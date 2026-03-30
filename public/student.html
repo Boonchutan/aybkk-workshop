@@ -747,15 +747,15 @@ let studentName = null;
 let currentStep = 0;
 const totalSteps = 7; // 0=register, 1-6=questions
 
-// Day-of-week color theme
+// Day-of-week color theme (pastel)
 const DAY_COLORS = [
-  { accent: '#5B8C5A', light: '#EEF5EE', hover: '#4A7A49' }, // Monday   — Green
-  { accent: '#C0392B', light: '#FDEDEC', hover: '#A93226' }, // Tuesday  — Red
-  { accent: '#D4A574', light: '#F5EDE4', hover: '#C49564' }, // Wednesday— Gold (default)
-  { accent: '#E67E22', light: '#FDF2E6', hover: '#D35400' }, // Thursday — Orange
-  { accent: '#2980B9', light: '#EBF5FB', hover: '#2471A3' }, // Friday   — Blue
-  { accent: '#8E44AD', light: '#F4ECF7', hover: '#7D3C98' }, // Saturday — Indigo
-  { accent: '#7F8C8D', light: '#F2F3F4', hover: '#6C7A7A' }  // Sunday   — Gray
+  { accent: '#7BAF7A', light: '#F0F7F0', hover: '#6A9E6A' }, // Monday   — Sage Green
+  { accent: '#D4836A', light: '#FBF0ED', hover: '#C4725A' }, // Tuesday  — Soft Terracotta
+  { accent: '#D4A574', light: '#F5EDE4', hover: '#C49564' }, // Wednesday— Warm Gold
+  { accent: '#D9A066', light: '#F8F0E4', hover: '#C99055' }, // Thursday — Pastel Orange
+  { accent: '#7AABBF', light: '#EDF4F7', hover: '#699AAE' }, // Friday   — Dusty Blue
+  { accent: '#A085B8', light: '#F2EDF6', hover: '#8F74A7' }, // Saturday — Soft Lavender
+  { accent: '#A3ADA8', light: '#F3F4F3', hover: '#929C97' }  // Sunday   — Mist Gray
 ];
 
 function applyDayColor() {
