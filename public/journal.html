@@ -136,7 +136,9 @@
 
   <script>
     const vinyasaEmoji = { kept_moving: '🟢', stop_breathe: '🟡', tired_paused: '🔴' };
+    const vinyasaLabel = { kept_moving: 'Kept moving', stop_breathe: 'Stopped to breathe', tired_paused: 'Tired, had to pause' };
     const bandhaEmoji = { body_light: '🟢', finding_light: '🟡', heavy_body: '🔴' };
+    const bandhaLabel = { body_light: 'Body feels light', finding_light: 'Finding lightness', heavy_body: 'Heavy body' };
     const asanaEmoji = {
       // Stable Today
       jump_back: '↩️ Jump back',
@@ -154,8 +156,10 @@
       forward_bend: '🔴 Forward bend',
       twisting: '🔴 Twisting',
       standing_balance: '🔴 Standing balance',
-      breathing: '🔴 Breathing',
-      bandha_heavy: '🔴 Bandha (heavy)'
+      breathing: '🫁 Breathing',
+      bandha_heavy: '🔴 Bandha (heavy)',
+      lifting_body: '🏋️ Lifting body',
+      body_ache_pain: '🤕 Body ache & pain'
     };
 
     function showTab(tab) {
@@ -262,11 +266,11 @@
               </div>
               <div class="history-item">
                 <div class="label">⚡ Vinyasa</div>
-                <div class="value">${vinyasaEmoji[a.vinyasa] || '⚪'} ${a.vinyasa}</div>
+                <div class="value">${vinyasaEmoji[a.vinyasa] || '⚪'} ${vinyasaLabel[a.vinyasa] || a.vinyasa || '-'}</div>
               </div>
               <div class="history-item">
                 <div class="label">🔮 Bandha</div>
-                <div class="value">${bandhaEmoji[a.bandha] || '⚪'} ${a.bandha}</div>
+                <div class="value">${bandhaEmoji[a.bandha] || '⚪'} ${bandhaLabel[a.bandha] || a.bandha || '-'}</div>
               </div>
               <div class="history-item">
                 <div class="label">💪 Stable</div>
