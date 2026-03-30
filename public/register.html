@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AYBKK Workshop</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #0a0a0a;
+      --bg-secondary: #141414;
+      --bg-tertiary: #1a1a1a;
+      --bg-hover: #242424;
+      --border: #2a2a2a;
+      --text: #f5f5f5;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666;
+      --accent: #d2a3ff;
+      --accent-bg: rgba(210, 163, 255, 0.1);
+      --green: #7dd3a0;
+      --green-bg: rgba(125, 211, 160, 0.1);
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .app {
+      max-width: 500px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header */
+    .header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+    
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    
+    .logo {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #d2a3ff, #a78bfa);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    
+    .badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    
+    .lang-switch {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-secondary);
+      padding: 4px;
+      border-radius: 10px;
+    }
+    
+    .lang-btn {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .lang-btn.active {
+      background: var(--bg-tertiary);
+      color: var(--text);
+    }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-secondary);
+      padding: 4px;
+      border-radius: 12px;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 10px 8px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    
+    .tab.active {
+      background: var(--bg-tertiary);
+      color: var(--text);
+    }
+    
+    /* Content */
+    .content {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    
+    /* Search */
+    .search-box {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .search-input:focus {
+      border-color: var(--accent);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+    
+    /* Student Card */
+    .student-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    
+    .student-card:hover {
+      background: var(--bg-hover);
+      border-color: #3a3a3a;
+    }
+    
+    .student-card:active {
+      transform: scale(0.98);
+    }
+    
+    .student-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    
+    .student-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .student-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    
+    .student-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .student-badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    
+    .badge-3w { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+    .badge-deep { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+    .badge-1w { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .badge-9d { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
+    .badge-4d { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+    
+    .student-arrow {
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+    
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .stat {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      text-align: center;
+    }
+    
+    .stat-num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+    
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    /* QR Section */
+    .qr-section {
+      display: none;
+    }
+    
+    .qr-section.active {
+      display: block;
+    }
+    
+    .qr-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-align: center;
+    }
+    
+    .qr-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    
+    .qr-class {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    
+    .qr-image {
+      background: #fff;
+      padding: 16px;
+      border-radius: var(--radius);
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    
+    .qr-image img {
+      display: block;
+      width: 200px;
+      height: 200px;
+    }
+    
+    .qr-hint {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0a;
+    }
+    
+    .btn-primary:hover {
+      background: #e0bfff;
+    }
+    
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text);
+      border: 1px solid var(--border);
+      margin-top: 10px;
+    }
+    
+    /* Walk-in Section */
+    .walkin-section {
+      display: none;
+    }
+    
+    .walkin-section.active {
+      display: block;
+    }
+    
+    .input-group {
+      margin-bottom: 14px;
+    }
+    
+    .input-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    .text-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    .text-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .text-input:focus {
+      border-color: var(--accent);
+    }
+    
+    select.text-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+    
+    /* Success */
+    .success-msg {
+      background: var(--green-bg);
+      border: 1px solid rgba(125, 211, 160, 0.3);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      display: none;
+    }
+    
+    .success-msg.show {
+      display: block;
+    }
+    
+    .success-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    
+    .success-text {
+      color: var(--green);
+      font-weight: 600;
+    }
+    
+    /* Empty State */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+    
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    
+    /* Section Title */
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+    
+    /* Back button */
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      cursor: pointer;
+      padding: 8px 0;
+    }
+    
+    .back-btn:hover {
+      color: var(--text);
+    }
+    
+    /* Student List Section */
+    .list-section {
+      display: block;
+    }
+    
+    .list-section.hidden {
+      display: none;
+    }
+    
+    /* Stats Summary */
+    .summary-bar {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .summary-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    .summary-num {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">
+        <div class="logo-icon">🧘</div>
+        <span>AYBKK Workshop</span>
+      </div>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="zh">中</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="th">TH</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="list">学生列表</button>
+      <button class="tab" data-tab="walkin">现场登记</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <!-- List Section -->
+    <div class="list-section" id="listSection">
+      <div class="summary-bar">
+        <span class="summary-text">Workshop 学生</span>
+        <span class="summary-num" id="totalCount">0 人</span>
+      </div>
+      
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索学生...">
+      </div>
+      
+      <div class="section-title">点击查看二维码</div>
+      <div id="studentList">
+        <div class="loading">加载中...</div>
+      </div>
+    </div>
+
+    <!-- QR Section -->
+    <div class="qr-section" id="qrSection">
+      <div class="back-btn" onclick="showList()">← 返回列表</div>
+      <div class="qr-card">
+        <div class="qr-name" id="qrName">-</div>
+        <div class="qr-class" id="qrClass">-</div>
+        <div class="qr-image">
+          <img id="qrImg" src="" alt="QR Code">
+        </div>
+        <div class="qr-hint" id="qrHint">截图保存到手机</div>
+        <button class="btn btn-primary" id="nextStudentBtn" onclick="showNextStudent()">下一个学生</button>
+        <button class="btn btn-secondary" onclick="showList()">返回列表</button>
+      </div>
+    </div>
+
+    <!-- Walk-in Section -->
+    <div class="walkin-section" id="walkinSection">
+      <div class="success-msg" id="successMsg">
+        <div class="success-icon">✓</div>
+        <div class="success-text" id="successText">登记成功！</div>
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label">姓名</label>
+        <input type="text" class="text-input" id="walkinName" placeholder="输入学生姓名">
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label">课程类型</label>
+        <select class="text-input" id="walkinClass">
+          <option value="3-week-workshop">3周工作坊 (9870元)</option>
+          <option value="deep-course">深度课程 (7485元)</option>
+          <option value="1-week">一周课程 (4180元)</option>
+          <option value="9-day">9天课程 (4300元)</option>
+          <option value="4-day-mysore">4天Mysore (2200元)</option>
+        </select>
+      </div>
+      
+      <button class="btn btn-primary" id="registerBtn" onclick="registerWalkin()">注册并显示二维码</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const T = {
+  zh: {
+    tabList: '学生列表',
+    tabWalkin: '现场登记',
+    searchPlaceholder: '搜索学生...',
+    sectionTitle: '点击查看二维码',
+    totalStudents: 'Workshop 学生',
+    loading: '加载中...',
+    name: '姓名',
+    classType: '课程类型',
+    registerBtn: '注册并显示二维码',
+    qrHint: '截图保存到手机',
+    nextStudent: '下一个学生',
+    backToList: '返回列表',
+    successTitle: '登记成功！',
+    class3w: '3周工作坊',
+    classDeep: '深度课程',
+    class1w: '一周课程',
+    class9d: '9天课程',
+    class4d: '4天Mysore',
+  },
+  en: {
+    tabList: 'Students',
+    tabWalkin: 'Walk-in',
+    searchPlaceholder: 'Search students...',
+    sectionTitle: 'Tap to view QR',
+    totalStudents: 'Workshop Students',
+    loading: 'Loading...',
+    name: 'Name',
+    classType: 'Course Type',
+    registerBtn: 'Register & Show QR',
+    qrHint: 'Screenshot to save',
+    nextStudent: 'Next Student',
+    backToList: 'Back to List',
+    successTitle: 'Registered!',
+    class3w: '3-Week Workshop',
+    classDeep: 'Deep Course',
+    class1w: '1-Week',
+    class9d: '9-Day',
+    class4d: '4-Day Mysore',
+  },
+  th: {
+    tabList: 'รายชื่อ',
+    tabWalkin: 'ลงทะเบียน',
+    searchPlaceholder: 'ค้นหา...',
+    sectionTitle: 'แตะเพื่อดู QR',
+    totalStudents: 'นักเรียน Workshop',
+    loading: 'กำลังโหลด...',
+    name: 'ชื่อ',
+    classType: 'ประเภทคอร์ส',
+    registerBtn: 'ลงทะเบียน & แสดง QR',
+    qrHint: 'บันทึกภาพหน้าจอ',
+    nextStudent: 'นักเรียนถัดไป',
+    backToList: 'กลับรายชื่อ',
+    successTitle: 'ลงทะเบียนสำเร็จ!',
+    class3w: 'คอร์ส 3 สัปดาห์',
+    classDeep: 'คอร์สเข้มข้น',
+    class1w: 'คอร์ส 1 สัปดาห์',
+    class9d: 'คอร์ส 9 วัน',
+    class4d: 'Mysore 4 วัน',
+  }
+};
+
+const TUNNEL_URL = 'https://1fbb4d3ec59313a1-171-6-16-246.serveousercontent.com';
+
+let currentLang = 'zh';
+let students = [];
+let filteredStudents = [];
+let currentStudentIndex = 0;
+let studentQRs = {};
+
+// Initialize
+async function init() {
+  loadLang('zh');
+  await loadStudents();
+  setupEventListeners();
+}
+
+function loadLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('workshopLang', lang);
+  
+  // Update lang buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  
+  // Update text
+  const t = T[lang];
+  document.querySelector('[data-tab="list"]').textContent = t.tabList;
+  document.querySelector('[data-tab="walkin"]').textContent = t.tabWalkin;
+  document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+  document.querySelector('.section-title').textContent = t.sectionTitle;
+  document.querySelector('.summary-text').textContent = t.totalStudents;
+  document.getElementById('loading') && (document.querySelector('.loading')?.textContent = t.loading);
+  document.querySelector('.input-label:nth-child(1)').textContent = t.name;
+  document.querySelector('.input-label:nth-child(2)').textContent = t.classType;
+  document.getElementById('registerBtn').textContent = t.registerBtn;
+  document.getElementById('qrHint').textContent = t.qrHint;
+  document.getElementById('nextStudentBtn').textContent = t.nextStudent;
+  document.querySelector('.back-btn').innerHTML = '← ' + t.backToList;
+  
+  // Update class select options
+  const classSelect = document.getElementById('walkinClass');
+  classSelect.options[0].text = '3周工作坊 (9870元)';
+  classSelect.options[1].text = '深度课程 (7485元)';
+  classSelect.options[2].text = '一周课程 (4180元)';
+  classSelect.options[3].text = '9天课程 (4300元)';
+  classSelect.options[4].text = '4天Mysore (2200元)';
+  
+  // Re-render list
+  if (filteredStudents.length > 0) {
+    renderStudentList();
+  }
+}
+
+async function loadStudents() {
+  try {
+    const res = await fetch('/api/journal/students');
+    const data = await res.json();
+    
+    // Filter to only workshop students
+    const workshopTypes = ['3-week-workshop', 'deep-course', '1-week', '9-day', '4-day-mysore', 'chinese-workshop'];
+    students = data.students.filter(s => 
+      workshopTypes.includes(s.classType) || 
+      s.classType?.includes('workshop') || 
+      s.classType?.includes('course')
+    );
+    filteredStudents = [...students];
+    
+    document.getElementById('totalCount').textContent = students.length + ' 人';
+    renderStudentList();
+  } catch (err) {
+    console.error('Failed to load students:', err);
+    document.getElementById('studentList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div>加载失败</div>';
+  }
+}
+
+function renderStudentList() {
+  const list = document.getElementById('studentList');
+  
+  if (filteredStudents.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">👥</div>暂无学生</div>';
+    return;
+  }
+  
+  const badgeClass = {
+    '3-week-workshop': 'badge-3w',
+    'deep-course': 'badge-deep',
+    '1-week': 'badge-1w',
+    '9-day': 'badge-9d',
+    '4-day-mysore': 'badge-4d',
+    'chinese-workshop': 'badge-3w'
+  };
+  
+  const classNames = {
+    '3-week-workshop': '3周工作坊',
+    'deep-course': '深度课程',
+    '1-week': '一周课程',
+    '9-day': '9天课程',
+    '4-day-mysore': '4天Mysore',
+    'chinese-workshop': '工作坊'
+  };
+  
+  list.innerHTML = filteredStudents.map((s, i) => `
+    <div class="student-card" onclick="showQR(${i})">
+      <div class="student-avatar">${s.name.slice(0, 1)}</div>
+      <div class="student-info">
+        <div class="student-name">${s.name}</div>
+        <div class="student-meta">${s.classType ? classNames[s.classType] || s.classType : '-'}</div>
+      </div>
+      <span class="student-badge ${badgeClass[s.classType] || 'badge-3w'}">${s.classType ? classNames[s.classType]?.slice(0, 2) || 'WK' : 'WK'}</span>
+      <span class="student-arrow">›</span>
+    </div>
+  `).join('');
+}
+
+function setupEventListeners() {
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      const tabName = tab.dataset.tab;
+      document.getElementById('listSection').classList.toggle('hidden', tabName !== 'list');
+      document.getElementById('qrSection').classList.remove('active');
+      document.getElementById('walkinSection').classList.toggle('active', tabName === 'walkin');
+      
+      if (tabName === 'walkin') {
+        document.getElementById('successMsg').classList.remove('show');
+        document.getElementById('walkinName').value = '';
+      }
+    });
+  });
+  
+  // Language switching
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => loadLang(btn.dataset.lang));
+  });
+  
+  // Search
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    filteredStudents = students.filter(s => 
+      s.name.toLowerCase().includes(q) ||
+      (s.classType && s.classType.toLowerCase().includes(q))
+    );
+    renderStudentList();
+  });
+}
+
+async function showQR(index) {
+  currentStudentIndex = index;
+  const student = filteredStudents[index];
+  
+  document.getElementById('listSection').classList.add('hidden');
+  document.getElementById('qrSection').classList.add('active');
+  
+  document.getElementById('qrName').textContent = student.name;
+  
+  const classNames = {
+    '3-week-workshop': '3周工作坊 (9870元)',
+    'deep-course': '深度课程 (7485元)',
+    '1-week': '一周课程 (4180元)',
+    '9-day': '9天课程 (4300元)',
+    '4-day-mysore': '4天Mysore (2200元)',
+    'chinese-workshop': '工作坊'
+  };
+  document.getElementById('qrClass').textContent = classNames[student.classType] || student.classType || '工作坊';
+  
+  // Get or generate QR
+  if (!studentQRs[student.id]) {
+    try {
+      const res = await fetch(`/api/journal/qr/${student.id}`);
+      const data = await res.json();
+      studentQRs[student.id] = data.qrDataUrl;
+    } catch (err) {
+      // Fallback: generate from tunnel URL
+      studentQRs[student.id] = await generateQR(student.id);
+    }
+  }
+  
+  document.getElementById('qrImg').src = studentQRs[student.id];
+}
+
+async function generateQR(studentId) {
+  // Dynamic import qrcode
+  return new Promise((resolve) => {
+    // Use the tunnel URL
+    const url = `${TUNNEL_URL}/student.html?id=${studentId}`;
+    // For now, show placeholder - actual QR generated server-side
+    document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+    resolve(document.getElementById('qrImg').src);
+  });
+}
+
+function showList() {
+  document.getElementById('qrSection').classList.remove('active');
+  document.getElementById('listSection').classList.remove('hidden');
+}
+
+function showNextStudent() {
+  if (currentStudentIndex < filteredStudents.length - 1) {
+    showQR(currentStudentIndex + 1);
+  } else {
+    // Loop back
+    showQR(0);
+  }
+}
+
+async function registerWalkin() {
+  const name = document.getElementById('walkinName').value.trim();
+  const classType = document.getElementById('walkinClass').value;
+  
+  if (!name) {
+    alert('请输入姓名 / Please enter name');
+    return;
+  }
+  
+  const btn = document.getElementById('registerBtn');
+  btn.disabled = true;
+  btn.textContent = '注册中...';
+  
+  try {
+    const res = await fetch('/api/journal/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, classType, isChineseStudent: true })
+    });
+    
+    const data = await res.json();
+    
+    if (data.error && data.error.includes('exists')) {
+      alert('学生已存在 / Student already exists');
+      btn.disabled = false;
+      btn.textContent = T[currentLang].registerBtn;
+      return;
+    }
+    
+    // Success - show QR
+    students.push({ id: data.studentId, name, classType });
+    filteredStudents = [...students];
+    document.getElementById('totalCount').textContent = students.length + ' 人';
+    renderStudentList();
+    
+    document.getElementById('successMsg').classList.add('show');
+    document.getElementById('successText').textContent = T[currentLang].successTitle;
+    
+    setTimeout(() => {
+      // Switch to list and show QR
+      document.querySelector('[data-tab="list"]').click();
+      const newIndex = students.length - 1;
+      filteredStudents = [...students];
+      showQR(newIndex);
+    }, 1000);
+    
+  } catch (err) {
+    console.error('Registration error:', err);
+    alert('注册失败 / Registration failed');
+  }
+  
+  btn.disabled = false;
+  btn.textContent = T[currentLang].registerBtn;
+}
+
+// Start
+init();
+</script>
+</body>
+</html>

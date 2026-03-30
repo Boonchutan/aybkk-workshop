@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AYBKK Teaching System — Mindmap</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+    :root {
+      --bg: #F9EFE1;
+      --paper: #FFFDF7;
+      --card: #FFFDF7;
+      --border: #D4B896;
+      --text: #2C1810;
+      --text-secondary: #6B4C2A;
+      --text-light: #8B7355;
+      --accent-green: #2D5016;
+      --accent-green-light: #E8F0E0;
+      --accent-red: #8B2500;
+      --accent-red-light: #F5E8E0;
+      --accent-purple: #4A2545;
+      --accent-purple-light: #F0E8F0;
+      --accent-brown: #8B4513;
+      --accent-brown-light: #F5EBE0;
+      --accent-dark: #3D2914;
+      --accent-dark-light: #EDE5DA;
+      --shadow: 0 2px 8px rgba(44,24,16,0.08);
+      --shadow-lg: 0 4px 20px rgba(44,24,16,0.12);
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 60px;
+      background: var(--paper);
+      border-bottom: 2px solid var(--accent-brown);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(166,97,26,0.1);
+    }
+    .header-logo {
+      font-family: 'Crimson Pro', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-brown);
+      white-space: nowrap;
+    }
+    .header-logo span {
+      font-size: 11px;
+      color: var(--text-light);
+      font-weight: 400;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .search-box {
+      flex: 1;
+      max-width: 320px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 8px 14px 8px 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent-green);
+    }
+    .search-box input::placeholder { color: var(--text-light); }
+    .search-box::before {
+      content: '🔍';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+    }
+    .search-results {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0; right: 0;
+      background: var(--paper);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+      z-index: 200;
+    }
+    .search-results.show { display: block; }
+    .search-result-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: var(--bg); }
+    .search-result-item .name {
+      font-weight: 500;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .search-result-item .meta {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    /* Toggle */
+    .toggle-group {
+      display: flex;
+      gap: 2px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 3px;
+    }
+    .toggle-btn {
+      padding: 5px 14px;
+      border-radius: 16px;
+      border: none;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      color: var(--text-secondary);
+      background: transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .toggle-btn.active {
+      background: var(--paper);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Zoom controls */
+    .zoom-controls {
+      display: flex;
+      gap: 4px;
+    }
+    .zoom-btn {
+      width: 32px;
+      height: 32px;
+      background: var(--paper);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      color: var(--text);
+    }
+    .zoom-btn:hover { background: var(--bg); border-color: var(--text-light); }
+
+    /* ── MAIN CANVAS ── */
+    .canvas-wrapper {
+      position: fixed;
+      top: 60px; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+    }
+    .canvas {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      transition: transform 0.1s ease-out;
+    }
+    .canvas:active { cursor: grabbing; }
+    .canvas.smooth { transition: transform 0.3s ease-out; }
+
+    /* Three columns */
+    .columns {
+      display: flex;
+      gap: 0;
+      height: 100%;
+      padding: 20px;
+      min-width: max-content;
+    }
+
+    .column {
+      width: 340px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 12px;
+    }
+    .column:first-child { padding-left: 0; }
+    .column:last-child { padding-right: 0; }
+
+    /* Column header */
+    .col-header {
+      text-align: center;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 2px solid;
+      background: var(--paper);
+    }
+    .col-header.green {
+      border-color: var(--accent-brown);
+      color: var(--accent-brown);
+    }
+    .col-header.red {
+      border-color: var(--accent-brown);
+      color: var(--accent-brown);
+    }
+    .col-header.purple {
+      border-color: var(--accent-brown);
+      color: var(--accent-brown);
+    }
+    .col-header h2 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .col-header .subtitle {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    /* Stage */
+    .stage {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .stage-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stage-header.green { border-left: 3px solid var(--accent-green); }
+    .stage-header.red { border-left: 3px solid var(--accent-red); }
+    .stage-header.purple { border-left: 3px solid var(--accent-purple); }
+    .stage-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+    .stage-count {
+      font-size: 11px;
+      color: var(--text-light);
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* Asana list */
+    .asana-list {
+      padding: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* Asana pill */
+    .asana-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1.5px solid;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .asana-pill.green {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      background: var(--accent-green-light);
+    }
+    .asana-pill.green:hover {
+      background: var(--accent-green);
+      color: #fff;
+    }
+    .asana-pill.red {
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+      background: var(--accent-red-light);
+    }
+    .asana-pill.red:hover {
+      background: var(--accent-red);
+      color: #fff;
+    }
+    .asana-pill.purple {
+      border-color: var(--accent-purple);
+      color: var(--accent-purple);
+      background: var(--accent-purple-light);
+    }
+    .asana-pill.purple:hover {
+      background: var(--accent-purple);
+      color: #fff;
+    }
+    .asana-pill.dark {
+      border-color: var(--accent-dark);
+      color: var(--accent-dark);
+      background: var(--accent-dark-light);
+    }
+    .asana-pill.dark:hover {
+      background: var(--accent-dark);
+      color: #fff;
+    }
+
+    /* Actions row */
+    .actions-row {
+      padding: 6px 14px 10px;
+      border-top: 1px solid var(--border);
+    }
+    .actions-label {
+      font-size: 10px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .action-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .action-tag {
+      padding: 3px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .action-tag:hover {
+      border-color: var(--text);
+      color: var(--text);
+    }
+
+    /* ── DETAIL PANEL ── */
+    .detail-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(44,24,16,0.3);
+      z-index: 200;
+      display: none;
+    }
+    .detail-overlay.show { display: block; }
+
+    .detail-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 480px;
+      max-height: 80vh;
+      background: var(--paper);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      z-index: 300;
+      display: none;
+      flex-direction: column;
+    }
+    .detail-panel.show { display: flex; }
+    .detail-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1.5px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .detail-header-text { flex: 1; }
+    .detail-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .detail-badge.green { background: var(--accent-green-light); color: var(--accent-green); }
+    .detail-badge.red { background: var(--accent-red-light); color: var(--accent-red); }
+    .detail-badge.purple { background: var(--accent-purple-light); color: var(--accent-purple); }
+    .detail-badge.dark { background: var(--accent-dark-light); color: var(--accent-dark); }
+    .detail-title {
+      font-family: 'Crimson Pro', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .detail-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+    .detail-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .detail-close:hover { color: var(--text); }
+
+    .detail-body {
+      padding: 16px 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .detail-section {
+      margin-bottom: 16px;
+    }
+    .detail-section:last-child { margin-bottom: 0; }
+    .detail-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .detail-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .detail-info-item {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+    }
+    .detail-info-item .label {
+      font-size: 10px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .detail-info-item .value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-top: 2px;
+    }
+
+    /* Actions in detail panel */
+    .detail-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .detail-action-btn {
+      padding: 5px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--paper);
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .detail-action-btn:hover {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      background: var(--accent-green-light);
+    }
+
+    /* Related asanas */
+    .detail-related {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .detail-related-pill {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1.5px solid;
+      transition: all 0.15s;
+    }
+
+    /* Legend */
+    .legend {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      background: var(--paper);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 12px;
+      z-index: 50;
+      box-shadow: var(--shadow);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-dot.green { background: var(--accent-green); }
+    .legend-dot.red { background: var(--accent-red); }
+    .legend-dot.purple { background: var(--accent-purple); }
+    .legend-dot.dark { background: var(--accent-dark); }
+
+    /* Hint */
+    .hint {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      background: var(--paper);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 11px;
+      color: var(--text-light);
+      z-index: 50;
+      box-shadow: var(--shadow);
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    /* Stage description */
+    .stage-desc {
+      padding: 6px 14px 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Student view: hide advanced structures */
+    body.student-view .column:nth-child(2),
+    body.student-view .column:nth-child(3) {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    body.student-view .col-header.green {
+      box-shadow: 0 0 0 3px var(--accent-green);
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    AYBKK Teaching System
+    <span>Every student is a project</span>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search asana or action..." autocomplete="off">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <div class="toggle-group">
+    <button class="toggle-btn active" id="btnTeacher" onclick="setView('teacher')">👨‍🏫 Teacher</button>
+    <button class="toggle-btn" id="btnStudent" onclick="setView('student')">🧘 Student</button>
+  </div>
+
+  <div class="zoom-controls">
+    <button class="zoom-btn" onclick="zoomIn()">+</button>
+    <button class="zoom-btn" onclick="zoomOut()">−</button>
+    <button class="zoom-btn" onclick="resetView()" style="font-size:11px;">⊙</button>
+  </div>
+</div>
+
+<!-- MAIN CANVAS -->
+<div class="canvas-wrapper">
+  <div class="canvas" id="canvas">
+    <div class="loading" id="loading">Loading teaching system...</div>
+  </div>
+</div>
+
+<!-- DETAIL OVERLAY -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-header">
+    <div class="detail-header-text">
+      <span class="detail-badge" id="detailBadge">—</span>
+      <div class="detail-title" id="detailTitle">—</div>
+      <div class="detail-subtitle" id="detailSubtitle">—</div>
+    </div>
+    <button class="detail-close" onclick="closeDetail()">×</button>
+  </div>
+  <div class="detail-body" id="detailBody"></div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot green"></div> Primary Series</div>
+  <div class="legend-item"><div class="legend-dot red"></div> Intermediate Series</div>
+  <div class="legend-item"><div class="legend-dot purple"></div> Advanced A Series</div>
+  <div class="legend-item"><div class="legend-dot dark"></div> Advanced B Series</div>
+</div>
+
+<!-- HINT -->
+<div class="hint">Click asana for details · Click action (tag) to see related asanas</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────
+let allData = null; // { structures, asanas, tags }
+let currentView = 'teacher';
+let scale = 1;
+let panX = 0;
+let panY = 0;
+let isDragging = false;
+let dragStartX, dragStartY;
+let currentDetail = null; // 'asana' or 'tag'
+let lastClickedTag = null;
+
+// ─── COLOR MAP ────────────────────────────────────────────────
+const seriesColor = {
+  'primary': 'green',
+  'intermediate': 'red',
+  'advance-a': 'purple',
+  'advance-b': 'dark'
+};
+const colorNames = { green: 'green', red: 'red', purple: 'purple', dark: 'dark' };
+
+// ─── INIT ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', loadData);
+
+async function loadData() {
+  try {
+    const [treeRes, asanasRes, tagsRes] = await Promise.all([
+      fetch('/api/mindmap/tree'),
+      fetch('/api/mindmap/asanas'),
+      fetch('/api/mindmap/tags')
+    ]);
+    const tree = await treeRes.json();
+    const asanas = await asanasRes.json();
+    const tags = await tagsRes.json();
+    
+    allData = {
+      structures: tree.structures,
+      asanas: asanas.asanas,
+      tags: tags.tags
+    };
+    
+    renderMindmap();
+  } catch (e) {
+    document.getElementById('canvas').innerHTML = 
+      '<div class="loading">Error loading data: ' + e.message + '</div>';
+  }
+}
+
+// ─── RENDER ─────────────────────────────────────────────────
+function renderMindmap() {
+  const canvas = document.getElementById('canvas');
+  canvas.innerHTML = '';
+  
+  const columns = document.createElement('div');
+  columns.className = 'columns';
+  canvas.appendChild(columns);
+  
+  if (!allData || !allData.structures.length) {
+    columns.innerHTML = '<div class="loading">No teaching data found</div>';
+    return;
+  }
+  
+  allData.structures.forEach((struct, idx) => {
+    const colorClass = seriesColor[struct.series] || 'green';
+    const colDiv = document.createElement('div');
+    colDiv.className = 'column';
+    
+    // Header
+    colDiv.innerHTML = `
+      <div class="col-header ${colorClass}">
+        <h2>${struct.name}</h2>
+        <div class="subtitle">${struct.stages.length} stages</div>
+      </div>
+    `;
+    
+    // Stages
+    struct.stages.forEach(stage => {
+      const stageDiv = document.createElement('div');
+      stageDiv.className = 'stage';
+      
+      const asanas = stage.asanas || [];
+      const actionSet = new Set();
+      asanas.forEach(a => {
+        if (a.tags) a.tags.forEach(t => actionSet.add(t));
+      });
+      const actions = Array.from(actionSet).slice(0, 8);
+      
+      stageDiv.innerHTML = `
+        <div class="stage-header ${colorClass}">
+          <div class="stage-name">${stage.name}</div>
+          <div class="stage-count">${asanas.length}</div>
+        </div>
+        ${stage.description ? `<div class="stage-desc">${stage.description}</div>` : ''}
+        <div class="asana-list">
+          ${asanas.map(a => `
+            <button class="asana-pill ${colorClass}" 
+              data-name="${a.name}" 
+              data-series="${struct.series}"
+              onclick="showAsanaDetail('${escapeHtml(a.name)}')">
+              ${a.name}
+            </button>
+          `).join('')}
+        </div>
+        ${actions.length ? `
+          <div class="actions-row">
+            <div class="actions-label">Actions</div>
+            <div class="action-tags">
+              ${actions.map(action => `
+                <button class="action-tag" onclick="showTagDetail('${escapeHtml(action)}')">${action}</button>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      `;
+      
+      colDiv.appendChild(stageDiv);
+    });
+    
+    columns.appendChild(colDiv);
+  });
+  
+  updateTransform();
+}
+
+// ─── DETAIL PANELS ────────────────────────────────────────────
+function showAsanaDetail(name) {
+  const asana = allData.asanas.find(a => a.name === name);
+  if (!asana) return;
+  
+  currentDetail = 'asana';
+  const color = seriesColor[asana.series] || 'green';
+  const colorNames_map = { green: 'Primary', red: 'Intermediate', purple: 'Advanced A', dark: 'Advanced B' };
+  
+  const badge = document.getElementById('detailBadge');
+  badge.className = 'detail-badge ' + color;
+  badge.textContent = colorNames_map[color];
+  
+  document.getElementById('detailTitle').textContent = asana.name;
+  document.getElementById('detailSubtitle').textContent = 
+    (asana.englishName || '') + (asana.section ? ' · ' + asana.section : '');
+  
+  const body = document.getElementById('detailBody');
+  body.innerHTML = `
+    <div class="detail-section">
+      <div class="detail-info-grid">
+        <div class="detail-info-item">
+          <div class="label">Vinyasa Count</div>
+          <div class="value">${asana.vinyasaCount || '—'}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="label">Section</div>
+          <div class="value">${asana.section || '—'}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="label">Stage</div>
+          <div class="value">${asana.stage || '—'}</div>
+        </div>
+        <div class="detail-info-item">
+          <div class="label">Series</div>
+          <div class="value">${colorNames_map[color]}</div>
+        </div>
+      </div>
+    </div>
+    ${asana.tags && asana.tags.length ? `
+    <div class="detail-section">
+      <div class="detail-section-title">Actions / Tags</div>
+      <div class="detail-actions">
+        ${asana.tags.map(tag => `
+          <button class="detail-action-btn" onclick="showTagDetail('${escapeHtml(tag)}')">${tag}</button>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+    <div class="detail-section">
+      <div class="detail-section-title">All Asanas with These Actions</div>
+      <div class="detail-related">
+        ${getRelatedAsanas(asana.tags || [], asana.name, color).map(a => `
+          <button class="detail-related-pill ${color}" 
+            style="border-color: var(--accent-${color}); color: var(--accent-${color}); background: var(--accent-${color}-light);"
+            onclick="showAsanaDetail('${escapeHtml(a.name)}')">${a.name}</button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  
+  showPanel();
+}
+
+function showTagDetail(tagName) {
+  lastClickedTag = tagName;
+  currentDetail = 'tag';
+  
+  // Find asanas that have this tag
+  const asanasWithTag = allData.asanas.filter(a => 
+    a.tags && a.tags.includes(tagName)
+  );
+  
+  // Group by series color
+  const grouped = {};
+  asanasWithTag.forEach(a => {
+    const c = seriesColor[a.series] || 'green';
+    if (!grouped[c]) grouped[c] = [];
+    grouped[c].push(a);
+  });
+  
+  document.getElementById('detailBadge').textContent = 'Action';
+  document.getElementById('detailBadge').className = 'detail-badge';
+  document.getElementById('detailTitle').textContent = tagName;
+  document.getElementById('detailSubtitle').textContent = 
+    `${asanasWithTag.length} asanas across ${Object.keys(grouped).length} series`;
+  
+  const body = document.getElementById('detailBody');
+  body.innerHTML = `
+    <div class="detail-section">
+      <div class="detail-section-title">Asanas with "${tagName}"</div>
+      <div class="detail-related">
+        ${Object.entries(grouped).map(([color, asanas]) => 
+          asanas.map(a => `
+            <button class="detail-related-pill ${color}"
+              style="border-color: var(--accent-${color}); color: var(--accent-${color}); background: var(--accent-${color}-light);"
+              onclick="showAsanaDetail('${escapeHtml(a.name)}')">${a.name}</button>
+          `).join('')
+        ).join('')}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">All Actions in Mindmap</div>
+      <div class="detail-actions">
+        ${allData.tags.map(t => `
+          <button class="detail-action-btn ${t.name === tagName ? 'selected' : ''}" 
+            onclick="showTagDetail('${escapeHtml(t.name)}')"
+            style="${t.name === tagName ? 'border-color: var(--accent-green); color: var(--accent-green); background: var(--accent-green-light);' : ''}">${t.name} (${t.asanaCount})</button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  
+  showPanel();
+}
+
+function getRelatedAsanas(tags, excludeName, color) {
+  if (!tags || !tags.length) return [];
+  return allData.asanas
+    .filter(a => {
+      if (a.name === excludeName) return false;
+      if (seriesColor[a.series] !== color) return false;
+      return a.tags && a.tags.some(t => tags.includes(t));
+    })
+    .slice(0, 12);
+}
+
+function showPanel() {
+  document.getElementById('detailOverlay').classList.add('show');
+  document.getElementById('detailPanel').classList.add('show');
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('show');
+  document.getElementById('detailPanel').classList.remove('show');
+  currentDetail = null;
+}
+
+// ─── SEARCH ──────────────────────────────────────────────────
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+let searchTimeout;
+
+searchInput.addEventListener('input', e => {
+  clearTimeout(searchTimeout);
+  const q = e.target.value.trim();
+  if (!q) {
+    searchResults.classList.remove('show');
+    return;
+  }
+  searchTimeout = setTimeout(() => doSearch(q), 200);
+});
+
+async function doSearch(query) {
+  // Search in-memory first (fast)
+  const q = query.toLowerCase();
+  const matches = allData.asanas.filter(a => 
+    a.name.toLowerCase().includes(q) || 
+    (a.englishName && a.englishName.toLowerCase().includes(q)) ||
+    (a.tags && a.tags.some(t => t.toLowerCase().includes(q)))
+  ).slice(0, 10);
+  
+  // Also search tags
+  const tagMatches = allData.tags.filter(t => t.name.toLowerCase().includes(q)).slice(0, 5);
+  
+  if (!matches.length && !tagMatches.length) {
+    searchResults.innerHTML = '<div class="search-result-item"><div class="name">No results</div></div>';
+    searchResults.classList.add('show');
+    return;
+  }
+  
+  let html = '';
+  
+  tagMatches.forEach(t => {
+    html += `<div class="search-result-item" onclick="showTagDetail('${escapeHtml(t.name)}'); searchResults.classList.remove('show'); searchInput.value='';">
+      <div class="name">🏷️ ${t.name}</div>
+      <div class="meta">Action · ${t.asanaCount} asanas</div>
+    </div>`;
+  });
+  
+  matches.forEach(a => {
+    const color = seriesColor[a.series] || 'green';
+    html += `<div class="search-result-item" onclick="showAsanaDetail('${escapeHtml(a.name)}'); searchResults.classList.remove('show'); searchInput.value='';">
+      <div class="name" style="color: var(--accent-${color})">${a.name}</div>
+      <div class="meta">${a.englishName || ''} ${a.stage ? '· ' + a.stage : ''}</div>
+    </div>`;
+  });
+  
+  searchResults.innerHTML = html;
+  searchResults.classList.add('show');
+}
+
+// Close search on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-box')) {
+    searchResults.classList.remove('show');
+  }
+});
+
+// ─── ZOOM & PAN ──────────────────────────────────────────────
+const canvas = document.getElementById('canvas');
+
+canvas.addEventListener('mousedown', e => {
+  if (e.target.closest('.asana-pill') || e.target.closest('.action-tag') || 
+      e.target.closest('.search-result-item') || e.target.closest('.detail-panel') ||
+      e.target.closest('.detail-overlay')) return;
+  isDragging = true;
+  dragStartX = e.clientX - panX;
+  dragStartY = e.clientY - panY;
+  canvas.style.cursor = 'grabbing';
+});
+
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  panX = e.clientX - dragStartX;
+  panY = e.clientY - dragStartY;
+  updateTransform();
+});
+
+window.addEventListener('mouseup', () => {
+  if (isDragging) {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+  }
+});
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = e.deltaY > 0 ? 0.92 : 1.08;
+  scale = Math.min(Math.max(scale * factor, 0.3), 2.5);
+  updateTransform(true);
+});
+
+function updateTransform(smooth = false) {
+  canvas.classList.toggle('smooth', smooth);
+  canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  canvas.style.transformOrigin = '0 0';
+}
+
+function zoomIn() {
+  scale = Math.min(scale * 1.15, 2.5);
+  updateTransform(true);
+}
+function zoomOut() {
+  scale = Math.max(scale * 0.85, 0.3);
+  updateTransform(true);
+}
+function resetView() {
+  scale = 1;
+  panX = 0;
+  panY = 0;
+  updateTransform(true);
+}
+
+// ─── VIEW TOGGLE ──────────────────────────────────────────────
+function setView(view) {
+  currentView = view;
+  document.getElementById('btnTeacher').classList.toggle('active', view === 'teacher');
+  document.getElementById('btnStudent').classList.toggle('active', view === 'student');
+  document.body.classList.toggle('student-view', view === 'student');
+  resetView();
+}
+
+// ─── UTILS ───────────────────────────────────────────────────
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ─── KEYBOARD ────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDetail();
+});
+</script>
+</body>
+</html>

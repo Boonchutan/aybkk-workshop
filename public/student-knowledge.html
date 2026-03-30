@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYBKK - Student Knowledge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #FAFAFA;
+      --card: #FFFFFF;
+      --text: #1A1A1A;
+      --text-light: #666666;
+      --text-lighter: #999999;
+      --accent: #2563EB;
+      --accent-light: #DBEAFE;
+      --border: #E5E5E5;
+      --green: #10B981;
+      --green-light: #D1FAE5;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 16px 80px;
+    }
+    
+    header {
+      padding: 32px 0 24px;
+      text-align: center;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--text);
+    }
+    
+    .subtitle {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    
+    /* Tab navigation */
+    .tabs {
+      display: flex;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-light);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .tab.active {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .tab:hover:not(.active) {
+      color: var(--text);
+    }
+    
+    /* Section visibility */
+    .section {
+      display: none;
+    }
+    
+    .section.active {
+      display: block;
+    }
+    
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    
+    .card.expanded {
+      border-color: var(--accent);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card-title {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    
+    .card-count {
+      font-size: 11px;
+      color: var(--text-lighter);
+      background: var(--bg);
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
+    
+    .card-arrow {
+      font-size: 14px;
+      color: var(--text-lighter);
+      transition: transform 0.2s;
+    }
+    
+    .card.expanded .card-arrow {
+      transform: rotate(180deg);
+    }
+    
+    /* Expandable content */
+    .card-content {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .card.expanded .card-content {
+      display: block;
+    }
+    
+    /* Problem cards have special styling */
+    .problem-card {
+      border-left: 3px solid var(--green);
+    }
+    
+    .problem-card .card-content {
+      background: var(--green-light);
+      margin: 16px -20px -20px;
+      padding: 16px 20px;
+      border-radius: 0 0 11px 11px;
+      border-top: none;
+    }
+    
+    .solution-label {
+      font-size: 11px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      margin-top: 12px;
+    }
+    
+    .solution-label:first-child {
+      margin-top: 0;
+    }
+    
+    .asana-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    
+    .asana-tag {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+    
+    .asana-tag.problem {
+      background: #FEF3C7;
+      border-color: #F59E0B;
+    }
+    
+    /* Asana detail modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .modal.show {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: var(--card);
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .modal-close {
+      background: var(--bg);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-section {
+      margin-bottom: 16px;
+    }
+    
+    .modal-label {
+      font-size: 11px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    
+    .modal-asanas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .modal-asana-tag {
+      background: var(--accent-light);
+      color: var(--accent);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .modal-asana-tag:hover {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .deep-dive-btn {
+      display: block;
+      width: 100%;
+      background: var(--text);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    .deep-dive-btn:hover {
+      background: #000;
+    }
+    
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+    }
+    
+    /* Empty state */
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+    }
+    
+    footer {
+      text-align: center;
+      padding: 32px 0;
+      font-size: 11px;
+      color: var(--text-lighter);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">AYBKK</div>
+      <div class="subtitle">Knowledge Universe</div>
+    </header>
+    
+    <!-- Tab Navigation -->
+    <div class="tabs">
+      <div class="tab active" data-tab="movements">Movements</div>
+      <div class="tab" data-tab="asanas">Asanas</div>
+      <div class="tab" data-tab="problems">Problems</div>
+    </div>
+    
+    <!-- Movements Section -->
+    <div class="section active" id="section-movements">
+      <div id="movements-list">
+        <div class="loading">Loading...</div>
+      </div>
+    </div>
+    
+    <!-- Asanas Section -->
+    <div class="section" id="section-asanas">
+      <div id="asanas-list">
+        <div class="loading">Loading...</div>
+      </div>
+    </div>
+    
+    <!-- Problems Section -->
+    <div class="section" id="section-problems">
+      <div id="problems-list">
+        <div class="loading">Loading...</div>
+      </div>
+    </div>
+    
+    <footer>
+      AYBKK Teaching Universe
+    </footer>
+  </div>
+  
+  <!-- Asana Detail Modal -->
+  <div class="modal" id="asana-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">Asana Name</div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-section">
+        <div class="modal-label">Movement Types</div>
+        <div class="modal-asanas" id="modal-movements"></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-label">Related Asanas</div>
+        <div class="modal-asanas" id="modal-related"></div>
+      </div>
+      <button class="deep-dive-btn" onclick="openDeepDive()">
+        View in Knowledge Graph →
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let movements = [];
+    let asanas = [];
+    let problems = [];
+    let currentAsana = null;
+    
+    // Load all data
+    async function loadData() {
+      try {
+        const [movementsRes, asanasRes, problemsRes] = await Promise.all([
+          fetch('/api/student/movements').then(r => r.json()),
+          fetch('/api/student/asanas').then(r => r.json()),
+          fetch('/api/student/problems').then(r => r.json())
+        ]);
+        
+        movements = movementsRes;
+        asanas = asanasRes;
+        problems = problemsRes;
+        
+        renderMovements();
+        renderAsanas();
+        renderProblems();
+      } catch (err) {
+        console.error('Failed to load:', err);
+        document.querySelectorAll('.loading').forEach(el => el.textContent = 'Failed to load data');
+      }
+    }
+    
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('section-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+    
+    // Render movements
+    function renderMovements() {
+      const container = document.getElementById('movements-list');
+      if (movements.length === 0) {
+        container.innerHTML = '<div class="empty">No movements found</div>';
+        return;
+      }
+      
+      container.innerHTML = movements.map(m => `
+        <div class="card" onclick="toggleCard(this)">
+          <div class="card-header">
+            <div class="card-title">${m.name}</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="card-count">${m.asanaCount} asanas</span>
+              <span class="card-arrow">▼</span>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="asana-list" id="movement-${m.name.replace(/[^a-zA-Z0-9]/g, '-')}"></div>
+          </div>
+        </div>
+      `).join('');
+      
+      // Load asanas for each movement
+      movements.forEach(m => {
+        fetch('/api/student/movement/' + encodeURIComponent(m.name))
+          .then(r => r.json())
+          .then(asanas => {
+            const el = document.getElementById('movement-' + m.name.replace(/[^a-zA-Z0-9]/g, '-'));
+            if (el) {
+              el.innerHTML = asanas.map(a => 
+                `<span class="asana-tag" onclick="event.stopPropagation();showAsanaDetail('${a}')">${a}</span>`
+              ).join('');
+            }
+          });
+      });
+    }
+    
+    // Render asanas
+    function renderAsanas() {
+      const container = document.getElementById('asanas-list');
+      if (asanas.length === 0) {
+        container.innerHTML = '<div class="empty">No asanas found</div>';
+        return;
+      }
+      
+      container.innerHTML = asanas.map(a => `
+        <div class="card" onclick="showAsanaDetail('${a.name}')">
+          <div class="card-header">
+            <div class="card-title">${a.name}</div>
+            <span class="card-arrow">→</span>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Render problems
+    function renderProblems() {
+      const container = document.getElementById('problems-list');
+      if (problems.length === 0) {
+        container.innerHTML = '<div class="empty">No problems found</div>';
+        return;
+      }
+      
+      container.innerHTML = problems.map(p => `
+        <div class="card problem-card" onclick="toggleCard(this)">
+          <div class="card-header">
+            <div class="card-title">${p.problem}</div>
+            <span class="card-arrow">▼</span>
+          </div>
+          <div class="card-content">
+            ${Object.entries(p.solutions).map(([movement, asanaList]) => `
+              <div class="solution-label">${movement}</div>
+              <div class="asana-list">
+                ${asanaList.map(a => `<span class="asana-tag problem" onclick="event.stopPropagation();showAsanaDetail('${a}')">${a}</span>`).join('')}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Toggle card expand
+    function toggleCard(card) {
+      card.classList.toggle('expanded');
+    }
+    
+    // Show asana detail
+    async function showAsanaDetail(name) {
+      try {
+        const res = await fetch('/api/student/asana/' + encodeURIComponent(name));
+        const data = await res.json();
+        
+        if (data.error) {
+          console.error(data.error);
+          return;
+        }
+        
+        currentAsana = data;
+        
+        document.getElementById('modal-title').textContent = data.name;
+        document.getElementById('modal-movements').innerHTML = data.movements.map(m => 
+          `<span class="asana-tag">${m}</span>`
+        ).join('');
+        document.getElementById('modal-related').innerHTML = data.related.map(a => 
+          `<span class="modal-asana-tag" onclick="showAsanaDetail('${a}')">${a}</span>`
+        ).join('') || '<span class="asana-tag">None found</span>';
+        
+        document.getElementById('asana-modal').classList.add('show');
+      } catch (err) {
+        console.error('Failed to load asana:', err);
+      }
+    }
+    
+    // Close modal
+    function closeModal() {
+      document.getElementById('asana-modal').classList.remove('show');
+      currentAsana = null;
+    }
+    
+    // Open deep dive (opens Plato's full knowledge page)
+    function openDeepDive() {
+      if (currentAsana) {
+        window.open('/knowledge.html', '_blank');
+      }
+    }
+    
+    // Close modal on backdrop click
+    document.getElementById('asana-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'asana-modal') {
+        closeModal();
+      }
+    });
+    
+    // Initialize
+    loadData();
+  </script>
+</body>
+</html>

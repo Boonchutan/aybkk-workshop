@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYBKK Huizhou Workshop — Orientation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #faf8f5; color: #2a2420; min-height: 100vh; }
+    .header { background: linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #4e342e 100%); color: white; padding: 40px 24px 30px; text-align: center; }
+    .header img { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 16px; border: 3px solid rgba(255,255,255,0.3); }
+    .header h1 { font-size: 22px; margin-bottom: 6px; }
+    .header p { color: rgba(255,255,255,0.7); font-size: 14px; }
+    .lang-switch { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+    .lang-btn { background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.7); padding: 6px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .lang-btn.active { background: rgba(255,255,255,0.3); color: white; }
+    .container { max-width: 480px; margin: 0 auto; padding: 24px 20px; }
+    .intro { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .intro p { font-size: 15px; line-height: 1.7; color: #5d4037; margin-bottom: 16px; }
+    .rules { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .rules h3 { font-size: 16px; color: #3e2723; margin-bottom: 16px; }
+    .rule { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0ebe5; }
+    .rule:last-child { border-bottom: none; }
+    .rule-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+    .rule-text { font-size: 14px; line-height: 1.5; color: #5d4037; }
+    .closing { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .closing p { font-size: 15px; line-height: 1.7; color: #5d4037; font-style: italic; }
+    .signatures { font-size: 14px; color: #8b7d6b; margin-top: 12px; }
+    
+    .form-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .form-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 4px; }
+    .form-section p { font-size: 13px; color: #8b7d6b; margin-bottom: 20px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 14px; font-weight: 600; color: #3e2723; margin-bottom: 6px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 12px 16px; border: 2px solid #e8e0d8; border-radius: 12px; font-size: 15px; background: #faf8f5; color: #2a2420; transition: border-color 0.2s; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #c49564; }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field .hint { font-size: 12px; color: #8b7d6b; margin-top: 4px; }
+    
+    .options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .option { background: #faf8f5; border: 2px solid #e8e0d8; border-radius: 20px; padding: 8px 16px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: #5d4037; }
+    .option.selected { background: #c49564; border-color: #c49564; color: white; }
+    
+    .submit-btn { width: 100%; background: #3e2723; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+    .submit-btn:hover { background: #5d4037; }
+    .submit-btn:disabled { background: #a89888; cursor: not-allowed; }
+    
+    .success-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(62,39,35,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .success-overlay.hidden { display: none; }
+    .success-box { background: white; border-radius: 20px; padding: 40px 32px; text-align: center; max-width: 320px; margin: 20px; }
+    .success-box .check { font-size: 48px; margin-bottom: 16px; }
+    .success-box h2 { font-size: 20px; color: #3e2723; margin-bottom: 8px; }
+    .success-box p { font-size: 14px; color: #8b7d6b; line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <img src="/aybkk-logo.jpg" alt="AYBKK">
+  <h1 id="mainTitle">AYBKK Huizhou Workshop</h1>
+  <p id="mainSub">Mar 28 — Apr 19, 2026 · 3-Week Intensive</p>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('zh')">中文</button>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Orientation Text -->
+  <div class="intro" id="introSection">
+    <p id="introText">This coming Saturday will be the first day of our 3-week intensive Mysore practice. Jamsai and I are looking forward to helping you find the right technique for your body and improve your skills for challenging movements and asanas.</p>
+    <p id="introText2">For most of you, you have experienced practicing with us before, so we expect you to be a good example to your classmates of how to properly behave during Mysore practice.</p>
+  </div>
+
+  <!-- Rules -->
+  <div class="rules">
+    <h3 id="rulesTitle">Traditional Mysore Culture</h3>
+    <div class="rule">
+      <span class="rule-icon">💧</span>
+      <span class="rule-text" id="rule1">No water inside the Mysore room</span>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">📵</span>
+      <span class="rule-text" id="rule2">No phone or camera inside the Mysore room</span>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">🤫</span>
+      <span class="rule-text" id="rule3">No talking during practice</span>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">🧘</span>
+      <span class="rule-text" id="rule4">Do not move your mat around (unless teacher requests)</span>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">🤝</span>
+      <span class="rule-text" id="rule5">Do not help other students during practice (unless teacher requests)</span>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">🔄</span>
+      <span class="rule-text" id="rule6">Follow proper vinyasa — no stopping to look around or watch others</span>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">🙏</span>
+      <span class="rule-text" id="rule7">Before finishing (after backbending), wait in front of your mat with arms crossed to chest to wait for the teacher to assist your last backbending</span>
+    </div>
+  </div>
+
+  <!-- Closing -->
+  <div class="closing">
+    <p id="closingText">We love to see you get through all the obstacles in practice and look forward to working on your technique.</p>
+    <div class="signatures">— Boonchu Tanti & Jamsai Tanti</div>
+  </div>
+
+  <!-- Registration Form -->
+  <div class="form-section" id="formSection">
+    <h3 id="formTitle">Your Practice Profile</h3>
+    <p id="formSub">Please fill in your details before Day 1</p>
+
+    <div class="field">
+      <label id="labelEnglish">English Name</label>
+      <input type="text" id="englishName" placeholder="e.g. John Smith">
+    </div>
+
+    <div class="field">
+      <label id="labelChinese">Chinese Name 中文名</label>
+      <input type="text" id="chineseName" placeholder="e.g. 张三">
+    </div>
+
+    <div class="field">
+      <label id="labelCity">City 城市</label>
+      <input type="text" id="city" placeholder="e.g. Shanghai">
+    </div>
+
+    <div class="field">
+      <label id="labelYears">Years of Practice 练习年数</label>
+      <select id="yearsPractice">
+        <option value="">Select...</option>
+        <option value="<1">Less than 1 year 不到1年</option>
+        <option value="1-3">1-3 years</option>
+        <option value="3-5">3-5 years</option>
+        <option value="5-10">5-10 years</option>
+        <option value="10+">10+ years</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label id="labelLast">Last Asana 最后一个体式</label>
+      <input type="text" id="lastAsana" placeholder="e.g. Marichyasana D">
+      <div class="hint" id="hintLast">The last asana you can practice independently</div>
+    </div>
+
+    <div class="field">
+      <label id="labelDifficulty">Difficulty 挑战</label>
+      <div class="options" id="difficultyOptions">
+        <div class="option" onclick="toggleOpt(this)" data-val="forward-fold">Forward Fold 前屈</div>
+        <div class="option" onclick="toggleOpt(this)" data-val="hip-opening">Hip Opening 开髋</div>
+        <div class="option" onclick="toggleOpt(this)" data-val="backbend">Backbend 后弯</div>
+        <div class="option" onclick="toggleOpt(this)" data-val="inversion">Inversion 倒立</div>
+        <div class="option" onclick="toggleOpt(this)" data-val="balance">Balance 平衡</div>
+        <div class="option" onclick="toggleOpt(this)" data-val="twist">Twist 扭转</div>
+        <div class="option" onclick="toggleOpt(this)" data-val="shoulder">Shoulder 肩膀</div>
+        <div class="option" onclick="toggleOpt(this)" data-val="core">Core 核心</div>
+      </div>
+      <div class="hint">Select all that apply 可多选</div>
+    </div>
+
+    <div class="field">
+      <label id="labelInjury">Injury / Notes 受伤/备注</label>
+      <textarea id="injury" placeholder="Any injuries or conditions we should know about..."></textarea>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="doSubmit()">Submit 提交</button>
+  </div>
+</div>
+
+<!-- Success with Share Card -->
+<div class="success-overlay hidden" id="successOverlay">
+  <div class="success-box" style="max-width:360px;">
+    <div id="shareCard" style="background:linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #4e342e 100%);border-radius:16px;padding:28px 24px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 8px 32px rgba(62,39,35,0.3);">
+      <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:56px;height:56px;border-radius:50%;margin-bottom:12px;border:2px solid rgba(255,255,255,0.3);">
+      <div style="color:#d7ccc8;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">AYBKK Mysore Huizhou 2026</div>
+      <div id="shareWelcome" style="color:#fff8e1;font-size:16px;font-weight:600;margin-bottom:6px;line-height:1.4;">Welcome to AYBKK Mysore Huizhou<br>3 Week Intensive Program</div>
+      <div id="shareStudentName" style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:16px;"></div>
+      <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+        <div style="color:#fff8e1;font-size:13px;font-style:italic;line-height:1.6;font-weight:400;">"Atha Yoganushasanam"</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-top:6px;">Now, the discipline of yoga. — Yoga Sutra 1.1</div>
+      </div>
+      <div style="color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;">by Boonchu Tanti & Jamsai Tanti</div>
+    </div>
+    <button class="btn" onclick="shareToWeChat()" style="width:100%;background:#3e2723;color:white;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:8px;" id="shareWeChatBtn">Share to WeChat 📱</button>
+    <button style="width:100%;background:transparent;color:#8b7d6b;border:2px solid #e8e0d8;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;" onclick="window.location.reload()" id="doneBtn">Done</button>
+  </div>
+</div>
+
+<script>
+// Language
+const T = {
+  en: {
+    mainTitle: 'AYBKK Huizhou Workshop',
+    mainSub: 'Mar 28 — Apr 19, 2026 · 3-Week Intensive',
+    introText: 'This coming Saturday will be the first day of our 3-week intensive Mysore practice. Jamsai and I are looking forward to helping you find the right technique for your body and improve your skills for challenging movements and asanas.',
+    introText2: 'For most of you, you have experienced practicing with us before, so we expect you to be a good example to your classmates of how to properly behave during Mysore practice.',
+    rulesTitle: 'Traditional Mysore Culture',
+    rule1: 'No water inside the Mysore room',
+    rule2: 'No phone or camera inside the Mysore room',
+    rule3: 'No talking during practice',
+    rule4: 'Do not move your mat around (unless teacher requests)',
+    rule5: 'Do not help other students during practice (unless teacher requests)',
+    rule6: 'Follow proper vinyasa — no stopping to look around or watch others',
+    rule7: 'Before finishing (after backbending), wait in front of your mat with arms crossed to chest to wait for the teacher to assist your last backbending',
+    closingText: 'We love to see you get through all the obstacles in practice and look forward to working on your technique.',
+    formTitle: 'Your Practice Profile',
+    formSub: 'Please fill in your details before Day 1',
+    labelEnglish: 'English Name',
+    labelChinese: 'Chinese Name',
+    labelCity: 'City',
+    labelYears: 'Years of Practice',
+    labelLast: 'Last Asana',
+    hintLast: 'The last asana you can practice independently',
+    labelDifficulty: 'What\'s challenging for you?',
+    labelInjury: 'Injury / Notes',
+    submitBtn: 'Submit',
+    successTitle: 'Profile Saved!',
+    successText: 'See you on Saturday, March 28!'
+  },
+  zh: {
+    mainTitle: 'AYBKK 惠州工作坊',
+    mainSub: '2026年3月28日 — 4月19日 · 三周密集练习',
+    introText: '这个周六将是我们三周密集Mysore练习的第一天。Jamsai和我很期待帮助你找到适合你身体的技巧，提升你在有挑战性的动作和体式中的能力。',
+    introText2: '你们中的大多数人都曾经和我们练习过，所以我们希望你能成为同学们的榜样，展示如何在Mysore练习中正确地行为。',
+    rulesTitle: '传统Mysore文化',
+    rule1: 'Mysore教室里不能带水',
+    rule2: 'Mysore教室里不能带手机或相机',
+    rule3: '练习时不能说话',
+    rule4: '不要随意移动垫子（除非老师要求）',
+    rule5: '不要帮助其他同学（除非老师要求）',
+    rule6: '跟随正确的vinyasa — 不要停下来四处张望',
+    rule7: '做结束动作前（后弯之后），在垫子前交叉手臂放在胸前等待老师辅助最后一个后弯',
+    closingText: '我们很高兴看到你在练习中克服所有障碍，期待帮助你提升技巧。',
+    formTitle: '你的练习档案',
+    formSub: '请在第一天之前填写你的信息',
+    labelEnglish: '英文名',
+    labelChinese: '中文名',
+    labelCity: '城市',
+    labelYears: '练习年数',
+    labelLast: '最后一个体式',
+    hintLast: '你能独立完成的最后一个体式',
+    labelDifficulty: '哪些方面有挑战？',
+    labelInjury: '受伤 / 备注',
+    submitBtn: '提交',
+    successTitle: '档案已保存！',
+    successText: '周六（3月28日）见！'
+  }
+};
+
+let currentLang = 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  
+  const t = T[lang];
+  Object.keys(t).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = t[key];
+      } else {
+        el.textContent = t[key];
+      }
+    }
+  });
+}
+
+// Difficulty toggle
+function toggleOpt(el) {
+  el.classList.toggle('selected');
+}
+
+// Get selected difficulties
+function getDifficulties() {
+  return Array.from(document.querySelectorAll('.option.selected')).map(e => e.dataset.val);
+}
+
+// Submit
+async function doSubmit() {
+  const name = document.getElementById('englishName').value.trim();
+  if (!name) {
+    document.getElementById('englishName').style.borderColor = '#e74c3c';
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = currentLang === 'zh' ? '提交中...' : 'Submitting...';
+
+  const data = {
+    englishName: name,
+    chineseName: document.getElementById('chineseName').value.trim(),
+    city: document.getElementById('city').value.trim(),
+    yearsPractice: document.getElementById('yearsPractice').value,
+    lastAsana: document.getElementById('lastAsana').value.trim(),
+    difficulties: getDifficulties(),
+    injury: document.getElementById('injury').value.trim(),
+    classType: 'chinese-workshop'
+  };
+
+  try {
+    const res = await fetch('/api/orientation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (result.ok) {
+      document.getElementById('shareStudentName').textContent = name;
+      document.getElementById('successOverlay').classList.remove('hidden');
+    } else {
+      alert('Error: ' + (result.error || 'Unknown'));
+      btn.disabled = false;
+      btn.textContent = currentLang === 'zh' ? '提交' : 'Submit';
+    }
+  } catch (err) {
+    alert('Network error: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = currentLang === 'zh' ? '提交' : 'Submit';
+  }
+}
+
+// Init
+(function init() {
+  const navLang = navigator.language || '';
+  if (navLang.startsWith('zh')) setLang('zh');
+})();
+
+// Share to WeChat
+async function shareToWeChat() {
+  const card = document.getElementById('shareCard');
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: 'AYBKK Mysore Huizhou 2026',
+        text: 'Welcome to AYBKK Mysore Huizhou — 3 Week Intensive Program',
+        url: window.location.href
+      });
+    } else {
+      await navigator.clipboard.writeText('✅ AYBKK Mysore Huizhou 2026 — Profile saved!');
+      const btn = document.getElementById('shareWeChatBtn');
+      btn.textContent = 'Copied! Paste in WeChat ✓';
+      setTimeout(() => { btn.textContent = 'Share to WeChat 📱'; }, 3000);
+    }
+  } catch(e) {
+    // User cancelled
+  }
+}
+</script>
+
+</body>
+</html>

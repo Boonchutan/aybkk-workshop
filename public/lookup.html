@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>AYBKK Huizhou Workshop — Student Portal</title>
+  <style>
+    :root {
+      --bg: #faf8f5;
+      --card: #ffffff;
+      --accent: #8b6f4e;
+      --accent-light: #f5f0e8;
+      --text: #2c2c2c;
+      --text-secondary: #8e8e93;
+      --border: #e8e3db;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'Helvetica Neue', 'PingFang SC', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px 16px;
+    }
+    .container { max-width: 390px; margin: 0 auto; }
+    .logo { text-align: center; margin-bottom: 16px; }
+    .logo img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; opacity: 0.85; }
+    h1 { text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+    .search-box {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 16px;
+      background: var(--card);
+      outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    .search-box:focus { border-color: var(--accent); }
+    .search-box::placeholder { color: #c5bfb5; }
+    .student-list { display: flex; flex-direction: column; gap: 8px; }
+    .student-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--card);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .student-item:hover { border-color: var(--accent); background: var(--accent-light); }
+    .student-item:active { transform: scale(0.98); }
+    .student-name { font-size: 16px; font-weight: 500; }
+    .student-arrow { color: var(--accent); font-size: 18px; }
+    .no-results { text-align: center; color: var(--text-secondary); padding: 40px 0; font-size: 14px; }
+    .count { text-align: center; font-size: 12px; color: var(--text-secondary); margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="/aybkk-logo.jpg" alt="AYBKK">
+    </div>
+    <h1>AYBKK Huizhou Workshop 2026</h1>
+    <div class="subtitle">Find your name to open your Practice Journal</div>
+    <input type="text" class="search-box" id="searchBox" placeholder="Search your name / 搜索名字" oninput="filterStudents()">
+    <div class="student-list" id="studentList"></div>
+    <div class="count" id="countText"></div>
+  </div>
+
+  <script>
+    let students = [];
+
+    async function loadStudents() {
+      try {
+        const res = await fetch('/api/journal/students');
+        const data = await res.json();
+        // Filter to workshop students
+        students = (data.students || []).filter(s => s.classType === 'chinese-workshop' || s.classType === 'workshop' || s.classType === 'in-depth-mysore-cn2');
+        renderStudents(students);
+      } catch (err) {
+        document.getElementById('studentList').innerHTML = '<div class="no-results">Failed to load students</div>';
+      }
+    }
+
+    function renderStudents(list) {
+      const el = document.getElementById('studentList');
+      if (list.length === 0) {
+        el.innerHTML = '<div class="no-results">No students found</div>';
+      } else {
+        el.innerHTML = list.map(s => `
+          <div class="student-item" onclick="openJournal('${s.id}', '${encodeURIComponent(s.name)}')">
+            <span class="student-name">${s.name}</span>
+            <span class="student-arrow">→</span>
+          </div>
+        `).join('');
+      }
+      document.getElementById('countText').textContent = `${list.length} students registered`;
+    }
+
+    function filterStudents() {
+      const q = document.getElementById('searchBox').value.toLowerCase();
+      const filtered = students.filter(s => s.name.toLowerCase().includes(q));
+      renderStudents(filtered);
+    }
+
+    function openJournal(id, name) {
+      window.location.href = `/student.html?id=${id}&name=${name}`;
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>

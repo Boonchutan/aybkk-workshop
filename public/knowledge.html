@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYBKK Knowledge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #F7F5F2;
+      --card: #FFFFFF;
+      --text: #2C2C2C;
+      --text-light: #6B6B6B;
+      --accent: #8B7355;
+      --accent-light: #C4B8A8;
+      --border: #E8E4DF;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding-top: 32px;
+    }
+    
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    
+    .tagline {
+      font-size: 12px;
+      color: var(--text-light);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    
+    .section {
+      margin-bottom: 48px;
+    }
+    
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .category-grid {
+      display: grid;
+      gap: 12px;
+    }
+    
+    .category-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--accent);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .category-card:hover,
+    .category-card.active {
+      border-color: var(--accent-light);
+      transform: translateX(4px);
+    }
+    
+    .category-card:hover::before,
+    .category-card.active::before {
+      transform: scaleY(1);
+    }
+    
+    .category-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .category-count {
+      font-size: 11px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .detail-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 16px;
+      display: none;
+      animation: slideIn 0.3s ease;
+    }
+    
+    .detail-panel.show {
+      display: block;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .detail-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    
+    .detail-item {
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 12px;
+      text-align: center;
+    }
+    
+    /* Series section */
+    .series-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .series-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .series-item:hover {
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+    
+    .series-item.active {
+      border-color: var(--accent);
+    }
+    
+    .series-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .series-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    
+    .series-count {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+    
+    .series-asanas {
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .series-item.active .series-asanas {
+      display: flex;
+    }
+    
+    .asana-tag {
+      background: var(--bg);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 10px;
+      color: var(--text);
+    }
+    
+    .series-arrow {
+      font-size: 18px;
+      color: var(--accent-light);
+      transition: all 0.3s ease;
+    }
+    
+    .series-item.active .series-arrow {
+      transform: rotate(90deg);
+      color: var(--accent);
+    }
+    
+    /* Concept tags */
+    .concept-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .concept-tag {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+    
+    .concept-tag:hover {
+      background: var(--accent);
+      color: var(--card);
+      border-color: var(--accent);
+    }
+    
+    /* Guru lineage */
+    .guru-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .guru-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 16px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .guru-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    
+    .guru-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--accent-light);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    
+    .guru-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .guru-title {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+    
+    /* Sanskrit roots */
+    .sanskrit-list {
+      display: grid;
+      gap: 8px;
+    }
+    
+    .sanskrit-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .sanskrit-item:hover {
+      border-color: var(--accent-light);
+    }
+    
+    .sanskrit-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    
+    .sanskrit-meaning {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    
+    /* Photo placeholder */
+    .photo-placeholder {
+      background: var(--card);
+      border: 2px dashed var(--accent-light);
+      border-radius: 8px;
+      padding: 48px 24px;
+      text-align: center;
+      margin: 24px 0;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .photo-placeholder:hover {
+      border-color: var(--accent);
+      transform: scale(1.02);
+    }
+    
+    .photo-placeholder-text {
+      font-size: 12px;
+      color: var(--text-light);
+      letter-spacing: 1px;
+    }
+    
+    .photo-placeholder-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      opacity: 0.5;
+    }
+    
+    /* Click ripple effect */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.3;
+      transform: scale(0);
+      animation: ripple-effect 0.6s ease-out;
+      pointer-events: none;
+    }
+    
+    @keyframes ripple-effect {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+    
+    footer {
+      text-align: center;
+      padding: 48px 0 24px;
+      font-size: 11px;
+      color: var(--text-light);
+    }
+    
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    /* Loading state */
+    .loading {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-light);
+    }
+    
+    .loading::after {
+      content: '';
+      animation: dots 1.5s infinite;
+    }
+    
+    @keyframes dots {
+      0%, 20% { content: '.'; }
+      40% { content: '..'; }
+      60%, 100% { content: '...'; }
+    }
+    
+    /* Stages accordion */
+    .stage-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    
+    .stage-header {
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+    
+    .stage-header:hover {
+      background: var(--bg);
+    }
+    
+    .stage-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    
+    .stage-arrow {
+      font-size: 14px;
+      color: var(--accent-light);
+      transition: transform 0.3s ease;
+    }
+    
+    .stage-item.active .stage-arrow {
+      transform: rotate(90deg);
+    }
+    
+    .stage-content {
+      display: none;
+      padding: 0 16px 16px;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .stage-item.active .stage-content {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">AYBKK</div>
+      <div class="tagline">Knowledge Universe</div>
+    </header>
+    
+    <!-- Movement Types Section -->
+    <section class="section">
+      <div class="section-title">Movement Types</div>
+      <div class="category-grid" id="movements">
+        <div class="loading">Loading</div>
+      </div>
+    </section>
+    
+    <!-- Series Section -->
+    <section class="section">
+      <div class="section-title">Ashtanga Series</div>
+      <div class="series-list" id="series">
+        <div class="loading">Loading</div>
+      </div>
+    </section>
+    
+    <!-- Sections -->
+    <section class="section">
+      <div class="section-title">Practice Sections</div>
+      <div id="sections" class="category-grid">
+        <div class="loading">Loading</div>
+      </div>
+    </section>
+    
+    <!-- Teaching Stages -->
+    <section class="section">
+      <div class="section-title">Teaching Journey</div>
+      <div id="stages">
+        <div class="loading">Loading</div>
+      </div>
+    </section>
+    
+    <!-- Core Concepts -->
+    <section class="section">
+      <div class="section-title">Core Concepts</div>
+      <div id="concepts">
+        <div class="loading">Loading</div>
+      </div>
+    </section>
+    
+    <!-- Guru Lineage -->
+    <section class="section">
+      <div class="section-title">Guru Lineage</div>
+      <div class="guru-grid" id="gurus">
+        <div class="loading">Loading</div>
+      </div>
+    </section>
+    
+    <!-- Sanskrit Origins -->
+    <section class="section">
+      <div class="section-title">Sanskrit Origins</div>
+      <div class="sanskrit-list" id="sanskrit">
+        <div class="loading">Loading</div>
+      </div>
+    </section>
+    
+    <!-- Photo Placeholder -->
+    <section class="section">
+      <div class="section-title">Teaching Moments</div>
+      <div class="photo-placeholder" onclick="this.style.borderColor='var(--accent)'">
+        <div class="photo-placeholder-icon">📷</div>
+        <div class="photo-placeholder-text">Click to add photo</div>
+      </div>
+    </section>
+    
+    <footer>
+      Knowledge organized by <a href="#">Plato</a> · Powered by <a href="#">Neo</a>
+    </footer>
+  </div>
+  
+  <script>
+    // Ripple effect on click
+    document.addEventListener('click', function(e) {
+      const card = e.target.closest('.category-card, .guru-card, .series-item, .photo-placeholder, .stage-header');
+      if (!card) return;
+      
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      
+      const rect = card.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+      
+      card.style.position = 'relative';
+      card.appendChild(ripple);
+      
+      setTimeout(() => ripple.remove(), 600);
+    });
+    
+    // Fetch all data
+    async function fetchKnowledge() {
+      try {
+        const [movements, series, sections, stages, concepts, gurus, sanskrit] = await Promise.all([
+          fetch('/api/knowledge/body-parts').then(r => r.json()),
+          fetch('/api/knowledge/series').then(r => r.json()),
+          fetch('/api/knowledge/sections').then(r => r.json()),
+          fetch('/api/knowledge/stages').then(r => r.json()),
+          fetch('/api/knowledge/concepts').then(r => r.json()),
+          fetch('/api/knowledge/gurus').then(r => r.json()),
+          fetch('/api/knowledge/sanskrit').then(r => r.json())
+        ]);
+        
+        renderMovements(movements);
+        renderSeries(series);
+        renderSections(sections);
+        renderStages(stages);
+        renderConcepts(concepts);
+        renderGurus(gurus);
+        renderSanskrit(sanskrit);
+      } catch (err) {
+        console.error('Failed to load knowledge:', err);
+      }
+    }
+    
+    function renderMovements(parts) {
+      const container = document.getElementById('movements');
+      if (!parts.length) {
+        container.innerHTML = '<div class="category-card"><div class="category-name">No data yet</div></div>';
+        return;
+      }
+      container.innerHTML = parts.map(part => `
+        <div class="category-card" onclick="toggleDetail(this, '${part.name}')">
+          <div class="category-name">${part.name}</div>
+          <div class="category-count">${part.count} asanas</div>
+          <div class="detail-panel" id="detail-${part.name.replace(/\s+/g, '-')}">
+            <div class="detail-grid">
+              ${part.asanas.slice(0, 10).map(a => `<div class="detail-item">${a}</div>`).join('')}
+            </div>
+            ${part.asanas.length > 10 ? `<div style="margin-top:8px;font-size:11px;color:var(--text-light)">+${part.asanas.length - 10} more</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function toggleDetail(card, name) {
+      const panelId = 'detail-' + name.replace(/\s+/g, '-');
+      const panel = document.getElementById(panelId);
+      const wasActive = card.classList.contains('active');
+      
+      // Close all others
+      document.querySelectorAll('.category-card.active').forEach(c => {
+        c.classList.remove('active');
+        c.querySelector('.detail-panel')?.classList.remove('show');
+      });
+      
+      if (!wasActive) {
+        card.classList.add('active');
+        panel.classList.add('show');
+      }
+    }
+    
+    function renderSeries(series) {
+      const container = document.getElementById('series');
+      if (!series.length) {
+        container.innerHTML = '<div class="series-item"><span>No series yet</span></div>';
+        return;
+      }
+      container.innerHTML = series.map(s => `
+        <div class="series-item" onclick="this.classList.toggle('active')">
+          <div class="series-header">
+            <div>
+              <div class="series-name">${s.name}</div>
+              <div class="series-count">${s.count} asanas</div>
+            </div>
+            <span class="series-arrow">→</span>
+          </div>
+          <div class="series-asanas">
+            ${s.asanas.map(a => `<span class="asana-tag">${a}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function renderSections(sections) {
+      const container = document.getElementById('sections');
+      if (!sections.length) {
+        container.innerHTML = '<div class="category-card"><div>No sections yet</div></div>';
+        return;
+      }
+      container.innerHTML = sections.map(s => `
+        <div class="category-card" onclick="toggleDetail(this, '${s.name}')">
+          <div class="category-name">${s.name}</div>
+          <div class="category-count">${s.count} asanas</div>
+          <div class="detail-panel" id="detail-section-${s.name.replace(/\s+/g, '-')}">
+            <div class="detail-grid">
+              ${s.asanas.slice(0, 8).map(a => `<div class="detail-item">${a}</div>`).join('')}
+            </div>
+            ${s.asanas.length > 8 ? `<div style="margin-top:8px;font-size:11px;color:var(--text-light)">+${s.asanas.length - 8} more</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function renderStages(stages) {
+      const container = document.getElementById('stages');
+      if (!stages.length) {
+        container.innerHTML = '<div class="stage-item"><div class="stage-name">No stages yet</div></div>';
+        return;
+      }
+      container.innerHTML = stages.map((s, i) => `
+        <div class="stage-item" onclick="this.classList.toggle('active')">
+          <div class="stage-header">
+            <div class="stage-name">${i + 1}. ${s.name}</div>
+            <span class="stage-arrow">→</span>
+          </div>
+          ${s.description ? `<div class="stage-content">${s.description}</div>` : ''}
+        </div>
+      `).join('');
+    }
+    
+    function renderConcepts(concepts) {
+      const container = document.getElementById('concepts');
+      if (!concepts.length) {
+        container.innerHTML = '<div class="concept-tags"><span class="concept-tag">No concepts yet</span></div>';
+        return;
+      }
+      container.innerHTML = `<div class="concept-tags">${
+        concepts.map(c => `<span class="concept-tag">${c.name}</span>`).join('')
+      }</div>`;
+    }
+    
+    function renderGurus(gurus) {
+      const container = document.getElementById('gurus');
+      if (!gurus.length) {
+        container.innerHTML = '<div class="loading">No guru data</div>';
+        return;
+      }
+      container.innerHTML = gurus.map(g => `
+        <div class="guru-card">
+          <div class="guru-avatar">🙏</div>
+          <div class="guru-name">${g.name}</div>
+          <div class="guru-title">${g.title || 'Guru'}</div>
+        </div>
+      `).join('');
+    }
+    
+    function renderSanskrit(roots) {
+      const container = document.getElementById('sanskrit');
+      if (!roots.length) {
+        container.innerHTML = '<div class="sanskrit-item"><div class="sanskrit-name">No Sanskrit roots yet</div></div>';
+        return;
+      }
+      container.innerHTML = roots.slice(0, 15).map(r => `
+        <div class="sanskrit-item">
+          <div class="sanskrit-name">${r.name}</div>
+          ${r.meaning ? `<div class="sanskrit-meaning">${r.meaning}</div>` : ''}
+        </div>
+      `).join('');
+    }
+    
+    // Load on page ready
+    document.addEventListener('DOMContentLoaded', fetchKnowledge);
+  </script>
+</body>
+</html>

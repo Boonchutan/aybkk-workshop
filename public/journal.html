@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AYBKK Student Journal</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f5; min-height: 100vh; }
+    .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 18px; color: #1a1a1a; margin-bottom: 16px; text-align: center; }
+    
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; margin-bottom: 16px; background: #fff; padding: 4px; border-radius: 12px; }
+    .tab { flex: 1; padding: 10px 8px; text-align: center; cursor: pointer; font-size: 13px; border-radius: 8px; border: none; background: transparent; color: #666; }
+    .tab.active { background: #4CAF50; color: #fff; }
+    
+    /* Cards */
+    .card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .card-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px; }
+    
+    /* Student List */
+    .student-item { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
+    .student-item:last-child { border-bottom: none; }
+    .student-item .info { flex: 1; }
+    .student-item .name { font-weight: 600; font-size: 15px; color: #1a1a1a; }
+    .student-item .meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .student-item .qr-btn { 
+      background: #4CAF50; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; 
+      font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; margin-left: 12px;
+    }
+    .student-item .checkin-btn { 
+      background: #fff; color: #4CAF50; border: 2px solid #4CAF50; padding: 8px 16px; 
+      border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; margin-left: 8px;
+    }
+    
+    /* QR Modal */
+    .qr-modal { 
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+      background: #fff; z-index: 1000; text-align: center; padding: 20px;
+    }
+    .qr-modal.show { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .qr-modal .close-btn { 
+      position: absolute; top: 16px; right: 16px; background: #f5f5f5; border: none; 
+      width: 40px; height: 40px; border-radius: 50%; font-size: 20px; cursor: pointer;
+    }
+    .qr-modal .student-name { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    .qr-modal .subtitle { font-size: 14px; color: #888; margin-bottom: 24px; }
+    .qr-modal .qr-container { background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .qr-modal img { width: 250px; height: 250px; }
+    .qr-modal .hint { font-size: 12px; color: #888; margin-top: 16px; }
+    
+    /* History */
+    .history-card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .history-name { font-weight: 600; font-size: 15px; }
+    .history-time { font-size: 11px; color: #888; }
+    .history-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .history-item { background: #f9f9f9; padding: 8px 10px; border-radius: 6px; font-size: 12px; }
+    .history-item .label { color: #888; font-size: 10px; }
+    .history-item .value { font-weight: 500; margin-top: 2px; }
+    .history-text { margin-top: 8px; font-size: 12px; color: #666; }
+    
+    /* Filters */
+    .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; background: #fff; }
+    
+    /* Empty state */
+    .empty { text-align: center; padding: 40px; color: #888; font-size: 14px; }
+    
+    /* Badge */
+    .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 500; }
+    .badge-chinese { background: #ffebee; color: #c62828; }
+    .badge-thai { background: #e3f2fd; color: #1565c0; }
+    
+    /* Loading */
+    .loading { text-align: center; padding: 40px; color: #888; }
+    
+    /* Tab content */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    
+    /* Language selector for form */
+    .lang-toggle { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+    .lang-btn { padding: 6px 12px; border: 1px solid #ddd; background: #fff; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .lang-btn.active { background: #4CAF50; color: #fff; border-color: #4CAF50; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📖 AYBKK Student Journal</h1>
+    
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('students')">👥 Students</button>
+      <button class="tab" onclick="showTab('history')">📊 Check-ins</button>
+    </div>
+    
+    <!-- Students Tab -->
+    <div id="tab-students" class="tab-content active">
+      <div class="filters">
+        <select id="filterType" onchange="loadStudents()">
+          <option value="">All Students</option>
+          <option value="chinese">中文 Chinese</option>
+          <option value="thai">ไทย Thai</option>
+        </select>
+      </div>
+      <div class="card">
+        <div id="studentsList"><div class="loading">Loading students...</div></div>
+      </div>
+    </div>
+    
+    <!-- History Tab -->
+    <div id="tab-history" class="tab-content">
+      <div class="filters">
+        <select id="filterDays" onchange="loadHistory()">
+          <option value="1">Today</option>
+          <option value="3">Last 3 Days</option>
+          <option value="7" selected>Last 7 Days</option>
+          <option value="30">Last 30 Days</option>
+        </select>
+      </div>
+      <div id="historyList"><div class="loading">Loading...</div></div>
+    </div>
+  </div>
+  
+  <!-- QR Modal -->
+  <div id="qrModal" class="qr-modal">
+    <button class="close-btn" onclick="closeQR()">✕</button>
+    <div class="student-name" id="qrStudentName"></div>
+    <div class="subtitle">让他们扫描二维码</div>
+    <div class="qr-container">
+      <img id="qrImage" src="" alt="QR Code">
+    </div>
+    <div class="hint">扫描后填写练习记录</div>
+  </div>
+
+  <script>
+    const vinyasaEmoji = { kept_moving: '🟢', stop_breathe: '🟡', tired_paused: '🔴' };
+    const bandhaEmoji = { body_light: '🟢', finding_light: '🟡', heavy_body: '🔴' };
+    const asanaEmoji = {
+      // Stable Today
+      jump_back: '↩️ Jump back',
+      jump_through: '↪️ Jump through',
+      arms_shoulders: '💪 Arms & shoulders',
+      backbending: '🌉 Backbending',
+      leg_behind_head: '🦵 Leg behind head',
+      arm_balance: '🤸 Arm balance',
+      inversion: '🙃 Inversion',
+      bandha: '✨ Bandha',
+      hip_legs: '🦵 Hip and legs',
+      // Difficult Today
+      chaturanga: '🔴 Chaturanga',
+      upward_dog: '🔴 Upward dog',
+      forward_bend: '🔴 Forward bend',
+      twisting: '🔴 Twisting',
+      standing_balance: '🔴 Standing balance',
+      breathing: '🔴 Breathing',
+      bandha_heavy: '🔴 Bandha (heavy)'
+    };
+
+    function showTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      event.target.classList.add('active');
+      
+      if (tab === 'students') loadStudents();
+      else if (tab === 'history') loadHistory();
+    }
+
+    async function loadStudents() {
+      const type = document.getElementById('filterType').value;
+      let url = '/api/journal/students';
+      
+      const res = await fetch(url);
+      const data = await res.json();
+      
+      if (!data.students || data.students.length === 0) {
+        document.getElementById('studentsList').innerHTML = '<div class="empty">No students yet.<br>They appear after first check-in.</div>';
+        return;
+      }
+      
+      // Filter by type
+      let students = data.students;
+      if (type === 'chinese') students = students.filter(s => s.isChineseStudent);
+      else if (type === 'thai') students = students.filter(s => !s.isChineseStudent);
+      
+      if (students.length === 0) {
+        document.getElementById('studentsList').innerHTML = '<div class="empty">No students in this category</div>';
+        return;
+      }
+      
+      let html = '';
+      students.forEach(s => {
+        const created = new Date(s.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        html += `
+          <div class="student-item">
+            <div class="info">
+              <div class="name">
+                ${s.name}
+                ${s.isChineseStudent ? '<span class="badge badge-chinese">中文</span>' : '<span class="badge badge-thai">ไทย</span>'}
+              </div>
+              <div class="meta">${s.assessmentCount} check-ins · Created ${created}</div>
+            </div>
+            <button class="qr-btn" onclick="showQR('${s.id}', '${s.name}')">📱 QR</button>
+          </div>
+        `;
+      });
+      
+      document.getElementById('studentsList').innerHTML = html;
+    }
+
+    async function showQR(studentId, studentName) {
+      document.getElementById('qrStudentName').textContent = studentName;
+      document.getElementById('qrModal').classList.add('show');
+      
+      // Fetch QR
+      const res = await fetch(`/api/journal/qr/${studentId}`);
+      const data = await res.json();
+      document.getElementById('qrImage').src = data.qrDataUrl;
+    }
+
+    function closeQR() {
+      document.getElementById('qrModal').classList.remove('show');
+    }
+
+    // Close QR on outside click
+    document.getElementById('qrModal').addEventListener('click', function(e) {
+      if (e.target === this) closeQR();
+    });
+
+    async function loadHistory() {
+      const days = document.getElementById('filterDays').value;
+      const res = await fetch(`/api/journal/history/${days}`);
+      const data = await res.json();
+      
+      if (!data.history || data.history.length === 0) {
+        document.getElementById('historyList').innerHTML = '<div class="empty">No check-ins in this period</div>';
+        return;
+      }
+      
+      let html = '';
+      data.history.forEach(item => {
+        const a = item.assessment;
+        const date = new Date(a.checkedInAt).toLocaleString('en-US', { 
+          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+        });
+        
+        html += `
+          <div class="history-card">
+            <div class="history-header">
+              <div class="history-name">
+                ${item.studentName}
+                ${item.isChineseStudent ? '<span class="badge badge-chinese">中文</span>' : '<span class="badge badge-thai">ไทย</span>'}
+              </div>
+              <div class="history-time">${date}</div>
+            </div>
+            <div class="history-grid">
+              <div class="history-item">
+                <div class="label">📍 Last Asana</div>
+                <div class="value">${a.lastAsana || '-'}</div>
+              </div>
+              <div class="history-item">
+                <div class="label">⚡ Vinyasa</div>
+                <div class="value">${vinyasaEmoji[a.vinyasa] || '⚪'} ${a.vinyasa}</div>
+              </div>
+              <div class="history-item">
+                <div class="label">🔮 Bandha</div>
+                <div class="value">${bandhaEmoji[a.bandha] || '⚪'} ${a.bandha}</div>
+              </div>
+              <div class="history-item">
+                <div class="label">💪 Stable</div>
+                <div class="value">${(a.stableToday || []).map(x => asanaEmoji[x] || x).join(', ') || '-'}</div>
+              </div>
+              <div class="history-item">
+                <div class="label">🎯 Difficult</div>
+                <div class="value">${(a.difficultToday || []).map(x => asanaEmoji[x] || x).join(', ') || '-'}</div>
+              </div>
+            </div>
+            ${a.practiceNotes ? `<div class="history-text">📝 ${a.practiceNotes}</div>` : ''}
+          </div>
+        `;
+      });
+      
+      document.getElementById('historyList').innerHTML = html;
+    }
+
+    // Init
+    loadStudents();
+  </script>
+</body>
+</html>

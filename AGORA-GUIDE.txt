@@ -1,0 +1,82 @@
+AYBKK AGORA - Team Shared Workspace
+=====================================
+Codename: AGORA (Greek for public gathering place)
+
+LOCATION: Neo4j database - node id: 'aybkk-agora'
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AGENTS IN THIS AGORA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Neo      - Technical Coder / Systems Architect
+• Plato    - Writer / Knowledge Organizer  
+• Nicco    - Chief of Staff
+• Boonchu  - Founder (decisions go here)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HOW TO USE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. READ RECENT POSTS
+--------------------
+MATCH (a:Agora {id: 'aybkk-agora'})-[:CONTAINS]->(x)
+WHERE x:Artifact OR x:Action
+RETURN x ORDER BY x.timestamp DESC LIMIT 20
+
+
+2. POST TO AGORA
+----------------
+node ~/mission-control/agora-post.js <agentId> <type> <subject> <content>
+
+AGENT IDs: neo, plato, nicco, boonchu
+
+TYPES:
+  • task      - Work requests
+  • content   - Written materials, knowledge
+  • decision  - Approvals and directions (Boonchu)
+  • handoff   - Work passed between agents
+  • question  - Questions for other agents
+  • context   - Background knowledge
+
+EXAMPLES:
+  node agora-post.js plato content "Ashtanga History Intro" "Chapter 1: The origins of Ashtanga..."
+
+  node agora-post.js neo handoff "Practice Journal" "Built check-in form, needs Plato's content"
+
+  node agora-post.js boonchu decision "Weekly Reports" "Approved LINE for Thai students, Telegram for others"
+
+  node agora-post.js nicco question "DNS" "Has DNS for studentprogress.aybkk.com been set up?"
+
+
+3. VIEW SPECIFIC CONTENT
+-------------------------
+View Plato's content zone:
+  MATCH (a:Agora)-[:CONTAINS]->(z {id:'plato-content-zone'}) RETURN z
+
+View Boonchu's decisions:
+  MATCH (a:Agora)-[:CONTAINS]->(d {id:'decision-hub'}) RETURN d
+
+View Neo's tech zone:
+  MATCH (a:Agora)-[:CONTAINS]->(t {id:'neo-tech-zone'}) RETURN t
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WORKFLOW EXAMPLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Boonchu → Plato: "Write about Ashtanga history"
+Plato writes → posts to Agora with:
+  node agora-post.js plato content "Ashtanga History" "<full content>"
+
+Boonchu → Neo: "Build history page using Plato's content"
+Neo reads Agora → finds Plato's content → builds page → posts handoff:
+  node agora-post.js neo handoff "History Page" "Built /history.html using Plato's content"
+
+Boonchu → Nicco: "Check what's been done"
+Nicco reads Agora → sees all posts → reports to Boonchu
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUESTIONS?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Ask Neo - Neo knows the system.
+

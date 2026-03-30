@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Teacher Assessment - AYBKK</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+    :root {
+      --bg: #FAF9F7;
+      --card: #FFFFFF;
+      --border: #E8E5E0;
+      --text: #1A1A1A;
+      --text-secondary: #8B8680;
+      --accent: #D4A574;
+      --accent-light: #F5EDE4;
+      --accent-hover: #C49564;
+      --success: #6B9E6B;
+      --success-bg: #EEF5EE;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .header p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Logo */
+    .logo {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      opacity: 0.85;
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      background: var(--accent-light);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+    .stats-bar .count {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stats-bar .teachers {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    /* Success message */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(250,249,247,0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .success-box {
+      text-align: center;
+      max-width: 300px;
+      padding: 16px;
+    }
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--success-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+    }
+    .success-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .success-msg {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title .icon {
+      font-size: 18px;
+    }
+
+    /* Search box */
+    .search-box {
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 12px 14px 12px 38px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color var(--transition);
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .search-box::before {
+      content: '🔍';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+    }
+
+    /* Student list */
+    .student-list {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .student-item {
+      padding: 12px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+    .student-item:last-child {
+      border-bottom: none;
+    }
+    .student-item:hover {
+      background: var(--accent-light);
+    }
+    .student-item.selected {
+      background: var(--accent-light);
+    }
+    .student-item .name {
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .student-item .meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Selected student badge */
+    .selected-student {
+      display: none;
+      padding: 14px 16px;
+      background: var(--accent-light);
+      border: 1.5px solid var(--accent);
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .selected-student.visible {
+      display: block;
+    }
+    .selected-student .name {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--accent);
+    }
+    .selected-student .change {
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .selected-student .change:hover {
+      color: var(--accent);
+    }
+
+    /* Teacher select */
+    .teacher-select {
+      display: flex;
+      gap: 8px;
+    }
+    .teacher-btn {
+      flex: 1;
+      padding: 12px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--card);
+      cursor: pointer;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--text);
+      transition: all var(--transition);
+    }
+    .teacher-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .teacher-btn.selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Button groups (radio-style) */
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--card);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--text);
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .btn.selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .btn-pass {
+      border-color: var(--success);
+      color: var(--success);
+    }
+    .btn-pass:hover {
+      background: var(--success-bg);
+      border-color: var(--success);
+    }
+    .btn-pass.selected {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+    }
+    .btn-hold {
+      border-color: #cc6600;
+      color: #cc6600;
+    }
+    .btn-hold:hover {
+      background: #fff5e6;
+      border-color: #cc6600;
+    }
+    .btn-hold.selected {
+      background: #cc6600;
+      color: #fff;
+      border-color: #cc6600;
+    }
+
+    /* Tag groups (checkbox-style) */
+    .tag-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag-btn {
+      padding: 8px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      background: var(--card);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+    }
+    .tag-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .tag-btn.selected {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Text inputs */
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color var(--transition);
+      resize: vertical;
+    }
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: var(--text-secondary);
+    }
+    textarea {
+      min-height: 80px;
+    }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition);
+      margin-top: 8px;
+    }
+    .submit-btn:hover {
+      background: var(--accent-hover);
+    }
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+    .submit-btn:disabled {
+      background: var(--border);
+      color: var(--text-secondary);
+      cursor: not-allowed;
+    }
+
+    /* Assessment history */
+    .assessment-history {
+      margin-top: 8px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .history-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+    }
+    .history-item {
+      background: var(--accent-light);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    .history-item .header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .history-item .teacher {
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .history-item .date {
+      color: var(--text-secondary);
+    }
+    .history-item .detail {
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Logo -->
+    <div class="logo">
+      <img src="/aybkk-logo.jpg" alt="AYBKK">
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <div style="text-align:center;margin-bottom:12px;">
+        <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:56px;height:56px;border-radius:50%;object-fit:cover;opacity:0.85;">
+      </div>
+      <h1 id="pageTitle">Teacher Assessment</h1>
+      <p id="pageSubtitle">Record student progress after class</p>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div>
+        <span class="count" id="todayCount">0</span>
+        <span style="color: var(--text-secondary); font-size: 13px;"> assessments today</span>
+      </div>
+      <div class="teachers" id="todayTeachers">-</div>
+    </div>
+
+    <!-- Success message -->
+    <div class="success-overlay hidden" id="successOverlay">
+      <div class="success-box">
+        <div class="success-icon">✅</div>
+        <div class="success-title" id="successTitle">Assessment Saved!</div>
+        <div class="success-msg" id="successSub">Saved successfully</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Select Student -->
+    <div class="card" id="studentSection">
+      <div class="section-title">
+        <span class="icon">👤</span> <span id="studentLabel">Select Student</span>
+      </div>
+      <div class="search-box">
+        <input type="search" id="studentSearch" placeholder="Search by name..." autocomplete="off">
+      </div>
+      <div class="student-list" id="studentList">
+        <div class="student-item" style="color:var(--text-secondary);text-align:center;">Type to search students</div>
+      </div>
+    </div>
+
+    <!-- Selected student badge -->
+    <div class="selected-student" id="selectedStudent">
+      <div class="name" id="selectedName">-</div>
+      <div class="change" onclick="clearStudent()" id="changeBtn">← Change student</div>
+    </div>
+
+    <!-- Assessment Form -->
+    <form id="assessmentForm" class="hidden">
+      <!-- Teacher Name -->
+      <div class="card">
+        <div class="section-title">
+          <span class="icon">👨‍🏫</span> <span id="teacherLabel">Teacher</span>
+        </div>
+        <div class="teacher-select" id="teacherSelect">
+          <button type="button" class="teacher-btn" data-value="Boonchu">Boonchu</button>
+          <button type="button" class="teacher-btn" data-value="Jamsai">Jamsai</button>
+          <button type="button" class="teacher-btn" data-value="M">M</button>
+        </div>
+        <input type="hidden" id="teacherName" name="teacherName" required>
+      </div>
+
+      <!-- Energy Level -->
+      <div class="card">
+        <div class="section-title">
+          <span class="icon">⚡</span> <span id="energyLabel">Energy Level</span>
+        </div>
+        <div class="btn-group" id="energyGroup">
+          <button type="button" class="btn" data-field="energy" data-value="high">🔴 High</button>
+          <button type="button" class="btn" data-field="energy" data-value="medium">🟡 Medium</button>
+          <button type="button" class="btn" data-field="energy" data-value="low">⚪ Low</button>
+        </div>
+        <input type="hidden" id="energy" name="energy">
+      </div>
+
+      <!-- Practice Consistency -->
+      <div class="card">
+        <div class="section-title">
+          <span class="icon">🔁</span> <span id="consistencyLabel">Practice Consistency</span>
+        </div>
+        <div class="btn-group" id="consistencyGroup">
+          <button type="button" class="btn" data-field="practiceConsistency" data-value="proper_vinyasa">🟢 Proper Vinyasa</button>
+          <button type="button" class="btn" data-field="practiceConsistency" data-value="rest_often">🟡 Rest Often</button>
+          <button type="button" class="btn" data-field="practiceConsistency" data-value="too_much_distractions">🔴 Too Distracted</button>
+        </div>
+        <input type="hidden" id="practiceConsistency" name="practiceConsistency">
+      </div>
+
+      <!-- Practice Flow -->
+      <div class="card">
+        <div class="section-title">
+          <span class="icon">🏃</span> <span id="flowLabel">Practice Flow</span>
+        </div>
+        <div class="btn-group" id="flowGroup">
+          <button type="button" class="btn" data-field="behavior" data-value="proper_vinyasa">🟢 Good Flow</button>
+          <button type="button" class="btn" data-field="behavior" data-value="rest_often">🟡 Interrupted</button>
+          <button type="button" class="btn" data-field="behavior" data-value="too_much_distractions">🔴 Rough</button>
+        </div>
+        <input type="hidden" id="behavior" name="behavior">
+      </div>
+
+      <!-- Strengths -->
+      <div class="card" id="strengthsSection">
+        <div class="section-title">
+          <span class="icon">💪</span> <span id="strengthsLabel">Strengths</span>
+        </div>
+        <div class="tag-group" id="strengthsTags"></div>
+      </div>
+
+      <!-- Weaknesses -->
+      <div class="card" id="weaknessesSection">
+        <div class="section-title">
+          <span class="icon">📌</span> <span id="weaknessesLabel">Weaknesses</span>
+        </div>
+        <div class="tag-group" id="weaknessesTags"></div>
+      </div>
+
+      <!-- Last Asana -->
+      <div class="card">
+        <div class="section-title">
+          <span class="icon">📹</span> <span id="asanaLabel">Last Asana Learned</span>
+        </div>
+        <input type="text" id="lastAsana" name="lastAsana" placeholder="e.g., Marichyasana C" style="margin-top:4px;">
+      </div>
+
+      <!-- Pass/Hold Vote -->
+      <div class="card">
+        <div class="section-title">
+          <span class="icon">🗳️</span> <span id="passLabel">Ready for Next Asana?</span>
+        </div>
+        <div class="btn-group" id="passGroup">
+          <button type="button" class="btn btn-pass" data-field="lastAsanaPass" data-value="true">✅ PASS</button>
+          <button type="button" class="btn btn-hold" data-field="lastAsanaPass" data-value="false">⏸️ HOLD</button>
+        </div>
+        <input type="hidden" id="lastAsanaPass" name="lastAsanaPass">
+      </div>
+
+      <!-- To Fix -->
+      <div class="card">
+        <div class="section-title">
+          <span class="icon">🔧</span> <span id="fixLabel">What to Fix First</span>
+        </div>
+        <textarea id="toFix" name="toFix" placeholder="Short description of focus area..." style="margin-top:4px;"></textarea>
+      </div>
+
+      <!-- Notes -->
+      <div class="card">
+        <div class="section-title">
+          <span class="icon">📝</span> <span id="notesLabel">Additional Notes</span>
+        </div>
+        <textarea id="notes" name="notes" placeholder="Optional notes..." style="margin-top:4px;"></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Save Assessment</button>
+    </form>
+
+    <!-- Assessment History -->
+    <div class="assessment-history hidden" id="historySection">
+      <div class="history-title" id="historyTitle">Recent Assessments</div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let selectedStudentId = null;
+    let selectedStudentName = null;
+    let students = [];
+    let tags = { strengths: [], weaknesses: [] };
+    let selectedTags = { strengths: [], weaknesses: [] };
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Workshop mode
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('classType') === 'chinese-workshop') {
+        document.getElementById('pageTitle').textContent = 'Teacher Assessment — Huizhou Workshop';
+        document.getElementById('pageSubtitle').textContent = 'Boonchu & Jamsai Tanti';
+      }
+      loadTodayStats();
+      loadStudents();
+      loadTags();
+      setupFormHandlers();
+    });
+
+    async function loadTodayStats() {
+      try {
+        const res = await fetch('/api/teacher/today');
+        const data = await res.json();
+        document.getElementById('todayCount').textContent = data.count;
+        document.getElementById('todayTeachers').textContent = 
+          data.teachers.length ? data.teachers.join(', ') : '-';
+      } catch (e) {
+        console.error('Failed to load today stats', e);
+      }
+    }
+
+    async function loadStudents() {
+      try {
+        // Check URL params for workshop mode
+        const params = new URLSearchParams(window.location.search);
+        const classType = params.get('classType') || '';
+        const url = classType ? `/api/teacher/students?classType=${classType}` : '/api/teacher/students';
+        const res = await fetch(url);
+        const data = await res.json();
+        students = data.students || [];
+        renderStudentList(students);
+      } catch (e) {
+        console.error('Failed to load students', e);
+        document.getElementById('studentList').innerHTML = 
+          '<div class="student-item" style="color:var(--text-secondary);text-align:center;">Error loading students</div>';
+      }
+    }
+
+    function renderStudentList(list) {
+      const container = document.getElementById('studentList');
+      if (!list.length) {
+        container.innerHTML = '<div class="student-item" style="color:var(--text-secondary);text-align:center;">No students found</div>';
+        return;
+      }
+      container.innerHTML = list.map(s => `
+        <div class="student-item" data-id="${s.id}" data-name="${s.name}">
+          <div class="name">${s.name}</div>
+          ${s.level ? `<div class="meta">${s.level}</div>` : ''}
+        </div>
+      `).join('');
+      
+      container.querySelectorAll('.student-item[data-id]').forEach(item => {
+        item.addEventListener('click', () => selectStudent(item.dataset.id, item.dataset.name));
+      });
+    }
+
+    function selectStudent(id, name) {
+      selectedStudentId = id;
+      selectedStudentName = name;
+      
+      document.getElementById('studentSection').classList.add('hidden');
+      document.getElementById('selectedStudent').classList.add('visible');
+      document.getElementById('selectedName').textContent = name;
+      document.getElementById('assessmentForm').classList.remove('hidden');
+      
+      loadStudentHistory(id);
+    }
+
+    function clearStudent() {
+      selectedStudentId = null;
+      selectedStudentName = null;
+      
+      document.getElementById('studentSection').classList.remove('hidden');
+      document.getElementById('selectedStudent').classList.remove('visible');
+      document.getElementById('assessmentForm').classList.add('hidden');
+      document.getElementById('historySection').classList.add('hidden');
+      document.getElementById('studentSearch').value = '';
+      renderStudentList(students);
+    }
+
+    async function loadStudentHistory(studentId) {
+      try {
+        const res = await fetch(`/api/teacher/history/${studentId}`);
+        const data = await res.json();
+        renderHistory(data.history || []);
+      } catch (e) {
+        console.error('Failed to load history', e);
+      }
+    }
+
+    function renderHistory(history) {
+      const section = document.getElementById('historySection');
+      const list = document.getElementById('historyList');
+      
+      if (!history.length) {
+        section.classList.add('hidden');
+        return;
+      }
+      
+      section.classList.remove('hidden');
+      list.innerHTML = history.slice(0, 5).map(h => `
+        <div class="history-item">
+          <div class="header">
+            <span class="teacher">${h.teacher}</span>
+            <span class="date">${new Date(h.date).toLocaleDateString()}</span>
+          </div>
+          <div class="detail">${h.summary || '-'}</div>
+        </div>
+      `).join('');
+    }
+
+    async function loadTags() {
+      try {
+        const res = await fetch('/api/teacher/tags');
+        const data = await res.json();
+        tags = data;
+        renderTags('strengths');
+        renderTags('weaknesses');
+      } catch (e) {
+        console.error('Failed to load tags', e);
+        // Use defaults
+        tags = {
+          strengths: ['Flexibility', 'Breath', 'Focus', 'Strength', 'Balance', 'Patience'],
+          weaknesses: ['Flexibility', 'Breath', 'Focus', 'Strength', 'Balance', 'Patience']
+        };
+        renderTags('strengths');
+        renderTags('weaknesses');
+      }
+    }
+
+    function renderTags(type) {
+      const container = document.getElementById(type + 'Tags');
+      container.innerHTML = tags[type].map(tag => `
+        <button type="button" class="tag-btn" data-type="${type}" data-tag="${tag}">${tag}</button>
+      `).join('');
+      
+      container.querySelectorAll('.tag-btn').forEach(btn => {
+        btn.addEventListener('click', () => toggleTag(btn));
+      });
+    }
+
+    function toggleTag(btn) {
+      const type = btn.dataset.type;
+      const tag = btn.dataset.tag;
+      
+      btn.classList.toggle('selected');
+      
+      if (btn.classList.contains('selected')) {
+        if (!selectedTags[type].includes(tag)) {
+          selectedTags[type].push(tag);
+        }
+      } else {
+        selectedTags[type] = selectedTags[type].filter(t => t !== tag);
+      }
+    }
+
+    function setupFormHandlers() {
+      // Teacher buttons
+      document.getElementById('teacherSelect').addEventListener('click', e => {
+        if (e.target.classList.contains('teacher-btn')) {
+          document.querySelectorAll('#teacherSelect .teacher-btn').forEach(b => b.classList.remove('selected'));
+          e.target.classList.add('selected');
+          document.getElementById('teacherName').value = e.target.dataset.value;
+        }
+      });
+
+      // Generic button groups
+      ['energyGroup', 'consistencyGroup', 'flowGroup', 'passGroup'].forEach(groupId => {
+        const group = document.getElementById(groupId);
+        if (!group) return;
+        group.addEventListener('click', e => {
+          const btn = e.target.closest('.btn');
+          if (!btn) return;
+          
+          const field = btn.dataset.field;
+          const value = btn.dataset.value;
+          
+          // Toggle single-selection
+          group.querySelectorAll('.btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          
+          document.getElementById(field).value = value;
+        });
+      });
+
+      // Student search
+      document.getElementById('studentSearch').addEventListener('input', e => {
+        const q = e.target.value.toLowerCase().trim();
+        if (!q) {
+          renderStudentList(students);
+          return;
+        }
+        const filtered = students.filter(s => 
+          s.name.toLowerCase().includes(q)
+        );
+        renderStudentList(filtered);
+      });
+
+      // Form submit
+      document.getElementById('assessmentForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        
+        if (!selectedStudentId) {
+          alert('Please select a student');
+          return;
+        }
+        
+        const teacher = document.getElementById('teacherName').value;
+        if (!teacher) {
+          alert('Please select a teacher');
+          return;
+        }
+        
+        const data = {
+          studentId: selectedStudentId,
+          studentName: selectedStudentName,
+          teacher: teacher,
+          energy: document.getElementById('energy').value,
+          practiceConsistency: document.getElementById('practiceConsistency').value,
+          behavior: document.getElementById('behavior').value,
+          strengths: selectedTags.strengths,
+          weaknesses: selectedTags.weaknesses,
+          lastAsana: document.getElementById('lastAsana').value,
+          lastAsanaPass: document.getElementById('lastAsanaPass').value,
+          toFix: document.getElementById('toFix').value,
+          notes: document.getElementById('notes').value
+        };
+        
+        try {
+          const res = await fetch('/api/teacher/assessment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          
+          if (res.ok) {
+            // Show success
+            document.getElementById('successOverlay').classList.remove('hidden');
+            loadTodayStats();
+            
+            // Reset form
+            setTimeout(() => {
+              document.getElementById('successOverlay').classList.add('hidden');
+              clearStudent();
+              document.querySelectorAll('.btn.selected, .tag-btn.selected').forEach(b => b.classList.remove('selected'));
+              document.querySelectorAll('input[type="hidden"]').forEach(i => i.value = '');
+              document.querySelectorAll('input[type="text"], textarea').forEach(i => i.value = '');
+              selectedTags = { strengths: [], weaknesses: [] };
+            }, 1500);
+          } else {
+            alert('Failed to save assessment');
+          }
+        } catch (e) {
+          console.error('Submit error', e);
+          alert('Error saving assessment');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

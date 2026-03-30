@@ -1,0 +1,26 @@
+// Agora reminder - paste this in chat to remind agents
+// Or save as a pinned message in team chat
+
+REMINDER FOR ALL AGENTS:
+========================
+When interacting with Boonchu:
+
+1. REQUESTS - Log to Agora: node agora-post.js <agent> task "<subject>" "<what Boonchu asked for>"
+
+2. DECISIONS - Log to Agora immediately when Boonchu says "yes", "approved", "do it", "go ahead"
+
+3. QUESTIONS - Log to Agora when Boonchu asks something
+
+4. RESULTS - Log to Agora when you complete something
+
+5. CONTEXT - If Boonchu shares info that might matter later, ask "Should I save this to Agora?"
+
+DO NOT wait to be reminded. Make Agora your second brain.
+
+---
+
+Quick command to post a Boonchu decision:
+node ~/mission-control/agora-post.js <yourId> decision "<what>" "<details>"
+
+Example: Boonchu said "Use LINE for Thai students"
+→ node ~/mission-control/agora-post.js neo decision "LINE for Thai students" "Boonchu approved using LINE for weekly reports to Thai students"

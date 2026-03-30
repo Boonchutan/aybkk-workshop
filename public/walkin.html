@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>AYBKK — Walk-in Registration</title>
+  <style>
+    :root {
+      --bg: #faf8f5;
+      --card: #ffffff;
+      --accent: #8b6f4e;
+      --accent-light: #f5f0e8;
+      --text: #2c2c2c;
+      --text-secondary: #8e8e93;
+      --border: #e8e3db;
+      --radius: 14px;
+      --success: #4a9e6f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'Helvetica Neue', 'PingFang SC', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px 16px;
+    }
+    .container { max-width: 390px; margin: 0 auto; }
+    .logo { text-align: center; margin-bottom: 16px; }
+    .logo img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; opacity: 0.85; }
+    h1 { text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    input[type="text"], input[type="tel"], select {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+      background: #fff;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.6; }
+    .success-msg {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .success-msg .check { font-size: 48px; margin-bottom: 16px; }
+    .success-msg h2 { font-size: 20px; margin-bottom: 8px; }
+    .success-msg p { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; }
+    .success-msg .btn { background: var(--success); max-width: 200px; margin: 0 auto 12px; }
+    .success-msg .btn-secondary {
+      display: block;
+      max-width: 200px;
+      margin: 0 auto;
+      padding: 14px;
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+    .lang-switch { display: flex; justify-content: center; gap: 12px; margin-bottom: 24px; }
+    .lang-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+    .day-selector { display: flex; gap: 8px; margin-bottom: 16px; }
+    .day-btn {
+      flex: 1;
+      padding: 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .day-btn.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo"><img src="/aybkk-logo.jpg" alt="AYBKK"></div>
+    <h1 id="pageTitle">AYBKK Huizhou Workshop 2026</h1>
+    <div class="subtitle" id="pageSubtitle">Walk-in Registration</div>
+
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="th">ไทย</button>
+    </div>
+
+    <!-- Registration Form -->
+    <div id="regForm">
+      <div class="card">
+        <label id="nameLabel">Student Name</label>
+        <input type="text" id="studentName" placeholder="Enter name / 输入姓名">
+        
+        <label id="dayLabel">Which day?</label>
+        <select id="daySelect">
+          <option value="">— Select day —</option>
+        </select>
+
+        <div id="classTypeDisplay" style="display:none;">
+          <label>Class today</label>
+          <div id="classTypeText" style="padding:14px 16px;background:#f5f0e8;border-radius:10px;font-size:16px;font-weight:500;color:#8b6f4e;margin-bottom:16px;"></div>
+        </div>
+
+        <button class="btn" id="registerBtn" onclick="doRegister()">Register & Start Journal</button>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div id="successView" style="display:none;">
+      <div class="card">
+        <div class="success-msg">
+          <div class="check">✅</div>
+          <h2 id="successTitle">Welcome!</h2>
+          <p id="successSub">Your journal is ready.</p>
+          <a class="btn" id="openJournalBtn" href="#">Open Practice Journal →</a>
+          <button class="btn-secondary" onclick="resetForm()">Register another student</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const T = {
+      zh: {
+        title: 'AYBKK 惠州工作坊 2026',
+        subtitle: '现场注册',
+        nameLabel: '学生姓名',
+        namePlaceholder: '输入姓名',
+        dayLabel: '选择日期',
+        registerBtn: '注册并开始记录',
+        successTitle: '欢迎加入！',
+        successSub: '你的练习记录已准备就绪',
+        openJournal: '打开练习记录 →',
+        registerAnother: '注册下一位学生'
+      },
+      en: {
+        title: 'AYBKK Huizhou Workshop 2026',
+        subtitle: 'Walk-in Registration',
+        nameLabel: 'Student Name',
+        namePlaceholder: 'Enter name',
+        dayLabel: 'Which day?',
+        registerBtn: 'Register & Start Journal',
+        successTitle: 'Welcome!',
+        successSub: 'Your practice journal is ready.',
+        openJournal: 'Open Practice Journal →',
+        registerAnother: 'Register another student'
+      },
+      th: {
+        title: 'AYBKK Huizhou Workshop 2026',
+        subtitle: 'ลงทะเบียนหน้างาน',
+        nameLabel: 'ชื่อนักเรียน',
+        namePlaceholder: 'กรอกชื่อ',
+        dayLabel: 'วันที่?',
+        registerBtn: 'ลงทะเบียนและเริ่มบันทึก',
+        successTitle: 'ยินดีต้อนรับ!',
+        successSub: 'บันทึกการฝึกพร้อมแล้ว',
+        openJournal: 'เปิดบันทึกการฝึก →',
+        registerAnother: 'ลงทะเบียนคนต่อไป'
+      }
+    };
+
+    let currentLang = 'en';
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    // Huizhou Workshop Schedule: Mar 28 → Apr 19, 2026
+    const WORKSHOP_SCHEDULE = [
+      { date: '2026-03-28', day: 1,  class: 'led_primary',         label: 'Led Primary + Lecture', note: '' },
+      { date: '2026-03-29', day: 2,  class: 'mysore',              label: 'Mysore + Workshop',    note: '' },
+      { date: '2026-03-30', day: 3,  class: 'mysore',              label: 'Mysore',        note: '' },
+      { date: '2026-03-31', day: 4,  class: 'led_primary_int',     label: 'Led Pri + Int', note: '' },
+      { date: '2026-04-01', day: 5,  class: 'mysore',              label: 'Mysore',        note: '' },
+      { date: '2026-04-02', day: 6,  class: 'led_int_adv',         label: 'Led Int + Adv', note: '' },
+      { date: '2026-04-03', day: 7,  class: 'mysore',              label: 'Mysore',        note: '' },
+      { date: '2026-04-04', day: 8,  class: 'off',                 label: '🌙 Day Off',     note: 'moon' },
+      { date: '2026-04-05', day: 9,  class: 'off',                 label: '🌕 Full Moon',   note: 'full_moon' },
+      { date: '2026-04-06', day: 10, class: 'mysore',              label: 'Mysore',        note: '' },
+      { date: '2026-04-07', day: 11, class: 'led_primary_int',     label: 'Led Pri + Int', note: '' },
+      { date: '2026-04-08', day: 12, class: 'mysore',              label: 'Mysore',        note: '' },
+      { date: '2026-04-09', day: 13, class: 'led_int_adv',         label: 'Led Int + Adv', note: '' },
+      { date: '2026-04-10', day: 14, class: 'mysore',              label: 'Mysore',        note: '' },
+      { date: '2026-04-11', day: 15, class: 'lecture',             label: 'Lecture',       note: '' },
+      { date: '2026-04-12', day: 16, class: 'off',                 label: '🌑 New Moon',    note: 'new_moon' },
+      { date: '2026-04-13', day: 17, class: 'mysore',              label: 'Mysore',        note: '' },
+      { date: '2026-04-14', day: 18, class: 'led_primary_int',     label: 'Led Pri + Int', note: '' },
+      { date: '2026-04-15', day: 19, class: 'mysore',              label: 'Mysore',        note: '' },
+      { date: '2026-04-16', day: 20, class: 'led_int_adv',         label: 'Led Int + Adv', note: '' },
+      { date: '2026-04-17', day: 21, class: 'mysore',              label: 'Mysore',        note: '' },
+      { date: '2026-04-18', day: 22, class: 'led_int_adv',         label: 'Led Int + Adv', note: '' },
+      { date: '2026-04-19', day: 23, class: 'workshop',            label: 'Workshop / Conference', note: 'last_day' },
+    ];
+
+    // Generate day dropdown from schedule
+    (function generateDays() {
+      const select = document.getElementById('daySelect');
+      WORKSHOP_SCHEDULE.forEach(d => {
+        const date = new Date(d.date);
+        const dateStr = `${monthNames[date.getMonth()]} ${date.getDate()} (${dayNames[date.getDay()]})`;
+        const opt = document.createElement('option');
+        opt.value = d.date;
+        opt.textContent = `Day ${d.day} — ${dateStr} — ${d.label}`;
+        if (d.note === 'full_moon' || d.note === 'new_moon' || d.note === 'moon') {
+          opt.textContent += ' ☾';
+        }
+        select.appendChild(opt);
+      });
+      // Auto-set class type when day changes
+      select.addEventListener('change', () => {
+        const selected = WORKSHOP_SCHEDULE.find(s => s.date === select.value);
+        const display = document.getElementById('classTypeDisplay');
+        const text = document.getElementById('classTypeText');
+        if (selected) {
+          text.textContent = selected.label;
+          display.style.display = 'block';
+        } else {
+          display.style.display = 'none';
+        }
+      });
+    })();
+
+    // Language switching
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentLang = btn.dataset.lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyLang(currentLang);
+      });
+    });
+
+    function applyLang(lang) {
+      const t = T[lang];
+      document.getElementById('pageTitle').textContent = t.title;
+      document.getElementById('pageSubtitle').textContent = t.subtitle;
+      document.getElementById('nameLabel').textContent = t.nameLabel;
+      document.getElementById('studentName').placeholder = t.namePlaceholder;
+      document.getElementById('dayLabel').textContent = t.dayLabel;
+      document.getElementById('sessionLabel').textContent = t.sessionLabel;
+      document.getElementById('registerBtn').textContent = t.registerBtn;
+      document.getElementById('successTitle').textContent = t.successTitle;
+      document.getElementById('successSub').textContent = t.successSub;
+      document.getElementById('openJournalBtn').textContent = t.openJournal;
+    }
+
+    function selectDay(day) {
+      selectedDay = day;
+      document.querySelectorAll('.day-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.day) === day);
+      });
+    }
+
+    async function doRegister() {
+      const name = document.getElementById('studentName').value.trim();
+      if (!name) {
+        document.getElementById('studentName').style.borderColor = '#e74c3c';
+        return;
+      }
+      const selectedDay = document.getElementById('daySelect').value;
+      if (!selectedDay) {
+        alert('Please select a day');
+        return;
+      }
+      const selectedSchedule = WORKSHOP_SCHEDULE.find(s => s.date === selectedDay);
+
+      const btn = document.getElementById('registerBtn');
+      btn.disabled = true;
+      btn.textContent = '...';
+
+      try {
+        const res = await fetch('/api/journal/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            classType: 'chinese-workshop',
+            language: currentLang,
+            day: selectedDay,
+            session: selectedSchedule?.class || '',
+            platform: 'walk-in'
+          })
+        });
+        const data = await res.json();
+
+        if (data.studentId) {
+          document.getElementById('regForm').style.display = 'none';
+          document.getElementById('successView').style.display = 'block';
+          document.getElementById('openJournalBtn').href = `/student.html?id=${data.studentId}&name=${encodeURIComponent(name)}`;
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = T[currentLang].registerBtn;
+        alert('Error registering. Please try again.');
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('studentName').value = '';
+      document.getElementById('daySelect').value = '';
+      document.getElementById('classTypeDisplay').style.display = 'none';
+      document.getElementById('regForm').style.display = 'block';
+      document.getElementById('successView').style.display = 'none';
+      document.getElementById('registerBtn').disabled = false;
+      document.getElementById('registerBtn').textContent = T[currentLang].registerBtn;
+    }
+
+    // Init
+    applyLang('en');
+  </script>
+</body>
+</html>

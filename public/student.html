@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AYBKK Practice Journal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+    /* Day-of-week colors: Mon=Green, Tue=Red, Wed=Gold, Thu=Orange, Fri=Blue, Sat=Indigo, Sun=Gray */
+    :root {
+      --bg: #FAF9F7;
+      --card: #FFFFFF;
+      --border: #E8E5E0;
+      --text: #1A1A1A;
+      --text-secondary: #8B8680;
+      --accent: #D4A574;
+      --accent-light: #F5EDE4;
+      --accent-hover: #C49564;
+      --success: #6B9E6B;
+      --success-bg: #EEF5EE;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .header p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 28px;
+    }
+    .progress-dot {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--border);
+      transition: background var(--transition);
+    }
+    .progress-dot.active { background: var(--accent); }
+    .progress-dot.done { background: var(--success); }
+
+    /* Language switcher */
+    .lang-switch {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .lang-btn {
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .lang-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Student name */
+    .student-name {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 24px;
+      padding: 10px;
+      background: var(--accent-light);
+      border-radius: var(--radius-sm);
+    }
+
+    /* Steps container */
+    .step {
+      display: none;
+      animation: slideIn 0.35s ease-out;
+    }
+    .step.active { display: block; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .step-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .step-question {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .step-hint {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* Options */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: 15px;
+      line-height: 1.4;
+      user-select: none;
+    }
+    .option:hover { border-color: var(--accent); background: var(--accent-light); }
+    .option.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .option input { display: none; }
+
+    .option-indicator {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      margin-right: 14px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+    .option.selected .option-indicator {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+    .option.selected .option-indicator::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    /* Checkbox style for multi-select */
+    .option .checkbox-indicator {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      margin-right: 14px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: transparent;
+      transition: all var(--transition);
+    }
+    .option.selected .checkbox-indicator {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .option-text { flex: 1; color: var(--text); }
+
+    /* Text input */
+    .text-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color var(--transition);
+    }
+    .text-input:focus { outline: none; border-color: var(--accent); }
+    .text-input::placeholder { color: var(--text-secondary); }
+
+    .name-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color var(--transition);
+      margin-bottom: 12px;
+    }
+    .name-input:focus { outline: none; border-color: var(--accent); }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition);
+      margin-top: 16px;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: var(--border); color: var(--text-secondary); cursor: not-allowed; }
+
+    .next-btn { background: var(--bg-tertiary); color: var(--text); border: 1.5px solid var(--border); }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 15px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition);
+      margin-top: 10px;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Success overlay */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(250,249,247,0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .success-box {
+      text-align: center;
+      max-width: 300px;
+      padding: 16px;
+    }
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--success-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+    }
+    .success-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .success-msg {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Logo -->
+  <div style="text-align:center;margin-bottom:16px;">
+    <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:80px;height:80px;border-radius:50%;object-fit:cover;opacity:0.85;">
+  </div>
+
+  <!-- Language -->
+  <div class="lang-switch">
+    <button class="lang-btn" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="th">ไทย</button>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <h1 id="pageTitle">练习记录</h1>
+    <p id="pageSubtitle">Practice Journal</p>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-dot" data-step="1"></div>
+    <div class="progress-dot" data-step="2"></div>
+    <div class="progress-dot" data-step="3"></div>
+    <div class="progress-dot" data-step="4"></div>
+    <div class="progress-dot" data-step="5"></div>
+    <div class="progress-dot" data-step="6"></div>
+  </div>
+
+  <!-- Student Name -->
+  <div id="studentName" class="student-name hidden"></div>
+
+  <!-- WELCOME SCREEN -->
+  <div class="step" id="step-1" data-step="-1">
+    <div class="card" style="text-align:center;padding:32px 20px;">
+      <div style="font-size:36px;margin-bottom:12px;">🧘</div>
+      <div class="step-question" id="welcomeTitle" style="font-size:20px;margin-bottom:8px;">AYBKK Huizhou Workshop</div>
+      <div class="step-hint" id="welcomeTeachers" style="font-size:14px;color:var(--text-secondary);margin-bottom:6px;">by Boonchu Tanti & Jamsai Tanti</div>
+      <div id="welcomeStudentName" style="font-size:16px;font-weight:600;color:var(--accent);margin:20px 0 8px;"></div>
+      <div class="step-hint" id="welcomeSub" style="font-size:13px;margin-bottom:24px;">Practice Journal — Self Assessment</div>
+      <button class="btn" id="welcomeStartBtn" onclick="startFromWelcome()">开始记录 / Start Journal</button>
+    </div>
+  </div>
+
+  <!-- STEP 0: Registration (hidden if returning student) -->
+  <div class="step" id="step0" data-step="0">
+    <div class="card">
+      <div class="step-icon">🧘</div>
+      <div class="step-question" id="regTitle">Welcome to AYBKK</div>
+      <div class="step-hint" id="regHint">First time? Enter your name to start.</div>
+      <input type="text" class="name-input" id="regName" placeholder="Your name / 你的名字">
+      <button class="btn" id="registerBtn" onclick="doRegister()">Start Practice Journal</button>
+    </div>
+  </div>
+
+  <!-- STEP 1: Vinyasa -->
+  <div class="step" id="step1">
+    <div class="card">
+      <div class="step-icon">🌊</div>
+      <div class="step-question" id="vinyasaQ">How was your vinyasa flow?</div>
+      <div class="step-hint" id="vinyasaH">Select one</div>
+      <div class="options" data-name="vinyasa">
+        <label class="option" data-value="kept_moving">
+          <input type="radio" name="vinyasa" value="kept_moving">
+          <span class="option-indicator"></span>
+          <span class="option-text" id="vOpt1">I kept moving</span>
+        </label>
+        <label class="option" data-value="stop_breathe">
+          <input type="radio" name="vinyasa" value="stop_breathe">
+          <span class="option-indicator"></span>
+          <span class="option-text" id="vOpt2">Stopped to breathe</span>
+        </label>
+        <label class="option" data-value="tired_paused">
+          <input type="radio" name="vinyasa" value="tired_paused">
+          <span class="option-indicator"></span>
+          <span class="option-text" id="vOpt3">Tired, had to pause</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Bandha -->
+  <div class="step" id="step2">
+    <div class="card">
+      <div class="step-icon">✨</div>
+      <div class="step-question" id="bandhaQ">How did your bandha feel?</div>
+      <div class="step-hint" id="bandhaH">Select one</div>
+      <div class="options" data-name="bandha">
+        <label class="option" data-value="body_light">
+          <input type="radio" name="bandha" value="body_light">
+          <span class="option-indicator"></span>
+          <span class="option-text" id="bOpt1">Body feels light</span>
+        </label>
+        <label class="option" data-value="finding_light">
+          <input type="radio" name="bandha" value="finding_light">
+          <span class="option-indicator"></span>
+          <span class="option-text" id="bOpt2">Finding lightness</span>
+        </label>
+        <label class="option" data-value="heavy_body">
+          <input type="radio" name="bandha" value="heavy_body">
+          <span class="option-indicator"></span>
+          <span class="option-text" id="bOpt3">Heavy body</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: What felt stable -->
+  <div class="step" id="step3">
+    <div class="card">
+      <div class="step-icon">💪</div>
+      <div class="step-question" id="stableQ">What felt stable today?</div>
+      <div class="step-hint" id="stableH">Select all that apply</div>
+      <div class="options" data-name="stableToday">
+        <label class="option" data-value="jump_back">
+          <input type="checkbox" name="stableToday" value="jump_back">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Jump back</span>
+        </label>
+        <label class="option" data-value="jump_through">
+          <input type="checkbox" name="stableToday" value="jump_through">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Jump through</span>
+        </label>
+        <label class="option" data-value="arms_shoulders">
+          <input type="checkbox" name="stableToday" value="arms_shoulders">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Arms & shoulders</span>
+        </label>
+        <label class="option" data-value="backbending">
+          <input type="checkbox" name="stableToday" value="backbending">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Backbending</span>
+        </label>
+        <label class="option" data-value="leg_behind_head">
+          <input type="checkbox" name="stableToday" value="leg_behind_head">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Leg behind head</span>
+        </label>
+        <label class="option" data-value="arm_balance">
+          <input type="checkbox" name="stableToday" value="arm_balance">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Arm balance</span>
+        </label>
+        <label class="option" data-value="inversion">
+          <input type="checkbox" name="stableToday" value="inversion">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Inversion</span>
+        </label>
+        <label class="option" data-value="bandha">
+          <input type="checkbox" name="stableToday" value="bandha">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Bandha</span>
+        </label>
+        <label class="option" data-value="hip_legs">
+          <input type="checkbox" name="stableToday" value="hip_legs">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Hip & legs</span>
+        </label>
+      </div>
+      <button class="btn next-btn" id="stableNextBtn" onclick="goNext(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: What felt difficult -->
+  <div class="step" id="step4">
+    <div class="card">
+      <div class="step-icon">🔥</div>
+      <div class="step-question" id="difficultQ">What was challenging today?</div>
+      <div class="step-hint" id="difficultH">Select all that apply</div>
+      <div class="options" data-name="difficultToday">
+        <label class="option" data-value="jump_back">
+          <input type="checkbox" name="difficultToday" value="jump_back">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Jump back</span>
+        </label>
+        <label class="option" data-value="chaturanga">
+          <input type="checkbox" name="difficultToday" value="chaturanga">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Chaturanga</span>
+        </label>
+        <label class="option" data-value="forward_bend">
+          <input type="checkbox" name="difficultToday" value="forward_bend">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Forward bend</span>
+        </label>
+        <label class="option" data-value="twisting">
+          <input type="checkbox" name="difficultToday" value="twisting">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Twisting</span>
+        </label>
+        <label class="option" data-value="leg_behind_head">
+          <input type="checkbox" name="difficultToday" value="leg_behind_head">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Leg behind head</span>
+        </label>
+        <label class="option" data-value="standing_balance">
+          <input type="checkbox" name="difficultToday" value="standing_balance">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Standing balance</span>
+        </label>
+        <label class="option" data-value="inversion">
+          <input type="checkbox" name="difficultToday" value="inversion">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Inversion</span>
+        </label>
+        <label class="option" data-value="breathing">
+          <input type="checkbox" name="difficultToday" value="breathing">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Breathing</span>
+        </label>
+        <label class="option" data-value="backbending">
+          <input type="checkbox" name="difficultToday" value="backbending">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Backbending</span>
+        </label>
+        <label class="option" data-value="arm_balance">
+          <input type="checkbox" name="difficultToday" value="arm_balance">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Arm balance</span>
+        </label>
+        <label class="option" data-value="jump_through">
+          <input type="checkbox" name="difficultToday" value="jump_through">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Jump through</span>
+        </label>
+        <label class="option" data-value="lifting_body">
+          <input type="checkbox" name="difficultToday" value="lifting_body">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Lifting body</span>
+        </label>
+        <label class="option" data-value="body_ache_pain">
+          <input type="checkbox" name="difficultToday" value="body_ache_pain">
+          <span class="checkbox-indicator">✓</span>
+          <span class="option-text">Body ache & pain</span>
+        </label>
+      </div>
+      <button class="btn next-btn" id="difficultNextBtn" onclick="goNext(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: Last Asana Note -->
+  <div class="step" id="step5">
+    <div class="card">
+      <div class="step-icon">🎯</div>
+      <div class="step-question" id="lastAsanaQ">Note about your last asana — how did it go?</div>
+      <div class="step-hint" id="lastAsanaH">Write about your real experience</div>
+      <textarea class="text-input" id="lastAsanaNote" placeholder="Write about it..."></textarea>
+      <button class="btn" id="nextToNotesBtn" onclick="showStep(6)">Next</button>
+      <button class="btn-secondary" onclick="showStep(6)">Skip</button>
+    </div>
+  </div>
+
+  <!-- STEP 6: Notes -->
+  <div class="step" id="step6">
+    <div class="card">
+      <div class="step-icon">📝</div>
+      <div class="step-question" id="notesQ">Anything to share?</div>
+      <div class="step-hint" id="notesH">Optional — your thoughts, feelings, or observations</div>
+      <textarea class="text-input" id="practiceNotes" placeholder="Write if you'd like..."></textarea>
+      <button class="btn" id="submitBtn" onclick="doSubmit()">Submit Check-in</button>
+      <button class="btn-secondary" id="skipBtn" onclick="doSubmit()">Skip</button>
+    </div>
+  </div>
+</div>
+
+<!-- Success + Share Card -->
+<div id="successOverlay" class="success-overlay hidden">
+  <div class="success-box">
+    <div id="shareCard" style="background:linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #4e342e 100%);border-radius:16px;padding:28px 24px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 8px 32px rgba(62,39,35,0.3);">
+      <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:56px;height:56px;border-radius:50%;margin-bottom:12px;border:2px solid rgba(255,255,255,0.3);">
+      <div style="color:#d7ccc8;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;" id="shareSubtitle">AYBKK PRACTICE JOURNAL</div>
+      <div style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:4px;" id="shareStudentName"></div>
+      <div style="color:#a5d6a7;font-size:15px;font-weight:500;margin-bottom:16px;" id="shareDayInfo"></div>
+      <div style="border-top:1px solid rgba(255,255,255,0.2);padding-top:16px;margin-top:8px;">
+        <div style="color:#fff8e1;font-size:14px;font-style:italic;line-height:1.6;font-weight:400;" id="shareQuote"></div>
+      </div>
+      <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:16px;font-weight:500;">by Boonchu Tanti & Jamsai Tanti</div>
+    </div>
+    <button class="btn" onclick="shareToWeChat()" id="shareWeChatBtn">Share to WeChat 📱</button>
+    <button class="btn-secondary" onclick="window.location.reload()" id="doneBtn">Done</button>
+  </div>
+</div>
+    <div class="success-msg" id="successMsg">Your practice journal is saved.<br>See you next session.</div>
+    <div id="successTitle" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+const T = {
+  zh: {
+    pageTitle: '练习记录',
+    pageSubtitle: 'Practice Journal',
+    regTitle: '欢迎来到 AYBKK',
+    regHint: '首次使用？请输入你的名字开始。',
+    regBtn: '开始记录',
+    regBtnLoading: '注册中...',
+    vinyasaQ: '今天的流动怎么样？',
+    vinyasaH: '选择一项',
+    vOpt1: '持续流动，节奏稳定',
+    vOpt2: '停下来深呼吸',
+    vOpt3: '累了，需要休息',
+    bandhaQ: 'Bandha 收束感如何？',
+    bandhaH: '选择一项',
+    bOpt1: '身体轻盈，有控制',
+    bOpt2: '正在寻找轻盈感',
+    bOpt3: '身体比较沉重',
+    stableQ: '今天哪些感觉稳定？',
+    stableH: '可以多选',
+    difficultQ: '今天哪些有挑战？',
+    difficultH: '可以多选',
+    notesQ: '有什么想分享的吗？',
+    notesH: '可选 — 你的想法、感受或观察',
+    notesPlaceholder: '想写就写...',
+    lastAsanaQ: '关于你的最后一个体式 — 做得怎么样？',
+    lastAsanaH: '记录你的真实感受',
+    lastAsanaPlaceholder: '写下你的体验...',
+    nextBtn: '下一步',
+    submitBtn: '提交',
+    skipBtn: '跳过',
+    successTitle: '感谢你 🙏',
+    successMsg: '练习记录已保存<br>下次见',
+    welcomeTitle: 'AYBKK 惠州工作坊',
+    welcomeTeachers: '导师: Boonchu Tanti & Jamsai Tanti',
+    welcomeSub: '练习记录 — 自我评估',
+    welcomeStartBtn: '开始记录'
+  },
+  en: {
+    pageTitle: 'Practice Journal',
+    pageSubtitle: 'Practice Journal',
+    regTitle: 'Welcome to AYBKK',
+    regHint: 'First time? Enter your name to start.',
+    regBtn: 'Start Journal',
+    regBtnLoading: 'Registering...',
+    vinyasaQ: 'How was your vinyasa flow?',
+    vinyasaH: 'Select one',
+    vOpt1: 'I kept moving',
+    vOpt2: 'Stopped to breathe',
+    vOpt3: 'Tired, had to pause',
+    bandhaQ: 'How did your bandha feel?',
+    bandhaH: 'Select one',
+    bOpt1: 'Body feels light',
+    bOpt2: 'Finding lightness',
+    bOpt3: 'Heavy body',
+    stableQ: 'What felt stable today?',
+    stableH: 'Select all that apply',
+    difficultQ: 'What was challenging today?',
+    difficultH: 'Select all that apply',
+    notesQ: 'Anything to share?',
+    notesH: 'Optional — your thoughts, feelings, or observations',
+    notesPlaceholder: 'Write if you\'d like...',
+    lastAsanaQ: 'Note about your last asana — how did it go?',
+    lastAsanaH: 'Write about your real experience',
+    lastAsanaPlaceholder: 'Write about it...',
+    nextBtn: 'Next',
+    submitBtn: 'Submit',
+    skipBtn: 'Skip',
+    successTitle: 'Thank you 🙏',
+    successMsg: 'Your practice journal is saved.<br>See you next session.',
+    welcomeTitle: 'AYBKK Practice Journal',
+    welcomeTeachers: 'by Boonchu Tanti & Jamsai Tanti',
+    welcomeSub: 'Practice Journal — Self Assessment',
+    welcomeStartBtn: 'Start Journal'
+  },
+  th: {
+    pageTitle: 'บันทึกการฝึก',
+    pageSubtitle: 'Practice Journal',
+    regTitle: 'ยินดีต้อนรับสู่ AYBKK',
+    regHint: 'ครั้งแรก? กรอกชื่อเพื่อเริ่มต้น',
+    regBtn: 'เริ่มบันทึก',
+    regBtnLoading: 'กำลังลงทะเบียน...',
+    vinyasaQ: 'วันนี้ vinyasa ไหลเป็นยังไง?',
+    vinyasaH: 'เลือก 1 ข้อ',
+    vOpt1: 'เคลื่อนไหวต่อเนื่อง',
+    vOpt2: 'หยุดหายใจ',
+    vOpt3: 'เหนื่อย ต้องพัก',
+    bandhaQ: 'Bandha รู้สึกยังไง?',
+    bandhaH: 'เลือก 1 ข้อ',
+    bOpt1: 'ตัวเบา มีสมาธิ',
+    bOpt2: 'กำลังหาความเบา',
+    bOpt3: 'ตัวหนัก',
+    stableQ: 'วันนี้อะไรมั่นคง?',
+    stableH: 'เลือกได้หลายข้อ',
+    difficultQ: 'วันนี้อะไรท้าทาย?',
+    difficultH: 'เลือกได้หลายข้อ',
+    notesQ: 'อยากแชร์อะไรไหม?',
+    notesH: 'ไม่บังคับ — ความคิด ความรู้สึก หรือสิ่งที่สังเกต',
+    notesPlaceholder: 'อยากเขียนก็เขียน...',
+    lastAsanaQ: 'บันทึกท่าสุดท้าย — ทำได้ยังไงบ้าง?',
+    lastAsanaH: 'เขียนประสบการณ์จริงของคุณ',
+    lastAsanaPlaceholder: 'เขียนเลย...',
+    nextBtn: 'ถัดไป',
+    submitBtn: 'ส่ง',
+    skipBtn: 'ข้าม',
+    successTitle: 'ขอบคุณ 🙏',
+    successMsg: 'บันทึกการฝึกเรียบร้อย<br>ไว้เจอกันใหม่',
+    welcomeTitle: 'AYBKK Practice Journal',
+    welcomeTeachers: 'โดย Boonchu Tanti & Jamsai Tanti',
+    welcomeSub: 'บันทึกการฝึก — ประเมินตนเอง',
+    welcomeStartBtn: 'เริ่มบันทึก'
+  }
+};
+
+let currentLang = 'zh';
+let studentId = null;
+let studentName = null;
+let currentStep = 0;
+const totalSteps = 7; // 0=register, 1-6=questions
+
+// Day-of-week color theme
+const DAY_COLORS = [
+  { accent: '#5B8C5A', light: '#EEF5EE', hover: '#4A7A49' }, // Monday   — Green
+  { accent: '#C0392B', light: '#FDEDEC', hover: '#A93226' }, // Tuesday  — Red
+  { accent: '#D4A574', light: '#F5EDE4', hover: '#C49564' }, // Wednesday— Gold (default)
+  { accent: '#E67E22', light: '#FDF2E6', hover: '#D35400' }, // Thursday — Orange
+  { accent: '#2980B9', light: '#EBF5FB', hover: '#2471A3' }, // Friday   — Blue
+  { accent: '#8E44AD', light: '#F4ECF7', hover: '#7D3C98' }, // Saturday — Indigo
+  { accent: '#7F8C8D', light: '#F2F3F4', hover: '#6C7A7A' }  // Sunday   — Gray
+];
+
+function applyDayColor() {
+  const dayIndex = new Date().getDay(); // 0=Sun, 1=Mon, ...
+  const mapped = dayIndex === 0 ? 6 : dayIndex - 1; // Mon=0 ... Sun=6
+  const c = DAY_COLORS[mapped];
+  const r = document.documentElement;
+  r.style.setProperty('--accent', c.accent);
+  r.style.setProperty('--accent-light', c.light);
+  r.style.setProperty('--accent-hover', c.hover);
+}
+
+// Parse URL
+const params = new URLSearchParams(window.location.search);
+const workshopLocation = params.get('location') || 'bangkok';
+const isHuizhou = workshopLocation === 'huizhou';
+if (params.has('id')) {
+  studentId = params.get('id');
+  if (params.has('name')) studentName = decodeURIComponent(params.get('name'));
+}
+
+// Init
+function init() {
+  applyDayColor();
+  if (studentId && studentName) {
+    // Returning student — show welcome, then questions
+    document.getElementById('welcomeStudentName').textContent = studentName;
+    showStep(-1); // welcome screen
+  } else {
+    showStep(0); // registration
+  }
+  applyLang('zh');
+  document.querySelector('.lang-btn[data-lang="zh"]').classList.add('active');
+
+  // Set location-specific titles
+  const wsTitle = isHuizhou ? 'AYBKK Huizhou Workshop' : 'AYBKK Practice Journal';
+  const wsTitleYear = isHuizhou ? 'AYBKK Huizhou Workshop 2026' : 'AYBKK Practice Journal';
+  document.getElementById('welcomeTitle').textContent = wsTitle;
+  document.getElementById('shareSubtitle').textContent = wsTitleYear;
+  document.title = wsTitle;
+  
+  // Update share text
+  window._wsTitleYear = wsTitleYear;
+}
+
+function startFromWelcome() {
+  if (studentId && studentName) {
+    document.getElementById('studentName').textContent = studentName;
+    document.getElementById('studentName').classList.remove('hidden');
+    showStep(1); // go to questions
+  } else {
+    showStep(0); // go to registration
+  }
+}
+
+// Step navigation
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('step' + n);
+  if (el) { el.classList.add('active'); }
+  currentStep = n;
+
+  // Update progress bar
+  document.querySelectorAll('.progress-dot').forEach(dot => {
+    const s = parseInt(dot.dataset.step);
+    dot.classList.remove('active', 'done');
+    if (s < n) dot.classList.add('done');
+    else if (s === n) dot.classList.add('active');
+  });
+
+  // Hide progress for step 0
+  document.getElementById('progressBar').style.display = n === 0 ? 'none' : 'flex';
+}
+
+// Go to next step manually (for checkbox/text steps)
+function goNext(fromStep) {
+  if (fromStep < 6) showStep(fromStep + 1);
+}
+
+// Option click handlers
+document.querySelectorAll('.option').forEach(opt => {
+  opt.addEventListener('click', (e) => {
+    e.preventDefault();
+    const input = opt.querySelector('input');
+    if (input.type === 'radio') {
+      // Deselect siblings
+      opt.closest('.options').querySelectorAll('.option').forEach(o => {
+        o.classList.remove('selected');
+      });
+      opt.classList.add('selected');
+      input.checked = true;
+
+      // Auto-advance after 400ms
+      setTimeout(() => {
+        const stepNum = parseInt(opt.closest('.step').id.replace('step', ''));
+        if (stepNum < 5) showStep(stepNum + 1);
+      }, 400);
+    } else {
+      // Checkbox toggle
+      input.checked = !input.checked;
+      opt.classList.toggle('selected', input.checked);
+    }
+  });
+});
+
+// Language
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentLang = btn.dataset.lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyLang(currentLang);
+  });
+});
+
+function applyLang(lang) {
+  const t = T[lang];
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+  document.getElementById('regTitle').textContent = t.regTitle;
+  document.getElementById('regHint').textContent = t.regHint;
+  document.getElementById('registerBtn').textContent = t.regBtn;
+  document.getElementById('vinyasaQ').textContent = t.vinyasaQ;
+  document.getElementById('vinyasaH').textContent = t.vinyasaH;
+  document.getElementById('vOpt1').textContent = t.vOpt1;
+  document.getElementById('vOpt2').textContent = t.vOpt2;
+  document.getElementById('vOpt3').textContent = t.vOpt3;
+  document.getElementById('bandhaQ').textContent = t.bandhaQ;
+  document.getElementById('bandhaH').textContent = t.bandhaH;
+  document.getElementById('bOpt1').textContent = t.bOpt1;
+  document.getElementById('bOpt2').textContent = t.bOpt2;
+  document.getElementById('bOpt3').textContent = t.bOpt3;
+  document.getElementById('stableQ').textContent = t.stableQ;
+  document.getElementById('stableH').textContent = t.stableH;
+  document.getElementById('difficultQ').textContent = t.difficultQ;
+  document.getElementById('difficultH').textContent = t.difficultH;
+  document.getElementById('notesQ').textContent = t.notesQ;
+  document.getElementById('notesH').textContent = t.notesH;
+  document.getElementById('practiceNotes').placeholder = t.notesPlaceholder;
+  document.getElementById('lastAsanaQ').textContent = t.lastAsanaQ;
+  document.getElementById('lastAsanaH').textContent = t.lastAsanaH;
+  document.getElementById('lastAsanaNote').placeholder = t.lastAsanaPlaceholder;
+  document.getElementById('nextToNotesBtn').textContent = t.nextBtn;
+  document.getElementById('submitBtn').textContent = t.submitBtn;
+  document.getElementById('skipBtn').textContent = t.skipBtn;
+  document.getElementById('successTitle').textContent = t.successTitle;
+  document.getElementById('successMsg').innerHTML = t.successMsg;
+  // Location-aware title
+  const wsTitle = isHuizhou ? 'AYBKK Huizhou Workshop' : 'AYBKK Practice Journal';
+  document.getElementById('welcomeTitle').textContent = wsTitle;
+  document.getElementById('welcomeTeachers').textContent = t.welcomeTeachers;
+  document.getElementById('welcomeSub').textContent = t.welcomeSub;
+  document.getElementById('welcomeStartBtn').textContent = t.welcomeStartBtn;
+  document.getElementById('regName').placeholder = lang === 'zh' ? '你的名字' : lang === 'th' ? 'ชื่อของคุณ' : 'Your name';
+}
+
+// Register
+async function doRegister() {
+  const name = document.getElementById('regName').value.trim();
+  if (!name) {
+    document.getElementById('regName').style.borderColor = '#e74c3c';
+    return;
+  }
+  const btn = document.getElementById('registerBtn');
+  btn.disabled = true;
+  btn.textContent = T[currentLang].regBtnLoading;
+  try {
+    const res = await fetch('/api/journal/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, language: currentLang, platform: getPlatform() })
+    });
+    const data = await res.json();
+    studentId = data.studentId;
+    studentName = name;
+    document.getElementById('studentName').textContent = name;
+    document.getElementById('studentName').classList.remove('hidden');
+    showStep(1);
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = T[currentLang].regBtn;
+    alert('Registration failed');
+  }
+}
+
+// Submit
+// 21 Yoga Sutra quotes (one per day)
+const SUTRA_QUOTES = [
+  "Yoga is the stilling of the fluctuations of the mind. — YS 1.2",
+  "Then the seer abides in its own true nature. — YS 1.3",
+  "When you are inspired, all thoughts break their bonds. — Patanjali",
+  "Practice becomes firmly grounded when attended to for a long time, without break. — YS 1.14",
+  "The obstacles to yoga are disease, doubt, carelessness, laziness. — YS 1.30",
+  "Peace comes from within. Do not seek it without. — Buddha",
+  "Yoga is the journey of the self, through the self, to the self. — Bhagavad Gita",
+  "Breath is the bridge which connects life to consciousness. — Thich Nhat Hanh",
+  "The body is your temple. Keep it pure and clean for the soul to reside in. — B.K.S. Iyengar",
+  "It is through the alignment of the body that I discovered the alignment of my mind. — B.K.S. Iyengar",
+  "Yoga does not just change the way we see things, it transforms the person who sees. — B.K.S. Iyengar",
+  "The rhythm of the body, the melody of the mind, and the harmony of the soul create the symphony of life. — B.K.S. Iyengar",
+  "When the breath wanders the mind also is unsteady. — Hatha Yoga Pradipika",
+  "The success of Yoga does not lie in the ability to perform postures but in how it positively changes the way we live our life. — T.K.V. Desikachar",
+  "Yoga is 99% practice and 1% theory. — Sri K. Pattabhi Jois",
+  "Do your practice and all is coming. — Sri K. Pattabhi Jois",
+  "Anyone can practice. Young man can practice. Old man can practice. Very old man can practice. Man who is sick, he can practice. Man who doesn't have strength can practice. — Sri K. Pattabhi Jois",
+  "Ashtanga yoga is for all of us. — Sharath Jois",
+  "The whole of yoga is in the breath. — Sri K. Pattabhi Jois",
+  "Vinyasa means breath-synchronized movement. — Richard Freeman",
+  "When you listen to yourself, everything comes naturally. It comes from inside, like a kind of will to do something. — Sri K. Pattabhi Jois"
+];
+
+function getDailyQuote() {
+  const start = new Date('2026-03-28'); // Workshop start date
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const dayIndex = Math.floor((today - start) / 86400000);
+  const safeIndex = ((dayIndex % SUTRA_QUOTES.length) + SUTRA_QUOTES.length) % SUTRA_QUOTES.length;
+  return SUTRA_QUOTES[safeIndex];
+}
+
+function getDayInfo() {
+  if (isHuizhou) {
+    const start = new Date('2026-03-28');
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const day = Math.max(1, Math.floor((today - start) / 86400000) + 1);
+    return `Day ${day} • Practice Journal saved ✅`;
+  } else {
+    const today = new Date();
+    const options = { weekday: 'short', month: 'short', day: 'numeric' };
+    return `${today.toLocaleDateString('en-US', options)} • Practice Journal saved ✅`;
+  }
+}
+
+function getDayNumber() {
+  if (isHuizhou) {
+    const start = new Date('2026-03-28');
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    return Math.max(1, Math.floor((today - start) / 86400000) + 1);
+  } else {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  }
+}
+
+// Show share card after submit
+function showShareCard() {
+  document.getElementById('shareStudentName').textContent = studentName;
+  document.getElementById('shareDayInfo').textContent = getDayInfo();
+  document.getElementById('shareQuote').textContent = `"${getDailyQuote()}"`;
+}
+
+// WeChat share
+async function shareToWeChat() {
+  const card = document.getElementById('shareCard');
+  
+  // Try canvas-based image generation
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 720;
+    const ctx = canvas.getContext('2d');
+    
+    // Chocolate gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 640, 720);
+    gradient.addColorStop(0, '#3e2723');
+    gradient.addColorStop(0.5, '#5d4037');
+    gradient.addColorStop(1, '#4e342e');
+    ctx.fillStyle = gradient;
+    roundRect(ctx, 0, 0, 640, 720, 32);
+    ctx.fill();
+    
+    // AYBKK label
+    ctx.fillStyle = '#d7ccc8';
+    ctx.font = '600 14px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '3px';
+    ctx.fillText('AYBKK HUIZHOU WORKSHOP 2026', 320, 80);
+    
+    // Student name
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 40px -apple-system, PingFang SC, sans-serif';
+    ctx.fillText(studentName, 320, 200);
+    
+    // Day info
+    ctx.fillStyle = '#a5d6a7';
+    ctx.font = '500 22px -apple-system, sans-serif';
+    ctx.fillText(getDayInfo(), 320, 240);
+    
+    // Divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath();
+    ctx.moveTo(120, 300);
+    ctx.lineTo(520, 300);
+    ctx.stroke();
+    
+    // Quote
+    ctx.fillStyle = '#fff8e1';
+    ctx.font = 'italic 18px -apple-system, serif';
+    const quote = getDailyQuote();
+    wrapText(ctx, `"${quote}"`, 320, 360, 440, 28);
+    
+    // Credit
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '500 14px -apple-system, sans-serif';
+    ctx.fillText('by Boonchu Tanti & Jamsai Tanti', 320, 680);
+    
+    // Convert to blob and trigger download/share
+    canvas.toBlob(async (blob) => {
+      if (navigator.share && navigator.canShare) {
+        const file = new File([blob], 'aybkk-journal.png', { type: 'image/png' });
+        const shareData = {
+          title: window._wsTitleYear,
+          text: `${getDayInfo()} — ${studentName}`,
+          files: [file]
+        };
+        if (navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          return;
+        }
+      }
+      // Fallback: download
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `aybkk-${getDayNumber()}-${studentName}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+      alert('Image saved! Open WeChat and share from your gallery.');
+    }, 'image/png');
+  } catch (err) {
+    // Final fallback: copy text
+    const text = `🧘 ${window._wsTitleYear}\n${studentName} — ${getDayInfo()}\n"${getDailyQuote()}"\nby Boonchu Tanti & Jamsai Tanti`;
+    await navigator.clipboard.writeText(text);
+    alert('Copied! Paste in WeChat to share.');
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  let lines = [];
+  for (const word of words) {
+    const test = line + word + ' ';
+    if (ctx.measureText(test).width > maxWidth && line !== '') {
+      lines.push(line.trim());
+      line = word + ' ';
+    } else {
+      line = test;
+    }
+  }
+  lines.push(line.trim());
+  const startY = y - ((lines.length - 1) * lineHeight) / 2;
+  lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineHeight));
+}
+
+// Update doSubmit to show share card
+async function doSubmit() {
+  const vinyasa = document.querySelector('input[name="vinyasa"]:checked');
+  const bandha = document.querySelector('input[name="bandha"]:checked');
+  const stableToday = [...document.querySelectorAll('input[name="stableToday"]:checked')].map(i => i.value);
+  const difficultToday = [...document.querySelectorAll('input[name="difficultToday"]:checked')].map(i => i.value);
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  try {
+    await fetch('/api/journal/checkin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentId,
+        studentName,
+        vinyasa: vinyasa?.value || '',
+        bandha: bandha?.value || '',
+        stableToday,
+        difficultToday,
+        lastAsanaNote: document.getElementById('lastAsanaNote').value,
+        practiceNotes: document.getElementById('practiceNotes').value,
+        sessionDate: new Date().toISOString().split('T')[0],
+        platform: getPlatform()
+      })
+    });
+    showShareCard();
+    document.getElementById('successOverlay').classList.remove('hidden');
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = T[currentLang].submitBtn;
+  }
+}
+
+function getPlatform() {
+  const ua = navigator.userAgent.toLowerCase();
+  if (ua.includes('line')) return 'line';
+  if (ua.includes('micromessenger')) return 'wechat';
+  return 'web';
+}
+
+init();
+</script>
+</body>
+</html>

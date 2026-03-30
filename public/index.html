@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYBKK Practice Journal</title>
+  <style>
+    :root {
+      --bg: #f8f5f0;
+      --card: #fff;
+      --text: #2a2420;
+      --text-muted: #8b7d6b;
+      --accent: #c49564;
+      --accent-dark: #a07850;
+      --success: #6b9e6b;
+      --border: #e8e0d4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5ebe0 0%, #e8ddd0 50%, #f0e8df 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 380px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 40px 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    .lang-switch {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .lang-btn {
+      padding: 6px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      background: transparent;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 18px 20px;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+    .btn:hover {
+      border-color: var(--accent);
+      background: #fdf8f4;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(196,149,100,0.12);
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-icon { font-size: 24px; flex-shrink: 0; }
+    .btn-content h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .btn-content p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* Search overlay */
+    .search-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .search-overlay.active { display: flex; }
+    .search-modal {
+      background: var(--card);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px;
+      max-height: 70vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .search-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .search-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px 8px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 12px;
+      -webkit-appearance: none;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .student-list {
+      overflow-y: auto;
+      flex: 1;
+      min-height: 100px;
+      max-height: 45vh;
+    }
+    .student-item {
+      padding: 12px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-bottom: 1px solid #f5f0e8;
+    }
+    .student-item:last-child { border-bottom: none; }
+    .student-item:hover { background: #f5ede4; }
+    .student-item .name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .student-item .group {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .loading, .no-results {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card { animation: fadeIn 0.4s ease-out; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <img src="/aybkk-logo.jpg" alt="AYBKK" class="logo">
+      <h1 id="title">AYBKK Practice Journal</h1>
+      <p class="subtitle" id="subtitle">Ashtanga Yoga Bangkok</p>
+
+      <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLang('zh')">中文</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('th')">ไทย</button>
+      </div>
+
+      <button class="btn" onclick="openSearch()">
+        <div class="btn-icon">📖</div>
+        <div class="btn-content">
+          <h3 id="btnJournal">我的瑜伽日志</h3>
+          <p id="btnJournalDesc">找到你的名字，开始记录今天的练习</p>
+        </div>
+      </button>
+
+      <button class="btn" id="btnWalkinWrap" style="display:none;" onclick="window.location.href='/walkin.html'">
+        <div class="btn-icon">✏️</div>
+        <div class="btn-content">
+          <h3 id="btnWalkin">首次签到注册</h3>
+          <p id="btnWalkinDesc">现场注册新学生</p>
+        </div>
+      </button>
+
+    </div>
+    <div class="footer">AYBKK Workshop · 2026</div>
+  </div>
+
+  <!-- Search Modal -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-header">
+        <h2 id="searchTitle">查找你的名字</h2>
+        <button class="close-btn" onclick="closeSearch()">✕</button>
+      </div>
+      <input type="text" class="search-input" id="searchInput" placeholder="输入你的名字..." oninput="filterStudents()">
+      <div class="student-list" id="studentList">
+        <div class="loading" id="loadingMsg">加载中...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allStudents = [];
+    let currentLang = 'zh';
+
+    const texts = {
+      zh: {
+        title: 'AYBKK 练习日记',
+        subtitle: '阿斯汤加瑜伽',
+        btnJournal: '我的瑜伽日志',
+        btnJournalDesc: '找到你的名字，开始记录今天的练习',
+        btnWalkin: '首次签到注册',
+        btnWalkinDesc: '现场注册新学生',
+        btnTeacher: '教师评估',
+        btnTeacherDesc: '课后学生进度记录',
+        searchTitle: '查找你的名字',
+        searchPlaceholder: '输入你的名字...',
+        loading: '加载中...',
+        noResults: '未找到学生'
+      },
+      en: {
+        title: 'AYBKK Practice Journal',
+        subtitle: 'Ashtanga Yoga Bangkok',
+        btnJournal: 'My Yoga Journal',
+        btnJournalDesc: 'Find your name and log today\'s practice',
+        btnWalkin: 'Walk-in Registration',
+        btnWalkinDesc: 'Register new students on-site',
+        btnTeacher: 'Teacher Assessment',
+        btnTeacherDesc: 'Record student progress after class',
+        searchTitle: 'Find Your Name',
+        searchPlaceholder: 'Type your name...',
+        loading: 'Loading...',
+        noResults: 'No students found'
+      },
+      th: {
+        title: 'AYBKK Practice Journal',
+        subtitle: 'Ashtanga Yoga Bangkok',
+        btnJournal: 'บันทึกโยคะของฉัน',
+        btnJournalDesc: 'ค้นหาชื่อแล้วบันทึกการฝึกวันนี้',
+        btnWalkin: 'ลงทะเบียนหน้างาน',
+        btnWalkinDesc: 'ลงทะเบียนนักเรียนใหม่',
+        btnTeacher: 'ประเมินของครู',
+        btnTeacherDesc: 'บันทึกความก้าวหน้าหลังคลาส',
+        searchTitle: 'ค้นหาชื่อของคุณ',
+        searchPlaceholder: 'พิมพ์ชื่อของคุณ...',
+        loading: 'กำลังโหลด...',
+        noResults: 'ไม่พบนักเรียน'
+      }
+    };
+
+    function setLang(lang) {
+      currentLang = lang;
+      const t = texts[lang];
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('title').textContent = t.title;
+      document.getElementById('subtitle').textContent = t.subtitle;
+      document.getElementById('btnJournal').textContent = t.btnJournal;
+      document.getElementById('btnJournalDesc').textContent = t.btnJournalDesc;
+      document.getElementById('btnWalkin').textContent = t.btnWalkin;
+      document.getElementById('btnWalkinDesc').textContent = t.btnWalkinDesc;
+      document.getElementById('btnTeacher').textContent = t.btnTeacher;
+      document.getElementById('btnTeacherDesc').textContent = t.btnTeacherDesc;
+      document.getElementById('searchTitle').textContent = t.searchTitle;
+      document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+      document.getElementById('loadingMsg').textContent = t.loading;
+    }
+
+    async function openSearch() {
+      document.getElementById('searchOverlay').classList.add('active');
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchInput').focus();
+      if (!allStudents.length) {
+        await loadStudents();
+      }
+      renderStudents(allStudents);
+    }
+
+    function closeSearch() {
+      document.getElementById('searchOverlay').classList.remove('active');
+    }
+
+    async function loadStudents() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const location = params.get('location') || 'bangkok';
+        const today = new Date().toISOString().split('T')[0];
+        const classFilter = location === 'huizhou' ? 'chinese-workshop,in-depth-mysore-cn2' : 'aybkk-bangkok';
+        const res = await fetch('/api/teacher/students?classType=' + classFilter + '&date=' + today);
+        const data = await res.json();
+        allStudents = data.students || [];
+      } catch (e) {
+        console.error('Load error', e);
+        allStudents = [];
+      }
+    }
+
+    function filterStudents() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      if (!q) { renderStudents(allStudents); return; }
+      const filtered = allStudents.filter(s =>
+        (s.name || '').toLowerCase().includes(q)
+      );
+      renderStudents(filtered);
+    }
+
+    function renderStudents(students) {
+      const container = document.getElementById('studentList');
+      if (!students.length) {
+        container.innerHTML = `<div class="no-results">${texts[currentLang].noResults}</div>`;
+        return;
+      }
+      container.innerHTML = students.map(s => `
+        <div class="student-item" onclick="openJournal('${s.id || s.studentId}', '${encodeURIComponent(s.name)}')">
+          <div class="name">${s.name}</div>
+          ${s.classType === 'in-depth-mysore-cn2' ? '<div class="group">In-depth Mysore</div>' : '<div class="group">Workshop</div>'}
+        </div>
+      `).join('');
+    }
+
+    function openJournal(id, name) {
+      const decodedName = decodeURIComponent(name);
+      const msg = currentLang === 'zh' ? `你是 ${decodedName} 吗？` :
+                  currentLang === 'th' ? `คุณคือ ${decodedName} ใช่ไหม?` :
+                  `Are you ${decodedName}?`;
+      if (confirm(msg)) {
+        window.location.href = `/student.html?id=${id}&name=${encodeURIComponent(decodedName)}&lang=${currentLang}`;
+      }
+    }
+
+    // Auto-detect language and location
+    (function init() {
+      const navLang = navigator.language || navigator.userLanguage || '';
+      const params = new URLSearchParams(window.location.search);
+      const location = params.get('location') || 'bangkok';
+      
+      if (location === 'huizhou') {
+        // Huizhou Workshop
+        document.getElementById('title').textContent = 'AYBKK Huizhou Workshop';
+        document.getElementById('subtitle').textContent = 'Ashtanga Yoga';
+        document.getElementById('btnWalkinWrap').style.display = 'flex';
+        document.title = 'AYBKK Huizhou Workshop';
+      }
+      
+      if (navLang.startsWith('zh')) setLang('zh');
+      else if (navLang.startsWith('th')) setLang('th');
+      else setLang('en');
+    })();
+  </script>
+</body>
+</html>
