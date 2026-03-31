@@ -772,6 +772,7 @@ function applyDayColor() {
 const params = new URLSearchParams(window.location.search);
 const workshopLocation = params.get('location') || 'bangkok';
 const isHuizhou = workshopLocation === 'huizhou';
+const studentPhoto = params.get('photo') || null; // photo URL for share card
 if (params.has('id')) {
   studentId = params.get('id');
   if (params.has('name')) studentName = decodeURIComponent(params.get('name'));
@@ -1023,10 +1024,10 @@ function showShareCard() {
 // WeChat share
 async function shareToWeChat() {
   const card = document.getElementById('shareCard');
+  const dc = getDayColor();
   
   // Try canvas-based image generation
   try {
-    const dc = getDayColor();
     const canvas = document.createElement('canvas');
     canvas.width = 640;
     canvas.height = 720;
@@ -1040,6 +1041,35 @@ async function shareToWeChat() {
     ctx.fillStyle = gradient;
     roundRect(ctx, 0, 0, 640, 720, 32);
     ctx.fill();
+    
+    // Student photo background (if available)
+    if (studentPhoto) {
+      try {
+        const img = await loadStudentPhoto(studentPhoto);
+        if (img) {
+          // Draw photo with 40% opacity, cover-fit
+          ctx.save();
+          ctx.globalAlpha = 0.4;
+          const scale = Math.max(640 / img.width, 720 / img.height);
+          const sw = img.width * scale;
+          const sh = img.height * scale;
+          const sx = (640 - sw) / 2;
+          const sy = (720 - sh) / 2;
+          ctx.drawImage(img, sx, sy, sw, sh);
+          ctx.restore();
+          
+          // Re-apply gradient overlay on top of photo for readability
+          const photoOverlay = ctx.createLinearGradient(0, 0, 0, 720);
+          photoOverlay.addColorStop(0, dc.accent + '99');
+          photoOverlay.addColorStop(0.3, dc.accent + '66');
+          photoOverlay.addColorStop(0.7, dc.hover + '66');
+          photoOverlay.addColorStop(1, dc.accent + '99');
+          ctx.fillStyle = photoOverlay;
+          roundRect(ctx, 0, 0, 640, 720, 32);
+          ctx.fill();
+        }
+      } catch(e) { console.log('Photo load failed:', e); }
+    }
     
     // Subtle white overlay for depth
     const overlay = ctx.createLinearGradient(0, 0, 0, 720);
@@ -1181,6 +1211,17 @@ async function doSubmit() {
     btn.disabled = false;
     btn.textContent = T[currentLang].submitBtn;
   }
+}
+
+// Load student photo for share card
+function loadStudentPhoto(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null); // fail silently
+    img.src = url;
+  });
 }
 
 function getPlatform() {
