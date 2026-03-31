@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧱 闯关 Break Through the Wall — AYBKK Body Knowledge Gate</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Noto Sans SC', 'PingFang SC', sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; padding: 20px;
+  }
+  .header { text-align: center; margin-bottom: 30px; }
+  .header .logo { width: 64px; height: 64px; border-radius: 14px; margin-bottom: 10px; }
+  .header h1 { font-size: 1.4em; color: #f5c518; margin-bottom: 5px; }
+  .header .subtitle { font-size: 0.9em; color: #888; }
+  .progress-bar { width: 100%; max-width: 500px; height: 6px; background: #222; border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #f5c518, #ff8c00); border-radius: 3px; transition: width 0.4s ease; }
+  .question-num { font-size: 0.85em; color: #888; margin-bottom: 10px; text-align: center; width: 100%; max-width: 500px; }
+  .card { background: #1a1a1a; border: 1px solid #333; border-radius: 16px; padding: 24px; width: 100%; max-width: 500px; margin-bottom: 20px; }
+  .card h2 { font-size: 1.1em; color: #fff; margin-bottom: 16px; line-height: 1.5; }
+  .card .q-cn { font-size: 0.95em; color: #ccc; margin-bottom: 16px; line-height: 1.5; }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    background: #222; border: 2px solid #333; border-radius: 12px; padding: 14px 16px;
+    color: #e0e0e0; font-size: 1em; text-align: left; cursor: pointer; transition: all 0.2s; line-height: 1.4;
+  }
+  .choice-btn:hover:not(.locked) { border-color: #f5c518; background: #2a2200; }
+  .choice-btn.selected-correct { border-color: #4caf50; background: #1a3a1a; color: #4caf50; }
+  .choice-btn.selected-wrong { border-color: #f44336; background: #3a1a1a; color: #f44336; }
+  .choice-btn.reveal-correct { border-color: #4caf50; background: #1a3a1a; color: #4caf50; }
+  .choice-btn.locked { cursor: default; }
+  .choice-btn .cn { display: block; font-size: 0.85em; color: #999; margin-top: 3px; }
+  .feedback { margin-top: 16px; padding: 14px; border-radius: 10px; font-size: 0.95em; line-height: 1.6; display: none; }
+  .feedback.correct { background: #1a3a1a; border: 1px solid #4caf50; color: #a5d6a7; display: block; }
+  .feedback.wrong { background: #3a1a1a; border: 1px solid #f44336; color: #ef9a9a; display: block; }
+  .feedback .cn { display: block; margin-top: 8px; color: #bbb; font-size: 0.9em; }
+  .next-btn {
+    background: linear-gradient(135deg, #f5c518, #ff8c00); color: #000; border: none; border-radius: 12px;
+    padding: 14px 32px; font-size: 1em; font-weight: 600; cursor: pointer; margin-top: 16px;
+    display: none; width: 100%; transition: opacity 0.2s;
+  }
+  .next-btn:hover { opacity: 0.9; }
+  .next-btn.visible { display: block; }
+  .result-screen { display: none; text-align: center; }
+  .result-screen.visible { display: block; }
+  .result-screen h2 { font-size: 1.8em; color: #f5c518; margin-bottom: 10px; }
+  .result-screen .score { font-size: 3em; font-weight: 700; color: #fff; margin: 20px 0; }
+  .result-screen .score span { color: #f5c518; }
+  .result-screen .msg { font-size: 1em; color: #aaa; margin-bottom: 30px; line-height: 1.6; }
+  .trophy { font-size: 4em; margin: 10px 0; }
+  .attempt-badge { display: inline-block; background: #333; color: #f5c518; border-radius: 20px; padding: 6px 14px; font-size: 0.85em; margin-top: 8px; }
+  .unlock-section { background: #1a1a1a; border: 2px solid #f5c518; border-radius: 16px; padding: 24px; max-width: 500px; margin: 0 auto; text-align: left; }
+  .unlock-section h3 { color: #f5c518; margin-bottom: 16px; font-size: 1.1em; }
+  .unlock-section .session { padding: 8px 0; border-bottom: 1px solid #222; font-size: 0.95em; }
+  .unlock-section .session:last-child { border-bottom: none; }
+  .unlock-section .session .num { color: #f5c518; font-weight: 600; margin-right: 8px; }
+  .unlock-section .session .type { color: #888; font-size: 0.8em; margin-left: 6px; }
+  .unlock-section .session .cn { color: #888; font-size: 0.8em; display: block; margin-left: 28px; }
+  .retry-btn { background: #333; color: #e0e0e0; border: 1px solid #555; border-radius: 12px; padding: 12px 24px; font-size: 0.95em; cursor: pointer; margin-top: 16px; }
+  .hint-label { color: #888; font-size: 0.8em; margin-bottom: 8px; }
+  .login-screen { text-align: center; }
+  .login-screen h2 { color: #f5c518; margin-bottom: 10px; font-size: 1.3em; }
+  .login-screen p { color: #888; margin-bottom: 20px; font-size: 0.95em; line-height: 1.5; }
+  .name-input {
+    width: 100%; max-width: 400px; padding: 14px 18px; border-radius: 12px;
+    border: 2px solid #333; background: #222; color: #fff; font-size: 1.1em;
+    text-align: center; outline: none; margin-bottom: 16px;
+  }
+  .name-input:focus { border-color: #f5c518; }
+  .start-btn {
+    background: linear-gradient(135deg, #f5c518, #ff8c00); color: #000; border: none;
+    border-radius: 12px; padding: 14px 40px; font-size: 1.1em; font-weight: 600;
+    cursor: pointer; width: 100%; max-width: 400px;
+  }
+  .start-btn:disabled { opacity: 0.4; cursor: default; }
+  .past-attempts { margin-top: 24px; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .past-attempts h4 { color: #888; font-size: 0.85em; margin-bottom: 10px; }
+  .attempt-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: #1a1a1a; border-radius: 8px; margin-bottom: 6px; font-size: 0.9em;
+  }
+  .attempt-row .date { color: #666; }
+  .attempt-row .score-badge { font-weight: 600; }
+  .attempt-row .score-badge.pass { color: #4caf50; }
+  .attempt-row .score-badge.fail { color: #f44336; }
+  .attempt-row .trophy-mini { font-size: 1.2em; }
+
+  /* === SHARE CARD === */
+  .share-card-wrapper { margin: 24px 0; display: flex; flex-direction: column; align-items: center; }
+  .share-card {
+    width: 360px; height: 480px; border-radius: 16px; overflow: hidden;
+    position: relative; display: flex; flex-direction: column;
+    font-family: 'Georgia', 'Noto Serif SC', serif;
+  }
+  .share-card .card-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(145deg, #1a1206 0%, #2a1f0a 30%, #0a0a0a 70%, #1a1206 100%);
+    z-index: 0;
+  }
+  .share-card .card-pattern {
+    position: absolute; inset: 0; z-index: 1; opacity: 0.06;
+    background-image: 
+      radial-gradient(circle at 20% 20%, #f5c518 1px, transparent 1px),
+      radial-gradient(circle at 80% 80%, #f5c518 1px, transparent 1px),
+      radial-gradient(circle at 50% 50%, #f5c518 0.5px, transparent 0.5px);
+    background-size: 60px 60px, 60px 60px, 30px 30px;
+  }
+  .share-card .card-content {
+    position: relative; z-index: 2; padding: 32px 28px; flex: 1;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .share-card .card-top { text-align: center; }
+  .share-card .card-logo { width: 56px; height: 56px; border-radius: 12px; margin-bottom: 10px; }
+  .share-card .brick { font-size: 2.4em; margin-bottom: 8px; }
+  .share-card .card-title {
+    font-size: 0.75em; color: #f5c518; letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .share-card .card-name {
+    font-size: 1.6em; color: #fff; font-weight: 700; margin-bottom: 2px;
+  }
+  .share-card .card-name-cn {
+    font-size: 1em; color: #ccc; margin-bottom: 16px;
+  }
+  .share-card .card-badge {
+    display: inline-block; background: linear-gradient(135deg, #f5c518, #ff8c00);
+    color: #000; padding: 6px 16px; border-radius: 20px; font-size: 0.8em;
+    font-weight: 700; letter-spacing: 1px; margin-bottom: 16px;
+  }
+  .share-card .card-divider {
+    width: 60px; height: 1px; background: linear-gradient(90deg, transparent, #f5c518, transparent);
+    margin: 0 auto 16px;
+  }
+  .share-card .card-quote {
+    font-size: 0.82em; color: #d4c4a0; line-height: 1.7; text-align: center;
+    font-style: italic; padding: 0 8px;
+  }
+  .share-card .card-quote .quote-mark {
+    font-size: 2em; color: #f5c518; line-height: 0.5; display: block; margin-bottom: 6px;
+    font-style: normal;
+  }
+  .share-card .card-praise {
+    font-size: 0.78em; color: #b0a080; text-align: center; line-height: 1.6;
+    margin-top: 12px;
+  }
+  .share-card .card-bottom {
+    text-align: center; padding-top: 12px;
+    border-top: 1px solid rgba(245,197,24,0.15);
+  }
+  .share-card .card-sign {
+    font-size: 0.8em; color: #f5c518; font-weight: 600;
+  }
+  .share-card .card-sub {
+    font-size: 0.65em; color: #888; margin-top: 4px; letter-spacing: 1px;
+  }
+  .share-card .card-trophy { font-size: 1.4em; margin-bottom: 4px; }
+
+  .share-btn {
+    background: linear-gradient(135deg, #f5c518, #ff8c00); color: #000; border: none;
+    border-radius: 12px; padding: 14px 32px; font-size: 1em; font-weight: 600;
+    cursor: pointer; width: 100%; max-width: 360px; margin-top: 12px; transition: opacity 0.2s;
+  }
+  .share-btn:hover { opacity: 0.9; }
+  .share-btn.saving { opacity: 0.6; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img class="logo" src="aybkk-logo.jpg" alt="AYBKK">
+  <h1>🧱 闯关 Break Through the Wall</h1>
+  <div class="subtitle">AYBKK Body Knowledge Gate · In-Depth Mysore CN Year 2</div>
+</div>
+
+<div id="loginScreen" class="login-screen">
+  <h2>📝 Enter Your Name 请输入姓名</h2>
+  <p>Enter your name to start the quiz.<br>输入你的姓名开始测试</p>
+  <input type="text" class="name-input" id="nameInput" placeholder="你的名字 Your name" maxlength="30" autocomplete="off">
+  <br>
+  <button class="start-btn" id="startBtn" onclick="startQuiz()" disabled>Start Quiz 开始测试</button>
+  <div class="past-attempts" id="pastAttempts" style="display:none;">
+    <h4>📊 Your Past Attempts 历史记录：</h4>
+    <div id="attemptList"></div>
+  </div>
+</div>
+
+<div id="quizArea" style="display:none;">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="question-num" id="questionNum"></div>
+  <div id="questionArea"></div>
+</div>
+
+<div class="result-screen" id="resultScreen">
+  <div class="trophy" id="trophyEmoji"></div>
+  <h2 id="resultTitle"></h2>
+  <div class="score" id="resultScore"></div>
+  <div class="msg" id="resultMsg"></div>
+  <div class="attempt-badge" id="attemptBadge"></div>
+
+  <!-- SHARE CARD (only for 70%+) -->
+  <div class="share-card-wrapper" id="shareCardWrapper" style="display:none;">
+    <div class="share-card" id="shareCard">
+      <div class="card-bg"></div>
+      <div class="card-pattern"></div>
+      <div class="card-content">
+        <div class="card-top">
+          <img class="card-logo" src="aybkk-logo.jpg" alt="AYBKK">
+          <div class="brick">🧱</div>
+          <div class="card-title">AYBKK In-Depth Mysore</div>
+          <div class="card-name" id="cardName"></div>
+          <div class="card-name-cn">broke through the wall</div>
+          <div class="card-badge" id="cardBadge"></div>
+          <div class="card-divider"></div>
+          <div class="card-quote">
+            <span class="quote-mark">"</span>
+            Tapas is the fire that burns impurities.<br>
+            Through persistent practice,<br>
+            the body becomes a lamp<br>
+            and the mind becomes steady.<br><br>
+            <span style="font-size:0.85em; color:#a09070;">
+              — Inspired by Patanjali's Yoga Sutras<br>
+              II.1 & II.43
+            </span>
+          </div>
+          <div class="card-praise">
+            This is not just knowledge —<br>
+            this is who you are becoming.<br>
+            <span style="color:#f5c518;">你的坚持，就是你的力量。</span>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="card-trophy" id="cardTrophy"></div>
+          <div class="card-sign">Boonchu & Jamsai Tanti</div>
+          <div class="card-sub">AYBKK SHALA · BANGKOK · HUIZHOU 2026</div>
+        </div>
+      </div>
+    </div>
+    <button class="share-btn" id="shareBtn" onclick="saveCard()">💾 Save Card & Share 保存卡片并分享</button>
+  </div>
+
+  <div class="unlock-section" id="unlockSection">
+    <h3>📜 Sessions 11–20: 惠州课程大纲 Huizhou Syllabus</h3>
+    <div class="session"><span class="num">11</span> Muscle & Joint Review 肌肉与关节复习<span class="type">Lesson</span></div>
+    <div class="session"><span class="num">12</span> Quiz + Breakdown #1: Sun A → Navasana <span class="type">Lesson + Led</span></div>
+    <div class="session"><span class="num">13</span> Breakdown #2: Bhuja → Supta Kurmasana <span class="type">Lesson + Led</span></div>
+    <div class="session"><span class="num">14</span> Breakdown #3: Paschima → Setu + Finishing <span class="type">Lesson + Led</span></div>
+    <div class="session"><span class="num">15</span> Practice Technique 练习技巧 <span class="type">Lesson</span></div>
+    <div class="session"><span class="num">16</span> EXAM 1 考试 <span class="type">Exam</span></div>
+    <div class="session"><span class="num">17</span> Asana Connection & Progression 体式连接与进阶 <span class="type">Lesson</span></div>
+    <div class="session"><span class="num">18</span> Student Observation 学生观察与分析 <span class="type">Practical</span></div>
+    <div class="session"><span class="num">19</span> Pre-Adjustment: Reading the Body 调整前：读懂身体 <span class="type">Lesson</span></div>
+    <div class="session"><span class="num">20</span> Adjustment Introduction 调整入门 <span class="type">Practical</span></div>
+  </div>
+  <button class="retry-btn" onclick="retryQuiz()">🔄 重新测试 Retry Quiz</button>
+</div>
+
+<script>
+// === STORAGE ===
+const STORAGE_KEY = 'aybkk_quiz_attempts';
+function getAttempts(name) {
+  try { const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); return all[name] || []; } catch { return []; }
+}
+function saveAttempt(name, score, total, pct, trophy) {
+  try {
+    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (!all[name]) all[name] = [];
+    all[name].push({ date: new Date().toLocaleString('zh-CN',{timeZone:'Asia/Shanghai'}), score, total, pct, trophy });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+  } catch {}
+}
+
+// === NAME SCREEN ===
+const nameInput = document.getElementById('nameInput');
+const startBtn = document.getElementById('startBtn');
+nameInput.addEventListener('input', () => {
+  startBtn.disabled = nameInput.value.trim().length < 1;
+  showPastAttempts();
+});
+nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' && nameInput.value.trim().length >= 1) startQuiz(); });
+function showPastAttempts() {
+  const name = nameInput.value.trim();
+  const attempts = getAttempts(name);
+  const container = document.getElementById('pastAttempts');
+  const list = document.getElementById('attemptList');
+  if (attempts.length > 0) {
+    container.style.display = 'block';
+    list.innerHTML = attempts.slice().reverse().map(a =>
+      `<div class="attempt-row"><span class="date">${a.date}</span><span class="score-badge ${a.pct>=70?'pass':'fail'}">${a.score}/${a.total} (${a.pct}%)</span><span class="trophy-mini">${a.trophy?'🏆':''}</span></div>`
+    ).join('');
+  } else { container.style.display = 'none'; }
+}
+let studentName = '';
+function startQuiz() {
+  studentName = nameInput.value.trim();
+  if (!studentName) return;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'block';
+  shuffleArray(questions);
+  renderQuestion();
+}
+function retryQuiz() {
+  document.getElementById('resultScreen').classList.remove('visible');
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'block';
+  document.getElementById('quizArea').style.display = 'none';
+  showPastAttempts();
+}
+
+// === QUESTIONS ===
+const questions = [
+  {
+    type: 'bone-chain', q: '🦴 List the bones from SKULL to SACRUM in order:',
+    qCn: '🦴 按顺序排列从头骨到骶骨的骨骼：',
+    bones: ['Skull 头骨','Cervical vertebrae 颈椎 (C1-C7)','Thoracic vertebrae 胸椎 (T1-T12)','Lumbar vertebrae 腰椎 (L1-L5)','Sacrum 骶骨'],
+    distractors: ['Femur 股骨','Humerus 肱骨','Scapula 肩胛骨','Patella 髌骨','Clavicle 锁骨','Radius 桡骨'],
+    explanation: 'The vertebral column: Skull → Cervical (neck, 7) → Thoracic (mid-back, 12) → Lumbar (lower back, 5) → Sacrum.',
+    explanationCn: '脊柱顺序：头骨 → 颈椎（7节）→ 胸椎（12节）→ 腰椎（5节）→ 骶骨。'
+  },
+  {
+    type: 'bone-chain', q: '🦴 List the bones from SHOULDER to FINGERTIPS on one arm:',
+    qCn: '🦴 按顺序排列从肩膀到手指尖的上肢骨骼：',
+    bones: ['Clavicle 锁骨','Scapula 肩胛骨','Humerus 肱骨','Radius + Ulna 桡骨+尺骨','Carpals 腕骨','Metacarpals 掌骨','Phalanges 指骨'],
+    distractors: ['Femur 股骨','Tibia 胫骨','Fibula 腓骨','Patella 髌骨','Tarsals 跗骨','Ilium 髂骨'],
+    explanation: 'Arm chain: Clavicle → Scapula → Humerus → Radius + Ulna → Carpals → Metacarpals → Phalanges.',
+    explanationCn: '上肢：锁骨 → 肩胛骨 → 肱骨 → 桡骨+尺骨 → 腕骨 → 掌骨 → 指骨。'
+  },
+  {
+    type: 'bone-chain', q: '🦴 List the bones from HIP to TOES on one leg:',
+    qCn: '🦴 按顺序排列从髋关节到脚趾的下肢骨骼：',
+    bones: ['Pelvis 骨盆','Femur 股骨','Patella 髌骨','Tibia + Fibula 胫骨+腓骨','Tarsals 跗骨','Metatarsals 跖骨','Phalanges 趾骨'],
+    distractors: ['Humerus 肱骨','Clavicle 锁骨','Scapula 肩胛骨','Radius 桡骨','Carpals 腕骨','Sternum 胸骨'],
+    explanation: 'Leg chain: Pelvis → Femur → Patella → Tibia + Fibula → Tarsals → Metatarsals → Phalanges.',
+    explanationCn: '下肢：骨盆 → 股骨 → 髌骨 → 胫骨+腓骨 → 跗骨 → 跖骨 → 趾骨。'
+  },
+  {
+    type: 'pick-muscles', q: '💪 Which muscles work HARDEST in Chaturanga? Pick 4:',
+    qCn: '💪 四柱支撑中最辛苦的肌肉？选4个：',
+    options: [
+      {text:'Pectoralis major',cn:'胸大肌',correct:true},{text:'Anterior deltoid',cn:'三角肌前束',correct:true},
+      {text:'Triceps brachii',cn:'肱三头肌',correct:true},{text:'Rectus abdominis',cn:'腹直肌',correct:true},
+      {text:'Biceps brachii',cn:'肱二头肌',correct:false},{text:'Gastrocnemius',cn:'腓肠肌',correct:false},
+      {text:'Gluteus maximus',cn:'臀大肌',correct:false},{text:'Tibialis anterior',cn:'胫骨前肌',correct:false}
+    ],
+    explanation: 'Chaturanga = push. Pecs push, anterior deltoids stabilize, triceps extend elbow, core holds plank.',
+    explanationCn: '四柱是推的动作。胸大肌推动，三角肌前束稳定，肱三头肌伸肘，腹直肌保持平板。'
+  },
+  {
+    type: 'pick-muscles', q: '💪 Which muscles are the PRIMARY hip flexors? Pick 2:',
+    qCn: '💪 主要的髋屈肌？选2个：',
+    options: [
+      {text:'Iliopsoas',cn:'髂腰肌',correct:true},{text:'Rectus femoris',cn:'股直肌',correct:true},
+      {text:'Gluteus maximus',cn:'臀大肌',correct:false},{text:'Hamstrings',cn:'腘绳肌',correct:false},
+      {text:'Gastrocnemius',cn:'腓肠肌',correct:false},{text:'Trapezius',cn:'斜方肌',correct:false}
+    ],
+    explanation: 'Iliopsoas = primary hip flexor. Rectus femoris also flexes hip. Glutes & hamstrings are hip EXTENDERS.',
+    explanationCn: '髂腰肌是最主要髋屈肌。股直肌也屈髋。臀大肌和腘绳肌是髋伸肌——相反。'
+  },
+  {
+    type: 'joint-function', q: '🔄 In Marichyasana C (twist), what happens at the SPINE?',
+    qCn: '🔄 马里奇C中脊柱发生了什么运动？',
+    options: [
+      {text:'Transverse plane rotation (twist) + some flexion',cn:'水平面旋转+部分屈曲',correct:true},
+      {text:'Sagittal plane extension (backbend)',cn:'矢状面伸展（后弯）',correct:false},
+      {text:'Frontal plane lateral flexion (side bend only)',cn:'额状面侧屈',correct:false},
+      {text:'No spinal movement — only hip rotation',cn:'没有脊柱运动',correct:false}
+    ],
+    explanation: 'Marichyasana C = TRANSVERSE plane (rotation/twist). Spine rotates around its axis.',
+    explanationCn: '马里奇C是水平面运动（扭转）。脊柱围绕自己的轴旋转。'
+  },
+  {
+    type: 'joint-function', q: '🔄 The shoulder joint (glenohumeral) is a _______ joint:',
+    qCn: '🔄 肩关节是_______关节：',
+    options: [
+      {text:'Ball-and-socket — widest range, most unstable',cn:'球窝关节——范围最大，最不稳定',correct:true},
+      {text:'Hinge — only flexion and extension',cn:'铰链关节——只能屈伸',correct:false},
+      {text:'Pivot — only rotation',cn:'车轴关节——只能旋转',correct:false},
+      {text:'Saddle — limited movement',cn:'鞍状关节——活动受限',correct:false}
+    ],
+    explanation: 'Ball-and-socket = max freedom but MOST unstable. That\'s why rotator cuff injuries are common.',
+    explanationCn: '球窝关节 = 最大自由度但最不稳定。肩袖损伤在Ashtanga中很常见。'
+  },
+  {
+    type: 'pick-muscles', q: '💪 In Urdhva Dhanurasana (backbend), the main ANTAGONIST is:',
+    qCn: '💪 上弓式中主要的拮抗肌是：',
+    options: [
+      {text:'Rectus abdominis',cn:'腹直肌',correct:true},{text:'Erector spinae',cn:'竖脊肌',correct:false},
+      {text:'Gluteus maximus',cn:'臀大肌',correct:false},{text:'Deltoid',cn:'三角肌',correct:false}
+    ],
+    explanation: 'Antagonist opposes the movement. Backbend = extending spine. Rectus abdominis FLEXES spine = antagonist.',
+    explanationCn: '拮抗肌抵抗动作。后弯=伸展脊柱。腹直肌使脊柱屈曲=拮抗肌。竖脊肌是主动肌。'
+  },
+  {
+    type: 'joint-function', q: '🔄 In Baddha Konasana, what movement at the HIP?',
+    qCn: '🔄 束角式中髋关节的运动：',
+    options: [
+      {text:'External rotation + abduction',cn:'外旋 + 外展',correct:true},
+      {text:'Internal rotation + adduction',cn:'内旋 + 内收',correct:false},
+      {text:'Flexion + extension',cn:'屈曲 + 伸展',correct:false},
+      {text:'Only extension',cn:'只有伸展',correct:false}
+    ],
+    explanation: 'Baddha Konasana = knees OUT (abduction) + rotate OUT (external rotation). Hip rotators do the work.',
+    explanationCn: '束角式=膝盖向外打开（外展）+向外旋转（外旋）。深层髋旋转肌负责工作。'
+  },
+  {
+    type: 'pick-muscles', q: '💪 In Jump Back, which muscles initiate the LIFT? Pick 3:',
+    qCn: '💪 向后跳中启动抬起的肌肉？选3个：',
+    options: [
+      {text:'Hip flexors (iliopsoas)',cn:'髋屈肌（髂腰肌）',correct:true},
+      {text:'Rectus abdominis (core)',cn:'腹直肌（核心）',correct:true},
+      {text:'Triceps + deltoids',cn:'三头肌+三角肌',correct:true},
+      {text:'Hamstrings',cn:'腘绳肌',correct:false},
+      {text:'Gastrocnemius',cn:'腓肠肌',correct:false},
+      {text:'Trapezius',cn:'斜方肌',correct:false}
+    ],
+    explanation: 'Jump back = compress (hip flexors + core) → lift (triceps + deltoids press) → swing back.',
+    explanationCn: '向后跳=压缩（髋屈肌+核心）→抬起（三头肌+三角肌推地）→向后摆。'
+  }
+];
+
+function shuffleArray(arr) { for (let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+
+let currentQ = 0, score = 0;
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const area = document.getElementById('questionArea');
+  document.getElementById('questionNum').textContent = `问题 ${currentQ+1}/${questions.length} · Question ${currentQ+1}/${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(currentQ/questions.length)*100}%`;
+  if (q.type === 'bone-chain') {
+    let allOptions = [...q.bones, ...q.distractors].sort(() => Math.random()-0.5);
+    area.innerHTML = `<div class="card"><h2>${q.q}</h2><div class="q-cn">${q.qCn}</div><p class="hint-label">Tap in correct order 按正确顺序点击</p><div class="choices" id="boneOptions">${allOptions.map(b=>`<div class="choice-btn" data-bone="${b}" onclick="selectBone(this)">${b}</div>`).join('')}</div><div style="margin-top:12px;padding:10px;background:#111;border-radius:8px;min-height:40px;"><div style="color:#888;font-size:0.8em;margin-bottom:6px;">Your order 你的顺序：</div><div id="selectedOrder" style="display:flex;flex-wrap:wrap;gap:4px;"></div></div><button class="next-btn" id="checkBtn" onclick="checkBoneChain()">✓ Check 检查</button><div class="feedback" id="feedback"></div><button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next 下一题 →</button></div>`;
+    window._selectedBones = []; window._correctOrder = q.bones;
+  } else {
+    let shuffled = q.options.map(o=>({...o})).sort(()=>Math.random()-0.5);
+    const isSingle = q.type === 'joint-function';
+    area.innerHTML = `<div class="card"><h2>${q.q}</h2><div class="q-cn">${q.qCn}</div><div class="choices" id="pickOptions">${shuffled.map(o=>`<div class="choice-btn" data-correct="${o.correct}" data-text="${o.text}" onclick="pickOption(this,${isSingle?'single':'multi'})">${o.text}<span class="cn">${o.cn}</span></div>`).join('')}</div>${isSingle?'':'<button class="next-btn visible" id="checkBtn" onclick="checkPicks(false)">✓ Check 检查</button>'}<div class="feedback" id="feedback"></div><button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next 下一题 →</button></div>`;
+    window._pickedOptions = [];
+    window._isSingle = isSingle;
+  }
+}
+
+function selectBone(el) {
+  if (el.classList.contains('locked')) return;
+  const bone = el.dataset.bone;
+  if (window._selectedBones.includes(bone)) return;
+  window._selectedBones.push(bone); el.classList.add('selected','locked');
+  document.getElementById('selectedOrder').innerHTML = window._selectedBones.map((b,i)=>`<span style="background:#f5c518;color:#000;padding:4px 8px;border-radius:6px;font-size:0.85em;">${i+1}. ${b}</span>`).join(' <span style="color:#555;">→</span> ');
+  if (window._selectedBones.length >= window._correctOrder.length) document.getElementById('checkBtn').classList.add('visible');
+}
+function checkBoneChain() {
+  document.querySelectorAll('#boneOptions .choice-btn').forEach(b=>b.classList.add('locked'));
+  document.getElementById('checkBtn').style.display='none';
+  let correctCount=0, allMatch=true;
+  window._selectedBones.forEach((b,i)=>{if(b===window._correctOrder[i])correctCount++;else allMatch=false;});
+  const q=questions[currentQ];
+  if(allMatch&&correctCount===window._correctOrder.length){score++;document.getElementById('feedback').className='feedback correct';document.getElementById('feedback').innerHTML=`✅ Perfect! ${correctCount}/${window._correctOrder.length}<br>${q.explanation}<span class="cn">${q.explanationCn}</span>`;}
+  else{document.getElementById('feedback').className='feedback wrong';document.getElementById('feedback').innerHTML=`❌ ${correctCount}/${window._correctOrder.length}. Correct 正确：<br><strong>${window._correctOrder.join(' → ')}</strong><br>${q.explanation}<span class="cn">${q.explanationCn}</span>`;}
+  document.getElementById('nextBtn').classList.add('visible');
+}
+function pickOption(el,mode) {
+  if(el.classList.contains('locked'))return;
+  if(mode==='single'){
+    document.querySelectorAll('#pickOptions .choice-btn').forEach(b=>b.classList.remove('selected'));
+    el.classList.add('selected');
+    window._pickedOptions=[el.dataset.text];
+    // Auto-check for single choice
+    checkPicks(true);
+  }else{
+    el.classList.toggle('selected');
+    if(el.classList.contains('selected'))window._pickedOptions.push(el.dataset.text);
+    else window._pickedOptions=window._pickedOptions.filter(t=>t!==el.dataset.text);
+  }
+}
+function checkPicks(isSingle) {
+  const btns=document.querySelectorAll('#pickOptions .choice-btn');btns.forEach(b=>b.classList.add('locked'));document.getElementById('checkBtn').style.display='none';
+  let allCorrect=true,correctCount=0;const correctAnswers=[];
+  btns.forEach(b=>{const isCorrect=b.dataset.correct==='true';const wasPicked=b.classList.contains('selected');if(isCorrect)correctAnswers.push(b.dataset.text);if(isCorrect&&wasPicked){b.classList.add('selected-correct');correctCount++;}else if(!isCorrect&&wasPicked){b.classList.add('selected-wrong');allCorrect=false;}else if(isCorrect&&!wasPicked){b.classList.add('reveal-correct');allCorrect=false;}});
+  const q=questions[currentQ];
+  if(allCorrect){score++;document.getElementById('feedback').className='feedback correct';document.getElementById('feedback').innerHTML=`✅ Perfect!<br>${q.explanation}<span class="cn">${q.explanationCn}</span>`;}
+  else{document.getElementById('feedback').className='feedback wrong';document.getElementById('feedback').innerHTML=`Correct 正确: ${correctAnswers.join(', ')}<br>${q.explanation}<span class="cn">${q.explanationCn}</span>`;}
+  document.getElementById('nextBtn').classList.add('visible');
+}
+function nextQuestion(){currentQ++;if(currentQ>=questions.length)showResult();else renderQuestion();}
+
+function showResult() {
+  document.getElementById('quizArea').style.display='none';
+  document.getElementById('progressFill').style.width='100%';
+  const pct=Math.round((score/questions.length)*100);
+  const hasTrophy=pct>=90;
+  const passed=pct>=70;
+  const attempts=getAttempts(studentName);
+  const attemptNum=attempts.length+1;
+  saveAttempt(studentName,score,questions.length,pct,hasTrophy);
+  const screen=document.getElementById('resultScreen');
+  screen.style.display='block';screen.classList.add('visible');
+  document.getElementById('trophyEmoji').textContent=hasTrophy?'🏆':'';
+  if(hasTrophy)document.getElementById('resultTitle').textContent='🏆 Champion 大师!';
+  else if(passed)document.getElementById('resultTitle').textContent='🎉 Welcome 欢迎来到 Part 2!';
+  else document.getElementById('resultTitle').textContent='📚 Study More 继续学习!';
+  document.getElementById('resultScore').innerHTML=`<span>${score}</span> / ${questions.length}`;
+  if(hasTrophy)document.getElementById('resultMsg').innerHTML=`Outstanding ${studentName}!<br>得分 <strong>${score}/${questions.length}</strong> (${pct}%)<br>Your body knowledge is excellent! 你的身体知识非常优秀！`;
+  else if(passed)document.getElementById('resultMsg').innerHTML=`${studentName}, 得分 <strong>${score}/${questions.length}</strong> (${pct}%).<br>Your body knowledge is ready! 你的身体知识已准备好！`;
+  else document.getElementById('resultMsg').innerHTML=`${studentName}, 得分 <strong>${score}/${questions.length}</strong> (${pct}%).<br>需要70%以上才能解锁。复习后再试！`;
+  document.getElementById('attemptBadge').textContent=`📊 Attempt 第${attemptNum}次测试`;
+  document.getElementById('unlockSection').style.display=passed?'block':'none';
+
+  // Share card (70%+ only)
+  const shareWrapper=document.getElementById('shareCardWrapper');
+  if(passed){
+    shareWrapper.style.display='flex';
+    document.getElementById('cardName').textContent=studentName;
+    document.getElementById('cardBadge').textContent=hasTrophy?'🏆 CHAMPION':'✅ PASSED';
+    document.getElementById('cardTrophy').textContent=hasTrophy?'🏆':'🧱';
+  } else {
+    shareWrapper.style.display='none';
+  }
+}
+
+function saveCard() {
+  const btn = document.getElementById('shareBtn');
+  btn.textContent = '⏳ Saving...';
+  btn.classList.add('saving');
+  
+  const card = document.getElementById('shareCard');
+  html2canvas(card, {
+    scale: 2,
+    backgroundColor: null,
+    useCORS: true,
+    logging: false
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = `AYBKK-${studentName}-BodyKnowledgeGate.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.textContent = '✅ Saved! Share on WeChat/IG 已保存!';
+    setTimeout(() => {
+      btn.textContent = '💾 Save Card & Share 保存卡片并分享';
+      btn.classList.remove('saving');
+    }, 3000);
+  }).catch(err => {
+    console.error(err);
+    btn.textContent = '❌ Error — try screenshot instead 请截图';
+    setTimeout(() => {
+      btn.textContent = '💾 Save Card & Share 保存卡片并分享';
+      btn.classList.remove('saving');
+    }, 3000);
+  });
+}
+</script>
+</body>
+</html>
