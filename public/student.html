@@ -607,15 +607,15 @@
 <!-- Success + Share Card -->
 <div id="successOverlay" class="success-overlay hidden">
   <div class="success-box">
-    <div id="shareCard" style="background:linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #4e342e 100%);border-radius:16px;padding:28px 24px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 8px 32px rgba(62,39,35,0.3);">
-      <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:56px;height:56px;border-radius:50%;margin-bottom:12px;border:2px solid rgba(255,255,255,0.3);">
-      <div style="color:#d7ccc8;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;" id="shareSubtitle">AYBKK PRACTICE JOURNAL</div>
+    <div id="shareCard" style="border-radius:16px;padding:28px 24px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 8px 32px rgba(0,0,0,0.15);">
+      <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:56px;height:56px;border-radius:50%;margin-bottom:12px;border:2px solid rgba(255,255,255,0.4);">
+      <div style="color:rgba(255,255,255,0.7);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;" id="shareSubtitle">AYBKK PRACTICE JOURNAL</div>
       <div style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:4px;" id="shareStudentName"></div>
-      <div style="color:#a5d6a7;font-size:15px;font-weight:500;margin-bottom:16px;" id="shareDayInfo"></div>
+      <div style="color:rgba(255,255,255,0.85);font-size:15px;font-weight:500;margin-bottom:16px;" id="shareDayInfo"></div>
       <div style="border-top:1px solid rgba(255,255,255,0.2);padding-top:16px;margin-top:8px;">
-        <div style="color:#fff8e1;font-size:14px;font-style:italic;line-height:1.6;font-weight:400;" id="shareQuote"></div>
+        <div style="color:#ffffff;font-size:14px;font-style:italic;line-height:1.6;font-weight:400;" id="shareQuote"></div>
       </div>
-      <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:16px;font-weight:500;">by Boonchu Tanti & Jamsai Tanti</div>
+      <div style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:16px;font-weight:500;">by Boonchu Tanti & Jamsai Tanti</div>
     </div>
     <button class="btn" onclick="shareToWeChat()" id="shareWeChatBtn">Share to WeChat 📱</button>
     <button class="btn-secondary" onclick="window.location.reload()" id="doneBtn">Done</button>
@@ -1002,11 +1002,22 @@ function getDayNumber() {
   }
 }
 
+// Get current day's color values
+function getDayColor() {
+  const dayIndex = new Date().getDay();
+  const mapped = dayIndex === 0 ? 6 : dayIndex - 1;
+  return DAY_COLORS[mapped];
+}
+
 // Show share card after submit
 function showShareCard() {
   document.getElementById('shareStudentName').textContent = studentName;
   document.getElementById('shareDayInfo').textContent = getDayInfo();
   document.getElementById('shareQuote').textContent = `"${getDailyQuote()}"`;
+  // Apply pastel day color to share card
+  const c = getDayColor();
+  const card = document.getElementById('shareCard');
+  card.style.background = `linear-gradient(135deg, ${c.accent} 0%, ${c.hover} 50%, ${c.accent} 100%)`;
 }
 
 // WeChat share
@@ -1015,25 +1026,34 @@ async function shareToWeChat() {
   
   // Try canvas-based image generation
   try {
+    const dc = getDayColor();
     const canvas = document.createElement('canvas');
     canvas.width = 640;
     canvas.height = 720;
     const ctx = canvas.getContext('2d');
     
-    // Chocolate gradient background
+    // Pastel day-color gradient background
     const gradient = ctx.createLinearGradient(0, 0, 640, 720);
-    gradient.addColorStop(0, '#3e2723');
-    gradient.addColorStop(0.5, '#5d4037');
-    gradient.addColorStop(1, '#4e342e');
+    gradient.addColorStop(0, dc.accent);
+    gradient.addColorStop(0.5, dc.hover);
+    gradient.addColorStop(1, dc.accent);
     ctx.fillStyle = gradient;
     roundRect(ctx, 0, 0, 640, 720, 32);
     ctx.fill();
     
+    // Subtle white overlay for depth
+    const overlay = ctx.createLinearGradient(0, 0, 0, 720);
+    overlay.addColorStop(0, 'rgba(255,255,255,0.15)');
+    overlay.addColorStop(0.5, 'rgba(255,255,255,0)');
+    overlay.addColorStop(1, 'rgba(0,0,0,0.1)');
+    ctx.fillStyle = overlay;
+    roundRect(ctx, 0, 0, 640, 720, 32);
+    ctx.fill();
+    
     // AYBKK label
-    ctx.fillStyle = '#d7ccc8';
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
     ctx.font = '600 14px -apple-system, sans-serif';
     ctx.textAlign = 'center';
-    ctx.letterSpacing = '3px';
     ctx.fillText('AYBKK HUIZHOU WORKSHOP 2026', 320, 80);
     
     // Student name
@@ -1042,19 +1062,19 @@ async function shareToWeChat() {
     ctx.fillText(studentName, 320, 200);
     
     // Day info
-    ctx.fillStyle = '#a5d6a7';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
     ctx.font = '500 22px -apple-system, sans-serif';
     ctx.fillText(getDayInfo(), 320, 240);
     
     // Divider
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
     ctx.beginPath();
     ctx.moveTo(120, 300);
     ctx.lineTo(520, 300);
     ctx.stroke();
     
     // Quote
-    ctx.fillStyle = '#fff8e1';
+    ctx.fillStyle = '#ffffff';
     ctx.font = 'italic 18px -apple-system, serif';
     const quote = getDailyQuote();
     wrapText(ctx, `"${quote}"`, 320, 360, 440, 28);
