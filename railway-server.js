@@ -111,6 +111,42 @@ app.get('/api/journal/history/:days', (req, res) => {
   }
 });
 
+// GET /api/journal/profiles — all orientation profiles (for teacher summary cards)
+app.get('/api/journal/profiles', (req, res) => {
+  try {
+    const file = path.join(__dirname, 'orientations.json');
+    let orientations = [];
+    try { orientations = JSON.parse(fs.readFileSync(file, 'utf8')); } catch {}
+
+    const checkins = readJson(JOURNAL_FILE);
+
+    const profiles = orientations.map(o => {
+      const name = o.englishName || o.chineseName || o.name || '';
+      const myCheckins = checkins.filter(c => 
+        c.studentName === name || c.studentName === o.englishName || c.studentName === o.chineseName
+      ).sort((a, b) => b.checkedInAt.localeCompare(a.checkedInAt));
+      return {
+        id: o.id || name,
+        name: name,
+        englishName: o.englishName || null,
+        chineseName: o.chineseName || null,
+        city: o.city || null,
+        yearsPractice: o.yearsPractice || null,
+        lastAsana: o.lastAsana || null,
+        difficulties: o.difficulties || [],
+        injury: o.injury || null,
+        classType: o.classType || null,
+        totalCheckins: myCheckins.length,
+        recentAssessments: myCheckins.slice(0, 3)
+      };
+    });
+
+    res.json({ profiles, count: profiles.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Simple file-based orientation storage (works without Neo4j)
 app.post('/api/orientation', (req, res) => {
   try {

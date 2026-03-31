@@ -300,6 +300,122 @@ router.get('/today', async (req, res) => {
   }
 });
 
+// POST /api/teacher/comment - Teacher writes a comment for a student
+router.post('/comment', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { studentId, teacherName, comment, weekLabel } = req.body;
+
+    if (!studentId) return res.status(400).json({ error: 'studentId is required' });
+    if (!teacherName) return res.status(400).json({ error: 'teacherName is required' });
+    if (!comment || !comment.trim()) return res.status(400).json({ error: 'comment is required' });
+
+    const commentId = uuidv4();
+    const now = new Date().toISOString();
+    const week = weekLabel || `Week of ${now.split('T')[0]}`;
+
+    // Check student exists
+    const studentResult = await session.run(
+      'MATCH (s:Student) WHERE s.studentId = $studentId OR s.id = $studentId RETURN s',
+      { studentId }
+    );
+    if (studentResult.records.length === 0) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    const studentNode = studentResult.records[0].get('s');
+    const actualStudentId = studentNode.properties.studentId || studentNode.properties.id;
+
+    // Create TeacherComment node
+    await session.run(`
+      MATCH (s:Student)
+      WHERE s.studentId = $studentId OR s.id = $studentId
+      CREATE (tc:TeacherComment {
+        id: $id,
+        teacher_name: $teacherName,
+        comment: $comment,
+        week_label: $weekLabel,
+        is_read: false,
+        created_at: datetime($createdAt)
+      })
+      CREATE (tc)-[:ABOUT_STUDENT]->(s)
+      RETURN tc.id AS id
+    `, {
+      id: commentId,
+      studentId: actualStudentId,
+      teacherName,
+      comment: comment.trim(),
+      weekLabel: week,
+      createdAt: now
+    });
+
+    res.json({
+      success: true,
+      commentId,
+      studentName: studentNode.properties.name,
+      createdAt: now
+    });
+  } catch (error) {
+    console.error('Teacher comment error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// GET /api/teacher/comments/:studentId - Get teacher comments for a student
+router.get('/comments/:studentId', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { studentId } = req.params;
+
+    const result = await session.run(`
+      MATCH (tc:TeacherComment)-[:ABOUT_STUDENT]->(s:Student)
+      WHERE s.studentId = $studentId OR s.id = $studentId
+      RETURN tc.id AS id, tc.teacher_name AS teacherName,
+             tc.comment AS comment, tc.week_label AS weekLabel,
+             tc.is_read AS isRead, tc.created_at AS createdAt
+      ORDER BY tc.created_at DESC
+      LIMIT 20
+    `, { studentId });
+
+    const comments = result.records.map(r => ({
+      id: r.get('id'),
+      teacherName: r.get('teacherName'),
+      comment: r.get('comment'),
+      weekLabel: r.get('weekLabel'),
+      isRead: r.get('isRead'),
+      createdAt: r.get('createdAt')
+    }));
+
+    res.json({ comments, count: comments.length });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// POST /api/teacher/comment/read - Mark comment as read
+router.post('/comment/read', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { commentId } = req.body;
+    if (!commentId) return res.status(400).json({ error: 'commentId is required' });
+
+    await session.run(
+      'MATCH (tc:TeacherComment {id: $commentId}) SET tc.is_read = true RETURN tc',
+      { commentId }
+    );
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
 // POST /api/workshop/orientation - Save student orientation profile
 router.post('/orientation', async (req, res) => {
   const session = req.driver.session();

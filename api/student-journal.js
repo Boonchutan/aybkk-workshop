@@ -277,6 +277,95 @@ router.get('/students', async (req, res) => {
   }
 });
 
+// GET /api/journal/profile/:id - Get student orientation profile (for teacher summary card)
+router.get('/profile/:id', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { id } = req.params;
+
+    // Try by workshop ID first, then by name match across both ID systems
+    const result = await session.run(`
+      MATCH (s:Student)
+      WHERE s.id = $id
+      OPTIONAL MATCH (s)-[:HAS_SELF_ASSESSMENT]->(sa:SelfAssessment)
+      WITH s, sa ORDER BY sa.checkedInAt DESC
+      WITH s, collect(sa)[0..5] as recentAssessments, count(sa) as totalCheckins
+      RETURN s, recentAssessments, totalCheckins
+    `, { id });
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    const record = result.records[0];
+    const s = record.get('s').properties;
+    const recent = record.get('recentAssessments').filter(Boolean).map(sa => sa.properties);
+    const totalCheckins = record.get('totalCheckins').toInt();
+
+    res.json({
+      id: s.id,
+      name: s.name,
+      englishName: s.englishName || null,
+      chineseName: s.chineseName || null,
+      city: s.city || null,
+      yearsPractice: s.yearsPractice || null,
+      lastAsana: s.lastAsana || null,
+      difficulties: s.difficulties || [],
+      injury: s.injury || null,
+      classType: s.classType || null,
+      oriented: s.oriented || false,
+      totalCheckins,
+      recentAssessments: recent
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// GET /api/journal/profiles - Bulk fetch all student profiles (for teacher summary cards)
+router.get('/profiles', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const result = await session.run(`
+      MATCH (s:Student {classType: 'chinese-workshop'})
+      WHERE s.oriented = true
+      OPTIONAL MATCH (s)-[:HAS_SELF_ASSESSMENT]->(sa:SelfAssessment)
+      WITH s, sa ORDER BY sa.checkedInAt DESC
+      WITH s, collect(sa)[0..3] as recentAssessments, count(sa) as totalCheckins
+      RETURN s.id as id, s.name as name, s.englishName as englishName, 
+             s.chineseName as chineseName, s.city as city,
+             s.yearsPractice as yearsPractice, s.lastAsana as lastAsana,
+             s.difficulties as difficulties, s.injury as injury,
+             s.classType as classType, totalCheckins,
+             recentAssessments
+      ORDER BY s.name
+    `);
+
+    const profiles = result.records.map(r => ({
+      id: r.get('id'),
+      name: r.get('name'),
+      englishName: r.get('englishName'),
+      chineseName: r.get('chineseName'),
+      city: r.get('city'),
+      yearsPractice: r.get('yearsPractice'),
+      lastAsana: r.get('lastAsana'),
+      difficulties: r.get('difficulties'),
+      injury: r.get('injury'),
+      classType: r.get('classType'),
+      totalCheckins: r.get('totalCheckins').toInt(),
+      recentAssessments: r.get('recentAssessments').filter(Boolean).map(sa => sa.properties)
+    }));
+
+    res.json({ profiles, count: profiles.length });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
 // GET /api/journal/qr/:studentId - Get QR code for student
 router.get('/qr/:studentId', async (req, res) => {
   try {
@@ -318,6 +407,59 @@ router.post('/qr/batch', async (req, res) => {
     }
 
     res.json({ success: true, qrcodes: results });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// GET /api/journal/comments/:studentId - Get teacher comments for a student (student-facing)
+router.get('/comments/:studentId', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { studentId } = req.params;
+
+    const result = await session.run(`
+      MATCH (tc:TeacherComment)-[:ABOUT_STUDENT]->(s:Student)
+      WHERE s.studentId = $studentId OR s.id = $studentId
+      RETURN tc.id AS id, tc.teacher_name AS teacherName,
+             tc.comment AS comment, tc.week_label AS weekLabel,
+             tc.is_read AS isRead, tc.created_at AS createdAt
+      ORDER BY tc.created_at DESC
+      LIMIT 10
+    `, { studentId });
+
+    const comments = result.records.map(r => ({
+      id: r.get('id'),
+      teacherName: r.get('teacherName'),
+      comment: r.get('comment'),
+      weekLabel: r.get('weekLabel'),
+      isRead: r.get('isRead'),
+      createdAt: r.get('createdAt')
+    }));
+
+    res.json({ comments, count: comments.length });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// POST /api/journal/comments/read - Mark comment as read (student confirms)
+router.post('/comments/read', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { commentId } = req.body;
+    if (!commentId) return res.status(400).json({ error: 'commentId is required' });
+
+    await session.run(
+      'MATCH (tc:TeacherComment {id: $commentId}) SET tc.is_read = true RETURN tc',
+      { commentId }
+    );
+
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

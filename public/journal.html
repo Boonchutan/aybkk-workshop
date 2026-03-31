@@ -74,6 +74,62 @@
     .badge-huizhou { background: #FFF3E0; color: #E65100; }
     .badge-bangkok { background: #E3F2FD; color: #1565C0; }
     
+    /* Student Summary Modal */
+    .summary-modal {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4); z-index: 1000; overflow-y: auto;
+      padding: 40px 16px;
+    }
+    .summary-modal.show { display: flex; justify-content: center; align-items: flex-start; }
+    .summary-card {
+      background: #fff; border-radius: 16px; max-width: 420px; width: 100%;
+      padding: 0; box-shadow: 0 8px 32px rgba(0,0,0,0.15); overflow: hidden;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .summary-header {
+      background: linear-gradient(135deg, #5d4037, #795548); padding: 24px 20px 20px;
+      text-align: center; position: relative;
+    }
+    .summary-close {
+      position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.2);
+      border: none; width: 32px; height: 32px; border-radius: 50%; color: #fff;
+      font-size: 16px; cursor: pointer;
+    }
+    .summary-avatar {
+      width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.3);
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;
+      font-size: 28px; color: #fff;
+    }
+    .summary-name { font-size: 20px; font-weight: 700; color: #fff; }
+    .summary-subtitle { font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 4px; }
+    .summary-body { padding: 20px; }
+    .summary-section { margin-bottom: 16px; }
+    .summary-section-title { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .summary-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-label { color: #888; }
+    .summary-value { font-weight: 500; color: #333; text-align: right; max-width: 60%; }
+    .summary-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .summary-tag { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+    .tag-difficulty { background: #FFF3E0; color: #E65100; }
+    .tag-stable { background: #E8F5E9; color: #2E7D32; }
+    .tag-injury { background: #FFEBEE; color: #C62828; }
+    .summary-injury { background: #FFF8E1; border-left: 3px solid #FFB300; padding: 10px 12px; border-radius: 0 8px 8px 0; font-size: 13px; color: #5D4037; line-height: 1.5; }
+    .summary-teacher-note {
+      background: #F3E5F5; border-radius: 8px; padding: 12px; margin-top: 12px;
+    }
+    .summary-teacher-note textarea {
+      width: 100%; border: none; background: transparent; font-family: inherit;
+      font-size: 14px; resize: none; min-height: 60px; color: #333;
+    }
+    .summary-teacher-note textarea:focus { outline: none; }
+    .summary-teacher-note .save-btn {
+      background: #7B1FA2; color: #fff; border: none; padding: 8px 16px;
+      border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 8px;
+    }
+    .summary-who { font-size: 13px; color: #666; line-height: 1.6; background: #FAFAFA; padding: 12px; border-radius: 8px; }
+    
     /* Loading */
     .loading { text-align: center; padding: 40px; color: #888; }
     
@@ -135,6 +191,13 @@
     <div class="hint">Students open link → save to phone → fill after practice</div>
   </div>
 
+  <!-- Student Summary Modal -->
+  <div id="summaryModal" class="summary-modal" onclick="if(event.target===this)closeSummary()">
+    <div class="summary-card" id="summaryCard">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
   <script>
     // Huizhou student IDs (from workshop-qr-urls.md)
     const HUIZHOU_IDS = [
@@ -183,6 +246,38 @@
     let currentLocation = 'huizhou';
     let historyLocation = 'huizhou';
     let allStudents = [];
+    let allProfiles = {};
+
+    // Student orientation profiles (from intake forms)
+    const STUDENT_PROFILES = [
+      {name:"Amy Yu",cn:"于贝贝",city:"Huizhou",yrs:"10+",last:"Bakasana",diff:["backbend","inversion","core"],inj:"Right shoulder pain, lower back discomfort in deep backbends, left knee pain in leg-behind-head"},
+      {name:"Beibei",cn:"北辰",city:"ZhuHai",yrs:"5-10",last:"Baddha Hasta Sirsasana A-D",diff:["inversion","balance","core"],inj:""},
+      {name:"CHEN YUN",cn:"陈云",city:"雄安新区",yrs:"3-5",last:"Urdhva Dhanurasana",diff:["backbend","shoulder"],inj:"Waist injury, left shoulder"},
+      {name:"Carrie Bai",cn:"白雪云",city:"Shenzhen",yrs:"10+",last:"Pincha",diff:["inversion","core"],inj:""},
+      {name:"Chang Chia Fen",cn:"張嘉芬",city:"Kaohsiung",yrs:"3-5",last:"Yoganidrasana",diff:["backbend","core"],inj:""},
+      {name:"Deer",cn:"谢.丽君",city:"深圳",yrs:"10+",last:"Eka Pada Sirsasana",diff:["hip-opening","twist"],inj:"Right knee ligament & meniscus injury — cannot do lotus or hip-opening. Handle with care."},
+      {name:"Gina",cn:"谢礼群",city:"惠州",yrs:"3-5",last:"Kapotasana",diff:["shoulder","core"],inj:""},
+      {name:"Jnana",cn:"隋洪乙",city:"吉林",yrs:"1-3",last:"—",diff:["forward-fold","hip-opening","backbend","inversion","balance","twist","shoulder","core"],inj:"Shoulder pain. Beginner — needs encouragement."},
+      {name:"Lily",cn:"郑莉",city:"Guangzhou",yrs:"1-3",last:"Kapo",diff:["shoulder","core"],inj:""},
+      {name:"Maggie yang",cn:"杨小凤",city:"Huizhou",yrs:"1-3",last:"Bakasana B",diff:["hip-opening","backbend","shoulder","core"],inj:"Complex: tight breath, lower back/tailbone mobility issues, cannot reach heels in Kapotasana, inconsistent backbends. Has 2 specific questions about bandha engagement and practice modification."},
+      {name:"Qiao",cn:"乔乔",city:"Shanghai",yrs:"1-3",last:"Kapotasana",diff:["hip-opening","backbend"],inj:"Knee — posterior meniscus corner injury"},
+      {name:"Rena",cn:"刘建梅",city:"Beijing",yrs:"3-5",last:"Primary Series",diff:["backbend"],inj:"Right wrist pain for 3 months during backbends. OK in support poses."},
+      {name:"RongJun",cn:"李蓉君",city:"甘肃兰州",yrs:"5-10",last:"Kapotasana",diff:["hip-opening","backbend","inversion","shoulder","core"],inj:""},
+      {name:"Sharma",cn:"小马",city:"广州",yrs:"5-10",last:"Parighasana",diff:["backbend","inversion","shoulder"],inj:"Fell twice doing handstand → wheel. Shoulder/back injured. Currently recovering."},
+      {name:"Skyler",cn:"曲学明(小辣椒)",city:"青岛",yrs:"1-3",last:"Pinchamyurasana",diff:["inversion","balance","core"],inj:"Chest fascia strain from jumping. Still practiceable, go slow."},
+      {name:"Staya Ji",cn:"吉庆端",city:"云南昆明",yrs:"3-5",last:"Pincha Mayurasana",diff:["hip-opening","backbend","inversion","core"],inj:"Right leg tension when doing leg-behind-head if not open enough"},
+      {name:"Wen Luo",cn:"骆文",city:"ShenZhen",yrs:"1-3",last:"Supta Kurmasana",diff:["hip-opening","backbend"],inj:"Right upper back injury — cannot do deep backbends or lift head"},
+      {name:"XIEYING",cn:"XIEYING",city:"SHIVHUAN",yrs:"5-10",last:"Purna Matsyendrasana",diff:[],inj:"Left thigh fracture history, right rib compression/cracking. Advanced practitioner."},
+      {name:"chen",cn:"邢晨晨",city:"青岛",yrs:"1-3",last:"Pincha",diff:["hip-opening","backbend","inversion","balance","twist"],inj:""},
+      {name:"ekam",cn:"一权",city:"Huizhou",yrs:"3-5",last:"Ardha Matsyendrasana",diff:["hip-opening","inversion"],inj:"Shoulder"},
+      {name:"shelley Wang",cn:"汪晓红",city:"广州",yrs:"5-10",last:"Kapotasana",diff:["backbend","inversion","balance","shoulder","core"],inj:""}
+    ];
+
+    // Index by multiple name variants
+    STUDENT_PROFILES.forEach(p => {
+      allProfiles[p.name.toLowerCase()] = p;
+      if (p.cn) allProfiles[p.cn] = p;
+    });
 
     function isHuizhou(id) { return HUIZHOU_IDS.includes(id); }
 
@@ -233,11 +328,15 @@
         const badge = hz ? '<span class="badge badge-huizhou">Huizhou</span>' : '';
         const checkins = s.assessmentCount || 0;
         const lastDate = s.lastAssessment ? new Date(s.lastAssessment.checkedInAt).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : 'none yet';
+        const profile = allProfiles[s.name.toLowerCase()] || allProfiles[s.name] || null;
+        const hasProfile = !!profile;
+        const profileIcon = hasProfile ? ' 👤' : '';
+        const clickAction = hasProfile ? `onclick="showSummary('${s.name.replace(/'/g,"\\'")}')"` : '';
         html += `
           <div class="student-item">
-            <div class="info">
-              <div class="name">${s.name}${badge}</div>
-              <div class="meta">${checkins} check-ins · Last: ${lastDate}</div>
+            <div class="info" ${clickAction} style="${hasProfile ? 'cursor:pointer;' : ''}">
+              <div class="name">${s.name}${badge}${profileIcon}</div>
+              <div class="meta">${checkins} check-ins · Last: ${lastDate}${hasProfile ? ' · Tap for profile' : ''}</div>
             </div>
             <button class="qr-btn" onclick="showQR('${s.id}','${s.name.replace(/'/g,"\\'")}')">📱 QR</button>
           </div>`;
@@ -308,6 +407,69 @@
           </div>`;
       });
       document.getElementById('historyList').innerHTML = html;
+    }
+
+    // Student Summary Modal
+    function showSummary(name) {
+      const p = allProfiles[name.toLowerCase()] || allProfiles[name];
+      if (!p) return;
+      
+      const initials = (p.name || '?').charAt(0).toUpperCase();
+      const diffTags = (p.diff || []).map(d => 
+        `<span class="summary-tag tag-difficulty">${d.replace(/-/g,' ')}</span>`
+      ).join('');
+      
+      let injuryHtml = '';
+      if (p.inj && p.inj.trim() && p.inj !== 'None' && p.inj !== 'Non.') {
+        injuryHtml = `<div class="summary-section">
+          <div class="summary-section-title">⚠️ Injuries / Watch Areas</div>
+          <div class="summary-injury">${p.inj.substring(0, 300)}${p.inj.length > 300 ? '...' : ''}</div>
+        </div>`;
+      }
+      
+      const html = `
+        <div class="summary-header">
+          <button class="summary-close" onclick="closeSummary()">✕</button>
+          <div class="summary-avatar">${initials}</div>
+          <div class="summary-name">${p.name}</div>
+          <div class="summary-subtitle">${p.cn ? p.cn + ' · ' : ''}${p.city || ''}</div>
+        </div>
+        <div class="summary-body">
+          <div class="summary-section">
+            <div class="summary-section-title">📋 Profile</div>
+            <div class="summary-row"><span class="summary-label">Years of practice</span><span class="summary-value">${p.yrs || '—'}</span></div>
+            <div class="summary-row"><span class="summary-label">Last asana reached</span><span class="summary-value">${p.last || '—'}</span></div>
+          </div>
+          ${diffTags ? `<div class="summary-section"><div class="summary-section-title">🎯 Difficulty Areas</div><div class="summary-tags">${diffTags}</div></div>` : ''}
+          ${injuryHtml}
+          <div class="summary-who">
+            <strong>💡 Who is this person?</strong><br>
+            ${p.name}${p.cn ? ' ('+p.cn+')' : ''} from ${p.city || 'unknown'} · ${p.yrs || '?'} years of practice · 
+            Currently working on <strong>${p.last || 'fundamentals'}</strong>.
+            ${p.diff && p.diff.length > 0 ? `Main challenges: <strong>${p.diff.join(', ')}</strong>.` : ''}
+            ${p.inj && p.inj.trim() && p.inj !== 'None' ? `<br>⚠️ <em>Be mindful of: ${p.inj.substring(0, 120)}${p.inj.length > 120 ? '...' : ''}</em>` : ''}
+          </div>
+          <div class="summary-teacher-note">
+            <div class="summary-section-title">✍️ Your Note (for this student)</div>
+            <textarea placeholder="Write your feedback here... e.g. 'Great progress on Kapotasana, keep working on hip opening.'" id="teacherNote_${p.name.replace(/[^a-zA-Z]/g,'')}"></textarea>
+            <button class="save-btn" onclick="alert('Note saved! (TODO: connect to API)')">Save Note 📝</button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('summaryCard').innerHTML = html;
+      document.getElementById('summaryModal').classList.add('show');
+    }
+    
+    function closeSummary() {
+      document.getElementById('summaryModal').classList.remove('show');
+    }
+    
+    async function saveTeacherNote(studentId) {
+      const note = document.getElementById('teacherNote_' + studentId).value;
+      if (!note.trim()) return;
+      // TODO: POST to teacher comment API
+      alert('Note saved! (TODO: connect to teacher comment API)\n\n' + note);
     }
 
     // Init — default to Huizhou

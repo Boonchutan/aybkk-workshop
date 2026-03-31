@@ -613,6 +613,19 @@
       <button type="submit" class="submit-btn" id="submitBtn">Save Assessment</button>
     </form>
 
+    <!-- Teacher Comment -->
+    <div class="assessment-history hidden" id="commentSection">
+      <div class="history-title">💬 Weekly Comment for Student</div>
+      <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">This comment will appear on the student's journal page.</p>
+      <div style="margin-bottom:10px;">
+        <input type="text" id="weekLabel" placeholder="e.g. Week 1, Day 3..." style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;margin-bottom:8px;" />
+        <textarea id="teacherComment" placeholder="Write your feedback for the student..." rows="4" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;resize:vertical;font-family:inherit;"></textarea>
+      </div>
+      <button type="button" id="sendCommentBtn" style="width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;">Send Comment to Student</button>
+      <div id="commentSuccess" style="display:none;text-align:center;padding:12px;background:var(--success-bg);color:var(--success);border-radius:var(--radius-sm);margin-top:10px;font-weight:500;">✓ Comment sent!</div>
+      <div id="pastComments" style="margin-top:16px;"></div>
+    </div>
+
     <!-- Assessment History -->
     <div class="assessment-history hidden" id="historySection">
       <div class="history-title" id="historyTitle">Recent Assessments</div>
@@ -697,8 +710,10 @@
       document.getElementById('selectedStudent').classList.add('visible');
       document.getElementById('selectedName').textContent = name;
       document.getElementById('assessmentForm').classList.remove('hidden');
+      document.getElementById('commentSection').classList.remove('hidden');
       
       loadStudentHistory(id);
+      loadStudentComments(id);
     }
 
     function clearStudent() {
@@ -709,7 +724,11 @@
       document.getElementById('selectedStudent').classList.remove('visible');
       document.getElementById('assessmentForm').classList.add('hidden');
       document.getElementById('historySection').classList.add('hidden');
+      document.getElementById('commentSection').classList.add('hidden');
       document.getElementById('studentSearch').value = '';
+      document.getElementById('teacherComment').value = '';
+      document.getElementById('weekLabel').value = '';
+      document.getElementById('commentSuccess').style.display = 'none';
       renderStudentList(students);
     }
 
@@ -891,6 +910,79 @@
         }
       });
     }
+
+    // ============ TEACHER COMMENTS ============
+    async function loadStudentComments(studentId) {
+      try {
+        const res = await fetch(`/api/teacher/comments/${studentId}`);
+        const data = await res.json();
+        renderPastComments(data.comments || []);
+      } catch (e) {
+        console.error('Failed to load comments', e);
+      }
+    }
+
+    function renderPastComments(comments) {
+      const container = document.getElementById('pastComments');
+      if (!comments.length) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = '<div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">Past Comments</div>' +
+        comments.map(c => {
+          const date = new Date(c.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          const readBadge = c.isRead ? '<span style="color:var(--success);font-size:11px;">✓ Read</span>' : '<span style="color:var(--accent);font-size:11px;">● Unread</span>';
+          return `<div style="background:#f9f9f9;border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;font-weight:600;">${c.weekLabel || ''}</span>
+              <span>${readBadge}</span>
+            </div>
+            <div style="font-size:13px;color:#333;line-height:1.4;">${c.comment}</div>
+            <div style="font-size:11px;color:#999;margin-top:4px;">${c.teacherName} · ${date}</div>
+          </div>`;
+        }).join('');
+    }
+
+    document.getElementById('sendCommentBtn').addEventListener('click', async () => {
+      if (!selectedStudentId) { alert('Select a student first'); return; }
+      const comment = document.getElementById('teacherComment').value.trim();
+      if (!comment) { alert('Write a comment first'); return; }
+
+      const teacher = document.getElementById('teacherName').value || 'Boonchu';
+      const weekLabel = document.getElementById('weekLabel').value.trim() || '';
+
+      const btn = document.getElementById('sendCommentBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        const res = await fetch('/api/teacher/comment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentId: selectedStudentId,
+            teacherName: teacher,
+            comment,
+            weekLabel
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('commentSuccess').style.display = 'block';
+          document.getElementById('teacherComment').value = '';
+          document.getElementById('weekLabel').value = '';
+          loadStudentComments(selectedStudentId);
+          setTimeout(() => { document.getElementById('commentSuccess').style.display = 'none'; }, 3000);
+        } else {
+          alert('Error: ' + (data.error || 'Unknown'));
+        }
+      } catch (e) {
+        alert('Failed to send comment');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Comment to Student';
+      }
+    });
   </script>
 </body>
 </html>
