@@ -1,988 +1,420 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Teacher Assessment - AYBKK</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Teacher Assessment — AYBKK</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+:root{--bg:#FAF9F7;--card:#FFF;--border:#E8E5E0;--text:#1A1A1A;--muted:#8B8680;--accent:#D4A574;--accent-light:#F5EDE4;--accent-hover:#C49564;--success:#6B9E6B;--success-bg:#EEF5EE;--red:#c0392b;--red-bg:#fce4ec;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.06);--radius:14px;--radius-sm:10px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:480px;margin:0 auto;padding:20px 16px 40px}
+.header{text-align:center;margin-bottom:20px}
+.header h1{font-size:20px;font-weight:600;letter-spacing:-.3px}
+.header p{font-size:13px;color:var(--muted);margin-top:4px}
+.logo{text-align:center;margin-bottom:12px}
+.logo img{width:60px;height:60px;border-radius:50%;object-fit:cover;opacity:.85}
 
-    :root {
-      --bg: #FAF9F7;
-      --card: #FFFFFF;
-      --border: #E8E5E0;
-      --text: #1A1A1A;
-      --text-secondary: #8B8680;
-      --accent: #D4A574;
-      --accent-light: #F5EDE4;
-      --accent-hover: #C49564;
-      --success: #6B9E6B;
-      --success-bg: #EEF5EE;
-      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-      --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
-      --radius: 14px;
-      --radius-sm: 10px;
-      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+/* Student selector */
+.student-select{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.student-select label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.student-select select{width:100%;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;margin-top:8px;background:#fff}
+.selected-student{text-align:center;padding:10px;margin-top:10px;background:var(--accent-light);border-radius:var(--radius-sm);font-weight:600;font-size:16px}
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+/* Journal summary */
+.journal-summary{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.journal-summary h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--accent-hover)}
+.j-entry{background:#faf8f5;border-radius:8px;padding:10px;margin-bottom:8px;font-size:12px}
+.j-date{font-weight:600;color:var(--accent-hover);margin-bottom:4px}
+.j-row{margin-bottom:3px;line-height:1.4}
+.j-label{font-weight:600;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.j-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500}
+.badge-stable{background:#e8f5e9;color:#2e7d32}
+.badge-difficult{background:#fce4ec;color:#c62828}
 
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      min-height: 100vh;
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-    }
+/* Cards */
+.card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.section-title{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.section-title .icon{font-size:16px}
 
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px 16px 40px;
-    }
+/* Tags */
+.tag-group{display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;user-select:none}
+.tag.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent-hover)}
+.tag.weakness.active{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 
-    /* Header */
-    .header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .header h1 {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.3px;
-    }
-    .header p {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
+/* Buttons */
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:8px 16px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent-hover)}
+.btn-pass.active{background:var(--success-bg);border-color:var(--success);color:var(--success)}
+.btn-hold.active{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 
-    /* Logo */
-    .logo {
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .logo img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      object-fit: cover;
-      opacity: 0.85;
-    }
+input[type=text],textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-family:inherit;resize:vertical;margin-top:6px}
+input:focus,textarea:focus{outline:none;border-color:var(--accent)}
 
-    /* Stats bar */
-    .stats-bar {
-      background: var(--accent-light);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
-      margin-bottom: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-    }
-    .stats-bar .count {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .stats-bar .teachers {
-      color: var(--text-secondary);
-      font-size: 13px;
-    }
+/* Submit */
+.submit-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;background:var(--accent);color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px}
+.submit-btn:hover{background:var(--accent-hover)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
 
-    /* Success message */
-    .success-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(250,249,247,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .success-box {
-      text-align: center;
-      max-width: 300px;
-      padding: 16px;
-    }
-    .success-icon {
-      width: 64px;
-      height: 64px;
-      background: var(--success-bg);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 28px;
-    }
-    .success-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    .success-msg {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
+/* History */
+.history-item{background:#faf8f5;border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;line-height:1.4}
+.history-date{font-weight:600;color:var(--accent-hover);margin-bottom:4px}
+.history-row{margin-bottom:2px}
 
-    /* Cards */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px 20px;
-      box-shadow: var(--shadow);
-      margin-bottom: 16px;
-    }
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;display:none;z-index:100}
 
-    .section-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .section-title .icon {
-      font-size: 18px;
-    }
-
-    /* Search box */
-    .search-box {
-      position: relative;
-      margin-bottom: 10px;
-    }
-    .search-box input {
-      width: 100%;
-      padding: 12px 14px 12px 38px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-size: 15px;
-      font-family: inherit;
-      background: var(--bg);
-      color: var(--text);
-      transition: border-color var(--transition);
-    }
-    .search-box input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    .search-box::before {
-      content: '🔍';
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 14px;
-    }
-
-    /* Student list */
-    .student-list {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      max-height: 180px;
-      overflow-y: auto;
-    }
-    .student-item {
-      padding: 12px 14px;
-      cursor: pointer;
-      border-bottom: 1px solid var(--border);
-      transition: background var(--transition);
-    }
-    .student-item:last-child {
-      border-bottom: none;
-    }
-    .student-item:hover {
-      background: var(--accent-light);
-    }
-    .student-item.selected {
-      background: var(--accent-light);
-    }
-    .student-item .name {
-      font-weight: 500;
-      font-size: 14px;
-    }
-    .student-item .meta {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-
-    /* Selected student badge */
-    .selected-student {
-      display: none;
-      padding: 14px 16px;
-      background: var(--accent-light);
-      border: 1.5px solid var(--accent);
-      border-radius: var(--radius-sm);
-      margin-bottom: 16px;
-      text-align: center;
-    }
-    .selected-student.visible {
-      display: block;
-    }
-    .selected-student .name {
-      font-weight: 600;
-      font-size: 15px;
-      color: var(--accent);
-    }
-    .selected-student .change {
-      font-size: 13px;
-      color: var(--text-secondary);
-      cursor: pointer;
-      margin-top: 4px;
-    }
-    .selected-student .change:hover {
-      color: var(--accent);
-    }
-
-    /* Teacher select */
-    .teacher-select {
-      display: flex;
-      gap: 8px;
-    }
-    .teacher-btn {
-      flex: 1;
-      padding: 12px 8px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--card);
-      cursor: pointer;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 500;
-      font-family: inherit;
-      color: var(--text);
-      transition: all var(--transition);
-    }
-    .teacher-btn:hover {
-      border-color: var(--accent);
-      background: var(--accent-light);
-    }
-    .teacher-btn.selected {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    /* Button groups (radio-style) */
-    .btn-group {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .btn {
-      padding: 10px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--card);
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      font-family: inherit;
-      color: var(--text);
-      transition: all var(--transition);
-      white-space: nowrap;
-    }
-    .btn:hover {
-      border-color: var(--accent);
-      background: var(--accent-light);
-    }
-    .btn.selected {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-    .btn-pass {
-      border-color: var(--success);
-      color: var(--success);
-    }
-    .btn-pass:hover {
-      background: var(--success-bg);
-      border-color: var(--success);
-    }
-    .btn-pass.selected {
-      background: var(--success);
-      color: #fff;
-      border-color: var(--success);
-    }
-    .btn-hold {
-      border-color: #cc6600;
-      color: #cc6600;
-    }
-    .btn-hold:hover {
-      background: #fff5e6;
-      border-color: #cc6600;
-    }
-    .btn-hold.selected {
-      background: #cc6600;
-      color: #fff;
-      border-color: #cc6600;
-    }
-
-    /* Tag groups (checkbox-style) */
-    .tag-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .tag-btn {
-      padding: 8px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      background: var(--card);
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      font-family: inherit;
-      color: var(--text-secondary);
-      transition: all var(--transition);
-    }
-    .tag-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .tag-btn.selected {
-      background: var(--accent-light);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* Text inputs */
-    input[type="text"],
-    textarea {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      font-family: inherit;
-      background: var(--bg);
-      color: var(--text);
-      transition: border-color var(--transition);
-      resize: vertical;
-    }
-    input[type="text"]:focus,
-    textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    input[type="text"]::placeholder,
-    textarea::placeholder {
-      color: var(--text-secondary);
-    }
-    textarea {
-      min-height: 80px;
-    }
-
-    /* Submit button */
-    .submit-btn {
-      width: 100%;
-      padding: 15px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-size: 15px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all var(--transition);
-      margin-top: 8px;
-    }
-    .submit-btn:hover {
-      background: var(--accent-hover);
-    }
-    .submit-btn:active {
-      transform: scale(0.98);
-    }
-    .submit-btn:disabled {
-      background: var(--border);
-      color: var(--text-secondary);
-      cursor: not-allowed;
-    }
-
-    /* Assessment history */
-    .assessment-history {
-      margin-top: 8px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-    }
-    .history-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: var(--text-secondary);
-    }
-    .history-item {
-      background: var(--accent-light);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      margin-bottom: 10px;
-      font-size: 13px;
-    }
-    .history-item .header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .history-item .teacher {
-      font-weight: 500;
-      color: var(--accent);
-    }
-    .history-item .date {
-      color: var(--text-secondary);
-    }
-    .history-item .detail {
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-  </style>
+/* Success overlay */
+.success-overlay{position:fixed;inset:0;background:rgba(250,249,247,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;display:none}
+.success-overlay .icon{font-size:48px;margin-bottom:16px}
+.success-overlay h2{font-size:18px;margin-bottom:8px}
+.success-overlay p{color:var(--muted);font-size:13px}
+</style>
 </head>
 <body>
-  <div class="container">
-    <!-- Logo -->
-    <div class="logo">
-      <img src="/aybkk-logo.jpg" alt="AYBKK">
-    </div>
+<div class="container">
 
-    <!-- Header -->
-    <div class="header">
-      <div style="text-align:center;margin-bottom:12px;">
-        <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:56px;height:56px;border-radius:50%;object-fit:cover;opacity:0.85;">
-      </div>
-      <h1 id="pageTitle">Teacher Assessment</h1>
-      <p id="pageSubtitle">Record student progress after class</p>
-    </div>
+<div class="logo"><img src="https://aybkk-ashtanga.up.railway.app/logo.png" onerror="this.style.display='none'" alt="AYBKK"></div>
+<div class="header">
+  <h1>Teacher Assessment</h1>
+  <p>Record student progress after class</p>
+</div>
 
-    <!-- Stats bar -->
-    <div class="stats-bar">
-      <div>
-        <span class="count" id="todayCount">0</span>
-        <span style="color: var(--text-secondary); font-size: 13px;"> assessments today</span>
-      </div>
-      <div class="teachers" id="todayTeachers">-</div>
-    </div>
+<!-- Student Selector -->
+<div class="student-select">
+  <label>Select Student</label>
+  <select id="studentSelect" onchange="selectStudent()">
+    <option value="">— Choose a student —</option>
+  </select>
+  <div class="selected-student" id="selectedStudent" style="display:none"></div>
+</div>
 
-    <!-- Success message -->
-    <div class="success-overlay hidden" id="successOverlay">
-      <div class="success-box">
-        <div class="success-icon">✅</div>
-        <div class="success-title" id="successTitle">Assessment Saved!</div>
-        <div class="success-msg" id="successSub">Saved successfully</div>
-      </div>
-    </div>
+<!-- Journal Summary (shown when student selected) -->
+<div class="journal-summary" id="journalSection" style="display:none">
+  <h3>📖 Recent Journal Entries</h3>
+  <div id="journalEntries"></div>
+</div>
 
-    <!-- Step 1: Select Student -->
-    <div class="card" id="studentSection">
-      <div class="section-title">
-        <span class="icon">👤</span> <span id="studentLabel">Select Student</span>
-      </div>
-      <div class="search-box">
-        <input type="search" id="studentSearch" placeholder="Search by name..." autocomplete="off">
-      </div>
-      <div class="student-list" id="studentList">
-        <div class="student-item" style="color:var(--text-secondary);text-align:center;">Type to search students</div>
-      </div>
-    </div>
+<!-- Assessment Form (shown when student selected) -->
+<div id="assessmentForm" style="display:none">
 
-    <!-- Selected student badge -->
-    <div class="selected-student" id="selectedStudent">
-      <div class="name" id="selectedName">-</div>
-      <div class="change" onclick="clearStudent()" id="changeBtn">← Change student</div>
-    </div>
-
-    <!-- Assessment Form -->
-    <form id="assessmentForm" class="hidden">
-      <!-- Teacher Name -->
-      <div class="card">
-        <div class="section-title">
-          <span class="icon">👨‍🏫</span> <span id="teacherLabel">Teacher</span>
-        </div>
-        <div class="teacher-select" id="teacherSelect">
-          <button type="button" class="teacher-btn" data-value="Boonchu">Boonchu</button>
-          <button type="button" class="teacher-btn" data-value="Jamsai">Jamsai</button>
-          <button type="button" class="teacher-btn" data-value="M">M</button>
-        </div>
-        <input type="hidden" id="teacherName" name="teacherName" required>
-      </div>
-
-      <!-- Energy Level -->
-      <div class="card">
-        <div class="section-title">
-          <span class="icon">⚡</span> <span id="energyLabel">Energy Level</span>
-        </div>
-        <div class="btn-group" id="energyGroup">
-          <button type="button" class="btn" data-field="energy" data-value="high">🔴 High</button>
-          <button type="button" class="btn" data-field="energy" data-value="medium">🟡 Medium</button>
-          <button type="button" class="btn" data-field="energy" data-value="low">⚪ Low</button>
-        </div>
-        <input type="hidden" id="energy" name="energy">
-      </div>
-
-      <!-- Practice Consistency -->
-      <div class="card">
-        <div class="section-title">
-          <span class="icon">🔁</span> <span id="consistencyLabel">Practice Consistency</span>
-        </div>
-        <div class="btn-group" id="consistencyGroup">
-          <button type="button" class="btn" data-field="practiceConsistency" data-value="proper_vinyasa">🟢 Proper Vinyasa</button>
-          <button type="button" class="btn" data-field="practiceConsistency" data-value="rest_often">🟡 Rest Often</button>
-          <button type="button" class="btn" data-field="practiceConsistency" data-value="too_much_distractions">🔴 Too Distracted</button>
-        </div>
-        <input type="hidden" id="practiceConsistency" name="practiceConsistency">
-      </div>
-
-      <!-- Practice Flow -->
-      <div class="card">
-        <div class="section-title">
-          <span class="icon">🏃</span> <span id="flowLabel">Practice Flow</span>
-        </div>
-        <div class="btn-group" id="flowGroup">
-          <button type="button" class="btn" data-field="behavior" data-value="proper_vinyasa">🟢 Good Flow</button>
-          <button type="button" class="btn" data-field="behavior" data-value="rest_often">🟡 Interrupted</button>
-          <button type="button" class="btn" data-field="behavior" data-value="too_much_distractions">🔴 Rough</button>
-        </div>
-        <input type="hidden" id="behavior" name="behavior">
-      </div>
-
-      <!-- Strengths -->
-      <div class="card" id="strengthsSection">
-        <div class="section-title">
-          <span class="icon">💪</span> <span id="strengthsLabel">Strengths</span>
-        </div>
-        <div class="tag-group" id="strengthsTags"></div>
-      </div>
-
-      <!-- Weaknesses -->
-      <div class="card" id="weaknessesSection">
-        <div class="section-title">
-          <span class="icon">📌</span> <span id="weaknessesLabel">Weaknesses</span>
-        </div>
-        <div class="tag-group" id="weaknessesTags"></div>
-      </div>
-
-      <!-- Last Asana -->
-      <div class="card">
-        <div class="section-title">
-          <span class="icon">📹</span> <span id="asanaLabel">Last Asana Learned</span>
-        </div>
-        <input type="text" id="lastAsana" name="lastAsana" placeholder="e.g., Marichyasana C" style="margin-top:4px;">
-      </div>
-
-      <!-- Pass/Hold Vote -->
-      <div class="card">
-        <div class="section-title">
-          <span class="icon">🗳️</span> <span id="passLabel">Ready for Next Asana?</span>
-        </div>
-        <div class="btn-group" id="passGroup">
-          <button type="button" class="btn btn-pass" data-field="lastAsanaPass" data-value="true">✅ PASS</button>
-          <button type="button" class="btn btn-hold" data-field="lastAsanaPass" data-value="false">⏸️ HOLD</button>
-        </div>
-        <input type="hidden" id="lastAsanaPass" name="lastAsanaPass">
-      </div>
-
-      <!-- To Fix -->
-      <div class="card">
-        <div class="section-title">
-          <span class="icon">🔧</span> <span id="fixLabel">What to Fix First</span>
-        </div>
-        <textarea id="toFix" name="toFix" placeholder="Short description of focus area..." style="margin-top:4px;"></textarea>
-      </div>
-
-      <!-- Notes -->
-      <div class="card">
-        <div class="section-title">
-          <span class="icon">📝</span> <span id="notesLabel">Additional Notes</span>
-        </div>
-        <textarea id="notes" name="notes" placeholder="Optional notes..." style="margin-top:4px;"></textarea>
-      </div>
-
-      <button type="submit" class="submit-btn" id="submitBtn">Save Assessment</button>
-    </form>
-
-    <!-- Teacher Comment -->
-    <div class="assessment-history hidden" id="commentSection">
-      <div class="history-title">💬 Weekly Comment for Student</div>
-      <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">This comment will appear on the student's journal page.</p>
-      <div style="margin-bottom:10px;">
-        <input type="text" id="weekLabel" placeholder="e.g. Week 1, Day 3..." style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;margin-bottom:8px;" />
-        <textarea id="teacherComment" placeholder="Write your feedback for the student..." rows="4" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;resize:vertical;font-family:inherit;"></textarea>
-      </div>
-      <button type="button" id="sendCommentBtn" style="width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;">Send Comment to Student</button>
-      <div id="commentSuccess" style="display:none;text-align:center;padding:12px;background:var(--success-bg);color:var(--success);border-radius:var(--radius-sm);margin-top:10px;font-weight:500;">✓ Comment sent!</div>
-      <div id="pastComments" style="margin-top:16px;"></div>
-    </div>
-
-    <!-- Assessment History -->
-    <div class="assessment-history hidden" id="historySection">
-      <div class="history-title" id="historyTitle">Recent Assessments</div>
-      <div id="historyList"></div>
+  <!-- Energy Level -->
+  <div class="card">
+    <div class="section-title"><span class="icon">⚡</span> Energy Level</div>
+    <div class="btn-group" id="energyGroup">
+      <button type="button" class="btn" data-field="energy" data-value="high">🔴 High</button>
+      <button type="button" class="btn" data-field="energy" data-value="medium">🟡 Medium</button>
+      <button type="button" class="btn" data-field="energy" data-value="low">⚪ Low</button>
     </div>
   </div>
 
-  <script>
-    // State
-    let selectedStudentId = null;
-    let selectedStudentName = null;
-    let students = [];
-    let tags = { strengths: [], weaknesses: [] };
-    let selectedTags = { strengths: [], weaknesses: [] };
+  <!-- Practice Behavior -->
+  <div class="card">
+    <div class="section-title"><span class="icon">🌊</span> Practice Flow</div>
+    <div class="btn-group" id="flowGroup">
+      <button type="button" class="btn" data-field="behavior" data-value="proper_vinyasa">🟢 Good Flow</button>
+      <button type="button" class="btn" data-field="behavior" data-value="rest_often">🟡 Interrupted</button>
+      <button type="button" class="btn" data-field="behavior" data-value="too_much_distractions">🔴 Rough</button>
+    </div>
+  </div>
 
-    // Load data on page load
-    document.addEventListener('DOMContentLoaded', async () => {
-      // Workshop mode
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('classType') === 'chinese-workshop') {
-        document.getElementById('pageTitle').textContent = 'Teacher Assessment — Huizhou Workshop';
-        document.getElementById('pageSubtitle').textContent = 'Boonchu & Jamsai Tanti';
-      }
-      loadTodayStats();
-      loadStudents();
-      loadTags();
-      setupFormHandlers();
+  <!-- Strengths -->
+  <div class="card">
+    <div class="section-title"><span class="icon">💪</span> Strengths</div>
+    <div class="tag-group" id="strengthsTags"></div>
+  </div>
+
+  <!-- Weaknesses -->
+  <div class="card">
+    <div class="section-title"><span class="icon">📌</span> Weaknesses</div>
+    <div class="tag-group" id="weaknessesTags"></div>
+  </div>
+
+  <!-- Last Asana -->
+  <div class="card">
+    <div class="section-title"><span class="icon">🧘</span> Last Asana</div>
+    <input type="text" id="lastAsana" placeholder="e.g., Marichyasana C">
+    <div class="btn-group" id="passGroup" style="margin-top:8px">
+      <button type="button" class="btn btn-pass" data-field="lastAsanaPass" data-value="true">✅ PASS</button>
+      <button type="button" class="btn btn-hold" data-field="lastAsanaPass" data-value="false">⏸️ HOLD</button>
+    </div>
+  </div>
+
+  <!-- To Fix -->
+  <div class="card">
+    <div class="section-title"><span class="icon">🎯</span> To Fix Now</div>
+    <textarea id="toFix" rows="2" placeholder="What should the student focus on next?"></textarea>
+  </div>
+
+  <!-- Teacher Notes -->
+  <div class="card">
+    <div class="section-title"><span class="icon">📝</span> Your Notes</div>
+    <textarea id="teacherNotes" rows="3" placeholder="Overall observation, encouragement, specific feedback..."></textarea>
+  </div>
+
+  <button class="submit-btn" onclick="saveAssessment()">💾 Save Assessment</button>
+  <button class="submit-btn" onclick="saveAndSend()" style="background:var(--success);margin-top:8px">📤 Save & Send to Student</button>
+</div>
+
+<!-- Assessment History -->
+<div id="historySection" style="display:none;margin-top:16px">
+  <h3 style="font-size:14px;font-weight:600;margin-bottom:10px">📋 Assessment History</h3>
+  <div id="historyList"></div>
+</div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Success -->
+<div id="successOverlay" class="success-overlay">
+  <div class="icon">✅</div>
+  <h2>Assessment Saved</h2>
+  <p id="successMsg">Click to continue</p>
+  <button class="submit-btn" style="max-width:200px;margin-top:16px" onclick="hideSuccess()">OK</button>
+</div>
+
+<script>
+// ============ DATA ============
+let students = [];
+let allCheckins = {};
+let formData = { energy: '', behavior: '', lastAsanaPass: '', strengths: [], weaknesses: [] };
+
+const defaultTags = {
+  strengths: ['Bandha', 'Breath', 'Balance', 'Flexibility', 'Strength', 'Focus', 'Patience', 'Jump Through', 'Jump Back', 'Headstand', 'Backbending', 'Hip Opening', 'Consistency', 'Confidence', 'Awareness'],
+  weaknesses: ['Bandha', 'Breath', 'Balance', 'Flexibility', 'Strength', 'Focus', 'Chaturanga', 'Jump Back', 'Jump Through', 'Leg Behind Head', 'Backbending', 'Hip Opening', 'Hamstring', 'Core', 'Shoulder Stability']
+};
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadStudents();
+  renderTags('strengths');
+  renderTags('weaknesses');
+  setupButtonGroups();
+});
+
+// ============ LOAD STUDENTS ============
+async function loadStudents() {
+  const params = new URLSearchParams(window.location.search);
+  const days = params.get('days') || '30';
+  
+  const res = await fetch(`/api/journal/history/${days}`);
+  const data = await res.json();
+  const checkins = data.history || [];
+  
+  // Group by student
+  const studentMap = {};
+  checkins.forEach(c => {
+    const name = c.studentName;
+    if (!name || name === 'Test Workshop Student' || name === '测试学生') return;
+    if (!studentMap[name]) studentMap[name] = { name, id: c.studentId, entries: [] };
+    studentMap[name].entries.push(c);
+  });
+  
+  students = Object.values(studentMap).sort((a, b) => a.name.localeCompare(b.name));
+  
+  // Populate dropdown
+  const select = document.getElementById('studentSelect');
+  students.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = `${s.name} (${s.entries.length} entries)`;
+    select.appendChild(opt);
+  });
+}
+
+// ============ SELECT STUDENT ============
+async function selectStudent() {
+  const select = document.getElementById('studentSelect');
+  const studentId = select.value;
+  if (!studentId) {
+    document.getElementById('selectedStudent').style.display = 'none';
+    document.getElementById('journalSection').style.display = 'none';
+    document.getElementById('assessmentForm').style.display = 'none';
+    document.getElementById('historySection').style.display = 'none';
+    return;
+  }
+  
+  const student = students.find(s => s.id === studentId);
+  if (!student) return;
+  
+  document.getElementById('selectedStudent').textContent = student.name;
+  document.getElementById('selectedStudent').style.display = 'block';
+  document.getElementById('journalSection').style.display = 'block';
+  document.getElementById('assessmentForm').style.display = 'block';
+  
+  renderJournalEntries(student.entries);
+  loadHistory(studentId);
+}
+
+function renderJournalEntries(entries) {
+  const container = document.getElementById('journalEntries');
+  container.innerHTML = entries.slice(0, 10).map(e => {
+    const stable = (e.stableToday || []).map(t => `<span class="badge badge-stable">${translateTag(t)}</span>`).join('');
+    const difficult = (e.difficultToday || []).map(t => `<span class="badge badge-difficult">${translateTag(t)}</span>`).join('');
+    
+    return `<div class="j-entry">
+      <div class="j-date">${fmtDate(e.checkedInAt)} · ${e.platform || 'web'}</div>
+      <div class="j-row"><span class="j-label">Vinyasa:</span> ${translateVinyasa(e.vinyasa)} · <span class="j-label">Bandha:</span> ${translateBandha(e.bandha)}</div>
+      ${e.lastAsanaNote ? `<div class="j-row"><span class="j-label">Last Asana:</span> ${e.lastAsanaNote}</div>` : ''}
+      ${e.practiceNotes ? `<div class="j-row"><span class="j-label">Notes:</span> ${e.practiceNotes}</div>` : ''}
+      ${stable || difficult ? `<div class="j-badges">${stable}${difficult}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ============ ASSESSMENT HISTORY ============
+async function loadHistory(studentId) {
+  try {
+    const res = await fetch(`/api/journal/comments/${studentId}`);
+    const data = await res.json();
+    const section = document.getElementById('historySection');
+    const list = document.getElementById('historyList');
+    
+    if (data.comment) {
+      section.style.display = 'block';
+      list.innerHTML = `<div class="history-item">
+        <div class="history-date">${fmtDate(data.updatedAt)}</div>
+        <div>${data.comment}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">— ${data.teacherName || 'Boonchu'}</div>
+      </div>`;
+    } else {
+      section.style.display = 'none';
+    }
+  } catch {}
+}
+
+// ============ TAGS ============
+function renderTags(type) {
+  const container = document.getElementById(type + 'Tags');
+  const tagList = defaultTags[type];
+  container.innerHTML = tagList.map(t => 
+    `<span class="tag ${type === 'weaknesses' ? 'weakness' : ''}" data-type="${type}" data-value="${t}" onclick="toggleTag(this,'${type}','${t}')">${t}</span>`
+  ).join('');
+}
+
+function toggleTag(el, type, value) {
+  el.classList.toggle('active');
+  if (el.classList.contains('active')) formData[type].push(value);
+  else formData[type] = formData[type].filter(v => v !== value);
+}
+
+// ============ BUTTON GROUPS ============
+function setupButtonGroups() {
+  ['energyGroup', 'flowGroup', 'passGroup'].forEach(groupId => {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    group.addEventListener('click', e => {
+      const btn = e.target.closest('.btn');
+      if (!btn) return;
+      group.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      formData[btn.dataset.field] = btn.dataset.value;
     });
+  });
+}
 
-    async function loadTodayStats() {
-      try {
-        const res = await fetch('/api/teacher/today');
-        const data = await res.json();
-        document.getElementById('todayCount').textContent = data.count;
-        document.getElementById('todayTeachers').textContent = 
-          data.teachers.length ? data.teachers.join(', ') : '-';
-      } catch (e) {
-        console.error('Failed to load today stats', e);
-      }
-    }
-
-    async function loadStudents() {
-      try {
-        // Check URL params for workshop mode
-        const params = new URLSearchParams(window.location.search);
-        const classType = params.get('classType') || '';
-        const url = classType ? `/api/teacher/students?classType=${classType}` : '/api/teacher/students';
-        const res = await fetch(url);
-        const data = await res.json();
-        students = data.students || [];
-        renderStudentList(students);
-      } catch (e) {
-        console.error('Failed to load students', e);
-        document.getElementById('studentList').innerHTML = 
-          '<div class="student-item" style="color:var(--text-secondary);text-align:center;">Error loading students</div>';
-      }
-    }
-
-    function renderStudentList(list) {
-      const container = document.getElementById('studentList');
-      if (!list.length) {
-        container.innerHTML = '<div class="student-item" style="color:var(--text-secondary);text-align:center;">No students found</div>';
-        return;
-      }
-      container.innerHTML = list.map(s => `
-        <div class="student-item" data-id="${s.id}" data-name="${s.name}">
-          <div class="name">${s.name}</div>
-          ${s.level ? `<div class="meta">${s.level}</div>` : ''}
-        </div>
-      `).join('');
-      
-      container.querySelectorAll('.student-item[data-id]').forEach(item => {
-        item.addEventListener('click', () => selectStudent(item.dataset.id, item.dataset.name));
-      });
-    }
-
-    function selectStudent(id, name) {
-      selectedStudentId = id;
-      selectedStudentName = name;
-      
-      document.getElementById('studentSection').classList.add('hidden');
-      document.getElementById('selectedStudent').classList.add('visible');
-      document.getElementById('selectedName').textContent = name;
-      document.getElementById('assessmentForm').classList.remove('hidden');
-      document.getElementById('commentSection').classList.remove('hidden');
-      
-      loadStudentHistory(id);
-      loadStudentComments(id);
-    }
-
-    function clearStudent() {
-      selectedStudentId = null;
-      selectedStudentName = null;
-      
-      document.getElementById('studentSection').classList.remove('hidden');
-      document.getElementById('selectedStudent').classList.remove('visible');
-      document.getElementById('assessmentForm').classList.add('hidden');
-      document.getElementById('historySection').classList.add('hidden');
-      document.getElementById('commentSection').classList.add('hidden');
-      document.getElementById('studentSearch').value = '';
-      document.getElementById('teacherComment').value = '';
-      document.getElementById('weekLabel').value = '';
-      document.getElementById('commentSuccess').style.display = 'none';
-      renderStudentList(students);
-    }
-
-    async function loadStudentHistory(studentId) {
-      try {
-        const res = await fetch(`/api/teacher/history/${studentId}`);
-        const data = await res.json();
-        renderHistory(data.history || []);
-      } catch (e) {
-        console.error('Failed to load history', e);
-      }
-    }
-
-    function renderHistory(history) {
-      const section = document.getElementById('historySection');
-      const list = document.getElementById('historyList');
-      
-      if (!history.length) {
-        section.classList.add('hidden');
-        return;
-      }
-      
-      section.classList.remove('hidden');
-      list.innerHTML = history.slice(0, 5).map(h => `
-        <div class="history-item">
-          <div class="header">
-            <span class="teacher">${h.teacher}</span>
-            <span class="date">${new Date(h.date).toLocaleDateString()}</span>
-          </div>
-          <div class="detail">${h.summary || '-'}</div>
-        </div>
-      `).join('');
-    }
-
-    async function loadTags() {
-      try {
-        const res = await fetch('/api/teacher/tags');
-        const data = await res.json();
-        tags = data;
-        renderTags('strengths');
-        renderTags('weaknesses');
-      } catch (e) {
-        console.error('Failed to load tags', e);
-        // Use defaults
-        tags = {
-          strengths: ['Flexibility', 'Breath', 'Focus', 'Strength', 'Balance', 'Patience'],
-          weaknesses: ['Flexibility', 'Breath', 'Focus', 'Strength', 'Balance', 'Patience']
-        };
-        renderTags('strengths');
-        renderTags('weaknesses');
-      }
-    }
-
-    function renderTags(type) {
-      const container = document.getElementById(type + 'Tags');
-      container.innerHTML = tags[type].map(tag => `
-        <button type="button" class="tag-btn" data-type="${type}" data-tag="${tag}">${tag}</button>
-      `).join('');
-      
-      container.querySelectorAll('.tag-btn').forEach(btn => {
-        btn.addEventListener('click', () => toggleTag(btn));
-      });
-    }
-
-    function toggleTag(btn) {
-      const type = btn.dataset.type;
-      const tag = btn.dataset.tag;
-      
-      btn.classList.toggle('selected');
-      
-      if (btn.classList.contains('selected')) {
-        if (!selectedTags[type].includes(tag)) {
-          selectedTags[type].push(tag);
-        }
-      } else {
-        selectedTags[type] = selectedTags[type].filter(t => t !== tag);
-      }
-    }
-
-    function setupFormHandlers() {
-      // Teacher buttons
-      document.getElementById('teacherSelect').addEventListener('click', e => {
-        if (e.target.classList.contains('teacher-btn')) {
-          document.querySelectorAll('#teacherSelect .teacher-btn').forEach(b => b.classList.remove('selected'));
-          e.target.classList.add('selected');
-          document.getElementById('teacherName').value = e.target.dataset.value;
-        }
-      });
-
-      // Generic button groups
-      ['energyGroup', 'consistencyGroup', 'flowGroup', 'passGroup'].forEach(groupId => {
-        const group = document.getElementById(groupId);
-        if (!group) return;
-        group.addEventListener('click', e => {
-          const btn = e.target.closest('.btn');
-          if (!btn) return;
-          
-          const field = btn.dataset.field;
-          const value = btn.dataset.value;
-          
-          // Toggle single-selection
-          group.querySelectorAll('.btn').forEach(b => b.classList.remove('selected'));
-          btn.classList.add('selected');
-          
-          document.getElementById(field).value = value;
-        });
-      });
-
-      // Student search
-      document.getElementById('studentSearch').addEventListener('input', e => {
-        const q = e.target.value.toLowerCase().trim();
-        if (!q) {
-          renderStudentList(students);
-          return;
-        }
-        const filtered = students.filter(s => 
-          s.name.toLowerCase().includes(q)
-        );
-        renderStudentList(filtered);
-      });
-
-      // Form submit
-      document.getElementById('assessmentForm').addEventListener('submit', async e => {
-        e.preventDefault();
-        
-        if (!selectedStudentId) {
-          alert('Please select a student');
-          return;
-        }
-        
-        const teacher = document.getElementById('teacherName').value;
-        if (!teacher) {
-          alert('Please select a teacher');
-          return;
-        }
-        
-        const data = {
-          studentId: selectedStudentId,
-          studentName: selectedStudentName,
-          teacher: teacher,
-          energy: document.getElementById('energy').value,
-          practiceConsistency: document.getElementById('practiceConsistency').value,
-          behavior: document.getElementById('behavior').value,
-          strengths: selectedTags.strengths,
-          weaknesses: selectedTags.weaknesses,
-          lastAsana: document.getElementById('lastAsana').value,
-          lastAsanaPass: document.getElementById('lastAsanaPass').value,
-          toFix: document.getElementById('toFix').value,
-          notes: document.getElementById('notes').value
-        };
-        
-        try {
-          const res = await fetch('/api/teacher/assessment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
-          
-          if (res.ok) {
-            // Show success
-            document.getElementById('successOverlay').classList.remove('hidden');
-            loadTodayStats();
-            
-            // Reset form
-            setTimeout(() => {
-              document.getElementById('successOverlay').classList.add('hidden');
-              clearStudent();
-              document.querySelectorAll('.btn.selected, .tag-btn.selected').forEach(b => b.classList.remove('selected'));
-              document.querySelectorAll('input[type="hidden"]').forEach(i => i.value = '');
-              document.querySelectorAll('input[type="text"], textarea').forEach(i => i.value = '');
-              selectedTags = { strengths: [], weaknesses: [] };
-            }, 1500);
-          } else {
-            alert('Failed to save assessment');
-          }
-        } catch (e) {
-          console.error('Submit error', e);
-          alert('Error saving assessment');
-        }
-      });
-    }
-
-    // ============ TEACHER COMMENTS ============
-    async function loadStudentComments(studentId) {
-      try {
-        const res = await fetch(`/api/teacher/comments/${studentId}`);
-        const data = await res.json();
-        renderPastComments(data.comments || []);
-      } catch (e) {
-        console.error('Failed to load comments', e);
-      }
-    }
-
-    function renderPastComments(comments) {
-      const container = document.getElementById('pastComments');
-      if (!comments.length) {
-        container.innerHTML = '';
-        return;
-      }
-      container.innerHTML = '<div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">Past Comments</div>' +
-        comments.map(c => {
-          const date = new Date(c.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          const readBadge = c.isRead ? '<span style="color:var(--success);font-size:11px;">✓ Read</span>' : '<span style="color:var(--accent);font-size:11px;">● Unread</span>';
-          return `<div style="background:#f9f9f9;border-radius:8px;padding:10px 12px;margin-bottom:8px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-              <span style="font-size:12px;font-weight:600;">${c.weekLabel || ''}</span>
-              <span>${readBadge}</span>
-            </div>
-            <div style="font-size:13px;color:#333;line-height:1.4;">${c.comment}</div>
-            <div style="font-size:11px;color:#999;margin-top:4px;">${c.teacherName} · ${date}</div>
-          </div>`;
-        }).join('');
-    }
-
-    document.getElementById('sendCommentBtn').addEventListener('click', async () => {
-      if (!selectedStudentId) { alert('Select a student first'); return; }
-      const comment = document.getElementById('teacherComment').value.trim();
-      if (!comment) { alert('Write a comment first'); return; }
-
-      const teacher = document.getElementById('teacherName').value || 'Boonchu';
-      const weekLabel = document.getElementById('weekLabel').value.trim() || '';
-
-      const btn = document.getElementById('sendCommentBtn');
-      btn.disabled = true;
-      btn.textContent = 'Sending...';
-
-      try {
-        const res = await fetch('/api/teacher/comment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            studentId: selectedStudentId,
-            teacherName: teacher,
-            comment,
-            weekLabel
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-          document.getElementById('commentSuccess').style.display = 'block';
-          document.getElementById('teacherComment').value = '';
-          document.getElementById('weekLabel').value = '';
-          loadStudentComments(selectedStudentId);
-          setTimeout(() => { document.getElementById('commentSuccess').style.display = 'none'; }, 3000);
-        } else {
-          alert('Error: ' + (data.error || 'Unknown'));
-        }
-      } catch (e) {
-        alert('Failed to send comment');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Send Comment to Student';
-      }
+// ============ SAVE ============
+async function saveAssessment() {
+  const select = document.getElementById('studentSelect');
+  const studentId = select.value;
+  if (!studentId) return;
+  
+  const student = students.find(s => s.id === studentId);
+  const comment = document.getElementById('teacherNotes').value.trim() || document.getElementById('toFix').value.trim();
+  if (!comment) { showToast('Please write some notes first'); return; }
+  
+  const btn = document.querySelector('.submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  
+  try {
+    // Save as comment (existing API)
+    await fetch('/api/journal/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentId,
+        comment: buildFullComment(),
+        teacherName: 'Boonchu'
+      })
     });
-  </script>
+    
+    showToast('Saved ✓');
+    btn.disabled = false;
+    btn.textContent = '💾 Save Assessment';
+    loadHistory(studentId);
+  } catch (e) {
+    showToast('Error saving');
+    btn.disabled = false;
+    btn.textContent = '💾 Save Assessment';
+  }
+}
+
+async function saveAndSend() {
+  await saveAssessment();
+  const studentId = document.getElementById('studentSelect').value;
+  const student = students.find(s => s.id === studentId);
+  if (!student) return;
+  
+  const url = `https://aybkk-ashtanga.up.railway.app/student.html?studentId=${studentId}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    showSuccess(`Assessment saved! Student link copied to clipboard.`);
+  } catch {
+    showSuccess(`Assessment saved for ${student.name}`);
+  }
+}
+
+function buildFullComment() {
+  const parts = [];
+  if (formData.energy) parts.push(`Energy: ${formData.energy}`);
+  if (formData.behavior) parts.push(`Flow: ${formData.behavior}`);
+  if (formData.strengths.length) parts.push(`Strengths: ${formData.strengths.join(', ')}`);
+  if (formData.weaknesses.length) parts.push(`Weaknesses: ${formData.weaknesses.join(', ')}`);
+  if (document.getElementById('lastAsana').value) parts.push(`Last Asana: ${document.getElementById('lastAsana').value} (${formData.lastAsanaPass === 'true' ? 'PASS' : formData.lastAsanaPass === 'false' ? 'HOLD' : ''})`);
+  if (document.getElementById('toFix').value) parts.push(`To Fix: ${document.getElementById('toFix').value}`);
+  if (document.getElementById('teacherNotes').value) parts.push(`Notes: ${document.getElementById('teacherNotes').value}`);
+  return parts.join('\n');
+}
+
+// ============ UI ============
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+function showSuccess(msg) {
+  document.getElementById('successMsg').textContent = msg;
+  document.getElementById('successOverlay').style.display = 'flex';
+}
+function hideSuccess() {
+  document.getElementById('successOverlay').style.display = 'none';
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+}
+function translateTag(t) {
+  const m = {jump_back:'Jump Back',jump_through:'Jump Through',twisting:'Twisting',leg_behind_head:'Leg Behind Head',backbending:'Backbending',arm_balance:'Arm Balance',inversion:'Inversion',bandha:'Bandha',hip_legs:'Hip/Legs',arms_shoulders:'Arms/Shoulders',standing_balance:'Standing Balance',chaturanga:'Chaturanga',breathing:'Breathing',lifting_body:'Lifting Body',forward_bend:'Forward Bend',body_ache_pain:'Body Ache'};
+  return m[t]||t;
+}
+function translateVinyasa(v) {
+  const m={kept_moving:'Kept Moving',stop_breathe:'Stop & Breathe',tired_paused:'Tired/Paused'};
+  return m[v]||v;
+}
+function translateBandha(b) {
+  const m={body_light:'Body Light',finding_light:'Finding Light',heavy_body:'Heavy Body'};
+  return m[b]||b;
+}
+</script>
 </body>
 </html>
