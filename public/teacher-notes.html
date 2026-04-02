@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Notes — AYBKK</title>
+<style>
+:root{--bg:#f8f5f0;--card:#fff;--text:#2a2420;--muted:#8b7d6b;--accent:#c49564;--accent-dark:#a07850;--success:#6b9e6b;--border:#e8e0d4;--red:#c0392b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding:16px;max-width:800px;margin:0 auto}
+h1{font-size:22px;margin-bottom:4px}
+.subtitle{color:var(--muted);font-size:13px;margin-bottom:20px}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-bar select,.filter-bar button{padding:8px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;background:#fff}
+.filter-bar select{flex:1;min-width:120px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500}
+.btn:hover{background:var(--accent-dark)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-send{background:var(--success)}
+.btn-send:hover{background:#5a8a5a}
+
+.student-card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid var(--border);transition:all .2s}
+.student-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.student-card.expanded{border-color:var(--accent)}
+.card-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.student-name{font-size:16px;font-weight:600}
+.student-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.expand-icon{font-size:18px;color:var(--muted);transition:transform .2s}
+.student-card.expanded .expand-icon{transform:rotate(180deg)}
+
+.journal-summary{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.student-card.expanded .journal-summary{display:block}
+
+.journal-entry{background:#faf8f5;border-radius:8px;padding:12px;margin-bottom:8px;font-size:13px}
+.journal-date{font-weight:600;color:var(--accent-dark);margin-bottom:4px;font-size:12px}
+.journal-row{margin-bottom:4px}
+.journal-label{font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.journal-text{margin-top:2px;line-height:1.5}
+.journal-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500}
+.badge-stable{background:#e8f5e9;color:#2e7d32}
+.badge-difficult{background:#fce4ec;color:#c62828}
+.badge-tag{background:#f3e5f5;color:#6a1b9a}
+
+.teacher-section{margin-top:16px;padding-top:16px;border-top:2px solid var(--accent)}
+.teacher-section label{font-size:13px;font-weight:600;color:var(--accent-dark);display:block;margin-bottom:6px}
+.teacher-section textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px;font-size:13px;font-family:inherit;resize:vertical;min-height:80px}
+.teacher-section textarea:focus{outline:none;border-color:var(--accent)}
+
+.comment-exists{background:#e8f5e9;border-left:3px solid var(--success);padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:8px;font-size:13px;line-height:1.5}
+.comment-meta{font-size:11px;color:var(--muted);margin-top:4px}
+
+.save-row{display:flex;gap:8px;margin-top:10px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;display:none;z-index:100}
+
+.student-count{text-align:center;color:var(--muted);font-size:12px;margin:16px 0}
+</style>
+</head>
+<body>
+
+<h1>📝 Teacher Notes</h1>
+<p class="subtitle">Write your comments on each student's practice</p>
+
+<div class="filter-bar">
+  <select id="dateFilter" onchange="loadStudents()">
+    <option value="7">Last 7 days</option>
+    <option value="14">Last 14 days</option>
+    <option value="30" selected>Last 30 days</option>
+  </select>
+  <button class="btn" onclick="expandAll()">Expand All</button>
+  <button class="btn btn-sm" onclick="collapseAll()">Collapse</button>
+</div>
+
+<div id="studentList"></div>
+<div id="studentCount" class="student-count"></div>
+<div id="toast" class="toast">Saved ✓</div>
+
+<script>
+let allCheckins = [];
+let allComments = {};
+let allStudents = [];
+
+async function loadStudents() {
+  const days = document.getElementById('dateFilter').value;
+  
+  // Load journal history
+  const res = await fetch(`/api/journal/history/${days}`);
+  const data = await res.json();
+  allCheckins = data.history || [];
+  
+  // Group by student
+  const studentMap = {};
+  allCheckins.forEach(c => {
+    const name = c.studentName;
+    if (!name || name === 'Test Workshop Student' || name === '测试学生') return;
+    if (!studentMap[name]) studentMap[name] = { name, id: c.studentId, entries: [] };
+    studentMap[name].entries.push(c);
+  });
+  
+  allStudents = Object.values(studentMap).sort((a, b) => {
+    // Sort by most recent check-in
+    const aLast = a.entries[0]?.checkedInAt || '';
+    const bLast = b.entries[0]?.checkedInAt || '';
+    return bLast.localeCompare(aLast);
+  });
+  
+  // Load all comments
+  for (const s of allStudents) {
+    try {
+      const cr = await fetch(`/api/journal/comments/${s.id}`);
+      const cd = await cr.json();
+      if (cd.comment) allComments[s.id] = cd;
+    } catch {}
+  }
+  
+  render();
+}
+
+function render() {
+  const container = document.getElementById('studentList');
+  const count = document.getElementById('studentCount');
+  
+  if (allStudents.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px">No student check-ins found</div>';
+    count.textContent = '';
+    return;
+  }
+  
+  count.textContent = `${allStudents.length} students with journal entries`;
+  
+  container.innerHTML = allStudents.map(s => {
+    const comment = allComments[s.id];
+    const latestEntry = s.entries[0];
+    
+    return `
+    <div class="student-card" id="card-${s.id}">
+      <div class="card-header" onclick="toggle('${s.id}')">
+        <div>
+          <div class="student-name">${s.name}</div>
+          <div class="student-meta">${s.entries.length} entries · Last: ${fmtDate(latestEntry.checkedInAt)}</div>
+        </div>
+        <span class="expand-icon">▼</span>
+      </div>
+      <div class="journal-summary">
+        ${renderEntries(s.entries)}
+        
+        <div class="teacher-section">
+          ${comment ? `<div class="comment-exists">${comment.comment}<div class="comment-meta">— You, ${fmtDate(comment.updatedAt)}</div></div>` : ''}
+          
+          <label>✏️ Your Notes on ${s.name}</label>
+          <textarea id="note-${s.id}" placeholder="What did you notice about this student's practice?">${comment ? comment.comment : ''}</textarea>
+          <div class="save-row">
+            <button class="btn btn-send" onclick="saveAndSend('${s.id}','${s.name}')">Save & Send to Student</button>
+            <button class="btn" onclick="saveComment('${s.id}')">Save Only</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderEntries(entries) {
+  return entries.slice(0, 10).map(e => {
+    const stable = (e.stableToday || []).map(t => `<span class="badge badge-stable">${translateTag(t)}</span>`).join('');
+    const difficult = (e.difficultToday || []).map(t => `<span class="badge badge-difficult">${translateTag(t)}</span>`).join('');
+    
+    return `
+    <div class="journal-entry">
+      <div class="journal-date">${fmtDate(e.checkedInAt)} · ${e.platform || 'web'}</div>
+      <div class="journal-row">
+        <span class="journal-label">Vinyasa:</span> ${translateVinyasa(e.vinyasa)} · 
+        <span class="journal-label">Bandha:</span> ${translateBandha(e.bandha)}
+      </div>
+      ${e.lastAsanaNote ? `<div class="journal-row"><div class="journal-label">Last Asana</div><div class="journal-text">${e.lastAsanaNote}</div></div>` : ''}
+      ${e.practiceNotes ? `<div class="journal-row"><div class="journal-label">Notes</div><div class="journal-text">${e.practiceNotes}</div></div>` : ''}
+      ${stable || difficult ? `<div class="journal-badges">${stable}${difficult}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggle(id) {
+  const card = document.getElementById('card-' + id);
+  card.classList.toggle('expanded');
+}
+
+function expandAll() {
+  document.querySelectorAll('.student-card').forEach(c => c.classList.add('expanded'));
+}
+function collapseAll() {
+  document.querySelectorAll('.student-card').forEach(c => c.classList.remove('expanded'));
+}
+
+async function saveComment(studentId) {
+  const textarea = document.getElementById('note-' + studentId);
+  const comment = textarea.value.trim();
+  if (!comment) return;
+  
+  await fetch('/api/journal/comments', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ studentId, comment, teacherName: 'Boonchu' })
+  });
+  
+  allComments[studentId] = { comment, teacherName: 'Boonchu', updatedAt: new Date().toISOString() };
+  showToast('Saved ✓');
+}
+
+async function saveAndSend(studentId, studentName) {
+  await saveComment(studentId);
+  // For now — show link to share with student
+  const url = `https://aybkk-ashtanga.up.railway.app/student.html?studentId=${studentId}`;
+  showToast(`Comment saved! Share link with ${studentName}`);
+  // Copy to clipboard
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast(`Saved! Link copied to clipboard ✓`);
+  } catch {}
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function translateTag(t) {
+  const map = { jump_back:'Jump Back', jump_through:'Jump Through', twisting:'Twisting', leg_behind_head:'Leg Behind Head', backbending:'Backbending', arm_balance:'Arm Balance', inversion:'Inversion', bandha:'Bandha', hip_legs:'Hip/Legs', arms_shoulders:'Arms/Shoulders', standing_balance:'Standing Balance', chaturanga:'Chaturanga', breathing:'Breathing', lifting_body:'Lifting Body', forward_bend:'Forward Bend', body_ache_pain:'Body Ache' };
+  return map[t] || t;
+}
+function translateVinyasa(v) {
+  const map = { kept_moving:'Kept Moving', stop_breathe:'Stop & Breathe', tired_paused:'Tired/Paused' };
+  return map[v] || v;
+}
+function translateBandha(b) {
+  const map = { body_light:'Body Light', finding_light:'Finding Light', heavy_body:'Heavy Body' };
+  return map[b] || b;
+}
+
+// Auto-load
+loadStudents();
+</script>
+</body>
+</html>
