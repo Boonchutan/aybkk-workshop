@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AYBKK Weekly Practice Report</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --bg: #FAF9F7; --card: #FFFFFF; --border: #E8E5E0;
+      --text: #1A1A1A; --text-secondary: #8B8680;
+      --accent: #D4A574; --accent-light: #F5EDE4;
+      --success: #6B9E6B; --success-bg: #EEF5EE;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+      --radius: 14px; --radius-sm: 10px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); min-height: 100vh; color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+    .report { max-width: 480px; margin: 0 auto; padding: 0 0 40px; }
+    .hero {
+      position: relative; width: 100%; min-height: 320px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: flex-end; padding: 40px 20px 30px;
+      overflow: hidden; border-radius: 0 0 var(--radius) var(--radius);
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background-size: cover; background-position: center;
+      filter: brightness(1.1) contrast(0.9);
+    }
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(180deg, rgba(212,165,116,0.35) 0%, rgba(212,165,116,0.55) 100%);
+    }
+    .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; }
+    .hero-badge {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(8px); padding: 6px 14px; border-radius: 20px;
+      margin-bottom: 16px; display: inline-block;
+    }
+    .hero-name { font-size: 28px; font-weight: 700; margin-bottom: 6px; text-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+    .hero-date { font-size: 13px; opacity: 0.9; }
+    .lang-switch { display: flex; justify-content: center; gap: 6px; margin: -20px auto 0; position: relative; z-index: 3; }
+    .lang-btn {
+      padding: 5px 14px; border: 1px solid var(--border); background: var(--card);
+      border-radius: 8px; font-size: 12px; font-weight: 500;
+      color: var(--text-secondary); cursor: pointer; transition: all var(--transition);
+      box-shadow: var(--shadow);
+    }
+    .lang-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .section { padding: 0 16px; margin-top: 20px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow); margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 14px; font-weight: 600; color: var(--text);
+      margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .card-title .icon { font-size: 18px; }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .stat-item { text-align: center; padding: 12px 8px; background: var(--accent-light); border-radius: var(--radius-sm); }
+    .stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+    .stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+    .tag-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    }
+    .tag.strength { background: #EEF5EE; color: #4A7C4A; }
+    .tag.growth { background: #FFF3E0; color: #C47A20; }
+    .summary-text {
+      font-size: 15px; line-height: 1.7; color: var(--text);
+      padding: 4px 0; font-weight: 400;
+    }
+    .summary-text strong { font-weight: 600; color: var(--accent); }
+    .feeling-badge {
+      display: inline-block; padding: 8px 16px; border-radius: 20px;
+      font-size: 13px; font-weight: 600; margin-bottom: 12px;
+    }
+    .feeling-badge.positive { background: #EEF5EE; color: #4A7C4A; }
+    .feeling-badge.neutral { background: #F0F0F0; color: #666; }
+    .feeling-badge.growing { background: #FFF3E0; color: #C47A20; }
+    .teacher-card {
+      background: linear-gradient(135deg, #FAF9F7 0%, #F5EDE4 100%);
+      border: 1.5px solid var(--accent); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow);
+    }
+    .teacher-quote {
+      font-size: 15px; line-height: 1.7; font-style: italic;
+      color: var(--text); padding: 12px 0;
+      border-left: 3px solid var(--accent); padding-left: 16px;
+    }
+    .teacher-name { font-size: 12px; color: var(--accent); font-weight: 600; margin-top: 8px; text-align: right; }
+    .belief-card {
+      background: linear-gradient(135deg, var(--accent) 0%, #C49564 100%);
+      border-radius: var(--radius); padding: 24px 20px;
+      text-align: center; color: #fff; box-shadow: var(--shadow-lg);
+    }
+    .belief-text { font-size: 15px; line-height: 1.6; font-weight: 500; }
+    .belief-icon { font-size: 32px; margin-bottom: 12px; }
+    .footer {
+      text-align: center; padding: 24px 16px 40px;
+      font-size: 12px; color: var(--text-secondary);
+    }
+    .share-btn {
+      position: fixed; bottom: 20px; right: 20px;
+      background: var(--accent); color: #fff;
+      width: 48px; height: 48px; border-radius: 50%;
+      border: none; font-size: 20px; cursor: pointer;
+      box-shadow: var(--shadow-lg); z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform var(--transition);
+    }
+    .share-btn:hover { transform: scale(1.1); }
+    .loading { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+    .loading-spinner { font-size: 32px; margin-bottom: 12px; animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .no-photo .hero { min-height: 200px; background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg) 100%); }
+  </style>
+</head>
+<body>
+  <div id="loading" class="loading">
+    <div class="loading-spinner">☸</div>
+    <p data-zh="正在生成你的周报…" data-en="Generating your report…">正在生成你的周报…</p>
+  </div>
+  <div id="app" class="report" style="display:none;"></div>
+  <button class="share-btn" onclick="shareReport()" style="display:none;" id="shareBtn">📤</button>
+  <script>
+    const P = new URLSearchParams(location.search);
+    const studentId = P.get('id');
+    const studentName = decodeURIComponent(P.get('name') || 'Student');
+    const photoUrl = P.get('photo');
+    let lang = P.get('lang') || 'zh';
+    let journalEntries = [];
+    let teacherComment = '';
+
+    const T = {
+      zh: {
+        reportTitle: 'AYBKK 周度练习报告',
+        daysPracticed: '练习天数',
+        totalEntries: '记录条数',
+        bandhaScore: '收束感知',
+        strengths: '✨ 稳定体式',
+        growth: '🌱 成长方向',
+        summary: '🧘 练习感悟',
+        teacherMsg: '💬 老师寄语',
+        belief: '相信过程，忠于练习。AYBKK方法陪伴你在垫子上成长，在生活中扎根。',
+        share: '分享',
+        feelingPositive: '✨ 积极向上',
+        feelingGrowing: '🌱 在成长中',
+        feelingNeutral: '🧘 平静稳定',
+        weekOf: '本周练习',
+        vinyasa: { kept_moving: '流畅持续', steady_pace: '稳定节奏', heavy_slow: '扎实有力' },
+        bandha: { body_light: '身体轻盈，收束良好', finding_light: '正在找到收束感觉', hard_to_find: '基础建立中' },
+        tags: {
+          jump_back: '跳回', jump_through: '跳穿', backbending: '后弯',
+          inversion: '倒立', bandha: '收束', forward_bend: '前屈',
+          leg_behind_head: '挂头', standing_balance: '站立平衡',
+          twisting: '扭转', lifting_body: '提身'
+        }
+      },
+      en: {
+        reportTitle: 'AYBKK Weekly Practice Report',
+        daysPracticed: 'Days Practiced',
+        totalEntries: 'Journal Entries',
+        bandhaScore: 'Bandha Awareness',
+        strengths: '✨ Stable Asanas',
+        growth: '🌱 Growth Areas',
+        summary: '🧘 Practice Insight',
+        teacherMsg: '💬 Teacher\'s Message',
+        belief: 'Trust the process, stay true to your practice. The AYBKK method supports your growth on the mat and beyond.',
+        share: 'Share',
+        feelingPositive: '✨ Positive & Energized',
+        feelingGrowing: '🌱 Growing & Developing',
+        feelingNeutral: '🧘 Calm & Steady',
+        weekOf: 'This Week\'s Practice',
+        vinyasa: { kept_moving: 'Flowing & Energized', steady_pace: 'Calm & Steady', heavy_slow: 'Grounded & Strong' },
+        bandha: { body_light: 'Body light, strong bandha', finding_light: 'Developing bandha awareness', hard_to_find: 'Building foundation' },
+        tags: {
+          jump_back: 'Jump back', jump_through: 'Jump through', backbending: 'Backbending',
+          inversion: 'Inversion', bandha: 'Bandha', forward_bend: 'Forward bend',
+          leg_behind_head: 'Leg behind head', standing_balance: 'Standing balance',
+          twisting: 'Twisting', lifting_body: 'Lifting body'
+        }
+      }
+    };
+
+    function t(key) { return T[lang]?.[key] || T.zh[key]; }
+    function translateTag(tag) { return t('tags')[tag] || tag; }
+    function translateVinyasa(v) { return t('vinyasa')[v] || v; }
+    function translateBandha(b) { return t('bandha')[b] || b; }
+
+    function getFeeling(entries) {
+      if (!entries.length) return { level: 'neutral', text: t('feelingNeutral') };
+      const recent = entries.slice(-5);
+      const positiveCount = recent.filter(e => e.vinyasa === 'kept_moving' || e.bandha === 'body_light').length;
+      const growingCount = recent.filter(e => e.difficultToday && e.difficultToday.length > 0).length;
+      if (positiveCount >= 3) return { level: 'positive', text: t('feelingPositive') };
+      if (growingCount >= 2) return { level: 'growing', text: t('feelingGrowing') };
+      return { level: 'neutral', text: t('feelingNeutral') };
+    }
+
+    function getUniqueTags(entries, field) {
+      const tags = new Set();
+      entries.forEach(e => { (e[field] || []).forEach(tag => tags.add(tag)); });
+      return [...tags];
+    }
+
+    function getDaysPracticed(entries) {
+      const dates = new Set();
+      entries.forEach(e => { if (e.sessionDate && e.sessionDate !== 'None') dates.add(e.sessionDate); });
+      return dates.size;
+    }
+
+    function generateSummary(entries, name) {
+      if (!entries.length) return lang === 'zh'
+        ? `${name}，本周的练习之旅即将开始。每一次踏上垫子都是一次新的探索，期待看到你的成长。`
+        : `${name}, your practice journey is just beginning. Every time you step onto the mat is a new exploration.`;
+      
+      const days = getDaysPracticed(entries);
+      const strengths = getUniqueTags(entries, 'stableToday');
+      const growth = getUniqueTags(entries, 'difficultToday');
+      const hasNotes = entries.some(e => e.practiceNotes || e.lastAsanaNote);
+      
+      let summary = '';
+      if (lang === 'zh') {
+        summary += `在过去的练习中，你记录了 ${entries.length} 次练习笔记`;
+        if (days > 0) summary += `，涵盖了 ${days} 个不同的练习日`;
+        summary += '。';
+        if (strengths.length) {
+          summary += `你在 ${strengths.map(translateTag).join('、')} 方面展现了稳定的进步，这些体式正在成为你练习中的坚实基础。`;
+        }
+        if (growth.length) {
+          summary += `对于 ${growth.map(translateTag).join('、')}，这些挑战正是你下一步突破的方向——每一次尝试都在积累力量。`;
+        }
+        if (hasNotes) {
+          const noteEntry = entries.find(e => e.practiceNotes || e.lastAsanaNote);
+          if (noteEntry && (noteEntry.practiceNotes || noteEntry.lastAsanaNote)) {
+            summary += `\n\n你在笔记中写道："${noteEntry.practiceNotes || noteEntry.lastAsanaNote}" —— 这种自我觉察是深度练习的标志。`;
+          }
+        }
+        summary += '\n\n记住：每一次呼吸，每一个vinyasa，都在编织你独一无二的瑜伽故事。';
+      } else {
+        summary += `In your recent practice, you recorded ${entries.length} practice notes`;
+        if (days > 0) summary += ` across ${days} different practice days`;
+        summary += '.';
+        if (strengths.length) {
+          summary += ` You showed stable progress in ${strengths.map(translateTag).join(', ')} — these asanas are becoming your solid foundation.`;
+        }
+        if (growth.length) {
+          summary += ` For ${growth.map(translateTag).join(', ')} — these challenges are your next breakthrough. Every attempt builds strength.`;
+        }
+        if (hasNotes) {
+          const noteEntry = entries.find(e => e.practiceNotes || e.lastAsanaNote);
+          if (noteEntry && (noteEntry.practiceNotes || noteEntry.lastAsanaNote)) {
+            summary += `\n\nYou wrote: "${noteEntry.practiceNotes || noteEntry.lastAsanaNote}" — this self-awareness is the mark of deep practice.`;
+          }
+        }
+        summary += '\n\nRemember: every breath, every vinyasa, is weaving your unique yoga story.';
+      }
+      return summary;
+    }
+
+    function renderApp() {
+      const entries = journalEntries;
+      const feeling = getFeeling(entries);
+      const strengths = getUniqueTags(entries, 'stableToday');
+      const growth = getUniqueTags(entries, 'difficultToday');
+      const days = getDaysPracticed(entries);
+      const summary = generateSummary(entries, studentName);
+      const now = new Date();
+      const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+
+      const hasPhoto = !!photoUrl;
+      document.body.className = hasPhoto ? '' : 'no-photo';
+
+      document.getElementById('app').innerHTML = `
+        <div class="hero">
+          ${hasPhoto ? `<div class="hero-bg" style="background-image:url('${photoUrl}')"></div><div class="hero-overlay"></div>` : ''}
+          <div class="hero-content">
+            <div class="hero-badge">AYBKK</div>
+            <div class="hero-name">${studentName}</div>
+            <div class="hero-date">${t('reportTitle')} · ${dateStr}</div>
+          </div>
+        </div>
+
+        <div class="lang-switch">
+          <button class="lang-btn ${lang==='zh'?'active':''}" onclick="switchLang('zh')">中文</button>
+          <button class="lang-btn ${lang==='en'?'active':''}" onclick="switchLang('en')">EN</button>
+        </div>
+
+        <div class="section">
+          <div class="card">
+            <div class="card-title"><span class="icon">📊</span> ${t('weekOf')}</div>
+            <div class="stat-grid">
+              <div class="stat-item">
+                <div class="stat-value">${days}</div>
+                <div class="stat-label">${t('daysPracticed')}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${entries.length}</div>
+                <div class="stat-label">${t('totalEntries')}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${feeling.level === 'positive' ? '⭐' : feeling.level === 'growing' ? '🌱' : '🧘'}</div>
+                <div class="stat-label">${feeling.text}</div>
+              </div>
+            </div>
+          </div>
+
+          ${strengths.length ? `<div class="card">
+            <div class="card-title"><span class="icon">✨</span> ${t('strengths')}</div>
+            <div class="tag-group">
+              ${strengths.map(s => `<span class="tag strength">${translateTag(s)}</span>`).join('')}
+            </div>
+          </div>` : ''}
+
+          ${growth.length ? `<div class="card">
+            <div class="card-title"><span class="icon">🌱</span> ${t('growth')}</div>
+            <div class="tag-group">
+              ${growth.map(g => `<span class="tag growth">${translateTag(g)}</span>`).join('')}
+            </div>
+          </div>` : ''}
+
+          <div class="card">
+            <div class="card-title"><span class="icon">🧘</span> ${t('summary')}</div>
+            <div class="feeling-badge ${feeling.level}">${feeling.text}</div>
+            <div class="summary-text">${summary.replace(/\n/g, '<br>')}</div>
+          </div>
+
+          ${teacherComment ? `<div class="teacher-card">
+            <div class="card-title"><span class="icon">💬</span> ${t('teacherMsg')}</div>
+            <div class="teacher-quote">${teacherComment}</div>
+            <div class="teacher-name">— Boonchu · AYBKK</div>
+          </div>` : ''}
+
+          <div class="belief-card">
+            <div class="belief-icon">🧘‍♀️</div>
+            <div class="belief-text">${t('belief')}</div>
+          </div>
+        </div>
+
+        <div class="footer">
+          AYBKK Shala · Huizhou Workshop · ${dateStr}<br>
+          <span style="font-size:11px;color:var(--text-secondary)">Practice is not about perfection. It's about showing up.</span>
+        </div>
+      `;
+
+      document.getElementById('shareBtn').style.display = 'flex';
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+    }
+
+    function switchLang(newLang) {
+      lang = newLang;
+      renderApp();
+    }
+
+    function shareReport() {
+      if (navigator.share) {
+        navigator.share({
+          title: t('reportTitle'),
+          text: `${studentName} — ${t('reportTitle')}`,
+          url: location.href
+        });
+      } else {
+        navigator.clipboard.writeText(location.href).then(() => alert(lang === 'zh' ? '链接已复制' : 'Link copied!'));
+      }
+    }
+
+    async function load() {
+      if (!studentId) {
+        document.getElementById('loading').innerHTML = '<p>Missing student ID</p>';
+        return;
+      }
+      try {
+        // Try student-specific endpoint first
+        let allEntries = [];
+        try {
+          const sRes = await fetch(`/api/journal/student/${studentId}`);
+          if (sRes.ok) {
+            const sData = await sRes.json();
+            allEntries = sData.assessments || [];
+          }
+        } catch(e) {}
+        
+        // Fallback: fetch all history and filter
+        if (!allEntries.length) {
+          const res = await fetch('/api/journal/history/30');
+          const data = await res.json();
+          allEntries = (data.history || []).filter(e =>
+            e.studentId === studentId ||
+            (e.assessment && e.assessment.studentId === studentId) ||
+            e.studentName === studentName
+          ).map(e => e.assessment ? { ...e.assessment, studentName: e.studentName } : e);
+        }
+        
+        journalEntries = allEntries;
+        
+        // Load teacher comment if available
+        try {
+          const cRes = await fetch(`/api/teacher/comments/${studentId}`);
+          if (cRes.ok) {
+            const cData = await cRes.json();
+            if (cData.comment) teacherComment = cData.comment;
+          }
+        } catch(e) {}
+      } catch(e) {
+        journalEntries = [];
+      }
+      renderApp();
+    }
+
+    load();
+  </script>
+</body>
+</html>

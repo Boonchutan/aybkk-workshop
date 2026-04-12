@@ -10,6 +10,11 @@ const QRCode = require('qrcode');
 
 const TUNNEL_URL = process.env.TUNNEL_URL || 'https://607ab25360db2889-171-7-60-252.serveousercontent.com';
 
+// Debug: test route
+router.get('/_test', (req, res) => {
+  res.json({ ok: true, routes: router.stack.map(l => l.route?.path).filter(Boolean) });
+});
+
 // ============================================
 // STUDENT SELF-ASSESSMENT ROUTES
 // ============================================

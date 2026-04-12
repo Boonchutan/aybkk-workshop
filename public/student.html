@@ -339,22 +339,18 @@
 <body>
 
 <div class="container">
-  <!-- Logo -->
-  <div style="text-align:center;margin-bottom:16px;">
-    <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:80px;height:80px;border-radius:50%;object-fit:cover;opacity:0.85;">
+  <!-- Logo & Header -->
+  <div class="header" style="text-align:center;">
+    <div style="margin-bottom:10px;">
+      <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:68px;height:68px;border-radius:50%;object-fit:cover;opacity:0.9;">
+    </div>
+    <h1 id="pageTitle">AYBKK RUSSIA WS 2026</h1>
+    <p id="pageSubtitle" style="font-size:12px;color:var(--text-secondary);margin-top:4px;">By Boonchu & Jamsai Tanti</p>
   </div>
-
   <!-- Language -->
   <div class="lang-switch">
-    <button class="lang-btn" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="ru">RU</button>
     <button class="lang-btn" data-lang="en">EN</button>
-    <button class="lang-btn" data-lang="th">ไทย</button>
-  </div>
-
-  <!-- Header -->
-  <div class="header">
-    <h1 id="pageTitle">练习记录</h1>
-    <p id="pageSubtitle">Practice Journal</p>
   </div>
 
   <!-- Progress -->
@@ -374,11 +370,11 @@
   <div class="step" id="step-1" data-step="-1">
     <div class="card" style="text-align:center;padding:32px 20px;">
       <div style="font-size:36px;margin-bottom:12px;">🧘</div>
-      <div class="step-question" id="welcomeTitle" style="font-size:20px;margin-bottom:8px;">AYBKK Huizhou Workshop</div>
-      <div class="step-hint" id="welcomeTeachers" style="font-size:14px;color:var(--text-secondary);margin-bottom:6px;">by Boonchu Tanti & Jamsai Tanti</div>
+      <div class="step-question" id="welcomeTitle" style="font-size:20px;margin-bottom:8px;">AYBKK RUSSIA WS 2026</div>
+      <div class="step-hint" id="welcomeTeachers" style="font-size:14px;color:var(--text-secondary);margin-bottom:6px;">By Boonchu & Jamsai Tanti</div>
       <div id="welcomeStudentName" style="font-size:16px;font-weight:600;color:var(--accent);margin:20px 0 8px;"></div>
-      <div class="step-hint" id="welcomeSub" style="font-size:13px;margin-bottom:24px;">Practice Journal — Self Assessment</div>
-      <button class="btn" id="welcomeStartBtn" onclick="startFromWelcome()">开始记录 / Start Journal</button>
+      <div class="step-hint" id="welcomeSub" style="font-size:13px;margin-bottom:24px;">Practice Journal / Дневник практики</div>
+      <button class="btn" id="welcomeStartBtn" onclick="startFromWelcome()">Начать запись / Start Journal</button>
     </div>
   </div>
 
@@ -738,6 +734,43 @@ const T = {
     welcomeTeachers: 'โดย Boonchu Tanti & Jamsai Tanti',
     welcomeSub: 'บันทึกการฝึก — ประเมินตนเอง',
     welcomeStartBtn: 'เริ่มบันทึก'
+  },
+  ru: {
+    pageTitle: 'AYBKK RUSSIA WS 2026',
+    pageSubtitle: 'By Boonchu & Jamsai Tanti',
+    regTitle: 'Добро пожаловать в AYBKK!',
+    regHint: 'Впервые? Введите ваше имя, чтобы начать.',
+    regBtn: 'Начать запись',
+    regBtnLoading: 'Регистрация...',
+    vinyasaQ: 'Как проходил поток виньясы?',
+    vinyasaH: 'Выберите один вариант',
+    vOpt1: 'Продолжал(а) двигаться',
+    vOpt2: 'Остановился(ась) подышать',
+    vOpt3: 'Устал(а), нужно было отдохнуть',
+    bandhaQ: 'Как ощущались бандхи?',
+    bandhaH: 'Выберите один вариант',
+    bOpt1: 'Тело лёгкое, всё под контролем',
+    bOpt2: 'Ищу лёгкость',
+    bOpt3: 'Тело тяжёлое',
+    stableQ: 'Что сегодня было стабильно?',
+    stableH: 'Можно выбрать несколько',
+    difficultQ: 'Что было сложным сегодня?',
+    difficultH: 'Можно выбрать несколько',
+    notesQ: 'Хотите что-то добавить?',
+    notesH: 'Необязательно — ваши мысли, чувства или наблюдения',
+    notesPlaceholder: 'Напишите, если хотите...',
+    lastAsanaQ: 'Последняя асана — как прошла?',
+    lastAsanaH: 'Опишите ваш реальный опыт',
+    lastAsanaPlaceholder: 'Напишите о вашем опыте...',
+    nextBtn: 'Далее',
+    submitBtn: 'Отправить',
+    skipBtn: 'Пропустить',
+    successTitle: 'Спасибо 🙏',
+    successMsg: 'Дневник практики сохранён.<br>До встречи на следующем занятии!',
+    welcomeTitle: 'AYBKK RUSSIA WS 2026',
+    welcomeTeachers: 'By Boonchu & Jamsai Tanti',
+    welcomeSub: 'Practice Journal / Дневник практики',
+    welcomeStartBtn: 'Начать запись / Start Journal'
   }
 };
 
@@ -772,6 +805,7 @@ function applyDayColor() {
 const params = new URLSearchParams(window.location.search);
 const workshopLocation = params.get('location') || 'bangkok';
 const isHuizhou = workshopLocation === 'huizhou';
+const isRussian = workshopLocation === 'russia';
 const studentPhoto = params.get('photo') || null; // photo URL for share card
 if (params.has('id')) {
   studentId = params.get('id');
@@ -788,12 +822,31 @@ function init() {
   } else {
     showStep(0); // registration
   }
-  applyLang('zh');
-  document.querySelector('.lang-btn[data-lang="zh"]').classList.add('active');
+  // Apply language (default to Russian for Russia workshop)
+  const langParam = params.get('lang');
+  const defaultLang = isRussian ? 'ru' : 'zh';
+  if (langParam && T[langParam]) {
+    currentLang = langParam;
+  } else {
+    currentLang = defaultLang;
+  }
+  applyLang(currentLang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
 
   // Set location-specific titles
-  const wsTitle = isHuizhou ? 'AYBKK Huizhou Workshop' : 'AYBKK Practice Journal';
-  const wsTitleYear = isHuizhou ? 'AYBKK Huizhou Workshop 2026' : 'AYBKK Practice Journal';
+  let wsTitle, wsTitleYear;
+  if (isRussian) {
+    wsTitle = 'AYBKK RUSSIA WS 2026';
+    wsTitleYear = 'AYBKK RUSSIA WS 2026';
+  } else if (isHuizhou) {
+    wsTitle = 'AYBKK Huizhou Workshop';
+    wsTitleYear = 'AYBKK Huizhou Workshop 2026';
+  } else {
+    wsTitle = 'AYBKK Practice Journal';
+    wsTitleYear = 'AYBKK Practice Journal';
+  }
   document.getElementById('welcomeTitle').textContent = wsTitle;
   document.getElementById('shareSubtitle').textContent = wsTitleYear;
   document.title = wsTitle;
@@ -904,13 +957,13 @@ function applyLang(lang) {
   document.getElementById('skipBtn').textContent = t.skipBtn;
   document.getElementById('successTitle').textContent = t.successTitle;
   document.getElementById('successMsg').innerHTML = t.successMsg;
-  // Location-aware title
-  const wsTitle = isHuizhou ? 'AYBKK Huizhou Workshop' : 'AYBKK Practice Journal';
-  document.getElementById('welcomeTitle').textContent = wsTitle;
-  document.getElementById('welcomeTeachers').textContent = t.welcomeTeachers;
-  document.getElementById('welcomeSub').textContent = t.welcomeSub;
-  document.getElementById('welcomeStartBtn').textContent = t.welcomeStartBtn;
-  document.getElementById('regName').placeholder = lang === 'zh' ? '你的名字' : lang === 'th' ? 'ชื่อของคุณ' : 'Your name';
+  // Location-aware title override (Russian overrides language default)
+  if (isRussian) {
+    document.getElementById('welcomeTitle').textContent = 'AYBKK RUSSIA WS 2026';
+    document.getElementById('welcomeTeachers').textContent = 'By Boonchu & Jamsai Tanti';
+  } else if (isHuizhou) {
+    document.getElementById('welcomeTitle').textContent = 'AYBKK Huizhou Workshop';
+  }
 }
 
 // Register
@@ -943,38 +996,53 @@ async function doRegister() {
 }
 
 // Submit
-// 21 Yoga Sutra quotes (one per day)
-const SUTRA_QUOTES = [
+// Yoga Sutras of Patanjali + Bhagavad Gita quotes (daily rotation)
+const WISDOM_QUOTES = [
+  // Yoga Sutras — Book 1
   "Yoga is the stilling of the fluctuations of the mind. — YS 1.2",
   "Then the seer abides in its own true nature. — YS 1.3",
-  "When you are inspired, all thoughts break their bonds. — Patanjali",
+  "When you are inspired, all thoughts break their bonds. — YS 1.49",
   "Practice becomes firmly grounded when attended to for a long time, without break. — YS 1.14",
   "The obstacles to yoga are disease, doubt, carelessness, laziness. — YS 1.30",
-  "Peace comes from within. Do not seek it without. — Buddha",
-  "Yoga is the journey of the self, through the self, to the self. — Bhagavad Gita",
-  "Breath is the bridge which connects life to consciousness. — Thich Nhat Hanh",
-  "The body is your temple. Keep it pure and clean for the soul to reside in. — B.K.S. Iyengar",
-  "It is through the alignment of the body that I discovered the alignment of my mind. — B.K.S. Iyengar",
-  "Yoga does not just change the way we see things, it transforms the person who sees. — B.K.S. Iyengar",
-  "The rhythm of the body, the melody of the mind, and the harmony of the soul create the symphony of life. — B.K.S. Iyengar",
-  "When the breath wanders the mind also is unsteady. — Hatha Yoga Pradipika",
-  "The success of Yoga does not lie in the ability to perform postures but in how it positively changes the way we live our life. — T.K.V. Desikachar",
-  "Yoga is 99% practice and 1% theory. — Sri K. Pattabhi Jois",
-  "Do your practice and all is coming. — Sri K. Pattabhi Jois",
-  "Anyone can practice. Young man can practice. Old man can practice. Very old man can practice. Man who is sick, he can practice. Man who doesn't have strength can practice. — Sri K. Pattabhi Jois",
-  "Ashtanga yoga is for all of us. — Sharath Jois",
-  "The whole of yoga is in the breath. — Sri K. Pattabhi Jois",
-  "Vinyasa means breath-synchronized movement. — Richard Freeman",
-  "When you listen to yourself, everything comes naturally. It comes from inside, like a kind of will to do something. — Sri K. Pattabhi Jois"
+  "The mind is restless; it is difficult to restrain. — YS 1.12",
+  "Abiding in one's own true nature is yoga. — YS 1.3 ( commentary)",
+  "Liberation comes from understanding the nature of the mind. — YS 1.48",
+  // Yoga Sutras — Book 2 (Kleshas)
+  "Ignorance, egotism, rage, attachment, and resistance are the five stains. — YS 2.3",
+  "Ignorance is the field upon which the others grow. — YS 2.4",
+  "Pain arises from a union with something painful. — YS 2.15",
+  "The seer and the seen are the two aspects of experience. — YS 2.20",
+  "When yoga is established, the seeker abides in absolute freedom. — YS 2.28",
+  "Eight limbs of yoga: ethical restraints, rules, posture, breath control, abstraction, concentration, meditation, absorption. — YS 2.29",
+  // Yoga Sutras — Book 3 (Siddhis)
+  "Through practice of abstraction, the mind becomes pure. — YS 3.43",
+  "Through samyama comes discriminative knowledge. — YS 3.53",
+  // Yoga Sutras — Book 4
+  "The enlightened one abides in absolute freedom. — YS 4.30",
+  // Bhagavad Gita — Chapter 2 (The Teaching)
+  "You have the right to action but not to its fruits. — BG 2.47",
+  "He who sees inaction in action and action in inaction is wise among humans. — BG 4.18",
+  "Yoga is skill in action. — BG 2.50",
+  "The self is not born; it does not die. — BG 2.20",
+  "The soul is eternal, unborn, imperishable. — BG 2.20",
+  "Be free from the three gunas, established in self. — BG 14.23",
+  // Bhagavad Gita — Chapter 6 (Yoga of Meditation)
+  "Yoga is the journey of the self, through the self, to the self. — BG 6.7",
+  "The embodied soul is the supporter of the body. — BG 6.34",
+  // Bhagavad Gita — Chapter 18 (Freedom through Knowledge)
+  "Action is the field, the self is the knower of the field. — BG 13.1",
+  "Freed from attachment, untouched by success or failure — such a person is freed from all bonds. — BG 13.28",
+  "He who sees all beings in himself and himself in all beings — that one is the highest. — BG 6.29",
+  "When the embodied one conquers the fluctuations of the mind, he approaches yoga. — BG 6.18"
 ];
 
 function getDailyQuote() {
-  const start = new Date('2026-03-28'); // Workshop start date
+  const start = new Date('2026-05-01'); // Russian WS start date
   const today = new Date();
   today.setHours(0,0,0,0);
   const dayIndex = Math.floor((today - start) / 86400000);
-  const safeIndex = ((dayIndex % SUTRA_QUOTES.length) + SUTRA_QUOTES.length) % SUTRA_QUOTES.length;
-  return SUTRA_QUOTES[safeIndex];
+  const safeIndex = ((dayIndex % WISDOM_QUOTES.length) + WISDOM_QUOTES.length) % WISDOM_QUOTES.length;
+  return WISDOM_QUOTES[safeIndex];
 }
 
 function getDayInfo() {
