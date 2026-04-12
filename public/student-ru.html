@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AYBKK Russia WS 2026 — Practice Journal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    :root {
+      --bg: #FAF9F7;
+      --card: #FFFFFF;
+      --border: #E8E5E0;
+      --text: #1A1A1A;
+      --text-secondary: #8B8680;
+      --accent: #D4A574;
+      --accent-light: #F5EDE4;
+      --accent-hover: #C49564;
+      --success: #6B9E6B;
+      --success-bg: #EEF5EE;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); -webkit-font-smoothing: antialiased; }
+    .container { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+    .header { text-align: center; margin-bottom: 24px; }
+    .logo { width: 64px; height: 64px; border-radius: 50%; margin-bottom: 12px; object-fit: cover; }
+    .header h1 { font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .header .subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+    .quote-box { background: var(--accent-light); border-left: 4px solid var(--accent); padding: 16px 20px; margin: 20px 0; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 14px; line-height: 1.6; color: var(--text); font-style: italic; }
+    .quote-source { font-size: 12px; color: var(--text-secondary); margin-top: 8px; font-style: normal; }
+    .card { background: var(--card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+    .card-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; background: var(--bg); color: var(--text); transition: border-color var(--transition); }
+    .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .btn { width: 100%; background: var(--accent); color: white; border: none; padding: 14px 20px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; transition: background var(--transition); }
+    .btn:hover { background: var(--accent-hover); }
+    .btn:disabled { background: var(--text-secondary); cursor: not-allowed; }
+    .success-msg { background: var(--success-bg); color: var(--success); padding: 16px; border-radius: var(--radius-sm); text-align: center; font-size: 14px; margin-bottom: 16px; display: none; }
+    .lang-switch { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+    .lang-btn { background: var(--accent-light); border: none; color: var(--accent); padding: 6px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+    .lang-btn.active { background: var(--accent); color: white; }
+    .energy-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 8px; }
+    .energy-btn { aspect-ratio: 1; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 16px; cursor: pointer; transition: all 0.2s; background: var(--bg); }
+    .energy-btn.selected { border-color: var(--accent); background: var(--accent-light); }
+    .emoji-row { display: flex; gap: 8px; margin-top: 8px; }
+    .emoji-btn { flex: 1; aspect-ratio: 1; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 24px; cursor: pointer; background: var(--bg); transition: all 0.2s; }
+    .emoji-btn.selected { border-color: var(--accent); background: var(--accent-light); }
+    .game-section { margin-top: 20px; }
+    .game-card { background: var(--card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); text-align: center; }
+    .game-question { font-size: 16px; font-weight: 500; margin-bottom: 16px; }
+    .game-options { display: flex; flex-direction: column; gap: 10px; }
+    .game-option { padding: 14px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; transition: all 0.2s; background: var(--bg); text-align: left; }
+    .game-option:hover { border-color: var(--accent); }
+    .game-option.correct { border-color: var(--success); background: var(--success-bg); }
+    .game-option.wrong { border-color: #e57373; background: #ffebee; }
+    .game-result { margin-top: 12px; font-size: 14px; font-weight: 500; }
+    @media (max-width: 360px) { .energy-grid { grid-template-columns: repeat(5, 1fr); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img class="logo" src="https://aybkk-ashtanga.up.railway.app/logo.png" alt="AYBKK" onerror="this.style.display='none'">
+      <h1>AYBKK RUSSIA WS 2026</h1>
+      <p class="subtitle">By Boonchu & Jamsai Tanti</p>
+      <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+
+    <div class="quote-box" id="quoteBox">
+      <div id="quoteText">Загрузка цитаты...</div>
+      <div class="quote-source" id="quoteSource"></div>
+    </div>
+
+    <form id="journalForm" onsubmit="submitJournal(event)">
+      <div class="card">
+        <div class="card-title" id="formTitle">Дневник практики</div>
+        
+        <div class="field">
+          <label id="lblDate">Дата</label>
+          <input type="date" id="date" required>
+        </div>
+
+        <div class="field">
+          <label id="lblClass">Класс</label>
+          <select id="classType" required>
+            <option value="Mysore">Mysore</option>
+            <option value="Led">Led Class</option>
+            <option value="Workshop">Workshop</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label id="lblEnergy">Энергия (1-10)</label>
+          <div class="energy-grid">
+            <button type="button" class="energy-btn" onclick="selectEnergy(1)">1</button>
+            <button type="button" class="energy-btn" onclick="selectEnergy(2)">2</button>
+            <button type="button" class="energy-btn" onclick="selectEnergy(3)">3</button>
+            <button type="button" class="energy-btn" onclick="selectEnergy(4)">4</button>
+            <button type="button" class="energy-btn" onclick="selectEnergy(5)">5</button>
+            <button type="button" class="energy-btn" onclick="selectEnergy(6)">6</button>
+            <button type="button" class="energy-btn" onclick="selectEnergy(7)">7</button>
+            <button type="button" class="energy-btn" onclick="selectEnergy(8)">8</button>
+            <button type="button" class="energy-btn" onclick="selectEnergy(9)">9</button>
+            <button type="button" class="energy-btn" onclick="selectEnergy(10)">10</button>
+          </div>
+          <input type="hidden" id="energy" value="">
+        </div>
+
+        <div class="field">
+          <label id="lblFocus">Фокус</label>
+          <div class="emoji-row">
+            <button type="button" class="emoji-btn" onclick="selectFocus('🧘')">🧘</button>
+            <button type="button" class="emoji-btn" onclick="selectFocus('💪')">💪</button>
+            <button type="button" class="emoji-btn" onclick="selectFocus('🕉️')">🕉️</button>
+            <button type="button" class="emoji-btn" onclick="selectFocus('🙏')">🙏</button>
+            <button type="button" class="emoji-btn" onclick="selectFocus('🔥')">🔥</button>
+          </div>
+          <input type="hidden" id="focus" value="">
+        </div>
+
+        <div class="field">
+          <label id="lblNotes">Личные заметки</label>
+          <textarea id="notes" placeholder="Как прошла практика?..."></textarea>
+        </div>
+      </div>
+
+      <!-- Game Section -->
+      <div class="game-section">
+        <div class="card" style="text-align:center">
+          <div class="card-title" id="gameTitle">🎮 Игра дня</div>
+          <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px" id="gameDesc">Проверь свои знания!</p>
+          <div id="gameContainer"></div>
+        </div>
+      </div>
+
+      <div class="success-msg" id="successMsg">✅ Сохранено!</div>
+      <button type="submit" class="btn" id="submitBtn">Отправить</button>
+    </form>
+  </div>
+
+<script>
+// =====================
+// CONFIG
+// =====================
+const STUDENT_ID = new URLSearchParams(window.location.search).get('id') || '';
+const STUDENT_NAME = new URLSearchParams(window.location.search).get('name') || '';
+const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+
+// =====================
+// TRANSLATIONS
+// =====================
+const T = {
+  ru: {
+    pageTitle: 'Дневник практики',
+    lblDate: 'Дата',
+    lblClass: 'Класс',
+    lblEnergy: 'Энергия (1-10)',
+    lblFocus: 'Фокус',
+    lblNotes: 'Личные заметки',
+    notesPlaceholder: 'Как прошла практика?...',
+    submitBtn: 'Отправить',
+    gameTitle: '🎮 Игра дня',
+    gameDesc: 'Проверь свои знания!',
+    successMsg: '✅ Сохранено!'
+  },
+  en: {
+    pageTitle: 'Practice Journal',
+    lblDate: 'Date',
+    lblClass: 'Class',
+    lblEnergy: 'Energy (1-10)',
+    lblFocus: 'Focus',
+    lblNotes: 'Personal notes',
+    notesPlaceholder: 'How was your practice?...',
+    submitBtn: 'Submit',
+    gameTitle: '🎮 Daily Game',
+    gameDesc: 'Test your knowledge!',
+    successMsg: '✅ Saved!'
+  }
+};
+
+// =====================
+// QUOTES — Yoga Sutras + Bhagavad Gita only
+// =====================
+const QUOTES = [
+  { text: 'Когда вы думаете, что знаете, возникают страдания. Когда вы знаете — страдания исчезают.', source: '— BG 2.56', book: 'Bhagavad Gita' },
+  { text: 'Ум становится чистым через практику отделения от желаний.', source: '— YS 1.12', book: 'Yoga Sutras' },
+  { text: 'Действуй без привязанности к плодам действия.', source: '— BG 2.47', book: 'Bhagavad Gita' },
+  { text: 'Практика — это постоянное и непрерывное усилие ума.', source: '— YS 1.13', book: 'Yoga Sutras' },
+  { text: 'Тот, кто не откладывает на потом, обретает высшее благо.', source: '— BG 2.40', book: 'Bhagavad Gita' },
+  { text: 'Обо всех объектах восприятия следует думать как о непостоянных.', source: '— YS 1.15', book: 'Yoga Sutras' },
+  { text: 'Счастье и несчастье созданы самим умом.', source: '— BG 2.15', book: 'Bhagavad Gita' },
+  { text: 'Ослабление колебаний ума приходит через практику и отрешенность.', source: '— YS 1.16', book: 'Yoga Sutras' },
+  { text: 'Что кажется реальным — проявлено. Что невидимо — во сне. Что скрыто — в глубоком сне.', source: '— BG 2.22', book: 'Bhagavad Gita' },
+  { text: 'Истинное Я не рождается и не умирает.', source: '— BG 2.20', book: 'Bhagavad Gita' },
+  { text: 'Не汗水 — это жертва, которую знающие приносят богам.', source: '— BG 4.28', book: 'Bhagavad Gita' },
+  { text: 'Дыхание следует за умом, ум следует за дыханием.', source: '— YS 2.49', book: 'Yoga Sutras' },
+  { text: 'Слово «мир» означает отсутствие страдания.', source: '— BG 2.66', book: 'Bhagavad Gita' },
+  { text: 'Сосредоточенный ум видит реальность как она есть.', source: '— YS 3.47', book: 'Yoga Sutras' },
+  { text: 'Свобода приходит, когда ум перестает отождествлять себя с явлениями.', source: '— YS 2.5', book: 'Yoga Sutras' }
+];
+
+// =====================
+// GAMES — Sanskrit counts, pose names, yoga sutras
+// =====================
+const GAMES = [
+  {
+    q: 'Сколько дыханий в Surya Namaskar A?',
+    options: ['9 дыханий', '12 дыханий', '15 дыханий'],
+    answer: 0,
+    explanation: 'Surya Namaskar A = 9 дыханий (Mountain → Upward Salute → Forward Bend → Halfway Lift → планка → Chaturanga -> Upward Dog -> Downward Dog — повторяется 5 раз)'
+  },
+  {
+    q: 'Какой номер сутры "Клеши алая викритибхигьям"?',
+    options: ['YS 2.4', 'YS 2.5', 'YS 1.2'],
+    answer: 1,
+    explanation: 'YS 2.5: "Клеши алая викритибхигьям" — невежество порождает все страдания.'
+  },
+  {
+    q: 'В какой позе дыхание "уджайи"?',
+    options: ['Sukhasana', 'Virasana', 'Все асаны'],
+    answer: 2,
+    explanation: 'Уджайи (победоносное дыхание) — практикуется во всех асанах.'
+  },
+  {
+    q: 'Сколько сутр в первой книге Yoga Sutras?',
+    options: ['25', '51', '55'],
+    answer: 1,
+    explanation: 'Первая книга (Samadhi Pada) содержит 51 сутру.'
+  },
+  {
+    q: 'Как звучит пранаяма в BG 4.29?',
+    options: ['Уджайи', 'Анулома-вилома', 'Прапанчасуда Нирвичара'],
+    answer: 0,
+    explanation: 'BG 4.29: "Прапанчасуда нирвичара" — дыхание, растворяющее мирские различия.'
+  },
+  {
+    q: 'Какая сутра говорит о "дхаране"?',
+    options: ['YS 1.1', 'YS 1.20', 'YS 3.1'],
+    answer: 2,
+    explanation: 'YS 3.1: "Дхарана — фиксация ума на объекте."'
+  }
+];
+
+// =====================
+// STATE
+// =====================
+let currentLang = 'ru';
+let energy = 0;
+let focus = '';
+let currentGame = null;
+let gameAnswered = false;
+
+function init() {
+  // Set today's date
+  document.getElementById('date').value = new Date().toISOString().split('T')[0];
+  
+  // Pick random quote
+  const today = new Date();
+  const dayIndex = today.getDate() % QUOTES.length;
+  const q = QUOTES[dayIndex];
+  document.getElementById('quoteText').textContent = q.text;
+  document.getElementById('quoteSource').textContent = q.source;
+  
+  // Pick random game
+  const gameIndex = today.getDate() % GAMES.length;
+  currentGame = GAMES[gameIndex];
+  renderGame();
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  document.getElementById('formTitle').textContent = T[lang].pageTitle;
+  document.getElementById('lblDate').textContent = T[lang].lblDate;
+  document.getElementById('lblClass').textContent = T[lang].lblClass;
+  document.getElementById('lblEnergy').textContent = T[lang].lblEnergy;
+  document.getElementById('lblFocus').textContent = T[lang].lblFocus;
+  document.getElementById('lblNotes').textContent = T[lang].lblNotes;
+  document.getElementById('notes').placeholder = T[lang].notesPlaceholder;
+  document.getElementById('submitBtn').textContent = T[lang].submitBtn;
+  document.getElementById('gameTitle').textContent = T[lang].gameTitle;
+  document.getElementById('gameDesc').textContent = T[lang].gameDesc;
+  document.getElementById('successMsg').textContent = T[lang].successMsg;
+}
+
+function selectEnergy(n) {
+  energy = n;
+  document.querySelectorAll('.energy-btn').forEach((b, i) => {
+    b.classList.toggle('selected', i < n);
+  });
+  document.getElementById('energy').value = n;
+}
+
+function selectFocus(emoji) {
+  focus = emoji;
+  document.querySelectorAll('.emoji-btn').forEach(b => {
+    b.classList.toggle('selected', b.textContent === emoji);
+  });
+  document.getElementById('focus').value = emoji;
+}
+
+function renderGame() {
+  if (!currentGame) return;
+  const container = document.getElementById('gameContainer');
+  container.innerHTML = `
+    <p class="game-question">${currentGame.q}</p>
+    <div class="game-options">
+      ${currentGame.options.map((opt, i) => `
+        <button type="button" class="game-option" onclick="answerGame(${i})" id="opt${i}">
+          ${opt}
+        </button>
+      `).join('')}
+    </div>
+    <div class="game-result" id="gameResult"></div>
+  `;
+}
+
+function answerGame(choice) {
+  if (gameAnswered) return;
+  gameAnswered = true;
+  
+  const isCorrect = choice === currentGame.answer;
+  const options = document.querySelectorAll('.game-option');
+  options.forEach((btn, i) => {
+    btn.style.pointerEvents = 'none';
+    if (i === currentGame.answer) btn.classList.add('correct');
+    else if (i === choice && !isCorrect) btn.classList.add('wrong');
+  });
+  
+  document.getElementById('gameResult').innerHTML = isCorrect 
+    ? '✅ Правильно!' 
+    : `❌ Ответ: ${currentGame.options[currentGame.answer]}`;
+  
+  // Save game result
+  saveGameResult(isCorrect, choice);
+}
+
+async function saveGameResult(isCorrect, userAnswer) {
+  if (!STUDENT_ID) return;
+  try {
+    await fetch(`${API_BASE}/journal/game`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentId: STUDENT_ID,
+        studentName: STUDENT_NAME,
+        game: currentGame.q,
+        isCorrect,
+        userAnswer: currentGame.options[userAnswer],
+        correctAnswer: currentGame.options[currentGame.answer],
+        date: new Date().toISOString()
+      })
+    });
+  } catch(e) { console.error('Game save failed:', e); }
+}
+
+async function submitJournal(e) {
+  e.preventDefault();
+  if (!energy) { alert('Выберите уровень энергии'); return; }
+  
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '...';
+  
+  const entry = {
+    studentId: STUDENT_ID,
+    studentName: STUDENT_NAME,
+    date: document.getElementById('date').value,
+    classType: document.getElementById('classType').value,
+    energy,
+    focus,
+    notes: document.getElementById('notes').value,
+    language: currentLang,
+    workshop: 'Russian WS May 2026'
+  };
+  
+  try {
+    const res = await fetch(`${API_BASE}/journal`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    });
+    if (res.ok) {
+      document.getElementById('successMsg').style.display = 'block';
+      setTimeout(() => { window.location.reload(); }, 2000);
+    } else {
+      throw new Error('Save failed');
+    }
+  } catch(e) {
+    alert('Ошибка сохранения. Попробуйте снова.');
+    btn.disabled = false;
+    btn.textContent = T[currentLang].submitBtn;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
