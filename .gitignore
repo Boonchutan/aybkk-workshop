@@ -1,0 +1,11 @@
+node_modules/
+uploads/
+public/photos/
+public/web/
+data/
+db/
+*.log
+*.json
+.env
+.env.*
+.DS_Store
