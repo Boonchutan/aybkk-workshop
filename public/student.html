@@ -1115,9 +1115,9 @@ async function shareToWeChat() {
       try {
         const img = await loadStudentPhoto(studentPhoto);
         if (img) {
-          // Draw photo with 40% opacity, cover-fit
+          // Draw photo with 60% opacity, cover-fit
           ctx.save();
-          ctx.globalAlpha = 0.4;
+          ctx.globalAlpha = 0.6;
           const scale = Math.max(640 / img.width, 720 / img.height);
           const sw = img.width * scale;
           const sh = img.height * scale;
