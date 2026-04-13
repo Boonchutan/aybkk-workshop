@@ -609,7 +609,9 @@
       <div style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:4px;" id="shareStudentName"></div>
       <div style="color:rgba(255,255,255,0.85);font-size:15px;font-weight:500;margin-bottom:16px;" id="shareDayInfo"></div>
       <div style="border-top:1px solid rgba(255,255,255,0.2);padding-top:16px;margin-top:8px;">
-        <div style="color:#ffffff;font-size:14px;font-style:italic;line-height:1.6;font-weight:400;" id="shareQuote"></div>
+        <div style="color:#ffffff;font-size:14px;font-style:italic;line-height:1.6;font-weight:400;margin-bottom:12px;" id="shareQuote"></div>
+      
+        <div style="color:#ffffff;font-size:15px;font-weight:700;letter-spacing:0.5px;line-height:1.5;display:none;margin-bottom:4px;" id="shareUplift"></div>
       </div>
       <div style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:16px;font-weight:500;">by Boonchu Tanti & Jamsai Tanti</div>
     </div>
@@ -790,6 +792,47 @@ const DAY_COLORS = [
   { accent: '#A085B8', light: '#F2EDF6', hover: '#8F74A7' }, // Saturday — Soft Lavender
   { accent: '#A3ADA8', light: '#F3F4F3', hover: '#929C97' }  // Sunday   — Mist Gray
 ];
+
+// =====================
+// UPLIFT PHRASES — Chinese wisdom + yoga philosophy
+// =====================
+const UPLIFT_PHRASES = [
+  // Yoga sutras + Bhagavad Gita
+  { keywords: ['tired', 'exhaust', 'drain', '累', '疲劳', '困', '无力', '虚弱'], phrase: '瑜伽是自我的旅程，经由自我，回归自我。', source: '— 瑜伽经' },
+  { keywords: ['stiff', 'tight', '僵硬', '紧', '僵硬', '酸', '痛'], phrase: '当您认为已知时，苦便升起。当您真正知时，苦便消散。', source: '— 薄伽梵歌 2.56' },
+  { keywords: ['difficult', 'hard', '难', '困难', '挑战', '挣扎', '不容易'], phrase: '不拖延的人，必得至高幸福。行动吧，别执着于结果。', source: '— 薄伽梵歌 2.40' },
+  { keywords: ['frustrat', 'angry', 'annoy', '烦', '怒', '躁', '不满', '挫折'], phrase: '平静之人，既不喜人之所喜，亦不悲人之所悲。', source: '— 薄伽梵歌 2.15' },
+  { keywords: ['confus', 'lost', '迷', '困惑', '不懂', '不懂', '混乱'], phrase: '专注之心，照见真实。每一个体式都是一次回归。', source: '— 薄伽梵歌 6.19' },
+  { keywords: ['pain', 'hurt', 'injury', '疼', '痛', '伤', '痛', '不舒服'], phrase: '呼吸跟随心意，心意跟随呼吸。回归呼吸，即回归当下。', source: '— 瑜伽经 2.49' },
+  { keywords: ['great', 'good', 'wonderful', 'amazing', '棒', '好', '赞', '厉害', '完美', '顺利'], phrase: '真正的力量，始于您愿意迈出第一步。每一天都是新的练习。', source: '— 瑜伽经 1.14' },
+  { keywords: ['happy', 'joy', 'peace', '开心', '快乐', '喜悦', '平静', '幸福', '满足'], phrase: '内心平静之人，照见万物之真。Namaste。', source: '— 薄伽梵歌 5.20' },
+  { keywords: ['first', 'first time', '第一次', '新', '刚开始', '新手'], phrase: '每一位大师，都曾以新手之身，踏出第一步。继续。', source: '— Alfred' },
+  { keywords: ['shy', 'embarrass', '不好意思', '害羞', '尴尬'], phrase: '练习是您与自己对话。在垫子上，没有别人。', source: '— Alfred' },
+  { keywords: ['breakthrough', '突破', '进步', '做到', '成功', '达成了'], phrase: '每一次突破，都源于您不曾放弃的那个早晨。', source: '— Alfred' },
+  { keywords: ['sick', 'ill', '不舒服', '病', '感冒', '发烧'], phrase: '身体会生病，但练习的精神永远清醒。给自己温柔。', source: '— Alfred' },
+  { keywords: ['struggle', '挣扎', '煎熬', '撑', '忍着'], phrase: '挣扎不代表失败。代表您还在坚持。', source: '— Alfred' },
+  { keywords: ['focus', '专注', '集中', '专心'], phrase: '心若调柔，万物皆柔。专注即是力量。', source: '— Alfred' },
+  { keywords: ['sweat', '汗水', '累', '辛苦'], phrase: '汗水是瑜伽的礼物。每一次付出，都在塑造更好的您。', source: '— Alfred' },
+  { keywords: ['try', '尝试', '努力', '尽力'], phrase: '行动本身即是收获。结果自然会来。', source: '— 薄伽梵歌 2.47' },
+  // Default — always matches if nothing else does
+  { keywords: [], phrase: '您的练习正在改变您看不见的部分。保持信念。', source: '— Alfred' }
+];
+
+// Detect mood from notes and return best uplift phrase
+let _capturedNotes = '';
+function getUpliftPhrase(notes) {
+  if (!notes || notes.trim() === '') return null;
+  const lower = notes.toLowerCase();
+  for (const entry of UPLIFT_PHRASES) {
+    if (entry.keywords.length === 0) continue; // skip default
+    for (const kw of entry.keywords) {
+      if (lower.includes(kw.toLowerCase())) return entry.phrase;
+    }
+  }
+  // Default phrase if notes exist but no keyword matched
+  const defaults = UPLIFT_PHRASES.filter(e => e.keywords.length === 0);
+  return defaults.length > 0 ? defaults[0].phrase : null;
+}
 
 function applyDayColor() {
   const dayIndex = new Date().getDay(); // 0=Sun, 1=Mon, ...
@@ -1083,6 +1126,17 @@ function showShareCard() {
   document.getElementById('shareStudentName').textContent = studentName;
   document.getElementById('shareDayInfo').textContent = getDayInfo();
   document.getElementById('shareQuote').textContent = `"${getDailyQuote()}"`;
+  // Apply uplift phrase if notes were provided
+  const upliftEl = document.getElementById('shareUplift');
+  const uplift = getUpliftPhrase(window._practiceNotes);
+  if (upliftEl) {
+    if (uplift) {
+      upliftEl.textContent = uplift;
+      upliftEl.style.display = 'block';
+    } else {
+      upliftEl.style.display = 'none';
+    }
+  }
   // Apply pastel day color to share card
   const c = getDayColor();
   const card = document.getElementById('shareCard');
@@ -1167,15 +1221,31 @@ async function shareToWeChat() {
     // Divider
     ctx.strokeStyle = 'rgba(255,255,255,0.2)';
     ctx.beginPath();
-    ctx.moveTo(120, 300);
-    ctx.lineTo(520, 300);
+    ctx.moveTo(120, 280);
+    ctx.lineTo(520, 280);
     ctx.stroke();
     
     // Quote
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'italic 18px -apple-system, serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 16px -apple-system, serif';
     const quote = getDailyQuote();
-    wrapText(ctx, `"${quote}"`, 320, 360, 440, 28);
+    wrapText(ctx, `"${quote}"`, 320, 330, 460, 26);
+    
+    // Uplift phrase — large, centered, bold
+    const uplift = getUpliftPhrase(window._practiceNotes);
+    if (uplift) {
+      // Decorative line above uplift
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.beginPath();
+      ctx.moveTo(200, 420);
+      ctx.lineTo(440, 420);
+      ctx.stroke();
+      
+      // Big uplift words
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 24px -apple-system, PingFang SC, sans-serif';
+      wrapText(ctx, uplift, 320, 470, 500, 34);
+    }
     
     // Credit
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
@@ -1207,7 +1277,10 @@ async function shareToWeChat() {
     }, 'image/png');
   } catch (err) {
     // Final fallback: copy text
-    const text = `🧘 ${window._wsTitleYear}\n${studentName} — ${getDayInfo()}\n"${getDailyQuote()}"\nby Boonchu Tanti & Jamsai Tanti`;
+    const uplift = getUpliftPhrase(window._practiceNotes);
+    const text = uplift
+      ? `🧘 ${window._wsTitleYear}\n${studentName} — ${getDayInfo()}\n"${getDailyQuote()}"\n✨ ${uplift}\nby Boonchu Tanti & Jamsai Tanti`
+      : `🧘 ${window._wsTitleYear}\n${studentName} — ${getDayInfo()}\n"${getDailyQuote()}"\nby Boonchu Tanti & Jamsai Tanti`;
     await navigator.clipboard.writeText(text);
     alert('Copied! Paste in WeChat to share.');
   }
@@ -1256,6 +1329,9 @@ async function doSubmit() {
   btn.disabled = true;
   btn.textContent = '...';
 
+  // Capture notes for uplift generation
+  window._practiceNotes = document.getElementById('practiceNotes').value || '';
+
   try {
     await fetch('/api/journal/checkin', {
       method: 'POST',
@@ -1268,7 +1344,7 @@ async function doSubmit() {
         stableToday,
         difficultToday,
         lastAsanaNote: document.getElementById('lastAsanaNote').value,
-        practiceNotes: document.getElementById('practiceNotes').value,
+        practiceNotes: window._practiceNotes,
         sessionDate: new Date().toISOString().split('T')[0],
         platform: getPlatform()
       })
