@@ -363,6 +363,9 @@
     <div class="progress-dot" data-step="4"></div>
     <div class="progress-dot" data-step="5"></div>
     <div class="progress-dot" data-step="6"></div>
+    <div class="progress-dot" data-step="7"></div>
+    <div class="progress-dot" data-step="8"></div>
+    <div class="progress-dot" data-step="9"></div>
   </div>
 
   <!-- Student Name -->
@@ -600,6 +603,47 @@
       <button class="btn-secondary" id="skipBtn" onclick="doSubmit()">Skip</button>
     </div>
   </div>
+
+  <!-- STEP 7: Photo Upload -->
+  <div class="step" id="step7">
+    <div class="card">
+      <div class="step-icon">📸</div>
+      <div class="step-question" id="photoQ">Add your photo!</div>
+      <div class="step-hint" id="photoH">Optional — for your share card</div>
+      <div style="text-align:center;padding:12px 0;">
+        <label id="photoPreviewContainer" style="display:none;margin-bottom:16px;cursor:pointer;">
+          <img id="photoPreview" src="" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);">
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">Tap to change</div>
+        </label>
+        <div id="photoPlaceholder" style="width:120px;height:120px;border-radius:50%;border:3px dashed var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <span style="font-size:40px;">📷</span>
+        </div>
+        <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;">
+        <button class="btn" id="photoUploadBtn" onclick="document.getElementById('photoInput').click()">Take / Upload Photo</button>
+        <button class="btn-secondary" onclick="goNext(7)">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8: Quiz A (2 questions) -->
+  <div class="step" id="step8">
+    <div class="card">
+      <div class="step-icon">🧘</div>
+      <div class="step-question" id="quizTitle">Quick Ashtanga Quiz!</div>
+      <div class="step-hint" id="quizHint">2 quick questions before you're done</div>
+      <div id="quizAContainer"></div>
+    </div>
+  </div>
+
+  <!-- STEP 9: Quiz B (2 more questions) -->
+  <div class="step" id="step9">
+    <div class="card">
+      <div class="step-icon">💪</div>
+      <div class="step-question">Almost done!</div>
+      <div class="step-hint">2 more questions...</div>
+      <div id="quizBContainer"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Success + Share Card -->
@@ -659,7 +703,15 @@ const T = {
     welcomeTitle: 'AYBKK 惠州工作坊',
     welcomeTeachers: '导师: Boonchu Tanti & Jamsai Tanti',
     welcomeSub: '练习记录 — 自我评估',
-    welcomeStartBtn: '开始记录'
+    welcomeStartBtn: '开始记录',
+    photoQ: '添加你的照片！',
+    photoH: '可选 — 用于分享卡',
+    quizTitle: '快速瑜伽小测验！',
+    quizHint: '完成前回答2个问题',
+    quizNext: '下一题 →',
+    quizComplete: '完成测验',
+    quizCorrect: '🥳🎊 正确！',
+    quizWrong: '🙏 下次再试'
   },
   en: {
     pageTitle: 'Practice Journal',
@@ -696,7 +748,15 @@ const T = {
     welcomeTitle: 'AYBKK Practice Journal',
     welcomeTeachers: 'by Boonchu Tanti & Jamsai Tanti',
     welcomeSub: 'Practice Journal — Self Assessment',
-    welcomeStartBtn: 'Start Journal'
+    welcomeStartBtn: 'Start Journal',
+    photoQ: 'Add your photo!',
+    photoH: 'Optional — for your share card',
+    quizTitle: 'Quick Ashtanga Quiz!',
+    quizHint: '2 quick questions before you\'re done',
+    quizNext: 'Next →',
+    quizComplete: 'Complete Quiz',
+    quizCorrect: '🥳🎊 Correct!',
+    quizWrong: '🙏 Try next time'
   },
   th: {
     pageTitle: 'บันทึกการฝึก',
@@ -733,7 +793,15 @@ const T = {
     welcomeTitle: 'AYBKK Practice Journal',
     welcomeTeachers: 'โดย Boonchu Tanti & Jamsai Tanti',
     welcomeSub: 'บันทึกการฝึก — ประเมินตนเอง',
-    welcomeStartBtn: 'เริ่มบันทึก'
+    welcomeStartBtn: 'เริ่มบันทึก',
+    photoQ: 'เพิ่มรูปของคุณ!',
+    photoH: 'ไม่บังคับ — สำหรับการ์ดแชร์',
+    quizTitle: 'ทดสอบ Ashtanga ควิก!',
+    quizHint: 'ตอบ 2 ข้อก่อนเสร็จ',
+    quizNext: 'ข้อถัดไป →',
+    quizComplete: 'เสร็จสิ้น',
+    quizCorrect: '🥳🎊 ถูกต้อง!',
+    quizWrong: '🙏 ลองใหม่ครั้งหน้า'
   },
   ru: {
     pageTitle: 'AYBKK RUSSIA WS 2026',
@@ -770,7 +838,15 @@ const T = {
     welcomeTitle: 'AYBKK RUSSIA WS 2026',
     welcomeTeachers: 'By Boonchu & Jamsai Tanti',
     welcomeSub: 'Practice Journal / Дневник практики',
-    welcomeStartBtn: 'Начать запись / Start Journal'
+    welcomeStartBtn: 'Начать запись / Start Journal',
+    photoQ: 'Добавьте фото!',
+    photoH: 'Необязательно — для открытки',
+    quizTitle: 'Быстрая викторина по Аштанга-йоге!',
+    quizHint: '2 вопроса перед завершением',
+    quizNext: 'Далее →',
+    quizComplete: 'Завершить',
+    quizCorrect: '🥳🎊 Правильно!',
+    quizWrong: '🙏 Попробуйте в следующий раз'
   }
 };
 
@@ -778,7 +854,38 @@ let currentLang = 'zh';
 let studentId = null;
 let studentName = null;
 let currentStep = 0;
-const totalSteps = 7; // 0=register, 1-6=questions
+const totalSteps = 9; // 0=register, 1-6=questions, 7=photo, 8-9=quiz
+
+// =====================
+// QUIZ DATA
+// =====================
+const QUIZ_QUESTIONS = [
+  { q: 'Who is the creator of ashtanga yoga method?', options: ['Guru Purnima', 'Guru Sharath Jois', 'Guru Patanjali', 'Guru Pattabhi Jois'], answer: 3 },
+  { q: 'What is the translation of "ashtanga"?', options: ['Tangerine over ashes', 'Eight limbs of Yoga', 'Making Soup', 'Thong underwear'], answer: 1 },
+  { q: 'How many times do we repeat Suryanamaskara A?', options: ['Few times to warm up', '5 times is tradition', 'None', 'What are you talking about'], answer: 1 },
+  { q: 'How many vinyasa in suryanamaskara B?', options: ['6', '9', '14', '17'], answer: 3 },
+  { q: 'What is the name of the asana after Janu sirsasana A?', options: ['Janu Sirsasana AA', 'Janu Sirsasana A1', 'Janunu Sirsasana', 'Janu Sirsasana B'], answer: 3 },
+  { q: 'Sentence before "..om, shanti shanti shantih" in closing muntra?', options: ['Boom Shakala', 'Vande Gurunam', 'Sukhino bhavantu', 'Wu Zhao Sheng You Zhao'], answer: 2 },
+  { q: 'Language used for counting vinyasa in ashtanga yoga?', options: ['Hindi', 'Arabic', 'Tamil', 'Sanskrit'], answer: 3 },
+  { q: 'How many days per week do practitioners do Ashtanga traditionally?', options: ['6 days per week full power', 'I practice everyday', '1 day rest 2 days', 'Whenever I feel tired'], answer: 0 },
+  { q: 'How many breaths in headstand half bend?', options: ['Can barely breathe', 'Long 10 breaths', "Can't do 1 breath", '25 breaths'], answer: 1 },
+  { q: 'What is bandha?', options: ['Same as holding poop', 'Lifting pelvic floor feeling light', 'Another type of scarf', 'Slang for bandaid'], answer: 1 },
+  { q: 'Main idea of Ashtanga practice?', options: ['Gain big muscles', 'Handstand', 'Breathing, moving body, hold postures', 'Nice photos for social media'], answer: 2 },
+  { q: 'How many times do we stand up and bend in Urdhva Dhanurasana during mysore?', options: ['What are you talking about', 'As many as I can for photos', 'Three times or more', 'Only like handstand'], answer: 2 },
+  { q: 'What is mysore class?', options: ['Ashtanga practice at home', 'Do my sequence', 'Practice at studio for nice photos', 'Traditional at sacred space with teacher from parampara'], answer: 3 }
+];
+
+// Select N unique random questions
+function pickRandom(arr, n) {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
+
+// Quiz state
+let quizQ1 = []; // first 2 questions (step 8)
+let quizQ2 = []; // second 2 questions (step 9)
+let quizResults = []; // {correct, selected}
+let quizAnswered = []; // indices of answered questions
 
 // Day-of-week color theme (pastel)
 const DAY_COLORS = [
@@ -996,6 +1103,10 @@ function applyLang(lang) {
   document.getElementById('nextToNotesBtn').textContent = t.nextBtn;
   document.getElementById('submitBtn').textContent = t.submitBtn;
   document.getElementById('skipBtn').textContent = t.skipBtn;
+  document.getElementById('photoQ').textContent = t.photoQ || 'Add your photo!';
+  document.getElementById('photoH').textContent = t.photoH || 'Optional — for your share card';
+  document.getElementById('quizTitle').textContent = t.quizTitle || 'Quick Ashtanga Quiz!';
+  document.getElementById('quizHint').textContent = t.quizHint || '2 quick questions before you're done';
   document.getElementById('successTitle').textContent = t.successTitle;
   document.getElementById('successMsg').innerHTML = t.successMsg;
   // Location-aware title override (Russian overrides language default)
@@ -1347,8 +1458,9 @@ async function doSubmit() {
         platform: getPlatform()
       })
     });
-    showShareCard();
-    document.getElementById('successOverlay').classList.remove('hidden');
+    initPhotoStep();
+    showStep(7);
+    // photo step will show share card after quiz
   } catch (err) {
     btn.disabled = false;
     btn.textContent = T[currentLang].submitBtn;
@@ -1371,6 +1483,334 @@ function getPlatform() {
   if (ua.includes('line')) return 'line';
   if (ua.includes('micromessenger')) return 'wechat';
   return 'web';
+}
+
+// =====================
+// PHOTO UPLOAD
+// =====================
+let uploadedPhotoDataURL = null;
+
+function initPhotoStep() {
+  // Pick quiz questions once
+  initQuizSets();
+  
+  // Init photo step
+  const photoInput = document.getElementById('photoInput');
+  const preview = document.getElementById('photoPreview');
+  const placeholder = document.getElementById('photoPlaceholder');
+  const previewContainer = document.getElementById('photoPreviewContainer');
+  const uploadBtn = document.getElementById('photoUploadBtn');
+  
+  // Check if student already has a photo in localStorage
+  const stored = localStorage.getItem('photo_' + studentId);
+  if (stored) {
+    uploadedPhotoDataURL = stored;
+    preview.src = stored;
+    placeholder.style.display = 'none';
+    previewContainer.style.display = 'block';
+    uploadBtn.textContent = 'Change Photo';
+  }
+  
+  photoInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      uploadedPhotoDataURL = ev.target.result;
+      localStorage.setItem('photo_' + studentId, uploadedPhotoDataURL);
+      preview.src = uploadedPhotoDataURL;
+      placeholder.style.display = 'none';
+      previewContainer.style.display = 'block';
+      uploadBtn.textContent = 'Change Photo';
+    };
+    reader.readAsDataURL(file);
+  });
+  
+  // Click on preview to re-trigger input
+  previewContainer.addEventListener('click', () => photoInput.click());
+  
+  // Apply language
+  const t = T[currentLang] || T.zh;
+  document.getElementById('photoQ').textContent = t.photoQ || 'Add your photo!';
+  document.getElementById('photoH').textContent = t.photoH || 'Optional — for your share card';
+}
+
+// =====================
+// QUIZ RENDERING
+// =====================
+let quizRound = 0; // 0=not started, 1=quizA, 2=quizB
+let currentQuizQ = []; // current batch of 2 questions
+
+function initQuizSets() {
+  // Pick 4 unique questions: first 2 for quiz A, last 2 for quiz B
+  const all4 = pickRandom(QUIZ_QUESTIONS, 4);
+  quizQ1 = all4.slice(0, 2);
+  quizQ2 = all4.slice(2);
+  quizResults = [];
+  quizRound = 0;
+}
+
+function renderQuiz(containerId, questions, roundNum) {
+  const container = document.getElementById(containerId);
+  quizRound = roundNum;
+  currentQuizQ = questions;
+  
+  // Apply language
+  const t = T[currentLang] || T.zh;
+  if (roundNum === 1) {
+    document.getElementById('quizTitle').textContent = t.quizTitle;
+    document.getElementById('quizHint').textContent = t.quizHint;
+  }
+  
+  let html = '';
+  questions.forEach((q, qi) => {
+    html += '<div style="margin-bottom:20px;padding:16px;background:var(--accent-light);border-radius:12px;">';
+    html += '<div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text);">' + (qi + 1) + '. ' + q.q + '</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:8px;">';
+    q.options.forEach((opt, oi) => {
+      html += '<button class="quiz-opt" data-qi="' + qi + '" data-oi="' + oi + '" onclick="answerQuiz(this,' + qi + ',' + oi + ')" style="padding:12px 16px;border:2px solid var(--border);border-radius:10px;background:white;font-size:14px;text-align:left;cursor:pointer;transition:all 0.2s;color:var(--text);">' + opt + '</button>';
+    });
+    html += '</div>';
+    html += '<div class="quiz-result hidden" id="qr' + qi + '" style="margin-top:10px;font-size:14px;font-weight:600;padding:10px;border-radius:8px;"></div>';
+    html += '</div>';
+  });
+  
+  // Next button
+  html += '<button class="btn" id="quizNextBtn" onclick="nextQuizRound()">' + (roundNum === 2 ? (T[currentLang]?.quizComplete || 'Complete Quiz') : (T[currentLang]?.quizNext || 'Next →')) + '</button>';
+  html += '<button class="btn-secondary" onclick="skipQuiz()">Skip Quiz</button>';
+  
+  container.innerHTML = html;
+}
+
+function answerQuiz(btn, qi, oi) {
+  // Prevent double-answering
+  if (btn.classList.contains('answered')) return;
+  btn.classList.add('answered');
+  
+  const q = currentQuizQ[qi];
+  const isCorrect = oi === q.answer;
+  quizResults.push({ qi, oi, correct: isCorrect });
+  
+  // Highlight correct/wrong
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach((o, idx) => {
+    o.style.cursor = 'default';
+    if (idx === q.answer) o.style.borderColor = 'var(--success)';
+    if (idx === oi && !isCorrect) o.style.borderColor = '#e57373';
+  });
+  
+  // Show result
+  const t = T[currentLang] || T.zh;
+  const resultEl = document.getElementById('qr' + qi);
+  resultEl.classList.remove('hidden');
+  if (isCorrect) {
+    resultEl.textContent = t.quizCorrect || '🥳🎊 Correct!';
+    resultEl.style.cssText = 'background:#eef5ee;color:#6B9E6B;';
+  } else {
+    resultEl.textContent = t.quizWrong || '🙏 Try next time';
+    resultEl.style.cssText = 'background:#ffebee;color:#e57373;';
+  }
+}
+
+function nextQuizRound() {
+  if (quizRound === 1) {
+    showStep(9);
+    setTimeout(() => renderQuiz('quizBContainer', quizQ2, 2), 50);
+  } else if (quizRound === 2) {
+    showShareCard();
+    document.getElementById('successOverlay').classList.remove('hidden');
+  }
+}
+
+function skipQuiz() {
+  if (quizRound === 1) {
+    showStep(9);
+    setTimeout(() => renderQuiz('quizBContainer', quizQ2, 2), 50);
+  } else if (quizRound === 2) {
+    showShareCard();
+    document.getElementById('successOverlay').classList.remove('hidden');
+  }
+}
+
+
+  if (fromStep < 6) {
+    _origGoNext(fromStep);
+  } else if (fromStep === 6) {
+    initPhotoStep();
+    showStep(7);
+  } else if (fromStep === 7) {
+    // Photo done → start quiz A (step 8)
+    initQuizSets();
+    showStep(8);
+  } else if (fromStep === 8) {
+    showStep(9);
+    renderQuiz('quizBContainer', quizQ2, 2);
+  } else if (fromStep === 9) {
+    showShareCard();
+    document.getElementById('successOverlay').classList.remove('hidden');
+  }
+}
+
+// =====================
+// SHARE CARD — load photo from localStorage
+// =====================
+async function shareToWeChat() {
+  const dc = getDayColor();
+  
+  // Try canvas-based image generation
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 720;
+    const ctx = canvas.getContext('2d');
+    
+    // Pastel day-color gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 640, 720);
+    gradient.addColorStop(0, dc.accent);
+    gradient.addColorStop(0.5, dc.hover);
+    gradient.addColorStop(1, dc.accent);
+    ctx.fillStyle = gradient;
+    roundRect(ctx, 0, 0, 640, 720, 32);
+    ctx.fill();
+    
+    // Student photo from localStorage (primary) or URL param (fallback)
+    const localPhoto = localStorage.getItem('photo_' + studentId);
+    const photoSrc = localPhoto || studentPhoto;
+    if (photoSrc) {
+      try {
+        const img = await loadStudentPhoto(photoSrc);
+        if (img) {
+          ctx.save();
+          ctx.globalAlpha = 0.75;
+          const scale = Math.max(640 / img.width, 720 / img.height);
+          const sw = img.width * scale;
+          const sh = img.height * scale;
+          const sx = (640 - sw) / 2;
+          const sy = (720 - sh) / 2;
+          ctx.drawImage(img, sx, sy, sw, sh);
+          ctx.restore();
+          
+          // Gradient overlay for readability
+          const photoOverlay = ctx.createLinearGradient(0, 0, 0, 720);
+          photoOverlay.addColorStop(0, dc.accent + '99');
+          photoOverlay.addColorStop(0.3, dc.accent + '66');
+          photoOverlay.addColorStop(0.7, dc.hover + '66');
+          photoOverlay.addColorStop(1, dc.accent + '99');
+          ctx.fillStyle = photoOverlay;
+          roundRect(ctx, 0, 0, 640, 720, 32);
+          ctx.fill();
+        }
+      } catch(e) { console.log('Photo load failed:', e); }
+    }
+    
+    // Subtle depth overlay
+    const overlay = ctx.createLinearGradient(0, 0, 0, 720);
+    overlay.addColorStop(0, 'rgba(255,255,255,0.15)');
+    overlay.addColorStop(0.5, 'rgba(255,255,255,0)');
+    overlay.addColorStop(1, 'rgba(0,0,0,0.1)');
+    ctx.fillStyle = overlay;
+    roundRect(ctx, 0, 0, 640, 720, 32);
+    ctx.fill();
+    
+    // Location-specific share title
+    let shareTitle = window._wsTitleYear || 'AYBKK WORKSHOP 2026';
+    if (isGuangzhou) shareTitle = 'AYBKK 广州工作坊 2026';
+    else if (isRussian) shareTitle = 'AYBKK RUSSIA WS 2026';
+    
+    // AYBKK label
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = '600 14px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(shareTitle, 320, 80);
+    
+    // Student name
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 40px -apple-system, PingFang SC, sans-serif';
+    ctx.fillText(studentName, 320, 200);
+    
+    // Day info
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = '500 22px -apple-system, sans-serif';
+    ctx.fillText(getDayInfo(), 320, 240);
+    
+    // Divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.beginPath();
+    ctx.moveTo(120, 280);
+    ctx.lineTo(520, 280);
+    ctx.stroke();
+    
+    // Quote
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = 'italic 16px -apple-system, serif';
+    const quote = getDailyQuote();
+    wrapText(ctx, '"' + quote + '"', 320, 330, 460, 26);
+    
+    // Uplift phrase
+    const uplift = getUpliftPhrase(window._practiceNotes);
+    if (uplift) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.beginPath();
+      ctx.moveTo(200, 420);
+      ctx.lineTo(440, 420);
+      ctx.stroke();
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 24px -apple-system, PingFang SC, sans-serif';
+      wrapText(ctx, uplift, 320, 470, 500, 34);
+    }
+    
+    // Credit
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '500 14px -apple-system, sans-serif';
+    ctx.fillText('by Boonchu Tanti & Jamsai Tanti', 320, 680);
+    
+    // Convert to blob and trigger download/share
+    canvas.toBlob(async (blob) => {
+      if (navigator.share && navigator.canShare) {
+        const file = new File([blob], 'aybkk-journal.png', { type: 'image/png' });
+        const shareData = {
+          title: shareTitle,
+          text: getDayInfo() + ' — ' + studentName,
+          files: [file]
+        };
+        if (navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          return;
+        }
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'aybkk-' + getDayNumber() + '-' + studentName + '.png';
+      a.click();
+      URL.revokeObjectURL(url);
+      alert('Image saved! Open WeChat and share from your gallery.');
+    }, 'image/png');
+  } catch (err) {
+    const uplift = getUpliftPhrase(window._practiceNotes);
+    const text = uplift
+      ? '🧘 ' + shareTitle + '
+' + studentName + ' — ' + getDayInfo() + '
+"' + getDailyQuote() + '"
+✨ ' + uplift + '
+by Boonchu Tanti & Jamsai Tanti'
+      : '🧘 ' + shareTitle + '
+' + studentName + ' — ' + getDayInfo() + '
+"' + getDailyQuote() + '"
+by Boonchu Tanti & Jamsai Tanti';
+    await navigator.clipboard.writeText(text);
+    alert('Copied! Paste in WeChat to share.');
+  }
+}
+
+// Add Guangzhou location flag
+const isGuangzhou = workshopLocation === 'guangzhou';
+
+// Set Guangzhou title
+if (isGuangzhou) {
+  const wsTitle = 'AYBKK 广州工作坊 2026';
+  window._wsTitleYear = wsTitle;
 }
 
 init();

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYBKK 广州工作坊 2026 — Orientation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #faf8f5; color: #2a2420; min-height: 100vh; }
+    .header { background: linear-gradient(135deg, #8b4513 0%, #a0522d 50%, #8b4513 100%); color: white; padding: 40px 24px 30px; text-align: center; }
+    .header img { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 16px; border: 3px solid rgba(255,255,255,0.3); }
+    .header h1 { font-size: 22px; margin-bottom: 6px; }
+    .header .by { color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 4px; }
+    .header p { color: rgba(255,255,255,0.6); font-size: 13px; }
+    .lang-switch { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+    .lang-btn { background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.7); padding: 6px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .lang-btn.active { background: rgba(255,255,255,0.3); color: white; }
+    .container { max-width: 480px; margin: 0 auto; padding: 24px 20px; }
+    .intro { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .intro p { font-size: 15px; line-height: 1.7; color: #5d4037; margin-bottom: 12px; }
+    .rules { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .rules h3 { font-size: 16px; color: #3e2723; margin-bottom: 16px; }
+    .rule { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0ebe5; }
+    .rule:last-child { border-bottom: none; }
+    .rule-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+    .rule-text { font-size: 14px; line-height: 1.5; color: #5d4037; }
+    .quote-box { background: #f5ede4; border-left: 4px solid #c49564; padding: 16px 20px; margin: 20px 0; border-radius: 0 10px 10px 0; font-size: 14px; line-height: 1.6; color: #3e2723; font-style: italic; }
+    .quote-source { font-size: 12px; color: #8b7d6b; margin-top: 8px; font-style: normal; }
+    .closing { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .closing p { font-size: 15px; line-height: 1.7; color: #5d4037; font-style: italic; }
+    .signatures { font-size: 14px; color: #8b7d6b; margin-top: 12px; }
+    
+    .form-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .form-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 4px; }
+    .form-section p { font-size: 13px; color: #8b7d6b; margin-bottom: 20px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 14px; font-weight: 600; color: #3e2723; margin-bottom: 6px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 12px 16px; border: 2px solid #e8e0d8; border-radius: 12px; font-size: 15px; background: #faf8f5; color: #2a2420; transition: border-color 0.2s; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #c49564; }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field .hint { font-size: 12px; color: #8b7d6b; margin-top: 4px; }
+    .options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .option { background: #faf8f5; border: 2px solid #e8e0d8; border-radius: 20px; padding: 8px 16px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: #5d4037; }
+    .option.selected { background: #c49564; border-color: #c49564; color: white; }
+    .submit-btn { width: 100%; background: #8b4513; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+    .submit-btn:hover { background: #a0522d; }
+    .submit-btn:disabled { background: #a89888; cursor: not-allowed; }
+    .success-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(139,69,19,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .success-overlay.hidden { display: none; }
+    .success-box { background: white; border-radius: 20px; padding: 40px 32px; text-align: center; max-width: 320px; margin: 20px; }
+    .success-box h2 { font-size: 20px; color: #3e2723; margin-bottom: 12px; }
+    .success-box p { font-size: 14px; color: #5d4037; line-height: 1.6; }
+    
+    /* Game styles */
+    .game-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .game-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 16px; text-align: center; }
+    .game-card { background: #faf8f5; border-radius: 12px; padding: 20px; margin-bottom: 16px; text-align: center; }
+    .game-question { font-size: 16px; font-weight: 500; color: #3e2723; margin-bottom: 16px; }
+    .game-options { display: flex; flex-direction: column; gap: 10px; }
+    .game-option { padding: 14px 20px; border: 2px solid #e8e0d8; border-radius: 10px; font-size: 15px; cursor: pointer; transition: all 0.2s; background: white; text-align: left; color: #3e2723; }
+    .game-option:hover { border-color: #c49564; background: #faf8f5; }
+    .game-option.correct { border-color: #6B9E6B; background: #eef5ee; }
+    .game-option.wrong { border-color: #e57373; background: #ffebee; }
+    .game-result { margin-top: 12px; font-size: 14px; font-weight: 500; padding: 12px; border-radius: 8px; }
+    .game-result.correct { background: #eef5ee; color: #6B9E6B; }
+    .game-result.wrong { background: #ffebee; color: #e57373; }
+    .game-score { font-size: 14px; color: #8b7d6b; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://aybkk-ashtanga.up.railway.app/logo.png" alt="AYBKK" onerror="this.style.display='none'">
+    <h1>AYBKK 广州工作坊 2026</h1>
+    <p class="by">By Boonchu & Jamsai Tanti</p>
+    <p>April 20-24, 2026</p>
+    <div class="lang-switch">
+      <button class="lang-btn active" onclick="setLang('zh')">中文</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Quote in Chinese -->
+    <div class="quote-box">
+      <div id="quoteText">加载中...</div>
+      <div class="quote-source" id="quoteSource"></div>
+    </div>
+
+    <!-- Intro -->
+    <div class="intro">
+      <p id="introText">欢迎来到 AYBKK 广州工作坊 2026！在开始工作坊之前，请填写此问卷并参与我们的迎新游戏。</p>
+    </div>
+
+    <!-- Rules -->
+    <div class="rules">
+      <h3>📋 工作坊规则</h3>
+      <div class="rule">
+        <span class="rule-icon">🧘</span>
+        <span class="rule-text">Mysore 风格：按自己的节奏练习，倾听身体的声音</span>
+      </div>
+      <div class="rule">
+        <span class="rule-icon">⏰</span>
+        <span class="rule-text">准时到达教室</span>
+      </div>
+      <div class="rule">
+        <span class="rule-icon">🤫</span>
+        <span class="rule-text">保持教室安静</span>
+      </div>
+      <div class="rule">
+        <span class="rule-icon">💧</span>
+        <span class="rule-text">多喝水，感觉累了就休息</span>
+      </div>
+      <div class="rule">
+        <span class="rule-icon">🙏</span>
+        <span class="rule-text">尊重老师和其他同学</span>
+      </div>
+    </div>
+
+    <!-- Games Section -->
+    <div class="game-section">
+      <h3>🎮 迎新游戏</h3>
+      <p style="font-size:13px;color:#8b7d6b;margin-bottom:16px;text-align:center">测试你的阿斯汤加瑜伽知识！</p>
+      <div id="gamesContainer"></div>
+      <div class="game-score" id="gameScore"></div>
+    </div>
+
+    <!-- Form -->
+    <form id="orientationForm" onsubmit="submitForm(event)">
+      <div class="form-section">
+        <h3>报名表</h3>
+        <p>请填写您的信息</p>
+
+        <div class="field">
+          <label>姓名</label>
+          <input type="text" id="name" required placeholder="您的姓名">
+        </div>
+
+        <div class="field">
+          <label>微信</label>
+          <input type="text" id="wechat" placeholder="微信号">
+        </div>
+
+        <div class="field">
+          <label>阿斯汤加瑜伽经验</label>
+          <select id="experience">
+            <option value="beginner">初学者（0-1年）</option>
+            <option value="intermediate">中级（1-3年）</option>
+            <option value="advanced">高级（3年以上）</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>伤病</label>
+          <textarea id="injuries" placeholder="任何伤病或身体限制..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>工作坊目标</label>
+          <textarea id="goals" placeholder="您想达成什么？"></textarea>
+        </div>
+
+        <div class="field">
+          <label>紧急联系人</label>
+          <input type="text" id="emergency" placeholder="姓名 + 电话">
+        </div>
+
+        <div class="field">
+          <label>尺码</label>
+          <select id="size">
+            <option value="XS">XS</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>📸 同意书</h3>
+        <div class="field">
+          <div class="options" id="photoOptions">
+            <span class="option selected" onclick="toggleOption(this, 'photo')">📸 照片/视频拍摄</span>
+          </div>
+          <input type="hidden" id="photoConsent" value="yes">
+        </div>
+        <div class="field">
+          <div class="options" id="medicalOptions">
+            <span class="option selected" onclick="toggleOption(this, 'medical')">✅ 医疗免责声明</span>
+          </div>
+          <input type="hidden" id="medicalConsent" value="yes">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">提交</button>
+    </form>
+  </div>
+
+  <div class="success-overlay hidden" id="successOverlay">
+    <div class="success-box">
+      <h2>✅ 欢迎！</h2>
+      <p>您的报名表已提交。练习场上见！<br><br>🧘 AYBKK 广州工作坊 2026</p>
+    </div>
+  </div>
+
+<script>
+const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+const T = {
+  zh: {
+    intro: '欢迎来到 AYBKK 广州工作坊 2026！在开始工作坊之前，请填写此问卷并参与我们的迎新游戏。',
+    submit: '提交',
+    gameTitle: '🎮 迎新游戏'
+  },
+  en: {
+    intro: 'Welcome to AYBKK Guangzhou Workshop 2026! Before the workshop, please fill out this form and play our orientation games.',
+    submit: 'Submit',
+    gameTitle: '🎮 Orientation Games'
+  }
+};
+
+// Yoga Sutras quotes in Chinese
+const QUOTES = [
+  { text: '当您认为已知时，苦便升起。当您真正知时，苦便消散。', source: '— 薄伽梵歌 2.56' },
+  { text: '不执著于行动成果的行动，便是真正的自由。', source: '— 薄伽梵歌 2.47' },
+  { text: '心意若平静，万物皆清明。', source: '— 瑜伽经 1.2' },
+  { text: '练习是持续不懈的努力。', source: '— 瑜伽经 1.14' },
+  { text: '痛苦与快乐，皆由心意所造。', source: '— 薄伽梵歌 2.15' },
+  { text: '当心意摆脱执着，便照见真实。', source: '— 瑜伽经 2.5' }
+];
+
+// Games
+const GAMES = [
+  {
+    q: 'Surya Namaskar A 有多少个呼吸？',
+    options: ['9个呼吸', '12个呼吸', '15个呼吸'],
+    answer: 0
+  },
+  {
+    q: 'Bandha 是什么？',
+    options: ['一种围巾', '收束法 — 提升骨盆底感受到轻盈', '一种呼吸法'],
+    answer: 1
+  },
+  {
+    q: 'Mysore 课的传统是什么？',
+    options: ['在studio拍照好看的课', '在家自己练习', '在神圣空间跟随传承老师的传统练习'],
+    answer: 2
+  }
+];
+
+let currentLang = 'zh';
+let gameResults = [];
+let answered = {};
+
+function init() {
+  // Quote
+  const idx = new Date().getDate() % QUOTES.length;
+  document.getElementById('quoteText').textContent = QUOTES[idx].text;
+  document.getElementById('quoteSource').textContent = QUOTES[idx].source;
+  
+  renderGames();
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  document.getElementById('introText').textContent = T[lang].intro;
+  document.getElementById('submitBtn').textContent = T[lang].submit;
+}
+
+function renderGames() {
+  const container = document.getElementById('gamesContainer');
+  container.innerHTML = GAMES.map((g, gi) => `
+    <div class="game-card">
+      <p class="game-question">${g.q}</p>
+      <div class="game-options">
+        ${g.options.map((opt, oi) => `
+          <button type="button" class="game-option" onclick="answerGame(${gi}, ${oi})" id="g${gi}_o${oi}">
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+      <div class="game-result hidden" id="g${gi}_result"></div>
+    </div>
+  `).join('');
+}
+
+function answerGame(gameIdx, optIdx) {
+  if (answered[gameIdx] !== undefined) return;
+  answered[gameIdx] = optIdx;
+  
+  const game = GAMES[gameIdx];
+  const isCorrect = optIdx === game.answer;
+  gameResults.push({ game: game.q, isCorrect, choice: game.options[optIdx] });
+  
+  document.querySelectorAll(`#g${gameIdx}_o${game.answer}`).forEach(b => b.classList.add('correct'));
+  if (!isCorrect) {
+    document.querySelectorAll(`#g${gameIdx}_o${optIdx}`).forEach(b => b.classList.add('wrong'));
+  }
+  
+  const resultEl = document.getElementById(`g${gameIdx}_result`);
+  resultEl.classList.remove('hidden');
+  resultEl.className = `game-result ${isCorrect ? 'correct' : 'wrong'}`;
+  resultEl.textContent = isCorrect ? '✅ 正确！' : `❌ 正确答案是：${game.options[game.answer]}`;
+  
+  updateScore();
+}
+
+function updateScore() {
+  const correct = gameResults.filter(r => r.isCorrect).length;
+  document.getElementById('gameScore').textContent = `得分：${correct}/${GAMES.length}`;
+}
+
+function toggleOption(el, type) {
+  el.classList.toggle('selected');
+  const val = el.classList.contains('selected') ? 'yes' : 'no';
+  document.getElementById(type + 'Consent').value = val;
+}
+
+async function submitForm(e) {
+  e.preventDefault();
+  
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '...';
+  
+  const data = {
+    name: document.getElementById('name').value,
+    wechat: document.getElementById('wechat').value,
+    experience: document.getElementById('experience').value,
+    injuries: document.getElementById('injuries').value,
+    goals: document.getElementById('goals').value,
+    emergency: document.getElementById('emergency').value,
+    size: document.getElementById('size').value,
+    photoConsent: document.getElementById('photoConsent').value,
+    medicalConsent: document.getElementById('medicalConsent').value,
+    gameResults: gameResults,
+    language: currentLang,
+    workshop: 'Guangzhou WS Apr 2026',
+    date: new Date().toISOString()
+  };
+  
+  try {
+    const res = await fetch(`${API_BASE}/orientations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    
+    if (res.ok) {
+      document.getElementById('successOverlay').classList.remove('hidden');
+    } else {
+      throw new Error('Failed');
+    }
+  } catch(e) {
+    alert('提交失败，请重试。');
+    btn.disabled = false;
+    btn.textContent = T[currentLang].submit;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
