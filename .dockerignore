@@ -1,7 +1,9 @@
 node_modules
+uploads
+public/photos
+public/web
+data
+db
 .git
 *.log
-data/
-docs/
-uploads/
-photos/web/
+.env

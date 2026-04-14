@@ -349,8 +349,10 @@
   </div>
   <!-- Language -->
   <div class="lang-switch">
-    <button class="lang-btn" data-lang="ru">RU</button>
-    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="th">🇹🇭 TH</button>
+    <button class="lang-btn" data-lang="zh">🇨🇳 ZH</button>
+    <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+    <button class="lang-btn" data-lang="ru">🇷🇺 RU</button>
   </div>
 
   <!-- Progress -->
@@ -610,17 +612,13 @@
       <div style="color:rgba(255,255,255,0.85);font-size:15px;font-weight:500;margin-bottom:16px;" id="shareDayInfo"></div>
       <div style="border-top:1px solid rgba(255,255,255,0.2);padding-top:16px;margin-top:8px;">
         <div style="color:#ffffff;font-size:14px;font-style:italic;line-height:1.6;font-weight:400;margin-bottom:12px;" id="shareQuote"></div>
-      
         <div style="color:#ffffff;font-size:15px;font-weight:700;letter-spacing:0.5px;line-height:1.5;display:none;margin-bottom:4px;" id="shareUplift"></div>
       </div>
       <div style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:16px;font-weight:500;">by Boonchu Tanti & Jamsai Tanti</div>
     </div>
+    <div class="success-msg" id="successMsg">Your practice journal is saved.<br>See you next session.</div>
     <button class="btn" onclick="shareToWeChat()" id="shareWeChatBtn">Share to WeChat 📱</button>
     <button class="btn-secondary" onclick="window.location.reload()" id="doneBtn">Done</button>
-  </div>
-</div>
-    <div class="success-msg" id="successMsg">Your practice journal is saved.<br>See you next session.</div>
-    <div id="successTitle" style="display:none;"></div>
   </div>
 </div>
 
@@ -1171,7 +1169,7 @@ async function shareToWeChat() {
         if (img) {
           // Draw photo with 60% opacity, cover-fit
           ctx.save();
-          ctx.globalAlpha = 0.6;
+          ctx.globalAlpha = 0.75;
           const scale = Math.max(640 / img.width, 720 / img.height);
           const sw = img.width * scale;
           const sh = img.height * scale;
@@ -1206,7 +1204,7 @@ async function shareToWeChat() {
     ctx.fillStyle = 'rgba(255,255,255,0.7)';
     ctx.font = '600 14px -apple-system, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('AYBKK HUIZHOU WORKSHOP 2026', 320, 80);
+    ctx.fillText(window._wsTitleYear || 'AYBKK WORKSHOP 2026', 320, 80);
     
     // Student name
     ctx.fillStyle = '#ffffff';
