@@ -29,7 +29,7 @@
     .closing { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
     .closing p { font-size: 15px; line-height: 1.7; color: #5d4037; font-style: italic; }
     .signatures { font-size: 14px; color: #8b7d6b; margin-top: 12px; }
-    
+
     .form-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
     .form-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 4px; }
     .form-section p { font-size: 13px; color: #8b7d6b; margin-bottom: 20px; }
@@ -45,26 +45,36 @@
     .submit-btn { width: 100%; background: #8b4513; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
     .submit-btn:hover { background: #a0522d; }
     .submit-btn:disabled { background: #a89888; cursor: not-allowed; }
-    .success-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(139,69,19,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .success-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(139,69,19,0.92); display: flex; align-items: center; justify-content: center; z-index: 1000; overflow-y: auto; padding: 20px; }
     .success-overlay.hidden { display: none; }
-    .success-box { background: white; border-radius: 20px; padding: 40px 32px; text-align: center; max-width: 320px; margin: 20px; }
+    .success-box { background: white; border-radius: 20px; padding: 32px 24px; text-align: center; max-width: 360px; margin: 20px auto; }
     .success-box h2 { font-size: 20px; color: #3e2723; margin-bottom: 12px; }
     .success-box p { font-size: 14px; color: #5d4037; line-height: 1.6; }
-    
-    /* Game styles */
-    .game-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .game-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 16px; text-align: center; }
-    .game-card { background: #faf8f5; border-radius: 12px; padding: 20px; margin-bottom: 16px; text-align: center; }
-    .game-question { font-size: 16px; font-weight: 500; color: #3e2723; margin-bottom: 16px; }
-    .game-options { display: flex; flex-direction: column; gap: 10px; }
-    .game-option { padding: 14px 20px; border: 2px solid #e8e0d8; border-radius: 10px; font-size: 15px; cursor: pointer; transition: all 0.2s; background: white; text-align: left; color: #3e2723; }
-    .game-option:hover { border-color: #c49564; background: #faf8f5; }
-    .game-option.correct { border-color: #6B9E6B; background: #eef5ee; }
-    .game-option.wrong { border-color: #e57373; background: #ffebee; }
-    .game-result { margin-top: 12px; font-size: 14px; font-weight: 500; padding: 12px; border-radius: 8px; }
-    .game-result.correct { background: #eef5ee; color: #6B9E6B; }
-    .game-result.wrong { background: #ffebee; color: #e57373; }
-    .game-score { font-size: 14px; color: #8b7d6b; margin-top: 12px; }
+
+    /* Quiz styles */
+    .quiz-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .quiz-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 8px; text-align: center; }
+    .quiz-subtitle { font-size: 13px; color: #8b7d6b; margin-bottom: 20px; text-align: center; }
+    .quiz-question { background: #f5ede4; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+    .quiz-q-label { font-size: 12px; font-weight: 600; color: #c49564; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .quiz-q-text { font-size: 16px; font-weight: 600; color: #3e2723; margin-bottom: 16px; line-height: 1.4; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt { padding: 12px 16px; border: 2px solid #e8e0d8; border-radius: 10px; font-size: 14px; cursor: pointer; transition: all 0.2s; background: white; text-align: left; color: #3e2723; }
+    .quiz-opt:hover:not(.disabled) { border-color: #c49564; background: #faf8f5; }
+    .quiz-opt.disabled { cursor: default; }
+    .quiz-opt.correct { border-color: #6B9E6B; background: #eef5ee; }
+    .quiz-opt.wrong { border-color: #e57373; background: #ffebee; }
+    .quiz-result { margin-top: 12px; font-size: 14px; font-weight: 600; padding: 12px; border-radius: 8px; }
+    .quiz-result.correct { background: #eef5ee; color: #6B9E6B; }
+    .quiz-result.wrong { background: #ffebee; color: #e57373; }
+
+    /* Link display */
+    .link-box { background: #f5ede4; border: 2px solid #c49564; border-radius: 12px; padding: 16px; margin: 16px 0; text-align: center; }
+    .link-box .link-label { font-size: 12px; color: #8b7d6b; margin-bottom: 8px; font-weight: 600; }
+    .link-box .link-url { font-size: 13px; color: #3e2723; word-break: break-all; font-family: monospace; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e8e0d8; margin-bottom: 8px; }
+    .link-box .link-hint { font-size: 11px; color: #8b7d6b; margin-top: 8px; }
+    .copy-btn { background: #8b4513; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+    .copy-btn:hover { background: #a0522d; }
   </style>
 </head>
 <body>
@@ -76,6 +86,8 @@
     <div class="lang-switch">
       <button class="lang-btn active" onclick="setLang('zh')">中文</button>
       <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('th')">TH</button>
+      <button class="lang-btn" onclick="setLang('ru')">RU</button>
     </div>
   </div>
 
@@ -116,12 +128,17 @@
       </div>
     </div>
 
-    <!-- Games Section -->
-    <div class="game-section">
+    <!-- Quiz Section (1 question, 4 languages) -->
+    <div class="quiz-section" id="quizSection">
       <h3>🎮 迎新游戏</h3>
-      <p style="font-size:13px;color:#8b7d6b;margin-bottom:16px;text-align:center">测试你的阿斯汤加瑜伽知识！</p>
-      <div id="gamesContainer"></div>
-      <div class="game-score" id="gameScore"></div>
+      <p class="quiz-subtitle" id="quizSubtitle">测试你的阿斯汤加瑜伽知识！</p>
+      <div class="quiz-question">
+        <div class="quiz-q-label" id="quizLang">English</div>
+        <div class="quiz-q-text" id="quizQText">Loading...</div>
+        <div class="quiz-opts" id="quizOpts"></div>
+        <div class="quiz-result hidden" id="quizResult"></div>
+      </div>
+      <button class="submit-btn" id="quizNextBtn" onclick="proceedPastQuiz()" disabled>完成</button>
     </div>
 
     <!-- Form -->
@@ -131,41 +148,41 @@
         <p>请填写您的信息</p>
 
         <div class="field">
-          <label>姓名</label>
+          <label id="labelName">姓名</label>
           <input type="text" id="name" required placeholder="您的姓名">
         </div>
 
         <div class="field">
-          <label>微信</label>
+          <label id="labelWechat">微信</label>
           <input type="text" id="wechat" placeholder="微信号">
         </div>
 
         <div class="field">
-          <label>阿斯汤加瑜伽经验</label>
+          <label id="labelExp">阿斯汤加瑜伽经验</label>
           <select id="experience">
-            <option value="beginner">初学者（0-1年）</option>
-            <option value="intermediate">中级（1-3年）</option>
-            <option value="advanced">高级（3年以上）</option>
+            <option value="beginner" id="exp1">初学者（0-1年）</option>
+            <option value="intermediate" id="exp2">中级（1-3年）</option>
+            <option value="advanced" id="exp3">高级（3年以上）</option>
           </select>
         </div>
 
         <div class="field">
-          <label>伤病</label>
+          <label id="labelInjuries">伤病</label>
           <textarea id="injuries" placeholder="任何伤病或身体限制..."></textarea>
         </div>
 
         <div class="field">
-          <label>工作坊目标</label>
+          <label id="labelGoals">工作坊目标</label>
           <textarea id="goals" placeholder="您想达成什么？"></textarea>
         </div>
 
         <div class="field">
-          <label>紧急联系人</label>
+          <label id="labelEmergency">紧急联系人</label>
           <input type="text" id="emergency" placeholder="姓名 + 电话">
         </div>
 
         <div class="field">
-          <label>尺码</label>
+          <label id="labelSize">尺码</label>
           <select id="size">
             <option value="XS">XS</option>
             <option value="S">S</option>
@@ -197,25 +214,199 @@
     </form>
   </div>
 
+  <!-- Success Overlay with Journal Link -->
   <div class="success-overlay hidden" id="successOverlay">
     <div class="success-box">
-      <h2>✅ 欢迎！</h2>
-      <p>您的报名表已提交。练习场上见！<br><br>🧘 AYBKK 广州工作坊 2026</p>
+      <h2>✅ <span id="successName">欢迎！</span></h2>
+      <p>您的报名表已提交。<br id="br1">练习场上见！</p>
+
+      <!-- Journal Link Display -->
+      <div class="link-box">
+        <div class="link-label">🧘 您的练习记录链接 — 保存这个！</div>
+        <div class="link-url" id="journalLink"></div>
+        <button class="copy-btn" onclick="copyLink()">📋 复制链接</button>
+        <div class="link-hint">每天练习后记录<br>Keep this link to log your practice!</div>
+      </div>
+
+      <p style="margin-top:12px;font-size:13px;color:#8b7d6b;">🧘 AYBKK 广州工作坊 2026</p>
     </div>
   </div>
 
 <script>
 const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+
+// Quiz in 4 languages — pick 1 random question
+const QUIZ_POOL = [
+  {
+    question: {
+      en: 'Who is the creator of ashtanga yoga method?',
+      zh: '谁创造了阿斯汤加瑜伽方法？',
+      th: 'ใครคือผู้สร้างวิธีโยคะอัชตางค์?',
+      ru: 'Кто создал метод аштанга-йоги?'
+    },
+    options: {
+      en: ['Guru Purnima', 'Guru Sharath Jois', 'Guru Patanjali', 'Guru Pattabhi Jois'],
+      zh: ['古鲁 Purnima', '古鲁 Sharath Jois', '古鲁 Patanjali', '古鲁 Pattabhi Jois'],
+      th: ['ครู Purnima', 'ครู Sharath Jois', 'ครู Patanjali', 'ครู Pattabhi Jois'],
+      ru: ['Гуру Пурнима', 'Гуру Шарат Джойс', 'Гуру Патанджали', 'Гуру Паттабхи Джойс']
+    },
+    answer: 3
+  },
+  {
+    question: {
+      en: 'What is the translation of "ashtanga"?',
+      zh: '"ashtanga" 是什么意思？',
+      th: '"อัชตางค์" แปลว่าอะไร?',
+      ru: 'Что означает «аштанга»?'
+    },
+    options: {
+      en: ['Tangerine over ashes', 'Eight limbs of Yoga', 'Making Soup', 'Thong underwear'],
+      zh: ['橘子灰上', '瑜伽八支', '做汤', '丁字裤'],
+      th: ['ส้มบนขี้เถ้า', 'แปดขั้นของโยคะ', 'ทำซุป', 'กางเกงใน'],
+      ru: ['Мандарин над пеплом', 'Восемь ветвей Йоги', 'Делать суп', 'Трусы-стринги']
+    },
+    answer: 1
+  },
+  {
+    question: {
+      en: 'How many times do we repeat Suryanamaskara A?',
+      zh: '我们重复 Suryanamaskara A 多少次？',
+      th: 'เราทำ Suryanamaskara A กี่รอบ?',
+      ru: 'Сколько раз мы повторяем Сурьянамаскару А?'
+    },
+    options: {
+      en: ['Few times to warm up', '5 times is tradition', 'None', 'Only if asked'],
+      zh: ['热身几次', '传统是5次', '不做', '只有被要求时'],
+      th: ['สองสามรอบเพื่ออบอุ่น', 'ตามประเพณี 5 รอบ', 'ไม่ทำ', 'ถ้าถูกขอ'],
+      ru: ['Несколько раз для разогрева', '5 раз по традиции', 'Нет', 'Только если попросят']
+    },
+    answer: 1
+  },
+  {
+    question: {
+      en: 'What is bandha?',
+      zh: '什么是 Bandha（收束法）？',
+      th: 'Bandha คืออะไร?',
+      ru: 'Что такое бандха?'
+    },
+    options: {
+      en: ['Same as holding poop', 'Lifting pelvic floor feeling light', 'Another type of scarf', 'Slang for bandaid'],
+      zh: ['就像憋大便', '提升盆底感到轻盈', '另一种围巾', '创可贴的俚语'],
+      th: ['เหมือนกลั้นอึ', 'ยกพื้นเชิงกรานรู้สึกเบา', 'ผ้าพันคออีกแบบ', 'คำสแลงของแผ่นเทียน'],
+      ru: ['То же, что держать кал', 'Подъём тазового дна, ощущение лёгкости', 'Ещё один тип шарфа', 'Сленг для пластыря']
+    },
+    answer: 1
+  },
+  {
+    question: {
+      en: 'What is mysore class?',
+      zh: '什么是 Mysore 课？',
+      th: 'คลาส Mysore คืออะไร?',
+      ru: 'Что такое класс майсор?'
+    },
+    options: {
+      en: ['Practice at home', 'Do my sequence', 'Practice at studio for photos', 'Traditional at sacred space with teacher from parampara'],
+      zh: ['在家练习', '做我的序列', '在工作室拍照好看的练习', '在神圣空间跟随传承老师的传统练习'],
+      th: ['ฝึกที่บ้าน', 'ทำลำดับของฉัน', 'ฝึกที่สตูดิโอเพื่อถ่ายรูป', 'แบบดั้งเดิมในพื้นที่ศักดิ์สิทธิ์กับครูจากปรมาจารย์'],
+      ru: ['Практика дома', 'Делать свою последовательность', 'Практика в студии для красивых фото', 'Традиционная практика в священном месте с учителем из парампары']
+    },
+    answer: 3
+  }
+];
+
+// Translations
 const T = {
   zh: {
     intro: '欢迎来到 AYBKK 广州工作坊 2026！在开始工作坊之前，请填写此问卷并参与我们的迎新游戏。',
+    quizSubtitle: '测试你的阿斯汤加瑜伽知识！',
+    quizLang: 'English',
+    quizBtn: '完成',
     submit: '提交',
-    gameTitle: '🎮 迎新游戏'
+    labelName: '姓名',
+    labelWechat: '微信',
+    labelExp: '阿斯汤加瑜伽经验',
+    labelInjuries: '伤病',
+    labelGoals: '工作坊目标',
+    labelEmergency: '紧急联系人',
+    labelSize: '尺码',
+    exp1: '初学者（0-1年）',
+    exp2: '中级（1-3年）',
+    exp3: '高级（3年以上）',
+    linkLabel: '🧘 您的练习记录链接 — 保存这个！',
+    successName: '欢迎！',
+    br1: '',
+    correctText: '🥳🎊 正确！',
+    wrongText: '🙏 下次再试',
+    quizPlaceholder: '选择一个答案'
   },
   en: {
-    intro: 'Welcome to AYBKK Guangzhou Workshop 2026! Before the workshop, please fill out this form and play our orientation games.',
+    intro: 'Welcome to AYBKK Guangzhou Workshop 2026! Before the workshop, please fill out this form and play our orientation game.',
+    quizSubtitle: 'Test your Ashtanga yoga knowledge!',
+    quizLang: '中文',
+    quizBtn: 'Done',
     submit: 'Submit',
-    gameTitle: '🎮 Orientation Games'
+    labelName: 'Name',
+    labelWechat: 'WeChat',
+    labelExp: 'Ashtanga Experience',
+    labelInjuries: 'Injuries',
+    labelGoals: 'Workshop Goals',
+    labelEmergency: 'Emergency Contact',
+    labelSize: 'T-Shirt Size',
+    exp1: 'Beginner (0-1 year)',
+    exp2: 'Intermediate (1-3 years)',
+    exp3: 'Advanced (3+ years)',
+    linkLabel: '🧘 Your Practice Journal Link — Save This!',
+    successName: 'Welcome!',
+    br1: '',
+    correctText: '🥳🎊 Correct!',
+    wrongText: '🙏 Try next time',
+    quizPlaceholder: 'Choose an answer'
+  },
+  th: {
+    intro: 'ยินดีต้อนรับสู่ AYBKK Guangzhou Workshop 2026! ก่อนเริ่ม workshop กรุณากรอกแบบฟอร์มนี้และเล่นเกมต้อนรับของเรา',
+    quizSubtitle: 'ทดสอบความรู้โยคะอัชตางค์ของคุณ!',
+    quizLang: '中文',
+    quizBtn: 'เสร็จแล้ว',
+    submit: 'ส่ง',
+    labelName: 'ชื่อ',
+    labelWechat: 'WeChat',
+    labelExp: 'ประสบการณ์ Ashtanga',
+    labelInjuries: 'การบาดเจ็บ',
+    labelGoals: 'เป้าหมาย Workshop',
+    labelEmergency: 'ติดต่อฉุกเฉิน',
+    labelSize: 'ไซส์เสื้อ',
+    exp1: 'ผู้เริ่มต้น (0-1 ปี)',
+    exp2: 'ระดับกลาง (1-3 ปี)',
+    exp3: 'ขั้นสูง (3+ ปี)',
+    linkLabel: '🧘 ลิงก์บันทึกการฝึกของคุณ — เก็บลิงก์นี้ไว้!',
+    successName: 'ยินดีต้อนรับ!',
+    br1: '<br>',
+    correctText: '🥳🎊 ถูกต้อง!',
+    wrongText: '🙏 ลองใหม่ครั้งหน้า',
+    quizPlaceholder: 'เลือกคำตอบ'
+  },
+  ru: {
+    intro: 'Добро пожаловать на AYBKK Guangzhou Workshop 2026! Перед workshop, пожалуйста, заполните эту анкету и сыграйте в нашу приветственную игру.',
+    quizSubtitle: 'Проверь свои знания Ashtanga yoga!',
+    quizLang: '中文',
+    quizBtn: 'Готово',
+    submit: 'Отправить',
+    labelName: 'Имя',
+    labelWechat: 'WeChat',
+    labelExp: 'Опыт в Ashtanga',
+    labelInjuries: 'Травмы',
+    labelGoals: 'Цели Workshop',
+    labelEmergency: 'Экстренный контакт',
+    labelSize: 'Размер',
+    exp1: 'Начинающий (0-1 год)',
+    exp2: 'Средний (1-3 года)',
+    exp3: 'Продвинутый (3+ лет)',
+    linkLabel: '🧘 Ваша ссылка на дневник практики — Сохраните!',
+    successName: 'Добро пожаловать!',
+    br1: '<br>',
+    correctText: '🥳🎊 Правильно!',
+    wrongText: '🙏 Попробуйте в следующий раз',
+    quizPlaceholder: 'Выберите ответ'
   }
 };
 
@@ -229,87 +420,99 @@ const QUOTES = [
   { text: '当心意摆脱执着，便照见真实。', source: '— 瑜伽经 2.5' }
 ];
 
-// Games
-const GAMES = [
-  {
-    q: 'Surya Namaskar A 有多少个呼吸？',
-    options: ['9个呼吸', '12个呼吸', '15个呼吸'],
-    answer: 0
-  },
-  {
-    q: 'Bandha 是什么？',
-    options: ['一种围巾', '收束法 — 提升骨盆底感受到轻盈', '一种呼吸法'],
-    answer: 1
-  },
-  {
-    q: 'Mysore 课的传统是什么？',
-    options: ['在studio拍照好看的课', '在家自己练习', '在神圣空间跟随传承老师的传统练习'],
-    answer: 2
-  }
-];
-
 let currentLang = 'zh';
-let gameResults = [];
-let answered = {};
+let quizAnswered = false;
+let currentQuiz = null;
+let quizCorrect = false;
+let journalLinkData = null;
 
 function init() {
   // Quote
   const idx = new Date().getDate() % QUOTES.length;
   document.getElementById('quoteText').textContent = QUOTES[idx].text;
   document.getElementById('quoteSource').textContent = QUOTES[idx].source;
-  
-  renderGames();
+
+  // Pick random quiz question
+  currentQuiz = QUIZ_POOL[Math.floor(Math.random() * QUIZ_POOL.length)];
+  renderQuiz();
 }
 
 function setLang(lang) {
   currentLang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
-  document.getElementById('introText').textContent = T[lang].intro;
-  document.getElementById('submitBtn').textContent = T[lang].submit;
-}
 
-function renderGames() {
-  const container = document.getElementById('gamesContainer');
-  container.innerHTML = GAMES.map((g, gi) => `
-    <div class="game-card">
-      <p class="game-question">${g.q}</p>
-      <div class="game-options">
-        ${g.options.map((opt, oi) => `
-          <button type="button" class="game-option" onclick="answerGame(${gi}, ${oi})" id="g${gi}_o${oi}">
-            ${opt}
-          </button>
-        `).join('')}
-      </div>
-      <div class="game-result hidden" id="g${gi}_result"></div>
-    </div>
-  `).join('');
-}
+  const t = T[lang];
+  document.getElementById('introText').textContent = t.intro;
+  document.getElementById('quizSubtitle').textContent = t.quizSubtitle;
+  document.getElementById('quizLang').textContent = t.quizLang;
+  document.getElementById('quizNextBtn').textContent = t.quizBtn;
+  document.getElementById('submitBtn').textContent = t.submit;
+  document.getElementById('labelName').textContent = t.labelName;
+  document.getElementById('labelWechat').textContent = t.labelWechat;
+  document.getElementById('labelExp').textContent = t.labelExp;
+  document.getElementById('exp1').textContent = t.exp1;
+  document.getElementById('exp2').textContent = t.exp2;
+  document.getElementById('exp3').textContent = t.exp3;
+  document.getElementById('labelInjuries').textContent = t.labelInjuries;
+  document.getElementById('labelGoals').textContent = t.labelGoals;
+  document.getElementById('labelEmergency').textContent = t.labelEmergency;
+  document.getElementById('labelSize').textContent = t.labelSize;
 
-function answerGame(gameIdx, optIdx) {
-  if (answered[gameIdx] !== undefined) return;
-  answered[gameIdx] = optIdx;
-  
-  const game = GAMES[gameIdx];
-  const isCorrect = optIdx === game.answer;
-  gameResults.push({ game: game.q, isCorrect, choice: game.options[optIdx] });
-  
-  document.querySelectorAll(`#g${gameIdx}_o${game.answer}`).forEach(b => b.classList.add('correct'));
-  if (!isCorrect) {
-    document.querySelectorAll(`#g${gameIdx}_o${optIdx}`).forEach(b => b.classList.add('wrong'));
+  // Re-render quiz in new language
+  if (currentQuiz) {
+    document.getElementById('quizQText').textContent = currentQuiz.question[lang];
+    renderQuizOpts(lang);
   }
-  
-  const resultEl = document.getElementById(`g${gameIdx}_result`);
-  resultEl.classList.remove('hidden');
-  resultEl.className = `game-result ${isCorrect ? 'correct' : 'wrong'}`;
-  resultEl.textContent = isCorrect ? '✅ 正确！' : `❌ 正确答案是：${game.options[game.answer]}`;
-  
-  updateScore();
+
+  // Update placeholder
+  document.getElementById('name').placeholder = lang === 'zh' ? '您的姓名' : lang === 'en' ? 'Your name' : lang === 'th' ? 'ชื่อของคุณ' : 'Ваше имя';
+  document.getElementById('wechat').placeholder = lang === 'zh' ? '微信号' : lang === 'en' ? 'WeChat ID' : lang === 'th' ? 'ไอดี WeChat' : 'ID WeChat';
+  document.getElementById('injuries').placeholder = lang === 'zh' ? '任何伤病或身体限制...' : lang === 'en' ? 'Any injuries or physical limitations...' : lang === 'th' ? 'การบาดเจ็บหรือข้อจำกัดทางกาย...' : 'Любые травмы или ограничения...';
+  document.getElementById('goals').placeholder = lang === 'zh' ? '您想达成什么？' : lang === 'en' ? 'What do you want to achieve?' : lang === 'th' ? 'คุณต้องการบรรลุอะไร?' : 'Чего хотите достичь?';
+  document.getElementById('emergency').placeholder = lang === 'zh' ? '姓名 + 电话' : lang === 'en' ? 'Name + Phone' : lang === 'th' ? 'ชื่อ + โทร' : 'Имя + Телефон';
 }
 
-function updateScore() {
-  const correct = gameResults.filter(r => r.isCorrect).length;
-  document.getElementById('gameScore').textContent = `得分：${correct}/${GAMES.length}`;
+function renderQuiz() {
+  const lang = currentLang;
+  document.getElementById('quizQText').textContent = currentQuiz.question[lang];
+  renderQuizOpts(lang);
+}
+
+function renderQuizOpts(lang) {
+  const container = document.getElementById('quizOpts');
+  container.innerHTML = currentQuiz.options[lang].map((opt, idx) =>
+    `<button class="quiz-opt" onclick="answerQuiz(${idx})" id="qo${idx}">${opt}</button>`
+  ).join('');
+  document.getElementById('quizResult').classList.add('hidden');
+  quizAnswered = false;
+  document.getElementById('quizNextBtn').disabled = true;
+}
+
+function answerQuiz(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  quizCorrect = idx === currentQuiz.answer;
+
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === currentQuiz.answer) o.classList.add('correct');
+    if (i === idx && idx !== currentQuiz.answer) o.classList.add('wrong');
+  });
+
+  const t = T[currentLang];
+  const resultEl = document.getElementById('quizResult');
+  resultEl.classList.remove('hidden');
+  resultEl.className = 'quiz-result ' + (quizCorrect ? 'correct' : 'wrong');
+  resultEl.textContent = quizCorrect ? t.correctText : t.wrongText;
+
+  document.getElementById('quizNextBtn').disabled = false;
+}
+
+function proceedPastQuiz() {
+  document.getElementById('quizSection').style.display = 'none';
+  document.getElementById('orientationForm').scrollIntoView({ behavior: 'smooth' });
 }
 
 function toggleOption(el, type) {
@@ -318,13 +521,32 @@ function toggleOption(el, type) {
   document.getElementById(type + 'Consent').value = val;
 }
 
+async function copyLink() {
+  if (!journalLinkData) return;
+  try {
+    await navigator.clipboard.writeText(journalLinkData);
+    const btn = document.querySelector('.copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  } catch(e) {
+    // Fallback
+    const el = document.getElementById('journalLink');
+    const range = document.createRange();
+    range.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+  }
+}
+
 async function submitForm(e) {
   e.preventDefault();
-  
+
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.textContent = '...';
-  
+
   const data = {
     name: document.getElementById('name').value,
     wechat: document.getElementById('wechat').value,
@@ -335,28 +557,34 @@ async function submitForm(e) {
     size: document.getElementById('size').value,
     photoConsent: document.getElementById('photoConsent').value,
     medicalConsent: document.getElementById('medicalConsent').value,
-    gameResults: gameResults,
     language: currentLang,
     workshop: 'Guangzhou WS Apr 2026',
-    date: new Date().toISOString()
+    gameResults: [{ quiz: currentQuiz.question.en, correct: quizCorrect }]
   };
-  
+
   try {
     const res = await fetch(`${API_BASE}/orientations`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    
-    if (res.ok) {
+    const result = await res.json();
+
+    if (result.success) {
+      journalLinkData = result.journalLink;
+      const t = T[currentLang];
+      document.getElementById('successName').textContent = t.successName + (data.name ? ', ' + data.name + '!' : '!');
+      document.getElementById('journalLink').textContent = result.journalLink;
+      document.getElementById('linkBoxLabel') || null; // just for t reference
       document.getElementById('successOverlay').classList.remove('hidden');
     } else {
       throw new Error('Failed');
     }
   } catch(e) {
-    alert('提交失败，请重试。');
+    const t = T[currentLang];
+    alert((currentLang === 'zh' ? '提交失败，请重试。' : currentLang === 'en' ? 'Submission failed, please retry.' : 'Ошибка отправки. Попробуйте снова.'));
     btn.disabled = false;
-    btn.textContent = T[currentLang].submit;
+    btn.textContent = t.submit;
   }
 }
 
