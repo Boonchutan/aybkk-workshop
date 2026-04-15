@@ -954,6 +954,7 @@ const params = new URLSearchParams(window.location.search);
 const workshopLocation = params.get('location') || 'bangkok';
 const isHuizhou = workshopLocation === 'huizhou';
 const isRussian = workshopLocation === 'russia';
+const isGuangzhou = workshopLocation === 'guangzhou';
 const studentPhoto = params.get('photo') || null; // photo URL for share card
 if (params.has('id')) {
   studentId = params.get('id');
@@ -1077,6 +1078,18 @@ function applyLang(lang) {
   const t = T[lang];
   document.getElementById('pageTitle').textContent = t.pageTitle;
   document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
+
+  // Update location-specific titles
+  if (isGuangzhou) {
+    document.getElementById('pageTitle').textContent = 'AYBKK 广州工作坊 2026';
+    document.getElementById('welcomeTitle').textContent = 'AYBKK 广州工作坊 2026';
+  } else if (isRussian) {
+    document.getElementById('pageTitle').textContent = 'AYBKK RUSSIA WS 2026';
+    document.getElementById('welcomeTitle').textContent = 'AYBKK RUSSIA WS 2026';
+  } else if (isHuizhou) {
+    document.getElementById('pageTitle').textContent = 'AYBKK Huizhou Workshop 2026';
+    document.getElementById('welcomeTitle').textContent = 'AYBKK Huizhou Workshop';
+  }
   document.getElementById('regTitle').textContent = t.regTitle;
   document.getElementById('regHint').textContent = t.regHint;
   document.getElementById('registerBtn').textContent = t.regBtn;
@@ -1642,6 +1655,9 @@ function skipQuiz() {
     // Photo done → start quiz A (step 8)
     initQuizSets();
     showStep(8);
+  } else if (isGuangzhou && fromStep === 6) {
+    initPhotoStep();
+    showStep(7);
   } else if (fromStep === 8) {
     showStep(9);
     renderQuiz('quizBContainer', quizQ2, 2);
