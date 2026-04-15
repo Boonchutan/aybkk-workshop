@@ -618,8 +618,8 @@
         <div id="photoPlaceholder" style="width:120px;height:120px;border-radius:50%;border:3px dashed var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
           <span style="font-size:40px;">📷</span>
         </div>
-        <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;">
-        <button class="btn" id="photoUploadBtn" onclick="document.getElementById('photoInput').click()">Take / Upload Photo</button>
+        <input type="file" id="photoInput" accept="image/*" style="display:none;">
+        <label for="photoInput" class="btn" id="photoUploadBtn" style="display:block;text-align:center;cursor:pointer;">Take / Upload Photo</label>
         <button class="btn-secondary" onclick="goNext(7)">Skip</button>
       </div>
     </div>
@@ -1039,7 +1039,13 @@ function showStep(n) {
 
 // Go to next step manually (for checkbox/text steps)
 function goNext(fromStep) {
-  if (fromStep < 6) showStep(fromStep + 1);
+  if (fromStep < 6) {
+    showStep(fromStep + 1);
+  } else if (fromStep === 7) {
+    // Photo step → go to quiz A
+    showStep(8);
+    renderQuiz('quizAContainer', quizQ1, 1);
+  }
 }
 
 // Option click handlers
@@ -1528,6 +1534,7 @@ function getPlatform() {
 // PHOTO UPLOAD
 // =====================
 let uploadedPhotoDataURL = null;
+let photoStepInited = false;
 
 function initPhotoStep() {
   // Pick quiz questions once
@@ -1550,23 +1557,29 @@ function initPhotoStep() {
     uploadBtn.textContent = 'Change Photo';
   }
   
-  photoInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      uploadedPhotoDataURL = ev.target.result;
-      localStorage.setItem('photo_' + studentId, uploadedPhotoDataURL);
-      preview.src = uploadedPhotoDataURL;
-      placeholder.style.display = 'none';
-      previewContainer.style.display = 'block';
-      uploadBtn.textContent = 'Change Photo';
-    };
-    reader.readAsDataURL(file);
-  });
-  
-  // Click on preview to re-trigger input
-  previewContainer.addEventListener('click', () => photoInput.click());
+  // Only attach listeners once
+  if (!photoStepInited) {
+    photoInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        uploadedPhotoDataURL = ev.target.result;
+        localStorage.setItem('photo_' + studentId, uploadedPhotoDataURL);
+        preview.src = uploadedPhotoDataURL;
+        placeholder.style.display = 'none';
+        previewContainer.style.display = 'block';
+        uploadBtn.textContent = 'Change Photo';
+        // Auto-advance to quiz after photo selected
+        setTimeout(() => goNext(7), 600);
+      };
+      reader.readAsDataURL(file);
+    });
+    
+    // Click on preview to re-trigger input
+    previewContainer.addEventListener('click', () => photoInput.click());
+    photoStepInited = true;
+  }
   
   // Apply language
   const t = T[currentLang] || T.zh;

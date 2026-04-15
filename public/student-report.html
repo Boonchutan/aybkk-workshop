@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Progress Reports — AYBKK</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #f5f0eb; color: #1a1a1a; }
+
+    .top-bar { background: #fff; padding: 16px 20px; border-bottom: 1px solid #e8e0d8; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .top-bar h1 { font-size: 18px; font-weight: 700; }
+    .top-bar .sub { font-size: 12px; color: #888; margin-top: 2px; }
+    .filter-bar { padding: 12px 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn { border: 1.5px solid #d4c9be; background: #fff; border-radius: 20px; padding: 6px 14px; font-size: 13px; cursor: pointer; }
+    .filter-btn.active { background: #7b6cf6; color: #fff; border-color: #7b6cf6; }
+
+    /* Student list */
+    .student-list { padding: 0 16px 80px; }
+    .student-row {
+      background: #fff; border-radius: 14px; margin-bottom: 10px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.06); overflow: hidden;
+    }
+    .student-header {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+      cursor: pointer; user-select: none;
+    }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+    .student-info { flex: 1; min-width: 0; }
+    .sname { font-size: 15px; font-weight: 600; }
+    .smeta { font-size: 12px; color: #888; margin-top: 2px; }
+    .chevron { font-size: 14px; color: #bbb; transition: transform 0.2s; }
+    .student-row.open .chevron { transform: rotate(180deg); }
+
+    /* Report panel */
+    .report-panel { display: none; padding: 0 16px 20px; border-top: 1px solid #f0ebe4; }
+    .student-row.open .report-panel { display: block; }
+
+    /* Trend bars */
+    .section-title { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 8px; }
+    .trend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .trend-label { font-size: 12px; color: #666; width: 80px; flex-shrink: 0; }
+    .trend-dots { display: flex; gap: 4px; flex: 1; }
+    .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: #4CAF50; }
+    .dot-yellow { background: #FFC107; }
+    .dot-red { background: #F44336; }
+    .dot-empty { background: #e8e0d8; }
+    .trend-summary { font-size: 12px; color: #888; }
+
+    /* Asana tags */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .tag { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+    .tag-stable { background: #e8f5e9; color: #2e7d32; }
+    .tag-diff { background: #fff3e0; color: #e65100; }
+
+    /* Summary box */
+    .summary-box { background: #faf7f3; border-radius: 10px; padding: 14px; margin: 12px 0; }
+    .summary-box .lang-label { font-size: 11px; font-weight: 600; color: #7b6cf6; margin-bottom: 6px; }
+    .summary-text { font-size: 14px; line-height: 1.7; color: #333; }
+    .summary-zh { margin-top: 10px; padding-top: 10px; border-top: 1px solid #ede8e0; }
+
+    /* Teacher input */
+    .teacher-section { margin-top: 14px; }
+    .teacher-label { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+    textarea {
+      width: 100%; border: 1.5px solid #e0d8cf; border-radius: 10px; padding: 10px 12px;
+      font-size: 13px; line-height: 1.6; color: #1a1a1a; background: #fff;
+      resize: vertical; min-height: 80px; font-family: inherit;
+    }
+    textarea:focus { outline: none; border-color: #7b6cf6; }
+    .save-btn {
+      background: #7b6cf6; color: #fff; border: none; border-radius: 8px;
+      padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px;
+    }
+    .save-btn.saved { background: #4CAF50; }
+
+    /* No data */
+    .no-data { text-align: center; color: #bbb; font-size: 14px; padding: 40px 0; }
+    .checkin-count { font-size: 22px; font-weight: 700; color: #7b6cf6; }
+    .checkin-label { font-size: 11px; color: #aaa; }
+    .stats-row { display: flex; gap: 16px; margin: 8px 0 4px; }
+    .stat-box { text-align: center; flex: 1; }
+
+    @media print {
+      .top-bar, .filter-bar { display: none; }
+      .student-row { break-inside: avoid; margin-bottom: 20px; box-shadow: none; border: 1px solid #ddd; }
+      .report-panel { display: block !important; }
+      .teacher-section textarea { border: 1px solid #ccc; }
+      .save-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div>
+    <div class="top-bar h1" style="font-size:18px;font-weight:700;">Student Progress Reports</div>
+    <div class="sub">AYBKK — 学员练习进展报告</div>
+  </div>
+  <button onclick="window.print()" style="background:#f0f0f0;border:none;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;">🖨 Print</button>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+  <button class="filter-btn" onclick="setFilter('with-checkins', this)">Has Check-ins</button>
+  <button class="filter-btn" onclick="setFilter('huizhou', this)">Huizhou</button>
+  <button class="filter-btn" onclick="setFilter('guangzhou', this)">Guangzhou</button>
+</div>
+
+<div class="student-list" id="studentList">
+  <div class="no-data">Loading students...</div>
+</div>
+
+<script>
+const API = 'https://aybkk-ashtanga.up.railway.app/api';
+
+// Huizhou student IDs
+const HUIZHOU_IDS = [
+  { id: '823a0c35-2ebd-4651-b6a3-027c9a41ce41', name: '马儿' },
+  { id: '829e51c6-b4fd-4a5f-b70f-45025c93a366', name: '权哥' },
+  { id: '9b4c3922-e063-4dce-97a0-c8225b12adfe', name: '嘉芬' },
+  { id: 'dab9badc-a7fc-4434-b99c-615823aff389', name: '老谢' },
+  { id: 'c3d063b4-14d9-4030-b41b-29cdbbfafc18', name: '陈云' },
+  { id: '9b5cda78-681e-4a4b-b567-0953c3bc0c9d', name: '刘建梅' },
+  { id: '5b7b526b-8a52-4258-8c6a-9e91d33e7d9c', name: 'Maggie' },
+  { id: '4a3ec6bf-ad9c-4e29-a66c-4b64bcbb144d', name: '郑莉' },
+  { id: 'b9374595-c94a-4742-bb76-31eb232cbbc4', name: '萍姐' },
+  { id: 'd5e274a2-4170-4bad-87ef-e2e88f81356f', name: '丽君' },
+  { id: 'a3488eb9-6a51-4710-a15a-7b329acf70c4', name: '华姐' },
+  { id: 'e9865ce2-18f0-4621-84a2-a32f72068d60', name: '吉吉' },
+  { id: '64111735-daf0-4ef1-ac6d-eb18382daae2', name: '白姐' },
+  { id: 'ed932971-7874-474f-89c4-08f57f4c913d', name: '小辣椒' },
+  { id: '518fb95f-990c-41c3-9bdd-2cd440615249', name: '邢晨晨' },
+  { id: 'e49bf4a2-cf3b-4de0-9b94-7c4e0f460cf7', name: '汪晓红' },
+  { id: '98dae66e-72c2-41a3-bb01-2e42218e7803', name: 'Smile' },
+  { id: 'bd3fa653-bb43-48ac-9683-fbbc85b423ba', name: '老聂' },
+  { id: 'db5b1a8a-b4fa-4d3f-ad08-872a930e277b', name: '李蓉君' },
+  { id: '934a1599-c69c-4e96-9b58-691707124891', name: '歆芝Zia' },
+  { id: '8feaa2f8-4d09-4a31-bb78-c0e17c2b1d9f', name: '骆文' },
+  { id: 'fc8e0d85-0b55-4ac2-bf9f-a7624f236780', name: '隋洪乙' },
+  { id: 'ea13f12c-4f43-4480-975b-584ad353cf8c', name: '乔乔' },
+  { id: '9a24e2cc-1257-43e5-aca3-09139dca0d1b', name: 'Amy Beibei' },
+  { id: '16756991-fed2-469f-9d2c-19d934fc17af', name: 'Edison Hu' },
+];
+
+const COLORS = ['#e8d5f5','#d5e8f5','#d5f5e8','#f5e8d5','#f5d5d5','#d5f5f5','#f5f5d5'];
+const vinyasaMap = { kept_moving: { label: 'Kept Moving', dot: 'dot-green', zh: '持续流动' }, stop_breathe: { label: 'Stopped to Breathe', dot: 'dot-yellow', zh: '停下呼吸' }, tired_paused: { label: 'Tired, Paused', dot: 'dot-red', zh: '疲惫暂停' } };
+const bandhaMap = { body_light: { label: 'Body Feels Light', dot: 'dot-green', zh: '身体轻盈' }, finding_light: { label: 'Finding Lightness', dot: 'dot-yellow', zh: '寻找轻盈' }, heavy_body: { label: 'Heavy Body', dot: 'dot-red', zh: '身体沉重' } };
+
+let allStudents = [];
+let currentFilter = 'all';
+let reportCache = {};
+
+async function init() {
+  // Load GZ students from API
+  let gzStudents = [];
+  try {
+    const r = await fetch(`${API}/journal/students?isChinese=true`);
+    const d = await r.json();
+    gzStudents = (d.students || []).filter(s => s.id && s.name && s.classType === 'chinese-workshop');
+  } catch(e) {}
+
+  // Merge: Huizhou from hardcoded list, GZ from API
+  const huizhouStudents = HUIZHOU_IDS.map(h => ({ id: h.id, name: h.name, workshop: 'huizhou', classType: 'chinese' }));
+  const gzMapped = gzStudents.map(s => ({ id: s.id, name: s.name, workshop: 'guangzhou', classType: 'chinese-workshop', assessmentCount: s.assessmentCount || 0 }));
+
+  allStudents = [...gzMapped, ...huizhouStudents];
+  render();
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  let students = allStudents;
+  if (currentFilter === 'huizhou') students = students.filter(s => s.workshop === 'huizhou');
+  else if (currentFilter === 'guangzhou') students = students.filter(s => s.workshop === 'guangzhou');
+  else if (currentFilter === 'with-checkins') students = students.filter(s => (s.assessmentCount || 0) > 0);
+
+  if (!students.length) {
+    document.getElementById('studentList').innerHTML = '<div class="no-data">No students found.</div>';
+    return;
+  }
+
+  document.getElementById('studentList').innerHTML = students.map((s, i) => {
+    const color = COLORS[i % COLORS.length];
+    const initials = s.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    const count = s.assessmentCount || 0;
+    return `<div class="student-row" id="row-${s.id}">
+      <div class="student-header" onclick="toggleReport('${s.id}', '${s.workshop}')">
+        <div class="avatar" style="background:${color}">${initials}</div>
+        <div class="student-info">
+          <div class="sname">${s.name}</div>
+          <div class="smeta">${s.workshop === 'guangzhou' ? '广州 Guangzhou' : '惠州 Huizhou'} · ${count} check-in${count !== 1 ? 's' : ''}</div>
+        </div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="report-panel" id="panel-${s.id}">
+        <div style="color:#bbb;font-size:13px;padding:12px 0;">Loading report...</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleReport(id, workshop) {
+  const row = document.getElementById('row-' + id);
+  const panel = document.getElementById('panel-' + id);
+  const isOpen = row.classList.contains('open');
+
+  // Close all others
+  document.querySelectorAll('.student-row.open').forEach(r => r.classList.remove('open'));
+
+  if (isOpen) return;
+  row.classList.add('open');
+
+  // Load if not cached
+  if (!reportCache[id]) {
+    try {
+      const r = await fetch(`${API}/journal/student/${id}`);
+      if (!r.ok) throw new Error('not found');
+      reportCache[id] = await r.json();
+    } catch(e) {
+      panel.innerHTML = '<div style="color:#aaa;font-size:13px;padding:12px 0;">No journal entries yet.</div>';
+      return;
+    }
+  }
+
+  renderReport(id, reportCache[id], workshop, panel);
+}
+
+function renderReport(id, data, workshop, panel) {
+  const assessments = data.assessments || [];
+  const name = data.name || '';
+
+  if (!assessments.length) {
+    const saved = getSaved(id);
+    panel.innerHTML = `
+      <div style="color:#aaa;font-size:13px;padding:8px 0 12px;">No practice entries yet.</div>
+      ${teacherInputHTML(id, saved)}`;
+    return;
+  }
+
+  // Trend analysis (last 7, newest first)
+  const recent = assessments.slice(0, 7);
+  const vDots = recent.map(a => vinyasaMap[a.vinyasa] || { dot: 'dot-empty' });
+  const bDots = recent.map(a => bandhaMap[a.bandha] || { dot: 'dot-empty' });
+
+  // Most frequent stable / difficult
+  const stableCounts = {}, diffCounts = {};
+  assessments.forEach(a => {
+    if (a.stableToday) (a.stableToday.split ? a.stableToday.split(',') : [a.stableToday]).forEach(x => { x = x.trim(); if(x) stableCounts[x] = (stableCounts[x]||0)+1; });
+    if (a.difficultToday) (a.difficultToday.split ? a.difficultToday.split(',') : [a.difficultToday]).forEach(x => { x = x.trim(); if(x) diffCounts[x] = (diffCounts[x]||0)+1; });
+  });
+  const topStable = Object.entries(stableCounts).sort((a,b) => b[1]-a[1]).slice(0,4).map(e => e[0]);
+  const topDiff = Object.entries(diffCounts).sort((a,b) => b[1]-a[1]).slice(0,4).map(e => e[0]);
+
+  // Trend direction
+  const greenV = recent.filter(a => a.vinyasa === 'kept_moving').length;
+  const greenB = recent.filter(a => a.bandha === 'body_light').length;
+  const total = recent.length;
+
+  // Generate summaries
+  const { en: summaryEN, zh: summaryZH } = generateSummary(name, assessments.length, greenV, greenB, total, topStable, topDiff);
+
+  const saved = getSaved(id);
+
+  panel.innerHTML = `
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="checkin-count">${assessments.length}</div>
+        <div class="checkin-label">Check-ins</div>
+      </div>
+      <div class="stat-box">
+        <div class="checkin-count" style="color:#4CAF50">${Math.round(greenV/total*100)}%</div>
+        <div class="checkin-label">Good Vinyasa</div>
+      </div>
+      <div class="stat-box">
+        <div class="checkin-count" style="color:#7b6cf6">${Math.round(greenB/total*100)}%</div>
+        <div class="checkin-label">Light Body</div>
+      </div>
+    </div>
+
+    <div class="section-title">Vinyasa Trend (recent)</div>
+    <div class="trend-row">
+      <div class="trend-dots">${vDots.map(d => `<div class="dot ${d.dot}"></div>`).join('')}</div>
+      <div class="trend-summary">${vDots[0] ? (vinyasaMap[assessments[0].vinyasa]?.label || '') : ''}</div>
+    </div>
+
+    <div class="section-title">Bandha / Body Feeling</div>
+    <div class="trend-row">
+      <div class="trend-dots">${bDots.map(d => `<div class="dot ${d.dot}"></div>`).join('')}</div>
+      <div class="trend-summary">${bDots[0] ? (bandhaMap[assessments[0].bandha]?.label || '') : ''}</div>
+    </div>
+
+    ${topStable.length ? `
+    <div class="section-title">Consistent Strengths</div>
+    <div class="tag-row">${topStable.map(t => `<span class="tag tag-stable">✓ ${t}</span>`).join('')}</div>` : ''}
+
+    ${topDiff.length ? `
+    <div class="section-title">Working On</div>
+    <div class="tag-row">${topDiff.map(t => `<span class="tag tag-diff">→ ${t}</span>`).join('')}</div>` : ''}
+
+    <div class="section-title">Progress Summary</div>
+    <div class="summary-box">
+      <div class="lang-label">English</div>
+      <div class="summary-text">${summaryEN}</div>
+      <div class="summary-zh">
+        <div class="lang-label">中文</div>
+        <div class="summary-text">${summaryZH}</div>
+      </div>
+    </div>
+
+    ${teacherInputHTML(id, saved)}
+  `;
+
+  // Restore saved values
+  if (saved.comment) document.getElementById('comment-' + id).value = saved.comment;
+  if (saved.focus) document.getElementById('focus-' + id).value = saved.focus;
+}
+
+function teacherInputHTML(id, saved) {
+  return `<div class="teacher-section">
+    <div class="teacher-label">📝 Teacher's Comment for ${getSavedName(id)}</div>
+    <textarea id="comment-${id}" placeholder="Write your personal observation and encouragement for this student...">${saved.comment || ''}</textarea>
+    <div class="teacher-label" style="margin-top:10px;">🎯 Future Focus / Next Steps</div>
+    <textarea id="focus-${id}" placeholder="What should this student focus on next? Any specific asanas, breathing work, or mindset...">${saved.focus || ''}</textarea>
+    <button class="save-btn" id="savebtn-${id}" onclick="saveComment('${id}')">Save Notes</button>
+  </div>`;
+}
+
+function generateSummary(name, total, greenV, greenB, recent, topStable, topDiff) {
+  const vPct = Math.round(greenV / recent * 100);
+  const bPct = Math.round(greenB / recent * 100);
+  const firstName = name.split(' ')[0];
+
+  // EN summary
+  let en = `${firstName} has completed ${total} practice journal ${total === 1 ? 'entry' : 'entries'}, showing genuine commitment to self-reflection. `;
+
+  if (vPct >= 70) en += `Their vinyasa flow has been consistently strong — keeping breath connected to movement ${vPct}% of sessions. `;
+  else if (vPct >= 40) en += `Their vinyasa shows real growth, with breath-connected movement in ${vPct}% of sessions — a positive direction. `;
+  else en += `The vinyasa is a growing edge — ${firstName} is learning to trust the breath and find rhythm. `;
+
+  if (bPct >= 70) en += `The bandha engagement is clearly developing, with ${bPct}% of sessions feeling light and lifted. `;
+  else if (bPct >= 40) en += `Bandha awareness is emerging — ${bPct}% of sessions showing a lighter quality. `;
+  else en += `The bandha journey is just beginning — this is where deep transformation will unfold. `;
+
+  if (topStable.length) en += `${firstName}'s reliable strengths include ${topStable.slice(0,2).join(' and ')}. `;
+  if (topDiff.length) en += `Areas of growth and exploration: ${topDiff.slice(0,2).join(' and ')}. `;
+
+  en += `With continued practice and awareness, ${firstName} is building a beautiful foundation. 🙏`;
+
+  // ZH summary
+  let zh = `${firstName}已完成${total}次练习记录，展现出真诚的自我觉察与坚持。`;
+
+  if (vPct >= 70) zh += `串联流动表现稳定，${vPct}%的练习中呼吸与动作保持连贯。`;
+  else if (vPct >= 40) zh += `串联流动持续进步，${vPct}%的练习中感受到呼吸与移动的连接。`;
+  else zh += `串联流动是当前的成长领域，正在学习信任呼吸、找到节奏。`;
+
+  if (bPct >= 70) zh += `根锁（bandha）意识正在清晰建立，${bPct}%的练习感受到轻盈上扬。`;
+  else if (bPct >= 40) zh += `根锁意识正在萌芽，${bPct}%的练习开始体验轻盈感。`;
+  else zh += `根锁的探索才刚开始，这正是深层转变的起点。`;
+
+  if (topStable.length) zh += `稳定的优势在于：${topStable.slice(0,2).join('和')}。`;
+  if (topDiff.length) zh += `正在深化的领域：${topDiff.slice(0,2).join('和')}。`;
+
+  zh += `持续练习，${firstName}正在建立美好的根基。🙏`;
+
+  return { en, zh };
+}
+
+function getSaved(id) {
+  try { return JSON.parse(localStorage.getItem('report_' + id) || '{}'); } catch(e) { return {}; }
+}
+function getSavedName(id) {
+  const s = allStudents.find(s => s.id === id);
+  return s ? s.name.split(' ')[0] : '';
+}
+
+function saveComment(id) {
+  const comment = document.getElementById('comment-' + id)?.value || '';
+  const focus = document.getElementById('focus-' + id)?.value || '';
+  localStorage.setItem('report_' + id, JSON.stringify({ comment, focus }));
+  const btn = document.getElementById('savebtn-' + id);
+  btn.textContent = '✓ Saved';
+  btn.classList.add('saved');
+  setTimeout(() => { btn.textContent = 'Save Notes'; btn.classList.remove('saved'); }, 2000);
+}
+
+init();
+</script>
+</body>
+</html>

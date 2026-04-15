@@ -371,12 +371,40 @@ app.post('/api/orientations', async (req, res) => {
           createdAt: datetime
         }
       );
+      // Also create a Student node so the journal checkin route can find this student
+      const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+      const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=guangzhou';
+      await session.run(
+        `CREATE (s:Student {
+          id: $id,
+          name: $name,
+          wechatId: $wechat,
+          classType: 'chinese-workshop',
+          isChineseStudent: true,
+          isActive: true,
+          oriented: true,
+          language: $language,
+          workshop: $workshop,
+          injuries: $injuries,
+          experience: $experience,
+          journalLink: $journalLink,
+          createdAt: datetime($createdAt)
+        })`,
+        {
+          id: studentId,
+          name: name,
+          wechat: wechat || '',
+          language: language || 'zh',
+          workshop: workshop || 'Guangzhou WS Apr 2026',
+          injuries: injuries || '',
+          experience: experience || '',
+          journalLink,
+          createdAt: datetime
+        }
+      );
     } finally {
       await session.close();
     }
-
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
-    const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=guangzhou';
 
     res.json({ success: true, studentId, journalLink, name });
   } catch (err) {

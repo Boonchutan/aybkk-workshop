@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GZ Students — Journal Links</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, sans-serif; background: #f5f0eb; color: #1a1a1a; padding: 16px; }
+    h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 16px; }
+    .refresh-btn { background: #7b6cf6; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; margin-bottom: 16px; }
+    .student-card {
+      background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+      display: flex; align-items: center; gap: 14px;
+    }
+    .student-info { flex: 1; min-width: 0; }
+    .student-name { font-size: 16px; font-weight: 600; }
+    .student-meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .student-link { font-size: 11px; color: #7b6cf6; word-break: break-all; margin-top: 4px; }
+    .btn-group { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .qr-btn { background: #4CAF50; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .copy-btn { background: #f0f0f0; color: #333; border: none; border-radius: 8px; padding: 8px 14px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .copy-btn.done { background: #e8f5e9; color: #388e3c; }
+    /* QR overlay */
+    .qr-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      z-index: 100; align-items: center; justify-content: center;
+    }
+    .qr-overlay.show { display: flex; }
+    .qr-box {
+      background: #fff; border-radius: 20px; padding: 28px 24px; text-align: center;
+      width: 280px; position: relative;
+    }
+    .qr-box h2 { font-size: 17px; margin-bottom: 4px; }
+    .qr-box p { font-size: 12px; color: #888; margin-bottom: 16px; }
+    .qr-box img { width: 220px; height: 220px; border-radius: 8px; }
+    .qr-hint { font-size: 11px; color: #aaa; margin-top: 10px; }
+    .close-btn { position: absolute; top: 12px; right: 14px; background: #f5f5f5; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+    .empty { text-align: center; color: #aaa; padding: 40px 0; font-size: 14px; }
+    .count { font-size: 13px; color: #888; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h1>🧘 GZ Workshop Students</h1>
+  <div class="subtitle">广州工作坊 — 学员练习记录链接</div>
+  <button class="refresh-btn" onclick="loadStudents()">↻ Refresh</button>
+  <div id="count" class="count"></div>
+  <div id="list"></div>
+
+  <!-- QR overlay -->
+  <div class="qr-overlay" id="qrOverlay" onclick="if(event.target===this)closeQR()">
+    <div class="qr-box">
+      <button class="close-btn" onclick="closeQR()">✕</button>
+      <h2 id="qrName"></h2>
+      <p>扫码打开练习记录 / Scan to open journal</p>
+      <img id="qrImg" src="" alt="QR">
+      <div class="qr-hint">长按图片保存 / Long-press to save</div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://aybkk-ashtanga.up.railway.app/api';
+
+    async function loadStudents() {
+      document.getElementById('list').innerHTML = '<div class="empty">Loading...</div>';
+      try {
+        const res = await fetch(`${API}/journal/students?isChinese=true`);
+        const data = await res.json();
+        render(data.students || []);
+      } catch(e) {
+        document.getElementById('list').innerHTML = '<div class="empty">Failed to load. Check connection.</div>';
+      }
+    }
+
+    function render(students) {
+      // Filter to GZ workshop only
+      const gz = students.filter(s => s.classType === 'chinese-workshop');
+      document.getElementById('count').textContent = gz.length + ' students';
+      if (!gz.length) {
+        document.getElementById('list').innerHTML = '<div class="empty">No students yet.</div>';
+        return;
+      }
+      document.getElementById('list').innerHTML = gz.map(s => {
+        const link = `https://aybkk-ashtanga.up.railway.app/student.html?id=${s.id}&name=${encodeURIComponent(s.name)}&lang=zh&location=guangzhou`;
+        const checkins = s.assessmentCount || 0;
+        return `<div class="student-card">
+          <div class="student-info">
+            <div class="student-name">${s.name}</div>
+            <div class="student-meta">${checkins} check-in${checkins !== 1 ? 's' : ''}</div>
+            <div class="student-link">${link}</div>
+          </div>
+          <div class="btn-group">
+            <button class="qr-btn" onclick="showQR('${s.id}','${s.name.replace(/'/g,"\\'")}')">QR</button>
+            <button class="copy-btn" id="copy-${s.id}" onclick="copyLink('${s.id}','${link}')">Copy</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    async function showQR(studentId, name) {
+      document.getElementById('qrName').textContent = name;
+      document.getElementById('qrImg').src = '';
+      document.getElementById('qrOverlay').classList.add('show');
+      try {
+        const res = await fetch(`${API}/journal/qr/${studentId}`);
+        const data = await res.json();
+        document.getElementById('qrImg').src = data.qrDataUrl;
+      } catch(e) {
+        document.getElementById('qrImg').alt = 'QR failed';
+      }
+    }
+
+    function closeQR() {
+      document.getElementById('qrOverlay').classList.remove('show');
+    }
+
+    async function copyLink(id, link) {
+      try {
+        await navigator.clipboard.writeText(link);
+      } catch(e) {
+        const ta = document.createElement('textarea');
+        ta.value = link; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      }
+      const btn = document.getElementById('copy-' + id);
+      btn.textContent = '✓ Copied';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 2000);
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>

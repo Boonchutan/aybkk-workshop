@@ -223,6 +223,10 @@
       <!-- Journal Link Display -->
       <div class="link-box">
         <div class="link-label">🧘 您的练习记录链接 — 保存这个！</div>
+        <div id="qrCodeBox" style="margin:12px auto;text-align:center;display:none;">
+          <img id="qrCodeImg" src="" alt="QR Code" style="width:200px;height:200px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.12);">
+          <div style="font-size:12px;color:#8b7d6b;margin-top:6px;">扫码保存 / Scan to save</div>
+        </div>
         <div class="link-url" id="journalLink"></div>
         <button class="copy-btn" onclick="copyLink()">📋 复制链接</button>
         <div class="link-hint">每天练习后记录<br>Keep this link to log your practice!</div>
@@ -584,8 +588,16 @@ async function submitForm(e) {
       const t = T[currentLang];
       document.getElementById('successName').textContent = t.successName + (data.name ? ', ' + data.name + '!' : '!');
       document.getElementById('journalLink').textContent = result.journalLink;
-      document.getElementById('linkBoxLabel') || null; // just for t reference
       document.getElementById('successOverlay').classList.remove('hidden');
+      // Fetch and display QR code
+      try {
+        const qrRes = await fetch(`${API_BASE}/journal/qr/${result.studentId}`);
+        const qrData = await qrRes.json();
+        if (qrData.qrDataUrl) {
+          document.getElementById('qrCodeImg').src = qrData.qrDataUrl;
+          document.getElementById('qrCodeBox').style.display = 'block';
+        }
+      } catch(e) { /* QR is bonus — silently skip if it fails */ }
     } else {
       throw new Error('Failed');
     }
