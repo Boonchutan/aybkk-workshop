@@ -23,7 +23,7 @@ router.get('/_test', (req, res) => {
 router.post('/checkin', async (req, res) => {
   const session = req.driver.session();
   try {
-    const { studentId, studentName, lastAsana, vinyasa, bandha, stableToday, difficultToday, lastAsanaNote, practiceNotes, sessionDate, platform } = req.body;
+    const { studentId, studentName, lastAsana, vinyasa, bandha, stableToday, difficultToday, lastAsanaNote, practiceNotes, sessionDate, platform, location } = req.body;
 
     // Validate required fields
     if (!vinyasa || !bandha || !stableToday || !difficultToday) {
@@ -80,6 +80,7 @@ router.post('/checkin', async (req, res) => {
         practiceNotes: $practiceNotes,
         sessionDate: $sessionDate,
         platform: $platform,
+        location: $location,
         checkedInAt: datetime($checkedInAt)
       })
       CREATE (s)-[:HAS_SELF_ASSESSMENT]->(sa)
@@ -96,6 +97,7 @@ router.post('/checkin', async (req, res) => {
       practiceNotes: practiceNotes || '',
       sessionDate: sessionDate || new Date().toISOString().split('T')[0],
       platform: platform || 'web',
+      location: location || 'unknown',
       checkedInAt: now
     });
 
@@ -117,7 +119,7 @@ router.post('/checkin', async (req, res) => {
 router.post('/profile', async (req, res) => {
   const session = req.driver.session();
   try {
-    const { name, lineId, wechatId, phone, email, isChineseStudent, classType } = req.body;
+    const { name, lineId, wechatId, phone, email, isChineseStudent, classType, language, location, platform } = req.body;
 
     if (!name) {
       return res.status(400).json({ error: 'Name is required' });
@@ -131,11 +133,12 @@ router.post('/profile', async (req, res) => {
       'MATCH (s:Student {name: $name}) RETURN s LIMIT 1',
       { name }
     );
-    
+
     if (existing.records.length > 0) {
-      return res.status(409).json({ 
+      return res.status(409).json({
         error: 'Student with this name already exists',
-        studentId: existing.records[0].get('s').properties.id
+        studentId: existing.records[0].get('s').properties.id,
+        name
       });
     }
 
@@ -150,6 +153,9 @@ router.post('/profile', async (req, res) => {
         email: $email,
         isChineseStudent: $isChineseStudent,
         classType: $classType,
+        language: $language,
+        location: $location,
+        platform: $platform,
         createdAt: datetime($createdAt),
         isActive: true
       })
@@ -163,6 +169,9 @@ router.post('/profile', async (req, res) => {
       email: email || null,
       isChineseStudent: isChineseStudent || false,
       classType: classType || 'regular',
+      language: language || 'zh',
+      location: location || 'unknown',
+      platform: platform || 'web',
       createdAt: now
     });
 
