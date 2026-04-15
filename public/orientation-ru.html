@@ -51,20 +51,20 @@
     .success-box h2 { font-size: 20px; color: #3e2723; margin-bottom: 12px; }
     .success-box p { font-size: 14px; color: #5d4037; line-height: 1.6; }
     
-    /* Game styles */
-    .game-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .game-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 16px; text-align: center; }
-    .game-card { background: #faf8f5; border-radius: 12px; padding: 20px; margin-bottom: 16px; text-align: center; }
-    .game-question { font-size: 16px; font-weight: 500; color: #3e2723; margin-bottom: 16px; }
-    .game-options { display: flex; flex-direction: column; gap: 10px; }
-    .game-option { padding: 14px 20px; border: 2px solid #e8e0d8; border-radius: 10px; font-size: 15px; cursor: pointer; transition: all 0.2s; background: white; text-align: left; color: #3e2723; }
-    .game-option:hover { border-color: #c49564; background: #faf8f5; }
-    .game-option.correct { border-color: #6B9E6B; background: #eef5ee; }
-    .game-option.wrong { border-color: #e57373; background: #ffebee; }
-    .game-result { margin-top: 12px; font-size: 14px; font-weight: 500; padding: 12px; border-radius: 8px; }
-    .game-result.correct { background: #eef5ee; color: #6B9E6B; }
-    .game-result.wrong { background: #ffebee; color: #e57373; }
-    .game-score { font-size: 14px; color: #8b7d6b; margin-top: 12px; }
+    /* Quiz styles */
+    .quiz-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .quiz-section h3 { font-size: 17px; color: #3e2723; margin-bottom: 4px; text-align:center; }
+    .quiz-progress { font-size: 12px; color: #8b7d6b; text-align:center; margin-bottom: 16px; }
+    .quiz-q { font-size: 16px; font-weight: 600; color: #3e2723; margin-bottom: 16px; line-height: 1.4; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-opt { padding: 13px 18px; border: 2px solid #e8e0d8; border-radius: 12px; font-size: 14px; cursor: pointer; text-align: left; background: #faf8f5; color: #3e2723; transition: all 0.18s; }
+    .quiz-opt:hover { border-color: #c49564; }
+    .quiz-opt.correct { border-color: #6B9E6B; background: #eef5ee; color: #2d6a2d; }
+    .quiz-opt.wrong { border-color: #e57373; background: #ffebee; color: #b71c1c; }
+    .quiz-result { margin-top: 12px; font-size: 14px; font-weight: 600; padding: 11px 14px; border-radius: 10px; display:none; }
+    .quiz-result.correct { background: #eef5ee; color: #3a7a3a; }
+    .quiz-result.wrong { background: #ffebee; color: #c62828; }
+    .continue-btn { width:100%; margin-top:14px; padding:13px; border-radius:12px; border:none; background:#3e2723; color:white; font-size:15px; font-weight:600; cursor:pointer; display:none; }
   </style>
 </head>
 <body>
@@ -116,16 +116,26 @@
       </div>
     </div>
 
-    <!-- Games Section -->
-    <div class="game-section">
-      <h3>🎮 Orientation Games</h3>
-      <p style="font-size:13px;color:#8b7d6b;margin-bottom:16px;text-align:center">Проверь свои знания Ashtanga!</p>
-      <div id="gamesContainer"></div>
-      <div class="game-score" id="gameScore"></div>
+    <!-- Quiz Section -->
+    <div class="quiz-section" id="quizSection">
+      <h3>🧘 Викторина Ashtanga</h3>
+      <div class="quiz-progress" id="quizProgress"></div>
+      <div id="quizQ1Block">
+        <div class="quiz-q" id="quizQ1Text"></div>
+        <div class="quiz-opts" id="quizOpts1"></div>
+        <div class="quiz-result" id="quizResult1"></div>
+        <button class="continue-btn" id="quizNextBtn" onclick="goToQ2()">Следующий вопрос →</button>
+      </div>
+      <div id="quizQ2Block" style="display:none;margin-top:20px;">
+        <div class="quiz-q" id="quizQ2Text"></div>
+        <div class="quiz-opts" id="quizOpts2"></div>
+        <div class="quiz-result" id="quizResult2"></div>
+        <button class="continue-btn" id="quizNextBtn2" onclick="proceedPastQuiz()">Перейти к анкете →</button>
+      </div>
     </div>
 
-    <!-- Form -->
-    <form id="orientationForm" onsubmit="submitForm(event)">
+    <!-- Form (hidden until quiz done) -->
+    <form id="orientationForm" onsubmit="submitForm(event)" style="display:none;">
       <div class="form-section">
         <h3>Анкета участника</h3>
         <p>Заполните свои данные</p>
@@ -229,36 +239,92 @@ const QUOTES = [
   { text: 'Свобода приходит, когда ум перестает отождествлять себя с явлениями.', source: 'YS 2.5' }
 ];
 
-// Games
-const GAMES = [
-  {
-    q: 'Сколько дыханий в Surya Namaskar A?',
-    options: ['9 дыханий', '12 дыханий', '15 дыханий'],
-    answer: 0
-  },
-  {
-    q: 'Какой номер сутры о "клешах"?',
-    options: ['YS 2.4', 'YS 2.5', 'YS 1.2'],
-    answer: 1
-  },
-  {
-    q: 'В какой позе дыхание "уджайи"?',
-    options: ['Sukhasana', 'Virasana', 'Все асаны'],
-    answer: 2
-  }
+// Quiz pool (RU + EN)
+const QUIZ_POOL = [
+  { q:{ru:'Кто создал метод аштанга-йоги?',en:'Who created the Ashtanga yoga method?'},
+    opts:{ru:['Гуру Пурнима','Гуру Шарат Джойс','Гуру Патанджали','Гуру Паттабхи Джойс'],en:['Guru Purnima','Guru Sharath Jois','Guru Patanjali','Guru Pattabhi Jois']}, answer:3 },
+  { q:{ru:'Что означает «аштанга»?',en:'What does "ashtanga" mean?'},
+    opts:{ru:['Мандарин над пеплом 🍊🔥','Восемь ветвей Йоги 🧘','Делать суп 🍲','Трусы-стринги 🩲'],en:['Tangerine over ashes 🍊🔥','Eight limbs of Yoga 🧘','Making soup 🍲','Thong underwear 🩲']}, answer:1 },
+  { q:{ru:'Сколько раз мы повторяем Сурьянамаскару А?',en:'How many times do we repeat Suryanamaskara A?'},
+    opts:{ru:['Несколько раз для разогрева','5 раз по традиции ✅','В моём городе нет солнца ☁️','О чём вы говорите 🤔'],en:['A few times to warm up','5 times is tradition ✅','No sun in my city ☁️','What are you talking about 🤔']}, answer:1 },
+  { q:{ru:'Сколько виньяс в Сурьянамаскаре Б?',en:'How many vinyasa in Suryanamaskara B?'},
+    opts:{ru:['9','14','17 ✅','Что такое виньяса? 😳'],en:['9','14','17 ✅','What is vinyasa? 😳']}, answer:2 },
+  { q:{ru:'На каком языке считают виньясы в аштанга-йоге?',en:'What language is used for counting vinyasa in Ashtanga?'},
+    opts:{ru:['Хинди','Арабский','Тамильский','Санскрит ✅'],en:['Hindi','Arabic','Tamil','Sanskrit ✅']}, answer:3 },
+  { q:{ru:'Сколько дней в неделю практикуют аштангу по традиции?',en:'How many days per week traditionally?'},
+    opts:{ru:['6 дней в неделю 💪 ✅','Каждый день 😇','Врач сказал 1 день отдыха 👨‍⚕️','Когда устаю 🙂'],en:['6 days per week 💪 ✅','Every day 😇','My doctor says rest 1 day 👨‍⚕️','Whenever tired 🙂']}, answer:0 },
+  { q:{ru:'Что такое бандха?',en:'What is bandha?'},
+    opts:{ru:['То же, что держать кал 💩','Подъём тазового дна — лёгкость 🪽 ✅','Ещё один тип шарфа 👳','Сленг для пластыря 🩹'],en:['Same as holding poop 💩','Lifting pelvic floor — feeling light 🪽 ✅','Type of scarf 👳','Slang for bandaid 🩹']}, answer:1 },
+  { q:{ru:'В чём главная идея практики аштанги?',en:'Main idea of Ashtanga practice?'},
+    opts:{ru:['Накачать мышцы 💪','Стойка на руках 🤸','Дыхание, движение, удержание поз 🧘 ✅','Красивые фото для соцсетей 📸'],en:['Big muscles 💪','Handstand 🤸','Breathing, moving, holding postures 🧘 ✅','Nice photos 📸']}, answer:2 },
+  { q:{ru:'Что такое класс майсор?',en:'What is a Mysore class?'},
+    opts:{ru:['Практика аштанги дома','Своя последовательность в студии','Традиционная аштанга с учителем из парампары ✅','В студии для красивых фото'],en:['Ashtanga at home','My sequence at studio','Traditional Ashtanga with teacher from parampara ✅','Studio photos']}, answer:2 }
 ];
 
 let currentLang = 'ru';
 let gameResults = [];
-let answered = {};
+let quiz1 = null, quiz2 = null;
+let q1Answered = false, q1Correct = false;
+let q2Answered = false, q2Correct = false;
+
+function renderQuizQ1() {
+  document.getElementById('quizQ1Text').textContent = quiz1.q[currentLang]||quiz1.q.en;
+  document.getElementById('quizOpts1').innerHTML = (quiz1.opts[currentLang]||quiz1.opts.en).map((o,i)=>
+    `<button type="button" class="quiz-opt${q1Answered?(i===quiz1.answer?' correct':(i===quiz1._sel?' wrong':'')):''}${q1Answered?' disabled':''}" onclick="answerQ1(${i})">${o}</button>`
+  ).join('');
+  if (q1Answered) {
+    const r=document.getElementById('quizResult1');
+    r.className='quiz-result '+(q1Correct?'correct':'wrong');
+    r.textContent=q1Correct?'✅ Правильно!':'❌ '+(quiz1.opts[currentLang]||quiz1.opts.en)[quiz1.answer];
+    r.style.display='block';
+    document.getElementById('quizNextBtn').style.display='block';
+  }
+  document.getElementById('quizProgress').textContent=currentLang==='ru'?'Вопрос 1 из 2':'Question 1 of 2';
+}
+
+function renderQuizQ2() {
+  document.getElementById('quizQ2Text').textContent = quiz2.q[currentLang]||quiz2.q.en;
+  document.getElementById('quizOpts2').innerHTML = (quiz2.opts[currentLang]||quiz2.opts.en).map((o,i)=>
+    `<button type="button" class="quiz-opt${q2Answered?(i===quiz2.answer?' correct':(i===quiz2._sel?' wrong':'')):''}${q2Answered?' disabled':''}" onclick="answerQ2(${i})">${o}</button>`
+  ).join('');
+  if (q2Answered) {
+    const r=document.getElementById('quizResult2');
+    r.className='quiz-result '+(q2Correct?'correct':'wrong');
+    r.textContent=q2Correct?'✅ Правильно!':'❌ '+(quiz2.opts[currentLang]||quiz2.opts.en)[quiz2.answer];
+    r.style.display='block';
+    document.getElementById('quizNextBtn2').style.display='block';
+  }
+}
+
+function answerQ1(idx) {
+  if(q1Answered)return; q1Answered=true; quiz1._sel=idx; q1Correct=idx===quiz1.answer;
+  gameResults[0]={quiz:quiz1.q.en,correct:q1Correct}; renderQuizQ1();
+}
+function answerQ2(idx) {
+  if(q2Answered)return; q2Answered=true; quiz2._sel=idx; q2Correct=idx===quiz2.answer;
+  gameResults[1]={quiz:quiz2.q.en,correct:q2Correct}; renderQuizQ2();
+}
+function goToQ2() {
+  document.getElementById('quizQ2Block').style.display='block';
+  document.getElementById('quizNextBtn').style.display='none';
+  document.getElementById('quizProgress').textContent=currentLang==='ru'?'Вопрос 2 из 2':'Question 2 of 2';
+  document.getElementById('quizQ2Block').scrollIntoView({behavior:'smooth'});
+  renderQuizQ2();
+}
+function proceedPastQuiz() {
+  document.getElementById('quizSection').style.display='none';
+  const form=document.getElementById('orientationForm');
+  form.style.display='block';
+  form.scrollIntoView({behavior:'smooth'});
+}
 
 function init() {
-  // Quote
   const idx = new Date().getDate() % QUOTES.length;
   document.getElementById('quoteText').textContent = QUOTES[idx].text;
   document.getElementById('quoteSource').textContent = '— ' + QUOTES[idx].source;
-  
-  renderGames();
+  const shuffled = [...QUIZ_POOL].sort(() => Math.random() - 0.5);
+  quiz1 = shuffled[0]; quiz2 = shuffled[1];
+  renderQuizQ1();
 }
 
 function setLang(lang) {
@@ -267,50 +333,8 @@ function setLang(lang) {
   document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
   document.getElementById('introText').textContent = T[lang].intro;
   document.getElementById('submitBtn').textContent = T[lang].submit;
-}
-
-function renderGames() {
-  const container = document.getElementById('gamesContainer');
-  container.innerHTML = GAMES.map((g, gi) => `
-    <div class="game-card">
-      <p class="game-question">${g.q}</p>
-      <div class="game-options">
-        ${g.options.map((opt, oi) => `
-          <button type="button" class="game-option" onclick="answerGame(${gi}, ${oi})" id="g${gi}_o${oi}">
-            ${opt}
-          </button>
-        `).join('')}
-      </div>
-      <div class="game-result hidden" id="g${gi}_result"></div>
-    </div>
-  `).join('');
-}
-
-function answerGame(gameIdx, optIdx) {
-  if (answered[gameIdx] !== undefined) return;
-  answered[gameIdx] = optIdx;
-  
-  const game = GAMES[gameIdx];
-  const isCorrect = optIdx === game.answer;
-  gameResults.push({ game: game.q, isCorrect, choice: game.options[optIdx] });
-  
-  // Highlight options
-  document.querySelectorAll(`#g${gameIdx}_o${game.answer}`).forEach(b => b.classList.add('correct'));
-  if (!isCorrect) {
-    document.querySelectorAll(`#g${gameIdx}_o${optIdx}`).forEach(b => b.classList.add('wrong'));
-  }
-  
-  const resultEl = document.getElementById(`g${gameIdx}_result`);
-  resultEl.classList.remove('hidden');
-  resultEl.className = `game-result ${isCorrect ? 'correct' : 'wrong'}`;
-  resultEl.textContent = isCorrect ? '✅ Правильно!' : `❌ ${game.options[game.answer]}`;
-  
-  updateScore();
-}
-
-function updateScore() {
-  const correct = gameResults.filter(r => r.isCorrect).length;
-  document.getElementById('gameScore').textContent = `Результат: ${correct}/${GAMES.length}`;
+  if(quiz1) renderQuizQ1();
+  if(quiz2 && document.getElementById('quizQ2Block').style.display!=='none') renderQuizQ2();
 }
 
 function toggleOption(el, type) {

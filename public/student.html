@@ -625,40 +625,52 @@
     </div>
   </div>
 
-  <!-- STEP 8: Quiz A (2 questions) -->
+  <!-- STEP 8: Quiz (1 question per session) -->
   <div class="step" id="step8">
     <div class="card">
       <div class="step-icon">🧘</div>
       <div class="step-question" id="quizTitle">Quick Ashtanga Quiz!</div>
-      <div class="step-hint" id="quizHint">2 quick questions before you're done</div>
+      <div class="step-hint" id="quizHint">1 quick question before you're done</div>
       <div id="quizAContainer"></div>
     </div>
   </div>
 
-  <!-- STEP 9: Quiz B (2 more questions) -->
-  <div class="step" id="step9">
-    <div class="card">
-      <div class="step-icon">💪</div>
-      <div class="step-question">Almost done!</div>
-      <div class="step-hint">2 more questions...</div>
-      <div id="quizBContainer"></div>
-    </div>
+  <!-- STEP 9: kept for layout but skipped in flow -->
+  <div class="step" id="step9" style="display:none;">
+    <div id="quizBContainer"></div>
   </div>
 </div>
 
 <!-- Success + Share Card -->
 <div id="successOverlay" class="success-overlay hidden">
   <div class="success-box">
-    <div id="shareCard" style="border-radius:16px;padding:28px 24px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 8px 32px rgba(0,0,0,0.15);">
-      <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:56px;height:56px;border-radius:50%;margin-bottom:12px;border:2px solid rgba(255,255,255,0.4);">
-      <div style="color:rgba(255,255,255,0.7);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;" id="shareSubtitle">AYBKK PRACTICE JOURNAL</div>
-      <div style="color:#ffffff;font-size:22px;font-weight:700;margin-bottom:4px;" id="shareStudentName"></div>
-      <div style="color:rgba(255,255,255,0.85);font-size:15px;font-weight:500;margin-bottom:16px;" id="shareDayInfo"></div>
-      <div style="border-top:1px solid rgba(255,255,255,0.2);padding-top:16px;margin-top:8px;">
-        <div style="color:#ffffff;font-size:14px;font-style:italic;line-height:1.6;font-weight:400;margin-bottom:12px;" id="shareQuote"></div>
-        <div style="color:#ffffff;font-size:15px;font-weight:700;letter-spacing:0.5px;line-height:1.5;display:none;margin-bottom:4px;" id="shareUplift"></div>
+    <div id="shareCard" style="border-radius:20px;padding:32px 26px 28px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 16px 48px rgba(0,0,0,0.28);position:relative;overflow:hidden;border:1px solid rgba(196,149,100,0.35);">
+      <!-- Photo background layer -->
+      <div id="shareCardPhotoBg" style="position:absolute;inset:0;background-size:cover;background-position:center top;opacity:0;z-index:0;"></div>
+      <!-- Dark vignette overlay — only visible when photo is showing -->
+      <div id="shareCardOverlay" style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.08) 0%,rgba(0,0,0,0.18) 50%,rgba(0,0,0,0.40) 100%);z-index:1;opacity:0;transition:opacity 0.4s;"></div>
+      <!-- Content -->
+      <div style="position:relative;z-index:2;">
+        <!-- Logo in amber ring -->
+        <div style="width:54px;height:54px;border-radius:50%;border:1.5px solid rgba(196,149,100,0.65);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.2);">
+          <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        <!-- Subtitle -->
+        <div style="color:rgba(255,255,255,0.55);font-size:9.5px;letter-spacing:3.5px;text-transform:uppercase;margin-bottom:12px;font-weight:500;" id="shareSubtitle">AYBKK PRACTICE JOURNAL</div>
+        <!-- Amber accent line -->
+        <div style="width:36px;height:1px;background:linear-gradient(90deg,transparent,rgba(196,149,100,0.8),transparent);margin:0 auto 18px;"></div>
+        <!-- Student name -->
+        <div style="color:#ffffff;font-size:28px;font-weight:700;margin-bottom:7px;letter-spacing:0.3px;text-shadow:0 2px 12px rgba(0,0,0,0.35);" id="shareStudentName"></div>
+        <!-- Date info -->
+        <div style="color:rgba(255,255,255,0.7);font-size:12.5px;font-weight:400;margin-bottom:20px;letter-spacing:0.4px;" id="shareDayInfo"></div>
+        <!-- Divider + quote -->
+        <div style="border-top:1px solid rgba(255,255,255,0.12);padding-top:16px;">
+          <div style="color:rgba(255,255,255,0.85);font-size:13px;font-style:italic;line-height:1.75;font-weight:300;margin-bottom:10px;letter-spacing:0.15px;" id="shareQuote"></div>
+          <div style="color:#fff;font-size:14px;font-weight:600;letter-spacing:0.4px;line-height:1.55;display:none;margin-bottom:4px;" id="shareUplift"></div>
+        </div>
+        <!-- Byline -->
+        <div style="color:rgba(255,255,255,0.38);font-size:10px;margin-top:18px;letter-spacing:1.5px;text-transform:uppercase;">Boonchu · Jamsai Tanti</div>
       </div>
-      <div style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:16px;font-weight:500;">by Boonchu Tanti & Jamsai Tanti</div>
     </div>
     <div class="success-msg" id="successMsg">Your practice journal is saved.<br>See you next session.</div>
     <button class="btn" onclick="shareToWeChat()" id="shareWeChatBtn">Share to WeChat 📱</button>
@@ -707,7 +719,7 @@ const T = {
     photoQ: '添加你的照片！',
     photoH: '可选 — 用于分享卡',
     quizTitle: '快速瑜伽小测验！',
-    quizHint: '完成前回答2个问题',
+    quizHint: '完成前回答1个问题',
     quizNext: '下一题 →',
     quizComplete: '完成测验',
     quizCorrect: '🥳🎊 正确！',
@@ -752,7 +764,7 @@ const T = {
     photoQ: 'Add your photo!',
     photoH: 'Optional — for your share card',
     quizTitle: 'Quick Ashtanga Quiz!',
-    quizHint: '2 quick questions before you\'re done',
+    quizHint: "1 quick question before you're done",
     quizNext: 'Next →',
     quizComplete: 'Complete Quiz',
     quizCorrect: '🥳🎊 Correct!',
@@ -797,7 +809,7 @@ const T = {
     photoQ: 'เพิ่มรูปของคุณ!',
     photoH: 'ไม่บังคับ — สำหรับการ์ดแชร์',
     quizTitle: 'ทดสอบ Ashtanga ควิก!',
-    quizHint: 'ตอบ 2 ข้อก่อนเสร็จ',
+    quizHint: 'ตอบ 1 ข้อก่อนเสร็จ',
     quizNext: 'ข้อถัดไป →',
     quizComplete: 'เสร็จสิ้น',
     quizCorrect: '🥳🎊 ถูกต้อง!',
@@ -842,7 +854,7 @@ const T = {
     photoQ: 'Добавьте фото!',
     photoH: 'Необязательно — для открытки',
     quizTitle: 'Быстрая викторина по Аштанга-йоге!',
-    quizHint: '2 вопроса перед завершением',
+    quizHint: '1 вопрос перед завершением',
     quizNext: 'Далее →',
     quizComplete: 'Завершить',
     quizCorrect: '🥳🎊 Правильно!',
@@ -1129,7 +1141,7 @@ function applyLang(lang) {
   document.getElementById('photoQ').textContent = t.photoQ || 'Add your photo!';
   document.getElementById('photoH').textContent = t.photoH || 'Optional — for your share card';
   document.getElementById('quizTitle').textContent = t.quizTitle || 'Quick Ashtanga Quiz!';
-  document.getElementById('quizHint').textContent = t.quizHint || "2 quick questions before you're done";
+  document.getElementById('quizHint').textContent = t.quizHint || "1 quick question before you're done";
   document.getElementById('successTitle').textContent = t.successTitle;
   document.getElementById('successMsg').innerHTML = t.successMsg;
   // Location-aware title override (Russian overrides language default)
@@ -1279,10 +1291,25 @@ function showShareCard() {
       upliftEl.style.display = 'none';
     }
   }
-  // Apply pastel day color to share card
+  // Apply color + photo background to share card
   const c = getDayColor();
   const card = document.getElementById('shareCard');
-  card.style.background = `linear-gradient(135deg, ${c.accent} 0%, ${c.hover} 50%, ${c.accent} 100%)`;
+  const photoBg = document.getElementById('shareCardPhotoBg');
+  const overlay = document.getElementById('shareCardOverlay');
+  const localPhoto = localStorage.getItem('photo_' + studentId);
+
+  if (localPhoto && photoBg) {
+    // Photo present: semi-transparent gradient so photo shows through
+    card.style.background = `linear-gradient(160deg, ${c.accent}bb 0%, ${c.hover}88 50%, ${c.accent}bb 100%)`;
+    photoBg.style.backgroundImage = `url(${localPhoto})`;
+    photoBg.style.opacity = '0.7';
+    if (overlay) overlay.style.opacity = '1';
+  } else {
+    // No photo: solid gradient
+    card.style.background = `linear-gradient(160deg, ${c.accent} 0%, ${c.hover} 50%, ${c.accent} 100%)`;
+    if (photoBg) photoBg.style.opacity = '0';
+    if (overlay) overlay.style.opacity = '0';
+  }
 }
 
 // WeChat share
@@ -1311,9 +1338,9 @@ async function shareToWeChat() {
       try {
         const img = await loadStudentPhoto(studentPhoto);
         if (img) {
-          // Draw photo with 60% opacity, cover-fit
+          // Draw photo with 70% opacity, cover-fit
           ctx.save();
-          ctx.globalAlpha = 0.75;
+          ctx.globalAlpha = 0.70;
           const scale = Math.max(640 / img.width, 720 / img.height);
           const sw = img.width * scale;
           const sh = img.height * scale;
@@ -1594,10 +1621,9 @@ let quizRound = 0; // 0=not started, 1=quizA, 2=quizB
 let currentQuizQ = []; // current batch of 2 questions
 
 function initQuizSets() {
-  // Pick 4 unique questions: first 2 for quiz A, last 2 for quiz B
-  const all4 = pickRandom(QUIZ_QUESTIONS, 4);
-  quizQ1 = all4.slice(0, 2);
-  quizQ2 = all4.slice(2);
+  // Pick 1 random question per session
+  quizQ1 = pickRandom(QUIZ_QUESTIONS, 1);
+  quizQ2 = [];
   quizResults = [];
   quizRound = 0;
 }
@@ -1665,23 +1691,14 @@ function answerQuiz(btn, qi, oi) {
 }
 
 function nextQuizRound() {
-  if (quizRound === 1) {
-    showStep(9);
-    setTimeout(() => renderQuiz('quizBContainer', quizQ2, 2), 50);
-  } else if (quizRound === 2) {
-    showShareCard();
-    document.getElementById('successOverlay').classList.remove('hidden');
-  }
+  // 1 question per session — always go to success after quiz
+  showShareCard();
+  document.getElementById('successOverlay').classList.remove('hidden');
 }
 
 function skipQuiz() {
-  if (quizRound === 1) {
-    showStep(9);
-    setTimeout(() => renderQuiz('quizBContainer', quizQ2, 2), 50);
-  } else if (quizRound === 2) {
-    showShareCard();
-    document.getElementById('successOverlay').classList.remove('hidden');
-  }
+  showShareCard();
+  document.getElementById('successOverlay').classList.remove('hidden');
 }
 
 
@@ -1715,7 +1732,7 @@ async function shareToWeChat() {
         const img = await loadStudentPhoto(photoSrc);
         if (img) {
           ctx.save();
-          ctx.globalAlpha = 0.75;
+          ctx.globalAlpha = 0.70;
           const scale = Math.max(640 / img.width, 720 / img.height);
           const sw = img.width * scale;
           const sh = img.height * scale;

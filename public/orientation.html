@@ -51,6 +51,20 @@
     .success-box .check { font-size: 48px; margin-bottom: 16px; }
     .success-box h2 { font-size: 20px; color: #3e2723; margin-bottom: 8px; }
     .success-box p { font-size: 14px; color: #8b7d6b; line-height: 1.6; }
+    .quiz-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .quiz-section h3 { font-size: 17px; color: #3e2723; margin-bottom: 4px; text-align:center; }
+    .quiz-progress { font-size: 12px; color: #8b7d6b; text-align:center; margin-bottom: 16px; }
+    .quiz-q { font-size: 16px; font-weight: 600; color: #3e2723; margin-bottom: 16px; line-height: 1.4; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-opt { padding: 13px 18px; border: 2px solid #e8e0d8; border-radius: 12px; font-size: 14px; cursor: pointer; text-align: left; background: #faf8f5; color: #3e2723; transition: all 0.18s; }
+    .quiz-opt:hover { border-color: #c49564; }
+    .quiz-opt.correct { border-color: #6B9E6B; background: #eef5ee; color: #2d6a2d; }
+    .quiz-opt.wrong { border-color: #e57373; background: #ffebee; color: #b71c1c; }
+    .quiz-result { margin-top: 12px; font-size: 14px; font-weight: 600; padding: 11px 14px; border-radius: 10px; display:none; }
+    .quiz-result.correct { background: #eef5ee; color: #3a7a3a; }
+    .quiz-result.wrong { background: #ffebee; color: #c62828; }
+    .continue-btn { width:100%; margin-top:14px; padding:13px; border-radius:12px; border:none; background:#3e2723; color:white; font-size:15px; font-weight:600; cursor:pointer; display:none; }
+    .continue-btn:disabled { background:#a89888; cursor:not-allowed; }
   </style>
 </head>
 <body>
@@ -111,8 +125,28 @@
     <div class="signatures">— Boonchu Tanti & Jamsai Tanti</div>
   </div>
 
-  <!-- Registration Form -->
-  <div class="form-section" id="formSection">
+  <!-- Quiz Section (2 sequential questions) -->
+  <div class="quiz-section" id="quizSection">
+    <h3>🧘 Quick Quiz</h3>
+    <div class="quiz-progress" id="quizProgress"></div>
+    <!-- Q1 -->
+    <div id="quizQ1Block">
+      <div class="quiz-q" id="quizQ1Text"></div>
+      <div class="quiz-opts" id="quizOpts1"></div>
+      <div class="quiz-result" id="quizResult1"></div>
+      <button class="continue-btn" id="quizNextBtn" onclick="goToQ2()">Next question →</button>
+    </div>
+    <!-- Q2 -->
+    <div id="quizQ2Block" style="display:none;margin-top:20px;">
+      <div class="quiz-q" id="quizQ2Text"></div>
+      <div class="quiz-opts" id="quizOpts2"></div>
+      <div class="quiz-result" id="quizResult2"></div>
+      <button class="continue-btn" id="quizNextBtn2" onclick="proceedPastQuiz()">Continue to form →</button>
+    </div>
+  </div>
+
+  <!-- Registration Form (hidden until quiz done) -->
+  <div class="form-section" id="formSection" style="display:none;">
     <h3 id="formTitle">Your Practice Profile</h3>
     <p id="formSub">Please fill in your details before Day 1</p>
 
@@ -193,6 +227,91 @@
 </div>
 
 <script>
+// Quiz pool (EN + ZH)
+const QUIZ_POOL = [
+  { q:{en:'Who is the creator of the Ashtanga yoga method?',zh:'谁创造了阿斯汤加瑜伽方法？'},
+    opts:{en:['Guru Purnima','Guru Sharath Jois','Guru Patanjali','Guru Pattabhi Jois'],zh:['古鲁 Purnima','古鲁 Sharath Jois','古鲁 Patanjali','古鲁 Pattabhi Jois']}, answer:3 },
+  { q:{en:'What does "ashtanga" mean?',zh:'"Ashtanga"是什么意思？'},
+    opts:{en:['Tangerine over ashes 🍊🔥','Eight limbs of Yoga 🧘','Making soup 🍲','Thong underwear 🩲'],zh:['橘子灰上🍊🔥','瑜伽八支🧘','做汤🍲','丁字裤🩲']}, answer:1 },
+  { q:{en:'How many times do we repeat Suryanamaskara A?',zh:'Suryanamaskara A 重复多少次？'},
+    opts:{en:['A few times to warm up','5 times is tradition ✅','No sun in my city ☁️','What are you talking about 🤔'],zh:['热身几次','传统是5次✅','我的城市没有太阳 ☁️','你在说什么？🤔']}, answer:1 },
+  { q:{en:'How many vinyasa in Suryanamaskara B?',zh:'Suryanamaskara B 有多少个 Vinyasa？'},
+    opts:{en:['9','14','17 ✅','What is vinyasa? 😳'],zh:['9','14','17 ✅','Vinyasa是什么？😳']}, answer:2 },
+  { q:{en:'What language is used for counting vinyasa in Ashtanga?',zh:'阿斯汤加瑜伽数 Vinyasa 用的是什么语言？'},
+    opts:{en:['Hindi','Arabic','Tamil','Sanskrit ✅'],zh:['印地语','阿拉伯语','泰米尔语','梵语 ✅']}, answer:3 },
+  { q:{en:'How many days per week do Ashtanga practitioners practice traditionally?',zh:'传统上阿斯汤加练习者每周练几天？'},
+    opts:{en:['6 days per week 💪 ✅','Every day 😇','My doctor says 1 day rest 👨‍⚕️','Whenever I feel tired 🙂'],zh:['每周6天，全力以赴 💪 ✅','每天练习 😇','医生说1练2休 👨‍⚕️','累了就休息 🙂']}, answer:0 },
+  { q:{en:'What is bandha?',zh:'什么是 Bandha（收束法）？'},
+    opts:{en:['Same as holding poop 💩','Lifting pelvic floor — feeling light 🪽 ✅','Another type of scarf 👳','Slang for bandaid 🩹'],zh:['和憋大便一样 💩','提升盆底，感到轻盈 🪽 ✅','另一种围巾 👳','是创可贴的俚语 🩹']}, answer:1 },
+  { q:{en:'What is the main idea of Ashtanga practice?',zh:'阿斯汤加练习的核心理念是什么？'},
+    opts:{en:['Gain big muscles 💪','Handstand — I love it! 🤸','Breathing, moving, holding postures 🧘 ✅','Nice photos for social media 📸'],zh:['练出大肌肉 💪','倒立！我超爱！🤸','呼吸、移动身体、保持体式 🧘 ✅','拍漂亮照片发社交媒体 📸']}, answer:2 },
+  { q:{en:'What is a Mysore class?',zh:'什么是 Mysore 课？'},
+    opts:{en:['Ashtanga practice at home','Do my sequence at a studio','Traditional Ashtanga with teacher from parampara ✅','Practice for nice photos'],zh:['在家练习阿斯汤加','在瑜伽馆做我自己编的序列','在道场由传承老师指导的传统练习 ✅','在工作室拍漂亮照片']}, answer:2 }
+];
+
+let quiz1 = null, quiz2 = null;
+let q1Answered = false, q1Correct = false;
+let q2Answered = false, q2Correct = false;
+
+function renderQuizQ1() {
+  document.getElementById('quizQ1Text').textContent = quiz1.q[currentLang] || quiz1.q.en;
+  document.getElementById('quizOpts1').innerHTML = (quiz1.opts[currentLang]||quiz1.opts.en).map((o,i) =>
+    `<button class="quiz-opt${q1Answered?(i===quiz1.answer?' correct':(i===quiz1._sel?' wrong':'')):''}${q1Answered?' pointer-events:none;':''}" onclick="answerQ1(${i})">${o}</button>`
+  ).join('');
+  if (q1Answered) {
+    const r = document.getElementById('quizResult1');
+    r.className = 'quiz-result ' + (q1Correct?'correct':'wrong');
+    r.textContent = q1Correct ? '✅ Correct!' : '❌ ' + (quiz1.opts[currentLang]||quiz1.opts.en)[quiz1.answer];
+    r.style.display = 'block';
+    document.getElementById('quizNextBtn').style.display = 'block';
+  }
+  const p = currentLang === 'zh' ? '第1题，共2题' : 'Question 1 of 2';
+  document.getElementById('quizProgress').textContent = p;
+}
+
+function renderQuizQ2() {
+  document.getElementById('quizQ2Text').textContent = quiz2.q[currentLang] || quiz2.q.en;
+  document.getElementById('quizOpts2').innerHTML = (quiz2.opts[currentLang]||quiz2.opts.en).map((o,i) =>
+    `<button class="quiz-opt${q2Answered?(i===quiz2.answer?' correct':(i===quiz2._sel?' wrong':'')):''}${q2Answered?' pointer-events:none;':''}" onclick="answerQ2(${i})">${o}</button>`
+  ).join('');
+  if (q2Answered) {
+    const r = document.getElementById('quizResult2');
+    r.className = 'quiz-result ' + (q2Correct?'correct':'wrong');
+    r.textContent = q2Correct ? '✅ Correct!' : '❌ ' + (quiz2.opts[currentLang]||quiz2.opts.en)[quiz2.answer];
+    r.style.display = 'block';
+    document.getElementById('quizNextBtn2').style.display = 'block';
+  }
+}
+
+function answerQ1(idx) {
+  if (q1Answered) return;
+  q1Answered = true; quiz1._sel = idx;
+  q1Correct = idx === quiz1.answer;
+  renderQuizQ1();
+}
+
+function answerQ2(idx) {
+  if (q2Answered) return;
+  q2Answered = true; quiz2._sel = idx;
+  q2Correct = idx === quiz2.answer;
+  renderQuizQ2();
+}
+
+function goToQ2() {
+  document.getElementById('quizQ2Block').style.display = 'block';
+  document.getElementById('quizNextBtn').style.display = 'none';
+  const p = currentLang === 'zh' ? '第2题，共2题' : 'Question 2 of 2';
+  document.getElementById('quizProgress').textContent = p;
+  document.getElementById('quizQ2Block').scrollIntoView({behavior:'smooth'});
+  renderQuizQ2();
+}
+
+function proceedPastQuiz() {
+  document.getElementById('quizSection').style.display = 'none';
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('formSection').scrollIntoView({behavior:'smooth'});
+}
+
 // Language
 const T = {
   en: {
@@ -259,7 +378,7 @@ function setLang(lang) {
   currentLang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
-  
+
   const t = T[lang];
   Object.keys(t).forEach(key => {
     const el = document.getElementById(key);
@@ -271,6 +390,8 @@ function setLang(lang) {
       }
     }
   });
+  if (quiz1) renderQuizQ1();
+  if (quiz2 && document.getElementById('quizQ2Block').style.display !== 'none') renderQuizQ2();
 }
 
 // Difficulty toggle
@@ -330,8 +451,12 @@ async function doSubmit() {
 
 // Init
 (function init() {
+  const shuffled = [...QUIZ_POOL].sort(() => Math.random() - 0.5);
+  quiz1 = shuffled[0];
+  quiz2 = shuffled[1];
   const navLang = navigator.language || '';
   if (navLang.startsWith('zh')) setLang('zh');
+  else renderQuizQ1();
 })();
 
 // Share to WeChat

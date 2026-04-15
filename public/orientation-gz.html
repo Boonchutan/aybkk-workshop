@@ -139,10 +139,22 @@
   <div class="card" id="quizSection">
     <h3 id="quizTitle"></h3>
     <p style="font-size:13px;color:#8b7d6b;margin-bottom:16px;" id="quizSubtitle"></p>
-    <div class="quiz-q-text" id="quizQText"></div>
-    <div class="quiz-opts" id="quizOpts"></div>
-    <div class="quiz-result hidden" id="quizResult"></div>
-    <button class="continue-btn" id="quizNextBtn" onclick="proceedPastQuiz()" disabled></button>
+    <!-- Question 1 -->
+    <div id="quizQ1Block">
+      <div style="font-size:11px;font-weight:600;color:#c49564;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" id="quizQ1Label">Question 1 / 2</div>
+      <div class="quiz-q-text" id="quizQText"></div>
+      <div class="quiz-opts" id="quizOpts"></div>
+      <div class="quiz-result hidden" id="quizResult"></div>
+      <button class="continue-btn" id="quizNextBtn" onclick="goToQ2()" disabled></button>
+    </div>
+    <!-- Question 2 -->
+    <div id="quizQ2Block" style="display:none;margin-top:20px;border-top:1px solid #f0ebe5;padding-top:20px;">
+      <div style="font-size:11px;font-weight:600;color:#c49564;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" id="quizQ2Label">Question 2 / 2</div>
+      <div class="quiz-q-text" id="quizQText2"></div>
+      <div class="quiz-opts" id="quizOpts2"></div>
+      <div class="quiz-result hidden" id="quizResult2"></div>
+      <button class="continue-btn" id="quizNextBtn2" onclick="proceedPastQuiz()" disabled></button>
+    </div>
   </div>
 
   <!-- Registration Form -->
@@ -528,7 +540,7 @@ const T = {
   }
 };
 
-// ─── Quiz pool ──────────────────────────────────────────────────
+// ─── Full quiz pool (13 questions, all 4 languages) ─────────────
 const QUIZ_POOL = [
   {
     q: { zh:'谁创造了阿斯汤加瑜伽方法？', en:'Who is the creator of the Ashtanga yoga method?', th:'ใครคือผู้สร้างวิธีโยคะอัชตางค์?', ru:'Кто создал метод аштанга-йоги?' },
@@ -537,48 +549,115 @@ const QUIZ_POOL = [
       en:['Guru Purnima','Guru Sharath Jois','Guru Patanjali','Guru Pattabhi Jois'],
       th:['ครู Purnima','ครู Sharath Jois','ครู Patanjali','ครู Pattabhi Jois'],
       ru:['Гуру Пурнима','Гуру Шарат Джойс','Гуру Патанджали','Гуру Паттабхи Джойс']
-    },
-    answer: 3
+    }, answer: 3
   },
   {
     q: { zh:'"Ashtanga"是什么意思？', en:'What does "ashtanga" mean?', th:'"อัชตางค์" แปลว่าอะไร?', ru:'Что означает «аштанга»?' },
     opts: {
-      zh:['橘子灰上','瑜伽八支','做汤','丁字裤'],
-      en:['Tangerine over ashes','Eight limbs of Yoga','Making soup','Thong underwear'],
-      th:['ส้มบนขี้เถ้า','แปดขั้นของโยคะ','ทำซุป','กางเกงใน'],
-      ru:['Мандарин над пеплом','Восемь ветвей Йоги','Делать суп','Трусы-стринги']
-    },
-    answer: 1
+      zh:['橘子灰上🍊🔥','瑜伽八支🧘','做汤🍲','丁字裤🩲'],
+      en:['Tangerine over ashes 🍊🔥','Eight limbs of Yoga 🧘','Making soup 🍲','Thong underwear 🩲'],
+      th:['ส้มบนขี้เถ้า 🍊🔥','แปดขั้นของโยคะ 🧘','ทำซุป 🍲','กางเกงใน 🩲'],
+      ru:['Мандарин над пеплом 🍊🔥','Восемь ветвей Йоги 🧘','Делать суп 🍲','Трусы-стринги 🩲']
+    }, answer: 1
   },
   {
     q: { zh:'Suryanamaskara A 重复多少次？', en:'How many times do we repeat Suryanamaskara A?', th:'เราทำ Suryanamaskara A กี่รอบ?', ru:'Сколько раз мы повторяем Сурьянамаскару А?' },
     opts: {
-      zh:['热身几次','传统是5次','不做','只有被要求时'],
-      en:['A few times to warm up','5 times is tradition','None','Only if asked'],
-      th:['สองสามรอบเพื่ออบอุ่น','ตามประเพณี 5 รอบ','ไม่ทำ','ถ้าถูกขอ'],
-      ru:['Несколько раз для разогрева','5 раз по традиции','Нет','Только если попросят']
-    },
-    answer: 1
+      zh:['热身几次','传统是5次✅','我的城市没有太阳 ☁️','你在说什么？🤔'],
+      en:['A few times to warm up','5 times is tradition ✅','No sun in my city ☁️','What are you talking about 🤔'],
+      th:['สองสามรอบเพื่ออบอุ่น','ตามประเพณี 5 รอบ ✅','ไม่มีดวงอาทิตย์ในเมืองฉัน ☁️','พูดถึงอะไร 🤔'],
+      ru:['Несколько раз для разогрева','5 раз по традиции ✅','В моём городе нет солнца ☁️','О чём вы говорите 🤔']
+    }, answer: 1
+  },
+  {
+    q: { zh:'Suryanamaskara B 有多少个 Vinyasa？', en:'How many vinyasa in Suryanamaskara B?', th:'Suryanamaskara B มีกี่ vinyasa?', ru:'Сколько виньяс в Сурьянамаскаре Б?' },
+    opts: {
+      zh:['9','14','17 ✅','Vinyasa是什么？😳'],
+      en:['9','14','17 ✅','Huh... what is vinyasa? 😳'],
+      th:['9','14','17 ✅','อะไรคือ vinyasa? 😳'],
+      ru:['9','14','17 ✅','Что такое виньяса? 😳']
+    }, answer: 2
+  },
+  {
+    q: { zh:'Janu Sirsasana A 之后是哪个体式？', en:'What is the asana after Janu Sirsasana A?', th:'ท่าอะไรหลัง Janu Sirsasana A?', ru:'Какая асана следует за Джану Ширшасаной А?' },
+    opts: {
+      zh:['Janu Sirsasana AA','Janu Sirsasana A1','Janunu Sirsasana','Janu Sirsasana B ✅'],
+      en:['Janu Sirsasana AA','Janu Sirsasana A1','Janunu Sirsasana','Janu Sirsasana B ✅'],
+      th:['Janu Sirsasana AA','Janu Sirsasana A1','Janunu Sirsasana','Janu Sirsasana B ✅'],
+      ru:['Джану Ширшасана АА','Джану Ширшасана А1','Джануну Ширшасана','Джану Ширшасана Б ✅']
+    }, answer: 3
+  },
+  {
+    q: { zh:'结束曼陀罗"om shanti shanti shantih"前一句是什么？', en:'Sentence before "om shanti shanti shantih" in closing mantra?', th:'ประโยคก่อน "om shanti shanti shantih" ในบทสวดปิด?', ru:'Фраза перед «ом шанти шанти шантих» в завершающей мантре?' },
+    opts: {
+      zh:['Boom Shakala 🕺','Vande Gurunam 👳','Sukhino bhavantu 🕊️ ✅','Wu Zhao Sheng You Zhao ⚔️'],
+      en:['Boom Shakala 🕺','Vande Gurunam 👳','Sukhino bhavantu 🕊️ ✅','Wu Zhao Sheng You Zhao ⚔️'],
+      th:['Boom Shakala 🕺','Vande Gurunam 👳','Sukhino bhavantu 🕊️ ✅','Wu Zhao Sheng You Zhao ⚔️'],
+      ru:['Бум Шакала 🕺','Ванде Гуруна 👳','Сукхино бхаванту 🕊️ ✅','У Чжао Шэн Ю Чжао ⚔️']
+    }, answer: 2
+  },
+  {
+    q: { zh:'阿斯汤加瑜伽数 Vinyasa 用的是什么语言？', en:'What language is used for counting vinyasa in Ashtanga yoga?', th:'ภาษาอะไรที่ใช้นับ vinyasa ในโยคะ Ashtanga?', ru:'На каком языке считают виньясы в аштанга-йоге?' },
+    opts: {
+      zh:['印地语','阿拉伯语','泰米尔语','梵语 ✅'],
+      en:['Hindi','Arabic','Tamil','Sanskrit ✅'],
+      th:['ภาษาฮินดี','ภาษาอาหรับ','ภาษาทมิฬ','ภาษาสันสกฤต ✅'],
+      ru:['Хинди','Арабский','Тамильский','Санскрит ✅']
+    }, answer: 3
+  },
+  {
+    q: { zh:'传统上阿斯汤加练习者每周练几天？', en:'How many days per week do Ashtanga practitioners practice traditionally?', th:'โดยประเพณี นักปฏิบัติ Ashtanga ฝึกกี่วันต่อสัปดาห์?', ru:'Сколько дней в неделю практикуют аштангу по традиции?' },
+    opts: {
+      zh:['每周6天，全力以赴 💪 ✅','每天练习 😇','医生说1练2休 👨‍⚕️','累了就休息，听身体的 🙂'],
+      en:['6 days per week — full power 💪 ✅','I practice every day 😇','My doctor says 1 day rest 2 days 👨‍⚕️','Whenever I feel tired — listening to my body 🙂'],
+      th:['6 วันต่อสัปดาห์ 💪 ✅','ฝึกทุกวัน 😇','หมอบอก 1 วันพัก 2 วัน 👨‍⚕️','เหนื่อยก็หยุด ฟังร่างกาย 🙂'],
+      ru:['6 дней в неделю — полная мощь 💪 ✅','Практикую каждый день 😇','Врач сказал 1 день отдыха из 2 👨‍⚕️','Когда устаю, делаю перерыв 🙂']
+    }, answer: 0
+  },
+  {
+    q: { zh:'头倒立半弯时要做几次呼吸？', en:'How many breaths do we do in headstand half bend?', th:'เราทำกี่ลมหายใจใน headstand half bend?', ru:'Сколько дыханий мы делаем в полунаклоне в стойке на голове?' },
+    opts: {
+      zh:['做的时候根本喘不过气 🥵','长长的10次呼吸 😌 ✅','连1次都做不了！😤','25次呼吸'],
+      en:['When I do it, I can barely breathe 🥵','Long 10 breaths 😌 ✅','I can\'t even do 1 breath 😤','25 breaths'],
+      th:['ตอนทำฉันแทบหายใจไม่ออก 🥵','10 ลมหายใจยาวๆ 😌 ✅','ฉันไม่สามารถหายใจได้เลย 😤','25 ลมหายใจ'],
+      ru:['Когда делаю, едва дышу 🥵','Долгих 10 дыханий 😌 ✅','Не могу сделать даже 1 вдох 😤','25 дыханий']
+    }, answer: 1
   },
   {
     q: { zh:'什么是 Bandha（收束法）？', en:'What is bandha?', th:'Bandha คืออะไร?', ru:'Что такое бандха?' },
     opts: {
-      zh:['就像憋大便','提升盆底感到轻盈','另一种围巾','创可贴的俚语'],
-      en:['Same as holding poop','Lifting pelvic floor — feeling light','Another type of scarf','Slang for bandaid'],
-      th:['เหมือนกลั้นอึ','ยกพื้นเชิงกรานรู้สึกเบา','ผ้าพันคออีกแบบ','คำสแลงของแผ่นเทียน'],
-      ru:['То же, что держать кал','Подъём тазового дна — ощущение лёгкости','Ещё один тип шарфа','Сленг для пластыря']
-    },
-    answer: 1
+      zh:['和憋大便一样 💩','提升盆底，感到轻盈 🪽 ✅','另一种围巾"班达纳" 👳','是创可贴的俚语 🩹'],
+      en:['Same as holding poop 💩','Lifting pelvic floor — feeling light 🪽 ✅','Another type of scarf "Bandana" 👳','Slang for bandaid 🩹'],
+      th:['เหมือนกลั้นอึ 💩','ยกพื้นเชิงกรานรู้สึกเบา 🪽 ✅','ผ้าพันคออีกแบบ "Bandana" 👳','คำสแลงของแผ่นเทียน 🩹'],
+      ru:['То же, что держать кал 💩','Подъём тазового дна — лёгкость 🪽 ✅','Ещё один тип шарфа "бандана" 👳','Сленг для пластыря 🩹']
+    }, answer: 1
+  },
+  {
+    q: { zh:'阿斯汤加练习的核心理念是什么？', en:'What is the main idea of Ashtanga practice?', th:'แนวคิดหลักของการฝึก Ashtanga คืออะไร?', ru:'В чём главная идея практики аштанги?' },
+    opts: {
+      zh:['练出大肌肉，耶！💪','倒立！我超爱！🤸','呼吸、移动身体、保持体式 🧘 ✅','拍漂亮照片发社交媒体 📸'],
+      en:['Gain big muscles — yeah! 💪','Handstand — I love it! 🤸','Breathing, moving body, holding postures 🧘 ✅','Nice photos for social media 📸'],
+      th:['สร้างกล้ามเนื้อใหญ่ยักษ์ 💪','Handstand ฉันรัก! 🤸','หายใจ ขยับร่างกาย ยืนท่า 🧘 ✅','รูปสวยลง social media 📸'],
+      ru:['Накачать мышцы — ура! 💪','Стойка на руках — я люблю! 🤸','Дыхание, движение, удержание поз 🧘 ✅','Красивые фото для соцсетей 📸']
+    }, answer: 2
+  },
+  {
+    q: { zh:'Mysore 课上 Urdhva Dhanurasana 要站起来弯下几次？', en:'How many times do we stand up and bend in Urdhva Dhanurasana during Mysore?', th:'เราลุกขึ้นและก้มลงกี่ครั้งใน Urdhva Dhanurasana ระหว่าง Mysore?', ru:'Сколько раз мы встаём и наклоняемся в Урдхва Дханурасане на Майсоре?' },
+    opts: {
+      zh:['你在说什么！？我讨厌后弯！🤯','能拍多少漂亮视频就多少次 🥰','三次或更多 😎 ✅','为什么要这样？我只喜欢倒立！🤸'],
+      en:['What are you talking about?! I hate backbends! 🤯','As many as I can for photos 🥰','Three times or more 😎 ✅','Why? I only like handstand! 🤸'],
+      th:['พูดถึงอะไร?! ฉันเกลียด backbend! 🤯','เพื่อถ่ายรูปให้ได้มากที่สุด 🥰','สามครั้งขึ้นไป 😎 ✅','ทำไม? ฉันชอบแค่ handstand! 🤸'],
+      ru:['О чём вы говорите?! Я ненавижу прогибы! 🤯','Столько раз, сколько можно сфотографировать 🥰','Три раза или больше 😎 ✅','Зачем? Я люблю только стойку! 🤸']
+    }, answer: 2
   },
   {
     q: { zh:'什么是 Mysore 课？', en:'What is a Mysore class?', th:'คลาส Mysore คืออะไร?', ru:'Что такое класс майсор?' },
     opts: {
-      zh:['在家练习','做我的序列','在工作室拍照','在神圣空间跟随传承老师的传统练习'],
-      en:['Practice at home','Do my own sequence','Practice for photos','Traditional practice in sacred space with a teacher from parampara'],
-      th:['ฝึกที่บ้าน','ทำลำดับของฉัน','ฝึกเพื่อถ่ายรูป','แบบดั้งเดิมในพื้นที่ศักดิ์สิทธิ์กับครูจากปรมาจารย์'],
-      ru:['Практика дома','Делать свою последовательность','Практика для красивых фото','Традиционная практика в священном месте с учителем из парампары']
-    },
-    answer: 3
+      zh:['在家练习阿斯汤加','在瑜伽馆做我自己编的序列','在道场由传承老师指导的传统练习 ✅','在工作室拍漂亮照片的练习'],
+      en:['Ashtanga practice at home','Do my sequence at a yoga studio','Traditional Ashtanga at a sacred space with teacher from parampara ✅','Practice at studio for nice photos'],
+      th:['ฝึก Ashtanga ที่บ้าน','ทำลำดับของตัวเองที่สตูดิโอ','Ashtanga แบบดั้งเดิมในพื้นที่ศักดิ์สิทธิ์กับครูจากปรมาจารย์ ✅','ฝึกที่สตูดิโอเพื่อถ่ายรูปสวย'],
+      ru:['Практика аштанги дома','Делать свою последовательность в студии','Традиционная аштанга в священном месте с учителем из парампары ✅','Практика в студии для красивых фото']
+    }, answer: 2
   }
 ];
 
@@ -608,14 +687,19 @@ const QUOTES = {
 
 // ─── State ───────────────────────────────────────────────────────
 let currentLang = 'zh';
-let currentQuiz = null;
+let quiz1 = null, quiz2 = null;
 let quizAnswered = false;
 let quizCorrect = false;
+let quiz2Answered = false;
+let quiz2Correct = false;
 let journalLinkData = null;
 
 // ─── Init ────────────────────────────────────────────────────────
 function init() {
-  currentQuiz = QUIZ_POOL[Math.floor(Math.random() * QUIZ_POOL.length)];
+  // Pick 2 unique random questions
+  const shuffled = [...QUIZ_POOL].sort(() => Math.random() - 0.5);
+  quiz1 = shuffled[0];
+  quiz2 = shuffled[1];
   setLang('zh');
 }
 
@@ -653,26 +737,49 @@ function setLang(lang) {
   document.getElementById('goals').placeholder = t.goalsPlaceholder;
   document.getElementById('emergency').placeholder = t.emergencyPlaceholder;
 
-  // Re-render quiz in new language (reset if not yet answered)
-  if (currentQuiz) {
-    document.getElementById('quizQText').textContent = currentQuiz.q[lang];
-    const container = document.getElementById('quizOpts');
+  // Re-render quiz 1
+  if (quiz1) {
+    document.getElementById('quizQText').textContent = quiz1.q[lang];
+    const c1 = document.getElementById('quizOpts');
     if (!quizAnswered) {
-      container.innerHTML = currentQuiz.opts[lang].map((opt, i) =>
+      c1.innerHTML = quiz1.opts[lang].map((opt, i) =>
         `<button class="quiz-opt" onclick="answerQuiz(${i})">${opt}</button>`
       ).join('');
       document.getElementById('quizResult').classList.add('hidden');
       document.getElementById('quizNextBtn').disabled = true;
     } else {
-      // Re-render with answer state preserved
-      container.innerHTML = currentQuiz.opts[lang].map((opt, i) => {
+      c1.innerHTML = quiz1.opts[lang].map((opt, i) => {
         let cls = 'quiz-opt disabled';
-        if (i === currentQuiz.answer) cls += ' correct';
-        else if (!quizCorrect && i === currentQuiz._selectedIdx) cls += ' wrong';
+        if (i === quiz1.answer) cls += ' correct';
+        else if (!quizCorrect && i === quiz1._sel) cls += ' wrong';
         return `<button class="${cls}">${opt}</button>`;
       }).join('');
     }
   }
+  // Re-render quiz 2 if visible
+  if (quiz2 && document.getElementById('quizQ2Block').style.display !== 'none') {
+    document.getElementById('quizQText2').textContent = quiz2.q[lang];
+    const c2 = document.getElementById('quizOpts2');
+    if (!quiz2Answered) {
+      c2.innerHTML = quiz2.opts[lang].map((opt, i) =>
+        `<button class="quiz-opt" onclick="answerQuiz2(${i})">${opt}</button>`
+      ).join('');
+    } else {
+      c2.innerHTML = quiz2.opts[lang].map((opt, i) => {
+        let cls = 'quiz-opt disabled';
+        if (i === quiz2.answer) cls += ' correct';
+        else if (!quiz2Correct && i === quiz2._sel) cls += ' wrong';
+        return `<button class="${cls}">${opt}</button>`;
+      }).join('');
+    }
+  }
+  // Q1/Q2 labels
+  const q1lbl = lang === 'zh' ? '第1题 / 共2题' : lang === 'th' ? 'ข้อ 1 / 2' : lang === 'ru' ? 'Вопрос 1 из 2' : 'Question 1 / 2';
+  const q2lbl = lang === 'zh' ? '第2题 / 共2题' : lang === 'th' ? 'ข้อ 2 / 2' : lang === 'ru' ? 'Вопрос 2 из 2' : 'Question 2 / 2';
+  document.getElementById('quizQ1Label').textContent = q1lbl;
+  document.getElementById('quizQ2Label').textContent = q2lbl;
+  // Q2 next button text
+  document.getElementById('quizNextBtn2').textContent = T[lang].quizBtn;
 
   // Quote
   const pool = QUOTES[lang] || QUOTES.zh;
@@ -685,22 +792,59 @@ function setLang(lang) {
 function answerQuiz(idx) {
   if (quizAnswered) return;
   quizAnswered = true;
-  quizCorrect = idx === currentQuiz.answer;
-  currentQuiz._selectedIdx = idx;
+  quizCorrect = idx === quiz1.answer;
+  quiz1._sel = idx;
 
-  const opts = document.querySelectorAll('.quiz-opt');
-  opts.forEach((o, i) => {
+  document.querySelectorAll('#quizOpts .quiz-opt').forEach((o, i) => {
     o.classList.add('disabled');
-    if (i === currentQuiz.answer) o.classList.add('correct');
+    if (i === quiz1.answer) o.classList.add('correct');
     if (i === idx && !quizCorrect) o.classList.add('wrong');
   });
 
   const t = T[currentLang];
+  const q1lbl = currentLang === 'zh' ? '第1题 / 共2题' : currentLang === 'th' ? 'ข้อ 1 / 2' : currentLang === 'ru' ? 'Вопрос 1 из 2' : 'Question 1 / 2';
   const resultEl = document.getElementById('quizResult');
   resultEl.className = 'quiz-result ' + (quizCorrect ? 'correct' : 'wrong');
   resultEl.textContent = quizCorrect ? t.correctText : t.wrongText;
   resultEl.classList.remove('hidden');
-  document.getElementById('quizNextBtn').disabled = false;
+  // Show "Next question" button
+  const nxt = document.getElementById('quizNextBtn');
+  nxt.textContent = currentLang === 'zh' ? '下一题 →' : currentLang === 'th' ? 'ข้อถัดไป →' : currentLang === 'ru' ? 'Следующий →' : 'Next question →';
+  nxt.disabled = false;
+}
+
+function answerQuiz2(idx) {
+  if (quiz2Answered) return;
+  quiz2Answered = true;
+  quiz2Correct = idx === quiz2.answer;
+  quiz2._sel = idx;
+
+  document.querySelectorAll('#quizOpts2 .quiz-opt').forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === quiz2.answer) o.classList.add('correct');
+    if (i === idx && !quiz2Correct) o.classList.add('wrong');
+  });
+
+  const t = T[currentLang];
+  const resultEl = document.getElementById('quizResult2');
+  resultEl.className = 'quiz-result ' + (quiz2Correct ? 'correct' : 'wrong');
+  resultEl.textContent = quiz2Correct ? t.correctText : t.wrongText;
+  resultEl.classList.remove('hidden');
+  document.getElementById('quizNextBtn2').disabled = false;
+}
+
+function goToQ2() {
+  // Reveal question 2
+  const block = document.getElementById('quizQ2Block');
+  block.style.display = 'block';
+  document.getElementById('quizNextBtn').style.display = 'none';
+  // Render Q2 options
+  document.getElementById('quizQText2').textContent = quiz2.q[currentLang];
+  document.getElementById('quizOpts2').innerHTML = quiz2.opts[currentLang].map((opt, i) =>
+    `<button class="quiz-opt" onclick="answerQuiz2(${i})">${opt}</button>`
+  ).join('');
+  document.getElementById('quizNextBtn2').textContent = T[currentLang].quizBtn;
+  block.scrollIntoView({ behavior: 'smooth' });
 }
 
 function proceedPastQuiz() {
@@ -748,7 +892,10 @@ async function submitForm(e) {
     medicalConsent: document.getElementById('medicalConsent').value,
     language: currentLang,
     workshop: 'Guangzhou WS Apr 2026',
-    gameResults: [{ quiz: currentQuiz.q.en, correct: quizCorrect }]
+    gameResults: [
+      { quiz: quiz1 ? quiz1.q.en : '', correct: quizCorrect },
+      { quiz: quiz2 ? quiz2.q.en : '', correct: quiz2Correct }
+    ]
   };
 
   try {
