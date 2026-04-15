@@ -344,8 +344,8 @@
     <div style="margin-bottom:10px;">
       <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:68px;height:68px;border-radius:50%;object-fit:cover;opacity:0.9;">
     </div>
-    <h1 id="pageTitle">AYBKK RUSSIA WS 2026</h1>
-    <p id="pageSubtitle" style="font-size:12px;color:var(--text-secondary);margin-top:4px;">By Boonchu & Jamsai Tanti</p>
+    <h1 id="pageTitle">AYBKK Practice Journal</h1>
+    <p id="pageSubtitle" style="font-size:12px;color:var(--text-secondary);margin-top:4px;">by Boonchu Tanti & Jamsai Tanti</p>
   </div>
   <!-- Language -->
   <div class="lang-switch">
@@ -375,7 +375,7 @@
   <div class="step" id="step-1" data-step="-1">
     <div class="card" style="text-align:center;padding:32px 20px;">
       <div style="font-size:36px;margin-bottom:12px;">🧘</div>
-      <div class="step-question" id="welcomeTitle" style="font-size:20px;margin-bottom:8px;">AYBKK RUSSIA WS 2026</div>
+      <div class="step-question" id="welcomeTitle" style="font-size:20px;margin-bottom:8px;">AYBKK Practice Journal</div>
       <div class="step-hint" id="welcomeTeachers" style="font-size:14px;color:var(--text-secondary);margin-bottom:6px;">By Boonchu & Jamsai Tanti</div>
       <div id="welcomeStudentName" style="font-size:16px;font-weight:600;color:var(--accent);margin:20px 0 8px;"></div>
       <div class="step-hint" id="welcomeSub" style="font-size:13px;margin-bottom:24px;">Practice Journal / Дневник практики</div>
@@ -951,7 +951,8 @@ function applyDayColor() {
 
 // Parse URL
 const params = new URLSearchParams(window.location.search);
-const workshopLocation = params.get('location') || 'bangkok';
+const langParam = params.get('lang') || 'en';
+const workshopLocation = params.get('location') || (langParam === 'zh' ? 'huizhou' : langParam === 'ru' ? 'russia' : 'bangkok');
 const isHuizhou = workshopLocation === 'huizhou';
 const isRussian = workshopLocation === 'russia';
 const isGuangzhou = workshopLocation === 'guangzhou';
@@ -972,7 +973,6 @@ function init() {
     showStep(0); // registration
   }
   // Apply language (default to Russian for Russia workshop)
-  const langParam = params.get('lang');
   const defaultLang = isRussian ? 'ru' : 'zh';
   if (langParam && T[langParam]) {
     currentLang = langParam;
@@ -984,9 +984,13 @@ function init() {
   const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang}"]`);
   if (activeBtn) activeBtn.classList.add('active');
 
-  // Set location-specific titles
+  // === DEPLOY TEST: 2026-04-15-1128Alfred ===
+// Set location-specific titles
   let wsTitle, wsTitleYear;
-  if (isRussian) {
+  if (isGuangzhou) {
+    wsTitle = 'AYBKK 广州工作坊 2026';
+    wsTitleYear = 'AYBKK 广州工作坊 2026';
+  } else if (isRussian) {
     wsTitle = 'AYBKK RUSSIA WS 2026';
     wsTitleYear = 'AYBKK RUSSIA WS 2026';
   } else if (isHuizhou) {
@@ -1119,7 +1123,7 @@ function applyLang(lang) {
   document.getElementById('photoQ').textContent = t.photoQ || 'Add your photo!';
   document.getElementById('photoH').textContent = t.photoH || 'Optional — for your share card';
   document.getElementById('quizTitle').textContent = t.quizTitle || 'Quick Ashtanga Quiz!';
-  document.getElementById('quizHint').textContent = t.quizHint || '2 quick questions before you're done';
+  document.getElementById('quizHint').textContent = t.quizHint || "2 quick questions before you're done";
   document.getElementById('successTitle').textContent = t.successTitle;
   document.getElementById('successMsg').innerHTML = t.successMsg;
   // Location-aware title override (Russian overrides language default)
@@ -1145,9 +1149,19 @@ async function doRegister() {
     const res = await fetch('/api/journal/profile', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, language: currentLang, platform: getPlatform() })
+      body: JSON.stringify({
+        name,
+        language: currentLang,
+        location: workshopLocation,
+        isChineseStudent: isGuangzhou || isHuizhou,
+        platform: getPlatform()
+      })
     });
     const data = await res.json();
+    // 409 = name already exists → treat as returning student, use their existing ID
+    if (!res.ok && res.status !== 409) {
+      throw new Error(data.error || 'Registration failed');
+    }
     studentId = data.studentId;
     studentName = name;
     document.getElementById('studentName').textContent = name;
@@ -1156,7 +1170,7 @@ async function doRegister() {
   } catch (err) {
     btn.disabled = false;
     btn.textContent = T[currentLang].regBtn;
-    alert('Registration failed');
+    alert('Registration failed: ' + (err.message || 'Please try again'));
   }
 }
 
@@ -1455,7 +1469,7 @@ async function doSubmit() {
   window._practiceNotes = document.getElementById('practiceNotes').value || '';
 
   try {
-    await fetch('/api/journal/checkin', {
+    const checkinRes = await fetch('/api/journal/checkin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1468,15 +1482,27 @@ async function doSubmit() {
         lastAsanaNote: document.getElementById('lastAsanaNote').value,
         practiceNotes: window._practiceNotes,
         sessionDate: new Date().toISOString().split('T')[0],
+        location: workshopLocation,
         platform: getPlatform()
       })
     });
+    const checkinData = await checkinRes.json();
+    // If student not found, go back to registration
+    if (!checkinRes.ok) {
+      if (checkinData.needsProfile) {
+        studentId = null;
+        showStep(0);
+        return;
+      }
+      throw new Error(checkinData.error || 'Check-in failed');
+    }
     initPhotoStep();
     showStep(7);
     // photo step will show share card after quiz
   } catch (err) {
     btn.disabled = false;
     btn.textContent = T[currentLang].submitBtn;
+    alert('Check-in failed: ' + (err.message || 'Please try again'));
   }
 }
 
@@ -1646,27 +1672,6 @@ function skipQuiz() {
 }
 
 
-  if (fromStep < 6) {
-    _origGoNext(fromStep);
-  } else if (fromStep === 6) {
-    initPhotoStep();
-    showStep(7);
-  } else if (fromStep === 7) {
-    // Photo done → start quiz A (step 8)
-    initQuizSets();
-    showStep(8);
-  } else if (isGuangzhou && fromStep === 6) {
-    initPhotoStep();
-    showStep(7);
-  } else if (fromStep === 8) {
-    showStep(9);
-    renderQuiz('quizBContainer', quizQ2, 2);
-  } else if (fromStep === 9) {
-    showShareCard();
-    document.getElementById('successOverlay').classList.remove('hidden');
-  }
-}
-
 // =====================
 // SHARE CARD — load photo from localStorage
 // =====================
@@ -1806,24 +1811,14 @@ async function shareToWeChat() {
   } catch (err) {
     const uplift = getUpliftPhrase(window._practiceNotes);
     const text = uplift
-      ? '🧘 ' + shareTitle + '
-' + studentName + ' — ' + getDayInfo() + '
-"' + getDailyQuote() + '"
-✨ ' + uplift + '
-by Boonchu Tanti & Jamsai Tanti'
-      : '🧘 ' + shareTitle + '
-' + studentName + ' — ' + getDayInfo() + '
-"' + getDailyQuote() + '"
-by Boonchu Tanti & Jamsai Tanti';
+      ? '🧘 ' + shareTitle + '\n' + studentName + ' — ' + getDayInfo() + '\n"' + getDailyQuote() + '"\n✨ ' + uplift + '\nby Boonchu Tanti & Jamsai Tanti'
+      : '🧘 ' + shareTitle + '\n' + studentName + ' — ' + getDayInfo() + '\n"' + getDailyQuote() + '"\nby Boonchu Tanti & Jamsai Tanti';
     await navigator.clipboard.writeText(text);
     alert('Copied! Paste in WeChat to share.');
   }
 }
 
-// Add Guangzhou location flag
-const isGuangzhou = workshopLocation === 'guangzhou';
-
-// Set Guangzhou title
+// Set Guangzhou title (isGuangzhou already declared above)
 if (isGuangzhou) {
   const wsTitle = 'AYBKK 广州工作坊 2026';
   window._wsTitleYear = wsTitle;
