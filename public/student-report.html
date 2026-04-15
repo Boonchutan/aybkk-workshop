@@ -174,7 +174,14 @@ async function init() {
     .filter(s => s.classType === 'chinese-workshop' && !huizhouIdSet.has(s.id))
     .map(s => ({ id: s.id, name: s.name, workshop: 'guangzhou', classType: 'chinese-workshop', assessmentCount: s.assessmentCount || 0 }));
 
-  allStudents = [...gzStudents, ...huizhouStudents];
+  // Other: any API student with check-ins not in Huizhou or GZ lists
+  const gzIdSet = new Set(gzStudents.map(s => s.id));
+  const testNames = new Set(['测试学生', 'Test Workshop Student', 'Test Student', 'test']);
+  const otherStudents = Object.values(apiById)
+    .filter(s => s.assessmentCount > 0 && !huizhouIdSet.has(s.id) && !gzIdSet.has(s.id) && !testNames.has(s.name))
+    .map(s => ({ id: s.id, name: s.name, workshop: 'other', classType: s.classType, assessmentCount: s.assessmentCount || 0 }));
+
+  allStudents = [...gzStudents, ...huizhouStudents, ...otherStudents];
   render();
 }
 
@@ -205,7 +212,7 @@ function render() {
         <div class="avatar" style="background:${color}">${initials}</div>
         <div class="student-info">
           <div class="sname">${s.name}</div>
-          <div class="smeta">${s.workshop === 'guangzhou' ? '广州 Guangzhou' : '惠州 Huizhou'} · ${count} check-in${count !== 1 ? 's' : ''}</div>
+          <div class="smeta">${s.workshop === 'guangzhou' ? '广州 Guangzhou' : s.workshop === 'other' ? 'Other' : '惠州 Huizhou'} · ${count} check-in${count !== 1 ? 's' : ''}</div>
         </div>
         <div class="chevron">▼</div>
       </div>
