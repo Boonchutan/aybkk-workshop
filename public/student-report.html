@@ -262,8 +262,10 @@ function renderReport(id, data, workshop, panel) {
   // Most frequent stable / difficult
   const stableCounts = {}, diffCounts = {};
   assessments.forEach(a => {
-    if (a.stableToday) (a.stableToday.split ? a.stableToday.split(',') : [a.stableToday]).forEach(x => { x = x.trim(); if(x) stableCounts[x] = (stableCounts[x]||0)+1; });
-    if (a.difficultToday) (a.difficultToday.split ? a.difficultToday.split(',') : [a.difficultToday]).forEach(x => { x = x.trim(); if(x) diffCounts[x] = (diffCounts[x]||0)+1; });
+    const stableItems = Array.isArray(a.stableToday) ? a.stableToday : (a.stableToday ? a.stableToday.split(',') : []);
+    stableItems.forEach(x => { x = String(x).trim(); if(x) stableCounts[x] = (stableCounts[x]||0)+1; });
+    const diffItems = Array.isArray(a.difficultToday) ? a.difficultToday : (a.difficultToday ? a.difficultToday.split(',') : []);
+    diffItems.forEach(x => { x = String(x).trim(); if(x) diffCounts[x] = (diffCounts[x]||0)+1; });
   });
   const topStable = Object.entries(stableCounts).sort((a,b) => b[1]-a[1]).slice(0,4).map(e => e[0]);
   const topDiff = Object.entries(diffCounts).sort((a,b) => b[1]-a[1]).slice(0,4).map(e => e[0]);
