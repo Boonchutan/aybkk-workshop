@@ -198,16 +198,40 @@ router.post('/profile', async (req, res) => {
   }
 });
 
-// GET /api/journal/student/:id - Get student with history
+// GET /api/journal/student/:id - Get student with history (PracticeLog + SelfAssessment)
 router.get('/student/:id', async (req, res) => {
   const session = req.driver.session();
   try {
     const result = await session.run(`
       MATCH (s:Student {id: $id})
+      OPTIONAL MATCH (s)-[:HAS_PRACTICE_LOG]->(pl:PracticeLog)
       OPTIONAL MATCH (s)-[:HAS_SELF_ASSESSMENT]->(sa:SelfAssessment)
-      WITH s, sa ORDER BY sa.checkedInAt DESC
-      WITH s, collect(sa) as assessments
-      RETURN s, assessments
+      WITH s,
+           collect(DISTINCT {
+             id: coalesce(pl.id, ''),
+             vinyasa: pl.vinyasa,
+             bandha: pl.bandha,
+             stableToday: pl.stableToday,
+             difficultToday: pl.difficultToday,
+             practiceNotes: pl.practiceNotes,
+             lastAsana: coalesce(pl.lastAsana, pl.lastAsanaNote, ''),
+             sessionDate: pl.sessionDate,
+             checkedInAt: toString(pl.checkedInAt),
+             source: 'practice_log'
+           }) as practiceLogs,
+           collect(DISTINCT {
+             id: coalesce(sa.id, ''),
+             vinyasa: sa.vinyasa,
+             bandha: sa.bandha,
+             stableToday: sa.stableToday,
+             difficultToday: sa.difficultToday,
+             practiceNotes: sa.practiceNotes,
+             lastAsana: coalesce(sa.lastAsana, sa.lastAsanaNote, ''),
+             sessionDate: sa.sessionDate,
+             checkedInAt: toString(sa.checkedInAt),
+             source: 'self_assessment'
+           }) as selfAssessments
+      RETURN s, practiceLogs, selfAssessments
     `, { id: req.params.id });
 
     if (result.records.length === 0) {
@@ -216,7 +240,12 @@ router.get('/student/:id', async (req, res) => {
 
     const record = result.records[0];
     const s = record.get('s').properties;
-    const assessments = record.get('assessments').filter(Boolean).map(sa => sa.properties);
+    const practiceLogs = (record.get('practiceLogs') || []).filter(a => a && a.vinyasa);
+    const selfAssessments = (record.get('selfAssessments') || []).filter(a => a && a.vinyasa);
+
+    // Merge both sources, deduplicate by sessionDate, sort newest first
+    const allAssessments = [...practiceLogs, ...selfAssessments]
+      .sort((a, b) => (b.sessionDate || '').localeCompare(a.sessionDate || ''));
 
     res.json({
       id: s.id,
@@ -226,8 +255,8 @@ router.get('/student/:id', async (req, res) => {
       isChineseStudent: s.isChineseStudent,
       classType: s.classType,
       createdAt: s.createdAt,
-      assessments,
-      assessmentCount: assessments.length
+      assessments: allAssessments,
+      assessmentCount: allAssessments.length
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -253,21 +282,22 @@ router.get('/students', async (req, res) => {
     let query = `
       MATCH (s:Student)
       ${whereClause}
+      OPTIONAL MATCH (s)-[:HAS_PRACTICE_LOG]->(pl:PracticeLog)
       OPTIONAL MATCH (s)-[:HAS_SELF_ASSESSMENT]->(sa:SelfAssessment)
-      WITH s, sa ORDER BY sa.checkedInAt DESC
-      WITH s, collect(sa) as assessments
+      WITH s,
+           count(DISTINCT pl) + count(DISTINCT sa) as assessmentCount,
+           max(coalesce(pl.sessionDate, sa.sessionDate)) as lastDate
       WHERE s.isActive = true
     `;
-    
+
     if (hasAssessment === 'true') {
-      query += ' AND size(assessments) > 0';
+      query += ' AND assessmentCount > 0';
     }
-    
+
     query += `
-      RETURN s.id as id, s.name as name, s.isChineseStudent as isChineseStudent, 
+      RETURN s.id as id, s.name as name, s.isChineseStudent as isChineseStudent,
              s.classType as classType, s.createdAt as createdAt,
-             assessments[0] as lastAssessment,
-             size(assessments) as assessmentCount
+             lastDate, assessmentCount
       ORDER BY s.name ASC
     `;
 
@@ -279,7 +309,7 @@ router.get('/students', async (req, res) => {
       isChineseStudent: r.get('isChineseStudent'),
       classType: r.get('classType'),
       createdAt: r.get('createdAt'),
-      lastAssessment: r.get('lastAssessment')?.properties || null,
+      lastDate: r.get('lastDate'),
       assessmentCount: r.get('assessmentCount').toInt()
     }));
 
