@@ -1672,8 +1672,7 @@ function answerQuiz(btn, qi, oi) {
   const opts = btn.parentElement.querySelectorAll('.quiz-opt');
   opts.forEach((o, idx) => {
     o.style.cursor = 'default';
-    if (idx === q.answer) o.style.borderColor = 'var(--success)';
-    if (idx === oi && !isCorrect) o.style.borderColor = '#e57373';
+    if (idx === oi) o.style.borderColor = isCorrect ? 'var(--success)' : '#e57373';
   });
   
   // Show result

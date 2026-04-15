@@ -750,8 +750,7 @@ function setLang(lang) {
     } else {
       c1.innerHTML = quiz1.opts[lang].map((opt, i) => {
         let cls = 'quiz-opt disabled';
-        if (i === quiz1.answer) cls += ' correct';
-        else if (!quizCorrect && i === quiz1._sel) cls += ' wrong';
+        if (i === quiz1._sel) cls += quizCorrect ? ' correct' : ' wrong';
         return `<button class="${cls}">${opt}</button>`;
       }).join('');
     }
@@ -767,8 +766,7 @@ function setLang(lang) {
     } else {
       c2.innerHTML = quiz2.opts[lang].map((opt, i) => {
         let cls = 'quiz-opt disabled';
-        if (i === quiz2.answer) cls += ' correct';
-        else if (!quiz2Correct && i === quiz2._sel) cls += ' wrong';
+        if (i === quiz2._sel) cls += quiz2Correct ? ' correct' : ' wrong';
         return `<button class="${cls}">${opt}</button>`;
       }).join('');
     }
@@ -797,8 +795,7 @@ function answerQuiz(idx) {
 
   document.querySelectorAll('#quizOpts .quiz-opt').forEach((o, i) => {
     o.classList.add('disabled');
-    if (i === quiz1.answer) o.classList.add('correct');
-    if (i === idx && !quizCorrect) o.classList.add('wrong');
+    if (i === idx) o.classList.add(quizCorrect ? 'correct' : 'wrong');
   });
 
   const t = T[currentLang];
@@ -821,8 +818,7 @@ function answerQuiz2(idx) {
 
   document.querySelectorAll('#quizOpts2 .quiz-opt').forEach((o, i) => {
     o.classList.add('disabled');
-    if (i === quiz2.answer) o.classList.add('correct');
-    if (i === idx && !quiz2Correct) o.classList.add('wrong');
+    if (i === idx) o.classList.add(quiz2Correct ? 'correct' : 'wrong');
   });
 
   const t = T[currentLang];

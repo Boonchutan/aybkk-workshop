@@ -270,12 +270,12 @@ let q2Answered = false, q2Correct = false;
 function renderQuizQ1() {
   document.getElementById('quizQ1Text').textContent = quiz1.q[currentLang]||quiz1.q.en;
   document.getElementById('quizOpts1').innerHTML = (quiz1.opts[currentLang]||quiz1.opts.en).map((o,i)=>
-    `<button type="button" class="quiz-opt${q1Answered?(i===quiz1.answer?' correct':(i===quiz1._sel?' wrong':'')):''}${q1Answered?' disabled':''}" onclick="answerQ1(${i})">${o}</button>`
+    `<button type="button" class="quiz-opt${q1Answered?(i===quiz1._sel?(q1Correct?' correct':' wrong'):''):''}${q1Answered?' disabled':''}" onclick="answerQ1(${i})">${o}</button>`
   ).join('');
   if (q1Answered) {
     const r=document.getElementById('quizResult1');
     r.className='quiz-result '+(q1Correct?'correct':'wrong');
-    r.textContent=q1Correct?'✅ Правильно!':'❌ '+(quiz1.opts[currentLang]||quiz1.opts.en)[quiz1.answer];
+    r.textContent=q1Correct?'✅ Правильно!':'❌ Попробуй в следующий раз!';
     r.style.display='block';
     document.getElementById('quizNextBtn').style.display='block';
   }
@@ -285,12 +285,12 @@ function renderQuizQ1() {
 function renderQuizQ2() {
   document.getElementById('quizQ2Text').textContent = quiz2.q[currentLang]||quiz2.q.en;
   document.getElementById('quizOpts2').innerHTML = (quiz2.opts[currentLang]||quiz2.opts.en).map((o,i)=>
-    `<button type="button" class="quiz-opt${q2Answered?(i===quiz2.answer?' correct':(i===quiz2._sel?' wrong':'')):''}${q2Answered?' disabled':''}" onclick="answerQ2(${i})">${o}</button>`
+    `<button type="button" class="quiz-opt${q2Answered?(i===quiz2._sel?(q2Correct?' correct':' wrong'):''):''}${q2Answered?' disabled':''}" onclick="answerQ2(${i})">${o}</button>`
   ).join('');
   if (q2Answered) {
     const r=document.getElementById('quizResult2');
     r.className='quiz-result '+(q2Correct?'correct':'wrong');
-    r.textContent=q2Correct?'✅ Правильно!':'❌ '+(quiz2.opts[currentLang]||quiz2.opts.en)[quiz2.answer];
+    r.textContent=q2Correct?'✅ Правильно!':'❌ Попробуй в следующий раз!';
     r.style.display='block';
     document.getElementById('quizNextBtn2').style.display='block';
   }
