@@ -462,7 +462,16 @@ function setLang(lang) {
   // Re-render quiz in new language
   if (currentQuiz) {
     document.getElementById('quizQText').textContent = currentQuiz.question[lang];
-    renderQuizOpts(lang);
+    // Re-render ALL options and reset answer state
+    const container = document.getElementById('quizOpts');
+    if (container) {
+      container.innerHTML = currentQuiz.options[lang].map((opt, idx) =>
+        `<button class="quiz-opt" onclick="answerQuiz(${idx})" id="qo${idx}">${opt}</button>`
+      ).join('');
+    }
+    document.getElementById('quizResult').classList.add('hidden');
+    quizAnswered = false;
+    document.getElementById('quizNextBtn').disabled = true;
   }
 
   // Update placeholder
