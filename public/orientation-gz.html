@@ -8,518 +8,698 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #faf8f5; color: #2a2420; min-height: 100vh; }
     .header { background: linear-gradient(135deg, #8b4513 0%, #a0522d 50%, #8b4513 100%); color: white; padding: 40px 24px 30px; text-align: center; }
-    .header img { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 16px; border: 3px solid rgba(255,255,255,0.3); }
+    .header img { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 16px; border: 3px solid rgba(255,255,255,0.3); object-fit: cover; }
     .header h1 { font-size: 22px; margin-bottom: 6px; }
     .header .by { color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 4px; }
-    .header p { color: rgba(255,255,255,0.6); font-size: 13px; }
-    .lang-switch { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+    .header .dates { color: rgba(255,255,255,0.6); font-size: 13px; }
+    .lang-switch { display: flex; justify-content: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
     .lang-btn { background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.7); padding: 6px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
-    .lang-btn.active { background: rgba(255,255,255,0.3); color: white; }
-    .container { max-width: 480px; margin: 0 auto; padding: 24px 20px; }
-    .intro { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .intro p { font-size: 15px; line-height: 1.7; color: #5d4037; margin-bottom: 12px; }
-    .rules { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .rules h3 { font-size: 16px; color: #3e2723; margin-bottom: 16px; }
+    .lang-btn.active { background: rgba(255,255,255,0.35); color: white; font-weight: 600; }
+
+    .container { max-width: 480px; margin: 0 auto; padding: 24px 20px 40px; }
+    .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .card h3 { font-size: 16px; color: #3e2723; margin-bottom: 16px; font-weight: 700; }
+    .card p { font-size: 15px; line-height: 1.7; color: #5d4037; margin-bottom: 12px; }
+    .card p:last-child { margin-bottom: 0; }
+
+    .quote-box { background: #f5ede4; border-left: 4px solid #c49564; padding: 16px 20px; margin-bottom: 20px; border-radius: 0 12px 12px 0; font-size: 14px; line-height: 1.7; color: #3e2723; font-style: italic; }
+    .quote-source { font-size: 12px; color: #8b7d6b; margin-top: 6px; font-style: normal; }
+
     .rule { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0ebe5; }
     .rule:last-child { border-bottom: none; }
     .rule-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
     .rule-text { font-size: 14px; line-height: 1.5; color: #5d4037; }
-    .quote-box { background: #f5ede4; border-left: 4px solid #c49564; padding: 16px 20px; margin: 20px 0; border-radius: 0 10px 10px 0; font-size: 14px; line-height: 1.6; color: #3e2723; font-style: italic; }
-    .quote-source { font-size: 12px; color: #8b7d6b; margin-top: 8px; font-style: normal; }
-    .closing { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .closing p { font-size: 15px; line-height: 1.7; color: #5d4037; font-style: italic; }
-    .signatures { font-size: 14px; color: #8b7d6b; margin-top: 12px; }
 
-    .form-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .form-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 4px; }
-    .form-section p { font-size: 13px; color: #8b7d6b; margin-bottom: 20px; }
-    .field { margin-bottom: 16px; }
-    .field label { display: block; font-size: 14px; font-weight: 600; color: #3e2723; margin-bottom: 6px; }
-    .field input, .field select, .field textarea { width: 100%; padding: 12px 16px; border: 2px solid #e8e0d8; border-radius: 12px; font-size: 15px; background: #faf8f5; color: #2a2420; transition: border-color 0.2s; }
-    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #c49564; }
-    .field textarea { resize: vertical; min-height: 80px; }
-    .field .hint { font-size: 12px; color: #8b7d6b; margin-top: 4px; }
-    .options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .option { background: #faf8f5; border: 2px solid #e8e0d8; border-radius: 20px; padding: 8px 16px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: #5d4037; }
-    .option.selected { background: #c49564; border-color: #c49564; color: white; }
-    .submit-btn { width: 100%; background: #8b4513; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
-    .submit-btn:hover { background: #a0522d; }
-    .submit-btn:disabled { background: #a89888; cursor: not-allowed; }
-    .success-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(139,69,19,0.92); display: flex; align-items: center; justify-content: center; z-index: 1000; overflow-y: auto; padding: 20px; }
-    .success-overlay.hidden { display: none; }
-    .success-box { background: white; border-radius: 20px; padding: 32px 24px; text-align: center; max-width: 360px; margin: 20px auto; }
-    .success-box h2 { font-size: 20px; color: #3e2723; margin-bottom: 12px; }
-    .success-box p { font-size: 14px; color: #5d4037; line-height: 1.6; }
+    .closing { font-style: italic; }
+    .signatures { font-size: 14px; color: #8b7d6b; margin-top: 12px; font-style: normal; }
 
-    /* Quiz styles */
-    .quiz-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .quiz-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 8px; text-align: center; }
-    .quiz-subtitle { font-size: 13px; color: #8b7d6b; margin-bottom: 20px; text-align: center; }
-    .quiz-question { background: #f5ede4; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-    .quiz-q-label { font-size: 12px; font-weight: 600; color: #c49564; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    /* Quiz */
     .quiz-q-text { font-size: 16px; font-weight: 600; color: #3e2723; margin-bottom: 16px; line-height: 1.4; }
     .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
     .quiz-opt { padding: 12px 16px; border: 2px solid #e8e0d8; border-radius: 10px; font-size: 14px; cursor: pointer; transition: all 0.2s; background: white; text-align: left; color: #3e2723; }
-    .quiz-opt:hover:not(.disabled) { border-color: #c49564; background: #faf8f5; }
+    .quiz-opt:active:not(.disabled) { background: #faf8f5; }
     .quiz-opt.disabled { cursor: default; }
-    .quiz-opt.correct { border-color: #6B9E6B; background: #eef5ee; }
+    .quiz-opt.correct { border-color: #6B9E6B; background: #eef5ee; color: #2e7d32; font-weight: 600; }
     .quiz-opt.wrong { border-color: #e57373; background: #ffebee; }
-    .quiz-result { margin-top: 12px; font-size: 14px; font-weight: 600; padding: 12px; border-radius: 8px; }
-    .quiz-result.correct { background: #eef5ee; color: #6B9E6B; }
-    .quiz-result.wrong { background: #ffebee; color: #e57373; }
+    .quiz-result { margin-top: 12px; font-size: 15px; font-weight: 600; padding: 12px 16px; border-radius: 10px; text-align: center; }
+    .quiz-result.correct { background: #eef5ee; color: #2e7d32; }
+    .quiz-result.wrong { background: #fff3e0; color: #e65100; }
+    .hidden { display: none; }
 
-    /* Link display */
-    .link-box { background: #f5ede4; border: 2px solid #c49564; border-radius: 12px; padding: 16px; margin: 16px 0; text-align: center; }
-    .link-box .link-label { font-size: 12px; color: #8b7d6b; margin-bottom: 8px; font-weight: 600; }
-    .link-box .link-url { font-size: 13px; color: #3e2723; word-break: break-all; font-family: monospace; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e8e0d8; margin-bottom: 8px; }
-    .link-box .link-hint { font-size: 11px; color: #8b7d6b; margin-top: 8px; }
-    .copy-btn { background: #8b4513; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-    .copy-btn:hover { background: #a0522d; }
+    /* Form */
+    .field { margin-bottom: 18px; }
+    .field label { display: block; font-size: 14px; font-weight: 600; color: #3e2723; margin-bottom: 6px; }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 12px 16px; border: 2px solid #e8e0d8; border-radius: 12px;
+      font-size: 15px; background: #faf8f5; color: #2a2420; transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #c49564; }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field .hint { font-size: 12px; color: #8b7d6b; margin-top: 5px; }
+    .options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .option { background: #faf8f5; border: 2px solid #e8e0d8; border-radius: 20px; padding: 8px 16px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: #5d4037; user-select: none; }
+    .option.selected { background: #c49564; border-color: #c49564; color: white; }
+
+    .submit-btn { width: 100%; background: #8b4513; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+    .submit-btn:disabled { background: #a89888; cursor: not-allowed; }
+    .continue-btn { width: 100%; background: #8b4513; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+    .continue-btn:disabled { background: #c9b8a8; cursor: not-allowed; }
+
+    /* Success */
+    .success-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(139,69,19,0.92); display: flex; align-items: center; justify-content: center; z-index: 1000; overflow-y: auto; padding: 20px; }
+    .success-overlay.hidden { display: none; }
+    .success-box { background: white; border-radius: 20px; padding: 28px 24px; text-align: center; max-width: 360px; width: 100%; margin: auto; }
+    .share-card { background: linear-gradient(135deg, #8b4513 0%, #a0522d 60%, #8b4513 100%); border-radius: 16px; padding: 24px 20px; margin-bottom: 16px; }
+    .share-card .wstitle { color: rgba(255,255,255,0.7); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    .share-card .welcome { color: #fff8e1; font-size: 17px; font-weight: 700; margin-bottom: 6px; line-height: 1.4; }
+    .share-card .sname { color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 14px; }
+    .share-card .sutra { background: rgba(255,255,255,0.12); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+    .share-card .sutra-text { color: #fff8e1; font-size: 13px; font-style: italic; line-height: 1.6; }
+    .share-card .sutra-src { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 4px; }
+    .share-card .by { color: rgba(255,255,255,0.5); font-size: 12px; }
+
+    .link-box { background: #f5ede4; border: 2px solid #c49564; border-radius: 12px; padding: 16px; margin: 14px 0; text-align: center; }
+    .link-label { font-size: 12px; color: #8b7d6b; margin-bottom: 8px; font-weight: 600; }
+    .link-url { font-size: 12px; color: #3e2723; word-break: break-all; font-family: monospace; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e8e0d8; margin-bottom: 8px; }
+    .link-hint { font-size: 11px; color: #8b7d6b; margin-top: 8px; line-height: 1.5; }
+    .copy-btn { background: #8b4513; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .share-btn { width: 100%; background: #8b4513; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 8px; }
+    .done-btn { width: 100%; background: transparent; color: #8b7d6b; border: 2px solid #e8e0d8; padding: 12px; border-radius: 12px; font-size: 14px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <img src="https://aybkk-ashtanga.up.railway.app/logo.png" alt="AYBKK" onerror="this.style.display='none'">
-    <h1>AYBKK 广州工作坊 2026</h1>
-    <p class="by">By Boonchu & Jamsai Tanti</p>
-    <p>April 20-24, 2026</p>
-    <div class="lang-switch">
-      <button class="lang-btn active" onclick="setLang('zh')">中文</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" onclick="setLang('th')">TH</button>
-      <button class="lang-btn" onclick="setLang('ru')">RU</button>
-    </div>
+
+<div class="header">
+  <img src="/aybkk-logo.jpg" alt="AYBKK" onerror="this.style.display='none'">
+  <h1>AYBKK 广州工作坊 2026</h1>
+  <p class="by">By Boonchu & Jamsai Tanti</p>
+  <p class="dates">April 20–24, 2026</p>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('zh')">🇨🇳 中文</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLang('th')">🇹🇭 TH</button>
+    <button class="lang-btn" onclick="setLang('ru')">🇷🇺 RU</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Daily quote -->
+  <div class="quote-box">
+    <div id="quoteText"></div>
+    <div class="quote-source" id="quoteSource"></div>
   </div>
 
-  <div class="container">
-    <!-- Quote in Chinese -->
-    <div class="quote-box">
-      <div id="quoteText">加载中...</div>
-      <div class="quote-source" id="quoteSource"></div>
-    </div>
-
-    <!-- Intro -->
-    <div class="intro">
-      <p id="introText">欢迎来到 AYBKK 广州工作坊 2026！在开始工作坊之前，请填写此问卷并参与我们的迎新游戏。</p>
-    </div>
-
-    <!-- Rules -->
-    <div class="rules">
-      <h3>📋 工作坊规则</h3>
-      <div class="rule">
-        <span class="rule-icon">🧘</span>
-        <span class="rule-text">Mysore 风格：按自己的节奏练习，倾听身体的声音</span>
-      </div>
-      <div class="rule">
-        <span class="rule-icon">⏰</span>
-        <span class="rule-text">准时到达教室</span>
-      </div>
-      <div class="rule">
-        <span class="rule-icon">🤫</span>
-        <span class="rule-text">保持教室安静</span>
-      </div>
-      <div class="rule">
-        <span class="rule-icon">💧</span>
-        <span class="rule-text">多喝水，感觉累了就休息</span>
-      </div>
-      <div class="rule">
-        <span class="rule-icon">🙏</span>
-        <span class="rule-text">尊重老师和其他同学</span>
-      </div>
-    </div>
-
-    <!-- Quiz Section (1 question, 4 languages) -->
-    <div class="quiz-section" id="quizSection">
-      <h3>🎮 迎新游戏</h3>
-      <p class="quiz-subtitle" id="quizSubtitle">测试你的阿斯汤加瑜伽知识！</p>
-      <div class="quiz-question">
-        <div class="quiz-q-label" id="quizLang">English</div>
-        <div class="quiz-q-text" id="quizQText">Loading...</div>
-        <div class="quiz-opts" id="quizOpts"></div>
-        <div class="quiz-result hidden" id="quizResult"></div>
-      </div>
-      <button class="submit-btn" id="quizNextBtn" onclick="proceedPastQuiz()" disabled>完成</button>
-    </div>
-
-    <!-- Form -->
-    <form id="orientationForm" onsubmit="submitForm(event)">
-      <div class="form-section">
-        <h3>报名表</h3>
-        <p>请填写您的信息</p>
-
-        <div class="field">
-          <label id="labelName">姓名</label>
-          <input type="text" id="name" required placeholder="您的姓名">
-        </div>
-
-        <div class="field">
-          <label id="labelWechat">微信</label>
-          <input type="text" id="wechat" placeholder="微信号">
-        </div>
-
-        <div class="field">
-          <label id="labelExp">阿斯汤加瑜伽经验</label>
-          <select id="experience">
-            <option value="beginner" id="exp1">初学者（0-1年）</option>
-            <option value="intermediate" id="exp2">中级（1-3年）</option>
-            <option value="advanced" id="exp3">高级（3年以上）</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label id="labelInjuries">伤病</label>
-          <textarea id="injuries" placeholder="任何伤病或身体限制..."></textarea>
-        </div>
-
-        <div class="field">
-          <label id="labelGoals">工作坊目标</label>
-          <textarea id="goals" placeholder="您想达成什么？"></textarea>
-        </div>
-
-        <div class="field">
-          <label id="labelEmergency">紧急联系人</label>
-          <input type="text" id="emergency" placeholder="姓名 + 电话">
-        </div>
-
-        <div class="field">
-          <label id="labelSize">尺码</label>
-          <select id="size">
-            <option value="XS">XS</option>
-            <option value="S">S</option>
-            <option value="M">M</option>
-            <option value="L">L</option>
-            <option value="XL">XL</option>
-            <option value="XXL">XXL</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <h3>📸 同意书</h3>
-        <div class="field">
-          <div class="options" id="photoOptions">
-            <span class="option selected" onclick="toggleOption(this, 'photo')">📸 照片/视频拍摄</span>
-          </div>
-          <input type="hidden" id="photoConsent" value="yes">
-        </div>
-        <div class="field">
-          <div class="options" id="medicalOptions">
-            <span class="option selected" onclick="toggleOption(this, 'medical')">✅ 医疗免责声明</span>
-          </div>
-          <input type="hidden" id="medicalConsent" value="yes">
-        </div>
-      </div>
-
-      <button type="submit" class="submit-btn" id="submitBtn">提交</button>
-    </form>
+  <!-- Welcome intro -->
+  <div class="card">
+    <p id="introText1"></p>
+    <p id="introText2"></p>
   </div>
 
-  <!-- Success Overlay with Journal Link -->
-  <div class="success-overlay hidden" id="successOverlay">
-    <div class="success-box">
-      <h2>✅ <span id="successName">欢迎！</span></h2>
-      <p>您的报名表已提交。<br id="br1">练习场上见！</p>
+  <!-- Rules -->
+  <div class="card">
+    <h3 id="rulesTitle"></h3>
+    <div class="rule"><span class="rule-icon">💧</span><span class="rule-text" id="rule1"></span></div>
+    <div class="rule"><span class="rule-icon">📵</span><span class="rule-text" id="rule2"></span></div>
+    <div class="rule"><span class="rule-icon">🤫</span><span class="rule-text" id="rule3"></span></div>
+    <div class="rule"><span class="rule-icon">🧘</span><span class="rule-text" id="rule4"></span></div>
+    <div class="rule"><span class="rule-icon">🤝</span><span class="rule-text" id="rule5"></span></div>
+    <div class="rule"><span class="rule-icon">🔄</span><span class="rule-text" id="rule6"></span></div>
+    <div class="rule"><span class="rule-icon">🙏</span><span class="rule-text" id="rule7"></span></div>
+  </div>
 
-      <!-- Journal Link Display -->
-      <div class="link-box">
-        <div class="link-label">🧘 您的练习记录链接 — 保存这个！</div>
-        <div id="qrCodeBox" style="margin:12px auto;text-align:center;display:none;">
-          <img id="qrCodeImg" src="" alt="QR Code" style="width:200px;height:200px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.12);">
-          <div style="font-size:12px;color:#8b7d6b;margin-top:6px;">扫码保存 / Scan to save</div>
-        </div>
-        <div class="link-url" id="journalLink"></div>
-        <button class="copy-btn" onclick="copyLink()">📋 复制链接</button>
-        <div class="link-hint">每天练习后记录<br>Keep this link to log your practice!</div>
+  <!-- Closing from teachers -->
+  <div class="card">
+    <p class="closing" id="closingText"></p>
+    <div class="signatures">— Boonchu Tanti & Jamsai Tanti</div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="card" id="quizSection">
+    <h3 id="quizTitle"></h3>
+    <p style="font-size:13px;color:#8b7d6b;margin-bottom:16px;" id="quizSubtitle"></p>
+    <div class="quiz-q-text" id="quizQText"></div>
+    <div class="quiz-opts" id="quizOpts"></div>
+    <div class="quiz-result hidden" id="quizResult"></div>
+    <button class="continue-btn" id="quizNextBtn" onclick="proceedPastQuiz()" disabled></button>
+  </div>
+
+  <!-- Registration Form -->
+  <form id="orientationForm" onsubmit="submitForm(event)">
+    <div class="card">
+      <h3 id="formTitle"></h3>
+      <p style="font-size:13px;color:#8b7d6b;margin-bottom:20px;" id="formSub"></p>
+
+      <div class="field">
+        <label id="labelNameEn"></label>
+        <input type="text" id="nameEn" required>
       </div>
 
-      <p style="margin-top:12px;font-size:13px;color:#8b7d6b;">🧘 AYBKK 广州工作坊 2026</p>
+      <div class="field">
+        <label id="labelNameZh"></label>
+        <input type="text" id="nameZh">
+      </div>
+
+      <div class="field">
+        <label id="labelCity"></label>
+        <input type="text" id="city">
+      </div>
+
+      <div class="field">
+        <label id="labelWechat"></label>
+        <input type="text" id="wechat">
+      </div>
+
+      <div class="field">
+        <label id="labelYears"></label>
+        <select id="yearsPractice">
+          <option value="" id="yOpt0"></option>
+          <option value="<1" id="yOpt1"></option>
+          <option value="1-3" id="yOpt2"></option>
+          <option value="3-5" id="yOpt3"></option>
+          <option value="5-10" id="yOpt4"></option>
+          <option value="10+" id="yOpt5"></option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label id="labelLast"></label>
+        <input type="text" id="lastAsana" placeholder="e.g. Marichyasana D">
+        <div class="hint" id="hintLast"></div>
+      </div>
+
+      <div class="field">
+        <label id="labelDifficulty"></label>
+        <div class="options" id="difficultyOptions">
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="forward-fold">Forward Fold 前屈</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="hip-opening">Hip Opening 开髋</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="backbend">Backbend 后弯</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="inversion">Inversion 倒立</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="balance">Balance 平衡</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="twist">Twist 扭转</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="shoulder">Shoulder 肩膀</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="core">Core 核心</div>
+        </div>
+        <div class="hint" id="hintDifficulty"></div>
+      </div>
+
+      <div class="field">
+        <label id="labelInjuries"></label>
+        <textarea id="injuries"></textarea>
+      </div>
+
+      <div class="field">
+        <label id="labelGoals"></label>
+        <textarea id="goals"></textarea>
+      </div>
+
+      <div class="field">
+        <label id="labelEmergency"></label>
+        <input type="text" id="emergency">
+      </div>
+
+      <div class="field">
+        <label id="labelSize"></label>
+        <select id="size">
+          <option value="XS">XS</option>
+          <option value="S">S</option>
+          <option value="M" selected>M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="XXL">XXL</option>
+        </select>
+      </div>
     </div>
+
+    <!-- Consents -->
+    <div class="card">
+      <h3 id="consentTitle"></h3>
+      <div class="field">
+        <div class="options" id="photoOptions">
+          <span class="option selected" onclick="toggleConsent(this, 'photo')" id="photoConsentLabel"></span>
+        </div>
+        <input type="hidden" id="photoConsent" value="yes">
+      </div>
+      <div class="field">
+        <div class="options" id="medicalOptions">
+          <span class="option selected" onclick="toggleConsent(this, 'medical')" id="medicalConsentLabel"></span>
+        </div>
+        <input type="hidden" id="medicalConsent" value="yes">
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn"></button>
+  </form>
+</div>
+
+<!-- Success overlay -->
+<div class="success-overlay hidden" id="successOverlay">
+  <div class="success-box">
+    <div class="share-card">
+      <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);margin-bottom:10px;" onerror="this.style.display='none'">
+      <div class="wstitle">AYBKK Guangzhou WS 2026</div>
+      <div class="welcome" id="successWelcome"></div>
+      <div class="sname" id="successName"></div>
+      <div class="sutra">
+        <div class="sutra-text">"Atha Yoganushasanam"</div>
+        <div class="sutra-src">Now, the discipline of yoga. — Yoga Sutra 1.1</div>
+      </div>
+      <div class="by">by Boonchu Tanti & Jamsai Tanti</div>
+    </div>
+
+    <!-- Journal link + QR -->
+    <div class="link-box">
+      <div class="link-label" id="linkLabel"></div>
+      <div id="qrCodeBox" style="margin:10px auto;display:none;">
+        <img id="qrCodeImg" src="" alt="QR" style="width:180px;height:180px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+        <div style="font-size:11px;color:#8b7d6b;margin-top:5px;" id="qrHint"></div>
+      </div>
+      <div class="link-url" id="journalLinkDisplay"></div>
+      <button class="copy-btn" onclick="copyLink()" id="copyBtn"></button>
+      <div class="link-hint" id="linkHint"></div>
+    </div>
+
+    <button class="share-btn" onclick="shareToWeChat()" id="shareBtn"></button>
+    <button class="done-btn" onclick="window.location.reload()" id="doneBtn"></button>
   </div>
+</div>
 
 <script>
 const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
 
-// Quiz in 4 languages — pick 1 random question
-const QUIZ_POOL = [
-  {
-    question: {
-      en: 'Who is the creator of ashtanga yoga method?',
-      zh: '谁创造了阿斯汤加瑜伽方法？',
-      th: 'ใครคือผู้สร้างวิธีโยคะอัชตางค์?',
-      ru: 'Кто создал метод аштанга-йоги?'
-    },
-    options: {
-      en: ['Guru Purnima', 'Guru Sharath Jois', 'Guru Patanjali', 'Guru Pattabhi Jois'],
-      zh: ['古鲁 Purnima', '古鲁 Sharath Jois', '古鲁 Patanjali', '古鲁 Pattabhi Jois'],
-      th: ['ครู Purnima', 'ครู Sharath Jois', 'ครู Patanjali', 'ครู Pattabhi Jois'],
-      ru: ['Гуру Пурнима', 'Гуру Шарат Джойс', 'Гуру Патанджали', 'Гуру Паттабхи Джойс']
-    },
-    answer: 3
-  },
-  {
-    question: {
-      en: 'What is the translation of "ashtanga"?',
-      zh: '"ashtanga" 是什么意思？',
-      th: '"อัชตางค์" แปลว่าอะไร?',
-      ru: 'Что означает «аштанга»?'
-    },
-    options: {
-      en: ['Tangerine over ashes', 'Eight limbs of Yoga', 'Making Soup', 'Thong underwear'],
-      zh: ['橘子灰上', '瑜伽八支', '做汤', '丁字裤'],
-      th: ['ส้มบนขี้เถ้า', 'แปดขั้นของโยคะ', 'ทำซุป', 'กางเกงใน'],
-      ru: ['Мандарин над пеплом', 'Восемь ветвей Йоги', 'Делать суп', 'Трусы-стринги']
-    },
-    answer: 1
-  },
-  {
-    question: {
-      en: 'How many times do we repeat Suryanamaskara A?',
-      zh: '我们重复 Suryanamaskara A 多少次？',
-      th: 'เราทำ Suryanamaskara A กี่รอบ?',
-      ru: 'Сколько раз мы повторяем Сурьянамаскару А?'
-    },
-    options: {
-      en: ['Few times to warm up', '5 times is tradition', 'None', 'Only if asked'],
-      zh: ['热身几次', '传统是5次', '不做', '只有被要求时'],
-      th: ['สองสามรอบเพื่ออบอุ่น', 'ตามประเพณี 5 รอบ', 'ไม่ทำ', 'ถ้าถูกขอ'],
-      ru: ['Несколько раз для разогрева', '5 раз по традиции', 'Нет', 'Только если попросят']
-    },
-    answer: 1
-  },
-  {
-    question: {
-      en: 'What is bandha?',
-      zh: '什么是 Bandha（收束法）？',
-      th: 'Bandha คืออะไร?',
-      ru: 'Что такое бандха?'
-    },
-    options: {
-      en: ['Same as holding poop', 'Lifting pelvic floor feeling light', 'Another type of scarf', 'Slang for bandaid'],
-      zh: ['就像憋大便', '提升盆底感到轻盈', '另一种围巾', '创可贴的俚语'],
-      th: ['เหมือนกลั้นอึ', 'ยกพื้นเชิงกรานรู้สึกเบา', 'ผ้าพันคออีกแบบ', 'คำสแลงของแผ่นเทียน'],
-      ru: ['То же, что держать кал', 'Подъём тазового дна, ощущение лёгкости', 'Ещё один тип шарфа', 'Сленг для пластыря']
-    },
-    answer: 1
-  },
-  {
-    question: {
-      en: 'What is mysore class?',
-      zh: '什么是 Mysore 课？',
-      th: 'คลาส Mysore คืออะไร?',
-      ru: 'Что такое класс майсор?'
-    },
-    options: {
-      en: ['Practice at home', 'Do my sequence', 'Practice at studio for photos', 'Traditional at sacred space with teacher from parampara'],
-      zh: ['在家练习', '做我的序列', '在工作室拍照好看的练习', '在神圣空间跟随传承老师的传统练习'],
-      th: ['ฝึกที่บ้าน', 'ทำลำดับของฉัน', 'ฝึกที่สตูดิโอเพื่อถ่ายรูป', 'แบบดั้งเดิมในพื้นที่ศักดิ์สิทธิ์กับครูจากปรมาจารย์'],
-      ru: ['Практика дома', 'Делать свою последовательность', 'Практика в студии для красивых фото', 'Традиционная практика в священном месте с учителем из парампары']
-    },
-    answer: 3
-  }
-];
-
-// Translations
+// ─── Translations ───────────────────────────────────────────────
 const T = {
   zh: {
-    intro: '欢迎来到 AYBKK 广州工作坊 2026！在开始工作坊之前，请填写此问卷并参与我们的迎新游戏。',
-    quizSubtitle: '测试你的阿斯汤加瑜伽知识！',
-    quizLang: 'English',
-    quizBtn: '完成',
-    submit: '提交',
-    labelName: '姓名',
-    labelWechat: '微信',
-    labelExp: '阿斯汤加瑜伽经验',
-    labelInjuries: '伤病',
+    introText1: '欢迎来到 AYBKK 广州工作坊 2026！在工作坊开始前，请填写此表格，并参与我们的迎新小游戏。',
+    introText2: '我们期待在这几天里，帮助你找到适合身体的技术，深化你在挑战性动作和体式中的能力。',
+    rulesTitle: '📋 传统 Mysore 文化',
+    rule1: 'Mysore 教室内不能带水',
+    rule2: 'Mysore 教室内不能带手机或相机',
+    rule3: '练习期间保持安静，不交谈',
+    rule4: '不随意移动垫子（除非老师要求）',
+    rule5: '不帮助其他同学练习（除非老师要求）',
+    rule6: '遵循正确的串联 — 不要停下来观察他人',
+    rule7: '完成后弯练习后，双臂交叉放于胸前，在垫子前等待老师辅助最后一个后弯',
+    closingText: '我们非常期待看到你克服练习中的一切障碍，也期待在技术层面与你共同成长。',
+    quizTitle: '🎮 迎新游戏',
+    quizSubtitle: '回答一道阿斯汤加瑜伽知识题！',
+    quizBtn: '继续填写报名表 →',
+    formTitle: '🧘 你的练习档案',
+    formSub: '请在工作坊第一天前填写完毕',
+    labelNameEn: '英文名 English Name',
+    labelNameZh: '中文名',
+    labelCity: '城市 City',
+    labelWechat: '微信号 WeChat ID',
+    labelYears: '练习年数',
+    yOpt0: '请选择...',
+    yOpt1: '不到1年',
+    yOpt2: '1–3 年',
+    yOpt3: '3–5 年',
+    yOpt4: '5–10 年',
+    yOpt5: '10 年以上',
+    labelLast: '最后一个体式 Last Asana',
+    hintLast: '你能独立完成的最后一个体式',
+    labelDifficulty: '哪些方面有挑战？',
+    hintDifficulty: '可多选',
+    labelInjuries: '伤病或身体限制',
     labelGoals: '工作坊目标',
-    labelEmergency: '紧急联系人',
-    labelSize: '尺码',
-    exp1: '初学者（0-1年）',
-    exp2: '中级（1-3年）',
-    exp3: '高级（3年以上）',
-    linkLabel: '🧘 您的练习记录链接 — 保存这个！',
-    successName: '欢迎！',
-    br1: '',
-    correctText: '🥳🎊 正确！',
-    wrongText: '🙏 下次再试',
-    quizPlaceholder: '选择一个答案'
+    labelEmergency: '紧急联系人（姓名 + 电话）',
+    labelSize: 'T恤尺码',
+    consentTitle: '📸 同意书',
+    photoConsentLabel: '📸 同意拍照/摄影',
+    medicalConsentLabel: '✅ 同意医疗免责声明',
+    submitBtn: '提交报名表',
+    successWelcome: '欢迎加入 AYBKK 广州工作坊！',
+    linkLabel: '🧘 你的练习记录链接 — 保存这个！',
+    qrHint: '扫码保存 / 长按图片保存',
+    copyBtn: '📋 复制链接',
+    linkHint: '每次练习后打开这个链接记录你的练习',
+    shareBtn: '分享到微信 📱',
+    doneBtn: '完成',
+    correctText: '🥳🎊 正确！太棒了！',
+    wrongText: '🙏 没关系，下次再试！',
+    namePlaceholder: '英文姓名',
+    nameZhPlaceholder: '中文姓名',
+    cityPlaceholder: '例：广州',
+    wechatPlaceholder: '微信号',
+    injuriesPlaceholder: '任何伤病或身体限制…',
+    goalsPlaceholder: '你希望在这次工作坊中达成什么？',
+    emergencyPlaceholder: '姓名 + 电话',
+    submitLoading: '提交中...',
+    errorMsg: '提交失败，请重试。'
   },
   en: {
-    intro: 'Welcome to AYBKK Guangzhou Workshop 2026! Before the workshop, please fill out this form and play our orientation game.',
-    quizSubtitle: 'Test your Ashtanga yoga knowledge!',
-    quizLang: '中文',
-    quizBtn: 'Done',
-    submit: 'Submit',
-    labelName: 'Name',
-    labelWechat: 'WeChat',
-    labelExp: 'Ashtanga Experience',
-    labelInjuries: 'Injuries',
+    introText1: 'Welcome to the AYBKK Guangzhou Workshop 2026! Before the workshop begins, please fill out this form and play our orientation game.',
+    introText2: 'We look forward to helping you find the right technique for your body and deepen your skills in challenging movements and asanas.',
+    rulesTitle: '📋 Traditional Mysore Culture',
+    rule1: 'No water inside the Mysore room',
+    rule2: 'No phone or camera inside the Mysore room',
+    rule3: 'No talking during practice',
+    rule4: 'Do not move your mat around (unless teacher requests)',
+    rule5: 'Do not help other students during practice (unless teacher requests)',
+    rule6: 'Follow proper vinyasa — no stopping to look around or watch others',
+    rule7: 'Before finishing (after backbending), wait in front of your mat with arms crossed to chest for the teacher to assist your last backbend',
+    closingText: 'We love to see you work through all the obstacles in practice and look forward to working on your technique together.',
+    quizTitle: '🎮 Orientation Game',
+    quizSubtitle: 'Answer one Ashtanga yoga question!',
+    quizBtn: 'Continue to Registration →',
+    formTitle: '🧘 Your Practice Profile',
+    formSub: 'Please fill in before Day 1',
+    labelNameEn: 'English Name',
+    labelNameZh: 'Chinese Name 中文名',
+    labelCity: 'City',
+    labelWechat: 'WeChat ID',
+    labelYears: 'Years of Practice',
+    yOpt0: 'Select...',
+    yOpt1: 'Less than 1 year',
+    yOpt2: '1–3 years',
+    yOpt3: '3–5 years',
+    yOpt4: '5–10 years',
+    yOpt5: '10+ years',
+    labelLast: 'Last Asana',
+    hintLast: 'The last asana you can practice independently',
+    labelDifficulty: "What's challenging for you?",
+    hintDifficulty: 'Select all that apply',
+    labelInjuries: 'Injuries / Physical Limitations',
     labelGoals: 'Workshop Goals',
-    labelEmergency: 'Emergency Contact',
+    labelEmergency: 'Emergency Contact (Name + Phone)',
     labelSize: 'T-Shirt Size',
-    exp1: 'Beginner (0-1 year)',
-    exp2: 'Intermediate (1-3 years)',
-    exp3: 'Advanced (3+ years)',
+    consentTitle: '📸 Consent',
+    photoConsentLabel: '📸 Consent to photo/video',
+    medicalConsentLabel: '✅ Medical disclaimer',
+    submitBtn: 'Submit',
+    successWelcome: 'Welcome to AYBKK Guangzhou Workshop!',
     linkLabel: '🧘 Your Practice Journal Link — Save This!',
-    successName: 'Welcome!',
-    br1: '',
-    correctText: '🥳🎊 Correct!',
-    wrongText: '🙏 Try next time',
-    quizPlaceholder: 'Choose an answer'
+    qrHint: 'Scan to save / Long-press to save image',
+    copyBtn: '📋 Copy Link',
+    linkHint: 'Open this link after each practice to log your session',
+    shareBtn: 'Share to WeChat 📱',
+    doneBtn: 'Done',
+    correctText: '🥳🎊 Correct! Well done!',
+    wrongText: '🙏 No worries, try next time!',
+    namePlaceholder: 'e.g. Li Wei',
+    nameZhPlaceholder: 'e.g. 李伟',
+    cityPlaceholder: 'e.g. Guangzhou',
+    wechatPlaceholder: 'WeChat ID',
+    injuriesPlaceholder: 'Any injuries or physical limitations...',
+    goalsPlaceholder: 'What do you want to achieve in this workshop?',
+    emergencyPlaceholder: 'Name + Phone',
+    submitLoading: 'Submitting...',
+    errorMsg: 'Submission failed, please try again.'
   },
   th: {
-    intro: 'ยินดีต้อนรับสู่ AYBKK Guangzhou Workshop 2026! ก่อนเริ่ม workshop กรุณากรอกแบบฟอร์มนี้และเล่นเกมต้อนรับของเรา',
-    quizSubtitle: 'ทดสอบความรู้โยคะอัชตางค์ของคุณ!',
-    quizLang: '中文',
-    quizBtn: 'เสร็จแล้ว',
-    submit: 'ส่ง',
-    labelName: 'ชื่อ',
-    labelWechat: 'WeChat',
-    labelExp: 'ประสบการณ์ Ashtanga',
-    labelInjuries: 'การบาดเจ็บ',
-    labelGoals: 'เป้าหมาย Workshop',
-    labelEmergency: 'ติดต่อฉุกเฉิน',
-    labelSize: 'ไซส์เสื้อ',
-    exp1: 'ผู้เริ่มต้น (0-1 ปี)',
-    exp2: 'ระดับกลาง (1-3 ปี)',
-    exp3: 'ขั้นสูง (3+ ปี)',
-    linkLabel: '🧘 ลิงก์บันทึกการฝึกของคุณ — เก็บลิงก์นี้ไว้!',
-    successName: 'ยินดีต้อนรับ!',
-    br1: '<br>',
-    correctText: '🥳🎊 ถูกต้อง!',
-    wrongText: '🙏 ลองใหม่ครั้งหน้า',
-    quizPlaceholder: 'เลือกคำตอบ'
+    introText1: 'ยินดีต้อนรับสู่ AYBKK Guangzhou Workshop 2026! ก่อนเริ่ม workshop กรุณากรอกแบบฟอร์มและเล่นเกมต้อนรับของเรา',
+    introText2: 'เราตั้งตารอที่จะช่วยให้คุณค้นพบเทคนิคที่เหมาะกับร่างกายของคุณและพัฒนาทักษะในท่าที่ท้าทาย',
+    rulesTitle: '📋 วัฒนธรรม Mysore แบบดั้งเดิม',
+    rule1: 'ห้ามนำน้ำเข้าห้อง Mysore',
+    rule2: 'ห้ามนำโทรศัพท์หรือกล้องเข้าห้อง Mysore',
+    rule3: 'ห้ามพูดคุยระหว่างฝึก',
+    rule4: 'ห้ามขยับเสื่อ (ยกเว้นครูขอให้ขยับ)',
+    rule5: 'ห้ามช่วยเหลือนักเรียนคนอื่นระหว่างฝึก (ยกเว้นครูขอให้ช่วย)',
+    rule6: 'ฝึก vinyasa ให้ถูกต้อง — ห้ามหยุดมองคนอื่น',
+    rule7: 'หลังทำ backbend เสร็จ ให้ยืนหน้าเสื่อ ประสานแขนบนหน้าอก รอครูช่วย backbend ครั้งสุดท้าย',
+    closingText: 'เรารักที่จะเห็นคุณก้าวผ่านอุปสรรคในการฝึก และตั้งตารอที่จะพัฒนาเทคนิคร่วมกัน',
+    quizTitle: '🎮 เกมต้อนรับ',
+    quizSubtitle: 'ตอบคำถามเกี่ยวกับ Ashtanga yoga!',
+    quizBtn: 'ไปกรอกแบบฟอร์ม →',
+    formTitle: '🧘 โปรไฟล์การฝึกของคุณ',
+    formSub: 'กรุณากรอกก่อนวันแรก',
+    labelNameEn: 'ชื่อภาษาอังกฤษ',
+    labelNameZh: 'ชื่อภาษาจีน 中文名',
+    labelCity: 'เมือง',
+    labelWechat: 'WeChat ID',
+    labelYears: 'ประสบการณ์การฝึก',
+    yOpt0: 'เลือก...',
+    yOpt1: 'น้อยกว่า 1 ปี',
+    yOpt2: '1–3 ปี',
+    yOpt3: '3–5 ปี',
+    yOpt4: '5–10 ปี',
+    yOpt5: 'มากกว่า 10 ปี',
+    labelLast: 'ท่าสุดท้าย (Last Asana)',
+    hintLast: 'ท่าสุดท้ายที่คุณฝึกได้ด้วยตัวเอง',
+    labelDifficulty: 'อะไรที่ท้าทายสำหรับคุณ?',
+    hintDifficulty: 'เลือกได้หลายข้อ',
+    labelInjuries: 'การบาดเจ็บหรือข้อจำกัดทางร่างกาย',
+    labelGoals: 'เป้าหมายใน Workshop',
+    labelEmergency: 'ผู้ติดต่อฉุกเฉิน (ชื่อ + โทร)',
+    labelSize: 'ขนาดเสื้อ',
+    consentTitle: '📸 ความยินยอม',
+    photoConsentLabel: '📸 ยินยอมให้ถ่ายภาพ/วิดีโอ',
+    medicalConsentLabel: '✅ ข้อจำกัดความรับผิดทางการแพทย์',
+    submitBtn: 'ส่งแบบฟอร์ม',
+    successWelcome: 'ยินดีต้อนรับสู่ AYBKK Guangzhou Workshop!',
+    linkLabel: '🧘 ลิงก์บันทึกการฝึกของคุณ — เก็บไว้!',
+    qrHint: 'สแกน QR เพื่อบันทึก / กดค้างเพื่อบันทึกภาพ',
+    copyBtn: '📋 คัดลอกลิงก์',
+    linkHint: 'เปิดลิงก์นี้หลังฝึกทุกครั้งเพื่อบันทึกการฝึก',
+    shareBtn: 'แชร์ไป WeChat 📱',
+    doneBtn: 'เสร็จแล้ว',
+    correctText: '🥳🎊 ถูกต้อง! เยี่ยมมาก!',
+    wrongText: '🙏 ไม่เป็นไร ลองใหม่ครั้งหน้า!',
+    namePlaceholder: 'ชื่อ-นามสกุลภาษาอังกฤษ',
+    nameZhPlaceholder: 'ชื่อภาษาจีน',
+    cityPlaceholder: 'เช่น กวางโจว',
+    wechatPlaceholder: 'WeChat ID',
+    injuriesPlaceholder: 'การบาดเจ็บหรือข้อจำกัดทางร่างกาย...',
+    goalsPlaceholder: 'คุณต้องการบรรลุอะไรใน workshop นี้?',
+    emergencyPlaceholder: 'ชื่อ + เบอร์โทร',
+    submitLoading: 'กำลังส่ง...',
+    errorMsg: 'ส่งไม่สำเร็จ กรุณาลองใหม่'
   },
   ru: {
-    intro: 'Добро пожаловать на AYBKK Guangzhou Workshop 2026! Перед workshop, пожалуйста, заполните эту анкету и сыграйте в нашу приветственную игру.',
-    quizSubtitle: 'Проверь свои знания Ashtanga yoga!',
-    quizLang: '中文',
-    quizBtn: 'Готово',
-    submit: 'Отправить',
-    labelName: 'Имя',
-    labelWechat: 'WeChat',
-    labelExp: 'Опыт в Ashtanga',
-    labelInjuries: 'Травмы',
-    labelGoals: 'Цели Workshop',
-    labelEmergency: 'Экстренный контакт',
-    labelSize: 'Размер',
-    exp1: 'Начинающий (0-1 год)',
-    exp2: 'Средний (1-3 года)',
-    exp3: 'Продвинутый (3+ лет)',
-    linkLabel: '🧘 Ваша ссылка на дневник практики — Сохраните!',
-    successName: 'Добро пожаловать!',
-    br1: '<br>',
-    correctText: '🥳🎊 Правильно!',
-    wrongText: '🙏 Попробуйте в следующий раз',
-    quizPlaceholder: 'Выберите ответ'
+    introText1: 'Добро пожаловать на AYBKK Guangzhou Workshop 2026! Перед началом workshop, пожалуйста, заполните эту анкету и сыграйте в нашу приветственную игру.',
+    introText2: 'Мы с нетерпением ждём возможности помочь вам найти правильную технику для вашего тела и углубить навыки в сложных движениях и асанах.',
+    rulesTitle: '📋 Традиционная культура Майсор',
+    rule1: 'Не приносить воду в зал Mysore',
+    rule2: 'Не приносить телефон или камеру в зал Mysore',
+    rule3: 'Не разговаривать во время практики',
+    rule4: 'Не перемещать коврик (если только учитель не попросит)',
+    rule5: 'Не помогать другим ученикам во время практики (если только учитель не попросит)',
+    rule6: 'Соблюдать правильную виньясу — не останавливаться, чтобы смотреть на других',
+    rule7: 'После завершения прогиба — встать перед ковриком, скрестив руки на груди, и ждать помощи учителя в последнем прогибе',
+    closingText: 'Мы любим наблюдать, как вы преодолеваете препятствия в практике, и с нетерпением ждём работы над вашей техникой.',
+    quizTitle: '🎮 Приветственная игра',
+    quizSubtitle: 'Ответьте на вопрос об Аштанга-йоге!',
+    quizBtn: 'Продолжить к анкете →',
+    formTitle: '🧘 Ваш практический профиль',
+    formSub: 'Пожалуйста, заполните до первого дня',
+    labelNameEn: 'Имя (латиница)',
+    labelNameZh: 'Имя на китайском 中文名',
+    labelCity: 'Город',
+    labelWechat: 'WeChat ID',
+    labelYears: 'Лет практики',
+    yOpt0: 'Выберите...',
+    yOpt1: 'Менее 1 года',
+    yOpt2: '1–3 года',
+    yOpt3: '3–5 лет',
+    yOpt4: '5–10 лет',
+    yOpt5: '10+ лет',
+    labelLast: 'Последняя асана',
+    hintLast: 'Последняя асана, которую вы можете практиковать самостоятельно',
+    labelDifficulty: 'Что даётся с трудом?',
+    hintDifficulty: 'Можно выбрать несколько',
+    labelInjuries: 'Травмы / физические ограничения',
+    labelGoals: 'Цели на workshop',
+    labelEmergency: 'Экстренный контакт (имя + телефон)',
+    labelSize: 'Размер футболки',
+    consentTitle: '📸 Согласие',
+    photoConsentLabel: '📸 Согласие на фото/видео',
+    medicalConsentLabel: '✅ Медицинский отказ от ответственности',
+    submitBtn: 'Отправить анкету',
+    successWelcome: 'Добро пожаловать на AYBKK Guangzhou Workshop!',
+    linkLabel: '🧘 Ссылка на дневник практики — сохраните!',
+    qrHint: 'Сканируйте QR / Удерживайте для сохранения',
+    copyBtn: '📋 Копировать ссылку',
+    linkHint: 'Открывайте эту ссылку после каждой практики для записей',
+    shareBtn: 'Поделиться в WeChat 📱',
+    doneBtn: 'Готово',
+    correctText: '🥳🎊 Правильно! Отлично!',
+    wrongText: '🙏 Ничего, попробуйте в следующий раз!',
+    namePlaceholder: 'Имя на латинице',
+    nameZhPlaceholder: 'Имя на китайском',
+    cityPlaceholder: 'напр. Гуанчжоу',
+    wechatPlaceholder: 'WeChat ID',
+    injuriesPlaceholder: 'Травмы или физические ограничения...',
+    goalsPlaceholder: 'Что хотите достичь на этом workshop?',
+    emergencyPlaceholder: 'Имя + телефон',
+    submitLoading: 'Отправка...',
+    errorMsg: 'Ошибка отправки. Попробуйте снова.'
   }
 };
 
-// Yoga Sutras quotes in Chinese
-const QUOTES = [
-  { text: '当您认为已知时，苦便升起。当您真正知时，苦便消散。', source: '— 薄伽梵歌 2.56' },
-  { text: '不执著于行动成果的行动，便是真正的自由。', source: '— 薄伽梵歌 2.47' },
-  { text: '心意若平静，万物皆清明。', source: '— 瑜伽经 1.2' },
-  { text: '练习是持续不懈的努力。', source: '— 瑜伽经 1.14' },
-  { text: '痛苦与快乐，皆由心意所造。', source: '— 薄伽梵歌 2.15' },
-  { text: '当心意摆脱执着，便照见真实。', source: '— 瑜伽经 2.5' }
+// ─── Quiz pool ──────────────────────────────────────────────────
+const QUIZ_POOL = [
+  {
+    q: { zh:'谁创造了阿斯汤加瑜伽方法？', en:'Who is the creator of the Ashtanga yoga method?', th:'ใครคือผู้สร้างวิธีโยคะอัชตางค์?', ru:'Кто создал метод аштанга-йоги?' },
+    opts: {
+      zh:['古鲁 Purnima','古鲁 Sharath Jois','古鲁 Patanjali','古鲁 Pattabhi Jois'],
+      en:['Guru Purnima','Guru Sharath Jois','Guru Patanjali','Guru Pattabhi Jois'],
+      th:['ครู Purnima','ครู Sharath Jois','ครู Patanjali','ครู Pattabhi Jois'],
+      ru:['Гуру Пурнима','Гуру Шарат Джойс','Гуру Патанджали','Гуру Паттабхи Джойс']
+    },
+    answer: 3
+  },
+  {
+    q: { zh:'"Ashtanga"是什么意思？', en:'What does "ashtanga" mean?', th:'"อัชตางค์" แปลว่าอะไร?', ru:'Что означает «аштанга»?' },
+    opts: {
+      zh:['橘子灰上','瑜伽八支','做汤','丁字裤'],
+      en:['Tangerine over ashes','Eight limbs of Yoga','Making soup','Thong underwear'],
+      th:['ส้มบนขี้เถ้า','แปดขั้นของโยคะ','ทำซุป','กางเกงใน'],
+      ru:['Мандарин над пеплом','Восемь ветвей Йоги','Делать суп','Трусы-стринги']
+    },
+    answer: 1
+  },
+  {
+    q: { zh:'Suryanamaskara A 重复多少次？', en:'How many times do we repeat Suryanamaskara A?', th:'เราทำ Suryanamaskara A กี่รอบ?', ru:'Сколько раз мы повторяем Сурьянамаскару А?' },
+    opts: {
+      zh:['热身几次','传统是5次','不做','只有被要求时'],
+      en:['A few times to warm up','5 times is tradition','None','Only if asked'],
+      th:['สองสามรอบเพื่ออบอุ่น','ตามประเพณี 5 รอบ','ไม่ทำ','ถ้าถูกขอ'],
+      ru:['Несколько раз для разогрева','5 раз по традиции','Нет','Только если попросят']
+    },
+    answer: 1
+  },
+  {
+    q: { zh:'什么是 Bandha（收束法）？', en:'What is bandha?', th:'Bandha คืออะไร?', ru:'Что такое бандха?' },
+    opts: {
+      zh:['就像憋大便','提升盆底感到轻盈','另一种围巾','创可贴的俚语'],
+      en:['Same as holding poop','Lifting pelvic floor — feeling light','Another type of scarf','Slang for bandaid'],
+      th:['เหมือนกลั้นอึ','ยกพื้นเชิงกรานรู้สึกเบา','ผ้าพันคออีกแบบ','คำสแลงของแผ่นเทียน'],
+      ru:['То же, что держать кал','Подъём тазового дна — ощущение лёгкости','Ещё один тип шарфа','Сленг для пластыря']
+    },
+    answer: 1
+  },
+  {
+    q: { zh:'什么是 Mysore 课？', en:'What is a Mysore class?', th:'คลาส Mysore คืออะไร?', ru:'Что такое класс майсор?' },
+    opts: {
+      zh:['在家练习','做我的序列','在工作室拍照','在神圣空间跟随传承老师的传统练习'],
+      en:['Practice at home','Do my own sequence','Practice for photos','Traditional practice in sacred space with a teacher from parampara'],
+      th:['ฝึกที่บ้าน','ทำลำดับของฉัน','ฝึกเพื่อถ่ายรูป','แบบดั้งเดิมในพื้นที่ศักดิ์สิทธิ์กับครูจากปรมาจารย์'],
+      ru:['Практика дома','Делать свою последовательность','Практика для красивых фото','Традиционная практика в священном месте с учителем из парампары']
+    },
+    answer: 3
+  }
 ];
 
+// ─── Quotes ─────────────────────────────────────────────────────
+const QUOTES = {
+  zh: [
+    { text:'不执著于行动成果的行动，便是真正的自由。', source:'— 薄伽梵歌 2.47' },
+    { text:'心意若平静，万物皆清明。', source:'— 瑜伽经 1.2' },
+    { text:'练习是持续不懈的努力。', source:'— 瑜伽经 1.14' },
+    { text:'痛苦与快乐，皆由心意所造。', source:'— 薄伽梵歌 2.15' },
+    { text:'当心意摆脱执着，便照见真实。', source:'— 瑜伽经 2.5' }
+  ],
+  en: [
+    { text:'Action done without attachment to results is true freedom.', source:'— Bhagavad Gita 2.47' },
+    { text:'Yoga is the cessation of the fluctuations of the mind.', source:'— Yoga Sutra 1.2' },
+    { text:'Practice becomes firmly grounded when attended to for a long time.', source:'— Yoga Sutra 1.14' }
+  ],
+  th: [
+    { text:'การกระทำโดยไม่ยึดติดในผลลัพธ์ คือเสรีภาพที่แท้จริง', source:'— ภควัทคีตา 2.47' },
+    { text:'โยคะคือการหยุดนิ่งของจิตใจ', source:'— โยคะสูตร 1.2' }
+  ],
+  ru: [
+    { text:'Действие без привязанности к результату — это истинная свобода.', source:'— Бхагавад-гита 2.47' },
+    { text:'Йога есть прекращение колебаний ума.', source:'— Йога-сутра 1.2' }
+  ]
+};
+
+// ─── State ───────────────────────────────────────────────────────
 let currentLang = 'zh';
-let quizAnswered = false;
 let currentQuiz = null;
+let quizAnswered = false;
 let quizCorrect = false;
 let journalLinkData = null;
 
+// ─── Init ────────────────────────────────────────────────────────
 function init() {
-  // Quote
-  const idx = new Date().getDate() % QUOTES.length;
-  document.getElementById('quoteText').textContent = QUOTES[idx].text;
-  document.getElementById('quoteSource').textContent = QUOTES[idx].source;
-
-  // Pick random quiz question
   currentQuiz = QUIZ_POOL[Math.floor(Math.random() * QUIZ_POOL.length)];
-  renderQuiz();
+  setLang('zh');
 }
 
+// ─── Language ────────────────────────────────────────────────────
 function setLang(lang) {
   currentLang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
 
   const t = T[lang];
-  document.getElementById('introText').textContent = t.intro;
-  document.getElementById('quizSubtitle').textContent = t.quizSubtitle;
-  document.getElementById('quizLang').textContent = t.quizLang;
-  document.getElementById('quizNextBtn').textContent = t.quizBtn;
-  document.getElementById('submitBtn').textContent = t.submit;
-  document.getElementById('labelName').textContent = t.labelName;
-  document.getElementById('labelWechat').textContent = t.labelWechat;
-  document.getElementById('labelExp').textContent = t.labelExp;
-  document.getElementById('exp1').textContent = t.exp1;
-  document.getElementById('exp2').textContent = t.exp2;
-  document.getElementById('exp3').textContent = t.exp3;
-  document.getElementById('labelInjuries').textContent = t.labelInjuries;
-  document.getElementById('labelGoals').textContent = t.labelGoals;
-  document.getElementById('labelEmergency').textContent = t.labelEmergency;
-  document.getElementById('labelSize').textContent = t.labelSize;
 
-  // Re-render quiz in new language
+  // Text fields
+  const textIds = ['introText1','introText2','rulesTitle','rule1','rule2','rule3','rule4','rule5','rule6','rule7',
+    'closingText','quizTitle','quizSubtitle','quizBtn','formTitle','formSub',
+    'labelNameEn','labelNameZh','labelCity','labelWechat','labelYears',
+    'yOpt0','yOpt1','yOpt2','yOpt3','yOpt4','yOpt5',
+    'labelLast','hintLast','labelDifficulty','hintDifficulty',
+    'labelInjuries','labelGoals','labelEmergency','labelSize',
+    'consentTitle','photoConsentLabel','medicalConsentLabel','submitBtn',
+    'successWelcome','linkLabel','qrHint','copyBtn','linkHint','shareBtn','doneBtn'];
+  textIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && t[id] !== undefined) el.textContent = t[id];
+  });
+
+  // Quiz next button
+  document.getElementById('quizNextBtn').textContent = t.quizBtn;
+
+  // Placeholders
+  document.getElementById('nameEn').placeholder = t.namePlaceholder;
+  document.getElementById('nameZh').placeholder = t.nameZhPlaceholder;
+  document.getElementById('city').placeholder = t.cityPlaceholder;
+  document.getElementById('wechat').placeholder = t.wechatPlaceholder;
+  document.getElementById('injuries').placeholder = t.injuriesPlaceholder;
+  document.getElementById('goals').placeholder = t.goalsPlaceholder;
+  document.getElementById('emergency').placeholder = t.emergencyPlaceholder;
+
+  // Re-render quiz in new language (reset if not yet answered)
   if (currentQuiz) {
-    document.getElementById('quizQText').textContent = currentQuiz.question[lang];
-    // Re-render ALL options and reset answer state
+    document.getElementById('quizQText').textContent = currentQuiz.q[lang];
     const container = document.getElementById('quizOpts');
-    if (container) {
-      container.innerHTML = currentQuiz.options[lang].map((opt, idx) =>
-        `<button class="quiz-opt" onclick="answerQuiz(${idx})" id="qo${idx}">${opt}</button>`
+    if (!quizAnswered) {
+      container.innerHTML = currentQuiz.opts[lang].map((opt, i) =>
+        `<button class="quiz-opt" onclick="answerQuiz(${i})">${opt}</button>`
       ).join('');
+      document.getElementById('quizResult').classList.add('hidden');
+      document.getElementById('quizNextBtn').disabled = true;
+    } else {
+      // Re-render with answer state preserved
+      container.innerHTML = currentQuiz.opts[lang].map((opt, i) => {
+        let cls = 'quiz-opt disabled';
+        if (i === currentQuiz.answer) cls += ' correct';
+        else if (!quizCorrect && i === currentQuiz._selectedIdx) cls += ' wrong';
+        return `<button class="${cls}">${opt}</button>`;
+      }).join('');
     }
-    document.getElementById('quizResult').classList.add('hidden');
-    quizAnswered = false;
-    document.getElementById('quizNextBtn').disabled = true;
   }
 
-  // Update placeholder
-  document.getElementById('name').placeholder = lang === 'zh' ? '您的姓名' : lang === 'en' ? 'Your name' : lang === 'th' ? 'ชื่อของคุณ' : 'Ваше имя';
-  document.getElementById('wechat').placeholder = lang === 'zh' ? '微信号' : lang === 'en' ? 'WeChat ID' : lang === 'th' ? 'ไอดี WeChat' : 'ID WeChat';
-  document.getElementById('injuries').placeholder = lang === 'zh' ? '任何伤病或身体限制...' : lang === 'en' ? 'Any injuries or physical limitations...' : lang === 'th' ? 'การบาดเจ็บหรือข้อจำกัดทางกาย...' : 'Любые травмы или ограничения...';
-  document.getElementById('goals').placeholder = lang === 'zh' ? '您想达成什么？' : lang === 'en' ? 'What do you want to achieve?' : lang === 'th' ? 'คุณต้องการบรรลุอะไร?' : 'Чего хотите достичь?';
-  document.getElementById('emergency').placeholder = lang === 'zh' ? '姓名 + 电话' : lang === 'en' ? 'Name + Phone' : lang === 'th' ? 'ชื่อ + โทร' : 'Имя + Телефон';
+  // Quote
+  const pool = QUOTES[lang] || QUOTES.zh;
+  const q = pool[new Date().getDate() % pool.length];
+  document.getElementById('quoteText').textContent = q.text;
+  document.getElementById('quoteSource').textContent = q.source;
 }
 
-function renderQuiz() {
-  const lang = currentLang;
-  document.getElementById('quizQText').textContent = currentQuiz.question[lang];
-  renderQuizOpts(lang);
-}
-
-function renderQuizOpts(lang) {
-  const container = document.getElementById('quizOpts');
-  container.innerHTML = currentQuiz.options[lang].map((opt, idx) =>
-    `<button class="quiz-opt" onclick="answerQuiz(${idx})" id="qo${idx}">${opt}</button>`
-  ).join('');
-  document.getElementById('quizResult').classList.add('hidden');
-  quizAnswered = false;
-  document.getElementById('quizNextBtn').disabled = true;
-}
-
+// ─── Quiz ────────────────────────────────────────────────────────
 function answerQuiz(idx) {
   if (quizAnswered) return;
   quizAnswered = true;
   quizCorrect = idx === currentQuiz.answer;
+  currentQuiz._selectedIdx = idx;
 
   const opts = document.querySelectorAll('.quiz-opt');
   opts.forEach((o, i) => {
     o.classList.add('disabled');
     if (i === currentQuiz.answer) o.classList.add('correct');
-    if (i === idx && idx !== currentQuiz.answer) o.classList.add('wrong');
+    if (i === idx && !quizCorrect) o.classList.add('wrong');
   });
 
   const t = T[currentLang];
   const resultEl = document.getElementById('quizResult');
-  resultEl.classList.remove('hidden');
   resultEl.className = 'quiz-result ' + (quizCorrect ? 'correct' : 'wrong');
   resultEl.textContent = quizCorrect ? t.correctText : t.wrongText;
-
+  resultEl.classList.remove('hidden');
   document.getElementById('quizNextBtn').disabled = false;
 }
 
@@ -528,51 +708,47 @@ function proceedPastQuiz() {
   document.getElementById('orientationForm').scrollIntoView({ behavior: 'smooth' });
 }
 
-function toggleOption(el, type) {
+// ─── Consent toggle ──────────────────────────────────────────────
+function toggleConsent(el, type) {
   el.classList.toggle('selected');
-  const val = el.classList.contains('selected') ? 'yes' : 'no';
-  document.getElementById(type + 'Consent').value = val;
+  document.getElementById(type + 'Consent').value = el.classList.contains('selected') ? 'yes' : 'no';
 }
 
-async function copyLink() {
-  if (!journalLinkData) return;
-  try {
-    await navigator.clipboard.writeText(journalLinkData);
-    const btn = document.querySelector('.copy-btn');
-    const orig = btn.textContent;
-    btn.textContent = '✅ Copied!';
-    setTimeout(() => btn.textContent = orig, 2000);
-  } catch(e) {
-    // Fallback
-    const el = document.getElementById('journalLink');
-    const range = document.createRange();
-    range.selectNode(el);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-    document.execCommand('copy');
-  }
+// ─── Difficulty ──────────────────────────────────────────────────
+function getDifficulties() {
+  return Array.from(document.querySelectorAll('#difficultyOptions .option.selected')).map(e => e.dataset.val);
 }
 
+// ─── Submit ──────────────────────────────────────────────────────
 async function submitForm(e) {
   e.preventDefault();
-
+  const t = T[currentLang];
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.textContent = '...';
+  btn.textContent = t.submitLoading;
+
+  const nameEn = document.getElementById('nameEn').value.trim();
+  const nameZh = document.getElementById('nameZh').value.trim();
+  const displayName = nameEn || nameZh;
 
   const data = {
-    name: document.getElementById('name').value,
-    wechat: document.getElementById('wechat').value,
-    experience: document.getElementById('experience').value,
-    injuries: document.getElementById('injuries').value,
-    goals: document.getElementById('goals').value,
-    emergency: document.getElementById('emergency').value,
+    name: displayName,
+    englishName: nameEn,
+    chineseName: nameZh,
+    city: document.getElementById('city').value.trim(),
+    wechat: document.getElementById('wechat').value.trim(),
+    experience: document.getElementById('yearsPractice').value,
+    lastAsana: document.getElementById('lastAsana').value.trim(),
+    difficulties: getDifficulties(),
+    injuries: document.getElementById('injuries').value.trim(),
+    goals: document.getElementById('goals').value.trim(),
+    emergency: document.getElementById('emergency').value.trim(),
     size: document.getElementById('size').value,
     photoConsent: document.getElementById('photoConsent').value,
     medicalConsent: document.getElementById('medicalConsent').value,
     language: currentLang,
     workshop: 'Guangzhou WS Apr 2026',
-    gameResults: [{ quiz: currentQuiz.question.en, correct: quizCorrect }]
+    gameResults: [{ quiz: currentQuiz.q.en, correct: quizCorrect }]
   };
 
   try {
@@ -585,11 +761,12 @@ async function submitForm(e) {
 
     if (result.success) {
       journalLinkData = result.journalLink;
-      const t = T[currentLang];
-      document.getElementById('successName').textContent = t.successName + (data.name ? ', ' + data.name + '!' : '!');
-      document.getElementById('journalLink').textContent = result.journalLink;
+      document.getElementById('successName').textContent = displayName;
+      document.getElementById('successWelcome').textContent = T[currentLang].successWelcome;
+      document.getElementById('journalLinkDisplay').textContent = result.journalLink;
       document.getElementById('successOverlay').classList.remove('hidden');
-      // Fetch and display QR code
+
+      // Fetch QR code
       try {
         const qrRes = await fetch(`${API_BASE}/journal/qr/${result.studentId}`);
         const qrData = await qrRes.json();
@@ -597,16 +774,45 @@ async function submitForm(e) {
           document.getElementById('qrCodeImg').src = qrData.qrDataUrl;
           document.getElementById('qrCodeBox').style.display = 'block';
         }
-      } catch(e) { /* QR is bonus — silently skip if it fails */ }
+      } catch(e) { /* QR is optional */ }
     } else {
-      throw new Error('Failed');
+      throw new Error(result.error || 'Failed');
     }
   } catch(e) {
-    const t = T[currentLang];
-    alert((currentLang === 'zh' ? '提交失败，请重试。' : currentLang === 'en' ? 'Submission failed, please retry.' : 'Ошибка отправки. Попробуйте снова.'));
+    alert(T[currentLang].errorMsg);
     btn.disabled = false;
-    btn.textContent = t.submit;
+    btn.textContent = T[currentLang].submitBtn;
   }
+}
+
+// ─── Copy link ───────────────────────────────────────────────────
+async function copyLink() {
+  if (!journalLinkData) return;
+  try {
+    await navigator.clipboard.writeText(journalLinkData);
+  } catch(e) {
+    const ta = document.createElement('textarea');
+    ta.value = journalLinkData; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  const btn = document.getElementById('copyBtn');
+  const orig = btn.textContent;
+  btn.textContent = '✅ Copied!';
+  setTimeout(() => btn.textContent = orig, 2000);
+}
+
+// ─── WeChat share ────────────────────────────────────────────────
+async function shareToWeChat() {
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: 'AYBKK Guangzhou WS 2026', url: journalLinkData || window.location.href });
+    } else {
+      await copyLink();
+      const btn = document.getElementById('shareBtn');
+      btn.textContent = '✓ Link copied — paste in WeChat';
+      setTimeout(() => btn.textContent = T[currentLang].shareBtn, 3000);
+    }
+  } catch(e) {}
 }
 
 init();
