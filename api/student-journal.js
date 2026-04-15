@@ -310,7 +310,7 @@ router.get('/students', async (req, res) => {
       classType: r.get('classType'),
       createdAt: r.get('createdAt'),
       lastDate: r.get('lastDate'),
-      assessmentCount: r.get('assessmentCount').toInt()
+      assessmentCount: Number(r.get('assessmentCount') || 0)
     }));
 
     res.json({ students, count: students.length });

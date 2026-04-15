@@ -153,19 +153,28 @@ let currentFilter = 'all';
 let reportCache = {};
 
 async function init() {
-  // Load GZ students from API
-  let gzStudents = [];
+  // Load all active students from API, indexed by ID
+  const apiById = {};
   try {
-    const r = await fetch(`${API}/journal/students?isChinese=true`);
+    const r = await fetch(`${API}/journal/students`);
     const d = await r.json();
-    gzStudents = (d.students || []).filter(s => s.id && s.name && s.classType === 'chinese-workshop');
+    (d.students || []).filter(s => s.id && s.name).forEach(s => { apiById[s.id] = s; });
   } catch(e) {}
 
-  // Merge: Huizhou from hardcoded list, GZ from API
-  const huizhouStudents = HUIZHOU_IDS.map(h => ({ id: h.id, name: h.name, workshop: 'huizhou', classType: 'chinese' }));
-  const gzMapped = gzStudents.map(s => ({ id: s.id, name: s.name, workshop: 'guangzhou', classType: 'chinese-workshop', assessmentCount: s.assessmentCount || 0 }));
+  const huizhouIdSet = new Set(HUIZHOU_IDS.map(h => h.id));
 
-  allStudents = [...gzMapped, ...huizhouStudents];
+  // Huizhou: hardcoded list, look up assessmentCount from API by ID
+  const huizhouStudents = HUIZHOU_IDS.map(h => ({
+    id: h.id, name: h.name, workshop: 'huizhou', classType: 'chinese',
+    assessmentCount: apiById[h.id] ? apiById[h.id].assessmentCount || 0 : 0
+  }));
+
+  // GZ: from API, classType 'chinese-workshop', not already in Huizhou list
+  const gzStudents = Object.values(apiById)
+    .filter(s => s.classType === 'chinese-workshop' && !huizhouIdSet.has(s.id))
+    .map(s => ({ id: s.id, name: s.name, workshop: 'guangzhou', classType: 'chinese-workshop', assessmentCount: s.assessmentCount || 0 }));
+
+  allStudents = [...gzStudents, ...huizhouStudents];
   render();
 }
 
