@@ -312,10 +312,19 @@ function goToQ2() {
   renderQuizQ2();
 }
 function proceedPastQuiz() {
-  document.getElementById('quizSection').style.display='none';
-  const form=document.getElementById('orientationForm');
-  form.style.display='block';
-  form.scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('#quizOpts1 .quiz-opt').forEach((o, i) => {
+    if (i === quiz1.answer) o.classList.add('correct');
+  });
+  document.querySelectorAll('#quizOpts2 .quiz-opt').forEach((o, i) => {
+    if (i === quiz2.answer) o.classList.add('correct');
+  });
+  document.getElementById('quizNextBtn2').disabled = true;
+  setTimeout(() => {
+    document.getElementById('quizSection').style.display='none';
+    const form=document.getElementById('orientationForm');
+    form.style.display='block';
+    form.scrollIntoView({behavior:'smooth'});
+  }, 1500);
 }
 
 function init() {
