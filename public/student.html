@@ -1607,14 +1607,33 @@ function initPhotoStep() {
       if (!file) return;
       const reader = new FileReader();
       reader.onload = function(ev) {
-        uploadedPhotoDataURL = ev.target.result;
-        localStorage.setItem('photo_' + studentId, uploadedPhotoDataURL);
-        preview.src = uploadedPhotoDataURL;
-        placeholder.style.display = 'none';
-        previewContainer.style.display = 'block';
-        uploadBtn.textContent = 'Change Photo';
-        // Auto-advance to quiz after photo selected
-        setTimeout(() => goNext(7), 600);
+        // Resize + compress before storing — phone photos can be 5–10MB
+        // which silently blows the ~5MB localStorage quota
+        const img = new Image();
+        img.onload = function() {
+          const MAX = 800;
+          const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale);
+          const h = Math.round(img.height * scale);
+          const cvs = document.createElement('canvas');
+          cvs.width = w; cvs.height = h;
+          cvs.getContext('2d').drawImage(img, 0, 0, w, h);
+          const compressed = cvs.toDataURL('image/jpeg', 0.82);
+          uploadedPhotoDataURL = compressed;
+          try {
+            localStorage.setItem('photo_' + studentId, compressed);
+          } catch(err) {
+            // Quota exceeded — keep in memory only, still works for this session
+            console.warn('Photo not saved to localStorage (quota):', err);
+          }
+          preview.src = compressed;
+          placeholder.style.display = 'none';
+          previewContainer.style.display = 'block';
+          uploadBtn.textContent = 'Change Photo';
+          // Auto-advance to quiz after photo selected
+          setTimeout(() => goNext(7), 600);
+        };
+        img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
     });
