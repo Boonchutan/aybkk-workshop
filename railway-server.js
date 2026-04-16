@@ -176,27 +176,36 @@ app.get('/api/journal/profiles', (req, res) => {
 });
 
 // Simple file-based orientation storage (works without Neo4j)
-app.post('/api/orientation', (req, res) => {
+function saveOrientation(req, res) {
   try {
+    const { name, language, wechat } = req.body;
+    const studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     const data = {
       ...req.body,
+      id: studentId,
       submittedAt: new Date().toISOString()
     };
-    
+
     const file = path.join(DATA_DIR, 'orientations.json');
     let orientations = [];
     try {
       orientations = JSON.parse(fs.readFileSync(file, 'utf8'));
     } catch {}
-    
+
     orientations.push(data);
     fs.writeFileSync(file, JSON.stringify(orientations, null, 2));
-    
-    res.json({ ok: true, id: orientations.length });
+
+    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name || '') + '&lang=' + (language || 'zh') + '&location=guangzhou';
+
+    res.json({ success: true, studentId, journalLink, name: name || '' });
   } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
-});
+}
+
+app.post('/api/orientation', saveOrientation);
+app.post('/api/orientations', saveOrientation);
 
 // Get all orientations (for later import to Neo4j)
 app.get('/api/orientations', (req, res) => {
