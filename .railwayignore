@@ -1,4 +1,5 @@
 node_modules/
+.claude/
 uploads/
 public/photos/
 public/web/

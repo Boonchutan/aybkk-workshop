@@ -292,6 +292,16 @@
       <div class="link-hint" id="linkHint"></div>
     </div>
 
+    <!-- Selfie upload for share card -->
+    <div style="margin-bottom:12px;">
+      <input type="file" id="selfieInput" accept="image/*" capture="user" style="display:none" onchange="loadSelfie(this)">
+      <button class="done-btn" onclick="document.getElementById('selfieInput').click()" id="selfieBtn" style="border-color:#c49564;color:#8b4513;">📸 Add selfie to share card</button>
+      <div id="selfiePreview" style="display:none;margin-top:8px;text-align:center;">
+        <img id="selfieImg" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #c49564;" />
+        <div style="font-size:11px;color:#8b7d6b;margin-top:4px;" id="selfieReady">✓ Photo ready for share card</div>
+      </div>
+    </div>
+
     <button class="share-btn" onclick="shareToWeChat()" id="shareBtn"></button>
     <button class="done-btn" onclick="window.location.reload()" id="doneBtn"></button>
   </div>
@@ -343,9 +353,9 @@ const T = {
     medicalConsentLabel: '✅ 同意医疗免责声明',
     submitBtn: '提交报名表',
     successWelcome: '欢迎加入 AYBKK 广州工作坊！',
-    linkLabel: '🧘 你的练习记录链接 — 保存这个！',
+    linkLabel: '🔒 你的专属练习记录链接 — 请勿分享！仅供自己使用',
     qrHint: '扫码保存 / 长按图片保存',
-    copyBtn: '📋 复制链接',
+    copyBtn: '📋 复制链接（保存到自己）',
     linkHint: '每次练习后打开这个链接记录你的练习',
     shareBtn: '分享到微信 📱',
     doneBtn: '完成',
@@ -402,9 +412,9 @@ const T = {
     medicalConsentLabel: '✅ Medical disclaimer',
     submitBtn: 'Submit',
     successWelcome: 'Welcome to AYBKK Guangzhou Workshop!',
-    linkLabel: '🧘 Your Practice Journal Link — Save This!',
+    linkLabel: '🔒 Your Private Practice Link — Do NOT share! Keep it for yourself only',
     qrHint: 'Scan to save / Long-press to save image',
-    copyBtn: '📋 Copy Link',
+    copyBtn: '📋 Copy My Private Link',
     linkHint: 'Open this link after each practice to log your session',
     shareBtn: 'Share to WeChat 📱',
     doneBtn: 'Done',
@@ -693,6 +703,7 @@ let quizCorrect = false;
 let quiz2Answered = false;
 let quiz2Correct = false;
 let journalLinkData = null;
+let selfieDataUrl = null; // student selfie for share card
 
 // ─── Init ────────────────────────────────────────────────────────
 function init() {
@@ -918,6 +929,8 @@ async function submitForm(e) {
       document.getElementById('successWelcome').textContent = T[currentLang].successWelcome;
       document.getElementById('journalLinkDisplay').textContent = result.journalLink;
       document.getElementById('successOverlay').classList.remove('hidden');
+      const selfieLabels = { zh: '📸 添加自拍到分享卡', en: '📸 Add selfie to share card', th: '📸 เพิ่มเซลฟี่', ru: '📸 Добавить селфи' };
+      document.getElementById('selfieBtn').textContent = selfieLabels[currentLang] || '📸 Add selfie to share card';
 
       // Fetch QR code
       try {
@@ -954,18 +967,150 @@ async function copyLink() {
   setTimeout(() => btn.textContent = orig, 2000);
 }
 
-// ─── WeChat share ────────────────────────────────────────────────
+// ─── Selfie loader ───────────────────────────────────────────────
+function loadSelfie(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    selfieDataUrl = e.target.result;
+    document.getElementById('selfieImg').src = selfieDataUrl;
+    document.getElementById('selfiePreview').style.display = 'block';
+    const labels = { zh: '✓ 照片已添加', en: '✓ Photo ready', th: '✓ ใส่รูปแล้ว', ru: '✓ Фото готово' };
+    document.getElementById('selfieReady').textContent = labels[currentLang] || '✓ Photo ready';
+    const btnLabels = { zh: '📸 更换照片', en: '📸 Change photo', th: '📸 เปลี่ยนรูป', ru: '📸 Изменить фото' };
+    document.getElementById('selfieBtn').textContent = btnLabels[currentLang] || '📸 Change photo';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── WeChat share (shares a welcome card IMAGE, not the private journal link) ──
 async function shareToWeChat() {
+  const btn = document.getElementById('shareBtn');
+  const name = document.getElementById('successName').textContent || '';
+  const t = T[currentLang];
+
   try {
-    if (navigator.share) {
-      await navigator.share({ title: 'AYBKK Guangzhou WS 2026', url: journalLinkData || window.location.href });
+    // Build a canvas welcome card
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 640;
+    const ctx = canvas.getContext('2d');
+
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, 640, 640);
+    grad.addColorStop(0, '#8b4513');
+    grad.addColorStop(0.5, '#a0522d');
+    grad.addColorStop(1, '#8b4513');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 640, 640, 28);
+    ctx.fill();
+
+    // Selfie at 70% opacity over background
+    if (selfieDataUrl) {
+      await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          ctx.save();
+          ctx.globalAlpha = 0.70;
+          const scale = Math.max(640 / img.width, 640 / img.height);
+          const sw = img.width * scale, sh = img.height * scale;
+          ctx.drawImage(img, (640 - sw) / 2, (640 - sh) / 2, sw, sh);
+          ctx.restore();
+          // Gradient overlay for readability
+          const overlay = ctx.createLinearGradient(0, 0, 0, 640);
+          overlay.addColorStop(0, 'rgba(139,69,19,0.55)');
+          overlay.addColorStop(0.4, 'rgba(139,69,19,0.30)');
+          overlay.addColorStop(0.7, 'rgba(139,69,19,0.45)');
+          overlay.addColorStop(1, 'rgba(139,69,19,0.65)');
+          ctx.fillStyle = overlay;
+          ctx.beginPath(); ctx.roundRect(0, 0, 640, 640, 28); ctx.fill();
+          resolve();
+        };
+        img.src = selfieDataUrl;
+      });
     } else {
-      await copyLink();
-      const btn = document.getElementById('shareBtn');
-      btn.textContent = '✓ Link copied — paste in WeChat';
-      setTimeout(() => btn.textContent = T[currentLang].shareBtn, 3000);
+      // Subtle inner glow when no photo
+      const glow = ctx.createRadialGradient(320, 200, 0, 320, 200, 380);
+      glow.addColorStop(0, 'rgba(255,248,225,0.12)');
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, 640, 640);
     }
-  } catch(e) {}
+
+    // Workshop label
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '500 22px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('AYBKK GUANGZHOU WORKSHOP 2026', 320, 100);
+
+    // Divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(180, 120); ctx.lineTo(460, 120); ctx.stroke();
+
+    // Welcome line
+    const welcomeText = currentLang === 'zh' ? '欢迎加入' : currentLang === 'th' ? 'ยินดีต้อนรับ' : currentLang === 'ru' ? 'Добро пожаловать' : 'Welcome';
+    ctx.fillStyle = 'rgba(255,248,225,0.8)';
+    ctx.font = '400 30px Georgia, serif';
+    ctx.fillText(welcomeText, 320, 200);
+
+    // Student name
+    ctx.fillStyle = '#fff8e1';
+    ctx.font = 'bold 46px Georgia, serif';
+    ctx.fillText(name, 320, 268);
+
+    // Sutra
+    ctx.fillStyle = 'rgba(255,248,225,0.7)';
+    ctx.font = 'italic 22px Georgia, serif';
+    ctx.fillText('"Atha Yoganushasanam"', 320, 360);
+
+    ctx.fillStyle = 'rgba(255,248,225,0.45)';
+    ctx.font = '18px Georgia, serif';
+    ctx.fillText('Now, the discipline of yoga. — Yoga Sutra 1.1', 320, 398);
+
+    // Divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.beginPath(); ctx.moveTo(180, 460); ctx.lineTo(460, 460); ctx.stroke();
+
+    // Dates
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '500 20px -apple-system, sans-serif';
+    ctx.fillText('April 20–24, 2026', 320, 510);
+
+    // Credit
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '16px -apple-system, sans-serif';
+    ctx.fillText('by Boonchu Tanti & Jamsai Tanti', 320, 590);
+
+    canvas.toBlob(async (blob) => {
+      if (navigator.share && navigator.canShare) {
+        const file = new File([blob], 'aybkk-guangzhou-2026.png', { type: 'image/png' });
+        const shareData = { title: 'AYBKK Guangzhou Workshop 2026', text: `${name} — ${welcomeText}`, files: [file] };
+        if (navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          return;
+        }
+      }
+      // Fallback: download image
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'aybkk-guangzhou-2026.png'; a.click();
+      URL.revokeObjectURL(url);
+      const saved = currentLang === 'zh' ? '图片已保存！打开微信分享。' : currentLang === 'th' ? 'บันทึกภาพแล้ว! เปิด WeChat เพื่อแชร์' : currentLang === 'ru' ? 'Изображение сохранено!' : 'Image saved! Open WeChat to share.';
+      alert(saved);
+    }, 'image/png');
+  } catch(err) {
+    // Last fallback: share just the workshop page (NOT the private journal link)
+    const workshopUrl = window.location.origin + window.location.pathname;
+    if (navigator.share) {
+      await navigator.share({ title: 'AYBKK Guangzhou Workshop 2026', url: workshopUrl }).catch(() => {});
+    } else {
+      btn.textContent = '✗ Share failed';
+      setTimeout(() => btn.textContent = t.shareBtn, 2000);
+    }
+  }
 }
 
 init();
