@@ -64,20 +64,31 @@ async function loadStudents() {
       return;
     }
     
+    // Sort newest first
+    students.sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
+
     let html = '';
     students.forEach((s, i) => {
       const time = s.submittedAt ? new Date(s.submittedAt).toLocaleString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
       const diffs = (s.difficulties || []).map(d => `<span class="tag">${diffLabels[d] || d}</span>`).join('');
-      
+      const injuries = s.injuries || s.injury || '';
+      const goals = s.goals || '';
+      const experience = s.experience || s.yearsPractice || '';
+      const wechat = s.wechat || '';
+      const journalLink = s.journalLink || '';
+
       html += `<div class="card">
-        <div class="name">${i+1}. ${s.englishName || 'Unknown'}</div>
+        <div class="name">${i+1}. ${s.englishName || s.name || 'Unknown'}</div>
         ${s.chineseName ? `<div class="chinese">${s.chineseName}</div>` : ''}
         <div class="row"><span class="label">City</span><span class="value">${s.city || '—'}</span></div>
-        <div class="row"><span class="label">Years</span><span class="value">${s.yearsPractice || '—'}</span></div>
+        ${wechat ? `<div class="row"><span class="label">WeChat</span><span class="value">${wechat}</span></div>` : ''}
+        <div class="row"><span class="label">Experience</span><span class="value">${experience || '—'}</span></div>
         <div class="row"><span class="label">Last Asana</span><span class="value">${s.lastAsana || '—'}</span></div>
         ${diffs ? `<div class="tags">${diffs}</div>` : ''}
-        ${s.injury ? `<div class="injury">⚠️ ${s.injury}</div>` : ''}
-        <div class="row" style="margin-top:6px;"><span class="label">Submitted</span><span class="value">${time}</span></div>
+        ${injuries ? `<div class="injury">⚠️ ${injuries}</div>` : ''}
+        ${goals ? `<div class="injury" style="background:#f0f7ee;border-color:#66bb6a;">🎯 ${goals}</div>` : ''}
+        ${journalLink ? `<div class="row" style="margin-top:6px;"><span class="label">Journal</span><a href="${journalLink}" target="_blank" style="font-size:11px;color:#8b4513;word-break:break-all;">Open ↗</a></div>` : ''}
+        <div class="row" style="margin-top:4px;"><span class="label">Submitted</span><span class="value">${time}</span></div>
       </div>`;
     });
     
