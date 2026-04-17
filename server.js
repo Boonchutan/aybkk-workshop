@@ -38,12 +38,18 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 }
 
 // Neo4j Connection
+// Local dev: bolt://localhost:7687
+// Production: neo4j+s://xxxxxxxx.databases.neo4j.io (AuraDB)
 const driver = neo4j.driver(
   process.env.NEO4J_URI || 'bolt://localhost:7687',
   neo4j.auth.basic(
-    process.env.NEO4J_USER || 'neo4j',
-    'aybkk_neo4j_2026'
-  )
+    process.env.NEO4J_USER || '69645294',
+    process.env.NEO4J_PASSWORD || 'aybkk_neo4j_2026'
+  ),
+  {
+    // AuraDB requires encrypted connection
+    encrypted: (process.env.NEO4J_URI || '').startsWith('neo4j+s') ? 'ENCRYPTION_ON' : 'ENCRYPTION_OFF',
+  }
 );
 
 // Test Neo4j connection
@@ -141,9 +147,24 @@ app.get('/line/webhook', (req, res) => {
   res.send('ok');
 });
 
-// Attach Neo4j driver to all requests
+// PostgreSQL connection (shared booking system DB)
+let pgPool = null;
+if (process.env.DATABASE_URL) {
+  const { Pool } = require('pg');
+  const isInternal = process.env.DATABASE_URL.includes('railway.internal');
+  pgPool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: isInternal ? false : { rejectUnauthorized: false }
+  });
+  pgPool.query('SELECT 1').then(() => console.log('✓ PostgreSQL connected')).catch(e => console.error('✗ PostgreSQL failed:', e.message));
+} else {
+  console.log('⚠ No DATABASE_URL — PostgreSQL features disabled');
+}
+
+// Attach Neo4j driver + pg pool to all requests
 app.use((req, res, next) => {
   req.driver = driver;
+  req.pg = pgPool;
   next();
 });
 
