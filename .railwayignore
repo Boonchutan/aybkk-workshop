@@ -3,6 +3,7 @@ node_modules/
 uploads/
 public/photos/
 public/web/
+public/qr-cards/
 data/
 db/
 .git/
