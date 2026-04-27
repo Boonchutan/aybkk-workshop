@@ -11,107 +11,64 @@ const { v4: uuidv4 } = require('uuid');
 router.post('/assessment', async (req, res) => {
   const session = req.driver.session();
   try {
-    const { 
-      studentId, 
-      teacherName, 
-      strengths, 
-      weaknesses, 
-      energy, 
-      behavior, 
-      practiceConsistency,
-      lastAsana, 
-      lastAsanaPass, 
+    const {
+      studentId,
+      studentName,
+      teacherName,
+      strengths,
+      weaknesses,
+      energy,
+      behavior,
+      lastAsana,
+      lastAsanaPass,
       toFix,
       notes
     } = req.body;
 
-    // Validate required fields
-    if (!studentId) {
-      return res.status(400).json({ error: 'studentId is required' });
-    }
-    if (!teacherName) {
-      return res.status(400).json({ error: 'teacherName is required' });
-    }
+    if (!studentId) return res.status(400).json({ error: 'studentId is required' });
+    if (!teacherName) return res.status(400).json({ error: 'teacherName is required' });
 
     const assessmentId = uuidv4();
     const now = new Date().toISOString();
 
-    // Check if student exists
-    const studentResult = await session.run(
-      'MATCH (s:Student) WHERE s.studentId = $studentId OR s.id = $studentId RETURN s',
-      { studentId }
-    );
-
-    if (studentResult.records.length === 0) {
-      return res.status(404).json({ error: 'Student not found' });
-    }
-
-    const studentNode = studentResult.records[0].get('s');
-    const actualStudentId = studentNode.properties.studentId || studentNode.properties.id;
-
-    // Create Assessment node
-    await session.run(`
-      MATCH (s:Student)
-      WHERE s.studentId = $studentId OR s.id = $studentId
+    // MERGE student — creates Neo4j node if first time assessing a booking-system student
+    const mergeResult = await session.run(`
+      MERGE (s:Student {pgId: $pgId})
+      ON CREATE SET s.id = $pgId, s.name = $name, s.pgId = $pgId, s.createdAt = datetime($now)
+      ON MATCH SET s.name = COALESCE(s.name, $name)
       CREATE (a:Assessment {
         id: $id,
-        teacher_id: $teacherId,
         teacher_name: $teacherName,
         energy_level: $energy,
         practice_behavior: $behavior,
-        practice_consistency: $practiceConsistency,
         last_asana: $lastAsana,
         last_asana_pass: $lastAsanaPass,
         to_fix_now: $toFix,
         notes: $notes,
-        created_at: datetime($createdAt)
+        strengths: $strengths,
+        weaknesses: $weaknesses,
+        created_at: datetime($now)
       })
       CREATE (a)-[:FOR_STUDENT]->(s)
-      RETURN a.id AS id
+      RETURN s.name AS resolvedName
     `, {
+      pgId: studentId.toString(),
+      name: studentName || '',
       id: assessmentId,
-      studentId: actualStudentId,
-      teacherId: teacherName, // Use teacherName as ID for web
       teacherName,
-      energy: energy || null,
-      behavior: behavior || null,
-      practiceConsistency: practiceConsistency || null,
+      energy: energy || '',
+      behavior: behavior || '',
       lastAsana: lastAsana || '',
-      lastAsanaPass: lastAsanaPass,
+      lastAsanaPass: lastAsanaPass || '',
       toFix: toFix || '',
       notes: notes || '',
-      createdAt: now
+      strengths: strengths || [],
+      weaknesses: weaknesses || [],
+      now
     });
 
-    // Update student tags (strengths/weaknesses)
-    if (strengths && Array.isArray(strengths) && strengths.length > 0) {
-      for (const tagName of strengths) {
-        await session.run(`
-          MATCH (s:Student), (t:Tag)
-          WHERE s.studentId = $studentId AND t.name = $tagName
-          MERGE (s)-[r:HAS_STRENGTH]->(t)
-          SET r.assigned_date = date()
-        `, { studentId: actualStudentId, tagName });
-      }
-    }
-
-    if (weaknesses && Array.isArray(weaknesses) && weaknesses.length > 0) {
-      for (const tagName of weaknesses) {
-        await session.run(`
-          MATCH (s:Student), (t:Tag)
-          WHERE s.studentId = $studentId AND t.name = $tagName
-          MERGE (s)-[r:HAS_WEAKNESS]->(t)
-          SET r.assigned_date = date()
-        `, { studentId: actualStudentId, tagName });
-      }
-    }
-
-    res.json({ 
-      success: true, 
-      assessmentId,
-      studentName: studentNode.properties.name,
-      createdAt: now
-    });
+    const resolvedName = mergeResult.records[0]?.get('resolvedName') || studentName || '';
+    res.json({ success: true, assessmentId, studentName: resolvedName, createdAt: now });
 
   } catch (error) {
     console.error('Teacher assessment error:', error);
@@ -129,15 +86,15 @@ router.get('/assessment/:studentId', async (req, res) => {
     
     const result = await session.run(`
       MATCH (a:Assessment)-[:FOR_STUDENT]->(s:Student)
-      WHERE s.studentId = $studentId OR s.id = $studentId
+      WHERE s.studentId = $studentId OR s.id = $studentId OR s.pgId = $studentId
       RETURN a.id AS id, a.teacher_name AS teacherName,
              a.energy_level AS energy, a.practice_behavior AS behavior,
-             a.practice_consistency AS practiceConsistency,
              a.last_asana AS lastAsana, a.last_asana_pass AS lastAsanaPass,
              a.to_fix_now AS toFix, a.notes AS notes,
+             a.strengths AS strengths, a.weaknesses AS weaknesses,
              a.created_at AS createdAt
       ORDER BY a.created_at DESC
-      LIMIT 20
+      LIMIT 100
     `, { studentId });
 
     const assessments = result.records.map(r => ({
@@ -145,11 +102,12 @@ router.get('/assessment/:studentId', async (req, res) => {
       teacherName: r.get('teacherName'),
       energy: r.get('energy'),
       behavior: r.get('behavior'),
-      practiceConsistency: r.get('practiceConsistency'),
       lastAsana: r.get('lastAsana'),
       lastAsanaPass: r.get('lastAsanaPass'),
       toFix: r.get('toFix'),
       notes: r.get('notes'),
+      strengths: r.get('strengths') || [],
+      weaknesses: r.get('weaknesses') || [],
       createdAt: r.get('createdAt')
     }));
 

@@ -8,7 +8,9 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 
-const TUNNEL_URL = process.env.TUNNEL_URL || 'https://607ab25360db2889-171-7-60-252.serveousercontent.com';
+const TUNNEL_URL = process.env.TUNNEL_URL || process.env.RAILWAY_PUBLIC_DOMAIN
+  ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+  : 'https://aybkk-ashtanga.up.railway.app';
 
 // Debug: test route
 router.get('/_test', (req, res) => {
@@ -53,10 +55,36 @@ router.post('/checkin', async (req, res) => {
       }
     }
 
-    // If still no student, return error with flag to create profile
+    // If still no student but we have an ID + name from the URL (existing Reserv student
+    // opening their journal for the first time, or a workshop student), auto-create the
+    // Neo4j node so they're not bounced to registration.
+    if (!student && studentId && studentName) {
+      const created = await session.run(`
+        MERGE (s:Student {id: $id})
+        ON CREATE SET
+          s.name = $name,
+          s.location = $location,
+          s.language = $language,
+          s.classType = $classType,
+          s.isActive = true,
+          s.createdAt = datetime($now),
+          s.autoCreatedFromCheckin = true
+        RETURN s
+      `, {
+        id: studentId,
+        name: studentName,
+        location: location || 'bangkok',
+        language: req.body.language || (location === 'bangkok' ? 'th' : 'en'),
+        classType: location === 'bangkok' ? 'shala-regular' : (location || 'unknown'),
+        now: new Date().toISOString()
+      });
+      student = created.records[0].get('s');
+    }
+
+    // If still no student (truly anonymous fresh user — no id, no name), prompt registration
     if (!student) {
-      return res.status(404).json({ 
-        error: 'Student not found', 
+      return res.status(404).json({
+        error: 'Student not found',
         needsProfile: true,
         message: 'Please create your profile first by filling in your details below.'
       });
@@ -66,7 +94,10 @@ router.post('/checkin', async (req, res) => {
     const checkinId = uuidv4();
     const now = new Date().toISOString();
 
-    // Create self-assessment node linked to student
+    // Create self-assessment node linked to student. We snapshot the student's
+    // CURRENT photoUrl onto this assessment so that even if they skip the photo
+    // step, this entry has a pinned versioned URL — and a *future* photo upload
+    // for a different entry won't retroactively change this one.
     await session.run(`
       MATCH (s:Student {id: $studentId})
       CREATE (sa:SelfAssessment {
@@ -81,6 +112,7 @@ router.post('/checkin', async (req, res) => {
         sessionDate: $sessionDate,
         platform: $platform,
         location: $location,
+        photoUrl: s.photoUrl,
         checkedInAt: datetime($checkedInAt)
       })
       CREATE (s)-[:HAS_SELF_ASSESSMENT]->(sa)
@@ -127,6 +159,12 @@ router.post('/profile', async (req, res) => {
 
     const studentId = uuidv4();
     const now = new Date().toISOString();
+    const lang = language || 'zh';
+    const loc = location || 'unknown';
+    const journalLink = `${TUNNEL_URL}/student.html?id=${studentId}`
+      + `&name=${encodeURIComponent(name)}`
+      + `&lang=${lang}`
+      + `&location=${loc}`;
 
     // Check if student with same name exists
     const existing = await session.run(
@@ -135,9 +173,11 @@ router.post('/profile', async (req, res) => {
     );
 
     if (existing.records.length > 0) {
+      const props = existing.records[0].get('s').properties;
       return res.status(409).json({
         error: 'Student with this name already exists',
-        studentId: existing.records[0].get('s').properties.id,
+        studentId: props.id,
+        journalLink: props.journalLink || null,
         name
       });
     }
@@ -156,6 +196,7 @@ router.post('/profile', async (req, res) => {
         language: $language,
         location: $location,
         platform: $platform,
+        journalLink: $journalLink,
         createdAt: datetime($createdAt),
         isActive: true
       })
@@ -169,9 +210,10 @@ router.post('/profile', async (req, res) => {
       email: email || null,
       isChineseStudent: isChineseStudent || false,
       classType: classType || 'regular',
-      language: language || 'zh',
-      location: location || 'unknown',
+      language: lang,
+      location: loc,
       platform: platform || 'web',
+      journalLink,
       createdAt: now
     });
 
@@ -183,10 +225,11 @@ router.post('/profile', async (req, res) => {
       color: { dark: '#000000', light: '#FFFFFF' }
     });
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       studentId,
       name,
+      journalLink,
       qrUrl,
       qrDataUrl
     });
@@ -217,6 +260,7 @@ router.get('/student/:id', async (req, res) => {
              lastAsana: coalesce(pl.lastAsana, pl.lastAsanaNote, ''),
              sessionDate: pl.sessionDate,
              checkedInAt: toString(pl.checkedInAt),
+             photoUrl: pl.photoUrl,
              source: 'practice_log'
            }) as practiceLogs,
            collect(DISTINCT {
@@ -229,6 +273,7 @@ router.get('/student/:id', async (req, res) => {
              lastAsana: coalesce(sa.lastAsana, sa.lastAsanaNote, ''),
              sessionDate: sa.sessionDate,
              checkedInAt: toString(sa.checkedInAt),
+             photoUrl: sa.photoUrl,
              source: 'self_assessment'
            }) as selfAssessments
       RETURN s, practiceLogs, selfAssessments
@@ -252,6 +297,7 @@ router.get('/student/:id', async (req, res) => {
       name: s.name,
       lineId: s.lineId,
       wechatId: s.wechatId,
+      photoUrl: s.photoUrl || null,
       isChineseStudent: s.isChineseStudent,
       classType: s.classType,
       createdAt: s.createdAt,
@@ -297,6 +343,7 @@ router.get('/students', async (req, res) => {
     query += `
       RETURN s.id as id, s.name as name, s.isChineseStudent as isChineseStudent,
              s.classType as classType, s.createdAt as createdAt,
+             s.photoUrl as photoUrl,
              lastDate, assessmentCount
       ORDER BY s.name ASC
     `;
@@ -308,6 +355,7 @@ router.get('/students', async (req, res) => {
       name: r.get('name'),
       isChineseStudent: r.get('isChineseStudent'),
       classType: r.get('classType'),
+      photoUrl: r.get('photoUrl') || null,
       createdAt: r.get('createdAt'),
       lastDate: r.get('lastDate'),
       assessmentCount: Number(r.get('assessmentCount') || 0)
@@ -468,8 +516,8 @@ router.get('/comments/:studentId', async (req, res) => {
       MATCH (tc:TeacherComment)-[:ABOUT_STUDENT]->(s:Student)
       WHERE s.studentId = $studentId OR s.id = $studentId
       RETURN tc.id AS id, tc.teacher_name AS teacherName,
-             tc.comment AS comment, tc.week_label AS weekLabel,
-             tc.is_read AS isRead, tc.created_at AS createdAt
+             tc.comment AS comment, tc.focus AS focus, tc.week_label AS weekLabel,
+             tc.is_read AS isRead, toString(tc.created_at) AS createdAt
       ORDER BY tc.created_at DESC
       LIMIT 10
     `, { studentId });
@@ -478,13 +526,63 @@ router.get('/comments/:studentId', async (req, res) => {
       id: r.get('id'),
       teacherName: r.get('teacherName'),
       comment: r.get('comment'),
+      focus: r.get('focus'),
       weekLabel: r.get('weekLabel'),
       isRead: r.get('isRead'),
       createdAt: r.get('createdAt')
     }));
 
-    res.json({ comments, count: comments.length });
+    res.json({ comments, count: comments.length, latest: comments[0] || null });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// POST /api/journal/comments - Teacher saves observation + next focus for a student.
+// Always creates a new TeacherComment (history preserved); the latest one is the
+// source of truth for both the teacher form (resume editing) and the student view.
+router.post('/comments', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { studentId, comment, focus, teacherName, weekLabel } = req.body;
+    if (!studentId) return res.status(400).json({ error: 'studentId is required' });
+    if (!comment && !focus) return res.status(400).json({ error: 'comment or focus is required' });
+
+    const commentId = uuidv4();
+    const now = new Date().toISOString();
+
+    const result = await session.run(`
+      MATCH (s:Student {id: $studentId})
+      CREATE (tc:TeacherComment {
+        id: $id,
+        comment: $comment,
+        focus: $focus,
+        teacher_name: $teacherName,
+        week_label: $weekLabel,
+        is_read: false,
+        created_at: datetime($createdAt)
+      })
+      CREATE (tc)-[:ABOUT_STUDENT]->(s)
+      RETURN tc.id AS id
+    `, {
+      studentId,
+      id: commentId,
+      comment: comment || '',
+      focus: focus || '',
+      teacherName: teacherName || 'Boonchu',
+      weekLabel: weekLabel || '',
+      createdAt: now
+    });
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    res.json({ success: true, commentId });
+  } catch (error) {
+    console.error('Save comment error:', error);
     res.status(500).json({ error: error.message });
   } finally {
     await session.close();
@@ -528,7 +626,10 @@ router.get('/history/:days', async (req, res) => {
       ${whereClause}
       WITH s, sa
       WHERE sa.checkedInAt >= datetime() - duration({days: $days})
-      RETURN s.id as studentId, s.name as studentName, s.isChineseStudent as isChineseStudent, sa
+      RETURN s.id as studentId, s.name as studentName,
+             s.isChineseStudent as isChineseStudent,
+             coalesce(sa.location, s.location) as location,
+             sa { .*, checkedInAt: toString(sa.checkedInAt) } as sa
       ORDER BY sa.checkedInAt DESC
     `, { days });
 
@@ -536,7 +637,8 @@ router.get('/history/:days', async (req, res) => {
       studentId: r.get('studentId'),
       studentName: r.get('studentName'),
       isChineseStudent: r.get('isChineseStudent'),
-      assessment: r.get('sa').properties
+      location: r.get('location'),
+      assessment: r.get('sa')
     }));
 
     res.json({ history, count: history.length });
