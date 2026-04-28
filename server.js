@@ -125,22 +125,34 @@ app.get('/api/student/photo/:studentId', async (req, res) => {
 
 // POST /api/upload/student-photo
 // Body: { studentId, imageBase64, assessmentId? }  — base64 data URL from browser.
-// Cloudinary returns a versioned URL each time; saving that exact URL on the
-// SelfAssessment preserves a historical snapshot per entry, even after newer
-// uploads. Older entries that don't have a photoUrl fall back to Student.photoUrl
-// in the renderer.
+//
+// When `assessmentId` is provided, we upload to a UNIQUE public_id per entry
+// (`student_<studentId>_<assessmentId>`) so each entry gets its own immutable
+// Cloudinary asset. Future uploads for OTHER entries can never overwrite this
+// one. The historical photo is preserved forever.
+//
+// When `assessmentId` is omitted (orientation / profile setup), we use the
+// canonical `student_<studentId>` id and `backup: true` so even those uploads
+// keep an asset-version safety net.
 app.post('/api/upload/student-photo', async (req, res) => {
   const { studentId, imageBase64, assessmentId } = req.body;
   if (!studentId || !imageBase64) return res.status(400).json({ error: 'Missing studentId or imageBase64' });
   try {
+    const isPerEntry = !!assessmentId;
+    const publicId = isPerEntry
+      ? `student_${studentId}_${assessmentId}`
+      : `student_${studentId}`;
     const result = await cloudinary.uploader.upload(imageBase64, {
       folder: 'aybkk-students',
-      public_id: 'student_' + studentId,
-      overwrite: true,
+      public_id: publicId,
+      overwrite: !isPerEntry, // per-entry uploads create a fresh asset every time
+      backup: true,            // safety net for the canonical-id flow
       transformation: [{ width: 400, height: 400, crop: 'fill', gravity: 'face', quality: 'auto' }]
     });
     const photoUrl = result.secure_url;
-    // Save URL to Neo4j Student node (current photo) + optionally pin to the entry
+
+    // Always update Student.photoUrl (latest-known face for the dashboard) +
+    // pin to the specific assessment when provided.
     const session = driver.session();
     try {
       await session.run(
