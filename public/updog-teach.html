@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urdhva Mukha Svanasana — AYBKK Teaching</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --espresso: #100C06;
+  --ink:      #1C1812;
+  --amber:    #C8650A;
+  --amber-l:  #F0C49A;
+  --parchment:#F2EDE4;
+  --muted:    #7A6A57;
+  --fd: 'Playfair Display', Georgia, serif;
+  --fb: 'Jost', sans-serif;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--espresso);
+  font-family: var(--fb);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.hdr {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px;
+  background: linear-gradient(to bottom, rgba(16,12,6,0.95) 0%, transparent 100%);
+}
+.hdr-logo {
+  font-family: var(--fd); font-weight: 700;
+  font-size: 1rem; color: var(--parchment); letter-spacing: 0.06em;
+}
+.hdr-logo span {
+  font-family: var(--fb); font-weight: 400; font-size: 0.6rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-left: 10px;
+}
+.hdr-pose {
+  font-family: var(--fd); font-weight: 700; font-style: italic;
+  font-size: 0.95rem; color: var(--amber-l); letter-spacing: 0.04em;
+}
+.hdr-counter {
+  font-family: var(--fb); font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ── Stage ───────────────────────────────────────────────── */
+.stage {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Photo ───────────────────────────────────────────────── */
+.photo-wrap {
+  position: relative;
+  height: 100vh;
+  max-width: 100vw;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.5s ease;
+}
+.photo-wrap.panel-open { transform: translateX(-18%); }
+
+.pose-photo {
+  height: 100vh;
+  width: auto;
+  max-width: 100vw;
+  object-fit: contain;
+  filter: sepia(10%) contrast(1.05) saturate(0.92);
+  display: block;
+}
+
+/* ── SVG Overlay ─────────────────────────────────────────── */
+.svg-overlay {
+  position: absolute; inset: 0;
+  pointer-events: none;
+}
+.svg-overlay svg {
+  width: 100%; height: 100%;
+  pointer-events: all;
+}
+
+/* ── Dot ─────────────────────────────────────────────────── */
+.dot-group { cursor: pointer; }
+.dot-group:hover .dot-ring { opacity: 0.9; }
+
+.dot-outer {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 1.5;
+  opacity: 0;
+  animation: pulse-ring 2.4s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.dot-inner {
+  fill: var(--amber);
+  opacity: 0.92;
+  transition: all 0.2s;
+}
+.dot-group:hover .dot-inner { fill: #fff; r: 8; }
+.dot-group.active .dot-inner { fill: #fff; }
+.dot-group.active .dot-outer { stroke: #fff; }
+
+.dot-label {
+  font-family: var(--fb); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  fill: var(--parchment); opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+.dot-group:hover .dot-label,
+.dot-group.active .dot-label { opacity: 1; }
+
+.dot-line {
+  stroke: rgba(200,101,10,0.5); stroke-width: 1;
+  stroke-dasharray: 4 3; opacity: 0;
+  transition: opacity 0.25s;
+}
+.dot-group:hover .dot-line,
+.dot-group.active .dot-line { opacity: 1; }
+
+/* stagger pulse animations */
+.dot-group:nth-child(1) .dot-outer { animation-delay: 0s; }
+.dot-group:nth-child(2) .dot-outer { animation-delay: 0.3s; }
+.dot-group:nth-child(3) .dot-outer { animation-delay: 0.6s; }
+.dot-group:nth-child(4) .dot-outer { animation-delay: 0.9s; }
+.dot-group:nth-child(5) .dot-outer { animation-delay: 1.2s; }
+.dot-group:nth-child(6) .dot-outer { animation-delay: 1.5s; }
+.dot-group:nth-child(7) .dot-outer { animation-delay: 1.8s; }
+.dot-group:nth-child(8) .dot-outer { animation-delay: 2.1s; }
+
+@keyframes pulse-ring {
+  0%   { r: 10; opacity: 0.7; }
+  70%  { r: 22; opacity: 0; }
+  100% { r: 22; opacity: 0; }
+}
+
+/* ── Panel ───────────────────────────────────────────────── */
+.panel {
+  position: fixed;
+  top: 0; right: 0;
+  width: 380px; height: 100vh;
+  background: rgba(20,15,8,0.97);
+  border-left: 1px solid #2A1E0E;
+  padding: 80px 36px 36px;
+  transform: translateX(100%);
+  transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+  z-index: 200;
+  display: flex; flex-direction: column; gap: 0;
+  overflow-y: auto;
+}
+.panel.open { transform: translateX(0); }
+
+.panel-num {
+  font-family: var(--fd); font-weight: 900; font-style: italic;
+  font-size: 5rem; line-height: 1; color: rgba(200,101,10,0.12);
+  position: absolute; top: 56px; right: 32px;
+  pointer-events: none;
+}
+
+.panel-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px 4px 8px;
+  border: 1px solid #3A2E1E; border-radius: 999px;
+  font-size: 0.62rem; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--amber);
+  margin-bottom: 20px;
+}
+.panel-chip::before { content: '✦'; font-size: 0.55rem; }
+
+.panel-title {
+  font-family: var(--fd); font-weight: 900;
+  font-size: 2rem; line-height: 1.05;
+  color: var(--parchment); margin-bottom: 24px;
+}
+
+.panel-divider {
+  width: 40px; height: 2px; background: var(--amber);
+  margin-bottom: 24px;
+}
+
+.panel-body {
+  font-size: 0.9rem; line-height: 1.85;
+  color: #9A8A76; font-weight: 300;
+  margin-bottom: 20px;
+}
+
+.panel-cue {
+  background: #1A1208; border-left: 2px solid var(--amber);
+  padding: 14px 16px; border-radius: 0 8px 8px 0;
+  font-family: var(--fd); font-weight: 700; font-style: italic;
+  font-size: 1rem; color: var(--amber-l); line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.panel-mistakes {
+  margin-top: 8px;
+}
+.panel-mistakes h4 {
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #4A3C2A; margin-bottom: 10px;
+}
+.panel-mistake {
+  display: flex; gap: 10px; font-size: 0.82rem;
+  color: #6A5A44; font-weight: 300; line-height: 1.6;
+  margin-bottom: 8px;
+}
+.panel-mistake::before {
+  content: '→'; color: #4A3C2A; flex-shrink: 0;
+}
+
+.panel-nav {
+  display: flex; gap: 8px; margin-top: auto; padding-top: 32px;
+}
+.panel-nav-btn {
+  flex: 1; padding: 11px;
+  font-family: var(--fb); font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  border: none; cursor: pointer; border-radius: 6px;
+  transition: background 0.2s;
+}
+.panel-nav-prev { background: #1E1608; color: #5A4A38; }
+.panel-nav-prev:hover { color: var(--parchment); }
+.panel-nav-next { background: var(--amber); color: #fff; }
+.panel-nav-next:hover { background: #A8530A; }
+
+.panel-close {
+  position: absolute; top: 20px; right: 20px;
+  background: #1E1608; border: none; color: #5A4A38;
+  width: 36px; height: 36px; border-radius: 50%;
+  font-size: 1rem; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.panel-close:hover { background: #2A1E10; color: var(--parchment); }
+
+/* ── Bottom bar ──────────────────────────────────────────── */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 32px 20px;
+  background: linear-gradient(to top, rgba(16,12,6,0.95) 0%, transparent 100%);
+}
+.bottom-hint {
+  font-size: 0.62rem; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #3A2E1E;
+}
+.bottom-dots { display: flex; gap: 8px; align-items: center; }
+.bottom-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #2A1E0E; transition: all 0.25s; cursor: pointer;
+}
+.bottom-dot.active { background: var(--amber); width: 20px; border-radius: 3px; }
+.bottom-dot:hover { background: #5A4A38; }
+
+/* ── Intro overlay ───────────────────────────────────────── */
+.intro {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--espresso);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 0;
+  text-align: center;
+  transition: opacity 0.8s ease;
+}
+.intro.hidden { opacity: 0; pointer-events: none; }
+.intro-logo {
+  font-family: var(--fd); font-weight: 700;
+  font-size: 1rem; color: var(--muted);
+  letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 48px;
+}
+.intro-title {
+  font-family: var(--fd); font-weight: 900;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 0.95; color: var(--parchment); margin-bottom: 12px;
+}
+.intro-sub {
+  font-family: var(--fd); font-weight: 700; font-style: italic;
+  font-size: clamp(1rem, 2vw, 1.5rem); color: var(--amber);
+  margin-bottom: 48px;
+}
+.intro-desc {
+  font-size: 0.88rem; color: #5A4A38; font-weight: 300;
+  line-height: 1.8; max-width: 38ch; margin-bottom: 40px;
+}
+.intro-btn {
+  font-family: var(--fb); font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 14px 36px; background: var(--amber); color: #fff;
+  border: none; border-radius: 999px; cursor: pointer;
+  transition: background 0.2s;
+}
+.intro-btn:hover { background: #A8530A; }
+.intro-hint {
+  font-size: 0.62rem; color: #2A1E0E; margin-top: 14px;
+  letter-spacing: 0.1em;
+}
+</style>
+</head>
+<body>
+
+<!-- Intro screen -->
+<div class="intro" id="intro">
+  <div class="intro-logo">AYBKK · Teaching Series</div>
+  <h1 class="intro-title">Urdhva Mukha<br>Svanasana</h1>
+  <div class="intro-sub">Upward Facing Dog</div>
+  <p class="intro-desc">Click any glowing point on the body to explore the anatomy and technique behind this pose.</p>
+  <button class="intro-btn" onclick="startPresentation()">Begin →</button>
+  <div class="intro-hint">Or press Space / Arrow keys to navigate</div>
+</div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-logo">AYBKK <span>Teaching Series</span></div>
+  <div class="hdr-pose">Urdhva Mukha Svanasana</div>
+  <div class="hdr-counter" id="counter">— / 8</div>
+</div>
+
+<!-- Stage -->
+<div class="stage">
+  <div class="photo-wrap" id="photoWrap">
+
+    <!-- REPLACE src with your wife's actual photo path -->
+    <img class="pose-photo" id="posePhoto"
+      src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&q=85"
+      alt="Urdhva Mukha Svanasana">
+
+    <!-- SVG annotation overlay -->
+    <div class="svg-overlay">
+      <svg id="annotationSvg" viewBox="0 0 1000 667" preserveAspectRatio="xMidYMid meet">
+        <!-- Dots are positioned for a typical updog photo landscape orientation -->
+        <!-- Adjust cx/cy percentages after uploading the real photo -->
+
+        <!-- 1. Wrists -->
+        <g class="dot-group" data-id="0" onclick="selectDot(0)">
+          <line class="dot-line" x1="195" y1="520" x2="195" y2="490"/>
+          <circle class="dot-outer" cx="195" cy="520" r="10"/>
+          <circle class="dot-inner" cx="195" cy="520" r="7"/>
+          <text class="dot-label" x="210" y="525" text-anchor="start">Wrists</text>
+        </g>
+
+        <!-- 2. Arms -->
+        <g class="dot-group" data-id="1" onclick="selectDot(1)">
+          <line class="dot-line" x1="230" y1="460" x2="230" y2="430"/>
+          <circle class="dot-outer" cx="230" cy="460" r="10"/>
+          <circle class="dot-inner" cx="230" cy="460" r="7"/>
+          <text class="dot-label" x="245" y="465" text-anchor="start">Arms</text>
+        </g>
+
+        <!-- 3. Chest / Heart -->
+        <g class="dot-group" data-id="2" onclick="selectDot(2)">
+          <line class="dot-line" x1="500" y1="260" x2="500" y2="230"/>
+          <circle class="dot-outer" cx="500" cy="280" r="10"/>
+          <circle class="dot-inner" cx="500" cy="280" r="7"/>
+          <text class="dot-label" x="515" y="285" text-anchor="start">Chest / Heart</text>
+        </g>
+
+        <!-- 4. Shoulder blades -->
+        <g class="dot-group" data-id="3" onclick="selectDot(3)">
+          <line class="dot-line" x1="420" y1="310" x2="420" y2="280"/>
+          <circle class="dot-outer" cx="420" cy="320" r="10"/>
+          <circle class="dot-inner" cx="420" cy="320" r="7"/>
+          <text class="dot-label" x="435" y="325" text-anchor="start">Shoulder Blades</text>
+        </g>
+
+        <!-- 5. Core / Uddiyana -->
+        <g class="dot-group" data-id="4" onclick="selectDot(4)">
+          <line class="dot-line" x1="500" y1="390" x2="500" y2="360"/>
+          <circle class="dot-outer" cx="500" cy="400" r="10"/>
+          <circle class="dot-inner" cx="500" cy="400" r="7"/>
+          <text class="dot-label" x="515" y="405" text-anchor="start">Core / Uddiyana</text>
+        </g>
+
+        <!-- 6. Hip flexors -->
+        <g class="dot-group" data-id="5" onclick="selectDot(5)">
+          <line class="dot-line" x1="500" y1="450" x2="500" y2="420"/>
+          <circle class="dot-outer" cx="500" cy="460" r="10"/>
+          <circle class="dot-inner" cx="500" cy="460" r="7"/>
+          <text class="dot-label" x="515" y="465" text-anchor="start">Hip Flexors</text>
+        </g>
+
+        <!-- 7. Thighs -->
+        <g class="dot-group" data-id="6" onclick="selectDot(6)">
+          <line class="dot-line" x1="550" y1="510" x2="550" y2="480"/>
+          <circle class="dot-outer" cx="550" cy="520" r="10"/>
+          <circle class="dot-inner" cx="550" cy="520" r="7"/>
+          <text class="dot-label" x="565" y="525" text-anchor="start">Thighs</text>
+        </g>
+
+        <!-- 8. Tops of feet -->
+        <g class="dot-group" data-id="7" onclick="selectDot(7)">
+          <line class="dot-line" x1="750" y1="580" x2="750" y2="550"/>
+          <circle class="dot-outer" cx="750" cy="590" r="10"/>
+          <circle class="dot-inner" cx="750" cy="590" r="7"/>
+          <text class="dot-label" x="765" y="595" text-anchor="start">Tops of Feet</text>
+        </g>
+
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- Teaching Panel -->
+<div class="panel" id="panel">
+  <div class="panel-num" id="panelNum">1</div>
+  <button class="panel-close" onclick="closePanel()">✕</button>
+  <div class="panel-chip" id="panelChip">Point 1 of 8</div>
+  <h2 class="panel-title" id="panelTitle">Wrists</h2>
+  <div class="panel-divider"></div>
+  <p class="panel-body" id="panelBody"></p>
+  <div class="panel-cue" id="panelCue"></div>
+  <div class="panel-mistakes" id="panelMistakes"></div>
+  <div class="panel-nav">
+    <button class="panel-nav-btn panel-nav-prev" onclick="navigate(-1)">← Prev</button>
+    <button class="panel-nav-btn panel-nav-next" onclick="navigate(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Bottom bar -->
+<div class="bottom-bar">
+  <div class="bottom-hint">Click any point · Arrow keys to navigate · Esc to close</div>
+  <div class="bottom-dots" id="bottomDots"></div>
+</div>
+
+<script>
+const POINTS = [
+  {
+    id: 0,
+    title: "Wrists",
+    chip: "Foundation",
+    body: "The wrists must be directly under the shoulders — not in front, not too wide. The base of the index finger and thumb press evenly into the mat. This distributes load across the whole hand, not into the wrist joint.",
+    cue: "\"Press the floor away from you — feel the mat push back into your palms.\"",
+    mistakes: [
+      "Wrists too far forward — compresses the joint, no power",
+      "Weight collapsing into the outer wrist — creates imbalance in the arm chain",
+      "Fingers passive — energy leaks, no foundation"
+    ]
+  },
+  {
+    id: 1,
+    title: "Arms",
+    chip: "Structure",
+    body: "The arms are fully extended but not locked. A slight internal rotation of the upper arm — as if you were trying to rotate your elbows to face forward — broadens the chest and stabilises the shoulder joint. This is subtle but critical.",
+    cue: "\"Rotate your inner elbow forward. Feel your chest open without pushing.\"",
+    mistakes: [
+      "Arms splaying wide — collapses the chest, loads the lower back",
+      "Elbows bent — removes the structural support the arms provide",
+      "Shoulders creeping toward ears — disconnects the chest from the arms"
+    ]
+  },
+  {
+    id: 2,
+    title: "Chest / Heart",
+    chip: "The Lift",
+    body: "The lift must come from the thoracic spine — the middle back — not from crunching the lumbar. Most students collapse into the lower back instead of opening the chest. Lead with the sternum, feel the collarbones widen, let the heart move forward and up.",
+    cue: "\"Lift your chest as if someone is pulling your sternum forward and up. The lower back follows — it does not lead.\"",
+    mistakes: [
+      "Compressing the lower back — common, painful over time",
+      "Chin jutting forward — disconnects the neck from the lift",
+      "Ribs flaring — means uddiyana is not engaged"
+    ]
+  },
+  {
+    id: 3,
+    title: "Shoulder Blades",
+    chip: "Stability",
+    body: "The shoulder blades should draw together (retract) and slide down the back (depress). This opens the front of the chest and protects the shoulder joint. If the blades wing out, the chest cannot lift properly and the shoulders take all the load.",
+    cue: "\"Pull your shoulder blades toward each other and slide them down your back — like putting them in your back pockets.\"",
+    mistakes: [
+      "Blades winging out — chest collapses, arms lose connection",
+      "Shoulders at ears — tension in neck, blocks the chest lift",
+      "Over-squeezing — creates rigidity, limits thoracic extension"
+    ]
+  },
+  {
+    id: 4,
+    title: "Core / Uddiyana Bandha",
+    chip: "Bandha",
+    body: "Uddiyana bandha is a subtle lift of the lower abdomen — not a grip, not a suck-in. It stabilises the lumbar spine so the backbend comes from the thoracic, not a hinge in the lower back. Without it, the chest lift becomes a lower back compression.",
+    cue: "\"Gently draw your navel toward your spine — soft, not hard. Feel your lower back lengthen, not crunch.\"",
+    mistakes: [
+      "Releasing bandha completely — all load moves to lumbar spine",
+      "Over-gripping — restricts the breath, blocks the lift",
+      "Belly dropping toward floor — no support for the backbend"
+    ]
+  },
+  {
+    id: 5,
+    title: "Hip Flexors",
+    chip: "Length",
+    body: "In Upward Dog the hip flexors should be lengthening, not compressing. The pelvis stays neutral — not tucked, not anteriorly tilted. Feel a long line from the top of the thigh through the hip and into the belly. This is where the pose becomes a true backbend, not just an arm press.",
+    cue: "\"Feel your hip bones gently moving forward as your chest lifts back. Length in the front of the hips.\"",
+    mistakes: [
+      "Pelvis tilting forward — shortens hip flexors, compresses lower back",
+      "Buttocks gripping — locks the pelvis, blocks the hip extension",
+      "Thighs dropping to the floor — removes hip flexor engagement"
+    ]
+  },
+  {
+    id: 6,
+    title: "Thighs",
+    chip: "Engagement",
+    body: "The thighs must be lifted off the floor. This is what separates Upward Dog from Cobra. Quadriceps are engaged, kneecaps draw up, legs are active and strong. The entire leg is one line of energy pressing back while the chest presses forward and up.",
+    cue: "\"Squeeze your quads, lift your kneecaps, and feel your thighs hover. Your legs are your foundation from behind.\"",
+    mistakes: [
+      "Thighs on the floor — this is Cobra, not Upward Dog",
+      "Knees soft — no power, no support for the hip lift",
+      "Feet rolling in or out — breaks the alignment chain from foot to hip"
+    ]
+  },
+  {
+    id: 7,
+    title: "Tops of Feet",
+    chip: "The Ground",
+    body: "The tops of the feet (dorsum) press into the mat — not the toes. The ankle is extended, the toenails face the floor. This activates the entire back of the leg and creates the grounding that allows the chest to lift without collapsing. Equal pressure across both feet.",
+    cue: "\"Press the tops of your feet down — feel the floor. The more you press down here, the higher your chest can go.\"",
+    mistakes: [
+      "Toes curled under — weight in wrong place, loses the leg line",
+      "Feet rolling to one side — creates spinal rotation, asymmetry",
+      "Feet passive — the press into the floor is what drives the lift"
+    ]
+  }
+];
+
+let current = -1;
+let panelOpen = false;
+
+// Build bottom dots
+const dotsEl = document.getElementById('bottomDots');
+POINTS.forEach((p, i) => {
+  const d = document.createElement('div');
+  d.className = 'bottom-dot';
+  d.onclick = () => selectDot(i);
+  dotsEl.appendChild(d);
+});
+
+function startPresentation() {
+  const intro = document.getElementById('intro');
+  intro.classList.add('hidden');
+  setTimeout(() => intro.style.display = 'none', 800);
+}
+
+function selectDot(i) {
+  // Deactivate all dots
+  document.querySelectorAll('.dot-group').forEach(g => g.classList.remove('active'));
+  document.querySelectorAll('.bottom-dot').forEach(d => d.classList.remove('active'));
+
+  // Activate selected
+  document.querySelector(`.dot-group[data-id="${i}"]`).classList.add('active');
+  document.querySelectorAll('.bottom-dot')[i].classList.add('active');
+
+  current = i;
+  showPanel(POINTS[i]);
+  document.getElementById('counter').textContent = `${i+1} / ${POINTS.length}`;
+}
+
+function showPanel(p) {
+  document.getElementById('panelNum').textContent = p.id + 1;
+  document.getElementById('panelChip').textContent = p.chip;
+  document.getElementById('panelTitle').textContent = p.title;
+  document.getElementById('panelBody').textContent = p.body;
+  document.getElementById('panelCue').textContent = p.cue;
+
+  const mistakesEl = document.getElementById('panelMistakes');
+  mistakesEl.innerHTML = `<h4>Common Mistakes</h4>` +
+    p.mistakes.map(m => `<div class="panel-mistake">${m}</div>`).join('');
+
+  const panel = document.getElementById('panel');
+  panel.classList.add('open');
+  document.getElementById('photoWrap').classList.add('panel-open');
+  panelOpen = true;
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('photoWrap').classList.remove('panel-open');
+  document.querySelectorAll('.dot-group').forEach(g => g.classList.remove('active'));
+  document.querySelectorAll('.bottom-dot').forEach(d => d.classList.remove('active'));
+  document.getElementById('counter').textContent = '— / 8';
+  panelOpen = false;
+  current = -1;
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 0 || next >= POINTS.length) return;
+  selectDot(next);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closePanel(); return; }
+  if (e.key === ' ' || e.key === 'Enter') {
+    if (!panelOpen) { selectDot(0); return; }
+    navigate(1); return;
+  }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigate(-1);
+  if (e.key >= '1' && e.key <= '8') selectDot(parseInt(e.key) - 1);
+});
+</script>
+
+</body>
+</html>

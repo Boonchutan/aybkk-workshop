@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>My Practice Journal — AYBKK</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&display=swap');
+    :root {
+      --bg: #FAF6F1;            /* warmer cream — matches the new clay system */
+      --card: #FFFFFF;
+      --border: #E8E1D6;
+      --border-soft: #F0E7DC;
+      --text: #2A2622;          /* warm near-black, never pure */
+      --text-secondary: #8B7E70;
+      --text-muted: #B8AC9D;
+      --sand: #D4A574;          /* everyday accent (was --accent) */
+      --sand-light: #F5EDE4;
+      --sand-hover: #C49564;
+      --clay: #C2876A;          /* memory + emotion — used sparingly */
+      --clay-light: #EDD6CB;
+      --clay-deep: #A36B52;
+      --success: #6B9E6B;
+      --shadow: 0 1px 3px rgba(82,58,38,0.05), 0 1px 2px rgba(82,58,38,0.04);
+      --shadow-press: 0 0 0 4px rgba(194,135,106,0.12);
+      --radius: 14px; --radius-sm: 12px; --radius-pill: 999px;
+      --transition: 0.22s cubic-bezier(0.32, 0.72, 0, 1); /* Apple-like spring */
+      /* Back-compat aliases — older rules in this file still reference these */
+      --accent: var(--sand);
+      --accent-light: var(--sand-light);
+      --accent-hover: var(--sand-hover);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Spectral', 'Hoefler Text', 'Times New Roman', serif;
+      background: var(--bg); min-height: 100vh; color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px 60px; }
+
+    /* AYBKK logo — printed onto the cream background, not floating in a white circle */
+    .brand-logo {
+      display: block; width: 60px; height: 60px;
+      margin: 0 auto 14px;
+      mix-blend-mode: multiply;
+      filter: contrast(1.05);
+    }
+
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h1 {
+      font-family: 'Spectral', serif;
+      font-size: clamp(24px, 5.5vw, 28px); font-weight: 700;
+      color: var(--text); letter-spacing: -0.4px; line-height: 1.15;
+    }
+    .student-name {
+      font-family: 'Spectral', serif;
+      font-size: 15px; font-weight: 400; font-style: italic;
+      color: var(--clay-deep); margin-top: 6px;
+    }
+    .stats {
+      font-size: 12px; color: var(--text-secondary); margin-top: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Motivational tagline — Boonchu's voice, the page's quiet anchor */
+    .motto {
+      max-width: 360px; margin: 0 auto 22px;
+      padding: 10px 18px;
+      font-family: 'Spectral', serif;
+      font-size: 14px; line-height: 1.55; font-style: italic;
+      text-align: center; color: var(--clay-deep);
+      border-top: 1px solid var(--clay-light);
+      border-bottom: 1px solid var(--clay-light);
+    }
+    .motto strong { font-style: normal; font-weight: 600; color: var(--clay-deep); }
+
+    .lang-switch { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
+    .lang-btn {
+      padding: 6px 14px; border: 1px solid var(--border); background: var(--card);
+      border-radius: var(--radius-pill); font-size: 12px; font-weight: 500;
+      color: var(--text-secondary); cursor: pointer; transition: all var(--transition);
+      font-family: inherit;
+    }
+    .lang-btn:active { transform: scale(0.96); }
+    .lang-btn.active { background: var(--sand); color: #fff; border-color: var(--sand); }
+
+    /* Apple-style tab pills */
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+    .nav-tab {
+      flex: 1; padding: 12px 8px; background: var(--card);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-family: 'Spectral', serif;
+      font-size: 14px; font-weight: 500; color: var(--text-secondary);
+      cursor: pointer; transition: all var(--transition); text-align: center;
+      text-decoration: none; line-height: 1;
+    }
+    .nav-tab:active { transform: scale(0.97); }
+    .nav-tab.active {
+      background: var(--text); color: #fff; border-color: var(--text);
+      box-shadow: 0 4px 12px rgba(42,38,34,0.18);
+    }
+    .nav-tab:not(.active):hover { border-color: var(--clay); color: var(--clay-deep); }
+
+    .entry {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px;
+      box-shadow: var(--shadow); margin-bottom: 12px;
+      transition: border-color var(--transition);
+    }
+    .entry:hover { border-color: var(--clay-light); }
+    .entry-date {
+      font-family: 'Spectral', serif;
+      font-size: 13px; font-weight: 600;
+      color: var(--clay-deep); letter-spacing: 0.4px;
+      margin-bottom: 14px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-soft);
+      text-transform: uppercase;
+    }
+    .entry-row { display: flex; gap: 12px; margin-bottom: 10px; font-size: 14px; align-items: flex-start; }
+    .entry-row .label {
+      font-family: 'Spectral', serif;
+      color: var(--text-secondary); flex-shrink: 0; min-width: 78px;
+      padding-top: 1px; font-style: italic; font-size: 13px;
+    }
+    .entry-row .value { color: var(--text); flex: 1; font-family: 'Spectral', serif; }
+
+    .tag-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+    .tag.strength { background: #EEF5EE; color: #4A7C4A; }
+    .tag.growth { background: #FFF3E0; color: #C47A20; }
+
+    .entry-note {
+      background: var(--bg); border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: 'Spectral', serif;
+      font-size: 14px; line-height: 1.65; font-style: italic;
+      color: var(--text); margin-top: 12px;
+    }
+    .entry-note .label-inline {
+      font-style: normal; color: var(--clay-deep);
+      font-weight: 600; margin-right: 6px; font-size: 11px;
+      letter-spacing: 0.6px; text-transform: uppercase;
+    }
+
+    .empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+    .empty-msg {
+      font-family: 'Spectral', serif;
+      font-size: 15px; line-height: 1.65; margin-bottom: 22px;
+      color: var(--clay-deep); font-style: italic;
+    }
+
+    /* Apple-style filled CTA */
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 48px; padding: 0 26px; background: var(--clay);
+      color: #fff; border-radius: var(--radius-sm);
+      text-decoration: none;
+      font-family: 'Spectral', serif;
+      font-weight: 600; font-size: 15px; letter-spacing: 0.2px;
+      border: none; cursor: pointer;
+      box-shadow: 0 2px 6px rgba(163,107,82,0.18);
+      transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+    }
+    .btn-primary:hover { background: var(--clay-deep); box-shadow: 0 4px 12px rgba(163,107,82,0.25); }
+    .btn-primary:active { transform: scale(0.97); box-shadow: 0 1px 3px rgba(163,107,82,0.2); }
+
+    .loading { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+    .spinner { font-size: 32px; margin-bottom: 12px; animation: spin 1.4s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* Teacher's Note — clay-toned for emotional weight */
+    .teacher-card {
+      background: linear-gradient(135deg, var(--clay-light) 0%, #FBF1EB 100%);
+      border: 1px solid var(--clay);
+      border-radius: var(--radius);
+      padding: 20px 20px 18px;
+      box-shadow: 0 2px 8px rgba(163,107,82,0.08);
+      margin-bottom: 22px;
+    }
+    .teacher-card-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .teacher-card-header strong {
+      font-family: 'Spectral', serif;
+      font-weight: 600; font-size: 12px; color: var(--clay-deep);
+      letter-spacing: 1.6px; text-transform: uppercase;
+    }
+    .tc-date { font-size: 11px; color: var(--text-secondary); font-style: italic; }
+    .tc-comment {
+      font-family: 'Spectral', serif;
+      font-weight: 400; font-style: italic;
+      font-size: 16px; line-height: 1.7;
+      color: var(--text); padding: 6px 0 4px;
+    }
+    .tc-comment::before {
+      content: '“'; color: var(--clay); font-size: 36px;
+      line-height: 0; vertical-align: -14px; margin-right: 6px;
+      font-family: 'Spectral', Georgia, serif; font-weight: 700;
+    }
+    .tc-focus-block {
+      margin-top: 14px; padding-top: 14px;
+      border-top: 1px dashed var(--clay-light);
+    }
+    .tc-focus-label {
+      font-family: 'Spectral', serif;
+      font-size: 11px; font-weight: 600; color: var(--clay-deep);
+      letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .tc-focus {
+      font-family: 'Spectral', serif;
+      font-size: 15px; line-height: 1.65; color: var(--text);
+    }
+
+    /* Apple-style tonal button — soft fill, no border */
+    .view-card-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 14px; padding: 8px 16px;
+      background: var(--clay-light); border: none;
+      border-radius: var(--radius-pill);
+      font-family: 'Spectral', serif;
+      font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
+      color: var(--clay-deep); cursor: pointer;
+      transition: all var(--transition);
+    }
+    .view-card-btn:hover { background: var(--clay); color: #fff; }
+    .view-card-btn:active { transform: scale(0.96); }
+
+    .card-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88); z-index: 200;
+      flex-direction: column; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .card-modal-inner { text-align: center; max-width: 340px; width: 100%; }
+    .card-modal-hint {
+      color: rgba(255,255,255,0.85); font-size: 13px;
+      font-weight: 500; margin-bottom: 14px;
+    }
+    .card-modal img {
+      width: 100%; border-radius: 16px; display: block;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .card-modal button {
+      margin-top: 16px; width: 100%; padding: 12px;
+      border-radius: 10px; border: 1px solid rgba(255,255,255,0.3);
+      background: transparent; color: #fff; font-size: 14px;
+      cursor: pointer; font-family: inherit;
+    }
+    .card-modal-loading { color: #fff; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <img class="brand-logo" src="/aybkk-logo.jpg" alt="AYBKK">
+    <h1 id="pageTitle">My Practice Journal</h1>
+    <div class="student-name" id="studentNameEl"></div>
+    <div class="stats" id="statsEl"></div>
+  </div>
+
+  <div class="motto" id="mottoLine"></div>
+
+  <div class="lang-switch">
+    <button class="lang-btn" data-lang="th">🇹🇭 TH</button>
+    <button class="lang-btn" data-lang="zh">🇨🇳 ZH</button>
+    <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+    <button class="lang-btn" data-lang="ru">🇷🇺 RU</button>
+  </div>
+
+  <div class="nav-tabs">
+    <a class="nav-tab" id="navNewEntry"></a>
+    <a class="nav-tab active" id="navHistory"></a>
+    <a class="nav-tab" id="navWeek"></a>
+  </div>
+
+  <div id="loading" class="loading">
+    <div class="spinner">☸</div>
+    <p id="loadingText">Loading…</p>
+  </div>
+
+  <div id="teacherCommentBox" class="teacher-card" style="display:none;">
+    <div class="teacher-card-header">
+      <strong id="tcLabel">Teacher's Note</strong>
+      <span class="tc-date" id="tcDate"></span>
+    </div>
+    <div class="tc-comment" id="tcComment"></div>
+    <div class="tc-focus-block" id="tcFocusBlock" style="display:none;">
+      <div class="tc-focus-label" id="tcFocusLabel">🎯 Next Focus</div>
+      <div class="tc-focus" id="tcFocus"></div>
+    </div>
+  </div>
+
+  <div id="entries" style="display:none;"></div>
+
+  <div id="empty" class="empty" style="display:none;">
+    <div class="empty-icon">📔</div>
+    <div class="empty-msg" id="emptyMsg"></div>
+    <a class="btn-primary" id="emptyCta"></a>
+  </div>
+</div>
+
+<div class="card-modal" id="cardModal">
+  <div class="card-modal-inner">
+    <div class="card-modal-hint" id="cardModalHint"></div>
+    <img id="cardModalImg" alt="">
+    <button onclick="closeCardModal()" id="cardModalClose"></button>
+  </div>
+</div>
+
+<script>
+const T = {
+  zh: {
+    pageTitle: '我的练习记录',
+    loading: '加载中…',
+    statsTpl: '共 {count} 次练习记录',
+    newEntry: '+ 新记录',
+    history: '我的记录',
+    week: '本周报告',
+    emptyMsg: '还没有记录。开始您的第一次练习记录。',
+    startJournal: '开始记录',
+    vinyasaLabel: '流动',
+    bandhaLabel: 'Bandha',
+    stableLabel: '稳定',
+    difficultLabel: '挑战',
+    notesLabel: '感悟',
+    asanaLabel: '体式',
+    viewCard: '📷 查看卡片',
+    longPressToSave: '长按图片保存到相册',
+    close: '关闭',
+    teacherNote: '老师寄语',
+    nextFocus: '🎯 下一步重点',
+    motto: '<strong>这些都是你的回忆。</strong>但练习在<strong>现在</strong>，在<strong>明天</strong>——在垫子上，而不是在沙发上。',
+    vinyasa: { kept_moving: '持续流动', stop_breathe: '停下深呼吸', tired_paused: '休息了一下' },
+    bandha: { body_light: '身体轻盈', finding_light: '寻找轻盈感', heavy_body: '身体较沉重' },
+    tags: {
+      jump_back: '跳回', jump_through: '跳穿', backbending: '后弯',
+      inversion: '倒立', bandha: '收束', forward_bend: '前屈',
+      leg_behind_head: '挂头', standing_balance: '站立平衡',
+      twisting: '扭转', lifting_body: '提身',
+      arms_shoulders: '手臂和肩膀', arm_balance: '手臂平衡',
+      hip_legs: '髋部和腿', chaturanga: 'Chaturanga',
+      breathing: '呼吸', body_ache_pain: '身体酸痛'
+    }
+  },
+  en: {
+    pageTitle: 'My Practice Journal',
+    loading: 'Loading…',
+    statsTpl: '{count} sessions logged',
+    newEntry: '+ New Entry',
+    history: 'My Journal',
+    week: 'My Week',
+    emptyMsg: 'No entries yet. Start your first practice journal.',
+    startJournal: 'Start Journal',
+    vinyasaLabel: 'Vinyasa',
+    bandhaLabel: 'Bandha',
+    stableLabel: 'Stable',
+    difficultLabel: 'Challenge',
+    notesLabel: 'Notes',
+    asanaLabel: 'Last asana',
+    viewCard: '📷 View Card',
+    longPressToSave: 'Long press image to save',
+    close: 'Close',
+    teacherNote: "Teacher's Note",
+    nextFocus: '🎯 Next Focus',
+    motto: '<strong>These memories are yours.</strong> Practice is <strong>now</strong> — and <strong>tomorrow</strong>. On the mat, not on the couch.',
+    vinyasa: { kept_moving: 'Kept moving', stop_breathe: 'Stopped to breathe', tired_paused: 'Tired, paused' },
+    bandha: { body_light: 'Body light', finding_light: 'Finding lightness', heavy_body: 'Heavy body' },
+    tags: {
+      jump_back: 'Jump back', jump_through: 'Jump through', backbending: 'Backbending',
+      inversion: 'Inversion', bandha: 'Bandha', forward_bend: 'Forward bend',
+      leg_behind_head: 'Leg behind head', standing_balance: 'Standing balance',
+      twisting: 'Twisting', lifting_body: 'Lifting body',
+      arms_shoulders: 'Arms & shoulders', arm_balance: 'Arm balance',
+      hip_legs: 'Hip & legs', chaturanga: 'Chaturanga',
+      breathing: 'Breathing', body_ache_pain: 'Body ache & pain'
+    }
+  },
+  th: {
+    pageTitle: 'บันทึกการฝึกของฉัน',
+    loading: 'กำลังโหลด…',
+    statsTpl: 'บันทึกแล้ว {count} ครั้ง',
+    newEntry: '+ บันทึกใหม่',
+    history: 'บันทึกของฉัน',
+    week: 'สัปดาห์นี้',
+    emptyMsg: 'ยังไม่มีบันทึก เริ่มบันทึกแรกของคุณ',
+    startJournal: 'เริ่มบันทึก',
+    vinyasaLabel: 'Vinyasa',
+    bandhaLabel: 'Bandha',
+    stableLabel: 'มั่นคง',
+    difficultLabel: 'ท้าทาย',
+    notesLabel: 'ความรู้สึก',
+    asanaLabel: 'ท่าสุดท้าย',
+    viewCard: '📷 ดูการ์ด',
+    longPressToSave: 'กดค้างที่รูปเพื่อบันทึก',
+    close: 'ปิด',
+    teacherNote: 'หมายเหตุจากครู',
+    nextFocus: '🎯 จุดเน้นต่อไป',
+    motto: '<strong>ความทรงจำเหล่านี้เป็นของคุณ</strong> การฝึกอยู่ที่<strong>ตอนนี้</strong> และ<strong>พรุ่งนี้</strong> — บนเสื่อ ไม่ใช่บนโซฟา',
+    vinyasa: { kept_moving: 'เคลื่อนต่อเนื่อง', stop_breathe: 'หยุดหายใจ', tired_paused: 'เหนื่อย พัก' },
+    bandha: { body_light: 'ตัวเบา', finding_light: 'กำลังหาความเบา', heavy_body: 'ตัวหนัก' },
+    tags: {
+      jump_back: 'Jump back', jump_through: 'Jump through', backbending: 'แอ่นหลัง',
+      inversion: 'หัวกลับ', bandha: 'Bandha', forward_bend: 'ก้มตัว',
+      leg_behind_head: 'ขาหลังหัว', standing_balance: 'ยืนทรงตัว',
+      twisting: 'บิดตัว', lifting_body: 'ยกตัว',
+      arms_shoulders: 'แขน & ไหล่', arm_balance: 'แขนรับน้ำหนัก',
+      hip_legs: 'สะโพก & ขา', chaturanga: 'Chaturanga',
+      breathing: 'หายใจ', body_ache_pain: 'ปวดตัว'
+    }
+  },
+  ru: {
+    pageTitle: 'Мой дневник практики',
+    loading: 'Загрузка…',
+    statsTpl: '{count} занятий записано',
+    newEntry: '+ Новая запись',
+    history: 'Мой дневник',
+    week: 'Моя неделя',
+    emptyMsg: 'Записей ещё нет. Начните свою первую запись.',
+    startJournal: 'Начать запись',
+    vinyasaLabel: 'Виньяса',
+    bandhaLabel: 'Бандха',
+    stableLabel: 'Стабильно',
+    difficultLabel: 'Сложно',
+    notesLabel: 'Заметки',
+    asanaLabel: 'Последняя асана',
+    viewCard: '📷 Открытка',
+    longPressToSave: 'Удерживайте изображение для сохранения',
+    close: 'Закрыть',
+    teacherNote: 'Слово учителя',
+    nextFocus: '🎯 Следующий фокус',
+    motto: '<strong>Эти воспоминания — твои.</strong> А практика — <strong>сейчас</strong> и <strong>завтра</strong>. На коврике, не на диване.',
+    vinyasa: { kept_moving: 'Двигался(ась)', stop_breathe: 'Остановка на дыхание', tired_paused: 'Устал(а), пауза' },
+    bandha: { body_light: 'Тело лёгкое', finding_light: 'Ищу лёгкость', heavy_body: 'Тело тяжёлое' },
+    tags: {
+      jump_back: 'Прыжок назад', jump_through: 'Прыжок вперёд', backbending: 'Прогибы',
+      inversion: 'Перевёрнутые', bandha: 'Бандха', forward_bend: 'Наклоны',
+      leg_behind_head: 'Нога за головой', standing_balance: 'Баланс стоя',
+      twisting: 'Скрутки', lifting_body: 'Подъём тела',
+      arms_shoulders: 'Руки и плечи', arm_balance: 'Баланс на руках',
+      hip_legs: 'Бёдра и ноги', chaturanga: 'Чатуранга',
+      breathing: 'Дыхание', body_ache_pain: 'Боли в теле'
+    }
+  }
+};
+
+const P = new URLSearchParams(location.search);
+const studentId = P.get('id');
+const studentName = decodeURIComponent(P.get('name') || 'Student');
+let lang = P.get('lang') || 'zh';
+if (!T[lang]) lang = 'zh';
+
+function t(k) { return (T[lang] && T[lang][k] !== undefined) ? T[lang][k] : T.zh[k]; }
+function tagLabel(v) { return (T[lang].tags && T[lang].tags[v]) || T.zh.tags[v] || v; }
+function vinyasaLabel(v) { return (T[lang].vinyasa && T[lang].vinyasa[v]) || T.zh.vinyasa[v] || v; }
+function bandhaLabel(b) { return (T[lang].bandha && T[lang].bandha[b]) || T.zh.bandha[b] || b; }
+
+function backQS() {
+  const parts = [];
+  if (studentId) parts.push('id=' + encodeURIComponent(studentId));
+  if (studentName) parts.push('name=' + encodeURIComponent(studentName));
+  parts.push('lang=' + encodeURIComponent(lang));
+  return '?' + parts.join('&');
+}
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = t('pageTitle') + ' — AYBKK';
+  document.getElementById('pageTitle').textContent = t('pageTitle');
+  document.getElementById('loadingText').textContent = t('loading');
+  document.getElementById('emptyMsg').textContent = t('emptyMsg');
+  document.getElementById('emptyCta').textContent = t('startJournal');
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+
+  const qs = backQS();
+  const navNew = document.getElementById('navNewEntry');
+  const navHist = document.getElementById('navHistory');
+  const navWeek = document.getElementById('navWeek');
+  navNew.textContent = t('newEntry');
+  navNew.href = '/student.html' + qs;
+  navHist.textContent = t('history');
+  navWeek.textContent = t('week');
+  navWeek.href = '/weekly-report.html' + qs;
+  document.getElementById('emptyCta').href = '/student.html' + qs;
+  const closeBtn = document.getElementById('cardModalClose');
+  if (closeBtn) closeBtn.textContent = t('close');
+  const tcLabel = document.getElementById('tcLabel');
+  if (tcLabel) tcLabel.textContent = t('teacherNote');
+  const tcFocusLabel = document.getElementById('tcFocusLabel');
+  if (tcFocusLabel) tcFocusLabel.textContent = t('nextFocus');
+  const motto = document.getElementById('mottoLine');
+  if (motto) motto.innerHTML = t('motto');
+
+  if (allAssessments.length) {
+    document.getElementById('statsEl').textContent = t('statsTpl').replace('{count}', allAssessments.length);
+    render();
+  }
+}
+
+function setLang(newLang) {
+  if (!T[newLang]) return;
+  lang = newLang;
+  applyLang();
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso.slice(0, 10);
+  const opts = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+  const locale = lang === 'zh' ? 'zh-CN' : lang === 'th' ? 'th-TH' : lang === 'ru' ? 'ru-RU' : 'en-US';
+  try { return d.toLocaleDateString(locale, opts); } catch (e) { return d.toLocaleDateString('en-US', opts); }
+}
+
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+const DAY_COLORS = [
+  { accent: '#7BAF7A', light: '#F0F7F0', hover: '#6A9E6A' },
+  { accent: '#D4836A', light: '#FBF0ED', hover: '#C4725A' },
+  { accent: '#D4A574', light: '#F5EDE4', hover: '#C49564' },
+  { accent: '#D9A066', light: '#F8F0E4', hover: '#C99055' },
+  { accent: '#7AABBF', light: '#EDF4F7', hover: '#699AAE' },
+  { accent: '#A085B8', light: '#F2EDF6', hover: '#8F74A7' },
+  { accent: '#A3ADA8', light: '#F3F4F3', hover: '#929C97' }
+];
+
+const WISDOM_QUOTES = [
+  "Yoga is the stilling of the fluctuations of the mind. — YS 1.2",
+  "Then the seer abides in its own true nature. — YS 1.3",
+  "When you are inspired, all thoughts break their bonds. — YS 1.49",
+  "Practice becomes firmly grounded when attended to for a long time, without break. — YS 1.14",
+  "The obstacles to yoga are disease, doubt, carelessness, laziness. — YS 1.30",
+  "The mind is restless; it is difficult to restrain. — YS 1.12",
+  "Liberation comes from understanding the nature of the mind. — YS 1.48",
+  "Ignorance, egotism, rage, attachment, and resistance are the five stains. — YS 2.3",
+  "When yoga is established, the seeker abides in absolute freedom. — YS 2.28",
+  "Eight limbs of yoga: ethical restraints, rules, posture, breath control, abstraction, concentration, meditation, absorption. — YS 2.29",
+  "Through practice of abstraction, the mind becomes pure. — YS 3.43",
+  "The enlightened one abides in absolute freedom. — YS 4.30",
+  "You have the right to action but not to its fruits. — BG 2.47",
+  "He who sees inaction in action and action in inaction is wise among humans. — BG 4.18",
+  "Yoga is skill in action. — BG 2.50",
+  "The self is not born; it does not die. — BG 2.20",
+  "Be free from the three gunas, established in self. — BG 14.23",
+  "Yoga is the journey of the self, through the self, to the self. — BG 6.7",
+  "He who sees all beings in himself and himself in all beings — that one is the highest. — BG 6.29",
+  "When the embodied one conquers the fluctuations of the mind, he approaches yoga. — BG 6.18"
+];
+
+const UPLIFT_PHRASES = [
+  { keywords: ['tired', 'exhaust', 'drain', '累', '疲劳', '困', '无力'], phrase: '瑜伽是自我的旅程，经由自我，回归自我。' },
+  { keywords: ['stiff', 'tight', '僵硬', '紧', '酸', '痛'], phrase: '当您认为已知时，苦便升起。当您真正知时，苦便消散。' },
+  { keywords: ['difficult', 'hard', '难', '困难', '挑战', '挣扎'], phrase: '不拖延的人，必得至高幸福。行动吧，别执着于结果。' },
+  { keywords: ['frustrat', 'angry', 'annoy', '烦', '怒', '躁', '不满'], phrase: '平静之人，既不喜人之所喜，亦不悲人之所悲。' },
+  { keywords: ['confus', 'lost', '迷', '困惑', '不懂', '混乱'], phrase: '专注之心，照见真实。每一个体式都是一次回归。' },
+  { keywords: ['pain', 'hurt', 'injury', '疼', '痛', '伤', '不舒服'], phrase: '呼吸跟随心意，心意跟随呼吸。回归呼吸，即回归当下。' },
+  { keywords: ['great', 'good', 'wonderful', 'amazing', '棒', '好', '赞', '完美', '顺利'], phrase: '真正的力量，始于您愿意迈出第一步。每一天都是新的练习。' },
+  { keywords: ['happy', 'joy', 'peace', '开心', '快乐', '喜悦', '平静', '幸福', '满足'], phrase: '内心平静之人，照见万物之真。Namaste。' },
+  { keywords: ['first', '第一次', '新', '刚开始', '新手'], phrase: '每一位大师，都曾以新手之身，踏出第一步。继续。' },
+  { keywords: ['shy', 'embarrass', '不好意思', '害羞', '尴尬'], phrase: '练习是您与自己对话。在垫子上，没有别人。' },
+  { keywords: ['breakthrough', '突破', '进步', '做到', '成功', '达成了'], phrase: '每一次突破，都源于您不曾放弃的那个早晨。' },
+  { keywords: ['sick', 'ill', '病', '感冒', '发烧'], phrase: '身体会生病，但练习的精神永远清醒。给自己温柔。' },
+  { keywords: ['struggle', '挣扎', '煎熬', '撑', '忍着'], phrase: '挣扎不代表失败。代表您还在坚持。' },
+  { keywords: ['focus', '专注', '集中', '专心'], phrase: '心若调柔，万物皆柔。专注即是力量。' },
+  { keywords: ['sweat', '汗水', '辛苦'], phrase: '汗水是瑜伽的礼物。每一次付出，都在塑造更好的您。' },
+  { keywords: ['try', '尝试', '努力', '尽力'], phrase: '行动本身即是收获。结果自然会来。' },
+  { keywords: [], phrase: '您的练习正在改变您看不见的部分。保持信念。' }
+];
+
+function getDayColor(dateStr) {
+  const d = dateStr ? new Date(dateStr) : new Date();
+  if (isNaN(d.getTime())) return DAY_COLORS[2];
+  const idx = d.getDay();
+  return DAY_COLORS[idx === 0 ? 6 : idx - 1];
+}
+
+function getDailyQuote(dateStr) {
+  const start = new Date('2026-05-01');
+  const d = dateStr ? new Date(dateStr) : new Date();
+  d.setHours(0, 0, 0, 0);
+  const dayIndex = Math.floor((d - start) / 86400000);
+  const safeIndex = ((dayIndex % WISDOM_QUOTES.length) + WISDOM_QUOTES.length) % WISDOM_QUOTES.length;
+  return WISDOM_QUOTES[safeIndex];
+}
+
+function getDayInfoText(dateStr) {
+  const d = dateStr ? new Date(dateStr) : new Date();
+  if (isNaN(d.getTime())) return '';
+  const opts = { weekday: 'short', month: 'short', day: 'numeric' };
+  const locale = lang === 'zh' ? 'zh-CN' : lang === 'th' ? 'th-TH' : lang === 'ru' ? 'ru-RU' : 'en-US';
+  try { return d.toLocaleDateString(locale, opts) + ' · Practice Journal ✅'; }
+  catch (e) { return d.toLocaleDateString('en-US', opts) + ' · Practice Journal ✅'; }
+}
+
+function getUpliftPhrase(notes) {
+  if (!notes || !notes.trim()) return null;
+  const lower = notes.toLowerCase();
+  for (const entry of UPLIFT_PHRASES) {
+    if (entry.keywords.length === 0) continue;
+    for (const kw of entry.keywords) {
+      if (lower.includes(kw.toLowerCase())) return entry.phrase;
+    }
+  }
+  const def = UPLIFT_PHRASES.filter(e => e.keywords.length === 0);
+  return def.length ? def[0].phrase : null;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = String(text).split(' ');
+  let line = '';
+  const lines = [];
+  for (const word of words) {
+    const test = line + word + ' ';
+    if (ctx.measureText(test).width > maxWidth && line !== '') {
+      lines.push(line.trim());
+      line = word + ' ';
+    } else {
+      line = test;
+    }
+  }
+  lines.push(line.trim());
+  const startY = y - ((lines.length - 1) * lineHeight) / 2;
+  lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineHeight));
+}
+
+function loadImageSafe(url) {
+  return new Promise(resolve => {
+    if (!url) return resolve(null);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
+async function renderShareCard(entry, name, photoUrl) {
+  const date = entry.checkedInAt || entry.sessionDate;
+  const dc = getDayColor(date);
+  const quote = getDailyQuote(date);
+  const uplift = getUpliftPhrase(entry.practiceNotes);
+  const dayInfo = getDayInfoText(date);
+  const shareTitle = getCardEyebrow();
+
+  // Make sure Spectral has loaded before drawing — canvas fonts must be ready
+  // or the browser silently falls back to system serif.
+  try {
+    await Promise.all([
+      document.fonts.load("700 48px Spectral"),
+      document.fonts.load("600 24px Spectral"),
+      document.fonts.load("500 11px Spectral"),
+      document.fonts.load("italic 400 17px Spectral"),
+      document.fonts.load("italic 300 12px Spectral")
+    ]);
+  } catch (_) { /* fall back to serif system stack */ }
+
+  const SERIF = "Spectral, 'Hoefler Text', 'Times New Roman', serif";
+  const canvas = document.createElement('canvas');
+  canvas.width = 640;
+  canvas.height = 720;
+  const ctx = canvas.getContext('2d');
+
+  // 1. Day-color frame — fills around photo edges, sets the seasonal tone
+  const frame = ctx.createLinearGradient(0, 0, 0, 720);
+  frame.addColorStop(0, dc.hover);
+  frame.addColorStop(1, dc.accent);
+  ctx.fillStyle = frame;
+  roundRect(ctx, 0, 0, 640, 720, 32);
+  ctx.fill();
+
+  // 2. Photo, almost full-strength so the face shows through
+  let hasPhoto = false;
+  if (photoUrl) {
+    const img = await loadImageSafe(photoUrl);
+    if (img) {
+      hasPhoto = true;
+      ctx.save();
+      ctx.globalAlpha = 0.92;
+      const scale = Math.max(640 / img.width, 720 / img.height);
+      const sw = img.width * scale;
+      const sh = img.height * scale;
+      const sx = (640 - sw) / 2;
+      const sy = (720 - sh) / 2;
+      ctx.drawImage(img, sx, sy, sw, sh);
+      ctx.restore();
+
+      // 3a. Top legibility band (eyebrow + name + date)
+      const top = ctx.createLinearGradient(0, 0, 0, 290);
+      top.addColorStop(0, dc.hover + 'D9');     // ~85% — strong at edge
+      top.addColorStop(0.55, dc.accent + '80'); // ~50% mid
+      top.addColorStop(1, dc.accent + '00');    // fade to clear above face
+      ctx.fillStyle = top;
+      ctx.fillRect(0, 0, 640, 290);
+
+      // 3b. Bottom legibility band (quote + uplift + byline)
+      const bot = ctx.createLinearGradient(0, 380, 0, 720);
+      bot.addColorStop(0, dc.accent + '00');
+      bot.addColorStop(0.35, dc.accent + '99');
+      bot.addColorStop(1, dc.hover + 'E6');
+      ctx.fillStyle = bot;
+      ctx.fillRect(0, 380, 640, 340);
+    }
+  }
+  // No photo? Add a soft single-tone wash so text contrasts predictably.
+  if (!hasPhoto) {
+    const wash = ctx.createLinearGradient(0, 0, 0, 720);
+    wash.addColorStop(0, dc.hover);
+    wash.addColorStop(0.5, dc.accent);
+    wash.addColorStop(1, dc.hover);
+    ctx.fillStyle = wash;
+    roundRect(ctx, 0, 0, 640, 720, 32);
+    ctx.fill();
+  }
+
+  // 4. Logo — a single small mark, top center
+  const logo = await loadImageSafe('/aybkk-logo.jpg');
+  if (logo) {
+    const r = 26, cx = 320, cy = 56;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(logo, cx - r, cy - r, r * 2, r * 2);
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  ctx.textAlign = 'center';
+
+  // helper — draw text with subtle dark shadow for legibility on photos
+  const draw = (text, font, color, x, y, shadow) => {
+    ctx.font = font;
+    ctx.fillStyle = color;
+    if (shadow) {
+      ctx.shadowColor = 'rgba(0,0,0,0.35)';
+      ctx.shadowBlur = shadow.blur || 6;
+      ctx.shadowOffsetY = shadow.y || 2;
+    }
+    ctx.fillText(text, x, y);
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+  };
+
+  // 5. EYEBROW — uppercase, letter-spaced, reads as a journal masthead
+  ctx.letterSpacing = '4px';
+  draw(shareTitle, `500 11px ${SERIF}`, 'rgba(255,255,255,0.88)', 320, 116, { blur: 4, y: 1 });
+  ctx.letterSpacing = '0px';
+
+  // 6. NAME — the hero. Big serif, light shadow for face-photo readability.
+  draw(name, `700 48px ${SERIF}`, '#ffffff', 320, 218, { blur: 8, y: 2 });
+
+  // 7. DATE — small italic, breathes under the name
+  draw(dayInfo, `italic 400 17px ${SERIF}`, 'rgba(255,255,255,0.85)', 320, 252, { blur: 3, y: 1 });
+
+  // 8. Hairline divider — thin, restrained
+  ctx.strokeStyle = 'rgba(255,255,255,0.32)';
+  ctx.lineWidth = 0.6;
+  ctx.beginPath();
+  ctx.moveTo(220, 290);
+  ctx.lineTo(420, 290);
+  ctx.stroke();
+
+  // 9. QUOTE — the sutra/Gita line, italic body serif
+  ctx.font = `italic 400 17px ${SERIF}`;
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.shadowColor = 'rgba(0,0,0,0.3)';
+  ctx.shadowBlur = 4;
+  ctx.shadowOffsetY = 1;
+  wrapText(ctx, '“' + quote + '”', 320, 440, 500, 26);
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetY = 0;
+
+  // 10. UPLIFT — semibold serif (less aggressive than 700), stands as a refrain
+  if (uplift) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.32)';
+    ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(220, 538);
+    ctx.lineTo(420, 538);
+    ctx.stroke();
+    ctx.font = `600 22px ${SERIF}`;
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0,0,0,0.35)';
+    ctx.shadowBlur = 6;
+    ctx.shadowOffsetY = 2;
+    wrapText(ctx, uplift, 320, 580, 500, 32);
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+  }
+
+  // 11. BYLINE — smallest, lightest italic, gentle attribution
+  draw('— Boonchu Tanti & Jamsai Tanti', `italic 300 12px ${SERIF}`, 'rgba(255,255,255,0.78)', 320, 686, { blur: 2, y: 1 });
+
+  return canvas.toDataURL('image/png');
+}
+
+async function showEntryCard(idx) {
+  const entry = allAssessments[idx];
+  if (!entry) return;
+  const modal = document.getElementById('cardModal');
+  const img = document.getElementById('cardModalImg');
+  const hint = document.getElementById('cardModalHint');
+  modal.style.display = 'flex';
+  img.src = '';
+  hint.textContent = '…';
+  try {
+    // Per-entry photo first; fall back to the student's current photo for old
+    // entries that pre-date the snapshot feature.
+    const photoForEntry = entry.photoUrl || studentPhotoUrl;
+    const dataUrl = await renderShareCard(entry, currentStudentName, photoForEntry);
+    img.src = dataUrl;
+    hint.textContent = t('longPressToSave');
+  } catch (e) {
+    console.error('card render failed', e);
+    closeCardModal();
+  }
+}
+
+function closeCardModal() {
+  document.getElementById('cardModal').style.display = 'none';
+  document.getElementById('cardModalImg').src = '';
+}
+
+let allAssessments = [];
+let studentPhotoUrl = null;
+let currentStudentName = studentName;
+let studentClassType = '';
+
+function getCardEyebrow() {
+  // id prefix wins over classType because `chinese-workshop` is overloaded
+  // for both Huizhou and Guangzhou cohorts in Neo4j.
+  const id = studentId || '';
+  const ct = studentClassType || '';
+  if (id.startsWith('gz-')) return 'AYBKK · 广州工作坊 2026';
+  if (id.startsWith('ru-')) return 'AYBKK · RUSSIA WS 2026';
+  if (ct === 'in-depth-mysore-cn2') return 'AYBKK · IN-DEPTH MYSORE';
+  if (ct === 'chinese-workshop') return 'AYBKK · HUIZHOU WORKSHOP';
+  if (ct === 'russia-workshop') return 'AYBKK · RUSSIA WS 2026';
+  return 'AYBKK · PRACTICE JOURNAL';
+}
+
+async function load() {
+  if (!studentId) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('empty').style.display = 'block';
+    document.getElementById('studentNameEl').textContent = studentName;
+    return;
+  }
+  try {
+    const res = await fetch('/api/journal/student/' + encodeURIComponent(studentId));
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+    allAssessments = data.assessments || [];
+    studentPhotoUrl = data.photoUrl || null;
+    currentStudentName = data.name || studentName;
+    studentClassType = data.classType || '';
+    document.getElementById('studentNameEl').textContent = currentStudentName;
+    document.getElementById('statsEl').textContent = t('statsTpl').replace('{count}', allAssessments.length);
+    render();
+    // Optional teacher note — failures are silent, the section just stays hidden
+    try {
+      const cRes = await fetch('/api/journal/comments/' + encodeURIComponent(studentId));
+      if (cRes.ok) {
+        const cData = await cRes.json();
+        const latest = cData.latest;
+        if (latest && (latest.comment || latest.focus)) {
+          const box = document.getElementById('teacherCommentBox');
+          document.getElementById('tcComment').textContent = latest.comment || '';
+          if (latest.focus) {
+            document.getElementById('tcFocus').textContent = latest.focus;
+            document.getElementById('tcFocusBlock').style.display = 'block';
+          }
+          if (latest.createdAt) {
+            const d = new Date(latest.createdAt);
+            if (!isNaN(d.getTime())) {
+              const locale = lang === 'zh' ? 'zh-CN' : lang === 'th' ? 'th-TH' : lang === 'ru' ? 'ru-RU' : 'en-US';
+              try { document.getElementById('tcDate').textContent = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' }); }
+              catch (e) {}
+            }
+          }
+          box.style.display = 'block';
+        }
+      }
+    } catch (_) {}
+  } catch (err) {
+    console.error('load failed:', err);
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('empty').style.display = 'block';
+  }
+}
+
+function render() {
+  document.getElementById('loading').style.display = 'none';
+  if (!allAssessments.length) {
+    document.getElementById('entries').style.display = 'none';
+    document.getElementById('empty').style.display = 'block';
+    return;
+  }
+  const container = document.getElementById('entries');
+  container.style.display = 'block';
+  document.getElementById('empty').style.display = 'none';
+  container.innerHTML = allAssessments.map((a, i) => renderEntry(a, i)).join('');
+}
+
+function renderEntry(a, idx) {
+  const stable = (a.stableToday || []).map(v => '<span class="tag strength">' + escapeHtml(tagLabel(v)) + '</span>').join('');
+  const difficult = (a.difficultToday || []).map(v => '<span class="tag growth">' + escapeHtml(tagLabel(v)) + '</span>').join('');
+
+  let html = '<div class="entry">';
+  html += '<div class="entry-date">' + escapeHtml(fmtDate(a.checkedInAt || a.sessionDate)) + '</div>';
+
+  if (a.vinyasa) {
+    html += '<div class="entry-row"><span class="label">' + escapeHtml(t('vinyasaLabel')) + '</span><span class="value">' + escapeHtml(vinyasaLabel(a.vinyasa)) + '</span></div>';
+  }
+  if (a.bandha) {
+    html += '<div class="entry-row"><span class="label">' + escapeHtml(t('bandhaLabel')) + '</span><span class="value">' + escapeHtml(bandhaLabel(a.bandha)) + '</span></div>';
+  }
+  if (stable) {
+    html += '<div class="entry-row"><span class="label">' + escapeHtml(t('stableLabel')) + '</span><div class="value"><div class="tag-group">' + stable + '</div></div></div>';
+  }
+  if (difficult) {
+    html += '<div class="entry-row"><span class="label">' + escapeHtml(t('difficultLabel')) + '</span><div class="value"><div class="tag-group">' + difficult + '</div></div></div>';
+  }
+  if (a.lastAsana) {
+    html += '<div class="entry-note"><span class="label-inline">' + escapeHtml(t('asanaLabel')) + ':</span>' + escapeHtml(a.lastAsana) + '</div>';
+  }
+  if (a.practiceNotes) {
+    html += '<div class="entry-note"><span class="label-inline">' + escapeHtml(t('notesLabel')) + ':</span>' + escapeHtml(a.practiceNotes) + '</div>';
+  }
+  html += '<button type="button" class="view-card-btn" onclick="showEntryCard(' + idx + ')">' + escapeHtml(t('viewCard')) + '</button>';
+  html += '</div>';
+  return html;
+}
+
+document.querySelectorAll('.lang-btn').forEach(b => {
+  b.addEventListener('click', () => setLang(b.dataset.lang));
+});
+
+applyLang();
+load();
+</script>
+</body>
+</html>

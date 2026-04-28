@@ -144,6 +144,9 @@
 <body>
   <div class="container">
     <h1>📖 AYBKK Student Journal</h1>
+    <div style="margin-top:8px">
+      <a href="/send-links.html" style="display:inline-block;font-size:12px;color:#888;text-decoration:none;padding:5px 12px;border:1px solid #ddd;border-radius:20px;background:#fff;">📲 Send journal links to students</a>
+    </div>
     
     <div class="tabs">
       <button class="tab active" onclick="showMainTab('students')">👥 Students</button>
@@ -154,6 +157,7 @@
     <div id="tab-students" class="tab-content active">
       <div class="sub-tabs">
         <button class="sub-tab active" onclick="showLocation('huizhou')">🍊 Huizhou</button>
+        <button class="sub-tab" onclick="showLocation('guangzhou')">🌆 Guangzhou</button>
         <button class="sub-tab" onclick="showLocation('bangkok')">🏙️ Bangkok</button>
         <button class="sub-tab" onclick="showLocation('all')">📋 All</button>
       </div>
@@ -164,6 +168,7 @@
     <div id="tab-history" class="tab-content">
       <div class="sub-tabs">
         <button class="sub-tab active" onclick="showHistoryLocation('huizhou')">🍊 Huizhou</button>
+        <button class="sub-tab" onclick="showHistoryLocation('guangzhou')">🌆 Guangzhou</button>
         <button class="sub-tab" onclick="showHistoryLocation('bangkok')">🏙️ Bangkok</button>
         <button class="sub-tab" onclick="showHistoryLocation('all')">📋 All</button>
       </div>
@@ -247,6 +252,7 @@
     let historyLocation = 'huizhou';
     let allStudents = [];
     let allProfiles = {};
+    let currentSummaryStudentId = null;
 
     // Student orientation profiles (from intake forms)
     const STUDENT_PROFILES = [
@@ -311,10 +317,15 @@
       renderStudents();
     }
 
+    function isGuangzhou(s) {
+      return (s.location === 'guangzhou') || (s.id && s.id.startsWith('gz-')) || (s.workshop && s.workshop.toLowerCase().includes('guangzhou'));
+    }
+
     function renderStudents() {
       let students = allStudents;
       if (currentLocation === 'huizhou') students = students.filter(s => isHuizhou(s.id));
-      else if (currentLocation === 'bangkok') students = students.filter(s => !isHuizhou(s.id));
+      else if (currentLocation === 'guangzhou') students = students.filter(s => isGuangzhou(s));
+      else if (currentLocation === 'bangkok') students = students.filter(s => s.location === 'bangkok');
 
       if (students.length === 0) {
         document.getElementById('studentsList').innerHTML = '<div class="empty">No students in this category</div>';
@@ -331,7 +342,7 @@
         const profile = allProfiles[s.name.toLowerCase()] || allProfiles[s.name] || null;
         const hasProfile = !!profile;
         const profileIcon = hasProfile ? ' 👤' : '';
-        const clickAction = hasProfile ? `onclick="showSummary('${s.name.replace(/'/g,"\\'")}')"` : '';
+        const clickAction = hasProfile ? `onclick="showSummary('${s.name.replace(/'/g,"\\'")}','${s.id}')"` : '';
         html += `
           <div class="student-item">
             <div class="info" ${clickAction} style="${hasProfile ? 'cursor:pointer;' : ''}">
@@ -363,7 +374,8 @@
 
       // Filter by location
       if (historyLocation === 'huizhou') history = history.filter(h => isHuizhou(h.studentId));
-      else if (historyLocation === 'bangkok') history = history.filter(h => !isHuizhou(h.studentId));
+      else if (historyLocation === 'guangzhou') history = history.filter(h => h.studentId && h.studentId.startsWith('gz-'));
+      else if (historyLocation === 'bangkok') history = history.filter(h => h.location === 'bangkok');
 
       if (history.length === 0) {
         document.getElementById('historyList').innerHTML = '<div class="empty">No check-ins in this period</div>';
@@ -410,7 +422,8 @@
     }
 
     // Student Summary Modal
-    function showSummary(name) {
+    function showSummary(name, studentId) {
+      currentSummaryStudentId = studentId || null;
       const p = allProfiles[name.toLowerCase()] || allProfiles[name];
       if (!p) return;
       
@@ -451,8 +464,8 @@
           </div>
           <div class="summary-teacher-note">
             <div class="summary-section-title">✍️ Your Note (for this student)</div>
-            <textarea placeholder="Write your feedback here... e.g. 'Great progress on Kapotasana, keep working on hip opening.'" id="teacherNote_${p.name.replace(/[^a-zA-Z]/g,'')}"></textarea>
-            <button class="save-btn" onclick="alert('Note saved! (TODO: connect to API)')">Save Note 📝</button>
+            <textarea placeholder="Write your feedback here... e.g. 'Great progress on Kapotasana, keep working on hip opening.'" id="teacherNote_input"></textarea>
+            <button class="save-btn" id="saveNoteBtn" onclick="saveTeacherNote()">Save Note 📝</button>
           </div>
         </div>
       `;
@@ -465,11 +478,35 @@
       document.getElementById('summaryModal').classList.remove('show');
     }
     
-    async function saveTeacherNote(studentId) {
-      const note = document.getElementById('teacherNote_' + studentId).value;
-      if (!note.trim()) return;
-      // TODO: POST to teacher comment API
-      alert('Note saved! (TODO: connect to teacher comment API)\n\n' + note);
+    async function saveTeacherNote() {
+      const note = document.getElementById('teacherNote_input').value.trim();
+      if (!note) { alert('Write a note first'); return; }
+      if (!currentSummaryStudentId) { alert('No student selected'); return; }
+
+      const btn = document.getElementById('saveNoteBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        const res = await fetch('/api/teacher/comment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentId: currentSummaryStudentId,
+            teacherName: 'Boonchu',
+            comment: note
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Save failed');
+        btn.textContent = '✓ Saved!';
+        btn.style.background = '#4caf50';
+        setTimeout(() => { btn.textContent = 'Save Note 📝'; btn.style.background = ''; btn.disabled = false; }, 2000);
+      } catch (e) {
+        alert('Error saving note: ' + e.message);
+        btn.disabled = false;
+        btn.textContent = 'Save Note 📝';
+      }
     }
 
     // Init — default to Huizhou

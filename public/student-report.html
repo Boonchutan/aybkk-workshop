@@ -5,89 +5,251 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Progress Reports — AYBKK</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: #f5f0eb; color: #1a1a1a; }
-
-    .top-bar { background: #fff; padding: 16px 20px; border-bottom: 1px solid #e8e0d8; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-    .top-bar h1 { font-size: 18px; font-weight: 700; }
-    .top-bar .sub { font-size: 12px; color: #888; margin-top: 2px; }
-    .filter-bar { padding: 12px 16px; display: flex; gap: 8px; flex-wrap: wrap; }
-    .filter-btn { border: 1.5px solid #d4c9be; background: #fff; border-radius: 20px; padding: 6px 14px; font-size: 13px; cursor: pointer; }
-    .filter-btn.active { background: #7b6cf6; color: #fff; border-color: #7b6cf6; }
-
-    /* Student list */
-    .student-list { padding: 0 16px 80px; }
-    .student-row {
-      background: #fff; border-radius: 14px; margin-bottom: 10px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.06); overflow: hidden;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
+    :root {
+      --bg: #FAF9F7;
+      --card: #FFFFFF;
+      --border: #E8E5E0;
+      --border-soft: #F0EBE4;
+      --text: #1A1A1A;
+      --text-secondary: #8B8680;
+      --text-muted: #B8B2AA;
+      --accent: #D4A574;
+      --accent-light: #F5EDE4;
+      --accent-hover: #C49564;
+      --success: #6B9E6B;
+      --success-bg: #EEF5EE;
+      --warn: #C47A20;
+      --warn-bg: #FFF3E0;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .top-bar {
+      background: var(--card);
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .top-bar .title {
+      font-family: 'Spectral', 'Hoefler Text', serif;
+      font-size: 22px; font-weight: 700;
+      letter-spacing: -0.3px; color: var(--text);
+    }
+    .top-bar .sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .top-bar .print-btn {
+      background: transparent; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 8px 14px;
+      font-size: 13px; cursor: pointer; color: var(--text); font-family: inherit;
+      transition: all var(--transition);
+    }
+    .top-bar .print-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+
+    .view-switch {
+      display: flex; gap: 8px; padding: 14px 16px 0;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .view-tab {
+      padding: 10px 18px; border-radius: 999px;
+      background: var(--card); border: 1px solid var(--border);
+      font-family: 'Spectral', serif;
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .view-tab:active { transform: scale(0.97); }
+    .view-tab:hover { border-color: var(--accent); color: var(--text); }
+    .view-tab.active {
+      background: var(--text); color: #fff; border-color: var(--text);
+      box-shadow: 0 4px 12px rgba(42,38,34,0.18);
+    }
+
+    .filter-bar { padding: 14px 16px 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn {
+      border: 1.5px solid var(--border); background: var(--card);
+      border-radius: 20px; padding: 6px 14px; font-size: 13px;
+      cursor: pointer; color: var(--text-secondary);
+      font-family: inherit; transition: all var(--transition);
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filter-btn.active {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+
+    .group-list { padding: 8px 16px 80px; max-width: 1200px; margin: 0 auto; }
+
+    .group-section { margin-top: 28px; }
+    .group-section:first-child { margin-top: 12px; }
+    .group-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 0 4px 10px; margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .group-name {
+      font-family: 'Spectral', 'Hoefler Text', serif;
+      font-size: 13px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent-hover);
+    }
+    .group-count {
+      font-size: 11px; color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .student-row {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 8px;
+      overflow: hidden; transition: border-color var(--transition);
+    }
+    .student-row:hover { border-color: var(--accent-light); }
+    .student-row.open { border-color: var(--accent); }
+    .student-row.dim .avatar,
+    .student-row.dim .student-info { opacity: 0.55; }
+
     .student-header {
-      display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 14px;
       cursor: pointer; user-select: none;
     }
-    .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+
+    .avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      flex-shrink: 0; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent-light);
+      color: var(--accent-hover);
+      font-family: 'Spectral', 'Hoefler Text', serif;
+      font-size: 18px; font-weight: 600; letter-spacing: -0.5px;
+      border: 1.5px solid var(--card);
+      box-shadow: 0 0 0 1px var(--border);
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
     .student-info { flex: 1; min-width: 0; }
-    .sname { font-size: 15px; font-weight: 600; }
-    .smeta { font-size: 12px; color: #888; margin-top: 2px; }
-    .chevron { font-size: 14px; color: #bbb; transition: transform 0.2s; }
+    .sname {
+      font-family: 'Spectral', 'Hoefler Text', serif;
+      font-size: 17px; font-weight: 600; line-height: 1.25;
+      color: var(--text);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .smeta { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+    .smeta .smeta-pill {
+      display: inline-block; padding: 1px 7px; border-radius: 10px;
+      background: var(--accent-light); color: var(--accent-hover);
+      font-weight: 500; font-size: 11px;
+    }
+
+    .chevron { font-size: 12px; color: var(--text-muted); transition: transform var(--transition); margin-left: 2px; }
     .student-row.open .chevron { transform: rotate(180deg); }
 
+    .row-action {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; cursor: pointer; flex-shrink: 0;
+      text-decoration: none; color: var(--text); transition: all var(--transition);
+      font-family: inherit; padding: 0;
+    }
+    .row-action:hover { background: var(--card); border-color: var(--accent); transform: translateY(-1px); }
+    .row-action:active { transform: scale(0.95); }
+
     /* Report panel */
-    .report-panel { display: none; padding: 0 16px 20px; border-top: 1px solid #f0ebe4; }
+    .report-panel { display: none; padding: 4px 18px 20px; border-top: 1px solid var(--border-soft); background: var(--bg); }
     .student-row.open .report-panel { display: block; }
 
     /* Trend bars */
-    .section-title { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 8px; }
+    .section-title {
+      font-family: 'Spectral', 'Hoefler Text', serif;
+      font-size: 11px; font-weight: 600;
+      color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.5px;
+      margin: 18px 0 8px;
+    }
     .trend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .trend-label { font-size: 12px; color: #666; width: 80px; flex-shrink: 0; }
+    .trend-label { font-size: 12px; color: var(--text-secondary); width: 80px; flex-shrink: 0; }
     .trend-dots { display: flex; gap: 4px; flex: 1; }
-    .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
-    .dot-green { background: #4CAF50; }
-    .dot-yellow { background: #FFC107; }
-    .dot-red { background: #F44336; }
-    .dot-empty { background: #e8e0d8; }
-    .trend-summary { font-size: 12px; color: #888; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: var(--success); }
+    .dot-yellow { background: #E5B250; }
+    .dot-red { background: #C46A55; }
+    .dot-empty { background: var(--border); }
+    .trend-summary { font-size: 12px; color: var(--text-secondary); font-style: italic; }
 
     /* Asana tags */
     .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-    .tag { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
-    .tag-stable { background: #e8f5e9; color: #2e7d32; }
-    .tag-diff { background: #fff3e0; color: #e65100; }
+    .tag { font-size: 12px; padding: 4px 11px; border-radius: 20px; font-weight: 500; }
+    .tag-stable { background: var(--success-bg); color: #4A7C4A; }
+    .tag-diff { background: var(--warn-bg); color: var(--warn); }
 
     /* Summary box */
-    .summary-box { background: #faf7f3; border-radius: 10px; padding: 14px; margin: 12px 0; }
-    .summary-box .lang-label { font-size: 11px; font-weight: 600; color: #7b6cf6; margin-bottom: 6px; }
-    .summary-text { font-size: 14px; line-height: 1.7; color: #333; }
-    .summary-zh { margin-top: 10px; padding-top: 10px; border-top: 1px solid #ede8e0; }
+    .summary-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin: 10px 0; }
+    .summary-box .lang-label { font-size: 10px; font-weight: 600; color: var(--accent-hover); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
+    .summary-text { font-family: 'Spectral', serif; font-size: 14px; line-height: 1.7; color: var(--text); }
+    .summary-zh { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-soft); }
+    .ai-btn {
+      background: var(--text); color: #fff; border: none; border-radius: var(--radius-sm);
+      padding: 8px 14px; font-size: 12px; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; gap: 6px; font-family: inherit;
+      letter-spacing: 0.3px; transition: all var(--transition);
+    }
+    .ai-btn:hover { background: var(--accent-hover); }
+    .ai-btn:disabled { opacity: 0.5; cursor: default; }
+    .ai-badge { font-size: 9px; background: rgba(255,255,255,0.18); border-radius: 4px; padding: 1px 5px; letter-spacing: 0.5px; }
 
     /* Teacher input */
-    .teacher-section { margin-top: 14px; }
-    .teacher-label { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .teacher-section {
+      margin-top: 16px; padding: 16px; background: var(--card);
+      border: 1px solid var(--accent-light); border-radius: var(--radius-sm);
+    }
+    .teacher-label {
+      font-family: 'Spectral', serif;
+      font-size: 13px; font-weight: 600; color: var(--accent-hover); margin-bottom: 8px;
+    }
     textarea {
-      width: 100%; border: 1.5px solid #e0d8cf; border-radius: 10px; padding: 10px 12px;
-      font-size: 13px; line-height: 1.6; color: #1a1a1a; background: #fff;
-      resize: vertical; min-height: 80px; font-family: inherit;
+      width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-family: 'Spectral', 'Hoefler Text', serif;
+      font-size: 14px; line-height: 1.6; color: var(--text); background: var(--bg);
+      resize: vertical; min-height: 70px;
+      transition: border-color var(--transition);
     }
-    textarea:focus { outline: none; border-color: #7b6cf6; }
+    textarea:focus { outline: none; border-color: var(--accent); background: var(--card); }
     .save-btn {
-      background: #7b6cf6; color: #fff; border: none; border-radius: 8px;
-      padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px;
+      background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm);
+      padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+      margin-top: 10px; font-family: inherit; transition: background var(--transition);
     }
-    .save-btn.saved { background: #4CAF50; }
+    .save-btn:hover { background: var(--accent-hover); }
+    .save-btn.saved { background: var(--success); }
 
     /* No data */
-    .no-data { text-align: center; color: #bbb; font-size: 14px; padding: 40px 0; }
-    .checkin-count { font-size: 22px; font-weight: 700; color: #7b6cf6; }
-    .checkin-label { font-size: 11px; color: #aaa; }
-    .stats-row { display: flex; gap: 16px; margin: 8px 0 4px; }
-    .stat-box { text-align: center; flex: 1; }
+    .no-data { text-align: center; color: var(--text-muted); font-size: 14px; padding: 40px 0; font-style: italic; }
+    .checkin-count { font-family: 'Spectral', serif; font-size: 24px; font-weight: 700; color: var(--accent-hover); }
+    .checkin-label { font-size: 10px; color: var(--text-secondary); letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; }
+    .stats-row { display: flex; gap: 12px; margin: 12px 0 4px; }
+    .stat-box { text-align: center; flex: 1; padding: 10px 8px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+
+    @media (min-width: 720px) {
+      .group-list { padding: 8px 24px 80px; }
+      .student-header { padding: 14px 18px; gap: 16px; }
+      .avatar { width: 56px; height: 56px; }
+      .sname { font-size: 18px; }
+    }
 
     @media print {
       .top-bar, .filter-bar { display: none; }
-      .student-row { break-inside: avoid; margin-bottom: 20px; box-shadow: none; border: 1px solid #ddd; }
+      .student-row { break-inside: avoid; margin-bottom: 16px; box-shadow: none; border: 1px solid #ddd; }
       .report-panel { display: block !important; }
       .teacher-section textarea { border: 1px solid #ccc; }
-      .save-btn { display: none; }
+      .save-btn, .row-action { display: none; }
     }
   </style>
 </head>
@@ -95,10 +257,16 @@
 
 <div class="top-bar">
   <div>
-    <div class="top-bar h1" style="font-size:18px;font-weight:700;">Student Progress Reports</div>
+    <div class="title">Student Progress</div>
     <div class="sub">AYBKK — 学员练习进展报告</div>
   </div>
-  <button onclick="window.print()" style="background:#f0f0f0;border:none;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;">🖨 Print</button>
+  <button class="print-btn" onclick="window.print()">🖨 Print</button>
+</div>
+
+<div class="view-switch">
+  <a class="view-tab active" href="/student-report.html" aria-current="page">📋 Reports</a>
+  <a class="view-tab" href="/faces.html">📸 Faces grid</a>
+  <a class="view-tab" href="/mindmap.html" title="Asana ↔ body reference (work in progress)">🧠 Knowledge</a>
 </div>
 
 <div class="filter-bar">
@@ -106,10 +274,13 @@
   <button class="filter-btn" onclick="setFilter('with-checkins', this)">Has Check-ins</button>
   <button class="filter-btn" onclick="setFilter('huizhou', this)">Huizhou</button>
   <button class="filter-btn" onclick="setFilter('guangzhou', this)">Guangzhou</button>
+  <button class="filter-btn" onclick="setFilter('in-depth', this)">In-Depth</button>
+  <button class="filter-btn" onclick="setFilter('russia', this)">Russia</button>
+  <button class="filter-btn" onclick="setFilter('bangkok', this)">Bangkok</button>
 </div>
 
-<div class="student-list" id="studentList">
-  <div class="no-data">Loading students...</div>
+<div class="group-list" id="studentList">
+  <div class="no-data">Loading students…</div>
 </div>
 
 <script>
@@ -162,26 +333,59 @@ async function init() {
   } catch(e) {}
 
   const huizhouIdSet = new Set(HUIZHOU_IDS.map(h => h.id));
+  const testNames = new Set(['测试学生', 'Test Workshop Student', 'Test Student', 'test', '测试2', 'Boonchu (Test)', 'test boonchu', 'B T', 'B t']);
 
-  // Huizhou: hardcoded list, look up assessmentCount from API by ID
-  const huizhouStudents = HUIZHOU_IDS.map(h => ({
-    id: h.id, name: h.name, workshop: 'huizhou', classType: 'chinese',
-    assessmentCount: apiById[h.id] ? apiById[h.id].assessmentCount || 0 : 0
-  }));
+  function classify(s) {
+    if (!s.id) return 'other';
+    // id prefix is the most reliable signal
+    if (s.id.startsWith('gz-')) return 'guangzhou';
+    if (s.id.startsWith('ru-')) return 'russia';
+    if (s.id.startsWith('bkk-')) return 'bangkok';
+    if (huizhouIdSet.has(s.id)) return 'huizhou';
+    // classType
+    if (s.classType === 'in-depth-mysore-cn2') return 'in-depth';
+    if (s.classType === 'huizhou')             return 'huizhou';
+    if (s.classType === 'chinese-workshop')    return 'huizhou'; // legacy chinese cohort without gz- prefix
+    if (s.classType === 'russia-workshop')     return 'russia';
+    if (s.classType === 'shala-regular')       return 'bangkok'; // Saturday-onward shala cohort
+    if (s.classType === 'test')                return 'test';
+    // 'regular' is a junk drawer — disambiguate by isChineseStudent flag
+    if (s.classType === 'regular') {
+      return s.isChineseStudent === true ? 'huizhou' : 'bangkok';
+    }
+    return 'other';
+  }
 
-  // GZ: from API, classType 'chinese-workshop', not already in Huizhou list
-  const gzStudents = Object.values(apiById)
-    .filter(s => s.classType === 'chinese-workshop' && !huizhouIdSet.has(s.id))
-    .map(s => ({ id: s.id, name: s.name, workshop: 'guangzhou', classType: 'chinese-workshop', assessmentCount: s.assessmentCount || 0 }));
+  // Build full list — every student from API, except tests
+  allStudents = Object.values(apiById)
+    .filter(s => !testNames.has(s.name) && s.classType !== 'test')
+    .map(s => ({
+      id: s.id,
+      name: s.name,
+      photoUrl: s.photoUrl || null,
+      workshop: classify(s),
+      classType: s.classType,
+      lastDate: s.lastDate || null,
+      assessmentCount: s.assessmentCount || 0
+    }));
 
-  // Other: any API student with check-ins not in Huizhou or GZ lists
-  const gzIdSet = new Set(gzStudents.map(s => s.id));
-  const testNames = new Set(['测试学生', 'Test Workshop Student', 'Test Student', 'test']);
-  const otherStudents = Object.values(apiById)
-    .filter(s => s.assessmentCount > 0 && !huizhouIdSet.has(s.id) && !gzIdSet.has(s.id) && !testNames.has(s.name))
-    .map(s => ({ id: s.id, name: s.name, workshop: 'other', classType: s.classType, assessmentCount: s.assessmentCount || 0 }));
+  // Add hardcoded Huizhou students that aren't already in the API list
+  const knownIds = new Set(allStudents.map(s => s.id));
+  HUIZHOU_IDS.forEach(h => {
+    if (!knownIds.has(h.id)) {
+      allStudents.push({ id: h.id, name: h.name, photoUrl: null, workshop: 'huizhou', classType: 'chinese-workshop', lastDate: null, assessmentCount: 0 });
+    }
+  });
 
-  allStudents = [...gzStudents, ...huizhouStudents, ...otherStudents];
+  // Sort: workshop group, then assessment count desc within each
+  const order = { huizhou: 0, guangzhou: 1, 'in-depth': 2, russia: 3, bangkok: 4, other: 5 };
+  allStudents.sort((a, b) => {
+    const oa = order[a.workshop] ?? 9;
+    const ob = order[b.workshop] ?? 9;
+    if (oa !== ob) return oa - ob;
+    return (b.assessmentCount || 0) - (a.assessmentCount || 0);
+  });
+
   render();
 }
 
@@ -194,8 +398,11 @@ function setFilter(f, btn) {
 
 function render() {
   let students = allStudents;
-  if (currentFilter === 'huizhou') students = students.filter(s => s.workshop === 'huizhou');
+  if (currentFilter === 'huizhou')        students = students.filter(s => s.workshop === 'huizhou');
   else if (currentFilter === 'guangzhou') students = students.filter(s => s.workshop === 'guangzhou');
+  else if (currentFilter === 'in-depth')  students = students.filter(s => s.workshop === 'in-depth');
+  else if (currentFilter === 'russia')    students = students.filter(s => s.workshop === 'russia');
+  else if (currentFilter === 'bangkok')   students = students.filter(s => s.workshop === 'bangkok');
   else if (currentFilter === 'with-checkins') students = students.filter(s => (s.assessmentCount || 0) > 0);
 
   if (!students.length) {
@@ -203,24 +410,172 @@ function render() {
     return;
   }
 
-  document.getElementById('studentList').innerHTML = students.map((s, i) => {
-    const color = COLORS[i % COLORS.length];
-    const initials = s.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
-    const count = s.assessmentCount || 0;
-    return `<div class="student-row" id="row-${s.id}">
-      <div class="student-header" onclick="toggleReport('${s.id}', '${s.workshop}')">
-        <div class="avatar" style="background:${color}">${initials}</div>
-        <div class="student-info">
-          <div class="sname">${s.name}</div>
-          <div class="smeta">${s.workshop === 'guangzhou' ? '广州 Guangzhou' : s.workshop === 'other' ? 'Other' : '惠州 Huizhou'} · ${count} check-in${count !== 1 ? 's' : ''}</div>
+  const labels = {
+    huizhou:    'Huizhou',
+    guangzhou:  'Guangzhou',
+    'in-depth': 'In-Depth Mysore',
+    russia:     'Russia',
+    bangkok:    'Bangkok Shala',
+    test:       'Test',
+    other:      'Other'
+  };
+  const order = ['huizhou', 'guangzhou', 'in-depth', 'russia', 'bangkok', 'other', 'test'];
+
+  // Group by workshop
+  const groups = {};
+  students.forEach(s => { (groups[s.workshop] ||= []).push(s); });
+
+  // Sort each group: most active first, then alphabetical
+  Object.values(groups).forEach(arr => arr.sort((a, b) => {
+    const ca = a.assessmentCount || 0, cb = b.assessmentCount || 0;
+    if (ca !== cb) return cb - ca;
+    return (a.name || '').localeCompare(b.name || '');
+  }));
+
+  const html = order
+    .filter(g => groups[g] && groups[g].length)
+    .map(g => {
+      const list = groups[g];
+      const active = list.filter(s => (s.assessmentCount || 0) > 0).length;
+      const headerCount = active === list.length
+        ? `${list.length} student${list.length !== 1 ? 's' : ''}`
+        : `${active} active · ${list.length} total`;
+      return `<section class="group-section">
+        <div class="group-header">
+          <div class="group-name">${labels[g] || g}</div>
+          <div class="group-count">${headerCount}</div>
         </div>
-        <div class="chevron">▼</div>
+        ${list.map(s => renderStudentRow(s)).join('')}
+      </section>`;
+    })
+    .join('');
+
+  document.getElementById('studentList').innerHTML = html;
+}
+
+function langFor(s) {
+  const w = s.workshop;
+  if (w === 'huizhou' || w === 'guangzhou' || w === 'in-depth') return 'zh';
+  if (w === 'russia') return 'ru';
+  if (w === 'bangkok') return 'th';
+  return 'en';
+}
+
+function locationFor(s) {
+  const w = s.workshop;
+  if (w === 'guangzhou') return 'guangzhou';
+  if (w === 'huizhou')   return 'huizhou';
+  if (w === 'russia')    return 'russia';
+  if (w === 'bangkok')   return 'bangkok';
+  return '';
+}
+
+function studentLinks(s) {
+  const lang = langFor(s);
+  const loc  = locationFor(s);
+  const qs = 'id=' + encodeURIComponent(s.id) + '&name=' + encodeURIComponent(s.name || '') + '&lang=' + lang + (loc ? '&location=' + loc : '');
+  return {
+    profile: '/my-journal.html?' + qs,
+    journal: '/student.html?' + qs,
+    week:    '/weekly-report.html?' + qs
+  };
+}
+
+function renderStudentRow(s) {
+  const initials = (s.name || '?').split(/[\s·]/).filter(Boolean).map(w => w[0]).join('').slice(0,2).toUpperCase();
+  const count = s.assessmentCount || 0;
+  const links = studentLinks(s);
+  const safeName = (s.name || '').replace(/'/g, '&#39;');
+  const dimClass = count === 0 ? ' dim' : '';
+  const lastDate = s.lastDate ? formatLastDate(s.lastDate) : null;
+  const metaParts = [
+    `<span class="smeta-pill">${count}</span> check-in${count !== 1 ? 's' : ''}`
+  ];
+  if (lastDate) metaParts.push(`last ${lastDate}`);
+  const meta = metaParts.join(' · ');
+
+  const avatar = s.photoUrl
+    ? `<div class="avatar"><img src="${s.photoUrl}" alt="${safeName}" loading="lazy" onerror="this.parentElement.textContent='${initials}'"></div>`
+    : `<div class="avatar">${initials}</div>`;
+
+  return `<div class="student-row${dimClass}" id="row-${s.id}">
+    <div class="student-header" onclick="toggleReport('${s.id}', '${s.workshop}')">
+      ${avatar}
+      <div class="student-info">
+        <div class="sname">${s.name}</div>
+        <div class="smeta">${meta}</div>
       </div>
-      <div class="report-panel" id="panel-${s.id}">
-        <div style="color:#bbb;font-size:13px;padding:12px 0;">Loading report...</div>
-      </div>
-    </div>`;
-  }).join('');
+      <a class="row-action" href="${links.profile}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open student profile — see what they see">📖</a>
+      <button class="row-action" onclick="event.stopPropagation(); copyToClip('${links.journal}', '${safeName}')" title="Copy journal entry link (send to student)">🔗</button>
+      <button class="row-action" onclick="event.stopPropagation(); showQR('${s.id}', '${safeName}')" title="Show QR code for this student">📱</button>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="report-panel" id="panel-${s.id}">
+      <div style="color:var(--text-muted);font-size:13px;padding:14px 0;font-style:italic;">Loading report…</div>
+    </div>
+  </div>`;
+}
+
+function formatLastDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return String(dateStr).slice(0, 10);
+  const now = new Date();
+  const days = Math.floor((now - d) / 86400000);
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 7) return `${days} days ago`;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function copyToClip(path, label) {
+  const url = location.origin + path;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('Link copied — ' + (label || ''));
+  }).catch(() => {
+    prompt('Copy this link', url);
+  });
+}
+
+async function showQR(id, name) {
+  let modal = document.getElementById('qrModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'qrModal';
+    modal.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:300;align-items:center;justify-content:center;padding:20px;';
+    modal.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:24px;max-width:340px;width:100%;text-align:center;">
+        <div id="qrName" style="font-size:15px;font-weight:600;margin-bottom:14px;color:#1A1A1A;"></div>
+        <img id="qrImg" alt="" style="width:100%;border-radius:10px;display:block;background:#f4f4f4;min-height:280px;">
+        <div id="qrUrl" style="font-size:11px;color:#888;margin-top:10px;word-break:break-all;"></div>
+        <button onclick="document.getElementById('qrModal').style.display='none'" style="margin-top:14px;width:100%;padding:11px;border-radius:8px;border:1px solid #e8e5e0;background:#fff;color:#1A1A1A;font-size:14px;cursor:pointer;font-family:inherit;">Close</button>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('qrName').textContent = name || id;
+  document.getElementById('qrUrl').textContent = '';
+  document.getElementById('qrImg').src = '';
+  modal.style.display = 'flex';
+  try {
+    const r = await fetch(`${API}/journal/qr/${encodeURIComponent(id)}`);
+    const d = await r.json();
+    if (d.qrDataUrl) document.getElementById('qrImg').src = d.qrDataUrl;
+    if (d.url) document.getElementById('qrUrl').textContent = d.url;
+  } catch(e) { /* surface nothing — image stays blank */ }
+}
+
+function showToast(msg) {
+  let t = document.getElementById('srToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'srToast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:400;opacity:0;transition:opacity 0.25s;pointer-events:none;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 1800);
 }
 
 async function toggleReport(id, workshop) {
@@ -237,9 +592,14 @@ async function toggleReport(id, workshop) {
   // Load if not cached
   if (!reportCache[id]) {
     try {
-      const r = await fetch(`${API}/journal/student/${id}`);
-      if (!r.ok) throw new Error('not found');
-      reportCache[id] = await r.json();
+      const [reportRes, commentRes] = await Promise.all([
+        fetch(`${API}/journal/student/${id}`),
+        fetch(`${API}/journal/comments/${id}`)
+      ]);
+      if (!reportRes.ok) throw new Error('not found');
+      reportCache[id] = await reportRes.json();
+      const commentData = commentRes.ok ? await commentRes.json() : {};
+      reportCache[id]._saved = commentData.latest || {};
     } catch(e) {
       panel.innerHTML = '<div style="color:#aaa;font-size:13px;padding:12px 0;">No journal entries yet.</div>';
       return;
@@ -254,10 +614,11 @@ function renderReport(id, data, workshop, panel) {
   const name = data.name || '';
 
   if (!assessments.length) {
-    const saved = getSaved(id);
+    const saved = data._saved || {};
     panel.innerHTML = `
       <div style="color:#aaa;font-size:13px;padding:8px 0 12px;">No practice entries yet.</div>
       ${teacherInputHTML(id, saved)}`;
+    restoreTeacherInputs(id, saved);
     return;
   }
 
@@ -282,10 +643,10 @@ function renderReport(id, data, workshop, panel) {
   const greenB = recent.filter(a => a.bandha === 'body_light').length;
   const total = recent.length;
 
-  // Generate summaries
+  // Template summary (shown until AI runs)
   const { en: summaryEN, zh: summaryZH } = generateSummary(name, assessments.length, greenV, greenB, total, topStable, topDiff);
 
-  const saved = getSaved(id);
+  const saved = data._saved || {};
 
   panel.innerHTML = `
     <div class="stats-row">
@@ -323,8 +684,13 @@ function renderReport(id, data, workshop, panel) {
     <div class="section-title">Working On</div>
     <div class="tag-row">${topDiff.map(t => `<span class="tag tag-diff">→ ${t}</span>`).join('')}</div>` : ''}
 
-    <div class="section-title">Progress Summary</div>
-    <div class="summary-box">
+    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>Progress Summary</span>
+      <button class="ai-btn" id="aibtn-${id}" onclick="generateAISummary('${id}')">
+        ✦ AI Summary <span class="ai-badge">DeepSeek</span>
+      </button>
+    </div>
+    <div id="summary-box-${id}" class="summary-box">
       <div class="lang-label">English</div>
       <div class="summary-text">${summaryEN}</div>
       <div class="summary-zh">
@@ -336,17 +702,47 @@ function renderReport(id, data, workshop, panel) {
     ${teacherInputHTML(id, saved)}
   `;
 
-  // Restore saved values
-  if (saved.comment) document.getElementById('comment-' + id).value = saved.comment;
-  if (saved.focus) document.getElementById('focus-' + id).value = saved.focus;
+  restoreTeacherInputs(id, saved);
+}
+
+function restoreTeacherInputs(id, saved) {
+  if (saved.comment) { const el = document.getElementById('comment-' + id); if (el) el.value = saved.comment; }
+  if (saved.focus)   { const el = document.getElementById('focus-' + id);   if (el) el.value = saved.focus; }
+}
+
+async function generateAISummary(id) {
+  const btn = document.getElementById('aibtn-' + id);
+  const box = document.getElementById('summary-box-' + id);
+  if (!btn || !box) return;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Thinking…';
+  box.innerHTML = '<div style="color:#aaa;font-size:13px;padding:8px 0;">Generating — usually 5–10 seconds…</div>';
+  try {
+    const r = await fetch(`${API}/journal/ai-summary/${id}`, { method: 'POST' });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error || 'AI error');
+    box.innerHTML = `
+      <div class="lang-label">English</div>
+      <div class="summary-text">${d.summary.en}</div>
+      <div class="summary-zh">
+        <div class="lang-label">中文</div>
+        <div class="summary-text">${d.summary.zh}</div>
+      </div>`;
+    btn.innerHTML = '✓ Done';
+    setTimeout(() => { btn.disabled = false; btn.innerHTML = '✦ Regenerate'; }, 2000);
+  } catch(e) {
+    box.innerHTML = `<div style="color:#c00;font-size:13px;">Error: ${e.message}</div>`;
+    btn.disabled = false;
+    btn.innerHTML = '✦ Retry';
+  }
 }
 
 function teacherInputHTML(id, saved) {
   return `<div class="teacher-section">
-    <div class="teacher-label">📝 Teacher's Comment for ${getSavedName(id)}</div>
-    <textarea id="comment-${id}" placeholder="Write your personal observation and encouragement for this student...">${saved.comment || ''}</textarea>
-    <div class="teacher-label" style="margin-top:10px;">🎯 Future Focus / Next Steps</div>
-    <textarea id="focus-${id}" placeholder="What should this student focus on next? Any specific asanas, breathing work, or mindset...">${saved.focus || ''}</textarea>
+    <div class="teacher-label">📝 Teacher's Observation for ${getSavedName(id)}</div>
+    <textarea id="comment-${id}" placeholder="Write your personal observation and encouragement for this student..."></textarea>
+    <div class="teacher-label" style="margin-top:10px;">🎯 Next Focus</div>
+    <textarea id="focus-${id}" placeholder="What should this student focus on next? Specific asanas, breath work, mindset…"></textarea>
     <button class="save-btn" id="savebtn-${id}" onclick="saveComment('${id}')">Save Notes</button>
   </div>`;
 }
@@ -391,22 +787,34 @@ function generateSummary(name, total, greenV, greenB, recent, topStable, topDiff
   return { en, zh };
 }
 
-function getSaved(id) {
-  try { return JSON.parse(localStorage.getItem('report_' + id) || '{}'); } catch(e) { return {}; }
-}
 function getSavedName(id) {
   const s = allStudents.find(s => s.id === id);
   return s ? s.name.split(' ')[0] : '';
 }
 
-function saveComment(id) {
+async function saveComment(id) {
   const comment = document.getElementById('comment-' + id)?.value || '';
   const focus = document.getElementById('focus-' + id)?.value || '';
-  localStorage.setItem('report_' + id, JSON.stringify({ comment, focus }));
   const btn = document.getElementById('savebtn-' + id);
-  btn.textContent = '✓ Saved';
-  btn.classList.add('saved');
-  setTimeout(() => { btn.textContent = 'Save Notes'; btn.classList.remove('saved'); }, 2000);
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+  try {
+    const r = await fetch(`${API}/journal/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId: id, comment, focus })
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error || 'Save failed');
+    // Update cache so reopening restores values
+    if (reportCache[id]) reportCache[id]._saved = { comment, focus };
+    btn.textContent = '✓ Saved';
+    btn.classList.add('saved');
+    setTimeout(() => { btn.textContent = 'Save Notes'; btn.classList.remove('saved'); btn.disabled = false; }, 2000);
+  } catch(e) {
+    btn.textContent = 'Error — retry';
+    btn.disabled = false;
+  }
 }
 
 init();

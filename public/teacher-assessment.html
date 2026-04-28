@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,27 +8,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 :root{--bg:#FAF9F7;--card:#FFF;--border:#E8E5E0;--text:#1A1A1A;--muted:#8B8680;--accent:#D4A574;--accent-light:#F5EDE4;--accent-hover:#C49564;--success:#6B9E6B;--success-bg:#EEF5EE;--red:#c0392b;--red-bg:#fce4ec;--shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.06);--radius:14px;--radius-sm:10px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);-webkit-font-smoothing:antialiased}
-.container{max-width:480px;margin:0 auto;padding:20px 16px 40px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:480px;margin:0 auto;padding:20px 16px 60px}
 .header{text-align:center;margin-bottom:20px}
 .header h1{font-size:20px;font-weight:600;letter-spacing:-.3px}
 .header p{font-size:13px;color:var(--muted);margin-top:4px}
-.logo{text-align:center;margin-bottom:12px}
-.logo img{width:60px;height:60px;border-radius:50%;object-fit:cover;opacity:.85}
+.nav{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
+.nav a{font-size:12px;color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:#fff}
+.nav a:hover{background:var(--accent-light)}
 
-/* Student selector */
-.student-select{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
-.student-select label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.student-select select{width:100%;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;margin-top:8px;background:#fff}
-.selected-student{text-align:center;padding:10px;margin-top:10px;background:var(--accent-light);border-radius:var(--radius-sm);font-weight:600;font-size:16px}
+/* Student search */
+.student-search-wrap{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow);position:relative}
+.student-search-wrap label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px}
+.student-search-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit}
+.student-search-input:focus{outline:none;border-color:var(--accent)}
+.student-dropdown{position:absolute;left:16px;right:16px;top:calc(100% - 6px);background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:0 4px 20px rgba(0,0,0,.1);max-height:240px;overflow-y:auto;z-index:100;display:none}
+.student-option{padding:10px 14px;cursor:pointer;font-size:14px;border-bottom:1px solid #f5f5f5}
+.student-option:last-child{border-bottom:none}
+.student-option:hover{background:var(--accent-light)}
+.student-option .meta{font-size:11px;color:var(--muted);margin-top:1px}
+.selected-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-light);border:1px solid var(--accent);border-radius:20px;padding:6px 14px;font-size:14px;font-weight:600;color:var(--accent-hover);margin-top:10px}
+.selected-badge button{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;padding:0}
 
 /* Journal summary */
 .journal-summary{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
-.journal-summary h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--accent-hover)}
-.j-entry{background:#faf8f5;border-radius:8px;padding:10px;margin-bottom:8px;font-size:12px}
-.j-date{font-weight:600;color:var(--accent-hover);margin-bottom:4px}
-.j-row{margin-bottom:3px;line-height:1.4}
-.j-label{font-weight:600;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.journal-summary h3{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--accent-hover)}
+.j-entry{background:#faf8f5;border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;line-height:1.5}
+.j-date{font-weight:600;color:var(--accent-hover);margin-bottom:3px}
 .j-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
 .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500}
 .badge-stable{background:#e8f5e9;color:#2e7d32}
@@ -36,18 +42,17 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 
 /* Cards */
 .card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
-.section-title{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.section-title .icon{font-size:16px}
+.section-title{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px;color:var(--text)}
 
 /* Tags */
 .tag-group{display:flex;flex-wrap:wrap;gap:6px}
-.tag{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;user-select:none}
+.tag{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;user-select:none}
 .tag.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent-hover)}
 .tag.weakness.active{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 
 /* Buttons */
 .btn-group{display:flex;gap:8px;flex-wrap:wrap}
-.btn{padding:8px 16px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn{padding:8px 16px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
 .btn.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent-hover)}
 .btn-pass.active{background:var(--success-bg);border-color:var(--success);color:var(--success)}
 .btn-hold.active{background:var(--red-bg);border-color:var(--red);color:var(--red)}
@@ -56,364 +61,401 @@ input[type=text],textarea{width:100%;border:1px solid var(--border);border-radiu
 input:focus,textarea:focus{outline:none;border-color:var(--accent)}
 
 /* Submit */
-.submit-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;background:var(--accent);color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px}
+.submit-btn{width:100%;padding:14px;border-radius:var(--radius);border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:6px}
 .submit-btn:hover{background:var(--accent-hover)}
 .submit-btn:disabled{opacity:.5;cursor:not-allowed}
+.submit-btn.green{background:var(--success)}
 
-/* History */
-.history-item{background:#faf8f5;border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;line-height:1.4}
-.history-date{font-weight:600;color:var(--accent-hover);margin-bottom:4px}
-.history-row{margin-bottom:2px}
+/* History timeline */
+.history-wrap{margin-top:20px}
+.history-wrap h3{font-size:13px;font-weight:600;margin-bottom:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.history-entry{position:relative;padding-left:20px;margin-bottom:16px}
+.history-entry::before{content:'';position:absolute;left:6px;top:0;bottom:-16px;width:2px;background:var(--border)}
+.history-entry:last-child::before{display:none}
+.history-dot{position:absolute;left:0;top:4px;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 0 0 2px var(--accent)}
+.history-card{background:var(--card);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
+.history-date{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:8px}
+.history-row{font-size:12px;margin-bottom:4px;line-height:1.5}
+.history-row strong{color:var(--accent-hover)}
+.history-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.htag{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500}
+.htag-s{background:#e8f5e9;color:#2e7d32}
+.htag-w{background:#fce4ec;color:#c62828}
 
 /* Toast */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;display:none;z-index:100}
-
-/* Success overlay */
-.success-overlay{position:fixed;inset:0;background:rgba(250,249,247,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;display:none}
-.success-overlay .icon{font-size:48px;margin-bottom:16px}
-.success-overlay h2{font-size:18px;margin-bottom:8px}
-.success-overlay p{color:var(--muted);font-size:13px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;display:none;z-index:200;max-width:300px;text-align:center}
 </style>
 </head>
 <body>
 <div class="container">
 
-<div class="logo"><img src="https://aybkk-ashtanga.up.railway.app/logo.png" onerror="this.style.display='none'" alt="AYBKK"></div>
 <div class="header">
   <h1>Teacher Assessment</h1>
-  <p>Record student progress after class</p>
+  <p>Record each student's practice — builds lifetime case study</p>
+</div>
+<div class="nav">
+  <a href="/mindmap.html">🗺 Mindmap</a>
+  <a href="/student-report.html">📋 Reports</a>
+  <a href="/journal.html">📖 Journal</a>
 </div>
 
-<!-- Student Selector -->
-<div class="student-select">
-  <label>Select Student</label>
-  <select id="studentSelect" onchange="selectStudent()">
-    <option value="">— Choose a student —</option>
-  </select>
-  <div class="selected-student" id="selectedStudent" style="display:none"></div>
+<!-- Student Search -->
+<div class="student-search-wrap" id="studentSearchWrap">
+  <label>Select Student (all 718 students)</label>
+  <input type="text" class="student-search-input" id="studentSearch"
+    placeholder="Type name to search..."
+    oninput="filterStudents(this.value)"
+    onfocus="showDropdown()"
+    autocomplete="off">
+  <div class="student-dropdown" id="studentDropdown"></div>
+  <div id="selectedBadge" style="display:none">
+    <div class="selected-badge" style="display:flex;align-items:center;gap:10px;">
+      <img id="selectedPhoto" src="" alt="" style="display:none;width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0;">
+      <span id="selectedName">—</span>
+      <button onclick="clearStudent()" style="margin-left:auto;">✕</button>
+    </div>
+  </div>
 </div>
 
-<!-- Journal Summary (shown when student selected) -->
+<!-- Recent journal entries for this student -->
 <div class="journal-summary" id="journalSection" style="display:none">
-  <h3>📖 Recent Journal Entries</h3>
-  <div id="journalEntries"></div>
+  <h3>📖 Student's recent journal entries</h3>
+  <div id="journalEntries"><span style="font-size:12px;color:var(--muted)">Loading...</span></div>
 </div>
 
-<!-- Assessment Form (shown when student selected) -->
+<!-- Assessment Form -->
 <div id="assessmentForm" style="display:none">
 
-  <!-- Energy Level -->
   <div class="card">
-    <div class="section-title"><span class="icon">⚡</span> Energy Level</div>
+    <div class="section-title">⚡ Energy today</div>
     <div class="btn-group" id="energyGroup">
-      <button type="button" class="btn" data-field="energy" data-value="high">🔴 High</button>
-      <button type="button" class="btn" data-field="energy" data-value="medium">🟡 Medium</button>
-      <button type="button" class="btn" data-field="energy" data-value="low">⚪ Low</button>
+      <button class="btn" data-field="energy" data-value="high">🔴 High energy</button>
+      <button class="btn" data-field="energy" data-value="medium">🟡 Medium</button>
+      <button class="btn" data-field="energy" data-value="low">⚪ Low energy</button>
     </div>
   </div>
 
-  <!-- Practice Behavior -->
   <div class="card">
-    <div class="section-title"><span class="icon">🌊</span> Practice Flow</div>
+    <div class="section-title">🌊 Practice flow</div>
     <div class="btn-group" id="flowGroup">
-      <button type="button" class="btn" data-field="behavior" data-value="proper_vinyasa">🟢 Good Flow</button>
-      <button type="button" class="btn" data-field="behavior" data-value="rest_often">🟡 Interrupted</button>
-      <button type="button" class="btn" data-field="behavior" data-value="too_much_distractions">🔴 Rough</button>
+      <button class="btn" data-field="behavior" data-value="proper_vinyasa">🟢 Good flow</button>
+      <button class="btn" data-field="behavior" data-value="rest_often">🟡 Interrupted</button>
+      <button class="btn" data-field="behavior" data-value="too_much_distractions">🔴 Rough</button>
     </div>
   </div>
 
-  <!-- Strengths -->
   <div class="card">
-    <div class="section-title"><span class="icon">💪</span> Strengths</div>
+    <div class="section-title">💪 Strengths (what you saw today)</div>
     <div class="tag-group" id="strengthsTags"></div>
   </div>
 
-  <!-- Weaknesses -->
   <div class="card">
-    <div class="section-title"><span class="icon">📌</span> Weaknesses</div>
+    <div class="section-title">📌 Needs work</div>
     <div class="tag-group" id="weaknessesTags"></div>
   </div>
 
-  <!-- Last Asana -->
   <div class="card">
-    <div class="section-title"><span class="icon">🧘</span> Last Asana</div>
-    <input type="text" id="lastAsana" placeholder="e.g., Marichyasana C">
-    <div class="btn-group" id="passGroup" style="margin-top:8px">
-      <button type="button" class="btn btn-pass" data-field="lastAsanaPass" data-value="true">✅ PASS</button>
-      <button type="button" class="btn btn-hold" data-field="lastAsanaPass" data-value="false">⏸️ HOLD</button>
+    <div class="section-title">🧘 Last asana today</div>
+    <input type="text" id="lastAsana" placeholder="e.g. Marichyasana C, Kapotasana...">
+    <div class="btn-group" id="passGroup" style="margin-top:10px">
+      <button class="btn btn-pass" data-field="lastAsanaPass" data-value="pass">✅ PASS — ready to move on</button>
+      <button class="btn btn-hold" data-field="lastAsanaPass" data-value="hold">⏸ HOLD — stay here</button>
     </div>
   </div>
 
-  <!-- To Fix -->
   <div class="card">
-    <div class="section-title"><span class="icon">🎯</span> To Fix Now</div>
-    <textarea id="toFix" rows="2" placeholder="What should the student focus on next?"></textarea>
+    <div class="section-title">🎯 Focus for next session</div>
+    <textarea id="toFix" rows="2" placeholder="What should this student focus on next class?"></textarea>
   </div>
 
-  <!-- Teacher Notes -->
   <div class="card">
-    <div class="section-title"><span class="icon">📝</span> Your Notes</div>
-    <textarea id="teacherNotes" rows="3" placeholder="Overall observation, encouragement, specific feedback..."></textarea>
+    <div class="section-title">📝 Teacher notes</div>
+    <textarea id="teacherNotes" rows="4" placeholder="Observations, injuries, body awareness, technique notes, encouragement..."></textarea>
   </div>
 
-  <button class="submit-btn" onclick="saveAssessment()">💾 Save Assessment</button>
-  <button class="submit-btn" onclick="saveAndSend()" style="background:var(--success);margin-top:8px">📤 Save & Send to Student</button>
-</div>
-
-<!-- Assessment History -->
-<div id="historySection" style="display:none;margin-top:16px">
-  <h3 style="font-size:14px;font-weight:600;margin-bottom:10px">📋 Assessment History</h3>
-  <div id="historyList"></div>
-</div>
+  <button class="submit-btn" id="saveBtn" onclick="saveAssessment()">💾 Save Assessment</button>
 
 </div>
 
-<!-- Toast -->
+<!-- Assessment History Timeline -->
+<div id="historySection" style="display:none">
+  <div class="history-wrap">
+    <h3 id="historyTitle">Assessment History</h3>
+    <div id="historyList"></div>
+  </div>
+</div>
+
+</div>
+
 <div id="toast" class="toast"></div>
 
-<!-- Success -->
-<div id="successOverlay" class="success-overlay">
-  <div class="icon">✅</div>
-  <h2>Assessment Saved</h2>
-  <p id="successMsg">Click to continue</p>
-  <button class="submit-btn" style="max-width:200px;margin-top:16px" onclick="hideSuccess()">OK</button>
-</div>
-
 <script>
-// ============ DATA ============
-let students = [];
-let allCheckins = {};
-let formData = { energy: '', behavior: '', lastAsanaPass: '', strengths: [], weaknesses: [] };
+let allStudents = [];
+let selectedStudent = null;
+let formData = { energy: '', behavior: '', lastAsanaPass: '' };
 
-const defaultTags = {
-  strengths: ['Bandha', 'Breath', 'Balance', 'Flexibility', 'Strength', 'Focus', 'Patience', 'Jump Through', 'Jump Back', 'Headstand', 'Backbending', 'Hip Opening', 'Consistency', 'Confidence', 'Awareness'],
-  weaknesses: ['Bandha', 'Breath', 'Balance', 'Flexibility', 'Strength', 'Focus', 'Chaturanga', 'Jump Back', 'Jump Through', 'Leg Behind Head', 'Backbending', 'Hip Opening', 'Hamstring', 'Core', 'Shoulder Stability', 'Body Control', 'Nervousness', 'Movement Mechanics']
-};
+const STRENGTH_TAGS = ['Bandha','Breath','Balance','Flexibility','Strength','Focus','Patience',
+  'Jump Through','Jump Back','Backbending','Hip Opening','Consistency','Confidence','Awareness',
+  'Vinyasa','Steadiness','Transitions'];
+const WEAKNESS_TAGS = ['Bandha','Breath','Balance','Flexibility','Strength','Focus',
+  'Chaturanga','Jump Back','Jump Through','Leg Behind Head','Backbending','Hip Opening',
+  'Hamstring','Core','Shoulder Stability','Body Control','Nervousness','Twisting',
+  'Inversion','Forward Bend'];
 
-// ============ INIT ============
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadStudents();
-  renderTags('strengths');
-  renderTags('weaknesses');
+  renderTags();
   setupButtonGroups();
+  await loadStudents();
 });
 
-// ============ LOAD STUDENTS ============
+// ── Load all 718 students from booking system ──────────────────────────────
 async function loadStudents() {
-  const params = new URLSearchParams(window.location.search);
-  const days = params.get('days') || '30';
-  
-  const res = await fetch(`/api/journal/history/${days}`);
-  const data = await res.json();
-  const checkins = data.history || [];
-  
-  // Group by student
-  const studentMap = {};
-  checkins.forEach(c => {
-    const name = c.studentName;
-    if (!name || name === 'Test Workshop Student' || name === '测试学生') return;
-    if (!studentMap[name]) studentMap[name] = { name, id: c.studentId, entries: [] };
-    studentMap[name].entries.push(c);
-  });
-  
-  students = Object.values(studentMap).sort((a, b) => a.name.localeCompare(b.name));
-  
-  // Populate dropdown
-  const select = document.getElementById('studentSelect');
-  students.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.id;
-    opt.textContent = `${s.name} (${s.entries.length} entries)`;
-    select.appendChild(opt);
-  });
-}
-
-// ============ SELECT STUDENT ============
-async function selectStudent() {
-  const select = document.getElementById('studentSelect');
-  const studentId = select.value;
-  if (!studentId) {
-    document.getElementById('selectedStudent').style.display = 'none';
-    document.getElementById('journalSection').style.display = 'none';
-    document.getElementById('assessmentForm').style.display = 'none';
-    document.getElementById('historySection').style.display = 'none';
-    return;
+  try {
+    const res = await fetch('/api/mindmap/students');
+    const data = await res.json();
+    allStudents = (data.students || []).sort((a, b) => a.name.localeCompare(b.name));
+    showDropdown('');
+  } catch (e) {
+    console.error('Failed to load students:', e);
   }
-  
-  const student = students.find(s => s.id === studentId);
-  if (!student) return;
-  
-  document.getElementById('selectedStudent').textContent = student.name;
-  document.getElementById('selectedStudent').style.display = 'block';
-  document.getElementById('journalSection').style.display = 'block';
+}
+
+function filterStudents(q) {
+  showDropdown(q);
+}
+
+function showDropdown(q) {
+  const dd = document.getElementById('studentDropdown');
+  const query = (q || '').toLowerCase().trim();
+  const matches = query
+    ? allStudents.filter(s => s.name.toLowerCase().includes(query)).slice(0, 30)
+    : allStudents.slice(0, 50);
+
+  if (matches.length === 0) {
+    dd.innerHTML = '<div class="student-option" style="color:var(--muted)">No match</div>';
+  } else {
+    dd.innerHTML = matches.map(s =>
+      `<div class="student-option" onclick="selectStudent('${s.id}','${s.name.replace(/'/g,"\\'")}',${s.sessionCount||0})">
+        ${s.name}
+        <div class="meta">${s.sessionCount || 0} sessions</div>
+      </div>`
+    ).join('');
+  }
+  dd.style.display = 'block';
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#studentSearchWrap')) {
+    document.getElementById('studentDropdown').style.display = 'none';
+  }
+});
+
+async function selectStudent(id, name, sessions) {
+  selectedStudent = { id, name, sessions };
+  document.getElementById('studentSearch').value = name;
+  document.getElementById('studentDropdown').style.display = 'none';
+  document.getElementById('selectedName').textContent = name;
+  document.getElementById('selectedBadge').style.display = 'block';
   document.getElementById('assessmentForm').style.display = 'block';
-  
-  renderJournalEntries(student.entries);
-  loadHistory(studentId);
+  // Show photo if available
+  const photoEl = document.getElementById('selectedPhoto');
+  photoEl.style.display = 'none';
+  try {
+    const r = await fetch(`/api/student/photo/${id}`);
+    const d = await r.json();
+    if (d.photoUrl) {
+      photoEl.src = d.photoUrl;
+      photoEl.style.display = 'block';
+    }
+  } catch(e) {}
+  resetForm();
+  loadJournalEntries(id);
+  loadHistory(id);
 }
 
-function renderJournalEntries(entries) {
-  const container = document.getElementById('journalEntries');
-  container.innerHTML = entries.slice(0, 10).map(e => {
-    const stable = (e.stableToday || []).map(t => `<span class="badge badge-stable">${translateTag(t)}</span>`).join('');
-    const difficult = (e.difficultToday || []).map(t => `<span class="badge badge-difficult">${translateTag(t)}</span>`).join('');
-    
-    return `<div class="j-entry">
-      <div class="j-date">${fmtDate(e.checkedInAt)} · ${e.platform || 'web'}</div>
-      <div class="j-row"><span class="j-label">Vinyasa:</span> ${translateVinyasa(e.vinyasa)} · <span class="j-label">Bandha:</span> ${translateBandha(e.bandha)}</div>
-      ${e.lastAsanaNote ? `<div class="j-row"><span class="j-label">Last Asana:</span> ${e.lastAsanaNote}</div>` : ''}
-      ${e.practiceNotes ? `<div class="j-row"><span class="j-label">Notes:</span> ${e.practiceNotes}</div>` : ''}
-      ${stable || difficult ? `<div class="j-badges">${stable}${difficult}</div>` : ''}
-    </div>`;
-  }).join('');
+function clearStudent() {
+  selectedStudent = null;
+  document.getElementById('studentSearch').value = '';
+  document.getElementById('selectedBadge').style.display = 'none';
+  document.getElementById('assessmentForm').style.display = 'none';
+  document.getElementById('journalSection').style.display = 'none';
+  document.getElementById('historySection').style.display = 'none';
 }
 
-// ============ ASSESSMENT HISTORY ============
+// ── Journal entries for context ────────────────────────────────────────────
+async function loadJournalEntries(studentId) {
+  const section = document.getElementById('journalSection');
+  section.style.display = 'block';
+  try {
+    const res = await fetch(`/api/mindmap/student-data/${studentId}`);
+    const data = await res.json();
+    const entries = data.entries || [];
+    if (!entries.length) {
+      document.getElementById('journalEntries').innerHTML =
+        '<span style="font-size:12px;color:var(--muted)">No journal entries yet</span>';
+      return;
+    }
+    const tagMap = {jump_back:'Jump Back',jump_through:'Jump Through',backbending:'Backbending',
+      bandha:'Bandha',hip_legs:'Hip/Legs',arms_shoulders:'Arms/Shoulders',
+      standing_balance:'Balance',chaturanga:'Chaturanga',breathing:'Breathing',
+      forward_bend:'Forward Bend',twisting:'Twisting',inversion:'Inversion',
+      body_ache_pain:'Body Ache',arm_balance:'Arm Balance',leg_behind_head:'LBH',
+      lifting_body:'Lifting Body'};
+    document.getElementById('journalEntries').innerHTML = entries.slice(0,5).map(e => {
+      const s = (e.stableToday||[]).map(t=>`<span class="badge badge-stable">${tagMap[t]||t}</span>`).join('');
+      const d = (e.difficultToday||[]).map(t=>`<span class="badge badge-difficult">${tagMap[t]||t}</span>`).join('');
+      const dt = e.checkedInAt ? new Date(e.checkedInAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '';
+      return `<div class="j-entry">
+        <div class="j-date">${dt}${e.lastAsanaNote ? ' · Last: '+e.lastAsanaNote : ''}</div>
+        ${e.vinyasa ? `<div>Vinyasa: ${e.vinyasa.replace(/_/g,' ')} · Bandha: ${(e.bandha||'').replace(/_/g,' ')}</div>` : ''}
+        ${e.practiceNotes ? `<div style="color:#666">${e.practiceNotes}</div>` : ''}
+        ${s||d ? `<div class="j-badges">${s}${d}</div>` : ''}
+      </div>`;
+    }).join('');
+  } catch { document.getElementById('journalEntries').innerHTML = '<span style="font-size:12px;color:var(--muted)">Could not load journal data</span>'; }
+}
+
+// ── Assessment history ─────────────────────────────────────────────────────
 async function loadHistory(studentId) {
   try {
-    const res = await fetch(`/api/journal/comments/${studentId}`);
+    const res = await fetch(`/api/teacher/assessment/${studentId}`);
     const data = await res.json();
+    const assessments = data.assessments || [];
     const section = document.getElementById('historySection');
-    const list = document.getElementById('historyList');
-    
-    if (data.comment) {
-      section.style.display = 'block';
-      list.innerHTML = `<div class="history-item">
-        <div class="history-date">${fmtDate(data.updatedAt)}</div>
-        <div>${data.comment}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">— ${data.teacherName || 'Boonchu'}</div>
-      </div>`;
-    } else {
+
+    if (!assessments.length) {
       section.style.display = 'none';
+      return;
     }
-  } catch {}
+
+    section.style.display = 'block';
+    document.getElementById('historyTitle').textContent =
+      `${assessments.length} assessment${assessments.length > 1 ? 's' : ''} on record`;
+
+    document.getElementById('historyList').innerHTML = assessments.map((a, i) => {
+      const dt = a.createdAt ? fmtDate(typeof a.createdAt === 'object' ? a.createdAt.toString() : a.createdAt) : 'Unknown date';
+      const strengths = Array.isArray(a.strengths) ? a.strengths : [];
+      const weaknesses = Array.isArray(a.weaknesses) ? a.weaknesses : [];
+      return `<div class="history-entry">
+        <div class="history-dot" style="${i===0?'background:var(--accent)':'background:var(--border)'}"></div>
+        <div class="history-card">
+          <div class="history-date">${dt}</div>
+          ${a.energy ? `<div class="history-row"><strong>Energy:</strong> ${a.energy}</div>` : ''}
+          ${a.behavior ? `<div class="history-row"><strong>Flow:</strong> ${a.behavior.replace(/_/g,' ')}</div>` : ''}
+          ${a.lastAsana ? `<div class="history-row"><strong>Last asana:</strong> ${a.lastAsana} ${a.lastAsanaPass==='pass'?'✅ PASS':a.lastAsanaPass==='hold'?'⏸ HOLD':''}</div>` : ''}
+          ${a.toFix ? `<div class="history-row"><strong>Focus:</strong> ${a.toFix}</div>` : ''}
+          ${a.notes ? `<div class="history-row"><strong>Notes:</strong> ${a.notes}</div>` : ''}
+          ${strengths.length||weaknesses.length ? `<div class="history-tags">
+            ${strengths.map(t=>`<span class="htag htag-s">💪 ${t}</span>`).join('')}
+            ${weaknesses.map(t=>`<span class="htag htag-w">📌 ${t}</span>`).join('')}
+          </div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    console.error('History load error:', e);
+  }
 }
 
-// ============ TAGS ============
-function renderTags(type) {
-  const container = document.getElementById(type + 'Tags');
-  const tagList = defaultTags[type];
-  container.innerHTML = tagList.map(t => 
-    `<span class="tag ${type === 'weaknesses' ? 'weakness' : ''}" data-type="${type}" data-value="${t}" onclick="toggleTag(this,'${type}','${t}')">${t}</span>`
-  ).join('');
+// ── Save assessment ────────────────────────────────────────────────────────
+async function saveAssessment() {
+  if (!selectedStudent) { showToast('Select a student first'); return; }
+
+  const notes = document.getElementById('teacherNotes').value.trim();
+  const toFix = document.getElementById('toFix').value.trim();
+  if (!notes && !toFix) { showToast('Write at least some notes or a focus point'); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  const strengths = [...document.querySelectorAll('#strengthsTags .tag.active')].map(t => t.dataset.value);
+  const weaknesses = [...document.querySelectorAll('#weaknessesTags .tag.active')].map(t => t.dataset.value);
+
+  try {
+    const res = await fetch('/api/teacher/assessment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentId: selectedStudent.id,
+        studentName: selectedStudent.name,
+        teacherName: 'Boonchu',
+        energy: formData.energy,
+        behavior: formData.behavior,
+        strengths,
+        weaknesses,
+        lastAsana: document.getElementById('lastAsana').value.trim(),
+        lastAsanaPass: formData.lastAsanaPass,
+        toFix,
+        notes
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Save failed');
+
+    showToast('Saved ✓');
+    resetForm();
+    loadHistory(selectedStudent.id);
+  } catch (e) {
+    showToast('Error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '💾 Save Assessment';
+  }
 }
 
-function toggleTag(el, type, value) {
+// ── Tags ──────────────────────────────────────────────────────────────────
+function renderTags() {
+  document.getElementById('strengthsTags').innerHTML =
+    STRENGTH_TAGS.map(t => `<span class="tag" data-value="${t}" onclick="toggleTag(this,'strength')">${t}</span>`).join('');
+  document.getElementById('weaknessesTags').innerHTML =
+    WEAKNESS_TAGS.map(t => `<span class="tag weakness" data-value="${t}" onclick="toggleTag(this,'weakness')">${t}</span>`).join('');
+}
+
+function toggleTag(el, type) {
   el.classList.toggle('active');
-  if (el.classList.contains('active')) formData[type].push(value);
-  else formData[type] = formData[type].filter(v => v !== value);
 }
 
-// ============ BUTTON GROUPS ============
+// ── Button groups ─────────────────────────────────────────────────────────
 function setupButtonGroups() {
-  ['energyGroup', 'flowGroup', 'passGroup'].forEach(groupId => {
-    const group = document.getElementById(groupId);
-    if (!group) return;
-    group.addEventListener('click', e => {
+  ['energyGroup','flowGroup','passGroup'].forEach(id => {
+    const g = document.getElementById(id);
+    if (!g) return;
+    g.addEventListener('click', e => {
       const btn = e.target.closest('.btn');
       if (!btn) return;
-      group.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+      g.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       formData[btn.dataset.field] = btn.dataset.value;
     });
   });
 }
 
-// ============ SAVE ============
-async function saveAssessment() {
-  const select = document.getElementById('studentSelect');
-  const studentId = select.value;
-  if (!studentId) return;
-  
-  const student = students.find(s => s.id === studentId);
-  const comment = document.getElementById('teacherNotes').value.trim() || document.getElementById('toFix').value.trim();
-  if (!comment) { showToast('Please write some notes first'); return; }
-  
-  const btn = document.querySelector('.submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'Saving...';
-  
-  try {
-    // Save as comment (existing API)
-    await fetch('/api/journal/comments', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        studentId,
-        comment: buildFullComment(),
-        teacherName: 'Boonchu'
-      })
-    });
-    
-    showToast('Saved ✓');
-    btn.disabled = false;
-    btn.textContent = '💾 Save Assessment';
-    loadHistory(studentId);
-  } catch (e) {
-    showToast('Error saving');
-    btn.disabled = false;
-    btn.textContent = '💾 Save Assessment';
-  }
+function resetForm() {
+  formData = { energy: '', behavior: '', lastAsanaPass: '' };
+  document.getElementById('lastAsana').value = '';
+  document.getElementById('toFix').value = '';
+  document.getElementById('teacherNotes').value = '';
+  document.querySelectorAll('.btn.active,.tag.active').forEach(el => el.classList.remove('active'));
 }
 
-async function saveAndSend() {
-  await saveAssessment();
-  const studentId = document.getElementById('studentSelect').value;
-  const student = students.find(s => s.id === studentId);
-  if (!student) return;
-  
-  const url = `https://aybkk-ashtanga.up.railway.app/student.html?studentId=${studentId}`;
-  try {
-    await navigator.clipboard.writeText(url);
-    showSuccess(`Assessment saved! Student link copied to clipboard.`);
-  } catch {
-    showSuccess(`Assessment saved for ${student.name}`);
-  }
-}
-
-function buildFullComment() {
-  const parts = [];
-  if (formData.energy) parts.push(`Energy: ${formData.energy}`);
-  if (formData.behavior) parts.push(`Flow: ${formData.behavior}`);
-  if (formData.strengths.length) parts.push(`Strengths: ${formData.strengths.join(', ')}`);
-  if (formData.weaknesses.length) parts.push(`Weaknesses: ${formData.weaknesses.join(', ')}`);
-  if (document.getElementById('lastAsana').value) parts.push(`Last Asana: ${document.getElementById('lastAsana').value} (${formData.lastAsanaPass === 'true' ? 'PASS' : formData.lastAsanaPass === 'false' ? 'HOLD' : ''})`);
-  if (document.getElementById('toFix').value) parts.push(`To Fix: ${document.getElementById('toFix').value}`);
-  if (document.getElementById('teacherNotes').value) parts.push(`Notes: ${document.getElementById('teacherNotes').value}`);
-  return parts.join('\n');
-}
-
-// ============ UI ============
+// ── Helpers ───────────────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.style.display = 'block';
   setTimeout(() => t.style.display = 'none', 3000);
 }
-function showSuccess(msg) {
-  document.getElementById('successMsg').textContent = msg;
-  document.getElementById('successOverlay').style.display = 'flex';
-}
-function hideSuccess() {
-  document.getElementById('successOverlay').style.display = 'none';
-}
 
-function fmtDate(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-}
-function translateTag(t) {
-  const m = {jump_back:'Jump Back',jump_through:'Jump Through',twisting:'Twisting',leg_behind_head:'Leg Behind Head',backbending:'Backbending',arm_balance:'Arm Balance',inversion:'Inversion',bandha:'Bandha',hip_legs:'Hip/Legs',arms_shoulders:'Arms/Shoulders',standing_balance:'Standing Balance',chaturanga:'Chaturanga',breathing:'Breathing',lifting_body:'Lifting Body',forward_bend:'Forward Bend',body_ache_pain:'Body Ache'};
-  return m[t]||t;
-}
-function translateVinyasa(v) {
-  const m={kept_moving:'Kept Moving',stop_breathe:'Stop & Breathe',tired_paused:'Tired/Paused'};
-  return m[v]||v;
-}
-function translateBandha(b) {
-  const m={body_light:'Body Light',finding_light:'Finding Light',heavy_body:'Heavy Body'};
-  return m[b]||b;
+function fmtDate(str) {
+  if (!str) return '';
+  try {
+    // Neo4j datetime objects come back as strings like "2026-04-18T..."
+    const d = new Date(str.replace ? str.replace(/\[.*\]/, '') : str);
+    if (isNaN(d)) return str;
+    return d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' })
+      + ' ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  } catch { return str; }
 }
 </script>
 </body>

@@ -65,7 +65,11 @@ async function loadStudents() {
     }
     
     // Sort newest first
-    students.sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
+    students.sort((a, b) => {
+      const da = new Date(String(a.submittedAt || 0));
+      const db = new Date(String(b.submittedAt || 0));
+      return db - da; // newest first
+    });
 
     let html = '';
     students.forEach((s, i) => {

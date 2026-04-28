@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYBKK · Upward Dog — 3-View Teaching</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --esp:#0A0705;--ink:#1C1812;--amb:#C8650A;
+  --ambl:#F0C49A;--parch:#F2EDE4;--mut:#7A6A57;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'Jost',sans-serif;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-family:var(--fb);-webkit-font-smoothing:antialiased;}
+
+/* ── Header ───────────────────────────────────────────── */
+.hdr{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 32px;
+  background:linear-gradient(to bottom,rgba(10,7,5,0.97) 0%,transparent 100%);
+}
+.hdr-logo{font-family:var(--fd);font-weight:700;font-size:1rem;color:var(--parch);letter-spacing:.05em;}
+.hdr-logo span{font-family:var(--fb);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-left:8px;}
+.hdr-pose{font-family:var(--fd);font-weight:700;font-style:italic;font-size:.95rem;color:var(--ambl);}
+.hdr-tip{font-size:.6rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#2A1E0E;}
+
+/* ── Stage ────────────────────────────────────────────── */
+.stage{
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  user-select:none;
+}
+
+/* ── Photo container ──────────────────────────────────── */
+.photo-wrap{
+  position:relative;
+  height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .5s ease;
+}
+.photo-wrap.shifted{transform:translateX(-18%);}
+
+.view{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .4s ease;
+  pointer-events:none;
+}
+.view.active{opacity:1;pointer-events:all;}
+
+.view img{
+  height:100vh;width:auto;max-width:90vw;
+  object-fit:contain;
+  filter:sepia(8%) contrast(1.06) saturate(.95);
+  display:block;
+}
+
+/* ── View labels ──────────────────────────────────────── */
+.view-label{
+  position:absolute;bottom:72px;left:50%;transform:translateX(-50%);
+  font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--mut);background:rgba(10,7,5,.7);
+  padding:5px 14px;border-radius:999px;white-space:nowrap;
+  pointer-events:none;
+}
+
+/* ── Rotation arc indicator ───────────────────────────── */
+.rot-bar{
+  position:fixed;bottom:52px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;z-index:150;
+}
+.rot-seg{
+  width:48px;height:3px;background:#1E1408;border-radius:2px;
+  transition:background .3s,width .3s;cursor:pointer;
+}
+.rot-seg.active{background:var(--amb);width:72px;}
+.rot-label{
+  font-size:.58rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:#2A1E0E;width:40px;text-align:center;font-size:.55rem;
+}
+
+/* ── Drag hint ────────────────────────────────────────── */
+.drag-hint{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  font-size:.58rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  color:#2A1E0E;pointer-events:none;
+  transition:opacity .3s;
+}
+.drag-hint.hidden{opacity:0;}
+
+/* ── Dots container (per view) ────────────────────────── */
+.dots-layer{
+  position:absolute;inset:0;
+  pointer-events:none;
+}
+.dot-wrap{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  pointer-events:all;cursor:pointer;
+}
+
+/* Outer pulse ring */
+.dot-ring{
+  position:absolute;top:50%;left:50%;
+  width:32px;height:32px;border-radius:50%;
+  border:1.5px solid var(--amb);
+  transform:translate(-50%,-50%);
+  animation:pulseRing 2.2s ease-out infinite;
+}
+/* Core dot */
+.dot-core{
+  width:14px;height:14px;border-radius:50%;
+  background:var(--amb);
+  border:2px solid rgba(240,196,154,.4);
+  transition:all .2s;
+  position:relative;z-index:2;
+  box-shadow:0 0 10px rgba(200,101,10,.5);
+}
+.dot-wrap:hover .dot-core,
+.dot-wrap.active .dot-core{
+  background:#fff;box-shadow:0 0 16px rgba(255,255,255,.7);transform:scale(1.25);
+}
+/* Dot label bubble */
+.dot-bubble{
+  position:absolute;left:20px;top:50%;transform:translateY(-50%);
+  background:rgba(10,7,5,.85);border:1px solid #2A1E0E;
+  padding:4px 10px;border-radius:4px;white-space:nowrap;
+  font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ambl);pointer-events:none;
+  opacity:0;transition:opacity .2s;
+}
+.dot-wrap:hover .dot-bubble,
+.dot-wrap.active .dot-bubble{opacity:1;}
+
+@keyframes pulseRing{
+  0%{transform:translate(-50%,-50%) scale(1);opacity:.7;}
+  70%{transform:translate(-50%,-50%) scale(2.2);opacity:0;}
+  100%{transform:translate(-50%,-50%) scale(2.2);opacity:0;}
+}
+
+/* ── Panel ────────────────────────────────────────────── */
+.panel{
+  position:fixed;top:0;right:0;width:370px;height:100vh;
+  background:rgba(10,6,3,.97);border-left:1px solid #1A1008;
+  padding:70px 30px 30px;z-index:300;overflow-y:auto;
+  transform:translateX(100%);
+  transition:transform .45s cubic-bezier(.22,1,.36,1);
+  display:flex;flex-direction:column;
+}
+.panel.open{transform:translateX(0);}
+.panel-num{
+  position:absolute;top:48px;right:22px;
+  font-family:var(--fd);font-weight:900;font-style:italic;
+  font-size:5.5rem;line-height:1;
+  color:rgba(200,101,10,.08);pointer-events:none;
+}
+.panel-close{
+  position:absolute;top:16px;right:16px;
+  background:#160C04;border:none;color:#3A2E1E;
+  width:34px;height:34px;border-radius:50%;font-size:.9rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.panel-close:hover{background:#251808;color:var(--parch);}
+.panel-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 12px 4px 8px;border:1px solid #251808;border-radius:999px;
+  font-size:.6rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--amb);margin-bottom:16px;
+}
+.panel-chip::before{content:'✦';font-size:.5rem;}
+.panel-title{
+  font-family:var(--fd);font-weight:900;
+  font-size:1.85rem;line-height:1.05;color:var(--parch);margin-bottom:18px;
+}
+.panel-div{width:34px;height:2px;background:var(--amb);margin-bottom:18px;}
+.panel-body{font-size:.87rem;line-height:1.85;color:#9A8A76;font-weight:300;margin-bottom:16px;}
+.panel-cue{
+  background:#140A02;border-left:2px solid var(--amb);
+  padding:12px 14px;border-radius:0 6px 6px 0;
+  font-family:var(--fd);font-weight:700;font-style:italic;
+  font-size:.93rem;color:var(--ambl);line-height:1.45;margin-bottom:16px;
+}
+.panel-mistakes h4{
+  font-size:.58rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:#3A2E1E;margin-bottom:8px;
+}
+.panel-mistake{
+  display:flex;gap:8px;font-size:.8rem;
+  color:#5A4A38;font-weight:300;line-height:1.6;margin-bottom:6px;
+}
+.panel-mistake::before{content:'→';color:#3A2E1E;flex-shrink:0;}
+.panel-nav{display:flex;gap:8px;margin-top:auto;padding-top:24px;}
+.pnav{
+  flex:1;padding:10px;font-family:var(--fb);font-size:.65rem;
+  font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  border:none;cursor:pointer;border-radius:6px;transition:background .2s;
+}
+.pnav-p{background:#160C04;color:#3A2E1E;}.pnav-p:hover{color:var(--parch);}
+.pnav-n{background:var(--amb);color:#fff;}.pnav-n:hover{background:#A8530A;}
+
+/* ── Intro ────────────────────────────────────────────── */
+.intro{
+  position:fixed;inset:0;z-index:500;background:var(--esp);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;transition:opacity .8s;
+}
+.intro.gone{opacity:0;pointer-events:none;}
+.i-brand{font-size:.65rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:#2A1E0E;margin-bottom:36px;}
+.i-title{font-family:var(--fd);font-weight:900;font-size:clamp(2rem,6vw,4.5rem);line-height:.92;color:var(--parch);margin-bottom:10px;}
+.i-sub{font-family:var(--fd);font-weight:700;font-style:italic;font-size:clamp(.9rem,2vw,1.35rem);color:var(--amb);margin-bottom:36px;}
+.i-desc{font-size:.85rem;color:#4A3C2A;font-weight:300;line-height:1.8;max-width:36ch;margin-bottom:32px;}
+.i-btn{font-family:var(--fb);font-size:.72rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:13px 34px;background:var(--amb);color:#fff;border:none;border-radius:999px;cursor:pointer;transition:background .2s;}
+.i-btn:hover{background:#A8530A;}
+.i-key{font-size:.58rem;color:#1E1408;margin-top:10px;letter-spacing:.1em;}
+</style>
+</head>
+<body>
+
+<!-- Intro -->
+<div class="intro" id="intro">
+  <div class="i-brand">AYBKK · Teaching Series</div>
+  <h1 class="i-title">Urdhva Mukha<br>Svanasana</h1>
+  <div class="i-sub">Upward Facing Dog</div>
+  <p class="i-desc">Drag left/right to rotate the body. Click any glowing point to open the teaching panel.</p>
+  <button class="i-btn" id="startBtn">Begin →</button>
+  <div class="i-key">Drag · Arrow keys · 1–8 to jump to point</div>
+</div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-logo">AYBKK <span>Teaching Series</span></div>
+  <div class="hdr-pose">Urdhva Mukha Svanasana — Upward Dog</div>
+  <div class="hdr-tip" id="viewName">Front View</div>
+</div>
+
+<!-- Stage -->
+<div class="stage" id="stage">
+  <div class="photo-wrap" id="photoWrap">
+
+    <!-- VIEW 0: FRONT ──────────────────────────────────── -->
+    <div class="view active" id="view0">
+      <!--
+        REPLACE this src with your FRONT photo path.
+        Example: src="/photos/updog-front.jpg"
+        Photo tip: shoot from eye level, full body visible, neutral background
+      -->
+      <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=85" alt="Front view">
+      <div class="view-label">Front View</div>
+      <div class="dots-layer" id="dots0">
+        <!-- Dots for FRONT view -->
+        <!-- After uploading real photo, adjust left/top % to match anatomy -->
+        <!-- Format: left = horizontal %, top = vertical % from top -->
+
+        <!-- 1 Wrists -->
+        <div class="dot-wrap" style="left:35%;top:80%;" data-pt="0">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Wrists</div>
+        </div>
+        <!-- 2 Arms -->
+        <div class="dot-wrap" style="left:28%;top:62%;" data-pt="1">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Arms</div>
+        </div>
+        <!-- 3 Chest -->
+        <div class="dot-wrap" style="left:50%;top:38%;" data-pt="2">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Chest</div>
+        </div>
+        <!-- 4 Shoulders -->
+        <div class="dot-wrap" style="left:30%;top:44%;" data-pt="3">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Shoulder Blades</div>
+        </div>
+        <!-- 5 Uddiyana -->
+        <div class="dot-wrap" style="left:50%;top:55%;" data-pt="4">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Uddiyana</div>
+        </div>
+        <!-- 6 Hip Flexors -->
+        <div class="dot-wrap" style="left:50%;top:64%;" data-pt="5">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Hip Flexors</div>
+        </div>
+        <!-- 7 Thighs -->
+        <div class="dot-wrap" style="left:45%;top:74%;" data-pt="6">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Thighs</div>
+        </div>
+        <!-- 8 Tops of Feet -->
+        <div class="dot-wrap" style="left:50%;top:88%;" data-pt="7">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Tops of Feet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 1: SIDE ───────────────────────────────────── -->
+    <div class="view" id="view1">
+      <!--
+        REPLACE this src with your SIDE photo path.
+        Example: src="/photos/updog-side.jpg"
+        Photo tip: shoot from directly to the right, full body, same height as front
+      -->
+      <img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=900&q=85" alt="Side view">
+      <div class="view-label">Side View</div>
+      <div class="dots-layer" id="dots1">
+        <!-- Dots for SIDE view — side shows the backbend arc most clearly -->
+        <!-- 1 Wrists -->
+        <div class="dot-wrap" style="left:20%;top:82%;" data-pt="0">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Wrists</div>
+        </div>
+        <!-- 2 Arms -->
+        <div class="dot-wrap" style="left:22%;top:66%;" data-pt="1">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Arms</div>
+        </div>
+        <!-- 3 Chest — most prominent from side -->
+        <div class="dot-wrap" style="left:35%;top:36%;" data-pt="2">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Chest / Heart</div>
+        </div>
+        <!-- 4 Shoulder blades -->
+        <div class="dot-wrap" style="left:40%;top:44%;" data-pt="3">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Shoulder Blades</div>
+        </div>
+        <!-- 5 Uddiyana -->
+        <div class="dot-wrap" style="left:42%;top:56%;" data-pt="4">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Uddiyana</div>
+        </div>
+        <!-- 6 Hip Flexors — clearest from side -->
+        <div class="dot-wrap" style="left:55%;top:62%;" data-pt="5">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Hip Flexors</div>
+        </div>
+        <!-- 7 Thighs -->
+        <div class="dot-wrap" style="left:65%;top:72%;" data-pt="6">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Thighs</div>
+        </div>
+        <!-- 8 Tops of feet -->
+        <div class="dot-wrap" style="left:80%;top:84%;" data-pt="7">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Tops of Feet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: BACK ───────────────────────────────────── -->
+    <div class="view" id="view2">
+      <!--
+        REPLACE this src with your BACK photo path.
+        Example: src="/photos/updog-back.jpg"
+        Photo tip: shoot from directly behind, same distance and height
+      -->
+      <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=900&q=85" alt="Back view">
+      <div class="view-label">Back View</div>
+      <div class="dots-layer" id="dots2">
+        <!-- Dots for BACK view — shows shoulder blades, hamstrings, feet clearly -->
+        <!-- 1 Wrists -->
+        <div class="dot-wrap" style="left:35%;top:80%;" data-pt="0">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Wrists</div>
+        </div>
+        <!-- 2 Arms -->
+        <div class="dot-wrap" style="left:27%;top:62%;" data-pt="1">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Arms</div>
+        </div>
+        <!-- 3 Chest (from back: visible arc) -->
+        <div class="dot-wrap" style="left:50%;top:32%;" data-pt="2">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Chest Lift</div>
+        </div>
+        <!-- 4 Shoulder blades — most visible from back -->
+        <div class="dot-wrap" style="left:35%;top:42%;" data-pt="3">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Shoulder Blades</div>
+        </div>
+        <!-- 5 Uddiyana -->
+        <div class="dot-wrap" style="left:50%;top:56%;" data-pt="4">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Uddiyana</div>
+        </div>
+        <!-- 6 Hip Flexors -->
+        <div class="dot-wrap" style="left:50%;top:64%;" data-pt="5">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Hip Flexors</div>
+        </div>
+        <!-- 7 Thighs — most visible from back -->
+        <div class="dot-wrap" style="left:45%;top:74%;" data-pt="6">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Thighs</div>
+        </div>
+        <!-- 8 Tops of feet — visible from back -->
+        <div class="dot-wrap" style="left:50%;top:88%;" data-pt="7">
+          <div class="dot-ring"></div><div class="dot-core"></div>
+          <div class="dot-bubble">Tops of Feet</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /photo-wrap -->
+</div><!-- /stage -->
+
+<!-- View rotation bar -->
+<div class="rot-bar" id="rotBar">
+  <div class="rot-label" style="text-align:right">Front</div>
+  <div class="rot-seg active" onclick="setView(0)"></div>
+  <div class="rot-seg" onclick="setView(1)"></div>
+  <div class="rot-seg" onclick="setView(2)"></div>
+  <div class="rot-label">Back</div>
+</div>
+
+<div class="drag-hint" id="dragHint">← Drag to rotate →</div>
+
+<!-- Teaching Panel -->
+<div class="panel" id="panel">
+  <div class="panel-num" id="pNum">1</div>
+  <button class="panel-close" onclick="closePanel()">✕</button>
+  <div class="panel-chip" id="pChip">Zone</div>
+  <h2 class="panel-title" id="pTitle">—</h2>
+  <div class="panel-div"></div>
+  <p class="panel-body" id="pBody"></p>
+  <div class="panel-cue" id="pCue"></div>
+  <div class="panel-mistakes" id="pMistakes"></div>
+  <div class="panel-nav">
+    <button class="pnav pnav-p" onclick="navigate(-1)">← Prev</button>
+    <button class="pnav pnav-n" onclick="navigate(1)">Next →</button>
+  </div>
+</div>
+
+<script>
+/* ── Teaching data ─────────────────────────────────────── */
+const POINTS=[
+  {title:'Wrists',chip:'Foundation',
+   body:'Wrists directly under the shoulders — not in front, not too wide. Base of the index finger and thumb press evenly into the mat. This distributes load across the whole hand, not into the wrist joint itself.',
+   cue:'"Press the floor away. Feel the mat push back into every part of your palm."',
+   mistakes:['Wrists too far forward — compresses the joint, removes power','Weight into outer wrist — creates imbalance through the arm chain','Fingers passive — energy leaks, foundation collapses']},
+  {title:'Arms',chip:'Structure',
+   body:'Arms fully extended, not locked. A slight internal rotation of the upper arm — rotating the inner elbow to face forward — broadens the chest and stabilises the shoulder joint. Subtle but essential.',
+   cue:'"Rotate your inner elbow forward. Your chest opens without forcing."',
+   mistakes:['Arms splaying wide — collapses chest, loads the lower back','Elbows bent — removes the structural support','Shoulders creeping up toward ears — disconnects the chest']},
+  {title:'Chest / Heart',chip:'The Lift',
+   body:'The lift comes from the thoracic spine — the mid back — not from crunching the lumbar. Lead with the sternum. Feel the collarbones widen. Let the heart move forward and upward. The lower back follows — it does not lead.',
+   cue:'"Sternum forward and up. Lower back lengthens — it never compresses."',
+   mistakes:['Collapsing into lower back — most common error, painful long-term','Chin jutting forward — disconnects neck from the lift','Ribs flaring — means uddiyana is absent']},
+  {title:'Shoulder Blades',chip:'Stability',
+   body:'Shoulder blades draw together (retract) and slide down the back (depress). This opens the front of the chest and protects the shoulder joint. If they wing out, the chest cannot lift and the shoulders absorb all the load.',
+   cue:'"Blades together, slide them down toward your back pockets."',
+   mistakes:['Blades winging — chest collapses, arms lose connection','Shoulders at ears — tension in neck, blocks the chest lift','Over-squeezing — rigidity, limits thoracic extension']},
+  {title:'Uddiyana Bandha',chip:'Bandha',
+   body:'A subtle lift of the lower abdomen — not a grip, not a forceful suck. It stabilises the lumbar so the backbend comes from the thoracic, not a hinge point in the lower back. Without it, every backbend compresses the lumbar.',
+   cue:'"Gently draw your navel in and up. Soft, not hard. Feel your lower back lengthen."',
+   mistakes:['Releasing completely — all load moves into lumbar spine','Over-gripping — restricts breath, blocks the lift','Belly dropping toward floor — no support for the backbend']},
+  {title:'Hip Flexors',chip:'Length',
+   body:'Hip flexors should be lengthening, not compressing. Pelvis stays neutral — not tucked, not tilted. Feel a long line from the top of the thigh through the hip into the belly. This is where the pose becomes a true backbend.',
+   cue:'"Hip bones gently forward as the chest lifts back. Length in the front of the hips."',
+   mistakes:['Pelvis tilting forward — shortens hip flexors, compresses lumbar','Buttocks gripping — locks the pelvis, blocks hip extension','Thighs dropping to floor — removes all hip engagement']},
+  {title:'Thighs',chip:'Engagement',
+   body:'Thighs must be lifted off the floor. This is what separates Upward Dog from Cobra. Quadriceps engaged, kneecaps drawn up, legs strong and active. The whole leg is one line of energy pressing back while the chest lifts forward.',
+   cue:'"Squeeze your quads, lift your kneecaps. Thighs hover. Legs push back, chest lifts forward."',
+   mistakes:['Thighs on the floor — this is Cobra, not Upward Dog','Knees soft — no power, no support for the hip lift','Feet rolling in or out — breaks the alignment chain']},
+  {title:'Tops of Feet',chip:'The Ground',
+   body:'Tops of the feet (dorsum) press into the mat — not the toes. Ankle fully extended, toenails face the floor. This activates the entire back of the leg and creates the grounding that allows the chest to rise. Equal pressure both feet.',
+   cue:'"Press the tops of your feet down. The more you press here, the higher your chest goes."',
+   mistakes:['Toes curled under — wrong weight distribution, loses the leg line','Feet rolling to one side — creates spinal rotation, asymmetry','Feet passive — the press into the floor drives the entire lift']}
+];
+
+const VIEWS=['Front View','Side View','Back View'];
+let currentView=0, currentPoint=-1, panelOpen=false;
+let dragStartX=0, dragging=false, hasDragged=false;
+
+/* ── View switching ─────────────────────────────────────── */
+window.setView=function(v){
+  document.querySelectorAll('.view').forEach((el,i)=>el.classList.toggle('active',i===v));
+  document.querySelectorAll('.rot-seg').forEach((el,i)=>el.classList.toggle('active',i===v));
+  document.getElementById('viewName').textContent=VIEWS[v];
+  currentView=v;
+  // Re-activate current dot in new view if panel is open
+  if(currentPoint>=0) activateDot(currentPoint);
+};
+
+/* ── Dot interaction ─────────────────────────────────────── */
+function activateDot(ptIdx){
+  document.querySelectorAll('.dot-wrap').forEach(d=>{
+    d.classList.toggle('active', parseInt(d.dataset.pt)===ptIdx);
+  });
+}
+
+document.querySelectorAll('.dot-wrap').forEach(d=>{
+  d.addEventListener('click',e=>{
+    e.stopPropagation();
+    selectPoint(parseInt(d.dataset.pt));
+  });
+});
+
+/* ── Teaching panel ─────────────────────────────────────── */
+function selectPoint(i){
+  currentPoint=i;
+  const p=POINTS[i];
+  document.getElementById('pNum').textContent=i+1;
+  document.getElementById('pChip').textContent=p.chip;
+  document.getElementById('pTitle').textContent=p.title;
+  document.getElementById('pBody').textContent=p.body;
+  document.getElementById('pCue').textContent=p.cue;
+  document.getElementById('pMistakes').innerHTML='<h4>Common Mistakes</h4>'+
+    p.mistakes.map(m=>`<div class="panel-mistake">${m}</div>`).join('');
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('photoWrap').classList.add('shifted');
+  activateDot(i);
+  panelOpen=true;
+}
+
+window.closePanel=function(){
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('photoWrap').classList.remove('shifted');
+  document.querySelectorAll('.dot-wrap').forEach(d=>d.classList.remove('active'));
+  panelOpen=false; currentPoint=-1;
+};
+
+window.navigate=function(dir){
+  const n=currentPoint+dir;
+  if(n<0||n>=POINTS.length)return;
+  selectPoint(n);
+};
+
+/* ── Drag to rotate ─────────────────────────────────────── */
+const stage=document.getElementById('stage');
+
+stage.addEventListener('pointerdown',e=>{
+  if(e.target.closest('.dot-wrap')||e.target.closest('.panel'))return;
+  dragStartX=e.clientX; dragging=true; hasDragged=false;
+  stage.setPointerCapture(e.pointerId);
+  document.getElementById('dragHint').classList.add('hidden');
+});
+
+stage.addEventListener('pointermove',e=>{
+  if(!dragging)return;
+  const dx=e.clientX-dragStartX;
+  if(Math.abs(dx)>8) hasDragged=true;
+});
+
+stage.addEventListener('pointerup',e=>{
+  if(!dragging)return;
+  const dx=e.clientX-dragStartX;
+  if(Math.abs(dx)>50){
+    if(dx<0) setView(Math.min(currentView+1,2)); // drag left → next view (front→side→back)
+    else     setView(Math.max(currentView-1,0)); // drag right → prev view
+  } else if(!hasDragged && !e.target.closest('.dot-wrap')){
+    closePanel();
+  }
+  dragging=false;
+});
+
+/* ── Keyboard ───────────────────────────────────────────── */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closePanel();return;}
+  if(e.key==='ArrowRight'){
+    if(panelOpen) navigate(1);
+    else setView(Math.min(currentView+1,2));
+    return;
+  }
+  if(e.key==='ArrowLeft'){
+    if(panelOpen) navigate(-1);
+    else setView(Math.max(currentView-1,0));
+    return;
+  }
+  if(e.key===' '||e.key==='Enter'){
+    if(!panelOpen) selectPoint(0); else navigate(1); return;
+  }
+  if(e.key>='1'&&e.key<='8') selectPoint(parseInt(e.key)-1);
+  if(e.key==='f'||e.key==='F') setView(0);
+  if(e.key==='s'||e.key==='S') setView(1);
+  if(e.key==='b'||e.key==='B') setView(2);
+});
+
+/* ── Intro ──────────────────────────────────────────────── */
+document.getElementById('startBtn').onclick=()=>{
+  const el=document.getElementById('intro');
+  el.classList.add('gone');
+  setTimeout(()=>el.style.display='none',800);
+};
+
+// Stagger dot pulse animations
+document.querySelectorAll('.dot-ring').forEach((r,i)=>{
+  r.style.animationDelay=(i*0.28)+'s';
+});
+</script>
+</body>
+</html>

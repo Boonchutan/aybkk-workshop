@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
+  <title>AYBKK · Your Welcome Card</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #faf8f5;
+      min-height: 100vh;
+      color: #2a2420;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 40px;
+    }
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #3e2723;
+    }
+    .sub { color: #8b7d6b; font-size: 14px; margin-bottom: 24px; text-align: center; }
+    .card-wrap {
+      max-width: 420px;
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+      background: #1a1612;
+      margin-bottom: 28px;
+    }
+    .card-wrap img { display: block; width: 100%; height: auto; }
+    .card-wrap.loading {
+      aspect-ratio: 640 / 720;
+      display: flex; align-items: center; justify-content: center;
+      color: #c49564; font-size: 14px;
+    }
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .btn {
+      width: 100%;
+      padding: 16px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: #3e2723; color: #fff; }
+    .btn-primary:hover { background: #5d4037; }
+    .btn-secondary {
+      background: #fff;
+      color: #5d4037;
+      border: 1.5px solid #d4c5b3;
+    }
+    .btn-secondary:hover { background: #faf8f5; }
+    .hint { font-size: 12px; color: #8b7d6b; text-align: center; margin-top: 16px; line-height: 1.6; max-width: 420px; }
+    .err { color: #c62828; font-size: 13px; margin-top: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1 id="title">Your Welcome Card</h1>
+  <p class="sub" id="subtitle">AYBKK Russia WS 2026</p>
+
+  <div class="card-wrap loading" id="cardWrap">Loading your card…</div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="shareBtn">Share 📷</button>
+    <button class="btn btn-secondary" id="downloadBtn">Save to Photos</button>
+  </div>
+
+  <p class="hint" id="hint">
+    Tap <b>Share</b> to send to Instagram, WhatsApp or anywhere.<br>
+    Or <b>Save to Photos</b> to keep it on your device.
+  </p>
+  <p class="err" id="err"></p>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    const type = params.get('type') || 'welcome';
+
+    const cardWrap = document.getElementById('cardWrap');
+    const shareBtn = document.getElementById('shareBtn');
+    const dlBtn = document.getElementById('downloadBtn');
+    const errEl = document.getElementById('err');
+    const titleEl = document.getElementById('title');
+
+    if (type === 'journal') {
+      titleEl.textContent = 'Today\'s Practice Card';
+    }
+
+    let cardBlob = null;
+    let cardUrl = null;
+
+    async function loadCard() {
+      if (!id) {
+        errEl.textContent = 'Missing student id in URL.';
+        return;
+      }
+      try {
+        const res = await fetch(`/api/share-card/${encodeURIComponent(id)}?type=${encodeURIComponent(type)}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        cardBlob = await res.blob();
+        cardUrl = URL.createObjectURL(cardBlob);
+        cardWrap.classList.remove('loading');
+        cardWrap.innerHTML = `<img src="${cardUrl}" alt="AYBKK Card">`;
+      } catch (e) {
+        errEl.textContent = 'Could not load card. ' + e.message;
+      }
+    }
+
+    shareBtn.addEventListener('click', async () => {
+      if (!cardBlob) return;
+      const file = new File([cardBlob], 'aybkk-card.png', { type: 'image/png' });
+      try {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'AYBKK Russia WS 2026',
+            text: 'My welcome card from AYBKK Russia WS 2026 🙏'
+          });
+        } else {
+          // Fallback: trigger download
+          dlBtn.click();
+        }
+      } catch (e) {
+        if (e.name !== 'AbortError') errEl.textContent = 'Share failed. Try Save instead.';
+      }
+    });
+
+    dlBtn.addEventListener('click', () => {
+      if (!cardBlob) return;
+      const a = document.createElement('a');
+      a.href = cardUrl || URL.createObjectURL(cardBlob);
+      a.download = `aybkk-${type}-card.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    loadCard();
+  </script>
+</body>
+</html>

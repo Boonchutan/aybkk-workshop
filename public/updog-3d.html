@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYBKK · 3D Teaching — Urdhva Mukha Svanasana</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --espresso:#0A0705; --ink:#1C1812; --amber:#C8650A;
+  --amber-l:#F0C49A; --parchment:#F2EDE4; --muted:#7A6A57;
+  --fd:'Playfair Display',Georgia,serif; --fb:'Jost',sans-serif;
+}
+html,body { width:100%; height:100%; overflow:hidden; background:var(--espresso); font-family:var(--fb); -webkit-font-smoothing:antialiased; }
+
+/* Canvas */
+#canvas { position:fixed; inset:0; }
+
+/* CSS2D labels */
+.label3d {
+  font-family:var(--fb); font-size:10px; font-weight:600;
+  letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--amber-l); pointer-events:none;
+  background:rgba(10,7,5,0.7); padding:3px 8px; border-radius:3px;
+  white-space:nowrap; opacity:0; transition:opacity 0.2s;
+}
+.label3d.visible { opacity:1; }
+
+/* Header */
+.hdr {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 32px;
+  background:linear-gradient(to bottom,rgba(10,7,5,0.96) 0%,transparent 100%);
+}
+.hdr-logo { font-family:var(--fd); font-weight:700; font-size:1rem; color:var(--parchment); letter-spacing:0.06em; }
+.hdr-logo span { font-family:var(--fb); font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-left:10px; }
+.hdr-pose { font-family:var(--fd); font-weight:700; font-style:italic; font-size:0.95rem; color:var(--amber-l); }
+.hdr-tip { font-size:0.6rem; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:#2A1E0E; }
+
+/* Panel */
+.panel {
+  position:fixed; top:0; right:0; width:370px; height:100vh;
+  background:rgba(12,8,4,0.97); border-left:1px solid #1E1408;
+  padding:72px 32px 32px; z-index:200; overflow-y:auto;
+  transform:translateX(100%); transition:transform 0.45s cubic-bezier(0.22,1,0.36,1);
+  display:flex; flex-direction:column;
+}
+.panel.open { transform:translateX(0); }
+.panel-bg-num {
+  font-family:var(--fd); font-weight:900; font-style:italic;
+  font-size:6rem; line-height:1; color:rgba(200,101,10,0.08);
+  position:absolute; top:48px; right:24px; pointer-events:none;
+}
+.panel-close {
+  position:absolute; top:18px; right:18px;
+  background:#1A1208; border:none; color:#4A3C2A;
+  width:34px; height:34px; border-radius:50%; font-size:0.9rem;
+  cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center;
+}
+.panel-close:hover { background:#2A1E10; color:var(--parchment); }
+.panel-chip {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 12px 4px 8px; border:1px solid #2A1E0E; border-radius:999px;
+  font-size:0.6rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--amber); margin-bottom:18px;
+}
+.panel-chip::before { content:'✦'; font-size:0.5rem; }
+.panel-title { font-family:var(--fd); font-weight:900; font-size:1.9rem; line-height:1.05; color:var(--parchment); margin-bottom:20px; }
+.panel-div { width:36px; height:2px; background:var(--amber); margin-bottom:20px; }
+.panel-body { font-size:0.88rem; line-height:1.85; color:#9A8A76; font-weight:300; margin-bottom:18px; }
+.panel-cue {
+  background:#160E06; border-left:2px solid var(--amber);
+  padding:13px 15px; border-radius:0 6px 6px 0;
+  font-family:var(--fd); font-weight:700; font-style:italic;
+  font-size:0.95rem; color:var(--amber-l); line-height:1.45; margin-bottom:18px;
+}
+.panel-mistakes h4 { font-size:0.6rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:#3A2E1E; margin-bottom:10px; }
+.panel-mistake { display:flex; gap:8px; font-size:0.8rem; color:#5A4A38; font-weight:300; line-height:1.6; margin-bottom:7px; }
+.panel-mistake::before { content:'→'; color:#3A2E1E; flex-shrink:0; }
+.panel-nav { display:flex; gap:8px; margin-top:auto; padding-top:28px; }
+.pnav { flex:1; padding:10px; font-family:var(--fb); font-size:0.65rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; border:none; cursor:pointer; border-radius:6px; transition:background 0.2s; }
+.pnav-prev { background:#160E06; color:#4A3C2A; }
+.pnav-prev:hover { color:var(--parchment); }
+.pnav-next { background:var(--amber); color:#fff; }
+.pnav-next:hover { background:#A8530A; }
+
+/* Bottom */
+.bottom {
+  position:fixed; bottom:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 32px 18px;
+  background:linear-gradient(to top,rgba(10,7,5,0.95) 0%,transparent 100%);
+}
+.b-dots { display:flex; gap:7px; align-items:center; }
+.b-dot { width:5px; height:5px; border-radius:50%; background:#1E1408; transition:all 0.25s; cursor:pointer; }
+.b-dot.active { background:var(--amber); width:18px; border-radius:3px; }
+.b-counter { font-size:0.6rem; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; color:#2A1E0E; }
+
+/* Intro */
+.intro {
+  position:fixed; inset:0; z-index:500; background:var(--espresso);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; gap:0; transition:opacity 0.8s;
+}
+.intro.gone { opacity:0; pointer-events:none; }
+.intro-sub-brand { font-family:var(--fb); font-size:0.65rem; font-weight:500; letter-spacing:0.28em; text-transform:uppercase; color:#3A2E1E; margin-bottom:40px; }
+.intro-title { font-family:var(--fd); font-weight:900; font-size:clamp(2.2rem,6vw,4.8rem); line-height:0.92; color:var(--parchment); margin-bottom:10px; }
+.intro-italic { font-family:var(--fd); font-weight:700; font-style:italic; font-size:clamp(0.9rem,2vw,1.4rem); color:var(--amber); margin-bottom:44px; }
+.intro-desc { font-size:0.85rem; color:#4A3C2A; font-weight:300; line-height:1.8; max-width:36ch; margin-bottom:36px; }
+.intro-btn { font-family:var(--fb); font-size:0.72rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; padding:14px 36px; background:var(--amber); color:#fff; border:none; border-radius:999px; cursor:pointer; transition:background 0.2s; }
+.intro-btn:hover { background:#A8530A; }
+.intro-key { font-size:0.6rem; color:#2A1E0E; margin-top:12px; letter-spacing:0.1em; }
+</style>
+</head>
+<body>
+
+<div class="intro" id="intro">
+  <div class="intro-sub-brand">AYBKK · 3D Teaching Series</div>
+  <h1 class="intro-title">Urdhva Mukha<br>Svanasana</h1>
+  <div class="intro-italic">Upward Facing Dog</div>
+  <p class="intro-desc">Drag to rotate the body in 3D. Click any glowing point to explore the anatomy and technique.</p>
+  <button class="intro-btn" id="startBtn">Begin →</button>
+  <div class="intro-key">Drag · Scroll to zoom · Arrow keys to navigate</div>
+</div>
+
+<div class="hdr">
+  <div class="hdr-logo">AYBKK <span>3D Teaching</span></div>
+  <div class="hdr-pose">Urdhva Mukha Svanasana</div>
+  <div class="hdr-tip">Drag to rotate · Click points to learn</div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<div class="panel" id="panel">
+  <div class="panel-bg-num" id="bgNum">1</div>
+  <button class="panel-close" onclick="closePanel()">✕</button>
+  <div class="panel-chip" id="pChip">Zone 1</div>
+  <h2 class="panel-title" id="pTitle">—</h2>
+  <div class="panel-div"></div>
+  <p class="panel-body" id="pBody"></p>
+  <div class="panel-cue" id="pCue"></div>
+  <div class="panel-mistakes" id="pMistakes"></div>
+  <div class="panel-nav">
+    <button class="pnav pnav-prev" onclick="navigate(-1)">← Prev</button>
+    <button class="pnav pnav-next" onclick="navigate(1)">Next →</button>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="b-counter" id="bctr">— / 8</div>
+  <div class="b-dots" id="bdots"></div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+/* ── Teaching data ───────────────────────────────────────── */
+const POINTS = [
+  { title:'Wrists', chip:'Foundation',
+    body:'Wrists directly under the shoulders — not in front, not too wide. Base of the index finger and thumb press evenly into the mat. This distributes load across the whole hand, not into the wrist joint itself.',
+    cue:'"Press the floor away. Feel the mat push back into every part of your palm."',
+    mistakes:['Wrists too far forward — compresses the joint, removes power','Weight into outer wrist — creates imbalance through the arm chain','Fingers passive — energy leaks, foundation collapses']
+  },
+  { title:'Arms', chip:'Structure',
+    body:'Arms fully extended, not locked. A slight internal rotation of the upper arm — rotating the inner elbow to face forward — broadens the chest and stabilises the shoulder joint. Subtle but essential.',
+    cue:'"Rotate your inner elbow forward. Your chest opens without forcing."',
+    mistakes:['Arms splaying wide — collapses the chest, loads the lower back','Elbows bent — removes the structural support','Shoulders creeping up toward ears — disconnects the chest']
+  },
+  { title:'Chest / Heart', chip:'The Lift',
+    body:'The lift must come from the thoracic spine — the mid back. Not from crunching the lumbar. Lead with the sternum. Feel the collarbones widen. Let the heart move forward and upward. The lower back follows — it does not lead.',
+    cue:'"Sternum forward and up. The lower back lengthens — it never compresses."',
+    mistakes:['Collapsing into the lower back — most common error, painful over time','Chin jutting forward — disconnects the neck from the lift','Ribs flaring — means uddiyana is absent']
+  },
+  { title:'Shoulder Blades', chip:'Stability',
+    body:'The shoulder blades draw together (retract) and slide down the back (depress). This opens the front of the chest and protects the shoulder joint. If they wing out, the chest cannot lift and the shoulders absorb all the load.',
+    cue:'"Blades together, slide them down toward your back pockets."',
+    mistakes:['Blades winging — chest collapses, arms lose their connection','Shoulders at ears — creates tension, blocks chest lift','Over-squeezing — rigidity, limits thoracic extension']
+  },
+  { title:'Uddiyana Bandha', chip:'Bandha',
+    body:'A subtle lift of the lower abdomen — not a grip, not a forceful suck. It stabilises the lumbar so the backbend comes from the thoracic, not a hinge point in the lower back. Without it, every backbend is a lower back compression.',
+    cue:'"Gently draw your navel in and up. Soft, not hard. Feel your lower back lengthen."',
+    mistakes:['Releasing completely — all load moves into lumbar spine','Over-gripping — restricts breath, blocks the lift','Belly dropping to floor — no support for the backbend']
+  },
+  { title:'Hip Flexors', chip:'Length',
+    body:'The hip flexors should be lengthening, not compressing. Pelvis stays neutral — not tucked, not tilted. Feel a long line from the top of the thigh through the hip and into the belly. This is where the pose becomes a true backbend.',
+    cue:'"Hip bones gently forward as the chest lifts back. Length in the front of the hips."',
+    mistakes:['Pelvis tilting forward — shortens hip flexors, compresses lumbar','Buttocks gripping — locks the pelvis, blocks hip extension','Thighs dropping to floor — removes all hip engagement']
+  },
+  { title:'Thighs', chip:'Engagement',
+    body:'Thighs must be lifted off the floor. This is what separates Upward Dog from Cobra. Quadriceps engaged, kneecaps drawn up, legs strong and active. The whole leg is one line of energy pressing back while the chest lifts forward.',
+    cue:'"Squeeze your quads, lift your kneecaps. Your thighs hover. Legs push back, chest lifts forward."',
+    mistakes:['Thighs on the floor — this is Cobra, not Upward Dog','Knees soft — no power, no support for the hip lift','Feet rolling in or out — breaks the alignment chain']
+  },
+  { title:'Tops of Feet', chip:'The Ground',
+    body:'Tops of the feet (dorsum) press into the mat — not the toes. Ankle fully extended. Toenails face the floor. This activates the entire back of the leg and creates the grounding that allows the chest to rise. Equal pressure both feet.',
+    cue:'"Press the tops of your feet down. The more you press here, the higher your chest goes."',
+    mistakes:['Toes curled under — wrong weight, loses the leg line','Feet rolling to one side — spinal rotation, asymmetry','Feet passive — the press into the floor drives the entire lift']
+  }
+];
+
+/* ── Init ────────────────────────────────────────────────── */
+const canvas = document.getElementById('canvas');
+const W = () => window.innerWidth, H = () => window.innerHeight;
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
+renderer.setSize(W(), H()); renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(W(), H());
+labelRenderer.domElement.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:50;';
+document.body.appendChild(labelRenderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0A0705);
+scene.fog = new THREE.Fog(0x0A0705, 12, 22);
+
+const camera = new THREE.PerspectiveCamera(42, W()/H(), 0.1, 50);
+camera.position.set(0, 2.5, 7);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.minDistance = 3; controls.maxDistance = 12;
+controls.target.set(0, 0.8, 0);
+controls.maxPolarAngle = Math.PI * 0.85;
+
+/* ── Lights ──────────────────────────────────────────────── */
+scene.add(new THREE.AmbientLight(0x3A2510, 2.2));
+
+const key = new THREE.DirectionalLight(0xFFD9A0, 3.5);
+key.position.set(-3, 6, 4); key.castShadow = true;
+key.shadow.mapSize.set(2048,2048); key.shadow.camera.near = 0.5; key.shadow.camera.far = 20;
+key.shadow.camera.left = -6; key.shadow.camera.right = 6;
+key.shadow.camera.top = 6; key.shadow.camera.bottom = -6;
+scene.add(key);
+
+const fill = new THREE.DirectionalLight(0x604530, 1.2);
+fill.position.set(4, 3, -2); scene.add(fill);
+
+const rim = new THREE.DirectionalLight(0xC8650A, 0.8);
+rim.position.set(0, -1, -5); scene.add(rim);
+
+/* ── Materials ───────────────────────────────────────────── */
+const matBody = new THREE.MeshStandardMaterial({
+  color:0xC4956A, roughness:0.72, metalness:0.0,
+  envMapIntensity:0.3
+});
+const matBodyHL = new THREE.MeshStandardMaterial({
+  color:0xE8B080, roughness:0.6, metalness:0.0, emissive:0x200800, emissiveIntensity:0.3
+});
+const matBodyActive = new THREE.MeshStandardMaterial({
+  color:0xC8650A, roughness:0.5, metalness:0.1, emissive:0x401800, emissiveIntensity:0.6
+});
+const matMarker = new THREE.MeshStandardMaterial({
+  color:0xC8650A, roughness:0.3, metalness:0.2,
+  emissive:0xC8650A, emissiveIntensity:0.8
+});
+const matMarkerHL = new THREE.MeshStandardMaterial({
+  color:0xFFFFFF, roughness:0.2, metalness:0.3,
+  emissive:0xFFFFFF, emissiveIntensity:1.2
+});
+
+/* ── Helper: cylinder between two Vector3s ───────────────── */
+function bone(p1, p2, r, mat) {
+  const dir = new THREE.Vector3().subVectors(p2, p1);
+  const len = dir.length();
+  const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+  const geo = new THREE.CylinderGeometry(r, r, len, 12, 1);
+  const m = new THREE.Mesh(geo, mat.clone()); m.castShadow = true;
+  m.position.copy(mid);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.normalize());
+  return m;
+}
+
+function joint(pos, r, mat) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r,14,10), mat.clone());
+  m.position.copy(pos); m.castShadow = true; return m;
+}
+
+/* ── Body group ──────────────────────────────────────────── */
+const bodyGroup = new THREE.Group();
+scene.add(bodyGroup);
+const bodyParts = []; // all meshes for raycasting body highlight
+
+function addBone(p1,p2,r) { const m=bone(p1,p2,r,matBody); bodyGroup.add(m); bodyParts.push(m); return m; }
+function addJoint(pos,r)   { const m=joint(pos,r,matBody);  bodyGroup.add(m); bodyParts.push(m); return m; }
+
+/* ── Joint positions — Upward Dog ───────────────────────── */
+// Z = depth (head toward -Z, feet toward +Z)
+// Y = height, X = left/right
+const J = {
+  HEAD:        new THREE.Vector3( 0,    2.05, -1.7),
+  NECK_BOT:    new THREE.Vector3( 0,    1.75, -1.35),
+  CHEST:       new THREE.Vector3( 0,    1.65, -0.9),
+  MID_BACK:    new THREE.Vector3( 0,    1.35,  0.0),
+  SACRUM:      new THREE.Vector3( 0,    0.85,  0.5),
+
+  R_SHOULDER:  new THREE.Vector3( 0.65, 1.6,  -0.75),
+  L_SHOULDER:  new THREE.Vector3(-0.65, 1.6,  -0.75),
+  R_ELBOW:     new THREE.Vector3( 0.72, 0.65, -0.7),
+  L_ELBOW:     new THREE.Vector3(-0.72, 0.65, -0.7),
+  R_WRIST:     new THREE.Vector3( 0.65, 0.04, -0.55),
+  L_WRIST:     new THREE.Vector3(-0.65, 0.04, -0.55),
+  R_HAND:      new THREE.Vector3( 0.65, 0.0,  -0.3),
+  L_HAND:      new THREE.Vector3(-0.65, 0.0,  -0.3),
+
+  R_HIP:       new THREE.Vector3( 0.32, 0.65,  0.55),
+  L_HIP:       new THREE.Vector3(-0.32, 0.65,  0.55),
+  R_KNEE:      new THREE.Vector3( 0.32, 0.1,   1.6),
+  L_KNEE:      new THREE.Vector3(-0.32, 0.1,   1.6),
+  R_ANKLE:     new THREE.Vector3( 0.3,  0.04,  2.65),
+  L_ANKLE:     new THREE.Vector3(-0.3,  0.04,  2.65),
+  R_FOOT:      new THREE.Vector3( 0.3,  0.0,   2.95),
+  L_FOOT:      new THREE.Vector3(-0.3,  0.0,   2.95),
+};
+
+// Head
+addJoint(J.HEAD, 0.29);
+// Head tilt — slightly back
+bodyGroup.children[bodyGroup.children.length-1].rotation.x = -0.25;
+
+// Neck
+addBone(J.NECK_BOT, J.HEAD, 0.13);
+
+// Torso — upper
+addBone(J.CHEST, J.NECK_BOT, 0.22);
+// Torso — mid
+addBone(J.MID_BACK, J.CHEST, 0.26);
+// Torso — lower
+addBone(J.SACRUM, J.MID_BACK, 0.22);
+
+// Shoulder joints
+addJoint(J.R_SHOULDER, 0.18); addJoint(J.L_SHOULDER, 0.18);
+
+// Upper arms
+addBone(J.R_SHOULDER, J.R_ELBOW, 0.11); addBone(J.L_SHOULDER, J.L_ELBOW, 0.11);
+// Elbow joints
+addJoint(J.R_ELBOW, 0.12); addJoint(J.L_ELBOW, 0.12);
+// Forearms
+addBone(J.R_ELBOW, J.R_WRIST, 0.09); addBone(J.L_ELBOW, J.L_WRIST, 0.09);
+// Wrist joints
+addJoint(J.R_WRIST, 0.10); addJoint(J.L_WRIST, 0.10);
+// Hands
+addBone(J.R_WRIST, J.R_HAND, 0.08); addBone(J.L_WRIST, J.L_HAND, 0.08);
+
+// Hip joints
+addJoint(J.R_HIP, 0.20); addJoint(J.L_HIP, 0.20);
+// Pelvis bridge
+addBone(J.R_HIP, J.L_HIP, 0.15);
+// Thighs
+addBone(J.R_HIP, J.R_KNEE, 0.155); addBone(J.L_HIP, J.L_KNEE, 0.155);
+// Knee joints
+addJoint(J.R_KNEE, 0.14); addJoint(J.L_KNEE, 0.14);
+// Shins
+addBone(J.R_KNEE, J.R_ANKLE, 0.11); addBone(J.L_KNEE, J.L_ANKLE, 0.11);
+// Ankle joints
+addJoint(J.R_ANKLE, 0.10); addJoint(J.L_ANKLE, 0.10);
+// Feet
+addBone(J.R_ANKLE, J.R_FOOT, 0.07); addBone(J.L_ANKLE, J.L_FOOT, 0.07);
+
+/* ── Chest plate (torso width) ───────────────────────────── */
+{
+  const geo = new THREE.BoxGeometry(0.85, 0.5, 0.35);
+  const m = new THREE.Mesh(geo, matBody.clone()); m.castShadow = true;
+  m.position.set(0, 1.55, -0.82); m.rotation.x = 0.18;
+  bodyGroup.add(m); bodyParts.push(m);
+}
+// Pelvis plate
+{
+  const geo = new THREE.BoxGeometry(0.7, 0.32, 0.38);
+  const m = new THREE.Mesh(geo, matBody.clone()); m.castShadow = true;
+  m.position.set(0, 0.72, 0.52); m.rotation.x = 0.1;
+  bodyGroup.add(m); bodyParts.push(m);
+}
+
+/* ── Ground ──────────────────────────────────────────────── */
+{
+  const geo = new THREE.PlaneGeometry(14, 14);
+  const mat = new THREE.MeshStandardMaterial({ color:0x120A04, roughness:0.9, metalness:0.0 });
+  const m = new THREE.Mesh(geo, mat); m.rotation.x = -Math.PI/2; m.receiveShadow = true;
+  scene.add(m);
+}
+// Subtle grid
+{
+  const grid = new THREE.GridHelper(12, 24, 0x1E1208, 0x160C06);
+  grid.position.y = 0.001; scene.add(grid);
+}
+
+/* ── Annotation markers ──────────────────────────────────── */
+// Each marker: position, label, which POINT index
+const MARKERS_DEF = [
+  { pos: new THREE.Vector3( 0.9,  0.3,  -0.5),  label:'Wrists',          idx:0 },
+  { pos: new THREE.Vector3( 1.2,  1.1,  -0.72), label:'Arms',            idx:1 },
+  { pos: new THREE.Vector3( 0.9,  1.95, -0.85), label:'Chest',           idx:2 },
+  { pos: new THREE.Vector3( 0.85, 1.75,  0.0),  label:'Shoulder Blades', idx:3 },
+  { pos: new THREE.Vector3( 0.7,  1.15,  0.2),  label:'Uddiyana',        idx:4 },
+  { pos: new THREE.Vector3( 0.75, 0.9,   0.55), label:'Hip Flexors',     idx:5 },
+  { pos: new THREE.Vector3( 0.75, 0.3,   1.6),  label:'Thighs',          idx:6 },
+  { pos: new THREE.Vector3( 0.7,  0.25,  2.8),  label:'Tops of Feet',    idx:7 },
+];
+
+const markerMeshes = [];
+const labelObjects = [];
+const pulseClock = new THREE.Clock();
+
+MARKERS_DEF.forEach((def, i) => {
+  // Pulsing outer ring
+  const outerGeo = new THREE.SphereGeometry(0.13, 12, 8);
+  const outerMat = new THREE.MeshStandardMaterial({
+    color:0xC8650A, transparent:true, opacity:0.15, roughness:0.4
+  });
+  const outer = new THREE.Mesh(outerGeo, outerMat); outer.position.copy(def.pos);
+  scene.add(outer);
+
+  // Core marker sphere
+  const geo = new THREE.SphereGeometry(0.07, 10, 8);
+  const m = new THREE.Mesh(geo, matMarker.clone()); m.position.copy(def.pos);
+  m.userData = { markerIdx: def.idx, markerDef: def, outerMesh: outer };
+  scene.add(m); markerMeshes.push(m);
+
+  // Dashed line from marker to body (approximate)
+  const bodyTarget = Object.values(J)[Math.floor(i * (Object.values(J).length / MARKERS_DEF.length))];
+  const points = [def.pos.clone(), bodyTarget.clone()];
+  const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+  const lineMat = new THREE.LineDashedMaterial({ color:0xC8650A, dashSize:0.08, gapSize:0.06, opacity:0.35, transparent:true });
+  const line = new THREE.Line(lineGeo, lineMat); line.computeLineDistances();
+  scene.add(line);
+
+  // CSS2D label
+  const div = document.createElement('div');
+  div.className = 'label3d'; div.textContent = def.label;
+  const lObj = new CSS2DObject(div);
+  lObj.position.copy(def.pos).add(new THREE.Vector3(0.18, 0.08, 0));
+  scene.add(lObj); labelObjects.push({ obj:lObj, el:div });
+});
+
+/* ── Bottom dots ─────────────────────────────────────────── */
+const bdotsEl = document.getElementById('bdots');
+POINTS.forEach((_,i) => {
+  const d = document.createElement('div'); d.className='b-dot';
+  d.onclick = () => selectPoint(i); bdotsEl.appendChild(d);
+});
+
+/* ── State ───────────────────────────────────────────────── */
+let current = -1;
+let panelOpen = false;
+let hoveredMarker = null;
+
+function selectPoint(i) {
+  current = i;
+  // Reset all markers
+  markerMeshes.forEach(m => { m.material = matMarker.clone(); labelObjects[markerMeshes.indexOf(m)].el.classList.remove('visible'); });
+  document.querySelectorAll('.b-dot').forEach(d => d.classList.remove('active'));
+
+  // Activate selected
+  markerMeshes[i].material = matMarkerHL.clone();
+  labelObjects[i].el.classList.add('visible');
+  document.querySelectorAll('.b-dot')[i].classList.add('active');
+
+  // Show panel
+  const p = POINTS[i];
+  document.getElementById('bgNum').textContent = i+1;
+  document.getElementById('pChip').textContent = p.chip;
+  document.getElementById('pTitle').textContent = p.title;
+  document.getElementById('pBody').textContent = p.body;
+  document.getElementById('pCue').textContent = p.cue;
+  document.getElementById('pMistakes').innerHTML = '<h4>Common Mistakes</h4>' +
+    p.mistakes.map(m=>`<div class="panel-mistake">${m}</div>`).join('');
+  document.getElementById('bctr').textContent = `${i+1} / ${POINTS.length}`;
+  document.getElementById('panel').classList.add('open');
+  panelOpen = true;
+}
+
+window.closePanel = function() {
+  document.getElementById('panel').classList.remove('open');
+  markerMeshes.forEach(m => m.material = matMarker.clone());
+  labelObjects.forEach(l => l.el.classList.remove('visible'));
+  document.querySelectorAll('.b-dot').forEach(d => d.classList.remove('active'));
+  document.getElementById('bctr').textContent = '— / 8';
+  panelOpen = false; current = -1;
+};
+
+window.navigate = function(dir) {
+  const next = current + dir;
+  if (next < 0 || next >= POINTS.length) return;
+  selectPoint(next);
+};
+
+/* ── Raycasting ──────────────────────────────────────────── */
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+function onPointerMove(e) {
+  const x = e.clientX ?? e.touches?.[0]?.clientX;
+  const y = e.clientY ?? e.touches?.[0]?.clientY;
+  mouse.set((x/W())*2-1, -(y/H())*2+1);
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(markerMeshes);
+  document.body.style.cursor = hits.length ? 'pointer' : 'grab';
+  if (hits.length) {
+    if (hoveredMarker !== hits[0].object) {
+      if (hoveredMarker) hoveredMarker.material = (hoveredMarker === markerMeshes[current]) ? matMarkerHL.clone() : matMarker.clone();
+      hoveredMarker = hits[0].object;
+      hoveredMarker.material = matMarkerHL.clone();
+    }
+  } else {
+    if (hoveredMarker && markerMeshes.indexOf(hoveredMarker) !== current) {
+      hoveredMarker.material = matMarker.clone();
+    }
+    hoveredMarker = null;
+  }
+}
+
+function onPointerDown(e) {
+  if (e.target !== canvas) return;
+  const x = e.clientX ?? e.touches?.[0]?.clientX;
+  const y = e.clientY ?? e.touches?.[0]?.clientY;
+  mouse.set((x/W())*2-1, -(y/H())*2+1);
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(markerMeshes);
+  if (hits.length) {
+    const idx = hits[0].object.userData.markerIdx;
+    selectPoint(idx);
+  }
+}
+
+canvas.addEventListener('pointermove', onPointerMove);
+canvas.addEventListener('pointerdown', onPointerDown);
+
+/* ── Keyboard ────────────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') { closePanel(); return; }
+  if (e.key===' '||e.key==='Enter') { if(!panelOpen) selectPoint(0); else navigate(1); return; }
+  if (e.key==='ArrowRight'||e.key==='ArrowDown') navigate(1);
+  if (e.key==='ArrowLeft'||e.key==='ArrowUp') navigate(-1);
+  if (e.key>='1'&&e.key<='8') selectPoint(parseInt(e.key)-1);
+});
+
+/* ── Intro ───────────────────────────────────────────────── */
+document.getElementById('startBtn').onclick = () => {
+  const el = document.getElementById('intro');
+  el.classList.add('gone'); setTimeout(()=>el.style.display='none',800);
+};
+
+/* ── Resize ──────────────────────────────────────────────── */
+window.addEventListener('resize', () => {
+  camera.aspect = W()/H(); camera.updateProjectionMatrix();
+  renderer.setSize(W(),H()); labelRenderer.setSize(W(),H());
+});
+
+/* ── Animate ─────────────────────────────────────────────── */
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  // Pulse markers
+  markerMeshes.forEach((m, i) => {
+    if (i !== current) {
+      const s = 1 + 0.12 * Math.sin(t * 2.5 + i * 0.8);
+      m.scale.setScalar(s);
+      if (m.userData.outerMesh) {
+        const os = 1 + 0.4 * Math.sin(t * 2.5 + i * 0.8);
+        m.userData.outerMesh.scale.setScalar(os);
+        m.userData.outerMesh.material.opacity = 0.08 + 0.08 * Math.sin(t*2.5+i*0.8);
+      }
+    } else {
+      m.scale.setScalar(1.3);
+    }
+  });
+
+  // Gentle body float
+  bodyGroup.position.y = Math.sin(t * 0.4) * 0.025;
+
+  controls.update();
+  renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

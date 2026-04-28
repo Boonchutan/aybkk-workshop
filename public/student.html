@@ -6,35 +6,52 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>AYBKK Practice Journal</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&display=swap');
 
     /* Day-of-week colors: Mon=Green, Tue=Red, Wed=Gold, Thu=Orange, Fri=Blue, Sat=Indigo, Sun=Gray */
     :root {
-      --bg: #FAF9F7;
+      --bg: #FAF6F1;
       --card: #FFFFFF;
-      --border: #E8E5E0;
-      --text: #1A1A1A;
-      --text-secondary: #8B8680;
-      --accent: #D4A574;
-      --accent-light: #F5EDE4;
-      --accent-hover: #C49564;
+      --border: #E8E1D6;
+      --border-soft: #F0E7DC;
+      --text: #2A2622;
+      --text-secondary: #8B7E70;
+      --text-muted: #B8AC9D;
+      --sand: #D4A574;
+      --sand-light: #F5EDE4;
+      --sand-hover: #C49564;
+      --clay: #C2876A;
+      --clay-light: #EDD6CB;
+      --clay-deep: #A36B52;
+      /* legacy aliases — runtime CSS overrides --accent for day-of-week color */
+      --accent: var(--sand);
+      --accent-light: var(--sand-light);
+      --accent-hover: var(--sand-hover);
       --success: #6B9E6B;
       --success-bg: #EEF5EE;
-      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-      --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow: 0 1px 3px rgba(82,58,38,0.05), 0 1px 2px rgba(82,58,38,0.04);
+      --shadow-lg: 0 4px 12px rgba(82,58,38,0.10);
       --radius: 14px;
-      --radius-sm: 10px;
-      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --radius-sm: 12px;
+      --radius-pill: 999px;
+      --transition: 0.22s cubic-bezier(0.32, 0.72, 0, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Spectral', 'Hoefler Text', 'Times New Roman', serif;
       background: var(--bg);
       min-height: 100vh;
       color: var(--text);
       -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+    .brand-logo-mark {
+      display: block; width: 60px; height: 60px;
+      margin: 0 auto 14px;
+      mix-blend-mode: multiply;
+      filter: contrast(1.05);
     }
 
     .container {
@@ -256,42 +273,48 @@
     }
     .name-input:focus { outline: none; border-color: var(--accent); }
 
-    /* Buttons */
+    /* Apple-style buttons */
     .btn {
       width: 100%;
-      padding: 15px;
+      height: 50px;
+      padding: 0 20px;
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: var(--radius-sm);
-      font-size: 15px;
+      font-family: 'Spectral', serif;
+      font-size: 16px;
       font-weight: 600;
-      font-family: inherit;
+      letter-spacing: 0.2px;
       cursor: pointer;
-      transition: all var(--transition);
-      margin-top: 16px;
+      transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+      margin-top: 18px;
+      box-shadow: 0 2px 6px rgba(82,58,38,0.12);
     }
-    .btn:hover { background: var(--accent-hover); }
-    .btn:active { transform: scale(0.98); }
-    .btn:disabled { background: var(--border); color: var(--text-secondary); cursor: not-allowed; }
+    .btn:hover { background: var(--accent-hover); box-shadow: 0 4px 12px rgba(82,58,38,0.18); }
+    .btn:active { transform: scale(0.97); box-shadow: 0 1px 3px rgba(82,58,38,0.14); }
+    .btn:disabled { background: var(--border); color: var(--text-secondary); cursor: not-allowed; box-shadow: none; }
 
     .next-btn { background: var(--bg-tertiary); color: var(--text); border: 1.5px solid var(--border); }
 
     .btn-secondary {
       width: 100%;
-      padding: 15px;
-      background: transparent;
-      color: var(--text-secondary);
-      border: 1.5px solid var(--border);
+      height: 46px;
+      padding: 0 18px;
+      background: var(--clay-light);
+      color: var(--clay-deep);
+      border: none;
       border-radius: var(--radius-sm);
+      font-family: 'Spectral', serif;
       font-size: 14px;
-      font-weight: 500;
-      font-family: inherit;
+      font-weight: 600;
+      letter-spacing: 0.3px;
       cursor: pointer;
-      transition: all var(--transition);
+      transition: transform var(--transition), background var(--transition);
       margin-top: 10px;
     }
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-secondary:hover { background: var(--clay); color: #fff; }
+    .btn-secondary:active { transform: scale(0.97); }
 
     /* Success overlay */
     .success-overlay {
@@ -341,11 +364,9 @@
 <div class="container">
   <!-- Logo & Header -->
   <div class="header" style="text-align:center;">
-    <div style="margin-bottom:10px;">
-      <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:68px;height:68px;border-radius:50%;object-fit:cover;opacity:0.9;">
-    </div>
-    <h1 id="pageTitle">AYBKK Practice Journal</h1>
-    <p id="pageSubtitle" style="font-size:12px;color:var(--text-secondary);margin-top:4px;">by Boonchu Tanti & Jamsai Tanti</p>
+    <img class="brand-logo-mark" src="/aybkk-logo.jpg" alt="AYBKK" style="width:54px;height:54px;margin-bottom:8px;">
+    <h1 id="pageTitle" style="font-family:'Spectral',serif;font-size:22px;font-weight:700;letter-spacing:-0.3px;">AYBKK Practice Journal</h1>
+    <p id="pageSubtitle" style="font-family:'Spectral',serif;font-style:italic;font-size:12px;color:var(--text-secondary);margin-top:4px;">by Boonchu Tanti & Jamsai Tanti</p>
   </div>
   <!-- Language -->
   <div class="lang-switch">
@@ -374,12 +395,21 @@
   <!-- WELCOME SCREEN -->
   <div class="step" id="step-1" data-step="-1">
     <div class="card" style="text-align:center;padding:32px 20px;">
-      <div style="font-size:36px;margin-bottom:12px;">🧘</div>
-      <div class="step-question" id="welcomeTitle" style="font-size:20px;margin-bottom:8px;">AYBKK Practice Journal</div>
+      <img class="brand-logo-mark" src="/aybkk-logo.jpg" alt="AYBKK">
+      <div class="step-question" id="welcomeTitle" style="font-family:'Spectral',serif;font-size:24px;font-weight:700;letter-spacing:-0.4px;margin-bottom:8px;">AYBKK Practice Journal</div>
       <div class="step-hint" id="welcomeTeachers" style="font-size:14px;color:var(--text-secondary);margin-bottom:6px;">By Boonchu & Jamsai Tanti</div>
       <div id="welcomeStudentName" style="font-size:16px;font-weight:600;color:var(--accent);margin:20px 0 8px;"></div>
-      <div class="step-hint" id="welcomeSub" style="font-size:13px;margin-bottom:24px;">Practice Journal / Дневник практики</div>
+      <div class="step-hint" id="welcomeSub" style="font-size:13px;margin-bottom:16px;">Practice Journal / Дневник практики</div>
+      <!-- Reminder: this IS the journal, use it after every class -->
+      <div style="background:var(--accent-light);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:var(--accent-hover);line-height:1.6;text-align:left;">
+        📌 <strong>收藏此链接</strong> — 每次练习后打开记录<br>
+        <span style="opacity:0.75;">Bookmark this link · Use after every class</span>
+      </div>
       <button class="btn" id="welcomeStartBtn" onclick="startFromWelcome()">Начать запись / Start Journal</button>
+      <div id="welcomeReturningNav" class="hidden" style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn-secondary" id="welcomeMyJournalBtn" onclick="goToMyJournal()" style="flex:1;margin-top:0;">📖 My Journal</button>
+        <button class="btn-secondary" id="welcomeMyWeekBtn" onclick="goToMyWeek()" style="flex:1;margin-top:0;">📊 My Week</button>
+      </div>
     </div>
   </div>
 
@@ -644,36 +674,34 @@
 <!-- Success + Share Card -->
 <div id="successOverlay" class="success-overlay hidden">
   <div class="success-box">
-    <div id="shareCard" style="border-radius:20px;padding:32px 26px 28px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 16px 48px rgba(0,0,0,0.4);position:relative;overflow:hidden;border:1px solid rgba(196,149,100,0.3);background:linear-gradient(160deg,#1c1814 0%,#2a2018 60%,#1a1612 100%);">
-      <!-- Photo background layer -->
+    <div id="shareCard" style="border-radius:20px;padding:32px 26px 28px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 16px 48px rgba(0,0,0,0.25);position:relative;overflow:hidden;background:#7BAF7A;">
+      <!-- Photo background layer (set to 0.7 opacity when photo present) -->
       <div id="shareCardPhotoBg" style="position:absolute;inset:0;background-size:cover;background-position:center top;opacity:0;z-index:0;"></div>
-      <!-- Dark vignette overlay -->
-      <div id="shareCardOverlay" style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,14,10,0.55) 0%,rgba(18,14,10,0.35) 45%,rgba(18,14,10,0.65) 100%);z-index:1;opacity:0;transition:opacity 0.4s;"></div>
+      <!-- Day-color tint overlay (replaces dark vignette) -->
+      <div id="shareCardOverlay" style="position:absolute;inset:0;z-index:1;opacity:0;transition:opacity 0.4s;"></div>
       <!-- Content -->
       <div style="position:relative;z-index:2;">
-        <!-- Logo in amber ring -->
-        <div style="width:52px;height:52px;border-radius:50%;border:1px solid rgba(196,149,100,0.5);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.4);">
+        <!-- Logo in white ring -->
+        <div style="width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.2);">
           <img src="/aybkk-logo.jpg" alt="AYBKK" style="width:100%;height:100%;object-fit:cover;">
         </div>
         <!-- Subtitle -->
-        <div style="color:rgba(196,149,100,0.7);font-size:9px;letter-spacing:4px;text-transform:uppercase;margin-bottom:12px;font-weight:400;font-family:Georgia,serif;" id="shareSubtitle">AYBKK PRACTICE JOURNAL</div>
-        <!-- Amber accent line -->
-        <div style="width:40px;height:1px;background:linear-gradient(90deg,transparent,rgba(196,149,100,0.6),transparent);margin:0 auto 18px;"></div>
-        <!-- Student name — serif -->
-        <div style="color:#f5f0e8;font-size:27px;font-weight:700;margin-bottom:6px;letter-spacing:0.5px;text-shadow:0 2px 14px rgba(0,0,0,0.5);font-family:Georgia,serif;" id="shareStudentName"></div>
+        <div style="color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;letter-spacing:1.5px;margin-bottom:18px;" id="shareSubtitle">AYBKK PRACTICE JOURNAL</div>
+        <!-- Student name — sans bold -->
+        <div style="color:#ffffff;font-size:32px;font-weight:700;margin-bottom:6px;letter-spacing:0.3px;text-shadow:0 2px 6px rgba(0,0,0,0.2);" id="shareStudentName"></div>
         <!-- Date info -->
-        <div style="color:rgba(245,240,232,0.6);font-size:12px;font-weight:400;margin-bottom:20px;letter-spacing:0.5px;font-family:Georgia,serif;" id="shareDayInfo"></div>
+        <div style="color:rgba(255,255,255,0.9);font-size:14px;font-weight:500;margin-bottom:18px;" id="shareDayInfo"></div>
         <!-- Divider + quote -->
-        <div style="border-top:1px solid rgba(196,149,100,0.2);padding-top:16px;">
-          <div style="color:rgba(245,240,232,0.8);font-size:12.5px;font-style:italic;line-height:1.8;font-weight:400;margin-bottom:10px;font-family:Georgia,serif;" id="shareQuote"></div>
-          <div style="color:#f5f0e8;font-size:13px;font-weight:600;letter-spacing:0.3px;line-height:1.55;display:none;margin-bottom:4px;font-family:Georgia,serif;" id="shareUplift"></div>
+        <div style="border-top:1px solid rgba(255,255,255,0.25);padding-top:16px;">
+          <div style="color:rgba(255,255,255,0.92);font-size:14px;font-style:italic;line-height:1.7;font-weight:400;margin-bottom:10px;font-family:Georgia,serif;" id="shareQuote"></div>
+          <div style="color:#ffffff;font-size:15px;font-weight:700;letter-spacing:0.3px;line-height:1.5;display:none;margin-bottom:4px;" id="shareUplift"></div>
         </div>
         <!-- Byline -->
-        <div style="color:rgba(196,149,100,0.45);font-size:9.5px;margin-top:18px;letter-spacing:2px;text-transform:uppercase;font-family:Georgia,serif;">Boonchu · Jamsai Tanti</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:12px;margin-top:18px;font-weight:500;">by Boonchu Tanti &amp; Jamsai Tanti</div>
       </div>
     </div>
     <div class="success-msg" id="successMsg">Your practice journal is saved.<br>See you next session.</div>
-    <button class="btn" onclick="shareToWeChat()" id="shareWeChatBtn">Share to WeChat 📱</button>
+    <button class="btn" onclick="shareToWeChat()" id="shareWeChatBtn">Save & Share 📷</button>
     <button class="btn-secondary" onclick="window.location.reload()" id="doneBtn">Done</button>
   </div>
 </div>
@@ -701,9 +729,9 @@ const T = {
     stableH: '可以多选',
     difficultQ: '今天哪些有挑战？',
     difficultH: '可以多选',
-    notesQ: '有什么想分享的吗？',
-    notesH: '可选 — 你的想法、感受或观察',
-    notesPlaceholder: '想写就写...',
+    notesQ: '写下今天练习的回忆',
+    notesH: '为自己保留这次练习的记忆',
+    notesPlaceholder: '写下今天的感受、发现或一个细节...',
     lastAsanaQ: '关于你的最后一个体式 — 做得怎么样？',
     lastAsanaH: '记录你的真实感受',
     lastAsanaPlaceholder: '写下你的体验...',
@@ -723,7 +751,9 @@ const T = {
     quizNext: '下一题 →',
     quizComplete: '完成测验',
     quizCorrect: '🥳🎊 正确！',
-    quizWrong: '🙏 下次再试'
+    quizWrong: '🙏 下次再试',
+    myJournalBtn: '📖 我的记录',
+    myWeekBtn: '📊 本周报告'
   },
   en: {
     pageTitle: 'Practice Journal',
@@ -746,9 +776,9 @@ const T = {
     stableH: 'Select all that apply',
     difficultQ: 'What was challenging today?',
     difficultH: 'Select all that apply',
-    notesQ: 'Anything to share?',
-    notesH: 'Optional — your thoughts, feelings, or observations',
-    notesPlaceholder: 'Write if you\'d like...',
+    notesQ: 'Write your practice memory',
+    notesH: 'Keep this practice as a memory for yourself',
+    notesPlaceholder: 'A feeling, a discovery, a small detail from today...',
     lastAsanaQ: 'Note about your last asana — how did it go?',
     lastAsanaH: 'Write about your real experience',
     lastAsanaPlaceholder: 'Write about it...',
@@ -768,7 +798,9 @@ const T = {
     quizNext: 'Next →',
     quizComplete: 'Complete Quiz',
     quizCorrect: '🥳🎊 Correct!',
-    quizWrong: '🙏 Try next time'
+    quizWrong: '🙏 Try next time',
+    myJournalBtn: '📖 My Journal',
+    myWeekBtn: '📊 My Week'
   },
   th: {
     pageTitle: 'บันทึกการฝึก',
@@ -791,9 +823,9 @@ const T = {
     stableH: 'เลือกได้หลายข้อ',
     difficultQ: 'วันนี้อะไรท้าทาย?',
     difficultH: 'เลือกได้หลายข้อ',
-    notesQ: 'อยากแชร์อะไรไหม?',
-    notesH: 'ไม่บังคับ — ความคิด ความรู้สึก หรือสิ่งที่สังเกต',
-    notesPlaceholder: 'อยากเขียนก็เขียน...',
+    notesQ: 'เขียนความทรงจำการฝึกของวันนี้',
+    notesH: 'เก็บการฝึกครั้งนี้ไว้เป็นความทรงจำของคุณ',
+    notesPlaceholder: 'ความรู้สึก ค้นพบ หรือรายละเอียดเล็กๆ จากวันนี้...',
     lastAsanaQ: 'บันทึกท่าสุดท้าย — ทำได้ยังไงบ้าง?',
     lastAsanaH: 'เขียนประสบการณ์จริงของคุณ',
     lastAsanaPlaceholder: 'เขียนเลย...',
@@ -813,7 +845,9 @@ const T = {
     quizNext: 'ข้อถัดไป →',
     quizComplete: 'เสร็จสิ้น',
     quizCorrect: '🥳🎊 ถูกต้อง!',
-    quizWrong: '🙏 ลองใหม่ครั้งหน้า'
+    quizWrong: '🙏 ลองใหม่ครั้งหน้า',
+    myJournalBtn: '📖 บันทึกของฉัน',
+    myWeekBtn: '📊 รายงานสัปดาห์'
   },
   ru: {
     pageTitle: 'AYBKK RUSSIA WS 2026',
@@ -836,9 +870,9 @@ const T = {
     stableH: 'Можно выбрать несколько',
     difficultQ: 'Что было сложным сегодня?',
     difficultH: 'Можно выбрать несколько',
-    notesQ: 'Хотите что-то добавить?',
-    notesH: 'Необязательно — ваши мысли, чувства или наблюдения',
-    notesPlaceholder: 'Напишите, если хотите...',
+    notesQ: 'Запишите воспоминание о практике',
+    notesH: 'Сохраните эту практику как воспоминание для себя',
+    notesPlaceholder: 'Ощущение, открытие, маленькая деталь сегодняшнего дня...',
     lastAsanaQ: 'Последняя асана — как прошла?',
     lastAsanaH: 'Опишите ваш реальный опыт',
     lastAsanaPlaceholder: 'Напишите о вашем опыте...',
@@ -858,7 +892,9 @@ const T = {
     quizNext: 'Далее →',
     quizComplete: 'Завершить',
     quizCorrect: '🥳🎊 Правильно!',
-    quizWrong: '🙏 Попробуйте в следующий раз'
+    quizWrong: '🙏 Попробуйте в следующий раз',
+    myJournalBtn: '📖 Мой дневник',
+    myWeekBtn: '📊 Моя неделя'
   }
 };
 
@@ -874,17 +910,17 @@ const totalSteps = 9; // 0=register, 1-6=questions, 7=photo, 8-9=quiz
 const QUIZ_QUESTIONS = [
   { q: 'Who is the creator of the Ashtanga yoga method we practice?', options: ['Guru Purnima', 'Guru Sharath Jois', 'Guru Patanjali', 'Guru Pattabhi Jois 🙏'], answer: 3 },
   { q: 'What is the translation of "ashtanga"?', options: ['Put tangerine 🍊 over ashes 🔥', 'Eight limbs of Yoga 🧘', 'The process of making soup 🍲', "It's a thong underwear 🩲"], answer: 1 },
-  { q: 'How many times do we repeat Suryanamaskara A?', options: ['I repeat a few times to warm up', '5 times is tradition ✅', 'No sun in my city — none! 🤷', 'What are you talking about? 🤔'], answer: 1 },
-  { q: 'How many vinyasa in Suryanamaskara B?', options: ['9', '14', '17 ✅', 'Huh.. what is vinyasa?! 😳'], answer: 2 },
-  { q: 'What is the asana after Janu Sirsasana A?', options: ['Janu Sirsasana AA', 'Janu Sirsasana A1', 'Janunu Sirsasana', 'Janu Sirsasana B ✅'], answer: 3 },
-  { q: 'Sentence before "om shanti shanti shantih" in closing mantra?', options: ['Boom Shakala 🕺', 'Vande Gurunam 👳', 'Sukhino bhavantu 🕊️ ✅', 'Wu Zhao Sheng You Zhao ⚔️'], answer: 2 },
-  { q: 'What language is used for counting vinyasa in Ashtanga?', options: ['Hindi', 'Arabic', 'Tamil', 'Sanskrit ✅'], answer: 3 },
-  { q: 'How many days per week do Ashtanga practitioners practice traditionally?', options: ['6 days per week, full power 💪 ✅', 'I practice every day 😇', 'Doctor said 1 day on, 2 days rest 👨‍⚕️', 'Whenever I feel tired — listening to my body 🙂'], answer: 0 },
-  { q: 'How many breaths in headstand half bend?', options: ['When I do it I can barely breathe 🥵', 'Long 10 breaths 😌 ✅', "I can't even do 1 breath! 😤", '25 breaths'], answer: 1 },
-  { q: 'What is bandha?', options: ['Same as holding your poop 💩', 'Lifting pelvic floor and feeling light 🪽 ✅', 'Another type of scarf "Bandana" 👳', "It's slang for bandaid 🩹"], answer: 1 },
-  { q: 'What is the main idea of Ashtanga practice?', options: ['Gain big muscles — yeah! 💪', 'Handstand — I love it! 🤸', 'Breathing, moving body and holding postures 🧘 ✅', 'Nice photos to post on social media! 📸'], answer: 2 },
-  { q: 'How many times do we stand up and bend in Urdhva Dhanurasana during Mysore?', options: ['What are you talking about?! I hate backbends! 🤯', 'As many as I can for nice videos 🥰', 'Three times or more 😎 ✅', 'Why?! I only like handstand! 🤸'], answer: 2 },
-  { q: 'What is a Mysore class?', options: ['Ashtanga practice at home', 'My own "Black Diamond" sequence at a yoga studio 🤦', 'Practice for nice photos with friends adjusting 📸', 'Traditional Ashtanga at a sacred space with a teacher from parampara 🙏 ✅'], answer: 3 }
+  { q: 'How many times do we repeat Suryanamaskara A?', options: ['I repeat a few times to warm up', '5 times is tradition', 'No sun in my city — none! 🤷', 'What are you talking about? 🤔'], answer: 1 },
+  { q: 'How many vinyasa in Suryanamaskara B?', options: ['9', '14', '17', 'Huh.. what is vinyasa?! 😳'], answer: 2 },
+  { q: 'What is the asana after Janu Sirsasana A?', options: ['Janu Sirsasana AA', 'Janu Sirsasana A1', 'Janunu Sirsasana', 'Janu Sirsasana B'], answer: 3 },
+  { q: 'Sentence before "om shanti shanti shantih" in closing mantra?', options: ['Boom Shakala 🕺', 'Vande Gurunam 👳', 'Sukhino bhavantu 🕊️', 'Wu Zhao Sheng You Zhao ⚔️'], answer: 2 },
+  { q: 'What language is used for counting vinyasa in Ashtanga?', options: ['Hindi', 'Arabic', 'Tamil', 'Sanskrit'], answer: 3 },
+  { q: 'How many days per week do Ashtanga practitioners practice traditionally?', options: ['6 days per week, full power 💪', 'I practice every day 😇', 'Doctor said 1 day on, 2 days rest 👨‍⚕️', 'Whenever I feel tired — listening to my body 🙂'], answer: 0 },
+  { q: 'How many breaths in headstand half bend?', options: ['When I do it I can barely breathe 🥵', 'Long 10 breaths 😌', "I can't even do 1 breath! 😤", '25 breaths'], answer: 1 },
+  { q: 'What is bandha?', options: ['Same as holding your poop 💩', 'Lifting pelvic floor and feeling light 🪽', 'Another type of scarf "Bandana" 👳', "It's slang for bandaid 🩹"], answer: 1 },
+  { q: 'What is the main idea of Ashtanga practice?', options: ['Gain big muscles — yeah! 💪', 'Handstand — I love it! 🤸', 'Breathing, moving body and holding postures 🧘', 'Nice photos to post on social media! 📸'], answer: 2 },
+  { q: 'How many times do we stand up and bend in Urdhva Dhanurasana during Mysore?', options: ['What are you talking about?! I hate backbends! 🤯', 'As many as I can for nice videos 🥰', 'Three times or more 😎', 'Why?! I only like handstand! 🤸'], answer: 2 },
+  { q: 'What is a Mysore class?', options: ['Ashtanga practice at home', 'My own "Black Diamond" sequence at a yoga studio 🤦', 'Practice for nice photos with friends adjusting 📸', 'Traditional Ashtanga at a sacred space with a teacher from parampara 🙏'], answer: 3 }
 ];
 
 // Select N unique random questions
@@ -980,6 +1016,7 @@ function init() {
   if (studentId && studentName) {
     // Returning student — show welcome, then questions
     document.getElementById('welcomeStudentName').textContent = studentName;
+    document.getElementById('welcomeReturningNav').classList.remove('hidden');
     showStep(-1); // welcome screen
   } else {
     showStep(0); // registration
@@ -1028,6 +1065,16 @@ function startFromWelcome() {
   } else {
     showStep(0); // go to registration
   }
+}
+
+function goToMyJournal() {
+  if (!studentId || !studentName) return;
+  window.location.href = `/my-journal.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(studentName)}&lang=${currentLang}`;
+}
+
+function goToMyWeek() {
+  if (!studentId || !studentName) return;
+  window.location.href = `/weekly-report.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(studentName)}&lang=${currentLang}`;
 }
 
 // Step navigation
@@ -1142,8 +1189,13 @@ function applyLang(lang) {
   document.getElementById('photoH').textContent = t.photoH || 'Optional — for your share card';
   document.getElementById('quizTitle').textContent = t.quizTitle || 'Quick Ashtanga Quiz!';
   document.getElementById('quizHint').textContent = t.quizHint || "1 quick question before you're done";
-  document.getElementById('successTitle').textContent = t.successTitle;
+  const stTitleEl = document.getElementById('successTitle');
+  if (stTitleEl) stTitleEl.textContent = t.successTitle;
   document.getElementById('successMsg').innerHTML = t.successMsg;
+  const mjBtn = document.getElementById('welcomeMyJournalBtn');
+  const mwBtn = document.getElementById('welcomeMyWeekBtn');
+  if (mjBtn) mjBtn.textContent = t.myJournalBtn || '📖 My Journal';
+  if (mwBtn) mwBtn.textContent = t.myWeekBtn || '📊 My Week';
   // Location-aware title override (Russian overrides language default)
   if (isRussian) {
     document.getElementById('welcomeTitle').textContent = 'AYBKK RUSSIA WS 2026';
@@ -1184,6 +1236,17 @@ async function doRegister() {
     studentName = name;
     document.getElementById('studentName').textContent = name;
     document.getElementById('studentName').classList.remove('hidden');
+    // Persist the studentId/name in the URL so a reload lands on the welcome
+    // screen with the My Journal / My Week buttons (instead of registration).
+    try {
+      const u = new URL(window.location.href);
+      u.searchParams.set('id', studentId);
+      u.searchParams.set('name', name);
+      if (!u.searchParams.has('lang')) u.searchParams.set('lang', currentLang);
+      if (!u.searchParams.has('location')) u.searchParams.set('location', workshopLocation);
+      window.history.replaceState({}, '', u.toString());
+    } catch (e) { /* old browser — ignore */ }
+    document.getElementById('welcomeReturningNav').classList.remove('hidden');
     showStep(1);
   } catch (err) {
     btn.disabled = false;
@@ -1291,185 +1354,51 @@ function showShareCard() {
       upliftEl.style.display = 'none';
     }
   }
-  // Share card always uses dark espresso palette — sophisticated, vintage
+  // Day-color pastel base (matches canvas-rendered share card)
+  const dc = getDayColor();
   const card = document.getElementById('shareCard');
   const photoBg = document.getElementById('shareCardPhotoBg');
   const overlay = document.getElementById('shareCardOverlay');
   const localPhoto = localStorage.getItem('photo_' + studentId);
 
+  // Base gradient is the day color
+  card.style.background = `linear-gradient(135deg, ${dc.accent} 0%, ${dc.hover} 50%, ${dc.accent} 100%)`;
+
   if (localPhoto && photoBg) {
-    // Photo present: photo at 70% opacity, dark overlay for readability
-    card.style.background = 'linear-gradient(160deg,#1c1814 0%,#2a2018 60%,#1a1612 100%)';
+    // Photo at 70% opacity, day-color tint overlay (NOT dark) — keeps photo bright
     photoBg.style.backgroundImage = `url(${localPhoto})`;
     photoBg.style.opacity = '0.7';
-    if (overlay) overlay.style.opacity = '1';
+    if (overlay) {
+      overlay.style.background = `linear-gradient(180deg, ${dc.accent}99 0%, ${dc.accent}66 30%, ${dc.hover}66 70%, ${dc.accent}99 100%)`;
+      overlay.style.opacity = '1';
+    }
   } else {
-    // No photo: solid dark espresso gradient
-    card.style.background = 'linear-gradient(160deg,#1c1814 0%,#2a2018 60%,#1a1612 100%)';
     if (photoBg) photoBg.style.opacity = '0';
     if (overlay) overlay.style.opacity = '0';
   }
-}
 
-// WeChat share
-async function shareToWeChat() {
-  const card = document.getElementById('shareCard');
-  const dc = getDayColor();
-  
-  // Try canvas-based image generation
-  try {
-    const canvas = document.createElement('canvas');
-    canvas.width = 640;
-    canvas.height = 720;
-    const ctx = canvas.getContext('2d');
-    
-    // Pastel day-color gradient background
-    const gradient = ctx.createLinearGradient(0, 0, 640, 720);
-    gradient.addColorStop(0, dc.accent);
-    gradient.addColorStop(0.5, dc.hover);
-    gradient.addColorStop(1, dc.accent);
-    ctx.fillStyle = gradient;
-    roundRect(ctx, 0, 0, 640, 720, 32);
-    ctx.fill();
-    
-    // Student photo background (if available)
-    if (studentPhoto) {
-      try {
-        const img = await loadStudentPhoto(studentPhoto);
-        if (img) {
-          // Draw photo with 70% opacity, cover-fit
-          ctx.save();
-          ctx.globalAlpha = 0.70;
-          const scale = Math.max(640 / img.width, 720 / img.height);
-          const sw = img.width * scale;
-          const sh = img.height * scale;
-          const sx = (640 - sw) / 2;
-          const sy = (720 - sh) / 2;
-          ctx.drawImage(img, sx, sy, sw, sh);
-          ctx.restore();
-          
-          // Re-apply gradient overlay on top of photo for readability
-          const photoOverlay = ctx.createLinearGradient(0, 0, 0, 720);
-          photoOverlay.addColorStop(0, dc.accent + '99');
-          photoOverlay.addColorStop(0.3, dc.accent + '66');
-          photoOverlay.addColorStop(0.7, dc.hover + '66');
-          photoOverlay.addColorStop(1, dc.accent + '99');
-          ctx.fillStyle = photoOverlay;
-          roundRect(ctx, 0, 0, 640, 720, 32);
-          ctx.fill();
+  // Russia students: also post the journal share card to their workshop group
+  // (the digital Mysore room — everyone sees everyone practice).
+  if (isRussian && studentId) {
+    fetch('/api/journal/share-to-group/' + encodeURIComponent(studentId), { method: 'POST' })
+      .then(r => r.json())
+      .then(data => {
+        if (data.posted) {
+          const msg = currentLang === 'ru'
+            ? '✓ Открытка отправлена в группу'
+            : '✓ Card shared to the workshop group';
+          // Tiny non-blocking confirmation under the card
+          const el = document.createElement('div');
+          el.textContent = msg;
+          el.style.cssText = 'text-align:center;color:#6b9e6b;font-size:13px;margin:8px 0 -4px;font-weight:500;';
+          card.parentNode.insertBefore(el, card.nextSibling);
         }
-      } catch(e) { console.log('Photo load failed:', e); }
-    }
-    
-    // Subtle white overlay for depth
-    const overlay = ctx.createLinearGradient(0, 0, 0, 720);
-    overlay.addColorStop(0, 'rgba(255,255,255,0.15)');
-    overlay.addColorStop(0.5, 'rgba(255,255,255,0)');
-    overlay.addColorStop(1, 'rgba(0,0,0,0.1)');
-    ctx.fillStyle = overlay;
-    roundRect(ctx, 0, 0, 640, 720, 32);
-    ctx.fill();
-
-    // AYBKK logo (circular)
-    try {
-      const logoImg = await new Promise((res, rej) => {
-        const img = new Image(); img.crossOrigin = 'anonymous';
-        img.onload = () => res(img); img.onerror = rej;
-        img.src = '/aybkk-logo.jpg';
-      });
-      const r = 34, cx = 320, cy = 52;
-      ctx.save();
-      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
-      ctx.drawImage(logoImg, cx - r, cy - r, r * 2, r * 2);
-      ctx.restore();
-      // White ring
-      ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-    } catch(e) { /* logo optional */ }
-
-    // AYBKK label
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.font = '600 14px -apple-system, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(window._wsTitleYear || 'AYBKK WORKSHOP 2026', 320, 106);
-
-    // Student name
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '700 40px -apple-system, PingFang SC, sans-serif';
-    ctx.fillText(studentName, 320, 210);
-    
-    // Day info
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.font = '500 22px -apple-system, sans-serif';
-    ctx.fillText(getDayInfo(), 320, 240);
-    
-    // Divider
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-    ctx.beginPath();
-    ctx.moveTo(120, 280);
-    ctx.lineTo(520, 280);
-    ctx.stroke();
-    
-    // Quote
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.font = 'italic 16px -apple-system, serif';
-    const quote = getDailyQuote();
-    wrapText(ctx, `"${quote}"`, 320, 330, 460, 26);
-    
-    // Uplift phrase — large, centered, bold
-    const uplift = getUpliftPhrase(window._practiceNotes);
-    if (uplift) {
-      // Decorative line above uplift
-      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-      ctx.beginPath();
-      ctx.moveTo(200, 420);
-      ctx.lineTo(440, 420);
-      ctx.stroke();
-      
-      // Big uplift words
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '700 24px -apple-system, PingFang SC, sans-serif';
-      wrapText(ctx, uplift, 320, 470, 500, 34);
-    }
-    
-    // Credit
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.font = '500 14px -apple-system, sans-serif';
-    ctx.fillText('by Boonchu Tanti & Jamsai Tanti', 320, 680);
-    
-    // Convert to blob and trigger download/share
-    canvas.toBlob(async (blob) => {
-      if (navigator.share && navigator.canShare) {
-        const file = new File([blob], 'aybkk-journal.png', { type: 'image/png' });
-        const shareData = {
-          title: window._wsTitleYear,
-          text: `${getDayInfo()} — ${studentName}`,
-          files: [file]
-        };
-        if (navigator.canShare(shareData)) {
-          await navigator.share(shareData);
-          return;
-        }
-      }
-      // Fallback: download
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `aybkk-${getDayNumber()}-${studentName}.png`;
-      a.click();
-      URL.revokeObjectURL(url);
-      alert('Image saved! Open WeChat and share from your gallery.');
-    }, 'image/png');
-  } catch (err) {
-    // Final fallback: copy text
-    const uplift = getUpliftPhrase(window._practiceNotes);
-    const text = uplift
-      ? `🧘 ${window._wsTitleYear}\n${studentName} — ${getDayInfo()}\n"${getDailyQuote()}"\n✨ ${uplift}\nby Boonchu Tanti & Jamsai Tanti`
-      : `🧘 ${window._wsTitleYear}\n${studentName} — ${getDayInfo()}\n"${getDailyQuote()}"\nby Boonchu Tanti & Jamsai Tanti`;
-    await navigator.clipboard.writeText(text);
-    alert('Copied! Paste in WeChat to share.');
+      })
+      .catch(() => { /* silent — student doesn't need to know if it failed */ });
   }
 }
+
+// WeChat share — intentionally removed (duplicate below)
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -1545,6 +1474,9 @@ async function doSubmit() {
       }
       throw new Error(checkinData.error || 'Check-in failed');
     }
+    // Remember the just-created assessment id so the photo step can pin its
+    // upload to THIS entry (otherwise every past card shows the latest photo).
+    window._lastCheckinId = checkinData.checkinId || null;
     initPhotoStep();
     showStep(7);
     // photo step will show share card after quiz
@@ -1590,16 +1522,19 @@ function initPhotoStep() {
   const previewContainer = document.getElementById('photoPreviewContainer');
   const uploadBtn = document.getElementById('photoUploadBtn');
   
-  // Check if student already has a photo in localStorage
-  const stored = localStorage.getItem('photo_' + studentId);
-  if (stored) {
-    uploadedPhotoDataURL = stored;
-    preview.src = stored;
-    placeholder.style.display = 'none';
-    previewContainer.style.display = 'block';
-    uploadBtn.textContent = 'Change Photo';
-  }
-  
+  // Always start fresh — each entry deserves its own photo. The student's
+  // previous photo is still preserved on the previous assessment (its versioned
+  // Cloudinary URL is pinned), and today's entry inherits Student.photoUrl as
+  // a fallback at checkin time. The photo step is here to capture *today's*
+  // moment, not to confirm yesterday's.
+  uploadedPhotoDataURL = null;
+  preview.src = '';
+  placeholder.style.display = 'flex';
+  previewContainer.style.display = 'none';
+  uploadBtn.textContent = 'Take / Upload Photo';
+  if (photoInput) photoInput.value = '';
+
+
   // Only attach listeners once
   if (!photoStepInited) {
     photoInput.addEventListener('change', function(e) {
@@ -1623,13 +1558,28 @@ function initPhotoStep() {
           try {
             localStorage.setItem('photo_' + studentId, compressed);
           } catch(err) {
-            // Quota exceeded — keep in memory only, still works for this session
             console.warn('Photo not saved to localStorage (quota):', err);
           }
           preview.src = compressed;
           placeholder.style.display = 'none';
           previewContainer.style.display = 'block';
           uploadBtn.textContent = 'Change Photo';
+
+          // Upload to Cloudinary so teacher can see student face. Pin to the
+          // just-submitted assessment so historical share cards show the photo
+          // from THAT day, not the latest one.
+          if (studentId) {
+            fetch('/api/upload/student-photo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                studentId,
+                imageBase64: compressed,
+                assessmentId: window._lastCheckinId || null
+              })
+            }).catch(() => {}); // silent — share card still works regardless
+          }
+
           // Auto-advance to quiz after photo selected
           setTimeout(() => goNext(7), 600);
         };
@@ -1737,36 +1687,59 @@ function skipQuiz() {
 
 
 // =====================
-// SHARE CARD — load photo from localStorage
+// SHARE CARD — refined editorial design (Spectral serif, photo-first)
+// Mirrors public/my-journal.html renderShareCard() so a card looks identical
+// at submit-time and later from the profile view.
 // =====================
 async function shareToWeChat() {
   const dc = getDayColor();
-  
-  // Try canvas-based image generation
+  const quote = getDailyQuote();
+  const dayInfo = getDayInfo();
+  const uplift = getUpliftPhrase(window._practiceNotes);
+
+  // Location-aware eyebrow (e.g. "AYBKK RUSSIA WS 2026")
+  let shareTitle = window._wsTitleYear || 'AYBKK · PRACTICE JOURNAL';
+  if (isGuangzhou) shareTitle = 'AYBKK · 广州工作坊 2026';
+  else if (isRussian) shareTitle = 'AYBKK · RUSSIA WS 2026';
+  else if (isHuizhou) shareTitle = 'AYBKK · HUIZHOU WORKSHOP';
+
   try {
+    // Make sure Spectral has loaded before drawing — canvas falls back silently
+    try {
+      await Promise.all([
+        document.fonts.load("700 48px Spectral"),
+        document.fonts.load("600 22px Spectral"),
+        document.fonts.load("500 11px Spectral"),
+        document.fonts.load("italic 400 17px Spectral"),
+        document.fonts.load("italic 300 12px Spectral")
+      ]);
+    } catch (_) { /* fall back to serif system stack */ }
+
+    const SERIF = "Spectral, 'Hoefler Text', 'Times New Roman', serif";
     const canvas = document.createElement('canvas');
     canvas.width = 640;
     canvas.height = 720;
     const ctx = canvas.getContext('2d');
-    
-    // Pastel day-color gradient background
-    const gradient = ctx.createLinearGradient(0, 0, 640, 720);
-    gradient.addColorStop(0, dc.accent);
-    gradient.addColorStop(0.5, dc.hover);
-    gradient.addColorStop(1, dc.accent);
-    ctx.fillStyle = gradient;
+
+    // 1. Day-color frame
+    const frame = ctx.createLinearGradient(0, 0, 0, 720);
+    frame.addColorStop(0, dc.hover);
+    frame.addColorStop(1, dc.accent);
+    ctx.fillStyle = frame;
     roundRect(ctx, 0, 0, 640, 720, 32);
     ctx.fill();
-    
-    // Student photo from localStorage (primary) or URL param (fallback)
+
+    // 2. Photo, almost full strength
+    let hasPhoto = false;
     const localPhoto = localStorage.getItem('photo_' + studentId);
     const photoSrc = localPhoto || studentPhoto;
     if (photoSrc) {
       try {
         const img = await loadStudentPhoto(photoSrc);
         if (img) {
+          hasPhoto = true;
           ctx.save();
-          ctx.globalAlpha = 0.70;
+          ctx.globalAlpha = 0.92;
           const scale = Math.max(640 / img.width, 720 / img.height);
           const sw = img.width * scale;
           const sh = img.height * scale;
@@ -1774,129 +1747,144 @@ async function shareToWeChat() {
           const sy = (720 - sh) / 2;
           ctx.drawImage(img, sx, sy, sw, sh);
           ctx.restore();
-          
-          // Gradient overlay for readability
-          const photoOverlay = ctx.createLinearGradient(0, 0, 0, 720);
-          photoOverlay.addColorStop(0, dc.accent + '99');
-          photoOverlay.addColorStop(0.3, dc.accent + '66');
-          photoOverlay.addColorStop(0.7, dc.hover + '66');
-          photoOverlay.addColorStop(1, dc.accent + '99');
-          ctx.fillStyle = photoOverlay;
-          roundRect(ctx, 0, 0, 640, 720, 32);
-          ctx.fill();
-        }
-      } catch(e) { console.log('Photo load failed:', e); }
-    }
-    
-    // Subtle depth overlay
-    const overlay = ctx.createLinearGradient(0, 0, 0, 720);
-    overlay.addColorStop(0, 'rgba(255,255,255,0.15)');
-    overlay.addColorStop(0.5, 'rgba(255,255,255,0)');
-    overlay.addColorStop(1, 'rgba(0,0,0,0.1)');
-    ctx.fillStyle = overlay;
-    roundRect(ctx, 0, 0, 640, 720, 32);
-    ctx.fill();
 
-    // AYBKK logo (circular)
+          // Top legibility band
+          const top = ctx.createLinearGradient(0, 0, 0, 290);
+          top.addColorStop(0, dc.hover + 'D9');
+          top.addColorStop(0.55, dc.accent + '80');
+          top.addColorStop(1, dc.accent + '00');
+          ctx.fillStyle = top;
+          ctx.fillRect(0, 0, 640, 290);
+
+          // Bottom legibility band
+          const bot = ctx.createLinearGradient(0, 380, 0, 720);
+          bot.addColorStop(0, dc.accent + '00');
+          bot.addColorStop(0.35, dc.accent + '99');
+          bot.addColorStop(1, dc.hover + 'E6');
+          ctx.fillStyle = bot;
+          ctx.fillRect(0, 380, 640, 340);
+        }
+      } catch (e) { console.log('Photo load failed:', e); }
+    }
+    if (!hasPhoto) {
+      const wash = ctx.createLinearGradient(0, 0, 0, 720);
+      wash.addColorStop(0, dc.hover);
+      wash.addColorStop(0.5, dc.accent);
+      wash.addColorStop(1, dc.hover);
+      ctx.fillStyle = wash;
+      roundRect(ctx, 0, 0, 640, 720, 32);
+      ctx.fill();
+    }
+
+    // 3. Logo
     try {
       const logoImg = await new Promise((res, rej) => {
         const img = new Image(); img.crossOrigin = 'anonymous';
         img.onload = () => res(img); img.onerror = rej;
         img.src = '/aybkk-logo.jpg';
       });
-      const r = 34, cx = 320, cy = 52;
+      const r = 26, cx = 320, cy = 56;
       ctx.save();
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
       ctx.drawImage(logoImg, cx - r, cy - r, r * 2, r * 2);
       ctx.restore();
-      // White ring
-      ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-    } catch(e) { /* logo optional */ }
+    } catch (e) { /* logo optional */ }
 
-    // Location-specific share title
-    let shareTitle = window._wsTitleYear || 'AYBKK WORKSHOP 2026';
-    if (isGuangzhou) shareTitle = 'AYBKK 广州工作坊 2026';
-    else if (isRussian) shareTitle = 'AYBKK RUSSIA WS 2026';
-
-    // AYBKK label
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.font = '600 14px -apple-system, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(shareTitle, 320, 106);
 
-    // Student name
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '700 40px -apple-system, PingFang SC, sans-serif';
-    ctx.fillText(studentName, 320, 210);
-    
-    // Day info
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.font = '500 22px -apple-system, sans-serif';
-    ctx.fillText(getDayInfo(), 320, 240);
-    
-    // Divider
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-    ctx.beginPath();
-    ctx.moveTo(120, 280);
-    ctx.lineTo(520, 280);
-    ctx.stroke();
-    
-    // Quote
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.font = 'italic 16px -apple-system, serif';
-    const quote = getDailyQuote();
-    wrapText(ctx, '"' + quote + '"', 320, 330, 460, 26);
-    
-    // Uplift phrase
-    const uplift = getUpliftPhrase(window._practiceNotes);
-    if (uplift) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-      ctx.beginPath();
-      ctx.moveTo(200, 420);
-      ctx.lineTo(440, 420);
-      ctx.stroke();
-      
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '700 24px -apple-system, PingFang SC, sans-serif';
-      wrapText(ctx, uplift, 320, 470, 500, 34);
-    }
-    
-    // Credit
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.font = '500 14px -apple-system, sans-serif';
-    ctx.fillText('by Boonchu Tanti & Jamsai Tanti', 320, 680);
-    
-    // Convert to blob and trigger download/share
-    canvas.toBlob(async (blob) => {
-      if (navigator.share && navigator.canShare) {
-        const file = new File([blob], 'aybkk-journal.png', { type: 'image/png' });
-        const shareData = {
-          title: shareTitle,
-          text: getDayInfo() + ' — ' + studentName,
-          files: [file]
-        };
-        if (navigator.canShare(shareData)) {
-          await navigator.share(shareData);
-          return;
-        }
+    // helper — draw text with subtle shadow for legibility on photos
+    const draw = (text, font, color, x, y, shadow) => {
+      ctx.font = font;
+      ctx.fillStyle = color;
+      if (shadow) {
+        ctx.shadowColor = 'rgba(0,0,0,0.35)';
+        ctx.shadowBlur = shadow.blur || 6;
+        ctx.shadowOffsetY = shadow.y || 2;
       }
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'aybkk-' + getDayNumber() + '-' + studentName + '.png';
-      a.click();
-      URL.revokeObjectURL(url);
-      alert('Image saved! Open WeChat and share from your gallery.');
-    }, 'image/png');
+      ctx.fillText(text, x, y);
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
+    };
+
+    // 4. EYEBROW — letterspaced uppercase, journal masthead
+    ctx.letterSpacing = '4px';
+    draw(shareTitle, `500 11px ${SERIF}`, 'rgba(255,255,255,0.88)', 320, 116, { blur: 4, y: 1 });
+    ctx.letterSpacing = '0px';
+
+    // 5. NAME — hero serif
+    draw(studentName, `700 48px ${SERIF}`, '#ffffff', 320, 218, { blur: 8, y: 2 });
+
+    // 6. DATE — italic
+    draw(dayInfo, `italic 400 17px ${SERIF}`, 'rgba(255,255,255,0.85)', 320, 252, { blur: 3, y: 1 });
+
+    // 7. Hairline divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.32)';
+    ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(220, 290);
+    ctx.lineTo(420, 290);
+    ctx.stroke();
+
+    // 8. QUOTE — italic body serif
+    ctx.font = `italic 400 17px ${SERIF}`;
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 1;
+    wrapText(ctx, '“' + quote + '”', 320, 440, 500, 26);
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+
+    // 9. UPLIFT — semibold serif refrain
+    if (uplift) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.32)'; ctx.lineWidth = 0.6;
+      ctx.beginPath();
+      ctx.moveTo(220, 538);
+      ctx.lineTo(420, 538);
+      ctx.stroke();
+      ctx.font = `600 22px ${SERIF}`;
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = 'rgba(0,0,0,0.35)';
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetY = 2;
+      wrapText(ctx, uplift, 320, 580, 500, 32);
+      ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+    }
+
+    // 10. BYLINE
+    draw('— Boonchu Tanti & Jamsai Tanti', `italic 300 12px ${SERIF}`, 'rgba(255,255,255,0.78)', 320, 686, { blur: 2, y: 1 });
+
+    const dataUrl = canvas.toDataURL('image/png');
+    showSaveImageModal(dataUrl);
   } catch (err) {
-    const uplift = getUpliftPhrase(window._practiceNotes);
     const text = uplift
-      ? '🧘 ' + shareTitle + '\n' + studentName + ' — ' + getDayInfo() + '\n"' + getDailyQuote() + '"\n✨ ' + uplift + '\nby Boonchu Tanti & Jamsai Tanti'
-      : '🧘 ' + shareTitle + '\n' + studentName + ' — ' + getDayInfo() + '\n"' + getDailyQuote() + '"\nby Boonchu Tanti & Jamsai Tanti';
-    await navigator.clipboard.writeText(text);
-    alert('Copied! Paste in WeChat to share.');
+      ? '🧘 ' + shareTitle + '\n' + studentName + ' — ' + dayInfo + '\n"' + quote + '"\n✨ ' + uplift + '\nby Boonchu Tanti & Jamsai Tanti'
+      : '🧘 ' + shareTitle + '\n' + studentName + ' — ' + dayInfo + '\n"' + quote + '"\nby Boonchu Tanti & Jamsai Tanti';
+    try { await navigator.clipboard.writeText(text); } catch (e) {}
+    alert('长按图片保存\nLong press image to save');
   }
+}
+
+function showSaveImageModal(dataUrl) {
+  let modal = document.getElementById('saveImgModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'saveImgModal';
+    modal.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+    modal.innerHTML = `
+      <div style="text-align:center;max-width:320px;width:100%;">
+        <div style="color:#fff;font-size:14px;font-weight:600;margin-bottom:12px;">
+          长按图片保存到相册<br><span style="font-size:12px;opacity:0.7;">Long press image → Save to Album</span>
+        </div>
+        <img id="saveImgEl" src="" style="width:100%;border-radius:16px;display:block;" />
+        <button onclick="document.getElementById('saveImgModal').style.display='none'" style="margin-top:16px;width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.3);background:transparent;color:#fff;font-size:14px;cursor:pointer;">关闭 / Close</button>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('saveImgEl').src = dataUrl;
+  modal.style.display = 'flex';
 }
 
 // Set Guangzhou title (isGuangzhou already declared above)

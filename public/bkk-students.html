@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYBKK Bangkok Shala — Students</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, sans-serif; background: #f5f0eb; color: #1a1a1a; padding: 16px; }
+    h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 16px; }
+    .row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+    .refresh-btn { background: #7BAF7A; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
+    .new-btn { background: #c49564; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; text-decoration: none; }
+    .filter-btn { background: #fff; color: #555; border: 1px solid #e0d8cf; border-radius: 16px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
+    .filter-btn.active { background: #3e2723; color: #fff; border-color: #3e2723; }
+    .search { flex: 1; min-width: 160px; padding: 8px 12px; border: 1px solid #e0d8cf; border-radius: 8px; font-size: 13px; background: #fff; }
+    .count { font-size: 12px; color: #888; margin-bottom: 10px; }
+    .student-card {
+      background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 10px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .student-info { flex: 1; min-width: 0; }
+    .student-name { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; letter-spacing: 0.3px; }
+    .badge.reserv { background: #eef5ee; color: #2e7d32; }
+    .badge.new { background: #fff3e0; color: #e65100; }
+    .student-meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .btn-group { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .qr-btn { background: #7BAF7A; color: #fff; border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .copy-btn { background: #f0f0f0; color: #333; border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .copy-btn.done { background: #e8f5e9; color: #388e3c; }
+    .qr-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
+    .qr-overlay.show { display: flex; }
+    .qr-box { background: #fff; border-radius: 20px; padding: 28px 24px; text-align: center; width: 280px; position: relative; }
+    .qr-box h2 { font-size: 17px; margin-bottom: 4px; }
+    .qr-box p { font-size: 12px; color: #888; margin-bottom: 16px; }
+    .qr-box img { width: 220px; height: 220px; border-radius: 8px; }
+    .qr-hint { font-size: 11px; color: #aaa; margin-top: 10px; }
+    .close-btn { position: absolute; top: 12px; right: 14px; background: #f5f5f5; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+    .empty { text-align: center; color: #aaa; padding: 40px 0; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>🧘 AYBKK Bangkok Shala</h1>
+  <div class="subtitle">Daily journal links — existing Reserv students + new walk-ins</div>
+  <div class="row">
+    <button class="refresh-btn" onclick="loadStudents()">↻ Refresh</button>
+    <a class="new-btn" href="/orientation-bkk.html" target="_blank">+ New student orientation</a>
+  </div>
+  <div class="row">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" data-filter="reserv" onclick="setFilter('reserv')">Reserv</button>
+    <button class="filter-btn" data-filter="orientation" onclick="setFilter('orientation')">New</button>
+    <input class="search" id="searchBox" placeholder="Search name…" oninput="render()">
+  </div>
+  <div id="count" class="count"></div>
+  <div id="list"></div>
+
+  <div class="qr-overlay" id="qrOverlay" onclick="if(event.target===this)closeQR()">
+    <div class="qr-box">
+      <button class="close-btn" onclick="closeQR()">✕</button>
+      <h2 id="qrName"></h2>
+      <p>Scan to open journal / สแกนเพื่อเปิดสมุดบันทึก</p>
+      <img id="qrImg" src="" alt="QR">
+      <div class="qr-hint">Long-press to save / กดค้างเพื่อบันทึก</div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://aybkk-ashtanga.up.railway.app/api';
+    let allStudents = [];
+    let currentFilter = 'all';
+
+    async function loadStudents() {
+      document.getElementById('list').innerHTML = '<div class="empty">Loading…</div>';
+      try {
+        const res = await fetch(`${API}/orientations/bkk`);
+        const data = await res.json();
+        allStudents = data.students || [];
+        render();
+      } catch(e) {
+        document.getElementById('list').innerHTML = '<div class="empty">Failed to load. Check connection.</div>';
+      }
+    }
+
+    function setFilter(f) {
+      currentFilter = f;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.filter === f);
+      });
+      render();
+    }
+
+    function escapeHtml(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function cssId(s) { return String(s||'').replace(/[^a-zA-Z0-9_-]/g, '_'); }
+
+    function render() {
+      const search = document.getElementById('searchBox').value.trim().toLowerCase();
+      let list = allStudents;
+      if (currentFilter !== 'all') list = list.filter(s => s.source === currentFilter);
+      if (search) list = list.filter(s => (s.name || '').toLowerCase().includes(search));
+
+      const reservCount = allStudents.filter(s=>s.source==='reserv').length;
+      const newCount = allStudents.filter(s=>s.source==='orientation').length;
+      document.getElementById('count').textContent =
+        `${list.length} student${list.length !== 1 ? 's' : ''}` +
+        (currentFilter === 'all' ? ` (${reservCount} Reserv · ${newCount} new)` : '');
+
+      const el = document.getElementById('list');
+      if (!list.length) {
+        el.innerHTML = '<div class="empty">No students.</div>';
+        return;
+      }
+      el.innerHTML = list.map(s => {
+        const checkins = s.checkins || 0;
+        const badge = s.source === 'reserv'
+          ? '<span class="badge reserv">Reserv</span>'
+          : '<span class="badge new">New</span>';
+        const meta = [
+          checkins + ' check-in' + (checkins !== 1 ? 's' : ''),
+          s.lastDate ? 'last ' + s.lastDate : ''
+        ].filter(Boolean).join(' · ');
+        const k = cssId(s.id);
+        return `<div class="student-card" data-id="${escapeHtml(s.id)}">
+          <div class="student-info">
+            <div class="student-name">${escapeHtml(s.name)} ${badge}</div>
+            <div class="student-meta">${escapeHtml(meta)}</div>
+          </div>
+          <div class="btn-group">
+            <button class="qr-btn" data-action="qr" data-id="${escapeHtml(s.id)}">QR</button>
+            <button class="copy-btn" id="copy-${k}" data-action="copy" data-id="${escapeHtml(s.id)}">Copy</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // Event delegation — avoids quoting issues with names/links
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const student = allStudents.find(s => s.id === id);
+      if (!student) return;
+      if (btn.dataset.action === 'qr') showQR(student);
+      else if (btn.dataset.action === 'copy') copyLink(student);
+    });
+
+    async function showQR(student) {
+      document.getElementById('qrName').textContent = student.name;
+      document.getElementById('qrImg').src = '';
+      document.getElementById('qrOverlay').classList.add('show');
+      try {
+        const res = await fetch(`${API}/journal/qr/${encodeURIComponent(student.id)}`);
+        const data = await res.json();
+        if (data.qrDataUrl) {
+          document.getElementById('qrImg').src = data.qrDataUrl;
+          return;
+        }
+      } catch(e) { /* fall through */ }
+      document.getElementById('qrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(student.journalLink)}`;
+    }
+
+    function closeQR() {
+      document.getElementById('qrOverlay').classList.remove('show');
+    }
+
+    async function copyLink(student) {
+      try {
+        await navigator.clipboard.writeText(student.journalLink);
+      } catch(e) {
+        const ta = document.createElement('textarea');
+        ta.value = student.journalLink; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      }
+      const btn = document.getElementById('copy-' + cssId(student.id));
+      if (!btn) return;
+      btn.textContent = '✓ Copied';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 2000);
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>

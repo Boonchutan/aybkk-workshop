@@ -8,16 +8,29 @@ const { Bot, InlineKeyboard } = require('grammy');
 const neo4j = require('neo4j-driver');
 const line = require('@line/bot-sdk');
 
-// Config
-const BOT_TOKEN='8368539519:AAF12ytC_rr26xBoDxmKVceCFeANRTK69dA';
-const NEO4J_URI = 'bolt://localhost:7687';
-const NEO4J_USER = 'neo4j';
-const NEO4J_PASSWORD='aybkk_neo4j_2026';
-const LINE_CHANNEL_ACCESS_TOKEN = 'KQfDnkH0SDXW/WhitCBT//bXNMqY/h6dVUcQP7TzGLqEIzyzKI+iNuIbwzIfif6PE469u2Rl85Is6fLP0DAN/8YmLaIRfcnrLBJNfI9EtbS9VzAbwsXrvTfOERSTp45VfBZzXBDduEcrBYiLaum4vQdB04t89/1O/w1cDnyilFU=';
+// Config — load from .env
+require('dotenv').config();
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const NEO4J_URI = process.env.NEO4J_URI || 'bolt://localhost:7687';
+const NEO4J_USER = process.env.NEO4J_USER || 'neo4j';
+const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD;
+const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+
+if (!BOT_TOKEN) { console.error('✗ TELEGRAM_BOT_TOKEN missing in .env'); process.exit(1); }
 
 const driver = neo4j.driver(NEO4J_URI, neo4j.auth.basic(NEO4J_USER, NEO4J_PASSWORD));
 
 const bot = new Bot(BOT_TOKEN);
+
+// Wire Russia student flow EARLY — its handlers run before teacher handlers
+// so an in-progress orientation (or /start ru payload) routes to the Russia flow.
+let russia = null;
+try {
+  russia = require('./russia-bot.js');
+  russia.attach(bot);
+} catch (e) {
+  console.error('✗ russia-bot.js not loaded:', e.message);
+}
 
 // ============ TRANSLATIONS ============
 const T = {
@@ -690,8 +703,13 @@ async function showReview(ctx) {
   return await ctx.reply(reviewText, { reply_markup: buildConfirmKeyboard(ctx) });
 }
 
+// The assessment flow is DM-only. Bail on any update from a group/supergroup
+// so the bot stays silent inside student workshop chats.
+const isPrivate = (ctx) => ctx.chat?.type === 'private';
+
 // ============ COMMAND HANDLERS ============
 bot.command('start', async (ctx) => {
+  if (!isPrivate(ctx)) return;
   const state = getState(ctx);
   state.lang = 'en';
   state.step = 0;
@@ -706,12 +724,14 @@ bot.command('start', async (ctx) => {
 });
 
 bot.command('cancel', async (ctx) => {
+  if (!isPrivate(ctx)) return;
   const state = getState(ctx);
   Object.assign(state, { student: null, strengths: [], weaknesses: [], energy: null, behavior: null, practiceConsistency: null, lastAsana: '', lastAsanaPass: null, toFix: '', step: 0, searchMode: false, kbMessageId: null, teacherName: null });
   await ctx.reply('Cancelled. /start to begin again.');
 });
 
 bot.command('students', async (ctx) => {
+  if (!isPrivate(ctx)) return;
   const state = getState(ctx);
   state.step = 0;
   const students = await getStudentsSortedByCompleteness();
@@ -719,6 +739,7 @@ bot.command('students', async (ctx) => {
 });
 
 bot.command('search', async (ctx) => {
+  if (!isPrivate(ctx)) return;
   const state = getState(ctx);
   state.searchMode = true;
   await ctx.reply(t(ctx, 'enterStudentName'));
@@ -726,6 +747,7 @@ bot.command('search', async (ctx) => {
 
 // ============ CALLBACK HANDLERS ============
 bot.on('callback_query', async (ctx) => {
+  if (!isPrivate(ctx)) return;
   const query = ctx.callbackQuery.data;
   const state = getState(ctx);
   const l = T[state.lang];
@@ -1044,8 +1066,10 @@ bot.on('callback_query', async (ctx) => {
 
 // ============ MESSAGE HANDLER ============
 bot.on('message', async (ctx) => {
+  if (!isPrivate(ctx)) return;
   const state = getState(ctx);
   const msg = ctx.message.text;
+  if (!msg) return;
   const l = T[state.lang];
 
   // Main menu buttons
@@ -1183,9 +1207,15 @@ async function main() {
     console.error('Bot error:', err.message);
   });
 
-  bot.start();
+  // Russia bot's scheduler starts after bot polls (so it can use bot.api)
+  if (russia && russia.startScheduler) russia.startScheduler(bot);
+
+  // Explicitly request my_chat_member updates so the auto-detect-on-add DM works
+  // (Telegram doesn't include these in long-poll by default).
+  bot.start({
+    allowed_updates: ['message', 'callback_query', 'my_chat_member', 'chat_member', 'edited_message'],
+  });
   console.log('✓ AYBKK Student Progress Bot started');
-  console.log('  Token: 8368539519:AAF12ytC_rr26xBoDxmKVceCFeANRTK69dA');
   console.log('  Bot: @AYBKKstudentProgress_bot');
 }
 

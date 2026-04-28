@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYBKK — Ashtanga Yoga Bangkok</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,400;1,700;1,900&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ─────────────────────────────────────────────── */
+:root {
+  --parchment:   #F2EDE4;
+  --parchment-2: #E8DFD2;
+  --ink:         #1C1812;
+  --ink-2:       #3D3226;
+  --ink-muted:   #7A6A57;
+  --ink-faint:   #A89880;
+  --amber:       #C8650A;
+  --amber-light: #F0C49A;
+  --amber-pale:  #F9EEE0;
+  --espresso:    #1A1208;
+  --espresso-2:  #251C10;
+  --cream:       #FAF7F2;
+
+  --font-display: 'Playfair Display', 'Georgia', serif;
+  --font-body:    'Jost', 'Helvetica Neue', sans-serif;
+
+  --t-hero:    clamp(4rem, 11vw, 9.5rem);
+  --t-section: clamp(2.8rem, 6vw, 5.5rem);
+  --t-title:   clamp(1.6rem, 3vw, 2.4rem);
+  --t-body:    clamp(1rem, 1.2vw, 1.1rem);
+  --t-sm:      0.8rem;
+  --t-xs:      0.7rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--parchment);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+/* ── Chip label (Spinlab motif) ─────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--parchment);
+}
+.chip .star { color: var(--amber); font-size: 0.85em; }
+.chip-amber {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #fff;
+}
+.chip-amber .star { color: #fff; }
+
+/* ── Nav ────────────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 40px;
+  background: oklch(95.5% 0.012 65 / 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(28,24,18,0.08);
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.nav-links {
+  display: flex; gap: 36px; list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--amber); }
+.nav-book {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  background: var(--ink);
+  color: var(--parchment);
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+.nav-book:hover { background: var(--amber); }
+
+/* ── Hero ───────────────────────────────────────────────── */
+.hero {
+  min-height: 100svh;
+  background: var(--espresso);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 140px 40px 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grainy texture overlay */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-photo {
+  position: absolute;
+  top: 0; right: 0;
+  width: 52%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0.45;
+  mix-blend-mode: luminosity;
+  filter: sepia(30%) contrast(1.1);
+}
+
+.hero-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; }
+
+.hero-eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber-light);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: up 0.9s ease 0.2s forwards;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--t-hero);
+  line-height: 0.92;
+  color: var(--parchment);
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: up 0.9s ease 0.4s forwards;
+}
+
+.hero-title span {
+  display: block;
+  color: var(--amber-light);
+}
+
+.hero-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  opacity: 0;
+  animation: up 0.9s ease 0.6s forwards;
+}
+
+.hero-sub {
+  font-size: var(--t-body);
+  color: #A89070;
+  line-height: 1.7;
+  max-width: 44ch;
+  font-weight: 300;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.btn-fill {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  background: var(--amber);
+  color: #fff;
+  border-radius: 999px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+.btn-fill:hover { background: #A8530A; }
+
+.btn-outline {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 13px 28px;
+  border: 1.5px solid #5A4A36;
+  color: #A89070;
+  border-radius: 999px;
+  transition: all 0.2s;
+  display: inline-block;
+}
+.btn-outline:hover { border-color: var(--amber-light); color: var(--amber-light); }
+
+/* ── Section wrapper ────────────────────────────────────── */
+.wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* ── Section 01 — About ─────────────────────────────────── */
+.about {
+  background: var(--cream);
+  padding: 96px 0;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.about-left {}
+
+.section-num {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  margin-bottom: 24px;
+}
+
+.section-heading {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--t-section);
+  line-height: 0.95;
+  color: var(--ink);
+  margin-bottom: 32px;
+}
+
+.section-body {
+  font-size: var(--t-body);
+  color: var(--ink-muted);
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 48ch;
+}
+
+.section-body + .section-body { margin-top: 18px; }
+
+.about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 36px;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.about-link:hover { color: var(--amber); border-color: var(--amber); }
+
+.about-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.about-img-main {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  filter: sepia(8%) saturate(0.9);
+}
+
+.about-img-accent {
+  width: 60%;
+  align-self: flex-end;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  filter: sepia(8%) saturate(0.9);
+  margin-top: -60px;
+  position: relative;
+  z-index: 2;
+  border: 6px solid var(--cream);
+}
+
+/* ── Why us strip ───────────────────────────────────────── */
+.why {
+  background: var(--parchment-2);
+  padding: 96px 0;
+  border-top: 1px solid rgba(28,24,18,0.08);
+  border-bottom: 1px solid rgba(28,24,18,0.08);
+}
+
+.why-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: end;
+  margin-bottom: 72px;
+}
+
+.why-sub {
+  font-size: var(--t-body);
+  color: var(--ink-muted);
+  font-weight: 300;
+  line-height: 1.75;
+  max-width: 44ch;
+  padding-bottom: 8px;
+}
+
+.why-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: rgba(28,24,18,0.1);
+}
+
+.pillar {
+  background: var(--cream);
+  padding: 40px 36px 44px;
+}
+
+.pillar-num {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 3rem;
+  color: var(--amber);
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.pillar-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+.pillar-body {
+  font-size: 0.88rem;
+  color: var(--ink-muted);
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+/* ── Classes ────────────────────────────────────────────── */
+.classes {
+  background: var(--espresso);
+  padding: 96px 0;
+}
+
+.classes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 64px;
+}
+
+.classes-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--t-section);
+  line-height: 0.95;
+  color: var(--parchment);
+}
+
+.classes-title span { color: var(--amber-light); }
+
+.classes-desc {
+  font-size: var(--t-body);
+  color: #7A6A55;
+  font-weight: 300;
+  line-height: 1.75;
+  max-width: 38ch;
+  padding-top: 12px;
+}
+
+.class-rows { border-top: 1px solid #2E2216; }
+
+.class-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 200px;
+  gap: 32px;
+  align-items: center;
+  padding: 32px 0;
+  border-bottom: 1px solid #2E2216;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.class-row:hover { background: #20180C; }
+.class-row:hover .class-arrow { transform: translateX(6px); color: var(--amber-light); }
+
+.class-row-num {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  color: #4A3C2A;
+  letter-spacing: 0.1em;
+  padding-left: 4px;
+}
+
+.class-row-body {}
+
+.class-row-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--t-title);
+  color: var(--parchment);
+  margin-bottom: 6px;
+  line-height: 1.1;
+}
+
+.class-row-desc {
+  font-size: 0.85rem;
+  color: #6A5A44;
+  font-weight: 300;
+  line-height: 1.6;
+  max-width: 52ch;
+}
+
+.class-arrow {
+  font-size: 1.4rem;
+  color: #4A3C2A;
+  text-align: right;
+  transition: all 0.25s ease;
+}
+
+/* ── Quote ──────────────────────────────────────────────── */
+.quote-section {
+  background: var(--amber);
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.quote-text {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(2rem, 4.5vw, 4rem);
+  color: #fff;
+  line-height: 1.1;
+  max-width: 20ch;
+  margin: 0 auto 20px;
+}
+
+.quote-attr {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+}
+
+/* ── Teacher ─────────────────────────────────────────────── */
+.teacher {
+  background: var(--cream);
+  padding: 96px 0;
+}
+
+.teacher-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.teacher-img-wrap { position: relative; }
+
+.teacher-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  filter: sepia(12%) saturate(0.85) contrast(1.05);
+}
+
+.teacher-badge {
+  position: absolute;
+  bottom: 24px;
+  left: -20px;
+  background: var(--amber);
+  padding: 16px 24px;
+}
+
+.teacher-badge-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.teacher-badge-role {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+}
+
+.teacher-body { padding-top: 16px; }
+
+.teacher-intro {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  line-height: 1.25;
+  color: var(--ink);
+  margin-top: 32px;
+  margin-bottom: 32px;
+  max-width: 28ch;
+}
+
+.teacher-para {
+  font-size: var(--t-body);
+  color: var(--ink-muted);
+  line-height: 1.85;
+  font-weight: 300;
+  max-width: 52ch;
+}
+.teacher-para + .teacher-para { margin-top: 18px; }
+
+.lineage-strip {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(28,24,18,0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.lineage-name {
+  font-family: var(--font-body);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+}
+
+.lineage-arrow { color: var(--amber); font-size: 0.9rem; }
+
+/* ── China programme ─────────────────────────────────────── */
+.china {
+  background: var(--espresso-2);
+  padding: 96px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.china::after {
+  content: '壹';
+  position: absolute;
+  right: -3rem;
+  bottom: -4rem;
+  font-family: var(--font-display);
+  font-size: 32vw;
+  color: rgba(255,255,255,0.025);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.china-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.china-label { margin-bottom: 24px; }
+
+.china-heading {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--t-section);
+  line-height: 0.95;
+  color: var(--parchment);
+  margin-bottom: 32px;
+}
+
+.china-heading span { color: var(--amber-light); }
+
+.china-body {
+  font-size: var(--t-body);
+  color: #7A6A55;
+  font-weight: 300;
+  line-height: 1.8;
+  max-width: 46ch;
+}
+
+.china-card {
+  border: 1px solid #3A2E1E;
+  padding: 40px;
+  background: #1E1608;
+}
+
+.china-price-label {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #6A5A40;
+  margin-bottom: 12px;
+}
+
+.china-price {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  color: var(--amber-light);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.china-price-note {
+  font-size: 0.82rem;
+  color: #5A4A35;
+  font-weight: 300;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.china-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+
+.china-features li {
+  font-size: 0.85rem;
+  color: #7A6A55;
+  display: flex;
+  gap: 10px;
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.china-features li::before {
+  content: '✦';
+  color: var(--amber);
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  margin-top: 4px;
+}
+
+/* ── CTA ─────────────────────────────────────────────────── */
+.cta-section {
+  background: var(--espresso);
+  padding: 120px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-bg {
+  font-family: var(--font-display);
+  font-size: 22vw;
+  color: rgba(255,255,255,0.025);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.cta-inner { position: relative; z-index: 2; }
+
+.cta-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--t-section);
+  line-height: 0.95;
+  color: var(--parchment);
+  margin-bottom: 24px;
+}
+
+.cta-title span { color: var(--amber-light); }
+
+.cta-sub {
+  font-size: var(--t-body);
+  color: #7A6A55;
+  font-weight: 300;
+  line-height: 1.75;
+  max-width: 44ch;
+  margin: 0 auto 48px;
+}
+
+.cta-pills {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.cta-pill {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border: 1px solid #3A2E1E;
+  color: #6A5A44;
+  border-radius: 999px;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.footer {
+  background: var(--espresso);
+  border-top: 1px solid #2A1E0E;
+  padding: 64px 0 40px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid #2A1E0E;
+  margin-bottom: 32px;
+}
+
+.footer-brand-name {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--parchment);
+  margin-bottom: 12px;
+}
+
+.footer-tagline {
+  font-size: 0.82rem;
+  color: #5A4A38;
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 26ch;
+}
+
+.footer-col h4 {
+  font-family: var(--font-body);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #5A4A38;
+  margin-bottom: 20px;
+}
+
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+.footer-col a {
+  font-size: 0.85rem;
+  color: #4A3C2A;
+  font-weight: 300;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover { color: var(--amber-light); }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-copy {
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  color: #3A2E1E;
+}
+
+.footer-langs {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-langs a {
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  color: #3A2E1E;
+  transition: color 0.2s;
+}
+.footer-langs a:hover { color: var(--amber-light); }
+
+/* ── Global grain overlay ───────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  mix-blend-mode: multiply;
+}
+
+/* ── Reveal ──────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.85s ease, transform 0.85s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── Animations ─────────────────────────────────────────── */
+@keyframes up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  .hero { padding: 120px 24px 48px; }
+  .hero-photo { width: 100%; opacity: 0.18; }
+  .hero-row { flex-direction: column; gap: 32px; align-items: flex-start; }
+  .wrap { padding: 0 24px; }
+  .about { padding: 72px 0; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .about-img-accent { display: none; }
+  .why-header { grid-template-columns: 1fr; }
+  .why-pillars { grid-template-columns: 1fr; gap: 2px; }
+  .classes { padding: 72px 0; }
+  .classes-header { flex-direction: column; gap: 24px; }
+  .class-row { grid-template-columns: 40px 1fr; }
+  .class-arrow { display: none; }
+  .teacher { padding: 72px 0; }
+  .teacher-grid { grid-template-columns: 1fr; gap: 48px; }
+  .teacher-badge { left: 0; }
+  .china-inner { grid-template-columns: 1fr; gap: 48px; }
+  .china::after { display: none; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .cta-bg { display: none; }
+}
+
+@media (max-width: 600px) {
+  .about-img-main { aspect-ratio: 3/2; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 16px; }
+  .cta-pills { gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <a href="/" class="nav-logo">AYBKK</a>
+  <ul class="nav-links">
+    <li><a href="#">About</a></li>
+    <li><a href="#">The Practice</a></li>
+    <li><a href="#">Classes</a></li>
+    <li><a href="#">Teaching</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <a href="https://aybkk.com" class="nav-book">Book a Class</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <img class="hero-photo"
+    src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=1400&q=80"
+    alt="Ashtanga practice">
+  <div class="hero-content">
+    <p class="hero-eyebrow">✦ Ashtanga Yoga Center of Bangkok · Est. 2013</p>
+    <h1 class="hero-title">
+      Ancient<br>
+      <span>Practice.</span><br>
+      Bangkok.
+    </h1>
+    <div class="hero-row">
+      <p class="hero-sub">Under the lineage of Pattabhi Jois and Sharath Jois — traditional Mysore, Led Primary and Intermediate classes. Six days a week. The full method.</p>
+      <div class="hero-actions">
+        <a href="https://aybkk.com" class="btn-fill">Join a Class</a>
+        <a href="#about" class="btn-outline">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 About -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="about-grid reveal">
+      <div class="about-left">
+        <div class="section-num">01</div>
+        <span class="chip"><span class="star">✦</span> About</span>
+        <h2 class="section-heading" style="margin-top:24px;">A legacy<br>of practice.</h2>
+        <p class="section-body">At AYBKK, we follow the full spectrum of Ashtanga — gaze, breath, posture, bandha. Not a fitness class. A method practiced exactly as it has been for generations, under direct lineage from Mysore, India.</p>
+        <p class="section-body">We offer Mysore and Led Primary classes on the traditional schedule. We have been running a Led Intermediate Series for nearly a decade — a rarity that reflects the depth of our students.</p>
+        <a href="/pages/about-us" class="about-link">Our full story →</a>
+      </div>
+      <div class="about-right">
+        <img class="about-img-main"
+          src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&q=80"
+          alt="Ashtanga practice" loading="lazy">
+        <img class="about-img-accent"
+          src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80"
+          alt="Practice detail" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Why Us -->
+<section class="why">
+  <div class="wrap">
+    <div class="why-header reveal">
+      <div>
+        <div class="section-num">02</div>
+        <span class="chip"><span class="star">✦</span> Why Us</span>
+        <h2 class="section-heading" style="margin-top:24px;">Unearth<br>your practice.</h2>
+      </div>
+      <p class="why-sub">Drop-ins are welcome — but only if you already practice Mysore style and are ready for Ashtanga. This is not a beginner flow class.</p>
+    </div>
+    <div class="why-pillars reveal">
+      <div class="pillar">
+        <div class="pillar-num">I</div>
+        <h3 class="pillar-title">Authentic<br>lineage</h3>
+        <p class="pillar-body">Direct line from Pattabhi Jois and Sharath Jois. The method unchanged. The sequence the same. Exactly as it was taught.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">II</div>
+        <h3 class="pillar-title">Personal<br>attention</h3>
+        <p class="pillar-body">Boonchu meets you where you are. He pinpoints your weaknesses and syncs teaching to your energy and current level.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">III</div>
+        <h3 class="pillar-title">Real<br>commitment</h3>
+        <p class="pillar-body">Six days a week. The same sequence. The same breath. We nurture practitioners who mean it — not casual drop-in culture.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 Classes -->
+<section class="classes">
+  <div class="wrap">
+    <div class="classes-header reveal">
+      <div>
+        <div class="section-num" style="color:#4A3C2A;">03</div>
+        <span class="chip chip-amber"><span class="star">✦</span> The Practice</span>
+        <h2 class="classes-title" style="margin-top:24px;">The<br><span>method.</span></h2>
+      </div>
+      <p class="classes-desc">Six days a week. The same sequence. The same breath. Exactly as it was taught in Mysore, India.</p>
+    </div>
+
+    <div class="class-rows reveal">
+      <div class="class-row">
+        <span class="class-row-num">01</span>
+        <div class="class-row-body">
+          <div class="class-row-name">Mysore Class</div>
+          <div class="class-row-desc">Self-practice under direct teacher guidance. You move at your own pace — the teacher meets you where you are. The foundation of Ashtanga.</div>
+        </div>
+        <div class="class-arrow">→</div>
+      </div>
+      <div class="class-row">
+        <span class="class-row-num">02</span>
+        <div class="class-row-body">
+          <div class="class-row-name">Led Primary Series</div>
+          <div class="class-row-desc">The teacher counts every vinyasa. Align your breath and movement with the group — and be corrected in real time.</div>
+        </div>
+        <div class="class-arrow">→</div>
+      </div>
+      <div class="class-row">
+        <span class="class-row-num">03</span>
+        <div class="class-row-body">
+          <div class="class-row-name">Led Intermediate Series</div>
+          <div class="class-row-desc">Rare outside Mysore. AYBKK has run this series for nearly a decade. Open to dedicated practitioners with strong Primary foundation.</div>
+        </div>
+        <div class="class-arrow">→</div>
+      </div>
+      <div class="class-row">
+        <span class="class-row-num">04</span>
+        <div class="class-row-body">
+          <div class="class-row-name">Monthly Package</div>
+          <div class="class-row-desc">The recommended entry point for new students. Daily practice, structured progression, personal attention from the teacher every session.</div>
+        </div>
+        <div class="class-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quote -->
+<div class="quote-section reveal">
+  <p class="quote-text">"99% practice. 1% theory."</p>
+  <p class="quote-attr">— Sri K. Pattabhi Jois</p>
+</div>
+
+<!-- Teacher -->
+<section class="teacher">
+  <div class="wrap">
+    <div class="section-num">04</div>
+    <span class="chip"><span class="star">✦</span> Your Teacher</span>
+    <div class="teacher-grid reveal" style="margin-top:40px;">
+      <div class="teacher-img-wrap">
+        <img class="teacher-img"
+          src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80"
+          alt="Boonchu Tanti" loading="lazy">
+        <div class="teacher-badge">
+          <div class="teacher-badge-name">Boonchu Tanti</div>
+          <div class="teacher-badge-role">Lead Teacher · AYBKK</div>
+        </div>
+      </div>
+      <div class="teacher-body">
+        <h2 class="section-heading">Honest<br>teaching.</h2>
+        <p class="teacher-intro">"We find your weaknesses. We match teaching to your energy. That is how you grow — not faster, but correctly."</p>
+        <p class="teacher-para">Boonchu Tanti has practiced and taught Ashtanga for over ten years, studying under the lineage of Pattabhi Jois and Sharath Jois in Mysore, India. His teaching is direct, personal, and built around each individual — not a generic class.</p>
+        <p class="teacher-para">Together with Jamsai Tanti, AYBKK has built a community of practitioners committed to the full method: six days a week, every week, without compromise.</p>
+        <div class="lineage-strip">
+          <span class="chip" style="font-size:0.65rem;">Lineage</span>
+          <span class="lineage-name">Sri K. Pattabhi Jois</span>
+          <span class="lineage-arrow">→</span>
+          <span class="lineage-name">R. Sharath Jois</span>
+          <span class="lineage-arrow">→</span>
+          <span class="lineage-name">Boonchu Tanti</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- China Programme -->
+<section class="china">
+  <div class="wrap">
+    <div class="china-inner reveal">
+      <div>
+        <div class="section-num" style="color:#4A3C2A;">05</div>
+        <span class="chip chip-amber"><span class="star">✦</span> China Programme</span>
+        <h2 class="china-heading" style="margin-top:24px;">Immersive<br>training for<br><span>serious</span><br>practitioners.</h2>
+        <p class="china-body" style="margin-top:24px;">A full structured programme for Chinese practitioners who want to go deep. Not a workshop — a real commitment. Daily Mysore, personal adjustments, direct access to Boonchu throughout.</p>
+      </div>
+      <div>
+        <div class="china-card">
+          <div class="china-price-label">Programme Investment</div>
+          <div class="china-price">฿150,000</div>
+          <div class="china-price-note">Thai Baht · Full programme · Paid in full</div>
+          <ul class="china-features">
+            <li>Full immersive programme with Boonchu Tanti</li>
+            <li>Daily Mysore practice with personal adjustments</li>
+            <li>Theory, philosophy and method discussions</li>
+            <li>Sequence progression and personalised attention</li>
+            <li>Certificate of completion</li>
+            <li>WeChat support and ongoing connection post-programme</li>
+          </ul>
+          <a href="/pages/contact-us" class="btn-fill" style="display:inline-block;">Enquire Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-bg">Join</div>
+  <div class="cta-inner reveal">
+    <h2 class="cta-title">Ready to<br><span>begin?</span></h2>
+    <p class="cta-sub">Classes run six days a week. Book through aybkk.com or enquire about the monthly package for new students.</p>
+    <div class="cta-pills">
+      <span class="cta-pill">Mysore Class</span>
+      <span class="cta-pill">Led Primary</span>
+      <span class="cta-pill">Led Intermediate</span>
+      <span class="cta-pill">Monthly Package</span>
+      <span class="cta-pill">Drop-In</span>
+    </div>
+    <a href="https://aybkk.com" class="btn-fill" style="font-size:0.85rem;padding:16px 40px;">View Schedule & Book</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">AYBKK</div>
+        <p class="footer-tagline">Ashtanga Yoga Center of Bangkok · Est. 2013. Traditional practice under the lineage of Pattabhi Jois and Sharath Jois.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Practice</h4>
+        <ul>
+          <li><a href="#">Mysore Class</a></li>
+          <li><a href="#">Led Primary</a></li>
+          <li><a href="#">Led Intermediate</a></li>
+          <li><a href="#">Monthly Package</a></li>
+          <li><a href="#">Drop-In</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>School</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Teaching Programme</a></li>
+          <li><a href="#">China Programme</a></li>
+          <li><a href="#">Workshops</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">WeChat</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 AYBKK · Bangkok, Thailand</p>
+      <div class="footer-langs">
+        <a href="#">English</a>
+        <a href="#">ภาษาไทย</a>
+        <a href="#">简体中文</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const io = new IntersectionObserver(
+  entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  }),
+  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+);
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

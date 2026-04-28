@@ -438,7 +438,7 @@ function renderQuestion() {
   } else {
     let shuffled = q.options.map(o=>({...o})).sort(()=>Math.random()-0.5);
     const isSingle = q.type === 'joint-function';
-    area.innerHTML = `<div class="card"><h2>${q.q}</h2><div class="q-cn">${q.qCn}</div><div class="choices" id="pickOptions">${shuffled.map(o=>`<div class="choice-btn" data-correct="${o.correct}" data-text="${o.text}" onclick="pickOption(this,${isSingle?'single':'multi'})">${o.text}<span class="cn">${o.cn}</span></div>`).join('')}</div>${isSingle?'':'<button class="next-btn visible" id="checkBtn" onclick="checkPicks(false)">✓ Check 检查</button>'}<div class="feedback" id="feedback"></div><button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next 下一题 →</button></div>`;
+    area.innerHTML = `<div class="card"><h2>${q.q}</h2><div class="q-cn">${q.qCn}</div><div class="choices" id="pickOptions">${shuffled.map(o=>`<div class="choice-btn" data-correct="${o.correct}" data-text="${o.text}" onclick="pickOption(this,'${isSingle?'single':'multi'}')">${o.text}<span class="cn">${o.cn}</span></div>`).join('')}</div><button class="next-btn" id="checkBtn" onclick="checkPicks(${isSingle})">✓ Check 检查</button><div class="feedback" id="feedback"></div><button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next 下一题 →</button></div>`;
     window._pickedOptions = [];
     window._isSingle = isSingle;
   }
@@ -468,13 +468,14 @@ function pickOption(el,mode) {
     document.querySelectorAll('#pickOptions .choice-btn').forEach(b=>b.classList.remove('selected'));
     el.classList.add('selected');
     window._pickedOptions=[el.dataset.text];
-    // Auto-check for single choice
-    checkPicks(true);
   }else{
     el.classList.toggle('selected');
     if(el.classList.contains('selected'))window._pickedOptions.push(el.dataset.text);
     else window._pickedOptions=window._pickedOptions.filter(t=>t!==el.dataset.text);
   }
+  // Show Check button only after something is selected
+  const cb=document.getElementById('checkBtn');
+  if(cb&&window._pickedOptions.length>0)cb.classList.add('visible');
 }
 function checkPicks(isSingle) {
   const btns=document.querySelectorAll('#pickOptions .choice-btn');btns.forEach(b=>b.classList.add('locked'));document.getElementById('checkBtn').style.display='none';

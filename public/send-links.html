@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Send Journal Links — AYBKK</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+:root {
+  --bg: #FAF9F7; --card: #FFF; --border: #E8E5E0;
+  --text: #1A1A1A; --muted: #8B8680; --accent: #D4A574;
+  --accent-light: #F5EDE4; --accent-hover: #C49564;
+  --green: #6B9E6B; --green-bg: #EEF5EE;
+  --shadow: 0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.06);
+  --radius: 14px; --radius-sm: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); -webkit-font-smoothing: antialiased; }
+.container { max-width: 520px; margin: 0 auto; padding: 24px 16px 60px; }
+
+.header { text-align: center; margin-bottom: 24px; }
+.header h1 { font-size: 20px; font-weight: 600; }
+.header p { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+.nav { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+.nav a { font-size: 12px; color: var(--muted); text-decoration: none; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: #fff; }
+
+/* Search */
+.search-wrap { position: relative; margin-bottom: 12px; }
+.search-input {
+  width: 100%; padding: 12px 16px 12px 40px;
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  font-size: 15px; font-family: inherit; background: #fff;
+  box-shadow: var(--shadow);
+}
+.search-input:focus { outline: none; border-color: var(--accent); }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+
+/* Stats bar */
+.stats { font-size: 12px; color: var(--muted); margin-bottom: 12px; padding: 0 4px; }
+
+/* Student list */
+.student-card {
+  background: var(--card); border-radius: var(--radius);
+  padding: 14px 16px; margin-bottom: 8px;
+  box-shadow: var(--shadow); border: 1px solid transparent;
+  transition: border-color .15s;
+}
+.student-card:hover { border-color: var(--accent); }
+
+.student-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.student-name { font-size: 15px; font-weight: 600; }
+.student-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.copy-btn {
+  flex-shrink: 0;
+  padding: 8px 14px; border-radius: 8px; border: none;
+  background: var(--accent); color: #fff;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: background .15s; white-space: nowrap;
+}
+.copy-btn:hover { background: var(--accent-hover); }
+.copy-btn.copied { background: var(--green); }
+
+.link-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.link-text {
+  flex: 1; font-size: 11px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: monospace; background: #f5f5f5;
+  padding: 5px 8px; border-radius: 6px;
+}
+
+.qr-btn {
+  flex-shrink: 0;
+  padding: 6px 10px; border-radius: 8px;
+  border: 1px solid var(--border); background: #fff;
+  font-size: 12px; cursor: pointer; color: var(--muted);
+  transition: all .15s;
+}
+.qr-btn:hover { border-color: var(--accent); color: var(--accent-hover); }
+
+/* QR modal */
+.qr-modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); z-index: 100;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.qr-modal.show { display: flex; }
+.qr-card {
+  background: #fff; border-radius: var(--radius);
+  padding: 28px 24px; text-align: center;
+  max-width: 300px; width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,.15);
+}
+.qr-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.qr-card p { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+.qr-card img { width: 220px; height: 220px; }
+.qr-card .hint { font-size: 11px; color: var(--muted); margin-top: 14px; line-height: 1.5; }
+.qr-close {
+  display: block; width: 100%; margin-top: 16px;
+  padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+  background: #fff; font-size: 14px; cursor: pointer;
+}
+
+/* Empty / loading */
+.empty { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 14px; }
+.loading { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 14px; }
+
+/* WeChat copy hint */
+.wechat-hint {
+  background: var(--accent-light); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin-bottom: 16px; font-size: 12px;
+  color: var(--accent-hover); line-height: 1.6;
+}
+.wechat-hint strong { font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>📲 Send Journal Links</h1>
+    <p>Find any student → copy their personal link → paste into WeChat.<br>They save it, tap it after every practice.</p>
+    <div class="nav">
+      <a href="/journal.html">📖 Journal</a>
+      <a href="/teacher-assessment.html">✍️ Assessment</a>
+      <a href="/mindmap.html">🗺 Mindmap</a>
+    </div>
+  </div>
+
+  <div class="wechat-hint">
+    <strong>How to use:</strong> Copy link → Open WeChat → paste to student chat → ask them to save as bookmark 🔖. After that, one tap = journal entry.
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchInput"
+      placeholder="Search by name..."
+      oninput="filterList(this.value)"
+      autocomplete="off">
+  </div>
+
+  <div class="stats" id="stats">Loading students...</div>
+  <div id="studentList"><div class="loading">Loading...</div></div>
+
+</div>
+
+<!-- QR Modal -->
+<div class="qr-modal" id="qrModal" onclick="if(event.target===this)closeQR()">
+  <div class="qr-card">
+    <h3 id="qrName"></h3>
+    <p>Scan to open personal journal</p>
+    <img id="qrImg" src="" alt="QR Code">
+    <div class="hint">Student scans once → saves link to phone → journals every day</div>
+    <button class="qr-close" onclick="closeQR()">Close</button>
+  </div>
+</div>
+
+<script>
+const BASE = 'https://aybkk-ashtanga.up.railway.app';
+let allStudents = [];
+let filtered = [];
+
+// ── Load students ──────────────────────────────────────────────────────────
+async function loadStudents() {
+  try {
+    // Load from Neo4j (students who have journal profiles = have an ID we can link to)
+    const res = await fetch('/api/journal/students');
+    const data = await res.json();
+    allStudents = (data.students || [])
+      .filter(s => s.id && s.name)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    filtered = [...allStudents];
+    updateStats();
+    render();
+  } catch (e) {
+    document.getElementById('studentList').innerHTML =
+      '<div class="empty">Failed to load students. Check connection.</div>';
+  }
+}
+
+function filterList(q) {
+  const query = q.toLowerCase().trim();
+  filtered = query
+    ? allStudents.filter(s => s.name.toLowerCase().includes(query))
+    : [...allStudents];
+  updateStats(query);
+  render();
+}
+
+function updateStats(query) {
+  const el = document.getElementById('stats');
+  if (query) {
+    el.textContent = `${filtered.length} match${filtered.length !== 1 ? 'es' : ''} for "${query}"`;
+  } else {
+    el.textContent = `${allStudents.length} students with journal profiles`;
+  }
+}
+
+// ── Render list ────────────────────────────────────────────────────────────
+function render() {
+  const list = document.getElementById('studentList');
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty">No students found</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(s => {
+    const link = `${BASE}/student.html?id=${s.id}`;
+    const lastDate = s.lastAssessment
+      ? new Date(s.lastAssessment.checkedInAt || s.lastAssessment).toLocaleDateString('en-GB', { day:'numeric', month:'short' })
+      : null;
+    const count = s.assessmentCount || 0;
+    const meta = [
+      count ? `${count} journal entr${count !== 1 ? 'ies' : 'y'}` : 'No entries yet',
+      lastDate ? `Last: ${lastDate}` : null
+    ].filter(Boolean).join(' · ');
+
+    return `<div class="student-card">
+      <div class="student-top">
+        <div>
+          <div class="student-name">${s.name}</div>
+          <div class="student-meta">${meta}</div>
+        </div>
+        <button class="copy-btn" id="copy_${s.id}" onclick="copyLink('${s.id}','${s.name.replace(/'/g,"\\'")}','${link}')">
+          Copy Link
+        </button>
+      </div>
+      <div class="link-row">
+        <div class="link-text">${link}</div>
+        <button class="qr-btn" onclick="showQR('${s.id}','${s.name.replace(/'/g,"\\'")}')">📱 QR</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Copy link ──────────────────────────────────────────────────────────────
+async function copyLink(id, name, link) {
+  const btn = document.getElementById('copy_' + id);
+  try {
+    await navigator.clipboard.writeText(link);
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy Link';
+      btn.classList.remove('copied');
+    }, 2500);
+  } catch {
+    // Fallback for older mobile browsers
+    const ta = document.createElement('textarea');
+    ta.value = link;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy Link';
+      btn.classList.remove('copied');
+    }, 2500);
+  }
+}
+
+// ── QR code ────────────────────────────────────────────────────────────────
+async function showQR(studentId, name) {
+  document.getElementById('qrName').textContent = name;
+  document.getElementById('qrImg').src = '';
+  document.getElementById('qrModal').classList.add('show');
+
+  try {
+    const res = await fetch(`/api/journal/qr/${studentId}`);
+    const data = await res.json();
+    document.getElementById('qrImg').src = data.qrDataUrl;
+  } catch {
+    document.getElementById('qrImg').alt = 'Could not load QR';
+  }
+}
+
+function closeQR() {
+  document.getElementById('qrModal').classList.remove('show');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+loadStudents();
+</script>
+</body>
+</html>

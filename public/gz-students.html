@@ -75,9 +75,12 @@
     }
 
     function render(students) {
-      // Filter to GZ workshop only
-      const gz = students.filter(s => s.classType === 'chinese-workshop');
-      document.getElementById('count').textContent = gz.length + ' students';
+      // Filter to GZ only — location=guangzhou OR id starts with gz-
+      const gz = students.filter(s =>
+        s.location === 'guangzhou' ||
+        (s.id && s.id.startsWith('gz-'))
+      );
+      document.getElementById('count').textContent = gz.length + ' GZ students';
       if (!gz.length) {
         document.getElementById('list').innerHTML = '<div class="empty">No students yet.</div>';
         return;

@@ -5,22 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AYBKK Weekly Practice Report</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&display=swap');
     :root {
-      --bg: #FAF9F7; --card: #FFFFFF; --border: #E8E5E0;
-      --text: #1A1A1A; --text-secondary: #8B8680;
-      --accent: #D4A574; --accent-light: #F5EDE4;
+      --bg: #FAF6F1; --card: #FFFFFF; --border: #E8E1D6; --border-soft: #F0E7DC;
+      --text: #2A2622; --text-secondary: #8B7E70; --text-muted: #B8AC9D;
+      --sand: #D4A574; --sand-light: #F5EDE4; --sand-hover: #C49564;
+      --clay: #C2876A; --clay-light: #EDD6CB; --clay-deep: #A36B52;
       --success: #6B9E6B; --success-bg: #EEF5EE;
-      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-      --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
-      --radius: 14px; --radius-sm: 10px;
-      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow: 0 1px 3px rgba(82,58,38,0.05), 0 1px 2px rgba(82,58,38,0.04);
+      --shadow-lg: 0 4px 12px rgba(82,58,38,0.10);
+      --radius: 14px; --radius-sm: 12px; --radius-pill: 999px;
+      --transition: 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+      --accent: var(--sand); --accent-light: var(--sand-light); /* legacy aliases */
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Spectral', 'Hoefler Text', 'Times New Roman', serif;
       background: var(--bg); min-height: 100vh; color: var(--text);
       -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+    .brand-logo-mark {
+      display: block; width: 44px; height: 44px;
+      margin: 0 auto 14px;
+      mix-blend-mode: multiply;
+      filter: contrast(1.05);
+    }
+    .hero .brand-logo-mark {
+      mix-blend-mode: lighten;
+      filter: brightness(1.15) contrast(1.1) drop-shadow(0 1px 4px rgba(0,0,0,0.18));
     }
     .report { max-width: 480px; margin: 0 auto; padding: 0 0 40px; }
     .hero {
@@ -32,29 +45,42 @@
     .hero-bg {
       position: absolute; inset: 0; z-index: 0;
       background-size: cover; background-position: center;
-      filter: brightness(1.1) contrast(0.9);
+      filter: brightness(1.05) contrast(0.92);
     }
     .hero-overlay {
       position: absolute; inset: 0; z-index: 1;
-      background: linear-gradient(180deg, rgba(212,165,116,0.35) 0%, rgba(212,165,116,0.55) 100%);
+      background: linear-gradient(180deg, rgba(194,135,106,0.30) 0%, rgba(163,107,82,0.55) 100%);
     }
     .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; }
     .hero-badge {
-      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
-      text-transform: uppercase; background: rgba(255,255,255,0.2);
-      backdrop-filter: blur(8px); padding: 6px 14px; border-radius: 20px;
-      margin-bottom: 16px; display: inline-block;
+      font-family: 'Spectral', serif;
+      font-size: 11px; font-weight: 600; letter-spacing: 2.4px;
+      text-transform: uppercase; background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px); padding: 6px 16px; border-radius: var(--radius-pill);
+      margin-bottom: 18px; display: inline-block;
     }
-    .hero-name { font-size: 28px; font-weight: 700; margin-bottom: 6px; text-shadow: 0 1px 4px rgba(0,0,0,0.15); }
-    .hero-date { font-size: 13px; opacity: 0.9; }
+    .hero-name {
+      font-family: 'Spectral', serif;
+      font-size: clamp(30px, 7vw, 38px); font-weight: 700;
+      letter-spacing: -0.5px; line-height: 1.1;
+      margin-bottom: 6px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.22);
+    }
+    .hero-date {
+      font-family: 'Spectral', serif;
+      font-size: 14px; font-style: italic; opacity: 0.92;
+    }
     .lang-switch { display: flex; justify-content: center; gap: 6px; margin: -20px auto 0; position: relative; z-index: 3; }
     .lang-btn {
-      padding: 5px 14px; border: 1px solid var(--border); background: var(--card);
-      border-radius: 8px; font-size: 12px; font-weight: 500;
+      padding: 6px 16px; border: 1px solid var(--border); background: var(--card);
+      border-radius: var(--radius-pill);
+      font-family: 'Spectral', serif;
+      font-size: 12px; font-weight: 500;
       color: var(--text-secondary); cursor: pointer; transition: all var(--transition);
       box-shadow: var(--shadow);
     }
-    .lang-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .lang-btn:active { transform: scale(0.96); }
+    .lang-btn.active { background: var(--clay); color: #fff; border-color: var(--clay); }
     .section { padding: 0 16px; margin-top: 20px; }
     .card {
       background: var(--card); border: 1px solid var(--border);
@@ -62,14 +88,24 @@
       box-shadow: var(--shadow); margin-bottom: 16px;
     }
     .card-title {
-      font-size: 14px; font-weight: 600; color: var(--text);
+      font-family: 'Spectral', serif;
+      font-size: 14px; font-weight: 600; color: var(--clay-deep);
+      letter-spacing: 0.4px;
       margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
     }
     .card-title .icon { font-size: 18px; }
     .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    .stat-item { text-align: center; padding: 12px 8px; background: var(--accent-light); border-radius: var(--radius-sm); }
-    .stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
-    .stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+    .stat-item { text-align: center; padding: 14px 8px; background: var(--clay-light); border-radius: var(--radius-sm); }
+    .stat-value {
+      font-family: 'Spectral', serif;
+      font-size: 28px; font-weight: 700; color: var(--clay-deep);
+      line-height: 1; letter-spacing: -0.5px;
+    }
+    .stat-label {
+      font-family: 'Spectral', serif;
+      font-size: 11px; color: var(--text-secondary);
+      margin-top: 4px; letter-spacing: 0.4px;
+    }
     .tag-group { display: flex; flex-wrap: wrap; gap: 8px; }
     .tag {
       padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
@@ -77,10 +113,11 @@
     .tag.strength { background: #EEF5EE; color: #4A7C4A; }
     .tag.growth { background: #FFF3E0; color: #C47A20; }
     .summary-text {
-      font-size: 15px; line-height: 1.7; color: var(--text);
+      font-family: 'Spectral', serif;
+      font-size: 15px; line-height: 1.75; color: var(--text);
       padding: 4px 0; font-weight: 400;
     }
-    .summary-text strong { font-weight: 600; color: var(--accent); }
+    .summary-text strong { font-weight: 600; color: var(--clay-deep); }
     .feeling-badge {
       display: inline-block; padding: 8px 16px; border-radius: 20px;
       font-size: 13px; font-weight: 600; margin-bottom: 12px;
@@ -124,9 +161,33 @@
     .loading-spinner { font-size: 32px; margin-bottom: 12px; animation: spin 1s linear infinite; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .no-photo .hero { min-height: 200px; background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg) 100%); }
+    .top-nav { max-width: 480px; margin: 0 auto; padding: 14px 16px 0; }
+    .top-nav .nav-tabs { display: flex; gap: 8px; }
+    .top-nav .nav-tab {
+      flex: 1; padding: 12px 8px; background: var(--card);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-family: 'Spectral', serif;
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      cursor: pointer; transition: all var(--transition); text-align: center;
+      text-decoration: none; line-height: 1;
+    }
+    .top-nav .nav-tab:active { transform: scale(0.97); }
+    .top-nav .nav-tab.active {
+      background: var(--text); color: #fff; border-color: var(--text);
+      box-shadow: 0 4px 12px rgba(42,38,34,0.18);
+    }
+    .top-nav .nav-tab:not(.active):hover { border-color: var(--clay); color: var(--clay-deep); }
   </style>
 </head>
 <body>
+  <div class="top-nav" id="topNav" style="display:none;">
+    <div class="nav-tabs">
+      <a class="nav-tab" id="navNewEntry"></a>
+      <a class="nav-tab" id="navHistory"></a>
+      <a class="nav-tab active" id="navWeek"></a>
+    </div>
+  </div>
+
   <div id="loading" class="loading">
     <div class="loading-spinner">☸</div>
     <p data-zh="正在生成你的周报…" data-en="Generating your report…">正在生成你的周报…</p>
@@ -141,6 +202,31 @@
     let lang = P.get('lang') || 'zh';
     let journalEntries = [];
     let teacherComment = '';
+    let studentClassType = '';
+
+    function getWorkshopLabel() {
+      // id prefix wins over classType because `chinese-workshop` is overloaded
+      // (both Huizhou and Guangzhou cohorts share that classType in Neo4j).
+      const id = studentId || '';
+      const ct = studentClassType || '';
+      const guangzhou = { zh: 'AYBKK · 广州工作坊', en: 'AYBKK · Guangzhou Workshop', ru: 'AYBKK · Воркшоп Гуанчжоу' };
+      const huizhou   = { zh: 'AYBKK · 惠州工作坊', en: 'AYBKK · Huizhou Workshop',   ru: 'AYBKK · Воркшоп Хуэйчжоу' };
+      const russia    = { zh: 'AYBKK · 俄罗斯工作坊', en: 'AYBKK · Russia Workshop',   ru: 'AYBKK · Русский воркшоп' };
+      const bangkok   = { zh: 'AYBKK 曼谷工作室',     en: 'AYBKK Shala · Bangkok',     ru: 'AYBKK · Бангкокская шала' };
+      const inDepth   = { zh: 'AYBKK · 深度密授',     en: 'AYBKK · In-Depth Mysore',  ru: 'AYBKK · Углублённое Майсур' };
+
+      let map = null;
+      if (id.startsWith('gz-')) map = guangzhou;
+      else if (id.startsWith('ru-')) map = russia;
+      else if (id.startsWith('bkk-')) map = bangkok;
+      else if (ct === 'in-depth-mysore-cn2') map = inDepth;
+      else if (ct === 'chinese-workshop') map = huizhou; // legacy default for non-prefixed Chinese students
+      else if (ct === 'russia-workshop')   map = russia;
+      else if (ct === 'regular')           map = bangkok;
+
+      if (map) return map[lang] || map.en || 'AYBKK Shala';
+      return 'AYBKK Shala';
+    }
 
     const T = {
       zh: {
@@ -158,6 +244,7 @@
         feelingGrowing: '🌱 在成长中',
         feelingNeutral: '🧘 平静稳定',
         weekOf: '本周练习',
+        footerLine: '练习不在于完美。在于你愿意走到垫子前。',
         vinyasa: { kept_moving: '流畅持续', steady_pace: '稳定节奏', heavy_slow: '扎实有力' },
         bandha: { body_light: '身体轻盈，收束良好', finding_light: '正在找到收束感觉', hard_to_find: '基础建立中' },
         tags: {
@@ -182,6 +269,7 @@
         feelingGrowing: '🌱 Growing & Developing',
         feelingNeutral: '🧘 Calm & Steady',
         weekOf: 'This Week\'s Practice',
+        footerLine: "Practice is not about perfection. It's about showing up.",
         vinyasa: { kept_moving: 'Flowing & Energized', steady_pace: 'Calm & Steady', heavy_slow: 'Grounded & Strong' },
         bandha: { body_light: 'Body light, strong bandha', finding_light: 'Developing bandha awareness', hard_to_find: 'Building foundation' },
         tags: {
@@ -189,6 +277,31 @@
           inversion: 'Inversion', bandha: 'Bandha', forward_bend: 'Forward bend',
           leg_behind_head: 'Leg behind head', standing_balance: 'Standing balance',
           twisting: 'Twisting', lifting_body: 'Lifting body'
+        }
+      },
+      ru: {
+        reportTitle: 'AYBKK Еженедельный отчёт о практике',
+        daysPracticed: 'Дни практики',
+        totalEntries: 'Записи дневника',
+        bandhaScore: 'Осознание бандх',
+        strengths: '✨ Стабильные асаны',
+        growth: '🌱 Зоны роста',
+        summary: '🧘 Понимание практики',
+        teacherMsg: '💬 Слово учителя',
+        belief: 'Доверьтесь процессу, оставайтесь верны практике. Метод AYBKK поддерживает ваш рост на коврике и за его пределами.',
+        share: 'Поделиться',
+        feelingPositive: '✨ Энергично и позитивно',
+        feelingGrowing: '🌱 В развитии',
+        feelingNeutral: '🧘 Спокойно и ровно',
+        weekOf: 'Практика этой недели',
+        footerLine: 'Практика — не о совершенстве. Она о том, чтобы прийти на коврик.',
+        vinyasa: { kept_moving: 'Поток с энергией', steady_pace: 'Спокойный темп', heavy_slow: 'Заземлённо и сильно' },
+        bandha: { body_light: 'Тело лёгкое, бандхи сильные', finding_light: 'Развиваю осознание бандх', hard_to_find: 'Строю основу' },
+        tags: {
+          jump_back: 'Прыжок назад', jump_through: 'Прыжок вперёд', backbending: 'Прогибы',
+          inversion: 'Перевёрнутые', bandha: 'Бандхи', forward_bend: 'Наклоны',
+          leg_behind_head: 'Нога за головой', standing_balance: 'Баланс стоя',
+          twisting: 'Скрутки', lifting_body: 'Подъём тела'
         }
       }
     };
@@ -221,9 +334,11 @@
     }
 
     function generateSummary(entries, name) {
-      if (!entries.length) return lang === 'zh'
-        ? `${name}，本周的练习之旅即将开始。每一次踏上垫子都是一次新的探索，期待看到你的成长。`
-        : `${name}, your practice journey is just beginning. Every time you step onto the mat is a new exploration.`;
+      if (!entries.length) {
+        if (lang === 'zh') return `${name}，本周的练习之旅即将开始。每一次踏上垫子都是一次新的探索，期待看到你的成长。`;
+        if (lang === 'ru') return `${name}, ваше путешествие практики только начинается. Каждый раз, когда вы встаёте на коврик — это новое открытие.`;
+        return `${name}, your practice journey is just beginning. Every time you step onto the mat is a new exploration.`;
+      }
       
       const days = getDaysPracticed(entries);
       const strengths = getUniqueTags(entries, 'stableToday');
@@ -248,6 +363,23 @@
           }
         }
         summary += '\n\n记住：每一次呼吸，每一个vinyasa，都在编织你独一无二的瑜伽故事。';
+      } else if (lang === 'ru') {
+        summary += `За последние практики вы записали ${entries.length} ${entries.length === 1 ? 'заметку' : (entries.length < 5 ? 'заметки' : 'заметок')}`;
+        if (days > 0) summary += `, охватив ${days} ${days === 1 ? 'день' : (days < 5 ? 'дня' : 'дней')} практики`;
+        summary += '.';
+        if (strengths.length) {
+          summary += ` Вы показали стабильный прогресс в ${strengths.map(translateTag).join(', ')} — эти асаны становятся надёжной основой вашей практики.`;
+        }
+        if (growth.length) {
+          summary += ` ${growth.map(translateTag).join(', ')} — эти задачи указывают на следующий прорыв; каждая попытка накапливает силу.`;
+        }
+        if (hasNotes) {
+          const noteEntry = entries.find(e => e.practiceNotes || e.lastAsanaNote);
+          if (noteEntry && (noteEntry.practiceNotes || noteEntry.lastAsanaNote)) {
+            summary += `\n\nВы записали: "${noteEntry.practiceNotes || noteEntry.lastAsanaNote}" — это самонаблюдение — признак глубокой практики.`;
+          }
+        }
+        summary += '\n\nПомните: каждый вдох, каждая виньяса плетёт вашу уникальную историю йоги.';
       } else {
         summary += `In your recent practice, you recorded ${entries.length} practice notes`;
         if (days > 0) summary += ` across ${days} different practice days`;
@@ -286,7 +418,8 @@
         <div class="hero">
           ${hasPhoto ? `<div class="hero-bg" style="background-image:url('${photoUrl}')"></div><div class="hero-overlay"></div>` : ''}
           <div class="hero-content">
-            <div class="hero-badge">AYBKK</div>
+            <img class="brand-logo-mark" src="/aybkk-logo.jpg" alt="AYBKK">
+            <div class="hero-badge">${t('reportTitle')}</div>
             <div class="hero-name">${studentName}</div>
             <div class="hero-date">${t('reportTitle')} · ${dateStr}</div>
           </div>
@@ -295,6 +428,7 @@
         <div class="lang-switch">
           <button class="lang-btn ${lang==='zh'?'active':''}" onclick="switchLang('zh')">中文</button>
           <button class="lang-btn ${lang==='en'?'active':''}" onclick="switchLang('en')">EN</button>
+          <button class="lang-btn ${lang==='ru'?'active':''}" onclick="switchLang('ru')">RU</button>
         </div>
 
         <div class="section">
@@ -349,8 +483,8 @@
         </div>
 
         <div class="footer">
-          AYBKK Shala · Huizhou Workshop · ${dateStr}<br>
-          <span style="font-size:11px;color:var(--text-secondary)">Practice is not about perfection. It's about showing up.</span>
+          ${getWorkshopLabel()} · ${dateStr}<br>
+          <span style="font-size:11px;color:var(--text-secondary)">${t('footerLine')}</span>
         </div>
       `;
 
@@ -359,8 +493,31 @@
       document.getElementById('app').style.display = 'block';
     }
 
+    function setupNav() {
+      const qs = (() => {
+        const parts = [];
+        if (studentId) parts.push('id=' + encodeURIComponent(studentId));
+        if (studentName) parts.push('name=' + encodeURIComponent(studentName));
+        parts.push('lang=' + encodeURIComponent(lang));
+        return '?' + parts.join('&');
+      })();
+      const labels = lang === 'zh'
+        ? { newEntry: '+ 新记录', history: '📖 我的记录', week: '📊 本周报告' }
+        : lang === 'ru'
+        ? { newEntry: '+ Новая запись', history: '📖 Мой дневник', week: '📊 Моя неделя' }
+        : { newEntry: '+ New Entry', history: '📖 My Journal', week: '📊 My Week' };
+      const navNew = document.getElementById('navNewEntry');
+      const navHist = document.getElementById('navHistory');
+      const navWeek = document.getElementById('navWeek');
+      if (navNew) { navNew.textContent = labels.newEntry; navNew.href = '/student.html' + qs + '&location=bangkok'; }
+      if (navHist) { navHist.textContent = labels.history; navHist.href = '/my-journal.html' + qs; }
+      if (navWeek) { navWeek.textContent = labels.week; }
+      document.getElementById('topNav').style.display = 'block';
+    }
+
     function switchLang(newLang) {
       lang = newLang;
+      setupNav();
       renderApp();
     }
 
@@ -389,6 +546,7 @@
           if (sRes.ok) {
             const sData = await sRes.json();
             allEntries = sData.assessments || [];
+            studentClassType = sData.classType || '';
           }
         } catch(e) {}
         
@@ -419,6 +577,7 @@
       renderApp();
     }
 
+    setupNav();
     load();
   </script>
 </body>

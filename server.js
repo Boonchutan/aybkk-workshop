@@ -40,16 +40,15 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 // Neo4j Connection
 // Local dev: bolt://localhost:7687
 // Production: neo4j+s://xxxxxxxx.databases.neo4j.io (AuraDB)
+const _neo4jUri = process.env.NEO4J_URI || 'bolt://localhost:7687';
+const _neo4jConfig = _neo4jUri.startsWith('neo4j+s') ? {} : { encrypted: 'ENCRYPTION_OFF' };
 const driver = neo4j.driver(
-  process.env.NEO4J_URI || 'bolt://localhost:7687',
+  _neo4jUri,
   neo4j.auth.basic(
     process.env.NEO4J_USER || '69645294',
     process.env.NEO4J_PASSWORD || 'aybkk_neo4j_2026'
   ),
-  {
-    // AuraDB requires encrypted connection
-    encrypted: (process.env.NEO4J_URI || '').startsWith('neo4j+s') ? 'ENCRYPTION_ON' : 'ENCRYPTION_OFF',
-  }
+  _neo4jConfig
 );
 
 // Test Neo4j connection
@@ -97,9 +96,74 @@ const upload = multer({
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(UPLOAD_DIR));
+
+// ─── Cloudinary Setup ────────────────────────────────────────────────────────
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+  cloud_name: 'dw1uubecu',
+  api_key: process.env.CLOUDINARY_API_KEY || '191765218532954',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'kBwusl-gHqqNiZYykFgChJjt3MQ'
+});
+
+// GET /api/student/photo/:studentId
+app.get('/api/student/photo/:studentId', async (req, res) => {
+  const session = driver.session();
+  try {
+    const result = await session.run(
+      `MATCH (s:Student) WHERE s.id = $sid OR s.pgId = $sid RETURN s.photoUrl AS photoUrl LIMIT 1`,
+      { sid: req.params.studentId }
+    );
+    const photoUrl = result.records[0]?.get('photoUrl') || null;
+    res.json({ photoUrl });
+  } catch(err) {
+    res.json({ photoUrl: null });
+  } finally { await session.close(); }
+});
+
+// POST /api/upload/student-photo
+// Body: { studentId, imageBase64, assessmentId? }  — base64 data URL from browser.
+// Cloudinary returns a versioned URL each time; saving that exact URL on the
+// SelfAssessment preserves a historical snapshot per entry, even after newer
+// uploads. Older entries that don't have a photoUrl fall back to Student.photoUrl
+// in the renderer.
+app.post('/api/upload/student-photo', async (req, res) => {
+  const { studentId, imageBase64, assessmentId } = req.body;
+  if (!studentId || !imageBase64) return res.status(400).json({ error: 'Missing studentId or imageBase64' });
+  try {
+    const result = await cloudinary.uploader.upload(imageBase64, {
+      folder: 'aybkk-students',
+      public_id: 'student_' + studentId,
+      overwrite: true,
+      transformation: [{ width: 400, height: 400, crop: 'fill', gravity: 'face', quality: 'auto' }]
+    });
+    const photoUrl = result.secure_url;
+    // Save URL to Neo4j Student node (current photo) + optionally pin to the entry
+    const session = driver.session();
+    try {
+      await session.run(
+        `MERGE (s:Student {id: $sid})
+         ON CREATE SET s.createdAt = datetime()
+         SET s.photoUrl = $url`,
+        { sid: studentId, url: photoUrl }
+      );
+      if (assessmentId) {
+        await session.run(
+          `MATCH (sa) WHERE (sa:SelfAssessment OR sa:PracticeLog) AND sa.id = $aid
+           SET sa.photoUrl = $url
+           RETURN sa.id AS id`,
+          { aid: assessmentId, url: photoUrl }
+        );
+      }
+    } finally { await session.close(); }
+    res.json({ success: true, photoUrl });
+  } catch (err) {
+    console.error('[Cloudinary upload error]', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Store LINE group ID for notifications
 global.LINE_GROUP_ID = null;
@@ -171,6 +235,112 @@ app.use((req, res, next) => {
 // Student Journal API Routes
 const studentJournal = require('./api/student-journal');
 app.use('/api/journal', studentJournal);
+
+// POST /api/journal/ai-summary/:studentId — DeepSeek bilingual progress summary
+app.post('/api/journal/ai-summary/:studentId', async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) return res.status(500).json({ error: 'OPENROUTER_API_KEY not configured' });
+
+    // Get student + journal entries from Neo4j
+    const session = req.driver.session();
+    let studentName, entries;
+    try {
+      const result = await session.run(`
+        MATCH (s:Student {id: $id})
+        OPTIONAL MATCH (s)-[:HAS_PRACTICE_LOG]->(pl:PracticeLog)
+        OPTIONAL MATCH (s)-[:HAS_SELF_ASSESSMENT]->(sa:SelfAssessment)
+        RETURN s.name AS name,
+          collect(DISTINCT {
+            date: pl.sessionDate, vinyasa: pl.vinyasa, bandha: pl.bandha,
+            stable: pl.stableToday, difficult: pl.difficultToday,
+            lastAsana: coalesce(pl.lastAsana, pl.lastAsanaNote, ''),
+            notes: pl.practiceNotes, source: 'log'
+          }) AS practiceLogs,
+          collect(DISTINCT {
+            date: sa.sessionDate, vinyasa: sa.vinyasa, bandha: sa.bandha,
+            stable: sa.stableToday, difficult: sa.difficultToday,
+            lastAsana: coalesce(sa.lastAsana, sa.lastAsanaNote, ''),
+            notes: sa.practiceNotes, source: 'assessment'
+          }) AS selfAssessments
+      `, { id: studentId });
+
+      if (!result.records.length) return res.status(404).json({ error: 'Student not found' });
+      const rec = result.records[0];
+      studentName = rec.get('name');
+      const allEntries = [
+        ...(rec.get('practiceLogs') || []).filter(e => e.vinyasa),
+        ...(rec.get('selfAssessments') || []).filter(e => e.vinyasa)
+      ].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      entries = allEntries;
+    } finally {
+      await session.close();
+    }
+
+    if (!entries.length) return res.status(400).json({ error: 'No journal entries yet' });
+
+    const toArr = v => Array.isArray(v) ? v : (v ? String(v).split(',').map(s => s.trim()) : []);
+    const vLabel = { kept_moving: 'Good flow', stop_breathe: 'Stopped to breathe', tired_paused: 'Tired, had to pause' };
+    const bLabel = { body_light: 'Body light/lifted', finding_light: 'Finding lightness', heavy_body: 'Body heavy' };
+
+    const entrySummaries = entries.slice(0, 20).map((e, i) => {
+      const parts = [`Session ${i + 1}${e.date ? ' (' + e.date + ')' : ''}:`];
+      if (e.vinyasa) parts.push(`  Vinyasa: ${vLabel[e.vinyasa] || e.vinyasa}`);
+      if (e.bandha) parts.push(`  Body: ${bLabel[e.bandha] || e.bandha}`);
+      const stable = toArr(e.stable);
+      const difficult = toArr(e.difficult);
+      if (stable.length) parts.push(`  Strong: ${stable.join(', ')}`);
+      if (difficult.length) parts.push(`  Challenging: ${difficult.join(', ')}`);
+      if (e.lastAsana) parts.push(`  Last asana: ${e.lastAsana}`);
+      if (e.notes) parts.push(`  Note: ${e.notes}`);
+      return parts.join('\n');
+    }).join('\n\n');
+
+    const prompt = `You are Boonchu, Ashtanga yoga teacher at AYBKK. Write a warm, personal progress summary for your student ${studentName} based on their actual practice journal.
+
+Be specific to what they actually wrote — reference real patterns (consistent vinyasa quality, recurring struggles, progress). Not generic — this should only make sense for this student.
+
+Write TWO paragraphs:
+1. English (3-4 sentences): Warm, teacher-to-student tone. Specific and encouraging.
+2. 中文 (3-4句): Natural Mandarin, not a translation — speak directly to them.
+
+Student: ${studentName}
+Total sessions: ${entries.length}
+
+${entrySummaries}
+
+Respond with only valid JSON:
+{"en": "...", "zh": "..."}`;
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://aybkk-ashtanga.up.railway.app',
+        'X-Title': 'AYBKK Student Progress'
+      },
+      body: JSON.stringify({
+        model: 'deepseek/deepseek-v3-0324',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 700
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) return res.status(500).json({ error: data.error?.message || 'OpenRouter error' });
+
+    const content = data.choices?.[0]?.message?.content || '';
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) return res.status(500).json({ error: 'Could not parse AI response', raw: content });
+
+    res.json({ success: true, summary: JSON.parse(jsonMatch[0]) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Student Engagement API Routes
 const studentEngagement = require('./api/student-engagement');
@@ -370,6 +540,8 @@ app.post('/api/orientations', async (req, res) => {
     const { name, wechat, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, workshop, gameResults } = req.body;
     const studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     const datetime = new Date().toISOString();
+    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=guangzhou';
 
     const session = driver.session();
     try {
@@ -392,15 +564,13 @@ app.post('/api/orientations', async (req, res) => {
           createdAt: datetime
         }
       );
-      // Also create a Student node so the journal checkin route can find this student
-      const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
-      const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=guangzhou';
       await session.run(
         `CREATE (s:Student {
           id: $id,
           name: $name,
           wechatId: $wechat,
           classType: 'chinese-workshop',
+          location: 'guangzhou',
           isChineseStudent: true,
           isActive: true,
           oriented: true,
@@ -430,6 +600,722 @@ app.post('/api/orientations', async (req, res) => {
     res.json({ success: true, studentId, journalLink, name });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/orientations - Get all GZ orientation submissions for dashboard
+app.get('/api/orientations', async (req, res) => {
+  const session = driver.session();
+  try {
+    const result = await session.run(`
+      MATCH (s:Student)
+      WHERE s.location = 'guangzhou' OR s.id STARTS WITH 'gz-'
+      RETURN s.id AS id, s.name AS name, s.wechatId AS wechat,
+             s.experience AS experience, s.injuries AS injuries,
+             s.goals AS goals, s.workshop AS workshop,
+             s.journalLink AS journalLink, s.createdAt AS createdAt
+      ORDER BY s.createdAt DESC
+    `);
+    const orientations = result.records.map(r => ({
+      id: r.get('id'),
+      name: r.get('name'),
+      wechat: r.get('wechat'),
+      experience: r.get('experience'),
+      injuries: r.get('injuries'),
+      goals: r.get('goals'),
+      workshop: r.get('workshop'),
+      journalLink: r.get('journalLink'),
+      submittedAt: r.get('createdAt')
+    }));
+    res.json({ orientations, count: orientations.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// ─── AYBKK Bangkok Shala — orientation save/list ─────────────────────────
+// POST /api/orientations/bkk — only used for NEW shala students.
+// Existing AYBKK students live in the booking-system PostgreSQL DB and don't
+// re-fill an orientation — the dashboard surfaces them directly.
+app.post('/api/orientations/bkk', async (req, res) => {
+  try {
+    const { name, wechat, contactType, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, gameResults } = req.body;
+    const studentId = 'bkk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    const datetime = new Date().toISOString();
+    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'th') + '&location=bangkok';
+
+    const session = driver.session();
+    try {
+      await session.run(
+        'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, contactType: $contactType, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
+        {
+          id: studentId,
+          name: name,
+          wechat: wechat || '',
+          contactType: contactType || 'line',
+          experience: experience || '',
+          injuries: injuries || '',
+          goals: goals || '',
+          emergency: emergency || '',
+          size: size || '',
+          photoConsent: photoConsent || 'yes',
+          medicalConsent: medicalConsent || 'yes',
+          language: language || 'th',
+          workshop: 'AYBKK Bangkok Shala',
+          gameResults: JSON.stringify(gameResults || []),
+          createdAt: datetime
+        }
+      );
+      await session.run(
+        `CREATE (s:Student {
+          id: $id,
+          name: $name,
+          wechatId: $wechat,
+          contactType: $contactType,
+          classType: 'shala-regular',
+          location: 'bangkok',
+          isChineseStudent: false,
+          isActive: true,
+          oriented: true,
+          language: $language,
+          workshop: 'AYBKK Bangkok Shala',
+          injuries: $injuries,
+          experience: $experience,
+          journalLink: $journalLink,
+          createdAt: datetime($createdAt)
+        })`,
+        {
+          id: studentId,
+          name: name,
+          wechat: wechat || '',
+          contactType: contactType || 'line',
+          language: language || 'th',
+          injuries: injuries || '',
+          experience: experience || '',
+          journalLink,
+          createdAt: datetime
+        }
+      );
+    } finally {
+      await session.close();
+    }
+
+    res.json({ success: true, studentId, journalLink, name });
+  } catch (err) {
+    console.error('[bkk orientation save]', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/orientations/bkk — merged list: existing booking-system students + new BKK orientations
+app.get('/api/orientations/bkk', async (req, res) => {
+  const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+  const out = [];
+
+  // 1) Existing students from PostgreSQL booking DB (Reserv) — no orientation needed
+  if (pgPool) {
+    try {
+      const result = await pgPool.query(`
+        SELECT s.id::text AS id, s.name,
+               count(je.id) AS session_count,
+               max(je.session_date) AS last_date
+        FROM students s
+        LEFT JOIN journal_entries je ON je.student_id = s.id
+        WHERE s.name IS NOT NULL AND s.name != ''
+        GROUP BY s.id, s.name
+        ORDER BY s.name ASC
+      `);
+      for (const r of result.rows) {
+        const link = baseUrl + '/student.html?id=' + encodeURIComponent(r.id) + '&name=' + encodeURIComponent(r.name) + '&lang=th&location=bangkok';
+        out.push({
+          id: r.id,
+          name: r.name,
+          source: 'reserv',
+          checkins: parseInt(r.session_count) || 0,
+          lastDate: r.last_date ? r.last_date.toISOString().substring(0, 10) : null,
+          journalLink: link,
+          oriented: false
+        });
+      }
+    } catch (err) {
+      console.error('[bkk list pg]', err.message);
+    }
+  }
+
+  // 2) New shala-walk-in students who filled the bkk orientation (Neo4j)
+  const session = driver.session();
+  try {
+    const result = await session.run(`
+      MATCH (s:Student)
+      WHERE s.location = 'bangkok' OR s.id STARTS WITH 'bkk-'
+      OPTIONAL MATCH (s)-[:HAS_PRACTICE_LOG]->(pl:PracticeLog)
+      OPTIONAL MATCH (s)-[:HAS_SELF_ASSESSMENT]->(sa:SelfAssessment)
+      WITH s, count(DISTINCT pl) + count(DISTINCT sa) AS checkins
+      RETURN s.id AS id, s.name AS name, s.journalLink AS journalLink,
+             s.wechatId AS wechat, s.experience AS experience,
+             s.createdAt AS createdAt, checkins
+      ORDER BY s.createdAt DESC
+    `);
+    for (const r of result.records) {
+      const id = r.get('id');
+      const name = r.get('name');
+      const link = r.get('journalLink') || (baseUrl + '/student.html?id=' + encodeURIComponent(id) + '&name=' + encodeURIComponent(name) + '&lang=th&location=bangkok');
+      const checkinsRaw = r.get('checkins');
+      out.push({
+        id,
+        name,
+        source: 'orientation',
+        checkins: typeof checkinsRaw === 'object' && checkinsRaw && 'low' in checkinsRaw ? checkinsRaw.low : (parseInt(checkinsRaw) || 0),
+        wechat: r.get('wechat'),
+        experience: r.get('experience'),
+        journalLink: link,
+        oriented: true
+      });
+    }
+  } catch (err) {
+    console.error('[bkk list neo4j]', err.message);
+  } finally {
+    await session.close();
+  }
+
+  // De-duplicate (Reserv ID may also exist as Neo4j student after first check-in)
+  const seen = new Set();
+  const merged = out.filter(s => {
+    if (seen.has(s.id)) return false;
+    seen.add(s.id);
+    return true;
+  });
+
+  res.json({ students: merged, count: merged.length });
+});
+
+// ─── Short journal link redirect ─────────────────────────────────────────
+// /j/:slug — short link that 302s to the full Thai journal URL.
+//   slug = numeric Reserv ID (e.g. /j/44) or fuzzy name (/j/tomoko)
+// If the student already has a `journal_link` in Reserv, we preserve its
+// underlying id (keeps existing journal history) but force lang=th & location=bangkok.
+app.get('/j/:slug', async (req, res) => {
+  const slug = decodeURIComponent(req.params.slug || '').trim();
+  if (!slug) return res.status(404).send('Not found');
+  if (!pgPool) return res.status(503).send('Booking DB unavailable');
+
+  try {
+    let row = null;
+    // Pattern 1: pure numeric ID — /j/689
+    // Pattern 2: pretty slug with trailing ID — /j/boonchu-test-689 (id wins, prefix is decorative)
+    // Pattern 3: name-only fuzzy match — /j/tomoko (must resolve to exactly one)
+    // ID can appear three ways: bare (/j/689), leading (/j/689-boonchu), trailing (/j/boonchu-689)
+    let id = null;
+    if (/^\d+$/.test(slug)) {
+      id = parseInt(slug, 10);
+    } else {
+      const lead = slug.match(/^(\d+)[-_]/);
+      const tail = slug.match(/[-_](\d+)$/);
+      if (lead) id = parseInt(lead[1], 10);
+      else if (tail) id = parseInt(tail[1], 10);
+    }
+
+    if (id !== null) {
+      const r = await pgPool.query(
+        'SELECT id, name, journal_link FROM students WHERE id = $1 LIMIT 1', [id]
+      );
+      row = r.rows[0] || null;
+    } else {
+      // Tokenize: "boonchu-test" → ["boonchu","test"], all must appear in name
+      const tokens = slug.toLowerCase().replace(/[_]+/g, '-').split(/[-\s]+/).filter(Boolean);
+      if (!tokens.length) return res.status(404).send('Not found');
+      const params = tokens.map(t => '%' + t + '%');
+      const where = tokens.map((_, i) => 'name ILIKE $' + (i + 1)).join(' AND ');
+      const r = await pgPool.query(
+        `SELECT id, name, journal_link FROM students WHERE ${where} ORDER BY id DESC LIMIT 3`,
+        params
+      );
+      if (r.rowCount === 1) row = r.rows[0];
+      else if (r.rowCount > 1) {
+        const list = r.rows.map(x => `/j/${x.id}-${x.name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')}`).join('\n');
+        return res.status(409).type('text/plain').send(
+          'Multiple matches for "' + slug + '" — pick one:\n\n' + list
+        );
+      }
+    }
+
+    if (!row) return res.status(404).send('Student not found');
+
+    // Preserve any existing journal id (keeps practice history)
+    let targetId = String(row.id);
+    if (row.journal_link) {
+      try {
+        const u = new URL(row.journal_link);
+        const qid = u.searchParams.get('id');
+        if (qid) targetId = qid;
+      } catch (_) { /* fall back to pg id */ }
+    }
+
+    const target = '/student.html?id=' + encodeURIComponent(targetId) +
+      '&name=' + encodeURIComponent(row.name) +
+      '&lang=th&location=bangkok';
+    return res.redirect(302, target);
+  } catch (err) {
+    console.error('[/j redirect]', err.message);
+    return res.status(500).send('Lookup failed');
+  }
+});
+
+// ─── Short profile link redirect ─────────────────────────────────────────
+// /p/:slug — same lookup as /j/ but redirects to the read-only profile page
+// (my-journal.html). Use this for "here is your practice profile" links —
+// students see their journal history + weekly AI report, no entry form.
+app.get('/p/:slug', async (req, res) => {
+  const slug = decodeURIComponent(req.params.slug || '').trim();
+  if (!slug) return res.status(404).send('Not found');
+  if (!pgPool) return res.status(503).send('Booking DB unavailable');
+
+  try {
+    let row = null;
+    let id = null;
+    if (/^\d+$/.test(slug)) {
+      id = parseInt(slug, 10);
+    } else {
+      const lead = slug.match(/^(\d+)[-_]/);
+      const tail = slug.match(/[-_](\d+)$/);
+      if (lead) id = parseInt(lead[1], 10);
+      else if (tail) id = parseInt(tail[1], 10);
+    }
+
+    if (id !== null) {
+      const r = await pgPool.query(
+        'SELECT id, name, journal_link FROM students WHERE id = $1 LIMIT 1', [id]
+      );
+      row = r.rows[0] || null;
+    } else {
+      const tokens = slug.toLowerCase().replace(/[_]+/g, '-').split(/[-\s]+/).filter(Boolean);
+      if (!tokens.length) return res.status(404).send('Not found');
+      const params = tokens.map(t => '%' + t + '%');
+      const where = tokens.map((_, i) => 'name ILIKE $' + (i + 1)).join(' AND ');
+      const r = await pgPool.query(
+        `SELECT id, name, journal_link FROM students WHERE ${where} ORDER BY id DESC LIMIT 3`,
+        params
+      );
+      if (r.rowCount === 1) row = r.rows[0];
+      else if (r.rowCount > 1) {
+        const list = r.rows.map(x => `/p/${x.id}-${x.name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')}`).join('\n');
+        return res.status(409).type('text/plain').send(
+          'Multiple matches for "' + slug + '" — pick one:\n\n' + list
+        );
+      }
+    }
+
+    if (!row) return res.status(404).send('Student not found');
+
+    let targetId = String(row.id);
+    if (row.journal_link) {
+      try {
+        const u = new URL(row.journal_link);
+        const qid = u.searchParams.get('id');
+        if (qid) targetId = qid;
+      } catch (_) { /* fall back to pg id */ }
+    }
+
+    const target = '/my-journal.html?id=' + encodeURIComponent(targetId) +
+      '&name=' + encodeURIComponent(row.name) +
+      '&lang=th';
+    return res.redirect(302, target);
+  } catch (err) {
+    console.error('[/p redirect]', err.message);
+    return res.status(500).send('Lookup failed');
+  }
+});
+
+// ─── Share card image generator ──────────────────────────────────────────
+// GET /api/share-card/:studentId
+//   Optional query: ?type=welcome|journal (default: welcome)
+//                   ?subtitle=... ?dateInfo=... ?quote=... ?uplift=... ?dayIndex=0..6
+// Returns: PNG. Used by the Telegram bot to send a real designed share card
+// (the same design as the in-page card on student.html).
+const { renderShareCard } = require('./share-card-renderer');
+
+// Yoga Sutra + Bhagavad Gita quote pool, bilingual.
+const SHARE_CARD_QUOTES = {
+  en: [
+    'Atha Yoganushasanam — Yoga Sutra 1.1',
+    'Yoga is the cessation of the fluctuations of the mind. — Yoga Sutra 1.2',
+    'Sthira sukham asanam — steady, comfortable. — Yoga Sutra 2.46',
+    'Practice becomes firmly grounded when attended to for a long time. — Yoga Sutra 1.14',
+    'You have a right to action, but never to its fruits. — Bhagavad Gita 2.47',
+    'Yoga is skill in action. — Bhagavad Gita 2.50',
+    'Yoga is equanimity of mind. — Bhagavad Gita 2.48',
+    'Like a lamp in a windless place that does not flicker. — Bhagavad Gita 6.19',
+    'For one who has conquered the mind, the mind is the best of friends. — Bhagavad Gita 6.6',
+    'Whatever happened, happened for the good. — Bhagavad Gita',
+    'When meditation is mastered, the mind is unwavering. — Bhagavad Gita 6.19',
+    'The soul is neither born, nor does it ever die. — Bhagavad Gita 2.20',
+  ],
+  ru: [
+    'Атха йогануш́асанам — Йога-сутра 1.1',
+    'Йога есть прекращение колебаний ума. — Йога-сутра 1.2',
+    'Стхира сукхам асанам — устойчивая, удобная поза. — Йога-сутра 2.46',
+    'Практика становится прочной при долгом, непрерывном внимании. — Йога-сутра 1.14',
+    'У тебя есть право на действие, но не на его плоды. — Бхагавад-гита 2.47',
+    'Йога есть искусство в действии. — Бхагавад-гита 2.50',
+    'Йога есть невозмутимость ума. — Бхагавад-гита 2.48',
+    'Как пламя лампы в безветренном месте, что не колышется. — Бхагавад-гита 6.19',
+    'Для того, кто овладел умом, ум — лучший друг. — Бхагавад-гита 6.6',
+    'Что бы ни произошло, произошло во благо. — Бхагавад-гита',
+    'Когда медитация достигнута, ум неподвижен. — Бхагавад-гита 6.19',
+    'Душа не рождается и не умирает. — Бхагавад-гита 2.20',
+  ],
+  zh: [
+    'Atha Yoganushasanam — 瑜伽经 1.1',
+    '瑜伽是心意波动的止息。— 瑜伽经 1.2',
+    '体式应当稳定而舒适。— 瑜伽经 2.46',
+    '长久持续的练习使根基稳固。— 瑜伽经 1.14',
+    '你只有行动的权利，从无对结果的权利。— 薄伽梵歌 2.47',
+    '瑜伽是行动中的技艺。— 薄伽梵歌 2.50',
+    '瑜伽是心的平等。— 薄伽梵歌 2.48',
+    '如无风之处的灯焰，不动摇。— 薄伽梵歌 6.19',
+    '征服自心者，自心即是至友。— 薄伽梵歌 6.6',
+  ],
+};
+
+// Deterministic quote per student (welcome) and per student+day (journal),
+// so different students reliably see different quotes and the journal rotates daily.
+function hashString(s) {
+  let h = 0;
+  for (const ch of s) h = ((h << 5) - h + ch.charCodeAt(0)) | 0;
+  return Math.abs(h);
+}
+
+function quoteForCard({ studentId, type, lang }) {
+  const pool = SHARE_CARD_QUOTES[lang] || SHARE_CARD_QUOTES.en;
+  if (!pool.length) return '';
+  const seed = type === 'journal'
+    ? `${studentId}|${new Date().toISOString().split('T')[0]}`   // rotates daily
+    : `${studentId}|welcome`;                                    // stable per student
+  return pool[hashString(seed) % pool.length];
+}
+
+// POST /api/journal/share-to-group/:studentId
+// Called from student.html after a Russia student completes their daily journal.
+// Server fetches the rendered share card and posts it to the student's city group.
+app.post('/api/journal/share-to-group/:studentId', async (req, res) => {
+  const session = driver.session();
+  try {
+    const { studentId } = req.params;
+
+    const result = await session.run(
+      `MATCH (s:Student) WHERE s.id = $id
+       RETURN s.name AS name, s.city AS city, s.location AS location,
+              s.language AS language, s.telegramChatId AS tgChatId
+       LIMIT 1`,
+      { id: studentId }
+    );
+    if (result.records.length === 0) return res.status(404).json({ error: 'Student not found' });
+
+    const r = result.records[0];
+    const name = r.get('name') || 'Student';
+    const city = r.get('city') || '';
+    const location = r.get('location') || '';
+    const language = r.get('language') || 'en';
+    const tgChatId = r.get('tgChatId') || '';
+
+    if (location !== 'russia') return res.json({ posted: false, reason: 'not a Russia student' });
+
+    const groupMap = { spb: process.env.RU_GROUP_CHAT_ID_SPB, moscow: process.env.RU_GROUP_CHAT_ID_MOSCOW };
+    const groupId = groupMap[city];
+    if (!groupId) return res.json({ posted: false, reason: `no group chat_id for city ${city}` });
+
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    if (!token) return res.status(500).json({ error: 'TELEGRAM_BOT_TOKEN not set on server' });
+
+    // Skip Boonchu's test entries
+    if (process.env.BOONCHU_CHAT_ID && String(tgChatId) === String(process.env.BOONCHU_CHAT_ID)) {
+      return res.json({ posted: false, reason: 'test mode (Boonchu)' });
+    }
+
+    // Fetch the journal-type share card
+    const cardRes = await fetch(`https://aybkk-ashtanga.up.railway.app/api/share-card/${encodeURIComponent(studentId)}?type=journal`);
+    if (!cardRes.ok) throw new Error(`share-card fetch ${cardRes.status}`);
+    const cardBuf = Buffer.from(await cardRes.arrayBuffer());
+
+    // Caption
+    const today = new Date();
+    const dateLabel = today.toLocaleDateString(language === 'ru' ? 'ru-RU' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const caption = language === 'ru'
+      ? `🙏 ${name} · ${dateLabel}\nПрактика записана.`
+      : `🙏 ${name} · ${dateLabel}\nPractice logged.`;
+
+    // POST multipart to Telegram sendPhoto
+    const fd = new FormData();
+    fd.append('chat_id', String(groupId));
+    fd.append('caption', caption);
+    fd.append('photo', new Blob([cardBuf], { type: 'image/png' }), 'journal-card.png');
+
+    const tgRes = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, { method: 'POST', body: fd });
+    const tgJson = await tgRes.json();
+    if (!tgJson.ok) throw new Error(`telegram sendPhoto ${tgJson.description}`);
+
+    res.json({ posted: true, city, groupId });
+  } catch (err) {
+    console.error('[journal share-to-group]', err.message);
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
+app.get('/api/share-card/:studentId', async (req, res) => {
+  const session = driver.session();
+  try {
+    const { studentId } = req.params;
+    const { type, subtitle, dateInfo, quote, uplift, dayIndex } = req.query;
+
+    // Look up the student
+    const result = await session.run(
+      `MATCH (s:Student) WHERE s.id = $id
+       RETURN s.name AS name, s.photoUrl AS photoUrl, s.city AS city,
+              s.location AS location, s.workshop AS workshop, s.language AS language,
+              s.telegramPhotoFileId AS telegramPhotoFileId
+       LIMIT 1`,
+      { id: studentId }
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    const r = result.records[0];
+    const name = r.get('name') || 'Student';
+    let photoUrl = r.get('photoUrl') || '';
+    const tgPhotoFileId = r.get('telegramPhotoFileId') || '';
+    const city = r.get('city') || '';
+    const location = r.get('location') || '';
+    const workshop = r.get('workshop') || '';
+    const language = r.get('language') || 'en';
+
+    // Fallback: if no Cloudinary URL, fetch the photo URL directly from Telegram by file_id.
+    // Telegram keeps photos for a long time, so this works even if Cloudinary upload failed.
+    if (!photoUrl && tgPhotoFileId && process.env.TELEGRAM_BOT_TOKEN) {
+      try {
+        const fileRes = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getFile?file_id=${encodeURIComponent(tgPhotoFileId)}`);
+        const fileJson = await fileRes.json();
+        if (fileJson.ok && fileJson.result?.file_path) {
+          photoUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${fileJson.result.file_path}`;
+          console.log('[share-card] using Telegram fallback photo for', studentId);
+        }
+      } catch (e) {
+        console.warn('[share-card] telegram fallback failed:', e.message);
+      }
+    }
+
+    // Build subtitle/dateInfo from defaults or query overrides
+    const isWelcome = (type || 'welcome') === 'welcome';
+    const cityLabel = city === 'moscow' ? 'Moscow' : (city === 'spb' ? 'St. Petersburg' : '');
+
+    const defaultSubtitle = isWelcome
+      ? (location === 'russia' ? 'AYBKK RUSSIA WS 2026' : (workshop || 'AYBKK 2026'))
+      : 'AYBKK PRACTICE JOURNAL';
+
+    const today = new Date();
+    const opts = { weekday: 'short', month: 'short', day: 'numeric' };
+    const todayStr = today.toLocaleDateString('en-US', opts);
+    const defaultDateInfo = isWelcome
+      ? (cityLabel ? `${cityLabel} · ${todayStr}` : todayStr)
+      : `${todayStr} · Practice Journal saved ✅`;
+
+    // Deterministic quote per student/day (Yoga Sutra + Bhagavad Gita), language-aware.
+    const defaultQuote = quoteForCard({ studentId, type: type || 'welcome', lang: language });
+
+    const png = await renderShareCard({
+      name,
+      subtitle: subtitle || defaultSubtitle,
+      dateInfo: dateInfo || defaultDateInfo,
+      quote: quote || defaultQuote,
+      uplift: uplift || '',
+      photoUrl,
+      dayIndex: dayIndex !== undefined ? parseInt(dayIndex, 10) : undefined,
+    });
+
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.send(png);
+  } catch (err) {
+    console.error('[share-card]', err.message);
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// ─── Russia WS 2026 — orientation save/list ─────────────────────────────
+// POST /api/orientations/ru — Telegram bot calls this after the chat orientation flow
+app.post('/api/orientations/ru', async (req, res) => {
+  try {
+    const {
+      name, email, city, size, experience, lastAsana,
+      difficulties, injuries, language, workshop,
+      telegramChatId, telegramUsername, telegramFirstName, telegramLastName,
+      telegramPhotoFileId, photoUrl, quizResults
+    } = req.body;
+
+    if (!name) return res.status(400).json({ success: false, error: 'name required' });
+    if (!city || !['spb', 'moscow'].includes(city)) return res.status(400).json({ success: false, error: 'city must be spb or moscow' });
+
+    const datetime = new Date().toISOString();
+    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const tgChatStr = String(telegramChatId || '');
+    const emailStr = (email || '').trim().toLowerCase();
+
+    const diffStr = Array.isArray(difficulties) ? difficulties.join(', ') : (difficulties || '');
+    const quizStr = JSON.stringify(quizResults || []);
+
+    const session = driver.session();
+    try {
+      // Look up existing RU Student by telegramChatId, then by email — so a repeat
+      // registration updates the same row instead of creating a duplicate.
+      let existingId = null;
+      let existingLink = null;
+      if (tgChatStr) {
+        const r = await session.run(
+          `MATCH (s:Student {location: 'russia', telegramChatId: $tg})
+           RETURN s.id AS id, s.journalLink AS link
+           ORDER BY s.createdAt DESC LIMIT 1`,
+          { tg: tgChatStr }
+        );
+        if (r.records.length) {
+          existingId = r.records[0].get('id');
+          existingLink = r.records[0].get('link');
+        }
+      }
+      if (!existingId && emailStr) {
+        const r = await session.run(
+          `MATCH (s:Student {location: 'russia'})
+           WHERE toLower(s.email) = $em AND s.email <> ''
+           RETURN s.id AS id, s.journalLink AS link
+           ORDER BY s.createdAt DESC LIMIT 1`,
+          { em: emailStr }
+        );
+        if (r.records.length) {
+          existingId = r.records[0].get('id');
+          existingLink = r.records[0].get('link');
+        }
+      }
+
+      const studentId = existingId || ('ru-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6));
+      const journalLink = existingLink || (baseUrl + '/student.html?id=' + studentId
+        + '&name=' + encodeURIComponent(name)
+        + '&lang=' + (language || 'ru')
+        + '&location=russia'
+        + '&city=' + city);
+
+      // Orientation = audit log of every registration event (always CREATE).
+      await session.run(`
+        CREATE (o:Orientation {
+          id: $id, name: $name, email: $email, city: $city, size: $size,
+          experience: $experience, lastAsana: $lastAsana, difficulties: $diff,
+          injuries: $injuries, language: $language, workshop: $workshop,
+          telegramChatId: $tgChat, telegramUsername: $tgUser,
+          telegramFirstName: $tgFirst, telegramLastName: $tgLast,
+          telegramPhotoFileId: $tgPhoto,
+          photoUrl: $photoUrl, quizResults: $quiz, location: 'russia',
+          createdAt: datetime($createdAt)
+        })`, {
+        id: studentId, name, email: email || '', city, size: size || '',
+        experience: experience || '', lastAsana: lastAsana || '', diff: diffStr,
+        injuries: injuries || '', language: language || 'ru',
+        workshop: workshop || 'AYBKK Russia WS May 2026',
+        tgChat: tgChatStr, tgUser: telegramUsername || '',
+        tgFirst: telegramFirstName || '', tgLast: telegramLastName || '',
+        tgPhoto: telegramPhotoFileId || '',
+        photoUrl: photoUrl || '', quiz: quizStr, createdAt: datetime,
+      });
+
+      // Student = canonical profile (one per person). MERGE on id so a repeat
+      // registration updates the existing node and journals stay attached.
+      await session.run(`
+        MERGE (s:Student { id: $id })
+        ON CREATE SET
+          s.createdAt = datetime($createdAt),
+          s.classType = 'russia-workshop',
+          s.location = 'russia',
+          s.isActive = true
+        SET
+          s.name = $name, s.email = $email, s.city = $city, s.size = $size,
+          s.oriented = true,
+          s.language = $language, s.workshop = $workshop, s.injuries = $injuries,
+          s.experience = $experience, s.lastAsana = $lastAsana,
+          s.telegramChatId = $tgChat, s.telegramUsername = $tgUser,
+          s.telegramPhotoFileId = $tgPhoto,
+          s.photoUrl = $photoUrl, s.journalLink = $journalLink,
+          s.updatedAt = datetime($createdAt)
+        `, {
+        id: studentId, name, email: email || '', city, size: size || '',
+        language: language || 'ru', workshop: workshop || 'AYBKK Russia WS May 2026',
+        injuries: injuries || '', experience: experience || '', lastAsana: lastAsana || '',
+        tgChat: tgChatStr, tgUser: telegramUsername || '',
+        tgPhoto: telegramPhotoFileId || '',
+        photoUrl: photoUrl || '', journalLink, createdAt: datetime,
+      });
+
+      res.json({ success: true, studentId, journalLink, name, reused: !!existingId });
+    } finally {
+      await session.close();
+    }
+  } catch (err) {
+    console.error('[ru orientation save]', err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/orientations/ru — list RU students (?city=spb|moscow, ?format=csv)
+app.get('/api/orientations/ru', async (req, res) => {
+  const session = driver.session();
+  try {
+    const { city, format } = req.query;
+    const cityFilter = city ? `AND s.city = $city` : '';
+    const result = await session.run(`
+      MATCH (s:Student)
+      WHERE s.location = 'russia' OR s.id STARTS WITH 'ru-'
+      ${cityFilter}
+      RETURN s.id AS id, s.name AS name, s.email AS email, s.city AS city,
+             s.size AS size, s.experience AS experience, s.lastAsana AS lastAsana,
+             s.injuries AS injuries, s.telegramChatId AS telegramChatId,
+             s.telegramUsername AS telegramUsername, s.photoUrl AS photoUrl,
+             s.journalLink AS journalLink, s.language AS language,
+             s.workshop AS workshop, s.createdAt AS createdAt
+      ORDER BY s.city, s.name
+    `, { city: city || null });
+
+    const students = result.records.map(r => ({
+      id: r.get('id'), name: r.get('name'), email: r.get('email'),
+      city: r.get('city'), size: r.get('size'), experience: r.get('experience'),
+      lastAsana: r.get('lastAsana'), injuries: r.get('injuries'),
+      telegramChatId: r.get('telegramChatId'), telegramUsername: r.get('telegramUsername'),
+      photoUrl: r.get('photoUrl'), journalLink: r.get('journalLink'),
+      language: r.get('language'), workshop: r.get('workshop'),
+      createdAt: r.get('createdAt'),
+    }));
+
+    if (format === 'csv') {
+      const cols = ['id','name','email','city','size','experience','lastAsana','injuries','telegramUsername','telegramChatId','photoUrl','journalLink','language','createdAt'];
+      const escape = v => {
+        if (v == null) return '';
+        const s = String(v).replace(/"/g, '""');
+        return /[",\n]/.test(s) ? `"${s}"` : s;
+      };
+      const csv = [cols.join(','), ...students.map(s => cols.map(c => escape(s[c])).join(','))].join('\n');
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      return res.send(csv);
+    }
+
+    res.json({ students, count: students.length });
+  } catch (err) {
+    console.error('[ru orientation list]', err.message);
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
   }
 });
 
@@ -1505,9 +2391,31 @@ app.get('/api/tags', async (req, res) => {
 async function start() {
   await testNeo4j();
   await initSchema();
-  
+
   app.listen(PORT, () => {
     console.log(`✓ Mission Control running on http://localhost:${PORT}`);
+  });
+
+  // Auto-start the Telegram bot as a managed child process when running on Railway
+  // (or anywhere RUN_BOT=1 is set). Auto-restarts on crash so it stays alive 24/7.
+  if (process.env.RUN_BOT === '1' || process.env.RAILWAY_ENVIRONMENT) {
+    startBot();
+  }
+}
+
+function startBot() {
+  const { spawn } = require('child_process');
+  console.log('[bot-supervisor] starting assessment-bot.js as managed child');
+  const child = spawn('node', ['assessment-bot.js'], {
+    stdio: 'inherit',
+    env: process.env,
+  });
+  child.on('exit', (code, signal) => {
+    console.log(`[bot-supervisor] bot exited (code=${code}, signal=${signal}) — restarting in 5s`);
+    setTimeout(startBot, 5000);
+  });
+  child.on('error', (err) => {
+    console.error('[bot-supervisor] spawn error:', err.message);
   });
 }
 

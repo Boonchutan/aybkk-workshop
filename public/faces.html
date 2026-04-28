@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYBKK — Student Faces</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #faf8f5; color: #2a2420; min-height: 100vh;
+}
+.header {
+  background: linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #4e342e 100%);
+  color: white; padding: 20px 16px; text-align: center;
+  position: sticky; top: 0; z-index: 10;
+}
+.header h1 { font-size: 18px; margin-bottom: 4px; }
+.header .sub { color: rgba(255,255,255,0.7); font-size: 13px; }
+.filter-bar {
+  display: flex; gap: 8px; padding: 12px 16px;
+  background: white; border-bottom: 1px solid #e8e0d8;
+  position: sticky; top: 72px; z-index: 9;
+  overflow-x: auto;
+}
+.filter-btn {
+  padding: 6px 16px; border-radius: 999px; border: 1.5px solid #c49564;
+  background: white; color: #5d4037; font-size: 12px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: all .2s;
+}
+.filter-btn.active { background: #5d4037; color: white; border-color: #5d4037; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px; padding: 16px;
+  max-width: 900px; margin: 0 auto;
+}
+.card {
+  background: white; border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  overflow: hidden; cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+  border: 2px solid transparent;
+  display: block; color: inherit; text-decoration: none;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.card:active { transform: translateY(0); }
+a.card:focus-visible { outline: 2px solid #c49564; outline-offset: 2px; }
+.card.has-photo { border-color: #c49564; }
+.photo-box {
+  width: 100%; aspect-ratio: 1;
+  background: #f0ebe5;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.photo-box img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.photo-placeholder {
+  font-size: 48px; opacity: .25;
+}
+.no-photo-label {
+  position: absolute; bottom: 6px; left: 0; right: 0;
+  text-align: center; font-size: 10px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: #b0a090;
+}
+.card-info {
+  padding: 10px 10px 12px;
+}
+.card-en {
+  font-size: 13px; font-weight: 700; color: #3e2723;
+  margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-zh {
+  font-size: 12px; color: #8b7d6b; margin-bottom: 6px;
+}
+.card-meta {
+  font-size: 11px; color: #a09080;
+}
+.card-city {
+  display: inline-block; background: #f0ebe5;
+  padding: 2px 7px; border-radius: 999px;
+  font-size: 10px; font-weight: 600; color: #8b7d6b;
+}
+.loading { text-align: center; padding: 60px 20px; color: #8b7d6b; font-size: 15px; }
+.empty { text-align: center; padding: 60px 20px; color: #8b7d6b; }
+.count-bar {
+  padding: 8px 16px; font-size: 12px; color: #8b7d6b;
+  text-align: center;
+}
+.photo-count {
+  display: inline-block; margin-left: 8px;
+  background: #c49564; color: white;
+  padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
+}
+.refresh-btn {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #3e2723; color: white; border: none;
+  width: 48px; height: 48px; border-radius: 50%;
+  font-size: 20px; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.view-switch {
+  display: flex; gap: 8px; padding: 14px 16px 4px;
+  max-width: 900px; margin: 0 auto;
+}
+.view-tab {
+  padding: 10px 18px; border-radius: 999px;
+  background: #fff; border: 1px solid #e8e0d8;
+  font-family: Georgia, 'Hoefler Text', serif;
+  font-size: 13px; font-weight: 500; color: #8b7d6b;
+  text-decoration: none; cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.view-tab:active { transform: scale(0.97); }
+.view-tab:hover { border-color: #c49564; color: #2a2420; }
+.view-tab.active {
+  background: #2a2420; color: #fff; border-color: #2a2420;
+  box-shadow: 0 4px 12px rgba(42,36,32,0.18);
+}
+.pulse {
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: .5; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Student Faces</h1>
+  <div class="sub" id="headerSub">Loading...</div>
+</div>
+
+<div class="view-switch">
+  <a class="view-tab" href="/student-report.html">📋 Reports</a>
+  <a class="view-tab active" href="/faces.html" aria-current="page">📸 Faces grid</a>
+  <a class="view-tab" href="/mindmap.html" title="Asana ↔ body reference (work in progress)">🧠 Knowledge</a>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-f="all" onclick="setFilter('all')">All</button>
+  <button class="filter-btn" data-f="huizhou" onclick="setFilter('huizhou')">Huizhou</button>
+  <button class="filter-btn" data-f="guangzhou" onclick="setFilter('guangzhou')">Guangzhou</button>
+  <button class="filter-btn" data-f="indepth" onclick="setFilter('indepth')">In-Depth</button>
+  <button class="filter-btn" data-f="bangkok" onclick="setFilter('bangkok')">Bangkok</button>
+  <button class="filter-btn" data-f="spb" onclick="setFilter('spb')">🇷🇺 SPB</button>
+  <button class="filter-btn" data-f="moscow" onclick="setFilter('moscow')">🇷🇺 Moscow</button>
+  <button class="filter-btn" data-f="photo" onclick="setFilter('photo')">📷 Photo</button>
+  <button class="filter-btn" data-f="nophoto" onclick="setFilter('nophoto')">No Photo</button>
+</div>
+
+<div class="count-bar" id="countBar">&nbsp;</div>
+
+<div class="grid" id="grid">
+  <div class="loading pulse">Loading students...</div>
+</div>
+
+<button class="refresh-btn" onclick="load()" title="Refresh">↻</button>
+
+<script>
+let allStudents = [];
+let currentFilter = 'all';
+
+function isGuangzhou(s) {
+  return s.location === 'guangzhou' || (s.id && s.id.startsWith('gz-'));
+}
+function isInDepth(s) {
+  return s.classType === 'in-depth-mysore-cn2';
+}
+function isRussia(s) {
+  return s.location === 'russia' || (s.id && s.id.startsWith('ru-'));
+}
+function isHuizhou(s) {
+  if (isGuangzhou(s) || isInDepth(s) || isRussia(s)) return false;
+  return s.location === 'huizhou'
+      || s.isChineseStudent === true
+      || s.classType === 'chinese-workshop'
+      || s.classType === 'huizhou';
+}
+function isBangkok(s) {
+  if (isRussia(s) || isGuangzhou(s) || isHuizhou(s) || isInDepth(s)) return false;
+  return s.location === 'bangkok' || s.classType === 'shala-regular';
+}
+
+// Map a student to the location param expected by /student.html.
+function locationFor(s) {
+  if (isRussia(s))    return 'russia';
+  if (isGuangzhou(s)) return 'guangzhou';
+  if (isInDepth(s))   return 'huizhou';
+  if (isHuizhou(s))   return 'huizhou';
+  if (isBangkok(s))   return 'bangkok';
+  return s.location || 'bangkok';
+}
+function langFor(s) {
+  if (isRussia(s)) return 'ru';
+  if (isGuangzhou(s) || isHuizhou(s) || isInDepth(s)) return 'zh';
+  return 'en';
+}
+function journalUrlFor(s) {
+  if (s.journalLink) return s.journalLink;
+  if (!s.id) return null;
+  const params = new URLSearchParams({
+    id: s.id,
+    name: s.name || s.englishName || '',
+    lang: langFor(s),
+    location: locationFor(s),
+  });
+  return `/student.html?${params.toString()}`;
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.f === f);
+  });
+  render();
+}
+
+function filtered() {
+  if (currentFilter === 'huizhou')   return allStudents.filter(isHuizhou);
+  if (currentFilter === 'guangzhou') return allStudents.filter(isGuangzhou);
+  if (currentFilter === 'indepth')   return allStudents.filter(isInDepth);
+  if (currentFilter === 'bangkok')   return allStudents.filter(isBangkok);
+  if (currentFilter === 'spb')       return allStudents.filter(s => isRussia(s) && s.city === 'spb');
+  if (currentFilter === 'moscow')    return allStudents.filter(s => isRussia(s) && s.city === 'moscow');
+  if (currentFilter === 'photo')     return allStudents.filter(s => s.photoUrl);
+  if (currentFilter === 'nophoto')   return allStudents.filter(s => !s.photoUrl);
+  return allStudents;
+}
+
+function render() {
+  const students = filtered();
+  const withPhoto = students.filter(s => s.photoUrl).length;
+
+  document.getElementById('countBar').innerHTML =
+    `${students.length} student${students.length!==1?'s':''} &nbsp;` +
+    `<span class="photo-count">📷 ${withPhoto} with photo</span>`;
+
+  document.getElementById('headerSub').textContent =
+    `${withPhoto} of ${students.length} photos uploaded`;
+
+  if (!students.length) {
+    document.getElementById('grid').innerHTML =
+      '<div class="empty" style="grid-column:1/-1">No students found.</div>';
+    return;
+  }
+
+  // Sort: photos first, then alphabetical by English name
+  const sorted = [...students].sort((a,b) => {
+    if (a.photoUrl && !b.photoUrl) return -1;
+    if (!a.photoUrl && b.photoUrl) return 1;
+    return (a.englishName||a.name||'').localeCompare(b.englishName||b.name||'');
+  });
+
+  document.getElementById('grid').innerHTML = sorted.map(s => {
+    const name = s.englishName || s.name || '—';
+    const zh   = s.chineseName || (s.englishName ? s.name : '');
+    const badge = badgeFor(s);
+    const hasPhoto = !!s.photoUrl;
+    const url = journalUrlFor(s);
+
+    const photoHtml = hasPhoto
+      ? `<img src="${esc(s.photoUrl)}" alt="${esc(name)}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'photo-placeholder\\'>🧘</div><div class=\\'no-photo-label\\'>Photo error</div>'">`
+      : `<div class="photo-placeholder">🧘</div><div class="no-photo-label">Awaiting photo</div>`;
+
+    const cardInner = `
+      <div class="photo-box">${photoHtml}</div>
+      <div class="card-info">
+        <div class="card-en">${esc(name)}</div>
+        ${zh ? `<div class="card-zh">${esc(zh)}</div>` : ''}
+        ${badge ? `<div><span class="card-city">${badge}</span></div>` : ''}
+      </div>`;
+
+    if (url) {
+      return `<a class="card ${hasPhoto?'has-photo':''}" href="${esc(url)}" title="${esc(name)}${zh?' · '+esc(zh):''} — open journal">${cardInner}</a>`;
+    }
+    return `<div class="card ${hasPhoto?'has-photo':''}" title="${esc(name)}${zh?' · '+esc(zh):''}">${cardInner}</div>`;
+  }).join('');
+}
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function badgeFor(s) {
+  if (isRussia(s))    return s.city === 'moscow' ? '🇷🇺 Moscow' : '🇷🇺 SPB';
+  if (isInDepth(s))   return 'In-Depth';
+  if (isGuangzhou(s)) return 'Guangzhou';
+  if (isHuizhou(s))   return 'Huizhou';
+  if (isBangkok(s))   return 'Bangkok';
+  return s.classType || s.location || '';
+}
+
+async function load() {
+  try {
+    const r = await fetch('/api/students');
+    const data = await r.json();
+
+    // Handle { students: [...] } wrapper or plain array
+    const arr = Array.isArray(data) ? data : (data.students || []);
+    if (!arr.length && data.error) {
+      document.getElementById('grid').innerHTML =
+        `<div class="empty" style="grid-column:1/-1">API error: ${data.error}</div>`;
+      return;
+    }
+
+    allStudents = arr;
+    render();
+  } catch(e) {
+    document.getElementById('grid').innerHTML =
+      `<div class="empty" style="grid-column:1/-1">Network error: ${e.message}</div>`;
+  }
+}
+
+load();
+// Auto-refresh every 30s — photos come in throughout the day
+setInterval(load, 30000);
+</script>
+
+</body>
+</html>
