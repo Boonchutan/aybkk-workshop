@@ -638,18 +638,44 @@
   <div class="step" id="step7">
     <div class="card">
       <div class="step-icon">📸</div>
-      <div class="step-question" id="photoQ">Add your photo!</div>
-      <div class="step-hint" id="photoH">Optional — for your share card</div>
+      <div class="step-question" id="photoQ">Add your photos!</div>
+      <div class="step-hint" id="photoH">Optional — up to 4 photos for your share card</div>
       <div style="text-align:center;padding:12px 0;">
-        <label id="photoPreviewContainer" style="display:none;margin-bottom:16px;cursor:pointer;">
-          <img id="photoPreview" src="" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);">
-          <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">Tap to change</div>
-        </label>
-        <div id="photoPlaceholder" style="width:120px;height:120px;border-radius:50%;border:3px dashed var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-          <span style="font-size:40px;">📷</span>
+        <div class="photo-grid" id="photoGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:320px;margin:0 auto 16px;">
+          <div class="photo-slot" data-slot="1">
+            <div class="slot-placeholder" style="width:100%;aspect-ratio:1;border-radius:12px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:#fafafa;">
+              <span style="font-size:28px;">📷</span>
+              <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;">1</span>
+            </div>
+            <img class="slot-thumb" src="" style="display:none;width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;border:2px solid var(--accent);cursor:pointer;">
+            <input type="file" class="slot-input" accept="image/*" style="display:none;" data-slot="1">
+          </div>
+          <div class="photo-slot" data-slot="2">
+            <div class="slot-placeholder" style="width:100%;aspect-ratio:1;border-radius:12px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:#fafafa;">
+              <span style="font-size:28px;">📷</span>
+              <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;">2</span>
+            </div>
+            <img class="slot-thumb" src="" style="display:none;width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;border:2px solid var(--accent);cursor:pointer;">
+            <input type="file" class="slot-input" accept="image/*" style="display:none;" data-slot="2">
+          </div>
+          <div class="photo-slot" data-slot="3">
+            <div class="slot-placeholder" style="width:100%;aspect-ratio:1;border-radius:12px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:#fafafa;">
+              <span style="font-size:28px;">📷</span>
+              <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;">3</span>
+            </div>
+            <img class="slot-thumb" src="" style="display:none;width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;border:2px solid var(--accent);cursor:pointer;">
+            <input type="file" class="slot-input" accept="image/*" style="display:none;" data-slot="3">
+          </div>
+          <div class="photo-slot" data-slot="4">
+            <div class="slot-placeholder" style="width:100%;aspect-ratio:1;border-radius:12px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:#fafafa;">
+              <span style="font-size:28px;">📷</span>
+              <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;">4</span>
+            </div>
+            <img class="slot-thumb" src="" style="display:none;width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;border:2px solid var(--accent);cursor:pointer;">
+            <input type="file" class="slot-input" accept="image/*" style="display:none;" data-slot="4">
+          </div>
         </div>
-        <input type="file" id="photoInput" accept="image/*" style="display:none;">
-        <label for="photoInput" class="btn" id="photoUploadBtn" style="display:block;text-align:center;cursor:pointer;">Take / Upload Photo</label>
+        <button class="btn" id="photoDoneBtn" onclick="goNext(7)" style="display:none;">Continue</button>
         <button class="btn-secondary" onclick="goNext(7)">Skip</button>
       </div>
     </div>
@@ -744,8 +770,8 @@ const T = {
     welcomeTeachers: '导师: Boonchu Tanti & Jamsai Tanti',
     welcomeSub: '练习记录 — 自我评估',
     welcomeStartBtn: '开始记录',
-    photoQ: '添加你的照片！',
-    photoH: '可选 — 用于分享卡',
+    photoQ: '添加照片！',
+    photoH: '可选 — 最多4张',
     quizTitle: '快速瑜伽小测验！',
     quizHint: '完成前回答1个问题',
     quizNext: '下一题 →',
@@ -1359,7 +1385,13 @@ function showShareCard() {
   const card = document.getElementById('shareCard');
   const photoBg = document.getElementById('shareCardPhotoBg');
   const overlay = document.getElementById('shareCardOverlay');
-  const localPhoto = localStorage.getItem('photo_' + studentId);
+  // 4-photo: read slot 1 from photos array, fall back to legacy single photo key
+  let localPhoto = null;
+  try {
+    const photos = JSON.parse(localStorage.getItem('photos_' + studentId) || 'null');
+    localPhoto = Array.isArray(photos) ? (photos[0] || null) : null;
+  } catch(e) { localPhoto = null; }
+  if (!localPhoto) localPhoto = localStorage.getItem('photo_' + studentId); // legacy compat
 
   // Base gradient is the day color
   card.style.background = `linear-gradient(135deg, ${dc.accent} 0%, ${dc.hover} 50%, ${dc.accent} 100%)`;
@@ -1506,92 +1538,131 @@ function getPlatform() {
 }
 
 // =====================
-// PHOTO UPLOAD
+// PHOTO UPLOAD (4-SLOT)
 // =====================
-let uploadedPhotoDataURL = null;
+let uploadedPhotos = [null, null, null, null]; // sparse array, indices 0-3
 let photoStepInited = false;
 
 function initPhotoStep() {
-  // Pick quiz questions once
-  initQuizSets();
-  
-  // Init photo step
-  const photoInput = document.getElementById('photoInput');
-  const preview = document.getElementById('photoPreview');
-  const placeholder = document.getElementById('photoPlaceholder');
-  const previewContainer = document.getElementById('photoPreviewContainer');
-  const uploadBtn = document.getElementById('photoUploadBtn');
-  
-  // Always start fresh — each entry deserves its own photo. The student's
-  // previous photo is still preserved on the previous assessment (its versioned
-  // Cloudinary URL is pinned), and today's entry inherits Student.photoUrl as
-  // a fallback at checkin time. The photo step is here to capture *today's*
-  // moment, not to confirm yesterday's.
-  uploadedPhotoDataURL = null;
-  preview.src = '';
-  placeholder.style.display = 'flex';
-  previewContainer.style.display = 'none';
-  uploadBtn.textContent = 'Take / Upload Photo';
-  if (photoInput) photoInput.value = '';
+  // Reset all slots
+  uploadedPhotos = [null, null, null, null];
+  const slots = document.querySelectorAll('.photo-slot');
+  slots.forEach((slot) => {
+    const thumb = slot.querySelector('.slot-thumb');
+    const placeholder = slot.querySelector('.slot-placeholder');
+    const input = slot.querySelector('.slot-input');
+    if (thumb) { thumb.src = ''; thumb.style.display = 'none'; }
+    if (placeholder) placeholder.style.display = 'flex';
+    if (input) input.value = '';
+  });
+  const doneBtn = document.getElementById('photoDoneBtn');
+  if (doneBtn) doneBtn.style.display = 'none';
 
-
-  // Only attach listeners once
   if (!photoStepInited) {
-    photoInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        // Resize + compress before storing — phone photos can be 5–10MB
-        // which silently blows the ~5MB localStorage quota
-        const img = new Image();
-        img.onload = function() {
-          const MAX = 800;
-          const scale = Math.min(1, MAX / Math.max(img.width, img.height));
-          const w = Math.round(img.width * scale);
-          const h = Math.round(img.height * scale);
-          const cvs = document.createElement('canvas');
-          cvs.width = w; cvs.height = h;
-          cvs.getContext('2d').drawImage(img, 0, 0, w, h);
-          const compressed = cvs.toDataURL('image/jpeg', 0.82);
-          uploadedPhotoDataURL = compressed;
-          try {
-            localStorage.setItem('photo_' + studentId, compressed);
-          } catch(err) {
-            console.warn('Photo not saved to localStorage (quota):', err);
-          }
-          preview.src = compressed;
-          placeholder.style.display = 'none';
-          previewContainer.style.display = 'block';
-          uploadBtn.textContent = 'Change Photo';
-
-          // Upload to Cloudinary so teacher can see student face. Pin to the
-          // just-submitted assessment so historical share cards show the photo
-          // from THAT day, not the latest one.
-          if (studentId) {
-            fetch('/api/upload/student-photo', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                studentId,
-                imageBase64: compressed,
-                assessmentId: window._lastCheckinId || null
-              })
-            }).catch(() => {}); // silent — share card still works regardless
-          }
-
-          // Auto-advance to quiz after photo selected
-          setTimeout(() => goNext(7), 600);
-        };
-        img.src = ev.target.result;
-      };
-      reader.readAsDataURL(file);
+    // Attach listener to each slot's file input
+    document.querySelectorAll('.slot-input').forEach((input) => {
+      input.addEventListener('change', function(e) {
+        const slot = parseInt(this.dataset.slot, 10); // 1-4
+        const file = e.target.files[0];
+        if (!file) return;
+        processSlotPhoto(file, slot);
+      });
     });
-    
-    // Click on preview to re-trigger input
-    previewContainer.addEventListener('click', () => photoInput.click());
+
+    // Click on thumbnail to re-trigger that slot's input
+    document.querySelectorAll('.slot-thumb').forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        const slotEl = thumb.closest('.photo-slot');
+        const input = slotEl.querySelector('.slot-input');
+        if (input) input.click();
+      });
+    });
+
+    // Click on placeholder to trigger input
+    document.querySelectorAll('.slot-placeholder').forEach((placeholder) => {
+      placeholder.addEventListener('click', () => {
+        const slotEl = placeholder.closest('.photo-slot');
+        const input = slotEl.querySelector('.slot-input');
+        if (input) input.click();
+      });
+    });
+
     photoStepInited = true;
   }
+
+  // Apply language
+  const t = T[currentLang] || T.zh;
+  document.getElementById('photoQ').textContent = t.photoQ || 'Add your photos!';
+  document.getElementById('photoH').textContent = t.photoH || 'Optional — up to 4 photos';
+}
+
+function processSlotPhoto(file, slot) {
+  // slot is 1-based (1-4), convert to 0-based index
+  const idx = slot - 1;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const img = new Image();
+    img.onload = function() {
+      const MAX = 800;
+      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const cvs = document.createElement('canvas');
+      cvs.width = w; cvs.height = h;
+      cvs.getContext('2d').drawImage(img, 0, 0, w, h);
+      const compressed = cvs.toDataURL('image/jpeg', 0.82);
+
+      // Store in sparse array
+      uploadedPhotos[idx] = compressed;
+
+      // Show thumbnail in slot
+      const slotEl = document.querySelector(`.photo-slot[data-slot="${slot}"]`);
+      if (slotEl) {
+        const thumb = slotEl.querySelector('.slot-thumb');
+        const placeholder = slotEl.querySelector('.slot-placeholder');
+        if (thumb) { thumb.src = compressed; thumb.style.display = 'block'; }
+        if (placeholder) placeholder.style.display = 'none';
+      }
+
+      // Save full array to localStorage
+      try {
+        localStorage.setItem('photos_' + studentId, JSON.stringify(uploadedPhotos));
+      } catch(err) {
+        console.warn('Photos not saved to localStorage (quota):', err);
+      }
+
+      // Show Done button once at least one photo is selected
+      const doneBtn = document.getElementById('photoDoneBtn');
+      if (doneBtn) {
+        const hasAny = uploadedPhotos.some(p => p !== null);
+        doneBtn.style.display = hasAny ? 'inline-block' : 'none';
+      }
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function uploadAllPhotos() {
+  // Upload all non-null photos to Cloudinary, pinned to this assessment
+  const photosToUpload = uploadedPhotos.map((dataUrl, idx) => ({ dataUrl, slot: idx + 1 }))
+    .filter(p => p.dataUrl !== null);
+
+  if (!photosToUpload.length || !studentId) return;
+
+  photosToUpload.forEach(({ dataUrl, slot }) => {
+    fetch('/api/upload/student-photo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentId,
+        imageBase64: dataUrl,
+        assessmentId: window._lastCheckinId || null,
+        slotIndex: slot
+      })
+    }).catch(() => {});
+  });
+}
   
   // Apply language
   const t = T[currentLang] || T.zh;
@@ -1676,11 +1747,13 @@ function answerQuiz(btn, qi, oi) {
 
 function nextQuizRound() {
   // 1 question per session — always go to success after quiz
+  uploadAllPhotos(); // upload all 4 photos pinned to this assessment
   showShareCard();
   document.getElementById('successOverlay').classList.remove('hidden');
 }
 
 function skipQuiz() {
+  uploadAllPhotos(); // upload all 4 photos pinned to this assessment
   showShareCard();
   document.getElementById('successOverlay').classList.remove('hidden');
 }
