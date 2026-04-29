@@ -134,37 +134,47 @@ app.get('/api/student/photo/:studentId', async (req, res) => {
 // When `assessmentId` is omitted (orientation / profile setup), we use the
 // canonical `student_<studentId>` id and `backup: true` so even those uploads
 // keep an asset-version safety net.
+// POST /api/upload/student-photo
+// Body: { studentId, imageBase64, assessmentId?, slotIndex? }
+//
+// Per-assessment 4-slot photo storage:
+//   - public_id = student_<studentId>_<assessmentId>_slot<slotIndex>
+//   - each slot gets its OWN Cloudinary asset (never overwrites another slot)
+//   - photoUrls array on the assessment node accumulates all 4 slots
 app.post('/api/upload/student-photo', async (req, res) => {
-  const { studentId, imageBase64, assessmentId } = req.body;
+  const { studentId, imageBase64, assessmentId, slotIndex } = req.body;
   if (!studentId || !imageBase64) return res.status(400).json({ error: 'Missing studentId or imageBase64' });
   try {
     const isPerEntry = !!assessmentId;
+    // Slot-aware public_id: each slot index gets its own asset
+    const slotSuffix = (slotIndex !== undefined && slotIndex !== null) ? `_slot${slotIndex}` : '';
     const publicId = isPerEntry
-      ? `student_${studentId}_${assessmentId}`
-      : `student_${studentId}`;
+      ? `student_${studentId}_${assessmentId}${slotSuffix}`
+      : `student_${studentId}${slotSuffix}`;
     const result = await cloudinary.uploader.upload(imageBase64, {
       folder: 'aybkk-students',
       public_id: publicId,
-      overwrite: !isPerEntry, // per-entry uploads create a fresh asset every time
-      backup: true,            // safety net for the canonical-id flow
+      overwrite: true, // re-upload same slot = refresh; different slot = separate asset
+      backup: false,   // no backup version needed per slot
       transformation: [{ width: 400, height: 400, crop: 'fill', gravity: 'face', quality: 'auto' }]
     });
     const photoUrl = result.secure_url;
 
-    // Always update Student.photoUrl (latest-known face for the dashboard) +
-    // pin to the specific assessment when provided.
     const session = driver.session();
     try {
+      // Always update Student.photoUrl (latest-known face for dashboard)
       await session.run(
         `MERGE (s:Student {id: $sid})
          ON CREATE SET s.createdAt = datetime()
          SET s.photoUrl = $url`,
         { sid: studentId, url: photoUrl }
       );
+      // Pin to the specific assessment using photoUrls array
       if (assessmentId) {
         await session.run(
           `MATCH (sa) WHERE (sa:SelfAssessment OR sa:PracticeLog) AND sa.id = $aid
-           SET sa.photoUrl = $url
+           SET sa.photoUrls = coalesce(sa.photoUrls, []) + $url,
+               sa.photoUrl = $url
            RETURN sa.id AS id`,
           { aid: assessmentId, url: photoUrl }
         );

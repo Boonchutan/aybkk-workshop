@@ -261,6 +261,7 @@ router.get('/student/:id', async (req, res) => {
              sessionDate: pl.sessionDate,
              checkedInAt: toString(pl.checkedInAt),
              photoUrl: pl.photoUrl,
+             photoUrls: pl.photoUrls,
              source: 'practice_log'
            }) as practiceLogs,
            collect(DISTINCT {
@@ -274,6 +275,7 @@ router.get('/student/:id', async (req, res) => {
              sessionDate: sa.sessionDate,
              checkedInAt: toString(sa.checkedInAt),
              photoUrl: sa.photoUrl,
+             photoUrls: sa.photoUrls,
              source: 'self_assessment'
            }) as selfAssessments
       RETURN s, practiceLogs, selfAssessments

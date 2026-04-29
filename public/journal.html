@@ -366,6 +366,15 @@
     function closeQR() { document.getElementById('qrModal').classList.remove('show'); }
     document.getElementById('qrModal').addEventListener('click', function(e) { if (e.target === this) closeQR(); });
 
+    function renderHistoryPhotos(a) {
+      const urls = Array.isArray(a.photoUrls) && a.photoUrls.length ? a.photoUrls : (a.photoUrl ? [a.photoUrl] : []);
+      if (!urls.length) return '';
+      const thumbs = urls.slice(0, 4).map(u =>
+        `<img src="${u}" alt="photo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid #eee;" loading="lazy" onerror="this.style.display='none'">`
+      ).join('');
+      return `<div style="display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;">${thumbs}</div>`;
+    }
+
     async function loadHistory() {
       const days = document.getElementById('filterDays').value;
       const res = await fetch(`/api/journal/history/${days}`);
@@ -416,6 +425,7 @@
             </div>
             ${a.lastAsanaNote ? `<div class="history-text">🎯 Last Asana: ${a.lastAsanaNote}</div>` : ''}
             ${a.practiceNotes ? `<div class="history-text">📝 ${a.practiceNotes}</div>` : ''}
+            ${renderHistoryPhotos(a)}
           </div>`;
       });
       document.getElementById('historyList').innerHTML = html;
