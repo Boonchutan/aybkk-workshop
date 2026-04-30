@@ -1663,12 +1663,6 @@ function uploadAllPhotos() {
     }).catch(() => {});
   });
 }
-  
-  // Apply language
-  const t = T[currentLang] || T.zh;
-  document.getElementById('photoQ').textContent = t.photoQ || 'Add your photo!';
-  document.getElementById('photoH').textContent = t.photoH || 'Optional — for your share card';
-}
 
 // =====================
 // QUIZ RENDERING
