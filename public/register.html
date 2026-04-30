@@ -696,7 +696,7 @@ function loadLang(lang) {
   document.getElementById('searchInput').placeholder = t.searchPlaceholder;
   document.querySelector('.section-title').textContent = t.sectionTitle;
   document.querySelector('.summary-text').textContent = t.totalStudents;
-  document.getElementById('loading') && (document.querySelector('.loading')?.textContent = t.loading);
+  { const _loadingEl = document.querySelector('.loading'); if (_loadingEl) _loadingEl.textContent = t.loading; }
   document.querySelector('.input-label:nth-child(1)').textContent = t.name;
   document.querySelector('.input-label:nth-child(2)').textContent = t.classType;
   document.getElementById('registerBtn').textContent = t.registerBtn;
