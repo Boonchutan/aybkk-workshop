@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f scripts/check-inline-js.js ] && node scripts/check-inline-js.js >&2 || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

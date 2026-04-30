@@ -6,6 +6,9 @@ data/
 db/
 *.log
 *.json
+!package.json
+!package-lock.json
+!.claude/settings.json
 .env
 .env.*
 .DS_Store
