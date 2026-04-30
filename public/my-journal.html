@@ -553,24 +553,26 @@ const WISDOM_QUOTES = [
   "When the embodied one conquers the fluctuations of the mind, he approaches yoga. — BG 6.18"
 ];
 
+// Uplift phrases — Chinese for zh students, English for everyone else.
+// English drafts 2026-04-30 — Boonchu to revise any that don't match his voice.
 const UPLIFT_PHRASES = [
-  { keywords: ['tired', 'exhaust', 'drain', '累', '疲劳', '困', '无力'], phrase: '瑜伽是自我的旅程，经由自我，回归自我。' },
-  { keywords: ['stiff', 'tight', '僵硬', '紧', '酸', '痛'], phrase: '当您认为已知时，苦便升起。当您真正知时，苦便消散。' },
-  { keywords: ['difficult', 'hard', '难', '困难', '挑战', '挣扎'], phrase: '不拖延的人，必得至高幸福。行动吧，别执着于结果。' },
-  { keywords: ['frustrat', 'angry', 'annoy', '烦', '怒', '躁', '不满'], phrase: '平静之人，既不喜人之所喜，亦不悲人之所悲。' },
-  { keywords: ['confus', 'lost', '迷', '困惑', '不懂', '混乱'], phrase: '专注之心，照见真实。每一个体式都是一次回归。' },
-  { keywords: ['pain', 'hurt', 'injury', '疼', '痛', '伤', '不舒服'], phrase: '呼吸跟随心意，心意跟随呼吸。回归呼吸，即回归当下。' },
-  { keywords: ['great', 'good', 'wonderful', 'amazing', '棒', '好', '赞', '完美', '顺利'], phrase: '真正的力量，始于您愿意迈出第一步。每一天都是新的练习。' },
-  { keywords: ['happy', 'joy', 'peace', '开心', '快乐', '喜悦', '平静', '幸福', '满足'], phrase: '内心平静之人，照见万物之真。Namaste。' },
-  { keywords: ['first', '第一次', '新', '刚开始', '新手'], phrase: '每一位大师，都曾以新手之身，踏出第一步。继续。' },
-  { keywords: ['shy', 'embarrass', '不好意思', '害羞', '尴尬'], phrase: '练习是您与自己对话。在垫子上，没有别人。' },
-  { keywords: ['breakthrough', '突破', '进步', '做到', '成功', '达成了'], phrase: '每一次突破，都源于您不曾放弃的那个早晨。' },
-  { keywords: ['sick', 'ill', '病', '感冒', '发烧'], phrase: '身体会生病，但练习的精神永远清醒。给自己温柔。' },
-  { keywords: ['struggle', '挣扎', '煎熬', '撑', '忍着'], phrase: '挣扎不代表失败。代表您还在坚持。' },
-  { keywords: ['focus', '专注', '集中', '专心'], phrase: '心若调柔，万物皆柔。专注即是力量。' },
-  { keywords: ['sweat', '汗水', '辛苦'], phrase: '汗水是瑜伽的礼物。每一次付出，都在塑造更好的您。' },
-  { keywords: ['try', '尝试', '努力', '尽力'], phrase: '行动本身即是收获。结果自然会来。' },
-  { keywords: [], phrase: '您的练习正在改变您看不见的部分。保持信念。' }
+  { keywords: ['tired', 'exhaust', 'drain', '累', '疲劳', '困', '无力'], phrase: '瑜伽是自我的旅程，经由自我，回归自我。', en: 'Yoga is the journey of the self, through the self, to the self.' },
+  { keywords: ['stiff', 'tight', '僵硬', '紧', '酸', '痛'], phrase: '当您认为已知时，苦便升起。当您真正知时，苦便消散。', en: 'When you think you know, suffering arises. When you truly know, it dissolves.' },
+  { keywords: ['difficult', 'hard', '难', '困难', '挑战', '挣扎'], phrase: '不拖延的人，必得至高幸福。行动吧，别执着于结果。', en: 'The one who acts without delay finds the highest joy. Act — don\'t cling to the fruit.' },
+  { keywords: ['frustrat', 'angry', 'annoy', '烦', '怒', '躁', '不满'], phrase: '平静之人，既不喜人之所喜，亦不悲人之所悲。', en: 'The peaceful one neither rejoices in another\'s joy nor grieves in another\'s grief.' },
+  { keywords: ['confus', 'lost', '迷', '困惑', '不懂', '混乱'], phrase: '专注之心，照见真实。每一个体式都是一次回归。', en: 'A focused mind sees the real. Every asana is a return.' },
+  { keywords: ['pain', 'hurt', 'injury', '疼', '痛', '伤', '不舒服'], phrase: '呼吸跟随心意，心意跟随呼吸。回归呼吸，即回归当下。', en: 'Breath follows mind, mind follows breath. Return to the breath — return to now.' },
+  { keywords: ['great', 'good', 'wonderful', 'amazing', '棒', '好', '赞', '完美', '顺利'], phrase: '真正的力量，始于您愿意迈出第一步。每一天都是新的练习。', en: 'True strength begins the moment you take the first step. Every day is a new practice.' },
+  { keywords: ['happy', 'joy', 'peace', '开心', '快乐', '喜悦', '平静', '幸福', '满足'], phrase: '内心平静之人，照见万物之真。Namaste。', en: 'The mind at peace sees the truth in all things. Namaste.' },
+  { keywords: ['first', '第一次', '新', '刚开始', '新手'], phrase: '每一位大师，都曾以新手之身，踏出第一步。继续。', en: 'Every master once stood where you stand now. Continue.' },
+  { keywords: ['shy', 'embarrass', '不好意思', '害羞', '尴尬'], phrase: '练习是您与自己对话。在垫子上，没有别人。', en: 'Practice is your conversation with yourself. On the mat, there is no one else.' },
+  { keywords: ['breakthrough', '突破', '进步', '做到', '成功', '达成了'], phrase: '每一次突破，都源于您不曾放弃的那个早晨。', en: 'Every breakthrough begins on a morning you did not give up.' },
+  { keywords: ['sick', 'ill', '病', '感冒', '发烧'], phrase: '身体会生病，但练习的精神永远清醒。给自己温柔。', en: 'The body falls ill — the spirit of practice does not. Be gentle with yourself.' },
+  { keywords: ['struggle', '挣扎', '煎熬', '撑', '忍着'], phrase: '挣扎不代表失败。代表您还在坚持。', en: 'Struggle is not failure. It means you are still here.' },
+  { keywords: ['focus', '专注', '集中', '专心'], phrase: '心若调柔，万物皆柔。专注即是力量。', en: 'When the mind softens, everything softens. Focus itself is strength.' },
+  { keywords: ['sweat', '汗水', '辛苦'], phrase: '汗水是瑜伽的礼物。每一次付出，都在塑造更好的您。', en: 'Sweat is yoga\'s offering back. Every drop shapes who you are becoming.' },
+  { keywords: ['try', '尝试', '努力', '尽力'], phrase: '行动本身即是收获。结果自然会来。', en: 'The action itself is the harvest. The fruit comes when it comes.' },
+  { keywords: [], phrase: '您的练习正在改变您看不见的部分。保持信念。', en: 'Your practice is changing what you cannot yet see. Keep faith.' }
 ];
 
 function getDayColor(dateStr) {
@@ -600,15 +602,18 @@ function getDayInfoText(dateStr) {
 
 function getUpliftPhrase(notes) {
   if (!notes || !notes.trim()) return null;
+  // zh students see the original Chinese; everyone else (en/th/ru) sees English.
+  const useEn = (typeof lang !== 'undefined' && lang !== 'zh');
+  const pick = (entry) => useEn ? (entry.en || entry.phrase) : entry.phrase;
   const lower = notes.toLowerCase();
   for (const entry of UPLIFT_PHRASES) {
     if (entry.keywords.length === 0) continue;
     for (const kw of entry.keywords) {
-      if (lower.includes(kw.toLowerCase())) return entry.phrase;
+      if (lower.includes(kw.toLowerCase())) return pick(entry);
     }
   }
   const def = UPLIFT_PHRASES.filter(e => e.keywords.length === 0);
-  return def.length ? def[0].phrase : null;
+  return def.length ? pick(def[0]) : null;
 }
 
 function roundRect(ctx, x, y, w, h, r) {
