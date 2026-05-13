@@ -32,6 +32,13 @@ Use when writing or reviewing the "this is not for you" section of the China coh
 
 **Do not use for:** general copywriting, student emails, or operations.
 
+### `/hook`
+**Purpose:** Hook writer for Reels and Shorts — generates 5 hook options per topic using distinct psychological levers (authority, contrarian, stakes, question, pattern interrupt), then recommends the strongest one.
+
+Use when writing the opening line of any video content. Designed to stop a 10-year practitioner, not a beginner.
+
+**Do not use for:** captions, carousels, sales copy, or long-form content.
+
 ---
 
 ## Key Facts for Any Claude Instance
