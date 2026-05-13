@@ -25,6 +25,13 @@ and must always be the anchor of the strategy.
 
 **Do not use for:** student management, scheduling, server ops, or daily tasks.
 
+### `/qualify`
+**Purpose:** Name-Disqualify-Release framework — writes the qualification section of a high-ticket offer page to filter buyers, not persuade them.
+
+Use when writing or reviewing the "this is not for you" section of the China cohort page, drafting application criteria, or auditing existing copy for false urgency and vague claims.
+
+**Do not use for:** general copywriting, student emails, or operations.
+
 ---
 
 ## Key Facts for Any Claude Instance
