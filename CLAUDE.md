@@ -39,6 +39,13 @@ Use when writing the opening line of any video content. Designed to stop a 10-ye
 
 **Do not use for:** captions, carousels, sales copy, or long-form content.
 
+### `/dm`
+**Purpose:** DM triage — reads an incoming inquiry about the China cohort, classifies the sender (tourist / beginner / serious), and drafts a response under 60 words that filters or routes. No selling in DMs.
+
+Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB program. Paste the incoming message after the command.
+
+**Do not use for:** existing student questions, general inquiries, or anything unrelated to the China program.
+
 ---
 
 ## Key Facts for Any Claude Instance
