@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curation Queue · AYBKK</title>
+  <link rel="stylesheet" href="/tokens.css">
+  <style>
+    /* teacher-questions.html — private curation queue. Boonchu (or another
+       teacher) opens this with ?token=XXX. Token must match TEACHER_TOKEN env
+       var on the server. Not linked from anywhere; URL is the secret. */
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: var(--space-6) var(--space-4) var(--space-7);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: var(--space-6);
+    }
+    .header .eyebrow {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-2);
+    }
+    .header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 6vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      color: #2f2517;
+      text-shadow: var(--text-carve);
+    }
+    .header .meta {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: var(--space-3);
+    }
+
+    .empty,
+    .loading,
+    .err {
+      text-align: center;
+      padding: var(--space-7) var(--space-5);
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .empty { color: var(--ink-soft); }
+    .loading { color: var(--accent); }
+    .err { color: #8d4f2c; }
+
+    /* Question card — raised beech block */
+    .qcard {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+
+    .qmeta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d4ba8c 0%, #997a52 100%);
+      box-shadow:
+        inset 3px 3px 6px rgba(255, 240, 215, 0.3),
+        inset -2px -2px 4px rgba(40, 20, 4, 0.2);
+      display: grid; place-items: center;
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 800;
+      color: #fff5e0;
+    }
+    .qmeta .name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink);
+    }
+    .qmeta .country {
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--surface-2);
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
+    }
+    .qmeta .when {
+      margin-left: auto;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    .qtext {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+      letter-spacing: -0.005em;
+    }
+
+    /* Answer textarea — carved cavity */
+    .answer-label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 8px;
+    }
+    .answer-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.55;
+      background: var(--surface-2);
+      color: var(--ink);
+      resize: vertical;
+      min-height: 110px;
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px rgba(150, 120, 80, 0.18);
+      transition: box-shadow var(--dur-base);
+    }
+    .answer-input::placeholder {
+      color: rgba(108, 94, 74, 0.55);
+      font-style: italic;
+    }
+    .answer-input:focus {
+      outline: none;
+      box-shadow:
+        inset 3px 3px 0 rgba(120, 90, 50, 0.28),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 6px 6px 12px rgba(120, 90, 50, 0.22);
+    }
+    .charcount {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 6px;
+      text-align: right;
+    }
+    .charcount.over { color: #8d4f2c; }
+
+    .actions {
+      display: flex;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+    .btn {
+      flex: 1;
+      padding: 14px var(--space-4);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .btn-publish {
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.7),
+        -1px -1px 1px rgba(50, 28, 10, 0.85),
+        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      box-shadow:
+        12px 12px 26px rgba(120, 80, 40, 0.30),
+        -6px -6px 14px var(--shadow-light),
+        inset 4px 4px 10px rgba(255, 240, 215, 0.5),
+        inset -3px -3px 8px rgba(40, 20, 4, 0.25);
+    }
+    .btn-publish:hover { transform: translateY(-3px) scale(1.02); }
+    .btn-publish:active { transform: scale(0.97); }
+    .btn-publish:disabled {
+      background: var(--surface-2);
+      color: rgba(108, 94, 74, 0.4);
+      text-shadow: none;
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-reject {
+      background: var(--surface);
+      color: var(--primary-deep);
+      box-shadow:
+        8px 8px 16px var(--shadow-dark),
+        -5px -5px 12px var(--shadow-light);
+    }
+    .btn-reject:hover { transform: translateY(-2px); }
+
+    .qcard.gone {
+      opacity: 0.3;
+      pointer-events: none;
+      transition: opacity 0.4s var(--ease-out);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="eyebrow">AYBKK · Question Board</div>
+      <h1>Curation Queue</h1>
+      <div class="meta" id="meta">Loading…</div>
+    </div>
+
+    <div id="root"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+
+    const root = document.getElementById('root');
+    const metaEl = document.getElementById('meta');
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return iso.slice(0, 10);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function initials(name) {
+      if (!name) return '?';
+      const parts = name.trim().split(/\s+/);
+      return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
+    }
+
+    async function load() {
+      if (!token) {
+        metaEl.textContent = '';
+        root.innerHTML = '<div class="err">Missing token in URL.</div>';
+        return;
+      }
+      root.innerHTML = '<div class="loading">Loading queue…</div>';
+      try {
+        const res = await fetch('/api/journal/questions/queue?token=' + encodeURIComponent(token));
+        if (res.status === 401) {
+          metaEl.textContent = '';
+          root.innerHTML = '<div class="err">Unauthorized. Check your token.</div>';
+          return;
+        }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        render(data.questions || []);
+      } catch (e) {
+        root.innerHTML = '<div class="err">Could not load queue. ' + escapeHtml(e.message) + '</div>';
+      }
+    }
+
+    function render(questions) {
+      metaEl.textContent = questions.length === 0
+        ? 'No pending questions.'
+        : questions.length + ' pending';
+
+      if (questions.length === 0) {
+        root.innerHTML = '<div class="empty">Inbox zero.<br>Nothing to curate right now.</div>';
+        return;
+      }
+
+      root.innerHTML = questions.map(q => `
+        <div class="qcard" data-id="${escapeHtml(q.id)}">
+          <div class="qmeta">
+            <div class="avatar">${escapeHtml(initials(q.studentName))}</div>
+            <span class="name">${escapeHtml(q.studentName || 'Unknown')}</span>
+            ${q.studentCountry ? `<span class="country">${escapeHtml(q.studentCountry)}</span>` : ''}
+            <span class="when">${escapeHtml(fmtDate(q.askedAt))}</span>
+          </div>
+          <div class="qtext">${escapeHtml(q.text)}</div>
+          <label class="answer-label" for="ans-${escapeHtml(q.id)}">Your answer</label>
+          <textarea
+            id="ans-${escapeHtml(q.id)}"
+            class="answer-input"
+            maxlength="1500"
+            placeholder="Direct, warm, lineage-respecting. Max 1500 characters."
+            oninput="updateCount('${escapeHtml(q.id)}')"
+          ></textarea>
+          <div class="charcount" id="cnt-${escapeHtml(q.id)}">0 / 1500</div>
+          <div class="actions">
+            <button class="btn btn-reject" onclick="reject('${escapeHtml(q.id)}')">Reject</button>
+            <button class="btn btn-publish" onclick="publish('${escapeHtml(q.id)}')">Publish</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateCount(id) {
+      const el = document.getElementById('ans-' + id);
+      const cnt = document.getElementById('cnt-' + id);
+      if (!el || !cnt) return;
+      const n = el.value.length;
+      cnt.textContent = n + ' / 1500';
+      cnt.classList.toggle('over', n > 1500);
+    }
+
+    async function publish(id) {
+      const ta = document.getElementById('ans-' + id);
+      const text = (ta?.value || '').trim();
+      if (!text) { ta?.focus(); return; }
+      const card = document.querySelector('.qcard[data-id="' + id + '"]');
+      const btn = card?.querySelector('.btn-publish');
+      if (btn) { btn.disabled = true; btn.textContent = '…'; }
+      try {
+        const res = await fetch('/api/journal/question/' + encodeURIComponent(id) + '/answer?token=' + encodeURIComponent(token), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answerText: text, teacherName: 'Boonchu' })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        if (card) card.classList.add('gone');
+        setTimeout(() => { if (card) card.remove(); updateMetaCount(); }, 450);
+      } catch (e) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Publish'; }
+        alert('Publish failed: ' + e.message);
+      }
+    }
+
+    async function reject(id) {
+      if (!confirm('Reject this question? It will not be visible to students.')) return;
+      const card = document.querySelector('.qcard[data-id="' + id + '"]');
+      try {
+        const res = await fetch('/api/journal/question/' + encodeURIComponent(id) + '/answer?token=' + encodeURIComponent(token), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reject: true })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        if (card) card.classList.add('gone');
+        setTimeout(() => { if (card) card.remove(); updateMetaCount(); }, 450);
+      } catch (e) {
+        alert('Reject failed: ' + e.message);
+      }
+    }
+
+    function updateMetaCount() {
+      const remaining = document.querySelectorAll('.qcard:not(.gone)').length;
+      metaEl.textContent = remaining === 0 ? 'No pending questions.' : remaining + ' pending';
+      if (remaining === 0) {
+        root.innerHTML = '<div class="empty">Inbox zero.<br>Nothing to curate right now.</div>';
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

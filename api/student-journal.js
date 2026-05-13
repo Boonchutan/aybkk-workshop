@@ -651,4 +651,189 @@ router.get('/history/:days', async (req, res) => {
   }
 });
 
+// ============================================
+// QUESTION BOARD (v2)
+// Forum-style Q&A inside the journal. Students ask, teachers (Boonchu)
+// curate + publish. Published questions appear in everyone's journal.
+// Status: pending → published, or rejected.
+// ============================================
+
+function checkTeacherAuth(req) {
+  const expected = process.env.TEACHER_TOKEN;
+  if (!expected) return false;
+  const got = req.headers['x-teacher-token'] || req.query.token;
+  return got === expected;
+}
+
+// POST /api/journal/question — student creates a question.
+router.post('/question', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { studentId, text, lang } = req.body;
+    if (!studentId || !text || !text.trim()) {
+      return res.status(400).json({ error: 'Missing studentId or text' });
+    }
+    const trimmed = text.trim();
+    if (trimmed.length > 500) {
+      return res.status(400).json({ error: 'Question too long (max 500 chars)' });
+    }
+
+    // Look up student so name + country/workshop denormalize onto the question.
+    // A question is a record of a moment — student profile changes don't rewrite it.
+    const studentResult = await session.run(
+      'MATCH (s:Student {id: $id}) RETURN s LIMIT 1',
+      { id: studentId }
+    );
+    if (studentResult.records.length === 0) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+    const s = studentResult.records[0].get('s').properties;
+
+    const id = uuidv4();
+    const now = new Date().toISOString();
+
+    await session.run(`
+      MATCH (s:Student {id: $studentId})
+      CREATE (q:Question {
+        id: $id,
+        text: $text,
+        lang: $lang,
+        askedAt: datetime($now),
+        status: 'pending',
+        studentName: $studentName,
+        studentCountry: $studentCountry,
+        workshop: $workshop
+      })
+      CREATE (s)-[:ASKED {at: datetime($now)}]->(q)
+      RETURN q.id as id
+    `, {
+      studentId,
+      id,
+      text: trimmed,
+      lang: lang || 'en',
+      now,
+      studentName: s.name || 'Student',
+      studentCountry: s.location || s.country || '',
+      workshop: s.classType || ''
+    });
+
+    res.json({ ok: true, id });
+  } catch (error) {
+    console.error('POST /question error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// GET /api/journal/questions/queue — teacher curation queue (pending only).
+router.get('/questions/queue', async (req, res) => {
+  if (!checkTeacherAuth(req)) return res.status(401).json({ error: 'unauthorized' });
+  const session = req.driver.session();
+  try {
+    const result = await session.run(`
+      MATCH (q:Question)
+      WHERE q.status = 'pending'
+      RETURN q {
+        .id, .text, .lang,
+        .studentName, .studentCountry, .workshop,
+        askedAt: toString(q.askedAt)
+      } as q
+      ORDER BY q.askedAt ASC
+    `);
+    const questions = result.records.map(r => r.get('q'));
+    res.json({ questions, count: questions.length });
+  } catch (error) {
+    console.error('GET /questions/queue error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// POST /api/journal/question/:id/answer — teacher answers + publishes.
+// Body: { answerText, teacherName }, or { reject: true } to soft-delete.
+router.post('/question/:id/answer', async (req, res) => {
+  if (!checkTeacherAuth(req)) return res.status(401).json({ error: 'unauthorized' });
+  const session = req.driver.session();
+  try {
+    const { id } = req.params;
+    const { answerText, teacherName, reject } = req.body;
+
+    if (reject) {
+      const r = await session.run(
+        `MATCH (q:Question {id: $id})
+         SET q.status = 'rejected', q.rejectedAt = datetime()
+         RETURN q.id as id`,
+        { id }
+      );
+      if (r.records.length === 0) return res.status(404).json({ error: 'Question not found' });
+      return res.json({ ok: true, status: 'rejected' });
+    }
+
+    if (!answerText || !answerText.trim()) {
+      return res.status(400).json({ error: 'answerText required' });
+    }
+    const trimmed = answerText.trim();
+    if (trimmed.length > 1500) {
+      return res.status(400).json({ error: 'Answer too long (max 1500 chars)' });
+    }
+
+    const result = await session.run(`
+      MATCH (q:Question {id: $id})
+      WHERE q.status IN ['pending', 'published']
+      SET q.answer = $answer,
+          q.teacherName = $teacher,
+          q.answeredAt = datetime(),
+          q.publishedAt = coalesce(q.publishedAt, datetime()),
+          q.status = 'published'
+      RETURN q.id as id
+    `, {
+      id,
+      answer: trimmed,
+      teacher: (teacherName && teacherName.trim()) || 'Boonchu'
+    });
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: 'Question not found or rejected' });
+    }
+    res.json({ ok: true, status: 'published' });
+  } catch (error) {
+    console.error('POST /question/:id/answer error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// GET /api/journal/questions — public feed (published only).
+router.get('/questions', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 50, 200);
+    const result = await session.run(`
+      MATCH (q:Question)
+      WHERE q.status = 'published'
+      RETURN q {
+        .id, .text, .lang, .answer,
+        .studentName, .studentCountry, .workshop,
+        .teacherName,
+        askedAt: toString(q.askedAt),
+        answeredAt: toString(q.answeredAt),
+        publishedAt: toString(q.publishedAt)
+      } as q
+      ORDER BY q.publishedAt DESC
+      LIMIT toInteger($limit)
+    `, { limit });
+
+    const questions = result.records.map(r => r.get('q'));
+    res.json({ questions, count: questions.length });
+  } catch (error) {
+    console.error('GET /questions error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
 module.exports = router;

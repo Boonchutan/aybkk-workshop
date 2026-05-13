@@ -959,64 +959,96 @@ app.get('/p/:slug', async (req, res) => {
 // (the same design as the in-page card on student.html).
 const { renderShareCard } = require('./share-card-renderer');
 
-// Yoga Sutra + Bhagavad Gita quote pool, bilingual.
-const SHARE_CARD_QUOTES = {
-  en: [
-    'Atha Yoganushasanam — Yoga Sutra 1.1',
-    'Yoga is the cessation of the fluctuations of the mind. — Yoga Sutra 1.2',
-    'Sthira sukham asanam — steady, comfortable. — Yoga Sutra 2.46',
-    'Practice becomes firmly grounded when attended to for a long time. — Yoga Sutra 1.14',
-    'You have a right to action, but never to its fruits. — Bhagavad Gita 2.47',
-    'Yoga is skill in action. — Bhagavad Gita 2.50',
-    'Yoga is equanimity of mind. — Bhagavad Gita 2.48',
-    'Like a lamp in a windless place that does not flicker. — Bhagavad Gita 6.19',
-    'For one who has conquered the mind, the mind is the best of friends. — Bhagavad Gita 6.6',
-    'Whatever happened, happened for the good. — Bhagavad Gita',
-    'When meditation is mastered, the mind is unwavering. — Bhagavad Gita 6.19',
-    'The soul is neither born, nor does it ever die. — Bhagavad Gita 2.20',
-  ],
-  ru: [
-    'Атха йогануш́асанам — Йога-сутра 1.1',
-    'Йога есть прекращение колебаний ума. — Йога-сутра 1.2',
-    'Стхира сукхам асанам — устойчивая, удобная поза. — Йога-сутра 2.46',
-    'Практика становится прочной при долгом, непрерывном внимании. — Йога-сутра 1.14',
-    'У тебя есть право на действие, но не на его плоды. — Бхагавад-гита 2.47',
-    'Йога есть искусство в действии. — Бхагавад-гита 2.50',
-    'Йога есть невозмутимость ума. — Бхагавад-гита 2.48',
-    'Как пламя лампы в безветренном месте, что не колышется. — Бхагавад-гита 6.19',
-    'Для того, кто овладел умом, ум — лучший друг. — Бхагавад-гита 6.6',
-    'Что бы ни произошло, произошло во благо. — Бхагавад-гита',
-    'Когда медитация достигнута, ум неподвижен. — Бхагавад-гита 6.19',
-    'Душа не рождается и не умирает. — Бхагавад-гита 2.20',
-  ],
-  zh: [
-    'Atha Yoganushasanam — 瑜伽经 1.1',
-    '瑜伽是心意波动的止息。— 瑜伽经 1.2',
-    '体式应当稳定而舒适。— 瑜伽经 2.46',
-    '长久持续的练习使根基稳固。— 瑜伽经 1.14',
-    '你只有行动的权利，从无对结果的权利。— 薄伽梵歌 2.47',
-    '瑜伽是行动中的技艺。— 薄伽梵歌 2.50',
-    '瑜伽是心的平等。— 薄伽梵歌 2.48',
-    '如无风之处的灯焰，不动摇。— 薄伽梵歌 6.19',
-    '征服自心者，自心即是至友。— 薄伽梵歌 6.6',
-  ],
-};
+// Quote pool: Yoga Sutra + Bhagavad Gita + Hatha Yoga Pradipika + Stoic
+// (Marcus Aurelius / Epictetus / Seneca). Sourced from quotes.js (root) so the
+// ignore rules on data/ don't strip it during Railway upload. To update quotes,
+// edit data/quotes.json then regenerate quotes.js (see header in quotes.js).
+const SHARE_CARD_QUOTES = (() => {
+  const raw = require('./quotes.js');
+  const flat = {};
+  for (const lang of Object.keys(raw)) {
+    if (lang.startsWith('_')) continue;
+    flat[lang] = Object.values(raw[lang]).flat();
+  }
+  console.log(`[share-card] loaded quotes: ${Object.entries(flat).map(([l, a]) => `${l}=${a.length}`).join(' ')}`);
+  return flat;
+})();
 
-// Deterministic quote per student (welcome) and per student+day (journal),
-// so different students reliably see different quotes and the journal rotates daily.
+// Hash + seeded Fisher-Yates shuffle. Used to deterministically shuffle the
+// quote pool per cohort/day so every student in the cohort gets a distinct quote.
 function hashString(s) {
   let h = 0;
   for (const ch of s) h = ((h << 5) - h + ch.charCodeAt(0)) | 0;
   return Math.abs(h);
 }
 
-function quoteForCard({ studentId, type, lang }) {
+function shuffleSeeded(arr, seed) {
+  let state = hashString(seed) || 1;
+  const rand = () => {
+    state = (state * 1103515245 + 12345) & 0x7fffffff;
+    return state / 0x7fffffff;
+  };
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Zero-collision-within-cohort quote assignment.
+// The cohort is the set of students who could co-post in the same group chat
+// (Russia: location+city; workshop students: workshop; otherwise: location).
+// We sort the cohort by id, shuffle the pool with a cohort-scoped seed, and
+// assign the student the quote at their sorted index. Result: every student
+// in the cohort sees a different quote on the same day. Journal rotates daily;
+// welcome is stable across days.
+async function quoteForCard({ studentId, type, lang, session, location, workshop, city }) {
   const pool = SHARE_CARD_QUOTES[lang] || SHARE_CARD_QUOTES.en;
   if (!pool.length) return '';
+  const today = new Date().toISOString().split('T')[0];
+
+  let cohortQuery, cohortParams, cohortKey;
+  if (location === 'russia' && city) {
+    cohortQuery = `MATCH (s:Student) WHERE s.location = $location AND s.city = $city RETURN s.id AS id ORDER BY s.id`;
+    cohortParams = { location, city };
+    cohortKey = `${location}|${city}`;
+  } else if (workshop) {
+    cohortQuery = `MATCH (s:Student) WHERE s.workshop = $workshop RETURN s.id AS id ORDER BY s.id`;
+    cohortParams = { workshop };
+    cohortKey = `ws|${workshop}`;
+  } else if (location) {
+    cohortQuery = `MATCH (s:Student) WHERE s.location = $location RETURN s.id AS id ORDER BY s.id`;
+    cohortParams = { location };
+    cohortKey = `loc|${location}`;
+  } else {
+    cohortQuery = `MATCH (s:Student) RETURN s.id AS id ORDER BY s.id`;
+    cohortParams = {};
+    cohortKey = 'all';
+  }
+
+  let cohortIdx = -1;
+  if (session) {
+    try {
+      const r = await session.run(cohortQuery, cohortParams);
+      const cohort = r.records.map(rec => rec.get('id'));
+      if (cohort.length <= pool.length) cohortIdx = cohort.indexOf(studentId);
+    } catch (err) {
+      console.warn('[quoteForCard] cohort query failed, falling back to hash:', err.message);
+    }
+  }
+
+  if (cohortIdx === -1) {
+    // Fallback: hash-mod (collisions possible). Used when cohort exceeds pool,
+    // student is missing from cohort, or no session was passed.
+    const seed = type === 'journal' ? `${studentId}|${today}` : `${studentId}|welcome`;
+    return pool[hashString(seed) % pool.length];
+  }
+
   const seed = type === 'journal'
-    ? `${studentId}|${new Date().toISOString().split('T')[0]}`   // rotates daily
-    : `${studentId}|welcome`;                                    // stable per student
-  return pool[hashString(seed) % pool.length];
+    ? `journal|${cohortKey}|${lang}|${today}`
+    : `welcome|${cohortKey}|${lang}`;
+  return shuffleSeeded(pool, seed)[cohortIdx];
 }
 
 // POST /api/journal/share-to-group/:studentId
@@ -1147,8 +1179,16 @@ app.get('/api/share-card/:studentId', async (req, res) => {
       ? (cityLabel ? `${cityLabel} · ${todayStr}` : todayStr)
       : `${todayStr} · Practice Journal saved ✅`;
 
-    // Deterministic quote per student/day (Yoga Sutra + Bhagavad Gita), language-aware.
-    const defaultQuote = quoteForCard({ studentId, type: type || 'welcome', lang: language });
+    // Zero-collision-within-cohort quote (Yoga Sutra + Gita + HYP + Stoic), language-aware.
+    const defaultQuote = await quoteForCard({
+      studentId,
+      type: type || 'welcome',
+      lang: language,
+      session,
+      location,
+      workshop,
+      city,
+    });
 
     const png = await renderShareCard({
       name,
