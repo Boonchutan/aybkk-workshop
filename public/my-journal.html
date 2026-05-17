@@ -4,252 +4,521 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>My Practice Journal — AYBKK</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&display=swap');
-    :root {
-      --bg: #FAF6F1;            /* warmer cream — matches the new clay system */
-      --card: #FFFFFF;
-      --border: #E8E1D6;
-      --border-soft: #F0E7DC;
-      --text: #2A2622;          /* warm near-black, never pure */
-      --text-secondary: #8B7E70;
-      --text-muted: #B8AC9D;
-      --sand: #D4A574;          /* everyday accent (was --accent) */
-      --sand-light: #F5EDE4;
-      --sand-hover: #C49564;
-      --clay: #C2876A;          /* memory + emotion — used sparingly */
-      --clay-light: #EDD6CB;
-      --clay-deep: #A36B52;
-      --success: #6B9E6B;
-      --shadow: 0 1px 3px rgba(82,58,38,0.05), 0 1px 2px rgba(82,58,38,0.04);
-      --shadow-press: 0 0 0 4px rgba(194,135,106,0.12);
-      --radius: 14px; --radius-sm: 12px; --radius-pill: 999px;
-      --transition: 0.22s cubic-bezier(0.32, 0.72, 0, 1); /* Apple-like spring */
-      /* Back-compat aliases — older rules in this file still reference these */
-      --accent: var(--sand);
-      --accent-light: var(--sand-light);
-      --accent-hover: var(--sand-hover);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* my-journal.html — student practice history view.
+       Visual language imported from tokens.css (beech wood + walnut + carved
+       clay). Page-specific layout and component styles only here. */
+
     body {
-      font-family: 'Spectral', 'Hoefler Text', 'Times New Roman', serif;
-      background: var(--bg); min-height: 100vh; color: var(--text);
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      margin: 0;
       -webkit-font-smoothing: antialiased;
       font-feature-settings: "kern" 1, "liga" 1;
     }
-    .container { max-width: 480px; margin: 0 auto; padding: 24px 16px 60px; }
+    * { margin: 0; padding: 0; }
+    .container { max-width: 480px; margin: 0 auto; padding: var(--space-5) var(--space-4) var(--space-7); }
 
-    /* AYBKK logo — printed onto the cream background, not floating in a white circle */
+    /* Brand logo — printed onto the cream wall, not floating */
     .brand-logo {
       display: block; width: 60px; height: 60px;
-      margin: 0 auto 14px;
+      margin: 0 auto var(--space-3);
       mix-blend-mode: multiply;
       filter: contrast(1.05);
     }
 
-    .header { text-align: center; margin-bottom: 14px; }
+    .header { text-align: center; margin-bottom: var(--space-3); }
     .header h1 {
-      font-family: 'Spectral', serif;
-      font-size: clamp(24px, 5.5vw, 28px); font-weight: 700;
-      color: var(--text); letter-spacing: -0.4px; line-height: 1.15;
+      font-family: var(--font-display);
+      font-size: clamp(22px, 5.4vw, 30px);
+      font-weight: 800;
+      letter-spacing: -0.012em;
+      line-height: 1.15;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
     }
     .student-name {
-      font-family: 'Spectral', serif;
-      font-size: 15px; font-weight: 400; font-style: italic;
-      color: var(--clay-deep); margin-top: 6px;
+      font-family: var(--font-body);
+      font-size: 15px; font-style: italic;
+      color: var(--accent);
+      margin-top: 6px;
     }
     .stats {
-      font-size: 12px; color: var(--text-secondary); margin-top: 6px;
-      letter-spacing: 0.3px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--ink-soft);
+      letter-spacing: 0.04em;
+      margin-top: 4px;
     }
 
-    /* Motivational tagline — Boonchu's voice, the page's quiet anchor */
+    /* Motto — Boonchu's voice between two hairlines, like a printed manual */
     .motto {
-      max-width: 360px; margin: 0 auto 22px;
-      padding: 10px 18px;
-      font-family: 'Spectral', serif;
+      max-width: 360px; margin: 0 auto var(--space-5);
+      padding: var(--space-3) var(--space-4);
+      font-family: var(--font-body);
       font-size: 14px; line-height: 1.55; font-style: italic;
-      text-align: center; color: var(--clay-deep);
-      border-top: 1px solid var(--clay-light);
-      border-bottom: 1px solid var(--clay-light);
+      text-align: center;
+      color: var(--accent);
+      border-top: 1px solid var(--shadow-dark);
+      border-bottom: 1px solid var(--shadow-dark);
     }
-    .motto strong { font-style: normal; font-weight: 600; color: var(--clay-deep); }
+    .motto strong { font-style: normal; font-weight: 600; color: var(--primary-deep); }
 
-    .lang-switch { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
+    /* Language switch — restrained pill row */
+    .lang-switch { display: flex; justify-content: center; gap: 8px; margin-bottom: var(--space-4); }
     .lang-btn {
-      padding: 6px 14px; border: 1px solid var(--border); background: var(--card);
-      border-radius: var(--radius-pill); font-size: 12px; font-weight: 500;
-      color: var(--text-secondary); cursor: pointer; transition: all var(--transition);
-      font-family: inherit;
+      padding: 7px 14px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
     .lang-btn:active { transform: scale(0.96); }
-    .lang-btn.active { background: var(--sand); color: #fff; border-color: var(--sand); }
+    .lang-btn.active {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.55),
+        -1px -1px 1px rgba(50, 28, 10, 0.65);
+      box-shadow:
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4),
+        inset -2px -2px 4px rgba(40, 20, 4, 0.25),
+        6px 6px 12px rgba(120, 80, 40, 0.25);
+    }
 
-    /* Apple-style tab pills */
-    .nav-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+    /* Nav tabs — three carved-wood plaques. Active = pressed in. */
+    .nav-tabs { display: flex; gap: var(--space-2); margin-bottom: var(--space-5); }
     .nav-tab {
-      flex: 1; padding: 12px 8px; background: var(--card);
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      font-family: 'Spectral', serif;
-      font-size: 14px; font-weight: 500; color: var(--text-secondary);
-      cursor: pointer; transition: all var(--transition); text-align: center;
-      text-decoration: none; line-height: 1;
+      flex: 1;
+      padding: 14px 8px;
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      line-height: 1;
+      box-shadow:
+        6px 6px 14px var(--shadow-dark),
+        -4px -4px 10px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
     .nav-tab:active { transform: scale(0.97); }
     .nav-tab.active {
-      background: var(--text); color: #fff; border-color: var(--text);
-      box-shadow: 0 4px 12px rgba(42,38,34,0.18);
-    }
-    .nav-tab:not(.active):hover { border-color: var(--clay); color: var(--clay-deep); }
-
-    .entry {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 18px;
-      box-shadow: var(--shadow); margin-bottom: 12px;
-      transition: border-color var(--transition);
-    }
-    .entry:hover { border-color: var(--clay-light); }
-    .entry-date {
-      font-family: 'Spectral', serif;
-      font-size: 13px; font-weight: 600;
-      color: var(--clay-deep); letter-spacing: 0.4px;
-      margin-bottom: 14px; padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-soft);
-      text-transform: uppercase;
-    }
-    .entry-row { display: flex; gap: 12px; margin-bottom: 10px; font-size: 14px; align-items: flex-start; }
-    .entry-row .label {
-      font-family: 'Spectral', serif;
-      color: var(--text-secondary); flex-shrink: 0; min-width: 78px;
-      padding-top: 1px; font-style: italic; font-size: 13px;
-    }
-    .entry-row .value { color: var(--text); flex: 1; font-family: 'Spectral', serif; }
-
-    .tag-group { display: flex; flex-wrap: wrap; gap: 6px; }
-    .tag { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
-    .tag.strength { background: #EEF5EE; color: #4A7C4A; }
-    .tag.growth { background: #FFF3E0; color: #C47A20; }
-
-    .entry-note {
-      background: var(--bg); border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      font-family: 'Spectral', serif;
-      font-size: 14px; line-height: 1.65; font-style: italic;
-      color: var(--text); margin-top: 12px;
-    }
-    .entry-note .label-inline {
-      font-style: normal; color: var(--clay-deep);
-      font-weight: 600; margin-right: 6px; font-size: 11px;
-      letter-spacing: 0.6px; text-transform: uppercase;
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 5px 5px 12px var(--shadow-dark),
+        inset -4px -4px 8px var(--shadow-light);
     }
 
-    .empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
-    .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
-    .empty-msg {
-      font-family: 'Spectral', serif;
-      font-size: 15px; line-height: 1.65; margin-bottom: 22px;
-      color: var(--clay-deep); font-style: italic;
+    /* Loading */
+    .loading { text-align: center; padding: var(--space-7) var(--space-5); }
+    .loading p {
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--ink-soft);
     }
-
-    /* Apple-style filled CTA */
-    .btn-primary {
-      display: inline-flex; align-items: center; justify-content: center;
-      height: 48px; padding: 0 26px; background: var(--clay);
-      color: #fff; border-radius: var(--radius-sm);
-      text-decoration: none;
-      font-family: 'Spectral', serif;
-      font-weight: 600; font-size: 15px; letter-spacing: 0.2px;
-      border: none; cursor: pointer;
-      box-shadow: 0 2px 6px rgba(163,107,82,0.18);
-      transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+    .spinner {
+      font-size: 36px;
+      margin-bottom: var(--space-3);
+      color: var(--accent);
+      animation: spin 1.6s linear infinite;
     }
-    .btn-primary:hover { background: var(--clay-deep); box-shadow: 0 4px 12px rgba(163,107,82,0.25); }
-    .btn-primary:active { transform: scale(0.97); box-shadow: 0 1px 3px rgba(163,107,82,0.2); }
-
-    .loading { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
-    .spinner { font-size: 32px; margin-bottom: 12px; animation: spin 1.4s linear infinite; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    /* Teacher's Note — clay-toned for emotional weight */
+    /* Teacher's Note — carved walnut card */
     .teacher-card {
-      background: linear-gradient(135deg, var(--clay-light) 0%, #FBF1EB 100%);
-      border: 1px solid var(--clay);
-      border-radius: var(--radius);
-      padding: 20px 20px 18px;
-      box-shadow: 0 2px 8px rgba(163,107,82,0.08);
-      margin-bottom: 22px;
+      background: var(--surface-2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5) var(--space-5) var(--space-4);
+      margin-bottom: var(--space-5);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 4px 4px 5px rgba(150, 120, 80, 0.13),
+        inset -4px -4px 5px rgba(253, 250, 242, 0.55),
+        inset 22px 22px 44px var(--shadow-dark),
+        inset -14px -14px 28px var(--shadow-light);
     }
     .teacher-card-header {
       display: flex; justify-content: space-between; align-items: baseline;
-      margin-bottom: 10px;
+      margin-bottom: var(--space-3);
     }
     .teacher-card-header strong {
-      font-family: 'Spectral', serif;
-      font-weight: 600; font-size: 12px; color: var(--clay-deep);
-      letter-spacing: 1.6px; text-transform: uppercase;
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 11px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
     }
-    .tc-date { font-size: 11px; color: var(--text-secondary); font-style: italic; }
+    .tc-date {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
     .tc-comment {
-      font-family: 'Spectral', serif;
-      font-weight: 400; font-style: italic;
-      font-size: 16px; line-height: 1.7;
-      color: var(--text); padding: 6px 0 4px;
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 17px; line-height: 1.65;
+      color: var(--ink);
+      padding: var(--space-1) 0 var(--space-2);
     }
     .tc-comment::before {
-      content: '“'; color: var(--clay); font-size: 36px;
-      line-height: 0; vertical-align: -14px; margin-right: 6px;
-      font-family: 'Spectral', Georgia, serif; font-weight: 700;
+      content: '“';
+      color: var(--accent);
+      font-size: 38px;
+      line-height: 0;
+      vertical-align: -14px;
+      margin-right: 4px;
+      font-family: var(--font-display);
+      font-weight: 700;
     }
     .tc-focus-block {
-      margin-top: 14px; padding-top: 14px;
-      border-top: 1px dashed var(--clay-light);
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px dashed var(--shadow-dark);
     }
     .tc-focus-label {
-      font-family: 'Spectral', serif;
-      font-size: 11px; font-weight: 600; color: var(--clay-deep);
-      letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 6px;
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 6px;
     }
     .tc-focus {
-      font-family: 'Spectral', serif;
-      font-size: 15px; line-height: 1.65; color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
     }
 
-    /* Apple-style tonal button — soft fill, no border */
+    /* Entry — raised beech block, like a page from a printed practice book */
+    .entry {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+    .entry-date {
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 800;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .entry-row {
+      display: flex; gap: var(--space-3);
+      margin-bottom: var(--space-2);
+      align-items: flex-start;
+    }
+    .entry-row .label {
+      flex-shrink: 0; min-width: 78px;
+      padding-top: 2px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+    .entry-row .value {
+      flex: 1;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    /* Tag chips — earth-toned, semantic */
+    .tag-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      box-shadow:
+        inset 2px 2px 4px rgba(150, 120, 80, 0.18),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.65);
+    }
+    .tag.strength { background: #ddd9c2; color: #4f5d3a; }
+    .tag.growth   { background: #ecd5be; color: #8d4f2c; }
+
+    /* Practice notes — typographic block, no nested card */
+    .entry-note {
+      margin-top: var(--space-4);
+      padding-top: var(--space-3);
+      border-top: 1px dashed var(--shadow-dark);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      font-style: italic;
+      color: var(--ink);
+    }
+    .entry-note .label-inline {
+      display: block;
+      font-family: var(--font-display);
+      font-style: normal;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 6px;
+    }
+
+    /* View Card — small carved pill */
     .view-card-btn {
       display: inline-flex; align-items: center; gap: 6px;
-      margin-top: 14px; padding: 8px 16px;
-      background: var(--clay-light); border: none;
+      margin-top: var(--space-4);
+      padding: 9px 18px;
+      background: var(--surface);
+      border: none;
       border-radius: var(--radius-pill);
-      font-family: 'Spectral', serif;
-      font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
-      color: var(--clay-deep); cursor: pointer;
-      transition: all var(--transition);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      cursor: pointer;
+      box-shadow:
+        6px 6px 12px var(--shadow-dark),
+        -4px -4px 8px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
-    .view-card-btn:hover { background: var(--clay); color: #fff; }
+    .view-card-btn:hover { transform: translateY(-2px); }
     .view-card-btn:active { transform: scale(0.96); }
 
+    /* Empty state */
+    .empty { text-align: center; padding: var(--space-7) var(--space-5); }
+    .empty-icon {
+      font-size: 44px;
+      margin-bottom: var(--space-3);
+      color: var(--accent);
+      opacity: 0.55;
+    }
+    .empty-msg {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-5);
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #f1e2c4;
+      padding: 16px 32px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.7),
+        -1px -1px 1px rgba(50, 28, 10, 0.85),
+        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      box-shadow:
+        14px 14px 28px rgba(120, 80, 40, 0.30),
+        -8px -8px 18px var(--shadow-light),
+        inset 4px 4px 10px rgba(255, 240, 215, 0.5),
+        inset -3px -3px 8px rgba(40, 20, 4, 0.25);
+      cursor: pointer;
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .btn-primary:hover { transform: translateY(-3px) scale(1.02); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    /* Card modal — dark photo viewer (untouched semantics) */
     .card-modal {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.88); z-index: 200;
+      background: rgba(20, 14, 8, 0.92);
+      z-index: 200;
       flex-direction: column; align-items: center; justify-content: center;
-      padding: 20px;
+      padding: var(--space-5);
     }
     .card-modal-inner { text-align: center; max-width: 340px; width: 100%; }
     .card-modal-hint {
-      color: rgba(255,255,255,0.85); font-size: 13px;
-      font-weight: 500; margin-bottom: 14px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: rgba(252, 249, 239, 0.85);
+      margin-bottom: var(--space-3);
     }
     .card-modal img {
-      width: 100%; border-radius: 16px; display: block;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      width: 100%;
+      border-radius: 22px;
+      display: block;
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5);
     }
     .card-modal button {
-      margin-top: 16px; width: 100%; padding: 12px;
-      border-radius: 10px; border: 1px solid rgba(255,255,255,0.3);
-      background: transparent; color: #fff; font-size: 14px;
-      cursor: pointer; font-family: inherit;
+      margin-top: var(--space-4);
+      width: 100%;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(252, 249, 239, 0.25);
+      background: transparent;
+      color: rgba(252, 249, 239, 0.92);
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background var(--dur-base);
     }
-    .card-modal-loading { color: #fff; font-size: 14px; }
+    .card-modal button:hover { background: rgba(252, 249, 239, 0.08); }
+
+    /* Q&A public feed (Question Board v2) */
+    .qa-empty {
+      text-align: center;
+      padding: var(--space-7) var(--space-5);
+    }
+    .qa-empty .icon {
+      font-size: 44px;
+      margin-bottom: var(--space-3);
+      color: var(--accent);
+      opacity: 0.55;
+    }
+    .qa-empty .msg {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    .qa-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+    .qa-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .qa-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d4ba8c 0%, #997a52 100%);
+      box-shadow:
+        inset 3px 3px 6px rgba(255, 240, 215, 0.3),
+        inset -2px -2px 4px rgba(40, 20, 4, 0.2);
+      display: grid; place-items: center;
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 800;
+      color: #fff5e0;
+    }
+    .qa-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--ink);
+    }
+    .qa-country {
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--surface-2);
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
+    }
+    .qa-when {
+      margin-left: auto;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+    .qa-text {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+      letter-spacing: -0.005em;
+    }
+    /* Answer block — carved cavity inside the qa card */
+    .qa-answer {
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      background: var(--surface-2);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.92),
+        inset 5px 5px 10px rgba(150, 120, 80, 0.13);
+    }
+    .qa-answer-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 8px;
+    }
+    .qa-answer-badge {
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(135deg, #a47e54, var(--accent));
+      color: #fdf6e6;
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      box-shadow: 4px 4px 10px rgba(110, 85, 55, 0.30);
+    }
+    .qa-teacher {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--ink);
+    }
+    .qa-answer-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--ink);
+    }
   </style>
 </head>
 <body>
@@ -273,7 +542,8 @@
 
   <div class="nav-tabs">
     <a class="nav-tab" id="navNewEntry"></a>
-    <a class="nav-tab active" id="navHistory"></a>
+    <a class="nav-tab active" id="navHistory" onclick="showHistoryView(); return false;" href="#"></a>
+    <a class="nav-tab" id="navQA" onclick="showQAView(); return false;" href="#"></a>
     <a class="nav-tab" id="navWeek"></a>
   </div>
 
@@ -301,6 +571,11 @@
     <div class="empty-msg" id="emptyMsg"></div>
     <a class="btn-primary" id="emptyCta"></a>
   </div>
+
+  <!-- Q&A public feed (Question Board v2) -->
+  <div id="qaSection" style="display:none;">
+    <div id="qaList"></div>
+  </div>
 </div>
 
 <div class="card-modal" id="cardModal">
@@ -320,6 +595,9 @@ const T = {
     newEntry: '+ 新记录',
     history: '我的记录',
     week: '本周报告',
+    qa: '问答',
+    qaEmpty: '还没有公开问答。继续练习，老师会挑选问题回答。',
+    teacherReply: '老师回答',
     emptyMsg: '还没有记录。开始您的第一次练习记录。',
     startJournal: '开始记录',
     vinyasaLabel: '流动',
@@ -353,6 +631,9 @@ const T = {
     newEntry: '+ New Entry',
     history: 'My Journal',
     week: 'My Week',
+    qa: 'Q&A',
+    qaEmpty: 'No public questions yet. Keep practicing — your teacher will pick questions to answer here.',
+    teacherReply: "Teacher's reply",
     emptyMsg: 'No entries yet. Start your first practice journal.',
     startJournal: 'Start Journal',
     vinyasaLabel: 'Vinyasa',
@@ -386,6 +667,9 @@ const T = {
     newEntry: '+ บันทึกใหม่',
     history: 'บันทึกของฉัน',
     week: 'สัปดาห์นี้',
+    qa: 'ถาม-ตอบ',
+    qaEmpty: 'ยังไม่มีคำถามสาธารณะ ฝึกต่อไป ครูจะเลือกคำถามมาตอบที่นี่',
+    teacherReply: 'คำตอบจากครู',
     emptyMsg: 'ยังไม่มีบันทึก เริ่มบันทึกแรกของคุณ',
     startJournal: 'เริ่มบันทึก',
     vinyasaLabel: 'Vinyasa',
@@ -419,6 +703,9 @@ const T = {
     newEntry: '+ Новая запись',
     history: 'Мой дневник',
     week: 'Моя неделя',
+    qa: 'Q&A',
+    qaEmpty: 'Публичных вопросов пока нет. Продолжайте практику — учитель выберет вопросы и ответит здесь.',
+    teacherReply: 'Ответ учителя',
     emptyMsg: 'Записей ещё нет. Начните свою первую запись.',
     startJournal: 'Начать запись',
     vinyasaLabel: 'Виньяса',
@@ -484,6 +771,8 @@ function applyLang() {
   navHist.textContent = t('history');
   navWeek.textContent = t('week');
   navWeek.href = '/weekly-report.html' + qs;
+  const navQATab = document.getElementById('navQA');
+  if (navQATab) navQATab.textContent = t('qa');
   document.getElementById('emptyCta').href = '/student.html' + qs;
   const closeBtn = document.getElementById('cardModalClose');
   if (closeBtn) closeBtn.textContent = t('close');
@@ -878,7 +1167,54 @@ function getCardEyebrow() {
   return 'AYBKK · PRACTICE JOURNAL';
 }
 
+// Demo mode (?demo=1) — synthetic data to preview design without backend.
+// Safe to keep: only triggers when the explicit query flag is set.
+async function loadDemoData() {
+  allAssessments = [
+    {
+      checkedInAt: new Date().toISOString(),
+      vinyasa: 'kept_moving',
+      bandha: 'finding_light',
+      stableToday: ['standing_balance', 'breathing'],
+      difficultToday: ['backbending', 'jump_through'],
+      lastAsana: 'Janu Sirsasana A',
+      practiceNotes: 'Body felt light today. Found bandha for the first time in Marichyasana C — held it without straining.'
+    },
+    {
+      checkedInAt: new Date(Date.now() - 86400000).toISOString(),
+      vinyasa: 'stop_breathe',
+      bandha: 'body_light',
+      stableToday: ['forward_bend'],
+      difficultToday: ['arms_shoulders'],
+      practiceNotes: 'Tired in the morning, but the breath carried. Less force, more listening.'
+    },
+    {
+      checkedInAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+      vinyasa: 'kept_moving',
+      bandha: 'heavy_body',
+      stableToday: ['twisting', 'inversion'],
+      difficultToday: ['leg_behind_head'],
+      lastAsana: 'Supta Kurmasana'
+    }
+  ];
+  currentStudentName = studentName;
+  studentClassType = '';
+  document.getElementById('studentNameEl').textContent = currentStudentName;
+  document.getElementById('statsEl').textContent = t('statsTpl').replace('{count}', allAssessments.length);
+  // Demo teacher note
+  const tcBox = document.getElementById('teacherCommentBox');
+  document.getElementById('tcComment').textContent = 'Bandha is not a clench — it is a quiet decision the body makes. You found it. Stay with that.';
+  document.getElementById('tcFocus').textContent = 'This week: explore Marichyasana D with the same softness.';
+  document.getElementById('tcFocusBlock').style.display = 'block';
+  document.getElementById('tcDate').textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  tcBox.style.display = 'block';
+  render();
+}
+
 async function load() {
+  if (P.get('demo') === '1') {
+    return loadDemoData();
+  }
   if (!studentId) {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('empty').style.display = 'block';
@@ -974,6 +1310,86 @@ function renderEntry(a, idx) {
 document.querySelectorAll('.lang-btn').forEach(b => {
   b.addEventListener('click', () => setLang(b.dataset.lang));
 });
+
+// ============================================
+// Q&A public feed (Question Board v2) — toggled inline via nav tabs.
+// History view = entries list + teacher card. Q&A view = published feed.
+// One state at a time; data fetches lazily on first switch.
+// ============================================
+let qaLoaded = false;
+
+function showHistoryView() {
+  document.getElementById('qaSection').style.display = 'none';
+  if (allAssessments.length) {
+    document.getElementById('entries').style.display = 'block';
+  } else {
+    document.getElementById('empty').style.display = 'block';
+  }
+  const tcBox = document.getElementById('teacherCommentBox');
+  if (tcBox && tcBox.dataset.hadContent === '1') tcBox.style.display = 'block';
+  document.getElementById('navHistory').classList.add('active');
+  document.getElementById('navQA').classList.remove('active');
+}
+
+function showQAView() {
+  document.getElementById('entries').style.display = 'none';
+  document.getElementById('empty').style.display = 'none';
+  const tcBox = document.getElementById('teacherCommentBox');
+  if (tcBox) {
+    if (tcBox.style.display !== 'none') tcBox.dataset.hadContent = '1';
+    tcBox.style.display = 'none';
+  }
+  document.getElementById('qaSection').style.display = 'block';
+  document.getElementById('navHistory').classList.remove('active');
+  document.getElementById('navQA').classList.add('active');
+  if (!qaLoaded) loadQA();
+}
+
+async function loadQA() {
+  const list = document.getElementById('qaList');
+  list.innerHTML = '<div class="loading"><div class="spinner">☸</div><p>' + escapeHtml(t('loading')) + '</p></div>';
+  try {
+    const res = await fetch('/api/journal/questions?limit=50');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    qaLoaded = true;
+    renderQA(data.questions || []);
+  } catch (err) {
+    list.innerHTML = '<div class="qa-empty"><div class="msg">Could not load. ' + escapeHtml(err.message) + '</div></div>';
+  }
+}
+
+function renderQA(questions) {
+  const list = document.getElementById('qaList');
+  if (!questions.length) {
+    list.innerHTML = '<div class="qa-empty"><div class="icon">☸</div><div class="msg">' + escapeHtml(t('qaEmpty')) + '</div></div>';
+    return;
+  }
+  list.innerHTML = questions.map(q => `
+    <div class="qa-card">
+      <div class="qa-meta">
+        <div class="qa-avatar">${escapeHtml(qaInitials(q.studentName))}</div>
+        <span class="qa-name">${escapeHtml(q.studentName || '')}</span>
+        ${q.studentCountry ? `<span class="qa-country">${escapeHtml(q.studentCountry)}</span>` : ''}
+        <span class="qa-when">${escapeHtml(fmtDate(q.publishedAt || q.askedAt))}</span>
+      </div>
+      <div class="qa-text">${escapeHtml(q.text)}</div>
+      <div class="qa-answer">
+        <div class="qa-answer-header">
+          <span class="qa-answer-badge">${escapeHtml(q.teacherName || 'Boonchu')}</span>
+          <span class="qa-teacher">${escapeHtml(t('teacherReply'))}</span>
+        </div>
+        <div class="qa-answer-text">${escapeHtml(q.answer || '')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function qaInitials(name) {
+  if (!name) return '?';
+  const parts = String(name).trim().split(/\s+/);
+  return ((parts[0]?.[0] || '?') + (parts[1]?.[0] || '')).toUpperCase();
+}
 
 applyLang();
 load();

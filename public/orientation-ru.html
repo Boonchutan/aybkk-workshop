@@ -4,67 +4,434 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AYBKK Russia WS 2026 — Orientation</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
+    /* orientation-ru.html — Russia WS 2026 orientation: quote, intro, rules,
+       quiz, registration form, success. All-serif (Fraunces + Spectral) on
+       beech wood with carved-clay components. Quote uses hairline pull-quote
+       style (top + bottom rules) — never side-stripe (impeccable ban). */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #faf8f5; color: #2a2420; min-height: 100vh; }
-    .header { background: linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #4e342e 100%); color: white; padding: 40px 24px 30px; text-align: center; }
-    .header img { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 16px; border: 3px solid rgba(255,255,255,0.3); }
-    .header h1 { font-size: 22px; margin-bottom: 6px; }
-    .header .by { color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 4px; }
-    .header p { color: rgba(255,255,255,0.6); font-size: 13px; }
-    .lang-switch { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
-    .lang-btn { background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.7); padding: 6px 16px; border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
-    .lang-btn.active { background: rgba(255,255,255,0.3); color: white; }
-    .container { max-width: 480px; margin: 0 auto; padding: 24px 20px; }
-    .intro { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .intro p { font-size: 15px; line-height: 1.7; color: #5d4037; margin-bottom: 12px; }
-    .rules { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .rules h3 { font-size: 16px; color: #3e2723; margin-bottom: 16px; }
-    .rule { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0ebe5; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+
+    /* Header — beech wood band, carved title (no dark gradient) */
+    .header {
+      background: var(--surface);
+      padding: var(--space-7) var(--space-5) var(--space-5);
+      text-align: center;
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .header img {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      margin-bottom: var(--space-3);
+      mix-blend-mode: multiply;
+      filter: contrast(1.05);
+    }
+    .header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 5.4vw, 26px);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: 6px;
+    }
+    .header .by {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-style: italic;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .header p {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--ink-soft);
+      letter-spacing: 0.02em;
+    }
+
+    .lang-switch {
+      display: flex; justify-content: center; gap: 8px;
+      margin-top: var(--space-4);
+    }
+    .lang-btn {
+      padding: 7px 16px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .lang-btn:active { transform: scale(0.96); }
+    .lang-btn.active {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
+      box-shadow:
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4),
+        inset -2px -2px 4px rgba(40, 20, 4, 0.25),
+        6px 6px 12px rgba(120, 80, 40, 0.25);
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: var(--space-5) var(--space-4) var(--space-7);
+    }
+
+    /* Generic section card — raised beech */
+    .intro,
+    .rules,
+    .closing,
+    .form-section,
+    .quiz-section {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+    .intro p,
+    .closing p {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--ink);
+    }
+    .closing p { font-style: italic; }
+
+    .rules h3,
+    .form-section h3 {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-4);
+    }
+    .form-section h3 { letter-spacing: 0.15em; }
+    .form-section p {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-5);
+    }
+
+    .rule {
+      display: flex; align-items: flex-start; gap: var(--space-3);
+      padding: var(--space-3) 0;
+      border-bottom: 1px dashed var(--shadow-dark);
+    }
     .rule:last-child { border-bottom: none; }
     .rule-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
-    .rule-text { font-size: 14px; line-height: 1.5; color: #5d4037; }
-    .quote-box { background: #f5ede4; border-left: 4px solid #c49564; padding: 16px 20px; margin: 20px 0; border-radius: 0 10px 10px 0; font-size: 14px; line-height: 1.6; color: #3e2723; font-style: italic; }
-    .quote-source { font-size: 12px; color: #8b7d6b; margin-top: 8px; font-style: normal; }
-    .closing { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .closing p { font-size: 15px; line-height: 1.7; color: #5d4037; font-style: italic; }
-    .signatures { font-size: 14px; color: #8b7d6b; margin-top: 12px; }
-    
-    .form-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .form-section h3 { font-size: 18px; color: #3e2723; margin-bottom: 4px; }
-    .form-section p { font-size: 13px; color: #8b7d6b; margin-bottom: 20px; }
-    .field { margin-bottom: 16px; }
-    .field label { display: block; font-size: 14px; font-weight: 600; color: #3e2723; margin-bottom: 6px; }
-    .field input, .field select, .field textarea { width: 100%; padding: 12px 16px; border: 2px solid #e8e0d8; border-radius: 12px; font-size: 15px; background: #faf8f5; color: #2a2420; transition: border-color 0.2s; }
-    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #c49564; }
-    .field textarea { resize: vertical; min-height: 80px; }
-    .field .hint { font-size: 12px; color: #8b7d6b; margin-top: 4px; }
+    .rule-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    /* Quote — pull-quote between hairlines (no side-stripe) */
+    .quote-box {
+      max-width: 420px;
+      margin: var(--space-5) auto;
+      padding: var(--space-4) var(--space-4);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      font-style: italic;
+      text-align: center;
+      color: var(--accent);
+      border-top: 1px solid var(--shadow-dark);
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .quote-source {
+      display: block;
+      margin-top: var(--space-2);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-style: normal;
+      color: var(--primary-deep);
+    }
+
+    .signatures {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: var(--space-3);
+    }
+
+    /* Form fields — carved inputs */
+    .field { margin-bottom: var(--space-4); }
+    .field label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 8px;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 15px;
+      background: var(--surface-2);
+      color: var(--ink);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px rgba(150, 120, 80, 0.18);
+      transition: box-shadow var(--dur-base);
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      box-shadow:
+        inset 3px 3px 0 rgba(120, 90, 50, 0.28),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 6px 6px 12px rgba(120, 90, 50, 0.22);
+    }
+    .field textarea { resize: vertical; min-height: 84px; }
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: rgba(108, 94, 74, 0.55);
+      font-style: italic;
+    }
+    .field .hint {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 6px;
+    }
+
+    /* Consent option pills — small carved/protruding chips */
     .options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .option { background: #faf8f5; border: 2px solid #e8e0d8; border-radius: 20px; padding: 8px 16px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: #5d4037; }
-    .option.selected { background: #c49564; border-color: #c49564; color: white; }
-    .submit-btn { width: 100%; background: #3e2723; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
-    .submit-btn:hover { background: #5d4037; }
-    .submit-btn:disabled { background: #a89888; cursor: not-allowed; }
-    .success-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(62,39,35,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .option {
+      padding: 9px 16px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--ink-soft);
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .option:hover { transform: translateY(-1px); }
+    .option.selected {
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.22),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px var(--shadow-dark);
+      transform: none;
+    }
+
+    /* Submit button — full clay-button */
+    .submit-btn,
+    .continue-btn {
+      width: 100%;
+      padding: 18px var(--space-5);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: var(--space-2);
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.7),
+        -1px -1px 1px rgba(50, 28, 10, 0.85),
+        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      box-shadow:
+        14px 14px 28px rgba(120, 80, 40, 0.30),
+        -8px -8px 18px var(--shadow-light),
+        inset 4px 4px 10px rgba(255, 240, 215, 0.5),
+        inset -3px -3px 8px rgba(40, 20, 4, 0.25);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .submit-btn:hover,
+    .continue-btn:hover { transform: translateY(-3px) scale(1.02); }
+    .submit-btn:active,
+    .continue-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled {
+      background: var(--surface-2);
+      color: rgba(108, 94, 74, 0.4);
+      text-shadow: none;
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+      cursor: not-allowed;
+      transform: none;
+    }
+    .continue-btn { display: none; margin-top: var(--space-4); }
+
+    /* Success overlay */
+    .success-overlay {
+      position: fixed; inset: 0;
+      background: rgba(241, 237, 227, 0.95);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      padding: var(--space-5);
+      animation: fadeIn 0.3s var(--ease-out);
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .success-overlay.hidden { display: none; }
-    .success-box { background: white; border-radius: 20px; padding: 40px 32px; text-align: center; max-width: 320px; margin: 20px; }
-    .success-box h2 { font-size: 20px; color: #3e2723; margin-bottom: 12px; }
-    .success-box p { font-size: 14px; color: #5d4037; line-height: 1.6; }
-    
+    .success-box {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-7) var(--space-6);
+      text-align: center;
+      max-width: 360px;
+      margin: var(--space-5);
+      box-shadow:
+        20px 20px 40px var(--shadow-dark),
+        -10px -10px 22px var(--shadow-light);
+    }
+    .success-box h2 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: var(--space-3);
+    }
+    .success-box p {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-style: italic;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+
     /* Quiz styles */
-    .quiz-section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .quiz-section h3 { font-size: 17px; color: #3e2723; margin-bottom: 4px; text-align:center; }
-    .quiz-progress { font-size: 12px; color: #8b7d6b; text-align:center; margin-bottom: 16px; }
-    .quiz-q { font-size: 16px; font-weight: 600; color: #3e2723; margin-bottom: 16px; line-height: 1.4; }
+    .quiz-section h3 {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 4px;
+      text-align: center;
+    }
+    .quiz-progress {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      text-align: center;
+      margin-bottom: var(--space-4);
+    }
+    .quiz-q {
+      font-family: var(--font-body);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+      line-height: 1.45;
+    }
     .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
-    .quiz-opt { padding: 13px 18px; border: 2px solid #e8e0d8; border-radius: 12px; font-size: 14px; cursor: pointer; text-align: left; background: #faf8f5; color: #3e2723; transition: all 0.18s; }
-    .quiz-opt:hover { border-color: #c49564; }
-    .quiz-opt.correct { border-color: #6B9E6B; background: #eef5ee; color: #2d6a2d; }
-    .quiz-opt.wrong { border-color: #e57373; background: #ffebee; color: #b71c1c; }
-    .quiz-result { margin-top: 12px; font-size: 14px; font-weight: 600; padding: 11px 14px; border-radius: 10px; display:none; }
-    .quiz-result.correct { background: #eef5ee; color: #3a7a3a; }
-    .quiz-result.wrong { background: #ffebee; color: #c62828; }
-    .continue-btn { width:100%; margin-top:14px; padding:13px; border-radius:12px; border:none; background:#3e2723; color:white; font-size:15px; font-weight:600; cursor:pointer; display:none; }
+    .quiz-opt {
+      padding: 14px 18px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 14px;
+      cursor: pointer;
+      text-align: left;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .quiz-opt:hover { transform: translateY(-1px); }
+    .quiz-opt.correct {
+      background: #ddd9c2;
+      color: #4f5d3a;
+      box-shadow:
+        inset 3px 3px 0 rgba(80, 95, 60, 0.16),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.7),
+        inset 5px 5px 10px rgba(80, 95, 60, 0.12);
+      transform: none;
+    }
+    .quiz-opt.wrong {
+      background: #ecd5be;
+      color: #8d4f2c;
+      box-shadow:
+        inset 3px 3px 0 rgba(141, 79, 44, 0.20),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.7),
+        inset 5px 5px 10px rgba(141, 79, 44, 0.12);
+      transform: none;
+    }
+
+    .quiz-result {
+      margin-top: var(--space-3);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      display: none;
+    }
+    .quiz-result.correct {
+      background: #ddd9c2;
+      color: #4f5d3a;
+      box-shadow:
+        inset 2px 2px 4px rgba(80, 95, 60, 0.14),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.55);
+    }
+    .quiz-result.wrong {
+      background: #ecd5be;
+      color: #8d4f2c;
+      box-shadow:
+        inset 2px 2px 4px rgba(141, 79, 44, 0.16),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.55);
+    }
   </style>
 </head>
 <body>

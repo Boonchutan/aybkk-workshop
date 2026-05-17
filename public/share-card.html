@@ -3,82 +3,184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
-  <title>AYBKK · Your Welcome Card</title>
+  <title>AYBKK · Your Card</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* share-card.html — wood-framed display for the canvas-rendered card.
+       The card image itself keeps its day-of-week pastel (DAY_COLORS in
+       the API renderer). This page picks up today's color as a subtle
+       hairline + button gradient + outer glow tint, so frame and image
+       agree without competing. Carved title, protruding frame, protruding
+       primary button. */
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #faf8f5;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
       min-height: 100vh;
-      color: #2a2420;
+      margin: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 16px 40px;
+      padding: var(--space-6) var(--space-4) var(--space-7);
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
     }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    .header { text-align: center; margin-bottom: var(--space-5); max-width: 420px; }
     h1 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #3e2723;
+      font-family: var(--font-display);
+      font-size: clamp(24px, 5.6vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.012em;
+      line-height: 1.15;
+      color: #2f2517;
+      text-shadow: var(--text-carve);
     }
-    .sub { color: #8b7d6b; font-size: 14px; margin-bottom: 24px; text-align: center; }
+    .day-rule {
+      width: 80px;
+      height: 2px;
+      margin: var(--space-3) auto var(--space-3);
+      background: var(--today-color, var(--accent));
+      border-radius: var(--radius-pill);
+      opacity: 0.85;
+    }
+    .sub {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-style: italic;
+      color: var(--ink-soft);
+      letter-spacing: 0.02em;
+    }
+
+    /* Card wrap — carved cavity. The image sits inside the wood groove,
+       like a polaroid set flush into the surface. Inset edges (sharp 3px
+       light highlight on bottom-right, soft dark on top-left) match the
+       journal entries' carved language. */
     .card-wrap {
       max-width: 420px;
       width: 100%;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.18);
-      background: #1a1612;
-      margin-bottom: 28px;
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      background: var(--surface-2);
+      margin-bottom: var(--space-6);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.26),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 5px 5px 6px rgba(150, 120, 80, 0.18),
+        inset -4px -4px 5px rgba(253, 250, 242, 0.55),
+        inset 18px 18px 28px var(--shadow-dark),
+        inset -14px -14px 28px var(--shadow-light);
+      position: relative;
     }
-    .card-wrap img { display: block; width: 100%; height: auto; }
+    .card-wrap img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 14px rgba(80, 55, 30, 0.22);
+    }
     .card-wrap.loading {
       aspect-ratio: 640 / 720;
-      display: flex; align-items: center; justify-content: center;
-      color: #c49564; font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--accent);
+      font-size: 14px;
+      padding: 0;
     }
+
+    /* Actions */
     .actions {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: var(--space-3);
       width: 100%;
       max-width: 420px;
     }
     .btn {
       width: 100%;
-      padding: 16px 20px;
+      padding: 18px 24px;
       border: none;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       cursor: pointer;
-      font-family: inherit;
-      transition: transform 0.15s, background 0.15s;
+      transition: transform var(--dur-base) var(--ease-spring);
     }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: #3e2723; color: #fff; }
-    .btn-primary:hover { background: #5d4037; }
+    .btn:active { transform: scale(0.97); }
+
+    /* Primary = protruding wooden block, day color blended into gradient */
+    .btn-primary {
+      color: #f1e2c4;
+      background:
+        linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.7),
+        -1px -1px 1px rgba(50, 28, 10, 0.85),
+        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      box-shadow:
+        16px 16px 32px rgba(120, 80, 40, 0.30),
+        -8px -8px 18px var(--shadow-light),
+        inset 4px 4px 10px rgba(255, 240, 215, 0.5),
+        inset -3px -3px 8px rgba(40, 20, 4, 0.25),
+        0 6px 24px var(--today-accent, transparent);
+      position: relative;
+    }
+    .btn-primary:hover { transform: translateY(-3px) scale(1.02); }
+
+    /* Secondary = subtle outset surface */
     .btn-secondary {
-      background: #fff;
-      color: #5d4037;
-      border: 1.5px solid #d4c5b3;
+      color: var(--primary-deep);
+      background: var(--surface);
+      box-shadow:
+        10px 10px 22px var(--shadow-dark),
+        -6px -6px 14px var(--shadow-light);
     }
-    .btn-secondary:hover { background: #faf8f5; }
-    .hint { font-size: 12px; color: #8b7d6b; text-align: center; margin-top: 16px; line-height: 1.6; max-width: 420px; }
-    .err { color: #c62828; font-size: 13px; margin-top: 8px; text-align: center; }
+    .btn-secondary:hover { transform: translateY(-2px); }
+
+    .hint {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+      text-align: center;
+      margin-top: var(--space-4);
+      line-height: 1.65;
+      max-width: 420px;
+    }
+    .hint b {
+      font-style: normal;
+      font-weight: 600;
+      color: var(--primary-deep);
+    }
+
+    .err {
+      font-family: var(--font-body);
+      color: #8d3a1f;
+      font-size: 13px;
+      font-style: italic;
+      margin-top: var(--space-2);
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <h1 id="title">Your Welcome Card</h1>
-  <p class="sub" id="subtitle">AYBKK Russia WS 2026</p>
+  <div class="header">
+    <h1 id="title">Your Welcome Card</h1>
+    <div class="day-rule"></div>
+    <p class="sub" id="subtitle">AYBKK Russia WS 2026</p>
+  </div>
 
   <div class="card-wrap loading" id="cardWrap">Loading your card…</div>
 
   <div class="actions">
-    <button class="btn btn-primary" id="shareBtn">Share 📷</button>
+    <button class="btn btn-primary" id="shareBtn">Share</button>
     <button class="btn btn-secondary" id="downloadBtn">Save to Photos</button>
   </div>
 
@@ -89,6 +191,28 @@
   <p class="err" id="err"></p>
 
   <script>
+    // Day-of-week color rotation — same palette as my-journal.html DAY_COLORS,
+    // applied as subtle tints to the page (frame glow, button glow, hairline)
+    // so the surround agrees with the day pastel rendered inside the card.
+    const DAY_COLORS = [
+      { accent: '#7BAF7A', glow: 'rgba(123, 175, 122, 0.35)' }, // Mon
+      { accent: '#D4836A', glow: 'rgba(212, 131, 106, 0.35)' }, // Tue
+      { accent: '#D4A574', glow: 'rgba(212, 165, 116, 0.35)' }, // Wed
+      { accent: '#D9A066', glow: 'rgba(217, 160, 102, 0.35)' }, // Thu
+      { accent: '#7AABBF', glow: 'rgba(122, 171, 191, 0.35)' }, // Fri
+      { accent: '#A085B8', glow: 'rgba(160, 133, 184, 0.35)' }, // Sat
+      { accent: '#A3ADA8', glow: 'rgba(163, 173, 168, 0.35)' }  // Sun
+    ];
+    (function applyDayAccent() {
+      const idx = new Date().getDay();
+      const dc = DAY_COLORS[idx === 0 ? 6 : idx - 1];
+      // Solid color for the hairline rule under the title.
+      document.documentElement.style.setProperty('--today-color', dc.accent);
+      // Soft rgba glow form for the card frame + primary button outer halo —
+      // `--today-accent` is what the CSS box-shadows reference.
+      document.documentElement.style.setProperty('--today-accent', dc.glow);
+    })();
+
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
     const type = params.get('type') || 'welcome';
@@ -100,7 +224,7 @@
     const titleEl = document.getElementById('title');
 
     if (type === 'journal') {
-      titleEl.textContent = 'Today\'s Practice Card';
+      titleEl.textContent = "Today's Practice Card";
     }
 
     let cardBlob = null;
@@ -134,7 +258,6 @@
             text: 'My welcome card from AYBKK Russia WS 2026 🙏'
           });
         } else {
-          // Fallback: trigger download
           dlBtn.click();
         }
       } catch (e) {

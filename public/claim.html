@@ -4,86 +4,182 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Link LINE Account - AYBKK</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
+    /* claim.html — LINE account linking form. Single carved card with two
+       inputs and one wood button. "How it works" steps live as typographic
+       block (no nested card) framed by hairlines. */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f5f5f5; 
-      min-height: 100vh; 
-      display: flex; 
-      align-items: center; 
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: var(--space-5);
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
     }
     .container {
-      background: white;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      background: var(--surface);
+      padding: var(--space-6) var(--space-5);
+      border-radius: var(--radius-lg);
       max-width: 400px;
       width: 100%;
+      box-shadow:
+        18px 18px 36px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
     }
-    h1 { 
-      color: #00b900; 
-      margin-bottom: 8px; 
+    h1 {
+      font-family: var(--font-display);
       font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.012em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: var(--space-2);
     }
-    .subtitle { 
-      color: #666; 
-      margin-bottom: 24px;
+    .subtitle {
+      font-family: var(--font-body);
       font-size: 14px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-5);
+      line-height: 1.5;
     }
+
+    /* Steps — typographic block between hairlines, no nested card */
+    .steps {
+      padding: var(--space-4) 0;
+      margin-bottom: var(--space-5);
+      border-top: 1px solid var(--shadow-dark);
+      border-bottom: 1px solid var(--shadow-dark);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--ink);
+    }
+    .steps strong:first-child {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-3);
+    }
+    .steps li { margin-bottom: var(--space-2); padding-left: 4px; }
+    .steps strong { font-weight: 600; color: var(--primary-deep); }
+
     label {
       display: block;
-      color: #333;
-      font-weight: 500;
-      margin-bottom: 6px;
-      font-size: 14px;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 8px;
     }
     input {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
-      margin-bottom: 16px;
+      padding: 13px 16px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 15px;
+      background: var(--surface-2);
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px rgba(150, 120, 80, 0.18);
+      transition: box-shadow var(--dur-base);
     }
     input:focus {
       outline: none;
-      border-color: #00b900;
+      box-shadow:
+        inset 3px 3px 0 rgba(120, 90, 50, 0.28),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 6px 6px 12px rgba(120, 90, 50, 0.22);
     }
+    input::placeholder {
+      color: rgba(108, 94, 74, 0.55);
+      font-style: italic;
+    }
+
     button {
       width: 100%;
-      padding: 14px;
-      background: #00b900;
-      color: white;
+      padding: 18px var(--space-5);
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       cursor: pointer;
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.7),
+        -1px -1px 1px rgba(50, 28, 10, 0.85),
+        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      box-shadow:
+        14px 14px 28px rgba(120, 80, 40, 0.30),
+        -8px -8px 18px var(--shadow-light),
+        inset 4px 4px 10px rgba(255, 240, 215, 0.5),
+        inset -3px -3px 8px rgba(40, 20, 4, 0.25);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
-    button:hover { background: #00a000; }
-    button:disabled { background: #ccc; cursor: not-allowed; }
+    button:hover { transform: translateY(-3px) scale(1.02); }
+    button:active { transform: scale(0.97); }
+    button:disabled {
+      background: var(--surface-2);
+      color: rgba(108, 94, 74, 0.4);
+      text-shadow: none;
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Message states — earth-toned semantic */
     .message {
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 8px;
+      margin-top: var(--space-4);
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
       font-size: 14px;
       text-align: center;
     }
-    .success { background: #e8f5e9; color: #2e7d32; }
-    .error { background: #ffebee; color: #c62828; }
-    .info { background: #e3f2fd; color: #1565c0; }
-    .steps {
-      background: #f9f9f9;
-      padding: 16px;
-      border-radius: 8px;
-      margin-bottom: 24px;
-      font-size: 13px;
-      color: #555;
+    .success {
+      background: #ddd9c2;
+      color: #4f5d3a;
+      box-shadow:
+        inset 2px 2px 4px rgba(80, 95, 60, 0.14),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.55);
     }
-    .steps li { margin-bottom: 8px; padding-left: 4px; }
+    .error {
+      background: #ecd5be;
+      color: #8d4f2c;
+      box-shadow:
+        inset 2px 2px 4px rgba(141, 79, 44, 0.16),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.55);
+    }
+    .info {
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 3px var(--shadow-light);
+    }
   </style>
 </head>
 <body>
