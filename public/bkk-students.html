@@ -4,42 +4,244 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AYBKK Bangkok Shala — Students</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
+    /* bkk-students.html — Bangkok Shala roster (admin), beech/walnut palette.
+       Reserv = mossy beech, new = clay rust earth-tone chips. */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, sans-serif; background: #f5f0eb; color: #1a1a1a; padding: 16px; }
-    h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-    .subtitle { font-size: 13px; color: #888; margin-bottom: 16px; }
-    .row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
-    .refresh-btn { background: #7BAF7A; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
-    .new-btn { background: #c49564; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; text-decoration: none; }
-    .filter-btn { background: #fff; color: #555; border: 1px solid #e0d8cf; border-radius: 16px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
-    .filter-btn.active { background: #3e2723; color: #fff; border-color: #3e2723; }
-    .search { flex: 1; min-width: 160px; padding: 8px 12px; border: 1px solid #e0d8cf; border-radius: 8px; font-size: 13px; background: #fff; }
-    .count { font-size: 12px; color: #888; margin-bottom: 10px; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      padding: var(--space-4);
+      -webkit-font-smoothing: antialiased;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 5vw, 26px);
+      font-weight: 800;
+      letter-spacing: -0.012em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-family: var(--font-body);
+      font-size: 13px; font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-4);
+    }
+    .row { display: flex; gap: 8px; margin-bottom: var(--space-3); flex-wrap: wrap; align-items: center; }
+    .refresh-btn,
+    .new-btn {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 9px 16px;
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.6), -1px -1px 1px rgba(50, 28, 10, 0.7);
+      box-shadow:
+        6px 6px 14px rgba(120, 80, 40, 0.30),
+        -3px -3px 8px var(--shadow-light),
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .refresh-btn:hover, .new-btn:hover { transform: translateY(-2px); }
+
+    .filter-btn {
+      background: var(--surface);
+      color: var(--ink-soft);
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 7px 14px;
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+    }
+    .filter-btn.active {
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px var(--shadow-dark);
+    }
+    .search {
+      flex: 1; min-width: 160px;
+      padding: 9px 14px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 14px;
+      background: var(--surface-2);
+      color: var(--ink);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.85),
+        inset 4px 4px 8px rgba(150, 120, 80, 0.16);
+    }
+    .search:focus { outline: none; }
+    .search::placeholder { color: rgba(108, 94, 74, 0.55); font-style: italic; }
+
+    .count {
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-3);
+    }
+
     .student-card {
-      background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 10px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+      box-shadow:
+        12px 12px 26px var(--shadow-dark),
+        -6px -6px 14px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
       display: flex; align-items: center; gap: 12px;
     }
     .student-info { flex: 1; min-width: 0; }
-    .student-name { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-    .badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; letter-spacing: 0.3px; }
-    .badge.reserv { background: #eef5ee; color: #2e7d32; }
-    .badge.new { background: #fff3e0; color: #e65100; }
-    .student-meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .student-name {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 700;
+      color: var(--ink);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge {
+      font-family: var(--font-display);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      box-shadow:
+        inset 2px 2px 4px rgba(0, 0, 0, 0.10),
+        inset -1px -1px 2px rgba(253, 250, 242, 0.45);
+    }
+    .badge.reserv { background: #c5cba5; color: #3d4a26; }
+    .badge.new { background: #e3b89a; color: #7e3a1a; }
+    .student-meta {
+      font-family: var(--font-body);
+      font-size: 12px; font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+
     .btn-group { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
-    .qr-btn { background: #7BAF7A; color: #fff; border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    .copy-btn { background: #f0f0f0; color: #333; border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; white-space: nowrap; }
-    .copy-btn.done { background: #e8f5e9; color: #388e3c; }
-    .qr-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
+    .qr-btn,
+    .copy-btn {
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 12px;
+      border: none;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .qr-btn {
+      background: linear-gradient(135deg, #b89878, var(--accent));
+      color: #fdf6e6;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.4);
+    }
+    .qr-btn:hover { transform: translateY(-1px); }
+    .copy-btn {
+      background: var(--surface);
+      color: var(--primary-deep);
+    }
+    .copy-btn:hover { transform: translateY(-1px); }
+    .copy-btn.done {
+      background: #ddd9c2;
+      color: #4f5d3a;
+      box-shadow: inset 2px 2px 4px rgba(80, 95, 60, 0.16);
+    }
+
+    .qr-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(20, 14, 8, 0.92);
+      z-index: 100;
+      align-items: center; justify-content: center;
+      padding: var(--space-5);
+    }
     .qr-overlay.show { display: flex; }
-    .qr-box { background: #fff; border-radius: 20px; padding: 28px 24px; text-align: center; width: 280px; position: relative; }
-    .qr-box h2 { font-size: 17px; margin-bottom: 4px; }
-    .qr-box p { font-size: 12px; color: #888; margin-bottom: 16px; }
-    .qr-box img { width: 220px; height: 220px; border-radius: 8px; }
-    .qr-hint { font-size: 11px; color: #aaa; margin-top: 10px; }
-    .close-btn { position: absolute; top: 12px; right: 14px; background: #f5f5f5; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; }
-    .empty { text-align: center; color: #aaa; padding: 40px 0; font-size: 14px; }
+    .qr-box {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6) var(--space-5);
+      text-align: center;
+      width: 300px;
+      position: relative;
+      box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    .qr-box h2 {
+      font-family: var(--font-display);
+      font-size: 18px; font-weight: 800;
+      color: #2f2517;
+      margin-bottom: 4px;
+    }
+    .qr-box p {
+      font-family: var(--font-body);
+      font-size: 12px; font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-4);
+    }
+    .qr-box img {
+      width: 220px; height: 220px;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      background: #fffaf0;
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.92),
+        inset 6px 6px 12px var(--shadow-dark);
+    }
+    .qr-hint {
+      font-family: var(--font-body);
+      font-size: 11px; font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 10px;
+    }
+    .close-btn {
+      position: absolute; top: 12px; right: 14px;
+      background: var(--surface-2);
+      border: none;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--primary-deep);
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
+    }
+
+    .empty {
+      text-align: center;
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--ink-soft);
+      padding: var(--space-7) 0;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>

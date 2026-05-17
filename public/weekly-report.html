@@ -4,24 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AYBKK Weekly Practice Report</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&display=swap');
-    :root {
-      --bg: #FAF6F1; --card: #FFFFFF; --border: #E8E1D6; --border-soft: #F0E7DC;
-      --text: #2A2622; --text-secondary: #8B7E70; --text-muted: #B8AC9D;
-      --sand: #D4A574; --sand-light: #F5EDE4; --sand-hover: #C49564;
-      --clay: #C2876A; --clay-light: #EDD6CB; --clay-deep: #A36B52;
-      --success: #6B9E6B; --success-bg: #EEF5EE;
-      --shadow: 0 1px 3px rgba(82,58,38,0.05), 0 1px 2px rgba(82,58,38,0.04);
-      --shadow-lg: 0 4px 12px rgba(82,58,38,0.10);
-      --radius: 14px; --radius-sm: 12px; --radius-pill: 999px;
-      --transition: 0.22s cubic-bezier(0.32, 0.72, 0, 1);
-      --accent: var(--sand); --accent-light: var(--sand-light); /* legacy aliases */
-    }
+    /* weekly-report.html — student weekly summary. Hero photo-overlay,
+       carved stat cavities, hairline pull-quote (no side-stripe). */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Spectral', 'Hoefler Text', 'Times New Roman', serif;
-      background: var(--bg); min-height: 100vh; color: var(--text);
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
       -webkit-font-smoothing: antialiased;
       font-feature-settings: "kern" 1, "liga" 1;
     }
@@ -35,12 +27,15 @@
       mix-blend-mode: lighten;
       filter: brightness(1.15) contrast(1.1) drop-shadow(0 1px 4px rgba(0,0,0,0.18));
     }
-    .report { max-width: 480px; margin: 0 auto; padding: 0 0 40px; }
+    .report { max-width: 480px; margin: 0 auto; padding: 0 0 var(--space-7); }
+
+    /* Hero — photo-overlay surface. Photo is the soul. */
     .hero {
       position: relative; width: 100%; min-height: 320px;
       display: flex; flex-direction: column; align-items: center;
-      justify-content: flex-end; padding: 40px 20px 30px;
-      overflow: hidden; border-radius: 0 0 var(--radius) var(--radius);
+      justify-content: flex-end; padding: var(--space-6) var(--space-5) var(--space-5);
+      overflow: hidden;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     }
     .hero-bg {
       position: absolute; inset: 0; z-index: 0;
@@ -49,134 +44,292 @@
     }
     .hero-overlay {
       position: absolute; inset: 0; z-index: 1;
-      background: linear-gradient(180deg, rgba(194,135,106,0.30) 0%, rgba(163,107,82,0.55) 100%);
+      background: linear-gradient(180deg, rgba(154, 128, 93, 0.30) 0%, rgba(122, 92, 56, 0.55) 100%);
     }
-    .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; }
+    .hero-content { position: relative; z-index: 2; text-align: center; color: #fff5e0; }
     .hero-badge {
-      font-family: 'Spectral', serif;
-      font-size: 11px; font-weight: 600; letter-spacing: 2.4px;
-      text-transform: uppercase; background: rgba(255,255,255,0.18);
-      backdrop-filter: blur(10px); padding: 6px 16px; border-radius: var(--radius-pill);
-      margin-bottom: 18px; display: inline-block;
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(10px);
+      padding: 6px 16px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 18px;
+      display: inline-block;
     }
     .hero-name {
-      font-family: 'Spectral', serif;
-      font-size: clamp(30px, 7vw, 38px); font-weight: 700;
-      letter-spacing: -0.5px; line-height: 1.1;
+      font-family: var(--font-display);
+      font-size: clamp(30px, 7vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.012em;
+      line-height: 1.1;
       margin-bottom: 6px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.22);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     }
     .hero-date {
-      font-family: 'Spectral', serif;
-      font-size: 14px; font-style: italic; opacity: 0.92;
+      font-family: var(--font-body);
+      font-size: 14px; font-style: italic;
+      opacity: 0.92;
     }
-    .lang-switch { display: flex; justify-content: center; gap: 6px; margin: -20px auto 0; position: relative; z-index: 3; }
+
+    .lang-switch {
+      display: flex; justify-content: center; gap: 8px;
+      margin: -20px auto 0;
+      position: relative; z-index: 3;
+    }
     .lang-btn {
-      padding: 6px 16px; border: 1px solid var(--border); background: var(--card);
+      padding: 7px 16px;
+      background: var(--surface);
+      border: none;
       border-radius: var(--radius-pill);
-      font-family: 'Spectral', serif;
-      font-size: 12px; font-weight: 500;
-      color: var(--text-secondary); cursor: pointer; transition: all var(--transition);
-      box-shadow: var(--shadow);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
     }
-    .lang-btn:active { transform: scale(0.96); }
-    .lang-btn.active { background: var(--clay); color: #fff; border-color: var(--clay); }
-    .section { padding: 0 16px; margin-top: 20px; }
+    .lang-btn.active {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
+      box-shadow:
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4),
+        inset -2px -2px 4px rgba(40, 20, 4, 0.25),
+        6px 6px 12px rgba(120, 80, 40, 0.25);
+    }
+
+    .section { padding: 0 var(--space-4); margin-top: var(--space-5); }
+
+    /* Card — raised beech */
     .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px;
-      box-shadow: var(--shadow); margin-bottom: 16px;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      box-shadow:
+        12px 12px 26px var(--shadow-dark),
+        -6px -6px 14px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
     }
     .card-title {
-      font-family: 'Spectral', serif;
-      font-size: 14px; font-weight: 600; color: var(--clay-deep);
-      letter-spacing: 0.4px;
-      margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-4);
+      display: flex; align-items: center; gap: 8px;
     }
     .card-title .icon { font-size: 18px; }
+
+    /* Stat tiles — carved cavities */
     .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    .stat-item { text-align: center; padding: 14px 8px; background: var(--clay-light); border-radius: var(--radius-sm); }
+    .stat-item {
+      text-align: center;
+      padding: 14px 8px;
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.85),
+        inset 4px 4px 8px rgba(150, 120, 80, 0.13);
+    }
     .stat-value {
-      font-family: 'Spectral', serif;
-      font-size: 28px; font-weight: 700; color: var(--clay-deep);
-      line-height: 1; letter-spacing: -0.5px;
+      font-family: var(--font-display);
+      font-size: 30px; font-weight: 800;
+      color: var(--primary-deep);
+      line-height: 1;
+      letter-spacing: -0.012em;
     }
     .stat-label {
-      font-family: 'Spectral', serif;
-      font-size: 11px; color: var(--text-secondary);
-      margin-top: 4px; letter-spacing: 0.4px;
+      font-family: var(--font-display);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-top: 6px;
     }
+
+    /* Tags — earth-toned semantic chips */
     .tag-group { display: flex; flex-wrap: wrap; gap: 8px; }
     .tag {
-      padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      box-shadow:
+        inset 2px 2px 4px rgba(150, 120, 80, 0.18),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.65);
     }
-    .tag.strength { background: #EEF5EE; color: #4A7C4A; }
-    .tag.growth { background: #FFF3E0; color: #C47A20; }
+    .tag.strength { background: #ddd9c2; color: #4f5d3a; }
+    .tag.growth   { background: #ecd5be; color: #8d4f2c; }
+
     .summary-text {
-      font-family: 'Spectral', serif;
-      font-size: 15px; line-height: 1.75; color: var(--text);
-      padding: 4px 0; font-weight: 400;
+      font-family: var(--font-body);
+      font-size: 16px; line-height: 1.7;
+      color: var(--ink);
+      padding: 4px 0;
     }
-    .summary-text strong { font-weight: 600; color: var(--clay-deep); }
+    .summary-text strong { font-weight: 600; color: var(--primary-deep); }
+
     .feeling-badge {
-      display: inline-block; padding: 8px 16px; border-radius: 20px;
-      font-size: 13px; font-weight: 600; margin-bottom: 12px;
+      display: inline-block;
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 12px;
+      box-shadow:
+        inset 2px 2px 4px rgba(0, 0, 0, 0.10),
+        inset -1px -1px 2px rgba(253, 250, 242, 0.45);
     }
-    .feeling-badge.positive { background: #EEF5EE; color: #4A7C4A; }
-    .feeling-badge.neutral { background: #F0F0F0; color: #666; }
-    .feeling-badge.growing { background: #FFF3E0; color: #C47A20; }
+    .feeling-badge.positive { background: #c5cba5; color: #3d4a26; }
+    .feeling-badge.neutral  { background: var(--surface-2); color: var(--primary-deep); }
+    .feeling-badge.growing  { background: #e3b89a; color: #7e3a1a; }
+
+    /* Teacher card — carved walnut surface */
     .teacher-card {
-      background: linear-gradient(135deg, #FAF9F7 0%, #F5EDE4 100%);
-      border: 1.5px solid var(--accent); border-radius: var(--radius);
-      padding: 20px; box-shadow: var(--shadow);
+      background: var(--surface-2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 4px 4px 5px rgba(150, 120, 80, 0.13),
+        inset -4px -4px 5px rgba(253, 250, 242, 0.55),
+        inset 22px 22px 44px var(--shadow-dark),
+        inset -14px -14px 28px var(--shadow-light);
     }
+    /* Teacher quote — hairline pull-quote (no side-stripe) */
     .teacher-quote {
-      font-size: 15px; line-height: 1.7; font-style: italic;
-      color: var(--text); padding: 12px 0;
-      border-left: 3px solid var(--accent); padding-left: 16px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      font-style: italic;
+      color: var(--ink);
+      padding: var(--space-3) 0;
+      border-top: 1px solid var(--shadow-dark);
+      border-bottom: 1px solid var(--shadow-dark);
+      text-align: center;
     }
-    .teacher-name { font-size: 12px; color: var(--accent); font-weight: 600; margin-top: 8px; text-align: right; }
+    .teacher-name {
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-top: var(--space-3);
+      text-align: right;
+    }
+
+    /* Belief card — full walnut block */
     .belief-card {
-      background: linear-gradient(135deg, var(--accent) 0%, #C49564 100%);
-      border-radius: var(--radius); padding: 24px 20px;
-      text-align: center; color: #fff; box-shadow: var(--shadow-lg);
+      background: linear-gradient(135deg, #b89572 0%, var(--primary) 60%, #6b4f2d 100%);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6) var(--space-5);
+      text-align: center;
+      color: #fff5e0;
+      box-shadow: 12px 12px 28px rgba(80, 55, 30, 0.35);
     }
-    .belief-text { font-size: 15px; line-height: 1.6; font-weight: 500; }
+    .belief-text {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      font-style: italic;
+    }
     .belief-icon { font-size: 32px; margin-bottom: 12px; }
+
     .footer {
-      text-align: center; padding: 24px 16px 40px;
-      font-size: 12px; color: var(--text-secondary);
+      text-align: center;
+      padding: var(--space-5) var(--space-4) var(--space-7);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
     }
+
+    /* Share button — carved/protruding circle */
     .share-btn {
       position: fixed; bottom: 20px; right: 20px;
-      background: var(--accent); color: #fff;
-      width: 48px; height: 48px; border-radius: 50%;
-      border: none; font-size: 20px; cursor: pointer;
-      box-shadow: var(--shadow-lg); z-index: 10;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      z-index: 10;
       display: flex; align-items: center; justify-content: center;
-      transition: transform var(--transition);
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.6), -1px -1px 1px rgba(50, 28, 10, 0.6);
+      box-shadow:
+        10px 10px 22px rgba(120, 80, 40, 0.40),
+        -4px -4px 10px var(--shadow-light),
+        inset 3px 3px 6px rgba(255, 240, 215, 0.5);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
-    .share-btn:hover { transform: scale(1.1); }
-    .loading { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
-    .loading-spinner { font-size: 32px; margin-bottom: 12px; animation: spin 1s linear infinite; }
+    .share-btn:hover { transform: translateY(-3px) scale(1.05); }
+
+    .loading {
+      text-align: center;
+      padding: var(--space-7) var(--space-5);
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+    .loading-spinner {
+      font-size: 32px;
+      margin-bottom: 12px;
+      animation: spin 1.4s linear infinite;
+      color: var(--accent);
+    }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .no-photo .hero { min-height: 200px; background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg) 100%); }
-    .top-nav { max-width: 480px; margin: 0 auto; padding: 14px 16px 0; }
+
+    .no-photo .hero {
+      min-height: 200px;
+      background: linear-gradient(135deg, var(--surface-2) 0%, var(--bg) 100%);
+    }
+
+    /* Top nav (back to journal etc.) — carved tab plaques */
+    .top-nav { max-width: 480px; margin: 0 auto; padding: var(--space-3) var(--space-4) 0; }
     .top-nav .nav-tabs { display: flex; gap: 8px; }
     .top-nav .nav-tab {
-      flex: 1; padding: 12px 8px; background: var(--card);
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      font-family: 'Spectral', serif;
-      font-size: 13px; font-weight: 500; color: var(--text-secondary);
-      cursor: pointer; transition: all var(--transition); text-align: center;
-      text-decoration: none; line-height: 1;
+      flex: 1;
+      padding: 13px 8px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      line-height: 1;
+      box-shadow:
+        6px 6px 14px var(--shadow-dark),
+        -4px -4px 10px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
     .top-nav .nav-tab:active { transform: scale(0.97); }
     .top-nav .nav-tab.active {
-      background: var(--text); color: #fff; border-color: var(--text);
-      box-shadow: 0 4px 12px rgba(42,38,34,0.18);
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 5px 5px 12px var(--shadow-dark);
     }
-    .top-nav .nav-tab:not(.active):hover { border-color: var(--clay); color: var(--clay-deep); }
   </style>
 </head>
 <body>

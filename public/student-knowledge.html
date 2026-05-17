@@ -6,326 +6,309 @@
   <title>AYBKK - Student Knowledge</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/tokens.css">
   <style>
+    /* student-knowledge.html — student-facing knowledge browser. Beech/walnut
+       palette. Problem-card side-stripe replaced with mossy-beech tint (full
+       background, no side-bar). Asana modal in carved overlay. */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    :root {
-      --bg: #FAFAFA;
-      --card: #FFFFFF;
-      --text: #1A1A1A;
-      --text-light: #666666;
-      --text-lighter: #999999;
-      --accent: #2563EB;
-      --accent-light: #DBEAFE;
-      --border: #E5E5E5;
-      --green: #10B981;
-      --green-light: #D1FAE5;
-    }
-    
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
-      color: var(--text);
+      color: var(--ink);
       min-height: 100vh;
-      font-weight: 300;
-      line-height: 1.5;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
     }
-    
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px 16px 80px;
-    }
-    
-    header {
-      padding: 32px 0 24px;
-      text-align: center;
-    }
-    
+    .container { max-width: 600px; margin: 0 auto; padding: var(--space-5) var(--space-4) var(--space-8); }
+
+    header { padding: var(--space-6) 0 var(--space-5); text-align: center; }
     .logo {
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      color: var(--text);
+      font-family: var(--font-display);
+      font-size: clamp(22px, 5vw, 28px);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
     }
-    
     .subtitle {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 4px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 6px;
     }
-    
-    /* Tab navigation */
+
+    /* Tabs — carved track + protruding active tab */
     .tabs {
       display: flex;
-      background: var(--card);
-      border-radius: 12px;
-      padding: 4px;
-      margin-bottom: 24px;
-      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 5px;
+      margin-bottom: var(--space-5);
+      box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
     }
-    
     .tab {
       flex: 1;
-      padding: 12px 8px;
+      padding: 11px 8px;
       text-align: center;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-light);
-      border-radius: 8px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all var(--dur-base) var(--ease-spring);
     }
-    
     .tab.active {
-      background: var(--accent);
-      color: white;
+      background: var(--surface);
+      color: var(--primary-deep);
+      box-shadow:
+        4px 4px 10px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
     }
-    
-    .tab:hover:not(.active) {
-      color: var(--text);
-    }
-    
-    /* Section visibility */
-    .section {
-      display: none;
-    }
-    
-    .section.active {
-      display: block;
-    }
-    
+
+    .section { display: none; }
+    .section.active { display: block; }
+
     /* Cards */
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 12px;
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      margin-bottom: 10px;
       cursor: pointer;
-      transition: all 0.2s;
+      box-shadow:
+        6px 6px 14px var(--shadow-dark),
+        -3px -3px 8px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
-    
-    .card:hover {
-      border-color: var(--accent);
-      transform: translateY(-1px);
-    }
-    
+    .card:hover { transform: translateY(-2px); }
     .card.expanded {
-      border-color: var(--accent);
+      transform: none;
+      background: var(--surface-2);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 12px var(--shadow-dark);
     }
-    
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    
     .card-title {
+      font-family: var(--font-display);
       font-size: 15px;
-      font-weight: 500;
+      font-weight: 700;
+      color: var(--ink);
     }
-    
     .card-count {
-      font-size: 11px;
-      color: var(--text-lighter);
-      background: var(--bg);
-      padding: 4px 8px;
-      border-radius: 12px;
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      background: var(--surface-2);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
     }
-    
     .card-arrow {
       font-size: 14px;
-      color: var(--text-lighter);
-      transition: transform 0.2s;
+      color: var(--ink-soft);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
-    
     .card.expanded .card-arrow {
       transform: rotate(180deg);
+      color: var(--primary-deep);
     }
-    
-    /* Expandable content */
+
     .card-content {
       display: none;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: 1px dashed var(--shadow-dark);
     }
-    
-    .card.expanded .card-content {
-      display: block;
-    }
-    
-    /* Problem cards have special styling */
-    .problem-card {
-      border-left: 3px solid var(--green);
-    }
-    
+    .card.expanded .card-content { display: block; }
+
+    /* Problem cards — mossy-beech tint (no side-stripe). Background swap
+       signals "this is a known issue / has solutions" without a banned
+       border-left accent. */
+    .problem-card { background: #ddd9c2; }
+    .problem-card.expanded { background: #c5cba5; }
+    .problem-card .card-title { color: #4f5d3a; }
     .problem-card .card-content {
-      background: var(--green-light);
-      margin: 16px -20px -20px;
-      padding: 16px 20px;
-      border-radius: 0 0 11px 11px;
-      border-top: none;
+      margin: var(--space-3) calc(var(--space-4) * -1) calc(var(--space-4) * -1);
+      padding: var(--space-3) var(--space-4);
+      border-top: 1px dashed rgba(80, 95, 60, 0.3);
+      background: rgba(197, 203, 165, 0.55);
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
     }
-    
+
     .solution-label {
-      font-size: 11px;
-      color: var(--text-light);
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      color: var(--primary-deep);
       margin-bottom: 8px;
       margin-top: 12px;
     }
-    
-    .solution-label:first-child {
-      margin-top: 0;
-    }
-    
-    .asana-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    
+    .solution-label:first-child { margin-top: 0; }
+
+    .asana-list { display: flex; flex-wrap: wrap; gap: 6px; }
     .asana-tag {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-sm);
       padding: 6px 10px;
+      font-family: var(--font-body);
       font-size: 12px;
+      color: var(--ink);
+      box-shadow:
+        2px 2px 4px var(--shadow-dark),
+        -1px -1px 2px var(--shadow-light);
     }
-    
+    /* Asana flagged as a problem-area — clay rust */
     .asana-tag.problem {
-      background: #FEF3C7;
-      border-color: #F59E0B;
+      background: #ecd5be;
+      color: #8d4f2c;
+      box-shadow:
+        inset 2px 2px 4px rgba(141, 79, 44, 0.16),
+        inset -1px -1px 2px rgba(253, 250, 242, 0.55);
     }
-    
-    /* Asana detail modal */
+
+    /* Asana modal — dark photo viewer */
     .modal {
       display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
+      position: fixed; inset: 0;
+      background: rgba(20, 14, 8, 0.85);
       z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      align-items: center; justify-content: center;
+      padding: var(--space-5);
     }
-    
-    .modal.show {
-      display: flex;
-    }
-    
+    .modal.show { display: flex; }
     .modal-content {
-      background: var(--card);
-      border-radius: 16px;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
       max-width: 500px;
       width: 100%;
       max-height: 80vh;
       overflow-y: auto;
-      padding: 24px;
+      padding: var(--space-5);
+      box-shadow:
+        20px 20px 40px rgba(0, 0, 0, 0.4),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
     }
-    
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 20px;
+      margin-bottom: var(--space-5);
     }
-    
     .modal-title {
-      font-size: 18px;
-      font-weight: 600;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 800;
+      color: #2f2517;
+      letter-spacing: -0.012em;
+      text-shadow: var(--text-carve-soft);
     }
-    
     .modal-close {
-      background: var(--bg);
+      background: var(--surface-2);
       border: none;
       border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      font-size: 18px;
+      width: 34px; height: 34px;
+      font-size: 16px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: var(--primary-deep);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
     }
-    
-    .modal-section {
-      margin-bottom: 16px;
-    }
-    
+
+    .modal-section { margin-bottom: var(--space-4); }
     .modal-label {
+      font-family: var(--font-display);
       font-size: 11px;
-      color: var(--text-light);
+      font-weight: 700;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      color: var(--primary-deep);
       margin-bottom: 8px;
     }
-    
-    .modal-asanas {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    
+    .modal-asanas { display: flex; flex-wrap: wrap; gap: 8px; }
     .modal-asana-tag {
-      background: var(--accent-light);
-      color: var(--accent);
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 13px;
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
       cursor: pointer;
-      transition: all 0.2s;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -2px -2px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
-    
-    .modal-asana-tag:hover {
-      background: var(--accent);
-      color: white;
-    }
-    
+    .modal-asana-tag:hover { transform: translateY(-1px); }
+
+    /* Deep-dive CTA — full clay-button */
     .deep-dive-btn {
       display: block;
       width: 100%;
-      background: var(--text);
-      color: white;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
       border: none;
-      border-radius: 8px;
-      padding: 14px;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-family: var(--font-display);
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       cursor: pointer;
-      margin-top: 20px;
+      margin-top: var(--space-5);
       text-align: center;
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.7),
+        -1px -1px 1px rgba(50, 28, 10, 0.85);
+      box-shadow:
+        12px 12px 26px rgba(120, 80, 40, 0.30),
+        -6px -6px 14px var(--shadow-light),
+        inset 4px 4px 10px rgba(255, 240, 215, 0.5);
+      transition: transform var(--dur-base) var(--ease-spring);
     }
-    
-    .deep-dive-btn:hover {
-      background: #000;
-    }
-    
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-light);
-    }
-    
-    /* Empty state */
+    .deep-dive-btn:hover { transform: translateY(-3px) scale(1.02); }
+
+    .loading,
     .empty {
       text-align: center;
-      padding: 40px;
-      color: var(--text-light);
+      padding: var(--space-6);
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--ink-soft);
     }
-    
+
     footer {
       text-align: center;
-      padding: 32px 0;
+      padding: var(--space-6) 0;
+      font-family: var(--font-body);
       font-size: 11px;
-      color: var(--text-lighter);
+      font-style: italic;
+      color: var(--ink-soft);
     }
   </style>
 </head>

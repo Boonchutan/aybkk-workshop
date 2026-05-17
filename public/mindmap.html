@@ -4,50 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AYBKK Teaching Reference</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+    /* mindmap.html — teaching reference (admin). Surgical migration:
+       chrome (header, panels, search) gets the wood/clay palette + Fraunces
+       /Spectral fonts. Mindmap nodes' semantic colors (green=strength,
+       red=struggle, purple=advanced, brown=preparatory, dark=mastery, plus
+       student state colors) stay because they carry teaching meaning, but
+       are reassigned to earth-toned values to match the system. Side-stripes
+       on stage-headers replaced with full-width hairline + colored count
+       chip, no border-left bar (impeccable absolute ban). */
 
     :root {
-      --bg: #F9EFE1;
-      --paper: #FFFDF7;
-      --card: #FFFDF7;
-      --border: #D4B896;
-      --text: #2C1810;
-      --text-secondary: #6B4C2A;
-      --text-light: #8B7355;
-      --accent-green: #2D5016;
-      --accent-green-light: #E8F0E0;
-      --accent-red: #8B2500;
-      --accent-red-light: #F5E8E0;
-      --accent-purple: #4A2545;
-      --accent-purple-light: #F0E8F0;
-      --accent-brown: #8B4513;
-      --accent-brown-light: #F5EBE0;
-      --accent-dark: #3D2914;
-      --accent-dark-light: #EDE5DA;
-      /* Student intelligence colors */
-      --student-current: #B8860B;
-      --student-current-bg: #FFF8E1;
-      --student-strength: #1B5E20;
-      --student-strength-bg: #C8E6C9;
-      --student-struggle: #B71C1C;
-      --student-struggle-bg: #FFCDD2;
-      --student-predicted: #E65100;
-      --student-predicted-bg: #FFE0B2;
-      --student-upcoming: #1565C0;
-      --student-upcoming-bg: #BBDEFB;
-      --student-unreached: #9E9E9E;
-      --student-unreached-bg: #F5F5F5;
-      --shadow: 0 2px 8px rgba(44,24,16,0.08);
-      --shadow-lg: 0 4px 20px rgba(44,24,16,0.12);
-      --radius: 10px;
-      --radius-sm: 6px;
+      /* Chrome: alias to tokens.css wood palette (--bg comes from tokens.css) */
+      --paper: var(--surface);
+      --card: var(--surface);
+      --border: var(--shadow-dark);
+      --text: var(--ink);
+      --text-secondary: var(--ink-soft);
+      --text-light: rgba(108, 94, 74, 0.7);
+
+      /* Mindmap semantic colors — earth-toned, kept distinct */
+      --accent-green: #4f5d3a;            /* mossy beech (preparatory/stable) */
+      --accent-green-light: #ddd9c2;
+      --accent-red: #8d4f2c;              /* clay rust (struggle/intense) */
+      --accent-red-light: #ecd5be;
+      --accent-purple: #6e5a48;           /* walnut (advanced) */
+      --accent-purple-light: #e2d6c0;
+      --accent-brown: #7d6442;             /* primary walnut */
+      --accent-brown-light: #ede1c9;
+      --accent-dark: #3a2e1f;              /* deep ink (mastery) */
+      --accent-dark-light: #d8c9aa;
+
+      /* Student intelligence — earth-toned variants */
+      --student-current: #b08a3f;          /* ochre (current asana) */
+      --student-current-bg: #f0e3c0;
+      --student-strength: #4f5d3a;         /* mossy beech */
+      --student-strength-bg: #ddd9c2;
+      --student-struggle: #8d4f2c;         /* clay rust */
+      --student-struggle-bg: #ecd5be;
+      --student-predicted: #b06a30;        /* warm amber */
+      --student-predicted-bg: #f0d8b8;
+      --student-upcoming: #6e7a8a;         /* dusty blue-grey */
+      --student-upcoming-bg: #d8dde2;
+      --student-unreached: #9c9080;
+      --student-unreached-bg: var(--surface-2);
+
+      --shadow: 4px 4px 8px var(--shadow-dark), -2px -2px 6px var(--shadow-light);
+      --shadow-lg: 12px 12px 28px var(--shadow-dark), -6px -6px 16px var(--shadow-light);
+      --radius: 12px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -69,7 +80,7 @@
       box-shadow: 0 2px 12px rgba(166,97,26,0.1);
     }
     .header-logo {
-      font-family: 'Crimson Pro', serif;
+      font-family: var(--font-display);
       font-size: 17px;
       font-weight: 700;
       color: var(--accent-brown);
@@ -319,7 +330,7 @@
       color: var(--accent-brown);
     }
     .col-header h2 {
-      font-family: 'Crimson Pro', serif;
+      font-family: var(--font-display);
       font-size: 14px;
       font-weight: 700;
     }
@@ -339,10 +350,11 @@
       align-items: center;
       gap: 8px;
     }
-    .stage-header.green { border-left: 3px solid var(--accent-green); }
-    .stage-header.red { border-left: 3px solid var(--accent-red); }
-    .stage-header.purple { border-left: 3px solid var(--accent-purple); }
-    .stage-header.dark { border-left: 3px solid var(--accent-dark); }
+    /* Stage-header semantic accent — full top edge (no side-stripe) */
+    .stage-header.green  { box-shadow: inset 0 3px 0 var(--accent-green); }
+    .stage-header.red    { box-shadow: inset 0 3px 0 var(--accent-red); }
+    .stage-header.purple { box-shadow: inset 0 3px 0 var(--accent-purple); }
+    .stage-header.dark   { box-shadow: inset 0 3px 0 var(--accent-dark); }
     .stage-name { font-size: 12px; font-weight: 600; color: var(--text); flex: 1; }
     .stage-count {
       font-size: 10px;
@@ -359,28 +371,53 @@
       gap: 5px;
     }
 
-    /* Base asana pill */
+    /* Base asana pill — carved into the surface, semantic color tints. */
     .asana-pill {
       display: inline-flex;
       align-items: center;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 20px;
+      font-family: var(--font-display);
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 700;
+      letter-spacing: 0.04em;
       cursor: pointer;
-      border: 1.5px solid;
-      transition: all 0.2s;
+      border: none;
       white-space: nowrap;
       position: relative;
+      transition: transform var(--dur-base) var(--ease-spring);
     }
-    .asana-pill.green { border-color: var(--accent-green); color: var(--accent-green); background: var(--accent-green-light); }
-    .asana-pill.green:hover { background: var(--accent-green); color: #fff; }
-    .asana-pill.red { border-color: var(--accent-red); color: var(--accent-red); background: var(--accent-red-light); }
-    .asana-pill.red:hover { background: var(--accent-red); color: #fff; }
-    .asana-pill.purple { border-color: var(--accent-purple); color: var(--accent-purple); background: var(--accent-purple-light); }
-    .asana-pill.purple:hover { background: var(--accent-purple); color: #fff; }
-    .asana-pill.dark { border-color: var(--accent-dark); color: var(--accent-dark); background: var(--accent-dark-light); }
-    .asana-pill.dark:hover { background: var(--accent-dark); color: #fff; }
+    .asana-pill:hover { transform: translateY(-1px); }
+
+    /* Each variant: light tint background + deep tint text + carved insets */
+    .asana-pill.green {
+      background: var(--accent-green-light);
+      color: var(--accent-green);
+      box-shadow:
+        inset 2px 2px 4px rgba(80, 95, 60, 0.22),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.65);
+    }
+    .asana-pill.red {
+      background: var(--accent-red-light);
+      color: var(--accent-red);
+      box-shadow:
+        inset 2px 2px 4px rgba(141, 79, 44, 0.22),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.65);
+    }
+    .asana-pill.purple {
+      background: var(--accent-purple-light);
+      color: var(--accent-purple);
+      box-shadow:
+        inset 2px 2px 4px rgba(110, 90, 72, 0.22),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.65);
+    }
+    .asana-pill.dark {
+      background: var(--accent-dark-light);
+      color: var(--accent-dark);
+      box-shadow:
+        inset 2px 2px 4px rgba(58, 46, 31, 0.24),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.65);
+    }
 
     /* Student overlay states — override base colors */
     body.student-mode .asana-pill.s-current {
@@ -494,7 +531,7 @@
       background: var(--student-current-bg);
     }
     .intel-header .intel-name {
-      font-family: 'Crimson Pro', serif;
+      font-family: var(--font-display);
       font-size: 18px;
       font-weight: 700;
       color: var(--student-current);
@@ -756,7 +793,7 @@
     .detail-badge.purple { background: var(--accent-purple-light); color: var(--accent-purple); }
     .detail-badge.dark { background: var(--accent-dark-light); color: var(--accent-dark); }
     .detail-title {
-      font-family: 'Crimson Pro', serif;
+      font-family: var(--font-display);
       font-size: 19px;
       font-weight: 700;
       color: var(--text);
@@ -814,6 +851,175 @@
       border: 1.5px solid;
       transition: all 0.15s;
     }
+
+    /* ── BORDERLESS CHROME — depth via shadow only.
+       The page was reading "drawn" because every container had a 1.5–2px
+       outline. Strip outlines on cards/panels/dropdowns/inputs; rely on
+       raised or carved shadows for separation. Header floats with a strong
+       drop shadow above the canvas. ── */
+
+    .header {
+      border-bottom: none !important;
+      box-shadow:
+        0 10px 28px rgba(80, 60, 40, 0.20),
+        0 2px 6px rgba(80, 60, 40, 0.10);
+    }
+
+    .stage,
+    .stage-header,
+    .actions-row,
+    .col-header,
+    .search-box input,
+    .search-results,
+    .search-result-item,
+    .student-select-btn,
+    .student-dropdown,
+    .student-dropdown-search,
+    .student-dropdown-search input,
+    .student-list-item,
+    .student-list-item .sbadge,
+    .toggle-group,
+    .zoom-btn,
+    .intel-panel,
+    .intel-header,
+    .intel-current-asana,
+    .skill-bar-track,
+    .upcoming-item,
+    .upcoming-item.predicted,
+    .upcoming-item.neutral,
+    .session-entry,
+    .action-tag,
+    .stage-header[class*="green"],
+    .stage-header[class*="red"],
+    .stage-header[class*="purple"],
+    .stage-header[class*="dark"] {
+      border: none !important;
+    }
+    /* Borderless list-item separators — kill bottoms too */
+    .search-result-item,
+    .student-dropdown-search,
+    .student-list-item,
+    .intel-header {
+      border-bottom: none !important;
+    }
+    .clear-student-btn,
+    .actions-row {
+      border-top: none !important;
+    }
+
+    /* Inputs that were bordered: now carved cavities */
+    .search-box input,
+    .student-dropdown-search input {
+      background: var(--surface-2);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.80),
+        inset 4px 4px 8px rgba(150, 120, 80, 0.16);
+    }
+    .search-box input:focus,
+    .student-dropdown-search input:focus {
+      box-shadow:
+        inset 3px 3px 0 rgba(120, 90, 50, 0.28),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.95),
+        inset 5px 5px 10px rgba(120, 90, 50, 0.20);
+    }
+
+    /* Stage cards: raised wood plaques (no outline). */
+    .stage {
+      box-shadow:
+        8px 8px 18px var(--shadow-dark),
+        -4px -4px 10px var(--shadow-light);
+    }
+
+    /* Col header: raised label plaque. */
+    .col-header {
+      box-shadow:
+        6px 6px 14px var(--shadow-dark),
+        -3px -3px 8px var(--shadow-light);
+    }
+
+    /* Floating panels (search results, dropdowns) lift via shadow. */
+    .search-results,
+    .student-dropdown {
+      box-shadow:
+        14px 14px 32px var(--shadow-dark),
+        -6px -6px 14px var(--shadow-light);
+    }
+
+    /* Toggle/zoom/select buttons: outset chips. */
+    .toggle-group {
+      box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+    }
+    .zoom-btn,
+    .student-select-btn {
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+    }
+
+    /* Intel panel: deep float, no outline. */
+    .intel-panel {
+      box-shadow:
+        18px 18px 38px var(--shadow-dark),
+        -8px -8px 18px var(--shadow-light);
+    }
+    .intel-current-asana {
+      box-shadow:
+        inset 2px 2px 4px rgba(176, 138, 63, 0.24),
+        inset -1px -1px 3px rgba(253, 250, 242, 0.65);
+    }
+
+    /* Skill-bar track: carved groove. */
+    .skill-bar-track {
+      background: var(--surface-2);
+      box-shadow:
+        inset 2px 2px 3px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
+    }
+
+    /* Action tags: subtle outset chips. */
+    .action-tag {
+      background: var(--surface);
+      box-shadow:
+        2px 2px 4px var(--shadow-dark),
+        -1px -1px 2px var(--shadow-light);
+    }
+
+    /* Session entries / upcoming items: carved cavities (read-only data). */
+    .session-entry,
+    .upcoming-item.neutral {
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
+    }
+    .upcoming-item.predicted {
+      box-shadow:
+        inset 2px 2px 4px rgba(176, 106, 48, 0.20),
+        inset -1px -1px 2px rgba(253, 250, 242, 0.55);
+    }
+
+    /* ── OVERFLOW FIX — let stages grow to fit all pills.
+       Stages were clipped by overflow:hidden + columns squeezed to 100%
+       viewport height. Fix: stages size naturally, columns align to top
+       and grow as tall as their content, canvas pans (JS-driven) to
+       reveal everything. ── */
+    .stage {
+      overflow: visible !important;
+      flex-shrink: 0 !important;
+    }
+    .columns {
+      height: auto !important;
+      min-height: 100%;
+      align-items: flex-start !important;
+    }
+    .column {
+      height: auto !important;
+    }
+    .asana-list {
+      overflow: visible !important;
+    }
   </style>
 </head>
 <body>
@@ -826,7 +1032,7 @@
 .view-switch-mm a {
   padding: 8px 16px; border-radius: 999px;
   background: var(--paper); border: 1px solid var(--border);
-  font-family: 'Crimson Pro', Georgia, serif;
+  font-family: var(--font-display);
   font-size: 13px; font-weight: 500; color: var(--text-secondary);
   text-decoration: none; cursor: pointer;
   transition: all 0.22s cubic-bezier(0.32, 0.72, 0, 1);

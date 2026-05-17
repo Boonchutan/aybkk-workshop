@@ -4,44 +4,249 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Russia WS Students — AYBKK 2026</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
+    /* ru-students.html — Russia WS roster (admin). Same beech/walnut palette
+       as other admin tools. City badges (SPB / Moscow) earth-toned. */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; background: #faf8f5; color: #2a2420; padding: 16px; }
-    h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; color: #3e2723; }
-    .subtitle { font-size: 13px; color: #8b7d6b; margin-bottom: 16px; }
-    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-    .btn { background: #3e2723; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; font-weight: 500; }
-    .btn.secondary { background: #c49564; }
-    .btn.ghost { background: #fff; color: #3e2723; border: 1.5px solid #d4c5b3; }
-    .btn.ghost.active { background: #3e2723; color: #fff; border-color: #3e2723; }
-    .count { font-size: 13px; color: #8b7d6b; margin-bottom: 12px; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      padding: var(--space-4);
+      -webkit-font-smoothing: antialiased;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 5vw, 28px);
+      font-weight: 800;
+      letter-spacing: -0.012em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-4);
+    }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--space-4); }
+    .btn {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 10px 18px;
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.6), -1px -1px 1px rgba(50, 28, 10, 0.7);
+      box-shadow:
+        8px 8px 16px rgba(120, 80, 40, 0.30),
+        -4px -4px 10px var(--shadow-light),
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn.secondary {
+      background: var(--surface);
+      color: var(--primary-deep);
+      text-shadow: none;
+      box-shadow:
+        6px 6px 12px var(--shadow-dark),
+        -3px -3px 8px var(--shadow-light);
+    }
+    .btn.ghost {
+      background: var(--surface);
+      color: var(--ink-soft);
+      text-shadow: none;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+    }
+    .btn.ghost.active {
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px var(--shadow-dark);
+      transform: none;
+    }
+
+    .count {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-3);
+    }
+
     .student-card {
-      background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 12px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+      box-shadow:
+        12px 12px 26px var(--shadow-dark),
+        -6px -6px 14px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
       display: flex; gap: 14px; align-items: flex-start;
     }
-    .photo { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: #f0ebe5; border: 2px solid #e8e0d8; }
-    .photo.placeholder { display: flex; align-items: center; justify-content: center; color: #c49564; font-size: 22px; font-weight: 600; }
+    .photo {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--surface-2);
+      box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+    }
+    .photo.placeholder {
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      color: var(--primary-deep);
+      font-size: 20px; font-weight: 800;
+    }
     .info { flex: 1; min-width: 0; }
     .row1 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-    .name { font-size: 16px; font-weight: 600; color: #3e2723; }
-    .city-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .city-badge.spb { background: #e3f2fd; color: #1565c0; }
-    .city-badge.moscow { background: #ffebee; color: #c62828; }
-    .meta { font-size: 12px; color: #8b7d6b; margin-top: 2px; }
-    .meta-row { margin-top: 6px; font-size: 12px; color: #5d4037; line-height: 1.5; }
-    .meta-row strong { color: #3e2723; font-weight: 600; }
+    .name {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .city-badge {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      box-shadow:
+        inset 2px 2px 4px rgba(0, 0, 0, 0.10),
+        inset -1px -1px 2px rgba(253, 250, 242, 0.45);
+    }
+    .city-badge.spb { background: #c5cba5; color: #3d4a26; }
+    .city-badge.moscow { background: #e3b89a; color: #7e3a1a; }
+    .meta {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+    .meta-row {
+      font-family: var(--font-body);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--ink);
+      margin-top: 6px;
+    }
+    .meta-row strong {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-right: 4px;
+    }
     .actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
-    .actions a, .actions button { font-size: 11px; padding: 6px 10px; border-radius: 8px; border: 1px solid #d4c5b3; background: #faf8f5; color: #5d4037; text-decoration: none; cursor: pointer; }
-    .actions a:hover, .actions button:hover { background: #f5ede4; }
-    .empty { text-align: center; color: #aaa; padding: 40px 0; font-size: 14px; }
-    .qr-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
+    .actions a, .actions button {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 12px;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: var(--surface);
+      color: var(--primary-deep);
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .actions a:hover, .actions button:hover { transform: translateY(-1px); }
+
+    .empty {
+      text-align: center;
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--ink-soft);
+      padding: var(--space-7) 0;
+      font-size: 14px;
+    }
+
+    /* QR overlay — dark photo viewer with carved cavity holding the QR */
+    .qr-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(20, 14, 8, 0.92);
+      z-index: 100;
+      align-items: center; justify-content: center;
+      padding: var(--space-5);
+    }
     .qr-overlay.show { display: flex; }
-    .qr-box { background: #fff; border-radius: 20px; padding: 28px 24px; text-align: center; width: 280px; position: relative; }
-    .qr-box h2 { font-size: 17px; margin-bottom: 4px; }
-    .qr-box p { font-size: 12px; color: #888; margin-bottom: 16px; }
-    .qr-box img { width: 220px; height: 220px; border-radius: 8px; }
-    .close-btn { position: absolute; top: 12px; right: 14px; background: #f5f5f5; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+    .qr-box {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6) var(--space-5);
+      text-align: center;
+      width: 300px;
+      position: relative;
+      box-shadow:
+        20px 20px 40px rgba(0, 0, 0, 0.4),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+    .qr-box h2 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 800;
+      color: #2f2517;
+      margin-bottom: 4px;
+    }
+    .qr-box p {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-4);
+    }
+    .qr-box img {
+      width: 220px; height: 220px;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      background: #fffaf0;
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.92),
+        inset 6px 6px 12px var(--shadow-dark);
+    }
+    .close-btn {
+      position: absolute; top: 12px; right: 14px;
+      background: var(--surface-2);
+      border: none;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--primary-deep);
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
+    }
   </style>
 </head>
 <body>
