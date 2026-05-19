@@ -1767,7 +1767,12 @@ app.get('/claim', (req, res) => {
 // DB read the table is seeded from the local file if present, otherwise from
 // the committed seed module (data/ is gitignored, so the seed ships in code).
 const CALENDAR_FILE = path.join(__dirname, 'data', 'calendar.json');
-const CALENDAR_SEED = require('./scripts/calendar-seed.js');
+let CALENDAR_SEED = null;
+try {
+  CALENDAR_SEED = require('./scripts/calendar-seed.js');
+} catch (e) {
+  console.error('calendar seed module unavailable, planner starts empty:', e.message);
+}
 
 const CALENDAR_DEFAULT = {
   lanes: [
