@@ -1050,19 +1050,27 @@ $('vYear').onclick = () => { view='year'; switchView(); render(); };
 // peek tab on vertical scroll (auto, with manual override via the tab).
 const scroller = $('scroll'), topbar = $('topbar'), peek = $('peek');
 let tbManualUntil = 0;
+// Hysteresis: collapse only past COLLAPSE_AT, expand only under
+// EXPAND_AT. The wide dead zone between them stops the collapse →
+// pane-resize → re-trigger feedback loop that made it blink.
+const COLLAPSE_AT = 96, EXPAND_AT = 8;
+function autoTopbar(st) {
+  if (Date.now() < tbManualUntil) return;
+  const min = topbar.classList.contains('min');
+  if (!min && st > COLLAPSE_AT) topbar.classList.add('min');
+  else if (min && st < EXPAND_AT) topbar.classList.remove('min');
+}
 scroller.addEventListener('scroll', () => {
   const l = document.querySelector('.lane-labels');
   if (l) l.style.left = scroller.scrollLeft + 'px';
-  if (Date.now() < tbManualUntil) return;
-  topbar.classList.toggle('min', scroller.scrollTop > 26);
+  autoTopbar(scroller.scrollTop);
 }, { passive: true });
 peek.addEventListener('click', () => {
   topbar.classList.toggle('min');
   tbManualUntil = Date.now() + 3000;
 });
 $('yearWrap').addEventListener('scroll', () => {
-  if (Date.now() < tbManualUntil) return;
-  topbar.classList.toggle('min', $('yearWrap').scrollTop > 26);
+  autoTopbar($('yearWrap').scrollTop);
 }, { passive: true });
 
 load();
