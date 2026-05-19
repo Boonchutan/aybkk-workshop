@@ -30,7 +30,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.MISSION_CONTROL_PORT || 3000;
-const UPLOAD_DIR = process.env.UPLOAD_DIR || '/Users/alfredoagent/mission-control/uploads';
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 
 // Ensure upload directory exists
 if (!fs.existsSync(UPLOAD_DIR)) {
@@ -1755,6 +1755,58 @@ app.get('/', (req, res) => {
 // Claim page for LINE linking
 app.get('/claim', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'claim.html'));
+});
+
+// ─── Yearly Planner / Timeline ───────────────────────────────────────────────
+// Single-operator planning tool: full-year timeline of projects, workshops,
+// travel and kids' school holidays. State persisted as one JSON document.
+const CALENDAR_FILE = path.join(__dirname, 'data', 'calendar.json');
+
+const CALENDAR_DEFAULT = {
+  lanes: [
+    { id: 'school',   name: "Kids' School & Holidays", color: '#9a805d' },
+    { id: 'travel',   name: 'Travel & Workshops',      color: '#7d6442' },
+    { id: 'aybkk',    name: 'AYBKK',                    color: '#b8895a' },
+    { id: 'tee',      name: 'Tee Shirt Plan',          color: '#a8693f' },
+    { id: 'online',   name: 'Online Class',            color: '#8a7b53' },
+    { id: 'personal', name: 'Personal',                color: '#6c5e4a' }
+  ],
+  events: []
+};
+
+app.get('/calendar', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'calendar.html'));
+});
+
+app.get('/api/calendar', (req, res) => {
+  try {
+    if (!fs.existsSync(CALENDAR_FILE)) {
+      return res.json(CALENDAR_DEFAULT);
+    }
+    const raw = fs.readFileSync(CALENDAR_FILE, 'utf8');
+    const data = JSON.parse(raw);
+    res.json({
+      lanes: Array.isArray(data.lanes) && data.lanes.length ? data.lanes : CALENDAR_DEFAULT.lanes,
+      events: Array.isArray(data.events) ? data.events : []
+    });
+  } catch (err) {
+    console.error('calendar read failed:', err.message);
+    res.json(CALENDAR_DEFAULT);
+  }
+});
+
+app.put('/api/calendar', (req, res) => {
+  try {
+    const { lanes, events } = req.body || {};
+    if (!Array.isArray(lanes) || !Array.isArray(events)) {
+      return res.status(400).json({ error: 'lanes and events arrays required' });
+    }
+    fs.writeFileSync(CALENDAR_FILE, JSON.stringify({ lanes, events }, null, 2));
+    res.json({ ok: true, saved: events.length });
+  } catch (err) {
+    console.error('calendar write failed:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Student self-assessment (redirect for clean QR URLs)
