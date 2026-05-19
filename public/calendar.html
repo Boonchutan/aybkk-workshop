@@ -3,345 +3,356 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>AYBKK — Year Planner</title>
+  <title>Jamsai & Boonchu — Work / Life Year Planner</title>
 
   <!-- Add to Home Screen: launches full-screen, no Safari chrome -->
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#f7f0df">
+  <meta name="theme-color" content="#eceff4">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Planner">
   <link rel="apple-touch-icon" href="/planner-icon-180.png">
 
-  <link rel="stylesheet" href="/tokens.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* High-contrast override, tuned for low-vision legibility.
-       Keeps the warm wood identity; trades soft carved-clay tonality
-       for crisp edges, near-black ink, and larger type. */
     :root {
-      --bg:           #f7f0df;
-      --surface:      #fffaf0;
-      --surface-2:    #efe1c2;
-      --shadow-dark:  #9c8454;
-      --shadow-light: #fffdf5;
-      --primary:      #c9a86f;
-      --primary-deep: #432f12;   /* labels / eyebrow: ~9:1 on bg */
-      --ink:          #1b1307;   /* body: ~15:1 on bg */
-      --ink-soft:     #45340f;   /* secondary: ~7:1 on bg */
-      --accent:       #7a4a1c;
-      --hair:         rgba(50,36,14,0.34);
-      --hair-strong:  rgba(50,36,14,0.58);
-      /* flatten the carved multi-shadow: it muddies glyph edges */
-      --text-carve:      0 1px 0 rgba(255,251,240,0.55);
-      --text-carve-soft: 0 1px 0 rgba(255,251,240,0.5);
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+              system-ui, "Manrope", "Helvetica Neue", Arial, sans-serif;
+      --ink:        #14161a;   /* ~16:1 on the light field */
+      --ink-soft:   #565b66;
+      --accent:     #c0822a;   /* today */
+      --glass:      rgba(255,255,255,0.62);
+      --glass-2:    rgba(255,255,255,0.42);
+      --glass-3:    rgba(255,255,255,0.30);
+      --blur:       saturate(180%) blur(22px);
+      --shadow:     0 12px 36px rgba(22,28,48,0.13);
+      --shadow-sm:  0 6px 18px rgba(22,28,48,0.10);
+      --hair:       rgba(22,28,48,0.07);
+      --hair-2:     rgba(22,28,48,0.13);
+      --r:          22px;
+      --r-sm:       14px;
+      --pill:       999px;
+      --ease:       cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .display, .display-md { color: #241a0b; }
-    html, body { height: 100%; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
     body {
-      margin: 0;
-      background: var(--bg);
+      font-family: var(--font);
       color: var(--ink);
-      font-family: var(--font-body);
+      background:
+        radial-gradient(1200px 700px at 78% -10%, #f4f1ff 0%, rgba(244,241,255,0) 60%),
+        radial-gradient(1100px 800px at -5% 110%, #e7f3f6 0%, rgba(231,243,246,0) 55%),
+        linear-gradient(180deg, #eef0f5 0%, #e6e9f1 100%);
+      background-attachment: fixed;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
+    ::selection { background: rgba(192,130,42,0.28); }
 
     /* ---------- Top bar ---------- */
     .topbar {
-      position: sticky; top: 0; z-index: 40;
-      display: flex; align-items: center; gap: var(--space-4);
-      flex-wrap: wrap;
-      padding: 18px 24px;
-      padding-top: calc(18px + env(safe-area-inset-top));
-      padding-left: calc(24px + env(safe-area-inset-left));
-      padding-right: calc(24px + env(safe-area-inset-right));
-      background: var(--bg);
-      border-bottom: 1px solid rgba(150,120,80,0.18);
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      padding: 16px 22px;
+      padding-top: calc(16px + env(safe-area-inset-top));
+      background: var(--glass);
+      -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+      box-shadow: 0 1px 0 var(--hair), var(--shadow-sm);
     }
-    .brand { display: flex; flex-direction: column; line-height: 1; margin-right: auto; }
-    .brand .eyebrow { margin-bottom: 4px; }
+    .brand { display: flex; flex-direction: column; line-height: 1.05; margin-right: auto; }
+    .brand .eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--ink-soft); margin-bottom: 5px;
+    }
     .brand h1 {
-      font-family: var(--font-display);
-      font-weight: 800; font-size: 22px; letter-spacing: -0.01em;
-      color: #2f2517; text-shadow: var(--text-carve-soft); margin: 0;
+      margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
+      color: var(--ink);
     }
 
-    .yearnav { display: flex; align-items: center; gap: 10px; }
+    .glass-group {
+      display: inline-flex; align-items: center; gap: 4px; padding: 5px;
+      background: var(--glass-2);
+      -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+      border-radius: var(--pill); box-shadow: var(--shadow-sm);
+    }
     .yearnav .year {
-      font-family: var(--font-display); font-weight: 800; font-size: 26px;
-      color: var(--primary-deep); min-width: 92px; text-align: center;
-      letter-spacing: 0.02em;
+      font-size: 19px; font-weight: 800; letter-spacing: -0.01em;
+      min-width: 64px; text-align: center; color: var(--ink);
     }
     .iconbtn {
-      width: 42px; height: 42px; border: none; cursor: pointer;
-      border-radius: var(--radius-md); background: var(--surface);
-      color: var(--primary-deep); font-size: 18px; font-family: var(--font-display);
-      box-shadow: 8px 8px 18px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
-      transition: transform var(--dur-base) var(--ease-spring);
+      width: 38px; height: 38px; border: none; cursor: pointer;
+      border-radius: 50%; background: transparent; color: var(--ink);
+      font-size: 19px; font-weight: 700; line-height: 1;
+      transition: background var(--ease) .25s, transform var(--ease) .25s;
     }
-    .iconbtn:hover { transform: translateY(-2px); }
-    .iconbtn:active { transform: translateY(2px) scale(0.96); }
+    .iconbtn:hover { background: rgba(255,255,255,0.7); }
+    .iconbtn:active { transform: scale(0.92); }
 
-    .seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: var(--radius-md); }
+    .seg { display: inline-flex; padding: 5px; gap: 4px;
+      background: var(--glass-2);
+      -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+      border-radius: var(--pill); box-shadow: var(--shadow-sm); }
     .seg button {
-      border: none; cursor: pointer; padding: 10px 18px;
-      font-family: var(--font-display); font-weight: 700; font-size: 13px;
-      letter-spacing: 0.04em; text-transform: uppercase;
+      border: none; cursor: pointer; padding: 9px 18px;
+      font-family: var(--font); font-weight: 700; font-size: 13px;
       color: var(--ink-soft); background: transparent;
-      border-radius: var(--radius-sm); transition: all var(--dur-base) var(--ease-out);
+      border-radius: var(--pill); transition: all var(--ease) .3s;
     }
     .seg button.active {
-      color: #f1e2c4;
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      box-shadow: inset 4px 4px 9px rgba(255,240,215,0.5), inset -3px -3px 8px rgba(40,20,4,0.28);
+      color: var(--ink); background: #fff;
+      box-shadow: 0 4px 14px rgba(22,28,48,0.16);
     }
 
-    .actbtn {
-      border: none; cursor: pointer; padding: 13px 22px;
-      font-family: var(--font-display); font-weight: 800; font-size: 13px;
-      letter-spacing: 0.05em; text-transform: uppercase; color: #f1e2c4;
-      border-radius: var(--radius-md);
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      box-shadow: 10px 10px 22px rgba(120,80,40,0.28), -6px -6px 14px var(--shadow-light),
-        inset 4px 4px 10px rgba(255,240,215,0.5), inset -3px -3px 8px rgba(40,20,4,0.28);
-      transition: transform var(--dur-base) var(--ease-spring);
+    .zoom { gap: 2px; padding-left: 12px; padding-right: 12px; }
+    .zoom label { font-size: 11px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-soft); margin-right: 6px; }
+    .zoom input[type=range] {
+      -webkit-appearance: none; appearance: none; width: 116px; height: 6px;
+      border-radius: 999px; background: rgba(22,28,48,0.16); cursor: pointer;
     }
-    .actbtn:hover { transform: translateY(-3px) scale(1.02); }
-    .actbtn:active { transform: translateY(2px) scale(0.97); }
-    .actbtn.ghost {
-      color: var(--primary-deep); background: var(--surface);
-      box-shadow: 8px 8px 18px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+    .zoom input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+      background: var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,0.25);
     }
+
+    .btn {
+      border: none; cursor: pointer; padding: 11px 20px;
+      font-family: var(--font); font-weight: 700; font-size: 13px;
+      letter-spacing: 0.01em; border-radius: var(--pill);
+      transition: transform var(--ease) .25s, background var(--ease) .25s, filter var(--ease) .25s;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn.primary { color: #fff; background: #2E4A6B; box-shadow: 0 8px 20px rgba(46,74,107,0.32); }
+    .btn.primary:hover { filter: brightness(1.08); }
+    .btn.ghost {
+      color: var(--ink); background: var(--glass);
+      -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+      box-shadow: var(--shadow-sm);
+    }
+    .btn.ghost:hover { background: rgba(255,255,255,0.8); }
 
     .saver {
-      font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft);
-      opacity: 0; transition: opacity var(--dur-base);
-    }
-    .saver.show { opacity: 0.7; }
+      font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--ink-soft);
+      opacity: 0; transition: opacity .3s; }
+    .saver.show { opacity: 0.75; }
 
     /* ---------- Timeline ---------- */
-    .stage { padding: 22px 24px 80px; }
+    .stage { padding: 22px; }
+    #timelineWrap { position: relative; }
     .scroll {
       overflow-x: auto; overflow-y: hidden;
-      border-radius: var(--radius-lg);
-      background: var(--surface);
-      border: 2px solid var(--hair-strong);
-      box-shadow: 0 10px 28px rgba(80,52,28,0.18);
+      border-radius: var(--r);
+      background: var(--glass);
+      -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+      box-shadow: var(--shadow);
     }
     .grid { position: relative; }
 
-    .months {
-      position: relative; height: 56px;
-      border-bottom: 1.5px solid var(--hair-strong);
-    }
+    .months { position: relative; height: 54px;
+      box-shadow: 0 1px 0 var(--hair-2); }
     .month-cell {
       position: absolute; top: 0; bottom: 0;
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-display); font-weight: 700; font-size: 15px;
-      letter-spacing: 0.16em; text-transform: uppercase; color: var(--primary-deep);
+      font-size: 13px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--ink-soft);
     }
-    .laneband {
-      position: relative; z-index: 2;
-      border-bottom: 1px solid var(--hair);
-    }
-    .laneband:last-of-type { border-bottom: none; }
 
-    /* faint full-height quarter / strategic backdrop bands */
-    .bd-layer { position: absolute; top: 56px; z-index: 0; pointer-events: none; }
+    .laneband { position: relative; z-index: 2; box-shadow: 0 1px 0 var(--hair); }
+    .laneband:last-of-type { box-shadow: none; }
+
+    .bd-layer { position: absolute; top: 54px; z-index: 0; pointer-events: none; }
     .bd-band {
       position: absolute; top: 0; bottom: 0; pointer-events: auto; cursor: pointer;
       display: flex; align-items: flex-start; justify-content: center;
-      background: rgba(90,60,28,0.055);
-      border-left: 1px dashed rgba(90,60,28,0.28);
-      border-right: 1px dashed rgba(90,60,28,0.28);
+      background: rgba(255,255,255,0.34);
+      -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
     }
     .bd-band span {
-      margin-top: 10px;
-      font-family: var(--font-display); font-size: 12px; font-weight: 800;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: rgba(67,47,18,0.5);
+      margin-top: 9px; font-size: 11px; font-weight: 800;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(20,22,26,0.34);
     }
-    .bd-band:hover { background: rgba(90,60,28,0.1); }
+    .bd-band:hover { background: rgba(255,255,255,0.5); }
 
-    /* clean month gridlines, one layer behind the lanes */
-    .gl-layer { position: absolute; top: 56px; z-index: 1; pointer-events: none; }
+    .gl-layer { position: absolute; top: 54px; z-index: 1; pointer-events: none; }
     .gl { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--hair); }
-    .gl.q { background: var(--hair-strong); }
+    .gl.q { background: var(--hair-2); }
 
-    .lane-labels {
-      position: absolute; left: 0; top: 56px; width: 178px; z-index: 20;
-    }
+    .lane-labels { position: absolute; left: 0; top: 54px; z-index: 20; }
     .lane-label {
-      display: flex; align-items: center; gap: 10px;
-      padding: 0 14px;
-      font-family: var(--font-display); font-weight: 800; font-size: 16px;
-      color: var(--ink); background: var(--surface);
-      border-top: 1.5px solid var(--hair);
-      border-right: 2px solid var(--hair-strong);
-      box-shadow: 7px 0 14px rgba(60,44,20,0.16);
+      display: flex; align-items: center; gap: 11px; padding: 0 16px;
+      background: var(--glass);
+      -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+      box-shadow: 0 1px 0 var(--hair), 14px 0 22px rgba(22,28,48,0.07);
     }
-    .lane-label .dot { width: 16px; height: 16px; border-radius: 4px; flex: none;
-      border: 1.5px solid rgba(40,28,8,0.45); }
-    .lane-label .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lane-label .dot {
+      width: 16px; height: 16px; border-radius: 6px; flex: none;
+    }
+    .lane-label .nm {
+      flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap; font-size: 15.5px; font-weight: 700; color: var(--ink);
+    }
     .lane-label .x {
-      margin-left: auto; opacity: 0; cursor: pointer; border: none; background: none;
-      color: var(--ink-soft); font-size: 15px; padding: 4px; transition: opacity var(--dur-fast);
-    }
-    .lane-label:hover .x { opacity: 0.6; }
+      opacity: 0; cursor: pointer; border: none; background: none;
+      color: var(--ink-soft); font-size: 15px; padding: 4px; line-height: 1;
+      transition: opacity .2s; }
+    .lane-label:hover .x { opacity: 0.55; }
     .lane-label .x:hover { opacity: 1; }
 
-    /* flat capsule, no border / shadow / gradient */
+    /* drag-to-resize handle for the tab column */
+    #laneResizer {
+      position: absolute; top: 54px; bottom: 0; width: 16px;
+      transform: translateX(-50%); z-index: 30;
+      cursor: col-resize; touch-action: none;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #laneResizer::before {
+      content: ""; width: 4px; height: 46px; border-radius: 999px;
+      background: rgba(22,28,48,0.18); transition: background .2s, height .2s;
+    }
+    #laneResizer:hover::before, #laneResizer.drag::before {
+      background: var(--accent); height: 70px;
+    }
+
+    /* flat capsule — no stroke, no shadow, no gradient */
     .bar {
       position: absolute; border-radius: 999px;
       display: flex; align-items: center; padding: 0 16px; cursor: pointer;
-      font-family: var(--font-body); font-size: 15px; font-weight: 700;
-      color: #fdf5e4; white-space: nowrap; overflow: hidden;
-      transition: transform var(--dur-fast) var(--ease-out), filter var(--dur-fast);
+      font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden;
+      transition: transform var(--ease) .22s, filter var(--ease) .22s;
     }
-    .bar:hover { transform: translateY(-1px); filter: brightness(1.07); z-index: 6; }
+    .bar:hover { transform: translateY(-1px); filter: brightness(1.05); z-index: 6; }
     .bar .lbl { overflow: hidden; text-overflow: ellipsis; }
-    /* importance: louder for high, recede for low */
     .bar.pr-high { font-weight: 800; }
-    .bar.pr-low  { opacity: 0.46; font-weight: 600; }
-    .bar.dot {
-      padding: 0; border-radius: 50%; justify-content: center;
-      box-shadow: 0 0 0 3px var(--surface);
-    }
+    .bar.pr-low { opacity: 0.5; font-weight: 600; }
+    .bar.dot { padding: 0; border-radius: 50%; justify-content: center; }
     .bar-ext {
       position: absolute; z-index: 3; height: 20px; line-height: 20px;
       cursor: pointer; white-space: nowrap;
-      font-family: var(--font-body); font-size: 14px; font-weight: 700;
-      color: var(--ink);
+      font-size: 14px; font-weight: 700; color: var(--ink);
     }
     .bar-ext.pr-high { font-weight: 800; }
-    .bar-ext.pr-low  { opacity: 0.55; font-weight: 600; }
+    .bar-ext.pr-low { opacity: 0.55; font-weight: 600; }
 
-    .today {
-      position: absolute; width: 2px; z-index: 5;
-      background: #c0822a;
-      pointer-events: none;
-    }
+    .today { position: absolute; width: 2px; z-index: 5;
+      background: var(--accent); pointer-events: none; }
     .today-pill {
       position: absolute; z-index: 6; transform: translateX(-50%);
-      font-family: var(--font-display); font-size: 12px; font-weight: 800;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: #fdf5e4; background: #c0822a;
-      padding: 7px 16px; border-radius: var(--radius-pill); white-space: nowrap;
+      font-size: 12px; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #fff; background: var(--accent);
+      padding: 8px 18px; border-radius: var(--pill); white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(192,130,42,0.4);
     }
+    .empty { text-align: center; padding: 70px 20px; color: var(--ink-soft);
+      font-size: 16px; font-weight: 600; }
 
     /* ---------- Year grid ---------- */
     .yeargrid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(244px, 1fr));
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 18px;
     }
     .mini {
-      padding: 16px; border-radius: var(--radius-md); background: var(--surface);
-      box-shadow: 10px 10px 22px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+      padding: 18px; border-radius: var(--r);
+      background: var(--glass);
+      -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+      box-shadow: var(--shadow-sm);
     }
     .mini h3 {
-      margin: 0 0 12px; font-family: var(--font-display); font-weight: 800;
-      font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--primary-deep);
+      margin: 0 0 14px; font-size: 15px; font-weight: 800;
+      letter-spacing: 0.04em; color: var(--ink);
     }
     .mini table { width: 100%; border-collapse: collapse; }
     .mini th {
-      font-family: var(--font-display); font-size: 12px; font-weight: 800;
-      color: var(--ink-soft); padding-bottom: 7px;
+      font-size: 11px; font-weight: 700; color: var(--ink-soft);
+      padding-bottom: 8px;
     }
     .mini td {
-      text-align: center; padding: 0; height: 34px; width: 14.28%;
-      font-size: 15px; font-family: var(--font-body); position: relative;
+      text-align: center; padding: 2px; height: 34px; width: 14.28%;
+      font-size: 14px; position: relative;
     }
     .mini td .d {
-      width: 30px; height: 30px; line-height: 30px; margin: 0 auto;
-      border-radius: 50%; cursor: pointer; color: var(--ink); font-weight: 600;
-      transition: background var(--dur-fast);
+      display: flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; margin: 0 auto; border-radius: 9px;
+      cursor: pointer; color: var(--ink); font-weight: 600;
+      transition: transform .15s var(--ease);
     }
     .mini td.has .d { font-weight: 800; }
-    .mini td.school {
-      background: rgba(63,93,58,0.22); border-radius: 6px;
-      outline: 1.5px solid rgba(63,93,58,0.5); outline-offset: -1.5px;
-    }
-    .mini td.today .d {
-      background: #b2371a; color: #fdf5e4; font-weight: 800;
-    }
-    .mini td .d:hover { background: rgba(201,168,111,0.55); }
+    .mini td.has .d:hover { transform: scale(1.12); }
+    .mini td.today .d { background: var(--accent); color: #fff; font-weight: 800; }
+    .mini td.dim .d { color: rgba(86,91,102,0.32); cursor: default; }
     .mini td .dots {
-      position: absolute; bottom: 0; left: 0; right: 0;
+      position: absolute; bottom: 1px; left: 0; right: 0;
       display: flex; gap: 3px; justify-content: center;
     }
-    .mini td .dots i { width: 6px; height: 6px; border-radius: 50%; display: block;
-      border: 1px solid rgba(28,18,4,0.4); }
-    .mini td.dim .d { color: rgba(70,52,16,0.3); cursor: default; }
-    .mini td.dim .d:hover { background: none; }
+    .mini td .dots i { width: 5px; height: 5px; border-radius: 50%; display: block; }
 
     /* ---------- Modal ---------- */
     .scrim {
       position: fixed; inset: 0; z-index: 90; display: none;
       align-items: center; justify-content: center; padding: 20px;
-      background: rgba(60,42,24,0.42); backdrop-filter: blur(3px);
+      background: rgba(22,26,40,0.34);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
     }
     .scrim.open { display: flex; }
     .modal {
-      width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto;
-      padding: 28px; border-radius: var(--radius-lg); background: var(--surface);
-      box-shadow: 22px 22px 50px rgba(80,52,28,0.4), -10px -10px 24px var(--shadow-light);
+      width: 100%; max-width: 470px; max-height: 90vh; overflow-y: auto;
+      padding: 28px; border-radius: 26px;
+      background: rgba(255,255,255,0.86);
+      -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+      box-shadow: 0 30px 70px rgba(20,24,40,0.4);
     }
-    .modal h2 {
-      margin: 0 0 4px; font-family: var(--font-display); font-weight: 800;
-      font-size: 22px; color: #2f2517; text-shadow: var(--text-carve-soft);
-    }
-    .modal .sub { margin: 0 0 20px; font-size: 13px; color: var(--ink-soft); }
+    .modal h2 { margin: 0 0 4px; font-size: 22px; font-weight: 800;
+      letter-spacing: -0.01em; color: var(--ink); }
+    .modal .sub { margin: 0 0 22px; font-size: 13.5px; color: var(--ink-soft); }
     .field { margin-bottom: 16px; }
     .field label {
-      display: block; margin-bottom: 6px;
-      font-family: var(--font-display); font-size: 11px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary-deep);
+      display: block; margin-bottom: 7px; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft);
     }
     .field input, .field select, .field textarea {
-      width: 100%; padding: 12px 14px; border: none; color: var(--ink);
-      font-family: var(--font-body); font-size: 15px;
-      border-radius: var(--radius-sm); background: var(--surface-2);
-      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+      width: 100%; padding: 13px 15px; border: none; color: var(--ink);
+      font-family: var(--font); font-size: 15px; border-radius: var(--r-sm);
+      background: rgba(22,28,48,0.05);
+      transition: background .2s, box-shadow .2s;
     }
-    .field textarea { resize: vertical; min-height: 64px; }
+    .field textarea { resize: vertical; min-height: 66px; }
     .field input:focus, .field select:focus, .field textarea:focus {
-      outline: 2px solid var(--primary); outline-offset: 1px;
+      outline: none; background: #fff;
+      box-shadow: 0 0 0 3px rgba(46,74,107,0.35);
     }
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+    .swatches { display: flex; flex-wrap: wrap; gap: 9px; }
     .swatches button {
-      width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
-      box-shadow: inset -1px -1px 3px rgba(0,0,0,0.25);
+      width: 30px; height: 30px; border-radius: 9px; border: none; cursor: pointer;
+      transition: transform .15s var(--ease);
     }
-    .swatches button.sel { outline: 3px solid var(--primary-deep); outline-offset: 2px; }
-    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
-    .modal-actions .actbtn { flex: 1; }
-    .danger {
-      border: none; cursor: pointer; padding: 13px 18px; color: #7a2f1c;
-      font-family: var(--font-display); font-weight: 700; font-size: 13px;
-      letter-spacing: 0.04em; border-radius: var(--radius-md);
-      background: var(--surface); box-shadow: 6px 6px 14px var(--shadow-dark),
-        -4px -4px 10px var(--shadow-light);
-    }
+    .swatches button:hover { transform: scale(1.12); }
+    .swatches button.sel { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
+    .modal-actions { display: flex; gap: 12px; margin-top: 26px; }
+    .modal-actions .btn { flex: 1; }
+    .danger { border: none; cursor: pointer; padding: 12px 18px; color: #c0392b;
+      font-family: var(--font); font-weight: 700; font-size: 13px;
+      border-radius: var(--pill); background: rgba(192,57,43,0.10); }
+    .danger:hover { background: rgba(192,57,43,0.18); }
     .daylist { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
     .dayrow {
-      display: flex; align-items: center; gap: 10px; cursor: pointer;
-      padding: 11px 14px; border-radius: var(--radius-sm); background: var(--surface-2);
-      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
-    }
-    .dayrow .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+      display: flex; align-items: center; gap: 11px; cursor: pointer;
+      padding: 12px 14px; border-radius: var(--r-sm); background: rgba(22,28,48,0.05);
+      transition: background .18s; }
+    .dayrow:hover { background: rgba(22,28,48,0.09); }
+    .dayrow .dot { width: 11px; height: 11px; border-radius: 4px; flex: none; }
     .dayrow .meta { font-size: 11px; color: var(--ink-soft); margin-left: auto; }
-    .empty { text-align: center; padding: 60px 20px; color: var(--ink-soft);
-      font-size: 15px; }
-    @media (max-width: 640px) {
-      .topbar {
-        padding: 14px 16px; gap: 12px;
-        padding-top: calc(14px + env(safe-area-inset-top));
-      }
-      .brand { margin-right: 0; width: 100%; }
-      .stage { padding: 16px 12px 80px; }
+
+    @media (max-width: 680px) {
+      .topbar { padding: 14px 14px;
+        padding-top: calc(14px + env(safe-area-inset-top)); gap: 10px; }
+      .brand { width: 100%; margin-right: 0; }
+      .stage { padding: 14px; }
+      .zoom { display: none; }
     }
   </style>
 </head>
@@ -349,21 +360,27 @@
 
 <div class="topbar">
   <div class="brand">
-    <span class="eyebrow">AYBKK Mission Control</span>
-    <h1>Year Planner</h1>
+    <span class="eyebrow">Jamsai &amp; Boonchu</span>
+    <h1>Work / Life Year Planner</h1>
   </div>
-  <div class="yearnav">
+  <div class="glass-group yearnav">
     <button class="iconbtn" id="prevY" title="Previous year">‹</button>
     <span class="year" id="yearLbl">2026</span>
     <button class="iconbtn" id="nextY" title="Next year">›</button>
   </div>
-  <button class="actbtn ghost" id="todayBtn">Today</button>
-  <div class="seg clay-inset-sm">
+  <button class="btn ghost" id="todayBtn">Today</button>
+  <div class="seg">
     <button id="vTimeline" class="active">Timeline</button>
     <button id="vYear">Year Grid</button>
   </div>
-  <button class="actbtn ghost" id="addLane">+ Lane</button>
-  <button class="actbtn" id="addEvent">+ Event</button>
+  <div class="glass-group zoom" id="zoomGroup">
+    <label>Zoom</label>
+    <button class="iconbtn" id="zoomOut" title="Compress">−</button>
+    <input type="range" id="zoomRange" min="4" max="26" step="1">
+    <button class="iconbtn" id="zoomIn" title="Expand">+</button>
+  </div>
+  <button class="btn ghost" id="addLane">+ Lane</button>
+  <button class="btn primary" id="addEvent">+ Event</button>
   <span class="saver" id="saver">Saved</span>
 </div>
 
@@ -372,6 +389,7 @@
     <div class="scroll" id="scroll">
       <div class="grid" id="grid"></div>
     </div>
+    <div id="laneResizer" title="Drag to resize · double-click to reset"></div>
   </div>
   <div id="yearWrap" style="display:none;">
     <div class="yeargrid" id="yeargrid"></div>
@@ -396,8 +414,8 @@
         <label>Importance</label>
         <select id="fPriority">
           <option value="normal">Normal</option>
-          <option value="high">High — stands out</option>
-          <option value="low">Low — fades back</option>
+          <option value="high">High, stands out</option>
+          <option value="low">Low, fades back</option>
         </select>
       </div>
     </div>
@@ -406,17 +424,17 @@
       <div class="field"><label>End</label><input id="fEnd" type="date"></div>
     </div>
     <div class="field">
-      <label>Colour</label>
+      <label>Colour (optional, defaults to lane)</label>
       <div class="swatches" id="evSwatch"></div>
     </div>
     <div class="field">
       <label>Note (optional)</label>
-      <textarea id="fNote" placeholder="Details, links, who's involved…"></textarea>
+      <textarea id="fNote" placeholder="Details, links, who is involved"></textarea>
     </div>
     <div class="modal-actions">
       <button class="danger" id="evDelete" style="display:none;">Delete</button>
-      <button class="actbtn ghost" id="evCancel">Cancel</button>
-      <button class="actbtn" id="evSave">Save</button>
+      <button class="btn ghost" id="evCancel">Cancel</button>
+      <button class="btn primary" id="evSave">Save</button>
     </div>
   </div>
 </div>
@@ -425,7 +443,7 @@
 <div class="scrim" id="lnScrim">
   <div class="modal">
     <h2>New Lane</h2>
-    <p class="sub">A new row on the timeline — e.g. a new project.</p>
+    <p class="sub">A new row on the timeline, for example a new project.</p>
     <div class="field">
       <label>Lane name</label>
       <input id="fLaneName" type="text" placeholder="e.g. Certification Course">
@@ -435,32 +453,32 @@
       <div class="swatches" id="lnSwatch"></div>
     </div>
     <div class="modal-actions">
-      <button class="actbtn ghost" id="lnCancel">Cancel</button>
-      <button class="actbtn" id="lnSave">Add lane</button>
+      <button class="btn ghost" id="lnCancel">Cancel</button>
+      <button class="btn primary" id="lnSave">Add lane</button>
     </div>
   </div>
 </div>
 
-<!-- Day modal (year grid) -->
+<!-- Day modal -->
 <div class="scrim" id="dyScrim">
   <div class="modal">
     <h2 id="dyTitle">Day</h2>
     <p class="sub" id="dySub"></p>
     <div class="daylist" id="dyList"></div>
     <div class="modal-actions">
-      <button class="actbtn ghost" id="dyClose">Close</button>
-      <button class="actbtn" id="dyAdd">+ Add on this day</button>
+      <button class="btn ghost" id="dyClose">Close</button>
+      <button class="btn primary" id="dyAdd">+ Add on this day</button>
     </div>
   </div>
 </div>
 
 <script>
-const PALETTE = ['#9a805d','#7d6442','#b8895a','#a8693f','#8a7b53','#6c5e4a','#5f7a52','#7a5260','#4f6d78','#8a5a3a'];
-const DAY_W = 9;            // px per day on the timeline
-const LABEL_W = 200;        // lane label gutter
-const ROW_H = 46;           // px per stacked sub-row (airy)
-const LANE_PAD = 14;        // vertical breathing room per lane
-const BAR_H = { low: 16, normal: 28, high: 36 };  // importance = visual weight
+const PALETTE = ['#E8503A','#F0962E','#EBB22E','#5FA463','#3FB3CC','#2E4A6B',
+                 '#2FA38C','#8A4F86','#5B6B7B','#E0726A'];
+let DAY_W = clampNum(+localStorage.getItem('plnr.dayW') || 9, 4, 26);
+let LABEL_W = clampNum(+localStorage.getItem('plnr.labelW') || 210, 132, 480);
+const ROW_H = 46, LANE_PAD = 14;
+const BAR_H = { low: 16, normal: 28, high: 36 };
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MON_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const DOW = ['S','M','T','W','T','F','S'];
@@ -468,9 +486,7 @@ const DOW = ['S','M','T','W','T','F','S'];
 let state = { lanes: [], events: [] };
 let year = new Date().getFullYear();
 let view = 'timeline';
-let editingId = null;
-let pendingDay = null;
-let saveTimer = null;
+let editingId = null, pendingDay = null, saveTimer = null, autoScroll = true;
 
 const $ = id => document.getElementById(id);
 const pad = n => String(n).padStart(2, '0');
@@ -479,6 +495,26 @@ const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y
 const isLeap = y => (y%4===0 && y%100!==0) || y%400===0;
 const daysInYear = y => isLeap(y) ? 366 : 365;
 const dayOfYear = d => Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000);
+function clampNum(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+// Pick black or white text for max contrast on a given bar colour
+function lum(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const c = [n>>16&255, n>>8&255, n&255].map(v => {
+    v /= 255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+  });
+  return 0.2126*c[0] + 0.7152*c[1] + 0.0722*c[2];
+}
+function textOn(hex) {
+  const L = lum(hex);
+  const cW = 1.05 / (L + 0.05);          // contrast vs white
+  const cB = (L + 0.05) / 0.05;          // contrast vs near-black
+  return cB >= cW ? '#15171a' : '#ffffff';
+}
+function tint(hex, a) {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;
+}
 
 async function load() {
   try {
@@ -495,8 +531,7 @@ function save() {
   saveTimer = setTimeout(async () => {
     try {
       await fetch('/api/calendar', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(state)
       });
       const s = $('saver'); s.classList.add('show');
@@ -506,9 +541,8 @@ function save() {
 }
 
 const laneById = id => state.lanes.find(l => l.id === id);
-const colorOf = ev => ev.color || (laneById(ev.laneId)||{}).color || '#9a805d';
+const colorOf = ev => ev.color || (laneById(ev.laneId)||{}).color || '#5B6B7B';
 
-// Events clamped to the visible year, with day offsets
 function eventsForYear() {
   const y0 = new Date(year,0,1), y1 = new Date(year,11,31);
   return state.events.map(ev => {
@@ -520,9 +554,8 @@ function eventsForYear() {
   }).filter(Boolean);
 }
 
-// Greedy stack so overlapping bars in a lane don't collide
-// Greedy stack. Reserve horizontal room for the label too, so a short
-// bar with a long name doesn't collide with the next event in its row.
+// Greedy stack; reserve room for the label so short bars with long
+// names don't collide with the next event in the row.
 function packLane(items) {
   const rows = [];
   items.sort((a,b) => a.startDay - b.startDay);
@@ -545,7 +578,6 @@ function renderTimeline() {
   grid.innerHTML = '';
   grid.style.paddingBottom = '';
 
-  // Month header
   const months = document.createElement('div');
   months.className = 'months';
   months.style.marginLeft = LABEL_W + 'px';
@@ -561,14 +593,12 @@ function renderTimeline() {
   }
   grid.appendChild(months);
 
-  // Split strategic backdrops out of the lanes so they don't compete
   const yev = eventsForYear();
   const backdrops = yev.filter(it => it.ev.backdrop);
   const grouped = {};
   yev.filter(it => !it.ev.backdrop)
      .forEach(it => (grouped[it.ev.laneId] = grouped[it.ev.laneId] || []).push(it));
 
-  // Pre-pass: pack each lane, measure total body height
   const layout = state.lanes.map(lane => {
     const items = grouped[lane.id] || [];
     const sub = packLane(items);
@@ -576,7 +606,6 @@ function renderTimeline() {
   });
   const bodyH = layout.reduce((s, l) => s + l.h, 0);
 
-  // Faint quarter / strategic bands behind everything
   const bd = document.createElement('div');
   bd.className = 'bd-layer';
   bd.style.left = LABEL_W + 'px'; bd.style.height = bodyH + 'px';
@@ -593,7 +622,6 @@ function renderTimeline() {
   });
   grid.appendChild(bd);
 
-  // Clean month gridlines, one layer
   const gl = document.createElement('div');
   gl.className = 'gl-layer';
   gl.style.left = LABEL_W + 'px'; gl.style.height = bodyH + 'px';
@@ -606,7 +634,6 @@ function renderTimeline() {
   }
   grid.appendChild(gl);
 
-  // Lanes
   const labels = document.createElement('div');
   labels.className = 'lane-labels';
   labels.style.width = LABEL_W + 'px';
@@ -627,11 +654,13 @@ function renderTimeline() {
       const pr = it.ev.priority || 'normal';
       const barH = BAR_H[pr] || BAR_H.normal;
       const single = it.startDay === it.endDay;
+      const c = colorOf(it.ev);
       const bar = document.createElement('div');
       bar.className = 'bar pr-' + pr + (single ? ' dot' : '');
       bar.style.height = barH + 'px';
       bar.style.top = (it.row * ROW_H + LANE_PAD + (ROW_H - barH) / 2) + 'px';
-      bar.style.background = colorOf(it.ev);
+      bar.style.background = c;
+      bar.style.color = textOn(c);
       if (single) {
         bar.style.width = barH + 'px';
         bar.style.left = (it.startDay * DAY_W + DAY_W / 2 - barH / 2) + 'px';
@@ -641,15 +670,14 @@ function renderTimeline() {
         bar.style.width = w + 'px';
         if (it.clipL) bar.style.borderTopLeftRadius = bar.style.borderBottomLeftRadius = '5px';
         if (it.clipR) bar.style.borderTopRightRadius = bar.style.borderBottomRightRadius = '5px';
-        // label inside if it fits, otherwise beside the capsule
-        const approx = it.ev.title.length * 8.4 + 28;
+        const approx = it.ev.title.length * 8.4 + 30;
         if (w >= approx) {
           bar.innerHTML = `<span class="lbl">${esc(it.ev.title)}</span>`;
         } else {
           const ext = document.createElement('div');
           ext.className = 'bar-ext pr-' + pr;
           ext.textContent = it.ev.title;
-          ext.style.left = (it.startDay * DAY_W + w + 8) + 'px';
+          ext.style.left = (it.startDay * DAY_W + w + 9) + 'px';
           ext.style.top = (it.row * ROW_H + LANE_PAD + (ROW_H - 20) / 2) + 'px';
           ext.onclick = () => openEvent(it.ev.id);
           band.appendChild(ext);
@@ -674,27 +702,26 @@ function renderTimeline() {
   });
   grid.appendChild(labels);
 
-  // Today: amber line + pill anchored below the chart
   if (year === new Date().getFullYear()) {
     const t = new Date(); t.setHours(0,0,0,0);
     const x = LABEL_W + (dayOfYear(t)-1) * DAY_W;
     const td = document.createElement('div');
     td.className = 'today';
-    td.style.left = x + 'px';
-    td.style.top = '56px';
-    td.style.height = bodyH + 'px';
+    td.style.left = x + 'px'; td.style.top = '54px'; td.style.height = bodyH + 'px';
     grid.appendChild(td);
     const pill = document.createElement('div');
-    pill.className = 'today-pill';
-    pill.textContent = 'Today';
-    pill.style.left = x + 'px';
-    pill.style.top = (56 + bodyH + 14) + 'px';
+    pill.className = 'today-pill'; pill.textContent = 'Today';
+    pill.style.left = x + 'px'; pill.style.top = (54 + bodyH + 14) + 'px';
     grid.appendChild(pill);
     grid.style.paddingBottom = '52px';
-    requestAnimationFrame(() => {
-      $('scroll').scrollLeft = Math.max(0, (dayOfYear(t)-1) * DAY_W - 300);
-    });
+    if (autoScroll) {
+      autoScroll = false;
+      requestAnimationFrame(() => {
+        $('scroll').scrollLeft = Math.max(0, (dayOfYear(t)-1) * DAY_W - 320);
+      });
+    }
   }
+  positionResizer();
 }
 
 function renderYearGrid() {
@@ -716,13 +743,12 @@ function renderYearGrid() {
         const ds = `${year}-${pad(m+1)}-${pad(day)}`;
         const evs = state.events.filter(ev =>
           !ev.backdrop && ds >= ev.start && ds <= (ev.end || ev.start));
-        const school = evs.some(ev => (laneById(ev.laneId)||{}).id === 'school');
-        const dots = [...new Set(evs.map(colorOf))].slice(0,4)
-          .map(c => `<i style="background:${c}"></i>`).join('');
-        const cls = [evs.length?'has':'', school?'school':'', ds===todayIso?'today':'']
-          .filter(Boolean).join(' ');
+        const cols = [...new Set(evs.map(colorOf))];
+        const dots = cols.slice(0,4).map(c => `<i style="background:${c}"></i>`).join('');
+        const bg = cols.length ? `style="background:${tint(cols[0], 0.22)}"` : '';
+        const cls = [evs.length?'has':'', ds===todayIso?'today':''].filter(Boolean).join(' ');
         html += `<td class="${cls}" data-d="${ds}">
-          <span class="d">${day}</span>
+          <span class="d" ${cls.includes('today')?'':bg}>${day}</span>
           ${dots?`<span class="dots">${dots}</span>`:''}</td>`;
       }
       html += '</tr>';
@@ -737,6 +763,7 @@ function renderYearGrid() {
 
 function render() {
   $('yearLbl').textContent = year;
+  $('zoomRange').value = DAY_W;
   if (!state.lanes.length) {
     $('grid').innerHTML = '<div class="empty">No lanes yet. Add a lane to begin planning.</div>';
   } else if (view === 'timeline') {
@@ -744,6 +771,52 @@ function render() {
   }
   if (view === 'year') renderYearGrid();
 }
+
+// ---------- Tab-column resize ----------
+function positionResizer() {
+  const r = $('laneResizer');
+  if (view !== 'timeline') { r.style.display = 'none'; return; }
+  r.style.display = '';
+  r.style.left = LABEL_W + 'px';
+}
+let rafQ = false;
+function softRender() {
+  if (rafQ) return; rafQ = true;
+  requestAnimationFrame(() => { rafQ = false; renderTimeline(); });
+}
+(function initResizer(){
+  const h = $('laneResizer');
+  let active = false, sx = 0, sw = 0;
+  h.addEventListener('pointerdown', e => {
+    active = true; sx = e.clientX; sw = LABEL_W;
+    h.classList.add('drag'); h.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  h.addEventListener('pointermove', e => {
+    if (!active) return;
+    const w = clampNum(Math.round(sw + (e.clientX - sx)), 132, 480);
+    if (w !== LABEL_W) { LABEL_W = w; softRender(); }
+  });
+  function end(){ if(!active) return; active = false;
+    h.classList.remove('drag'); localStorage.setItem('plnr.labelW', LABEL_W);
+    renderTimeline(); }
+  h.addEventListener('pointerup', end);
+  h.addEventListener('pointercancel', end);
+  h.addEventListener('dblclick', () => {
+    LABEL_W = 210; localStorage.setItem('plnr.labelW', LABEL_W); renderTimeline();
+  });
+})();
+
+// ---------- Timeline zoom ----------
+function setZoom(v) {
+  DAY_W = clampNum(Math.round(v), 4, 26);
+  localStorage.setItem('plnr.dayW', DAY_W);
+  $('zoomRange').value = DAY_W;
+  renderTimeline();
+}
+$('zoomRange').oninput = e => setZoom(+e.target.value);
+$('zoomIn').onclick  = () => setZoom(DAY_W + 2);
+$('zoomOut').onclick = () => setZoom(DAY_W - 2);
 
 // ---------- Event modal ----------
 let evColor = '';
@@ -803,9 +876,11 @@ $('evSave').onclick = () => {
     Object.assign(ev, { title, laneId, start, end, color: useColor,
       note: $('fNote').value.trim(), priority });
     if (priority === 'normal') delete ev.priority;
+    if (!useColor) delete ev.color;
   } else {
     const ev = { id: 'e'+Date.now().toString(36), title, laneId, start, end,
-      color: useColor, note: $('fNote').value.trim() };
+      note: $('fNote').value.trim() };
+    if (useColor) ev.color = useColor;
     if (priority !== 'normal') ev.priority = priority;
     state.events.push(ev);
   }
@@ -819,7 +894,7 @@ $('evDelete').onclick = () => {
 };
 
 // ---------- Lane modal ----------
-let lnColor = PALETTE[2];
+let lnColor = PALETTE[0];
 $('addLane').onclick = () => {
   $('fLaneName').value = '';
   lnColor = PALETTE[state.lanes.length % PALETTE.length];
@@ -855,7 +930,7 @@ function openDay(ds) {
     const span = ev.end && ev.end !== ev.start ? `${fmt(ev.start)} – ${fmt(ev.end)}` : fmt(ev.start);
     return `<div class="dayrow" data-id="${ev.id}">
       <span class="dot" style="background:${colorOf(ev)}"></span>
-      <div><div style="font-weight:600;color:var(--ink)">${esc(ev.title)}</div>
+      <div><div style="font-weight:700;color:var(--ink)">${esc(ev.title)}</div>
       <div style="font-size:11px;color:var(--ink-soft)">${esc(lane.name||'')}</div></div>
       <span class="meta">${span}</span></div>`;
   }).join('');
@@ -871,9 +946,9 @@ function esc(s) { return String(s).replace(/[&<>"]/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function closeModals() { document.querySelectorAll('.scrim').forEach(s => s.classList.remove('open')); }
 
-$('prevY').onclick = () => { year--; render(); };
-$('nextY').onclick = () => { year++; render(); };
-$('todayBtn').onclick = () => { year = new Date().getFullYear();
+$('prevY').onclick = () => { year--; autoScroll = true; render(); };
+$('nextY').onclick = () => { year++; autoScroll = true; render(); };
+$('todayBtn').onclick = () => { year = new Date().getFullYear(); autoScroll = true;
   if (view === 'year') { view='timeline'; switchView(); } render(); };
 $('addEvent').onclick = () => openEvent(null);
 $('evCancel').onclick = $('lnCancel').onclick = $('dyClose').onclick = closeModals;
@@ -886,12 +961,13 @@ function switchView() {
   $('vYear').classList.toggle('active', view==='year');
   $('timelineWrap').style.display = view==='timeline' ? '' : 'none';
   $('yearWrap').style.display = view==='year' ? '' : 'none';
+  $('zoomGroup').style.visibility = view==='timeline' ? '' : 'hidden';
+  positionResizer();
 }
-$('vTimeline').onclick = () => { view='timeline'; switchView(); render(); };
+$('vTimeline').onclick = () => { view='timeline'; autoScroll = true; switchView(); render(); };
 $('vYear').onclick = () => { view='year'; switchView(); render(); };
 
-// Keep the lane-name column pinned to the left edge while the
-// timeline scrolls sideways, so you never lose which row is which.
+// Keep the tab column pinned to the left edge during horizontal scroll
 $('scroll').addEventListener('scroll', () => {
   const l = document.querySelector('.lane-labels');
   if (l) l.style.left = $('scroll').scrollLeft + 'px';
