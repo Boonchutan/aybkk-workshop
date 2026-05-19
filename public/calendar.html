@@ -40,6 +40,7 @@
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
     body {
+      height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
       font-family: var(--font);
       color: var(--ink);
       background:
@@ -54,14 +55,41 @@
 
     /* ---------- Top bar ---------- */
     .topbar {
-      position: sticky; top: 0; z-index: 50;
-      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-      padding: 16px 22px;
-      padding-top: calc(16px + env(safe-area-inset-top));
+      position: relative; z-index: 50; flex: none;
+      display: flex; flex-direction: column;
       background: var(--glass);
       -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
       box-shadow: 0 1px 0 var(--hair), var(--shadow-sm);
     }
+    .topbar-body {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      padding: 16px 22px;
+      padding-top: calc(16px + env(safe-area-inset-top));
+      max-height: 340px; overflow: hidden;
+      transition: max-height .42s var(--ease), opacity .34s var(--ease),
+                  padding .42s var(--ease);
+    }
+    .topbar.min .topbar-body {
+      max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0;
+      pointer-events: none;
+    }
+    .peek {
+      flex: none; height: 22px; display: flex; align-items: center;
+      justify-content: center; gap: 10px; cursor: pointer; color: var(--ink-soft);
+      transition: background .2s;
+    }
+    .peek:hover { background: rgba(255,255,255,0.4); }
+    .peek .grab {
+      width: 46px; height: 5px; border-radius: 999px;
+      background: rgba(22,28,48,0.22); transition: background .2s, width .2s;
+    }
+    .peek:hover .grab { background: var(--accent); width: 60px; }
+    .peek .lbl {
+      font-size: 11px; font-weight: 800; letter-spacing: 0.18em;
+      text-transform: uppercase; opacity: 0;
+      transition: opacity .3s; max-width: 0; overflow: hidden;
+    }
+    .topbar.min .peek .lbl { opacity: 0.62; max-width: 320px; }
     .brand { display: flex; flex-direction: column; line-height: 1.05; margin-right: auto; }
     .brand .eyebrow {
       font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
@@ -141,24 +169,30 @@
     .saver.show { opacity: 0.75; }
 
     /* ---------- Timeline ---------- */
-    .stage { padding: 22px; }
-    #timelineWrap { position: relative; }
+    .stage { padding: 18px; flex: 1; min-height: 0; }
+    #timelineWrap { position: relative; height: 100%; }
     .scroll {
-      overflow-x: auto; overflow-y: hidden;
+      height: 100%; overflow: auto;
       border-radius: var(--r);
       background: var(--glass);
       -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
       box-shadow: var(--shadow);
     }
+    #yearWrap { height: 100%; overflow: auto; }
     .grid { position: relative; }
 
-    .months { position: relative; height: 54px;
-      box-shadow: 0 1px 0 var(--hair-2); }
+    /* month header sticks to the top while you scroll down */
+    .months {
+      position: sticky; top: 0; z-index: 25; height: 54px;
+      background: var(--glass-2);
+      -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+      box-shadow: 0 1px 0 var(--hair-2);
+    }
     .month-cell {
       position: absolute; top: 0; bottom: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--ink-soft);
+      font-size: 13.5px; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--ink);
     }
 
     .laneband { position: relative; z-index: 2; box-shadow: 0 1px 0 var(--hair); }
@@ -202,6 +236,21 @@
       transition: opacity .2s; }
     .lane-label:hover .x { opacity: 0.55; }
     .lane-label .x:hover { opacity: 1; }
+
+    /* collapsed side column: slim colour strip, name kept legible */
+    .lane-labels.collapsed .lane-label {
+      padding: 0; cursor: pointer; gap: 0;
+      justify-content: center; overflow: hidden;
+    }
+    .lane-labels.collapsed .lane-label .dot,
+    .lane-labels.collapsed .lane-label .x { display: none; }
+    .lane-strip {
+      writing-mode: vertical-rl; transform: rotate(180deg);
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.05em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
 
     /* drag-to-resize handle for the tab column */
     #laneResizer {
@@ -348,17 +397,18 @@
     .dayrow .meta { font-size: 11px; color: var(--ink-soft); margin-left: auto; }
 
     @media (max-width: 680px) {
-      .topbar { padding: 14px 14px;
+      .topbar-body { padding: 14px 14px;
         padding-top: calc(14px + env(safe-area-inset-top)); gap: 10px; }
       .brand { width: 100%; margin-right: 0; }
-      .stage { padding: 14px; }
+      .stage { padding: 12px; }
       .zoom { display: none; }
     }
   </style>
 </head>
 <body>
 
-<div class="topbar">
+<div class="topbar" id="topbar">
+ <div class="topbar-body">
   <div class="brand">
     <span class="eyebrow">Jamsai &amp; Boonchu</span>
     <h1>Work / Life Year Planner</h1>
@@ -382,6 +432,11 @@
   <button class="btn ghost" id="addLane">+ Lane</button>
   <button class="btn primary" id="addEvent">+ Event</button>
   <span class="saver" id="saver">Saved</span>
+ </div>
+ <div class="peek" id="peek" title="Show / hide the bar">
+   <span class="grab"></span>
+   <span class="lbl">Jamsai &amp; Boonchu · Year Planner</span>
+ </div>
 </div>
 
 <div class="stage">
@@ -477,6 +532,9 @@ const PALETTE = ['#E8503A','#F0962E','#EBB22E','#5FA463','#3FB3CC','#2E4A6B',
                  '#2FA38C','#8A4F86','#5B6B7B','#E0726A'];
 let DAY_W = clampNum(+localStorage.getItem('plnr.dayW') || 9, 4, 26);
 let LABEL_W = clampNum(+localStorage.getItem('plnr.labelW') || 210, 132, 480);
+const COLLAPSED_W = 34;
+let lanesCollapsed = localStorage.getItem('plnr.lanesCol') === '1';
+const LW = () => lanesCollapsed ? COLLAPSED_W : LABEL_W;   // effective gutter
 const ROW_H = 46, LANE_PAD = 14;
 const BAR_H = { low: 16, normal: 28, high: 36 };
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -574,19 +632,19 @@ function packLane(items) {
 function renderTimeline() {
   const grid = $('grid');
   const total = daysInYear(year);
-  grid.style.width = (LABEL_W + total * DAY_W) + 'px';
+  const lw = LW();
+  grid.style.width = (lw + total * DAY_W) + 'px';
   grid.innerHTML = '';
   grid.style.paddingBottom = '';
 
   const months = document.createElement('div');
   months.className = 'months';
-  months.style.marginLeft = LABEL_W + 'px';
   for (let m = 0; m < 12; m++) {
     const startD = dayOfYear(new Date(year, m, 1)) - 1;
     const span = new Date(year, m+1, 0).getDate();
     const cell = document.createElement('div');
     cell.className = 'month-cell';
-    cell.style.left = startD * DAY_W + 'px';
+    cell.style.left = (lw + startD * DAY_W) + 'px';
     cell.style.width = span * DAY_W + 'px';
     cell.textContent = MON_ABBR[m];
     months.appendChild(cell);
@@ -608,7 +666,7 @@ function renderTimeline() {
 
   const bd = document.createElement('div');
   bd.className = 'bd-layer';
-  bd.style.left = LABEL_W + 'px'; bd.style.height = bodyH + 'px';
+  bd.style.left = lw + 'px'; bd.style.height = bodyH + 'px';
   backdrops.forEach(it => {
     const el = document.createElement('div');
     el.className = 'bd-band';
@@ -624,7 +682,7 @@ function renderTimeline() {
 
   const gl = document.createElement('div');
   gl.className = 'gl-layer';
-  gl.style.left = LABEL_W + 'px'; gl.style.height = bodyH + 'px';
+  gl.style.left = lw + 'px'; gl.style.height = bodyH + 'px';
   for (let m = 1; m < 12; m++) {
     const d = dayOfYear(new Date(year, m, 1)) - 1;
     const ln = document.createElement('div');
@@ -635,14 +693,14 @@ function renderTimeline() {
   grid.appendChild(gl);
 
   const labels = document.createElement('div');
-  labels.className = 'lane-labels';
-  labels.style.width = LABEL_W + 'px';
+  labels.className = 'lane-labels' + (lanesCollapsed ? ' collapsed' : '');
+  labels.style.width = lw + 'px';
 
   layout.forEach(({ lane, items, h }) => {
     const band = document.createElement('div');
     band.className = 'laneband';
     band.style.height = h + 'px';
-    band.style.marginLeft = LABEL_W + 'px';
+    band.style.marginLeft = lw + 'px';
     band.addEventListener('dblclick', e => {
       if (e.target !== band) return;
       const dy = Math.max(0, Math.min(total-1, Math.round(e.offsetX / DAY_W)));
@@ -694,17 +752,24 @@ function renderTimeline() {
     const lab = document.createElement('div');
     lab.className = 'lane-label';
     lab.style.height = h + 'px';
-    lab.innerHTML = `<span class="dot" style="background:${lane.color}"></span>
-      <span class="nm">${esc(lane.name)}</span>
-      <button class="x" title="Delete lane">✕</button>`;
-    lab.querySelector('.x').onclick = () => deleteLane(lane.id);
+    if (lanesCollapsed) {
+      lab.style.background = tint(lane.color, 0.16);
+      lab.title = lane.name + ' — click to expand';
+      lab.innerHTML = `<span class="lane-strip" style="color:${lane.color}">${esc(lane.name)}</span>`;
+      lab.onclick = () => setLanesCollapsed(false);
+    } else {
+      lab.innerHTML = `<span class="dot" style="background:${lane.color}"></span>
+        <span class="nm">${esc(lane.name)}</span>
+        <button class="x" title="Delete lane">✕</button>`;
+      lab.querySelector('.x').onclick = () => deleteLane(lane.id);
+    }
     labels.appendChild(lab);
   });
   grid.appendChild(labels);
 
   if (year === new Date().getFullYear()) {
     const t = new Date(); t.setHours(0,0,0,0);
-    const x = LABEL_W + (dayOfYear(t)-1) * DAY_W;
+    const x = lw + (dayOfYear(t)-1) * DAY_W;
     const td = document.createElement('div');
     td.className = 'today';
     td.style.left = x + 'px'; td.style.top = '54px'; td.style.height = bodyH + 'px';
@@ -772,12 +837,17 @@ function render() {
   if (view === 'year') renderYearGrid();
 }
 
-// ---------- Tab-column resize ----------
+// ---------- Tab-column resize & collapse ----------
 function positionResizer() {
   const r = $('laneResizer');
   if (view !== 'timeline') { r.style.display = 'none'; return; }
   r.style.display = '';
-  r.style.left = LABEL_W + 'px';
+  r.style.left = LW() + 'px';
+}
+function setLanesCollapsed(v) {
+  lanesCollapsed = v;
+  localStorage.setItem('plnr.lanesCol', v ? '1' : '0');
+  renderTimeline();
 }
 let rafQ = false;
 function softRender() {
@@ -786,25 +856,34 @@ function softRender() {
 }
 (function initResizer(){
   const h = $('laneResizer');
-  let active = false, sx = 0, sw = 0;
+  let active = false;
+  const SNAP = 96;   // dragged narrower than this collapses the column
   h.addEventListener('pointerdown', e => {
-    active = true; sx = e.clientX; sw = LABEL_W;
-    h.classList.add('drag'); h.setPointerCapture(e.pointerId);
+    active = true;
+    h.classList.add('drag');
+    try { h.setPointerCapture(e.pointerId); } catch (_) {}
     e.preventDefault();
   });
   h.addEventListener('pointermove', e => {
     if (!active) return;
-    const w = clampNum(Math.round(sw + (e.clientX - sx)), 132, 480);
-    if (w !== LABEL_W) { LABEL_W = w; softRender(); }
+    // splitter follows the pointer: width = pointer X from the pane's left
+    const paneLeft = $('scroll').getBoundingClientRect().left;
+    const target = Math.round(e.clientX - paneLeft);
+    if (target < SNAP) {
+      if (!lanesCollapsed) { lanesCollapsed = true; softRender(); }
+    } else {
+      const w = clampNum(target, 132, 480);
+      if (lanesCollapsed || w !== LABEL_W) { lanesCollapsed = false; LABEL_W = w; softRender(); }
+    }
   });
   function end(){ if(!active) return; active = false;
-    h.classList.remove('drag'); localStorage.setItem('plnr.labelW', LABEL_W);
+    h.classList.remove('drag');
+    localStorage.setItem('plnr.labelW', LABEL_W);
+    localStorage.setItem('plnr.lanesCol', lanesCollapsed ? '1' : '0');
     renderTimeline(); }
   h.addEventListener('pointerup', end);
   h.addEventListener('pointercancel', end);
-  h.addEventListener('dblclick', () => {
-    LABEL_W = 210; localStorage.setItem('plnr.labelW', LABEL_W); renderTimeline();
-  });
+  h.addEventListener('dblclick', () => setLanesCollapsed(!lanesCollapsed));
 })();
 
 // ---------- Timeline zoom ----------
@@ -967,10 +1046,23 @@ function switchView() {
 $('vTimeline').onclick = () => { view='timeline'; autoScroll = true; switchView(); render(); };
 $('vYear').onclick = () => { view='year'; switchView(); render(); };
 
-// Keep the tab column pinned to the left edge during horizontal scroll
-$('scroll').addEventListener('scroll', () => {
+// Pin the tab column on horizontal scroll; collapse the top bar to a
+// peek tab on vertical scroll (auto, with manual override via the tab).
+const scroller = $('scroll'), topbar = $('topbar'), peek = $('peek');
+let tbManualUntil = 0;
+scroller.addEventListener('scroll', () => {
   const l = document.querySelector('.lane-labels');
-  if (l) l.style.left = $('scroll').scrollLeft + 'px';
+  if (l) l.style.left = scroller.scrollLeft + 'px';
+  if (Date.now() < tbManualUntil) return;
+  topbar.classList.toggle('min', scroller.scrollTop > 26);
+}, { passive: true });
+peek.addEventListener('click', () => {
+  topbar.classList.toggle('min');
+  tbManualUntil = Date.now() + 3000;
+});
+$('yearWrap').addEventListener('scroll', () => {
+  if (Date.now() < tbManualUntil) return;
+  topbar.classList.toggle('min', $('yearWrap').scrollTop > 26);
 }, { passive: true });
 
 load();
