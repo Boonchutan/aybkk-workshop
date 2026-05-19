@@ -1,88 +1,89 @@
 /**
- * Generates the AYBKK Year Planner home-screen icons.
- * Beech-wood tile, serif "A" carved into the grain (carved-clay
- * light/shadow), a quiet baseline rule for the timeline signal.
- * Editorial / lineage register — never a generic calendar glyph.
+ * Jamsai & Boonchu planner app icon.
+ * Apple liquid-glass tile: light frosted base with soft Pantone
+ * colour blooms, modern SF monogram "JS" over "BT", high contrast.
+ * No carved wood, no heavy bevel; flat-glass to match the app.
  */
 const { createCanvas, GlobalFonts } = require('@napi-rs/canvas');
 const fs = require('fs');
 const path = require('path');
 
-GlobalFonts.registerFromPath(
-  path.join(__dirname, '..', 'fonts', 'PlayfairDisplay-Bold.ttf'),
-  'Playfair Display'
-);
+let FF = 'sans-serif';
+for (const p of ['/System/Library/Fonts/SFNS.ttf',
+                 '/System/Library/Fonts/HelveticaNeue.ttc',
+                 '/System/Library/Fonts/Helvetica.ttc']) {
+  if (fs.existsSync(p)) { try { GlobalFonts.registerFromPath(p, 'IconSans'); FF = 'IconSans'; break; } catch (e) {} }
+}
 
-// inset = maskable safe-zone fraction (0 = full bleed for apple-touch)
-function draw(size, inset = 0) {
+// faux-bold: stack a few sub-pixel passes so weight is reliable
+function heavy(x, text, cx, cy, size, color, spread) {
+  x.fillStyle = color;
+  x.font = `${size}px "${FF}"`;
+  x.textAlign = 'center';
+  x.textBaseline = 'middle';
+  const s = spread || size * 0.012;
+  for (const [dx, dy] of [[-s,0],[s,0],[0,-s],[0,s],[0,0]]) x.fillText(text, cx+dx, cy+dy);
+}
+
+function bloom(x, cx, cy, r, color, a) {
+  const g = x.createRadialGradient(cx, cy, 0, cx, cy, r);
+  g.addColorStop(0, color + a);
+  g.addColorStop(1, color + '00');
+  x.fillStyle = g;
+  x.fillRect(0, 0, x.canvas.width, x.canvas.height);
+}
+
+function draw(size, inset) {
   const cv = createCanvas(size, size);
   const x = cv.getContext('2d');
-  const m = size * inset;            // safe-zone margin
-  const s = size - m * 2;            // drawable tile size
-  const cx = size / 2;
+  const m = size * (inset || 0);
 
-  // --- beech field: warm radial, walnut toward the edges ---
-  const g = x.createRadialGradient(cx, size * 0.42, s * 0.08, cx, cx, s * 0.78);
-  g.addColorStop(0, '#e3cb9e');
-  g.addColorStop(0.55, '#d2b487');
-  g.addColorStop(1, '#a9885c');
-  x.fillStyle = '#b8956a';
+  // light glass base
+  const base = x.createLinearGradient(0, 0, size, size);
+  base.addColorStop(0, '#eef0f5');
+  base.addColorStop(1, '#e4e7ef');
+  x.fillStyle = base;
   x.fillRect(0, 0, size, size);
-  x.fillStyle = g;
-  x.fillRect(m, m, s, s);
 
-  // --- faint vertical grain ---
-  x.save();
-  x.beginPath(); x.rect(m, m, s, s); x.clip();
-  x.lineWidth = Math.max(1, size / 360);
-  for (let i = 0; i < 14; i++) {
-    const gx = m + (s / 13) * i + Math.sin(i * 1.7) * s * 0.012;
-    x.strokeStyle = i % 2 ? 'rgba(120,92,58,0.05)' : 'rgba(255,244,224,0.05)';
-    x.beginPath(); x.moveTo(gx, m); x.lineTo(gx, m + s); x.stroke();
-  }
-  x.restore();
+  // soft Pantone blooms (the app palette)
+  bloom(x, size * 0.20, size * 0.18, size * 0.66, '#E8503A', 'a0');
+  bloom(x, size * 0.86, size * 0.26, size * 0.58, '#F0962E', '8c');
+  bloom(x, size * 0.82, size * 0.88, size * 0.70, '#3FB3CC', '9a');
+  bloom(x, size * 0.16, size * 0.90, size * 0.58, '#5FA463', '7c');
 
-  // --- carved serif "A" ---
-  const fs1 = s * 0.62;
-  x.font = `${fs1}px "Playfair Display"`;
-  x.textAlign = 'center';
-  x.textBaseline = 'alphabetic';
-  const ay = cx + fs1 * 0.30;        // optical centering for the cap
+  // frosted veil → milky glass (lighter, lets the colour through)
+  x.fillStyle = 'rgba(255,255,255,0.30)';
+  x.fillRect(0, 0, size, size);
+  // gentle top sheen
+  const sheen = x.createLinearGradient(0, m, 0, size * 0.6);
+  sheen.addColorStop(0, 'rgba(255,255,255,0.40)');
+  sheen.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = sheen;
+  x.fillRect(0, 0, size, size);
 
-  // light edge (upper-left), then shadow (lower-right), then face
-  x.fillStyle = 'rgba(253,247,232,0.85)';
-  x.fillText('A', cx - size * 0.006, ay - size * 0.006);
-  x.fillStyle = 'rgba(58,42,22,0.55)';
-  x.fillText('A', cx + size * 0.011, ay + size * 0.011);
-  x.fillStyle = '#6a5132';
-  x.fillText('A', cx, ay);
+  // monogram: JS over BT, high-contrast ink
+  const ink = '#15171a';
+  const gs = size * 0.345;
+  heavy(x, 'JS', size/2, size * 0.385, gs, ink);
+  heavy(x, 'BT', size/2, size * 0.655, gs, ink);
 
-  // --- baseline rule = the timeline ---
-  const ry = m + s * 0.80;
-  const rx0 = m + s * 0.20, rx1 = m + s * 0.80;
-  x.strokeStyle = 'rgba(58,42,22,0.42)';
-  x.lineWidth = Math.max(2, size / 150);
-  x.beginPath(); x.moveTo(rx0, ry); x.lineTo(rx1, ry); x.stroke();
-  x.strokeStyle = 'rgba(253,247,232,0.5)';
-  x.beginPath(); x.moveTo(rx0, ry + x.lineWidth); x.lineTo(rx1, ry + x.lineWidth); x.stroke();
-  // four quiet ticks (quarters of the year)
-  x.fillStyle = 'rgba(58,42,22,0.5)';
-  for (let i = 0; i < 4; i++) {
-    const tx = rx0 + ((rx1 - rx0) / 3) * i;
-    x.fillRect(tx - x.lineWidth / 2, ry - s * 0.022, x.lineWidth, s * 0.044);
-  }
+  // thin Pantone divider between the two
+  const dw = size * 0.30;
+  x.fillStyle = '#2E4A6B';
+  const dh = Math.max(2, size * 0.018);
+  x.fillRect((size - dw) / 2, size * 0.52 - dh / 2, dw, dh);
 
   return cv.toBuffer('image/png');
 }
 
 const out = path.join(__dirname, '..', 'public');
 const jobs = [
-  ['planner-icon-180.png', 180, 0],     // apple-touch (iOS masks it)
+  ['planner-icon-180.png', 180, 0],     // apple-touch (iOS masks corners)
   ['planner-icon-192.png', 192, 0],
   ['planner-icon-512.png', 512, 0],
-  ['planner-icon-512-maskable.png', 512, 0.11],
+  ['planner-icon-512-maskable.png', 512, 0.10],  // Android safe zone
 ];
 for (const [name, size, inset] of jobs) {
   fs.writeFileSync(path.join(out, name), draw(size, inset));
-  console.log('wrote', name, `${size}x${size}`);
+  console.log('wrote', name, `${size}x${size}`, FF);
 }
