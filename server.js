@@ -192,6 +192,30 @@ global.LINE_GROUP_ID = null;
 
 // LINE Messaging API webhook
 const LINE_CHANNEL_SECRET = process.env.LINE_CHANNEL_SECRET || 'your-line-channel-secret';
+const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN || '';
+
+// Push helper used by webhook handlers
+async function linePushPlain(uid, messages) {
+  if (!LINE_CHANNEL_ACCESS_TOKEN) {
+    console.warn('[LINE] Missing access token, skipping push');
+    return false;
+  }
+  try {
+    const resp = await fetch('https://api.line.me/v2/bot/message/push', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`
+      },
+      body: JSON.stringify({ to: uid, messages })
+    });
+    if (!resp.ok) console.error('[LINE] push failed', resp.status, await resp.text());
+    return resp.ok;
+  } catch (err) {
+    console.error('[LINE] push error:', err.message);
+    return false;
+  }
+}
 
 app.post('/line/webhook', express.json({ type: '*/*' }), async (req, res) => {
   try {
@@ -216,6 +240,87 @@ app.post('/line/webhook', express.json({ type: '*/*' }), async (req, res) => {
         if (event.source && event.source.type === 'group') {
           global.LINE_GROUP_ID = event.source.groupId;
           console.log('[LINE] Group ID from join:', event.source.groupId);
+        }
+      }
+
+      // Capture follow events: a user added the bot as a friend.
+      // We need their userId to push messages to them later, and we send
+      // back a claim code so they can link to their student profile.
+      if (event.type === 'follow' && event.source && event.source.userId) {
+        const uid = event.source.userId;
+        console.log('[LINE] New follower UID:', uid);
+        try {
+          const session = driver.session();
+          // If already linked to a Student, send a "welcome back" message and skip code.
+          const existing = await session.run(
+            `OPTIONAL MATCH (s:Student)-[:HAS_LINE]->(la:LineAccount {uid: $uid})
+             RETURN s.name AS name`,
+            { uid }
+          );
+          const linkedName = existing.records.length ? existing.records[0].get('name') : null;
+
+          if (linkedName) {
+            await session.close();
+            await linePushPlain(uid, [
+              { type: 'text', text:
+                `${linkedName} ยินดีต้อนรับกลับมา 🙏\n` +
+                `บัญชี LINE ของคุณเชื่อมกับ AYBKK แล้ว — คุณจะได้รับรูปจากการฝึกในแต่ละวันที่นี่\n\n` +
+                `Welcome back, ${linkedName}!\nYour LINE is connected to AYBKK. Daily class photos will arrive here.` }
+            ]);
+          } else {
+            const code = String(Math.floor(1000 + Math.random() * 9000));
+            await session.run(
+              `MERGE (la:LineAccount {uid: $uid})
+               ON CREATE SET la.createdAt = datetime(), la.followedBot = true, la.linked = false
+               ON MATCH SET la.followedBot = true, la.unfollowedAt = null
+               SET la.pendingCode = $code,
+                   la.codeExpires = datetime() + duration('PT24H')`,
+              { uid, code }
+            );
+            await session.close();
+            await linePushPlain(uid, [
+              { type: 'text', text:
+                `ยินดีต้อนรับสู่ AYBKK 🙏\n\n` +
+                `เพื่อรับรูปจากการฝึกในแต่ละวัน:\n` +
+                `1. เปิด https://aybkk-ashtanga.up.railway.app/claim\n` +
+                `2. พิมพ์ชื่อของคุณ (ตามระบบจองคลาส)\n` +
+                `3. ใส่รหัส: ${code}\n` +
+                `(รหัสมีอายุ 24 ชม.)\n\n` +
+                `— English —\n` +
+                `Welcome to AYBKK. To receive your daily class photo:\n` +
+                `1. Open https://aybkk-ashtanga.up.railway.app/claim\n` +
+                `2. Type your name (as in our booking system)\n` +
+                `3. Enter code: ${code}\n` +
+                `(code expires in 24h)` }
+            ]);
+          }
+        } catch (err) {
+          console.error('[LINE] Failed to handle follow:', err.message);
+        }
+      }
+
+      // Log incoming user messages with UID — useful for capturing UIDs
+      // before/without a follow event during testing.
+      if (event.type === 'message' && event.source && event.source.userId) {
+        const uid = event.source.userId;
+        const text = event.message && event.message.text ? event.message.text : `(${event.message?.type || 'non-text'})`;
+        console.log(`[LINE] Message from ${uid}: ${text.slice(0, 80)}`);
+      }
+
+      // Unfollow: mark inactive so broadcaster skips them.
+      if (event.type === 'unfollow' && event.source && event.source.userId) {
+        const uid = event.source.userId;
+        console.log('[LINE] Unfollowed:', uid);
+        try {
+          const session = driver.session();
+          await session.run(
+            `MATCH (la:LineAccount {uid: $uid})
+             SET la.unfollowedAt = datetime(), la.followedBot = false`,
+            { uid }
+          );
+          await session.close();
+        } catch (err) {
+          console.error('[LINE] Failed to mark unfollow:', err.message);
         }
       }
     }
@@ -397,6 +502,63 @@ app.get('/api/health', async (req, res) => {
     res.json({ status: 'ok', neo4j: 'connected', timestamp: new Date().toISOString() });
   } catch (err) {
     res.status(500).json({ status: 'error', neo4j: 'disconnected', error: err.message });
+  }
+});
+
+// LINE pipeline status — quick mobile-friendly dashboard
+app.get('/admin/line-status', async (req, res) => {
+  const session = driver.session();
+  try {
+    // Run each count as its own query so a zero result doesn't collapse the whole row
+    const oneNum = async (cypher) => {
+      const r = await session.run(cypher);
+      return r.records[0] ? r.records[0].get('n').toNumber() : 0;
+    };
+    const totalStudents = await oneNum(`MATCH (s:Student) RETURN count(s) AS n`);
+    const activeMembers = await oneNum(`MATCH (s:Student)-[:HAS_MEMBERSHIP]->(:Membership {status:'active'}) RETURN count(DISTINCT s) AS n`);
+    const followers = await oneNum(`MATCH (la:LineAccount) WHERE la.followedBot=true AND la.unfollowedAt IS NULL RETURN count(la) AS n`);
+    const linkedStudents = await oneNum(`MATCH (s:Student)-[:HAS_LINE]->(la:LineAccount) WHERE la.followedBot=true AND la.unfollowedAt IS NULL RETURN count(DISTINCT s) AS n`);
+    const reachable = await oneNum(`MATCH (s:Student)-[:HAS_MEMBERSHIP]->(:Membership {status:'active'}) MATCH (s)-[:HAS_LINE]->(la:LineAccount) WHERE la.followedBot=true AND la.unfollowedAt IS NULL RETURN count(DISTINCT s) AS n`);
+    const c = { totalStudents, activeMembers, followers, linkedStudents, reachable };
+
+    const recent = await session.run(`
+      MATCH (la:LineAccount)
+      WHERE la.createdAt > datetime() - duration('PT24H')
+      RETURN la.uid AS uid, la.followedBot AS following,
+             la.unfollowedAt AS unfollowed, la.linked AS linked,
+             la.createdAt AS at
+      ORDER BY at DESC LIMIT 10
+    `);
+
+    const html = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AYBKK LINE status</title>
+<style>body{font:16px/1.5 -apple-system,sans-serif;max-width:560px;margin:24px auto;padding:0 16px;color:#222}
+h1{font-size:20px}.k{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:8px 0}
+.k b{font-variant-numeric:tabular-nums}.r{background:#fafaf6;padding:12px;border-radius:8px;margin-top:16px;font-size:14px}
+.r div{padding:4px 0;border-bottom:1px solid #eee}.ok{color:#2a7}.no{color:#a55}</style>
+<h1>AYBKK LINE pipeline</h1>
+<div class="k"><span>Total students in DB</span><b>${c.totalStudents}</b></div>
+<div class="k"><span>Active Rezerv members</span><b>${c.activeMembers}</b></div>
+<div class="k"><span>LINE followers (added bot)</span><b>${c.followers}</b></div>
+<div class="k"><span>Followers linked to a student</span><b>${c.linkedStudents}</b></div>
+<div class="k"><span><b>Reachable today</b> (active + linked)</span><b>${c.reachable}</b></div>
+<div class="r"><b>Recent LineAccount activity (24h)</b>
+${recent.records.length === 0 ? '<div>nothing yet</div>' :
+  recent.records.map(r => {
+    const isLinked = r.get('linked');
+    const isFollowing = r.get('following');
+    const uf = r.get('unfollowed');
+    const status = uf ? 'unfollowed' : (isLinked ? 'linked' : (isFollowing ? 'following' : 'pending'));
+    const cls = uf ? 'no' : 'ok';
+    return `<div class="${cls}">${String(r.get('uid')).slice(0,12)}…  ${status}</div>`;
+  }).join('')}
+</div>
+<p style="color:#888;font-size:12px;margin-top:24px">${new Date().toISOString()}</p>`;
+    res.set('Content-Type', 'text/html').send(html);
+  } catch (err) {
+    res.status(500).send(`Error: ${err.message}`);
+  } finally {
+    await session.close();
   }
 });
 

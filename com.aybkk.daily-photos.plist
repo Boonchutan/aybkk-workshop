@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Daily AYBKK photo watcher — runs every 5 minutes when the Mac mini is on,
+  scans the Drive folder, uploads new images to Cloudinary.
+
+  Install:
+    cp com.aybkk.daily-photos.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.aybkk.daily-photos.plist
+
+  Uninstall:
+    launchctl unload ~/Library/LaunchAgents/com.aybkk.daily-photos.plist
+
+  Logs:
+    tail -f /tmp/aybkk-photo-watcher.log
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.aybkk.daily-photos</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>-lc</string>
+        <string>cd /Users/alfredoagent/mission-control &amp;&amp; /opt/homebrew/bin/railway run /opt/homebrew/bin/node aybkk-photo-watcher.js --once</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/alfredoagent/mission-control</string>
+
+    <key>StartInterval</key>
+    <integer>300</integer>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/aybkk-photo-watcher.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/aybkk-photo-watcher.log</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>

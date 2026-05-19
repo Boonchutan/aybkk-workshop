@@ -11,7 +11,7 @@ async function queryStudents() {
       method: 'POST',
       path: `data_sources/${dbId}/query`,
       body: {
-        page_size: 5
+        page_size: 100
       }
     });
 
