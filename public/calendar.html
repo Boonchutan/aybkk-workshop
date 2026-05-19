@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AYBKK — Year Planner</title>
+
+  <!-- Add to Home Screen: launches full-screen, no Safari chrome -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#f7f0df">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Planner">
+  <link rel="apple-touch-icon" href="/planner-icon-180.png">
+
+  <link rel="stylesheet" href="/tokens.css">
+  <style>
+    /* High-contrast override, tuned for low-vision legibility.
+       Keeps the warm wood identity; trades soft carved-clay tonality
+       for crisp edges, near-black ink, and larger type. */
+    :root {
+      --bg:           #f7f0df;
+      --surface:      #fffaf0;
+      --surface-2:    #efe1c2;
+      --shadow-dark:  #9c8454;
+      --shadow-light: #fffdf5;
+      --primary:      #c9a86f;
+      --primary-deep: #432f12;   /* labels / eyebrow: ~9:1 on bg */
+      --ink:          #1b1307;   /* body: ~15:1 on bg */
+      --ink-soft:     #45340f;   /* secondary: ~7:1 on bg */
+      --accent:       #7a4a1c;
+      --hair:         rgba(50,36,14,0.34);
+      --hair-strong:  rgba(50,36,14,0.58);
+      /* flatten the carved multi-shadow: it muddies glyph edges */
+      --text-carve:      0 1px 0 rgba(255,251,240,0.55);
+      --text-carve-soft: 0 1px 0 rgba(255,251,240,0.5);
+    }
+    .display, .display-md { color: #241a0b; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- Top bar ---------- */
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      display: flex; align-items: center; gap: var(--space-4);
+      flex-wrap: wrap;
+      padding: 18px 24px;
+      padding-top: calc(18px + env(safe-area-inset-top));
+      padding-left: calc(24px + env(safe-area-inset-left));
+      padding-right: calc(24px + env(safe-area-inset-right));
+      background: var(--bg);
+      border-bottom: 1px solid rgba(150,120,80,0.18);
+    }
+    .brand { display: flex; flex-direction: column; line-height: 1; margin-right: auto; }
+    .brand .eyebrow { margin-bottom: 4px; }
+    .brand h1 {
+      font-family: var(--font-display);
+      font-weight: 800; font-size: 22px; letter-spacing: -0.01em;
+      color: #2f2517; text-shadow: var(--text-carve-soft); margin: 0;
+    }
+
+    .yearnav { display: flex; align-items: center; gap: 10px; }
+    .yearnav .year {
+      font-family: var(--font-display); font-weight: 800; font-size: 26px;
+      color: var(--primary-deep); min-width: 92px; text-align: center;
+      letter-spacing: 0.02em;
+    }
+    .iconbtn {
+      width: 42px; height: 42px; border: none; cursor: pointer;
+      border-radius: var(--radius-md); background: var(--surface);
+      color: var(--primary-deep); font-size: 18px; font-family: var(--font-display);
+      box-shadow: 8px 8px 18px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .iconbtn:hover { transform: translateY(-2px); }
+    .iconbtn:active { transform: translateY(2px) scale(0.96); }
+
+    .seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: var(--radius-md); }
+    .seg button {
+      border: none; cursor: pointer; padding: 10px 18px;
+      font-family: var(--font-display); font-weight: 700; font-size: 13px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--ink-soft); background: transparent;
+      border-radius: var(--radius-sm); transition: all var(--dur-base) var(--ease-out);
+    }
+    .seg button.active {
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      box-shadow: inset 4px 4px 9px rgba(255,240,215,0.5), inset -3px -3px 8px rgba(40,20,4,0.28);
+    }
+
+    .actbtn {
+      border: none; cursor: pointer; padding: 13px 22px;
+      font-family: var(--font-display); font-weight: 800; font-size: 13px;
+      letter-spacing: 0.05em; text-transform: uppercase; color: #f1e2c4;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      box-shadow: 10px 10px 22px rgba(120,80,40,0.28), -6px -6px 14px var(--shadow-light),
+        inset 4px 4px 10px rgba(255,240,215,0.5), inset -3px -3px 8px rgba(40,20,4,0.28);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .actbtn:hover { transform: translateY(-3px) scale(1.02); }
+    .actbtn:active { transform: translateY(2px) scale(0.97); }
+    .actbtn.ghost {
+      color: var(--primary-deep); background: var(--surface);
+      box-shadow: 8px 8px 18px var(--shadow-dark), -5px -5px 12px var(--shadow-light);
+    }
+
+    .saver {
+      font-family: var(--font-display); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft);
+      opacity: 0; transition: opacity var(--dur-base);
+    }
+    .saver.show { opacity: 0.7; }
+
+    /* ---------- Timeline ---------- */
+    .stage { padding: 22px 24px 80px; }
+    .scroll {
+      overflow-x: auto; overflow-y: hidden;
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      border: 2px solid var(--hair-strong);
+      box-shadow: 0 10px 28px rgba(80,52,28,0.18);
+    }
+    .grid { position: relative; }
+
+    .months {
+      position: relative; height: 56px;
+      border-bottom: 1.5px solid var(--hair-strong);
+    }
+    .month-cell {
+      position: absolute; top: 0; bottom: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-weight: 700; font-size: 15px;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--primary-deep);
+    }
+    .laneband {
+      position: relative; z-index: 2;
+      border-bottom: 1px solid var(--hair);
+    }
+    .laneband:last-of-type { border-bottom: none; }
+
+    /* faint full-height quarter / strategic backdrop bands */
+    .bd-layer { position: absolute; top: 56px; z-index: 0; pointer-events: none; }
+    .bd-band {
+      position: absolute; top: 0; bottom: 0; pointer-events: auto; cursor: pointer;
+      display: flex; align-items: flex-start; justify-content: center;
+      background: rgba(90,60,28,0.055);
+      border-left: 1px dashed rgba(90,60,28,0.28);
+      border-right: 1px dashed rgba(90,60,28,0.28);
+    }
+    .bd-band span {
+      margin-top: 10px;
+      font-family: var(--font-display); font-size: 12px; font-weight: 800;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: rgba(67,47,18,0.5);
+    }
+    .bd-band:hover { background: rgba(90,60,28,0.1); }
+
+    /* clean month gridlines, one layer behind the lanes */
+    .gl-layer { position: absolute; top: 56px; z-index: 1; pointer-events: none; }
+    .gl { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--hair); }
+    .gl.q { background: var(--hair-strong); }
+
+    .lane-labels {
+      position: absolute; left: 0; top: 56px; width: 178px; z-index: 20;
+    }
+    .lane-label {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 14px;
+      font-family: var(--font-display); font-weight: 800; font-size: 16px;
+      color: var(--ink); background: var(--surface);
+      border-top: 1.5px solid var(--hair);
+      border-right: 2px solid var(--hair-strong);
+      box-shadow: 7px 0 14px rgba(60,44,20,0.16);
+    }
+    .lane-label .dot { width: 16px; height: 16px; border-radius: 4px; flex: none;
+      border: 1.5px solid rgba(40,28,8,0.45); }
+    .lane-label .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lane-label .x {
+      margin-left: auto; opacity: 0; cursor: pointer; border: none; background: none;
+      color: var(--ink-soft); font-size: 15px; padding: 4px; transition: opacity var(--dur-fast);
+    }
+    .lane-label:hover .x { opacity: 0.6; }
+    .lane-label .x:hover { opacity: 1; }
+
+    /* flat capsule, no border / shadow / gradient */
+    .bar {
+      position: absolute; border-radius: 999px;
+      display: flex; align-items: center; padding: 0 16px; cursor: pointer;
+      font-family: var(--font-body); font-size: 15px; font-weight: 700;
+      color: #fdf5e4; white-space: nowrap; overflow: hidden;
+      transition: transform var(--dur-fast) var(--ease-out), filter var(--dur-fast);
+    }
+    .bar:hover { transform: translateY(-1px); filter: brightness(1.07); z-index: 6; }
+    .bar .lbl { overflow: hidden; text-overflow: ellipsis; }
+    /* importance: louder for high, recede for low */
+    .bar.pr-high { font-weight: 800; }
+    .bar.pr-low  { opacity: 0.46; font-weight: 600; }
+    .bar.dot {
+      padding: 0; border-radius: 50%; justify-content: center;
+      box-shadow: 0 0 0 3px var(--surface);
+    }
+    .bar-ext {
+      position: absolute; z-index: 3; height: 20px; line-height: 20px;
+      cursor: pointer; white-space: nowrap;
+      font-family: var(--font-body); font-size: 14px; font-weight: 700;
+      color: var(--ink);
+    }
+    .bar-ext.pr-high { font-weight: 800; }
+    .bar-ext.pr-low  { opacity: 0.55; font-weight: 600; }
+
+    .today {
+      position: absolute; width: 2px; z-index: 5;
+      background: #c0822a;
+      pointer-events: none;
+    }
+    .today-pill {
+      position: absolute; z-index: 6; transform: translateX(-50%);
+      font-family: var(--font-display); font-size: 12px; font-weight: 800;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: #fdf5e4; background: #c0822a;
+      padding: 7px 16px; border-radius: var(--radius-pill); white-space: nowrap;
+    }
+
+    /* ---------- Year grid ---------- */
+    .yeargrid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(244px, 1fr));
+      gap: 18px;
+    }
+    .mini {
+      padding: 16px; border-radius: var(--radius-md); background: var(--surface);
+      box-shadow: 10px 10px 22px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+    }
+    .mini h3 {
+      margin: 0 0 12px; font-family: var(--font-display); font-weight: 800;
+      font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--primary-deep);
+    }
+    .mini table { width: 100%; border-collapse: collapse; }
+    .mini th {
+      font-family: var(--font-display); font-size: 12px; font-weight: 800;
+      color: var(--ink-soft); padding-bottom: 7px;
+    }
+    .mini td {
+      text-align: center; padding: 0; height: 34px; width: 14.28%;
+      font-size: 15px; font-family: var(--font-body); position: relative;
+    }
+    .mini td .d {
+      width: 30px; height: 30px; line-height: 30px; margin: 0 auto;
+      border-radius: 50%; cursor: pointer; color: var(--ink); font-weight: 600;
+      transition: background var(--dur-fast);
+    }
+    .mini td.has .d { font-weight: 800; }
+    .mini td.school {
+      background: rgba(63,93,58,0.22); border-radius: 6px;
+      outline: 1.5px solid rgba(63,93,58,0.5); outline-offset: -1.5px;
+    }
+    .mini td.today .d {
+      background: #b2371a; color: #fdf5e4; font-weight: 800;
+    }
+    .mini td .d:hover { background: rgba(201,168,111,0.55); }
+    .mini td .dots {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; gap: 3px; justify-content: center;
+    }
+    .mini td .dots i { width: 6px; height: 6px; border-radius: 50%; display: block;
+      border: 1px solid rgba(28,18,4,0.4); }
+    .mini td.dim .d { color: rgba(70,52,16,0.3); cursor: default; }
+    .mini td.dim .d:hover { background: none; }
+
+    /* ---------- Modal ---------- */
+    .scrim {
+      position: fixed; inset: 0; z-index: 90; display: none;
+      align-items: center; justify-content: center; padding: 20px;
+      background: rgba(60,42,24,0.42); backdrop-filter: blur(3px);
+    }
+    .scrim.open { display: flex; }
+    .modal {
+      width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto;
+      padding: 28px; border-radius: var(--radius-lg); background: var(--surface);
+      box-shadow: 22px 22px 50px rgba(80,52,28,0.4), -10px -10px 24px var(--shadow-light);
+    }
+    .modal h2 {
+      margin: 0 0 4px; font-family: var(--font-display); font-weight: 800;
+      font-size: 22px; color: #2f2517; text-shadow: var(--text-carve-soft);
+    }
+    .modal .sub { margin: 0 0 20px; font-size: 13px; color: var(--ink-soft); }
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block; margin-bottom: 6px;
+      font-family: var(--font-display); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary-deep);
+    }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 12px 14px; border: none; color: var(--ink);
+      font-family: var(--font-body); font-size: 15px;
+      border-radius: var(--radius-sm); background: var(--surface-2);
+      box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+    }
+    .field textarea { resize: vertical; min-height: 64px; }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: 2px solid var(--primary); outline-offset: 1px;
+    }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+    .swatches button {
+      width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
+      box-shadow: inset -1px -1px 3px rgba(0,0,0,0.25);
+    }
+    .swatches button.sel { outline: 3px solid var(--primary-deep); outline-offset: 2px; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .modal-actions .actbtn { flex: 1; }
+    .danger {
+      border: none; cursor: pointer; padding: 13px 18px; color: #7a2f1c;
+      font-family: var(--font-display); font-weight: 700; font-size: 13px;
+      letter-spacing: 0.04em; border-radius: var(--radius-md);
+      background: var(--surface); box-shadow: 6px 6px 14px var(--shadow-dark),
+        -4px -4px 10px var(--shadow-light);
+    }
+    .daylist { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+    .dayrow {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      padding: 11px 14px; border-radius: var(--radius-sm); background: var(--surface-2);
+      box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
+    }
+    .dayrow .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+    .dayrow .meta { font-size: 11px; color: var(--ink-soft); margin-left: auto; }
+    .empty { text-align: center; padding: 60px 20px; color: var(--ink-soft);
+      font-size: 15px; }
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 14px 16px; gap: 12px;
+        padding-top: calc(14px + env(safe-area-inset-top));
+      }
+      .brand { margin-right: 0; width: 100%; }
+      .stage { padding: 16px 12px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="eyebrow">AYBKK Mission Control</span>
+    <h1>Year Planner</h1>
+  </div>
+  <div class="yearnav">
+    <button class="iconbtn" id="prevY" title="Previous year">‹</button>
+    <span class="year" id="yearLbl">2026</span>
+    <button class="iconbtn" id="nextY" title="Next year">›</button>
+  </div>
+  <button class="actbtn ghost" id="todayBtn">Today</button>
+  <div class="seg clay-inset-sm">
+    <button id="vTimeline" class="active">Timeline</button>
+    <button id="vYear">Year Grid</button>
+  </div>
+  <button class="actbtn ghost" id="addLane">+ Lane</button>
+  <button class="actbtn" id="addEvent">+ Event</button>
+  <span class="saver" id="saver">Saved</span>
+</div>
+
+<div class="stage">
+  <div id="timelineWrap">
+    <div class="scroll" id="scroll">
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+  <div id="yearWrap" style="display:none;">
+    <div class="yeargrid" id="yeargrid"></div>
+  </div>
+</div>
+
+<!-- Event modal -->
+<div class="scrim" id="evScrim">
+  <div class="modal">
+    <h2 id="evTitle">New Event</h2>
+    <p class="sub">Spans show as bars on the timeline.</p>
+    <div class="field">
+      <label>Title</label>
+      <input id="fTitle" type="text" placeholder="e.g. Guangzhou workshop">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Lane</label>
+        <select id="fLane"></select>
+      </div>
+      <div class="field">
+        <label>Importance</label>
+        <select id="fPriority">
+          <option value="normal">Normal</option>
+          <option value="high">High — stands out</option>
+          <option value="low">Low — fades back</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Start</label><input id="fStart" type="date"></div>
+      <div class="field"><label>End</label><input id="fEnd" type="date"></div>
+    </div>
+    <div class="field">
+      <label>Colour</label>
+      <div class="swatches" id="evSwatch"></div>
+    </div>
+    <div class="field">
+      <label>Note (optional)</label>
+      <textarea id="fNote" placeholder="Details, links, who's involved…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="danger" id="evDelete" style="display:none;">Delete</button>
+      <button class="actbtn ghost" id="evCancel">Cancel</button>
+      <button class="actbtn" id="evSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lane modal -->
+<div class="scrim" id="lnScrim">
+  <div class="modal">
+    <h2>New Lane</h2>
+    <p class="sub">A new row on the timeline — e.g. a new project.</p>
+    <div class="field">
+      <label>Lane name</label>
+      <input id="fLaneName" type="text" placeholder="e.g. Certification Course">
+    </div>
+    <div class="field">
+      <label>Colour</label>
+      <div class="swatches" id="lnSwatch"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="actbtn ghost" id="lnCancel">Cancel</button>
+      <button class="actbtn" id="lnSave">Add lane</button>
+    </div>
+  </div>
+</div>
+
+<!-- Day modal (year grid) -->
+<div class="scrim" id="dyScrim">
+  <div class="modal">
+    <h2 id="dyTitle">Day</h2>
+    <p class="sub" id="dySub"></p>
+    <div class="daylist" id="dyList"></div>
+    <div class="modal-actions">
+      <button class="actbtn ghost" id="dyClose">Close</button>
+      <button class="actbtn" id="dyAdd">+ Add on this day</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PALETTE = ['#9a805d','#7d6442','#b8895a','#a8693f','#8a7b53','#6c5e4a','#5f7a52','#7a5260','#4f6d78','#8a5a3a'];
+const DAY_W = 9;            // px per day on the timeline
+const LABEL_W = 200;        // lane label gutter
+const ROW_H = 46;           // px per stacked sub-row (airy)
+const LANE_PAD = 14;        // vertical breathing room per lane
+const BAR_H = { low: 16, normal: 28, high: 36 };  // importance = visual weight
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MON_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DOW = ['S','M','T','W','T','F','S'];
+
+let state = { lanes: [], events: [] };
+let year = new Date().getFullYear();
+let view = 'timeline';
+let editingId = null;
+let pendingDay = null;
+let saveTimer = null;
+
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const isLeap = y => (y%4===0 && y%100!==0) || y%400===0;
+const daysInYear = y => isLeap(y) ? 366 : 365;
+const dayOfYear = d => Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000);
+
+async function load() {
+  try {
+    const r = await fetch('/api/calendar');
+    const data = await r.json();
+    state.lanes = data.lanes || [];
+    state.events = data.events || [];
+  } catch (e) { console.error(e); }
+  render();
+}
+
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try {
+      await fetch('/api/calendar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state)
+      });
+      const s = $('saver'); s.classList.add('show');
+      setTimeout(() => s.classList.remove('show'), 1600);
+    } catch (e) { console.error(e); }
+  }, 500);
+}
+
+const laneById = id => state.lanes.find(l => l.id === id);
+const colorOf = ev => ev.color || (laneById(ev.laneId)||{}).color || '#9a805d';
+
+// Events clamped to the visible year, with day offsets
+function eventsForYear() {
+  const y0 = new Date(year,0,1), y1 = new Date(year,11,31);
+  return state.events.map(ev => {
+    const s = parse(ev.start), e = parse(ev.end || ev.start);
+    if (e < y0 || s > y1) return null;
+    const cs = s < y0 ? y0 : s, ce = e > y1 ? y1 : e;
+    return { ev, startDay: dayOfYear(cs)-1, endDay: dayOfYear(ce)-1,
+             clipL: s < y0, clipR: e > y1 };
+  }).filter(Boolean);
+}
+
+// Greedy stack so overlapping bars in a lane don't collide
+// Greedy stack. Reserve horizontal room for the label too, so a short
+// bar with a long name doesn't collide with the next event in its row.
+function packLane(items) {
+  const rows = [];
+  items.sort((a,b) => a.startDay - b.startDay);
+  items.forEach(it => {
+    const single = it.startDay === it.endDay;
+    const labelDays = single ? 1 : Math.ceil((it.ev.title.length * 8.4 + 28) / DAY_W);
+    it.packEnd = Math.max(it.endDay, it.startDay + Math.max(single ? 1 : 2, labelDays));
+    let r = rows.findIndex(end => end < it.startDay);
+    if (r === -1) { r = rows.length; rows.push(it.packEnd); }
+    else rows[r] = it.packEnd;
+    it.row = r;
+  });
+  return Math.max(rows.length, 1);
+}
+
+function renderTimeline() {
+  const grid = $('grid');
+  const total = daysInYear(year);
+  grid.style.width = (LABEL_W + total * DAY_W) + 'px';
+  grid.innerHTML = '';
+  grid.style.paddingBottom = '';
+
+  // Month header
+  const months = document.createElement('div');
+  months.className = 'months';
+  months.style.marginLeft = LABEL_W + 'px';
+  for (let m = 0; m < 12; m++) {
+    const startD = dayOfYear(new Date(year, m, 1)) - 1;
+    const span = new Date(year, m+1, 0).getDate();
+    const cell = document.createElement('div');
+    cell.className = 'month-cell';
+    cell.style.left = startD * DAY_W + 'px';
+    cell.style.width = span * DAY_W + 'px';
+    cell.textContent = MON_ABBR[m];
+    months.appendChild(cell);
+  }
+  grid.appendChild(months);
+
+  // Split strategic backdrops out of the lanes so they don't compete
+  const yev = eventsForYear();
+  const backdrops = yev.filter(it => it.ev.backdrop);
+  const grouped = {};
+  yev.filter(it => !it.ev.backdrop)
+     .forEach(it => (grouped[it.ev.laneId] = grouped[it.ev.laneId] || []).push(it));
+
+  // Pre-pass: pack each lane, measure total body height
+  const layout = state.lanes.map(lane => {
+    const items = grouped[lane.id] || [];
+    const sub = packLane(items);
+    return { lane, items, sub, h: sub * ROW_H + LANE_PAD * 2 };
+  });
+  const bodyH = layout.reduce((s, l) => s + l.h, 0);
+
+  // Faint quarter / strategic bands behind everything
+  const bd = document.createElement('div');
+  bd.className = 'bd-layer';
+  bd.style.left = LABEL_W + 'px'; bd.style.height = bodyH + 'px';
+  backdrops.forEach(it => {
+    const el = document.createElement('div');
+    el.className = 'bd-band';
+    el.style.left = it.startDay * DAY_W + 'px';
+    el.style.width = (it.endDay - it.startDay + 1) * DAY_W + 'px';
+    el.innerHTML = `<span>${esc(it.ev.title)}</span>`;
+    el.title = `${it.ev.title}\n${fmt(it.ev.start)} – ${fmt(it.ev.end)}`
+      + (it.ev.note ? `\n\n${it.ev.note}` : '');
+    el.onclick = () => openEvent(it.ev.id);
+    bd.appendChild(el);
+  });
+  grid.appendChild(bd);
+
+  // Clean month gridlines, one layer
+  const gl = document.createElement('div');
+  gl.className = 'gl-layer';
+  gl.style.left = LABEL_W + 'px'; gl.style.height = bodyH + 'px';
+  for (let m = 1; m < 12; m++) {
+    const d = dayOfYear(new Date(year, m, 1)) - 1;
+    const ln = document.createElement('div');
+    ln.className = 'gl' + (m % 3 === 0 ? ' q' : '');
+    ln.style.left = d * DAY_W + 'px';
+    gl.appendChild(ln);
+  }
+  grid.appendChild(gl);
+
+  // Lanes
+  const labels = document.createElement('div');
+  labels.className = 'lane-labels';
+  labels.style.width = LABEL_W + 'px';
+
+  layout.forEach(({ lane, items, h }) => {
+    const band = document.createElement('div');
+    band.className = 'laneband';
+    band.style.height = h + 'px';
+    band.style.marginLeft = LABEL_W + 'px';
+    band.addEventListener('dblclick', e => {
+      if (e.target !== band) return;
+      const dy = Math.max(0, Math.min(total-1, Math.round(e.offsetX / DAY_W)));
+      const d = new Date(year, 0, 1); d.setDate(d.getDate() + dy);
+      openEvent(null, lane.id, iso(d));
+    });
+
+    items.forEach(it => {
+      const pr = it.ev.priority || 'normal';
+      const barH = BAR_H[pr] || BAR_H.normal;
+      const single = it.startDay === it.endDay;
+      const bar = document.createElement('div');
+      bar.className = 'bar pr-' + pr + (single ? ' dot' : '');
+      bar.style.height = barH + 'px';
+      bar.style.top = (it.row * ROW_H + LANE_PAD + (ROW_H - barH) / 2) + 'px';
+      bar.style.background = colorOf(it.ev);
+      if (single) {
+        bar.style.width = barH + 'px';
+        bar.style.left = (it.startDay * DAY_W + DAY_W / 2 - barH / 2) + 'px';
+      } else {
+        const w = Math.max((it.endDay - it.startDay + 1) * DAY_W, DAY_W * 2);
+        bar.style.left = it.startDay * DAY_W + 'px';
+        bar.style.width = w + 'px';
+        if (it.clipL) bar.style.borderTopLeftRadius = bar.style.borderBottomLeftRadius = '5px';
+        if (it.clipR) bar.style.borderTopRightRadius = bar.style.borderBottomRightRadius = '5px';
+        // label inside if it fits, otherwise beside the capsule
+        const approx = it.ev.title.length * 8.4 + 28;
+        if (w >= approx) {
+          bar.innerHTML = `<span class="lbl">${esc(it.ev.title)}</span>`;
+        } else {
+          const ext = document.createElement('div');
+          ext.className = 'bar-ext pr-' + pr;
+          ext.textContent = it.ev.title;
+          ext.style.left = (it.startDay * DAY_W + w + 8) + 'px';
+          ext.style.top = (it.row * ROW_H + LANE_PAD + (ROW_H - 20) / 2) + 'px';
+          ext.onclick = () => openEvent(it.ev.id);
+          band.appendChild(ext);
+        }
+      }
+      const span = it.ev.end && it.ev.end !== it.ev.start
+        ? `${fmt(it.ev.start)} – ${fmt(it.ev.end)}` : fmt(it.ev.start);
+      bar.title = `${it.ev.title}\n${span}` + (it.ev.note ? `\n\n${it.ev.note}` : '');
+      bar.onclick = () => openEvent(it.ev.id);
+      band.appendChild(bar);
+    });
+    grid.appendChild(band);
+
+    const lab = document.createElement('div');
+    lab.className = 'lane-label';
+    lab.style.height = h + 'px';
+    lab.innerHTML = `<span class="dot" style="background:${lane.color}"></span>
+      <span class="nm">${esc(lane.name)}</span>
+      <button class="x" title="Delete lane">✕</button>`;
+    lab.querySelector('.x').onclick = () => deleteLane(lane.id);
+    labels.appendChild(lab);
+  });
+  grid.appendChild(labels);
+
+  // Today: amber line + pill anchored below the chart
+  if (year === new Date().getFullYear()) {
+    const t = new Date(); t.setHours(0,0,0,0);
+    const x = LABEL_W + (dayOfYear(t)-1) * DAY_W;
+    const td = document.createElement('div');
+    td.className = 'today';
+    td.style.left = x + 'px';
+    td.style.top = '56px';
+    td.style.height = bodyH + 'px';
+    grid.appendChild(td);
+    const pill = document.createElement('div');
+    pill.className = 'today-pill';
+    pill.textContent = 'Today';
+    pill.style.left = x + 'px';
+    pill.style.top = (56 + bodyH + 14) + 'px';
+    grid.appendChild(pill);
+    grid.style.paddingBottom = '52px';
+    requestAnimationFrame(() => {
+      $('scroll').scrollLeft = Math.max(0, (dayOfYear(t)-1) * DAY_W - 300);
+    });
+  }
+}
+
+function renderYearGrid() {
+  const wrap = $('yeargrid');
+  wrap.innerHTML = '';
+  const todayIso = iso(new Date());
+  for (let m = 0; m < 12; m++) {
+    const mini = document.createElement('div');
+    mini.className = 'mini';
+    let html = `<h3>${MONTHS[m]}</h3><table><tr>${DOW.map(d=>`<th>${d}</th>`).join('')}</tr>`;
+    const first = new Date(year, m, 1).getDay();
+    const dim = new Date(year, m+1, 0).getDate();
+    let day = 1 - first;
+    for (let w = 0; w < 6; w++) {
+      if (day > dim) break;
+      html += '<tr>';
+      for (let c = 0; c < 7; c++, day++) {
+        if (day < 1 || day > dim) { html += '<td class="dim"><span class="d"></span></td>'; continue; }
+        const ds = `${year}-${pad(m+1)}-${pad(day)}`;
+        const evs = state.events.filter(ev =>
+          !ev.backdrop && ds >= ev.start && ds <= (ev.end || ev.start));
+        const school = evs.some(ev => (laneById(ev.laneId)||{}).id === 'school');
+        const dots = [...new Set(evs.map(colorOf))].slice(0,4)
+          .map(c => `<i style="background:${c}"></i>`).join('');
+        const cls = [evs.length?'has':'', school?'school':'', ds===todayIso?'today':'']
+          .filter(Boolean).join(' ');
+        html += `<td class="${cls}" data-d="${ds}">
+          <span class="d">${day}</span>
+          ${dots?`<span class="dots">${dots}</span>`:''}</td>`;
+      }
+      html += '</tr>';
+    }
+    html += '</table>';
+    mini.innerHTML = html;
+    mini.querySelectorAll('td[data-d]').forEach(td =>
+      td.onclick = () => openDay(td.dataset.d));
+    wrap.appendChild(mini);
+  }
+}
+
+function render() {
+  $('yearLbl').textContent = year;
+  if (!state.lanes.length) {
+    $('grid').innerHTML = '<div class="empty">No lanes yet. Add a lane to begin planning.</div>';
+  } else if (view === 'timeline') {
+    renderTimeline();
+  }
+  if (view === 'year') renderYearGrid();
+}
+
+// ---------- Event modal ----------
+let evColor = '';
+function buildSwatch(box, sel, cb) {
+  box.innerHTML = '';
+  PALETTE.forEach(c => {
+    const b = document.createElement('button');
+    b.style.background = c;
+    if (c === sel) b.classList.add('sel');
+    b.onclick = () => { box.querySelectorAll('button').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel'); cb(c); };
+    box.appendChild(b);
+  });
+}
+
+function openEvent(id, laneId, dateStr) {
+  editingId = id;
+  const sel = $('fLane');
+  sel.innerHTML = state.lanes.map(l => `<option value="${l.id}">${esc(l.name)}</option>`).join('');
+  if (id) {
+    const ev = state.events.find(e => e.id === id);
+    $('evTitle').textContent = 'Edit Event';
+    $('fTitle').value = ev.title;
+    sel.value = ev.laneId;
+    $('fStart').value = ev.start;
+    $('fEnd').value = ev.end || ev.start;
+    $('fNote').value = ev.note || '';
+    $('fPriority').value = ev.priority || 'normal';
+    evColor = ev.color || '';
+    $('evDelete').style.display = '';
+  } else {
+    $('evTitle').textContent = 'New Event';
+    $('fTitle').value = '';
+    sel.value = laneId || state.lanes[0]?.id || '';
+    $('fStart').value = dateStr || iso(new Date());
+    $('fEnd').value = dateStr || iso(new Date());
+    $('fNote').value = '';
+    $('fPriority').value = 'normal';
+    evColor = '';
+    $('evDelete').style.display = 'none';
+  }
+  buildSwatch($('evSwatch'), evColor || (laneById(sel.value)||{}).color, c => evColor = c);
+  $('evScrim').classList.add('open');
+  $('fTitle').focus();
+}
+
+$('evSave').onclick = () => {
+  const title = $('fTitle').value.trim();
+  if (!title) { $('fTitle').focus(); return; }
+  let start = $('fStart').value, end = $('fEnd').value || start;
+  if (end < start) [start, end] = [end, start];
+  const laneId = $('fLane').value;
+  const useColor = evColor && evColor !== (laneById(laneId)||{}).color ? evColor : '';
+  const priority = $('fPriority').value;
+  if (editingId) {
+    const ev = state.events.find(e => e.id === editingId);
+    Object.assign(ev, { title, laneId, start, end, color: useColor,
+      note: $('fNote').value.trim(), priority });
+    if (priority === 'normal') delete ev.priority;
+  } else {
+    const ev = { id: 'e'+Date.now().toString(36), title, laneId, start, end,
+      color: useColor, note: $('fNote').value.trim() };
+    if (priority !== 'normal') ev.priority = priority;
+    state.events.push(ev);
+  }
+  closeModals(); save(); render();
+};
+
+$('evDelete').onclick = () => {
+  if (!confirm('Delete this event?')) return;
+  state.events = state.events.filter(e => e.id !== editingId);
+  closeModals(); save(); render();
+};
+
+// ---------- Lane modal ----------
+let lnColor = PALETTE[2];
+$('addLane').onclick = () => {
+  $('fLaneName').value = '';
+  lnColor = PALETTE[state.lanes.length % PALETTE.length];
+  buildSwatch($('lnSwatch'), lnColor, c => lnColor = c);
+  $('lnScrim').classList.add('open');
+  $('fLaneName').focus();
+};
+$('lnSave').onclick = () => {
+  const name = $('fLaneName').value.trim();
+  if (!name) { $('fLaneName').focus(); return; }
+  state.lanes.push({ id: 'l'+Date.now().toString(36), name, color: lnColor });
+  closeModals(); save(); render();
+};
+function deleteLane(id) {
+  const lane = laneById(id);
+  const n = state.events.filter(e => e.laneId === id).length;
+  if (!confirm(`Delete lane "${lane.name}"${n?` and its ${n} event(s)`:''}?`)) return;
+  state.lanes = state.lanes.filter(l => l.id !== id);
+  state.events = state.events.filter(e => e.laneId !== id);
+  save(); render();
+}
+
+// ---------- Day modal ----------
+function openDay(ds) {
+  pendingDay = ds;
+  const d = parse(ds);
+  $('dyTitle').textContent = d.toLocaleDateString(undefined,
+    { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const evs = state.events.filter(ev => ds >= ev.start && ds <= (ev.end || ev.start));
+  $('dySub').textContent = evs.length ? `${evs.length} item(s) on this day` : 'Nothing scheduled.';
+  $('dyList').innerHTML = evs.map(ev => {
+    const lane = laneById(ev.laneId) || {};
+    const span = ev.end && ev.end !== ev.start ? `${fmt(ev.start)} – ${fmt(ev.end)}` : fmt(ev.start);
+    return `<div class="dayrow" data-id="${ev.id}">
+      <span class="dot" style="background:${colorOf(ev)}"></span>
+      <div><div style="font-weight:600;color:var(--ink)">${esc(ev.title)}</div>
+      <div style="font-size:11px;color:var(--ink-soft)">${esc(lane.name||'')}</div></div>
+      <span class="meta">${span}</span></div>`;
+  }).join('');
+  $('dyList').querySelectorAll('.dayrow').forEach(r =>
+    r.onclick = () => { closeModals(); openEvent(r.dataset.id); });
+  $('dyScrim').classList.add('open');
+}
+$('dyAdd').onclick = () => { const d = pendingDay; closeModals(); openEvent(null, null, d); };
+
+// ---------- Shell ----------
+function fmt(s) { return parse(s).toLocaleDateString(undefined, { day:'numeric', month:'short' }); }
+function esc(s) { return String(s).replace(/[&<>"]/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function closeModals() { document.querySelectorAll('.scrim').forEach(s => s.classList.remove('open')); }
+
+$('prevY').onclick = () => { year--; render(); };
+$('nextY').onclick = () => { year++; render(); };
+$('todayBtn').onclick = () => { year = new Date().getFullYear();
+  if (view === 'year') { view='timeline'; switchView(); } render(); };
+$('addEvent').onclick = () => openEvent(null);
+$('evCancel').onclick = $('lnCancel').onclick = $('dyClose').onclick = closeModals;
+document.querySelectorAll('.scrim').forEach(s =>
+  s.onclick = e => { if (e.target === s) closeModals(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
+
+function switchView() {
+  $('vTimeline').classList.toggle('active', view==='timeline');
+  $('vYear').classList.toggle('active', view==='year');
+  $('timelineWrap').style.display = view==='timeline' ? '' : 'none';
+  $('yearWrap').style.display = view==='year' ? '' : 'none';
+}
+$('vTimeline').onclick = () => { view='timeline'; switchView(); render(); };
+$('vYear').onclick = () => { view='year'; switchView(); render(); };
+
+// Keep the lane-name column pinned to the left edge while the
+// timeline scrolls sideways, so you never lose which row is which.
+$('scroll').addEventListener('scroll', () => {
+  const l = document.querySelector('.lane-labels');
+  if (l) l.style.left = $('scroll').scrollLeft + 'px';
+}, { passive: true });
+
+load();
+</script>
+</body>
+</html>

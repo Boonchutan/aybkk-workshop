@@ -1,0 +1,16 @@
+{
+  "name": "AYBKK Year Planner",
+  "short_name": "Planner",
+  "description": "Full-year timeline for AYBKK projects, workshops, travel and the kids' school holidays.",
+  "start_url": "/calendar",
+  "scope": "/calendar",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f1ede3",
+  "theme_color": "#f1ede3",
+  "icons": [
+    { "src": "/planner-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/planner-icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/planner-icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

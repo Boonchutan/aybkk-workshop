@@ -30,7 +30,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.MISSION_CONTROL_PORT || 3000;
-const UPLOAD_DIR = process.env.UPLOAD_DIR || '/Users/alfredoagent/mission-control/uploads';
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 
 // Ensure upload directory exists
 if (!fs.existsSync(UPLOAD_DIR)) {
@@ -1917,6 +1917,116 @@ app.get('/', (req, res) => {
 // Claim page for LINE linking
 app.get('/claim', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'claim.html'));
+});
+
+// ─── Yearly Planner / Timeline ───────────────────────────────────────────────
+// Single-operator planning tool: full-year timeline of projects, workshops,
+// travel and kids' school holidays. Stored as one JSON document.
+//
+// Persistence: PostgreSQL (planner_state, one row) when DATABASE_URL is set —
+// this is the source of truth in production so phone and laptop stay in sync.
+// Without a DB (local dev) it falls back to data/calendar.json. On the first
+// DB read the table is seeded from the local file if present, otherwise from
+// the committed seed module (data/ is gitignored, so the seed ships in code).
+const CALENDAR_FILE = path.join(__dirname, 'data', 'calendar.json');
+const CALENDAR_SEED = require('./scripts/calendar-seed.js');
+
+const CALENDAR_DEFAULT = {
+  lanes: [
+    { id: 'school',   name: "Kids' School & Holidays", color: '#9a805d' },
+    { id: 'travel',   name: 'Travel & Workshops',      color: '#7d6442' },
+    { id: 'aybkk',    name: 'AYBKK',                    color: '#b8895a' },
+    { id: 'tee',      name: 'Tee Shirt Plan',          color: '#a8693f' },
+    { id: 'online',   name: 'Online Class',            color: '#8a7b53' },
+    { id: 'personal', name: 'Personal',                color: '#6c5e4a' }
+  ],
+  events: []
+};
+
+function calendarDoc(data) {
+  return {
+    lanes: Array.isArray(data && data.lanes) && data.lanes.length
+      ? data.lanes : CALENDAR_DEFAULT.lanes,
+    events: Array.isArray(data && data.events) ? data.events : []
+  };
+}
+
+let calendarTableReady = false;
+async function ensureCalendarTable(pg) {
+  if (calendarTableReady) return;
+  await pg.query(`CREATE TABLE IF NOT EXISTS planner_state (
+    id text PRIMARY KEY,
+    doc jsonb NOT NULL,
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`);
+  calendarTableReady = true;
+}
+
+async function readCalendar(pg) {
+  if (pg) {
+    await ensureCalendarTable(pg);
+    const r = await pg.query(`SELECT doc FROM planner_state WHERE id = 'default'`);
+    if (r.rows.length) return calendarDoc(r.rows[0].doc);
+    // first run: seed from local file if present, else the committed seed
+    let seed = CALENDAR_SEED;
+    try {
+      if (fs.existsSync(CALENDAR_FILE)) {
+        seed = JSON.parse(fs.readFileSync(CALENDAR_FILE, 'utf8'));
+      }
+    } catch (e) { console.error('calendar seed read failed:', e.message); }
+    const doc = calendarDoc(seed);
+    await pg.query(
+      `INSERT INTO planner_state (id, doc) VALUES ('default', $1)
+       ON CONFLICT (id) DO NOTHING`, [JSON.stringify(doc)]);
+    return doc;
+  }
+  try {
+    if (!fs.existsSync(CALENDAR_FILE)) return calendarDoc(CALENDAR_SEED);
+    return calendarDoc(JSON.parse(fs.readFileSync(CALENDAR_FILE, 'utf8')));
+  } catch (e) {
+    console.error('calendar file read failed:', e.message);
+    return CALENDAR_DEFAULT;
+  }
+}
+
+async function writeCalendar(pg, doc) {
+  if (pg) {
+    await ensureCalendarTable(pg);
+    await pg.query(
+      `INSERT INTO planner_state (id, doc, updated_at)
+       VALUES ('default', $1, now())
+       ON CONFLICT (id) DO UPDATE SET doc = EXCLUDED.doc, updated_at = now()`,
+      [JSON.stringify(doc)]);
+    return;
+  }
+  fs.writeFileSync(CALENDAR_FILE, JSON.stringify(doc, null, 2));
+}
+
+app.get('/calendar', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'calendar.html'));
+});
+
+app.get('/api/calendar', async (req, res) => {
+  try {
+    res.json(await readCalendar(req.pg));
+  } catch (err) {
+    console.error('calendar read failed:', err.message);
+    res.json(CALENDAR_DEFAULT);
+  }
+});
+
+app.put('/api/calendar', async (req, res) => {
+  try {
+    const { lanes, events } = req.body || {};
+    if (!Array.isArray(lanes) || !Array.isArray(events)) {
+      return res.status(400).json({ error: 'lanes and events arrays required' });
+    }
+    await writeCalendar(req.pg, { lanes, events });
+    res.json({ ok: true, saved: events.length });
+  } catch (err) {
+    console.error('calendar write failed:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Student self-assessment (redirect for clean QR URLs)
