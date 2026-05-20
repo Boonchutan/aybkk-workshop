@@ -1794,10 +1794,30 @@ function calendarDoc(data) {
   };
 }
 
+// Race a Postgres query against a timeout so a hung pool / paused DB
+// can't leave the planner request hanging forever.
+function pgQueryT(pg, sql, params, ms) {
+  const t = ms || 4500;
+  return Promise.race([
+    pg.query(sql, params),
+    new Promise((_, rej) =>
+      setTimeout(() => rej(new Error('pg query timeout after ' + t + 'ms')), t))
+  ]);
+}
+
+function readSeedFromDisk() {
+  try {
+    if (fs.existsSync(CALENDAR_FILE)) {
+      return JSON.parse(fs.readFileSync(CALENDAR_FILE, 'utf8'));
+    }
+  } catch (e) { console.error('calendar disk read failed:', e.message); }
+  return CALENDAR_SEED;
+}
+
 let calendarTableReady = false;
 async function ensureCalendarTable(pg) {
   if (calendarTableReady) return;
-  await pg.query(`CREATE TABLE IF NOT EXISTS planner_state (
+  await pgQueryT(pg, `CREATE TABLE IF NOT EXISTS planner_state (
     id text PRIMARY KEY,
     doc jsonb NOT NULL,
     updated_at timestamptz NOT NULL DEFAULT now()
@@ -1808,34 +1828,21 @@ async function ensureCalendarTable(pg) {
 async function readCalendar(pg) {
   if (pg) {
     await ensureCalendarTable(pg);
-    const r = await pg.query(`SELECT doc FROM planner_state WHERE id = 'default'`);
+    const r = await pgQueryT(pg, `SELECT doc FROM planner_state WHERE id = 'default'`);
     if (r.rows.length) return calendarDoc(r.rows[0].doc);
-    // first run: seed from local file if present, else the committed seed
-    let seed = CALENDAR_SEED;
-    try {
-      if (fs.existsSync(CALENDAR_FILE)) {
-        seed = JSON.parse(fs.readFileSync(CALENDAR_FILE, 'utf8'));
-      }
-    } catch (e) { console.error('calendar seed read failed:', e.message); }
-    const doc = calendarDoc(seed);
-    await pg.query(
+    const doc = calendarDoc(readSeedFromDisk());
+    await pgQueryT(pg,
       `INSERT INTO planner_state (id, doc) VALUES ('default', $1)
        ON CONFLICT (id) DO NOTHING`, [JSON.stringify(doc)]);
     return doc;
   }
-  try {
-    if (!fs.existsSync(CALENDAR_FILE)) return calendarDoc(CALENDAR_SEED);
-    return calendarDoc(JSON.parse(fs.readFileSync(CALENDAR_FILE, 'utf8')));
-  } catch (e) {
-    console.error('calendar file read failed:', e.message);
-    return CALENDAR_DEFAULT;
-  }
+  return calendarDoc(readSeedFromDisk());
 }
 
 async function writeCalendar(pg, doc) {
   if (pg) {
     await ensureCalendarTable(pg);
-    await pg.query(
+    await pgQueryT(pg,
       `INSERT INTO planner_state (id, doc, updated_at)
        VALUES ('default', $1, now())
        ON CONFLICT (id) DO UPDATE SET doc = EXCLUDED.doc, updated_at = now()`,
@@ -1854,7 +1861,10 @@ app.get('/api/calendar', async (req, res) => {
     res.json(await readCalendar(req.pg));
   } catch (err) {
     console.error('calendar read failed:', err.message);
-    res.json(CALENDAR_DEFAULT);
+    // DB unreachable: serve the on-disk seed so the planner still shows
+    // a usable plan instead of going blank, and re-try the table next time.
+    calendarTableReady = false;
+    res.set('X-Calendar-Fallback', 'seed').json(calendarDoc(readSeedFromDisk()));
   }
 });
 
@@ -1868,7 +1878,8 @@ app.put('/api/calendar', async (req, res) => {
     res.json({ ok: true, saved: events.length });
   } catch (err) {
     console.error('calendar write failed:', err.message);
-    res.status(500).json({ error: err.message });
+    calendarTableReady = false;
+    res.status(503).json({ error: 'calendar storage unavailable, please retry' });
   }
 });
 
