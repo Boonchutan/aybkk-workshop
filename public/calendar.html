@@ -181,24 +181,35 @@
     #yearWrap { height: 100%; overflow: auto; }
     .grid { position: relative; }
 
-    /* month header sticks to the top while you scroll down */
+    /* month header (month names + day-number ruler) sticks on scroll */
     .months {
-      position: sticky; top: 0; z-index: 25; height: 54px;
+      position: sticky; top: 0; z-index: 25; height: 76px;
       background: var(--glass-2);
       -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
       box-shadow: 0 1px 0 var(--hair-2);
     }
     .month-cell {
-      position: absolute; top: 0; bottom: 0;
+      position: absolute; top: 0; height: 42px;
       display: flex; align-items: center; justify-content: center;
       font-size: 13.5px; font-weight: 800; letter-spacing: 0.14em;
       text-transform: uppercase; color: var(--ink);
     }
+    .day-cell {
+      position: absolute; top: 42px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--ink-soft);
+    }
+    .day-cell.we { color: #c0822a; }
 
     .laneband { position: relative; z-index: 2; box-shadow: 0 1px 0 var(--hair); }
     .laneband:last-of-type { box-shadow: none; }
 
-    .bd-layer { position: absolute; top: 54px; z-index: 0; pointer-events: none; }
+    /* weekend columns + busy/free date-range bands, behind the bars */
+    .span-layer { position: absolute; top: 76px; z-index: 0; pointer-events: none; }
+    .wk { position: absolute; top: 0; bottom: 0; background: rgba(46,74,107,0.07); }
+    .busy { position: absolute; top: 0; bottom: 0; }
+
+    .bd-layer { position: absolute; top: 76px; z-index: 0; pointer-events: none; }
     .bd-band {
       position: absolute; top: 0; bottom: 0; pointer-events: auto; cursor: pointer;
       display: flex; align-items: flex-start; justify-content: center;
@@ -212,11 +223,11 @@
     }
     .bd-band:hover { background: rgba(255,255,255,0.5); }
 
-    .gl-layer { position: absolute; top: 54px; z-index: 1; pointer-events: none; }
+    .gl-layer { position: absolute; top: 76px; z-index: 1; pointer-events: none; }
     .gl { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--hair); }
     .gl.q { background: var(--hair-2); }
 
-    .lane-labels { position: absolute; left: 0; top: 54px; z-index: 20; }
+    .lane-labels { position: absolute; left: 0; top: 76px; z-index: 20; }
     .lane-label {
       display: flex; align-items: center; gap: 11px; padding: 0 16px;
       background: var(--glass);
@@ -254,7 +265,7 @@
 
     /* drag-to-resize handle for the tab column */
     #laneResizer {
-      position: absolute; top: 54px; bottom: 0; width: 16px;
+      position: absolute; top: 76px; bottom: 0; width: 16px;
       transform: translateX(-50%); z-index: 30;
       cursor: col-resize; touch-action: none;
       display: flex; align-items: center; justify-content: center;
@@ -649,6 +660,21 @@ function renderTimeline() {
     cell.textContent = MON_ABBR[m];
     months.appendChild(cell);
   }
+  // day-number ruler: every day when zoomed in, else Mondays + the 1st
+  const jan1 = new Date(year, 0, 1);
+  for (let d = 0; d < total; d++) {
+    const dt = new Date(year, 0, 1 + d);
+    const wd = dt.getDay(), dom = dt.getDate();
+    const weekend = wd === 0 || wd === 6;
+    if (DAY_W >= 15 || wd === 1 || dom === 1) {
+      const dc = document.createElement('div');
+      dc.className = 'day-cell' + (weekend ? ' we' : '');
+      dc.style.left = (lw + d * DAY_W) + 'px';
+      dc.style.width = DAY_W + 'px';
+      dc.textContent = dom;
+      months.appendChild(dc);
+    }
+  }
   grid.appendChild(months);
 
   const yev = eventsForYear();
@@ -663,6 +689,29 @@ function renderTimeline() {
     return { lane, items, sub, h: sub * ROW_H + LANE_PAD * 2 };
   });
   const bodyH = layout.reduce((s, l) => s + l.h, 0);
+
+  // weekend columns + busy/free date-range bands behind everything
+  const span = document.createElement('div');
+  span.className = 'span-layer';
+  span.style.left = lw + 'px'; span.style.height = bodyH + 'px';
+  for (let d = 0; d < total; d++) {
+    const wd = new Date(year, 0, 1 + d).getDay();
+    if (wd === 0 || wd === 6) {
+      const w = document.createElement('div');
+      w.className = 'wk';
+      w.style.left = d * DAY_W + 'px'; w.style.width = DAY_W + 'px';
+      span.appendChild(w);
+    }
+  }
+  yev.filter(it => !it.ev.backdrop).forEach(it => {
+    const b = document.createElement('div');
+    b.className = 'busy';
+    b.style.left = it.startDay * DAY_W + 'px';
+    b.style.width = (it.endDay - it.startDay + 1) * DAY_W + 'px';
+    b.style.background = tint(colorOf(it.ev), 0.10);
+    span.appendChild(b);
+  });
+  grid.appendChild(span);
 
   const bd = document.createElement('div');
   bd.className = 'bd-layer';
@@ -772,11 +821,11 @@ function renderTimeline() {
     const x = lw + (dayOfYear(t)-1) * DAY_W;
     const td = document.createElement('div');
     td.className = 'today';
-    td.style.left = x + 'px'; td.style.top = '54px'; td.style.height = bodyH + 'px';
+    td.style.left = x + 'px'; td.style.top = '76px'; td.style.height = bodyH + 'px';
     grid.appendChild(td);
     const pill = document.createElement('div');
     pill.className = 'today-pill'; pill.textContent = 'Today';
-    pill.style.left = x + 'px'; pill.style.top = (54 + bodyH + 14) + 'px';
+    pill.style.left = x + 'px'; pill.style.top = (76 + bodyH + 14) + 'px';
     grid.appendChild(pill);
     grid.style.paddingBottom = '52px';
     if (autoScroll) {
