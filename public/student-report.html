@@ -561,6 +561,7 @@
   <button class="filter-btn" onclick="setFilter('in-depth', this)">In-Depth</button>
   <button class="filter-btn" onclick="setFilter('russia', this)">Russia</button>
   <button class="filter-btn" onclick="setFilter('bangkok', this)">Bangkok</button>
+  <button class="filter-btn" onclick="setFilter('mysore-room', this)">Mysore Room</button>
 </div>
 
 <div class="group-list" id="studentList">
@@ -630,6 +631,7 @@ async function init() {
     if (s.id.startsWith('gz-')) return 'guangzhou';
     if (s.id.startsWith('ru-')) return 'russia';
     if (s.id.startsWith('bkk-')) return 'bangkok';
+    if (s.id.startsWith('online-')) return 'mysore-room';
     if (huizhouIdSet.has(s.id)) return 'huizhou';
     // classType
     if (s.classType === 'in-depth-mysore-cn2') return 'in-depth';
@@ -667,7 +669,7 @@ async function init() {
   });
 
   // Sort: workshop group, then assessment count desc within each
-  const order = { huizhou: 0, guangzhou: 1, 'in-depth': 2, russia: 3, bangkok: 4, other: 5 };
+  const order = { huizhou: 0, guangzhou: 1, 'in-depth': 2, russia: 3, bangkok: 4, 'mysore-room': 5, other: 6 };
   allStudents.sort((a, b) => {
     const oa = order[a.workshop] ?? 9;
     const ob = order[b.workshop] ?? 9;
@@ -692,6 +694,7 @@ function render() {
   else if (currentFilter === 'in-depth')  students = students.filter(s => s.workshop === 'in-depth');
   else if (currentFilter === 'russia')    students = students.filter(s => s.workshop === 'russia');
   else if (currentFilter === 'bangkok')   students = students.filter(s => s.workshop === 'bangkok');
+  else if (currentFilter === 'mysore-room') students = students.filter(s => s.workshop === 'mysore-room');
   else if (currentFilter === 'with-checkins') students = students.filter(s => (s.assessmentCount || 0) > 0);
 
   if (!students.length) {
@@ -700,15 +703,16 @@ function render() {
   }
 
   const labels = {
-    huizhou:    'Huizhou',
-    guangzhou:  'Guangzhou',
-    'in-depth': 'In-Depth Mysore',
-    russia:     'Russia',
-    bangkok:    'Bangkok Shala',
-    test:       'Test',
-    other:      'Other'
+    huizhou:       'Huizhou',
+    guangzhou:     'Guangzhou',
+    'in-depth':    'In-Depth Mysore',
+    russia:        'Russia',
+    bangkok:       'Bangkok Shala',
+    'mysore-room': 'Mysore Room Online',
+    test:          'Test',
+    other:         'Other'
   };
-  const order = ['huizhou', 'guangzhou', 'in-depth', 'russia', 'bangkok', 'other', 'test'];
+  const order = ['huizhou', 'guangzhou', 'in-depth', 'russia', 'bangkok', 'mysore-room', 'other', 'test'];
 
   // Group by workshop
   const groups = {};

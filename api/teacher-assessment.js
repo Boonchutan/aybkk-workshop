@@ -374,6 +374,87 @@ router.post('/comment/read', async (req, res) => {
   }
 });
 
+// POST /api/teacher/practice-focus - Set/update the persistent practice cue on a Student
+router.post('/practice-focus', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { studentId, practiceFocus, teacherName } = req.body;
+    if (!studentId) return res.status(400).json({ error: 'studentId is required' });
+
+    const focus = (practiceFocus || '').trim();
+
+    const result = await session.run(`
+      MATCH (s:Student)
+      WHERE s.studentId = $studentId OR s.id = $studentId
+      SET s.practiceFocus = $focus,
+          s.practiceFocusBy = $teacher,
+          s.practiceFocusUpdatedAt = datetime()
+      RETURN s.id AS id, s.practiceFocus AS focus, s.practiceFocusUpdatedAt AS updatedAt
+    `, { studentId, focus, teacher: teacherName || 'Boonchu' });
+
+    if (!result.records.length) return res.status(404).json({ error: 'Student not found' });
+
+    res.json({
+      success: true,
+      studentId: result.records[0].get('id'),
+      practiceFocus: result.records[0].get('focus'),
+      updatedAt: result.records[0].get('updatedAt')
+    });
+  } catch (error) {
+    console.error('Practice focus error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// GET /api/teacher/student-notes/:studentId - Bundle: practice focus + recent comments
+router.get('/student-notes/:studentId', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { studentId } = req.params;
+
+    const focusRes = await session.run(`
+      MATCH (s:Student)
+      WHERE s.studentId = $studentId OR s.id = $studentId
+      RETURN s.practiceFocus AS focus,
+             s.practiceFocusBy AS focusBy,
+             s.practiceFocusUpdatedAt AS focusUpdatedAt,
+             s.name AS name
+      LIMIT 1
+    `, { studentId });
+
+    if (!focusRes.records.length) return res.status(404).json({ error: 'Student not found' });
+
+    const commentsRes = await session.run(`
+      MATCH (tc:TeacherComment)-[:ABOUT_STUDENT]->(s:Student)
+      WHERE s.studentId = $studentId OR s.id = $studentId
+      RETURN tc.id AS id, tc.teacher_name AS teacherName,
+             tc.comment AS comment, tc.created_at AS createdAt
+      ORDER BY tc.created_at DESC
+      LIMIT 10
+    `, { studentId });
+
+    res.json({
+      studentName: focusRes.records[0].get('name'),
+      practiceFocus: focusRes.records[0].get('focus') || '',
+      practiceFocusBy: focusRes.records[0].get('focusBy') || '',
+      practiceFocusUpdatedAt: focusRes.records[0].get('focusUpdatedAt'),
+      comments: commentsRes.records.map(r => ({
+        id: r.get('id'),
+        teacherName: r.get('teacherName'),
+        comment: r.get('comment'),
+        createdAt: r.get('createdAt')
+      }))
+    });
+  } catch (error) {
+    console.error('Student notes error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
 // POST /api/workshop/orientation - Save student orientation profile
 router.post('/orientation', async (req, res) => {
   const session = req.driver.session();

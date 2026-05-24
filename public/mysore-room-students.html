@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mysore Room — Registrations</title>
+  <link rel="stylesheet" href="/tokens.css">
+  <style>
+    /* mysore-room-students.html — teacher review page for Boonchu's Mysore
+       Room applications. Lists applicants from GET /api/orientations/online;
+       copy welcome link + leave Practice Focus and Comments per student.
+       Carved-clay on beech wood. */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+
+    .header {
+      background: var(--surface);
+      padding: var(--space-6) var(--space-5) var(--space-5);
+      text-align: center;
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(19px, 5vw, 24px);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: 6px;
+    }
+    .header .count {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: var(--space-5) var(--space-4) var(--space-7);
+    }
+
+    .state {
+      text-align: center;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-style: italic;
+      color: var(--ink-soft);
+      padding: var(--space-7) var(--space-4);
+    }
+
+    .applicant {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      box-shadow:
+        14px 14px 28px var(--shadow-dark),
+        -8px -8px 18px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+    .applicant-head {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-3);
+    }
+    .applicant-photo {
+      flex: 0 0 60px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow:
+        4px 4px 9px var(--shadow-dark),
+        -3px -3px 7px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.6);
+    }
+    .applicant-photo.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 800;
+      text-shadow: var(--text-carve-soft);
+    }
+    .applicant-top {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      min-width: 0;
+      margin-bottom: 0;
+    }
+    .applicant-name {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 800;
+      color: #2f2517;
+    }
+    .applicant-date {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
+    .rows { margin-bottom: var(--space-3); }
+    .row {
+      display: flex;
+      gap: var(--space-3);
+      padding: 7px 0;
+      border-bottom: 1px dashed var(--shadow-dark);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .row:last-child { border-bottom: none; }
+    .row .k {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      flex: 0 0 92px;
+      padding-top: 2px;
+    }
+    .row .v {
+      font-family: var(--font-body);
+      color: var(--ink);
+      flex: 1;
+    }
+    .row .v.soft { color: var(--ink-soft); font-style: italic; }
+
+    /* Practice Focus chip — sits above the action buttons so Boonchu sees
+       each student's current cue without opening the modal. */
+    .focus-chip {
+      display: block;
+      margin-bottom: var(--space-3);
+      padding: 10px var(--space-3);
+      border-radius: var(--radius-md);
+      background: var(--surface-2);
+      box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+      font-family: var(--font-body);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+    .focus-chip .focus-label {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .focus-chip.empty {
+      color: var(--ink-soft);
+      font-style: italic;
+    }
+
+    .actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+    .btn {
+      flex: 1;
+      padding: 13px var(--space-3);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.7), -1px -1px 1px rgba(50, 28, 10, 0.85);
+      box-shadow:
+        8px 8px 18px rgba(120, 80, 40, 0.26),
+        -5px -5px 12px var(--shadow-light),
+        inset 3px 3px 7px rgba(255, 240, 215, 0.45);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn.done {
+      background: #5f8a52;
+      color: #eef2e6;
+      text-shadow: 1px 1px 0 rgba(28, 40, 20, 0.4);
+    }
+    .btn.secondary {
+      background: var(--surface);
+      color: var(--primary-deep);
+      text-shadow: none;
+      box-shadow:
+        6px 6px 12px var(--shadow-dark),
+        -4px -4px 8px var(--shadow-light);
+    }
+
+    .refresh {
+      display: block;
+      margin: 0 auto var(--space-5);
+      padding: 10px var(--space-5);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      background: var(--surface);
+      cursor: pointer;
+      box-shadow: 5px 5px 10px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+    }
+    .refresh:active { transform: scale(0.97); }
+
+    /* Notes modal — Practice Focus textarea + Comment history + new comment. */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(20, 14, 8, 0.78);
+      z-index: 100;
+      align-items: flex-start;
+      justify-content: center;
+      padding: var(--space-4);
+      overflow-y: auto;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      max-width: 520px;
+      width: 100%;
+      margin: var(--space-5) 0;
+      padding: var(--space-5);
+      box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.45);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: var(--surface-2);
+      border: none;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--primary-deep);
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
+    }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 800;
+      color: #2f2517;
+      margin-bottom: 2px;
+      padding-right: 40px;
+    }
+    .modal-sub {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-4);
+    }
+    .modal-section { margin-bottom: var(--space-5); }
+    .modal-section-title {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .modal textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: var(--surface-2);
+      box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink);
+      resize: vertical;
+    }
+    .modal textarea:focus { outline: 1px solid var(--primary); }
+    .modal-save-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+    .modal-save {
+      padding: 9px 18px;
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.7), -1px -1px 1px rgba(50, 28, 10, 0.85);
+      box-shadow:
+        6px 6px 12px rgba(120, 80, 40, 0.25),
+        -3px -3px 8px var(--shadow-light);
+    }
+    .modal-save.done { background: #5f8a52; color: #eef2e6; }
+    .modal-save:disabled { opacity: 0.55; cursor: default; }
+
+    .comments-list { display: flex; flex-direction: column; gap: 10px; }
+    .comment-item {
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      background: var(--surface-2);
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -1px -1px 2px var(--shadow-light);
+    }
+    .comment-meta {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 4px;
+    }
+    .comment-body {
+      font-family: var(--font-body);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--ink);
+      white-space: pre-wrap;
+    }
+    .comments-empty {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Boonchu's Mysore Room — Registrations</h1>
+    <div class="count" id="count">Loading…</div>
+  </div>
+
+  <div class="container">
+    <button class="refresh" onclick="load()">↻ Refresh</button>
+    <div id="list"><div class="state">Loading registrations…</div></div>
+  </div>
+
+  <div class="modal-overlay modal" id="notesModal" onclick="if(event.target===this)closeNotes()">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeNotes()">✕</button>
+      <div class="modal-title" id="modalName">Student</div>
+      <div class="modal-sub" id="modalSub"></div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Practice Focus</div>
+        <textarea id="focusInput" placeholder="e.g. Ribcage engagement during jump-back · hamstring just above the knees · backbend push-ups 20×"></textarea>
+        <div class="modal-save-row">
+          <button class="modal-save" id="saveFocusBtn" onclick="saveFocus()">Save Focus</button>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">New Comment</div>
+        <textarea id="commentInput" placeholder="What you saw today, what to work on next session…"></textarea>
+        <div class="modal-save-row">
+          <button class="modal-save" id="saveCommentBtn" onclick="saveComment()">Add Comment</button>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Recent Comments</div>
+        <div class="comments-list" id="commentsList">
+          <div class="comments-empty">Loading…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+const TEACHER_NAME = 'Boonchu';
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+function fmtDate(d) {
+  if (!d) return '';
+  if (typeof d === 'object' && d.year) {
+    var y = d.year.low != null ? d.year.low : d.year;
+    var m = d.month.low != null ? d.month.low : d.month;
+    var dd = d.day.low != null ? d.day.low : d.day;
+    return y + '-' + pad(m) + '-' + pad(dd);
+  }
+  return String(d).substring(0, 10);
+}
+
+function fmtDateTime(d) {
+  if (!d) return '';
+  if (typeof d === 'object' && d.year) {
+    var y = d.year.low != null ? d.year.low : d.year;
+    var m = d.month.low != null ? d.month.low : d.month;
+    var dd = d.day.low != null ? d.day.low : d.day;
+    var hh = d.hour ? (d.hour.low != null ? d.hour.low : d.hour) : 0;
+    var mm = d.minute ? (d.minute.low != null ? d.minute.low : d.minute) : 0;
+    return y + '-' + pad(m) + '-' + pad(dd) + ' ' + pad(hh) + ':' + pad(mm);
+  }
+  return String(d).substring(0, 16).replace('T', ' ');
+}
+
+function contactLabel(t) {
+  var map = { wechat: 'WeChat', telegram: 'Telegram', line: 'LINE', whatsapp: 'WhatsApp' };
+  return map[t] || (t || 'contact');
+}
+
+function photoCell(s) {
+  var url = s.photoUrl && String(s.photoUrl).trim();
+  if (url) {
+    return '<img class="applicant-photo" src="' + esc(url) + '" alt="">';
+  }
+  var name = String(s.name == null ? '' : s.name).trim();
+  var initial = name ? name.charAt(0).toUpperCase() : '?';
+  return '<div class="applicant-photo placeholder">' + esc(initial) + '</div>';
+}
+
+function focusChip(s) {
+  var focus = (s.practiceFocus || '').trim();
+  if (!focus) {
+    return '<div class="focus-chip empty">' +
+      '<span class="focus-label">Practice Focus</span>' +
+      'No focus set yet — tap Notes to add one.' +
+    '</div>';
+  }
+  return '<div class="focus-chip">' +
+    '<span class="focus-label">Practice Focus</span>' +
+    esc(focus) +
+  '</div>';
+}
+
+function applicantCard(s, idx) {
+  var injuries = s.injuries && s.injuries.trim()
+    ? '<span class="v">' + esc(s.injuries) + '</span>'
+    : '<span class="v soft">none noted</span>';
+  return '' +
+    '<div class="applicant" data-id="' + esc(s.id) + '">' +
+      '<div class="applicant-head">' +
+        photoCell(s) +
+        '<div class="applicant-top">' +
+          '<span class="applicant-name">' + esc(s.name) + '</span>' +
+          '<span class="applicant-date">' + esc(fmtDate(s.submittedAt)) + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rows">' +
+        '<div class="row"><span class="k">Contact</span><span class="v">' + esc(contactLabel(s.contactType)) + ' &middot; ' + esc(s.contact) + '</span></div>' +
+        '<div class="row"><span class="k">Location</span><span class="v">' + esc(s.city) + ', ' + esc(s.country) + ' &middot; ' + esc(s.timezone) + '</span></div>' +
+        '<div class="row"><span class="k">Practice</span><span class="v">' + esc(s.experience) + ' &middot; ' + esc(s.series) + '</span></div>' +
+        '<div class="row"><span class="k">Injuries</span>' + injuries + '</div>' +
+        '<div class="row"><span class="k">Language</span><span class="v">' + esc(s.language) + '</span></div>' +
+      '</div>' +
+      focusChip(s) +
+      '<div class="actions">' +
+        '<button class="btn" id="cp' + idx + '" onclick="copyLink(' + idx + ')">Copy Welcome Link</button>' +
+        '<button class="btn secondary" onclick="openNotes(' + idx + ')">Notes</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function welcomeLink(s) {
+  return 'https://aybkk-ashtanga.up.railway.app/mysore-room-welcome.html?id=' +
+    encodeURIComponent(s.id || '') + '&name=' + encodeURIComponent(s.name || '') +
+    '&lang=' + encodeURIComponent(s.language || 'en');
+}
+
+var STUDENTS = [];
+var LINKS = [];
+var CURRENT_STUDENT = null;
+
+function copyLink(idx) {
+  var link = LINKS[idx];
+  var btn = document.getElementById('cp' + idx);
+  function done() {
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('done');
+    setTimeout(function () { btn.textContent = 'Copy Welcome Link'; btn.classList.remove('done'); }, 2000);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link).then(done, function () { window.prompt('Copy the welcome link:', link); });
+  } else {
+    window.prompt('Copy the welcome link:', link);
+  }
+}
+
+async function openNotes(idx) {
+  var s = STUDENTS[idx];
+  if (!s || !s.id) return;
+  CURRENT_STUDENT = s;
+  document.getElementById('modalName').textContent = s.name || 'Student';
+  document.getElementById('modalSub').textContent = (s.city ? s.city + ', ' : '') + (s.country || '');
+  document.getElementById('focusInput').value = s.practiceFocus || '';
+  document.getElementById('commentInput').value = '';
+  document.getElementById('commentsList').innerHTML = '<div class="comments-empty">Loading…</div>';
+  resetSaveBtn('saveFocusBtn', 'Save Focus');
+  resetSaveBtn('saveCommentBtn', 'Add Comment');
+  document.getElementById('notesModal').classList.add('show');
+
+  try {
+    var res = await fetch(API_BASE + '/teacher/student-notes/' + encodeURIComponent(s.id));
+    if (!res.ok) throw new Error('load failed');
+    var data = await res.json();
+    document.getElementById('focusInput').value = data.practiceFocus || '';
+    s.practiceFocus = data.practiceFocus || '';
+    renderComments(data.comments || []);
+  } catch (e) {
+    document.getElementById('commentsList').innerHTML =
+      '<div class="comments-empty">Could not load notes — you can still save new ones.</div>';
+  }
+}
+
+function renderComments(comments) {
+  var list = document.getElementById('commentsList');
+  if (!comments.length) {
+    list.innerHTML = '<div class="comments-empty">No comments yet.</div>';
+    return;
+  }
+  list.innerHTML = comments.map(function (c) {
+    return '<div class="comment-item">' +
+      '<div class="comment-meta">' + esc(c.teacherName || 'Teacher') + ' &middot; ' + esc(fmtDateTime(c.createdAt)) + '</div>' +
+      '<div class="comment-body">' + esc(c.comment) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function closeNotes() {
+  document.getElementById('notesModal').classList.remove('show');
+  CURRENT_STUDENT = null;
+}
+
+function resetSaveBtn(id, label) {
+  var b = document.getElementById(id);
+  b.textContent = label;
+  b.disabled = false;
+  b.classList.remove('done');
+}
+
+async function saveFocus() {
+  if (!CURRENT_STUDENT) return;
+  var focus = document.getElementById('focusInput').value.trim();
+  var btn = document.getElementById('saveFocusBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    var res = await fetch(API_BASE + '/teacher/practice-focus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentId: CURRENT_STUDENT.id,
+        practiceFocus: focus,
+        teacherName: TEACHER_NAME
+      })
+    });
+    if (!res.ok) throw new Error('save failed');
+    CURRENT_STUDENT.practiceFocus = focus;
+    // refresh the card chip in-place
+    var card = document.querySelector('.applicant[data-id="' + CURRENT_STUDENT.id + '"]');
+    if (card) {
+      var chip = card.querySelector('.focus-chip');
+      if (chip) {
+        var newChip = document.createElement('div');
+        newChip.innerHTML = focusChip(CURRENT_STUDENT);
+        chip.replaceWith(newChip.firstChild);
+      }
+    }
+    btn.textContent = 'Saved ✓'; btn.classList.add('done');
+    setTimeout(function () { resetSaveBtn('saveFocusBtn', 'Save Focus'); }, 1800);
+  } catch (e) {
+    btn.textContent = 'Save failed'; btn.disabled = false;
+    setTimeout(function () { resetSaveBtn('saveFocusBtn', 'Save Focus'); }, 2200);
+  }
+}
+
+async function saveComment() {
+  if (!CURRENT_STUDENT) return;
+  var comment = document.getElementById('commentInput').value.trim();
+  if (!comment) return;
+  var btn = document.getElementById('saveCommentBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    var res = await fetch(API_BASE + '/teacher/comment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentId: CURRENT_STUDENT.id,
+        comment: comment,
+        teacherName: TEACHER_NAME
+      })
+    });
+    if (!res.ok) throw new Error('save failed');
+    document.getElementById('commentInput').value = '';
+    btn.textContent = 'Added ✓'; btn.classList.add('done');
+    // refresh comment list
+    try {
+      var notes = await fetch(API_BASE + '/teacher/student-notes/' + encodeURIComponent(CURRENT_STUDENT.id));
+      if (notes.ok) {
+        var data = await notes.json();
+        renderComments(data.comments || []);
+      }
+    } catch (_) {}
+    setTimeout(function () { resetSaveBtn('saveCommentBtn', 'Add Comment'); }, 1800);
+  } catch (e) {
+    btn.textContent = 'Save failed'; btn.disabled = false;
+    setTimeout(function () { resetSaveBtn('saveCommentBtn', 'Add Comment'); }, 2200);
+  }
+}
+
+async function load() {
+  var list = document.getElementById('list');
+  list.innerHTML = '<div class="state">Loading registrations…</div>';
+  try {
+    var res = await fetch(API_BASE + '/orientations/online');
+    if (!res.ok) throw new Error('Failed');
+    var data = await res.json();
+    var students = data.students || [];
+    STUDENTS = students;
+    document.getElementById('count').textContent = students.length + ' registered · 12 seats';
+    if (!students.length) {
+      list.innerHTML = '<div class="state">No registrations yet. They will appear here as students submit the form.</div>';
+      return;
+    }
+    LINKS = students.map(welcomeLink);
+    list.innerHTML = students.map(applicantCard).join('');
+  } catch (err) {
+    document.getElementById('count').textContent = '';
+    list.innerHTML = '<div class="state">Could not load registrations. Tap Refresh to try again.</div>';
+  }
+}
+
+load();
+</script>
+</body>
+</html>
