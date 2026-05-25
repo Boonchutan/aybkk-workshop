@@ -714,10 +714,11 @@ function render() {
   const groups = {};
   students.forEach(s => { (groups[s.workshop] ||= []).push(s); });
 
-  // Sort each group: most active first, then alphabetical
+  // Sort each group: most recent journal first, then alphabetical
   Object.values(groups).forEach(arr => arr.sort((a, b) => {
-    const ca = a.assessmentCount || 0, cb = b.assessmentCount || 0;
-    if (ca !== cb) return cb - ca;
+    const da = a.lastDate ? new Date(a.lastDate).getTime() : 0;
+    const db = b.lastDate ? new Date(b.lastDate).getTime() : 0;
+    if (da !== db) return db - da;
     return (a.name || '').localeCompare(b.name || '');
   }));
 
