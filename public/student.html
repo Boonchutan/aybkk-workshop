@@ -510,6 +510,17 @@
       <div class="step-hint" id="welcomeTeachers" style="font-size:14px;color:var(--text-secondary);margin-bottom:6px;">By Boonchu & Jamsai Tanti</div>
       <div id="welcomeStudentName" style="font-size:16px;font-weight:600;color:var(--accent);margin:20px 0 8px;"></div>
       <div class="step-hint" id="welcomeSub" style="font-size:13px;margin-bottom:16px;">Practice Journal / Дневник практики</div>
+
+      <!-- From Boonchu — practice focus + latest comments. Hidden unless content exists. -->
+      <div id="fromBoonchuCard" class="hidden" style="text-align:left;background:var(--accent-light);border-radius:12px;padding:14px 16px;margin-bottom:18px;border-left:3px solid var(--accent);">
+        <div id="fromBoonchuLabel" style="font-family:'Spectral',serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:8px;">From Boonchu</div>
+        <div id="fromBoonchuFocus" class="hidden" style="margin-bottom:10px;">
+          <div id="fromBoonchuFocusLabel" style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;">Practice Focus</div>
+          <div id="fromBoonchuFocusText" style="font-size:13px;line-height:1.55;color:var(--text-primary);white-space:pre-wrap;"></div>
+        </div>
+        <div id="fromBoonchuComments"></div>
+      </div>
+
       <!-- Reminder: this IS the journal, use it after every class -->
       <div style="background:var(--accent-light);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:var(--accent-hover);line-height:1.6;text-align:left;">
         📌 <strong>收藏此链接</strong> — 每次练习后打开记录<br>
@@ -902,7 +913,9 @@ const T = {
     quizCorrect: '🥳🎊 正确！',
     quizWrong: '🙏 下次再试',
     myJournalBtn: '📖 我的记录',
-    myWeekBtn: '📊 本周报告'
+    myWeekBtn: '📊 本周报告',
+    fromBoonchu: '来自 Boonchu',
+    practiceFocusLabel: '练习重点'
   },
   en: {
     pageTitle: 'Practice Journal',
@@ -952,7 +965,9 @@ const T = {
     quizCorrect: '🥳🎊 Correct!',
     quizWrong: '🙏 Try next time',
     myJournalBtn: '📖 My Journal',
-    myWeekBtn: '📊 My Week'
+    myWeekBtn: '📊 My Week',
+    fromBoonchu: 'From Boonchu',
+    practiceFocusLabel: 'Practice Focus'
   },
   th: {
     pageTitle: 'บันทึกการฝึก',
@@ -1002,7 +1017,9 @@ const T = {
     quizCorrect: '🥳🎊 ถูกต้อง!',
     quizWrong: '🙏 ลองใหม่ครั้งหน้า',
     myJournalBtn: '📖 บันทึกของฉัน',
-    myWeekBtn: '📊 รายงานสัปดาห์'
+    myWeekBtn: '📊 รายงานสัปดาห์',
+    fromBoonchu: 'จากครู Boonchu',
+    practiceFocusLabel: 'จุดโฟกัสการฝึก'
   },
   ru: {
     pageTitle: 'AYBKK RUSSIA WS 2026',
@@ -1052,7 +1069,9 @@ const T = {
     quizCorrect: '🥳🎊 Правильно!',
     quizWrong: '🙏 Попробуйте в следующий раз',
     myJournalBtn: '📖 Мой дневник',
-    myWeekBtn: '📊 Моя неделя'
+    myWeekBtn: '📊 Моя неделя',
+    fromBoonchu: 'От Boonchu',
+    practiceFocusLabel: 'Фокус практики'
   }
 };
 
@@ -1181,6 +1200,7 @@ function init() {
     document.getElementById('welcomeStudentName').textContent = studentName;
     document.getElementById('welcomeReturningNav').classList.remove('hidden');
     showStep(-1); // welcome screen
+    loadFromBoonchu(); // pull practice focus + latest comments
   } else {
     showStep(0); // registration
   }
@@ -1218,6 +1238,53 @@ function init() {
   
   // Update share text
   window._wsTitleYear = wsTitleYear;
+}
+
+async function loadFromBoonchu() {
+  if (!studentId) return;
+  try {
+    const res = await fetch('/api/teacher/student-notes/' + encodeURIComponent(studentId));
+    if (!res.ok) return;
+    const data = await res.json();
+    const focus = (data.practiceFocus || '').trim();
+    const comments = Array.isArray(data.comments) ? data.comments.slice(0, 2) : [];
+    if (!focus && comments.length === 0) return;
+
+    if (focus) {
+      document.getElementById('fromBoonchuFocusText').textContent = focus;
+      document.getElementById('fromBoonchuFocus').classList.remove('hidden');
+    }
+
+    if (comments.length) {
+      const fmt = (d) => {
+        if (!d) return '';
+        if (typeof d === 'object' && d.year) {
+          const y = d.year.low != null ? d.year.low : d.year;
+          const m = d.month.low != null ? d.month.low : d.month;
+          const dd = d.day.low != null ? d.day.low : d.day;
+          const pad = (n) => (n < 10 ? '0' : '') + n;
+          return y + '-' + pad(m) + '-' + pad(dd);
+        }
+        return String(d).substring(0, 10);
+      };
+      const esc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+      const html = comments.map(c =>
+        '<div style="padding-top:8px;border-top:1px dashed rgba(0,0,0,0.10);margin-top:8px;">' +
+          '<div style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;">' +
+            esc(c.teacherName || 'Boonchu') + ' · ' + esc(fmt(c.createdAt)) +
+          '</div>' +
+          '<div style="font-size:13px;line-height:1.55;color:var(--text-primary);white-space:pre-wrap;">' + esc(c.comment) + '</div>' +
+        '</div>'
+      ).join('');
+      document.getElementById('fromBoonchuComments').innerHTML = html;
+    }
+
+    document.getElementById('fromBoonchuCard').classList.remove('hidden');
+  } catch (e) {
+    // silent — card stays hidden
+  }
 }
 
 function startFromWelcome() {
@@ -1366,6 +1433,10 @@ function applyLang(lang) {
   const mwBtn = document.getElementById('welcomeMyWeekBtn');
   if (mjBtn) mjBtn.textContent = t.myJournalBtn || '📖 My Journal';
   if (mwBtn) mwBtn.textContent = t.myWeekBtn || '📊 My Week';
+  const fbLabel = document.getElementById('fromBoonchuLabel');
+  const pfLabel = document.getElementById('fromBoonchuFocusLabel');
+  if (fbLabel) fbLabel.textContent = t.fromBoonchu || 'From Boonchu';
+  if (pfLabel) pfLabel.textContent = t.practiceFocusLabel || 'Practice Focus';
   // Location-aware title override (Russian overrides language default)
   if (isRussian) {
     document.getElementById('welcomeTitle').textContent = 'AYBKK RUSSIA WS 2026';
