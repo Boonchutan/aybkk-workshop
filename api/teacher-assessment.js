@@ -435,6 +435,34 @@ router.get('/student-notes/:studentId', async (req, res) => {
       LIMIT 10
     `, { studentId });
 
+    // Derive cohort from student ID prefix for class-summary lookup
+    let cohort = null;
+    if (typeof studentId === 'string') {
+      if (studentId.startsWith('online-'))   cohort = 'mysore-room';
+      else if (studentId.startsWith('ru-'))  cohort = 'russia';
+      else if (studentId.startsWith('gz-'))  cohort = 'guangzhou';
+      else if (studentId.startsWith('bkk-')) cohort = 'bangkok';
+    }
+
+    let classSummaries = [];
+    if (cohort) {
+      const summRes = await session.run(`
+        MATCH (cs:ClassSummary {cohort: $cohort})
+        RETURN cs.id AS id, cs.date AS date, cs.title AS title,
+               cs.body AS body, cs.created_by AS createdBy, cs.created_at AS createdAt
+        ORDER BY cs.date DESC, cs.created_at DESC
+        LIMIT 3
+      `, { cohort });
+      classSummaries = summRes.records.map(r => ({
+        id: r.get('id'),
+        date: r.get('date'),
+        title: r.get('title'),
+        body: r.get('body'),
+        createdBy: r.get('createdBy'),
+        createdAt: r.get('createdAt')
+      }));
+    }
+
     res.json({
       studentName: focusRes.records[0].get('name'),
       practiceFocus: focusRes.records[0].get('focus') || '',
@@ -445,10 +473,101 @@ router.get('/student-notes/:studentId', async (req, res) => {
         teacherName: r.get('teacherName'),
         comment: r.get('comment'),
         createdAt: r.get('createdAt')
-      }))
+      })),
+      cohort,
+      classSummaries
     });
   } catch (error) {
     console.error('Student notes error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// POST /api/teacher/class-summary - Create a class summary visible to a cohort
+router.post('/class-summary', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const { cohort, date, title, body, teacherName } = req.body;
+    if (!cohort) return res.status(400).json({ error: 'cohort is required' });
+    if (!body || !body.trim()) return res.status(400).json({ error: 'body is required' });
+
+    const id = uuidv4();
+    const now = new Date().toISOString();
+    const classDate = date || now.split('T')[0];
+
+    await session.run(`
+      CREATE (cs:ClassSummary {
+        id: $id,
+        cohort: $cohort,
+        date: $date,
+        title: $title,
+        body: $body,
+        created_by: $teacherName,
+        created_at: datetime($now)
+      })
+      RETURN cs.id AS id
+    `, {
+      id,
+      cohort,
+      date: classDate,
+      title: (title || '').trim(),
+      body: body.trim(),
+      teacherName: teacherName || 'Boonchu',
+      now
+    });
+
+    res.json({ success: true, id, cohort, date: classDate, createdAt: now });
+  } catch (error) {
+    console.error('Class summary create error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// GET /api/teacher/class-summaries?cohort=X&limit=N - List summaries for a cohort
+router.get('/class-summaries', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    const cohort = req.query.cohort;
+    const limit = Math.min(parseInt(req.query.limit || '20', 10), 50);
+    if (!cohort) return res.status(400).json({ error: 'cohort query param is required' });
+
+    const result = await session.run(`
+      MATCH (cs:ClassSummary {cohort: $cohort})
+      RETURN cs.id AS id, cs.date AS date, cs.title AS title,
+             cs.body AS body, cs.created_by AS createdBy, cs.created_at AS createdAt
+      ORDER BY cs.date DESC, cs.created_at DESC
+      LIMIT $limit
+    `, { cohort, limit: require('neo4j-driver').int(limit) });
+
+    res.json({
+      summaries: result.records.map(r => ({
+        id: r.get('id'),
+        date: r.get('date'),
+        title: r.get('title'),
+        body: r.get('body'),
+        createdBy: r.get('createdBy'),
+        createdAt: r.get('createdAt')
+      }))
+    });
+  } catch (error) {
+    console.error('Class summaries list error:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// DELETE /api/teacher/class-summary/:id - Remove a class summary
+router.delete('/class-summary/:id', async (req, res) => {
+  const session = req.driver.session();
+  try {
+    await session.run('MATCH (cs:ClassSummary {id: $id}) DETACH DELETE cs', { id: req.params.id });
+    res.json({ success: true });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
     await session.close();

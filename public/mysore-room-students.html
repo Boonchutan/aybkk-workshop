@@ -377,8 +377,44 @@
   </div>
 
   <div class="container">
-    <button class="refresh" onclick="load()">↻ Refresh</button>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:var(--space-5);flex-wrap:wrap;">
+      <button class="refresh" style="margin:0;" onclick="load()">↻ Refresh</button>
+      <button class="refresh" style="margin:0;" onclick="openClassSummary()">+ Class Summary</button>
+    </div>
     <div id="list"><div class="state">Loading registrations…</div></div>
+  </div>
+
+  <div class="modal-overlay modal" id="classSummaryModal" onclick="if(event.target===this)closeClassSummary()">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeClassSummary()">✕</button>
+      <div class="modal-title">Class Summary</div>
+      <div class="modal-sub">Visible on every Mysore Room student's journal welcome screen.</div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Date</div>
+        <input type="date" id="csDate" style="padding:10px 12px;border-radius:var(--radius-md);border:none;background:var(--surface-2);box-shadow:inset 3px 3px 6px var(--shadow-dark),inset -2px -2px 4px var(--shadow-light);font-family:var(--font-body);font-size:14px;color:var(--ink);">
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Title</div>
+        <input type="text" id="csTitle" placeholder="e.g. BMR#1 — Ribcage engagement" style="width:100%;padding:10px 12px;border-radius:var(--radius-md);border:none;background:var(--surface-2);box-shadow:inset 3px 3px 6px var(--shadow-dark),inset -2px -2px 4px var(--shadow-light);font-family:var(--font-body);font-size:14px;color:var(--ink);">
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Body</div>
+        <textarea id="csBody" style="min-height:240px;" placeholder="Paste the class notes from Obsidian. Markdown is supported (## headings, **bold**, *italic*, - bullets)."></textarea>
+        <div class="modal-save-row">
+          <button class="modal-save" id="saveSummaryBtn" onclick="saveClassSummary()">Save Summary</button>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Recent Summaries</div>
+        <div class="comments-list" id="summariesList">
+          <div class="comments-empty">Loading…</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="modal-overlay modal" id="notesModal" onclick="if(event.target===this)closeNotes()">
@@ -648,6 +684,93 @@ async function saveComment() {
   } catch (e) {
     btn.textContent = 'Save failed'; btn.disabled = false;
     setTimeout(function () { resetSaveBtn('saveCommentBtn', 'Add Comment'); }, 2200);
+  }
+}
+
+var COHORT = 'mysore-room';
+
+function fmtSummaryDate(d) {
+  if (!d) return '';
+  if (typeof d === 'object' && d.year) {
+    var y = d.year.low != null ? d.year.low : d.year;
+    var m = d.month.low != null ? d.month.low : d.month;
+    var dd = d.day.low != null ? d.day.low : d.day;
+    return y + '-' + pad(m) + '-' + pad(dd);
+  }
+  return String(d).substring(0, 10);
+}
+
+async function openClassSummary() {
+  document.getElementById('csDate').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('csTitle').value = '';
+  document.getElementById('csBody').value = '';
+  document.getElementById('summariesList').innerHTML = '<div class="comments-empty">Loading…</div>';
+  resetSaveBtn('saveSummaryBtn', 'Save Summary');
+  document.getElementById('classSummaryModal').classList.add('show');
+  await loadClassSummaries();
+}
+
+function closeClassSummary() {
+  document.getElementById('classSummaryModal').classList.remove('show');
+}
+
+async function loadClassSummaries() {
+  try {
+    var res = await fetch(API_BASE + '/teacher/class-summaries?cohort=' + encodeURIComponent(COHORT) + '&limit=10');
+    if (!res.ok) throw new Error('load failed');
+    var data = await res.json();
+    var summaries = data.summaries || [];
+    var list = document.getElementById('summariesList');
+    if (!summaries.length) {
+      list.innerHTML = '<div class="comments-empty">No summaries yet.</div>';
+      return;
+    }
+    list.innerHTML = summaries.map(function (s) {
+      var preview = (s.body || '').slice(0, 160).replace(/\n+/g, ' ');
+      return '<div class="comment-item">' +
+        '<div class="comment-meta">' + esc(fmtSummaryDate(s.date)) + (s.title ? ' &middot; ' + esc(s.title) : '') + '</div>' +
+        '<div class="comment-body">' + esc(preview) + (s.body.length > 160 ? '…' : '') + '</div>' +
+        '<div style="margin-top:6px;text-align:right;"><button onclick="deleteClassSummary(\'' + s.id + '\')" style="background:none;border:none;color:var(--ink-soft);font-family:var(--font-display);font-size:10px;letter-spacing:0.10em;text-transform:uppercase;cursor:pointer;">Delete</button></div>' +
+      '</div>';
+    }).join('');
+  } catch (e) {
+    document.getElementById('summariesList').innerHTML = '<div class="comments-empty">Could not load.</div>';
+  }
+}
+
+async function saveClassSummary() {
+  var date = document.getElementById('csDate').value;
+  var title = document.getElementById('csTitle').value.trim();
+  var body = document.getElementById('csBody').value.trim();
+  if (!body) return;
+  var btn = document.getElementById('saveSummaryBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    var res = await fetch(API_BASE + '/teacher/class-summary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cohort: COHORT, date: date, title: title, body: body, teacherName: TEACHER_NAME })
+    });
+    if (!res.ok) throw new Error('save failed');
+    btn.textContent = 'Saved ✓'; btn.classList.add('done');
+    document.getElementById('csTitle').value = '';
+    document.getElementById('csBody').value = '';
+    await loadClassSummaries();
+    setTimeout(function () { resetSaveBtn('saveSummaryBtn', 'Save Summary'); }, 1800);
+  } catch (e) {
+    btn.textContent = 'Save failed'; btn.disabled = false;
+    setTimeout(function () { resetSaveBtn('saveSummaryBtn', 'Save Summary'); }, 2200);
+  }
+}
+
+async function deleteClassSummary(id) {
+  if (!confirm('Delete this class summary? Students will no longer see it.')) return;
+  try {
+    var res = await fetch(API_BASE + '/teacher/class-summary/' + encodeURIComponent(id), { method: 'DELETE' });
+    if (!res.ok) throw new Error('delete failed');
+    await loadClassSummaries();
+  } catch (e) {
+    alert('Delete failed');
   }
 }
 

@@ -521,6 +521,12 @@
         <div id="fromBoonchuComments"></div>
       </div>
 
+      <!-- Class Summary — visible when at least one class summary exists for this cohort. -->
+      <div id="classSummaryCard" class="hidden" style="text-align:left;background:var(--accent-light);border-radius:12px;padding:14px 16px;margin-bottom:18px;border-left:3px solid var(--accent);">
+        <div id="classSummaryLabel" style="font-family:'Spectral',serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:10px;">Class Summary</div>
+        <div id="classSummaryList"></div>
+      </div>
+
       <!-- Reminder: this IS the journal, use it after every class -->
       <div style="background:var(--accent-light);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:var(--accent-hover);line-height:1.6;text-align:left;">
         📌 <strong>收藏此链接</strong> — 每次练习后打开记录<br>
@@ -915,7 +921,8 @@ const T = {
     myJournalBtn: '📖 我的记录',
     myWeekBtn: '📊 本周报告',
     fromBoonchu: '来自 Boonchu',
-    practiceFocusLabel: '练习重点'
+    practiceFocusLabel: '练习重点',
+    classSummaryLabel: '课堂总结'
   },
   en: {
     pageTitle: 'Practice Journal',
@@ -967,7 +974,8 @@ const T = {
     myJournalBtn: '📖 My Journal',
     myWeekBtn: '📊 My Week',
     fromBoonchu: 'From Boonchu',
-    practiceFocusLabel: 'Practice Focus'
+    practiceFocusLabel: 'Practice Focus',
+    classSummaryLabel: 'Class Summary'
   },
   th: {
     pageTitle: 'บันทึกการฝึก',
@@ -1019,7 +1027,8 @@ const T = {
     myJournalBtn: '📖 บันทึกของฉัน',
     myWeekBtn: '📊 รายงานสัปดาห์',
     fromBoonchu: 'จากครู Boonchu',
-    practiceFocusLabel: 'จุดโฟกัสการฝึก'
+    practiceFocusLabel: 'จุดโฟกัสการฝึก',
+    classSummaryLabel: 'สรุปคลาส'
   },
   ru: {
     pageTitle: 'AYBKK RUSSIA WS 2026',
@@ -1071,7 +1080,8 @@ const T = {
     myJournalBtn: '📖 Мой дневник',
     myWeekBtn: '📊 Моя неделя',
     fromBoonchu: 'От Boonchu',
-    practiceFocusLabel: 'Фокус практики'
+    practiceFocusLabel: 'Фокус практики',
+    classSummaryLabel: 'Резюме урока'
   }
 };
 
@@ -1282,8 +1292,57 @@ async function loadFromBoonchu() {
     }
 
     document.getElementById('fromBoonchuCard').classList.remove('hidden');
+
+    // Class summaries for this cohort, if any
+    const summaries = Array.isArray(data.classSummaries) ? data.classSummaries.slice(0, 2) : [];
+    if (summaries.length) {
+      const esc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+      const fmtDate = (d) => {
+        if (!d) return '';
+        if (typeof d === 'object' && d.year) {
+          const y = d.year.low != null ? d.year.low : d.year;
+          const m = d.month.low != null ? d.month.low : d.month;
+          const dd = d.day.low != null ? d.day.low : d.day;
+          const pad = (n) => (n < 10 ? '0' : '') + n;
+          return y + '-' + pad(m) + '-' + pad(dd);
+        }
+        return String(d).substring(0, 10);
+      };
+      // Minimal markdown: ## heading, ### subheading, - bullet, **bold**, *italic*, blank line = paragraph break
+      const mdRender = (md) => {
+        const lines = String(md || '').split('\n');
+        let out = '';
+        let inList = false;
+        const inline = (s) => esc(s)
+          .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+          .replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>');
+        for (let line of lines) {
+          const t = line.trim();
+          if (!t) { if (inList) { out += '</ul>'; inList = false; } out += '<div style="height:6px;"></div>'; continue; }
+          if (/^####\s+/.test(t)) { if (inList) { out += '</ul>'; inList = false; } out += '<div style="font-family:Spectral,serif;font-size:12px;font-weight:700;color:var(--accent-hover);margin:8px 0 4px;">' + inline(t.replace(/^####\s+/, '')) + '</div>'; continue; }
+          if (/^###\s+/.test(t))  { if (inList) { out += '</ul>'; inList = false; } out += '<div style="font-family:Spectral,serif;font-size:13px;font-weight:700;color:var(--accent-hover);margin:10px 0 4px;">' + inline(t.replace(/^###\s+/, '')) + '</div>'; continue; }
+          if (/^##\s+/.test(t))   { if (inList) { out += '</ul>'; inList = false; } out += '<div style="font-family:Spectral,serif;font-size:14px;font-weight:700;color:var(--accent-hover);margin:12px 0 4px;">' + inline(t.replace(/^##\s+/, '')) + '</div>'; continue; }
+          if (/^[-*]\s+/.test(t)) { if (!inList) { out += '<ul style="margin:4px 0 4px 20px;padding:0;">'; inList = true; } out += '<li style="font-size:13px;line-height:1.55;color:var(--text-primary);margin-bottom:3px;">' + inline(t.replace(/^[-*]\s+/, '')) + '</li>'; continue; }
+          if (inList) { out += '</ul>'; inList = false; }
+          out += '<div style="font-size:13px;line-height:1.55;color:var(--text-primary);margin-bottom:4px;">' + inline(t) + '</div>';
+        }
+        if (inList) out += '</ul>';
+        return out;
+      };
+      document.getElementById('classSummaryList').innerHTML = summaries.map(s =>
+        '<div style="padding-top:8px;border-top:1px dashed rgba(0,0,0,0.10);margin-top:8px;">' +
+          '<div style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;">' +
+            esc(fmtDate(s.date)) + (s.title ? ' &middot; ' + esc(s.title) : '') +
+          '</div>' +
+          mdRender(s.body) +
+        '</div>'
+      ).join('');
+      document.getElementById('classSummaryCard').classList.remove('hidden');
+    }
   } catch (e) {
-    // silent — card stays hidden
+    // silent, card stays hidden
   }
 }
 
@@ -1435,8 +1494,10 @@ function applyLang(lang) {
   if (mwBtn) mwBtn.textContent = t.myWeekBtn || '📊 My Week';
   const fbLabel = document.getElementById('fromBoonchuLabel');
   const pfLabel = document.getElementById('fromBoonchuFocusLabel');
+  const csLabel = document.getElementById('classSummaryLabel');
   if (fbLabel) fbLabel.textContent = t.fromBoonchu || 'From Boonchu';
   if (pfLabel) pfLabel.textContent = t.practiceFocusLabel || 'Practice Focus';
+  if (csLabel) csLabel.textContent = t.classSummaryLabel || 'Class Summary';
   // Location-aware title override (Russian overrides language default)
   if (isRussian) {
     document.getElementById('welcomeTitle').textContent = 'AYBKK RUSSIA WS 2026';
