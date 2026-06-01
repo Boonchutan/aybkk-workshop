@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boonchu's Mysore Room — Registration</title>
+  <link rel="stylesheet" href="/tokens.css">
+  <style>
+    /* orientation-online.html — Boonchu's Mysore Room registration.
+       3 languages (EN / ZH / RU), English default — switcher works like
+       the daily journal. Student submits; Boonchu reviews and decides;
+       accepted students are sent their journal + payment link.
+       All-serif (Fraunces + Spectral) on beech wood, carved-clay. */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+
+    .header {
+      background: var(--surface);
+      padding: var(--space-7) var(--space-5) var(--space-5);
+      text-align: center;
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .header img {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      margin-bottom: var(--space-3);
+      mix-blend-mode: multiply;
+      filter: contrast(1.05);
+    }
+    .header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 5.4vw, 27px);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: 6px;
+    }
+    .header .by {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-style: italic;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .header p.sched {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--ink-soft);
+      letter-spacing: 0.02em;
+    }
+
+    .lang-switch {
+      display: flex; justify-content: center; gap: 8px;
+      margin-top: var(--space-4);
+    }
+    .lang-btn {
+      padding: 7px 16px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .lang-btn:active { transform: scale(0.96); }
+    .lang-btn.active {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
+      box-shadow:
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4),
+        inset -2px -2px 4px rgba(40, 20, 4, 0.25),
+        6px 6px 12px rgba(120, 80, 40, 0.25);
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: var(--space-5) var(--space-4) var(--space-7);
+    }
+
+    .intro,
+    .rules,
+    .form-section {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+    .intro p {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--ink);
+    }
+    .intro p + p { margin-top: var(--space-3); }
+
+    .rules h3,
+    .form-section h3 {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-4);
+    }
+    .form-section p.note {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-5);
+    }
+
+    .rule {
+      display: flex; align-items: flex-start; gap: var(--space-3);
+      padding: var(--space-3) 0;
+      border-bottom: 1px dashed var(--shadow-dark);
+    }
+    .rule:last-child { border-bottom: none; }
+    .rule-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+    .rule-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .quote-box {
+      max-width: 420px;
+      margin: var(--space-5) auto;
+      padding: var(--space-4);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      font-style: italic;
+      text-align: center;
+      color: var(--accent);
+      border-top: 1px solid var(--shadow-dark);
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .quote-source {
+      display: block;
+      margin-top: var(--space-2);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-style: normal;
+      color: var(--primary-deep);
+    }
+
+    /* Collapsible panels */
+    .cal-toggle {
+      width: 100%;
+      padding: 14px var(--space-5);
+      margin-bottom: var(--space-5);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      background: var(--surface);
+      cursor: pointer;
+      box-shadow:
+        8px 8px 16px var(--shadow-dark),
+        -6px -6px 12px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .cal-toggle:active { transform: scale(0.98); }
+    .cal-panel {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+    .legend span.leg {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .swatch { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .swatch.mysore { background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%); }
+    .swatch.led { background: #5f8a52; }
+    .swatch.brk {
+      border-radius: 3px;
+      background: repeating-linear-gradient(45deg, rgba(120,100,74,0.22) 0 3px, transparent 3px 6px);
+    }
+    .month { margin-bottom: var(--space-5); }
+    .month-name {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      text-align: center;
+      margin-bottom: var(--space-3);
+    }
+    .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .dow {
+      font-family: var(--font-display);
+      font-size: 9px; font-weight: 700;
+      color: var(--ink-soft);
+      text-align: center;
+      padding-bottom: 2px;
+    }
+    .cell {
+      aspect-ratio: 1 / 1;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--ink-soft);
+      border-radius: 50%;
+    }
+    .cell.blank { visibility: hidden; }
+    .cell.brk {
+      background: repeating-linear-gradient(45deg, rgba(120,100,74,0.20) 0 3px, transparent 3px 6px);
+      border-radius: 4px;
+      color: rgba(108, 94, 74, 0.55);
+    }
+    .cell.mysore {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f6ead0; font-weight: 700; font-family: var(--font-display);
+      text-shadow: 1px 1px 0 rgba(50, 28, 10, 0.4);
+    }
+    .cell.led {
+      background: #5f8a52;
+      color: #eef2e6; font-weight: 700; font-family: var(--font-display);
+      text-shadow: 1px 1px 0 rgba(28, 40, 20, 0.4);
+    }
+    .cal-blocks {
+      border-top: 1px solid var(--shadow-dark);
+      padding-top: var(--space-4);
+      margin-top: var(--space-2);
+    }
+    .cal-block-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 4px 0; gap: var(--space-3);
+    }
+    .cal-block-row .name {
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--primary-deep);
+      white-space: nowrap;
+    }
+    .cal-block-row .name.muted { color: var(--ink-soft); }
+    .cal-block-row .dates {
+      font-family: var(--font-body);
+      font-size: 13px; color: var(--ink);
+      text-align: right;
+    }
+    .cal-block-row .dates.muted { font-style: italic; color: var(--ink-soft); }
+
+    .about-tagline {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-style: italic;
+      line-height: 1.6;
+      color: var(--accent);
+      text-align: center;
+      padding-bottom: var(--space-4);
+      margin-bottom: var(--space-4);
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .about-body {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--ink);
+      margin-bottom: var(--space-3);
+    }
+    .about-body:last-child { margin-bottom: 0; }
+
+    .field { margin-bottom: var(--space-4); }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 8px;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 15px;
+      background: var(--surface-2);
+      color: var(--ink);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px rgba(150, 120, 80, 0.18);
+      transition: box-shadow var(--dur-base);
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      box-shadow:
+        inset 3px 3px 0 rgba(120, 90, 50, 0.28),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 6px 6px 12px rgba(120, 90, 50, 0.22);
+    }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: rgba(108, 94, 74, 0.55);
+      font-style: italic;
+    }
+    .field-row { display: flex; gap: var(--space-3); }
+    .field-row .field { flex: 1; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 18px var(--space-5);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.7),
+        -1px -1px 1px rgba(50, 28, 10, 0.85),
+        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      box-shadow:
+        14px 14px 28px rgba(120, 80, 40, 0.30),
+        -8px -8px 18px var(--shadow-light),
+        inset 4px 4px 10px rgba(255, 240, 215, 0.5),
+        inset -3px -3px 8px rgba(40, 20, 4, 0.25);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .submit-btn:hover { transform: translateY(-3px) scale(1.02); }
+    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled {
+      background: var(--surface-2);
+      color: rgba(108, 94, 74, 0.4);
+      text-shadow: none;
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .success-overlay {
+      position: fixed; inset: 0;
+      background: rgba(241, 237, 227, 0.96);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      padding: var(--space-5);
+      animation: fadeIn 0.3s var(--ease-out);
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .success-overlay.hidden { display: none; }
+    .success-box {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-7) var(--space-6);
+      text-align: center;
+      max-width: 380px;
+      margin: var(--space-5);
+      box-shadow:
+        20px 20px 40px var(--shadow-dark),
+        -10px -10px 22px var(--shadow-light);
+    }
+    .success-box h2 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: var(--space-3);
+    }
+    .success-box p {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-style: italic;
+      color: var(--ink-soft);
+      line-height: 1.65;
+      margin-bottom: var(--space-3);
+    }
+    .success-box p:last-child { margin-bottom: 0; }
+    .success-box .save-hint {
+      font-size: 12px;
+      font-style: normal;
+      color: var(--primary-deep);
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://aybkk-ashtanga.up.railway.app/logo.png" alt="AYBKK" onerror="this.style.display='none'">
+    <h1>BOONCHU'S MYSORE ROOM</h1>
+    <p class="by" id="headerSub">Online Mysore with Boonchu Tanti</p>
+    <p class="sched" id="headerSchedule">Wed &amp; Sun Mysore 10:00 &middot; Sat Led Intermediate 09:00 (Bangkok)</p>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">🇬🇧 EN</button>
+      <button class="lang-btn" data-lang="zh" onclick="setLang('zh')">🇨🇳 ZH</button>
+      <button class="lang-btn" data-lang="ru" onclick="setLang('ru')">🇷🇺 RU</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="quote-box">
+      <div id="quoteText">Loading...</div>
+      <div class="quote-source" id="quoteSource"></div>
+    </div>
+
+    <div class="intro">
+      <p id="intro1">This is your registration for Boonchu's Mysore Room — Season 1.</p>
+      <p id="intro2">Fill in the form below and submit it. Boonchu will review your registration personally and reply to you within two days.</p>
+    </div>
+
+    <div class="rules">
+      <h3 id="rulesTitle">How the Room Works</h3>
+      <div class="rule">
+        <span class="rule-icon">🧘</span>
+        <span class="rule-text" id="rule1">Mysore style — you practice at your own pace. I observe, comment, and advise.</span>
+      </div>
+      <div class="rule">
+        <span class="rule-icon">📹</span>
+        <span class="rule-text" id="rule2">Live only, no replays. Showing up is part of the practice.</span>
+      </div>
+      <div class="rule">
+        <span class="rule-icon">📓</span>
+        <span class="rule-text" id="rule3">Log your practice in the Daily Journal — I read it and respond.</span>
+      </div>
+      <div class="rule">
+        <span class="rule-icon">💬</span>
+        <span class="rule-text" id="rule4">Bring your questions to the weekly group Q&amp;A.</span>
+      </div>
+      <div class="rule">
+        <span class="rule-icon">🗓️</span>
+        <span class="rule-text" id="rule5">Wed &amp; Sun Mysore 10:00, Sat Led Intermediate 09:00 — Bangkok time.</span>
+      </div>
+    </div>
+
+    <button type="button" class="cal-toggle" id="aboutToggle" onclick="toggleAbout()">About Season 1 ▾</button>
+
+    <div class="cal-panel" id="aboutPanel" style="display:none;">
+      <p class="about-tagline" id="aboutTagline">Boonchu's first online Ashtanga program. Live Mysore practice with direct observation and correction.</p>
+      <p class="about-body" id="aboutBody1">This is a room of twelve — not a class you stream, but a room where I know your name and watch your practice with my own eyes.</p>
+      <p class="about-body" id="aboutBody2">You're seeing this because you were invited. Season 1 is ฿19,000 (about $540 USD) for the full season — seventeen live practices with me between May and July.</p>
+      <p class="about-body" id="aboutBody3">Submit your registration below. I read every one myself.</p>
+    </div>
+
+    <button type="button" class="cal-toggle" id="calToggle" onclick="toggleCalendar()">Season 1 Calendar ▾</button>
+
+    <div class="cal-panel" id="calPanel" style="display:none;">
+      <div class="legend">
+        <span class="leg"><span class="swatch mysore"></span><span id="legMysore">Mysore</span></span>
+        <span class="leg"><span class="swatch led"></span><span id="legLed">Led Intermediate</span></span>
+        <span class="leg"><span class="swatch brk"></span><span id="legBreak">Travel break</span></span>
+      </div>
+      <div id="months"></div>
+      <div class="cal-blocks">
+        <div class="cal-block-row">
+          <span class="name" id="blockA">Block A</span>
+          <span class="dates" id="blockADates">May 24 – Jun 10 · Bangkok</span>
+        </div>
+        <div class="cal-block-row">
+          <span class="name muted" id="breakLabel">Break</span>
+          <span class="dates muted" id="breakDates">Jun 12 – Jun 30 · integration</span>
+        </div>
+        <div class="cal-block-row">
+          <span class="name" id="blockB">Block B</span>
+          <span class="dates" id="blockBDates">Jul 1 – Jul 19 · Bangkok</span>
+        </div>
+      </div>
+    </div>
+
+    <form id="orientationForm" onsubmit="submitForm(event)">
+      <div class="form-section">
+        <h3 id="formTitle">Your Details</h3>
+        <p class="note" id="formNote">So I can prepare for your practice from the first day.</p>
+
+        <div class="field">
+          <label id="lblName">Full name</label>
+          <input type="text" id="name" required placeholder="Your name">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label id="lblReach">Reach you on</label>
+            <select id="contactType">
+              <option value="wechat">WeChat</option>
+              <option value="telegram">Telegram</option>
+              <option value="line">LINE</option>
+              <option value="whatsapp">WhatsApp</option>
+            </select>
+          </div>
+          <div class="field">
+            <label id="lblHandle">Handle / number</label>
+            <input type="text" id="contact" required placeholder="@username">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label id="lblCity">City</label>
+            <input type="text" id="city" required placeholder="City">
+          </div>
+          <div class="field">
+            <label id="lblCountry">Country</label>
+            <input type="text" id="country" required placeholder="Country">
+          </div>
+        </div>
+
+        <div class="field">
+          <label id="lblTimezone">Your timezone</label>
+          <input type="text" id="timezone" required placeholder="e.g. GMT+8 (Beijing)">
+        </div>
+
+        <div class="field">
+          <label id="lblExperience">Years practicing Ashtanga</label>
+          <select id="experience">
+            <option value="0-1 years" id="expO1">Less than 1 year</option>
+            <option value="1-3 years" id="expO2" selected>1-3 years</option>
+            <option value="3-6 years" id="expO3">3-6 years</option>
+            <option value="6+ years" id="expO4">6 years or more</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label id="lblSeries">Current series</label>
+          <select id="series">
+            <option value="Primary Series" id="serO1">Primary Series</option>
+            <option value="Primary + Intermediate" id="serO2">Primary + Intermediate</option>
+            <option value="Intermediate Series" id="serO3">Intermediate Series</option>
+            <option value="Advanced A / B" id="serO4">Advanced A / B</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label id="lblInjuries">Injuries or limitations</label>
+          <textarea id="injuries" placeholder="Anything I should know before I watch you practice"></textarea>
+        </div>
+
+        <div class="field">
+          <label id="lblLanguage">Journal language</label>
+          <select id="language">
+            <option value="en" selected>English</option>
+            <option value="zh">中文</option>
+            <option value="ru">Русский</option>
+            <option value="th">ภาษาไทย</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Registration</button>
+    </form>
+  </div>
+
+  <div class="success-overlay hidden" id="successOverlay">
+    <div class="success-box">
+      <h2 id="successTitle">Registration Received</h2>
+      <p id="successMsg">Thank you. Boonchu will review your registration personally and reply to you within two days.</p>
+      <p class="save-hint" id="successHint">Season 1 begins Sunday, May 24.</p>
+    </div>
+  </div>
+
+<script>
+const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+
+var T = {
+  en: {
+    headerSub: 'Online Mysore with Boonchu Tanti',
+    headerSchedule: 'Wed & Sun Mysore 10:00 · Sat Led Intermediate 09:00 (Bangkok)',
+    intro1: "This is your registration for Boonchu's Mysore Room — Season 1.",
+    intro2: 'Fill in the form below and submit it. Boonchu will review your registration personally and reply to you within two days.',
+    rulesTitle: 'How the Room Works',
+    rule1: 'Mysore style — you practice at your own pace. I observe, comment, and advise.',
+    rule2: 'Live only, no replays. Showing up is part of the practice.',
+    rule3: 'Log your practice in the Daily Journal — I read it and respond.',
+    rule4: 'Bring your questions to the weekly group Q&A.',
+    rule5: 'Wed & Sun Mysore 10:00, Sat Led Intermediate 09:00 — Bangkok time.',
+    aboutToggle: 'About Season 1 · ฿19,000',
+    calToggle: 'Season 1 Calendar',
+    aboutTagline: "Boonchu's first online Ashtanga program. Live Mysore practice with direct observation and correction.",
+    aboutBody1: 'This is a room of twelve — not a class you stream, but a room where I know your name and watch your practice with my own eyes.',
+    aboutBody2: "You're seeing this because you were invited. Season 1 is ฿19,000 (about $540 USD) for the full season — seventeen live practices with me between May and July.",
+    aboutBody3: 'Submit your registration below. I read every one myself.',
+    legMysore: 'Mysore',
+    legLed: 'Led Intermediate',
+    legBreak: 'Travel break',
+    monthMay: 'May 2026', monthJun: 'June 2026', monthJul: 'July 2026',
+    blockA: 'Block A', blockADates: 'May 24 – Jun 10 · Bangkok',
+    breakLabel: 'Break', breakDates: 'Jun 12 – Jun 30 · integration',
+    blockB: 'Block B', blockBDates: 'Jul 1 – Jul 19 · Bangkok',
+    formTitle: 'Your Details',
+    formNote: 'So I can prepare for your practice from the first day.',
+    lblName: 'Full name', lblReach: 'Reach you on', lblHandle: 'Handle / number',
+    lblCity: 'City', lblCountry: 'Country', lblTimezone: 'Your timezone',
+    lblExperience: 'Years practicing Ashtanga', lblSeries: 'Current series',
+    lblInjuries: 'Injuries or limitations', lblLanguage: 'Journal language',
+    phName: 'Your name', phHandle: '@username', phCity: 'City', phCountry: 'Country',
+    phTimezone: 'e.g. GMT+8 (Beijing)',
+    phInjuries: 'Anything I should know before I watch you practice',
+    expO1: 'Less than 1 year', expO2: '1-3 years', expO3: '3-6 years', expO4: '6 years or more',
+    serO1: 'Primary Series', serO2: 'Primary + Intermediate', serO3: 'Intermediate Series', serO4: 'Advanced A / B',
+    submitBtn: 'Submit Registration', submitting: 'Submitting...',
+    successTitle: 'Registration Received',
+    successThank: 'Thank you, ',
+    successAfter: '. Boonchu will review your registration personally and reply to you within two days.',
+    successHint: 'Season 1 begins Sunday, May 24.',
+    alertError: 'Something went wrong. Please try again.',
+    quotes: [
+      { text: 'Yoga is the cessation of the fluctuations of the mind.', source: 'YS 1.2' },
+      { text: 'Practice becomes firmly grounded when attended to for a long time, without break, with devotion.', source: 'YS 1.14' },
+      { text: 'Practice is the steady effort to still the mind.', source: 'YS 1.13' },
+      { text: 'You have the right to your actions, but never to the fruits of your actions.', source: 'BG 2.47' },
+      { text: 'When the body is firm and the breath is calm, the posture is mastered.', source: 'YS 2.46' },
+      { text: 'Through the practice of the limbs of yoga, impurity dwindles and wisdom rises.', source: 'YS 2.28' }
+    ]
+  },
+  zh: {
+    headerSub: '与 Boonchu Tanti 的线上迈索尔课程',
+    headerSchedule: '周三和周日 迈索尔 10:00 · 周六 引导中级课 09:00（曼谷时间）',
+    intro1: '这是你报名 Boonchu’s Mysore Room 第一季的表格。',
+    intro2: '请填写并提交下面的表格。Boonchu 会亲自审阅你的报名，并在两天内回复你。',
+    rulesTitle: '课程如何进行',
+    rule1: '迈索尔式 —— 你按自己的节奏练习，我观察、点评并给予指导。',
+    rule2: '只有现场直播，没有回放。出席本身就是练习的一部分。',
+    rule3: '在每日练习日志中记录你的练习 —— 我会阅读并回复。',
+    rule4: '把你的问题带到每周的小组问答。',
+    rule5: '周三和周日 迈索尔 10:00，周六 引导中级课 09:00 —— 曼谷时间。',
+    aboutToggle: '关于第一季 · ฿19,000',
+    calToggle: '第一季日历',
+    aboutTagline: 'Boonchu 的首个线上阿斯汤加课程。现场迈索尔练习，直接观察与纠正。',
+    aboutBody1: '这是一个只有十二人的课堂 —— 不是你在屏幕前观看的课程，而是一个我记得你名字、亲眼看着你练习的空间。',
+    aboutBody2: '你能看到这个，是因为你被邀请了。第一季为 ฿19,000（约 540 美元），涵盖整个赛季 —— 五月到七月间与我一起的十七次现场练习。',
+    aboutBody3: '在下方提交你的报名。每一份我都会亲自阅读。',
+    legMysore: '迈索尔',
+    legLed: '引导中级课',
+    legBreak: '旅行休息',
+    monthMay: '2026年5月', monthJun: '2026年6月', monthJul: '2026年7月',
+    blockA: 'A 阶段', blockADates: '5月24日 – 6月10日 · 曼谷',
+    breakLabel: '休息', breakDates: '6月12日 – 6月30日 · 沉淀',
+    blockB: 'B 阶段', blockBDates: '7月1日 – 7月19日 · 曼谷',
+    formTitle: '你的信息',
+    formNote: '让我从第一天起就能为你的练习做好准备。',
+    lblName: '全名', lblReach: '联系方式', lblHandle: '账号 / 号码',
+    lblCity: '城市', lblCountry: '国家', lblTimezone: '你的时区',
+    lblExperience: '练习阿斯汤加的年数', lblSeries: '当前序列',
+    lblInjuries: '伤病或身体限制', lblLanguage: '日志语言',
+    phName: '你的名字', phHandle: '@用户名', phCity: '城市', phCountry: '国家',
+    phTimezone: '例如 GMT+8（北京）',
+    phInjuries: '在我观察你练习之前，我需要知道的任何事',
+    expO1: '少于 1 年', expO2: '1-3 年', expO3: '3-6 年', expO4: '6 年或以上',
+    serO1: '初级序列', serO2: '初级 + 中级', serO3: '中级序列', serO4: '高级 A / B',
+    submitBtn: '提交报名', submitting: '提交中…',
+    successTitle: '已收到报名',
+    successThank: '谢谢你，',
+    successAfter: '。Boonchu 会亲自审阅你的报名，并在两天内回复你。',
+    successHint: '第一季于 5 月 24 日（周日）开始。',
+    alertError: '出错了，请重试。',
+    quotes: [
+      { text: '瑜伽是心识波动的止息。', source: 'YS 1.2' },
+      { text: '长期、不间断、满怀虔诚地练习，练习便会稳固扎根。', source: 'YS 1.14' },
+      { text: '练习是让心安定下来的持续努力。', source: 'YS 1.13' },
+      { text: '你只有行动的权利，而无权要求行动的果实。', source: 'BG 2.47' },
+      { text: '当身体稳定、呼吸平静，体式便已掌握。', source: 'YS 2.46' },
+      { text: '透过瑜伽各支的练习，杂质渐消，智慧升起。', source: 'YS 2.28' }
+    ]
+  },
+  ru: {
+    headerSub: 'Онлайн-майсор с Boonchu Tanti',
+    headerSchedule: 'Ср и Вс майсор 10:00 · Сб лед-класс Intermediate 09:00 (Бангкок)',
+    intro1: 'Это ваша регистрация в Boonchu’s Mysore Room — Сезон 1.',
+    intro2: 'Заполните форму ниже и отправьте её. Boonchu лично рассмотрит вашу заявку и ответит вам в течение двух дней.',
+    rulesTitle: 'Как устроена эта комната',
+    rule1: 'Майсор-стиль — вы практикуете в своём темпе. Я наблюдаю, комментирую и даю советы.',
+    rule2: 'Только вживую, без записей. Присутствие — часть практики.',
+    rule3: 'Записывайте практику в Ежедневный дневник — я читаю и отвечаю.',
+    rule4: 'Приносите вопросы на еженедельную групповую сессию вопросов и ответов.',
+    rule5: 'Ср и Вс майсор 10:00, Сб лед-класс Intermediate 09:00 — время Бангкока.',
+    aboutToggle: 'О Сезоне 1 · ฿19,000',
+    calToggle: 'Календарь Сезона 1',
+    aboutTagline: 'Первая онлайн-программа аштанги от Boonchu. Живая майсор-практика с прямым наблюдением и коррекцией.',
+    aboutBody1: 'Это комната на двенадцать человек — не урок, который вы смотрите в записи, а комната, где я знаю ваше имя и вижу вашу практику собственными глазами.',
+    aboutBody2: 'Вы видите это, потому что вас пригласили. Сезон 1 стоит ฿19,000 (около $540) за весь сезон — семнадцать живых практик со мной с мая по июль.',
+    aboutBody3: 'Отправьте заявку ниже. Я читаю каждую лично.',
+    legMysore: 'Майсор',
+    legLed: 'Лед Intermediate',
+    legBreak: 'Перерыв на поездку',
+    monthMay: 'Май 2026', monthJun: 'Июнь 2026', monthJul: 'Июль 2026',
+    blockA: 'Блок A', blockADates: '24 мая – 10 июня · Бангкок',
+    breakLabel: 'Перерыв', breakDates: '12 – 30 июня · интеграция',
+    blockB: 'Блок B', blockBDates: '1 – 19 июля · Бангкок',
+    formTitle: 'Ваши данные',
+    formNote: 'Чтобы я мог подготовиться к вашей практике с первого дня.',
+    lblName: 'Полное имя', lblReach: 'Связь с вами', lblHandle: 'Имя пользователя / номер',
+    lblCity: 'Город', lblCountry: 'Страна', lblTimezone: 'Ваш часовой пояс',
+    lblExperience: 'Сколько лет практикуете аштангу', lblSeries: 'Текущая серия',
+    lblInjuries: 'Травмы или ограничения', lblLanguage: 'Язык дневника',
+    phName: 'Ваше имя', phHandle: '@username', phCity: 'Город', phCountry: 'Страна',
+    phTimezone: 'напр. GMT+3 (Москва)',
+    phInjuries: 'Всё, что мне нужно знать перед тем, как я увижу вашу практику',
+    expO1: 'Менее 1 года', expO2: '1-3 года', expO3: '3-6 лет', expO4: '6 лет и более',
+    serO1: 'Первая серия', serO2: 'Первая + Вторая', serO3: 'Вторая серия', serO4: 'Продвинутая A / B',
+    submitBtn: 'Отправить заявку', submitting: 'Отправка…',
+    successTitle: 'Заявка получена',
+    successThank: 'Спасибо, ',
+    successAfter: '. Boonchu лично рассмотрит вашу заявку и ответит вам в течение двух дней.',
+    successHint: 'Сезон 1 начинается в воскресенье, 24 мая.',
+    alertError: 'Что-то пошло не так. Попробуйте ещё раз.',
+    quotes: [
+      { text: 'Йога — это прекращение колебаний ума.', source: 'YS 1.2' },
+      { text: 'Практика становится прочной, когда её выполняют долго, без перерывов и с преданностью.', source: 'YS 1.14' },
+      { text: 'Практика — это постоянное усилие успокоить ум.', source: 'YS 1.13' },
+      { text: 'У тебя есть право на действие, но не на плоды действия.', source: 'BG 2.47' },
+      { text: 'Когда тело устойчиво, а дыхание спокойно, асана освоена.', source: 'YS 2.46' },
+      { text: 'Через практику ступеней йоги загрязнения убывают и поднимается мудрость.', source: 'YS 2.28' }
+    ]
+  }
+};
+
+var curLang = 'en';
+var quoteIdx = 0;
+var aboutOpen = false;
+var calOpen = false;
+
+// Season 1 calendar — keyed by JS month index (May=4, Jun=5, Jul=6)
+var MONTHS = [
+  { key: 'monthMay', m: 4, days: 31 },
+  { key: 'monthJun', m: 5, days: 30 },
+  { key: 'monthJul', m: 6, days: 31 }
+];
+var MYSORE = { 4: [24, 27, 31], 5: [3, 7, 10], 6: [1, 5, 8, 12, 15, 19] };
+var LED = { 4: [30], 5: [6], 6: [4, 11, 18] };
+var BREAK_MONTH = 5, BREAK_FROM = 12, BREAK_TO = 30;
+var DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+function buildMonths() {
+  var t = T[curLang];
+  var host = document.getElementById('months');
+  var html = '';
+  for (var i = 0; i < MONTHS.length; i++) {
+    var mo = MONTHS[i];
+    var firstDow = new Date(2026, mo.m, 1).getDay();
+    html += '<div class="month"><div class="month-name">' + t[mo.key] + '</div><div class="grid">';
+    for (var d = 0; d < 7; d++) html += '<div class="dow">' + DOW[d] + '</div>';
+    for (var b = 0; b < firstDow; b++) html += '<div class="cell blank"></div>';
+    for (var day = 1; day <= mo.days; day++) {
+      var cls = 'cell';
+      if (MYSORE[mo.m].indexOf(day) !== -1) cls += ' mysore';
+      else if (LED[mo.m].indexOf(day) !== -1) cls += ' led';
+      else if (mo.m === BREAK_MONTH && day >= BREAK_FROM && day <= BREAK_TO) cls += ' brk';
+      html += '<div class="' + cls + '">' + day + '</div>';
+    }
+    html += '</div></div>';
+  }
+  host.innerHTML = html;
+}
+
+function updateToggleLabels() {
+  var t = T[curLang];
+  document.getElementById('aboutToggle').textContent = t.aboutToggle + ' ' + (aboutOpen ? '▴' : '▾');
+  document.getElementById('calToggle').textContent = t.calToggle + ' ' + (calOpen ? '▴' : '▾');
+}
+
+function toggleAbout() {
+  aboutOpen = !aboutOpen;
+  document.getElementById('aboutPanel').style.display = aboutOpen ? 'block' : 'none';
+  updateToggleLabels();
+}
+
+function toggleCalendar() {
+  calOpen = !calOpen;
+  document.getElementById('calPanel').style.display = calOpen ? 'block' : 'none';
+  updateToggleLabels();
+}
+
+function setText(id, value) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function setLang(lang) {
+  if (!T[lang]) return;
+  curLang = lang;
+  var t = T[lang];
+  document.documentElement.lang = lang;
+
+  var btns = document.querySelectorAll('.lang-btn');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('active', btns[i].getAttribute('data-lang') === lang);
+  }
+
+  setText('headerSub', t.headerSub);
+  setText('headerSchedule', t.headerSchedule);
+  setText('quoteText', t.quotes[quoteIdx].text);
+  setText('quoteSource', '— ' + t.quotes[quoteIdx].source);
+  setText('intro1', t.intro1);
+  setText('intro2', t.intro2);
+  setText('rulesTitle', t.rulesTitle);
+  setText('rule1', t.rule1);
+  setText('rule2', t.rule2);
+  setText('rule3', t.rule3);
+  setText('rule4', t.rule4);
+  setText('rule5', t.rule5);
+  setText('aboutTagline', t.aboutTagline);
+  setText('aboutBody1', t.aboutBody1);
+  setText('aboutBody2', t.aboutBody2);
+  setText('aboutBody3', t.aboutBody3);
+  setText('legMysore', t.legMysore);
+  setText('legLed', t.legLed);
+  setText('legBreak', t.legBreak);
+  setText('blockA', t.blockA);
+  setText('blockADates', t.blockADates);
+  setText('breakLabel', t.breakLabel);
+  setText('breakDates', t.breakDates);
+  setText('blockB', t.blockB);
+  setText('blockBDates', t.blockBDates);
+  setText('formTitle', t.formTitle);
+  setText('formNote', t.formNote);
+  setText('lblName', t.lblName);
+  setText('lblReach', t.lblReach);
+  setText('lblHandle', t.lblHandle);
+  setText('lblCity', t.lblCity);
+  setText('lblCountry', t.lblCountry);
+  setText('lblTimezone', t.lblTimezone);
+  setText('lblExperience', t.lblExperience);
+  setText('lblSeries', t.lblSeries);
+  setText('lblInjuries', t.lblInjuries);
+  setText('lblLanguage', t.lblLanguage);
+  setText('expO1', t.expO1);
+  setText('expO2', t.expO2);
+  setText('expO3', t.expO3);
+  setText('expO4', t.expO4);
+  setText('serO1', t.serO1);
+  setText('serO2', t.serO2);
+  setText('serO3', t.serO3);
+  setText('serO4', t.serO4);
+  setText('successTitle', t.successTitle);
+  setText('successHint', t.successHint);
+
+  document.getElementById('name').placeholder = t.phName;
+  document.getElementById('contact').placeholder = t.phHandle;
+  document.getElementById('city').placeholder = t.phCity;
+  document.getElementById('country').placeholder = t.phCountry;
+  document.getElementById('timezone').placeholder = t.phTimezone;
+  document.getElementById('injuries').placeholder = t.phInjuries;
+
+  var submitBtn = document.getElementById('submitBtn');
+  if (!submitBtn.disabled) submitBtn.textContent = t.submitBtn;
+
+  updateToggleLabels();
+  buildMonths();
+}
+
+async function submitForm(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById('submitBtn');
+  const t = T[curLang];
+  btn.disabled = true;
+  btn.textContent = t.submitting;
+
+  const data = {
+    name: document.getElementById('name').value.trim(),
+    contactType: document.getElementById('contactType').value,
+    contact: document.getElementById('contact').value.trim(),
+    city: document.getElementById('city').value.trim(),
+    country: document.getElementById('country').value.trim(),
+    timezone: document.getElementById('timezone').value.trim(),
+    experience: document.getElementById('experience').value,
+    series: document.getElementById('series').value,
+    injuries: document.getElementById('injuries').value.trim(),
+    language: document.getElementById('language').value,
+    workshop: "Boonchu's Mysore Room",
+    date: new Date().toISOString()
+  };
+
+  try {
+    const res = await fetch(API_BASE + '/orientations/online', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error('Failed');
+
+    document.getElementById('successMsg').textContent = t.successThank + (data.name || '') + t.successAfter;
+    document.getElementById('successOverlay').classList.remove('hidden');
+  } catch (err) {
+    alert(t.alertError);
+    btn.disabled = false;
+    btn.textContent = t.submitBtn;
+  }
+}
+
+function init() {
+  quoteIdx = new Date().getDate() % T.en.quotes.length;
+  var param = new URLSearchParams(window.location.search).get('lang');
+  var start = (param === 'zh' || param === 'ru' || param === 'en') ? param : 'en';
+  setLang(start);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome — Boonchu's Mysore Room</title>
+  <link rel="stylesheet" href="/tokens.css">
+  <style>
+    /* mysore-room-welcome.html — the "you're in" page for accepted + paid
+       students. Personalized via ?id / ?name / ?lang URL params. Greets by
+       name; guidelines; profile-photo upload; Zoom join links; Daily Journal.
+       3 languages (EN / ZH / RU), English default. Carved-clay on beech. */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+
+    .header {
+      background: var(--surface);
+      padding: var(--space-7) var(--space-5) var(--space-5);
+      text-align: center;
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .header img {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      margin-bottom: var(--space-3);
+      mix-blend-mode: multiply;
+      filter: contrast(1.05);
+    }
+    .header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 5.4vw, 27px);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: 6px;
+    }
+    .header .by {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .lang-switch {
+      display: flex; justify-content: center; gap: 8px;
+      margin-top: var(--space-4);
+    }
+    .lang-btn {
+      padding: 7px 16px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .lang-btn:active { transform: scale(0.96); }
+    .lang-btn.active {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
+      box-shadow:
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4),
+        inset -2px -2px 4px rgba(40, 20, 4, 0.25),
+        6px 6px 12px rgba(120, 80, 40, 0.25);
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: var(--space-5) var(--space-4) var(--space-7);
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6) var(--space-5);
+      margin-bottom: var(--space-5);
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+
+    .hero { text-align: center; }
+    .hero .eyebrow {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: var(--space-3);
+    }
+    .hero h2 {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 7vw, 32px);
+      font-weight: 800;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: var(--space-3);
+      line-height: 1.2;
+    }
+    .hero p {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--ink);
+    }
+
+    .card h3 {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-4);
+    }
+
+    .begin-intro {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink);
+      padding-bottom: var(--space-4);
+      margin-bottom: var(--space-3);
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .guide {
+      display: flex; align-items: flex-start; gap: var(--space-3);
+      padding: var(--space-3) 0;
+      border-bottom: 1px dashed var(--shadow-dark);
+    }
+    .guide:last-child { border-bottom: none; padding-bottom: 0; }
+    .guide-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .guide-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    /* Profile photo */
+    .photo-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+    }
+    .photo-preview {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      margin: 0 auto var(--space-4);
+      background: var(--surface-2);
+      background-size: cover;
+      background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow:
+        inset 4px 4px 9px var(--shadow-dark),
+        inset -3px -3px 7px rgba(253, 250, 242, 0.8);
+    }
+    .photo-preview .initial {
+      font-family: var(--font-display);
+      font-size: 44px;
+      font-weight: 800;
+      color: var(--primary-deep);
+      text-shadow: var(--text-carve-soft);
+    }
+    .photo-preview.has-photo .initial { display: none; }
+    .photo-btn {
+      width: 100%;
+      padding: 14px var(--space-5);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 800;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer;
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.7), -1px -1px 1px rgba(50, 28, 10, 0.85);
+      box-shadow:
+        10px 10px 20px rgba(120, 80, 40, 0.26),
+        -6px -6px 12px var(--shadow-light),
+        inset 3px 3px 7px rgba(255, 240, 215, 0.42);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .photo-btn:active { transform: scale(0.97); }
+    .photo-status {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+      text-align: center;
+      margin-top: var(--space-3);
+      min-height: 18px;
+    }
+
+    .class-row {
+      padding: var(--space-4) 0;
+      border-bottom: 1px dashed var(--shadow-dark);
+    }
+    .class-row:first-of-type { padding-top: 0; }
+    .class-row:last-of-type { border-bottom: none; padding-bottom: var(--space-2); }
+    .class-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: var(--space-3);
+    }
+    .class-head .day {
+      font-family: var(--font-display);
+      font-size: 15px; font-weight: 800;
+      color: var(--primary-deep);
+    }
+    .class-head .class-when {
+      font-family: var(--font-body);
+      font-size: 14px; color: var(--ink);
+    }
+    .join-btn {
+      display: block;
+      width: 100%;
+      padding: 12px var(--space-4);
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 12px; font-weight: 800;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      text-align: center; text-decoration: none;
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.7), -1px -1px 1px rgba(50, 28, 10, 0.85);
+      box-shadow:
+        8px 8px 16px rgba(120, 80, 40, 0.24),
+        -5px -5px 10px var(--shadow-light),
+        inset 2px 2px 6px rgba(255, 240, 215, 0.4);
+    }
+    .zoom-meta {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-align: center;
+      margin-top: 8px;
+    }
+    .sched-tz {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: var(--space-3);
+      text-align: center;
+    }
+
+    .journal-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+    }
+    .journal-btn {
+      display: block;
+      width: 100%;
+      padding: 17px var(--space-5);
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+      text-decoration: none;
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.7),
+        -1px -1px 1px rgba(50, 28, 10, 0.85);
+      box-shadow:
+        12px 12px 24px rgba(120, 80, 40, 0.28),
+        -7px -7px 16px var(--shadow-light),
+        inset 3px 3px 8px rgba(255, 240, 215, 0.45);
+    }
+
+    .cal-link {
+      display: block;
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--primary-deep);
+      text-decoration: none;
+      margin-bottom: var(--space-5);
+    }
+
+    .closing {
+      text-align: center;
+      padding: var(--space-4) 0;
+    }
+    .closing .line {
+      font-family: var(--font-body);
+      font-size: 17px;
+      font-style: italic;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .closing .by {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://aybkk-ashtanga.up.railway.app/logo.png" alt="AYBKK" onerror="this.style.display='none'">
+    <h1>BOONCHU'S MYSORE ROOM</h1>
+    <p class="by" id="headerSub">Online Mysore with Boonchu Tanti</p>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="en" onclick="setLang('en')">🇬🇧 EN</button>
+      <button class="lang-btn" data-lang="zh" onclick="setLang('zh')">🇨🇳 ZH</button>
+      <button class="lang-btn" data-lang="ru" onclick="setLang('ru')">🇷🇺 RU</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card hero">
+      <div class="eyebrow" id="eyebrow">Season 1 · 2026</div>
+      <h2 id="heroTitle">Welcome</h2>
+      <p id="heroConfirm">Your spot is confirmed. You are one of the twelve.</p>
+    </div>
+
+    <div class="card">
+      <h3 id="beginTitle">Before You Begin</h3>
+      <p class="begin-intro" id="beginIntro">For your first practice, join 10 minutes early.</p>
+      <div class="guide"><span class="guide-icon">🧘</span><span class="guide-text" id="guide1">Mysore style.</span></div>
+      <div class="guide"><span class="guide-icon">📹</span><span class="guide-text" id="guide2">Camera on.</span></div>
+      <div class="guide"><span class="guide-icon">⏰</span><span class="guide-text" id="guide3">Arrive on time.</span></div>
+      <div class="guide"><span class="guide-icon">📓</span><span class="guide-text" id="guide4">Log your practice.</span></div>
+      <div class="guide"><span class="guide-icon">🔇</span><span class="guide-text" id="guide5">Quiet space.</span></div>
+      <div class="guide"><span class="guide-icon">💬</span><span class="guide-text" id="guide6">Weekly Q&amp;A.</span></div>
+    </div>
+
+    <div class="card" id="photoCard">
+      <h3 id="photoTitle">Your Photo</h3>
+      <p class="photo-text" id="photoText">Add a photo of yourself so Boonchu can recognize you in class.</p>
+      <div class="photo-preview" id="photoPreview"><span class="initial" id="photoInitial">?</span></div>
+      <button type="button" class="photo-btn" id="photoBtn" onclick="document.getElementById('photoInput').click()">Take a Selfie or Upload</button>
+      <input type="file" id="photoInput" accept="image/*" style="display:none">
+      <div class="photo-status" id="photoStatus"></div>
+    </div>
+
+    <div class="card">
+      <h3 id="schedTitle">Your Live Classes</h3>
+      <div class="class-row">
+        <div class="class-head"><span class="day" id="schedWedDay">Wednesday</span><span class="class-when" id="schedWedVal">Mysore · 10:00</span></div>
+        <a class="join-btn" href="https://us02web.zoom.us/j/85675561332?pwd=V2a70CkEIXrLMuqNPK7i1bgJbbttzM.1" target="_blank" rel="noopener">Join on Zoom</a>
+        <div class="zoom-meta" id="metaWed"></div>
+      </div>
+      <div class="class-row">
+        <div class="class-head"><span class="day" id="schedSatDay">Saturday</span><span class="class-when" id="schedSatVal">Led Intermediate · 09:00</span></div>
+        <a class="join-btn" href="https://us02web.zoom.us/j/82636807274?pwd=TWJOaUdqdEI1eWRzRGdxaXNlb0Z4Zz09" target="_blank" rel="noopener">Join on Zoom</a>
+        <div class="zoom-meta" id="metaSat"></div>
+      </div>
+      <div class="class-row">
+        <div class="class-head"><span class="day" id="schedSunDay">Sunday</span><span class="class-when" id="schedSunVal">Mysore · 10:00</span></div>
+        <a class="join-btn" href="https://us02web.zoom.us/j/85602081555?pwd=hfiZtRITwfhXgY4GtfbKwWPCaibLnU.1" target="_blank" rel="noopener">Join on Zoom</a>
+        <div class="zoom-meta" id="metaSun"></div>
+      </div>
+      <div class="sched-tz" id="schedTz">All times Bangkok (GMT+7)</div>
+    </div>
+
+    <div class="card" id="journalCard">
+      <h3 id="journalTitle">Your Daily Journal</h3>
+      <p class="journal-text" id="journalText">This journal is yours for the whole season.</p>
+      <a class="journal-btn" id="journalBtn" href="#" target="_blank" rel="noopener">Open My Daily Journal</a>
+    </div>
+
+    <a class="cal-link" id="calLink" href="#" target="_blank" rel="noopener">See the full Season 1 calendar →</a>
+
+    <div class="closing">
+      <div class="line" id="closingLine">See you in the Room.</div>
+      <div class="by">— Boonchu</div>
+    </div>
+  </div>
+
+<script>
+var API = 'https://aybkk-ashtanga.up.railway.app/api';
+
+var T = {
+  en: {
+    headerSub: 'Online Mysore with Boonchu Tanti',
+    eyebrow: 'Season 1 · 2026',
+    welcome: 'Welcome',
+    heroConfirm: "Your spot in Boonchu's Mysore Room — Season 1 — is confirmed. You are one of the twelve.",
+    beginTitle: 'Before You Begin',
+    beginIntro: "For your first practice on Sunday, May 24, join 10 minutes early — 09:50 Bangkok. I'll go through the guidelines, then we begin at 10:00.",
+    guide1: 'Mysore style — practice at your own pace. I observe, comment, and advise.',
+    guide2: 'Keep your camera on for the whole practice, positioned so I can see your full mat.',
+    guide3: 'Arrive on time — we begin together.',
+    guide4: 'Log your practice in the Daily Journal after each session — I read it and respond.',
+    guide5: "Practice in a quiet space where you won't be interrupted.",
+    guide6: 'Bring your questions to the weekly group Q&A.',
+    photoTitle: 'Your Photo',
+    photoText: 'Add a photo of yourself so Boonchu can recognize you in class.',
+    photoBtn: 'Take a Selfie or Upload',
+    photoBtnChange: 'Change Photo',
+    photoUploading: 'Uploading…',
+    photoSaved: 'Photo saved ✓',
+    photoError: 'Upload failed — please try again.',
+    schedTitle: 'Your Live Classes',
+    schedWedDay: 'Wednesday', schedWedVal: 'Mysore · 10:00',
+    schedSatDay: 'Saturday', schedSatVal: 'Led Intermediate · 09:00',
+    schedSunDay: 'Sunday', schedSunVal: 'Mysore · 10:00',
+    schedTz: 'All times Bangkok (GMT+7)',
+    joinZoom: 'Join on Zoom',
+    idLabel: 'Meeting ID', passLabel: 'Passcode',
+    journalTitle: 'Your Daily Journal',
+    journalText: 'This journal is yours for the whole season. Log your practice after each session — I read it and respond to it.',
+    journalBtn: 'Open My Daily Journal',
+    calLink: 'See the full Season 1 calendar →',
+    closingLine: 'See you in the Room.'
+  },
+  zh: {
+    headerSub: '与 Boonchu Tanti 的线上迈索尔课程',
+    eyebrow: '第一季 · 2026',
+    welcome: '欢迎你',
+    heroConfirm: '你在 Boonchu’s Mysore Room 第一季的名额已确认。你是十二人之一。',
+    beginTitle: '开始之前',
+    beginIntro: '5 月 24 日（周日）你的第一次练习，请提前 10 分钟加入 —— 曼谷时间 09:50。我会讲解课程须知，然后我们在 10:00 开始。',
+    guide1: '迈索尔式 —— 按自己的节奏练习。我会观察、点评并给予指导。',
+    guide2: '整堂练习保持摄像头开启，并调整角度让我能看到你的整张垫子。',
+    guide3: '准时到课 —— 我们一起开始。',
+    guide4: '每次练习后在每日练习日志中记录 —— 我会阅读并回复。',
+    guide5: '在不会被打扰的安静空间里练习。',
+    guide6: '把你的问题带到每周的小组问答。',
+    photoTitle: '你的照片',
+    photoText: '上传一张你的照片，方便 Boonchu 在课上认出你。',
+    photoBtn: '自拍或上传照片',
+    photoBtnChange: '更换照片',
+    photoUploading: '上传中…',
+    photoSaved: '照片已保存 ✓',
+    photoError: '上传失败，请重试。',
+    schedTitle: '你的现场课程',
+    schedWedDay: '周三', schedWedVal: '迈索尔 · 10:00',
+    schedSatDay: '周六', schedSatVal: '引导中级课 · 09:00',
+    schedSunDay: '周日', schedSunVal: '迈索尔 · 10:00',
+    schedTz: '均为曼谷时间（GMT+7）',
+    joinZoom: '通过 Zoom 加入',
+    idLabel: '会议 ID', passLabel: '密码',
+    journalTitle: '你的每日练习日志',
+    journalText: '这本日志整个赛季都属于你。每次练习后记录下来 —— 我会阅读并回复。',
+    journalBtn: '打开我的每日日志',
+    calLink: '查看完整的第一季日历 →',
+    closingLine: '我们课上见。'
+  },
+  ru: {
+    headerSub: 'Онлайн-майсор с Boonchu Tanti',
+    eyebrow: 'Сезон 1 · 2026',
+    welcome: 'Добро пожаловать',
+    heroConfirm: 'Ваше место в Boonchu’s Mysore Room — Сезон 1 — подтверждено. Вы — один из двенадцати.',
+    beginTitle: 'Перед началом',
+    beginIntro: 'На вашу первую практику в воскресенье, 24 мая, подключитесь на 10 минут раньше — 09:50 по Бангкоку. Я расскажу правила, и в 10:00 мы начнём.',
+    guide1: 'Майсор-стиль — практикуйте в своём темпе. Я наблюдаю, комментирую и советую.',
+    guide2: 'Держите камеру включённой всю практику и расположите её так, чтобы я видел весь ваш коврик.',
+    guide3: 'Приходите вовремя — мы начинаем вместе.',
+    guide4: 'Записывайте практику в Ежедневный дневник после каждого занятия — я читаю и отвечаю.',
+    guide5: 'Практикуйте в тихом месте, где вас не побеспокоят.',
+    guide6: 'Приносите вопросы на еженедельную групповую сессию вопросов и ответов.',
+    photoTitle: 'Ваше фото',
+    photoText: 'Добавьте своё фото, чтобы Boonchu узнавал вас на занятии.',
+    photoBtn: 'Сделать селфи или загрузить',
+    photoBtnChange: 'Изменить фото',
+    photoUploading: 'Загрузка…',
+    photoSaved: 'Фото сохранено ✓',
+    photoError: 'Не удалось загрузить — попробуйте ещё раз.',
+    schedTitle: 'Ваши живые занятия',
+    schedWedDay: 'Среда', schedWedVal: 'майсор · 10:00',
+    schedSatDay: 'Суббота', schedSatVal: 'лед Intermediate · 09:00',
+    schedSunDay: 'Воскресенье', schedSunVal: 'майсор · 10:00',
+    schedTz: 'Время Бангкока (GMT+7)',
+    joinZoom: 'Подключиться в Zoom',
+    idLabel: 'ID конференции', passLabel: 'Код доступа',
+    journalTitle: 'Ваш Ежедневный дневник',
+    journalText: 'Этот дневник ваш на весь сезон. Записывайте практику после каждого занятия — я читаю и отвечаю.',
+    journalBtn: 'Открыть мой дневник',
+    calLink: 'Посмотреть полный календарь Сезона 1 →',
+    closingLine: 'Увидимся в комнате.'
+  }
+};
+
+var curLang = 'en';
+var hasPhoto = false;
+var params = new URLSearchParams(window.location.search);
+var studentId = params.get('id') || '';
+var studentName = params.get('name') ? decodeURIComponent(params.get('name')) : '';
+var firstName = studentName ? studentName.split(' ')[0] : '';
+
+function setText(id, value) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function setLang(lang) {
+  if (!T[lang]) return;
+  curLang = lang;
+  var t = T[lang];
+  document.documentElement.lang = lang;
+
+  var btns = document.querySelectorAll('.lang-btn');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('active', btns[i].getAttribute('data-lang') === lang);
+  }
+
+  setText('headerSub', t.headerSub);
+  setText('eyebrow', t.eyebrow);
+  setText('heroTitle', firstName ? (t.welcome + ', ' + firstName) : t.welcome);
+  setText('heroConfirm', t.heroConfirm);
+  setText('beginTitle', t.beginTitle);
+  setText('beginIntro', t.beginIntro);
+  setText('guide1', t.guide1);
+  setText('guide2', t.guide2);
+  setText('guide3', t.guide3);
+  setText('guide4', t.guide4);
+  setText('guide5', t.guide5);
+  setText('guide6', t.guide6);
+  setText('photoTitle', t.photoTitle);
+  setText('photoText', t.photoText);
+  setText('photoBtn', hasPhoto ? t.photoBtnChange : t.photoBtn);
+  setText('schedTitle', t.schedTitle);
+  setText('schedWedDay', t.schedWedDay);
+  setText('schedWedVal', t.schedWedVal);
+  setText('schedSatDay', t.schedSatDay);
+  setText('schedSatVal', t.schedSatVal);
+  setText('schedSunDay', t.schedSunDay);
+  setText('schedSunVal', t.schedSunVal);
+  setText('schedTz', t.schedTz);
+  setText('metaWed', t.idLabel + ' 856 7556 1332 · ' + t.passLabel + ' BMOwed26');
+  setText('metaSat', t.idLabel + ' 826 3680 7274 · ' + t.passLabel + ' ayled2live');
+  setText('metaSun', t.idLabel + ' 856 0208 1555 · ' + t.passLabel + ' BMOsun26');
+  setText('journalTitle', t.journalTitle);
+  setText('journalText', t.journalText);
+  setText('journalBtn', t.journalBtn);
+  setText('calLink', t.calLink);
+  setText('closingLine', t.closingLine);
+
+  var jb = document.querySelectorAll('.join-btn');
+  for (var k = 0; k < jb.length; k++) jb[k].textContent = t.joinZoom;
+
+  document.getElementById('calLink').setAttribute('href', 'season1.html?lang=' + lang);
+
+  if (studentId) {
+    var jl = 'https://aybkk-ashtanga.up.railway.app/student.html?id=' + encodeURIComponent(studentId) +
+      '&name=' + encodeURIComponent(studentName) +
+      '&lang=' + lang + '&location=mysore-room';
+    document.getElementById('journalBtn').setAttribute('href', jl);
+  }
+}
+
+function showPhoto(url) {
+  var prev = document.getElementById('photoPreview');
+  prev.style.backgroundImage = 'url(' + url + ')';
+  prev.classList.add('has-photo');
+  hasPhoto = true;
+  setText('photoBtn', T[curLang].photoBtnChange);
+}
+
+function handlePhoto(e) {
+  var file = e.target.files && e.target.files[0];
+  if (!file || !studentId) return;
+  var status = document.getElementById('photoStatus');
+  status.textContent = T[curLang].photoUploading;
+  var reader = new FileReader();
+  reader.onload = function () {
+    var img = new Image();
+    img.onload = function () {
+      var max = 700;
+      var w = img.width, h = img.height;
+      if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
+      else if (h >= w && h > max) { w = Math.round(w * max / h); h = max; }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      uploadPhoto(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = function () { status.textContent = T[curLang].photoError; };
+    img.src = reader.result;
+  };
+  reader.onerror = function () { status.textContent = T[curLang].photoError; };
+  reader.readAsDataURL(file);
+}
+
+async function uploadPhoto(dataUrl) {
+  var status = document.getElementById('photoStatus');
+  try {
+    var res = await fetch(API + '/upload/student-photo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId: studentId, imageBase64: dataUrl })
+    });
+    if (!res.ok) throw new Error('failed');
+    var data = await res.json();
+    if (data.photoUrl) showPhoto(data.photoUrl);
+    status.textContent = T[curLang].photoSaved;
+  } catch (err) {
+    status.textContent = T[curLang].photoError;
+  }
+}
+
+async function loadExistingPhoto() {
+  if (!studentId) return;
+  try {
+    var res = await fetch(API + '/student/photo/' + encodeURIComponent(studentId));
+    if (!res.ok) return;
+    var data = await res.json();
+    if (data.photoUrl) showPhoto(data.photoUrl);
+  } catch (err) { /* no photo yet */ }
+}
+
+function init() {
+  document.getElementById('photoInitial').textContent = firstName ? firstName.charAt(0).toUpperCase() : '?';
+  document.getElementById('photoInput').addEventListener('change', handlePhoto);
+  loadExistingPhoto();
+  var paramLang = params.get('lang');
+  var startLang = (paramLang === 'zh' || paramLang === 'ru' || paramLang === 'en') ? paramLang : 'en';
+  setLang(startLang);
+}
+
+init();
+</script>
+</body>
+</html>

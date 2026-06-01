@@ -1543,6 +1543,139 @@ app.get('/api/orientations/ru', async (req, res) => {
   }
 });
 
+// POST /api/orientations/online — Mysore Room Online registration form posts here
+app.post('/api/orientations/online', async (req, res) => {
+  const session = driver.session();
+  try {
+    const {
+      name, contactType, contact, city, country, timezone,
+      experience, series, injuries, language, workshop, date, photoUrl
+    } = req.body;
+
+    if (!name) return res.status(400).json({ success: false, error: 'name required' });
+    if (!contact) return res.status(400).json({ success: false, error: 'contact required' });
+
+    const datetime = date || new Date().toISOString();
+    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const contactStr = String(contact || '').trim().toLowerCase();
+    const contactTypeStr = String(contactType || 'telegram').trim().toLowerCase();
+
+    // De-dupe on contactType + contact
+    let existingId = null;
+    let existingLink = null;
+    if (contactStr) {
+      const r = await session.run(
+        `MATCH (s:Student {location: 'mysore-room'})
+         WHERE toLower(s.contact) = $c AND toLower(s.contactType) = $ct
+         RETURN s.id AS id, s.journalLink AS link
+         ORDER BY s.createdAt DESC LIMIT 1`,
+        { c: contactStr, ct: contactTypeStr }
+      );
+      if (r.records.length) {
+        existingId = r.records[0].get('id');
+        existingLink = r.records[0].get('link');
+      }
+    }
+
+    const studentId = existingId || ('online-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6));
+    const lang = language || 'en';
+    const journalLink = existingLink || (baseUrl + '/student.html?id=' + studentId
+      + '&name=' + encodeURIComponent(name)
+      + '&lang=' + lang
+      + '&location=mysore-room');
+
+    // :Orientation audit row (always CREATE)
+    await session.run(`
+      CREATE (o:Orientation {
+        id: $id, name: $name, contact: $contact, contactType: $contactType,
+        city: $city, country: $country, timezone: $timezone,
+        experience: $experience, series: $series, injuries: $injuries,
+        language: $language, workshop: $workshop, photoUrl: $photoUrl,
+        location: 'mysore-room', createdAt: datetime($createdAt)
+      })`, {
+      id: studentId, name, contact: contact || '', contactType: contactTypeStr,
+      city: city || '', country: country || '', timezone: timezone || '',
+      experience: experience || '', series: series || '', injuries: injuries || '',
+      language: lang, workshop: workshop || "Boonchu's Mysore Room",
+      photoUrl: photoUrl || '', createdAt: datetime,
+    });
+
+    // :Student canonical (MERGE on id so a repeat registration updates the same row)
+    await session.run(`
+      MERGE (s:Student { id: $id })
+      ON CREATE SET
+        s.createdAt = datetime($createdAt),
+        s.classType = 'mysore-room',
+        s.location = 'mysore-room',
+        s.isActive = true
+      SET
+        s.name = $name, s.contact = $contact, s.contactType = $contactType,
+        s.city = $city, s.country = $country, s.timezone = $timezone,
+        s.experience = $experience, s.series = $series, s.injuries = $injuries,
+        s.language = $language, s.workshop = $workshop, s.photoUrl = $photoUrl,
+        s.journalLink = $journalLink, s.oriented = true,
+        s.updatedAt = datetime($createdAt)
+      `, {
+      id: studentId, name, contact: contact || '', contactType: contactTypeStr,
+      city: city || '', country: country || '', timezone: timezone || '',
+      experience: experience || '', series: series || '', injuries: injuries || '',
+      language: lang, workshop: workshop || "Boonchu's Mysore Room",
+      photoUrl: photoUrl || '', journalLink, createdAt: datetime,
+    });
+
+    res.json({ success: true, studentId, journalLink, name, reused: !!existingId });
+  } catch (err) {
+    console.error('[online orientation save]', err.message);
+    res.status(500).json({ success: false, error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// GET /api/orientations/online — Mysore Room Online roster (admin)
+app.get('/api/orientations/online', async (req, res) => {
+  const session = driver.session();
+  try {
+    const result = await session.run(`
+      MATCH (s:Student)
+      WHERE s.location = 'mysore-room' OR s.id STARTS WITH 'online-'
+      OPTIONAL MATCH (s)<-[:FOR_STUDENT|ABOUT_STUDENT]-(c)
+      WITH s, count(c) AS checkins
+      RETURN s.id AS id, s.name AS name, s.contact AS contact, s.contactType AS contactType,
+             s.city AS city, s.country AS country, s.timezone AS timezone,
+             s.experience AS experience, s.series AS series, s.injuries AS injuries,
+             s.language AS language, s.journalLink AS journalLink, s.photoUrl AS photoUrl,
+             s.createdAt AS submittedAt, checkins
+      ORDER BY s.createdAt DESC
+    `);
+
+    const students = result.records.map(r => ({
+      id: r.get('id'),
+      name: r.get('name'),
+      contact: r.get('contact'),
+      contactType: r.get('contactType'),
+      city: r.get('city'),
+      country: r.get('country'),
+      timezone: r.get('timezone'),
+      experience: r.get('experience'),
+      series: r.get('series'),
+      injuries: r.get('injuries'),
+      language: r.get('language'),
+      journalLink: r.get('journalLink'),
+      photoUrl: r.get('photoUrl'),
+      checkins: r.get('checkins')?.toNumber ? r.get('checkins').toNumber() : (r.get('checkins') || 0),
+      submittedAt: r.get('submittedAt')
+    }));
+
+    res.json({ students, count: students.length });
+  } catch (err) {
+    console.error('[online orientation list]', err.message);
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
 // Get all students
 app.get('/api/students', async (req, res) => {
   try {

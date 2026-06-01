@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boonchu's Mysore Room — Season 1 Calendar</title>
+  <link rel="stylesheet" href="/tokens.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    /* season1.html — Boonchu's Mysore Room Season 1 calendar card.
+       Portrait, screenshot-friendly. Three month grids (May/Jun/Jul) with
+       Mysore / Led / Break days marked. Carved-clay on beech wood. */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-5) var(--space-3);
+    }
+
+    /* #shot is what gets captured as the image */
+    .shot {
+      background: var(--bg);
+      padding: var(--space-5);
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6) var(--space-5);
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+
+    .brand { text-align: center; margin-bottom: var(--space-5); }
+    .brand img {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      margin-bottom: var(--space-3);
+      mix-blend-mode: multiply;
+      filter: contrast(1.05);
+    }
+    .brand h1 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: 4px;
+    }
+    .brand .season {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .lang-switch {
+      display: flex; justify-content: center; gap: 8px;
+      margin-top: var(--space-4);
+    }
+    .lang-btn {
+      padding: 7px 16px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .lang-btn:active { transform: scale(0.96); }
+    .lang-btn.active {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
+      box-shadow:
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4),
+        inset -2px -2px 4px rgba(40, 20, 4, 0.25),
+        6px 6px 12px rgba(120, 80, 40, 0.25);
+    }
+
+    .schedule {
+      text-align: center;
+      border-top: 1px solid var(--shadow-dark);
+      border-bottom: 1px solid var(--shadow-dark);
+      padding: var(--space-4) 0;
+      margin-bottom: var(--space-5);
+    }
+    .schedule .line {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+    .schedule .line b {
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+    .schedule .tz {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+    .legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .swatch {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .swatch.mysore { background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%); }
+    .swatch.led { background: #5f8a52; }
+    .swatch.break {
+      border-radius: 3px;
+      background: repeating-linear-gradient(45deg, rgba(120,100,74,0.22) 0 3px, transparent 3px 6px);
+    }
+
+    .month { margin-bottom: var(--space-5); }
+    .month:last-of-type { margin-bottom: 0; }
+    .month-name {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      text-align: center;
+      margin-bottom: var(--space-3);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .dow {
+      font-family: var(--font-display);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--ink-soft);
+      text-align: center;
+      padding-bottom: 2px;
+    }
+    .cell {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--ink-soft);
+      border-radius: 50%;
+    }
+    .cell.blank { visibility: hidden; }
+    .cell.brk {
+      background: repeating-linear-gradient(45deg, rgba(120,100,74,0.20) 0 3px, transparent 3px 6px);
+      border-radius: 4px;
+      color: rgba(108, 94, 74, 0.55);
+    }
+    .cell.mysore {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f6ead0;
+      font-weight: 700;
+      font-family: var(--font-display);
+      text-shadow: 1px 1px 0 rgba(50, 28, 10, 0.4);
+      box-shadow:
+        3px 3px 6px var(--shadow-dark),
+        inset 2px 2px 4px rgba(255, 240, 215, 0.4);
+    }
+    .cell.led {
+      background: #5f8a52;
+      color: #eef2e6;
+      font-weight: 700;
+      font-family: var(--font-display);
+      text-shadow: 1px 1px 0 rgba(28, 40, 20, 0.4);
+      box-shadow:
+        3px 3px 6px var(--shadow-dark),
+        inset 2px 2px 4px rgba(230, 240, 220, 0.35);
+    }
+
+    .blocks {
+      border-top: 1px solid var(--shadow-dark);
+      margin-top: var(--space-5);
+      padding-top: var(--space-5);
+    }
+    .block-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 5px 0;
+    }
+    .block-row .name {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+    }
+    .block-row .name.muted { color: var(--ink-soft); }
+    .block-row .dates {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--ink);
+    }
+    .block-row .dates.muted { font-style: italic; color: var(--ink-soft); }
+
+    .footer {
+      text-align: center;
+      margin-top: var(--space-5);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--shadow-dark);
+    }
+    .footer .price {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 800;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+    }
+    .footer .price small {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+    }
+    .footer .terms {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 6px;
+    }
+
+    .save-btn {
+      margin-top: var(--space-5);
+      padding: 14px var(--space-6);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.7), -1px -1px 1px rgba(50, 28, 10, 0.85);
+      box-shadow:
+        10px 10px 22px rgba(120, 80, 40, 0.28),
+        -6px -6px 14px var(--shadow-light),
+        inset 3px 3px 8px rgba(255, 240, 215, 0.45);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .save-btn:active { transform: scale(0.97); }
+  </style>
+</head>
+<body>
+  <div class="shot" id="shot">
+    <div class="card">
+      <div class="brand">
+        <img src="https://aybkk-ashtanga.up.railway.app/logo.png" alt="AYBKK" onerror="this.style.display='none'">
+        <h1>Boonchu's Mysore Room</h1>
+        <div class="season" id="season">Season 1 &middot; 2026</div>
+      </div>
+
+      <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLang('en')">🇬🇧 EN</button>
+        <button class="lang-btn" onclick="setLang('zh')">🇨🇳 ZH</button>
+        <button class="lang-btn" onclick="setLang('ru')">🇷🇺 RU</button>
+      </div>
+
+      <div class="schedule">
+        <div class="line" id="sched1">Wed &amp; Sun — Mysore — 10:00</div>
+        <div class="line" id="sched2">Saturday — Led Intermediate — 09:00</div>
+        <div class="tz" id="tz">Bangkok time (GMT+7)</div>
+      </div>
+
+      <div class="legend">
+        <span><span class="swatch mysore"></span><span id="legMysore">Mysore</span></span>
+        <span><span class="swatch led"></span><span id="legLed">Led Intermediate</span></span>
+        <span><span class="swatch break"></span><span id="legBreak">Travel break</span></span>
+      </div>
+
+      <div id="months"></div>
+
+      <div class="blocks">
+        <div class="block-row">
+          <span class="name" id="blockA">Block A</span>
+          <span class="dates" id="blockADates">May 24 – Jun 10 &middot; Bangkok</span>
+        </div>
+        <div class="block-row">
+          <span class="name muted" id="breakLabel">Break</span>
+          <span class="dates muted" id="breakDates">Jun 12 – Jun 30 &middot; integration</span>
+        </div>
+        <div class="block-row">
+          <span class="name" id="blockB">Block B</span>
+          <span class="dates" id="blockBDates">Jul 1 – Jul 19 &middot; Bangkok</span>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="price">฿19,000 <small id="priceUnit">/ season</small></div>
+        <div class="terms" id="terms">&approx; $540 USD &middot; 17 live sessions &middot; 12 seats &middot; live only, no replays</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="save-btn" id="saveBtn" onclick="saveImage()">Save as Image</button>
+
+<script>
+var T = {
+  en: {
+    season: 'Season 1 · 2026',
+    sched1: 'Wed & Sun — Mysore — 10:00',
+    sched2: 'Saturday — Led Intermediate — 09:00',
+    tz: 'Bangkok time (GMT+7)',
+    legMysore: 'Mysore',
+    legLed: 'Led Intermediate',
+    legBreak: 'Travel break',
+    monthMay: 'May 2026',
+    monthJun: 'June 2026',
+    monthJul: 'July 2026',
+    blockA: 'Block A',
+    blockADates: 'May 24 – Jun 10 · Bangkok',
+    breakLabel: 'Break',
+    breakDates: 'Jun 12 – Jun 30 · integration',
+    blockB: 'Block B',
+    blockBDates: 'Jul 1 – Jul 19 · Bangkok',
+    priceUnit: '/ season',
+    terms: '≈ $540 USD · 17 live sessions · 12 seats · live only, no replays',
+    saveBtn: 'Save as Image'
+  },
+  zh: {
+    season: '第一季 · 2026',
+    sched1: '周三和周日 — 迈索尔 — 10:00',
+    sched2: '周六 — 引导中级课 — 09:00',
+    tz: '曼谷时间（GMT+7）',
+    legMysore: '迈索尔',
+    legLed: '引导中级课',
+    legBreak: '旅行休息',
+    monthMay: '2026年5月',
+    monthJun: '2026年6月',
+    monthJul: '2026年7月',
+    blockA: 'A 阶段',
+    blockADates: '5月24日 – 6月10日 · 曼谷',
+    breakLabel: '休息',
+    breakDates: '6月12日 – 6月30日 · 沉淀',
+    blockB: 'B 阶段',
+    blockBDates: '7月1日 – 7月19日 · 曼谷',
+    priceUnit: '/ 整季',
+    terms: '≈ 540 美元 · 17 次现场课 · 12 个名额 · 仅限现场，无回放',
+    saveBtn: '保存为图片'
+  },
+  ru: {
+    season: 'Сезон 1 · 2026',
+    sched1: 'Ср и Вс — майсор — 10:00',
+    sched2: 'Суббота — лед Intermediate — 09:00',
+    tz: 'Время Бангкока (GMT+7)',
+    legMysore: 'Майсор',
+    legLed: 'Лед Intermediate',
+    legBreak: 'Перерыв на поездку',
+    monthMay: 'Май 2026',
+    monthJun: 'Июнь 2026',
+    monthJul: 'Июль 2026',
+    blockA: 'Блок A',
+    blockADates: '24 мая – 10 июня · Бангкок',
+    breakLabel: 'Перерыв',
+    breakDates: '12 – 30 июня · интеграция',
+    blockB: 'Блок B',
+    blockBDates: '1 – 19 июля · Бангкок',
+    priceUnit: '/ сезон',
+    terms: '≈ $540 · 17 живых занятий · 12 мест · только вживую, без записей',
+    saveBtn: 'Сохранить как изображение'
+  }
+};
+
+var curLang = 'en';
+
+var MONTHS = [
+  { key: 'monthMay', m: 4, days: 31 },
+  { key: 'monthJun', m: 5, days: 30 },
+  { key: 'monthJul', m: 6, days: 31 }
+];
+// keyed by JS month index (May=4, Jun=5, Jul=6)
+var MYSORE = { 4: [24, 27, 31], 5: [3, 7, 10], 6: [1, 5, 8, 12, 15, 19] };
+var LED = { 4: [30], 5: [6], 6: [4, 11, 18] };
+var BREAK_MONTH = 5;
+var BREAK_FROM = 12;
+var BREAK_TO = 30;
+var DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+function buildMonths() {
+  var host = document.getElementById('months');
+  var html = '';
+  for (var i = 0; i < MONTHS.length; i++) {
+    var mo = MONTHS[i];
+    var firstDow = new Date(2026, mo.m, 1).getDay();
+    var label = T[curLang][mo.key];
+    html += '<div class="month"><div class="month-name">' + label + '</div><div class="grid">';
+    for (var d = 0; d < 7; d++) html += '<div class="dow">' + DOW[d] + '</div>';
+    for (var b = 0; b < firstDow; b++) html += '<div class="cell blank"></div>';
+    for (var day = 1; day <= mo.days; day++) {
+      var cls = 'cell';
+      if (MYSORE[mo.m].indexOf(day) !== -1) cls += ' mysore';
+      else if (LED[mo.m].indexOf(day) !== -1) cls += ' led';
+      else if (mo.m === BREAK_MONTH && day >= BREAK_FROM && day <= BREAK_TO) cls += ' brk';
+      html += '<div class="' + cls + '">' + day + '</div>';
+    }
+    html += '</div></div>';
+  }
+  host.innerHTML = html;
+}
+
+function setLang(lang) {
+  if (!T[lang]) lang = 'en';
+  curLang = lang;
+  var btns = document.querySelectorAll('.lang-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+  var active = document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]');
+  if (active) active.classList.add('active');
+  var t = T[lang];
+  var keys = ['season', 'sched1', 'sched2', 'tz', 'legMysore', 'legLed', 'legBreak',
+    'blockA', 'blockADates', 'breakLabel', 'breakDates', 'blockB', 'blockBDates',
+    'priceUnit', 'terms', 'saveBtn'];
+  for (var k = 0; k < keys.length; k++) {
+    var el = document.getElementById(keys[k]);
+    if (el) el.textContent = t[keys[k]];
+  }
+  buildMonths();
+}
+
+function saveImage() {
+  var node = document.getElementById('shot');
+  if (typeof html2canvas !== 'function') {
+    alert('Image library did not load — please screenshot this page instead.');
+    return;
+  }
+  html2canvas(node, { scale: 2, backgroundColor: null, useCORS: true }).then(function (canvas) {
+    var a = document.createElement('a');
+    a.download = 'mysore-room-season1.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  });
+}
+
+var urlLang = (new URLSearchParams(window.location.search)).get('lang');
+setLang(T[urlLang] ? urlLang : 'en');
+</script>
+</body>
+</html>
