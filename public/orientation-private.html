@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Private Student Registration · AYBKK</title>
+  <link rel="stylesheet" href="/tokens.css">
+  <style>
+    /* orientation-private.html · private student intake. Same beech/walnut
+       palette as the Mysore Room online form, no Season 1 copy, journal link
+       shown inline after submit. */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+    .lang-switch {
+      position: sticky; top: 0;
+      display: flex; gap: 6px;
+      padding: var(--space-3) var(--space-4);
+      background: var(--surface);
+      border-bottom: 1px solid var(--shadow-dark);
+      z-index: 10;
+    }
+    .lang-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      box-shadow: 3px 3px 6px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+    }
+    .lang-btn.active {
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      box-shadow:
+        inset 2px 2px 0 rgba(150, 120, 80, 0.18),
+        inset -1px -1px 0 rgba(253, 250, 242, 0.85),
+        inset 4px 4px 8px var(--shadow-dark);
+    }
+
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: var(--space-6) var(--space-4) var(--space-7);
+    }
+    .header { text-align: center; margin-bottom: var(--space-5); }
+    .header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 5vw, 28px);
+      font-weight: 800;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .header .sub {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+    .intro {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4) var(--space-5);
+      margin-bottom: var(--space-5);
+      box-shadow:
+        10px 10px 22px var(--shadow-dark),
+        -6px -6px 14px var(--shadow-light);
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .form-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      box-shadow:
+        14px 14px 28px var(--shadow-dark),
+        -8px -8px 18px var(--shadow-light);
+    }
+    .form-card h3 {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 4px;
+    }
+    .form-card .note {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-bottom: var(--space-4);
+    }
+    .field { margin-bottom: var(--space-3); }
+    .field-row { display: flex; gap: var(--space-3); }
+    .field-row .field { flex: 1; }
+    .field label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 4px;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: var(--surface-2);
+      box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ink);
+    }
+    .field textarea { min-height: 80px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: 1px solid var(--primary); }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: var(--space-4);
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f1e2c4;
+      cursor: pointer;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.7), -1px -1px 1px rgba(50, 28, 10, 0.85);
+      box-shadow:
+        8px 8px 18px rgba(120, 80, 40, 0.26),
+        -5px -5px 12px var(--shadow-light),
+        inset 3px 3px 7px rgba(255, 240, 215, 0.45);
+    }
+    .submit-btn:disabled { opacity: 0.7; cursor: default; }
+
+    .success-card {
+      display: none;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6) var(--space-5);
+      text-align: center;
+      box-shadow:
+        14px 14px 28px var(--shadow-dark),
+        -8px -8px 18px var(--shadow-light);
+    }
+    .success-card.show { display: block; }
+    .success-card h2 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: 8px;
+    }
+    .success-card p {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+    }
+    .journal-btn {
+      display: inline-block;
+      padding: 14px 28px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f1e2c4;
+      text-decoration: none;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.7), -1px -1px 1px rgba(50, 28, 10, 0.85);
+      box-shadow:
+        8px 8px 18px rgba(120, 80, 40, 0.26),
+        -5px -5px 12px var(--shadow-light),
+        inset 3px 3px 7px rgba(255, 240, 215, 0.45);
+    }
+    .save-hint {
+      margin-top: var(--space-4);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+  </style>
+</head>
+<body>
+  <div class="lang-switch">
+    <button class="lang-btn active" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="ru">RU</button>
+    <button class="lang-btn" data-lang="th">TH</button>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1 id="title">Private Student Registration</h1>
+      <div class="sub" id="sub">AYBKK · Boonchu Tanti</div>
+    </div>
+
+    <div class="intro" id="intro">
+      Fill in your details so Boonchu can prepare for your practice. Once you submit, your daily journal link appears below.
+    </div>
+
+    <div class="form-card" id="formCard">
+      <form id="form" onsubmit="submitForm(event)">
+        <h3 id="formTitle">Your Details</h3>
+        <p class="note" id="formNote">Used by Boonchu to know who you are and how to reach you.</p>
+
+        <div class="field">
+          <label id="lblName">Full name</label>
+          <input type="text" id="name" required placeholder="Your name">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label id="lblReach">Reach you on</label>
+            <select id="contactType">
+              <option value="wechat">WeChat</option>
+              <option value="telegram">Telegram</option>
+              <option value="line">LINE</option>
+              <option value="whatsapp">WhatsApp</option>
+            </select>
+          </div>
+          <div class="field">
+            <label id="lblHandle">Handle / number</label>
+            <input type="text" id="contact" required placeholder="@username">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label id="lblCity">City</label>
+            <input type="text" id="city" placeholder="City">
+          </div>
+          <div class="field">
+            <label id="lblCountry">Country</label>
+            <input type="text" id="country" placeholder="Country">
+          </div>
+        </div>
+
+        <div class="field">
+          <label id="lblExperience">Years practicing Ashtanga</label>
+          <select id="experience">
+            <option value="0-1 years" id="expO1">Less than 1 year</option>
+            <option value="1-3 years" id="expO2" selected>1 to 3 years</option>
+            <option value="3-6 years" id="expO3">3 to 6 years</option>
+            <option value="6+ years" id="expO4">6 years or more</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label id="lblSeries">Current series</label>
+          <select id="series">
+            <option value="Primary Series" id="serO1">Primary Series</option>
+            <option value="Primary + Intermediate" id="serO2">Primary + Intermediate</option>
+            <option value="Intermediate Series" id="serO3">Intermediate Series</option>
+            <option value="Advanced A / B" id="serO4">Advanced A / B</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label id="lblInjuries">Injuries or limitations</label>
+          <textarea id="injuries" placeholder="Anything Boonchu should know before watching you practice"></textarea>
+        </div>
+
+        <div class="field">
+          <label id="lblLanguage">Journal language</label>
+          <select id="language">
+            <option value="en" selected>English</option>
+            <option value="zh">中文</option>
+            <option value="ru">Русский</option>
+            <option value="th">ภาษาไทย</option>
+          </select>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Submit Registration</button>
+      </form>
+    </div>
+
+    <div class="success-card" id="successCard">
+      <h2 id="successTitle">Welcome</h2>
+      <p id="successMsg">Your profile is saved. Open your Daily Journal below and bookmark it. Log your practice after every session and Boonchu will respond there.</p>
+      <a class="journal-btn" id="journalBtn" href="#">Open My Journal</a>
+      <div class="save-hint" id="saveHint">Bookmark this link. It is yours.</div>
+    </div>
+  </div>
+
+<script>
+const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+
+const T = {
+  en: {
+    title: 'Private Student Registration', sub: 'AYBKK · Boonchu Tanti',
+    intro: 'Fill in your details so Boonchu can prepare for your practice. Once you submit, your daily journal link appears below.',
+    formTitle: 'Your Details', formNote: 'Used by Boonchu to know who you are and how to reach you.',
+    lblName: 'Full name', lblReach: 'Reach you on', lblHandle: 'Handle / number',
+    lblCity: 'City', lblCountry: 'Country',
+    lblExperience: 'Years practicing Ashtanga', lblSeries: 'Current series',
+    lblInjuries: 'Injuries or limitations', lblLanguage: 'Journal language',
+    phName: 'Your name', phHandle: '@username', phCity: 'City', phCountry: 'Country',
+    phInjuries: 'Anything Boonchu should know before watching you practice',
+    expO1: 'Less than 1 year', expO2: '1 to 3 years', expO3: '3 to 6 years', expO4: '6 years or more',
+    serO1: 'Primary Series', serO2: 'Primary + Intermediate', serO3: 'Intermediate Series', serO4: 'Advanced A / B',
+    submitBtn: 'Submit Registration', submitting: 'Saving...',
+    successTitle: 'Welcome',
+    successMsg: 'Your profile is saved. Open your Daily Journal below and bookmark it. Log your practice after every session and Boonchu will respond there.',
+    journalBtn: 'Open My Journal',
+    saveHint: 'Bookmark this link. It is yours.',
+    alertError: 'Something went wrong. Please try again.'
+  },
+  zh: {
+    title: '私人学员注册', sub: 'AYBKK · Boonchu Tanti',
+    intro: '请填写你的信息，让 Boonchu 为你的练习做准备。提交后，你的每日练习日志链接将显示在下方。',
+    formTitle: '你的信息', formNote: 'Boonchu 用来了解你以及如何联系你。',
+    lblName: '全名', lblReach: '联系方式', lblHandle: '账号 / 号码',
+    lblCity: '城市', lblCountry: '国家',
+    lblExperience: '练习阿斯汤加的年数', lblSeries: '当前序列',
+    lblInjuries: '伤病或身体限制', lblLanguage: '日志语言',
+    phName: '你的名字', phHandle: '@用户名', phCity: '城市', phCountry: '国家',
+    phInjuries: '在我观察你练习之前需要知道的事',
+    expO1: '少于 1 年', expO2: '1 至 3 年', expO3: '3 至 6 年', expO4: '6 年或以上',
+    serO1: '初级序列', serO2: '初级 + 中级', serO3: '中级序列', serO4: '高级 A / B',
+    submitBtn: '提交注册', submitting: '保存中...',
+    successTitle: '欢迎',
+    successMsg: '你的资料已保存。点击下方打开每日练习日志并加入书签。每次练习后记录，Boonchu 会在那里回复你。',
+    journalBtn: '打开我的日志',
+    saveHint: '加入书签。这是你的链接。',
+    alertError: '出错了，请重试。'
+  },
+  ru: {
+    title: 'Регистрация частного ученика', sub: 'AYBKK · Boonchu Tanti',
+    intro: 'Заполните данные, чтобы Boonchu подготовился к вашей практике. После отправки появится ссылка на ваш дневник.',
+    formTitle: 'Ваши данные', formNote: 'Чтобы Boonchu знал, кто вы и как с вами связаться.',
+    lblName: 'Полное имя', lblReach: 'Связь через', lblHandle: 'Имя / номер',
+    lblCity: 'Город', lblCountry: 'Страна',
+    lblExperience: 'Лет занятий аштангой', lblSeries: 'Текущая серия',
+    lblInjuries: 'Травмы или ограничения', lblLanguage: 'Язык дневника',
+    phName: 'Ваше имя', phHandle: '@username', phCity: 'Город', phCountry: 'Страна',
+    phInjuries: 'Что Boonchu должен знать перед практикой',
+    expO1: 'Менее 1 года', expO2: '1 до 3 лет', expO3: '3 до 6 лет', expO4: '6 лет и больше',
+    serO1: 'Первая серия', serO2: 'Первая + Вторая', serO3: 'Вторая серия', serO4: 'Продвинутая A / B',
+    submitBtn: 'Отправить', submitting: 'Сохранение...',
+    successTitle: 'Добро пожаловать',
+    successMsg: 'Ваш профиль сохранён. Откройте дневник ниже и добавьте его в закладки. Записывайте практику после каждого занятия, Boonchu ответит там.',
+    journalBtn: 'Открыть дневник',
+    saveHint: 'Добавьте ссылку в закладки. Она ваша.',
+    alertError: 'Что-то пошло не так. Попробуйте ещё раз.'
+  },
+  th: {
+    title: 'ลงทะเบียนนักเรียนส่วนตัว', sub: 'AYBKK · Boonchu Tanti',
+    intro: 'กรอกข้อมูลของคุณเพื่อให้ครู Boonchu เตรียมตัวสำหรับการฝึก หลังจากส่ง ลิงก์บันทึกการฝึกประจำวันจะปรากฏด้านล่าง',
+    formTitle: 'ข้อมูลของคุณ', formNote: 'ครู Boonchu ใช้ในการรู้จักและติดต่อคุณ',
+    lblName: 'ชื่อเต็ม', lblReach: 'ติดต่อทาง', lblHandle: 'ชื่อผู้ใช้ / เบอร์',
+    lblCity: 'เมือง', lblCountry: 'ประเทศ',
+    lblExperience: 'ปีที่ฝึกอัษฎางคะ', lblSeries: 'ซีรีส์ปัจจุบัน',
+    lblInjuries: 'อาการบาดเจ็บหรือข้อจำกัด', lblLanguage: 'ภาษาบันทึก',
+    phName: 'ชื่อคุณ', phHandle: '@username', phCity: 'เมือง', phCountry: 'ประเทศ',
+    phInjuries: 'สิ่งที่ครูควรรู้ก่อนสอน',
+    expO1: 'น้อยกว่า 1 ปี', expO2: '1 ถึง 3 ปี', expO3: '3 ถึง 6 ปี', expO4: '6 ปีขึ้นไป',
+    serO1: 'ซีรีส์ที่หนึ่ง', serO2: 'หนึ่ง + สอง', serO3: 'ซีรีส์ที่สอง', serO4: 'แอดวานซ์ A / B',
+    submitBtn: 'ส่งใบสมัคร', submitting: 'กำลังบันทึก...',
+    successTitle: 'ยินดีต้อนรับ',
+    successMsg: 'บันทึกข้อมูลแล้ว เปิดบันทึกการฝึกด้านล่างและบันทึกลิงก์ไว้ ฝึกแล้วบันทึกทุกครั้ง ครูจะตอบที่นั่น',
+    journalBtn: 'เปิดบันทึกของฉัน',
+    saveHint: 'บันทึกลิงก์นี้ไว้ มันเป็นของคุณ',
+    alertError: 'เกิดข้อผิดพลาด ลองใหม่อีกครั้ง'
+  }
+};
+
+let curLang = 'en';
+
+function setText(id, txt) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = txt;
+}
+
+function applyLang(lang) {
+  curLang = lang;
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  setText('title', t.title);
+  setText('sub', t.sub);
+  setText('intro', t.intro);
+  setText('formTitle', t.formTitle);
+  setText('formNote', t.formNote);
+  setText('lblName', t.lblName);
+  setText('lblReach', t.lblReach);
+  setText('lblHandle', t.lblHandle);
+  setText('lblCity', t.lblCity);
+  setText('lblCountry', t.lblCountry);
+  setText('lblExperience', t.lblExperience);
+  setText('lblSeries', t.lblSeries);
+  setText('lblInjuries', t.lblInjuries);
+  setText('lblLanguage', t.lblLanguage);
+  setText('expO1', t.expO1); setText('expO2', t.expO2); setText('expO3', t.expO3); setText('expO4', t.expO4);
+  setText('serO1', t.serO1); setText('serO2', t.serO2); setText('serO3', t.serO3); setText('serO4', t.serO4);
+  setText('successTitle', t.successTitle);
+  setText('successMsg', t.successMsg);
+  setText('saveHint', t.saveHint);
+
+  document.getElementById('name').placeholder = t.phName;
+  document.getElementById('contact').placeholder = t.phHandle;
+  document.getElementById('city').placeholder = t.phCity;
+  document.getElementById('country').placeholder = t.phCountry;
+  document.getElementById('injuries').placeholder = t.phInjuries;
+
+  const btn = document.getElementById('submitBtn');
+  if (!btn.disabled) btn.textContent = t.submitBtn;
+  document.getElementById('journalBtn').textContent = t.journalBtn;
+
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+}
+
+document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
+
+// Detect language from URL ?lang= or browser
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const wantedLang = params.get('lang');
+  if (wantedLang && T[wantedLang]) {
+    applyLang(wantedLang);
+  } else {
+    applyLang('en');
+  }
+})();
+
+async function submitForm(e) {
+  e.preventDefault();
+  const t = T[curLang];
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = t.submitting;
+
+  const data = {
+    name: document.getElementById('name').value.trim(),
+    contactType: document.getElementById('contactType').value,
+    contact: document.getElementById('contact').value.trim(),
+    city: document.getElementById('city').value.trim(),
+    country: document.getElementById('country').value.trim(),
+    experience: document.getElementById('experience').value,
+    series: document.getElementById('series').value,
+    injuries: document.getElementById('injuries').value.trim(),
+    language: document.getElementById('language').value,
+    date: new Date().toISOString()
+  };
+
+  try {
+    const res = await fetch(API_BASE + '/orientations/private', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('failed');
+    const out = await res.json();
+    if (!out.journalLink) throw new Error('no link');
+
+    document.getElementById('journalBtn').href = out.journalLink;
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('intro').style.display = 'none';
+    document.getElementById('successCard').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    alert(t.alertError);
+    btn.disabled = false;
+    btn.textContent = t.submitBtn;
+  }
+}
+</script>
+</body>
+</html>

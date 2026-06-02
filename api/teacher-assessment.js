@@ -438,10 +438,11 @@ router.get('/student-notes/:studentId', async (req, res) => {
     // Derive cohort from student ID prefix for class-summary lookup
     let cohort = null;
     if (typeof studentId === 'string') {
-      if (studentId.startsWith('online-'))   cohort = 'mysore-room';
-      else if (studentId.startsWith('ru-'))  cohort = 'russia';
-      else if (studentId.startsWith('gz-'))  cohort = 'guangzhou';
-      else if (studentId.startsWith('bkk-')) cohort = 'bangkok';
+      if (studentId.startsWith('online-'))       cohort = 'mysore-room';
+      else if (studentId.startsWith('ru-'))      cohort = 'russia';
+      else if (studentId.startsWith('gz-'))      cohort = 'guangzhou';
+      else if (studentId.startsWith('bkk-'))     cohort = 'bangkok';
+      else if (studentId.startsWith('private-')) cohort = 'private';
     }
 
     let classSummaries = [];
