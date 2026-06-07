@@ -1,0 +1,12 @@
+{
+  "name": "yoga-booking-system",
+  "version": "1.0.0",
+  "description": "Ashtanga Yoga Bangkok — Class Booking",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
