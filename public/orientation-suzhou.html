@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYBKK 苏州工作坊 2026 · Orientation</title>
+  <link rel="stylesheet" href="/tokens.css">
+  <style>
+    /* orientation-gz.html — Suzhou (ZH/EN) workshop orientation. Same wood
+       palette. Hairline pull-quote (no side-stripe). Text-only share card
+       on success uses a walnut gradient. */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+
+    .header {
+      background: var(--surface);
+      padding: var(--space-7) var(--space-5) var(--space-5);
+      text-align: center;
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .header img {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      margin-bottom: var(--space-3);
+      mix-blend-mode: multiply;
+      filter: contrast(1.05);
+      object-fit: cover;
+    }
+    .header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 5.4vw, 26px);
+      font-weight: 800;
+      letter-spacing: -0.012em;
+      color: #2f2517;
+      text-shadow: var(--text-carve-soft);
+      margin-bottom: 6px;
+    }
+    .header .by {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-style: italic;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .header .dates {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--ink-soft);
+    }
+
+    .lang-switch {
+      display: flex; justify-content: center; gap: 8px;
+      margin-top: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .lang-btn {
+      padding: 7px 16px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      cursor: pointer;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .lang-btn:active { transform: scale(0.96); }
+    .lang-btn.active {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
+      box-shadow:
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4),
+        inset -2px -2px 4px rgba(40, 20, 4, 0.25),
+        6px 6px 12px rgba(120, 80, 40, 0.25);
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: var(--space-5) var(--space-4) var(--space-7);
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light),
+        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+    }
+    .card h3 {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: var(--space-4);
+    }
+    .card p {
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--ink);
+      margin-bottom: var(--space-3);
+    }
+    .card p:last-child { margin-bottom: 0; }
+
+    /* Quote — pull-quote between hairlines (no side-stripe) */
+    .quote-box {
+      max-width: 420px;
+      margin: var(--space-5) auto;
+      padding: var(--space-4);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.7;
+      font-style: italic;
+      text-align: center;
+      color: var(--accent);
+      border-top: 1px solid var(--shadow-dark);
+      border-bottom: 1px solid var(--shadow-dark);
+    }
+    .quote-source {
+      display: block;
+      margin-top: var(--space-2);
+      font-family: var(--font-display);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-style: normal;
+      color: var(--primary-deep);
+    }
+
+    .rule {
+      display: flex; align-items: flex-start; gap: var(--space-3);
+      padding: var(--space-3) 0;
+      border-bottom: 1px dashed var(--shadow-dark);
+    }
+    .rule:last-child { border-bottom: none; }
+    .rule-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+    .rule-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .closing { font-style: italic; }
+    .signatures {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: var(--space-3);
+    }
+
+    /* Quiz */
+    .quiz-q-text {
+      font-family: var(--font-body);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+      line-height: 1.45;
+    }
+    .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-opt {
+      padding: 14px 18px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 14px;
+      cursor: pointer;
+      text-align: left;
+      background: var(--surface);
+      color: var(--ink);
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .quiz-opt:hover:not(.disabled) { transform: translateY(-1px); }
+    .quiz-opt.disabled { cursor: default; }
+    .quiz-opt.correct {
+      background: #ddd9c2; color: #4f5d3a;
+      box-shadow:
+        inset 3px 3px 0 rgba(80, 95, 60, 0.16),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.7),
+        inset 5px 5px 10px rgba(80, 95, 60, 0.12);
+      transform: none;
+      font-weight: 600;
+    }
+    .quiz-opt.wrong {
+      background: #ecd5be; color: #8d4f2c;
+      box-shadow:
+        inset 3px 3px 0 rgba(141, 79, 44, 0.20),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.7),
+        inset 5px 5px 10px rgba(141, 79, 44, 0.12);
+      transform: none;
+    }
+    .quiz-result {
+      margin-top: var(--space-3);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+    .quiz-result.correct {
+      background: #ddd9c2; color: #4f5d3a;
+      box-shadow: inset 2px 2px 4px rgba(80, 95, 60, 0.14);
+    }
+    .quiz-result.wrong {
+      background: #ecd5be; color: #8d4f2c;
+      box-shadow: inset 2px 2px 4px rgba(141, 79, 44, 0.16);
+    }
+    .hidden { display: none; }
+
+    /* Form */
+    .field { margin-bottom: var(--space-4); }
+    .field label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 8px;
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 15px;
+      background: var(--surface-2);
+      color: var(--ink);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px rgba(150, 120, 80, 0.18);
+      transition: box-shadow var(--dur-base);
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      box-shadow:
+        inset 3px 3px 0 rgba(120, 90, 50, 0.28),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.95),
+        inset 6px 6px 12px rgba(120, 90, 50, 0.22);
+    }
+    .field textarea { resize: vertical; min-height: 84px; }
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: rgba(108, 94, 74, 0.55);
+      font-style: italic;
+    }
+    .field .hint {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 6px;
+    }
+
+    .options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .option {
+      padding: 9px 16px;
+      background: var(--surface);
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--ink-soft);
+      cursor: pointer;
+      user-select: none;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .option:hover { transform: translateY(-1px); }
+    .option.selected {
+      background: var(--surface-2);
+      color: var(--primary-deep);
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.22),
+        inset -2px -2px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px var(--shadow-dark);
+      transform: none;
+    }
+
+    .submit-btn,
+    .continue-btn,
+    .share-btn {
+      width: 100%;
+      padding: 18px var(--space-5);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: var(--space-2);
+      color: #f1e2c4;
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      text-shadow:
+        1px 1px 0 rgba(255, 240, 215, 0.7),
+        -1px -1px 1px rgba(50, 28, 10, 0.85),
+        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      box-shadow:
+        14px 14px 28px rgba(120, 80, 40, 0.30),
+        -8px -8px 18px var(--shadow-light),
+        inset 4px 4px 10px rgba(255, 240, 215, 0.5),
+        inset -3px -3px 8px rgba(40, 20, 4, 0.25);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .submit-btn:hover,
+    .continue-btn:hover,
+    .share-btn:hover { transform: translateY(-3px) scale(1.02); }
+    .submit-btn:active,
+    .continue-btn:active,
+    .share-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled,
+    .continue-btn:disabled {
+      background: var(--surface-2);
+      color: rgba(108, 94, 74, 0.4);
+      text-shadow: none;
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+      cursor: not-allowed;
+      transform: none;
+    }
+    .continue-btn { margin-top: var(--space-4); }
+    .share-btn { margin-bottom: 8px; }
+
+    /* Success overlay */
+    .success-overlay {
+      position: fixed; inset: 0;
+      background: rgba(241, 237, 227, 0.95);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      overflow-y: auto;
+      padding: var(--space-5);
+    }
+    .success-overlay.hidden { display: none; }
+    .success-box {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6) var(--space-5);
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
+      margin: auto;
+      box-shadow:
+        20px 20px 40px var(--shadow-dark),
+        -10px -10px 22px var(--shadow-light);
+    }
+
+    /* Photo-overlay share card (per PRODUCT.md "Photo is the soul").
+       Structure: photo-bg layer (opacity 0 unless .has-photo set by JS),
+       vignette for legibility on dark photos, content layer on top.
+       Walnut gradient is the fallback background visible when no photo. */
+    .share-card {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #b89572 0%, #997a52 60%, #6b4f2d 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 26px 28px;
+      margin-bottom: var(--space-4);
+      box-shadow: 0 16px 48px rgba(80, 55, 30, 0.30);
+      text-align: center;
+    }
+    .share-card .photo-bg {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center top;
+      opacity: 0;
+      z-index: 0;
+    }
+    .share-card .photo-bg.has-photo { opacity: 0.7; }
+    .share-card .vignette {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 60%, rgba(0,0,0,0.32) 100%);
+      z-index: 1;
+      opacity: 0;
+    }
+    .share-card .photo-bg.has-photo + .vignette { opacity: 1; }
+    .share-card .content { position: relative; z-index: 2; }
+    .share-card .ring {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    }
+    .share-card .ring img { width: 100%; height: 100%; object-fit: cover; }
+    .share-card .wstitle {
+      font-family: var(--font-display);
+      color: rgba(255, 250, 240, 0.88);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .share-card .welcome {
+      font-family: var(--font-display);
+      color: #fff5e0;
+      font-size: 22px; font-weight: 800;
+      margin-bottom: 6px;
+      line-height: 1.35;
+      letter-spacing: -0.005em;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+    .share-card .sname {
+      font-family: var(--font-body);
+      color: rgba(255, 250, 240, 0.88);
+      font-size: 14px;
+      font-style: italic;
+      margin-bottom: 18px;
+    }
+    .share-card .sutra {
+      border-top: 1px solid rgba(255, 255, 255, 0.28);
+      padding-top: 16px;
+      margin-bottom: 12px;
+    }
+    .share-card .sutra-text {
+      font-family: var(--font-body);
+      color: rgba(255, 250, 240, 0.94);
+      font-size: 14px;
+      font-style: italic;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    .share-card .sutra-src {
+      font-family: var(--font-display);
+      color: rgba(255, 250, 240, 0.7);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .share-card .by {
+      font-family: var(--font-body);
+      color: rgba(255, 250, 240, 0.78);
+      font-size: 12px;
+      font-style: italic;
+      margin-top: 18px;
+    }
+
+    /* Link-copy box — carved cavity with monospace url field */
+    .link-box {
+      background: var(--surface-2);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      margin: var(--space-3) 0;
+      text-align: center;
+      box-shadow:
+        inset 3px 3px 0 rgba(150, 120, 80, 0.18),
+        inset -3px -3px 0 rgba(253, 250, 242, 0.85),
+        inset 5px 5px 10px rgba(150, 120, 80, 0.18);
+    }
+    .link-label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--primary-deep);
+      margin-bottom: 8px;
+    }
+    .link-url {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink);
+      word-break: break-all;
+      background: var(--surface);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      box-shadow: inset 2px 2px 4px var(--shadow-dark);
+    }
+    .link-hint {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-soft);
+      margin-top: 8px;
+      line-height: 1.55;
+    }
+    .copy-btn {
+      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
+      color: #f1e2c4;
+      border: none;
+      padding: 10px 24px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.6), -1px -1px 1px rgba(50, 28, 10, 0.7);
+      box-shadow:
+        6px 6px 14px rgba(120, 80, 40, 0.25),
+        -4px -4px 10px var(--shadow-light),
+        inset 3px 3px 6px rgba(255, 240, 215, 0.4);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .copy-btn:hover { transform: translateY(-2px); }
+
+    .done-btn {
+      width: 100%;
+      background: var(--surface);
+      color: var(--primary-deep);
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow:
+        8px 8px 16px var(--shadow-dark),
+        -5px -5px 12px var(--shadow-light);
+      transition: transform var(--dur-base) var(--ease-spring);
+    }
+    .done-btn:hover { transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <img src="/aybkk-logo.jpg" alt="AYBKK" onerror="this.style.display='none'">
+  <h1>AYBKK 苏州工作坊 2026</h1>
+  <p class="by">By Boonchu & Jamsai Tanti</p>
+  <p class="dates">June 19–23, 2026</p>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('zh')">🇨🇳 中文</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLang('th')">🇹🇭 TH</button>
+    <button class="lang-btn" onclick="setLang('ru')">🇷🇺 RU</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Daily quote -->
+  <div class="quote-box">
+    <div id="quoteText"></div>
+    <div class="quote-source" id="quoteSource"></div>
+  </div>
+
+  <!-- Welcome intro -->
+  <div class="card">
+    <p id="introText1"></p>
+    <p id="introText2"></p>
+  </div>
+
+  <!-- Rules -->
+  <div class="card">
+    <h3 id="rulesTitle"></h3>
+    <div class="rule"><span class="rule-icon">💧</span><span class="rule-text" id="rule1"></span></div>
+    <div class="rule"><span class="rule-icon">📵</span><span class="rule-text" id="rule2"></span></div>
+    <div class="rule"><span class="rule-icon">🤫</span><span class="rule-text" id="rule3"></span></div>
+    <div class="rule"><span class="rule-icon">🧘</span><span class="rule-text" id="rule4"></span></div>
+    <div class="rule"><span class="rule-icon">🤝</span><span class="rule-text" id="rule5"></span></div>
+    <div class="rule"><span class="rule-icon">🔄</span><span class="rule-text" id="rule6"></span></div>
+    <div class="rule"><span class="rule-icon">🙏</span><span class="rule-text" id="rule7"></span></div>
+  </div>
+
+  <!-- Closing from teachers -->
+  <div class="card">
+    <p class="closing" id="closingText"></p>
+    <div class="signatures">— Boonchu Tanti & Jamsai Tanti</div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="card" id="quizSection">
+    <h3 id="quizTitle"></h3>
+    <p style="font-size:13px;color:#8b7d6b;margin-bottom:16px;" id="quizSubtitle"></p>
+    <!-- Question 1 -->
+    <div id="quizQ1Block">
+      <div style="font-size:11px;font-weight:600;color:#c49564;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" id="quizQ1Label">Question 1 / 2</div>
+      <div class="quiz-q-text" id="quizQText"></div>
+      <div class="quiz-opts" id="quizOpts"></div>
+      <div class="quiz-result hidden" id="quizResult"></div>
+      <button class="continue-btn" id="quizNextBtn" onclick="goToQ2()" disabled></button>
+    </div>
+    <!-- Question 2 -->
+    <div id="quizQ2Block" style="display:none;margin-top:20px;border-top:1px solid #f0ebe5;padding-top:20px;">
+      <div style="font-size:11px;font-weight:600;color:#c49564;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" id="quizQ2Label">Question 2 / 2</div>
+      <div class="quiz-q-text" id="quizQText2"></div>
+      <div class="quiz-opts" id="quizOpts2"></div>
+      <div class="quiz-result hidden" id="quizResult2"></div>
+      <button class="continue-btn" id="quizNextBtn2" onclick="proceedPastQuiz()" disabled></button>
+    </div>
+  </div>
+
+  <!-- Registration Form -->
+  <form id="orientationForm" onsubmit="submitForm(event)">
+    <div class="card">
+      <h3 id="formTitle"></h3>
+      <p style="font-size:13px;color:#8b7d6b;margin-bottom:20px;" id="formSub"></p>
+
+      <div class="field">
+        <label id="labelNameEn"></label>
+        <input type="text" id="nameEn" required>
+      </div>
+
+      <div class="field">
+        <label id="labelNameZh"></label>
+        <input type="text" id="nameZh">
+      </div>
+
+      <div class="field">
+        <label id="labelCity"></label>
+        <input type="text" id="city">
+      </div>
+
+      <div class="field">
+        <label id="labelWechat"></label>
+        <input type="text" id="wechat">
+      </div>
+
+      <div class="field">
+        <label id="labelYears"></label>
+        <select id="yearsPractice">
+          <option value="" id="yOpt0"></option>
+          <option value="<1" id="yOpt1"></option>
+          <option value="1-3" id="yOpt2"></option>
+          <option value="3-5" id="yOpt3"></option>
+          <option value="5-10" id="yOpt4"></option>
+          <option value="10+" id="yOpt5"></option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label id="labelLast"></label>
+        <input type="text" id="lastAsana" placeholder="e.g. Marichyasana D">
+        <div class="hint" id="hintLast"></div>
+      </div>
+
+      <div class="field">
+        <label id="labelDifficulty"></label>
+        <div class="options" id="difficultyOptions">
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="forward-fold">Forward Fold 前屈</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="hip-opening">Hip Opening 开髋</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="backbend">Backbend 后弯</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="inversion">Inversion 倒立</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="balance">Balance 平衡</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="twist">Twist 扭转</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="shoulder">Shoulder 肩膀</div>
+          <div class="option" onclick="this.classList.toggle('selected')" data-val="core">Core 核心</div>
+        </div>
+        <div class="hint" id="hintDifficulty"></div>
+      </div>
+
+      <div class="field">
+        <label id="labelInjuries"></label>
+        <textarea id="injuries"></textarea>
+      </div>
+
+      <div class="field">
+        <label id="labelGoals"></label>
+        <textarea id="goals"></textarea>
+      </div>
+
+      <div class="field">
+        <label id="labelEmergency"></label>
+        <input type="text" id="emergency">
+      </div>
+
+      <div class="field">
+        <label id="labelSize"></label>
+        <select id="size">
+          <option value="XS">XS</option>
+          <option value="S">S</option>
+          <option value="M" selected>M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="XXL">XXL</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Consents -->
+    <div class="card">
+      <h3 id="consentTitle"></h3>
+      <div class="field">
+        <div class="options" id="photoOptions">
+          <span class="option selected" onclick="toggleConsent(this, 'photo')" id="photoConsentLabel"></span>
+        </div>
+        <input type="hidden" id="photoConsent" value="yes">
+      </div>
+      <div class="field">
+        <div class="options" id="medicalOptions">
+          <span class="option selected" onclick="toggleConsent(this, 'medical')" id="medicalConsentLabel"></span>
+        </div>
+        <input type="hidden" id="medicalConsent" value="yes">
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn"></button>
+  </form>
+</div>
+
+<!-- Success overlay -->
+<div class="success-overlay hidden" id="successOverlay">
+  <div class="success-box">
+    <div class="share-card">
+      <div class="photo-bg" id="successPhotoBg"></div>
+      <div class="vignette"></div>
+      <div class="content">
+        <div class="ring"><img src="/aybkk-logo.jpg" alt="AYBKK" onerror="this.style.display='none'"></div>
+        <div class="wstitle">AYBKK Suzhou WS 2026</div>
+        <div class="welcome" id="successWelcome"></div>
+        <div class="sname" id="successName"></div>
+        <div class="sutra">
+          <div class="sutra-text">"Atha Yoganushasanam"</div>
+          <div class="sutra-src">Now, the discipline of yoga. — Yoga Sutra 1.1</div>
+        </div>
+        <div class="by">by Boonchu Tanti & Jamsai Tanti</div>
+      </div>
+    </div>
+
+    <!-- Journal link + QR -->
+    <div class="link-box">
+      <div class="link-label" id="linkLabel"></div>
+      <div id="qrCodeBox" style="margin:10px auto;display:none;">
+        <img id="qrCodeImg" src="" alt="QR" style="width:180px;height:180px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+        <div style="font-size:11px;color:#8b7d6b;margin-top:5px;" id="qrHint"></div>
+      </div>
+      <div class="link-url" id="journalLinkDisplay"></div>
+      <button class="copy-btn" onclick="copyLink()" id="copyBtn"></button>
+      <div class="link-hint" id="linkHint"></div>
+    </div>
+
+    <!-- Selfie upload for share card -->
+    <div style="margin-bottom:12px;">
+      <input type="file" id="selfieInput" accept="image/*" style="display:none" onchange="loadSelfie(this)">
+      <button class="done-btn" onclick="document.getElementById('selfieInput').click()" id="selfieBtn" style="border-color:#c49564;color:#8b4513;">🖼️ 添加照片到分享卡 / Add photo to share card</button>
+      <div id="selfiePreview" style="display:none;margin-top:8px;text-align:center;">
+        <img id="selfieImg" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #c49564;" />
+        <div style="font-size:11px;color:#8b7d6b;margin-top:4px;" id="selfieReady">✓ Photo ready for share card</div>
+      </div>
+    </div>
+
+    <button class="share-btn" onclick="shareToWeChat()" id="shareBtn"></button>
+    <button class="done-btn" onclick="window.location.reload()" id="doneBtn"></button>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+
+// ─── Translations ───────────────────────────────────────────────
+const T = {
+  zh: {
+    introText1: '欢迎来到 AYBKK 苏州工作坊 2026！在工作坊开始前，请填写此表格，并参与我们的迎新小游戏。',
+    introText2: '我们期待在这几天里，帮助你找到适合身体的技术，深化你在挑战性动作和体式中的能力。',
+    rulesTitle: '📋 传统 Mysore 文化',
+    rule1: 'Mysore 教室内不能带水',
+    rule2: 'Mysore 教室内不能带手机或相机',
+    rule3: '练习期间保持安静，不交谈',
+    rule4: '不随意移动垫子（除非老师要求）',
+    rule5: '不帮助其他同学练习（除非老师要求）',
+    rule6: '遵循正确的串联 — 不要停下来观察他人',
+    rule7: '完成后弯练习后，双臂交叉放于胸前，在垫子前等待老师辅助最后一个后弯',
+    closingText: '我们非常期待看到你克服练习中的一切障碍，也期待在技术层面与你共同成长。',
+    quizTitle: '🎮 迎新游戏',
+    quizSubtitle: '回答一道阿斯汤加瑜伽知识题！',
+    quizBtn: '继续填写报名表 →',
+    formTitle: '🧘 你的练习档案',
+    formSub: '请在工作坊第一天前填写完毕',
+    labelNameEn: '英文名 English Name',
+    labelNameZh: '中文名',
+    labelCity: '城市 City',
+    labelWechat: '微信号 WeChat ID',
+    labelYears: '练习年数',
+    yOpt0: '请选择...',
+    yOpt1: '不到1年',
+    yOpt2: '1–3 年',
+    yOpt3: '3–5 年',
+    yOpt4: '5–10 年',
+    yOpt5: '10 年以上',
+    labelLast: '最后一个体式 Last Asana',
+    hintLast: '你能独立完成的最后一个体式',
+    labelDifficulty: '哪些方面有挑战？',
+    hintDifficulty: '可多选',
+    labelInjuries: '伤病或身体限制',
+    labelGoals: '工作坊目标',
+    labelEmergency: '紧急联系人（姓名 + 电话）',
+    labelSize: 'T恤尺码',
+    consentTitle: '📸 同意书',
+    photoConsentLabel: '📸 同意拍照/摄影',
+    medicalConsentLabel: '✅ 同意医疗免责声明',
+    submitBtn: '提交报名表',
+    successWelcome: '欢迎加入 AYBKK 苏州工作坊！',
+    linkLabel: '🔒 你的专属练习记录链接 — 请勿分享！仅供自己使用',
+    qrHint: '扫码保存 / 长按图片保存',
+    copyBtn: '📋 复制链接（保存到自己）',
+    linkHint: '每次练习后打开这个链接记录你的练习',
+    shareBtn: '分享到微信 📱',
+    doneBtn: '完成',
+    correctText: '🥳🎊 正确！太棒了！',
+    wrongText: '🙏 没关系，下次再试！',
+    namePlaceholder: '英文姓名',
+    nameZhPlaceholder: '中文姓名',
+    cityPlaceholder: '例：苏州',
+    wechatPlaceholder: '微信号',
+    injuriesPlaceholder: '任何伤病或身体限制…',
+    goalsPlaceholder: '你希望在这次工作坊中达成什么？',
+    emergencyPlaceholder: '姓名 + 电话',
+    submitLoading: '提交中...',
+    errorMsg: '提交失败，请重试。'
+  },
+  en: {
+    introText1: 'Welcome to the AYBKK Suzhou Workshop 2026! Before the workshop begins, please fill out this form and play our orientation game.',
+    introText2: 'We look forward to helping you find the right technique for your body and deepen your skills in challenging movements and asanas.',
+    rulesTitle: '📋 Traditional Mysore Culture',
+    rule1: 'No water inside the Mysore room',
+    rule2: 'No phone or camera inside the Mysore room',
+    rule3: 'No talking during practice',
+    rule4: 'Do not move your mat around (unless teacher requests)',
+    rule5: 'Do not help other students during practice (unless teacher requests)',
+    rule6: 'Follow proper vinyasa — no stopping to look around or watch others',
+    rule7: 'Before finishing (after backbending), wait in front of your mat with arms crossed to chest for the teacher to assist your last backbend',
+    closingText: 'We love to see you work through all the obstacles in practice and look forward to working on your technique together.',
+    quizTitle: '🎮 Orientation Game',
+    quizSubtitle: 'Answer one Ashtanga yoga question!',
+    quizBtn: 'Continue to Registration →',
+    formTitle: '🧘 Your Practice Profile',
+    formSub: 'Please fill in before Day 1',
+    labelNameEn: 'English Name',
+    labelNameZh: 'Chinese Name 中文名',
+    labelCity: 'City',
+    labelWechat: 'WeChat ID',
+    labelYears: 'Years of Practice',
+    yOpt0: 'Select...',
+    yOpt1: 'Less than 1 year',
+    yOpt2: '1–3 years',
+    yOpt3: '3–5 years',
+    yOpt4: '5–10 years',
+    yOpt5: '10+ years',
+    labelLast: 'Last Asana',
+    hintLast: 'The last asana you can practice independently',
+    labelDifficulty: "What's challenging for you?",
+    hintDifficulty: 'Select all that apply',
+    labelInjuries: 'Injuries / Physical Limitations',
+    labelGoals: 'Workshop Goals',
+    labelEmergency: 'Emergency Contact (Name + Phone)',
+    labelSize: 'T-Shirt Size',
+    consentTitle: '📸 Consent',
+    photoConsentLabel: '📸 Consent to photo/video',
+    medicalConsentLabel: '✅ Medical disclaimer',
+    submitBtn: 'Submit',
+    successWelcome: 'Welcome to AYBKK Suzhou Workshop!',
+    linkLabel: '🔒 Your Private Practice Link — Do NOT share! Keep it for yourself only',
+    qrHint: 'Scan to save / Long-press to save image',
+    copyBtn: '📋 Copy My Private Link',
+    linkHint: 'Open this link after each practice to log your session',
+    shareBtn: 'Share to WeChat 📱',
+    doneBtn: 'Done',
+    correctText: '🥳🎊 Correct! Well done!',
+    wrongText: '🙏 No worries, try next time!',
+    namePlaceholder: 'e.g. Li Wei',
+    nameZhPlaceholder: 'e.g. 李伟',
+    cityPlaceholder: 'e.g. Suzhou',
+    wechatPlaceholder: 'WeChat ID',
+    injuriesPlaceholder: 'Any injuries or physical limitations...',
+    goalsPlaceholder: 'What do you want to achieve in this workshop?',
+    emergencyPlaceholder: 'Name + Phone',
+    submitLoading: 'Submitting...',
+    errorMsg: 'Submission failed, please try again.'
+  },
+  th: {
+    introText1: 'ยินดีต้อนรับสู่ AYBKK Suzhou Workshop 2026! ก่อนเริ่ม workshop กรุณากรอกแบบฟอร์มและเล่นเกมต้อนรับของเรา',
+    introText2: 'เราตั้งตารอที่จะช่วยให้คุณค้นพบเทคนิคที่เหมาะกับร่างกายของคุณและพัฒนาทักษะในท่าที่ท้าทาย',
+    rulesTitle: '📋 วัฒนธรรม Mysore แบบดั้งเดิม',
+    rule1: 'ห้ามนำน้ำเข้าห้อง Mysore',
+    rule2: 'ห้ามนำโทรศัพท์หรือกล้องเข้าห้อง Mysore',
+    rule3: 'ห้ามพูดคุยระหว่างฝึก',
+    rule4: 'ห้ามขยับเสื่อ (ยกเว้นครูขอให้ขยับ)',
+    rule5: 'ห้ามช่วยเหลือนักเรียนคนอื่นระหว่างฝึก (ยกเว้นครูขอให้ช่วย)',
+    rule6: 'ฝึก vinyasa ให้ถูกต้อง — ห้ามหยุดมองคนอื่น',
+    rule7: 'หลังทำ backbend เสร็จ ให้ยืนหน้าเสื่อ ประสานแขนบนหน้าอก รอครูช่วย backbend ครั้งสุดท้าย',
+    closingText: 'เรารักที่จะเห็นคุณก้าวผ่านอุปสรรคในการฝึก และตั้งตารอที่จะพัฒนาเทคนิคร่วมกัน',
+    quizTitle: '🎮 เกมต้อนรับ',
+    quizSubtitle: 'ตอบคำถามเกี่ยวกับ Ashtanga yoga!',
+    quizBtn: 'ไปกรอกแบบฟอร์ม →',
+    formTitle: '🧘 โปรไฟล์การฝึกของคุณ',
+    formSub: 'กรุณากรอกก่อนวันแรก',
+    labelNameEn: 'ชื่อภาษาอังกฤษ',
+    labelNameZh: 'ชื่อภาษาจีน 中文名',
+    labelCity: 'เมือง',
+    labelWechat: 'WeChat ID',
+    labelYears: 'ประสบการณ์การฝึก',
+    yOpt0: 'เลือก...',
+    yOpt1: 'น้อยกว่า 1 ปี',
+    yOpt2: '1–3 ปี',
+    yOpt3: '3–5 ปี',
+    yOpt4: '5–10 ปี',
+    yOpt5: 'มากกว่า 10 ปี',
+    labelLast: 'ท่าสุดท้าย (Last Asana)',
+    hintLast: 'ท่าสุดท้ายที่คุณฝึกได้ด้วยตัวเอง',
+    labelDifficulty: 'อะไรที่ท้าทายสำหรับคุณ?',
+    hintDifficulty: 'เลือกได้หลายข้อ',
+    labelInjuries: 'การบาดเจ็บหรือข้อจำกัดทางร่างกาย',
+    labelGoals: 'เป้าหมายใน Workshop',
+    labelEmergency: 'ผู้ติดต่อฉุกเฉิน (ชื่อ + โทร)',
+    labelSize: 'ขนาดเสื้อ',
+    consentTitle: '📸 ความยินยอม',
+    photoConsentLabel: '📸 ยินยอมให้ถ่ายภาพ/วิดีโอ',
+    medicalConsentLabel: '✅ ข้อจำกัดความรับผิดทางการแพทย์',
+    submitBtn: 'ส่งแบบฟอร์ม',
+    successWelcome: 'ยินดีต้อนรับสู่ AYBKK Suzhou Workshop!',
+    linkLabel: '🧘 ลิงก์บันทึกการฝึกของคุณ — เก็บไว้!',
+    qrHint: 'สแกน QR เพื่อบันทึก / กดค้างเพื่อบันทึกภาพ',
+    copyBtn: '📋 คัดลอกลิงก์',
+    linkHint: 'เปิดลิงก์นี้หลังฝึกทุกครั้งเพื่อบันทึกการฝึก',
+    shareBtn: 'แชร์ไป WeChat 📱',
+    doneBtn: 'เสร็จแล้ว',
+    correctText: '🥳🎊 ถูกต้อง! เยี่ยมมาก!',
+    wrongText: '🙏 ไม่เป็นไร ลองใหม่ครั้งหน้า!',
+    namePlaceholder: 'ชื่อ-นามสกุลภาษาอังกฤษ',
+    nameZhPlaceholder: 'ชื่อภาษาจีน',
+    cityPlaceholder: 'เช่น กวางโจว',
+    wechatPlaceholder: 'WeChat ID',
+    injuriesPlaceholder: 'การบาดเจ็บหรือข้อจำกัดทางร่างกาย...',
+    goalsPlaceholder: 'คุณต้องการบรรลุอะไรใน workshop นี้?',
+    emergencyPlaceholder: 'ชื่อ + เบอร์โทร',
+    submitLoading: 'กำลังส่ง...',
+    errorMsg: 'ส่งไม่สำเร็จ กรุณาลองใหม่'
+  },
+  ru: {
+    introText1: 'Добро пожаловать на AYBKK Suzhou Workshop 2026! Перед началом workshop, пожалуйста, заполните эту анкету и сыграйте в нашу приветственную игру.',
+    introText2: 'Мы с нетерпением ждём возможности помочь вам найти правильную технику для вашего тела и углубить навыки в сложных движениях и асанах.',
+    rulesTitle: '📋 Традиционная культура Майсор',
+    rule1: 'Не приносить воду в зал Mysore',
+    rule2: 'Не приносить телефон или камеру в зал Mysore',
+    rule3: 'Не разговаривать во время практики',
+    rule4: 'Не перемещать коврик (если только учитель не попросит)',
+    rule5: 'Не помогать другим ученикам во время практики (если только учитель не попросит)',
+    rule6: 'Соблюдать правильную виньясу — не останавливаться, чтобы смотреть на других',
+    rule7: 'После завершения прогиба — встать перед ковриком, скрестив руки на груди, и ждать помощи учителя в последнем прогибе',
+    closingText: 'Мы любим наблюдать, как вы преодолеваете препятствия в практике, и с нетерпением ждём работы над вашей техникой.',
+    quizTitle: '🎮 Приветственная игра',
+    quizSubtitle: 'Ответьте на вопрос об Аштанга-йоге!',
+    quizBtn: 'Продолжить к анкете →',
+    formTitle: '🧘 Ваш практический профиль',
+    formSub: 'Пожалуйста, заполните до первого дня',
+    labelNameEn: 'Имя (латиница)',
+    labelNameZh: 'Имя на китайском 中文名',
+    labelCity: 'Город',
+    labelWechat: 'WeChat ID',
+    labelYears: 'Лет практики',
+    yOpt0: 'Выберите...',
+    yOpt1: 'Менее 1 года',
+    yOpt2: '1–3 года',
+    yOpt3: '3–5 лет',
+    yOpt4: '5–10 лет',
+    yOpt5: '10+ лет',
+    labelLast: 'Последняя асана',
+    hintLast: 'Последняя асана, которую вы можете практиковать самостоятельно',
+    labelDifficulty: 'Что даётся с трудом?',
+    hintDifficulty: 'Можно выбрать несколько',
+    labelInjuries: 'Травмы / физические ограничения',
+    labelGoals: 'Цели на workshop',
+    labelEmergency: 'Экстренный контакт (имя + телефон)',
+    labelSize: 'Размер футболки',
+    consentTitle: '📸 Согласие',
+    photoConsentLabel: '📸 Согласие на фото/видео',
+    medicalConsentLabel: '✅ Медицинский отказ от ответственности',
+    submitBtn: 'Отправить анкету',
+    successWelcome: 'Добро пожаловать на AYBKK Suzhou Workshop!',
+    linkLabel: '🧘 Ссылка на дневник практики — сохраните!',
+    qrHint: 'Сканируйте QR / Удерживайте для сохранения',
+    copyBtn: '📋 Копировать ссылку',
+    linkHint: 'Открывайте эту ссылку после каждой практики для записей',
+    shareBtn: 'Поделиться в WeChat 📱',
+    doneBtn: 'Готово',
+    correctText: '🥳🎊 Правильно! Отлично!',
+    wrongText: '🙏 Ничего, попробуйте в следующий раз!',
+    namePlaceholder: 'Имя на латинице',
+    nameZhPlaceholder: 'Имя на китайском',
+    cityPlaceholder: 'напр. Гуанчжоу',
+    wechatPlaceholder: 'WeChat ID',
+    injuriesPlaceholder: 'Травмы или физические ограничения...',
+    goalsPlaceholder: 'Что хотите достичь на этом workshop?',
+    emergencyPlaceholder: 'Имя + телефон',
+    submitLoading: 'Отправка...',
+    errorMsg: 'Ошибка отправки. Попробуйте снова.'
+  }
+};
+
+// ─── Full quiz pool (13 questions, all 4 languages) ─────────────
+const QUIZ_POOL = [
+  {
+    q: { zh:'谁创造了阿斯汤加瑜伽方法？', en:'Who is the creator of the Ashtanga yoga method?', th:'ใครคือผู้สร้างวิธีโยคะอัชตางค์?', ru:'Кто создал метод аштанга-йоги?' },
+    opts: {
+      zh:['古鲁 Purnima','古鲁 Sharath Jois','古鲁 Patanjali','古鲁 Pattabhi Jois'],
+      en:['Guru Purnima','Guru Sharath Jois','Guru Patanjali','Guru Pattabhi Jois'],
+      th:['ครู Purnima','ครู Sharath Jois','ครู Patanjali','ครู Pattabhi Jois'],
+      ru:['Гуру Пурнима','Гуру Шарат Джойс','Гуру Патанджали','Гуру Паттабхи Джойс']
+    }, answer: 3
+  },
+  {
+    q: { zh:'"Ashtanga"是什么意思？', en:'What does "ashtanga" mean?', th:'"อัชตางค์" แปลว่าอะไร?', ru:'Что означает «аштанга»?' },
+    opts: {
+      zh:['橘子灰上🍊🔥','瑜伽八支🧘','做汤🍲','丁字裤🩲'],
+      en:['Tangerine over ashes 🍊🔥','Eight limbs of Yoga 🧘','Making soup 🍲','Thong underwear 🩲'],
+      th:['ส้มบนขี้เถ้า 🍊🔥','แปดขั้นของโยคะ 🧘','ทำซุป 🍲','กางเกงใน 🩲'],
+      ru:['Мандарин над пеплом 🍊🔥','Восемь ветвей Йоги 🧘','Делать суп 🍲','Трусы-стринги 🩲']
+    }, answer: 1
+  },
+  {
+    q: { zh:'Suryanamaskara A 重复多少次？', en:'How many times do we repeat Suryanamaskara A?', th:'เราทำ Suryanamaskara A กี่รอบ?', ru:'Сколько раз мы повторяем Сурьянамаскару А?' },
+    opts: {
+      zh:['热身几次','传统是5次','我的城市没有太阳 ☁️','你在说什么？🤔'],
+      en:['A few times to warm up','5 times is tradition','No sun in my city ☁️','What are you talking about 🤔'],
+      th:['สองสามรอบเพื่ออบอุ่น','ตามประเพณี 5 รอบ','ไม่มีดวงอาทิตย์ในเมืองฉัน ☁️','พูดถึงอะไร 🤔'],
+      ru:['Несколько раз для разогрева','5 раз по традиции','В моём городе нет солнца ☁️','О чём вы говорите 🤔']
+    }, answer: 1
+  },
+  {
+    q: { zh:'Suryanamaskara B 有多少个 Vinyasa？', en:'How many vinyasa in Suryanamaskara B?', th:'Suryanamaskara B มีกี่ vinyasa?', ru:'Сколько виньяс в Сурьянамаскаре Б?' },
+    opts: {
+      zh:['9','14','17','Vinyasa是什么？😳'],
+      en:['9','14','17','Huh... what is vinyasa? 😳'],
+      th:['9','14','17','อะไรคือ vinyasa? 😳'],
+      ru:['9','14','17','Что такое виньяса? 😳']
+    }, answer: 2
+  },
+  {
+    q: { zh:'Janu Sirsasana A 之后是哪个体式？', en:'What is the asana after Janu Sirsasana A?', th:'ท่าอะไรหลัง Janu Sirsasana A?', ru:'Какая асана следует за Джану Ширшасаной А?' },
+    opts: {
+      zh:['Janu Sirsasana AA','Janu Sirsasana A1','Janunu Sirsasana','Janu Sirsasana B'],
+      en:['Janu Sirsasana AA','Janu Sirsasana A1','Janunu Sirsasana','Janu Sirsasana B'],
+      th:['Janu Sirsasana AA','Janu Sirsasana A1','Janunu Sirsasana','Janu Sirsasana B'],
+      ru:['Джану Ширшасана АА','Джану Ширшасана А1','Джануну Ширшасана','Джану Ширшасана Б']
+    }, answer: 3
+  },
+  {
+    q: { zh:'结束曼陀罗"om shanti shanti shantih"前一句是什么？', en:'Sentence before "om shanti shanti shantih" in closing mantra?', th:'ประโยคก่อน "om shanti shanti shantih" ในบทสวดปิด?', ru:'Фраза перед «ом шанти шанти шантих» в завершающей мантре?' },
+    opts: {
+      zh:['Boom Shakala 🕺','Vande Gurunam 👳','Sukhino bhavantu 🕊️','Wu Zhao Sheng You Zhao ⚔️'],
+      en:['Boom Shakala 🕺','Vande Gurunam 👳','Sukhino bhavantu 🕊️','Wu Zhao Sheng You Zhao ⚔️'],
+      th:['Boom Shakala 🕺','Vande Gurunam 👳','Sukhino bhavantu 🕊️','Wu Zhao Sheng You Zhao ⚔️'],
+      ru:['Бум Шакала 🕺','Ванде Гуруна 👳','Сукхино бхаванту 🕊️','У Чжао Шэн Ю Чжао ⚔️']
+    }, answer: 2
+  },
+  {
+    q: { zh:'阿斯汤加瑜伽数 Vinyasa 用的是什么语言？', en:'What language is used for counting vinyasa in Ashtanga yoga?', th:'ภาษาอะไรที่ใช้นับ vinyasa ในโยคะ Ashtanga?', ru:'На каком языке считают виньясы в аштанга-йоге?' },
+    opts: {
+      zh:['印地语','阿拉伯语','泰米尔语','梵语'],
+      en:['Hindi','Arabic','Tamil','Sanskrit'],
+      th:['ภาษาฮินดี','ภาษาอาหรับ','ภาษาทมิฬ','ภาษาสันสกฤต'],
+      ru:['Хинди','Арабский','Тамильский','Санскрит']
+    }, answer: 3
+  },
+  {
+    q: { zh:'传统上阿斯汤加练习者每周练几天？', en:'How many days per week do Ashtanga practitioners practice traditionally?', th:'โดยประเพณี นักปฏิบัติ Ashtanga ฝึกกี่วันต่อสัปดาห์?', ru:'Сколько дней в неделю практикуют аштангу по традиции?' },
+    opts: {
+      zh:['每周6天，全力以赴 💪','每天练习 😇','医生说1练2休 👨‍⚕️','累了就休息，听身体的 🙂'],
+      en:['6 days per week — full power 💪','I practice every day 😇','My doctor says 1 day rest 2 days 👨‍⚕️','Whenever I feel tired — listening to my body 🙂'],
+      th:['6 วันต่อสัปดาห์ 💪','ฝึกทุกวัน 😇','หมอบอก 1 วันพัก 2 วัน 👨‍⚕️','เหนื่อยก็หยุด ฟังร่างกาย 🙂'],
+      ru:['6 дней в неделю — полная мощь 💪','Практикую каждый день 😇','Врач сказал 1 день отдыха из 2 👨‍⚕️','Когда устаю, делаю перерыв 🙂']
+    }, answer: 0
+  },
+  {
+    q: { zh:'头倒立半弯时要做几次呼吸？', en:'How many breaths do we do in headstand half bend?', th:'เราทำกี่ลมหายใจใน headstand half bend?', ru:'Сколько дыханий мы делаем в полунаклоне в стойке на голове?' },
+    opts: {
+      zh:['做的时候根本喘不过气 🥵','长长的10次呼吸 😌','连1次都做不了！😤','25次呼吸'],
+      en:['When I do it, I can barely breathe 🥵','Long 10 breaths 😌','I can\'t even do 1 breath 😤','25 breaths'],
+      th:['ตอนทำฉันแทบหายใจไม่ออก 🥵','10 ลมหายใจยาวๆ 😌','ฉันไม่สามารถหายใจได้เลย 😤','25 ลมหายใจ'],
+      ru:['Когда делаю, едва дышу 🥵','Долгих 10 дыханий 😌','Не могу сделать даже 1 вдох 😤','25 дыханий']
+    }, answer: 1
+  },
+  {
+    q: { zh:'什么是 Bandha（收束法）？', en:'What is bandha?', th:'Bandha คืออะไร?', ru:'Что такое бандха?' },
+    opts: {
+      zh:['和憋大便一样 💩','提升盆底，感到轻盈 🪽','另一种围巾"班达纳" 👳','是创可贴的俚语 🩹'],
+      en:['Same as holding poop 💩','Lifting pelvic floor — feeling light 🪽','Another type of scarf "Bandana" 👳','Slang for bandaid 🩹'],
+      th:['เหมือนกลั้นอึ 💩','ยกพื้นเชิงกรานรู้สึกเบา 🪽','ผ้าพันคออีกแบบ "Bandana" 👳','คำสแลงของแผ่นเทียน 🩹'],
+      ru:['То же, что держать кал 💩','Подъём тазового дна — лёгкость 🪽','Ещё один тип шарфа "бандана" 👳','Сленг для пластыря 🩹']
+    }, answer: 1
+  },
+  {
+    q: { zh:'阿斯汤加练习的核心理念是什么？', en:'What is the main idea of Ashtanga practice?', th:'แนวคิดหลักของการฝึก Ashtanga คืออะไร?', ru:'В чём главная идея практики аштанги?' },
+    opts: {
+      zh:['练出大肌肉，耶！💪','倒立！我超爱！🤸','呼吸、移动身体、保持体式 🧘','拍漂亮照片发社交媒体 📸'],
+      en:['Gain big muscles — yeah! 💪','Handstand — I love it! 🤸','Breathing, moving body, holding postures 🧘','Nice photos for social media 📸'],
+      th:['สร้างกล้ามเนื้อใหญ่ยักษ์ 💪','Handstand ฉันรัก! 🤸','หายใจ ขยับร่างกาย ยืนท่า 🧘','รูปสวยลง social media 📸'],
+      ru:['Накачать мышцы — ура! 💪','Стойка на руках — я люблю! 🤸','Дыхание, движение, удержание поз 🧘','Красивые фото для соцсетей 📸']
+    }, answer: 2
+  },
+  {
+    q: { zh:'Mysore 课上 Urdhva Dhanurasana 要站起来弯下几次？', en:'How many times do we stand up and bend in Urdhva Dhanurasana during Mysore?', th:'เราลุกขึ้นและก้มลงกี่ครั้งใน Urdhva Dhanurasana ระหว่าง Mysore?', ru:'Сколько раз мы встаём и наклоняемся в Урдхва Дханурасане на Майсоре?' },
+    opts: {
+      zh:['你在说什么！？我讨厌后弯！🤯','能拍多少漂亮视频就多少次 🥰','三次或更多 😎','为什么要这样？我只喜欢倒立！🤸'],
+      en:['What are you talking about?! I hate backbends! 🤯','As many as I can for photos 🥰','Three times or more 😎','Why? I only like handstand! 🤸'],
+      th:['พูดถึงอะไร?! ฉันเกลียด backbend! 🤯','เพื่อถ่ายรูปให้ได้มากที่สุด 🥰','สามครั้งขึ้นไป 😎','ทำไม? ฉันชอบแค่ handstand! 🤸'],
+      ru:['О чём вы говорите?! Я ненавижу прогибы! 🤯','Столько раз, сколько можно сфотографировать 🥰','Три раза или больше 😎','Зачем? Я люблю только стойку! 🤸']
+    }, answer: 2
+  },
+  {
+    q: { zh:'什么是 Mysore 课？', en:'What is a Mysore class?', th:'คลาส Mysore คืออะไร?', ru:'Что такое класс майсор?' },
+    opts: {
+      zh:['在家练习阿斯汤加','在瑜伽馆做我自己编的序列','在道场由传承老师指导的传统练习','在工作室拍漂亮照片的练习'],
+      en:['Ashtanga practice at home','Do my sequence at a yoga studio','Traditional Ashtanga at a sacred space with teacher from parampara','Practice at studio for nice photos'],
+      th:['ฝึก Ashtanga ที่บ้าน','ทำลำดับของตัวเองที่สตูดิโอ','Ashtanga แบบดั้งเดิมในพื้นที่ศักดิ์สิทธิ์กับครูจากปรมาจารย์','ฝึกที่สตูดิโอเพื่อถ่ายรูปสวย'],
+      ru:['Практика аштанги дома','Делать свою последовательность в студии','Традиционная аштанга в священном месте с учителем из парампары','Практика в студии для красивых фото']
+    }, answer: 2
+  }
+];
+
+// ─── Quotes ─────────────────────────────────────────────────────
+const QUOTES = {
+  zh: [
+    { text:'不执著于行动成果的行动，便是真正的自由。', source:'— 薄伽梵歌 2.47' },
+    { text:'心意若平静，万物皆清明。', source:'— 瑜伽经 1.2' },
+    { text:'练习是持续不懈的努力。', source:'— 瑜伽经 1.14' },
+    { text:'痛苦与快乐，皆由心意所造。', source:'— 薄伽梵歌 2.15' },
+    { text:'当心意摆脱执着，便照见真实。', source:'— 瑜伽经 2.5' }
+  ],
+  en: [
+    { text:'Action done without attachment to results is true freedom.', source:'— Bhagavad Gita 2.47' },
+    { text:'Yoga is the cessation of the fluctuations of the mind.', source:'— Yoga Sutra 1.2' },
+    { text:'Practice becomes firmly grounded when attended to for a long time.', source:'— Yoga Sutra 1.14' }
+  ],
+  th: [
+    { text:'การกระทำโดยไม่ยึดติดในผลลัพธ์ คือเสรีภาพที่แท้จริง', source:'— ภควัทคีตา 2.47' },
+    { text:'โยคะคือการหยุดนิ่งของจิตใจ', source:'— โยคะสูตร 1.2' }
+  ],
+  ru: [
+    { text:'Действие без привязанности к результату — это истинная свобода.', source:'— Бхагавад-гита 2.47' },
+    { text:'Йога есть прекращение колебаний ума.', source:'— Йога-сутра 1.2' }
+  ]
+};
+
+// ─── State ───────────────────────────────────────────────────────
+let currentLang = 'zh';
+let quiz1 = null, quiz2 = null;
+let quizAnswered = false;
+let quizCorrect = false;
+let quiz2Answered = false;
+let quiz2Correct = false;
+let journalLinkData = null;
+let selfieDataUrl = null; // student selfie for share card
+let currentStudentId = null; // set after form submission
+
+// ─── Init ────────────────────────────────────────────────────────
+function init() {
+  // Pick 2 unique random questions
+  const shuffled = [...QUIZ_POOL].sort(() => Math.random() - 0.5);
+  quiz1 = shuffled[0];
+  quiz2 = shuffled[1];
+  setLang('zh');
+}
+
+// ─── Language ────────────────────────────────────────────────────
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+
+  const t = T[lang];
+
+  // Text fields
+  const textIds = ['introText1','introText2','rulesTitle','rule1','rule2','rule3','rule4','rule5','rule6','rule7',
+    'closingText','quizTitle','quizSubtitle','quizBtn','formTitle','formSub',
+    'labelNameEn','labelNameZh','labelCity','labelWechat','labelYears',
+    'yOpt0','yOpt1','yOpt2','yOpt3','yOpt4','yOpt5',
+    'labelLast','hintLast','labelDifficulty','hintDifficulty',
+    'labelInjuries','labelGoals','labelEmergency','labelSize',
+    'consentTitle','photoConsentLabel','medicalConsentLabel','submitBtn',
+    'successWelcome','linkLabel','qrHint','copyBtn','linkHint','shareBtn','doneBtn'];
+  textIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && t[id] !== undefined) el.textContent = t[id];
+  });
+
+  // Quiz next button
+  document.getElementById('quizNextBtn').textContent = t.quizBtn;
+
+  // Placeholders
+  document.getElementById('nameEn').placeholder = t.namePlaceholder;
+  document.getElementById('nameZh').placeholder = t.nameZhPlaceholder;
+  document.getElementById('city').placeholder = t.cityPlaceholder;
+  document.getElementById('wechat').placeholder = t.wechatPlaceholder;
+  document.getElementById('injuries').placeholder = t.injuriesPlaceholder;
+  document.getElementById('goals').placeholder = t.goalsPlaceholder;
+  document.getElementById('emergency').placeholder = t.emergencyPlaceholder;
+
+  // Re-render quiz 1
+  if (quiz1) {
+    document.getElementById('quizQText').textContent = quiz1.q[lang];
+    const c1 = document.getElementById('quizOpts');
+    if (!quizAnswered) {
+      c1.innerHTML = quiz1.opts[lang].map((opt, i) =>
+        `<button class="quiz-opt" onclick="answerQuiz(${i})">${opt}</button>`
+      ).join('');
+      document.getElementById('quizResult').classList.add('hidden');
+      document.getElementById('quizNextBtn').disabled = true;
+    } else {
+      c1.innerHTML = quiz1.opts[lang].map((opt, i) => {
+        let cls = 'quiz-opt disabled';
+        if (i === quiz1._sel) cls += quizCorrect ? ' correct' : ' wrong';
+        return `<button class="${cls}">${opt}</button>`;
+      }).join('');
+    }
+  }
+  // Re-render quiz 2 if visible
+  if (quiz2 && document.getElementById('quizQ2Block').style.display !== 'none') {
+    document.getElementById('quizQText2').textContent = quiz2.q[lang];
+    const c2 = document.getElementById('quizOpts2');
+    if (!quiz2Answered) {
+      c2.innerHTML = quiz2.opts[lang].map((opt, i) =>
+        `<button class="quiz-opt" onclick="answerQuiz2(${i})">${opt}</button>`
+      ).join('');
+    } else {
+      c2.innerHTML = quiz2.opts[lang].map((opt, i) => {
+        let cls = 'quiz-opt disabled';
+        if (i === quiz2._sel) cls += quiz2Correct ? ' correct' : ' wrong';
+        return `<button class="${cls}">${opt}</button>`;
+      }).join('');
+    }
+  }
+  // Q1/Q2 labels
+  const q1lbl = lang === 'zh' ? '第1题 / 共2题' : lang === 'th' ? 'ข้อ 1 / 2' : lang === 'ru' ? 'Вопрос 1 из 2' : 'Question 1 / 2';
+  const q2lbl = lang === 'zh' ? '第2题 / 共2题' : lang === 'th' ? 'ข้อ 2 / 2' : lang === 'ru' ? 'Вопрос 2 из 2' : 'Question 2 / 2';
+  document.getElementById('quizQ1Label').textContent = q1lbl;
+  document.getElementById('quizQ2Label').textContent = q2lbl;
+  // Q2 next button text
+  document.getElementById('quizNextBtn2').textContent = T[lang].quizBtn;
+
+  // Quote
+  const pool = QUOTES[lang] || QUOTES.zh;
+  const q = pool[new Date().getDate() % pool.length];
+  document.getElementById('quoteText').textContent = q.text;
+  document.getElementById('quoteSource').textContent = q.source;
+}
+
+// ─── Quiz ────────────────────────────────────────────────────────
+function answerQuiz(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  quizCorrect = idx === quiz1.answer;
+  quiz1._sel = idx;
+
+  document.querySelectorAll('#quizOpts .quiz-opt').forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === idx) o.classList.add(quizCorrect ? 'correct' : 'wrong');
+  });
+
+  const t = T[currentLang];
+  const q1lbl = currentLang === 'zh' ? '第1题 / 共2题' : currentLang === 'th' ? 'ข้อ 1 / 2' : currentLang === 'ru' ? 'Вопрос 1 из 2' : 'Question 1 / 2';
+  const resultEl = document.getElementById('quizResult');
+  resultEl.className = 'quiz-result ' + (quizCorrect ? 'correct' : 'wrong');
+  resultEl.textContent = quizCorrect ? t.correctText : t.wrongText;
+  resultEl.classList.remove('hidden');
+  // Show "Next question" button
+  const nxt = document.getElementById('quizNextBtn');
+  nxt.textContent = currentLang === 'zh' ? '下一题 →' : currentLang === 'th' ? 'ข้อถัดไป →' : currentLang === 'ru' ? 'Следующий →' : 'Next question →';
+  nxt.disabled = false;
+}
+
+function answerQuiz2(idx) {
+  if (quiz2Answered) return;
+  quiz2Answered = true;
+  quiz2Correct = idx === quiz2.answer;
+  quiz2._sel = idx;
+
+  document.querySelectorAll('#quizOpts2 .quiz-opt').forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === idx) o.classList.add(quiz2Correct ? 'correct' : 'wrong');
+  });
+
+  const t = T[currentLang];
+  const resultEl = document.getElementById('quizResult2');
+  resultEl.className = 'quiz-result ' + (quiz2Correct ? 'correct' : 'wrong');
+  resultEl.textContent = quiz2Correct ? t.correctText : t.wrongText;
+  resultEl.classList.remove('hidden');
+  document.getElementById('quizNextBtn2').disabled = false;
+}
+
+function goToQ2() {
+  // Reveal question 2
+  const block = document.getElementById('quizQ2Block');
+  block.style.display = 'block';
+  document.getElementById('quizNextBtn').style.display = 'none';
+  // Render Q2 options
+  document.getElementById('quizQText2').textContent = quiz2.q[currentLang];
+  document.getElementById('quizOpts2').innerHTML = quiz2.opts[currentLang].map((opt, i) =>
+    `<button class="quiz-opt" onclick="answerQuiz2(${i})">${opt}</button>`
+  ).join('');
+  document.getElementById('quizNextBtn2').textContent = T[currentLang].quizBtn;
+  block.scrollIntoView({ behavior: 'smooth' });
+}
+
+function proceedPastQuiz() {
+  // Reveal correct answers briefly before proceeding
+  document.querySelectorAll('#quizOpts .quiz-opt').forEach((o, i) => {
+    if (i === quiz1.answer) o.classList.add('correct');
+  });
+  document.querySelectorAll('#quizOpts2 .quiz-opt').forEach((o, i) => {
+    if (i === quiz2.answer) o.classList.add('correct');
+  });
+  document.getElementById('quizNextBtn2').disabled = true;
+  setTimeout(() => {
+    document.getElementById('quizSection').style.display = 'none';
+    document.getElementById('orientationForm').scrollIntoView({ behavior: 'smooth' });
+  }, 1500);
+}
+
+// ─── Consent toggle ──────────────────────────────────────────────
+function toggleConsent(el, type) {
+  el.classList.toggle('selected');
+  document.getElementById(type + 'Consent').value = el.classList.contains('selected') ? 'yes' : 'no';
+}
+
+// ─── Difficulty ──────────────────────────────────────────────────
+function getDifficulties() {
+  return Array.from(document.querySelectorAll('#difficultyOptions .option.selected')).map(e => e.dataset.val);
+}
+
+// ─── Submit ──────────────────────────────────────────────────────
+async function submitForm(e) {
+  e.preventDefault();
+  const t = T[currentLang];
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = t.submitLoading;
+
+  const nameEn = document.getElementById('nameEn').value.trim();
+  const nameZh = document.getElementById('nameZh').value.trim();
+  const displayName = nameEn || nameZh;
+
+  const data = {
+    name: displayName,
+    englishName: nameEn,
+    chineseName: nameZh,
+    city: document.getElementById('city').value.trim(),
+    wechat: document.getElementById('wechat').value.trim(),
+    experience: document.getElementById('yearsPractice').value,
+    lastAsana: document.getElementById('lastAsana').value.trim(),
+    difficulties: getDifficulties(),
+    injuries: document.getElementById('injuries').value.trim(),
+    goals: document.getElementById('goals').value.trim(),
+    emergency: document.getElementById('emergency').value.trim(),
+    size: document.getElementById('size').value,
+    photoConsent: document.getElementById('photoConsent').value,
+    medicalConsent: document.getElementById('medicalConsent').value,
+    language: currentLang,
+    workshop: 'Suzhou WS June 2026',
+    gameResults: [
+      { quiz: quiz1 ? quiz1.q.en : '', correct: quizCorrect },
+      { quiz: quiz2 ? quiz2.q.en : '', correct: quiz2Correct }
+    ]
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/orientations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+
+    if (result.success) {
+      journalLinkData = result.journalLink;
+      currentStudentId = result.studentId;
+      document.getElementById('successName').textContent = displayName;
+      document.getElementById('successWelcome').textContent = T[currentLang].successWelcome;
+      document.getElementById('journalLinkDisplay').textContent = result.journalLink;
+      document.getElementById('successOverlay').classList.remove('hidden');
+      const selfieLabels = { zh: '🖼️ 从相册添加照片到分享卡', en: '🖼️ Add photo from gallery', th: '🖼️ เพิ่มรูปจากอัลบั้ม', ru: '🖼️ Добавить фото из галереи' };
+      document.getElementById('selfieBtn').textContent = selfieLabels[currentLang] || '🖼️ Add photo from gallery';
+
+      // Fetch QR code
+      try {
+        const qrRes = await fetch(`${API_BASE}/journal/qr/${result.studentId}`);
+        const qrData = await qrRes.json();
+        if (qrData.qrDataUrl) {
+          document.getElementById('qrCodeImg').src = qrData.qrDataUrl;
+          document.getElementById('qrCodeBox').style.display = 'block';
+        }
+      } catch(e) { /* QR is optional */ }
+    } else {
+      throw new Error(result.error || 'Failed');
+    }
+  } catch(e) {
+    alert(T[currentLang].errorMsg);
+    btn.disabled = false;
+    btn.textContent = T[currentLang].submitBtn;
+  }
+}
+
+// ─── Copy link ───────────────────────────────────────────────────
+async function copyLink() {
+  if (!journalLinkData) return;
+  try {
+    await navigator.clipboard.writeText(journalLinkData);
+  } catch(e) {
+    const ta = document.createElement('textarea');
+    ta.value = journalLinkData; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  const btn = document.getElementById('copyBtn');
+  const orig = btn.textContent;
+  btn.textContent = '✅ Copied!';
+  setTimeout(() => btn.textContent = orig, 2000);
+}
+
+// ─── Selfie loader ───────────────────────────────────────────────
+function loadSelfie(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    // Resize to max 600px before upload
+    const img = new Image();
+    img.onload = function() {
+      const MAX = 600;
+      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const cvs = document.createElement('canvas');
+      cvs.width = w; cvs.height = h;
+      cvs.getContext('2d').drawImage(img, 0, 0, w, h);
+      selfieDataUrl = cvs.toDataURL('image/jpeg', 0.82);
+
+      document.getElementById('selfieImg').src = selfieDataUrl;
+      document.getElementById('selfiePreview').style.display = 'block';
+      const labels = { zh: '✓ 照片已添加', en: '✓ Photo ready', th: '✓ ใส่รูปแล้ว', ru: '✓ Фото готово' };
+      document.getElementById('selfieReady').textContent = labels[currentLang] || '✓ Photo ready';
+      const btnLabels = { zh: '🖼️ 更换照片', en: '🖼️ Change photo', th: '🖼️ เปลี่ยนรูป', ru: '🖼️ Изменить фото' };
+      document.getElementById('selfieBtn').textContent = btnLabels[currentLang] || '🖼️ Change photo';
+
+      // Upload to Cloudinary via server
+      if (currentStudentId) {
+        fetch('/api/upload/student-photo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ studentId: currentStudentId, imageBase64: selfieDataUrl })
+        }).then(r => r.json()).then(data => {
+          if (data.photoUrl) {
+            const savedLabels = { zh: '✓ 照片已保存到档案', en: '✓ Photo saved to profile', th: '✓ บันทึกรูปแล้ว', ru: '✓ Фото сохранено' };
+            document.getElementById('selfieReady').textContent = savedLabels[currentLang] || '✓ Photo saved to profile';
+          }
+        }).catch(() => {}); // fail silently — photo still works for share card
+      }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── WeChat share (shares a welcome card IMAGE, not the private journal link) ──
+async function shareToWeChat() {
+  const btn = document.getElementById('shareBtn');
+  const name = document.getElementById('successName').textContent || '';
+  const t = T[currentLang];
+
+  try {
+    // Build a canvas welcome card
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 640;
+    const ctx = canvas.getContext('2d');
+
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, 640, 640);
+    grad.addColorStop(0, '#8b4513');
+    grad.addColorStop(0.5, '#a0522d');
+    grad.addColorStop(1, '#8b4513');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 640, 640, 28);
+    ctx.fill();
+
+    // Selfie at 70% opacity over background
+    if (selfieDataUrl) {
+      await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          ctx.save();
+          ctx.globalAlpha = 0.70;
+          const scale = Math.max(640 / img.width, 640 / img.height);
+          const sw = img.width * scale, sh = img.height * scale;
+          ctx.drawImage(img, (640 - sw) / 2, (640 - sh) / 2, sw, sh);
+          ctx.restore();
+          // Gradient overlay for readability
+          const overlay = ctx.createLinearGradient(0, 0, 0, 640);
+          overlay.addColorStop(0, 'rgba(139,69,19,0.55)');
+          overlay.addColorStop(0.4, 'rgba(139,69,19,0.30)');
+          overlay.addColorStop(0.7, 'rgba(139,69,19,0.45)');
+          overlay.addColorStop(1, 'rgba(139,69,19,0.65)');
+          ctx.fillStyle = overlay;
+          ctx.beginPath(); ctx.roundRect(0, 0, 640, 640, 28); ctx.fill();
+          resolve();
+        };
+        img.src = selfieDataUrl;
+      });
+    } else {
+      // Subtle inner glow when no photo
+      const glow = ctx.createRadialGradient(320, 200, 0, 320, 200, 380);
+      glow.addColorStop(0, 'rgba(255,248,225,0.12)');
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, 640, 640);
+    }
+
+    // Workshop label
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '500 22px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('AYBKK SUZHOU WORKSHOP 2026', 320, 100);
+
+    // Divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(180, 120); ctx.lineTo(460, 120); ctx.stroke();
+
+    // Welcome line
+    const welcomeText = currentLang === 'zh' ? '欢迎加入' : currentLang === 'th' ? 'ยินดีต้อนรับ' : currentLang === 'ru' ? 'Добро пожаловать' : 'Welcome';
+    ctx.fillStyle = 'rgba(255,248,225,0.8)';
+    ctx.font = '400 30px Georgia, serif';
+    ctx.fillText(welcomeText, 320, 200);
+
+    // Student name
+    ctx.fillStyle = '#fff8e1';
+    ctx.font = 'bold 46px Georgia, serif';
+    ctx.fillText(name, 320, 268);
+
+    // Sutra
+    ctx.fillStyle = 'rgba(255,248,225,0.7)';
+    ctx.font = 'italic 22px Georgia, serif';
+    ctx.fillText('"Atha Yoganushasanam"', 320, 360);
+
+    ctx.fillStyle = 'rgba(255,248,225,0.45)';
+    ctx.font = '18px Georgia, serif';
+    ctx.fillText('Now, the discipline of yoga. — Yoga Sutra 1.1', 320, 398);
+
+    // Divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.beginPath(); ctx.moveTo(180, 460); ctx.lineTo(460, 460); ctx.stroke();
+
+    // Dates
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '500 20px -apple-system, sans-serif';
+    ctx.fillText('June 19–23, 2026', 320, 510);
+
+    // Credit
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '16px -apple-system, sans-serif';
+    ctx.fillText('by Boonchu Tanti & Jamsai Tanti', 320, 590);
+
+    // Show inline for WeChat long-press save
+    const dataUrl = canvas.toDataURL('image/png');
+    showGzSaveModal(dataUrl);
+  } catch(err) {
+    // Last fallback: share just the workshop page (NOT the private journal link)
+    const workshopUrl = window.location.origin + window.location.pathname;
+    if (navigator.share) {
+      await navigator.share({ title: 'AYBKK Suzhou Workshop 2026', url: workshopUrl }).catch(() => {});
+    } else {
+      btn.textContent = '✗ Share failed';
+      setTimeout(() => btn.textContent = t.shareBtn, 2000);
+    }
+  }
+}
+
+function showGzSaveModal(dataUrl) {
+  let modal = document.getElementById('gzSaveModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'gzSaveModal';
+    modal.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+    modal.innerHTML = `
+      <div style="text-align:center;max-width:340px;width:100%;">
+        <div style="color:#fff;font-size:14px;font-weight:600;margin-bottom:12px;">
+          长按图片保存到相册<br><span style="font-size:12px;opacity:0.7;">Long press image → Save to Album</span>
+        </div>
+        <img id="gzSaveImg" src="" style="width:100%;border-radius:16px;display:block;" />
+        <button onclick="document.getElementById('gzSaveModal').style.display='none'" style="margin-top:16px;width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.3);background:transparent;color:#fff;font-size:14px;cursor:pointer;">关闭 / Close</button>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('gzSaveImg').src = dataUrl;
+  modal.style.display = 'flex';
+}
+
+init();
+</script>
+</body>
+</html>
