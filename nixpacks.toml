@@ -1,11 +1,14 @@
-# Download cloudflared at build time using curl (from nixPkgs so it's available
-# during build). The binary is named 'cloudflared-bin' (not 'cloudflared') so it
-# is NOT excluded by the .gitignore pattern — it survives into the Docker image.
+# Build-time setup for Railway/nixpacks.
+# 1. npm install --ignore-scripts avoids cloudflared's postinstall (unreliable download).
+# 2. npm rebuild @napi-rs/canvas fetches the prebuilt .node binary (needed by share-card-renderer.js).
+# 3. cloudflared-bin is downloaded separately under a name NOT in .gitignore so nixpacks
+#    doesn't exclude it from the Docker image (.gitignore has 'cloudflared', not 'cloudflared-bin').
 [phases.setup]
 nixPkgs = ["curl"]
 
 [phases.install]
 cmds = [
   "npm install --ignore-scripts",
+  "npm rebuild @napi-rs/canvas || echo '[nixpacks] WARNING: @napi-rs/canvas rebuild failed'",
   "curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared-bin && chmod +x cloudflared-bin && echo '[nixpacks] cloudflared-bin ready' || echo '[nixpacks] WARNING: cloudflared download failed — will try at runtime'"
 ]
