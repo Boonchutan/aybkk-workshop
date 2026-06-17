@@ -2995,39 +2995,46 @@ app.get('/api/tags', async (req, res) => {
 // The URL is stable for the lifetime of this process (changes on Railway
 // restart).  The teacher posts it to the workshop WeChat group each day.
 function startChinaTunnel() {
-  const { spawn } = require('child_process');
   const { existsSync } = require('fs');
 
-  // 1. Local binary (build-time download, if not excluded by .dockerignore).
+  // 1. Local binary (build-time; may be excluded by .dockerignore).
   let cfBin = path.join(__dirname, 'cloudflared');
-  // 2. nixPkgs system binary (in PATH).
+  // 2. nixPkgs system binary in PATH.
   if (!existsSync(cfBin)) {
     try {
-      const { execSync } = require('child_process');
-      cfBin = execSync('which cloudflared', { encoding: 'utf8' }).trim();
+      const { execSync: ex } = require('child_process');
+      cfBin = ex('which cloudflared', { encoding: 'utf8', timeout: 5000 }).trim();
     } catch (_) { cfBin = ''; }
   }
-  // 3. Runtime download to /tmp (bypasses all build-time exclusion issues).
-  if (!cfBin) {
-    const tmpBin = '/tmp/cloudflared';
-    if (!existsSync(tmpBin)) {
-      console.log('[china-tunnel] binary not found; downloading cloudflared at runtime...');
-      try {
-        const { execSync } = require('child_process');
-        execSync(
-          'curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' +
-          ' -o /tmp/cloudflared-dl && chmod +x /tmp/cloudflared-dl && mv /tmp/cloudflared-dl /tmp/cloudflared',
-          { timeout: 120000 }
-        );
-        console.log('[china-tunnel] runtime download complete');
-      } catch (e) {
-        console.warn('[china-tunnel] runtime download failed:', e.message);
-        return;
-      }
-    }
-    cfBin = tmpBin;
+
+  if (cfBin) {
+    doSpawnTunnel(cfBin);
+    return;
   }
 
+  // 3. Runtime download (async — does not block the event loop).
+  const tmpBin = '/tmp/cloudflared';
+  if (existsSync(tmpBin)) {
+    doSpawnTunnel(tmpBin);
+    return;
+  }
+
+  console.log('[china-tunnel] binary not found; downloading cloudflared at runtime...');
+  const { exec } = require('child_process');
+  exec(
+    'curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' +
+    ' -o /tmp/cloudflared-dl && chmod +x /tmp/cloudflared-dl && mv /tmp/cloudflared-dl /tmp/cloudflared',
+    { timeout: 120000 },
+    (err) => {
+      if (err) { console.warn('[china-tunnel] runtime download failed:', err.message); return; }
+      console.log('[china-tunnel] download complete — starting tunnel');
+      doSpawnTunnel(tmpBin);
+    }
+  );
+}
+
+function doSpawnTunnel(cfBin) {
+  const { spawn } = require('child_process');
   console.log(`[china-tunnel] starting (binary: ${cfBin})`);
   const child = spawn(cfBin, ['tunnel', '--no-autoupdate', '--url', `http://localhost:${PORT}`], {
     stdio: ['ignore', 'pipe', 'pipe'],
