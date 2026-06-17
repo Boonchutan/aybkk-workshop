@@ -449,7 +449,7 @@
   </div>
 
 <script>
-const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+const API_BASE = '/api';
 const TEACHER_NAME = 'Boonchu';
 
 function esc(s) {
@@ -542,7 +542,7 @@ function applicantCard(s, idx) {
 }
 
 function welcomeLink(s) {
-  return 'https://aybkk-ashtanga.up.railway.app/mysore-room-welcome.html?id=' +
+  return window.location.origin + '/mysore-room-welcome.html?id=' +
     encodeURIComponent(s.id || '') + '&name=' + encodeURIComponent(s.name || '') +
     '&lang=' + encodeURIComponent(s.language || 'en');
 }
