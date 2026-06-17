@@ -1,0 +1,81 @@
+name: Update China Access URL
+
+on:
+  push:
+    branches: [main]          # refresh right after a Railway deploy commit
+  schedule:
+    - cron: '*/10 * * * *'   # also poll every 10 minutes
+  workflow_dispatch:           # manual trigger from Actions tab
+
+permissions:
+  contents: write              # needed to commit china-access.md back
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch current tunnel URL from Railway
+        id: fetch
+        run: |
+          set +e
+          RESPONSE=$(curl -sf --max-time 10 \
+            https://aybkk-ashtanga.up.railway.app/api/china-url 2>/dev/null)
+          if [ $? -ne 0 ] || [ -z "$RESPONSE" ]; then
+            echo "tunnel_url=" >> "$GITHUB_OUTPUT"
+            echo "status=offline" >> "$GITHUB_OUTPUT"
+          else
+            URL=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin).get('url',''))" 2>/dev/null)
+            echo "tunnel_url=$URL" >> "$GITHUB_OUTPUT"
+            echo "status=online" >> "$GITHUB_OUTPUT"
+            echo "Tunnel URL: $URL"
+          fi
+
+      - name: Write china-access.md
+        env:
+          TUNNEL_URL: ${{ steps.fetch.outputs.tunnel_url }}
+          STATUS: ${{ steps.fetch.outputs.status }}
+          UPDATED: ${{ github.event.head_commit.timestamp || '' }}
+        run: |
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          if [ "$STATUS" = "online" ] && [ -n "$TUNNEL_URL" ]; then
+            cat > china-access.md << MDEOF
+# 🇨🇳 中国学员访问链接 / China Student Access
+
+> 最后更新 / Last updated: ${TIMESTAMP}
+
+## 今日链接 / Today's Link
+
+**$TUNNEL_URL**
+
+点击上方链接，或复制到浏览器地址栏打开。
+Tap the link above, or copy it into your browser.
+
+- 无需 VPN / No VPN needed
+- 手机微信浏览器也可使用 / Works in WeChat browser
+
+---
+
+链接每次服务器重启后会改变。如果链接失效，请通知老师获取新链接。
+The URL changes if the server restarts. If it stops working, ask the teacher for the new link.
+MDEOF
+          else
+            cat > china-access.md << MDEOF
+# 🇨🇳 中国学员访问链接 / China Student Access
+
+> 最后检查 / Last checked: ${TIMESTAMP}
+
+⏳ 服务器部署中，请稍候几分钟再刷新此页面。
+Server is deploying, please refresh this page in a few minutes.
+MDEOF
+          fi
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add china-access.md
+          git diff --cached --quiet && echo "No change." || \
+            git commit -m "chore: update China access URL [skip ci]" && \
+            git push
