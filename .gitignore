@@ -13,3 +13,4 @@ db/
 .env.*
 .DS_Store
 .claude/worktrees/
+cloudflared
