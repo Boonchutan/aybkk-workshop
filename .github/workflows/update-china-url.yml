@@ -2,52 +2,53 @@ name: Update China Access URL
 
 on:
   push:
-    branches: [main]          # refresh right after a Railway deploy commit
+    branches: [main]
   schedule:
-    - cron: '*/10 * * * *'   # also poll every 10 minutes
-  workflow_dispatch:           # manual trigger from Actions tab
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
 
 permissions:
-  contents: write              # needed to commit china-access.md back
+  contents: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch current tunnel URL from Railway
-        id: fetch
+      - name: Fetch tunnel URL and update china-access.md
         run: |
-          set +e
-          RESPONSE=$(curl -sf --max-time 10 \
-            https://aybkk-ashtanga.up.railway.app/api/china-url 2>/dev/null)
-          if [ $? -ne 0 ] || [ -z "$RESPONSE" ]; then
-            echo "tunnel_url=" >> "$GITHUB_OUTPUT"
-            echo "status=offline" >> "$GITHUB_OUTPUT"
-          else
-            URL=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin).get('url',''))" 2>/dev/null)
-            echo "tunnel_url=$URL" >> "$GITHUB_OUTPUT"
-            echo "status=online" >> "$GITHUB_OUTPUT"
-            echo "Tunnel URL: $URL"
-          fi
-
-      - name: Write china-access.md
-        env:
-          TUNNEL_URL: ${{ steps.fetch.outputs.tunnel_url }}
-          STATUS: ${{ steps.fetch.outputs.status }}
-          UPDATED: ${{ github.event.head_commit.timestamp || '' }}
-        run: |
+          set -euo pipefail
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
-          if [ "$STATUS" = "online" ] && [ -n "$TUNNEL_URL" ]; then
-            cat > china-access.md << MDEOF
-# 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: ${TIMESTAMP}
+          # Fetch the Railway /api/china-url endpoint
+          HTTP_CODE=$(curl -s -o /tmp/rail.json -w '%{http_code}' \
+            --max-time 15 \
+            "https://aybkk-ashtanga.up.railway.app/api/china-url" || echo "000")
+          echo "HTTP code: $HTTP_CODE"
+
+          TUNNEL_URL=""
+          if [ "$HTTP_CODE" = "200" ]; then
+            TUNNEL_URL=$(python3 -c \
+              "import json,sys; d=json.load(open('/tmp/rail.json')); print(d.get('url',''))" \
+              2>/dev/null || true)
+          fi
+          echo "Tunnel URL: '${TUNNEL_URL}'"
+
+          if [ -n "$TUNNEL_URL" ]; then
+            # Live URL obtained — write the student-facing page
+            python3 - "$TUNNEL_URL" "$TIMESTAMP" << 'PYEOF'
+          import sys
+          url, ts = sys.argv[1], sys.argv[2]
+          content = f"""# \U0001f1e8\U0001f1f3 中国学员访问链接 / China Student Access
+
+> 最后更新 / Last updated: {ts}
 
 ## 今日链接 / Today's Link
 
-**$TUNNEL_URL**
+**{url}**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
@@ -59,23 +60,37 @@ Tap the link above, or copy it into your browser.
 
 链接每次服务器重启后会改变。如果链接失效，请通知老师获取新链接。
 The URL changes if the server restarts. If it stops working, ask the teacher for the new link.
-MDEOF
+"""
+          with open('china-access.md', 'w', encoding='utf-8') as f:
+              f.write(content)
+          print("Wrote live URL to china-access.md")
+          PYEOF
           else
-            cat > china-access.md << MDEOF
-# 🇨🇳 中国学员访问链接 / China Student Access
+            # Railway not yet up — write a "please wait" notice
+            python3 - "$TIMESTAMP" << 'PYEOF'
+          import sys
+          ts = sys.argv[1]
+          content = f"""# \U0001f1e8\U0001f1f3 中国学员访问链接 / China Student Access
 
-> 最后检查 / Last checked: ${TIMESTAMP}
+> 最后检查 / Last checked: {ts}
 
-⏳ 服务器部署中，请稍候几分钟再刷新此页面。
-Server is deploying, please refresh this page in a few minutes.
-MDEOF
+⏳ 服务器启动中，请 2–3 分钟后刷新此页面。
+Server is starting up, please refresh this page in 2-3 minutes.
+"""
+          with open('china-access.md', 'w', encoding='utf-8') as f:
+              f.write(content)
+          print("Railway not ready yet, wrote waiting notice")
+          PYEOF
           fi
 
-      - name: Commit if changed
+      - name: Commit and push if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add china-access.md
-          git diff --cached --quiet && echo "No change." || \
-            git commit -m "chore: update China access URL [skip ci]" && \
-            git push
+          if git diff --cached --quiet; then
+            echo "china-access.md unchanged — nothing to commit."
+          else
+            git commit -m "chore: update China access URL [skip ci]"
+            git push origin main
+          fi
