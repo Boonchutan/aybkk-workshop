@@ -1,0 +1,13 @@
+Debug captured: 2026-06-17 10:07 UTC
+Last /api/china-url code: 404
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/debug</pre>
+</body>
+</html>
