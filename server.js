@@ -2998,17 +2998,34 @@ function startChinaTunnel() {
   const { spawn } = require('child_process');
   const { existsSync } = require('fs');
 
-  // Prefer local binary, then cloudflared from PATH (installed via nixPkgs).
+  // 1. Local binary (build-time download, if not excluded by .dockerignore).
   let cfBin = path.join(__dirname, 'cloudflared');
+  // 2. nixPkgs system binary (in PATH).
   if (!existsSync(cfBin)) {
     try {
       const { execSync } = require('child_process');
       cfBin = execSync('which cloudflared', { encoding: 'utf8' }).trim();
     } catch (_) { cfBin = ''; }
   }
+  // 3. Runtime download to /tmp (bypasses all build-time exclusion issues).
   if (!cfBin) {
-    console.warn('[china-tunnel] cloudflared not found locally or in PATH — tunnel disabled');
-    return;
+    const tmpBin = '/tmp/cloudflared';
+    if (!existsSync(tmpBin)) {
+      console.log('[china-tunnel] binary not found; downloading cloudflared at runtime...');
+      try {
+        const { execSync } = require('child_process');
+        execSync(
+          'curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' +
+          ' -o /tmp/cloudflared-dl && chmod +x /tmp/cloudflared-dl && mv /tmp/cloudflared-dl /tmp/cloudflared',
+          { timeout: 120000 }
+        );
+        console.log('[china-tunnel] runtime download complete');
+      } catch (e) {
+        console.warn('[china-tunnel] runtime download failed:', e.message);
+        return;
+      }
+    }
+    cfBin = tmpBin;
   }
 
   console.log(`[china-tunnel] starting (binary: ${cfBin})`);
