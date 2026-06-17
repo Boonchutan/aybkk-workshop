@@ -8,8 +8,16 @@
    Never use #fff or #000. Tint every neutral toward the wood hue.
    ============================================================ */
 
-/* ---------- Type ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+Thai:wght@400;500;700&display=swap');
+/* ---------- Type ----------
+   Load fonts from Google's official China mirror (fonts.googleapis.cn /
+   fonts.gstatic.cn). The .com endpoint is blocked by the Great Firewall, and
+   because an @import is render-blocking, a blocked request leaves the whole
+   page hanging blank for students in mainland China ("stuck"). The .cn mirror
+   is reachable behind the Firewall, so the page loads normally there.
+   font-display=swap + the native fallback stacks below mean text paints
+   immediately in a system font and upgrades to the web font when it arrives —
+   so even if the mirror is slow, the page is never blocked. */
+@import url('https://fonts.googleapis.cn/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+Thai:wght@400;500;700&display=swap');
 
 :root {
   /* === Wood neutrals (Apple Store / Muji light beech) === */
@@ -24,9 +32,13 @@
   --ink-soft:     #6c5e4a;
   --accent:       #9a805d;  /* warm walnut accent (teacher badge etc) */
 
-  /* === Type stacks (multilingual: en, zh, th, ru) === */
-  --font-display: 'Fraunces', 'Noto Serif SC', Georgia, serif;
-  --font-body:    'Spectral', 'Noto Serif SC', 'Noto Sans Thai', Georgia, serif;
+  /* === Type stacks (multilingual: en, zh, th, ru) ===
+     Native CJK/Thai fonts are listed before Georgia so that, even if the web
+     fonts never load (e.g. the Firewall blocks the mirror), Chinese phones
+     still render crisp system serifs (Songti/STSong) and Thai (Thonburi)
+     instantly — the page is fully readable with zero external dependency. */
+  --font-display: 'Fraunces', Georgia, 'Songti SC', 'STSong', 'Noto Serif SC', serif;
+  --font-body:    'Spectral', Georgia, 'Songti SC', 'STSong', 'Noto Serif SC', 'Thonburi', 'Noto Sans Thai', serif;
   --font-mono:    ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* === Scale === */
