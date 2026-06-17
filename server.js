@@ -100,6 +100,14 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(UPLOAD_DIR));
 
+// Resolve the public-facing base URL, respecting Cloudflare Worker / reverse-proxy headers.
+// x-forwarded-host is set by workers/china-proxy so journal links use the proxy domain.
+function getBaseUrl(req) {
+  const proto = req.get('x-forwarded-proto') || req.protocol || 'https';
+  const host = req.get('x-forwarded-host') || req.get('host') || 'aybkk-ashtanga.up.railway.app';
+  return `${proto}://${host}`;
+}
+
 // ─── Cloudinary Setup ────────────────────────────────────────────────────────
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
@@ -724,7 +732,7 @@ app.post('/api/orientations', async (req, res) => {
     const { name, wechat, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, workshop, gameResults } = req.body;
     const studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     const datetime = new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=guangzhou';
 
     const session = driver.session();
@@ -828,7 +836,7 @@ app.post('/api/orientations/bkk', async (req, res) => {
     const { name, wechat, contactType, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, gameResults } = req.body;
     const studentId = 'bkk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     const datetime = new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'th') + '&location=bangkok';
 
     const session = driver.session();
@@ -1388,7 +1396,7 @@ app.post('/api/orientations/ru', async (req, res) => {
     if (!city || !['spb', 'moscow'].includes(city)) return res.status(400).json({ success: false, error: 'city must be spb or moscow' });
 
     const datetime = new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const tgChatStr = String(telegramChatId || '');
     const emailStr = (email || '').trim().toLowerCase();
 
@@ -1556,7 +1564,7 @@ app.post('/api/orientations/online', async (req, res) => {
     if (!contact) return res.status(400).json({ success: false, error: 'contact required' });
 
     const datetime = date || new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const contactStr = String(contact || '').trim().toLowerCase();
     const contactTypeStr = String(contactType || 'telegram').trim().toLowerCase();
 
@@ -1689,7 +1697,7 @@ app.post('/api/orientations/private', async (req, res) => {
     if (!contact) return res.status(400).json({ success: false, error: 'contact required' });
 
     const datetime = date || new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const contactStr = String(contact || '').trim().toLowerCase();
     const contactTypeStr = String(contactType || 'telegram').trim().toLowerCase();
 
