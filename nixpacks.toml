@@ -1,8 +1,4 @@
-# Install cloudflared as a Nix package so it's available in the runtime container.
-# Using nixPkgs is more reliable than curl-during-build because Nix packages
-# are present in the final image (curl downloads may be lost in multi-stage builds).
-[phases.setup]
-nixPkgs = ["cloudflared"]
-
+# cloudflared is downloaded at runtime by server.js (startChinaTunnel) if not
+# found in PATH. Runtime download to /tmp avoids all build-time exclusion issues.
 [phases.install]
 cmds = ["npm install --ignore-scripts"]
