@@ -1,7 +1,11 @@
-# curl is needed at runtime for cloudflared download in server.js (startChinaTunnel).
-# cloudflared itself is downloaded by server.js at startup if not already present.
+# Download cloudflared at build time using curl (from nixPkgs so it's available
+# during build). The binary is named 'cloudflared-bin' (not 'cloudflared') so it
+# is NOT excluded by the .gitignore pattern — it survives into the Docker image.
 [phases.setup]
 nixPkgs = ["curl"]
 
 [phases.install]
-cmds = ["npm install --ignore-scripts"]
+cmds = [
+  "npm install --ignore-scripts",
+  "curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared-bin && chmod +x cloudflared-bin && echo '[nixpacks] cloudflared-bin ready' || echo '[nixpacks] WARNING: cloudflared download failed — will try at runtime'"
+]

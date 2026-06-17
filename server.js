@@ -2997,8 +2997,10 @@ app.get('/api/tags', async (req, res) => {
 function startChinaTunnel() {
   const { existsSync } = require('fs');
 
-  // 1. Local binary (build-time; may be excluded by .dockerignore).
-  let cfBin = path.join(__dirname, 'cloudflared');
+  // 1. Build-time binary at cloudflared-bin (not excluded by .gitignore/.dockerignore).
+  let cfBin = path.join(__dirname, 'cloudflared-bin');
+  // Also try 'cloudflared' in case someone placed it manually.
+  if (!existsSync(cfBin)) cfBin = path.join(__dirname, 'cloudflared');
   // 2. nixPkgs system binary in PATH.
   if (!existsSync(cfBin)) {
     try {
