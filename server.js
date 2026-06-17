@@ -2994,33 +2994,49 @@ app.get('/api/tags', async (req, res) => {
 // making the app reachable from mainland China without a VPN.
 // The URL is stable for the lifetime of this process (changes on Railway
 // restart).  The teacher posts it to the workshop WeChat group each day.
-async function startChinaTunnel() {
-  try {
-    const { tunnel, install, bin } = require('cloudflared');
-    const { existsSync } = require('fs');
-    if (!existsSync(bin)) {
-      console.log('[china-tunnel] installing cloudflared binary...');
-      await install(bin);
-    }
-    const { url: urlPromise, child } = tunnel({
-      '--url': `http://localhost:${PORT}`,
-      '--no-autoupdate': null,
-    });
-    const tunnelUrl = await urlPromise;
-    process.env.TUNNEL_URL = tunnelUrl; // picked up by siteOrigin() in student-journal.js
-    console.log('');
-    console.log('🇨🇳 ═══════════════════════════════════════════════════');
-    console.log(`🇨🇳  CHINA ACCESS URL: ${tunnelUrl}`);
-    console.log('🇨🇳  Share this link with students in the WeChat group.');
-    console.log('🇨🇳 ═══════════════════════════════════════════════════');
-    console.log('');
-    child.on('exit', (code) => {
-      console.warn(`[china-tunnel] cloudflared exited (code ${code}) — restarting in 10s`);
-      setTimeout(startChinaTunnel, 10000);
-    });
-  } catch (e) {
-    console.warn('[china-tunnel] unavailable:', e.message);
+function startChinaTunnel() {
+  const { spawn } = require('child_process');
+  const { existsSync } = require('fs');
+
+  // Binary downloaded by nixpacks during build takes priority; npm package is fallback.
+  let cfBin = path.join(__dirname, 'cloudflared');
+  if (!existsSync(cfBin)) {
+    try { cfBin = require('cloudflared').bin; } catch (_) {}
   }
+  if (!existsSync(cfBin)) {
+    console.warn('[china-tunnel] cloudflared binary not found — tunnel disabled');
+    return;
+  }
+
+  console.log(`[china-tunnel] starting (binary: ${cfBin})`);
+  const child = spawn(cfBin, ['tunnel', '--no-autoupdate', '--url', `http://localhost:${PORT}`], {
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+
+  let found = false;
+  const onData = (data) => {
+    const text = data.toString();
+    process.stdout.write('[cloudflared] ' + text);
+    const match = text.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/);
+    if (match && !found) {
+      found = true;
+      process.env.TUNNEL_URL = match[0];
+      console.log('🇨🇳 ═══════════════════════════════════════════════════');
+      console.log(`🇨🇳  CHINA ACCESS URL: ${match[0]}`);
+      console.log('🇨🇳  Share this link with students in the WeChat group.');
+      console.log('🇨🇳 ═══════════════════════════════════════════════════');
+    }
+  };
+  child.stdout.on('data', onData);
+  child.stderr.on('data', onData);
+
+  child.on('error', (err) => console.warn(`[china-tunnel] spawn error: ${err.message}`));
+  child.on('exit', (code) => {
+    console.warn(`[china-tunnel] cloudflared exited (code ${code}) — restarting in 10s`);
+    process.env.TUNNEL_URL = '';
+    found = false;
+    setTimeout(startChinaTunnel, 10000);
+  });
 }
 
 // GET /api/china-url — returns the current China-accessible tunnel URL.
