@@ -1,13 +1,4 @@
-Debug captured: 2026-06-17 10:26 UTC
-Last /api/china-url code: 404
+Debug captured: 2026-06-17 11:00 UTC
+Last /api/china-url code: 503
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Error</title>
-</head>
-<body>
-<pre>Cannot GET /api/debug</pre>
-</body>
-</html>
+{"ts":"2026-06-17T11:00:10.807Z","tunnelUrl":null,"RAILWAY_ENVIRONMENT":"production","HOME":"/root","__dirname":"/app","binaries":{"/app/cloudflared-bin":{"exists":false},"/app/cloudflared":{"exists":false},"/tmp/cloudflared":{"exists":false}},"curl":"/bin/sh: 1: curl: not found","ls":"total 1500\ndrwxr-xr-x   1 root root   4096 Jun 17 10:52 .\ndrwxr-xr-x   1 root root   4096 Jun 17 10:52 ..\ndrwxrwxr-x   2 root root   4096 Jun 17 10:50 .claude\n-rw-rw-r--   1 root root     70 Jun 17 10:50 .dockerignore\ndrwxrwxr-x   3 root root   4096 Jun 17 10:52 .github\n-rw-rw-r--   1 root root    182 Jun 17 10:50 .gitignore\n-rw-rw-r--   1 root root    179 Jun 17 10:50 .railwayignore\n-rw-rw-r--   1 root root     29 Jun 17 10:50 .trigger\n-rw-rw-r--   1 root root  36522 Jun 17 10:50 30-Day-Master-Persuasion-Program.md\n-rw-rw-r--   1 root root   3168 Jun 17 10:50 AGORA-GUIDE.txt\n-rw-rw-r--   1 root root    968 Jun 17 10:50 AGORA-REMINDER.txt\n-rw-rw-r--   1 root root     20 Jun 17 10:50 Procfile\n-rw-rw-r--   1 root root   6318 Jun 17 10:50 README.md\n-rw-rw-r--   1 root root   1783 Jun 17 10:50 add-plato.js\n-rw-rw-r--   1 root root   2711 Jun 17 10:50 add_orientations.py\n-rw-rw-r--   1 root root   1137 Jun 17 10:50 agora-check.js\n-rw-rw-r--   1 root root    947 Jun 17 10:50 agora-log-event.js\n-rw-rw-r--   1 root root    927 Jun 17 10:50 agora-log-restart.js\n-rw-rw-r--   1 root root   1983 Jun 17 10:50 agora-log-status.js\n"}
