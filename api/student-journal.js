@@ -8,14 +8,24 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 
-// Public base URL for student-facing links/QRs. Prefer an explicit TUNNEL_URL,
-// then Railway's injected public domain, then the known production host.
-// NOTE: the parentheses matter — without them `||` binds tighter than `?:`,
-// so a set TUNNEL_URL with no RAILWAY_PUBLIC_DOMAIN would yield "https://undefined".
+// Fallback base URL when the request carries no host information.
+// Prefer TUNNEL_URL env var, then Railway's injected public domain.
+// NOTE: parentheses around the ternary matter — without them `||` binds
+// tighter than `?:` and a missing RAILWAY_PUBLIC_DOMAIN yields "https://undefined".
 const TUNNEL_URL = process.env.TUNNEL_URL
   || (process.env.RAILWAY_PUBLIC_DOMAIN
         ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
         : 'https://aybkk-ashtanga.up.railway.app');
+
+// Returns the client-facing origin for a request.  When the app sits behind
+// a proxy (Cloudflare Worker, nginx, etc.) the proxy sets X-Forwarded-Host
+// to the public domain; we prefer that over the Railway hostname so that
+// QR codes and journal links work for users who access via the proxy.
+function siteOrigin(req) {
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim();
+  return host ? `${proto}://${host}` : TUNNEL_URL;
+}
 
 // Debug: test route
 router.get('/_test', (req, res) => {
@@ -166,7 +176,7 @@ router.post('/profile', async (req, res) => {
     const now = new Date().toISOString();
     const lang = language || 'zh';
     const loc = location || 'unknown';
-    const journalLink = `${TUNNEL_URL}/student.html?id=${studentId}`
+    const journalLink = `${siteOrigin(req)}/student.html?id=${studentId}`
       + `&name=${encodeURIComponent(name)}`
       + `&lang=${lang}`
       + `&location=${loc}`;
@@ -223,7 +233,7 @@ router.post('/profile', async (req, res) => {
     });
 
     // Generate QR code for this student
-    const qrUrl = `${TUNNEL_URL}/student?id=${studentId}`;
+    const qrUrl = `${siteOrigin(req)}/student?id=${studentId}`;
     const qrDataUrl = await QRCode.toDataURL(qrUrl, {
       width: 300,
       margin: 2,
@@ -503,7 +513,7 @@ router.get('/qr/:studentId', async (req, res) => {
     if (name) qp.set('name', name);
     if (language) qp.set('lang', language);
     if (location) qp.set('location', location);
-    const targetUrl = `${TUNNEL_URL}/student.html?${qp.toString()}`;
+    const targetUrl = `${siteOrigin(req)}/student.html?${qp.toString()}`;
 
     const qrDataUrl = await QRCode.toDataURL(targetUrl, {
       width: 300,
@@ -530,7 +540,7 @@ router.post('/qr/batch', async (req, res) => {
     }
 
     const results = [];
-    const baseUrl = `${TUNNEL_URL}/student`;
+    const baseUrl = `${siteOrigin(req)}/student`;
 
     for (const studentId of studentIds) {
       const qrDataUrl = await QRCode.toDataURL(`${baseUrl}?id=${studentId}`, {
