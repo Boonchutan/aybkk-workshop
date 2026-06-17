@@ -8,9 +8,14 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 
-const TUNNEL_URL = process.env.TUNNEL_URL || process.env.RAILWAY_PUBLIC_DOMAIN
-  ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
-  : 'https://aybkk-ashtanga.up.railway.app';
+// Public base URL for student-facing links/QRs. Prefer an explicit TUNNEL_URL,
+// then Railway's injected public domain, then the known production host.
+// NOTE: the parentheses matter — without them `||` binds tighter than `?:`,
+// so a set TUNNEL_URL with no RAILWAY_PUBLIC_DOMAIN would yield "https://undefined".
+const TUNNEL_URL = process.env.TUNNEL_URL
+  || (process.env.RAILWAY_PUBLIC_DOMAIN
+        ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+        : 'https://aybkk-ashtanga.up.railway.app');
 
 // Debug: test route
 router.get('/_test', (req, res) => {
@@ -461,20 +466,52 @@ router.get('/profiles', async (req, res) => {
 });
 
 // GET /api/journal/qr/:studentId - Get QR code for student
+// The QR must deep-link the student straight into THEIR journal, in the right
+// language and workshop. Encoding only ?id= dropped the student on a blank
+// registration form (no name) defaulting to the Bangkok/English experience
+// (no lang/location), so a Guangzhou student scanning their code could neither
+// recognise the page nor write into their existing journal. We look the student
+// up and carry name + language + location into the link (query overrides win).
 router.get('/qr/:studentId', async (req, res) => {
+  const session = req.driver.session();
   try {
     const { studentId } = req.params;
-    const baseUrl = `${TUNNEL_URL}/student?id=${studentId}`;
-    
-    const qrDataUrl = await QRCode.toDataURL(baseUrl, {
+
+    let name = req.query.name || '';
+    let language = req.query.lang || '';
+    let location = req.query.location || '';
+    try {
+      const r = await session.run(
+        'MATCH (s:Student {id: $id}) RETURN s.name AS name, s.language AS language, s.location AS location',
+        { id: studentId }
+      );
+      if (r.records.length) {
+        name = name || r.records[0].get('name') || '';
+        language = language || r.records[0].get('language') || '';
+        location = location || r.records[0].get('location') || '';
+      }
+    } catch (lookupErr) {
+      // Non-fatal: fall back to an id-only link if the lookup fails.
+      console.warn('QR student lookup failed:', lookupErr.message);
+    }
+
+    const qp = new URLSearchParams({ id: studentId });
+    if (name) qp.set('name', name);
+    if (language) qp.set('lang', language);
+    if (location) qp.set('location', location);
+    const targetUrl = `${TUNNEL_URL}/student.html?${qp.toString()}`;
+
+    const qrDataUrl = await QRCode.toDataURL(targetUrl, {
       width: 300,
       margin: 2,
       color: { dark: '#000000', light: '#FFFFFF' }
     });
 
-    res.json({ qrDataUrl, url: baseUrl, studentId });
+    res.json({ qrDataUrl, url: targetUrl, studentId });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
   }
 });
 
