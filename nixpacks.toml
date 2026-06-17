@@ -1,0 +1,4 @@
+# Force npm install (not npm ci) so Railway accepts new dependencies
+# added to package.json before the lock file is updated locally.
+[phases.install]
+cmds = ["npm install --prefer-offline"]
