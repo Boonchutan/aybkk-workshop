@@ -1,7 +1,8 @@
-# --ignore-scripts skips all postinstall hooks (incl. cloudflared binary download)
-# so npm install always succeeds. We download cloudflared binary separately.
+# Install cloudflared as a Nix package so it's available in the runtime container.
+# Using nixPkgs is more reliable than curl-during-build because Nix packages
+# are present in the final image (curl downloads may be lost in multi-stage builds).
+[phases.setup]
+nixPkgs = ["cloudflared"]
+
 [phases.install]
-cmds = [
-  "npm install --ignore-scripts",
-  "curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o ./cloudflared && chmod +x ./cloudflared && echo '[nixpacks] cloudflared binary ready' || echo '[nixpacks] WARNING: cloudflared binary download failed, tunnel will be disabled'"
-]
+cmds = ["npm install --ignore-scripts"]

@@ -2998,13 +2998,16 @@ function startChinaTunnel() {
   const { spawn } = require('child_process');
   const { existsSync } = require('fs');
 
-  // Binary downloaded by nixpacks during build takes priority; npm package is fallback.
+  // Prefer local binary, then cloudflared from PATH (installed via nixPkgs).
   let cfBin = path.join(__dirname, 'cloudflared');
   if (!existsSync(cfBin)) {
-    try { cfBin = require('cloudflared').bin; } catch (_) {}
+    try {
+      const { execSync } = require('child_process');
+      cfBin = execSync('which cloudflared', { encoding: 'utf8' }).trim();
+    } catch (_) { cfBin = ''; }
   }
-  if (!existsSync(cfBin)) {
-    console.warn('[china-tunnel] cloudflared binary not found — tunnel disabled');
+  if (!cfBin) {
+    console.warn('[china-tunnel] cloudflared not found locally or in PATH — tunnel disabled');
     return;
   }
 
