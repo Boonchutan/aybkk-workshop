@@ -108,6 +108,24 @@ function getBaseUrl(req) {
   return `${proto}://${host}`;
 }
 
+// ─── Short orientation routes ────────────────────────────────────────────────
+// Clean, memorable entry points for each workshop orientation page, so links
+// shared in WeChat read e.g. <domain>/su instead of /orientation-suzhou.html.
+const ORIENTATION_SHORTCUTS = {
+  su: 'orientation-suzhou.html',
+  gz: 'orientation-gz.html',
+  bkk: 'orientation-bkk.html',
+};
+for (const [slug, file] of Object.entries(ORIENTATION_SHORTCUTS)) {
+  app.get('/' + slug, (req, res) => {
+    if (fs.existsSync(path.join(__dirname, 'public', file))) {
+      res.sendFile(path.join(__dirname, 'public', file));
+    } else {
+      res.redirect(302, '/' + file);
+    }
+  });
+}
+
 // ─── Cloudinary Setup ────────────────────────────────────────────────────────
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
