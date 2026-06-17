@@ -2989,6 +2989,53 @@ app.get('/api/tags', async (req, res) => {
   }
 });
 
+// Cloudflare Quick Tunnel — no account needed.
+// Gives a *.trycloudflare.com URL routed through Cloudflare's HK/SG edge,
+// making the app reachable from mainland China without a VPN.
+// The URL is stable for the lifetime of this process (changes on Railway
+// restart).  The teacher posts it to the workshop WeChat group each day.
+async function startChinaTunnel() {
+  try {
+    const { tunnel, install, bin } = require('cloudflared');
+    const { existsSync } = require('fs');
+    if (!existsSync(bin)) {
+      console.log('[china-tunnel] installing cloudflared binary...');
+      await install(bin);
+    }
+    const { url: urlPromise, child } = tunnel({
+      '--url': `http://localhost:${PORT}`,
+      '--no-autoupdate': null,
+    });
+    const tunnelUrl = await urlPromise;
+    process.env.TUNNEL_URL = tunnelUrl; // picked up by siteOrigin() in student-journal.js
+    console.log('');
+    console.log('🇨🇳 ═══════════════════════════════════════════════════');
+    console.log(`🇨🇳  CHINA ACCESS URL: ${tunnelUrl}`);
+    console.log('🇨🇳  Share this link with students in the WeChat group.');
+    console.log('🇨🇳 ═══════════════════════════════════════════════════');
+    console.log('');
+    child.on('exit', (code) => {
+      console.warn(`[china-tunnel] cloudflared exited (code ${code}) — restarting in 10s`);
+      setTimeout(startChinaTunnel, 10000);
+    });
+  } catch (e) {
+    console.warn('[china-tunnel] unavailable:', e.message);
+  }
+}
+
+// GET /api/china-url — returns the current China-accessible tunnel URL.
+// Teacher can open this on their device to get the current link to share.
+app.get('/api/china-url', (req, res) => {
+  const url = process.env.TUNNEL_URL;
+  if (url && url.includes('trycloudflare.com')) {
+    res.json({ url, instructions: 'Share this URL with students in China (no VPN needed).' });
+  } else if (url) {
+    res.json({ url, instructions: 'Custom domain or Railway URL.' });
+  } else {
+    res.status(503).json({ error: 'Tunnel not yet started, try again in 30s.' });
+  }
+});
+
 // Start server
 async function start() {
   await testNeo4j();
@@ -2997,6 +3044,12 @@ async function start() {
   app.listen(PORT, () => {
     console.log(`✓ Mission Control running on http://localhost:${PORT}`);
   });
+
+  // Start China tunnel in production (Railway) or when explicitly requested.
+  // Skipped in local dev unless ENABLE_TUNNEL=1 is set.
+  if (process.env.RAILWAY_ENVIRONMENT || process.env.ENABLE_TUNNEL === '1') {
+    startChinaTunnel();
+  }
 
   // Auto-start the Telegram bot as a managed child process when running on Railway
   // (or anywhere RUN_BOT=1 is set). Auto-restarts on crash so it stays alive 24/7.
