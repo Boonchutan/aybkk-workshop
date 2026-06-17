@@ -13,84 +13,59 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    env:
+      REPO: boonchutan/aybkk-workshop
+      FILE: china-access.md
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Fetch tunnel URL and update china-access.md
+      - name: Fetch tunnel URL from Railway
+        id: rail
         run: |
-          set -euo pipefail
-          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
-
-          # Fetch the Railway /api/china-url endpoint
-          HTTP_CODE=$(curl -s -o /tmp/rail.json -w '%{http_code}' \
-            --max-time 15 \
-            "https://aybkk-ashtanga.up.railway.app/api/china-url" || echo "000")
-          echo "HTTP code: $HTTP_CODE"
-
-          TUNNEL_URL=""
-          if [ "$HTTP_CODE" = "200" ]; then
-            TUNNEL_URL=$(python3 -c \
-              "import json,sys; d=json.load(open('/tmp/rail.json')); print(d.get('url',''))" \
-              2>/dev/null || true)
+          CODE=$(curl -s -o /tmp/rail.json -w '%{http_code}' --max-time 15 \
+            "https://aybkk-ashtanga.up.railway.app/api/china-url" || echo 000)
+          echo "http_code=$CODE"
+          URL=""
+          if [ "$CODE" = "200" ]; then
+            URL=$(python3 -c "import json; print(json.load(open('/tmp/rail.json')).get('url',''))" 2>/dev/null || true)
           fi
-          echo "Tunnel URL: '${TUNNEL_URL}'"
+          echo "url=$URL"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
 
+      - name: Build updated china-access.md
+        env:
+          TUNNEL_URL: ${{ steps.rail.outputs.url }}
+        run: |
+          TS=$(date -u '+%Y-%m-%d %H:%M UTC')
           if [ -n "$TUNNEL_URL" ]; then
-            # Live URL obtained — write the student-facing page
-            python3 - "$TUNNEL_URL" "$TIMESTAMP" << 'PYEOF'
-          import sys
-          url, ts = sys.argv[1], sys.argv[2]
-          content = f"""# \U0001f1e8\U0001f1f3 中国学员访问链接 / China Student Access
-
-> 最后更新 / Last updated: {ts}
-
-## 今日链接 / Today's Link
-
-**{url}**
-
-点击上方链接，或复制到浏览器地址栏打开。
-Tap the link above, or copy it into your browser.
-
-- 无需 VPN / No VPN needed
-- 手机微信浏览器也可使用 / Works in WeChat browser
-
----
-
-链接每次服务器重启后会改变。如果链接失效，请通知老师获取新链接。
-The URL changes if the server restarts. If it stops working, ask the teacher for the new link.
-"""
-          with open('china-access.md', 'w', encoding='utf-8') as f:
-              f.write(content)
-          print("Wrote live URL to china-access.md")
-          PYEOF
+            printf '# 🇨🇳 中国学员访问链接 / China Student Access\n\n> 最后更新 / Last updated: %s\n\n## 今日链接 / Today'"'"'s Link\n\n**%s**\n\n点击上方链接，或复制到浏览器地址栏打开。\nTap the link above, or copy it into your browser.\n\n- 无需 VPN / No VPN needed\n- 手机微信浏览器也可使用 / Works in WeChat browser\n\n---\n\n链接每次服务器重启后会改变。如果链接失效，请通知老师获取新链接。\nThe URL changes if the server restarts. If it stops working, ask the teacher for the new link.\n' \
+              "$TS" "$TUNNEL_URL" > /tmp/china-access.md
           else
-            # Railway not yet up — write a "please wait" notice
-            python3 - "$TIMESTAMP" << 'PYEOF'
-          import sys
-          ts = sys.argv[1]
-          content = f"""# \U0001f1e8\U0001f1f3 中国学员访问链接 / China Student Access
-
-> 最后检查 / Last checked: {ts}
-
-⏳ 服务器启动中，请 2–3 分钟后刷新此页面。
-Server is starting up, please refresh this page in 2-3 minutes.
-"""
-          with open('china-access.md', 'w', encoding='utf-8') as f:
-              f.write(content)
-          print("Railway not ready yet, wrote waiting notice")
-          PYEOF
+            printf '# 🇨🇳 中国学员访问链接 / China Student Access\n\n> 最后检查 / Last checked: %s\n\n⏳ 服务器启动中，请 2–3 分钟后刷新此页面。\nServer is starting, please refresh in 2-3 minutes.\n' \
+              "$TS" > /tmp/china-access.md
           fi
+          cat /tmp/china-access.md
 
-      - name: Commit and push if changed
+      - name: Update file via GitHub Contents API
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add china-access.md
-          if git diff --cached --quiet; then
-            echo "china-access.md unchanged — nothing to commit."
-          else
-            git commit -m "chore: update China access URL [skip ci]"
-            git push origin main
-          fi
+          # Get current file SHA (needed for updates)
+          SHA=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/contents/$FILE" \
+            | python3 -c "import json,sys; print(json.load(sys.stdin)['sha'])")
+          echo "Current SHA: $SHA"
+
+          # Base64-encode the new content
+          CONTENT=$(base64 -w0 /tmp/china-access.md)
+
+          # PUT the updated file
+          RESULT=$(curl -sf -X PUT \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/$REPO/contents/$FILE" \
+            -d "{\"message\":\"chore: update China access URL [skip ci]\",\"content\":\"$CONTENT\",\"sha\":\"$SHA\"}" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print('Updated to', d['content']['sha'])" \
+            2>&1 || echo "API PUT failed")
+          echo "$RESULT"
