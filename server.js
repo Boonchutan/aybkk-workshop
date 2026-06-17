@@ -3002,6 +3002,36 @@ app.get('/api/tags', async (req, res) => {
 // making the app reachable from mainland China without a VPN.
 // The URL is stable for the lifetime of this process (changes on Railway
 // restart).  The teacher posts it to the workshop WeChat group each day.
+// Download a file over HTTPS using Node's built-in module (no curl needed —
+// the Railway runtime image has no curl). Follows GitHub's 302 redirects to
+// the release-asset CDN. Writes to a temp path then renames atomically.
+function downloadBinary(url, dest, cb, redirects = 0) {
+  const https = require('https');
+  const fs = require('fs');
+  if (redirects > 6) return cb(new Error('too many redirects'));
+  https.get(url, { headers: { 'User-Agent': 'aybkk-server' } }, (res) => {
+    if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+      res.resume();
+      return downloadBinary(res.headers.location, dest, cb, redirects + 1);
+    }
+    if (res.statusCode !== 200) {
+      res.resume();
+      return cb(new Error('HTTP ' + res.statusCode));
+    }
+    const tmp = dest + '.dl';
+    const file = fs.createWriteStream(tmp);
+    res.pipe(file);
+    file.on('finish', () => file.close(() => {
+      try {
+        fs.chmodSync(tmp, 0o755);
+        fs.renameSync(tmp, dest);
+        cb(null);
+      } catch (e) { cb(e); }
+    }));
+    file.on('error', (e) => cb(e));
+  }).on('error', (e) => cb(e));
+}
+
 function startChinaTunnel() {
   const { existsSync } = require('fs');
 
@@ -3022,21 +3052,23 @@ function startChinaTunnel() {
     return;
   }
 
-  // 3. Runtime download (async — does not block the event loop).
+  // 3. Runtime download via Node https (no curl dependency).
   const tmpBin = '/tmp/cloudflared';
   if (existsSync(tmpBin)) {
     doSpawnTunnel(tmpBin);
     return;
   }
 
-  console.log('[china-tunnel] binary not found; downloading cloudflared at runtime...');
-  const { exec } = require('child_process');
-  exec(
-    'curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64' +
-    ' -o /tmp/cloudflared-dl && chmod +x /tmp/cloudflared-dl && mv /tmp/cloudflared-dl /tmp/cloudflared',
-    { timeout: 120000 },
+  console.log('[china-tunnel] binary not found; downloading cloudflared via Node https...');
+  downloadBinary(
+    'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64',
+    tmpBin,
     (err) => {
-      if (err) { console.warn('[china-tunnel] runtime download failed:', err.message); return; }
+      if (err) {
+        console.warn('[china-tunnel] runtime download failed:', err.message, '— retrying in 30s');
+        setTimeout(startChinaTunnel, 30000);
+        return;
+      }
       console.log('[china-tunnel] download complete — starting tunnel');
       doSpawnTunnel(tmpBin);
     }
