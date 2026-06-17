@@ -22,8 +22,9 @@ jobs:
         id: rail
         run: |
           URL=""
-          # On push events Railway may still be rebuilding, so retry up to 5× (5 min window).
-          for attempt in 1 2 3 4 5; do
+          # On push events Railway may still be rebuilding (takes up to 8 min).
+          # Retry every 60s for up to 10 attempts (10 min window).
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
             CODE=$(curl -s -o /tmp/rail.json -w '%{http_code}' --max-time 15 \
               "https://aybkk-ashtanga.up.railway.app/api/china-url" || echo 000)
             echo "attempt=$attempt http_code=$CODE"
@@ -34,7 +35,7 @@ jobs:
                 break
               fi
             fi
-            if [ "$attempt" -lt 5 ]; then
+            if [ "$attempt" -lt 10 ]; then
               echo "Railway not ready yet, waiting 60s before retry..."
               sleep 60
             fi
