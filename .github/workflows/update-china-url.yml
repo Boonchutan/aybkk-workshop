@@ -18,17 +18,27 @@ jobs:
       FILE: china-access.md
 
     steps:
-      - name: Fetch tunnel URL from Railway
+      - name: Fetch tunnel URL from Railway (with retry)
         id: rail
         run: |
-          CODE=$(curl -s -o /tmp/rail.json -w '%{http_code}' --max-time 15 \
-            "https://aybkk-ashtanga.up.railway.app/api/china-url" || echo 000)
-          echo "http_code=$CODE"
           URL=""
-          if [ "$CODE" = "200" ]; then
-            URL=$(python3 -c "import json; print(json.load(open('/tmp/rail.json')).get('url',''))" 2>/dev/null || true)
-          fi
-          echo "url=$URL"
+          # On push events Railway may still be rebuilding, so retry up to 5× (5 min window).
+          for attempt in 1 2 3 4 5; do
+            CODE=$(curl -s -o /tmp/rail.json -w '%{http_code}' --max-time 15 \
+              "https://aybkk-ashtanga.up.railway.app/api/china-url" || echo 000)
+            echo "attempt=$attempt http_code=$CODE"
+            if [ "$CODE" = "200" ]; then
+              URL=$(python3 -c "import json; print(json.load(open('/tmp/rail.json')).get('url',''))" 2>/dev/null || true)
+              if [ -n "$URL" ]; then
+                echo "Got tunnel URL on attempt $attempt: $URL"
+                break
+              fi
+            fi
+            if [ "$attempt" -lt 5 ]; then
+              echo "Railway not ready yet, waiting 60s before retry..."
+              sleep 60
+            fi
+          done
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
       - name: Build updated china-access.md
@@ -49,17 +59,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get current file SHA (needed for updates)
           SHA=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/$REPO/contents/$FILE" \
-            | python3 -c "import json,sys; print(json.load(sys.stdin)['sha'])")
+            | python3 -c "import json,sys; print(json.load(sys.stdin)['sha'])" || true)
+          if [ -z "$SHA" ]; then
+            echo "Could not fetch current file SHA, skipping update"
+            exit 0
+          fi
           echo "Current SHA: $SHA"
 
-          # Base64-encode the new content
           CONTENT=$(base64 -w0 /tmp/china-access.md)
 
-          # PUT the updated file
           RESULT=$(curl -sf -X PUT \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
@@ -67,5 +78,5 @@ jobs:
             "https://api.github.com/repos/$REPO/contents/$FILE" \
             -d "{\"message\":\"chore: update China access URL [skip ci]\",\"content\":\"$CONTENT\",\"sha\":\"$SHA\"}" \
             | python3 -c "import json,sys; d=json.load(sys.stdin); print('Updated to', d['content']['sha'])" \
-            2>&1 || echo "API PUT failed")
+            2>&1 || echo "API PUT failed (SHA conflict or network error)")
           echo "$RESULT"
