@@ -1,4 +1,7 @@
-# cloudflared is downloaded at runtime by server.js (startChinaTunnel) if not
-# found in PATH. Runtime download to /tmp avoids all build-time exclusion issues.
+# curl is needed at runtime for cloudflared download in server.js (startChinaTunnel).
+# cloudflared itself is downloaded by server.js at startup if not already present.
+[phases.setup]
+nixPkgs = ["curl"]
+
 [phases.install]
 cmds = ["npm install --ignore-scripts"]
