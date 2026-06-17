@@ -1,7 +1,7 @@
-# Force npm install (not npm ci) so Railway accepts new dependencies
-# added to package.json before the lock file is updated locally.
+# --ignore-scripts skips all postinstall hooks (incl. cloudflared binary download)
+# so npm install always succeeds. We download cloudflared binary separately.
 [phases.install]
 cmds = [
-  "npm install",
-  "curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o ./cloudflared && chmod +x ./cloudflared && echo '[nixpacks] cloudflared binary ready' || echo '[nixpacks] cloudflared binary download failed'"
+  "npm install --ignore-scripts",
+  "curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o ./cloudflared && chmod +x ./cloudflared && echo '[nixpacks] cloudflared binary ready' || echo '[nixpacks] WARNING: cloudflared binary download failed, tunnel will be disabled'"
 ]
