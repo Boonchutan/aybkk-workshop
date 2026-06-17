@@ -3040,6 +3040,7 @@ function doSpawnTunnel(cfBin) {
   console.log(`[china-tunnel] starting (binary: ${cfBin})`);
   const child = spawn(cfBin, ['tunnel', '--no-autoupdate', '--url', `http://localhost:${PORT}`], {
     stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env, HOME: '/tmp' },
   });
 
   let found = false;
@@ -3067,6 +3068,51 @@ function doSpawnTunnel(cfBin) {
     setTimeout(startChinaTunnel, 10000);
   });
 }
+
+// GET /api/debug — tunnel diagnostics written to git by GH Actions on 503.
+app.get('/api/debug', (req, res) => {
+  const { existsSync, statSync } = require('fs');
+  const { execSync: ex } = require('child_process');
+  const diag = {
+    ts: new Date().toISOString(),
+    tunnelUrl: process.env.TUNNEL_URL || null,
+    RAILWAY_ENVIRONMENT: process.env.RAILWAY_ENVIRONMENT || null,
+    HOME: process.env.HOME || null,
+    __dirname,
+  };
+
+  const checkPaths = [
+    path.join(__dirname, 'cloudflared-bin'),
+    path.join(__dirname, 'cloudflared'),
+    '/tmp/cloudflared',
+  ];
+  diag.binaries = {};
+  for (const p of checkPaths) {
+    try {
+      if (existsSync(p)) {
+        const st = statSync(p);
+        diag.binaries[p] = { exists: true, size: st.size, mode: '0' + (st.mode & 0o777).toString(8) };
+      } else {
+        diag.binaries[p] = { exists: false };
+      }
+    } catch (e) {
+      diag.binaries[p] = { exists: false, error: e.message };
+    }
+  }
+
+  try { diag.curl = ex('curl --version 2>&1 | head -1', { encoding: 'utf8', timeout: 5000 }).trim(); }
+  catch (e) { diag.curl = 'not found'; }
+
+  try { diag.ls = ex(`ls -la "${__dirname}" 2>&1 | head -20`, { encoding: 'utf8', timeout: 5000 }); }
+  catch (e) { diag.ls = 'error: ' + e.message; }
+
+  if (diag.binaries[checkPaths[0]]?.exists) {
+    try { diag.cfVersion = ex(`"${checkPaths[0]}" --version 2>&1`, { encoding: 'utf8', timeout: 8000 }).trim(); }
+    catch (e) { diag.cfVersion = 'exec failed: ' + e.message; }
+  }
+
+  res.json(diag);
+});
 
 // GET /api/china-url — returns the current China-accessible tunnel URL.
 // Teacher can open this on their device to get the current link to share.
