@@ -350,7 +350,7 @@ router.get('/students', async (req, res) => {
     query += `
       RETURN s.id as id, s.name as name, s.isChineseStudent as isChineseStudent,
              s.classType as classType, s.createdAt as createdAt,
-             s.photoUrl as photoUrl,
+             s.photoUrl as photoUrl, s.location as location, s.workshop as workshop,
              lastDate, assessmentCount
       ORDER BY s.name ASC
     `;
@@ -362,6 +362,10 @@ router.get('/students', async (req, res) => {
       name: r.get('name'),
       isChineseStudent: r.get('isChineseStudent'),
       classType: r.get('classType'),
+      // location/workshop let teacher rosters (e.g. gz-students.html) filter by
+      // city reliably instead of guessing from the id prefix.
+      location: r.get('location') || null,
+      workshop: r.get('workshop') || null,
       photoUrl: r.get('photoUrl') || null,
       createdAt: r.get('createdAt'),
       lastDate: r.get('lastDate'),
