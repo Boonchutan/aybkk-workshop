@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-17 23:02 UTC
+> 最后更新 / Last updated: 2026-06-18 01:40 UTC
 
 ## 今日链接 / Today's Link
 
-**https://logical-size-peer-reg.trycloudflare.com**
+**https://feeling-boolean-somerset-productivity.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
