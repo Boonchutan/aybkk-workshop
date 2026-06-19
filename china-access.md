@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-19 10:04 UTC
+> 最后更新 / Last updated: 2026-06-19 13:49 UTC
 
 ## 今日链接 / Today's Link
 
-**https://desert-objectives-forbes-asks.trycloudflare.com**
+**https://bags-detective-venues-broke.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
