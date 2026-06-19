@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-19 00:12 UTC
+> 最后更新 / Last updated: 2026-06-19 05:30 UTC
 
 ## 今日链接 / Today's Link
 
-**https://voting-demo-jackets-pensions.trycloudflare.com**
+**https://best-typically-kim-parliament.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
