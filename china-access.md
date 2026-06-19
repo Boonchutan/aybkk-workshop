@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-19 22:40 UTC
+> 最后更新 / Last updated: 2026-06-19 23:54 UTC
 
 ## 今日链接 / Today's Link
 
-**https://separated-aspects-cement-towards.trycloudflare.com**
+**https://quotes-legitimate-ppc-por.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
