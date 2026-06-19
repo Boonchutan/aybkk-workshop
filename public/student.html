@@ -515,7 +515,7 @@
       <div id="fromBoonchuCard" class="hidden" style="text-align:left;background:var(--accent-light);border-radius:12px;padding:14px 16px;margin-bottom:18px;border-left:3px solid var(--accent);">
         <div id="fromBoonchuLabel" style="font-family:'Spectral',serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:8px;">From Boonchu</div>
         <div id="fromBoonchuFocus" class="hidden" style="margin-bottom:10px;">
-          <div id="fromBoonchuFocusLabel" style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;">Practice Focus</div>
+          <div id="fromBoonchuFocusLabel" style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;">Next Focus</div>
           <div id="fromBoonchuFocusText" style="font-size:13px;line-height:1.55;color:var(--text-primary);white-space:pre-wrap;"></div>
         </div>
         <div id="fromBoonchuComments"></div>
@@ -921,7 +921,7 @@ const T = {
     myJournalBtn: '📖 我的记录',
     myWeekBtn: '📊 本周报告',
     fromBoonchu: '来自 Boonchu',
-    practiceFocusLabel: '练习重点',
+    practiceFocusLabel: '下次练习重点',
     classSummaryLabel: '课堂总结'
   },
   en: {
@@ -974,7 +974,7 @@ const T = {
     myJournalBtn: '📖 My Journal',
     myWeekBtn: '📊 My Week',
     fromBoonchu: 'From Boonchu',
-    practiceFocusLabel: 'Practice Focus',
+    practiceFocusLabel: 'Next Focus',
     classSummaryLabel: 'Class Summary'
   },
   th: {
@@ -1027,7 +1027,7 @@ const T = {
     myJournalBtn: '📖 บันทึกของฉัน',
     myWeekBtn: '📊 รายงานสัปดาห์',
     fromBoonchu: 'จากครู Boonchu',
-    practiceFocusLabel: 'จุดโฟกัสการฝึก',
+    practiceFocusLabel: 'จุดโฟกัสครั้งหน้า',
     classSummaryLabel: 'สรุปคลาส'
   },
   ru: {
@@ -1080,7 +1080,7 @@ const T = {
     myJournalBtn: '📖 Мой дневник',
     myWeekBtn: '📊 Моя неделя',
     fromBoonchu: 'От Boonchu',
-    practiceFocusLabel: 'Фокус практики',
+    practiceFocusLabel: 'Следующий фокус',
     classSummaryLabel: 'Резюме урока'
   }
 };
@@ -1203,8 +1203,20 @@ if (params.has('id')) {
 }
 
 // Init
-function init() {
+async function init() {
   applyDayColor();
+  // Self-heal: if we arrived with only an id (e.g. a QR code or a shared bare
+  // link with no name), look up the student so we show their daily check-in
+  // instead of bouncing them to the registration screen as if they were new.
+  if (studentId && !studentName) {
+    try {
+      const res = await fetch('/api/journal/student/' + encodeURIComponent(studentId));
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.name) studentName = data.name;
+      }
+    } catch (e) { /* offline — fall through to registration */ }
+  }
   if (studentId && studentName) {
     // Returning student — show welcome, then questions
     document.getElementById('welcomeStudentName').textContent = studentName;
@@ -1496,7 +1508,7 @@ function applyLang(lang) {
   const pfLabel = document.getElementById('fromBoonchuFocusLabel');
   const csLabel = document.getElementById('classSummaryLabel');
   if (fbLabel) fbLabel.textContent = t.fromBoonchu || 'From Boonchu';
-  if (pfLabel) pfLabel.textContent = t.practiceFocusLabel || 'Practice Focus';
+  if (pfLabel) pfLabel.textContent = t.practiceFocusLabel || 'Next Focus';
   if (csLabel) csLabel.textContent = t.classSummaryLabel || 'Class Summary';
   // Location-aware title override (Russian overrides language default)
   if (isRussian) {

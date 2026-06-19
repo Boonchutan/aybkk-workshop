@@ -462,19 +462,44 @@ router.get('/profiles', async (req, res) => {
 
 // GET /api/journal/qr/:studentId - Get QR code for student
 router.get('/qr/:studentId', async (req, res) => {
+  const session = req.driver.session();
   try {
     const { studentId } = req.params;
-    const baseUrl = `${TUNNEL_URL}/student?id=${studentId}`;
-    
-    const qrDataUrl = await QRCode.toDataURL(baseUrl, {
+
+    // Encode the FULL journal link (name + lang + location), not just the id.
+    // A bare /student?id=X lands the student on the registration screen because
+    // student.html only shows the returning-student flow when both id AND name
+    // are present — so an id-only QR makes already-registered students look new.
+    let url = `${TUNNEL_URL}/student.html?id=${encodeURIComponent(studentId)}`;
+    try {
+      const r = await session.run(
+        'MATCH (s:Student {id: $id}) RETURN s.name AS name, coalesce(s.location, s.classType) AS location, s.language AS language',
+        { id: studentId }
+      );
+      if (r.records.length) {
+        const name = r.records[0].get('name');
+        const location = r.records[0].get('location');
+        const language = r.records[0].get('language');
+        if (name) url += `&name=${encodeURIComponent(name)}`;
+        if (language) url += `&lang=${encodeURIComponent(language)}`;
+        if (location) url += `&location=${encodeURIComponent(location)}`;
+      }
+    } catch (lookupErr) {
+      // If the lookup fails, fall back to the id-only link rather than 500.
+      console.warn('QR student lookup failed, using id-only link:', lookupErr.message);
+    }
+
+    const qrDataUrl = await QRCode.toDataURL(url, {
       width: 300,
       margin: 2,
       color: { dark: '#000000', light: '#FFFFFF' }
     });
 
-    res.json({ qrDataUrl, url: baseUrl, studentId });
+    res.json({ qrDataUrl, url, studentId });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
   }
 });
 
