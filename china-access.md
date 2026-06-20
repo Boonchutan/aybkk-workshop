@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-20 08:03 UTC
+> 最后更新 / Last updated: 2026-06-20 10:40 UTC
 
 ## 今日链接 / Today's Link
 
-**https://eventually-domain-inform-diamond.trycloudflare.com**
+**https://simply-routers-passive-least.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
