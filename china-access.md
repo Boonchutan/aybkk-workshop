@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-21 22:05 UTC
+> 最后更新 / Last updated: 2026-06-21 23:43 UTC
 
 ## 今日链接 / Today's Link
 
-**https://readers-rivers-whenever-asthma.trycloudflare.com**
+**https://fraser-oil-navy-rio.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
