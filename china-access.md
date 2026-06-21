@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-20 23:49 UTC
+> 最后更新 / Last updated: 2026-06-21 02:51 UTC
 
 ## 今日链接 / Today's Link
 
-**https://between-massive-downtown-hon.trycloudflare.com**
+**https://astrology-clothing-thumbs-potatoes.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
