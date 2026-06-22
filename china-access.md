@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-22 18:05 UTC
+> 最后更新 / Last updated: 2026-06-22 21:13 UTC
 
 ## 今日链接 / Today's Link
 
-**https://answers-shots-upgrading-meetings.trycloudflare.com**
+**https://clouds-projected-hung-tee.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
