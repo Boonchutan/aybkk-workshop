@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-22 07:44 UTC
+> 最后更新 / Last updated: 2026-06-22 13:22 UTC
 
 ## 今日链接 / Today's Link
 
-**https://chains-sociology-dictionaries-bull.trycloudflare.com**
+**https://told-constitutes-rev-genuine.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
