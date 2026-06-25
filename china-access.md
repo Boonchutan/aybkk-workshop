@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-25 18:24 UTC
+> 最后更新 / Last updated: 2026-06-25 20:33 UTC
 
 ## 今日链接 / Today's Link
 
-**https://conclusions-forever-scroll-trials.trycloudflare.com**
+**https://luther-tennis-hints-cities.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
