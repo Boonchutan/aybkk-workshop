@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-06-25 07:58 UTC
+> 最后更新 / Last updated: 2026-06-25 10:50 UTC
 
 ## 今日链接 / Today's Link
 
-**https://locale-pics-rewards-matters.trycloudflare.com**
+**https://enhancing-sept-photographs-reference.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
