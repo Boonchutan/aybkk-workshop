@@ -1,0 +1,19 @@
+{
+  "name": "aybkk-hermes",
+  "version": "0.1.0",
+  "description": "Hermes — a multi-agent AI system that autonomously builds and manages components for Ashtanga Yoga Bangkok (aybkk.com).",
+  "main": "core/orchestrator.js",
+  "scripts": {
+    "build": "node --experimental-sqlite cli.js",
+    "start": "node --experimental-sqlite server.js",
+    "hermes": "node --experimental-sqlite interfaces/telegram.js",
+    "demo": "node --experimental-sqlite cli.js \"Build a simple booking system for yoga classes\""
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "grammy": "^1.41.1"
+  }
+}
