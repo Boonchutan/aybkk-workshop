@@ -42,10 +42,21 @@ function draftWithClaude(payload) {
 
 async function main() {
   const key = await ensureKey();
-  const week = weekMonday();
-  const prevWeek = weekMonday(new Date(Date.now() - 7 * 86400000));
+  // Sent Sunday evening: the pack is FOR the week starting tomorrow (Monday),
+  // while the recap covers the week ending today.
+  const week = weekMonday(new Date(Date.now() + 86400000));
+  const prevWeek = weekMonday();
   const cities = activeCities();
   if (!cities.length) { console.log('No active cities.'); return; }
+
+  // If this week's pack was already sent (e.g. a manual run earlier in the
+  // week), say so in the header instead of double-asking the groups.
+  let alreadySent = false;
+  try {
+    const st = await httpJson('GET', `${API_BASE}/api/transmission/status?key=${key}`);
+    const entry = st.json && (st.json.weeks || []).find(w => w.week === week);
+    alreadySent = !!(entry && entry.cities.some(c => c.sentAt));
+  } catch { /* non-fatal */ }
 
   const focus = loadJson('curriculum.json').weeks[isoWeekNumber() % 12];
 
@@ -88,7 +99,8 @@ async function main() {
   };
 
   const tag = DRY ? '🧪 TEST · ' : '';
-  const header = `${tag}📮 周日传送 · Sunday Transmission\n周 ${week} · 重点: ${focus.zh}\n\n下面每条消息对应一个城市群，复制粘贴即可。全部发完后，点最后一条里的确认链接。`;
+  const dupNote = alreadySent ? '\n⚠️ 本周已经发过一次，群里发过的话请忽略这条。' : '';
+  const header = `${tag}📮 周日传送 · Sunday Transmission\n周 ${week} · 重点: ${focus.zh}${dupNote}\n\n下面每条消息对应一个城市群，复制粘贴即可。全部发完后，点最后一条里的确认链接。`;
   await notifyBoonchu(header);
 
   for (const c of cities) {
