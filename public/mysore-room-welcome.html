@@ -332,7 +332,7 @@
 </head>
 <body>
   <div class="header">
-    <img src="https://aybkk-ashtanga.up.railway.app/logo.png" alt="AYBKK" onerror="this.style.display='none'">
+    <img src="/logo.png" alt="AYBKK" onerror="this.style.display='none'">
     <h1>BOONCHU'S MYSORE ROOM</h1>
     <p class="by" id="headerSub">Online Mysore with Boonchu Tanti</p>
     <div class="lang-switch">
@@ -404,7 +404,7 @@
   </div>
 
 <script>
-var API = 'https://aybkk-ashtanga.up.railway.app/api';
+var API = '/api';
 
 var T = {
   en: {
@@ -569,7 +569,7 @@ function setLang(lang) {
   document.getElementById('calLink').setAttribute('href', 'season1.html?lang=' + lang);
 
   if (studentId) {
-    var jl = 'https://aybkk-ashtanga.up.railway.app/student.html?id=' + encodeURIComponent(studentId) +
+    var jl = window.location.origin + '/student.html?id=' + encodeURIComponent(studentId) +
       '&name=' + encodeURIComponent(studentName) +
       '&lang=' + lang + '&location=mysore-room';
     document.getElementById('journalBtn').setAttribute('href', jl);

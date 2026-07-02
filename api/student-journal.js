@@ -8,9 +8,21 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 
-const TUNNEL_URL = process.env.TUNNEL_URL || process.env.RAILWAY_PUBLIC_DOMAIN
-  ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
-  : 'https://aybkk-ashtanga.up.railway.app';
+// Returns the client-facing origin for a request.  When the app sits behind
+// a proxy (Cloudflare Worker, nginx, etc.) the proxy sets X-Forwarded-Host
+// to the public domain; we prefer that over the Railway hostname so that
+// QR codes and journal links work for users who access via the proxy.
+// Quick-tunnel hosts (trycloudflare.com) rotate on every server restart, so a
+// stored link or QR embedding one dies with the tunnel — those always resolve
+// to the stable domain instead. Browsing through the tunnel is unaffected.
+const STABLE_ORIGIN = process.env.PUBLIC_BASE_URL || 'https://aybkk-ashtanga.up.railway.app';
+function siteOrigin(req) {
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim();
+  if (!host) return STABLE_ORIGIN;
+  if (/\.trycloudflare\.com$/i.test(host.split(':')[0])) return STABLE_ORIGIN;
+  return `${proto}://${host}`;
+}
 
 // Debug: test route
 router.get('/_test', (req, res) => {
@@ -25,11 +37,17 @@ router.get('/_test', (req, res) => {
 router.post('/checkin', async (req, res) => {
   const session = req.driver.session();
   try {
-    const { studentId, studentName, lastAsana, vinyasa, bandha, stableToday, difficultToday, lastAsanaNote, practiceNotes, sessionDate, platform, location } = req.body;
+    const { studentId, studentName, lastAsana, vinyasa, bandha, stableToday, difficultToday, lastAsanaNote, practiceNotes, sessionDate, platform, location, daysPracticed, bodyFeel, weekOf } = req.body;
 
-    // Validate required fields
-    if (!vinyasa || !bandha || !stableToday || !difficultToday) {
+    // Two check-in shapes share this route:
+    //  - classic: the original four self-assessment answers
+    //  - tap: the ten-second weekly check-in (daysPracticed 0-6, bodyFeel), no writing required
+    const isTap = daysPracticed !== undefined && daysPracticed !== null && daysPracticed !== '';
+    if (!isTap && (!vinyasa || !bandha || !stableToday || !difficultToday)) {
       return res.status(400).json({ error: 'Missing required fields: vinyasa, bandha, stableToday, difficultToday' });
+    }
+    if (isTap && (isNaN(Number(daysPracticed)) || Number(daysPracticed) < 0 || Number(daysPracticed) > 7)) {
+      return res.status(400).json({ error: 'daysPracticed must be 0-7' });
     }
 
     // Check if student exists
@@ -102,6 +120,7 @@ router.post('/checkin', async (req, res) => {
       MATCH (s:Student {id: $studentId})
       CREATE (sa:SelfAssessment {
         id: $id,
+        type: $type,
         lastAsana: $lastAsana,
         lastAsanaNote: $lastAsanaNote,
         vinyasa: $vinyasa,
@@ -109,6 +128,9 @@ router.post('/checkin', async (req, res) => {
         stableToday: $stableToday,
         difficultToday: $difficultToday,
         practiceNotes: $practiceNotes,
+        daysPracticed: $daysPracticed,
+        bodyFeel: $bodyFeel,
+        weekOf: $weekOf,
         sessionDate: $sessionDate,
         platform: $platform,
         location: $location,
@@ -120,13 +142,17 @@ router.post('/checkin', async (req, res) => {
     `, {
       id: checkinId,
       studentId: studentIdVal,
+      type: isTap ? 'tap' : 'classic',
       lastAsana: lastAsana || '',
       lastAsanaNote: lastAsanaNote || '',
-      vinyasa,
-      bandha,
-      stableToday,
-      difficultToday,
+      vinyasa: vinyasa || '',
+      bandha: bandha || '',
+      stableToday: stableToday || '',
+      difficultToday: difficultToday || '',
       practiceNotes: practiceNotes || '',
+      daysPracticed: isTap ? Math.round(Number(daysPracticed)) : null,
+      bodyFeel: bodyFeel || null,
+      weekOf: weekOf || null,
       sessionDate: sessionDate || new Date().toISOString().split('T')[0],
       platform: platform || 'web',
       location: location || 'unknown',
@@ -161,7 +187,7 @@ router.post('/profile', async (req, res) => {
     const now = new Date().toISOString();
     const lang = language || 'zh';
     const loc = location || 'unknown';
-    const journalLink = `${TUNNEL_URL}/student.html?id=${studentId}`
+    const journalLink = `${siteOrigin(req)}/student.html?id=${studentId}`
       + `&name=${encodeURIComponent(name)}`
       + `&lang=${lang}`
       + `&location=${loc}`;
@@ -218,7 +244,7 @@ router.post('/profile', async (req, res) => {
     });
 
     // Generate QR code for this student
-    const qrUrl = `${TUNNEL_URL}/student?id=${studentId}`;
+    const qrUrl = `${siteOrigin(req)}/student?id=${studentId}`;
     const qrDataUrl = await QRCode.toDataURL(qrUrl, {
       width: 300,
       margin: 2,
@@ -242,6 +268,46 @@ router.post('/profile', async (req, res) => {
 });
 
 // GET /api/journal/student/:id - Get student with history (PracticeLog + SelfAssessment)
+// GET /api/journal/weekly-recap?workshop=<tag>&weekOf=<YYYY-MM-DD (Monday)>
+// Cohort stats for the Sunday Transmission pack: how many checked in during
+// the week, how many practiced 4+ days (tap check-ins), photos shared.
+router.get('/weekly-recap', async (req, res) => {
+  const { workshop, weekOf } = req.query;
+  if (!workshop || !weekOf || !/^\d{4}-\d{2}-\d{2}$/.test(weekOf)) {
+    return res.status(400).json({ error: 'workshop and weekOf=YYYY-MM-DD required' });
+  }
+  const start = weekOf + 'T00:00:00Z';
+  const endDate = new Date(weekOf + 'T00:00:00Z');
+  endDate.setUTCDate(endDate.getUTCDate() + 7);
+  const end = endDate.toISOString();
+  const session = req.driver.session();
+  try {
+    const result = await session.run(`
+      MATCH (s:Student) WHERE s.workshop = $workshop
+      OPTIONAL MATCH (s)-[:HAS_SELF_ASSESSMENT]->(sa:SelfAssessment)
+      WHERE sa.checkedInAt >= datetime($start) AND sa.checkedInAt < datetime($end)
+      WITH s, collect(sa) AS entries
+      RETURN count(s) AS cohort,
+             sum(CASE WHEN size(entries) > 0 THEN 1 ELSE 0 END) AS checkedIn,
+             sum(CASE WHEN any(e IN entries WHERE e.daysPracticed >= 4) THEN 1 ELSE 0 END) AS practiced4plus,
+             sum(reduce(acc = 0, e IN entries | acc + CASE WHEN e.photoUrls IS NOT NULL THEN 1 ELSE 0 END)) AS photos
+    `, { workshop, start, end });
+    const r = result.records[0];
+    const num = v => (v && typeof v.toNumber === 'function') ? v.toNumber() : Number(v) || 0;
+    res.json({
+      workshop, weekOf,
+      cohort: num(r.get('cohort')),
+      checkedIn: num(r.get('checkedIn')),
+      practiced4plus: num(r.get('practiced4plus')),
+      photos: num(r.get('photos'))
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
 router.get('/student/:id', async (req, res) => {
   const session = req.driver.session();
   try {
@@ -302,6 +368,8 @@ router.get('/student/:id', async (req, res) => {
       photoUrl: s.photoUrl || null,
       isChineseStudent: s.isChineseStudent,
       classType: s.classType,
+      language: s.language || null,
+      location: s.location || null,
       createdAt: s.createdAt,
       assessments: allAssessments,
       assessmentCount: allAssessments.length
@@ -345,7 +413,7 @@ router.get('/students', async (req, res) => {
     query += `
       RETURN s.id as id, s.name as name, s.isChineseStudent as isChineseStudent,
              s.classType as classType, s.createdAt as createdAt,
-             s.photoUrl as photoUrl,
+             s.photoUrl as photoUrl, s.location as location, s.workshop as workshop,
              lastDate, assessmentCount
       ORDER BY s.name ASC
     `;
@@ -357,6 +425,10 @@ router.get('/students', async (req, res) => {
       name: r.get('name'),
       isChineseStudent: r.get('isChineseStudent'),
       classType: r.get('classType'),
+      // location/workshop let teacher rosters (e.g. gz-students.html) filter by
+      // city reliably instead of guessing from the id prefix.
+      location: r.get('location') || null,
+      workshop: r.get('workshop') || null,
       photoUrl: r.get('photoUrl') || null,
       createdAt: r.get('createdAt'),
       lastDate: r.get('lastDate'),
@@ -461,41 +533,48 @@ router.get('/profiles', async (req, res) => {
 });
 
 // GET /api/journal/qr/:studentId - Get QR code for student
+// The QR must deep-link the student straight into THEIR journal, in the right
+// language and workshop. Encoding only ?id= dropped the student on a blank
+// registration form (no name) defaulting to the Bangkok/English experience
+// (no lang/location), so a Guangzhou student scanning their code could neither
+// recognise the page nor write into their existing journal. We look the student
+// up and carry name + language + location into the link (query overrides win).
 router.get('/qr/:studentId', async (req, res) => {
   const session = req.driver.session();
   try {
     const { studentId } = req.params;
 
-    // Encode the FULL journal link (name + lang + location), not just the id.
-    // A bare /student?id=X lands the student on the registration screen because
-    // student.html only shows the returning-student flow when both id AND name
-    // are present — so an id-only QR makes already-registered students look new.
-    let url = `${TUNNEL_URL}/student.html?id=${encodeURIComponent(studentId)}`;
+    let name = req.query.name || '';
+    let language = req.query.lang || '';
+    let location = req.query.location || '';
     try {
       const r = await session.run(
-        'MATCH (s:Student {id: $id}) RETURN s.name AS name, coalesce(s.location, s.classType) AS location, s.language AS language',
+        'MATCH (s:Student {id: $id}) RETURN s.name AS name, s.language AS language, s.location AS location',
         { id: studentId }
       );
       if (r.records.length) {
-        const name = r.records[0].get('name');
-        const location = r.records[0].get('location');
-        const language = r.records[0].get('language');
-        if (name) url += `&name=${encodeURIComponent(name)}`;
-        if (language) url += `&lang=${encodeURIComponent(language)}`;
-        if (location) url += `&location=${encodeURIComponent(location)}`;
+        name = name || r.records[0].get('name') || '';
+        language = language || r.records[0].get('language') || '';
+        location = location || r.records[0].get('location') || '';
       }
     } catch (lookupErr) {
-      // If the lookup fails, fall back to the id-only link rather than 500.
-      console.warn('QR student lookup failed, using id-only link:', lookupErr.message);
+      // Non-fatal: fall back to an id-only link if the lookup fails.
+      console.warn('QR student lookup failed:', lookupErr.message);
     }
 
-    const qrDataUrl = await QRCode.toDataURL(url, {
+    const qp = new URLSearchParams({ id: studentId });
+    if (name) qp.set('name', name);
+    if (language) qp.set('lang', language);
+    if (location) qp.set('location', location);
+    const targetUrl = `${siteOrigin(req)}/student.html?${qp.toString()}`;
+
+    const qrDataUrl = await QRCode.toDataURL(targetUrl, {
       width: 300,
       margin: 2,
       color: { dark: '#000000', light: '#FFFFFF' }
     });
 
-    res.json({ qrDataUrl, url, studentId });
+    res.json({ qrDataUrl, url: targetUrl, studentId });
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -514,7 +593,7 @@ router.post('/qr/batch', async (req, res) => {
     }
 
     const results = [];
-    const baseUrl = `${TUNNEL_URL}/student`;
+    const baseUrl = `${siteOrigin(req)}/student`;
 
     for (const studentId of studentIds) {
       const qrDataUrl = await QRCode.toDataURL(`${baseUrl}?id=${studentId}`, {

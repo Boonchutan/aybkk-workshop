@@ -213,7 +213,7 @@
   </div>
 
   <script>
-    const API = 'https://aybkk-ashtanga.up.railway.app/api';
+    const API = '/api';
 
     async function loadStudents() {
       document.getElementById('list').innerHTML = '<div class="empty">Loading...</div>';
@@ -238,7 +238,7 @@
         return;
       }
       document.getElementById('list').innerHTML = gz.map(s => {
-        const link = `https://aybkk-ashtanga.up.railway.app/student.html?id=${s.id}&name=${encodeURIComponent(s.name)}&lang=zh&location=guangzhou`;
+        const link = `${window.location.origin}/student.html?id=${s.id}&name=${encodeURIComponent(s.name)}&lang=zh&location=guangzhou`;
         const checkins = s.assessmentCount || 0;
         return `<div class="student-card">
           <div class="student-info">

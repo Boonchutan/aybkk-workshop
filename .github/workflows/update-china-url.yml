@@ -1,0 +1,126 @@
+name: Update China Access URL
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      REPO: boonchutan/aybkk-workshop
+      FILE: china-access.md
+      DEBUG_FILE: debug-china.txt
+
+    steps:
+      - name: Fetch tunnel URL from Railway (with retry)
+        id: rail
+        run: |
+          URL=""
+          LAST_CODE=""
+          # On push events Railway may still be rebuilding (takes up to 8 min).
+          # Retry every 60s for up to 10 attempts (10 min window).
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            CODE=$(curl -s -o /tmp/rail.json -w '%{http_code}' --max-time 15 \
+              "https://aybkk-ashtanga.up.railway.app/api/china-url" || echo 000)
+            echo "attempt=$attempt http_code=$CODE body=$(cat /tmp/rail.json)"
+            LAST_CODE="$CODE"
+            if [ "$CODE" = "200" ]; then
+              URL=$(python3 -c "import json; print(json.load(open('/tmp/rail.json')).get('url',''))" 2>/dev/null || true)
+              if [ -n "$URL" ]; then
+                echo "Got tunnel URL on attempt $attempt: $URL"
+                break
+              fi
+            fi
+            if [ "$attempt" -lt 10 ]; then
+              echo "Railway not ready yet, waiting 60s before retry..."
+              sleep 60
+            fi
+          done
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "last_code=$LAST_CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch debug info from Railway (on 503)
+        id: debug
+        if: steps.rail.outputs.url == ''
+        run: |
+          DEBUG_BODY=$(curl -s --max-time 15 "https://aybkk-ashtanga.up.railway.app/api/debug" 2>&1 || echo "curl failed")
+          echo "debug_body=$DEBUG_BODY"
+          TS=$(date -u '+%Y-%m-%d %H:%M UTC')
+          printf 'Debug captured: %s\nLast /api/china-url code: %s\n\n%s\n' \
+            "$TS" "${{ steps.rail.outputs.last_code }}" "$DEBUG_BODY" > /tmp/debug-china.txt
+          cat /tmp/debug-china.txt
+
+      - name: Build updated china-access.md
+        env:
+          TUNNEL_URL: ${{ steps.rail.outputs.url }}
+        run: |
+          TS=$(date -u '+%Y-%m-%d %H:%M UTC')
+          if [ -n "$TUNNEL_URL" ]; then
+            printf '# 🇨🇳 中国学员访问链接 / China Student Access\n\n> 最后更新 / Last updated: %s\n\n## 今日链接 / Today'"'"'s Link\n\n**%s**\n\n点击上方链接，或复制到浏览器地址栏打开。\nTap the link above, or copy it into your browser.\n\n- 无需 VPN / No VPN needed\n- 手机微信浏览器也可使用 / Works in WeChat browser\n\n---\n\n链接每次服务器重启后会改变。如果链接失效，请通知老师获取新链接。\nThe URL changes if the server restarts. If it stops working, ask the teacher for the new link.\n' \
+              "$TS" "$TUNNEL_URL" > /tmp/china-access.md
+          else
+            printf '# 🇨🇳 中国学员访问链接 / China Student Access\n\n> 最后检查 / Last checked: %s\n\n⏳ 服务器启动中，请 2–3 分钟后刷新此页面。\nServer is starting, please refresh in 2-3 minutes.\n' \
+              "$TS" > /tmp/china-access.md
+          fi
+          cat /tmp/china-access.md
+
+      - name: Update china-access.md via GitHub Contents API
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/contents/$FILE" \
+            | python3 -c "import json,sys; print(json.load(sys.stdin)['sha'])" || true)
+          if [ -z "$SHA" ]; then
+            echo "Could not fetch current file SHA, skipping update"
+            exit 0
+          fi
+          echo "Current SHA: $SHA"
+
+          CONTENT=$(base64 -w0 /tmp/china-access.md)
+
+          RESULT=$(curl -sf -X PUT \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/$REPO/contents/$FILE" \
+            -d "{\"message\":\"chore: update China access URL [skip ci]\",\"content\":\"$CONTENT\",\"sha\":\"$SHA\"}" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print('Updated to', d['content']['sha'])" \
+            2>&1 || echo "API PUT failed (SHA conflict or network error)")
+          echo "$RESULT"
+
+      - name: Update debug-china.txt via GitHub Contents API (on 503)
+        if: steps.rail.outputs.url == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA=$(curl -sf -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/contents/$DEBUG_FILE" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['sha'])" 2>/dev/null || true)
+
+          CONTENT=$(base64 -w0 /tmp/debug-china.txt)
+
+          if [ -n "$SHA" ]; then
+            BODY="{\"message\":\"debug: tunnel diagnostics [skip ci]\",\"content\":\"$CONTENT\",\"sha\":\"$SHA\"}"
+          else
+            BODY="{\"message\":\"debug: tunnel diagnostics [skip ci]\",\"content\":\"$CONTENT\"}"
+          fi
+
+          RESULT=$(curl -sf -X PUT \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/$REPO/contents/$DEBUG_FILE" \
+            -d "$BODY" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print('debug-china.txt updated to', d['content']['sha'])" \
+            2>&1 || echo "debug PUT failed (SHA conflict or network error)")
+          echo "$RESULT"

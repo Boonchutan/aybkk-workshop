@@ -100,6 +100,37 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(UPLOAD_DIR));
 
+// Resolve the public-facing base URL, respecting Cloudflare Worker / reverse-proxy headers.
+// x-forwarded-host is set by workers/china-proxy so journal links use the proxy domain.
+// Quick-tunnel hosts (trycloudflare.com) rotate on every restart; links stored with one
+// die with the tunnel, so they always resolve to the stable domain instead.
+const STABLE_BASE_URL = process.env.PUBLIC_BASE_URL || 'https://aybkk-ashtanga.up.railway.app';
+function getBaseUrl(req) {
+  const proto = req.get('x-forwarded-proto') || req.protocol || 'https';
+  const host = req.get('x-forwarded-host') || req.get('host') || '';
+  if (!host || /\.trycloudflare\.com$/i.test(host.split(':')[0])) return STABLE_BASE_URL;
+  return `${proto}://${host}`;
+}
+
+// ─── Short orientation routes ────────────────────────────────────────────────
+// Clean, memorable entry points for each workshop orientation page, so links
+// shared in WeChat read e.g. <domain>/su instead of /orientation-suzhou.html.
+const ORIENTATION_SHORTCUTS = {
+  su: 'orientation-suzhou.html',
+  gz: 'orientation-gz.html',
+  bkk: 'orientation-bkk.html',
+  hf: 'orientation-hefei.html',
+};
+for (const [slug, file] of Object.entries(ORIENTATION_SHORTCUTS)) {
+  app.get('/' + slug, (req, res) => {
+    if (fs.existsSync(path.join(__dirname, 'public', file))) {
+      res.sendFile(path.join(__dirname, 'public', file));
+    } else {
+      res.redirect(302, '/' + file);
+    }
+  });
+}
+
 // ─── Cloudinary Setup ────────────────────────────────────────────────────────
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
@@ -362,6 +393,10 @@ app.use((req, res, next) => {
 // Student Journal API Routes
 const studentJournal = require('./api/student-journal');
 app.use('/api/journal', studentJournal);
+
+// Weekly Transmission tracking (Sunday ritual: sent/confirm/status)
+const transmission = require('./api/transmission');
+app.use('/api/transmission', transmission);
 
 // POST /api/journal/ai-summary/:studentId — DeepSeek bilingual progress summary
 app.post('/api/journal/ai-summary/:studentId', async (req, res) => {
@@ -724,7 +759,7 @@ app.post('/api/orientations', async (req, res) => {
     const { name, wechat, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, workshop, gameResults } = req.body;
     const studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     const datetime = new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=guangzhou';
 
     const session = driver.session();
@@ -828,7 +863,7 @@ app.post('/api/orientations/bkk', async (req, res) => {
     const { name, wechat, contactType, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, gameResults } = req.body;
     const studentId = 'bkk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     const datetime = new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'th') + '&location=bangkok';
 
     const session = driver.session();
@@ -1388,7 +1423,7 @@ app.post('/api/orientations/ru', async (req, res) => {
     if (!city || !['spb', 'moscow'].includes(city)) return res.status(400).json({ success: false, error: 'city must be spb or moscow' });
 
     const datetime = new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const tgChatStr = String(telegramChatId || '');
     const emailStr = (email || '').trim().toLowerCase();
 
@@ -1556,7 +1591,7 @@ app.post('/api/orientations/online', async (req, res) => {
     if (!contact) return res.status(400).json({ success: false, error: 'contact required' });
 
     const datetime = date || new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const contactStr = String(contact || '').trim().toLowerCase();
     const contactTypeStr = String(contactType || 'telegram').trim().toLowerCase();
 
@@ -1689,7 +1724,7 @@ app.post('/api/orientations/private', async (req, res) => {
     if (!contact) return res.status(400).json({ success: false, error: 'contact required' });
 
     const datetime = date || new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const contactStr = String(contact || '').trim().toLowerCase();
     const contactTypeStr = String(contactType || 'telegram').trim().toLowerCase();
 
@@ -2989,6 +3024,176 @@ app.get('/api/tags', async (req, res) => {
   }
 });
 
+// Cloudflare Quick Tunnel — no account needed.
+// Gives a *.trycloudflare.com URL routed through Cloudflare's HK/SG edge,
+// making the app reachable from mainland China without a VPN.
+// The URL is stable for the lifetime of this process (changes on Railway
+// restart).  The teacher posts it to the workshop WeChat group each day.
+// Download a file over HTTPS using Node's built-in module (no curl needed —
+// the Railway runtime image has no curl). Follows GitHub's 302 redirects to
+// the release-asset CDN. Writes to a temp path then renames atomically.
+function downloadBinary(url, dest, cb, redirects = 0) {
+  const https = require('https');
+  const fs = require('fs');
+  if (redirects > 6) return cb(new Error('too many redirects'));
+  https.get(url, { headers: { 'User-Agent': 'aybkk-server' } }, (res) => {
+    if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+      res.resume();
+      return downloadBinary(res.headers.location, dest, cb, redirects + 1);
+    }
+    if (res.statusCode !== 200) {
+      res.resume();
+      return cb(new Error('HTTP ' + res.statusCode));
+    }
+    const tmp = dest + '.dl';
+    const file = fs.createWriteStream(tmp);
+    res.pipe(file);
+    file.on('finish', () => file.close(() => {
+      try {
+        fs.chmodSync(tmp, 0o755);
+        fs.renameSync(tmp, dest);
+        cb(null);
+      } catch (e) { cb(e); }
+    }));
+    file.on('error', (e) => cb(e));
+  }).on('error', (e) => cb(e));
+}
+
+function startChinaTunnel() {
+  const { existsSync } = require('fs');
+
+  // 1. Build-time binary at cloudflared-bin (not excluded by .gitignore/.dockerignore).
+  let cfBin = path.join(__dirname, 'cloudflared-bin');
+  // Also try 'cloudflared' in case someone placed it manually.
+  if (!existsSync(cfBin)) cfBin = path.join(__dirname, 'cloudflared');
+  // 2. nixPkgs system binary in PATH.
+  if (!existsSync(cfBin)) {
+    try {
+      const { execSync: ex } = require('child_process');
+      cfBin = ex('which cloudflared', { encoding: 'utf8', timeout: 5000 }).trim();
+    } catch (_) { cfBin = ''; }
+  }
+
+  if (cfBin) {
+    doSpawnTunnel(cfBin);
+    return;
+  }
+
+  // 3. Runtime download via Node https (no curl dependency).
+  const tmpBin = '/tmp/cloudflared';
+  if (existsSync(tmpBin)) {
+    doSpawnTunnel(tmpBin);
+    return;
+  }
+
+  console.log('[china-tunnel] binary not found; downloading cloudflared via Node https...');
+  downloadBinary(
+    'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64',
+    tmpBin,
+    (err) => {
+      if (err) {
+        console.warn('[china-tunnel] runtime download failed:', err.message, '— retrying in 30s');
+        setTimeout(startChinaTunnel, 30000);
+        return;
+      }
+      console.log('[china-tunnel] download complete — starting tunnel');
+      doSpawnTunnel(tmpBin);
+    }
+  );
+}
+
+function doSpawnTunnel(cfBin) {
+  const { spawn } = require('child_process');
+  console.log(`[china-tunnel] starting (binary: ${cfBin})`);
+  const child = spawn(cfBin, ['tunnel', '--no-autoupdate', '--url', `http://localhost:${PORT}`], {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env, HOME: '/tmp' },
+  });
+
+  let found = false;
+  const onData = (data) => {
+    const text = data.toString();
+    process.stdout.write('[cloudflared] ' + text);
+    const match = text.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/);
+    if (match && !found) {
+      found = true;
+      process.env.TUNNEL_URL = match[0];
+      console.log('🇨🇳 ═══════════════════════════════════════════════════');
+      console.log(`🇨🇳  CHINA ACCESS URL: ${match[0]}`);
+      console.log('🇨🇳  Share this link with students in the WeChat group.');
+      console.log('🇨🇳 ═══════════════════════════════════════════════════');
+    }
+  };
+  child.stdout.on('data', onData);
+  child.stderr.on('data', onData);
+
+  child.on('error', (err) => console.warn(`[china-tunnel] spawn error: ${err.message}`));
+  child.on('exit', (code) => {
+    console.warn(`[china-tunnel] cloudflared exited (code ${code}) — restarting in 10s`);
+    process.env.TUNNEL_URL = '';
+    found = false;
+    setTimeout(startChinaTunnel, 10000);
+  });
+}
+
+// GET /api/debug — tunnel diagnostics written to git by GH Actions on 503.
+app.get('/api/debug', (req, res) => {
+  const { existsSync, statSync } = require('fs');
+  const { execSync: ex } = require('child_process');
+  const diag = {
+    ts: new Date().toISOString(),
+    tunnelUrl: process.env.TUNNEL_URL || null,
+    RAILWAY_ENVIRONMENT: process.env.RAILWAY_ENVIRONMENT || null,
+    HOME: process.env.HOME || null,
+    __dirname,
+  };
+
+  const checkPaths = [
+    path.join(__dirname, 'cloudflared-bin'),
+    path.join(__dirname, 'cloudflared'),
+    '/tmp/cloudflared',
+  ];
+  diag.binaries = {};
+  for (const p of checkPaths) {
+    try {
+      if (existsSync(p)) {
+        const st = statSync(p);
+        diag.binaries[p] = { exists: true, size: st.size, mode: '0' + (st.mode & 0o777).toString(8) };
+      } else {
+        diag.binaries[p] = { exists: false };
+      }
+    } catch (e) {
+      diag.binaries[p] = { exists: false, error: e.message };
+    }
+  }
+
+  try { diag.curl = ex('curl --version 2>&1 | head -1', { encoding: 'utf8', timeout: 5000 }).trim(); }
+  catch (e) { diag.curl = 'not found'; }
+
+  try { diag.ls = ex(`ls -la "${__dirname}" 2>&1 | head -20`, { encoding: 'utf8', timeout: 5000 }); }
+  catch (e) { diag.ls = 'error: ' + e.message; }
+
+  if (diag.binaries[checkPaths[0]]?.exists) {
+    try { diag.cfVersion = ex(`"${checkPaths[0]}" --version 2>&1`, { encoding: 'utf8', timeout: 8000 }).trim(); }
+    catch (e) { diag.cfVersion = 'exec failed: ' + e.message; }
+  }
+
+  res.json(diag);
+});
+
+// GET /api/china-url — returns the current China-accessible tunnel URL.
+// Teacher can open this on their device to get the current link to share.
+app.get('/api/china-url', (req, res) => {
+  const url = process.env.TUNNEL_URL;
+  if (url && url.includes('trycloudflare.com')) {
+    res.json({ url, instructions: 'Share this URL with students in China (no VPN needed).' });
+  } else if (url) {
+    res.json({ url, instructions: 'Custom domain or Railway URL.' });
+  } else {
+    res.status(503).json({ error: 'Tunnel not yet started, try again in 30s.' });
+  }
+});
+
 // Start server
 async function start() {
   await testNeo4j();
@@ -2997,6 +3202,12 @@ async function start() {
   app.listen(PORT, () => {
     console.log(`✓ Mission Control running on http://localhost:${PORT}`);
   });
+
+  // Start China tunnel in production (Railway) or when explicitly requested.
+  // Skipped in local dev unless ENABLE_TUNNEL=1 is set.
+  if (process.env.RAILWAY_ENVIRONMENT || process.env.ENABLE_TUNNEL === '1') {
+    startChinaTunnel();
+  }
 
   // Auto-start the Telegram bot as a managed child process when running on Railway
   // (or anywhere RUN_BOT=1 is set). Auto-restarts on crash so it stays alive 24/7.

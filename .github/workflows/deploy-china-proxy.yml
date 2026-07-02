@@ -1,0 +1,48 @@
+name: Deploy China Proxy (Cloudflare Worker)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'workers/china-proxy/**'
+  workflow_dispatch:
+
+jobs:
+  deploy-worker:
+    name: Deploy Cloudflare Worker
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        id: deploy
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: workers/china-proxy
+
+      - name: Update Railway TUNNEL_URL via API
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          # Find these 3 IDs in Railway dashboard → project settings
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
+          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+          WORKER_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ]; then
+            echo "⚠ RAILWAY_TOKEN not set — set TUNNEL_URL=$WORKER_URL manually in Railway"
+            exit 0
+          fi
+          echo "Updating Railway TUNNEL_URL → $WORKER_URL"
+          curl -sf -X POST https://backboard.railway.app/graphql/v2 \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg proj "$RAILWAY_PROJECT_ID" \
+              --arg env  "$RAILWAY_ENVIRONMENT_ID" \
+              --arg svc  "$RAILWAY_SERVICE_ID" \
+              --arg url  "$WORKER_URL" \
+              '{query:"mutation($p:String!,$e:String!,$s:String!,$v:String!){variableUpsert(input:{projectId:$p,environmentId:$e,serviceId:$s,name:\"TUNNEL_URL\",value:$v})}",variables:{p:$proj,e:$env,s:$svc,v:$url}}')"
+          echo "✓ TUNNEL_URL set. Redeploy the Railway service to apply."
