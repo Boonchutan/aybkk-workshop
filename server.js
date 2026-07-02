@@ -394,6 +394,10 @@ app.use((req, res, next) => {
 const studentJournal = require('./api/student-journal');
 app.use('/api/journal', studentJournal);
 
+// Weekly Transmission tracking (Sunday ritual: sent/confirm/status)
+const transmission = require('./api/transmission');
+app.use('/api/transmission', transmission);
+
 // POST /api/journal/ai-summary/:studentId — DeepSeek bilingual progress summary
 app.post('/api/journal/ai-summary/:studentId', async (req, res) => {
   try {

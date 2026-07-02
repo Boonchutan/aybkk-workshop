@@ -37,11 +37,17 @@ router.get('/_test', (req, res) => {
 router.post('/checkin', async (req, res) => {
   const session = req.driver.session();
   try {
-    const { studentId, studentName, lastAsana, vinyasa, bandha, stableToday, difficultToday, lastAsanaNote, practiceNotes, sessionDate, platform, location } = req.body;
+    const { studentId, studentName, lastAsana, vinyasa, bandha, stableToday, difficultToday, lastAsanaNote, practiceNotes, sessionDate, platform, location, daysPracticed, bodyFeel, weekOf } = req.body;
 
-    // Validate required fields
-    if (!vinyasa || !bandha || !stableToday || !difficultToday) {
+    // Two check-in shapes share this route:
+    //  - classic: the original four self-assessment answers
+    //  - tap: the ten-second weekly check-in (daysPracticed 0-6, bodyFeel), no writing required
+    const isTap = daysPracticed !== undefined && daysPracticed !== null && daysPracticed !== '';
+    if (!isTap && (!vinyasa || !bandha || !stableToday || !difficultToday)) {
       return res.status(400).json({ error: 'Missing required fields: vinyasa, bandha, stableToday, difficultToday' });
+    }
+    if (isTap && (isNaN(Number(daysPracticed)) || Number(daysPracticed) < 0 || Number(daysPracticed) > 7)) {
+      return res.status(400).json({ error: 'daysPracticed must be 0-7' });
     }
 
     // Check if student exists
@@ -114,6 +120,7 @@ router.post('/checkin', async (req, res) => {
       MATCH (s:Student {id: $studentId})
       CREATE (sa:SelfAssessment {
         id: $id,
+        type: $type,
         lastAsana: $lastAsana,
         lastAsanaNote: $lastAsanaNote,
         vinyasa: $vinyasa,
@@ -121,6 +128,9 @@ router.post('/checkin', async (req, res) => {
         stableToday: $stableToday,
         difficultToday: $difficultToday,
         practiceNotes: $practiceNotes,
+        daysPracticed: $daysPracticed,
+        bodyFeel: $bodyFeel,
+        weekOf: $weekOf,
         sessionDate: $sessionDate,
         platform: $platform,
         location: $location,
@@ -132,13 +142,17 @@ router.post('/checkin', async (req, res) => {
     `, {
       id: checkinId,
       studentId: studentIdVal,
+      type: isTap ? 'tap' : 'classic',
       lastAsana: lastAsana || '',
       lastAsanaNote: lastAsanaNote || '',
-      vinyasa,
-      bandha,
-      stableToday,
-      difficultToday,
+      vinyasa: vinyasa || '',
+      bandha: bandha || '',
+      stableToday: stableToday || '',
+      difficultToday: difficultToday || '',
       practiceNotes: practiceNotes || '',
+      daysPracticed: isTap ? Math.round(Number(daysPracticed)) : null,
+      bodyFeel: bodyFeel || null,
+      weekOf: weekOf || null,
       sessionDate: sessionDate || new Date().toISOString().split('T')[0],
       platform: platform || 'web',
       location: location || 'unknown',
@@ -254,6 +268,46 @@ router.post('/profile', async (req, res) => {
 });
 
 // GET /api/journal/student/:id - Get student with history (PracticeLog + SelfAssessment)
+// GET /api/journal/weekly-recap?workshop=<tag>&weekOf=<YYYY-MM-DD (Monday)>
+// Cohort stats for the Sunday Transmission pack: how many checked in during
+// the week, how many practiced 4+ days (tap check-ins), photos shared.
+router.get('/weekly-recap', async (req, res) => {
+  const { workshop, weekOf } = req.query;
+  if (!workshop || !weekOf || !/^\d{4}-\d{2}-\d{2}$/.test(weekOf)) {
+    return res.status(400).json({ error: 'workshop and weekOf=YYYY-MM-DD required' });
+  }
+  const start = weekOf + 'T00:00:00Z';
+  const endDate = new Date(weekOf + 'T00:00:00Z');
+  endDate.setUTCDate(endDate.getUTCDate() + 7);
+  const end = endDate.toISOString();
+  const session = req.driver.session();
+  try {
+    const result = await session.run(`
+      MATCH (s:Student) WHERE s.workshop = $workshop
+      OPTIONAL MATCH (s)-[:HAS_SELF_ASSESSMENT]->(sa:SelfAssessment)
+      WHERE sa.checkedInAt >= datetime($start) AND sa.checkedInAt < datetime($end)
+      WITH s, collect(sa) AS entries
+      RETURN count(s) AS cohort,
+             sum(CASE WHEN size(entries) > 0 THEN 1 ELSE 0 END) AS checkedIn,
+             sum(CASE WHEN any(e IN entries WHERE e.daysPracticed >= 4) THEN 1 ELSE 0 END) AS practiced4plus,
+             sum(reduce(acc = 0, e IN entries | acc + CASE WHEN e.photoUrls IS NOT NULL THEN 1 ELSE 0 END)) AS photos
+    `, { workshop, start, end });
+    const r = result.records[0];
+    const num = v => (v && typeof v.toNumber === 'function') ? v.toNumber() : Number(v) || 0;
+    res.json({
+      workshop, weekOf,
+      cohort: num(r.get('cohort')),
+      checkedIn: num(r.get('checkedIn')),
+      practiced4plus: num(r.get('practiced4plus')),
+      photos: num(r.get('photos'))
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
 router.get('/student/:id', async (req, res) => {
   const session = req.driver.session();
   try {
