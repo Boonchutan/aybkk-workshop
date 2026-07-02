@@ -1203,8 +1203,22 @@ if (params.has('id')) {
 }
 
 // Init
-function init() {
+let selfHealLang = null;
+async function init() {
   applyDayColor();
+  // Self-heal: if we arrived with only an id (e.g. a QR code or a shared bare
+  // link with no name), look up the student so we show their daily check-in
+  // instead of bouncing them to the registration screen as if they were new.
+  if (studentId && !studentName) {
+    try {
+      const res = await fetch('/api/journal/student/' + encodeURIComponent(studentId));
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.name) studentName = data.name;
+        if (data && data.language && !langParam && T[data.language]) selfHealLang = data.language;
+      }
+    } catch (e) { /* offline — fall through to registration */ }
+  }
   if (studentId && studentName) {
     // Returning student — show welcome, then questions
     document.getElementById('welcomeStudentName').textContent = studentName;
@@ -1218,6 +1232,8 @@ function init() {
   const defaultLang = isRussian ? 'ru' : 'zh';
   if (langParam && T[langParam]) {
     currentLang = langParam;
+  } else if (selfHealLang) {
+    currentLang = selfHealLang;
   } else {
     currentLang = defaultLang;
   }

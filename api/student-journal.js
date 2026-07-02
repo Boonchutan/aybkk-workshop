@@ -8,23 +8,20 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 
-// Fallback base URL when the request carries no host information.
-// Prefer TUNNEL_URL env var, then Railway's injected public domain.
-// NOTE: parentheses around the ternary matter — without them `||` binds
-// tighter than `?:` and a missing RAILWAY_PUBLIC_DOMAIN yields "https://undefined".
-const TUNNEL_URL = process.env.TUNNEL_URL
-  || (process.env.RAILWAY_PUBLIC_DOMAIN
-        ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
-        : 'https://aybkk-ashtanga.up.railway.app');
-
 // Returns the client-facing origin for a request.  When the app sits behind
 // a proxy (Cloudflare Worker, nginx, etc.) the proxy sets X-Forwarded-Host
 // to the public domain; we prefer that over the Railway hostname so that
 // QR codes and journal links work for users who access via the proxy.
+// Quick-tunnel hosts (trycloudflare.com) rotate on every server restart, so a
+// stored link or QR embedding one dies with the tunnel — those always resolve
+// to the stable domain instead. Browsing through the tunnel is unaffected.
+const STABLE_ORIGIN = process.env.PUBLIC_BASE_URL || 'https://aybkk-ashtanga.up.railway.app';
 function siteOrigin(req) {
   const host = req.headers['x-forwarded-host'] || req.headers.host;
   const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim();
-  return host ? `${proto}://${host}` : TUNNEL_URL;
+  if (!host) return STABLE_ORIGIN;
+  if (/\.trycloudflare\.com$/i.test(host.split(':')[0])) return STABLE_ORIGIN;
+  return `${proto}://${host}`;
 }
 
 // Debug: test route
@@ -317,6 +314,8 @@ router.get('/student/:id', async (req, res) => {
       photoUrl: s.photoUrl || null,
       isChineseStudent: s.isChineseStudent,
       classType: s.classType,
+      language: s.language || null,
+      location: s.location || null,
       createdAt: s.createdAt,
       assessments: allAssessments,
       assessmentCount: allAssessments.length

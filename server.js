@@ -102,9 +102,13 @@ app.use('/uploads', express.static(UPLOAD_DIR));
 
 // Resolve the public-facing base URL, respecting Cloudflare Worker / reverse-proxy headers.
 // x-forwarded-host is set by workers/china-proxy so journal links use the proxy domain.
+// Quick-tunnel hosts (trycloudflare.com) rotate on every restart; links stored with one
+// die with the tunnel, so they always resolve to the stable domain instead.
+const STABLE_BASE_URL = process.env.PUBLIC_BASE_URL || 'https://aybkk-ashtanga.up.railway.app';
 function getBaseUrl(req) {
   const proto = req.get('x-forwarded-proto') || req.protocol || 'https';
-  const host = req.get('x-forwarded-host') || req.get('host') || 'aybkk-ashtanga.up.railway.app';
+  const host = req.get('x-forwarded-host') || req.get('host') || '';
+  if (!host || /\.trycloudflare\.com$/i.test(host.split(':')[0])) return STABLE_BASE_URL;
   return `${proto}://${host}`;
 }
 
