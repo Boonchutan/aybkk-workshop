@@ -115,6 +115,7 @@ const ORIENTATION_SHORTCUTS = {
   su: 'orientation-suzhou.html',
   gz: 'orientation-gz.html',
   bkk: 'orientation-bkk.html',
+  hf: 'orientation-hefei.html',
 };
 for (const [slug, file] of Object.entries(ORIENTATION_SHORTCUTS)) {
   app.get('/' + slug, (req, res) => {
