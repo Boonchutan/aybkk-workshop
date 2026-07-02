@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-07-02 21:46 UTC
+> 最后更新 / Last updated: 2026-07-02 22:52 UTC
 
 ## 今日链接 / Today's Link
 
-**https://peers-happening-travel-nearest.trycloudflare.com**
+**https://scsi-packing-third-study.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
