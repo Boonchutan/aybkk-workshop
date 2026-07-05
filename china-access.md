@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-07-05 19:38 UTC
+> 最后更新 / Last updated: 2026-07-05 20:40 UTC
 
 ## 今日链接 / Today's Link
 
-**https://sale-schedules-species-advocacy.trycloudflare.com**
+**https://composite-proper-collins-thereafter.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
