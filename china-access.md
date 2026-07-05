@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-07-05 22:44 UTC
+> 最后更新 / Last updated: 2026-07-05 23:50 UTC
 
 ## 今日链接 / Today's Link
 
-**https://pattern-behalf-canyon-jeremy.trycloudflare.com**
+**https://wiley-handy-contrary-attacked.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
