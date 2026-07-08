@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-07-08 18:45 UTC
+> 最后更新 / Last updated: 2026-07-08 20:14 UTC
 
 ## 今日链接 / Today's Link
 
-**https://met-tribes-transform-nights.trycloudflare.com**
+**https://rejected-solution-ton-clock.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
