@@ -1,10 +1,10 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-07-08 17:07 UTC
+> 最后更新 / Last updated: 2026-07-08 18:45 UTC
 
 ## 今日链接 / Today's Link
 
-**https://recruiting-intellectual-variety-lender.trycloudflare.com**
+**https://met-tribes-transform-nights.trycloudflare.com**
 
 点击上方链接，或复制到浏览器地址栏打开。
 Tap the link above, or copy it into your browser.
