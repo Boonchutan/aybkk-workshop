@@ -433,5 +433,19 @@
     "journalId": "ea8c2bbe-633e-44d0-a042-ca4563a4d9f7",
     "note": "test student (Boonchu)",
     "practice": ""
+  },
+  {
+    "name": "柴敏 (Chaimin)",
+    "package": "Full",
+    "size": "L",
+    "note": "swapped in, added Jul 9 via Lisa",
+    "practice": ""
+  },
+  {
+    "name": "丽云 (Lisa)",
+    "package": "Host",
+    "size": "",
+    "note": "co-host, tee size TBD",
+    "practice": ""
   }
 ]

@@ -438,5 +438,21 @@
     "journalId": "ea8c2bbe-633e-44d0-a042-ca4563a4d9f7",
     "file": "qr-cards/hefei/HEFEI-055.png",
     "url": "https://cn.aybkk.net/s/HEFEI-055"
+  },
+  {
+    "code": "HEFEI-056",
+    "name": "柴敏 (Chaimin)",
+    "package": "Full",
+    "journalId": "6726f264-fec5-55bc-9f6f-b48ab200c232",
+    "file": "qr-cards/hefei/HEFEI-056.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-056"
+  },
+  {
+    "code": "HEFEI-057",
+    "name": "丽云 (Lisa)",
+    "package": "Host",
+    "journalId": "0cf741cf-6076-5ab1-8a0b-2b74c5dca4f8",
+    "file": "qr-cards/hefei/HEFEI-057.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-057"
   }
 ]

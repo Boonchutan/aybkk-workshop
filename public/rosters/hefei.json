@@ -5,7 +5,7 @@
   "lang": "zh",
   "baseUrl": "https://cn.aybkk.net",
   "qrMode": "short",
-  "generatedAt": "2026-07-09T13:22:41.755Z",
+  "generatedAt": "2026-07-09T13:52:21.174Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -832,6 +832,34 @@
       "phone": "",
       "size": "",
       "note": "test student (Boonchu)",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-056",
+      "journalId": "6726f264-fec5-55bc-9f6f-b48ab200c232",
+      "name": "柴敏 (Chaimin)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "swapped in, added Jul 9 via Lisa",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-057",
+      "journalId": "0cf741cf-6076-5ab1-8a0b-2b74c5dca4f8",
+      "name": "丽云 (Lisa)",
+      "package": "Host",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "co-host, tee size TBD",
       "practice": "",
       "lastAsana": ""
     }
