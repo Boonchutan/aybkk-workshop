@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AYBKK Check-in">
+<meta name="theme-color" content="#0f1512">
+<link rel="manifest" href="/checkin-manifest.webmanifest">
+<title>AYBKK Check-in Station</title>
+<style>
+  :root{
+    --bg:#0f1512; --panel:#18211d; --line:#2b3831; --text:#eef2ee; --muted:#9fb0a6;
+    --green:#1f9d55; --amber:#c98a1a; --red:#c0392b; --accent:#d9a441;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+  body{display:flex;flex-direction:column;min-height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+  header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+  header .title{font-weight:700;font-size:16px;letter-spacing:.3px}
+  header .title small{display:block;color:var(--muted);font-weight:500;font-size:11px}
+  header .spacer{flex:1}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px rgba(0,0,0,.25)}
+  .dot.on{background:var(--green)}
+  select,button,input{font-family:inherit;font-size:15px}
+  select#session{background:#0c1210;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 10px;max-width:52vw}
+  main{flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  #scanWrap{position:relative;flex:1;min-height:220px;background:#000;display:flex;align-items:center;justify-content:center}
+  #video{width:100%;height:100%;object-fit:cover}
+  #reticle{position:absolute;width:62vmin;height:62vmin;max-width:320px;max-height:320px;border:3px solid rgba(255,255,255,.7);border-radius:22px;box-shadow:0 0 0 100vmax rgba(0,0,0,.35)}
+  #camMsg{position:absolute;color:var(--muted);font-size:15px;padding:20px;text-align:center;max-width:80%}
+  .toolbar{display:flex;gap:8px;padding:10px;background:var(--panel);border-top:1px solid var(--line);flex-wrap:wrap}
+  .btn{flex:1;min-width:120px;border:1px solid var(--line);background:#141c18;color:var(--text);
+    padding:13px 12px;border-radius:12px;font-weight:600;text-align:center}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--accent);color:#231a06;border-color:var(--accent)}
+  .stat{padding:8px 14px;background:var(--panel);border-top:1px solid var(--line);color:var(--muted);font-size:13px;display:flex;gap:14px;align-items:center}
+  .stat b{color:var(--text);font-size:15px}
+  /* Result flash overlay */
+  #flash{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:40;text-align:center;padding:24px}
+  #flash.show{display:flex}
+  #flash .mark{font-size:74px;line-height:1}
+  #flash .who{font-size:34px;font-weight:800;margin-top:8px}
+  #flash .sub{font-size:19px;margin-top:6px;opacity:.95}
+  #flash.ok{background:var(--green)} #flash.warn{background:var(--amber);color:#231a06} #flash.no{background:var(--red)} #flash.dup{background:#324a3d}
+  /* Sheet (manual / roster) */
+  #sheet{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:30;align-items:flex-end}
+  #sheet.show{display:flex}
+  #sheetInner{background:var(--panel);width:100%;max-height:82dvh;border-radius:18px 18px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column}
+  #sheetInner h3{margin:0;padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center}
+  #sheetInner h3 .x{margin-left:auto;color:var(--muted);font-size:22px;padding:0 6px}
+  #search{margin:12px 16px;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0c1210;color:var(--text)}
+  #list{overflow:auto;padding:0 8px 16px}
+  .row{display:flex;align-items:center;gap:10px;padding:12px 10px;border-bottom:1px solid var(--line)}
+  .row .nm{font-weight:600}
+  .row .pk{color:var(--muted);font-size:12px}
+  .row .rt{margin-left:auto;font-size:12px;padding:5px 9px;border-radius:999px}
+  .rt.in{background:var(--green);color:#fff}.rt.out{background:#26332c;color:var(--muted)}
+  .banner{background:#3a2410;color:#f4c98a;font-size:13px;padding:8px 14px;text-align:center;display:none}
+  .banner.show{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="title">AYBKK Check-in<small id="wsName">Hefei Workshop</small></div>
+  <div class="spacer"></div>
+  <select id="session" aria-label="Session"></select>
+  <div class="dot" id="net" title="network"></div>
+</header>
+
+<div class="banner" id="secureWarn">Open this page over <b>https</b> (or add it to the Home Screen) so the camera can start.</div>
+
+<main>
+  <div id="scanWrap">
+    <video id="video" playsinline muted></video>
+    <div id="reticle" hidden></div>
+    <div id="camMsg">Tap <b>Start camera</b> to scan cards.</div>
+  </div>
+  <div class="stat">
+    <span>Session: <b id="sCount">0</b>/<b id="sTotal">0</b></span>
+    <span id="syncState">not synced</span>
+    <span style="margin-left:auto" id="rosterState">roster: 0</span>
+  </div>
+  <div class="toolbar">
+    <button class="btn primary" id="startBtn">Start camera</button>
+    <button class="btn" id="manualBtn">Manual</button>
+    <button class="btn" id="rosterBtn">Roster</button>
+    <button class="btn" id="syncBtn">Sync</button>
+    <button class="btn" id="csvBtn">Export CSV</button>
+  </div>
+</main>
+
+<div id="flash" role="alert" aria-live="assertive">
+  <div class="mark"></div><div class="who"></div><div class="sub"></div>
+</div>
+
+<div id="sheet">
+  <div id="sheetInner">
+    <h3><span id="sheetTitle">Check in</span><span class="x" id="sheetClose">✕</span></h3>
+    <input id="search" placeholder="Search name or code…" autocomplete="off">
+    <div id="list"></div>
+  </div>
+</div>
+
+<canvas id="cv" hidden></canvas>
+<script src="/vendor/jsQR.js"></script>
+<script>
+(() => {
+  "use strict";
+  const WORKSHOP = "hefei";
+  const LS_ROSTER = "aybkk_roster_" + WORKSHOP;
+  const LS_ATT    = "aybkk_att_" + WORKSHOP;
+  const LS_SESS   = "aybkk_sess_" + WORKSHOP;
+  const $ = s => document.querySelector(s);
+
+  let roster = { workshop: WORKSHOP, title: "Hefei Workshop", lang: "zh", sessions: [], students: [] };
+  let byCode = new Map(), byJournal = new Map();
+  let attendance = [];           // [{id,journalId,name,package,session,sessionDate,checkedInAt,eligible,source,synced}]
+  let session = null;            // current session code
+  let stream = null, scanning = false, lastHit = { key: "", t: 0 };
+
+  // ---------- storage ----------
+  const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+  function indexRoster() {
+    byCode = new Map(); byJournal = new Map();
+    (roster.students || []).forEach(s => {
+      if (s.id) byCode.set(String(s.id).toUpperCase(), s);
+      if (s.journalId) byJournal.set(String(s.journalId).toLowerCase(), s);
+    });
+  }
+
+  async function initRoster() {
+    const cached = load(LS_ROSTER, null);
+    if (cached && cached.students) { roster = cached; }
+    // Try to refresh from server when possible (network-first, cache fallback)
+    try {
+      const r = await fetch("/rosters/hefei.json", { cache: "no-store" });
+      if (r.ok) { const j = await r.json(); if (j && j.students) { roster = j; save(LS_ROSTER, roster); } }
+    } catch (e) { /* offline — cached roster is fine */ }
+    indexRoster();
+    buildSessions();
+    render();
+  }
+
+  function buildSessions() {
+    const sel = $("#session"); sel.innerHTML = "";
+    const sessions = (roster.sessions && roster.sessions.length) ? roster.sessions
+      : [{ code: "GENERAL", label: "General" }];
+    sessions.forEach(s => {
+      const o = document.createElement("option");
+      o.value = s.code; o.textContent = s.label || s.code;
+      sel.appendChild(o);
+    });
+    session = load(LS_SESS, null) || sessions[0].code;
+    sel.value = session;
+    $("#wsName").textContent = roster.title || "Workshop";
+    sel.onchange = () => { session = sel.value; save(LS_SESS, session); render(); };
+  }
+
+  // ---------- scan parsing ----------
+  // Accepts: full URL (.../student.html?id=UUID), short link (.../s/HEFEI-001),
+  //          bare code "HEFEI-001", or a bare uuid.
+  function parseScan(text) {
+    text = (text || "").trim();
+    let journalId = null, code = null, name = null;
+    try {
+      const u = new URL(text);
+      if (u.searchParams.get("id")) journalId = u.searchParams.get("id");
+      if (u.searchParams.get("name")) name = u.searchParams.get("name");
+      const m = u.pathname.match(/\/s\/([^/?#]+)/i);
+      if (m) code = decodeURIComponent(m[1]);
+    } catch (e) {
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(text)) journalId = text;   // looks like a uuid
+      else code = text;                                                 // treat as a code
+    }
+    return { journalId, code, name };
+  }
+
+  function findStudent(p) {
+    if (p.code && byCode.has(p.code.toUpperCase())) return byCode.get(p.code.toUpperCase());
+    if (p.journalId && byJournal.has(p.journalId.toLowerCase())) return byJournal.get(p.journalId.toLowerCase());
+    return null;
+  }
+
+  function isEligible(student, sessionCode) {
+    const ent = student.entitledSessions;
+    const pkg = (student.package || "").toLowerCase();
+    if (pkg === "full" || pkg === "host" || pkg === "translator" || pkg === "teacher") return true;
+    if (!ent || ent.length === 0) return true;         // no restriction listed
+    if (ent.includes("*")) return true;
+    return ent.includes(sessionCode);
+  }
+
+  function sessionMeta(code) {
+    return (roster.sessions || []).find(s => s.code === code) || { code, label: code, date: null };
+  }
+
+  // ---------- check-in ----------
+  function checkIn(student, source) {
+    const meta = sessionMeta(session);
+    const already = attendance.find(a =>
+      a.session === session &&
+      ((student.journalId && a.journalId === student.journalId) || (student.id && a.id === student.id)));
+    if (already) { flash("dup", "•", student.name, "Already checked in"); return; }
+
+    const ok = isEligible(student, session);
+    attendance.push({
+      workshop: WORKSHOP, id: student.id || null, journalId: student.journalId || null,
+      name: student.name, package: student.package || "", studentCode: student.id || null,
+      session, sessionDate: meta.date || null, checkedInAt: new Date().toISOString(),
+      eligible: ok, source: source || "scan", synced: false
+    });
+    save(LS_ATT, attendance);
+    if (ok) flash("ok", "✓", student.name, (student.package || "") + " · checked in");
+    else    flash("no", "⚠", student.name, "NOT paid for this session (" + (student.package || "?") + ")");
+    render();
+    scheduleSync();
+  }
+
+  function handleScanText(text) {
+    const p = parseScan(text);
+    const key = (p.code || p.journalId || text);
+    const now = Date.now();
+    if (key === lastHit.key && now - lastHit.t < 2500) return;  // debounce same card
+    lastHit = { key, t: now };
+    const student = findStudent(p);
+    if (!student) { flash("warn", "?", p.code || p.name || "Unknown", "Not on roster — walk-in"); beep(220); return; }
+    checkIn(student, "scan"); beep(880);
+  }
+
+  // ---------- camera ----------
+  const video = $("#video"), cv = $("#cv"), ctx = cv.getContext("2d", { willReadFrequently: true });
+  async function startCam() {
+    if (location.protocol !== "https:" && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+      $("#secureWarn").classList.add("show");
+    }
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
+      video.srcObject = stream; await video.play();
+      $("#camMsg").hidden = true; $("#reticle").hidden = false;
+      $("#startBtn").textContent = "Stop camera";
+      scanning = true; requestAnimationFrame(tick);
+    } catch (e) {
+      $("#camMsg").hidden = false;
+      $("#camMsg").innerHTML = "Camera unavailable: " + (e.message || e.name) + "<br>Use <b>Manual</b> to check in.";
+    }
+  }
+  function stopCam() {
+    scanning = false;
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    $("#reticle").hidden = true; $("#camMsg").hidden = false; $("#startBtn").textContent = "Start camera";
+  }
+  let lastDecode = 0;
+  function tick(ts) {
+    if (!scanning) return;
+    if (video.readyState === video.HAVE_ENOUGH_DATA && ts - lastDecode > 160) {
+      lastDecode = ts;
+      const w = video.videoWidth, h = video.videoHeight;
+      if (w && h) {
+        cv.width = w; cv.height = h;
+        ctx.drawImage(video, 0, 0, w, h);
+        try {
+          const img = ctx.getImageData(0, 0, w, h);
+          const res = jsQR(img.data, w, h, { inversionAttempts: "dontInvert" });
+          if (res && res.data) handleScanText(res.data);
+        } catch (e) {}
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ---------- feedback ----------
+  function flash(kind, mark, who, sub) {
+    const f = $("#flash");
+    f.className = "show " + kind;
+    f.querySelector(".mark").textContent = mark;
+    f.querySelector(".who").textContent = who || "";
+    f.querySelector(".sub").textContent = sub || "";
+    if (navigator.vibrate) navigator.vibrate(kind === "ok" ? 60 : [40, 60, 40]);
+    clearTimeout(flash._t); flash._t = setTimeout(() => { f.className = ""; }, 1600);
+  }
+  let ac = null;
+  function beep(freq) {
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.frequency.value = freq; o.connect(g); g.connect(ac.destination);
+      g.gain.setValueAtTime(.15, ac.currentTime); o.start();
+      g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + .18); o.stop(ac.currentTime + .2);
+    } catch (e) {}
+  }
+
+  // ---------- sync ----------
+  let syncTimer = null;
+  function scheduleSync() { clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, 1500); }
+  async function syncNow() {
+    const pending = attendance.filter(a => !a.synced);
+    if (!pending.length) { $("#syncState").textContent = "all synced"; return; }
+    if (!navigator.onLine) { $("#syncState").textContent = pending.length + " to sync (offline)"; return; }
+    $("#syncState").textContent = "syncing " + pending.length + "…";
+    try {
+      const r = await fetch("/api/attendance/checkin", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rows: pending })
+      });
+      if (r.ok) { pending.forEach(a => a.synced = true); save(LS_ATT, attendance); $("#syncState").textContent = "all synced"; }
+      else $("#syncState").textContent = pending.length + " to sync (server " + r.status + ")";
+    } catch (e) { $("#syncState").textContent = pending.length + " to sync (no server)"; }
+    render();
+  }
+
+  // ---------- CSV (guaranteed offline backup) ----------
+  function exportCSV() {
+    const cols = ["workshop", "studentCode", "name", "package", "session", "sessionDate", "checkedInAt", "eligible", "source"];
+    const esc = v => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+    const csv = [cols.join(",")].concat(attendance.map(r => cols.map(c => esc(r[c])).join(","))).join("\n");
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "attendance-" + WORKSHOP + "-" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  // ---------- render ----------
+  function render() {
+    const inSession = attendance.filter(a => a.session === session);
+    $("#sCount").textContent = inSession.length;
+    $("#sTotal").textContent = (roster.students || []).length;
+    $("#rosterState").textContent = "roster: " + (roster.students || []).length;
+    const pending = attendance.filter(a => !a.synced).length;
+    if (pending && $("#syncState").textContent === "not synced") $("#syncState").textContent = pending + " to sync";
+    $("#net").classList.toggle("on", navigator.onLine);
+  }
+
+  // ---------- sheet (manual + roster) ----------
+  function openSheet(mode) {
+    $("#sheet").classList.add("show");
+    $("#sheetTitle").textContent = mode === "roster" ? "Session attendance" : "Manual check-in";
+    $("#search").value = ""; renderList("", mode); $("#search").focus();
+    $("#search").oninput = () => renderList($("#search").value, mode);
+    $("#sheet")._mode = mode;
+  }
+  function closeSheet() { $("#sheet").classList.remove("show"); }
+  function renderList(q, mode) {
+    q = (q || "").trim().toLowerCase();
+    const list = $("#list"); list.innerHTML = "";
+    const checked = new Set(attendance.filter(a => a.session === session).map(a => a.id || a.journalId));
+    (roster.students || [])
+      .filter(s => !q || (s.name || "").toLowerCase().includes(q) || (s.id || "").toLowerCase().includes(q))
+      .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+      .forEach(s => {
+        const isIn = checked.has(s.id) || checked.has(s.journalId);
+        const row = document.createElement("div"); row.className = "row";
+        row.innerHTML = '<div><div class="nm">' + esc(s.name || "") + '</div>' +
+          '<div class="pk">' + esc(s.id || "") + ' · ' + esc(s.package || "") + '</div></div>' +
+          '<div class="rt ' + (isIn ? "in" : "out") + '">' + (isIn ? "checked in" : "tap to check in") + '</div>';
+        row.onclick = () => { if (!isIn) { checkIn(s, "manual"); } renderList($("#search").value, mode); };
+        list.appendChild(row);
+      });
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // ---------- wire up ----------
+  $("#startBtn").onclick = () => scanning ? stopCam() : startCam();
+  $("#manualBtn").onclick = () => openSheet("manual");
+  $("#rosterBtn").onclick = () => openSheet("roster");
+  $("#sheetClose").onclick = closeSheet;
+  $("#sheet").onclick = e => { if (e.target.id === "sheet") closeSheet(); };
+  $("#syncBtn").onclick = syncNow;
+  $("#csvBtn").onclick = exportCSV;
+  window.addEventListener("online", () => { render(); syncNow(); });
+  window.addEventListener("offline", render);
+  setInterval(() => { if (navigator.onLine) syncNow(); }, 30000);
+
+  attendance = load(LS_ATT, []);
+  initRoster();
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/checkin-sw.js").catch(() => {});
+})();
+</script>
+</body>
+</html>

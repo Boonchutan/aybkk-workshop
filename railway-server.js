@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
 const { v4: uuidv4 } = (() => { try { return require('uuid'); } catch { return { v4: () => Math.random().toString(36).slice(2) + Date.now().toString(36) }; } })();
+const { mountAttendance } = require('./attendance-api');
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,9 @@ async function pgQuery(sql, params = []) {
 const dbReady = !!pool;
 if (dbReady) console.log('✓ PostgreSQL connected (shared booking system DB)');
 else console.log('⚠ No DATABASE_URL — falling back to JSON files');
+
+// Workshop check-in station sync + printed short links (offline-first station)
+mountAttendance(app, { pgPool: pool });
 
 // ── JSON file fallback (legacy / local dev) ───────────────────────────────────
 const DATA_DIR = '/data';
@@ -256,7 +260,17 @@ app.get('/api/journal/profiles', (req, res) => {
 function saveOrientation(req, res) {
   try {
     const { name, language, wechat } = req.body;
-    const studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    // Bind to a pre-assigned card identity when the link carries a card code
+    let studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    try {
+      const code = String(req.body.studentCode || '').trim().toUpperCase();
+      if (code && code.includes('-')) {
+        const rosterPath = path.join(__dirname, 'public', 'rosters', code.split('-')[0].toLowerCase() + '.json');
+        const roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
+        const hit = (roster.students || []).find(s => s.id === code);
+        if (hit) studentId = hit.journalId;
+      }
+    } catch (e) { /* no roster / bad code — fresh id */ }
     const data = {
       ...req.body,
       id: studentId,
