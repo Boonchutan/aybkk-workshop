@@ -627,6 +627,17 @@
   </div>
 
   <!-- Registration Form -->
+  <div id="cardPicker" style="background:#fff;border:2px solid #e8e2f5;border-radius:16px;padding:18px;margin:0 0 18px;display:none">
+    <div style="font-weight:700;font-size:17px;margin-bottom:4px">🎫 找到你的名字 · Find your name</div>
+    <div style="color:#777;font-size:13px;margin-bottom:10px">绑定你的学员卡 · This links your sticker card to your journal</div>
+    <input id="pickerSearch" type="text" placeholder="输入名字 · Type your name…" autocomplete="off"
+      style="width:100%;box-sizing:border-box;padding:12px;border:1.5px solid #d9d2ec;border-radius:10px;font-size:16px">
+    <div id="pickerList" style="max-height:220px;overflow:auto;margin-top:8px"></div>
+    <div id="pickerChosen" style="display:none;margin-top:10px;padding:12px;border-radius:10px;background:#f2eefc;font-weight:700"></div>
+    <button type="button" id="pickerSkip"
+      style="margin-top:10px;background:none;border:none;color:#8a7db0;font-size:13px;text-decoration:underline;cursor:pointer">我不在名单上 · I am not on the list</button>
+  </div>
+
   <form id="orientationForm" onsubmit="submitForm(event)">
     <div class="card">
       <h3 id="formTitle"></h3>
@@ -1385,7 +1396,7 @@ async function submitForm(e) {
     workshop: 'Hefei WS July 2026',
     location: 'hefei',
     // card binding: personal links look like orientation-hefei.html?s=HEFEI-023
-    studentCode: (new URLSearchParams(window.location.search).get('s') || '').toUpperCase(),
+    studentCode: (window.__cardCode || new URLSearchParams(window.location.search).get('s') || '').toUpperCase(),
     gameResults: [
       { quiz: quiz1 ? quiz1.q.en : '', correct: quizCorrect },
       { quiz: quiz2 ? quiz2.q.en : '', correct: quiz2Correct }
@@ -1625,6 +1636,68 @@ function showGzSaveModal(dataUrl) {
 }
 
 init();
+</script>
+<script>
+// Card picker — one shared link for the whole group; each student self-selects.
+// Fully defensive: any failure hides the picker and the page behaves as before.
+(async () => {
+  try {
+    const box = document.getElementById('cardPicker');
+    if (!box) return;
+    const urlCode = (new URLSearchParams(window.location.search).get('s') || '').toUpperCase();
+    const res = await fetch('/rosters/hefei.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const roster = await res.json();
+    const students = (roster.students || []).filter(s => !String(s.name).startsWith('Walk-in'));
+    if (!students.length) return;
+
+    const list = document.getElementById('pickerList');
+    const search = document.getElementById('pickerSearch');
+    const chosen = document.getElementById('pickerChosen');
+
+    function choose(st) {
+      window.__cardCode = st.id;
+      chosen.textContent = '✓ ' + st.name + ' · ' + st.id;
+      chosen.style.display = 'block';
+      list.style.display = 'none';
+      search.style.display = 'none';
+      // prefill name fields from "中文 (Latin)" format
+      try {
+        const m = String(st.name).match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+        const zh = m ? m[1].trim() : st.name, en = m ? m[2].trim() : st.name;
+        const fEn = document.getElementById('nameEn'), fZh = document.getElementById('nameZh');
+        if (fEn && !fEn.value) fEn.value = en;
+        if (fZh && !fZh.value) fZh.value = zh;
+      } catch (e) {}
+    }
+
+    function render(q) {
+      q = (q || '').trim().toLowerCase();
+      list.innerHTML = '';
+      students
+        .filter(s => !q || s.name.toLowerCase().includes(q))
+        .forEach(s => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = s.name;
+          b.style.cssText = 'display:block;width:100%;text-align:left;padding:11px 12px;margin-top:6px;border:1.5px solid #eee7fb;border-radius:10px;background:#faf8ff;font-size:16px;cursor:pointer';
+          b.onclick = () => choose(s);
+          list.appendChild(b);
+        });
+    }
+
+    search.addEventListener('input', () => render(search.value));
+    document.getElementById('pickerSkip').onclick = () => { window.__cardCode = ''; box.style.display = 'none'; };
+
+    box.style.display = 'block';
+    if (urlCode) {
+      const hit = students.find(s => s.id === urlCode);
+      if (hit) choose(hit); else box.style.display = 'block';
+    } else {
+      render('');
+    }
+  } catch (e) { /* picker unavailable — normal flow continues */ }
+})();
 </script>
 </body>
 </html>
