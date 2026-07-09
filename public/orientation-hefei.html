@@ -372,95 +372,50 @@
         -10px -10px 22px var(--shadow-light);
     }
 
-    /* Photo-overlay share card (per PRODUCT.md "Photo is the soul").
-       Structure: photo-bg layer (opacity 0 unless .has-photo set by JS),
-       vignette for legibility on dark photos, content layer on top.
-       Walnut gradient is the fallback background visible when no photo. */
+    /* Success card = the page hero itself, with the student's name.
+       The selfie no longer overlays here; it appears as the taped photo
+       in the saved image (shareToWeChat canvas). */
     .share-card {
       position: relative; overflow: hidden;
-      background: linear-gradient(135deg, #b89572 0%, #997a52 60%, #6b4f2d 100%);
+      background: var(--shirt);
       border-radius: var(--radius-lg);
-      padding: 32px 26px 28px;
+      padding: 20px 14px 24px;
       margin-bottom: var(--space-4);
-      box-shadow: 0 16px 48px rgba(80, 55, 30, 0.30);
       text-align: center;
+      color: var(--mark);
     }
-    .share-card .photo-bg {
-      position: absolute; inset: 0;
-      background-size: cover;
-      background-position: center top;
-      opacity: 0;
-      z-index: 0;
-    }
-    .share-card .photo-bg.has-photo { opacity: 0.7; }
-    .share-card .vignette {
-      position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 60%, rgba(0,0,0,0.32) 100%);
-      z-index: 1;
-      opacity: 0;
-    }
-    .share-card .photo-bg.has-photo + .vignette { opacity: 1; }
-    .share-card .content { position: relative; z-index: 2; }
-    .share-card .ring {
-      width: 52px; height: 52px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 14px;
-      overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-    }
-    .share-card .ring img { width: 100%; height: 100%; object-fit: cover; }
-    .share-card .wstitle {
-      font-family: var(--font-display);
-      color: rgba(255, 250, 240, 0.88);
-      font-size: 12px; font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      margin-bottom: 18px;
-    }
+    .share-card .photo-bg, .share-card .vignette { display: none; }
+    .share-card .content { position: relative; }
+    .share-card .mini-hero { display: block; width: 100%; height: auto; margin: 0 auto; }
     .share-card .welcome {
-      font-family: var(--font-display);
-      color: #fff5e0;
-      font-size: 22px; font-weight: 800;
-      margin-bottom: 6px;
-      line-height: 1.35;
-      letter-spacing: -0.005em;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      font-family: var(--font-note);
+      color: color-mix(in oklab, var(--mark) 85%, var(--shirt));
+      font-size: 19px;
+      line-height: 1.3;
+      transform: rotate(-1deg);
+      margin-top: 6px;
     }
     .share-card .sname {
-      font-family: var(--font-body);
-      color: rgba(255, 250, 240, 0.88);
-      font-size: 14px;
-      font-style: italic;
-      margin-bottom: 18px;
+      font-family: var(--font-note);
+      color: var(--mark);
+      font-size: 34px; font-weight: 700;
+      line-height: 1.2;
+      transform: rotate(-1deg);
+      margin: 2px 0 10px;
     }
-    .share-card .sutra {
-      border-top: 1px solid rgba(255, 255, 255, 0.28);
-      padding-top: 16px;
-      margin-bottom: 12px;
+    .share-card .firefly-line {
+      font-family: var(--font-note);
+      color: color-mix(in oklab, var(--mark) 88%, var(--shirt));
+      font-size: 15px;
+      line-height: 1.4;
     }
-    .share-card .sutra-text {
-      font-family: var(--font-body);
-      color: rgba(255, 250, 240, 0.94);
-      font-size: 14px;
-      font-style: italic;
-      line-height: 1.7;
-      margin-bottom: 8px;
-    }
-    .share-card .sutra-src {
+    .share-card .dates-line {
       font-family: var(--font-display);
-      color: rgba(255, 250, 240, 0.7);
-      font-size: 10px;
-      letter-spacing: 0.18em;
+      color: color-mix(in oklab, var(--mark) 78%, var(--shirt));
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-    }
-    .share-card .by {
-      font-family: var(--font-body);
-      color: rgba(255, 250, 240, 0.78);
-      font-size: 12px;
-      font-style: italic;
-      margin-top: 18px;
+      margin-top: 14px;
     }
 
     /* Link-copy box — carved cavity with monospace url field */
@@ -761,15 +716,26 @@
       <div class="photo-bg" id="successPhotoBg"></div>
       <div class="vignette"></div>
       <div class="content">
-        <div class="ring"><img src="/aybkk-logo.jpg" alt="AYBKK" onerror="this.style.display='none'"></div>
-        <div class="wstitle">AYBKK Hefei WS 2026</div>
+        <svg class="mini-hero" viewBox="60 40 580 360" role="img" aria-label="AYBKK 合肥 hand-drawn hero">
+          <text filter="url(#rough2)" font-family="'Shantell Sans','Marker Felt',sans-serif" font-weight="800" font-size="74" fill="var(--mark)" letter-spacing="6">
+            <textPath href="#heroArc" startOffset="50%" text-anchor="middle">ASHTANGA</textPath>
+          </text>
+          <g filter="url(#rough)" stroke="var(--mark)" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 175 340 C 150 320 142 285 158 262 C 172 241 200 232 224 240 C 232 222 254 214 272 222 C 292 230 300 250 294 268 C 308 292 300 322 276 338 C 246 358 200 358 175 340 Z"/>
+            <path d="M 196 306 C 214 318 238 318 252 306" stroke-width="9"/>
+            <path d="M 292 262 L 322 270 L 294 282" stroke-width="9"/>
+            <path d="M 205 356 L 205 384 M 246 358 L 246 386" stroke-width="9"/>
+            <path d="M 186 240 L 178 214 M 210 232 L 210 204 M 234 238 L 242 212" stroke-width="9"/>
+            <path d="M 150 392 C 260 380 420 380 560 390" stroke-width="7" opacity="0.7"/>
+          </g>
+          <circle cx="252" cy="258" r="7" fill="var(--mark)"/>
+          <text x="420" y="330" filter="url(#rough2)" font-family="'ZCOOL KuaiLe','PingFang SC',sans-serif" font-size="104" fill="var(--mark)">合肥</text>
+          <text x="422" y="368" font-family="'Shantell Sans','Marker Felt',sans-serif" font-weight="700" font-size="25" letter-spacing="10" fill="var(--mark)" opacity="0.85">AYBKK</text>
+        </svg>
         <div class="welcome" id="successWelcome"></div>
         <div class="sname" id="successName"></div>
-        <div class="sutra">
-          <div class="sutra-text">"Atha Yoganushasanam"</div>
-          <div class="sutra-src">Now, the discipline of yoga. — Yoga Sutra 1.1</div>
-        </div>
-        <div class="by">by Boonchu Tanti & Jamsai Tanti</div>
+        <div class="firefly-line">"A firefly does not force its light. 萤火虫不强求它的光"</div>
+        <div class="dates-line">Hefei WS · July 16–20 2026 · Boonchu &amp; Jamsai Tanti</div>
       </div>
     </div>
 
@@ -788,9 +754,9 @@
     <!-- Selfie upload for share card -->
     <div style="margin-bottom:12px;">
       <input type="file" id="selfieInput" accept="image/*" style="display:none" onchange="loadSelfie(this)">
-      <button class="done-btn" onclick="document.getElementById('selfieInput').click()" id="selfieBtn" style="border-color:#c49564;color:#8b4513;">🖼️ 添加照片到分享卡 / Add photo to share card</button>
+      <button class="done-btn" onclick="document.getElementById('selfieInput').click()" id="selfieBtn" style="border-color:var(--shirt);color:var(--shirt-deep);">🖼️ 添加照片到分享卡 / Add photo to share card</button>
       <div id="selfiePreview" style="display:none;margin-top:8px;text-align:center;">
-        <img id="selfieImg" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #c49564;" />
+        <img id="selfieImg" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--shirt);" />
         <div style="font-size:11px;color:#8b7d6b;margin-top:4px;" id="selfieReady">✓ Photo ready for share card</div>
       </div>
     </div>
