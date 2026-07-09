@@ -3127,16 +3127,35 @@ function startChinaTunnel() {
 
 function doSpawnTunnel(cfBin) {
   const { spawn } = require('child_process');
-  console.log(`[china-tunnel] starting (binary: ${cfBin})`);
-  const child = spawn(cfBin, ['tunnel', '--no-autoupdate', '--url', `http://localhost:${PORT}`], {
+  // Named tunnel (stable branded hostname, e.g. https://cn.aybkk.com):
+  //   set CN_TUNNEL_TOKEN (from Cloudflare Zero Trust > Tunnels) and
+  //   CN_STABLE_URL (the public hostname configured on that tunnel).
+  //   The URL never rotates, so it can be printed on QR cards.
+  // Without a token: quick tunnel (random *.trycloudflare.com, rotates
+  //   on every restart) — the pre-Jul-2026 behavior.
+  const token = process.env.CN_TUNNEL_TOKEN;
+  const stableUrl = process.env.CN_STABLE_URL;
+  const args = token
+    ? ['tunnel', '--no-autoupdate', 'run', '--token', token]
+    : ['tunnel', '--no-autoupdate', '--url', `http://localhost:${PORT}`];
+  console.log(`[china-tunnel] starting (${token ? 'named tunnel' : 'quick tunnel'}, binary: ${cfBin})`);
+  const child = spawn(cfBin, args, {
     stdio: ['ignore', 'pipe', 'pipe'],
     env: { ...process.env, HOME: '/tmp' },
   });
+
+  if (token && stableUrl) {
+    process.env.TUNNEL_URL = stableUrl;
+    console.log('🇨🇳 ═══════════════════════════════════════════════════');
+    console.log(`🇨🇳  CHINA ACCESS URL (stable): ${stableUrl}`);
+    console.log('🇨🇳 ═══════════════════════════════════════════════════');
+  }
 
   let found = false;
   const onData = (data) => {
     const text = data.toString();
     process.stdout.write('[cloudflared] ' + text);
+    if (token) return; // named tunnel: TUNNEL_URL already set to the stable host
     const match = text.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/);
     if (match && !found) {
       found = true;
@@ -3153,8 +3172,7 @@ function doSpawnTunnel(cfBin) {
   child.on('error', (err) => console.warn(`[china-tunnel] spawn error: ${err.message}`));
   child.on('exit', (code) => {
     console.warn(`[china-tunnel] cloudflared exited (code ${code}) — restarting in 10s`);
-    process.env.TUNNEL_URL = '';
-    found = false;
+    if (!token) { process.env.TUNNEL_URL = ''; found = false; }
     setTimeout(startChinaTunnel, 10000);
   });
 }
