@@ -30,7 +30,7 @@ const taskApi = require('./task-api');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.MISSION_CONTROL_PORT || 3000;
+const PORT = process.env.PORT || process.env.MISSION_CONTROL_PORT || 3000;
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 
 // Ensure upload directory exists
