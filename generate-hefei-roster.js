@@ -17,7 +17,8 @@
 const fs = require("fs");
 const path = require("path");
 const QRCode = require("qrcode");
-const { v4: uuidv4 } = require("uuid");
+const { v4: uuidv4, v5: uuidv5 } = require("uuid");
+const AYBKK_NS = uuidv5("aybkk.org/hefei-2026", uuidv5.DNS); // stable namespace
 
 const BASE_URL = (process.env.BASE_URL || "https://aybkk-ashtanga.up.railway.app").replace(/\/$/, "");
 const QR_MODE  = process.env.QR_MODE || "short";
@@ -99,7 +100,8 @@ async function main() {
   for (const raw of input) {
     i++;
     const code = "HEFEI-" + String(i).padStart(3, "0");
-    const journalId = raw.journalId || raw.id || uuidv4();
+    // deterministic: same name → same journal id on every re-run (never orphan a journal)
+    const journalId = raw.journalId || uuidv5(String(raw.name || raw.Name || ""), AYBKK_NS);
     const name = raw.name || raw.Name || "";
     const pkg = raw.package || raw.Package || "Full";
     // Per-student override wins (e.g. one-day mysore); otherwise derive from package.

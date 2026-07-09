@@ -1,50 +1,429 @@
 [
-  { "name": "一洋 (Yiyang)",        "package": "Translator", "size": "XL",  "journalId": "4c576442-e2c0-4884-9878-d97cd62ee8d3", "note": "translator 翻译 · in-depth CN2", "practice": "intermediate+advanced" },
-  { "name": "小马 (Xiao Ma)",       "package": "Full", "size": "XL",  "journalId": "e45dfbdc-dc48-4753-82f1-5c9be5dd3f26", "note": "in-depth CN2 深度课学生", "practice": "intermediate+advanced" },
-  { "name": "丫丫 (Yaya)",          "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "kapotasana (no catch)" },
-  { "name": "汪汪 (Wangwang)",      "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "kapotasana (no catch)" },
-  { "name": "陈静 (CC)",            "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "laghu vajrasana" },
-  { "name": "老罗 (Luo)",           "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary", "lastAsana": "urdhva mukha paschimottanasana · supta kurmasana no catch" },
-  { "name": "李娜 (Lina)",          "package": "Full", "size": "S",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "bakasana · kapotasana no catch" },
-  { "name": "梁菲 (Liangfei)",      "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "kapotasana (no catch)" },
-  { "name": "田晓琳 (Xiaolin)",     "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "supta vajrasana · kapotasana no catch" },
-  { "name": "孔敏 (Kongmin)",       "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "kapotasana (no catch)" },
-  { "name": "岳华姐 (Yuehua)",      "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "kapotasana (no catch)" },
-  { "name": "谨初 (Jinchu)",        "package": "Full", "size": "L",   "note": "RUYI student", "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "倩倩 (Qianqian)",      "package": "Full", "size": "L",   "note": "RUYI student", "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "玲姐 (Ling)",          "package": "Full", "size": "L",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "parsva dhanurasana" },
-  { "name": "柳叶儿 (Liuye)",       "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary", "lastAsana": "navasana" },
-  { "name": "圆琪 (Lea)",           "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary", "lastAsana": "navasana" },
-  { "name": "白雪 (Snowhite)",      "package": "Full", "size": "L",   "note": "RUYI student", "practice": "primary+intermediate", "lastAsana": "kapotasana (no catch)" },
-  { "name": "陈立群 (Honghong)",    "package": "Full", "size": "M",   "note": "RUYI student", "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "张莹 (Yoyo)",          "package": "Full", "size": "L",   "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "艳秋 (Yanqiu)",        "package": "Full", "size": "L",   "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "小七 (Seven)",         "package": "Full", "size": "L",   "practice": "intermediate", "lastAsana": "baddha hasta sirsasana · kapotasana no catch" },
-  { "name": "汪姐 (Wendy)",         "package": "Full", "size": "M",   "practice": "intermediate", "lastAsana": "pincha mayurasana" },
-  { "name": "蒋洁 (Xiaojie)",       "package": "Full", "size": "L",   "practice": "intermediate", "lastAsana": "baddha hasta sirsasana" },
-  { "name": "子墨 (August)",        "package": "Full", "size": "XL",  "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "李雯 (Liwen)",         "package": "Full", "size": "XL",  "practice": "primary", "lastAsana": "setu bandhasana · marichasana D no catch" },
-  { "name": "崔振江 (Cuizhenjiang)","package": "Full", "size": "M",   "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "张佩 (Pei)",           "package": "Full", "size": "L",   "practice": "primary", "lastAsana": "setu bandhasana · supta kurmasana no catch" },
-  { "name": "魏震 (Crow)",          "package": "Full", "size": "L",   "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "李娜娜 (Lucky)",       "package": "Full", "size": "XL",  "practice": "primary", "lastAsana": "setu bandhasana · supta kurmasana no catch" },
-  { "name": "徐畅 (Xuchang)",       "package": "Full", "size": "XL",  "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "冬情 (Dongqing)",      "package": "Full", "size": "M",   "practice": "intermediate", "lastAsana": "gomukhasana" },
-  { "name": "任晓青 (Xiaoqing)",    "package": "Full", "size": "L",   "practice": "primary", "lastAsana": "setu bandhasana · marichasana D no catch" },
-  { "name": "田林林 (Linlin)",      "package": "Full", "size": "L",   "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "陈瑜 (Chenyu)",        "package": "Full", "size": "M",   "practice": "primary+intermediate", "lastAsana": "laghu vajrasana" },
-  { "name": "魏蔚 (Yammin)",        "package": "Full", "size": "L",   "note": "past AYBKK WS attendee", "practice": "primary", "lastAsana": "navasana" },
-  { "name": "杰哥 (Lee)",           "package": "Full", "size": "L",   "journalId": "1971e49e-a9c6-41ea-b7a4-55f104dec8a9", "note": "in-depth CN2 深度课学生", "practice": "intermediate+advanced", "lastAsana": "viranchyasana" },
-  { "name": "亭逸 (Tinyee)",        "package": "Full", "size": "L",   "journalId": "c0b4d60e-df44-4b8d-93fa-854b4081de02", "note": "in-depth CN2 深度课学生", "practice": "intermediate" },
-  { "name": "马驰 (Mach)",          "package": "Full", "size": "XXL", "journalId": "e2568186-8aff-4f58-b429-fc2ce9d94b28", "note": "in-depth CN2 深度课学生", "practice": "intermediate" },
-  { "name": "乔乔 (Qiaoqiao)",      "package": "Full", "size": "L",   "journalId": "2fd8bebb-4cfb-41d2-933b-d5f55e30dbd0", "note": "in-depth CN2 深度课学生", "practice": "primary+intermediate", "lastAsana": "kapotasana (no catch)" },
-  { "name": "夏薇薇 (Vera)",        "package": "Weekend", "size": "L", "note": "Jul 18-19 only 两天WS", "practice": "primary", "lastAsana": "setu bandhasana · marichasana D no catch" },
-  { "name": "张依乐 (Jaya)",        "package": "Full", "size": "S",   "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "于珈 (Yujia)",         "package": "Full", "size": "L",   "practice": "primary", "lastAsana": "marichasana (no catch)" },
-  { "name": "陈丽萍 (Lin No)",      "package": "Weekend", "size": "", "note": "Jul 18-19 only 两天WS · NO SHIRT SIZE", "practice": "primary", "lastAsana": "setu bandhasana · supta kurmasana no catch" },
-  { "name": "朱美红 (Yuening)",     "package": "Full", "size": "M",   "note": "Nie friend discount 聂大哥朋友特别折扣", "practice": "primary", "lastAsana": "setu bandhasana" },
-  { "name": "黎安琴 (Lili)",        "package": "Full", "size": "L",   "note": "Nie friend discount 聂大哥朋友特别折扣", "practice": "primary", "lastAsana": "urdhva mukha paschimottanasana" },
-  { "name": "聂大哥 (Nie)",         "package": "Full", "size": "L",   "journalId": "bd3fa653-bb43-48ac-9683-fbbc85b423ba", "note": "in-depth 深度课学生 · Huizhou/Maoming/Suzhou/Xichang veteran", "practice": "primary+intermediate", "lastAsana": "laghu vajrasana" },
-  { "name": "戴茜 (Daisy)",         "package": "Single", "size": "", "entitledSessions": ["D3-MY"], "note": "Jul 18 mysore only 18号一天mysore · NO SHIRT SIZE", "practice": "intermediate", "lastAsana": "baddha hasta sirsasana" },
-  { "name": "GUIGUI",               "package": "Full", "size": "M",   "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95", "note": "in-depth CN2 深度课学生", "practice": "intermediate+advanced", "lastAsana": "urdhva kukkutasana" }
+  {
+    "name": "一洋 (Yiyang)",
+    "package": "Translator",
+    "size": "XL",
+    "journalId": "4c576442-e2c0-4884-9878-d97cd62ee8d3",
+    "note": "translator 翻译 · in-depth CN2",
+    "practice": "intermediate+advanced"
+  },
+  {
+    "name": "小马 (Xiao Ma)",
+    "package": "Full",
+    "size": "XL",
+    "journalId": "e45dfbdc-dc48-4753-82f1-5c9be5dd3f26",
+    "note": "in-depth CN2 深度课学生",
+    "practice": "intermediate+advanced"
+  },
+  {
+    "name": "丫丫 (Yaya)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "kapotasana (no catch)"
+  },
+  {
+    "name": "汪汪 (Wangwang)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "kapotasana (no catch)"
+  },
+  {
+    "name": "陈静 (CC)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "laghu vajrasana"
+  },
+  {
+    "name": "老罗 (Luo)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary",
+    "lastAsana": "urdhva mukha paschimottanasana · supta kurmasana no catch"
+  },
+  {
+    "name": "李娜 (Lina)",
+    "package": "Full",
+    "size": "S",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "bakasana · kapotasana no catch"
+  },
+  {
+    "name": "梁菲 (Liangfei)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "kapotasana (no catch)"
+  },
+  {
+    "name": "田晓琳 (Xiaolin)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "supta vajrasana · kapotasana no catch"
+  },
+  {
+    "name": "孔敏 (Kongmin)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "kapotasana (no catch)"
+  },
+  {
+    "name": "岳华姐 (Yuehua)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "kapotasana (no catch)"
+  },
+  {
+    "name": "谨初 (Jinchu)",
+    "package": "Full",
+    "size": "L",
+    "note": "RUYI student",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "倩倩 (Qianqian)",
+    "package": "Full",
+    "size": "L",
+    "note": "RUYI student",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "玲姐 (Ling)",
+    "package": "Full",
+    "size": "L",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "parsva dhanurasana"
+  },
+  {
+    "name": "柳叶儿 (Liuye)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary",
+    "lastAsana": "navasana"
+  },
+  {
+    "name": "圆琪 (Lea)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary",
+    "lastAsana": "navasana"
+  },
+  {
+    "name": "白雪 (Snowhite)",
+    "package": "Full",
+    "size": "L",
+    "note": "RUYI student",
+    "practice": "primary+intermediate",
+    "lastAsana": "kapotasana (no catch)"
+  },
+  {
+    "name": "陈立群 (Honghong)",
+    "package": "Full",
+    "size": "M",
+    "note": "RUYI student",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "张莹 (Yoyo)",
+    "package": "Full",
+    "size": "L",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "艳秋 (Yanqiu)",
+    "package": "Full",
+    "size": "L",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "小七 (Seven)",
+    "package": "Full",
+    "size": "L",
+    "practice": "intermediate",
+    "lastAsana": "baddha hasta sirsasana · kapotasana no catch"
+  },
+  {
+    "name": "汪姐 (Wendy)",
+    "package": "Full",
+    "size": "M",
+    "practice": "intermediate",
+    "lastAsana": "pincha mayurasana"
+  },
+  {
+    "name": "蒋洁 (Xiaojie)",
+    "package": "Full",
+    "size": "L",
+    "practice": "intermediate",
+    "lastAsana": "baddha hasta sirsasana"
+  },
+  {
+    "name": "子墨 (August)",
+    "package": "Full",
+    "size": "XL",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "李雯 (Liwen)",
+    "package": "Full",
+    "size": "XL",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana · marichasana D no catch"
+  },
+  {
+    "name": "崔振江 (Cuizhenjiang)",
+    "package": "Full",
+    "size": "M",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "张佩 (Pei)",
+    "package": "Full",
+    "size": "L",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana · supta kurmasana no catch"
+  },
+  {
+    "name": "魏震 (Crow)",
+    "package": "Full",
+    "size": "L",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "李娜娜 (Lucky)",
+    "package": "Full",
+    "size": "XL",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana · supta kurmasana no catch"
+  },
+  {
+    "name": "徐畅 (Xuchang)",
+    "package": "Full",
+    "size": "XL",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "冬情 (Dongqing)",
+    "package": "Full",
+    "size": "M",
+    "practice": "intermediate",
+    "lastAsana": "gomukhasana"
+  },
+  {
+    "name": "任晓青 (Xiaoqing)",
+    "package": "Full",
+    "size": "L",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana · marichasana D no catch"
+  },
+  {
+    "name": "田林林 (Linlin)",
+    "package": "Full",
+    "size": "L",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "陈瑜 (Chenyu)",
+    "package": "Full",
+    "size": "M",
+    "practice": "primary+intermediate",
+    "lastAsana": "laghu vajrasana"
+  },
+  {
+    "name": "魏蔚 (Yammin)",
+    "package": "Full",
+    "size": "L",
+    "note": "past AYBKK WS attendee",
+    "practice": "primary",
+    "lastAsana": "navasana"
+  },
+  {
+    "name": "杰哥 (Lee)",
+    "package": "Full",
+    "size": "L",
+    "journalId": "1971e49e-a9c6-41ea-b7a4-55f104dec8a9",
+    "note": "in-depth CN2 深度课学生",
+    "practice": "intermediate+advanced",
+    "lastAsana": "viranchyasana"
+  },
+  {
+    "name": "亭逸 (Tinyee)",
+    "package": "Full",
+    "size": "L",
+    "journalId": "c0b4d60e-df44-4b8d-93fa-854b4081de02",
+    "note": "in-depth CN2 深度课学生",
+    "practice": "intermediate"
+  },
+  {
+    "name": "马驰 (Mach)",
+    "package": "Full",
+    "size": "XXL",
+    "journalId": "e2568186-8aff-4f58-b429-fc2ce9d94b28",
+    "note": "in-depth CN2 深度课学生",
+    "practice": "intermediate"
+  },
+  {
+    "name": "乔乔 (Qiaoqiao)",
+    "package": "Full",
+    "size": "L",
+    "journalId": "2fd8bebb-4cfb-41d2-933b-d5f55e30dbd0",
+    "note": "in-depth CN2 深度课学生",
+    "practice": "primary+intermediate",
+    "lastAsana": "kapotasana (no catch)"
+  },
+  {
+    "name": "夏薇薇 (Vera)",
+    "package": "Weekend",
+    "size": "L",
+    "note": "Jul 18-19 only 两天WS",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana · marichasana D no catch"
+  },
+  {
+    "name": "张依乐 (Jaya)",
+    "package": "Full",
+    "size": "S",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "于珈 (Yujia)",
+    "package": "Full",
+    "size": "L",
+    "practice": "primary",
+    "lastAsana": "marichasana (no catch)"
+  },
+  {
+    "name": "陈丽萍 (Lin No)",
+    "package": "Weekend",
+    "size": "",
+    "note": "Jul 18-19 only 两天WS · NO SHIRT SIZE",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana · supta kurmasana no catch"
+  },
+  {
+    "name": "朱美红 (Yuening)",
+    "package": "Full",
+    "size": "M",
+    "note": "Nie friend discount 聂大哥朋友特别折扣",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana"
+  },
+  {
+    "name": "黎安琴 (Lili)",
+    "package": "Full",
+    "size": "L",
+    "note": "Nie friend discount 聂大哥朋友特别折扣",
+    "practice": "primary",
+    "lastAsana": "urdhva mukha paschimottanasana"
+  },
+  {
+    "name": "聂大哥 (Nie)",
+    "package": "Full",
+    "size": "L",
+    "journalId": "bd3fa653-bb43-48ac-9683-fbbc85b423ba",
+    "note": "in-depth 深度课学生 · Huizhou/Maoming/Suzhou/Xichang veteran",
+    "practice": "primary+intermediate",
+    "lastAsana": "laghu vajrasana"
+  },
+  {
+    "name": "戴茜 (Daisy)",
+    "package": "Single",
+    "size": "",
+    "entitledSessions": [
+      "D3-MY"
+    ],
+    "note": "Jul 18 mysore only 18号一天mysore · NO SHIRT SIZE",
+    "practice": "intermediate",
+    "lastAsana": "baddha hasta sirsasana"
+  },
+  {
+    "name": "GUIGUI",
+    "package": "Full",
+    "size": "M",
+    "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95",
+    "note": "in-depth CN2 深度课学生",
+    "practice": "intermediate+advanced",
+    "lastAsana": "urdhva kukkutasana"
+  },
+  {
+    "name": "Walk-in 1 走读",
+    "package": "Single",
+    "size": "",
+    "entitledSessions": [
+      "*"
+    ],
+    "note": "spare card — assign at door"
+  },
+  {
+    "name": "Walk-in 2 走读",
+    "package": "Single",
+    "size": "",
+    "entitledSessions": [
+      "*"
+    ],
+    "note": "spare card — assign at door"
+  },
+  {
+    "name": "Walk-in 3 走读",
+    "package": "Single",
+    "size": "",
+    "entitledSessions": [
+      "*"
+    ],
+    "note": "spare card — assign at door"
+  },
+  {
+    "name": "Walk-in 4 走读",
+    "package": "Single",
+    "size": "",
+    "entitledSessions": [
+      "*"
+    ],
+    "note": "spare card — assign at door"
+  },
+  {
+    "name": "Walk-in 5 走读",
+    "package": "Single",
+    "size": "",
+    "entitledSessions": [
+      "*"
+    ],
+    "note": "spare card — assign at door"
+  },
+  {
+    "name": "Walk-in 6 走读",
+    "package": "Single",
+    "size": "",
+    "entitledSessions": [
+      "*"
+    ],
+    "note": "spare card — assign at door"
+  }
 ]

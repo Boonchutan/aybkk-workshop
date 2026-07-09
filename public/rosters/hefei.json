@@ -5,7 +5,7 @@
   "lang": "zh",
   "baseUrl": "https://aybkk-ashtanga.up.railway.app",
   "qrMode": "short",
-  "generatedAt": "2026-07-09T05:32:50.744Z",
+  "generatedAt": "2026-07-09T06:32:52.681Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -89,7 +89,7 @@
     },
     {
       "id": "HEFEI-003",
-      "journalId": "0aafd5d7-d73f-4f9e-b80b-1fc44f8d93e8",
+      "journalId": "c90ad817-a87d-5296-b06b-44af2337a71b",
       "name": "丫丫 (Yaya)",
       "package": "Full",
       "entitledSessions": [
@@ -103,7 +103,7 @@
     },
     {
       "id": "HEFEI-004",
-      "journalId": "289a5714-9b1f-4ec0-bc98-aa9e8c59816a",
+      "journalId": "9d359bfc-f3fe-562f-8672-b9eb9e2a7dc2",
       "name": "汪汪 (Wangwang)",
       "package": "Full",
       "entitledSessions": [
@@ -117,7 +117,7 @@
     },
     {
       "id": "HEFEI-005",
-      "journalId": "c00101c6-5439-4f84-87b5-2d9b5db885ef",
+      "journalId": "ca21e962-41b1-541b-be96-aef5467283a3",
       "name": "陈静 (CC)",
       "package": "Full",
       "entitledSessions": [
@@ -131,7 +131,7 @@
     },
     {
       "id": "HEFEI-006",
-      "journalId": "2c516926-4808-44bf-a867-74a6984513ec",
+      "journalId": "a5c7dfd1-fac8-5c7d-bb68-c0383f838d06",
       "name": "老罗 (Luo)",
       "package": "Full",
       "entitledSessions": [
@@ -145,7 +145,7 @@
     },
     {
       "id": "HEFEI-007",
-      "journalId": "361d386a-9821-4574-a068-daa3ecf8eb5f",
+      "journalId": "190d089e-acc0-549c-829e-77c4b2b9fd8c",
       "name": "李娜 (Lina)",
       "package": "Full",
       "entitledSessions": [
@@ -159,7 +159,7 @@
     },
     {
       "id": "HEFEI-008",
-      "journalId": "5bde2427-1d70-4db5-b19e-eff3b42040fa",
+      "journalId": "83c9b7a2-4f01-5483-898b-7a323012fdb5",
       "name": "梁菲 (Liangfei)",
       "package": "Full",
       "entitledSessions": [
@@ -173,7 +173,7 @@
     },
     {
       "id": "HEFEI-009",
-      "journalId": "872ee312-13ba-4048-9b35-ea137af9a71c",
+      "journalId": "4e11ea9d-5428-56f7-b452-150df8c6a282",
       "name": "田晓琳 (Xiaolin)",
       "package": "Full",
       "entitledSessions": [
@@ -187,7 +187,7 @@
     },
     {
       "id": "HEFEI-010",
-      "journalId": "37e640bb-96d8-4b51-95df-2132df6fd20f",
+      "journalId": "4ba29c18-bbc9-5edb-82a7-a45f435866df",
       "name": "孔敏 (Kongmin)",
       "package": "Full",
       "entitledSessions": [
@@ -201,7 +201,7 @@
     },
     {
       "id": "HEFEI-011",
-      "journalId": "d64e67d9-4d8b-447d-bb1a-98fb053b649a",
+      "journalId": "52f69d47-0d7f-5760-bb53-979f599b2e69",
       "name": "岳华姐 (Yuehua)",
       "package": "Full",
       "entitledSessions": [
@@ -215,7 +215,7 @@
     },
     {
       "id": "HEFEI-012",
-      "journalId": "8651742f-4c83-4e34-b81c-c1a75c73649a",
+      "journalId": "7bf6481a-da52-54c1-9a6b-3bcf703e9f54",
       "name": "谨初 (Jinchu)",
       "package": "Full",
       "entitledSessions": [
@@ -229,7 +229,7 @@
     },
     {
       "id": "HEFEI-013",
-      "journalId": "36b2bdfe-4653-441d-8b29-2c80ac0a9d1d",
+      "journalId": "8bcd6257-3ff9-5dda-8861-62921be40c42",
       "name": "倩倩 (Qianqian)",
       "package": "Full",
       "entitledSessions": [
@@ -243,7 +243,7 @@
     },
     {
       "id": "HEFEI-014",
-      "journalId": "92cbc379-c740-4bde-aec0-a69674e96f82",
+      "journalId": "73104d79-63e4-5ea3-8aae-9e554362c418",
       "name": "玲姐 (Ling)",
       "package": "Full",
       "entitledSessions": [
@@ -257,7 +257,7 @@
     },
     {
       "id": "HEFEI-015",
-      "journalId": "91bc59e7-1c6b-4b65-ba30-64feb2f878ba",
+      "journalId": "e230f3ac-3962-5e2a-b674-c7b61a0b1c7d",
       "name": "柳叶儿 (Liuye)",
       "package": "Full",
       "entitledSessions": [
@@ -271,7 +271,7 @@
     },
     {
       "id": "HEFEI-016",
-      "journalId": "b5446909-e3f1-43c5-8f68-f70ec335fe97",
+      "journalId": "52e8ecd7-63da-5c30-978c-3fd988ded1a0",
       "name": "圆琪 (Lea)",
       "package": "Full",
       "entitledSessions": [
@@ -285,7 +285,7 @@
     },
     {
       "id": "HEFEI-017",
-      "journalId": "c077d414-9daf-472d-9e75-f285b0e4fc69",
+      "journalId": "6158102c-1fa2-5f52-85ec-c81140ccb58e",
       "name": "白雪 (Snowhite)",
       "package": "Full",
       "entitledSessions": [
@@ -299,7 +299,7 @@
     },
     {
       "id": "HEFEI-018",
-      "journalId": "8e77bd9f-2696-4185-831d-be04acb3d034",
+      "journalId": "438eef8c-fa62-5fc9-a1c9-191ce7d75347",
       "name": "陈立群 (Honghong)",
       "package": "Full",
       "entitledSessions": [
@@ -313,7 +313,7 @@
     },
     {
       "id": "HEFEI-019",
-      "journalId": "6985a3bf-6f9d-4708-ac62-e101b29d92b5",
+      "journalId": "7a204f21-d610-594e-ad46-f1cc091ac284",
       "name": "张莹 (Yoyo)",
       "package": "Full",
       "entitledSessions": [
@@ -327,7 +327,7 @@
     },
     {
       "id": "HEFEI-020",
-      "journalId": "b76177ad-9acb-40b9-83e7-2dee9c0beebd",
+      "journalId": "a6d466bc-8ad1-5b40-84ad-ebb684462a30",
       "name": "艳秋 (Yanqiu)",
       "package": "Full",
       "entitledSessions": [
@@ -341,7 +341,7 @@
     },
     {
       "id": "HEFEI-021",
-      "journalId": "d4762a3d-82c8-4a19-bbe4-1318bcf42101",
+      "journalId": "c7cc1cb2-70d7-53f4-bea3-c62c2d61fc15",
       "name": "小七 (Seven)",
       "package": "Full",
       "entitledSessions": [
@@ -355,7 +355,7 @@
     },
     {
       "id": "HEFEI-022",
-      "journalId": "a37881a6-4d15-4119-b29c-e1bf9539f76b",
+      "journalId": "add92473-2e8e-5f6d-a75d-559621c34a14",
       "name": "汪姐 (Wendy)",
       "package": "Full",
       "entitledSessions": [
@@ -369,7 +369,7 @@
     },
     {
       "id": "HEFEI-023",
-      "journalId": "074acf94-6064-4fbe-ad70-e55a00871b32",
+      "journalId": "8713ac8b-7ea3-547f-b089-2d6393508ebe",
       "name": "蒋洁 (Xiaojie)",
       "package": "Full",
       "entitledSessions": [
@@ -383,7 +383,7 @@
     },
     {
       "id": "HEFEI-024",
-      "journalId": "1629f36a-0952-4196-bb5d-42731ba2886f",
+      "journalId": "8d510572-c10b-51f7-9065-7bf2fdbaeb87",
       "name": "子墨 (August)",
       "package": "Full",
       "entitledSessions": [
@@ -397,7 +397,7 @@
     },
     {
       "id": "HEFEI-025",
-      "journalId": "c38ad81e-5d6b-4f24-ac41-824d9e98233f",
+      "journalId": "ba05090c-044a-57ff-9311-a9f1f19f3dac",
       "name": "李雯 (Liwen)",
       "package": "Full",
       "entitledSessions": [
@@ -411,7 +411,7 @@
     },
     {
       "id": "HEFEI-026",
-      "journalId": "87587d2c-1c5b-4cd1-8613-70557b75974c",
+      "journalId": "1677578a-17fa-55e2-8876-86a7efc5b3db",
       "name": "崔振江 (Cuizhenjiang)",
       "package": "Full",
       "entitledSessions": [
@@ -425,7 +425,7 @@
     },
     {
       "id": "HEFEI-027",
-      "journalId": "8d532c55-996f-4696-9eb6-70d6b4d6e3dc",
+      "journalId": "196217b4-4fae-58aa-8284-981cac0e2cb3",
       "name": "张佩 (Pei)",
       "package": "Full",
       "entitledSessions": [
@@ -439,7 +439,7 @@
     },
     {
       "id": "HEFEI-028",
-      "journalId": "6a65a065-d7d7-4f72-8091-36dad9c03cf1",
+      "journalId": "681233f8-8ebd-57ed-b9b6-d055acb72627",
       "name": "魏震 (Crow)",
       "package": "Full",
       "entitledSessions": [
@@ -453,7 +453,7 @@
     },
     {
       "id": "HEFEI-029",
-      "journalId": "af185125-f296-4ffd-8fc9-cda6d34759d2",
+      "journalId": "3c71078b-e721-5db3-806e-8d47c63aada4",
       "name": "李娜娜 (Lucky)",
       "package": "Full",
       "entitledSessions": [
@@ -467,7 +467,7 @@
     },
     {
       "id": "HEFEI-030",
-      "journalId": "c3d87290-c718-4213-94f9-f52ceac71dc0",
+      "journalId": "4685e098-0a64-59a3-b171-ff3b377cfd00",
       "name": "徐畅 (Xuchang)",
       "package": "Full",
       "entitledSessions": [
@@ -481,7 +481,7 @@
     },
     {
       "id": "HEFEI-031",
-      "journalId": "21100fa4-c281-4e86-9931-42e0b8bd77c4",
+      "journalId": "42706368-6fbb-5f5b-a2e9-2fda898b4418",
       "name": "冬情 (Dongqing)",
       "package": "Full",
       "entitledSessions": [
@@ -495,7 +495,7 @@
     },
     {
       "id": "HEFEI-032",
-      "journalId": "bf01a38d-3db5-4357-9e80-3d5b09a2afb5",
+      "journalId": "5157fd2d-052f-568c-8bf8-aa1f6f9edd9f",
       "name": "任晓青 (Xiaoqing)",
       "package": "Full",
       "entitledSessions": [
@@ -509,7 +509,7 @@
     },
     {
       "id": "HEFEI-033",
-      "journalId": "bc188c46-5548-4a61-a812-edd46880f297",
+      "journalId": "4f7590e8-01c3-5c35-b490-36b96b78cb7f",
       "name": "田林林 (Linlin)",
       "package": "Full",
       "entitledSessions": [
@@ -523,7 +523,7 @@
     },
     {
       "id": "HEFEI-034",
-      "journalId": "41825eec-2bf5-4a5b-9ba7-d83bf59696a0",
+      "journalId": "378c1e95-e1c3-513f-9d4a-b64bfac2c793",
       "name": "陈瑜 (Chenyu)",
       "package": "Full",
       "entitledSessions": [
@@ -537,7 +537,7 @@
     },
     {
       "id": "HEFEI-035",
-      "journalId": "3ca28e79-14f1-4a4e-b6ba-b06c8bf8e492",
+      "journalId": "e0508f14-65fd-5185-9b80-c659f11d138c",
       "name": "魏蔚 (Yammin)",
       "package": "Full",
       "entitledSessions": [
@@ -607,7 +607,7 @@
     },
     {
       "id": "HEFEI-040",
-      "journalId": "a4d8ef25-a026-47ff-9f45-db42c0ea63b1",
+      "journalId": "39960a56-6783-54f4-8f08-62b716c6ef0e",
       "name": "夏薇薇 (Vera)",
       "package": "Weekend",
       "entitledSessions": [
@@ -624,7 +624,7 @@
     },
     {
       "id": "HEFEI-041",
-      "journalId": "3bcf62ca-ac68-43ee-8d23-9627ce966ffe",
+      "journalId": "34e53c36-e2d6-508b-a23a-88e266c598a4",
       "name": "张依乐 (Jaya)",
       "package": "Full",
       "entitledSessions": [
@@ -638,7 +638,7 @@
     },
     {
       "id": "HEFEI-042",
-      "journalId": "248d039f-269f-44d0-b2b6-81fec1098d5f",
+      "journalId": "5c6d3b18-29f3-5e3f-a728-ad701b1b8e5a",
       "name": "于珈 (Yujia)",
       "package": "Full",
       "entitledSessions": [
@@ -652,7 +652,7 @@
     },
     {
       "id": "HEFEI-043",
-      "journalId": "62882822-24e3-4f81-8f04-cd5f5525591c",
+      "journalId": "0aa9fe0f-8c04-5d01-9b97-affc62a62a74",
       "name": "陈丽萍 (Lin No)",
       "package": "Weekend",
       "entitledSessions": [
@@ -669,7 +669,7 @@
     },
     {
       "id": "HEFEI-044",
-      "journalId": "0df616c5-09cd-4ecb-864f-00ee210752fa",
+      "journalId": "22ed787c-29f9-5609-b64f-58b95d66902c",
       "name": "朱美红 (Yuening)",
       "package": "Full",
       "entitledSessions": [
@@ -683,7 +683,7 @@
     },
     {
       "id": "HEFEI-045",
-      "journalId": "88851b53-9432-499f-8b03-be53e6c350c6",
+      "journalId": "6394d141-39f1-5f1e-be58-e3815024f88d",
       "name": "黎安琴 (Lili)",
       "package": "Full",
       "entitledSessions": [
@@ -711,7 +711,7 @@
     },
     {
       "id": "HEFEI-047",
-      "journalId": "7c0e1931-b3d7-4ff3-ba72-902596270523",
+      "journalId": "4f3e1b8f-f986-56fb-845e-3952348edb0f",
       "name": "戴茜 (Daisy)",
       "package": "Single",
       "entitledSessions": [
@@ -736,6 +736,90 @@
       "note": "in-depth CN2 深度课学生",
       "practice": "intermediate+advanced",
       "lastAsana": "urdhva kukkutasana"
+    },
+    {
+      "id": "HEFEI-049",
+      "journalId": "7dd95fb8-d53d-510e-98aa-32e4608d8fc6",
+      "name": "Walk-in 1 走读",
+      "package": "Single",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "spare card — assign at door",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-050",
+      "journalId": "a3b73285-b975-5650-b8d5-33ac1e17927a",
+      "name": "Walk-in 2 走读",
+      "package": "Single",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "spare card — assign at door",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-051",
+      "journalId": "a41233f5-b7a1-55ff-98d5-0375be1b68fe",
+      "name": "Walk-in 3 走读",
+      "package": "Single",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "spare card — assign at door",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-052",
+      "journalId": "7a489390-b50b-5eb2-aec3-44b91af74e1c",
+      "name": "Walk-in 4 走读",
+      "package": "Single",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "spare card — assign at door",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-053",
+      "journalId": "ea5331c2-a52a-5ded-aa5d-87993b95fe7b",
+      "name": "Walk-in 5 走读",
+      "package": "Single",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "spare card — assign at door",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-054",
+      "journalId": "7572a4ca-4e4c-56cc-8942-34d9ebc6cb22",
+      "name": "Walk-in 6 走读",
+      "package": "Single",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "spare card — assign at door",
+      "practice": "",
+      "lastAsana": ""
     }
   ]
 }
