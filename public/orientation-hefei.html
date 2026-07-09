@@ -1046,6 +1046,15 @@ const T = {
 // ─── Full quiz pool (13 questions, all 4 languages) ─────────────
 const QUIZ_POOL = [
   {
+    q: { zh:'Primary 序列中我们做几次 Padmasana（莲花坐）？', en:'How many times do we do Padmasana in the Primary series?', th:'เราทำ Padmasana กี่ครั้งใน Primary series?', ru:'Сколько раз мы делаем Падмасану в Первой серии?' },
+    opts: {
+      zh:['我做不了莲花坐，所以是…零！🙂‍↔️','1次，就这样 😌','2次','Padmasana…那是什么？🤔'],
+      en:['I cannot do Padmasana, so... zero! 🙂‍↔️','1 time. That\'s it 😌','2 times','Padmasana... what\'s that? 🤔'],
+      th:['ฉันทำ Padmasana ไม่ได้ ดังนั้น...ศูนย์! 🙂‍↔️','1 ครั้ง แค่นั้น 😌','2 ครั้ง','Padmasana...คืออะไร? 🤔'],
+      ru:['Я не могу сделать Падмасану, так что... ноль! 🙂‍↔️','1 раз, и всё 😌','2 раза','Падмасана... что это? 🤔']
+    }, answer: 2
+  },
+  {
     q: { zh:'谁创造了阿斯汤加瑜伽方法？', en:'Who is the creator of the Ashtanga yoga method?', th:'ใครคือผู้สร้างวิธีโยคะอัชตางค์?', ru:'Кто создал метод аштанга-йоги?' },
     opts: {
       zh:['古鲁 Purnima','古鲁 Sharath Jois','古鲁 Patanjali','古鲁 Pattabhi Jois'],
@@ -1516,98 +1525,144 @@ async function shareToWeChat() {
   const t = T[currentLang];
 
   try {
-    // Build a canvas welcome card
+    // Build the shirt-hero welcome card (1080x1440, matches the page hero)
+    const SHIRT = '#7429ac', CHALK = '#f6f2ea';
+    const W = 1080, H = 1440, CX = W / 2;
     const canvas = document.createElement('canvas');
-    canvas.width = 640;
-    canvas.height = 640;
+    canvas.width = W;
+    canvas.height = H;
     const ctx = canvas.getContext('2d');
 
-    // Background gradient
-    const grad = ctx.createLinearGradient(0, 0, 640, 640);
-    grad.addColorStop(0, '#8b4513');
-    grad.addColorStop(0.5, '#a0522d');
-    grad.addColorStop(1, '#8b4513');
-    ctx.fillStyle = grad;
+    // Make sure the hand fonts are in before drawing (falls back gracefully)
+    try {
+      await Promise.all([
+        document.fonts.load('800 92px "Shantell Sans"'),
+        document.fonts.load('700 30px "Shantell Sans"'),
+        document.fonts.load('96px "ZCOOL KuaiLe"'),
+        document.fonts.load('600 88px "Caveat"'),
+        document.fonts.load('44px "Ma Shan Zheng"'),
+      ]);
+    } catch (e) {}
+    const F_DISPLAY = '"Shantell Sans","Marker Felt","Chalkboard SE",sans-serif';
+    const F_ZH = '"ZCOOL KuaiLe","PingFang SC",sans-serif';
+    const F_NOTE = '"Caveat","Ma Shan Zheng","Kaiti SC","Bradley Hand",cursive';
+
+    // The shirt
+    ctx.fillStyle = SHIRT;
     ctx.beginPath();
-    ctx.roundRect(0, 0, 640, 640, 28);
+    ctx.roundRect(0, 0, W, H, 44);
     ctx.fill();
 
-    // Selfie at 70% opacity over background
+    // Arched ASHTANGA, chalk, like the tee
+    ctx.fillStyle = CHALK;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    (function archText(text, cx, cy, radius, spreadDeg) {
+      const chars = [...text];
+      const spread = spreadDeg * Math.PI / 180;
+      const step = spread / (chars.length - 1);
+      ctx.font = '800 92px ' + F_DISPLAY;
+      chars.forEach((ch, i) => {
+        const a = -spread / 2 + i * step;
+        ctx.save();
+        ctx.translate(cx + radius * Math.sin(a), cy - radius * Math.cos(a));
+        ctx.rotate(a);
+        ctx.fillText(ch, 0, 0);
+        ctx.restore();
+      });
+    })('ASHTANGA', CX, 860, 720, 58);
+
+    // The crowned bird, chalk strokes (same paths as the page hero)
+    ctx.save();
+    ctx.translate(150, 190);
+    ctx.scale(0.95, 0.95);
+    ctx.strokeStyle = CHALK;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 11;
+    [
+      'M 175 340 C 150 320 142 285 158 262 C 172 241 200 232 224 240 C 232 222 254 214 272 222 C 292 230 300 250 294 268 C 308 292 300 322 276 338 C 246 358 200 358 175 340 Z',
+    ].forEach(d => ctx.stroke(new Path2D(d)));
+    ctx.lineWidth = 9;
+    [
+      'M 196 306 C 214 318 238 318 252 306',
+      'M 292 262 L 322 270 L 294 282',
+      'M 205 356 L 205 384 M 246 358 L 246 386',
+      'M 186 240 L 178 214 M 210 232 L 210 204 M 234 238 L 242 212',
+    ].forEach(d => ctx.stroke(new Path2D(d)));
+    ctx.lineWidth = 7;
+    ctx.globalAlpha = 0.7;
+    ctx.stroke(new Path2D('M 150 392 C 260 380 420 380 560 390'));
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(252, 258, 7, 0, Math.PI * 2); ctx.fillStyle = CHALK; ctx.fill();
+    ctx.restore();
+
+    // 合肥 + AYBKK, right side like the hero
+    ctx.fillStyle = CHALK;
+    ctx.textAlign = 'left';
+    ctx.font = '96px ' + F_ZH;
+    ctx.fillText('合肥', 700, 500);
+    ctx.font = '700 30px ' + F_DISPLAY;
+    try { ctx.letterSpacing = '10px'; } catch (e) {}
+    ctx.fillText('AYBKK', 706, 545);
+    try { ctx.letterSpacing = '0px'; } catch (e) {}
+
+    // Welcome line + the student's name, handwritten, slightly tilted
+    const welcomeText = currentLang === 'zh' ? '欢迎加入' : currentLang === 'th' ? 'ยินดีต้อนรับ' : currentLang === 'ru' ? 'Добро пожаловать' : 'Welcome,';
+    ctx.save();
+    ctx.translate(CX, 700);
+    ctx.rotate(-0.021);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(246,242,234,0.82)';
+    ctx.font = '600 52px ' + F_NOTE + ', "PingFang SC"';
+    ctx.fillText(welcomeText, 0, 0);
+    ctx.fillStyle = CHALK;
+    ctx.font = '600 104px ' + F_NOTE + ', "PingFang SC"';
+    ctx.fillText(name, 0, 118);
+    ctx.restore();
+
+    // Selfie as a taped-in photo, if they took one
     if (selfieDataUrl) {
       await new Promise((resolve) => {
         const img = new Image();
         img.onload = () => {
+          const pw = 400, ph = 400, px = CX - pw / 2, py = 900;
           ctx.save();
-          ctx.globalAlpha = 0.70;
-          const scale = Math.max(640 / img.width, 640 / img.height);
+          ctx.translate(px + pw / 2, py + ph / 2);
+          ctx.rotate(0.028);
+          ctx.translate(-(px + pw / 2), -(py + ph / 2));
+          ctx.beginPath(); ctx.roundRect(px - 10, py - 10, pw + 20, ph + 20, 18);
+          ctx.fillStyle = CHALK; ctx.fill();
+          ctx.beginPath(); ctx.roundRect(px, py, pw, ph, 12);
+          ctx.clip();
+          const scale = Math.max(pw / img.width, ph / img.height);
           const sw = img.width * scale, sh = img.height * scale;
-          ctx.drawImage(img, (640 - sw) / 2, (640 - sh) / 2, sw, sh);
+          ctx.drawImage(img, px + (pw - sw) / 2, py + (ph - sh) / 2, sw, sh);
           ctx.restore();
-          // Gradient overlay for readability
-          const overlay = ctx.createLinearGradient(0, 0, 0, 640);
-          overlay.addColorStop(0, 'rgba(139,69,19,0.55)');
-          overlay.addColorStop(0.4, 'rgba(139,69,19,0.30)');
-          overlay.addColorStop(0.7, 'rgba(139,69,19,0.45)');
-          overlay.addColorStop(1, 'rgba(139,69,19,0.65)');
-          ctx.fillStyle = overlay;
-          ctx.beginPath(); ctx.roundRect(0, 0, 640, 640, 28); ctx.fill();
           resolve();
         };
+        img.onerror = () => resolve();
         img.src = selfieDataUrl;
       });
     } else {
-      // Subtle inner glow when no photo
-      const glow = ctx.createRadialGradient(320, 200, 0, 320, 200, 380);
-      glow.addColorStop(0, 'rgba(255,248,225,0.12)');
-      glow.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, 640, 640);
+      // No photo: the firefly line carries the middle
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(246,242,234,0.9)';
+      ctx.font = '600 56px ' + F_NOTE;
+      ctx.fillText('"A firefly does not force its light."', CX, 1010);
+      ctx.font = '48px "Ma Shan Zheng","Kaiti SC",' + F_NOTE;
+      ctx.fillText('萤火虫不强求它的光', CX, 1090);
     }
 
-    // Workshop label
-    ctx.fillStyle = 'rgba(255,255,255,0.55)';
-    ctx.font = '500 22px -apple-system, sans-serif';
+    // Dates + credit, chalk caps
     ctx.textAlign = 'center';
-    ctx.fillText('AYBKK HEFEI WORKSHOP 2026', 320, 100);
-
-    // Divider
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(180, 120); ctx.lineTo(460, 120); ctx.stroke();
-
-    // Welcome line
-    const welcomeText = currentLang === 'zh' ? '欢迎加入' : currentLang === 'th' ? 'ยินดีต้อนรับ' : currentLang === 'ru' ? 'Добро пожаловать' : 'Welcome';
-    ctx.fillStyle = 'rgba(255,248,225,0.8)';
-    ctx.font = '400 30px Georgia, serif';
-    ctx.fillText(welcomeText, 320, 200);
-
-    // Student name
-    ctx.fillStyle = '#fff8e1';
-    ctx.font = 'bold 46px Georgia, serif';
-    ctx.fillText(name, 320, 268);
-
-    // Sutra
-    ctx.fillStyle = 'rgba(255,248,225,0.7)';
-    ctx.font = 'italic 22px Georgia, serif';
-    ctx.fillText('"Atha Yoganushasanam"', 320, 360);
-
-    ctx.fillStyle = 'rgba(255,248,225,0.45)';
-    ctx.font = '18px Georgia, serif';
-    ctx.fillText('Now, the discipline of yoga. — Yoga Sutra 1.1', 320, 398);
-
-    // Divider
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-    ctx.beginPath(); ctx.moveTo(180, 460); ctx.lineTo(460, 460); ctx.stroke();
-
-    // Dates
-    ctx.fillStyle = 'rgba(255,255,255,0.55)';
-    ctx.font = '500 20px -apple-system, sans-serif';
-    ctx.fillText('July 16–20, 2026', 320, 510);
-
-    // Credit
-    ctx.fillStyle = 'rgba(255,255,255,0.4)';
-    ctx.font = '16px -apple-system, sans-serif';
-    ctx.fillText('by Boonchu Tanti & Jamsai Tanti', 320, 590);
+    ctx.fillStyle = 'rgba(246,242,234,0.8)';
+    ctx.font = '700 34px ' + F_DISPLAY;
+    try { ctx.letterSpacing = '6px'; } catch (e) {}
+    ctx.fillText('HEFEI WS · JULY 16–20 2026', CX, 1330);
+    ctx.font = '700 26px ' + F_DISPLAY;
+    ctx.fillText('BOONCHU & JAMSAI TANTI', CX, 1382);
+    try { ctx.letterSpacing = '0px'; } catch (e) {}
 
     // Show inline for WeChat long-press save
     const dataUrl = canvas.toDataURL('image/png');
