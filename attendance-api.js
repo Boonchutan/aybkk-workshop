@@ -29,9 +29,11 @@ function mountAttendance(app, opts = {}) {
         checked_in_at TIMESTAMPTZ,
         eligible      BOOLEAN,
         source        TEXT,
+        photo_file    TEXT,
         UNIQUE (workshop, journal_id, session)
       )
-    `).then(() => { pgReady = true; console.log('✓ attendance table ready'); })
+    `).then(() => pgPool.query('ALTER TABLE attendance ADD COLUMN IF NOT EXISTS photo_file TEXT'))
+      .then(() => { pgReady = true; console.log('✓ attendance table ready'); })
       .catch(e => console.error('attendance table init failed:', e.message));
   }
 
@@ -51,13 +53,14 @@ function mountAttendance(app, opts = {}) {
         for (const r of rows) {
           try {
             await pgPool.query(
-              `INSERT INTO attendance (workshop,journal_id,student_code,name,session,session_date,checked_in_at,eligible,source)
-               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+              `INSERT INTO attendance (workshop,journal_id,student_code,name,session,session_date,checked_in_at,eligible,source,photo_file)
+               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
                ON CONFLICT (workshop,journal_id,session) DO UPDATE
-                 SET checked_in_at=EXCLUDED.checked_in_at, eligible=EXCLUDED.eligible, source=EXCLUDED.source`,
+                 SET checked_in_at=EXCLUDED.checked_in_at, eligible=EXCLUDED.eligible, source=EXCLUDED.source,
+                     photo_file=COALESCE(EXCLUDED.photo_file, attendance.photo_file)`,
               [r.workshop || 'hefei', r.journalId || r.id || null, r.studentCode || r.id || null, r.name || null,
                r.session || null, r.sessionDate || null, r.checkedInAt || new Date().toISOString(),
-               r.eligible === false ? false : true, r.source || 'station']
+               r.eligible === false ? false : true, r.source || 'station', r.photoFile || null]
             );
           } catch (e) { /* keep going; JSON mirror below is the guarantee */ }
         }
@@ -89,7 +92,7 @@ function mountAttendance(app, opts = {}) {
   app.get('/api/attendance.csv', (req, res) => {
     let rows = readStore();
     if (req.query.workshop) rows = rows.filter(r => (r.workshop || 'hefei') === req.query.workshop);
-    const cols = ['workshop', 'studentCode', 'name', 'package', 'session', 'sessionDate', 'checkedInAt', 'eligible', 'source'];
+    const cols = ['workshop', 'studentCode', 'name', 'package', 'session', 'sessionDate', 'checkedInAt', 'eligible', 'source', 'photoFile'];
     const esc = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
     const csv = [cols.join(',')].concat(rows.map(r => cols.map(c => esc(r[c])).join(','))).join('\n');
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
