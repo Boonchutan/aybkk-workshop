@@ -425,5 +425,13 @@
       "*"
     ],
     "note": "spare card — assign at door"
+  },
+  {
+    "name": "Boone Tanti",
+    "package": "Test",
+    "size": "",
+    "journalId": "ea8c2bbe-633e-44d0-a042-ca4563a4d9f7",
+    "note": "test student (Boonchu)",
+    "practice": ""
   }
 ]

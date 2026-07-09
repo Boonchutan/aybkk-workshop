@@ -820,6 +820,20 @@
       "note": "spare card — assign at door",
       "practice": "",
       "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-055",
+      "journalId": "ea8c2bbe-633e-44d0-a042-ca4563a4d9f7",
+      "name": "Boone Tanti",
+      "package": "Test",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "test student (Boonchu)",
+      "practice": "",
+      "lastAsana": ""
     }
   ]
 }
