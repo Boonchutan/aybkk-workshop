@@ -36,7 +36,7 @@
       font-size: clamp(20px, 5.4vw, 26px);
       font-weight: 800;
       letter-spacing: -0.012em;
-      color: #2f2517;
+      color: var(--ink);
       text-shadow: var(--text-carve-soft);
       margin-bottom: 6px;
     }
@@ -69,9 +69,9 @@
     }
     .lang-btn:active { transform: scale(0.96); }
     .lang-btn.active {
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      color: #f1e2c4;
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
+      background: var(--shirt-deep);
+      color: var(--chalk);
+      text-shadow: none;
       box-shadow:
         inset 3px 3px 6px rgba(255, 240, 215, 0.4),
         inset -2px -2px 4px rgba(40, 20, 4, 0.25),
@@ -245,12 +245,9 @@
       text-transform: uppercase;
       cursor: pointer;
       margin-top: var(--space-2);
-      color: #f1e2c4;
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      text-shadow:
-        1px 1px 0 rgba(255, 240, 215, 0.7),
-        -1px -1px 1px rgba(50, 28, 10, 0.85),
-        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      color: var(--chalk);
+      background: var(--shirt-deep);
+      text-shadow: none;
       box-shadow:
         14px 14px 28px rgba(120, 80, 40, 0.30),
         -8px -8px 18px var(--shadow-light),
@@ -302,7 +299,7 @@
       font-family: var(--font-display);
       font-size: 22px;
       font-weight: 800;
-      color: #2f2517;
+      color: var(--ink);
       text-shadow: var(--text-carve-soft);
       margin-bottom: var(--space-2);
     }

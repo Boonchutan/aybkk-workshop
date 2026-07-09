@@ -29,7 +29,7 @@
       font-family: var(--font-display);
       font-size: 22px; font-weight: 800;
       letter-spacing: -0.012em;
-      color: #2f2517;
+      color: var(--ink);
       text-shadow: var(--text-carve-soft);
     }
     .top-bar .sub {
@@ -105,9 +105,9 @@
         -3px -3px 6px var(--shadow-light);
     }
     .filter-btn.active {
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      color: #f1e2c4;
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
+      background: var(--shirt-deep);
+      color: var(--chalk);
+      text-shadow: none;
       box-shadow:
         inset 3px 3px 6px rgba(255, 240, 215, 0.4),
         inset -2px -2px 4px rgba(40, 20, 4, 0.25),
@@ -342,8 +342,8 @@
 
     /* AI button — primary clay */
     .ai-btn {
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      color: #f1e2c4;
+      background: var(--shirt-deep);
+      color: var(--chalk);
       border: none;
       border-radius: var(--radius-md);
       padding: 10px 16px;
@@ -353,7 +353,7 @@
       text-transform: uppercase;
       cursor: pointer;
       display: flex; align-items: center; gap: 6px;
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.6), -1px -1px 1px rgba(50, 28, 10, 0.7);
+      text-shadow: none;
       box-shadow:
         6px 6px 14px rgba(120, 80, 40, 0.30),
         -3px -3px 8px var(--shadow-light),
@@ -417,8 +417,8 @@
         inset 5px 5px 10px rgba(120, 90, 50, 0.20);
     }
     .save-btn {
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      color: #f1e2c4;
+      background: var(--shirt-deep);
+      color: var(--chalk);
       border: none;
       border-radius: var(--radius-md);
       padding: 10px 22px;
@@ -428,7 +428,7 @@
       text-transform: uppercase;
       cursor: pointer;
       margin-top: 10px;
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.6), -1px -1px 1px rgba(50, 28, 10, 0.7);
+      text-shadow: none;
       box-shadow:
         6px 6px 14px rgba(120, 80, 40, 0.30),
         -3px -3px 8px var(--shadow-light),
@@ -438,7 +438,7 @@
     .save-btn:hover { transform: translateY(-2px); }
     .save-btn.saved {
       background: #5d6e3f;
-      color: #f1e2c4;
+      color: var(--chalk);
       box-shadow: 6px 6px 14px rgba(80, 95, 60, 0.30);
     }
 

@@ -4,26 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AYBKK — Orientation Dashboard</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #faf8f5; color: #2a2420; }
-    .header { background: linear-gradient(135deg, #3e2723 0%, #5d4037 50%, #4e342e 100%); color: white; padding: 20px 16px; text-align: center; position: sticky; top: 0; z-index: 10; }
-    .header h1 { font-size: 18px; margin-bottom: 4px; }
-    .header .count { color: rgba(255,255,255,0.7); font-size: 13px; }
+    body { font-family: var(--font-body); background: var(--wall); color: var(--ink); }
+    .header { background: var(--shirt); color: var(--chalk); padding: 20px 16px; text-align: center; position: sticky; top: 0; z-index: 10; }
+    .header h1 { font-family: var(--font-display); font-size: 18px; margin-bottom: 4px; }
+    .header .count { color: color-mix(in oklab, var(--chalk) 75%, transparent); font-size: 13px; }
     .container { max-width: 500px; margin: 0 auto; padding: 16px; }
-    .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .card .name { font-size: 17px; font-weight: 600; color: #3e2723; margin-bottom: 4px; }
-    .card .chinese { font-size: 14px; color: #8b7d6b; margin-bottom: 8px; }
-    .card .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f0ebe5; font-size: 13px; }
+    .card { background: var(--paper); border: var(--frame-w) solid var(--ink); border-radius: var(--frame-radius); box-shadow: var(--frame-shadow); padding: 16px; margin-bottom: 12px; }
+    .card .name { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .card .chinese { font-size: 14px; color: var(--ink-soft); margin-bottom: 8px; }
+    .card .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--hairline); font-size: 13px; }
     .card .row:last-child { border-bottom: none; }
-    .card .label { color: #8b7d6b; }
-    .card .value { color: #2a2420; font-weight: 500; text-align: right; max-width: 60%; }
+    .card .label { color: var(--ink-soft); }
+    .card .value { color: var(--ink); font-weight: 500; text-align: right; max-width: 60%; }
     .card .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
-    .card .tag { background: #c49564; color: white; padding: 3px 8px; border-radius: 10px; font-size: 11px; }
-    .card .injury { background: #fff3e0; border-left: 3px solid #ff9800; padding: 8px 12px; margin-top: 8px; border-radius: 0 8px 8px 0; font-size: 12px; color: #5d4037; }
-    .empty { text-align: center; padding: 40px; color: #8b7d6b; }
-    .refresh { position: fixed; bottom: 20px; right: 20px; background: #3e2723; color: white; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-    .loading { text-align: center; padding: 20px; color: #8b7d6b; }
+    .card .tag { background: var(--shirt); color: var(--chalk); padding: 3px 8px; border-radius: 10px; font-size: 11px; }
+    .card .injury { background: color-mix(in oklab, #a8632f 12%, var(--paper)); border-left: 3px solid #a8632f; padding: 8px 12px; margin-top: 8px; border-radius: 0 8px 8px 0; font-size: 12px; color: #a8632f; }
+    .empty { text-align: center; padding: 40px; color: var(--ink-soft); }
+    .refresh { position: fixed; bottom: 20px; right: 20px; background: var(--shirt-deep); color: var(--chalk); border: 2px solid var(--ink); width: 48px; height: 48px; border-radius: 50%; font-family: var(--font-display); font-size: 20px; cursor: pointer; box-shadow: 3px 3px 0 color-mix(in oklab, var(--ink) 30%, transparent); }
+    .loading { text-align: center; padding: 20px; color: var(--ink-soft); }
   </style>
 </head>
 <body>
@@ -90,8 +91,8 @@ async function loadStudents() {
         <div class="row"><span class="label">Last Asana</span><span class="value">${s.lastAsana || '—'}</span></div>
         ${diffs ? `<div class="tags">${diffs}</div>` : ''}
         ${injuries ? `<div class="injury">⚠️ ${injuries}</div>` : ''}
-        ${goals ? `<div class="injury" style="background:#f0f7ee;border-color:#66bb6a;">🎯 ${goals}</div>` : ''}
-        ${journalLink ? `<div class="row" style="margin-top:6px;"><span class="label">Journal</span><a href="${journalLink}" target="_blank" style="font-size:11px;color:#8b4513;word-break:break-all;">Open ↗</a></div>` : ''}
+        ${goals ? `<div class="injury" style="background:color-mix(in oklab, #2e7d5b 12%, var(--paper));border-color:#2e7d5b;color:#2e7d5b;">🎯 ${goals}</div>` : ''}
+        ${journalLink ? `<div class="row" style="margin-top:6px;"><span class="label">Journal</span><a href="${journalLink}" target="_blank" style="font-size:11px;color:var(--shirt);word-break:break-all;">Open ↗</a></div>` : ''}
         <div class="row" style="margin-top:4px;"><span class="label">Submitted</span><span class="value">${time}</span></div>
       </div>`;
     });

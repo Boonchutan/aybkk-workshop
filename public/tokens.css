@@ -1,47 +1,57 @@
 /* ============================================================
-   AYBKK Tokens — design language v1
-   Beech wood + walnut + carved-clay + Fraunces/Spectral pair.
-   Per PRODUCT.md: warm, traditional, lineage-respecting; anti-SaaS,
-   anti-wellness-startup. Editorial / printed-manual register.
+   AYBKK Tokens — design language v2: "The theme is the shirt"
+   Boonchu's hand ink. Each city's pages wear that city's tour tee.
+   Four roles: --shirt (city color), --wall (room), --chalk (ink on
+   shirt), --ink (text on paper). Per DESIGN.md, confirmed 2026-07-09.
+
+   v1 (beech wood + carved clay) survives as the Bangkok home theme
+   palette; v1 variable NAMES are kept below as aliases so every page
+   that drank from tokens v1 re-skins without edits.
 
    Load order: this file FIRST, then any page-level <style>.
-   Never use #fff or #000. Tint every neutral toward the wood hue.
+   Never #fff or #000. Never hardcode a city color in a page:
+   stamp <html data-ws="hefei"> and use the roles.
    ============================================================ */
 
-/* ---------- Type ----------
-   Load fonts from Google's official China mirror (fonts.googleapis.cn /
-   fonts.gstatic.cn). The .com endpoint is blocked by the Great Firewall, and
-   because an @import is render-blocking, a blocked request leaves the whole
-   page hanging blank for students in mainland China ("stuck"). The .cn mirror
-   is reachable behind the Firewall, so the page loads normally there.
-   font-display=swap + the native fallback stacks below mean text paints
-   immediately in a system font and upgrades to the web font when it arrives —
-   so even if the mirror is slow, the page is never blocked. */
-@import url('https://fonts.googleapis.cn/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800;9..144,900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+Thai:wght@400;500;700&display=swap');
+/* ---------- Fonts ----------
+   Google's official China mirror (fonts.googleapis.cn / gstatic.cn).
+   The .com endpoint is blocked by the Great Firewall; the mirror is
+   reachable. font-display:swap + native fallback stacks mean text
+   paints instantly in a system font and upgrades when (if) the web
+   font arrives. Chinese display/handwriting load as sliced subsets. */
+@import url('https://fonts.googleapis.cn/css2?family=Shantell+Sans:wght@500;700;800&family=ZCOOL+KuaiLe&family=Caveat:wght@600;700&family=Ma+Shan+Zheng&family=Nunito:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+Thai:wght@400;500;700&display=swap');
 
 :root {
-  /* === Wood neutrals (Apple Store / Muji light beech) === */
-  --bg:           #f1ede3;  /* oklch(0.94 0.008 82) — cream-white wall */
-  --surface:      #f8f4ea;  /* oklch(0.97 0.008 82) — paper, faint cream */
-  --surface-2:    #ecdfc4;  /* oklch(0.91 0.024 78) — bleached beech card */
-  --shadow-dark:  #b8a280;  /* oklch(0.71 0.035 72) — beech grain shadow */
-  --shadow-light: #fcf9ef;
-  --primary:      #d4ba8c;  /* oklch(0.78 0.038 75) — light beech (button) */
-  --primary-deep: #7d6442;  /* oklch(0.46 0.040 62) — walnut (text contrast) */
-  --ink:          #2a2117;  /* warm near-black, never #000 */
-  --ink-soft:     #6c5e4a;
-  --accent:       #9a805d;  /* warm walnut accent (teacher badge etc) */
+  /* === The four roles (default = home / Bangkok, the walnut shirt) === */
+  --shirt:       #7d6442;  /* oklch(0.46 0.040 62) — the tee color */
+  --shirt-deep:  #5a4730;  /* pressed / text-safe shade of the shirt */
+  --shirt-soft:  #a08663;  /* worn / faded shirt, secondary accents */
+  --wall:        #f1ede3;  /* oklch(0.94 0.008 82) — room behind everything */
+  --paper:       #f8f4ea;  /* reading/writing surface */
+  --paper-2:     #efe8d8;  /* pressed paper (active tabs, wells) */
+  --chalk:       #f6f2ea;  /* the white ink on the shirt — never #fff */
+  --mark:        var(--chalk); /* art color ON the shirt; dark on light shirts */
+  --mark-contrast: var(--shirt-deep); /* text color on a --mark surface */
+  --ink:         #2a2117;  /* text on paper — never #000, tinted to shirt */
+  --ink-soft:    #6c5e4a;
 
-  /* === Type stacks (multilingual: en, zh, th, ru) ===
-     Native CJK/Thai fonts are listed before Georgia so that, even if the web
-     fonts never load (e.g. the Firewall blocks the mirror), Chinese phones
-     still render crisp system serifs (Songti/STSong) and Thai (Thonburi)
-     instantly — the page is fully readable with zero external dependency. */
-  --font-display: 'Fraunces', Georgia, 'Songti SC', 'STSong', 'Noto Serif SC', serif;
-  --font-body:    'Spectral', Georgia, 'Songti SC', 'STSong', 'Noto Serif SC', 'Thonburi', 'Noto Sans Thai', serif;
+  /* === Ink physics (hand-drawn language) === */
+  --frame-w: 2.5px;                       /* hand frame stroke */
+  --frame-shadow: 3px 3px 0 color-mix(in oklab, var(--ink) 15%, transparent);
+  --frame-radius: 14px 18px 15px 17px / 17px 14px 18px 15px;
+  --frame-radius-sm: 9px 12px 10px 11px / 11px 9px 12px 10px;
+  --hairline: color-mix(in oklab, var(--ink) 18%, transparent);
+
+  /* === Type stacks (en / zh / th / ru; nothing blocks on a download) ===
+     Latin+Cyrillic display: Shantell Sans. zh display: ZCOOL KuaiLe.
+     Handwriting: Caveat (latin) / Ma Shan Zheng (zh).
+     Body: Nunito, then system CJK/Thai. */
+  --font-display: 'Shantell Sans', 'ZCOOL KuaiLe', 'Marker Felt', 'Chalkboard SE', 'PingFang SC', 'Noto Sans SC', 'Noto Sans Thai', sans-serif;
+  --font-note:    'Caveat', 'Ma Shan Zheng', 'Kaiti SC', 'Bradley Hand', cursive;
+  --font-body:    'Nunito', -apple-system, 'PingFang SC', 'Noto Sans SC', 'Thonburi', 'Noto Sans Thai', sans-serif;
   --font-mono:    ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* === Scale === */
+  /* === Scale (kept from v1) === */
   --radius-xs:    8px;
   --radius-sm:    12px;
   --radius-md:    18px;
@@ -57,68 +67,128 @@
   --space-7: 48px;
   --space-8: 64px;
 
-  /* === Motion (Apple-style ease-out) === */
+  /* === Motion === */
   --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
   --dur-fast: 140ms;
   --dur-base: 240ms;
   --dur-slow: 420ms;
+  --dur-draw: 1700ms;
 
-  /* === Carved-into-wood text-shadow (Fraunces display only) === */
-  --text-carve:
-    1px 1px 0 rgba(253, 250, 242, 0.95),
-    2px 2px 2px rgba(253, 250, 242, 0.6),
-    3px 3px 5px rgba(253, 250, 242, 0.35),
-    -1px -1px 1px rgba(150, 115, 75, 0.48),
-    -2px -2px 4px rgba(150, 115, 75, 0.26);
-
-  --text-carve-soft:
-    1px 1px 0 rgba(253, 250, 242, 0.9),
-    2px 2px 3px rgba(253, 250, 242, 0.5),
-    -1px -1px 1px rgba(150, 115, 75, 0.44),
-    -2px -2px 3px rgba(150, 115, 75, 0.22);
+  /* ============================================================
+     v1 compatibility aliases — every page written against tokens v1
+     keeps working and picks up the new language through these.
+     ============================================================ */
+  --bg:           var(--wall);
+  --surface:      var(--paper);
+  --surface-2:    var(--paper-2);
+  --primary:      var(--shirt-soft);
+  --primary-deep: var(--shirt-deep);
+  --accent:       var(--shirt);
+  /* Legacy neumorphic shadows collapse to faint flat ink / nothing.
+     Pages also use --shadow-dark as a hairline border color. */
+  --shadow-dark:  color-mix(in oklab, var(--ink) 14%, transparent);
+  --shadow-light: rgba(255, 255, 255, 0);
+  --text-carve:      none;
+  --text-carve-soft: none;
 }
 
-/* ---------- Minimal additive base (no aggressive reset) ---------- */
+/* ============================================================
+   City themes. Stamp the page: <html data-ws="hefei">.
+   Light shirts (suzhou, zhuhai) flip --mark to a dark ink and give
+   buttons a text-safe --shirt-deep.
+   ============================================================ */
+html[data-ws="hefei"] {
+  --shirt: #7429ac; --shirt-deep: #56207f; --shirt-soft: #9a5ec7;
+  --wall: #e7eef5; --paper: #f7f4ee; --paper-2: #ece5f2;
+  --ink: #251c2e; --ink-soft: #5f5468; --mark: var(--chalk);
+}
+html[data-ws="suzhou"] {
+  --shirt: #e3aa1a; --shirt-deep: #8a6410; --shirt-soft: #edc45e;
+  --wall: #e8f0e0; --paper: #f8f5ec; --paper-2: #f0e8cf;
+  --ink: #2c2214; --ink-soft: #6b5c3f; --mark: #2c2214; --mark-contrast: #f8f5ec;
+}
+html[data-ws="chengdu"] {
+  --shirt: #1f8a70; --shirt-deep: #14614e; --shirt-soft: #5aa98f;
+  --wall: #f6e9e6; --paper: #f9f5ee; --paper-2: #e4ede6;
+  --ink: #1c2823; --ink-soft: #4f6158; --mark: var(--chalk);
+}
+html[data-ws="xichang"] {
+  --shirt: #c1531d; --shirt-deep: #8c3a12; --shirt-soft: #d97f4e;
+  --wall: #e6eef5; --paper: #f8f4ec; --paper-2: #f2e3d8;
+  --ink: #2b2019; --ink-soft: #6a584c; --mark: var(--chalk);
+}
+html[data-ws="maoming"] {
+  --shirt: #5c4030; --shirt-deep: #422c20; --shirt-soft: #8a6a54;
+  --wall: #e4efe9; --paper: #f7f4ec; --paper-2: #e9e1d3;
+  --ink: #26201a; --ink-soft: #63564a; --mark: var(--chalk);
+}
+html[data-ws="zhuhai"] {
+  /* heather gray tee, vivid violet ink (the surfing bird) */
+  --shirt: #c0c2c6; --shirt-deep: #6b21b0; --shirt-soft: #a9aab3;
+  --wall: #f0f1f3; --paper: #f8f6f1; --paper-2: #e9e7ee;
+  --ink: #29222f; --ink-soft: #5f5768; --mark: #8b2fd6; --mark-contrast: var(--chalk);
+}
+html[data-ws="gz"] {
+  --shirt: #a8322f; --shirt-deep: #7c2321; --shirt-soft: #c26562;
+  --wall: #eaf0ec; --paper: #f8f4ec; --paper-2: #f0e2dd;
+  --ink: #291b1a; --ink-soft: #665048; --mark: var(--chalk);
+}
+
+/* ---------- Minimal additive base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 
 ::selection {
-  background: rgba(212, 186, 140, 0.45);
+  background: color-mix(in oklab, var(--shirt) 30%, var(--wall));
   color: var(--ink);
 }
 
-/* ---------- Display / typography utilities ---------- */
+/* Wall grain — the room behind everything. Off in print and on canvases. */
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media print { body::after { display: none; } }
+
+/* ---------- Typography utilities ---------- */
 .display {
   font-family: var(--font-display);
   font-weight: 800;
-  letter-spacing: -0.015em;
-  line-height: 1.1;
-  color: #2f2517;
-  text-shadow: var(--text-carve);
+  letter-spacing: 0.005em;
+  line-height: 1.12;
+  color: var(--ink);
 }
 
 .display-md {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.012em;
+  letter-spacing: 0;
   line-height: 1.2;
-  color: #2f2517;
-  text-shadow: var(--text-carve-soft);
+  color: var(--ink);
 }
 
 .eyebrow {
   font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--primary-deep);
+  color: var(--shirt);
+}
+
+.note {
+  font-family: var(--font-note);
+  font-size: 1.25em;
+  line-height: 1.35;
+  transform: rotate(-1deg);
+  display: inline-block;
 }
 
 .body-lg {
   font-family: var(--font-body);
   font-size: 18px;
-  line-height: 1.6;
+  line-height: 1.65;
   font-weight: 400;
   color: var(--ink-soft);
 }
@@ -126,83 +196,77 @@
 .body-md {
   font-family: var(--font-body);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.65;
   font-weight: 400;
   color: var(--ink-soft);
 }
 
-/* ---------- Clay surfaces (carved-clay design language) ---------- */
+/* ---------- Hand-drawn surfaces ----------
+   v1 clay class names kept so existing pages restyle for free. */
+.ink-frame,
 .clay-outset {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  box-shadow:
-    18px 18px 36px var(--shadow-dark),
-    -10px -10px 20px var(--shadow-light),
-    inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+  background: var(--paper);
+  border: var(--frame-w) solid var(--ink);
+  border-radius: var(--frame-radius);
+  box-shadow: var(--frame-shadow);
 }
 
+.ink-well,
 .clay-inset {
-  background: var(--surface-2);
-  border-radius: var(--radius-lg);
-  box-shadow:
-    inset 3px 3px 0 rgba(150, 120, 80, 0.18),
-    inset -3px -3px 0 rgba(253, 250, 242, 0.95),
-    inset 4px 4px 5px rgba(150, 120, 80, 0.13),
-    inset -4px -4px 5px rgba(253, 250, 242, 0.55),
-    inset 22px 22px 44px var(--shadow-dark),
-    inset -14px -14px 28px var(--shadow-light);
+  background: var(--paper-2);
+  border: var(--frame-w) solid var(--ink);
+  border-radius: var(--frame-radius);
+  box-shadow: inset 3px 3px 0 color-mix(in oklab, var(--ink) 10%, transparent);
 }
 
 .clay-inset-sm {
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  box-shadow:
-    inset 3px 3px 0 rgba(150, 120, 80, 0.16),
-    inset -3px -3px 0 rgba(253, 250, 242, 0.92),
-    inset 4px 4px 5px rgba(150, 120, 80, 0.11),
-    inset -4px -4px 5px rgba(253, 250, 242, 0.5),
-    inset 18px 18px 36px var(--shadow-dark),
-    inset -12px -12px 24px var(--shadow-light);
+  background: var(--paper-2);
+  border: 2px solid var(--ink);
+  border-radius: var(--frame-radius-sm);
+  box-shadow: inset 2px 2px 0 color-mix(in oklab, var(--ink) 10%, transparent);
 }
 
-/* ---------- Buttons (protruding wood block, deep-carved letters) ---------- */
+/* Tape card — journal notes, pinned photos */
+.tape {
+  position: relative;
+  background: var(--paper);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--ink) 22%, transparent);
+  transform: rotate(1.2deg);
+}
+.tape::before {
+  content: ""; position: absolute; top: -9px; left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 72px; height: 20px; border-radius: 2px;
+  background: color-mix(in oklab, var(--shirt) 30%, var(--paper));
+  opacity: 0.85;
+}
+
+/* ---------- Buttons: screen-printed patches ---------- */
 .clay-button {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 16px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #f1e2c4;
-
-  padding: 20px 40px;
-  border: none;
+  color: var(--chalk);
+  padding: 16px 34px;
+  border: var(--frame-w) solid var(--ink);
   border-radius: var(--radius-md);
   cursor: pointer;
-
-  background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-
-  text-shadow:
-    1px 1px 0 rgba(255, 240, 215, 0.7),
-    2px 2px 3px rgba(255, 230, 195, 0.45),
-    3px 3px 5px rgba(255, 225, 185, 0.25),
-    -1px -1px 1px rgba(50, 28, 10, 0.85),
-    -2px -2px 4px rgba(50, 28, 10, 0.55),
-    -1px -1px 8px rgba(50, 28, 10, 0.3);
-
-  box-shadow:
-    18px 18px 36px rgba(120, 80, 40, 0.30),
-    -10px -10px 22px var(--shadow-light),
-    inset 5px 5px 12px rgba(255, 240, 215, 0.55),
-    inset -4px -4px 10px rgba(40, 20, 4, 0.30);
-
-  transition: transform var(--dur-base) var(--ease-spring);
+  background: var(--shirt-deep);
+  box-shadow: 4px 4px 0 color-mix(in oklab, var(--ink) 35%, transparent);
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
 }
-
-.clay-button:hover { transform: translateY(-3px) scale(1.02); }
-.clay-button:active { transform: translateY(2px) scale(0.97); }
+.clay-button:hover { transform: translateY(-2px) rotate(-0.5deg); }
+.clay-button:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 color-mix(in oklab, var(--ink) 35%, transparent);
+}
 .clay-button:focus-visible {
-  outline: 2px solid var(--primary-deep);
-  outline-offset: 4px;
+  outline: 3px solid var(--shirt);
+  outline-offset: 3px;
 }
 
 .btn-secondary {
@@ -210,43 +274,69 @@
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.04em;
-  color: var(--primary-deep);
-
-  padding: 14px 26px;
-  border: none;
+  color: var(--ink);
+  padding: 12px 24px;
+  border: 2px solid var(--ink);
   border-radius: var(--radius-md);
   cursor: pointer;
-
-  background: var(--surface);
-
-  box-shadow:
-    10px 10px 22px var(--shadow-dark),
-    -6px -6px 14px var(--shadow-light);
-
-  transition: transform var(--dur-base) var(--ease-spring);
+  background: var(--paper);
+  box-shadow: 3px 3px 0 color-mix(in oklab, var(--ink) 18%, transparent);
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
 }
-
-.btn-secondary:hover { transform: translateY(-3px); }
+.btn-secondary:hover { transform: translateY(-2px); }
+.btn-secondary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 color-mix(in oklab, var(--ink) 18%, transparent);
+}
 .btn-secondary:focus-visible {
-  outline: 2px solid var(--primary-deep);
-  outline-offset: 4px;
+  outline: 3px solid var(--shirt);
+  outline-offset: 3px;
 }
 
-/* ---------- Pills / chips ---------- */
+/* ---------- Stickers / pills / chips ---------- */
+.sticker,
 .pill {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: var(--radius-pill);
-  background: var(--surface-2);
-  color: var(--primary-deep);
+  background: var(--chalk);
+  color: var(--ink);
   font-family: var(--font-display);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  box-shadow:
-    inset 3px 3px 6px var(--shadow-dark),
-    inset -2px -2px 4px var(--shadow-light);
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 color-mix(in oklab, var(--ink) 28%, transparent);
+  transform: rotate(-1.2deg);
+}
+.sticker-shirt {
+  background: var(--shirt);
+  color: var(--chalk);
+}
+
+/* ---------- Marker underline (inline SVG helper) ----------
+   Usage: <span class="marker-underline">words<svg viewBox="0 0 100 10"
+   preserveAspectRatio="none"><path d="M 2 7 C 25 3 55 3 98 6"/></svg></span> */
+.marker-underline { position: relative; white-space: nowrap; }
+.marker-underline svg {
+  position: absolute; left: -2%; bottom: -6px;
+  width: 104%; height: 11px; overflow: visible;
+}
+.marker-underline svg path {
+  stroke: var(--shirt); stroke-width: 4.5; fill: none; stroke-linecap: round;
+}
+
+/* ---------- Draw-on strokes ----------
+   Put class="drawon play" on an inline SVG whose paths should draw in. */
+.drawon path { stroke-dasharray: 900; stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .drawon.play path { animation: aybkk-draw var(--dur-draw) var(--ease-out) both; }
+  @keyframes aybkk-draw {
+    from { stroke-dashoffset: 900; }
+    to   { stroke-dashoffset: 0; }
+  }
 }
 
 /* ---------- Accessibility ---------- */

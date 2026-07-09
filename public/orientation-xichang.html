@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" data-ws="xichang">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,40 +19,39 @@
       font-feature-settings: "kern" 1, "liga" 1;
     }
 
-    .header {
-      background: var(--surface);
-      padding: var(--space-7) var(--space-5) var(--space-5);
+    /* Poster hero — the page wears the Xichang shirt */
+    .hero {
+      background: var(--shirt);
+      color: var(--mark);
+      padding: var(--space-6) var(--space-4) var(--space-6);
       text-align: center;
-      border-bottom: 1px solid var(--shadow-dark);
     }
-    .header img {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      margin-bottom: var(--space-3);
-      mix-blend-mode: multiply;
-      filter: contrast(1.05);
-      object-fit: cover;
-    }
-    .header h1 {
+    .hero-art { display: block; width: min(430px, 88vw); margin: 0 auto; height: auto; }
+    .hero h1 {
       font-family: var(--font-display);
-      font-size: clamp(20px, 5.4vw, 26px);
+      font-size: clamp(19px, 5vw, 24px);
       font-weight: 800;
-      letter-spacing: -0.012em;
-      color: #2f2517;
-      text-shadow: var(--text-carve-soft);
-      margin-bottom: 6px;
+      letter-spacing: 0.01em;
+      color: var(--mark);
+      margin-top: var(--space-3);
     }
-    .header .by {
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-style: italic;
-      color: var(--accent);
-      margin-bottom: 4px;
+    .hero .firefly {
+      font-family: var(--font-note);
+      font-size: clamp(19px, 4.6vw, 23px);
+      line-height: 1.35;
+      max-width: 340px;
+      margin: 10px auto 0;
+      transform: rotate(-1.2deg);
+      color: var(--mark);
     }
-    .header .dates {
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--ink-soft);
+    .hero .dates {
+      margin-top: var(--space-4);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: color-mix(in oklab, var(--mark) 78%, var(--shirt));
     }
 
     .lang-switch {
@@ -62,29 +61,26 @@
     }
     .lang-btn {
       padding: 7px 16px;
-      background: var(--surface);
-      border: none;
+      background: transparent;
+      border: 2px solid color-mix(in oklab, var(--mark) 55%, transparent);
       border-radius: var(--radius-pill);
       font-family: var(--font-display);
       font-size: 11px; font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--ink-soft);
+      color: var(--mark);
       cursor: pointer;
-      box-shadow:
-        4px 4px 8px var(--shadow-dark),
-        -3px -3px 6px var(--shadow-light);
-      transition: transform var(--dur-base) var(--ease-spring);
+      transition: transform var(--dur-base) var(--ease-out);
     }
     .lang-btn:active { transform: scale(0.96); }
+    .lang-btn:focus-visible { outline: 3px solid var(--mark); outline-offset: 2px; }
     .lang-btn.active {
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      color: #f1e2c4;
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
-      box-shadow:
-        inset 3px 3px 6px rgba(255, 240, 215, 0.4),
-        inset -2px -2px 4px rgba(40, 20, 4, 0.25),
-        6px 6px 12px rgba(120, 80, 40, 0.25);
+      background: var(--mark);
+      border-color: var(--mark);
+      color: var(--mark-contrast);
+      text-shadow: none;
+      transform: rotate(-1.5deg);
+      box-shadow: 2px 2px 0 color-mix(in oklab, var(--ink) 40%, transparent);
     }
 
     .container {
@@ -94,14 +90,12 @@
     }
 
     .card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
+      background: var(--paper);
+      border: var(--frame-w) solid var(--ink);
+      border-radius: var(--frame-radius);
       padding: var(--space-5);
       margin-bottom: var(--space-5);
-      box-shadow:
-        16px 16px 32px var(--shadow-dark),
-        -10px -10px 20px var(--shadow-light),
-        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+      box-shadow: var(--frame-shadow);
     }
     .card h3 {
       font-family: var(--font-display);
@@ -121,19 +115,17 @@
     }
     .card p:last-child { margin-bottom: 0; }
 
-    /* Quote — pull-quote between hairlines (no side-stripe) */
+    /* Quote — a handwritten margin note, like the box on the tee */
     .quote-box {
       max-width: 420px;
       margin: var(--space-5) auto;
-      padding: var(--space-4);
-      font-family: var(--font-body);
-      font-size: 15px;
-      line-height: 1.7;
-      font-style: italic;
+      padding: var(--space-3) var(--space-4);
+      font-family: var(--font-note);
+      font-size: 20px;
+      line-height: 1.4;
       text-align: center;
-      color: var(--accent);
-      border-top: 1px solid var(--shadow-dark);
-      border-bottom: 1px solid var(--shadow-dark);
+      color: var(--ink-soft);
+      transform: rotate(-0.8deg);
     }
     .quote-source {
       display: block;
@@ -143,7 +135,7 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       font-style: normal;
-      color: var(--primary-deep);
+      color: var(--shirt);
     }
 
     .rule {
@@ -327,12 +319,9 @@
       text-transform: uppercase;
       cursor: pointer;
       margin-top: var(--space-2);
-      color: #f1e2c4;
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      text-shadow:
-        1px 1px 0 rgba(255, 240, 215, 0.7),
-        -1px -1px 1px rgba(50, 28, 10, 0.85),
-        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      color: var(--chalk);
+      background: var(--shirt-deep);
+      text-shadow: none;
       box-shadow:
         14px 14px 28px rgba(120, 80, 40, 0.30),
         -8px -8px 18px var(--shadow-light),
@@ -516,8 +505,8 @@
       line-height: 1.55;
     }
     .copy-btn {
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      color: #f1e2c4;
+      background: var(--shirt-deep);
+      color: var(--chalk);
       border: none;
       padding: 10px 24px;
       border-radius: var(--radius-md);
@@ -527,7 +516,7 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       cursor: pointer;
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.6), -1px -1px 1px rgba(50, 28, 10, 0.7);
+      text-shadow: none;
       box-shadow:
         6px 6px 14px rgba(120, 80, 40, 0.25),
         -4px -4px 10px var(--shadow-light),
@@ -559,11 +548,31 @@
 </head>
 <body>
 
-<div class="header">
-  <img src="/aybkk-logo.jpg" alt="AYBKK" onerror="this.style.display='none'">
+<div class="hero">
+  <svg class="hero-art drawon play" viewBox="0 0 700 430" role="img" aria-label="AYBKK 西昌 — hand-drawn crowned bird and arched Ashtanga lettering from the Xichang tee">
+    <defs>
+      <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="6"/></filter>
+      <filter id="rough2"><feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="4"/></filter>
+      <path id="heroArc" d="M 90 205 Q 350 60 610 205" fill="none"/>
+    </defs>
+    <text filter="url(#rough2)" font-family="'Shantell Sans','Marker Felt',sans-serif" font-weight="800" font-size="74" fill="var(--mark)" letter-spacing="6">
+      <textPath href="#heroArc" startOffset="50%" text-anchor="middle">ASHTANGA</textPath>
+    </text>
+    <g filter="url(#rough)" stroke="var(--mark)" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 175 340 C 150 320 142 285 158 262 C 172 241 200 232 224 240 C 232 222 254 214 272 222 C 292 230 300 250 294 268 C 308 292 300 322 276 338 C 246 358 200 358 175 340 Z"/>
+      <path d="M 196 306 C 214 318 238 318 252 306" stroke-width="9"/>
+      <path d="M 292 262 L 322 270 L 294 282" stroke-width="9"/>
+      <path d="M 205 356 L 205 384 M 246 358 L 246 386" stroke-width="9"/>
+      <path d="M 186 240 L 178 214 M 210 232 L 210 204 M 234 238 L 242 212" stroke-width="9"/>
+      <path d="M 150 392 C 260 380 420 380 560 390" stroke-width="7" opacity="0.7"/>
+    </g>
+    <circle cx="252" cy="258" r="7" fill="var(--mark)"/>
+    <text x="470" y="330" filter="url(#rough2)" font-family="'ZCOOL KuaiLe','PingFang SC',sans-serif" font-size="104" fill="var(--mark)">西昌</text>
+    <text x="472" y="368" font-family="'Shantell Sans','Marker Felt',sans-serif" font-weight="700" font-size="25" letter-spacing="10" fill="var(--mark)" opacity="0.85">AYBKK</text>
+  </svg>
   <h1>AYBKK 西昌工作坊 2026</h1>
-  <p class="by">By Boonchu & Jamsai Tanti</p>
-  <p class="dates">June 24–28, 2026</p>
+  <div class="firefly">呼吸静定 · Breath first, then bend.</div>
+  <p class="dates">June 24–28, 2026 · Boonchu &amp; Jamsai Tanti</p>
   <div class="lang-switch">
     <button class="lang-btn active" onclick="setLang('zh')">🇨🇳 中文</button>
     <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>

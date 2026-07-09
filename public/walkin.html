@@ -4,21 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>AYBKK — Walk-in Registration</title>
+  <link rel="stylesheet" href="/tokens.css">
   <style>
     :root {
-      --bg: #faf8f5;
-      --card: #ffffff;
-      --accent: #8b6f4e;
-      --accent-light: #f5f0e8;
-      --text: #2c2c2c;
-      --text-secondary: #8e8e93;
-      --border: #e8e3db;
-      --radius: 14px;
-      --success: #4a9e6f;
+      --bg: var(--wall);
+      --card: var(--paper);
+      --accent: var(--shirt);
+      --accent-light: var(--paper-2);
+      --text: var(--ink);
+      --text-secondary: var(--ink-soft);
+      --border: var(--hairline);
+      --radius: var(--frame-radius);
+      --success: #2e7d5b;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, 'Helvetica Neue', 'PingFang SC', sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -27,11 +28,13 @@
     .container { max-width: 390px; margin: 0 auto; }
     .logo { text-align: center; margin-bottom: 16px; }
     .logo img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; opacity: 0.85; }
-    h1 { text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    h1 { font-family: var(--font-display); text-align: center; font-size: 18px; font-weight: 600; margin-bottom: 4px; }
     .subtitle { text-align: center; font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
     .card {
       background: var(--card);
+      border: var(--frame-w) solid var(--ink);
       border-radius: var(--radius);
+      box-shadow: var(--frame-shadow);
       padding: 24px 20px;
       margin-bottom: 16px;
     }
@@ -48,23 +51,26 @@
       border: 1.5px solid var(--border);
       border-radius: 10px;
       font-size: 16px;
+      font-family: var(--font-body);
       outline: none;
       margin-bottom: 16px;
       transition: border-color 0.2s;
-      background: #fff;
+      background: var(--paper);
     }
     input:focus, select:focus { border-color: var(--accent); }
     .btn {
       display: block;
       width: 100%;
       padding: 16px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
+      background: var(--shirt-deep);
+      color: var(--chalk);
+      border: 2px solid var(--ink);
       border-radius: 12px;
       font-size: 16px;
       font-weight: 600;
+      font-family: var(--font-display);
       cursor: pointer;
+      box-shadow: 3px 3px 0 color-mix(in oklab, var(--ink) 30%, transparent);
       transition: all 0.2s;
     }
     .btn:active { transform: scale(0.98); }
@@ -74,7 +80,7 @@
       padding: 40px 20px;
     }
     .success-msg .check { font-size: 48px; margin-bottom: 16px; }
-    .success-msg h2 { font-size: 20px; margin-bottom: 8px; }
+    .success-msg h2 { font-family: var(--font-display); font-size: 20px; margin-bottom: 8px; }
     .success-msg p { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; }
     .success-msg .btn { background: var(--success); max-width: 200px; margin: 0 auto 12px; }
     .success-msg .btn-secondary {
@@ -110,7 +116,7 @@
       padding: 12px;
       border: 1.5px solid var(--border);
       border-radius: 10px;
-      background: #fff;
+      background: var(--paper);
       text-align: center;
       font-size: 14px;
       font-weight: 500;
@@ -145,7 +151,7 @@
 
         <div id="classTypeDisplay" style="display:none;">
           <label>Class today</label>
-          <div id="classTypeText" style="padding:14px 16px;background:#f5f0e8;border-radius:10px;font-size:16px;font-weight:500;color:#8b6f4e;margin-bottom:16px;"></div>
+          <div id="classTypeText" style="padding:14px 16px;background:var(--paper-2);border-radius:10px;font-size:16px;font-weight:500;color:var(--shirt);margin-bottom:16px;"></div>
         </div>
 
         <button class="btn" id="registerBtn" onclick="doRegister()">Register & Start Journal</button>
@@ -299,7 +305,7 @@
     async function doRegister() {
       const name = document.getElementById('studentName').value.trim();
       if (!name) {
-        document.getElementById('studentName').style.borderColor = '#e74c3c';
+        document.getElementById('studentName').style.borderColor = '#a8402f';
         return;
       }
       const selectedDay = document.getElementById('daySelect').value;
