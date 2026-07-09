@@ -1,0 +1,741 @@
+{
+  "workshop": "hefei",
+  "title": "Hefei Workshop",
+  "dates": "2026-07-16..2026-07-20",
+  "lang": "zh",
+  "baseUrl": "https://aybkk-ashtanga.up.railway.app",
+  "qrMode": "short",
+  "generatedAt": "2026-07-09T05:32:50.744Z",
+  "sessions": [
+    {
+      "code": "D1-LED",
+      "label": "Day 1 · Led Primary",
+      "date": "2026-07-16"
+    },
+    {
+      "code": "D1-WS",
+      "label": "Day 1 · Workshop 1",
+      "date": "2026-07-16"
+    },
+    {
+      "code": "D2-MY",
+      "label": "Day 2 · Mysore",
+      "date": "2026-07-17"
+    },
+    {
+      "code": "D2-WS",
+      "label": "Day 2 · Workshop 2",
+      "date": "2026-07-17"
+    },
+    {
+      "code": "D3-MY",
+      "label": "Day 3 · Mysore",
+      "date": "2026-07-18"
+    },
+    {
+      "code": "D3-WS",
+      "label": "Day 3 · Workshop 3",
+      "date": "2026-07-18"
+    },
+    {
+      "code": "D4-MY",
+      "label": "Day 4 · Mysore",
+      "date": "2026-07-19"
+    },
+    {
+      "code": "D4-WS",
+      "label": "Day 4 · Workshop 4",
+      "date": "2026-07-19"
+    },
+    {
+      "code": "D5-LED",
+      "label": "Day 5 · Led P+I",
+      "date": "2026-07-20"
+    },
+    {
+      "code": "D5-QA",
+      "label": "Day 5 · Q&A + Photo",
+      "date": "2026-07-20"
+    }
+  ],
+  "students": [
+    {
+      "id": "HEFEI-001",
+      "journalId": "4c576442-e2c0-4884-9878-d97cd62ee8d3",
+      "name": "一洋 (Yiyang)",
+      "package": "Translator",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "XL",
+      "note": "translator 翻译 · in-depth CN2",
+      "practice": "intermediate+advanced",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-002",
+      "journalId": "e45dfbdc-dc48-4753-82f1-5c9be5dd3f26",
+      "name": "小马 (Xiao Ma)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "XL",
+      "note": "in-depth CN2 深度课学生",
+      "practice": "intermediate+advanced",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-003",
+      "journalId": "0aafd5d7-d73f-4f9e-b80b-1fc44f8d93e8",
+      "name": "丫丫 (Yaya)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "kapotasana (no catch)"
+    },
+    {
+      "id": "HEFEI-004",
+      "journalId": "289a5714-9b1f-4ec0-bc98-aa9e8c59816a",
+      "name": "汪汪 (Wangwang)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "kapotasana (no catch)"
+    },
+    {
+      "id": "HEFEI-005",
+      "journalId": "c00101c6-5439-4f84-87b5-2d9b5db885ef",
+      "name": "陈静 (CC)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "laghu vajrasana"
+    },
+    {
+      "id": "HEFEI-006",
+      "journalId": "2c516926-4808-44bf-a867-74a6984513ec",
+      "name": "老罗 (Luo)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary",
+      "lastAsana": "urdhva mukha paschimottanasana · supta kurmasana no catch"
+    },
+    {
+      "id": "HEFEI-007",
+      "journalId": "361d386a-9821-4574-a068-daa3ecf8eb5f",
+      "name": "李娜 (Lina)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "S",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "bakasana · kapotasana no catch"
+    },
+    {
+      "id": "HEFEI-008",
+      "journalId": "5bde2427-1d70-4db5-b19e-eff3b42040fa",
+      "name": "梁菲 (Liangfei)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "kapotasana (no catch)"
+    },
+    {
+      "id": "HEFEI-009",
+      "journalId": "872ee312-13ba-4048-9b35-ea137af9a71c",
+      "name": "田晓琳 (Xiaolin)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "supta vajrasana · kapotasana no catch"
+    },
+    {
+      "id": "HEFEI-010",
+      "journalId": "37e640bb-96d8-4b51-95df-2132df6fd20f",
+      "name": "孔敏 (Kongmin)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "kapotasana (no catch)"
+    },
+    {
+      "id": "HEFEI-011",
+      "journalId": "d64e67d9-4d8b-447d-bb1a-98fb053b649a",
+      "name": "岳华姐 (Yuehua)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "kapotasana (no catch)"
+    },
+    {
+      "id": "HEFEI-012",
+      "journalId": "8651742f-4c83-4e34-b81c-c1a75c73649a",
+      "name": "谨初 (Jinchu)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "RUYI student",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-013",
+      "journalId": "36b2bdfe-4653-441d-8b29-2c80ac0a9d1d",
+      "name": "倩倩 (Qianqian)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "RUYI student",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-014",
+      "journalId": "92cbc379-c740-4bde-aec0-a69674e96f82",
+      "name": "玲姐 (Ling)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "parsva dhanurasana"
+    },
+    {
+      "id": "HEFEI-015",
+      "journalId": "91bc59e7-1c6b-4b65-ba30-64feb2f878ba",
+      "name": "柳叶儿 (Liuye)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary",
+      "lastAsana": "navasana"
+    },
+    {
+      "id": "HEFEI-016",
+      "journalId": "b5446909-e3f1-43c5-8f68-f70ec335fe97",
+      "name": "圆琪 (Lea)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary",
+      "lastAsana": "navasana"
+    },
+    {
+      "id": "HEFEI-017",
+      "journalId": "c077d414-9daf-472d-9e75-f285b0e4fc69",
+      "name": "白雪 (Snowhite)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "RUYI student",
+      "practice": "primary+intermediate",
+      "lastAsana": "kapotasana (no catch)"
+    },
+    {
+      "id": "HEFEI-018",
+      "journalId": "8e77bd9f-2696-4185-831d-be04acb3d034",
+      "name": "陈立群 (Honghong)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "RUYI student",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-019",
+      "journalId": "6985a3bf-6f9d-4708-ac62-e101b29d92b5",
+      "name": "张莹 (Yoyo)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-020",
+      "journalId": "b76177ad-9acb-40b9-83e7-2dee9c0beebd",
+      "name": "艳秋 (Yanqiu)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-021",
+      "journalId": "d4762a3d-82c8-4a19-bbe4-1318bcf42101",
+      "name": "小七 (Seven)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "intermediate",
+      "lastAsana": "baddha hasta sirsasana · kapotasana no catch"
+    },
+    {
+      "id": "HEFEI-022",
+      "journalId": "a37881a6-4d15-4119-b29c-e1bf9539f76b",
+      "name": "汪姐 (Wendy)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "",
+      "practice": "intermediate",
+      "lastAsana": "pincha mayurasana"
+    },
+    {
+      "id": "HEFEI-023",
+      "journalId": "074acf94-6064-4fbe-ad70-e55a00871b32",
+      "name": "蒋洁 (Xiaojie)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "intermediate",
+      "lastAsana": "baddha hasta sirsasana"
+    },
+    {
+      "id": "HEFEI-024",
+      "journalId": "1629f36a-0952-4196-bb5d-42731ba2886f",
+      "name": "子墨 (August)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "XL",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-025",
+      "journalId": "c38ad81e-5d6b-4f24-ac41-824d9e98233f",
+      "name": "李雯 (Liwen)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "XL",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana · marichasana D no catch"
+    },
+    {
+      "id": "HEFEI-026",
+      "journalId": "87587d2c-1c5b-4cd1-8613-70557b75974c",
+      "name": "崔振江 (Cuizhenjiang)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-027",
+      "journalId": "8d532c55-996f-4696-9eb6-70d6b4d6e3dc",
+      "name": "张佩 (Pei)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana · supta kurmasana no catch"
+    },
+    {
+      "id": "HEFEI-028",
+      "journalId": "6a65a065-d7d7-4f72-8091-36dad9c03cf1",
+      "name": "魏震 (Crow)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-029",
+      "journalId": "af185125-f296-4ffd-8fc9-cda6d34759d2",
+      "name": "李娜娜 (Lucky)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "XL",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana · supta kurmasana no catch"
+    },
+    {
+      "id": "HEFEI-030",
+      "journalId": "c3d87290-c718-4213-94f9-f52ceac71dc0",
+      "name": "徐畅 (Xuchang)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "XL",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-031",
+      "journalId": "21100fa4-c281-4e86-9931-42e0b8bd77c4",
+      "name": "冬情 (Dongqing)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "",
+      "practice": "intermediate",
+      "lastAsana": "gomukhasana"
+    },
+    {
+      "id": "HEFEI-032",
+      "journalId": "bf01a38d-3db5-4357-9e80-3d5b09a2afb5",
+      "name": "任晓青 (Xiaoqing)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana · marichasana D no catch"
+    },
+    {
+      "id": "HEFEI-033",
+      "journalId": "bc188c46-5548-4a61-a812-edd46880f297",
+      "name": "田林林 (Linlin)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-034",
+      "journalId": "41825eec-2bf5-4a5b-9ba7-d83bf59696a0",
+      "name": "陈瑜 (Chenyu)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "",
+      "practice": "primary+intermediate",
+      "lastAsana": "laghu vajrasana"
+    },
+    {
+      "id": "HEFEI-035",
+      "journalId": "3ca28e79-14f1-4a4e-b6ba-b06c8bf8e492",
+      "name": "魏蔚 (Yammin)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "past AYBKK WS attendee",
+      "practice": "primary",
+      "lastAsana": "navasana"
+    },
+    {
+      "id": "HEFEI-036",
+      "journalId": "1971e49e-a9c6-41ea-b7a4-55f104dec8a9",
+      "name": "杰哥 (Lee)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "in-depth CN2 深度课学生",
+      "practice": "intermediate+advanced",
+      "lastAsana": "viranchyasana"
+    },
+    {
+      "id": "HEFEI-037",
+      "journalId": "c0b4d60e-df44-4b8d-93fa-854b4081de02",
+      "name": "亭逸 (Tinyee)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "in-depth CN2 深度课学生",
+      "practice": "intermediate",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-038",
+      "journalId": "e2568186-8aff-4f58-b429-fc2ce9d94b28",
+      "name": "马驰 (Mach)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "XXL",
+      "note": "in-depth CN2 深度课学生",
+      "practice": "intermediate",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-039",
+      "journalId": "2fd8bebb-4cfb-41d2-933b-d5f55e30dbd0",
+      "name": "乔乔 (Qiaoqiao)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "in-depth CN2 深度课学生",
+      "practice": "primary+intermediate",
+      "lastAsana": "kapotasana (no catch)"
+    },
+    {
+      "id": "HEFEI-040",
+      "journalId": "a4d8ef25-a026-47ff-9f45-db42c0ea63b1",
+      "name": "夏薇薇 (Vera)",
+      "package": "Weekend",
+      "entitledSessions": [
+        "D3-MY",
+        "D3-WS",
+        "D4-MY",
+        "D4-WS"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "Jul 18-19 only 两天WS",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana · marichasana D no catch"
+    },
+    {
+      "id": "HEFEI-041",
+      "journalId": "3bcf62ca-ac68-43ee-8d23-9627ce966ffe",
+      "name": "张依乐 (Jaya)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "S",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-042",
+      "journalId": "248d039f-269f-44d0-b2b6-81fec1098d5f",
+      "name": "于珈 (Yujia)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "marichasana (no catch)"
+    },
+    {
+      "id": "HEFEI-043",
+      "journalId": "62882822-24e3-4f81-8f04-cd5f5525591c",
+      "name": "陈丽萍 (Lin No)",
+      "package": "Weekend",
+      "entitledSessions": [
+        "D3-MY",
+        "D3-WS",
+        "D4-MY",
+        "D4-WS"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "Jul 18-19 only 两天WS · NO SHIRT SIZE",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana · supta kurmasana no catch"
+    },
+    {
+      "id": "HEFEI-044",
+      "journalId": "0df616c5-09cd-4ecb-864f-00ee210752fa",
+      "name": "朱美红 (Yuening)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "Nie friend discount 聂大哥朋友特别折扣",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-045",
+      "journalId": "88851b53-9432-499f-8b03-be53e6c350c6",
+      "name": "黎安琴 (Lili)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "Nie friend discount 聂大哥朋友特别折扣",
+      "practice": "primary",
+      "lastAsana": "urdhva mukha paschimottanasana"
+    },
+    {
+      "id": "HEFEI-046",
+      "journalId": "bd3fa653-bb43-48ac-9683-fbbc85b423ba",
+      "name": "聂大哥 (Nie)",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "in-depth 深度课学生 · Huizhou/Maoming/Suzhou/Xichang veteran",
+      "practice": "primary+intermediate",
+      "lastAsana": "laghu vajrasana"
+    },
+    {
+      "id": "HEFEI-047",
+      "journalId": "7c0e1931-b3d7-4ff3-ba72-902596270523",
+      "name": "戴茜 (Daisy)",
+      "package": "Single",
+      "entitledSessions": [
+        "D3-MY"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "Jul 18 mysore only 18号一天mysore · NO SHIRT SIZE",
+      "practice": "intermediate",
+      "lastAsana": "baddha hasta sirsasana"
+    },
+    {
+      "id": "HEFEI-048",
+      "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95",
+      "name": "GUIGUI",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "in-depth CN2 深度课学生",
+      "practice": "intermediate+advanced",
+      "lastAsana": "urdhva kukkutasana"
+    }
+  ]
+}

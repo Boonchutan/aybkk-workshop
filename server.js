@@ -8,6 +8,7 @@ const express = require('express');
 const multer = require('multer');
 const neo4j = require('neo4j-driver');
 const cors = require('cors');
+const { mountAttendance } = require('./attendance-api');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -390,6 +391,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Workshop check-in station sync + printed short links (offline-first station)
+mountAttendance(app, { pgPool });
+
 // Student Journal API Routes
 const studentJournal = require('./api/student-journal');
 app.use('/api/journal', studentJournal);
@@ -757,17 +761,31 @@ app.post('/api/students', async (req, res) => {
 app.post('/api/orientations', async (req, res) => {
   try {
     const { name, wechat, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, workshop, gameResults } = req.body;
-    const studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    // Bind to a pre-assigned card identity when the orientation link carries a card code
+    // (e.g. orientation-hefei.html?s=HEFEI-023 → reuse that student's journal UUID).
+    let studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    let cardCode = null;
+    try {
+      const code = String(req.body.studentCode || '').trim().toUpperCase();
+      if (code && code.includes('-')) {
+        const rosterPath = path.join(__dirname, 'public', 'rosters', code.split('-')[0].toLowerCase() + '.json');
+        const roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
+        const hit = (roster.students || []).find(s => s.id === code);
+        if (hit) { studentId = hit.journalId; cardCode = hit.id; }
+      }
+    } catch (e) { /* no roster / bad code — fall through to a fresh id */ }
+
+    const loc = req.body.location || 'guangzhou';
     const datetime = new Date().toISOString();
     const baseUrl = getBaseUrl(req);
-    const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=guangzhou';
+    const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=' + encodeURIComponent(loc);
 
     const session = driver.session();
     try {
       await session.run(
         'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
         {
-          id: studentId,
+          id: studentId + '-o-' + Date.now(),
           name: name,
           wechat: wechat || '',
           experience: experience || '',
@@ -783,32 +801,37 @@ app.post('/api/orientations', async (req, res) => {
           createdAt: datetime
         }
       );
+      // MERGE, not CREATE: card-bound students (in-depth grads etc.) may already
+      // exist — never duplicate them or downgrade their classType on re-orientation.
       await session.run(
-        `CREATE (s:Student {
-          id: $id,
-          name: $name,
-          wechatId: $wechat,
-          classType: 'chinese-workshop',
-          location: 'guangzhou',
-          isChineseStudent: true,
-          isActive: true,
-          oriented: true,
-          language: $language,
-          workshop: $workshop,
-          injuries: $injuries,
-          experience: $experience,
-          journalLink: $journalLink,
-          createdAt: datetime($createdAt)
-        })`,
+        `MERGE (s:Student {id: $id})
+         ON CREATE SET
+          s.classType = 'chinese-workshop',
+          s.location = $location,
+          s.isChineseStudent = true,
+          s.createdAt = datetime($createdAt)
+         SET
+          s.name = coalesce(s.name, $name),
+          s.wechatId = CASE WHEN $wechat <> '' THEN $wechat ELSE s.wechatId END,
+          s.isActive = true,
+          s.oriented = true,
+          s.language = $language,
+          s.workshop = $workshop,
+          s.injuries = $injuries,
+          s.experience = $experience,
+          s.journalLink = $journalLink,
+          s.cardCode = $cardCode`,
         {
           id: studentId,
           name: name,
           wechat: wechat || '',
+          location: loc,
           language: language || 'zh',
           workshop: workshop || 'Guangzhou WS Apr 2026',
           injuries: injuries || '',
           experience: experience || '',
           journalLink,
+          cardCode: cardCode,
           createdAt: datetime
         }
       );

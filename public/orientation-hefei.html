@@ -1383,6 +1383,9 @@ async function submitForm(e) {
     medicalConsent: document.getElementById('medicalConsent').value,
     language: currentLang,
     workshop: 'Hefei WS July 2026',
+    location: 'hefei',
+    // card binding: personal links look like orientation-hefei.html?s=HEFEI-023
+    studentCode: (new URLSearchParams(window.location.search).get('s') || '').toUpperCase(),
     gameResults: [
       { quiz: quiz1 ? quiz1.q.en : '', correct: quizCorrect },
       { quiz: quiz2 ? quiz2.q.en : '', correct: quiz2Correct }
