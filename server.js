@@ -3244,6 +3244,16 @@ async function start() {
     console.log(`✓ Mission Control running on http://localhost:${PORT}`);
   });
 
+  // Compatibility listener: Railway's custom-domain target port was created
+  // against the old default (3000). Until the domain's target port is moved
+  // to 8080 in the dashboard, serve both so my.aybkk.com stays up.
+  const LEGACY_PORT = process.env.MISSION_CONTROL_PORT || 3000;
+  if (String(LEGACY_PORT) !== String(PORT)) {
+    app.listen(LEGACY_PORT, () => {
+      console.log(`✓ Compatibility listener on http://localhost:${LEGACY_PORT}`);
+    });
+  }
+
   // Start China tunnel in production (Railway) or when explicitly requested.
   // Skipped in local dev unless ENABLE_TUNNEL=1 is set.
   if (process.env.RAILWAY_ENVIRONMENT || process.env.ENABLE_TUNNEL === '1') {
