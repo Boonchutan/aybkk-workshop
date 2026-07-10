@@ -20,6 +20,25 @@ function mountShop(app, opts = {}) {
   const HOLD_MS = 10 * 60 * 1000;                    // 10-minute payment window
 
   const read = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
+
+  // Telegram ping to Boonchu when a payment screenshot arrives (fire-and-forget)
+  async function notifyPayment(order) {
+    try {
+      const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.BOONCHU_CHAT_ID;
+      if (!token || !chat) return;
+      const text = [
+        '👕 付款截图 Payment screenshot!',
+        (order.nameZh || '') + ' ' + (order.nameEn || '') + ' (wx: ' + order.wechatId + ')',
+        order.productNameZh + ' · ' + order.size + ' × ' + order.qty + ' · ¥' + order.amount,
+        'Order ' + order.id,
+        '→ https://my.aybkk.com/shop-admin.html  (Confirm / Cancel)'
+      ].join('\n');
+      await fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chat, text })
+      });
+    } catch (e) { console.error('shop tg notify failed:', e.message); }
+  }
   const write = (f, v) => fs.writeFileSync(f, JSON.stringify(v, null, 2));
   const uid = p => p + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6).toUpperCase();
   const isAdmin = req => (req.headers['x-shop-key'] || req.query.key) === ADMIN_KEY;
@@ -106,8 +125,9 @@ function mountShop(app, opts = {}) {
       if (o.status === 'expired') return res.status(410).json({ error: 'order expired', errorZh: '订单已超时，请重新下单' });
       if (!['pending', 'review'].includes(o.status)) return res.status(409).json({ error: 'order is ' + o.status });
       o.screenshot = file;
-      o.status = 'review';
+      o.status = 'review';                      // clock stops; stock stays held until admin decides
       write(F.orders, orders);
+      notifyPayment(o);
       res.json({ success: true, order: o });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
