@@ -4,6 +4,7 @@ const path = require('path');
 const { Pool } = require('pg');
 const { v4: uuidv4 } = (() => { try { return require('uuid'); } catch { return { v4: () => Math.random().toString(36).slice(2) + Date.now().toString(36) }; } })();
 const { mountAttendance } = require('./attendance-api');
+const { mountShop } = require('./shop-api');
 
 const app = express();
 app.use(express.json());
@@ -27,6 +28,9 @@ else console.log('⚠ No DATABASE_URL — falling back to JSON files');
 
 // Workshop check-in station sync + printed short links (offline-first station)
 mountAttendance(app, { pgPool: pool });
+
+// Tee shop (WeChat-pay flow with reservation holds)
+mountShop(app);
 
 // ── JSON file fallback (legacy / local dev) ───────────────────────────────────
 const DATA_DIR = '/data';

@@ -9,6 +9,7 @@ const multer = require('multer');
 const neo4j = require('neo4j-driver');
 const cors = require('cors');
 const { mountAttendance } = require('./attendance-api');
+const { mountShop } = require('./shop-api');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -393,6 +394,9 @@ app.use((req, res, next) => {
 
 // Workshop check-in station sync + printed short links (offline-first station)
 mountAttendance(app, { pgPool });
+
+// Tee shop (WeChat-pay flow with reservation holds)
+mountShop(app);
 
 // Student Journal API Routes
 const studentJournal = require('./api/student-journal');
