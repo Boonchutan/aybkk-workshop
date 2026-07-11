@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ashtanga Yoga Bangkok — Class Booking</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <h1>Book your Ashtanga practice</h1>
+    <p>Reserve a spot in Mysore self-practice, led primary series, or a beginner orientation at Ashtanga Yoga Bangkok. Moon days and Saturdays follow the traditional Ashtanga calendar.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Schedule</h2>
+      <div id="classes" class="class-grid">Loading classes…</div>
+    </section>
+
+    <section>
+      <h2>Book a spot</h2>
+      <form id="booking-form">
+        <label>Your name <input name="name" required /></label>
+        <label>Email <input name="email" type="email" required /></label>
+        <label>Class
+          <select name="classId" id="classId" required></select>
+        </label>
+        <label>Date <input name="date" type="date" required /></label>
+        <button type="submit">Reserve</button>
+      </form>
+      <p id="result" class="result" role="status"></p>
+    </section>
+  </main>
+
+  <footer><p>Ashtanga Yoga Bangkok</p></footer>
+
+  <script>
+    const fmtDays = (d) => Array.isArray(d) ? d.join(', ') : d;
+
+    async function loadClasses() {
+      const res = await fetch('/api/classes');
+      const classes = await res.json();
+      const grid = document.getElementById('classes');
+      const select = document.getElementById('classId');
+      grid.innerHTML = '';
+      select.innerHTML = '';
+      classes.forEach((c) => {
+        const card = document.createElement('article');
+        card.className = 'class-card';
+        card.innerHTML =
+          '<h3>' + c.name + '</h3>' +
+          '<p class="meta">' + fmtDays(c.days) + ' &middot; ' + c.time + '</p>' +
+          '<p>' + c.description + '</p>' +
+          '<p class="meta">' + c.level + ' &middot; ' + c.priceTHB + ' THB &middot; cap ' + c.capacity + '</p>';
+        grid.appendChild(card);
+
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name + ' (' + fmtDays(c.days) + ' ' + c.time + ')';
+        select.appendChild(opt);
+      });
+    }
+
+    document.getElementById('booking-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const payload = {
+        name: form.name.value,
+        email: form.email.value,
+        classId: form.classId.value,
+        date: form.date.value,
+      };
+      const result = document.getElementById('result');
+      result.textContent = 'Booking…';
+      try {
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Booking failed');
+        result.className = 'result ok';
+        result.textContent = 'Confirmed! ' + data.booking.name + ' is booked for ' + payload.date + '.';
+        form.reset();
+      } catch (err) {
+        result.className = 'result err';
+        result.textContent = err.message;
+      }
+    });
+
+    loadClasses();
+  </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+node_modules/
+.env
+memory/*.db
+memory/*.db-journal
+memory/*.db-wal
+memory/*.db-shm
+
+# Runtime-generated project output. The committed example below is the demo deliverable.
+projects/run-*/
