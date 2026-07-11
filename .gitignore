@@ -9,6 +9,7 @@ db/
 !package.json
 !package-lock.json
 !.claude/settings.json
+!scripts/tee-photos.json
 .env
 .env.*
 .DS_Store

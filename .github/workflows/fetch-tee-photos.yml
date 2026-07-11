@@ -1,0 +1,51 @@
+name: Fetch tee shop photos from Drive
+
+# One-shot: downloads link-shared Drive photos listed in scripts/tee-photos.json,
+# compresses them for mobile, and commits them to public/img/tees/.
+# Run manually from the Actions tab (workflow_dispatch).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download, verify, compress
+        run: |
+          sudo apt-get -qq update && sudo apt-get -qq install -y imagemagick jq >/dev/null
+          mkdir -p public/img/tees
+          FAIL=0
+          jq -c '.photos[]' scripts/tee-photos.json | while read -r row; do
+            FILE=$(echo "$row" | jq -r .file)
+            ID=$(echo "$row" | jq -r .driveId)
+            OUT="public/img/tees/$FILE"
+            curl -sL --max-time 120 "https://drive.google.com/uc?export=download&id=$ID" -o /tmp/raw
+            TYPE=$(file -b --mime-type /tmp/raw)
+            if [ "$TYPE" != "image/jpeg" ] && [ "$TYPE" != "image/png" ]; then
+              echo "::warning::$FILE: got $TYPE instead of an image (not public? quota?)"
+              echo "$FILE" >> /tmp/failed
+              continue
+            fi
+            convert /tmp/raw -auto-orient -strip -resize '900x900>' -quality 78 "$OUT"
+            echo "$FILE: $(du -h "$OUT" | cut -f1)"
+          done
+          ls -la public/img/tees/ | head -45
+          if [ -f /tmp/failed ]; then echo "FAILED:"; cat /tmp/failed; fi
+
+      - name: Commit photos
+        run: |
+          git config user.name "tee-photo-bot"
+          git config user.email "noreply@aybkk.com"
+          git add public/img/tees/
+          if git diff --cached --quiet; then
+            echo "No new photos to commit"
+          else
+            git commit -m "Add compressed tee shop photos from Drive [skip ci]"
+            git push
+          fi
