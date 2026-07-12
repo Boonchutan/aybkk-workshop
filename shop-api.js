@@ -298,8 +298,10 @@ function mountShop(app, opts = {}) {
     const o = orders.find(x => x.id === req.params.id);
     if (!o) return res.status(404).json({ error: 'not found' });
     if (['rejected', 'expired'].includes(o.status)) return res.json({ success: true, order: o });
+    // pending / review / paid all hold stock — cancelling any of them returns it
     const p = products.find(x => x.id === o.productId);
-    if (o.status !== 'paid' && p && p.sizes[o.size] != null) p.sizes[o.size] += o.qty;  // restock
+    if (['pending', 'review', 'paid'].includes(o.status) && p && p.sizes[o.size] != null)
+      p.sizes[o.size] += o.qty;
     o.status = 'rejected';
     write(F.orders, orders); write(F.products, products);
     res.json({ success: true, order: o });

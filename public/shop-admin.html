@@ -202,7 +202,8 @@
         ${o.status === 'expired' ? `
           <button class="btn green" onclick="act('${o.id}','confirm')">Revive &amp; confirm 补确认</button>` : ''}
         ${o.status === 'paid' ? `
-          <button class="btn" onclick="receipt('${o.id}')">收据 Receipt</button>` : ''}</td>
+          <button class="btn" onclick="receipt('${o.id}')">收据 Receipt</button><br><br>
+          <button class="btn red" onclick="cancelPaid('${o.id}')">Cancel ✗ 取消</button>` : ''}</td>
       </tr>`).join('');
     $('#view').innerHTML = `<div class="box"><b>Orders 订单</b> <button class="btn gray" onclick="location.reload()">↻</button>
       <table><tr><th>Student</th><th>Item</th><th>Status</th><th>Payment proof</th><th></th></tr>${rows || ''}</table>
@@ -219,6 +220,11 @@
       body: JSON.stringify({ qty }) });
     if (!r.ok) alert((await r.json()).error);
     refresh();
+  };
+
+  window.cancelPaid = (id) => {
+    if (!confirm('取消这个已付款订单？库存会退回。\nCancel this PAID order? The shirt returns to stock.')) return;
+    act(id, 'reject');
   };
 
   window.act = async (id, what) => {
