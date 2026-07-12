@@ -1,6 +1,6 @@
 {
-  "version": 6,
-  "note": "v6: real sellable stock for 38-42 from Boonchu photos (free attendee tees excluded). setSizes = target sellable; loader subtracts already-active orders.",
+  "version": 7,
+  "note": "v7: reserve 1 per kids size on Hefei/Burgundy/Pink for Boonchu's 2 kids.",
   "products": [
     {
       "id": "tee-1",
@@ -562,9 +562,9 @@
         "M": 10,
         "L": 15,
         "XL": 6,
-        "12": 5,
-        "14": 10,
-        "16": 15
+        "12": 4,
+        "14": 9,
+        "16": 14
       },
       "hidden": false,
       "note": "🎁 合肥工作坊全程学员免费获得此款1件 · Hefei full-workshop attendees get 1 free",
@@ -573,9 +573,9 @@
         "M": 10,
         "L": 15,
         "XL": 6,
-        "12": 5,
-        "14": 10,
-        "16": 15
+        "12": 4,
+        "14": 9,
+        "16": 14
       }
     },
     {
@@ -645,8 +645,8 @@
         "M": 12,
         "L": 15,
         "XL": 10,
-        "14": 10,
-        "16": 10
+        "14": 9,
+        "16": 9
       },
       "hidden": false,
       "setSizes": {
@@ -654,8 +654,8 @@
         "M": 12,
         "L": 15,
         "XL": 10,
-        "14": 10,
-        "16": 10
+        "14": 9,
+        "16": 9
       }
     },
     {
@@ -674,8 +674,8 @@
         "M": 12,
         "L": 15,
         "XL": 10,
-        "14": 10,
-        "16": 10
+        "14": 9,
+        "16": 9
       },
       "hidden": false,
       "setSizes": {
@@ -683,8 +683,8 @@
         "M": 12,
         "L": 15,
         "XL": 10,
-        "14": 10,
-        "16": 10
+        "14": 9,
+        "16": 9
       }
     }
   ],
