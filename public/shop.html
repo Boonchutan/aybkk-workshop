@@ -33,6 +33,7 @@
   .price b.pre{font-size:24px}
   .price .prelabel{font-size:12px;font-weight:700;letter-spacing:.04em;opacity:.75}
   .paynote{font-size:12px;color:#8a7db0;margin-top:2px}
+  .itemnote{font-size:13px;font-weight:700;color:#187a43;background:#e6f6ec;border-radius:9px;padding:6px 10px;margin-top:8px}
   .sizes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .size{border:1.5px solid var(--line);border-radius:10px;padding:8px 13px;font-size:15px;background:#faf8ff;cursor:pointer}
   .size b{margin-right:4px}
@@ -121,6 +122,7 @@
            <div class="zh">${esc(p.nameZh)}</div>
            <div class="price">${p.fullPrice > p.price ? `<s class="full">${yen(p.fullPrice)}</s> <b class="pre">${yen(p.price)}</b> <span class="prelabel">预购价 pre-order</span>` : yen(p.price)}</div>
            <div class="paynote">下单后请在 10 分钟内付款 · pay within 10 minutes</div>
+           ${p.note ? `<div class="itemnote">${esc(p.note)}</div>` : ''}
            <div class="sizes">${sizes}</div>
          </div>`;
       el.appendChild(card);

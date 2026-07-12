@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "note": "v4: Black Indepth (tee-12) removed — item does not exist; its two model photos were actually Huizhou Heart (tee-1), now photos 1-4/1-5.",
+  "version": 5,
+  "note": "v5: five new items 38-42 (Hefei WS, Zhuhai WS, Green/Burgundy/Pink back logos). WS tees carry free-for-attendees notes. Pre-order stock 99/size pending real counts from Boonchu.",
   "products": [
     {
       "id": "tee-1",
@@ -544,6 +544,102 @@
       "sizes": {
         "12": 1,
         "14": 2
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-38",
+      "nameEn": "Hefei WS Tee — Purple Tithibasana",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/38.jpg",
+      "photos": [
+        "/img/tees/38.jpg"
+      ],
+      "sizes": {
+        "S": 99,
+        "M": 99,
+        "L": 99,
+        "XL": 99
+      },
+      "hidden": false,
+      "note": "🎁 合肥工作坊全程学员免费获得此款1件 · Hefei full-workshop attendees get 1 free"
+    },
+    {
+      "id": "tee-39",
+      "nameEn": "Zhuhai WS Tee — Grey Seabird",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/39.jpg",
+      "photos": [
+        "/img/tees/39.jpg",
+        "/img/tees/39-2.jpg"
+      ],
+      "sizes": {
+        "S": 99,
+        "M": 99,
+        "L": 99,
+        "XL": 99
+      },
+      "hidden": false,
+      "note": "🎁 珠海工作坊全程学员免费获得此款1件 · Zhuhai full-workshop attendees get 1 free"
+    },
+    {
+      "id": "tee-40",
+      "nameEn": "Green AYBKK Back Logo",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/40.jpg",
+      "photos": [
+        "/img/tees/40.jpg",
+        "/img/tees/40-2.jpg"
+      ],
+      "sizes": {
+        "S": 99,
+        "M": 99,
+        "L": 99,
+        "XL": 99
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-41",
+      "nameEn": "Burgundy AYBKK Back Logo",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/41.jpg",
+      "photos": [
+        "/img/tees/41.jpg",
+        "/img/tees/41-2.jpg"
+      ],
+      "sizes": {
+        "S": 99,
+        "M": 99,
+        "L": 99,
+        "XL": 99
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-42",
+      "nameEn": "Pink Logo Minimal",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/42.jpg",
+      "photos": [
+        "/img/tees/42.jpg",
+        "/img/tees/42-2.jpg"
+      ],
+      "sizes": {
+        "S": 99,
+        "M": 99,
+        "L": 99,
+        "XL": 99
       },
       "hidden": false
     }
