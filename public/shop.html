@@ -34,6 +34,7 @@
   .price .prelabel{font-size:12px;font-weight:700;letter-spacing:.04em;opacity:.75}
   .paynote{font-size:12px;color:#8a7db0;margin-top:2px}
   .itemnote{font-size:13px;font-weight:700;color:#187a43;background:#e6f6ec;border-radius:9px;padding:6px 10px;margin-top:8px}
+  .receiptimg{width:100%;max-width:340px;border-radius:14px;box-shadow:0 6px 24px rgba(36,18,67,.18);margin-top:12px}
   .sizes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .size{border:1.5px solid var(--line);border-radius:10px;padding:8px 13px;font-size:15px;background:#faf8ff;cursor:pointer}
   .size b{margin-right:4px}
@@ -237,12 +238,113 @@
       if (!r.ok) throw new Error(j.errorZh || j.error);
       if (timer) { clearInterval(timer); timer = null; }
       $('#countdown').textContent = '✓';
-      $('#payState').innerHTML = '<div class="state ok">已收到截图，等待确认。确认后T恤为你保留。<br>Screenshot received — waiting for confirmation. Your shirt is held for you.</div>';
+      $('#payState').innerHTML = '<div class="state ok">已收到截图，等待确认。确认后T恤为你保留。<br>Screenshot received — waiting for confirmation. Your shirt is held for you.</div><div id="receiptSpot"></div>';
       $('#upBtn').style.display = 'none';
+      receiptBlock({ ...j.order, status: 'review' }, '#receiptSpot');
     } catch (e) {
       $('#payState').innerHTML = '<div class="state bad">' + esc(e.message || 'failed') + '</div>';
       $('#upBtn').disabled = false; $('#upBtn').textContent = '上传付款截图 Upload screenshot';
     }
+  }
+
+  // ── receipt card: canvas-drawn purchase confirmation the student saves ──
+  async function makeReceipt(order) {
+    try { await document.fonts.ready; } catch (e) {}
+    // little bird from the shop header comes along on the receipt
+    const bird = await new Promise(res => {
+      const im = new Image();
+      im.onload = () => res(im); im.onerror = () => res(null);
+      im.src = '/img/hefei-bird.png';
+    });
+    const S = 2, W = 680, H = 1060;
+    const cv = document.createElement('canvas'); cv.width = W * S; cv.height = H * S;
+    const ctx = cv.getContext('2d'); ctx.scale(S, S);
+    const hand = "'Shantell Sans','PingFang SC',sans-serif";
+    const body = "-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif";
+
+    // paper
+    ctx.fillStyle = '#f6f3fa'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.roundRect(28, 24, W - 56, H - 72, 18); ctx.fill();
+    ctx.strokeStyle = '#e3dcf0'; ctx.lineWidth = 1.5; ctx.stroke();
+    // serrated receipt bottom
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.moveTo(28, H - 48);
+    for (let x = 28; x < W - 28; x += 20) { ctx.lineTo(x + 10, H - 34); ctx.lineTo(x + 20, H - 48); }
+    ctx.lineTo(W - 28, H - 48); ctx.fill();
+
+    // purple header with the bird
+    ctx.fillStyle = '#582C83';
+    ctx.beginPath(); ctx.roundRect(28, 24, W - 56, 180, [18, 18, 0, 0]); ctx.fill();
+    if (bird) {
+      const bw = 84, bh = bird.height / bird.width * bw;
+      ctx.drawImage(bird, W / 2 - bw / 2, 38, bw, bh);
+    }
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+    ctx.font = '800 34px ' + hand; ctx.fillText('AYBKK Tee Shop', W / 2, bird ? 148 : 96);
+    ctx.font = '600 17px ' + body; ctx.globalAlpha = .92;
+    ctx.fillText('收 据 · R E C E I P T', W / 2, bird ? 180 : 130); ctx.globalAlpha = 1;
+
+    // detail rows
+    const rows = [
+      ['订单号 Order', order.id],
+      ['商品 Item', order.productName || ''],
+      ['尺码 Size', order.size + '　×　' + order.qty],
+      ['中文名', order.nameZh || '—'],
+      ['Name', order.nameEn || '—'],
+      ['微信 WeChat', order.wechatId || ''],
+      ['日期 Date', (order.createdAt || '').slice(0, 16).replace('T', '  ')],
+    ];
+    let y = 258;
+    for (const [k, v] of rows) {
+      ctx.textAlign = 'left'; ctx.fillStyle = '#8a7db0';
+      ctx.font = '600 15px ' + body; ctx.fillText(k, 64, y);
+      ctx.textAlign = 'right'; ctx.fillStyle = '#241243';
+      ctx.font = '700 19px ' + body;
+      let val = String(v); while (ctx.measureText(val).width > 380 && val.length > 3) val = val.slice(0, -2);
+      ctx.fillText(val, W - 64, y);
+      ctx.strokeStyle = '#eee9f6'; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(64, y + 18); ctx.lineTo(W - 64, y + 18); ctx.stroke();
+      ctx.setLineDash([]);
+      y += 56;
+    }
+
+    // amount
+    y += 14;
+    ctx.textAlign = 'left'; ctx.fillStyle = '#8a7db0';
+    ctx.font = '600 16px ' + body; ctx.fillText('合计 Total', 64, y + 6);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#582C83';
+    ctx.font = '800 44px ' + hand; ctx.fillText('¥' + order.amount, W - 64, y + 14);
+
+    // status stamp
+    const paid = order.status === 'paid';
+    const label = paid ? '已确认 PAID' : '待确认 PENDING';
+    const color = paid ? '#187a43' : '#b26a00';
+    ctx.save(); ctx.translate(W / 2, y + 110); ctx.rotate(-0.09);
+    ctx.strokeStyle = color; ctx.lineWidth = 3.5; ctx.globalAlpha = .85;
+    ctx.beginPath(); ctx.roundRect(-140, -34, 280, 68, 12); ctx.stroke();
+    ctx.fillStyle = color; ctx.font = '800 30px ' + hand;
+    ctx.textAlign = 'center'; ctx.fillText(label, 0, 11); ctx.restore(); ctx.globalAlpha = 1;
+
+    // footer
+    ctx.textAlign = 'center'; ctx.fillStyle = '#8a7db0';
+    ctx.font = '600 15px ' + body;
+    ctx.fillText('凭此收据到店取货 · Show this receipt at pickup', W / 2, y + 190);
+    ctx.font = 'italic 600 14px ' + hand; ctx.globalAlpha = .8;
+    ctx.fillText('✍︎ All designed & made by Boonchu Tanti · AYBKK', W / 2, y + 220);
+    ctx.globalAlpha = 1;
+    return cv.toDataURL('image/png');
+  }
+
+  async function receiptBlock(order, mountSel) {
+    try {
+      const url = await makeReceipt(order);
+      const el = document.querySelector(mountSel);
+      if (!el) return;
+      el.innerHTML = `
+        <img class="receiptimg" src="${url}" alt="receipt">
+        <div class="note">长按上图保存收据 · Long-press the receipt to save it</div>
+        <a class="ghost" style="display:block;text-align:center" href="${url}" download="AYBKK-receipt-${esc(order.id)}.png">下载收据 Download receipt</a>`;
+    } catch (e) { /* receipt is a bonus — never block the flow */ }
   }
 
   async function resumeOrder() {
@@ -260,8 +362,10 @@
         $('#sheet').classList.add('show');
         $('#sheetIn').innerHTML = `<div class="paywrap"><h3>订单 ${esc(order.id)}</h3>
           <div class="state ok">已收到你的付款截图，等待确认中。确认后T恤为你保留 ✓<br>Screenshot received — waiting for Boonchu's confirmation.</div>
+          <div id="receiptSpot"></div>
           <button class="ghost" id="done">好 OK</button></div>`;
         $('#done').onclick = closeSheet;
+        receiptBlock(order, '#receiptSpot');
       } else if (order.status === 'expired') {
         $('#sheet').classList.add('show');
         $('#sheetIn').innerHTML = `<div class="paywrap"><h3>${esc(order.productNameZh || order.productName)} · ${esc(order.size)} × ${order.qty}</h3>
@@ -275,8 +379,10 @@
         $('#sheet').classList.add('show');
         $('#sheetIn').innerHTML = `<div class="paywrap"><h3>${esc(order.productNameZh || order.productName)} · ${esc(order.size)} × ${order.qty}</h3>
           <div class="state ok">已确认，T恤是你的了！到店取货 🎉<br>Confirmed — the shirt is yours! Pick it up at the shala.</div>
+          <div id="receiptSpot"></div>
           <button class="ghost" id="done">太好了 Yay</button></div>`;
         $('#done').onclick = closeSheet;
+        receiptBlock(order, '#receiptSpot');
       } else {
         localStorage.removeItem('aybkk_shop_order');
       }
