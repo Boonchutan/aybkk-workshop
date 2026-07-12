@@ -31,7 +31,7 @@ function mountShop(app, opts = {}) {
     const products = read(F.products, []);
     const settings = read(F.settings, {});
     const seedVer = seed.version || 0;
-    const syncFields = ['nameEn', 'nameZh', 'price', 'fullPrice', 'photo', 'photo2'];
+    const syncFields = ['nameEn', 'nameZh', 'price', 'fullPrice', 'photo', 'photo2', 'photos'];
     const known = new Map(products.map(p => [p.id, p]));
     let added = 0, synced = 0;
     for (const sp of seed.products || []) {
