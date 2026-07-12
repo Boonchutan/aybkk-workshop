@@ -21,19 +21,34 @@ function mountShop(app, opts = {}) {
 
   const read = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
-  // Boot-time seed: add products from shop-seed.json whose ids are not yet in
-  // the store. Existing ids are never touched, so admin edits and live stock
-  // survive redeploys; re-running is a no-op.
+  // Boot-time seed from shop-seed.json:
+  //  - ids not yet in the store are added
+  //  - when seed.version increases, display fields (names/prices/photos) are
+  //    synced onto existing ids — but sizes (live stock) and hidden are never
+  //    touched, so orders and admin stock edits survive redeploys
   try {
     const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'shop-seed.json'), 'utf8'));
     const products = read(F.products, []);
-    const known = new Set(products.map(p => p.id));
-    const fresh = (seed.products || []).filter(p => p.id && !known.has(p.id));
-    if (fresh.length) {
-      for (const p of fresh) products.push({ createdAt: new Date().toISOString(), ...p });
-      fs.writeFileSync(F.products, JSON.stringify(products, null, 2));
-      console.log(`✓ shop seed: added ${fresh.length} new products (${products.length} total)`);
+    const settings = read(F.settings, {});
+    const seedVer = seed.version || 0;
+    const syncFields = ['nameEn', 'nameZh', 'price', 'fullPrice', 'photo', 'photo2'];
+    const known = new Map(products.map(p => [p.id, p]));
+    let added = 0, synced = 0;
+    for (const sp of seed.products || []) {
+      if (!sp.id) continue;
+      const cur = known.get(sp.id);
+      if (!cur) { products.push({ createdAt: new Date().toISOString(), ...sp }); added++; }
+      else if (seedVer > (settings.seedVersion || 0)) {
+        let touched = false;
+        for (const k of syncFields) {
+          if (sp[k] !== undefined && cur[k] !== sp[k]) { cur[k] = sp[k]; touched = true; }
+        }
+        if (touched) synced++;
+      }
     }
+    if (added || synced) write(F.products, products);
+    if (seedVer > (settings.seedVersion || 0)) { settings.seedVersion = seedVer; write(F.settings, settings); }
+    if (added || synced) console.log(`✓ shop seed v${seedVer}: +${added} new, ${synced} synced (${products.length} total)`);
   } catch (e) { if (e.code !== 'ENOENT') console.warn('shop seed skipped:', e.message); }
 
   // Telegram ping to Boonchu when a payment screenshot arrives (fire-and-forget)

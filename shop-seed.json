@@ -1,13 +1,13 @@
 {
-  "version": 1,
-  "note": "Pre-order launch stock, Boonchu sheet 2026-07-11. Added at boot for ids not already present.",
+  "version": 2,
+  "note": "v2: fullPrice 270. Display fields (names/prices/photos) sync to live products when version increases; sizes/hidden never touched.",
   "products": [
     {
       "id": "tee-1",
       "nameEn": "Huizhou Shirt",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/1.jpg",
       "photo2": null,
       "sizes": {
@@ -23,7 +23,7 @@
       "nameEn": "Guangzhou - Grey Viranchayasana A",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/2.jpg",
       "photo2": null,
       "sizes": {
@@ -38,7 +38,7 @@
       "nameEn": "Suzhou - Yellow Maricasana H",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/3.jpg",
       "photo2": null,
       "sizes": {
@@ -54,7 +54,7 @@
       "nameEn": "Maoming - Brown Purna Matsyendrasana",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/4.jpg",
       "photo2": null,
       "sizes": {
@@ -69,7 +69,7 @@
       "nameEn": "Red Logo",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/5.jpg",
       "photo2": null,
       "sizes": {
@@ -84,7 +84,7 @@
       "nameEn": "Light Brown Logo",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/6.jpg",
       "photo2": null,
       "sizes": {
@@ -97,7 +97,7 @@
       "nameEn": "Tianjin - White Adho Dandasana",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/7.jpg",
       "photo2": null,
       "sizes": {
@@ -111,7 +111,7 @@
       "nameEn": "Logo - Orange on Blue",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/8.jpg",
       "photo2": null,
       "sizes": {
@@ -126,7 +126,7 @@
       "nameEn": "Logo - Brown on Black",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/9.jpg",
       "photo2": null,
       "sizes": {
@@ -139,7 +139,7 @@
       "nameEn": "Russian - Orange Bear",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/10.jpg",
       "photo2": null,
       "sizes": {
@@ -153,7 +153,7 @@
       "nameEn": "Grey AYBKK Vintage",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/11.jpg",
       "photo2": null,
       "sizes": {
@@ -167,7 +167,7 @@
       "nameEn": "Black Indepth",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": null,
       "photo2": null,
       "sizes": {
@@ -180,7 +180,7 @@
       "nameEn": "Grey Red Indepth",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/13.jpg",
       "photo2": null,
       "sizes": {
@@ -195,7 +195,7 @@
       "nameEn": "White Red Indepth",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/14.jpg",
       "photo2": "/img/tees/14-2.jpg",
       "sizes": {
@@ -208,7 +208,7 @@
       "nameEn": "Grey AYBKK",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/15.jpg",
       "photo2": null,
       "sizes": {
@@ -222,7 +222,7 @@
       "nameEn": "Qingdao - Urdhva Kukuta",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/16.jpg",
       "photo2": null,
       "sizes": {
@@ -239,7 +239,7 @@
       "nameEn": "Yoga Kids",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/17.jpg",
       "photo2": null,
       "sizes": {
@@ -257,7 +257,7 @@
       "nameEn": "Black AYBKK",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/18.jpg",
       "photo2": null,
       "sizes": {
@@ -272,7 +272,7 @@
       "nameEn": "White AYBKK Orange",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/19.jpg",
       "photo2": null,
       "sizes": {
@@ -285,7 +285,7 @@
       "nameEn": "Xichang - Kundinyasana",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/20.jpg",
       "photo2": null,
       "sizes": {
@@ -301,7 +301,7 @@
       "nameEn": "Green Lion",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/21.jpg",
       "photo2": null,
       "sizes": {
@@ -314,7 +314,7 @@
       "nameEn": "Sharathji Tithiba",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/22.jpg",
       "photo2": null,
       "sizes": {
@@ -327,7 +327,7 @@
       "nameEn": "Cream Ashtanga Back",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/23.jpg",
       "photo2": "/img/tees/23-2.jpg",
       "sizes": {
@@ -341,7 +341,7 @@
       "nameEn": "Huizhou - Monkey Yogi",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/24.jpg",
       "photo2": null,
       "sizes": {
@@ -356,7 +356,7 @@
       "nameEn": "Walrus Handstand",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/25.jpg",
       "photo2": null,
       "sizes": {
@@ -371,7 +371,7 @@
       "nameEn": "Black Logo Color",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/26.jpg",
       "photo2": null,
       "sizes": {
@@ -385,7 +385,7 @@
       "nameEn": "Rino",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/27.jpg",
       "photo2": null,
       "sizes": {
@@ -400,7 +400,7 @@
       "nameEn": "Bangkok",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/28.jpg",
       "photo2": null,
       "sizes": {
@@ -413,7 +413,7 @@
       "nameEn": "Old Rose Heart",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/29.jpg",
       "photo2": null,
       "sizes": {
@@ -426,7 +426,7 @@
       "nameEn": "Huizhou Wolf Vatayana",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/30.jpg",
       "photo2": null,
       "sizes": {
@@ -440,7 +440,7 @@
       "nameEn": "Mustard Brown Logo Green",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/31.jpg",
       "photo2": "/img/tees/31-2.jpg",
       "sizes": {
@@ -455,7 +455,7 @@
       "nameEn": "Elephant Seal",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/32.jpg",
       "photo2": null,
       "sizes": {
@@ -469,7 +469,7 @@
       "nameEn": "LOVE Sleeveless",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/33.jpg",
       "photo2": null,
       "sizes": {
@@ -482,7 +482,7 @@
       "nameEn": "Guruji",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/34.jpg",
       "photo2": null,
       "sizes": {
@@ -495,7 +495,7 @@
       "nameEn": "Pink Bear Russian (Kids)",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": null,
       "photo2": null,
       "sizes": {
@@ -509,7 +509,7 @@
       "nameEn": "Russian St.Pete Cat (Kids)",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/36.jpg",
       "photo2": null,
       "sizes": {
@@ -523,7 +523,7 @@
       "nameEn": "China Indepth #1 (Kids)",
       "nameZh": "",
       "price": 220,
-      "fullPrice": 260,
+      "fullPrice": 270,
       "photo": "/img/tees/37.jpg",
       "photo2": null,
       "sizes": {
