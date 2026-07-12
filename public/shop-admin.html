@@ -4,6 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AYBKK Shop Admin</title>
 <style>
+  @font-face{font-family:'Shantell Sans';src:url('/fonts/shantell-var.woff2') format('woff2');font-weight:300 800;font-display:swap}
   :root{ --purple:#582C83; --line:#e3dcf0; }
   *{box-sizing:border-box}
   body{margin:0;background:#f6f3fa;color:#2b2340;font-family:-apple-system,"PingFang SC","Hiragino Sans GB",sans-serif}
@@ -195,7 +196,11 @@
         <td>${o.screenshot ? `<a href="${esc(o.screenshot)}" target="_blank"><img class="thumb" src="${esc(o.screenshot)}"></a>` : '<span class="muted">no proof</span>'}</td>
         <td>${['review','pending'].includes(o.status) ? `
           <button class="btn green" onclick="act('${o.id}','confirm')">Confirm ✓ 确认</button><br><br>
-          <button class="btn red" onclick="act('${o.id}','reject')">Cancel ✗ 取消</button>` : ''}</td>
+          <button class="btn red" onclick="act('${o.id}','reject')">Cancel ✗ 取消</button>` : ''}
+        ${o.status === 'expired' ? `
+          <button class="btn green" onclick="act('${o.id}','confirm')">Revive &amp; confirm 补确认</button>` : ''}
+        ${o.status === 'paid' ? `
+          <button class="btn" onclick="receipt('${o.id}')">收据 Receipt</button>` : ''}</td>
       </tr>`).join('');
     $('#view').innerHTML = `<div class="box"><b>Orders 订单</b> <button class="btn gray" onclick="location.reload()">↻</button>
       <table><tr><th>Student</th><th>Item</th><th>Status</th><th>Payment proof</th><th></th></tr>${rows || ''}</table>
@@ -206,6 +211,77 @@
     const r = await api('/api/shop/admin/orders/' + id + '/' + what, { method: 'POST' });
     if (!r.ok) alert((await r.json()).error);
     refresh();
+  };
+
+  // ── confirmation receipt (teacher side): drawn card to send to the customer ──
+  window.receipt = async (id) => {
+    const o = ORDERS.find(x => x.id === id);
+    if (!o) return;
+    try { await document.fonts.ready; } catch (e) {}
+    const bird = await new Promise(res => {
+      const im = new Image();
+      im.onload = () => res(im); im.onerror = () => res(null);
+      im.src = '/img/hefei-bird.png';
+    });
+    const S = 2, W = 680, H = 1060;
+    const cv = document.createElement('canvas'); cv.width = W * S; cv.height = H * S;
+    const ctx = cv.getContext('2d'); ctx.scale(S, S);
+    const hand = "'Shantell Sans','PingFang SC',sans-serif";
+    const body = "-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif";
+    ctx.fillStyle = '#f6f3fa'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.roundRect(28, 24, W - 56, H - 72, 18); ctx.fill();
+    ctx.strokeStyle = '#e3dcf0'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(28, H - 48);
+    for (let x = 28; x < W - 28; x += 20) { ctx.lineTo(x + 10, H - 34); ctx.lineTo(x + 20, H - 48); }
+    ctx.lineTo(W - 28, H - 48); ctx.fill();
+    ctx.fillStyle = '#582C83';
+    ctx.beginPath(); ctx.roundRect(28, 24, W - 56, 180, [18, 18, 0, 0]); ctx.fill();
+    if (bird) { const bw = 84, bh = bird.height / bird.width * bw; ctx.drawImage(bird, W / 2 - bw / 2, 38, bw, bh); }
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+    ctx.font = '800 34px ' + hand; ctx.fillText('AYBKK Tee Shop', W / 2, bird ? 148 : 96);
+    ctx.font = '600 17px ' + body; ctx.globalAlpha = .92;
+    ctx.fillText('订单确认 · ORDER CONFIRMED', W / 2, bird ? 180 : 130); ctx.globalAlpha = 1;
+    const rows = [
+      ['订单号 Order', o.id],
+      ['商品 Item', o.productName || ''],
+      ['尺码 Size', o.size + '　×　' + o.qty],
+      ['中文名', o.nameZh || '—'],
+      ['Name', o.nameEn || '—'],
+      ['微信 WeChat', o.wechatId || ''],
+      ['确认日期 Confirmed', (o.confirmedAt || new Date().toISOString()).slice(0, 16).replace('T', '  ')],
+    ];
+    let y = 258;
+    for (const [k, v] of rows) {
+      ctx.textAlign = 'left'; ctx.fillStyle = '#8a7db0';
+      ctx.font = '600 15px ' + body; ctx.fillText(k, 64, y);
+      ctx.textAlign = 'right'; ctx.fillStyle = '#241243';
+      ctx.font = '700 19px ' + body;
+      let val = String(v); while (ctx.measureText(val).width > 380 && val.length > 3) val = val.slice(0, -2);
+      ctx.fillText(val, W - 64, y);
+      ctx.strokeStyle = '#eee9f6'; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(64, y + 18); ctx.lineTo(W - 64, y + 18); ctx.stroke();
+      ctx.setLineDash([]); y += 56;
+    }
+    y += 14;
+    ctx.textAlign = 'left'; ctx.fillStyle = '#8a7db0';
+    ctx.font = '600 16px ' + body; ctx.fillText('合计 Total', 64, y + 6);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#582C83';
+    ctx.font = '800 44px ' + hand; ctx.fillText('¥' + o.amount, W - 64, y + 14);
+    ctx.save(); ctx.translate(W / 2, y + 110); ctx.rotate(-0.09);
+    ctx.strokeStyle = '#187a43'; ctx.lineWidth = 3.5; ctx.globalAlpha = .85;
+    ctx.beginPath(); ctx.roundRect(-160, -34, 320, 68, 12); ctx.stroke();
+    ctx.fillStyle = '#187a43'; ctx.font = '800 28px ' + hand;
+    ctx.textAlign = 'center'; ctx.fillText('已确认 CONFIRMED ✓', 0, 10); ctx.restore(); ctx.globalAlpha = 1;
+    ctx.textAlign = 'center'; ctx.fillStyle = '#8a7db0';
+    ctx.font = '600 15px ' + body;
+    ctx.fillText('T恤已为你保留，到店取货 · Your shirt is reserved — pick up at the shala', W / 2, y + 190);
+    ctx.font = 'italic 600 14px ' + hand; ctx.globalAlpha = .8;
+    ctx.fillText('✍︎ All designed & made by Boonchu Tanti · AYBKK', W / 2, y + 220);
+    const url = cv.toDataURL('image/png');
+    const w = window.open('');
+    if (w) w.document.write('<title>Receipt ' + o.id + '</title><body style="margin:0;background:#f6f3fa;text-align:center"><img src="' + url + '" style="max-width:100%"><p style="font:14px sans-serif;color:#8a7db0">长按保存，发给学员 · Long-press to save, send to the student</p></body>');
+    else { const a = document.createElement('a'); a.href = url; a.download = 'AYBKK-confirmed-' + o.id + '.png'; a.click(); }
   };
 
   // auto-unlock if key saved

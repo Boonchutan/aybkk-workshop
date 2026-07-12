@@ -168,9 +168,21 @@ function mountShop(app, opts = {}) {
       if (!['pending', 'review'].includes(o.status)) return res.status(409).json({ error: 'order is ' + o.status });
       o.screenshot = file;
       o.status = 'review';                      // clock stops; stock stays held until admin decides
+      // One WeChat transfer often covers several orders. Attach the same
+      // proof to this customer's OTHER pending orders so their holds stop
+      // ticking too, instead of silently expiring.
+      const siblings = orders.filter(x =>
+        x.id !== o.id && x.status === 'pending' && x.wechatId === o.wechatId);
+      for (const s of siblings) { s.screenshot = file; s.status = 'review'; }
       write(F.orders, orders);
-      notifyPayment(o);
-      res.json({ success: true, order: o });
+      if (siblings.length) {
+        const total = o.amount + siblings.reduce((a, s) => a + s.amount, 0);
+        notifyPayment({ ...o, productNameZh: (o.productNameZh || o.productName) +
+          ` (+${siblings.length} more orders, combined ¥${total})` });
+      } else {
+        notifyPayment(o);
+      }
+      res.json({ success: true, order: o, alsoCovered: siblings.map(s => s.id) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -206,10 +218,21 @@ function mountShop(app, opts = {}) {
 
   app.post('/api/shop/admin/orders/:id/confirm', (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
-    const { orders } = sweep();
+    const { orders, products } = sweep();
     const o = orders.find(x => x.id === req.params.id);
     if (!o) return res.status(404).json({ error: 'not found' });
-    if (!['review', 'pending'].includes(o.status)) return res.status(409).json({ error: 'order is ' + o.status });
+    if (o.status === 'expired') {
+      // Revive: customer actually paid (e.g. one screenshot covered several
+      // orders) but the hold ran out. Stock was returned on expiry, so it
+      // must be deducted again — only possible while it is still available.
+      const p = products.find(x => x.id === o.productId);
+      if (!p || (p.sizes[o.size] ?? 0) < o.qty)
+        return res.status(409).json({ error: `cannot revive: only ${p ? (p.sizes[o.size] ?? 0) : 0} left in ${o.size}` });
+      p.sizes[o.size] -= o.qty;
+      write(F.products, products);
+    } else if (!['review', 'pending'].includes(o.status)) {
+      return res.status(409).json({ error: 'order is ' + o.status });
+    }
     o.status = 'paid';                                               // stock stays deducted — final
     o.confirmedAt = new Date().toISOString();
     write(F.orders, orders);
