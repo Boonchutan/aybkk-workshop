@@ -46,8 +46,11 @@ function mountShop(app, opts = {}) {
         if (touched) synced++;
       }
     }
-    if (added || synced) write(F.products, products);
-    if (seedVer > (settings.seedVersion || 0)) { settings.seedVersion = seedVer; write(F.settings, settings); }
+    if (added || synced) fs.writeFileSync(F.products, JSON.stringify(products, null, 2));
+    if (seedVer > (settings.seedVersion || 0)) {
+      settings.seedVersion = seedVer;
+      fs.writeFileSync(F.settings, JSON.stringify(settings, null, 2));
+    }
     if (added || synced) console.log(`✓ shop seed v${seedVer}: +${added} new, ${synced} synced (${products.length} total)`);
   } catch (e) { if (e.code !== 'ENOENT') console.warn('shop seed skipped:', e.message); }
 
