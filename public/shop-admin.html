@@ -195,7 +195,7 @@
           ${['pending','review','paid'].includes(o.status) ? `<button class="btn gray" style="padding:2px 8px;font-size:12px" onclick="editQty('${o.id}',${o.qty})">✎</button>` : ''}
           <br><b>¥${o.amount}</b></td>
         <td><span class="pill ${o.status}">${o.status}</span><br><span class="muted">${(o.createdAt || '').slice(5, 16).replace('T', ' ')}</span></td>
-        <td>${o.screenshot ? `<a href="${esc(o.screenshot)}" target="_blank"><img class="thumb" src="${esc(o.screenshot)}"></a>` : '<span class="muted">no proof</span>'}</td>
+        <td>${o.screenshot ? `<a href="${esc(o.screenshot)}" target="_blank"><img class="thumb" src="${esc(o.screenshot)}" onerror="this.outerHTML='<span class=muted>proof file lost<br>(pre-fix deploy)</span>'"></a>` : '<span class="muted">no proof</span>'}</td>
         <td>${['review','pending'].includes(o.status) ? `
           <button class="btn green" onclick="act('${o.id}','confirm')">Confirm ✓ 确认</button><br><br>
           <button class="btn red" onclick="act('${o.id}','reject')">Cancel ✗ 取消</button>` : ''}

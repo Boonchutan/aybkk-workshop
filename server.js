@@ -32,7 +32,11 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || process.env.MISSION_CONTROL_PORT || 3000;
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
+// Uploads must live on the persistent volume (/data on Railway) — the app
+// directory is wiped on every redeploy, which silently deleted payment
+// screenshots while their orders (stored in /data) survived.
+const UPLOAD_DIR = process.env.UPLOAD_DIR ||
+  (fs.existsSync('/data') ? '/data/uploads' : path.join(__dirname, 'uploads'));
 
 // Ensure upload directory exists
 if (!fs.existsSync(UPLOAD_DIR)) {
