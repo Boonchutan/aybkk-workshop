@@ -9,6 +9,12 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      - name: Check deployed shop.html version
+        run: |
+          curl -sf --max-time 20 "https://my.aybkk.com/shop.html" -o /tmp/shop.html
+          grep -q 'prelabel' /tmp/shop.html && echo "shop.html: NEW version (pre-order styles present)" || echo "shop.html: OLD version still serving"
+          grep -q 'c62828' /tmp/shop.html && echo "shop.html: red strikethrough present" || echo "shop.html: red strikethrough MISSING"
+
       - name: Fetch live products
         run: |
           curl -sf --max-time 20 "https://my.aybkk.com/api/shop/products" -o /tmp/p.json
