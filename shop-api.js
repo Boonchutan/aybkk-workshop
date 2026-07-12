@@ -31,13 +31,16 @@ function mountShop(app, opts = {}) {
     const products = read(F.products, []);
     const settings = read(F.settings, {});
     const seedVer = seed.version || 0;
-    const syncFields = ['nameEn', 'nameZh', 'price', 'fullPrice', 'photo', 'photo2', 'photos'];
+    const syncFields = ['nameEn', 'nameZh', 'price', 'fullPrice', 'photo', 'photo2', 'photos', 'kids', 'note'];
     const known = new Map(products.map(p => [p.id, p]));
     let added = 0, synced = 0;
     for (const sp of seed.products || []) {
       if (!sp.id) continue;
       const cur = known.get(sp.id);
-      if (!cur) { products.push({ createdAt: new Date().toISOString(), ...sp }); added++; }
+      if (!cur) {
+        const np = { createdAt: new Date().toISOString(), ...sp };
+        products.push(np); known.set(sp.id, np); added++;
+      }
       else if (seedVer > (settings.seedVersion || 0)) {
         let touched = false;
         for (const k of syncFields) {
@@ -55,9 +58,13 @@ function mountShop(app, opts = {}) {
         if (!sp.setSizes) continue;
         const cur = known.get(sp.id);
         if (!cur) continue;
+        // soldFromIds: when sizes moved here from another product (e.g. kids
+        // sizes split off an adult tee), orders placed against the old id
+        // still claim this stock.
+        const srcIds = [sp.id, ...(sp.soldFromIds || [])];
         const sold = {};
         for (const ord of ordersNow) {
-          if (ord.productId === sp.id && ['pending', 'review', 'paid'].includes(ord.status))
+          if (srcIds.includes(ord.productId) && ['pending', 'review', 'paid'].includes(ord.status))
             sold[ord.size] = (sold[ord.size] || 0) + ord.qty;
         }
         const next = {};

@@ -1,6 +1,6 @@
 {
-  "version": 7,
-  "note": "v7: reserve 1 per kids size on Hefei/Burgundy/Pink for Boonchu's 2 kids.",
+  "version": 8,
+  "note": "v8: kids tees split into their own section at 230/200. Hefei/Burgundy/Pink kids sizes move to new -k products (soldFromIds keeps old-id orders counted); Yoga Kids and 35-37 flagged kids.",
   "products": [
     {
       "id": "tee-1",
@@ -241,8 +241,8 @@
       "id": "tee-17",
       "nameEn": "Yoga Kids",
       "nameZh": "",
-      "price": 220,
-      "fullPrice": 270,
+      "price": 200,
+      "fullPrice": 230,
       "photo": "/img/tees/17.jpg",
       "photo2": null,
       "sizes": {
@@ -257,7 +257,8 @@
       "photos": [
         "/img/tees/17.jpg",
         "/img/tees/17-2.jpg"
-      ]
+      ],
+      "kids": true
     },
     {
       "id": "tee-18",
@@ -509,43 +510,46 @@
       "id": "tee-35",
       "nameEn": "Pink Bear Russian (Kids)",
       "nameZh": "",
-      "price": 220,
-      "fullPrice": 270,
+      "price": 200,
+      "fullPrice": 230,
       "photo": "/img/tees/35.jpg",
       "photo2": null,
       "sizes": {
         "12": 1,
         "14": 1
       },
-      "hidden": false
+      "hidden": false,
+      "kids": true
     },
     {
       "id": "tee-36",
       "nameEn": "Russian St.Pete Cat (Kids)",
       "nameZh": "",
-      "price": 220,
-      "fullPrice": 270,
+      "price": 200,
+      "fullPrice": 230,
       "photo": "/img/tees/36.jpg",
       "photo2": null,
       "sizes": {
         "12": 1,
         "14": 1
       },
-      "hidden": false
+      "hidden": false,
+      "kids": true
     },
     {
       "id": "tee-37",
       "nameEn": "China Indepth #1 (Kids)",
       "nameZh": "",
-      "price": 220,
-      "fullPrice": 270,
+      "price": 200,
+      "fullPrice": 230,
       "photo": "/img/tees/37.jpg",
       "photo2": null,
       "sizes": {
         "12": 1,
         "14": 2
       },
-      "hidden": false
+      "hidden": false,
+      "kids": true
     },
     {
       "id": "tee-38",
@@ -561,10 +565,7 @@
         "S": 8,
         "M": 10,
         "L": 15,
-        "XL": 6,
-        "12": 4,
-        "14": 9,
-        "16": 14
+        "XL": 6
       },
       "hidden": false,
       "note": "🎁 合肥工作坊全程学员免费获得此款1件 · Hefei full-workshop attendees get 1 free",
@@ -572,10 +573,7 @@
         "S": 8,
         "M": 10,
         "L": 15,
-        "XL": 6,
-        "12": 4,
-        "14": 9,
-        "16": 14
+        "XL": 6
       }
     },
     {
@@ -644,18 +642,14 @@
         "S": 8,
         "M": 12,
         "L": 15,
-        "XL": 10,
-        "14": 9,
-        "16": 9
+        "XL": 10
       },
       "hidden": false,
       "setSizes": {
         "S": 8,
         "M": 12,
         "L": 15,
-        "XL": 10,
-        "14": 9,
-        "16": 9
+        "XL": 10
       }
     },
     {
@@ -673,19 +667,91 @@
         "S": 8,
         "M": 12,
         "L": 15,
-        "XL": 10,
-        "14": 9,
-        "16": 9
+        "XL": 10
       },
       "hidden": false,
       "setSizes": {
         "S": 8,
         "M": 12,
         "L": 15,
-        "XL": 10,
+        "XL": 10
+      }
+    },
+    {
+      "id": "tee-38k",
+      "nameEn": "Hefei WS Tee Kids — Purple Tithibasana",
+      "nameZh": "",
+      "kids": true,
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/38.jpg",
+      "photos": [
+        "/img/tees/38.jpg"
+      ],
+      "sizes": {
+        "12": 4,
+        "14": 9,
+        "16": 14
+      },
+      "setSizes": {
+        "12": 4,
+        "14": 9,
+        "16": 14
+      },
+      "soldFromIds": [
+        "tee-38"
+      ],
+      "hidden": false
+    },
+    {
+      "id": "tee-41k",
+      "nameEn": "Burgundy AYBKK Kids",
+      "nameZh": "",
+      "kids": true,
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/41.jpg",
+      "photos": [
+        "/img/tees/41.jpg",
+        "/img/tees/41-2.jpg"
+      ],
+      "sizes": {
         "14": 9,
         "16": 9
-      }
+      },
+      "setSizes": {
+        "14": 9,
+        "16": 9
+      },
+      "soldFromIds": [
+        "tee-41"
+      ],
+      "hidden": false
+    },
+    {
+      "id": "tee-42k",
+      "nameEn": "Pink Logo Kids",
+      "nameZh": "",
+      "kids": true,
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/42.jpg",
+      "photos": [
+        "/img/tees/42.jpg",
+        "/img/tees/42-2.jpg"
+      ],
+      "sizes": {
+        "14": 9,
+        "16": 9
+      },
+      "setSizes": {
+        "14": 9,
+        "16": 9
+      },
+      "soldFromIds": [
+        "tee-42"
+      ],
+      "hidden": false
     }
   ],
   "remove": [
