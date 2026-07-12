@@ -46,6 +46,28 @@ function mountShop(app, opts = {}) {
         if (touched) synced++;
       }
     }
+    // setSizes: replace a product's stock with a counted target, minus
+    // whatever active orders (pending/review/paid) already claimed — so
+    // updating real stock never resurrects shirts that are already sold.
+    if (seedVer > (settings.seedVersion || 0)) {
+      const ordersNow = read(F.orders, []);
+      for (const sp of seed.products || []) {
+        if (!sp.setSizes) continue;
+        const cur = known.get(sp.id);
+        if (!cur) continue;
+        const sold = {};
+        for (const ord of ordersNow) {
+          if (ord.productId === sp.id && ['pending', 'review', 'paid'].includes(ord.status))
+            sold[ord.size] = (sold[ord.size] || 0) + ord.qty;
+        }
+        const next = {};
+        for (const [sz, target] of Object.entries(sp.setSizes))
+          next[sz] = Math.max(0, target - (sold[sz] || 0));
+        cur.sizes = next;
+        synced++;
+      }
+    }
+
     // Retire ids listed in seed.remove (discontinued / never existed).
     // Hidden rather than deleted so past orders keep their product reference.
     let removed = 0;

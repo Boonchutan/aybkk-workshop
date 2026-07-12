@@ -1,6 +1,6 @@
 {
-  "version": 5,
-  "note": "v5: five new items 38-42 (Hefei WS, Zhuhai WS, Green/Burgundy/Pink back logos). WS tees carry free-for-attendees notes. Pre-order stock 99/size pending real counts from Boonchu.",
+  "version": 6,
+  "note": "v6: real sellable stock for 38-42 from Boonchu photos (free attendee tees excluded). setSizes = target sellable; loader subtracts already-active orders.",
   "products": [
     {
       "id": "tee-1",
@@ -558,13 +558,25 @@
         "/img/tees/38.jpg"
       ],
       "sizes": {
-        "S": 99,
-        "M": 99,
-        "L": 99,
-        "XL": 99
+        "S": 8,
+        "M": 10,
+        "L": 15,
+        "XL": 6,
+        "12": 5,
+        "14": 10,
+        "16": 15
       },
       "hidden": false,
-      "note": "🎁 合肥工作坊全程学员免费获得此款1件 · Hefei full-workshop attendees get 1 free"
+      "note": "🎁 合肥工作坊全程学员免费获得此款1件 · Hefei full-workshop attendees get 1 free",
+      "setSizes": {
+        "S": 8,
+        "M": 10,
+        "L": 15,
+        "XL": 6,
+        "12": 5,
+        "14": 10,
+        "16": 15
+      }
     },
     {
       "id": "tee-39",
@@ -578,13 +590,19 @@
         "/img/tees/39-2.jpg"
       ],
       "sizes": {
-        "S": 99,
-        "M": 99,
-        "L": 99,
-        "XL": 99
+        "S": 10,
+        "M": 10,
+        "L": 16,
+        "XL": 11
       },
       "hidden": false,
-      "note": "🎁 珠海工作坊全程学员免费获得此款1件 · Zhuhai full-workshop attendees get 1 free"
+      "note": "🎁 珠海工作坊全程学员免费获得此款1件 · Zhuhai full-workshop attendees get 1 free",
+      "setSizes": {
+        "S": 10,
+        "M": 10,
+        "L": 16,
+        "XL": 11
+      }
     },
     {
       "id": "tee-40",
@@ -598,12 +616,18 @@
         "/img/tees/40-2.jpg"
       ],
       "sizes": {
-        "S": 99,
-        "M": 99,
-        "L": 99,
-        "XL": 99
+        "S": 10,
+        "M": 10,
+        "L": 18,
+        "XL": 12
       },
-      "hidden": false
+      "hidden": false,
+      "setSizes": {
+        "S": 10,
+        "M": 10,
+        "L": 18,
+        "XL": 12
+      }
     },
     {
       "id": "tee-41",
@@ -617,12 +641,22 @@
         "/img/tees/41-2.jpg"
       ],
       "sizes": {
-        "S": 99,
-        "M": 99,
-        "L": 99,
-        "XL": 99
+        "S": 8,
+        "M": 12,
+        "L": 15,
+        "XL": 10,
+        "14": 10,
+        "16": 10
       },
-      "hidden": false
+      "hidden": false,
+      "setSizes": {
+        "S": 8,
+        "M": 12,
+        "L": 15,
+        "XL": 10,
+        "14": 10,
+        "16": 10
+      }
     },
     {
       "id": "tee-42",
@@ -636,12 +670,22 @@
         "/img/tees/42-2.jpg"
       ],
       "sizes": {
-        "S": 99,
-        "M": 99,
-        "L": 99,
-        "XL": 99
+        "S": 8,
+        "M": 12,
+        "L": 15,
+        "XL": 10,
+        "14": 10,
+        "16": 10
       },
-      "hidden": false
+      "hidden": false,
+      "setSizes": {
+        "S": 8,
+        "M": 12,
+        "L": 15,
+        "XL": 10,
+        "14": 10,
+        "16": 10
+      }
     }
   ],
   "remove": [
