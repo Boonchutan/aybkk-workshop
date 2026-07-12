@@ -25,6 +25,10 @@
   .card h2{margin:0 0 2px;font-size:21px;font-family:var(--hand);font-weight:800}
   .card .zh{color:#6b5f85;font-size:14px;margin-bottom:8px}
   .price{font-size:22px;font-weight:800;color:var(--purple);font-family:var(--hand)}
+  .price s.full{font-size:15px;font-weight:600;opacity:.55}
+  .price b.pre{font-size:24px}
+  .price .prelabel{font-size:12px;font-weight:700;letter-spacing:.04em;opacity:.75}
+  .paynote{font-size:12px;color:#8a7db0;margin-top:2px}
   .sizes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .size{border:1.5px solid var(--line);border-radius:10px;padding:8px 13px;font-size:15px;background:#faf8ff;cursor:pointer}
   .size b{margin-right:4px}
@@ -101,7 +105,8 @@
         `<div class="body">
            <h2>${esc(p.nameEn)}</h2>
            <div class="zh">${esc(p.nameZh)}</div>
-           <div class="price">${yen(p.price)}</div>
+           <div class="price">${p.fullPrice > p.price ? `<s class="full">${yen(p.fullPrice)}</s> <b class="pre">${yen(p.price)}</b> <span class="prelabel">预购价 pre-order</span>` : yen(p.price)}</div>
+           <div class="paynote">下单后请在 10 分钟内付款 · pay within 10 minutes</div>
            <div class="sizes">${sizes}</div>
          </div>`;
       el.appendChild(card);

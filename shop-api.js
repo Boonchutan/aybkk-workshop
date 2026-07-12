@@ -21,6 +21,21 @@ function mountShop(app, opts = {}) {
 
   const read = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
+  // Boot-time seed: add products from shop-seed.json whose ids are not yet in
+  // the store. Existing ids are never touched, so admin edits and live stock
+  // survive redeploys; re-running is a no-op.
+  try {
+    const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'shop-seed.json'), 'utf8'));
+    const products = read(F.products, []);
+    const known = new Set(products.map(p => p.id));
+    const fresh = (seed.products || []).filter(p => p.id && !known.has(p.id));
+    if (fresh.length) {
+      for (const p of fresh) products.push({ createdAt: new Date().toISOString(), ...p });
+      fs.writeFileSync(F.products, JSON.stringify(products, null, 2));
+      console.log(`✓ shop seed: added ${fresh.length} new products (${products.length} total)`);
+    }
+  } catch (e) { if (e.code !== 'ENOENT') console.warn('shop seed skipped:', e.message); }
+
   // Telegram ping to Boonchu when a payment screenshot arrives (fire-and-forget)
   async function notifyPayment(order) {
     try {

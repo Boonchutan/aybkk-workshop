@@ -10,6 +10,7 @@ db/
 !package-lock.json
 !.claude/settings.json
 !scripts/tee-photos.json
+!shop-seed.json
 .env
 .env.*
 .DS_Store
