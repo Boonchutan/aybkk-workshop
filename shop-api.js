@@ -239,6 +239,30 @@ function mountShop(app, opts = {}) {
     res.json({ success: true, order: o });
   });
 
+  // Fix a mis-typed quantity (customer meant 4, tapped 5). Adjusts stock by
+  // the difference and reprices the order. Allowed while the order still
+  // holds stock (pending / review / paid).
+  app.post('/api/shop/admin/orders/:id/qty', (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    const newQty = Math.max(1, Math.min(20, parseInt(req.body && req.body.qty) || 0));
+    if (!newQty) return res.status(400).json({ error: 'qty required' });
+    const { orders, products } = sweep();
+    const o = orders.find(x => x.id === req.params.id);
+    if (!o) return res.status(404).json({ error: 'not found' });
+    if (!['pending', 'review', 'paid'].includes(o.status))
+      return res.status(409).json({ error: 'order is ' + o.status + ' — no stock held to adjust' });
+    const p = products.find(x => x.id === o.productId);
+    if (!p) return res.status(404).json({ error: 'product not found' });
+    const delta = newQty - o.qty;
+    if (delta > 0 && (p.sizes[o.size] ?? 0) < delta)
+      return res.status(409).json({ error: `only ${p.sizes[o.size] ?? 0} left in ${o.size}` });
+    p.sizes[o.size] = (p.sizes[o.size] ?? 0) - delta;               // + returns, - takes
+    o.qty = newQty;
+    o.amount = p.price * newQty;
+    write(F.orders, orders); write(F.products, products);
+    res.json({ success: true, order: o });
+  });
+
   app.post('/api/shop/admin/orders/:id/reject', (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     const { orders, products } = sweep();

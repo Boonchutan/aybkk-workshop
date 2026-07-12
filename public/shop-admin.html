@@ -191,7 +191,9 @@
     const rows = ORDERS.map(o => `
       <tr>
         <td><b>${esc(o.nameZh || o.nameEn)}</b><br>${esc(o.nameEn)}<br><span class="muted">wx: ${esc(o.wechatId)}</span></td>
-        <td>${esc(o.productNameZh || o.productName)}<br>${esc(o.size)} × ${o.qty}<br><b>¥${o.amount}</b></td>
+        <td>${esc(o.productNameZh || o.productName)}<br>${esc(o.size)} × ${o.qty}
+          ${['pending','review','paid'].includes(o.status) ? `<button class="btn gray" style="padding:2px 8px;font-size:12px" onclick="editQty('${o.id}',${o.qty})">✎</button>` : ''}
+          <br><b>¥${o.amount}</b></td>
         <td><span class="pill ${o.status}">${o.status}</span><br><span class="muted">${(o.createdAt || '').slice(5, 16).replace('T', ' ')}</span></td>
         <td>${o.screenshot ? `<a href="${esc(o.screenshot)}" target="_blank"><img class="thumb" src="${esc(o.screenshot)}"></a>` : '<span class="muted">no proof</span>'}</td>
         <td>${['review','pending'].includes(o.status) ? `
@@ -206,6 +208,18 @@
       <table><tr><th>Student</th><th>Item</th><th>Status</th><th>Payment proof</th><th></th></tr>${rows || ''}</table>
       ${ORDERS.length ? '' : '<p class="muted">no orders yet</p>'}</div>`;
   }
+
+  window.editQty = async (id, cur) => {
+    const v = prompt('New quantity 新数量:', cur);
+    if (v === null) return;
+    const qty = parseInt(v);
+    if (!qty || qty < 1) { alert('bad quantity'); return; }
+    const r = await api('/api/shop/admin/orders/' + id + '/qty', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ qty }) });
+    if (!r.ok) alert((await r.json()).error);
+    refresh();
+  };
 
   window.act = async (id, what) => {
     const r = await api('/api/shop/admin/orders/' + id + '/' + what, { method: 'POST' });
