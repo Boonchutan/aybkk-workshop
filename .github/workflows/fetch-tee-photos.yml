@@ -47,5 +47,6 @@ jobs:
             echo "No new photos to commit"
           else
             git commit -m "Add compressed tee shop photos from Drive [skip ci]"
+            git pull --rebase origin main
             git push
           fi
