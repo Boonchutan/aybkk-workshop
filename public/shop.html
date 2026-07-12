@@ -46,7 +46,7 @@
   .qty button{width:44px;height:44px;font-size:22px;border:1.5px solid var(--line);border-radius:10px;background:#faf8ff}
   .qty b{font-size:20px;min-width:24px;text-align:center}
   .cta{width:100%;margin-top:16px;padding:15px;border:none;border-radius:16px;background:var(--purple);color:#fff;font-size:18px;font-weight:800;font-family:var(--hand)}
-  .cta[disabled]{opacity:.5}
+  .cta[disabled]{opacity:.45;background:#9a92ad;cursor:not-allowed}
   .ghost{width:100%;margin-top:8px;padding:12px;border:none;background:none;color:#8a7db0;font-size:14px;text-decoration:underline}
   /* payment stage */
   .paywrap{text-align:center}
@@ -126,16 +126,22 @@
         <button id="less">−</button><b id="qn">1</b><button id="more">＋</button>
         <span style="color:#8a7db0;font-size:13px">合计 Total: <b id="tot">${yen(p.price)}</b></span>
       </div>
-      <label>中文名字 Chinese name</label><input id="nameZh" autocomplete="off">
-      <label>English name 英文名</label><input id="nameEn" autocomplete="off">
-      <label>微信号 WeChat ID</label><input id="wechatId" autocomplete="off">
-      <button class="cta" id="place">下单 Place order</button>
+      <label>中文名字 Chinese name <b style="color:#c62828">*</b></label><input id="nameZh" autocomplete="off">
+      <label>English name 英文名 <b style="color:#c62828">*</b></label><input id="nameEn" autocomplete="off">
+      <label>微信号 WeChat ID <b style="color:#c62828">*</b></label><input id="wechatId" autocomplete="off">
+      <button class="cta" id="place" disabled>下单 Place order</button>
       <button class="ghost" id="cancel">取消 Cancel</button>`;
     $('#sheet').classList.add('show');
     const max = p.sizes[size] || 1;
     $('#more').onclick = () => { qty = Math.min(max, 10, qty + 1); paint(); };
     $('#less').onclick = () => { qty = Math.max(1, qty - 1); paint(); };
     const paint = () => { $('#qn').textContent = qty; $('#tot').textContent = yen(p.price * qty); };
+    // Place order stays greyed out until Chinese name, English name AND WeChat ID are all filled
+    const gate = () => {
+      const ok = $('#nameZh').value.trim() && $('#nameEn').value.trim() && $('#wechatId').value.trim();
+      $('#place').disabled = !ok;
+    };
+    ['nameZh', 'nameEn', 'wechatId'].forEach(id => { $('#' + id).oninput = gate; });
     $('#cancel').onclick = closeSheet;
     $('#place').onclick = placeOrder;
   }
@@ -143,7 +149,7 @@
 
   async function placeOrder() {
     const nameZh = $('#nameZh').value.trim(), nameEn = $('#nameEn').value.trim(), wechatId = $('#wechatId').value.trim();
-    if (!(nameZh || nameEn) || !wechatId) { alert('请填写名字和微信号 · Name and WeChat ID required'); return; }
+    if (!nameZh || !nameEn || !wechatId) { alert('请填写中文名、英文名和微信号 · Chinese name, English name and WeChat ID are all required'); return; }
     $('#place').disabled = true;
     try {
       const r = await fetch('/api/shop/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' },

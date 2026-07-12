@@ -111,8 +111,8 @@ function mountShop(app, opts = {}) {
     try {
       const { productId, size, qty, nameEn, nameZh, wechatId } = req.body || {};
       const q = Math.max(1, Math.min(10, parseInt(qty) || 1));
-      if (!productId || !size || !(nameEn || nameZh) || !wechatId)
-        return res.status(400).json({ error: 'missing fields', errorZh: '请填写完整信息' });
+      if (!productId || !size || !(nameEn || '').trim() || !(nameZh || '').trim() || !(wechatId || '').trim())
+        return res.status(400).json({ error: 'Chinese name, English name and WeChat ID are all required', errorZh: '请填写中文名、英文名和微信号' });
 
       const { orders, products } = sweep();
       const p = products.find(x => x.id === productId && !x.hidden);
