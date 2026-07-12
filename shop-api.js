@@ -46,12 +46,21 @@ function mountShop(app, opts = {}) {
         if (touched) synced++;
       }
     }
-    if (added || synced) fs.writeFileSync(F.products, JSON.stringify(products, null, 2));
+    // Retire ids listed in seed.remove (discontinued / never existed).
+    // Hidden rather than deleted so past orders keep their product reference.
+    let removed = 0;
+    if (seedVer > (settings.seedVersion || 0)) {
+      for (const rid of seed.remove || []) {
+        const cur = known.get(rid);
+        if (cur && !cur.hidden) { cur.hidden = true; removed++; }
+      }
+    }
+    if (added || synced || removed) fs.writeFileSync(F.products, JSON.stringify(products, null, 2));
     if (seedVer > (settings.seedVersion || 0)) {
       settings.seedVersion = seedVer;
       fs.writeFileSync(F.settings, JSON.stringify(settings, null, 2));
     }
-    if (added || synced) console.log(`✓ shop seed v${seedVer}: +${added} new, ${synced} synced (${products.length} total)`);
+    if (added || synced || removed) console.log(`✓ shop seed v${seedVer}: +${added} new, ${synced} synced, ${removed} retired (${products.length} total)`);
   } catch (e) { if (e.code !== 'ENOENT') console.warn('shop seed skipped:', e.message); }
 
   // Telegram ping to Boonchu when a payment screenshot arrives (fire-and-forget)
