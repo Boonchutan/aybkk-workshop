@@ -3,9 +3,9 @@
   "title": "Hefei Workshop",
   "dates": "2026-07-16..2026-07-20",
   "lang": "zh",
-  "baseUrl": "https://cn.aybkk.net",
+  "baseUrl": "https://my.aybkk.com",
   "qrMode": "short",
-  "generatedAt": "2026-07-09T13:52:21.174Z",
+  "generatedAt": "2026-07-13T01:53:15.323Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -725,86 +725,94 @@
     },
     {
       "id": "HEFEI-048",
-      "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95",
-      "name": "GUIGUI",
+      "journalId": "99de3b2c-8e45-5e70-8cb1-93b48e19a971",
+      "name": "Serena Wang",
       "package": "Full",
       "entitledSessions": [
         "*"
       ],
       "phone": "",
       "size": "M",
-      "note": "in-depth CN2 深度课学生",
-      "practice": "intermediate+advanced",
-      "lastAsana": "urdhva kukkutasana"
+      "note": "Zhuhai student · deposit transferred to Hefei, paid full 5144 regular · joined Jul 13 · card HEFEI-048",
+      "practice": "",
+      "lastAsana": ""
     },
     {
       "id": "HEFEI-049",
-      "journalId": "7dd95fb8-d53d-510e-98aa-32e4608d8fc6",
-      "name": "Walk-in 1 走读",
-      "package": "Single",
+      "journalId": "1cf6ba13-8647-50a3-80d6-1db7f153aac9",
+      "name": "程琳 (Chenglin)",
+      "package": "Full",
       "entitledSessions": [
         "*"
       ],
       "phone": "",
       "size": "",
-      "note": "spare card — assign at door",
-      "practice": "",
+      "note": "RUYI student · added from paid list Jul 11 · card HEFEI-049 (printed face says Walk-in 1)",
+      "practice": "primary",
       "lastAsana": ""
     },
     {
       "id": "HEFEI-050",
-      "journalId": "a3b73285-b975-5650-b8d5-33ac1e17927a",
-      "name": "Walk-in 2 走读",
-      "package": "Single",
+      "journalId": "6726f264-fec5-55bc-9f6f-b48ab200c232",
+      "name": "柴敏 (Chaimin)",
+      "package": "Full",
       "entitledSessions": [
         "*"
       ],
       "phone": "",
       "size": "",
-      "note": "spare card — assign at door",
-      "practice": "",
+      "note": "RUYI student · added from paid list Jul 11 · card HEFEI-050 (printed face says Walk-in 2)",
+      "practice": "primary+intermediate",
       "lastAsana": ""
     },
     {
       "id": "HEFEI-051",
-      "journalId": "a41233f5-b7a1-55ff-98d5-0375be1b68fe",
-      "name": "Walk-in 3 走读",
-      "package": "Single",
+      "journalId": "01d07a12-4742-583e-a8da-7eeb47229888",
+      "name": "柠檬 (Lemon)",
+      "package": "Full",
       "entitledSessions": [
         "*"
       ],
       "phone": "",
       "size": "",
-      "note": "spare card — assign at door",
-      "practice": "",
+      "note": "added from paid list Jul 11 · card HEFEI-051 (printed face says Walk-in 3)",
+      "practice": "primary",
       "lastAsana": ""
     },
     {
       "id": "HEFEI-052",
-      "journalId": "7a489390-b50b-5eb2-aec3-44b91af74e1c",
-      "name": "Walk-in 4 走读",
-      "package": "Single",
+      "journalId": "03e6cae1-7ccc-537d-a3b5-f8731fb9fd91",
+      "name": "Wini",
+      "package": "2day",
       "entitledSessions": [
-        "*"
+        "D4-MY",
+        "D4-WS",
+        "D5-LED",
+        "D5-QA"
       ],
       "phone": "",
       "size": "",
-      "note": "spare card — assign at door",
-      "practice": "",
+      "note": "in-depth CN2 深度课学生 · Jul 19-20 only · card HEFEI-052 (printed face says Walk-in 4) · link prior CN2 journal if she has one",
+      "practice": "intermediate+advanced",
       "lastAsana": ""
     },
     {
       "id": "HEFEI-053",
-      "journalId": "ea5331c2-a52a-5ded-aa5d-87993b95fe7b",
-      "name": "Walk-in 5 走读",
-      "package": "Single",
+      "journalId": "0f468e0f-916d-537b-b6a9-b2fdb783d4cb",
+      "name": "宋研羽 (Yanyan)",
+      "package": "3day",
       "entitledSessions": [
-        "*"
+        "D2-MY",
+        "D2-WS",
+        "D3-MY",
+        "D3-WS",
+        "D4-MY",
+        "D4-WS"
       ],
       "phone": "",
       "size": "",
-      "note": "spare card — assign at door",
-      "practice": "",
+      "note": "Jul 17-19 三天 · added from paid list Jul 11 · card HEFEI-053 (printed face says Walk-in 5)",
+      "practice": "primary",
       "lastAsana": ""
     },
     {
@@ -831,35 +839,35 @@
       ],
       "phone": "",
       "size": "",
-      "note": "test student (Boonchu)",
+      "note": "test student (Boonchu) · station check · not printed",
       "practice": "",
       "lastAsana": ""
     },
     {
       "id": "HEFEI-056",
-      "journalId": "6726f264-fec5-55bc-9f6f-b48ab200c232",
-      "name": "柴敏 (Chaimin)",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "L",
-      "note": "swapped in, added Jul 9 via Lisa",
-      "practice": "",
-      "lastAsana": ""
-    },
-    {
-      "id": "HEFEI-057",
-      "journalId": "0cf741cf-6076-5ab1-8a0b-2b74c5dca4f8",
-      "name": "丽云 (Lisa)",
+      "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95",
+      "name": "贵贵 (Guigui)",
       "package": "Host",
       "entitledSessions": [
         "*"
       ],
       "phone": "",
+      "size": "M",
+      "note": "host · free practice spot (decided Jul 13) · in-depth CN2, journal history kept · card HEFEI-056",
+      "practice": "intermediate+advanced",
+      "lastAsana": "urdhva kukkutasana"
+    },
+    {
+      "id": "HEFEI-057",
+      "journalId": "0cf741cf-6076-5ab1-8a0b-2b74c5dca4f8",
+      "name": "丽云 (Lisa)",
+      "package": "Photographer",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
       "size": "",
-      "note": "co-host, tee size TBD",
+      "note": "co-host · photographer (decided Jul 13) · shirts 1M+1L · card HEFEI-057",
       "practice": "",
       "lastAsana": ""
     }

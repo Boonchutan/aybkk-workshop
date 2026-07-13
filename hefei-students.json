@@ -364,58 +364,58 @@
     "lastAsana": "baddha hasta sirsasana"
   },
   {
-    "name": "GUIGUI",
+    "name": "Serena Wang",
     "package": "Full",
     "size": "M",
-    "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95",
-    "note": "in-depth CN2 深度课学生",
+    "note": "Zhuhai student · deposit transferred to Hefei, paid full 5144 regular · joined Jul 13 · card HEFEI-048",
+    "practice": "",
+    "lastAsana": ""
+  },
+  {
+    "name": "程琳 (Chenglin)",
+    "package": "Full",
+    "size": "",
+    "note": "RUYI student · added from paid list Jul 11 · card HEFEI-049 (printed face says Walk-in 1)",
+    "practice": "primary",
+    "lastAsana": ""
+  },
+  {
+    "name": "柴敏 (Chaimin)",
+    "package": "Full",
+    "size": "",
+    "note": "RUYI student · added from paid list Jul 11 · card HEFEI-050 (printed face says Walk-in 2)",
+    "practice": "primary+intermediate",
+    "lastAsana": ""
+  },
+  {
+    "name": "柠檬 (Lemon)",
+    "package": "Full",
+    "size": "",
+    "note": "added from paid list Jul 11 · card HEFEI-051 (printed face says Walk-in 3)",
+    "practice": "primary",
+    "lastAsana": ""
+  },
+  {
+    "name": "Wini",
+    "package": "2day",
+    "size": "",
+    "entitledSessions": [
+      "D4-MY",
+      "D4-WS",
+      "D5-LED",
+      "D5-QA"
+    ],
+    "note": "in-depth CN2 深度课学生 · Jul 19-20 only · card HEFEI-052 (printed face says Walk-in 4) · link prior CN2 journal if she has one",
     "practice": "intermediate+advanced",
-    "lastAsana": "urdhva kukkutasana"
+    "lastAsana": ""
   },
   {
-    "name": "Walk-in 1 走读",
-    "package": "Single",
+    "name": "宋研羽 (Yanyan)",
+    "package": "3day",
     "size": "",
-    "entitledSessions": [
-      "*"
-    ],
-    "note": "spare card — assign at door"
-  },
-  {
-    "name": "Walk-in 2 走读",
-    "package": "Single",
-    "size": "",
-    "entitledSessions": [
-      "*"
-    ],
-    "note": "spare card — assign at door"
-  },
-  {
-    "name": "Walk-in 3 走读",
-    "package": "Single",
-    "size": "",
-    "entitledSessions": [
-      "*"
-    ],
-    "note": "spare card — assign at door"
-  },
-  {
-    "name": "Walk-in 4 走读",
-    "package": "Single",
-    "size": "",
-    "entitledSessions": [
-      "*"
-    ],
-    "note": "spare card — assign at door"
-  },
-  {
-    "name": "Walk-in 5 走读",
-    "package": "Single",
-    "size": "",
-    "entitledSessions": [
-      "*"
-    ],
-    "note": "spare card — assign at door"
+    "note": "Jul 17-19 三天 · added from paid list Jul 11 · card HEFEI-053 (printed face says Walk-in 5)",
+    "practice": "primary",
+    "lastAsana": ""
   },
   {
     "name": "Walk-in 6 走读",
@@ -431,21 +431,29 @@
     "package": "Test",
     "size": "",
     "journalId": "ea8c2bbe-633e-44d0-a042-ca4563a4d9f7",
-    "note": "test student (Boonchu)",
+    "note": "test student (Boonchu) · station check · not printed",
     "practice": ""
   },
   {
-    "name": "柴敏 (Chaimin)",
-    "package": "Full",
-    "size": "L",
-    "note": "swapped in, added Jul 9 via Lisa",
-    "practice": ""
+    "name": "贵贵 (Guigui)",
+    "package": "Host",
+    "size": "M",
+    "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95",
+    "entitledSessions": [
+      "*"
+    ],
+    "note": "host · free practice spot (decided Jul 13) · in-depth CN2, journal history kept · card HEFEI-056",
+    "practice": "intermediate+advanced",
+    "lastAsana": "urdhva kukkutasana"
   },
   {
     "name": "丽云 (Lisa)",
-    "package": "Host",
+    "package": "Photographer",
     "size": "",
-    "note": "co-host, tee size TBD",
+    "entitledSessions": [
+      "*"
+    ],
+    "note": "co-host · photographer (decided Jul 13) · shirts 1M+1L · card HEFEI-057",
     "practice": ""
   }
 ]
