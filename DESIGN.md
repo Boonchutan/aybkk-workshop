@@ -40,6 +40,8 @@ Zhuhai) set `--mark` to a dark ink instead of chalk.
 | `maoming` | Maoming 茂名 | `#5c4030` tour brown | `#e4efe9` sea foam | real tee |
 | `zhuhai` | Zhuhai 珠海 | `#b9c6d6` blue-gray | `#f4f1ea` shell | real tee; mark = purple `#4a2d8f` (refine against attached design) |
 | `gz` | Guangzhou 广州 | `#a8322f` red | `#eaf0ec` gray jade | proposal |
+| `huizhou` | Huizhou 惠州 | `#cf6d15` mandarin | `#eef2e2` pale leaf | proposal |
+| `russia` | Russia (SPB/Moscow) | `#a9c8e4` ice blue | `#f2f1ec` snow | proposal; mark = `#27516f` |
 
 Adding a city = one block in tokens.css. Never hardcode city colors in pages.
 
