@@ -125,6 +125,45 @@
   const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
   const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 
+  // ---------- photo store (IndexedDB — localStorage is too small for images) ----------
+  let idb = null;
+  const idbReady = new Promise(res => {
+    try {
+      const rq = indexedDB.open("aybkk-checkin-photos", 1);
+      rq.onupgradeneeded = () => rq.result.createObjectStore("photos", { keyPath: "key" });
+      rq.onsuccess = () => { idb = rq.result; res(true); };
+      rq.onerror = () => res(false);
+    } catch (e) { res(false); }
+  });
+  const photoPut = rec => new Promise(res => {
+    if (!idb) return res(false);
+    const tx = idb.transaction("photos", "readwrite");
+    tx.objectStore("photos").put(rec);
+    tx.oncomplete = () => res(true); tx.onerror = () => res(false);
+  });
+  const photoGet = key => new Promise(res => {
+    if (!idb) return res(null);
+    const rq = idb.transaction("photos").objectStore("photos").get(key);
+    rq.onsuccess = () => res(rq.result || null); rq.onerror = () => res(null);
+  });
+  const photoDel = key => new Promise(res => {
+    if (!idb) return res(false);
+    const tx = idb.transaction("photos", "readwrite");
+    tx.objectStore("photos").delete(key);
+    tx.oncomplete = () => res(true); tx.onerror = () => res(false);
+  });
+
+  // Grab the current camera frame (the student is in view at the scan moment)
+  function captureFrame() {
+    try {
+      if (!stream || video.readyState < 2 || !video.videoWidth) return null;
+      const w = 640, h = Math.round(video.videoHeight * (w / video.videoWidth));
+      const pc = document.createElement("canvas"); pc.width = w; pc.height = h;
+      pc.getContext("2d").drawImage(video, 0, 0, w, h);
+      return pc.toDataURL("image/jpeg", 0.72);
+    } catch (e) { return null; }
+  }
+
   function indexRoster() {
     byCode = new Map(); byJournal = new Map();
     (roster.students || []).forEach(s => {
@@ -208,11 +247,19 @@
     if (already) { flash("dup", "•", student.name, "Already checked in"); return; }
 
     const ok = isEligible(student, session);
+    // photo: the camera is already on the student — capture this exact moment
+    let photoKey = null;
+    const frame = captureFrame();
+    if (frame) {
+      photoKey = WORKSHOP + "|" + (student.id || student.journalId) + "|" + session + "|" + Date.now();
+      photoPut({ key: photoKey, dataUrl: frame, ts: Date.now() });
+    }
     attendance.push({
       workshop: WORKSHOP, id: student.id || null, journalId: student.journalId || null,
       name: student.name, package: student.package || "", studentCode: student.id || null,
       session, sessionDate: meta.date || null, checkedInAt: new Date().toISOString(),
-      eligible: ok, source: source || "scan", synced: false
+      eligible: ok, source: source || "scan", synced: false,
+      photoKey, photoFile: null
     });
     save(LS_ATT, attendance);
     if (ok) flash("ok", "✓", student.name, (student.package || "") + " · checked in");
@@ -302,12 +349,38 @@
     if (!pending.length) { $("#syncState").textContent = "all synced"; return; }
     if (!navigator.onLine) { $("#syncState").textContent = pending.length + " to sync (offline)"; return; }
     $("#syncState").textContent = "syncing " + pending.length + "…";
+
+    // 1: upload captured photos that don't have a server file yet
+    for (const a of pending) {
+      if (!a.photoKey || a.photoFile) continue;
+      try {
+        const rec = await photoGet(a.photoKey);
+        if (!rec) { a.photoKey = null; continue; }        // photo lost — sync row anyway
+        const blob = await (await fetch(rec.dataUrl)).blob();
+        const fd = new FormData();
+        fd.append("file", blob, (a.studentCode || "student") + "-" + a.session + ".jpg");
+        const up = await fetch("/api/upload/attendance-photo", { method: "POST", body: fd });
+        if (up.ok) {
+          const j = await up.json();
+          a.photoFile = (j.file && j.file.filename) || null;
+        }
+      } catch (e) { /* retry on the next sync pass */ }
+    }
+    save(LS_ATT, attendance);
+
+    // 2: sync the rows
     try {
       const r = await fetch("/api/attendance/checkin", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rows: pending })
       });
-      if (r.ok) { pending.forEach(a => a.synced = true); save(LS_ATT, attendance); $("#syncState").textContent = "all synced"; }
+      if (r.ok) {
+        for (const a of pending) {
+          a.synced = true;
+          if (a.photoKey && a.photoFile) { photoDel(a.photoKey); a.photoKey = null; }
+        }
+        save(LS_ATT, attendance); $("#syncState").textContent = "all synced";
+      }
       else $("#syncState").textContent = pending.length + " to sync (server " + r.status + ")";
     } catch (e) { $("#syncState").textContent = pending.length + " to sync (no server)"; }
     render();
@@ -315,7 +388,7 @@
 
   // ---------- CSV (guaranteed offline backup) ----------
   function exportCSV() {
-    const cols = ["workshop", "studentCode", "name", "package", "session", "sessionDate", "checkedInAt", "eligible", "source"];
+    const cols = ["workshop", "studentCode", "name", "package", "session", "sessionDate", "checkedInAt", "eligible", "source", "photoFile"];
     const esc = v => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
     const csv = [cols.join(",")].concat(attendance.map(r => cols.map(c => esc(r[c])).join(","))).join("\n");
     const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });

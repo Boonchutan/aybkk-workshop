@@ -1,0 +1,39 @@
+name: Shop products check
+
+# Manual: prints the live shop product list so it can be verified from CI logs.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check China domain (cn.aybkk.net)
+        run: |
+          CODE=$(curl -s -o /tmp/cn.html -w '%{http_code}' --max-time 20 "https://cn.aybkk.net/shop.html" || echo 000)
+          echo "cn.aybkk.net/shop.html -> HTTP $CODE"
+          grep -q 'AYBKK Tee Shop' /tmp/cn.html && echo "cn: serves the shop page" || echo "cn: WRONG CONTENT"
+          PCODE=$(curl -s -o /tmp/cnp.json -w '%{http_code}' --max-time 20 "https://cn.aybkk.net/api/shop/products" || echo 000)
+          N=$(python3 -c "import json; print(len(json.load(open('/tmp/cnp.json'))['products']))" 2>/dev/null || echo '?')
+          echo "cn products API -> HTTP $PCODE, $N products"
+
+      - name: Check deployed shop.html version
+        run: |
+          curl -sf --max-time 20 "https://my.aybkk.com/shop.html" -o /tmp/shop.html
+          grep -q 'prelabel' /tmp/shop.html && echo "shop.html: NEW version (pre-order styles present)" || echo "shop.html: OLD version still serving"
+          grep -q 'c62828' /tmp/shop.html && echo "shop.html: red strikethrough present" || echo "shop.html: red strikethrough MISSING"
+
+      - name: Fetch live products
+        run: |
+          curl -sf --max-time 20 "https://my.aybkk.com/api/shop/products" -o /tmp/p.json
+          python3 - <<'EOF'
+          import json
+          d = json.load(open('/tmp/p.json'))
+          ps = d['products']
+          print(f"{len(ps)} products live")
+          for p in ps:
+              total = sum(p['sizes'].values())
+              photo = 'photo:yes' if p.get('photo') else 'photo:NO'
+              print(f"{p['id']:>10} | {p['nameEn'][:38]:38} | full {p.get('fullPrice')} pre {p['price']} | {total:3} pcs | {photo}")
+          EOF

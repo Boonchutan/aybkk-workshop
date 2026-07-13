@@ -9,6 +9,7 @@ const multer = require('multer');
 const neo4j = require('neo4j-driver');
 const cors = require('cors');
 const { mountAttendance } = require('./attendance-api');
+const { mountShop } = require('./shop-api');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -31,7 +32,11 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || process.env.MISSION_CONTROL_PORT || 3000;
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
+// Uploads must live on the persistent volume (/data on Railway) — the app
+// directory is wiped on every redeploy, which silently deleted payment
+// screenshots while their orders (stored in /data) survived.
+const UPLOAD_DIR = process.env.UPLOAD_DIR ||
+  (fs.existsSync('/data') ? '/data/uploads' : path.join(__dirname, 'uploads'));
 
 // Ensure upload directory exists
 if (!fs.existsSync(UPLOAD_DIR)) {
@@ -394,6 +399,9 @@ app.use((req, res, next) => {
 
 // Workshop check-in station sync + printed short links (offline-first station)
 mountAttendance(app, { pgPool });
+
+// Tee shop (WeChat-pay flow with reservation holds)
+mountShop(app);
 
 // Student Journal API Routes
 const studentJournal = require('./api/student-journal');

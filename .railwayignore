@@ -13,6 +13,7 @@ db/
 seed*.js
 *.json
 !package.json
+!shop-seed.json
 !data/quotes.json
 .env
 *.env*
