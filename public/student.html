@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/tokens.css">
   <script>
   (function () {
-    var map = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou' };
+    var map = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou', russia:'russia' };
     var loc = (new URLSearchParams(window.location.search).get('location') || '').toLowerCase();
     if (map[loc]) document.documentElement.setAttribute('data-ws', map[loc]);
   })();
@@ -1416,7 +1416,7 @@ async function init() {
         if (data && data.name) studentName = data.name;
         if (data && data.language && !params.has('lang') && T[data.language]) selfHealLang = data.language;
         if (data && data.location && !params.has('location')) {
-          var wsMap = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou' };
+          var wsMap = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou', russia:'russia' };
           if (wsMap[String(data.location).toLowerCase()]) document.documentElement.setAttribute('data-ws', wsMap[String(data.location).toLowerCase()]);
         }
       }

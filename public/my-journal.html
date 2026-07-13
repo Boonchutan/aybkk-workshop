@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/tokens.css">
   <script>
   (function () {
-    var map = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou' };
+    var map = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou', russia:'russia' };
     var loc = (new URLSearchParams(window.location.search).get('location') || '').toLowerCase();
     if (map[loc]) document.documentElement.setAttribute('data-ws', map[loc]);
   })();

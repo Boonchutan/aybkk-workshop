@@ -134,6 +134,11 @@ html[data-ws="huizhou"] {
   --wall: #eef2e2; --paper: #f9f5ec; --paper-2: #f4e6d4;
   --ink: #2b2115; --ink-soft: #6a5a44; --mark: var(--chalk);
 }
+html[data-ws="russia"] {
+  --shirt: #a9c8e4; --shirt-deep: #27516f; --shirt-soft: #c4d9ec;
+  --wall: #f2f1ec; --paper: #f8f6f0; --paper-2: #e7edf3;
+  --ink: #212a33; --ink-soft: #58636e; --mark: #27516f; --mark-contrast: var(--chalk);
+}
 html[data-ws="gz"] {
   --shirt: #a8322f; --shirt-deep: #7c2321; --shirt-soft: #c26562;
   --wall: #eaf0ec; --paper: #f8f4ec; --paper-2: #f0e2dd;
