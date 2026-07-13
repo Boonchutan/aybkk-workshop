@@ -110,7 +110,7 @@ app.use('/uploads', express.static(UPLOAD_DIR));
 // x-forwarded-host is set by workers/china-proxy so journal links use the proxy domain.
 // Quick-tunnel hosts (trycloudflare.com) rotate on every restart; links stored with one
 // die with the tunnel, so they always resolve to the stable domain instead.
-const STABLE_BASE_URL = process.env.PUBLIC_BASE_URL || 'https://aybkk-ashtanga.up.railway.app';
+const STABLE_BASE_URL = process.env.PUBLIC_BASE_URL || 'https://cn.aybkk.net';
 function getBaseUrl(req) {
   const proto = req.get('x-forwarded-proto') || req.protocol || 'https';
   const host = req.get('x-forwarded-host') || req.get('host') || '';
