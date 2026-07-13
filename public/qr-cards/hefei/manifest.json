@@ -377,49 +377,49 @@
   },
   {
     "code": "HEFEI-048",
-    "name": "GUIGUI",
+    "name": "Serena Wang",
     "package": "Full",
-    "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95",
+    "journalId": "99de3b2c-8e45-5e70-8cb1-93b48e19a971",
     "file": "qr-cards/hefei/HEFEI-048.png",
     "url": "https://cn.aybkk.net/s/HEFEI-048"
   },
   {
     "code": "HEFEI-049",
-    "name": "Walk-in 1 走读",
-    "package": "Single",
-    "journalId": "7dd95fb8-d53d-510e-98aa-32e4608d8fc6",
+    "name": "程琳 (Chenglin)",
+    "package": "Full",
+    "journalId": "1cf6ba13-8647-50a3-80d6-1db7f153aac9",
     "file": "qr-cards/hefei/HEFEI-049.png",
     "url": "https://cn.aybkk.net/s/HEFEI-049"
   },
   {
     "code": "HEFEI-050",
-    "name": "Walk-in 2 走读",
-    "package": "Single",
-    "journalId": "a3b73285-b975-5650-b8d5-33ac1e17927a",
+    "name": "柴敏 (Chaimin)",
+    "package": "Full",
+    "journalId": "6726f264-fec5-55bc-9f6f-b48ab200c232",
     "file": "qr-cards/hefei/HEFEI-050.png",
     "url": "https://cn.aybkk.net/s/HEFEI-050"
   },
   {
     "code": "HEFEI-051",
-    "name": "Walk-in 3 走读",
-    "package": "Single",
-    "journalId": "a41233f5-b7a1-55ff-98d5-0375be1b68fe",
+    "name": "柠檬 (Lemon)",
+    "package": "Full",
+    "journalId": "01d07a12-4742-583e-a8da-7eeb47229888",
     "file": "qr-cards/hefei/HEFEI-051.png",
     "url": "https://cn.aybkk.net/s/HEFEI-051"
   },
   {
     "code": "HEFEI-052",
-    "name": "Walk-in 4 走读",
-    "package": "Single",
-    "journalId": "7a489390-b50b-5eb2-aec3-44b91af74e1c",
+    "name": "Wini",
+    "package": "2day",
+    "journalId": "03e6cae1-7ccc-537d-a3b5-f8731fb9fd91",
     "file": "qr-cards/hefei/HEFEI-052.png",
     "url": "https://cn.aybkk.net/s/HEFEI-052"
   },
   {
     "code": "HEFEI-053",
-    "name": "Walk-in 5 走读",
-    "package": "Single",
-    "journalId": "ea5331c2-a52a-5ded-aa5d-87993b95fe7b",
+    "name": "宋研羽 (Yanyan)",
+    "package": "3day",
+    "journalId": "0f468e0f-916d-537b-b6a9-b2fdb783d4cb",
     "file": "qr-cards/hefei/HEFEI-053.png",
     "url": "https://cn.aybkk.net/s/HEFEI-053"
   },
@@ -441,16 +441,16 @@
   },
   {
     "code": "HEFEI-056",
-    "name": "柴敏 (Chaimin)",
-    "package": "Full",
-    "journalId": "6726f264-fec5-55bc-9f6f-b48ab200c232",
+    "name": "贵贵 (Guigui)",
+    "package": "Host",
+    "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95",
     "file": "qr-cards/hefei/HEFEI-056.png",
     "url": "https://cn.aybkk.net/s/HEFEI-056"
   },
   {
     "code": "HEFEI-057",
     "name": "丽云 (Lisa)",
-    "package": "Host",
+    "package": "Photographer",
     "journalId": "0cf741cf-6076-5ab1-8a0b-2b74c5dca4f8",
     "file": "qr-cards/hefei/HEFEI-057.png",
     "url": "https://cn.aybkk.net/s/HEFEI-057"
