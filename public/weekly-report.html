@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AYBKK Weekly Practice Report</title>
   <link rel="stylesheet" href="/tokens.css">
+  <script>
+  (function () {
+    var map = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou' };
+    var loc = (new URLSearchParams(window.location.search).get('location') || '').toLowerCase();
+    if (map[loc]) document.documentElement.setAttribute('data-ws', map[loc]);
+  })();
+  </script>
+
   <style>
     /* weekly-report.html — student weekly summary. Hero photo-overlay,
        carved stat cavities, hairline pull-quote (no side-stripe). */

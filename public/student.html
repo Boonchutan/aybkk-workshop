@@ -6,6 +6,14 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>AYBKK Practice Journal</title>
   <link rel="stylesheet" href="/tokens.css">
+  <script>
+  (function () {
+    var map = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou' };
+    var loc = (new URLSearchParams(window.location.search).get('location') || '').toLowerCase();
+    if (map[loc]) document.documentElement.setAttribute('data-ws', map[loc]);
+  })();
+  </script>
+
   <style>
     /* student.html — daily practice entry. Multi-step form: vinyasa, bandha,
        stable/difficult tags, last asana note, practice notes, photos, quiz,
@@ -496,8 +504,8 @@
   <!-- Logo & Header -->
   <div class="header" style="text-align:center;">
     <img class="brand-logo-mark" src="/aybkk-logo.jpg" alt="AYBKK" style="width:54px;height:54px;margin-bottom:8px;">
-    <h1 id="pageTitle" style="font-family:'Spectral',serif;font-size:22px;font-weight:700;letter-spacing:-0.3px;">AYBKK Practice Journal</h1>
-    <p id="pageSubtitle" style="font-family:'Spectral',serif;font-style:italic;font-size:12px;color:var(--text-secondary);margin-top:4px;">by Boonchu Tanti & Jamsai Tanti</p>
+    <h1 id="pageTitle" style="font-family:var(--font-display);font-size:22px;font-weight:800;letter-spacing:0;">AYBKK Practice Journal</h1>
+    <p id="pageSubtitle" style="font-family:var(--font-note);font-size:15px;color:var(--text-secondary);margin-top:4px;">by Boonchu Tanti & Jamsai Tanti</p>
   </div>
   <!-- Language -->
   <div class="lang-switch">
@@ -527,14 +535,14 @@
   <div class="step" id="step-1" data-step="-1">
     <div class="card" style="text-align:center;padding:32px 20px;">
       <img class="brand-logo-mark" src="/aybkk-logo.jpg" alt="AYBKK">
-      <div class="step-question" id="welcomeTitle" style="font-family:'Spectral',serif;font-size:24px;font-weight:700;letter-spacing:-0.4px;margin-bottom:8px;">AYBKK Practice Journal</div>
+      <div class="step-question" id="welcomeTitle" style="font-family:var(--font-display);font-size:24px;font-weight:800;letter-spacing:0;margin-bottom:8px;">AYBKK Practice Journal</div>
       <div class="step-hint" id="welcomeTeachers" style="font-size:14px;color:var(--text-secondary);margin-bottom:6px;">By Boonchu & Jamsai Tanti</div>
       <div id="welcomeStudentName" style="font-size:16px;font-weight:600;color:var(--accent);margin:20px 0 8px;"></div>
       <div class="step-hint" id="welcomeSub" style="font-size:13px;margin-bottom:16px;">Practice Journal / Дневник практики</div>
 
       <!-- From Boonchu — practice focus + latest comments. Hidden unless content exists. -->
-      <div id="fromBoonchuCard" class="hidden" style="text-align:left;background:var(--accent-light);border-radius:12px;padding:14px 16px;margin-bottom:18px;border-left:3px solid var(--accent);">
-        <div id="fromBoonchuLabel" style="font-family:'Spectral',serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:8px;">From Boonchu</div>
+      <div id="fromBoonchuCard" class="hidden" style="text-align:left;background:var(--paper-2);border:2px solid var(--ink);border-radius:var(--frame-radius-sm);box-shadow:var(--frame-shadow);padding:14px 16px;margin-bottom:18px;">
+        <div id="fromBoonchuLabel" style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:8px;">From Boonchu</div>
         <div id="fromBoonchuFocus" class="hidden" style="margin-bottom:10px;">
           <div id="fromBoonchuFocusLabel" style="font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--accent);margin-bottom:3px;">Next Focus</div>
           <div id="fromBoonchuFocusText" style="font-size:13px;line-height:1.55;color:var(--text-primary);white-space:pre-wrap;"></div>
@@ -543,14 +551,14 @@
       </div>
 
       <!-- Class Summary — visible when at least one class summary exists for this cohort. -->
-      <div id="classSummaryCard" class="hidden" style="text-align:left;background:var(--accent-light);border-radius:12px;padding:14px 16px;margin-bottom:18px;border-left:3px solid var(--accent);">
-        <div id="classSummaryLabel" style="font-family:'Spectral',serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:10px;">Class Summary</div>
+      <div id="classSummaryCard" class="hidden" style="text-align:left;background:var(--paper-2);border:2px solid var(--ink);border-radius:var(--frame-radius-sm);box-shadow:var(--frame-shadow);padding:14px 16px;margin-bottom:18px;">
+        <div id="classSummaryLabel" style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:10px;">Class Summary</div>
         <div id="classSummaryList"></div>
       </div>
 
       <!-- Ten-second tap check-in — the weekly no-writing check-in. Returning students only. -->
-      <div id="tapCheckinCard" class="hidden" style="text-align:left;background:var(--accent-light);border-radius:12px;padding:14px 16px;margin-bottom:18px;border-left:3px solid var(--accent);">
-        <div id="tapTitle" style="font-family:'Spectral',serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:10px;">本周打卡 · 10 秒</div>
+      <div id="tapCheckinCard" class="hidden" style="text-align:left;background:var(--paper-2);border:2px solid var(--ink);border-radius:var(--frame-radius-sm);box-shadow:var(--frame-shadow);padding:14px 16px;margin-bottom:18px;">
+        <div id="tapTitle" style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:10px;">本周打卡 · 10 秒</div>
         <div id="tapForm">
           <div id="tapDaysLabel" style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;">这周练习了几天？</div>
           <div id="tapDays" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
@@ -886,7 +894,7 @@
 <!-- Success + Share Card -->
 <div id="successOverlay" class="success-overlay hidden">
   <div class="success-box">
-    <div id="shareCard" style="border-radius:20px;padding:32px 26px 28px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 16px 48px rgba(0,0,0,0.25);position:relative;overflow:hidden;background:#7BAF7A;">
+    <div id="shareCard" style="border-radius:20px;padding:32px 26px 28px;text-align:center;margin-bottom:16px;max-width:320px;margin-left:auto;margin-right:auto;box-shadow:0 16px 48px rgba(0,0,0,0.25);position:relative;overflow:hidden;background:var(--shirt);">
       <!-- Photo background layer (set to 0.7 opacity when photo present) -->
       <div id="shareCardPhotoBg" style="position:absolute;inset:0;background-size:cover;background-position:center top;opacity:0;z-index:0;"></div>
       <!-- Day-color tint overlay (replaces dark vignette) -->
@@ -905,7 +913,7 @@
         <div style="color:rgba(255,255,255,0.9);font-size:14px;font-weight:500;margin-bottom:18px;" id="shareDayInfo"></div>
         <!-- Divider + quote -->
         <div style="border-top:1px solid rgba(255,255,255,0.25);padding-top:16px;">
-          <div style="color:rgba(255,255,255,0.92);font-size:14px;font-style:italic;line-height:1.7;font-weight:400;margin-bottom:10px;font-family:Georgia,serif;" id="shareQuote"></div>
+          <div style="color:rgba(255,255,255,0.92);font-size:14px;font-style:italic;line-height:1.7;font-weight:400;margin-bottom:10px;font-family:var(--font-note);" id="shareQuote"></div>
           <div style="color:#ffffff;font-size:15px;font-weight:700;letter-spacing:0.3px;line-height:1.5;display:none;margin-bottom:4px;" id="shareUplift"></div>
         </div>
         <!-- Byline -->
@@ -1277,6 +1285,8 @@ function getUpliftPhrase(notes) {
 }
 
 function applyDayColor() {
+  // City-stamped pages keep their shirt color; day pastels are a home-page touch.
+  if (document.documentElement.hasAttribute('data-ws')) return;
   const dayIndex = new Date().getDay(); // 0=Sun, 1=Mon, ...
   const mapped = dayIndex === 0 ? 6 : dayIndex - 1; // Mon=0 ... Sun=6
   const c = DAY_COLORS[mapped];
@@ -1405,6 +1415,10 @@ async function init() {
         const data = await res.json();
         if (data && data.name) studentName = data.name;
         if (data && data.language && !params.has('lang') && T[data.language]) selfHealLang = data.language;
+        if (data && data.location && !params.has('location')) {
+          var wsMap = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou' };
+          if (wsMap[String(data.location).toLowerCase()]) document.documentElement.setAttribute('data-ws', wsMap[String(data.location).toLowerCase()]);
+        }
       }
     } catch (e) { /* offline — fall through to registration */ }
   }
@@ -1529,9 +1543,9 @@ async function loadFromBoonchu() {
         for (let line of lines) {
           const t = line.trim();
           if (!t) { if (inList) { out += '</ul>'; inList = false; } out += '<div style="height:6px;"></div>'; continue; }
-          if (/^####\s+/.test(t)) { if (inList) { out += '</ul>'; inList = false; } out += '<div style="font-family:Spectral,serif;font-size:12px;font-weight:700;color:var(--accent-hover);margin:8px 0 4px;">' + inline(t.replace(/^####\s+/, '')) + '</div>'; continue; }
-          if (/^###\s+/.test(t))  { if (inList) { out += '</ul>'; inList = false; } out += '<div style="font-family:Spectral,serif;font-size:13px;font-weight:700;color:var(--accent-hover);margin:10px 0 4px;">' + inline(t.replace(/^###\s+/, '')) + '</div>'; continue; }
-          if (/^##\s+/.test(t))   { if (inList) { out += '</ul>'; inList = false; } out += '<div style="font-family:Spectral,serif;font-size:14px;font-weight:700;color:var(--accent-hover);margin:12px 0 4px;">' + inline(t.replace(/^##\s+/, '')) + '</div>'; continue; }
+          if (/^####\s+/.test(t)) { if (inList) { out += '</ul>'; inList = false; } out += '<div style="font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--accent-hover);margin:8px 0 4px;">' + inline(t.replace(/^####\s+/, '')) + '</div>'; continue; }
+          if (/^###\s+/.test(t))  { if (inList) { out += '</ul>'; inList = false; } out += '<div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--accent-hover);margin:10px 0 4px;">' + inline(t.replace(/^###\s+/, '')) + '</div>'; continue; }
+          if (/^##\s+/.test(t))   { if (inList) { out += '</ul>'; inList = false; } out += '<div style="font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--accent-hover);margin:12px 0 4px;">' + inline(t.replace(/^##\s+/, '')) + '</div>'; continue; }
           if (/^[-*]\s+/.test(t)) { if (!inList) { out += '<ul style="margin:4px 0 4px 20px;padding:0;">'; inList = true; } out += '<li style="font-size:13px;line-height:1.55;color:var(--text-primary);margin-bottom:3px;">' + inline(t.replace(/^[-*]\s+/, '')) + '</li>'; continue; }
           if (inList) { out += '</ul>'; inList = false; }
           out += '<div style="font-size:13px;line-height:1.55;color:var(--text-primary);margin-bottom:4px;">' + inline(t) + '</div>';
@@ -1566,12 +1580,12 @@ function startFromWelcome() {
 
 function goToMyJournal() {
   if (!studentId || !studentName) return;
-  window.location.href = `/my-journal.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(studentName)}&lang=${currentLang}`;
+  window.location.href = `/my-journal.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(studentName)}&lang=${currentLang}&location=${encodeURIComponent(workshopLocation)}`;
 }
 
 function goToMyWeek() {
   if (!studentId || !studentName) return;
-  window.location.href = `/weekly-report.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(studentName)}&lang=${currentLang}`;
+  window.location.href = `/weekly-report.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(studentName)}&lang=${currentLang}&location=${encodeURIComponent(workshopLocation)}`;
 }
 
 // Step navigation

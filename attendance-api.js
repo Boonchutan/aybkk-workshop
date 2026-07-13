@@ -113,7 +113,8 @@ function mountAttendance(app, opts = {}) {
     const lang = (roster && roster.lang) || 'zh';
     const url = '/student.html?id=' + encodeURIComponent(uuid) +
                 (name ? '&name=' + encodeURIComponent(name) : '') +
-                '&lang=' + encodeURIComponent(lang);
+                '&lang=' + encodeURIComponent(lang) +
+                '&location=' + encodeURIComponent((roster && roster.location) || 'hefei');
     res.redirect(302, url);
   });
 

@@ -129,6 +129,11 @@ html[data-ws="zhuhai"] {
   --wall: #f0f1f3; --paper: #f8f6f1; --paper-2: #e9e7ee;
   --ink: #29222f; --ink-soft: #5f5768; --mark: #8b2fd6; --mark-contrast: var(--chalk);
 }
+html[data-ws="huizhou"] {
+  --shirt: #cf6d15; --shirt-deep: #954d0d; --shirt-soft: #e09a55;
+  --wall: #eef2e2; --paper: #f9f5ec; --paper-2: #f4e6d4;
+  --ink: #2b2115; --ink-soft: #6a5a44; --mark: var(--chalk);
+}
 html[data-ws="gz"] {
   --shirt: #a8322f; --shirt-deep: #7c2321; --shirt-soft: #c26562;
   --wall: #eaf0ec; --paper: #f8f4ec; --paper-2: #f0e2dd;

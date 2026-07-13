@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>My Practice Journal — AYBKK</title>
   <link rel="stylesheet" href="/tokens.css">
+  <script>
+  (function () {
+    var map = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou' };
+    var loc = (new URLSearchParams(window.location.search).get('location') || '').toLowerCase();
+    if (map[loc]) document.documentElement.setAttribute('data-ws', map[loc]);
+  })();
+  </script>
+
   <style>
     /* my-journal.html — student practice history view.
        Visual language imported from tokens.css (beech wood + walnut + carved
