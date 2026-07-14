@@ -859,6 +859,34 @@ app.post('/api/orientations', async (req, res) => {
   }
 });
 
+// GET /api/orientation-status/hefei — roster vs who actually completed the
+// Hefei orientation form. "Done" means the form set oriented=true AND stamped
+// the Hefei workshop tag on the Student node (pre-seeded nodes and in-depth
+// grads with old flags don't count until they fill the Hefei form).
+app.get('/api/orientation-status/hefei', async (req, res) => {
+  const session = driver.session();
+  try {
+    const rosterPath = path.join(__dirname, 'public', 'rosters', 'hefei.json');
+    const roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
+    const students = (roster.students || []).filter(s => !/^walk-in/i.test(s.name || ''));
+    const result = await session.run(
+      `MATCH (s:Student)
+       WHERE s.workshop = 'Hefei WS July 2026' AND s.oriented = true
+       RETURN s.id AS id`
+    );
+    const orientedIds = new Set(result.records.map(r => r.get('id')));
+    const done = [], pending = [];
+    for (const s of students) {
+      (orientedIds.has(s.journalId) ? done : pending).push({ code: s.id, name: s.name, slug: s.slug });
+    }
+    res.json({ total: students.length, doneCount: done.length, done, pending });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
 // GET /api/orientations - Get all GZ orientation submissions for dashboard
 app.get('/api/orientations', async (req, res) => {
   const session = driver.session();

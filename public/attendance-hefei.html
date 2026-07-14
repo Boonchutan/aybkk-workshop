@@ -55,6 +55,8 @@
 <div id="inList"><div class="empty">…</div></div>
 <h2>未到 · Not yet</h2>
 <div id="outList" class="absent"><div class="empty">…</div></div>
+<h2>问卷 · Orientation <span id="oCount" style="color:var(--ink);text-transform:none;letter-spacing:0"></span></h2>
+<div id="oPending" class="absent"><div class="empty">…</div></div>
 
 <div id="detail" onclick="if(event.target.id==='detail')closeDetail()">
   <div id="detailBox">
@@ -178,6 +180,22 @@ async function refresh() {
     if (r.ok) rows = (await r.json()).rows || [];
     $("#updated").textContent = "· " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   } catch (e) { $("#updated").textContent = "· offline"; }
+  try {
+    const o = await fetch("/api/orientation-status/hefei", { cache: "no-store" });
+    if (o.ok) {
+      const d = await o.json();
+      $("#oCount").textContent = "· " + d.doneCount + "/" + d.total + " done";
+      const el = $("#oPending"); el.innerHTML = "";
+      if (d.pending.length) {
+        d.pending.forEach(p => {
+          const sp = document.createElement("span");
+          sp.textContent = p.name;
+          sp.onclick = () => showDetail((roster.students.find(s => s.id === p.code) || {}).journalId || p.code, p.name);
+          el.appendChild(sp);
+        });
+      } else el.innerHTML = '<div class="empty">Everyone finished the form 🙏</div>';
+    }
+  } catch (e) { /* section stays as-is */ }
   renderAll();
 }
 
