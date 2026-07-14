@@ -541,13 +541,34 @@
       <div class="step-hint" id="welcomeSub" style="font-size:13px;margin-bottom:16px;">Practice Journal / Дневник практики</div>
 
       <!-- Digital door pass — Hefei roster students only. The HOST scans this
-           from the student's phone screen at the door (replaces printed cards). -->
-      <div id="doorPassCard" class="hidden" style="background:var(--paper-2);border:2px solid var(--ink);border-radius:var(--frame-radius-sm);box-shadow:var(--frame-shadow);padding:14px 16px;margin-bottom:18px;">
-        <div style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:8px;">我的入场码 · My Door Pass</div>
-        <img id="doorPassQr" alt="door pass QR" style="width:190px;height:190px;border-radius:8px;background:#fff;padding:6px;">
-        <div id="doorPassName" style="font-size:15px;font-weight:700;margin-top:6px;"></div>
-        <div id="doorPassLink" style="font-size:12px;color:var(--text-secondary);margin-top:2px;"></div>
-        <div style="font-size:11px;color:var(--text-secondary);margin-top:8px;">入场时把屏幕亮度调高，出示给老师扫码<br>Show this to the host at the door</div>
+           from the student's phone screen at the door (replaces printed cards).
+           Tee-purple like the printed card: crowned bird left, 合肥/AYBKK right. -->
+      <div id="doorPassCard" class="hidden" style="background:#582C83;border:2px solid var(--ink);border-radius:var(--frame-radius-sm);box-shadow:var(--frame-shadow);padding:14px 10px;margin-bottom:18px;">
+        <div style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#fff;opacity:0.9;margin-bottom:10px;">我的入场码 · My Door Pass</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:4px;">
+          <svg viewBox="130 195 210 205" style="flex:1 1 0;min-width:52px;max-width:88px;height:auto;" aria-hidden="true">
+            <defs>
+              <filter id="dpRough"><feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="6"/></filter>
+            </defs>
+            <g filter="url(#dpRough)" stroke="#fff" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M 175 340 C 150 320 142 285 158 262 C 172 241 200 232 224 240 C 232 222 254 214 272 222 C 292 230 300 250 294 268 C 308 292 300 322 276 338 C 246 358 200 358 175 340 Z"/>
+              <path d="M 196 306 C 214 318 238 318 252 306" stroke-width="9"/>
+              <path d="M 292 262 L 322 270 L 294 282" stroke-width="9"/>
+              <path d="M 205 356 L 205 384 M 246 358 L 246 386" stroke-width="9"/>
+              <path d="M 186 240 L 178 214 M 210 232 L 210 204 M 234 238 L 242 212" stroke-width="9"/>
+            </g>
+            <circle cx="252" cy="258" r="7" fill="#fff"/>
+          </svg>
+          <img id="doorPassQr" alt="door pass QR" style="width:168px;height:168px;border-radius:10px;background:#fff;padding:6px;flex-shrink:0;">
+          <svg viewBox="0 0 150 170" style="flex:1 1 0;min-width:52px;max-width:88px;height:auto;" aria-hidden="true">
+            <text x="75" y="72" text-anchor="middle" font-family="'ZCOOL KuaiLe','PingFang SC',sans-serif" font-size="62" fill="#fff">合肥</text>
+            <text x="75" y="112" text-anchor="middle" font-family="'Shantell Sans','Marker Felt',sans-serif" font-weight="700" font-size="21" letter-spacing="6" fill="#fff" opacity="0.85">AYBKK</text>
+            <path d="M 22 138 C 60 132 96 132 128 137" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
+          </svg>
+        </div>
+        <div id="doorPassName" style="font-size:15px;font-weight:700;margin-top:8px;color:#fff;"></div>
+        <div id="doorPassLink" style="font-size:12px;color:#fff;opacity:0.75;margin-top:2px;"></div>
+        <div style="font-size:11px;color:#fff;opacity:0.7;margin-top:8px;">入场时把屏幕亮度调高，出示给老师扫码<br>Show this to the host at the door</div>
       </div>
 
       <!-- From Boonchu — practice focus + latest comments. Hidden unless content exists. -->
