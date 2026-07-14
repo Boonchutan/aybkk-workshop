@@ -5,7 +5,7 @@
   "lang": "zh",
   "baseUrl": "https://cn.aybkk.net",
   "qrMode": "short",
-  "generatedAt": "2026-07-14T08:49:12.055Z",
+  "generatedAt": "2026-07-14T09:34:53.956Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -712,6 +712,10 @@
       "journalId": "bd3fa653-bb43-48ac-9683-fbbc85b423ba",
       "name": "聂大哥 (Nie)",
       "slug": "nie",
+      "aka": [
+        "Nim",
+        "Nym"
+      ],
       "package": "Full",
       "entitledSessions": [
         "*"
