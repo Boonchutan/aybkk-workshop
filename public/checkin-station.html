@@ -96,6 +96,7 @@
     <button class="btn" id="rosterBtn">Roster</button>
     <button class="btn" id="syncBtn">Sync</button>
     <button class="btn" id="csvBtn">Export CSV</button>
+    <button class="btn" id="viewBtn">📊 View</button>
   </div>
 </main>
 
@@ -556,6 +557,7 @@
   $("#sheet").onclick = e => { if (e.target.id === "sheet") closeSheet(); };
   $("#syncBtn").onclick = syncNow;
   $("#csvBtn").onclick = exportCSV;
+  $("#viewBtn").onclick = () => window.open("/attendance-hefei.html", "_blank");
   window.addEventListener("online", () => { render(); syncNow(); });
   window.addEventListener("offline", render);
   setInterval(() => { if (navigator.onLine) syncNow(); }, 30000);
