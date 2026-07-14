@@ -39,6 +39,13 @@ Use when writing the opening line of any video content. Designed to stop a 10-ye
 
 **Do not use for:** captions, carousels, sales copy, or long-form content.
 
+### `/shop`
+**Purpose:** Shop builder & operations — the full recipe for AYBKK pre-order shops (tee shop live at cn.aybkk.net/shop.html; future: Bangkok price list with classes and courses).
+
+Use when adding/changing shop products, stock, prices, sections, or order operations. Covers the seed mechanism, photo pipeline, China access rules, and every incident fix already built.
+
+**Do not use for:** marketing copy, journals, or orientation pages.
+
 ### `/dm`
 **Purpose:** DM triage — reads an incoming inquiry about the China cohort, classifies the sender (tourist / beginner / serious), and drafts a response under 60 words that filters or routes. No selling in DMs.
 
