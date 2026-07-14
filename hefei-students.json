@@ -298,14 +298,6 @@
     "lastAsana": "kapotasana (no catch)"
   },
   {
-    "name": "夏薇薇 (Vera)",
-    "package": "Weekend",
-    "size": "L",
-    "note": "Jul 18-19 only 两天WS",
-    "practice": "primary",
-    "lastAsana": "setu bandhasana · marichasana D no catch"
-  },
-  {
     "name": "张依乐 (Jaya)",
     "package": "Full",
     "size": "S",
@@ -318,14 +310,6 @@
     "size": "L",
     "practice": "primary",
     "lastAsana": "marichasana (no catch)"
-  },
-  {
-    "name": "陈丽萍 (Lin No)",
-    "package": "Weekend",
-    "size": "",
-    "note": "Jul 18-19 only 两天WS · NO SHIRT SIZE",
-    "practice": "primary",
-    "lastAsana": "setu bandhasana · supta kurmasana no catch"
   },
   {
     "name": "朱美红 (Yuening)",
@@ -351,17 +335,6 @@
     "note": "in-depth 深度课学生 · Huizhou/Maoming/Suzhou/Xichang veteran",
     "practice": "primary+intermediate",
     "lastAsana": "laghu vajrasana"
-  },
-  {
-    "name": "戴茜 (Daisy)",
-    "package": "Single",
-    "size": "",
-    "entitledSessions": [
-      "D3-MY"
-    ],
-    "note": "Jul 18 mysore only 18号一天mysore · NO SHIRT SIZE",
-    "practice": "intermediate",
-    "lastAsana": "baddha hasta sirsasana"
   },
   {
     "name": "Serena Wang",
@@ -396,6 +369,43 @@
     "lastAsana": ""
   },
   {
+    "name": "方缘 (Lilian)",
+    "package": "Full",
+    "size": "M",
+    "note": "added Jul 14 per Lisa · hot price 3,690 transferred May 25",
+    "practice": ""
+  },
+  {
+    "name": "夏薇薇 (Vera)",
+    "package": "Weekend",
+    "size": "L",
+    "note": "Jul 18-19 only 两天WS",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana · marichasana D no catch",
+    "code": "D01"
+  },
+  {
+    "name": "陈丽萍 (Lin No)",
+    "package": "Weekend",
+    "size": "",
+    "note": "Jul 18-19 only 两天WS · NO SHIRT SIZE",
+    "practice": "primary",
+    "lastAsana": "setu bandhasana · supta kurmasana no catch",
+    "code": "D02"
+  },
+  {
+    "name": "戴茜 (Daisy)",
+    "package": "Single",
+    "size": "",
+    "entitledSessions": [
+      "D3-MY"
+    ],
+    "note": "Jul 18 mysore only 18号一天mysore · NO SHIRT SIZE",
+    "practice": "intermediate",
+    "lastAsana": "baddha hasta sirsasana",
+    "code": "D03"
+  },
+  {
     "name": "Wini",
     "package": "2day",
     "size": "",
@@ -407,7 +417,8 @@
     ],
     "note": "in-depth CN2 深度课学生 · Jul 19-20 only · card HEFEI-052 (printed face says Walk-in 4) · link prior CN2 journal if she has one",
     "practice": "intermediate+advanced",
-    "lastAsana": ""
+    "lastAsana": "",
+    "code": "D04"
   },
   {
     "name": "宋研羽 (Yanyan)",
@@ -415,7 +426,16 @@
     "size": "",
     "note": "Jul 17-19 三天 · added from paid list Jul 11 · card HEFEI-053 (printed face says Walk-in 5)",
     "practice": "primary",
-    "lastAsana": ""
+    "lastAsana": "",
+    "code": "D05"
+  },
+  {
+    "name": "吴丽萍 (Leona)",
+    "package": "Weekend",
+    "size": "",
+    "note": "added Jul 14 per Lisa · weekend Jul 18-19 · 2,200 · no tee",
+    "practice": "",
+    "code": "D06"
   },
   {
     "name": "Walk-in 6 走读",
@@ -424,7 +444,8 @@
     "entitledSessions": [
       "*"
     ],
-    "note": "spare card — assign at door"
+    "note": "spare card — assign at door",
+    "code": "D07"
   },
   {
     "name": "Boone Tanti",
@@ -432,7 +453,8 @@
     "size": "",
     "journalId": "ea8c2bbe-633e-44d0-a042-ca4563a4d9f7",
     "note": "test student (Boonchu) · station check · not printed",
-    "practice": ""
+    "practice": "",
+    "code": "T1"
   },
   {
     "name": "贵贵 (Guigui)",
@@ -444,7 +466,8 @@
     ],
     "note": "host · free practice spot (decided Jul 13) · in-depth CN2, journal history kept · card HEFEI-056",
     "practice": "intermediate+advanced",
-    "lastAsana": "urdhva kukkutasana"
+    "lastAsana": "urdhva kukkutasana",
+    "code": "H1"
   },
   {
     "name": "丽云 (Lisa)",
@@ -454,20 +477,7 @@
       "*"
     ],
     "note": "co-host · photographer (decided Jul 13) · shirts 1M+1L · card HEFEI-057",
-    "practice": ""
-  },
-  {
-    "name": "方缘 (Lilian)",
-    "package": "Full",
-    "size": "M",
-    "note": "added Jul 14 per Lisa · hot price 3,690 transferred May 25",
-    "practice": ""
-  },
-  {
-    "name": "吴丽萍 (Leona)",
-    "package": "Weekend",
-    "size": "",
-    "note": "added Jul 14 per Lisa · weekend Jul 18-19 · 2,200 · no tee",
-    "practice": ""
+    "practice": "",
+    "code": "H2"
   }
 ]

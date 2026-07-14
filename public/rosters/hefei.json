@@ -5,7 +5,7 @@
   "lang": "zh",
   "baseUrl": "https://cn.aybkk.net",
   "qrMode": "short",
-  "generatedAt": "2026-07-14T05:09:02.846Z",
+  "generatedAt": "2026-07-14T05:25:52.872Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -646,6 +646,156 @@
     },
     {
       "id": "HEFEI-040",
+      "journalId": "34e53c36-e2d6-508b-a23a-88e266c598a4",
+      "name": "张依乐 (Jaya)",
+      "slug": "jaya",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "S",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-041",
+      "journalId": "5c6d3b18-29f3-5e3f-a728-ad701b1b8e5a",
+      "name": "于珈 (Yujia)",
+      "slug": "yujia",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "",
+      "practice": "primary",
+      "lastAsana": "marichasana (no catch)"
+    },
+    {
+      "id": "HEFEI-042",
+      "journalId": "22ed787c-29f9-5609-b64f-58b95d66902c",
+      "name": "朱美红 (Yuening)",
+      "slug": "yuening",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "Nie friend discount 聂大哥朋友特别折扣",
+      "practice": "primary",
+      "lastAsana": "setu bandhasana"
+    },
+    {
+      "id": "HEFEI-043",
+      "journalId": "6394d141-39f1-5f1e-be58-e3815024f88d",
+      "name": "黎安琴 (Lili)",
+      "slug": "lili",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "Nie friend discount 聂大哥朋友特别折扣",
+      "practice": "primary",
+      "lastAsana": "urdhva mukha paschimottanasana"
+    },
+    {
+      "id": "HEFEI-044",
+      "journalId": "bd3fa653-bb43-48ac-9683-fbbc85b423ba",
+      "name": "聂大哥 (Nie)",
+      "slug": "nie",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "L",
+      "note": "in-depth 深度课学生 · Huizhou/Maoming/Suzhou/Xichang veteran",
+      "practice": "primary+intermediate",
+      "lastAsana": "laghu vajrasana"
+    },
+    {
+      "id": "HEFEI-045",
+      "journalId": "99de3b2c-8e45-5e70-8cb1-93b48e19a971",
+      "name": "Serena Wang",
+      "slug": "serenawang",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "Zhuhai student · deposit transferred to Hefei, paid full 5144 regular · joined Jul 13 · card HEFEI-048",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-046",
+      "journalId": "1cf6ba13-8647-50a3-80d6-1db7f153aac9",
+      "name": "程琳 (Chenglin)",
+      "slug": "chenglin",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "RUYI student · added from paid list Jul 11 · card HEFEI-049 (printed face says Walk-in 1)",
+      "practice": "primary",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-047",
+      "journalId": "6726f264-fec5-55bc-9f6f-b48ab200c232",
+      "name": "柴敏 (Chaimin)",
+      "slug": "chaimin",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "RUYI student · added from paid list Jul 11 · card HEFEI-050 (printed face says Walk-in 2)",
+      "practice": "primary+intermediate",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-048",
+      "journalId": "01d07a12-4742-583e-a8da-7eeb47229888",
+      "name": "柠檬 (Lemon)",
+      "slug": "lemon",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "added from paid list Jul 11 · card HEFEI-051 (printed face says Walk-in 3)",
+      "practice": "primary",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-049",
+      "journalId": "46038040-4d47-5881-bf6b-f1cd38a9b185",
+      "name": "方缘 (Lilian)",
+      "slug": "lilian",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "added Jul 14 per Lisa · hot price 3,690 transferred May 25",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-D01",
       "journalId": "39960a56-6783-54f4-8f08-62b716c6ef0e",
       "name": "夏薇薇 (Vera)",
       "slug": "vera",
@@ -663,37 +813,7 @@
       "lastAsana": "setu bandhasana · marichasana D no catch"
     },
     {
-      "id": "HEFEI-041",
-      "journalId": "34e53c36-e2d6-508b-a23a-88e266c598a4",
-      "name": "张依乐 (Jaya)",
-      "slug": "jaya",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "S",
-      "note": "",
-      "practice": "primary",
-      "lastAsana": "setu bandhasana"
-    },
-    {
-      "id": "HEFEI-042",
-      "journalId": "5c6d3b18-29f3-5e3f-a728-ad701b1b8e5a",
-      "name": "于珈 (Yujia)",
-      "slug": "yujia",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "L",
-      "note": "",
-      "practice": "primary",
-      "lastAsana": "marichasana (no catch)"
-    },
-    {
-      "id": "HEFEI-043",
+      "id": "HEFEI-D02",
       "journalId": "0aa9fe0f-8c04-5d01-9b97-affc62a62a74",
       "name": "陈丽萍 (Lin No)",
       "slug": "linno",
@@ -711,52 +831,7 @@
       "lastAsana": "setu bandhasana · supta kurmasana no catch"
     },
     {
-      "id": "HEFEI-044",
-      "journalId": "22ed787c-29f9-5609-b64f-58b95d66902c",
-      "name": "朱美红 (Yuening)",
-      "slug": "yuening",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "M",
-      "note": "Nie friend discount 聂大哥朋友特别折扣",
-      "practice": "primary",
-      "lastAsana": "setu bandhasana"
-    },
-    {
-      "id": "HEFEI-045",
-      "journalId": "6394d141-39f1-5f1e-be58-e3815024f88d",
-      "name": "黎安琴 (Lili)",
-      "slug": "lili",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "L",
-      "note": "Nie friend discount 聂大哥朋友特别折扣",
-      "practice": "primary",
-      "lastAsana": "urdhva mukha paschimottanasana"
-    },
-    {
-      "id": "HEFEI-046",
-      "journalId": "bd3fa653-bb43-48ac-9683-fbbc85b423ba",
-      "name": "聂大哥 (Nie)",
-      "slug": "nie",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "L",
-      "note": "in-depth 深度课学生 · Huizhou/Maoming/Suzhou/Xichang veteran",
-      "practice": "primary+intermediate",
-      "lastAsana": "laghu vajrasana"
-    },
-    {
-      "id": "HEFEI-047",
+      "id": "HEFEI-D03",
       "journalId": "4f3e1b8f-f986-56fb-845e-3952348edb0f",
       "name": "戴茜 (Daisy)",
       "slug": "daisy",
@@ -771,67 +846,7 @@
       "lastAsana": "baddha hasta sirsasana"
     },
     {
-      "id": "HEFEI-048",
-      "journalId": "99de3b2c-8e45-5e70-8cb1-93b48e19a971",
-      "name": "Serena Wang",
-      "slug": "serenawang",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "M",
-      "note": "Zhuhai student · deposit transferred to Hefei, paid full 5144 regular · joined Jul 13 · card HEFEI-048",
-      "practice": "",
-      "lastAsana": ""
-    },
-    {
-      "id": "HEFEI-049",
-      "journalId": "1cf6ba13-8647-50a3-80d6-1db7f153aac9",
-      "name": "程琳 (Chenglin)",
-      "slug": "chenglin",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "",
-      "note": "RUYI student · added from paid list Jul 11 · card HEFEI-049 (printed face says Walk-in 1)",
-      "practice": "primary",
-      "lastAsana": ""
-    },
-    {
-      "id": "HEFEI-050",
-      "journalId": "6726f264-fec5-55bc-9f6f-b48ab200c232",
-      "name": "柴敏 (Chaimin)",
-      "slug": "chaimin",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "",
-      "note": "RUYI student · added from paid list Jul 11 · card HEFEI-050 (printed face says Walk-in 2)",
-      "practice": "primary+intermediate",
-      "lastAsana": ""
-    },
-    {
-      "id": "HEFEI-051",
-      "journalId": "01d07a12-4742-583e-a8da-7eeb47229888",
-      "name": "柠檬 (Lemon)",
-      "slug": "lemon",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "",
-      "note": "added from paid list Jul 11 · card HEFEI-051 (printed face says Walk-in 3)",
-      "practice": "primary",
-      "lastAsana": ""
-    },
-    {
-      "id": "HEFEI-052",
+      "id": "HEFEI-D04",
       "journalId": "03e6cae1-7ccc-537d-a3b5-f8731fb9fd91",
       "name": "Wini",
       "slug": "wini",
@@ -849,7 +864,7 @@
       "lastAsana": ""
     },
     {
-      "id": "HEFEI-053",
+      "id": "HEFEI-D05",
       "journalId": "0f468e0f-916d-537b-b6a9-b2fdb783d4cb",
       "name": "宋研羽 (Yanyan)",
       "slug": "yanyan",
@@ -869,7 +884,25 @@
       "lastAsana": ""
     },
     {
-      "id": "HEFEI-054",
+      "id": "HEFEI-D06",
+      "journalId": "a8c694d7-d572-5601-af56-a40485a45c3c",
+      "name": "吴丽萍 (Leona)",
+      "slug": "leona",
+      "package": "Weekend",
+      "entitledSessions": [
+        "D3-MY",
+        "D3-WS",
+        "D4-MY",
+        "D4-WS"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "added Jul 14 per Lisa · weekend Jul 18-19 · 2,200 · no tee",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-D07",
       "journalId": "7572a4ca-4e4c-56cc-8942-34d9ebc6cb22",
       "name": "Walk-in 6 走读",
       "slug": "walkin6",
@@ -884,7 +917,7 @@
       "lastAsana": ""
     },
     {
-      "id": "HEFEI-055",
+      "id": "HEFEI-T1",
       "journalId": "ea8c2bbe-633e-44d0-a042-ca4563a4d9f7",
       "name": "Boone Tanti",
       "slug": "boonetanti",
@@ -899,7 +932,7 @@
       "lastAsana": ""
     },
     {
-      "id": "HEFEI-056",
+      "id": "HEFEI-H1",
       "journalId": "a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95",
       "name": "贵贵 (Guigui)",
       "slug": "guigui",
@@ -914,7 +947,7 @@
       "lastAsana": "urdhva kukkutasana"
     },
     {
-      "id": "HEFEI-057",
+      "id": "HEFEI-H2",
       "journalId": "0cf741cf-6076-5ab1-8a0b-2b74c5dca4f8",
       "name": "丽云 (Lisa)",
       "slug": "lisa",
@@ -925,39 +958,6 @@
       "phone": "",
       "size": "",
       "note": "co-host · photographer (decided Jul 13) · shirts 1M+1L · card HEFEI-057",
-      "practice": "",
-      "lastAsana": ""
-    },
-    {
-      "id": "HEFEI-058",
-      "journalId": "46038040-4d47-5881-bf6b-f1cd38a9b185",
-      "name": "方缘 (Lilian)",
-      "slug": "lilian",
-      "package": "Full",
-      "entitledSessions": [
-        "*"
-      ],
-      "phone": "",
-      "size": "M",
-      "note": "added Jul 14 per Lisa · hot price 3,690 transferred May 25",
-      "practice": "",
-      "lastAsana": ""
-    },
-    {
-      "id": "HEFEI-059",
-      "journalId": "a8c694d7-d572-5601-af56-a40485a45c3c",
-      "name": "吴丽萍 (Leona)",
-      "slug": "leona",
-      "package": "Weekend",
-      "entitledSessions": [
-        "D3-MY",
-        "D3-WS",
-        "D4-MY",
-        "D4-WS"
-      ],
-      "phone": "",
-      "size": "",
-      "note": "added Jul 14 per Lisa · weekend Jul 18-19 · 2,200 · no tee",
       "practice": "",
       "lastAsana": ""
     }

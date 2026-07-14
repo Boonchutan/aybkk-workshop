@@ -117,7 +117,12 @@ async function main() {
   let i = 0;
   for (const raw of input) {
     i++;
-    const code = "HEFEI-" + String(i).padStart(3, "0");
+    // Explicit `code` in hefei-students.json wins (letter blocks: D=drop-in/
+    // partial, H=host, T=test). Positional numbering covers the Full block —
+    // keep all positional entries BEFORE any lettered ones in the file.
+    const code = raw.code
+      ? "HEFEI-" + String(raw.code).toUpperCase()
+      : "HEFEI-" + String(i).padStart(3, "0");
     // deterministic: same name → same journal id on every re-run (never orphan a journal)
     const journalId = raw.journalId || uuidv5(String(raw.name || raw.Name || ""), AYBKK_NS);
     const name = raw.name || raw.Name || "";
