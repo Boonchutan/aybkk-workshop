@@ -529,5 +529,14 @@
     "journalId": "0cf741cf-6076-5ab1-8a0b-2b74c5dca4f8",
     "file": "qr-cards/hefei/HEFEI-H2.png",
     "url": "https://cn.aybkk.net/s/HEFEI-H2"
+  },
+  {
+    "code": "HEFEI-D08",
+    "name": "陈彦鸿 (Yan hong)",
+    "slug": "yanhong",
+    "package": "4day",
+    "journalId": "f5f25a55-f7d6-5b2f-ae8d-f296a73a0ec0",
+    "file": "qr-cards/hefei/HEFEI-D08.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-D08"
   }
 ]

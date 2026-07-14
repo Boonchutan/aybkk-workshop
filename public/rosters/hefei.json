@@ -5,7 +5,7 @@
   "lang": "zh",
   "baseUrl": "https://cn.aybkk.net",
   "qrMode": "short",
-  "generatedAt": "2026-07-14T09:34:53.956Z",
+  "generatedAt": "2026-07-14T10:48:05.456Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -968,6 +968,28 @@
       "phone": "",
       "size": "",
       "note": "co-host · photographer (decided Jul 13) · shirts 1M+1L · card HEFEI-057",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-D08",
+      "journalId": "f5f25a55-f7d6-5b2f-ae8d-f296a73a0ec0",
+      "name": "陈彦鸿 (Yan hong)",
+      "slug": "yanhong",
+      "package": "4day",
+      "entitledSessions": [
+        "D2-MY",
+        "D2-WS",
+        "D3-MY",
+        "D3-WS",
+        "D4-MY",
+        "D4-WS",
+        "D5-LED",
+        "D5-QA"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "added Jul 14 per Lisa · 4-day Jul 17-20 · fee TBC · no tee",
       "practice": "",
       "lastAsana": ""
     }
