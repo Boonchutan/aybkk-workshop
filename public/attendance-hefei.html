@@ -23,8 +23,20 @@
   .bad{display:inline-block;background:var(--red);color:#fff;font-size:10px;border-radius:6px;padding:2px 6px;margin-top:3px}
   .src{display:inline-block;background:#24312a;color:var(--muted);font-size:10px;border-radius:6px;padding:2px 6px;margin-top:3px}
   .absent{display:flex;flex-wrap:wrap;gap:6px}
-  .absent span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--muted)}
+  .absent span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--muted);cursor:pointer}
   .empty{color:var(--muted);font-size:13px;padding:8px 2px}
+  .row{cursor:pointer}
+  .strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
+  .chip{flex-shrink:0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:11px;color:var(--muted);cursor:pointer;text-align:center;line-height:1.4}
+  .chip b{display:block;font-size:14px;color:var(--ink)}
+  .chip.active{border-color:var(--green);color:var(--ink)}
+  #detail{display:none;position:fixed;inset:0;background:rgba(6,10,8,.72);z-index:10;align-items:flex-end;justify-content:center}
+  #detail.show{display:flex}
+  #detailBox{background:var(--bg);border:1px solid var(--line);border-radius:16px 16px 0 0;width:100%;max-width:560px;max-height:82vh;overflow:auto;padding:16px}
+  #detailBox h3{display:flex;align-items:center;gap:12px;font-size:16px;margin-bottom:4px}
+  #detailBox h3 .x{margin-left:auto;color:var(--muted);cursor:pointer;font-size:20px;padding:4px 8px}
+  #detailBox .bigph{width:72px;height:72px;border-radius:12px;object-fit:cover;background:#0c120f}
+  #detailMeta{font-size:12px;color:var(--muted);margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -37,10 +49,20 @@
   <span id="updated"></span>
   <button class="refresh" onclick="refresh()">↻ Refresh</button>
 </div>
+<div class="strip" id="strip"></div>
 <h2>已签到 · Checked in</h2>
 <div id="inList"><div class="empty">…</div></div>
 <h2>未到 · Not yet</h2>
 <div id="outList" class="absent"><div class="empty">…</div></div>
+
+<div id="detail" onclick="if(event.target.id==='detail')closeDetail()">
+  <div id="detailBox">
+    <h3><img class="bigph" id="detailPhoto" onerror="this.style.visibility='hidden'"><span id="detailName"></span><span class="x" onclick="closeDetail()">✕</span></h3>
+    <div id="detailMeta"></div>
+    <h2>签到记录 · Check-in history</h2>
+    <div id="detailList"></div>
+  </div>
+</div>
 
 <script>
 let roster = null, rows = [], session = null;
@@ -54,6 +76,57 @@ function todaySession(sessions) {
   // afternoon → second session of the day when there is one
   return (new Date().getHours() >= 11 && hit[1] ? hit[1] : hit[0]).code;
 }
+
+function sessionLabel(code) {
+  const s = (roster.sessions || []).find(x => x.code === code);
+  return s ? (s.label || s.code) : code;
+}
+
+function renderStrip() {
+  const strip = $("#strip"); strip.innerHTML = "";
+  (roster.sessions || []).forEach(s => {
+    const n = rows.filter(r => r.session === s.code).length;
+    const c = document.createElement("div");
+    c.className = "chip" + (s.code === session ? " active" : "");
+    c.innerHTML = esc((s.label || s.code).replace("Day ", "D").replace(" · ", " ")) + "<b>" + n + "</b>";
+    c.onclick = () => { session = s.code; $("#session").value = s.code; renderAll(); };
+    strip.appendChild(c);
+  });
+}
+
+function showDetail(key, fallbackName) {
+  const mine = rows.filter(r => (r.journalId || r.studentCode) === key ||
+                                r.journalId === key || r.studentCode === key);
+  const st = (roster.students || []).find(s => s.journalId === key || s.id === key) || {};
+  $("#detailName").textContent = st.name || fallbackName || "";
+  $("#detailMeta").textContent = (st.id || "") + (st.package ? " · " + st.package : "") +
+    (st.slug ? " · cn.aybkk.net/s/" + st.slug : "");
+  const withPhoto = mine.filter(r => r.photoFile).sort((a, b) => String(b.checkedInAt || "").localeCompare(String(a.checkedInAt || "")))[0];
+  const ph = $("#detailPhoto");
+  ph.style.visibility = "visible";
+  ph.src = withPhoto ? "/uploads/attendance-photo/" + encodeURIComponent(withPhoto.photoFile) : "";
+  if (!withPhoto) ph.style.visibility = "hidden";
+  const list = $("#detailList"); list.innerHTML = "";
+  mine.slice().sort((a, b) => String(a.checkedInAt || "").localeCompare(String(b.checkedInAt || "")))
+    .forEach(r => {
+      const d = document.createElement("div"); d.className = "row"; d.style.cursor = "default";
+      const dt = r.checkedInAt ? new Date(r.checkedInAt) : null;
+      const when = dt ? dt.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }) + " · " +
+        dt.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "";
+      const photo = r.photoFile
+        ? '<img class="ph" src="/uploads/attendance-photo/' + esc(r.photoFile) + '" onerror="this.outerHTML=\'<div class=ph>🧘</div>\'">'
+        : '<div class="ph">🧘</div>';
+      d.innerHTML = photo +
+        '<div><div class="nm">' + esc(sessionLabel(r.session)) + '</div>' +
+        '<div class="sub">' + esc(when) + '</div>' +
+        (r.eligible === false ? '<span class="bad">NOT in package</span> ' : '') +
+        '<span class="src">' + esc(r.source || "") + '</span></div>';
+      list.appendChild(d);
+    });
+  if (!mine.length) list.innerHTML = '<div class="empty">No check-ins yet.</div>';
+  $("#detail").classList.add("show");
+}
+function closeDetail() { $("#detail").classList.remove("show"); }
 
 function render() {
   if (!roster) return;
@@ -79,15 +152,24 @@ function render() {
         (r.eligible === false ? '<span class="bad">NOT in package</span> ' : '') +
         '<span class="src">' + esc(r.source || "") + '</span></div>' +
         '<div class="t">' + time + '</div>';
+      d.onclick = () => showDetail(r.journalId || r.studentCode, r.name);
       inList.appendChild(d);
     });
   if (!inSession.length) inList.innerHTML = '<div class="empty">No check-ins yet for this session.</div>';
 
   const out = students.filter(s => !byKey.has(s.journalId) && !byKey.has(s.id));
-  $("#outList").innerHTML = out.length
-    ? out.map(s => "<span>" + esc(s.name) + "</span>").join("")
-    : '<div class="empty">Everyone is in 🙏</div>';
+  const outEl = $("#outList"); outEl.innerHTML = "";
+  if (out.length) {
+    out.forEach(s => {
+      const sp = document.createElement("span");
+      sp.textContent = s.name;
+      sp.onclick = () => showDetail(s.journalId || s.id, s.name);
+      outEl.appendChild(sp);
+    });
+  } else outEl.innerHTML = '<div class="empty">Everyone is in 🙏</div>';
 }
+
+function renderAll() { renderStrip(); render(); }
 
 async function refresh() {
   try {
@@ -95,7 +177,7 @@ async function refresh() {
     if (r.ok) rows = (await r.json()).rows || [];
     $("#updated").textContent = "· " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   } catch (e) { $("#updated").textContent = "· offline"; }
-  render();
+  renderAll();
 }
 
 (async function init() {
@@ -108,7 +190,7 @@ async function refresh() {
   });
   session = todaySession(roster.sessions || []) || null;
   if (session) sel.value = session;
-  sel.onchange = () => { session = sel.value; render(); };
+  sel.onchange = () => { session = sel.value; renderAll(); };
   await refresh();
   setInterval(refresh, 60000);
 })();

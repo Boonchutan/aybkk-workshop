@@ -53,6 +53,15 @@ function mountAttendance(app, opts = {}) {
       if (pgReady) {
         for (const r of rows) {
           try {
+            if (r.voided) {
+              // Un-check from the station: remove the row entirely.
+              await pgPool.query(
+                `DELETE FROM attendance WHERE workshop=$1 AND session=$2
+                   AND (journal_id=$3 OR student_code=$4)`,
+                [r.workshop || 'hefei', r.session || null, r.journalId || r.id || null, r.studentCode || r.id || null]
+              );
+              continue;
+            }
             await pgPool.query(
               `INSERT INTO attendance (workshop,journal_id,student_code,name,session,session_date,checked_in_at,eligible,source,photo_file)
                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
@@ -67,11 +76,12 @@ function mountAttendance(app, opts = {}) {
         }
       }
 
-      // JSON mirror (always, dedup by workshop|student|session)
+      // JSON mirror (always, dedup by workshop|student|session; voided = remove)
       const store = readStore();
       for (const r of rows) {
         const rec = { ...r, workshop: r.workshop || 'hefei', savedAt: new Date().toISOString() };
         const i = store.findIndex(x => keyOf(x) === keyOf(rec));
+        if (r.voided) { if (i >= 0) store.splice(i, 1); continue; }
         if (i >= 0) store[i] = rec; else store.push(rec);
       }
       writeStore(store);

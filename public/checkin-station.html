@@ -58,6 +58,8 @@
   .row .pk{color:var(--muted);font-size:12px}
   .row .rt{margin-left:auto;font-size:12px;padding:5px 9px;border-radius:999px}
   .rt.in{background:var(--green);color:#fff}.rt.out{background:#26332c;color:var(--muted)}
+  .row .act{background:#26332c;color:#cfe0d6;border:0;border-radius:8px;padding:8px 12px;font-size:12px;margin-left:6px}
+  .row .act.warn{background:#5a2d20;color:#f0b9a8}
   .banner{background:#3a2410;color:#f4c98a;font-size:13px;padding:8px 14px;text-align:center;display:none}
   .banner.show{display:block}
   #scanWrap{position:relative}
@@ -249,7 +251,7 @@
   function checkIn(student, source) {
     const meta = sessionMeta(session);
     const already = attendance.find(a =>
-      a.session === session &&
+      !a.voided && a.session === session &&
       ((student.journalId && a.journalId === student.journalId) || (student.id && a.id === student.id)));
     if (already) { flash("dup", "•", student.name, "Already checked in"); return; }
 
@@ -297,6 +299,19 @@
     clearTimeout(photoTimer);
     $("#photoBanner").classList.remove("show");
   }
+  // Un-check a wrong tap/scan. The row is voided locally and the deletion
+  // syncs to the server (attendance-api removes it from Postgres + JSON).
+  function uncheck(row) {
+    row.voided = true;
+    row.synced = false;
+    if (photoMode === row) endPhotoMode();
+    if (row.photoKey) { photoDel(row.photoKey); row.photoKey = null; } // wrong person — never upload
+    save(LS_ATT, attendance);
+    flash("warn", "↩", row.name, "Un-checked");
+    render();
+    scheduleSync();
+  }
+
   function snapPhotoForMode() {
     if (!photoMode) return;
     const frame = captureFrame();
@@ -398,7 +413,7 @@
     // 1: upload captured photos (attendance file + student profile) that
     //    haven't reached the server yet
     for (const a of pending) {
-      if (!a.photoKey) continue;
+      if (a.voided || !a.photoKey) continue;
       try {
         const rec = await photoGet(a.photoKey);
         if (!rec) { a.photoKey = null; continue; }        // photo lost — sync row anyway
@@ -451,7 +466,8 @@
   function exportCSV() {
     const cols = ["workshop", "studentCode", "name", "package", "session", "sessionDate", "checkedInAt", "eligible", "source", "photoFile"];
     const esc = v => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
-    const csv = [cols.join(",")].concat(attendance.map(r => cols.map(c => esc(r[c])).join(","))).join("\n");
+    const rows = attendance.filter(r => !r.voided);
+    const csv = [cols.join(",")].concat(rows.map(r => cols.map(c => esc(r[c])).join(","))).join("\n");
     const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -461,7 +477,7 @@
 
   // ---------- render ----------
   function render() {
-    const inSession = attendance.filter(a => a.session === session);
+    const inSession = attendance.filter(a => !a.voided && a.session === session);
     $("#sCount").textContent = inSession.length;
     $("#sTotal").textContent = (roster.students || []).length;
     $("#rosterState").textContent = "roster: " + (roster.students || []).length;
@@ -479,20 +495,52 @@
     $("#sheet")._mode = mode;
   }
   function closeSheet() { $("#sheet").classList.remove("show"); }
+  let sheetExpanded = null; // student whose checked-in row shows the photo/uncheck actions
+  function activeRowFor(s) {
+    return attendance.find(a => !a.voided && a.session === session &&
+      ((s.journalId && a.journalId === s.journalId) || (s.id && a.id === s.id)));
+  }
   function renderList(q, mode) {
     q = (q || "").trim().toLowerCase();
     const list = $("#list"); list.innerHTML = "";
-    const checked = new Set(attendance.filter(a => a.session === session).map(a => a.id || a.journalId));
+    const checked = new Set(attendance.filter(a => !a.voided && a.session === session).map(a => a.id || a.journalId));
     (roster.students || [])
-      .filter(s => !q || (s.name || "").toLowerCase().includes(q) || (s.id || "").toLowerCase().includes(q))
+      .filter(s => !q || (s.name || "").toLowerCase().includes(q) || (s.id || "").toLowerCase().includes(q) || (s.slug || "").includes(q))
       .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
       .forEach(s => {
         const isIn = checked.has(s.id) || checked.has(s.journalId);
         const row = document.createElement("div"); row.className = "row";
-        row.innerHTML = '<div><div class="nm">' + esc(s.name || "") + '</div>' +
-          '<div class="pk">' + esc(s.id || "") + ' · ' + esc(s.package || "") + '</div></div>' +
-          '<div class="rt ' + (isIn ? "in" : "out") + '">' + (isIn ? "checked in" : "tap to check in") + '</div>';
-        row.onclick = () => { if (!isIn) { checkIn(s, "manual"); } renderList($("#search").value, mode); };
+        const left = '<div><div class="nm">' + esc(s.name || "") + '</div>' +
+          '<div class="pk">' + esc(s.id || "") + ' · ' + esc(s.package || "") + '</div></div>';
+        if (isIn && sheetExpanded === (s.id || s.journalId)) {
+          // Tapped a checked-in student: offer photo (or retake) and un-check.
+          row.innerHTML = left;
+          const photoBtn = document.createElement("button"); photoBtn.className = "act"; photoBtn.textContent = "📸 Photo";
+          photoBtn.onclick = e => {
+            e.stopPropagation(); sheetExpanded = null;
+            const rec = activeRowFor(s);
+            if (rec) startPhotoMode(rec, s); // works for scan check-ins too
+          };
+          const unBtn = document.createElement("button"); unBtn.className = "act warn"; unBtn.textContent = "↩ Uncheck";
+          unBtn.onclick = e => {
+            e.stopPropagation(); sheetExpanded = null;
+            const rec = activeRowFor(s);
+            if (rec) uncheck(rec);
+            renderList($("#search").value, mode);
+          };
+          const right = document.createElement("div"); right.style.marginLeft = "auto";
+          right.appendChild(photoBtn); right.appendChild(unBtn);
+          row.appendChild(right);
+          row.onclick = () => { sheetExpanded = null; renderList($("#search").value, mode); };
+        } else {
+          row.innerHTML = left +
+            '<div class="rt ' + (isIn ? "in" : "out") + '">' + (isIn ? "checked in" : "tap to check in") + '</div>';
+          row.onclick = () => {
+            if (!isIn) { checkIn(s, "manual"); }
+            else { sheetExpanded = (s.id || s.journalId); }
+            renderList($("#search").value, mode);
+          };
+        }
         list.appendChild(row);
       });
   }
