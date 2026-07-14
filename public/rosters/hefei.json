@@ -5,7 +5,7 @@
   "lang": "zh",
   "baseUrl": "https://cn.aybkk.net",
   "qrMode": "short",
-  "generatedAt": "2026-07-14T05:25:52.872Z",
+  "generatedAt": "2026-07-14T08:49:12.055Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -574,6 +574,9 @@
       "journalId": "e0508f14-65fd-5185-9b80-c659f11d138c",
       "name": "魏蔚 (Yammin)",
       "slug": "yammin",
+      "aka": [
+        "Yasmin"
+      ],
       "package": "Full",
       "entitledSessions": [
         "*"
@@ -724,6 +727,9 @@
       "journalId": "99de3b2c-8e45-5e70-8cb1-93b48e19a971",
       "name": "Serena Wang",
       "slug": "serenawang",
+      "aka": [
+        "Serena"
+      ],
       "package": "Full",
       "entitledSessions": [
         "*"

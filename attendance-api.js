@@ -148,7 +148,8 @@ function mountAttendance(app, opts = {}) {
           const m = String(x.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
           const sZh = (m ? m[1] : x.name || '').trim();
           const sEn = latin(m ? m[2] : x.name);
-          return (en && sEn && sEn === en) || (zh && sZh && sZh === zh);
+          const akas = (x.aka || []).map(latin);
+          return (en && sEn && sEn === en) || (zh && sZh && sZh === zh) || (en && akas.includes(en));
         });
       }
       if (!s) return res.status(404).json({ error: 'not on roster' });
@@ -189,7 +190,8 @@ function mountAttendance(app, opts = {}) {
           const m = String(x.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
           const sZh = (m ? m[1] : x.name || '').trim();
           const sEn = latin(m ? m[2] : x.name);
-          return (en && sEn && sEn === en) || (zh && sZh && sZh === zh);
+          const akas = (x.aka || []).map(latin);
+          return (en && sEn && sEn === en) || (zh && sZh && sZh === zh) || (en && akas.includes(en));
         });
       }
       if (!s) return res.status(404).json({ error: 'not on roster' });

@@ -132,7 +132,8 @@ async function main() {
     const entitledSessions = (Array.isArray(raw.entitledSessions) && raw.entitledSessions.length)
       ? raw.entitledSessions : entitledFor(pkg);
 
-    students.push({ id: code, journalId, name, slug, package: pkg, entitledSessions,
+    const aka = Array.isArray(raw.aka) ? raw.aka : undefined;
+    students.push({ id: code, journalId, name, slug, ...(aka ? { aka } : {}), package: pkg, entitledSessions,
                     phone: raw.phone || "", size: raw.size || "",
                     note: raw.note || "", practice: raw.practice || "", lastAsana: raw.lastAsana || "" });
 

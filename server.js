@@ -799,7 +799,9 @@ app.post('/api/orientations', async (req, res) => {
           const m = String(s.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
           const sZh = (m ? m[1] : s.name || '').trim();
           const sEn = latin(m ? m[2] : s.name);
-          return (en && sEn && en === sEn) || (zh && sZh && zh === sZh) || (s.slug && en === s.slug);
+          const akas = (s.aka || []).map(latin);
+          return (en && sEn && en === sEn) || (zh && sZh && zh === sZh) || (s.slug && en === s.slug)
+            || (en && akas.includes(en));
         });
         if (hit) { studentId = hit.journalId; cardCode = hit.id; }
       }
@@ -903,13 +905,49 @@ app.get('/api/orientation-status/hefei', async (req, res) => {
       const sZh = (m ? m[1] : s.name || '').trim();
       const sEn = latin(m ? m[2] : s.name);
       // Bound orientations match by journalId; picker-skippers (fresh gz- ids)
-      // match by the name they typed on the form.
+      // match by the name they typed on the form, including known aliases
+      // (e.g. Yammin signs as Yasmin).
       const isDone = orientedIds.has(s.journalId)
         || (sEn && orientedLatin.has(sEn))
-        || (sZh && orientedZh.has(sZh));
+        || (sZh && orientedZh.has(sZh))
+        || (s.aka || []).some(a => orientedLatin.has(latin(a)));
       (isDone ? done : pending).push({ code: s.id, name: s.name, slug: s.slug });
     }
     res.json({ total: students.length, doneCount: done.length, done, pending });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// POST /api/orientation-status/hefei/cleanup {key, deactivate: [ids]}
+// Soft-hide duplicate/abandoned Student nodes (e.g. repeated orientation
+// attempts). Guarded by the transmission key; reversible (isActive=true).
+app.post('/api/orientation-status/hefei/cleanup', async (req, res) => {
+  const session = driver.session();
+  try {
+    const provided = (req.body && req.body.key) || '';
+    let key = process.env.TRANSMISSION_KEY;
+    if (!key) {
+      const kr = await session.run(`MATCH (c:Config {name: 'transmissionKey'}) RETURN c.value AS v`);
+      key = kr.records.length ? kr.records[0].get('v') : null;
+    }
+    if (!key || provided !== key) return res.status(403).json({ error: 'bad key' });
+    const ids = (req.body && req.body.deactivate) || [];
+    if (!Array.isArray(ids) || !ids.length) return res.status(400).json({ error: 'deactivate[] required' });
+    const done = [];
+    for (const id of ids) {
+      const r = await session.run(
+        `MATCH (s:Student {id: $id})
+         SET s.isActive = false, s.dedupedAt = datetime(),
+             s.dedupeNote = 'duplicate identity hidden Jul 14 cleanup'
+         RETURN s.id AS id, s.name AS name`,
+        { id }
+      );
+      if (r.records.length) done.push({ id, name: r.records[0].get('name') });
+    }
+    res.json({ deactivated: done });
   } catch (err) {
     res.status(500).json({ error: err.message });
   } finally {
