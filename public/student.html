@@ -569,6 +569,11 @@
         <div id="doorPassName" style="font-size:15px;font-weight:700;margin-top:8px;color:#fff;"></div>
         <div id="doorPassLink" style="font-size:12px;color:#fff;opacity:0.75;margin-top:2px;"></div>
         <div style="font-size:11px;color:#fff;opacity:0.7;margin-top:8px;">入场时把屏幕亮度调高，出示给老师扫码<br>Show this to the host at the door</div>
+        <!-- Their own check-in stamps, one chip per Hefei class attended -->
+        <div id="doorPassStamps" class="hidden" style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.25);padding-top:8px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;opacity:0.85;margin-bottom:6px;">已签到 · Checked in</div>
+          <div id="doorPassStampList" style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;"></div>
+        </div>
       </div>
 
       <!-- From Boonchu — practice focus + latest comments. Hidden unless content exists. -->
@@ -1418,7 +1423,28 @@ async function loadDoorPass() {
     const d = await r.json();
     show(d);
     try { localStorage.setItem(lsKey, JSON.stringify(d)); } catch (e) { /* quota */ }
+    loadMyStamps();
   } catch (e) { /* offline — cached pass (if any) is already showing */ }
+}
+
+// Their own attendance stamps inside the door-pass card (one chip per class).
+async function loadMyStamps() {
+  try {
+    const r = await fetch('/api/attendance/mine/' + encodeURIComponent(studentId) +
+      (studentName ? '?name=' + encodeURIComponent(studentName) : ''));
+    if (!r.ok) return;
+    const d = await r.json();
+    if (!d.rows || !d.rows.length) return;
+    const list = document.getElementById('doorPassStampList');
+    list.innerHTML = '';
+    d.rows.forEach(row => {
+      const chip = document.createElement('span');
+      chip.style.cssText = 'background:rgba(255,255,255,0.16);color:#fff;border-radius:999px;padding:4px 10px;font-size:11px;';
+      chip.textContent = '✓ ' + (row.label || row.session);
+      list.appendChild(chip);
+    });
+    document.getElementById('doorPassStamps').classList.remove('hidden');
+  } catch (e) { /* offline — stamps are a bonus */ }
 }
 
 function initTapCheckin() {

@@ -130,6 +130,43 @@ function mountAttendance(app, opts = {}) {
     res.redirect(302, url);
   });
 
+  // GET /api/attendance/mine/:id — a single student's own check-in stamps for
+  // their journal page (id = journalId | code | slug; ?name= fallback like the
+  // pass). Returns only that student's rows, with session labels attached.
+  app.get('/api/attendance/mine/:id', (req, res) => {
+    try {
+      const roster = readRoster();
+      if (!roster || !Array.isArray(roster.students)) return res.status(404).json({ error: 'no roster' });
+      const id = String(req.params.id || '');
+      let s = roster.students.find(x =>
+        x.journalId === id || x.id === id || (x.slug && x.slug === id.toLowerCase()));
+      if (!s && req.query.name) {
+        const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const en = latin(req.query.name);
+        const zh = String(req.query.name).trim();
+        s = roster.students.find(x => {
+          const m = String(x.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+          const sZh = (m ? m[1] : x.name || '').trim();
+          const sEn = latin(m ? m[2] : x.name);
+          return (en && sEn && sEn === en) || (zh && sZh && sZh === zh);
+        });
+      }
+      if (!s) return res.status(404).json({ error: 'not on roster' });
+      const labelOf = code => {
+        const meta = (roster.sessions || []).find(x => x.code === code);
+        return meta ? (meta.label || code) : code;
+      };
+      const rows = readStore()
+        .filter(r => (r.workshop || 'hefei') === (roster.workshop || 'hefei'))
+        .filter(r => (r.journalId && r.journalId === s.journalId) || (r.studentCode && r.studentCode === s.id))
+        .map(r => ({ session: r.session, label: labelOf(r.session), sessionDate: r.sessionDate || null, checkedInAt: r.checkedInAt || null }))
+        .sort((a, b) => String(a.checkedInAt || '').localeCompare(String(b.checkedInAt || '')));
+      res.json({ code: s.id, name: s.name, count: rows.length, rows });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   // GET /api/attendance/pass/:id — digital door pass for the journal front page.
   // id = journalId | HEFEI-### | slug. QR encodes the short slug link on the
   // China-reachable roster.baseUrl (never the request host), which the door
