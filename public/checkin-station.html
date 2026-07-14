@@ -60,6 +60,10 @@
   .rt.in{background:var(--green);color:#fff}.rt.out{background:#26332c;color:var(--muted)}
   .banner{background:#3a2410;color:#f4c98a;font-size:13px;padding:8px 14px;text-align:center;display:none}
   .banner.show{display:block}
+  #scanWrap{position:relative}
+  #photoBanner{position:absolute;left:0;right:0;bottom:0;background:rgba(16,24,20,.92);color:#f4e8c8;padding:10px 12px;font-size:14px;display:none;align-items:center;gap:10px;z-index:5}
+  #photoBanner.show{display:flex}
+  #photoBanner .skip{margin-left:auto;background:#26332c;color:#cfe0d6;border:0;border-radius:8px;padding:8px 14px;font-size:13px}
 </style>
 </head>
 <body>
@@ -77,6 +81,7 @@
     <video id="video" playsinline muted></video>
     <div id="reticle" hidden></div>
     <div id="camMsg">Tap <b>Start camera</b> to scan cards.</div>
+    <div id="photoBanner">📸 <span id="photoWho"></span> · 对准学生后点屏幕拍照<button class="skip" id="photoSkip">Skip</button></div>
   </div>
   <div class="stat">
     <span>Session: <b id="sCount">0</b>/<b id="sTotal">0</b></span>
@@ -116,7 +121,7 @@
   const $ = s => document.querySelector(s);
 
   let roster = { workshop: WORKSHOP, title: "Hefei Workshop", lang: "zh", sessions: [], students: [] };
-  let byCode = new Map(), byJournal = new Map();
+  let byCode = new Map(), byJournal = new Map(), bySlug = new Map();
   let attendance = [];           // [{id,journalId,name,package,session,sessionDate,checkedInAt,eligible,source,synced}]
   let session = null;            // current session code
   let stream = null, scanning = false, lastHit = { key: "", t: 0 };
@@ -165,10 +170,11 @@
   }
 
   function indexRoster() {
-    byCode = new Map(); byJournal = new Map();
+    byCode = new Map(); byJournal = new Map(); bySlug = new Map();
     (roster.students || []).forEach(s => {
       if (s.id) byCode.set(String(s.id).toUpperCase(), s);
       if (s.journalId) byJournal.set(String(s.journalId).toLowerCase(), s);
+      if (s.slug) bySlug.set(String(s.slug).toLowerCase(), s);
     });
   }
 
@@ -221,6 +227,7 @@
 
   function findStudent(p) {
     if (p.code && byCode.has(p.code.toUpperCase())) return byCode.get(p.code.toUpperCase());
+    if (p.code && bySlug.has(p.code.toLowerCase())) return bySlug.get(p.code.toLowerCase());
     if (p.journalId && byJournal.has(p.journalId.toLowerCase())) return byJournal.get(p.journalId.toLowerCase());
     return null;
   }
@@ -247,28 +254,66 @@
     if (already) { flash("dup", "•", student.name, "Already checked in"); return; }
 
     const ok = isEligible(student, session);
-    // photo: the camera is already on the student — capture this exact moment
+    // Scan path: the camera is already on the student — capture this exact moment.
+    // Manual path: the sheet covers the screen, so the photo is a deliberate
+    // follow-up step (startPhotoMode) and must never block the check-in itself.
     let photoKey = null;
-    const frame = captureFrame();
-    if (frame) {
-      photoKey = WORKSHOP + "|" + (student.id || student.journalId) + "|" + session + "|" + Date.now();
-      photoPut({ key: photoKey, dataUrl: frame, ts: Date.now() });
+    if (source !== "manual") {
+      const frame = captureFrame();
+      if (frame) {
+        photoKey = WORKSHOP + "|" + (student.id || student.journalId) + "|" + session + "|" + Date.now();
+        photoPut({ key: photoKey, dataUrl: frame, ts: Date.now() });
+      }
     }
-    attendance.push({
+    const row = {
       workshop: WORKSHOP, id: student.id || null, journalId: student.journalId || null,
       name: student.name, package: student.package || "", studentCode: student.id || null,
       session, sessionDate: meta.date || null, checkedInAt: new Date().toISOString(),
       eligible: ok, source: source || "scan", synced: false,
       photoKey, photoFile: null
-    });
+    };
+    attendance.push(row);
     save(LS_ATT, attendance);
     if (ok) flash("ok", "✓", student.name, (student.package || "") + " · checked in");
     else    flash("no", "⚠", student.name, "NOT paid for this session (" + (student.package || "?") + ")");
     render();
     scheduleSync();
+    if (source === "manual") startPhotoMode(row, student);
+  }
+
+  // ---------- manual-check-in photo step ----------
+  let photoMode = null, photoTimer = null;
+  function startPhotoMode(row, student) {
+    closeSheet();
+    photoMode = row;
+    $("#photoWho").textContent = student.name || "";
+    $("#photoBanner").classList.add("show");
+    if (!stream) startCam(); // fire and forget; Skip always works
+    clearTimeout(photoTimer);
+    photoTimer = setTimeout(endPhotoMode, 25000);
+  }
+  function endPhotoMode() {
+    photoMode = null;
+    clearTimeout(photoTimer);
+    $("#photoBanner").classList.remove("show");
+  }
+  function snapPhotoForMode() {
+    if (!photoMode) return;
+    const frame = captureFrame();
+    if (!frame) { flash("warn", "…", "Camera not ready", "Point at the student, tap again (or Skip)"); return; }
+    const row = photoMode;
+    const key = WORKSHOP + "|" + (row.id || row.journalId) + "|" + row.session + "|" + Date.now();
+    photoPut({ key, dataUrl: frame, ts: Date.now() });
+    row.photoKey = key;
+    row.synced = false; // re-post the row so the server links the photo
+    save(LS_ATT, attendance);
+    flash("ok", "📸", row.name, "photo saved");
+    endPhotoMode();
+    scheduleSync();
   }
 
   function handleScanText(text) {
+    if (photoMode) return; // a stray QR in view must not fire while framing a photo
     const p = parseScan(text);
     const key = (p.code || p.journalId || text);
     const now = Date.now();
@@ -350,19 +395,33 @@
     if (!navigator.onLine) { $("#syncState").textContent = pending.length + " to sync (offline)"; return; }
     $("#syncState").textContent = "syncing " + pending.length + "…";
 
-    // 1: upload captured photos that don't have a server file yet
+    // 1: upload captured photos (attendance file + student profile) that
+    //    haven't reached the server yet
     for (const a of pending) {
-      if (!a.photoKey || a.photoFile) continue;
+      if (!a.photoKey) continue;
       try {
         const rec = await photoGet(a.photoKey);
         if (!rec) { a.photoKey = null; continue; }        // photo lost — sync row anyway
-        const blob = await (await fetch(rec.dataUrl)).blob();
-        const fd = new FormData();
-        fd.append("file", blob, (a.studentCode || "student") + "-" + a.session + ".jpg");
-        const up = await fetch("/api/upload/attendance-photo", { method: "POST", body: fd });
-        if (up.ok) {
-          const j = await up.json();
-          a.photoFile = (j.file && j.file.filename) || null;
+        if (!a.photoFile) {
+          const blob = await (await fetch(rec.dataUrl)).blob();
+          const fd = new FormData();
+          fd.append("file", blob, (a.studentCode || "student") + "-" + a.session + ".jpg");
+          const up = await fetch("/api/upload/attendance-photo", { method: "POST", body: fd });
+          if (up.ok) {
+            const j = await up.json();
+            a.photoFile = (j.file && j.file.filename) || null;
+          }
+        }
+        // Same shot becomes the student's profile face (Cloudinary, face-cropped),
+        // so the teacher sees who attended on faces.html / student profiles.
+        if (!a.profilePushed && a.journalId) {
+          try {
+            const pr = await fetch("/api/upload/student-photo", {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ studentId: a.journalId, imageBase64: rec.dataUrl, name: a.name, location: WORKSHOP })
+            });
+            if (pr.ok) a.profilePushed = true; // freshest face wins
+          } catch (e) { /* retry next pass */ }
         }
       } catch (e) { /* retry on the next sync pass */ }
     }
@@ -377,7 +436,9 @@
       if (r.ok) {
         for (const a of pending) {
           a.synced = true;
-          if (a.photoKey && a.photoFile) { photoDel(a.photoKey); a.photoKey = null; }
+          // Keep the local photo until BOTH destinations have it (attendance
+          // file + profile push), so a failed push never loses the shot.
+          if (a.photoKey && a.photoFile && (a.profilePushed || !a.journalId)) { photoDel(a.photoKey); a.photoKey = null; }
         }
         save(LS_ATT, attendance); $("#syncState").textContent = "all synced";
       }
@@ -439,6 +500,8 @@
 
   // ---------- wire up ----------
   $("#startBtn").onclick = () => scanning ? stopCam() : startCam();
+  $("#scanWrap").onclick = () => { if (photoMode) snapPhotoForMode(); };
+  $("#photoSkip").onclick = e => { e.stopPropagation(); endPhotoMode(); };
   $("#manualBtn").onclick = () => openSheet("manual");
   $("#rosterBtn").onclick = () => openSheet("roster");
   $("#sheetClose").onclick = closeSheet;
