@@ -63,9 +63,11 @@
   .banner{background:#3a2410;color:#f4c98a;font-size:13px;padding:8px 14px;text-align:center;display:none}
   .banner.show{display:block}
   #scanWrap{position:relative}
-  #photoBanner{position:absolute;left:0;right:0;bottom:0;background:rgba(16,24,20,.92);color:#f4e8c8;padding:10px 12px;font-size:14px;display:none;align-items:center;gap:10px;z-index:5}
+  #photoBanner{position:absolute;left:0;right:0;bottom:0;background:rgba(16,24,20,.92);color:#f4e8c8;padding:10px 12px;font-size:14px;display:none;align-items:center;gap:8px;z-index:5;flex-wrap:wrap}
   #photoBanner.show{display:flex}
   #photoBanner .skip{margin-left:auto;background:#26332c;color:#cfe0d6;border:0;border-radius:8px;padding:8px 14px;font-size:13px}
+  #photoBanner .cancel{background:#5a2d20;color:#f0b9a8;border:0;border-radius:8px;padding:8px 14px;font-size:13px}
+  #photoBanner .warnTag{background:#a63d2f;color:#fff;border-radius:6px;padding:2px 8px;font-size:11px}
 </style>
 </head>
 <body>
@@ -83,7 +85,7 @@
     <video id="video" playsinline muted></video>
     <div id="reticle" hidden></div>
     <div id="camMsg">Tap <b>Start camera</b> to scan cards.</div>
-    <div id="photoBanner">📸 <span id="photoWho"></span> · 对准学生后点屏幕拍照<button class="skip" id="photoSkip">Skip</button></div>
+    <div id="photoBanner">📸 <span id="photoWho"></span> <span id="photoHint">· 对准学生后点屏幕拍照</span><span class="warnTag" id="photoWarn" hidden>⚠ 未购此节</span><button class="skip" id="photoSkip">Skip</button><button class="cancel" id="photoCancel">✕</button></div>
   </div>
   <div class="stat">
     <span>Session: <b id="sCount">0</b>/<b id="sTotal">0</b></span>
@@ -249,7 +251,11 @@
   }
 
   // ---------- check-in ----------
-  function checkIn(student, source) {
+  // Every check-in carries a face photo: Boonchu is not at the door, and the
+  // photos are how he learns names and faces in the afternoon.
+  //   manual: photo FIRST (pre mode), then the check-in registers
+  //   scan:   check-in on scan, then the face-photo step opens (post mode)
+  function checkIn(student, source, preKey) {
     const meta = sessionMeta(session);
     const already = attendance.find(a =>
       !a.voided && a.session === session &&
@@ -257,11 +263,10 @@
     if (already) { flash("dup", "•", student.name, "Already checked in"); return; }
 
     const ok = isEligible(student, session);
-    // Scan path: the camera is already on the student — capture this exact moment.
-    // Manual path: the sheet covers the screen, so the photo is a deliberate
-    // follow-up step (startPhotoMode) and must never block the check-in itself.
-    let photoKey = null;
-    if (source !== "manual") {
+    // Scan path: grab the scan-moment frame as a fallback shot in case the
+    // host skips the face step (usually shows the phone/QR, not the face).
+    let photoKey = preKey || null;
+    if (source !== "manual" && !photoKey) {
       const frame = captureFrame();
       if (frame) {
         photoKey = WORKSHOP + "|" + (student.id || student.journalId) + "|" + session + "|" + Date.now();
@@ -277,54 +282,85 @@
     };
     attendance.push(row);
     save(LS_ATT, attendance);
-    if (ok) flash("ok", "✓", student.name, (student.package || "") + " · checked in");
+    if (ok) flash("ok", "✓", student.name, (student.package || "") + (photoKey ? " · ✓ 📸" : " · checked in"));
     else    flash("no", "⚠", student.name, "NOT paid for this session (" + (student.package || "?") + ")");
     render();
     scheduleSync();
-    if (source === "manual") startPhotoMode(row, student);
+    if (source !== "manual") startPhotoMode("post", student, row); // face shot after scan
   }
 
-  // ---------- manual-check-in photo step ----------
+  // ---------- face-photo step ----------
+  // pre  = before a manual check-in (photo saved -> check-in registers)
+  // post = right after a scan check-in, or retake via the 📸 button
   let photoMode = null, photoTimer = null;
-  function startPhotoMode(row, student) {
+  function startPhotoMode(type, student, row) {
     closeSheet();
-    photoMode = row;
+    photoMode = { type, student, row: row || null };
     $("#photoWho").textContent = student.name || "";
+    $("#photoHint").textContent = type === "pre" ? "· 拍照后签到 · photo, then check-in" : "· 拍脸 · face photo";
+    $("#photoWarn").hidden = !(type === "pre" && !isEligible(student, session));
+    $("#photoSkip").textContent = type === "pre" ? "无照片签到" : "Skip";
     $("#photoBanner").classList.add("show");
-    if (!stream) startCam(); // fire and forget; Skip always works
+    if (!stream) startCam(); // fire and forget; the fallback buttons always work
     clearTimeout(photoTimer);
-    photoTimer = setTimeout(endPhotoMode, 25000);
+    photoTimer = setTimeout(() => {
+      // Never silently decide for the host: a pre-mode timeout does NOT check in.
+      if (photoMode && photoMode.type === "pre") flash("warn", "✕", photoMode.student.name, "未签到 · not checked in");
+      endPhotoMode();
+    }, 45000);
   }
   function endPhotoMode() {
     photoMode = null;
     clearTimeout(photoTimer);
     $("#photoBanner").classList.remove("show");
   }
+  function skipPhotoMode() {
+    if (!photoMode) return;
+    const m = photoMode; endPhotoMode();
+    if (m.type === "pre") checkIn(m.student, "manual", null); // camera broken fallback
+  }
+  function cancelPhotoMode() {
+    if (!photoMode) return;
+    const m = photoMode; endPhotoMode();
+    if (m.type === "pre") flash("warn", "✕", m.student.name, "已取消 · cancelled");
+  }
+  function snapPhotoForMode() {
+    if (!photoMode) return;
+    const frame = captureFrame();
+    if (!frame) { flash("warn", "…", "Camera not ready", "Point at the student, tap again"); return; }
+    const m = photoMode; endPhotoMode();
+    if (m.type === "pre") {
+      // photo saved -> now the check-in registers
+      const key = WORKSHOP + "|" + (m.student.id || m.student.journalId) + "|" + session + "|" + Date.now();
+      photoPut({ key, dataUrl: frame, ts: Date.now() });
+      checkIn(m.student, "manual", key);
+      return;
+    }
+    // post/retake: the face shot replaces whatever the row had (e.g. the QR frame)
+    const row = m.row;
+    if (!row || row.voided) return;
+    if (row.photoKey) photoDel(row.photoKey);
+    const key = WORKSHOP + "|" + (row.id || row.journalId) + "|" + row.session + "|" + Date.now();
+    photoPut({ key, dataUrl: frame, ts: Date.now() });
+    row.photoKey = key;
+    row.photoFile = null;      // re-upload the new shot
+    row.profilePushed = false; // the face replaces the QR frame on the profile too
+    row.synced = false;
+    save(LS_ATT, attendance);
+    flash("ok", "📸", row.name, "face saved");
+    scheduleSync();
+  }
+
   // Un-check a wrong tap/scan. The row is voided locally and the deletion
   // syncs to the server (attendance-api removes it from Postgres + JSON).
   function uncheck(row) {
     row.voided = true;
     row.synced = false;
-    if (photoMode === row) endPhotoMode();
+    if (photoMode && photoMode.row === row) endPhotoMode();
     if (row.photoKey) { photoDel(row.photoKey); row.photoKey = null; } // wrong person — never upload
     save(LS_ATT, attendance);
     flash("warn", "↩", row.name, "Un-checked");
     render();
-    scheduleSync();
-  }
-
-  function snapPhotoForMode() {
-    if (!photoMode) return;
-    const frame = captureFrame();
-    if (!frame) { flash("warn", "…", "Camera not ready", "Point at the student, tap again (or Skip)"); return; }
-    const row = photoMode;
-    const key = WORKSHOP + "|" + (row.id || row.journalId) + "|" + row.session + "|" + Date.now();
-    photoPut({ key, dataUrl: frame, ts: Date.now() });
-    row.photoKey = key;
-    row.synced = false; // re-post the row so the server links the photo
-    save(LS_ATT, attendance);
-    flash("ok", "📸", row.name, "photo saved");
-    endPhotoMode();
     scheduleSync();
   }
 
@@ -496,52 +532,51 @@
     $("#sheet")._mode = mode;
   }
   function closeSheet() { $("#sheet").classList.remove("show"); }
-  let sheetExpanded = null; // student whose checked-in row shows the photo/uncheck actions
   function activeRowFor(s) {
     return attendance.find(a => !a.voided && a.session === session &&
       ((s.journalId && a.journalId === s.journalId) || (s.id && a.id === s.id)));
   }
+  // Rows are scroll-safe: the row body is inert, only the explicit buttons act
+  // (Boonchu tapped a name by accident while scrolling). Sorted by card number.
   function renderList(q, mode) {
     q = (q || "").trim().toLowerCase();
     const list = $("#list"); list.innerHTML = "";
     const checked = new Set(attendance.filter(a => !a.voided && a.session === session).map(a => a.id || a.journalId));
     (roster.students || [])
       .filter(s => !q || (s.name || "").toLowerCase().includes(q) || (s.id || "").toLowerCase().includes(q) || (s.slug || "").includes(q))
-      .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+      .sort((a, b) => (a.id || "").localeCompare(b.id || ""))
       .forEach(s => {
         const isIn = checked.has(s.id) || checked.has(s.journalId);
         const row = document.createElement("div"); row.className = "row";
-        const left = '<div><div class="nm">' + esc(s.name || "") + '</div>' +
+        row.innerHTML = '<div><div class="nm">' + esc(s.name || "") + '</div>' +
           '<div class="pk">' + esc(s.id || "") + ' · ' + esc(s.package || "") + '</div></div>';
-        if (isIn && sheetExpanded === (s.id || s.journalId)) {
-          // Tapped a checked-in student: offer photo (or retake) and un-check.
-          row.innerHTML = left;
-          const photoBtn = document.createElement("button"); photoBtn.className = "act"; photoBtn.textContent = "📸 Photo";
+        const right = document.createElement("div"); right.style.marginLeft = "auto"; right.style.flexShrink = "0";
+        if (!isIn) {
+          const goBtn = document.createElement("button"); goBtn.className = "act"; goBtn.textContent = "📸 tap to check in";
+          goBtn.onclick = e => { e.stopPropagation(); startPhotoMode("pre", s); }; // camera first, then check-in
+          right.appendChild(goBtn);
+        } else {
+          const photoBtn = document.createElement("button"); photoBtn.className = "act"; photoBtn.textContent = "📸";
+          photoBtn.title = "take / retake face photo";
           photoBtn.onclick = e => {
-            e.stopPropagation(); sheetExpanded = null;
+            e.stopPropagation();
             const rec = activeRowFor(s);
-            if (rec) startPhotoMode(rec, s); // works for scan check-ins too
+            if (rec) startPhotoMode("post", s, rec);
           };
-          const unBtn = document.createElement("button"); unBtn.className = "act warn"; unBtn.textContent = "↩ Uncheck";
+          const unBtn = document.createElement("button"); unBtn.className = "act warn"; unBtn.textContent = "↩";
+          unBtn.title = "un-check";
           unBtn.onclick = e => {
-            e.stopPropagation(); sheetExpanded = null;
+            e.stopPropagation();
+            if (!confirm("Un-check " + (s.name || "") + "?")) return;
             const rec = activeRowFor(s);
             if (rec) uncheck(rec);
             renderList($("#search").value, mode);
           };
-          const right = document.createElement("div"); right.style.marginLeft = "auto";
-          right.appendChild(photoBtn); right.appendChild(unBtn);
-          row.appendChild(right);
-          row.onclick = () => { sheetExpanded = null; renderList($("#search").value, mode); };
-        } else {
-          row.innerHTML = left +
-            '<div class="rt ' + (isIn ? "in" : "out") + '">' + (isIn ? "checked in" : "tap to check in") + '</div>';
-          row.onclick = () => {
-            if (!isIn) { checkIn(s, "manual"); }
-            else { sheetExpanded = (s.id || s.journalId); }
-            renderList($("#search").value, mode);
-          };
+          const tag = document.createElement("span"); tag.className = "rt in"; tag.textContent = "✓";
+          tag.style.marginRight = "6px";
+          right.appendChild(tag); right.appendChild(photoBtn); right.appendChild(unBtn);
         }
+        row.appendChild(right);
         list.appendChild(row);
       });
   }
@@ -550,7 +585,8 @@
   // ---------- wire up ----------
   $("#startBtn").onclick = () => scanning ? stopCam() : startCam();
   $("#scanWrap").onclick = () => { if (photoMode) snapPhotoForMode(); };
-  $("#photoSkip").onclick = e => { e.stopPropagation(); endPhotoMode(); };
+  $("#photoSkip").onclick = e => { e.stopPropagation(); skipPhotoMode(); };
+  $("#photoCancel").onclick = e => { e.stopPropagation(); cancelPhotoMode(); };
   $("#manualBtn").onclick = () => openSheet("manual");
   $("#rosterBtn").onclick = () => openSheet("roster");
   $("#sheetClose").onclick = closeSheet;
