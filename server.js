@@ -180,7 +180,7 @@ app.get('/api/student/photo/:studentId', async (req, res) => {
 //   - each slot gets its OWN Cloudinary asset (never overwrites another slot)
 //   - photoUrls array on the assessment node accumulates all 4 slots
 app.post('/api/upload/student-photo', async (req, res) => {
-  const { studentId, imageBase64, assessmentId, slotIndex } = req.body;
+  const { studentId, imageBase64, assessmentId, slotIndex, name, location } = req.body;
   if (!studentId || !imageBase64) return res.status(400).json({ error: 'Missing studentId or imageBase64' });
   try {
     const isPerEntry = !!assessmentId;
@@ -200,12 +200,17 @@ app.post('/api/upload/student-photo', async (req, res) => {
 
     const session = driver.session();
     try {
-      // Always update Student.photoUrl (latest-known face for dashboard)
+      // Always update Student.photoUrl (latest-known face for dashboard).
+      // Optional name/location let the door station create a proper node for
+      // roster students who never touched Neo4j; never overwrites an existing name.
       await session.run(
         `MERGE (s:Student {id: $sid})
-         ON CREATE SET s.createdAt = datetime()
-         SET s.photoUrl = $url`,
-        { sid: studentId, url: photoUrl }
+         ON CREATE SET s.createdAt = datetime(),
+                       s.location = coalesce($location, 'hefei'),
+                       s.isChineseStudent = true
+         SET s.photoUrl = $url,
+             s.name = coalesce(s.name, $name)`,
+        { sid: studentId, url: photoUrl, name: name || null, location: location || null }
       );
       // Pin to the specific assessment using photoUrls array
       if (assessmentId) {

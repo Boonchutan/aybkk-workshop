@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const QRCode = require('qrcode');
 
 function mountAttendance(app, opts = {}) {
   const pgPool = opts.pgPool || null;
@@ -106,7 +107,8 @@ function mountAttendance(app, opts = {}) {
     const roster = readRoster();
     let entry = null;
     if (roster && Array.isArray(roster.students)) {
-      entry = roster.students.find(s => s.id === code || s.journalId === code);
+      entry = roster.students.find(s => s.id === code || s.journalId === code
+        || (s.slug && s.slug === String(code).toLowerCase()));
     }
     const uuid = entry ? entry.journalId : code;
     const name = entry ? entry.name : '';
@@ -118,7 +120,30 @@ function mountAttendance(app, opts = {}) {
     res.redirect(302, url);
   });
 
-  console.log('✓ attendance-api mounted (POST /api/attendance/checkin, GET /api/attendance[.csv], GET /s/:code)');
+  // GET /api/attendance/pass/:id — digital door pass for the journal front page.
+  // id = journalId | HEFEI-### | slug. QR encodes the short slug link on the
+  // China-reachable roster.baseUrl (never the request host), which the door
+  // station already knows how to scan.
+  app.get('/api/attendance/pass/:id', async (req, res) => {
+    try {
+      const roster = readRoster();
+      if (!roster || !Array.isArray(roster.students)) return res.status(404).json({ error: 'no roster' });
+      const id = String(req.params.id || '');
+      const s = roster.students.find(x =>
+        x.journalId === id || x.id === id || (x.slug && x.slug === id.toLowerCase()));
+      if (!s) return res.status(404).json({ error: 'not on roster' });
+      const base = (roster.baseUrl || 'https://cn.aybkk.net').replace(/\/$/, '');
+      const shortUrl = base + '/s/' + (s.slug || s.id);
+      const qrDataUrl = await QRCode.toDataURL(shortUrl,
+        { errorCorrectionLevel: 'H', width: 320, margin: 2 });
+      res.set('Cache-Control', 'public, max-age=3600');
+      res.json({ slug: s.slug || s.id, shortUrl, qrDataUrl, name: s.name, code: s.id, package: s.package });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  console.log('✓ attendance-api mounted (POST /api/attendance/checkin, GET /api/attendance[.csv], GET /s/:code, GET /api/attendance/pass/:id)');
 }
 
 module.exports = { mountAttendance };
