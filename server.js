@@ -106,6 +106,68 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(UPLOAD_DIR));
 
+// ─── Merged-identity alias ───────────────────────────────────────────────────
+// Post-workshop identity merges (POST /api/orientation-status/hefei/merge) stamp
+// retired gz- Student nodes with mergedInto = <roster journalId>. Students still
+// hold saved journal links with the old id, so any gz- id in a URL path or JSON
+// body is rewritten to its canonical id before routing — reads and writes both
+// land on the surviving node. Ids without mergedInto pass through untouched.
+const GZ_ID_ONE = /^gz-\d{10,}-[a-z0-9]+$/;
+const GZ_ID_ALL = /gz-\d{10,}-[a-z0-9]+/g;
+const ALIAS_NEG_TTL_MS = 10 * 60 * 1000; // re-check unmerged ids occasionally
+const aliasCache = new Map(); // id -> { to: canonicalId|null, at: epochMs }
+
+async function resolveMergedId(id) {
+  let cur = id;
+  const seen = new Set();
+  for (let hop = 0; hop < 3 && !seen.has(cur); hop++) {
+    seen.add(cur);
+    let next;
+    const hit = aliasCache.get(cur);
+    if (hit && (hit.to !== null || Date.now() - hit.at < ALIAS_NEG_TTL_MS)) {
+      next = hit.to;
+    } else {
+      const session = driver.session();
+      try {
+        const r = await session.run('MATCH (s:Student {id: $id}) RETURN s.mergedInto AS to', { id: cur });
+        next = r.records.length ? (r.records[0].get('to') || null) : null;
+      } finally {
+        await session.close();
+      }
+      if (aliasCache.size > 5000) aliasCache.clear();
+      aliasCache.set(cur, { to: next, at: Date.now() });
+    }
+    if (!next || next === cur) break;
+    cur = next;
+  }
+  return cur;
+}
+
+app.use(async (req, res, next) => {
+  const bodyIdFields = ['studentId', 'id'];
+  const hasBodyId = req.body && typeof req.body === 'object'
+    && bodyIdFields.some(f => typeof req.body[f] === 'string' && GZ_ID_ONE.test(req.body[f]));
+  if (!req.url.includes('gz-') && !hasBodyId) return next();
+  try {
+    const candidates = new Set(req.url.match(GZ_ID_ALL) || []);
+    if (hasBodyId) bodyIdFields.forEach(f => { if (typeof req.body[f] === 'string' && GZ_ID_ONE.test(req.body[f])) candidates.add(req.body[f]); });
+    const rewrites = new Map();
+    for (const id of candidates) {
+      const to = await resolveMergedId(id);
+      if (to !== id) rewrites.set(id, to);
+    }
+    if (rewrites.size) {
+      req.url = req.url.replace(GZ_ID_ALL, m => rewrites.get(m) || m);
+      if (req.body && typeof req.body === 'object') {
+        bodyIdFields.forEach(f => { if (rewrites.has(req.body[f])) req.body[f] = rewrites.get(req.body[f]); });
+      }
+    }
+  } catch (e) {
+    // resolver unavailable — serve under the original id rather than fail the request
+  }
+  next();
+});
+
 // Resolve the public-facing base URL, respecting Cloudflare Worker / reverse-proxy headers.
 // x-forwarded-host is set by workers/china-proxy so journal links use the proxy domain.
 // Quick-tunnel hosts (trycloudflare.com) rotate on every restart; links stored with one
@@ -948,6 +1010,242 @@ app.post('/api/orientation-status/hefei/cleanup', async (req, res) => {
       if (r.records.length) done.push({ id, name: r.records[0].get('name') });
     }
     res.json({ deactivated: done });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// POST /api/orientation-status/hefei/merge {key, dryRun, only: [codes]}
+// Post-workshop identity consolidation. Picker-skippers journaled onto fresh
+// gz- nodes while attendance stayed keyed to roster journalIds, so each roster
+// person's gz- node(s) merge INTO their roster journalId node: relationships
+// move over, blank properties fill in, and the gz- node is soft-hidden with
+// mergedInto so the alias middleware keeps old saved links working.
+// dryRun defaults to TRUE — pass dryRun:false to execute. Idempotent: already
+// merged nodes are reported and skipped. `only` restricts to roster codes
+// (e.g. ["HEFEI-005"]) for a staged first run.
+app.post('/api/orientation-status/hefei/merge', async (req, res) => {
+  const session = driver.session();
+  try {
+    const provided = (req.body && req.body.key) || '';
+    let key = process.env.TRANSMISSION_KEY;
+    if (!key) {
+      const kr = await session.run(`MATCH (c:Config {name: 'transmissionKey'}) RETURN c.value AS v`);
+      key = kr.records.length ? kr.records[0].get('v') : null;
+    }
+    if (!key || provided !== key) return res.status(403).json({ error: 'bad key' });
+
+    const dryRun = !(req.body && req.body.dryRun === false);
+    const only = Array.isArray(req.body && req.body.only)
+      ? req.body.only.map(c => String(c).trim().toUpperCase()).filter(Boolean)
+      : null;
+    const WORKSHOP = 'Hefei WS July 2026';
+    const num = v => (v && typeof v.toNumber === 'function') ? v.toNumber() : Number(v) || 0;
+    const blank = v => v === null || v === undefined || v === '';
+    const SAFE_NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
+    // identity + bookkeeping props stay per-node; everything else fills blanks
+    const NO_FILL = new Set(['id', 'name', 'isActive', 'createdAt', 'journalLink', 'cardCode',
+      'mergedInto', 'mergedAt', 'mergeNote', 'dedupedAt', 'dedupeNote',
+      'autoCreatedFromCheckin', 'createdFromMerge', 'sortOrder']);
+
+    const roster = JSON.parse(fs.readFileSync(path.join(__dirname, 'public', 'rosters', 'hefei.json'), 'utf8'));
+    const people = (roster.students || []).filter(s => !/^walk-in/i.test(s.name || '') && s.journalId);
+    const journalIds = people.map(p => p.journalId);
+
+    const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const matchesPerson = (node, p) => {
+      const m = String(p.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+      const pZh = (m ? m[1] : p.name || '').trim();
+      const pEn = latin(m ? m[2] : p.name);
+      const nZh = String(node.name || '').trim();
+      const nEn = latin(node.name);
+      const akas = (p.aka || []).map(latin);
+      return (pEn && nEn && nEn === pEn) || (pZh && nZh && nZh === pZh)
+        || (p.slug && nEn === p.slug) || (nEn && akas.includes(nEn));
+    };
+
+    const nodesRes = await session.run(
+      `MATCH (s:Student) WHERE s.workshop = $workshop OR s.id IN $journalIds RETURN s`,
+      { workshop: WORKSHOP, journalIds }
+    );
+    const nodes = nodesRes.records.map(r => r.get('s').properties);
+    const byId = new Map(nodes.map(n => [n.id, n]));
+
+    // claim gz- nodes; a node matching two people needs a roster/aka fix first
+    const gzClaims = new Map();
+    for (const p of people) {
+      for (const n of nodes) {
+        if (String(n.id).startsWith('gz-') && matchesPerson(n, p)) {
+          if (!gzClaims.has(n.id)) gzClaims.set(n.id, []);
+          gzClaims.get(n.id).push(p.id);
+        }
+      }
+    }
+    const conflicts = [...gzClaims.entries()].filter(([, codes]) => codes.length > 1)
+      .map(([id, codes]) => ({ id, claimedBy: codes }));
+    const conflicted = new Set(conflicts.map(c => c.id));
+
+    const relProfile = async (id) => {
+      const out = await session.run(
+        `MATCH (s:Student {id: $id}) OPTIONAL MATCH (s)-[r]->()
+         WITH type(r) AS t, count(r) AS c WHERE t IS NOT NULL RETURN t, c`, { id });
+      const inn = await session.run(
+        `MATCH (s:Student {id: $id}) OPTIONAL MATCH (s)<-[r]-()
+         WITH type(r) AS t, count(r) AS c WHERE t IS NOT NULL RETURN t, c`, { id });
+      const toObj = rr => Object.fromEntries(rr.records.map(x => [x.get('t'), num(x.get('c'))]));
+      const o = toObj(out), i = toObj(inn);
+      const total = [...Object.values(o), ...Object.values(i)].reduce((a, b) => a + b, 0);
+      return { out: o, in: i, total };
+    };
+
+    const plan = [];
+    for (const p of people) {
+      if (only && !only.includes(String(p.id).toUpperCase())) continue;
+      const gz = [...gzClaims.entries()]
+        .filter(([id, codes]) => codes[0] === p.id && codes.length === 1)
+        .map(([id]) => byId.get(id));
+      if (!gz.length) continue;
+      const canonical = byId.get(p.journalId) || null;
+      const sources = [];
+      for (const n of gz) {
+        const rels = await relProfile(n.id);
+        const active = n.isActive !== false;
+        const action = n.mergedInto ? 'already-merged' : (active ? 'merge' : 'alias-only');
+        sources.push({
+          id: n.id, name: n.name, active, action, rels: rels.out, incoming: rels.in, relTotal: rels.total,
+          warning: (action === 'alias-only' && rels.total > 0)
+            ? 'hidden node still holds ' + rels.total + ' relationship(s), left untouched (was soft-hidden deliberately)'
+            : undefined
+        });
+      }
+      plan.push({
+        code: p.id, roster: p.name, canonicalId: p.journalId,
+        canonicalExists: !!canonical, canonicalName: canonical ? canonical.name : null,
+        sources
+      });
+    }
+
+    const summary = {
+      dryRun, workshop: WORKSHOP,
+      people: plan.length,
+      toMerge: plan.reduce((a, g) => a + g.sources.filter(s => s.action === 'merge').length, 0),
+      aliasOnly: plan.reduce((a, g) => a + g.sources.filter(s => s.action === 'alias-only').length, 0),
+      alreadyMerged: plan.reduce((a, g) => a + g.sources.filter(s => s.action === 'already-merged').length, 0),
+      conflicts
+    };
+    if (dryRun) return res.json({ ...summary, plan });
+
+    const now = new Date().toISOString();
+    const executed = [];
+    for (const g of plan) {
+      // primary source (most data, then newest) donates identity fields on create
+      const donors = g.sources.filter(s => s.action === 'merge')
+        .sort((a, b) => b.relTotal - a.relTotal || String(b.id).localeCompare(String(a.id)));
+      const primary = donors[0] ? byId.get(donors[0].id) : (g.sources[0] ? byId.get(g.sources[0].id) : null);
+      const entry = { code: g.code, canonicalId: g.canonicalId, created: false, moved: {}, filled: [], stamped: [], leftover: 0 };
+
+      const created = await session.run(
+        `MERGE (k:Student {id: $cid})
+         ON CREATE SET k.createdAt = datetime($now), k.name = $name, k.location = $location,
+           k.language = $language, k.classType = 'chinese-workshop', k.isChineseStudent = true,
+           k.workshop = $workshop, k.journalLink = $journalLink, k.oriented = $oriented,
+           k.createdFromMerge = true
+         SET k.isActive = true, k.cardCode = $cardCode
+         RETURN k`,
+        {
+          cid: g.canonicalId, now,
+          name: (primary && primary.name) || g.roster,
+          location: (primary && primary.location) || 'hefei',
+          language: (primary && primary.language) || 'zh',
+          workshop: WORKSHOP,
+          journalLink: (roster.baseUrl || STABLE_BASE_URL) + '/student.html?id=' + g.canonicalId
+            + '&name=' + encodeURIComponent((primary && primary.name) || g.roster)
+            + '&lang=' + ((primary && primary.language) || 'zh') + '&location=hefei',
+          oriented: !!(primary && primary.oriented),
+          cardCode: g.code
+        }
+      );
+      entry.created = !g.canonicalExists;
+      const canonicalProps = created.records[0].get('k').properties;
+
+      // alias first: from this moment concurrent reads/writes on old ids land on canonical
+      for (const s of g.sources) {
+        if (s.action === 'merge') {
+          await session.run(
+            `MATCH (d:Student {id: $id})
+             SET d.isActive = false, d.mergedInto = $cid, d.mergedAt = datetime($now), d.mergeNote = $note`,
+            { id: s.id, cid: g.canonicalId, now, note: 'post-Hefei identity merge (rels moved to roster id)' }
+          );
+          entry.stamped.push(s.id);
+        } else if (s.action === 'alias-only') {
+          await session.run(
+            `MATCH (d:Student {id: $id}) SET d.mergedInto = $cid`,
+            { id: s.id, cid: g.canonicalId }
+          );
+          entry.stamped.push(s.id + ' (alias only)');
+        }
+      }
+      aliasCache.clear();
+
+      for (const s of g.sources.filter(x => x.action === 'merge')) {
+        const moveOnce = async () => {
+          const prof = await relProfile(s.id);
+          for (const [t, c] of Object.entries(prof.out)) {
+            if (!SAFE_NAME.test(t)) { entry.moved[t] = 'SKIPPED unsafe type name'; continue; }
+            await session.run(
+              `MATCH (d:Student {id: $dropId})-[r:\`${t}\`]->(x)
+               MATCH (k:Student {id: $cid})
+               WHERE x <> k
+               MERGE (k)-[:\`${t}\`]->(x)
+               DELETE r`,
+              { dropId: s.id, cid: g.canonicalId }
+            );
+            entry.moved[t] = (typeof entry.moved[t] === 'number' ? entry.moved[t] : 0) + c;
+          }
+          for (const [t, c] of Object.entries(prof.in)) {
+            if (!SAFE_NAME.test(t)) { entry.moved['in:' + t] = 'SKIPPED unsafe type name'; continue; }
+            await session.run(
+              `MATCH (x)-[r:\`${t}\`]->(d:Student {id: $dropId})
+               MATCH (k:Student {id: $cid})
+               WHERE x <> k
+               MERGE (x)-[:\`${t}\`]->(k)
+               DELETE r`,
+              { dropId: s.id, cid: g.canonicalId }
+            );
+            entry.moved['in:' + t] = (typeof entry.moved['in:' + t] === 'number' ? entry.moved['in:' + t] : 0) + c;
+          }
+        };
+        await moveOnce();
+        const leftover = await relProfile(s.id);
+        if (leftover.total > 0) await moveOnce(); // a write slipped in mid-move
+        entry.leftover += (await relProfile(s.id)).total;
+      }
+
+      // fill canonical blanks from donors (most data first), identity fields excluded
+      const fill = {};
+      for (const d of donors.map(x => byId.get(x.id)).filter(Boolean)) {
+        for (const [k, v] of Object.entries(d)) {
+          if (NO_FILL.has(k) || !blank(canonicalProps[k]) || blank(v) || k in fill) continue;
+          if (!SAFE_NAME.test(k)) continue;
+          fill[k] = v;
+        }
+      }
+      if (Object.keys(fill).length) {
+        const setClauses = Object.keys(fill).map(k => `k.\`${k}\` = $fill_${k}`).join(', ');
+        const params = { cid: g.canonicalId };
+        for (const [k, v] of Object.entries(fill)) params['fill_' + k] = v;
+        await session.run(`MATCH (k:Student {id: $cid}) SET ${setClauses}`, params);
+        entry.filled = Object.keys(fill);
+      }
+
+      entry.canonicalAfter = await relProfile(g.canonicalId);
+      executed.push(entry);
+    }
+    aliasCache.clear();
+
+    res.json({ ...summary, executed });
   } catch (err) {
     res.status(500).json({ error: err.message });
   } finally {
