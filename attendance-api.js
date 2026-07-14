@@ -139,8 +139,22 @@ function mountAttendance(app, opts = {}) {
       const roster = readRoster();
       if (!roster || !Array.isArray(roster.students)) return res.status(404).json({ error: 'no roster' });
       const id = String(req.params.id || '');
-      const s = roster.students.find(x =>
+      let s = roster.students.find(x =>
         x.journalId === id || x.id === id || (x.slug && x.slug === id.toLowerCase()));
+      // Fallback: students who oriented without the picker carry a fresh gz- id,
+      // but their journal URL knows their name — match it against the roster so
+      // the door pass still appears for them.
+      if (!s && req.query.name) {
+        const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const en = latin(req.query.name);
+        const zh = String(req.query.name).trim();
+        s = roster.students.find(x => {
+          const m = String(x.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+          const sZh = (m ? m[1] : x.name || '').trim();
+          const sEn = latin(m ? m[2] : x.name);
+          return (en && sEn && sEn === en) || (zh && sZh && sZh === zh);
+        });
+      }
       if (!s) return res.status(404).json({ error: 'not on roster' });
       const base = (roster.baseUrl || 'https://cn.aybkk.net').replace(/\/$/, '');
       const shortUrl = base + '/s/' + (s.slug || s.id);

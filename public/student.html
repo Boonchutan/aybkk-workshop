@@ -1410,7 +1410,10 @@ async function loadDoorPass() {
   };
   try { show(JSON.parse(localStorage.getItem(lsKey))); } catch (e) { /* no cache */ }
   try {
-    const r = await fetch('/api/attendance/pass/' + encodeURIComponent(studentId));
+    // Send the name too: picker-skippers have a fresh gz- id the roster does
+    // not know, but their name still finds them their door pass.
+    const r = await fetch('/api/attendance/pass/' + encodeURIComponent(studentId) +
+      (studentName ? '?name=' + encodeURIComponent(studentName) : ''));
     if (!r.ok) return; // not on the roster — card stays hidden
     const d = await r.json();
     show(d);

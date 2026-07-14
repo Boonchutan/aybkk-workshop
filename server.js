@@ -777,14 +777,30 @@ app.post('/api/orientations', async (req, res) => {
     const { name, wechat, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, workshop, gameResults } = req.body;
     // Bind to a pre-assigned card identity when the orientation link carries a card code
     // (e.g. orientation-hefei.html?s=HEFEI-023 → reuse that student's journal UUID).
+    // Students who skip the name picker still get bound when their typed name
+    // matches a roster entry (Yuehua case: picker skipped → orphan gz- id).
     let studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     let cardCode = null;
     try {
       const code = String(req.body.studentCode || '').trim().toUpperCase();
+      let roster = null;
       if (code && code.includes('-')) {
         const rosterPath = path.join(__dirname, 'public', 'rosters', code.split('-')[0].toLowerCase() + '.json');
-        const roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
+        roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
         const hit = (roster.students || []).find(s => s.id === code);
+        if (hit) { studentId = hit.journalId; cardCode = hit.id; }
+      }
+      if (!cardCode && String(req.body.location || '') === 'hefei') {
+        if (!roster) roster = JSON.parse(fs.readFileSync(path.join(__dirname, 'public', 'rosters', 'hefei.json'), 'utf8'));
+        const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const en = latin(req.body.englishName || name);
+        const zh = String(req.body.chineseName || name || '').trim();
+        const hit = (roster.students || []).find(s => {
+          const m = String(s.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+          const sZh = (m ? m[1] : s.name || '').trim();
+          const sEn = latin(m ? m[2] : s.name);
+          return (en && sEn && en === sEn) || (zh && sZh && zh === sZh) || (s.slug && en === s.slug);
+        });
         if (hit) { studentId = hit.journalId; cardCode = hit.id; }
       }
     } catch (e) { /* no roster / bad code — fall through to a fresh id */ }
@@ -872,12 +888,26 @@ app.get('/api/orientation-status/hefei', async (req, res) => {
     const result = await session.run(
       `MATCH (s:Student)
        WHERE s.workshop = 'Hefei WS July 2026' AND s.oriented = true
-       RETURN s.id AS id`
+       RETURN s.id AS id, s.name AS name`
     );
-    const orientedIds = new Set(result.records.map(r => r.get('id')));
+    const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const orientedIds = new Set(), orientedLatin = new Set(), orientedZh = new Set();
+    for (const r of result.records) {
+      orientedIds.add(r.get('id'));
+      const n = r.get('name');
+      if (n) { orientedLatin.add(latin(n)); orientedZh.add(String(n).trim()); }
+    }
     const done = [], pending = [];
     for (const s of students) {
-      (orientedIds.has(s.journalId) ? done : pending).push({ code: s.id, name: s.name, slug: s.slug });
+      const m = String(s.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+      const sZh = (m ? m[1] : s.name || '').trim();
+      const sEn = latin(m ? m[2] : s.name);
+      // Bound orientations match by journalId; picker-skippers (fresh gz- ids)
+      // match by the name they typed on the form.
+      const isDone = orientedIds.has(s.journalId)
+        || (sEn && orientedLatin.has(sEn))
+        || (sZh && orientedZh.has(sZh));
+      (isDone ? done : pending).push({ code: s.id, name: s.name, slug: s.slug });
     }
     res.json({ total: students.length, doneCount: done.length, done, pending });
   } catch (err) {
