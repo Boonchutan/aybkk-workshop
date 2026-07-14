@@ -87,6 +87,24 @@ function qrPayload(code, journalId, name) {
   return `${BASE_URL}/s/${code}`;
 }
 
+// Short, human-readable slug for the digital door pass (cn.aybkk.net/s/<slug>).
+// Explicit `slug` in hefei-students.json wins; else the Latin part of
+// "中文 (Yaya)"; else the whole name ASCII-stripped; else the card code.
+// Collisions get the card digits appended so every slug stays unique.
+const takenSlugs = new Set();
+function slugFor(raw, name, code) {
+  let base = String(raw.slug || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!base) {
+    const m = String(name).match(/\(([^)]+)\)/);
+    base = (m ? m[1] : String(name)).toLowerCase().replace(/[^a-z0-9]/g, "");
+  }
+  if (!base) base = code.toLowerCase().replace(/[^a-z0-9]/g, "");
+  let s = base;
+  if (takenSlugs.has(s)) s = base + code.replace(/\D/g, "");
+  takenSlugs.add(s);
+  return s;
+}
+
 async function main() {
   const input = loadInput();
   const outDir = path.join(__dirname, "public", "rosters");
@@ -104,11 +122,12 @@ async function main() {
     const journalId = raw.journalId || uuidv5(String(raw.name || raw.Name || ""), AYBKK_NS);
     const name = raw.name || raw.Name || "";
     const pkg = raw.package || raw.Package || "Full";
+    const slug = slugFor(raw, name, code);
     // Per-student override wins (e.g. one-day mysore); otherwise derive from package.
     const entitledSessions = (Array.isArray(raw.entitledSessions) && raw.entitledSessions.length)
       ? raw.entitledSessions : entitledFor(pkg);
 
-    students.push({ id: code, journalId, name, package: pkg, entitledSessions,
+    students.push({ id: code, journalId, name, slug, package: pkg, entitledSessions,
                     phone: raw.phone || "", size: raw.size || "",
                     note: raw.note || "", practice: raw.practice || "", lastAsana: raw.lastAsana || "" });
 
@@ -119,7 +138,7 @@ async function main() {
       errorCorrectionLevel: "H", margin: 2, width: 600,
       color: { dark: "#000000", light: "#ffffff" }
     });
-    cardManifest.push({ code, name, package: pkg, journalId, file: "qr-cards/hefei/" + file, url: payload });
+    cardManifest.push({ code, name, slug, package: pkg, journalId, file: "qr-cards/hefei/" + file, url: payload });
   }
 
   const roster = {
