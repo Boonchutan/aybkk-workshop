@@ -60,6 +60,7 @@
   .rt.in{background:var(--green);color:#fff}.rt.out{background:#26332c;color:var(--muted)}
   .row .act{background:#26332c;color:#cfe0d6;border:0;border-radius:8px;padding:8px 12px;font-size:12px;margin-left:6px}
   .row .act.warn{background:#5a2d20;color:#f0b9a8}
+  .btn small{display:block;font-size:10px;font-weight:400;opacity:.8;margin-top:2px}
   .banner{background:#3a2410;color:#f4c98a;font-size:13px;padding:8px 14px;text-align:center;display:none}
   .banner.show{display:block}
   #scanWrap{position:relative}
@@ -93,12 +94,12 @@
     <span style="margin-left:auto" id="rosterState">roster: 0</span>
   </div>
   <div class="toolbar">
-    <button class="btn primary" id="startBtn">Start camera</button>
-    <button class="btn" id="manualBtn">Manual</button>
-    <button class="btn" id="rosterBtn">Roster</button>
-    <button class="btn" id="syncBtn">Sync</button>
-    <button class="btn" id="csvBtn">Export CSV</button>
-    <button class="btn" id="viewBtn">📊 View</button>
+    <button class="btn primary" id="startBtn">Start camera<small>开启相机</small></button>
+    <button class="btn" id="manualBtn">Manual<small>手动签到</small></button>
+    <button class="btn" id="rosterBtn">Student List<small>学员名单</small></button>
+    <button class="btn" id="syncBtn">Sync<small>同步</small></button>
+    <button class="btn" id="csvBtn">Export CSV<small>导出表格</small></button>
+    <button class="btn" id="viewBtn">📊 View<small>出勤看板</small></button>
   </div>
 </main>
 
@@ -109,7 +110,7 @@
 <div id="sheet">
   <div id="sheetInner">
     <h3><span id="sheetTitle">Check in</span><span class="x" id="sheetClose">✕</span></h3>
-    <input id="search" placeholder="Search name or code…" autocomplete="off">
+    <input id="search" placeholder="搜索姓名或编号 · Search name or code…" autocomplete="off">
     <div id="list"></div>
   </div>
 </div>
@@ -386,7 +387,7 @@
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
       video.srcObject = stream; await video.play();
       $("#camMsg").hidden = true; $("#reticle").hidden = false;
-      $("#startBtn").textContent = "Stop camera";
+      $("#startBtn").innerHTML = "Stop camera<small>关闭相机</small>";
       scanning = true; requestAnimationFrame(tick);
     } catch (e) {
       $("#camMsg").hidden = false;
@@ -396,7 +397,7 @@
   function stopCam() {
     scanning = false;
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-    $("#reticle").hidden = true; $("#camMsg").hidden = false; $("#startBtn").textContent = "Start camera";
+    $("#reticle").hidden = true; $("#camMsg").hidden = false; $("#startBtn").innerHTML = "Start camera<small>开启相机</small>";
   }
   let lastDecode = 0;
   function tick(ts) {
@@ -526,7 +527,7 @@
   // ---------- sheet (manual + roster) ----------
   function openSheet(mode) {
     $("#sheet").classList.add("show");
-    $("#sheetTitle").textContent = mode === "roster" ? "Session attendance" : "Manual check-in";
+    $("#sheetTitle").textContent = mode === "roster" ? "学员名单 · Student List" : "手动签到 · Manual check-in";
     $("#search").value = ""; renderList("", mode); $("#search").focus();
     $("#search").oninput = () => renderList($("#search").value, mode);
     $("#sheet")._mode = mode;
@@ -552,7 +553,7 @@
           '<div class="pk">' + esc(s.id || "") + ' · ' + esc(s.package || "") + '</div></div>';
         const right = document.createElement("div"); right.style.marginLeft = "auto"; right.style.flexShrink = "0";
         if (!isIn) {
-          const goBtn = document.createElement("button"); goBtn.className = "act"; goBtn.textContent = "📸 tap to check in";
+          const goBtn = document.createElement("button"); goBtn.className = "act"; goBtn.textContent = "📸 拍照签到 · check in";
           goBtn.onclick = e => { e.stopPropagation(); startPhotoMode("pre", s); }; // camera first, then check-in
           right.appendChild(goBtn);
         } else {
@@ -567,7 +568,7 @@
           unBtn.title = "un-check";
           unBtn.onclick = e => {
             e.stopPropagation();
-            if (!confirm("Un-check " + (s.name || "") + "?")) return;
+            if (!confirm("取消签到 Un-check " + (s.name || "") + "?")) return;
             const rec = activeRowFor(s);
             if (rec) uncheck(rec);
             renderList($("#search").value, mode);

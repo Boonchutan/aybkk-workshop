@@ -511,5 +511,23 @@
     "journalId": "0cf741cf-6076-5ab1-8a0b-2b74c5dca4f8",
     "file": "qr-cards/hefei/HEFEI-057.png",
     "url": "https://cn.aybkk.net/s/HEFEI-057"
+  },
+  {
+    "code": "HEFEI-058",
+    "name": "方缘 (Lilian)",
+    "slug": "lilian",
+    "package": "Full",
+    "journalId": "46038040-4d47-5881-bf6b-f1cd38a9b185",
+    "file": "qr-cards/hefei/HEFEI-058.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-058"
+  },
+  {
+    "code": "HEFEI-059",
+    "name": "吴丽萍 (Leona)",
+    "slug": "leona",
+    "package": "Weekend",
+    "journalId": "a8c694d7-d572-5601-af56-a40485a45c3c",
+    "file": "qr-cards/hefei/HEFEI-059.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-059"
   }
 ]

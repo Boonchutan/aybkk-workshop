@@ -1,7 +1,7 @@
 // checkin-sw.js — offline shell for the AYBKK check-in station.
 // Load the station once on good wifi, "Add to Home Screen", and it then runs
 // fully offline. This is what makes it survive a blocked/flaky network in China.
-const CACHE = "aybkk-checkin-v6"; // v6: photo-first manual check-in, face step after scans, number-sorted sheet
+const CACHE = "aybkk-checkin-v7"; // v7: bilingual buttons, Student List rename, roster 59
 const SHELL = [
   "/checkin-station.html",
   "/vendor/jsQR.js",

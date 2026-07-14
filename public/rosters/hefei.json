@@ -5,7 +5,7 @@
   "lang": "zh",
   "baseUrl": "https://cn.aybkk.net",
   "qrMode": "short",
-  "generatedAt": "2026-07-14T02:17:14.192Z",
+  "generatedAt": "2026-07-14T05:09:02.846Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -925,6 +925,39 @@
       "phone": "",
       "size": "",
       "note": "co-host · photographer (decided Jul 13) · shirts 1M+1L · card HEFEI-057",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-058",
+      "journalId": "46038040-4d47-5881-bf6b-f1cd38a9b185",
+      "name": "方缘 (Lilian)",
+      "slug": "lilian",
+      "package": "Full",
+      "entitledSessions": [
+        "*"
+      ],
+      "phone": "",
+      "size": "M",
+      "note": "added Jul 14 per Lisa · hot price 3,690 transferred May 25",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-059",
+      "journalId": "a8c694d7-d572-5601-af56-a40485a45c3c",
+      "name": "吴丽萍 (Leona)",
+      "slug": "leona",
+      "package": "Weekend",
+      "entitledSessions": [
+        "D3-MY",
+        "D3-WS",
+        "D4-MY",
+        "D4-WS"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "added Jul 14 per Lisa · weekend Jul 18-19 · 2,200 · no tee",
       "practice": "",
       "lastAsana": ""
     }
