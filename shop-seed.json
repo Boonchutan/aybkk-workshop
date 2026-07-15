@@ -1,6 +1,6 @@
 {
-  "version": 8,
-  "note": "v8: kids tees split into their own section at 230/200. Hefei/Burgundy/Pink kids sizes move to new -k products (soldFromIds keeps old-id orders counted); Yoga Kids and 35-37 flagged kids.",
+  "version": 9,
+  "note": "v9: shop paused (team in Hefei, cannot carry stock from Bangkok). Reopen via admin toggle.",
   "products": [
     {
       "id": "tee-1",
@@ -756,5 +756,8 @@
   ],
   "remove": [
     "tee-12"
-  ]
+  ],
+  "settings": {
+    "paused": true
+  }
 }

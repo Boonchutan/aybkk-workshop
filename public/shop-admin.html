@@ -75,7 +75,7 @@
     const [a, p] = await Promise.all([ api('/api/shop/admin/orders').then(r => r.json()),
                                        fetch('/api/shop/products', { cache: 'no-store' }).then(r => r.json()) ]);
     ORDERS = a.orders || []; PRODUCTS = a.products || [];
-    SETTINGS = { paymentQr: p.paymentQr, wechatAccount: p.wechatAccount };
+    SETTINGS = { paymentQr: p.paymentQr, wechatAccount: p.wechatAccount, paused: p.paused };
     tab(current);
   }
 
@@ -110,6 +110,11 @@
         <span class="muted" id="pMsg"></span>
       </div>
       <div class="box">
+        <b>Shop status 商店状态</b>
+        <p class="muted">${SETTINGS.paused ? '🛑 PAUSED — students can browse and fill carts, ordering is closed.' : '🟢 OPEN — students can order.'}</p>
+        <button class="btn ${SETTINGS.paused ? 'green' : 'red'}" id="pauseToggle">${SETTINGS.paused ? 'Reopen shop 重新开放' : 'Pause shop 暂停购买'}</button>
+      </div>
+      <div class="box">
         <b>Payment QR 收款码</b>
         <p class="muted">Students see this at checkout. Upload your WeChat Pay receive-money QR.</p>
         ${SETTINGS.paymentQr ? `<img class="thumb" src="${esc(SETTINGS.paymentQr)}">` : '<p class="muted">not set 未设置</p>'}
@@ -121,6 +126,12 @@
       <div class="box"><b>Listed 已上架</b><div id="pList"></div></div>`;
     $('#pAdd').onclick = addProduct;
     $('#qrSave').onclick = saveQr;
+    $('#pauseToggle').onclick = async () => {
+      const target = !SETTINGS.paused;
+      if (!confirm(target ? 'Pause the shop? 暂停购买？' : 'Reopen the shop? 重新开放购买？')) return;
+      await api('/api/shop/admin/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paused: target }) });
+      refresh();
+    };
     const list = PRODUCTS.map(p => `
       <tr><td>${p.photo ? `<img class="thumb" src="${esc(p.photo)}">` : ''}</td>
       <td><b>${esc(p.nameEn)}</b><br>${esc(p.nameZh)}<br>¥${p.price}</td>

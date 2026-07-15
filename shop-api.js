@@ -86,6 +86,7 @@ function mountShop(app, opts = {}) {
     }
     if (added || synced || removed) fs.writeFileSync(F.products, JSON.stringify(products, null, 2));
     if (seedVer > (settings.seedVersion || 0)) {
+      Object.assign(settings, seed.settings || {});   // e.g. { paused: true }
       settings.seedVersion = seedVer;
       fs.writeFileSync(F.settings, JSON.stringify(settings, null, 2));
     }
@@ -141,12 +142,18 @@ function mountShop(app, opts = {}) {
       products: products.filter(p => !p.hidden),
       paymentQr: settings.paymentQr || null,
       wechatAccount: settings.wechatAccount || 'AYBKK',
+      paused: !!settings.paused,
     });
   });
 
   // POST /api/shop/orders — place order: validates stock, reserves, starts the clock
   app.post('/api/shop/orders', (req, res) => {
     try {
+      if (read(F.settings, {}).paused)
+        return res.status(403).json({
+          error: 'Shop is paused — we will announce when ordering reopens',
+          errorZh: '商店暂停中，重新开放时会通知大家',
+        });
       const { productId, size, qty, nameEn, nameZh, wechatId } = req.body || {};
       const q = Math.max(1, Math.min(10, parseInt(qty) || 1));
       if (!productId || !size || !(nameEn || '').trim() || !(nameZh || '').trim() || !(wechatId || '').trim())
@@ -312,6 +319,7 @@ function mountShop(app, opts = {}) {
     const s = read(F.settings, {});
     if (req.body.paymentQr !== undefined) s.paymentQr = req.body.paymentQr;
     if (req.body.wechatAccount !== undefined) s.wechatAccount = req.body.wechatAccount;
+    if (req.body.paused !== undefined) s.paused = !!req.body.paused;
     write(F.settings, s);
     res.json({ success: true, settings: s });
   });

@@ -35,6 +35,12 @@
   .paynote{font-size:12px;color:#8a7db0;margin-top:2px}
   .itemnote{font-size:13px;font-weight:700;color:#187a43;background:#e6f6ec;border-radius:9px;padding:6px 10px;margin-top:8px}
   .sechead{font-family:var(--hand);font-weight:800;font-size:22px;color:var(--purple);text-align:center;margin:26px 0 14px;border-top:2px dashed var(--line);padding-top:22px}
+  .pausebanner{background:#fdf3e0;border:2px dashed #b26a00;border-radius:14px;padding:14px 16px;margin-bottom:16px;color:#7a4a00;font-size:14.5px;line-height:1.55}
+  .pausebanner b{font-family:var(--hand);font-size:16px}
+  #cartbar{position:fixed;left:12px;right:12px;bottom:12px;background:var(--purple);color:#fff;border-radius:14px;padding:12px 16px;font-family:var(--hand);font-weight:700;font-size:16px;display:none;justify-content:space-between;align-items:center;box-shadow:0 8px 24px rgba(36,18,67,.35);z-index:15;cursor:pointer}
+  #cartbar.show{display:flex}
+  .cartitem{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .cartitem button{border:none;background:none;color:#a33;font-size:14px;text-decoration:underline}
   .receiptimg{width:100%;max-width:340px;border-radius:14px;box-shadow:0 6px 24px rgba(36,18,67,.18);margin-top:12px}
   .sizes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .size{border:1.5px solid var(--line);border-radius:10px;padding:8px 13px;font-size:15px;background:#faf8ff;cursor:pointer}
@@ -74,6 +80,7 @@
   <p class="credit">✍︎ All designed &amp; made by Boonchu Tanti · 全部由 Boonchu Tanti 亲自设计制作</p>
 </header>
 <main id="list"><p style="text-align:center;color:#9a8fb5">加载中 Loading…</p></main>
+<div id="cartbar"></div>
 <footer>All designed &amp; made by Boonchu Tanti · AYBKK</footer>
 
 <div id="sheet"><div id="sheetIn"></div></div>
@@ -104,6 +111,15 @@
     const el = $('#list');
     if (!DATA.products.length) { el.innerHTML = '<p style="text-align:center;color:#9a8fb5">暂无商品 · No shirts yet</p>'; return; }
     el.innerHTML = '';
+    if (DATA.paused) {
+      const b = document.createElement('div'); b.className = 'pausebanner';
+      b.innerHTML = '<b>🛑 商店暂停中 · Shop paused</b><br>' +
+        '我们已抵达合肥，暂时无法从曼谷带货，先不开放购买。<br>' +
+        '以下是我们现有的款式 — 可以先加入购物车，重新开放时会通知大家！<br>' +
+        'We are in Hefei now and cannot bring shirts from Bangkok, so ordering is paused. ' +
+        'These are the styles we have — save them to your cart, and we will announce when the shop reopens.';
+      el.appendChild(b);
+    }
     // Adults first, then a Kids section
     const ordered = [...DATA.products.filter(p => !p.kids), null, ...DATA.products.filter(p => p.kids)];
     for (const p of ordered) {
@@ -139,12 +155,59 @@
          </div>`;
       el.appendChild(card);
     }
-    el.querySelectorAll('.size').forEach(b => b.onclick = () => openOrder(b.dataset.p, b.dataset.s));
+    el.querySelectorAll('.size').forEach(b => b.onclick = () =>
+      DATA.paused ? addToCart(b.dataset.p, b.dataset.s) : openOrder(b.dataset.p, b.dataset.s));
+    renderCartBar();
     // Tap a thumbnail to swap it into the big image
     el.querySelectorAll('.thumbs .th').forEach(t => t.onclick = () => {
       const card = t.closest('.card');
       card.querySelector('img.main').src = t.src;
       card.querySelectorAll('.th').forEach(x => x.classList.toggle('on', x === t));
+    });
+  }
+
+  // ── shopping cart (wishlist while the shop is paused) ──
+  const cartGet = () => { try { return JSON.parse(localStorage.getItem('aybkk_cart') || '[]'); } catch (e) { return []; } };
+  const cartSet = c => { localStorage.setItem('aybkk_cart', JSON.stringify(c)); renderCartBar(); };
+
+  function addToCart(pid, size) {
+    const c = cartGet();
+    if (!c.some(x => x.p === pid && x.s === size)) c.push({ p: pid, s: size });
+    cartSet(c);
+    openCart();
+  }
+
+  function renderCartBar() {
+    const c = cartGet();
+    const bar = $('#cartbar');
+    bar.classList.toggle('show', c.length > 0);
+    if (c.length) {
+      bar.innerHTML = `<span>🛒 购物车 Cart · ${c.length}</span><span>${DATA.paused ? '暂停购买 paused' : '点击查看 view'}</span>`;
+      bar.onclick = openCart;
+    }
+  }
+
+  function openCart() {
+    const c = cartGet();
+    const items = c.map((x, i) => {
+      const p = DATA.products.find(y => y.id === x.p);
+      if (!p) return '';
+      return `<div class="cartitem"><span>${esc(p.nameEn)} · ${esc(x.s)} · ${yen(p.price)}</span>
+        <span>${!DATA.paused ? `<button class="btn-order" data-i="${i}" style="color:var(--purple)">下单 order</button> ` : ''}
+        <button class="btn-rm" data-i="${i}">删除 remove</button></span></div>`;
+    }).join('');
+    $('#sheetIn').innerHTML = `<h3>🛒 购物车 Shopping Cart</h3>
+      ${items || '<p class="note">购物车是空的 · Cart is empty</p>'}
+      ${DATA.paused ? '<p class="note">商店暂停中 — 你的购物车已保存，重新开放时会通知大家。<br>Shop is paused — your cart is saved. We will announce when ordering reopens.</p>' : ''}
+      <button class="ghost" id="done">关闭 Close</button>`;
+    $('#sheet').classList.add('show');
+    $('#done').onclick = closeSheet;
+    document.querySelectorAll('.cartitem .btn-rm').forEach(b => b.onclick = () => {
+      const c2 = cartGet(); c2.splice(parseInt(b.dataset.i), 1); cartSet(c2); openCart();
+    });
+    document.querySelectorAll('.cartitem .btn-order').forEach(b => b.onclick = () => {
+      const it = cartGet()[parseInt(b.dataset.i)];
+      if (it) openOrder(it.p, it.s);
     });
   }
 
