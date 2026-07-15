@@ -31,7 +31,7 @@ jobs:
           import json
           d = json.load(open('/tmp/p.json'))
           ps = d['products']
-          print(f"{len(ps)} products live")
+          print(f"{len(ps)} products live | shop {'PAUSED' if d.get('paused') else 'OPEN'}")
           for p in ps:
               total = sum(p['sizes'].values())
               photo = 'photo:yes' if p.get('photo') else 'photo:NO'
