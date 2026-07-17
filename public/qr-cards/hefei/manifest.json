@@ -538,5 +538,50 @@
     "journalId": "f5f25a55-f7d6-5b2f-ae8d-f296a73a0ec0",
     "file": "qr-cards/hefei/HEFEI-D08.png",
     "url": "https://cn.aybkk.net/s/HEFEI-D08"
+  },
+  {
+    "code": "HEFEI-D09",
+    "name": "汤莹莹 (Yingying)",
+    "slug": "yingying",
+    "package": "Single",
+    "journalId": "6cc125b7-6109-5baf-9f80-52198bb2ace6",
+    "file": "qr-cards/hefei/HEFEI-D09.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-D09"
+  },
+  {
+    "code": "HEFEI-D10",
+    "name": "刘清 (Liuqing)",
+    "slug": "liuqing",
+    "package": "3day",
+    "journalId": "428c0d63-d59d-5184-8994-d3b75bfe3f95",
+    "file": "qr-cards/hefei/HEFEI-D10.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-D10"
+  },
+  {
+    "code": "HEFEI-D11",
+    "name": "尹传更 (Xiao Yin)",
+    "slug": "xiaoyin",
+    "package": "Mysore",
+    "journalId": "c1c415f1-74f0-5244-9cbf-408ec9b362ce",
+    "file": "qr-cards/hefei/HEFEI-D11.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-D11"
+  },
+  {
+    "code": "HEFEI-D12",
+    "name": "董丽 (Lily)",
+    "slug": "lily",
+    "package": "Weekend",
+    "journalId": "87e708dd-15a2-5b7d-abac-85b1aa7be85e",
+    "file": "qr-cards/hefei/HEFEI-D12.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-D12"
+  },
+  {
+    "code": "HEFEI-D13",
+    "name": "周杰 (Jason)",
+    "slug": "jason",
+    "package": "Weekend",
+    "journalId": "6d90f3e6-e7a7-5e27-bc5c-f89d4bdc7f60",
+    "file": "qr-cards/hefei/HEFEI-D13.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-D13"
   }
 ]

@@ -505,7 +505,50 @@
       "D5-LED",
       "D5-QA"
     ],
-    "note": "added Jul 14 per Lisa · 4-day Jul 17-20 · fee TBC · no tee",
+    "note": "ledger v5 paid ¥2,555 = weekend+Day5 led (2200+490 -5%) · if 4-day Jul17-20 confirmed price is ¥3,750, collect ¥1,195 · no tee",
     "practice": ""
+  },
+  {
+    "name": "汤莹莹 (Yingying)",
+    "package": "Single",
+    "entitledSessions": [
+      "D1-LED"
+    ],
+    "note": "Jul 16 led class only",
+    "code": "D09"
+  },
+  {
+    "name": "刘清 (Liuqing)",
+    "package": "3day",
+    "entitledSessions": [
+      "D1-LED",
+      "D1-WS",
+      "D3-MY",
+      "D3-WS",
+      "D4-MY",
+      "D4-WS"
+    ],
+    "note": "3 days 16·18·19",
+    "code": "D10"
+  },
+  {
+    "name": "尹传更 (Xiao Yin)",
+    "package": "Mysore",
+    "entitledSessions": [
+      "D3-MY",
+      "D4-MY"
+    ],
+    "note": "mysore ×2 · Jul 18+19",
+    "code": "D11"
+  },
+  {
+    "name": "董丽 (Lily)",
+    "package": "Weekend",
+    "code": "D12"
+  },
+  {
+    "name": "周杰 (Jason)",
+    "package": "Weekend",
+    "code": "D13"
   }
 ]

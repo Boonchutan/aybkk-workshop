@@ -5,7 +5,7 @@
   "lang": "zh",
   "baseUrl": "https://cn.aybkk.net",
   "qrMode": "short",
-  "generatedAt": "2026-07-14T10:48:05.456Z",
+  "generatedAt": "2026-07-17T11:39:13.633Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -989,7 +989,94 @@
       ],
       "phone": "",
       "size": "",
-      "note": "added Jul 14 per Lisa · 4-day Jul 17-20 · fee TBC · no tee",
+      "note": "ledger v5 paid ¥2,555 = weekend+Day5 led (2200+490 -5%) · if 4-day Jul17-20 confirmed price is ¥3,750, collect ¥1,195 · no tee",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-D09",
+      "journalId": "6cc125b7-6109-5baf-9f80-52198bb2ace6",
+      "name": "汤莹莹 (Yingying)",
+      "slug": "yingying",
+      "package": "Single",
+      "entitledSessions": [
+        "D1-LED"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "Jul 16 led class only",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-D10",
+      "journalId": "428c0d63-d59d-5184-8994-d3b75bfe3f95",
+      "name": "刘清 (Liuqing)",
+      "slug": "liuqing",
+      "package": "3day",
+      "entitledSessions": [
+        "D1-LED",
+        "D1-WS",
+        "D3-MY",
+        "D3-WS",
+        "D4-MY",
+        "D4-WS"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "3 days 16·18·19",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-D11",
+      "journalId": "c1c415f1-74f0-5244-9cbf-408ec9b362ce",
+      "name": "尹传更 (Xiao Yin)",
+      "slug": "xiaoyin",
+      "package": "Mysore",
+      "entitledSessions": [
+        "D3-MY",
+        "D4-MY"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "mysore ×2 · Jul 18+19",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-D12",
+      "journalId": "87e708dd-15a2-5b7d-abac-85b1aa7be85e",
+      "name": "董丽 (Lily)",
+      "slug": "lily",
+      "package": "Weekend",
+      "entitledSessions": [
+        "D3-MY",
+        "D3-WS",
+        "D4-MY",
+        "D4-WS"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-D13",
+      "journalId": "6d90f3e6-e7a7-5e27-bc5c-f89d4bdc7f60",
+      "name": "周杰 (Jason)",
+      "slug": "jason",
+      "package": "Weekend",
+      "entitledSessions": [
+        "D3-MY",
+        "D3-WS",
+        "D4-MY",
+        "D4-WS"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "",
       "practice": "",
       "lastAsana": ""
     }
