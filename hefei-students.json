@@ -408,9 +408,11 @@
     "package": "Single",
     "size": "",
     "entitledSessions": [
-      "D3-MY"
+      "D3-MY",
+      "D5-LED",
+      "D5-QA"
     ],
-    "note": "Jul 18 mysore only 18号一天mysore · NO SHIRT SIZE",
+    "note": "FINAL ¥1,040: Jul 18 mysore + Jul 20 led (550+490)",
     "practice": "intermediate",
     "lastAsana": "baddha hasta sirsasana",
     "code": "D03"
@@ -496,8 +498,6 @@
     "size": "",
     "code": "D08",
     "entitledSessions": [
-      "D2-MY",
-      "D2-WS",
       "D3-MY",
       "D3-WS",
       "D4-MY",
@@ -505,7 +505,7 @@
       "D5-LED",
       "D5-QA"
     ],
-    "note": "ledger v5 paid ¥2,555 = weekend+Day5 led (2200+490 -5%) · if 4-day Jul17-20 confirmed price is ¥3,750, collect ¥1,195 · no tee",
+    "note": "FINAL ¥2,555 = weekend + Day5 led (5% past-attendee) · 4-day did not happen, ¥1,195 question closed",
     "practice": ""
   },
   {
@@ -526,9 +526,11 @@
       "D3-MY",
       "D3-WS",
       "D4-MY",
-      "D4-WS"
+      "D4-WS",
+      "D5-LED",
+      "D5-QA"
     ],
-    "note": "3 days 16·18·19",
+    "note": "FINAL ¥3,480: mornings 16+20, full days 18-19 (ledger pinyin \"liuling\" is a typo)",
     "code": "D10"
   },
   {
@@ -550,5 +552,14 @@
     "name": "周杰 (Jason)",
     "package": "Weekend",
     "code": "D13"
+  },
+  {
+    "name": "张若祺 (Ruoqi)",
+    "code": "D14",
+    "package": "Single",
+    "entitledSessions": [
+      "D3-WS"
+    ],
+    "note": "FINAL ¥710: Jul 18 workshop only"
   }
 ]

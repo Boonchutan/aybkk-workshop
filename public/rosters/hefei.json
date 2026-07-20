@@ -5,7 +5,7 @@
   "lang": "zh",
   "baseUrl": "https://cn.aybkk.net",
   "qrMode": "short",
-  "generatedAt": "2026-07-17T11:39:13.633Z",
+  "generatedAt": "2026-07-20T23:36:31.676Z",
   "sessions": [
     {
       "code": "D1-LED",
@@ -847,11 +847,13 @@
       "slug": "daisy",
       "package": "Single",
       "entitledSessions": [
-        "D3-MY"
+        "D3-MY",
+        "D5-LED",
+        "D5-QA"
       ],
       "phone": "",
       "size": "",
-      "note": "Jul 18 mysore only 18号一天mysore · NO SHIRT SIZE",
+      "note": "FINAL ¥1,040: Jul 18 mysore + Jul 20 led (550+490)",
       "practice": "intermediate",
       "lastAsana": "baddha hasta sirsasana"
     },
@@ -978,8 +980,6 @@
       "slug": "yanhong",
       "package": "4day",
       "entitledSessions": [
-        "D2-MY",
-        "D2-WS",
         "D3-MY",
         "D3-WS",
         "D4-MY",
@@ -989,7 +989,7 @@
       ],
       "phone": "",
       "size": "",
-      "note": "ledger v5 paid ¥2,555 = weekend+Day5 led (2200+490 -5%) · if 4-day Jul17-20 confirmed price is ¥3,750, collect ¥1,195 · no tee",
+      "note": "FINAL ¥2,555 = weekend + Day5 led (5% past-attendee) · 4-day did not happen, ¥1,195 question closed",
       "practice": "",
       "lastAsana": ""
     },
@@ -1020,11 +1020,13 @@
         "D3-MY",
         "D3-WS",
         "D4-MY",
-        "D4-WS"
+        "D4-WS",
+        "D5-LED",
+        "D5-QA"
       ],
       "phone": "",
       "size": "",
-      "note": "3 days 16·18·19",
+      "note": "FINAL ¥3,480: mornings 16+20, full days 18-19 (ledger pinyin \"liuling\" is a typo)",
       "practice": "",
       "lastAsana": ""
     },
@@ -1077,6 +1079,21 @@
       "phone": "",
       "size": "",
       "note": "",
+      "practice": "",
+      "lastAsana": ""
+    },
+    {
+      "id": "HEFEI-D14",
+      "journalId": "458c7805-5d52-5d55-be91-c06f44d124bc",
+      "name": "张若祺 (Ruoqi)",
+      "slug": "ruoqi",
+      "package": "Single",
+      "entitledSessions": [
+        "D3-WS"
+      ],
+      "phone": "",
+      "size": "",
+      "note": "FINAL ¥710: Jul 18 workshop only",
       "practice": "",
       "lastAsana": ""
     }

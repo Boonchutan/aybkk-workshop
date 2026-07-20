@@ -583,5 +583,14 @@
     "journalId": "6d90f3e6-e7a7-5e27-bc5c-f89d4bdc7f60",
     "file": "qr-cards/hefei/HEFEI-D13.png",
     "url": "https://cn.aybkk.net/s/HEFEI-D13"
+  },
+  {
+    "code": "HEFEI-D14",
+    "name": "张若祺 (Ruoqi)",
+    "slug": "ruoqi",
+    "package": "Single",
+    "journalId": "458c7805-5d52-5d55-be91-c06f44d124bc",
+    "file": "qr-cards/hefei/HEFEI-D14.png",
+    "url": "https://cn.aybkk.net/s/HEFEI-D14"
   }
 ]
