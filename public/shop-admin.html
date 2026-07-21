@@ -134,9 +134,17 @@
     };
     const list = PRODUCTS.map(p => `
       <tr><td>${p.photo ? `<img class="thumb" src="${esc(p.photo)}">` : ''}</td>
-      <td><b>${esc(p.nameEn)}</b><br>${esc(p.nameZh)}<br>¥${p.price}</td>
+      <td>
+        <input class="ed-en" data-p="${p.id}" value="${esc(p.nameEn)}" placeholder="English name" style="width:170px;padding:6px;margin-bottom:4px">
+        <input class="ed-zh" data-p="${p.id}" value="${esc(p.nameZh || '')}" placeholder="中文名 (可留空)" style="width:170px;padding:6px;margin-bottom:4px">
+        <div class="row" style="max-width:230px"><input class="ed-price" data-p="${p.id}" type="number" min="0" value="${p.price}" style="width:70px;padding:6px"> <span class="muted" style="align-self:center">price ¥</span></div>
+      </td>
       <td>${Object.entries(p.sizes).map(([s,n]) => s + ':' + n).join(' · ')}</td>
-      <td><button class="btn gray" onclick="toggleHide('${p.id}',${!p.hidden})">${p.hidden ? 'Show' : 'Hide'}</button></td></tr>`).join('');
+      <td>
+        <button class="btn green" onclick="saveMeta('${p.id}')">Save 保存</button>
+        <span class="muted" id="metamsg-${p.id}"></span><br><br>
+        <button class="btn gray" onclick="toggleHide('${p.id}',${!p.hidden})">${p.hidden ? 'Show' : 'Hide'}</button>
+      </td></tr>`).join('');
     $('#pList').innerHTML = PRODUCTS.length ? `<table>${list}</table>` : '<p class="muted">none yet</p>';
   }
 
@@ -166,6 +174,19 @@
     } catch (e) { $('#pMsg').textContent = '✗ ' + e.message; }
     $('#pAdd').disabled = false;
   }
+
+  window.saveMeta = async (pid) => {
+    const en = document.querySelector(`.ed-en[data-p="${pid}"]`).value.trim();
+    const zh = document.querySelector(`.ed-zh[data-p="${pid}"]`).value.trim();
+    const price = parseInt(document.querySelector(`.ed-price[data-p="${pid}"]`).value);
+    if (!en) return alert('English name cannot be empty');
+    const body = { id: pid, nameEn: en, nameZh: zh };
+    if (!isNaN(price) && price >= 0) body.price = price;
+    const r = await api('/api/shop/products', { method: 'POST', body: JSON.stringify(body) });
+    const el = document.getElementById('metamsg-' + pid);
+    if (r.ok) { if (el) el.textContent = 'saved ✓'; setTimeout(refresh, 700); }
+    else { const j = await r.json(); alert(j.error || 'failed'); }
+  };
 
   window.toggleHide = async (id, hidden) => {
     await api('/api/shop/products', { method: 'POST', body: JSON.stringify({ id, hidden }) });
