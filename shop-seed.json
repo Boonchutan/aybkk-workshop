@@ -1,6 +1,6 @@
 {
   "version": 9,
-  "note": "v9: shop paused (team in Hefei, cannot carry stock from Bangkok). Reopen via admin toggle.",
+  "note": "v9 was the pause; pause flag removed so future seed bumps never re-pause. Shop open/paused is controlled from the admin toggle.",
   "products": [
     {
       "id": "tee-1",
@@ -756,8 +756,5 @@
   ],
   "remove": [
     "tee-12"
-  ],
-  "settings": {
-    "paused": true
-  }
+  ]
 }
