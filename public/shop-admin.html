@@ -98,14 +98,16 @@
           <div><label>Name (English)</label><input id="pEn" placeholder="Hefei Firefly Tee"></div>
           <div><label>名称（中文）</label><input id="pZh" placeholder="合肥萤火虫T恤"></div>
         </div>
+        <label style="display:flex;align-items:center;gap:8px;margin:10px 0">
+          <input id="pKids" type="checkbox" style="width:auto"> 🧒 Kids shirt 儿童款 (sizes 12/14/16, ¥200)
+        </label>
         <div class="row">
-          <div><label>Price 价格 (¥)</label><input id="pPrice" type="number" placeholder="180"></div>
-          <div><label>Photo 图片</label><input id="pPhoto" type="file" accept="image/*"></div>
+          <div><label>Pre-order price 预购价 (¥)</label><input id="pPrice" type="number" placeholder="220"></div>
+          <div><label>Full price 原价 (¥, optional)</label><input id="pFull" type="number" placeholder="270"></div>
         </div>
+        <div><label>Photo 图片</label><input id="pPhoto" type="file" accept="image/*"></div>
         <label>Stock per size 每个尺码数量</label>
-        <div class="row" id="pSizes">
-          ${['S','M','L','XL','XXL'].map(s => `<div><label>${s}</label><input data-size="${s}" type="number" value="0" min="0"></div>`).join('')}
-        </div>
+        <div class="row" id="pSizes"></div>
         <button class="btn" style="margin-top:12px" id="pAdd">Add shirt 上架</button>
         <span class="muted" id="pMsg"></span>
       </div>
@@ -124,6 +126,15 @@
         </div>
       </div>
       <div class="box"><b>Listed 已上架</b><div id="pList"></div></div>`;
+    const renderSizeInputs = () => {
+      const kids = $('#pKids').checked;
+      const sizes = kids ? ['12','14','16'] : ['S','M','L','XL','XXL'];
+      $('#pSizes').innerHTML = sizes.map(s => `<div><label>${s}</label><input data-size="${s}" type="number" value="0" min="0"></div>`).join('');
+      if (kids) { if (!$('#pPrice').value) $('#pPrice').value = 200; if (!$('#pFull').value) $('#pFull').value = 230; }
+      else { if ($('#pPrice').value == 200) $('#pPrice').value = 220; if ($('#pFull').value == 230) $('#pFull').value = 270; }
+    };
+    renderSizeInputs();
+    $('#pKids').onchange = renderSizeInputs;
     $('#pAdd').onclick = addProduct;
     $('#qrSave').onclick = saveQr;
     $('#pauseToggle').onclick = async () => {
@@ -164,7 +175,9 @@
       const sizes = {};
       document.querySelectorAll('#pSizes input').forEach(i => { const n = parseInt(i.value) || 0; if (n > 0) sizes[i.dataset.size] = n; });
       const body = { nameEn: $('#pEn').value.trim(), nameZh: $('#pZh').value.trim(),
-                     price: Number($('#pPrice').value) || 0, photo, sizes };
+                     price: Number($('#pPrice').value) || 0, photo, sizes,
+                     kids: $('#pKids').checked };
+      if ($('#pFull').value) body.fullPrice = Number($('#pFull').value);
       if (!body.nameEn && !body.nameZh) throw new Error('name required');
       if (!Object.keys(sizes).length) throw new Error('at least one size');
       const r = await api('/api/shop/products', { method: 'POST', body: JSON.stringify(body) });

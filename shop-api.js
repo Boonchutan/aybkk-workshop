@@ -232,14 +232,19 @@ function mountShop(app, opts = {}) {
         const p = products.find(x => x.id === b.id);
         if (!p) return res.status(404).json({ error: 'not found' });
         Object.assign(p, { nameEn: b.nameEn ?? p.nameEn, nameZh: b.nameZh ?? p.nameZh,
-                           price: b.price ?? p.price, photo: b.photo ?? p.photo,
-                           sizes: b.sizes ?? p.sizes, hidden: b.hidden ?? p.hidden });
+                           price: b.price ?? p.price, fullPrice: b.fullPrice ?? p.fullPrice,
+                           photo: b.photo ?? p.photo, sizes: b.sizes ?? p.sizes,
+                           kids: b.kids ?? p.kids, note: b.note ?? p.note,
+                           hidden: b.hidden ?? p.hidden });
         write(F.products, products);
         return res.json({ success: true, product: p });
       }
       const p = { id: uid('P'), nameEn: b.nameEn || '', nameZh: b.nameZh || '',
-                  price: Number(b.price) || 0, photo: b.photo || null,
-                  sizes: b.sizes || {}, hidden: false, createdAt: new Date().toISOString() };
+                  price: Number(b.price) || 0,
+                  fullPrice: b.fullPrice != null ? Number(b.fullPrice) : undefined,
+                  photo: b.photo || null,
+                  sizes: b.sizes || {}, kids: !!b.kids, note: b.note || undefined,
+                  hidden: false, createdAt: new Date().toISOString() };
       products.push(p);
       write(F.products, products);
       res.json({ success: true, product: p });
