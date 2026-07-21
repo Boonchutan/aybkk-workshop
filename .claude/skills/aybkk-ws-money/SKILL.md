@@ -44,6 +44,15 @@ subprocess.run(["open", url])
 - For any note whose exact path is unknown: ask Boonchu for right-click → Copy Obsidian URL. NEVER guess a path (duplicate-note risk; vault rule is one fact, one home).
 - Append a dated `## Update <date> · ledger vN` section: total · paid count · new/changed rows table · tier breakdown · transfer math · open items. No read-back is possible; ask him to glance at the note.
 
+## 4b · Transfer receipts archive (ALWAYS, for every receipt or bank screenshot)
+
+Every transfer document Boonchu shares (BOC submission receipt, K PLUS / SCB arrival screenshot) gets archived to the WS's `<WS> - Transfer Receipts` note in the Support folder:
+
+- Transcribe EVERY field: amount, date, beneficiary + account + SWIFT, payer account, reference number, remittance notes, and for arrivals the net amount and fee.
+- Maintain an arrival-tracking table: sent vs arrived vs fee. Submission receipt ≠ arrival (the Jul 14, 2026 Hefei THB 480,000 was submitted successfully and then blocked by the China-side bank — always confirm arrival in the receiving app).
+- Photos: if the image exists as a file path (drag-dropped in a local session), copy it into the vault attachments folder and embed with `![[...]]`. If the image arrived only in chat (remote/phone session), leave a "*(drop photo here)*" placeholder under its heading and tell Boonchu to drag the photo in.
+- Link the receipts note from Roster & Money and vice versa.
+
 ## 5 · Memory + report
 
 - Update the WS payments memory file and MEMORY.md index line with the new verified total.
