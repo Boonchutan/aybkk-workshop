@@ -188,14 +188,39 @@
     }
     const rows = PRODUCTS.map(p => {
       const szs = Object.keys(p.sizes);
-      return `<tr><td><b>${esc(p.nameEn)}</b><br>${esc(p.nameZh)}</td>
-        <td>${szs.map(s => `${s}: <b>${p.sizes[s]}</b> left${sold[p.id] && sold[p.id][s] ? ' / ' + sold[p.id][s] + ' sold' : ''}`).join('<br>')}</td>
-        <td>¥${p.price}</td></tr>`;
+      const inputs = szs.map(s =>
+        `<label style="display:inline-block;width:64px;margin:2px 6px 2px 0">${esc(s)}
+           <input class="stk" data-p="${p.id}" data-size="${esc(s)}" type="number" min="0" value="${p.sizes[s]}" style="padding:6px">
+         </label>${sold[p.id] && sold[p.id][s] ? `<span class="muted">${sold[p.id][s]} sold</span>` : ''}`
+      ).join('<br>');
+      return `<tr><td><b>${esc(p.nameEn)}</b><br>${esc(p.nameZh)}<br>¥${p.price}</td>
+        <td>${inputs}<br>
+          <input class="stk-new-name" data-p="${p.id}" placeholder="new size (e.g. XXL)" style="width:130px;padding:6px;margin-top:6px">
+          <input class="stk-new-qty" data-p="${p.id}" type="number" min="0" placeholder="qty" style="width:64px;padding:6px">
+        </td>
+        <td><button class="btn green" onclick="saveStock('${p.id}')">Save 保存</button><br>
+          <span class="muted" id="stkmsg-${p.id}"></span></td></tr>`;
     }).join('');
-    $('#view').innerHTML = `<div class="box"><b>Stock 库存</b><table>
-      <tr><th>Shirt</th><th>Available / sold</th><th>Price</th></tr>${rows}</table>
-      <p class="muted">"left" already excludes shirts reserved by unpaid 10-minute orders.</p></div>`;
+    $('#view').innerHTML = `<div class="box"><b>Stock 库存 — edit numbers, then Save each shirt</b><table>
+      <tr><th>Shirt</th><th>Available per size 每尺码可卖数量</th><th></th></tr>${rows}</table>
+      <p class="muted">Numbers shown = available to sell right now ("left" excludes shirts reserved by unpaid 10-minute orders).
+      Best to edit when no orders are pending — check the Orders tab first.</p></div>`;
   }
+
+  window.saveStock = async (pid) => {
+    const sizes = {};
+    document.querySelectorAll(`.stk[data-p="${pid}"]`).forEach(i => {
+      const n = parseInt(i.value);
+      sizes[i.dataset.size] = (isNaN(n) || n < 0) ? 0 : n;
+    });
+    const nn = document.querySelector(`.stk-new-name[data-p="${pid}"]`);
+    const nq = document.querySelector(`.stk-new-qty[data-p="${pid}"]`);
+    if (nn && nn.value.trim()) sizes[nn.value.trim()] = Math.max(0, parseInt(nq.value) || 0);
+    const r = await api('/api/shop/products', { method: 'POST', body: JSON.stringify({ id: pid, sizes }) });
+    const el = document.getElementById('stkmsg-' + pid);
+    if (r.ok) { if (el) el.textContent = 'saved ✓'; setTimeout(refresh, 600); }
+    else { const j = await r.json(); alert(j.error || 'failed'); }
+  };
 
   // ── orders ──
   function renderOrders() {
