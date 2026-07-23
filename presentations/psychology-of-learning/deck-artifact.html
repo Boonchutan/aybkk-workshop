@@ -1,9 +1,8 @@
 <style>
-  /* ===== AYBKK · Psychology of Learning · evidence map · offline · macOS-native ===== */
   :root{
     --bg1:#17130f; --bg2:#211a15; --ink:#f4efe6; --ink2:#c9c3b6;
     --hair:rgba(244,239,230,.12);
-    --teal:#7fa9b0; --terra:#cf7d54; --gold:#d8b98a; --sage:#93a996;
+    --teal:#7fa9b0; --gold:#d8b98a; --sage:#93a996; --terra:#cf7d54; --lav:#b58bc9; --rose:#d3897c; --sand:#c9a98a;
     --accent:var(--teal);
     --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,serif;
     --sans:"Avenir Next","Avenir","Helvetica Neue",-apple-system,BlinkMacSystemFont,sans-serif;
@@ -13,201 +12,111 @@
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;background:#000;overflow:hidden;font-family:var(--sans)}
   .zh{font-family:var(--zh);font-weight:500}
-
   #viewport{position:fixed;inset:0;display:grid;place-items:center;background:#000}
   #deck{width:1280px;height:720px;position:relative;transform-origin:center center;
-        background:radial-gradient(120% 120% at 20% 0%,var(--bg2),var(--bg1) 70%);
-        overflow:hidden;color:var(--ink)}
+        background:radial-gradient(120% 120% at 20% 0%,var(--bg2),var(--bg1) 70%);overflow:hidden;color:var(--ink)}
   #deck::before{content:"";position:absolute;width:860px;height:860px;right:-240px;top:-300px;border-radius:50%;
-     background:radial-gradient(circle,var(--accent) 0%,transparent 62%);opacity:.10;filter:blur(9px);
-     transition:background 1.1s ease;pointer-events:none}
-  #deck::after{content:"";position:absolute;inset:0;pointer-events:none;
-     background:radial-gradient(130% 100% at 50% 55%,transparent 55%,rgba(0,0,0,.42));}
+     background:radial-gradient(circle,var(--accent) 0%,transparent 62%);opacity:.09;filter:blur(9px);transition:background 1s ease;pointer-events:none}
+  #deck::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 100% at 50% 55%,transparent 55%,rgba(0,0,0,.42));}
 
-  .slide{position:absolute;inset:0;padding:76px 92px;display:flex;flex-direction:column;justify-content:center;
-    opacity:0;visibility:hidden;transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1);
-    transform:translateY(18px) scale(.992)}
+  .slide{position:absolute;inset:0;padding:70px 92px;display:flex;flex-direction:column;justify-content:center;
+    opacity:0;visibility:hidden;transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);transform:translateY(16px) scale(.993)}
   .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
-  .slide.prev{transform:translateY(-14px) scale(.992)}
-  .slide.rail::before{content:"";position:absolute;left:0;top:88px;bottom:88px;width:5px;border-radius:0 4px 4px 0;
+  .slide.prev{transform:translateY(-12px) scale(.993)}
+  .slide.rail::before{content:"";position:absolute;left:0;top:84px;bottom:84px;width:5px;border-radius:0 4px 4px 0;
     background:linear-gradient(var(--accent),transparent);opacity:.9}
 
-  .kicker{font-weight:600;font-size:17px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+  .kicker{font-weight:600;font-size:16px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
   .kicker .sep{opacity:.5;margin:0 .5em}
-  h1{font-family:var(--serif);font-weight:600;line-height:1.06;letter-spacing:-.01em}
-  .display{font-size:58px} .huge{font-size:60px;font-family:var(--serif);font-weight:600;line-height:1.06}
-  .big{font-size:40px;font-family:var(--serif);font-weight:600;line-height:1.12}
-  .sub{font-size:28px;color:var(--ink2);font-family:var(--serif);margin-top:12px}
-  .zh-line{font-size:23px;color:var(--accent);margin-top:18px;opacity:.95}
-  .lead{font-size:30px;line-height:1.32;font-family:var(--serif);max-width:24em}
-  .hl{color:var(--accent);font-weight:600} .em{color:var(--terra);font-weight:600}
-  em{font-style:italic}
-  .stat{font-family:var(--mono);color:var(--terra);font-weight:700}
+  h1{font-family:var(--serif);font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  .display{font-size:56px} .huge{font-size:58px;font-family:var(--serif);font-weight:600;line-height:1.06}
+  .sub{font-size:26px;color:var(--ink2);font-family:var(--serif);margin-top:12px}
+  .zh-line{font-size:23px;color:var(--accent);margin-top:16px}
+  .lead{font-size:28px;line-height:1.34;font-family:var(--serif);max-width:25em}
+  .hl{color:var(--accent);font-weight:600}
+  .callout{margin-top:22px;font-size:20px;color:var(--ink2);font-family:var(--serif);font-style:italic;max-width:32em}
+  .callout b{color:var(--accent);font-style:normal}
 
-  [data-step]{opacity:0;transform:translateY(13px);filter:blur(3px);
-    transition:opacity .55s ease, transform .55s cubic-bezier(.2,.7,.2,1), filter .55s ease}
+  [data-step]{opacity:0;transform:translateY(12px);filter:blur(3px);transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1), filter .5s ease}
   [data-step].on{opacity:1;transform:none;filter:none}
 
-  ul.pts{list-style:none;margin-top:20px;display:flex;flex-direction:column;gap:15px;max-width:30em}
-  ul.pts li{font-size:23px;line-height:1.3;padding-left:26px;position:relative;color:var(--ink)}
-  ul.pts li::before{content:"";position:absolute;left:0;top:.55em;width:9px;height:9px;border-radius:50%;background:var(--accent)}
-  ul.pts li .zh{color:var(--ink2);font-size:16px;display:block;margin-top:3px}
-  ul.pts li b{color:var(--accent)}
-  ul.pts li .src{color:var(--ink2);font-size:14px;opacity:.6;font-family:var(--sans)}
+  /* ==== principle slide ==== */
+  .principle{padding:64px 92px}
+  .ghost{position:absolute;right:56px;top:44px;font-family:var(--serif);font-weight:700;font-size:340px;line-height:.8;
+    color:var(--accent);opacity:.06;pointer-events:none;user-select:none}
+  .pgroup{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--accent)}
+  .pgroup .who{color:var(--ink2);opacity:.7;letter-spacing:.1em}
+  .pno{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:22px;margin:14px 0 6px;letter-spacing:.05em}
+  .phead{font-family:var(--serif);font-weight:600;font-size:52px;line-height:1.06;max-width:17em}
+  .pzh{font-family:var(--zh);font-weight:500;font-size:27px;color:var(--accent);margin-top:16px;max-width:26em;line-height:1.4}
+  .pex{font-size:23px;line-height:1.42;color:var(--ink);margin-top:20px;max-width:30em;font-family:var(--serif)}
+  .pex em{font-style:italic;color:var(--accent)}
+  .psrc{margin-top:18px;font-size:14px;letter-spacing:.03em;color:var(--ink2);opacity:.6;font-family:var(--sans)}
+  .ptell{margin-top:14px;font-size:14px;color:var(--accent);opacity:.55;font-style:italic;font-family:var(--sans)}
 
-  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:26px}
-  .cards.four{grid-template-columns:repeat(4,1fr);gap:16px}
-  .card{border:1px solid var(--hair);border-left:4px solid var(--c,var(--accent));border-radius:13px;
-    padding:18px 22px;background:linear-gradient(180deg,rgba(244,239,230,.045),rgba(244,239,230,.012))}
-  .card h3{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--c,var(--accent))}
-  .card .zh{font-size:15px;color:var(--ink2);margin:2px 0 8px}
-  .card ul{list-style:none;display:flex;flex-direction:column;gap:7px}
-  .card li{font-size:16px;color:var(--ink2);line-height:1.28;padding-left:14px;position:relative}
-  .card li::before{content:"";position:absolute;left:0;top:.5em;width:5px;height:5px;border-radius:50%;background:var(--c,var(--accent))}
-
-  /* myth rows */
-  .myths{margin-top:22px;display:flex;flex-direction:column;gap:13px;max-width:40em}
-  .myth{display:grid;grid-template-columns:1fr auto 1.1fr;gap:18px;align-items:baseline;font-size:20px}
-  .myth .claim{color:var(--ink2);text-decoration:line-through;text-decoration-color:var(--terra);text-decoration-thickness:2px;opacity:.75}
-  .myth .arrow{color:var(--terra)}
-  .myth .real{color:var(--ink)} .myth .real b{color:var(--terra)}
-
-  .frame3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:34px}
-  .frame3 .f{text-align:left}
+  .frame3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:32px}
   .frame3 .n{font-family:var(--mono);color:var(--accent);font-size:15px}
-  .frame3 .t{font-family:var(--serif);font-size:32px;font-weight:600;margin-top:6px}
-  .frame3 .d{font-size:17px;color:var(--ink2);margin-top:6px;line-height:1.3}
+  .frame3 .t{font-family:var(--serif);font-size:30px;font-weight:600;margin-top:6px}
+  .frame3 .d{font-size:16px;color:var(--ink2);margin-top:6px;line-height:1.3}
   .frame3 .zh{font-size:15px;color:var(--accent);opacity:.85;margin-top:6px}
 
-  .callout{margin-top:24px;font-size:22px;color:var(--ink2);font-family:var(--serif);font-style:italic;max-width:30em}
-  .callout b{color:var(--accent);font-style:normal}
-  .zhsmall{font-size:16px;color:var(--ink2)}
+  .myths{margin-top:20px;display:flex;flex-direction:column;gap:12px;max-width:42em}
+  .myth{display:grid;grid-template-columns:1fr auto 1.1fr;gap:18px;align-items:baseline;font-size:20px}
+  .myth .claim{color:var(--ink2);text-decoration:line-through;text-decoration-color:var(--terra);text-decoration-thickness:2px;opacity:.75}
+  .myth .arrow{color:var(--terra)} .myth .real{color:var(--ink)} .myth .real b{color:var(--terra)}
 
-  #chrome{position:absolute;left:92px;right:92px;bottom:30px;display:flex;justify-content:space-between;align-items:center;
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:26px}
+  .card{border:1px solid var(--hair);border-left:4px solid var(--c,var(--accent));border-radius:13px;padding:18px 22px;
+    background:linear-gradient(180deg,rgba(244,239,230,.045),rgba(244,239,230,.012))}
+  .card h3{font-family:var(--serif);font-size:23px;font-weight:600;color:var(--c,var(--accent))}
+  .card .zh{font-size:14px;color:var(--ink2);margin:2px 0 8px}
+  .card ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+  .card li{font-size:15px;color:var(--ink2);line-height:1.28;padding-left:13px;position:relative}
+  .card li::before{content:"";position:absolute;left:0;top:.5em;width:5px;height:5px;border-radius:50%;background:var(--c,var(--accent))}
+
+  #chrome{position:absolute;left:92px;right:92px;bottom:28px;display:flex;justify-content:space-between;align-items:center;
     font-size:14px;color:var(--ink2);letter-spacing:.04em;z-index:5}
-  #rail{position:absolute;left:92px;right:92px;bottom:58px;height:2px;background:var(--hair);z-index:5}
+  #rail{position:absolute;left:92px;right:92px;bottom:56px;height:2px;background:var(--hair);z-index:5}
   #railfill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .5s ease}
   #brand{font-weight:600;color:var(--ink);letter-spacing:.18em;text-transform:uppercase;font-size:12px}
   #pageno{font-family:var(--mono)}
   #hint{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(244,239,230,.4);z-index:5;letter-spacing:.08em}
-
-  #notes{position:absolute;inset:0;background:rgba(10,8,6,.94);z-index:40;display:none;padding:64px 84px;flex-direction:column;justify-content:center}
+  #notes{position:absolute;inset:0;background:rgba(10,8,6,.94);z-index:40;display:none;padding:60px 84px;flex-direction:column;justify-content:center}
   #notes.show{display:flex}
   #notes h4{text-transform:uppercase;letter-spacing:.2em;font-size:14px;color:var(--accent);margin-bottom:14px}
-  #notes .say{font-family:var(--serif);font-size:26px;line-height:1.42;color:var(--ink);max-width:28em}
-  #notes .meta{margin-top:20px;font-size:17px;color:var(--ink2)}
-
-  @media (prefers-reduced-motion: reduce){
-    .slide,[data-step]{transition:none!important}[data-step]{opacity:1;transform:none;filter:none}
-  }
+  #notes .say{font-family:var(--serif);font-size:24px;line-height:1.42;color:var(--ink);max-width:30em}
+  @media (prefers-reduced-motion: reduce){.slide,[data-step]{transition:none!important}[data-step]{opacity:1;transform:none;filter:none}}
 </style>
 <div id="viewport">
   <div id="deck">
 
-    <!-- 1 · TITLE -->
-    <section class="slide" data-accent="sand" data-notes="Frame this as a tools briefing built on meta-analyses, not opinion. We separate what's proven from what's popular-but-wrong.">
+    <!-- TITLE -->
+    <section class="slide" data-accent="sand" data-notes="Frame this as a numbered toolkit — 31 principles built on meta-analyses. Students recall by number; you supply the stories.">
       <div class="kicker" data-step>AYBKK Teacher Training <span class="sep">·</span> Evidence Module</div>
-      <h1 class="display" data-step>The Psychology of Learning<br>for Ashtanga Teachers</h1>
-      <div class="sub" data-step>What actually helps prospects, new students &amp; long-term practitioners</div>
-      <div class="zh-line zh" data-step>学习心理学 · 对潜在学员、新学员与长期练习者，真正有用的方法</div>
-      <div class="callout" data-step style="font-style:normal;font-size:19px;color:var(--ink2)">Built on <b>meta-analyses</b>, not single studies. Where the evidence is thin or wrong, we say so.</div>
+      <h1 class="display" data-step>The Psychology of Learning</h1>
+      <div class="sub" data-step>31 principles for teaching prospects, new &amp; long-term students</div>
+      <div class="zh-line zh" data-step>学习心理学 · 教学的 31 条原则</div>
+      <div class="callout" data-step style="font-style:normal;font-size:18px">Each principle has a <b>number</b> (recall it by number), a headline, and a 中文 line for instant context. Built on <b>meta-analyses</b>, not single studies.</div>
     </section>
 
-    <!-- 2 · THE FRAME -->
-    <section class="slide" data-accent="teal" data-notes="This is the whole module in one idea. Cleverness of cue matters far less than these three. Hold this frame over everything else.">
-      <div class="kicker" data-step>The single most useful frame <span class="sep">·</span> <span class="zh">最有用的框架</span></div>
-      <div class="big" data-step style="font-size:34px">What predicts whether a student stays and improves isn't the clever cue. It's three things:</div>
+    <!-- THE LENS -->
+    <section class="slide" data-accent="teal" data-notes="Before the list: the lens over all of it. Cleverness of cue matters far less than these three.">
+      <div class="kicker" data-step>The lens over all 31 <span class="sep">·</span> <span class="zh">贯穿全部的框架</span></div>
+      <div class="huge" data-step style="font-size:34px">What keeps a student &amp; makes them improve isn't the clever cue — it's three things:</div>
       <div class="frame3">
-        <div class="f" data-step><div class="n">01</div><div class="t">Real success</div><div class="d">they genuinely achieve the posture</div><div class="zh zh">真实的成功体验</div></div>
-        <div class="f" data-step><div class="n">02</div><div class="t">Some choice</div><div class="d">they feel a sense of autonomy</div><div class="zh zh">一定的自主选择</div></div>
-        <div class="f" data-step><div class="n">03</div><div class="t">The relationship</div><div class="d">the bond with the teacher</div><div class="zh zh">与老师的关系</div></div>
+        <div data-step><div class="n">A</div><div class="t">Real success</div><div class="d">they genuinely achieve it</div><div class="zh zh">真实的成功体验</div></div>
+        <div data-step><div class="n">B</div><div class="t">Some choice</div><div class="d">a sense of autonomy</div><div class="zh zh">一定的自主选择</div></div>
+        <div data-step><div class="n">C</div><div class="t">The relationship</div><div class="d">the bond with the teacher</div><div class="zh zh">与老师的关系</div></div>
       </div>
-      <div class="callout" data-step>Hold this frame while reading everything else.</div>
+      <div class="callout" data-step>Hold this while we go through the numbers.</div>
     </section>
 
-    <!-- 3 · MOTOR LEARNING: attention & practice -->
-    <section class="slide rail" data-accent="teal" data-notes="External focus is one of the most replicated findings in motor learning. Cue toward the effect, not the muscle. And structure practice by level.">
-      <div class="kicker" data-step>Motor learning <span class="sep">·</span> attention &amp; practice <span class="sep">·</span> <span class="zh">运动学习</span></div>
-      <ul class="pts">
-        <li data-step><b>External focus beats internal.</b> Cue the effect, not the body part — "press the floor away," not "engage your quads." <span class="zh">把注意力放在动作的效果上，比放在肌肉上更有效。</span> <span class="src">Wulf, most-replicated</span></li>
-        <li data-step><b>Short daily beats occasional long.</b> Distributed practice &gt; massed. The daily Mysore format already fits this. <span class="zh">每天短时间练习，胜过偶尔的长时间。</span></li>
-        <li data-step><b>Blocked for novices, varied for experts.</b> Random practice feels worse today but sticks better later — but high variation overwhelms beginners. <span class="zh">新手先重复，老手再变化。</span> <span class="src">contextual interference</span></li>
-      </ul>
-    </section>
+    <!-- principles injected here -->
+    <div id="anchor" style="display:none"></div>
 
-    <!-- 4 · FEEDBACK -->
-    <section class="slide rail" data-accent="teal" data-notes="The guidance hypothesis: too much feedback creates dependence, so performance collapses when you stop. Fade it as skill grows. And keep it about the task.">
-      <div class="kicker" data-step>Feedback <span class="sep">·</span> the guidance hypothesis <span class="sep">·</span> <span class="zh">反馈</span></div>
-      <ul class="pts">
-        <li data-step><b>Fade your corrections as skill grows.</b> Constant feedback creates dependence; less feedback = worse today, better learning. Don't correct every student on every pose every day. <span class="zh">随着进步，减少纠正，让学生自己感受体式。</span></li>
-        <li data-step><b>Keep feedback on the task, not the person.</b> <span class="stat">~1/3</span> of feedback interventions make performance <em>worse</em> — usually when aimed at the self. "The hand goes here," not "you always get this wrong." <span class="zh">反馈针对动作，不针对人。</span> <span class="src">Kluger &amp; DeNisi, 607 effects</span></li>
-      </ul>
-    </section>
-
-    <!-- 5 · SELF-EFFICACY -->
-    <section class="slide rail" data-accent="sage" data-notes="Bandura: four sources of confidence, and mastery dwarfs the rest. Your main job is to engineer real success — scale postures so they truly achieve them.">
-      <div class="kicker" data-step>Self-efficacy <span class="sep">·</span> Bandura's four sources <span class="sep">·</span> <span class="zh">自我效能</span></div>
-      <div class="big" data-step style="font-size:32px">Confidence is built, in order of power:</div>
-      <ul class="pts" style="margin-top:16px">
-        <li data-step><b>1 · Mastery</b> — actually succeeding. <em>By far the strongest.</em> Scale postures so students genuinely achieve them. <span class="zh">自信最强的来源是真实的成功。</span></li>
-        <li data-step><b>2 · Vicarious</b> — seeing <em>relatable</em> others succeed (not just advanced demos)</li>
-        <li data-step><b>3 · Verbal</b> — credible encouragement (helps, can't replace success)</li>
-        <li data-step><b>4 · Emotional</b> — teach students to read shaking &amp; fatigue as normal, not failure</li>
-      </ul>
-    </section>
-
-    <!-- 6 · AUTONOMY / OPTIMAL -->
-    <section class="slide rail" data-accent="sage" data-notes="OPTIMAL theory: expectancies + autonomy + external focus. They're free and they stack. Give small choices within a frame — natural in Mysore.">
-      <div class="kicker" data-step>Autonomy &amp; expectancies <span class="sep">·</span> OPTIMAL theory <span class="sep">·</span> <span class="zh">自主与预期</span></div>
-      <ul class="pts">
-        <li data-step><b>Set them up to expect success.</b> Honest positive framing improves performance <em>and</em> learning — not just kindness. <span class="zh">让学生相信"能做到"，表现和学习都更好。</span></li>
-        <li data-step><b>Give small choices within a frame.</b> Which variation, how many breaths, when to ask. Self-controlled practice learns better. Natural in Mysore. <span class="zh">给学生一定的掌控，学得更好。</span></li>
-        <li data-step><b>Cue externally.</b> Together these three stack — and they're free. <span class="src">Wulf &amp; Lewthwaite, 2016</span></li>
-      </ul>
-    </section>
-
-    <!-- 7 · DROPOUT & HABIT -->
-    <section class="slide rail" data-accent="terra" data-notes="The first 3 months are a retention emergency. Front-load relationship, success, habit. And correct the myths students carry about habits.">
-      <div class="kicker" data-step>Motivation &amp; dropout <span class="sep">·</span> <span class="zh">坚持与流失</span></div>
-      <ul class="pts">
-        <li data-step><b>The first 3 months are the danger zone.</b> <span class="stat">~63%</span> of new members quit before month 3; attendance studies show ~50%. Treat the first 90 days as a retention emergency. <span class="zh">前三个月最容易放弃。头90天重点建立关系、成功感、习惯。</span> <span class="src">Sperandei 2016</span></li>
-        <li data-step><b>Habit takes ~66 days, not 21 — and missing a day is fine.</b> Set this expectation to prevent early discouragement. <span class="zh">养成习惯平均约66天，漏掉一天没关系。</span> <span class="src">Lally 2010</span></li>
-        <li data-step><b>Use if-then plans + a simple practice log.</b> "After I wake, I roll out my mat." Tie practice to a fixed cue, time, place. <span class="zh">用"如果…就…"计划，并记录练习。</span></li>
-      </ul>
-    </section>
-
-    <!-- 8 · TEACHER BLIND SPOTS -->
-    <section class="slide rail" data-accent="terra" data-notes="The most important warning for a skilled teacher. You underestimate beginner difficulty by about 2x. Don't trust 'this is easy.' Watch and ask.">
-      <div class="kicker" data-step>The teacher's blind spots <span class="sep">·</span> <span class="zh">老师的盲点</span></div>
-      <ul class="pts">
-        <li data-step><b>You underestimate beginner difficulty by ~<span class="stat">2×</span>.</b> Expertise makes predictions <em>worse</em>. Don't trust "this is easy" — watch beginners and ask them directly. <span class="zh">老师会严重低估新手的难度（约两倍）。别相信直觉，多观察多问。</span> <span class="src">Hinds 1999; expert blind spot</span></li>
-        <li data-step><b>The expertise-reversal effect.</b> Heavy step-by-step guidance that helps a novice <em>holds back</em> an experienced student — the extra detail is now load. Fade it. <span class="zh">对新手有用的详细指导，对老手反而有害。</span></li>
-        <li data-step><b>Novices: full demos, few cues.</b> Working memory is limited — break it into small steps, don't pile on cues. <span class="src">cognitive load</span></li>
-      </ul>
-    </section>
-
-    <!-- 9 · PROSPECTS / MI -->
-    <section class="slide rail" data-accent="gold" data-notes="With prospects, do not sell. Motivational interviewing beats persuasion — draw out their own reasons. Pressure triggers reactance and backfires.">
-      <div class="kicker" data-step>Talking to prospects <span class="sep">·</span> don't sell <span class="sep">·</span> <span class="zh">与潜在学员</span></div>
-      <ul class="pts">
-        <li data-step><b>Motivational interviewing beats persuasion.</b> Ask open questions, listen, reflect their own reasons back, ask permission before advising. Let them talk themselves toward the decision. <span class="zh">用"动机式访谈"：提问、倾听、反映他们自己的理由，而不是推销。</span> <span class="src">Rubak 2005, 72 trials</span></li>
-        <li data-step><b>Pressure backfires — reactance.</b> Threaten someone's freedom to choose and they push back. "It's completely your decision" — and mean it. <span class="zh">越推越抗拒。保护对方的选择自由。</span></li>
-        <li data-step><b>The relationship predicts the outcome.</b> The alliance is a primary driver, not secondary to technique. <span class="src">Flückiger 2018, 295 studies</span></li>
-      </ul>
-    </section>
-
-    <!-- 10 · CHINESE LEARNERS -->
-    <section class="slide rail" data-accent="terra" data-notes="Critical for this cohort. Repetition is a path to depth, not shallow. Protect face — correct privately. Autonomy means volition, not independence — a trusted teacher can guide choices.">
-      <div class="kicker" data-step>Chinese learners <span class="sep">·</span> specifically <span class="sep">·</span> <span class="zh">中国学生</span></div>
-      <ul class="pts">
-        <li data-step><b>Repetition is a route to understanding, not shallow.</b> These students link memorizing and understanding — disciplined repetition of the sequence fits both Ashtanga and their tradition. <span class="zh">重复练习序列，对他们是通向理解的路径。</span></li>
-        <li data-step><b>Protect face (面子). Correct privately &amp; gently.</b> Don't expose incompetence in front of peers; normalize difficulty for the whole group. The one-on-one Mysore format suits this. <span class="zh">面子很重要。尽量私下纠正，不要当众让学生难堪。</span></li>
-        <li data-step><b>Autonomy = volition, not independence.</b> A respected teacher guiding choices <em>enhances</em> motivation here. Emphasize competence — real success — heavily. <span class="zh">"自主"指学生认同练习，而非脱离老师。可信任的老师引导选择，同样激发动力。</span></li>
-      </ul>
-    </section>
-
-    <!-- 11 · MYTHS TO DROP -->
-    <section class="slide" data-accent="terra" data-notes="Say these plainly in the module. They're popular and wrong. Teaching the debunk stops new teachers spreading them.">
+    <!-- MYTHS -->
+    <section class="slide" data-accent="terra" data-notes="Say these plainly. Popular and wrong. Teaching the debunk stops teachers spreading them.">
       <div class="kicker" data-step>Drop these <span class="sep">·</span> popular but unsupported <span class="sep">·</span> <span class="zh">该丢掉的迷思</span></div>
       <div class="myths">
         <div class="myth" data-step><span class="claim">Learning styles (visual/auditory)</span><span class="arrow">→</span><span class="real"><b>no credible evidence</b></span></div>
@@ -217,59 +126,119 @@
         <div class="myth" data-step><span class="claim">Left-brain / right-brain learners</span><span class="arrow">→</span><span class="real"><b>no evidence</b> (1,011 brain scans)</span></div>
         <div class="myth" data-step><span class="claim">More feedback is always better</span><span class="arrow">→</span><span class="real"><b>&gt;1/3</b> of feedback makes it worse</span></div>
       </div>
-      <div class="callout zh" data-step style="font-style:normal;font-size:17px;margin-top:20px">学习风格、强版成长型思维、21天习惯、一万小时定律、左右脑分型——都缺乏科学依据。</div>
+      <div class="callout zh" data-step style="font-style:normal;font-size:17px;margin-top:18px">学习风格、强版成长型思维、21天习惯、一万小时定律、左右脑分型——都缺乏科学依据。</div>
     </section>
 
-    <!-- 12 · THE STAGED PLAYBOOK -->
-    <section class="slide" data-accent="teal" data-notes="The whole module as a playbook. Different groups, different handling. This is the slide to keep on the wall.">
+    <!-- PLAYBOOK -->
+    <section class="slide" data-accent="teal" data-notes="The whole list as a playbook by group. The slide to keep on the wall.">
       <div class="kicker" data-step>The staged playbook <span class="sep">·</span> <span class="zh">分阶段的实操</span></div>
-      <div class="cards four">
-        <div class="card" data-step style="--c:var(--gold)"><h3>Prospects</h3><div class="zh">潜在学员</div><ul>
-          <li>MI, not sales</li><li>protect their choice</li><li>start the relationship</li><li>weight-loss-only = risk</li></ul></div>
-        <div class="card" data-step style="--c:var(--terra)"><h3>New</h3><div class="zh">新学员</div><ul>
-          <li>first 90 days = emergency</li><li>engineer real success</li><li>blocked, few cues</li><li>if-then plan + log</li></ul></div>
-        <div class="card" data-step style="--c:var(--sage)"><h3>Experienced</h3><div class="zh">老学员</div><ul>
-          <li>fade corrections sharply</li><li>variation &amp; recall</li><li>external focus under pressure</li><li>reinforce identity</li></ul></div>
-        <div class="card" data-step style="--c:var(--teal)"><h3>Teacher</h3><div class="zh">老师</div><ul>
-          <li>assume 2× difficulty</li><li>task-focused feedback</li><li>build shared goals</li><li>teach the debunked myths</li></ul></div>
+      <div class="cards">
+        <div class="card" data-step style="--c:var(--gold)"><h3>Prospects</h3><div class="zh">潜在学员</div><ul><li>MI, not sales (25)</li><li>protect their choice (26)</li><li>start the relationship (24)</li><li>weight-loss-only = risk (9)</li></ul></div>
+        <div class="card" data-step style="--c:var(--terra)"><h3>New</h3><div class="zh">新学员</div><ul><li>first 90 days = emergency (9)</li><li>engineer success (16)</li><li>blocked, few cues (3,19)</li><li>if-then + log (11,15)</li></ul></div>
+        <div class="card" data-step style="--c:var(--sage)"><h3>Experienced</h3><div class="zh">老学员</div><ul><li>fade corrections (4,20)</li><li>variation &amp; recall (3,22)</li><li>external focus (1,8)</li><li>reinforce identity (13)</li></ul></div>
+        <div class="card" data-step style="--c:var(--teal)"><h3>Teacher</h3><div class="zh">老师</div><ul><li>assume 2× difficulty (21)</li><li>task-focused feedback (5)</li><li>build shared goals (24)</li><li>teach the myths</li></ul></div>
       </div>
     </section>
 
-    <!-- 13 · CLOSE -->
-    <section class="slide" data-accent="sand" data-notes="Return to the frame. The relationship is not secondary to technique; it's a primary driver. Practice quality over hours. Honesty about evidence is itself part of the method.">
+    <!-- CLOSE -->
+    <section class="slide" data-accent="sand" data-notes="Return to the lens. The relationship is not secondary to technique. Practice quality over hours. Honesty about evidence is part of the method.">
       <div class="kicker" data-step>To close <span class="sep">·</span> <span class="zh">收束</span></div>
       <div class="huge" data-step>Real success <span class="hl">·</span> some choice <span class="hl">·</span><br>the relationship.</div>
       <div class="zh-line zh" data-step style="font-size:24px">真实的成功 · 一定的选择 · 师生关系。</div>
-      <div class="callout" data-step style="margin-top:26px">The relationship is not secondary to technique — it's a primary driver. Practice <b>quality</b> over hours. And be honest about the evidence: that honesty is part of the method.</div>
+      <div class="callout" data-step style="margin-top:24px">Thirty-one tools — but the relationship is not secondary to technique; it's a primary driver. Practice <b>quality</b> over hours. And be honest about the evidence: that honesty is part of the method.</div>
     </section>
 
     <div id="rail"><div id="railfill"></div></div>
-    <div id="chrome"><span id="brand">AYBKK · Ashtanga Yoga Bangkok</span><span id="pageno">01 / 13</span></div>
+    <div id="chrome"><span id="brand">AYBKK · Ashtanga Yoga Bangkok</span><span id="pageno">01 / 01</span></div>
     <div id="hint">→ / space · next &nbsp;&nbsp; ← · back &nbsp;&nbsp; F · fullscreen &nbsp;&nbsp; N · notes</div>
-    <div id="notes"><h4>Speaker note <span id="notesno"></span></h4><div class="say" id="notessay"></div>
-      <div class="meta">Full evidence &amp; citations: the teaching note in your vault.</div></div>
+    <div id="notes"><h4>Speaker note <span id="notesno"></span></h4><div class="say" id="notessay"></div></div>
 
   </div>
 </div>
 <script>
 (function(){
   "use strict";
-  var ACC={sand:["#c9a98a"],teal:["#7fa9b0"],sage:["#93a996"],terra:["#cf7d54"],gold:["#d8b98a"]};
-  var deck=document.getElementById('deck'),slides=[].slice.call(document.querySelectorAll('.slide'));
+  var GROUPS={
+    ML:{label:"Motor Learning",zh:"运动学习",acc:"#7fa9b0"},
+    MOT:{label:"Motivation & Adherence",zh:"动机与坚持",acc:"#d8b98a"},
+    BEL:{label:"Belief & Self-Efficacy",zh:"信念与自我效能",acc:"#93a996"},
+    TCH:{label:"The Teacher's Blind Spots",zh:"老师的盲点",acc:"#cf7d54"},
+    REL:{label:"Relationship & Prospects",zh:"关系与潜在学员",acc:"#b58bc9"},
+    CN:{label:"Chinese Learners",zh:"中国学生",acc:"#d3897c"}
+  };
+  // [group, who, headline, zh-context, explanation, source]
+  var P=[
+    ["ML","ALL — esp. under strain","External focus of attention","把注意力放在动作的效果上（如「把地板推开」），比放在肌肉上更有效。","Direct attention to the <em>effect</em> of the movement, not the body part. “Press the floor away” beats “straighten your arm.” Across dozens of studies since 1998, external focus improves both performance and learning — most of all in balance and under pressure.","Wulf · one of the most replicated findings"],
+    ["ML","NEW & EXPERIENCED","Distributed practice","每天短时间练习，胜过偶尔的长时间练习。","Practice spread over time retains far better than the same practice crammed together. Short daily practice beats occasional long workshops — the Mysore format already lives this. (Strong for simple skills; mixed for complex motor skills — be honest about that.)","Lee & Genovese 1988; Cepeda 2006"],
+    ["ML","NEW (blocked) → EXPERIENCED (varied)","Contextual interference","打乱顺序练习，当下更难，但长期记得更牢。新手先重复，老手再变化。","Practising several variations in random order performs worse <em>today</em> but transfers better <em>later</em> than doing all of one, then all of another. But high variation overwhelms beginners — keep new students blocked and repetitive (the fixed sequence); add variation only for the experienced.","Shea & Morgan 1979; Czyż 2024"],
+    ["ML","NEW → EXPERIENCED","Fade your feedback as skill grows","不要每次都纠正。随着进步，减少纠正，让学生自己感受体式。","Feedback given too often creates dependence, so performance collapses when it is removed. Less feedback = worse on practice day, better long-term learning. Don’t correct every student on every pose every day; deliberately fade corrections so they learn to feel the posture themselves.","Guidance hypothesis · Salmoni 1984"],
+    ["ML","ALL","Feedback about the task, not the person","反馈要针对动作，不要针对人。针对人的反馈，约三分之一会起反作用。","Feedback helps on average — but over a third of interventions make performance <em>worse</em>, usually when they point at the self (ego, worth). Keep it about the task: “the hand goes here,” not “you always get this wrong.”","Kluger & DeNisi 1996 · 607 effect sizes"],
+    ["ML","ALL","Self-controlled practice","让学生对练习有一定掌控，学得更好。","Learners who control some aspect of their own practice — when to get feedback, the order of tasks, use of props — learn better than those who don’t. In Mysore this is natural: they set their own pace and decide when to ask.","Chiviacowsky & Wulf"],
+    ["ML","ALL","OPTIMAL: three free factors that stack","给选择、让学生相信能成功、注意力向外，三者叠加效果最好。","Three things combine: enhanced expectancies (believing you’ll succeed), autonomy support (real choices), and an external focus. Each helps alone; together they help more. All three cost nothing.","Wulf & Lewthwaite 2016"],
+    ["ML","EXPERIENCED (vs NEW)","Choking: don’t monitor the automatic","熟练者在压力下过度关注自己的身体反而会失常；应关注呼吸或外部目标。新手则需要具体步骤。","Under pressure, experts who turn attention inward to monitor well-learned movement perform <em>worse</em> — the automatic becomes clumsy when consciously controlled. Steer experienced students to breath or an external focus. Novices are the opposite: give them concrete steps.","Beilock & Carr 2001"],
+    ["MOT","NEW & PROSPECTS","The first 90 days are the danger zone","前三个月最容易放弃。头90天要重点建立关系、成功感和习惯。","About 63% of new members quit before the third month; attendance studies show ~50%. Treat the first 90 days as a retention emergency — front-load relationship, success, and habit. Watch for “weight-loss only” as a red flag for early dropout.","Sperandei 2016 · 5,240 members"],
+    ["MOT","NEW","Habit takes ~66 days, not 21","养成习惯平均约66天（不是21天）。漏掉一天没关系。","Automaticity took a median of 66 days (range 18–254), not 21 — and missing one day did not derail it. Tell new students to expect two to three months before daily practice feels automatic, and that one missed day undoes nothing.","Lally 2010"],
+    ["MOT","NEW & PROSPECTS","If-then plans","用「如果…就…」计划：把练习和固定的时间、地点、日常动作绑定。","Specific “after I wake up, I roll out my mat” plans produce medium-to-large gains in follow-through. Tie practice to an existing daily cue, a fixed time, and a place. It works best when the student already wants to practise.","Gollwitzer & Sheeran 2006 · 94 studies"],
+    ["MOT","ALL","Self-Determination: autonomy, competence, relatedness","长期坚持靠三点：自主、胜任感、归属感。让学生爱上练习本身。","Motivation lasts when three needs are met: autonomy (choice), competence (feeling effective), and relatedness (connection). Intrinsic motivation predicts long-term adherence — help students enjoy the practice itself, not only the results.","Deci & Ryan · Teixeira 2012"],
+    ["MOT","NEW & EXPERIENCED","Identity: “I am a practitioner”","帮学生从「我在尝试瑜伽」转变为「我是一个练习者」。","People act in line with who they believe they are. Help students move from “I am trying yoga” to “I am a practitioner,” and pre-frame difficulty as a normal sign the practice matters — not proof they don’t belong.","Oyserman · identity-based motivation"],
+    ["MOT","ALL","Don’t over-reward what they already enjoy","用外部奖励刺激本来喜欢的事，反而会削弱内在兴趣。","Rewarding an already-enjoyable behaviour with external incentives can <em>reduce</em> the inner motivation (the overjustification effect). Avoid turning practice into badges, points, or heavy praise for outcomes — protect the student’s own reasons for practising.","Deci; Lepper, Greene & Nisbett 1973"],
+    ["MOT","NEW","Self-monitoring, goals, action plans","有证据支持的方法：记录练习、设定目标、制定计划。","Among behaviour-change techniques for physical activity, self-monitoring, goal-setting, and action-planning have the best evidence — self-monitoring most of all. Encourage a simple practice log or calendar. Cheap, and evidence-backed.","Michie et al."],
+    ["BEL","ALL","Bandura: mastery is king","自信最强的来源是真实的成功。设计让学生真正做到的体式。","Confidence has four sources, in order of power: (1) mastery — actually succeeding, by far the strongest; (2) seeing <em>relatable</em> others succeed; (3) credible encouragement; (4) how you read fatigue and arousal. Above all, engineer real success — scale postures so students genuinely achieve them.","Bandura 1977, 1997"],
+    ["BEL","ALL — esp. PROSPECTS & NEW","Expectancy: honest positive framing","让学生相信「这个能做到」，表现和学习都会更好。","Telling learners they are doing well, or setting an easier success criterion, improves both performance and learning. Frame tasks as achievable and highlight genuine progress — honest positive framing is a performance tool, not just kindness.","Wulf; Palmer 2016"],
+    ["BEL","don’t oversell","Growth mindset: real but small","「成长型思维」是真的，但效果比流行说法小得多，别夸大。","The popular claim oversells it. Across 365,915 participants, mindset explained about 1% of achievement, and interventions averaged d = 0.08 — meaningful only for at-risk subgroups. Encourage an effort view if you like, but don’t build the module on it or promise it transforms outcomes.","Sisk 2018; Li & Bates 2019"],
+    ["TCH","about NOVICES","Cognitive load: full demos for beginners","新手记忆容量有限。多示范、分步骤、别一次给太多提示。","Working memory is limited. Novices learn better from full worked examples and demonstration than from being made to problem-solve, which overloads them. Break postures into small steps and don’t pile on many cues at once.","Sweller · cognitive load theory"],
+    ["TCH","NEW→EXPERIENCED boundary","The expertise-reversal effect","对新手有用的详细指导，对老手反而有害。进步后要减少指导。","Heavy guidance and worked examples that help novices become useless — or <em>harmful</em> — for advanced learners, because the extra information is now redundant load. Reduce detailed instruction as students advance. (This mirrors fading feedback, No.4.)","Kalyuga 2001"],
+    ["TCH","the key teacher warning","Curse of knowledge: assume ~2× harder","老师会严重低估新手的难度（约两倍）。别相信「这很简单」的直觉，多观察多问。","Experts underestimate how hard a task is for novices — beginners took about twice as long as experts predicted, and <em>more</em> expertise made the predictions worse. Debiasing didn’t fix it. Don’t trust your “this is easy.” Watch beginners and ask them directly.","Hinds 1999; Nathan & Petrosino 2003"],
+    ["TCH","NEW (mildly) & EXPERIENCED","Desirable difficulties & retrieval","感觉困难、缓慢的练习，往往长期效果更好。让学生凭记忆做序列。","Conditions that make practice feel harder and slower — spacing, interleaving, recall, reduced feedback — often produce better long-term learning. A smooth, easy class is not the same as good learning. Have students perform sequences from memory, not always by following.","Bjork · desirable difficulties"],
+    ["TCH","a whole-module warning","Deliberate practice: real, but ~18%","刻意练习重要，但只能解释运动表现的约18%。练习质量比时长更重要，但练习不能决定一切。","Structured, effortful practice matters — but the “10,000-hour rule” is a myth Ericsson himself rejected. Practice explained only ~18% of variance in sport; body, starting age, and life circumstances matter a great deal. Quality over hours — and don’t promise mastery purely as a function of time.","Macnamara 2014"],
+    ["REL","ALL — foundational","The working alliance predicts outcomes","师生关系是学习效果最强的预测因素之一。关系不是次要的，而是核心。","Across 295 studies and 30,000+ people, the quality of the relationship — shared goals, shared methods, and the personal bond — is one of the most consistent predictors of outcome, often mattering more than technique. For a shala, the teacher–student bond is a primary driver of whether students improve and stay.","Flückiger 2018"],
+    ["REL","PROSPECTS","Motivational interviewing, not sales","对潜在学员，用「动机式访谈」：提问、倾听、反映他们自己的理由，而不是推销。","A guiding, non-confrontational style that helps people resolve their own ambivalence beats advice-giving across 72 trials. With prospects, don’t pitch or pressure: ask open questions, listen, reflect their own reasons back, and ask permission before advising. Let them talk themselves toward the decision.","Miller & Rollnick; Rubak 2005"],
+    ["REL","PROSPECTS","Reactance: pushing backfires","越推越抗拒。保护对方的选择自由。","When people feel their freedom to choose is threatened, they push back and value the threatened option <em>less</em>. Pressuring a prospect toward a decision can produce the opposite of what you intend. Say “it’s completely your decision” — and mean it.","Brehm 1966 · reactance theory"],
+    ["REL","ALL — esp. NEW & EXPERIENCED","Approach & process goals","目标要「趋向」和「过程」导向（如「专注呼吸」），而不是「回避」或只看结果（如「别摔倒」）。","Approach goals (moving toward success) and process goals (executing the movement) sustain effort and lower anxiety better than avoidance goals or pure-outcome goals. Frame “focus on steady breathing through this sequence,” not “don’t fall” or “achieve the full posture.”","Elliot; Jackman 2022"],
+    ["CN","ALL Chinese students","The paradox of the Chinese learner","中国学生把「记忆」和「理解」看作相连。重复练习序列，对他们是通向理解的路径。","Chinese learners, often assumed to rote-memorize, frequently combine memorization <em>with</em> understanding — repetition is a route to depth, not shallowness. Disciplined repetition of the sequence fits both Ashtanga and their learning tradition. Frame progress as a matter of effort, which aligns with their attributions.","Watkins & Biggs; Marton 1996"],
+    ["CN","critical for NEW","Face (面子): correct privately","面子很重要。尽量私下纠正，不要当众让学生难堪。Mysore 一对一的方式很适合。","Social dignity (面子) strongly shapes behaviour: students may stay silent and avoid admitting difficulty to protect face, especially before peers. Correct privately and gently; don’t expose incompetence in public; normalize difficulty for the whole group so no one loses face. The one-on-one Mysore format suits this well.","research on Chinese classroom silence"],
+    ["CN","ALL Chinese students","Collectivism: guide the group","重视集体和谐。集体层面的引导，往往比单独点名更有效。","Collectivist patterns weight group harmony and interdependence. Public individual correction or singling someone out can disrupt harmony and cause discomfort beyond the individual. Group-level cues and shared norms often land better than individual spotlighting.","cross-cultural research"],
+    ["CN","ALL Chinese students","Autonomy = volition, not independence","自主支持在中国依然有效，但「自主」是指学生认同练习，而不是脱离老师。可信任的老师引导选择，同样能激发动力。","Autonomy support still works in China — but frame it right. Autonomy means the student endorses and <em>owns</em> the practice, not that they practise alone or reject the teacher’s authority. A respected teacher guiding choices <em>enhances</em> motivation rather than undermining it. Emphasize competence — real success — heavily.","Nalipay, King & Cai 2020 · 92,325 students"]
+  ];
+
+  // build principle slides in order; #anchor sits between the LENS slide and the MYTHS slide,
+  // so inserting each principle just before #anchor yields the correct sequence.
+  var deck=document.getElementById('deck'), anchor=document.getElementById('anchor');
+  P.forEach(function(p,i){
+    var g=GROUPS[p[0]], no=i+1, nn=(no<10?'0':'')+no;
+    var s=document.createElement('section');
+    s.className='slide principle rail';
+    s.setAttribute('data-accent-hex',g.acc);
+    s.setAttribute('data-notes','No.'+no+' — '+p[2]+'. Give your example or story here.');
+    s.innerHTML=
+      '<div class="ghost">'+nn+'</div>'+
+      '<div class="pgroup" data-step><span>'+g.label+' · <span class="zh">'+g.zh+'</span></span> <span class="who">'+p[1]+'</span></div>'+
+      '<div class="pno" data-step>Principle No. '+nn+'</div>'+
+      '<h2 class="phead" data-step>'+p[2]+'</h2>'+
+      '<div class="pzh zh" data-step>'+p[3]+'</div>'+
+      '<div class="pex" data-step>'+p[4]+'</div>'+
+      '<div class="psrc" data-step>'+p[5]+'</div>'+
+      '<div class="ptell" data-step>→ your example / story here</div>';
+    deck.insertBefore(s, anchor);
+  });
+
+  // ===== engine =====
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
   var railfill=document.getElementById('railfill'),pageno=document.getElementById('pageno');
   var notes=document.getElementById('notes'),notessay=document.getElementById('notessay'),notesno=document.getElementById('notesno');
+  var ACC={sand:"#c9a98a",teal:"#7fa9b0",sage:"#93a996",terra:"#cf7d54",gold:"#d8b98a",lav:"#b58bc9",rose:"#d3897c"};
   var idx=0,reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function scale(){var s=Math.min(window.innerWidth/1280,window.innerHeight/720);deck.style.transform='scale('+s+')';}
   window.addEventListener('resize',scale);scale();
   function pad(n){return (n<10?'0':'')+n;}
   function reveal(sl){sl.querySelectorAll('[data-step]').forEach(function(el,i){
     if(reduce){el.classList.add('on');return;}el.classList.remove('on');
-    setTimeout(function(){el.classList.add('on');},220+i*180);});}
+    setTimeout(function(){el.classList.add('on');},180+i*140);});}
   function show(n){
     n=Math.max(0,Math.min(slides.length-1,n));
     slides.forEach(function(s,i){s.classList.remove('active','prev');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('prev');});
-    var sl=slides[n],acc=ACC[sl.getAttribute('data-accent')]||ACC.teal;
-    deck.style.setProperty('--accent',acc[0]);
+    var sl=slides[n], hex=sl.getAttribute('data-accent-hex')||ACC[sl.getAttribute('data-accent')]||ACC.teal;
+    deck.style.setProperty('--accent',hex);
     railfill.style.width=(n/(slides.length-1)*100)+'%';
     pageno.textContent=pad(n+1)+' / '+pad(slides.length);
     idx=n;reveal(sl);
