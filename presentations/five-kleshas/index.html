@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Five Kleshas — The Roots of Suffering</title>
+<style>
+  /* ===== AYBKK · The Five Kleshas · high-contrast · offline · macOS-native ===== */
+  :root{
+    --bg1:#0c0a09; --bg2:#141110; --ink:#f2ece0; --ink2:#b7ae9e;
+    --hair:rgba(242,236,224,.12);
+    --ember:#b8442a; --gold:#e4b45e;
+    --accent:var(--ember);
+    --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:"Avenir Next","Avenir","Helvetica Neue",-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:"SF Mono","Menlo",monospace;
+    --zh:"PingFang SC","Songti SC","Heiti SC","Microsoft YaHei",sans-serif;
+    --dev:"Devanagari Sangam MN","Kohinoor Devanagari","Noto Sans Devanagari",serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#000;overflow:hidden;font-family:var(--sans)}
+  .zh{font-family:var(--zh);font-weight:500}
+  .dev{font-family:var(--dev)}
+
+  #viewport{position:fixed;inset:0;display:grid;place-items:center;background:#000}
+  #deck{width:1280px;height:720px;position:relative;transform-origin:center center;
+        background:radial-gradient(130% 130% at 22% 0%,var(--bg2),var(--bg1) 72%);
+        overflow:hidden;color:var(--ink)}
+  #deck::before{content:"";position:absolute;width:820px;height:820px;right:-220px;top:-280px;
+     border-radius:50%;background:radial-gradient(circle,var(--accent) 0%,transparent 60%);
+     opacity:.10;filter:blur(10px);transition:background 1.1s ease,opacity 1.1s ease;pointer-events:none}
+  #deck::after{content:"";position:absolute;inset:0;pointer-events:none;
+     background:radial-gradient(135% 105% at 50% 52%,transparent 52%,rgba(0,0,0,.55));}
+
+  .slide{position:absolute;inset:0;padding:80px 96px;display:flex;flex-direction:column;
+    justify-content:center;opacity:0;visibility:hidden;
+    transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1);
+    transform:translateY(18px) scale(.992)}
+  .slide.active{opacity:1;visibility:visible;transform:none;z-index:2}
+  .slide.prev{transform:translateY(-14px) scale(.992)}
+  .slide.rail::before{content:"";position:absolute;left:0;top:92px;bottom:92px;width:5px;
+    border-radius:0 4px 4px 0;background:linear-gradient(var(--accent),transparent);opacity:.9}
+
+  .kicker{font-weight:600;font-size:18px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:22px}
+  .kicker .sep{opacity:.5;margin:0 .5em}
+  h1{font-family:var(--serif);font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  .display{font-size:82px}
+  .big{font-size:52px;font-family:var(--serif);line-height:1.1;font-weight:600}
+  .huge{font-size:72px;font-family:var(--serif);line-height:1.05;font-weight:600}
+  .sub{font-size:30px;color:var(--ink2);font-family:var(--serif);margin-top:12px}
+  .zh-line{font-size:25px;color:var(--accent);margin-top:20px;opacity:.95}
+  .zh-sub{font-size:21px;color:var(--ink2);margin-top:8px}
+  p.lead{font-size:31px;line-height:1.34;font-family:var(--serif);max-width:24em}
+  .hl{color:var(--accent);font-weight:600}
+  .gold{color:var(--gold)}
+  em{font-style:italic}
+  .quote{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--ink2);margin-top:22px}
+  .quote b{color:var(--gold);font-style:normal;font-weight:600}
+
+  [data-step]{opacity:0;transform:translateY(14px);filter:blur(3px);
+    transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1), filter .6s ease}
+  [data-step].on{opacity:1;transform:none;filter:none}
+
+  .kname{display:flex;align-items:baseline;gap:20px;flex-wrap:wrap}
+  .kname .rom{font-family:var(--serif);font-size:60px;font-weight:600;color:var(--ink)}
+  .kname .dev{font-size:40px;color:var(--accent);opacity:.85}
+  .kname .zh{font-size:30px;color:var(--ink2)}
+  .keng{font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);
+    margin-top:6px;font-weight:600}
+  .def{font-family:var(--serif);font-size:26px;line-height:1.34;margin-top:20px;max-width:20em;color:var(--ink)}
+  .story{font-size:20px;line-height:1.42;margin-top:18px;max-width:22em;color:var(--ink2);
+    border-left:2px solid var(--accent);padding-left:16px}
+  .story .zh{display:block;margin-top:6px;color:var(--ink2);font-size:16px;opacity:.85}
+  .sideways{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--ember);margin-top:14px;max-width:22em}
+  .inpractice{font-size:18px;color:var(--ink2);margin-top:14px}
+  .inpractice b{color:var(--ink)}
+  .antidote{margin-top:16px;font-size:19px;color:var(--gold);display:flex;align-items:center;gap:10px}
+  .antidote svg{width:20px;height:20px;flex:none;stroke:var(--gold);fill:none;stroke-width:1.6}
+  .antidote .zh{color:var(--gold);opacity:.8;font-size:15px;margin-left:.3em}
+
+  .withart{display:grid;grid-template-columns:1.12fr .88fr;gap:36px;align-items:center;height:100%}
+  .art{display:grid;place-items:center}
+  .art svg{width:100%;max-width:330px;height:auto;overflow:visible}
+
+  .draw{stroke-dasharray:var(--len,600);stroke-dashoffset:var(--len,600);
+    transition:stroke-dashoffset 1.2s ease .1s}
+  [data-step].on .draw{stroke-dashoffset:0}
+  .fadein{opacity:0;transition:opacity .8s ease .5s}
+  [data-step].on .fadein{opacity:1}
+  .pulse{transform-origin:center}
+  [data-step].on .pulse{animation:pulse 2.4s ease-in-out .8s infinite}
+  @keyframes pulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+  @keyframes flick{0%,100%{opacity:.7;transform:scaleY(1)}45%{opacity:1;transform:scaleY(1.12)}70%{opacity:.85;transform:scaleY(.96)}}
+  [data-step].on .flame{transform-origin:bottom center;animation:flick 1.8s ease-in-out .6s infinite}
+  .glow{filter:drop-shadow(0 0 7px var(--accent))}
+  .glowg{filter:drop-shadow(0 0 8px var(--gold))}
+
+  .chain{display:flex;align-items:center;gap:14px;margin-top:26px;flex-wrap:wrap;font-size:22px}
+  .chain .node{border:1px solid var(--hair);border-radius:10px;padding:10px 16px;background:rgba(242,236,224,.03)}
+  .chain .node b{color:var(--ember)}
+  .chain .op{color:var(--accent)}
+
+  .states{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:30px}
+  .st{border:1px solid var(--hair);border-top:3px solid var(--accent);border-radius:12px;padding:18px 20px}
+  .st h4{font-family:var(--serif);font-size:23px;color:var(--ink)}
+  .st .zh{font-size:16px;color:var(--ink2);margin-top:2px}
+  .st p{font-size:15px;color:var(--ink2);margin-top:8px;line-height:1.3}
+  .antidotes{display:flex;gap:26px;margin-top:26px;flex-wrap:wrap}
+  .antidotes div{font-size:17px;color:var(--gold)}
+  .antidotes b{color:var(--ink)}
+
+  #chrome{position:absolute;left:96px;right:96px;bottom:32px;display:flex;justify-content:space-between;
+    align-items:center;font-size:15px;color:var(--ink2);letter-spacing:.04em;z-index:5}
+  #rail{position:absolute;left:96px;right:96px;bottom:62px;height:2px;background:var(--hair);z-index:5}
+  #railfill{height:100%;width:0;background:linear-gradient(90deg,var(--ember),var(--gold));transition:width .5s ease}
+  #brand{font-weight:600;color:var(--ink);letter-spacing:.18em;text-transform:uppercase;font-size:13px}
+  #pageno{font-family:var(--mono)}
+  #hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:12px;
+    color:rgba(242,236,224,.4);z-index:5;letter-spacing:.08em}
+
+  #notes{position:absolute;inset:0;background:rgba(6,5,4,.95);z-index:40;display:none;
+    padding:66px 88px;flex-direction:column;justify-content:center}
+  #notes.show{display:flex}
+  #notes h4{text-transform:uppercase;letter-spacing:.2em;font-size:15px;color:var(--gold);margin-bottom:16px}
+  #notes .say{font-family:var(--serif);font-size:27px;line-height:1.42;color:var(--ink);max-width:27em}
+  #notes .meta{margin-top:22px;font-size:18px;color:var(--ink2);max-width:30em}
+  #notes .meta b{color:var(--gold)}
+
+  @media (prefers-reduced-motion: reduce){
+    .slide,[data-step],.draw,.fadein{transition:none!important}
+    .pulse,.flame{animation:none!important}
+    [data-step]{opacity:1;transform:none;filter:none}.draw{stroke-dashoffset:0}
+  }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="deck">
+
+    <!-- 1 · TITLE -->
+    <section class="slide" data-accent="gold" data-notes="Open low and slow. Tonight we look straight at suffering — not to wallow, but because the sutras promise the future kind can be avoided. | 今晚我们直视苦。">
+      <div class="kicker" data-step>Boonchu Tanti <span class="sep">·</span> Indepth China <span class="sep">·</span> 2026</div>
+      <div class="dev" data-step style="font-size:34px;color:var(--gold);opacity:.8">पञ्च क्लेशाः</div>
+      <h1 class="display" data-step>The Five Kleshas</h1>
+      <div class="sub" data-step>The Roots of Suffering <span class="zh" style="margin-left:.4em">五种烦恼 · 苦的根源</span></div>
+      <div class="quote" data-step>"Heyaṃ duḥkham anāgatam" — <b>future suffering can be avoided.</b><br><span class="zh" style="font-style:normal;font-size:19px">尚未到来的苦，可以避免。</span> <span style="font-size:16px;opacity:.6">— Yoga Sutra II.16</span></div>
+      <svg data-step viewBox="0 0 200 220" style="position:absolute;right:120px;top:150px;width:300px;opacity:.9;fill:none;overflow:visible">
+        <path class="draw" style="--len:180" d="M20 190 h160" stroke="var(--ink2)" stroke-width="1.4" stroke-opacity=".5"/>
+        <g stroke="var(--ember)" stroke-width="2" stroke-linecap="round">
+          <path class="fadein" style="transition-delay:.5s" d="M50 190 C50 160 40 150 44 138"/>
+          <path class="fadein" style="transition-delay:.7s" d="M80 190 C80 150 70 138 76 122"/>
+          <path class="fadein glow" style="transition-delay:.9s" d="M110 190 C110 140 102 122 110 100"/>
+          <path class="fadein" style="transition-delay:1.1s" d="M140 190 C140 150 150 138 144 122"/>
+          <path class="fadein" style="transition-delay:1.3s" d="M170 190 C170 160 180 150 176 138"/>
+        </g>
+        <circle class="pulse glowg" cx="110" cy="96" r="6" fill="var(--gold)"/>
+      </svg>
+    </section>
+
+    <!-- 2 · ROOT & CHAIN -->
+    <section class="slide rail" data-accent="ember" data-notes="Make the case that pain is a mind event. Use the knee. Then plant the key structural idea: avidya is the soil; the other four grow from it. | 痛，是心的事件。无明是土壤。">
+      <div class="kicker" data-step>The Root <span class="sep">·</span> <span class="zh">根源</span></div>
+      <p class="lead" data-step>Pain in practice is <span class="hl">not just physical</span> —<br>the mind fuels it.</p>
+      <div class="zh-line zh" data-step>练习中的痛，不只是身体的——是心在助燃。</div>
+      <div class="chain" data-step>
+        <span class="node">Knee pain <span class="zh" style="font-size:14px">膝痛</span></span><span class="op">→</span>
+        <span class="node">frustration</span><span class="op">→</span>
+        <span class="node">tight breath</span><span class="op">→</span>
+        <span class="node"><b>more pain</b></span>
+      </div>
+      <div class="sideways" data-step style="color:var(--ink2);font-style:normal;margin-top:26px;font-size:22px"><span class="hl">Avidyā is the field.</span> The other four are its crop. <span class="zh" style="font-size:17px">无明是土壤，其余四种，是长在其上的作物。</span> <span style="opacity:.6;font-size:16px">(YS 2.4)</span></div>
+    </section>
+
+    <!-- 3 · AVIDYA -->
+    <section class="slide rail" data-accent="ember" data-notes="The root klesha. The tiger among goats: a life lived weak and afraid — not from any real limit, but from a false name for oneself. | 羊群中的虎——因错认自己而活得怯弱。">
+      <div class="withart">
+        <div>
+          <div class="kname" data-step><span class="rom">Avidyā</span><span class="dev">अविद्या</span><span class="zh">无明</span></div>
+          <div class="keng" data-step>Ignorance · the root <span class="zh" style="text-transform:none;letter-spacing:0">无知 · 根</span></div>
+          <div class="def" data-step>Mistaking the impermanent for the permanent — the not-Self for the Self. <span style="opacity:.6;font-size:17px">(YS 2.5)</span></div>
+          <div class="story" data-step>The tiger cub raised among goats — bleating, grazing, afraid — until it sees its reflection, and roars.<span class="zh">一只在羊群中长大的虎，直到看见水中的倒影，才想起自己是谁。</span></div>
+          <div class="sideways" data-step>A whole life lived weak — not from any real limit, but from a false name.</div>
+          <div class="inpractice" data-step><b>In practice:</b> "I can't do this posture = I am not enough." <span class="zh">「我做不到 = 我不够好」</span></div>
+          <div class="antidote" data-step><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Svādhyāya — self-study · presence · viveka <span class="zh">自我研习 · 临在 · 明辨</span></div>
+        </div>
+        <div class="art" data-step>
+          <svg viewBox="0 0 200 220">
+            <path class="draw glow" style="--len:520" d="M40 200 C20 170 60 150 70 160 C90 176 40 120 70 110 C110 96 150 130 150 96 C150 66 118 60 120 44" fill="none" stroke="var(--ember)" stroke-width="4" stroke-linecap="round"/>
+            <path class="fadein" style="transition-delay:1s" d="M120 44 c-8 -6 -8 -16 0 -22 c8 6 8 16 0 22z" fill="var(--ember)" stroke="none"/>
+            <circle class="fadein" style="transition-delay:1.2s" cx="116" cy="28" r="1.6" fill="var(--bg1)"/>
+            <circle class="fadein" style="transition-delay:1.2s" cx="124" cy="28" r="1.6" fill="var(--bg1)"/>
+            <path class="fadein glowg" style="transition-delay:1.4s" d="M112 12 l4 8 m8 -8 l-4 8" stroke="var(--gold)" stroke-width="1.4" fill="none"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · ASMITA -->
+    <section class="slide rail" data-accent="ember" data-notes="Ego. Ravana disdained to name humans in his boon — and a human ended him. It was not his power but his ego that authored his ruin. | 傲慢——罗波那的自负杀了他。">
+      <div class="withart">
+        <div>
+          <div class="kname" data-step><span class="rom">Asmitā</span><span class="dev">अस्मिता</span><span class="zh">我执</span></div>
+          <div class="keng" data-step>Egoism · I-am-ness <span class="zh" style="text-transform:none;letter-spacing:0">自我</span></div>
+          <div class="def" data-step>Confusing the Seer with the instrument of seeing — the manufactured "I." <span style="opacity:.6;font-size:17px">(YS 2.6)</span></div>
+          <div class="story" data-step>Rāvaṇa — scholar, devotee, king — was so proud he never named a human as a threat in his boon. A "mere human," Rāma, ended him.<span class="zh">罗波那博学而虔诚，却因傲慢，求庇佑时不屑将「人」列为威胁；终为凡人罗摩所灭。</span></div>
+          <div class="sideways" data-step>It was not his power, but his ego, that authored his ruin.</div>
+          <div class="inpractice" data-step><b>In practice:</b> "I know, I know. I am strong. I am flexible. I am <em>not</em> flexible." <span class="zh">「我懂。我很强。我很柔软。我不够柔软。」</span></div>
+          <div class="antidote" data-step><svg viewBox="0 0 24 24"><path d="M12 21c5-3 8-6 8-11V5l-8-3-8 3v5c0 5 3 8 8 11z"/></svg>Humility in repetition · gratitude in surrender <span class="zh">重复中谦卑 · 臣服中感恩</span></div>
+        </div>
+        <div class="art" data-step>
+          <svg viewBox="0 0 200 220">
+            <path class="draw glow" style="--len:360" d="M50 120 L50 70 L74 96 L100 56 L126 96 L150 70 L150 120 Z" fill="none" stroke="var(--ember)" stroke-width="3.5" stroke-linejoin="round"/>
+            <g fill="var(--ember)" class="fadein" style="transition-delay:.9s"><circle cx="50" cy="70" r="4"/><circle cx="100" cy="56" r="5"/><circle cx="150" cy="70" r="4"/></g>
+            <path class="fadein" style="transition-delay:1.1s" d="M50 130 h100" stroke="var(--ember)" stroke-width="3" stroke-linecap="round"/>
+            <g class="fadein" style="transition-delay:1.3s" stroke="var(--gold)" stroke-width="1.6" stroke-linecap="round" opacity=".8">
+              <path d="M60 150 q4 18 -2 34"/><path d="M84 150 q2 22 -4 40"/><path d="M108 150 q4 16 -2 30"/><path d="M132 150 q2 20 -4 36"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · RAGA -->
+    <section class="slide rail" data-accent="ember" data-notes="Craving. Yayati borrowed his son's youth, indulged 1000 years, learned desire flares like fire fed with ghee. A millennium of pleasure, emptier than before. | 贪——亚雅提纵欲千年，越烧越旺。">
+      <div class="withart">
+        <div>
+          <div class="kname" data-step><span class="rom">Rāga</span><span class="dev">राग</span><span class="zh">贪</span></div>
+          <div class="keng" data-step>Attachment · craving <span class="zh" style="text-transform:none;letter-spacing:0">执着</span></div>
+          <div class="def" data-step>Clinging to pleasure — organizing life around repeating it. <span style="opacity:.6;font-size:17px">(YS 2.7)</span></div>
+          <div class="story" data-step>King Yayāti took his son's youth and indulged a thousand years — and found desire is never quenched by enjoyment; it flares, like fire fed with ghee.<span class="zh">亚雅提王借来儿子的青春，纵欲千年，终于明白：欲望不因享受而止，反如浇了酥油的火，越烧越旺。</span></div>
+          <div class="sideways" data-step>A thousand extra years of pleasure left him emptier than before.</div>
+          <div class="inpractice" data-step><b>In practice:</b> "I want that depth, that old jump, yesterday's practice." <span class="zh">「我想找回那个深度、那一跳、昨天的练习。」</span></div>
+          <div class="antidote" data-step><svg viewBox="0 0 24 24"><path d="M12 3v6m0 0l-3-2m3 2l3-2M5 13a7 7 0 1014 0"/></svg>Remember impermanence · enjoy what comes, let go when it goes <span class="zh">忆无常 · 来则享，去则放</span></div>
+        </div>
+        <div class="art" data-step>
+          <svg viewBox="0 0 200 220">
+            <path class="flame glow draw" style="--len:360" d="M100 200 C70 170 78 140 92 120 C96 138 108 140 108 128 C126 150 130 176 118 194 C112 200 106 202 100 200Z" fill="var(--ember)" fill-opacity=".85" stroke="var(--ember)" stroke-width="2"/>
+            <path class="flame" d="M100 190 C88 176 92 158 100 148 C104 160 112 162 110 174 C110 184 106 190 100 190Z" fill="var(--gold)" fill-opacity=".9" style="animation-delay:.3s"/>
+            <circle class="fadein glowg" style="transition-delay:1s" cx="100" cy="60" r="6" fill="var(--gold)"/>
+            <path class="fadein" style="transition-delay:1.1s" d="M100 68 q4 20 0 44" stroke="var(--gold)" stroke-width="1.4" fill="none" stroke-opacity=".7"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 · DVESA -->
+    <section class="slide rail" data-accent="ember" data-notes="Aversion. Shishupala's lifelong hatred of Krishna: he hurls his hundredth insult and the chakra takes his head. Hatred drove him straight into the ruin he wished on another. | 嗔——童护王的仇恨杀了自己。">
+      <div class="withart">
+        <div>
+          <div class="kname" data-step><span class="rom">Dveṣa</span><span class="dev">द्वेष</span><span class="zh">嗔</span></div>
+          <div class="keng" data-step>Aversion · dislike <span class="zh" style="text-transform:none;letter-spacing:0">厌恶</span></div>
+          <div class="def" data-step>Recoiling from pain — the mirror of craving. <span style="opacity:.6;font-size:17px">(YS 2.8)</span></div>
+          <div class="story" data-step>Śiśupāla nursed a lifelong hatred of Krishna. At the great sacrifice he hurled his hundredth insult — and the Sudarśana-chakra took his head.<span class="zh">童护王一生仇恨黑天；大典之上，他骂出第一百句，善见神轮当即取其首级。</span></div>
+          <div class="sideways" data-step>His hatred drove him into the very ruin he wished on another. It eats the hater.</div>
+          <div class="inpractice" data-step><b>In practice:</b> avoiding backbends, twists, early mornings — laziness and excuses. <span class="zh">逃避后弯、扭转、清晨——懒惰与借口。</span></div>
+          <div class="antidote" data-step><svg viewBox="0 0 24 24"><path d="M4 14h6l-2 6M20 10h-6l2-6M6 10c0-4 4-6 6-6s6 2 6 6M18 14c0 4-4 6-6 6s-6-2-6-6"/></svg>Steady breath through challenge — Dveṣa becomes the <span class="gold">doorway</span> <span class="zh">于挑战中稳住呼吸 · 嗔成门户</span></div>
+        </div>
+        <div class="art" data-step>
+          <svg viewBox="0 0 200 220">
+            <circle class="pulse glow" cx="100" cy="120" r="26" fill="var(--ember)" fill-opacity=".9"/>
+            <circle cx="100" cy="120" r="14" fill="var(--gold)" fill-opacity=".85" class="pulse"/>
+            <g class="draw glow" style="--len:520" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round">
+              <path d="M70 150 C60 140 60 122 74 122 C74 110 92 108 92 122 C92 108 110 106 110 122 C110 108 128 110 128 124 C138 120 146 132 138 146 C132 160 118 172 100 172 C86 172 76 162 70 150Z"/>
+            </g>
+            <g class="fadein" style="transition-delay:1.2s" stroke="var(--ember)" stroke-width="1.6" stroke-linecap="round" opacity=".8">
+              <path d="M100 84 v-14 M84 90 l-8 -12 M116 90 l8 -12"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 · ABHINIVESA -->
+    <section class="slide rail" data-accent="ember" data-notes="Fear of death. Nachiketa faces Yama, refuses every bribe, keeps only his question — and wins the deathless. The counter-image: Aesop's dog lunges at its reflection and drops the real bone. The grip causes the loss. | 怖畏——纳奇凯塔直面死神。抓得越紧，失得越快。">
+      <div class="withart">
+        <div>
+          <div class="kname" data-step><span class="rom">Abhiniveśā</span><span class="dev">अभिनिवेश</span><span class="zh">怖畏</span></div>
+          <div class="keng" data-step>Clinging to life · fear of death <span class="zh" style="text-transform:none;letter-spacing:0">贪生</span></div>
+          <div class="def" data-step>The will-to-live and dread of ending — rooted even in the wise. <span style="opacity:.6;font-size:17px">(YS 2.9)</span></div>
+          <div class="story" data-step>Sent to Death, the boy Nachiketā refused every bribe — long life, gold, dancing girls — and kept only his question. He won the Self that death cannot touch.<span class="zh">少年纳奇凯塔被送到死神门前，拒绝一切诱惑，只守着他的问题，终得那死亡无法触及的「真我」。</span></div>
+          <div class="sideways" data-step>Aesop's dog lunges at its reflection for a second bone — and drops the real one. The grip <em>causes</em> the loss it fears.</div>
+          <div class="inpractice" data-step><b>In practice:</b> panic in deep asana, breath-holds, transitions. <span class="zh">深度体式、屏息、过渡中的惊慌。</span></div>
+          <div class="antidote" data-step><svg viewBox="0 0 24 24"><path d="M4 12h5l2-5 3 10 2-5h4"/></svg>You are not the body · follow the task at hand · one step at a time <span class="zh">你非此身 · 专注眼前 · 一次一步</span></div>
+        </div>
+        <div class="art" data-step>
+          <svg viewBox="0 0 200 220">
+            <g class="draw glow" style="--len:340" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round">
+              <path d="M60 44 C52 44 50 56 60 58 C50 62 54 74 64 70 L128 96 C138 100 146 90 138 82 C148 82 148 68 138 68 L74 46 C70 42 64 42 60 44Z"/>
+            </g>
+            <line class="fadein" style="transition-delay:.8s" x1="120" y1="96" x2="140" y2="150" stroke="var(--ink2)" stroke-width="1.4" stroke-dasharray="3 5"/>
+            <g class="fadein" style="transition-delay:1s" fill="none" stroke="var(--gold)" stroke-width="1.6" opacity=".8">
+              <path class="pulse" d="M70 170 q30 -14 60 0"/>
+              <path class="pulse" style="animation-delay:.4s" d="M56 186 q44 -18 88 0"/>
+              <path class="pulse" style="animation-delay:.8s" d="M44 200 q56 -20 112 0"/>
+            </g>
+            <path class="fadein" style="transition-delay:1.3s" d="M138 152 l-6 -4 m6 4 l-4 6" stroke="var(--gold)" stroke-width="1.4" fill="none"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 · FOUR STATES + MESSENGERS -->
+    <section class="slide rail" data-accent="gold" data-notes="The advanced-student caution: a klesha you don't feel is not a klesha you've killed. Then reframe: these are messengers. The antidotes are insight, not war. | 潜伏的种子不是死去的种子。烦恼是信使。">
+      <div class="kicker" data-step>A caution for the advanced <span class="sep">·</span> <span class="zh">给资深练习者</span></div>
+      <div class="big" data-step style="font-size:38px">A <span class="gold">dormant</span> seed is not a <span class="gold">dead</span> seed. <span class="zh" style="font-size:22px">潜伏的种子，不是死去的种子。</span></div>
+      <div class="states">
+        <div class="st" data-step><h4>Dormant</h4><div class="zh">潜伏</div><p>a seed only — until conditions water it</p></div>
+        <div class="st" data-step><h4>Attenuated</h4><div class="zh">减弱</div><p>thinned by practice, but still there</p></div>
+        <div class="st" data-step><h4>Interrupted</h4><div class="zh">间断</div><p>overridden, flickering on and off</p></div>
+        <div class="st" data-step><h4>Active</h4><div class="zh">活跃</div><p>running the show at full strength</p></div>
+      </div>
+      <div class="big" data-step style="font-size:30px;margin-top:26px;color:var(--gold)">"The kleshas are not enemies. They are <span class="gold">messengers.</span>" <span class="zh" style="font-size:20px;color:var(--ink2)">烦恼不是敌人，而是信使。</span></div>
+      <div class="antidotes">
+        <div data-step><b>Kriyā yoga</b> — tapas · svādhyāya · īśvara-praṇidhāna</div>
+        <div data-step><b>Pratipakṣa bhāvana</b> — cultivate the opposite</div>
+        <div data-step><b>Viveka</b> — discernment</div>
+      </div>
+    </section>
+
+    <!-- 9 · CLOSE -->
+    <section class="slide" data-accent="gold" data-notes="Land it in gold. The kleshas are not the wall — they are the doorway, and each is carved with your own name. Let the last line sit in silence. | 不是墙，是门——门上刻着你的名字。让沉默停留。">
+      <div class="withart">
+        <div>
+          <div class="kicker" data-step>To Close <span class="sep">·</span> <span class="zh">收束</span></div>
+          <div class="huge" data-step style="font-size:56px">Not the <span class="hl">wall</span> in your practice —<br>the <span class="gold">doorway,</span><br>carved with your own name.</div>
+          <div class="zh-line zh" data-step style="color:var(--gold);font-size:24px">不是练习中的墙——<br>是门，门上刻着你自己的名字。</div>
+        </div>
+        <div class="art" data-step>
+          <svg viewBox="0 0 200 240">
+            <path class="draw" style="--len:520" d="M50 220 L50 70 A50 50 0 0 1 150 70 L150 220" fill="none" stroke="var(--ink2)" stroke-width="3"/>
+            <path class="fadein glowg" style="transition-delay:.7s" d="M78 220 L78 92 A22 22 0 0 1 122 92 L122 220 Z" fill="var(--gold)" fill-opacity=".16" stroke="var(--gold)" stroke-width="1.5"/>
+            <g class="fadein glowg" style="transition-delay:1.1s" stroke="var(--gold)" stroke-width="1.4" opacity=".8">
+              <path d="M100 118 v54 M84 132 l32 0 M88 150 l24 0"/>
+            </g>
+            <circle class="pulse glowg" cx="100" cy="104" r="5" fill="var(--gold)"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <div id="rail"><div id="railfill"></div></div>
+    <div id="chrome"><span id="brand">AYBKK · Ashtanga Yoga Bangkok</span><span id="pageno">01 / 09</span></div>
+    <div id="hint">→ / space · next &nbsp;&nbsp; ← · back &nbsp;&nbsp; F · fullscreen &nbsp;&nbsp; N · notes</div>
+    <div id="notes"><h4>Speaker note <span id="notesno"></span></h4><div class="say" id="notessay"></div>
+      <div class="meta">Full stories, sources &amp; delivery are in <b>talk-script.html</b>. Press <b>N</b> to close.</div></div>
+
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var ACC={ember:["#b8442a"],gold:["#e4b45e"]};
+  var deck=document.getElementById('deck'),slides=[].slice.call(document.querySelectorAll('.slide'));
+  var railfill=document.getElementById('railfill'),pageno=document.getElementById('pageno');
+  var notes=document.getElementById('notes'),notessay=document.getElementById('notessay'),notesno=document.getElementById('notesno');
+  var idx=0,reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function scale(){var s=Math.min(window.innerWidth/1280,window.innerHeight/720);deck.style.transform='scale('+s+')';}
+  window.addEventListener('resize',scale);scale();
+  function pad(n){return (n<10?'0':'')+n;}
+  function reveal(sl){var st=sl.querySelectorAll('[data-step]');st.forEach(function(el,i){
+    if(reduce){el.classList.add('on');return;}el.classList.remove('on');
+    setTimeout(function(){el.classList.add('on');},240+i*200);});}
+  function show(n){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,i){s.classList.remove('active','prev');if(i===n)s.classList.add('active');else if(i<n)s.classList.add('prev');});
+    var sl=slides[n],acc=ACC[sl.getAttribute('data-accent')]||ACC.ember;
+    deck.style.setProperty('--accent',acc[0]);
+    railfill.style.width=(n/(slides.length-1)*100)+'%';
+    pageno.textContent=pad(n+1)+' / '+pad(slides.length);
+    idx=n;reveal(sl);
+    var note=sl.getAttribute('data-notes')||'';notessay.textContent=note.split('|')[0].trim();
+    notesno.textContent='· '+pad(n+1)+'/'+pad(slides.length);
+  }
+  function next(){if(idx<slides.length-1)show(idx+1);}
+  function prev(){if(idx>0)show(idx-1);}
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+    else if(e.key==='Home'){show(0);}else if(e.key==='End'){show(slides.length-1);}
+    else if(e.key==='f'||e.key==='F'){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}else{document.exitFullscreen&&document.exitFullscreen();}}
+    else if(e.key==='n'||e.key==='N'){notes.classList.toggle('show');}
+    else if(e.key==='Escape'){notes.classList.remove('show');}
+  });
+  deck.addEventListener('click',function(e){if(e.target.closest('#notes'))return;next();});
+  show(0);
+})();
+</script>
+</body>
+</html>
