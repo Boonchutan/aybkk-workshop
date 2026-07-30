@@ -429,6 +429,8 @@
         inset 2px 2px 4px rgba(141, 79, 44, 0.16),
         inset -1px -1px 3px rgba(253, 250, 242, 0.55);
     }
+      .waiver-details summary { cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .waiver-text { white-space: pre-line; font-size: 12px; line-height: 1.6; opacity: .82; margin: 8px 0 6px; }
   </style>
 </head>
 <body>
@@ -564,6 +566,20 @@
             <span class="option selected" onclick="toggleOption(this, 'medical')">✅ Медицинский отказ от ответственности</span>
           </div>
           <input type="hidden" id="medicalConsent" value="yes">
+        </div>
+        <div class="field" id="waiverBox">
+          <details class="waiver-details">
+            <summary>📜 Отказ от ответственности и условия (нажмите, чтобы прочитать)</summary>
+            <div class="waiver-text">1. Йога — физическая активность; мышечная боль и лёгкий дискомфорт — нормальная часть практики.
+2. Я практикую на свой страх и риск, отвечаю за своё самочувствие, следую указаниям учителя и сообщу о травмах или проблемах со здоровьем до занятия.
+3. AYBKK, учителя и персонал не несут ответственности за травмы во время практики; я не буду предъявлять юридические претензии.
+4. Все платежи (абонементы, пакеты, разовые занятия, воркшопы) окончательны и возврату не подлежат. В особых случаях AYBKK может по своему усмотрению перевести остаток в кредит на будущий воркшоп или пакет AYBKK в течение 12 месяцев. Если AYBKK отменяет воркшоп — полный возврат или перенос на новые даты.
+5. AYBKK может делать фото/видео во время занятий и воркшопов для соцсетей и продвижения сообщества (действует ваш выбор фото выше).</div>
+          </details>
+          <div class="options" id="waiverOptions">
+            <span class="option" onclick="toggleOption(this, 'waiver')">📜 Я прочитал(а) и принимаю условия</span>
+          </div>
+          <input type="hidden" id="waiverConsent" value="no">
         </div>
       </div>
 
@@ -745,7 +761,11 @@ function toggleOption(el, type) {
 
 async function submitForm(e) {
   e.preventDefault();
-  
+  if (document.getElementById('waiverConsent').value !== 'yes') {
+    alert('Пожалуйста, сначала примите условия');
+    document.getElementById('waiverBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.textContent = '...';
@@ -760,6 +780,8 @@ async function submitForm(e) {
     size: document.getElementById('size').value,
     photoConsent: document.getElementById('photoConsent').value,
     medicalConsent: document.getElementById('medicalConsent').value,
+    waiverConsent: document.getElementById('waiverConsent').value,
+    waiverVersion: '1.0',
     gameResults: gameResults,
     language: currentLang,
     workshop: 'Russian WS May 2026',

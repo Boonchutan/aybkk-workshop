@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYBKK Moments 瞬间</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, sans-serif;
+      background: #f6f2ea;
+      color: #2b2620;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 0 10px 60px; }
+
+    header {
+      text-align: center;
+      padding: 34px 16px 22px;
+    }
+    header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+    header .sub {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #8b7d6b;
+    }
+    header .mark {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: #8b7d6b;
+    }
+
+    .day { margin-top: 26px; }
+    .day-head {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 0 4px 10px;
+    }
+    .day-head .d1 { font-size: 17px; font-weight: 800; }
+    .day-head .d2 { font-size: 12px; color: #8b7d6b; }
+    .day-head .count {
+      margin-left: auto;
+      font-size: 11px;
+      color: #8b7d6b;
+      background: #ede6d9;
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+    .cell {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #e8e0d2;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+    }
+    .cell img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .25s ease;
+    }
+    .cell:active img { transform: scale(0.97); }
+    .cell .play {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px;
+      color: #fff;
+      background: rgba(0,0,0,.22);
+      pointer-events: none;
+    }
+
+    .state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #8b7d6b;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .state .big { font-size: 34px; display: block; margin-bottom: 10px; }
+
+    footer {
+      text-align: center;
+      padding: 40px 16px 20px;
+      font-size: 11px;
+      color: #b3a58e;
+      letter-spacing: 0.06em;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(12, 10, 8, 0.96);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 50;
+    }
+    .lightbox.hidden { display: none; }
+    .lightbox img, .lightbox video {
+      max-width: 100vw;
+      max-height: 100vh;
+      object-fit: contain;
+    }
+    .lb-btn {
+      position: fixed;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      width: 42px; height: 42px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lb-close { top: 14px; right: 14px; }
+    .lb-prev { left: 8px; top: 50%; transform: translateY(-50%); }
+    .lb-next { right: 8px; top: 50%; transform: translateY(-50%); }
+    .lb-count {
+      position: fixed; top: 22px; left: 18px;
+      color: rgba(255,255,255,.75);
+      font-size: 12px;
+      letter-spacing: .08em;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span class="mark">A Y B K K</span>
+      <h1>Moments 瞬间</h1>
+      <div class="sub">Daily practice photos · 每日练习照片</div>
+    </header>
+
+    <div id="feed">
+      <div class="state" id="loadingState"><span class="big">🧘</span>Loading… 加载中…</div>
+    </div>
+
+    <footer>AYBKK · ASHTANGA YOGA BANGKOK</footer>
+  </div>
+
+  <div class="lightbox hidden" id="lightbox" onclick="closeLb(event)">
+    <span class="lb-count" id="lbCount"></span>
+    <div id="lbMedia"></div>
+    <button class="lb-btn lb-close" onclick="closeLb()">✕</button>
+    <button class="lb-btn lb-prev" onclick="stepLb(event, -1)">‹</button>
+    <button class="lb-btn lb-next" onclick="stepLb(event, 1)">›</button>
+  </div>
+
+<script>
+let FLAT = [];
+let lbIndex = 0;
+
+function thumbUrl(item) {
+  if (item.type === 'video') {
+    return item.url
+      .replace('/upload/', '/upload/w_600,h_600,c_fill,q_auto,so_0/')
+      .replace(/\.[a-z0-9]+$/i, '.jpg');
+  }
+  return item.url.replace('/upload/', '/upload/w_600,h_600,c_fill,q_auto,f_auto/');
+}
+function fullUrl(item) {
+  if (item.type === 'video') return item.url;
+  return item.url.replace('/upload/', '/upload/w_1600,q_auto,f_auto/');
+}
+
+const WEEKDAYS = [
+  ['Sunday', '星期日'], ['Monday', '星期一'], ['Tuesday', '星期二'], ['Wednesday', '星期三'],
+  ['Thursday', '星期四'], ['Friday', '星期五'], ['Saturday', '星期六']
+];
+
+function dayLabel(dateStr) {
+  const today = new Date();
+  const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  const yest = new Date(today.getTime() - 86400000);
+  const yestStr = yest.getFullYear() + '-' + String(yest.getMonth() + 1).padStart(2, '0') + '-' + String(yest.getDate()).padStart(2, '0');
+  const d = new Date(dateStr + 'T12:00:00');
+  const wd = WEEKDAYS[d.getDay()];
+  const nice = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  if (dateStr === todayStr) return { d1: 'Today 今天', d2: nice + ' · ' + wd[1] };
+  if (dateStr === yestStr) return { d1: 'Yesterday 昨天', d2: nice + ' · ' + wd[1] };
+  return { d1: nice, d2: wd[0] + ' · ' + wd[1] };
+}
+
+function render(days) {
+  const feed = document.getElementById('feed');
+  if (!days.length) {
+    feed.innerHTML = '<div class="state"><span class="big">🌱</span>No photos yet — check back after practice!<br>还没有照片，练习后再来看看吧</div>';
+    return;
+  }
+  FLAT = [];
+  let html = '';
+  for (const day of days) {
+    const lbl = dayLabel(day.date);
+    html += '<section class="day"><div class="day-head">'
+      + '<span class="d1">' + lbl.d1 + '</span>'
+      + '<span class="d2">' + lbl.d2 + '</span>'
+      + '<span class="count">' + day.items.length + '</span>'
+      + '</div><div class="grid">';
+    for (const item of day.items) {
+      const idx = FLAT.length;
+      FLAT.push(item);
+      html += '<button class="cell" onclick="openLb(' + idx + ')">'
+        + '<img loading="lazy" src="' + thumbUrl(item) + '" alt="AYBKK practice">'
+        + (item.type === 'video' ? '<span class="play">▶</span>' : '')
+        + '</button>';
+    }
+    html += '</div></section>';
+  }
+  feed.innerHTML = html;
+}
+
+function openLb(i) {
+  lbIndex = i;
+  showLb();
+  document.getElementById('lightbox').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function showLb() {
+  const item = FLAT[lbIndex];
+  const box = document.getElementById('lbMedia');
+  document.getElementById('lbCount').textContent = (lbIndex + 1) + ' / ' + FLAT.length;
+  if (item.type === 'video') {
+    box.innerHTML = '<video src="' + fullUrl(item) + '" controls autoplay playsinline></video>';
+  } else {
+    box.innerHTML = '<img src="' + fullUrl(item) + '" alt="AYBKK practice">';
+  }
+}
+function stepLb(e, dir) {
+  if (e) e.stopPropagation();
+  lbIndex = (lbIndex + dir + FLAT.length) % FLAT.length;
+  showLb();
+}
+function closeLb(e) {
+  if (e && e.target.closest('#lbMedia')) return;
+  document.getElementById('lightbox').classList.add('hidden');
+  document.getElementById('lbMedia').innerHTML = '';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lightbox').classList.contains('hidden')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') stepLb(null, -1);
+  if (e.key === 'ArrowRight') stepLb(null, 1);
+});
+
+fetch('/api/moments')
+  .then(r => r.json())
+  .then(data => render(data.days || []))
+  .catch(() => {
+    document.getElementById('feed').innerHTML =
+      '<div class="state"><span class="big">🙏</span>Could not load — please try again later<br>加载失败，请稍后再试</div>';
+  });
+</script>
+</body>
+</html>

@@ -208,6 +208,63 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET || 'kBwusl-gHqqNiZYykFgChJjt3MQ'
 });
 
+// ─── Moments feed ────────────────────────────────────────────────────────────
+// WeChat-moments-style photo feed for oriented students: /moments (page) +
+// GET /api/moments (data). Sources class photos the photo-watcher uploads to
+// Cloudinary with the `aybkk-daily` tag (public_id aybkk/daily/<date>/…).
+// Student selfies live in the aybkk-students folder and are never tagged, so
+// they can't leak into the feed. Newest 50 per day, last 7 days with content.
+const MOMENTS_PER_DAY = 50;
+const MOMENTS_MAX_DAYS = 7;
+let momentsCache = { at: 0, data: null };
+
+app.get('/moments', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'moments.html'));
+});
+
+app.get('/api/moments', async (req, res) => {
+  try {
+    if (momentsCache.data && Date.now() - momentsCache.at < 10 * 60 * 1000) {
+      return res.json(momentsCache.data);
+    }
+    const result = await cloudinary.search
+      .expression('tags=aybkk-daily AND (resource_type:image OR resource_type:video)')
+      .sort_by('created_at', 'desc')
+      .max_results(MOMENTS_PER_DAY * MOMENTS_MAX_DAYS)
+      .execute();
+
+    const byDay = new Map();
+    for (const r of result.resources || []) {
+      // Day comes from the upload path (aybkk/daily/<date>/…), falling back to created_at
+      const m = String(r.public_id).match(/aybkk\/daily\/(\d{4}-\d{2}-\d{2})\//);
+      const day = m ? m[1] : String(r.created_at).slice(0, 10);
+      if (!byDay.has(day)) byDay.set(day, []);
+      const items = byDay.get(day);
+      if (items.length < MOMENTS_PER_DAY) {
+        items.push({
+          url: r.secure_url,
+          type: r.resource_type === 'video' ? 'video' : 'photo',
+          w: r.width || 0,
+          h: r.height || 0,
+          created: r.created_at
+        });
+      }
+    }
+    const days = [...byDay.entries()]
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .slice(0, MOMENTS_MAX_DAYS)
+      .map(([date, items]) => ({ date, items }));
+
+    const data = { days, updatedAt: new Date().toISOString() };
+    momentsCache = { at: Date.now(), data };
+    res.json(data);
+  } catch (err) {
+    // Serve a stale cache over an error page — the feed is student-facing
+    if (momentsCache.data) return res.json(momentsCache.data);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/student/photo/:studentId
 app.get('/api/student/photo/:studentId', async (req, res) => {
   const session = driver.session();
@@ -836,7 +893,7 @@ app.post('/api/students', async (req, res) => {
 // POST /api/orientations - Save orientation form and generate journal link
 app.post('/api/orientations', async (req, res) => {
   try {
-    const { name, wechat, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, workshop, gameResults } = req.body;
+    const { name, wechat, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, waiverConsent, waiverVersion, language, workshop, gameResults } = req.body;
     // Bind to a pre-assigned card identity when the orientation link carries a card code
     // (e.g. orientation-hefei.html?s=HEFEI-023 → reuse that student's journal UUID).
     // Students who skip the name picker still get bound when their typed name
@@ -877,7 +934,7 @@ app.post('/api/orientations', async (req, res) => {
     const session = driver.session();
     try {
       await session.run(
-        'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
+        'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, waiverConsent: $waiverConsent, waiverVersion: $waiverVersion, waiverAcceptedAt: $waiverAcceptedAt, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
         {
           id: studentId + '-o-' + Date.now(),
           name: name,
@@ -889,6 +946,9 @@ app.post('/api/orientations', async (req, res) => {
           size: size || '',
           photoConsent: photoConsent || 'yes',
           medicalConsent: medicalConsent || 'yes',
+          waiverConsent: waiverConsent || '',
+          waiverVersion: waiverConsent === 'yes' ? (waiverVersion || '1.0') : '',
+          waiverAcceptedAt: waiverConsent === 'yes' ? datetime : '',
           language: language || 'zh',
           workshop: workshop || 'Guangzhou WS Apr 2026',
           gameResults: JSON.stringify(gameResults || []),
@@ -914,7 +974,10 @@ app.post('/api/orientations', async (req, res) => {
           s.injuries = $injuries,
           s.experience = $experience,
           s.journalLink = $journalLink,
-          s.cardCode = $cardCode`,
+          s.cardCode = $cardCode,
+          s.waiverConsent = CASE WHEN $waiverConsent = 'yes' THEN 'yes' ELSE s.waiverConsent END,
+          s.waiverVersion = CASE WHEN $waiverConsent = 'yes' THEN $waiverVersion ELSE s.waiverVersion END,
+          s.waiverAcceptedAt = CASE WHEN $waiverConsent = 'yes' THEN $createdAt ELSE s.waiverAcceptedAt END`,
         {
           id: studentId,
           name: name,
@@ -926,6 +989,8 @@ app.post('/api/orientations', async (req, res) => {
           experience: experience || '',
           journalLink,
           cardCode: cardCode,
+          waiverConsent: waiverConsent || '',
+          waiverVersion: waiverConsent === 'yes' ? (waiverVersion || '1.0') : '',
           createdAt: datetime
         }
       );
@@ -1291,7 +1356,7 @@ app.get('/api/orientations', async (req, res) => {
 // re-fill an orientation — the dashboard surfaces them directly.
 app.post('/api/orientations/bkk', async (req, res) => {
   try {
-    const { name, wechat, contactType, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, gameResults } = req.body;
+    const { name, wechat, contactType, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, waiverConsent, waiverVersion, language, gameResults } = req.body;
     const studentId = 'bkk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     const datetime = new Date().toISOString();
     const baseUrl = getBaseUrl(req);
@@ -1300,7 +1365,7 @@ app.post('/api/orientations/bkk', async (req, res) => {
     const session = driver.session();
     try {
       await session.run(
-        'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, contactType: $contactType, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
+        'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, contactType: $contactType, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, waiverConsent: $waiverConsent, waiverVersion: $waiverVersion, waiverAcceptedAt: $waiverAcceptedAt, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
         {
           id: studentId,
           name: name,
@@ -1313,6 +1378,9 @@ app.post('/api/orientations/bkk', async (req, res) => {
           size: size || '',
           photoConsent: photoConsent || 'yes',
           medicalConsent: medicalConsent || 'yes',
+          waiverConsent: waiverConsent || '',
+          waiverVersion: waiverConsent === 'yes' ? (waiverVersion || '1.0') : '',
+          waiverAcceptedAt: waiverConsent === 'yes' ? datetime : '',
           language: language || 'th',
           workshop: 'AYBKK Bangkok Shala',
           gameResults: JSON.stringify(gameResults || []),
@@ -2057,6 +2125,7 @@ app.post('/api/orientations/online', async (req, res) => {
         city: $city, country: $country, timezone: $timezone,
         experience: $experience, series: $series, injuries: $injuries,
         language: $language, workshop: $workshop, photoUrl: $photoUrl,
+        waiverConsent: $waiverConsent, waiverVersion: $waiverVersion, waiverAcceptedAt: $waiverAcceptedAt,
         location: 'mysore-room', createdAt: datetime($createdAt)
       })`, {
       id: studentId, name, contact: contact || '', contactType: contactTypeStr,
@@ -2064,6 +2133,9 @@ app.post('/api/orientations/online', async (req, res) => {
       experience: experience || '', series: series || '', injuries: injuries || '',
       language: lang, workshop: workshop || "Boonchu's Mysore Room",
       photoUrl: photoUrl || '', createdAt: datetime,
+      waiverConsent: req.body.waiverConsent || '',
+      waiverVersion: req.body.waiverConsent === 'yes' ? (req.body.waiverVersion || '1.0') : '',
+      waiverAcceptedAt: req.body.waiverConsent === 'yes' ? datetime : '',
     });
 
     // :Student canonical (MERGE on id so a repeat registration updates the same row)
@@ -2189,12 +2261,16 @@ app.post('/api/orientations/private', async (req, res) => {
         city: $city, country: $country,
         experience: $experience, series: $series, injuries: $injuries,
         language: $language, photoUrl: $photoUrl,
+        waiverConsent: $waiverConsent, waiverVersion: $waiverVersion, waiverAcceptedAt: $waiverAcceptedAt,
         location: 'private', createdAt: datetime($createdAt)
       })`, {
       id: studentId, name, contact: contact || '', contactType: contactTypeStr,
       city: city || '', country: country || '',
       experience: experience || '', series: series || '', injuries: injuries || '',
       language: lang, photoUrl: photoUrl || '', createdAt: datetime,
+      waiverConsent: req.body.waiverConsent || '',
+      waiverVersion: req.body.waiverConsent === 'yes' ? (req.body.waiverVersion || '1.0') : '',
+      waiverAcceptedAt: req.body.waiverConsent === 'yes' ? datetime : '',
     });
 
     await session.run(`

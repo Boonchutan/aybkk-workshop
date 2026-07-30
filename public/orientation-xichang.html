@@ -544,6 +544,8 @@
       transition: transform var(--dur-base) var(--ease-spring);
     }
     .done-btn:hover { transform: translateY(-2px); }
+      .waiver-details summary { cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .waiver-text { white-space: pre-line; font-size: 12px; line-height: 1.6; opacity: .82; margin: 8px 0 6px; }
   </style>
 </head>
 <body>
@@ -737,6 +739,16 @@
         </div>
         <input type="hidden" id="medicalConsent" value="yes">
       </div>
+      <div class="field" id="waiverBox">
+        <details class="waiver-details">
+          <summary id="waiverToggle"></summary>
+          <div class="waiver-text" id="waiverText"></div>
+        </details>
+        <div class="options" id="waiverOptions">
+          <span class="option" onclick="toggleConsent(this, 'waiver')" id="waiverConsentLabel"></span>
+        </div>
+        <input type="hidden" id="waiverConsent" value="no">
+      </div>
     </div>
 
     <button type="submit" class="submit-btn" id="submitBtn"></button>
@@ -833,6 +845,10 @@ const T = {
     consentTitle: '📸 同意书',
     photoConsentLabel: '📸 同意拍照/摄影',
     medicalConsentLabel: '✅ 同意医疗免责声明',
+    waiverToggle: '📜 免责声明与条款（点击阅读）',
+    waiverText: '1. 瑜伽属于体力活动，肌肉酸痛和轻微不适是练习过程中的正常现象。\n2. 练习风险自负；本人对自身健康负责，听从老师指导，并在课前告知伤病或健康状况。\n3. 对练习期间发生的受伤或意外，AYBKK及其老师和工作人员不承担法律责任，本人不会就此采取法律行动。\n4. 所有付款（会员、套餐、单次课及工作坊）一经支付概不退款。特殊情况下，AYBKK可全权决定将剩余金额在12个月内转为未来AYBKK工作坊或套餐的抵用额度。如AYBKK取消工作坊，可获全额退款或转至改期场次。\n5. AYBKK可能在课程和工作坊期间拍摄照片/视频，用于社交媒体及社区推广（以上方拍照选择为准）。',
+    waiverConsentLabel: '📜 我已阅读并同意免责声明与条款',
+    waiverRequiredMsg: '请先阅读并同意免责声明与条款',
     submitBtn: '提交报名表',
     successWelcome: '欢迎加入 AYBKK 西昌工作坊！',
     linkLabel: '🔒 你的专属练习记录链接 — 请勿分享！仅供自己使用',
@@ -892,6 +908,10 @@ const T = {
     consentTitle: '📸 Consent',
     photoConsentLabel: '📸 Consent to photo/video',
     medicalConsentLabel: '✅ Medical disclaimer',
+    waiverToggle: '📜 Waiver & Terms (tap to read)',
+    waiverText: '1. Yoga is a physical activity; muscle soreness and minor discomfort are a normal part of practice.\n2. I practice at my own risk, take responsibility for my well-being, follow the teacher\'s instructions, and will report any injury or health condition before class.\n3. AYBKK, its teachers, and staff are not liable for injuries sustained during practice, and I agree not to pursue legal action for such incidents.\n4. All payments (memberships, packages, drop-ins, workshops) are final and non-refundable. In exceptional cases AYBKK may, at its sole discretion, convert remaining value into credit for a future AYBKK workshop or package within 12 months. If AYBKK cancels a workshop, I receive a full refund or a transfer to the rescheduled workshop.\n5. AYBKK may take photos/videos during classes and workshops for social media and community promotion (your photo choice above applies).',
+    waiverConsentLabel: '📜 I have read and agree to the Waiver & Terms',
+    waiverRequiredMsg: 'Please read and agree to the Waiver & Terms first',
     submitBtn: 'Submit',
     successWelcome: 'Welcome to AYBKK Xichang Workshop!',
     linkLabel: '🔒 Your Private Practice Link — Do NOT share! Keep it for yourself only',
@@ -951,6 +971,10 @@ const T = {
     consentTitle: '📸 ความยินยอม',
     photoConsentLabel: '📸 ยินยอมให้ถ่ายภาพ/วิดีโอ',
     medicalConsentLabel: '✅ ข้อจำกัดความรับผิดทางการแพทย์',
+    waiverToggle: '📜 ข้อตกลงและการสละสิทธิ์ (แตะเพื่ออ่าน)',
+    waiverText: '1. โยคะเป็นกิจกรรมทางกาย อาการปวดเมื่อยและความไม่สบายเล็กน้อยเป็นส่วนหนึ่งของการฝึกตามปกติ\n2. ฉันฝึกโดยยอมรับความเสี่ยงเอง รับผิดชอบต่อสุขภาพของตนเอง ปฏิบัติตามคำแนะนำของครู และจะแจ้งอาการบาดเจ็บหรือปัญหาสุขภาพก่อนเข้าคลาส\n3. AYBKK ครูผู้สอน และทีมงานไม่รับผิดชอบต่อการบาดเจ็บระหว่างการฝึก และฉันจะไม่ดำเนินการทางกฎหมายจากเหตุการณ์ดังกล่าว\n4. การชำระเงินทั้งหมด (สมาชิก แพ็กเกจ คลาสรายครั้ง เวิร์กช็อป) ถือเป็นที่สิ้นสุดและไม่คืนเงิน กรณีพิเศษ AYBKK อาจพิจารณาเปลี่ยนยอดคงเหลือเป็นเครดิตสำหรับเวิร์กช็อปหรือแพ็กเกจของ AYBKK ภายใน 12 เดือน หาก AYBKK ยกเลิกเวิร์กช็อป จะได้รับเงินคืนเต็มจำนวนหรือย้ายไปรอบที่เลื่อนใหม่\n5. AYBKK อาจถ่ายภาพ/วิดีโอระหว่างคลาสและเวิร์กช็อปเพื่อโซเชียลมีเดียและการส่งเสริมชุมชน (เป็นไปตามตัวเลือกภาพถ่ายด้านบน)',
+    waiverConsentLabel: '📜 ฉันได้อ่านและยอมรับข้อตกลงแล้ว',
+    waiverRequiredMsg: 'กรุณาอ่านและยอมรับข้อตกลงก่อนส่งแบบฟอร์ม',
     submitBtn: 'ส่งแบบฟอร์ม',
     successWelcome: 'ยินดีต้อนรับสู่ AYBKK Xichang Workshop!',
     linkLabel: '🧘 ลิงก์บันทึกการฝึกของคุณ — เก็บไว้!',
@@ -1010,6 +1034,10 @@ const T = {
     consentTitle: '📸 Согласие',
     photoConsentLabel: '📸 Согласие на фото/видео',
     medicalConsentLabel: '✅ Медицинский отказ от ответственности',
+    waiverToggle: '📜 Отказ от ответственности и условия (нажмите, чтобы прочитать)',
+    waiverText: '1. Йога — физическая активность; мышечная боль и лёгкий дискомфорт — нормальная часть практики.\n2. Я практикую на свой страх и риск, отвечаю за своё самочувствие, следую указаниям учителя и сообщу о травмах или проблемах со здоровьем до занятия.\n3. AYBKK, учителя и персонал не несут ответственности за травмы во время практики; я не буду предъявлять юридические претензии.\n4. Все платежи (абонементы, пакеты, разовые занятия, воркшопы) окончательны и возврату не подлежат. В особых случаях AYBKK может по своему усмотрению перевести остаток в кредит на будущий воркшоп или пакет AYBKK в течение 12 месяцев. Если AYBKK отменяет воркшоп — полный возврат или перенос на новые даты.\n5. AYBKK может делать фото/видео во время занятий и воркшопов для соцсетей и продвижения сообщества (действует ваш выбор фото выше).',
+    waiverConsentLabel: '📜 Я прочитал(а) и принимаю условия',
+    waiverRequiredMsg: 'Пожалуйста, сначала примите условия',
     submitBtn: 'Отправить анкету',
     successWelcome: 'Добро пожаловать на AYBKK Xichang Workshop!',
     linkLabel: '🧘 Ссылка на дневник практики — сохраните!',
@@ -1239,7 +1267,7 @@ function setLang(lang) {
     'yOpt0','yOpt1','yOpt2','yOpt3','yOpt4','yOpt5',
     'labelLast','hintLast','labelDifficulty','hintDifficulty',
     'labelInjuries','labelGoals','labelEmergency','labelSize',
-    'consentTitle','photoConsentLabel','medicalConsentLabel','submitBtn',
+    'consentTitle','photoConsentLabel','medicalConsentLabel','waiverToggle','waiverText','waiverConsentLabel','submitBtn',
     'successWelcome','linkLabel','qrHint','copyBtn','linkHint','shareBtn','doneBtn'];
   textIds.forEach(id => {
     const el = document.getElementById(id);
@@ -1393,6 +1421,11 @@ function getDifficulties() {
 // ─── Submit ──────────────────────────────────────────────────────
 async function submitForm(e) {
   e.preventDefault();
+  if (document.getElementById('waiverConsent').value !== 'yes') {
+    alert(T[currentLang].waiverRequiredMsg);
+    document.getElementById('waiverBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   const t = T[currentLang];
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -1417,6 +1450,8 @@ async function submitForm(e) {
     size: document.getElementById('size').value,
     photoConsent: document.getElementById('photoConsent').value,
     medicalConsent: document.getElementById('medicalConsent').value,
+    waiverConsent: document.getElementById('waiverConsent').value,
+    waiverVersion: '1.0',
     language: currentLang,
     workshop: 'Xichang WS June 2026',
     gameResults: [
