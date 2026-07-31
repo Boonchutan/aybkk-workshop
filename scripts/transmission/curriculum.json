@@ -1,0 +1,17 @@
+{
+  "comment": "12-week rotating practice focus for the Sunday Transmission. Edit freely — the drafting agent quotes one entry per week (ISO week number modulo 12).",
+  "weeks": [
+    { "slug": "breath-length",    "zh": "呼吸的长度：吸气和呼气一样长，练习就稳了", "en": "Equal length inhale and exhale steadies the whole practice" },
+    { "slug": "bandha-jump",      "zh": "跳穿越前先找到班达：先提起，再移动", "en": "Find the bandha before the jump through: lift first, then move" },
+    { "slug": "backbend-chest",   "zh": "后弯从胸口开始，不是从腰开始", "en": "The backbend begins in the chest, not the lower back" },
+    { "slug": "lbh-hips",         "zh": "脚挂头的钥匙在髋：每天一点点，别着急", "en": "Leg behind head lives in the hips: a little every day, no hurry" },
+    { "slug": "drishti",          "zh": "眼睛看哪里，心就在哪里：这周守住凝视点", "en": "Where the eyes go, the mind goes: hold your drishti this week" },
+    { "slug": "slow-exhale",      "zh": "前屈时慢慢呼气，身体会自己下去", "en": "Exhale slowly in the forward fold and the body goes down by itself" },
+    { "slug": "uddiyana-surya",   "zh": "拜日式里收腹：每一个 Surya 都是练班达的机会", "en": "Uddiyana in every Surya: each round is bandha practice" },
+    { "slug": "soft-landing",     "zh": "跳回时轻轻落地，声音越小，控制越好", "en": "Land softly in the jump back: the quieter the landing, the better the control" },
+    { "slug": "one-asana-patience","zh": "选一个难的体式，这周只加深一点点", "en": "Pick one hard asana and go one small step deeper this week" },
+    { "slug": "savasana",         "zh": "Savasana 不是休息，是练习的一部分：躺满十分钟", "en": "Savasana is part of the practice, not a break: stay the full ten minutes" },
+    { "slug": "six-days",         "zh": "传统是一周六天：不求完美，只求不断", "en": "Six days a week is the tradition: not perfect, just unbroken" },
+    { "slug": "moon-rest",        "zh": "月亮日休息也是练习：身体需要空隙", "en": "Rest on moon days is also practice: the body needs the gap" }
+  ]
+}

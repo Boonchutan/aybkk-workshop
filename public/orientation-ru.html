@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-ws="russia">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +39,7 @@
       font-size: clamp(20px, 5.4vw, 26px);
       font-weight: 800;
       letter-spacing: 0.02em;
-      color: #2f2517;
+      color: var(--ink);
       text-shadow: var(--text-carve-soft);
       margin-bottom: 6px;
     }
@@ -79,9 +79,9 @@
     }
     .lang-btn:active { transform: scale(0.96); }
     .lang-btn.active {
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      color: #f1e2c4;
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
+      background: var(--shirt-deep);
+      color: var(--chalk);
+      text-shadow: none;
       box-shadow:
         inset 3px 3px 6px rgba(255, 240, 215, 0.4),
         inset -2px -2px 4px rgba(40, 20, 4, 0.25),
@@ -279,12 +279,9 @@
       text-transform: uppercase;
       cursor: pointer;
       margin-top: var(--space-2);
-      color: #f1e2c4;
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      text-shadow:
-        1px 1px 0 rgba(255, 240, 215, 0.7),
-        -1px -1px 1px rgba(50, 28, 10, 0.85),
-        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      color: var(--chalk);
+      background: var(--shirt-deep);
+      text-shadow: none;
       box-shadow:
         14px 14px 28px rgba(120, 80, 40, 0.30),
         -8px -8px 18px var(--shadow-light),
@@ -334,7 +331,7 @@
       font-family: var(--font-display);
       font-size: 22px;
       font-weight: 800;
-      color: #2f2517;
+      color: var(--ink);
       text-shadow: var(--text-carve-soft);
       margin-bottom: var(--space-3);
     }
@@ -432,11 +429,13 @@
         inset 2px 2px 4px rgba(141, 79, 44, 0.16),
         inset -1px -1px 3px rgba(253, 250, 242, 0.55);
     }
+      .waiver-details summary { cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .waiver-text { white-space: pre-line; font-size: 12px; line-height: 1.6; opacity: .82; margin: 8px 0 6px; }
   </style>
 </head>
 <body>
   <div class="header">
-    <img src="https://aybkk-ashtanga.up.railway.app/logo.png" alt="AYBKK" onerror="this.style.display='none'">
+    <img src="/logo.png" alt="AYBKK" onerror="this.style.display='none'">
     <h1>AYBKK RUSSIA WS 2026</h1>
     <p class="by">By Boonchu & Jamsai Tanti</p>
     <p>May 1-3 & May 6-9, 2026</p>
@@ -568,6 +567,20 @@
           </div>
           <input type="hidden" id="medicalConsent" value="yes">
         </div>
+        <div class="field" id="waiverBox">
+          <details class="waiver-details">
+            <summary>📜 Отказ от ответственности и условия (нажмите, чтобы прочитать)</summary>
+            <div class="waiver-text">1. Йога — физическая активность; мышечная боль и лёгкий дискомфорт — нормальная часть практики.
+2. Я практикую на свой страх и риск, отвечаю за своё самочувствие, следую указаниям учителя и сообщу о травмах или проблемах со здоровьем до занятия.
+3. AYBKK, учителя и персонал не несут ответственности за травмы во время практики; я не буду предъявлять юридические претензии.
+4. Все платежи (абонементы, пакеты, разовые занятия, воркшопы) окончательны и возврату не подлежат. В особых случаях AYBKK может по своему усмотрению перевести остаток в кредит на будущий воркшоп или пакет AYBKK в течение 12 месяцев. Если AYBKK отменяет воркшоп — полный возврат или перенос на новые даты.
+5. AYBKK может делать фото/видео во время занятий и воркшопов для соцсетей и продвижения сообщества (действует ваш выбор фото выше).</div>
+          </details>
+          <div class="options" id="waiverOptions">
+            <span class="option" onclick="toggleOption(this, 'waiver')">📜 Я прочитал(а) и принимаю условия</span>
+          </div>
+          <input type="hidden" id="waiverConsent" value="no">
+        </div>
       </div>
 
       <button type="submit" class="submit-btn" id="submitBtn">Отправить</button>
@@ -582,7 +595,7 @@
   </div>
 
 <script>
-const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+const API_BASE = '/api';
 const T = {
   ru: {
     intro: 'Добро пожаловать в AYBKK Russia Workshop 2026! Перед началом workshop, пожалуйста, заполните эту анкету и сыграйте в наши обучающие игры.',
@@ -608,6 +621,33 @@ const QUOTES = [
 
 // Quiz pool (RU + EN)
 const QUIZ_POOL = [
+  {
+    q: { zh:'课上突然想放屁，怎么办？', en:'I feel like farting during class. What should I do?', th:'รู้สึกอยากตดระหว่างคลาส ทำยังไงดี?', ru:'Во время класса захотелось пукнуть. Что делать?' },
+    opts: {
+      zh:['忍住！这是很好的收束法练习 🤬','放出来。憋着紧张对身体不好 😮‍💨','等一下，先问老师该怎么办 😬','那我就不做 jump back 和 jump through 了 🤢'],
+      en:['I would hold it. This is a good bandha practice. 🤬','I would let it go. Holding tension is not good for my body. 😮‍💨','I would wait and ask the teacher what I should do. 😬','I would not jump back or jump through. 🤢'],
+      th:['กลั้นไว้! เป็นการฝึกบันดาที่ดี 🤬','ปล่อยออกมา กลั้นไว้ไม่ดีต่อร่างกาย 😮‍💨','รอถามครูก่อนว่าควรทำยังไง 😬','งดกระโดดถอยหลังและกระโดดผ่าน 🤢'],
+      ru:['Сдержу! Это хорошая практика бандхи 🤬','Отпущу. Держать напряжение вредно для тела 😮‍💨','Подожду и спрошу учителя, что делать 😬','Не буду делать прыжок назад и прыжок вперёд 🤢']
+    }, answer: 1
+  },
+  {
+    q: { zh:'我最喜欢的垫子位置是……', en:'My best mat spot is...', th:'จุดวางเสื่อที่ดีที่สุดของฉันคือ...', ru:'Моё лучшее место для коврика...' },
+    opts: {
+      zh:['最远的角落，确保老师看不到我 🫣','正前排中间，我的练习很美，朋友们都该看到 😏','门边最好，想休息随时溜出去 😝','哪里有空位就去哪里，挨着大家，从第一排到最后一排 🤓'],
+      en:['Right in the far corner. I make sure the teacher\'s eyes cannot find me. 🫣','In the front, in the middle. My practice is beautiful and my friends need to see it. 😏','By the door is my favorite. I can bounce out any time I need a rest. 😝','Wherever is available, next to others, from the front row to the back. 🤓'],
+      th:['มุมไกลสุด ให้สายตาครูหาฉันไม่เจอ 🫣','แถวหน้าตรงกลาง ท่าฉันสวย เพื่อนๆ ต้องได้เห็น 😏','ข้างประตูดีสุด อยากพักก็ออกได้ตลอด 😝','ตรงไหนว่างก็ตรงนั้น ข้างๆ คนอื่น จากแถวหน้าถึงแถวหลัง 🤓'],
+      ru:['В дальнем углу, чтобы глаза учителя меня не нашли 🫣','Спереди по центру: моя практика красива, друзья должны это видеть 😏','У двери: можно выскочить отдохнуть в любой момент 😝','Где есть место, рядом с другими, от первого ряда до последнего 🤓']
+    }, answer: 3
+  },
+  {
+    q: { zh:'Primary 序列中我们做几次 Padmasana（莲花坐）？', en:'How many times do we do Padmasana in the Primary series?', th:'เราทำ Padmasana กี่ครั้งใน Primary series?', ru:'Сколько раз мы делаем Падмасану в Первой серии?' },
+    opts: {
+      zh:['我做不了莲花坐，所以是…零！🙂‍↔️','1次，就这样 😌','2次','Padmasana…那是什么？🤔'],
+      en:['I cannot do Padmasana, so... zero! 🙂‍↔️','1 time. That\'s it 😌','2 times','Padmasana... what\'s that? 🤔'],
+      th:['ฉันทำ Padmasana ไม่ได้ ดังนั้น...ศูนย์! 🙂‍↔️','1 ครั้ง แค่นั้น 😌','2 ครั้ง','Padmasana...คืออะไร? 🤔'],
+      ru:['Я не могу сделать Падмасану, так что... ноль! 🙂‍↔️','1 раз, и всё 😌','2 раза','Падмасана... что это? 🤔']
+    }, answer: 2
+  },
   { q:{ru:'Кто создал метод аштанга-йоги?',en:'Who created the Ashtanga yoga method?'},
     opts:{ru:['Гуру Пурнима','Гуру Шарат Джойс','Гуру Патанджали','Гуру Паттабхи Джойс'],en:['Guru Purnima','Guru Sharath Jois','Guru Patanjali','Guru Pattabhi Jois']}, answer:3 },
   { q:{ru:'Что означает «аштанга»?',en:'What does "ashtanga" mean?'},
@@ -721,7 +761,11 @@ function toggleOption(el, type) {
 
 async function submitForm(e) {
   e.preventDefault();
-  
+  if (document.getElementById('waiverConsent').value !== 'yes') {
+    alert('Пожалуйста, сначала примите условия');
+    document.getElementById('waiverBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.textContent = '...';
@@ -736,6 +780,8 @@ async function submitForm(e) {
     size: document.getElementById('size').value,
     photoConsent: document.getElementById('photoConsent').value,
     medicalConsent: document.getElementById('medicalConsent').value,
+    waiverConsent: document.getElementById('waiverConsent').value,
+    waiverVersion: '1.0',
     gameResults: gameResults,
     language: currentLang,
     workshop: 'Russian WS May 2026',

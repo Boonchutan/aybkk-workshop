@@ -9,10 +9,13 @@ db/
 !package.json
 !package-lock.json
 !.claude/settings.json
+!scripts/tee-photos.json
+!shop-seed.json
 .env
 .env.*
 .DS_Store
 .claude/worktrees/
+cloudflared
 
 # submitted exam papers, student writing. never commit
 exam-submissions/

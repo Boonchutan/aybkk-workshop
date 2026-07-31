@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK — Send Artwork</title>
+<style>
+  body{font-family:-apple-system,sans-serif;background:#582C83;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+  .box{width:min(520px,92vw);text-align:center}
+  #drop{border:3px dashed rgba(255,255,255,.6);border-radius:20px;padding:60px 20px;font-size:19px;cursor:pointer;transition:.2s}
+  #drop.over{background:rgba(255,255,255,.12);border-color:#fff}
+  #status{margin-top:18px;font-size:17px;min-height:26px}
+  .ok{color:#8ff0b4;font-weight:700}
+  input{display:none}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>🎨 Send the Hefei artwork</h2>
+  <div id="drop">Drag <b>IMG_7005</b> here<br><small>or tap to choose the file</small></div>
+  <input type="file" id="pick" accept="image/*">
+  <div id="status"></div>
+</div>
+<script>
+const drop = document.getElementById('drop'), pick = document.getElementById('pick'), st = document.getElementById('status');
+drop.onclick = () => pick.click();
+['dragover','dragenter'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', ev => send(ev.dataTransfer.files[0]));
+pick.onchange = () => send(pick.files[0]);
+async function send(f) {
+  if (!f) return;
+  st.textContent = 'Uploading ' + f.name + '…';
+  const fd = new FormData(); fd.append('file', f);
+  try {
+    const r = await fetch('/api/upload/hefei-art', { method: 'POST', body: fd });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok) { st.innerHTML = '<span class="ok">✓ Received. Boonchu, you are done here.</span>'; }
+    else st.textContent = 'Failed: ' + (j.error || r.status);
+  } catch (e) { st.textContent = 'Failed: ' + e.message; }
+}
+</script>
+</body>
+</html>

@@ -20,40 +20,39 @@
       font-feature-settings: "kern" 1, "liga" 1;
     }
 
-    .header {
-      background: var(--surface);
-      padding: var(--space-7) var(--space-5) var(--space-5);
+    /* Poster hero — the page wears the Bangkok shirt */
+    .hero {
+      background: var(--shirt);
+      color: var(--mark);
+      padding: var(--space-6) var(--space-4) var(--space-6);
       text-align: center;
-      border-bottom: 1px solid var(--shadow-dark);
     }
-    .header img {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      margin-bottom: var(--space-3);
-      mix-blend-mode: multiply;
-      filter: contrast(1.05);
-      object-fit: cover;
-    }
-    .header h1 {
+    .hero-art { display: block; width: min(430px, 88vw); margin: 0 auto; height: auto; }
+    .hero h1 {
       font-family: var(--font-display);
-      font-size: clamp(20px, 5.4vw, 26px);
+      font-size: clamp(19px, 5vw, 24px);
       font-weight: 800;
-      letter-spacing: -0.012em;
-      color: #2f2517;
-      text-shadow: var(--text-carve-soft);
-      margin-bottom: 6px;
+      letter-spacing: 0.01em;
+      color: var(--mark);
+      margin-top: var(--space-3);
     }
-    .header .by {
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-style: italic;
-      color: var(--accent);
-      margin-bottom: 4px;
+    .hero .firefly {
+      font-family: var(--font-note);
+      font-size: clamp(19px, 4.6vw, 23px);
+      line-height: 1.35;
+      max-width: 340px;
+      margin: 10px auto 0;
+      transform: rotate(-1.2deg);
+      color: var(--mark);
     }
-    .header .dates {
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--ink-soft);
+    .hero .dates {
+      margin-top: var(--space-4);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: color-mix(in oklab, var(--mark) 78%, var(--shirt));
     }
 
     .lang-switch {
@@ -63,29 +62,26 @@
     }
     .lang-btn {
       padding: 7px 16px;
-      background: var(--surface);
-      border: none;
+      background: transparent;
+      border: 2px solid color-mix(in oklab, var(--mark) 55%, transparent);
       border-radius: var(--radius-pill);
       font-family: var(--font-display);
       font-size: 11px; font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--ink-soft);
+      color: var(--mark);
       cursor: pointer;
-      box-shadow:
-        4px 4px 8px var(--shadow-dark),
-        -3px -3px 6px var(--shadow-light);
-      transition: transform var(--dur-base) var(--ease-spring);
+      transition: transform var(--dur-base) var(--ease-out);
     }
     .lang-btn:active { transform: scale(0.96); }
+    .lang-btn:focus-visible { outline: 3px solid var(--mark); outline-offset: 2px; }
     .lang-btn.active {
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      color: #f1e2c4;
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.55), -1px -1px 1px rgba(50, 28, 10, 0.65);
-      box-shadow:
-        inset 3px 3px 6px rgba(255, 240, 215, 0.4),
-        inset -2px -2px 4px rgba(40, 20, 4, 0.25),
-        6px 6px 12px rgba(120, 80, 40, 0.25);
+      background: var(--mark);
+      border-color: var(--mark);
+      color: var(--mark-contrast);
+      text-shadow: none;
+      transform: rotate(-1.5deg);
+      box-shadow: 2px 2px 0 color-mix(in oklab, var(--ink) 40%, transparent);
     }
 
     .container {
@@ -94,16 +90,13 @@
       padding: var(--space-5) var(--space-4) var(--space-7);
     }
 
-    /* Generic card — raised beech */
     .card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
+      background: var(--paper);
+      border: var(--frame-w) solid var(--ink);
+      border-radius: var(--frame-radius);
       padding: var(--space-5);
       margin-bottom: var(--space-5);
-      box-shadow:
-        16px 16px 32px var(--shadow-dark),
-        -10px -10px 20px var(--shadow-light),
-        inset 1px 1px 0 rgba(253, 250, 242, 0.7);
+      box-shadow: var(--frame-shadow);
     }
     .card h3 {
       font-family: var(--font-display);
@@ -123,19 +116,17 @@
     }
     .card p:last-child { margin-bottom: 0; }
 
-    /* Quote — pull-quote between hairlines (no side-stripe) */
+    /* Quote — a handwritten margin note, like the box on the tee */
     .quote-box {
       max-width: 420px;
       margin: var(--space-5) auto;
-      padding: var(--space-4);
-      font-family: var(--font-body);
-      font-size: 15px;
-      line-height: 1.7;
-      font-style: italic;
+      padding: var(--space-3) var(--space-4);
+      font-family: var(--font-note);
+      font-size: 20px;
+      line-height: 1.4;
       text-align: center;
-      color: var(--accent);
-      border-top: 1px solid var(--shadow-dark);
-      border-bottom: 1px solid var(--shadow-dark);
+      color: var(--ink-soft);
+      transform: rotate(-0.8deg);
     }
     .quote-source {
       display: block;
@@ -145,7 +136,7 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       font-style: normal;
-      color: var(--primary-deep);
+      color: var(--shirt);
     }
 
     .rule {
@@ -330,12 +321,9 @@
       text-transform: uppercase;
       cursor: pointer;
       margin-top: var(--space-2);
-      color: #f1e2c4;
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      text-shadow:
-        1px 1px 0 rgba(255, 240, 215, 0.7),
-        -1px -1px 1px rgba(50, 28, 10, 0.85),
-        -2px -2px 4px rgba(50, 28, 10, 0.55);
+      color: var(--chalk);
+      background: var(--shirt-deep);
+      text-shadow: none;
       box-shadow:
         14px 14px 28px rgba(120, 80, 40, 0.30),
         -8px -8px 18px var(--shadow-light),
@@ -506,8 +494,8 @@
       line-height: 1.55;
     }
     .copy-btn {
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      color: #f1e2c4;
+      background: var(--shirt-deep);
+      color: var(--chalk);
       border: none;
       padding: 10px 24px;
       border-radius: var(--radius-md);
@@ -517,7 +505,7 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       cursor: pointer;
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.6), -1px -1px 1px rgba(50, 28, 10, 0.7);
+      text-shadow: none;
       box-shadow:
         6px 6px 14px rgba(120, 80, 40, 0.25),
         -4px -4px 10px var(--shadow-light),
@@ -546,15 +534,37 @@
       transition: transform var(--dur-base) var(--ease-spring);
     }
     .done-btn:hover { transform: translateY(-2px); }
+      .waiver-details summary { cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .waiver-text { white-space: pre-line; font-size: 12px; line-height: 1.6; opacity: .82; margin: 8px 0 6px; }
   </style>
 </head>
 <body>
 
-<div class="header">
-  <img src="/aybkk-logo.jpg" alt="AYBKK" onerror="this.style.display='none'">
+<div class="hero">
+  <svg class="hero-art drawon play" viewBox="0 0 700 430" role="img" aria-label="AYBKK 曼谷 — hand-drawn crowned bird and arched Ashtanga lettering from the Bangkok tee">
+    <defs>
+      <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="6"/></filter>
+      <filter id="rough2"><feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="4"/></filter>
+      <path id="heroArc" d="M 90 205 Q 350 60 610 205" fill="none"/>
+    </defs>
+    <text filter="url(#rough2)" font-family="'Shantell Sans','Marker Felt',sans-serif" font-weight="800" font-size="74" fill="var(--mark)" letter-spacing="6">
+      <textPath href="#heroArc" startOffset="50%" text-anchor="middle">ASHTANGA</textPath>
+    </text>
+    <g filter="url(#rough)" stroke="var(--mark)" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 175 340 C 150 320 142 285 158 262 C 172 241 200 232 224 240 C 232 222 254 214 272 222 C 292 230 300 250 294 268 C 308 292 300 322 276 338 C 246 358 200 358 175 340 Z"/>
+      <path d="M 196 306 C 214 318 238 318 252 306" stroke-width="9"/>
+      <path d="M 292 262 L 322 270 L 294 282" stroke-width="9"/>
+      <path d="M 205 356 L 205 384 M 246 358 L 246 386" stroke-width="9"/>
+      <path d="M 186 240 L 178 214 M 210 232 L 210 204 M 234 238 L 242 212" stroke-width="9"/>
+      <path d="M 150 392 C 260 380 420 380 560 390" stroke-width="7" opacity="0.7"/>
+    </g>
+    <circle cx="252" cy="258" r="7" fill="var(--mark)"/>
+    <text x="470" y="330" filter="url(#rough2)" font-family="'ZCOOL KuaiLe','PingFang SC',sans-serif" font-size="104" fill="var(--mark)">曼谷</text>
+    <text x="472" y="368" font-family="'Shantell Sans','Marker Felt',sans-serif" font-weight="700" font-size="25" letter-spacing="10" fill="var(--mark)" opacity="0.85">AYBKK</text>
+  </svg>
   <h1>AYBKK Bangkok Shala</h1>
-  <p class="by">By Boonchu & Jamsai Tanti</p>
-  <p class="dates">Daily Practice Journal</p>
+  <div class="firefly">呼吸静定 · Breath first, then bend.</div>
+  <p class="dates">Daily Practice Journal · Boonchu &amp; Jamsai Tanti</p>
   <div class="lang-switch">
     <button class="lang-btn active" onclick="setLang('th')">🇹🇭 TH</button>
     <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
@@ -730,6 +740,16 @@
         </div>
         <input type="hidden" id="medicalConsent" value="yes">
       </div>
+      <div class="field" id="waiverBox">
+        <details class="waiver-details">
+          <summary id="waiverToggle"></summary>
+          <div class="waiver-text" id="waiverText"></div>
+        </details>
+        <div class="options" id="waiverOptions">
+          <span class="option" onclick="toggleConsent(this, 'waiver')" id="waiverConsentLabel"></span>
+        </div>
+        <input type="hidden" id="waiverConsent" value="no">
+      </div>
     </div>
 
     <button type="submit" class="submit-btn" id="submitBtn"></button>
@@ -783,7 +803,7 @@
 </div>
 
 <script>
-const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+const API_BASE = '/api';
 
 // ─── Translations ───────────────────────────────────────────────
 const T = {
@@ -833,6 +853,10 @@ const T = {
     consentTitle: '📸 同意书',
     photoConsentLabel: '📸 同意拍照/摄影',
     medicalConsentLabel: '✅ 同意医疗免责声明',
+    waiverToggle: '📜 免责声明与条款（点击阅读）',
+    waiverText: '1. 瑜伽属于体力活动，肌肉酸痛和轻微不适是练习过程中的正常现象。\n2. 练习风险自负；本人对自身健康负责，听从老师指导，并在课前告知伤病或健康状况。\n3. 对练习期间发生的受伤或意外，AYBKK及其老师和工作人员不承担法律责任，本人不会就此采取法律行动。\n4. 所有付款（会员、套餐、单次课及工作坊）一经支付概不退款。特殊情况下，AYBKK可全权决定将剩余金额在12个月内转为未来AYBKK工作坊或套餐的抵用额度。如AYBKK取消工作坊，可获全额退款或转至改期场次。\n5. AYBKK可能在课程和工作坊期间拍摄照片/视频，用于社交媒体及社区推广（以上方拍照选择为准）。',
+    waiverConsentLabel: '📜 我已阅读并同意免责声明与条款',
+    waiverRequiredMsg: '请先阅读并同意免责声明与条款',
     submitBtn: '提交报名表',
     successWelcome: '欢迎加入 AYBKK 曼谷瑜伽馆！',
     linkLabel: '🔒 你的专属练习记录链接 — 请勿分享！仅供自己使用',
@@ -899,6 +923,10 @@ const T = {
     consentTitle: '📸 Consent',
     photoConsentLabel: '📸 Consent to photo/video',
     medicalConsentLabel: '✅ Medical disclaimer',
+    waiverToggle: '📜 Waiver & Terms (tap to read)',
+    waiverText: '1. Yoga is a physical activity; muscle soreness and minor discomfort are a normal part of practice.\n2. I practice at my own risk, take responsibility for my well-being, follow the teacher\'s instructions, and will report any injury or health condition before class.\n3. AYBKK, its teachers, and staff are not liable for injuries sustained during practice, and I agree not to pursue legal action for such incidents.\n4. All payments (memberships, packages, drop-ins, workshops) are final and non-refundable. In exceptional cases AYBKK may, at its sole discretion, convert remaining value into credit for a future AYBKK workshop or package within 12 months. If AYBKK cancels a workshop, I receive a full refund or a transfer to the rescheduled workshop.\n5. AYBKK may take photos/videos during classes and workshops for social media and community promotion (your photo choice above applies).',
+    waiverConsentLabel: '📜 I have read and agree to the Waiver & Terms',
+    waiverRequiredMsg: 'Please read and agree to the Waiver & Terms first',
     submitBtn: 'Submit',
     successWelcome: 'Welcome to AYBKK Bangkok Shala!',
     linkLabel: '🔒 Your Private Practice Link — Do NOT share! Keep it for yourself only',
@@ -965,6 +993,10 @@ const T = {
     consentTitle: '📸 ความยินยอม',
     photoConsentLabel: '📸 ยินยอมให้ถ่ายภาพ/วิดีโอ',
     medicalConsentLabel: '✅ ข้อจำกัดความรับผิดทางการแพทย์',
+    waiverToggle: '📜 ข้อตกลงและการสละสิทธิ์ (แตะเพื่ออ่าน)',
+    waiverText: '1. โยคะเป็นกิจกรรมทางกาย อาการปวดเมื่อยและความไม่สบายเล็กน้อยเป็นส่วนหนึ่งของการฝึกตามปกติ\n2. ฉันฝึกโดยยอมรับความเสี่ยงเอง รับผิดชอบต่อสุขภาพของตนเอง ปฏิบัติตามคำแนะนำของครู และจะแจ้งอาการบาดเจ็บหรือปัญหาสุขภาพก่อนเข้าคลาส\n3. AYBKK ครูผู้สอน และทีมงานไม่รับผิดชอบต่อการบาดเจ็บระหว่างการฝึก และฉันจะไม่ดำเนินการทางกฎหมายจากเหตุการณ์ดังกล่าว\n4. การชำระเงินทั้งหมด (สมาชิก แพ็กเกจ คลาสรายครั้ง เวิร์กช็อป) ถือเป็นที่สิ้นสุดและไม่คืนเงิน กรณีพิเศษ AYBKK อาจพิจารณาเปลี่ยนยอดคงเหลือเป็นเครดิตสำหรับเวิร์กช็อปหรือแพ็กเกจของ AYBKK ภายใน 12 เดือน หาก AYBKK ยกเลิกเวิร์กช็อป จะได้รับเงินคืนเต็มจำนวนหรือย้ายไปรอบที่เลื่อนใหม่\n5. AYBKK อาจถ่ายภาพ/วิดีโอระหว่างคลาสและเวิร์กช็อปเพื่อโซเชียลมีเดียและการส่งเสริมชุมชน (เป็นไปตามตัวเลือกภาพถ่ายด้านบน)',
+    waiverConsentLabel: '📜 ฉันได้อ่านและยอมรับข้อตกลงแล้ว',
+    waiverRequiredMsg: 'กรุณาอ่านและยอมรับข้อตกลงก่อนส่งแบบฟอร์ม',
     submitBtn: 'ส่งแบบฟอร์ม',
     successWelcome: 'ยินดีต้อนรับสู่ AYBKK Bangkok Shala!',
     linkLabel: '🧘 ลิงก์บันทึกการฝึกของคุณ — เก็บไว้!',
@@ -1031,6 +1063,10 @@ const T = {
     consentTitle: '📸 Согласие',
     photoConsentLabel: '📸 Согласие на фото/видео',
     medicalConsentLabel: '✅ Медицинский отказ от ответственности',
+    waiverToggle: '📜 Отказ от ответственности и условия (нажмите, чтобы прочитать)',
+    waiverText: '1. Йога — физическая активность; мышечная боль и лёгкий дискомфорт — нормальная часть практики.\n2. Я практикую на свой страх и риск, отвечаю за своё самочувствие, следую указаниям учителя и сообщу о травмах или проблемах со здоровьем до занятия.\n3. AYBKK, учителя и персонал не несут ответственности за травмы во время практики; я не буду предъявлять юридические претензии.\n4. Все платежи (абонементы, пакеты, разовые занятия, воркшопы) окончательны и возврату не подлежат. В особых случаях AYBKK может по своему усмотрению перевести остаток в кредит на будущий воркшоп или пакет AYBKK в течение 12 месяцев. Если AYBKK отменяет воркшоп — полный возврат или перенос на новые даты.\n5. AYBKK может делать фото/видео во время занятий и воркшопов для соцсетей и продвижения сообщества (действует ваш выбор фото выше).',
+    waiverConsentLabel: '📜 Я прочитал(а) и принимаю условия',
+    waiverRequiredMsg: 'Пожалуйста, сначала примите условия',
     submitBtn: 'Отправить анкету',
     successWelcome: 'Добро пожаловать в AYBKK Bangkok Shala!',
     linkLabel: '🧘 Ссылка на дневник практики — сохраните!',
@@ -1055,6 +1091,33 @@ const T = {
 
 // ─── Full quiz pool (13 questions, all 4 languages) ─────────────
 const QUIZ_POOL = [
+  {
+    q: { zh:'课上突然想放屁，怎么办？', en:'I feel like farting during class. What should I do?', th:'รู้สึกอยากตดระหว่างคลาส ทำยังไงดี?', ru:'Во время класса захотелось пукнуть. Что делать?' },
+    opts: {
+      zh:['忍住！这是很好的收束法练习 🤬','放出来。憋着紧张对身体不好 😮‍💨','等一下，先问老师该怎么办 😬','那我就不做 jump back 和 jump through 了 🤢'],
+      en:['I would hold it. This is a good bandha practice. 🤬','I would let it go. Holding tension is not good for my body. 😮‍💨','I would wait and ask the teacher what I should do. 😬','I would not jump back or jump through. 🤢'],
+      th:['กลั้นไว้! เป็นการฝึกบันดาที่ดี 🤬','ปล่อยออกมา กลั้นไว้ไม่ดีต่อร่างกาย 😮‍💨','รอถามครูก่อนว่าควรทำยังไง 😬','งดกระโดดถอยหลังและกระโดดผ่าน 🤢'],
+      ru:['Сдержу! Это хорошая практика бандхи 🤬','Отпущу. Держать напряжение вредно для тела 😮‍💨','Подожду и спрошу учителя, что делать 😬','Не буду делать прыжок назад и прыжок вперёд 🤢']
+    }, answer: 1
+  },
+  {
+    q: { zh:'我最喜欢的垫子位置是……', en:'My best mat spot is...', th:'จุดวางเสื่อที่ดีที่สุดของฉันคือ...', ru:'Моё лучшее место для коврика...' },
+    opts: {
+      zh:['最远的角落，确保老师看不到我 🫣','正前排中间，我的练习很美，朋友们都该看到 😏','门边最好，想休息随时溜出去 😝','哪里有空位就去哪里，挨着大家，从第一排到最后一排 🤓'],
+      en:['Right in the far corner. I make sure the teacher\'s eyes cannot find me. 🫣','In the front, in the middle. My practice is beautiful and my friends need to see it. 😏','By the door is my favorite. I can bounce out any time I need a rest. 😝','Wherever is available, next to others, from the front row to the back. 🤓'],
+      th:['มุมไกลสุด ให้สายตาครูหาฉันไม่เจอ 🫣','แถวหน้าตรงกลาง ท่าฉันสวย เพื่อนๆ ต้องได้เห็น 😏','ข้างประตูดีสุด อยากพักก็ออกได้ตลอด 😝','ตรงไหนว่างก็ตรงนั้น ข้างๆ คนอื่น จากแถวหน้าถึงแถวหลัง 🤓'],
+      ru:['В дальнем углу, чтобы глаза учителя меня не нашли 🫣','Спереди по центру: моя практика красива, друзья должны это видеть 😏','У двери: можно выскочить отдохнуть в любой момент 😝','Где есть место, рядом с другими, от первого ряда до последнего 🤓']
+    }, answer: 3
+  },
+  {
+    q: { zh:'Primary 序列中我们做几次 Padmasana（莲花坐）？', en:'How many times do we do Padmasana in the Primary series?', th:'เราทำ Padmasana กี่ครั้งใน Primary series?', ru:'Сколько раз мы делаем Падмасану в Первой серии?' },
+    opts: {
+      zh:['我做不了莲花坐，所以是…零！🙂‍↔️','1次，就这样 😌','2次','Padmasana…那是什么？🤔'],
+      en:['I cannot do Padmasana, so... zero! 🙂‍↔️','1 time. That\'s it 😌','2 times','Padmasana... what\'s that? 🤔'],
+      th:['ฉันทำ Padmasana ไม่ได้ ดังนั้น...ศูนย์! 🙂‍↔️','1 ครั้ง แค่นั้น 😌','2 ครั้ง','Padmasana...คืออะไร? 🤔'],
+      ru:['Я не могу сделать Падмасану, так что... ноль! 🙂‍↔️','1 раз, и всё 😌','2 раза','Падмасана... что это? 🤔']
+    }, answer: 2
+  },
   {
     q: { zh:'谁创造了阿斯汤加瑜伽方法？', en:'Who is the creator of the Ashtanga yoga method?', th:'ใครคือผู้สร้างวิธีโยคะอัชตางค์?', ru:'Кто создал метод аштанга-йоги?' },
     opts: {
@@ -1234,7 +1297,7 @@ function setLang(lang) {
     'yOpt0','yOpt1','yOpt2','yOpt3','yOpt4','yOpt5',
     'labelLast','hintLast','labelDifficulty','hintDifficulty',
     'labelInjuries','labelGoals','labelEmergency','labelSize',
-    'consentTitle','photoConsentLabel','medicalConsentLabel','submitBtn',
+    'consentTitle','photoConsentLabel','medicalConsentLabel','waiverToggle','waiverText','waiverConsentLabel','submitBtn',
     'successWelcome','linkLabel','qrHint','copyBtn','linkHint','shareBtn','doneBtn'];
   textIds.forEach(id => {
     const el = document.getElementById(id);
@@ -1408,6 +1471,11 @@ function getDifficulties() {
 // ─── Submit ──────────────────────────────────────────────────────
 async function submitForm(e) {
   e.preventDefault();
+  if (document.getElementById('waiverConsent').value !== 'yes') {
+    alert(T[currentLang].waiverRequiredMsg);
+    document.getElementById('waiverBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   const t = T[currentLang];
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -1433,6 +1501,8 @@ async function submitForm(e) {
     size: document.getElementById('size').value,
     photoConsent: document.getElementById('photoConsent').value,
     medicalConsent: document.getElementById('medicalConsent').value,
+    waiverConsent: document.getElementById('waiverConsent').value,
+    waiverVersion: '1.0',
     language: currentLang,
     workshop: 'AYBKK Bangkok Shala',
     gameResults: [

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK Shop Admin</title>
+<style>
+  @font-face{font-family:'Shantell Sans';src:url('/fonts/shantell-var.woff2') format('woff2');font-weight:300 800;font-display:swap}
+  :root{ --purple:#582C83; --line:#e3dcf0; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#f6f3fa;color:#2b2340;font-family:-apple-system,"PingFang SC","Hiragino Sans GB",sans-serif}
+  header{background:var(--purple);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px}
+  header h1{margin:0;font-size:17px;flex:1}
+  nav{display:flex;background:#fff;border-bottom:1px solid var(--line)}
+  nav button{flex:1;padding:13px;border:none;background:none;font-size:15px;font-weight:600;color:#8a7db0}
+  nav button.on{color:var(--purple);border-bottom:3px solid var(--purple)}
+  main{max-width:760px;margin:0 auto;padding:14px}
+  .box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+  label{display:block;font-size:12px;color:#6b5f85;margin:10px 0 3px}
+  input,select{width:100%;padding:10px;border:1.5px solid var(--line);border-radius:9px;font-size:15px}
+  .row{display:flex;gap:10px}.row>*{flex:1}
+  .btn{padding:11px 16px;border:none;border-radius:10px;background:var(--purple);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+  .btn.gray{background:#8a7db0}.btn.red{background:#b3453c}.btn.green{background:#1f9d55}
+  .btn[disabled]{opacity:.5}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:#8a7db0;font-size:12px}
+  .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700}
+  .pending{background:#fff3d6;color:#8a6a12}.review{background:#e3ecfd;color:#2c5bb5}
+  .paid{background:#e6f6ec;color:#187a43}.expired,.rejected{background:#eee;color:#888}
+  img.thumb{width:74px;height:74px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+  #gate{max-width:340px;margin:16vh auto;text-align:center}
+  .muted{color:#8a7db0;font-size:12px}
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="box">
+    <h2 style="margin:4px 0 12px">AYBKK Shop Admin</h2>
+    <input id="key" type="password" placeholder="passcode">
+    <button class="btn" style="width:100%;margin-top:12px" onclick="unlock()">Enter</button>
+    <p class="muted" id="gateMsg"></p>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+<header><h1>AYBKK Shop Admin</h1><button class="btn gray" onclick="logout()">Lock</button></header>
+<nav>
+  <button id="t-products" class="on" onclick="tab('products')">Products 商品</button>
+  <button id="t-stock" onclick="tab('stock')">Stock 库存</button>
+  <button id="t-orders" onclick="tab('orders')">Orders 订单</button>
+</nav>
+<main id="view"></main>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  let KEY = localStorage.getItem('aybkk_shop_key') || '';
+  let PRODUCTS = [], ORDERS = [], SETTINGS = {};
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const api = (url, opts = {}) => fetch(url, { ...opts, headers: { 'Content-Type': 'application/json', 'X-Shop-Key': KEY, ...(opts.headers || {}) } });
+
+  window.unlock = async () => {
+    KEY = $('#key').value.trim();
+    const r = await api('/api/shop/admin/orders');
+    if (r.status === 401) { $('#gateMsg').textContent = 'wrong passcode'; return; }
+    localStorage.setItem('aybkk_shop_key', KEY);
+    $('#gate').style.display = 'none'; $('#app').style.display = 'block';
+    refresh();
+  };
+  window.logout = () => { localStorage.removeItem('aybkk_shop_key'); location.reload(); };
+
+  async function refresh() {
+    const [a, p] = await Promise.all([ api('/api/shop/admin/orders').then(r => r.json()),
+                                       fetch('/api/shop/products', { cache: 'no-store' }).then(r => r.json()) ]);
+    ORDERS = a.orders || []; PRODUCTS = a.products || [];
+    SETTINGS = { paymentQr: p.paymentQr, wechatAccount: p.wechatAccount, paused: p.paused };
+    tab(current);
+  }
+
+  let current = 'products';
+  window.tab = t => {
+    current = t;
+    document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.id === 't-' + t));
+    if (t === 'products') renderProducts();
+    if (t === 'stock') renderStock();
+    if (t === 'orders') renderOrders();
+  };
+
+  // ── products: add + edit + payment QR ──
+  function renderProducts() {
+    const v = $('#view');
+    v.innerHTML = `
+      <div class="box">
+        <b>New shirt 新商品</b>
+        <div class="row">
+          <div><label>Name (English)</label><input id="pEn" placeholder="Hefei Firefly Tee"></div>
+          <div><label>名称（中文）</label><input id="pZh" placeholder="合肥萤火虫T恤"></div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;margin:10px 0">
+          <input id="pKids" type="checkbox" style="width:auto"> 🧒 Kids shirt 儿童款 (sizes 12/14/16, ¥200)
+        </label>
+        <div class="row">
+          <div><label>Pre-order price 预购价 (¥)</label><input id="pPrice" type="number" placeholder="220"></div>
+          <div><label>Full price 原价 (¥, optional)</label><input id="pFull" type="number" placeholder="270"></div>
+        </div>
+        <div><label>Photo 图片</label><input id="pPhoto" type="file" accept="image/*"></div>
+        <label>Stock per size 每个尺码数量</label>
+        <div class="row" id="pSizes"></div>
+        <button class="btn" style="margin-top:12px" id="pAdd">Add shirt 上架</button>
+        <span class="muted" id="pMsg"></span>
+      </div>
+      <div class="box">
+        <b>Shop status 商店状态</b>
+        <p class="muted">${SETTINGS.paused ? '🛑 PAUSED — students can browse and fill carts, ordering is closed.' : '🟢 OPEN — students can order.'}</p>
+        <button class="btn ${SETTINGS.paused ? 'green' : 'red'}" id="pauseToggle">${SETTINGS.paused ? 'Reopen shop 重新开放' : 'Pause shop 暂停购买'}</button>
+      </div>
+      <div class="box">
+        <b>Payment QR 收款码</b>
+        <p class="muted">Students see this at checkout. Upload your WeChat Pay receive-money QR.</p>
+        ${SETTINGS.paymentQr ? `<img class="thumb" src="${esc(SETTINGS.paymentQr)}">` : '<p class="muted">not set 未设置</p>'}
+        <div class="row">
+          <input id="qrFile" type="file" accept="image/*">
+          <button class="btn gray" id="qrSave">Save QR</button>
+        </div>
+      </div>
+      <div class="box"><b>Listed 已上架</b><div id="pList"></div></div>`;
+    const renderSizeInputs = () => {
+      const kids = $('#pKids').checked;
+      const sizes = kids ? ['12','14','16'] : ['S','M','L','XL','XXL'];
+      $('#pSizes').innerHTML = sizes.map(s => `<div><label>${s}</label><input data-size="${s}" type="number" value="0" min="0"></div>`).join('');
+      if (kids) { if (!$('#pPrice').value) $('#pPrice').value = 200; if (!$('#pFull').value) $('#pFull').value = 230; }
+      else { if ($('#pPrice').value == 200) $('#pPrice').value = 220; if ($('#pFull').value == 230) $('#pFull').value = 270; }
+    };
+    renderSizeInputs();
+    $('#pKids').onchange = renderSizeInputs;
+    $('#pAdd').onclick = addProduct;
+    $('#qrSave').onclick = saveQr;
+    $('#pauseToggle').onclick = async () => {
+      const target = !SETTINGS.paused;
+      if (!confirm(target ? 'Pause the shop? 暂停购买？' : 'Reopen the shop? 重新开放购买？')) return;
+      await api('/api/shop/admin/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paused: target }) });
+      refresh();
+    };
+    const list = PRODUCTS.map(p => `
+      <tr><td>${p.photo ? `<img class="thumb" src="${esc(p.photo)}">` : ''}</td>
+      <td>
+        <input class="ed-en" data-p="${p.id}" value="${esc(p.nameEn)}" placeholder="English name" style="width:170px;padding:6px;margin-bottom:4px">
+        <input class="ed-zh" data-p="${p.id}" value="${esc(p.nameZh || '')}" placeholder="中文名 (可留空)" style="width:170px;padding:6px;margin-bottom:4px">
+        <div class="row" style="max-width:230px"><input class="ed-price" data-p="${p.id}" type="number" min="0" value="${p.price}" style="width:70px;padding:6px"> <span class="muted" style="align-self:center">price ¥</span></div>
+      </td>
+      <td>${Object.entries(p.sizes).map(([s,n]) => s + ':' + n).join(' · ')}</td>
+      <td>
+        <button class="btn green" onclick="saveMeta('${p.id}')">Save 保存</button>
+        <span class="muted" id="metamsg-${p.id}"></span><br><br>
+        <button class="btn gray" onclick="toggleHide('${p.id}',${!p.hidden})">${p.hidden ? 'Show' : 'Hide'}</button>
+      </td></tr>`).join('');
+    $('#pList').innerHTML = PRODUCTS.length ? `<table>${list}</table>` : '<p class="muted">none yet</p>';
+  }
+
+  async function uploadImage(fileInput, type) {
+    const f = fileInput.files[0];
+    if (!f) return null;
+    const fd = new FormData(); fd.append('file', f);
+    const r = await fetch('/api/upload/' + type, { method: 'POST', body: fd });
+    const j = await r.json();
+    return j.file && j.file.filename ? '/uploads/' + type + '/' + j.file.filename : null;
+  }
+
+  async function addProduct() {
+    $('#pAdd').disabled = true; $('#pMsg').textContent = 'saving…';
+    try {
+      const photo = await uploadImage($('#pPhoto'), 'shop-products');
+      const sizes = {};
+      document.querySelectorAll('#pSizes input').forEach(i => { const n = parseInt(i.value) || 0; if (n > 0) sizes[i.dataset.size] = n; });
+      const body = { nameEn: $('#pEn').value.trim(), nameZh: $('#pZh').value.trim(),
+                     price: Number($('#pPrice').value) || 0, photo, sizes,
+                     kids: $('#pKids').checked };
+      if ($('#pFull').value) body.fullPrice = Number($('#pFull').value);
+      if (!body.nameEn && !body.nameZh) throw new Error('name required');
+      if (!Object.keys(sizes).length) throw new Error('at least one size');
+      const r = await api('/api/shop/products', { method: 'POST', body: JSON.stringify(body) });
+      if (!r.ok) throw new Error((await r.json()).error);
+      $('#pMsg').textContent = '✓ listed';
+      refresh();
+    } catch (e) { $('#pMsg').textContent = '✗ ' + e.message; }
+    $('#pAdd').disabled = false;
+  }
+
+  window.saveMeta = async (pid) => {
+    const en = document.querySelector(`.ed-en[data-p="${pid}"]`).value.trim();
+    const zh = document.querySelector(`.ed-zh[data-p="${pid}"]`).value.trim();
+    const price = parseInt(document.querySelector(`.ed-price[data-p="${pid}"]`).value);
+    if (!en) return alert('English name cannot be empty');
+    const body = { id: pid, nameEn: en, nameZh: zh };
+    if (!isNaN(price) && price >= 0) body.price = price;
+    const r = await api('/api/shop/products', { method: 'POST', body: JSON.stringify(body) });
+    const el = document.getElementById('metamsg-' + pid);
+    if (r.ok) { if (el) el.textContent = 'saved ✓'; setTimeout(refresh, 700); }
+    else { const j = await r.json(); alert(j.error || 'failed'); }
+  };
+
+  window.toggleHide = async (id, hidden) => {
+    await api('/api/shop/products', { method: 'POST', body: JSON.stringify({ id, hidden }) });
+    refresh();
+  };
+
+  async function saveQr() {
+    const url = await uploadImage($('#qrFile'), 'shop-settings');
+    if (!url) return alert('choose an image first');
+    await api('/api/shop/admin/settings', { method: 'POST', body: JSON.stringify({ paymentQr: url }) });
+    refresh();
+  }
+
+  // ── stock ──
+  function renderStock() {
+    const sold = {};
+    for (const o of ORDERS) if (o.status === 'paid') {
+      sold[o.productId] = sold[o.productId] || {};
+      sold[o.productId][o.size] = (sold[o.productId][o.size] || 0) + o.qty;
+    }
+    const rows = PRODUCTS.map(p => {
+      const szs = Object.keys(p.sizes);
+      const inputs = szs.map(s =>
+        `<label style="display:inline-block;width:64px;margin:2px 6px 2px 0">${esc(s)}
+           <input class="stk" data-p="${p.id}" data-size="${esc(s)}" type="number" min="0" value="${p.sizes[s]}" style="padding:6px">
+         </label>${sold[p.id] && sold[p.id][s] ? `<span class="muted">${sold[p.id][s]} sold</span>` : ''}`
+      ).join('<br>');
+      return `<tr><td><b>${esc(p.nameEn)}</b><br>${esc(p.nameZh)}<br>¥${p.price}</td>
+        <td>${inputs}<br>
+          <input class="stk-new-name" data-p="${p.id}" placeholder="new size (e.g. XXL)" style="width:130px;padding:6px;margin-top:6px">
+          <input class="stk-new-qty" data-p="${p.id}" type="number" min="0" placeholder="qty" style="width:64px;padding:6px">
+        </td>
+        <td><button class="btn green" onclick="saveStock('${p.id}')">Save 保存</button><br>
+          <span class="muted" id="stkmsg-${p.id}"></span></td></tr>`;
+    }).join('');
+    $('#view').innerHTML = `<div class="box"><b>Stock 库存 — edit numbers, then Save each shirt</b><table>
+      <tr><th>Shirt</th><th>Available per size 每尺码可卖数量</th><th></th></tr>${rows}</table>
+      <p class="muted">Numbers shown = available to sell right now ("left" excludes shirts reserved by unpaid 10-minute orders).
+      Best to edit when no orders are pending — check the Orders tab first.</p></div>`;
+  }
+
+  window.saveStock = async (pid) => {
+    const sizes = {};
+    document.querySelectorAll(`.stk[data-p="${pid}"]`).forEach(i => {
+      const n = parseInt(i.value);
+      sizes[i.dataset.size] = (isNaN(n) || n < 0) ? 0 : n;
+    });
+    const nn = document.querySelector(`.stk-new-name[data-p="${pid}"]`);
+    const nq = document.querySelector(`.stk-new-qty[data-p="${pid}"]`);
+    if (nn && nn.value.trim()) sizes[nn.value.trim()] = Math.max(0, parseInt(nq.value) || 0);
+    const r = await api('/api/shop/products', { method: 'POST', body: JSON.stringify({ id: pid, sizes }) });
+    const el = document.getElementById('stkmsg-' + pid);
+    if (r.ok) { if (el) el.textContent = 'saved ✓'; setTimeout(refresh, 600); }
+    else { const j = await r.json(); alert(j.error || 'failed'); }
+  };
+
+  // ── orders ──
+  function renderOrders() {
+    const rows = ORDERS.map(o => `
+      <tr>
+        <td><b>${esc(o.nameZh || o.nameEn)}</b><br>${esc(o.nameEn)}<br><span class="muted">wx: ${esc(o.wechatId)}</span></td>
+        <td>${esc(o.productNameZh || o.productName)}<br>${esc(o.size)} × ${o.qty}
+          ${['pending','review','paid'].includes(o.status) ? `<button class="btn gray" style="padding:2px 8px;font-size:12px" onclick="editQty('${o.id}',${o.qty})">✎</button>` : ''}
+          <br><b>¥${o.amount}</b></td>
+        <td><span class="pill ${o.status}">${o.status}</span><br><span class="muted">${(o.createdAt || '').slice(5, 16).replace('T', ' ')}</span></td>
+        <td>${o.screenshot ? `<a href="${esc(o.screenshot)}" target="_blank"><img class="thumb" src="${esc(o.screenshot)}" onerror="this.outerHTML='<span class=muted>proof file lost<br>(pre-fix deploy)</span>'"></a>` : '<span class="muted">no proof</span>'}</td>
+        <td>${['review','pending'].includes(o.status) ? `
+          <button class="btn green" onclick="act('${o.id}','confirm')">Confirm ✓ 确认</button><br><br>
+          <button class="btn red" onclick="act('${o.id}','reject')">Cancel ✗ 取消</button>` : ''}
+        ${o.status === 'expired' ? `
+          <button class="btn green" onclick="act('${o.id}','confirm')">Revive &amp; confirm 补确认</button>` : ''}
+        ${o.status === 'paid' ? `
+          <button class="btn" onclick="receipt('${o.id}')">收据 Receipt</button><br><br>
+          <button class="btn red" onclick="cancelPaid('${o.id}')">Cancel ✗ 取消</button>` : ''}</td>
+      </tr>`).join('');
+    $('#view').innerHTML = `<div class="box"><b>Orders 订单</b> <button class="btn gray" onclick="location.reload()">↻</button>
+      <table><tr><th>Student</th><th>Item</th><th>Status</th><th>Payment proof</th><th></th></tr>${rows || ''}</table>
+      ${ORDERS.length ? '' : '<p class="muted">no orders yet</p>'}</div>`;
+  }
+
+  window.editQty = async (id, cur) => {
+    const v = prompt('New quantity 新数量:', cur);
+    if (v === null) return;
+    const qty = parseInt(v);
+    if (!qty || qty < 1) { alert('bad quantity'); return; }
+    const r = await api('/api/shop/admin/orders/' + id + '/qty', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ qty }) });
+    if (!r.ok) alert((await r.json()).error);
+    refresh();
+  };
+
+  window.cancelPaid = (id) => {
+    if (!confirm('取消这个已付款订单？库存会退回。\nCancel this PAID order? The shirt returns to stock.')) return;
+    act(id, 'reject');
+  };
+
+  window.act = async (id, what) => {
+    const r = await api('/api/shop/admin/orders/' + id + '/' + what, { method: 'POST' });
+    if (!r.ok) alert((await r.json()).error);
+    refresh();
+  };
+
+  // ── confirmation receipt (teacher side): drawn card to send to the customer ──
+  window.receipt = async (id) => {
+    const o = ORDERS.find(x => x.id === id);
+    if (!o) return;
+    try { await document.fonts.ready; } catch (e) {}
+    const bird = await new Promise(res => {
+      const im = new Image();
+      im.onload = () => res(im); im.onerror = () => res(null);
+      im.src = '/img/hefei-bird.png';
+    });
+    const S = 2, W = 680, H = 1060;
+    const cv = document.createElement('canvas'); cv.width = W * S; cv.height = H * S;
+    const ctx = cv.getContext('2d'); ctx.scale(S, S);
+    const hand = "'Shantell Sans','PingFang SC',sans-serif";
+    const body = "-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif";
+    ctx.fillStyle = '#f6f3fa'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.roundRect(28, 24, W - 56, H - 72, 18); ctx.fill();
+    ctx.strokeStyle = '#e3dcf0'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(28, H - 48);
+    for (let x = 28; x < W - 28; x += 20) { ctx.lineTo(x + 10, H - 34); ctx.lineTo(x + 20, H - 48); }
+    ctx.lineTo(W - 28, H - 48); ctx.fill();
+    ctx.fillStyle = '#582C83';
+    ctx.beginPath(); ctx.roundRect(28, 24, W - 56, 180, [18, 18, 0, 0]); ctx.fill();
+    if (bird) { const bw = 84, bh = bird.height / bird.width * bw; ctx.drawImage(bird, W / 2 - bw / 2, 38, bw, bh); }
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+    ctx.font = '800 34px ' + hand; ctx.fillText('AYBKK Tee Shop', W / 2, bird ? 148 : 96);
+    ctx.font = '600 17px ' + body; ctx.globalAlpha = .92;
+    ctx.fillText('订单确认 · ORDER CONFIRMED', W / 2, bird ? 180 : 130); ctx.globalAlpha = 1;
+    const rows = [
+      ['订单号 Order', o.id],
+      ['商品 Item', o.productName || ''],
+      ['尺码 Size', o.size + '　×　' + o.qty],
+      ['中文名', o.nameZh || '—'],
+      ['Name', o.nameEn || '—'],
+      ['微信 WeChat', o.wechatId || ''],
+      ['确认日期 Confirmed', (o.confirmedAt || new Date().toISOString()).slice(0, 16).replace('T', '  ')],
+    ];
+    let y = 258;
+    for (const [k, v] of rows) {
+      ctx.textAlign = 'left'; ctx.fillStyle = '#8a7db0';
+      ctx.font = '600 15px ' + body; ctx.fillText(k, 64, y);
+      ctx.textAlign = 'right'; ctx.fillStyle = '#241243';
+      ctx.font = '700 19px ' + body;
+      let val = String(v); while (ctx.measureText(val).width > 380 && val.length > 3) val = val.slice(0, -2);
+      ctx.fillText(val, W - 64, y);
+      ctx.strokeStyle = '#eee9f6'; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(64, y + 18); ctx.lineTo(W - 64, y + 18); ctx.stroke();
+      ctx.setLineDash([]); y += 56;
+    }
+    y += 14;
+    ctx.textAlign = 'left'; ctx.fillStyle = '#8a7db0';
+    ctx.font = '600 16px ' + body; ctx.fillText('合计 Total', 64, y + 6);
+    ctx.textAlign = 'right'; ctx.fillStyle = '#582C83';
+    ctx.font = '800 44px ' + hand; ctx.fillText('¥' + o.amount, W - 64, y + 14);
+    ctx.save(); ctx.translate(W / 2, y + 110); ctx.rotate(-0.09);
+    ctx.strokeStyle = '#187a43'; ctx.lineWidth = 3.5; ctx.globalAlpha = .85;
+    ctx.beginPath(); ctx.roundRect(-160, -34, 320, 68, 12); ctx.stroke();
+    ctx.fillStyle = '#187a43'; ctx.font = '800 28px ' + hand;
+    ctx.textAlign = 'center'; ctx.fillText('已确认 CONFIRMED ✓', 0, 10); ctx.restore(); ctx.globalAlpha = 1;
+    ctx.textAlign = 'center'; ctx.fillStyle = '#8a7db0';
+    ctx.font = '600 15px ' + body;
+    ctx.fillText('T恤已为你保留，到店取货 · Your shirt is reserved — pick up at the shala', W / 2, y + 190);
+    ctx.font = 'italic 600 14px ' + hand; ctx.globalAlpha = .8;
+    ctx.fillText('✍︎ All designed & made by Boonchu Tanti · AYBKK', W / 2, y + 220);
+    const url = cv.toDataURL('image/png');
+    const w = window.open('');
+    if (w) w.document.write('<title>Receipt ' + o.id + '</title><body style="margin:0;background:#f6f3fa;text-align:center"><img src="' + url + '" style="max-width:100%"><p style="font:14px sans-serif;color:#8a7db0">长按保存，发给学员 · Long-press to save, send to the student</p></body>');
+    else { const a = document.createElement('a'); a.href = url; a.download = 'AYBKK-confirmed-' + o.id + '.png'; a.click(); }
+  };
+
+  // auto-unlock if key saved
+  if (KEY) { $('#key').value = KEY; unlock(); }
+})();
+</script>
+</body>
+</html>

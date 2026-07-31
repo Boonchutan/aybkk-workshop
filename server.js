@@ -8,6 +8,8 @@ const express = require('express');
 const multer = require('multer');
 const neo4j = require('neo4j-driver');
 const cors = require('cors');
+const { mountAttendance } = require('./attendance-api');
+const { mountShop } = require('./shop-api');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -29,8 +31,12 @@ const taskApi = require('./task-api');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.MISSION_CONTROL_PORT || 3000;
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
+const PORT = process.env.PORT || process.env.MISSION_CONTROL_PORT || 3000;
+// Uploads must live on the persistent volume (/data on Railway) — the app
+// directory is wiped on every redeploy, which silently deleted payment
+// screenshots while their orders (stored in /data) survived.
+const UPLOAD_DIR = process.env.UPLOAD_DIR ||
+  (fs.existsSync('/data') ? '/data/uploads' : path.join(__dirname, 'uploads'));
 
 // Ensure upload directory exists
 if (!fs.existsSync(UPLOAD_DIR)) {
@@ -100,12 +106,163 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(UPLOAD_DIR));
 
+// ─── Merged-identity alias ───────────────────────────────────────────────────
+// Post-workshop identity merges (POST /api/orientation-status/hefei/merge) stamp
+// retired gz- Student nodes with mergedInto = <roster journalId>. Students still
+// hold saved journal links with the old id, so any gz- id in a URL path or JSON
+// body is rewritten to its canonical id before routing — reads and writes both
+// land on the surviving node. Ids without mergedInto pass through untouched.
+const GZ_ID_ONE = /^gz-\d{10,}-[a-z0-9]+$/;
+const GZ_ID_ALL = /gz-\d{10,}-[a-z0-9]+/g;
+const ALIAS_NEG_TTL_MS = 10 * 60 * 1000; // re-check unmerged ids occasionally
+const aliasCache = new Map(); // id -> { to: canonicalId|null, at: epochMs }
+
+async function resolveMergedId(id) {
+  let cur = id;
+  const seen = new Set();
+  for (let hop = 0; hop < 3 && !seen.has(cur); hop++) {
+    seen.add(cur);
+    let next;
+    const hit = aliasCache.get(cur);
+    if (hit && (hit.to !== null || Date.now() - hit.at < ALIAS_NEG_TTL_MS)) {
+      next = hit.to;
+    } else {
+      const session = driver.session();
+      try {
+        const r = await session.run('MATCH (s:Student {id: $id}) RETURN s.mergedInto AS to', { id: cur });
+        next = r.records.length ? (r.records[0].get('to') || null) : null;
+      } finally {
+        await session.close();
+      }
+      if (aliasCache.size > 5000) aliasCache.clear();
+      aliasCache.set(cur, { to: next, at: Date.now() });
+    }
+    if (!next || next === cur) break;
+    cur = next;
+  }
+  return cur;
+}
+
+app.use(async (req, res, next) => {
+  const bodyIdFields = ['studentId', 'id'];
+  const hasBodyId = req.body && typeof req.body === 'object'
+    && bodyIdFields.some(f => typeof req.body[f] === 'string' && GZ_ID_ONE.test(req.body[f]));
+  if (!req.url.includes('gz-') && !hasBodyId) return next();
+  try {
+    const candidates = new Set(req.url.match(GZ_ID_ALL) || []);
+    if (hasBodyId) bodyIdFields.forEach(f => { if (typeof req.body[f] === 'string' && GZ_ID_ONE.test(req.body[f])) candidates.add(req.body[f]); });
+    const rewrites = new Map();
+    for (const id of candidates) {
+      const to = await resolveMergedId(id);
+      if (to !== id) rewrites.set(id, to);
+    }
+    if (rewrites.size) {
+      req.url = req.url.replace(GZ_ID_ALL, m => rewrites.get(m) || m);
+      if (req.body && typeof req.body === 'object') {
+        bodyIdFields.forEach(f => { if (rewrites.has(req.body[f])) req.body[f] = rewrites.get(req.body[f]); });
+      }
+    }
+  } catch (e) {
+    // resolver unavailable — serve under the original id rather than fail the request
+  }
+  next();
+});
+
+// Resolve the public-facing base URL, respecting Cloudflare Worker / reverse-proxy headers.
+// x-forwarded-host is set by workers/china-proxy so journal links use the proxy domain.
+// Quick-tunnel hosts (trycloudflare.com) rotate on every restart; links stored with one
+// die with the tunnel, so they always resolve to the stable domain instead.
+const STABLE_BASE_URL = process.env.PUBLIC_BASE_URL || 'https://cn.aybkk.net';
+function getBaseUrl(req) {
+  const proto = req.get('x-forwarded-proto') || req.protocol || 'https';
+  const host = req.get('x-forwarded-host') || req.get('host') || '';
+  if (!host || /\.trycloudflare\.com$/i.test(host.split(':')[0])) return STABLE_BASE_URL;
+  return `${proto}://${host}`;
+}
+
+// ─── Short orientation routes ────────────────────────────────────────────────
+// Clean, memorable entry points for each workshop orientation page, so links
+// shared in WeChat read e.g. <domain>/su instead of /orientation-suzhou.html.
+const ORIENTATION_SHORTCUTS = {
+  su: 'orientation-suzhou.html',
+  gz: 'orientation-gz.html',
+  bkk: 'orientation-bkk.html',
+  hf: 'orientation-hefei.html',
+  zh: 'orientation-zhuhai.html',
+};
+for (const [slug, file] of Object.entries(ORIENTATION_SHORTCUTS)) {
+  app.get('/' + slug, (req, res) => {
+    if (fs.existsSync(path.join(__dirname, 'public', file))) {
+      res.sendFile(path.join(__dirname, 'public', file));
+    } else {
+      res.redirect(302, '/' + file);
+    }
+  });
+}
+
 // ─── Cloudinary Setup ────────────────────────────────────────────────────────
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
   cloud_name: 'dw1uubecu',
   api_key: process.env.CLOUDINARY_API_KEY || '191765218532954',
   api_secret: process.env.CLOUDINARY_API_SECRET || 'kBwusl-gHqqNiZYykFgChJjt3MQ'
+});
+
+// ─── Moments feed ────────────────────────────────────────────────────────────
+// WeChat-moments-style photo feed for oriented students: /moments (page) +
+// GET /api/moments (data). Sources class photos the photo-watcher uploads to
+// Cloudinary with the `aybkk-daily` tag (public_id aybkk/daily/<date>/…).
+// Student selfies live in the aybkk-students folder and are never tagged, so
+// they can't leak into the feed. Newest 50 per day, last 7 days with content.
+const MOMENTS_PER_DAY = 50;
+const MOMENTS_MAX_DAYS = 7;
+let momentsCache = { at: 0, data: null };
+
+app.get('/moments', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'moments.html'));
+});
+
+app.get('/api/moments', async (req, res) => {
+  try {
+    if (momentsCache.data && Date.now() - momentsCache.at < 10 * 60 * 1000) {
+      return res.json(momentsCache.data);
+    }
+    const result = await cloudinary.search
+      .expression('tags=aybkk-daily AND (resource_type:image OR resource_type:video)')
+      .sort_by('created_at', 'desc')
+      .max_results(MOMENTS_PER_DAY * MOMENTS_MAX_DAYS)
+      .execute();
+
+    const byDay = new Map();
+    for (const r of result.resources || []) {
+      // Day comes from the upload path (aybkk/daily/<date>/…), falling back to created_at
+      const m = String(r.public_id).match(/aybkk\/daily\/(\d{4}-\d{2}-\d{2})\//);
+      const day = m ? m[1] : String(r.created_at).slice(0, 10);
+      if (!byDay.has(day)) byDay.set(day, []);
+      const items = byDay.get(day);
+      if (items.length < MOMENTS_PER_DAY) {
+        items.push({
+          url: r.secure_url,
+          type: r.resource_type === 'video' ? 'video' : 'photo',
+          w: r.width || 0,
+          h: r.height || 0,
+          created: r.created_at
+        });
+      }
+    }
+    const days = [...byDay.entries()]
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .slice(0, MOMENTS_MAX_DAYS)
+      .map(([date, items]) => ({ date, items }));
+
+    const data = { days, updatedAt: new Date().toISOString() };
+    momentsCache = { at: Date.now(), data };
+    res.json(data);
+  } catch (err) {
+    // Serve a stale cache over an error page — the feed is student-facing
+    if (momentsCache.data) return res.json(momentsCache.data);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET /api/student/photo/:studentId
@@ -142,7 +299,7 @@ app.get('/api/student/photo/:studentId', async (req, res) => {
 //   - each slot gets its OWN Cloudinary asset (never overwrites another slot)
 //   - photoUrls array on the assessment node accumulates all 4 slots
 app.post('/api/upload/student-photo', async (req, res) => {
-  const { studentId, imageBase64, assessmentId, slotIndex } = req.body;
+  const { studentId, imageBase64, assessmentId, slotIndex, name, location } = req.body;
   if (!studentId || !imageBase64) return res.status(400).json({ error: 'Missing studentId or imageBase64' });
   try {
     const isPerEntry = !!assessmentId;
@@ -162,12 +319,17 @@ app.post('/api/upload/student-photo', async (req, res) => {
 
     const session = driver.session();
     try {
-      // Always update Student.photoUrl (latest-known face for dashboard)
+      // Always update Student.photoUrl (latest-known face for dashboard).
+      // Optional name/location let the door station create a proper node for
+      // roster students who never touched Neo4j; never overwrites an existing name.
       await session.run(
         `MERGE (s:Student {id: $sid})
-         ON CREATE SET s.createdAt = datetime()
-         SET s.photoUrl = $url`,
-        { sid: studentId, url: photoUrl }
+         ON CREATE SET s.createdAt = datetime(),
+                       s.location = coalesce($location, 'hefei'),
+                       s.isChineseStudent = true
+         SET s.photoUrl = $url,
+             s.name = coalesce(s.name, $name)`,
+        { sid: studentId, url: photoUrl, name: name || null, location: location || null }
       );
       // Pin to the specific assessment using photoUrls array
       if (assessmentId) {
@@ -359,9 +521,19 @@ app.use((req, res, next) => {
   next();
 });
 
+// Workshop check-in station sync + printed short links (offline-first station)
+mountAttendance(app, { pgPool });
+
+// Tee shop (WeChat-pay flow with reservation holds)
+mountShop(app);
+
 // Student Journal API Routes
 const studentJournal = require('./api/student-journal');
 app.use('/api/journal', studentJournal);
+
+// Weekly Transmission tracking (Sunday ritual: sent/confirm/status)
+const transmission = require('./api/transmission');
+app.use('/api/transmission', transmission);
 
 // POST /api/journal/ai-summary/:studentId — DeepSeek bilingual progress summary
 app.post('/api/journal/ai-summary/:studentId', async (req, res) => {
@@ -725,18 +897,50 @@ app.post('/api/students', async (req, res) => {
 // POST /api/orientations - Save orientation form and generate journal link
 app.post('/api/orientations', async (req, res) => {
   try {
-    const { name, wechat, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, workshop, gameResults } = req.body;
-    const studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    const { name, wechat, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, waiverConsent, waiverVersion, language, workshop, gameResults } = req.body;
+    // Bind to a pre-assigned card identity when the orientation link carries a card code
+    // (e.g. orientation-hefei.html?s=HEFEI-023 → reuse that student's journal UUID).
+    // Students who skip the name picker still get bound when their typed name
+    // matches a roster entry (Yuehua case: picker skipped → orphan gz- id).
+    let studentId = 'gz-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    let cardCode = null;
+    try {
+      const code = String(req.body.studentCode || '').trim().toUpperCase();
+      let roster = null;
+      if (code && code.includes('-')) {
+        const rosterPath = path.join(__dirname, 'public', 'rosters', code.split('-')[0].toLowerCase() + '.json');
+        roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
+        const hit = (roster.students || []).find(s => s.id === code);
+        if (hit) { studentId = hit.journalId; cardCode = hit.id; }
+      }
+      if (!cardCode && String(req.body.location || '') === 'hefei') {
+        if (!roster) roster = JSON.parse(fs.readFileSync(path.join(__dirname, 'public', 'rosters', 'hefei.json'), 'utf8'));
+        const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const en = latin(req.body.englishName || name);
+        const zh = String(req.body.chineseName || name || '').trim();
+        const hit = (roster.students || []).find(s => {
+          const m = String(s.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+          const sZh = (m ? m[1] : s.name || '').trim();
+          const sEn = latin(m ? m[2] : s.name);
+          const akas = (s.aka || []).map(latin);
+          return (en && sEn && en === sEn) || (zh && sZh && zh === sZh) || (s.slug && en === s.slug)
+            || (en && akas.includes(en));
+        });
+        if (hit) { studentId = hit.journalId; cardCode = hit.id; }
+      }
+    } catch (e) { /* no roster / bad code — fall through to a fresh id */ }
+
+    const loc = req.body.location || 'guangzhou';
     const datetime = new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
-    const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=guangzhou';
+    const baseUrl = getBaseUrl(req);
+    const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'zh') + '&location=' + encodeURIComponent(loc);
 
     const session = driver.session();
     try {
       await session.run(
-        'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
+        'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, waiverConsent: $waiverConsent, waiverVersion: $waiverVersion, waiverAcceptedAt: $waiverAcceptedAt, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
         {
-          id: studentId,
+          id: studentId + '-o-' + Date.now(),
           name: name,
           wechat: wechat || '',
           experience: experience || '',
@@ -746,38 +950,51 @@ app.post('/api/orientations', async (req, res) => {
           size: size || '',
           photoConsent: photoConsent || 'yes',
           medicalConsent: medicalConsent || 'yes',
+          waiverConsent: waiverConsent || '',
+          waiverVersion: waiverConsent === 'yes' ? (waiverVersion || '1.0') : '',
+          waiverAcceptedAt: waiverConsent === 'yes' ? datetime : '',
           language: language || 'zh',
           workshop: workshop || 'Guangzhou WS Apr 2026',
           gameResults: JSON.stringify(gameResults || []),
           createdAt: datetime
         }
       );
+      // MERGE, not CREATE: card-bound students (in-depth grads etc.) may already
+      // exist — never duplicate them or downgrade their classType on re-orientation.
       await session.run(
-        `CREATE (s:Student {
-          id: $id,
-          name: $name,
-          wechatId: $wechat,
-          classType: 'chinese-workshop',
-          location: 'guangzhou',
-          isChineseStudent: true,
-          isActive: true,
-          oriented: true,
-          language: $language,
-          workshop: $workshop,
-          injuries: $injuries,
-          experience: $experience,
-          journalLink: $journalLink,
-          createdAt: datetime($createdAt)
-        })`,
+        `MERGE (s:Student {id: $id})
+         ON CREATE SET
+          s.classType = 'chinese-workshop',
+          s.location = $location,
+          s.isChineseStudent = true,
+          s.createdAt = datetime($createdAt)
+         SET
+          s.name = coalesce(s.name, $name),
+          s.wechatId = CASE WHEN $wechat <> '' THEN $wechat ELSE s.wechatId END,
+          s.isActive = true,
+          s.oriented = true,
+          s.language = $language,
+          s.workshop = $workshop,
+          s.injuries = $injuries,
+          s.experience = $experience,
+          s.journalLink = $journalLink,
+          s.cardCode = $cardCode,
+          s.waiverConsent = CASE WHEN $waiverConsent = 'yes' THEN 'yes' ELSE s.waiverConsent END,
+          s.waiverVersion = CASE WHEN $waiverConsent = 'yes' THEN $waiverVersion ELSE s.waiverVersion END,
+          s.waiverAcceptedAt = CASE WHEN $waiverConsent = 'yes' THEN $createdAt ELSE s.waiverAcceptedAt END`,
         {
           id: studentId,
           name: name,
           wechat: wechat || '',
+          location: loc,
           language: language || 'zh',
           workshop: workshop || 'Guangzhou WS Apr 2026',
           injuries: injuries || '',
           experience: experience || '',
           journalLink,
+          cardCode: cardCode,
+          waiverConsent: waiverConsent || '',
+          waiverVersion: waiverConsent === 'yes' ? (waiverVersion || '1.0') : '',
           createdAt: datetime
         }
       );
@@ -788,6 +1005,320 @@ app.post('/api/orientations', async (req, res) => {
     res.json({ success: true, studentId, journalLink, name });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/orientation-status/hefei — roster vs who actually completed the
+// Hefei orientation form. "Done" means the form set oriented=true AND stamped
+// the Hefei workshop tag on the Student node (pre-seeded nodes and in-depth
+// grads with old flags don't count until they fill the Hefei form).
+app.get('/api/orientation-status/hefei', async (req, res) => {
+  const session = driver.session();
+  try {
+    const rosterPath = path.join(__dirname, 'public', 'rosters', 'hefei.json');
+    const roster = JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
+    const students = (roster.students || []).filter(s => !/^walk-in/i.test(s.name || ''));
+    const result = await session.run(
+      `MATCH (s:Student)
+       WHERE s.workshop = 'Hefei WS July 2026' AND s.oriented = true
+       RETURN s.id AS id, s.name AS name`
+    );
+    const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const orientedIds = new Set(), orientedLatin = new Set(), orientedZh = new Set();
+    for (const r of result.records) {
+      orientedIds.add(r.get('id'));
+      const n = r.get('name');
+      if (n) { orientedLatin.add(latin(n)); orientedZh.add(String(n).trim()); }
+    }
+    const done = [], pending = [];
+    for (const s of students) {
+      const m = String(s.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+      const sZh = (m ? m[1] : s.name || '').trim();
+      const sEn = latin(m ? m[2] : s.name);
+      // Bound orientations match by journalId; picker-skippers (fresh gz- ids)
+      // match by the name they typed on the form, including known aliases
+      // (e.g. Yammin signs as Yasmin).
+      const isDone = orientedIds.has(s.journalId)
+        || (sEn && orientedLatin.has(sEn))
+        || (sZh && orientedZh.has(sZh))
+        || (s.aka || []).some(a => orientedLatin.has(latin(a)));
+      (isDone ? done : pending).push({ code: s.id, name: s.name, slug: s.slug });
+    }
+    res.json({ total: students.length, doneCount: done.length, done, pending });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// POST /api/orientation-status/hefei/cleanup {key, deactivate: [ids]}
+// Soft-hide duplicate/abandoned Student nodes (e.g. repeated orientation
+// attempts). Guarded by the transmission key; reversible (isActive=true).
+app.post('/api/orientation-status/hefei/cleanup', async (req, res) => {
+  const session = driver.session();
+  try {
+    const provided = (req.body && req.body.key) || '';
+    let key = process.env.TRANSMISSION_KEY;
+    if (!key) {
+      const kr = await session.run(`MATCH (c:Config {name: 'transmissionKey'}) RETURN c.value AS v`);
+      key = kr.records.length ? kr.records[0].get('v') : null;
+    }
+    if (!key || provided !== key) return res.status(403).json({ error: 'bad key' });
+    const ids = (req.body && req.body.deactivate) || [];
+    if (!Array.isArray(ids) || !ids.length) return res.status(400).json({ error: 'deactivate[] required' });
+    const done = [];
+    for (const id of ids) {
+      const r = await session.run(
+        `MATCH (s:Student {id: $id})
+         SET s.isActive = false, s.dedupedAt = datetime(),
+             s.dedupeNote = 'duplicate identity hidden Jul 14 cleanup'
+         RETURN s.id AS id, s.name AS name`,
+        { id }
+      );
+      if (r.records.length) done.push({ id, name: r.records[0].get('name') });
+    }
+    res.json({ deactivated: done });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// POST /api/orientation-status/hefei/merge {key, dryRun, only: [codes]}
+// Post-workshop identity consolidation. Picker-skippers journaled onto fresh
+// gz- nodes while attendance stayed keyed to roster journalIds, so each roster
+// person's gz- node(s) merge INTO their roster journalId node: relationships
+// move over, blank properties fill in, and the gz- node is soft-hidden with
+// mergedInto so the alias middleware keeps old saved links working.
+// dryRun defaults to TRUE — pass dryRun:false to execute. Idempotent: already
+// merged nodes are reported and skipped. `only` restricts to roster codes
+// (e.g. ["HEFEI-005"]) for a staged first run.
+app.post('/api/orientation-status/hefei/merge', async (req, res) => {
+  const session = driver.session();
+  try {
+    const provided = (req.body && req.body.key) || '';
+    let key = process.env.TRANSMISSION_KEY;
+    if (!key) {
+      const kr = await session.run(`MATCH (c:Config {name: 'transmissionKey'}) RETURN c.value AS v`);
+      key = kr.records.length ? kr.records[0].get('v') : null;
+    }
+    if (!key || provided !== key) return res.status(403).json({ error: 'bad key' });
+
+    const dryRun = !(req.body && req.body.dryRun === false);
+    const only = Array.isArray(req.body && req.body.only)
+      ? req.body.only.map(c => String(c).trim().toUpperCase()).filter(Boolean)
+      : null;
+    const WORKSHOP = 'Hefei WS July 2026';
+    const num = v => (v && typeof v.toNumber === 'function') ? v.toNumber() : Number(v) || 0;
+    const blank = v => v === null || v === undefined || v === '';
+    const SAFE_NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
+    // identity + bookkeeping props stay per-node; everything else fills blanks
+    const NO_FILL = new Set(['id', 'name', 'isActive', 'createdAt', 'journalLink', 'cardCode',
+      'mergedInto', 'mergedAt', 'mergeNote', 'dedupedAt', 'dedupeNote',
+      'autoCreatedFromCheckin', 'createdFromMerge', 'sortOrder']);
+
+    const roster = JSON.parse(fs.readFileSync(path.join(__dirname, 'public', 'rosters', 'hefei.json'), 'utf8'));
+    const people = (roster.students || []).filter(s => !/^walk-in/i.test(s.name || '') && s.journalId);
+    const journalIds = people.map(p => p.journalId);
+
+    const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const matchesPerson = (node, p) => {
+      const m = String(p.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+      const pZh = (m ? m[1] : p.name || '').trim();
+      const pEn = latin(m ? m[2] : p.name);
+      const nZh = String(node.name || '').trim();
+      const nEn = latin(node.name);
+      const akas = (p.aka || []).map(latin);
+      return (pEn && nEn && nEn === pEn) || (pZh && nZh && nZh === pZh)
+        || (p.slug && nEn === p.slug) || (nEn && akas.includes(nEn));
+    };
+
+    const nodesRes = await session.run(
+      `MATCH (s:Student) WHERE s.workshop = $workshop OR s.id IN $journalIds RETURN s`,
+      { workshop: WORKSHOP, journalIds }
+    );
+    const nodes = nodesRes.records.map(r => r.get('s').properties);
+    const byId = new Map(nodes.map(n => [n.id, n]));
+
+    // claim gz- nodes; a node matching two people needs a roster/aka fix first
+    const gzClaims = new Map();
+    for (const p of people) {
+      for (const n of nodes) {
+        if (String(n.id).startsWith('gz-') && matchesPerson(n, p)) {
+          if (!gzClaims.has(n.id)) gzClaims.set(n.id, []);
+          gzClaims.get(n.id).push(p.id);
+        }
+      }
+    }
+    const conflicts = [...gzClaims.entries()].filter(([, codes]) => codes.length > 1)
+      .map(([id, codes]) => ({ id, claimedBy: codes }));
+    const conflicted = new Set(conflicts.map(c => c.id));
+
+    const relProfile = async (id) => {
+      const out = await session.run(
+        `MATCH (s:Student {id: $id}) OPTIONAL MATCH (s)-[r]->()
+         WITH type(r) AS t, count(r) AS c WHERE t IS NOT NULL RETURN t, c`, { id });
+      const inn = await session.run(
+        `MATCH (s:Student {id: $id}) OPTIONAL MATCH (s)<-[r]-()
+         WITH type(r) AS t, count(r) AS c WHERE t IS NOT NULL RETURN t, c`, { id });
+      const toObj = rr => Object.fromEntries(rr.records.map(x => [x.get('t'), num(x.get('c'))]));
+      const o = toObj(out), i = toObj(inn);
+      const total = [...Object.values(o), ...Object.values(i)].reduce((a, b) => a + b, 0);
+      return { out: o, in: i, total };
+    };
+
+    const plan = [];
+    for (const p of people) {
+      if (only && !only.includes(String(p.id).toUpperCase())) continue;
+      const gz = [...gzClaims.entries()]
+        .filter(([id, codes]) => codes[0] === p.id && codes.length === 1)
+        .map(([id]) => byId.get(id));
+      if (!gz.length) continue;
+      const canonical = byId.get(p.journalId) || null;
+      const sources = [];
+      for (const n of gz) {
+        const rels = await relProfile(n.id);
+        const active = n.isActive !== false;
+        const action = n.mergedInto ? 'already-merged' : (active ? 'merge' : 'alias-only');
+        sources.push({
+          id: n.id, name: n.name, active, action, rels: rels.out, incoming: rels.in, relTotal: rels.total,
+          warning: (action === 'alias-only' && rels.total > 0)
+            ? 'hidden node still holds ' + rels.total + ' relationship(s), left untouched (was soft-hidden deliberately)'
+            : undefined
+        });
+      }
+      plan.push({
+        code: p.id, roster: p.name, canonicalId: p.journalId,
+        canonicalExists: !!canonical, canonicalName: canonical ? canonical.name : null,
+        sources
+      });
+    }
+
+    const summary = {
+      dryRun, workshop: WORKSHOP,
+      people: plan.length,
+      toMerge: plan.reduce((a, g) => a + g.sources.filter(s => s.action === 'merge').length, 0),
+      aliasOnly: plan.reduce((a, g) => a + g.sources.filter(s => s.action === 'alias-only').length, 0),
+      alreadyMerged: plan.reduce((a, g) => a + g.sources.filter(s => s.action === 'already-merged').length, 0),
+      conflicts
+    };
+    if (dryRun) return res.json({ ...summary, plan });
+
+    const now = new Date().toISOString();
+    const executed = [];
+    for (const g of plan) {
+      // primary source (most data, then newest) donates identity fields on create
+      const donors = g.sources.filter(s => s.action === 'merge')
+        .sort((a, b) => b.relTotal - a.relTotal || String(b.id).localeCompare(String(a.id)));
+      const primary = donors[0] ? byId.get(donors[0].id) : (g.sources[0] ? byId.get(g.sources[0].id) : null);
+      const entry = { code: g.code, canonicalId: g.canonicalId, created: false, moved: {}, filled: [], stamped: [], leftover: 0 };
+
+      const created = await session.run(
+        `MERGE (k:Student {id: $cid})
+         ON CREATE SET k.createdAt = datetime($now), k.name = $name, k.location = $location,
+           k.language = $language, k.classType = 'chinese-workshop', k.isChineseStudent = true,
+           k.workshop = $workshop, k.journalLink = $journalLink, k.oriented = $oriented,
+           k.createdFromMerge = true
+         SET k.isActive = true, k.cardCode = $cardCode
+         RETURN k`,
+        {
+          cid: g.canonicalId, now,
+          name: (primary && primary.name) || g.roster,
+          location: (primary && primary.location) || 'hefei',
+          language: (primary && primary.language) || 'zh',
+          workshop: WORKSHOP,
+          journalLink: (roster.baseUrl || STABLE_BASE_URL) + '/student.html?id=' + g.canonicalId
+            + '&name=' + encodeURIComponent((primary && primary.name) || g.roster)
+            + '&lang=' + ((primary && primary.language) || 'zh') + '&location=hefei',
+          oriented: !!(primary && primary.oriented),
+          cardCode: g.code
+        }
+      );
+      entry.created = !g.canonicalExists;
+      const canonicalProps = created.records[0].get('k').properties;
+
+      // alias first: from this moment concurrent reads/writes on old ids land on canonical
+      for (const s of g.sources) {
+        if (s.action === 'merge') {
+          await session.run(
+            `MATCH (d:Student {id: $id})
+             SET d.isActive = false, d.mergedInto = $cid, d.mergedAt = datetime($now), d.mergeNote = $note`,
+            { id: s.id, cid: g.canonicalId, now, note: 'post-Hefei identity merge (rels moved to roster id)' }
+          );
+          entry.stamped.push(s.id);
+        } else if (s.action === 'alias-only') {
+          await session.run(
+            `MATCH (d:Student {id: $id}) SET d.mergedInto = $cid`,
+            { id: s.id, cid: g.canonicalId }
+          );
+          entry.stamped.push(s.id + ' (alias only)');
+        }
+      }
+      aliasCache.clear();
+
+      for (const s of g.sources.filter(x => x.action === 'merge')) {
+        const moveOnce = async () => {
+          const prof = await relProfile(s.id);
+          for (const [t, c] of Object.entries(prof.out)) {
+            if (!SAFE_NAME.test(t)) { entry.moved[t] = 'SKIPPED unsafe type name'; continue; }
+            await session.run(
+              `MATCH (d:Student {id: $dropId})-[r:\`${t}\`]->(x)
+               MATCH (k:Student {id: $cid})
+               WHERE x <> k
+               MERGE (k)-[:\`${t}\`]->(x)
+               DELETE r`,
+              { dropId: s.id, cid: g.canonicalId }
+            );
+            entry.moved[t] = (typeof entry.moved[t] === 'number' ? entry.moved[t] : 0) + c;
+          }
+          for (const [t, c] of Object.entries(prof.in)) {
+            if (!SAFE_NAME.test(t)) { entry.moved['in:' + t] = 'SKIPPED unsafe type name'; continue; }
+            await session.run(
+              `MATCH (x)-[r:\`${t}\`]->(d:Student {id: $dropId})
+               MATCH (k:Student {id: $cid})
+               WHERE x <> k
+               MERGE (x)-[:\`${t}\`]->(k)
+               DELETE r`,
+              { dropId: s.id, cid: g.canonicalId }
+            );
+            entry.moved['in:' + t] = (typeof entry.moved['in:' + t] === 'number' ? entry.moved['in:' + t] : 0) + c;
+          }
+        };
+        await moveOnce();
+        const leftover = await relProfile(s.id);
+        if (leftover.total > 0) await moveOnce(); // a write slipped in mid-move
+        entry.leftover += (await relProfile(s.id)).total;
+      }
+
+      // fill canonical blanks from donors (most data first), identity fields excluded
+      const fill = {};
+      for (const d of donors.map(x => byId.get(x.id)).filter(Boolean)) {
+        for (const [k, v] of Object.entries(d)) {
+          if (NO_FILL.has(k) || !blank(canonicalProps[k]) || blank(v) || k in fill) continue;
+          if (!SAFE_NAME.test(k)) continue;
+          fill[k] = v;
+        }
+      }
+      if (Object.keys(fill).length) {
+        const setClauses = Object.keys(fill).map(k => `k.\`${k}\` = $fill_${k}`).join(', ');
+        const params = { cid: g.canonicalId };
+        for (const [k, v] of Object.entries(fill)) params['fill_' + k] = v;
+        await session.run(`MATCH (k:Student {id: $cid}) SET ${setClauses}`, params);
+        entry.filled = Object.keys(fill);
+      }
+
+      entry.canonicalAfter = await relProfile(g.canonicalId);
+      executed.push(entry);
+    }
+    aliasCache.clear();
+
+    res.json({ ...summary, executed });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await session.close();
   }
 });
 
@@ -829,16 +1360,16 @@ app.get('/api/orientations', async (req, res) => {
 // re-fill an orientation — the dashboard surfaces them directly.
 app.post('/api/orientations/bkk', async (req, res) => {
   try {
-    const { name, wechat, contactType, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, language, gameResults } = req.body;
+    const { name, wechat, contactType, experience, injuries, goals, emergency, size, photoConsent, medicalConsent, waiverConsent, waiverVersion, language, gameResults } = req.body;
     const studentId = 'bkk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
     const datetime = new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const journalLink = baseUrl + '/student.html?id=' + studentId + '&name=' + encodeURIComponent(name) + '&lang=' + (language || 'th') + '&location=bangkok';
 
     const session = driver.session();
     try {
       await session.run(
-        'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, contactType: $contactType, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
+        'CREATE (s:Orientation {id: $id, name: $name, wechat: $wechat, contactType: $contactType, experience: $experience, injuries: $injuries, goals: $goals, emergency: $emergency, size: $size, photoConsent: $photoConsent, medicalConsent: $medicalConsent, waiverConsent: $waiverConsent, waiverVersion: $waiverVersion, waiverAcceptedAt: $waiverAcceptedAt, language: $language, workshop: $workshop, gameResults: $gameResults, createdAt: datetime($createdAt)})',
         {
           id: studentId,
           name: name,
@@ -851,6 +1382,9 @@ app.post('/api/orientations/bkk', async (req, res) => {
           size: size || '',
           photoConsent: photoConsent || 'yes',
           medicalConsent: medicalConsent || 'yes',
+          waiverConsent: waiverConsent || '',
+          waiverVersion: waiverConsent === 'yes' ? (waiverVersion || '1.0') : '',
+          waiverAcceptedAt: waiverConsent === 'yes' ? datetime : '',
           language: language || 'th',
           workshop: 'AYBKK Bangkok Shala',
           gameResults: JSON.stringify(gameResults || []),
@@ -1392,7 +1926,7 @@ app.post('/api/orientations/ru', async (req, res) => {
     if (!city || !['spb', 'moscow'].includes(city)) return res.status(400).json({ success: false, error: 'city must be spb or moscow' });
 
     const datetime = new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const tgChatStr = String(telegramChatId || '');
     const emailStr = (email || '').trim().toLowerCase();
 
@@ -1560,7 +2094,7 @@ app.post('/api/orientations/online', async (req, res) => {
     if (!contact) return res.status(400).json({ success: false, error: 'contact required' });
 
     const datetime = date || new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const contactStr = String(contact || '').trim().toLowerCase();
     const contactTypeStr = String(contactType || 'telegram').trim().toLowerCase();
 
@@ -1595,6 +2129,7 @@ app.post('/api/orientations/online', async (req, res) => {
         city: $city, country: $country, timezone: $timezone,
         experience: $experience, series: $series, injuries: $injuries,
         language: $language, workshop: $workshop, photoUrl: $photoUrl,
+        waiverConsent: $waiverConsent, waiverVersion: $waiverVersion, waiverAcceptedAt: $waiverAcceptedAt,
         location: 'mysore-room', createdAt: datetime($createdAt)
       })`, {
       id: studentId, name, contact: contact || '', contactType: contactTypeStr,
@@ -1602,6 +2137,9 @@ app.post('/api/orientations/online', async (req, res) => {
       experience: experience || '', series: series || '', injuries: injuries || '',
       language: lang, workshop: workshop || "Boonchu's Mysore Room",
       photoUrl: photoUrl || '', createdAt: datetime,
+      waiverConsent: req.body.waiverConsent || '',
+      waiverVersion: req.body.waiverConsent === 'yes' ? (req.body.waiverVersion || '1.0') : '',
+      waiverAcceptedAt: req.body.waiverConsent === 'yes' ? datetime : '',
     });
 
     // :Student canonical (MERGE on id so a repeat registration updates the same row)
@@ -1693,7 +2231,7 @@ app.post('/api/orientations/private', async (req, res) => {
     if (!contact) return res.status(400).json({ success: false, error: 'contact required' });
 
     const datetime = date || new Date().toISOString();
-    const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
+    const baseUrl = getBaseUrl(req);
     const contactStr = String(contact || '').trim().toLowerCase();
     const contactTypeStr = String(contactType || 'telegram').trim().toLowerCase();
 
@@ -1727,12 +2265,16 @@ app.post('/api/orientations/private', async (req, res) => {
         city: $city, country: $country,
         experience: $experience, series: $series, injuries: $injuries,
         language: $language, photoUrl: $photoUrl,
+        waiverConsent: $waiverConsent, waiverVersion: $waiverVersion, waiverAcceptedAt: $waiverAcceptedAt,
         location: 'private', createdAt: datetime($createdAt)
       })`, {
       id: studentId, name, contact: contact || '', contactType: contactTypeStr,
       city: city || '', country: country || '',
       experience: experience || '', series: series || '', injuries: injuries || '',
       language: lang, photoUrl: photoUrl || '', createdAt: datetime,
+      waiverConsent: req.body.waiverConsent || '',
+      waiverVersion: req.body.waiverConsent === 'yes' ? (req.body.waiverVersion || '1.0') : '',
+      waiverAcceptedAt: req.body.waiverConsent === 'yes' ? datetime : '',
     });
 
     await session.run(`
@@ -2993,6 +3535,194 @@ app.get('/api/tags', async (req, res) => {
   }
 });
 
+// Cloudflare Quick Tunnel — no account needed.
+// Gives a *.trycloudflare.com URL routed through Cloudflare's HK/SG edge,
+// making the app reachable from mainland China without a VPN.
+// The URL is stable for the lifetime of this process (changes on Railway
+// restart).  The teacher posts it to the workshop WeChat group each day.
+// Download a file over HTTPS using Node's built-in module (no curl needed —
+// the Railway runtime image has no curl). Follows GitHub's 302 redirects to
+// the release-asset CDN. Writes to a temp path then renames atomically.
+function downloadBinary(url, dest, cb, redirects = 0) {
+  const https = require('https');
+  const fs = require('fs');
+  if (redirects > 6) return cb(new Error('too many redirects'));
+  https.get(url, { headers: { 'User-Agent': 'aybkk-server' } }, (res) => {
+    if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+      res.resume();
+      return downloadBinary(res.headers.location, dest, cb, redirects + 1);
+    }
+    if (res.statusCode !== 200) {
+      res.resume();
+      return cb(new Error('HTTP ' + res.statusCode));
+    }
+    const tmp = dest + '.dl';
+    const file = fs.createWriteStream(tmp);
+    res.pipe(file);
+    file.on('finish', () => file.close(() => {
+      try {
+        fs.chmodSync(tmp, 0o755);
+        fs.renameSync(tmp, dest);
+        cb(null);
+      } catch (e) { cb(e); }
+    }));
+    file.on('error', (e) => cb(e));
+  }).on('error', (e) => cb(e));
+}
+
+function startChinaTunnel() {
+  const { existsSync } = require('fs');
+
+  // 1. Build-time binary at cloudflared-bin (not excluded by .gitignore/.dockerignore).
+  let cfBin = path.join(__dirname, 'cloudflared-bin');
+  // Also try 'cloudflared' in case someone placed it manually.
+  if (!existsSync(cfBin)) cfBin = path.join(__dirname, 'cloudflared');
+  // 2. nixPkgs system binary in PATH.
+  if (!existsSync(cfBin)) {
+    try {
+      const { execSync: ex } = require('child_process');
+      cfBin = ex('which cloudflared', { encoding: 'utf8', timeout: 5000 }).trim();
+    } catch (_) { cfBin = ''; }
+  }
+
+  if (cfBin) {
+    doSpawnTunnel(cfBin);
+    return;
+  }
+
+  // 3. Runtime download via Node https (no curl dependency).
+  const tmpBin = '/tmp/cloudflared';
+  if (existsSync(tmpBin)) {
+    doSpawnTunnel(tmpBin);
+    return;
+  }
+
+  console.log('[china-tunnel] binary not found; downloading cloudflared via Node https...');
+  downloadBinary(
+    'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64',
+    tmpBin,
+    (err) => {
+      if (err) {
+        console.warn('[china-tunnel] runtime download failed:', err.message, '— retrying in 30s');
+        setTimeout(startChinaTunnel, 30000);
+        return;
+      }
+      console.log('[china-tunnel] download complete — starting tunnel');
+      doSpawnTunnel(tmpBin);
+    }
+  );
+}
+
+function doSpawnTunnel(cfBin) {
+  const { spawn } = require('child_process');
+  // Named tunnel (stable branded hostname, e.g. https://cn.aybkk.com):
+  //   set CN_TUNNEL_TOKEN (from Cloudflare Zero Trust > Tunnels) and
+  //   CN_STABLE_URL (the public hostname configured on that tunnel).
+  //   The URL never rotates, so it can be printed on QR cards.
+  // Without a token: quick tunnel (random *.trycloudflare.com, rotates
+  //   on every restart) — the pre-Jul-2026 behavior.
+  const token = process.env.CN_TUNNEL_TOKEN;
+  const stableUrl = process.env.CN_STABLE_URL;
+  const args = token
+    ? ['tunnel', '--no-autoupdate', 'run', '--token', token]
+    : ['tunnel', '--no-autoupdate', '--url', `http://localhost:${PORT}`];
+  console.log(`[china-tunnel] starting (${token ? 'named tunnel' : 'quick tunnel'}, binary: ${cfBin})`);
+  const child = spawn(cfBin, args, {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env, HOME: '/tmp' },
+  });
+
+  if (token && stableUrl) {
+    process.env.TUNNEL_URL = stableUrl;
+    console.log('🇨🇳 ═══════════════════════════════════════════════════');
+    console.log(`🇨🇳  CHINA ACCESS URL (stable): ${stableUrl}`);
+    console.log('🇨🇳 ═══════════════════════════════════════════════════');
+  }
+
+  let found = false;
+  const onData = (data) => {
+    const text = data.toString();
+    process.stdout.write('[cloudflared] ' + text);
+    if (token) return; // named tunnel: TUNNEL_URL already set to the stable host
+    const match = text.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/);
+    if (match && !found) {
+      found = true;
+      process.env.TUNNEL_URL = match[0];
+      console.log('🇨🇳 ═══════════════════════════════════════════════════');
+      console.log(`🇨🇳  CHINA ACCESS URL: ${match[0]}`);
+      console.log('🇨🇳  Share this link with students in the WeChat group.');
+      console.log('🇨🇳 ═══════════════════════════════════════════════════');
+    }
+  };
+  child.stdout.on('data', onData);
+  child.stderr.on('data', onData);
+
+  child.on('error', (err) => console.warn(`[china-tunnel] spawn error: ${err.message}`));
+  child.on('exit', (code) => {
+    console.warn(`[china-tunnel] cloudflared exited (code ${code}) — restarting in 10s`);
+    if (!token) { process.env.TUNNEL_URL = ''; found = false; }
+    setTimeout(startChinaTunnel, 10000);
+  });
+}
+
+// GET /api/debug — tunnel diagnostics written to git by GH Actions on 503.
+app.get('/api/debug', (req, res) => {
+  const { existsSync, statSync } = require('fs');
+  const { execSync: ex } = require('child_process');
+  const diag = {
+    ts: new Date().toISOString(),
+    tunnelUrl: process.env.TUNNEL_URL || null,
+    RAILWAY_ENVIRONMENT: process.env.RAILWAY_ENVIRONMENT || null,
+    HOME: process.env.HOME || null,
+    __dirname,
+  };
+
+  const checkPaths = [
+    path.join(__dirname, 'cloudflared-bin'),
+    path.join(__dirname, 'cloudflared'),
+    '/tmp/cloudflared',
+  ];
+  diag.binaries = {};
+  for (const p of checkPaths) {
+    try {
+      if (existsSync(p)) {
+        const st = statSync(p);
+        diag.binaries[p] = { exists: true, size: st.size, mode: '0' + (st.mode & 0o777).toString(8) };
+      } else {
+        diag.binaries[p] = { exists: false };
+      }
+    } catch (e) {
+      diag.binaries[p] = { exists: false, error: e.message };
+    }
+  }
+
+  try { diag.curl = ex('curl --version 2>&1 | head -1', { encoding: 'utf8', timeout: 5000 }).trim(); }
+  catch (e) { diag.curl = 'not found'; }
+
+  try { diag.ls = ex(`ls -la "${__dirname}" 2>&1 | head -20`, { encoding: 'utf8', timeout: 5000 }); }
+  catch (e) { diag.ls = 'error: ' + e.message; }
+
+  if (diag.binaries[checkPaths[0]]?.exists) {
+    try { diag.cfVersion = ex(`"${checkPaths[0]}" --version 2>&1`, { encoding: 'utf8', timeout: 8000 }).trim(); }
+    catch (e) { diag.cfVersion = 'exec failed: ' + e.message; }
+  }
+
+  res.json(diag);
+});
+
+// GET /api/china-url — returns the current China-accessible tunnel URL.
+// Teacher can open this on their device to get the current link to share.
+app.get('/api/china-url', (req, res) => {
+  const url = process.env.TUNNEL_URL;
+  if (url && url.includes('trycloudflare.com')) {
+    res.json({ url, instructions: 'Share this URL with students in China (no VPN needed).' });
+  } else if (url) {
+    res.json({ url, instructions: 'Custom domain or Railway URL.' });
+  } else {
+    res.status(503).json({ error: 'Tunnel not yet started, try again in 30s.' });
+  }
+});
+
 // Start server
 async function start() {
   await testNeo4j();
@@ -3001,6 +3731,22 @@ async function start() {
   app.listen(PORT, () => {
     console.log(`✓ Mission Control running on http://localhost:${PORT}`);
   });
+
+  // Compatibility listener: Railway's custom-domain target port was created
+  // against the old default (3000). Until the domain's target port is moved
+  // to 8080 in the dashboard, serve both so my.aybkk.com stays up.
+  const LEGACY_PORT = process.env.MISSION_CONTROL_PORT || 3000;
+  if (String(LEGACY_PORT) !== String(PORT)) {
+    app.listen(LEGACY_PORT, () => {
+      console.log(`✓ Compatibility listener on http://localhost:${LEGACY_PORT}`);
+    });
+  }
+
+  // Start China tunnel in production (Railway) or when explicitly requested.
+  // Skipped in local dev unless ENABLE_TUNNEL=1 is set.
+  if (process.env.RAILWAY_ENVIRONMENT || process.env.ENABLE_TUNNEL === '1') {
+    startChinaTunnel();
+  }
 
   // Auto-start the Telegram bot as a managed child process when running on Railway
   // (or anywhere RUN_BOT=1 is set). Auto-restarts on crash so it stays alive 24/7.

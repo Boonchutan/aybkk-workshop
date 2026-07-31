@@ -57,7 +57,7 @@
       font-family: var(--font-display);
       font-size: clamp(22px, 5vw, 28px);
       font-weight: 800;
-      color: #2f2517;
+      color: var(--ink);
       text-shadow: var(--text-carve-soft);
       letter-spacing: -0.01em;
       margin-bottom: 4px;
@@ -147,10 +147,10 @@
       font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #f1e2c4;
+      color: var(--chalk);
       cursor: pointer;
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.7), -1px -1px 1px rgba(50, 28, 10, 0.85);
+      background: var(--shirt-deep);
+      text-shadow: none;
       box-shadow:
         8px 8px 18px rgba(120, 80, 40, 0.26),
         -5px -5px 12px var(--shadow-light),
@@ -173,7 +173,7 @@
       font-family: var(--font-display);
       font-size: 22px;
       font-weight: 800;
-      color: #2f2517;
+      color: var(--ink);
       text-shadow: var(--text-carve-soft);
       margin-bottom: 8px;
     }
@@ -194,10 +194,10 @@
       font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #f1e2c4;
+      color: var(--chalk);
       text-decoration: none;
-      background: linear-gradient(135deg, #e6d2a8 0%, var(--primary) 55%, #997a52 100%);
-      text-shadow: 1px 1px 0 rgba(255, 240, 215, 0.7), -1px -1px 1px rgba(50, 28, 10, 0.85);
+      background: var(--shirt-deep);
+      text-shadow: none;
       box-shadow:
         8px 8px 18px rgba(120, 80, 40, 0.26),
         -5px -5px 12px var(--shadow-light),
@@ -209,6 +209,9 @@
       font-style: italic;
       color: var(--ink-soft);
     }
+      .field label.waiver-check { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; text-transform: none; letter-spacing: 0; margin-top: 8px; cursor: pointer; }
+    .waiver-details summary { cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .waiver-text { white-space: pre-line; font-size: 12px; line-height: 1.6; opacity: .82; margin: 8px 0 6px; }
   </style>
 </head>
 <body>
@@ -301,6 +304,14 @@
           </select>
         </div>
 
+        <div class="field" id="waiverBox">
+          <details class="waiver-details">
+            <summary id="waiverToggle">📜 Waiver &amp; Terms (tap to read)</summary>
+            <div class="waiver-text" id="waiverText"></div>
+          </details>
+          <label class="waiver-check"><input type="checkbox" id="waiverConsent"> <span id="waiverLabel">I have read and agree to the Waiver &amp; Terms</span></label>
+        </div>
+
         <button type="submit" class="submit-btn" id="submitBtn">Submit Registration</button>
       </form>
     </div>
@@ -314,7 +325,7 @@
   </div>
 
 <script>
-const API_BASE = 'https://aybkk-ashtanga.up.railway.app/api';
+const API_BASE = '/api';
 
 const T = {
   en: {
@@ -325,6 +336,10 @@ const T = {
     lblCity: 'City', lblCountry: 'Country',
     lblExperience: 'Years practicing Ashtanga', lblSeries: 'Current series',
     lblInjuries: 'Injuries or limitations', lblLanguage: 'Journal language',
+    waiverToggle: '📜 Waiver & Terms (tap to read)',
+    waiverText: '1. Yoga is a physical activity; muscle soreness and minor discomfort are a normal part of practice.\n2. I practice at my own risk, take responsibility for my well-being, follow the teacher\'s instructions, and will report any injury or health condition before class.\n3. AYBKK, its teachers, and staff are not liable for injuries sustained during practice, and I agree not to pursue legal action for such incidents.\n4. All payments (memberships, packages, drop-ins, workshops) are final and non-refundable. In exceptional cases AYBKK may, at its sole discretion, convert remaining value into credit for a future AYBKK workshop or package within 12 months. If AYBKK cancels a workshop, I receive a full refund or a transfer to the rescheduled workshop.\n5. AYBKK may take photos/videos during classes and workshops for social media and community promotion.',
+    waiverLabel: 'I have read and agree to the Waiver & Terms',
+    waiverRequired: 'Please read and agree to the Waiver & Terms first',
     phName: 'Your name', phHandle: '@username', phCity: 'City', phCountry: 'Country',
     phInjuries: 'Anything Boonchu should know before watching you practice',
     expO1: 'Less than 1 year', expO2: '1 to 3 years', expO3: '3 to 6 years', expO4: '6 years or more',
@@ -344,6 +359,10 @@ const T = {
     lblCity: '城市', lblCountry: '国家',
     lblExperience: '练习阿斯汤加的年数', lblSeries: '当前序列',
     lblInjuries: '伤病或身体限制', lblLanguage: '日志语言',
+    waiverToggle: '📜 免责声明与条款（点击阅读）',
+    waiverText: '1. 瑜伽属于体力活动，肌肉酸痛和轻微不适是练习过程中的正常现象。\n2. 练习风险自负；本人对自身健康负责，听从老师指导，并在课前告知伤病或健康状况。\n3. 对练习期间发生的受伤或意外，AYBKK及其老师和工作人员不承担法律责任，本人不会就此采取法律行动。\n4. 所有付款（会员、套餐、单次课及工作坊）一经支付概不退款。特殊情况下，AYBKK可全权决定将剩余金额在12个月内转为未来AYBKK工作坊或套餐的抵用额度。如AYBKK取消工作坊，可获全额退款或转至改期场次。\n5. AYBKK可能在课程和工作坊期间拍摄照片/视频，用于社交媒体及社区推广。',
+    waiverLabel: '我已阅读并同意免责声明与条款',
+    waiverRequired: '请先阅读并同意免责声明与条款',
     phName: '你的名字', phHandle: '@用户名', phCity: '城市', phCountry: '国家',
     phInjuries: '在我观察你练习之前需要知道的事',
     expO1: '少于 1 年', expO2: '1 至 3 年', expO3: '3 至 6 年', expO4: '6 年或以上',
@@ -363,6 +382,10 @@ const T = {
     lblCity: 'Город', lblCountry: 'Страна',
     lblExperience: 'Лет занятий аштангой', lblSeries: 'Текущая серия',
     lblInjuries: 'Травмы или ограничения', lblLanguage: 'Язык дневника',
+    waiverToggle: '📜 Отказ от ответственности и условия (нажмите, чтобы прочитать)',
+    waiverText: '1. Йога — физическая активность; мышечная боль и лёгкий дискомфорт — нормальная часть практики.\n2. Я практикую на свой страх и риск, отвечаю за своё самочувствие, следую указаниям учителя и сообщу о травмах или проблемах со здоровьем до занятия.\n3. AYBKK, учителя и персонал не несут ответственности за травмы во время практики; я не буду предъявлять юридические претензии.\n4. Все платежи (абонементы, пакеты, разовые занятия, воркшопы) окончательны и возврату не подлежат. В особых случаях AYBKK может по своему усмотрению перевести остаток в кредит на будущий воркшоп или пакет AYBKK в течение 12 месяцев. Если AYBKK отменяет воркшоп — полный возврат или перенос на новые даты.\n5. AYBKK может делать фото/видео во время занятий и воркшопов для соцсетей и продвижения сообщества.',
+    waiverLabel: 'Я прочитал(а) и принимаю условия',
+    waiverRequired: 'Пожалуйста, сначала примите условия',
     phName: 'Ваше имя', phHandle: '@username', phCity: 'Город', phCountry: 'Страна',
     phInjuries: 'Что Boonchu должен знать перед практикой',
     expO1: 'Менее 1 года', expO2: '1 до 3 лет', expO3: '3 до 6 лет', expO4: '6 лет и больше',
@@ -382,6 +405,10 @@ const T = {
     lblCity: 'เมือง', lblCountry: 'ประเทศ',
     lblExperience: 'ปีที่ฝึกอัษฎางคะ', lblSeries: 'ซีรีส์ปัจจุบัน',
     lblInjuries: 'อาการบาดเจ็บหรือข้อจำกัด', lblLanguage: 'ภาษาบันทึก',
+    waiverToggle: '📜 ข้อตกลงและการสละสิทธิ์ (แตะเพื่ออ่าน)',
+    waiverText: '1. โยคะเป็นกิจกรรมทางกาย อาการปวดเมื่อยและความไม่สบายเล็กน้อยเป็นส่วนหนึ่งของการฝึกตามปกติ\n2. ฉันฝึกโดยยอมรับความเสี่ยงเอง รับผิดชอบต่อสุขภาพของตนเอง ปฏิบัติตามคำแนะนำของครู และจะแจ้งอาการบาดเจ็บหรือปัญหาสุขภาพก่อนเข้าคลาส\n3. AYBKK ครูผู้สอน และทีมงานไม่รับผิดชอบต่อการบาดเจ็บระหว่างการฝึก และฉันจะไม่ดำเนินการทางกฎหมายจากเหตุการณ์ดังกล่าว\n4. การชำระเงินทั้งหมด (สมาชิก แพ็กเกจ คลาสรายครั้ง เวิร์กช็อป) ถือเป็นที่สิ้นสุดและไม่คืนเงิน กรณีพิเศษ AYBKK อาจพิจารณาเปลี่ยนยอดคงเหลือเป็นเครดิตสำหรับเวิร์กช็อปหรือแพ็กเกจของ AYBKK ภายใน 12 เดือน หาก AYBKK ยกเลิกเวิร์กช็อป จะได้รับเงินคืนเต็มจำนวนหรือย้ายไปรอบที่เลื่อนใหม่\n5. AYBKK อาจถ่ายภาพ/วิดีโอระหว่างคลาสและเวิร์กช็อปเพื่อโซเชียลมีเดียและการส่งเสริมชุมชน',
+    waiverLabel: 'ฉันได้อ่านและยอมรับข้อตกลงแล้ว',
+    waiverRequired: 'กรุณาอ่านและยอมรับข้อตกลงก่อนส่งแบบฟอร์ม',
     phName: 'ชื่อคุณ', phHandle: '@username', phCity: 'เมือง', phCountry: 'ประเทศ',
     phInjuries: 'สิ่งที่ครูควรรู้ก่อนสอน',
     expO1: 'น้อยกว่า 1 ปี', expO2: '1 ถึง 3 ปี', expO3: '3 ถึง 6 ปี', expO4: '6 ปีขึ้นไป',
@@ -420,6 +447,9 @@ function applyLang(lang) {
   setText('lblSeries', t.lblSeries);
   setText('lblInjuries', t.lblInjuries);
   setText('lblLanguage', t.lblLanguage);
+  setText('waiverToggle', t.waiverToggle);
+  setText('waiverText', t.waiverText);
+  setText('waiverLabel', t.waiverLabel);
   setText('expO1', t.expO1); setText('expO2', t.expO2); setText('expO3', t.expO3); setText('expO4', t.expO4);
   setText('serO1', t.serO1); setText('serO2', t.serO2); setText('serO3', t.serO3); setText('serO4', t.serO4);
   setText('successTitle', t.successTitle);
@@ -454,6 +484,11 @@ document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', 
 
 async function submitForm(e) {
   e.preventDefault();
+  if (!document.getElementById('waiverConsent').checked) {
+    alert(T[curLang].waiverRequired);
+    document.getElementById('waiverBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
   const t = T[curLang];
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -469,6 +504,8 @@ async function submitForm(e) {
     series: document.getElementById('series').value,
     injuries: document.getElementById('injuries').value.trim(),
     language: document.getElementById('language').value,
+    waiverConsent: document.getElementById('waiverConsent').checked ? 'yes' : 'no',
+    waiverVersion: '1.0',
     date: new Date().toISOString()
   };
 

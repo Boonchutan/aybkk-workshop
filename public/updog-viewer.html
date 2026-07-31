@@ -4,14 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AYBKK · Upward Dog — 3-View Teaching</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/tokens.css">
 <style>
+/* updog-viewer.html — tokens v2 migration. A 3-view (front/side/back)
+   photo switcher with a floating teaching panel, same register as
+   updog-3d/updog-teach: per DESIGN.md migration notes this chrome stays
+   dark (the html/body colour doubles as letterboxing around each photo,
+   so it must match the dark theatre, not the light --wall) tinted with
+   the --ink hue, chalk text, instead of pure black. Local var NAMES kept
+   so every rule below re-skins without further edits; only their VALUES
+   now come from tokens.css. The photos and their sepia filter, and the
+   drag/view-switch logic, are untouched. */
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --esp:#0A0705;--ink:#1C1812;--amb:#C8650A;
-  --ambl:#F0C49A;--parch:#F2EDE4;--mut:#7A6A57;
-  --fd:'Playfair Display',Georgia,serif;
-  --fb:'Jost',sans-serif;
+  --esp:      var(--ink);
+  --amb:      var(--shirt);
+  --ambl:     var(--shirt-soft);
+  --amb-deep: var(--shirt-deep);
+  --parch:    var(--chalk);
+  --mut:      var(--ink-soft);
+  --well:     color-mix(in oklab, var(--ink) 88%, var(--chalk) 8%);
+  --hair:     color-mix(in oklab, var(--chalk) 14%, transparent);
+  --dim:      color-mix(in oklab, var(--chalk) 55%, var(--ink));
+  --whisper:  color-mix(in oklab, var(--chalk) 24%, var(--ink));
+  --fd: var(--font-display);
+  --fb: var(--font-body);
 }
 html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-family:var(--fb);-webkit-font-smoothing:antialiased;}
 
@@ -20,12 +37,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-fami
   position:fixed;top:0;left:0;right:0;z-index:200;
   display:flex;align-items:center;justify-content:space-between;
   padding:14px 32px;
-  background:linear-gradient(to bottom,rgba(10,7,5,0.97) 0%,transparent 100%);
+  background:linear-gradient(to bottom, color-mix(in oklab, var(--ink) 97%, transparent) 0%, transparent 100%);
 }
 .hdr-logo{font-family:var(--fd);font-weight:700;font-size:1rem;color:var(--parch);letter-spacing:.05em;}
 .hdr-logo span{font-family:var(--fb);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-left:8px;}
 .hdr-pose{font-family:var(--fd);font-weight:700;font-style:italic;font-size:.95rem;color:var(--ambl);}
-.hdr-tip{font-size:.6rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#2A1E0E;}
+.hdr-tip{font-size:.6rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--whisper);}
 
 /* ── Stage ────────────────────────────────────────────── */
 .stage{
@@ -62,8 +79,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-fami
 .view-label{
   position:absolute;bottom:72px;left:50%;transform:translateX(-50%);
   font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--mut);background:rgba(10,7,5,.7);
-  padding:5px 14px;border-radius:999px;white-space:nowrap;
+  color:var(--mut);background:color-mix(in oklab, var(--ink) 70%, transparent);
+  padding:5px 14px;border-radius:var(--radius-pill);white-space:nowrap;
   pointer-events:none;
 }
 
@@ -73,20 +90,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-fami
   display:flex;align-items:center;gap:10px;z-index:150;
 }
 .rot-seg{
-  width:48px;height:3px;background:#1E1408;border-radius:2px;
+  width:48px;height:3px;background:var(--hair);border-radius:2px;
   transition:background .3s,width .3s;cursor:pointer;
 }
 .rot-seg.active{background:var(--amb);width:72px;}
 .rot-label{
   font-size:.58rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
-  color:#2A1E0E;width:40px;text-align:center;font-size:.55rem;
+  color:var(--whisper);width:40px;text-align:center;font-size:.55rem;
 }
 
 /* ── Drag hint ────────────────────────────────────────── */
 .drag-hint{
   position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
   font-size:.58rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
-  color:#2A1E0E;pointer-events:none;
+  color:var(--whisper);pointer-events:none;
   transition:opacity .3s;
 }
 .drag-hint.hidden{opacity:0;}
@@ -114,19 +131,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-fami
 .dot-core{
   width:14px;height:14px;border-radius:50%;
   background:var(--amb);
-  border:2px solid rgba(240,196,154,.4);
+  border:2px solid color-mix(in oklab, var(--ambl) 40%, transparent);
   transition:all .2s;
   position:relative;z-index:2;
-  box-shadow:0 0 10px rgba(200,101,10,.5);
+  box-shadow:0 0 10px color-mix(in oklab, var(--amb) 50%, transparent);
 }
 .dot-wrap:hover .dot-core,
 .dot-wrap.active .dot-core{
-  background:#fff;box-shadow:0 0 16px rgba(255,255,255,.7);transform:scale(1.25);
+  background:var(--parch);box-shadow:0 0 16px color-mix(in oklab, var(--chalk) 70%, transparent);transform:scale(1.25);
 }
 /* Dot label bubble */
 .dot-bubble{
   position:absolute;left:20px;top:50%;transform:translateY(-50%);
-  background:rgba(10,7,5,.85);border:1px solid #2A1E0E;
+  background:color-mix(in oklab, var(--ink) 85%, transparent);border:1px solid var(--hair);
   padding:4px 10px;border-radius:4px;white-space:nowrap;
   font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
   color:var(--ambl);pointer-events:none;
@@ -144,7 +161,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-fami
 /* ── Panel ────────────────────────────────────────────── */
 .panel{
   position:fixed;top:0;right:0;width:370px;height:100vh;
-  background:rgba(10,6,3,.97);border-left:1px solid #1A1008;
+  background:color-mix(in oklab, var(--ink) 97%, transparent);border-left:var(--frame-w) solid var(--hair);
   padding:70px 30px 30px;z-index:300;overflow-y:auto;
   transform:translateX(100%);
   transition:transform .45s cubic-bezier(.22,1,.36,1);
@@ -155,19 +172,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-fami
   position:absolute;top:48px;right:22px;
   font-family:var(--fd);font-weight:900;font-style:italic;
   font-size:5.5rem;line-height:1;
-  color:rgba(200,101,10,.08);pointer-events:none;
+  color:color-mix(in oklab, var(--amb) 16%, transparent);pointer-events:none;
 }
 .panel-close{
   position:absolute;top:16px;right:16px;
-  background:#160C04;border:none;color:#3A2E1E;
+  background:var(--well);border:none;color:var(--whisper);
   width:34px;height:34px;border-radius:50%;font-size:.9rem;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:all .2s;
 }
-.panel-close:hover{background:#251808;color:var(--parch);}
+.panel-close:hover{background:color-mix(in oklab, var(--ink) 78%, var(--chalk) 14%);color:var(--parch);}
 .panel-chip{
   display:inline-flex;align-items:center;gap:5px;
-  padding:4px 12px 4px 8px;border:1px solid #251808;border-radius:999px;
+  padding:4px 12px 4px 8px;border:1px solid var(--hair);border-radius:var(--radius-pill);
   font-size:.6rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
   color:var(--amb);margin-bottom:16px;
 }
@@ -177,30 +194,31 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-fami
   font-size:1.85rem;line-height:1.05;color:var(--parch);margin-bottom:18px;
 }
 .panel-div{width:34px;height:2px;background:var(--amb);margin-bottom:18px;}
-.panel-body{font-size:.87rem;line-height:1.85;color:#9A8A76;font-weight:300;margin-bottom:16px;}
+.panel-body{font-size:.87rem;line-height:1.85;color:var(--dim);font-weight:300;margin-bottom:16px;}
 .panel-cue{
-  background:#140A02;border-left:2px solid var(--amb);
+  background:var(--well);border-left:2px solid var(--amb);
   padding:12px 14px;border-radius:0 6px 6px 0;
   font-family:var(--fd);font-weight:700;font-style:italic;
   font-size:.93rem;color:var(--ambl);line-height:1.45;margin-bottom:16px;
 }
 .panel-mistakes h4{
   font-size:.58rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
-  color:#3A2E1E;margin-bottom:8px;
+  color:var(--whisper);margin-bottom:8px;
 }
 .panel-mistake{
   display:flex;gap:8px;font-size:.8rem;
-  color:#5A4A38;font-weight:300;line-height:1.6;margin-bottom:6px;
+  color:var(--dim);font-weight:300;line-height:1.6;margin-bottom:6px;
 }
-.panel-mistake::before{content:'→';color:#3A2E1E;flex-shrink:0;}
+.panel-mistake::before{content:'→';color:var(--whisper);flex-shrink:0;}
 .panel-nav{display:flex;gap:8px;margin-top:auto;padding-top:24px;}
 .pnav{
   flex:1;padding:10px;font-family:var(--fb);font-size:.65rem;
   font-weight:600;letter-spacing:.12em;text-transform:uppercase;
   border:none;cursor:pointer;border-radius:6px;transition:background .2s;
 }
-.pnav-p{background:#160C04;color:#3A2E1E;}.pnav-p:hover{color:var(--parch);}
-.pnav-n{background:var(--amb);color:#fff;}.pnav-n:hover{background:#A8530A;}
+.pnav-p{background:var(--well);color:var(--whisper);}.pnav-p:hover{color:var(--parch);}
+.pnav-n{background:var(--amb-deep);color:var(--parch);border:2px solid var(--chalk);box-shadow:3px 3px 0 color-mix(in oklab, var(--ink) 45%, transparent);}
+.pnav-n:hover{background:color-mix(in oklab, var(--amb-deep) 80%, var(--ink) 20%);}
 
 /* ── Intro ────────────────────────────────────────────── */
 .intro{
@@ -209,13 +227,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--esp);font-fami
   text-align:center;transition:opacity .8s;
 }
 .intro.gone{opacity:0;pointer-events:none;}
-.i-brand{font-size:.65rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:#2A1E0E;margin-bottom:36px;}
+.i-brand{font-size:.65rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--whisper);margin-bottom:36px;}
 .i-title{font-family:var(--fd);font-weight:900;font-size:clamp(2rem,6vw,4.5rem);line-height:.92;color:var(--parch);margin-bottom:10px;}
 .i-sub{font-family:var(--fd);font-weight:700;font-style:italic;font-size:clamp(.9rem,2vw,1.35rem);color:var(--amb);margin-bottom:36px;}
-.i-desc{font-size:.85rem;color:#4A3C2A;font-weight:300;line-height:1.8;max-width:36ch;margin-bottom:32px;}
-.i-btn{font-family:var(--fb);font-size:.72rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:13px 34px;background:var(--amb);color:#fff;border:none;border-radius:999px;cursor:pointer;transition:background .2s;}
-.i-btn:hover{background:#A8530A;}
-.i-key{font-size:.58rem;color:#1E1408;margin-top:10px;letter-spacing:.1em;}
+.i-desc{font-size:.85rem;color:var(--dim);font-weight:300;line-height:1.8;max-width:36ch;margin-bottom:32px;}
+.i-btn{font-family:var(--fb);font-size:.72rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:13px 34px;background:var(--amb-deep);color:var(--parch);border:2px solid var(--chalk);border-radius:var(--radius-pill);cursor:pointer;box-shadow:3px 3px 0 color-mix(in oklab, var(--ink) 45%, transparent);transition:background .2s;}
+.i-btn:hover{background:color-mix(in oklab, var(--amb-deep) 80%, var(--ink) 20%);}
+.i-key{font-size:.58rem;color:var(--whisper);margin-top:10px;letter-spacing:.1em;}
 </style>
 </head>
 <body>

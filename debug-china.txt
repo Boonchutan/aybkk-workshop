@@ -1,0 +1,4 @@
+Debug captured: 2026-07-15 22:17 UTC
+Last /api/china-url code: 502
+
+{"status":"error","code":502,"message":"Application failed to respond","request_id":"o8qNP7UORmyJWI997fhULg"}

@@ -4,19 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Urdhva Mukha Svanasana — AYBKK Teaching</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/tokens.css">
 <style>
+/* updog-teach.html — tokens v2 migration. A full-bleed photo "stage" with
+   a floating teaching panel, same register as updog-3d/updog-viewer: per
+   DESIGN.md migration notes this chrome stays dark (the html/body colour
+   doubles as letterboxing around the photo, so it must match the dark
+   theatre, not the light --wall) tinted with the --ink hue, chalk text,
+   instead of pure black. Local var NAMES kept so every rule below
+   re-skins without further edits; only their VALUES now come from
+   tokens.css. The photo and its sepia filter are untouched. */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --espresso: #100C06;
-  --ink:      #1C1812;
-  --amber:    #C8650A;
-  --amber-l:  #F0C49A;
-  --parchment:#F2EDE4;
-  --muted:    #7A6A57;
-  --fd: 'Playfair Display', Georgia, serif;
-  --fb: 'Jost', sans-serif;
+  --espresso:   var(--ink);
+  --amber:      var(--shirt);
+  --amber-l:    var(--shirt-soft);
+  --amber-deep: var(--shirt-deep);
+  --parchment:  var(--chalk);
+  --muted:      var(--ink-soft);
+  --well:       color-mix(in oklab, var(--ink) 88%, var(--chalk) 8%);
+  --hair:       color-mix(in oklab, var(--chalk) 14%, transparent);
+  --dim:        color-mix(in oklab, var(--chalk) 55%, var(--ink));
+  --whisper:    color-mix(in oklab, var(--chalk) 24%, var(--ink));
+  --fd: var(--font-display);
+  --fb: var(--font-body);
 }
 
 html, body {
@@ -32,7 +44,7 @@ html, body {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 32px;
-  background: linear-gradient(to bottom, rgba(16,12,6,0.95) 0%, transparent 100%);
+  background: linear-gradient(to bottom, color-mix(in oklab, var(--ink) 95%, transparent) 0%, transparent 100%);
 }
 .hdr-logo {
   font-family: var(--fd); font-weight: 700;
@@ -105,9 +117,9 @@ html, body {
   opacity: 0.92;
   transition: all 0.2s;
 }
-.dot-group:hover .dot-inner { fill: #fff; r: 8; }
-.dot-group.active .dot-inner { fill: #fff; }
-.dot-group.active .dot-outer { stroke: #fff; }
+.dot-group:hover .dot-inner { fill: var(--parchment); r: 8; }
+.dot-group.active .dot-inner { fill: var(--parchment); }
+.dot-group.active .dot-outer { stroke: var(--parchment); }
 
 .dot-label {
   font-family: var(--fb); font-size: 11px; font-weight: 500;
@@ -120,7 +132,7 @@ html, body {
 .dot-group.active .dot-label { opacity: 1; }
 
 .dot-line {
-  stroke: rgba(200,101,10,0.5); stroke-width: 1;
+  stroke: color-mix(in oklab, var(--amber) 50%, transparent); stroke-width: 1;
   stroke-dasharray: 4 3; opacity: 0;
   transition: opacity 0.25s;
 }
@@ -148,8 +160,8 @@ html, body {
   position: fixed;
   top: 0; right: 0;
   width: 380px; height: 100vh;
-  background: rgba(20,15,8,0.97);
-  border-left: 1px solid #2A1E0E;
+  background: color-mix(in oklab, var(--ink) 97%, transparent);
+  border-left: var(--frame-w) solid var(--hair);
   padding: 80px 36px 36px;
   transform: translateX(100%);
   transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
@@ -161,7 +173,7 @@ html, body {
 
 .panel-num {
   font-family: var(--fd); font-weight: 900; font-style: italic;
-  font-size: 5rem; line-height: 1; color: rgba(200,101,10,0.12);
+  font-size: 5rem; line-height: 1; color: color-mix(in oklab, var(--amber) 20%, transparent);
   position: absolute; top: 56px; right: 32px;
   pointer-events: none;
 }
@@ -169,7 +181,7 @@ html, body {
 .panel-chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 4px 12px 4px 8px;
-  border: 1px solid #3A2E1E; border-radius: 999px;
+  border: 1px solid var(--hair); border-radius: var(--radius-pill);
   font-size: 0.62rem; font-weight: 500; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--amber);
   margin-bottom: 20px;
@@ -189,13 +201,13 @@ html, body {
 
 .panel-body {
   font-size: 0.9rem; line-height: 1.85;
-  color: #9A8A76; font-weight: 300;
+  color: var(--dim); font-weight: 300;
   margin-bottom: 20px;
 }
 
 .panel-cue {
-  background: #1A1208; border-left: 2px solid var(--amber);
-  padding: 14px 16px; border-radius: 0 8px 8px 0;
+  background: var(--well); border-left: 2px solid var(--amber);
+  padding: 14px 16px; border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
   font-family: var(--fd); font-weight: 700; font-style: italic;
   font-size: 1rem; color: var(--amber-l); line-height: 1.4;
   margin-bottom: 20px;
@@ -206,15 +218,15 @@ html, body {
 }
 .panel-mistakes h4 {
   font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em;
-  text-transform: uppercase; color: #4A3C2A; margin-bottom: 10px;
+  text-transform: uppercase; color: var(--whisper); margin-bottom: 10px;
 }
 .panel-mistake {
   display: flex; gap: 10px; font-size: 0.82rem;
-  color: #6A5A44; font-weight: 300; line-height: 1.6;
+  color: var(--dim); font-weight: 300; line-height: 1.6;
   margin-bottom: 8px;
 }
 .panel-mistake::before {
-  content: '→'; color: #4A3C2A; flex-shrink: 0;
+  content: '→'; color: var(--whisper); flex-shrink: 0;
 }
 
 .panel-nav {
@@ -227,38 +239,38 @@ html, body {
   border: none; cursor: pointer; border-radius: 6px;
   transition: background 0.2s;
 }
-.panel-nav-prev { background: #1E1608; color: #5A4A38; }
+.panel-nav-prev { background: var(--well); color: var(--dim); }
 .panel-nav-prev:hover { color: var(--parchment); }
-.panel-nav-next { background: var(--amber); color: #fff; }
-.panel-nav-next:hover { background: #A8530A; }
+.panel-nav-next { background: var(--amber-deep); color: var(--parchment); border: 2px solid var(--chalk); box-shadow: 3px 3px 0 color-mix(in oklab, var(--ink) 45%, transparent); }
+.panel-nav-next:hover { background: color-mix(in oklab, var(--amber-deep) 80%, var(--ink) 20%); }
 
 .panel-close {
   position: absolute; top: 20px; right: 20px;
-  background: #1E1608; border: none; color: #5A4A38;
+  background: var(--well); border: none; color: var(--dim);
   width: 36px; height: 36px; border-radius: 50%;
   font-size: 1rem; cursor: pointer; transition: all 0.2s;
   display: flex; align-items: center; justify-content: center;
 }
-.panel-close:hover { background: #2A1E10; color: var(--parchment); }
+.panel-close:hover { background: color-mix(in oklab, var(--ink) 78%, var(--chalk) 14%); color: var(--parchment); }
 
 /* ── Bottom bar ──────────────────────────────────────────── */
 .bottom-bar {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 32px 20px;
-  background: linear-gradient(to top, rgba(16,12,6,0.95) 0%, transparent 100%);
+  background: linear-gradient(to top, color-mix(in oklab, var(--ink) 95%, transparent) 0%, transparent 100%);
 }
 .bottom-hint {
   font-size: 0.62rem; font-weight: 500; letter-spacing: 0.14em;
-  text-transform: uppercase; color: #3A2E1E;
+  text-transform: uppercase; color: var(--whisper);
 }
 .bottom-dots { display: flex; gap: 8px; align-items: center; }
 .bottom-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: #2A1E0E; transition: all 0.25s; cursor: pointer;
+  background: var(--hair); transition: all 0.25s; cursor: pointer;
 }
 .bottom-dot.active { background: var(--amber); width: 20px; border-radius: 3px; }
-.bottom-dot:hover { background: #5A4A38; }
+.bottom-dot:hover { background: var(--dim); }
 
 /* ── Intro overlay ───────────────────────────────────────── */
 .intro {
@@ -286,19 +298,20 @@ html, body {
   margin-bottom: 48px;
 }
 .intro-desc {
-  font-size: 0.88rem; color: #5A4A38; font-weight: 300;
+  font-size: 0.88rem; color: var(--dim); font-weight: 300;
   line-height: 1.8; max-width: 38ch; margin-bottom: 40px;
 }
 .intro-btn {
   font-family: var(--fb); font-size: 0.75rem; font-weight: 600;
   letter-spacing: 0.16em; text-transform: uppercase;
-  padding: 14px 36px; background: var(--amber); color: #fff;
-  border: none; border-radius: 999px; cursor: pointer;
+  padding: 14px 36px; background: var(--amber-deep); color: var(--parchment);
+  border: 2px solid var(--chalk); border-radius: var(--radius-pill); cursor: pointer;
+  box-shadow: 3px 3px 0 color-mix(in oklab, var(--ink) 45%, transparent);
   transition: background 0.2s;
 }
-.intro-btn:hover { background: #A8530A; }
+.intro-btn:hover { background: color-mix(in oklab, var(--amber-deep) 80%, var(--ink) 20%); }
 .intro-hint {
-  font-size: 0.62rem; color: #2A1E0E; margin-top: 14px;
+  font-size: 0.62rem; color: var(--whisper); margin-top: 14px;
   letter-spacing: 0.1em;
 }
 </style>

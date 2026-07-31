@@ -1,0 +1,12 @@
+{
+  "comment": "Active cohorts for the Weekly Transmission. 'workshop' must match the Student.workshop tag in Neo4j. 'activeFrom' delays a cohort joining the rotation. Set active:false to pause a city.",
+  "cities": [
+    { "key": "xichang",   "label": "西昌 Xichang",   "workshop": "Xichang WS June 2026",  "wechatGroup": "西昌工作坊群",  "lang": "zh", "active": true },
+    { "key": "maoming",   "label": "茂名 Maoming",   "workshop": "Maoming WS June 2026",  "wechatGroup": "茂名工作坊群",  "lang": "zh", "active": true },
+    { "key": "suzhou",    "label": "苏州 Suzhou",    "workshop": "Suzhou WS June 2026",   "wechatGroup": "苏州工作坊群",  "lang": "zh", "active": true },
+    { "key": "guangzhou", "label": "广州 Guangzhou", "workshop": "Guangzhou WS Apr 2026", "wechatGroup": "广州工作坊群",  "lang": "zh", "active": true },
+    { "key": "hefei",     "label": "合肥 Hefei",     "workshop": "Hefei WS July 2026",    "wechatGroup": "合肥工作坊群",  "lang": "zh", "active": true, "activeFrom": "2026-07-20" },
+    { "key": "spb",       "label": "SPB",            "workshop": "AYBKK SPB WS May 2026", "wechatGroup": "SPB group",    "lang": "ru", "active": false },
+    { "key": "moscow",    "label": "Moscow",         "workshop": "AYBKK Moscow WS May 2026", "wechatGroup": "Moscow group", "lang": "ru", "active": false }
+  ]
+}

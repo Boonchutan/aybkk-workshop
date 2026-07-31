@@ -1,0 +1,760 @@
+{
+  "version": 9,
+  "note": "v9 was the pause; pause flag removed so future seed bumps never re-pause. Shop open/paused is controlled from the admin toggle.",
+  "products": [
+    {
+      "id": "tee-1",
+      "nameEn": "Huizhou Shirt",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/1.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 12,
+        "M": 12,
+        "L": 3,
+        "XL": 3
+      },
+      "hidden": false,
+      "photos": [
+        "/img/tees/1.jpg",
+        "/img/tees/1-2.jpg",
+        "/img/tees/1-3.jpg",
+        "/img/tees/1-4.jpg",
+        "/img/tees/1-5.jpg"
+      ]
+    },
+    {
+      "id": "tee-2",
+      "nameEn": "Guangzhou - Grey Viranchayasana A",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/2.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 12,
+        "M": 8,
+        "L": 3
+      },
+      "hidden": false,
+      "photos": [
+        "/img/tees/2.jpg",
+        "/img/tees/2-2.jpg",
+        "/img/tees/2-3.jpg"
+      ]
+    },
+    {
+      "id": "tee-3",
+      "nameEn": "Suzhou - Yellow Maricasana H",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/3.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 4,
+        "M": 3,
+        "L": 5,
+        "XL": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-4",
+      "nameEn": "Maoming - Brown Purna Matsyendrasana",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/4.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 3,
+        "M": 6,
+        "XL": 4
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-5",
+      "nameEn": "Red Logo",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/5.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 3,
+        "L": 6,
+        "XL": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-6",
+      "nameEn": "Light Brown Logo",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/6.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 5
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-7",
+      "nameEn": "Tianjin - White Adho Dandasana",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/7.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 2,
+        "L": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-8",
+      "nameEn": "Logo - Orange on Blue",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/8.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 1,
+        "L": 1,
+        "XL": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-9",
+      "nameEn": "Logo - Brown on Black",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/9.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 3
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-10",
+      "nameEn": "Russian - Orange Bear",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/10.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 1,
+        "XL": 9
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-11",
+      "nameEn": "Grey AYBKK Vintage",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/11.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 1,
+        "XL": 9
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-13",
+      "nameEn": "Grey Red Indepth",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/13.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 3,
+        "M": 4,
+        "L": 7
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-14",
+      "nameEn": "White Red Indepth",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/14.jpg",
+      "photo2": "/img/tees/14-2.jpg",
+      "sizes": {
+        "S": 1
+      },
+      "hidden": false,
+      "photos": [
+        "/img/tees/14.jpg",
+        "/img/tees/14-2.jpg"
+      ]
+    },
+    {
+      "id": "tee-15",
+      "nameEn": "Grey AYBKK",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/15.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 1,
+        "L": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-16",
+      "nameEn": "Qingdao - Urdhva Kukuta",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/16.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 6,
+        "M": 7,
+        "L": 6,
+        "XL": 1,
+        "16": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-17",
+      "nameEn": "Yoga Kids",
+      "nameZh": "",
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/17.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 9,
+        "M": 4,
+        "L": 1,
+        "12": 4,
+        "14": 4,
+        "16": 10
+      },
+      "hidden": false,
+      "photos": [
+        "/img/tees/17.jpg",
+        "/img/tees/17-2.jpg"
+      ],
+      "kids": true
+    },
+    {
+      "id": "tee-18",
+      "nameEn": "Black AYBKK",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/18.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 1,
+        "L": 1,
+        "XL": 9
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-19",
+      "nameEn": "White AYBKK Orange",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/19.jpg",
+      "photo2": null,
+      "sizes": {
+        "L": 2
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-20",
+      "nameEn": "Xichang - Kundinyasana",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/20.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 3,
+        "M": 3,
+        "L": 5,
+        "XL": 3
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-21",
+      "nameEn": "Green Lion",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/21.jpg",
+      "photo2": null,
+      "sizes": {
+        "L": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-22",
+      "nameEn": "Sharathji Tithiba",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/22.jpg",
+      "photo2": null,
+      "sizes": {
+        "L": 2
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-23",
+      "nameEn": "Cream Ashtanga Back",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/23.jpg",
+      "photo2": "/img/tees/23-2.jpg",
+      "sizes": {
+        "M": 1,
+        "L": 9
+      },
+      "hidden": false,
+      "photos": [
+        "/img/tees/23.jpg",
+        "/img/tees/23-2.jpg"
+      ]
+    },
+    {
+      "id": "tee-24",
+      "nameEn": "Huizhou - Monkey Yogi",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/24.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 1,
+        "L": 1,
+        "XL": 3
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-25",
+      "nameEn": "Walrus Handstand",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/25.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 1,
+        "M": 3,
+        "XL": 2
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-26",
+      "nameEn": "Black Logo Color",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/26.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 2,
+        "M": 2
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-27",
+      "nameEn": "Rino",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/27.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 2,
+        "M": 2,
+        "XL": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-28",
+      "nameEn": "Bangkok",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/28.jpg",
+      "photo2": null,
+      "sizes": {
+        "M": 8
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-29",
+      "nameEn": "Old Rose Heart",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/29.jpg",
+      "photo2": null,
+      "sizes": {
+        "L": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-30",
+      "nameEn": "Huizhou Wolf Vatayana",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/30.jpg",
+      "photo2": null,
+      "sizes": {
+        "L": 1,
+        "16": 1
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-31",
+      "nameEn": "Mustard Brown Logo Green",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/31.jpg",
+      "photo2": "/img/tees/31-2.jpg",
+      "sizes": {
+        "S": 1,
+        "M": 1,
+        "XL": 1
+      },
+      "hidden": false,
+      "photos": [
+        "/img/tees/31.jpg",
+        "/img/tees/31-2.jpg"
+      ]
+    },
+    {
+      "id": "tee-32",
+      "nameEn": "Elephant Seal",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/32.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 1,
+        "M": 2
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-33",
+      "nameEn": "LOVE Sleeveless",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/33.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 4
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-34",
+      "nameEn": "Guruji",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/34.jpg",
+      "photo2": null,
+      "sizes": {
+        "S": 6
+      },
+      "hidden": false
+    },
+    {
+      "id": "tee-35",
+      "nameEn": "Pink Bear Russian (Kids)",
+      "nameZh": "",
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/35.jpg",
+      "photo2": null,
+      "sizes": {
+        "12": 1,
+        "14": 1
+      },
+      "hidden": false,
+      "kids": true
+    },
+    {
+      "id": "tee-36",
+      "nameEn": "Russian St.Pete Cat (Kids)",
+      "nameZh": "",
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/36.jpg",
+      "photo2": null,
+      "sizes": {
+        "12": 1,
+        "14": 1
+      },
+      "hidden": false,
+      "kids": true
+    },
+    {
+      "id": "tee-37",
+      "nameEn": "China Indepth #1 (Kids)",
+      "nameZh": "",
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/37.jpg",
+      "photo2": null,
+      "sizes": {
+        "12": 1,
+        "14": 2
+      },
+      "hidden": false,
+      "kids": true
+    },
+    {
+      "id": "tee-38",
+      "nameEn": "Hefei WS Tee — Purple Tithibasana",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/38.jpg",
+      "photos": [
+        "/img/tees/38.jpg"
+      ],
+      "sizes": {
+        "S": 8,
+        "M": 10,
+        "L": 15,
+        "XL": 6
+      },
+      "hidden": false,
+      "note": "🎁 合肥工作坊全程学员免费获得此款1件 · Hefei full-workshop attendees get 1 free",
+      "setSizes": {
+        "S": 8,
+        "M": 10,
+        "L": 15,
+        "XL": 6
+      }
+    },
+    {
+      "id": "tee-39",
+      "nameEn": "Zhuhai WS Tee — Grey Seabird",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/39.jpg",
+      "photos": [
+        "/img/tees/39.jpg",
+        "/img/tees/39-2.jpg"
+      ],
+      "sizes": {
+        "S": 10,
+        "M": 10,
+        "L": 16,
+        "XL": 11
+      },
+      "hidden": false,
+      "note": "🎁 珠海工作坊全程学员免费获得此款1件 · Zhuhai full-workshop attendees get 1 free",
+      "setSizes": {
+        "S": 10,
+        "M": 10,
+        "L": 16,
+        "XL": 11
+      }
+    },
+    {
+      "id": "tee-40",
+      "nameEn": "Green AYBKK Back Logo",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/40.jpg",
+      "photos": [
+        "/img/tees/40.jpg",
+        "/img/tees/40-2.jpg"
+      ],
+      "sizes": {
+        "S": 10,
+        "M": 10,
+        "L": 18,
+        "XL": 12
+      },
+      "hidden": false,
+      "setSizes": {
+        "S": 10,
+        "M": 10,
+        "L": 18,
+        "XL": 12
+      }
+    },
+    {
+      "id": "tee-41",
+      "nameEn": "Burgundy AYBKK Back Logo",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/41.jpg",
+      "photos": [
+        "/img/tees/41.jpg",
+        "/img/tees/41-2.jpg"
+      ],
+      "sizes": {
+        "S": 8,
+        "M": 12,
+        "L": 15,
+        "XL": 10
+      },
+      "hidden": false,
+      "setSizes": {
+        "S": 8,
+        "M": 12,
+        "L": 15,
+        "XL": 10
+      }
+    },
+    {
+      "id": "tee-42",
+      "nameEn": "Pink Logo Minimal",
+      "nameZh": "",
+      "price": 220,
+      "fullPrice": 270,
+      "photo": "/img/tees/42.jpg",
+      "photos": [
+        "/img/tees/42.jpg",
+        "/img/tees/42-2.jpg"
+      ],
+      "sizes": {
+        "S": 8,
+        "M": 12,
+        "L": 15,
+        "XL": 10
+      },
+      "hidden": false,
+      "setSizes": {
+        "S": 8,
+        "M": 12,
+        "L": 15,
+        "XL": 10
+      }
+    },
+    {
+      "id": "tee-38k",
+      "nameEn": "Hefei WS Tee Kids — Purple Tithibasana",
+      "nameZh": "",
+      "kids": true,
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/38.jpg",
+      "photos": [
+        "/img/tees/38.jpg"
+      ],
+      "sizes": {
+        "12": 4,
+        "14": 9,
+        "16": 14
+      },
+      "setSizes": {
+        "12": 4,
+        "14": 9,
+        "16": 14
+      },
+      "soldFromIds": [
+        "tee-38"
+      ],
+      "hidden": false
+    },
+    {
+      "id": "tee-41k",
+      "nameEn": "Burgundy AYBKK Kids",
+      "nameZh": "",
+      "kids": true,
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/41.jpg",
+      "photos": [
+        "/img/tees/41.jpg",
+        "/img/tees/41-2.jpg"
+      ],
+      "sizes": {
+        "14": 9,
+        "16": 9
+      },
+      "setSizes": {
+        "14": 9,
+        "16": 9
+      },
+      "soldFromIds": [
+        "tee-41"
+      ],
+      "hidden": false
+    },
+    {
+      "id": "tee-42k",
+      "nameEn": "Pink Logo Kids",
+      "nameZh": "",
+      "kids": true,
+      "price": 200,
+      "fullPrice": 230,
+      "photo": "/img/tees/42.jpg",
+      "photos": [
+        "/img/tees/42.jpg",
+        "/img/tees/42-2.jpg"
+      ],
+      "sizes": {
+        "14": 9,
+        "16": 9
+      },
+      "setSizes": {
+        "14": 9,
+        "16": 9
+      },
+      "soldFromIds": [
+        "tee-42"
+      ],
+      "hidden": false
+    }
+  ],
+  "remove": [
+    "tee-12"
+  ]
+}

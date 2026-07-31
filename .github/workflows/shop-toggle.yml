@@ -1,0 +1,24 @@
+name: Shop open/pause toggle
+
+on:
+  workflow_dispatch:
+    inputs:
+      paused:
+        description: "true = pause, false = open"
+        required: true
+        default: "false"
+
+jobs:
+  toggle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set shop paused state
+        run: |
+          RES=$(curl -sf -X POST "https://my.aybkk.com/api/shop/admin/settings" \
+            -H "Content-Type: application/json" \
+            -H "X-Shop-Key: ${SHOP_KEY:-aybkk2026}" \
+            -d "{\"paused\": ${{ inputs.paused }}}")
+          echo "settings now: $RES"
+          curl -s "https://my.aybkk.com/api/shop/products" | python3 -c "import json,sys; d=json.load(sys.stdin); print('shop is', 'PAUSED' if d.get('paused') else 'OPEN')"
+        env:
+          SHOP_KEY: ${{ secrets.SHOP_ADMIN_KEY }}
