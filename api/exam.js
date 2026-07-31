@@ -660,49 +660,81 @@ Respond with only valid JSON: {"results":[...]}`;
       return JSON.parse(match[0]).results || [];
     }
 
-    /* one retry per batch, then fail that batch alone rather than the whole paper */
-    const batchErrors = [];
-    const settled = await Promise.all(batches.map(async b => {
-      try { return await analyseBatch(b, 1); }
-      catch (e1) {
-        try { return await analyseBatch(b, 2); }
-        catch (e2) {
-          console.error('analyse batch failed twice:', e2.message);
-          batchErrors.push(e2.message);
-          return [];
-        }
-      }
-    }));
-    const byQ = new Map(settled.flat().map(r => [r.id, r]));
-    if (byQ.size === 0) {
-      return res.status(502).json({
-        error: 'analysis_failed',
-        detail: batchErrors.slice(0, 3)
-      });
-    }
-
-    const merged = answers.map(a => {
-      const r = byQ.get(a.id);
-      if (!r) return a;
-      return {
-        ...a,
-        suggestedMark: r.mark,
-        finalMark: a.finalMark === null ? r.mark : a.finalMark, // pre-fill, Boonchu can change
-        category: r.category,
-        translationEn: r.translationEn || '',
-        analysisEn: r.readingEn || '',
-        analysisZh: r.readingZh || '',
-        needsBoonchu: !!r.needsBoonchu
-      };
-    });
+    /* The edge gateway cuts any request that stays open for the full analysis,
+       whatever the batching. So the request returns at once, the batches run on
+       behind it, and the results are written to the attempt when they land. The
+       review page polls until the status changes. */
+    const driver = req.driver;
 
     await session.run(
-      `MATCH (a:ExamAttempt {id: $attemptId})
-       SET a.answers = $answers, a.status = 'analysed', a.analysedAt = datetime($now)`,
-      { attemptId, answers: JSON.stringify(merged), now: new Date().toISOString() }
+      `MATCH (a:ExamAttempt {id: $attemptId}) SET a.status = 'analysing'`,
+      { attemptId }
     );
 
-    res.json({ success: true, answers: merged });
+    res.json({ success: true, started: true, status: 'analysing' });
+
+    (async () => {
+      const bg = driver.session();
+      try {
+        const batchErrors = [];
+        const settled = await Promise.all(batches.map(async b => {
+          try { return await analyseBatch(b, 1); }
+          catch (e1) {
+            try { return await analyseBatch(b, 2); }
+            catch (e2) {
+              console.error('analyse batch failed twice:', e2.message);
+              batchErrors.push(e2.message);
+              return [];
+            }
+          }
+        }));
+        const byQ = new Map(settled.flat().map(r => [r.id, r]));
+
+        if (byQ.size === 0) {
+          await bg.run(
+            `MATCH (a:ExamAttempt {id: $attemptId})
+             SET a.status = 'analyse_failed', a.analyseError = $err`,
+            { attemptId, err: (batchErrors[0] || 'unknown').slice(0, 300) }
+          );
+          return;
+        }
+
+        const merged = answers.map(a => {
+          const r = byQ.get(a.id);
+          if (!r) return a;
+          return {
+            ...a,
+            suggestedMark: r.mark,
+            finalMark: a.finalMark === null || a.finalMark === undefined ? r.mark : a.finalMark,
+            category: r.category,
+            translationEn: r.translationEn || '',
+            analysisEn: r.readingEn || '',
+            analysisZh: r.readingZh || '',
+            needsBoonchu: !!r.needsBoonchu
+          };
+        });
+
+        await bg.run(
+          `MATCH (a:ExamAttempt {id: $attemptId})
+           SET a.answers = $answers, a.status = 'analysed', a.analysedAt = datetime($now)`,
+          { attemptId, answers: JSON.stringify(merged), now: new Date().toISOString() }
+        );
+        console.log('analysis complete for', attemptId, byQ.size, 'answers');
+      } catch (e) {
+        console.error('background analysis crashed:', e.message);
+        try {
+          await bg.run(
+            `MATCH (a:ExamAttempt {id: $attemptId})
+             SET a.status = 'analyse_failed', a.analyseError = $err`,
+            { attemptId, err: String(e.message).slice(0, 300) }
+          );
+        } catch (_) {}
+      } finally {
+        await bg.close();
+      }
+    })();
+    return;
+
   } catch (error) {
     console.error('exam analyse error:', error);
     res.status(500).json({ error: error.message });

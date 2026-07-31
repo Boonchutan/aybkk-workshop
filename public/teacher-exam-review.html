@@ -253,6 +253,11 @@ function updateRunning(attemptId){
     ' (' + (total ? Math.round(got / total * 100) : 0) + '%)';
 }
 
+/* The reading pass runs on the server for a minute or two, far longer than the
+   edge gateway lets one request stay open. So starting it returns immediately
+   and this page polls until the attempt's status flips to analysed. */
+var pollTimers = {};
+
 function analyse(attemptId){
   var btn = document.getElementById('an-' + attemptId);
   btn.disabled = true; btn.textContent = 'Reading…';
@@ -264,12 +269,42 @@ function analyse(attemptId){
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(!d.success) throw new Error(d.error || 'failed');
-      load();
+      pollAnalysis(attemptId, 0);
     })
     .catch(function(e){
       btn.disabled = false; btn.textContent = 'Read failed, retry';
-      alert('Could not read the answers: ' + e.message);
+      alert('Could not start the reading pass: ' + e.message);
     });
+}
+
+function pollAnalysis(attemptId, n){
+  if(n > 60){   // five minutes of patience, then give up loudly
+    var btn = document.getElementById('an-' + attemptId);
+    if(btn){ btn.disabled = false; btn.textContent = 'Read failed, retry'; }
+    alert('The reading pass is taking too long. Try again.');
+    return;
+  }
+  pollTimers[attemptId] = setTimeout(function(){
+    fetch(API + '/review?token=' + encodeURIComponent(token))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var a = (d.attempts || []).filter(function(x){ return x.attemptId === attemptId; })[0];
+        if(!a){ pollAnalysis(attemptId, n + 1); return; }
+        if(a.status === 'analysed'){
+          attempts = d.attempts; render(); return;
+        }
+        if(a.status === 'analyse_failed'){
+          var btn = document.getElementById('an-' + attemptId);
+          if(btn){ btn.disabled = false; btn.textContent = 'Read failed, retry'; }
+          alert('The reading pass failed on the server. Try again.');
+          return;
+        }
+        var btn = document.getElementById('an-' + attemptId);
+        if(btn) btn.textContent = 'Reading… ' + (n * 5) + 's';
+        pollAnalysis(attemptId, n + 1);
+      })
+      .catch(function(){ pollAnalysis(attemptId, n + 1); });
+  }, 5000);
 }
 
 function save(attemptId){
