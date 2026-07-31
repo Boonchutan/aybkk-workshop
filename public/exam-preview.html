@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Preview with Answers · AYBKK</title>
+<link rel="stylesheet" href="/tokens.css">
+<style>
+/* exam-preview.html , the answer key. Shows the exact paper a given seat will
+   receive, with the correct option marked, why every wrong option is wrong, and
+   the model written answer. Boonchu opens it with ?token=XXX matching
+   TEACHER_TOKEN. Never link this from a student-facing page. */
+
+:root { --navy:#2b3a67; --navy-deep:#1d2847; --rust:#9d3b2f; --sage:#4f5d3a; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--ink); font-family:var(--font-body);
+  min-height:100vh; -webkit-font-smoothing:antialiased; }
+.container { max-width:780px; margin:0 auto; padding:var(--space-6) var(--space-4) var(--space-8); }
+.header { text-align:center; margin-bottom:var(--space-5); }
+.eyebrow { font-family:var(--font-display); font-size:11px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--rust); margin-bottom:var(--space-2); }
+h1 { font-family:var(--font-display); font-size:26px; font-weight:600; color:var(--navy);
+  text-shadow:var(--text-carve-soft); }
+.meta { color:var(--ink-soft); font-size:13px; margin-top:var(--space-2); }
+.warn { background:#ecd5be; color:#8d4f2c; border-radius:var(--radius-md);
+  padding:12px 16px; font-size:13px; text-align:center; margin-bottom:var(--space-5); }
+
+.seats { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:var(--space-5); }
+.seat { padding:8px 14px; border:none; border-radius:var(--radius-pill); cursor:pointer;
+  font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:.04em;
+  background:var(--surface); color:var(--ink-soft);
+  box-shadow:4px 4px 8px var(--shadow-dark), -3px -3px 6px var(--shadow-light); }
+.seat.on { background:linear-gradient(135deg,#3c4d7e 0%,var(--navy) 55%,var(--navy-deep) 100%);
+  color:#eef1f8; }
+
+.card { background:var(--surface); border-radius:var(--radius-lg); padding:var(--space-5);
+  margin-bottom:var(--space-4);
+  box-shadow:16px 16px 32px var(--shadow-dark), -10px -10px 20px var(--shadow-light),
+             inset 1px 1px 0 rgba(253,250,242,.7); }
+.qhead { font-family:var(--font-display); font-size:10px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--rust); margin-bottom:8px; }
+.stem { font-size:16px; line-height:1.5; margin-bottom:4px; }
+.stem-zh { font-size:14px; line-height:1.7; color:var(--ink-soft); margin-bottom:var(--space-4); }
+
+.opt { border-radius:var(--radius-md); padding:12px 14px; margin-bottom:9px;
+  background:var(--surface-2); font-size:14px; line-height:1.5; }
+.opt.right { background:#ddd9c2; box-shadow:inset 0 0 0 2px var(--sage); }
+.opt .lbl { font-family:var(--font-display); font-weight:700; margin-right:7px; }
+.opt .tick { color:var(--sage); font-weight:700; margin-left:6px; }
+.opt .zh { display:block; font-size:13px; color:var(--ink-soft); margin-top:3px; }
+.opt .note { display:block; font-size:12.5px; font-style:italic; margin-top:6px;
+  color:var(--ink-soft); }
+.opt.right .note { color:#3f4a2e; }
+
+.model { margin-top:var(--space-3); padding:12px 14px; border-radius:var(--radius-md);
+  background:var(--surface-2); font-size:13.5px; line-height:1.6; }
+.model b { font-family:var(--font-display); font-size:11px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--navy); display:block; margin-bottom:5px; }
+.model .zh { display:block; margin-top:8px; color:var(--ink-soft); }
+.tp { margin-top:10px; font-size:13px; color:var(--rust); font-style:italic; }
+.loading,.err { text-align:center; padding:var(--space-6); color:var(--ink-soft); }
+.err { color:#8d4f2c; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="eyebrow">AYBKK · In-depth CN#2</div>
+    <h1>Exam Preview, with Answers</h1>
+    <div class="meta" id="meta">Loading…</div>
+  </div>
+  <div class="warn">Teacher copy. The correct answer is marked on every question.</div>
+  <div class="seats" id="seats"></div>
+  <div id="root"></div>
+</div>
+
+<script>
+var API = '/api/exam';
+var P = new URLSearchParams(location.search);
+var token = P.get('token');
+var seat = P.get('seat') || 'test-boonchu';
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function renderSeats(list){
+  var all = '<button class="seat' + (seat === 'all' ? ' on' : '') +
+            '" onclick="pick(\'all\')">Every question</button>';
+  document.getElementById('seats').innerHTML = all + list.map(function(s){
+    return '<button class="seat' + (s.id === seat ? ' on' : '') + '" onclick="pick(\'' +
+      esc(s.id) + '\')">' + esc(s.name) + '</button>';
+  }).join('');
+}
+
+function pick(id){ seat = id; load(); }
+
+function load(){
+  var root = document.getElementById('root');
+  if(!token){ root.innerHTML = '<div class="err">Missing token in URL.</div>'; return; }
+  root.innerHTML = '<div class="loading">Loading paper…</div>';
+
+  fetch(API + '/roster')
+    .then(function(r){ return r.json(); })
+    .then(function(d){ renderSeats(d.students || []); })
+    .catch(function(){});
+
+  fetch(API + '/preview/' + encodeURIComponent(seat) + '?token=' + encodeURIComponent(token))
+    .then(function(r){
+      if(r.status === 401) throw new Error('unauthorized');
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(d){
+      document.getElementById('meta').textContent = d.studentId === 'all'
+        ? d.count + ' questions in the bank · each student draws 46'
+        : d.count + ' questions · ' + (d.count * 3) + ' marks · seat ' + d.studentId;
+      root.innerHTML = d.questions.map(renderQ).join('');
+    })
+    .catch(function(e){
+      root.innerHTML = '<div class="err">' +
+        (String(e.message) === 'unauthorized' ? 'Unauthorized. Check your token.'
+                                             : 'Could not load. ' + esc(e.message)) + '</div>';
+    });
+}
+
+function renderQ(q){
+  return '<div class="card">' +
+    '<div class="qhead">Q' + q.n + ' · ' + esc(q.lecture) + ' · answer ' + esc(q.correct) +
+      (q.topic ? ' · ' + esc(q.topic) : '') + '</div>' +
+    '<div class="stem">' + esc(q.stem_en) + '</div>' +
+    '<div class="stem-zh">' + esc(q.stem_zh) + '</div>' +
+    q.options.map(function(o){
+      return '<div class="opt' + (o.isCorrect ? ' right' : '') + '">' +
+        '<span class="lbl">' + esc(o.label) + '.</span>' + esc(o.text_en) +
+        (o.isCorrect ? '<span class="tick">✓ correct</span>' : '') +
+        '<span class="zh">' + esc(o.text_zh) + '</span>' +
+        (o.note ? '<span class="note">' + esc(o.note) + '</span>' : '') +
+      '</div>';
+    }).join('') +
+    (q.expected_en ? '<div class="model"><b>Full marks in the box</b>' + esc(q.expected_en) +
+       '<span class="zh">' + esc(q.expected_zh) + '</span></div>' : '') +
+    (q.teacherPoint ? '<div class="tp">They walk away able to: ' + esc(q.teacherPoint) + '</div>' : '') +
+  '</div>';
+}
+
+load();
+</script>
+</body>
+</html>

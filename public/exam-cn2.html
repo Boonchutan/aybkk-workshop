@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>结业考试 · In-depth CN#2 Final Exam</title>
+<link rel="stylesheet" href="/tokens.css">
+<style>
+/* exam-cn2.html , In-depth CN#2 final exam, student facing. Sent to the WeChat
+   group as a plain link. Student picks their own name from the cohort roster,
+   then sits a paper drawn for them alone. Every question needs a choice AND a
+   written reason before it will advance. Answers are held in localStorage as
+   they go, so a dropped phone connection does not cost the paper. The correct
+   answers live on the server and never reach this page. */
+
+/* IDCN #2 identity: indigo navy and brick rust on the cream ground, taken from
+   the cohort poster. Navy carries structure and anything chosen; rust carries
+   the marks that identify this particular cohort. */
+:root {
+  --navy:      #2b3a67;
+  --navy-deep: #1d2847;
+  --rust:      #9d3b2f;
+  --rust-soft: #b8574a;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* stacked wordmark. Uses the real artwork when public/idcn2-logo.png exists,
+   otherwise draws it in type so the page is never broken by a missing file. */
+.mark { text-align:center; margin-bottom: var(--space-4); }
+.mark img { max-width:74px; height:auto; display:block; margin:0 auto; }
+.mark-type { line-height:.92; }
+.mark-type .stack {
+  font-family: var(--font-display); font-weight:900;
+  font-size:34px; letter-spacing:.10em; color: var(--navy);
+  display:block; text-shadow: 1px 1px 0 rgba(43,58,103,.18);
+}
+.mark-type .cohort {
+  font-family: var(--font-display); font-weight:900;
+  font-size:15px; letter-spacing:.16em; color: var(--rust);
+  display:block; margin-top:8px;
+}
+.container { max-width: 640px; margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-8); }
+
+.header { text-align:center; margin-bottom: var(--space-5); }
+.eyebrow {
+  font-family: var(--font-display); font-size:11px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color: var(--rust);
+  margin-bottom: var(--space-2);
+}
+h1 {
+  font-family: var(--font-display); font-size:26px; font-weight:600;
+  line-height:1.2; color: var(--navy); text-shadow: var(--text-carve-soft);
+}
+.sub { color: var(--ink-soft); font-size:14px; margin-top: var(--space-2); }
+
+.lang-switch { display:flex; justify-content:center; gap:8px; margin: var(--space-4) 0; }
+.lang-btn {
+  padding:7px 14px; background: var(--surface); border:none; border-radius: var(--radius-pill);
+  font-family: var(--font-display); font-size:11px; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase; color: var(--ink-soft); cursor:pointer;
+  box-shadow: 4px 4px 8px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+.lang-btn.active {
+  background: linear-gradient(135deg,#e6d2a8 0%,var(--primary) 55%,#997a52 100%);
+  color:#f1e2c4;
+  text-shadow: 1px 1px 0 rgba(255,240,215,.55), -1px -1px 1px rgba(50,28,10,.65);
+  box-shadow: inset 3px 3px 6px rgba(255,240,215,.4), inset -2px -2px 4px rgba(40,20,4,.25),
+              6px 6px 12px rgba(120,80,40,.25);
+}
+
+.card {
+  background: var(--surface); border-radius: var(--radius-lg);
+  padding: var(--space-5); margin-bottom: var(--space-5);
+  box-shadow: 16px 16px 32px var(--shadow-dark), -10px -10px 20px var(--shadow-light),
+              inset 1px 1px 0 rgba(253,250,242,.7);
+}
+
+/* ---- name picker ---- */
+.search-box {
+  width:100%; padding:14px 16px; border:none; border-radius: var(--radius-md);
+  font-family: var(--font-body); font-size:16px;
+  background: var(--surface-2); color: var(--ink); margin-bottom: var(--space-4);
+  box-shadow: inset 3px 3px 0 rgba(150,120,80,.18), inset -3px -3px 0 rgba(253,250,242,.85),
+              inset 5px 5px 10px rgba(150,120,80,.18);
+}
+.student-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 18px; margin-bottom:10px; border-radius: var(--radius-md);
+  background: var(--surface); cursor:pointer;
+  box-shadow: 8px 8px 16px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+.student-item:active { transform: scale(.97); }
+.student-item.done { opacity:.45; pointer-events:none; }
+.student-name { font-size:17px; font-weight:600; }
+.student-zh { font-size:13px; color: var(--ink-soft); margin-top:2px; }
+.student-arrow { color: var(--rust); font-size:18px; }
+.badge-done {
+  font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+  color: var(--primary-deep); font-family: var(--font-display); font-weight:700;
+}
+
+/* ---- progress ---- */
+.progress-wrap { position:sticky; top:0; z-index:10; background: var(--bg); padding: var(--space-3) 0; }
+.progress-meta {
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:12px; color: var(--ink-soft); margin-bottom:8px;
+  font-family: var(--font-display); letter-spacing:.05em;
+}
+.progress-bar { height:6px; background: var(--surface-2); border-radius: var(--radius-pill); overflow:hidden;
+  box-shadow: inset 2px 2px 4px rgba(150,120,80,.22); }
+.progress-fill {
+  height:100%; width:0%; border-radius: var(--radius-pill);
+  background: linear-gradient(90deg,var(--navy) 0%,var(--rust) 100%);
+  transition: width var(--dur-base) var(--ease-out);
+}
+
+/* ---- question ---- */
+.q-lecture {
+  font-family: var(--font-display); font-size:10px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color: var(--rust);
+  margin-bottom: var(--space-3);
+}
+.q-stem { font-size:17px; line-height:1.55; margin-bottom:6px; }
+.q-stem-zh { font-size:15px; line-height:1.7; color: var(--ink-soft); margin-bottom: var(--space-4); }
+.opt {
+  display:block; width:100%; text-align:left;
+  padding:14px 16px; margin-bottom:10px; border:none; border-radius: var(--radius-md);
+  background: var(--surface-2); color: var(--ink); cursor:pointer;
+  font-family: var(--font-body); font-size:15px; line-height:1.5;
+  box-shadow: 6px 6px 12px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+  transition: transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-fast);
+}
+.opt:active { transform: scale(.98); }
+.opt.selected {
+  background: linear-gradient(135deg,#3c4d7e 0%,var(--navy) 55%,var(--navy-deep) 100%);
+  color:#eef1f8;
+  box-shadow: inset 3px 3px 8px rgba(255,255,255,.16), inset -3px -3px 8px rgba(10,16,36,.40),
+              8px 8px 16px rgba(29,40,71,.30);
+}
+.opt-label { font-family: var(--font-display); font-weight:700; margin-right:8px; }
+.opt-zh { display:block; font-size:13px; opacity:.82; margin-top:4px; }
+
+.why-label {
+  font-family: var(--font-display); font-size:12px; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; color: var(--navy);
+  margin: var(--space-4) 0 8px;
+}
+.why-input {
+  width:100%; padding:14px 16px; border:none; border-radius: var(--radius-md);
+  font-family: var(--font-body); font-size:15px; line-height:1.55;
+  background: var(--surface-2); color: var(--ink); resize:vertical; min-height:120px;
+  box-shadow: inset 3px 3px 0 rgba(150,120,80,.18), inset -3px -3px 0 rgba(253,250,242,.85),
+              inset 5px 5px 10px rgba(150,120,80,.18);
+}
+.hint { font-size:12px; color: var(--ink-soft); margin-top:6px; }
+.hint.warn { color:#8d4f2c; }
+
+.nav { display:flex; gap:12px; margin-top: var(--space-5); }
+.btn {
+  flex:1; padding:16px; border:none; border-radius: var(--radius-md);
+  font-family: var(--font-display); font-size:15px; font-weight:700;
+  letter-spacing:.04em; cursor:pointer;
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+.btn:not(:disabled):active { transform: scale(.97); }
+.btn-back {
+  background: var(--surface); color: var(--ink-soft); flex:0 0 96px;
+  box-shadow: 6px 6px 12px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+}
+.btn-next {
+  color:#f1e2c4;
+  background: linear-gradient(135deg,#3c4d7e 0%,var(--navy) 55%,var(--navy-deep) 100%);
+  text-shadow: 1px 1px 0 rgba(255,255,255,.22), -1px -1px 1px rgba(10,16,36,.85);
+  box-shadow: 12px 12px 26px rgba(29,40,71,.28), -6px -6px 14px var(--shadow-light),
+              inset 4px 4px 10px rgba(255,255,255,.22), inset -3px -3px 8px rgba(10,16,36,.35);
+}
+.hidden { display:none !important; }
+
+/* countdown. Sticky so it is always visible, and it turns rust in the last
+   fifteen minutes so nobody is surprised by the cut off. */
+.timer { font-family:var(--font-display); font-weight:700; letter-spacing:.06em;
+  font-size:13px; color:var(--navy); }
+.timer.low { color:var(--rust); }
+.timer.idle { color:var(--ink-soft); font-weight:400; letter-spacing:.02em; }
+
+/* first page instructions */
+.rules { counter-reset:r; }
+.rule { display:flex; gap:12px; margin-bottom:var(--space-4); }
+.rule .num { flex:0 0 26px; height:26px; border-radius:50%;
+  background:linear-gradient(135deg,#3c4d7e 0%,var(--navy) 55%,var(--navy-deep) 100%);
+  color:#eef1f8; font-family:var(--font-display); font-weight:700; font-size:12px;
+  display:flex; align-items:center; justify-content:center; }
+.rule .body { flex:1; }
+.rule .en { font-size:15px; line-height:1.5; }
+.rule .zh { font-size:14px; line-height:1.7; color:var(--ink-soft); margin-top:3px; }
+.begin { width:100%; padding:17px; border:none; border-radius:var(--radius-md);
+  font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:.04em;
+  cursor:pointer; color:#f1e2c4;
+  background:linear-gradient(135deg,#3c4d7e 0%,var(--navy) 55%,var(--navy-deep) 100%);
+  text-shadow:1px 1px 0 rgba(255,255,255,.22), -1px -1px 1px rgba(10,16,36,.85);
+  box-shadow:12px 12px 26px rgba(29,40,71,.28), -6px -6px 14px var(--shadow-light),
+             inset 4px 4px 10px rgba(255,255,255,.22), inset -3px -3px 8px rgba(10,16,36,.35); }
+.wordcount { font-size:12px; color:var(--ink-soft); margin-top:6px; text-align:right; }
+.wordcount.short { color:#8d4f2c; }
+.loading, .err, .empty { text-align:center; padding: var(--space-6); color: var(--ink-soft); }
+.err { color:#8d4f2c; }
+.done-mark { text-align:center; font-size:44px; margin-bottom: var(--space-3); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="mark">
+    <img src="/idcn2-logo.png" alt="AYBKK IDCN #2"
+         onerror="this.style.display='none';document.getElementById('markType').style.display='block'">
+    <div class="mark-type" id="markType" style="display:none">
+      <span class="stack">A Y B K K</span>
+      <span class="cohort">IDCN #2</span>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="eyebrow">In-depth China #2 · 深度课程</div>
+    <h1 id="pageTitle">结业考试</h1>
+    <div class="sub" id="pageSub">Zhuhai 2026</div>
+  </div>
+
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('zh')">🇨🇳 中文</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+
+  <!-- 1. pick your name -->
+  <div id="pickScreen">
+    <div class="card">
+      <div class="q-lecture" id="pickTitle">找到你的名字</div>
+      <input type="text" class="search-box" id="searchBox" oninput="filterStudents()" placeholder="搜索名字 / Search your name">
+      <div id="studentList"><div class="loading">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- 1b. read this before you start -->
+  <div id="briefScreen" class="hidden">
+    <div class="card">
+      <div class="q-lecture" id="briefWho"></div>
+      <h1 id="briefTitle" style="font-size:21px;margin-bottom:var(--space-4)"></h1>
+      <div class="rules" id="briefRules"></div>
+      <button class="begin" id="beginBtn" onclick="beginExam()"></button>
+      <div class="hint" id="briefFoot" style="text-align:center;margin-top:var(--space-3)"></div>
+    </div>
+  </div>
+
+  <!-- 2. the paper -->
+  <div id="examScreen" class="hidden">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="progressWho"></span>
+        <span class="timer idle" id="timer"></span>
+        <span id="progressCount"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="q-lecture" id="qLecture"></div>
+      <div class="q-stem" id="qStem"></div>
+      <div class="q-stem-zh" id="qStemZh"></div>
+      <div id="qOptions"></div>
+      <div class="why-label" id="whyLabel">为什么？ / Why?</div>
+      <textarea class="why-input" id="whyInput" oninput="onWhyInput()"></textarea>
+      <div class="wordcount" id="wordCount"></div>
+      <div class="hint" id="whyHint"></div>
+      <div class="nav">
+        <button class="btn btn-back" id="backBtn" onclick="goBack()">←</button>
+        <button class="btn btn-next" id="nextBtn" onclick="goNext()" disabled></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. finished -->
+  <div id="doneScreen" class="hidden">
+    <div class="card" style="text-align:center">
+      <div class="done-mark">🪷</div>
+      <h1 id="doneTitle" style="font-size:22px"></h1>
+      <p class="sub" id="doneBody" style="margin-top:var(--space-3)"></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var API = '/api/exam';
+var COHORT_KEY = 'aybkk_cn2_exam';
+var lang = 'zh';
+var students = [];
+var student = null;
+var questions = [];
+var answers = {};        // { [qid]: { choice, explanation } }
+var idx = 0;
+var LIMIT_MIN = 120;      // the exam window
+var MIN_WORDS = 5;        // one Latin word, or two Chinese characters
+var startedAt = null;     // set on the FIRST answer, not when the page opens
+var ticker = null;
+var finished = false;
+
+var T = {
+  zh: {
+    pageTitle:'结业考试', pageSub:'珠海 2026 · 深度课程 CN#2',
+    pickTitle:'找到你的名字', searchPh:'搜索名字 / Search your name',
+    loading:'加载中…', loadFail:'加载失败，请刷新重试。', empty:'没有找到学生。',
+    submitted:'已提交',
+    why:'为什么？ / Why?',
+    whyPh:'写下你为什么选这个答案。可以用中文或英文。',
+    hintNeed:'请先选一个选项，并写下理由。',
+    hintOk:'可以继续。',
+    next:'下一题 →', finish:'提交试卷', submitting:'提交中…',
+    back:'←',
+    doneTitle:'已提交，谢谢。',
+    doneBody:'你的试卷已经交给 Boonchu。成绩会在批改后单独发给你。',
+    already:'你已经交过这份试卷了。',
+    err:'提交失败，请检查网络后再试一次。',
+    briefTitle:'开始之前，请先读这一页',
+    rules:[
+      ['每题有两件事要做：选一个答案，并写下你为什么这样选。两样都做了才能进入下一题。',
+       ''],
+      ['解释不用长，但要是一句真正的理由。至少 10 个汉字（或 5 个英文单词）。写「好」或「是的」不算。',
+       ''],
+      ['解释可以用中文或英文。用你想得最清楚的那种语言。',''],
+      ['考试时间 2 小时。<b>你点下第一个答案的那一刻，计时开始</b>，不是打开这一页的时候。',''],
+      ['时间到，系统会自动交卷，把你已经写好的答案交上去，并通知 Boonchu。',''],
+      ['你可以随时回到前面的题目修改。你选的和写的都会保存，除非你自己改掉。',''],
+      ['中途断网或不小心关掉页面，答案还在。用同一台设备、同一个浏览器重新打开就行。','']
+    ],
+    begin:'我读完了，开始考试',
+    briefFoot:'点「开始考试」还不会启动计时。计时从你点下第一个答案开始。',
+    timerIdle:'计时未开始',
+    words:'字数',
+    tooShort:'再多写一点',
+    timeUp:'时间到，正在自动交卷…',
+    autoDone:'时间到。你的试卷已经自动提交。',
+    left:'剩余'
+  },
+  en: {
+    pageTitle:'Final Exam', pageSub:'Zhuhai 2026 · In-depth CN#2',
+    pickTitle:'Find your name', searchPh:'Search your name / 搜索名字',
+    loading:'Loading…', loadFail:'Could not load. Please refresh.', empty:'No students found.',
+    submitted:'submitted',
+    why:'Why? / 为什么？',
+    whyPh:'Write why you chose that answer. English or Chinese, either is fine.',
+    hintNeed:'Choose an option and write your reason before continuing.',
+    hintOk:'Ready to continue.',
+    next:'Next →', finish:'Submit paper', submitting:'Submitting…',
+    back:'←',
+    doneTitle:'Submitted. Thank you.',
+    doneBody:'Your paper has gone to Boonchu. Your result will come back to you after marking.',
+    already:'You have already submitted this paper.',
+    err:'Submit failed. Check your connection and try once more.',
+    briefTitle:'Read this page before you begin',
+    rules:[
+      ['Every question needs two things: choose one answer, and write why you chose it. You cannot move on until you have done both.',''],
+      ['The explanation does not need to be long, but it must be a real reason. At least 5 words, or 10 Chinese characters. "ok" does not count.',''],
+      ['Write the explanation in Chinese or English, whichever you think more clearly in.',''],
+      ['You have 2 hours. <b>The clock starts the moment you choose your first answer</b>, not when you open this page.',''],
+      ['When the time runs out the exam submits itself, sends whatever you have written, and tells Boonchu.',''],
+      ['You can go back to earlier questions at any time. Everything you picked and wrote stays until you change it.',''],
+      ['If you lose signal or close the page by accident, your answers are still here. Reopen on the same device and the same browser.','']
+    ],
+    begin:'I have read this, start the exam',
+    briefFoot:'Pressing start does not begin the clock. The clock begins on your first answer.',
+    timerIdle:'clock not started',
+    words:'words',
+    tooShort:'write a little more',
+    timeUp:'Time is up, submitting…',
+    autoDone:'Time is up. Your paper has been submitted automatically.',
+    left:'left'
+  }
+};
+
+/* Must match countWords in api/exam.js exactly, or the page will let a student
+   move on and the server will then reject the whole paper. One Latin word, or
+   two Chinese characters, counts as one unit. */
+function countWords(str){
+  var t = String(str == null ? '' : str).trim();
+  if(!t) return 0;
+  var cjk = (t.match(/[\u4e00-\u9fff\u3040-\u30ff]/g) || []).length;
+  var latin = (t.replace(/[\u4e00-\u9fff\u3040-\u30ff]/g,' ')
+                .match(/[A-Za-z0-9'\u2019\u00c0-\u024f]+/g) || []).length;
+  return latin + Math.ceil(cjk/2);
+}
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function setLang(l){
+  if(!T[l]) return;
+  lang = l;
+  var btns = document.querySelectorAll('.lang-btn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('active');
+  document.querySelector('.lang-btn[onclick="setLang(\'' + l + '\')"]').classList.add('active');
+  var t = T[l];
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  document.getElementById('pageSub').textContent   = t.pageSub;
+  document.getElementById('pickTitle').textContent = t.pickTitle;
+  document.getElementById('searchBox').placeholder = t.searchPh;
+  document.getElementById('whyLabel').textContent  = t.why;
+  document.getElementById('whyInput').placeholder  = t.whyPh;
+  document.getElementById('backBtn').textContent   = t.back;
+  document.getElementById('doneTitle').textContent = t.doneTitle;
+  document.getElementById('doneBody').textContent  = t.doneBody;
+  if(students.length) renderStudents(students);
+  if(questions.length) renderQuestion();
+}
+
+/* ---------------------------------------------------------- name picker */
+function loadStudents(){
+  fetch(API + '/roster')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      students = d.students || [];
+      renderStudents(students);
+    })
+    .catch(function(){
+      document.getElementById('studentList').innerHTML =
+        '<div class="err">' + esc(T[lang].loadFail) + '</div>';
+    });
+}
+
+function renderStudents(list){
+  var el = document.getElementById('studentList');
+  if(!list.length){ el.innerHTML = '<div class="empty">' + esc(T[lang].empty) + '</div>'; return; }
+  el.innerHTML = list.map(function(s){
+    return '<div class="student-item' + (s.submitted ? ' done' : '') + '" ' +
+           'onclick="pickStudent(\'' + esc(s.id) + '\')">' +
+             '<div>' +
+               '<div class="student-name">' + esc(s.name) + '</div>' +
+               (s.chineseName ? '<div class="student-zh">' + esc(s.chineseName) + '</div>' : '') +
+             '</div>' +
+             (s.submitted
+               ? '<span class="badge-done">' + esc(T[lang].submitted) + '</span>'
+               : '<span class="student-arrow">→</span>') +
+           '</div>';
+  }).join('');
+}
+
+function filterStudents(){
+  var q = document.getElementById('searchBox').value.toLowerCase();
+  renderStudents(students.filter(function(s){
+    return (s.name || '').toLowerCase().indexOf(q) !== -1 ||
+           (s.chineseName || '').indexOf(q) !== -1;
+  }));
+}
+
+function pickStudent(id){
+  student = students.filter(function(s){ return s.id === id; })[0];
+  if(!student) return;
+  fetch(API + '/paper/' + encodeURIComponent(id))
+    .then(function(r){
+      if(r.status === 409){ throw new Error('already'); }
+      return r.json();
+    })
+    .then(function(d){
+      questions = d.questions || [];
+      restore();
+      document.getElementById('progressWho').textContent = d.name || '';
+      document.getElementById('pickScreen').classList.add('hidden');
+      if(startedAt){            // already sitting it, do not show the brief again
+        document.getElementById('examScreen').classList.remove('hidden');
+        startTicking();
+        renderQuestion();
+      } else {
+        showBrief(d);
+      }
+    })
+    .catch(function(e){
+      if(String(e.message) === 'already'){
+        document.getElementById('pickScreen').classList.add('hidden');
+        document.getElementById('doneScreen').classList.remove('hidden');
+        document.getElementById('doneTitle').textContent = T[lang].already;
+        document.getElementById('doneBody').textContent  = '';
+      } else {
+        alert(T[lang].loadFail);
+      }
+    });
+}
+
+/* --------------------------------------------------------------- the brief */
+function showBrief(d){
+  var t = T[lang];
+  document.getElementById('briefWho').textContent =
+    (d.name || '') + ' · ' + questions.length + (lang === 'zh' ? ' 题' : ' questions');
+  document.getElementById('briefTitle').textContent = t.briefTitle;
+  document.getElementById('briefRules').innerHTML = t.rules.map(function(r, i){
+    return '<div class="rule"><div class="num">' + (i+1) + '</div>' +
+           '<div class="body"><div class="en">' + r[0] + '</div></div></div>';
+  }).join('');
+  document.getElementById('beginBtn').textContent = t.begin;
+  document.getElementById('briefFoot').textContent = t.briefFoot;
+  document.getElementById('briefScreen').classList.remove('hidden');
+}
+
+function beginExam(){
+  document.getElementById('briefScreen').classList.add('hidden');
+  document.getElementById('examScreen').classList.remove('hidden');
+  renderTimer();
+  renderQuestion();
+}
+
+/* ------------------------------------------------------------------ timer */
+/* The clock starts on the first answer, not when the page opens, so reading the
+   brief costs nobody any time. The start time is persisted, so closing the page
+   and returning does not hand out extra minutes. */
+function startClockIfNeeded(){
+  if(startedAt) return;
+  startedAt = new Date().toISOString();
+  persist();
+  startTicking();
+}
+
+function startTicking(){
+  if(ticker) return;
+  ticker = setInterval(renderTimer, 1000);
+  renderTimer();
+}
+
+function msLeft(){
+  if(!startedAt) return LIMIT_MIN * 60000;
+  return (Date.parse(startedAt) + LIMIT_MIN * 60000) - Date.now();
+}
+
+function renderTimer(){
+  var el = document.getElementById('timer');
+  if(!el) return;
+  var t = T[lang];
+  if(!startedAt){ el.textContent = t.timerIdle; el.className = 'timer idle'; return; }
+  var ms = msLeft();
+  if(ms <= 0){ el.textContent = '0:00'; el.className = 'timer low'; timeUp(); return; }
+  var m = Math.floor(ms / 60000), sec = Math.floor((ms % 60000) / 1000);
+  el.textContent = m + ':' + (sec < 10 ? '0' : '') + sec + ' ' + t.left;
+  el.className = 'timer' + (ms < 15 * 60000 ? ' low' : '');
+}
+
+function timeUp(){
+  if(finished) return;
+  finished = true;
+  if(ticker){ clearInterval(ticker); ticker = null; }
+  var btn = document.getElementById('nextBtn');
+  if(btn){ btn.disabled = true; btn.textContent = T[lang].timeUp; }
+  document.querySelectorAll('.opt').forEach(function(o){ o.disabled = true; });
+  var ta = document.getElementById('whyInput');
+  if(ta) ta.disabled = true;
+  submitPaper(true);
+}
+
+/* -------------------------------------------------- local save / restore */
+function storeKey(){ return COHORT_KEY + ':' + (student ? student.id : 'x'); }
+function persist(){
+  try { localStorage.setItem(storeKey(), JSON.stringify({ answers: answers, idx: idx, startedAt: startedAt })); } catch(e){}
+}
+function restore(){
+  try {
+    var raw = localStorage.getItem(storeKey());
+    if(raw){ var d = JSON.parse(raw); answers = d.answers || {}; idx = d.idx || 0; startedAt = d.startedAt || null; }
+  } catch(e){ answers = {}; idx = 0; }
+  if(idx >= questions.length) idx = Math.max(0, questions.length - 1);
+}
+
+/* ------------------------------------------------------------- question */
+function currentAnswer(){
+  var q = questions[idx];
+  if(!answers[q.id]) answers[q.id] = { choice:'', explanation:'' };
+  return answers[q.id];
+}
+
+function renderQuestion(){
+  if(!questions.length) return;
+  var q = questions[idx], a = currentAnswer(), t = T[lang];
+
+  document.getElementById('qLecture').textContent = q.lecture || '';
+  document.getElementById('qStem').textContent    = q.stem_en || '';
+  document.getElementById('qStemZh').textContent  = q.stem_zh || '';
+
+  document.getElementById('qOptions').innerHTML = (q.options || []).map(function(o){
+    return '<button type="button" class="opt' + (a.choice === o.label ? ' selected' : '') + '" ' +
+           'onclick="choose(\'' + o.label + '\')">' +
+             '<span class="opt-label">' + esc(o.label) + '.</span>' + esc(o.text_en) +
+             '<span class="opt-zh">' + esc(o.text_zh) + '</span>' +
+           '</button>';
+  }).join('');
+
+  document.getElementById('whyInput').value = a.explanation || '';
+  document.getElementById('progressCount').textContent = (idx + 1) + ' / ' + questions.length;
+  document.getElementById('progressFill').style.width =
+    Math.round(((idx + 1) / questions.length) * 100) + '%';
+  document.getElementById('backBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').textContent =
+    idx === questions.length - 1 ? t.finish : t.next;
+  updateGate();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function choose(label){
+  if(finished) return;
+  startClockIfNeeded();
+  currentAnswer().choice = label;
+  persist();
+  renderQuestion();
+}
+
+function onWhyInput(){
+  if(finished) return;
+  var v = document.getElementById('whyInput').value;
+  if(v.trim()) startClockIfNeeded();
+  currentAnswer().explanation = v;
+  persist();
+  updateGate();
+}
+
+/* both a tick and a written reason, or the button stays shut */
+function updateGate(){
+  var a = currentAnswer(), t = T[lang];
+  var n = countWords(a.explanation);
+  var ok = !!a.choice && n >= MIN_WORDS;
+  document.getElementById('nextBtn').disabled = !ok || finished;
+
+  var wc = document.getElementById('wordCount');
+  wc.textContent = t.words + ' ' + n + ' / ' + MIN_WORDS;
+  wc.className = 'wordcount' + (n < MIN_WORDS ? ' short' : '');
+
+  var hint = document.getElementById('whyHint');
+  hint.textContent = ok ? t.hintOk : (a.choice ? t.tooShort : t.hintNeed);
+  hint.className = ok ? 'hint' : 'hint warn';
+}
+
+function goBack(){ if(idx > 0){ idx--; persist(); renderQuestion(); } }
+
+function goNext(){
+  if(finished) return;
+  if(idx < questions.length - 1){ idx++; persist(); renderQuestion(); return; }
+  submitPaper(false);
+}
+
+/* --------------------------------------------------------------- submit */
+function submitPaper(auto){
+  finished = true;
+  if(ticker){ clearInterval(ticker); ticker = null; }
+  var btn = document.getElementById('nextBtn');
+  btn.disabled = true;
+  btn.textContent = auto ? T[lang].timeUp : T[lang].submitting;
+
+  var payload = {
+    studentId: student.id,
+    language: lang,
+    startedAt: startedAt,
+    autoSubmit: !!auto,
+    answers: questions.map(function(q){
+      var a = answers[q.id] || {};
+      return { id:q.id, choice:a.choice || '', explanation:(a.explanation || '').trim() };
+    })
+  };
+
+  fetch(API + '/submit', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify(payload)
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.success) throw new Error(d.error || 'failed');
+      try { localStorage.removeItem(storeKey()); } catch(e){}
+      document.getElementById('examScreen').classList.add('hidden');
+      document.getElementById('doneScreen').classList.remove('hidden');
+      document.getElementById('doneTitle').textContent =
+        auto ? T[lang].autoDone : T[lang].doneTitle;
+      document.getElementById('doneBody').textContent  = T[lang].doneBody;
+    })
+    .catch(function(){
+      if(auto){
+        // the clock ran out and the network failed. Keep their answers and keep
+        // retrying quietly rather than losing the paper.
+        setTimeout(function(){ submitPaper(true); }, 15000);
+        return;
+      }
+      alert(T[lang].err);
+      finished = false;
+      btn.disabled = false;
+      btn.textContent = T[lang].finish;
+    });
+}
+
+setLang('zh');
+loadStudents();
+</script>
+</body>
+</html>

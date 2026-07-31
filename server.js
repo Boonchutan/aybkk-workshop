@@ -491,6 +491,10 @@ const teacherAssessment = require('./api/teacher-assessment');
 app.use('/api/teacher', teacherAssessment);
 app.use('/api/mindmap', mindmapApi);
 
+// In-depth CN#2 final exam (student paper + teacher grading review)
+const examApi = require('./api/exam');
+app.use('/api/exam', examApi);
+
 // Routes
 
 // Health check

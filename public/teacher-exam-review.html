@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Review · AYBKK</title>
+<link rel="stylesheet" href="/tokens.css">
+<style>
+/* teacher-exam-review.html , private marking desk for the In-depth CN#2 final.
+   Boonchu opens this with ?token=XXX, matching the TEACHER_TOKEN env var.
+   Not linked from anywhere; the URL is the secret. For each written answer it
+   shows what the student wrote in Chinese, a translation, a reading of what
+   they meant, and a suggested mark he confirms or overrides. */
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body);
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+.container { max-width: 720px; margin:0 auto; padding: var(--space-6) var(--space-4) var(--space-8); }
+.header { text-align:center; margin-bottom: var(--space-5); }
+.eyebrow {
+  font-family: var(--font-display); font-size:11px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color: var(--accent); margin-bottom: var(--space-2);
+}
+h1 { font-family: var(--font-display); font-size:26px; font-weight:600; text-shadow: var(--text-carve-soft); }
+.meta { color: var(--ink-soft); font-size:13px; margin-top: var(--space-2); }
+
+.card {
+  background: var(--surface); border-radius: var(--radius-lg);
+  padding: var(--space-5); margin-bottom: var(--space-5);
+  box-shadow: 16px 16px 32px var(--shadow-dark), -10px -10px 20px var(--shadow-light),
+              inset 1px 1px 0 rgba(253,250,242,.7);
+}
+.card.gone { opacity:.3; pointer-events:none; transition: opacity .4s var(--ease-out); }
+
+/* student header row */
+.stu { display:flex; align-items:center; justify-content:space-between; gap:12px;
+       margin-bottom: var(--space-4); flex-wrap:wrap; }
+.stu-name { font-family: var(--font-display); font-size:20px; font-weight:600; }
+.stu-zh { font-size:13px; color: var(--ink-soft); }
+.pill {
+  font-family: var(--font-display); font-size:11px; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase;
+  padding:6px 12px; border-radius: var(--radius-pill);
+  background: var(--surface-2); color: var(--primary-deep);
+  box-shadow: inset 2px 2px 4px rgba(150,120,80,.18);
+}
+.pill.flag { background:#ecd5be; color:#8d4f2c; }
+
+/* one answer */
+.ans { padding: var(--space-4) 0; border-top:1px solid rgba(150,120,80,.18); }
+.ans:first-of-type { border-top:none; }
+.qnum {
+  font-family: var(--font-display); font-size:10px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color: var(--accent); margin-bottom:6px;
+}
+.qstem { font-size:15px; line-height:1.5; margin-bottom: var(--space-3); }
+.tick { font-size:13px; margin-bottom: var(--space-3); }
+.tick .ok { color:#4f5d3a; font-weight:600; }
+.tick .no { color:#8d4f2c; font-weight:600; }
+
+.wrote {
+  background: var(--surface-2); border-radius: var(--radius-md);
+  padding:14px 16px; margin-bottom: var(--space-3); font-size:15px; line-height:1.7;
+  box-shadow: inset 3px 3px 8px rgba(150,120,80,.18), inset -2px -2px 6px rgba(253,250,242,.8);
+}
+.lang-label {
+  font-family: var(--font-display); font-size:10px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase; color: var(--accent); margin-bottom:4px;
+}
+.translation { font-size:14px; line-height:1.6; color: var(--ink); margin-bottom: var(--space-3); }
+.reading {
+  font-size:14px; line-height:1.6; color: var(--ink-soft);
+  border-left:2px solid var(--primary); padding-left:12px; margin-bottom: var(--space-3);
+}
+.expected { font-size:13px; line-height:1.55; color: var(--ink-soft); margin-bottom: var(--space-3); }
+
+/* mark buttons */
+.marks { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.mark-btn {
+  padding:10px 16px; border:none; border-radius: var(--radius-pill);
+  font-family: var(--font-display); font-size:14px; font-weight:700; cursor:pointer;
+  background: var(--surface-2); color: var(--ink-soft);
+  box-shadow: 5px 5px 10px var(--shadow-dark), -3px -3px 7px var(--shadow-light);
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+.mark-btn:active { transform: scale(.95); }
+.mark-btn.on {
+  background: linear-gradient(135deg,#e6d2a8 0%,var(--primary) 55%,#997a52 100%);
+  color:#3a2c18;
+  box-shadow: inset 3px 3px 7px rgba(255,240,215,.45), inset -2px -2px 6px rgba(40,20,4,.22);
+}
+.mark-btn.suggested::after { content:' ·'; color: var(--primary-deep); }
+.cat {
+  font-family: var(--font-display); font-size:11px; letter-spacing:.06em;
+  text-transform:uppercase; color: var(--ink-soft); margin-left:auto;
+}
+
+.actions { display:flex; gap:12px; margin-top: var(--space-5); }
+.btn {
+  flex:1; padding:15px; border:none; border-radius: var(--radius-md);
+  font-family: var(--font-display); font-size:14px; font-weight:700;
+  letter-spacing:.04em; cursor:pointer;
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+.btn:disabled { opacity:.45; cursor:not-allowed; }
+.btn:not(:disabled):active { transform: scale(.97); }
+.btn-ghost {
+  background: var(--surface-2); color: var(--ink-soft);
+  box-shadow: 6px 6px 12px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+}
+.btn-save {
+  color:#f1e2c4;
+  background: linear-gradient(135deg,#e6d2a8 0%,var(--primary) 55%,#997a52 100%);
+  text-shadow: 1px 1px 0 rgba(255,240,215,.7), -1px -1px 1px rgba(50,28,10,.85);
+  box-shadow: 12px 12px 26px rgba(120,80,40,.30), -6px -6px 14px var(--shadow-light),
+              inset 4px 4px 10px rgba(255,240,215,.5), inset -3px -3px 8px rgba(40,20,4,.25);
+}
+.btn-save.done { filter: saturate(.7); }
+.running { font-size:13px; color: var(--ink-soft); text-align:right; margin-top: var(--space-3); }
+.loading, .err, .empty { text-align:center; padding: var(--space-6); color: var(--ink-soft); }
+.err { color:#8d4f2c; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="eyebrow">AYBKK · In-depth CN#2</div>
+    <h1>Exam Review</h1>
+    <div class="meta" id="meta">Loading…</div>
+  </div>
+  <div id="root"></div>
+</div>
+
+<script>
+var API = '/api/exam';
+var params = new URLSearchParams(location.search);
+var token = params.get('token');
+var attempts = [];
+var edits = {};   // { attemptId: { qid: mark } }
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function fmtDate(d){
+  if(!d) return '';
+  try { return new Date(d).toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }); }
+  catch(e){ return String(d); }
+}
+
+function load(){
+  var root = document.getElementById('root');
+  if(!token){ root.innerHTML = '<div class="err">Missing token in URL.</div>'; return; }
+  root.innerHTML = '<div class="loading">Loading submitted papers…</div>';
+  fetch(API + '/review?token=' + encodeURIComponent(token))
+    .then(function(r){
+      if(r.status === 401){ throw new Error('unauthorized'); }
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(d){ attempts = d.attempts || []; render(); })
+    .catch(function(e){
+      root.innerHTML = '<div class="err">' +
+        (String(e.message) === 'unauthorized'
+          ? 'Unauthorized. Check your token.'
+          : 'Could not load. ' + esc(e.message)) + '</div>';
+    });
+}
+
+function render(){
+  var root = document.getElementById('root');
+  document.getElementById('meta').textContent =
+    attempts.length + (attempts.length === 1 ? ' paper submitted' : ' papers submitted');
+  if(!attempts.length){ root.innerHTML = '<div class="empty">Nothing submitted yet.</div>'; return; }
+  root.innerHTML = attempts.map(renderAttempt).join('');
+  attempts.forEach(function(a){ updateRunning(a.attemptId); });
+}
+
+function renderAttempt(a){
+  var analysed = a.answers.some(function(x){ return x.suggestedMark !== null && x.suggestedMark !== undefined; });
+  var flagged = a.answers.filter(function(x){ return x.needsBoonchu; }).length;
+  return '<div class="card" data-attempt="' + esc(a.attemptId) + '">' +
+    '<div class="stu">' +
+      '<div>' +
+        '<div class="stu-name">' + esc(a.name) + '</div>' +
+        (a.chineseName ? '<div class="stu-zh">' + esc(a.chineseName) + '</div>' : '') +
+      '</div>' +
+      '<span class="pill">' + a.ticksCorrect + '/' + a.questionCount + ' ticks</span>' +
+      (flagged ? '<span class="pill flag">' + flagged + ' to check</span>' : '') +
+      '<span class="pill">' + esc(fmtDate(a.submittedAt)) + '</span>' +
+    '</div>' +
+    (analysed
+      ? a.answers.map(function(x, i){ return renderAnswer(a.attemptId, x, i); }).join('')
+      : '<div class="empty">Not analysed yet. Run the reading pass to get translations and suggested marks.</div>') +
+    '<div class="running" id="run-' + esc(a.attemptId) + '"></div>' +
+    '<div class="actions">' +
+      '<button class="btn btn-ghost" id="an-' + esc(a.attemptId) + '" onclick="analyse(\'' + esc(a.attemptId) + '\')">' +
+        (analysed ? 'Re-read answers' : 'Read answers') + '</button>' +
+      '<button class="btn btn-save" id="sv-' + esc(a.attemptId) + '" onclick="save(\'' + esc(a.attemptId) + '\')"' +
+        (analysed ? '' : ' disabled') + '>Confirm grades</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderAnswer(attemptId, x, i){
+  var marks = [0, 0.5, 1, 1.5, 2];
+  var chosen = (edits[attemptId] && edits[attemptId][x.id] !== undefined)
+    ? edits[attemptId][x.id]
+    : (x.finalMark !== null && x.finalMark !== undefined ? x.finalMark : x.suggestedMark);
+  return '<div class="ans">' +
+    '<div class="qnum">Q' + (i + 1) + ' · ' + esc(x.lecture) + (x.needsBoonchu ? ' · needs you' : '') + '</div>' +
+    '<div class="qstem">' + esc(x.stem_en) + '</div>' +
+    '<div class="tick">Ticked <strong>' + esc(x.choice) + '</strong>, correct was <strong>' + esc(x.correct) + '</strong> ' +
+      (x.tickMark ? '<span class="ok">right</span>' : '<span class="no">wrong</span>') + '</div>' +
+    '<div class="lang-label">They wrote</div>' +
+    '<div class="wrote">' + esc(x.explanation) + '</div>' +
+    (x.translationEn ? '<div class="lang-label">English</div><div class="translation">' + esc(x.translationEn) + '</div>' : '') +
+    (x.analysisEn ? '<div class="reading">' + esc(x.analysisEn) + '</div>' : '') +
+    (x.expected_en ? '<div class="expected"><strong>Full marks looks like:</strong> ' + esc(x.expected_en) + '</div>' : '') +
+    '<div class="marks">' +
+      marks.map(function(m){
+        var on = (Number(chosen) === m) ? ' on' : '';
+        var sug = (Number(x.suggestedMark) === m) ? ' suggested' : '';
+        return '<button class="mark-btn' + on + sug + '" onclick="setMark(\'' + esc(attemptId) + '\',\'' + esc(x.id) + '\',' + m + ')">' + m + '</button>';
+      }).join('') +
+      (x.category ? '<span class="cat">' + esc(x.category) + '</span>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+function setMark(attemptId, qid, m){
+  if(!edits[attemptId]) edits[attemptId] = {};
+  edits[attemptId][qid] = m;
+  var a = attempts.filter(function(x){ return x.attemptId === attemptId; })[0];
+  var ans = a.answers.filter(function(x){ return x.id === qid; })[0];
+  if(ans) ans.finalMark = m;
+  render();
+}
+
+function updateRunning(attemptId){
+  var a = attempts.filter(function(x){ return x.attemptId === attemptId; })[0];
+  if(!a) return;
+  var el = document.getElementById('run-' + attemptId);
+  if(!el) return;
+  var got = a.answers.reduce(function(s, x){
+    return s + (x.tickMark || 0) + (Number(x.finalMark) || 0);
+  }, 0);
+  var total = a.answers.length * 3;
+  el.textContent = 'Running total ' + got + ' / ' + total +
+    ' (' + (total ? Math.round(got / total * 100) : 0) + '%)';
+}
+
+function analyse(attemptId){
+  var btn = document.getElementById('an-' + attemptId);
+  btn.disabled = true; btn.textContent = 'Reading…';
+  fetch(API + '/analyse?token=' + encodeURIComponent(token), {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({ attemptId: attemptId })
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.success) throw new Error(d.error || 'failed');
+      load();
+    })
+    .catch(function(e){
+      btn.disabled = false; btn.textContent = 'Read failed, retry';
+      alert('Could not read the answers: ' + e.message);
+    });
+}
+
+function save(attemptId){
+  var a = attempts.filter(function(x){ return x.attemptId === attemptId; })[0];
+  var btn = document.getElementById('sv-' + attemptId);
+  btn.disabled = true; btn.textContent = 'Saving…';
+  var marks = {};
+  a.answers.forEach(function(x){
+    if(x.finalMark !== null && x.finalMark !== undefined) marks[x.id] = x.finalMark;
+  });
+  fetch(API + '/grade?token=' + encodeURIComponent(token), {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({ attemptId: attemptId, marks: marks, finalise: true })
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.success) throw new Error(d.error || 'failed');
+      btn.textContent = 'Saved ' + d.score + '/' + d.total + ' (' + d.pct + '%)';
+      btn.classList.add('done');
+      setTimeout(function(){ btn.disabled = false; btn.textContent = 'Confirm grades'; btn.classList.remove('done'); }, 2600);
+    })
+    .catch(function(e){
+      btn.textContent = 'Save failed'; btn.disabled = false;
+      setTimeout(function(){ btn.textContent = 'Confirm grades'; }, 2200);
+      alert('Save failed: ' + e.message);
+    });
+}
+
+load();
+</script>
+</body>
+</html>
