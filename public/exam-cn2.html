@@ -422,7 +422,9 @@ function setLang(l){
   document.getElementById('doneTitle').textContent = t.doneTitle;
   document.getElementById('doneBody').textContent  = t.doneBody;
   if(students.length) renderStudents(students);
-  if(questions.length) renderQuestion();
+  if(briefData && !document.getElementById('briefScreen').classList.contains('hidden')) showBrief(briefData);
+  if(questions.length && document.getElementById('briefScreen').classList.contains('hidden')) renderQuestion();
+  renderTimer();
 }
 
 /* ---------------------------------------------------------- name picker */
@@ -498,7 +500,9 @@ function pickStudent(id){
 }
 
 /* --------------------------------------------------------------- the brief */
+var briefData = null;
 function showBrief(d){
+  briefData = d;
   var t = T[lang];
   document.getElementById('briefWho').textContent =
     (d.name || '') + ' · ' + questions.length + (lang === 'zh' ? ' 题' : ' questions');
