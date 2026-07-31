@@ -174,11 +174,15 @@ router.get('/paper/:studentId', async (req, res) => {
     }
 
     const paper = drawForStudent(BANK, studentId, EXAM_ID);
+    /* the roster name wins over the graph name, so Xiao Ma is not greeted as
+       "Sharma", the alias her database record happens to carry */
+    const rosterEntry = COHORT_ROSTER.find(r => r.id === studentId);
     res.json({
       success: true,
       studentId,
-      name: found.records[0].get('name'),
-      chineseName: found.records[0].get('chineseName') || null,
+      name: (rosterEntry && rosterEntry.name) || found.records[0].get('name'),
+      chineseName: (rosterEntry && rosterEntry.chineseName)
+        || found.records[0].get('chineseName') || null,
       total: paper.questions.length * MARKS_PER_Q,
       questions: paper.questions
     });
