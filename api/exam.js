@@ -513,7 +513,8 @@ router.get('/review', async (req, res) => {
        RETURN s.id AS studentId, s.name AS name, s.chineseName AS chineseName,
               a.id AS attemptId, a.answers AS answers, a.ticksCorrect AS ticksCorrect,
               a.questionCount AS questionCount, a.totalMarks AS totalMarks,
-              a.status AS status, toString(a.submittedAt) AS submittedAt
+              a.status AS status, a.analyseError AS analyseError,
+              toString(a.submittedAt) AS submittedAt
        ORDER BY a.submittedAt ASC`,
       { examId: EXAM_ID }
     );
@@ -540,6 +541,7 @@ router.get('/review', async (req, res) => {
         questionCount: Number(r.get('questionCount') || 0),
         totalMarks: Number(r.get('totalMarks') || 0),
         status: r.get('status'),
+        analyseError: r.get('analyseError') || null,
         submittedAt: r.get('submittedAt'),
         answers
       };
