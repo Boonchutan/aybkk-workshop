@@ -653,24 +653,33 @@ Respond with only valid JSON: {"results":[...]}`;
         })
       });
       const out = await response.json();
+      if (out.error) throw new Error('openrouter: ' + JSON.stringify(out.error).slice(0, 200));
       const content = out.choices && out.choices[0] && out.choices[0].message.content;
-      if (!content) throw new Error('empty analysis for a batch');
+      if (!content) throw new Error('empty analysis: ' + JSON.stringify(out).slice(0, 200));
       const match = content.match(/\{[\s\S]*\}/);
       return JSON.parse(match[0]).results || [];
     }
 
     /* one retry per batch, then fail that batch alone rather than the whole paper */
+    const batchErrors = [];
     const settled = await Promise.all(batches.map(async b => {
       try { return await analyseBatch(b, 1); }
       catch (e1) {
         try { return await analyseBatch(b, 2); }
         catch (e2) {
           console.error('analyse batch failed twice:', e2.message);
+          batchErrors.push(e2.message);
           return [];
         }
       }
     }));
     const byQ = new Map(settled.flat().map(r => [r.id, r]));
+    if (byQ.size === 0) {
+      return res.status(502).json({
+        error: 'analysis_failed',
+        detail: batchErrors.slice(0, 3)
+      });
+    }
 
     const merged = answers.map(a => {
       const r = byQ.get(a.id);
