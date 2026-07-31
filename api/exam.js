@@ -42,6 +42,30 @@ const TEST_SEATS = [
 ];
 const isTestSeat = id => TEST_SEATS.some(s => s.id === id);
 
+/* The eleven who sat Part 3, named explicitly rather than read from classType.
+   The tag in the graph is wrong in three ways: it still carries Cris, who did not
+   attend, and it is missing QiaoQiao and Xiao Ma entirely, so two students could
+   not have sat the exam at all. An exam roster must not depend on a tag being
+   tidy on the night.
+
+   Ids were chosen by journal history, because a record with real check-ins is the
+   student's actual account and the zero check-in duplicates are workshop signup
+   forms. Two are marked verify: they had more than one plausible record.
+   Cris Shudi and TinaQian are deliberately absent. */
+const COHORT_ROSTER = [
+  { id: '4c576442-e2c0-4884-9878-d97cd62ee8d3', name: 'Yi yang',  chineseName: '徐一洋' },
+  { id: 'ws-1774548685162',                     name: 'QiaoQiao', chineseName: '乔畅', verify: true },
+  { id: '0522af73-efb6-46a5-a73b-c5023f8affeb', name: 'Lisa',     chineseName: '赵丽云' },
+  { id: 'ws-1774682257163',                     name: 'Xiao Ma',  chineseName: '马雪琴', verify: true },
+  { id: '9453f2ba-ba16-47f1-bbf9-1da116c5dea3', name: 'XiaoQin',  chineseName: '李琴琴' },
+  { id: 'd3abf781-32c8-4f0f-b7df-624addca3511', name: 'Yu Lang',  chineseName: '余浪' },
+  { id: 'a03da5a9-bc6e-4fc6-bfbf-fa54fcd83e95', name: 'GuiGui',   chineseName: '王国贵' },
+  { id: '1971e49e-a9c6-41ea-b7a4-55f104dec8a9', name: 'Lee',      chineseName: '李雨杰' },
+  { id: 'c0b4d60e-df44-4b8d-93fa-854b4081de02', name: 'Tinyee',   chineseName: '李亭逸' },
+  { id: 'e2568186-8aff-4f58-b429-fc2ce9d94b28', name: 'Much',     chineseName: '马驰' },
+  { id: 'd7e82761-191f-4723-bbb5-a9eb7a65b8b1', name: 'Wini',     chineseName: '王榕榕' },
+];
+
 /* Append-only disk copy of every submitted paper, written before the graph write.
    This is the safety net: if Neo4j is unreachable, slow, or the write silently
    matches nothing, the student's answers still exist on disk and can be replayed.
@@ -86,32 +110,34 @@ function checkTeacherAuth(req) {
 }
 
 /* ---------------------------------------------------------------- roster */
-/* The 11 students sitting this paper. Cris and Tina did not attend Part 3. */
+/* Serves COHORT_ROSTER, the explicit list of the eleven who sat Part 3. The
+   graph is consulted only for who has already submitted, so a wrong or missing
+   classType tag cannot drop a student from the exam or add one who left. */
 router.get('/roster', async (req, res) => {
   const session = req.driver.session();
   try {
     const result = await session.run(
-      `MATCH (s:Student)
-       WHERE s.classType = $cohort AND coalesce(s.isActive, true) = true
-       OPTIONAL MATCH (s)-[:TOOK]->(a:ExamAttempt {examId: $examId})
-       RETURN s.id AS id, s.name AS name, s.chineseName AS chineseName,
-              count(a) AS attempts
-       ORDER BY s.name ASC`,
-      { cohort: COHORT, examId: EXAM_ID }
+      `MATCH (s:Student)-[:TOOK]->(a:ExamAttempt {examId: $examId})
+       WHERE s.id IN $ids OR s.pgId IN $ids OR s.studentId IN $ids
+       RETURN DISTINCT s.id AS id`,
+      { examId: EXAM_ID, ids: COHORT_ROSTER.map(s => s.id) }
     );
-    const students = result.records.map(r => ({
-      id: r.get('id'),
-      name: r.get('name'),
-      chineseName: r.get('chineseName') || null,
-      submitted: Number(r.get('attempts') || 0) > 0
+    const done = new Set(result.records.map(r => r.get('id')));
+    const students = COHORT_ROSTER.map(s => ({
+      id: s.id, name: s.name, chineseName: s.chineseName,
+      submitted: done.has(s.id)
     }));
     const seats = TEST_SEATS.map(s => ({ ...s, submitted: false, isTest: true }));
     res.json({ success: true, students: students.concat(seats), count: students.length });
   } catch (error) {
-    // the teachers can still try the paper when the graph is unreachable
+    /* even with the graph down the full roster still renders; only the
+       "submitted" badges are lost until it returns */
     console.error('exam roster error:', error);
+    const students = COHORT_ROSTER.map(s => ({
+      id: s.id, name: s.name, chineseName: s.chineseName, submitted: false
+    }));
     const seats = TEST_SEATS.map(s => ({ ...s, submitted: false, isTest: true }));
-    res.json({ success: true, students: seats, count: 0, degraded: true });
+    res.json({ success: true, students: students.concat(seats), count: students.length, degraded: true });
   } finally {
     await session.close();
   }
