@@ -300,6 +300,14 @@ router.post('/submit', async (req, res) => {
           teacherPoint: q.teacherPoint || ''
         };
       });
+      /* a test run pings Telegram too, clearly labelled, so the report channel
+         can be proven working before any student sits the paper */
+      notifyBoonchu(
+        `*TEST submission* (nothing saved)\n` +
+        `Seat: \`${studentId}\`\n` +
+        `Ticks correct: ${right} of ${answers.length}\n` +
+        `If you can read this, exam reports are working.`
+      );
       return res.json({
         success: true, isTest: true, stored: false,
         ticksCorrect: right, questionCount: answers.length, detail
