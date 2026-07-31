@@ -613,7 +613,15 @@ router.post('/analyse', async (req, res) => {
       };
     });
 
-    const prompt = `You are helping Boonchu Tanti mark the final exam of his Ashtanga teacher training in Zhuhai. The student is ${studentName}. Most answers are written in Chinese.
+    /* One request for all 46 answers takes longer than the edge gateway allows,
+       so it returned an HTML timeout page and the client saw "not valid JSON".
+       Analyse in parallel batches instead: each stays well inside the limit. */
+    const BATCH = 8;
+    const batches = [];
+    for (let i = 0; i < items.length; i += BATCH) batches.push(items.slice(i, i + BATCH));
+
+    async function analyseBatch(batch, attempt) {
+      const prompt = `You are helping Boonchu Tanti mark the final exam of his Ashtanga teacher training in Zhuhai. The student is ${studentName}. Most answers are written in Chinese.
 
 ${RUBRIC}
 
@@ -625,32 +633,44 @@ For EACH item below return an object with:
   needsBoonchu (true if this is a borderline call he should look at first).
 
 ITEMS:
-${JSON.stringify(items, null, 1)}
+${JSON.stringify(batch, null, 1)}
 
 Respond with only valid JSON: {"results":[...]}`;
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://aybkk-ashtanga.up.railway.app',
-        'X-Title': 'AYBKK In-depth CN2 Exam'
-      },
-      body: JSON.stringify({
-        model: 'deepseek/deepseek-v3-0324',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 6000
-      })
-    });
-    const out = await response.json();
-    const content = out.choices && out.choices[0] && out.choices[0].message.content;
-    if (!content) return res.status(502).json({ error: 'no analysis returned' });
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://aybkk-ashtanga.up.railway.app',
+          'X-Title': 'AYBKK In-depth CN2 Exam'
+        },
+        body: JSON.stringify({
+          model: 'deepseek/deepseek-v3-0324',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.3,
+          max_tokens: 3500
+        })
+      });
+      const out = await response.json();
+      const content = out.choices && out.choices[0] && out.choices[0].message.content;
+      if (!content) throw new Error('empty analysis for a batch');
+      const match = content.match(/\{[\s\S]*\}/);
+      return JSON.parse(match[0]).results || [];
+    }
 
-    const match = content.match(/\{[\s\S]*\}/);
-    const parsed = JSON.parse(match[0]);
-    const byQ = new Map((parsed.results || []).map(r => [r.id, r]));
+    /* one retry per batch, then fail that batch alone rather than the whole paper */
+    const settled = await Promise.all(batches.map(async b => {
+      try { return await analyseBatch(b, 1); }
+      catch (e1) {
+        try { return await analyseBatch(b, 2); }
+        catch (e2) {
+          console.error('analyse batch failed twice:', e2.message);
+          return [];
+        }
+      }
+    }));
+    const byQ = new Map(settled.flat().map(r => [r.id, r]));
 
     const merged = answers.map(a => {
       const r = byQ.get(a.id);
