@@ -1,0 +1,605 @@
+// bkk-api.js — AYBKK Bangkok: packages, payment (PaySolutions), passes,
+// class schedule, bookings, check-in.
+//
+// Mount:  mountBkk(app, { pgPool })
+//
+// Owns its own bkk_* tables. It NEVER writes Rezerv's students/classes/
+// bookings/passes tables — the two systems run side by side.
+//
+// Money rule: a pass is only created after the gateway itself confirms the
+// payment AND the amount matches. The PaySolutions postback is treated as an
+// untrusted nudge (their own plugins accept it blindly; we do not).
+
+const crypto = require('crypto');
+
+const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
+const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
+
+// ── seed data (from aybkk.com, captured 2026-08-05) ─────────────────────────
+// price_thb is the BASE price. The online surcharge is a setting, applied at
+// checkout, so it can be changed without touching the catalogue.
+const SEED_PRODUCTS = [
+  { code: 'dropin',    name_en: 'Drop-in',              name_th: 'ครั้งเดียว',        price_thb: 1500,  kind: 'credits',   credits: 1,  valid_days: 1,   daily_cap: null, sort: 10 },
+  { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 20 },
+  { code: 'unlim1',    name_en: '1 month unlimited',     name_th: '1 เดือน ไม่จำกัด',   price_thb: 9600,  kind: 'unlimited', credits: null, valid_days: 30,  daily_cap: 2, sort: 30 },
+  { code: 'unlim2',    name_en: '2 months unlimited',    name_th: '2 เดือน ไม่จำกัด',   price_thb: 18200, kind: 'unlimited', credits: null, valid_days: 60,  daily_cap: 2, sort: 40 },
+  { code: 'unlim3',    name_en: '3 months unlimited',    name_th: '3 เดือน ไม่จำกัด',   price_thb: 25800, kind: 'unlimited', credits: null, valid_days: 90,  daily_cap: 2, sort: 50 },
+  { code: 'unlim6',    name_en: '6 months unlimited',    name_th: '6 เดือน ไม่จำกัด',   price_thb: 45000, kind: 'unlimited', credits: null, valid_days: 180, daily_cap: 2, sort: 60 },
+  { code: 'unlim12',   name_en: '12 months unlimited (1 free month)', name_th: '12 เดือน ไม่จำกัด (ฟรี 1 เดือน)', price_thb: 78000, kind: 'unlimited', credits: null, valid_days: 395, daily_cap: 2, sort: 70 },
+];
+
+// weekday: 0=Sun … 6=Sat
+const SEED_SLOTS = [
+  { code: 'my530',   title: 'Mysore 5.30am (1st batch)', kind: 'mysore',       weekdays: [1,2,3,4,5], start_time: '05:30', duration_min: 120, capacity: 42, is_online: false },
+  { code: 'my730',   title: 'Mysore 7.30am (2nd batch)', kind: 'mysore',       weekdays: [1,2,3,4,5], start_time: '07:30', duration_min: 120, capacity: 42, is_online: false },
+  { code: 'lp_mon',  title: 'Led Primary series',        kind: 'led_primary',  weekdays: [1],         start_time: '06:30', duration_min: 90,  capacity: 42, is_online: false },
+  { code: 'lp_sat',  title: 'Led Primary series',        kind: 'led_primary',  weekdays: [6],         start_time: '07:00', duration_min: 90,  capacity: 42, is_online: false },
+  { code: 'li_sat',  title: 'Led Intermediate series',   kind: 'led_inter',    weekdays: [6],         start_time: '08:45', duration_min: 120, capacity: 42, is_online: false },
+  { code: 'my_sun',  title: 'Mysore Sunday',             kind: 'mysore',       weekdays: [0],         start_time: '07:00', duration_min: 150, capacity: 42, is_online: false },
+  { code: 'olp_mon', title: '[Online] Led Primary series',      kind: 'led_primary', weekdays: [1], start_time: '06:30', duration_min: 90,  capacity: 20, is_online: true },
+  { code: 'olp_sat', title: '[Online] Led Primary series',      kind: 'led_primary', weekdays: [6], start_time: '07:00', duration_min: 90,  capacity: 10, is_online: true },
+  { code: 'oli_sat', title: '[Online] Led Intermediate series', kind: 'led_inter',   weekdays: [6], start_time: '09:00', duration_min: 120, capacity: 15, is_online: true },
+];
+
+function mountBkk(app, opts = {}) {
+  const pool = opts.pgPool;
+  const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || 'aybkk2026';
+  const isAdmin = req => (req.headers['x-bkk-key'] || req.query.key) === ADMIN_KEY;
+
+  if (!pool) { console.warn('⚠ bkk-api: no pgPool — Bangkok API disabled'); return; }
+  const q = (sql, params = []) => pool.query(sql, params);
+
+  // ── schema ────────────────────────────────────────────────────────────────
+  async function initSchema() {
+    await q(`CREATE TABLE IF NOT EXISTS bkk_settings (
+      key TEXT PRIMARY KEY, value JSONB, updated_at TIMESTAMPTZ DEFAULT now())`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_products (
+      id SERIAL PRIMARY KEY, code TEXT UNIQUE NOT NULL,
+      name_en TEXT NOT NULL, name_th TEXT, price_thb INTEGER NOT NULL,
+      kind TEXT NOT NULL, credits INTEGER, valid_days INTEGER NOT NULL,
+      daily_cap INTEGER, active BOOLEAN DEFAULT true, sort INTEGER DEFAULT 100)`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_members (
+      id SERIAL PRIMARY KEY, code TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL, email TEXT, phone TEXT,
+      student_id TEXT, created_at TIMESTAMPTZ DEFAULT now())`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_members_email ON bkk_members (lower(email))`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_orders (
+      id SERIAL PRIMARY KEY, refno BIGINT UNIQUE NOT NULL,
+      product_id INTEGER REFERENCES bkk_products(id),
+      member_id INTEGER REFERENCES bkk_members(id),
+      base_thb INTEGER NOT NULL, fee_thb INTEGER NOT NULL DEFAULT 0,
+      amount_thb INTEGER NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      gateway_ref TEXT, gateway_note TEXT,
+      verified_at TIMESTAMPTZ, created_at TIMESTAMPTZ DEFAULT now())`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_passes (
+      id SERIAL PRIMARY KEY, member_id INTEGER REFERENCES bkk_members(id),
+      product_id INTEGER REFERENCES bkk_products(id),
+      order_id INTEGER REFERENCES bkk_orders(id),
+      kind TEXT NOT NULL, credits_total INTEGER, credits_used INTEGER DEFAULT 0,
+      daily_cap INTEGER, valid_days INTEGER NOT NULL,
+      valid_from DATE, valid_until DATE,
+      status TEXT NOT NULL DEFAULT 'active', created_at TIMESTAMPTZ DEFAULT now())`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_class_slots (
+      id SERIAL PRIMARY KEY, code TEXT UNIQUE NOT NULL,
+      title TEXT NOT NULL, kind TEXT, teachers TEXT,
+      weekday INTEGER NOT NULL, start_time TEXT NOT NULL,
+      duration_min INTEGER NOT NULL, capacity INTEGER NOT NULL,
+      is_online BOOLEAN DEFAULT false, active BOOLEAN DEFAULT true)`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_class_overrides (
+      id SERIAL PRIMARY KEY, slot_id INTEGER REFERENCES bkk_class_slots(id),
+      class_date DATE NOT NULL, cancelled BOOLEAN DEFAULT false,
+      capacity INTEGER, note TEXT, UNIQUE (slot_id, class_date))`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_bookings (
+      id SERIAL PRIMARY KEY, slot_id INTEGER REFERENCES bkk_class_slots(id),
+      class_date DATE NOT NULL, start_at TIMESTAMPTZ NOT NULL,
+      member_id INTEGER REFERENCES bkk_members(id),
+      pass_id INTEGER REFERENCES bkk_passes(id),
+      status TEXT NOT NULL DEFAULT 'booked',
+      booked_at TIMESTAMPTZ DEFAULT now(), cancelled_at TIMESTAMPTZ,
+      checked_in_at TIMESTAMPTZ,
+      UNIQUE (slot_id, class_date, member_id))`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_bookings_slot_date
+             ON bkk_bookings (slot_id, class_date) WHERE status = 'booked'`);
+
+    // seed catalogue + timetable once
+    const p = await q('SELECT count(*)::int AS n FROM bkk_products');
+    if (p.rows[0].n === 0) {
+      for (const s of SEED_PRODUCTS) {
+        await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort)
+                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (code) DO NOTHING`,
+          [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort]);
+      }
+      console.log(`✓ bkk: seeded ${SEED_PRODUCTS.length} products`);
+    }
+    const c = await q('SELECT count(*)::int AS n FROM bkk_class_slots');
+    if (c.rows[0].n === 0) {
+      for (const s of SEED_SLOTS) {
+        for (const wd of s.weekdays) {
+          await q(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity,is_online)
+                   VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (code) DO NOTHING`,
+            [`${s.code}_${wd}`, s.title, s.kind, wd, s.start_time, s.duration_min, s.capacity, s.is_online]);
+        }
+      }
+      console.log('✓ bkk: seeded weekly timetable');
+    }
+    const st = await q(`SELECT value FROM bkk_settings WHERE key = 'surcharge_pct'`);
+    if (!st.rows.length) {
+      await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct','5')`);
+    }
+  }
+
+  async function getSetting(key, fallback) {
+    try {
+      const r = await q('SELECT value FROM bkk_settings WHERE key = $1', [key]);
+      return r.rows.length ? r.rows[0].value : fallback;
+    } catch (e) { return fallback; }
+  }
+
+  const surcharge = async () => Number(await getSetting('surcharge_pct', 5)) || 0;
+
+  // ── helpers ───────────────────────────────────────────────────────────────
+  const memberCode = () => 'B' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
+  // PaySolutions requires a numeric refno; 10 digits, unique.
+  const newRefno = () => Number(String(Date.now()).slice(-9) + String(Math.floor(Math.random() * 10)));
+  const bkkNow = () => new Date();
+  const startAtISO = (dateStr, hhmm) => `${dateStr}T${hhmm}:00${TZ_OFFSET}`;
+  const ymd = d => d.toISOString().slice(0, 10);
+
+  async function findOrCreateMember({ name, email, phone }) {
+    const em = (email || '').trim().toLowerCase();
+    if (em) {
+      const r = await q('SELECT * FROM bkk_members WHERE lower(email) = $1 LIMIT 1', [em]);
+      if (r.rows.length) return r.rows[0];
+    }
+    const r = await q(
+      `INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,$2,$3,$4) RETURNING *`,
+      [memberCode(), (name || '').trim() || 'Student', em || null, (phone || '').trim() || null]);
+    return r.rows[0];
+  }
+
+  // Active pass for a member, preferring one that is already started.
+  async function activePass(memberId) {
+    const r = await q(
+      `SELECT p.*, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id = p.product_id
+       WHERE p.member_id = $1 AND p.status = 'active'
+         AND (p.valid_until IS NULL OR p.valid_until >= (now() AT TIME ZONE 'Asia/Bangkok')::date)
+         AND (p.kind = 'unlimited' OR p.credits_used < p.credits_total)
+       ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1`, [memberId]);
+    return r.rows[0] || null;
+  }
+
+  // ── public: catalogue + schedule ──────────────────────────────────────────
+  app.get('/api/bkk/products', async (req, res) => {
+    try {
+      const pct = await surcharge();
+      const r = await q('SELECT * FROM bkk_products WHERE active ORDER BY sort, id');
+      res.json({
+        surchargePct: pct,
+        products: r.rows.map(p => ({
+          ...p,
+          fee_thb: Math.round(p.price_thb * pct / 100),
+          total_thb: p.price_thb + Math.round(p.price_thb * pct / 100),
+        })),
+      });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Schedule is generated from the weekly pattern on read — no cron.
+  app.get('/api/bkk/schedule', async (req, res) => {
+    try {
+      const days = Math.min(30, Math.max(1, parseInt(req.query.days) || 14));
+      const slots = (await q('SELECT * FROM bkk_class_slots WHERE active')).rows;
+      const from = new Date();
+      const dates = [];
+      for (let i = 0; i < days; i++) {
+        const d = new Date(from.getTime() + i * 86400000);
+        dates.push(ymd(d));
+      }
+      const overrides = (await q(
+        `SELECT * FROM bkk_class_overrides WHERE class_date = ANY($1::date[])`, [dates])).rows;
+      const counts = (await q(
+        `SELECT slot_id, class_date, count(*)::int AS n FROM bkk_bookings
+         WHERE status = 'booked' AND class_date = ANY($1::date[])
+         GROUP BY slot_id, class_date`, [dates])).rows;
+
+      const out = [];
+      for (const dstr of dates) {
+        const wd = new Date(`${dstr}T12:00:00${TZ_OFFSET}`).getUTCDay();
+        for (const s of slots.filter(x => x.weekday === wd)) {
+          const ov = overrides.find(o => o.slot_id === s.id && ymd(new Date(o.class_date)) === dstr);
+          if (ov && ov.cancelled) continue;
+          const cap = (ov && ov.capacity) || s.capacity;
+          const booked = (counts.find(c => c.slot_id === s.id && ymd(new Date(c.class_date)) === dstr) || {}).n || 0;
+          const startAt = startAtISO(dstr, s.start_time);
+          if (new Date(startAt) < bkkNow()) continue;         // hide past classes
+          out.push({
+            slotId: s.id, date: dstr, startAt, title: s.title, kind: s.kind,
+            teachers: s.teachers || '', durationMin: s.duration_min,
+            isOnline: s.is_online, capacity: cap, booked, seatsLeft: Math.max(0, cap - booked),
+          });
+        }
+      }
+      out.sort((a, b) => a.startAt.localeCompare(b.startAt));
+      res.json({ classes: out });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── buy: create order, hand back a PaySolutions redirect ──────────────────
+  app.post('/api/bkk/orders', async (req, res) => {
+    try {
+      const { productCode, name, email, phone } = req.body || {};
+      if (!productCode || !(name || '').trim() || !(email || '').trim())
+        return res.status(400).json({ error: 'name, email and product are required' });
+
+      const pr = (await q('SELECT * FROM bkk_products WHERE code = $1 AND active', [productCode])).rows[0];
+      if (!pr) return res.status(404).json({ error: 'product not found' });
+
+      const member = await findOrCreateMember({ name, email, phone });
+      const pct = await surcharge();
+      const fee = Math.round(pr.price_thb * pct / 100);
+      const total = pr.price_thb + fee;
+
+      const o = (await q(
+        `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,amount_thb)
+         VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+        [newRefno(), pr.id, member.id, pr.price_thb, fee, total])).rows[0];
+
+      const cfg = paysoConfig();
+      res.json({
+        order: { id: o.id, refno: String(o.refno), amount: total, product: pr.name_en },
+        member: { code: member.code },
+        pay: cfg ? buildPayForm(cfg, o, pr, member, req) : null,
+        payUnavailable: cfg ? undefined :
+          'Online payment is not configured yet — the shala will contact you to arrange payment.',
+      });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  function paysoConfig() {
+    const merchantId = process.env.PAYSO_MERCHANT_ID;
+    const secret = process.env.PAYSO_SECRET_KEY;
+    if (!merchantId || !secret) return null;
+    return {
+      merchantId, secret,
+      apiKey: process.env.PAYSO_API_KEY || '',
+      endpoint: process.env.PAYSO_ENDPOINT || 'https://www.thaiepay.com/epaylink/payment.aspx',
+      inquiryBase: process.env.PAYSO_INQUIRY_BASE || 'https://apis.paysolutions.asia',
+    };
+  }
+
+  // hash formula taken from PaySolutions' own WooCommerce plugin
+  function paysoHash(cfg, refno, total) {
+    return crypto.createHmac('sha512', cfg.secret)
+      .update(`${cfg.merchantId}${refno}${total}`).digest('base64');
+  }
+
+  function buildPayForm(cfg, order, product, member, req) {
+    const total = order.amount_thb.toFixed(2);
+    const refno = String(order.refno).padStart(10, '0');
+    const base = (process.env.PUBLIC_BASE_URL || 'https://my.aybkk.com').replace(/\/$/, '');
+    return {
+      action: cfg.endpoint,
+      fields: {
+        merchantid: cfg.merchantId,
+        refno,
+        customeremail: member.email || '',
+        productdetail: `AYBKK ${product.name_en}`,
+        total,
+        cc: '00',                                   // THB
+        lang: 'e',
+        returnurl: `${base}/bkk.html?paid=${refno}`,
+        postbackurl: `${base}/api/bkk/pay/postback`,
+        hash: paysoHash(cfg, refno, total),
+      },
+    };
+  }
+
+  // ── payment confirmation ──────────────────────────────────────────────────
+  // The postback carries NO trustworthy signature (PaySolutions' own plugins
+  // accept it blindly). It only tells us *which* order to go and verify.
+  app.post('/api/bkk/pay/postback', express_urlencoded_safe, async (req, res) => {
+    const refno = String((req.body && (req.body.refno || req.body.refNo)) || req.query.refno || '').trim();
+    res.json({ ok: true });                        // always 200 — never leak state
+    if (!refno) return;
+    try { await verifyAndActivate(Number(refno)); }
+    catch (e) { console.error('[bkk pay] verify failed:', e.message); }
+  });
+
+  // Student's browser comes back here; also triggers a verify so activation is
+  // not dependent on the postback arriving.
+  app.get('/api/bkk/pay/check/:refno', async (req, res) => {
+    try {
+      const r = await verifyAndActivate(Number(req.params.refno));
+      res.json(r);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  async function verifyAndActivate(refno) {
+    const o = (await q('SELECT * FROM bkk_orders WHERE refno = $1', [refno])).rows[0];
+    if (!o) return { status: 'unknown' };
+    if (o.status === 'paid') return { status: 'paid', already: true };
+
+    const cfg = paysoConfig();
+    if (!cfg) return { status: o.status, note: 'gateway not configured' };
+
+    const verdict = await inquire(cfg, o);
+    if (!verdict.paid) {
+      await q(`UPDATE bkk_orders SET gateway_note = $2 WHERE id = $1`,
+        [o.id, (verdict.note || 'not confirmed').slice(0, 300)]);
+      return { status: o.status, note: verdict.note };
+    }
+    // amount must match what we asked for
+    if (verdict.amount != null && Math.round(Number(verdict.amount)) !== o.amount_thb) {
+      await q(`UPDATE bkk_orders SET status='mismatch', gateway_note=$2 WHERE id=$1`,
+        [o.id, `amount ${verdict.amount} != ${o.amount_thb}`]);
+      console.warn(`[bkk pay] AMOUNT MISMATCH refno=${refno} gateway=${verdict.amount} expected=${o.amount_thb}`);
+      return { status: 'mismatch' };
+    }
+    await activateOrder(o, verdict);
+    return { status: 'paid' };
+  }
+
+  async function inquire(cfg, order) {
+    const url = `${cfg.inquiryBase.replace(/\/$/, '')}/order/orderdetailpost`;
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        merchantID: String(cfg.merchantId).slice(-5),
+        merchantSecretKey: cfg.secret,
+        apikey: cfg.apiKey,
+      },
+      body: JSON.stringify({
+        merchantID: String(cfg.merchantId).slice(-5),
+        orderNo: String(order.refno).padStart(10, '0'),
+        refno: String(order.refno).padStart(10, '0'),
+        productDetail: '',
+      }),
+    });
+    const text = await r.text();
+    let j = null; try { j = JSON.parse(text); } catch (_) {}
+    if (!j) return { paid: false, note: `inquiry ${r.status}: ${text.slice(0, 120)}` };
+    const d = j.data || j;
+    const statusStr = String(d.status ?? d.paymentStatus ?? d.orderStatus ?? '').toLowerCase();
+    const paid = j.success === true &&
+      /(^|[^a-z])(paid|success|successful|complete|completed|approved)([^a-z]|$)/.test(statusStr);
+    const amount = d.amount ?? d.total ?? d.paymentAmount ?? null;
+    return { paid, amount, note: paid ? 'confirmed' : `status=${statusStr || 'unknown'}`, raw: d };
+  }
+
+  async function activateOrder(order, verdict = {}) {
+    const pr = (await q('SELECT * FROM bkk_products WHERE id = $1', [order.product_id])).rows[0];
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const upd = await client.query(
+        `UPDATE bkk_orders SET status='paid', verified_at=now(), gateway_ref=$2, gateway_note=$3
+         WHERE id=$1 AND status <> 'paid' RETURNING id`,
+        [order.id, verdict.raw ? JSON.stringify(verdict.raw).slice(0, 400) : null, verdict.note || null]);
+      if (!upd.rows.length) { await client.query('ROLLBACK'); return; }   // already activated
+      await client.query(
+        `INSERT INTO bkk_passes (member_id,product_id,order_id,kind,credits_total,daily_cap,valid_days)
+         VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+        [order.member_id, pr.id, order.id, pr.kind, pr.credits, pr.daily_cap, pr.valid_days]);
+      await client.query('COMMIT');
+      console.log(`✓ bkk: pass activated for order ${order.id} (${pr.name_en})`);
+      notify(`💳 AYBKK payment\n${pr.name_en} · ฿${order.amount_thb}\nrefno ${order.refno}`);
+    } catch (e) {
+      await client.query('ROLLBACK'); throw e;
+    } finally { client.release(); }
+  }
+
+  async function notify(text) {
+    try {
+      const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.BOONCHU_CHAT_ID;
+      if (!token || !chat) return;
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chat, text }),
+      });
+    } catch (_) {}
+  }
+
+  // ── member view ───────────────────────────────────────────────────────────
+  app.get('/api/bkk/me/:code', async (req, res) => {
+    try {
+      const m = (await q('SELECT * FROM bkk_members WHERE code = $1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'not found' });
+      const passes = (await q(
+        `SELECT p.*, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+         WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id])).rows;
+      const bookings = (await q(
+        `SELECT b.*, s.title, s.start_time, s.is_online FROM bkk_bookings b
+         JOIN bkk_class_slots s ON s.id=b.slot_id
+         WHERE b.member_id=$1 AND b.status='booked' AND b.start_at >= now()
+         ORDER BY b.start_at`, [m.id])).rows;
+      res.json({
+        member: { code: m.code, name: m.name, email: m.email },
+        passes: passes.map(p => ({
+          name: p.name_en, kind: p.kind, status: p.status,
+          creditsLeft: p.kind === 'unlimited' ? null : (p.credits_total - p.credits_used),
+          validFrom: p.valid_from, validUntil: p.valid_until, dailyCap: p.daily_cap,
+        })),
+        bookings,
+      });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── booking ───────────────────────────────────────────────────────────────
+  app.post('/api/bkk/bookings', async (req, res) => {
+    const { memberCode: mcode, slotId, date } = req.body || {};
+    if (!mcode || !slotId || !date) return res.status(400).json({ error: 'memberCode, slotId and date required' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const m = (await client.query('SELECT * FROM bkk_members WHERE code=$1', [mcode])).rows[0];
+      if (!m) throw new Error('member not found');
+
+      const slot = (await client.query('SELECT * FROM bkk_class_slots WHERE id=$1 AND active', [slotId])).rows[0];
+      if (!slot) throw new Error('class not found');
+      const startAt = startAtISO(date, slot.start_time);
+      if (new Date(startAt) < bkkNow()) throw new Error('that class has already started');
+
+      const ov = (await client.query(
+        'SELECT * FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2', [slotId, date])).rows[0];
+      if (ov && ov.cancelled) throw new Error('class cancelled');
+      const capacity = (ov && ov.capacity) || slot.capacity;
+
+      // lock the class row-set so two students cannot take the last seat
+      const taken = (await client.query(
+        `SELECT count(*)::int AS n FROM bkk_bookings
+         WHERE slot_id=$1 AND class_date=$2 AND status='booked' FOR UPDATE`, [slotId, date])).rows[0].n;
+      if (taken >= capacity) throw new Error('class is full');
+
+      const pass = (await client.query(
+        `SELECT p.* FROM bkk_passes p
+         WHERE p.member_id=$1 AND p.status='active'
+           AND (p.valid_until IS NULL OR p.valid_until >= $2::date)
+           AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
+         ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 FOR UPDATE`, [m.id, date])).rows[0];
+      if (!pass) throw new Error('no active pass — please buy a package first');
+
+      // daily cap (memberships: 2 bookings per day)
+      if (pass.daily_cap) {
+        const today = (await client.query(
+          `SELECT count(*)::int AS n FROM bkk_bookings
+           WHERE member_id=$1 AND class_date=$2 AND status='booked'`, [m.id, date])).rows[0].n;
+        if (today >= pass.daily_cap)
+          throw new Error(`limit is ${pass.daily_cap} classes per day`);
+      }
+
+      // first booking starts the validity window
+      let validFrom = pass.valid_from, validUntil = pass.valid_until;
+      if (!validFrom) {
+        validFrom = date;
+        const vu = new Date(`${date}T00:00:00${TZ_OFFSET}`);
+        vu.setDate(vu.getDate() + pass.valid_days);
+        validUntil = ymd(vu);
+        await client.query('UPDATE bkk_passes SET valid_from=$2, valid_until=$3 WHERE id=$1',
+          [pass.id, validFrom, validUntil]);
+      }
+      if (pass.kind !== 'unlimited') {
+        await client.query('UPDATE bkk_passes SET credits_used = credits_used + 1 WHERE id=$1', [pass.id]);
+      }
+      const b = (await client.query(
+        `INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,pass_id)
+         VALUES ($1,$2,$3,$4,$5) RETURNING *`, [slotId, date, startAt, m.id, pass.id])).rows[0];
+      await client.query('COMMIT');
+      res.json({ success: true, booking: b });
+    } catch (e) {
+      await client.query('ROLLBACK');
+      const msg = /duplicate key/.test(e.message) ? 'you already booked this class' : e.message;
+      res.status(409).json({ error: msg });
+    } finally { client.release(); }
+  });
+
+  app.post('/api/bkk/bookings/:id/cancel', async (req, res) => {
+    const { memberCode: mcode } = req.body || {};
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const b = (await client.query(
+        `SELECT b.*, m.code AS mcode FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+         WHERE b.id=$1 FOR UPDATE`, [req.params.id])).rows[0];
+      if (!b) throw new Error('booking not found');
+      if (mcode && b.mcode !== mcode) throw new Error('not your booking');
+      if (b.status !== 'booked') throw new Error('already ' + b.status);
+
+      const hoursLeft = (new Date(b.start_at) - bkkNow()) / 3600000;
+      const refund = hoursLeft >= CANCEL_CUTOFF_HOURS;
+      await client.query(
+        `UPDATE bkk_bookings SET status='cancelled', cancelled_at=now() WHERE id=$1`, [b.id]);
+      if (refund && b.pass_id) {
+        await client.query(
+          `UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1)
+           WHERE id=$1 AND kind <> 'unlimited'`, [b.pass_id]);
+      }
+      await client.query('COMMIT');
+      res.json({
+        success: true, creditReturned: refund,
+        message: refund ? 'Cancelled — your credit is back.'
+          : `Cancelled. Less than ${CANCEL_CUTOFF_HOURS}h before class, so the credit is used.`,
+      });
+    } catch (e) {
+      await client.query('ROLLBACK'); res.status(409).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // ── check-in (door) ───────────────────────────────────────────────────────
+  // "Is this member booked for a class starting around now?"
+  app.post('/api/bkk/checkin', async (req, res) => {
+    try {
+      const { memberCode: mcode, windowMin } = req.body || {};
+      const win = Math.min(180, Math.max(15, parseInt(windowMin) || 90));
+      const m = (await q('SELECT * FROM bkk_members WHERE code=$1', [mcode])).rows[0];
+      if (!m) return res.status(404).json({ ok: false, reason: 'unknown member' });
+      const b = (await q(
+        `SELECT b.*, s.title FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id
+         WHERE b.member_id=$1 AND b.status='booked'
+           AND b.start_at BETWEEN now() - ($2 || ' minutes')::interval
+                              AND now() + ($2 || ' minutes')::interval
+         ORDER BY abs(extract(epoch FROM (b.start_at - now()))) LIMIT 1`, [m.id, win])).rows[0];
+      if (!b) return res.json({ ok: false, name: m.name, reason: 'no booking for this time' });
+      await q(`UPDATE bkk_bookings SET checked_in_at = COALESCE(checked_in_at, now()) WHERE id=$1`, [b.id]);
+      res.json({ ok: true, name: m.name, className: b.title, startAt: b.start_at });
+    } catch (e) { res.status(500).json({ ok: false, reason: e.message }); }
+  });
+
+  // ── admin ─────────────────────────────────────────────────────────────────
+  app.get('/api/bkk/admin/orders', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    const r = await q(
+      `SELECT o.*, pr.name_en, m.name AS member_name, m.email, m.code AS member_code
+       FROM bkk_orders o JOIN bkk_products pr ON pr.id=o.product_id
+       JOIN bkk_members m ON m.id=o.member_id ORDER BY o.id DESC LIMIT 200`);
+    res.json({ orders: r.rows });
+  });
+
+  // Deliberate manual override for the day the gateway misbehaves — recorded
+  // as such so the books show it was not a verified payment.
+  app.post('/api/bkk/admin/orders/:id/force-activate', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    try {
+      const o = (await q('SELECT * FROM bkk_orders WHERE id=$1', [req.params.id])).rows[0];
+      if (!o) return res.status(404).json({ error: 'not found' });
+      if (o.status === 'paid') return res.json({ success: true, already: true });
+      await activateOrder(o, { note: 'MANUAL ACTIVATION by admin' });
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.get('/api/bkk/admin/today', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    const r = await q(
+      `SELECT s.title, b.class_date, b.start_at, m.name, m.code, b.checked_in_at
+       FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id
+       JOIN bkk_members m ON m.id=b.member_id
+       WHERE b.status='booked' AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
+       ORDER BY b.start_at, m.name`);
+    res.json({ bookings: r.rows });
+  });
+
+  app.post('/api/bkk/admin/settings', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    try {
+      if (req.body.surchargePct !== undefined) {
+        await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct',$1)
+                 ON CONFLICT (key) DO UPDATE SET value=$1, updated_at=now()`,
+          [JSON.stringify(Number(req.body.surchargePct))]);
+      }
+      res.json({ success: true, surchargePct: await surcharge() });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  initSchema()
+    .then(() => console.log('✓ bkk-api mounted (/api/bkk/*)'))
+    .catch(e => console.error('✗ bkk-api schema init failed:', e.message));
+}
+
+// PaySolutions posts application/x-www-form-urlencoded; make sure that body is
+// parsed even though the app defaults to JSON.
+const express = require('express');
+const express_urlencoded_safe = express.urlencoded({ extended: false });
+
+module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS };

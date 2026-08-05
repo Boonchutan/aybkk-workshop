@@ -1,0 +1,35 @@
+name: Bangkok API tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'bkk-api.js'
+      - 'test/bkk-api.test.js'
+      - '.github/workflows/bkk-test.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: bkktest
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Install deps
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Run Bangkok API tests
+        env:
+          TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest
+        run: node test/bkk-api.test.js

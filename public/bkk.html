@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK — Timetable &amp; Packages</title>
+<link rel="stylesheet" href="/tokens.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--wall);color:var(--ink);font-family:var(--font-body)}
+  header{background:var(--shirt);color:var(--chalk);padding:30px 18px 26px;text-align:center}
+  header h1{margin:0;font-family:var(--font-display);font-size:clamp(26px,6vw,36px);font-weight:800;letter-spacing:.01em}
+  header p{margin:8px 0 0;opacity:.92;font-size:15px}
+  nav.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:5}
+  nav.tabs button{flex:1;padding:14px 8px;border:none;background:none;font:inherit;font-weight:700;font-size:15px;color:var(--ink-soft);cursor:pointer}
+  nav.tabs button.on{color:var(--shirt);box-shadow:inset 0 -3px 0 var(--shirt)}
+  main{max-width:620px;margin:0 auto;padding:16px}
+  .day{margin:22px 0 8px;font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--shirt-deep)}
+  .cls{background:var(--paper);border:2px solid var(--ink);border-radius:var(--frame-radius);box-shadow:var(--frame-shadow);padding:13px 15px;margin-bottom:10px;display:flex;gap:12px;align-items:center}
+  .cls .t{font-family:var(--font-display);font-weight:800;font-size:19px;min-width:74px;font-variant-numeric:tabular-nums}
+  .cls .b{flex:1}
+  .cls .n{font-weight:700}
+  .cls .m{font-size:13px;color:var(--ink-soft)}
+  .cls .seats{font-size:12.5px;font-weight:700;color:var(--shirt)}
+  .cls.full{opacity:.5}
+  .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--shirt-soft);color:var(--chalk);border-radius:999px;padding:2px 8px;margin-left:6px}
+  .btn{border:2px solid var(--ink);background:var(--shirt);color:var(--chalk);font:inherit;font-weight:800;border-radius:var(--frame-radius-sm);padding:9px 15px;cursor:pointer;font-family:var(--font-display)}
+  .btn.ghost{background:var(--paper);color:var(--ink)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .pkg{background:var(--paper);border:2px solid var(--ink);border-radius:var(--frame-radius);box-shadow:var(--frame-shadow);padding:16px;margin-bottom:12px}
+  .pkg h3{margin:0 0 4px;font-family:var(--font-display);font-size:20px;color:var(--shirt-deep)}
+  .pkg .price{font-family:var(--font-display);font-weight:800;font-size:27px}
+  .pkg .fee{font-size:12.5px;color:var(--ink-soft)}
+  .pkg ul{margin:8px 0 12px;padding-left:18px;font-size:14px;color:var(--ink-soft)}
+  .note{font-size:13px;color:var(--ink-soft);line-height:1.6}
+  dialog{border:2px solid var(--ink);border-radius:var(--frame-radius);padding:20px;max-width:400px;width:92%;background:var(--paper)}
+  dialog h3{margin:0 0 12px;font-family:var(--font-display)}
+  label{display:block;font-size:13px;color:var(--ink-soft);margin:10px 0 3px}
+  input{width:100%;padding:11px;border:1.5px solid var(--hairline);border-radius:9px;font-size:16px;font-family:inherit;background:var(--wall);color:var(--ink)}
+  .msg{padding:12px;border-radius:10px;margin-top:12px;font-size:14px}
+  .msg.ok{background:#e6f6ec;color:#187a43}.msg.bad{background:#fdeaea;color:#a33}
+  footer{text-align:center;color:var(--ink-soft);font-size:12.5px;padding:26px 16px 40px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Ashtanga Yoga Bangkok</h1>
+  <p>Mysore &amp; Led classes, six days a week · AYBKK at S31 Hotel</p>
+</header>
+
+<nav class="tabs">
+  <button id="t-schedule" class="on" onclick="tab('schedule')">Timetable</button>
+  <button id="t-packages" onclick="tab('packages')">Packages</button>
+  <button id="t-me" onclick="tab('me')">My pass</button>
+</nav>
+
+<main id="view"><p class="note">Loading…</p></main>
+<footer>AYBKK · Ashtanga Yoga Bangkok · S31 Hotel, Sukhumvit</footer>
+
+<dialog id="dlg"><div id="dlgIn"></div></dialog>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const baht = n => '฿' + Number(n).toLocaleString('en-US');
+  let CLASSES = [], PRODUCTS = [], SURCHARGE = 0;
+  const myCode = () => localStorage.getItem('aybkk_member') || '';
+
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const fmtDay = iso => {
+    const d = new Date(iso);
+    return DAYS[d.getDay()] + ', ' + d.getDate() + ' ' +
+      ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+  };
+  const fmtTime = iso => new Date(iso).toLocaleTimeString('en-GB',
+    { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
+
+  let current = 'schedule';
+  window.tab = t => {
+    current = t;
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.id === 't' + '-' + t));
+    if (t === 'schedule') renderSchedule();
+    if (t === 'packages') renderPackages();
+    if (t === 'me') renderMe();
+  };
+
+  async function load() {
+    try {
+      const [s, p] = await Promise.all([
+        fetch('/api/bkk/schedule?days=14').then(r => r.json()),
+        fetch('/api/bkk/products').then(r => r.json()),
+      ]);
+      CLASSES = s.classes || [];
+      PRODUCTS = p.products || [];
+      SURCHARGE = p.surchargePct || 0;
+      tab(current);
+    } catch (e) {
+      $('#view').innerHTML = '<p class="msg bad">Could not load. Please refresh.</p>';
+    }
+  }
+
+  function renderSchedule() {
+    if (!CLASSES.length) { $('#view').innerHTML = '<p class="note">No classes scheduled.</p>'; return; }
+    let html = '', lastDay = '';
+    for (const c of CLASSES) {
+      const day = fmtDay(c.startAt);
+      if (day !== lastDay) { html += `<div class="day">${esc(day)}</div>`; lastDay = day; }
+      const full = c.seatsLeft < 1;
+      html += `<div class="cls ${full ? 'full' : ''}">
+        <div class="t">${fmtTime(c.startAt)}</div>
+        <div class="b">
+          <div class="n">${esc(c.title)}${c.isOnline ? '<span class="pill">online</span>' : ''}</div>
+          <div class="m">${c.durationMin} min${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
+          <div class="seats">${full ? 'Class full' : c.seatsLeft + ' places left'}</div>
+        </div>
+        <button class="btn" ${full ? 'disabled' : ''} onclick="book(${c.slotId},'${c.date}')">Book</button>
+      </div>`;
+    }
+    $('#view').innerHTML = html;
+  }
+
+  function renderPackages() {
+    const html = PRODUCTS.map(p => {
+      const lines = p.kind === 'unlimited'
+        ? [`Unlimited classes for ${p.valid_days} days`, `${p.daily_cap} class bookings per day`]
+        : [`${p.credits} class credit${p.credits > 1 ? 's' : ''}`,
+           `Valid ${p.valid_days} day${p.valid_days > 1 ? 's' : ''} from your first booking`];
+      return `<div class="pkg">
+        <h3>${esc(p.name_en)}</h3>
+        <div class="price">${baht(p.total_thb)}</div>
+        <div class="fee">${baht(p.price_thb)} + ${SURCHARGE}% online payment fee</div>
+        <ul>${lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>
+        <button class="btn" onclick="buy('${esc(p.code)}')">Buy</button>
+      </div>`;
+    }).join('');
+    $('#view').innerHTML = html + `<p class="note">Classes are at AYBKK, S31 Hotel.
+      Every student books a class and checks in before practice.
+      Cancel at least 5 hours before class to keep your credit.</p>`;
+  }
+
+  async function renderMe() {
+    const code = myCode();
+    if (!code) {
+      $('#view').innerHTML = `<p class="note">You have no pass on this device yet.</p>
+        <p class="note">Buy a package, or enter your member code:</p>
+        <label>Member code</label><input id="mc" placeholder="B…">
+        <p><button class="btn" onclick="linkCode()">Find my pass</button></p>`;
+      return;
+    }
+    try {
+      const d = await fetch('/api/bkk/me/' + encodeURIComponent(code)).then(r => r.json());
+      if (d.error) throw new Error(d.error);
+      const passes = (d.passes || []).map(p => `<div class="pkg">
+        <h3>${esc(p.name)}</h3>
+        <div class="note">${p.kind === 'unlimited'
+          ? 'Unlimited · ' + p.dailyCap + ' bookings per day'
+          : (p.creditsLeft ?? 0) + ' classes left'}</div>
+        <div class="note">${p.validUntil ? 'Valid until ' + p.validUntil
+          : 'Starts when you book your first class'}</div>
+      </div>`).join('') || '<p class="note">No pass yet.</p>';
+      const bookings = (d.bookings || []).map(b => `<div class="cls">
+        <div class="t">${fmtTime(b.start_at)}</div>
+        <div class="b"><div class="n">${esc(b.title)}</div>
+          <div class="m">${fmtDay(b.start_at)}</div></div>
+        <button class="btn ghost" onclick="cancelBooking(${b.id})">Cancel</button>
+      </div>`).join('') || '<p class="note">No upcoming classes booked.</p>';
+      $('#view').innerHTML = `<p class="note">Member <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}</p>
+        <div class="day">Your pass</div>${passes}
+        <div class="day">Upcoming classes</div>${bookings}`;
+    } catch (e) {
+      $('#view').innerHTML = `<p class="msg bad">${esc(e.message)}</p>`;
+    }
+  }
+
+  window.linkCode = () => {
+    const v = $('#mc').value.trim();
+    if (v) { localStorage.setItem('aybkk_member', v); renderMe(); }
+  };
+
+  window.buy = (code) => {
+    const p = PRODUCTS.find(x => x.code === code);
+    if (!p) return;
+    $('#dlgIn').innerHTML = `<h3>${esc(p.name_en)} · ${baht(p.total_thb)}</h3>
+      <label>Your name</label><input id="bn" autocomplete="name">
+      <label>Email</label><input id="be" type="email" autocomplete="email">
+      <label>Phone (optional)</label><input id="bp" autocomplete="tel">
+      <div id="bmsg"></div>
+      <p style="margin-top:14px"><button class="btn" id="bgo">Continue to payment</button>
+      <button class="btn ghost" onclick="document.getElementById('dlg').close()">Cancel</button></p>`;
+    $('#dlg').showModal();
+    $('#bgo').onclick = async () => {
+      const name = $('#bn').value.trim(), email = $('#be').value.trim(), phone = $('#bp').value.trim();
+      if (!name || !email) { $('#bmsg').innerHTML = '<div class="msg bad">Name and email are required.</div>'; return; }
+      $('#bgo').disabled = true;
+      try {
+        const r = await fetch('/api/bkk/orders', { method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productCode: code, name, email, phone }) });
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.error || 'could not create order');
+        localStorage.setItem('aybkk_member', j.member.code);
+        if (j.pay) {
+          // hand off to the gateway's hosted page
+          const f = document.createElement('form');
+          f.method = 'POST'; f.action = j.pay.action;
+          for (const [k, v] of Object.entries(j.pay.fields)) {
+            const i = document.createElement('input');
+            i.type = 'hidden'; i.name = k; i.value = v; f.appendChild(i);
+          }
+          document.body.appendChild(f); f.submit();
+        } else {
+          $('#bmsg').innerHTML = `<div class="msg ok">Order ${esc(j.order.refno)} created.<br>
+            ${esc(j.payUnavailable || '')}<br>Your member code is <b>${esc(j.member.code)}</b>.</div>`;
+          $('#bgo').disabled = false;
+        }
+      } catch (e) {
+        $('#bmsg').innerHTML = `<div class="msg bad">${esc(e.message)}</div>`;
+        $('#bgo').disabled = false;
+      }
+    };
+  };
+
+  window.book = async (slotId, date) => {
+    const code = myCode();
+    if (!code) { alert('Please buy a package first, or open "My pass" and enter your member code.'); return; }
+    try {
+      const r = await fetch('/api/bkk/bookings', { method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberCode: code, slotId, date }) });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error);
+      alert('Booked. See you in the shala 🙏');
+      load();
+    } catch (e) { alert(e.message); }
+  };
+
+  window.cancelBooking = async (id) => {
+    if (!confirm('Cancel this booking?')) return;
+    try {
+      const r = await fetch(`/api/bkk/bookings/${id}/cancel`, { method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberCode: myCode() }) });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error);
+      alert(j.message);
+      renderMe();
+    } catch (e) { alert(e.message); }
+  };
+
+  // returning from the gateway: ?paid=<refno>
+  (async () => {
+    const m = new URLSearchParams(location.search).get('paid');
+    if (m) {
+      try {
+        const j = await fetch('/api/bkk/pay/check/' + encodeURIComponent(m)).then(r => r.json());
+        history.replaceState({}, '', location.pathname);
+        if (j.status === 'paid') { current = 'me'; alert('Payment confirmed — your pass is active 🙏'); }
+        else alert('We have not seen the payment confirmed yet. It can take a moment; open "My pass" to check.');
+      } catch (_) {}
+    }
+    load();
+  })();
+})();
+</script>
+</body>
+</html>
