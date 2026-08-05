@@ -1,0 +1,54 @@
+name: Bangkok live check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe the live Bangkok endpoints
+        run: |
+          BASE=https://my.aybkk.com
+          echo "== page =="
+          curl -s -o /tmp/p.html -w 'bkk.html HTTP %{http_code}\n' --max-time 20 "$BASE/bkk.html"
+          grep -q 'Ashtanga Yoga Bangkok' /tmp/p.html && echo 'page: served' || echo 'page: WRONG CONTENT'
+          curl -s -o /dev/null -w '/book HTTP %{http_code}\n' --max-time 20 "$BASE/book"
+
+          echo "== products =="
+          curl -s --max-time 20 "$BASE/api/bkk/products" -o /tmp/pr.json
+          python3 - <<'EOF'
+          import json
+          try:
+              d = json.load(open('/tmp/pr.json'))
+          except Exception as e:
+              print('products: NOT JSON ->', open('/tmp/pr.json').read()[:200]); raise SystemExit(0)
+          ps = d.get('products', [])
+          print(f"products: {len(ps)} | surcharge {d.get('surchargePct')}%")
+          for p in ps:
+              print(f"  {p['code']:9} {p['name_en'][:34]:34} ฿{p['price_thb']:>6} + fee ฿{p['fee_thb']:>4} = ฿{p['total_thb']:>6}")
+          EOF
+
+          echo "== schedule =="
+          curl -s --max-time 20 "$BASE/api/bkk/schedule?days=7" -o /tmp/s.json
+          python3 - <<'EOF'
+          import json
+          try:
+              d = json.load(open('/tmp/s.json'))
+          except Exception:
+              print('schedule: NOT JSON ->', open('/tmp/s.json').read()[:200]); raise SystemExit(0)
+          cs = d.get('classes', [])
+          print(f"classes in next 7 days: {len(cs)}")
+          for c in cs[:8]:
+              print(f"  {c['startAt'][:16]}  {c['title'][:34]:34} {c['seatsLeft']}/{c['capacity']} free")
+          EOF
+
+          echo "== security: forged postback must not activate =="
+          curl -s -o /dev/null -w 'postback HTTP %{http_code}\n' --max-time 20 \
+            -X POST "$BASE/api/bkk/pay/postback" \
+            -H 'Content-Type: application/x-www-form-urlencoded' -d 'refno=0000000001'
+          echo "(a pass must NOT appear from this — see admin orders)"
+
+          echo "== admin auth =="
+          curl -s -o /dev/null -w 'admin without key HTTP %{http_code} (expect 401)\n' --max-time 20 \
+            "$BASE/api/bkk/admin/orders"
