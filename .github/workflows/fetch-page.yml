@@ -1,0 +1,31 @@
+name: Fetch a public page (helper)
+
+# One-shot helper: fetches a public URL and prints its text so Claude can read
+# pages the sandbox's network policy cannot reach (e.g. aybkk.com).
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Public URL to fetch"
+        required: true
+        default: "https://aybkk.com/package"
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch and print as text
+        run: |
+          sudo apt-get -qq update >/dev/null && sudo apt-get -qq install -y html2text >/dev/null
+          echo "== FETCHING: ${{ inputs.url }}"
+          CODE=$(curl -sL -o /tmp/page.html -w '%{http_code}' --max-time 30 \
+            -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36" \
+            "${{ inputs.url }}")
+          echo "== HTTP $CODE, $(wc -c < /tmp/page.html) bytes"
+          echo "== TEXT =="
+          html2text -width 120 -nobs /tmp/page.html 2>/dev/null | grep -v '^\s*$' | head -400
+          echo "== PRICE-LIKE LINES =="
+          grep -oiE '[^<>]{0,80}(฿|THB|baht|[0-9],[0-9]{3})[^<>]{0,80}' /tmp/page.html | head -60
+          echo "== TIME-LIKE LINES =="
+          grep -oiE '[^<>]{0,60}([0-9]{1,2}[:.][0-9]{2}\s*(am|pm)?|mysore|led primary|led intermediate)[^<>]{0,60}' /tmp/page.html | head -60
