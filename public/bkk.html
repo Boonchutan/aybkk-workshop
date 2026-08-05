@@ -3,48 +3,117 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AYBKK — Timetable &amp; Packages</title>
-<link rel="stylesheet" href="/tokens.css">
+<link rel="preload" href="/fonts/longcang.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* AYBKK Bangkok — Aubergine & Blush.
+     Long Cang (brush) carries display only; body text is a plain face so the
+     small print stays readable. Self-hosted font: the Google CDN is blocked in China. */
+  @font-face{font-family:'Long Cang';src:url('/fonts/longcang.woff2') format('woff2');font-display:swap}
+  :root{
+    --ink:#17121a;          /* near-black, violet cast */
+    --wall:#f7f1f5;         /* blush-tinted room */
+    --paper:#ffffff;
+    --blush:#fbe7f0;        /* pink surface */
+    --blush-line:#f3d3e2;
+    --plum:#5c2160;         /* aubergine */
+    --plum-deep:#43164a;
+    --plum-soft:#8b4c90;
+    --pink:#e8458c;         /* the contrast */
+    --pink-deep:#c92f74;
+    --soft:#6b5d70;
+    --line:rgba(23,18,26,.11);
+    --on-dark:#fdf7fa;
+    --header:#17121a;   /* fixed: never flips with the theme */
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ink:#f5e9f0; --wall:#140f18; --paper:#1e1723; --blush:#2b1c2b; --blush-line:#3d2740;
+      --plum:#c07ec8; --plum-deep:#d9a5de; --plum-soft:#a468ac;
+      --pink:#ff6fae; --pink-deep:#ff8dc0; --soft:#b09cb6;
+      --line:rgba(245,233,240,.14); --on-dark:#17121a; --header:#17121a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#f5e9f0; --wall:#140f18; --paper:#1e1723; --blush:#2b1c2b; --blush-line:#3d2740;
+    --plum:#c07ec8; --plum-deep:#d9a5de; --plum-soft:#a468ac; --pink:#ff6fae; --pink-deep:#ff8dc0;
+    --soft:#b09cb6; --line:rgba(245,233,240,.14); --on-dark:#17121a; --header:#17121a;
+  }
+  :root[data-theme="light"]{
+    --ink:#17121a; --wall:#f7f1f5; --paper:#ffffff; --blush:#fbe7f0; --blush-line:#f3d3e2;
+    --plum:#5c2160; --plum-deep:#43164a; --plum-soft:#8b4c90; --pink:#e8458c; --pink-deep:#c92f74;
+    --soft:#6b5d70; --line:rgba(23,18,26,.11); --on-dark:#fdf7fa; --header:#17121a;
+  }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{margin:0;background:var(--wall);color:var(--ink);font-family:var(--font-body)}
-  header{background:var(--shirt);color:var(--chalk);padding:30px 18px 26px;text-align:center}
-  header h1{margin:0;font-family:var(--font-display);font-size:clamp(26px,6vw,36px);font-weight:800;letter-spacing:.01em}
-  header p{margin:8px 0 0;opacity:.92;font-size:15px}
-  nav.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:5}
-  nav.tabs button{flex:1;padding:14px 8px;border:none;background:none;font:inherit;font-weight:700;font-size:15px;color:var(--ink-soft);cursor:pointer}
-  nav.tabs button.on{color:var(--shirt);box-shadow:inset 0 -3px 0 var(--shirt)}
-  main{max-width:620px;margin:0 auto;padding:16px}
-  .day{margin:22px 0 8px;font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--shirt-deep)}
-  .cls{background:var(--paper);border:2px solid var(--ink);border-radius:var(--frame-radius);box-shadow:var(--frame-shadow);padding:13px 15px;margin-bottom:10px;display:flex;gap:12px;align-items:center}
-  .cls .t{font-family:var(--font-display);font-weight:800;font-size:19px;min-width:74px;font-variant-numeric:tabular-nums}
-  .cls .b{flex:1}
-  .cls .n{font-weight:700}
-  .cls .m{font-size:13px;color:var(--ink-soft)}
-  .cls .seats{font-size:12.5px;font-weight:700;color:var(--shirt)}
-  .cls.full{opacity:.5}
-  .pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--shirt-soft);color:var(--chalk);border-radius:999px;padding:2px 8px;margin-left:6px}
-  .btn{border:2px solid var(--ink);background:var(--shirt);color:var(--chalk);font:inherit;font-weight:800;border-radius:var(--frame-radius-sm);padding:9px 15px;cursor:pointer;font-family:var(--font-display)}
-  .btn.ghost{background:var(--paper);color:var(--ink)}
-  .btn[disabled]{opacity:.45;cursor:not-allowed}
-  .pkg{background:var(--paper);border:2px solid var(--ink);border-radius:var(--frame-radius);box-shadow:var(--frame-shadow);padding:16px;margin-bottom:12px}
-  .pkg h3{margin:0 0 4px;font-family:var(--font-display);font-size:20px;color:var(--shirt-deep)}
-  .pkg .price{font-family:var(--font-display);font-weight:800;font-size:27px}
-  .pkg .fee{font-size:12.5px;color:var(--ink-soft)}
-  .pkg ul{margin:8px 0 12px;padding-left:18px;font-size:14px;color:var(--ink-soft)}
-  .note{font-size:13px;color:var(--ink-soft);line-height:1.6}
-  dialog{border:2px solid var(--ink);border-radius:var(--frame-radius);padding:20px;max-width:400px;width:92%;background:var(--paper)}
-  dialog h3{margin:0 0 12px;font-family:var(--font-display)}
-  label{display:block;font-size:13px;color:var(--ink-soft);margin:10px 0 3px}
-  input{width:100%;padding:11px;border:1.5px solid var(--hairline);border-radius:9px;font-size:16px;font-family:inherit;background:var(--wall);color:var(--ink)}
-  .msg{padding:12px;border-radius:10px;margin-top:12px;font-size:14px}
-  .msg.ok{background:#e6f6ec;color:#187a43}.msg.bad{background:#fdeaea;color:#a33}
-  footer{text-align:center;color:var(--ink-soft);font-size:12.5px;padding:26px 16px 40px}
+  body{margin:0;background:var(--wall);color:var(--ink);
+    font:16px/1.6 -apple-system,'Helvetica Neue','PingFang SC','Noto Sans Thai',sans-serif}
+  .brush{font-family:'Long Cang',cursive;font-weight:400}
+
+  header{background:var(--header);color:#fdf7fa;padding:34px 20px 30px;text-align:center;position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
+    background:linear-gradient(90deg,var(--plum),var(--pink))}
+  header h1{margin:0;font-size:clamp(34px,8vw,50px);line-height:1.1}
+  header p{margin:8px 0 0;font-size:14.5px;color:#d9bfcf}
+  header .dot{color:var(--pink)}
+
+  nav.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  nav.tabs button{flex:1;padding:15px 8px;border:none;background:none;font:600 14px/1 inherit;
+    letter-spacing:.04em;color:var(--soft);cursor:pointer;position:relative}
+  nav.tabs button.on{color:var(--plum)}
+  nav.tabs button.on::after{content:"";position:absolute;left:18%;right:18%;bottom:0;height:3px;
+    border-radius:3px 3px 0 0;background:var(--pink)}
+
+  main{max-width:640px;margin:0 auto;padding:18px 16px 40px}
+  .day{margin:26px 0 10px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
+
+  .cls{background:var(--paper);border-radius:var(--radius);padding:15px 16px;margin-bottom:11px;
+    display:flex;gap:14px;align-items:center;border:1px solid var(--line)}
+  .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+    color:var(--plum);min-width:62px}
+  .cls .b{flex:1;min-width:0}
+  .cls .n{font-weight:600;font-size:15.5px}
+  .cls .m{font-size:13px;color:var(--soft);margin-top:1px}
+  .cls .seats{font-size:12.5px;font-weight:600;color:var(--pink);margin-top:3px}
+  .cls.full{opacity:.45}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--blush);color:var(--plum);border-radius:999px;padding:3px 9px;margin-left:6px}
+
+  .btn{background:var(--plum);color:var(--on-dark);border:none;border-radius:12px;padding:11px 22px;
+    font:600 14px/1 inherit;letter-spacing:.05em;cursor:pointer;transition:background .18s}
+  .btn:hover{background:var(--plum-deep)}
+  .btn.pink{background:var(--pink)}
+  .btn.pink:hover{background:var(--pink-deep)}
+  .btn.ghost{background:transparent;color:var(--plum);border:1px solid var(--line)}
+  .btn[disabled]{opacity:.4;cursor:not-allowed}
+
+  .pkg{background:var(--paper);border-radius:var(--radius);padding:18px;margin-bottom:13px;border:1px solid var(--line)}
+  .pkg.feature{background:var(--blush);border-color:var(--blush-line)}
+  .pkg h3{margin:0 0 2px;font-family:'Long Cang',cursive;font-weight:400;font-size:27px;line-height:1.2;color:var(--ink)}
+  .pkg .price{font-family:'Long Cang',cursive;font-size:42px;line-height:1.05;color:var(--pink)}
+  .pkg .fee{font-size:12.5px;color:var(--soft);margin-top:2px}
+  .pkg ul{margin:10px 0 15px;padding-left:17px;font-size:13.5px;color:var(--soft)}
+  .pkg li{margin:3px 0}
+  .note{font-size:13.5px;color:var(--soft);line-height:1.65}
+
+  dialog{border:none;border-radius:18px;padding:22px;max-width:410px;width:92%;
+    background:var(--paper);color:var(--ink);box-shadow:0 24px 60px rgba(23,18,26,.3)}
+  dialog::backdrop{background:rgba(23,18,26,.55)}
+  dialog h3{margin:0 0 14px;font-family:'Long Cang',cursive;font-weight:400;font-size:28px;line-height:1.2}
+  label{display:block;font-size:12.5px;color:var(--soft);margin:11px 0 4px}
+  input{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;font-size:16px;
+    font-family:inherit;background:var(--wall);color:var(--ink)}
+  input:focus{outline:2px solid var(--pink);outline-offset:1px}
+  .msg{padding:12px 14px;border-radius:11px;margin-top:12px;font-size:14px}
+  .msg.ok{background:var(--blush);color:var(--plum)}
+  .msg.bad{background:#fdeaea;color:#a33}
+  footer{text-align:center;color:var(--soft);font-size:12.5px;padding:26px 16px 44px}
+  footer .brush{font-size:19px;color:var(--plum);display:block;margin-bottom:4px}
 </style>
 </head>
 <body>
 <header>
-  <h1>Ashtanga Yoga Bangkok</h1>
-  <p>Mysore &amp; Led classes, six days a week · AYBKK at S31 Hotel</p>
+  <h1 class="brush">Ashtanga Yoga Bangkok</h1>
+  <p>Mysore &amp; Led classes, six days a week <span class="dot">·</span> S31 Hotel</p>
 </header>
 
 <nav class="tabs">
@@ -54,7 +123,7 @@
 </nav>
 
 <main id="view"><p class="note">Loading…</p></main>
-<footer>AYBKK · Ashtanga Yoga Bangkok · S31 Hotel, Sukhumvit</footer>
+<footer><span class="brush">AYBKK</span>Ashtanga Yoga Bangkok · S31 Hotel, Sukhumvit</footer>
 
 <dialog id="dlg"><div id="dlgIn"></div></dialog>
 
@@ -126,12 +195,12 @@
         ? [`Unlimited classes for ${p.valid_days} days`, `${p.daily_cap} class bookings per day`]
         : [`${p.credits} class credit${p.credits > 1 ? 's' : ''}`,
            `Valid ${p.valid_days} day${p.valid_days > 1 ? 's' : ''} from your first booking`];
-      return `<div class="pkg">
+      return `<div class="pkg ${p.kind === 'unlimited' ? 'feature' : ''}">
         <h3>${esc(p.name_en)}</h3>
         <div class="price">${baht(p.total_thb)}</div>
         <div class="fee">${baht(p.price_thb)} + ${SURCHARGE}% online payment fee</div>
         <ul>${lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>
-        <button class="btn" onclick="buy('${esc(p.code)}')">Buy</button>
+        <button class="btn pink" onclick="buy('${esc(p.code)}')">Buy</button>
       </div>`;
     }).join('');
     $('#view').innerHTML = html + `<p class="note">Classes are at AYBKK, S31 Hotel.
@@ -186,7 +255,7 @@
       <label>Email</label><input id="be" type="email" autocomplete="email">
       <label>Phone (optional)</label><input id="bp" autocomplete="tel">
       <div id="bmsg"></div>
-      <p style="margin-top:14px"><button class="btn" id="bgo">Continue to payment</button>
+      <p style="margin-top:14px"><button class="btn pink" id="bgo">Continue to payment</button>
       <button class="btn ghost" onclick="document.getElementById('dlg').close()">Cancel</button></p>`;
     $('#dlg').showModal();
     $('#bgo').onclick = async () => {
