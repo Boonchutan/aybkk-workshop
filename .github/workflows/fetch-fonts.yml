@@ -1,0 +1,55 @@
+name: Fetch candidate fonts
+
+# Downloads open-licensed (OFL) font files from Google Fonts and commits them
+# to public/fonts/ so pages can self-host them. Self-hosting matters: the
+# Google Fonts .com CDN is blocked in mainland China.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download woff2 for each candidate family
+        run: |
+          mkdir -p public/fonts
+          UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
+          fetch_family () {                       # $1 = css family spec, $2 = out name, $3 = subset
+            CSS=$(curl -s -A "$UA" "https://fonts.googleapis.com/css2?family=$1&display=swap&subset=$3")
+            URL=$(echo "$CSS" | grep -o 'https://fonts.gstatic.com[^)]*\.woff2' | tail -1)
+            if [ -z "$URL" ]; then echo "  ✗ $2 — no woff2 found"; return; fi
+            curl -s -o "public/fonts/$2.woff2" "$URL"
+            echo "  ✓ $2 $(du -h public/fonts/$2.woff2 | cut -f1)"
+          }
+          echo "== elegant / high-end hand ==";
+          fetch_family "Caveat:wght@400..700"            caveat            latin
+          fetch_family "Amatic+SC:wght@400;700"          amatic            latin
+          fetch_family "Petit+Formal+Script"             petitformal       latin
+          fetch_family "Parisienne"                      parisienne        latin
+          fetch_family "La+Belle+Aurore"                 labelle           latin
+          echo "== refined display (not handwriting) ==";
+          fetch_family "Cormorant+Garamond:ital,wght@0,300..700;1,300..700" cormorant latin
+          fetch_family "Marcellus"                       marcellus         latin
+          fetch_family "Italiana"                        italiana          latin
+          fetch_family "Gloock"                          gloock            latin
+          echo "== hand, with Thai support ==";
+          fetch_family "Charmonman:wght@400;700"         charmonman        thai
+          fetch_family "Mali:wght@300;400;600"           mali              thai
+          fetch_family "Sriracha"                        sriracha          thai
+          ls -la public/fonts/
+
+      - name: Commit fonts
+        run: |
+          git config user.name "font-bot"
+          git config user.email "noreply@aybkk.com"
+          git add public/fonts/
+          if git diff --cached --quiet; then echo "no new fonts"; else
+            git commit -m "Add candidate display fonts (OFL, self-hosted) [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
