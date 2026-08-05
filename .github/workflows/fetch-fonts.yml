@@ -41,6 +41,27 @@ jobs:
           fetch_family "Charmonman:wght@400;700"         charmonman        thai
           fetch_family "Mali:wght@300;400;600"           mali              thai
           fetch_family "Sriracha"                        sriracha          thai
+          echo "== round 2: upright + fountain-pen contrast ==";
+          fetch_family "Meddon"                          meddon            latin
+          fetch_family "Klee+One:wght@400;600"           kleeone           latin
+          fetch_family "Ma+Shan+Zheng"                   mashan            latin
+          fetch_family "Zhi+Mang+Xing"                   zhimang           latin
+          fetch_family "Liu+Jian+Mao+Cao"                liujian           latin
+          fetch_family "Long+Cang"                       longcang          latin
+          fetch_family "Caveat+Brush"                    caveatbrush       latin
+          fetch_family "Grape+Nuts"                      grapenuts         latin
+          fetch_family "Charm:wght@400;700"              charm             thai
+          echo "== round 2: upright + delicate (La Belle, straightened) ==";
+          fetch_family "Shadows+Into+Light"              shadows           latin
+          fetch_family "Shadows+Into+Light+Two"          shadows2          latin
+          fetch_family "Reenie+Beanie"                   reenie            latin
+          fetch_family "Nanum+Pen+Script"                nanumpen          latin
+          echo "== round 2: hand, but not tall (Amatic, shorter) ==";
+          fetch_family "Patrick+Hand"                    patrick           latin
+          fetch_family "Gochi+Hand"                      gochi             latin
+          fetch_family "Delius"                          delius            latin
+          fetch_family "Pangolin"                        pangolin          latin
+          fetch_family "Architects+Daughter"             architects        latin
           ls -la public/fonts/
 
       - name: Commit fonts
