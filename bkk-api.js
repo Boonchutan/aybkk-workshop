@@ -446,10 +446,16 @@ function mountBkk(app, opts = {}) {
       if (ov && ov.cancelled) throw new Error('class cancelled');
       const capacity = (ov && ov.capacity) || slot.capacity;
 
-      // lock the class row-set so two students cannot take the last seat
+      // Serialise everyone booking this same class: a transaction-scoped
+      // advisory lock keyed on (slot, date). Counting rows cannot be locked
+      // directly (Postgres forbids FOR UPDATE with aggregates), and without
+      // this two students can each read "41 booked" and both take seat 42.
+      await client.query('SELECT pg_advisory_xact_lock($1::int, $2::int)',
+        [slotId, Number(String(date).replace(/-/g, ''))]);
+
       const taken = (await client.query(
         `SELECT count(*)::int AS n FROM bkk_bookings
-         WHERE slot_id=$1 AND class_date=$2 AND status='booked' FOR UPDATE`, [slotId, date])).rows[0].n;
+         WHERE slot_id=$1 AND class_date=$2 AND status='booked'`, [slotId, date])).rows[0].n;
       if (taken >= capacity) throw new Error('class is full');
 
       const pass = (await client.query(
