@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK Bangkok Admin</title>
+<link rel="stylesheet" href="/tokens.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--wall);color:var(--ink);font-family:var(--font-body)}
+  header{background:var(--shirt);color:var(--chalk);padding:14px 16px;display:flex;align-items:center;gap:12px}
+  header h1{margin:0;font-size:17px;flex:1;font-family:var(--font-display)}
+  nav{display:flex;background:var(--paper);border-bottom:1px solid var(--hairline)}
+  nav button{flex:1;padding:13px;border:none;background:none;font:inherit;font-weight:700;font-size:15px;color:var(--ink-soft);cursor:pointer}
+  nav button.on{color:var(--shirt);box-shadow:inset 0 -3px 0 var(--shirt)}
+  main{max-width:820px;margin:0 auto;padding:14px}
+  .box{background:var(--paper);border:2px solid var(--ink);border-radius:var(--frame-radius);box-shadow:var(--frame-shadow);padding:14px;margin-bottom:12px}
+  .box b{font-family:var(--font-display)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--hairline);vertical-align:top}
+  th{color:var(--ink-soft);font-size:12px}
+  .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700}
+  .pending{background:#fff3d6;color:#8a6a12}.paid{background:#e6f6ec;color:#187a43}
+  .mismatch,.failed{background:#fdeaea;color:#a33}
+  .btn{padding:9px 14px;border:none;border-radius:10px;background:var(--shirt);color:var(--chalk);font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font-display)}
+  .btn.gray{background:var(--shirt-soft)}.btn.red{background:#b3453c}
+  input{padding:10px;border:1.5px solid var(--hairline);border-radius:9px;font-size:15px;font-family:inherit;background:var(--wall);color:var(--ink)}
+  #gate{max-width:340px;margin:16vh auto;text-align:center}
+  .muted{color:var(--ink-soft);font-size:12.5px}
+  .in{color:#187a43;font-weight:700}
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="box">
+    <h2 style="margin:4px 0 12px;font-family:var(--font-display)">AYBKK Bangkok Admin</h2>
+    <input id="key" type="password" placeholder="passcode" style="width:100%">
+    <button class="btn" style="width:100%;margin-top:12px" onclick="unlock()">Enter</button>
+    <p class="muted" id="gateMsg"></p>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+<header><h1>AYBKK Bangkok Admin</h1><button class="btn gray" onclick="logout()">Lock</button></header>
+<nav>
+  <button id="t-today" class="on" onclick="tab('today')">Today</button>
+  <button id="t-orders" onclick="tab('orders')">Payments</button>
+  <button id="t-settings" onclick="tab('settings')">Settings</button>
+</nav>
+<main id="view"></main>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  let KEY = localStorage.getItem('aybkk_bkk_key') || '';
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const api = (url, opts = {}) => fetch(url, { ...opts,
+    headers: { 'Content-Type': 'application/json', 'X-Bkk-Key': KEY, ...(opts.headers || {}) } });
+  const time = iso => new Date(iso).toLocaleTimeString('en-GB',
+    { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
+
+  window.unlock = async () => {
+    KEY = $('#key').value.trim();
+    const r = await api('/api/bkk/admin/orders');
+    if (r.status === 401) { $('#gateMsg').textContent = 'wrong passcode'; return; }
+    localStorage.setItem('aybkk_bkk_key', KEY);
+    $('#gate').style.display = 'none'; $('#app').style.display = 'block';
+    tab('today');
+  };
+  window.logout = () => { localStorage.removeItem('aybkk_bkk_key'); location.reload(); };
+
+  let current = 'today';
+  window.tab = t => {
+    current = t;
+    document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.id === 't-' + t));
+    if (t === 'today') renderToday();
+    if (t === 'orders') renderOrders();
+    if (t === 'settings') renderSettings();
+  };
+
+  async function renderToday() {
+    const d = await api('/api/bkk/admin/today').then(r => r.json());
+    const rows = (d.bookings || []);
+    if (!rows.length) {
+      $('#view').innerHTML = '<div class="box"><b>Today</b><p class="muted">No bookings today.</p></div>';
+      return;
+    }
+    const byClass = {};
+    for (const b of rows) {
+      const k = b.title + '|' + b.start_at;
+      (byClass[k] = byClass[k] || []).push(b);
+    }
+    const blocks = Object.entries(byClass).map(([k, list]) => {
+      const [title, startAt] = k.split('|');
+      const inCount = list.filter(b => b.checked_in_at).length;
+      return `<div class="box">
+        <b>${time(startAt)} · ${esc(title)}</b>
+        <span class="muted"> — ${list.length} booked, ${inCount} checked in</span>
+        <table>${list.map(b => `<tr>
+          <td>${esc(b.name)}</td>
+          <td class="muted">${esc(b.code)}</td>
+          <td>${b.checked_in_at ? '<span class="in">✓ in</span>' : '<span class="muted">not yet</span>'}</td>
+        </tr>`).join('')}</table></div>`;
+    }).join('');
+    $('#view').innerHTML = blocks;
+  }
+
+  async function renderOrders() {
+    const d = await api('/api/bkk/admin/orders').then(r => r.json());
+    const rows = (d.orders || []).map(o => `<tr>
+      <td><b>${esc(o.member_name)}</b><br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span></td>
+      <td>${esc(o.name_en)}<br><b>฿${o.amount_thb.toLocaleString()}</b>
+        <br><span class="muted">${o.base_thb.toLocaleString()} + fee ${o.fee_thb.toLocaleString()}</span></td>
+      <td><span class="pill ${esc(o.status)}">${esc(o.status)}</span><br>
+        <span class="muted">${(o.created_at || '').slice(5, 16).replace('T', ' ')}</span>
+        ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}</td>
+      <td class="muted">${o.refno}</td>
+      <td>${o.status !== 'paid'
+        ? `<button class="btn red" onclick="force(${o.id})">Activate by hand</button>`
+        : ''}</td>
+    </tr>`).join('');
+    $('#view').innerHTML = `<div class="box"><b>Payments</b>
+      <button class="btn gray" style="float:right" onclick="tab('orders')">↻</button>
+      <table><tr><th>Student</th><th>Package</th><th>Status</th><th>Ref</th><th></th></tr>
+      ${rows || '<tr><td class="muted">no orders yet</td></tr>'}</table>
+      <p class="muted">"Activate by hand" is for when a payment really arrived but the
+      gateway did not confirm it. It is recorded as a manual activation.</p></div>`;
+  }
+
+  window.force = async (id) => {
+    if (!confirm('Activate this pass without gateway confirmation?\nOnly do this if you have seen the money arrive.')) return;
+    const r = await api(`/api/bkk/admin/orders/${id}/force-activate`, { method: 'POST' });
+    if (!r.ok) alert((await r.json()).error || 'failed');
+    renderOrders();
+  };
+
+  async function renderSettings() {
+    const p = await fetch('/api/bkk/products').then(r => r.json());
+    $('#view').innerHTML = `<div class="box">
+      <b>Online payment fee</b>
+      <p class="muted">Added on top of every package price at checkout. It exists to
+      cover the card fees — PaySolutions is cheaper than Stripe, so you may want to lower it.</p>
+      <p><input id="sur" type="number" min="0" max="20" step="0.5" value="${p.surchargePct}" style="width:90px"> %
+      <button class="btn" onclick="saveSur()">Save</button></p>
+      <table><tr><th>Package</th><th>Base</th><th>Student pays</th></tr>
+      ${p.products.map(x => `<tr><td>${esc(x.name_en)}</td>
+        <td>฿${x.price_thb.toLocaleString()}</td>
+        <td><b>฿${x.total_thb.toLocaleString()}</b></td></tr>`).join('')}</table></div>`;
+  }
+
+  window.saveSur = async () => {
+    const v = Number($('#sur').value);
+    const r = await api('/api/bkk/admin/settings', { method: 'POST',
+      body: JSON.stringify({ surchargePct: v }) });
+    if (!r.ok) return alert('failed');
+    renderSettings();
+  };
+
+  if (KEY) { $('#key').value = KEY; unlock(); }
+})();
+</script>
+</body>
+</html>
