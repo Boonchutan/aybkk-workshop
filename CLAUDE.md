@@ -61,6 +61,11 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 - **Database:** Neo4j (credentials in `.env`, never commit)
 - **Student pages:** `pages/` — HTML templates for student-facing UI
 - **Public assets:** `public/` — CSS, JS, images
+- **Bangkok shala:** `bkk-api.js` + `public/bkk.html` (`/book`, `/shala`),
+  `bkk-admin.html`, `bkk-door.html` (`/door`, teacher-side check-in).
+  Own `bkk_*` Postgres tables — Rezerv's tables are read-only here.
+  Fonts are self-hosted in `public/fonts/` (Long Cang for display, IBM Plex Sans
+  Thai for text) because the Google Fonts CDN is blocked in China.
 - **Inline JS gate:** After every Write/Edit, `scripts/check-inline-js.js` runs automatically (PostToolUse hook). If it fails, fix the JS syntax before proceeding.
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.
