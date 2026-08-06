@@ -62,6 +62,26 @@ jobs:
           fetch_family "Delius"                          delius            latin
           fetch_family "Pangolin"                        pangolin          latin
           fetch_family "Architects+Daughter"             architects        latin
+          echo "== round 3: secondary sans (Latin) ==";
+          fetch_family "Inter:wght@400;500;600"              inter        latin
+          fetch_family "DM+Sans:wght@400;500;700"            dmsans       latin
+          fetch_family "Manrope:wght@400;500;700"            manrope      latin
+          fetch_family "Karla:wght@400;500;700"              karla        latin
+          fetch_family "Figtree:wght@400;500;700"            figtree      latin
+          fetch_family "Plus+Jakarta+Sans:wght@400;500;700"  jakarta      latin
+          fetch_family "Outfit:wght@400;500;600"             outfit       latin
+          fetch_family "Work+Sans:wght@400;500;600"          worksans     latin
+          echo "== round 3: sans that also set Thai (latin cut) ==";
+          fetch_family "IBM+Plex+Sans+Thai:wght@400;500;600" plexthai     latin
+          fetch_family "Sarabun:wght@400;500;600"            sarabun      latin
+          fetch_family "Anuphan:wght@400;500;600"            anuphan      latin
+          fetch_family "Prompt:wght@400;500;600"             prompt       latin
+          fetch_family "Noto+Sans+Thai:wght@400;500;600"     notothai     latin
+          echo "== round 3: same families, Thai cut (for the bilingual demo) ==";
+          fetch_family "IBM+Plex+Sans+Thai:wght@400;500;600" plexthai-th  thai
+          fetch_family "Sarabun:wght@400;500;600"            sarabun-th   thai
+          fetch_family "Anuphan:wght@400;500;600"            anuphan-th   thai
+          fetch_family "Noto+Sans+Thai:wght@400;500;600"     notothai-th  thai
           ls -la public/fonts/
 
       - name: Commit fonts
