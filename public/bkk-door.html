@@ -32,9 +32,11 @@
   .classes button .c{opacity:.75;font-size:12px;margin-left:6px}
 
   main{max-width:720px;margin:0 auto;padding:14px 14px 40px}
-  .bar{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
-  .bar h2{margin:0;font-size:19px;font-weight:600;flex:1}
-  .bar .cnt{font-size:14px;color:var(--soft)}
+  .bar{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+  /* min-width:0 or the long class title refuses to shrink and pushes the page
+     wider than the phone. */
+  .bar h2{margin:0;font-size:19px;font-weight:600;flex:1 1 200px;min-width:0}
+  .bar .cnt{font-size:14px;color:var(--soft);white-space:nowrap}
   .bar .cnt b{color:var(--in)}
   #q{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);
     background:var(--paper);color:var(--ink);font:inherit;font-size:16px;margin-bottom:12px}
@@ -45,9 +47,9 @@
     border-radius:14px;padding:15px 16px;margin-bottom:9px;font:inherit;cursor:pointer;
     transition:background .12s,border-color .12s}
   .row:active{background:#2a2033}
-  .row .nm{flex:1;font-size:17px;font-weight:600}
+  .row .nm{flex:1;min-width:0;font-size:17px;font-weight:600;overflow-wrap:anywhere}
   .row .cd{font-size:12.5px;color:var(--soft);font-weight:400;display:block;margin-top:1px}
-  .row .st{font-size:13px;color:var(--soft);flex-shrink:0}
+  .row .st{font-size:13px;color:var(--soft);flex-shrink:0;white-space:nowrap}
   .row.in{border-color:rgba(61,220,151,.45);background:rgba(61,220,151,.08)}
   .row.in .st{color:var(--in);font-weight:600}
   .row.miss{opacity:.55}
@@ -60,10 +62,10 @@
     background:var(--paper);color:var(--ink);font:inherit;font-size:16px;text-align:center}
   #gate button{width:100%;margin-top:12px;padding:13px;border:none;border-radius:12px;
     background:var(--plum);color:#17121a;font:inherit;font-weight:600;font-size:16px;cursor:pointer}
-  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120%);
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(140px);
     background:var(--in);color:#0d1a14;padding:13px 22px;border-radius:14px;font-weight:600;
-    transition:transform .22s;z-index:20;max-width:90vw;text-align:center}
-  #toast.show{transform:translateX(-50%) translateY(0)}
+    transition:transform .22s,opacity .22s;opacity:0;z-index:20;max-width:90vw;text-align:center}
+  #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   #toast.bad{background:#ff6b6b;color:#2a0d0d}
 </style>
 </head>
