@@ -436,14 +436,17 @@ function mountBkk(app, opts = {}) {
     let j = null; try { j = JSON.parse(text); } catch (_) {}
     if (!j) return { paid: false, note: `inquiry ${r.status}: ${text.slice(0, 120)}` };
     const d = Array.isArray(j) ? j[0] : (j.data || j);
-    if (!d) return { paid: false, note: 'empty record' };
+    // Carry the HTTP status in every note: an unpaid order and a rejected API
+    // key both come back "not paid", and the code is what tells them apart.
+    if (!d) return { paid: false, note: `no record (http ${r.status})` };
     const status = String(d.Status ?? '').toUpperCase();
     const paid = status === 'CP';
     // Total comes back as a JSON number (3900.0), not a string.
     const amount = d.Total == null ? null : Number(d.Total);
     return {
       paid, amount, raw: d,
-      note: paid ? 'confirmed' : `status=${status || 'unknown'} ${d.StatusName || ''}`.trim(),
+      note: paid ? 'confirmed'
+        : `http ${r.status} status=${status || 'unknown'} ${d.StatusName || ''}`.trim(),
     };
   }
 

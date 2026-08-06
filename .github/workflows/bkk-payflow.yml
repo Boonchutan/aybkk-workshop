@@ -78,12 +78,15 @@ jobs:
           note = str(d.get('note') or '')
           if d.get('status') == 'paid':
               print('  UNEXPECTED: an unpaid order reported as paid'); raise SystemExit(1)
-          if 'no record' in note:
-              print('  PASS  Inquiry API answered — credentials accepted')
-          elif any(c in note for c in ('401', '403', '400')):
-              print('  FAIL  gateway rejected our credentials'); raise SystemExit(1)
+          import re
+          m = re.search(r'http (\d{3})', note)
+          code = m.group(1) if m else '?'
+          if code in ('401', '403'):
+              print('  FAIL  gateway rejected our credentials (http ' + code + ')'); raise SystemExit(1)
+          if code == '200':
+              print('  PASS  Inquiry API answered 200 with no record — credentials accepted')
           else:
-              print('  ?     unrecognised reply — read the note above')
+              print('  ?     http ' + code + ' — read the note above')
           EOF
 
           echo ""
