@@ -115,14 +115,21 @@ const ok = (name, cond, extra = '') => {
   const moId = (await J('/api/bkk/admin/orders', { headers: ADMIN })).body.orders[0].id;
   await post(`/api/bkk/admin/orders/${moId}/force-activate`, {}, ADMIN);
   const uCode = mo.body.member.code;
-  const sameDay = sch.body.classes.filter(c => c.date === sch.body.classes[0].date);
+  // Re-read the schedule: the capacity test above deliberately filled a class,
+  // and booking into a full one would fail for the wrong reason. Pick a day that
+  // still has three seats going, so the only thing under test is the daily cap.
+  const fresh = (await J('/api/bkk/schedule?days=14')).body.classes.filter(c => c.seatsLeft > 0);
+  const byDate = {};
+  for (const c of fresh) (byDate[c.date] = byDate[c.date] || []).push(c);
+  const capDay = Object.values(byDate).find(list => list.length >= 3);
   let caps = [];
-  for (const c of sameDay.slice(0, 3)) {
+  for (const c of (capDay || []).slice(0, 3)) {
     caps.push(await post('/api/bkk/bookings', { memberCode: uCode, slotId: c.slotId, date: c.date }));
   }
   const goodCaps = caps.filter(r => r.status === 200).length;
-  ok('membership capped at 2 bookings/day', goodCaps <= 2 && /per day/.test(caps[caps.length-1].body.error || 'per day'),
-     `${goodCaps} succeeded; last error: ${caps[caps.length-1].body.error}`);
+  const lastErr = caps.length ? (caps[caps.length - 1].body.error || '') : 'no classes to test with';
+  ok('membership capped at 2 bookings/day', goodCaps === 2 && /per day/.test(lastErr),
+     `${goodCaps} succeeded; last error: ${lastErr}`);
 
   console.log('\n— cancellation —');
   const myB = (await J('/api/bkk/me/' + memberCode)).body.bookings[0];
