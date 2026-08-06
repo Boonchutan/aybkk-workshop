@@ -82,7 +82,10 @@ jobs:
           # unicode-range actually contains U+0E01 (ก).
           fetch_thai () {                         # $1 = css family spec, $2 = out name
             CSS=$(curl -s -A "$UA" "https://fonts.googleapis.com/css2?family=$1&display=swap&subset=thai")
-            URL=$(echo "$CSS" | tr '}' '\n' | grep 'U+0E01' | grep -o 'https://fonts.gstatic.com[^)]*\.woff2' | head -1)
+            # Flatten first: each @font-face must become ONE line, otherwise grep
+            # never sees the src URL and the unicode-range together.
+            URL=$(echo "$CSS" | tr -d '\n' | tr '}' '\n' | grep 'U+0E01' \
+                  | grep -o 'https://fonts.gstatic.com[^)]*\.woff2' | head -1)
             if [ -z "$URL" ]; then echo "  ✗ $2 — no Thai block found"; return; fi
             curl -s -o "public/fonts/$2.woff2" "$URL"
             echo "  ✓ $2 $(du -h public/fonts/$2.woff2 | cut -f1)"
