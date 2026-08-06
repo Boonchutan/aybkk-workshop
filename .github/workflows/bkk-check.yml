@@ -26,7 +26,10 @@ jobs:
               print('products: NOT JSON ->', open('/tmp/pr.json').read()[:200]); raise SystemExit(0)
           ps = d.get('products', [])
           mode = (d.get('payment') or {}).get('mode', '(field missing — old build)')
+          pay = d.get('payment') or {}
           print(f"PAYMENT MODE: {mode}")
+          miss = pay.get('missing') or pay.get('missingForGateway')
+          if miss: print(f"  MISSING ENV VARS: {', '.join(miss)}")
           print(f"products: {len(ps)} | surcharge {d.get('surchargePct')}%")
           for p in ps:
               print(f"  {p['code']:9} {p['name_en'][:34]:34} ฿{p['price_thb']:>6} + fee ฿{p['fee_thb']:>4} = ฿{p['total_thb']:>6}")

@@ -183,6 +183,18 @@ function mountBkk(app, opts = {}) {
     return r.rows[0] || null;
   }
 
+  // Reports how money can be taken, and — when it cannot — which environment
+  // variables are missing. Variable NAMES only, which are already public in the
+  // repo; no value, no length, no fragment of any key is ever exposed.
+  function paymentStatus() {
+    const need = ['PAYSO_MERCHANT_ID', 'PAYSO_SECRET_KEY', 'PAYSO_API_KEY'];
+    const missing = need.filter(k => !String(process.env[k] || '').trim());
+    if (!missing.length) return { mode: 'gateway' };
+    if (String(process.env.PAYSO_PAYSN_STORE || '').trim())
+      return { mode: 'link', missingForGateway: missing };
+    return { mode: 'none', missing };
+  }
+
   // ── public: catalogue + schedule ──────────────────────────────────────────
   app.get('/api/bkk/products', async (req, res) => {
     try {
@@ -193,8 +205,7 @@ function mountBkk(app, opts = {}) {
         // Which way this shala can take money right now. Names only — never a
         // key, never a fragment of one. 'gateway' = verified auto-activation,
         // 'link' = pay.sn plus a human confirming, 'none' = cannot sell online.
-        payment: { mode: paysoConfig() ? 'gateway'
-          : (process.env.PAYSO_PAYSN_STORE || '').trim() ? 'link' : 'none' },
+        payment: paymentStatus(),
         products: r.rows.map(p => ({
           ...p,
           fee_thb: Math.round(p.price_thb * pct / 100),
