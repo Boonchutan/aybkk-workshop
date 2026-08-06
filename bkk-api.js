@@ -10,7 +10,6 @@
 // payment AND the amount matches. The PaySolutions postback is treated as an
 // untrusted nudge (their own plugins accept it blindly; we do not).
 
-const crypto = require('crypto');
 
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
 const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
@@ -152,7 +151,11 @@ function mountBkk(app, opts = {}) {
   // ── helpers ───────────────────────────────────────────────────────────────
   const memberCode = () => 'B' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
   // PaySolutions requires a numeric refno; 10 digits, unique.
-  const newRefno = () => Number(String(Date.now()).slice(-9) + String(Math.floor(Math.random() * 10)));
+  // PaySolutions wants a unique 12-digit numeric reference. 8 digits of clock
+  // (unique for ~28h) + 4 random; the UNIQUE index on refno is the backstop.
+  const newRefno = () => Number(String(Date.now()).slice(-8) +
+    String(Math.floor(Math.random() * 10000)).padStart(4, '0'));
+  const refno12 = n => String(n).padStart(12, '0');
   const bkkNow = () => new Date();
   const startAtISO = (dateStr, hhmm) => `${dateStr}T${hhmm}:00${TZ_OFFSET}`;
   const ymd = d => d.toISOString().slice(0, 10);
@@ -251,10 +254,19 @@ function mountBkk(app, opts = {}) {
       const fee = Math.round(pr.price_thb * pct / 100);
       const total = pr.price_thb + fee;
 
-      const o = (await q(
-        `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,amount_thb)
-         VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-        [newRefno(), pr.id, member.id, pr.price_thb, fee, total])).rows[0];
+      // refno is unique-indexed and partly random, so a clash is possible if two
+      // orders land in the same millisecond. Retry rather than 500 at a student.
+      let o = null;
+      for (let attempt = 0; attempt < 5 && !o; attempt++) {
+        try {
+          o = (await q(
+            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,amount_thb)
+             VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+            [newRefno(), pr.id, member.id, pr.price_thb, fee, total])).rows[0];
+        } catch (e) {
+          if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
+        }
+      }
 
       const cfg = paysoConfig();
       res.json({
@@ -293,44 +305,41 @@ function mountBkk(app, opts = {}) {
     };
   }
 
+  // All three keys are required, not just the merchant id: the redirect itself
+  // needs only merchantid, but without the Inquiry credentials we could never
+  // confirm a payment, and activating on an unverifiable postback would give
+  // away memberships. No credentials → no automatic activation, by design.
   function paysoConfig() {
     const merchantId = process.env.PAYSO_MERCHANT_ID;
     const secret = process.env.PAYSO_SECRET_KEY;
-    if (!merchantId || !secret) return null;
+    const apiKey = process.env.PAYSO_API_KEY;
+    if (!merchantId || !secret || !apiKey) return null;
     return {
-      merchantId, secret,
-      apiKey: process.env.PAYSO_API_KEY || '',
-      endpoint: process.env.PAYSO_ENDPOINT || 'https://www.thaiepay.com/epaylink/payment.aspx',
+      merchantId, secret, apiKey,
+      endpoint: process.env.PAYSO_ENDPOINT || 'https://payments.paysolutions.asia/payment',
       inquiryBase: process.env.PAYSO_INQUIRY_BASE || 'https://apis.paysolutions.asia',
     };
   }
 
-  // hash formula taken from PaySolutions' own WooCommerce plugin
-  function paysoHash(cfg, refno, total) {
-    return crypto.createHmac('sha512', cfg.secret)
-      .update(`${cfg.merchantId}${refno}${total}`).digest('base64');
-  }
-
-  function buildPayForm(cfg, order, product, member, req) {
-    const total = order.amount_thb.toFixed(2);
-    const refno = String(order.refno).padStart(10, '0');
-    // Same stable host as the rest of the app (server.js STABLE_BASE_URL): it is
-    // the one that resolves both from Thailand and from inside China.
-    const base = (process.env.PUBLIC_BASE_URL || 'https://cn.aybkk.net').replace(/\/$/, '');
+  // The redirect is unsigned — PaySolutions publishes no hash, checksum or MAC
+  // for it, so every field here is modifiable by the payer before submitting.
+  // Nothing is trusted on the way back: the amount is re-read from the Inquiry
+  // API and compared with what we recorded.
+  // Return URL and Post Back URL are NOT form fields; they are configured once
+  // in the merchant panel and PaySolutions appends no parameters to the return.
+  function buildPayForm(cfg, order, product, member) {
     return {
       action: cfg.endpoint,
       fields: {
-        merchantid: cfg.merchantId,
-        refno,
-        customeremail: member.email || '',
-        productdetail: `AYBKK ${product.name_en}`,
-        total,
-        cc: '00',                                   // THB
-        lang: 'e',
-        returnurl: `${base}/bkk.html?paid=${refno}`,
-        postbackurl: `${base}/api/bkk/pay/postback`,
-        hash: paysoHash(cfg, refno, total),
+        merchantid: String(cfg.merchantId),
+        refno: refno12(order.refno),
+        customeremail: String(member.email || '').slice(0, 100),
+        productdetail: `AYBKK ${product.name_en}`.replace(/[<>&"']/g, ' ').slice(0, 255),
+        total: order.amount_thb.toFixed(2),
+        cc: '00',                                   // 00 = Thai baht
+        lang: 'EN',
       },
+      refno: refno12(order.refno),
     };
   }
 
@@ -368,8 +377,11 @@ function mountBkk(app, opts = {}) {
         [o.id, (verdict.note || 'not confirmed').slice(0, 300)]);
       return { status: o.status, note: verdict.note };
     }
-    // amount must match what we asked for
-    if (verdict.amount != null && Math.round(Number(verdict.amount)) !== o.amount_thb) {
+    // Amount must match what we asked for. A confirmed payment with no amount
+    // is not good enough either — the redirect form is unsigned, so the amount
+    // is the one thing a payer could have altered, and it is exactly what must
+    // be checked before a pass is created.
+    if (verdict.amount == null || Math.round(Number(verdict.amount)) !== o.amount_thb) {
       await q(`UPDATE bkk_orders SET status='mismatch', gateway_note=$2 WHERE id=$1`,
         [o.id, `amount ${verdict.amount} != ${o.amount_thb}`]);
       console.warn(`[bkk pay] AMOUNT MISMATCH refno=${refno} gateway=${verdict.amount} expected=${o.amount_thb}`);
@@ -379,32 +391,44 @@ function mountBkk(app, opts = {}) {
     return { status: 'paid' };
   }
 
+  // POST /order/orderdetailpost. Header casing is theirs and is inconsistent
+  // with their other endpoints — merchantID, merchantSecretKey, apikey — so it
+  // is written out literally rather than normalised. merchantID is the LAST 5
+  // DIGITS of the merchant id, in both header and body. Unused body fields take
+  // the literal placeholders the docs specify ("X", "QWERTY").
   async function inquire(cfg, order) {
     const url = `${cfg.inquiryBase.replace(/\/$/, '')}/order/orderdetailpost`;
+    const mid5 = String(cfg.merchantId).slice(-5);
     const r = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        merchantID: String(cfg.merchantId).slice(-5),
+        merchantID: mid5,
         merchantSecretKey: cfg.secret,
         apikey: cfg.apiKey,
       },
       body: JSON.stringify({
-        merchantID: String(cfg.merchantId).slice(-5),
-        orderNo: String(order.refno).padStart(10, '0'),
-        refno: String(order.refno).padStart(10, '0'),
-        productDetail: '',
+        merchantID: mid5,
+        orderNo: 'X',
+        refno: refno12(order.refno),
+        productDetail: 'QWERTY',
       }),
     });
-    const text = await r.text();
+    const text = (await r.text()).trim();
+    // Documented failure mode: an unsuccessful payment returns no body at all.
+    if (!text) return { paid: false, note: `no record (http ${r.status})` };
     let j = null; try { j = JSON.parse(text); } catch (_) {}
     if (!j) return { paid: false, note: `inquiry ${r.status}: ${text.slice(0, 120)}` };
-    const d = j.data || j;
-    const statusStr = String(d.status ?? d.paymentStatus ?? d.orderStatus ?? '').toLowerCase();
-    const paid = j.success === true &&
-      /(^|[^a-z])(paid|success|successful|complete|completed|approved)([^a-z]|$)/.test(statusStr);
-    const amount = d.amount ?? d.total ?? d.paymentAmount ?? null;
-    return { paid, amount, note: paid ? 'confirmed' : `status=${statusStr || 'unknown'}`, raw: d };
+    const d = Array.isArray(j) ? j[0] : (j.data || j);
+    if (!d) return { paid: false, note: 'empty record' };
+    const status = String(d.Status ?? '').toUpperCase();
+    const paid = status === 'CP';
+    // Total comes back as a JSON number (3900.0), not a string.
+    const amount = d.Total == null ? null : Number(d.Total);
+    return {
+      paid, amount, raw: d,
+      note: paid ? 'confirmed' : `status=${status || 'unknown'} ${d.StatusName || ''}`.trim(),
+    };
   }
 
   async function activateOrder(order, verdict = {}) {

@@ -284,6 +284,10 @@
         if (!r.ok) throw new Error(j.error || 'could not create order');
         localStorage.setItem('aybkk_member', j.member.code);
         if (j.pay) {
+          // PaySolutions appends nothing to the return URL, so the only way to
+          // know which order came back is to remember it before leaving.
+          localStorage.setItem('aybkk_pending',
+            JSON.stringify({ refno: j.pay.refno || j.order.refno, at: Date.now() }));
           // hand off to the gateway's hosted page
           const f = document.createElement('form');
           f.method = 'POST'; f.action = j.pay.action;
@@ -339,15 +343,34 @@
     } catch (e) { alert(e.message); }
   };
 
-  // returning from the gateway: ?paid=<refno>
+  // Coming back from the gateway. There is no parameter on the return URL, so
+  // we ask about whichever order this browser last started paying for.
+  function pendingRefno() {
+    const raw = new URLSearchParams(location.search).get('paid');
+    if (raw) return raw;
+    try {
+      const p = JSON.parse(localStorage.getItem('aybkk_pending') || 'null');
+      if (!p) return null;
+      if (Date.now() - p.at > 6 * 3600e3) { localStorage.removeItem('aybkk_pending'); return null; }
+      return p.refno;
+    } catch (_) { return null; }
+  }
+
   (async () => {
-    const m = new URLSearchParams(location.search).get('paid');
+    const m = pendingRefno();
     if (m) {
       try {
         const j = await fetch('/api/bkk/pay/check/' + encodeURIComponent(m)).then(r => r.json());
         history.replaceState({}, '', location.pathname);
-        if (j.status === 'paid') { current = 'me'; alert('Payment confirmed — your pass is active 🙏'); }
-        else alert('We have not seen the payment confirmed yet. It can take a moment; open "My pass" to check.');
+        if (j.status === 'paid') {
+          localStorage.removeItem('aybkk_pending');
+          current = 'me';
+          alert('Payment confirmed — your pass is active 🙏');
+        } else if (j.status === 'mismatch') {
+          localStorage.removeItem('aybkk_pending');
+          alert('The amount received does not match this order. Please contact the shala.');
+        }
+        // otherwise: leave it pending and check again next visit
       } catch (_) {}
     }
     load();
