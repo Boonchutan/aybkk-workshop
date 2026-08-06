@@ -81,6 +81,8 @@
   .cls .n{font-weight:600;font-size:15.5px}
   .cls .m{font-size:13px;color:var(--soft);margin-top:1px}
   .cls .seats{font-size:12.5px;font-weight:600;color:var(--pink);margin-top:3px}
+  /* pink is for scarcity; an empty class is just information */
+  .cls .seats.quiet{color:var(--soft);font-weight:400}
   .cls.full{opacity:.45}
   .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
     background:var(--blush);color:var(--plum);border-radius:999px;padding:3px 9px;margin-left:6px}
@@ -189,7 +191,11 @@
         <div class="b">
           <div class="n">${esc(c.title)}${c.isOnline ? '<span class="pill">online</span>' : ''}</div>
           <div class="m">${c.durationMin} min${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
-          <div class="seats">${full ? 'Class full' : c.seatsLeft + ' places left'}</div>
+          <div class="seats ${c.booked ? '' : 'quiet'}">${
+            full ? 'Class full'
+            : c.booked ? c.seatsLeft + ' places left'
+            : c.capacity + ' places'   /* nothing booked yet — "42 left" reads odd */
+          }</div>
         </div>
         <button class="btn" ${full ? 'disabled' : ''} onclick="book(${c.slotId},'${c.date}')">Book</button>
       </div>`;

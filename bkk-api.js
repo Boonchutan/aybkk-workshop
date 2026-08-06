@@ -30,8 +30,9 @@ const SEED_PRODUCTS = [
 
 // weekday: 0=Sun … 6=Sat
 const SEED_SLOTS = [
-  { code: 'my530',   title: 'Mysore 5.30am (1st batch)', kind: 'mysore',       weekdays: [1,2,3,4,5], start_time: '05:30', duration_min: 120, capacity: 42, is_online: false },
-  { code: 'my730',   title: 'Mysore 7.30am (2nd batch)', kind: 'mysore',       weekdays: [1,2,3,4,5], start_time: '07:30', duration_min: 120, capacity: 42, is_online: false },
+  // Titles carry no times — the schedule already shows the time in its own column.
+  { code: 'my530',   title: 'Mysore (1st batch)',        kind: 'mysore',       weekdays: [1,2,3,4,5], start_time: '05:30', duration_min: 120, capacity: 42, is_online: false },
+  { code: 'my730',   title: 'Mysore (2nd batch)',        kind: 'mysore',       weekdays: [1,2,3,4,5], start_time: '07:30', duration_min: 120, capacity: 42, is_online: false },
   { code: 'lp_mon',  title: 'Led Primary series',        kind: 'led_primary',  weekdays: [1],         start_time: '06:30', duration_min: 90,  capacity: 42, is_online: false },
   { code: 'lp_sat',  title: 'Led Primary series',        kind: 'led_primary',  weekdays: [6],         start_time: '07:00', duration_min: 90,  capacity: 42, is_online: false },
   { code: 'li_sat',  title: 'Led Intermediate series',   kind: 'led_inter',    weekdays: [6],         start_time: '08:45', duration_min: 120, capacity: 42, is_online: false },
@@ -122,6 +123,16 @@ function mountBkk(app, opts = {}) {
         }
       }
       console.log('✓ bkk: seeded weekly timetable');
+    }
+    // The seed above only fires on an empty table, so renaming a class in
+    // SEED_SLOTS would never reach a running shala. Titles are synced on every
+    // boot instead. Safe while there is no admin UI for renaming slots — add
+    // one, and this has to go.
+    for (const s of SEED_SLOTS) {
+      for (const wd of s.weekdays) {
+        await q('UPDATE bkk_class_slots SET title=$2 WHERE code=$1 AND title <> $2',
+          [`${s.code}_${wd}`, s.title]);
+      }
     }
     const st = await q(`SELECT value FROM bkk_settings WHERE key = 'surcharge_pct'`);
     if (!st.rows.length) {
