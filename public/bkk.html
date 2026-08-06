@@ -52,8 +52,9 @@
   header{background:var(--header);color:#fdf7fa;padding:34px 20px 30px;text-align:center;position:relative;overflow:hidden}
   header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
     background:linear-gradient(90deg,var(--plum),var(--pink))}
-  header h1{margin:0;font-size:clamp(34px,8vw,50px);line-height:1.1}
-  header p{margin:8px 0 0;font-size:14.5px;color:#d9bfcf}
+  header h1{margin:0;font-size:clamp(52px,14vw,80px);line-height:1;letter-spacing:.04em}
+  header .sub{margin:6px 0 0;font-size:15px;letter-spacing:.03em;color:#f0d6e3}
+  header .where{margin:5px 0 0;font-size:13px;color:#b79cab}
   header .dot{color:var(--pink)}
 
   nav.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
@@ -112,8 +113,9 @@
 </head>
 <body>
 <header>
-  <h1 class="brush">Ashtanga Yoga Bangkok</h1>
-  <p>Mysore &amp; Led classes, six days a week <span class="dot">·</span> S31 Hotel</p>
+  <h1 class="brush">AYBKK</h1>
+  <p class="sub">Ashtanga Yoga Center of Bangkok</p>
+  <p class="where">Mysore &amp; Led, six days a week <span class="dot">·</span> S31 Hotel, Sukhumvit 31</p>
 </header>
 
 <nav class="tabs">
@@ -123,7 +125,7 @@
 </nav>
 
 <main id="view"><p class="note">Loading…</p></main>
-<footer><span class="brush">AYBKK</span>Ashtanga Yoga Bangkok · S31 Hotel, Sukhumvit</footer>
+<footer><span class="brush">AYBKK</span>Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31</footer>
 
 <dialog id="dlg"><div id="dlgIn"></div></dialog>
 
