@@ -124,19 +124,19 @@
         ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}</td>
       <td class="muted">${o.refno}</td>
       <td>${o.status !== 'paid'
-        ? `<button class="btn red" onclick="force(${o.id})">Activate by hand</button>`
+        ? `<button class="btn red" onclick="force(${o.id})">Activate</button>`
         : ''}</td>
     </tr>`).join('');
     $('#view').innerHTML = `<div class="box"><b>Payments</b>
       <button class="btn gray" style="float:right" onclick="tab('orders')">↻</button>
       <table><tr><th>Student</th><th>Package</th><th>Status</th><th>Ref</th><th></th></tr>
       ${rows || '<tr><td class="muted">no orders yet</td></tr>'}</table>
-      <p class="muted">"Activate by hand" is for when a payment really arrived but the
-      gateway did not confirm it. It is recorded as a manual activation.</p></div>`;
+      <p class="muted">Find the reference number in the PaySolutions dashboard, check the
+      amount matches, then activate. Every activation here is recorded as manual.</p></div>`;
   }
 
   window.force = async (id) => {
-    if (!confirm('Activate this pass without gateway confirmation?\nOnly do this if you have seen the money arrive.')) return;
+    if (!confirm('Activate this pass?\nOnly do this once you have seen the money arrive in PaySolutions.')) return;
     const r = await api(`/api/bkk/admin/orders/${id}/force-activate`, { method: 'POST' });
     if (!r.ok) alert((await r.json()).error || 'failed');
     renderOrders();

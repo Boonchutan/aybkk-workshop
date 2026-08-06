@@ -250,11 +250,37 @@ function mountBkk(app, opts = {}) {
         order: { id: o.id, refno: String(o.refno), amount: total, product: pr.name_en },
         member: { code: member.code },
         pay: cfg ? buildPayForm(cfg, o, pr, member, req) : null,
-        payUnavailable: cfg ? undefined :
+        payLink: cfg ? null : paysnLink(o, pr),
+        payUnavailable: (cfg || paysnLink(o, pr)) ? undefined :
           'Online payment is not configured yet — the shala will contact you to arrange payment.',
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
+
+  // Pay.sn is PaySolutions' no-code product: a payment link, no API key, no
+  // secret, and therefore nothing we can verify server-side. Orders paid this
+  // way stay 'pending' until a human confirms in the admin — deliberately, since
+  // auto-activating on an unverifiable signal would hand out free memberships.
+  // Format from the merchant console: pay.sn/<store>/<amount>/<detail>,
+  // capped at 300,000 THB per link.
+  const PAYSN_MAX_THB = 300000;
+  function paysnLink(order, product) {
+    const store = (process.env.PAYSO_PAYSN_STORE || '').trim().replace(/^\/+|\/+$/g, '');
+    if (!store) return null;
+    if (order.amount_thb > PAYSN_MAX_THB) return null;
+    const ref = String(order.refno);
+    // The detail is a path segment: keep slashes out of it entirely rather than
+    // relying on %2F surviving their router.
+    const detail = `AYBKK ${product.name_en} ref ${ref}`.replace(/[\/\\?#&]+/g, '-');
+    return {
+      url: `https://pay.sn/${store}/${order.amount_thb}/${encodeURIComponent(detail)}`,
+      refno: ref,
+      amount: order.amount_thb,
+      // Shown to the student — they must quote this so the payment can be matched.
+      note: `Please keep reference #${ref}. Your pass is activated once the shala ` +
+            `sees the payment, usually the same day.`,
+    };
+  }
 
   function paysoConfig() {
     const merchantId = process.env.PAYSO_MERCHANT_ID;

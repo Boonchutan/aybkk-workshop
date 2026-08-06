@@ -286,6 +286,14 @@
             i.type = 'hidden'; i.name = k; i.value = v; f.appendChild(i);
           }
           document.body.appendChild(f); f.submit();
+        } else if (j.payLink) {
+          $('#bmsg').innerHTML = `<div class="msg ok">
+            <b>${esc(j.order.product)} — ฿${j.payLink.amount.toLocaleString()}</b><br>
+            Reference <b>#${esc(j.payLink.refno)}</b> · member code <b>${esc(j.member.code)}</b><br>
+            <span style="font-size:13px">${esc(j.payLink.note)}</span></div>
+            <p style="margin-top:12px"><a class="btn pink" style="display:inline-block;text-decoration:none"
+              href="${esc(j.payLink.url)}" target="_blank" rel="noopener">Pay ฿${j.payLink.amount.toLocaleString()}</a></p>`;
+          $('#bgo').style.display = 'none';
         } else {
           $('#bmsg').innerHTML = `<div class="msg ok">Order ${esc(j.order.refno)} created.<br>
             ${esc(j.payUnavailable || '')}<br>Your member code is <b>${esc(j.member.code)}</b>.</div>`;
