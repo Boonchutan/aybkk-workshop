@@ -44,7 +44,9 @@ const SEED_SLOTS = [
 function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
   const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || 'aybkk2026';
-  const isAdmin = req => (req.headers['x-bkk-key'] || req.query.key) === ADMIN_KEY;
+  // Header only. A key in the query string ends up in access logs, browser
+  // history and Referer headers.
+  const isAdmin = req => req.headers['x-bkk-key'] === ADMIN_KEY;
 
   if (!pool) { console.warn('⚠ bkk-api: no pgPool — Bangkok API disabled'); return; }
   const q = (sql, params = []) => pool.query(sql, params);
@@ -97,10 +99,17 @@ function mountBkk(app, opts = {}) {
       pass_id INTEGER REFERENCES bkk_passes(id),
       status TEXT NOT NULL DEFAULT 'booked',
       booked_at TIMESTAMPTZ DEFAULT now(), cancelled_at TIMESTAMPTZ,
-      checked_in_at TIMESTAMPTZ,
-      UNIQUE (slot_id, class_date, member_id))`);
+      checked_in_at TIMESTAMPTZ)`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_bookings_slot_date
              ON bkk_bookings (slot_id, class_date) WHERE status = 'booked'`);
+    // One seat per student per class — but only among LIVE bookings. A plain
+    // UNIQUE constraint counted cancelled rows too, so a student who cancelled
+    // and changed their mind was told "you already booked this class".
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_bookings_one_live
+             ON bkk_bookings (slot_id, class_date, member_id) WHERE status = 'booked'`);
+    // Existing databases still carry the old table-level constraint.
+    await q(`ALTER TABLE bkk_bookings
+             DROP CONSTRAINT IF EXISTS bkk_bookings_slot_id_class_date_member_id_key`);
 
     // seed catalogue + timetable once
     const p = await q('SELECT count(*)::int AS n FROM bkk_products');
@@ -158,7 +167,9 @@ function mountBkk(app, opts = {}) {
   const refno12 = n => String(n).padStart(12, '0');
   const bkkNow = () => new Date();
   const startAtISO = (dateStr, hhmm) => `${dateStr}T${hhmm}:00${TZ_OFFSET}`;
-  const ymd = d => d.toISOString().slice(0, 10);
+  // Calendar date in Bangkok, NOT UTC. toISOString() would put 01:00 Bangkok on
+  // the previous day — and 05:30 Mysore is booked in exactly those hours.
+  const ymd = d => new Date(d.getTime() + 7 * 3600000).toISOString().slice(0, 10);
 
   async function findOrCreateMember({ name, email, phone }) {
     const em = (email || '').trim().toLowerCase();
@@ -239,7 +250,8 @@ function mountBkk(app, opts = {}) {
         for (const s of slots.filter(x => x.weekday === wd)) {
           const ov = overrides.find(o => o.slot_id === s.id && ymd(new Date(o.class_date)) === dstr);
           if (ov && ov.cancelled) continue;
-          const cap = (ov && ov.capacity) || s.capacity;
+          // ?? not || — an override capacity of 0 ("closed today") is a real value.
+          const cap = (ov && ov.capacity != null) ? ov.capacity : s.capacity;
           const booked = (counts.find(c => c.slot_id === s.id && ymd(new Date(c.class_date)) === dstr) || {}).n || 0;
           const startAt = startAtISO(dstr, s.start_time);
           if (new Date(startAt) < bkkNow()) continue;         // hide past classes
@@ -526,7 +538,7 @@ function mountBkk(app, opts = {}) {
       const ov = (await client.query(
         'SELECT * FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2', [slotId, date])).rows[0];
       if (ov && ov.cancelled) throw new Error('class cancelled');
-      const capacity = (ov && ov.capacity) || slot.capacity;
+      const capacity = (ov && ov.capacity != null) ? ov.capacity : slot.capacity;
 
       // Serialise everyone booking this same class: a transaction-scoped
       // advisory lock keyed on (slot, date). Counting rows cannot be locked
@@ -591,7 +603,10 @@ function mountBkk(app, opts = {}) {
         `SELECT b.*, m.code AS mcode FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
          WHERE b.id=$1 FOR UPDATE`, [req.params.id])).rows[0];
       if (!b) throw new Error('booking not found');
-      if (mcode && b.mcode !== mcode) throw new Error('not your booking');
+      // The member code is REQUIRED. It used to be optional, which meant omitting
+      // it skipped the ownership check entirely and let anyone cancel any booking
+      // by guessing its id. Staff cancel through the admin, not through here.
+      if (!isAdmin(req) && b.mcode !== String(mcode || '')) throw new Error('not your booking');
       if (b.status !== 'booked') throw new Error('already ' + b.status);
 
       const hoursLeft = (new Date(b.start_at) - bkkNow()) / 3600000;
@@ -616,7 +631,10 @@ function mountBkk(app, opts = {}) {
 
   // ── check-in (door) ───────────────────────────────────────────────────────
   // "Is this member booked for a class starting around now?"
+  // Staff-only: the door page already holds the admin key, and marking someone
+  // present is a claim about the real world that a student must not make alone.
   app.post('/api/bkk/checkin', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ ok: false, reason: 'bad key' });
     try {
       const { memberCode: mcode, windowMin } = req.body || {};
       const win = Math.min(180, Math.max(15, parseInt(windowMin) || 90));
@@ -637,11 +655,13 @@ function mountBkk(app, opts = {}) {
   // ── admin ─────────────────────────────────────────────────────────────────
   app.get('/api/bkk/admin/orders', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
-    const r = await q(
-      `SELECT o.*, pr.name_en, m.name AS member_name, m.email, m.code AS member_code
-       FROM bkk_orders o JOIN bkk_products pr ON pr.id=o.product_id
-       JOIN bkk_members m ON m.id=o.member_id ORDER BY o.id DESC LIMIT 200`);
-    res.json({ orders: r.rows });
+    try {
+      const r = await q(
+        `SELECT o.*, pr.name_en, m.name AS member_name, m.email, m.code AS member_code
+         FROM bkk_orders o JOIN bkk_products pr ON pr.id=o.product_id
+         JOIN bkk_members m ON m.id=o.member_id ORDER BY o.id DESC LIMIT 200`);
+      res.json({ orders: r.rows });
+    } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   // Deliberate manual override for the day the gateway misbehaves — recorded
@@ -659,13 +679,15 @@ function mountBkk(app, opts = {}) {
 
   app.get('/api/bkk/admin/today', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
-    const r = await q(
-      `SELECT s.title, b.class_date, b.start_at, m.name, m.code, b.checked_in_at
-       FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id
-       JOIN bkk_members m ON m.id=b.member_id
-       WHERE b.status='booked' AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
-       ORDER BY b.start_at, m.name`);
-    res.json({ bookings: r.rows });
+    try {
+      const r = await q(
+        `SELECT s.title, b.class_date, b.start_at, m.name, m.code, b.checked_in_at
+         FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id
+         JOIN bkk_members m ON m.id=b.member_id
+         WHERE b.status='booked' AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
+         ORDER BY b.start_at, m.name`);
+      res.json({ bookings: r.rows });
+    } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   app.post('/api/bkk/admin/settings', async (req, res) => {
