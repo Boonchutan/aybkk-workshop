@@ -4,11 +4,17 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AYBKK — Timetable &amp; Packages</title>
 <link rel="preload" href="/fonts/longcang.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/plexthai.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* AYBKK Bangkok — Aubergine & Blush.
      Long Cang (brush) carries display only; body text is a plain face so the
      small print stays readable. Self-hosted font: the Google CDN is blocked in China. */
   @font-face{font-family:'Long Cang';src:url('/fonts/longcang.woff2') format('woff2');font-display:swap}
+  /* Two cuts of one family under one name: the browser picks the Thai file only
+     for Thai characters, so Thai and Latin sit on the same baseline. */
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
+    unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
   :root{
     --ink:#17121a;          /* near-black, violet cast */
     --wall:#f7f1f5;         /* blush-tinted room */
@@ -46,7 +52,7 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{margin:0;background:var(--wall);color:var(--ink);
-    font:16px/1.6 -apple-system,'Helvetica Neue','PingFang SC','Noto Sans Thai',sans-serif}
+    font:16px/1.6 'Plex',-apple-system,'Helvetica Neue','PingFang SC',sans-serif}
   .brush{font-family:'Long Cang',cursive;font-weight:400}
 
   header{background:var(--header);color:#fdf7fa;padding:34px 20px 30px;text-align:center;position:relative;overflow:hidden}

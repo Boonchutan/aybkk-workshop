@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK Door</title>
+<style>
+  @font-face{font-family:'Long Cang';src:url('/fonts/longcang.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
+    unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
+  /* The door runs at 05:15 in a dark shala, so this page is dark whatever the
+     tablet's theme is — a white screen at that hour is unusable. */
+  :root{--ink:#f5e9f0;--wall:#120d16;--paper:#1e1723;--line:rgba(245,233,240,.13);
+    --plum:#c07ec8;--pink:#ff6fae;--soft:#b09cb6;--in:#3ddc97}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--wall);color:var(--ink);
+    font:16px/1.5 'Plex',-apple-system,'Helvetica Neue',sans-serif;
+    -webkit-user-select:none;user-select:none}
+
+  header{background:#17121a;padding:14px 18px;display:flex;align-items:center;gap:14px;
+    position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line)}
+  header .brand{font-family:'Long Cang',cursive;font-size:30px;line-height:1;letter-spacing:.04em}
+  header .now{flex:1;font-size:13px;color:var(--soft)}
+  header .now b{display:block;font-size:16px;color:var(--ink);font-weight:600}
+  .lock{background:none;border:1px solid var(--line);color:var(--soft);border-radius:10px;
+    padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
+
+  .classes{display:flex;gap:8px;overflow-x:auto;padding:12px 14px;border-bottom:1px solid var(--line)}
+  .classes button{flex:0 0 auto;background:var(--paper);border:1px solid var(--line);color:var(--soft);
+    border-radius:12px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
+  .classes button.on{background:var(--plum);border-color:var(--plum);color:#17121a;font-weight:600}
+  .classes button .c{opacity:.75;font-size:12px;margin-left:6px}
+
+  main{max-width:720px;margin:0 auto;padding:14px 14px 40px}
+  .bar{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+  .bar h2{margin:0;font-size:19px;font-weight:600;flex:1}
+  .bar .cnt{font-size:14px;color:var(--soft)}
+  .bar .cnt b{color:var(--in)}
+  #q{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);
+    background:var(--paper);color:var(--ink);font:inherit;font-size:16px;margin-bottom:12px}
+  #q:focus{outline:2px solid var(--plum);outline-offset:1px}
+
+  .row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    background:var(--paper);border:1px solid var(--line);color:var(--ink);
+    border-radius:14px;padding:15px 16px;margin-bottom:9px;font:inherit;cursor:pointer;
+    transition:background .12s,border-color .12s}
+  .row:active{background:#2a2033}
+  .row .nm{flex:1;font-size:17px;font-weight:600}
+  .row .cd{font-size:12.5px;color:var(--soft);font-weight:400;display:block;margin-top:1px}
+  .row .st{font-size:13px;color:var(--soft);flex-shrink:0}
+  .row.in{border-color:rgba(61,220,151,.45);background:rgba(61,220,151,.08)}
+  .row.in .st{color:var(--in);font-weight:600}
+  .row.miss{opacity:.55}
+
+  .empty{color:var(--soft);text-align:center;padding:40px 10px;font-size:15px}
+  #gate{max-width:320px;margin:18vh auto;text-align:center;padding:0 16px}
+  #gate h1{font-family:'Long Cang',cursive;font-weight:400;font-size:46px;margin:0 0 4px}
+  #gate p{color:var(--soft);font-size:13.5px;margin:0 0 18px}
+  #gate input{width:100%;padding:13px;border-radius:12px;border:1px solid var(--line);
+    background:var(--paper);color:var(--ink);font:inherit;font-size:16px;text-align:center}
+  #gate button{width:100%;margin-top:12px;padding:13px;border:none;border-radius:12px;
+    background:var(--plum);color:#17121a;font:inherit;font-weight:600;font-size:16px;cursor:pointer}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120%);
+    background:var(--in);color:#0d1a14;padding:13px 22px;border-radius:14px;font-weight:600;
+    transition:transform .22s;z-index:20;max-width:90vw;text-align:center}
+  #toast.show{transform:translateX(-50%) translateY(0)}
+  #toast.bad{background:#ff6b6b;color:#2a0d0d}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1>AYBKK</h1>
+  <p>Door check-in</p>
+  <input id="key" type="password" placeholder="passcode" autocomplete="off">
+  <button onclick="unlock()">Enter</button>
+  <p id="gateMsg" style="margin-top:10px"></p>
+</div>
+
+<div id="app" style="display:none">
+  <header>
+    <span class="brand">AYBKK</span>
+    <span class="now"><b id="clock">—</b>door check-in</span>
+    <button class="lock" onclick="logout()">Lock</button>
+  </header>
+  <div class="classes" id="classes"></div>
+  <main>
+    <div class="bar"><h2 id="ctitle">—</h2><span class="cnt" id="ccount"></span></div>
+    <input id="q" placeholder="Search a name…" autocomplete="off">
+    <div id="list"></div>
+  </main>
+</div>
+<div id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  let KEY = localStorage.getItem('aybkk_bkk_key') || '';
+  let bookings = [], groups = [], picked = null, timer = null;
+
+  const api = (url, opts = {}) => fetch(url, { ...opts,
+    headers: { 'Content-Type': 'application/json', 'X-Bkk-Key': KEY, ...(opts.headers || {}) } });
+  const time = iso => new Date(iso).toLocaleTimeString('en-GB',
+    { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
+
+  function toast(msg, bad) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.className = 'show' + (bad ? ' bad' : '');
+    clearTimeout(t._h);
+    t._h = setTimeout(() => { t.className = ''; }, 2600);
+  }
+
+  window.unlock = async () => {
+    KEY = $('#key').value.trim();
+    const r = await api('/api/bkk/admin/today');
+    if (r.status === 401) { $('#gateMsg').textContent = 'wrong passcode'; return; }
+    localStorage.setItem('aybkk_bkk_key', KEY);
+    $('#gate').style.display = 'none';
+    $('#app').style.display = 'block';
+    start();
+  };
+  window.logout = () => { localStorage.removeItem('aybkk_bkk_key'); location.reload(); };
+
+  function tick() {
+    $('#clock').textContent = new Date().toLocaleTimeString('en-GB',
+      { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
+  }
+
+  function start() {
+    tick(); setInterval(tick, 20000);
+    load();
+    // Someone books on the way to the shala; without this the door list is stale.
+    timer = setInterval(load, 45000);
+  }
+
+  async function load() {
+    let d;
+    try { d = await api('/api/bkk/admin/today').then(r => r.json()); }
+    catch (_) { return; }                       // keep showing the last list offline
+    bookings = d.bookings || [];
+    const by = new Map();
+    for (const b of bookings) {
+      const k = b.start_at + '|' + b.title;
+      if (!by.has(k)) by.set(k, { startAt: b.start_at, title: b.title, list: [] });
+      by.get(k).list.push(b);
+    }
+    groups = [...by.values()].sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
+    if (!groups.length) { picked = null; renderClasses(); renderList(); return; }
+    // Default to the class nearest to now, so nobody has to choose at 05:20.
+    if (picked === null || !groups.some(g => g.startAt === picked)) {
+      const now = Date.now();
+      picked = groups.reduce((best, g) =>
+        Math.abs(new Date(g.startAt) - now) < Math.abs(new Date(best.startAt) - now) ? g : best
+      ).startAt;
+    }
+    renderClasses(); renderList();
+  }
+
+  function renderClasses() {
+    $('#classes').innerHTML = groups.map(g => {
+      const inC = g.list.filter(b => b.checked_in_at).length;
+      return `<button class="${g.startAt === picked ? 'on' : ''}" data-at="${esc(g.startAt)}">
+        ${time(g.startAt)}<span class="c">${inC}/${g.list.length}</span></button>`;
+    }).join('');
+    $('#classes').querySelectorAll('button').forEach(b =>
+      b.onclick = () => { picked = b.dataset.at; renderClasses(); renderList(); });
+  }
+
+  function renderList() {
+    const g = groups.find(x => x.startAt === picked);
+    if (!g) {
+      $('#ctitle').textContent = 'Nothing booked today';
+      $('#ccount').textContent = '';
+      $('#list').innerHTML = '<p class="empty">No bookings for today.</p>';
+      return;
+    }
+    const term = $('#q').value.trim().toLowerCase();
+    const inC = g.list.filter(b => b.checked_in_at).length;
+    $('#ctitle').textContent = time(g.startAt) + ' · ' + g.title;
+    $('#ccount').innerHTML = `<b>${inC}</b> in / ${g.list.length} booked`;
+    const rows = g.list.filter(b =>
+      !term || String(b.name).toLowerCase().includes(term) || String(b.code).toLowerCase().includes(term));
+    $('#list').innerHTML = rows.length ? rows.map(b => `
+      <button class="row ${b.checked_in_at ? 'in' : ''}" data-code="${esc(b.code)}">
+        <span class="nm">${esc(b.name)}<span class="cd">${esc(b.code)}</span></span>
+        <span class="st">${b.checked_in_at ? '✓ in ' + time(b.checked_in_at) : 'tap to check in'}</span>
+      </button>`).join('')
+      : '<p class="empty">No one matches that.</p>';
+    $('#list').querySelectorAll('.row').forEach(el => el.onclick = () => checkin(el.dataset.code));
+  }
+
+  $('#q').addEventListener('input', renderList);
+
+  async function checkin(code) {
+    const b = bookings.find(x => x.code === code && x.start_at === picked);
+    if (b && b.checked_in_at) { toast(b.name + ' is already in'); return; }
+    // Paint it green immediately — the teacher is not going to wait for the network.
+    if (b) { b.checked_in_at = new Date().toISOString(); renderList(); renderClasses(); }
+    try {
+      const r = await api('/api/bkk/checkin', {
+        method: 'POST', body: JSON.stringify({ memberCode: code }) });
+      const d = await r.json();
+      if (d.ok) { toast('✓ ' + d.name); }
+      else {
+        if (b) { b.checked_in_at = null; renderList(); renderClasses(); }
+        toast((d.name || code) + ' — ' + (d.reason || 'not booked'), true);
+      }
+    } catch (_) {
+      if (b) { b.checked_in_at = null; renderList(); renderClasses(); }
+      toast('No connection — try again', true);
+    }
+  }
+
+  if (KEY) { $('#key').value = KEY; unlock(); }
+})();
+</script>
+</body>
+</html>
