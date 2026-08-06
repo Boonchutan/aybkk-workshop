@@ -277,7 +277,9 @@ function mountBkk(app, opts = {}) {
   function buildPayForm(cfg, order, product, member, req) {
     const total = order.amount_thb.toFixed(2);
     const refno = String(order.refno).padStart(10, '0');
-    const base = (process.env.PUBLIC_BASE_URL || 'https://my.aybkk.com').replace(/\/$/, '');
+    // Same stable host as the rest of the app (server.js STABLE_BASE_URL): it is
+    // the one that resolves both from Thailand and from inside China.
+    const base = (process.env.PUBLIC_BASE_URL || 'https://cn.aybkk.net').replace(/\/$/, '');
     return {
       action: cfg.endpoint,
       fields: {
