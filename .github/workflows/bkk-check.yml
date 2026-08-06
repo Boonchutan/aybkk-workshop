@@ -9,11 +9,12 @@ jobs:
     steps:
       - name: Probe the live Bangkok endpoints
         run: |
-          BASE=https://my.aybkk.com
+          BASE=https://cn.aybkk.net
           echo "== page =="
           curl -s -o /tmp/p.html -w 'bkk.html HTTP %{http_code}\n' --max-time 20 "$BASE/bkk.html"
-          grep -q 'Ashtanga Yoga Bangkok' /tmp/p.html && echo 'page: served' || echo 'page: WRONG CONTENT'
+          grep -q 'Ashtanga Yoga Center of Bangkok' /tmp/p.html && echo 'page: served' || echo 'page: WRONG CONTENT'
           curl -s -o /dev/null -w '/book HTTP %{http_code}\n' --max-time 20 "$BASE/book"
+          curl -s -o /dev/null -w '/door HTTP %{http_code}\n' --max-time 20 "$BASE/door"
 
           echo "== products =="
           curl -s --max-time 20 "$BASE/api/bkk/products" -o /tmp/pr.json
@@ -24,6 +25,8 @@ jobs:
           except Exception as e:
               print('products: NOT JSON ->', open('/tmp/pr.json').read()[:200]); raise SystemExit(0)
           ps = d.get('products', [])
+          mode = (d.get('payment') or {}).get('mode', '(field missing — old build)')
+          print(f"PAYMENT MODE: {mode}")
           print(f"products: {len(ps)} | surcharge {d.get('surchargePct')}%")
           for p in ps:
               print(f"  {p['code']:9} {p['name_en'][:34]:34} ฿{p['price_thb']:>6} + fee ฿{p['fee_thb']:>4} = ฿{p['total_thb']:>6}")

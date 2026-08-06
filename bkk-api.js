@@ -190,6 +190,11 @@ function mountBkk(app, opts = {}) {
       const r = await q('SELECT * FROM bkk_products WHERE active ORDER BY sort, id');
       res.json({
         surchargePct: pct,
+        // Which way this shala can take money right now. Names only — never a
+        // key, never a fragment of one. 'gateway' = verified auto-activation,
+        // 'link' = pay.sn plus a human confirming, 'none' = cannot sell online.
+        payment: { mode: paysoConfig() ? 'gateway'
+          : (process.env.PAYSO_PAYSN_STORE || '').trim() ? 'link' : 'none' },
         products: r.rows.map(p => ({
           ...p,
           fee_thb: Math.round(p.price_thb * pct / 100),
