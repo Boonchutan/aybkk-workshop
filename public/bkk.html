@@ -226,9 +226,16 @@
     const code = myCode();
     if (!code) {
       $('#view').innerHTML = `<p class="note">You have no pass on this device yet.</p>
-        <p class="note">Buy a package, or enter your member code:</p>
+        <div class="pkg">
+          <h3>Already bought a pass?</h3>
+          <p class="note">We will email you a link that opens it. No code to remember.</p>
+          <label>Your email</label><input id="lemail" type="email" autocomplete="email" placeholder="you@example.com">
+          <p style="margin-top:12px"><button class="btn pink" onclick="emailLink()">Email me a link</button></p>
+          <div id="lmsg"></div>
+        </div>
+        <p class="note" style="margin-top:18px">Or, if you have your member code:</p>
         <label>Member code</label><input id="mc" placeholder="B…">
-        <p><button class="btn" onclick="linkCode()">Find my pass</button></p>`;
+        <p><button class="btn ghost" onclick="linkCode()">Find my pass</button></p>`;
       return;
     }
     try {
@@ -259,6 +266,26 @@
   window.linkCode = () => {
     const v = $('#mc').value.trim();
     if (v) { localStorage.setItem('aybkk_member', v); renderMe(); }
+  };
+
+  window.emailLink = async () => {
+    const email = ($('#lemail').value || '').trim();
+    if (!email.includes('@')) {
+      $('#lmsg').innerHTML = '<div class="msg bad">Please enter your email address.</div>';
+      return;
+    }
+    try {
+      const r = await fetch('/api/bkk/login/request', { method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, lang: (navigator.language || 'en').slice(0, 2) }) });
+      const j = await r.json();
+      // Deliberately the same message whether or not we know the address.
+      $('#lmsg').innerHTML = `<div class="msg ok">${esc(j.message ||
+        'If that address is registered, a link is on its way.')}<br>
+        <span style="font-size:13px">It works once and expires in 30 minutes.</span></div>`;
+    } catch (_) {
+      $('#lmsg').innerHTML = '<div class="msg bad">Could not reach the shala. Try again.</div>';
+    }
   };
 
   window.buy = (code) => {

@@ -10,8 +10,13 @@
 // payment AND the amount matches. The PaySolutions postback is treated as an
 // untrusted nudge (their own plugins accept it blindly; we do not).
 
+const crypto = require('crypto');
+const { sendMail, render } = require('./mailer');
 
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
+const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
+const SIGNIN_PER_EMAIL_HOUR = 3;               // and cheap to abuse without limits
+const SIGNIN_PER_IP_HOUR = 10;
 const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
 
 // ── seed data (from aybkk.com, captured 2026-08-05) ─────────────────────────
@@ -100,6 +105,19 @@ function mountBkk(app, opts = {}) {
       status TEXT NOT NULL DEFAULT 'booked',
       booked_at TIMESTAMPTZ DEFAULT now(), cancelled_at TIMESTAMPTZ,
       checked_in_at TIMESTAMPTZ)`);
+    // Single-use sign-in links. The IP is kept only to rate-limit: this endpoint
+    // sends mail from the shala's domain, so it must not become a spam cannon.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_login_tokens (
+      token TEXT PRIMARY KEY,
+      member_id INTEGER REFERENCES bkk_members(id),
+      email TEXT, ip TEXT,
+      expires_at TIMESTAMPTZ NOT NULL, used_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ DEFAULT now())`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_login_tokens_recent
+             ON bkk_login_tokens (created_at)`);
+    // Language the student last chose, so email matches the page they bought on.
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS lang TEXT`);
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS reminded_at TIMESTAMPTZ`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_bookings_slot_date
              ON bkk_bookings (slot_id, class_date) WHERE status = 'booked'`);
     // One seat per student per class — but only among LIVE bookings. A plain
@@ -479,9 +497,29 @@ function mountBkk(app, opts = {}) {
       await client.query('COMMIT');
       console.log(`✓ bkk: pass activated for order ${order.id} (${pr.name_en})`);
       notify(`💳 AYBKK payment\n${pr.name_en} · ฿${order.amount_thb}\nrefno ${order.refno}`);
+      // After COMMIT, and awaited only so failures are logged. The pass already
+      // exists; a mail server having a bad day must not undo a paid order.
+      emailReceipt(order, pr).catch(e => console.error('[bkk] receipt failed:', e.message));
     } catch (e) {
       await client.query('ROLLBACK'); throw e;
     } finally { client.release(); }
+  }
+
+  // The receipt doubles as the student's way back in: it carries a sign-in link,
+  // so nobody has to keep a member code safe to keep their pass.
+  async function emailReceipt(order, product) {
+    const m = (await q('SELECT * FROM bkk_members WHERE id=$1', [order.member_id])).rows[0];
+    if (!m || !m.email) return;
+    const token = crypto.randomBytes(32).toString('hex');
+    await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at)
+             VALUES ($1,$2,$3,'receipt', now() + interval '30 days')`,
+      [token, m.id, m.email]);
+    const t = render('receipt', m.lang || 'en', {
+      name: m.name, product: product.name_en,
+      amount: order.amount_thb, base: order.base_thb, fee: order.fee_thb,
+      refno: order.refno, link: `${baseUrl()}/api/bkk/login/${token}`,
+    });
+    await sendMail({ to: m.email, subject: t.subject, html: t.html, text: t.text, tag: 'receipt' });
   }
 
   async function notify(text) {
@@ -494,6 +532,85 @@ function mountBkk(app, opts = {}) {
       });
     } catch (_) {}
   }
+
+  // ── sign in by email ──────────────────────────────────────────────────────
+  // A member code lives in one browser. Lose it and the student is locked out —
+  // and the shala has no way to look it up either. A one-time link is the only
+  // option here that actually proves the student owns the address: a name is
+  // guessable and an email address is not a secret.
+
+  const baseUrl = () => (process.env.PUBLIC_BASE_URL || 'https://cn.aybkk.net').replace(/\/$/, '');
+  const clientIp = req =>
+    String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+    req.socket?.remoteAddress || 'unknown';
+
+  app.post('/api/bkk/login/request', async (req, res) => {
+    // The answer never varies. Telling a stranger whether an address is
+    // registered would leak the shala's student list one guess at a time.
+    const vague = { ok: true, message: 'If that address is registered, a link is on its way.' };
+    try {
+      const email = String((req.body || {}).email || '').trim().toLowerCase();
+      const lang = String((req.body || {}).lang || '').slice(0, 5) || null;
+      if (!email || !email.includes('@')) return res.json(vague);
+      const ip = clientIp(req);
+
+      const [byEmail, byIp] = await Promise.all([
+        q(`SELECT count(*)::int AS n FROM bkk_login_tokens
+           WHERE email=$1 AND created_at > now() - interval '1 hour'`, [email]),
+        q(`SELECT count(*)::int AS n FROM bkk_login_tokens
+           WHERE ip=$1 AND created_at > now() - interval '1 hour'`, [ip]),
+      ]);
+      if (byEmail.rows[0].n >= SIGNIN_PER_EMAIL_HOUR || byIp.rows[0].n >= SIGNIN_PER_IP_HOUR) {
+        console.warn(`[bkk login] throttled ${email} from ${ip}`);
+        return res.json(vague);
+      }
+
+      const m = (await q('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [email])).rows[0];
+      if (!m) return res.json(vague);
+      if (lang) await q('UPDATE bkk_members SET lang=$2 WHERE id=$1', [m.id, lang]);
+
+      const token = crypto.randomBytes(32).toString('hex');
+      await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at)
+               VALUES ($1,$2,$3,$4, now() + ($5 || ' minutes')::interval)`,
+        [token, m.id, email, ip, String(SIGNIN_TTL_MIN)]);
+
+      const t = render('signin', lang || m.lang || 'en',
+        { name: m.name, link: `${baseUrl()}/api/bkk/login/${token}` });
+      await sendMail({ to: m.email, subject: t.subject, html: t.html, text: t.text, tag: 'signin' });
+      res.json(vague);
+    } catch (e) {
+      console.error('[bkk login] request failed:', e.message);
+      res.json(vague);
+    }
+  });
+
+  // Landing here consumes the token and hands the member code to the browser.
+  // Deliberately not a redirect carrying the code in the URL — that would put it
+  // in history and in any link the student pastes to a friend.
+  app.get('/api/bkk/login/:token', async (req, res) => {
+    const page = (msg, code) => `<!DOCTYPE html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>AYBKK</title>
+<body style="font-family:-apple-system,sans-serif;background:#f7f1f5;color:#17121a;
+text-align:center;padding:22vh 20px"><p>${msg}</p>
+<script>${code ? `try{localStorage.setItem('aybkk_member',${JSON.stringify(code)})}catch(e){}
+setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></html>`;
+    try {
+      const r = await q(
+        `UPDATE bkk_login_tokens SET used_at = now()
+         WHERE token = $1 AND used_at IS NULL AND expires_at > now()
+         RETURNING member_id`, [req.params.token]);
+      if (!r.rows.length) {
+        return res.status(400).send(page('That link has already been used, or it has expired.<br>'
+          + '<a href="/book" style="color:#5c2160">Ask for a new one</a>'));
+      }
+      const m = (await q('SELECT code FROM bkk_members WHERE id=$1', [r.rows[0].member_id])).rows[0];
+      if (!m) return res.status(404).send(page('We could not find that member.'));
+      res.send(page('Signing you in…', m.code));
+    } catch (e) {
+      console.error('[bkk login] consume failed:', e.message);
+      res.status(500).send(page('Something went wrong. Please try again.'));
+    }
+  });
 
   // ── member view ───────────────────────────────────────────────────────────
   app.get('/api/bkk/me/:code', async (req, res) => {

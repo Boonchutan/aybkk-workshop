@@ -1,5 +1,6 @@
 // End-to-end test of bkk-api against a real Postgres.
 process.env.BKK_ADMIN_KEY = 'testkey';
+process.env.MAIL_DRY_RUN = '1';   // capture mail in an outbox instead of sending
 const express = require('express');
 const { Pool } = require('pg');
 const { mountBkk } = require('../bkk-api.js');
@@ -164,6 +165,49 @@ const ok = (name, cond, extra = '') => {
     const stillThere = (await J('/api/bkk/me/' + memberCode)).body.bookings.some(b => b.id === victim.id);
     ok('the booking survived both attempts', stillThere);
   } else ok('booking ownership fixture present', false, 'no booking to test with');
+
+  console.log('\n— sign in by email —');
+  const { outbox } = require('../mailer');
+  // Receipt mail is deliberately fire-and-forget, so it can land between two
+  // snapshots. Count only sign-in mail, which is sent inside the request.
+  const signins = () => outbox.filter(m => m.tag === 'signin');
+
+  const n0 = signins().length;
+  const known = await post('/api/bkk/login/request', { email: 'test@example.com' });
+  ok('login request accepted', known.status === 200 && known.body.ok);
+  ok('a sign-in mail was queued', signins().length === n0 + 1, `${n0}→${signins().length}`);
+
+  const n1 = signins().length;
+  const unknown = await post('/api/bkk/login/request', { email: 'nobody-here@example.com' });
+  ok('unknown address gets the identical answer',
+     unknown.body.message === known.body.message, String(unknown.body.message));
+  ok('...and no mail is sent for it', signins().length === n1, `grew to ${signins().length}`);
+
+  const lastMail = signins()[signins().length - 1];
+  const link = lastMail.text.match(/login\/([a-f0-9]{64})/);
+  ok('the mail carries a 64-character token', !!link, lastMail.text.slice(0, 80));
+  if (link) {
+    const first = await fetch(B + '/api/bkk/login/' + link[1]);
+    const firstHtml = await first.text();
+    ok('token signs the student in', first.status === 200 && firstHtml.includes(memberCode),
+       `status ${first.status}`);
+    const second = await fetch(B + '/api/bkk/login/' + link[1]);
+    ok('the same token cannot be used twice', second.status === 400, `status ${second.status}`);
+  }
+  const bogus = await fetch(B + '/api/bkk/login/' + 'f'.repeat(64));
+  ok('an invented token is refused', bogus.status === 400, `status ${bogus.status}`);
+
+  await post('/api/bkk/login/request', { email: 'test@example.com' });
+  const expTok = signins()[signins().length - 1].text.match(/login\/([a-f0-9]{64})/);
+  await pool.query(`UPDATE bkk_login_tokens SET expires_at = now() - interval '1 minute'
+                    WHERE token = $1`, [expTok ? expTok[1] : '']);
+  const expired = await fetch(B + '/api/bkk/login/' + (expTok ? expTok[1] : 'x'));
+  ok('an expired token is refused', expired.status === 400, `status ${expired.status}`);
+
+  const n2 = signins().length;
+  for (let i = 0; i < 5; i++) await post('/api/bkk/login/request', { email: 'test@example.com' });
+  ok('requests are throttled per address', signins().length - n2 <= 3,
+     `${signins().length - n2} mails sent for 5 requests`);
 
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');
