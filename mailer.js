@@ -123,6 +123,29 @@ const TEMPLATES = {
     }),
   },
 
+  classCancelled: {
+    en: ({ name, className, date, time, reason }) => ({
+      subject: `Class cancelled — ${className}, ${date}`,
+      text: [
+        `Hello ${name},`, '',
+        `We have had to cancel ${className} on ${date} at ${time}.`,
+        reason ? `Reason: ${reason}` : '',
+        '',
+        'Your credit has been returned — you have lost nothing.',
+        'You can book another class whenever suits you.', '',
+        'Sorry for the change.',
+      ].filter(Boolean).join('\n'),
+      html: shell(`
+        <p>Hello ${esc(name)},</p>
+        <p>We have had to cancel <b>${esc(className)}</b> on ${esc(date)} at ${esc(time)}.</p>
+        ${reason ? `<p style="color:#6b5d70">${esc(reason)}</p>` : ''}
+        <p style="background:#fbe7f0;padding:12px 14px;border-radius:8px">
+          <b>Your credit has been returned.</b> You have lost nothing — book another
+          class whenever suits you.</p>
+        <p style="font-size:13px;color:#6b5d70">Sorry for the change.</p>`),
+    }),
+  },
+
   signin: {
     en: ({ name, link }) => ({
       subject: 'Your AYBKK sign-in link',

@@ -118,6 +118,21 @@ function mountBkk(app, opts = {}) {
     // Language the student last chose, so email matches the page they bought on.
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS lang TEXT`);
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS reminded_at TIMESTAMPTZ`);
+
+    // The things a shala actually does to a pass, which Rezerv has and this did
+    // not: pause it for an injury, write off a mistake, note why.
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS frozen_from DATE`);
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS frozen_until DATE`);
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS note TEXT`);
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS source TEXT`);
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS cancel_reason TEXT`);
+
+    // findOrCreateMember and login/request both take the first row for an email
+    // with no ORDER BY. Two rows for one address means one of them — and any
+    // pass on it — becomes permanently unreachable. A bulk import is exactly
+    // how that happens, so make it impossible before importing anyone.
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_members_email_unique
+             ON bkk_members (lower(email)) WHERE email IS NOT NULL`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_bookings_slot_date
              ON bkk_bookings (slot_id, class_date) WHERE status = 'booked'`);
     // One seat per student per class — but only among LIVE bookings. A plain
@@ -686,9 +701,12 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
           throw new Error(`limit is ${pass.daily_cap} classes per day`);
       }
 
-      // first booking starts the validity window
+      // First booking starts the validity window — but ONLY for a pass that has
+      // no window yet. A pass imported from Rezerv carries an expiry the student
+      // already paid for; testing valid_from alone would overwrite that expiry
+      // with today + valid_days the moment they booked, silently and invisibly.
       let validFrom = pass.valid_from, validUntil = pass.valid_until;
-      if (!validFrom) {
+      if (!validFrom && !validUntil) {
         validFrom = date;
         const vu = new Date(`${date}T00:00:00${TZ_OFFSET}`);
         vu.setDate(vu.getDate() + pass.valid_days);
@@ -816,6 +834,228 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
           [JSON.stringify(Number(req.body.surchargePct))]);
       }
       res.json({ success: true, surchargePct: await surcharge() });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── running the shala ─────────────────────────────────────────────────────
+  // Everything below exists because Rezerv can do it and this could not, which
+  // meant the only way to close a class, pause a pass for an injury, or find a
+  // student who lost their code was hand-written SQL against production.
+
+  const adminOnly = (req, res) => {
+    if (isAdmin(req)) return false;
+    res.status(401).json({ error: 'bad key' });
+    return true;
+  };
+
+  // Find a student. There was no way to do this at all, so "I lost my code" had
+  // no answer from either side.
+  app.get('/api/bkk/admin/members', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const term = String(req.query.q || '').trim();
+      if (term.length < 2) return res.json({ members: [] });
+      const like = `%${term.toLowerCase()}%`;
+      const r = await q(
+        `SELECT m.*,
+           (SELECT count(*)::int FROM bkk_bookings b
+             WHERE b.member_id = m.id AND b.status='booked') AS booked
+         FROM bkk_members m
+         WHERE lower(m.name) LIKE $1 OR lower(m.email) LIKE $1
+            OR lower(m.code) LIKE $1 OR coalesce(m.phone,'') LIKE $1
+         ORDER BY m.name LIMIT 25`, [like]);
+      const ids = r.rows.map(m => m.id);
+      const passes = ids.length ? (await q(
+        `SELECT p.*, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+         WHERE p.member_id = ANY($1::int[]) ORDER BY p.id DESC`, [ids])).rows : [];
+      res.json({
+        members: r.rows.map(m => ({
+          ...m, passes: passes.filter(p => p.member_id === m.id),
+        })),
+      });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Grant a pass with no order behind it: migrating a student who already paid
+  // Rezerv, or a comp. Deliberately NOT activateOrder(), which would fabricate a
+  // paid order, ping Telegram about money that never arrived, and email the
+  // student a receipt for a payment they did not make.
+  app.post('/api/bkk/admin/passes', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const { memberCode, name, email, phone, productCode,
+              validFrom, validUntil, creditsTotal, creditsUsed, note, source } = req.body || {};
+      const pr = (await q('SELECT * FROM bkk_products WHERE code=$1', [productCode])).rows[0];
+      if (!pr) return res.status(404).json({ error: 'product not found' });
+
+      let m = memberCode
+        ? (await q('SELECT * FROM bkk_members WHERE code=$1', [memberCode])).rows[0]
+        : await findOrCreateMember({ name, email, phone });
+      if (!m) return res.status(404).json({ error: 'member not found' });
+
+      // An imported pass MUST carry both ends of its window. With only one end
+      // set, the first booking would rewrite the expiry the student paid for.
+      const vFrom = validFrom || null;
+      const vUntil = validUntil || null;
+      if ((vFrom && !vUntil) || (!vFrom && vUntil)) {
+        return res.status(400).json({
+          error: 'give both validFrom and validUntil, or neither (neither = starts on first booking)' });
+      }
+
+      const p = (await q(
+        `INSERT INTO bkk_passes
+           (member_id,product_id,order_id,kind,credits_total,credits_used,daily_cap,
+            valid_days,valid_from,valid_until,note,source)
+         VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+        [m.id, pr.id, pr.kind,
+         creditsTotal != null ? creditsTotal : pr.credits,
+         creditsUsed != null ? creditsUsed : 0,
+         pr.daily_cap, pr.valid_days, vFrom, vUntil,
+         note || null, source || 'manual'])).rows[0];
+      console.log(`✓ bkk: pass granted by hand to ${m.code} (${pr.name_en}, source=${source || 'manual'})`);
+      res.json({ success: true, member: { code: m.code, name: m.name }, pass: p });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Pause a pass — the injury case. The clock stops: the expiry moves out by the
+  // frozen days, and the pass cannot book while it is paused.
+  app.post('/api/bkk/admin/passes/:id/freeze', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const days = Math.max(1, Math.min(365, parseInt((req.body || {}).days) || 0));
+      if (!days) return res.status(400).json({ error: 'days required' });
+      const reason = String((req.body || {}).reason || '').slice(0, 200);
+      const r = await q(
+        `UPDATE bkk_passes SET status='frozen',
+           frozen_from = (now() AT TIME ZONE 'Asia/Bangkok')::date,
+           frozen_until = (now() AT TIME ZONE 'Asia/Bangkok')::date + $2::int,
+           valid_until = CASE WHEN valid_until IS NULL THEN NULL ELSE valid_until + $2::int END,
+           note = coalesce(note || ' | ', '') || $3
+         WHERE id=$1 AND status='active' RETURNING *`,
+        [req.params.id, days, `frozen ${days}d: ${reason || 'no reason given'}`]);
+      if (!r.rows.length) return res.status(409).json({ error: 'pass not found, or not active' });
+      res.json({ success: true, pass: r.rows[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Unpause early — and hand back the days that were not used, so a freeze can
+  // never quietly become a gift of extra time.
+  app.post('/api/bkk/admin/passes/:id/unfreeze', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const r = await q(
+        `UPDATE bkk_passes SET status='active',
+           valid_until = CASE
+             WHEN valid_until IS NULL OR frozen_until IS NULL THEN valid_until
+             ELSE valid_until - GREATEST(0,
+               frozen_until - (now() AT TIME ZONE 'Asia/Bangkok')::date) END,
+           frozen_until = (now() AT TIME ZONE 'Asia/Bangkok')::date
+         WHERE id=$1 AND status='frozen' RETURNING *`, [req.params.id]);
+      if (!r.rows.length) return res.status(409).json({ error: 'pass not found, or not frozen' });
+      res.json({ success: true, pass: r.rows[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Write off a pass. Nothing ever wrote bkk_passes.status before this, so a bad
+  // import or a refunded sale could only be undone by hand in the database.
+  app.post('/api/bkk/admin/passes/:id/void', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const reason = String((req.body || {}).reason || '').slice(0, 200);
+      const r = await q(
+        `UPDATE bkk_passes SET status='void',
+           note = coalesce(note || ' | ', '') || $2
+         WHERE id=$1 AND status <> 'void' RETURNING *`,
+        [req.params.id, `voided: ${reason || 'no reason given'}`]);
+      if (!r.rows.length) return res.status(409).json({ error: 'pass not found, or already void' });
+      res.json({ success: true, pass: r.rows[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Goodwill: extra days, extra credits, or both.
+  app.post('/api/bkk/admin/passes/:id/extend', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const days = Math.max(0, Math.min(730, parseInt((req.body || {}).days) || 0));
+      const credits = Math.max(0, Math.min(100, parseInt((req.body || {}).credits) || 0));
+      if (!days && !credits) return res.status(400).json({ error: 'days or credits required' });
+      const r = await q(
+        `UPDATE bkk_passes SET
+           valid_until = CASE WHEN valid_until IS NULL THEN NULL ELSE valid_until + $2::int END,
+           credits_total = CASE WHEN credits_total IS NULL THEN NULL ELSE credits_total + $3::int END,
+           note = coalesce(note || ' | ', '') || $4
+         WHERE id=$1 RETURNING *`,
+        [req.params.id, days, credits,
+         `extended +${days}d +${credits}cr: ${String((req.body || {}).reason || '').slice(0, 120)}`]);
+      if (!r.rows.length) return res.status(404).json({ error: 'pass not found' });
+      res.json({ success: true, pass: r.rows[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Close a class — moon day, Songkran, illness, travel.
+  // Until now the overrides table was read but never written, so a cancelled
+  // class was impossible to express AND every booked student silently lost the
+  // credit they had spent on a class that would not run.
+  app.post('/api/bkk/admin/classes/cancel', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const { slotId, date, reason } = req.body || {};
+    if (!slotId || !date) return res.status(400).json({ error: 'slotId and date required' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query(
+        `INSERT INTO bkk_class_overrides (slot_id,class_date,cancelled,note)
+         VALUES ($1,$2,true,$3)
+         ON CONFLICT (slot_id,class_date) DO UPDATE SET cancelled=true, note=EXCLUDED.note`,
+        [slotId, date, String(reason || '').slice(0, 200) || null]);
+
+      const hit = (await client.query(
+        `UPDATE bkk_bookings SET status='cancelled', cancelled_at=now(),
+           cancel_reason=$3
+         WHERE slot_id=$1 AND class_date=$2 AND status='booked'
+         RETURNING id, member_id, pass_id`,
+        [slotId, date, `class cancelled: ${reason || 'no reason given'}`])).rows;
+
+      // The shala cancelled, not the student — the credit always comes back,
+      // whatever the notice period was.
+      for (const b of hit) {
+        if (b.pass_id) {
+          await client.query(
+            `UPDATE bkk_passes SET credits_used = GREATEST(0, credits_used - 1)
+             WHERE id=$1 AND kind <> 'unlimited'`, [b.pass_id]);
+        }
+      }
+      await client.query('COMMIT');
+
+      const people = hit.length ? (await q(
+        `SELECT m.name, m.email, m.lang, s.title, s.start_time
+         FROM bkk_members m, bkk_class_slots s
+         WHERE m.id = ANY($1::int[]) AND s.id = $2`,
+        [hit.map(b => b.member_id), slotId])).rows : [];
+      for (const p of people) {
+        if (!p.email) continue;
+        const t = render('classCancelled', p.lang || 'en',
+          { name: p.name, className: p.title, date, time: p.start_time, reason });
+        sendMail({ to: p.email, subject: t.subject, html: t.html, text: t.text, tag: 'cancelled' })
+          .catch(e => console.error('[bkk] cancel mail failed:', e.message));
+      }
+      console.log(`✓ bkk: class ${slotId} on ${date} cancelled — ${hit.length} booking(s) released`);
+      res.json({ success: true, released: hit.length, notified: people.filter(p => p.email).length });
+    } catch (e) {
+      await client.query('ROLLBACK'); res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  app.post('/api/bkk/admin/classes/reopen', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const { slotId, date } = req.body || {};
+      if (!slotId || !date) return res.status(400).json({ error: 'slotId and date required' });
+      // Bookings are NOT restored: the students were told it was off, and some
+      // will have made other plans. They rebook, with their credit back.
+      await q(`UPDATE bkk_class_overrides SET cancelled=false
+               WHERE slot_id=$1 AND class_date=$2`, [slotId, date]);
+      res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

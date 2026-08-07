@@ -209,6 +209,86 @@ const ok = (name, cond, extra = '') => {
   ok('requests are throttled per address', signins().length - n2 <= 3,
      `${signins().length - n2} mails sent for 5 requests`);
 
+  console.log('\n— finding a student —');
+  const found = await J('/api/bkk/admin/members?q=' + encodeURIComponent('Test Stu'), { headers: ADMIN });
+  ok('member search by partial name', (found.body.members || []).some(m => m.code === memberCode),
+     JSON.stringify((found.body.members || []).map(m => m.name)));
+  const byMail = await J('/api/bkk/admin/members?q=' + encodeURIComponent('test@example'), { headers: ADMIN });
+  ok('member search by email', (byMail.body.members || []).some(m => m.code === memberCode));
+  ok('search returns their passes', (byMail.body.members || [])[0].passes.length >= 1);
+  const shortQ = await J('/api/bkk/admin/members?q=a', { headers: ADMIN });
+  ok('one-letter search returns nothing', shortQ.body.members.length === 0);
+
+  console.log('\n— granting a pass by hand (migration + comps) —');
+  const grant = await post('/api/bkk/admin/passes', {
+    name: 'Imported From Rezerv', email: 'imported@x.com', productCode: 'unlim3',
+    validFrom: '2026-01-01', validUntil: '2099-01-01', source: 'rezerv', note: 'migration test',
+  }, ADMIN);
+  ok('pass granted without an order', grant.status === 200 && grant.body.pass,
+     JSON.stringify(grant.body).slice(0, 140));
+  ok('the granted pass has no order behind it', grant.body.pass.order_id === null);
+  ok('...and keeps the expiry it was given', String(grant.body.pass.valid_until).startsWith('2099-01-01'),
+     String(grant.body.pass.valid_until));
+  const halfWindow = await post('/api/bkk/admin/passes',
+    { name: 'Half', email: 'half@x.com', productCode: 'unlim3', validFrom: '2026-01-01' }, ADMIN);
+  ok('a half-specified window is refused', halfWindow.status === 400, JSON.stringify(halfWindow.body));
+
+  console.log('\n— an imported expiry survives the first booking —');
+  const impCode = grant.body.member.code;
+  const openCls = (await J('/api/bkk/schedule?days=14')).body.classes.filter(c => c.seatsLeft > 0)[0];
+  await post('/api/bkk/bookings', { memberCode: impCode, slotId: openCls.slotId, date: openCls.date });
+  const impPass = (await J('/api/bkk/me/' + impCode)).body.passes[0];
+  ok('booking did not overwrite the imported expiry',
+     String(impPass.validUntil).startsWith('2099-01-01'), String(impPass.validUntil));
+
+  console.log('\n— freeze, unfreeze, extend, void —');
+  const pid = grant.body.pass.id;
+  const fz = await post(`/api/bkk/admin/passes/${pid}/freeze`, { days: 30, reason: 'broken wrist' }, ADMIN);
+  ok('pass freezes', fz.status === 200 && fz.body.pass.status === 'frozen', JSON.stringify(fz.body).slice(0, 120));
+  ok('freezing pushes the expiry out by the frozen days',
+     String(fz.body.pass.valid_until).startsWith('2099-01-31'), String(fz.body.pass.valid_until));
+  const bookFrozen = await post('/api/bkk/bookings',
+    { memberCode: impCode, slotId: openCls.slotId, date: openCls.date });
+  ok('a frozen pass cannot book', bookFrozen.status === 409, JSON.stringify(bookFrozen.body));
+  const uf = await post(`/api/bkk/admin/passes/${pid}/unfreeze`, {}, ADMIN);
+  ok('pass unfreezes', uf.status === 200 && uf.body.pass.status === 'active');
+  ok('unfreezing early hands back the unused days',
+     String(uf.body.pass.valid_until).startsWith('2099-01-01'), String(uf.body.pass.valid_until));
+  const ext = await post(`/api/bkk/admin/passes/${pid}/extend`, { days: 7, reason: 'goodwill' }, ADMIN);
+  ok('pass extends', ext.status === 200 && String(ext.body.pass.valid_until).startsWith('2099-01-08'),
+     String(ext.body.pass.valid_until));
+  const vd = await post(`/api/bkk/admin/passes/${pid}/void`, { reason: 'test' }, ADMIN);
+  ok('pass voids', vd.status === 200 && vd.body.pass.status === 'void');
+  const bookVoid = await post('/api/bkk/bookings',
+    { memberCode: impCode, slotId: openCls.slotId, date: openCls.date });
+  ok('a void pass cannot book', bookVoid.status === 409, JSON.stringify(bookVoid.body));
+  ok('pass actions need the staff key',
+     (await post(`/api/bkk/admin/passes/${pid}/void`, {}, {})).status === 401);
+
+  console.log('\n— closing a class (moon day) —');
+  const target = (await J('/api/bkk/schedule?days=14')).body.classes.filter(c => c.seatsLeft > 0).pop();
+  const buyer = await post('/api/bkk/admin/passes',
+    { name: 'Moon Day', email: 'moon@x.com', productCode: 'pack10' }, ADMIN);
+  const moonCode = buyer.body.member.code;
+  await post('/api/bkk/bookings', { memberCode: moonCode, slotId: target.slotId, date: target.date });
+  const creditsBefore = (await J('/api/bkk/me/' + moonCode)).body.passes[0].creditsLeft;
+  const closed = await post('/api/bkk/admin/classes/cancel',
+    { slotId: target.slotId, date: target.date, reason: 'Full moon' }, ADMIN);
+  ok('class closes', closed.status === 200 && closed.body.released >= 1, JSON.stringify(closed.body));
+  const creditsAfter = (await J('/api/bkk/me/' + moonCode)).body.passes[0].creditsLeft;
+  ok('the shala cancelling returns the credit', creditsAfter === creditsBefore + 1,
+     `${creditsBefore}→${creditsAfter}`);
+  const gone = (await J('/api/bkk/schedule?days=14')).body.classes
+    .some(c => c.slotId === target.slotId && c.date === target.date);
+  ok('the closed class disappears from the timetable', !gone);
+  ok('students were emailed about it',
+     outbox.filter(m => m.tag === 'cancelled').length >= 1,
+     String(outbox.filter(m => m.tag === 'cancelled').length));
+  await post('/api/bkk/admin/classes/reopen', { slotId: target.slotId, date: target.date }, ADMIN);
+  const back = (await J('/api/bkk/schedule?days=14')).body.classes
+    .some(c => c.slotId === target.slotId && c.date === target.date);
+  ok('reopening puts it back on the timetable', back);
+
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');
   ok('admin requires key', noKey.status === 401);
