@@ -24,6 +24,7 @@
   --c-shape:#6B3FB5;
   --c-thai:#1C6FA8;
   --c-feel:#BE3A6E;
+  --c-trace:#15616D;
   --on-accent:#FFFFFF;
 
   --good:#0B7F63;
@@ -372,6 +373,65 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
   font-family:var(--display);font-weight:800;
   font-size:clamp(34px,9vw,52px);color:var(--accent);line-height:1;
 }
+
+/* ── Tracing ───────────────────────────────────────────────────────── */
+.pickers{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;width:100%}
+.pick{
+  flex:1 1 auto;min-width:132px;
+  border-radius:22px;background:var(--card-2);border:3px solid var(--line);
+  padding:16px 18px;box-shadow:var(--lift-sm);
+  font-family:var(--school);font-size:30px;color:var(--ink);line-height:1.1;
+  transition:transform .12s,box-shadow .12s,border-color .2s;
+}
+.pick:active{transform:translateY(4px);box-shadow:none}
+.pick .who{
+  display:block;font-family:var(--ui);font-size:12.5px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px;
+}
+.pick .got{position:static;display:inline-block;background:none;color:var(--accent);font-size:14px;padding:0}
+
+.word{
+  display:flex;gap:3px;justify-content:center;flex-wrap:wrap;
+  font-family:var(--school);font-size:clamp(26px,7vw,38px);line-height:1.2;
+}
+.wl{color:var(--line);padding:0 3px;border-bottom:5px solid transparent}
+.wl.done{color:var(--accent)}
+.wl.now{color:var(--ink);border-bottom-color:var(--accent)}
+.count-of{
+  font-family:var(--display);font-weight:700;font-size:15px;color:var(--ink-soft);margin:0;
+}
+
+.tracepad{
+  position:relative;touch-action:none;cursor:crosshair;
+  display:flex;justify-content:center;width:100%;
+  -webkit-user-select:none;user-select:none;
+}
+.tracer{height:clamp(200px,34vh,380px);width:100%;display:block}
+.tracepad canvas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+/* A pale "road" carries the letter shape so it still reads as a letter, and a
+   dotted centreline on top says trace-along-here. Dots alone were unreadable. */
+.g-road{
+  fill:none;stroke:var(--line);stroke-width:17;
+  stroke-linecap:round;stroke-linejoin:round;opacity:.55;
+}
+.g-road.now{stroke:color-mix(in srgb,var(--accent) 30%,var(--line));opacity:1}
+.g-road.done{stroke:var(--accent);opacity:1}
+.g-stroke{
+  fill:none;stroke:var(--ink-soft);stroke-width:2.6;
+  stroke-linecap:round;stroke-dasharray:2 7;opacity:.45;
+}
+.g-stroke.now{stroke:var(--accent);opacity:.95}
+.g-stroke.done{opacity:0}
+.start-dot{
+  fill:var(--good);stroke:var(--card);stroke-width:3;
+  transform-box:fill-box;transform-origin:50% 50%;
+  animation:ping 1.5s ease-in-out infinite;
+}
+@keyframes ping{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.75}}
+.start-arrow{fill:var(--good);stroke:var(--card);stroke-width:1.6}
+.demo-dot{fill:var(--accent);opacity:0}
+.demo-dot.run{opacity:1}
+@media (prefers-reduced-motion:reduce){.start-dot{animation:none}}
 
 /* ── Celebration ───────────────────────────────────────────────────── */
 .curtain{
@@ -914,6 +974,57 @@ function faceSVG(key){
 
 var CRITTERS = ['🍌','🥭','⭐','🍎','🐟','🌸','🦋','🐞','🍒','🥥'];
 
+/* Tracing glyphs are hand-authored CENTRELINES, not font outlines — a font
+   gives you the edge of a letter, and tracing an edge teaches the wrong
+   motion. Each entry lists strokes in the order a child is taught to make
+   them, each starting where the pencil should land. Box is 100 x 140:
+   cap top 20, x-height 52, baseline 110. */
+var GLYPH = {
+  'B':['M32 20 L32 110',
+       'M32 20 L58 20 C76 20 76 63 58 63 L32 63',
+       'M32 63 L62 63 C82 63 82 110 62 110 L32 110'],
+  'J':['M64 20 L64 88 C64 108 40 114 30 98'],
+  'o':['M50 52 C33 52 24 66 24 81 C24 96 33 110 50 110 C67 110 76 96 76 81 C76 66 67 52 50 52'],
+  'n':['M30 52 L30 110',
+       'M30 68 C30 56 42 52 52 52 C64 52 72 61 72 72 L72 110'],
+  'e':['M26 84 L74 84 C74 62 58 52 44 56 C28 61 22 78 26 92 C30 106 46 114 62 108 C68 106 72 102 75 97'],
+  'a':['M72 64 C66 54 50 50 38 56 C24 63 20 84 28 97 C36 110 58 112 68 102',
+       'M72 52 L72 110'],
+  'i':['M50 52 L50 110',
+       'M50 33 L50 34'],
+  'c':['M74 64 C66 53 46 49 34 58 C20 68 20 94 34 104 C46 113 66 109 74 98'],
+  'h':['M30 20 L30 110',
+       'M30 68 C30 56 42 52 52 52 C64 52 72 61 72 72 L72 110'],
+  'u':['M28 52 L28 90 C28 104 40 111 52 110 C62 109 70 102 72 94',
+       'M72 52 L72 110'],
+  'm':['M22 52 L22 110',
+       'M22 68 C22 56 31 52 39 52 C49 52 56 60 56 70 L56 110',
+       'M56 68 C56 56 65 52 73 52 C83 52 90 60 90 70 L90 110'],
+  's':['M72 62 C68 52 44 48 34 56 C25 63 28 74 42 79 C58 85 74 87 72 99 C70 112 42 114 28 104'],
+  '0':['M50 22 C33 22 26 44 26 66 C26 88 33 110 50 110 C67 110 74 88 74 66 C74 44 67 22 50 22'],
+  '1':['M32 40 L52 22 L52 110'],
+  '2':['M28 42 C28 24 48 18 60 24 C74 31 74 48 62 60 C48 74 32 90 26 110 L76 110'],
+  '3':['M28 36 C32 22 62 18 70 30 C77 41 68 58 48 60 C68 60 82 70 78 86 C74 104 40 112 26 98'],
+  '4':['M62 22 L24 80 L80 80',
+       'M62 22 L62 110'],
+  '5':['M34 22 L30 58 C46 50 72 56 74 80 C76 102 46 116 28 102',
+       'M34 22 L72 22'],
+  '6':['M68 24 C42 32 26 56 26 80 C26 98 38 110 52 110 C68 110 76 96 74 84 C71 68 50 62 38 74'],
+  '7':['M26 24 L76 24 L44 110'],
+  '8':['M50 62 C34 62 28 50 30 40 C33 26 67 26 70 40 C72 50 66 62 50 62 C30 62 24 78 26 92 C29 108 71 108 74 92 C76 78 70 62 50 62'],
+  '9':['M72 60 C64 70 44 74 34 64 C24 54 26 34 42 26 C58 18 74 28 74 52 C74 78 66 100 40 110']
+};
+
+var NUMS = [];
+for (var _n = 1; _n <= 20; _n++) NUMS.push(String(_n));
+var TRACE_SETS = [
+  { id:'boone',   label:'Boone',   kind:'name',   items:'Boone'.split('') },
+  { id:'jai',     label:'Jai',     kind:'name',   items:'Jai'.split('') },
+  { id:'boonchu', label:'Boonchu', kind:'name',   items:'Boonchu'.split('') },
+  { id:'jamsai',  label:'Jamsai',  kind:'name',   items:'Jamsai'.split('') },
+  { id:'nums',    label:'1 → 20',  kind:'number', items:NUMS }
+];
+
 var CODE_LEVELS = [
   { start:[0,3], goal:[3,3], fire:[] },
   { start:[0,3], goal:[0,0], fire:[] },
@@ -925,6 +1036,8 @@ var CODE_LEVELS = [
 
 /* ═══ Activity registry ═══════════════════════════════════════════ */
 var ACTS = [
+  { id:'trace',  title:'Trace It',       sub:'Your name & 1–20',       mascot:'spider',   color:'var(--c-trace)',
+    area:'English & Mathematics — letter and numeral formation', note:'Traces Boone, Jai, Boonchu, Jamsai and the numbers 1 to 20. The guides are hand-drawn centrelines in taught stroke order, with a green start dot and a "Show me" demo, so he practises the right motion rather than just the right shape. A scribble across a letter will not complete it.' },
   { id:'sounds', title:'Silly Sounds',   sub:'Letters & first sounds', mascot:'cow',      color:'var(--c-sounds)',
     area:'English — InitiaLit F phonics', note:'Hears a letter sound, finds a word that starts with it. Lower case first, exactly the way school introduces it.' },
   { id:'count',  title:'Count with Chang', sub:'Touch, count, choose', mascot:'elephant', color:'var(--c-count)',
@@ -997,7 +1110,7 @@ var G = null;
 function start(id){
   var a = act(id);
   GEN++;
-  G = { a:a, round:0, correct:0 };
+  G = { a:a, round:0, correct:0, set:null, gi:0 };
   app.innerHTML = barHTML(a.title, true) +
     '<div class="play" style="--accent:' + a.color + '">' +
       '<div class="dots" id="dots"></div>' +
@@ -1042,7 +1155,7 @@ function next(){
   GEN++;
   G.round++;
   dots();
-  ({ sounds:roundSounds, count:roundCount, code:roundCode,
+  ({ trace:roundTrace, sounds:roundSounds, count:roundCount, code:roundCode,
      shape:roundShape, thai:roundThai, feel:roundFeel })[G.a.id]();
 }
 
@@ -1403,6 +1516,241 @@ function roundFeel(){
       el.classList.add('no');
       scored(false, 'That one looks ' + k + '. Look again.');
     }
+  });
+}
+
+/* ═══ 7 · Trace It ════════════════════════════════════════════════ */
+function roundTrace(){
+  if (!G.set) return traceMenu(false);
+  if (G.gi >= G.set.items.length){ var done = G.set; G.set = null; return traceMenu(done); }
+  traceItem();
+}
+
+function traceMenu(finished){
+  stage().innerHTML = lay(
+    finished ? 'You wrote the whole thing!' : 'What shall we write?',
+    (finished ? '<div class="word">' + finished.label.split('').map(function(c){
+        return '<span class="wl done">' + c + '</span>'; }).join('') + '</div>' : '') +
+    '<p class="ask">Pick one to trace.</p>' +
+    '<div class="pickers">' + TRACE_SETS.map(function(t){
+      return '<button class="pick" data-set="' + t.id + '">' +
+        '<span class="who">' + (t.kind === 'name' ? 'name' : 'numbers') + '</span>' + t.label +
+        '</button>';
+    }).join('') + '</div>'
+  );
+  later(340, function(){ say(finished ? 'You wrote the whole thing!' : 'What shall we write?'); });
+  on(stage(), '[data-set]', function(el){
+    var id = el.getAttribute('data-set');
+    for (var i=0;i<TRACE_SETS.length;i++) if (TRACE_SETS[i].id === id) G.set = TRACE_SETS[i];
+    G.gi = 0; sfx('tap'); next();
+  });
+}
+
+function traceItem(){
+  var set = G.set, item = set.items[G.gi], chars = item.split('');
+  var boxW = 100 * chars.length;
+
+  var roads = '', dots = '';
+  chars.forEach(function(ch, k){
+    var open = '<g transform="translate(' + (k * 100) + ',0)">', close = '</g>';
+    roads += open + GLYPH[ch].map(function(d){ return '<path class="g-road" d="' + d + '"/>'; }).join('') + close;
+    dots  += open + GLYPH[ch].map(function(d){ return '<path class="g-stroke" d="' + d + '"/>'; }).join('') + close;
+  });
+  var guides = roads + dots;
+
+  var head = set.kind === 'name'
+    ? '<div class="word">' + set.items.map(function(c, i){
+        return '<span class="wl ' + (i < G.gi ? 'done' : (i === G.gi ? 'now' : '')) + '">' + c + '</span>';
+      }).join('') + '</div>'
+    : '<p class="count-of">Number ' + item + ' — ' + (G.gi + 1) + ' of ' + set.items.length + '</p>';
+
+  stage().innerHTML = lay(
+    'Follow my silk with your finger.',
+    head +
+    '<div class="tracepad" id="pad">' +
+      '<svg class="tracer" id="tracer" viewBox="0 0 ' + boxW + ' 140" aria-label="trace ' + item + '">' +
+        guides +
+        '<circle class="start-dot" id="sdot" r="9" cx="-99" cy="-99"/>' +
+        '<polygon class="start-arrow" id="sarrow" points="-1,-6 11,0 -1,6" opacity="0"/>' +
+        '<circle class="demo-dot" id="ddot" r="11" cx="-99" cy="-99"/>' +
+      '</svg>' +
+      '<canvas id="ink"></canvas>' +
+    '</div>',
+    '<div class="row-keys">' +
+      '<button class="btn ghost" data-demo style="width:auto">👆 Show me</button>' +
+      '<button class="btn ghost" data-rub style="width:auto">↺ Rub out</button>' +
+    '</div>' +
+    '<p class="hint" id="hint"></p>'
+  );
+
+  var svg = document.getElementById('tracer');
+  var pad = document.getElementById('pad');
+  var ink = document.getElementById('ink');
+  var sdot = document.getElementById('sdot');
+  var sarrow = document.getElementById('sarrow');
+  var ddot = document.getElementById('ddot');
+  var ctx2 = ink.getContext('2d');
+
+  var roadEls = svg.querySelectorAll('.g-road');
+  var strokes = Array.prototype.map.call(svg.querySelectorAll('.g-stroke'), function(el, i){
+    var g = el.parentNode.getAttribute('transform') || '';
+    var m = /translate\(([-\d.]+)/.exec(g);
+    return { el:el, road:roadEls[i], i:i, ox: m ? parseFloat(m[1]) : 0,
+             len: el.getTotalLength(), pts:[], head:0, done:false };
+  });
+  var at = 0, tol = 26, drawing = false, finished = false;
+
+  function sizeInk(){
+    var r = svg.getBoundingClientRect();
+    ink.width = Math.round(r.width * devicePixelRatio);
+    ink.height = Math.round(r.height * devicePixelRatio);
+    ctx2.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    ctx2.lineCap = 'round'; ctx2.lineJoin = 'round';
+    ctx2.strokeStyle = (getComputedStyle(pad).getPropertyValue('--accent') || '').trim() || '#15616D';
+    // Scale the catch radius (and the child's ink) to how big the glyph
+    // actually rendered, so the game is equally forgiving on phone and tablet.
+    tol = Math.max(20, Math.min(48, 15 * (r.height / 140)));
+    ctx2.lineWidth = tol * 0.72;
+  }
+  function resample(){
+    strokes.forEach(function(s){
+      var ctm = s.el.getScreenCTM();
+      if (!ctm) return;
+      var n = Math.max(3, Math.round(s.len / 3.5));
+      s.pts = [];
+      for (var i=0;i<=n;i++){
+        var p = s.el.getPointAtLength(s.len * i / n);
+        var q = new DOMPoint(p.x, p.y).matrixTransform(ctm);
+        s.pts.push({ x:q.x, y:q.y });
+      }
+    });
+  }
+  function layout(){
+    if (!document.getElementById('tracer')){ removeEventListener('resize', layout); return; }
+    sizeInk(); resample(); markCurrent();
+  }
+
+  function markCurrent(){
+    strokes.forEach(function(s, i){
+      var now = !s.done && i === at;
+      [s.el, s.road].forEach(function(e){
+        if (!e) return;
+        e.classList.toggle('done', s.done);
+        e.classList.toggle('now', now);
+      });
+    });
+    var s = strokes[at];
+    if (!s || finished){ sdot.setAttribute('cx', -99); sarrow.setAttribute('opacity', 0); return; }
+    var p0 = s.el.getPointAtLength(0);
+    sdot.setAttribute('cx', p0.x + s.ox); sdot.setAttribute('cy', p0.y);
+    if (s.len > 8){
+      var p1 = s.el.getPointAtLength(Math.min(s.len, 18));
+      var a = Math.atan2(p1.y - p0.y, p1.x - p0.x);
+      sarrow.setAttribute('opacity', 1);
+      sarrow.setAttribute('transform',
+        'translate(' + (p0.x + s.ox + Math.cos(a) * 27) + ',' + (p0.y + Math.sin(a) * 27) + ') ' +
+        'rotate(' + (a * 180 / Math.PI) + ')');
+    } else {
+      sarrow.setAttribute('opacity', 0);
+    }
+  }
+
+  function clearInk(){ ctx2.clearRect(0, 0, ink.width, ink.height); }
+
+  function finishStroke(){
+    var s = strokes[at];
+    s.done = true; s.head = s.pts.length;
+    clearInk(); sfx('step');
+    at++;
+    while (at < strokes.length && strokes[at].done) at++;
+    if (at >= strokes.length) return finishItem();
+    markCurrent();
+  }
+
+  function finishItem(){
+    finished = true; markCurrent();
+    G.gi++;
+    var what = set.kind === 'name'
+      ? (G.gi >= set.items.length ? 'You finished ' + set.label + '!' : item)
+      : 'Number ' + item;
+    scored(true, what);
+  }
+
+  /* Advance only from at-or-just-ahead of where the pencil should be, so a
+     scribble across the letter cannot complete it. */
+  function feed(x, y){
+    var s = strokes[at];
+    if (!s || finished || !s.pts.length) return;
+    var top = Math.min(s.pts.length, s.head + 16);
+    for (var i = s.head; i < top; i++){
+      var p = s.pts[i];
+      if (Math.hypot(p.x - x, p.y - y) <= tol) s.head = i + 1;
+    }
+    if (s.head >= s.pts.length - 1) finishStroke();
+  }
+
+  function local(ev){
+    var r = svg.getBoundingClientRect();
+    return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+  }
+  pad.addEventListener('pointerdown', function(ev){
+    if (finished) return;
+    var s = strokes[at]; if (!s) return;
+    ctx(); // unlock audio on first touch
+    if (s.len <= 8){ // the dot on an i — a tap, not a drag
+      var d = s.pts[0];
+      if (d && Math.hypot(d.x - ev.clientX, d.y - ev.clientY) <= tol * 1.6) finishStroke();
+      return;
+    }
+    drawing = true;
+    try { pad.setPointerCapture(ev.pointerId); } catch(e){}
+    var l = local(ev);
+    ctx2.beginPath(); ctx2.moveTo(l.x, l.y);
+    feed(ev.clientX, ev.clientY);
+    ev.preventDefault();
+  });
+  pad.addEventListener('pointermove', function(ev){
+    if (!drawing || finished) return;
+    var l = local(ev);
+    ctx2.lineTo(l.x, l.y); ctx2.stroke();
+    ctx2.beginPath(); ctx2.moveTo(l.x, l.y);
+    feed(ev.clientX, ev.clientY);
+    ev.preventDefault();
+  });
+  function lift(){
+    if (!drawing) return;
+    drawing = false;
+    var s = strokes[at];
+    var hint = document.getElementById('hint');
+    if (s && !s.done && s.head === 0 && hint) hint.textContent = 'Start on the green dot 🟢';
+  }
+  pad.addEventListener('pointerup', lift);
+  pad.addEventListener('pointercancel', lift);
+
+  on(stage(), '[data-rub]', function(){
+    clearInk(); sfx('tap');
+    var s = strokes[at]; if (s) s.head = 0;
+    var hint = document.getElementById('hint'); if (hint) hint.textContent = '';
+  });
+  on(stage(), '[data-demo]', function(){
+    var s = strokes[at]; if (!s || finished) return;
+    sfx('tap');
+    var t0 = performance.now(), dur = reduce ? 400 : 1400;
+    ddot.classList.add('run');
+    (function frame(now){
+      if (!document.getElementById('ddot')) return;
+      var k = Math.min(1, (now - t0) / dur);
+      var p = s.el.getPointAtLength(s.len * k);
+      ddot.setAttribute('cx', p.x + s.ox); ddot.setAttribute('cy', p.y);
+      if (k < 1) requestAnimationFrame(frame);
+      else { ddot.classList.remove('run'); ddot.setAttribute('cx', -99); }
+    })(performance.now());
+  });
+
+  requestAnimationFrame(layout);
+  addEventListener('resize', layout);
+  later(360, function(){
+    say(set.kind === 'name' ? 'Trace the letter ' + item : 'Trace number ' + item);
   });
 }
 
