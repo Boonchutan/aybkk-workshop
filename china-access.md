@@ -1,6 +1,6 @@
 # 🇨🇳 中国学员访问链接 / China Student Access
 
-> 最后更新 / Last updated: 2026-08-12 17:45 UTC
+> 最后更新 / Last updated: 2026-08-12 18:41 UTC
 
 ## 今日链接 / Today's Link
 
