@@ -25,6 +25,10 @@
   --c-thai:#1C6FA8;
   --c-feel:#BE3A6E;
   --c-trace:#15616D;
+  --c-add:#3D4E8F;
+  --c-tall:#9A5B18;
+  --c-word:#4F6B21;
+  --c-memory:#5B4636;
   --on-accent:#FFFFFF;
 
   --good:#0B7F63;
@@ -433,6 +437,104 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .demo-dot.run{opacity:1}
 @media (prefers-reduced-motion:reduce){.start-dot{animation:none}}
 
+/* ── Word builder ──────────────────────────────────────────────────── */
+.spell{display:flex;gap:8px;justify-content:center;align-items:center}
+.slot-l{
+  font-family:var(--school);font-size:clamp(48px,13vw,80px);line-height:1;
+  min-width:.7em;text-align:center;color:var(--ink);
+}
+.slot-l.gap{
+  color:var(--accent);border-bottom:6px solid var(--accent);
+  min-width:.85em;
+}
+.slot-l.gap.empty::after{content:"?";opacity:.4}
+.big-pic{font-size:clamp(64px,17vw,104px);line-height:1}
+
+/* ── Sums ──────────────────────────────────────────────────────────── */
+.sum{
+  display:flex;gap:clamp(8px,3vw,20px);align-items:center;justify-content:center;
+  flex-wrap:wrap;font-family:var(--school);
+  font-size:clamp(40px,11vw,68px);line-height:1;color:var(--ink);
+}
+.sum .op{color:var(--accent);font-family:var(--display);font-weight:800}
+.heap{
+  display:flex;flex-wrap:wrap;gap:3px;justify-content:center;
+  max-width:clamp(96px,26vw,150px);font-size:clamp(22px,6vw,32px);line-height:1.05;
+}
+.heap .gone{opacity:.28;position:relative}
+.heap .gone::after{
+  content:"";position:absolute;left:-2px;right:-2px;top:50%;
+  border-top:3px solid var(--c-code);transform:rotate(-14deg);
+}
+
+/* ── Tall & small ──────────────────────────────────────────────────── */
+.grove{
+  display:flex;gap:clamp(8px,3vw,20px);align-items:flex-end;justify-content:center;
+  width:100%;min-height:clamp(150px,30vh,240px);
+}
+.tree{
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  flex:0 0 auto;position:relative;padding:0 2px;
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1),opacity .2s;
+}
+.tree:active{transform:translateY(4px)}
+.tree svg{display:block;width:clamp(44px,12vw,68px);height:auto}
+.tree .rank{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;
+  font-family:var(--school);font-size:17px;display:grid;place-items:center;
+}
+.tree.picked{opacity:.55}
+.tree.yes svg{filter:drop-shadow(0 0 0 var(--good))}
+.tree.no{animation:shake .4s ease-in-out}
+
+/* ── Memory ────────────────────────────────────────────────────────── */
+.deck{display:grid;gap:clamp(6px,1.8vw,11px);justify-content:center;width:100%}
+.card{
+  aspect-ratio:1;border-radius:16px;position:relative;
+  background:none;perspective:600px;min-width:0;
+}
+.card .inner{
+  position:absolute;inset:0;border-radius:16px;
+  transition:transform .34s cubic-bezier(.4,1.3,.5,1);
+  transform-style:preserve-3d;
+}
+.card.up .inner{transform:rotateY(180deg)}
+.card .side{
+  position:absolute;inset:0;border-radius:16px;
+  display:grid;place-items:center;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  font-size:clamp(26px,7vw,42px);
+}
+.card .back{background:var(--accent);box-shadow:var(--lift-sm)}
+.card .back svg{width:58%;height:58%;opacity:.5}
+/* Sixteen swaying armadillos is a lot of animation for one board. */
+.card .back .mx-all{animation:none}
+.card .front{
+  background:var(--card-2);border:3px solid var(--line);
+  transform:rotateY(180deg);
+}
+.card.made .front{border-color:var(--good);background:color-mix(in srgb,var(--good) 15%,var(--card-2))}
+.card.made{animation:bump .5s cubic-bezier(.34,1.56,.64,1)}
+@media (prefers-reduced-motion:reduce){
+  .card .inner{transition:none}
+  .card.up .inner{transform:none}
+  .card .front{transform:none}
+  .card.up .back{display:none}
+}
+
+/* ── Level chip ────────────────────────────────────────────────────── */
+.tile .lv{
+  position:absolute;top:12px;right:12px;
+  background:rgba(255,255,255,.22);border-radius:999px;
+  padding:3px 9px;font-size:12.5px;font-weight:800;letter-spacing:.04em;
+}
+.lv-up{
+  font-family:var(--display);font-weight:800;font-size:15px;
+  color:var(--pill-ink);background:var(--pill);
+  border-radius:999px;padding:6px 14px;
+}
+
 /* ── Celebration ───────────────────────────────────────────────────── */
 .curtain{
   position:fixed;inset:0;z-index:50;
@@ -585,6 +687,12 @@ var app = document.getElementById('app');
 var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ═══ Little helpers ══════════════════════════════════════════════ */
+/* Difficulty follows the stars already earned in THAT game, and it persists.
+   Ten stars buys a level; five levels in, every game is running its hardest
+   settings. This is what stops it going stale after one sitting. */
+function lvl(id){ return Math.min(4, Math.floor((S.got[id] || 0) / 10)); }
+function nextLevelIn(id){ var n = (S.got[id] || 0) % 10; return lvl(id) >= 4 ? 0 : 10 - n; }
+
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function shuffle(a){ a = a.slice(); for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 function sample(a,n,skip){
@@ -828,6 +936,175 @@ SVG.spider =
 '<path d="M86 98l14-6 14 6-14 5z" fill="#F5C02B"/>' +
 '</g></g></svg>';
 
+SVG.rhino =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Rocky the rhino"><g class="mx-all">' +
+'<path d="M154 142c16 6 18 18 11 28" stroke="#7E7E8C" stroke-width="6" fill="none" stroke-linecap="round"/>' +
+'<rect x="60" y="152" width="23" height="43" rx="11" fill="#8E8E9C"/>' +
+'<rect x="117" y="152" width="23" height="43" rx="11" fill="#8E8E9C"/>' +
+'<rect x="60" y="183" width="23" height="13" rx="6" fill="#65656F"/>' +
+'<rect x="117" y="183" width="23" height="13" rx="6" fill="#65656F"/>' +
+'<ellipse cx="100" cy="143" rx="55" ry="36" fill="#9A9AA8"/>' +
+'<path d="M56 130q44 13 88 0" stroke="#83838F" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+'<path d="M58 156q42 13 84 0" stroke="#83838F" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+'<ellipse class="ear-l" cx="66" cy="50" rx="9" ry="14" fill="#8E8E9C" stroke="#7A7A88" stroke-width="2"/>' +
+'<ellipse class="ear-r" cx="134" cy="50" rx="9" ry="14" fill="#8E8E9C" stroke="#7A7A88" stroke-width="2"/>' +
+'<ellipse cx="100" cy="84" rx="46" ry="40" fill="#A6A6B3"/>' +
+'<g class="eyes">' +
+'<ellipse cx="78" cy="74" rx="7.5" ry="8.5" fill="#fff" stroke="#5A5A66" stroke-width="2.3"/>' +
+'<ellipse cx="122" cy="74" rx="7.5" ry="8.5" fill="#fff" stroke="#5A5A66" stroke-width="2.3"/>' +
+'<circle cx="79" cy="76" r="3.8" fill="#33323C"/><circle cx="123" cy="76" r="3.8" fill="#33323C"/>' +
+'<circle cx="81.5" cy="73" r="1.4" fill="#fff"/><circle cx="125.5" cy="73" r="1.4" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="110" rx="31" ry="19" fill="#8E8E9C"/>' +
+'<ellipse cx="89" cy="113" rx="4" ry="5" fill="#5F5F6B"/><ellipse cx="111" cy="113" rx="4" ry="5" fill="#5F5F6B"/>' +
+'<path d="M100 104C92 86 94 66 100 56c6 10 8 30 0 48z" fill="#EFE6CE" stroke="#CCC0A2" stroke-width="2.2"/>' +
+'<path d="M100 62c-4-8-3-15 0-19 3 4 4 11 0 19z" fill="#EFE6CE" stroke="#CCC0A2" stroke-width="2"/>' +
+'</g></svg>';
+
+SVG.giraffe =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Gigi the giraffe"><g class="mx-all">' +
+'<path d="M136 162c15 7 15 19 9 27" stroke="#C08432" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+'<rect x="72" y="160" width="16" height="38" rx="8" fill="#D9A253"/>' +
+'<rect x="112" y="160" width="16" height="38" rx="8" fill="#D9A253"/>' +
+'<rect x="72" y="188" width="16" height="11" rx="5" fill="#7A5A2E"/>' +
+'<rect x="112" y="188" width="16" height="11" rx="5" fill="#7A5A2E"/>' +
+'<ellipse cx="100" cy="156" rx="40" ry="30" fill="#E5B267"/>' +
+'<ellipse cx="80" cy="146" rx="9" ry="8" fill="#A9702A"/>' +
+'<ellipse cx="114" cy="152" rx="10" ry="9" fill="#A9702A"/>' +
+'<ellipse cx="96" cy="170" rx="9" ry="7" fill="#A9702A"/>' +
+'<rect x="84" y="62" width="31" height="76" rx="15" fill="#E5B267"/>' +
+'<ellipse cx="92" cy="80" rx="7" ry="6" fill="#A9702A"/>' +
+'<ellipse cx="108" cy="98" rx="7" ry="6" fill="#A9702A"/>' +
+'<ellipse cx="91" cy="116" rx="7" ry="6" fill="#A9702A"/>' +
+'<path d="M86 30v10" stroke="#C08432" stroke-width="5" stroke-linecap="round"/>' +
+'<path d="M114 30v10" stroke="#C08432" stroke-width="5" stroke-linecap="round"/>' +
+'<circle cx="86" cy="28" r="6" fill="#7A5A2E"/><circle cx="114" cy="28" r="6" fill="#7A5A2E"/>' +
+'<ellipse class="ear-l" cx="66" cy="46" rx="14" ry="8" fill="#EFC07A" stroke="#C08432" stroke-width="2"/>' +
+'<ellipse class="ear-r" cx="134" cy="46" rx="14" ry="8" fill="#EFC07A" stroke="#C08432" stroke-width="2"/>' +
+'<ellipse cx="100" cy="52" rx="28" ry="25" fill="#EFC07A"/>' +
+'<g class="eyes">' +
+'<ellipse cx="86" cy="46" rx="8" ry="9" fill="#fff" stroke="#8A6528" stroke-width="2.3"/>' +
+'<ellipse cx="114" cy="46" rx="8" ry="9" fill="#fff" stroke="#8A6528" stroke-width="2.3"/>' +
+'<circle cx="86" cy="48" r="4.2" fill="#33302A"/><circle cx="114" cy="48" r="4.2" fill="#33302A"/>' +
+'<circle cx="88.5" cy="45" r="1.5" fill="#fff"/><circle cx="116.5" cy="45" r="1.5" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="68" rx="17" ry="12" fill="#F7DFB4"/>' +
+'<ellipse cx="94" cy="65" rx="3" ry="4" fill="#B98A44"/><ellipse cx="106" cy="65" rx="3" ry="4" fill="#B98A44"/>' +
+'<path d="M92 74q8 6 16 0" stroke="#B98A44" stroke-width="2.8" fill="none" stroke-linecap="round"/>' +
+'</g></svg>';
+
+SVG.buffalo =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Bo the buffalo"><g class="mx-all">' +
+'<path d="M152 146c15 6 17 18 10 27" stroke="#4C5860" stroke-width="6" fill="none" stroke-linecap="round"/>' +
+'<rect x="62" y="154" width="22" height="42" rx="10" fill="#5E6B72"/>' +
+'<rect x="116" y="154" width="22" height="42" rx="10" fill="#5E6B72"/>' +
+'<rect x="62" y="184" width="22" height="13" rx="6" fill="#3A444A"/>' +
+'<rect x="116" y="184" width="22" height="13" rx="6" fill="#3A444A"/>' +
+'<ellipse cx="100" cy="145" rx="54" ry="35" fill="#6A7880"/>' +
+'<path d="M64 58C36 50 22 30 28 12" stroke="#E0DAC6" stroke-width="12" fill="none" stroke-linecap="round"/>' +
+'<path d="M136 58c28-8 42-28 36-46" stroke="#E0DAC6" stroke-width="12" fill="none" stroke-linecap="round"/>' +
+'<ellipse class="ear-l" cx="58" cy="80" rx="15" ry="9" fill="#5E6B72"/>' +
+'<ellipse class="ear-r" cx="142" cy="80" rx="15" ry="9" fill="#5E6B72"/>' +
+'<ellipse cx="100" cy="84" rx="45" ry="40" fill="#75838B"/>' +
+'<path d="M78 52q22-14 44 0-10 8-22 8t-22-8z" fill="#4C5860"/>' +
+'<g class="eyes">' +
+'<ellipse cx="80" cy="80" rx="7.5" ry="8.5" fill="#fff" stroke="#3A444A" stroke-width="2.3"/>' +
+'<ellipse cx="120" cy="80" rx="7.5" ry="8.5" fill="#fff" stroke="#3A444A" stroke-width="2.3"/>' +
+'<circle cx="81" cy="82" r="3.8" fill="#22282C"/><circle cx="121" cy="82" r="3.8" fill="#22282C"/>' +
+'<circle cx="83.5" cy="79" r="1.4" fill="#fff"/><circle cx="123.5" cy="79" r="1.4" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="108" rx="27" ry="18" fill="#8B979E"/>' +
+'<ellipse cx="90" cy="105" rx="4" ry="5.2" fill="#4C5860"/><ellipse cx="110" cy="105" rx="4" ry="5.2" fill="#4C5860"/>' +
+'<path d="M88 116q12 7 24 0" stroke="#4C5860" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+'</g></svg>';
+
+SVG.armadillo =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Ari the armadillo"><g class="mx-all">' +
+'<path d="M158 148c14 8 16 20 10 28" stroke="#9A7C5E" stroke-width="7" fill="none" stroke-linecap="round"/>' +
+'<path d="M160 150l6-4 5 5-6 4z" fill="#B99A78"/>' +
+'<rect x="66" y="154" width="17" height="40" rx="8" fill="#9A7C5E"/>' +
+'<rect x="112" y="154" width="17" height="40" rx="8" fill="#9A7C5E"/>' +
+'<path d="M66 190h17l-3 7h-11z" fill="#6E573C"/><path d="M112 190h17l-3 7h-11z" fill="#6E573C"/>' +
+'<path d="M42 158C42 108 68 78 106 78s54 30 54 80z" fill="#B99A78"/>' +
+'<path d="M60 158c0-38 18-60 46-60s48 22 48 60" stroke="#8E7052" stroke-width="3.5" fill="none"/>' +
+'<path d="M76 158c0-28 12-44 30-44s32 16 32 44" stroke="#8E7052" stroke-width="3.5" fill="none"/>' +
+'<path d="M92 158c0-16 6-26 14-26s16 10 16 26" stroke="#8E7052" stroke-width="3.5" fill="none"/>' +
+'<ellipse class="ear-l" cx="62" cy="70" rx="8" ry="12" fill="#C7A987" stroke="#9A7C5E" stroke-width="2"/>' +
+'<ellipse class="ear-r" cx="106" cy="60" rx="8" ry="12" fill="#C7A987" stroke="#9A7C5E" stroke-width="2"/>' +
+'<ellipse cx="82" cy="88" rx="34" ry="30" fill="#C7A987"/>' +
+'<path d="M52 92q-18 4-20 14 2 10 20 12z" fill="#D6BC9E"/>' +
+'<ellipse cx="35" cy="105" rx="7" ry="6" fill="#8E7052"/>' +
+'<circle cx="32" cy="103" r="1.8" fill="#5E4A33"/><circle cx="38" cy="103" r="1.8" fill="#5E4A33"/>' +
+'<g class="eyes">' +
+'<ellipse cx="66" cy="84" rx="8" ry="9" fill="#fff" stroke="#7A6146" stroke-width="2.3"/>' +
+'<ellipse cx="94" cy="82" rx="8" ry="9" fill="#fff" stroke="#7A6146" stroke-width="2.3"/>' +
+'<circle cx="66" cy="86" r="4" fill="#33302A"/><circle cx="94" cy="84" r="4" fill="#33302A"/>' +
+'<circle cx="68.5" cy="83" r="1.5" fill="#fff"/><circle cx="96.5" cy="81" r="1.5" fill="#fff"/>' +
+'</g></g></svg>';
+
+SVG.snail =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Silvy the snail"><g class="mx-all">' +
+'<path d="M18 176q34-10 70-4" stroke="#C7DCE6" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="5 10"/>' +
+'<path d="M30 166q0-18 24-20h96q22 2 22 20 0 10-16 10H46q-16 0-16-10z" fill="#F0C9A6" stroke="#D6A87F" stroke-width="2.5"/>' +
+'<path d="M150 148c6-24 2-40-8-46" stroke="#F0C9A6" stroke-width="11" fill="none" stroke-linecap="round"/>' +
+'<path d="M126 104C124 76 140 50 162 44" stroke="#F0C9A6" stroke-width="8" fill="none" stroke-linecap="round"/>' +
+'<path d="M140 108C144 84 164 70 184 68" stroke="#F0C9A6" stroke-width="8" fill="none" stroke-linecap="round"/>' +
+'<g class="eyes">' +
+'<circle cx="163" cy="41" r="9.5" fill="#fff" stroke="#D6A87F" stroke-width="2.4"/>' +
+'<circle cx="186" cy="66" r="9.5" fill="#fff" stroke="#D6A87F" stroke-width="2.4"/>' +
+'<circle cx="165" cy="40" r="4.6" fill="#33323C"/><circle cx="188" cy="65" r="4.6" fill="#33323C"/>' +
+'<circle cx="167" cy="37.5" r="1.7" fill="#fff"/><circle cx="190" cy="62.5" r="1.7" fill="#fff"/>' +
+'</g>' +
+'<path d="M148 132q10 7 20 1" stroke="#D6A87F" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+'<path d="M96 148a44 44 0 1 1 40-62 32 32 0 1 0-28 46 21 21 0 1 1 18-30 11 11 0 1 0-10 16" ' +
+'fill="none" stroke="#C98A46" stroke-width="17" stroke-linecap="round"/>' +
+'<path d="M96 148a44 44 0 1 1 40-62 32 32 0 1 0-28 46 21 21 0 1 1 18-30 11 11 0 1 0-10 16" ' +
+'fill="none" stroke="#E8B978" stroke-width="10" stroke-linecap="round"/>' +
+'</g></svg>';
+
+SVG.frog =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Fern the frog"><g class="mx-all">' +
+'<ellipse cx="52" cy="168" rx="26" ry="14" fill="#4E9B45"/>' +
+'<ellipse cx="148" cy="168" rx="26" ry="14" fill="#4E9B45"/>' +
+'<path d="M28 170q-8 8 2 10h16q8-4 0-10z" fill="#5CB050"/>' +
+'<path d="M172 170q8 8-2 10h-16q-8-4 0-10z" fill="#5CB050"/>' +
+'<ellipse cx="100" cy="132" rx="60" ry="46" fill="#5CB050"/>' +
+'<ellipse cx="100" cy="146" rx="38" ry="30" fill="#BFE39A"/>' +
+'<circle cx="66" cy="70" r="26" fill="#5CB050"/><circle cx="134" cy="70" r="26" fill="#5CB050"/>' +
+'<g class="eyes">' +
+'<circle cx="66" cy="70" r="18" fill="#fff" stroke="#3F8038" stroke-width="2.6"/>' +
+'<circle cx="134" cy="70" r="18" fill="#fff" stroke="#3F8038" stroke-width="2.6"/>' +
+'<circle cx="68" cy="73" r="8" fill="#2B2B33"/><circle cx="136" cy="73" r="8" fill="#2B2B33"/>' +
+'<circle cx="72" cy="68" r="3" fill="#fff"/><circle cx="140" cy="68" r="3" fill="#fff"/>' +
+'</g>' +
+'<path d="M56 112q44 30 88 0" stroke="#357030" stroke-width="4.5" fill="none" stroke-linecap="round"/>' +
+'<circle cx="58" cy="120" r="6" fill="#F0A6B4" opacity=".65"/>' +
+'<circle cx="142" cy="120" r="6" fill="#F0A6B4" opacity=".65"/>' +
+'<circle cx="76" cy="104" r="3.4" fill="#3F8038"/><circle cx="124" cy="104" r="3.4" fill="#3F8038"/>' +
+'</g></svg>';
+
+SVG.panda =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Pip the panda"><g class="mx-all">' +
+'<ellipse cx="72" cy="176" rx="19" ry="13" fill="#2B2B33"/>' +
+'<ellipse cx="128" cy="176" rx="19" ry="13" fill="#2B2B33"/>' +
+'<ellipse cx="100" cy="146" rx="46" ry="38" fill="#F7F4EC"/>' +
+'<ellipse cx="56" cy="140" rx="14" ry="26" fill="#2B2B33" transform="rotate(18 56 140)"/>' +
+'<ellipse cx="144" cy="140" rx="14" ry="26" fill="#2B2B33" transform="rotate(-18 144 140)"/>' +
+'<circle class="ear-l" cx="62" cy="46" r="18" fill="#2B2B33"/>' +
+'<circle class="ear-r" cx="138" cy="46" r="18" fill="#2B2B33"/>' +
+'<ellipse cx="100" cy="80" rx="48" ry="42" fill="#F7F4EC"/>' +
+'<ellipse cx="76" cy="76" rx="15" ry="18" fill="#2B2B33" transform="rotate(-20 76 76)"/>' +
+'<ellipse cx="124" cy="76" rx="15" ry="18" fill="#2B2B33" transform="rotate(20 124 76)"/>' +
+'<g class="eyes">' +
+'<circle cx="77" cy="76" r="7.5" fill="#fff"/><circle cx="123" cy="76" r="7.5" fill="#fff"/>' +
+'<circle cx="78" cy="77" r="4" fill="#2B2B33"/><circle cx="124" cy="77" r="4" fill="#2B2B33"/>' +
+'<circle cx="80" cy="74" r="1.5" fill="#fff"/><circle cx="126" cy="74" r="1.5" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="98" rx="9" ry="6.5" fill="#2B2B33"/>' +
+'<path d="M100 104v5" stroke="#2B2B33" stroke-width="3" stroke-linecap="round"/>' +
+'<path d="M86 112q14 11 28 0" stroke="#2B2B33" stroke-width="3.2" fill="none" stroke-linecap="round"/>' +
+'</g></svg>';
+
 function mascotHTML(kind, extra){
   return '<div class="mascot ' + kind + (extra ? ' ' + extra : '') + '">' + SVG[kind] + '</div>';
 }
@@ -1025,31 +1302,51 @@ var TRACE_SETS = [
   { id:'nums',    label:'1 → 20',  kind:'number', items:NUMS }
 ];
 
+/* Quests get longer and gain more Flaming Mountains to route around; the
+   last band widens the grid to 5x5. */
 var CODE_LEVELS = [
-  { start:[0,3], goal:[3,3], fire:[] },
-  { start:[0,3], goal:[0,0], fire:[] },
-  { start:[0,3], goal:[2,1], fire:[] },
-  { start:[3,3], goal:[0,0], fire:[[2,2]] },
-  { start:[0,0], goal:[3,3], fire:[[1,1],[2,2]] },
-  { start:[0,3], goal:[3,0], fire:[[1,2],[2,1],[1,0]] }
+  [ { w:4, start:[0,3], goal:[3,3], fire:[] },
+    { w:4, start:[0,3], goal:[0,0], fire:[] },
+    { w:4, start:[0,3], goal:[2,1], fire:[] } ],
+  [ { w:4, start:[3,3], goal:[0,0], fire:[[2,2]] },
+    { w:4, start:[0,0], goal:[3,3], fire:[[1,1]] },
+    { w:4, start:[0,3], goal:[3,0], fire:[[2,2]] } ],
+  [ { w:4, start:[0,0], goal:[3,3], fire:[[1,1],[2,2]] },
+    { w:4, start:[0,3], goal:[3,0], fire:[[1,2],[2,1]] },
+    { w:4, start:[3,0], goal:[0,3], fire:[[1,1],[2,2]] } ],
+  [ { w:4, start:[0,3], goal:[3,0], fire:[[1,2],[2,1],[1,0]] },
+    { w:5, start:[0,4], goal:[4,0], fire:[[2,2],[1,3]] },
+    { w:5, start:[0,0], goal:[4,4], fire:[[1,1],[3,3],[2,2]] } ],
+  [ { w:5, start:[0,4], goal:[4,4], fire:[[1,3],[2,2],[3,3],[2,4]] },
+    { w:5, start:[4,0], goal:[0,4], fire:[[1,1],[2,2],[3,3],[3,1]] },
+    { w:5, start:[2,4], goal:[2,0], fire:[[1,2],[3,2],[2,3]] } ]
 ];
 
 /* ═══ Activity registry ═══════════════════════════════════════════ */
+/* One animal per tile — no mascot appears twice. */
 var ACTS = [
-  { id:'trace',  title:'Trace It',       sub:'Your name & 1–20',       mascot:'spider',   color:'var(--c-trace)',
-    area:'English & Mathematics — letter and numeral formation', note:'Traces Boone, Jai, Boonchu, Jamsai and the numbers 1 to 20. The guides are hand-drawn centrelines in taught stroke order, with a green start dot and a "Show me" demo, so he practises the right motion rather than just the right shape. A scribble across a letter will not complete it.' },
+  { id:'trace',  title:'Trace It',       sub:'Your name & 1–20',       mascot:'snail',    color:'var(--c-trace)',
+    area:'English & Mathematics — letter and numeral formation', note:'Traces Boone, Jai, Boonchu, Jamsai and the numbers 1 to 20. The guides are hand-drawn centrelines in taught stroke order, with a green start dot and a "Show me" demo, so he practises the right motion rather than just the right shape. A scribble across a letter will not complete it. Higher levels tighten how close he has to stay to the line.' },
   { id:'sounds', title:'Silly Sounds',   sub:'Letters & first sounds', mascot:'cow',      color:'var(--c-sounds)',
-    area:'English — InitiaLit F phonics', note:'Hears a letter sound, finds a word that starts with it. Lower case first, exactly the way school introduces it.' },
-  { id:'count',  title:'Count with Chang', sub:'Touch, count, choose', mascot:'elephant', color:'var(--c-count)',
-    area:'Mathematics — number & counting', note:'Taps each object once before answering. That one-to-one touch is the skill Foundation is really assessing, not the final number.' },
+    area:'English — InitiaLit F phonics', note:'Hears a letter sound, finds a word that starts with it. Later levels swap in confusable sounds (b/d, m/n, f/v) and a fourth choice.' },
+  { id:'count',  title:'Count the Hops', sub:'Touch, count, choose',   mascot:'frog',     color:'var(--c-count)',
+    area:'Mathematics — number & counting', note:'Taps each object once before answering — that one-to-one touch is what Foundation is really assessing. The range grows from 1–5 up to 1–20, and the wrong answers close in to within one.' },
   { id:'code',   title:'Monkey King Code', sub:'Program the cloud',    mascot:'monkey',   color:'var(--c-code)',
-    area:'STEAM — early coding concepts', note:'Builds a sequence of steps, then runs it. Introduces order, prediction and debugging without a keyboard.' },
+    area:'STEAM — early coding concepts', note:'Builds a sequence of steps, then runs it. Later levels add flaming mountains to route around and a bigger grid.' },
   { id:'shape',  title:'Shape Web',      sub:'Shapes & patterns',      mascot:'spider',   color:'var(--c-shape)',
-    area:'Mathematics — shape, space, pattern', note:'Alternates naming 2D shapes with continuing a repeating pattern.' },
+    area:'Mathematics — shape, space, pattern', note:'Alternates naming 2D shapes with continuing a repeating pattern. Levels add the harder shapes and ABC / AABB pattern rules.' },
+  { id:'word',   title:'Word Builder',   sub:'Sound out the word',     mascot:'buffalo',  color:'var(--c-word)',
+    area:'English — blending CVC words', note:'The step after first sounds: a picture plus the word with one letter missing. Starts with the first letter, then the vowel in the middle (much harder), then the last, then building the whole word from scratch.' },
+  { id:'add',    title:'Add & Take Away', sub:'Sums you can see',      mascot:'rhino',    color:'var(--c-add)',
+    area:'Mathematics — addition and subtraction', note:'Sums with objects to count at first, then without them once he is ready. Take-away appears at level 2, and the range reaches 20.' },
+  { id:'tall',   title:'Tall & Small',   sub:'Order them by size',     mascot:'giraffe',  color:'var(--c-tall)',
+    area:'Mathematics — measurement and ordering', note:'Compares heights, then puts three or four things in order shortest to tallest, then orders numbers. Ordering is a real jump up from picking a single answer.' },
+  { id:'memory', title:'Memory Burrow',  sub:'Find the pairs',         mascot:'armadillo',color:'var(--c-memory)',
+    area:'Working memory and concentration', note:'Card pairs, growing from three pairs to eight. Not on the school curriculum, but it stretches the concentration everything else depends on — and it is the one game an adult does not automatically win.' },
   { id:'thai',   title:'Thai Time',      sub:'Words to say out loud',  mascot:'elephant', color:'var(--c-thai)',
-    area:'Thai Language & Culture', note:'Thai script in a looped teaching face, with sound. Falls back to reading the romanisation aloud if the device has no Thai voice.' },
-  { id:'feel',   title:'Big Feelings',   sub:'Read the faces',         mascot:'cow',      color:'var(--c-feel)',
-    area:'Health & PE — Bounce Back, Kimochis', note:'Names a feeling from a face. The same emotional vocabulary the wellbeing program uses.' }
+    area:'Thai Language & Culture', note:'Thai script in a looped teaching face, with sound. Falls back to reading the romanisation aloud if the device has no Thai voice. Later levels widen the word list and add a fourth choice.' },
+  { id:'feel',   title:'Big Feelings',   sub:'Read the faces',         mascot:'panda',    color:'var(--c-feel)',
+    area:'Health & PE — Bounce Back, Kimochis', note:'Names a feeling from a face. Early levels use four clearly different feelings; later ones bring in the near-neighbours (worried, scared, shy) that are genuinely hard to tell apart.' }
 ];
 function act(id){ for (var i=0;i<ACTS.length;i++) if (ACTS[i].id === id) return ACTS[i]; return null; }
 
@@ -1082,9 +1379,10 @@ function addStar(id){
 function home(){
   hush(); GEN++; G = null;
   var tiles = ACTS.map(function(a){
-    var got = S.got[a.id] || 0;
+    var got = S.got[a.id] || 0, L = lvl(a.id);
     return '<button class="tile" data-go="' + a.id + '" style="--tile:' + a.color + '">' +
       (got ? '<span class="got">⭐ ' + got + '</span>' : '') +
+      (L ? '<span class="lv">Lv ' + L + '</span>' : '') +
       '<span class="peek">' + SVG[a.mascot] + '</span>' +
       '<h2>' + a.title + '</h2><span class="sub">' + a.sub + '</span>' +
       '</button>';
@@ -1094,7 +1392,7 @@ function home(){
     '<div class="hero">' +
       '<div class="eyebrow">Foundation · 2026–2027</div>' +
       '<h1>Pick a friend.<br><em>Let\'s play.</em></h1>' +
-      '<p>Six little games for your first year at big school. Tap anywhere — nothing here can go wrong.</p>' +
+      '<p>Eleven little games for your first year at big school. They get harder the more you play.</p>' +
     '</div>' +
     '<div class="board">' + tiles + '</div>' +
     '<div class="footnote"><button class="linky" data-panel>For grown-ups →</button></div>';
@@ -1156,7 +1454,8 @@ function next(){
   G.round++;
   dots();
   ({ trace:roundTrace, sounds:roundSounds, count:roundCount, code:roundCode,
-     shape:roundShape, thai:roundThai, feel:roundFeel })[G.a.id]();
+     shape:roundShape, thai:roundThai, feel:roundFeel,
+     word:roundWord, add:roundAdd, tall:roundTall, memory:roundMemory })[G.a.id]();
 }
 
 function party(){
@@ -1170,6 +1469,9 @@ function party(){
     '<h2>' + pick(lines) + '</h2>' +
     '<p>Five in a row on ' + a.title + '.</p>' +
     '<span class="sticker">⭐ ' + S.stars + ' stars all up</span>' +
+    '<span class="lv-up">' + (lvl(a.id) >= 4
+      ? 'Level 4 — the hardest there is'
+      : 'Level ' + lvl(a.id) + ' · ' + nextLevelIn(a.id) + ' more stars until it gets harder') + '</span>' +
     '<button class="btn" data-more>Play more</button>' +
     '<button class="btn ghost" data-home>Back to the board</button>' +
     '</div>';
@@ -1181,10 +1483,23 @@ function party(){
 }
 
 /* ═══ 1 · Silly Sounds ════════════════════════════════════════════ */
+/* Sounds children mix up. Once he is good, the wrong answers come from here
+   instead of from a random unrelated letter. */
+var CONFUSE = { b:'dp', d:'bg', p:'bq', g:'d', m:'n', n:'m', f:'v', v:'f',
+                s:'z', z:'s', c:'k', k:'c', u:'n', i:'l', e:'a', a:'e', o:'a' };
 function roundSounds(){
+  var L = lvl('sounds'), n = L >= 3 ? 3 : 2;
   var item = pick(PHONICS);
   var right = pick(item.words);
-  var others = sample(PHONICS, 2, [item]).map(function(p){ return pick(p.words); });
+  var others;
+  if (L >= 2 && CONFUSE[item.l]){
+    var near = PHONICS.filter(function(p){ return CONFUSE[item.l].indexOf(p.l) >= 0; });
+    var rest = sample(PHONICS, n, [item].concat(near));
+    others = shuffle(near).slice(0, n).concat(rest).slice(0, n);
+  } else {
+    others = sample(PHONICS, n, [item]);
+  }
+  others = others.map(function(p){ return pick(p.words); });
   var opts = shuffle([{ w:right, ok:true }].concat(others.map(function(w){ return { w:w, ok:false }; })));
 
   stage().innerHTML = lay(
@@ -1215,12 +1530,21 @@ function roundSounds(){
 }
 
 /* ═══ 2 · Count with Chang ════════════════════════════════════════ */
-var NUMWORD = ['zero','one','two','three','four','five','six','seven','eight','nine','ten'];
+var NUMWORD = ['zero','one','two','three','four','five','six','seven','eight','nine','ten',
+  'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'];
+function numWord(n){ return NUMWORD[n] || String(n); }
 function roundCount(){
-  var n = 1 + Math.floor(Math.random() * 10);
+  var L = lvl('count');
+  var lo = L >= 3 ? 8 : 1;
+  var hi = L < 1 ? 5 : (L < 2 ? 10 : (L < 3 ? 14 : 20));
+  var n = lo + Math.floor(Math.random() * (hi - lo + 1));
   var emo = pick(CRITTERS);
-  var opts = shuffle([n].concat(sample([n-2,n-1,n+1,n+2].filter(function(x){ return x >= 1 && x <= 10; }), 2)));
-  while (opts.length < 3) opts.push(Math.min(10, n + opts.length));
+  // Once he is confident the wrong answers sit right next door, so a rough
+  // guess at the size no longer gets there.
+  var near = L >= 2 ? [n-1, n+1] : [n-2, n-1, n+1, n+2];
+  var opts = shuffle([n].concat(sample(near.filter(function(x){ return x >= 1 && x <= hi + 2; }), 2)));
+  var bump = 1;
+  while (opts.length < 3){ if (opts.indexOf(n + bump) < 0 && n + bump >= 1) opts.push(n + bump); bump++; }
 
   var body = '';
   for (var i=0;i<n;i++) body += '<button class="critter" data-c="' + i + '">' + emo + '</button>';
@@ -1244,7 +1568,7 @@ function roundCount(){
     el.classList.add('counted');
     el.insertAdjacentHTML('beforeend', '<span class="tag">' + tapped + '</span>');
     sfx('step');
-    say(NUMWORD[tapped], 'en-AU', 1);
+    say(numWord(tapped), 'en-AU', 1);
     var hint = document.getElementById('hint');
     if (hint && tapped === n) hint.textContent = 'Now pick the number!';
   });
@@ -1256,7 +1580,7 @@ function roundCount(){
       if (done) return;
       done = true;
       el.classList.add('yes');
-      scored(true, NUMWORD[n] + '! There are ' + n + '.');
+      scored(true, numWord(n) + '! There are ' + n + '.');
     } else {
       el.classList.add('no');
       scored(false, 'Count them again with your finger.');
@@ -1268,8 +1592,9 @@ function roundCount(){
 var DIRS = { up:[0,-1], down:[0,1], left:[-1,0], right:[1,0] };
 var ARROW = { up:'⬆', down:'⬇', left:'⬅', right:'➡' };
 function roundCode(){
-  var lv = CODE_LEVELS[(G.round - 1) % CODE_LEVELS.length];
-  var W = 4, H = 4;
+  var band = CODE_LEVELS[lvl('code')];
+  var lv = band[(G.round - 1) % band.length];
+  var W = lv.w, H = lv.w;
   var prog = [], running = false;
   var pos = lv.start.slice();
 
@@ -1378,9 +1703,12 @@ function roundCode(){
 function roundShape(){
   if (G.round % 2 === 1) shapeName(); else shapePattern();
 }
+var EASY_SHAPES = ['circle','square','triangle','rectangle'];
+function shapePool(){ return lvl('shape') >= 2 ? SHAPE_NAMES : EASY_SHAPES; }
 function shapeName(){
-  var right = pick(SHAPE_NAMES);
-  var opts = shuffle([right].concat(sample(SHAPE_NAMES, 2, [right])));
+  var pool = shapePool(), n = lvl('shape') >= 3 ? 3 : 2;
+  var right = pick(pool);
+  var opts = shuffle([right].concat(sample(pool, n, [right])));
 
   stage().innerHTML = lay(
     'I caught a shape in my web!',
@@ -1407,13 +1735,15 @@ function shapeName(){
   });
 }
 function shapePattern(){
-  var kinds = sample(SHAPE_NAMES, 3);
-  var rule = pick(['AB','AAB','ABB','ABC']);
+  var L = lvl('shape'), pool = shapePool();
+  var rules = L < 1 ? ['AB'] : (L < 2 ? ['AB','AAB','ABB'] : ['AB','AAB','ABB','ABC','AABB','ABCC']);
+  var kinds = sample(pool, 3);
+  var rule = pick(rules);
   var map = { A:kinds[0], B:kinds[1], C:kinds[2] };
   var seq = [];
   for (var i=0;i<7;i++) seq.push(map[rule[i % rule.length]]);
   var answer = seq[6];
-  var opts = shuffle([answer].concat(sample(kinds.concat(SHAPE_NAMES), 2, [answer])));
+  var opts = shuffle([answer].concat(sample(kinds.concat(pool), L >= 3 ? 3 : 2, [answer])));
 
   var strip = seq.slice(0,6).map(function(s){
     return '<span class="slot" style="color:var(--accent)">' + shapeSVG(s) + '</span>';
@@ -1450,8 +1780,10 @@ function speakThai(w){
   else say(w.ro.replace(/-/g, ' '), 'en-AU', 0.8);
 }
 function roundThai(){
-  var right = pick(THAI);
-  var opts = shuffle([right].concat(sample(THAI, 2, [right])));
+  var L = lvl('thai');
+  var pool = L < 2 ? THAI.slice(0, 8) : THAI;
+  var right = pick(pool);
+  var opts = shuffle([right].concat(sample(pool, L >= 3 ? 3 : 2, [right])));
 
   stage().innerHTML = lay(
     'Say it with me!',
@@ -1489,9 +1821,25 @@ function roundThai(){
 
 /* ═══ 6 · Big Feelings ════════════════════════════════════════════ */
 var FEEL_KEYS = Object.keys(FEEL);
+var FEEL_EASY = ['happy','sad','angry','tired'];
+/* Feelings that genuinely look alike. Late levels put these together, which
+   is the whole point of the Kimochis work. */
+var FEEL_NEAR = { scared:['worried','shy'], worried:['scared','sad'], shy:['worried','calm'],
+                  proud:['happy','excited'], excited:['happy','proud'], calm:['tired','shy'],
+                  happy:['excited','proud'], sad:['worried','tired'], tired:['calm','sad'], angry:['worried'] };
 function roundFeel(){
-  var right = pick(FEEL_KEYS);
-  var opts = shuffle([right].concat(sample(FEEL_KEYS, 2, [right])));
+  var L = lvl('feel');
+  var pool = L < 2 ? FEEL_EASY : FEEL_KEYS;
+  var n = L >= 3 ? 3 : 2;
+  var right = pick(pool);
+  var opts;
+  if (L >= 2 && FEEL_NEAR[right]){
+    var near = shuffle(FEEL_NEAR[right]).slice(0, n);
+    opts = near.concat(sample(pool, n, [right].concat(near))).slice(0, n);
+  } else {
+    opts = sample(pool, n, [right]);
+  }
+  opts = shuffle([right].concat(opts));
 
   stage().innerHTML = lay(
     'Can you find this feeling?',
@@ -1609,7 +1957,7 @@ function traceItem(){
     ctx2.strokeStyle = (getComputedStyle(pad).getPropertyValue('--accent') || '').trim() || '#15616D';
     // Scale the catch radius (and the child's ink) to how big the glyph
     // actually rendered, so the game is equally forgiving on phone and tablet.
-    tol = Math.max(20, Math.min(48, 15 * (r.height / 140)));
+    tol = Math.max(20, Math.min(48, 15 * (r.height / 140))) * (1 - lvl('trace') * 0.06);
     ctx2.lineWidth = tol * 0.72;
   }
   function resample(){
@@ -1754,6 +2102,301 @@ function traceItem(){
   });
 }
 
+/* ═══ 8 · Word Builder ════════════════════════════════════════════ */
+/* CVC words — the step after naming a first sound is blending three. */
+var CVC = [
+  ['cat','🐈'],['dog','🐕'],['pig','🐷'],['cup','🥤'],['sun','☀️'],['bus','🚌'],
+  ['hat','🎩'],['bed','🛏️'],['log','🪵'],['jam','🫙'],['fox','🦊'],['box','📦'],
+  ['bag','🎒'],['van','🚐'],['web','🕸️'],['pen','🖊️'],['bat','🦇'],['pot','🍲'],
+  ['cap','🧢'],['fan','🪭'],['hen','🐔'],['leg','🦵'],['lip','👄'],['map','🗺️'],
+  ['nut','🥜'],['pin','📌'],['rat','🐀'],['six','6️⃣'],['ten','🔟'],['yak','🐃'],
+  ['egg','🥚'],['bee','🐝'],['key','🔑'],['cow','🐄']
+];
+var VOWELS = ['a','e','i','o','u'];
+var CONSO = 'bcdfghjklmnpqrstvwxyz'.split('');
+
+function roundWord(){
+  var L = lvl('word');
+  var w = pick(CVC), word = w[0], letters = word.split('');
+  // Which letter to hide: first, then the vowel in the middle, then the last.
+  var slot = L < 1 ? 0 : (L < 2 ? pick([0, 2]) : (L < 3 ? 1 : pick([0, 1, 2])));
+  if (slot >= letters.length) slot = 0;
+  var whole = L >= 4;
+  var answer = letters[slot];
+  var isVowel = VOWELS.indexOf(answer) >= 0;
+  var wrongPool = isVowel ? VOWELS : CONSO;
+  var opts = shuffle([answer].concat(sample(wrongPool, L >= 3 ? 3 : 2, [answer])));
+
+  var built = whole ? [] : null;
+  function spellHTML(){
+    return letters.map(function(c, i){
+      if (whole) return '<span class="slot-l gap' + (built[i] ? '' : ' empty') + '">' + (built[i] || '') + '</span>';
+      return i === slot
+        ? '<span class="slot-l gap empty" id="gap"></span>'
+        : '<span class="slot-l">' + c + '</span>';
+    }).join('');
+  }
+
+  if (whole){
+    for (var i=0;i<letters.length;i++) built.push('');
+    var bank = shuffle(letters.slice());
+    stage().innerHTML = lay(
+      'Build the whole word.',
+      '<div class="big-pic">' + w[1] + '</div>' +
+      '<div class="spell" id="spell">' + spellHTML() + '</div>' +
+      '<p class="ask" aria-live="polite">Tap the letters in order.</p>',
+      '<div class="choices">' + bank.map(function(c, i){
+        return '<button class="choice num" data-c="' + c + '" data-i="' + i + '">' + c + '</button>';
+      }).join('') + '</div>'
+    );
+    later(340, function(){ say('Build the word ' + word); });
+    var at = 0, done = false;
+    on(stage(), '.choice', function(el){
+      if (done) return;
+      var c = el.getAttribute('data-c');
+      if (c === letters[at]){
+        built[at] = c; at++;
+        el.classList.add('yes'); el.disabled = true;
+        document.getElementById('spell').innerHTML = spellHTML();
+        sfx('step'); say(c, 'en-AU', 1);
+        if (at >= letters.length){ done = true; scored(true, word + '! ' + word + '.'); }
+      } else {
+        el.classList.add('no');
+        scored(false, 'Not that one yet.');
+      }
+    });
+    return;
+  }
+
+  stage().innerHTML = lay(
+    'Which letter is missing?',
+    '<div class="big-pic">' + w[1] + '</div>' +
+    '<div class="spell">' + spellHTML() + '</div>' +
+    '<p class="ask" aria-live="polite">Finish the word “' + word + '”.</p>',
+    '<div class="choices">' + opts.map(function(c){
+      return '<button class="choice num" data-c="' + c + '">' + c + '</button>';
+    }).join('') + '</div>'
+  );
+  later(340, function(){ say(word + '. ' + word.split('').join(' ') + '. Which letter is missing?'); });
+
+  var settled = false;
+  on(stage(), '.choice', function(el){
+    var c = el.getAttribute('data-c');
+    if (c === answer){
+      if (settled) return;
+      settled = true;
+      el.classList.add('yes');
+      var g = document.getElementById('gap');
+      if (g){ g.textContent = answer; g.classList.remove('empty'); }
+      scored(true, word + '!');
+    } else {
+      el.classList.add('no');
+      scored(false, 'Say it slowly. ' + word + '.');
+    }
+  });
+}
+
+/* ═══ 9 · Add & Take Away ═════════════════════════════════════════ */
+function roundAdd(){
+  var L = lvl('add');
+  var top = L < 1 ? 5 : (L < 2 ? 10 : (L < 4 ? 15 : 20));
+  var show = L < 2;                       // objects to count, until he is ready
+  var sub = L >= 2 && Math.random() < 0.45;
+  var emo = pick(CRITTERS);
+  var a, b, ans;
+  if (sub){
+    a = 2 + Math.floor(Math.random() * (top - 1));
+    b = 1 + Math.floor(Math.random() * (a - 1));
+    ans = a - b;
+  } else {
+    a = 1 + Math.floor(Math.random() * (top - 1));
+    b = 1 + Math.floor(Math.random() * (top - a));
+    ans = a + b;
+  }
+  var opts = shuffle([ans].concat(sample([ans-2,ans-1,ans+1,ans+2].filter(function(x){ return x >= 0 && x <= top + 2; }), 2)));
+  var bump = 1;
+  while (opts.length < 3){ if (opts.indexOf(ans + bump) < 0 && ans + bump >= 0) opts.push(ans + bump); bump++; }
+
+  function heap(n, goneFrom){
+    var out = '';
+    for (var i=0;i<n;i++) out += '<span' + (goneFrom != null && i >= goneFrom ? ' class="gone"' : '') + '>' + emo + '</span>';
+    return '<span class="heap">' + out + '</span>';
+  }
+  var body = sub
+    ? (show ? heap(a, a - b) : '<span>' + a + '</span>') + '<span class="op">−</span>' +
+      (show ? '<span>' + b + '</span>' : '<span>' + b + '</span>')
+    : (show ? heap(a) : '<span>' + a + '</span>') + '<span class="op">+</span>' +
+      (show ? heap(b) : '<span>' + b + '</span>');
+
+  stage().innerHTML = lay(
+    sub ? 'Take some away!' : 'Put them together!',
+    '<div class="sum">' + body + '<span class="op">=</span><span class="op">?</span></div>' +
+    '<p class="ask" aria-live="polite">' + a + (sub ? ' take away ' : ' add ') + b + '?</p>',
+    '<div class="choices">' + opts.map(function(v){
+      return '<button class="choice num" data-v="' + v + '">' + v + '</button>';
+    }).join('') + '</div>'
+  );
+  later(340, function(){ say(a + (sub ? ' take away ' : ' plus ') + b + '. How many?'); });
+
+  var settled = false;
+  on(stage(), '.choice', function(el){
+    var v = +el.getAttribute('data-v');
+    if (v === ans){
+      if (settled) return;
+      settled = true; el.classList.add('yes');
+      scored(true, a + (sub ? ' take away ' : ' plus ') + b + ' is ' + ans);
+    } else {
+      el.classList.add('no');
+      scored(false, show ? 'Count them all again.' : 'Try counting on your fingers.');
+    }
+  });
+}
+
+/* ═══ 10 · Tall & Small ═══════════════════════════════════════════ */
+/* h is 0..1. Trunk stays on the ground and the crown grows upward, so the
+   only thing that varies between trees is the thing being compared. */
+function treeSVG(h){
+  var H = 74 + Math.round(h * 150), crown = H - 30;
+  return '<svg viewBox="0 0 60 ' + H + '" style="height:' + H + 'px" aria-hidden="true">' +
+    '<rect x="25" y="' + (H - 32) + '" width="11" height="32" rx="4" fill="#7A5A2E"/>' +
+    '<ellipse cx="30" cy="' + (crown / 2) + '" rx="27" ry="' + (crown / 2) + '" fill="#4E9B45"/>' +
+    '<ellipse cx="21" cy="' + (crown / 2.4) + '" rx="8" ry="' + (crown / 3.4) + '" fill="#6BBF5C" opacity=".55"/>' +
+    '</svg>';
+}
+function roundTall(){
+  var L = lvl('tall');
+  var mode = L < 1 ? 'pick' : (L < 3 ? (G.round % 2 ? 'pick' : 'order') : 'order');
+  var count = L < 2 ? 3 : (L < 4 ? 4 : 4);
+  var numbers = L >= 4 && mode === 'order';
+
+  var hs = [];
+  while (hs.length < count){
+    var v = Math.round(Math.random() * 100) / 100;
+    if (hs.every(function(x){ return Math.abs(x - v) > (L >= 2 ? 0.14 : 0.24); })) hs.push(v);
+  }
+  var vals = numbers ? shuffle([3,7,11,15,19,4,8,12,16,20]).slice(0, count) : hs;
+  var items = vals.map(function(v, i){ return { v:v, i:i, h:hs[i] }; });
+  var wantBig = Math.random() < 0.5;
+
+  var body = '<div class="grove" id="grove">' + items.map(function(t){
+    return '<button class="tree" data-i="' + t.i + '" style="color:var(--accent)" aria-label="' +
+      (numbers ? 'number ' + t.v : 'a tree') + '">' +
+      (numbers ? '<span class="slot-l">' + t.v + '</span>' : treeSVG(t.h)) + '</button>';
+  }).join('') + '</div>';
+
+  var askText = mode === 'pick'
+    ? (wantBig ? 'Tap the tallest tree.' : 'Tap the shortest tree.')
+    : (numbers ? 'Tap the numbers from smallest to biggest.' : 'Tap them from shortest to tallest.');
+
+  stage().innerHTML = lay(
+    mode === 'pick' ? 'I can only reach the tall ones!' : 'Line them up for me!',
+    body + '<p class="ask" aria-live="polite">' + askText + '</p>',
+    ''
+  );
+  later(340, function(){ say(askText); });
+
+  var sortedAsc = items.slice().sort(function(x, y){ return x.v - y.v; });
+  var target = mode === 'pick'
+    ? [wantBig ? sortedAsc[sortedAsc.length - 1] : sortedAsc[0]]
+    : sortedAsc;
+  var step = 0, settled = false;
+
+  on(stage(), '.tree', function(el){
+    if (settled) return;
+    var i = +el.getAttribute('data-i');
+    if (i === target[step].i){
+      step++;
+      sfx('step');
+      if (mode === 'order'){
+        el.classList.add('picked');
+        el.insertAdjacentHTML('beforeend', '<span class="rank">' + step + '</span>');
+      }
+      if (step >= target.length){
+        settled = true;
+        scored(true, mode === 'pick' ? 'That one!' : 'Smallest to biggest. Perfect.');
+      }
+    } else {
+      el.classList.add('no');
+      later(500, function(){ el.classList.remove('no'); });
+      if (mode === 'order' && step > 0){
+        step = 0;
+        Array.prototype.forEach.call(stage().querySelectorAll('.tree'), function(t){
+          t.classList.remove('picked');
+          var r = t.querySelector('.rank'); if (r) r.remove();
+        });
+        scored(false, 'Start again from the smallest.');
+      } else {
+        scored(false, 'Look again.');
+      }
+    }
+  });
+}
+
+/* ═══ 11 · Memory Burrow ══════════════════════════════════════════ */
+var MEM_FACES = ['🍉','🐠','🌵','🎈','🚂','🦉','🍄','🌻','🐙','⛵','🪁','🧁','🦩','🥁','🪐','🐞'];
+
+/* Memory scores per pair rather than per round, so the board keeps going. */
+function gainStar(){
+  addStar(G.a.id); G.correct++; dots();
+  if (G.correct >= 5){ later(1000, party); return true; }
+  return false;
+}
+function roundMemory(){
+  var L = lvl('memory');
+  var pairs = [3, 4, 5, 6, 8][L];
+  var cols = pairs <= 4 ? pairs : (pairs <= 6 ? Math.ceil(pairs * 2 / 3) : 4);
+  var faces = sample(MEM_FACES, pairs);
+  var deck = shuffle(faces.concat(faces));
+
+  stage().innerHTML = lay(
+    'Two of each are hiding down here.',
+    '<div class="deck" id="deck" style="grid-template-columns:repeat(' + cols + ',minmax(0,1fr));max-width:min(100%,' + (cols * 116) + 'px)">' +
+      deck.map(function(f, i){
+        return '<button class="card" data-i="' + i + '" data-f="' + f + '" aria-label="hidden card">' +
+          '<span class="inner">' +
+            '<span class="side back">' + SVG.armadillo + '</span>' +
+            '<span class="side front">' + f + '</span>' +
+          '</span></button>';
+      }).join('') +
+    '</div>',
+    '<p class="hint" id="hint">Find a matching pair</p>'
+  );
+  later(340, function(){ say('Find the matching pairs.'); });
+
+  var open = [], busy = false, made = 0;
+  on(stage(), '.card', function(el){
+    if (busy || el.classList.contains('up') || el.classList.contains('made')) return;
+    el.classList.add('up');
+    el.setAttribute('aria-label', el.getAttribute('data-f'));
+    sfx('tap');
+    open.push(el);
+    if (open.length < 2) return;
+    busy = true;
+    var a = open[0], b = open[1];
+    if (a.getAttribute('data-f') === b.getAttribute('data-f')){
+      later(320, function(){
+        a.classList.add('made'); b.classList.add('made');
+        open = []; busy = false; made++;
+        sfx('yes'); react('happy');
+        var hint = document.getElementById('hint');
+        if (hint) hint.textContent = made + ' of ' + pairs + ' found';
+        if (gainStar()) return;
+        if (made >= pairs){
+          say('You found them all!');
+          later(1100, next);
+        }
+      });
+    } else {
+      later(820, function(){
+        a.classList.remove('up'); b.classList.remove('up');
+        a.setAttribute('aria-label', 'hidden card'); b.setAttribute('aria-label', 'hidden card');
+        open = []; busy = false;
+        sfx('no');
+      });
+    }
+  });
+}
+
 /* ═══ Grown-ups ═══════════════════════════════════════════════════ */
 function grownups(){
   var rows = ACTS.map(function(a){
@@ -1768,7 +2411,8 @@ function grownups(){
   wrap.innerHTML = '<div class="panel-inner">' +
     '<div class="bar"><div class="bar-title" style="font-size:26px">For grown-ups</div>' +
     '<button class="icon-btn" data-close aria-label="Close">✕</button></div>' +
-    '<p>Six games, one per learning area in the AISB Foundation letter. Everything runs in the page — no accounts, no network, no ads, nothing to buy. Progress is saved on this device only.</p>' +
+    '<p>Eleven games covering the learning areas in the AISB Foundation letter, each with its own animal. Everything runs in the page — no accounts, no network, no ads, nothing to buy. Progress is saved on this device only.</p>' +
+    '<p><b>It gets harder as he plays.</b> Every game keeps its own level: ten stars in that game buys the next one, up to level 4, and the level shows on its tile. Levels widen the number range, bring in confusable letter sounds and near-identical feelings, add flaming mountains and a bigger grid to the coding quests, and move Word Builder from the first letter to the vowel in the middle. Nothing you have to set — it just stops being easy.</p>' +
     '<div class="map">' + rows + '</div>' +
     '<p><b>How it behaves:</b> a wrong tap never ends anything — the mascot wobbles, the answer stays open, and the voice gives a nudge. Five correct in a row earns a celebration. There are no timers and no scores to lose.</p>' +
     '<p><b>If it is silent:</b> tap 🔊 in the top bar, and check the device is not on mute. The voice uses whichever Australian or English voice the device has; Thai words use a Thai voice when one is installed, otherwise it reads the romanisation aloud instead.</p>' +
