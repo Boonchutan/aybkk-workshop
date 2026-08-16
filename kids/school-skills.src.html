@@ -663,6 +663,17 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
   background:rgba(255,255,255,.22);border-radius:999px;
   padding:3px 9px;font-size:12.5px;font-weight:800;letter-spacing:.04em;
 }
+.tile .lv.done{background:var(--gold);color:#4A3405}
+
+/* ── Tidy up ───────────────────────────────────────────────────────── */
+.tile.away{filter:grayscale(.75) brightness(.92);opacity:.5}
+/* Replaces the subtitle rather than sitting on top of it. */
+.tile .chip{
+  margin-top:7px;background:rgba(255,255,255,.92);color:#20303A;
+  border-radius:999px;padding:6px 14px;
+  font-size:13.5px;font-weight:800;white-space:nowrap;
+}
+.footnote span{font-weight:600}
 .lv-up{
   font-family:var(--display);font-weight:800;font-size:15px;
   color:var(--pill-ink);background:var(--pill);
@@ -825,7 +836,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 
 /* ═══ State ═══════════════════════════════════════════════════════ */
 var KEY = 'aisb-foundation-v1';
-var S = { stars:0, got:{}, sound:true, vname:'', rate:1 };
+var S = { stars:0, got:{}, sound:true, vname:'', rate:1, hidden:{} };
 try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); for (var k in p) if (k in S) S[k] = p[k]; } } catch(e){}
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
 
@@ -1814,20 +1825,36 @@ function addStar(id){
 }
 
 /* ═══ Home ════════════════════════════════════════════════════════ */
+/* Eighteen tiles is a long board. He can put away the ones he is done with,
+   and bring them back whenever he likes — it is his shelf, not a setting
+   buried in the grown-ups panel. */
+var TIDY = false;
+function hiddenCount(){ var n = 0; for (var k in S.hidden) if (S.hidden[k] && act(k)) n++; return n; }
+function shownActs(){ return ACTS.filter(function(a){ return !S.hidden[a.id]; }); }
+
 function home(){
   hush(); GEN++; G = null;
+  var away = hiddenCount();
+
   function tileHTML(a){
-    var got = S.got[a.id] || 0, L = lvl(a.id);
-    return '<button class="tile" data-go="' + a.id + '" style="--tile:' + a.color + '">' +
+    var got = S.got[a.id] || 0, L = lvl(a.id), gone = !!S.hidden[a.id];
+    var done = L >= MAXLVL;
+    return '<button class="tile' + (gone ? ' away' : '') + '"' +
+      (TIDY ? ' data-toggle="' + a.id + '"' : ' data-go="' + a.id + '"') +
+      ' style="--tile:' + a.color + '">' +
       (got ? '<span class="got">⭐ ' + got + '</span>' : '') +
-      (L ? '<span class="lv">Lv ' + L + '</span>' : '') +
+      (done && !TIDY ? '<span class="lv done">Done ✓</span>' : (L ? '<span class="lv">Lv ' + L + '</span>' : '')) +
       '<span class="peek">' + SVG[a.mascot] + '</span>' +
-      '<h2>' + a.title + '</h2><span class="sub">' + a.sub + '</span>' +
+      '<h2>' + a.title + '</h2>' +
+      (TIDY ? '<span class="chip">' + (gone ? '↩︎ bring back' : '📥 put away') + '</span>'
+            : '<span class="sub">' + a.sub + '</span>') +
       '</button>';
   }
+
   var tiles = STAGES.map(function(st){
     var mine = ACTS.filter(function(a){ return (a.stage || 'f') === st.key; });
-    if (!mine.length) return '';
+    if (!TIDY) mine = mine.filter(function(a){ return !S.hidden[a.id]; });
+    if (!mine.length) return '';                     // a fully packed-away band disappears
     return '<div class="band"><span class="band-name">' + st.label + '</span>' +
       '<span class="band-hint">' + st.hint + '</span></div>' +
       '<div class="board">' + mine.map(tileHTML).join('') + '</div>';
@@ -1836,15 +1863,34 @@ function home(){
   app.innerHTML = barHTML('Foundation Playground', false) +
     '<div class="hero">' +
       '<div class="eyebrow">Foundation · 2026–2027</div>' +
-      '<h1>Pick a friend.<br><em>Let\'s play.</em></h1>' +
-      '<p>Eighteen little games. They get harder the more you play, and they carry on past Foundation into Year 1, 2 and 3.</p>' +
+      '<h1>' + (TIDY ? 'Tidy up.<br><em>Tap to put away.</em>' : 'Pick a friend.<br><em>Let\'s play.</em>') + '</h1>' +
+      '<p>' + (TIDY
+        ? 'Tap any game to put it on the shelf. Tap it again to bring it back. Nothing is lost — your stars stay.'
+        : 'Eighteen little games. They get harder the more you play, and they carry on past Foundation into Year 1, 2 and 3.') +
+      '</p>' +
     '</div>' +
     tiles +
-    '<div class="footnote"><button class="linky" data-panel>For grown-ups →</button></div>';
+    '<div class="footnote">' +
+      '<button class="linky" data-tidy>' + (TIDY ? '✓ Done tidying' : '🧹 Tidy up') + '</button>' +
+      (!TIDY && away ? '<span>' + away + ' put away</span>' : '') +
+      '<button class="linky" data-panel>For grown-ups →</button>' +
+    '</div>';
 
   wireBar(app);
   on(app, '[data-go]', function(el){ sfx('tap'); start(el.getAttribute('data-go')); });
   on(app, '[data-panel]', function(){ sfx('tap'); grownups(); });
+  on(app, '[data-tidy]', function(){ sfx('tap'); TIDY = !TIDY; home(); });
+  on(app, '[data-toggle]', function(el){
+    var id = el.getAttribute('data-toggle');
+    if (!S.hidden[id] && shownActs().length <= 1){
+      sfx('bonk');
+      say('Keep at least one game!');
+      return;
+    }
+    S.hidden[id] = !S.hidden[id];
+    if (!S.hidden[id]) delete S.hidden[id];
+    save(); sfx('tap'); home();
+  });
 }
 
 /* ═══ Play shell ══════════════════════════════════════════════════ */
@@ -3675,11 +3721,19 @@ function grownups(){
     '<div class="band"><span class="band-name">What each game teaches</span></div>' +
     '<div class="map">' + rows + '</div>' +
     '<p><b>How it behaves:</b> a wrong tap never ends anything — the mascot wobbles, the answer stays open, and the voice gives a nudge. A run of correct answers earns a celebration — five early on, rising to nine at the top levels, so the later ones ask him to concentrate for longer. There are no timers and no scores to lose.</p>' +
+    '<p><b>Putting games away.</b> Eighteen tiles is a long board, so <b>🧹 Tidy up</b> on the board itself lets him shelve the ones he is finished with — anything at the top level wears a <b>Done ✓</b> badge — and bring any of them back the same way. Nothing is deleted and every star is kept. He cannot put the last game away, a band with nothing left in it disappears until something returns to it, and the button below restores the lot.</p>' +
+    '<button class="btn ghost" data-unhide style="--accent:var(--c-loop)">Bring back every game</button>' +
     '<button class="btn ghost" data-reset style="--accent:var(--c-code)">Clear the star count</button>' +
     '</div>';
   document.body.appendChild(wrap);
   wireVoice(wrap);
   on(wrap, '[data-close]', function(){ sfx('tap'); hush(); wrap.remove(); });
+  on(wrap, '[data-unhide]', function(el){
+    S.hidden = {}; save(); sfx('star');
+    // The panel sits on top of #app, so redraw the board behind it.
+    TIDY = false; home();
+    el.textContent = 'All back on the board ✓';
+  });
   on(wrap, '[data-reset]', function(el){
     if (el.getAttribute('data-armed')){
       S.stars = 0; S.got = {}; save(); wrap.remove(); home();
