@@ -55,6 +55,31 @@ while ((m = SCRIPT_RE.exec(out)) !== null) {
 if (bad) process.exit(1);
 
 fs.writeFileSync(outPath, out);
+
+// Second target: a complete document that plays when opened straight off a
+// device — saved to Files on an iPad, say — with no account and no network.
+// The Artifact publisher supplies its own wrapper, so that copy stays a
+// fragment and this one gets the head/body it needs to stand alone.
+const split = out.indexOf('<canvas');
+const standalone = `<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Playground">
+<meta name="theme-color" content="#DCEBF0">
+<meta name="color-scheme" content="light dark">
+<style>*{margin:0}</style>
+${out.slice(0, split)}</head>
+<body>
+${out.slice(split)}</body>
+</html>
+`;
+fs.writeFileSync(path.join(here, 'foundation-playground.html'), standalone);
+
 console.log('fonts inlined:');
 used.forEach(u => console.log('  ' + u));
 console.log(`\n✓ ${path.relative(process.cwd(), outPath)} — ${Math.round(out.length / 1024)} KB, ${i} script block(s) parse cleanly`);
+console.log(`✓ kids/foundation-playground.html — ${Math.round(standalone.length / 1024)} KB standalone`);
