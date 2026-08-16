@@ -40,6 +40,9 @@
   --c-tall:#9A5B18;
   --c-word:#4F6B21;
   --c-memory:#5B4636;
+  --c-loop:#1F6F4A;
+  --c-big:#7A3F86;
+  --c-lab:#A2431F;
   --on-accent:#FFFFFF;
 
   --good:#0B7F63;
@@ -161,10 +164,16 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .hero p{margin:0;max-width:34ch;color:var(--ink-soft);font-size:16.5px}
 
 .board{
-  display:grid;gap:16px;margin:22px 0 8px;
+  display:grid;gap:16px;margin:0 0 8px;
   grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
 }
 @media (max-width:520px){.board{grid-template-columns:repeat(2,1fr);gap:12px}}
+.band{display:flex;align-items:baseline;gap:10px;margin:26px 2px 12px;flex-wrap:wrap}
+.band-name{
+  font-family:var(--ui);font-weight:800;font-size:13px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink);
+}
+.band-hint{font-size:13.5px;color:var(--ink-soft)}
 .tile{
   position:relative;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -217,7 +226,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
   justify-content:space-between;gap:14px;
   background:var(--card);border-radius:28px;
   padding:18px 16px 20px;box-shadow:var(--pop);
-  position:relative;overflow:hidden;min-height:280px;
+  position:relative;overflow:hidden auto;min-height:280px;
 }
 /* The middle band swallows the slack so the answers always sit at the bottom. */
 .mid{
@@ -301,7 +310,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 }
 
 /* ── Coding ────────────────────────────────────────────────────────── */
-.grid-wrap{--cw:clamp(50px,13vw,66px);display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+/* --cw is set per grid width by the round, so a 6x6 board still fits the
+   card without pushing the keypad off the bottom. */
+.grid-wrap{--cw:clamp(44px,12vw,60px);display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
 .grid{
   display:grid;gap:5px;padding:8px;border-radius:20px;
   background:var(--card-2);border:3px solid var(--line);
@@ -534,6 +545,83 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
   .card.up .back{display:none}
 }
 
+/* ── Loops (block coding) ──────────────────────────────────────────── */
+.blocks{
+  display:flex;flex-wrap:wrap;gap:5px;align-items:center;justify-content:center;
+  min-height:52px;width:100%;padding:7px 9px;border-radius:14px;
+  background:var(--card-2);border:2.5px dashed var(--line);
+}
+.blocks:empty::before{
+  content:"build a program";
+  font-family:var(--display);font-size:14px;color:var(--ink-soft);
+}
+.blk{
+  display:inline-flex;align-items:center;gap:3px;
+  height:36px;padding:0 9px;border-radius:10px;
+  background:var(--accent);color:#fff;
+  font-family:var(--display);font-weight:800;font-size:17px;
+}
+.blk.mv{width:36px;padding:0;justify-content:center;font-size:19px}
+.blk.now{animation:bump .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 45%,transparent)}
+.loopwrap{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 6px 4px 4px;border-radius:12px;
+  background:color-mix(in srgb,var(--accent) 18%,var(--card));
+  border:2.5px solid var(--accent);
+}
+.loopwrap.open{border-style:dashed;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.62}}
+.loopwrap .cnt{
+  font-family:var(--display);font-weight:800;font-size:15px;color:var(--accent);
+  padding:0 4px;white-space:nowrap;
+}
+.budget{
+  font-family:var(--display);font-weight:700;font-size:14px;color:var(--ink-soft);
+  font-variant-numeric:tabular-nums;
+}
+.budget.full{color:var(--c-code)}
+.key.loop{background:color-mix(in srgb,var(--accent) 20%,var(--card-2));border-color:var(--accent);font-size:21px}
+.key.wide{font-family:var(--display);font-weight:800;font-size:15px;padding:0 8px;line-height:1.05}
+.pad.side{grid-template-columns:minmax(92px,auto);grid-template-rows:repeat(2,58px)}
+.blocks{max-width:520px}
+
+/* ── Big numbers ───────────────────────────────────────────────────── */
+.seq{
+  display:flex;gap:clamp(6px,2.4vw,16px);justify-content:center;align-items:center;
+  flex-wrap:wrap;font-family:var(--school);
+  font-size:clamp(30px,8vw,52px);line-height:1;
+}
+.seq .blank{color:var(--accent);border-bottom:5px solid var(--accent);min-width:1.1em;text-align:center}
+.pv{display:flex;gap:clamp(10px,4vw,28px);align-items:flex-end;justify-content:center;flex-wrap:wrap}
+.pv-col{display:flex;flex-direction:column;align-items:center;gap:6px}
+.rods{display:flex;gap:5px;align-items:flex-end}
+.rod{
+  width:13px;height:78px;border-radius:4px;background:var(--accent);
+  display:flex;flex-direction:column;
+}
+.rod i{flex:1;border-bottom:1.5px solid rgba(255,255,255,.5)}
+.cubes{display:grid;grid-template-columns:repeat(3,15px);gap:4px}
+.cube{width:15px;height:15px;border-radius:3px;background:color-mix(in srgb,var(--accent) 62%,var(--card))}
+.pv-lab{font-family:var(--display);font-weight:700;font-size:13.5px;color:var(--ink-soft);
+  text-transform:uppercase;letter-spacing:.1em}
+.array{display:grid;gap:5px;justify-content:center}
+.array span{font-size:clamp(20px,5.5vw,30px);line-height:1.1;text-align:center}
+.baskets{display:flex;gap:clamp(8px,3vw,18px);justify-content:center;flex-wrap:wrap}
+.basket{
+  border:3px solid var(--line);border-radius:16px;padding:8px;
+  min-width:74px;min-height:74px;background:var(--card-2);
+  display:flex;flex-wrap:wrap;gap:3px;align-content:center;justify-content:center;
+  font-size:22px;line-height:1;
+}
+
+/* ── Word lab ──────────────────────────────────────────────────────── */
+.lab-word{
+  font-family:var(--school);font-size:clamp(40px,11vw,72px);line-height:1.1;
+  color:var(--ink);letter-spacing:.02em;
+}
+.lab-word .miss{color:var(--accent);border-bottom:6px solid var(--accent);padding:0 .06em}
+.lab-word .add-e{color:var(--accent)}
+
 /* ── Level chip ────────────────────────────────────────────────────── */
 .tile .lv{
   position:absolute;top:12px;right:12px;
@@ -703,8 +791,9 @@ var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* Difficulty follows the stars already earned in THAT game, and it persists.
    Ten stars buys a level; five levels in, every game is running its hardest
    settings. This is what stops it going stale after one sitting. */
-function lvl(id){ return Math.min(4, Math.floor((S.got[id] || 0) / 10)); }
-function nextLevelIn(id){ var n = (S.got[id] || 0) % 10; return lvl(id) >= 4 ? 0 : 10 - n; }
+var MAXLVL = 5;
+function lvl(id){ return Math.min(MAXLVL, Math.floor((S.got[id] || 0) / 10)); }
+function nextLevelIn(id){ var n = (S.got[id] || 0) % 10; return lvl(id) >= MAXLVL ? 0 : 10 - n; }
 
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function shuffle(a){ a = a.slice(); for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
@@ -1118,6 +1207,95 @@ SVG.panda =
 '<path d="M86 112q14 11 28 0" stroke="#2B2B33" stroke-width="3.2" fill="none" stroke-linecap="round"/>' +
 '</g></svg>';
 
+SVG.woolly =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Woolly the woolly rhino"><g class="mx-all">' +
+'<rect x="60" y="156" width="24" height="38" rx="11" fill="#7E5330"/>' +
+'<rect x="116" y="156" width="24" height="38" rx="11" fill="#7E5330"/>' +
+'<rect x="60" y="183" width="24" height="13" rx="6" fill="#5A3A20"/>' +
+'<rect x="116" y="183" width="24" height="13" rx="6" fill="#5A3A20"/>' +
+'<ellipse cx="100" cy="140" rx="57" ry="38" fill="#A8703F"/>' +
+'<path d="M43 146q9 16 19 2 9 16 19 2 9 16 19 2 9 16 19 2 9 16 19 2 9 16 19-6" ' +
+'fill="none" stroke="#8E5C31" stroke-width="7" stroke-linecap="round"/>' +
+'<path d="M52 120q10-13 20 0 10-13 20 0 10-13 20 0 10-13 20 0 10-13 18 2" ' +
+'fill="none" stroke="#BF824C" stroke-width="6" stroke-linecap="round"/>' +
+'<ellipse class="ear-l" cx="66" cy="48" rx="9" ry="13" fill="#8E5C31"/>' +
+'<ellipse class="ear-r" cx="134" cy="48" rx="9" ry="13" fill="#8E5C31"/>' +
+'<ellipse cx="100" cy="82" rx="47" ry="41" fill="#B87C46"/>' +
+'<path d="M56 74q10-14 19-2 9-14 18-2" fill="none" stroke="#8E5C31" stroke-width="6" stroke-linecap="round"/>' +
+'<path d="M107 70q9-14 18-2 9-14 19 2" fill="none" stroke="#8E5C31" stroke-width="6" stroke-linecap="round"/>' +
+'<path d="M62 44q12-16 22-2 10-16 20-2 10-16 20 2 10-16 20 4" ' +
+'fill="none" stroke="#C68C56" stroke-width="8" stroke-linecap="round"/>' +
+'<g class="eyes">' +
+'<ellipse cx="78" cy="80" rx="7.5" ry="8.5" fill="#fff" stroke="#5A3A20" stroke-width="2.3"/>' +
+'<ellipse cx="122" cy="80" rx="7.5" ry="8.5" fill="#fff" stroke="#5A3A20" stroke-width="2.3"/>' +
+'<circle cx="79" cy="82" r="3.8" fill="#33302A"/><circle cx="123" cy="82" r="3.8" fill="#33302A"/>' +
+'<circle cx="81.5" cy="79" r="1.4" fill="#fff"/><circle cx="125.5" cy="79" r="1.4" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="112" rx="30" ry="18" fill="#9C6739"/>' +
+'<ellipse cx="90" cy="115" rx="4" ry="5" fill="#6E4726"/><ellipse cx="110" cy="115" rx="4" ry="5" fill="#6E4726"/>' +
+'<path d="M100 108C88 84 90 56 100 42c10 14 12 42 0 66z" fill="#F2E9D2" stroke="#CBBD9C" stroke-width="2.4"/>' +
+'<path d="M100 52c-5-9-4-16 0-20 4 4 5 11 0 20z" fill="#F2E9D2" stroke="#CBBD9C" stroke-width="2"/>' +
+'</g></svg>';
+
+SVG.mammoth =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Manny the mammoth"><g class="mx-all">' +
+'<rect x="62" y="156" width="23" height="38" rx="11" fill="#8A5F3A"/>' +
+'<rect x="115" y="156" width="23" height="38" rx="11" fill="#8A5F3A"/>' +
+'<rect x="62" y="183" width="23" height="13" rx="6" fill="#5E3F26"/>' +
+'<rect x="115" y="183" width="23" height="13" rx="6" fill="#5E3F26"/>' +
+'<ellipse cx="100" cy="142" rx="55" ry="37" fill="#A5734A"/>' +
+'<path d="M45 148q9 16 19 2 9 16 19 2 9 16 19 2 9 16 19 2 9 16 19 2 9 16 17-6" ' +
+'fill="none" stroke="#8A5F3A" stroke-width="7" stroke-linecap="round"/>' +
+'<path class="ear-l" d="M62 66C40 58 30 74 36 92c6 18 24 22 32 12z" fill="#8A5F3A"/>' +
+'<path class="ear-r" d="M138 66c22-8 32 8 26 26-6 18-24 22-32 12z" fill="#8A5F3A"/>' +
+'<ellipse cx="100" cy="80" rx="43" ry="42" fill="#B5825A"/>' +
+'<path d="M74 44q13-17 26-3 13-17 26 3" fill="none" stroke="#C79468" stroke-width="9" stroke-linecap="round"/>' +
+'<path d="M62 62q11-14 21-1 10-14 20-1 10-14 20 1 10-14 20 3" ' +
+'fill="none" stroke="#8A5F3A" stroke-width="6" stroke-linecap="round"/>' +
+'<g class="eyes">' +
+'<ellipse cx="80" cy="86" rx="8" ry="9" fill="#fff" stroke="#5E3F26" stroke-width="2.3"/>' +
+'<ellipse cx="120" cy="86" rx="8" ry="9" fill="#fff" stroke="#5E3F26" stroke-width="2.3"/>' +
+'<circle cx="81" cy="88" r="4" fill="#33302A"/><circle cx="121" cy="88" r="4" fill="#33302A"/>' +
+'<circle cx="83.5" cy="85" r="1.5" fill="#fff"/><circle cx="123.5" cy="85" r="1.5" fill="#fff"/>' +
+'</g>' +
+'<path d="M76 112C60 116 46 136 52 158c4 14 20 16 26 4" stroke="#F2E9D2" stroke-width="11" fill="none" stroke-linecap="round"/>' +
+'<path d="M124 112c16 4 30 24 24 46-4 14-20 16-26 4" stroke="#F2E9D2" stroke-width="11" fill="none" stroke-linecap="round"/>' +
+'<g class="ele-trunk">' +
+'<path d="M100 106C100 130 92 143 97 155c4 10 17 10 21 1" stroke="#B5825A" stroke-width="20" fill="none" stroke-linecap="round"/>' +
+'<path d="M100 106C100 130 92 143 97 155c4 10 17 10 21 1" stroke="#8A5F3A" stroke-width="20" fill="none" stroke-linecap="round" stroke-dasharray="2 11" opacity=".5"/>' +
+'</g></g></svg>';
+
+SVG.dragon =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Ember the dragon"><g class="mx-all">' +
+'<path class="ear-l" d="M62 96C30 78 14 46 22 26c22 6 44 30 48 58z" fill="#2F7F55" stroke="#256A46" stroke-width="2.5"/>' +
+'<path class="ear-r" d="M138 96c32-18 48-50 40-70-22 6-44 30-48 58z" fill="#2F7F55" stroke="#256A46" stroke-width="2.5"/>' +
+'<path d="M150 148c22 4 30 22 20 38-6 10-20 8-22-4" stroke="#3E9E63" stroke-width="9" fill="none" stroke-linecap="round"/>' +
+'<path d="M156 186l14-8 2 14z" fill="#E2703A"/>' +
+'<rect x="66" y="158" width="21" height="36" rx="10" fill="#3E9E63"/>' +
+'<rect x="113" y="158" width="21" height="36" rx="10" fill="#3E9E63"/>' +
+'<path d="M64 188h25l-4 8H68z" fill="#F2C14E"/><path d="M111 188h25l-4 8h-17z" fill="#F2C14E"/>' +
+'<ellipse cx="100" cy="142" rx="50" ry="36" fill="#3E9E63"/>' +
+'<ellipse cx="100" cy="150" rx="30" ry="24" fill="#EBD9A0"/>' +
+'<path d="M76 138h48M78 152h44" stroke="#D8C48A" stroke-width="3" stroke-linecap="round"/>' +
+'<path d="M100 106l9 14h-18z" fill="#2F7F55"/>' +
+'<ellipse cx="100" cy="80" rx="44" ry="39" fill="#48AE6E"/>' +
+'<path d="M72 42l6-20 10 18zM128 42l-6-20-10 18z" fill="#F2C14E" stroke="#C99A2E" stroke-width="2"/>' +
+'<path d="M84 44l4-14 7 13zM116 44l-4-14-7 13z" fill="#F2C14E" stroke="#C99A2E" stroke-width="2"/>' +
+'<g class="eyes">' +
+'<ellipse cx="82" cy="74" rx="10" ry="11" fill="#fff" stroke="#256A46" stroke-width="2.5"/>' +
+'<ellipse cx="118" cy="74" rx="10" ry="11" fill="#fff" stroke="#256A46" stroke-width="2.5"/>' +
+'<ellipse cx="83" cy="76" rx="4" ry="6" fill="#22282C"/><ellipse cx="119" cy="76" rx="4" ry="6" fill="#22282C"/>' +
+'<circle cx="86" cy="72" r="1.8" fill="#fff"/><circle cx="122" cy="72" r="1.8" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="104" rx="26" ry="17" fill="#5CBE7E"/>' +
+'<ellipse cx="90" cy="100" rx="3.6" ry="4.6" fill="#256A46"/><ellipse cx="110" cy="100" rx="3.6" ry="4.6" fill="#256A46"/>' +
+'<path d="M86 112q14 9 28 0" stroke="#256A46" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+'<g class="spray">' +
+'<ellipse cx="126" cy="106" rx="9" ry="6" fill="#F2A03E"/>' +
+'<ellipse cx="142" cy="102" rx="6" ry="4" fill="#E2703A"/>' +
+'<ellipse cx="154" cy="99" rx="4" ry="3" fill="#F2C14E"/>' +
+'</g></g></svg>';
+
 function mascotHTML(kind, extra){
   return '<div class="mascot ' + kind + (extra ? ' ' + extra : '') + '">' + SVG[kind] + '</div>';
 }
@@ -1178,6 +1356,15 @@ var THAI = [
   { th:'พระอาทิตย์', ro:'pra-aa-tit', en:'sun',  emo:'☀️' }
 ];
 
+/* 3D shapes arrive at level 5 — Year 1 names them alongside the flat ones. */
+var SOLIDS = {
+  cube:     '<g><polygon points="20,34 50,20 80,34 80,72 50,86 20,72"/><polyline points="20,34 50,48 80,34" fill="none" stroke="#fff" stroke-width="4"/><line x1="50" y1="48" x2="50" y2="86" stroke="#fff" stroke-width="4"/></g>',
+  sphere:   '<g><circle cx="50" cy="50" r="36"/><ellipse cx="50" cy="50" rx="36" ry="13" fill="none" stroke="#fff" stroke-width="4"/></g>',
+  cone:     '<g><polygon points="50,12 82,74 18,74"/><ellipse cx="50" cy="74" rx="32" ry="12"/><ellipse cx="50" cy="74" rx="32" ry="12" fill="none" stroke="#fff" stroke-width="3"/></g>',
+  cylinder: '<g><rect x="20" y="24" width="60" height="52"/><ellipse cx="50" cy="76" rx="30" ry="12"/><ellipse cx="50" cy="24" rx="30" ry="12" fill="none" stroke="#fff" stroke-width="4"/></g>',
+  pyramid:  '<g><polygon points="50,12 88,78 12,78"/><line x1="50" y1="12" x2="50" y2="78" stroke="#fff" stroke-width="4"/></g>'
+};
+var SOLID_NAMES = Object.keys(SOLIDS);
 var SHAPES = {
   circle:    '<circle cx="50" cy="50" r="38"/>',
   square:    '<rect x="13" y="13" width="74" height="74" rx="5"/>',
@@ -1190,7 +1377,8 @@ var SHAPES = {
 };
 var SHAPE_NAMES = Object.keys(SHAPES);
 function shapeSVG(name, fill){
-  return '<svg viewBox="0 0 100 100" role="img" aria-label="' + name + '" fill="' + (fill || 'currentColor') + '">' + SHAPES[name] + '</svg>';
+  var d = SHAPES[name] || SOLIDS[name];
+  return '<svg viewBox="0 0 100 100" role="img" aria-label="' + name + '" fill="' + (fill || 'currentColor') + '">' + d + '</svg>';
 }
 
 /* Parametric faces — Kimochis-style feeling recognition. */
@@ -1332,7 +1520,10 @@ var CODE_LEVELS = [
     { w:5, start:[0,0], goal:[4,4], fire:[[1,1],[3,3],[2,2]] } ],
   [ { w:5, start:[0,4], goal:[4,4], fire:[[1,3],[2,2],[3,3],[2,4]] },
     { w:5, start:[4,0], goal:[0,4], fire:[[1,1],[2,2],[3,3],[3,1]] },
-    { w:5, start:[2,4], goal:[2,0], fire:[[1,2],[3,2],[2,3]] } ]
+    { w:5, start:[2,4], goal:[2,0], fire:[[1,2],[3,2],[2,3]] } ],
+  [ { w:5, start:[0,4], goal:[4,0], fire:[[1,3],[2,2],[3,1],[1,1],[3,3]] },
+    { w:5, start:[2,2], goal:[0,0], fire:[[1,2],[2,1],[3,2],[2,3]] },
+    { w:5, start:[4,4], goal:[0,0], fire:[[3,3],[1,1],[2,4],[4,2]] } ]
 ];
 
 /* ═══ Activity registry ═══════════════════════════════════════════ */
@@ -1359,7 +1550,18 @@ var ACTS = [
   { id:'thai',   title:'Thai Time',      sub:'Words to say out loud',  mascot:'elephant', color:'var(--c-thai)',
     area:'Thai Language & Culture', note:'Thai script in a looped teaching face, with sound. Falls back to reading the romanisation aloud if the device has no Thai voice. Later levels widen the word list and add a fourth choice.' },
   { id:'feel',   title:'Big Feelings',   sub:'Read the faces',         mascot:'panda',    color:'var(--c-feel)',
-    area:'Health & PE — Bounce Back, Kimochis', note:'Names a feeling from a face. Early levels use four clearly different feelings; later ones bring in the near-neighbours (worried, scared, shy) that are genuinely hard to tell apart.' }
+    area:'Health & PE — Bounce Back, Kimochis', note:'Names a feeling from a face. Early levels use four clearly different feelings; later ones bring in the near-neighbours (worried, scared, shy) that are genuinely hard to tell apart.' },
+
+  { id:'loop',   title:'Dragon Loops',   sub:'Code with repeats',      mascot:'dragon',   color:'var(--c-loop)', stage:'y12',
+    area:'Digital Technologies, Year 1–2 — repetition', note:'The real step up from Monkey King Code. Each quest caps how many blocks the program may hold, so from the second level on it cannot be solved by spelling out every move — he has to spot the repeating pattern and wrap it in a repeat block. Tapping a repeat cycles how many times it runs. Later quests need a two-move body (right, up) repeated, which is the staircase every robotics course teaches.' },
+  { id:'big',    title:'Mammoth Numbers',sub:'Tens, hundreds, groups', mascot:'mammoth',  color:'var(--c-big)', stage:'y12',
+    area:'Mathematics, Year 1–2 — place value, skip counting, multiplication, division', note:'Cycles through skip counting (2s, 3s, 5s, 10s, 25s), tens-and-ones place value with rods and cubes, two-digit addition and subtraction to 200, multiplication as rows and columns, and division as fair sharing.' },
+  { id:'lab',    title:'Woolly Word Lab',sub:'sh · ch · magic e',      mascot:'woolly',   color:'var(--c-lab)', stage:'y12',
+    area:'English, Year 1–2 — digraphs, blends, long vowels', note:'Where phonics goes after single sounds: two letters making one sound (sh, ch, th, wh, ck, ng), consonant blends (fr, tr, st), split digraph / magic e (cap → cape), and vowel teams (ai, ee, oa, oo).' }
+];
+var STAGES = [
+  { key:'f',   label:'Foundation',  hint:'first year of school' },
+  { key:'y12', label:'Year 1 & 2',  hint:'when Foundation gets easy' }
 ];
 function act(id){ for (var i=0;i<ACTS.length;i++) if (ACTS[i].id === id) return ACTS[i]; return null; }
 
@@ -1391,7 +1593,7 @@ function addStar(id){
 /* ═══ Home ════════════════════════════════════════════════════════ */
 function home(){
   hush(); GEN++; G = null;
-  var tiles = ACTS.map(function(a){
+  function tileHTML(a){
     var got = S.got[a.id] || 0, L = lvl(a.id);
     return '<button class="tile" data-go="' + a.id + '" style="--tile:' + a.color + '">' +
       (got ? '<span class="got">⭐ ' + got + '</span>' : '') +
@@ -1399,15 +1601,22 @@ function home(){
       '<span class="peek">' + SVG[a.mascot] + '</span>' +
       '<h2>' + a.title + '</h2><span class="sub">' + a.sub + '</span>' +
       '</button>';
+  }
+  var tiles = STAGES.map(function(st){
+    var mine = ACTS.filter(function(a){ return (a.stage || 'f') === st.key; });
+    if (!mine.length) return '';
+    return '<div class="band"><span class="band-name">' + st.label + '</span>' +
+      '<span class="band-hint">' + st.hint + '</span></div>' +
+      '<div class="board">' + mine.map(tileHTML).join('') + '</div>';
   }).join('');
 
   app.innerHTML = barHTML('Foundation Playground', false) +
     '<div class="hero">' +
       '<div class="eyebrow">Foundation · 2026–2027</div>' +
       '<h1>Pick a friend.<br><em>Let\'s play.</em></h1>' +
-      '<p>Eleven little games for your first year at big school. They get harder the more you play.</p>' +
+      '<p>Fourteen little games. They get harder the more you play — and the last three keep going into Year 1 and 2.</p>' +
     '</div>' +
-    '<div class="board">' + tiles + '</div>' +
+    tiles +
     '<div class="footnote"><button class="linky" data-panel>For grown-ups →</button></div>';
 
   wireBar(app);
@@ -1468,7 +1677,8 @@ function next(){
   dots();
   ({ trace:roundTrace, sounds:roundSounds, count:roundCount, code:roundCode,
      shape:roundShape, thai:roundThai, feel:roundFeel,
-     word:roundWord, add:roundAdd, tall:roundTall, memory:roundMemory })[G.a.id]();
+     word:roundWord, add:roundAdd, tall:roundTall, memory:roundMemory,
+     loop:roundLoop, big:roundBig, lab:roundLab })[G.a.id]();
 }
 
 function party(){
@@ -1482,8 +1692,8 @@ function party(){
     '<h2>' + pick(lines) + '</h2>' +
     '<p>Five in a row on ' + a.title + '.</p>' +
     '<span class="sticker">⭐ ' + S.stars + ' stars all up</span>' +
-    '<span class="lv-up">' + (lvl(a.id) >= 4
-      ? 'Level 4 — the hardest there is'
+    '<span class="lv-up">' + (lvl(a.id) >= MAXLVL
+      ? 'Level ' + MAXLVL + ' — the hardest there is'
       : 'Level ' + lvl(a.id) + ' · ' + nextLevelIn(a.id) + ' more stars until it gets harder') + '</span>' +
     '<button class="btn" data-more>Play more</button>' +
     '<button class="btn ghost" data-home>Back to the board</button>' +
@@ -1604,6 +1814,8 @@ function roundCount(){
 /* ═══ 3 · Monkey King Code ════════════════════════════════════════ */
 var DIRS = { up:[0,-1], down:[0,1], left:[-1,0], right:[1,0] };
 var ARROW = { up:'⬆', down:'⬇', left:'⬅', right:'➡' };
+/* Wider boards get smaller squares so the keypad still fits under them. */
+function gridCW(w){ var cap = w >= 6 ? 44 : (w >= 5 ? 52 : 62); return 'clamp(30px,' + (Math.round(760/w)/10) + 'vw,' + cap + 'px)'; }
 function roundCode(){
   var band = CODE_LEVELS[lvl('code')];
   var lv = band[(G.round - 1) % band.length];
@@ -1622,7 +1834,7 @@ function roundCode(){
 
   stage().innerHTML = lay(
     'Tell my cloud where to fly!',
-    '<div class="grid-wrap">' +
+    '<div class="grid-wrap" style="--cw:' + gridCW(W) + '">' +
       '<div class="grid" id="grid" style="grid-template-columns:repeat(' + W + ',auto)">' + cells +
         '<div class="rider" id="rider">' + mascotHTML('monkey') + '</div>' +
       '</div>' +
@@ -1717,7 +1929,11 @@ function roundShape(){
   if (G.round % 2 === 1) shapeName(); else shapePattern();
 }
 var EASY_SHAPES = ['circle','square','triangle','rectangle'];
-function shapePool(){ return lvl('shape') >= 2 ? SHAPE_NAMES : EASY_SHAPES; }
+function shapePool(){
+  var L = lvl('shape');
+  if (L >= 5) return SHAPE_NAMES.concat(SOLID_NAMES);
+  return L >= 2 ? SHAPE_NAMES : EASY_SHAPES;
+}
 function shapeName(){
   var pool = shapePool(), n = lvl('shape') >= 3 ? 3 : 2;
   var right = pick(pool);
@@ -2226,38 +2442,53 @@ function roundAdd(){
     b = 1 + Math.floor(Math.random() * (top - a));
     ans = a + b;
   }
-  var opts = shuffle([ans].concat(sample([ans-2,ans-1,ans+1,ans+2].filter(function(x){ return x >= 0 && x <= top + 2; }), 2)));
+  // Level 5 hides one of the two numbers instead of the answer — a missing
+  // addend is a much harder question than "what is 5 plus 3".
+  var missing = L >= 5 && Math.random() < 0.5;
+  var target = missing ? b : ans;
+  var opts = shuffle([target].concat(sample([target-2,target-1,target+1,target+2].filter(function(x){ return x >= 0 && x <= top + 2; }), 2)));
   var bump = 1;
-  while (opts.length < 3){ if (opts.indexOf(ans + bump) < 0 && ans + bump >= 0) opts.push(ans + bump); bump++; }
+  while (opts.length < 3){ if (opts.indexOf(target + bump) < 0 && target + bump >= 0) opts.push(target + bump); bump++; }
 
   function heap(n, goneFrom){
     var out = '';
     for (var i=0;i<n;i++) out += '<span' + (goneFrom != null && i >= goneFrom ? ' class="gone"' : '') + '>' + emo + '</span>';
     return '<span class="heap">' + out + '</span>';
   }
-  var body = sub
-    ? (show ? heap(a, a - b) : '<span>' + a + '</span>') + '<span class="op">−</span>' +
-      (show ? '<span>' + b + '</span>' : '<span>' + b + '</span>')
-    : (show ? heap(a) : '<span>' + a + '</span>') + '<span class="op">+</span>' +
-      (show ? heap(b) : '<span>' + b + '</span>');
+  var op = sub ? '−' : '+';
+  var body;
+  if (missing){
+    body = '<span>' + a + '</span><span class="op">' + op + '</span><span class="blank">?</span>' +
+           '<span class="op">=</span><span>' + ans + '</span>';
+  } else if (show){
+    body = (sub ? heap(a, a - b) : heap(a)) + '<span class="op">' + op + '</span>' +
+           (sub ? '<span>' + b + '</span>' : heap(b)) +
+           '<span class="op">=</span><span class="op">?</span>';
+  } else {
+    body = '<span>' + a + '</span><span class="op">' + op + '</span><span>' + b + '</span>' +
+           '<span class="op">=</span><span class="op">?</span>';
+  }
+  var spoken = missing
+    ? (sub ? a + ' take away what leaves ' + ans + '?' : a + ' plus what makes ' + ans + '?')
+    : (a + (sub ? ' take away ' : ' plus ') + b + '. How many?');
 
   stage().innerHTML = lay(
-    sub ? 'Take some away!' : 'Put them together!',
-    '<div class="sum">' + body + '<span class="op">=</span><span class="op">?</span></div>' +
-    '<p class="ask" aria-live="polite">' + a + (sub ? ' take away ' : ' add ') + b + '?</p>',
+    missing ? 'What is hiding?' : (sub ? 'Take some away!' : 'Put them together!'),
+    '<div class="sum">' + body + '</div>' +
+    '<p class="ask" aria-live="polite">' + spoken + '</p>',
     '<div class="choices">' + opts.map(function(v){
       return '<button class="choice num" data-v="' + v + '">' + v + '</button>';
     }).join('') + '</div>'
   );
-  later(340, function(){ say(a + (sub ? ' take away ' : ' plus ') + b + '. How many?'); });
+  later(340, function(){ say(spoken); });
 
   var settled = false;
   on(stage(), '.choice', function(el){
     var v = +el.getAttribute('data-v');
-    if (v === ans){
+    if (v === target){
       if (settled) return;
       settled = true; el.classList.add('yes');
-      scored(true, a + (sub ? ' take away ' : ' plus ') + b + ' is ' + ans);
+      scored(true, a + ' ' + (sub ? 'take away' : 'plus') + ' ' + b + ' is ' + ans);
     } else {
       el.classList.add('no');
       scored(false, show ? 'Count them all again.' : 'Try counting on your fingers.');
@@ -2279,7 +2510,7 @@ function treeSVG(h){
 function roundTall(){
   var L = lvl('tall');
   var mode = L < 1 ? 'pick' : (L < 3 ? (G.round % 2 ? 'pick' : 'order') : 'order');
-  var count = L < 2 ? 3 : (L < 4 ? 4 : 4);
+  var count = L < 2 ? 3 : (L < 5 ? 4 : 5);
   var numbers = L >= 4 && mode === 'order';
 
   var hs = [];
@@ -2287,7 +2518,8 @@ function roundTall(){
     var v = Math.round(Math.random() * 100) / 100;
     if (hs.every(function(x){ return Math.abs(x - v) > (L >= 2 ? 0.14 : 0.24); })) hs.push(v);
   }
-  var vals = numbers ? shuffle([3,7,11,15,19,4,8,12,16,20]).slice(0, count) : hs;
+  var numPool = L >= 5 ? [12,25,38,47,53,61,74,86,95,100] : [3,7,11,15,19,4,8,12,16,20];
+  var vals = numbers ? shuffle(numPool).slice(0, count) : hs;
   var items = vals.map(function(v, i){ return { v:v, i:i, h:hs[i] }; });
   var wantBig = Math.random() < 0.5;
 
@@ -2356,7 +2588,7 @@ function gainStar(){
 }
 function roundMemory(){
   var L = lvl('memory');
-  var pairs = [3, 4, 5, 6, 8][L];
+  var pairs = [3, 4, 5, 6, 8, 10][L];
   var cols = pairs <= 4 ? pairs : (pairs <= 6 ? Math.ceil(pairs * 2 / 3) : 4);
   var faces = sample(MEM_FACES, pairs);
   var deck = shuffle(faces.concat(faces));
@@ -2410,13 +2642,410 @@ function roundMemory(){
   });
 }
 
+/* ═══ 12 · Dragon Loops ═══════════════════════════════════════════
+   Sequences were the Foundation lesson. This one caps how many blocks a
+   program may hold, so from level 1 on the quest cannot be solved by
+   spelling out every step — a repeat block is the only way through. */
+var LOOP_LEVELS = [
+  [ { w:5, start:[0,4], goal:[3,4], fire:[], max:6 },
+    { w:5, start:[0,4], goal:[0,1], fire:[], max:6 } ],
+  [ { w:5, start:[0,4], goal:[4,4], fire:[], max:2 },
+    { w:5, start:[0,4], goal:[0,0], fire:[], max:2 } ],
+  [ { w:5, start:[4,4], goal:[0,4], fire:[], max:2 },
+    { w:5, start:[0,0], goal:[0,4], fire:[], max:2 },
+    { w:5, start:[0,4], goal:[4,0], fire:[], max:2 } ],
+  [ { w:5, start:[0,4], goal:[4,0], fire:[], max:2 },
+    { w:6, start:[0,5], goal:[5,0], fire:[], max:2 },
+    { w:5, start:[4,0], goal:[0,4], fire:[], max:2 } ],
+  [ { w:6, start:[0,5], goal:[5,5], fire:[[2,5],[3,5]], max:5 },
+    { w:6, start:[0,5], goal:[5,0], fire:[], max:2 },
+    { w:6, start:[0,0], goal:[5,5], fire:[], max:2 } ],
+  [ { w:6, start:[0,5], goal:[5,5], fire:[[2,5],[3,5],[4,4]], max:5 },
+    { w:6, start:[5,0], goal:[0,5], fire:[], max:2 },
+    { w:6, start:[0,5], goal:[4,1], fire:[[2,3]], max:4 } ]
+];
+
+function roundLoop(){
+  var band = LOOP_LEVELS[lvl('loop')];
+  var lv = band[(G.round - 1) % band.length];
+  var W = lv.w, H = lv.w;
+  var prog = [], loopOpen = null, running = false;
+  var pos = lv.start.slice();
+
+  function isFire(c, r){ return lv.fire.some(function(f){ return f[0] === c && f[1] === r; }); }
+  function used(){ return prog.length; }
+
+  var cells = '';
+  for (var r=0;r<H;r++) for (var c=0;c<W;c++){
+    var goal = (lv.goal[0] === c && lv.goal[1] === r);
+    cells += '<div class="cell' + (goal ? ' goal' : '') + '" data-c="' + c + '" data-r="' + r + '">' +
+      (goal ? '💎' : (isFire(c,r) ? '🔥' : '')) + '</div>';
+  }
+
+  stage().innerHTML = lay(
+    'Only ' + lv.max + ' blocks. Use a repeat!',
+    '<div class="grid-wrap" style="--cw:' + gridCW(W) + '">' +
+      '<div class="grid" id="grid" style="grid-template-columns:repeat(' + W + ',auto)">' + cells +
+        '<div class="rider" id="rider">' + mascotHTML('dragon') + '</div>' +
+      '</div>' +
+      '<div class="blocks" id="blocks"></div>' +
+    '</div>',
+    '<div class="row-keys" style="align-items:flex-start">' +
+      '<div class="pad">' +
+        '<button class="key" data-d="left">⬅</button>' +
+        '<button class="key" data-d="up">⬆</button>' +
+        '<button class="key" data-d="right">➡</button>' +
+        '<button class="key wipe" data-wipe aria-label="Clear the program">↺</button>' +
+        '<button class="key" data-d="down">⬇</button>' +
+        '<button class="key go" data-run>RUN</button>' +
+      '</div>' +
+      '<div class="pad side">' +
+        '<button class="key loop wide" data-loop>🔁 repeat</button>' +
+        '<button class="key loop wide" data-close disabled>end repeat</button>' +
+      '</div>' +
+    '</div>' +
+    '<p class="hint"><span class="budget" id="budget">0 of ' + lv.max + ' blocks</span> · ' +
+      '<span id="msg">fly to the gem 💎</span></p>'
+  );
+
+  var grid = document.getElementById('grid'), rider = document.getElementById('rider');
+  function place(c, r, animate){
+    var cell = grid.querySelector('[data-c="' + c + '"][data-r="' + r + '"]');
+    if (!cell) return;
+    if (!animate) rider.style.transition = 'none';
+    rider.style.transform = 'translate(' + (cell.offsetLeft - rider.offsetLeft) + 'px,' + (cell.offsetTop - rider.offsetTop) + 'px)';
+    if (!animate) { void rider.offsetWidth; rider.style.transition = ''; }
+  }
+  requestAnimationFrame(function(){ place(pos[0], pos[1], false); });
+
+  function draw(active){
+    var el = document.getElementById('blocks'); if (!el) return;
+    var out = '', k = 0;
+    prog.forEach(function(it){
+      if (it.t === 'move'){
+        out += '<span class="blk mv' + (k === active ? ' now' : '') + '">' + ARROW[it.d] + '</span>';
+        k++;
+      } else {
+        out += '<span class="loopwrap' + (it === loopOpen ? ' open' : '') + '">' +
+          '<span class="cnt">🔁 ' + it.n + '×</span>' +
+          it.body.map(function(m){ return '<span class="blk mv">' + ARROW[m.d] + '</span>'; }).join('') +
+          '</span>';
+        k++;
+      }
+    });
+    el.innerHTML = out;
+    var b = document.getElementById('budget');
+    if (b){
+      b.textContent = used() + ' of ' + lv.max + ' blocks';
+      b.classList.toggle('full', used() >= lv.max);
+    }
+  }
+  later(340, function(){ say('Only ' + lv.max + ' blocks. Use a repeat to say it once.'); });
+
+  on(stage(), '[data-d]', function(el){
+    if (running) return;
+    var d = el.getAttribute('data-d');
+    if (loopOpen){
+      if (loopOpen.body.length >= 4) return;
+      loopOpen.body.push({ d:d });
+    } else {
+      if (used() >= lv.max) { sfx('bonk'); return; }
+      prog.push({ t:'move', d:d });
+    }
+    sfx('tap'); draw(-1);
+  });
+  on(stage(), '[data-loop]', function(){
+    if (running || loopOpen || used() >= lv.max) { if (!running) sfx('bonk'); return; }
+    // Cycle the count on repeated taps so 2-6 is reachable without a spinner.
+    loopOpen = { t:'loop', n:2, body:[] };
+    prog.push(loopOpen);
+    document.querySelector('[data-close]').disabled = false;
+    sfx('tap'); draw(-1);
+  });
+  on(stage(), '.loopwrap .cnt', function(){});
+  on(stage(), '[data-close]', function(el){
+    if (running || !loopOpen) return;
+    if (!loopOpen.body.length){ prog.pop(); }
+    loopOpen = null; el.disabled = true;
+    sfx('tap'); draw(-1);
+  });
+  on(stage(), '[data-wipe]', function(){
+    if (running) return;
+    prog = []; loopOpen = null;
+    document.querySelector('[data-close]').disabled = true;
+    draw(-1); sfx('tap');
+    pos = lv.start.slice(); place(pos[0], pos[1], true);
+  });
+
+  /* Tapping an existing repeat cycles how many times it runs. */
+  stage().addEventListener('click', function(ev){
+    var w = ev.target.closest ? ev.target.closest('.loopwrap') : null;
+    if (!w || running) return;
+    var idx = Array.prototype.indexOf.call(stage().querySelectorAll('.loopwrap'), w);
+    var loops = prog.filter(function(p){ return p.t === 'loop'; });
+    var it = loops[idx];
+    if (!it || it === loopOpen) return;
+    it.n = it.n >= 6 ? 2 : it.n + 1;
+    sfx('tap'); draw(-1);
+  });
+
+  on(stage(), '[data-run]', function(){
+    if (running || !prog.length) return;
+    if (loopOpen){ loopOpen = null; document.querySelector('[data-close]').disabled = true; }
+    running = true;
+    pos = lv.start.slice();
+    place(pos[0], pos[1], true);
+
+    // Flatten the program, remembering which block each step came from.
+    var steps = [];
+    prog.forEach(function(it, bi){
+      if (it.t === 'move') steps.push({ d:it.d, bi:bi });
+      else for (var i=0;i<it.n;i++) it.body.forEach(function(m){ steps.push({ d:m.d, bi:bi }); });
+    });
+
+    var i = 0, msg = document.getElementById('msg');
+    function step(){
+      if (!document.getElementById('grid')) return;
+      if (i >= steps.length){
+        running = false;
+        msg.textContent = 'Not there yet — change your program!';
+        sfx('no'); react('oops'); say('Almost! Change your program.');
+        draw(-1);
+        return;
+      }
+      var s = steps[i];
+      draw(s.bi);
+      var d = DIRS[s.d];
+      var nc = pos[0] + d[0], nr = pos[1] + d[1];
+      i++;
+      if (nc < 0 || nc >= W || nr < 0 || nr >= H || isFire(nc, nr)){
+        running = false;
+        sfx('bonk'); react('oops');
+        msg.textContent = nc < 0 || nc >= W || nr < 0 || nr >= H ? 'Off the edge!' : 'Too hot!';
+        say('Oops! Try again.');
+        later(700, function(){ pos = lv.start.slice(); place(pos[0], pos[1], true); draw(-1); });
+        return;
+      }
+      pos = [nc, nr];
+      place(nc, nr, true);
+      sfx('step');
+      if (nc === lv.goal[0] && nr === lv.goal[1]){
+        running = false;
+        msg.textContent = 'The gem! 💎';
+        scored(true, 'You got it in ' + used() + ' blocks!');
+        return;
+      }
+      later(330, step);
+    }
+    step();
+  });
+}
+
+/* ═══ 13 · Mammoth Numbers ════════════════════════════════════════ */
+function bigOpts(ans, spread, floorAt){
+  var lo = floorAt == null ? 0 : floorAt;
+  var near = [ans - spread, ans - 1, ans + 1, ans + spread].filter(function(x){ return x >= lo; });
+  var opts = shuffle([ans].concat(sample(near, 2)));
+  var b = 1;
+  while (opts.length < 3){ if (opts.indexOf(ans + b) < 0 && ans + b >= lo) opts.push(ans + b); b++; }
+  return shuffle(opts);
+}
+function askNumbers(prompt, ans, body, spoken, spread){
+  stage().innerHTML = lay(prompt, body, '<div class="choices">' +
+    bigOpts(ans, spread || 10).map(function(v){
+      return '<button class="choice num" data-v="' + v + '">' + v + '</button>';
+    }).join('') + '</div>');
+  later(340, function(){ say(spoken); });
+  var settled = false;
+  on(stage(), '.choice', function(el){
+    var v = +el.getAttribute('data-v');
+    if (v === ans){
+      if (settled) return;
+      settled = true; el.classList.add('yes');
+      scored(true, String(ans));
+    } else {
+      el.classList.add('no');
+      scored(false, 'Have another look.');
+    }
+  });
+}
+function roundBig(){
+  var L = lvl('big');
+  var modes = L < 1 ? ['skip'] : L < 2 ? ['skip','place'] : L < 3 ? ['place','sum2'] :
+              L < 4 ? ['sum2','array'] : L < 5 ? ['sum2','array','share'] : ['sum2','array','share','skip'];
+  var mode = pick(modes);
+
+  if (mode === 'skip'){
+    var stepBy = pick(L < 2 ? [2,5,10] : [2,3,4,5,10,25]);
+    var from = stepBy * (1 + Math.floor(Math.random() * 4));
+    var seq = [], i;
+    for (i=0;i<5;i++) seq.push(from + stepBy * i);
+    var ans = seq[4];
+    var html = '<div class="seq">' + seq.slice(0,4).map(function(v){ return '<span>' + v + '</span>'; }).join('<span>·</span>') +
+      '<span>·</span><span class="blank">?</span></div>' +
+      '<p class="ask" aria-live="polite">Counting by ' + stepBy + '. What comes next?</p>';
+    return askNumbers('Count in ' + stepBy + 's with me.', ans, html,
+      seq.slice(0,4).join(', ') + '. What comes next?', stepBy);
+  }
+
+  if (mode === 'place'){
+    var tens = 1 + Math.floor(Math.random() * (L >= 3 ? 9 : 5));
+    var ones = Math.floor(Math.random() * 10);
+    var n = tens * 10 + ones, rods = '', cubes = '';
+    for (i=0;i<tens;i++) rods += '<span class="rod"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>';
+    for (i=0;i<ones;i++) cubes += '<span class="cube"></span>';
+    var pvHtml = '<div class="pv">' +
+      '<span class="pv-col"><span class="rods">' + (rods || '<span class="pv-lab">none</span>') + '</span><span class="pv-lab">' + tens + ' tens</span></span>' +
+      '<span class="pv-col"><span class="cubes">' + cubes + '</span><span class="pv-lab">' + ones + ' ones</span></span>' +
+      '</div><p class="ask" aria-live="polite">How many altogether?</p>';
+    return askNumbers('Tens and ones. How many?', n, pvHtml,
+      tens + ' tens and ' + ones + ' ones. How many altogether?', 10);
+  }
+
+  if (mode === 'sum2'){
+    var top = L < 3 ? 40 : (L < 5 ? 80 : 200);
+    var take = L >= 3 && Math.random() < 0.4;
+    var a, b, ans2;
+    if (take){
+      a = 12 + Math.floor(Math.random() * (top - 12));
+      b = 2 + Math.floor(Math.random() * Math.min(a - 1, top / 2));
+      ans2 = a - b;
+    } else {
+      a = 10 + Math.floor(Math.random() * (top / 2));
+      b = 5 + Math.floor(Math.random() * (top / 2));
+      ans2 = a + b;
+    }
+    var sumHtml = '<div class="sum"><span>' + a + '</span><span class="op">' + (take ? '−' : '+') +
+      '</span><span>' + b + '</span><span class="op">=</span><span class="op">?</span></div>' +
+      '<p class="ask" aria-live="polite">' + a + (take ? ' take away ' : ' plus ') + b + '</p>';
+    return askNumbers(take ? 'Big take away!' : 'Big numbers!', ans2, sumHtml,
+      a + (take ? ' take away ' : ' plus ') + b, 10);
+  }
+
+  if (mode === 'array'){
+    var rows = 2 + Math.floor(Math.random() * (L >= 4 ? 5 : 3));
+    var cols = 2 + Math.floor(Math.random() * (L >= 4 ? 5 : 3));
+    var emo = pick(CRITTERS), cellsHtml = '';
+    for (i=0;i<rows*cols;i++) cellsHtml += '<span>' + emo + '</span>';
+    var arrHtml = '<div class="array" style="grid-template-columns:repeat(' + cols + ',auto)">' + cellsHtml + '</div>' +
+      '<div class="seq"><span>' + rows + '</span><span class="op">×</span><span>' + cols + '</span>' +
+      '<span class="op">=</span><span class="blank">?</span></div>' +
+      '<p class="ask" aria-live="polite">' + rows + ' rows of ' + cols + '</p>';
+    return askNumbers(rows + ' rows of ' + cols + '. How many?', rows * cols, arrHtml,
+      rows + ' rows of ' + cols + '. How many altogether?', Math.max(2, cols));
+  }
+
+  // share — division as equal grouping
+  var groups = 2 + Math.floor(Math.random() * 3);
+  var each = 2 + Math.floor(Math.random() * 5);
+  var total = groups * each;
+  var emo2 = pick(CRITTERS), bk = '';
+  for (i=0;i<groups;i++) bk += '<span class="basket"></span>';
+  var shareHtml = '<div class="array" style="grid-template-columns:repeat(' + Math.min(total, 8) + ',auto)">' +
+      new Array(total + 1).join('<span>' + emo2 + '</span>') + '</div>' +
+    '<div class="baskets">' + bk + '</div>' +
+    '<p class="ask" aria-live="polite">Share ' + total + ' between ' + groups + ' baskets — how many in each?</p>';
+  return askNumbers('Share them out fairly.', each, shareHtml,
+    'Share ' + total + ' between ' + groups + '. How many in each basket?', Math.max(2, each));
+}
+
+/* ═══ 14 · Woolly Word Lab ════════════════════════════════════════ */
+var DIGRAPH = [
+  ['sh','ship','🚢'],['sh','shell','🐚'],['sh','sheep','🐑'],['ch','chair','🪑'],['ch','cheese','🧀'],
+  ['ch','chick','🐤'],['th','thumb','👍'],['th','thorn','🌹'],['wh','whale','🐋'],['wh','wheel','🛞'],
+  ['ck','duck','🦆'],['ck','clock','🕐'],['ng','ring','💍'],['ng','king','👑']
+];
+var BLEND = [
+  ['fr','frog','🐸'],['tr','train','🚂'],['st','star','⭐'],['cr','crab','🦀'],['fl','flag','🏳️'],
+  ['bl','block','🧱'],['sn','snake','🐍'],['sp','spider','🕷️'],['gr','grapes','🍇'],['dr','drum','🥁'],
+  ['pl','plane','✈️'],['sw','swan','🦢']
+];
+var MAGIC_E = [
+  ['cap','cape','🦸'],['kit','kite','🪁'],['pin','pine','🌲'],['tub','tube','🧴'],
+  ['hat','hate','😠'],['can','cane','🦯'],['rob','robe','🥻'],['cub','cube','🧊'],['not','note','🎵']
+];
+var VOWEL_TEAM = [
+  ['ai','rain','🌧️'],['ai','snail','🐌'],['ee','tree','🌳'],['ee','bee','🐝'],['oa','boat','⛵'],
+  ['oa','goat','🐐'],['ea','leaf','🍃'],['oo','moon','🌙'],['oo','book','📖'],['ow','cow','🐄']
+];
+
+function roundLab(){
+  var L = lvl('lab');
+  var kind = L < 1 ? 'digraph' : L < 2 ? pick(['digraph','blend']) : L < 3 ? 'magic' :
+             L < 4 ? pick(['team','magic']) : pick(['digraph','blend','team','magic']);
+
+  if (kind === 'magic'){
+    var m = pick(MAGIC_E);
+    var showLong = Math.random() < 0.5;
+    var target = showLong ? m[1] : m[0];
+    var opts = shuffle([m[0], m[1]].concat(sample([m[0] + 'e', m[1].slice(0,-1)], 1, [m[0], m[1]])));
+    if (opts.length < 3) opts.push(m[0] + 'y');
+    stage().innerHTML = lay(
+      'Magic e makes the vowel say its name.',
+      '<div class="big-pic">' + m[2] + '</div>' +
+      '<p class="ask" aria-live="polite">Which word is “' + target + '”?</p>',
+      '<div class="choices">' + shuffle(opts).slice(0,3).map(function(wd){
+        return '<button class="choice num" data-w="' + wd + '" style="font-size:34px">' + wd + '</button>';
+      }).join('') + '</div>'
+    );
+    later(340, function(){ say('Which word is ' + target + '?'); });
+    var done = false;
+    on(stage(), '.choice', function(el){
+      if (el.getAttribute('data-w') === target){
+        if (done) return;
+        done = true; el.classList.add('yes');
+        scored(true, target + '. Magic e!');
+      } else { el.classList.add('no'); scored(false, 'Listen to the middle sound.'); }
+    });
+    return;
+  }
+
+  var bank = kind === 'digraph' ? DIGRAPH : (kind === 'blend' ? BLEND : VOWEL_TEAM);
+  var it = pick(bank);
+  var part = it[0], word = it[1], pic = it[2];
+  var at = word.indexOf(part);
+  var shown = word.slice(0, at) + '<span class="miss">' + new Array(part.length + 1).join('_') + '</span>' + word.slice(at + part.length);
+  var wrong = sample(bank.map(function(x){ return x[0]; }).filter(function(x, i, arr){ return arr.indexOf(x) === i; }),
+                     L >= 4 ? 3 : 2, [part]);
+  var choices = shuffle([part].concat(wrong));
+
+  stage().innerHTML = lay(
+    kind === 'team' ? 'Two vowels, one sound.' : 'Two letters, one sound.',
+    '<div class="big-pic">' + pic + '</div>' +
+    '<div class="lab-word">' + shown + '</div>' +
+    '<p class="ask" aria-live="polite">Finish the word “' + word + '”.</p>',
+    '<div class="choices">' + choices.map(function(c){
+      return '<button class="choice num" data-c="' + c + '">' + c + '</button>';
+    }).join('') + '</div>'
+  );
+  later(340, function(){ say(word + '. Which two letters are missing?'); });
+
+  var settled = false;
+  on(stage(), '.choice', function(el){
+    if (el.getAttribute('data-c') === part){
+      if (settled) return;
+      settled = true; el.classList.add('yes');
+      var slot = stage().querySelector('.miss');
+      if (slot) slot.textContent = part;
+      scored(true, word + '!');
+    } else {
+      el.classList.add('no');
+      scored(false, 'Say it slowly. ' + word + '.');
+    }
+  });
+}
+
 /* ═══ Grown-ups ═══════════════════════════════════════════════════ */
 function grownups(){
-  var rows = ACTS.map(function(a){
-    return '<div class="map-row" style="--tile:' + a.color + '">' +
-      '<div><h3>' + a.title + '</h3>' +
-      '<div class="area">' + a.area + '</div>' +
-      '<p style="margin-top:6px">' + a.note + '</p></div></div>';
+  var rows = STAGES.map(function(st){
+    var mine = ACTS.filter(function(a){ return (a.stage || 'f') === st.key; });
+    if (!mine.length) return '';
+    return '<div class="band"><span class="band-name">' + st.label + '</span></div>' + mine.map(function(a){
+      return '<div class="map-row" style="--tile:' + a.color + '">' +
+        '<div><h3>' + a.title + '</h3>' +
+        '<div class="area">' + a.area + '</div>' +
+        '<p style="margin-top:6px">' + a.note + '</p></div></div>';
+    }).join('');
   }).join('');
 
   var wrap = document.createElement('div');
@@ -2424,8 +3053,9 @@ function grownups(){
   wrap.innerHTML = '<div class="panel-inner">' +
     '<div class="bar"><div class="bar-title" style="font-size:26px">For grown-ups</div>' +
     '<button class="icon-btn" data-close aria-label="Close">✕</button></div>' +
-    '<p>Eleven games covering the learning areas in the AISB Foundation letter, each with its own animal. Everything runs in the page — no accounts, no network, no ads, nothing to buy. Progress is saved on this device only.</p>' +
-    '<p><b>It gets harder as he plays.</b> Every game keeps its own level: ten stars in that game buys the next one, up to level 4, and the level shows on its tile. Levels widen the number range, bring in confusable letter sounds and near-identical feelings, add flaming mountains and a bigger grid to the coding quests, and move Word Builder from the first letter to the vowel in the middle. Nothing you have to set — it just stops being easy.</p>' +
+    '<p>Fourteen games, each with its own animal. Eleven cover the learning areas in the AISB Foundation letter; three carry on into Year 1 and 2 for when Foundation stops being a challenge. Everything runs in the page — no accounts, no network, no ads, nothing to buy. Progress is saved on this device only.</p>' +
+    '<p><b>It gets harder as he plays.</b> Every game keeps its own level: ten stars in that game buys the next one, up to level ' + MAXLVL + ', and the level shows on its tile. Levels widen the number range, bring in confusable letter sounds and near-identical feelings, add flaming mountains and a bigger grid to the coding quests, introduce 3D shapes and missing-number sums, and move Word Builder from the first letter to the vowel in the middle. Nothing you have to set — it just stops being easy.</p>' +
+    '<p><b>If the Year 1–2 games are still too easy,</b> the fastest way to skip the early levels is simply to play: ten stars in a game is a couple of minutes. Dragon Loops is the one to watch — from its second quest the block limit makes a repeat block the only way through, which is the concept a year of robotics has been building toward.</p>' +
     '<div class="map">' + rows + '</div>' +
     '<p><b>How it behaves:</b> a wrong tap never ends anything — the mascot wobbles, the answer stays open, and the voice gives a nudge. Five correct in a row earns a celebration. There are no timers and no scores to lose.</p>' +
     '<p><b>If it is silent:</b> tap 🔊 in the top bar, and check the device is not on mute. The voice uses whichever Australian or English voice the device has; Thai words use a Thai voice when one is installed, otherwise it reads the romanisation aloud instead.</p>' +
