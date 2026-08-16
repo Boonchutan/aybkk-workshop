@@ -664,6 +664,18 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .btn:active{transform:translateY(5px);box-shadow:none}
 .btn.ghost{background:var(--card-2);color:var(--ink);border:3px solid var(--line);box-shadow:var(--lift-sm)}
 
+/* ── Settings fields ───────────────────────────────────────────────── */
+.field{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+.field > label{font-family:var(--display);font-weight:700;font-size:16px}
+.vrow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.vsel{
+  flex:1 1 210px;min-width:0;min-height:54px;
+  padding:12px 14px;border-radius:14px;
+  background:var(--card);color:var(--ink);
+  border:3px solid var(--line);font:inherit;font-size:16px;
+}
+.vrow .btn{width:auto;flex:0 0 auto;padding:12px 20px;min-height:54px}
+
 /* ── Grown-ups panel ───────────────────────────────────────────────── */
 .panel{
   position:fixed;inset:0;z-index:70;overflow-y:auto;
@@ -780,7 +792,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 
 /* ═══ State ═══════════════════════════════════════════════════════ */
 var KEY = 'aisb-foundation-v1';
-var S = { stars:0, got:{}, sound:true };
+var S = { stars:0, got:{}, sound:true, vname:'', rate:1 };
 try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); for (var k in p) if (k in S) S[k] = p[k]; } } catch(e){}
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
 
@@ -846,17 +858,50 @@ function sfx(name){
   else if (name === 'party') [523,659,784,1047,784,1047,1319].forEach(function(f,i){ tone(f, i*0.11, 0.34, 'triangle', 0.15); });
 }
 
-/* ═══ Voice ═══════════════════════════════════════════════════════ */
+/* ═══ Voice ═══════════════════════════════════════════════════════
+   Devices ship a pile of voices and the first one that matches the language
+   is very often the worst — the compact fallback on iOS, or one of the old
+   macOS novelty voices. Score them instead of taking whatever comes first,
+   and let a grown-up override the pick in the panel. */
 var voices = [];
 function loadVoices(){ try { voices = window.speechSynthesis.getVoices() || []; } catch(e){ voices = []; } }
 if (window.speechSynthesis) { loadVoices(); window.speechSynthesis.onvoiceschanged = loadVoices; }
-function voiceFor(lang){
+
+var V_GREAT = /natural|neural|enhanced|premium|siri|online/i;
+var V_GOOD  = /google|karen|catherine|matilda|samantha|serena|moira|tessa|fiona|daniel|arthur|martha|libby|aria|jenny|sonia|natasha|nicky|ava|allison|joana|zoe/i;
+/* The macOS novelty set and the low-bitrate fallbacks. Never pick these. */
+var V_AWFUL = /albert|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|jester|organ|trinoids|whisper|wobble|zarvox|hysterical|princess|bruce|agnes|junior|ralph|kathy|fred|superstar|grandma|grandpa|rocko|sandy|shelley|eddy|flo|reed|compact|espeak/i;
+
+function voiceScore(v, lang){
+  var n = (v.name || '') + ' ' + (v.voiceURI || '');
+  var s = 0;
+  if (V_AWFUL.test(n)) s -= 200;
+  if (V_GREAT.test(n)) s += 60;
+  if (V_GOOD.test(n)) s += 25;
+  if (!v.localService) s += 14;          // network voices are usually far better
+  if (v['default']) s += 6;
+  var vl = (v.lang || '').replace('_','-').toLowerCase(), want = lang.toLowerCase();
+  if (vl === want) s += 30;
+  else if (vl.split('-')[0] === want.split('-')[0]) s += 12;
+  return s;
+}
+function voicesFor(lang){
   if (!voices.length) loadVoices();
-  var base = lang.split('-')[0];
-  var exact = voices.filter(function(v){ return v.lang && v.lang.replace('_','-').toLowerCase() === lang.toLowerCase(); });
-  if (exact.length) return exact[0];
-  var near = voices.filter(function(v){ return v.lang && v.lang.toLowerCase().indexOf(base) === 0; });
-  return near.length ? near[0] : null;
+  var base = lang.split('-')[0].toLowerCase();
+  return voices
+    .filter(function(v){ return v.lang && v.lang.replace('_','-').toLowerCase().split('-')[0] === base; })
+    .sort(function(a, b){ return voiceScore(b, lang) - voiceScore(a, lang); });
+}
+function voiceFor(lang){
+  var list = voicesFor(lang);
+  if (!list.length) return null;
+  // A grown-up's explicit choice wins, but only for the language it belongs to.
+  if (S.vname){
+    for (var i=0;i<list.length;i++){
+      if (list[i].voiceURI === S.vname || list[i].name === S.vname) return list[i];
+    }
+  }
+  return list[0];
 }
 function hasLang(lang){ return !!voiceFor(lang); }
 function say(text, lang, rate){
@@ -865,8 +910,9 @@ function say(text, lang, rate){
     window.speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(text);
     u.lang = lang || 'en-AU';
-    u.rate = rate || 0.88;
-    u.pitch = 1.12;
+    u.rate = (rate || 0.9) * (S.rate || 1);
+    // 1.12 made every compact voice sound like a chipmunk. Warm, not shrill.
+    u.pitch = 1.04;
     var v = voiceFor(u.lang); if (v) u.voice = v;
     window.speechSynthesis.speak(u);
   } catch(e){}
@@ -3035,6 +3081,61 @@ function roundLab(){
   });
 }
 
+/* ═══ Voice settings ══════════════════════════════════════════════ */
+var VOICE_SAMPLE = 'Hello! I am ready to play. Can you find the letter b?';
+
+function voicePanel(){
+  var list = voicesFor('en-AU');
+  if (!list.length){
+    return '<p><b>Reading voice:</b> this device has not reported any speech voices yet. ' +
+      'Close this panel, tap a game so the page gets a touch, then come back.</p>';
+  }
+  var best = voiceFor('en-AU');
+  var opts = list.slice(0, 40).map(function(v){
+    var id = v.voiceURI || v.name;
+    var tag = V_GREAT.test(v.name + ' ' + id) ? ' ★ high quality'
+            : (v === best ? ' — recommended' : '');
+    return '<option value="' + id.replace(/"/g, '&quot;') + '"' +
+      ((S.vname && (S.vname === id)) || (!S.vname && v === best) ? ' selected' : '') + '>' +
+      v.name + ' (' + v.lang + ')' + tag + '</option>';
+  }).join('');
+
+  return '<div class="field"><label for="vpick">Reading voice</label>' +
+      '<div class="vrow">' +
+        '<select class="vsel" id="vpick">' + opts + '</select>' +
+        '<button class="btn ghost" data-vtest>▶ Hear it</button>' +
+      '</div>' +
+      '<p>' + list.length + ' voices on this device. Pick one and press Hear it — whatever sounds most like a person.</p>' +
+    '</div>' +
+    '<div class="field"><label for="rpick">Speaking speed</label>' +
+      '<select class="vsel" id="rpick" style="flex:1 1 100%">' +
+        [['0.85','Slower'],['1','Normal'],['1.15','Quicker'],['1.32','Quickest']].map(function(r){
+          return '<option value="' + r[0] + '"' + (String(S.rate) === r[0] ? ' selected' : '') + '>' + r[1] + '</option>';
+        }).join('') +
+      '</select>' +
+    '</div>' +
+    '<p><b>The voice sounds robotic?</b> That is the device, not the page — a web page cannot carry its own voice, so it has to borrow one the device already has. ' +
+    'On an iPad the good ones are a free download: <b>Settings → Accessibility → Spoken Content → Voices → English</b>, ' +
+    'pick a voice (Karen is Australian) and tap the ⬇ next to <b>Enhanced</b> or <b>Premium</b>. ' +
+    'Reload this page afterwards and the new voice appears in the list above, marked ★. It is a night-and-day difference.</p>';
+}
+
+function wireVoice(root){
+  var pick = root.querySelector('#vpick'), rate = root.querySelector('#rpick');
+  if (pick) pick.addEventListener('change', function(){
+    S.vname = pick.value; save();
+    say(VOICE_SAMPLE);
+  });
+  if (rate) rate.addEventListener('change', function(){
+    S.rate = parseFloat(rate.value) || 1; save();
+    say(VOICE_SAMPLE);
+  });
+  on(root, '[data-vtest]', function(){
+    if (!S.sound){ S.sound = true; save(); }
+    say(VOICE_SAMPLE);
+  });
+}
+
 /* ═══ Grown-ups ═══════════════════════════════════════════════════ */
 function grownups(){
   var rows = STAGES.map(function(st){
@@ -3056,13 +3157,17 @@ function grownups(){
     '<p>Fourteen games, each with its own animal. Eleven cover the learning areas in the AISB Foundation letter; three carry on into Year 1 and 2 for when Foundation stops being a challenge. Everything runs in the page — no accounts, no network, no ads, nothing to buy. Progress is saved on this device only.</p>' +
     '<p><b>It gets harder as he plays.</b> Every game keeps its own level: ten stars in that game buys the next one, up to level ' + MAXLVL + ', and the level shows on its tile. Levels widen the number range, bring in confusable letter sounds and near-identical feelings, add flaming mountains and a bigger grid to the coding quests, introduce 3D shapes and missing-number sums, and move Word Builder from the first letter to the vowel in the middle. Nothing you have to set — it just stops being easy.</p>' +
     '<p><b>If the Year 1–2 games are still too easy,</b> the fastest way to skip the early levels is simply to play: ten stars in a game is a couple of minutes. Dragon Loops is the one to watch — from its second quest the block limit makes a repeat block the only way through, which is the concept a year of robotics has been building toward.</p>' +
+    '<div class="band"><span class="band-name">Sound &amp; voice</span></div>' +
+    voicePanel() +
+    '<p><b>If it is silent:</b> tap 🔊 in the top bar, and check the device is not on mute. Thai words use a Thai voice when one is installed, otherwise it reads the romanisation aloud instead.</p>' +
+    '<div class="band"><span class="band-name">What each game teaches</span></div>' +
     '<div class="map">' + rows + '</div>' +
     '<p><b>How it behaves:</b> a wrong tap never ends anything — the mascot wobbles, the answer stays open, and the voice gives a nudge. Five correct in a row earns a celebration. There are no timers and no scores to lose.</p>' +
-    '<p><b>If it is silent:</b> tap 🔊 in the top bar, and check the device is not on mute. The voice uses whichever Australian or English voice the device has; Thai words use a Thai voice when one is installed, otherwise it reads the romanisation aloud instead.</p>' +
     '<button class="btn ghost" data-reset style="--accent:var(--c-code)">Clear the star count</button>' +
     '</div>';
   document.body.appendChild(wrap);
-  on(wrap, '[data-close]', function(){ sfx('tap'); wrap.remove(); });
+  wireVoice(wrap);
+  on(wrap, '[data-close]', function(){ sfx('tap'); hush(); wrap.remove(); });
   on(wrap, '[data-reset]', function(el){
     if (el.getAttribute('data-armed')){
       S.stars = 0; S.got = {}; save(); wrap.remove(); home();
@@ -3076,9 +3181,19 @@ function grownups(){
 /* ═══ Go ══════════════════════════════════════════════════════════ */
 home();
 
-/* First tap anywhere unlocks audio on iOS/Safari. */
+/* First tap anywhere unlocks audio on iOS/Safari. Speech needs its own
+   priming there: unless the very first utterance comes from inside a gesture
+   handler, every later say() is silently dropped. */
 document.addEventListener('pointerdown', function once(){
   ctx();
+  try {
+    if (window.speechSynthesis){
+      var u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      window.speechSynthesis.speak(u);
+      loadVoices();
+    }
+  } catch(e){}
   document.removeEventListener('pointerdown', once);
 }, { once:true });
 
