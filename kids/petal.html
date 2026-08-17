@@ -27,6 +27,10 @@
   --c-body:#6B3A73;
   --c-thai:#9B2F5F;
   --c-safe:#2F6B57;
+  --c-pairs:#A63F86;
+  --c-patt:#3F5FB8;
+  --c-where:#8A5A1F;
+  --c-odd:#5B4BA8;
   --on-accent:#FFFFFF;
 
   --good:#0E7A6B;
@@ -206,6 +210,63 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .swatch{width:78px;height:70px}
 .swatch svg{width:100%;height:100%;display:block}
 
+/* ── Colour hunt ───────────────────────────────────────────────────── */
+.garden{display:flex;flex-wrap:wrap;gap:10px 12px;justify-content:center;
+  max-width:430px;margin:0 auto}
+.bloom{width:clamp(72px,19vw,94px);height:clamp(72px,19vw,94px);padding:7px;
+  border-radius:24px;background:var(--card-2);border:4px solid transparent;
+  box-shadow:var(--lift-sm);transition:transform .14s,box-shadow .14s,border-color .2s,background .2s}
+.bloom svg{width:100%;height:100%;display:block}
+.bloom:active{transform:translateY(4px);box-shadow:none}
+.bloom.yes{border-color:var(--good);background:color-mix(in srgb,var(--good) 16%,var(--card-2));
+  transform:translateY(-6px) scale(1.05)}
+.bloom.no{animation:wiggle .5s ease-in-out}
+.bloom.hintme{animation:glow 1.1s ease-in-out infinite}
+
+/* ── Matching pairs ────────────────────────────────────────────────── */
+.deck{display:grid;gap:10px;justify-content:center;margin:0 auto}
+.pcard{width:clamp(70px,18vw,92px);height:clamp(84px,21vw,108px);border-radius:20px;
+  border:4px solid var(--line);background:var(--accent);color:transparent;
+  font-size:clamp(34px,9vw,46px);line-height:1;box-shadow:var(--lift-sm);
+  display:grid;place-items:center;transition:transform .16s,background .2s,border-color .2s}
+.pcard::after{content:'✿';color:rgba(255,255,255,.72);font-size:30px}
+.pcard:active{transform:translateY(4px)}
+.pcard.up,.pcard.done{background:var(--card-2);color:inherit;border-color:var(--good)}
+.pcard.up::after,.pcard.done::after{content:''}
+.pcard.done{opacity:.5}
+.pcard.up{animation:bump .4s cubic-bezier(.34,1.56,.64,1)}
+
+/* ── Patterns ──────────────────────────────────────────────────────── */
+/* The "?" has to stay on the end of the row — wrapped onto a line of its own
+   it stops reading as "and then this one". Longer strips shrink to fit. */
+.strip{display:flex;gap:7px;justify-content:center;align-items:center;
+  font-size:clamp(30px,8vw,44px);line-height:1}
+.strip span{flex:0 0 auto;width:clamp(44px,11.5vw,60px);height:clamp(44px,11.5vw,60px);
+  display:grid;place-items:center;background:var(--card-2);border-radius:16px;border:3px solid var(--line)}
+.strip.long{gap:5px;font-size:clamp(22px,6vw,38px)}
+.strip.long span{width:clamp(34px,8.4vw,52px);height:clamp(34px,8.4vw,52px)}
+.strip span.gap{border-style:dashed;border-color:var(--accent);color:var(--accent);
+  font-family:var(--display);font-size:1em}
+
+/* ── In, on, under ─────────────────────────────────────────────────────
+   The box has to read as an OPEN box or "in" means nothing: a dark cavity
+   behind, a wooden front panel in front of it, and two flaps folded open at
+   the top. A thing that is "in" sits in the cavity with its bottom half
+   hidden behind the front panel. */
+.scene{position:relative;width:min(100%,300px);height:262px;margin:0 auto}
+.crate-back,.crate-front{position:absolute;left:50%;transform:translateX(-50%);width:180px;
+  border:4px solid #C39A6B}
+.crate-back{top:104px;height:88px;border-radius:10px;background:#8B6942;z-index:1}
+.crate-back::before,.crate-back::after{content:'';position:absolute;top:-20px;width:72px;height:16px;
+  background:#EBCEA6;border:4px solid #C39A6B;border-radius:6px}
+.crate-back::before{left:-10px;transform:rotate(-15deg)}
+.crate-back::after{right:-10px;transform:rotate(15deg)}
+.crate-front{top:140px;height:56px;border-radius:0 0 12px 12px;background:#EBCEA6;border-top:0;z-index:3}
+.thing{position:absolute;left:50%;transform:translateX(-50%);font-size:54px;line-height:1;z-index:2}
+.thing.on{top:44px;z-index:4}
+.thing.in{top:112px}
+.thing.under{top:200px;z-index:0}
+
 .herd{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:center;max-width:400px;padding:4px}
 .critter{font-size:52px;line-height:1;padding:4px;border-radius:16px;position:relative;
   transition:transform .2s cubic-bezier(.34,1.56,.64,1),filter .2s}
@@ -324,7 +385,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 @keyframes spritz{0%{opacity:0;transform:translate(0,0) scale(.3)}30%{opacity:1}100%{opacity:0;transform:translate(24px,-38px) scale(1.3)}}
 
 @media (prefers-reduced-motion:reduce){
-  .mx-all,.eyes,.ear-l,.ear-r,.ele-trunk,.sparkle,.choice.hintme,.face-btn.hintme,.sizer.hintme{animation:none !important}
+  .mx-all,.eyes,.ear-l,.ear-r,.ele-trunk,.sparkle,.choice.hintme,.face-btn.hintme,.sizer.hintme,.bloom.hintme{animation:none !important}
   *{transition-duration:.01ms !important}
   .party{animation:none}
 }
@@ -363,12 +424,14 @@ function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){
 var app = document.getElementById('app');
 var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Three in a row wins, and it never gets harder than three choices. She is
-   three years old; the point is succeeding, not being stretched. */
-var WIN = 3;
-var MAXLVL = 2;
-function lvl(id){ return Math.min(MAXLVL, Math.floor((S.got[id] || 0) / 12)); }
-function nChoices(id){ return lvl(id) >= 2 ? 3 : 2; }
+/* A game grows with her rather than ending the moment she has the idea: four
+   rounds and two choices on the first sitting, seven rounds and four choices
+   once she knows it well. Still no losing and no clock — the stretch is in how
+   long she stays with it, not in pressure. */
+var MAXLVL = 4;
+function lvl(id){ return Math.min(MAXLVL, Math.floor((S.got[id] || 0) / 10)); }
+function nChoices(id){ var L = lvl(id); return L >= 3 ? 4 : (L >= 2 ? 3 : 2); }
+function winFor(id){ return Math.min(7, 4 + lvl(id)); }
 
 /* ═══ Helpers ═════════════════════════════════════════════════════ */
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
@@ -738,6 +801,100 @@ SVG.elephant =
 '<g class="spray"><circle cx="122" cy="150" r="5" fill="#5CB3F0"/><circle cx="132" cy="142" r="3.4" fill="#8ED0F7"/><circle cx="127" cy="158" r="3" fill="#8ED0F7"/></g>' +
 '</g></svg>';
 
+SVG.kitten =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Mimi the kitten"><g class="mx-all">' +
+'<path d="M148 176q26-6 28-30" stroke="#E8B79A" stroke-width="13" fill="none" stroke-linecap="round"/>' +
+'<ellipse cx="78" cy="186" rx="18" ry="11" fill="#F2C6AC"/>' +
+'<ellipse cx="122" cy="186" rx="18" ry="11" fill="#F2C6AC"/>' +
+'<ellipse cx="100" cy="152" rx="43" ry="40" fill="#F5D2BC"/>' +
+'<ellipse cx="100" cy="160" rx="26" ry="26" fill="#FFF3E9"/>' +
+'<ellipse cx="60" cy="150" rx="11" ry="22" fill="#F5D2BC" transform="rotate(16 60 150)"/>' +
+'<ellipse cx="140" cy="150" rx="11" ry="22" fill="#F5D2BC" transform="rotate(-16 140 150)"/>' +
+'<g class="ear-l"><path d="M64 64 58 24l34 20z" fill="#F5D2BC"/><path d="M67 60 64 36l19 12z" fill="#F3A9B8"/></g>' +
+'<g class="ear-r"><path d="M136 64 142 24l-34 20z" fill="#F5D2BC"/><path d="M133 60 136 36l-19 12z" fill="#F3A9B8"/></g>' +
+'<ellipse cx="100" cy="94" rx="45" ry="40" fill="#F5D2BC"/>' +
+'<path d="M70 66q10-8 20-4M130 66q-10-8-20-4" stroke="#E0A98C" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+'<g class="eyes">' +
+'<ellipse cx="81" cy="92" rx="9" ry="10" fill="#fff" stroke="#6B4A3A" stroke-width="2.2"/>' +
+'<ellipse cx="119" cy="92" rx="9" ry="10" fill="#fff" stroke="#6B4A3A" stroke-width="2.2"/>' +
+'<ellipse cx="82" cy="93" rx="4" ry="6.5" fill="#4E7C5A"/><ellipse cx="120" cy="93" rx="4" ry="6.5" fill="#4E7C5A"/>' +
+'<circle cx="84" cy="89" r="1.9" fill="#fff"/><circle cx="122" cy="89" r="1.9" fill="#fff"/>' +
+'</g>' +
+'<circle cx="68" cy="110" r="7" fill="#F9C4CE"/><circle cx="132" cy="110" r="7" fill="#F9C4CE"/>' +
+'<path d="M100 104 94 112h12z" fill="#E8899F"/>' +
+'<path d="M100 113q-7 8-13 1M100 113q7 8 13 1" stroke="#6B4A3A" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+'<path d="M62 100 34 94M62 108 34 110M138 100l28-6M138 108l28 2" stroke="#D9A88C" stroke-width="2.6" stroke-linecap="round"/>' +
+'</g></svg>';
+
+SVG.unicorn =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Pearl the unicorn"><g class="mx-all">' +
+'<ellipse cx="78" cy="186" rx="18" ry="11" fill="#EFE4F5"/>' +
+'<ellipse cx="122" cy="186" rx="18" ry="11" fill="#EFE4F5"/>' +
+'<ellipse cx="100" cy="152" rx="43" ry="40" fill="#F7EFFA"/>' +
+'<ellipse cx="100" cy="160" rx="26" ry="25" fill="#FFFCFE"/>' +
+'<ellipse cx="60" cy="150" rx="11" ry="22" fill="#F7EFFA" transform="rotate(16 60 150)"/>' +
+'<ellipse cx="140" cy="150" rx="11" ry="22" fill="#F7EFFA" transform="rotate(-16 140 150)"/>' +
+'<path d="M56 128q-22 6-24 30" stroke="#F3B6C6" stroke-width="11" fill="none" stroke-linecap="round"/>' +
+'<g class="ear-l"><ellipse cx="72" cy="56" rx="10" ry="19" fill="#F7EFFA" transform="rotate(-16 72 56)"/></g>' +
+'<g class="ear-r"><ellipse cx="128" cy="56" rx="10" ry="19" fill="#F7EFFA" transform="rotate(16 128 56)"/></g>' +
+'<path d="M100 8 112 50H88z" fill="#F7C948"/>' +
+'<path d="M100 14 106 46h-6z" fill="#FCE39B"/>' +
+'<path d="M64 48q14-16 36-14 24 2 34 20-16-6-34-4-20 2-36-2z" fill="#9BD6F0"/>' +
+'<path d="M70 44q16-12 32-10" stroke="#F3B6C6" stroke-width="6" fill="none" stroke-linecap="round"/>' +
+'<path d="M118 40q12 6 18 16" stroke="#C9A6E8" stroke-width="6" fill="none" stroke-linecap="round"/>' +
+'<ellipse cx="100" cy="96" rx="44" ry="39" fill="#F7EFFA"/>' +
+'<g class="eyes">' +
+'<path d="M74 92q9-11 18 0" stroke="#7A5A88" stroke-width="4.6" fill="none" stroke-linecap="round"/>' +
+'<path d="M108 92q9-11 18 0" stroke="#7A5A88" stroke-width="4.6" fill="none" stroke-linecap="round"/>' +
+'</g>' +
+'<circle cx="70" cy="110" r="7" fill="#F9C4CE"/><circle cx="130" cy="110" r="7" fill="#F9C4CE"/>' +
+'<ellipse cx="100" cy="112" rx="16" ry="12" fill="#FBE4EE"/>' +
+'<ellipse cx="93" cy="110" rx="3" ry="2.4" fill="#C994AC"/><ellipse cx="107" cy="110" rx="3" ry="2.4" fill="#C994AC"/>' +
+'<path d="M92 119q8 6 16 0" stroke="#B98BA6" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+'</g></svg>';
+
+SVG.duck =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Dilly the duckling"><g class="mx-all">' +
+'<path d="M84 190h-16l-8 8h30z" fill="#EFA23C"/>' +
+'<path d="M116 190h16l8 8h-30z" fill="#EFA23C"/>' +
+'<ellipse cx="100" cy="146" rx="46" ry="42" fill="#FBDF7A"/>' +
+'<ellipse cx="100" cy="154" rx="28" ry="28" fill="#FDF0B8"/>' +
+'<path d="M52 132q-18 10-14 32 14 4 22-10z" fill="#F7D25F"/>' +
+'<path d="M148 132q18 10 14 32-14 4-22-10z" fill="#F7D25F"/>' +
+'<circle cx="100" cy="82" r="44" fill="#FBDF7A"/>' +
+'<path d="M72 46q12-14 28-12" stroke="#F7D25F" stroke-width="7" fill="none" stroke-linecap="round"/>' +
+'<g class="eyes">' +
+'<ellipse cx="82" cy="76" rx="8.5" ry="9.5" fill="#fff" stroke="#8A6A22" stroke-width="2.2"/>' +
+'<ellipse cx="118" cy="76" rx="8.5" ry="9.5" fill="#fff" stroke="#8A6A22" stroke-width="2.2"/>' +
+'<circle cx="83" cy="77" r="4.4" fill="#4A3B18"/><circle cx="119" cy="77" r="4.4" fill="#4A3B18"/>' +
+'<circle cx="85" cy="74" r="1.8" fill="#fff"/><circle cx="121" cy="74" r="1.8" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="100" rx="22" ry="13" fill="#EFA23C"/>' +
+'<path d="M80 100q20 9 40 0" stroke="#D98A28" stroke-width="2.6" fill="none"/>' +
+'<circle cx="70" cy="94" r="6.5" fill="#F6B9AE" opacity=".75"/><circle cx="130" cy="94" r="6.5" fill="#F6B9AE" opacity=".75"/>' +
+'</g></svg>';
+
+SVG.owl =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Ollie the owl"><g class="mx-all">' +
+'<path d="M84 188h-14l-6 8h26z" fill="#EFA23C"/>' +
+'<path d="M116 188h14l6 8h-26z" fill="#EFA23C"/>' +
+'<ellipse cx="100" cy="128" rx="52" ry="60" fill="#C5A6D6"/>' +
+'<ellipse cx="100" cy="140" rx="34" ry="44" fill="#EEE1F5"/>' +
+'<path d="M52 108q-16 22-8 48 12 8 22-6z" fill="#B492C9"/>' +
+'<path d="M148 108q16 22 8 48-12 8-22-6z" fill="#B492C9"/>' +
+'<path d="M62 64 70 34l22 20z" fill="#C5A6D6"/>' +
+'<path d="M138 64 130 34l-22 20z" fill="#C5A6D6"/>' +
+'<g class="eyes">' +
+'<circle cx="78" cy="88" r="23" fill="#FFF6E4" stroke="#9B7BB0" stroke-width="3"/>' +
+'<circle cx="122" cy="88" r="23" fill="#FFF6E4" stroke="#9B7BB0" stroke-width="3"/>' +
+'<circle cx="78" cy="89" r="11" fill="#4A3B52"/><circle cx="122" cy="89" r="11" fill="#4A3B52"/>' +
+'<circle cx="82" cy="85" r="4" fill="#fff"/><circle cx="126" cy="85" r="4" fill="#fff"/>' +
+'</g>' +
+'<path d="M100 100 92 114h16z" fill="#EFA23C"/>' +
+'<path d="M76 152q10 8 24 8t24-8" stroke="#D6C2E4" stroke-width="3.4" fill="none" stroke-linecap="round"/>' +
+'<path d="M76 166q10 8 24 8t24-8" stroke="#D6C2E4" stroke-width="3.4" fill="none" stroke-linecap="round"/>' +
+'</g></svg>';
+
 function mascotHTML(kind, extra){
   return '<div class="mascot ' + kind + (extra ? ' ' + extra : '') + '">' + (SVG[kind] || '') + '</div>';
 }
@@ -772,6 +929,29 @@ function shapeSVG(name, fill){
 }
 function heartSVG(fill){
   return '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 88C23 70 9 56 9 38 9 25 19 15 31 15c8 0 15 4 19 11 4-7 11-11 19-11 12 0 22 10 22 23 0 18-14 32-41 50z" fill="' + fill + '" stroke="rgba(74,39,64,.25)" stroke-width="3"/></svg>';
+}
+/* Four shapes for the colour hunt. White has to read as white on a cream
+   card, so every shape carries the same soft outline. */
+function blobSVG(kind, fill){
+  var edge = ' stroke="rgba(74,39,64,.28)" stroke-width="3"';
+  var inner;
+  if (kind === 'flower'){
+    inner = '<g fill="' + fill + '"' + edge + '>' +
+      '<circle cx="50" cy="25" r="17"/><circle cx="77" cy="45" r="17"/>' +
+      '<circle cx="67" cy="76" r="17"/><circle cx="33" cy="76" r="17"/><circle cx="23" cy="45" r="17"/>' +
+      '</g><circle cx="50" cy="52" r="13" fill="#FFF0BF"' + edge + '/>';
+  } else if (kind === 'star'){
+    inner = '<polygon points="50,8 61,38 93,38 67,57 77,88 50,69 23,88 33,57 7,38 39,38" fill="' + fill + '"' + edge + '/>';
+  } else if (kind === 'butterfly'){
+    inner = '<g fill="' + fill + '"' + edge + '>' +
+      '<ellipse cx="29" cy="37" rx="22" ry="25"/><ellipse cx="71" cy="37" rx="22" ry="25"/>' +
+      '<ellipse cx="33" cy="72" rx="18" ry="19"/><ellipse cx="67" cy="72" rx="18" ry="19"/></g>' +
+      '<ellipse cx="50" cy="54" rx="6" ry="31" fill="#4A2740"/>' +
+      '<path d="M47 25q-8-12-16-14M53 25q8-12 16-14" stroke="#4A2740" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+  } else {
+    inner = '<path d="M50 88C23 70 9 56 9 38 9 25 19 15 31 15c8 0 15 4 19 11 4-7 11-11 19-11 12 0 22 10 22 23 0 18-14 32-41 50z" fill="' + fill + '"' + edge + '/>';
+  }
+  return '<svg viewBox="0 0 100 100" aria-hidden="true">' + inner + '</svg>';
 }
 var ANIMAL_SOUNDS = [
   { a:'🐄', n:'cow',      s:'Moo!' },     { a:'🐈', n:'cat',    s:'Meow!' },
@@ -916,8 +1096,8 @@ var SAFETY_NOTE = "<p><b>About “Clothes Stay On”.</b> This game teaches one 
 
 /* ═══ Activity registry ═══════════════════════════════════════════ */
 var ACTS = [
-  { id:'colour', title:'Rainbow Colours', sub:'Find the colour',   mascot:'flamingo', color:'var(--c-colour)',
-    area:'Colour naming', note:'Hears a colour name and taps the matching heart. Starts with red, blue, yellow and green, then adds pink, purple and orange.' },
+  { id:'colour', title:'Rainbow Colours', sub:'Find them all',     mascot:'flamingo', color:'var(--c-colour)',
+    area:'Colour naming', note:'Hears a colour and has to find every single thing of that colour — two at first, three later — hidden among other colours in four different shapes, so she cannot win by matching outlines. Starts with red, blue, yellow and green, then adds pink, purple and orange, then brown, black and white.' },
   { id:'count',  title:'Count to Five',   sub:'Touch and count',   mascot:'snail',    color:'var(--c-count)',
     area:'Early number', note:'Touches each thing once while the voice counts along, then picks the numeral. The touching matters more than the answer at this age.' },
   { id:'shape',  title:'Shape Party',     sub:'Match the shape',   mascot:'rabbit',   color:'var(--c-shape)',
@@ -933,7 +1113,15 @@ var ACTS = [
   { id:'thai',   title:'Thai Hello',      sub:'สวัสดี',            mascot:'elephant', color:'var(--c-thai)',
     area:'Thai language', note:'Nine everyday Thai words with pictures and sound. Falls back to reading the romanisation if the device has no Thai voice.' },
   { id:'safe',   title:'Clothes Stay On', sub:'My body is mine',   mascot:'koala',    color:'var(--c-safe)',
-    area:'Body safety — the swimsuit rule', note:'Three kinds of round: a rule she says back with one tap on a heart, a choice between a private and a public place to get changed in, and a place she is off to where clothes stay on. Two of the three offer only a positive action — putting "take them off" on a button would model the very thing this teaches against. No body is ever shown. See the note above for what to add in your own words.' }
+    area:'Body safety — the swimsuit rule', note:'Three kinds of round: a rule she says back with one tap on a heart, a choice between a private and a public place to get changed in, and a place she is off to where clothes stay on. Two of the three offer only a positive action — putting "take them off" on a button would model the very thing this teaches against. No body is ever shown. See the note above for what to add in your own words.' },
+  { id:'pairs',  title:'Matching Pairs',   sub:'Find the two that match', mascot:'kitten', color:'var(--c-pairs)',
+    area:'Memory and concentration', note:'Two pairs to start, four once she is good at it. A mismatch just turns the cards back — nothing is ever counted against her — so the only way through a round is to remember where things were.' },
+  { id:'patt',   title:'What Comes Next?', sub:'Finish the pattern', mascot:'unicorn', color:'var(--c-patt)',
+    area:'Patterns and early maths', note:'Repeating patterns, the first real algebra: red-blue-red-blue and then what? Starts with two-item patterns and works up to three.' },
+  { id:'where',  title:'In, On, Under',    sub:'Where is it hiding?', mascot:'duck', color:'var(--c-where)',
+    area:'Position words', note:'The words that make instructions make sense — in, on, under. She sees where the thing is and picks the word for it.' },
+  { id:'odd',    title:'Odd One Out',      sub:'Which is different?', mascot:'owl', color:'var(--c-odd)',
+    area:'Sorting and reasoning', note:'Everything belongs to one family except one. Asks her to hold a category in mind and test each picture against it.' }
 ];
 function act(id){ for (var i=0;i<ACTS.length;i++) if (ACTS[i].id === id) return ACTS[i]; return null; }
 
@@ -981,7 +1169,7 @@ function home(){
       '<span class="sparkle" style="top:110px;right:22%;animation-delay:1.4s">✦</span>' +
       '<div class="eyebrow">Pre-K1 · for my girl</div>' +
       '<h1>Hello, lovely.<br><em>Come and play.</em></h1>' +
-      '<p>Nine little games. Tap anywhere — nothing here can go wrong.</p>' +
+      '<p>Thirteen little games. Tap anywhere — nothing here can go wrong.</p>' +
     '</div>' +
     '<div class="board">' + tiles + '</div>' +
     '<div class="footnote"><button class="linky" data-panel>For grown-ups →</button></div>';
@@ -1009,7 +1197,7 @@ function start(id){
 function dots(){
   var d = document.getElementById('dots'); if (!d) return;
   var out = '';
-  for (var i=0;i<WIN;i++) out += '<span class="dot' + (i < G.correct ? ' on' : '') + '"></span>';
+  for (var i=0;i<winFor(G.a.id);i++) out += '<span class="dot' + (i < G.correct ? ' on' : '') + '"></span>';
   d.innerHTML = out;
 }
 function stage(){ return document.getElementById('stage'); }
@@ -1026,7 +1214,7 @@ function scored(ok, thenSay){
     G.correct++; G.misses = 0;
     dots();
     if (thenSay) later(240, function(){ say(thenSay); });
-    if (G.correct >= WIN) { later(1150, party); return; }
+    if (G.correct >= winFor(G.a.id)) { later(1150, party); return; }
     later(1500, next);
   } else {
     sfx('no'); react('oops');
@@ -1050,7 +1238,8 @@ function next(){
   dots();
   ({ colour:roundColour, count:roundCount, shape:roundShape, size:roundSize,
      sound:roundSound, feel:roundFeel, body:roundBody, thai:roundThai,
-     safe:roundSafe })[G.a.id]();
+     safe:roundSafe, pairs:roundPairs, patt:roundPatt, where:roundWhere,
+     odd:roundOdd })[G.a.id]();
 }
 
 function party(){
@@ -1062,7 +1251,7 @@ function party(){
   wrap.innerHTML = '<div class="party" style="--accent:' + a.color + '">' +
     mascotHTML(a.mascot, 'is-happy') +
     '<h2>' + pick(lines) + '</h2>' +
-    '<p>Three in a row on ' + a.title + '.</p>' +
+    '<p>' + NUMWORD[winFor(a.id)] + ' in a row on ' + a.title + '.</p>' +
     '<span class="sticker">⭐ ' + S.stars + ' stars altogether</span>' +
     '<button class="btn" data-more>Play more</button>' +
     '<button class="btn ghost" data-home>Pick another</button>' +
@@ -1075,38 +1264,67 @@ function party(){
 }
 
 /* ═══ 1 · Rainbow Colours ═════════════════════════════════════════ */
+/* A single tap was over before she had looked. Now she has to find every one
+   of a colour — two at first, three once she is sure — scattered among things
+   of other colours, in four different shapes so she cannot win by matching
+   outlines instead of reading the colour. */
+var BLOOM_KINDS = ['heart','flower','star','butterfly'];
 function roundColour(){
   var L = lvl('colour');
-  var pool = COLOURS.filter(function(c){ return c.tier <= L; });
+  var pool = COLOURS.filter(function(c){ return c.tier <= Math.min(2, L); });
   var right = pick(pool);
-  var opts = shuffle([right].concat(sample(pool, nChoices('colour') - 1, [right])));
+  var others = pool.filter(function(c){ return c.n !== right.n; });
+  var want = L < 2 ? 2 : 3;
+  var total = [4, 5, 6, 7, 8][L];
+
+  var items = [];
+  for (var i = 0; i < want; i++) items.push(right);
+  /* Distractors are drawn with repeats allowed, so the target is not simply
+     the only colour that appears more than once. */
+  while (items.length < total) items.push(pick(others));
+  items = shuffle(items).map(function(c, i){
+    return { c:c, i:i, kind:pick(BLOOM_KINDS), hit:c.n === right.n };
+  });
+
+  function tally(found){ return 'Found ' + found + ' of ' + want; }
 
   stage().innerHTML = lay(
-    'Can you find <b>' + right.n + '</b>?',
-    '<p class="ask" aria-live="polite">Tap the ' + right.n + ' heart</p>',
-    '<div class="choices">' + opts.map(function(c){
-      return '<button class="choice" data-n="' + c.n + '" aria-label="' + c.n + '">' +
-        '<span class="swatch">' + heartSVG(c.c) + '</span></button>';
-    }).join('') + '</div>'
+    'Find every <b>' + right.n + '</b> one!',
+    '<div class="garden">' + items.map(function(t){
+      return '<button class="bloom" data-i="' + t.i + '" data-n="' + t.c.n + '" data-hit="' + (t.hit ? 1 : 0) + '"' +
+        ' aria-label="' + t.c.n + ' ' + t.kind + '">' + blobSVG(t.kind, t.c.c) + '</button>';
+    }).join('') + '</div>' +
+    '<p class="ask" id="tallyline" aria-live="polite">' + tally(0) + '</p>',
+    ''
   );
-  showMe = function(){ glow('.choice[data-n="' + right.n + '"]'); };
-  later(340, function(){ say('Where is the ' + right.n + ' one?'); });
+  showMe = function(){ glow('.bloom[data-hit="1"]:not(.yes)'); };
+  later(340, function(){ say('Find all the ' + right.n + ' ones. There are ' + NUMWORD[want] + '.'); });
 
-  var done = false;
-  on(stage(), '.choice', function(el){
-    if (el.getAttribute('data-n') === right.n){
-      if (done) return;
-      done = true; el.classList.add('yes');
-      scored(true, right.n + '! Well done.');
+  var found = 0, done = false;
+  on(stage(), '.bloom', function(el){
+    if (done || el.classList.contains('yes')) return;
+    if (el.getAttribute('data-hit') === '1'){
+      el.classList.add('yes');
+      found++;
+      var line = document.getElementById('tallyline');
+      if (line) line.textContent = tally(found);
+      if (found >= want){
+        done = true;
+        scored(true, 'You found all ' + NUMWORD[want] + ' ' + right.n + ' ones!');
+      } else {
+        sfx('step');
+        say(NUMWORD[found], 'en-AU', 1);
+      }
     } else {
       el.classList.add('no');
-      scored(false, 'That one is ' + el.getAttribute('data-n') + '. Try again.');
+      wait(600, function(){ el.classList.remove('no'); });
+      scored(false, 'That one is ' + el.getAttribute('data-n') + '. Keep looking for ' + right.n + '.');
     }
   });
 }
 
 /* ═══ 2 · Count to Five ═══════════════════════════════════════════ */
-var NUMWORD = ['zero','one','two','three','four','five'];
+var NUMWORD = ['zero','one','two','three','four','five','six','seven'];
 function roundCount(){
   var L = lvl('count');
   var hi = L < 1 ? 3 : 5;
@@ -1343,7 +1561,7 @@ function roundThai(){
       G.correct++; G.misses = 0; dots();
       later(240, function(){ speakThai(right); });
       later(1400, function(){ say(right.ro.replace(/-/g,' ') + ' means ' + right.en); });
-      if (G.correct >= WIN) { later(2500, party); return; }
+      if (G.correct >= winFor(G.a.id)) { later(2500, party); return; }
       later(2800, next);
     } else {
       el.classList.add('no');
@@ -1424,6 +1642,184 @@ function roundSafe(){
     if (tapped) return;
     tapped = true; el.classList.add('yes');
     scored(true, 'Clothes stay on at ' + pl.place + '.');
+  });
+}
+
+/* ═══ 10 · Matching Pairs ═════════════════════════════════════════
+   Turning a card over and holding it in her head is the longest single thing
+   she does here. A mismatch is never scored against her — the cards simply
+   turn back — so the only way out of a round is finding every pair. */
+function roundPairs(){
+  var L = lvl('pairs');
+  var nPairs = [2, 3, 3, 4, 4][L];
+  var cols = nPairs <= 2 ? 2 : (nPairs === 3 ? 3 : 4);
+  var faces = sample(CUTE, nPairs);
+  var deck = shuffle(faces.concat(faces)).map(function(f, i){ return { f:f, i:i }; });
+
+  stage().innerHTML = lay(
+    'Find the two that match!',
+    '<div class="deck" style="grid-template-columns:repeat(' + cols + ',auto)">' +
+      deck.map(function(c){
+        return '<button class="pcard" data-i="' + c.i + '" data-f="' + c.f + '" aria-label="a card">' + c.f + '</button>';
+      }).join('') + '</div>' +
+    '<p class="ask" id="tallyline" aria-live="polite">0 of ' + nPairs + ' pairs</p>',
+    ''
+  );
+  later(340, function(){ say('Turn over two cards. Can you find a matching pair?'); });
+
+  var open = [], matched = 0, busy = false;
+  on(stage(), '.pcard', function(el){
+    if (busy || el.classList.contains('up') || el.classList.contains('done')) return;
+    el.classList.add('up');
+    sfx('tap');
+    open.push(el);
+    if (open.length < 2) return;
+
+    busy = true;
+    var a = open[0], b = open[1];
+    if (a.getAttribute('data-f') === b.getAttribute('data-f')){
+      matched++;
+      var line = document.getElementById('tallyline');
+      if (line) line.textContent = matched + ' of ' + nPairs + ' pairs';
+      open = [];
+      a.classList.add('done'); b.classList.add('done');
+      if (matched >= nPairs){
+        busy = true;
+        scored(true, 'Every pair found. Clever girl!');
+      } else {
+        sfx('step');
+        say('A pair!', 'en-AU', 1);
+        busy = false;
+      }
+    } else {
+      sfx('no');
+      later(900, function(){
+        a.classList.remove('up'); b.classList.remove('up');
+        open = []; busy = false;
+      });
+    }
+  });
+}
+
+/* ═══ 11 · What Comes Next? ═══════════════════════════════════════ */
+function roundPatt(){
+  var L = lvl('patt');
+  var units = L < 2 ? [['A','B']]
+    : (L < 3 ? [['A','B'],['A','A','B'],['A','B','B']]
+             : [['A','B'],['A','A','B'],['A','B','B'],['A','B','C']]);
+  var unit = pick(units);
+  var letters = [];
+  unit.forEach(function(x){ if (letters.indexOf(x) < 0) letters.push(x); });
+  var faces = sample(CUTE, letters.length);
+  var map = {};
+  letters.forEach(function(x, i){ map[x] = faces[i]; });
+
+  /* Show at least two whole repeats so the rhythm is visible, then ask for
+     the very next one. */
+  var reps = unit.length > 2 ? 2 : 3;
+  var seq = [];
+  for (var r = 0; r < reps; r++) for (var i = 0; i < unit.length; i++) seq.push(unit[i]);
+  var answer = map[unit[seq.length % unit.length]];
+  var opts = shuffle([answer].concat(sample(CUTE, nChoices('patt') - 1, faces)));
+
+  stage().innerHTML = lay(
+    'What comes next?',
+    '<div class="strip' + (seq.length >= 5 ? ' long' : '') + '">' +
+      seq.map(function(x){ return '<span>' + map[x] + '</span>'; }).join('') +
+      '<span class="gap">?</span></div>' +
+    '<p class="ask" aria-live="polite">Which one comes next?</p>',
+    '<div class="choices">' + opts.map(function(f){
+      return '<button class="choice" data-f="' + f + '" aria-label="a picture">' + f + '</button>';
+    }).join('') + '</div>'
+  );
+  showMe = function(){ glow('.choice[data-f="' + answer + '"]'); };
+  later(340, function(){ say('Look at the order. What comes next?'); });
+
+  var done = false;
+  on(stage(), '.choice', function(el){
+    if (el.getAttribute('data-f') === answer){
+      if (done) return;
+      done = true; el.classList.add('yes');
+      scored(true, 'Yes! That one comes next.');
+    } else {
+      el.classList.add('no');
+      scored(false, 'Say the order out loud with your finger.');
+    }
+  });
+}
+
+/* ═══ 12 · In, On, Under ══════════════════════════════════════════ */
+var WHERE_KEYS = ['in', 'on', 'under'];
+function roundWhere(){
+  var where = pick(WHERE_KEYS);
+  var thing = pick(CUTE);
+  var opts = shuffle([where].concat(sample(WHERE_KEYS, nChoices('where') - 1, [where])));
+
+  stage().innerHTML = lay(
+    'Where is it hiding?',
+    '<div class="scene">' +
+      '<span class="crate-back"></span>' +
+      '<span class="thing ' + where + '">' + thing + '</span>' +
+      '<span class="crate-front"></span>' +
+    '</div>' +
+    '<p class="ask" aria-live="polite">Is it in, on, or under the box?</p>',
+    '<div class="choices">' + opts.map(function(k){
+      return '<button class="choice" data-k="' + k + '" aria-label="' + k + '">' +
+        '<span class="cap" style="font-size:26px">' + k + '</span></button>';
+    }).join('') + '</div>'
+  );
+  showMe = function(){ glow('.choice[data-k="' + where + '"]'); };
+  later(340, function(){ say('Where is it? In the box, on the box, or under the box?'); });
+
+  var done = false;
+  on(stage(), '.choice', function(el){
+    if (el.getAttribute('data-k') === where){
+      if (done) return;
+      done = true; el.classList.add('yes');
+      scored(true, 'Yes! It is ' + where + ' the box.');
+    } else {
+      el.classList.add('no');
+      scored(false, 'Look again. Is it ' + where + ' the box?');
+    }
+  });
+}
+
+/* ═══ 13 · Which One Is Different? ════════════════════════════════ */
+var ODD_SETS = [
+  { many:'fruit',            one:'a fruit',        items:['🍎','🍌','🍓','🍇','🍊','🍐'] },
+  { many:'animals',          one:'an animal',      items:['🐈','🐕','🐰','🐘','🦆','🐷'] },
+  { many:'things that go',   one:'a thing that goes', items:['🚗','🚌','🚂','✈️','🚲','🚤'] },
+  { many:'clothes',          one:'clothes',        items:['👕','👗','🧦','👞','🧢','🧣'] },
+  { many:'flowers',          one:'a flower',       items:['🌸','🌷','🌻','🌹','🌼','💐'] }
+];
+function roundOdd(){
+  var main = pick(ODD_SETS);
+  var other = pick(ODD_SETS.filter(function(s){ return s.many !== main.many; }));
+  var odd = pick(other.items);
+  var body = shuffle(sample(main.items, nChoices('odd')).map(function(f){
+    return { f:f, odd:false };
+  }).concat([{ f:odd, odd:true }]));
+
+  stage().innerHTML = lay(
+    'One of these is different!',
+    '<p class="ask" aria-live="polite">Which one is not ' + main.one + '?</p>',
+    '<div class="choices">' + body.map(function(t){
+      return '<button class="choice" data-odd="' + (t.odd ? 1 : 0) + '" aria-label="a picture">' + t.f + '</button>';
+    }).join('') + '</div>'
+  );
+  showMe = function(){ glow('.choice[data-odd="1"]'); };
+  later(340, function(){ say('All of them are ' + main.many + ', except one. Which one is different?'); });
+
+  var done = false;
+  on(stage(), '.choice', function(el){
+    if (el.getAttribute('data-odd') === '1'){
+      if (done) return;
+      done = true; el.classList.add('yes');
+      scored(true, 'That one is different. Clever girl!');
+    } else {
+      el.classList.add('no');
+      scored(false, 'That one is ' + main.one + '. Find the odd one.');
+    }
   });
 }
 

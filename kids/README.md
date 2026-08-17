@@ -29,6 +29,14 @@ The two apps share four mascot SVGs (snail, panda, giraffe, elephant), copied
 rather than imported: they are separate deliverables and a change made for one
 child should not silently alter the other's page.
 
+Within an app, **every tile has its own animal** — no mascot appears on two
+tiles. Adding a game means drawing a new one. Both apps' test suites assert it.
+
+Difficulty in both apps is per game and driven only by stars earned in that
+game (`lvl(id)`), so one child's strong subject never drags a weaker one along
+with it. Petal levels every 10 stars to a maximum of 4, and a level also
+lengthens the game: `winFor(id)` grows the run from four rounds to seven.
+
 `petal.src.html` contains a body-safety game ("Clothes Stay On"). It is
 ordinary protective early-years material — the swimsuit rule. Two of its three
 round types offer only a positive action, because putting "take them off" on a
