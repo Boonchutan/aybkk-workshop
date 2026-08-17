@@ -47,6 +47,9 @@
   --c-times:#116B4A;
   --c-compare:#12566B;
   --c-frac:#3C4E56;
+  --c-sudoku:#8E2F3C;
+  --c-missing:#4A3F6B;
+  --c-follow:#B4531A;
   --on-accent:#FFFFFF;
 
   --good:#0B7F63;
@@ -668,6 +671,68 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .frac b{font-weight:400;padding:0 .12em}
 .frac i{display:block;height:3px;width:100%;min-width:1.1em;background:currentColor;margin:3px 0}
 
+/* ── Timer ─────────────────────────────────────────────────────────── */
+.clock{
+  width:100%;max-width:420px;height:12px;border-radius:999px;
+  background:var(--line);overflow:hidden;flex:none;
+}
+.clock i{
+  display:block;height:100%;width:100%;border-radius:999px;
+  background:var(--accent);transform-origin:left center;
+}
+.clock i.run{animation:drain linear forwards}
+.clock.low i{background:var(--c-code)}
+@keyframes drain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){.clock i.run{animation-duration:inherit}}
+
+/* ── Picture sudoku ────────────────────────────────────────────────── */
+.sud{
+  display:grid;gap:2px;padding:6px;border-radius:16px;
+  background:var(--ink-soft);
+}
+.sud .sc{
+  width:var(--sc);aspect-ratio:1;border-radius:7px;background:var(--card);
+  display:grid;place-items:center;font-size:calc(var(--sc) * .58);line-height:1;
+  transition:background .15s,box-shadow .15s;
+}
+.sud .sc.fixed{background:var(--card-2)}
+.sud .sc.sel{box-shadow:inset 0 0 0 4px var(--accent)}
+.sud .sc.bad{animation:shake .4s ease-in-out}
+/* The block edges have to be visible or the block rule is invisible: a wide
+   gutter plus a hairline of the board colour showing through. */
+.sud .sc.bx{margin-right:9px;box-shadow:9px 0 0 -3px var(--ink)}
+.sud .sc.by{margin-bottom:9px;box-shadow:0 9px 0 -3px var(--ink)}
+.sud .sc.bx.by{box-shadow:9px 0 0 -3px var(--ink),0 9px 0 -3px var(--ink)}
+.sud .sc.sel.bx,.sud .sc.sel.by,.sud .sc.sel{box-shadow:inset 0 0 0 4px var(--accent)}
+.tray{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.tray button{
+  min-width:62px;min-height:62px;border-radius:16px;
+  background:var(--card-2);border:3px solid var(--line);
+  font-size:32px;line-height:1;box-shadow:var(--lift-sm);
+  transition:transform .1s,box-shadow .1s;
+}
+.tray button:active{transform:translateY(3px);box-shadow:none}
+.tray button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 15%,var(--card-2))}
+
+/* ── Picture memory ────────────────────────────────────────────────── */
+.showcase{
+  display:grid;gap:10px;justify-content:center;
+}
+.showcase span{
+  width:var(--pw);height:var(--pw);border-radius:18px;
+  background:var(--card-2);border:3px solid var(--line);
+  display:grid;place-items:center;font-size:calc(var(--pw) * .56);line-height:1;
+}
+.showcase span.hid{color:transparent;background:var(--accent);border-color:var(--accent)}
+.showcase span.step{animation:bump .45s cubic-bezier(.34,1.56,.64,1)}
+.showcase span.lit{box-shadow:0 0 0 6px color-mix(in srgb,var(--gold) 65%,transparent)}
+.seqbar{display:flex;gap:6px;justify-content:center;min-height:34px;flex-wrap:wrap}
+.seqbar span{
+  width:32px;height:32px;border-radius:9px;background:var(--card-2);
+  border:2.5px solid var(--line);display:grid;place-items:center;font-size:18px;
+}
+.seqbar span.got{background:var(--accent);border-color:var(--accent)}
+
 /* ── Level chip ────────────────────────────────────────────────────── */
 .tile .lv{
   position:absolute;top:12px;right:12px;
@@ -849,7 +914,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 
 /* ═══ State ═══════════════════════════════════════════════════════ */
 var KEY = 'aisb-foundation-v1';
-var S = { stars:0, got:{}, sound:true, vname:'', rate:1, hidden:{} };
+var S = { stars:0, got:{}, sound:true, vname:'', rate:1, hidden:{}, notimer:false };
 try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); for (var k in p) if (k in S) S[k] = p[k]; } } catch(e){}
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
 
@@ -1524,6 +1589,86 @@ SVG.trike =
 '<path d="M86 128q14 10 28 0" stroke="#5A6C9E" stroke-width="3" fill="none" stroke-linecap="round"/>' +
 '</g></svg>';
 
+SVG.lion =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Leo the lion"><g class="mx-all">' +
+'<path d="M150 152c20 6 24 20 16 32" stroke="#C98F3E" stroke-width="6" fill="none" stroke-linecap="round"/>' +
+'<ellipse cx="168" cy="186" rx="9" ry="7" fill="#8A5A2B"/>' +
+'<rect x="64" y="156" width="22" height="40" rx="11" fill="#E0A54E"/>' +
+'<rect x="114" y="156" width="22" height="40" rx="11" fill="#E0A54E"/>' +
+'<ellipse cx="75" cy="194" rx="13" ry="7" fill="#F2D9A8"/><ellipse cx="125" cy="194" rx="13" ry="7" fill="#F2D9A8"/>' +
+'<ellipse cx="100" cy="146" rx="46" ry="36" fill="#E8B25C"/>' +
+'<ellipse cx="100" cy="152" rx="27" ry="24" fill="#F7E3BC"/>' +
+'<circle class="ear-l" cx="62" cy="52" r="14" fill="#C98F3E"/>' +
+'<circle class="ear-r" cx="138" cy="52" r="14" fill="#C98F3E"/>' +
+'<circle cx="62" cy="52" r="7" fill="#E8A0A8"/><circle cx="138" cy="52" r="7" fill="#E8A0A8"/>' +
+'<path d="M100 24c9 0 12 8 18 10 7 2 13-3 18 3s-1 12 2 18 11 7 11 15-8 9-11 15 1 12-2 18-11 1-18 3-9 10-18 10-12-8-18-10-13 3-18-3 1-12-2-18-11-7-11-15 8-9 11-15-1-12 2-18 11-1 18-3 9-10 18-10z" fill="#C98F3E"/>' +
+'<ellipse cx="100" cy="86" rx="42" ry="38" fill="#F0C070"/>' +
+'<g class="eyes">' +
+'<ellipse cx="82" cy="80" rx="9.5" ry="10.5" fill="#fff" stroke="#8A5A2B" stroke-width="2.4"/>' +
+'<ellipse cx="118" cy="80" rx="9.5" ry="10.5" fill="#fff" stroke="#8A5A2B" stroke-width="2.4"/>' +
+'<circle cx="83" cy="82" r="4.6" fill="#33302A"/><circle cx="119" cy="82" r="4.6" fill="#33302A"/>' +
+'<circle cx="86" cy="78" r="1.8" fill="#fff"/><circle cx="122" cy="78" r="1.8" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="100" rx="20" ry="14" fill="#F7E3BC"/>' +
+'<path d="M100 96l-8 6h16z" fill="#C4707E"/>' +
+'<path d="M100 102v6M100 108q-8 6-14 0M100 108q8 6 14 0" stroke="#8A5A2B" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+'<path d="M74 96h-14M74 102h-15M126 96h14M126 102h15" stroke="#D8B98A" stroke-width="2.4" stroke-linecap="round"/>' +
+'</g></svg>';
+
+SVG.saber =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Sabre the sabretooth cat"><g class="mx-all">' +
+'<path d="M148 150c20 6 26 20 18 32" stroke="#A9704A" stroke-width="7" fill="none" stroke-linecap="round"/>' +
+'<rect x="64" y="154" width="22" height="42" rx="11" fill="#BF8258"/>' +
+'<rect x="114" y="154" width="22" height="42" rx="11" fill="#BF8258"/>' +
+'<ellipse cx="75" cy="194" rx="13" ry="7" fill="#EAD3B8"/><ellipse cx="125" cy="194" rx="13" ry="7" fill="#EAD3B8"/>' +
+'<ellipse cx="100" cy="144" rx="47" ry="37" fill="#CE9066"/>' +
+'<ellipse cx="100" cy="150" rx="28" ry="25" fill="#F0DCC4"/>' +
+'<path d="M64 128h16M60 142h14M120 128h16M126 142h14" stroke="#A9704A" stroke-width="5" stroke-linecap="round"/>' +
+'<path class="ear-l" d="M62 56l-10-28 30 14z" fill="#BF8258" stroke="#A9704A" stroke-width="2"/>' +
+'<path class="ear-r" d="M138 56l10-28-30 14z" fill="#BF8258" stroke="#A9704A" stroke-width="2"/>' +
+'<ellipse cx="100" cy="86" rx="45" ry="40" fill="#D8A177"/>' +
+'<path d="M70 58l8 16M100 52v14M130 58l-8 16" stroke="#A9704A" stroke-width="5" stroke-linecap="round"/>' +
+'<g class="eyes">' +
+'<ellipse cx="80" cy="82" rx="10" ry="11" fill="#fff" stroke="#7E4F32" stroke-width="2.4"/>' +
+'<ellipse cx="120" cy="82" rx="10" ry="11" fill="#fff" stroke="#7E4F32" stroke-width="2.4"/>' +
+'<circle cx="81" cy="84" r="4.8" fill="#33302A"/><circle cx="121" cy="84" r="4.8" fill="#33302A"/>' +
+'<circle cx="84" cy="80" r="1.8" fill="#fff"/><circle cx="124" cy="80" r="1.8" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="102" rx="19" ry="13" fill="#F0DCC4"/>' +
+'<path d="M100 98l-7 5h14z" fill="#C4707E"/>' +
+'<path d="M100 103v5M100 108q-7 5-13 0M100 108q7 5 13 0" stroke="#7E4F32" stroke-width="2.8" fill="none" stroke-linecap="round"/>' +
+'<path d="M90 112q-2 22 2 26 4-4 2-26z" fill="#FBF3E4" stroke="#D8C4A8" stroke-width="1.6"/>' +
+'<path d="M110 112q2 22-2 26-4-4-2-26z" fill="#FBF3E4" stroke="#D8C4A8" stroke-width="1.6"/>' +
+'</g></svg>';
+
+SVG.tiger =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Tiggy the tiger"><g class="mx-all">' +
+'<path d="M150 150c20 6 26 20 18 32" stroke="#E08B2E" stroke-width="7" fill="none" stroke-linecap="round"/>' +
+'<path d="M158 158l10-3M162 168l10-2M166 178l9-1" stroke="#3A2A22" stroke-width="3" stroke-linecap="round"/>' +
+'<rect x="64" y="156" width="22" height="40" rx="11" fill="#EE9B34"/>' +
+'<rect x="114" y="156" width="22" height="40" rx="11" fill="#EE9B34"/>' +
+'<ellipse cx="75" cy="194" rx="13" ry="7" fill="#FBEBD2"/><ellipse cx="125" cy="194" rx="13" ry="7" fill="#FBEBD2"/>' +
+'<ellipse cx="100" cy="146" rx="46" ry="36" fill="#F0A63E"/>' +
+'<ellipse cx="100" cy="152" rx="27" ry="24" fill="#FBEBD2"/>' +
+'<path d="M62 130q8 8 4 18M74 124q6 10 2 20M126 124q-6 10-2 20M138 130q-8 8-4 18" stroke="#3A2A22" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+'<circle class="ear-l" cx="62" cy="50" r="15" fill="#EE9B34"/>' +
+'<circle class="ear-r" cx="138" cy="50" r="15" fill="#EE9B34"/>' +
+'<circle cx="62" cy="50" r="7.5" fill="#3A2A22"/><circle cx="138" cy="50" r="7.5" fill="#3A2A22"/>' +
+'<ellipse cx="100" cy="86" rx="45" ry="40" fill="#F5B04A"/>' +
+'<path d="M84 50q4 12 2 18M100 46v16M116 50q-4 12-2 18" stroke="#3A2A22" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+'<path d="M60 78q10 2 14 8M60 94q10 0 14-5M140 78q-10 2-14 8M140 94q-10 0-14-5" stroke="#3A2A22" stroke-width="4.5" fill="none" stroke-linecap="round"/>' +
+'<g class="eyes">' +
+'<ellipse cx="81" cy="84" rx="10" ry="11" fill="#fff" stroke="#8A5A20" stroke-width="2.4"/>' +
+'<ellipse cx="119" cy="84" rx="10" ry="11" fill="#fff" stroke="#8A5A20" stroke-width="2.4"/>' +
+'<circle cx="82" cy="86" r="4.8" fill="#33302A"/><circle cx="120" cy="86" r="4.8" fill="#33302A"/>' +
+'<circle cx="85" cy="82" r="1.8" fill="#fff"/><circle cx="123" cy="82" r="1.8" fill="#fff"/>' +
+'</g>' +
+'<ellipse cx="100" cy="104" rx="20" ry="14" fill="#FBEBD2"/>' +
+'<path d="M100 100l-8 6h16z" fill="#C4707E"/>' +
+'<path d="M100 106v5M100 111q-8 6-14 0M100 111q8 6 14 0" stroke="#8A5A20" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+'<path d="M76 100h-14M76 106h-15M124 100h14M124 106h15" stroke="#E0C9A4" stroke-width="2.4" stroke-linecap="round"/>' +
+'</g></svg>';
+
 function mascotHTML(kind, extra){
   return '<div class="mascot ' + kind + (extra ? ' ' + extra : '') + '">' + SVG[kind] + '</div>';
 }
@@ -1802,13 +1947,20 @@ var ACTS = [
     area:'Mathematics, Year 2–3 — multiplication and division', note:'Groups of dots along the snake at first, then bare numbers. Starts on the 2s, 5s and 10s, reaches the 12s, and mixes in division as sharing from level 4.' },
   { id:'compare',title:'Croc Compare',  sub:'Bigger or smaller?',      mascot:'croc',     color:'var(--c-compare)', stage:'y23',
     area:'Mathematics, Year 2–3 — comparing and ordering', note:'The crocodile’s mouth opens at the bigger number — the standard way &lt; and &gt; are taught. Numbers reach the hundreds, and from level 5 each side is a sum he has to work out before he can compare them.' },
+  { id:'sudoku', title:'Lion Sudoku',    sub:'Pictures, 4×4 to 6×6',   mascot:'lion',     color:'var(--c-sudoku)', stage:'brain',
+    area:'Logic and reasoning', note:'Picture sudoku. Every row and column needs one of each, and on the 4×4 and 6×6 boards every block does too — the thicker gutters show where the blocks are. The 5×5 boards have no blocks, so those are rows and columns only. A picture that would break the rule simply will not go down, which is how he learns the rule rather than being told it. Grids are generated by backtracking, so every puzzle is solvable. Untimed on purpose.' },
+  { id:'missing',title:'What’s Missing?', sub:'Remember, then spot',    mascot:'saber',    color:'var(--c-missing)', stage:'brain',
+    area:'Visual memory', note:'A set of pictures appears, then one is taken away. The wrong answers were never on screen, so he cannot get there by elimination — he has to hold the whole set in his head. Grows from three pictures to eight.' },
+  { id:'follow', title:'Follow Me',      sub:'Copy the order',         mascot:'tiger',    color:'var(--c-follow)', stage:'brain',
+    area:'Working memory and sequencing', note:'A sequence of pictures lights up and he taps them back in the same order. Two to start, eight at the top, from a pool that also grows. A wrong tap just replays the sequence — this is the game with the most headroom left in it.' },
   { id:'frac',   title:'Trike Fractions',sub:'Halves & thirds',        mascot:'trike',    color:'var(--c-frac)', stage:'y23',
     area:'Mathematics, Year 2–3 — fractions', note:'A circle cut into equal pieces with some shaded. Halves and quarters first, then thirds, sixths, eighths and twelfths. The wrong answers are deliberately near misses — one piece out, or the right count over the wrong total.' }
 ];
 var STAGES = [
-  { key:'f',   label:'Foundation',  hint:'first year of school' },
-  { key:'y12', label:'Year 1 & 2',  hint:'when Foundation gets easy' },
-  { key:'y23', label:'Year 2 & 3',  hint:'the deep end' }
+  { key:'f',     label:'Foundation',  hint:'first year of school' },
+  { key:'y12',   label:'Year 1 & 2',  hint:'when Foundation gets easy' },
+  { key:'y23',   label:'Year 2 & 3',  hint:'the deep end' },
+  { key:'brain', label:'Brain Games', hint:'logic and memory, no year level' }
 ];
 function act(id){ for (var i=0;i<ACTS.length;i++) if (ACTS[i].id === id) return ACTS[i]; return null; }
 
@@ -1879,7 +2031,7 @@ function home(){
       '<h1>' + (TIDY ? 'Tidy up.<br><em>Tap to put away.</em>' : 'Pick a friend.<br><em>Let\'s play.</em>') + '</h1>' +
       '<p>' + (TIDY
         ? 'Tap any game to put it on the shelf. Tap it again to bring it back. Nothing is lost — your stars stay.'
-        : 'Eighteen little games. They get harder the more you play, and they carry on past Foundation into Year 1, 2 and 3.') +
+        : 'Twenty-one little games. They get harder the more you play, and they carry on past Foundation into Year 1, 2 and 3.') +
       '</p>' +
     '</div>' +
     tiles +
@@ -1932,15 +2084,53 @@ function stage(){ return document.getElementById('stage'); }
 /* Every round lays out the same three bands: who's talking, the thing to
    look at, and the things to tap. */
 function lay(line, middle, tail){
-  return '<div class="buddy">' + mascotHTML(G.a.mascot) +
+  if (timeFor(G.a.id)) requestAnimationFrame(runClock);
+  return clockHTML() +
+    '<div class="buddy">' + mascotHTML(G.a.mascot) +
       (line ? '<div class="bubble">' + line + '</div>' : '') + '</div>' +
     '<div class="mid">' + middle + '</div>' +
     (tail || '');
 }
 
 /* One path for right, one for gently-not-yet. Nothing ever ends a game. */
+/* ── Timer ────────────────────────────────────────────────────────
+   Only the pick-an-answer games are timed, and only past level 3. The coding
+   puzzles, tracing and the memory games get no clock: thinking time is the
+   point of those, and hurrying them would teach the wrong habit. */
+var QUICK = { sounds:1, count:1, shape:1, word:1, add:1, tall:1, thai:1,
+              feel:1, times:1, compare:1, frac:1, big:1, lab:1 };
+function timeFor(id){
+  if (S.notimer || !QUICK[id]) return 0;
+  var L = lvl(id);
+  if (L < 3) return 0;
+  return Math.max(6, 16 - (L - 3) * 2.5);        // 16s at level 3, 6s at level 7
+}
+var clockT = 0;
+function stopClock(){ if (clockT){ clearTimeout(clockT); clockT = 0; } }
+function clockHTML(){
+  var t = timeFor(G.a.id);
+  return t ? '<div class="clock" id="clock"><i style="animation-duration:' + t + 's"></i></div>' : '';
+}
+function runClock(){
+  stopClock();
+  var st = stage(); if (!st) return;
+  var box = st.querySelector('#clock'); if (!box) return;
+  var bar = box.querySelector('i');
+  void bar.offsetWidth;
+  bar.classList.add('run');
+  clockT = setTimeout(function(){
+    if (!G || !stage() || !stage().querySelector('#clock')) return;
+    /* Running out is not a wrong answer — no star, no lost streak, just the
+       next question. The pressure is on keeping up, not on being punished. */
+    stopClock(); sfx('no'); react('oops');
+    say('Time is up. Here comes another one.');
+    later(1100, next);
+  }, timeFor(G.a.id) * 1000);
+}
+
 function scored(ok, thenSay){
   if (ok){
+    stopClock();
     sfx('yes'); react('happy'); addStar(G.a.id);
     G.correct++;
     dots();
@@ -1956,12 +2146,14 @@ function next(){
   if (!G || !stage()) return;
   GEN++;
   G.round++;
+  stopClock();
   dots();
   ({ trace:roundTrace, sounds:roundSounds, count:roundCount, code:roundCode,
      shape:roundShape, thai:roundThai, feel:roundFeel,
      word:roundWord, add:roundAdd, tall:roundTall, memory:roundMemory,
      loop:roundLoop, big:roundBig, lab:roundLab,
-     debug:roundDebug, times:roundTimes, compare:roundCompare, frac:roundFrac })[G.a.id]();
+     debug:roundDebug, times:roundTimes, compare:roundCompare, frac:roundFrac,
+     sudoku:roundSudoku, missing:roundMissing, follow:roundFollow })[G.a.id]();
 }
 
 function party(){
@@ -3546,13 +3738,17 @@ function roundDebug(){
 /* ═══ 16 · Snake Times ════════════════════════════════════════════ */
 function roundTimes(){
   var L = lvl('times');
-  var tables = L < 1 ? [2,5,10] : L < 2 ? [2,3,5,10] : L < 4 ? [2,3,4,5,10]
-             : L < 6 ? [2,3,4,5,6,7,8,9,10] : [2,3,4,5,6,7,8,9,10,11,12];
+  /* This was too steep. The 2s, 5s and 10s now hold for three levels, the
+     second number starts small, the dots stay on screen until level 4, and
+     division waits until 6. */
+  var tables = L < 3 ? [2,5,10] : L < 4 ? [2,3,5,10] : L < 5 ? [2,3,4,5,10]
+             : L < 7 ? [2,3,4,5,6,10] : [2,3,4,5,6,7,8,9,10];
   var a = pick(tables);
-  var b = 1 + Math.floor(Math.random() * (L < 3 ? 10 : 12));
+  var top = L < 2 ? 5 : (L < 4 ? 8 : (L < 6 ? 10 : 12));
+  var b = 1 + Math.floor(Math.random() * top);
   var product = a * b;
-  var divide = L >= 4 && Math.random() < 0.35;
-  var support = L < 2 && a * b <= 40;
+  var divide = L >= 6 && Math.random() < 0.3;
+  var support = L < 4 && a * b <= 60;
   var ans = divide ? b : product;
 
   var body = '';
@@ -3573,9 +3769,9 @@ function roundTimes(){
 
   var near = [ans - a, ans + a, ans - 1, ans + 1, ans - b, ans + b]
     .filter(function(x){ return x > 0 && x !== ans; });
-  var opts = shuffle([ans].concat(sample(near, L >= 5 ? 3 : 2)));
+  var opts = shuffle([ans].concat(sample(near, L >= 6 ? 3 : 2)));
   var bump = 1;
-  while (opts.length < (L >= 5 ? 4 : 3)){ if (opts.indexOf(ans + bump) < 0 && ans + bump > 0) opts.push(ans + bump); bump++; }
+  while (opts.length < (L >= 6 ? 4 : 3)){ if (opts.indexOf(ans + bump) < 0 && ans + bump > 0) opts.push(ans + bump); bump++; }
 
   stage().innerHTML = lay(
     divide ? 'Share them out along my back.' : 'I grow ' + b + ' at a time!',
@@ -3707,6 +3903,255 @@ function roundFrac(){
   });
 }
 
+/* ═══ 19 · Lion Sudoku ════════════════════════════════════════════ */
+var SUD_PICS = ['🍎','🍌','🍇','🍓','🥝','🍊'];
+/* Generated by backtracking rather than shuffling a hand-written grid, so
+   every puzzle is guaranteed valid at any size. */
+function sudokuGrid(N, bw, bh){
+  var g = [], r, c;
+  for (r = 0; r < N; r++){ g.push([]); for (c = 0; c < N; c++) g[r].push(-1); }
+  function ok(r, c, v){
+    for (var i = 0; i < N; i++) if (g[r][i] === v || g[i][c] === v) return false;
+    if (bw){
+      var br = Math.floor(r / bh) * bh, bc = Math.floor(c / bw) * bw;
+      for (var y = br; y < br + bh; y++) for (var x = bc; x < bc + bw; x++) if (g[y][x] === v) return false;
+    }
+    return true;
+  }
+  function solve(i){
+    if (i >= N * N) return true;
+    var r = Math.floor(i / N), c = i % N, opts = shuffle(SUD_PICS.slice(0, N).map(function(_, k){ return k; }));
+    for (var k = 0; k < N; k++){
+      if (ok(r, c, opts[k])){ g[r][c] = opts[k]; if (solve(i + 1)) return true; g[r][c] = -1; }
+    }
+    return false;
+  }
+  solve(0);
+  return g;
+}
+function roundSudoku(){
+  var L = lvl('sudoku');
+  var SPEC = [ { n:4, bw:2, bh:2, blank:4 },  { n:4, bw:2, bh:2, blank:6 },
+               { n:4, bw:2, bh:2, blank:8 },  { n:5, bw:0, bh:0, blank:7 },
+               { n:5, bw:0, bh:0, blank:9 },  { n:6, bw:3, bh:2, blank:10 },
+               { n:6, bw:3, bh:2, blank:13 }, { n:6, bw:3, bh:2, blank:16 } ];
+  var sp = SPEC[L], N = sp.n;
+  var full = sudokuGrid(N, sp.bw, sp.bh);
+  var pics = SUD_PICS.slice(0, N);
+
+  var holes = shuffle(full.map(function(_, i){ return i; }).reduce(function(a, _, r){
+    for (var c = 0; c < N; c++) a.push(r * N + c); return a;
+  }, [])).slice(0, Math.min(sp.blank, N * N - N));
+  var hole = {};
+  holes.forEach(function(i){ hole[i] = true; });
+
+  var now = [];
+  for (var r = 0; r < N; r++){ now.push([]); for (var c = 0; c < N; c++) now[r].push(hole[r * N + c] ? -1 : full[r][c]); }
+
+  var cw = N >= 6 ? 'clamp(38px,11vw,54px)' : (N === 5 ? 'clamp(44px,13vw,62px)' : 'clamp(52px,15vw,72px)');
+  function cellHTML(r, c){
+    var v = now[r][c], fixed = !hole[r * N + c];
+    var edge = (sp.bw && (c + 1) % sp.bw === 0 && c < N - 1 ? ' bx' : '') +
+               (sp.bh && (r + 1) % sp.bh === 0 && r < N - 1 ? ' by' : '');
+    return '<button class="sc' + (fixed ? ' fixed' : '') + edge + '" data-r="' + r + '" data-c="' + c +
+      '" aria-label="' + (v < 0 ? 'empty square' : pics[v]) + '">' + (v < 0 ? '' : pics[v]) + '</button>';
+  }
+  function drawGrid(){
+    var out = '';
+    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) out += cellHTML(r, c);
+    return out;
+  }
+
+  stage().innerHTML = lay(
+    'Every row and column, one of each.',
+    '<div class="sud" id="sud" style="--sc:' + cw + ';grid-template-columns:repeat(' + N + ',auto)">' + drawGrid() + '</div>' +
+    '<p class="ask" aria-live="polite">Fill every empty square</p>',
+    '<div class="tray" id="tray">' + pics.map(function(p, i){
+      return '<button data-p="' + i + '" aria-label="' + p + '">' + p + '</button>';
+    }).join('') + '</div>' +
+    '<p class="hint" id="msg">Tap a square, then tap a picture</p>'
+  );
+  later(340, function(){
+    say('Every row and every column needs one of each. ' + (sp.bw ? 'Every block too.' : ''));
+  });
+
+  var selR = -1, selC = -1, held = -1, done = false;
+  function repaint(){
+    var box = document.getElementById('sud'); if (!box) return;
+    box.innerHTML = drawGrid();
+    if (selR >= 0){
+      var el = box.querySelector('[data-r="' + selR + '"][data-c="' + selC + '"]');
+      if (el) el.classList.add('sel');
+    }
+    wireCells();
+  }
+  function legal(r, c, v){
+    for (var i = 0; i < N; i++){
+      if (i !== c && now[r][i] === v) return false;
+      if (i !== r && now[i][c] === v) return false;
+    }
+    if (sp.bw){
+      var br = Math.floor(r / sp.bh) * sp.bh, bc = Math.floor(c / sp.bw) * sp.bw;
+      for (var y = br; y < br + sp.bh; y++) for (var x = bc; x < bc + sp.bw; x++)
+        if (!(y === r && x === c) && now[y][x] === v) return false;
+    }
+    return true;
+  }
+  function place(r, c, v){
+    if (!hole[r * N + c] || done) return;
+    if (!legal(r, c, v)){
+      var el = document.getElementById('sud').querySelector('[data-r="' + r + '"][data-c="' + c + '"]');
+      if (el){ el.classList.add('bad'); wait(450, function(){ el.classList.remove('bad'); }); }
+      sfx('bonk');
+      var m = document.getElementById('msg');
+      if (m) m.textContent = 'That one is already in this row, column or block';
+      return;
+    }
+    now[r][c] = v; sfx('step');
+    selR = -1; selC = -1;
+    repaint();
+    for (var i = 0; i < N; i++) for (var j = 0; j < N; j++) if (now[i][j] < 0) return;
+    done = true;
+    scored(true, 'The whole grid! Well done.');
+  }
+  function wireCells(){
+    on(document.getElementById('sud'), '.sc', function(el){
+      if (done) return;
+      var r = +el.getAttribute('data-r'), c = +el.getAttribute('data-c');
+      if (!hole[r * N + c]) return;
+      if (held >= 0){ place(r, c, held); return; }
+      selR = r; selC = c; sfx('tap'); repaint();
+    });
+  }
+  wireCells();
+  on(stage(), '#tray button', function(el){
+    if (done) return;
+    var v = +el.getAttribute('data-p');
+    if (selR >= 0){ place(selR, selC, v); held = -1; }
+    else {
+      held = held === v ? -1 : v;
+      Array.prototype.forEach.call(stage().querySelectorAll('#tray button'), function(b){
+        b.classList.toggle('on', +b.getAttribute('data-p') === held);
+      });
+      sfx('tap');
+    }
+  });
+}
+
+/* ═══ 20 · What's Missing ═════════════════════════════════════════ */
+var MEM_PICS = ['🍉','🐠','🌵','🎈','🚂','🦉','🍄','🌻','🐙','⛵','🪁','🧁','🦩','🥁','🪐','🐞',
+                '🚀','🦋','🍩','🐢','🎸','🌈','🦚','🍿'];
+function roundMissing(){
+  var L = lvl('missing');
+  var n = 3 + Math.min(L, 5);                       // 3 up to 8 pictures
+  var look = 2200 + n * 320;
+  var shown = sample(MEM_PICS, n);
+  var goneIdx = Math.floor(Math.random() * n);
+  var gone = shown[goneIdx];
+  var rest = shuffle(shown.filter(function(p){ return p !== gone; }));
+  /* The decoys were never on screen, so he cannot solve it by elimination —
+     he has to remember what was there. */
+  var decoys = sample(MEM_PICS, L >= 3 ? 3 : 2, shown);
+  var opts = shuffle([gone].concat(decoys));
+  var cols = Math.min(4, Math.ceil(Math.sqrt(n)) + 1);
+  var pw = n > 6 ? 'clamp(56px,15vw,80px)' : 'clamp(66px,18vw,96px)';
+
+  function board(list){
+    return '<div class="showcase" style="--pw:' + pw + ';grid-template-columns:repeat(' + cols + ',auto)">' +
+      list.map(function(p){ return '<span>' + p + '</span>'; }).join('') + '</div>';
+  }
+
+  stage().innerHTML = lay('Look hard — remember them all!',
+    board(shown) + '<p class="ask" aria-live="polite">Remember these…</p>', '');
+  later(300, function(){ say('Look hard. Remember them all.'); });
+
+  later(look, function(){
+    stage().innerHTML = lay('One has gone. Which one?',
+      board(rest) + '<p class="ask" aria-live="polite">Which one went away?</p>',
+      '<div class="choices">' + opts.map(function(p){
+        return '<button class="choice" data-p="' + p + '" aria-label="a picture">' + p + '</button>';
+      }).join('') + '</div>');
+    say('One has gone. Which one?');
+    var settled = false;
+    on(stage(), '.choice', function(el){
+      if (el.getAttribute('data-p') === gone){
+        if (settled) return;
+        settled = true; el.classList.add('yes');
+        scored(true, 'Yes! That one went away.');
+      } else {
+        el.classList.add('no');
+        scored(false, 'That one was not there at all.');
+      }
+    });
+  });
+}
+
+/* ═══ 21 · Follow Me ══════════════════════════════════════════════ */
+function roundFollow(){
+  var L = lvl('follow');
+  var len = 2 + Math.min(L, 6);                     // 2 up to 8 in the sequence
+  var poolN = Math.min(4 + Math.floor(L / 2), 8);
+  var pool = sample(MEM_PICS, poolN);
+  var seq = [];
+  for (var i = 0; i < len; i++) seq.push(pool[Math.floor(Math.random() * poolN)]);
+  var cols = Math.min(4, poolN);
+  var pw = poolN > 6 ? 'clamp(56px,15vw,78px)' : 'clamp(66px,18vw,92px)';
+
+  stage().innerHTML = lay(
+    'Watch, then tap them back in order.',
+    '<div class="showcase" id="pool" style="--pw:' + pw + ';grid-template-columns:repeat(' + cols + ',auto)">' +
+      pool.map(function(p){ return '<span data-p="' + p + '">' + p + '</span>'; }).join('') + '</div>' +
+    '<p class="ask" aria-live="polite">Watch the order…</p>',
+    '<div class="seqbar" id="bar"></div>'
+  );
+
+  var at = 0, playing = true, done = false;
+  function cell(p){ var b = document.getElementById('pool'); return b && b.querySelector('[data-p="' + p + '"]'); }
+  function drawBar(){
+    var bar = document.getElementById('bar'); if (!bar) return;
+    var out = '';
+    for (var i = 0; i < seq.length; i++) out += '<span class="' + (i < at ? 'got' : '') + '">' + (i < at ? '✓' : '?') + '</span>';
+    bar.innerHTML = out;
+  }
+  drawBar();
+
+  function flash(i){
+    if (!G || !document.getElementById('pool')) return;
+    if (i >= seq.length){
+      playing = false;
+      var ask = stage().querySelector('.ask');
+      if (ask) ask.textContent = 'Now tap them in the same order';
+      say('Now tap them in the same order.');
+      return;
+    }
+    var el = cell(seq[i]);
+    if (el){ el.classList.add('lit'); sfx('step'); }
+    later(520, function(){ if (el) el.classList.remove('lit'); later(200, function(){ flash(i + 1); }); });
+  }
+  later(700, function(){ flash(0); });
+
+  on(stage(), '#pool span', function(el){
+    if (playing || done) return;
+    var p = el.getAttribute('data-p');
+    el.classList.add('step');
+    wait(400, function(){ el.classList.remove('step'); });
+    if (p === seq[at]){
+      at++; sfx('tap'); drawBar();
+      if (at >= seq.length){
+        done = true;
+        scored(true, 'The whole order! Brilliant.');
+      }
+    } else {
+      at = 0; drawBar();
+      sfx('no'); react('oops');
+      var ask = stage().querySelector('.ask');
+      if (ask) ask.textContent = 'Not quite — watch again';
+      playing = true;
+      later(900, function(){ flash(0); });
+    }
+  });
+}
+
 /* ═══ Grown-ups ═══════════════════════════════════════════════════ */
 function grownups(){
   var rows = STAGES.map(function(st){
@@ -3725,7 +4170,7 @@ function grownups(){
   wrap.innerHTML = '<div class="panel-inner">' +
     '<div class="bar"><div class="bar-title" style="font-size:26px">For grown-ups</div>' +
     '<button class="icon-btn" data-close aria-label="Close">✕</button></div>' +
-    '<p>Eighteen games, each with its own animal. Eleven cover the learning areas in the AISB Foundation letter; three carry on into Year 1–2 and four more into Year 2–3, for when the earlier ones stop being a challenge. Everything runs in the page — no accounts, no network, no ads, nothing to buy. Progress is saved on this device only.</p>' +
+    '<p>Twenty-one games, each with its own animal. Eleven cover the learning areas in the AISB Foundation letter; three carry on into Year 1–2, four more into Year 2–3, and three Brain Games sit outside the curriculum altogether. Everything runs in the page — no accounts, no network, no ads, nothing to buy. Progress is saved on this device only.</p>' +
     '<p><b>It gets harder as he plays.</b> Every game keeps its own level: ten stars in that game buys the next one, up to level ' + MAXLVL + ', and the level shows on its tile. Levels widen the number range, bring in confusable letter sounds and near-identical feelings, add flaming mountains and a bigger grid to the coding quests, introduce 3D shapes and missing-number sums, push every coding grid to 5×5 and 6×6 with walls of fire to route around, and move Word Builder from the first letter to the vowel in the middle. Nothing you have to set — it just stops being easy.</p>' +
     '<p><b>If these are still too easy,</b> the fastest way past the early levels is simply to play: ten stars in a game is a couple of minutes, and there are now eight levels in each. The two to watch are Dragon Loops, where the block limit makes a repeat the only way through, and Komodo Debug, where the program is already written and wrong — reading someone else’s broken code is a harder skill than writing your own, and it is most of what robotics actually is.</p>' +
     '<div class="band"><span class="band-name">Sound &amp; voice</span></div>' +
