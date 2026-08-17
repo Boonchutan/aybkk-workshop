@@ -2975,11 +2975,16 @@ function roundTall(){
   var count = L < 2 ? 3 : (L < 5 ? 4 : (L < 7 ? 5 : 6));
   var numbers = L >= 4 && mode === 'order';
 
+  /* Heights are built, not sampled. Drawing at random and rejecting anything
+     too close can accept a set that between them rules out every remaining
+     height — four trees at .14/.42/.70/.98 block the whole range — and then it
+     spins forever. Laying one tree in each band and jittering inside the band
+     keeps them the same distance apart and always finishes. */
+  var gap = L >= 2 ? 0.14 : 0.24;
+  var step = (0.84 + gap) / count;
   var hs = [];
-  while (hs.length < count){
-    var v = Math.round(Math.random() * 100) / 100;
-    if (hs.every(function(x){ return Math.abs(x - v) > (L >= 2 ? 0.14 : 0.24); })) hs.push(v);
-  }
+  for (var hi = 0; hi < count; hi++) hs.push(0.16 + hi * step + Math.random() * (step - gap));
+  hs = shuffle(hs);
   var numPool = L >= 7 ? [45,120,208,317,406,529,634,758,861,990]
     : (L >= 5 ? [12,25,38,47,53,61,74,86,95,100] : [3,7,11,15,19,4,8,12,16,20]);
   var vals = numbers ? shuffle(numPool).slice(0, count) : hs;
