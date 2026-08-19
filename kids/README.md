@@ -34,8 +34,15 @@ tiles. Adding a game means drawing a new one. Both apps' test suites assert it.
 
 Difficulty in both apps is per game and driven only by stars earned in that
 game (`lvl(id)`), so one child's strong subject never drags a weaker one along
-with it. Petal levels every 10 stars to a maximum of 4, and a level also
-lengthens the game: `winFor(id)` grows the run from four rounds to seven.
+with it. Petal levels every 10 stars to a maximum of 6, and a level does three
+things at once: `winFor(id)` grows the run from four rounds to eight,
+`nChoices(id)` widens it from two options to five, and each round function
+switches to harder material of its own — ordering instead of picking, three
+body parts instead of one, Thai script instead of pictures, and so on.
+
+Note that a level can rise *during* a run, because a star earned in the round
+just played counts immediately. Tests that seed a level and then play several
+rounds must assert against the opening round, not the later ones.
 
 `petal.src.html` contains a body-safety game ("Clothes Stay On"). It is
 ordinary protective early-years material — the swimsuit rule. Two of its three

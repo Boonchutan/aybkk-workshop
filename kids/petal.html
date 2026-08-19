@@ -31,6 +31,9 @@
   --c-patt:#3F5FB8;
   --c-where:#8A5A1F;
   --c-odd:#5B4BA8;
+  --c-opp:#1F6F8B;
+  --c-more:#A0522D;
+  --c-abc:#B03060;
   --on-accent:#FFFFFF;
 
   --good:#0E7A6B;
@@ -224,10 +227,10 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .bloom.hintme{animation:glow 1.1s ease-in-out infinite}
 
 /* ── Matching pairs ────────────────────────────────────────────────── */
-.deck{display:grid;gap:10px;justify-content:center;margin:0 auto}
-.pcard{width:clamp(70px,18vw,92px);height:clamp(84px,21vw,108px);border-radius:20px;
+.deck{display:grid;gap:8px;justify-content:center;margin:0 auto;width:100%;max-width:430px}
+.pcard{width:100%;aspect-ratio:3/4;border-radius:20px;
   border:4px solid var(--line);background:var(--accent);color:transparent;
-  font-size:clamp(34px,9vw,46px);line-height:1;box-shadow:var(--lift-sm);
+  font-size:clamp(24px,6.5vw,44px);line-height:1;box-shadow:var(--lift-sm);
   display:grid;place-items:center;transition:transform .16s,background .2s,border-color .2s}
 .pcard::after{content:'✿';color:rgba(255,255,255,.72);font-size:30px}
 .pcard:active{transform:translateY(4px)}
@@ -266,6 +269,24 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .thing.on{top:44px;z-index:4}
 .thing.in{top:112px}
 .thing.under{top:200px;z-index:0}
+.thing.beside{top:150px;left:auto;right:0;transform:none;z-index:4}
+
+/* ── Which has more ────────────────────────────────────────────────── */
+.piles{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;width:100%}
+.pile{flex:1 1 0;min-width:116px;max-width:210px;min-height:132px;border-radius:28px;
+  background:var(--card-2);border:4px solid var(--line);box-shadow:var(--lift-sm);
+  display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:5px;padding:13px;
+  transition:transform .12s,box-shadow .12s,background .2s,border-color .2s}
+.pile span{font-size:clamp(19px,5vw,29px);line-height:1}
+.pile:active{transform:translateY(4px);box-shadow:none}
+.pile.yes{background:color-mix(in srgb,var(--good) 18%,var(--card-2));border-color:var(--good);
+  animation:bump .5s cubic-bezier(.34,1.56,.64,1)}
+.pile.no{animation:wiggle .5s ease-in-out}
+.pile.hintme{animation:glow 1.1s ease-in-out infinite}
+
+/* ── Letters ───────────────────────────────────────────────────────── */
+.bigletter{font-family:var(--school);font-size:clamp(96px,26vw,140px);line-height:1;color:var(--accent)}
+.choice.letter{font-family:var(--school);font-size:clamp(46px,12vw,68px)}
 
 .herd{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:center;max-width:400px;padding:4px}
 .critter{font-size:52px;line-height:1;padding:4px;border-radius:16px;position:relative;
@@ -275,13 +296,18 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
   border-radius:999px;min-width:24px;height:24px;font-family:var(--school);font-size:15px;
   display:grid;place-items:center;padding:0 5px}
 
-.sizes{display:flex;gap:clamp(10px,4vw,30px);align-items:center;justify-content:center;width:100%}
+.sizes{display:flex;gap:clamp(6px,2.4vw,24px);align-items:center;justify-content:center;
+  width:100%;flex-wrap:wrap}
 .sizer{background:none;border:0;padding:6px;line-height:1;border-radius:20px;
   transition:transform .12s}
 .sizer:active{transform:translateY(4px)}
 .sizer.yes{animation:bump .5s cubic-bezier(.34,1.56,.64,1)}
 .sizer.no{animation:wiggle .5s ease-in-out}
 .sizer.hintme{animation:glow 1.1s ease-in-out infinite;border-radius:24px}
+.sizer{position:relative}
+.sizer .rank{position:absolute;top:-2px;right:-2px;background:var(--good);color:#fff;
+  border-radius:999px;min-width:26px;height:26px;font-family:var(--school);font-size:16px;
+  display:grid;place-items:center;padding:0 6px}
 
 .shape-hero{width:clamp(120px,32vw,168px);height:clamp(120px,32vw,168px)}
 .shape-hero svg,.shape-mini svg{width:100%;height:100%;display:block}
@@ -290,6 +316,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
 .thai-word{font-family:var(--thai);font-weight:700;font-size:clamp(48px,14vw,80px);
   line-height:1.5;color:var(--accent);text-align:center}
 .roman{font-family:var(--display);font-size:23px;color:var(--ink-soft);margin:0}
+.thai-mini{font-family:var(--thai);font-weight:700;font-size:clamp(26px,7vw,38px);line-height:1.6;color:var(--ink)}
 
 .faces{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;width:100%}
 .face-btn{flex:1 1 0;min-width:118px;max-width:210px;border-radius:28px;
@@ -425,13 +452,14 @@ var app = document.getElementById('app');
 var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* A game grows with her rather than ending the moment she has the idea: four
-   rounds and two choices on the first sitting, seven rounds and four choices
-   once she knows it well. Still no losing and no clock — the stretch is in how
-   long she stays with it, not in pressure. */
-var MAXLVL = 4;
+   rounds and two choices on the first sitting, eight rounds and five choices
+   by the top. Seven levels, so a game she loves keeps opening up instead of
+   running out. Still no losing and no clock — the stretch is in what she is
+   asked to hold in her head, not in pressure. */
+var MAXLVL = 6;
 function lvl(id){ return Math.min(MAXLVL, Math.floor((S.got[id] || 0) / 10)); }
-function nChoices(id){ var L = lvl(id); return L >= 3 ? 4 : (L >= 2 ? 3 : 2); }
-function winFor(id){ return Math.min(7, 4 + lvl(id)); }
+function nChoices(id){ var L = lvl(id); return L >= 5 ? 5 : (L >= 3 ? 4 : (L >= 2 ? 3 : 2)); }
+function winFor(id){ return Math.min(8, 4 + lvl(id)); }
 
 /* ═══ Helpers ═════════════════════════════════════════════════════ */
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
@@ -895,6 +923,73 @@ SVG.owl =
 '<path d="M76 166q10 8 24 8t24-8" stroke="#D6C2E4" stroke-width="3.4" fill="none" stroke-linecap="round"/>' +
 '</g></svg>';
 
+SVG.swan =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Grace the swan"><g class="mx-all">' +
+'<ellipse cx="100" cy="184" rx="62" ry="12" fill="#CFE8F5"/>' +
+'<ellipse cx="98" cy="152" rx="56" ry="38" fill="#FFFDFB"/>' +
+'<path d="M52 150q-16 6-18 24 18 8 34-6z" fill="#F4EDE6"/>' +
+'<path d="M146 150q16 6 18 24-18 8-34-6z" fill="#F4EDE6"/>' +
+'<ellipse cx="104" cy="146" rx="34" ry="26" fill="#F7F1EA"/>' +
+'<path d="M120 132C118 96 106 78 96 62" stroke="#FFFDFB" stroke-width="21" fill="none" stroke-linecap="round"/>' +
+'<circle cx="92" cy="54" r="25" fill="#FFFDFB"/>' +
+'<path d="M70 50 44 58l26 12z" fill="#EF9A3D"/>' +
+'<path d="M70 52 52 57l18 7z" fill="#D97E28"/>' +
+'<path d="M74 42q-8-2-12 2" stroke="#3A3340" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+'<g class="eyes">' +
+'<circle cx="92" cy="50" r="6.5" fill="#fff" stroke="#6B5A6F" stroke-width="2"/>' +
+'<circle cx="92" cy="51" r="3.6" fill="#4A3B52"/><circle cx="93.6" cy="49" r="1.4" fill="#fff"/>' +
+'</g>' +
+'<circle cx="108" cy="60" r="6" fill="#F9C4CE" opacity=".8"/>' +
+'<circle cx="150" cy="112" r="6" fill="#F3B6C6"/><circle cx="162" cy="124" r="4" fill="#F9D6DE"/>' +
+'</g></svg>';
+
+SVG.squirrel =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Nutmeg the squirrel"><g class="mx-all">' +
+'<path d="M46 178C6 166 8 96 52 76c14-6 22 8 12 16-26 20-24 62 0 74z" fill="#D89A62"/>' +
+'<path d="M48 168C18 156 22 104 56 88c8-4 12 4 6 9-20 16-20 54 0 63z" fill="#EFC195"/>' +
+'<ellipse cx="76" cy="188" rx="16" ry="10" fill="#C98B54"/>' +
+'<ellipse cx="120" cy="188" rx="16" ry="10" fill="#C98B54"/>' +
+'<ellipse cx="106" cy="150" rx="40" ry="38" fill="#D89A62"/>' +
+'<ellipse cx="106" cy="158" rx="24" ry="25" fill="#F6E3CE"/>' +
+'<ellipse cx="106" cy="94" rx="41" ry="37" fill="#D89A62"/>' +
+'<g class="ear-l"><ellipse cx="80" cy="58" rx="11" ry="17" fill="#D89A62" transform="rotate(-18 80 58)"/><ellipse cx="80" cy="60" rx="5.5" ry="10" fill="#F3B6C6" transform="rotate(-18 80 60)"/></g>' +
+'<g class="ear-r"><ellipse cx="130" cy="58" rx="11" ry="17" fill="#D89A62" transform="rotate(18 130 58)"/><ellipse cx="130" cy="60" rx="5.5" ry="10" fill="#F3B6C6" transform="rotate(18 130 60)"/></g>' +
+'<g class="eyes">' +
+'<ellipse cx="90" cy="92" rx="8.5" ry="9.5" fill="#fff" stroke="#6B4A2A" stroke-width="2.2"/>' +
+'<ellipse cx="122" cy="92" rx="8.5" ry="9.5" fill="#fff" stroke="#6B4A2A" stroke-width="2.2"/>' +
+'<circle cx="91" cy="93" r="4.4" fill="#4A3520"/><circle cx="123" cy="93" r="4.4" fill="#4A3520"/>' +
+'<circle cx="93" cy="90" r="1.8" fill="#fff"/><circle cx="125" cy="90" r="1.8" fill="#fff"/>' +
+'</g>' +
+'<circle cx="78" cy="108" r="6.5" fill="#F6B9AE" opacity=".8"/><circle cx="134" cy="108" r="6.5" fill="#F6B9AE" opacity=".8"/>' +
+'<ellipse cx="106" cy="106" rx="5.5" ry="4" fill="#8A5A32"/>' +
+'<path d="M106 110q-6 7-11 1M106 110q6 7 11 1" stroke="#6B4A2A" stroke-width="2.8" fill="none" stroke-linecap="round"/>' +
+'<ellipse cx="140" cy="156" rx="15" ry="17" fill="#C98B54"/>' +
+'<path d="M126 148q14-9 28 0l-2-9q-12-6-24 0z" fill="#8A5A32"/>' +
+'</g></svg>';
+
+SVG.bear =
+'<svg viewBox="0 0 200 210" role="img" aria-label="Honey the bear"><g class="mx-all">' +
+'<ellipse cx="76" cy="186" rx="19" ry="12" fill="#C08A57"/>' +
+'<ellipse cx="124" cy="186" rx="19" ry="12" fill="#C08A57"/>' +
+'<ellipse cx="100" cy="150" rx="45" ry="41" fill="#D2A06B"/>' +
+'<ellipse cx="100" cy="158" rx="27" ry="27" fill="#F3E0C8"/>' +
+'<ellipse cx="56" cy="148" rx="12" ry="24" fill="#C08A57" transform="rotate(16 56 148)"/>' +
+'<ellipse cx="144" cy="148" rx="12" ry="24" fill="#C08A57" transform="rotate(-16 144 148)"/>' +
+'<g class="ear-l"><circle cx="66" cy="52" r="20" fill="#D2A06B"/><circle cx="66" cy="52" r="10" fill="#EFC9A0"/></g>' +
+'<g class="ear-r"><circle cx="134" cy="52" r="20" fill="#D2A06B"/><circle cx="134" cy="52" r="10" fill="#EFC9A0"/></g>' +
+'<circle cx="100" cy="88" r="45" fill="#D2A06B"/>' +
+'<ellipse cx="100" cy="104" rx="27" ry="21" fill="#F3E0C8"/>' +
+'<g class="eyes">' +
+'<ellipse cx="82" cy="80" rx="8.5" ry="9.5" fill="#fff" stroke="#6B4A2A" stroke-width="2.2"/>' +
+'<ellipse cx="118" cy="80" rx="8.5" ry="9.5" fill="#fff" stroke="#6B4A2A" stroke-width="2.2"/>' +
+'<circle cx="83" cy="81" r="4.4" fill="#4A3520"/><circle cx="119" cy="81" r="4.4" fill="#4A3520"/>' +
+'<circle cx="85" cy="78" r="1.8" fill="#fff"/><circle cx="121" cy="78" r="1.8" fill="#fff"/>' +
+'</g>' +
+'<circle cx="66" cy="98" r="7" fill="#F6B9AE" opacity=".75"/><circle cx="134" cy="98" r="7" fill="#F6B9AE" opacity=".75"/>' +
+'<ellipse cx="100" cy="97" rx="8" ry="6" fill="#5E4028"/>' +
+'<path d="M100 103v6M100 109q-7 6-12 0M100 109q7 6 12 0" stroke="#6B4A2A" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+'</g></svg>';
+
 function mascotHTML(kind, extra){
   return '<div class="mascot ' + kind + (extra ? ' ' + extra : '') + '">' + (SVG[kind] || '') + '</div>';
 }
@@ -921,9 +1016,18 @@ var SHAPES = {
   square:   '<rect x="14" y="14" width="72" height="72" rx="8"/>',
   triangle: '<polygon points="50,10 88,84 12,84"/>',
   heart:    '<path d="M50 88C23 70 9 56 9 38 9 25 19 15 31 15c8 0 15 4 19 11 4-7 11-11 19-11 12 0 22 10 22 23 0 18-14 32-41 50z"/>',
-  star:     '<polygon points="50,7 61,38 94,38 67,58 77,90 50,70 23,90 33,58 6,38 39,38"/>'
+  star:     '<polygon points="50,7 61,38 94,38 67,58 77,90 50,70 23,90 33,58 6,38 39,38"/>',
+  /* The second five are deliberately confusable with the first five — oval
+     against circle, rectangle against square — so the later levels ask her to
+     look properly rather than to know one more word. */
+  oval:      '<ellipse cx="50" cy="50" rx="41" ry="27"/>',
+  rectangle: '<rect x="7" y="27" width="86" height="46" rx="7"/>',
+  diamond:   '<polygon points="50,7 89,50 50,93 11,50"/>',
+  crescent:  '<path d="M63 10a40 40 0 1 0 0 80 32 32 0 1 1 0-80z"/>',
+  hexagon:   '<polygon points="50,8 88,29 88,71 50,92 12,71 12,29"/>'
 };
 var SHAPE_NAMES = Object.keys(SHAPES);
+var SHAPE_BASIC = SHAPE_NAMES.slice(0, 5);
 function shapeSVG(name, fill){
   return '<svg viewBox="0 0 100 100" role="img" aria-label="' + name + '" fill="' + (fill || 'currentColor') + '">' + SHAPES[name] + '</svg>';
 }
@@ -978,9 +1082,13 @@ var FEEL = {
   happy: { brow:'up',   eye:'open',  mouth:'M52 100q28 26 56 0', blush:1 },
   sad:   { brow:'inup', eye:'teary', mouth:'M56 112q24-22 48 0' },
   angry: { brow:'down', eye:'squint',mouth:'M56 110q24-14 48 0', hot:1 },
-  tired: { brow:'inup', eye:'droop', mouth:'M72 106a8 9 0 1 0 16 0a8 9 0 1 0-16 0', zzz:1 }
+  tired: { brow:'inup', eye:'droop', mouth:'M72 106a8 9 0 1 0 16 0a8 9 0 1 0-16 0', zzz:1 },
+  scared:    { brow:'inup', eye:'wide', mouth:'M70 108a10 8 0 1 0 20 0a10 8 0 1 0-20 0', drop:1 },
+  surprised: { brow:'up',   eye:'wide', mouth:'M67 103a13 14 0 1 0 26 0a13 14 0 1 0-26 0' }
 };
 var FEEL_KEYS = Object.keys(FEEL);
+/* The four she already has words for; scared and surprised come later. */
+var FEEL_BASIC = FEEL_KEYS.slice(0, 4);
 var BROWS = {
   up:   ['M44 62q14-11 28-3','M116 62q-14-11-28-3'],
   inup: ['M44 56q14 4 26 12','M116 56q-14 4-26 12'],
@@ -997,6 +1105,10 @@ function eyesSVG(kind){
     if (kind === 'teary') o += '<path d="M50 92q-5 10 0 14t6-14z" fill="#6FC0F2"/>';
     return o;
   }
+  if (kind === 'wide'){
+    return c(L,Y,13,'#fff',1) + c(R,Y,13,'#fff',1) + c(L,Y+1,7,'#4A2740') + c(R,Y+1,7,'#4A2740') +
+           c(L+4,Y-3,2.8,'#fff') + c(R+4,Y-3,2.8,'#fff');
+  }
   if (kind === 'squint') return '<path d="M46 84q12-13 24 0q-12 7-24 0z" fill="#4A2740"/><path d="M90 84q12-13 24 0q-12 7-24 0z" fill="#4A2740"/>';
   return '<path d="M46 80q12 14 24 0" stroke="#4A2740" stroke-width="5" fill="none" stroke-linecap="round"/>' +
          '<path d="M90 80q12 14 24 0" stroke="#4A2740" stroke-width="5" fill="none" stroke-linecap="round"/>';
@@ -1005,6 +1117,7 @@ function faceSVG(key){
   var f = FEEL[key], b = BROWS[f.brow], extra = '';
   if (f.blush) extra += '<ellipse cx="38" cy="100" rx="13" ry="9" fill="#F492AE" opacity=".7"/><ellipse cx="122" cy="100" rx="13" ry="9" fill="#F492AE" opacity=".7"/>';
   if (f.hot)   extra += '<ellipse cx="38" cy="98" rx="13" ry="9" fill="#E2553B" opacity=".45"/><ellipse cx="122" cy="98" rx="13" ry="9" fill="#E2553B" opacity=".45"/>';
+  if (f.drop)  extra += '<ellipse cx="124" cy="58" rx="6" ry="9.5" fill="#8ED0F7" opacity=".9"/>';
   if (f.zzz)   extra += '<text x="126" y="42" font-size="21" font-family="Caveat, sans-serif" fill="#B692A8">z</text><text x="142" y="24" font-size="15" font-family="Caveat, sans-serif" fill="#B692A8">z</text>';
   return '<svg viewBox="0 0 160 150" role="img" aria-label="a face">' +
     '<circle cx="80" cy="78" r="62" fill="#FBE0CE" stroke="#E8BDA4" stroke-width="4"/>' + extra +
@@ -1099,29 +1212,35 @@ var ACTS = [
   { id:'colour', title:'Rainbow Colours', sub:'Find them all',     mascot:'flamingo', color:'var(--c-colour)',
     area:'Colour naming', note:'Hears a colour and has to find every single thing of that colour — two at first, three later — hidden among other colours in four different shapes, so she cannot win by matching outlines. Starts with red, blue, yellow and green, then adds pink, purple and orange, then brown, black and white.' },
   { id:'count',  title:'Count to Five',   sub:'Touch and count',   mascot:'snail',    color:'var(--c-count)',
-    area:'Early number', note:'Touches each thing once while the voice counts along, then picks the numeral. The touching matters more than the answer at this age.' },
+    area:'Early number', note:'Touches each thing once while the voice counts along, then picks the numeral. Goes to three, then five, then eight, then ten, and the wrong answers are always near misses so she has to count rather than guess by size.' },
   { id:'shape',  title:'Shape Party',     sub:'Match the shape',   mascot:'rabbit',   color:'var(--c-shape)',
-    area:'Shape recognition', note:'Matching, not naming — she finds the shape that looks the same, and hears its name while she does it.' },
-  { id:'size',   title:'Big & Little',    sub:'Which one is big?', mascot:'beluga',   color:'var(--c-size)',
-    area:'Comparing size', note:'Two of the same thing at different sizes. Asks for the big one and the little one about equally.' },
+    area:'Shape recognition', note:'Matching, not naming — she finds the shape that looks the same, and hears its name while she does it. The later levels add oval, rectangle, diamond, crescent and hexagon, deliberately confusable with the first five.' },
+  { id:'size',   title:'Big & Little',    sub:'Put them in order', mascot:'beluga',   color:'var(--c-size)',
+    area:'Comparing size', note:'Starts by asking for the big one or the little one. Later it puts five on screen and asks her to tap them in order, smallest to biggest — one look becomes a plan.' },
   { id:'sound',  title:'Who Says That?',  sub:'Animal sounds',     mascot:'sloth',    color:'var(--c-sound)',
-    area:'Listening and animals', note:'Hears a sound and finds the animal that makes it. There is a repeat button so she can hear it as often as she likes.' },
+    area:'Listening and animals', note:'Hears a sound and finds the animal that makes it. There is a repeat button so she can hear it as often as she likes; past level four the word comes off the screen so the only way through is to listen.' },
   { id:'feel',   title:'Happy Faces',     sub:'How do they feel?', mascot:'panda',    color:'var(--c-feel)',
-    area:'Feelings', note:'Just four feelings — happy, sad, angry, tired — the four she has words for.' },
+    area:'Feelings', note:'Four feelings to begin with — happy, sad, angry, tired — the four she has words for. Scared and surprised join later.' },
   { id:'body',   title:'Where Is My Nose?',sub:'Point to me',      mascot:'giraffe',  color:'var(--c-body)',
-    area:'Body parts', note:'Taps parts of a dressed cartoon child. Every part has an oversized invisible target so a small finger can actually land on it.' },
+    area:'Body parts', note:'Taps parts of a dressed cartoon child. Every part has an oversized invisible target so a small finger can actually land on it. Later it gives her two, then three, to find in order — a small instruction she has to keep hold of while she moves.' },
   { id:'thai',   title:'Thai Hello',      sub:'สวัสดี',            mascot:'elephant', color:'var(--c-thai)',
-    area:'Thai language', note:'Nine everyday Thai words with pictures and sound. Falls back to reading the romanisation if the device has no Thai voice.' },
+    area:'Thai language', note:'Nine everyday Thai words with pictures and sound. Falls back to reading the romanisation if the device has no Thai voice. Past level four the question turns round: she sees the picture and picks the Thai writing, with no romanisation to lean on.' },
   { id:'safe',   title:'Clothes Stay On', sub:'My body is mine',   mascot:'koala',    color:'var(--c-safe)',
     area:'Body safety — the swimsuit rule', note:'Three kinds of round: a rule she says back with one tap on a heart, a choice between a private and a public place to get changed in, and a place she is off to where clothes stay on. Two of the three offer only a positive action — putting "take them off" on a button would model the very thing this teaches against. No body is ever shown. See the note above for what to add in your own words.' },
   { id:'pairs',  title:'Matching Pairs',   sub:'Find the two that match', mascot:'kitten', color:'var(--c-pairs)',
-    area:'Memory and concentration', note:'Two pairs to start, four once she is good at it. A mismatch just turns the cards back — nothing is ever counted against her — so the only way through a round is to remember where things were.' },
+    area:'Memory and concentration', note:'Two pairs to start, six once she is good at it. A mismatch just turns the cards back — nothing is ever counted against her — so the only way through a round is to remember where things were.' },
   { id:'patt',   title:'What Comes Next?', sub:'Finish the pattern', mascot:'unicorn', color:'var(--c-patt)',
-    area:'Patterns and early maths', note:'Repeating patterns, the first real algebra: red-blue-red-blue and then what? Starts with two-item patterns and works up to three.' },
+    area:'Patterns and early maths', note:'Repeating patterns, the first real algebra: red-blue-red-blue and then what? Starts with two-item patterns and works up to four-item ones like ABCD.' },
   { id:'where',  title:'In, On, Under',    sub:'Where is it hiding?', mascot:'duck', color:'var(--c-where)',
     area:'Position words', note:'The words that make instructions make sense — in, on, under. She sees where the thing is and picks the word for it.' },
   { id:'odd',    title:'Odd One Out',      sub:'Which is different?', mascot:'owl', color:'var(--c-odd)',
-    area:'Sorting and reasoning', note:'Everything belongs to one family except one. Asks her to hold a category in mind and test each picture against it.' }
+    area:'Sorting and reasoning', note:'Everything belongs to one family except one. Later on the odd one comes from a neighbouring family — a carrot among the fruit — so a quick glance is not enough.' },
+  { id:'opp',    title:'The Other Way',    sub:'Find the opposite', mascot:'swan', color:'var(--c-opp)',
+    area:'Vocabulary and reasoning', note:'Big and little, day and night, loud and quiet. The first idea here that is not about how something looks — she has to hold a word and reach for its other end. The picture comes away at the top levels, leaving just the word.' },
+  { id:'more',   title:'Which Has More?',  sub:'Count them both', mascot:'squirrel', color:'var(--c-more)',
+    area:'Comparing numbers', note:'Counting says how many; this asks her to count two piles and compare them, which is harder. Later it asks which has FEWER, so the answer is not simply the bigger-looking pile.' },
+  { id:'abc',    title:'My First Letters', sub:'Find the letter', mascot:'bear', color:'var(--c-abc)',
+    area:'Letter recognition', note:'Three steps: match a capital to a capital, then match a capital to its little letter, then hear a word and find the letter it starts with.' }
 ];
 function act(id){ for (var i=0;i<ACTS.length;i++) if (ACTS[i].id === id) return ACTS[i]; return null; }
 
@@ -1169,7 +1288,7 @@ function home(){
       '<span class="sparkle" style="top:110px;right:22%;animation-delay:1.4s">✦</span>' +
       '<div class="eyebrow">Pre-K1 · for my girl</div>' +
       '<h1>Hello, lovely.<br><em>Come and play.</em></h1>' +
-      '<p>Thirteen little games. Tap anywhere — nothing here can go wrong.</p>' +
+      '<p>Sixteen little games. Tap anywhere — nothing here can go wrong.</p>' +
     '</div>' +
     '<div class="board">' + tiles + '</div>' +
     '<div class="footnote"><button class="linky" data-panel>For grown-ups →</button></div>';
@@ -1239,7 +1358,7 @@ function next(){
   ({ colour:roundColour, count:roundCount, shape:roundShape, size:roundSize,
      sound:roundSound, feel:roundFeel, body:roundBody, thai:roundThai,
      safe:roundSafe, pairs:roundPairs, patt:roundPatt, where:roundWhere,
-     odd:roundOdd })[G.a.id]();
+     odd:roundOdd, opp:roundOpp, more:roundMore, abc:roundAbc })[G.a.id]();
 }
 
 function party(){
@@ -1274,8 +1393,8 @@ function roundColour(){
   var pool = COLOURS.filter(function(c){ return c.tier <= Math.min(2, L); });
   var right = pick(pool);
   var others = pool.filter(function(c){ return c.n !== right.n; });
-  var want = L < 2 ? 2 : 3;
-  var total = [4, 5, 6, 7, 8][L];
+  var want = L < 2 ? 2 : (L < 5 ? 3 : 4);
+  var total = [4, 5, 6, 7, 8, 10, 12][L];
 
   var items = [];
   for (var i = 0; i < want; i++) items.push(right);
@@ -1324,15 +1443,20 @@ function roundColour(){
 }
 
 /* ═══ 2 · Count to Five ═══════════════════════════════════════════ */
-var NUMWORD = ['zero','one','two','three','four','five','six','seven'];
+var NUMWORD = ['zero','one','two','three','four','five','six','seven','eight','nine','ten'];
 function roundCount(){
   var L = lvl('count');
-  var hi = L < 1 ? 3 : 5;
+  var hi = L < 1 ? 3 : (L < 3 ? 5 : (L < 5 ? 8 : 10));
   var n = 1 + Math.floor(Math.random() * hi);
   var emo = pick(CUTE);
-  var opts = shuffle([n].concat(sample([n-1, n+1, n+2].filter(function(x){ return x >= 1 && x <= 5 && x !== n; }), nChoices('count') - 1)));
+  var want = nChoices('count');
+  /* Near misses make better wrong answers than random ones — she has to count
+     rather than eyeball the pile. */
+  var near = shuffle([n-1, n+1, n-2, n+2]).filter(function(x){ return x >= 1 && x <= hi && x !== n; });
+  var opts = [n].concat(near.slice(0, want - 1));
   var b = 1;
-  while (opts.length < nChoices('count')){ if (opts.indexOf(n + b) < 0 && n + b >= 1 && n + b <= 5) opts.push(n + b); b++; if (b > 6) break; }
+  while (opts.length < want){ if (opts.indexOf(n + b) < 0 && n + b >= 1 && n + b <= hi) opts.push(n + b); b++; if (b > hi + 2) break; }
+  opts = shuffle(opts);
 
   var body = '';
   for (var i=0;i<n;i++) body += '<button class="critter" data-c="' + i + '">' + emo + '</button>';
@@ -1375,7 +1499,7 @@ function roundCount(){
 /* ═══ 3 · Shape Party ═════════════════════════════════════════════ */
 function roundShape(){
   var L = lvl('shape');
-  var pool = L < 1 ? ['circle','square','triangle','heart'] : SHAPE_NAMES;
+  var pool = L < 1 ? ['circle','square','triangle','heart'] : (L < 3 ? SHAPE_BASIC : SHAPE_NAMES);
   var right = pick(pool);
   var opts = shuffle([right].concat(sample(pool, nChoices('shape') - 1, [right])));
 
@@ -1405,20 +1529,68 @@ function roundShape(){
 }
 
 /* ═══ 4 · Big & Little ════════════════════════════════════════════ */
+/* Picking the big one is one look. Putting five of them in order is a plan,
+   so that is what the later levels ask for. */
+var SIZE_SCALE = [1, 0.44, 0.72, 0.88, 0.58];
 function roundSize(){
+  var L = lvl('size');
   var emo = pick(CUTE);
+  var order = L >= 4;
+  var count = Math.min(SIZE_SCALE.length, Math.max(3, nChoices('size')));
+  var sizes = shuffle(SIZE_SCALE.slice(0, count));
   var wantBig = Math.random() < 0.5;
-  var count = nChoices('size');
-  var sizes = shuffle([1, 0.5, 0.72].slice(0, count));
-  var target = wantBig ? Math.max.apply(null, sizes) : Math.min.apply(null, sizes);
 
+  /* The biggest one still has to fit next to all the others on a phone, so the
+     whole set shrinks as it grows. */
+  var base = count >= 5 ? 68 : (count >= 4 ? 88 : 112);
+  function sizerHTML(lab){
+    return '<div class="sizes">' + sizes.map(function(sz, i){
+      return '<button class="sizer" data-s="' + sz + '" data-i="' + i + '" aria-label="' + lab(sz) + '" ' +
+        'style="font-size:' + Math.round(base * sz) + 'px">' + emo + '</button>';
+    }).join('') + '</div>';
+  }
+
+  if (order){
+    var seq = sizes.slice().sort(function(a, b){ return wantBig ? b - a : a - b; });
+    var ask = wantBig ? 'Tap them from biggest to smallest' : 'Tap them from smallest to biggest';
+    stage().innerHTML = lay(
+      'Put them in order for me!',
+      sizerHTML(function(){ return 'one of them'; }) +
+      '<p class="ask" aria-live="polite">' + ask + '</p>',
+      ''
+    );
+    var step = 0, settled = false;
+    showMe = function(){ glow('.sizer[data-s="' + seq[step] + '"]'); };
+    later(340, function(){ say(ask + '.'); });
+    on(stage(), '.sizer', function(el){
+      if (settled) return;
+      if (+el.getAttribute('data-s') === seq[step]){
+        step++; sfx('step');
+        el.classList.add('yes');
+        el.insertAdjacentHTML('beforeend', '<span class="rank">' + step + '</span>');
+        if (step >= seq.length){ settled = true; scored(true, 'In order. Beautiful!'); }
+      } else {
+        el.classList.add('no');
+        wait(600, function(){ el.classList.remove('no'); });
+        if (step > 0){
+          step = 0;
+          Array.prototype.forEach.call(stage().querySelectorAll('.sizer'), function(t){
+            t.classList.remove('yes');
+            var r = t.querySelector('.rank'); if (r) r.remove();
+          });
+          scored(false, 'Start again from the ' + (wantBig ? 'biggest' : 'smallest') + ' one.');
+        } else {
+          scored(false, 'Find the ' + (wantBig ? 'biggest' : 'smallest') + ' one first.');
+        }
+      }
+    });
+    return;
+  }
+
+  var target = wantBig ? Math.max.apply(null, sizes) : Math.min.apply(null, sizes);
   stage().innerHTML = lay(
     wantBig ? 'Which one is BIG?' : 'Which one is little?',
-    '<div class="sizes">' + sizes.map(function(s, i){
-      return '<button class="sizer" data-s="' + s + '" data-i="' + i + '" aria-label="' +
-        (s === target ? (wantBig ? 'the big one' : 'the little one') : 'another one') + '" ' +
-        'style="font-size:' + Math.round(112 * s) + 'px">' + emo + '</button>';
-    }).join('') + '</div>' +
+    sizerHTML(function(sz){ return sz === target ? (wantBig ? 'the big one' : 'the little one') : 'another one'; }) +
     '<p class="ask" aria-live="polite">Tap the ' + (wantBig ? 'big' : 'little') + ' one</p>',
     ''
   );
@@ -1440,13 +1612,17 @@ function roundSize(){
 
 /* ═══ 5 · Who Says That? ══════════════════════════════════════════ */
 function roundSound(){
+  var L = lvl('sound');
   var right = pick(ANIMAL_SOUNDS);
   var opts = shuffle([right].concat(sample(ANIMAL_SOUNDS, nChoices('sound') - 1, [right])));
   function playIt(){ say(right.s + ' ' + right.s + ' Who says that?'); }
+  /* Once she is good at it the word comes off the screen, so the only way
+     through is to actually listen. */
+  var showWord = L < 4;
 
   stage().innerHTML = lay(
     'Listen! Who says that?',
-    '<div class="feel-word" aria-live="polite">' + right.s + '</div>' +
+    '<div class="feel-word" aria-live="polite">' + (showWord ? right.s : '🔊') + '</div>' +
     '<p class="ask">Tap the animal</p>',
     '<div class="choices">' + opts.map(function(a){
       return '<button class="choice" data-n="' + a.n + '" aria-label="' + a.n + '">' + a.a + '</button>';
@@ -1472,8 +1648,9 @@ function roundSound(){
 
 /* ═══ 6 · Happy Faces ═════════════════════════════════════════════ */
 function roundFeel(){
-  var right = pick(FEEL_KEYS);
-  var opts = shuffle([right].concat(sample(FEEL_KEYS, nChoices('feel') - 1, [right])));
+  var pool = lvl('feel') < 3 ? FEEL_BASIC : FEEL_KEYS;
+  var right = pick(pool);
+  var opts = shuffle([right].concat(sample(pool, nChoices('feel') - 1, [right])));
 
   stage().innerHTML = lay(
     'Who feels this way?',
@@ -1501,30 +1678,57 @@ function roundFeel(){
 }
 
 /* ═══ 7 · Where Is My Nose? ═══════════════════════════════════════ */
+var SINGULAR = { nose:1, mouth:1, tummy:1, hair:1 };
+function isAre(w){ return SINGULAR[w] ? 'is' : 'are'; }
+/* One part is a pointing game. Two or three in a row is a little instruction
+   she has to keep hold of while she moves — which is the actual skill. */
 function roundBody(){
-  var right = pick(BODY_PARTS);
+  var L = lvl('body');
+  var howMany = L < 3 ? 1 : (L < 5 ? 2 : 3);
+  var want = sample(BODY_PARTS, howMany);
+  var words = want.map(function(x){ return 'the ' + x.say; });
+  var askText = howMany === 1
+    ? 'Tap ' + words[0]
+    : 'Tap ' + words.slice(0, -1).join(', ') + ', then ' + words[words.length - 1];
+  var spoken = howMany === 1
+    ? 'Where ' + isAre(want[0].say) + ' ' + words[0] + '?'
+    : 'Ready? ' + askText + '.';
+
   stage().innerHTML = lay(
-    'Where are my ' + right.say + '?',
+    howMany === 1 ? 'Where ' + isAre(want[0].say) + ' my ' + want[0].say + '?' : 'Can you remember all of them?',
     '<div class="kid">' + kidSVG() + '</div>' +
-    '<p class="ask" aria-live="polite">Tap the ' + right.say + '</p>',
+    '<p class="ask" aria-live="polite">' + askText + '</p>',
     '<p class="hint">Can you find yours too?</p>'
   );
+  var step = 0, settled = false;
   showMe = function(){
-    var el = stage().querySelector('.bp[data-p="' + right.p + '"]');
+    var el = stage().querySelector('.bp[data-p="' + want[step].p + '"]');
     if (el) el.classList.add('hintme');
   };
-  later(340, function(){ say('Where ' + (right.say === 'nose' || right.say === 'mouth' || right.say === 'tummy' || right.say === 'hair' ? 'is' : 'are') + ' the ' + right.say + '?'); });
+  later(340, function(){ say(spoken); });
 
-  var done = false;
   on(stage(), '.bp', function(el){
-    if (el.getAttribute('data-p') === right.p){
-      if (done) return;
-      done = true; el.classList.add('found');
-      scored(true, 'Yes! That is the ' + right.say + '.');
+    if (settled) return;
+    if (el.getAttribute('data-p') === want[step].p){
+      el.classList.add('found');
+      step++;
+      if (step >= want.length){
+        settled = true;
+        scored(true, howMany === 1 ? 'Yes! That is ' + words[0] + '.' : 'All of them. Clever girl!');
+      } else {
+        sfx('step');
+        say('Now ' + words[step] + '.');
+      }
     } else {
       el.classList.add('no');
       wait(600, function(){ el.classList.remove('no'); });
-      scored(false, 'That is the ' + el.getAttribute('data-p') + '. Try again.');
+      if (step > 0){
+        step = 0;
+        Array.prototype.forEach.call(stage().querySelectorAll('.bp'), function(t){ t.classList.remove('found'); });
+        scored(false, 'Start again. ' + askText + '.');
+      } else {
+        scored(false, 'That is the ' + el.getAttribute('data-p') + '. Try again.');
+      }
     }
   });
 }
@@ -1535,16 +1739,26 @@ function speakThai(w){
   else say(w.ro.replace(/-/g, ' '), 'en-AU', 0.76);
 }
 function roundThai(){
+  var L = lvl('thai');
   var right = pick(THAI);
   var opts = shuffle([right].concat(sample(THAI, nChoices('thai') - 1, [right])));
+  /* Hearing Thai and finding the picture is recognition. Seeing the picture
+     and finding the Thai writing is a step further, so that is what the later
+     levels ask — and the romanisation comes off the screen too. */
+  var reverse = L >= 4;
 
   stage().innerHTML = lay(
     'Say it with me!',
-    '<div class="thai-word">' + right.th + '</div>' +
-    '<p class="roman">' + right.ro + '</p>' +
-    '<p class="ask" aria-live="polite">Which picture?</p>',
+    (reverse
+      ? '<div style="font-size:86px;line-height:1">' + right.emo + '</div>' +
+        '<p class="ask" aria-live="polite">Which one says ' + right.en + '?</p>'
+      : '<div class="thai-word">' + right.th + '</div>' +
+        '<p class="roman">' + right.ro + '</p>' +
+        '<p class="ask" aria-live="polite">Which picture?</p>') +
+    '',
     '<div class="choices">' + opts.map(function(w){
-      return '<button class="choice" data-w="' + w.en + '" aria-label="' + w.en + '">' + w.emo + '</button>';
+      return '<button class="choice" data-w="' + w.en + '" aria-label="' + w.en + '">' +
+        (reverse ? '<span class="thai-mini">' + w.th + '</span>' : w.emo) + '</button>';
     }).join('') + '</div>' +
     '<p class="hint"><button class="linky" data-again>🔊 again</button></p>'
   );
@@ -1651,7 +1865,7 @@ function roundSafe(){
    turn back — so the only way out of a round is finding every pair. */
 function roundPairs(){
   var L = lvl('pairs');
-  var nPairs = [2, 3, 3, 4, 4][L];
+  var nPairs = [2, 3, 3, 4, 4, 5, 6][L];
   var cols = nPairs <= 2 ? 2 : (nPairs === 3 ? 3 : 4);
   var faces = sample(CUTE, nPairs);
   var deck = shuffle(faces.concat(faces)).map(function(f, i){ return { f:f, i:i }; });
@@ -1706,7 +1920,8 @@ function roundPatt(){
   var L = lvl('patt');
   var units = L < 2 ? [['A','B']]
     : (L < 3 ? [['A','B'],['A','A','B'],['A','B','B']]
-             : [['A','B'],['A','A','B'],['A','B','B'],['A','B','C']]);
+    : (L < 5 ? [['A','B'],['A','A','B'],['A','B','B'],['A','B','C']]
+             : [['A','A','B'],['A','B','B'],['A','B','C'],['A','A','B','B'],['A','B','C','D']]));
   var unit = pick(units);
   var letters = [];
   unit.forEach(function(x){ if (letters.indexOf(x) < 0) letters.push(x); });
@@ -1749,7 +1964,7 @@ function roundPatt(){
 }
 
 /* ═══ 12 · In, On, Under ══════════════════════════════════════════ */
-var WHERE_KEYS = ['in', 'on', 'under'];
+var WHERE_KEYS = ['in', 'on', 'under', 'beside'];
 function roundWhere(){
   var where = pick(WHERE_KEYS);
   var thing = pick(CUTE);
@@ -1786,15 +2001,23 @@ function roundWhere(){
 
 /* ═══ 13 · Which One Is Different? ════════════════════════════════ */
 var ODD_SETS = [
-  { many:'fruit',            one:'a fruit',        items:['🍎','🍌','🍓','🍇','🍊','🍐'] },
-  { many:'animals',          one:'an animal',      items:['🐈','🐕','🐰','🐘','🦆','🐷'] },
+  { many:'fruit',            one:'a fruit',        items:['🍎','🍌','🍓','🍇','🍊','🍐'], near:'vegetables' },
+  { many:'animals',          one:'an animal',      items:['🐈','🐕','🐰','🐘','🦆','🐷'], near:'sea animals' },
   { many:'things that go',   one:'a thing that goes', items:['🚗','🚌','🚂','✈️','🚲','🚤'] },
   { many:'clothes',          one:'clothes',        items:['👕','👗','🧦','👞','🧢','🧣'] },
-  { many:'flowers',          one:'a flower',       items:['🌸','🌷','🌻','🌹','🌼','💐'] }
+  { many:'flowers',          one:'a flower',       items:['🌸','🌷','🌻','🌹','🌼','💐'], near:'vegetables' },
+  { many:'vegetables',       one:'a vegetable',    items:['🥕','🥦','🌽','🍆','🥒','🫑'], near:'fruit' },
+  { many:'sea animals',      one:'a sea animal',   items:['🐟','🐠','🐙','🦀','🐬','🐳'], near:'animals' }
 ];
+/* Telling a car from an apple is easy. The later levels put the odd one in a
+   neighbouring family — a carrot among the fruit — so she has to hold the
+   actual category in mind. */
 function roundOdd(){
+  var L = lvl('odd');
   var main = pick(ODD_SETS);
-  var other = pick(ODD_SETS.filter(function(s){ return s.many !== main.many; }));
+  var rest = ODD_SETS.filter(function(x){ return x.many !== main.many; });
+  var close = rest.filter(function(x){ return x.many === main.near; });
+  var other = (L >= 4 && close.length) ? close[0] : pick(rest);
   var odd = pick(other.items);
   var body = shuffle(sample(main.items, nChoices('odd')).map(function(f){
     return { f:f, odd:false };
@@ -1819,6 +2042,169 @@ function roundOdd(){
     } else {
       el.classList.add('no');
       scored(false, 'That one is ' + main.one + '. Find the odd one.');
+    }
+  });
+}
+
+/* ═══ 14 · Opposites ══════════════════════════════════════════════ */
+var OPPOSITES = [
+  { a:{ w:'big',   e:'\uD83D\uDC18' }, b:{ w:'little', e:'\uD83D\uDC2D' } },
+  { a:{ w:'hot',   e:'\u2600\uFE0F' }, b:{ w:'cold',   e:'\u2744\uFE0F' } },
+  { a:{ w:'up',    e:'\u2B06\uFE0F' }, b:{ w:'down',   e:'\u2B07\uFE0F' } },
+  { a:{ w:'day',   e:'\uD83C\uDF1E' }, b:{ w:'night',  e:'\uD83C\uDF19' } },
+  { a:{ w:'wet',   e:'\uD83D\uDCA7' }, b:{ w:'dry',    e:'\uD83C\uDFDC\uFE0F' } },
+  { a:{ w:'happy', e:'\uD83D\uDE00' }, b:{ w:'sad',    e:'\uD83D\uDE22' } },
+  { a:{ w:'fast',  e:'\uD83D\uDC07' }, b:{ w:'slow',   e:'\uD83D\uDC22' } },
+  { a:{ w:'open',  e:'\uD83D\uDEAA' }, b:{ w:'closed', e:'\uD83D\uDD12' } },
+  { a:{ w:'loud',  e:'\uD83D\uDCE2' }, b:{ w:'quiet',  e:'\uD83E\uDD2B' } }
+];
+/* Opposites are the first idea here that is not about what a thing looks
+   like — she has to hold a word and reach for its other end. The picture
+   comes off the question at the top levels, leaving just the word. */
+function roundOpp(){
+  var L = lvl('opp');
+  var pair = pick(OPPOSITES);
+  var flip = Math.random() < 0.5;
+  var shown = flip ? pair.b : pair.a;
+  var answer = flip ? pair.a : pair.b;
+  var others = [];
+  OPPOSITES.forEach(function(x){
+    if (x === pair) return;
+    others.push(x.a); others.push(x.b);
+  });
+  var opts = shuffle([answer].concat(sample(others, nChoices('opp') - 1)));
+  var withPicture = L < 4;
+
+  stage().innerHTML = lay(
+    'What is the other way round?',
+    (withPicture ? '<div style="font-size:72px;line-height:1">' + shown.e + '</div>' : '') +
+    '<div class="feel-word" aria-live="polite">' + shown.w + '</div>' +
+    '<p class="ask">What is the opposite of ' + shown.w + '?</p>',
+    '<div class="choices">' + opts.map(function(o){
+      return '<button class="choice" data-w="' + o.w + '" aria-label="' + o.w + '">' +
+        (withPicture ? '<span>' + o.e + '</span>' : '') +
+        '<span class="cap">' + o.w + '</span></button>';
+    }).join('') + '</div>'
+  );
+  showMe = function(){ glow('.choice[data-w="' + answer.w + '"]'); };
+  later(340, function(){ say('What is the opposite of ' + shown.w + '?'); });
+
+  var done = false;
+  on(stage(), '.choice', function(el){
+    if (el.getAttribute('data-w') === answer.w){
+      if (done) return;
+      done = true; el.classList.add('yes');
+      scored(true, shown.w + ' and ' + answer.w + '. That is right!');
+    } else {
+      el.classList.add('no');
+      scored(false, 'Not quite. The opposite of ' + shown.w + '.');
+    }
+  });
+}
+
+/* ═══ 15 · Which Has More? ════════════════════════════════════════
+   Counting tells her how many. This asks her to count two piles and compare
+   them, which is a different and harder thing — and at the top it asks for
+   fewer, so the answer is not simply "the big-looking one". */
+function roundMore(){
+  var L = lvl('more');
+  var hi = L < 2 ? 4 : (L < 4 ? 6 : 9);
+  var groups = L < 4 ? 2 : 3;
+  var gapMin = L < 2 ? 2 : 1;
+  var wantMore = L < 3 ? true : Math.random() < 0.55;
+  var emo = pick(CUTE);
+
+  /* Counts are drawn without replacement so no two piles are ever equal — a
+     tie between the losing piles still looks broken to her even when the
+     winner is unambiguous. */
+  var counts, bag = [];
+  for (var v = 1; v <= hi; v++) bag.push(v);
+  for (var guard = 0; guard < 300; guard++){
+    counts = shuffle(bag).slice(0, groups);
+    var sorted = counts.slice().sort(function(x, y){ return x - y; });
+    var best = wantMore ? sorted[sorted.length - 1] : sorted[0];
+    var second = wantMore ? sorted[sorted.length - 2] : sorted[1];
+    if (Math.abs(best - second) >= gapMin) break;
+  }
+  var target = wantMore ? Math.max.apply(null, counts) : Math.min.apply(null, counts);
+  var ask = wantMore ? 'Which one has MORE?' : 'Which one has FEWER?';
+
+  stage().innerHTML = lay(
+    'Count them both!',
+    '<div class="piles">' + counts.map(function(c, i){
+      var pile = '';
+      for (var k = 0; k < c; k++) pile += '<span>' + emo + '</span>';
+      return '<button class="pile" data-c="' + c + '" data-i="' + i + '" aria-label="' + c + '">' + pile + '</button>';
+    }).join('') + '</div>' +
+    '<p class="ask" aria-live="polite">' + ask + '</p>',
+    ''
+  );
+  showMe = function(){ glow('.pile[data-c="' + target + '"]'); };
+  later(340, function(){ say(ask); });
+
+  var done = false;
+  on(stage(), '.pile', function(el){
+    if (+el.getAttribute('data-c') === target){
+      if (done) return;
+      done = true; el.classList.add('yes');
+      scored(true, NUMWORD[target] + ' is ' + (wantMore ? 'more' : 'fewer') + '. Well done!');
+    } else {
+      el.classList.add('no');
+      scored(false, 'Count them again with your finger.');
+    }
+  });
+}
+
+/* ═══ 16 · My First Letters ═══════════════════════════════════════ */
+var ABC = [
+  { u:'A', l:'a', e:'\uD83C\uDF4E', w:'apple' }, { u:'B', l:'b', e:'\uD83D\uDC3B', w:'bear' },
+  { u:'C', l:'c', e:'\uD83D\uDC08', w:'cat' },   { u:'D', l:'d', e:'\uD83D\uDC15', w:'dog' },
+  { u:'E', l:'e', e:'\uD83E\uDD5A', w:'egg' },   { u:'F', l:'f', e:'\uD83D\uDC1F', w:'fish' },
+  { u:'H', l:'h', e:'\uD83C\uDFE0', w:'house' }, { u:'M', l:'m', e:'\uD83C\uDF19', w:'moon' },
+  { u:'S', l:'s', e:'\u2600\uFE0F', w:'sun' },   { u:'T', l:'t', e:'\uD83C\uDF33', w:'tree' }
+];
+/* Three steps, not one: match a capital to a capital, then match a capital to
+   its little letter, then hear a word and find the letter it starts with. */
+function roundAbc(){
+  var L = lvl('abc');
+  var mode = L < 3 ? 'same' : (L < 5 ? 'lower' : 'sound');
+  var right = pick(ABC);
+  var opts = shuffle([right].concat(sample(ABC, nChoices('abc') - 1, [right])));
+  var face = mode === 'lower' ? function(x){ return x.l; } : function(x){ return x.u; };
+
+  var head, askText, spoken;
+  if (mode === 'sound'){
+    head = '<div style="font-size:80px;line-height:1">' + right.e + '</div>';
+    askText = 'What does ' + right.w + ' start with?';
+    spoken = right.w + '. What does ' + right.w + ' start with?';
+  } else {
+    head = '<div class="bigletter">' + right.u + '</div>';
+    askText = mode === 'lower' ? 'Find the little ' + right.u : 'Find the same letter';
+    spoken = mode === 'lower'
+      ? 'This is big ' + right.u + '. Find the little one.'
+      : 'This is ' + right.u + '. Find another ' + right.u + '.';
+  }
+
+  stage().innerHTML = lay(
+    mode === 'sound' ? 'Listen to the first sound!' : 'Find the letter!',
+    head + '<p class="ask" aria-live="polite">' + askText + '</p>',
+    '<div class="choices">' + opts.map(function(x){
+      return '<button class="choice letter" data-u="' + x.u + '" aria-label="letter ' + x.u + '">' +
+        face(x) + '</button>';
+    }).join('') + '</div>'
+  );
+  showMe = function(){ glow('.choice[data-u="' + right.u + '"]'); };
+  later(340, function(){ say(spoken); });
+
+  var done = false;
+  on(stage(), '.choice', function(el){
+    if (el.getAttribute('data-u') === right.u){
+      if (done) return;
+      done = true; el.classList.add('yes');
+      scored(true, right.u + ' for ' + right.w + '!');
+    } else {
+      el.classList.add('no');
+      scored(false, 'That one is ' + el.getAttribute('data-u') + '. Look again.');
     }
   });
 }
