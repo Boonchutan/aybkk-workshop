@@ -7,6 +7,12 @@ Two self-contained learning pages, one per child.
 | **Foundation Playground** | `school-skills.src.html` | Boone — Foundation at AISB, plus a Year 1–2 band |
 | **Petal Playground** | `petal.src.html` | his sister — pre-K1, age 3 |
 
+Alongside them, `reading-tutor.md` holds the nightly and weekly prompts for the
+two voice reading tutors — a different thing from the playground apps: the child
+talks to Claude rather than tapping a page. `reading-tutors.artifact.html` is the
+published copy-the-prompts page for that file; it is hand-written, not generated,
+and `build.js` does not touch it.
+
 **Do not edit the built `.html` files by hand.** They are generated. Edit the
 `*.src.html` and run:
 
