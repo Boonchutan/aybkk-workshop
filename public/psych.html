@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mind Stash · Psychology</title>
+<meta name="description" content="A spaced-repetition card deck for studying psychology.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233d5a4c'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fff' font-family='Georgia,serif'%3E%E2%97%86%3C/text%3E%3C/svg%3E">
+<style>
+  @font-face{font-family:'Inter';src:url('/fonts/inter.woff2') format('woff2');font-weight:100 900;font-display:swap}
+  @font-face{font-family:'Gloock';src:url('/fonts/gloock.woff2') format('woff2');font-weight:400;font-display:swap}
+
+  :root{
+    --bg:#f4f2ee; --surface:#ffffff; --surface-2:#faf9f7;
+    --ink:#1c1a17; --ink-2:#55504a; --ink-3:#8a837a;
+    --line:#e4e0d9; --line-2:#d3cec4;
+    --accent:#3d5a4c; --accent-soft:#e8efea; --accent-ink:#2b4438;
+    --warn:#8a5a1f; --warn-soft:#f7eddd;
+    --bad:#8f3a34; --bad-soft:#f8e7e5;
+    --display:'Gloock',Georgia,serif;
+    --text:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;
+    --r:16px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#16161a; --surface:#1f1f25; --surface-2:#26262d;
+      --ink:#f0eeea; --ink-2:#b5b0a8; --ink-3:#847e75;
+      --line:#32323a; --line-2:#41414b;
+      --accent:#8fbfa6; --accent-soft:#22322a; --accent-ink:#a9d4bc;
+      --warn:#d9a45f; --warn-soft:#33291a;
+      --bad:#d98d85; --bad-soft:#33211f;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#16161a; --surface:#1f1f25; --surface-2:#26262d;
+    --ink:#f0eeea; --ink-2:#b5b0a8; --ink-3:#847e75;
+    --line:#32323a; --line-2:#41414b;
+    --accent:#8fbfa6; --accent-soft:#22322a; --accent-ink:#a9d4bc;
+    --warn:#d9a45f; --warn-soft:#33291a;
+    --bad:#d98d85; --bad-soft:#33211f;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--text);
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+
+  /* ---------- top bar ---------- */
+  header{
+    position:sticky; top:0; z-index:20; background:var(--bg);
+    border-bottom:1px solid var(--line);
+    padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+  }
+  .bar{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:12px}
+  .brand{font-family:var(--display);font-size:20px;letter-spacing:.01em;margin-right:auto}
+  .stat{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--ink-2);
+        background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+  .stat b{color:var(--ink);font-variant-numeric:tabular-nums}
+  #themeBtn{background:var(--surface);border:1px solid var(--line);border-radius:999px;
+            width:32px;height:32px;display:grid;place-items:center;font-size:14px;padding:0}
+
+  /* ---------- tabs ---------- */
+  nav{max-width:640px;margin:0 auto;padding:10px 16px 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  .tab{background:none;border:1px solid transparent;border-radius:999px;padding:7px 14px;
+       font-size:14px;font-weight:600;color:var(--ink-3);white-space:nowrap}
+  .tab[aria-selected="true"]{background:var(--accent-soft);color:var(--accent-ink);border-color:var(--accent-soft)}
+  .tab .pill{display:inline-block;min-width:18px;margin-left:5px;padding:0 5px;border-radius:999px;
+             background:var(--accent);color:var(--bg);font-size:11px;font-weight:700;line-height:18px;text-align:center}
+  .tab[aria-selected="true"] .pill{background:var(--accent-ink);color:var(--surface)}
+
+  main{max-width:640px;margin:0 auto;padding:16px 16px 90px}
+  .panel[hidden]{display:none}
+
+  /* ---------- idea card ---------- */
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+    padding:22px; box-shadow:0 1px 2px rgba(0,0,0,.04);
+  }
+  .card .topic{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+  .card h2{font-family:var(--display);font-weight:400;font-size:25px;line-height:1.25;margin:0 0 12px}
+  .card .body{color:var(--ink-2);font-size:16px;line-height:1.68;margin:0}
+  .card .body p{margin:0 0 11px}
+  .card .body p:last-child{margin-bottom:0}
+  .card .src{margin-top:16px;padding-top:13px;border-top:1px solid var(--line);
+             font-size:13px;color:var(--ink-3);font-style:italic}
+  .card .flag{margin-top:13px;background:var(--warn-soft);color:var(--warn);border-radius:10px;
+              padding:10px 13px;font-size:13.5px;line-height:1.5;font-style:normal}
+  .card .flag b{font-weight:700}
+
+  /* ---------- actions ---------- */
+  .actions{display:flex;gap:9px;margin-top:15px}
+  .btn{flex:1;background:var(--surface);border:1px solid var(--line-2);border-radius:12px;
+       padding:13px 10px;font-size:15px;font-weight:600;text-align:center;transition:transform .06s}
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  :root[data-theme="dark"] .btn.primary,
+  :root:not([data-theme="light"]) .btn.primary{color:#16161a}
+  @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn.primary{color:#fff}}
+  .btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink)}
+
+  .meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;
+        font-size:13px;color:var(--ink-3);font-weight:500}
+
+  /* ---------- recall ---------- */
+  .recall{margin-top:15px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .recall .q{font-weight:600;font-size:15.5px;margin:0 0 4px}
+  .recall .hint{font-size:13px;color:var(--ink-3);margin:0}
+  .recall .a{margin:12px 0 0;padding-top:12px;border-top:1px dashed var(--line-2);color:var(--ink-2);font-size:15px}
+  .grades{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px}
+  .grade{border:1px solid var(--line-2);background:var(--surface);border-radius:11px;padding:11px 4px;
+         font-size:13px;font-weight:600;text-align:center;line-height:1.3}
+  .grade small{display:block;font-size:10.5px;font-weight:500;color:var(--ink-3);margin-top:2px;font-variant-numeric:tabular-nums}
+  .grade.g0{color:var(--bad)} .grade.g0:active{background:var(--bad-soft)}
+  .grade.g3{color:var(--accent-ink)} .grade.g3:active{background:var(--accent-soft)}
+
+  /* ---------- topics ---------- */
+  .tlist{display:flex;flex-direction:column;gap:9px}
+  .trow{display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--line);
+        border-radius:13px;padding:14px 15px;text-align:left;width:100%}
+  .trow.off{opacity:.5}
+  .trow .tx{flex:1;min-width:0}
+  .trow .tn{font-weight:600;font-size:15.5px}
+  .trow .td{font-size:13px;color:var(--ink-3);margin-top:1px}
+  .trow .chk{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line-2);
+             display:grid;place-items:center;font-size:13px;flex:0 0 auto;color:transparent}
+  .trow:not(.off) .chk{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  /* ---------- progress ---------- */
+  .pbar{height:7px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:7px}
+  .pbar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .3s}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+  .sbox{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:15px}
+  .sbox .n{font-family:var(--display);font-size:29px;line-height:1;font-variant-numeric:tabular-nums}
+  .sbox .l{font-size:12.5px;color:var(--ink-3);margin-top:5px}
+
+  h3.sec{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+         color:var(--ink-3);margin:24px 0 11px}
+  h3.sec:first-child{margin-top:0}
+
+  .empty{text-align:center;padding:44px 20px;color:var(--ink-3)}
+  .empty .big{font-family:var(--display);font-size:22px;color:var(--ink-2);margin-bottom:7px}
+
+  .mini{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 15px;
+        margin-bottom:9px;width:100%;text-align:left;display:block}
+  .mini .mt{font-weight:600;font-size:15px;line-height:1.35}
+  .mini .mb{font-size:13px;color:var(--ink-3);margin-top:3px;
+            display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .mini .mtop{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+
+  #search{width:100%;padding:12px 14px;border:1px solid var(--line-2);border-radius:12px;
+          background:var(--surface);color:var(--ink);font-size:16px;margin-bottom:14px}
+  #search::placeholder{color:var(--ink-3)}
+
+  .toast{position:fixed;left:50%;transform:translateX(-50%) translateY(70px);bottom:24px;
+         background:var(--ink);color:var(--bg);padding:11px 19px;border-radius:999px;font-size:14px;
+         font-weight:600;z-index:60;opacity:0;transition:.24s;pointer-events:none;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .note{font-size:13.5px;color:var(--ink-3);line-height:1.6;background:var(--surface-2);
+        border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-top:16px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <span class="brand">Mind Stash</span>
+    <span class="stat" title="Day streak">🔥 <b id="sStreak">0</b></span>
+    <span class="stat" title="Cards mastered">◆ <b id="sMastered">0</b></span>
+    <button id="themeBtn" aria-label="Toggle theme">◐</button>
+  </div>
+  <nav role="tablist">
+    <button class="tab" role="tab" data-p="feed" aria-selected="true">Feed</button>
+    <button class="tab" role="tab" data-p="study" aria-selected="false">Study<span class="pill" id="dueCount">0</span></button>
+    <button class="tab" role="tab" data-p="stash" aria-selected="false">Stash</button>
+    <button class="tab" role="tab" data-p="topics" aria-selected="false">Topics</button>
+    <button class="tab" role="tab" data-p="progress" aria-selected="false">Progress</button>
+  </nav>
+</header>
+
+<main>
+  <section class="panel" id="p-feed"></section>
+  <section class="panel" id="p-study" hidden></section>
+  <section class="panel" id="p-stash" hidden></section>
+  <section class="panel" id="p-topics" hidden></section>
+  <section class="panel" id="p-progress" hidden></section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+const TOPICS = [
+  {id:"bias",     name:"Cognitive Biases",      desc:"Where judgment reliably goes wrong"},
+  {id:"memory",   name:"Memory",                desc:"How remembering actually works"},
+  {id:"learning", name:"Learning & Skill",      desc:"What makes practice stick"},
+  {id:"motivation",name:"Motivation & Control", desc:"Drive, habit, willpower"},
+  {id:"emotion",  name:"Emotion",               desc:"How feelings are built and managed"},
+  {id:"social",   name:"Social Psychology",     desc:"People in the presence of others"},
+  {id:"influence",name:"Persuasion & Influence",desc:"Why people say yes"},
+  {id:"attention",name:"Attention & Perception",desc:"What reaches awareness, and what doesn't"},
+  {id:"person",   name:"Personality",           desc:"Stable differences between people"},
+  {id:"evidence", name:"Reading the Evidence",  desc:"Telling real findings from noise"}
+];
+
+const CARDS = [
+
+/* ============ COGNITIVE BIASES ============ */
+{id:"b1",topic:"bias",title:"You test your beliefs by trying to confirm them",
+body:"<p>Given a hypothesis, people overwhelmingly look for evidence that would appear if it were true — and rarely for evidence that would appear only if it were false. Both feel like investigating. Only the second can actually correct you.</p><p>This is why a strongly held view survives years of reading. Every article you chose to open was selected, unconsciously, for agreement.</p>",
+recall:"What is the specific asymmetry in how people gather evidence about a belief?",
+answer:"They seek evidence consistent with the belief rather than evidence that could falsify it. Only falsifying tests can correct an error.",
+src:"Wason's rule-discovery task (1960); studied since as confirmation bias"},
+
+{id:"b2",topic:"bias",title:"Ease of recall becomes an estimate of frequency",
+body:"<p>Asked how common something is, people don't count. They check how easily examples come to mind and read that fluency as frequency. Vivid, recent, and emotionally loaded events feel common because they are retrievable, not because they are frequent.</p><p>Anything covered heavily gets overestimated. Anything statistically common but undramatic gets underestimated.</p>",
+recall:"What does the availability heuristic substitute for an actual frequency estimate?",
+answer:"The ease with which examples come to mind. Retrievability is mistaken for prevalence.",
+src:"Tversky & Kahneman, 1973"},
+
+{id:"b3",topic:"bias",title:"The first number contaminates every number after it",
+body:"<p>Show someone an arbitrary number before asking for an estimate and their answer moves toward it — even when the number is visibly random, even when they are warned, even when they are experts in the domain.</p><p>Adjustment away from an anchor is systematically insufficient. You start from the anchor and stop as soon as the answer seems plausible.</p>",
+recall:"Why doesn't knowing about anchoring protect you from it?",
+answer:"Adjustment away from the anchor is insufficient regardless of awareness. Warning people and using obviously random anchors both fail to eliminate the effect.",
+src:"Tversky & Kahneman, 1974"},
+
+{id:"b4",topic:"bias",title:"You explain others by character and yourself by circumstance",
+body:"<p>When someone else is short with you, they're rude. When you're short with someone, you were tired and running late. The observer reaches for disposition; the actor knows the situation.</p><p>The asymmetry is partly informational — you can see your own pressures and not theirs — and partly perceptual: the other person is the vivid figure, their situation is the background.</p>",
+recall:"What are the two sources of the actor-observer asymmetry?",
+answer:"Information (you know your own situational pressures, not theirs) and salience (the person is figure, the situation is ground).",
+src:"Jones & Harris, 1967; Ross, 1977",
+flag:"Weaker and sometimes reversed in East Asian samples, where situational explanation is more readily available. This is a strong candidate for a culturally bounded effect, not a human universal."},
+
+{id:"b5",topic:"bias",title:"Once you know the outcome you cannot recover your uncertainty",
+body:"<p>After an event, people remember having assigned it a much higher probability than they actually did. The knowledge rewrites the memory of the prediction, and the past starts to look inevitable.</p><p>The practical damage is to learning: if it was obvious all along, there is nothing to update. Writing predictions down before the fact is the only reliable defence.</p>",
+recall:"Why does hindsight bias specifically block learning from experience?",
+answer:"If the outcome feels like it was predictable all along, there is no surprise to learn from — so no belief gets updated.",
+src:"Fischhoff, 1975"},
+
+{id:"b6",topic:"bias",title:"A vivid description overrides the underlying odds",
+body:"<p>Told that a quiet, detail-loving person is either a librarian or a salesperson, most people say librarian — ignoring that salespeople vastly outnumber librarians. The description resembles the stereotype, and resemblance displaces arithmetic.</p><p>The base rate isn't rejected. It simply never enters the judgment, because representativeness answers the question first.</p>",
+recall:"What replaces base-rate information when people judge category membership?",
+answer:"Representativeness — how closely the case resembles a prototype. Similarity crowds out prior probability.",
+src:"Kahneman & Tversky, 1973"},
+
+{id:"b7",topic:"bias",title:"Plans are built from the best case and never the record",
+body:"<p>People estimate how long a task will take by imagining it going well. They rarely consult how long similar tasks actually took, and so predictions stay optimistic even for people who have overrun many times before.</p><p>The correction is unglamorous: ignore the plan, find the reference class, use the distribution of actual outcomes for tasks like this one.</p>",
+recall:"What is the practical correction for the planning fallacy?",
+answer:"Take the outside view — base the estimate on the actual distribution of outcomes for similar past tasks rather than on a mental simulation of this one.",
+src:"Kahneman & Tversky, 1979; Buehler et al., 1994"},
+
+/* ============ MEMORY ============ */
+{id:"m1",topic:"memory",title:"Remembering is construction, not playback",
+body:"<p>A memory is not retrieved intact. It is rebuilt at the moment of recall from fragments, expectations, and general knowledge about how events like this usually go. The gaps are filled silently, and the result feels seamless.</p><p>This is why confidence and accuracy come apart. The construction feels identical whether the fragments were right or wrong.</p>",
+recall:"Why can a memory feel vivid and certain while being wrong?",
+answer:"Because recall reconstructs the event from fragments plus expectation, and the reconstruction feels the same regardless of whether its inputs were accurate.",
+src:"Bartlett, 1932; extensive modern work"},
+
+{id:"m2",topic:"memory",title:"Retrieval depends on matching the conditions of encoding",
+body:"<p>Memory works best when the cues at recall resemble those present at learning — physical setting, internal state, even the format of the material. Studying in one condition and testing in another loses part of what was learned.</p><p>The useful inversion: vary your study conditions. Material encoded across many contexts becomes retrievable in many contexts.</p>",
+recall:"What follows practically from encoding specificity?",
+answer:"Vary study conditions. Encoding across multiple contexts creates more retrieval routes than encoding repeatedly in one.",
+src:"Tulving & Thomson, 1973"},
+
+{id:"m3",topic:"memory",title:"Forgetting is fast at first, then nearly flat",
+body:"<p>Loss after learning is steep in the first hours and days, then levels off sharply. Most of what will be lost is lost early, which means the timing of review matters more than the amount.</p><p>Each successful review flattens the curve further, so the interval before the next one can be longer. This is the entire mechanism behind spaced repetition.</p>",
+recall:"Why does review timing matter more than review quantity?",
+answer:"Because forgetting is steep early and shallow later — reviewing just before the drop, then extending intervals, preserves more per unit of effort than massed repetition.",
+src:"Ebbinghaus, 1885"},
+
+{id:"m4",topic:"memory",title:"Retrieving beats reviewing, and it isn't close",
+body:"<p>Trying to recall something changes the memory more than re-reading it does. Groups that self-test outperform groups that restudy the same material for the same time, and the gap widens as the delay before the final test grows.</p><p>The effort is the mechanism. A struggled-for retrieval strengthens the trace; an easy re-reading barely touches it.</p>",
+recall:"Under what conditions does the testing effect look largest?",
+answer:"At longer delays. Restudy can match or beat testing on an immediate test, but testing wins clearly once time has passed.",
+src:"Roediger & Karpicke, 2006"},
+
+{id:"m5",topic:"memory",title:"Information supplied after the event gets absorbed into it",
+body:"<p>Witnesses who receive misleading details after an event later report those details as things they saw. The post-event information is not stored separately and flagged — it merges into the original memory and becomes indistinguishable from it.</p><p>Leading questions do this reliably, and the altered memory is reported with full confidence.</p>",
+recall:"Why is misleading post-event information so damaging to a memory?",
+answer:"It is integrated into the original memory rather than stored separately, so the witness cannot tell which parts were witnessed and which were suggested.",
+src:"Loftus & Palmer, 1974"},
+
+{id:"m6",topic:"memory",title:"Working memory holds about four things, not seven",
+body:"<p>The famous figure of seven items came from studies that allowed rehearsal and grouping. When those are blocked, the true capacity of working memory is closer to three or four independent chunks.</p><p>This is a hard ceiling on how much novel structure you can hold at once — and the reason unfamiliar material collapses so quickly under load.</p>",
+recall:"Why is the classic 'seven plus or minus two' an overestimate?",
+answer:"Those tasks permitted rehearsal and chunking. With those stripped out, pure capacity is nearer four items.",
+src:"Miller, 1956; revised by Cowan, 2001"},
+
+{id:"m7",topic:"memory",title:"Expertise is mostly better chunks",
+body:"<p>Chess masters recall board positions far better than novices — but only when the positions come from real games. On random arrangements their advantage largely disappears.</p><p>They are not holding more items. They are holding the same few slots filled with far larger, more meaningful units. Expertise reorganises what counts as one thing.</p>",
+recall:"What does the chess-position finding show about expert memory?",
+answer:"Experts don't have larger capacity — they have better chunks. The advantage vanishes for random positions because the meaningful units are gone.",
+src:"Chase & Simon, 1973"},
+
+/* ============ LEARNING ============ */
+{id:"l1",topic:"learning",title:"The same study time, spread out, produces more learning",
+body:"<p>Hold total study time constant and simply distribute it across days rather than massing it in one session, and long-term retention rises substantially. Nothing else changes — not the material, not the effort, only the schedule.</p><p>It is one of the most replicated findings in the field, and one of the least used, because massed study feels more productive while you're doing it.</p>",
+recall:"Why is spacing under-used despite being so well established?",
+answer:"Because massed practice produces better immediate performance and a stronger feeling of fluency, while spacing produces better retention later.",
+src:"Cepeda et al., 2006 meta-analysis"},
+
+{id:"l2",topic:"learning",title:"Mixing problem types beats practising them in blocks",
+body:"<p>Practising A A A then B B B produces faster gains in the session. Practising A B A B produces worse performance during practice and better performance on a later test.</p><p>Blocked practice lets you reuse the last solution without re-identifying the problem. Interleaving forces you to work out which approach applies — which is the skill actually needed later.</p>",
+recall:"What does interleaving train that blocked practice does not?",
+answer:"Discriminating which strategy a problem calls for. Blocked practice removes that step by making it obvious.",
+src:"Rohrer & Taylor, 2007"},
+
+{id:"l3",topic:"learning",title:"Conditions that slow you down can deepen learning",
+body:"<p>Spacing, interleaving, testing, and varied practice all make performance worse during acquisition and better at retention. Bjork's term for them is desirable difficulties.</p><p>The trap is that learners judge their own progress by how it feels in the moment, so they systematically abandon the methods that work in favour of the ones that feel smooth.</p>",
+recall:"What makes a difficulty 'desirable'?",
+answer:"It degrades performance during practice while improving long-term retention and transfer.",
+src:"Bjork & Bjork, 1992"},
+
+{id:"l4",topic:"learning",title:"Fluency is not knowledge, and it feels exactly like knowledge",
+body:"<p>Re-reading makes text feel familiar, and familiarity is misread as mastery. Students who re-read rate their learning highly and then perform poorly; students who self-test rate their learning lower and perform better.</p><p>The judgment is the problem. Confidence tracks processing ease, and processing ease is produced by exposure rather than by understanding.</p>",
+recall:"Why does re-reading produce overconfidence?",
+answer:"It increases processing fluency, which people read as a signal of mastery — but fluency comes from exposure, not from retrievable understanding.",
+src:"Koriat & Bjork, 2005"},
+
+{id:"l5",topic:"learning",title:"Material you produce is remembered better than material you read",
+body:"<p>Generating an answer, even incorrectly, before being shown the correct one improves later memory compared with simply studying the correct answer. The failed attempt is not wasted; it prepares the ground.</p><p>Practically: try to state the idea before you check it, try to solve before you're taught, guess before you look.</p>",
+recall:"Does a wrong guess before feedback help or hurt learning?",
+answer:"It helps. Attempting retrieval before receiving the answer improves later memory even when the attempt fails.",
+src:"Slamecka & Graf, 1978; Kornell et al., 2009"},
+
+{id:"l6",topic:"learning",title:"Practice only improves what it specifically targets",
+body:"<p>Deliberate practice means working at the edge of current ability on a defined weakness, with immediate feedback, repeatedly. It is not time spent performing — a musician playing pieces they already know is not practising in this sense.</p><p>Its limits are real: accumulated practice explains a substantial share of skill variance in structured domains like chess and music, and much less in loosely structured ones.</p>",
+recall:"What distinguishes deliberate practice from ordinary repetition?",
+answer:"A specific target at the edge of ability, immediate feedback, and repetition aimed at correcting a defined weakness — not performance of what is already mastered.",
+src:"Ericsson et al., 1993",
+flag:"The popular '10,000 hours' claim overstates this. Later meta-analyses found practice accounts for roughly a third of variance in music and chess, and far less in less structured fields."},
+
+{id:"l7",topic:"learning",title:"Skills transfer far less than anyone expects",
+body:"<p>Training on one task tends to improve that task and things closely resembling it. Broad transfer to unrelated abilities is rare, and claims of it usually dissolve under controlled testing — most famously in commercial brain-training.</p><p>If you want a capability, train the capability. Do not expect it to arrive as a side effect of training something else.</p>",
+recall:"What is the general pattern of transfer in skill learning?",
+answer:"Near transfer to similar tasks is common; far transfer to unrelated abilities is rare and usually fails under controlled test.",
+src:"Thorndike & Woodworth, 1901; Simons et al., 2016 review"},
+
+/* ============ MOTIVATION & CONTROL ============ */
+{id:"mo1",topic:"motivation",title:"Paying people for what they already enjoy reduces the enjoyment",
+body:"<p>Reward someone for an activity they were doing freely and their interest in it often drops once the reward stops. The behaviour gets reattributed: it stops being something you do because you want to and becomes something you do to get paid.</p><p>The effect is strongest for rewards that are expected, tangible, and tied to simply doing the task rather than to doing it well.</p>",
+recall:"Which kind of reward most damages intrinsic motivation?",
+answer:"Expected, tangible rewards given for merely engaging in the task. Unexpected rewards and rewards for genuine quality do far less harm.",
+src:"Deci, 1971; Lepper et al., 1973"},
+
+{id:"mo2",topic:"motivation",title:"Three needs predict whether motivation sustains itself",
+body:"<p>Self-determination theory identifies autonomy (I chose this), competence (I am getting better), and relatedness (this connects me to people) as the conditions under which motivation becomes self-sustaining.</p><p>Environments that supply all three produce persistence without supervision. Environments that supply none require constant external pressure to keep behaviour going.</p>",
+recall:"Name the three needs in self-determination theory and what each contributes.",
+answer:"Autonomy (volition — I chose this), competence (visible improvement), relatedness (connection to others). Together they make motivation self-sustaining.",
+src:"Deci & Ryan, 1985"},
+
+{id:"mo3",topic:"motivation",title:"Deciding in advance where and when beats deciding to try harder",
+body:"<p>An intention like 'I will practise more' fails far more often than 'when it is 6am and I am in the kitchen, I will roll out the mat.' The second specifies a cue and links it to an action, so the situation triggers the behaviour instead of your resolve having to.</p><p>Effect sizes for these if-then plans are consistently moderate across many domains — one of the more dependable interventions in the literature.</p>",
+recall:"Why does an if-then plan outperform a general intention?",
+answer:"It delegates initiation to a specific environmental cue rather than to in-the-moment willpower.",
+src:"Gollwitzer, 1999; Gollwitzer & Sheeran, 2006 meta-analysis"},
+
+{id:"mo4",topic:"motivation",title:"Willpower does not work like a fuel tank",
+body:"<p>For two decades the standard account held that self-control draws on a limited resource depleted by use — the ego depletion model. It was cited thousands of times and shaped a great deal of popular advice.</p><p>Large pre-registered replication attempts have found effects near zero. The original literature shows strong signs of publication bias. Treat the fuel-tank metaphor as unsupported.</p>",
+recall:"What happened to the ego depletion model under pre-registered replication?",
+answer:"Multi-lab pre-registered attempts found effects close to zero, and the original literature shows evidence of publication bias. The model is no longer considered well supported.",
+src:"Baumeister et al., 1998; Hagger et al., 2016 multi-lab replication",
+flag:"A useful case study: a finding can be famous, intuitive, endlessly cited, and still not survive careful testing. Popular psychology books written before 2016 present this as settled fact."},
+
+{id:"mo5",topic:"motivation",title:"Habits are cued by context, which is why moving house breaks them",
+body:"<p>A habit is an association between a stable context and a response, strengthened by repetition until the context alone triggers the action with little deliberation. The strength of the habit tracks the stability of the setting.</p><p>Change the setting — new home, new schedule, travel — and the cue structure dissolves. This is why relocation is simultaneously the hardest time to keep good habits and the easiest time to install new ones.</p>",
+recall:"Why does changing environment disrupt established habits?",
+answer:"Habits are triggered by stable context cues. Removing those cues removes the trigger, leaving the behaviour to deliberate intention again.",
+src:"Wood & Neal, 2007"},
+
+{id:"mo6",topic:"motivation",title:"Effort rises as the goal comes into view",
+body:"<p>People and animals accelerate as they approach a reward. Loyalty cards with two stamps pre-filled get completed faster than identical cards starting at zero, because the same remaining distance now reads as partial progress.</p><p>The lever is not the actual distance but the perceived proportion completed — which is why framing where someone stands changes how hard they push.</p>",
+recall:"Why do pre-stamped loyalty cards get completed faster?",
+answer:"They reframe the same remaining work as progress already underway, and effort scales with perceived proportion completed.",
+src:"Hull, 1932; Kivetz et al., 2006"},
+
+{id:"mo7",topic:"motivation",title:"The marshmallow study measured more than self-control",
+body:"<p>Children who waited for a larger reward were later found to have better outcomes, and the study became shorthand for willpower determining life success. The causal reading was always weaker than the popular one.</p><p>Larger, better-controlled replications find the association shrinks substantially once family background and home environment are accounted for. Waiting partly reflects whether a child has learned that promises get kept.</p>",
+recall:"What does controlling for background do to the marshmallow test's predictive power?",
+answer:"It shrinks it substantially. Much of the original association reflects socioeconomic environment and learned reliability of promises rather than trait willpower.",
+src:"Mischel et al., 1972; Watts et al., 2018 replication"},
+
+/* ============ EMOTION ============ */
+{id:"e1",topic:"emotion",title:"Events do not cause emotions — appraisals do",
+body:"<p>The same event produces different emotions in different people, and different emotions in the same person on different days. What varies is the appraisal: is this a threat or a challenge, is it my fault, can I do anything about it.</p><p>This is the opening that makes emotion regulation possible at all. The appraisal sits between the event and the feeling, and it can be revised.</p>",
+recall:"Where does appraisal sit in the causal chain, and why does that matter?",
+answer:"Between event and emotion. Because the appraisal generates the feeling, revising the appraisal changes the feeling — which is what makes regulation possible.",
+src:"Lazarus, 1991; Scherer"},
+
+{id:"e2",topic:"emotion",title:"Naming a feeling reduces its intensity",
+body:"<p>Putting an emotion into words — not describing the situation, but naming the state — lowers its physiological intensity. Neuroimaging shows reduced amygdala response accompanied by increased prefrontal activity when people label what they feel.</p><p>The everyday version works. 'I'm anxious about this' does measurably more than analysing why the situation is difficult.</p>",
+recall:"What distinguishes affect labeling from simply talking about a problem?",
+answer:"Labeling names the emotional state itself rather than describing the circumstances, and it is that naming that reduces physiological intensity.",
+src:"Lieberman et al., 2007"},
+
+{id:"e3",topic:"emotion",title:"Reinterpreting works; pushing down does not",
+body:"<p>Two strategies look similar and behave completely differently. Reappraisal — changing what the situation means — reduces the felt emotion and its physical signature. Suppression — holding the expression flat while feeling it fully — leaves the arousal in place, impairs memory for what happened, and raises stress in the people you're talking to.</p><p>Reappraisal also works better applied early, before the emotion has fully developed.</p>",
+recall:"What are the three documented costs of expressive suppression?",
+answer:"Physiological arousal is unchanged, memory for the episode is impaired, and stress increases in conversation partners.",
+src:"Gross, 1998, 2002"},
+
+{id:"e4",topic:"emotion",title:"You are bad at predicting how you will feel",
+body:"<p>People consistently overestimate how intense and how long-lasting their emotional reaction to a future event will be — good and bad alike. The impact bias appears for exam results, breakups, promotions, and serious medical diagnoses.</p><p>The reason is focalism plus adaptation: you imagine the event in isolation and forget that the rest of life keeps arriving, and that you will make sense of it.</p>",
+recall:"What two mechanisms produce the impact bias?",
+answer:"Focalism (imagining the event in isolation) and failure to anticipate adaptation (the psychological immune system that makes sense of what happens).",
+src:"Gilbert & Wilson, 1998; 2003"},
+
+{id:"e5",topic:"emotion",title:"Emotions carry information, and it is often about the wrong thing",
+body:"<p>Feelings are used as data when judging unrelated questions. Mood at the moment of judgment shifts reports of life satisfaction, and people asked on pleasant days report being happier overall.</p><p>When attention is drawn to the real source of the mood, the effect disappears — the feeling stops being read as evidence about the question.</p>",
+recall:"What removes the influence of incidental mood on an unrelated judgment?",
+answer:"Making the true source of the mood salient. Once people attribute the feeling correctly, they stop using it as information about the judgment.",
+src:"Schwarz & Clore, 1983"},
+
+{id:"e6",topic:"emotion",title:"Finer emotional vocabulary predicts better regulation",
+body:"<p>Some people experience emotion in broad strokes — good, bad, stressed. Others distinguish frustration from disappointment from resentment. Higher granularity is associated with more effective regulation and less reliance on drinking and aggression under distress.</p><p>The plausible mechanism is precision of response: a specific diagnosis suggests a specific action, while 'bad' suggests only escape.</p>",
+recall:"Why would finer emotional distinctions improve regulation?",
+answer:"A precisely identified state implies a specific appropriate response; an undifferentiated 'bad' offers only blunt escape strategies.",
+src:"Barrett et al., 2001; Kashdan et al., 2015"},
+
+{id:"e7",topic:"emotion",title:"Bodily signals are part of the emotion, not a readout of it",
+body:"<p>Interoception — the perception of internal bodily state — contributes to emotional experience rather than merely reflecting it. People differ reliably in how accurately they detect their own heartbeat, and that accuracy correlates with intensity of emotional experience.</p><p>It also means physical state feeds directly into emotional interpretation: exhaustion and hunger are not neutral backgrounds to a mood.</p>",
+recall:"What is interoception's role in emotion?",
+answer:"It is constitutive, not merely reflective — bodily signals feed into the construction of the emotional experience itself.",
+src:"Critchley & Garfinkel, 2017"},
+
+/* ============ SOCIAL ============ */
+{id:"s1",topic:"social",title:"People will deny plain evidence to match a group",
+body:"<p>Asked which line matches a reference line — a task with an obvious answer — participants gave the wrong answer roughly a third of the time when confederates unanimously gave it first. Most conformed at least once across trials.</p><p>The critical variable is unanimity. A single dissenter, even one giving a different wrong answer, collapses conformity dramatically.</p>",
+recall:"What single factor most reduces conformity in the Asch paradigm?",
+answer:"Breaking unanimity. One dissenting voice — even an incorrect one — sharply reduces conformity.",
+src:"Asch, 1951"},
+
+{id:"s2",topic:"social",title:"Ordinary people follow instructions further than anyone predicts",
+body:"<p>Instructed by an experimenter to deliver what they believed were escalating shocks, a majority of participants continued to the maximum level. Predictions beforehand — including from psychiatrists — put the figure near one percent.</p><p>The finding is real and important. The interpretation is contested: archival work shows the script was applied inconsistently and many participants doubted the setup.</p>",
+recall:"What is solid about Milgram's obedience work, and what is contested?",
+answer:"Solid: people comply far beyond what anyone predicts. Contested: the experimenter script varied more than reported, and many participants suspected the shocks were not real.",
+src:"Milgram, 1963; Perry, 2013 archival reanalysis"},
+
+{id:"s3",topic:"social",title:"More witnesses can mean less help",
+body:"<p>As the number of bystanders rises, the probability that any individual intervenes falls. Responsibility diffuses, and the visible inaction of others is read as evidence that intervention is unnecessary.</p><p>The nuance matters: in genuinely dangerous, unambiguous emergencies, video studies find intervention is actually common. The effect is strongest when the situation is ambiguous.</p>",
+recall:"When is the bystander effect weakest?",
+answer:"In unambiguous, clearly dangerous emergencies — where recent video-based studies find intervention rates are high.",
+src:"Darley & Latané, 1968; Philpot et al., 2020"},
+
+{id:"s4",topic:"social",title:"Group loyalty forms on nothing at all",
+body:"<p>Divide people by a coin flip, or by which painter they said they preferred, and they will immediately allocate more resources to their own group. No history, no contact, no competition, no stake.</p><p>Strikingly, participants often prefer maximising the gap between groups over maximising their own group's absolute gain. Relative standing outranks benefit.</p>",
+recall:"What does the minimal group paradigm demonstrate about in-group bias?",
+answer:"That it needs no real basis — arbitrary categorisation alone produces favouritism, and people often prioritise relative advantage over absolute gain.",
+src:"Tajfel et al., 1971"},
+
+{id:"s5",topic:"social",title:"Everyone privately disagrees and publicly complies",
+body:"<p>Pluralistic ignorance occurs when most members of a group privately reject a norm but assume everyone else accepts it, because nobody voices doubt. Each person's silence becomes evidence for everyone else.</p><p>It sustains norms that almost nobody actually endorses, and it collapses quickly once one person states the private view out loud.</p>",
+recall:"What sustains a norm under pluralistic ignorance, and what breaks it?",
+answer:"Mutual silence read as agreement sustains it. One person voicing the private view breaks it.",
+src:"Katz & Allport, 1931; Prentice & Miller, 1993"},
+
+{id:"s6",topic:"social",title:"The prison study is a cautionary tale, not evidence",
+body:"<p>The Stanford Prison Experiment is still taught as showing that situations transform ordinary people into brutes. Archival recordings and participant accounts show guards were coached toward harshness, and at least one famous breakdown was later described by the participant as performance.</p><p>It had no control condition, a tiny sample, and an experimenter running his own hypothesis. It is best studied as an example of how not to run research.</p>",
+recall:"Name three methodological problems with the Stanford Prison Experiment.",
+answer:"Guards were explicitly coached toward hostility, there was no control condition, and the sample was tiny with the experimenter actively participating.",
+src:"Zimbardo, 1971; Le Texier, 2019; Blum, 2018",
+flag:"If a book or course presents this as a demonstration of human nature, that tells you something about the book. It is a strong signal to check its other claims."},
+
+{id:"s7",topic:"social",title:"An unrequested gift creates a debt",
+body:"<p>Receiving something triggers a strong obligation to return it, and the obligation holds even when the gift was unwanted, unsolicited, and small. The return is often disproportionately large.</p><p>Every free sample and unsolicited favour in commerce runs on this. Recognising the gift as a move rather than a kindness is what restores the choice.</p>",
+recall:"Why is reciprocity exploitable as an influence tactic?",
+answer:"The obligation triggers even for unwanted, unsolicited gifts, and the repayment is often larger than what was given.",
+src:"Gouldner, 1960; Regan, 1971"},
+
+/* ============ INFLUENCE ============ */
+{id:"i1",topic:"influence",title:"Six levers account for most compliance",
+body:"<p>Cialdini's survey of influence practice identified reciprocity, commitment and consistency, social proof, authority, liking, and scarcity as the recurring levers behind requests that get agreed to.</p><p>They are descriptive regularities drawn from field observation rather than a unified theory, and their individual evidence bases vary in strength. Useful as a checklist, weaker as an explanation.</p>",
+recall:"List Cialdini's six principles.",
+answer:"Reciprocity, commitment and consistency, social proof, authority, liking, scarcity.",
+src:"Cialdini, 1984"},
+
+{id:"i2",topic:"influence",title:"A small yes makes a large yes far more likely",
+body:"<p>People who agree to a trivial request become substantially more likely to agree to a much bigger one later. Having acted, they now hold a self-image consistent with that action, and the larger request is congruent with it.</p><p>The mechanism is self-perception: the first compliance supplies evidence about what kind of person you are, and the second follows from it.</p>",
+recall:"What mechanism explains the foot-in-the-door effect?",
+answer:"Self-perception — the initial small compliance revises the person's self-image, and the larger request then fits that image.",
+src:"Freedman & Fraser, 1966"},
+
+{id:"i3",topic:"influence",title:"Restricting something increases its pull — and can backfire",
+body:"<p>Scarcity raises perceived value, and newly imposed scarcity raises it more than long-standing scarcity. But limits also trigger reactance: a perceived attempt to control your choice produces motivation to reassert it.</p><p>Whether scarcity attracts or repels depends almost entirely on whether the limit reads as genuine or as manufactured pressure.</p>",
+recall:"When does scarcity produce reactance instead of desire?",
+answer:"When the limit reads as a deliberate attempt to control the person's choice rather than as a real constraint.",
+src:"Worchel et al., 1975; Brehm, 1966"},
+
+{id:"i4",topic:"influence",title:"How a choice is described changes which one is taken",
+body:"<p>The same outcome described as saving 200 of 600 lives, or as 400 of 600 dying, produces opposite preferences. Nothing about the options differs — only whether the frame is a gain or a loss.</p><p>Gain frames pull toward the safe option; loss frames pull toward the risky one. The effect appears in experts making decisions in their own field.</p>",
+recall:"Which way does risk preference shift between gain and loss frames?",
+answer:"Gain frames produce risk aversion (take the sure thing); loss frames produce risk seeking (gamble to avoid the loss).",
+src:"Tversky & Kahneman, 1981"},
+
+{id:"i5",topic:"influence",title:"Losses weigh more than equivalent gains — but how much more is disputed",
+body:"<p>Loss aversion holds that a loss hurts more than an equal gain pleases. The commonly quoted ratio of about two to one is far less stable than its popularity suggests.</p><p>Recent reviews argue much of the evidence is explainable without a general loss-aversion parameter, and that the asymmetry depends heavily on stake size and context. Directionally sound, quantitatively soft.</p>",
+recall:"What is the current status of the 2:1 loss aversion ratio?",
+answer:"Contested. The direction of the effect holds in many settings, but the ratio is unstable and some reviews question whether a general parameter is needed at all.",
+src:"Kahneman & Tversky, 1979; Gal & Rucker, 2018"},
+
+{id:"i6",topic:"influence",title:"Authority signals work without the authority",
+body:"<p>Compliance rises with markers of authority — titles, uniforms, credentials — largely independent of whether the person actually holds relevant expertise. The cue is processed rather than the substance.</p><p>Which is precisely why unearned credentials are worth so much to people selling things, and why verifying the claim behind a credential is the whole defence.</p>",
+recall:"What does the authority effect actually respond to?",
+answer:"The surface markers of authority — titles, uniforms, credentials — rather than verified relevant expertise.",
+src:"Bickman, 1974; Milgram, 1963"},
+
+{id:"i7",topic:"influence",title:"Similarity and familiarity produce liking, and liking produces yes",
+body:"<p>People comply far more readily with those they like, and liking is generated by cues with little relation to merit: similarity, physical attractiveness, familiarity through repeated exposure, and cooperation toward a shared goal.</p><p>Mere exposure alone is enough. Repeated contact with a face, a name, or a brand increases positive evaluation with no other input.</p>",
+recall:"Name four cues that reliably generate liking.",
+answer:"Similarity, physical attractiveness, mere exposure/familiarity, and cooperation toward a common goal.",
+src:"Zajonc, 1968; Cialdini, 1984"},
+
+/* ============ ATTENTION & PERCEPTION ============ */
+{id:"a1",topic:"attention",title:"You do not see what you are not looking for",
+body:"<p>Asked to count passes between players, about half of observers fail to notice a person in a gorilla suit walking through the middle of the scene. They are looking directly at it. It does not reach awareness.</p><p>Attention is not a spotlight brightening part of a scene you already have. It is the gate that decides what gets built into a scene at all.</p>",
+recall:"What does inattentional blindness reveal about the relationship between looking and seeing?",
+answer:"They are separable. Visual input can fall on the fovea and still never reach awareness if attention is engaged elsewhere.",
+src:"Simons & Chabris, 1999"},
+
+{id:"a2",topic:"attention",title:"Large changes go unnoticed if they happen during an interruption",
+body:"<p>Swap the person someone is talking to mid-conversation, using a brief interruption to mask the change, and many people do not notice. Same for major alterations to a photograph across a blink or a cut.</p><p>The implication is that we do not hold a detailed internal copy of the scene. We hold a sparse summary and re-sample when needed.</p>",
+recall:"What does change blindness imply about our internal representation of a scene?",
+answer:"That it is sparse rather than detailed — we retain a summary and re-sample from the world instead of storing a full copy.",
+src:"Simons & Levin, 1998"},
+
+{id:"a3",topic:"attention",title:"Unattended channels are filtered but not fully closed",
+body:"<p>Focus on one conversation in a noisy room and the others become unintelligible — yet your own name spoken in an ignored stream still captures attention. Filtering happens, but some processing continues past the filter.</p><p>The gate is set by relevance, and highly self-relevant material gets through even when it was never consciously monitored.</p>",
+recall:"What does the cocktail party effect show about attentional filtering?",
+answer:"That filtering is partial — unattended streams are processed enough for highly relevant items like one's own name to break through.",
+src:"Cherry, 1953; Moray, 1959"},
+
+{id:"a4",topic:"attention",title:"Perception is a prediction corrected by the senses",
+body:"<p>What you perceive is generated jointly by incoming signal and prior expectation. Ambiguous input is resolved toward what context predicts, which is why degraded speech becomes clearly audible once you are told what it says — and cannot be un-heard afterward.</p><p>The prior is not an optional overlay. It is a component of the percept.</p>",
+recall:"Why can't you un-hear degraded speech once you know the words?",
+answer:"Expectation is a component of perception itself. Once the prior is in place it constrains how the ambiguous signal is resolved.",
+src:"Gregory, 1970; predictive processing accounts"},
+
+{id:"a5",topic:"attention",title:"Working memory load degrades everything running at once",
+body:"<p>Holding material in working memory while doing something else reduces performance on both. Capacity is small and shared, so instructional material that forces learners to integrate scattered sources spends capacity on integration rather than learning.</p><p>Reducing extraneous load — putting the label next to the diagram rather than in a legend — measurably improves comprehension.</p>",
+recall:"What is extraneous cognitive load and why does it matter?",
+answer:"Working-memory demand created by how material is presented rather than by its difficulty. It consumes capacity that would otherwise go to learning.",
+src:"Sweller, 1988"},
+
+{id:"a6",topic:"attention",title:"Multitasking is serial switching, and switching is expensive",
+body:"<p>Attention is not divided between demanding tasks; it alternates. Each switch carries a reconfiguration cost in time and errors, and the cost persists for a while after the switch.</p><p>Across a working session these costs accumulate substantially. The subjective sense of doing two things at once is real; the parallel processing is not.</p>",
+recall:"Why is 'multitasking' a misleading description of what happens?",
+answer:"Demanding tasks are handled by rapid serial switching, not in parallel, and each switch costs time and accuracy.",
+src:"Monsell, 2003; Rubinstein et al., 2001"},
+
+{id:"a7",topic:"attention",title:"Steady input fades from awareness",
+body:"<p>Sensory systems respond to change, not to constant states. An unchanging smell, a constant background noise, the pressure of clothing — all drop out of awareness within minutes while the stimulus is unchanged.</p><p>The same principle operates at longer timescales in hedonic adaptation: stable circumstances, good or bad, stop registering.</p>",
+recall:"What is the shared principle behind sensory adaptation and hedonic adaptation?",
+answer:"Systems encode change rather than absolute level, so any constant state — sensory or circumstantial — fades from awareness.",
+src:"Helson, 1964; Brickman & Campbell, 1971"},
+
+/* ============ PERSONALITY ============ */
+{id:"p1",topic:"person",title:"Five broad dimensions recur across languages and methods",
+body:"<p>Factor analyses of trait descriptors converge repeatedly on five dimensions: openness, conscientiousness, extraversion, agreeableness, and neuroticism. The structure appears across languages, rating methods, and self versus observer report.</p><p>It is a description of how trait variation is organised, not a theory of where traits come from — a distinction routinely lost in popular use.</p>",
+recall:"What does the Big Five model claim, and what does it not claim?",
+answer:"It claims trait variation reliably organises into five dimensions. It does not explain the causal origin of those traits.",
+src:"Goldberg, 1990; McCrae & Costa, 1987"},
+
+{id:"p2",topic:"person",title:"Strong situations flatten personality differences",
+body:"<p>Traits predict behaviour well in weak situations, where cues are ambiguous and many responses are acceptable. In strong situations — a funeral, a job interview, a military drill — behaviour converges regardless of personality.</p><p>So 'does personality predict behaviour' has no general answer. It depends entirely on how constraining the setting is.</p>",
+recall:"In what kind of situation do traits predict behaviour best?",
+answer:"Weak situations, where cues are ambiguous and a wide range of behaviour is acceptable. Strong situations compress individual differences.",
+src:"Mischel, 1977"},
+
+{id:"p3",topic:"person",title:"Behaviour is inconsistent across situations and stable in aggregate",
+body:"<p>Mischel showed that single behaviours predict other single behaviours poorly — correlations around .30. That looked like evidence against traits.</p><p>The resolution: traits predict aggregated behaviour across many occasions very well. A person is not consistent from moment to moment but is highly consistent on average, which is what a trait actually claims.</p>",
+recall:"How was the person-situation debate resolved?",
+answer:"Traits predict aggregated behaviour across many occasions well, even though single-instance prediction is weak. Traits describe averages, not moments.",
+src:"Mischel, 1968; Epstein, 1979"},
+
+{id:"p4",topic:"person",title:"Type indicators sort people into categories that don't exist",
+body:"<p>Instruments that assign people to types face two problems. The traits they measure are continuous, so cutting them at a midpoint creates categories that split people near the boundary arbitrarily. And retest reliability is poor — a large share of people get a different type within weeks.</p><p>The appeal is real: a type is a story about yourself. The measurement is not.</p>",
+recall:"What are the two core measurement problems with type-based personality instruments?",
+answer:"Dichotomising continuous traits creates arbitrary categories, and test-retest reliability is poor — many people change type on retest.",
+src:"Pittenger, 1993; Boyle, 1995",
+flag:"Worth knowing before any workshop or training that opens by assigning everyone a four-letter type."},
+
+{id:"p5",topic:"person",title:"Heritability describes populations, not individuals",
+body:"<p>Twin and adoption studies put heritability of major traits around 40 to 60 percent. This says that within a studied population, roughly that share of variation between people is associated with genetic variation.</p><p>It does not say a trait is 50 percent genetic in you, and it does not say the trait is fixed. Heritability is a population statistic that shifts as the environment shifts.</p>",
+recall:"What common misreading of a heritability estimate should be avoided?",
+answer:"Treating it as the proportion of an individual's trait caused by genes, or as evidence of immutability. It describes variance between people in one population and environment.",
+src:"Turkheimer, 2000; Polderman et al., 2015"},
+
+{id:"p6",topic:"person",title:"Traits change in a predictable direction across adulthood",
+body:"<p>Personality is not fixed after early adulthood. Longitudinal data show conscientiousness and agreeableness rising and neuroticism falling from the twenties through middle age — a pattern consistent enough to be called the maturity principle.</p><p>Change is gradual and modest, but it is real, directional, and continues far later than the popular idea of a personality set by thirty.</p>",
+recall:"What is the maturity principle in personality development?",
+answer:"Across adulthood, conscientiousness and agreeableness tend to increase while neuroticism decreases.",
+src:"Roberts et al., 2006 meta-analysis"},
+
+{id:"p7",topic:"person",title:"Self-report measures self-image as much as behaviour",
+body:"<p>Self-report questionnaires are contaminated by socially desirable responding, limited self-insight, and reference-group effects — you rate yourself relative to whoever you implicitly compare against, which differs between groups.</p><p>Observer ratings and behavioural measures often diverge, and for some traits observers predict outcomes better than the person does.</p>",
+recall:"What is the reference-group effect in self-report?",
+answer:"People rate themselves relative to an implicit comparison group, so identical ratings from different groups do not mean the same thing.",
+src:"Heine et al., 2002"},
+
+/* ============ READING THE EVIDENCE ============ */
+{id:"v1",topic:"evidence",title:"A large share of published findings did not replicate",
+body:"<p>A coordinated effort to repeat 100 psychology studies reproduced the original result in roughly 36 to 47 percent of cases depending on criterion, and effect sizes in replications averaged about half the originals.</p><p>The failure rate was not concentrated in obscure work. Well-known, heavily cited findings were among those that did not hold.</p>",
+recall:"Roughly what proportion of studies replicated in the Open Science Collaboration project, and what happened to effect sizes?",
+answer:"Around 36-47% depending on the criterion used, with replication effect sizes averaging about half the original magnitude.",
+src:"Open Science Collaboration, 2015"},
+
+{id:"v2",topic:"evidence",title:"Flexible analysis can manufacture significance from nothing",
+body:"<p>Deciding when to stop collecting data, which outliers to drop, which covariates to include, and which measures to report — all after seeing results — can push the false positive rate above 60 percent while every individual choice looks defensible.</p><p>No fraud is required. Ordinary discretion applied repeatedly is enough.</p>",
+recall:"Why do researcher degrees of freedom inflate false positives without any dishonesty?",
+answer:"Because many small analytic choices are made after seeing the data, and each defensible choice adds an implicit test — collectively driving the false positive rate far above 5%.",
+src:"Simmons, Nelson & Simonsohn, 2011"},
+
+{id:"v3",topic:"evidence",title:"Significance answers a question you did not ask",
+body:"<p>A p-value below .05 says the data would be unlikely under the null hypothesis. It says nothing about how large the effect is, whether it matters, or how likely the hypothesis is to be true.</p><p>With a large enough sample, trivial effects reach significance. Ask for the effect size and its confidence interval — that is the question you actually cared about.</p>",
+recall:"What does a p-value tell you, and what does it not?",
+answer:"It indicates how surprising the data would be if the null were true. It does not give effect magnitude, practical importance, or the probability the hypothesis is true.",
+src:"Cohen, 1994"},
+
+{id:"v4",topic:"evidence",title:"The evidence base is drawn from an unusual slice of humanity",
+body:"<p>A large majority of published psychology samples come from Western, educated, industrialised, rich, democratic populations — and disproportionately from undergraduates within them. That group is an outlier on many measures where cross-cultural data exist.</p><p>So generalising from these samples to 'people' is an assumption, and for social and moral psychology it is often a poor one.</p>",
+recall:"What does WEIRD stand for, and why is it a problem?",
+answer:"Western, Educated, Industrialised, Rich, Democratic. These samples are outliers on many measured dimensions, so results may not generalise to humans in general.",
+src:"Henrich, Heine & Norenzayan, 2010"},
+
+{id:"v5",topic:"evidence",title:"The literature is a filtered sample of what was found",
+body:"<p>Positive, surprising results get published; null results often do not. So the published record systematically overstates effects, and meta-analyses built on it inherit the distortion.</p><p>Funnel plots and related tools can detect the asymmetry. Pre-registration and registered reports address the cause by committing to publish regardless of outcome.</p>",
+recall:"How does pre-registration address publication bias?",
+answer:"By committing to hypotheses, analysis plan, and publication before results are known, so null findings enter the record rather than being filtered out.",
+src:"Rosenthal, 1979; Chambers, 2013"},
+
+{id:"v6",topic:"evidence",title:"Between correlation and causation sit three specific alternatives",
+body:"<p>Given an association between A and B, three possibilities remain besides A causing B: B causes A, a third variable causes both, or the association arose by chance or through selection into the sample.</p><p>Naming which alternative applies is more useful than reciting the slogan. Most popular-science causal claims fail on the third-variable option.</p>",
+recall:"What are the alternatives to 'A causes B' given an association?",
+answer:"Reverse causation, a common cause (confound), and chance or selection effects.",
+src:"Standard causal inference; Pearl, 2009"},
+
+{id:"v7",topic:"evidence",title:"Four questions to ask of any psychology claim",
+body:"<p>How big is the effect, in units that mean something? How many people, and who were they? Was this pre-registered, or found after the fact? Has an independent lab reproduced it?</p><p>Most claims that reach popular books fail at least two. Applying these before adopting a framework saves more time than any amount of reading afterward.</p>",
+recall:"What are the four screening questions for a psychology claim?",
+answer:"Effect size in meaningful units; sample size and composition; pre-registered or post hoc; independently replicated.",
+src:"Synthesis of open-science practice"}
+
+];
+
+/* ================= STATE ================= */
+const KEY = "mindstash.v1";
+const DAY = 86400000;
+const byId = {};
+CARDS.forEach(c => { byId[c.id] = c; });
+const topicName = id => (TOPICS.find(t => t.id === id) || {}).name || id;
+
+function blank(){
+  return { topics: TOPICS.map(t => t.id), srs:{}, stash:[], seen:[],
+           streak:0, lastDay:null, xp:0, theme:null };
+}
+let S = load();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return blank();
+    const p = JSON.parse(raw);
+    const b = blank();
+    return Object.assign(b, p, { topics: Array.isArray(p.topics) && p.topics.length ? p.topics : b.topics });
+  }catch(e){ return blank(); }
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+const todayKey = () => new Date().toISOString().slice(0,10);
+
+function touchStreak(){
+  const t = todayKey();
+  if(S.lastDay === t) return;
+  const y = new Date(Date.now() - DAY).toISOString().slice(0,10);
+  S.streak = (S.lastDay === y) ? S.streak + 1 : 1;
+  S.lastDay = t;
+  save();
+}
+
+/* ================= SPACED REPETITION (SM-2 lite) ================= */
+function schedule(id, grade){
+  const s = S.srs[id] || { ease:2.5, ivl:0, due:0, reps:0, lapses:0 };
+  if(grade === 0){
+    s.lapses++; s.reps = 0; s.ease = Math.max(1.3, s.ease - 0.2);
+    s.ivl = 0; s.due = Date.now() + 600000;             // 10 minutes
+  }else{
+    if(s.reps === 0)      s.ivl = (grade === 1) ? 1 : (grade === 2 ? 1 : 3);
+    else if(s.reps === 1) s.ivl = (grade === 1) ? 3 : (grade === 2 ? 4 : 6);
+    else{
+      const mult = (grade === 1) ? 1.2 : (grade === 2 ? s.ease : s.ease * 1.3);
+      s.ivl = Math.round(s.ivl * mult);
+    }
+    if(grade === 1) s.ease = Math.max(1.3, s.ease - 0.15);
+    if(grade === 3) s.ease = Math.min(3.2, s.ease + 0.1);
+    s.reps++;
+    s.due = Date.now() + s.ivl * DAY;
+  }
+  S.srs[id] = s;
+  S.xp += (grade === 0) ? 2 : 5;
+  touchStreak(); save();
+}
+function previewIvl(id, grade){
+  const s = S.srs[id] || { ease:2.5, ivl:0, reps:0 };
+  if(grade === 0) return "10m";
+  let d;
+  if(s.reps === 0)      d = (grade === 1) ? 1 : (grade === 2 ? 1 : 3);
+  else if(s.reps === 1) d = (grade === 1) ? 3 : (grade === 2 ? 4 : 6);
+  else{
+    const mult = (grade === 1) ? 1.2 : (grade === 2 ? s.ease : s.ease * 1.3);
+    d = Math.round(s.ivl * mult);
+  }
+  return d < 30 ? d + "d" : Math.round(d/30) + "mo";
+}
+const dueCards    = () => Object.keys(S.srs).filter(id => byId[id] && S.srs[id].due <= Date.now()).map(id => byId[id]);
+const masteredIds = () => Object.keys(S.srs).filter(id => S.srs[id].ivl >= 21);
+
+/* ================= HELPERS ================= */
+const $ = sel => document.querySelector(sel);
+function esc(s){ return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+let toastT;
+function toast(msg){
+  const el = $("#toast"); el.textContent = msg; el.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 1600);
+}
+function cardHTML(c){
+  return '<div class="topic">' + esc(topicName(c.topic)) + '</div>' +
+         '<h2>' + esc(c.title) + '</h2>' +
+         '<div class="body">' + c.body + '</div>' +
+         (c.flag ? '<div class="flag"><b>Worth flagging.</b> ' + esc(c.flag) + '</div>' : '') +
+         '<div class="src">' + esc(c.src) + '</div>';
+}
+
+/* ================= FEED ================= */
+let feedQueue = [];
+function buildFeed(){
+  const seen = new Set(S.seen);
+  feedQueue = CARDS.filter(c => S.topics.indexOf(c.topic) !== -1 && !seen.has(c.id));
+  for(let i = feedQueue.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = feedQueue[i]; feedQueue[i] = feedQueue[j]; feedQueue[j] = t;
+  }
+}
+function renderFeed(){
+  const el = $("#p-feed");
+  if(!feedQueue.length) buildFeed();
+  if(!feedQueue.length){
+    const total = CARDS.filter(c => S.topics.indexOf(c.topic) !== -1).length;
+    el.innerHTML = '<div class="empty"><div class="big">You have seen all ' + total + ' cards</div>' +
+      '<p>in the topics you switched on. Turn on more topics, or work your review queue in Study.</p>' +
+      '<div class="actions" style="max-width:320px;margin:18px auto 0">' +
+      '<button class="btn" id="fResetSeen">Reset feed</button>' +
+      '<button class="btn primary" data-go="topics">Topics</button></div></div>';
+    $("#fResetSeen").onclick = () => { S.seen = []; save(); buildFeed(); renderFeed(); toast("Feed reset"); };
+    return;
+  }
+  const c = feedQueue[0];
+  const inStash = S.stash.indexOf(c.id) !== -1;
+  const total = CARDS.filter(x => S.topics.indexOf(x.topic) !== -1).length;
+  el.innerHTML =
+    '<div class="meta"><span>' + (total - feedQueue.length + 1) + ' of ' + total + '</span>' +
+    '<span>' + S.stash.length + ' stashed</span></div>' +
+    '<article class="card">' + cardHTML(c) + '</article>' +
+    '<div class="actions">' +
+      '<button class="btn" id="fSkip">Skip</button>' +
+      '<button class="btn ' + (inStash ? "on" : "primary") + '" id="fStash">' +
+        (inStash ? "In your stash" : "Stash & study") + '</button>' +
+    '</div>' +
+    '<div class="note">Stashing adds the card to spaced repetition. It comes back for recall practice before you would forget it.</div>';
+
+  $("#fSkip").onclick = () => { S.seen.push(c.id); save(); feedQueue.shift(); renderFeed(); };
+  $("#fStash").onclick = () => {
+    if(S.stash.indexOf(c.id) === -1){
+      S.stash.push(c.id);
+      S.srs[c.id] = { ease:2.5, ivl:0, due:Date.now(), reps:0, lapses:0 };
+      S.xp += 3; touchStreak();
+    }
+    if(S.seen.indexOf(c.id) === -1) S.seen.push(c.id);
+    save(); feedQueue.shift(); renderFeed(); paintStats();
+    toast("Stashed — due in Study");
+  };
+}
+
+/* ================= STUDY ================= */
+let studyCard = null, revealed = false;
+function renderStudy(){
+  const el = $("#p-study");
+  const due = dueCards();
+  if(!due.length){
+    const upcoming = Object.keys(S.srs).length;
+    el.innerHTML = '<div class="empty"><div class="big">' +
+      (upcoming ? "Nothing due right now" : "Your review queue is empty") + '</div>' +
+      '<p>' + (upcoming
+        ? "Reviews return on schedule. " + upcoming + " card" + (upcoming===1?"":"s") + " in rotation."
+        : "Stash cards from the Feed and they will appear here for recall practice.") + '</p>' +
+      '<div class="actions" style="max-width:320px;margin:18px auto 0">' +
+      '<button class="btn primary" data-go="feed">Go to Feed</button></div></div>';
+    return;
+  }
+  if(!studyCard || due.indexOf(studyCard) === -1){ studyCard = due[0]; revealed = false; }
+  const c = studyCard;
+  el.innerHTML =
+    '<div class="meta"><span>' + due.length + ' due</span><span>' + esc(topicName(c.topic)) + '</span></div>' +
+    '<article class="card">' +
+      '<div class="topic">Recall</div>' +
+      '<h2>' + esc(c.title) + '</h2>' +
+      '<div class="recall">' +
+        '<p class="q">' + esc(c.recall) + '</p>' +
+        '<p class="hint">Answer it out loud before revealing. The effort is what builds the memory.</p>' +
+        (revealed ? '<p class="a">' + esc(c.answer) + '</p>' : '') +
+      '</div>' +
+    '</article>' +
+    (revealed
+      ? '<div class="grades">' +
+          '<button class="grade g0" data-g="0">Again<small>' + previewIvl(c.id,0) + '</small></button>' +
+          '<button class="grade" data-g="1">Hard<small>' + previewIvl(c.id,1) + '</small></button>' +
+          '<button class="grade" data-g="2">Good<small>' + previewIvl(c.id,2) + '</small></button>' +
+          '<button class="grade g3" data-g="3">Easy<small>' + previewIvl(c.id,3) + '</small></button>' +
+        '</div>' +
+        '<div class="actions"><button class="btn" id="sFull">Read the full card</button></div>'
+      : '<div class="actions"><button class="btn primary" id="sReveal">Show answer</button></div>');
+
+  if(revealed){
+    el.querySelectorAll(".grade").forEach(b => {
+      b.onclick = () => {
+        schedule(c.id, parseInt(b.dataset.g, 10));
+        studyCard = null; revealed = false;
+        renderStudy(); paintStats();
+      };
+    });
+    $("#sFull").onclick = () => {
+      const a = document.createElement("article");
+      a.className = "card"; a.style.marginTop = "12px";
+      a.innerHTML = cardHTML(c);
+      $("#sFull").parentElement.after(a);
+      $("#sFull").remove();
+    };
+  }else{
+    $("#sReveal").onclick = () => { revealed = true; renderStudy(); };
+  }
+}
+
+/* ================= STASH ================= */
+function renderStash(){
+  const el = $("#p-stash");
+  const q = (window.__q || "").toLowerCase().trim();
+  let list = S.stash.map(id => byId[id]).filter(Boolean).reverse();
+  if(q) list = list.filter(c => (c.title + " " + c.body + " " + c.src).toLowerCase().indexOf(q) !== -1);
+  el.innerHTML =
+    '<input id="search" placeholder="Search your stash" value="' + esc(window.__q || "") + '">' +
+    (list.length
+      ? list.map(c => {
+          const s = S.srs[c.id];
+          const when = s ? (s.due <= Date.now() ? "due now" : "in " + Math.max(1, Math.round((s.due - Date.now())/DAY)) + "d") : "";
+          return '<button class="mini" data-open="' + c.id + '">' +
+                 '<div class="mtop">' + esc(topicName(c.topic)) + (when ? " · " + when : "") + '</div>' +
+                 '<div class="mt">' + esc(c.title) + '</div>' +
+                 '<div class="mb">' + esc(c.answer) + '</div></button>';
+        }).join("")
+      : '<div class="empty"><div class="big">' + (q ? "No match" : "Nothing stashed yet") + '</div>' +
+        '<p>' + (q ? "Try another word." : "Cards you stash from the Feed collect here.") + '</p></div>');
+
+  const si = $("#search");
+  si.oninput = () => { window.__q = si.value; const p = si.selectionStart; renderStash();
+                       const n = $("#search"); n.focus(); n.setSelectionRange(p, p); };
+  el.querySelectorAll("[data-open]").forEach(b => {
+    b.onclick = () => {
+      const c = byId[b.dataset.open];
+      const a = document.createElement("article");
+      a.className = "card"; a.style.margin = "10px 0";
+      a.innerHTML = cardHTML(c) +
+        '<div class="actions"><button class="btn" data-un="' + c.id + '">Remove from stash</button></div>';
+      b.replaceWith(a);
+      a.querySelector("[data-un]").onclick = () => {
+        S.stash = S.stash.filter(x => x !== c.id);
+        delete S.srs[c.id]; save(); renderStash(); paintStats(); toast("Removed");
+      };
+    };
+  });
+}
+
+/* ================= TOPICS ================= */
+function renderTopics(){
+  const el = $("#p-topics");
+  el.innerHTML = '<h3 class="sec">What lands in your feed</h3><div class="tlist">' +
+    TOPICS.map(t => {
+      const on = S.topics.indexOf(t.id) !== -1;
+      const n = CARDS.filter(c => c.topic === t.id).length;
+      const done = CARDS.filter(c => c.topic === t.id && S.srs[c.id]).length;
+      return '<button class="trow' + (on ? "" : " off") + '" data-t="' + t.id + '">' +
+             '<span class="chk">✓</span><span class="tx"><span class="tn">' + esc(t.name) + '</span>' +
+             '<span class="td">' + done + " of " + n + ' in rotation · ' + esc(t.desc) + '</span></span></button>';
+    }).join("") + '</div>' +
+    '<div class="note">Ten topics, 70 cards. Switching a topic off only hides it from the Feed — anything already stashed stays in your review queue.</div>';
+  el.querySelectorAll("[data-t]").forEach(b => {
+    b.onclick = () => {
+      const id = b.dataset.t;
+      const i = S.topics.indexOf(id);
+      if(i === -1) S.topics.push(id);
+      else if(S.topics.length > 1) S.topics.splice(i, 1);
+      else return toast("Keep at least one topic on");
+      save(); buildFeed(); renderTopics();
+    };
+  });
+}
+
+/* ================= PROGRESS ================= */
+function renderProgress(){
+  const el = $("#p-progress");
+  const inRot = Object.keys(S.srs).length;
+  const mast = masteredIds().length;
+  const lvl = Math.floor(S.xp / 100) + 1;
+  el.innerHTML =
+    '<div class="stats">' +
+      '<div class="sbox"><div class="n">' + S.streak + '</div><div class="l">day streak</div></div>' +
+      '<div class="sbox"><div class="n">' + inRot + '</div><div class="l">cards in rotation</div></div>' +
+      '<div class="sbox"><div class="n">' + mast + '</div><div class="l">mastered (21d+)</div></div>' +
+      '<div class="sbox"><div class="n">' + lvl + '</div><div class="l">level · ' + S.xp + ' xp</div></div>' +
+    '</div>' +
+    '<h3 class="sec">By topic</h3>' +
+    TOPICS.map(t => {
+      const all = CARDS.filter(c => c.topic === t.id);
+      const m = all.filter(c => S.srs[c.id] && S.srs[c.id].ivl >= 21).length;
+      const r = all.filter(c => S.srs[c.id]).length;
+      return '<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:14px">' +
+             '<b style="font-weight:600">' + esc(t.name) + '</b>' +
+             '<span style="color:var(--ink-3)">' + m + '/' + all.length + '</span></div>' +
+             '<div class="pbar"><i style="width:' + Math.round((r/all.length)*100) + '%"></i></div></div>';
+    }).join("") +
+    '<div class="note"><b>How the schedule works.</b> A stashed card returns for recall before you would have forgotten it. Rate honestly — grading everything Easy just means you meet it again too late to matter. A card counts as mastered once its interval passes 21 days.</div>' +
+    '<div class="actions" style="margin-top:16px"><button class="btn" id="wipe">Reset all progress</button></div>';
+  $("#wipe").onclick = () => {
+    if(confirm("Delete your streak, stash and all review schedules? This cannot be undone.")){
+      S = blank(); save(); buildFeed(); paintStats(); show("feed"); toast("Reset");
+    }
+  };
+}
+
+/* ================= CHROME ================= */
+function paintStats(){
+  $("#sStreak").textContent = S.streak;
+  $("#sMastered").textContent = masteredIds().length;
+  const d = dueCards().length;
+  const pill = $("#dueCount");
+  pill.textContent = d; pill.style.display = d ? "" : "none";
+}
+const RENDER = { feed:renderFeed, study:renderStudy, stash:renderStash, topics:renderTopics, progress:renderProgress };
+function show(p){
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.p === p)));
+  document.querySelectorAll(".panel").forEach(s => { s.hidden = (s.id !== "p-" + p); });
+  RENDER[p]();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll(".tab").forEach(t => { t.onclick = () => show(t.dataset.p); });
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]");
+  if(g) show(g.dataset.go);
+});
+
+/* theme */
+function applyTheme(){
+  if(S.theme) document.documentElement.setAttribute("data-theme", S.theme);
+  else document.documentElement.removeAttribute("data-theme");
+}
+$("#themeBtn").onclick = () => {
+  S.theme = S.theme === "dark" ? "light" : (S.theme === "light" ? null : "dark");
+  save(); applyTheme();
+  toast(S.theme ? S.theme + " theme" : "system theme");
+};
+
+/* keyboard */
+document.addEventListener("keydown", e => {
+  if(e.target.tagName === "INPUT") return;
+  const cur = document.querySelector('.tab[aria-selected="true"]').dataset.p;
+  if(cur === "feed"){
+    if(e.key === "ArrowRight" || e.key === "s"){ const b = $("#fSkip"); if(b) b.click(); }
+    if(e.key === " " || e.key === "Enter"){ e.preventDefault(); const b = $("#fStash"); if(b) b.click(); }
+  }
+  if(cur === "study"){
+    if(e.key === " " || e.key === "Enter"){ e.preventDefault(); const b = $("#sReveal"); if(b) b.click(); }
+    if("1234".indexOf(e.key) !== -1){
+      const b = document.querySelector('.grade[data-g="' + (parseInt(e.key,10)-1) + '"]');
+      if(b) b.click();
+    }
+  }
+});
+
+applyTheme(); buildFeed(); paintStats(); show("feed");
+</script>
+</body>
+</html>
