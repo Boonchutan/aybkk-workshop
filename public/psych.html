@@ -88,6 +88,10 @@
   .card .body p:last-child{margin-bottom:0}
   .card .src{margin-top:16px;padding-top:13px;border-top:1px solid var(--line);
              font-size:13px;color:var(--ink-3);font-style:italic}
+  .card .apply{margin-top:14px;background:var(--accent-soft);color:var(--accent-ink);border-radius:10px;
+               padding:11px 14px;font-size:14px;line-height:1.55}
+  .card .apply b{display:block;font-size:10.5px;font-weight:700;letter-spacing:.1em;
+                 text-transform:uppercase;opacity:.75;margin-bottom:4px}
   .card .flag{margin-top:13px;background:var(--warn-soft);color:var(--warn);border-radius:10px;
               padding:10px 13px;font-size:13.5px;line-height:1.5;font-style:normal}
   .card .flag b{font-weight:700}
@@ -197,453 +201,525 @@
 "use strict";
 
 const TOPICS = [
-  {id:"bias",     name:"Cognitive Biases",      desc:"Where judgment reliably goes wrong"},
-  {id:"memory",   name:"Memory",                desc:"How remembering actually works"},
-  {id:"learning", name:"Learning & Skill",      desc:"What makes practice stick"},
-  {id:"motivation",name:"Motivation & Control", desc:"Drive, habit, willpower"},
-  {id:"emotion",  name:"Emotion",               desc:"How feelings are built and managed"},
-  {id:"social",   name:"Social Psychology",     desc:"People in the presence of others"},
-  {id:"influence",name:"Persuasion & Influence",desc:"Why people say yes"},
-  {id:"attention",name:"Attention & Perception",desc:"What reaches awareness, and what doesn't"},
-  {id:"person",   name:"Personality",           desc:"Stable differences between people"},
-  {id:"evidence", name:"Reading the Evidence",  desc:"Telling real findings from noise"}
+  {id:"choice",   name:"How Choices Get Made",  desc:"The machinery behind a decision"},
+  {id:"value",    name:"How Value Is Felt",     desc:"Why the same thing is worth more or less"},
+  {id:"attention",name:"Attention",             desc:"What gets noticed, what never arrives"},
+  {id:"sticky",   name:"What Makes A Message Stick", desc:"Memory, applied to what you say"},
+  {id:"yes",      name:"Why People Say Yes",    desc:"The levers behind compliance"},
+  {id:"tribes",   name:"Identity & Tribes",     desc:"People as members, not individuals"},
+  {id:"story",    name:"Story & Emotion",       desc:"How feeling is built and moved"},
+  {id:"action",   name:"Getting Someone To Act",desc:"The gap between wanting and doing"},
+  {id:"offer",    name:"The Offer",             desc:"Price, risk, and the pain of paying"},
+  {id:"evidence", name:"Reading The Evidence",  desc:"Telling real findings from noise"}
 ];
 
 const CARDS = [
 
-/* ============ COGNITIVE BIASES ============ */
-{id:"b1",topic:"bias",title:"You test your beliefs by trying to confirm them",
-body:"<p>Given a hypothesis, people overwhelmingly look for evidence that would appear if it were true — and rarely for evidence that would appear only if it were false. Both feel like investigating. Only the second can actually correct you.</p><p>This is why a strongly held view survives years of reading. Every article you chose to open was selected, unconsciously, for agreement.</p>",
-recall:"What is the specific asymmetry in how people gather evidence about a belief?",
-answer:"They seek evidence consistent with the belief rather than evidence that could falsify it. Only falsifying tests can correct an error.",
-src:"Wason's rule-discovery task (1960); studied since as confirmation bias"},
-
-{id:"b2",topic:"bias",title:"Ease of recall becomes an estimate of frequency",
-body:"<p>Asked how common something is, people don't count. They check how easily examples come to mind and read that fluency as frequency. Vivid, recent, and emotionally loaded events feel common because they are retrievable, not because they are frequent.</p><p>Anything covered heavily gets overestimated. Anything statistically common but undramatic gets underestimated.</p>",
-recall:"What does the availability heuristic substitute for an actual frequency estimate?",
-answer:"The ease with which examples come to mind. Retrievability is mistaken for prevalence.",
-src:"Tversky & Kahneman, 1973"},
-
-{id:"b3",topic:"bias",title:"The first number contaminates every number after it",
-body:"<p>Show someone an arbitrary number before asking for an estimate and their answer moves toward it — even when the number is visibly random, even when they are warned, even when they are experts in the domain.</p><p>Adjustment away from an anchor is systematically insufficient. You start from the anchor and stop as soon as the answer seems plausible.</p>",
+/* ============ HOW CHOICES GET MADE ============ */
+{id:"c1",topic:"choice",title:"The first number poisons every number after it",
+body:"<p>Show someone any number before asking them to estimate something, and their answer drifts toward it. This holds when the number is obviously random, when people are warned it is meaningless, and when the person is an expert in the field.</p><p>People adjust away from the starting number, but never far enough. Wherever the estimate begins is most of where it ends.</p>",
+apply:"Whatever number a prospect sees first — a price, a competitor's fee, a figure in your headline — becomes the reference for everything after. Choose the first number deliberately or the market chooses it for you.",
 recall:"Why doesn't knowing about anchoring protect you from it?",
-answer:"Adjustment away from the anchor is insufficient regardless of awareness. Warning people and using obviously random anchors both fail to eliminate the effect.",
+answer:"Adjustment away from the anchor is always insufficient. Warnings and visibly random anchors both fail to remove the effect, and experts are not exempt.",
 src:"Tversky & Kahneman, 1974"},
 
-{id:"b4",topic:"bias",title:"You explain others by character and yourself by circumstance",
-body:"<p>When someone else is short with you, they're rude. When you're short with someone, you were tired and running late. The observer reaches for disposition; the actor knows the situation.</p><p>The asymmetry is partly informational — you can see your own pressures and not theirs — and partly perceptual: the other person is the vivid figure, their situation is the background.</p>",
-recall:"What are the two sources of the actor-observer asymmetry?",
-answer:"Information (you know your own situational pressures, not theirs) and salience (the person is figure, the situation is ground).",
-src:"Jones & Harris, 1967; Ross, 1977",
-flag:"Weaker and sometimes reversed in East Asian samples, where situational explanation is more readily available. This is a strong candidate for a culturally bounded effect, not a human universal."},
+{id:"c2",topic:"choice",title:"The same offer, described two ways, gets two answers",
+body:"<p>Describe a medical programme as saving 200 of 600 lives and people choose the safe option. Describe the identical programme as 400 of 600 dying and they choose the gamble. Nothing about the outcomes differs — only whether the sentence is built from gains or from losses.</p><p>Gain wording pushes people toward the certain option. Loss wording pushes them toward the risky one.</p>",
+apply:"You are never describing your offer neutrally, because no neutral description exists. 'Keep practising through your forties' and 'stop losing years to bad practice' sell different decisions.",
+recall:"Which way does risk preference move between a gain frame and a loss frame?",
+answer:"Gain frames make people risk-averse and take the sure thing. Loss frames make people risk-seeking and gamble to avoid the loss.",
+src:"Tversky & Kahneman, 1981"},
 
-{id:"b5",topic:"bias",title:"Once you know the outcome you cannot recover your uncertainty",
-body:"<p>After an event, people remember having assigned it a much higher probability than they actually did. The knowledge rewrites the memory of the prediction, and the past starts to look inevitable.</p><p>The practical damage is to learning: if it was obvious all along, there is nothing to update. Writing predictions down before the fact is the only reliable defence.</p>",
-recall:"Why does hindsight bias specifically block learning from experience?",
-answer:"If the outcome feels like it was predictable all along, there is no surprise to learn from — so no belief gets updated.",
-src:"Fischhoff, 1975"},
+{id:"c3",topic:"choice",title:"Whatever requires no decision usually wins",
+body:"<p>When one option is preselected, far more people end up with it. The classic demonstration is organ-donor registration: countries where you are enrolled unless you opt out show participation above 90 percent, while opt-in countries often sit under 30 percent.</p><p>The people are not different. Only the effort required to end up somewhere else is.</p>",
+apply:"Every form field, preselected checkbox and 'most people choose' marker is a default. Notice what yours currently make easy, because that is what most people will do.",
+recall:"Why do defaults move behaviour so powerfully?",
+answer:"They remove the need to decide. Any option requiring action to escape is chosen far less than the same option pre-set.",
+src:"Johnson & Goldstein, 2003",
+flag:"Real effect, but the organ-donation case is partly registration policy rather than pure psychology. The direction is solid; treat the exact percentages as illustrative."},
 
-{id:"b6",topic:"bias",title:"A vivid description overrides the underlying odds",
-body:"<p>Told that a quiet, detail-loving person is either a librarian or a salesperson, most people say librarian — ignoring that salespeople vastly outnumber librarians. The description resembles the stereotype, and resemblance displaces arithmetic.</p><p>The base rate isn't rejected. It simply never enters the judgment, because representativeness answers the question first.</p>",
-recall:"What replaces base-rate information when people judge category membership?",
-answer:"Representativeness — how closely the case resembles a prototype. Similarity crowds out prior probability.",
+{id:"c4",topic:"choice",title:"Too many options can stop the decision entirely",
+body:"<p>A famous supermarket study offered shoppers either six jams or twenty-four. The larger display drew more interest but produced far fewer purchases. Choice felt good and made deciding harder.</p><p>The caveat matters: later meta-analysis found the average effect across many studies is close to zero, and it appears mainly under specific conditions — time pressure, unfamiliarity, no clear preference.</p>",
+apply:"Do not assume more options help. But also do not assume cutting choice always works — for a serious buyer who knows what they want, more information often helps.",
+recall:"What is the current status of the choice-overload effect?",
+answer:"Real in specific conditions (time pressure, unfamiliar domain, no prior preference) but averaging near zero across the wider literature.",
+src:"Iyengar & Lepper, 2000; Scheibehenne et al., 2010 meta-analysis",
+flag:"A good example of a finding that entered marketing folklore in a much stronger form than the evidence supports."},
+
+{id:"c5",topic:"choice",title:"A vivid story beats the underlying numbers",
+body:"<p>Told about a quiet, precise, detail-loving person, most people guess librarian over salesperson — even though salespeople massively outnumber librarians. The description matches a mental picture, and the match answers the question before arithmetic gets a turn.</p><p>The base rate is not rejected. It simply never enters the judgment.</p>",
+apply:"This is why one testimonial outperforms a statistic. It is also why you should distrust your own read on your market: a few vivid conversations feel like data and are not.",
+recall:"What crowds out base-rate information in everyday judgment?",
+answer:"Representativeness — how closely a case resembles a mental prototype. Similarity displaces prior probability.",
 src:"Kahneman & Tversky, 1973"},
 
-{id:"b7",topic:"bias",title:"Plans are built from the best case and never the record",
-body:"<p>People estimate how long a task will take by imagining it going well. They rarely consult how long similar tasks actually took, and so predictions stay optimistic even for people who have overrun many times before.</p><p>The correction is unglamorous: ignore the plan, find the reference class, use the distribution of actual outcomes for tasks like this one.</p>",
-recall:"What is the practical correction for the planning fallacy?",
-answer:"Take the outside view — base the estimate on the actual distribution of outcomes for similar past tasks rather than on a mental simulation of this one.",
-src:"Kahneman & Tversky, 1979; Buehler et al., 1994"},
+{id:"c6",topic:"choice",title:"How easily an example comes to mind stands in for how common it is",
+body:"<p>Asked how often something happens, people do not count. They check how quickly examples surface and treat that ease as frequency. Recent, dramatic and emotionally loaded events feel common because they are easy to recall.</p><p>Anything heavily covered gets overestimated. Anything genuinely common but dull gets underestimated.</p>",
+apply:"Your loudest complaints are not your most common ones — they are your most memorable ones. Count before you redesign anything around them.",
+recall:"What does the availability heuristic substitute for a real frequency estimate?",
+answer:"Ease of recall. Retrievability gets read as prevalence.",
+src:"Tversky & Kahneman, 1973"},
 
-/* ============ MEMORY ============ */
-{id:"m1",topic:"memory",title:"Remembering is construction, not playback",
-body:"<p>A memory is not retrieved intact. It is rebuilt at the moment of recall from fragments, expectations, and general knowledge about how events like this usually go. The gaps are filled silently, and the result feels seamless.</p><p>This is why confidence and accuracy come apart. The construction feels identical whether the fragments were right or wrong.</p>",
-recall:"Why can a memory feel vivid and certain while being wrong?",
-answer:"Because recall reconstructs the event from fragments plus expectation, and the reconstruction feels the same regardless of whether its inputs were accurate.",
-src:"Bartlett, 1932; extensive modern work"},
+{id:"c7",topic:"choice",title:"You look for evidence that agrees with you",
+body:"<p>Given a belief, people search for what would appear if it were true and rarely for what would appear only if it were false. Both feel like honest investigation. Only the second can correct you.</p><p>This is how a wrong idea survives years of reading — every source you chose to open was selected, without you noticing, for agreement.</p>",
+apply:"Before committing to a positioning, write down what you would expect to see if it were wrong. Then go looking for that specifically.",
+recall:"What is the asymmetry in how people gather evidence about their own beliefs?",
+answer:"They seek confirming evidence rather than evidence that could falsify the belief. Only falsifying tests can correct an error.",
+src:"Wason, 1960"},
 
-{id:"m2",topic:"memory",title:"Retrieval depends on matching the conditions of encoding",
-body:"<p>Memory works best when the cues at recall resemble those present at learning — physical setting, internal state, even the format of the material. Studying in one condition and testing in another loses part of what was learned.</p><p>The useful inversion: vary your study conditions. Material encoded across many contexts becomes retrievable in many contexts.</p>",
-recall:"What follows practically from encoding specificity?",
-answer:"Vary study conditions. Encoding across multiple contexts creates more retrieval routes than encoding repeatedly in one.",
-src:"Tulving & Thomson, 1973"},
+/* ============ HOW VALUE IS FELT ============ */
+{id:"v1",topic:"value",title:"There is no absolute value, only comparison",
+body:"<p>People are very poor at judging what something is worth on its own and very good at judging it against something else. Every price is read relative to a reference point — what it used to cost, what the alternative costs, what similar things cost.</p><p>Move the reference and the identical price feels expensive or cheap without changing by a cent.</p>",
+apply:"You are not setting a price. You are choosing what your price gets compared against. A cohort compared to other workshops reads as expensive; compared to years of unsupervised practice, it does not.",
+recall:"Why is a price never judged on its own?",
+answer:"Value perception is comparative. Every price is evaluated against a reference point, and moving the reference changes the felt cost without changing the number.",
+src:"Kahneman & Tversky, 1979; Ariely, 2008"},
 
-{id:"m3",topic:"memory",title:"Forgetting is fast at first, then nearly flat",
-body:"<p>Loss after learning is steep in the first hours and days, then levels off sharply. Most of what will be lost is lost early, which means the timing of review matters more than the amount.</p><p>Each successful review flattens the curve further, so the interval before the next one can be longer. This is the entire mechanism behind spaced repetition.</p>",
-recall:"Why does review timing matter more than review quantity?",
-answer:"Because forgetting is steep early and shallow later — reviewing just before the drop, then extending intervals, preserves more per unit of effort than massed repetition.",
-src:"Ebbinghaus, 1885"},
+{id:"v2",topic:"value",title:"Costly signals are believed because they are costly",
+body:"<p>A signal is trusted when it would be too expensive to fake. This is why a peacock's tail communicates fitness and a cheap claim communicates nothing — anyone could make the claim; not everyone could bear the cost.</p><p>Expensive advertising once worked partly this way. The message was not the content but the visible willingness to spend.</p>",
+apply:"Your strongest signal is one a competitor could not cheaply imitate. Anyone can say they teach traditionally. Eighteen years of a documented relationship cannot be bought this year.",
+recall:"What makes a signal credible in signalling theory?",
+answer:"That it is costly enough to be unfakeable by someone who lacks the quality being signalled.",
+src:"Zahavi, 1975; Spence, 1973"},
 
-{id:"m4",topic:"memory",title:"Retrieving beats reviewing, and it isn't close",
-body:"<p>Trying to recall something changes the memory more than re-reading it does. Groups that self-test outperform groups that restudy the same material for the same time, and the gap widens as the delay before the final test grows.</p><p>The effort is the mechanism. A struggled-for retrieval strengthens the trace; an easy re-reading barely touches it.</p>",
-recall:"Under what conditions does the testing effect look largest?",
-answer:"At longer delays. Restudy can match or beat testing on an immediate test, but testing wins clearly once time has passed.",
-src:"Roediger & Karpicke, 2006"},
+{id:"v3",topic:"value",title:"Owning something makes you value it more",
+body:"<p>Give people a mug and they demand roughly twice as much to give it up as an equivalent group will pay to acquire the same mug. Ownership alone shifts the valuation.</p><p>The explanation is disputed — it may be loss aversion, or attachment, or an artefact of how the experiments are run — but the pattern replicates widely.</p>",
+apply:"Trials, samples and free periods work partly through this. Once someone has begun a practice or holds a place, giving it up costs more than acquiring it did.",
+recall:"What is the endowment effect, and how confident should you be in the explanation?",
+answer:"People value what they own more than the identical thing unowned. The pattern is robust; the mechanism is contested.",
+src:"Kahneman, Knetsch & Thaler, 1990"},
 
-{id:"m5",topic:"memory",title:"Information supplied after the event gets absorbed into it",
-body:"<p>Witnesses who receive misleading details after an event later report those details as things they saw. The post-event information is not stored separately and flagged — it merges into the original memory and becomes indistinguishable from it.</p><p>Leading questions do this reliably, and the altered memory is reported with full confidence.</p>",
-recall:"Why is misleading post-event information so damaging to a memory?",
-answer:"It is integrated into the original memory rather than stored separately, so the witness cannot tell which parts were witnessed and which were suggested.",
-src:"Loftus & Palmer, 1974"},
+{id:"v4",topic:"value",title:"Paying hurts, separately from the price",
+body:"<p>The moment of payment carries its own discomfort, distinct from whether the price is fair. Making payment less visible — a subscription, a card on file, a bundled fee — reduces that discomfort without changing the amount.</p><p>Which cuts both ways: hiding payment increases spending, and making it visible again is how people control their own spending.</p>",
+apply:"Payment structure is a separate lever from price. Instalments can raise conversion at an unchanged total, because you are reducing the pain of paying rather than the cost.",
+recall:"What does 'pain of paying' describe?",
+answer:"The discomfort of the payment moment itself, separate from whether the price is judged fair. Payment structure changes it without changing the amount.",
+src:"Prelec & Loewenstein, 1998"},
 
-{id:"m6",topic:"memory",title:"Working memory holds about four things, not seven",
-body:"<p>The famous figure of seven items came from studies that allowed rehearsal and grouping. When those are blocked, the true capacity of working memory is closer to three or four independent chunks.</p><p>This is a hard ceiling on how much novel structure you can hold at once — and the reason unfamiliar material collapses so quickly under load.</p>",
-recall:"Why is the classic 'seven plus or minus two' an overestimate?",
-answer:"Those tasks permitted rehearsal and chunking. With those stripped out, pure capacity is nearer four items.",
+{id:"v5",topic:"value",title:"Expectation changes the experience, not just the report",
+body:"<p>Told a wine is expensive, people report enjoying it more — and brain imaging shows the pleasure regions actually respond more strongly. They are not being polite. The expectation altered the experience.</p><p>The same holds for painkillers labelled as expensive and food described in more detail.</p>",
+apply:"How you frame something before it is experienced changes the experience itself. Everything a student reads before their first class is part of that class.",
+recall:"What did the wine-pricing study add beyond self-report?",
+answer:"Neural evidence that pleasure response itself increased with expected price, showing expectation altered the experience rather than only the description of it.",
+src:"Plassmann et al., 2008"},
+
+{id:"v6",topic:"value",title:"Sunk cost keeps people going in the wrong direction",
+body:"<p>Having already spent money, time or effort, people continue investing even when the remaining prospects are poor. The spent resource is gone either way, so it should be irrelevant to the next decision. It is not.</p><p>The pull is stronger when the earlier investment was public or effortful.</p>",
+apply:"Two edges. It keeps committed students committed. It also keeps you in a losing campaign long after the numbers said stop — so decide from what remains, never from what you have already spent.",
+recall:"Why is prior investment logically irrelevant to the next decision?",
+answer:"The resource is unrecoverable whichever way you choose, so only future costs and benefits should count.",
+src:"Arkes & Blumer, 1985"},
+
+{id:"v7",topic:"value",title:"Effort put in raises the value felt",
+body:"<p>People rate things they assembled or worked for more highly than identical things received finished. Some of this is justification of the effort; some is genuine attachment formed by involvement.</p><p>Instant-cake mixes reportedly sold better once the recipe required adding a real egg — the folklore version of a real effect.</p>",
+apply:"An application form that takes effort does two jobs: it filters, and it raises the value of what is being applied for. Frictionless entry is not always the goal.",
+recall:"What is the effect of a person's own effort on their valuation of a thing?",
+answer:"It raises it. Self-assembled or self-earned outcomes are valued above identical outcomes received complete.",
+src:"Norton, Mochon & Ariely, 2012",
+flag:"The egg-in-the-cake-mix story is widely repeated marketing lore with thin documentation. The underlying lab effect is real; the anecdote should not be cited as evidence."},
+
+/* ============ ATTENTION ============ */
+{id:"a1",topic:"attention",title:"Looking at something is not the same as seeing it",
+body:"<p>Asked to count basketball passes, roughly half of viewers fail to notice a person in a gorilla suit walk through the middle of the shot, stop, and beat their chest. Their eyes are pointed at it. It never reaches awareness.</p><p>Attention is not a spotlight brightening a scene you already have. It decides what gets built into the scene at all.</p>",
+apply:"Your audience is not ignoring your message. In most cases it never arrived. Assume invisibility as the default state and design against it.",
+recall:"What does inattentional blindness show about the relationship between looking and seeing?",
+answer:"They come apart. Something can fall directly on the fovea and never reach awareness if attention is engaged elsewhere.",
+src:"Simons & Chabris, 1999"},
+
+{id:"a2",topic:"attention",title:"Familiarity alone produces liking",
+body:"<p>Repeated exposure to something — a shape, a face, a word, a brand — increases how much people like it, with no other information added. It works even when people cannot recall having seen the thing before.</p><p>The effect is strongest for neutral or mildly positive material, and it can reverse if the first impression was negative.</p>",
+apply:"Consistency compounds. The same phrase, same name, same face repeated builds preference by repetition alone — which is an argument for saying one thing many times rather than many things once.",
+recall:"What does the mere exposure effect require beyond repetition?",
+answer:"Nothing. Repeated exposure alone raises liking, even without conscious recognition — though it can reverse if the initial impression was negative.",
+src:"Zajonc, 1968"},
+
+{id:"a3",topic:"attention",title:"Easy to process reads as true",
+body:"<p>Statements in clearer fonts, in rhyme, or simply repeated are judged more likely to be true. The mind treats the ease of handling a claim as weak evidence for it.</p><p>Repetition alone increases believability even for statements people previously knew were false — the illusory truth effect.</p>",
+apply:"Plain, rhythmic, repeated phrasing is not dumbing down. It is a real credibility mechanism. It is also why you should be suspicious of claims that simply feel obviously true.",
+recall:"What is the illusory truth effect?",
+answer:"Repeated statements are judged more true than novel ones, including statements the person previously knew to be false.",
+src:"Hasher et al., 1977; Reber & Schwarz, 1999"},
+
+{id:"a4",topic:"attention",title:"Working memory holds about four things",
+body:"<p>The familiar 'seven, plus or minus two' came from tasks that allowed rehearsal and grouping. Strip those out and true capacity is nearer three or four independent chunks.</p><p>That is a hard ceiling on how much unfamiliar structure someone can hold while you explain something.</p>",
+apply:"Any message with more than about four moving parts is being lost. This is a reason to cut, not a reason to write shorter sentences.",
+recall:"Why is 'seven plus or minus two' an overestimate of working memory?",
+answer:"Those tasks permitted rehearsal and chunking. Without them, capacity is closer to four items.",
 src:"Miller, 1956; revised by Cowan, 2001"},
 
-{id:"m7",topic:"memory",title:"Expertise is mostly better chunks",
-body:"<p>Chess masters recall board positions far better than novices — but only when the positions come from real games. On random arrangements their advantage largely disappears.</p><p>They are not holding more items. They are holding the same few slots filled with far larger, more meaningful units. Expertise reorganises what counts as one thing.</p>",
-recall:"What does the chess-position finding show about expert memory?",
-answer:"Experts don't have larger capacity — they have better chunks. The advantage vanishes for random positions because the meaningful units are gone.",
-src:"Chase & Simon, 1973"},
+{id:"a5",topic:"attention",title:"What you expect shapes what you perceive",
+body:"<p>Perception combines incoming signal with prior expectation. Degraded speech becomes suddenly clear once you are told what it says — and then cannot be un-heard. The expectation is not an overlay on the perception; it is part of it.</p><p>Ambiguous input is always resolved toward what context predicts.</p>",
+apply:"What someone reads before they arrive determines what they experience when they do. Framing is not decoration around the product; it enters the product.",
+recall:"Why can't you un-hear degraded speech once you know the words?",
+answer:"Expectation is a component of perception itself, so once the prior is set it constrains how the ambiguous signal resolves.",
+src:"Gregory, 1970"},
 
-/* ============ LEARNING ============ */
-{id:"l1",topic:"learning",title:"The same study time, spread out, produces more learning",
-body:"<p>Hold total study time constant and simply distribute it across days rather than massing it in one session, and long-term retention rises substantially. Nothing else changes — not the material, not the effort, only the schedule.</p><p>It is one of the most replicated findings in the field, and one of the least used, because massed study feels more productive while you're doing it.</p>",
+{id:"a6",topic:"attention",title:"Multitasking is switching, and switching costs",
+body:"<p>Demanding tasks are not run in parallel. Attention alternates, and every switch carries a cost in time and errors that persists briefly after the switch.</p><p>The felt experience of doing two things at once is real. The parallel processing is not.</p>",
+apply:"Your audience is always switching, never focused. Anything requiring sustained attention to make sense will lose most of the people it reaches.",
+recall:"Why is 'multitasking' a misleading description?",
+answer:"Demanding tasks are handled by rapid serial switching, and each switch costs time and accuracy.",
+src:"Monsell, 2003"},
+
+{id:"a7",topic:"attention",title:"Anything constant disappears",
+body:"<p>Sensory systems encode change, not steady state. A constant smell, a background hum, the pressure of clothing all vanish from awareness within minutes while the stimulus continues unchanged.</p><p>The same principle runs at longer timescales: stable circumstances, good or bad, stop registering.</p>",
+apply:"A message that never changes stops being perceived, even by people still receiving it. Not a reason to change what you say — a reason to change how you say it.",
+recall:"What principle connects sensory adaptation and hedonic adaptation?",
+answer:"Systems encode change rather than absolute level, so any constant state fades from awareness.",
+src:"Helson, 1964; Brickman & Campbell, 1971"},
+
+/* ============ WHAT MAKES A MESSAGE STICK ============ */
+{id:"s1",topic:"sticky",title:"Retrieving beats reviewing, and it isn't close",
+body:"<p>Trying to recall something changes memory far more than re-reading it. Groups that test themselves outperform groups that restudy for the same time, and the gap widens as the delay before the final test grows.</p><p>The effort is the mechanism. A struggled-for retrieval strengthens the trace; easy re-reading barely touches it.</p>",
+apply:"This is why you are using this app rather than reading a list. It is also why a question in your content outperforms a statement — you are making the reader retrieve.",
+recall:"When does the testing effect look largest?",
+answer:"At longer delays. Restudy can match or beat testing immediately, but testing wins clearly once time passes.",
+src:"Roediger & Karpicke, 2006"},
+
+{id:"s2",topic:"sticky",title:"Forgetting is steep at first, then almost flat",
+body:"<p>Loss after learning is fast in the first hours and days, then levels off. Most of what will be forgotten goes early, which makes the timing of review matter more than the amount.</p><p>Each successful review flattens the curve, so the next gap can be longer. That is the whole basis of spaced repetition.</p>",
+apply:"A message met once is gone within days. Reaching the same person at spaced intervals beats reaching more people once — an argument for sequence over reach.",
+recall:"Why does review timing matter more than review quantity?",
+answer:"Forgetting is steep early and shallow later, so reviewing just before the drop and then extending intervals preserves more per unit of effort.",
+src:"Ebbinghaus, 1885"},
+
+{id:"s3",topic:"sticky",title:"The same study time, spread out, teaches more",
+body:"<p>Hold total time constant and simply distribute it across days instead of massing it, and long-term retention rises substantially. Nothing changes but the schedule.</p><p>It is among the best-replicated findings in psychology and among the least used, because cramming feels more productive while you do it.</p>",
+apply:"Applies directly to how you teach and how you sequence content. Also to you: five cards a day for a month beats a weekend of reading.",
 recall:"Why is spacing under-used despite being so well established?",
-answer:"Because massed practice produces better immediate performance and a stronger feeling of fluency, while spacing produces better retention later.",
+answer:"Massed practice produces better immediate performance and a stronger feeling of fluency, while spacing produces better retention later.",
 src:"Cepeda et al., 2006 meta-analysis"},
 
-{id:"l2",topic:"learning",title:"Mixing problem types beats practising them in blocks",
-body:"<p>Practising A A A then B B B produces faster gains in the session. Practising A B A B produces worse performance during practice and better performance on a later test.</p><p>Blocked practice lets you reuse the last solution without re-identifying the problem. Interleaving forces you to work out which approach applies — which is the skill actually needed later.</p>",
-recall:"What does interleaving train that blocked practice does not?",
-answer:"Discriminating which strategy a problem calls for. Blocked practice removes that step by making it obvious.",
-src:"Rohrer & Taylor, 2007"},
-
-{id:"l3",topic:"learning",title:"Conditions that slow you down can deepen learning",
-body:"<p>Spacing, interleaving, testing, and varied practice all make performance worse during acquisition and better at retention. Bjork's term for them is desirable difficulties.</p><p>The trap is that learners judge their own progress by how it feels in the moment, so they systematically abandon the methods that work in favour of the ones that feel smooth.</p>",
-recall:"What makes a difficulty 'desirable'?",
-answer:"It degrades performance during practice while improving long-term retention and transfer.",
-src:"Bjork & Bjork, 1992"},
-
-{id:"l4",topic:"learning",title:"Fluency is not knowledge, and it feels exactly like knowledge",
-body:"<p>Re-reading makes text feel familiar, and familiarity is misread as mastery. Students who re-read rate their learning highly and then perform poorly; students who self-test rate their learning lower and perform better.</p><p>The judgment is the problem. Confidence tracks processing ease, and processing ease is produced by exposure rather than by understanding.</p>",
+{id:"s4",topic:"sticky",title:"Feeling fluent is not knowing",
+body:"<p>Re-reading makes material feel familiar, and familiarity gets misread as mastery. People who re-read rate their learning highly and perform poorly; people who self-test rate themselves lower and perform better.</p><p>Confidence tracks ease of processing, and ease comes from exposure rather than understanding.</p>",
+apply:"An audience that finds your explanation easy may have learned nothing. If it matters that they retain it, make them do something with it.",
 recall:"Why does re-reading produce overconfidence?",
-answer:"It increases processing fluency, which people read as a signal of mastery — but fluency comes from exposure, not from retrievable understanding.",
+answer:"It raises processing fluency, which is read as a signal of mastery — but fluency comes from exposure, not retrievable understanding.",
 src:"Koriat & Bjork, 2005"},
 
-{id:"l5",topic:"learning",title:"Material you produce is remembered better than material you read",
-body:"<p>Generating an answer, even incorrectly, before being shown the correct one improves later memory compared with simply studying the correct answer. The failed attempt is not wasted; it prepares the ground.</p><p>Practically: try to state the idea before you check it, try to solve before you're taught, guess before you look.</p>",
+{id:"s5",topic:"sticky",title:"Memory is rebuilt each time, not replayed",
+body:"<p>A memory is not retrieved intact. It is reconstructed at the moment of recall from fragments plus general expectations about how such events go. Gaps are filled silently and the result feels seamless.</p><p>This is why confidence and accuracy come apart: the reconstruction feels identical whether its inputs were right or wrong.</p>",
+apply:"What a student remembers of your teaching is partly built from what they expected it to be. Set that expectation and you are shaping the memory in advance.",
+recall:"Why can a memory feel vivid and certain while being wrong?",
+answer:"Recall reconstructs the event from fragments plus expectation, and the reconstruction feels the same regardless of whether the inputs were accurate.",
+src:"Bartlett, 1932"},
+
+{id:"s6",topic:"sticky",title:"Information supplied afterward gets absorbed into the memory",
+body:"<p>People given misleading details after an event later report those details as things they witnessed. The later information is not stored separately and flagged — it merges in and becomes indistinguishable.</p><p>Leading questions do this reliably, and the altered memory is reported with full confidence.</p>",
+apply:"What you say after an experience edits the memory of it. A follow-up message is not a summary of what happened; it is partly a rewrite of it.",
+recall:"Why is misleading post-event information so damaging?",
+answer:"It integrates into the original memory rather than being stored separately, so the person cannot distinguish witnessed from suggested.",
+src:"Loftus & Palmer, 1974"},
+
+{id:"s7",topic:"sticky",title:"Producing something beats being shown it",
+body:"<p>Generating an answer before seeing the correct one improves later memory, even when the attempt was wrong. The failed guess is not wasted; it prepares the ground.</p><p>This is why a question that makes someone try, then reveals, outperforms simply telling them.</p>",
+apply:"Structure explanations as a problem the reader attempts before you resolve it. The attempt is what makes the resolution stick.",
 recall:"Does a wrong guess before feedback help or hurt learning?",
-answer:"It helps. Attempting retrieval before receiving the answer improves later memory even when the attempt fails.",
+answer:"It helps. Attempting retrieval before the answer improves later memory even when the attempt fails.",
 src:"Slamecka & Graf, 1978; Kornell et al., 2009"},
 
-{id:"l6",topic:"learning",title:"Practice only improves what it specifically targets",
-body:"<p>Deliberate practice means working at the edge of current ability on a defined weakness, with immediate feedback, repeatedly. It is not time spent performing — a musician playing pieces they already know is not practising in this sense.</p><p>Its limits are real: accumulated practice explains a substantial share of skill variance in structured domains like chess and music, and much less in loosely structured ones.</p>",
-recall:"What distinguishes deliberate practice from ordinary repetition?",
-answer:"A specific target at the edge of ability, immediate feedback, and repetition aimed at correcting a defined weakness — not performance of what is already mastered.",
-src:"Ericsson et al., 1993",
-flag:"The popular '10,000 hours' claim overstates this. Later meta-analyses found practice accounts for roughly a third of variance in music and chess, and far less in less structured fields."},
+/* ============ WHY PEOPLE SAY YES ============ */
+{id:"y1",topic:"yes",title:"Six levers behind most compliance",
+body:"<p>Cialdini's field survey of influence practice identified six recurring levers: reciprocity, commitment and consistency, social proof, authority, liking, and scarcity.</p><p>They are descriptive regularities gathered from observation rather than a unified theory, and their individual evidence bases vary in strength. A useful checklist, a weaker explanation.</p>",
+apply:"Use it as a diagnostic, not a recipe. Run your offer against all six and notice which you are relying on — if the answer is scarcity, you have a problem.",
+recall:"Name Cialdini's six principles.",
+answer:"Reciprocity, commitment and consistency, social proof, authority, liking, scarcity.",
+src:"Cialdini, 1984"},
 
-{id:"l7",topic:"learning",title:"Skills transfer far less than anyone expects",
-body:"<p>Training on one task tends to improve that task and things closely resembling it. Broad transfer to unrelated abilities is rare, and claims of it usually dissolve under controlled testing — most famously in commercial brain-training.</p><p>If you want a capability, train the capability. Do not expect it to arrive as a side effect of training something else.</p>",
-recall:"What is the general pattern of transfer in skill learning?",
-answer:"Near transfer to similar tasks is common; far transfer to unrelated abilities is rare and usually fails under controlled test.",
-src:"Thorndike & Woodworth, 1901; Simons et al., 2016 review"},
+{id:"y2",topic:"yes",title:"An unrequested gift creates a debt",
+body:"<p>Receiving something triggers an obligation to return it, and the obligation holds even when the gift was small, unwanted and unasked for. The return is often larger than what was given.</p><p>Every free sample and unsolicited favour in commerce runs on this.</p>",
+apply:"Genuinely useful free teaching creates real obligation — which is exactly why it must be genuinely useful. A thin free thing given to trigger reciprocity is recognised and resented.",
+recall:"Why is reciprocity exploitable?",
+answer:"The obligation triggers even for unwanted, unsolicited gifts, and repayment is often disproportionately large.",
+src:"Gouldner, 1960; Regan, 1971"},
 
-/* ============ MOTIVATION & CONTROL ============ */
-{id:"mo1",topic:"motivation",title:"Paying people for what they already enjoy reduces the enjoyment",
-body:"<p>Reward someone for an activity they were doing freely and their interest in it often drops once the reward stops. The behaviour gets reattributed: it stops being something you do because you want to and becomes something you do to get paid.</p><p>The effect is strongest for rewards that are expected, tangible, and tied to simply doing the task rather than to doing it well.</p>",
-recall:"Which kind of reward most damages intrinsic motivation?",
-answer:"Expected, tangible rewards given for merely engaging in the task. Unexpected rewards and rewards for genuine quality do far less harm.",
-src:"Deci, 1971; Lepper et al., 1973"},
+{id:"y3",topic:"yes",title:"A small yes makes a large yes likelier",
+body:"<p>People who agree to a trivial request become substantially more likely to agree to a much larger one later. Having acted, they now hold a self-image consistent with that action.</p><p>The mechanism is self-perception: the first compliance is evidence about what kind of person you are, and the second follows from it.</p>",
+apply:"The sequence matters more than the ask. Someone who has already read, replied, or attended once is a different person to ask than a stranger.",
+recall:"What mechanism explains foot-in-the-door?",
+answer:"Self-perception — the small initial compliance revises the person's self-image, and the larger request then fits it.",
+src:"Freedman & Fraser, 1966"},
 
-{id:"mo2",topic:"motivation",title:"Three needs predict whether motivation sustains itself",
-body:"<p>Self-determination theory identifies autonomy (I chose this), competence (I am getting better), and relatedness (this connects me to people) as the conditions under which motivation becomes self-sustaining.</p><p>Environments that supply all three produce persistence without supervision. Environments that supply none require constant external pressure to keep behaviour going.</p>",
-recall:"Name the three needs in self-determination theory and what each contributes.",
-answer:"Autonomy (volition — I chose this), competence (visible improvement), relatedness (connection to others). Together they make motivation self-sustaining.",
-src:"Deci & Ryan, 1985"},
+{id:"y4",topic:"yes",title:"Restriction attracts, until it looks like manipulation",
+body:"<p>Scarcity raises perceived value, and newly imposed scarcity raises it more than long-standing scarcity. But limits also trigger reactance — a perceived attempt to control your choice produces motivation to reassert it.</p><p>Whether scarcity pulls or repels depends almost entirely on whether the limit reads as real.</p>",
+apply:"Ten places is true, so say ten. A countdown timer on a lineage programme reads as manufactured, triggers reactance, and costs you exactly the serious buyer you wanted.",
+recall:"When does scarcity produce reactance instead of desire?",
+answer:"When the limit reads as a deliberate attempt to control the person's choice rather than a genuine constraint.",
+src:"Worchel et al., 1975; Brehm, 1966"},
 
-{id:"mo3",topic:"motivation",title:"Deciding in advance where and when beats deciding to try harder",
-body:"<p>An intention like 'I will practise more' fails far more often than 'when it is 6am and I am in the kitchen, I will roll out the mat.' The second specifies a cue and links it to an action, so the situation triggers the behaviour instead of your resolve having to.</p><p>Effect sizes for these if-then plans are consistently moderate across many domains — one of the more dependable interventions in the literature.</p>",
+{id:"y5",topic:"yes",title:"Authority markers work without the authority",
+body:"<p>Compliance rises with titles, uniforms and credentials, largely regardless of whether the person holds relevant expertise. The cue gets processed rather than the substance behind it.</p><p>Which is precisely why unearned credentials are valuable to people selling things.</p>",
+apply:"Your authority is verifiable, which is rarer than it sounds. State it exactly and let the precision do the work — inflation converts a real asset into a cue anyone could fake.",
+recall:"What does the authority effect actually respond to?",
+answer:"Surface markers of authority — titles, uniforms, credentials — rather than verified relevant expertise.",
+src:"Bickman, 1974"},
+
+{id:"y6",topic:"yes",title:"People copy people, especially when unsure",
+body:"<p>Where the right action is ambiguous, people look at what others are doing and copy it. The effect strengthens with uncertainty and with similarity to the people being observed.</p><p>It works even against plain evidence: in the line-matching studies, participants gave visibly wrong answers about a third of the time when everyone before them did.</p>",
+apply:"Social proof from people your buyer recognises as like themselves is worth far more than volume. Ten named practitioners beat a thousand anonymous ones.",
+recall:"What two conditions strengthen social proof?",
+answer:"Uncertainty about the correct action, and similarity between the observer and the people being observed.",
+src:"Asch, 1951; Cialdini, 1984"},
+
+{id:"y7",topic:"yes",title:"One dissenting voice breaks conformity",
+body:"<p>In the line-matching studies, the critical variable was unanimity. A single other person giving a different answer — even a different wrong answer — collapsed conformity dramatically.</p><p>It was never the size of the majority. It was whether it was unbroken.</p>",
+apply:"You do not need to outnumber the consensus in your field. You need to be the visible dissenting voice, which is a far cheaper position to occupy.",
+recall:"What single factor most reduces conformity?",
+answer:"Breaking unanimity. One dissenter, even an incorrect one, sharply reduces it.",
+src:"Asch, 1951"},
+
+/* ============ IDENTITY & TRIBES ============ */
+{id:"t1",topic:"tribes",title:"Group loyalty forms on nothing at all",
+body:"<p>Divide people by a coin flip, or by which painter they claim to prefer, and they immediately favour their own group when allocating resources. No history, no contact, no competition, nothing at stake.</p><p>More striking: people often prefer widening the gap between groups over maximising their own group's absolute gain. Relative standing beats benefit.</p>",
+apply:"A group forms around a marker, however arbitrary — a word, a practice, a way of doing something. You do not need a big audience to have a tribe; you need a visible boundary.",
+recall:"What does the minimal group paradigm show?",
+answer:"In-group favouritism needs no real basis — arbitrary categorisation alone produces it, and people often prioritise relative advantage over absolute gain.",
+src:"Tajfel et al., 1971"},
+
+{id:"t2",topic:"tribes",title:"Everyone privately disagrees and publicly complies",
+body:"<p>Pluralistic ignorance is when most people in a group privately reject a norm but assume everyone else accepts it, because nobody says otherwise. Each person's silence becomes evidence for everyone else's belief.</p><p>It sustains norms almost nobody actually holds, and it collapses fast once one person says the private thing out loud.</p>",
+apply:"If you suspect many people in your field quietly think the standard advice is wrong, saying so publicly is unusually high-leverage. You are not creating agreement — you are revealing it.",
+recall:"What sustains a norm under pluralistic ignorance, and what breaks it?",
+answer:"Mutual silence read as agreement sustains it. One person voicing the private view breaks it.",
+src:"Prentice & Miller, 1993"},
+
+{id:"t3",topic:"tribes",title:"Identity beats incentive",
+body:"<p>People act to remain consistent with who they believe they are, sometimes against their own material interest. Framing a behaviour as an identity rather than an action changes uptake — asking people to 'be a voter' outperforms asking them 'to vote'.</p><p>Once a behaviour is part of the self-concept it needs far less external motivation to continue.</p>",
+apply:"Sell membership in a description of a person, not a service. 'Someone who practises daily' is a stronger thing to become than 'someone who bought a course'.",
+recall:"Why does identity framing outperform behaviour framing?",
+answer:"Behaviour tied to self-concept is maintained to stay consistent with identity, requiring far less external motivation than behaviour framed as a discrete act.",
+src:"Bryan et al., 2011"},
+
+{id:"t4",topic:"tribes",title:"Similarity and familiarity produce liking, and liking produces yes",
+body:"<p>People comply far more readily with those they like, and liking is generated by cues largely unrelated to merit: similarity, attractiveness, familiarity from repeated contact, and cooperating toward a shared goal.</p><p>Similarity is the strongest of these and the cheapest to establish honestly.</p>",
+apply:"Being recognisably one of them — same practice, same problems, same history — does more than any credential. This is the part of authority that cannot be bought.",
+recall:"Name four cues that reliably generate liking.",
+answer:"Similarity, attractiveness, mere exposure or familiarity, and cooperation toward a common goal.",
+src:"Cialdini, 1984; Zajonc, 1968"},
+
+{id:"t5",topic:"tribes",title:"Explaining others by character, yourself by circumstance",
+body:"<p>When someone else is abrupt, they are rude. When you are abrupt, you were tired and late. The observer reaches for personality; the actor knows the situation.</p><p>The asymmetry is partly informational — you can see your own pressures and not theirs — and partly perceptual, since the person is vivid and their situation is background.</p>",
+apply:"When a prospect does not respond, the instinct is 'they are not serious'. Usually they were busy. Building for the situation converts better than judging the character.",
+recall:"What are the two sources of the actor-observer asymmetry?",
+answer:"Information — you know your own situational pressures but not theirs — and salience, since the person is figure and the situation is ground.",
+src:"Jones & Harris, 1967; Ross, 1977",
+flag:"Weaker and sometimes reversed in East Asian samples, where situational explanation comes more readily. Likely culturally bounded rather than a human universal."},
+
+{id:"t6",topic:"tribes",title:"More witnesses can mean less help",
+body:"<p>As the number of bystanders rises, the chance any individual acts falls. Responsibility diffuses, and other people's visible inaction is read as evidence that nothing is wrong.</p><p>The nuance matters: in unambiguous, genuinely dangerous situations, recent video-based studies find intervention is actually common.</p>",
+apply:"A message addressed to everyone is acted on by nobody. Addressing one identifiable person — by name, by situation, by description — removes the diffusion.",
+recall:"When is the bystander effect weakest?",
+answer:"In unambiguous, clearly dangerous emergencies, where video studies find intervention rates are high.",
+src:"Darley & Latané, 1968; Philpot et al., 2020"},
+
+{id:"t7",topic:"tribes",title:"The prison study is a cautionary tale, not evidence",
+body:"<p>The Stanford Prison Experiment is still taught as proof that situations turn ordinary people brutal. Archival recordings show guards were coached toward harshness, and at least one famous breakdown was later described by the participant as acting.</p><p>No control condition, tiny sample, and the experimenter running his own hypothesis from inside the study.</p>",
+apply:"A direct test of your sources. If a marketing book presents this as settled evidence about human nature, that tells you how carefully it treats its other claims.",
+recall:"Name three methodological problems with the Stanford Prison Experiment.",
+answer:"Guards were coached toward hostility, there was no control condition, and the sample was tiny with the experimenter participating.",
+src:"Le Texier, 2019; Blum, 2018"},
+
+/* ============ STORY & EMOTION ============ */
+{id:"e1",topic:"story",title:"Events do not cause emotions — interpretations do",
+body:"<p>The same event produces different emotions in different people and in the same person on different days. What varies is the appraisal: threat or challenge, my fault or not, something I can act on or not.</p><p>The appraisal sits between the event and the feeling, which is what makes emotion changeable at all.</p>",
+apply:"You are rarely changing someone's situation. You are offering a different reading of it — and that is not a trick, it is where the feeling actually comes from.",
+recall:"Where does appraisal sit in the causal chain, and why does it matter?",
+answer:"Between event and emotion. Because the appraisal generates the feeling, revising it changes the feeling.",
+src:"Lazarus, 1991"},
+
+{id:"e2",topic:"story",title:"Absorbed in a story, people stop arguing back",
+body:"<p>When someone is transported into a narrative, counter-arguing drops sharply and attitudes shift toward the story's implications. The same claim made directly triggers resistance; embedded in a narrative it often does not.</p><p>Transportation depends on absorption, not on whether the story is true.</p>",
+apply:"This is why a case study outperforms a claim, and also why you should be careful. A story that carries a claim past someone's judgment is powerful and easy to misuse.",
+recall:"What happens to counter-arguing under narrative transportation?",
+answer:"It drops substantially, and attitudes move toward the story's implications without the resistance a direct claim would trigger.",
+src:"Green & Brock, 2000"},
+
+{id:"e3",topic:"story",title:"Naming a feeling reduces it",
+body:"<p>Putting an emotion into words — naming the state, not describing the situation — lowers its physiological intensity. Imaging shows reduced amygdala response with increased prefrontal activity when people label what they feel.</p><p>The everyday version works: 'I'm anxious about this' does more than analysing why the situation is hard.</p>",
+apply:"Naming your reader's unspoken feeling before making any argument is the single most disarming move available. It is also just accurate, which is why it works.",
+recall:"What distinguishes affect labeling from talking about a problem?",
+answer:"Labeling names the emotional state itself rather than the circumstances, and that naming is what reduces intensity.",
+src:"Lieberman et al., 2007"},
+
+{id:"e4",topic:"story",title:"People are bad at predicting how they will feel",
+body:"<p>People consistently overestimate how intense and how long-lasting their reaction to a future event will be, good and bad alike. It shows up for exam results, breakups, promotions and serious diagnoses.</p><p>Two causes: imagining the event in isolation, and forgetting that you will adapt and make sense of it.</p>",
+apply:"Promises about how someone will feel afterward are believed at the moment of purchase and rarely match the experience. Sell what actually happens, not the imagined feeling.",
+recall:"What two mechanisms produce the impact bias?",
+answer:"Focalism — imagining the event in isolation — and failure to anticipate adaptation.",
+src:"Gilbert & Wilson, 1998"},
+
+{id:"e5",topic:"story",title:"Mood gets used as evidence about unrelated things",
+body:"<p>Feelings are read as information even when they came from somewhere else. Mood at the moment of judgment shifts reports of life satisfaction, and people asked on pleasant days report being happier overall.</p><p>Point out the real source of the mood and the effect disappears.</p>",
+apply:"Where and when someone encounters your message becomes part of how they judge it. Context is not neutral packaging.",
+recall:"What removes the influence of incidental mood on an unrelated judgment?",
+answer:"Making the true source of the mood salient, so the person stops treating the feeling as information about the question.",
+src:"Schwarz & Clore, 1983"},
+
+{id:"e6",topic:"story",title:"Reinterpreting works; pushing down does not",
+body:"<p>Two strategies that look similar behave completely differently. Reappraisal — changing what a situation means — reduces both the felt emotion and its physical signature. Suppression — holding the face flat while feeling it fully — leaves arousal untouched, impairs memory for the episode, and raises stress in the other person.</p><p>Reappraisal also works better applied early.</p>",
+apply:"Useful for you personally in difficult conversations with students and hosts. Suppressing irritation transmits it; reinterpreting the situation actually reduces it.",
+recall:"What are the three documented costs of expressive suppression?",
+answer:"Arousal is unchanged, memory for the episode is impaired, and stress rises in conversation partners.",
+src:"Gross, 1998"},
+
+{id:"e7",topic:"story",title:"Finer emotional vocabulary predicts better regulation",
+body:"<p>Some people experience feeling in broad strokes — good, bad, stressed. Others distinguish frustration from disappointment from resentment. Higher granularity is associated with more effective regulation and less reliance on drinking and aggression under distress.</p><p>A precise diagnosis suggests a precise response; 'bad' suggests only escape.</p>",
+apply:"Writing that names a specific feeling rather than a general one lands harder, because it demonstrates you actually know the reader's situation.",
+recall:"Why would finer emotional distinctions improve regulation?",
+answer:"A precisely identified state implies a specific appropriate response, while an undifferentiated 'bad' offers only blunt escape.",
+src:"Barrett et al., 2001"},
+
+/* ============ GETTING SOMEONE TO ACT ============ */
+{id:"n1",topic:"action",title:"Deciding when and where beats deciding to try harder",
+body:"<p>'I will practise more' fails far more often than 'when it is 6am and I am in the kitchen, I will roll out the mat.' The second names a cue and links it to an action, so the situation triggers the behaviour instead of resolve having to.</p><p>These if-then plans show consistently moderate effects across many domains — one of the more dependable interventions in the literature.</p>",
+apply:"Never end with 'get started'. End with a specific when and where. The gap between intention and action is closed by specificity, not by motivation.",
 recall:"Why does an if-then plan outperform a general intention?",
 answer:"It delegates initiation to a specific environmental cue rather than to in-the-moment willpower.",
 src:"Gollwitzer, 1999; Gollwitzer & Sheeran, 2006 meta-analysis"},
 
-{id:"mo4",topic:"motivation",title:"Willpower does not work like a fuel tank",
-body:"<p>For two decades the standard account held that self-control draws on a limited resource depleted by use — the ego depletion model. It was cited thousands of times and shaped a great deal of popular advice.</p><p>Large pre-registered replication attempts have found effects near zero. The original literature shows strong signs of publication bias. Treat the fuel-tank metaphor as unsupported.</p>",
-recall:"What happened to the ego depletion model under pre-registered replication?",
-answer:"Multi-lab pre-registered attempts found effects close to zero, and the original literature shows evidence of publication bias. The model is no longer considered well supported.",
-src:"Baumeister et al., 1998; Hagger et al., 2016 multi-lab replication",
-flag:"A useful case study: a finding can be famous, intuitive, endlessly cited, and still not survive careful testing. Popular psychology books written before 2016 present this as settled fact."},
+{id:"n2",topic:"action",title:"Small friction stops large intentions",
+body:"<p>Tiny obstacles — an extra form field, an unclear next step, a login — reduce completion far more than their size suggests. Equally, tiny conveniences increase it.</p><p>Behaviour is far more sensitive to the difficulty of the immediate next step than to the size of the eventual benefit.</p>",
+apply:"Before adding persuasion, remove steps. Most conversion problems are friction problems wearing a motivation costume.",
+recall:"Why does small friction have outsized effects on behaviour?",
+answer:"Behaviour responds to the difficulty of the immediate next step far more than to the magnitude of the eventual reward.",
+src:"Lewin, 1951; behavioural insights field literature"},
 
-{id:"mo5",topic:"motivation",title:"Habits are cued by context, which is why moving house breaks them",
-body:"<p>A habit is an association between a stable context and a response, strengthened by repetition until the context alone triggers the action with little deliberation. The strength of the habit tracks the stability of the setting.</p><p>Change the setting — new home, new schedule, travel — and the cue structure dissolves. This is why relocation is simultaneously the hardest time to keep good habits and the easiest time to install new ones.</p>",
+{id:"n3",topic:"action",title:"Willpower is not a fuel tank",
+body:"<p>For two decades the standard account held that self-control draws on a limited resource depleted by use. It was cited thousands of times and shaped a great deal of popular advice.</p><p>A 23-lab pre-registered replication with 2,141 participants found an effect of d = 0.04, with a confidence interval spanning zero. The original literature shows signs of publication bias.</p>",
+apply:"Any book advising you to schedule hard decisions early because willpower drains is repeating a dead finding. Check the publication date of the advice you are following.",
+recall:"What did the multi-lab pre-registered replication of ego depletion find?",
+answer:"An effect of d = 0.04 with a 95% confidence interval including zero — effectively null — across 23 labs and 2,141 participants.",
+src:"Baumeister et al., 1998; Hagger et al., 2016 — verified",
+flag:"The clearest case study in this deck: famous, intuitive, endlessly cited, and it did not survive careful testing."},
+
+{id:"n4",topic:"action",title:"Habits are cued by context, which is why travel breaks them",
+body:"<p>A habit is an association between a stable context and a response, repeated until the context alone triggers the action with little deliberation. Habit strength tracks the stability of the setting.</p><p>Change the setting — new home, new schedule, travel — and the cue structure dissolves.</p>",
+apply:"Relocation is the hardest time to keep habits and the easiest time to install them. For a travelling teacher this is both a warning and an opening.",
 recall:"Why does changing environment disrupt established habits?",
-answer:"Habits are triggered by stable context cues. Removing those cues removes the trigger, leaving the behaviour to deliberate intention again.",
+answer:"Habits are triggered by stable context cues; removing the cues removes the trigger, returning the behaviour to deliberate intention.",
 src:"Wood & Neal, 2007"},
 
-{id:"mo6",topic:"motivation",title:"Effort rises as the goal comes into view",
-body:"<p>People and animals accelerate as they approach a reward. Loyalty cards with two stamps pre-filled get completed faster than identical cards starting at zero, because the same remaining distance now reads as partial progress.</p><p>The lever is not the actual distance but the perceived proportion completed — which is why framing where someone stands changes how hard they push.</p>",
+{id:"n5",topic:"action",title:"Effort rises as the goal comes into view",
+body:"<p>People and animals accelerate as they approach a reward. Loyalty cards with two stamps already filled get completed faster than identical cards starting empty, because the same remaining distance now reads as progress underway.</p><p>The lever is perceived proportion completed, not actual distance.</p>",
+apply:"Show people where they already are rather than where they need to get to. The identical journey feels shorter when framed as partly done.",
 recall:"Why do pre-stamped loyalty cards get completed faster?",
-answer:"They reframe the same remaining work as progress already underway, and effort scales with perceived proportion completed.",
-src:"Hull, 1932; Kivetz et al., 2006"},
+answer:"They reframe the same remaining work as progress already begun, and effort scales with perceived proportion completed.",
+src:"Kivetz et al., 2006"},
 
-{id:"mo7",topic:"motivation",title:"The marshmallow study measured more than self-control",
-body:"<p>Children who waited for a larger reward were later found to have better outcomes, and the study became shorthand for willpower determining life success. The causal reading was always weaker than the popular one.</p><p>Larger, better-controlled replications find the association shrinks substantially once family background and home environment are accounted for. Waiting partly reflects whether a child has learned that promises get kept.</p>",
-recall:"What does controlling for background do to the marshmallow test's predictive power?",
-answer:"It shrinks it substantially. Much of the original association reflects socioeconomic environment and learned reliability of promises rather than trait willpower.",
-src:"Mischel et al., 1972; Watts et al., 2018 replication"},
+{id:"n6",topic:"action",title:"Paying people for what they already enjoy reduces the enjoyment",
+body:"<p>Reward someone for something they were doing freely and their interest often drops once the reward stops. The behaviour is reattributed — it stops being something you want to do and becomes something you are paid for.</p><p>Worst for rewards that are expected, tangible, and given for merely doing the task rather than doing it well.</p>",
+apply:"Discounts and incentives can quietly convert intrinsic students into transactional ones. What you use to acquire someone shapes why they stay.",
+recall:"Which kind of reward most damages intrinsic motivation?",
+answer:"Expected, tangible rewards for merely engaging in the task. Unexpected rewards and rewards for genuine quality do far less harm.",
+src:"Deci, 1971; Lepper et al., 1973"},
 
-/* ============ EMOTION ============ */
-{id:"e1",topic:"emotion",title:"Events do not cause emotions — appraisals do",
-body:"<p>The same event produces different emotions in different people, and different emotions in the same person on different days. What varies is the appraisal: is this a threat or a challenge, is it my fault, can I do anything about it.</p><p>This is the opening that makes emotion regulation possible at all. The appraisal sits between the event and the feeling, and it can be revised.</p>",
-recall:"Where does appraisal sit in the causal chain, and why does that matter?",
-answer:"Between event and emotion. Because the appraisal generates the feeling, revising the appraisal changes the feeling — which is what makes regulation possible.",
-src:"Lazarus, 1991; Scherer"},
+{id:"n7",topic:"action",title:"Three conditions make motivation self-sustaining",
+body:"<p>Self-determination theory identifies autonomy (I chose this), competence (I am visibly improving), and relatedness (this connects me to people) as the conditions under which motivation keeps itself going.</p><p>Supply all three and persistence needs no supervision. Supply none and behaviour requires constant external pressure.</p>",
+apply:"Retention is not a reminder problem. Students leave when they cannot see progress, feel no choice, or feel alone in it — check those three before adding another email.",
+recall:"Name the three needs in self-determination theory.",
+answer:"Autonomy, competence, relatedness — volition, visible improvement, and connection to others.",
+src:"Deci & Ryan, 1985"},
 
-{id:"e2",topic:"emotion",title:"Naming a feeling reduces its intensity",
-body:"<p>Putting an emotion into words — not describing the situation, but naming the state — lowers its physiological intensity. Neuroimaging shows reduced amygdala response accompanied by increased prefrontal activity when people label what they feel.</p><p>The everyday version works. 'I'm anxious about this' does measurably more than analysing why the situation is difficult.</p>",
-recall:"What distinguishes affect labeling from simply talking about a problem?",
-answer:"Labeling names the emotional state itself rather than describing the circumstances, and it is that naming that reduces physiological intensity.",
-src:"Lieberman et al., 2007"},
-
-{id:"e3",topic:"emotion",title:"Reinterpreting works; pushing down does not",
-body:"<p>Two strategies look similar and behave completely differently. Reappraisal — changing what the situation means — reduces the felt emotion and its physical signature. Suppression — holding the expression flat while feeling it fully — leaves the arousal in place, impairs memory for what happened, and raises stress in the people you're talking to.</p><p>Reappraisal also works better applied early, before the emotion has fully developed.</p>",
-recall:"What are the three documented costs of expressive suppression?",
-answer:"Physiological arousal is unchanged, memory for the episode is impaired, and stress increases in conversation partners.",
-src:"Gross, 1998, 2002"},
-
-{id:"e4",topic:"emotion",title:"You are bad at predicting how you will feel",
-body:"<p>People consistently overestimate how intense and how long-lasting their emotional reaction to a future event will be — good and bad alike. The impact bias appears for exam results, breakups, promotions, and serious medical diagnoses.</p><p>The reason is focalism plus adaptation: you imagine the event in isolation and forget that the rest of life keeps arriving, and that you will make sense of it.</p>",
-recall:"What two mechanisms produce the impact bias?",
-answer:"Focalism (imagining the event in isolation) and failure to anticipate adaptation (the psychological immune system that makes sense of what happens).",
-src:"Gilbert & Wilson, 1998; 2003"},
-
-{id:"e5",topic:"emotion",title:"Emotions carry information, and it is often about the wrong thing",
-body:"<p>Feelings are used as data when judging unrelated questions. Mood at the moment of judgment shifts reports of life satisfaction, and people asked on pleasant days report being happier overall.</p><p>When attention is drawn to the real source of the mood, the effect disappears — the feeling stops being read as evidence about the question.</p>",
-recall:"What removes the influence of incidental mood on an unrelated judgment?",
-answer:"Making the true source of the mood salient. Once people attribute the feeling correctly, they stop using it as information about the judgment.",
-src:"Schwarz & Clore, 1983"},
-
-{id:"e6",topic:"emotion",title:"Finer emotional vocabulary predicts better regulation",
-body:"<p>Some people experience emotion in broad strokes — good, bad, stressed. Others distinguish frustration from disappointment from resentment. Higher granularity is associated with more effective regulation and less reliance on drinking and aggression under distress.</p><p>The plausible mechanism is precision of response: a specific diagnosis suggests a specific action, while 'bad' suggests only escape.</p>",
-recall:"Why would finer emotional distinctions improve regulation?",
-answer:"A precisely identified state implies a specific appropriate response; an undifferentiated 'bad' offers only blunt escape strategies.",
-src:"Barrett et al., 2001; Kashdan et al., 2015"},
-
-{id:"e7",topic:"emotion",title:"Bodily signals are part of the emotion, not a readout of it",
-body:"<p>Interoception — the perception of internal bodily state — contributes to emotional experience rather than merely reflecting it. People differ reliably in how accurately they detect their own heartbeat, and that accuracy correlates with intensity of emotional experience.</p><p>It also means physical state feeds directly into emotional interpretation: exhaustion and hunger are not neutral backgrounds to a mood.</p>",
-recall:"What is interoception's role in emotion?",
-answer:"It is constitutive, not merely reflective — bodily signals feed into the construction of the emotional experience itself.",
-src:"Critchley & Garfinkel, 2017"},
-
-/* ============ SOCIAL ============ */
-{id:"s1",topic:"social",title:"People will deny plain evidence to match a group",
-body:"<p>Asked which line matches a reference line — a task with an obvious answer — participants gave the wrong answer roughly a third of the time when confederates unanimously gave it first. Most conformed at least once across trials.</p><p>The critical variable is unanimity. A single dissenter, even one giving a different wrong answer, collapses conformity dramatically.</p>",
-recall:"What single factor most reduces conformity in the Asch paradigm?",
-answer:"Breaking unanimity. One dissenting voice — even an incorrect one — sharply reduces conformity.",
-src:"Asch, 1951"},
-
-{id:"s2",topic:"social",title:"Ordinary people follow instructions further than anyone predicts",
-body:"<p>Instructed by an experimenter to deliver what they believed were escalating shocks, a majority of participants continued to the maximum level. Predictions beforehand — including from psychiatrists — put the figure near one percent.</p><p>The finding is real and important. The interpretation is contested: archival work shows the script was applied inconsistently and many participants doubted the setup.</p>",
-recall:"What is solid about Milgram's obedience work, and what is contested?",
-answer:"Solid: people comply far beyond what anyone predicts. Contested: the experimenter script varied more than reported, and many participants suspected the shocks were not real.",
-src:"Milgram, 1963; Perry, 2013 archival reanalysis"},
-
-{id:"s3",topic:"social",title:"More witnesses can mean less help",
-body:"<p>As the number of bystanders rises, the probability that any individual intervenes falls. Responsibility diffuses, and the visible inaction of others is read as evidence that intervention is unnecessary.</p><p>The nuance matters: in genuinely dangerous, unambiguous emergencies, video studies find intervention is actually common. The effect is strongest when the situation is ambiguous.</p>",
-recall:"When is the bystander effect weakest?",
-answer:"In unambiguous, clearly dangerous emergencies — where recent video-based studies find intervention rates are high.",
-src:"Darley & Latané, 1968; Philpot et al., 2020"},
-
-{id:"s4",topic:"social",title:"Group loyalty forms on nothing at all",
-body:"<p>Divide people by a coin flip, or by which painter they said they preferred, and they will immediately allocate more resources to their own group. No history, no contact, no competition, no stake.</p><p>Strikingly, participants often prefer maximising the gap between groups over maximising their own group's absolute gain. Relative standing outranks benefit.</p>",
-recall:"What does the minimal group paradigm demonstrate about in-group bias?",
-answer:"That it needs no real basis — arbitrary categorisation alone produces favouritism, and people often prioritise relative advantage over absolute gain.",
-src:"Tajfel et al., 1971"},
-
-{id:"s5",topic:"social",title:"Everyone privately disagrees and publicly complies",
-body:"<p>Pluralistic ignorance occurs when most members of a group privately reject a norm but assume everyone else accepts it, because nobody voices doubt. Each person's silence becomes evidence for everyone else.</p><p>It sustains norms that almost nobody actually endorses, and it collapses quickly once one person states the private view out loud.</p>",
-recall:"What sustains a norm under pluralistic ignorance, and what breaks it?",
-answer:"Mutual silence read as agreement sustains it. One person voicing the private view breaks it.",
-src:"Katz & Allport, 1931; Prentice & Miller, 1993"},
-
-{id:"s6",topic:"social",title:"The prison study is a cautionary tale, not evidence",
-body:"<p>The Stanford Prison Experiment is still taught as showing that situations transform ordinary people into brutes. Archival recordings and participant accounts show guards were coached toward harshness, and at least one famous breakdown was later described by the participant as performance.</p><p>It had no control condition, a tiny sample, and an experimenter running his own hypothesis. It is best studied as an example of how not to run research.</p>",
-recall:"Name three methodological problems with the Stanford Prison Experiment.",
-answer:"Guards were explicitly coached toward hostility, there was no control condition, and the sample was tiny with the experimenter actively participating.",
-src:"Zimbardo, 1971; Le Texier, 2019; Blum, 2018",
-flag:"If a book or course presents this as a demonstration of human nature, that tells you something about the book. It is a strong signal to check its other claims."},
-
-{id:"s7",topic:"social",title:"An unrequested gift creates a debt",
-body:"<p>Receiving something triggers a strong obligation to return it, and the obligation holds even when the gift was unwanted, unsolicited, and small. The return is often disproportionately large.</p><p>Every free sample and unsolicited favour in commerce runs on this. Recognising the gift as a move rather than a kindness is what restores the choice.</p>",
-recall:"Why is reciprocity exploitable as an influence tactic?",
-answer:"The obligation triggers even for unwanted, unsolicited gifts, and the repayment is often larger than what was given.",
-src:"Gouldner, 1960; Regan, 1971"},
-
-/* ============ INFLUENCE ============ */
-{id:"i1",topic:"influence",title:"Six levers account for most compliance",
-body:"<p>Cialdini's survey of influence practice identified reciprocity, commitment and consistency, social proof, authority, liking, and scarcity as the recurring levers behind requests that get agreed to.</p><p>They are descriptive regularities drawn from field observation rather than a unified theory, and their individual evidence bases vary in strength. Useful as a checklist, weaker as an explanation.</p>",
-recall:"List Cialdini's six principles.",
-answer:"Reciprocity, commitment and consistency, social proof, authority, liking, scarcity.",
-src:"Cialdini, 1984"},
-
-{id:"i2",topic:"influence",title:"A small yes makes a large yes far more likely",
-body:"<p>People who agree to a trivial request become substantially more likely to agree to a much bigger one later. Having acted, they now hold a self-image consistent with that action, and the larger request is congruent with it.</p><p>The mechanism is self-perception: the first compliance supplies evidence about what kind of person you are, and the second follows from it.</p>",
-recall:"What mechanism explains the foot-in-the-door effect?",
-answer:"Self-perception — the initial small compliance revises the person's self-image, and the larger request then fits that image.",
-src:"Freedman & Fraser, 1966"},
-
-{id:"i3",topic:"influence",title:"Restricting something increases its pull — and can backfire",
-body:"<p>Scarcity raises perceived value, and newly imposed scarcity raises it more than long-standing scarcity. But limits also trigger reactance: a perceived attempt to control your choice produces motivation to reassert it.</p><p>Whether scarcity attracts or repels depends almost entirely on whether the limit reads as genuine or as manufactured pressure.</p>",
-recall:"When does scarcity produce reactance instead of desire?",
-answer:"When the limit reads as a deliberate attempt to control the person's choice rather than as a real constraint.",
-src:"Worchel et al., 1975; Brehm, 1966"},
-
-{id:"i4",topic:"influence",title:"How a choice is described changes which one is taken",
-body:"<p>The same outcome described as saving 200 of 600 lives, or as 400 of 600 dying, produces opposite preferences. Nothing about the options differs — only whether the frame is a gain or a loss.</p><p>Gain frames pull toward the safe option; loss frames pull toward the risky one. The effect appears in experts making decisions in their own field.</p>",
-recall:"Which way does risk preference shift between gain and loss frames?",
-answer:"Gain frames produce risk aversion (take the sure thing); loss frames produce risk seeking (gamble to avoid the loss).",
-src:"Tversky & Kahneman, 1981"},
-
-{id:"i5",topic:"influence",title:"Losses weigh more than equivalent gains — but how much more is disputed",
-body:"<p>Loss aversion holds that a loss hurts more than an equal gain pleases. The commonly quoted ratio of about two to one is far less stable than its popularity suggests.</p><p>Recent reviews argue much of the evidence is explainable without a general loss-aversion parameter, and that the asymmetry depends heavily on stake size and context. Directionally sound, quantitatively soft.</p>",
+/* ============ THE OFFER ============ */
+{id:"o1",topic:"offer",title:"Losses loom larger than gains — but less than you were told",
+body:"<p>The standard claim is that a loss hurts about twice as much as an equivalent gain pleases. The direction has support in many settings. The famous 2:1 ratio does not travel well.</p><p>A 2018 review argued the accumulated evidence does not show losses are, on balance, more impactful than gains. Critics pushed back that this overstates the case, while agreeing the effect is far less universal and robust than the popular version implies.</p>",
+apply:"Loss framing is worth testing, not assuming. If a marketing book builds a whole method on a fixed 2:1 multiplier, it is treating a contested parameter as a constant.",
 recall:"What is the current status of the 2:1 loss aversion ratio?",
-answer:"Contested. The direction of the effect holds in many settings, but the ratio is unstable and some reviews question whether a general parameter is needed at all.",
-src:"Kahneman & Tversky, 1979; Gal & Rucker, 2018"},
+answer:"Contested. The direction holds in many settings, but the ratio is unstable and some reviews question whether a general loss-aversion parameter is needed at all.",
+src:"Kahneman & Tversky, 1979; Gal & Rucker, 2018 — verified"},
 
-{id:"i6",topic:"influence",title:"Authority signals work without the authority",
-body:"<p>Compliance rises with markers of authority — titles, uniforms, credentials — largely independent of whether the person actually holds relevant expertise. The cue is processed rather than the substance.</p><p>Which is precisely why unearned credentials are worth so much to people selling things, and why verifying the claim behind a credential is the whole defence.</p>",
-recall:"What does the authority effect actually respond to?",
-answer:"The surface markers of authority — titles, uniforms, credentials — rather than verified relevant expertise.",
-src:"Bickman, 1974; Milgram, 1963"},
+{id:"o2",topic:"offer",title:"Risk reversal removes the real objection",
+body:"<p>The objection blocking a purchase is usually not price. It is 'what if I am wrong'. Guarantees convert because they move that risk from the buyer to the seller, which removes the reason to postpone.</p><p>The strength of a guarantee is how much risk it genuinely absorbs, not how boldly it is worded.</p>",
+apply:"You cannot guarantee an outcome and should never try — no honest teacher can promise attainment. Guarantee what you control: the teaching, the access, and that you will say so if someone is not ready before they pay.",
+recall:"What objection does a guarantee actually address?",
+answer:"Uncertainty about being wrong, rather than price. It converts by removing the reason to delay.",
+src:"Direct response practice; risk-aversion literature"},
 
-{id:"i7",topic:"influence",title:"Similarity and familiarity produce liking, and liking produces yes",
-body:"<p>People comply far more readily with those they like, and liking is generated by cues with little relation to merit: similarity, physical attractiveness, familiarity through repeated exposure, and cooperation toward a shared goal.</p><p>Mere exposure alone is enough. Repeated contact with a face, a name, or a brand increases positive evaluation with no other input.</p>",
-recall:"Name four cues that reliably generate liking.",
-answer:"Similarity, physical attractiveness, mere exposure/familiarity, and cooperation toward a common goal.",
-src:"Zajonc, 1968; Cialdini, 1984"},
+{id:"o3",topic:"offer",title:"An unexplained deal reads as a trick",
+body:"<p>Offers create suspicion in proportion to how good they look. A reason — why this exists, why now, why this price — dissolves that suspicion faster than any amount of persuasion, because it gives the buyer something checkable instead of something to trust.</p><p>Even weak reasons increase compliance markedly; the word 'because' does measurable work on its own.</p>",
+apply:"State plainly why the cohort exists, why the number is what it is, and why now. If you cannot answer one of those honestly, fix the offer rather than the copy.",
+recall:"Why does giving a reason increase compliance even when the reason is weak?",
+answer:"Reasons convert an unexplained request into a justified one, and people respond to the presence of a justification structure, not only its strength.",
+src:"Langer et al., 1978"},
 
-/* ============ ATTENTION & PERCEPTION ============ */
-{id:"a1",topic:"attention",title:"You do not see what you are not looking for",
-body:"<p>Asked to count passes between players, about half of observers fail to notice a person in a gorilla suit walking through the middle of the scene. They are looking directly at it. It does not reach awareness.</p><p>Attention is not a spotlight brightening part of a scene you already have. It is the gate that decides what gets built into a scene at all.</p>",
-recall:"What does inattentional blindness reveal about the relationship between looking and seeing?",
-answer:"They are separable. Visual input can fall on the fovea and still never reach awareness if attention is engaged elsewhere.",
-src:"Simons & Chabris, 1999"},
+{id:"o4",topic:"offer",title:"Precise numbers are believed more than round ones",
+body:"<p>A specific figure signals that it was calculated rather than chosen. Precise prices and precise claims are judged more credible, and precise anchors are adjusted away from less than round ones.</p><p>Rounding upward toward a memorable number can cost credibility even while looking cleaner.</p>",
+apply:"'Eighteen years' is stronger than 'nearly twenty years' — and it has the advantage of being exactly true. Precision and honesty point the same direction here.",
+recall:"Why are precise numbers more persuasive than round ones?",
+answer:"Precision implies calculation rather than estimation, raising credibility, and precise anchors are adjusted away from less.",
+src:"Janiszewski & Uy, 2008"},
 
-{id:"a2",topic:"attention",title:"Large changes go unnoticed if they happen during an interruption",
-body:"<p>Swap the person someone is talking to mid-conversation, using a brief interruption to mask the change, and many people do not notice. Same for major alterations to a photograph across a blink or a cut.</p><p>The implication is that we do not hold a detailed internal copy of the scene. We hold a sparse summary and re-sample when needed.</p>",
-recall:"What does change blindness imply about our internal representation of a scene?",
-answer:"That it is sparse rather than detailed — we retain a summary and re-sample from the world instead of storing a full copy.",
-src:"Simons & Levin, 1998"},
+{id:"o5",topic:"offer",title:"What you compare against sets the price",
+body:"<p>Adding a third, deliberately unattractive option changes which of the other two people pick. Nothing about the original options changed; only the comparison set did.</p><p>The effect is real but has proven weaker and more condition-dependent in replication than the popular telling suggests.</p>",
+apply:"Useful as a reason to think hard about what sits next to your offer. Not a reason to invent a decoy tier — a fake option that serves no one is visible to a serious buyer.",
+recall:"What does the decoy effect demonstrate about preference?",
+answer:"Preferences are constructed relative to the available comparison set rather than being stable properties of the options themselves.",
+src:"Huber et al., 1982",
+flag:"Later replication work has found the effect smaller and more conditional than the popular version. Treat it as one consideration, not a reliable lever."},
 
-{id:"a3",topic:"attention",title:"Unattended channels are filtered but not fully closed",
-body:"<p>Focus on one conversation in a noisy room and the others become unintelligible — yet your own name spoken in an ignored stream still captures attention. Filtering happens, but some processing continues past the filter.</p><p>The gate is set by relevance, and highly self-relevant material gets through even when it was never consciously monitored.</p>",
-recall:"What does the cocktail party effect show about attentional filtering?",
-answer:"That filtering is partial — unattended streams are processed enough for highly relevant items like one's own name to break through.",
-src:"Cherry, 1953; Moray, 1959"},
+{id:"o6",topic:"offer",title:"Free changes the category, not just the price",
+body:"<p>Dropping a price to zero produces a jump in demand larger than the same size cut anywhere else on the scale. Zero appears to be processed differently — as no risk at all, rather than as a very low cost.</p><p>It also changes who arrives, which is often the point being missed.</p>",
+apply:"Free is a filter setting, not just a price. Free attracts everyone, which is exactly wrong when your problem is finding the right ten rather than the most people.",
+recall:"Why is a price of zero not simply a very low price?",
+answer:"Demand jumps disproportionately at zero, suggesting it is processed as an absence of risk rather than as a small cost.",
+src:"Shampanier, Mazar & Ariely, 2007"},
 
-{id:"a4",topic:"attention",title:"Perception is a prediction corrected by the senses",
-body:"<p>What you perceive is generated jointly by incoming signal and prior expectation. Ambiguous input is resolved toward what context predicts, which is why degraded speech becomes clearly audible once you are told what it says — and cannot be un-heard afterward.</p><p>The prior is not an optional overlay. It is a component of the percept.</p>",
-recall:"Why can't you un-hear degraded speech once you know the words?",
-answer:"Expectation is a component of perception itself. Once the prior is in place it constrains how the ambiguous signal is resolved.",
-src:"Gregory, 1970; predictive processing accounts"},
-
-{id:"a5",topic:"attention",title:"Working memory load degrades everything running at once",
-body:"<p>Holding material in working memory while doing something else reduces performance on both. Capacity is small and shared, so instructional material that forces learners to integrate scattered sources spends capacity on integration rather than learning.</p><p>Reducing extraneous load — putting the label next to the diagram rather than in a legend — measurably improves comprehension.</p>",
-recall:"What is extraneous cognitive load and why does it matter?",
-answer:"Working-memory demand created by how material is presented rather than by its difficulty. It consumes capacity that would otherwise go to learning.",
-src:"Sweller, 1988"},
-
-{id:"a6",topic:"attention",title:"Multitasking is serial switching, and switching is expensive",
-body:"<p>Attention is not divided between demanding tasks; it alternates. Each switch carries a reconfiguration cost in time and errors, and the cost persists for a while after the switch.</p><p>Across a working session these costs accumulate substantially. The subjective sense of doing two things at once is real; the parallel processing is not.</p>",
-recall:"Why is 'multitasking' a misleading description of what happens?",
-answer:"Demanding tasks are handled by rapid serial switching, not in parallel, and each switch costs time and accuracy.",
-src:"Monsell, 2003; Rubinstein et al., 2001"},
-
-{id:"a7",topic:"attention",title:"Steady input fades from awareness",
-body:"<p>Sensory systems respond to change, not to constant states. An unchanging smell, a constant background noise, the pressure of clothing — all drop out of awareness within minutes while the stimulus is unchanged.</p><p>The same principle operates at longer timescales in hedonic adaptation: stable circumstances, good or bad, stop registering.</p>",
-recall:"What is the shared principle behind sensory adaptation and hedonic adaptation?",
-answer:"Systems encode change rather than absolute level, so any constant state — sensory or circumstantial — fades from awareness.",
-src:"Helson, 1964; Brickman & Campbell, 1971"},
-
-/* ============ PERSONALITY ============ */
-{id:"p1",topic:"person",title:"Five broad dimensions recur across languages and methods",
-body:"<p>Factor analyses of trait descriptors converge repeatedly on five dimensions: openness, conscientiousness, extraversion, agreeableness, and neuroticism. The structure appears across languages, rating methods, and self versus observer report.</p><p>It is a description of how trait variation is organised, not a theory of where traits come from — a distinction routinely lost in popular use.</p>",
-recall:"What does the Big Five model claim, and what does it not claim?",
-answer:"It claims trait variation reliably organises into five dimensions. It does not explain the causal origin of those traits.",
-src:"Goldberg, 1990; McCrae & Costa, 1987"},
-
-{id:"p2",topic:"person",title:"Strong situations flatten personality differences",
-body:"<p>Traits predict behaviour well in weak situations, where cues are ambiguous and many responses are acceptable. In strong situations — a funeral, a job interview, a military drill — behaviour converges regardless of personality.</p><p>So 'does personality predict behaviour' has no general answer. It depends entirely on how constraining the setting is.</p>",
-recall:"In what kind of situation do traits predict behaviour best?",
-answer:"Weak situations, where cues are ambiguous and a wide range of behaviour is acceptable. Strong situations compress individual differences.",
-src:"Mischel, 1977"},
-
-{id:"p3",topic:"person",title:"Behaviour is inconsistent across situations and stable in aggregate",
-body:"<p>Mischel showed that single behaviours predict other single behaviours poorly — correlations around .30. That looked like evidence against traits.</p><p>The resolution: traits predict aggregated behaviour across many occasions very well. A person is not consistent from moment to moment but is highly consistent on average, which is what a trait actually claims.</p>",
-recall:"How was the person-situation debate resolved?",
-answer:"Traits predict aggregated behaviour across many occasions well, even though single-instance prediction is weak. Traits describe averages, not moments.",
-src:"Mischel, 1968; Epstein, 1979"},
-
-{id:"p4",topic:"person",title:"Type indicators sort people into categories that don't exist",
-body:"<p>Instruments that assign people to types face two problems. The traits they measure are continuous, so cutting them at a midpoint creates categories that split people near the boundary arbitrarily. And retest reliability is poor — a large share of people get a different type within weeks.</p><p>The appeal is real: a type is a story about yourself. The measurement is not.</p>",
-recall:"What are the two core measurement problems with type-based personality instruments?",
-answer:"Dichotomising continuous traits creates arbitrary categories, and test-retest reliability is poor — many people change type on retest.",
-src:"Pittenger, 1993; Boyle, 1995",
-flag:"Worth knowing before any workshop or training that opens by assigning everyone a four-letter type."},
-
-{id:"p5",topic:"person",title:"Heritability describes populations, not individuals",
-body:"<p>Twin and adoption studies put heritability of major traits around 40 to 60 percent. This says that within a studied population, roughly that share of variation between people is associated with genetic variation.</p><p>It does not say a trait is 50 percent genetic in you, and it does not say the trait is fixed. Heritability is a population statistic that shifts as the environment shifts.</p>",
-recall:"What common misreading of a heritability estimate should be avoided?",
-answer:"Treating it as the proportion of an individual's trait caused by genes, or as evidence of immutability. It describes variance between people in one population and environment.",
-src:"Turkheimer, 2000; Polderman et al., 2015"},
-
-{id:"p6",topic:"person",title:"Traits change in a predictable direction across adulthood",
-body:"<p>Personality is not fixed after early adulthood. Longitudinal data show conscientiousness and agreeableness rising and neuroticism falling from the twenties through middle age — a pattern consistent enough to be called the maturity principle.</p><p>Change is gradual and modest, but it is real, directional, and continues far later than the popular idea of a personality set by thirty.</p>",
-recall:"What is the maturity principle in personality development?",
-answer:"Across adulthood, conscientiousness and agreeableness tend to increase while neuroticism decreases.",
-src:"Roberts et al., 2006 meta-analysis"},
-
-{id:"p7",topic:"person",title:"Self-report measures self-image as much as behaviour",
-body:"<p>Self-report questionnaires are contaminated by socially desirable responding, limited self-insight, and reference-group effects — you rate yourself relative to whoever you implicitly compare against, which differs between groups.</p><p>Observer ratings and behavioural measures often diverge, and for some traits observers predict outcomes better than the person does.</p>",
-recall:"What is the reference-group effect in self-report?",
-answer:"People rate themselves relative to an implicit comparison group, so identical ratings from different groups do not mean the same thing.",
-src:"Heine et al., 2002"},
+{id:"o7",topic:"offer",title:"Naming the drawback increases trust",
+body:"<p>A message that admits a genuine weakness before making its case is often more persuasive than one that does not, particularly with a sceptical or informed audience. The admission signals honesty, and the argument that follows inherits that credit.</p><p>It works when the drawback is real and relevant. A cosmetic flaw offered as a confession reads as technique.</p>",
+apply:"Your disqualification section does this. Naming precisely who should not come is the strongest credibility move available, and it costs you only the people you did not want.",
+recall:"When does a two-sided message outperform a one-sided one?",
+answer:"With sceptical or well-informed audiences, and when the drawback disclosed is genuine and relevant rather than cosmetic.",
+src:"Hovland et al., 1949; Eisend, 2006 meta-analysis"},
 
 /* ============ READING THE EVIDENCE ============ */
-{id:"v1",topic:"evidence",title:"A large share of published findings did not replicate",
-body:"<p>A coordinated effort to repeat 100 psychology studies reproduced the original result in roughly 36 to 47 percent of cases depending on criterion, and effect sizes in replications averaged about half the originals.</p><p>The failure rate was not concentrated in obscure work. Well-known, heavily cited findings were among those that did not hold.</p>",
-recall:"Roughly what proportion of studies replicated in the Open Science Collaboration project, and what happened to effect sizes?",
-answer:"Around 36-47% depending on the criterion used, with replication effect sizes averaging about half the original magnitude.",
-src:"Open Science Collaboration, 2015"},
+{id:"r1",topic:"evidence",title:"Around a third of studies replicated",
+body:"<p>A coordinated effort repeated 100 psychology studies from leading journals. Where 97 percent of the originals reported significant results, 36 percent of the replications did — and replication effect sizes averaged about half the originals.</p><p>The failures were not confined to obscure work. Well-known, heavily cited findings were among them.</p>",
+apply:"Your default when reading any single striking study should be doubt, not belief. This is the card that protects you from every other card in this deck.",
+recall:"What did the Reproducibility Project find on replication rate and effect size?",
+answer:"36% replicated with significance in the same direction, against 97% of originals being significant, and replication effect sizes were about half the original magnitude.",
+src:"Open Science Collaboration, 2015 — verified"},
 
-{id:"v2",topic:"evidence",title:"Flexible analysis can manufacture significance from nothing",
-body:"<p>Deciding when to stop collecting data, which outliers to drop, which covariates to include, and which measures to report — all after seeing results — can push the false positive rate above 60 percent while every individual choice looks defensible.</p><p>No fraud is required. Ordinary discretion applied repeatedly is enough.</p>",
-recall:"Why do researcher degrees of freedom inflate false positives without any dishonesty?",
-answer:"Because many small analytic choices are made after seeing the data, and each defensible choice adds an implicit test — collectively driving the false positive rate far above 5%.",
-src:"Simmons, Nelson & Simonsohn, 2011"},
+{id:"r2",topic:"evidence",title:"Flexible analysis manufactures significance",
+body:"<p>Deciding when to stop collecting data, which outliers to drop, which controls to include and which measures to report — all after seeing results — pushes the false positive rate far above the nominal 5 percent, while each individual choice looks defensible.</p><p>No dishonesty is required. Ordinary discretion, applied repeatedly, is enough.</p>",
+apply:"When a study's method sounds unusually well-suited to the result, ask what else was measured and not reported. Marketing case studies have exactly this problem at higher intensity.",
+recall:"Why do researcher degrees of freedom inflate false positives without dishonesty?",
+answer:"Many small analytic choices are made after seeing the data, each adding an implicit test, driving the real false-positive rate well above 5%.",
+src:"Simmons, Nelson & Simonsohn, 2011",
+flag:"The paper simulates combinations of these choices and reports substantially inflated false-positive rates. I could not confirm the specific headline percentage against a source in this session, so it is deliberately not quoted here."},
 
-{id:"v3",topic:"evidence",title:"Significance answers a question you did not ask",
-body:"<p>A p-value below .05 says the data would be unlikely under the null hypothesis. It says nothing about how large the effect is, whether it matters, or how likely the hypothesis is to be true.</p><p>With a large enough sample, trivial effects reach significance. Ask for the effect size and its confidence interval — that is the question you actually cared about.</p>",
+{id:"r3",topic:"evidence",title:"Significance answers a question you did not ask",
+body:"<p>A p-value below .05 says the data would be unlikely if there were no effect. It says nothing about how large the effect is, whether it matters, or how likely the claim is to be true.</p><p>With a large enough sample, trivial effects become significant.</p>",
+apply:"Ask for the effect size, not whether it was significant. 'Statistically significant' in a marketing case study usually means nothing about whether it would move your numbers.",
 recall:"What does a p-value tell you, and what does it not?",
-answer:"It indicates how surprising the data would be if the null were true. It does not give effect magnitude, practical importance, or the probability the hypothesis is true.",
+answer:"How surprising the data would be if there were no effect. Not the size, the importance, or the probability the hypothesis is true.",
 src:"Cohen, 1994"},
 
-{id:"v4",topic:"evidence",title:"The evidence base is drawn from an unusual slice of humanity",
-body:"<p>A large majority of published psychology samples come from Western, educated, industrialised, rich, democratic populations — and disproportionately from undergraduates within them. That group is an outlier on many measures where cross-cultural data exist.</p><p>So generalising from these samples to 'people' is an assumption, and for social and moral psychology it is often a poor one.</p>",
-recall:"What does WEIRD stand for, and why is it a problem?",
-answer:"Western, Educated, Industrialised, Rich, Democratic. These samples are outliers on many measured dimensions, so results may not generalise to humans in general.",
+{id:"r4",topic:"evidence",title:"The evidence comes from an unusual slice of humanity",
+body:"<p>Most published psychology samples come from Western, educated, industrialised, rich, democratic populations — and disproportionately from undergraduates within them. That group is an outlier on many measures where cross-cultural comparison exists.</p><p>Generalising from these samples to 'people' is an assumption, and for social and moral psychology often a poor one.</p>",
+apply:"Directly relevant to you. Findings about persuasion drawn from American undergraduates may not transfer to Chinese practitioners, and the honest position is that often nobody has checked.",
+recall:"What does WEIRD stand for and why does it matter?",
+answer:"Western, Educated, Industrialised, Rich, Democratic. These samples are outliers on many measured dimensions, so results may not generalise.",
 src:"Henrich, Heine & Norenzayan, 2010"},
 
-{id:"v5",topic:"evidence",title:"The literature is a filtered sample of what was found",
-body:"<p>Positive, surprising results get published; null results often do not. So the published record systematically overstates effects, and meta-analyses built on it inherit the distortion.</p><p>Funnel plots and related tools can detect the asymmetry. Pre-registration and registered reports address the cause by committing to publish regardless of outcome.</p>",
+{id:"r5",topic:"evidence",title:"The literature is a filtered sample of what was found",
+body:"<p>Positive and surprising results get published; null results often do not. The published record therefore overstates effects, and meta-analyses built on it inherit that distortion.</p><p>Pre-registration addresses the cause: commit to the hypothesis and analysis before results are known, and publish either way.</p>",
+apply:"Every marketing case study you read is the survivor of a selection process. The campaigns that failed were not written up.",
 recall:"How does pre-registration address publication bias?",
-answer:"By committing to hypotheses, analysis plan, and publication before results are known, so null findings enter the record rather than being filtered out.",
+answer:"By committing to hypotheses, analysis plan and publication before results are known, so null findings enter the record rather than being filtered out.",
 src:"Rosenthal, 1979; Chambers, 2013"},
 
-{id:"v6",topic:"evidence",title:"Between correlation and causation sit three specific alternatives",
-body:"<p>Given an association between A and B, three possibilities remain besides A causing B: B causes A, a third variable causes both, or the association arose by chance or through selection into the sample.</p><p>Naming which alternative applies is more useful than reciting the slogan. Most popular-science causal claims fail on the third-variable option.</p>",
+{id:"r6",topic:"evidence",title:"Three alternatives sit between correlation and causation",
+body:"<p>Given that A and B move together, three possibilities remain besides A causing B: B causes A, something else causes both, or the pattern arose from chance or from how the sample was selected.</p><p>Naming which alternative applies is far more useful than reciting the slogan. Most popular causal claims fail on the third-variable option.</p>",
+apply:"When someone shows you that successful brands all do X, ask whether X caused the success or success enabled X. Usually it is the second.",
 recall:"What are the alternatives to 'A causes B' given an association?",
-answer:"Reverse causation, a common cause (confound), and chance or selection effects.",
-src:"Standard causal inference; Pearl, 2009"},
+answer:"Reverse causation, a common cause, and chance or selection effects.",
+src:"Standard causal inference"},
 
-{id:"v7",topic:"evidence",title:"Four questions to ask of any psychology claim",
-body:"<p>How big is the effect, in units that mean something? How many people, and who were they? Was this pre-registered, or found after the fact? Has an independent lab reproduced it?</p><p>Most claims that reach popular books fail at least two. Applying these before adopting a framework saves more time than any amount of reading afterward.</p>",
+{id:"r7",topic:"evidence",title:"Four questions to ask of any psychology claim",
+body:"<p>How big is the effect, in units that mean something? How many people, and who were they? Was this predicted in advance, or found after the fact? Has an independent group reproduced it?</p><p>Most claims reaching popular books fail at least two.</p>",
+apply:"Run this on Sutherland, Hormozi and Godin as you read them. All three are worth reading; none of them are careful about evidence, and knowing which parts are load-bearing is what separates using their work from repeating it.",
 recall:"What are the four screening questions for a psychology claim?",
-answer:"Effect size in meaningful units; sample size and composition; pre-registered or post hoc; independently replicated.",
+answer:"Effect size in meaningful units; sample size and composition; predicted in advance or found post hoc; independently replicated.",
 src:"Synthesis of open-science practice"}
 
 ];
@@ -657,7 +733,7 @@ const topicName = id => (TOPICS.find(t => t.id === id) || {}).name || id;
 
 function blank(){
   return { topics: TOPICS.map(t => t.id), srs:{}, stash:[], seen:[],
-           streak:0, lastDay:null, xp:0, theme:null };
+           streak:0, lastDay:null, xp:0, theme:null, dailyLimit:5, newDay:null, newCount:0 };
 }
 let S = load();
 
@@ -732,12 +808,18 @@ function cardHTML(c){
   return '<div class="topic">' + esc(topicName(c.topic)) + '</div>' +
          '<h2>' + esc(c.title) + '</h2>' +
          '<div class="body">' + c.body + '</div>' +
+         (c.apply ? '<div class="apply"><b>Use it</b>' + esc(c.apply) + '</div>' : '') +
          (c.flag ? '<div class="flag"><b>Worth flagging.</b> ' + esc(c.flag) + '</div>' : '') +
          '<div class="src">' + esc(c.src) + '</div>';
 }
 
 /* ================= FEED ================= */
 let feedQueue = [];
+function newToday(){
+  if(S.newDay !== todayKey()){ S.newDay = todayKey(); S.newCount = 0; save(); }
+  return S.newCount;
+}
+function countNew(){ newToday(); S.newCount++; save(); }
 function buildFeed(){
   const seen = new Set(S.seen);
   feedQueue = CARDS.filter(c => S.topics.indexOf(c.topic) !== -1 && !seen.has(c.id));
@@ -759,6 +841,17 @@ function renderFeed(){
     $("#fResetSeen").onclick = () => { S.seen = []; save(); buildFeed(); renderFeed(); toast("Feed reset"); };
     return;
   }
+  if(S.dailyLimit && newToday() >= S.dailyLimit){
+    const d = dueCards().length;
+    el.innerHTML = '<div class="empty"><div class="big">Done for today</div>' +
+      '<p>You have read your ' + S.dailyLimit + ' new cards. Spacing does the work now — ' +
+      'more today mostly means more forgotten by Friday.</p>' +
+      '<div class="actions" style="max-width:340px;margin:18px auto 0">' +
+      (d ? '<button class="btn primary" data-go="study">Review ' + d + ' due</button>' : '') +
+      '<button class="btn" id="fMore">Read 3 more anyway</button></div></div>';
+    $("#fMore").onclick = () => { S.newCount = Math.max(0, S.newCount - 3); save(); renderFeed(); };
+    return;
+  }
   const c = feedQueue[0];
   const inStash = S.stash.indexOf(c.id) !== -1;
   const total = CARDS.filter(x => S.topics.indexOf(x.topic) !== -1).length;
@@ -773,7 +866,7 @@ function renderFeed(){
     '</div>' +
     '<div class="note">Stashing adds the card to spaced repetition. It comes back for recall practice before you would forget it.</div>';
 
-  $("#fSkip").onclick = () => { S.seen.push(c.id); save(); feedQueue.shift(); renderFeed(); };
+  $("#fSkip").onclick = () => { S.seen.push(c.id); countNew(); save(); feedQueue.shift(); renderFeed(); };
   $("#fStash").onclick = () => {
     if(S.stash.indexOf(c.id) === -1){
       S.stash.push(c.id);
@@ -781,7 +874,7 @@ function renderFeed(){
       S.xp += 3; touchStreak();
     }
     if(S.seen.indexOf(c.id) === -1) S.seen.push(c.id);
-    save(); feedQueue.shift(); renderFeed(); paintStats();
+    countNew(); save(); feedQueue.shift(); renderFeed(); paintStats();
     toast("Stashed — due in Study");
   };
 }
@@ -896,7 +989,16 @@ function renderTopics(){
              '<span class="chk">✓</span><span class="tx"><span class="tn">' + esc(t.name) + '</span>' +
              '<span class="td">' + done + " of " + n + ' in rotation · ' + esc(t.desc) + '</span></span></button>';
     }).join("") + '</div>' +
-    '<div class="note">Ten topics, 70 cards. Switching a topic off only hides it from the Feed — anything already stashed stays in your review queue.</div>';
+    '<h3 class="sec">Daily pace</h3>' +
+    '<div class="actions" id="paceRow">' +
+      [3,5,8,0].map(n => '<button class="btn' + (S.dailyLimit === n ? ' on' : '') + '" data-n="' + n + '">' +
+        (n ? n : 'No cap') + '</button>').join("") +
+    '</div>' +
+    '<div class="note">Ten topics, 70 cards, seven per topic. New cards a day is capped so the review queue stays survivable — reviews are never capped. Switching a topic off only hides it from the Feed; anything already stashed stays in your queue.</div>';
+  el.querySelectorAll("#paceRow [data-n]").forEach(b => {
+    b.onclick = () => { S.dailyLimit = parseInt(b.dataset.n, 10); save(); renderTopics();
+                        toast(S.dailyLimit ? S.dailyLimit + " new cards a day" : "No daily cap"); };
+  });
   el.querySelectorAll("[data-t]").forEach(b => {
     b.onclick = () => {
       const id = b.dataset.t;
