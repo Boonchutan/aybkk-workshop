@@ -39,6 +39,13 @@ Use when writing the opening line of any video content. Designed to stop a 10-ye
 
 **Do not use for:** captions, carousels, sales copy, or long-form content.
 
+### `/story`
+**Purpose:** Reel script builder — structures the full video on the invisible 4-beat skeleton (Hook, Context, Ordeal, Takeaway): 4 beats for 60 seconds, 3 beats for 30. Works in two modes: spoken to camera (writes the lines) or caption-on-screen edit (writes a shot list from existing footage with max-8-word captions).
+
+Use when turning a story or teaching point into a complete Reel script, or planning a caption edit. `/hook` writes seconds 0–3; `/story` writes the rest. Enforces one ordeal per video — a story with two lessons becomes two videos.
+
+**Do not use for:** photo captions, carousels, sales copy, or long-form content.
+
 ### `/shop`
 **Purpose:** Shop builder & operations — the full recipe for AYBKK pre-order shops (tee shop live at cn.aybkk.net/shop.html; future: Bangkok price list with classes and courses).
 
