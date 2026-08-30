@@ -50,6 +50,8 @@
 <header><h1>AYBKK Bangkok Admin</h1><button class="btn gray" onclick="logout()">Lock</button></header>
 <nav>
   <button id="t-today" class="on" onclick="tab('today')">Today</button>
+  <button id="t-students" onclick="tab('students')">Students</button>
+  <button id="t-classes" onclick="tab('classes')">Classes</button>
   <button id="t-orders" onclick="tab('orders')">Payments</button>
   <button id="t-settings" onclick="tab('settings')">Settings</button>
 </nav>
@@ -82,8 +84,145 @@
     current = t;
     document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.id === 't-' + t));
     if (t === 'today') renderToday();
+    if (t === 'students') renderStudents();
+    if (t === 'classes') renderClasses();
     if (t === 'orders') renderOrders();
     if (t === 'settings') renderSettings();
+  };
+
+  const day = iso => new Date(iso).toLocaleDateString('en-GB',
+    { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Bangkok' });
+  const ask = (q, d = '') => { const v = prompt(q, d); return v === null ? null : v.trim(); };
+  const shout = async (r) => {
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { alert(j.error || 'failed'); return null; }
+    return j;
+  };
+
+  // ── students ──────────────────────────────────────────────────────────────
+  async function renderStudents(term) {
+    $('#view').innerHTML = `<div class="box">
+      <b>Students</b>
+      <p class="muted">Search by name, email, phone or member code.</p>
+      <p><input id="q" placeholder="e.g. Anna, or anna@…" style="width:68%" value="${esc(term || '')}">
+      <button class="btn" onclick="findStudents()">Search</button></p>
+      <div id="results"></div>
+    </div>
+    <div class="box">
+      <b>Give a pass</b>
+      <p class="muted">For a student who paid another way, a comp, or someone moving
+      over from Rezerv. No payment is recorded and no receipt is sent.</p>
+      <p><button class="btn pink" onclick="grantPass()">Give a pass</button></p>
+    </div>`;
+    $('#q').onkeydown = e => { if (e.key === 'Enter') findStudents(); };
+    if (term) findStudents();
+  }
+
+  window.findStudents = async () => {
+    const term = $('#q').value.trim();
+    if (term.length < 2) { $('#results').innerHTML = '<p class="muted">Type at least two letters.</p>'; return; }
+    const d = await api('/api/bkk/admin/members?q=' + encodeURIComponent(term)).then(r => r.json());
+    const ms = d.members || [];
+    if (!ms.length) { $('#results').innerHTML = '<p class="muted">Nobody matches that.</p>'; return; }
+    $('#results').innerHTML = ms.map(m => `<div style="border-top:1px solid var(--line);padding:12px 0">
+      <b>${esc(m.name)}</b> <span class="muted">${esc(m.code)}</span><br>
+      <span class="muted">${esc(m.email || 'no email')}${m.phone ? ' · ' + esc(m.phone) : ''}
+        · ${m.booked} upcoming</span>
+      ${(m.passes || []).map(p => `<div style="margin-top:8px">
+        <span class="pill ${p.status === 'active' ? 'paid' : 'pending'}">${esc(p.status)}</span>
+        ${esc(p.name_en)} —
+        ${p.kind === 'unlimited' ? 'unlimited' : `${p.credits_total - p.credits_used} left`}
+        ${p.valid_until ? ' · until ' + String(p.valid_until).slice(0, 10) : ' · not started'}
+        <br>
+        <button class="btn gray" onclick="passAct(${p.id},'freeze')">Freeze</button>
+        <button class="btn gray" onclick="passAct(${p.id},'unfreeze')">Unfreeze</button>
+        <button class="btn gray" onclick="passAct(${p.id},'extend')">Extend</button>
+        <button class="btn red" onclick="passAct(${p.id},'void')">Void</button>
+      </div>`).join('') || '<p class="muted">No pass.</p>'}
+      <p style="margin-top:8px"><button class="btn" onclick="bookFor('${esc(m.code)}')">Book into a class</button></p>
+    </div>`).join('');
+  };
+
+  window.passAct = async (id, what) => {
+    let body = {};
+    if (what === 'freeze') {
+      const days = ask('Pause for how many days?', '30'); if (days === null) return;
+      const reason = ask('Why? (injury, travel…)', ''); if (reason === null) return;
+      body = { days: Number(days), reason };
+    } else if (what === 'extend') {
+      const days = ask('Add how many days? (0 for none)', '7'); if (days === null) return;
+      const credits = ask('Add how many classes? (0 for none)', '0'); if (credits === null) return;
+      body = { days: Number(days), credits: Number(credits), reason: ask('Note', '') || '' };
+    } else if (what === 'void') {
+      if (!confirm('Void this pass? The student will not be able to book with it.')) return;
+      body = { reason: ask('Why?', '') || '' };
+    }
+    const r = await api(`/api/bkk/admin/passes/${id}/${what}`, { method: 'POST', body: JSON.stringify(body) });
+    if (await shout(r)) findStudents();
+  };
+
+  window.grantPass = async () => {
+    const d = await fetch('/api/bkk/products').then(r => r.json());
+    const codes = d.products.map(p => p.code).join(', ');
+    const productCode = ask('Which package? (' + codes + ')', 'pack10'); if (!productCode) return;
+    const name = ask('Student name'); if (!name) return;
+    const email = ask('Email (used to find them again)'); if (email === null) return;
+    const validFrom = ask('Start date YYYY-MM-DD (blank = starts on first booking)', '');
+    if (validFrom === null) return;
+    let validUntil = '';
+    if (validFrom) { validUntil = ask('Expires YYYY-MM-DD'); if (!validUntil) return; }
+    const r = await api('/api/bkk/admin/passes', { method: 'POST', body: JSON.stringify({
+      productCode, name, email, source: 'manual',
+      validFrom: validFrom || null, validUntil: validUntil || null,
+      note: ask('Note (why)', '') || '' }) });
+    const j = await shout(r);
+    if (j) { alert(`Done. ${j.member.name} — member code ${j.member.code}`); renderStudents(name); }
+  };
+
+  window.bookFor = async (code) => {
+    const d = await fetch('/api/bkk/schedule?days=14').then(r => r.json());
+    const list = (d.classes || []).slice(0, 40);
+    const pick = ask('Which class?\n' + list.map((c, i) =>
+      `${i + 1}. ${day(c.startAt)} ${time(c.startAt)} ${c.title} (${c.seatsLeft} left)`).join('\n'), '1');
+    if (!pick) return;
+    const c = list[Number(pick) - 1];
+    if (!c) return alert('No class with that number.');
+    const r = await api('/api/bkk/bookings', { method: 'POST',
+      body: JSON.stringify({ memberCode: code, slotId: c.slotId, date: c.date }) });
+    if (await shout(r)) { alert('Booked.'); findStudents(); }
+  };
+
+  // ── classes ───────────────────────────────────────────────────────────────
+  async function renderClasses() {
+    const d = await fetch('/api/bkk/schedule?days=21').then(r => r.json());
+    const rows = (d.classes || []).map(c => `<tr>
+      <td>${day(c.startAt)}<br><span class="muted">${time(c.startAt)}</span></td>
+      <td>${esc(c.title)}<br><span class="muted">${c.booked} booked of ${c.capacity}</span></td>
+      <td><button class="btn red" onclick="closeClass(${c.slotId},'${c.date}','${esc(c.title)}')">Close</button></td>
+    </tr>`).join('');
+    $('#view').innerHTML = `<div class="box"><b>Next three weeks</b>
+      <p class="muted">Closing a class gives every booked student their credit back
+      and emails them. A closed class disappears from the timetable.</p>
+      <table>${rows || '<tr><td class="muted">no classes</td></tr>'}</table>
+      <p class="muted">Put one back: <button class="btn gray" onclick="reopenClass()">Reopen a class</button></p>
+    </div>`;
+  }
+
+  window.closeClass = async (slotId, date, title) => {
+    if (!confirm(`Close ${title} on ${date}?\nEveryone booked gets their credit back and an email.`)) return;
+    const reason = ask('Reason (students see this)', 'Moon day'); if (reason === null) return;
+    const r = await api('/api/bkk/admin/classes/cancel', { method: 'POST',
+      body: JSON.stringify({ slotId, date, reason }) });
+    const j = await shout(r);
+    if (j) { alert(`Closed. ${j.released} booking(s) released, ${j.notified} emailed.`); renderClasses(); }
+  };
+
+  window.reopenClass = async () => {
+    const slotId = ask('Class number (slotId)'); if (!slotId) return;
+    const date = ask('Date YYYY-MM-DD'); if (!date) return;
+    const r = await api('/api/bkk/admin/classes/reopen', { method: 'POST',
+      body: JSON.stringify({ slotId: Number(slotId), date }) });
+    if (await shout(r)) renderClasses();
   };
 
   async function renderToday() {
@@ -142,19 +281,83 @@
     renderOrders();
   };
 
+  let LINKS = {};                       // social links, loaded with the tab
+
   async function renderSettings() {
     const p = await fetch('/api/bkk/products').then(r => r.json());
+    LINKS = await fetch('/api/bkk/settings').then(r => r.json())
+      .then(d => d.links || {}).catch(() => ({}));
     $('#view').innerHTML = `<div class="box">
       <b>Online payment fee</b>
       <p class="muted">Added on top of every package price at checkout. It exists to
       cover the card fees — PaySolutions is cheaper than Stripe, so you may want to lower it.</p>
       <p><input id="sur" type="number" min="0" max="20" step="0.5" value="${p.surchargePct}" style="width:90px"> %
       <button class="btn" onclick="saveSur()">Save</button></p>
-      <table><tr><th>Package</th><th>Base</th><th>Student pays</th></tr>
-      ${p.products.map(x => `<tr><td>${esc(x.name_en)}</td>
+      </div>
+      <div class="box"><b>Packages</b>
+      <p class="muted">Change a price or retire one. What a package DOES — classes
+      included, how long it lasts — is fixed once it exists, so passes already sold
+      cannot be rewritten underneath the students who bought them.</p>
+      <table><tr><th>Package</th><th>Base</th><th>Student pays</th><th></th></tr>
+      ${p.products.map(x => `<tr><td>${esc(x.name_en)}<br><span class="muted">${esc(x.code)}</span></td>
         <td>฿${x.price_thb.toLocaleString()}</td>
-        <td><b>฿${x.total_thb.toLocaleString()}</b></td></tr>`).join('')}</table></div>`;
+        <td><b>฿${x.total_thb.toLocaleString()}</b></td>
+        <td><button class="btn gray" onclick="editProduct('${esc(x.code)}',${x.price_thb})">Price</button>
+            <button class="btn red" onclick="retireProduct('${esc(x.code)}')">Retire</button></td>
+      </tr>`).join('')}</table>
+      <p><button class="btn pink" onclick="newProduct()">Add a package</button></p>
+      </div>
+      <div class="box"><b>Links</b>
+      <p class="muted">Where students are sent from their page. Leave one blank to
+      hide it. Paste the full address, starting https://</p>
+      ${['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop']
+        .map(k => `<label style="display:block;margin-top:8px">${k}</label>
+          <input id="lk_${k}" style="width:100%" placeholder="https://…"
+                 value="${esc((LINKS || {})[k] || '')}">`).join('')}
+      <p style="margin-top:12px"><button class="btn" onclick="saveLinks()">Save links</button></p>
+      </div>`;
   }
+
+  window.editProduct = async (code, current) => {
+    const v = ask(`New base price for ${code} (฿), before the online fee`, String(current));
+    if (v === null) return;
+    const r = await api('/api/bkk/admin/products', { method: 'POST',
+      body: JSON.stringify({ code, priceThb: Number(v) }) });
+    if (await shout(r)) renderSettings();
+  };
+
+  window.retireProduct = async (code) => {
+    if (!confirm(`Stop selling ${code}?\nPasses already bought keep working.`)) return;
+    const r = await api('/api/bkk/admin/products', { method: 'POST',
+      body: JSON.stringify({ code, active: false }) });
+    if (await shout(r)) renderSettings();
+  };
+
+  window.newProduct = async () => {
+    const nameEn = ask('Name, as students see it'); if (!nameEn) return;
+    const code = ask('Short code (letters and numbers, no spaces)',
+      nameEn.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12)); if (!code) return;
+    const kind = ask('Type: "credits" for a class pack, "unlimited" for a membership', 'credits');
+    if (!kind) return;
+    const priceThb = ask('Price in ฿, before the online fee'); if (!priceThb) return;
+    const validDays = ask('Valid for how many days after the first class?', '90'); if (!validDays) return;
+    const credits = kind === 'credits' ? ask('How many classes?', '10') : null;
+    if (kind === 'credits' && !credits) return;
+    const r = await api('/api/bkk/admin/products', { method: 'POST', body: JSON.stringify({
+      code, nameEn, kind, priceThb: Number(priceThb),
+      validDays: Number(validDays), credits: credits ? Number(credits) : undefined }) });
+    if (await shout(r)) renderSettings();
+  };
+
+  window.saveLinks = async () => {
+    const links = {};
+    for (const k of ['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop']) {
+      links[k] = $('#lk_' + k).value.trim();
+    }
+    const r = await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify({ links }) });
+    const j = await shout(r);
+    if (j) { LINKS = links; alert('Saved.'); }
+  };
 
   window.saveSur = async () => {
     const v = Number($('#sur').value);

@@ -665,7 +665,12 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
       const slot = (await client.query('SELECT * FROM bkk_class_slots WHERE id=$1 AND active', [slotId])).rows[0];
       if (!slot) throw new Error('class not found');
       const startAt = startAtISO(date, slot.start_time);
-      if (new Date(startAt) < bkkNow()) throw new Error('that class has already started');
+      // Students cannot book a class that has begun. Staff can, for the whole
+      // length of the class — someone walks in at 05:35 and has to be put on the
+      // list before they can be checked in.
+      const startedAgoMin = (bkkNow() - new Date(startAt)) / 60000;
+      const graceMin = isAdmin(req) ? (slot.duration_min || 120) : 0;
+      if (startedAgoMin > graceMin) throw new Error('that class has already started');
 
       const ov = (await client.query(
         'SELECT * FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2', [slotId, date])).rows[0];
@@ -825,6 +830,24 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // Links Boonchu can change himself. An allowlist, not a free-for-all: this
+  // writes a table the public read below serves, so an arbitrary key here would
+  // be an arbitrary value on the student page.
+  const LINK_KEYS = ['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop'];
+
+  app.get('/api/bkk/settings', async (req, res) => {
+    try {
+      const r = await q(`SELECT key, value FROM bkk_settings WHERE key = ANY($1::text[])`,
+        [LINK_KEYS.map(k => 'link_' + k)]);
+      const links = {};
+      for (const row of r.rows) {
+        const v = typeof row.value === 'string' ? row.value : (row.value ?? '');
+        if (v) links[row.key.replace(/^link_/, '')] = v;
+      }
+      res.json({ links });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   app.post('/api/bkk/admin/settings', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     try {
@@ -832,6 +855,19 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
         await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct',$1)
                  ON CONFLICT (key) DO UPDATE SET value=$1, updated_at=now()`,
           [JSON.stringify(Number(req.body.surchargePct))]);
+      }
+      const links = req.body.links || {};
+      for (const k of LINK_KEYS) {
+        if (links[k] === undefined) continue;
+        const url = String(links[k] || '').trim();
+        // Empty clears the link. Anything else must be a real http(s) URL —
+        // a typo here becomes a broken button on every student's page.
+        if (url && !/^https?:\/\/[^\s]+$/i.test(url)) {
+          return res.status(400).json({ error: `${k} must be a full https:// link, or empty to remove` });
+        }
+        await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
+                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`,
+          ['link_' + k, JSON.stringify(url)]);
       }
       res.json({ success: true, surchargePct: await surcharge() });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -989,6 +1025,54 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
          `extended +${days}d +${credits}cr: ${String((req.body || {}).reason || '').slice(0, 120)}`]);
       if (!r.rows.length) return res.status(404).json({ error: 'pass not found' });
       res.json({ success: true, pass: r.rows[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Packages. price_thb and active were read but never written, so changing a
+  // price or retiring a package meant SQL against production.
+  app.post('/api/bkk/admin/products', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const b = req.body || {};
+      const code = String(b.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (!code) return res.status(400).json({ error: 'code required' });
+      const existing = (await q('SELECT * FROM bkk_products WHERE code=$1', [code])).rows[0];
+
+      if (existing) {
+        // Only what was sent — an omitted field must not blank an existing one.
+        const r = await q(
+          `UPDATE bkk_products SET
+             name_en   = COALESCE($2, name_en),
+             name_th   = COALESCE($3, name_th),
+             price_thb = COALESCE($4, price_thb),
+             active    = COALESCE($5, active),
+             sort      = COALESCE($6, sort)
+           WHERE code=$1 RETURNING *`,
+          [code, b.nameEn ?? null, b.nameTh ?? null,
+           b.priceThb != null ? Math.max(0, parseInt(b.priceThb)) : null,
+           b.active != null ? !!b.active : null,
+           b.sort != null ? parseInt(b.sort) : null]);
+        return res.json({ success: true, product: r.rows[0], created: false });
+      }
+
+      // kind/credits/valid_days define what the pass DOES, so they are required
+      // on creation and deliberately not editable afterwards — changing them
+      // under passes already sold would silently rewrite what people bought.
+      const kind = ['credits', 'unlimited'].includes(b.kind) ? b.kind : null;
+      const validDays = parseInt(b.validDays);
+      if (!kind || !b.nameEn || !(validDays > 0) || b.priceThb == null) {
+        return res.status(400).json({
+          error: 'new package needs nameEn, kind (credits|unlimited), priceThb and validDays' });
+      }
+      const r = await q(
+        `INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort,active)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,true) RETURNING *`,
+        [code, b.nameEn, b.nameTh || null, Math.max(0, parseInt(b.priceThb)), kind,
+         kind === 'credits' ? Math.max(1, parseInt(b.credits) || 1) : null,
+         validDays,
+         b.dailyCap != null ? parseInt(b.dailyCap) : (kind === 'unlimited' ? 2 : null),
+         b.sort != null ? parseInt(b.sort) : 100]);
+      res.json({ success: true, product: r.rows[0], created: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

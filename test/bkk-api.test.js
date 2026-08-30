@@ -289,6 +289,36 @@ const ok = (name, cond, extra = '') => {
     .some(c => c.slotId === target.slotId && c.date === target.date);
   ok('reopening puts it back on the timetable', back);
 
+  console.log('\n— packages —');
+  const newProd = await post('/api/bkk/admin/products', {
+    code: 'test5', nameEn: 'Test 5 pack', kind: 'credits',
+    priceThb: 5000, validDays: 60, credits: 5 }, ADMIN);
+  ok('package created', newProd.status === 200 && newProd.body.created,
+     JSON.stringify(newProd.body).slice(0, 140));
+  const reprice = await post('/api/bkk/admin/products', { code: 'test5', priceThb: 5500 }, ADMIN);
+  ok('price changed', reprice.body.product.price_thb === 5500, String(reprice.body.product.price_thb));
+  ok('...without wiping the rest', reprice.body.product.credits === 5 &&
+     reprice.body.product.name_en === 'Test 5 pack',
+     JSON.stringify(reprice.body.product).slice(0, 120));
+  await post('/api/bkk/admin/products', { code: 'test5', active: false }, ADMIN);
+  const shown = (await J('/api/bkk/products')).body.products.some(p => p.code === 'test5');
+  ok('a retired package leaves the shop', !shown);
+  const halfBaked = await post('/api/bkk/admin/products', { code: 'nope', nameEn: 'No kind' }, ADMIN);
+  ok('a new package without its rules is refused', halfBaked.status === 400, JSON.stringify(halfBaked.body));
+  ok('packages need the staff key',
+     (await post('/api/bkk/admin/products', { code: 'x' })).status === 401);
+
+  console.log('\n— editable links —');
+  const badLink = await post('/api/bkk/admin/settings',
+    { links: { youtube: 'youtube.com/aybkk' } }, ADMIN);
+  ok('a link without https is refused', badLink.status === 400, JSON.stringify(badLink.body));
+  await post('/api/bkk/admin/settings',
+    { links: { youtube: 'https://youtube.com/@aybkk', tiktok: '' } }, ADMIN);
+  const links = (await J('/api/bkk/settings')).body.links;
+  ok('a saved link is served publicly', links.youtube === 'https://youtube.com/@aybkk',
+     JSON.stringify(links));
+  ok('a blank link is not served', links.tiktok === undefined, JSON.stringify(links));
+
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');
   ok('admin requires key', noKey.status === 401);
