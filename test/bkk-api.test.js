@@ -289,6 +289,44 @@ const ok = (name, cond, extra = '') => {
     .some(c => c.slotId === target.slotId && c.date === target.date);
   ok('reopening puts it back on the timetable', back);
 
+  console.log('\n— the teaching team —');
+  const mk = await post('/api/bkk/admin/teachers', { name: 'Jamsai' }, ADMIN);
+  ok('teacher added', mk.status === 200 && mk.body.passcode, JSON.stringify(mk.body).slice(0, 120));
+  const TKEY = { 'x-teacher-key': mk.body.passcode };
+  const whoami = await J('/api/bkk/teacher/me', { headers: TKEY });
+  ok('teacher signs in with their own passcode', whoami.body.teacher.name === 'Jamsai');
+  ok('a wrong passcode is refused',
+     (await J('/api/bkk/teacher/me', { headers: { 'x-teacher-key': 'nope' } })).status === 401);
+  ok('the admin key is not a teacher key',
+     (await J('/api/bkk/teacher/me', { headers: ADMIN })).status === 401);
+
+  const shared = await post('/api/bkk/teacher/notes', {
+    memberCode, toWorkOn: 'Straighten the front leg in Trikonasana',
+    body: 'Good breath today', shareWithStudent: true }, TKEY);
+  ok('a note saves', shared.status === 200, JSON.stringify(shared.body).slice(0, 140));
+  ok('...attributed to the teacher who wrote it', shared.body.note.teacher_name === 'Jamsai');
+  await post('/api/bkk/teacher/notes', {
+    memberCode, body: 'Shoulder guarding — watch it, do not mention yet',
+    shareWithStudent: false }, TKEY);
+
+  const seen = (await J('/api/bkk/me/' + memberCode)).body.notes || [];
+  ok('the student sees what to work on',
+     seen.some(n => /Trikonasana/.test(n.to_work_on || '')), JSON.stringify(seen).slice(0, 160));
+  ok('the student NEVER sees a team-only note',
+     !seen.some(n => /Shoulder guarding/.test((n.body || '') + (n.to_work_on || ''))),
+     JSON.stringify(seen).slice(0, 200));
+  const teacherView = await J('/api/bkk/teacher/student/' + memberCode, { headers: TKEY });
+  ok('the teacher sees both', (teacherView.body.notes || []).length >= 2,
+     String((teacherView.body.notes || []).length));
+  ok('notes need a teacher passcode',
+     (await post('/api/bkk/teacher/notes', { memberCode, body: 'x' })).status === 401);
+  ok('an empty note is refused',
+     (await post('/api/bkk/teacher/notes', { memberCode, body: '  ' }, TKEY)).status === 400);
+
+  await post('/api/bkk/admin/teachers', { id: mk.body.teacher.id, active: false }, ADMIN);
+  ok('a retired teacher can no longer sign in',
+     (await J('/api/bkk/teacher/me', { headers: TKEY })).status === 401);
+
   console.log('\n— packages —');
   const newProd = await post('/api/bkk/admin/products', {
     code: 'test5', nameEn: 'Test 5 pack', kind: 'credits',

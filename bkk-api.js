@@ -115,6 +115,32 @@ function mountBkk(app, opts = {}) {
       created_at TIMESTAMPTZ DEFAULT now())`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_login_tokens_recent
              ON bkk_login_tokens (created_at)`);
+
+    // The teaching team. Each teacher has their own passcode, stored hashed —
+    // a shared key would make every note say "somebody", and revoking one
+    // person would mean changing it for everyone.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_teachers (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL, email TEXT,
+      key_hash TEXT NOT NULL,
+      active BOOLEAN DEFAULT true,
+      created_at TIMESTAMPTZ DEFAULT now())`);
+
+    // What a teacher saw, and what the student should work on.
+    // share_with_student separates the two audiences deliberately: some notes
+    // are for the team ("pushing too hard, watch the shoulder") and some are
+    // for the student ("straighten the front leg in Trikonasana").
+    await q(`CREATE TABLE IF NOT EXISTS bkk_notes (
+      id SERIAL PRIMARY KEY,
+      member_id INTEGER REFERENCES bkk_members(id) ON DELETE CASCADE,
+      teacher_id INTEGER REFERENCES bkk_teachers(id),
+      class_date DATE,
+      body TEXT,
+      to_work_on TEXT,
+      share_with_student BOOLEAN DEFAULT true,
+      created_at TIMESTAMPTZ DEFAULT now())`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_notes_member
+             ON bkk_notes (member_id, created_at DESC)`);
     // Language the student last chose, so email matches the page they bought on.
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS lang TEXT`);
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS reminded_at TIMESTAMPTZ`);
@@ -640,8 +666,17 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
          JOIN bkk_class_slots s ON s.id=b.slot_id
          WHERE b.member_id=$1 AND b.status='booked' AND b.start_at >= now()
          ORDER BY b.start_at`, [m.id])).rows;
+      // Only what a teacher chose to share. Notes kept for the team never
+      // appear here — the student is not the audience for all of them.
+      const notes = (await q(
+        `SELECT n.to_work_on, n.body, n.class_date, n.created_at, t.name AS teacher
+         FROM bkk_notes n LEFT JOIN bkk_teachers t ON t.id=n.teacher_id
+         WHERE n.member_id=$1 AND n.share_with_student
+           AND (n.to_work_on IS NOT NULL OR n.body IS NOT NULL)
+         ORDER BY n.created_at DESC LIMIT 10`, [m.id])).rows;
       res.json({
         member: { code: m.code, name: m.name, email: m.email },
+        notes,
         passes: passes.map(p => ({
           name: p.name_en, kind: p.kind, status: p.status,
           creditsLeft: p.kind === 'unlimited' ? null : (p.credits_total - p.credits_used),
@@ -1025,6 +1060,136 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
          `extended +${days}d +${credits}cr: ${String((req.body || {}).reason || '').slice(0, 120)}`]);
       if (!r.rows.length) return res.status(404).json({ error: 'pass not found' });
       res.json({ success: true, pass: r.rows[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── the teaching team ─────────────────────────────────────────────────────
+  // Boonchu, Jamsai and M. Each signs in with their own passcode so every note
+  // carries a name; the admin passcode is for running the shala, not teaching.
+
+  const hashKey = k => crypto.createHash('sha256').update(String(k)).digest('hex');
+
+  // Returns the teacher, or null. Admin is NOT a teacher: someone has to own
+  // each note, and "the admin" is not a person a student can ask about it.
+  async function teacherFrom(req) {
+    const key = req.headers['x-teacher-key'];
+    if (!key) return null;
+    const r = await q(
+      'SELECT * FROM bkk_teachers WHERE key_hash = $1 AND active', [hashKey(key)]);
+    return r.rows[0] || null;
+  }
+
+  app.get('/api/bkk/teacher/me', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    res.json({ teacher: { id: t.id, name: t.name } });
+  });
+
+  // A teacher's view of one student: everything, including notes kept from them.
+  app.get('/api/bkk/teacher/student/:code', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    try {
+      const m = (await q('SELECT * FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'not found' });
+      const [passes, notes, recent] = await Promise.all([
+        q(`SELECT p.*, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+           WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id]),
+        q(`SELECT n.*, t.name AS teacher_name FROM bkk_notes n
+           LEFT JOIN bkk_teachers t ON t.id=n.teacher_id
+           WHERE n.member_id=$1 ORDER BY n.created_at DESC LIMIT 50`, [m.id]),
+        q(`SELECT b.class_date, b.checked_in_at, s.title FROM bkk_bookings b
+           JOIN bkk_class_slots s ON s.id=b.slot_id
+           WHERE b.member_id=$1 AND b.status='booked'
+           ORDER BY b.start_at DESC LIMIT 20`, [m.id]),
+      ]);
+      res.json({
+        member: { code: m.code, name: m.name, email: m.email, phone: m.phone },
+        passes: passes.rows, notes: notes.rows, recent: recent.rows,
+      });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/teacher/notes', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    try {
+      const { memberCode, body, toWorkOn, classDate, shareWithStudent } = req.body || {};
+      const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [memberCode])).rows[0];
+      if (!m) return res.status(404).json({ error: 'student not found' });
+      if (!String(body || '').trim() && !String(toWorkOn || '').trim()) {
+        return res.status(400).json({ error: 'write something in one of the two boxes' });
+      }
+      const n = (await q(
+        `INSERT INTO bkk_notes (member_id,teacher_id,class_date,body,to_work_on,share_with_student)
+         VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+        [m.id, t.id, classDate || null,
+         String(body || '').slice(0, 2000) || null,
+         String(toWorkOn || '').slice(0, 500) || null,
+         shareWithStudent !== false])).rows[0];
+      res.json({ success: true, note: { ...n, teacher_name: t.name } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.get('/api/bkk/teacher/today', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    try {
+      const r = await q(
+        `SELECT m.code, m.name, s.title, b.start_at, b.checked_in_at,
+           (SELECT count(*)::int FROM bkk_notes n WHERE n.member_id=m.id) AS notes
+         FROM bkk_bookings b
+         JOIN bkk_members m ON m.id=b.member_id
+         JOIN bkk_class_slots s ON s.id=b.slot_id
+         WHERE b.status='booked'
+           AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
+         ORDER BY b.start_at, m.name`);
+      res.json({ students: r.rows });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Admin manages who is on the team. Passcodes are shown once, at creation —
+  // they are stored hashed, so a forgotten one is reset, never recovered.
+  app.get('/api/bkk/admin/teachers', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const r = await q('SELECT id,name,email,active,created_at FROM bkk_teachers ORDER BY name');
+      res.json({ teachers: r.rows });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/admin/teachers', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const { id, name, email, active } = req.body || {};
+      if (id) {
+        const r = await q(
+          `UPDATE bkk_teachers SET name=COALESCE($2,name), email=COALESCE($3,email),
+             active=COALESCE($4,active) WHERE id=$1 RETURNING id,name,email,active`,
+          [id, name ?? null, email ?? null, active != null ? !!active : null]);
+        if (!r.rows.length) return res.status(404).json({ error: 'not found' });
+        return res.json({ success: true, teacher: r.rows[0] });
+      }
+      if (!String(name || '').trim()) return res.status(400).json({ error: 'name required' });
+      // Readable enough to pass on in person, random enough not to be guessed.
+      const passcode = crypto.randomBytes(6).toString('base64url');
+      const r = await q(
+        `INSERT INTO bkk_teachers (name,email,key_hash) VALUES ($1,$2,$3)
+         RETURNING id,name,email,active`,
+        [String(name).trim(), email || null, hashKey(passcode)]);
+      res.json({ success: true, teacher: r.rows[0], passcode,
+        note: 'Give this passcode to them now — it cannot be shown again.' });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/admin/teachers/:id/reset', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const passcode = crypto.randomBytes(6).toString('base64url');
+      const r = await q('UPDATE bkk_teachers SET key_hash=$2 WHERE id=$1 RETURNING name',
+        [req.params.id, hashKey(passcode)]);
+      if (!r.rows.length) return res.status(404).json({ error: 'not found' });
+      res.json({ success: true, name: r.rows[0].name, passcode });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

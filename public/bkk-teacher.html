@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK Teaching</title>
+<style>
+  @font-face{font-family:'Long Cang';src:url('/fonts/longcang.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
+    unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
+  :root{--ink:#17121a;--wall:#f7f1f5;--paper:#fff;--blush:#fbe7f0;--plum:#5c2160;
+    --plum-deep:#43164a;--pink:#e8458c;--soft:#6b5d70;--line:rgba(23,18,26,.11);--on-dark:#fdf7fa}
+  @media (prefers-color-scheme:dark){:root{--ink:#f5e9f0;--wall:#140f18;--paper:#1e1723;
+    --blush:#2b1c2b;--plum:#c07ec8;--plum-deep:#d9a5de;--pink:#ff6fae;--soft:#b09cb6;
+    --line:rgba(245,233,240,.14);--on-dark:#17121a}}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--wall);color:var(--ink);
+    font:16px/1.6 'Plex',-apple-system,'Helvetica Neue','PingFang SC',sans-serif}
+  header{background:#17121a;color:#fdf7fa;padding:16px 18px;display:flex;align-items:center;gap:12px}
+  header h1{margin:0;font-family:'Long Cang',cursive;font-weight:400;font-size:27px;flex:1;line-height:1.1}
+  header .who{font-size:13px;color:#f0d6e3}
+  main{max-width:720px;margin:0 auto;padding:14px}
+  .box{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:12px}
+  .box b{font-family:'Long Cang',cursive;font-weight:400;font-size:20px}
+  .btn{padding:10px 16px;border:none;border-radius:7px;background:var(--plum);color:var(--on-dark);
+    font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+  .btn.gray{background:var(--plum-deep)}.btn.pink{background:var(--pink)}
+  .btn.ghost{background:transparent;color:var(--plum);border:1px solid var(--line)}
+  input,textarea{width:100%;padding:11px;border:1.5px solid var(--line);border-radius:7px;
+    font:inherit;font-size:16px;background:var(--wall);color:var(--ink)}
+  textarea{min-height:74px;resize:vertical}
+  label{display:block;font-size:12.5px;color:var(--soft);margin:11px 0 4px}
+  .muted{color:var(--soft);font-size:12.5px}
+  .row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;
+    border:none;border-top:1px solid var(--line);padding:13px 0;font:inherit;color:var(--ink);cursor:pointer}
+  .row .nm{flex:1}.row .nm b{font-family:inherit;font-weight:600;font-size:15.5px}
+  .in{color:#187a43;font-weight:600;font-size:12.5px}
+  .note{border-top:1px solid var(--line);padding:11px 0}
+  .note .work{background:var(--blush);color:var(--plum);border-radius:7px;padding:9px 11px;margin-top:5px}
+  .private{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a33}
+  #gate{max-width:330px;margin:16vh auto;text-align:center;padding:0 16px}
+  #gate h1{font-family:'Long Cang',cursive;font-weight:400;font-size:40px;margin:0 0 4px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1>AYBKK</h1>
+  <p class="muted">Teaching notes</p>
+  <input id="key" type="password" placeholder="your passcode" autocomplete="off">
+  <button class="btn" style="width:100%;margin-top:12px" onclick="unlock()">Enter</button>
+  <p class="muted" id="gateMsg"></p>
+</div>
+
+<div id="app" style="display:none">
+  <header><h1>Teaching</h1><span class="who" id="who"></span>
+    <button class="btn gray" onclick="logout()">Lock</button></header>
+  <main id="view"></main>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  let KEY = localStorage.getItem('aybkk_teacher_key') || '';
+  let ME = null;
+
+  const api = (url, opts = {}) => fetch(url, { ...opts,
+    headers: { 'Content-Type': 'application/json', 'X-Teacher-Key': KEY, ...(opts.headers || {}) } });
+  const time = iso => new Date(iso).toLocaleTimeString('en-GB',
+    { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
+  const dateOnly = s => String(s || '').slice(0, 10);
+
+  window.unlock = async () => {
+    KEY = $('#key').value.trim();
+    const r = await api('/api/bkk/teacher/me');
+    if (!r.ok) { $('#gateMsg').textContent = 'That passcode is not recognised.'; return; }
+    ME = (await r.json()).teacher;
+    localStorage.setItem('aybkk_teacher_key', KEY);
+    $('#gate').style.display = 'none';
+    $('#app').style.display = 'block';
+    $('#who').textContent = ME.name;
+    today();
+  };
+  window.logout = () => { localStorage.removeItem('aybkk_teacher_key'); location.reload(); };
+
+  async function today() {
+    const d = await api('/api/bkk/teacher/today').then(r => r.json());
+    const rows = (d.students || []);
+    $('#view').innerHTML = `<div class="box">
+      <b>Practising today</b>
+      <p class="muted">Tap a name to see their history and leave a note.</p>
+      ${rows.length ? rows.map(s => `<button class="row" onclick="open_('${esc(s.code)}')">
+          <span class="nm"><b>${esc(s.name)}</b><br>
+            <span class="muted">${time(s.start_at)} · ${esc(s.title)}${
+              s.notes ? ` · ${s.notes} note${s.notes > 1 ? 's' : ''}` : ' · no notes yet'}</span></span>
+          ${s.checked_in_at ? '<span class="in">✓ in</span>' : '<span class="muted">not yet</span>'}
+        </button>`).join('')
+        : '<p class="muted">Nobody booked today.</p>'}
+    </div>
+    <div class="box"><b>Someone else</b>
+      <p class="muted">Anyone who is not practising today.</p>
+      <input id="code" placeholder="member code, e.g. B…">
+      <p style="margin-top:10px"><button class="btn ghost" onclick="open_($('#code').value.trim())">Open</button></p>
+    </div>`;
+  }
+
+  window.open_ = async (code) => {
+    if (!code) return;
+    const r = await api('/api/bkk/teacher/student/' + encodeURIComponent(code));
+    if (!r.ok) { alert('No student with that code.'); return; }
+    const d = await r.json();
+    const pass = (d.passes || []).find(p => p.status === 'active');
+    $('#view').innerHTML = `<p><button class="btn ghost" onclick="today()">← Today</button></p>
+      <div class="box">
+        <b>${esc(d.member.name)}</b>
+        <p class="muted">${esc(d.member.code)}${d.member.email ? ' · ' + esc(d.member.email) : ''}</p>
+        <p class="muted">${pass
+          ? esc(pass.name_en) + ' — ' + (pass.kind === 'unlimited' ? 'unlimited'
+              : (pass.credits_total - pass.credits_used) + ' classes left')
+          : 'No active pass.'}</p>
+      </div>
+
+      <div class="box">
+        <b>After this class</b>
+        <label>What you want them to work on <span class="muted">— they will see this</span></label>
+        <textarea id="work" placeholder="e.g. Straighten the front leg in Trikonasana. Breathe before you go deeper."></textarea>
+        <label>Notes for the team <span class="muted">— choose below whether they see it</span></label>
+        <textarea id="body" placeholder="e.g. Shoulder still guarding on the right. Went easy on Marichyasana D."></textarea>
+        <p style="margin-top:10px">
+          <label style="display:inline;color:var(--ink);font-size:14px">
+            <input type="checkbox" id="share" checked style="width:auto"> Let the student read the notes too</label>
+        </p>
+        <p><button class="btn pink" onclick="save('${esc(d.member.code)}')">Save</button></p>
+      </div>
+
+      <div class="box"><b>Practice history</b>
+        ${(d.recent || []).length ? (d.recent || []).map(b => `<div class="note">
+            ${dateOnly(b.class_date)} · ${esc(b.title)}
+            ${b.checked_in_at ? '<span class="in"> ✓ practised</span>' : '<span class="muted"> · booked</span>'}
+          </div>`).join('') : '<p class="muted">Nothing yet.</p>'}
+      </div>
+
+      <div class="box"><b>Previous notes</b>
+        ${(d.notes || []).length ? (d.notes || []).map(n => `<div class="note">
+            <span class="muted">${dateOnly(n.created_at)} · ${esc(n.teacher_name || 'unknown')}</span>
+            ${n.share_with_student ? '' : ' <span class="private">team only</span>'}
+            ${n.to_work_on ? `<div class="work">${esc(n.to_work_on)}</div>` : ''}
+            ${n.body ? `<div style="margin-top:5px">${esc(n.body)}</div>` : ''}
+          </div>`).join('') : '<p class="muted">No notes yet.</p>'}
+      </div>`;
+  };
+
+  window.save = async (code) => {
+    const toWorkOn = $('#work').value.trim();
+    const body = $('#body').value.trim();
+    if (!toWorkOn && !body) { alert('Write something in one of the two boxes.'); return; }
+    const r = await api('/api/bkk/teacher/notes', { method: 'POST', body: JSON.stringify({
+      memberCode: code, toWorkOn, body,
+      shareWithStudent: $('#share').checked,
+      classDate: new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10) }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { alert(j.error || 'Could not save.'); return; }
+    open_(code);
+  };
+
+  if (KEY) { $('#key').value = KEY; unlock(); }
+})();
+</script>
+</body>
+</html>

@@ -192,7 +192,8 @@ const ORIENTATION_SHORTCUTS = {
   zh: 'orientation-zhuhai.html',
 };
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
-const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', door: 'bkk-door.html' };
+const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
+  door: 'bkk-door.html', teach: 'bkk-teacher.html' };
 for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SHORTCUTS })) {
   app.get('/' + slug, (req, res) => {
     if (fs.existsSync(path.join(__dirname, 'public', file))) {
