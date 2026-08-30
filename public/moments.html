@@ -117,6 +117,17 @@
       max-height: 100vh;
       object-fit: contain;
     }
+    .lb-save {
+      position: fixed;
+      left: 50%; bottom: 22px; transform: translateX(-50%);
+      background: rgba(255,255,255,.16);
+      color: #fff; border: none; border-radius: 999px;
+      padding: 11px 22px; font-size: 15px; cursor: pointer;
+    }
+    .lb-hint {
+      position: fixed; left: 50%; bottom: 66px; transform: translateX(-50%);
+      color: rgba(255,255,255,.55); font-size: 12px; white-space: nowrap;
+    }
     .lb-btn {
       position: fixed;
       background: rgba(255,255,255,.12);
@@ -158,6 +169,8 @@
     <span class="lb-count" id="lbCount"></span>
     <div id="lbMedia"></div>
     <button class="lb-btn lb-close" onclick="closeLb()">✕</button>
+    <span class="lb-hint">or long-press the photo · 或长按图片保存</span>
+    <button class="lb-save" onclick="saveLb(event)">⬇ Save 保存</button>
     <button class="lb-btn lb-prev" onclick="stepLb(event, -1)">‹</button>
     <button class="lb-btn lb-next" onclick="stepLb(event, 1)">›</button>
   </div>
@@ -240,6 +253,12 @@ function showLb() {
   } else {
     box.innerHTML = '<img src="' + fullUrl(item) + '" alt="AYBKK practice">';
   }
+}
+function saveLb(e) {
+  if (e) e.stopPropagation();
+  const item = FLAT[lbIndex];
+  const name = 'AYBKK-' + (item.created || '').slice(0, 10);
+  window.open(item.url.replace('/upload/', '/upload/fl_attachment:' + name + '/'), '_blank');
 }
 function stepLb(e, dir) {
   if (e) e.stopPropagation();
