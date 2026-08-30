@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talk Script · The Five Kleshas</title>
+<style>
+  :root{
+    --bg:#0c0a09; --card:#151210; --ink:#f2ece0; --ink2:#b7ae9e; --hair:rgba(242,236,224,.12);
+    --ember:#b8442a; --gold:#e4b45e;
+    --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:"Avenir Next","Avenir","Helvetica Neue",-apple-system,sans-serif;
+    --zh:"PingFang SC","Songti SC","Heiti SC",sans-serif;
+    --dev:"Devanagari Sangam MN","Kohinoor Devanagari",serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:56px 20px 120px}
+  .wrap{max-width:820px;margin:0 auto}
+  .zh{font-family:var(--zh)} .dev{font-family:var(--dev)}
+  header{border-bottom:1px solid var(--hair);padding-bottom:26px;margin-bottom:14px}
+  .eyebrow{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  h1{font-family:var(--serif);font-size:38px;font-weight:600;margin:12px 0 6px}
+  .sub{color:var(--ink2);font-size:18px;font-family:var(--serif)}
+  .meta{margin-top:14px;font-size:14px;color:var(--ink2)} .meta b{color:var(--gold)}
+  .preface{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:24px 30px;margin:32px 0 42px}
+  .preface h2{font-family:var(--serif);font-size:23px;margin-bottom:12px}
+  .preface p{color:var(--ink2);margin-bottom:10px;font-size:16px} .preface p b{color:var(--ink)}
+  .preface .pace{margin-top:8px;font-size:15px;color:var(--gold)}
+  .slide{background:var(--card);border:1px solid var(--hair);border-left:5px solid var(--acc,var(--ember));
+    border-radius:14px;padding:24px 30px;margin-bottom:24px}
+  .head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .num{font-family:"SF Mono",Menlo,monospace;font-size:14px;color:var(--acc,var(--ember));font-weight:700}
+  .slide h3{font-family:var(--serif);font-size:25px;font-weight:600}
+  .slide h3 .dev{color:var(--acc,var(--ember));font-size:.8em;margin-left:.3em}
+  .time{margin-left:auto;font-family:"SF Mono",Menlo,monospace;font-size:13px;color:var(--ink2)}
+  .block{margin:13px 0}
+  .tag{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;padding:3px 9px;border-radius:5px;margin-bottom:8px}
+  .tag.say{background:rgba(242,236,224,.1);color:var(--ink)}
+  .tag.story{background:rgba(184,68,42,.18);color:#e69b86}
+  .tag.side{background:rgba(184,68,42,.1);color:#d98b73}
+  .tag.ask{background:rgba(228,180,94,.16);color:var(--gold)}
+  .tag.anti{background:rgba(228,180,94,.14);color:var(--gold)}
+  .say-text{font-family:var(--serif);font-size:20px;line-height:1.5} .say-text .zh{color:var(--acc,var(--ember));font-size:.9em}
+  .story-text{font-size:16px;color:var(--ink2);line-height:1.55} .story-text b{color:var(--ink)}
+  .side-text{font-family:var(--serif);font-style:italic;font-size:17px;color:#d98b73}
+  .ask-text{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--gold)}
+  .anti-text{font-size:16px;color:var(--gold)} .anti-text b{color:var(--ink)}
+  .src{font-size:13px;color:var(--ink2);opacity:.75;margin-top:4px}
+  .armor{background:rgba(228,180,94,.07);border:1px solid rgba(228,180,94,.3);border-radius:16px;padding:24px 30px;margin-top:38px}
+  .armor h2{font-family:var(--serif);font-size:22px;margin-bottom:6px}
+  .armor p.i{color:var(--ink2);font-size:15px;margin-bottom:14px}
+  .armor .r{padding:11px 0;border-top:1px solid var(--hair)} .armor .r:first-of-type{border-top:none}
+  .armor .q{font-weight:600;color:var(--gold);font-size:16px} .armor .a{color:var(--ink2);font-size:15px;margin-top:3px} .armor .a b{color:var(--ink)}
+  footer{text-align:center;color:var(--ink2);font-size:13px;margin-top:40px}
+  @media (max-width:600px){body{padding:32px 14px 80px}h1{font-size:29px}.slide{padding:20px}.say-text{font-size:19px}}
+  @media print{
+    body{background:#fff;color:#1a1a1a;padding:0}
+    .slide,.preface,.armor{background:#fff;border-color:#ddd;break-inside:avoid}
+    .say-text,.slide h3,.preface h2{color:#111}.story-text,.sub,.meta,.preface p{color:#333}
+    .story-text b,.preface p b{color:#000}.say-text .zh{color:#333}header{border-color:#ccc}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Presenter Talk-Script · 讲稿</div>
+    <h1>The Five Kleshas — The Roots of Suffering</h1>
+    <div class="sub">五种烦恼 · 苦的根源 — for Indepth China</div>
+    <div class="meta"><b>~18–20 minutes</b> · 9 slides · Companion to <b>index.html</b> · Ember for the affliction, gold for the light.</div>
+  </header>
+
+  <div class="preface">
+    <h2>How to hold this one</h2>
+    <p>This is a heavier register than the hormone talk — you are naming suffering. Slow down. Let the stories breathe; the myths carry the weight, you don't have to push them. Stay in <b>ember gravity</b> through the five afflictions (slides 3–7); when you reach the four states and "messengers" (slide 8), let the <b>gold — the light — enter your voice.</b> Close in silence.</p>
+    <p>One honesty note that <em>raises</em> your authority: the rope-snake and the tiger-among-goats are <b>Vedanta teaching parables</b>, not verses of the Yoga Sutras — so say "there's a story the old teachers tell." Yayāti, Śiśupāla, Nachiketā and Rāvaṇa are canonical (Mahābhārata, Kaṭha Upaniṣad, Rāmāyaṇa) — you can name the source.</p>
+    <div class="pace">Pace: ~2 min per klesha, 1 min on the frame/close. Total ≈ 18–20 min, leaving room for their questions.</div>
+  </div>
+
+  <!-- 1 -->
+  <div class="slide" style="--acc:var(--gold)">
+    <div class="head"><span class="num">01</span><h3>Title</h3><span class="time">0:00</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"For years you have worked with pain on the mat. Tonight we look straight at where it comes from — the five afflictions the sutras call the <em>kleshas,</em> the roots of suffering. And Patanjali makes a promise: <span class="zh">heyaṃ duḥkham anāgatam</span> — the suffering that <em>hasn't come yet</em> can be avoided. That's why we study this."</div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="slide" style="--acc:var(--ember)">
+    <div class="head"><span class="num">02</span><h3>The root &amp; the chain</h3><span class="time">1:00</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Pain in practice is not just physical. Watch the chain: knee pain in lotus → frustration → the breath tightens → and the pain grows. The body started it; the <em>mind</em> multiplied it. And underneath all of it sits one root — <span class="hl">avidyā,</span> ignorance. Patanjali calls it the <em>field</em>: the other four afflictions are not separate weeds, they are the crop that grows from this one soil."</div>
+    </div>
+    <div class="block"><span class="tag ask">Ask</span><div class="ask-text">"So before we name them — which of your pains this week was the knee… and which was the mind?"</div></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="slide" style="--acc:var(--ember)">
+    <div class="head"><span class="num">03</span><h3>Avidyā <span class="dev">अविद्या</span> · 无明</h3><span class="time">2:00</span></div>
+    <div class="block"><span class="tag say">Say</span><div class="say-text">"Avidyā — ignorance. Not lack of information; a <em>misreading of reality.</em> Mistaking the impermanent for the permanent, and the not-Self for the Self. It is the root of the other four."</div></div>
+    <div class="block"><span class="tag story">Story</span><div class="story-text">There's a story the old teachers tell. A <b>tiger cub, orphaned, is raised by goats.</b> It learns to bleat, to nibble grass, to be afraid — certain it is a weak little goat. One day a great tiger seizes it, drags it to a still pool, and shows it its own reflection — then makes it taste meat. And the cub, for the first time, <b>roars.</b><div class="src">— Vedānta teaching parable (Ramakrishna tradition). Say "a story teachers tell," not "the sutra says."</div></div></div>
+    <div class="block"><span class="tag side">Turns sideways</span><div class="side-text">It lived its whole life weak and afraid — not from any real limit, but from a false name it had been given for itself. That is avidyā: bondage is a case of mistaken identity.</div></div>
+    <div class="block"><span class="tag anti">Antidote</span><div class="anti-text"><b>Svādhyāya</b> (self-study), presence, and <b>viveka</b> — discernment. Insight, not force: when the light comes, the "snake" was always only a rope.</div></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="slide" style="--acc:var(--ember)">
+    <div class="head"><span class="num">04</span><h3>Asmitā <span class="dev">अस्मिता</span> · 我执</h3><span class="time">4:00</span></div>
+    <div class="block"><span class="tag say">Say</span><div class="say-text">"From that root grows the first shoot — <em>asmitā,</em> egoism. The moment the mind says 'I am this.' Patanjali defines it exactly: confusing the Seer with the instrument of seeing. The subtler you get, the stickier it becomes — 'I am the one who has transcended ego' is still ego."</div></div>
+    <div class="block"><span class="tag story">Story</span><div class="story-text"><b>Rāvaṇa</b> — ten-headed king of Lanka, a great scholar and Shiva-devotee. When he won his boon of invulnerability, he asked to be safe from gods and demons — but so proud, he <b>disdained even to name humans and animals</b> as possible threats. His ego wouldn't stoop to it. And that overlooked loophole is exactly what killed him: a "mere human," Rāma, brought him down.<div class="src">— Vālmīki Rāmāyaṇa. (The "ten heads = ten vices" reading is a later devotional gloss.)</div></div></div>
+    <div class="block"><span class="tag side">Turns sideways</span><div class="side-text">It was not his power that authored his ruin. It was his ego. Feedback he could have used, he received as insult — and became uncoachable.</div></div>
+    <div class="block"><span class="tag anti">Antidote</span><div class="anti-text"><b>Humility in repetition. Gratitude in surrender.</b> The mat humbles the "I" six days a week, if you let it.</div></div>
+  </div>
+
+  <!-- 5 -->
+  <div class="slide" style="--acc:var(--ember)">
+    <div class="head"><span class="num">05</span><h3>Rāga <span class="dev">राग</span> · 贪</h3><span class="time">6:00</span></div>
+    <div class="block"><span class="tag say">Say</span><div class="say-text">"The ego reaches toward what flatters it — that's <em>rāga,</em> attachment. Clinging to pleasure, and organizing your life around repeating it."</div></div>
+    <div class="block"><span class="tag story">Story</span><div class="story-text"><b>King Yayāti,</b> cursed with old age while his appetite still burned, begged his sons for their youth; only the youngest, Puru, agreed. Yayāti took it and indulged the senses for <b>a thousand more years</b> — and at the end he confessed the discovery: <b>desire is never quenched by enjoyment. It flares higher — like a fire fed with ghee.</b> He returned Puru's youth and renounced.<div class="src">— Mahābhārata, Ādi Parva. na jātu kāmaḥ kāmānām upabhogena śāmyati.</div></div></div>
+    <div class="block"><span class="tag side">Turns sideways</span><div class="side-text">A whole extra millennium of pleasure left him emptier than when he began. Craving is a treadmill: each hit resets the baseline, and satisfaction is always one more away.</div></div>
+    <div class="block"><span class="tag anti">Antidote</span><div class="anti-text"><b>Remember impermanence. Enjoy what comes; let go when it goes.</b> Don't hunt yesterday's practice.</div></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="slide" style="--acc:var(--ember)">
+    <div class="head"><span class="num">06</span><h3>Dveṣa <span class="dev">द्वेष</span> · 嗔</h3><span class="time">8:30</span></div>
+    <div class="block"><span class="tag say">Say</span><div class="say-text">"The mirror image of craving is <em>dveṣa,</em> aversion — recoiling from what once brought pain. Grudge, avoidance, revulsion. The trap: aversion keeps the disliked thing <em>glued</em> to your attention. You think about the enemy more than the friend."</div></div>
+    <div class="block"><span class="tag story">Story</span><div class="story-text"><b>Śiśupāla</b> spent his whole life hating Krishna — allied against him, insulted him at every turn. Krishna had vowed to forgive one hundred offenses. At Yudhiṣṭhira's great sacrifice, enraged that Krishna was honored first, Śiśupāla poured out abuse and crossed the <b>hundredth insult</b> — and the Sudarśana-chakra took his head on the spot.<div class="src">— Mahābhārata, Sabhā Parva (Śiśupāla-vadha).</div></div></div>
+    <div class="block"><span class="tag side">Turns sideways</span><div class="side-text">His aversion drove him to publicly provoke the very being he hated most — delivering him straight into the ruin he meant to inflict. Aversion eats the one who holds it.</div></div>
+    <div class="block"><span class="tag anti">Antidote</span><div class="anti-text"><b>Steady breath through the challenge.</b> Meet aversion with its opposite. The backbend you avoid becomes the doorway — <b>dveṣa becomes the door.</b></div></div>
+  </div>
+
+  <!-- 7 -->
+  <div class="slide" style="--acc:var(--ember)">
+    <div class="head"><span class="num">07</span><h3>Abhiniveśā <span class="dev">अभिनिवेश</span> · 怖畏</h3><span class="time">11:00</span></div>
+    <div class="block"><span class="tag say">Say</span><div class="say-text">"And the deepest — <em>abhiniveśā,</em> the clinging to life, the fear of death. Patanjali says it grips <em>even the wise.</em> Generalized, it's every smaller fear: of losing the youth, the status, the progress, the identity. And its cruel signature is that <b>the grip causes the very loss it fears.</b>"</div></div>
+    <div class="block"><span class="tag story">Story</span><div class="story-text">The boy <b>Nachiketā,</b> sent by his father's rash word to the house of Death, waited three nights at Yama's door. Granted three boons, for the last he asked the ultimate question: <em>what survives death?</em> Yama tried to divert him — offered sons, cattle, gold, vast lands, celestial dancing-girls, <b>long life</b> — the very bribes that <em>are</em> abhiniveśā. Nachiketā refused them all: "these wear out the senses; keep your horses and your dancers." And by facing death and refusing the clinging, he won the teaching of the deathless Self.<div class="src">— Kaṭha Upaniṣad 1–2.</div></div></div>
+    <div class="block"><span class="tag side">Turns sideways</span><div class="side-text">The counter-image: <b>Aesop's dog,</b> crossing a stream with a bone, sees its own reflection, lunges to seize that "other" bone too — and drops the real one into the water. Grasping for more security, it loses what it had.</div></div>
+    <div class="block"><span class="tag anti">Antidote</span><div class="anti-text"><b>You are not the body. Follow the task at hand. One step at a time.</b> Fear of death is beaten not by escaping death, but by knowing what in you death cannot touch.</div></div>
+  </div>
+
+  <!-- 8 -->
+  <div class="slide" style="--acc:var(--gold)">
+    <div class="head"><span class="num">08</span><h3>The four states · messengers</h3><span class="time">14:00</span></div>
+    <div class="block"><span class="tag say">Say — light enters here</span><div class="say-text">"One caution, especially for you, because you're advanced: a klesha you can't feel is not a klesha you've killed. Patanjali names four states — <b>dormant, attenuated, interrupted, active.</b> A dormant seed is not a dead seed; it waits for its conditions. So maturity is not 'I have no ego' — it's knowing the seed is still in the soil."</div></div>
+    <div class="block"><span class="tag ask">Ask</span><div class="ask-text">"Which klesha is running you right now — and is it active… or just dormant, waiting?"</div></div>
+    <div class="block"><span class="tag say">Say</span><div class="say-text">"And here is the turn: the kleshas are <em>not enemies.</em> They are <span class="gold">messengers.</span> Craving shows you where you've outsourced your peace. Aversion maps the places you refuse to feel. Fear points straight at what you're still identified with. You don't declare war on a messenger — you read the message. The tools are insight, not force: <b>kriyā yoga</b> (discipline, self-study, surrender), <b>pratipakṣa bhāvana</b> (cultivate the opposite), and <b>viveka</b> (discernment)."</div></div>
+  </div>
+
+  <!-- 9 -->
+  <div class="slide" style="--acc:var(--gold)">
+    <div class="head"><span class="num">09</span><h3>Close</h3><span class="time">17:00</span></div>
+    <div class="block"><span class="tag say">Say — slower</span><div class="say-text">"So don't push the affliction away. The knee pain, the craving, the grudge, the fear — they are not interruptions to the work. They <em>are</em> the work, arriving right on time to show you where you are still asleep."</div>
+      <div class="src" style="margin:8px 0">— pause, one full breath —</div>
+      <div class="say-text">"The klesha is not the wall in your practice. It is the <span class="gold">doorway</span> — and each one is carved with your own name."</div>
+    </div>
+  </div>
+
+  <div class="armor">
+    <h2>If a student pushes back — honest answers</h2>
+    <p class="i">Naming the limit precisely is what authority sounds like. Never bluff.</p>
+    <div class="r"><div class="q">"Is the tiger-and-goats story in the Yoga Sutras?"</div><div class="a"><b>No — it's a Vedanta teaching parable</b> (Ramakrishna tradition) paired with avidyā. The sutra itself just defines avidyā (2.5). Same for the rope-snake.</div></div>
+    <div class="r"><div class="q">"Are the others real scripture?"</div><div class="a"><b>Yes.</b> Yayāti = Mahābhārata (Ādi Parva); Śiśupāla = Mahābhārata (Sabhā Parva); Nachiketā = Kaṭha Upaniṣad; Rāvaṇa = Vālmīki Rāmāyaṇa.</div></div>
+    <div class="r"><div class="q">"If I don't feel a klesha, is it gone?"</div><div class="a"><b>Not necessarily.</b> YS 2.4 lists four states — dormant, attenuated, interrupted, active. Absence of a flare-up is not freedom; the seed can still be in the soil.</div></div>
+    <div class="r"><div class="q">"Why is avidyā the 'root'?"</div><div class="a"><b>YS 2.4 — avidyā is the <em>field</em> (kṣetram).</b> Because you misperceive a passing self as permanent, ego forms to defend it, then reaches (rāga), recoils (dveṣa), and clings in fear (abhiniveśā). Pull the root, the plant loses its ground.</div></div>
+  </div>
+
+  <footer>AYBKK · Ashtanga Yoga Bangkok · Presenter script — print to PDF or read on your phone.</footer>
+</div>
+</body>
+</html>

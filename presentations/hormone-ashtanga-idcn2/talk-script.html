@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talk Script · Hormones, Habit & the Nervous System</title>
+<style>
+  :root{
+    --bg:#17130f; --card:#1f1913; --ink:#f4efe6; --ink2:#c9c3b6; --hair:rgba(244,239,230,.12);
+    --gold:#c9a98a; --testosterone:#c2662f; --cortisol:#e0a23c; --dopamine:#e15c74;
+    --serotonin:#7e9a82; --brain:#8488c9;
+    --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:"Avenir Next","Avenir","Helvetica Neue",-apple-system,BlinkMacSystemFont,sans-serif;
+    --zh:"PingFang SC","Songti SC","Heiti SC","Microsoft YaHei",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;
+    padding:56px 20px 120px}
+  .wrap{max-width:820px;margin:0 auto}
+  .zh{font-family:var(--zh)}
+  header{border-bottom:1px solid var(--hair);padding-bottom:28px;margin-bottom:12px}
+  .eyebrow{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  h1{font-family:var(--serif);font-size:38px;font-weight:600;line-height:1.12;margin:14px 0 6px}
+  .sub{color:var(--ink2);font-size:18px;font-family:var(--serif)}
+  .meta{margin-top:16px;font-size:14px;color:var(--ink2)}
+  .meta b{color:var(--gold)}
+
+  .preface{background:var(--card);border:1px solid var(--hair);border-radius:16px;
+    padding:26px 30px;margin:34px 0 46px}
+  .preface h2{font-family:var(--serif);font-size:24px;font-weight:600;margin-bottom:14px}
+  .preface p{color:var(--ink2);margin-bottom:12px;font-size:17px}
+  .preface p b{color:var(--ink)}
+  .preface .pace{margin-top:10px;font-size:15px;color:var(--gold);font-family:var(--sans)}
+
+  .slide{background:var(--card);border:1px solid var(--hair);border-left:5px solid var(--acc,var(--gold));
+    border-radius:14px;padding:24px 30px;margin-bottom:26px}
+  .slide .head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  .num{font-family:"SF Mono",Menlo,monospace;font-size:14px;color:var(--acc,var(--gold));font-weight:700}
+  .slide h3{font-family:var(--serif);font-size:25px;font-weight:600;line-height:1.15}
+  .time{margin-left:auto;font-family:"SF Mono",Menlo,monospace;font-size:13px;color:var(--ink2)}
+
+  .block{margin:14px 0}
+  .tag{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;
+    padding:3px 9px;border-radius:5px;margin-bottom:8px}
+  .tag.say{background:rgba(244,239,230,.1);color:var(--ink)}
+  .tag.ask{background:rgba(225,92,116,.16);color:#e79bab}
+  .tag.depth{background:rgba(132,136,201,.16);color:#a9adde}
+  .tag.note{background:rgba(201,169,138,.14);color:var(--gold)}
+  .say-text{font-family:var(--serif);font-size:20px;line-height:1.5;color:var(--ink)}
+  .say-text .zh{color:var(--acc,var(--gold));font-size:.9em}
+  .ask-text{font-family:var(--serif);font-size:19px;font-style:italic;color:#f0cdd5}
+  .depth-text,.note-text{font-size:16px;color:var(--ink2);line-height:1.55}
+  .depth-text b,.note-text b{color:var(--ink)}
+  .cue{font-size:14px;color:var(--ink2);opacity:.8;margin-top:6px;font-style:italic}
+
+  .armor{background:rgba(132,136,201,.08);border:1px solid rgba(132,136,201,.3);border-radius:16px;
+    padding:26px 30px;margin-top:40px}
+  .armor h2{font-family:var(--serif);font-size:23px;margin-bottom:6px}
+  .armor p.i{color:var(--ink2);font-size:15px;margin-bottom:16px}
+  .armor .r{padding:12px 0;border-top:1px solid var(--hair)}
+  .armor .r:first-of-type{border-top:none}
+  .armor .q{font-weight:600;color:#a9adde;font-size:16px}
+  .armor .a{color:var(--ink2);font-size:16px;margin-top:3px}
+  .armor .a b{color:var(--ink)}
+
+  footer{text-align:center;color:var(--ink2);font-size:13px;margin-top:44px}
+
+  @media (max-width:600px){
+    body{padding:32px 14px 80px}
+    h1{font-size:30px}.slide{padding:20px 20px}.say-text{font-size:19px}
+  }
+  @media print{
+    body{background:#fff;color:#1a1a1a;padding:0}
+    .slide,.preface,.armor{background:#fff;border-color:#ddd;break-inside:avoid;page-break-inside:avoid}
+    .say-text,.slide h3,.preface h2{color:#111}
+    .depth-text,.note-text,.sub,.meta,.preface p{color:#333}
+    .depth-text b,.note-text b,.preface p b{color:#000}
+    .say-text .zh{color:#333}
+    header{border-color:#ccc}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Presenter Talk-Script · 讲稿</div>
+    <h1>Ashtanga Intensity &amp; the Chemistry of Transformation</h1>
+    <div class="sub">Hormones, Habit &amp; the Nervous System — for Indepth China #2</div>
+    <div class="meta"><b>~20 minutes</b> · 18 slides · Companion to <b>index.html</b> · Speak slower than feels natural — precision is authority.</div>
+  </header>
+
+  <div class="preface">
+    <h2>How to hold the room — presence &amp; boundary</h2>
+    <p>You know these ten well. Some of them drive you around, share meals, feel like friends. Tonight, shift the register slightly: <b>less friend, more teacher.</b> Warmth in the eyes, steadiness in the body — and let the silences sit. Don't fill the pause. Don't fish for the nod.</p>
+    <p>When you drop a piece of science they've never met, <b>don't soften it into a question — state it, then wait.</b> The goal isn't to impress them; it's to let them feel the floor beneath the practice they thought they already knew. That felt gap — "there is so much here I don't have" — is what re-sets the distance, without a single cold word.</p>
+    <p>Speak slower than feels natural. You are not offering opinions tonight; you are showing them the machinery. Leave the last slide in silence for one full breath before you close.</p>
+    <div class="pace">Pace: ~1 min per slide, 1.5–2 on the big ones. Total ≈ 20 minutes, leaving room for their questions after.</div>
+  </div>
+
+  <!-- 1 -->
+  <div class="slide" style="--acc:var(--gold)">
+    <div class="head"><span class="num">01</span><h3>Title — the frame</h3><span class="time">0:00</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"For years, you have <em>felt</em> what this practice does to you. Tonight I want to show you <em>why</em> — underneath the postures, in the chemistry and in the nervous system. This is not a class about asana. It's about the machinery that the asana has been quietly training, all this time." <span class="zh">今晚，我们走到体式之下。</span></div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="slide" style="--acc:var(--brain)">
+    <div class="head"><span class="num">02</span><h3>The endocrine event</h3><span class="time">0:40</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Everything you feel on the mat begins as an <em>endocrine event.</em> Your body detects a stimulus — <span class="zh">刺激</span> — and answers by releasing a hormone, to pull itself back toward balance. Stress, effort, fasting, emotion — each one is a signal. The practice is simply a way of sending those signals, on purpose, every single morning."</div>
+    </div>
+    <div class="block"><span class="tag depth">Depth-drop</span>
+      <div class="depth-text">The word 'balance' is almost a lie. The body is never still — it's <b>constantly overcorrecting.</b> What practice trains is not stillness; it's the quality of the correction.</div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="slide" style="--acc:var(--brain)">
+    <div class="head"><span class="num">03</span><h3>Practice reacts chemically</h3><span class="time">1:50</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"So when you practice, the body doesn't just move — it <em>answers,</em> chemically. Four answers. Effort asks for testosterone and growth hormone. Stress and challenge call cortisol. Focus and breath raise dopamine and serotonin. And fatigue, surrender — endorphins."</div>
+    </div>
+    <div class="block"><span class="tag ask">Ask</span>
+      <div class="ask-text">"A question. You feel powerful after backbends — clear, strong, almost taller. Which of these four is that? … And why is it gone by the evening?"</div>
+      <div class="cue">Let them try. Don't rescue them. The answer comes on slide 6 — the rise is real but small and short-lived. Sit in the gap.</div>
+    </div>
+    <div class="block"><span class="tag note">Note to self</span>
+      <div class="note-text">These four links are <b>memory-hooks, not literal wiring.</b> If a student pushes, concede warmly: "Yes — it's a way to remember; the real pathways overlap." Conceding precisely <em>raises</em> your authority, it doesn't lower it.</div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="slide" style="--acc:var(--gold)">
+    <div class="head"><span class="num">04</span><h3>The thesis</h3><span class="time">3:10</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"If you take one line from tonight, take this. <em>Ritual, plus intensity, plus repetition</em> — done long enough — becomes neurochemical change. Not motivation. Not willpower. Chemistry, and wiring. That is why this practice changes people who never intended to change."</div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="slide" style="--acc:var(--gold)">
+    <div class="head"><span class="num">05</span><h3>Hormonal mechanics — the map</h3><span class="time">3:50</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Four messengers. Testosterone — power, drive, growth. Cortisol — metabolism and stress regulation. Dopamine — motivation and learning. Serotonin — satisfaction and balance. We'll take them one at a time. Watch how each one has a different <em>job</em> — and a different <em>feel</em> in your body."</div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="slide" style="--acc:var(--testosterone)">
+    <div class="head"><span class="num">06</span><h3>Testosterone &amp; growth</h3><span class="time">4:30</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Testosterone first. Physical intensity — jump-backs, long holds, the fatigue of a led class — the body reads that as a signal to build. Isometric intensity, muscle recruitment, an anabolic signal. <span class="zh">合成代谢信号。</span>"</div>
+    </div>
+    <div class="block"><span class="tag depth">Depth-drop</span>
+      <div class="depth-text">Be precise here, because students will <em>over-believe</em> it. The testosterone rise from a practice is <b>small, and brief</b> — minutes to about an hour. It is <b>not</b> what builds the muscle; the building is mostly local, in the tissue itself. The hormone is a whisper, not the whole story. A teacher who says "yoga floods you with testosterone" is selling, not teaching. <em>(This is the answer to the backbend question.)</em></div>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="slide" style="--acc:var(--cortisol)">
+    <div class="head"><span class="num">07</span><h3>Cortisol &amp; controlled stress</h3><span class="time">5:50</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Cortisol. All of wellness treats it as the enemy — it isn't. In the right dose it's the <em>sharpening</em> hormone. Mysore — <span class="zh">迈索尔</span> — is a controlled adrenal challenge. Fear and challenge raise cortisol and testosterone together. Cortisol mobilizes energy, sharpens the response, and lowers inflammation."</div>
+    </div>
+    <div class="block"><span class="tag depth">Depth-drop</span>
+      <div class="depth-text">The whole secret is one word: <b>acute.</b> Everything good I just said is true of a short, sharp rise. <b>Chronic</b> cortisol — from a life that never downshifts — reverses all of it: it eats muscle, suppresses immunity, raises blood sugar. So the practice is not "low cortisol." It's a clean spike, then a real drop. <b>That drop is the skill.</b></div>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="slide" style="--acc:var(--cortisol)">
+    <div class="head"><span class="num">08</span><h3>Hormesis</h3><span class="time">7:10</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"That clean spike-then-drop has a name: <em>hormesis.</em> <span class="zh">适应性压力。</span> Small, repeated, controlled stress that makes the system stronger. This is why Mysore is self-paced. You pace yourself, you push within limits, and — the hard one — you learn to <em>recover while still in effort.</em> Marichyasana D. Kapotasana. You stay in the fire, and you find your breath <em>there.</em>"</div>
+    </div>
+    <div class="block"><span class="tag ask">Ask</span>
+      <div class="ask-text">"So — where, in your own practice, do you actually recover <em>while still working?</em> Not resting between poses. Recovering, inside the effort."</div>
+      <div class="cue">Most won't be able to answer precisely — good. That skill <em>is</em> the next years of practice. Name that plainly.</div>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="slide" style="--acc:var(--dopamine)">
+    <div class="head"><span class="num">09</span><h3>Dopamine &amp; presence</h3><span class="time">8:40</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Dopamine. Most people think it's the reward at the end — landing the pose. It isn't. Dopamine rises <em>during the process</em> of getting there. Learning a new transition. A jump-through that improves by an inch. Tracking the breath with real precision. That's why practice can feel good <em>on the way</em> — and why chasing the finish quietly kills it."</div>
+    </div>
+    <div class="block"><span class="tag depth">Depth-drop</span>
+      <div class="depth-text">Cold showers raise dopamine too — and unlike most things, the rise is <b>slow, and lasts for hours,</b> not a quick spike-and-crash. That's the same shape as practice. The nervous system prefers the slow climb — the fast hits are the ones that cost you.</div>
+    </div>
+  </div>
+
+  <!-- 10 -->
+  <div class="slide" style="--acc:var(--serotonin)">
+    <div class="head"><span class="num">10</span><h3>Serotonin &amp; mood</h3><span class="time">10:00</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Serotonin is the <em>sustainability</em> hormone. It doesn't spike — it rises with rhythm, repetition, steady progress. Same time, same room, same order, every day. And it needs raw material: tryptophan — <span class="zh">色氨酸</span> — an essential amino acid your body cannot make. You have to eat it: tofu, eggs, seeds. From that, the body builds serotonin."</div>
+    </div>
+    <div class="block"><span class="tag depth">Depth-drop</span>
+      <div class="depth-text">Say this carefully, or a sharp student will catch you. Most of the body's serotonin lives in the <b>gut,</b> and it doesn't cross into the brain. Eating tofu does not directly lift your mood. Tryptophan is <b>raw material</b> — necessary, but not a switch. The honest claim is always "the raw material," never "eat this and feel happy."</div>
+    </div>
+  </div>
+
+  <!-- 11 -->
+  <div class="slide" style="--acc:var(--brain)">
+    <div class="head"><span class="num">11</span><h3>Neuroscience of habit — the insula</h3><span class="time">11:30</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Now leave the hormones, and go to the wiring. The nervous system is the foundation — it builds the muscle, through the mind–muscle link. Practice forms <em>cortical maps</em> of movement. And every time you feel the muscles, the joints, the heartbeat, the fatigue — you are training the <em>insula,</em> <span class="zh">脑岛</span>: body-awareness, pain tolerance, emotional regulation, self-observation."</div>
+    </div>
+    <div class="block"><span class="tag depth">Depth-drop</span>
+      <div class="depth-text">The insula is buried <b>deep, folded under the surface</b> of the brain — you cannot see it from outside. Interoception — feeling inward — is the one sense we never even name, and it's the one this practice trains hardest. Most people live an entire life with a quiet insula. You are the exceptions.</div>
+    </div>
+  </div>
+
+  <!-- 12 -->
+  <div class="slide" style="--acc:var(--brain)">
+    <div class="head"><span class="num">12</span><h3>Cortical map vs muscle memory</h3><span class="time">13:00</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Here is the distinction to keep. <em>Cortical mapping</em> is the conscious sculpting — you, deliberately, building the model: <em>what</em> to move, <em>how</em> to move it, how it should <em>feel.</em> <em>Muscle memory</em> is the subconscious result. You sculpt with attention; the body keeps the copy."</div>
+    </div>
+    <div class="block"><span class="tag note">Note to self</span>
+      <div class="note-text">This split is <b>teaching, not strict anatomy</b> — "muscle memory" actually lives in the brain (basal ganglia, cerebellum), not the muscle. If someone knows that, agree, and keep the metaphor: conscious effort <em>now</em> becomes unconscious skill <em>later.</em></div>
+    </div>
+  </div>
+
+  <!-- 13 -->
+  <div class="slide" style="--acc:var(--dopamine)">
+    <div class="head"><span class="num">13</span><h3>Do one part at a time</h3><span class="time">14:10</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"A practical secret — for the hard postures, and for discipline itself. The difficult thing? <em>Do one part at a time.</em> <span class="zh">一次，只做一部分。</span> Break it. And here is the mechanism: each part you complete gives a small <em>dopamine kick,</em> which pulls you toward the next. That is not a mood trick — that is how the brain builds a habit."</div>
+    </div>
+  </div>
+
+  <!-- 14 -->
+  <div class="slide" style="--acc:var(--brain)">
+    <div class="head"><span class="num">14</span><h3>Tristana</h3><span class="time">15:10</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"This is our technology for that attention. <em>Tristana</em> — <span class="zh">三处专注</span> — gaze, breath, and bandha, held together. Drishti fixes the eyes. Ujjayi fixes the breath. Bandha holds the core. Three streams into one point. That convergence is what the lab calls <em>cognitive-motor integration</em> — mind and movement, fused. The old method already knew what science is only now naming."</div>
+    </div>
+  </div>
+
+  <!-- 15 -->
+  <div class="slide" style="--acc:var(--cortisol)">
+    <div class="head"><span class="num">15</span><h3>Cortisol as fuel</h3><span class="time">16:20</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Back to cortisol, practically — what it does with fuel. It <em>mobilizes:</em> raises blood sugar for ready energy, releases fat for steady fuel, and breaks protein down for backup. Notice the word — <em>breaks down.</em> Cortisol is a spender, not a saver."</div>
+    </div>
+    <div class="block"><span class="tag depth">Depth-drop</span>
+      <div class="depth-text">So where is recovery? Recovery is <b>not</b> high cortisol. Recovery comes when cortisol <b>falls</b> — when you finish, breathe, rest — and the anabolic, repair state takes over. The old rhythm — a strong practice, then a real savasana, food, sleep — <em>is</em> the endocrinology, done right long before anyone had the words.</div>
+    </div>
+  </div>
+
+  <!-- 16 -->
+  <div class="slide" style="--acc:var(--gold)">
+    <div class="head"><span class="num">16</span><h3>Hormones aren't results</h3><span class="time">17:40</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"So — the reframe. Stop chasing the hormone like a prize. <em>Hormones aren't results.</em> <span class="zh">激素不是结果。</span> They are part of the <em>process</em> — the weather inside the work, not the trophy at the end. The student who practices <em>to get</em> the dopamine has already lost it."</div>
+    </div>
+  </div>
+
+  <!-- 17 -->
+  <div class="slide" style="--acc:var(--brain)">
+    <div class="head"><span class="num">17</span><h3>Laboratory of the nervous system</h3><span class="time">18:30</span></div>
+    <div class="block"><span class="tag say">Say</span>
+      <div class="say-text">"Which leaves us here. Ashtanga is a <em>laboratory of the nervous system.</em> Every morning on the mat is an experiment you run on yourself — same variables, small changes, careful observation. You are the scientist <em>and</em> the subject. Six days a week, for years."</div>
+    </div>
+  </div>
+
+  <!-- 18 -->
+  <div class="slide" style="--acc:var(--gold)">
+    <div class="head"><span class="num">18</span><h3>Close</h3><span class="time">19:20</span></div>
+    <div class="block"><span class="tag say">Say — slower</span>
+      <div class="say-text">"So. Practice isn't just movement. It's a nervous <em>and</em> endocrine event. It began that way on our first slide — and that is what it still is: far more than a body moving through shapes. It is you — quietly rewriting your own chemistry."</div>
+      <div class="cue">Pause. Let the silence sit for one full breath.</div>
+      <div class="say-text" style="margin-top:10px">"…That is where we begin."</div>
+    </div>
+  </div>
+
+  <!-- ARMOR -->
+  <div class="armor">
+    <h2>If a sharp student pushes back — honest answers</h2>
+    <p class="i">Conceding a limit <em>precisely</em> is the most authoritative thing you can do. Never bluff; use these.</p>
+    <div class="r"><div class="q">"Doesn't yoga flood you with testosterone?"</div>
+      <div class="a"><b>No — the rise is small and lasts under an hour, and muscle is built mostly locally.</b> The hormone is a signal, not the cause.</div></div>
+    <div class="r"><div class="q">"So eating tryptophan makes me happy?"</div>
+      <div class="a"><b>Not directly.</b> Most serotonin is in the gut and doesn't reach the brain. Tryptophan is necessary raw material — not a mood switch.</div></div>
+    <div class="r"><div class="q">"Isn't muscle memory in the muscle?"</div>
+      <div class="a"><b>No — it lives in the brain</b> (basal ganglia, cerebellum, motor cortex). "Muscle memory" is a useful name, not an address.</div></div>
+    <div class="r"><div class="q">"Isn't cortisol bad for you?"</div>
+      <div class="a"><b>Acute cortisol sharpens; chronic cortisol harms.</b> The practice's value is the clean spike <em>and the drop after.</em></div></div>
+  </div>
+
+  <footer>AYBKK · Ashtanga Yoga Bangkok · Presenter script — print to PDF or read on your phone.</footer>
+</div>
+</body>
+</html>
