@@ -193,7 +193,7 @@ const ORIENTATION_SHORTCUTS = {
 };
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
-  door: 'bkk-door.html', teach: 'bkk-teacher.html' };
+  door: 'bkk-door.html', teach: 'bkk-teacher.html', boone: 'boone.html' };
 for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SHORTCUTS })) {
   app.get('/' + slug, (req, res) => {
     if (fs.existsSync(path.join(__dirname, 'public', file))) {

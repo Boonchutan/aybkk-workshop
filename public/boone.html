@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Boone's Time Machine</title>
+<meta name="theme-color" content="#0E1B2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
+<style>
+@font-face{font-family:'Patrick Hand';src:url('/fonts/patrick.woff2') format('woff2');font-display:swap}
+@font-face{font-family:'Mali';src:url('/fonts/mali.woff2') format('woff2');font-display:swap}
+
+:root{
+  --space:#0E1B2E; --space2:#17293F; --space3:#22385A;
+  --paper:#FFF6E3; --paper2:#F3E6C8; --ink:#2B2013; --ink-soft:#6B5B43;
+  --sun:#FFC53D; --sun-deep:#B57F17; --rope:#3A506B; --star:#EAF2FF;
+  --display:'Patrick Hand','Comic Sans MS','Chalkboard SE',cursive;
+  --body:'Mali','Comic Sans MS','Chalkboard SE',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:17px}
+body{
+  font-family:var(--body); color:var(--star); background:var(--space);
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(234,242,255,.9) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 78% 9%, rgba(234,242,255,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 32%, rgba(234,242,255,.55) 50%, transparent 51%),
+    radial-gradient(2px 2px at 90% 58%, rgba(255,197,61,.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 30% 71%, rgba(234,242,255,.65) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 8% 88%, rgba(234,242,255,.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 66% 92%, rgba(234,242,255,.7) 50%, transparent 51%);
+  min-height:100vh; line-height:1.55;
+}
+.wrap{max-width:31rem;margin:0 auto;padding:1.1rem 1.1rem 3.5rem}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:.6rem}
+[hidden]{display:none!important}
+
+/* ── Home ──────────────────────────────────────────────── */
+.masthead{text-align:center;padding:1.6rem 0 .4rem}
+.machine-dial{
+  width:4.6rem;height:4.6rem;margin:0 auto .7rem;border-radius:50%;
+  border:3px dashed var(--sun);display:flex;align-items:center;justify-content:center;
+  font-size:2.3rem;background:var(--space2);
+  animation:dialspin 60s linear infinite;
+}
+.machine-dial span{animation:dialspin 60s linear infinite reverse;display:block}
+@keyframes dialspin{to{transform:rotate(360deg)}}
+h1{
+  font-family:var(--display);color:var(--sun);font-weight:400;
+  font-size:2.35rem;line-height:1.05;letter-spacing:.02em;text-wrap:balance;
+}
+.masthead p{color:#AFC3DE;margin-top:.5rem;font-size:1rem}
+.masthead p b{color:var(--star)}
+
+.passport{
+  margin:1.3rem 0 .4rem;background:var(--space2);border:2px solid var(--space3);
+  border-radius:1.1rem;padding:.9rem 1rem;
+}
+.passport h2{
+  font-family:var(--display);font-weight:400;color:var(--sun);
+  font-size:1.15rem;letter-spacing:.06em;text-transform:uppercase;
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.passport h2 small{font-family:var(--body);color:#AFC3DE;font-size:.85rem;text-transform:none;letter-spacing:0}
+.stamps{display:grid;grid-template-columns:repeat(6,1fr);gap:.45rem;margin-top:.7rem}
+.stamp-slot{
+  aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.25rem;background:var(--space);border:2px dashed var(--rope);color:#44597A;
+}
+.stamp-slot.got{border:2.5px solid var(--sun);background:#243A5C;filter:none}
+.stamp-slot .empty{font-size:.8rem}
+.all-done{
+  margin-top:.8rem;text-align:center;background:var(--sun);color:var(--ink);
+  border-radius:.8rem;padding:.55rem .8rem;font-weight:700;font-size:.98rem;
+}
+
+.surprise{
+  display:block;width:100%;margin:1.1rem 0 1.6rem;padding:1rem;
+  background:var(--sun);color:#3A2A05;border-radius:1.1rem;
+  font-family:var(--display);font-size:1.5rem;letter-spacing:.03em;
+  border-bottom:5px solid var(--sun-deep);
+  transition:transform .1s;
+}
+.surprise:active{transform:translateY(3px);border-bottom-width:2px}
+
+.rope-title{
+  font-family:var(--display);color:#AFC3DE;font-weight:400;font-size:1.05rem;
+  text-transform:uppercase;letter-spacing:.14em;margin:0 0 .9rem .4rem;
+}
+.rope{list-style:none;position:relative;padding-left:1.55rem}
+.rope::before{
+  content:"";position:absolute;left:.5rem;top:.8rem;bottom:.8rem;
+  border-left:3px dotted var(--rope);
+}
+.rope li{position:relative;margin-bottom:.85rem}
+.rope li::before{
+  content:"";position:absolute;left:-1.42rem;top:1.45rem;width:.7rem;height:.7rem;
+  border-radius:50%;background:var(--rope);border:2.5px solid var(--space);
+}
+.trip-card{
+  width:100%;display:flex;align-items:center;gap:.85rem;text-align:left;
+  background:var(--space2);border:2px solid var(--space3);border-radius:1.1rem;
+  padding:.8rem .9rem;transition:transform .12s;
+}
+.rope li:nth-child(odd) .trip-card{transform:rotate(-.45deg)}
+.rope li:nth-child(even) .trip-card{transform:rotate(.45deg)}
+.trip-card:active{transform:scale(.98)}
+.medallion{
+  flex:0 0 3.4rem;width:3.4rem;height:3.4rem;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:1.85rem;
+  background:var(--space);border:3px solid var(--era,#3A506B);
+}
+.trip-card .txt{flex:1;min-width:0}
+.trip-when{
+  display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--space);background:var(--era,#AFC3DE);
+  border-radius:.5rem;padding:.05rem .5rem;margin-bottom:.15rem;
+}
+.trip-card h3{font-family:var(--display);font-weight:400;font-size:1.35rem;line-height:1.1;color:var(--star)}
+.trip-done{flex:0 0 auto;font-size:1.35rem}
+.trip-go{flex:0 0 auto;color:var(--era,#AFC3DE);font-size:1.3rem}
+
+footer{
+  margin-top:2.2rem;text-align:center;color:#6E84A3;font-size:.85rem;
+}
+footer button{color:#6E84A3;text-decoration:underline;font-size:.85rem}
+
+/* ── Trip view ─────────────────────────────────────────── */
+.trip-bar{display:flex;align-items:center;gap:.7rem;padding:.9rem 0 .6rem}
+.back-btn{
+  font-family:var(--display);font-size:1.15rem;color:#AFC3DE;
+  padding:.35rem .8rem .35rem .5rem;border:2px solid var(--space3);border-radius:2rem;
+  background:var(--space2);flex:0 0 auto;
+}
+.where-chip{
+  font-size:.8rem;font-weight:700;letter-spacing:.05em;color:var(--space);
+  background:var(--era);border-radius:2rem;padding:.25rem .8rem;
+  margin-left:auto;text-align:right;
+}
+.portal{
+  width:6.4rem;height:6.4rem;margin:0.6rem auto .9rem;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:3.3rem;
+  background:radial-gradient(circle at 35% 30%, var(--space3), var(--space) 75%);
+  border:4px solid var(--era);
+  box-shadow:0 0 0 .45rem var(--space2), 0 0 2.2rem 0 var(--era-glow,rgba(255,197,61,.25));
+}
+.trip-title{
+  text-align:center;font-family:var(--display);font-weight:400;color:var(--star);
+  font-size:1.9rem;line-height:1.1;text-wrap:balance;margin-bottom:1rem;
+}
+
+.story-card{
+  background:var(--paper);color:var(--ink);border-radius:1.3rem;
+  border:3px solid var(--era);padding:1.25rem 1.2rem 1.35rem;
+  box-shadow:0 .5rem 0 rgba(0,0,0,.35);
+  animation:cardin .3s ease-out;
+}
+@keyframes cardin{from{opacity:0;transform:translateY(.7rem)}to{opacity:1;transform:none}}
+.story-card .scene{font-size:2.6rem;line-height:1;margin-bottom:.6rem}
+.story-card p{font-size:1.28rem;line-height:1.6}
+.story-card .whisper{
+  font-family:var(--display);font-size:1.45rem;line-height:1.35;color:var(--era-deep,var(--ink));
+}
+.tap-hint{margin-top:.9rem;font-size:.85rem;color:var(--ink-soft);text-align:right}
+
+.learn-card{border-color:var(--sun);background:#FFF9E9}
+.learn-card .eyebrow{
+  font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem;
+  color:var(--sun-deep);margin-bottom:.5rem;
+}
+.learn-card .big-learn{font-family:var(--display);font-size:1.55rem;line-height:1.35;color:var(--ink)}
+.true-thing{
+  margin-top:1rem;background:var(--era-soft,#F3E6C8);border-radius:.9rem;
+  padding:.7rem .85rem;font-size:1.02rem;color:var(--ink);
+}
+.true-thing b{color:var(--era-deep,var(--ink))}
+
+.quiz-q{font-family:var(--display);font-size:1.5rem;line-height:1.3;margin-bottom:1rem;color:var(--ink)}
+.quiz-opts{display:flex;flex-direction:column;gap:.65rem}
+.quiz-opt{
+  text-align:left;background:#fff;border:2.5px solid var(--paper2);border-radius:.95rem;
+  padding:.8rem .95rem;font-size:1.15rem;color:var(--ink);font-family:var(--body);
+  transition:transform .1s;
+}
+.quiz-opt:active{transform:scale(.98)}
+.quiz-opt.nope{animation:wiggle .4s;border-color:#D9694F;background:#FCEFEA}
+.quiz-opt.yes{border-color:#4C9A6B;background:#E9F6EE}
+@keyframes wiggle{0%,100%{transform:none}25%{transform:translateX(-.4rem)}75%{transform:translateX(.4rem)}}
+.quiz-say{margin-top:.9rem;font-size:1.1rem;min-height:1.6rem;color:var(--era-deep,var(--ink))}
+
+.trip-controls{display:flex;align-items:center;gap:.8rem;margin-top:1.1rem}
+.say-btn{
+  flex:0 0 auto;width:3.2rem;height:3.2rem;border-radius:50%;font-size:1.4rem;
+  background:var(--space2);border:2px solid var(--space3);
+}
+.say-btn.talking{border-color:var(--sun);background:#243A5C}
+.no-tts .say-btn{display:none}
+.dots{flex:1;display:flex;gap:.35rem;justify-content:center;flex-wrap:wrap}
+.dots i{width:.55rem;height:.55rem;border-radius:50%;background:var(--rope)}
+.dots i.on{background:var(--sun)}
+.next-btn{
+  flex:0 0 auto;font-family:var(--display);font-size:1.35rem;color:#3A2A05;
+  background:var(--sun);border-radius:2rem;padding:.55rem 1.3rem;
+  border-bottom:4px solid var(--sun-deep);transition:transform .1s;
+}
+.next-btn:active{transform:translateY(2px);border-bottom-width:2px}
+
+/* ── Warp + stamp overlays ─────────────────────────────── */
+.overlay{
+  position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;padding:1.5rem;
+  background:rgba(10,17,29,.94);
+}
+#warp .streaks{
+  position:absolute;inset:-20%;
+  background:repeating-linear-gradient(180deg, transparent 0 46px, rgba(234,242,255,.16) 46px 48px),
+             repeating-linear-gradient(180deg, transparent 0 90px, rgba(255,197,61,.2) 90px 92px);
+  animation:streak .6s linear infinite;
+}
+@keyframes streak{to{transform:translateY(96px)}}
+#warp .warp-emoji{font-size:4.5rem;animation:zoomin .8s ease-out;position:relative}
+@keyframes zoomin{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+#warp p{font-family:var(--display);font-size:1.5rem;color:var(--sun);margin-top:1rem;position:relative}
+
+.stamp-big{
+  width:9.5rem;height:9.5rem;border-radius:50%;margin-bottom:1.1rem;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--paper);border:5px double var(--era,#FFC53D);color:var(--ink);
+  transform:rotate(-6deg);animation:slam .45s cubic-bezier(.2,2.5,.6,1);
+}
+@keyframes slam{from{transform:scale(2.4) rotate(18deg);opacity:0}to{transform:scale(1) rotate(-6deg);opacity:1}}
+.stamp-big .se{font-size:2.9rem;line-height:1.1}
+.stamp-big .sn{font-family:var(--display);font-size:1.05rem;line-height:1.05;padding:0 .6rem}
+#stampOverlay h2{font-family:var(--display);font-weight:400;color:var(--sun);font-size:1.9rem;margin-bottom:.3rem}
+#stampOverlay .sub{color:#AFC3DE;font-size:1rem;max-width:22rem}
+#stampOverlay .first-try{margin-top:.6rem;font-size:1.05rem;color:var(--sun)}
+.overlay-btns{display:flex;gap:.8rem;margin-top:1.6rem;flex-wrap:wrap;justify-content:center}
+.overlay-btns .next-btn{font-size:1.25rem}
+.overlay-btns .ghost{
+  font-family:var(--display);font-size:1.25rem;color:#AFC3DE;padding:.55rem 1.2rem;
+  border:2px solid var(--space3);border-radius:2rem;background:var(--space2);
+}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media (min-width:600px){html{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <section id="home"></section>
+  <section id="trip" hidden></section>
+</div>
+
+<div id="warp" class="overlay" hidden>
+  <div class="streaks"></div>
+  <div class="warp-emoji" id="warpEmoji">⏳</div>
+  <p id="warpText">WHOOSH!</p>
+</div>
+
+<div id="stampOverlay" class="overlay" hidden></div>
+
+<script>
+/* ============================================================
+   BOONE'S TIME MACHINE
+   12 trips through the history of inventions, told for a
+   6-year-old. Every trip follows the family formula:
+   "If Boone, who is 6 years old, happened to be in ___,
+    he would learn that ___."
+   To add a new era: copy one EPISODES entry, keep the same
+   shape, and place it in time order. That's the whole job.
+   ============================================================ */
+
+var EPISODES = [
+{
+  id:"ice", emoji:"🦣", a:"#6FC7E3", soft:"#E3F3F9", deep:"#1D6E8C",
+  when:"20,000 years ago", where:"The Great Ice",
+  title:"The Mammoth Coat",
+  arrive:"If Boone, who is 6 years old, happened to be in the Ice Age, twenty thousand years ago…",
+  beats:[
+    {e:"🥶", t:"BRRRR! Boone lands in snow up to his knees. The wind bites his nose. Far away something ENORMOUS walks past — woolly, with tusks longer than a car. A mammoth!"},
+    {e:"🔥", t:"A girl waves him into a cave. Inside there is a warm fire, and people wearing thick furry coats. “No coat?” she laughs. “You will turn into an icicle!”"},
+    {e:"🦴", t:"Her grandmother holds up something tiny: a needle, carved from BONE, with a little hole in it. Thread made from animal string slips through the hole."},
+    {e:"🧵", t:"Stitch, stitch, stitch. Grandmother sews the furs together so tightly that the cold cannot sneak in anywhere. She makes Boone a coat with a hood. Warmest thing EVER."},
+    {e:"🖐️", t:"At night, by firelight, everyone paints horses and mammoths on the cave wall. The girl blows red dust around Boone's hand. His handprint will stay there for twenty thousand years."}
+  ],
+  learn:"…he would learn that clothes were one of the very first inventions — and that a tiny bone needle helped people survive a whole Ice Age.",
+  fact:"Real Ice Age bone needles are in museums today, and real handprints are still on the cave walls.",
+  quiz:{ q:"The first needles were made from…",
+    opts:["Bone 🦴","Plastic 🥤","Spaghetti 🍝"], a:0,
+    yay:"YES! Bone — strong and sharp, with a tiny hole for the thread.",
+    hint:"Plastic wasn't invented yet. Look at what Grandmother carved…" },
+  badge:"Mammoth Friend"
+},
+{
+  id:"egypt", emoji:"🐫", a:"#E8A33D", soft:"#F9EBD0", deep:"#8C5A14",
+  when:"4,500 years ago", where:"Giza, Egypt",
+  title:"The Sphinx Wakes Up",
+  arrive:"If Boone, who is 6 years old, happened to be in Egypt while the Sphinx was being made…",
+  beats:[
+    {e:"🏜️", t:"Hot sand, bright blue sky, and CLANG CLANG CLANG! Hundreds of workers are carving a rock. Not a normal rock — a rock as big as a hill."},
+    {e:"🗿", t:"“It will be a lion with a king's face,” says a boy named Amun. “A guardian, to watch the desert forever.” The paws are already bigger than Boone's whole house."},
+    {e:"⛏️", t:"The chisels are made of copper. Tap, tap, tap — the stone comes off in little chips. No bulldozers. No cranes. Just hands, tools, and thousands of helpers."},
+    {e:"💧", t:"Boone gets a job: pouring water on the sand! Wet sand turns slippery, so giant stones SLIDE along on wooden sleds. “Clever trick,” Amun grins. “Water makes heavy things easy.”"},
+    {e:"🍞", t:"Lunch time! Every worker gets fresh bread from the king's kitchens. “People will still see our lion in five thousand years,” says Amun proudly. He is right."}
+  ],
+  learn:"…he would learn that the hugest things on Earth are not made by magic or giants. They are made by many small hands working together — with very clever tricks.",
+  fact:"The Sphinx was carved from ONE giant rock, and it is still guarding Egypt right now.",
+  quiz:{ q:"How did the workers make giant stones slide easily?",
+    opts:["Poured water on the sand 💧","Asked camels nicely 🐫","Said a magic spell 🪄"], a:0,
+    yay:"YES! Wet sand is slippery sand — scientists tested this trick and it really works.",
+    hint:"Remember the job Boone was given…" },
+  badge:"Sphinx Helper"
+},
+{
+  id:"china", emoji:"🐼", a:"#E4574F", soft:"#FBE3E0", deep:"#A02D26",
+  when:"1,900 years ago", where:"Han China",
+  title:"The Paper Secret",
+  arrive:"If Boone, who is 6 years old, happened to be in China when paper was invented…",
+  beats:[
+    {e:"📚", t:"THUMP! A boy drops his “book” — and it nearly squashes Boone's toes. Books here are heavy bamboo sticks tied together with string. One story weighs as much as a dog!"},
+    {e:"👑", t:"In the palace works a very clever man called Cai Lun. He is tired of heavy books. “There must be a lighter way to carry words,” he says, stroking his chin."},
+    {e:"🪵", t:"Boone helps him mash tree bark, old rags and bits of fishing net into water. SQUISH, SQUASH. It turns into grey mush. It looks like truly terrible porridge."},
+    {e:"🖼️", t:"Cai Lun dips a flat screen into the mush, lifts it out, and lets the sun dry it. It peels off as one thin white sheet. PAPER. The first paper!"},
+    {e:"✍️", t:"A brush, a drop of black ink, and Boone writes his name on it. So light! You could carry a hundred stories in one hand. “Now,” Cai Lun smiles, “ideas can fly.”"}
+  ],
+  learn:"…he would learn that paper was invented from mushed-up bark and old rags — and that when words became light, ideas could travel everywhere.",
+  fact:"Cai Lun really lived, about 1,900 years ago. Every page and sticker you touch today is his invention's great-great-grandchild.",
+  quiz:{ q:"What was the first paper made from?",
+    opts:["Mashed bark and old rags 🪵","Clouds ☁️","Elephant ears 🐘"], a:0,
+    yay:"YES! Mash it, screen it, dry it in the sun — paper!",
+    hint:"Think of the terrible grey porridge…" },
+  badge:"Paper Master"
+},
+{
+  id:"rome", emoji:"🏛️", a:"#C56B4A", soft:"#F6E5DC", deep:"#8A3B22",
+  when:"2,000 years ago", where:"Rome",
+  title:"The Water Road",
+  arrive:"If Boone, who is 6 years old, happened to be in Rome when the great water roads were built…",
+  beats:[
+    {e:"🏛️", t:"Rome is LOUD. Carts rattle, sellers shout, sandals slap the stone streets. And everywhere, fountains splash cold clean water. Wait — where does it all come from?"},
+    {e:"🌉", t:"An engineer named Marcus points far away. “From the mountains — fifty kilometres from here! The water walks to Rome on a bridge. We call it an aqueduct.” A stone bridge, just for water!"},
+    {e:"📐", t:"“No pumps. No motors. The secret is a tiny slope,” says Marcus. “The whole water road tilts a titchy bit down, down, down — so the water runs to Rome all by itself.”"},
+    {e:"🌋", t:"Boone helps mix the Romans' secret recipe: concrete — with ash from a VOLCANO stirred in. “It goes hard even under water,” Marcus whispers. “Strongest mud in the world.”"},
+    {e:"⛲", t:"At sunset the fountain gushes and kids splash in it. “A city is alive when water comes to the people,” says Marcus. Some Roman fountains are still running today."}
+  ],
+  learn:"…he would learn that the Romans moved rivers into their city using only a gentle slope and volcano-ash concrete. No pumps, no engines — just brains.",
+  fact:"The Pantheon in Rome has a concrete roof that is almost 1,900 years old — and it is still standing.",
+  quiz:{ q:"What was the secret ingredient in Roman concrete?",
+    opts:["Volcano ash 🌋","Strawberry jam 🍓","Dragon scales 🐉"], a:0,
+    yay:"YES! Volcano ash made it super strong — it even hardens under water.",
+    hint:"Marcus whispered it… something from a mountain that goes BOOM." },
+  badge:"Water Engineer"
+},
+{
+  id:"castle", emoji:"🏰", a:"#7BA05B", soft:"#E9F1DF", deep:"#48622F",
+  when:"800 years ago", where:"A castle town",
+  title:"The Wind Catcher",
+  arrive:"If Boone, who is 6 years old, happened to be in a castle town when windmills were brand new…",
+  beats:[
+    {e:"🏰", t:"TA-DAAA! A real castle, with towers and a drawbridge. But the most exciting thing is not the castle. On the hill stands a giant wooden tower with four huge arms — spinning."},
+    {e:"🌬️", t:"“That's our windmill! It catches the wind!” says Tilly, the miller's daughter. WHOOM… WHOOM… the great sails swing past, faster than a galloping horse."},
+    {e:"⚙️", t:"Inside, wooden wheels with teeth turn each other — clunk, clunk, clunk — all the way down to two giant round stones that rub together."},
+    {e:"🌾", t:"Tilly pours wheat between the stones. Wind turns the sails, sails turn the wheels, wheels turn the stones — and out pours soft white FLOUR. The wind is doing all the work!"},
+    {e:"🍞", t:"“Before the mill, people rubbed grain by hand ALL DAY,” Tilly says, handing Boone warm bread. “Now the sky helps us make breakfast.” Best. Bread. Ever."}
+  ],
+  learn:"…he would learn that people worked out how to borrow power from nature — wind and rivers did the heavy work long before engines existed.",
+  fact:"Windmills are the great-grandparents of the wind turbines that make electricity today.",
+  quiz:{ q:"What did the windmill's wind-power do?",
+    opts:["Turned stones to make flour 🌾","Blew the castle away 💨","Made ice cream 🍦"], a:0,
+    yay:"YES! Sails → wheels → stones → flour → BREAD.",
+    hint:"Follow the spinning… what poured out at the end?" },
+  badge:"Wind Catcher"
+},
+{
+  id:"press", emoji:"📖", a:"#8A6FC7", soft:"#ECE6F8", deep:"#55418A",
+  when:"575 years ago", where:"Mainz, Germany",
+  title:"The Letter Machine",
+  arrive:"If Boone, who is 6 years old, happened to be in Germany when the printing press was invented…",
+  beats:[
+    {e:"🕯️", t:"In a candle-lit room a monk is copying a book by hand. Letter… by… letter. “How long does one book take?” asks Boone. The monk sighs: “About one YEAR.”"},
+    {e:"🔠", t:"Down the street, a man named Gutenberg has a wild idea. He shows Boone a box of tiny metal letters — a whole alphabet you can pick up, mix, and line up into any words you like."},
+    {e:"🖤", t:"They lock the letters into a frame and roll sticky black ink over them — squelch, squelch. Then they lay a clean sheet of paper on top."},
+    {e:"🗜️", t:"Now the PRESS: a giant wooden squeezer, like the ones for squishing grapes. Boone pulls the handle — KA-CHUNK! — and lifts the paper. A whole page, printed in one squeeze!"},
+    {e:"📚", t:"They print the page again. And again. Fifty pages before dinner! “Soon,” says Gutenberg, “books won't be only for kings. Everyone will get to read.” And everyone did."}
+  ],
+  learn:"…he would learn that one machine made books fast and cheap — and once everyone could read, everyone could learn, and the whole world sped up.",
+  fact:"Many people call Gutenberg's press the most important invention of the last 1,000 years.",
+  quiz:{ q:"Before the press, one hand-copied book took about…",
+    opts:["A year 🗓️","Ten minutes ⏱️","One sneeze 🤧"], a:0,
+    yay:"YES! A whole year by hand — the press did a page in one KA-CHUNK.",
+    hint:"The tired monk told Boone…" },
+  badge:"Book Maker"
+},
+{
+  id:"steam", emoji:"🚂", a:"#6B7B8C", soft:"#E6EBF0", deep:"#3D4C5C",
+  when:"200 years ago", where:"England",
+  title:"The Iron Horse",
+  arrive:"If Boone, who is 6 years old, happened to be in England when the first trains raced…",
+  beats:[
+    {e:"🐎", t:"Everyone travels by horse. Everywhere. Clip-clop, slow and bumpy. But today a crowd waits beside two iron rails, whispering about a new machine called… the Rocket."},
+    {e:"🚂", t:"Here it comes — CHUFF! CHUFF! CHUFF! — puffing white steam, wheels pounding the rails. A steam train. It never gets tired, hungry or grumpy like a horse."},
+    {e:"🔥", t:"The driver shows Boone the secret: a fire heats water, the water becomes steam, and the steam PUSHES the wheels around — like a kettle strong enough to shove a house."},
+    {e:"😱", t:"“Careful, lad!” warns an old man. “Humans are not built to go THIRTY miles an hour! Your face might blow clean off!” Boone climbs aboard anyway."},
+    {e:"🌳", t:"WHOOSH — fields fly past, cows blur, Boone's hair dances. Faster than any horse alive. His face stays on. “Everything is about to get closer together,” smiles the driver."}
+  ],
+  learn:"…he would learn that boiling water — just steam! — pushed trains, ships and factories, and shrank the whole world.",
+  fact:"The Rocket won a real race in 1829. Some people honestly believed going that fast would hurt your body. It didn't.",
+  quiz:{ q:"What pushed the steam train's wheels?",
+    opts:["Steam from boiling water 💨","A thousand hamsters 🐹","Invisible horses 🐴"], a:0,
+    yay:"YES! Fire → hot water → steam → PUSH!",
+    hint:"The driver showed Boone a fire under a big kettle…" },
+  badge:"Steam Rider"
+},
+{
+  id:"light", emoji:"💡", a:"#FFC53D", soft:"#FFF1CC", deep:"#8C6A14",
+  when:"150 years ago", where:"Menlo Park, USA",
+  title:"The Night the Dark Ended",
+  arrive:"If Boone, who is 6 years old, happened to be in Thomas Edison's lab when the light bulb was born…",
+  beats:[
+    {e:"🕯️", t:"At night the world is DARK. Candles drip, gas lamps flicker, and houses sometimes catch fire. In one busy workshop, a team is trying to trap light inside glass."},
+    {e:"🔬", t:"Mr Edison's table is a beautiful mess. “We need a tiny thread that glows when electricity runs through it,” he says, “without burning up in one second.”"},
+    {e:"🎋", t:"They have tried THOUSANDS of threads. Metal. Cotton. Fishing line. Even a hair from a man's beard! Today Boone hands them a new one: a sliver of baked bamboo."},
+    {e:"💡", t:"Wires on. Everyone leans in. The bamboo thread glows… orange… then GOLDEN… and keeps glowing. Hour after hour. Soft, steady light — with no flame at all."},
+    {e:"🌃", t:"“We didn't fail a thousand times,” Edison laughs. “We found a thousand ways that don't work — and then one that does.” Soon, whole cities twinkle at night."}
+  ],
+  learn:"…he would learn that inventors fail and fail and fail and keep going — and that “keep trying” is the real invention hiding behind every light.",
+  fact:"Early bulbs really used baked bamboo threads. And in England, Joseph Swan invented a bulb at almost the same time.",
+  quiz:{ q:"How many things did Edison's team try before one worked?",
+    opts:["Thousands 😤","Two 😎","Zero — lucky first try! 🍀"], a:0,
+    yay:"YES! Thousands of tries. That's not failing — that's learning.",
+    hint:"Edison laughed about this at the end…" },
+  badge:"Light Keeper"
+},
+{
+  id:"flight", emoji:"🛩️", a:"#5FA8D3", soft:"#E2F0F9", deep:"#2A6A94",
+  when:"1903", where:"Kitty Hawk, USA",
+  title:"12 Seconds in the Sky",
+  arrive:"If Boone, who is 6 years old, happened to be on the beach the day humans first flew…",
+  beats:[
+    {e:"🌊", t:"A cold, windy beach. Two brothers — Wilbur and Orville — fuss over a strange machine of wood, wire and cloth. It looks like a giant kite with a bed on it."},
+    {e:"🚲", t:"“They fix bicycles,” whispers a fisherman. “Now they think they will FLY!” He chuckles. The brothers have crashed many, many times — and fixed it every time."},
+    {e:"🎲", t:"The brothers flip a coin. Orville wins. He lies flat on the wing, the little engine BUZZES like a thousand bees, and the machine rolls down a wooden rail…"},
+    {e:"🛩️", t:"…and lifts OFF THE GROUND. Boone screams “IT'S FLYING!” It wobbles, floats, and lands softly in the sand. Twelve seconds. Shorter than brushing your teeth. But it FLEW."},
+    {e:"📸", t:"One man snaps a photo — now the most famous photo in flying history. “Twelve seconds today,” grins Wilbur, spitting out sand. “The Moon someday.” He wasn't joking."}
+  ],
+  learn:"…he would learn that every gigantic dream starts embarrassingly small. Twelve wobbly seconds can change the sky forever.",
+  fact:"Only 66 years after those 12 seconds, humans landed on the Moon.",
+  quiz:{ q:"How long did the first airplane flight last?",
+    opts:["12 seconds ⏱️","12 hours 😴","12 days 🌙"], a:0,
+    yay:"YES! Twelve little seconds — and they changed everything.",
+    hint:"Shorter than you think. MUCH shorter." },
+  badge:"Sky Pioneer"
+},
+{
+  id:"medicine", emoji:"🧪", a:"#58B893", soft:"#E1F4EC", deep:"#2A7257",
+  when:"1928", where:"A messy London lab",
+  title:"The Fuzzy Mold Miracle",
+  arrive:"If Boone, who is 6 years old, happened to be in a very messy London laboratory in 1928…",
+  beats:[
+    {e:"🥼", t:"Dr Fleming is back from his holiday, and his lab is a MESS. Dirty little dishes everywhere — dishes where he grows germs to study them. “Yuck,” says Boone. “Exactly,” says Fleming."},
+    {e:"🦠", t:"Wait. On one dish, fuzzy blue-green MOLD is growing — like the fuzz on old bread. And all around the mold, the germs are GONE. The mold is fighting the germs!"},
+    {e:"🧪", t:"“The mold makes a germ-killing juice,” Fleming gasps. He names it penicillin. But for years, almost nobody listens. Mold juice? Pfff, they say."},
+    {e:"🏭", t:"Years later a big war is happening, and many hurt people are getting sick from germs. So helpers grow the mold in HUGE tanks — rivers of medicine. The best mold of all came from an old melon in a market!"},
+    {e:"💚", t:"Now a scratched knee, a bad tooth, a wounded soldier — penicillin helps heal them all. Millions and millions of people. All from fuzzy mold on a dirty dish that one curious man looked at twice."}
+  ],
+  learn:"…he would learn that even a moldy accident can save the world — IF somebody is curious enough to look closely instead of just cleaning up.",
+  fact:"Penicillin's family of medicines has saved millions of lives. It has probably already helped someone Boone knows.",
+  quiz:{ q:"Where did the first germ-killing medicine come from?",
+    opts:["Fuzzy mold 🦠","A wizard 🧙","Toothpaste 🪥"], a:0,
+    yay:"YES! Mold — the fuzzy stuff — makes a germ-killing juice.",
+    hint:"It also grows on very old bread…" },
+  badge:"Medicine Hero"
+},
+{
+  id:"moon", emoji:"🚀", a:"#9FA8DA", soft:"#EAECF8", deep:"#4A5490",
+  when:"1969", where:"Earth → the Moon",
+  title:"Footprints on the Moon",
+  arrive:"If Boone, who is 6 years old, happened to be watching the day people flew to the Moon…",
+  beats:[
+    {e:"🚀", t:"The rocket is TALLER than a 30-floor building. It is called Saturn V. Three astronauts climb into a tiny room at the very top. The whole world is watching on TV."},
+    {e:"🔟", t:"TEN… NINE… Boone counts along with a million people. THREE… TWO… ONE… The ground SHAKES. Fire like a volcano! The rocket rises on a tower of flame. GO, GO, GO!"},
+    {e:"🌍", t:"Three days of flying through black space. Earth shrinks to a beautiful blue marble. The spaceship's computer is weaker than a toy calculator — but 400,000 helpers on Earth did the maths."},
+    {e:"🌗", t:"The little lander touches down softly in the grey dust. The hatch opens. Neil Armstrong climbs down the ladder, slowly… and presses one boot into the Moon."},
+    {e:"👣", t:"There is no wind on the Moon. None at all. So the astronauts' footprints are STILL THERE tonight — look up! — sitting exactly where they were made."}
+  ],
+  learn:"…he would learn that 400,000 people flew that rocket together — and that a footprint can last forever if you are brave about where you put it.",
+  fact:"Look at the Moon tonight and remember: the footprints are still up there right now.",
+  quiz:{ q:"Are the Moon footprints still there?",
+    opts:["Yes — no wind to blow them away 👣","No — a Moon dog dug them up 🐕","No — aliens tidied up 🛸"], a:0,
+    yay:"YES! No wind, no rain on the Moon. Footprints forever.",
+    hint:"What does the Moon NOT have that Earth has lots of?" },
+  badge:"Moon Walker"
+},
+{
+  id:"pocket", emoji:"📱", a:"#F08BAE", soft:"#FCE6EE", deep:"#A03A60",
+  when:"Right about now", where:"Everywhere at once",
+  title:"The Whole World in a Pocket",
+  arrive:"If Boone, who is 6 years old, happened to be there when computers learned to talk to each other…",
+  beats:[
+    {e:"🖥️", t:"Not so long before Boone was born, computers were lonely. Each one sat alone in its own room, knowing only its own things. Then scientists taught them to send each other messages."},
+    {e:"🕸️", t:"A scientist named Tim built a way for ALL the computers to share pages with everyone. He called it the World Wide Web. Ask a question here — get an answer from the other side of the Earth, in one second."},
+    {e:"📱", t:"Then someone squeezed a computer, a camera, a map, a music box, a library and a telephone… into one little glass rectangle. A phone that sleeps in a pocket."},
+    {e:"🌏", t:"Now Boone can see the Sphinx, hear an elephant trumpet, watch the Moon landing and call Grandma — all before breakfast. A kid today holds more knowledge than ancient kings ever did."},
+    {e:"🌱", t:"But here is the secret nobody says out loud: the story is not finished. The needle, the paper, the bulb, the rocket — every one was invented by somebody's kid. The next page is empty…"}
+  ],
+  learn:"…he would learn that every single invention in history started the same way: with a kid who kept asking “WHY?” and “WHAT IF?” — a kid exactly like Boone.",
+  fact:"The next great invention has not been invented yet. Boone has arrived just in time.",
+  quiz:{ q:"What did every invention in history start with?",
+    opts:["A curious kid asking questions 🧒","A grumpy robot 🤖","Total silence 🤫"], a:0,
+    yay:"YES! Questions first, inventions after. Keep asking, Boone.",
+    hint:"Think about who Boone met on every single trip…" },
+  badge:"Future Inventor"
+}
+];
+
+/* ── tiny helpers ── */
+function $(s){ return document.querySelector(s); }
+function loadJSON(key, fallback){
+  try{ var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch(e){ return fallback; }
+}
+function saveJSON(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+}
+
+var badges = loadJSON("boone.badges", []);   // episode ids finished
+var stars  = loadJSON("boone.stars", []);    // episode ids with first-try quiz
+var state  = { ep:null, step:0, firstTry:true, answered:false };
+
+/* ── speech (Read to me) ── */
+var canTalk = ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window);
+if(!canTalk) document.body.classList.add("no-tts");
+function speak(text){
+  if(!canTalk) return;
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text.replace(/…/g, "."));
+    u.lang = "en-US"; u.rate = 0.92; u.pitch = 1.05;
+    u.onend = function(){ var b = $(".say-btn"); if(b) b.classList.remove("talking"); };
+    window.speechSynthesis.speak(u);
+    var b = $(".say-btn"); if(b) b.classList.add("talking");
+  }catch(e){}
+}
+function hushed(){ if(canTalk){ try{ window.speechSynthesis.cancel(); }catch(e){} } }
+
+/* ── home ── */
+function renderHome(){
+  hushed();
+  var got = badges.length;
+  var slots = EPISODES.map(function(ep){
+    var has = badges.indexOf(ep.id) >= 0;
+    return '<div class="stamp-slot' + (has ? ' got' : '') + '">' +
+      (has ? ep.emoji : '<span class="empty">✩</span>') + '</div>';
+  }).join("");
+
+  var cards = EPISODES.map(function(ep){
+    var has = badges.indexOf(ep.id) >= 0;
+    return '<li><button class="trip-card" style="--era:' + ep.a + '" data-ep="' + ep.id + '">' +
+      '<span class="medallion">' + ep.emoji + '</span>' +
+      '<span class="txt"><span class="trip-when">' + ep.when + '</span>' +
+      '<h3>' + ep.title + '</h3></span>' +
+      (has ? '<span class="trip-done">✅</span>' : '<span class="trip-go">➜</span>') +
+      '</button></li>';
+  }).join("");
+
+  $("#home").innerHTML =
+    '<div class="masthead">' +
+      '<div class="machine-dial"><span>🕰️</span></div>' +
+      '<h1>BOONE&rsquo;S TIME MACHINE</h1>' +
+      '<p>12 trips through time for one brave <b>6-year-old</b> explorer.<br>Tap a trip. See an invention happen.</p>' +
+    '</div>' +
+    '<div class="passport">' +
+      '<h2>Time Passport <small>' + got + ' / ' + EPISODES.length + ' stamps</small></h2>' +
+      '<div class="stamps">' + slots + '</div>' +
+      (got === EPISODES.length ?
+        '<div class="all-done">🏆 BOONE THE TIME MASTER — every stamp collected!</div>' : '') +
+    '</div>' +
+    '<button class="surprise" id="surpriseBtn">🎲 Surprise trip!</button>' +
+    '<h2 class="rope-title">The Time Rope · oldest first</h2>' +
+    '<ul class="rope">' + cards + '</ul>' +
+    '<footer>Made with ❤️ for Boone · <button id="resetBtn">start the adventure over</button></footer>';
+
+  $("#home").hidden = false;
+  $("#trip").hidden = true;
+
+  var btns = document.querySelectorAll(".trip-card");
+  for(var i=0;i<btns.length;i++){
+    btns[i].addEventListener("click", function(){ openTrip(this.getAttribute("data-ep")); });
+  }
+  $("#surpriseBtn").addEventListener("click", function(){
+    var left = EPISODES.filter(function(e){ return badges.indexOf(e.id) < 0; });
+    var pool = left.length ? left : EPISODES;
+    openTrip(pool[Math.floor(Math.random()*pool.length)].id);
+  });
+  $("#resetBtn").addEventListener("click", function(){
+    if(confirm("Start over? All stamps will be cleared.")){
+      badges = []; stars = [];
+      saveJSON("boone.badges", badges); saveJSON("boone.stars", stars);
+      renderHome(); window.scrollTo(0,0);
+    }
+  });
+}
+
+/* ── warp transition ── */
+function warpTo(ep, then){
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){ then(); return; }
+  $("#warpEmoji").textContent = ep.emoji;
+  $("#warpText").textContent = "WHOOSH! Traveling to " + ep.when + "…";
+  $("#warp").hidden = false;
+  setTimeout(function(){ $("#warp").hidden = true; then(); }, 750);
+}
+
+/* ── trip ── */
+function openTrip(id){
+  var ep = null;
+  for(var i=0;i<EPISODES.length;i++){ if(EPISODES[i].id === id) ep = EPISODES[i]; }
+  if(!ep) return;
+  state.ep = ep; state.step = 0; state.firstTry = true; state.answered = false;
+  warpTo(ep, function(){
+    $("#home").hidden = true; $("#trip").hidden = false;
+    window.scrollTo(0,0);
+    renderStep();
+  });
+}
+function totalSteps(ep){ return 1 + ep.beats.length + 2; } // arrive + beats + learn + quiz
+
+function renderStep(){
+  hushed();
+  var ep = state.ep, s = state.step, total = totalSteps(ep);
+  var dots = "";
+  for(var i=0;i<total;i++){ dots += '<i class="' + (i<=s ? "on" : "") + '"></i>'; }
+
+  var cardHTML = "", sayText = "", isQuiz = false;
+
+  if(s === 0){
+    cardHTML =
+      '<div class="story-card" id="tapCard">' +
+        '<div class="scene">' + ep.emoji + '</div>' +
+        '<p class="whisper">' + ep.arrive + '</p>' +
+        '<p class="tap-hint">tap to find out ➜</p>' +
+      '</div>';
+    sayText = ep.arrive;
+  } else if(s <= ep.beats.length){
+    var b = ep.beats[s-1];
+    cardHTML =
+      '<div class="story-card" id="tapCard">' +
+        '<div class="scene">' + b.e + '</div>' +
+        '<p>' + b.t + '</p>' +
+        '<p class="tap-hint">tap for more ➜</p>' +
+      '</div>';
+    sayText = b.t;
+  } else if(s === ep.beats.length + 1){
+    cardHTML =
+      '<div class="story-card learn-card" id="tapCard">' +
+        '<div class="eyebrow">✨ Boone would learn…</div>' +
+        '<p class="big-learn">' + ep.learn + '</p>' +
+        '<div class="true-thing"><b>TRUE THING TO KEEP:</b> ' + ep.fact + '</div>' +
+      '</div>';
+    sayText = ep.learn + " " + ep.fact;
+  } else {
+    isQuiz = true;
+    var opts = ep.quiz.opts.map(function(o, idx){
+      return '<button class="quiz-opt" data-i="' + idx + '">' + o + '</button>';
+    }).join("");
+    cardHTML =
+      '<div class="story-card">' +
+        '<div class="eyebrow" style="font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem;color:' + ep.deep + ';margin-bottom:.5rem">🧠 Quick question, Boone!</div>' +
+        '<p class="quiz-q">' + ep.quiz.q + '</p>' +
+        '<div class="quiz-opts">' + opts + '</div>' +
+        '<p class="quiz-say" id="quizSay"></p>' +
+      '</div>';
+    sayText = ep.quiz.q;
+  }
+
+  $("#trip").innerHTML =
+    '<div style="--era:' + ep.a + ';--era-soft:' + ep.soft + ';--era-deep:' + ep.deep + ';--era-glow:' + ep.a + '44">' +
+      '<div class="trip-bar">' +
+        '<button class="back-btn" id="backBtn">← Home</button>' +
+        '<span class="where-chip">' + ep.when + ' · ' + ep.where + '</span>' +
+      '</div>' +
+      '<div class="portal">' + ep.emoji + '</div>' +
+      '<h2 class="trip-title">' + ep.title + '</h2>' +
+      cardHTML +
+      '<div class="trip-controls">' +
+        '<button class="say-btn" id="sayBtn" aria-label="Read this out loud">🔊</button>' +
+        '<div class="dots" aria-hidden="true">' + dots + '</div>' +
+        (isQuiz ? '' : '<button class="next-btn" id="nextBtn">' +
+          (s === ep.beats.length + 1 ? 'Question! ➜' : 'Next ➜') + '</button>') +
+      '</div>' +
+    '</div>';
+
+  $("#backBtn").addEventListener("click", function(){ renderHome(); window.scrollTo(0,0); });
+  $("#sayBtn").addEventListener("click", function(){
+    if(canTalk && window.speechSynthesis.speaking){ hushed(); this.classList.remove("talking"); }
+    else speak(sayText);
+  });
+
+  if(isQuiz){
+    var optBtns = document.querySelectorAll(".quiz-opt");
+    for(var j=0;j<optBtns.length;j++){
+      optBtns[j].addEventListener("click", function(){ answer(parseInt(this.getAttribute("data-i"),10), this); });
+    }
+  } else {
+    var advance = function(){ state.step++; renderStep(); };
+    $("#nextBtn").addEventListener("click", advance);
+    var tapCard = $("#tapCard");
+    if(tapCard) tapCard.addEventListener("click", advance);
+  }
+}
+
+function answer(i, btn){
+  var ep = state.ep;
+  if(state.answered) return;
+  if(i === ep.quiz.a){
+    state.answered = true;
+    btn.classList.add("yes");
+    $("#quizSay").textContent = "⭐ " + ep.quiz.yay;
+    speak(ep.quiz.yay);
+    if(badges.indexOf(ep.id) < 0){ badges.push(ep.id); saveJSON("boone.badges", badges); }
+    if(state.firstTry && stars.indexOf(ep.id) < 0){ stars.push(ep.id); saveJSON("boone.stars", stars); }
+    setTimeout(showStamp, 1400);
+  } else {
+    state.firstTry = false;
+    btn.classList.add("nope");
+    $("#quizSay").textContent = "🤔 " + ep.quiz.hint;
+    setTimeout(function(){ btn.classList.remove("nope"); }, 500);
+  }
+}
+
+function showStamp(){
+  var ep = state.ep;
+  var gotStar = stars.indexOf(ep.id) >= 0;
+  var idx = -1;
+  for(var i=0;i<EPISODES.length;i++){ if(EPISODES[i].id === ep.id) idx = i; }
+  var next = null;
+  for(var k=1;k<=EPISODES.length;k++){
+    var cand = EPISODES[(idx+k) % EPISODES.length];
+    if(badges.indexOf(cand.id) < 0){ next = cand; break; }
+  }
+  var allDone = badges.length === EPISODES.length;
+
+  $("#stampOverlay").innerHTML =
+    '<div class="stamp-big" style="--era:' + ep.a + '">' +
+      '<div class="se">' + ep.emoji + '</div>' +
+      '<div class="sn">' + ep.badge + '</div>' +
+    '</div>' +
+    '<h2>STAMPED!</h2>' +
+    '<p class="sub">The “' + ep.badge + '” stamp is now in Boone&rsquo;s Time Passport.</p>' +
+    (gotStar ? '<p class="first-try">⭐ Gold star — first try!</p>' : '') +
+    (allDone ? '<p class="first-try">🏆 ALL 12 STAMPS! Boone is officially a TIME MASTER!</p>' : '') +
+    '<div class="overlay-btns">' +
+      '<button class="ghost" id="stampHome">🕰️ Time machine</button>' +
+      (next ? '<button class="next-btn" id="stampNext">Next trip: ' + next.emoji + ' ➜</button>' : '') +
+    '</div>';
+  $("#stampOverlay").hidden = false;
+
+  $("#stampHome").addEventListener("click", function(){
+    $("#stampOverlay").hidden = true; renderHome(); window.scrollTo(0,0);
+  });
+  var nb = $("#stampNext");
+  if(nb) nb.addEventListener("click", function(){
+    $("#stampOverlay").hidden = true; openTrip(next.id);
+  });
+}
+
+renderHome();
+</script>
+</body>
+</html>
