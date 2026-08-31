@@ -8,6 +8,7 @@ const { Pool } = require('pg');
 const { mountPartner } = require('../partner-api.js');
 const { fen } = require('../partner-money.js');
 
+process.env.BKK_ADMIN_KEY = 'test-admin';
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
   'postgres://test:test@127.0.0.1:5432/bkktest' });
 const app = express();
@@ -184,6 +185,42 @@ const sha = k => crypto.createHash('sha256').update(k).digest('hex');
   ok('refund recorded', aud.some(a => a.action === 'payment.refund'));
   ok('statement issue recorded', aud.some(a => a.action === 'statement.issue'));
   ok("Feifei's comment recorded", aud.some(a => a.action === 'statement.comment'));
+
+  console.log('\n— the one-tap demo seed —');
+  const seedAs = key => fetch(`${B}/api/loc/seed-demo`, { method: 'POST',
+    headers: key ? { 'x-bkk-key': key } : {} }).then(async r =>
+      ({ status: r.status, body: await r.json().catch(() => ({})) }));
+  ok('seed without the admin key → 401', (await seedAs(null)).status === 401);
+  ok('seed with a wrong key → 401', (await seedAs('nope')).status === 401);
+  const already = await seedAs('test-admin');
+  ok('seeding over an existing chengdu changes nothing and leaks no passcodes',
+     already.status === 200 && already.body.alreadySeeded === true
+       && already.body.passcodes == null, JSON.stringify(already.body));
+  // wipe chengdu completely (FK order), then seed for real
+  for (const sql of [
+    `DELETE FROM loc_statement_comments WHERE statement_id IN
+       (SELECT id FROM loc_statements WHERE location_id=$1)`,
+    'DELETE FROM loc_statements WHERE location_id=$1',
+    'DELETE FROM loc_audit WHERE location_id=$1',
+    'DELETE FROM loc_payments WHERE location_id=$1',
+    'DELETE FROM loc_settings WHERE location_id=$1',
+    'DELETE FROM loc_users WHERE location_id=$1',
+    'DELETE FROM locations WHERE id=$1',
+  ]) await pool.query(sql, [cd]);
+  const fresh = await seedAs('test-admin');
+  ok('a fresh seed returns exactly three passcodes and 30 payments + 1 refund',
+     fresh.status === 200 && fresh.body.alreadySeeded === false
+       && (fresh.body.passcodes || []).length === 3
+       && fresh.body.seededPayments === 31 && fresh.body.totalPayments === 31,
+     JSON.stringify(fresh.body).slice(0, 160));
+  ok('the seeded confirmed gross is ¥23,592 to the fen',
+     fresh.body.grossFen === fen(23592), String(fresh.body.grossFen));
+  const fp = (fresh.body.passcodes || []).find(p => p.name === 'Feifei') || {};
+  const fLogin = await post('/api/loc/login', fp.pass);
+  ok("Feifei's fresh passcode actually signs in to chengdu",
+     fLogin.status === 200 && fLogin.body.user
+       && fLogin.body.user.role === 'partner_viewer'
+       && fLogin.body.user.location.code === 'chengdu', JSON.stringify(fLogin.body));
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();

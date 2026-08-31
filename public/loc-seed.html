@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK Chengdu — Seed the demo</title>
+<style>
+  :root{--ink:#1a161d;--wall:#f6f3f5;--paper:#fff;--plum:#5c2160;--pink:#c92f74;
+    --soft:#6f6474;--line:rgba(26,22,29,.12);--good:#187a43}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--wall);color:var(--ink);
+    font:16px/1.6 -apple-system,'PingFang SC','Helvetica Neue',sans-serif}
+  main{max-width:440px;margin:10vh auto;padding:0 16px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:20px;margin-bottom:10px}
+  h1{margin:0 0 4px;font-size:20px}
+  input{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:8px;
+    font:inherit;font-size:16px;background:#fff;margin-top:10px}
+  .btn{background:var(--plum);color:#fdf7fa;border:none;border-radius:8px;
+    padding:12px 18px;font:inherit;font-weight:600;cursor:pointer;width:100%;margin-top:12px}
+  .muted{color:var(--soft);font-size:13px}
+  .warn{background:#fff3d6;color:#8a6a12;border-radius:8px;padding:12px;
+    font-size:14px;font-weight:600;margin-bottom:12px}
+  .pass{border-top:1px solid var(--line);padding:12px 0}
+  .pass .who{font-size:13px;color:var(--soft)}
+  .pass code{display:block;font-size:24px;font-weight:700;letter-spacing:1px;
+    font-family:ui-monospace,Menlo,monospace;user-select:all}
+  a.go{display:inline-block;background:var(--plum);color:#fdf7fa;text-decoration:none;
+    border-radius:8px;padding:11px 16px;font-weight:600;font-size:14px;margin:4px 6px 0 0}
+</style>
+</head>
+<body>
+<main>
+  <div class="card" id="gate">
+    <h1>Seed the Chengdu demo</h1>
+    <p class="muted">Creates the AYBKK Chengdu location, the three accounts
+      (Boonchu, Lou Han, Feifei) and a month of demo payments in the live
+      database. Safe to press twice — a second run changes nothing.</p>
+    <input id="key" type="password" placeholder="admin key" autocomplete="off">
+    <button class="btn" onclick="seed()">Seed now</button>
+    <p class="muted" id="msg"></p>
+  </div>
+  <div id="out"></div>
+</main>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const ROLE = { aybkk_owner: 'Owner — use loc-admin', location_admin: 'Location admin — use loc-admin',
+    partner_viewer: 'Partner — use partner page' };
+
+  window.seed = async () => {
+    $('#msg').textContent = 'Working…';
+    const r = await fetch('/api/loc/seed-demo', { method: 'POST',
+      headers: { 'x-bkk-key': $('#key').value.trim() } });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { $('#msg').textContent = j.error === 'bad key'
+      ? 'That admin key is not recognised.' : (j.error || 'Failed — try again.'); return; }
+    $('#msg').textContent = '';
+    const links = `<p><a class="go" href="/loc-admin.html">Open loc-admin</a>
+      <a class="go" href="/partner.html">Open partner page</a></p>`;
+    if (j.alreadySeeded) {
+      $('#out').innerHTML = `<div class="card">
+        <b>Already seeded.</b>
+        <p class="muted">Chengdu holds ${j.totalPayments} payment rows, confirmed gross
+          ¥${(j.grossFen / 100).toLocaleString()}. Nothing was changed, and passcodes are
+          only ever shown on the run that creates them — use the ones you saved.</p>
+        ${links}</div>`;
+      return;
+    }
+    $('#gate').style.display = 'none';
+    $('#out').innerHTML = `<div class="card">
+      <div class="warn">These passcodes are shown ONCE and stored hashed —
+        copy all three somewhere safe right now.</div>
+      ${j.passcodes.map(p => `<div class="pass">
+        <div class="who">${esc(p.name)} · ${ROLE[p.role] || esc(p.role)}</div>
+        <code>${esc(p.pass)}</code></div>`).join('')}
+      <p class="muted">Seeded ${j.seededPayments - 1} payments + 1 refund · confirmed gross
+        ¥${(j.grossFen / 100).toLocaleString()}.</p>
+      <p class="muted">Next: open loc-admin with <b>Boonchu's</b> passcode, press
+        <b>Statement draft</b> for this month, then <b>Issue</b>. That is the frozen
+        statement the demo needs.</p>
+      ${links}</div>`;
+  };
+})();
+</script>
+</body>
+</html>

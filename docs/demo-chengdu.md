@@ -1,8 +1,9 @@
 # The Feifei demo — under 2 minutes, exact clicks
 
 Before the call, once:
-1. Run `node scripts/seed-chengdu.js` against the live database. Copy the three
-   passcodes it prints — they are shown once.
+1. Open `cn.aybkk.net/loc-seed.html`, enter the admin key, press **Seed now**.
+   Copy the three passcodes it shows — they appear once, never again.
+   (Terminal alternative: `DATABASE_URL=... node scripts/seed-chengdu.js`.)
 2. As owner, open `/loc-admin.html`, press **Statement draft** for this month,
    check it with **View**, then **Issue**. The demo needs one issued statement.
 3. On your phone AND a second device (or a second browser profile), sign in:

@@ -1,27 +1,26 @@
 // scripts/seed-chengdu.js — realistic demo data for the Feifei call.
 //
 // Usage:  DATABASE_URL=... node scripts/seed-chengdu.js
+//         or POST /api/loc/seed-demo with the admin key (the no-terminal route).
 // Idempotent: running it twice will not duplicate the location or the users.
-// It prints the passcodes ONCE — copy them somewhere safe immediately.
+// Passcodes exist ONCE, in the return value of the fresh run — copy them
+// somewhere safe immediately.
 
 const crypto = require('crypto');
-const { Pool } = require('pg');
 const { fen } = require('../partner-money.js');
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL ||
-  process.env.TEST_DATABASE_URL || 'postgres://test:test@127.0.0.1:5432/bkktest' });
 const sha = k => crypto.createHash('sha256').update(k).digest('hex');
 const code = () => crypto.randomBytes(6).toString('base64url');
 
 const NAMES = ['王小雨', '李梅', '陈强', '刘芳', '张伟', '赵丽', '孙洋', '周杰',
   '吴敏', '郑浩', '林静', '何平', '高翔', '罗琳', '梁冰'];
 
-(async () => {
+async function seedChengdu(pool) {
   const existing = (await pool.query(`SELECT id FROM locations WHERE code='chengdu'`)).rows[0];
-  let locId;
+  let locId, passcodes = null, seededPayments = 0;
+
   if (existing) {
     locId = existing.id;
-    console.log('location chengdu already exists — reusing, users and payments untouched');
   } else {
     locId = (await pool.query(
       `INSERT INTO locations (code,name_en,name_zh,currency,tz)
@@ -33,13 +32,13 @@ const NAMES = ['王小雨', '李梅', '陈强', '刘芳', '张伟', '赵丽', '�
       ['location_admin', 'Lou Han', locId, 'zh'],
       ['partner_viewer', 'Feifei', locId, 'zh'],
     ];
-    console.log('\nPASSCODES — shown once, stored hashed:');
+    passcodes = [];
     for (const [role, name, lid, lang] of users) {
       const pass = code();
       await pool.query(
         `INSERT INTO loc_users (location_id,role,name,lang,key_hash) VALUES ($1,$2,$3,$4,$5)`,
         [lid, role, name, lang, sha(pass)]);
-      console.log(`  ${name.padEnd(10)} ${role.padEnd(16)} → ${pass}`);
+      passcodes.push({ name, role, pass });
     }
 
     // A month of believable Chengdu income: memberships and drop-ins, mixed
@@ -100,12 +99,38 @@ const NAMES = ['王小雨', '李梅', '陈强', '刘芳', '张伟', '赵丽', '�
       `INSERT INTO loc_audit (location_id,actor,actor_name,action,entity,after)
        VALUES ($1,$2,'Boonchu','location.create','location',
                '{"name":"AYBKK Chengdu (NaSaDi)"}')`, [locId, owner]);
-    console.log(`\nseeded ${rows.length} payments + 1 refund for AYBKK Chengdu`);
+    seededPayments = rows.length + 1;
   }
 
   const n = (await pool.query(
     `SELECT count(*)::int AS n, coalesce(sum(amount_fen) FILTER (WHERE status='confirmed'),0)::bigint AS g
      FROM loc_payments WHERE location_id=$1`, [locId])).rows[0];
-  console.log(`chengdu now holds ${n.n} payment rows, confirmed gross ¥${(Number(n.g) / 100).toLocaleString()}`);
-  await pool.end();
-})().catch(e => { console.error('seed failed:', e.message); process.exit(1); });
+  return {
+    alreadySeeded: !!existing,
+    passcodes,                      // null unless this run created the users
+    seededPayments,
+    totalPayments: n.n,
+    grossFen: Number(n.g),
+  };
+}
+
+module.exports = { seedChengdu };
+
+if (require.main === module) {
+  const { Pool } = require('pg');
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL ||
+    process.env.TEST_DATABASE_URL || 'postgres://test:test@127.0.0.1:5432/bkktest' });
+  seedChengdu(pool).then(async out => {
+    if (out.alreadySeeded) {
+      console.log('location chengdu already exists — reusing, users and payments untouched');
+    } else {
+      console.log('\nPASSCODES — shown once, stored hashed:');
+      for (const p of out.passcodes) {
+        console.log(`  ${p.name.padEnd(10)} ${p.role.padEnd(16)} → ${p.pass}`);
+      }
+      console.log(`\nseeded ${out.seededPayments - 1} payments + 1 refund for AYBKK Chengdu`);
+    }
+    console.log(`chengdu now holds ${out.totalPayments} payment rows, confirmed gross ¥${(out.grossFen / 100).toLocaleString()}`);
+    await pool.end();
+  }).catch(e => { console.error('seed failed:', e.message); process.exit(1); });
+}

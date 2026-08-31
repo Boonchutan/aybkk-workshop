@@ -532,6 +532,19 @@ function mountPartner(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   }));
 
+  // One-tap demo seed (loc-seed.html). Gated by the Bangkok admin key, not by
+  // loc_users — the owner account does not exist until the seed has run.
+  // Idempotent, and passcodes come back only on the run that created them.
+  app.post('/api/loc/seed-demo', async (req, res) => {
+    const adminKey = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || 'aybkk2026';
+    if (req.headers['x-bkk-key'] !== adminKey)
+      return res.status(401).json({ error: 'bad key' });
+    try {
+      const { seedChengdu } = require('./scripts/seed-chengdu.js');
+      res.json(await seedChengdu(pool));
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   initSchema()
     .then(() => console.log('✓ partner-api mounted (/api/loc/*)'))
     .catch(e => console.error('✗ partner-api schema init failed:', e.message));
