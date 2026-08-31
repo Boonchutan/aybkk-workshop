@@ -429,7 +429,9 @@ function mountPartner(app, opts = {}) {
     res.set('Content-Type', 'text/csv; charset=utf-8');
     res.set('Content-Disposition',
       `attachment; filename="aybkk-${loc.code}-${req.params.month}.csv"`);
-    res.send('﻿' + csv);                 // BOM: Excel renders Chinese correctly
+    // The escape is deliberate: a literal BOM in source gets silently stripped
+    // by some editors, and fetch .text() strips it on decode (tests read bytes).
+    res.send('\ufeff' + csv);
   }));
 
   // ── dashboard, settings, audit, users ─────────────────────────────────────

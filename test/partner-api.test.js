@@ -139,10 +139,16 @@ const sha = k => crypto.createHash('sha256').update(k).digest('hex');
   ok('read her payments', (await J('/api/loc/chengdu/payments', FEIFEI)).body.payments.length >= 5);
   ok('read her summary', (await J('/api/loc/chengdu/summary', FEIFEI)).status === 200);
   ok('read the statement', (await J(`/api/loc/chengdu/statements/${month}`, FEIFEI)).status === 200);
-  const csv = await J(`/api/loc/chengdu/statements/${month}/csv`, FEIFEI);
+  // fetch .text() strips a leading BOM on decode, so the BOM check must read
+  // the raw bytes: EF BB BF is what Excel actually receives.
+  const csvR = await fetch(`${B}/api/loc/chengdu/statements/${month}/csv`,
+    { headers: { 'x-loc-key': FEIFEI } });
+  const csvBuf = Buffer.from(await csvR.arrayBuffer());
   ok('download the CSV, bilingual, with BOM',
-     csv.status === 200 && csv.text.charCodeAt(0) === 0xFEFF && csv.text.includes('收款方'),
-     csv.text.slice(0, 40));
+     csvR.status === 200
+       && csvBuf[0] === 0xEF && csvBuf[1] === 0xBB && csvBuf[2] === 0xBF
+       && csvBuf.toString('utf8').includes('收款方'),
+     csvBuf.slice(0, 12).toString('hex'));
   ok('read the audit log', (await J('/api/loc/chengdu/audit', FEIFEI)).body.audit.length > 5);
   const cm = await post(`/api/loc/chengdu/statements/${month}/comments`, FEIFEI,
     { body: '九月的数字我核对过了，没有问题。' });
