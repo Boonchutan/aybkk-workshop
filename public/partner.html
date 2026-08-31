@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK 合作伙伴 Partner</title>
+<style>
+  /* Plain on purpose: this page is a ledger a partner checks on her phone,
+     inside WeChat. Big numbers, no decoration. */
+  :root{--ink:#1a161d;--wall:#f6f3f5;--paper:#fff;--plum:#5c2160;--pink:#c92f74;
+    --soft:#6f6474;--line:rgba(26,22,29,.12);--good:#187a43}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--wall);color:var(--ink);
+    font:16px/1.6 -apple-system,'PingFang SC','Helvetica Neue',sans-serif}
+  header{background:#1a161d;color:#fdf7fa;padding:18px 16px}
+  header h1{margin:0;font-size:20px;font-weight:600}
+  header p{margin:2px 0 0;font-size:13px;color:#d8c9d3}
+  main{max-width:520px;margin:0 auto;padding:12px 12px 40px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:16px;margin-bottom:10px}
+  .lbl{font-size:13px;color:var(--soft)}
+  .lbl small{color:#a99fae}
+  .big{font-size:34px;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
+  .big.plum{color:var(--plum)}
+  .net{font-size:22px;font-weight:700}
+  .row2{display:flex;gap:10px}.row2 .card{flex:1;margin-bottom:0}
+  .item{border-top:1px solid var(--line);padding:9px 0;font-size:13.5px;display:flex;gap:8px}
+  .item .who{color:var(--soft);white-space:nowrap}
+  a.btn{display:inline-block;background:var(--plum);color:#fdf7fa;text-decoration:none;
+    border-radius:8px;padding:11px 18px;font-weight:600;font-size:14px}
+  button.btn{background:var(--plum);color:#fdf7fa;border:none;border-radius:8px;
+    padding:12px 18px;font:inherit;font-weight:600;cursor:pointer}
+  input{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:8px;
+    font:inherit;font-size:16px;background:#fff}
+  .muted{color:var(--soft);font-size:12.5px}
+  #gate{max-width:320px;margin:16vh auto;text-align:center;padding:0 16px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h2 style="margin:0 0 2px">AYBKK 合作伙伴</h2>
+  <p class="muted" style="margin:0 0 16px">Partner view</p>
+  <input id="key" type="password" placeholder="你的密码 your passcode" autocomplete="off">
+  <p><button class="btn" style="width:100%;margin-top:10px" onclick="unlock()">进入 Enter</button></p>
+  <p class="muted" id="gateMsg"></p>
+</div>
+
+<div id="app" style="display:none">
+  <header><h1 id="locZh">—</h1><p id="locEn"></p></header>
+  <main id="view"></main>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  let KEY = localStorage.getItem('aybkk_loc_key') || '';
+  let LOC = null;
+  const api = (u, o = {}) => fetch(u, { ...o,
+    headers: { 'Content-Type': 'application/json', 'x-loc-key': KEY, ...(o.headers || {}) } });
+  const yuan = f => {
+    const n = Number(f), sign = n < 0 ? '-' : '', a = Math.abs(n);
+    return sign + '¥' + Math.floor(a / 100).toLocaleString('en-US')
+      + (a % 100 ? '.' + String(a % 100).padStart(2, '0') : '');
+  };
+
+  window.unlock = async () => {
+    KEY = $('#key').value.trim();
+    const r = await api('/api/loc/login', { method: 'POST' });
+    if (!r.ok) { $('#gateMsg').textContent = '密码不对 · That passcode is not recognised.'; return; }
+    const u = (await r.json()).user;
+    if (!u.location) { $('#gateMsg').textContent = '这个账号不属于某个场馆 · This account has no location.'; return; }
+    LOC = u.location.code;
+    localStorage.setItem('aybkk_loc_key', KEY);
+    $('#gate').style.display = 'none'; $('#app').style.display = 'block';
+    $('#locZh').textContent = u.location.name_zh || u.location.name_en;
+    $('#locEn').textContent = u.location.name_en + ' · ' + esc(u.name);
+    load();
+  };
+
+  async function load() {
+    const s = await api(`/api/loc/${LOC}/summary`).then(r => r.json());
+    const t = s.totals;
+    const aud = (await api(`/api/loc/${LOC}/audit`).then(r => r.json())).audit || [];
+    const sts = (await api(`/api/loc/${LOC}/statements`).then(r => r.json())).statements || [];
+    const netLine = t.netFen >= 0
+      ? `NaSaDi 应转给 AYBKK <span class="net" style="color:var(--pink)">${yuan(t.netFen)}</span>`
+      : `AYBKK 应转给 NaSaDi <span class="net" style="color:var(--good)">${yuan(-t.netFen)}</span>`;
+    $('#view').innerHTML = `
+      <div class="card">
+        <div class="lbl">本月收入 <small>This month's income · ${esc(s.month)}</small></div>
+        <div class="big">${yuan(t.grossFen)}</div>
+        <div class="muted">${t.paymentCount} 笔付款 payments · ${t.refundCount} 笔退款 refunds
+          ${s.pendingPayments ? ` · ${s.pendingPayments} 待确认 pending` : ''}</div>
+      </div>
+      <div class="row2">
+        <div class="card">
+          <div class="lbl">你的分成 <small>Your share (${(s.partnerPct / 100).toFixed(0)}%)</small></div>
+          <div class="big plum">${yuan(t.partnerFen)}</div>
+        </div>
+        <div class="card">
+          <div class="lbl">你已代收 <small>Collected by you</small></div>
+          <div class="big">${yuan(t.collectedByPartnerFen)}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="lbl">月底结算 <small>Settlement on the 1st</small></div>
+        <p style="margin:6px 0 0">${netLine}</p>
+      </div>
+      <div class="card">
+        <div class="lbl">对账单 <small>Statements</small></div>
+        ${sts.length ? sts.map(x => `<div class="item">
+            <span style="flex:1"><b>${esc(x.month)}</b>
+              <span class="muted">${x.status === 'issued' ? '已出账 issued' : '草稿 draft'}
+              ${x.comments ? ` · ${x.comments} 条留言` : ''}</span></span>
+            <a class="btn" style="padding:7px 12px;font-size:13px"
+               href="/loc-statement.html?loc=${esc(LOC)}&month=${esc(x.month)}">查看 View</a>
+          </div>`).join('')
+          : '<p class="muted">还没有对账单 · No statements yet.</p>'}
+      </div>
+      <div class="card">
+        <div class="lbl">操作记录 <small>Every change, who and when — nothing can be deleted</small></div>
+        ${aud.slice(0, 12).map(a => `<div class="item">
+          <span class="who">${new Date(a.at).toLocaleDateString('zh-CN',
+            { month: 'numeric', day: 'numeric' })} ${esc(a.actor_name)}</span>
+          <span>${esc(a.action)}${a.after && a.after.amount ? ' · ' + esc(a.after.amount) : ''}</span>
+        </div>`).join('') || '<p class="muted">—</p>'}
+      </div>
+      <p class="muted" style="text-align:center">数字有疑问？在对账单页面留言，双方都能看到。<br>
+        Question a number? Comment on the statement — both sides see it.</p>`;
+  }
+
+  if (KEY) { $('#key').value = KEY; unlock(); }
+})();
+</script>
+</body>
+</html>

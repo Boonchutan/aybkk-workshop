@@ -33,3 +33,9 @@ jobs:
         env:
           TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest
         run: node test/bkk-api.test.js
+      - name: Run partner money tests (pure, no DB)
+        run: node test/partner-money.test.js
+      - name: Run partner API tests (isolation + money through the API)
+        env:
+          TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest
+        run: node test/partner-api.test.js

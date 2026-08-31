@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK 对账单 Statement</title>
+<style>
+  :root{--ink:#1a161d;--wall:#f6f3f5;--plum:#5c2160;--pink:#c92f74;
+    --soft:#6f6474;--line:rgba(26,22,29,.14);--good:#187a43}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--wall);color:var(--ink);
+    font:15px/1.6 -apple-system,'PingFang SC','Helvetica Neue',sans-serif}
+  .sheet{max-width:640px;margin:14px auto;background:#fff;border:1px solid var(--line);
+    border-radius:10px;padding:22px}
+  h1{margin:0;font-size:20px}
+  .sub{color:var(--soft);font-size:13px;margin:2px 0 16px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--soft);font-weight:500;font-size:12px}
+  td.amt,th.amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .neg{color:#a33}
+  .totals td{border-bottom:none;padding:4px 6px}
+  .totals .grand td{font-size:17px;font-weight:700;padding-top:10px}
+  .net{background:#fbe9f2;border-radius:8px;padding:14px;margin-top:14px;
+    font-size:17px;font-weight:700;text-align:center}
+  .net.tocd{background:#e7f4ec}
+  .pcts{color:var(--soft);font-size:12px;margin-top:10px}
+  .comment{border-top:1px solid var(--line);padding:9px 0;font-size:13.5px}
+  .comment .who{color:var(--soft);font-size:12px}
+  textarea{width:100%;min-height:64px;padding:10px;border:1.5px solid var(--line);
+    border-radius:8px;font:inherit}
+  .btn{background:var(--plum);color:#fdf7fa;border:none;border-radius:8px;
+    padding:11px 18px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+  .bar{max-width:640px;margin:0 auto;padding:0 0 30px;text-align:center}
+  .muted{color:var(--soft);font-size:12.5px}
+  #gate{max-width:320px;margin:16vh auto;text-align:center;padding:0 16px}
+  input{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:8px;font:inherit}
+  @media print{
+    body{background:#fff}
+    .sheet{border:none;margin:0;max-width:none;border-radius:0}
+    .noprint{display:none!important}
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h2 style="margin:0 0 12px">对账单 Statement</h2>
+  <input id="key" type="password" placeholder="你的密码 your passcode" autocomplete="off">
+  <p><button class="btn" style="width:100%;margin-top:10px" onclick="unlock()">进入 Enter</button></p>
+  <p class="muted" id="gateMsg"></p>
+</div>
+
+<div id="doc" style="display:none">
+  <div class="sheet" id="sheet"></div>
+  <div class="bar noprint" id="bar"></div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const P = new URLSearchParams(location.search);
+  const LOC = P.get('loc') || 'chengdu', MONTH = P.get('month') || '';
+  let KEY = localStorage.getItem('aybkk_loc_key') || '';
+  const api = (u, o = {}) => fetch(u, { ...o,
+    headers: { 'Content-Type': 'application/json', 'x-loc-key': KEY, ...(o.headers || {}) } });
+  const yuan = f => {
+    const n = Number(f), s = n < 0 ? '-' : '', a = Math.abs(n);
+    return s + '¥' + Math.floor(a / 100).toLocaleString('en-US')
+      + '.' + String(a % 100).padStart(2, '0');
+  };
+  const METHOD = { wechat_pay: '微信 WeChat', alipay: '支付宝 Alipay', cash: '现金 Cash', bank: '银行 Bank' };
+
+  window.unlock = async () => {
+    KEY = $('#key').value.trim();
+    localStorage.setItem('aybkk_loc_key', KEY);
+    load();
+  };
+
+  async function load() {
+    const r = await api(`/api/loc/${LOC}/statements/${MONTH}`);
+    if (r.status === 401) { $('#gate').style.display = 'block'; $('#doc').style.display = 'none';
+      $('#gateMsg').textContent = '请输入密码 · enter your passcode'; return; }
+    if (!r.ok) { $('#gateMsg').textContent = '找不到这份对账单 · statement not found'; return; }
+    const d = await r.json();
+    $('#gate').style.display = 'none'; $('#doc').style.display = 'block';
+    const t = d.statement.totals, snap = d.statement.pct_snapshot;
+    const issued = d.statement.status === 'issued';
+    const net = t.netFen >= 0
+      ? `<div class="net">NaSaDi 应转给 AYBKK · NaSaDi transfers to AYBKK：${yuan(t.netFen)}</div>`
+      : `<div class="net tocd">AYBKK 应转给 NaSaDi · AYBKK transfers to NaSaDi：${yuan(-t.netFen)}</div>`;
+    $('#sheet').innerHTML = `
+      <h1>${esc(d.location.name_zh || d.location.name_en)}</h1>
+      <div class="sub">${esc(d.location.name_en)} · 月度对账单 Monthly statement · <b>${esc(MONTH)}</b>
+        · ${issued ? '已出账 ISSUED ' + String(d.statement.issued_at).slice(0, 10) : '草稿 DRAFT'}</div>
+      <table>
+        <tr><th>日期<br>Date</th><th>学员<br>Payer</th><th>方式<br>Method</th>
+            <th>收款方<br>Collected by</th><th class="amt">金额<br>Amount</th></tr>
+        ${d.lines.map(l => `<tr>
+          <td>${String(l.confirmed_at).slice(5, 10)}</td>
+          <td>${esc(l.payer_name || '—')}${l.refund_of ? '<br><span class="muted">退款 refund</span>' : ''}</td>
+          <td>${METHOD[l.method] || esc(l.method)}</td>
+          <td>${l.collected_by === 'PARTNER' ? 'NaSaDi' : 'AYBKK'}</td>
+          <td class="amt ${l.amount_fen < 0 ? 'neg' : ''}">${yuan(l.amount_fen)}</td>
+        </tr>`).join('')}
+      </table>
+      <table class="totals" style="margin-top:12px">
+        <tr><td>总收入 Gross（${t.paymentCount} 付款 / ${t.refundCount} 退款）</td>
+            <td class="amt">${yuan(t.grossFen)}</td></tr>
+        <tr><td>AYBKK 分成 share（${(snap.daily_aybkk_pct / 100).toFixed(2)}%）</td>
+            <td class="amt">${yuan(t.aybkkFen)}</td></tr>
+        <tr><td>NaSaDi 分成 share（${(snap.daily_partner_pct / 100).toFixed(2)}%）</td>
+            <td class="amt">${yuan(t.partnerFen)}</td></tr>
+        <tr><td>NaSaDi 已代收 collected</td><td class="amt">${yuan(t.collectedByPartnerFen)}</td></tr>
+        <tr><td>AYBKK 已收 collected</td><td class="amt">${yuan(t.collectedByAybkkFen)}</td></tr>
+      </table>
+      ${net}
+      <p class="pcts">本单按出账时的比例快照计算，之后修改比例不影响本单。<br>
+        Computed from the percentage snapshot taken when issued; later settings changes never alter this statement.</p>
+      <div class="noprint">
+        <h3 style="font-size:15px;margin:18px 0 4px">留言 Comments</h3>
+        ${d.comments.map(c => `<div class="comment">
+          <div class="who">${esc(c.author || '')} · ${String(c.created_at).slice(0, 10)}</div>
+          ${esc(c.body)}</div>`).join('') || '<p class="muted">还没有留言 · none yet</p>'}
+        <textarea id="cmt" placeholder="对这份对账单有疑问或确认，写在这里，双方都能看到。"></textarea>
+        <p><button class="btn" onclick="comment()">留言 Comment</button></p>
+      </div>`;
+    $('#bar').innerHTML = `
+      <button class="btn" onclick="window.print()">打印 / 存为PDF · Print / Save as PDF</button>
+      <a class="btn" style="background:#3d3542"
+         href="/api/loc/${esc(LOC)}/statements/${esc(MONTH)}/csv">下载 CSV Download</a>`;
+    // the CSV link needs the key too — fetch it instead so the header goes along
+    $('#bar').querySelector('a').onclick = async (e) => {
+      e.preventDefault();
+      const resp = await api(`/api/loc/${LOC}/statements/${MONTH}/csv`);
+      const blob = await resp.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `aybkk-${LOC}-${MONTH}.csv`;
+      a.click();
+    };
+  }
+
+  window.comment = async () => {
+    const body = $('#cmt').value.trim();
+    if (!body) return;
+    const r = await api(`/api/loc/${LOC}/statements/${MONTH}/comments`,
+      { method: 'POST', body: JSON.stringify({ body }) });
+    if (r.ok) load(); else alert('失败了，请重试 · failed, try again');
+  };
+
+  if (KEY && MONTH) load(); else $('#gate').style.display = 'block';
+})();
+</script>
+</body>
+</html>

@@ -10,6 +10,7 @@ const neo4j = require('neo4j-driver');
 const cors = require('cors');
 const { mountAttendance } = require('./attendance-api');
 const { mountBkk } = require('./bkk-api');
+const { mountPartner } = require('./partner-api');
 const { mountShop } = require('./shop-api');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -193,7 +194,7 @@ const ORIENTATION_SHORTCUTS = {
 };
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
-  door: 'bkk-door.html', teach: 'bkk-teacher.html' };
+  door: 'bkk-door.html', teach: 'bkk-teacher.html', partner: 'partner.html' };
 for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SHORTCUTS })) {
   app.get('/' + slug, (req, res) => {
     if (fs.existsSync(path.join(__dirname, 'public', file))) {
@@ -533,6 +534,7 @@ mountShop(app);
 
 // AYBKK Bangkok: packages, PaySolutions payment, passes, booking, check-in
 mountBkk(app, { pgPool });
+mountPartner(app, { pgPool });
 
 // Student Journal API Routes
 const studentJournal = require('./api/student-journal');

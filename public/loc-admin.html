@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK Location Admin</title>
+<style>
+  :root{--ink:#1a161d;--wall:#f6f3f5;--paper:#fff;--plum:#5c2160;--pink:#c92f74;
+    --soft:#6f6474;--line:rgba(26,22,29,.12);--good:#187a43}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--wall);color:var(--ink);
+    font:15.5px/1.6 -apple-system,'PingFang SC','Helvetica Neue',sans-serif}
+  header{background:#1a161d;color:#fdf7fa;padding:16px;display:flex;gap:12px;align-items:center}
+  header h1{margin:0;font-size:18px;flex:1}
+  header .who{font-size:12.5px;color:#d8c9d3}
+  main{max-width:640px;margin:0 auto;padding:12px 12px 40px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:15px;margin-bottom:10px}
+  .card b.h{font-size:16px}
+  label{display:block;font-size:12.5px;color:var(--soft);margin:9px 0 3px}
+  input,select{width:100%;padding:11px;border:1.5px solid var(--line);border-radius:8px;
+    font:inherit;font-size:16px;background:#fff}
+  .btn{background:var(--plum);color:#fdf7fa;border:none;border-radius:8px;
+    padding:11px 16px;font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+  .btn.gray{background:#3d3542}.btn.pink{background:var(--pink)}
+  .row{display:flex;gap:8px}.row>*{flex:1}
+  .pay{border-top:1px solid var(--line);padding:10px 0;font-size:13.5px;
+    display:flex;gap:10px;align-items:center}
+  .pay .amt{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .pay .neg{color:#a33}
+  .pill{font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px}
+  .pending{background:#fff3d6;color:#8a6a12}.confirmed{background:#e6f6ec;color:#187a43}
+  .muted{color:var(--soft);font-size:12.5px}
+  #gate{max-width:320px;margin:16vh auto;text-align:center;padding:0 16px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h2 style="margin:0 0 12px">AYBKK Location Admin</h2>
+  <input id="key" type="password" placeholder="your passcode" autocomplete="off">
+  <p><button class="btn" style="width:100%;margin-top:10px" onclick="unlock()">Enter</button></p>
+  <p class="muted" id="gateMsg"></p>
+</div>
+
+<div id="app" style="display:none">
+  <header><h1 id="locName">—</h1><span class="who" id="who"></span>
+    <button class="btn gray" onclick="logout()">Lock</button></header>
+  <main id="view"></main>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  let KEY = localStorage.getItem('aybkk_loc_key') || '';
+  let ME = null, LOC = null;
+  const api = (u, o = {}) => fetch(u, { ...o,
+    headers: { 'Content-Type': 'application/json', 'x-loc-key': KEY, ...(o.headers || {}) } });
+  const yuan = f => {
+    const n = Number(f), s = n < 0 ? '-' : '', a = Math.abs(n);
+    return s + '¥' + Math.floor(a / 100).toLocaleString('en-US')
+      + (a % 100 ? '.' + String(a % 100).padStart(2, '0') : '');
+  };
+  // Yuan typed by a human → integer fen, without ever multiplying floats.
+  const toFen = str => {
+    const m = String(str).trim().match(/^(\d+)(?:\.(\d{1,2}))?$/);
+    if (!m) return null;
+    return Number(m[1]) * 100 + Number((m[2] || '').padEnd(2, '0') || 0);
+  };
+  const monthNow = () => new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 7);
+
+  window.unlock = async () => {
+    KEY = $('#key').value.trim();
+    const r = await api('/api/loc/login', { method: 'POST' });
+    if (!r.ok) { $('#gateMsg').textContent = 'That passcode is not recognised.'; return; }
+    ME = (await r.json()).user;
+    const locs = (await api('/api/loc/locations').then(x => x.json())).locations;
+    LOC = (ME.location && ME.location.code) || (locs[0] && locs[0].code);
+    if (!LOC) { $('#gateMsg').textContent = 'No location available.'; return; }
+    localStorage.setItem('aybkk_loc_key', KEY);
+    $('#gate').style.display = 'none'; $('#app').style.display = 'block';
+    const l = locs.find(x => x.code === LOC) || {};
+    $('#locName').textContent = l.name_zh || l.name_en || LOC;
+    $('#who').textContent = `${ME.name} · ${ME.role}`;
+    load();
+  };
+  window.logout = () => { localStorage.removeItem('aybkk_loc_key'); location.reload(); };
+
+  async function load() {
+    const month = monthNow();
+    const [sum, pays] = await Promise.all([
+      api(`/api/loc/${LOC}/summary`).then(r => r.json()),
+      api(`/api/loc/${LOC}/payments?month=${month}`).then(r => r.json()),
+    ]);
+    const t = sum.totals;
+    const isOwner = ME.role === 'aybkk_owner';
+    const canMoney = ['aybkk_owner', 'aybkk_manager', 'location_admin'].includes(ME.role);
+    const canStatement = ['aybkk_owner', 'aybkk_manager'].includes(ME.role);
+
+    $('#view').innerHTML = `
+      <div class="card">
+        <b class="h">${esc(month)}</b>
+        <span class="muted"> gross ${yuan(t.grossFen)} · AYBKK ${yuan(t.aybkkFen)}
+          · partner ${yuan(t.partnerFen)} · net ${t.netFen >= 0 ? 'partner→AYBKK' : 'AYBKK→partner'}
+          ${yuan(Math.abs(t.netFen))}</span>
+        ${canStatement ? `<p style="margin:10px 0 0">
+          <button class="btn" onclick="draft('${month}')">Statement draft</button>
+          <button class="btn pink" onclick="issue('${month}')">Issue</button>
+          <a class="btn gray" style="text-decoration:none;display:inline-block"
+             href="/loc-statement.html?loc=${esc(LOC)}&month=${month}">View</a></p>` : ''}
+      </div>
+
+      ${canMoney ? `<div class="card">
+        <b class="h">Record a payment</b>
+        <label>Payer 学员</label><input id="pn" autocomplete="off">
+        <label>Amount ¥ 金额</label><input id="pa" inputmode="decimal" placeholder="e.g. 3000 or 3000.50">
+        <div class="row">
+          <div><label>Method 方式</label><select id="pm">
+            <option value="wechat_pay">微信 WeChat</option><option value="alipay">支付宝 Alipay</option>
+            <option value="cash">现金 Cash</option><option value="bank">银行 Bank</option></select></div>
+          <div><label>Collected by 收款方</label><select id="pc">
+            <option value="PARTNER">NaSaDi</option><option value="AYBKK">AYBKK</option></select></div>
+        </div>
+        <label>Reference 参考号 (optional)</label><input id="pr" autocomplete="off">
+        <p style="margin:12px 0 0"><button class="btn" onclick="record()">Record</button>
+          <span class="muted">Recorded as pending — confirm below once the money is seen.</span></p>
+      </div>` : ''}
+
+      <div class="card">
+        <b class="h">This month's payments</b>
+        ${(pays.payments || []).map(p => `<div class="pay">
+          <span style="flex:1"><b>${esc(p.payer_name || '—')}</b>
+            <span class="muted">${esc(p.method)} · ${p.collected_by === 'PARTNER' ? 'NaSaDi' : 'AYBKK'}
+              ${p.refund_of ? ' · refund of #' + p.refund_of : ''}</span></span>
+          <span class="amt ${Number(p.amount_fen) < 0 ? 'neg' : ''}">${yuan(p.amount_fen)}</span>
+          <span class="pill ${esc(p.status)}">${esc(p.status)}</span>
+          ${canMoney && p.status === 'pending'
+            ? `<button class="btn" style="padding:7px 10px" onclick="confirmPay(${p.id})">Confirm</button>` : ''}
+          ${canMoney && p.status === 'confirmed' && !p.refund_of
+            ? `<button class="btn gray" style="padding:7px 10px" onclick="refund(${p.id})">Refund</button>` : ''}
+        </div>`).join('') || '<p class="muted">Nothing this month yet.</p>'}
+      </div>
+
+      ${isOwner ? `<div class="card">
+        <b class="h">Split settings</b> <span class="muted">owner only — every change is audited
+          and never touches an issued statement</span>
+        <div class="row">
+          <div><label>AYBKK daily %</label><input id="sa" inputmode="decimal"></div>
+          <div><label>Partner daily %</label><input id="sp" inputmode="decimal"></div>
+        </div>
+        <p style="margin:12px 0 0"><button class="btn" onclick="saveSplit()">Save split</button></p>
+      </div>` : ''}`;
+    if (isOwner) {
+      const st = await api(`/api/loc/${LOC}/settings`).then(r => r.json());
+      $('#sa').value = (st.pcts.daily_aybkk_pct / 100).toFixed(2);
+      $('#sp').value = (st.pcts.daily_partner_pct / 100).toFixed(2);
+    }
+  }
+
+  const shout = async r => { const j = await r.json().catch(() => ({}));
+    if (!r.ok) { alert(j.error || 'failed'); return null; } return j; };
+
+  window.record = async () => {
+    const amountFen = toFen($('#pa').value);
+    if (amountFen == null || amountFen <= 0) return alert('Amount must be yuan, e.g. 3000 or 3000.50');
+    const r = await api(`/api/loc/${LOC}/payments`, { method: 'POST', body: JSON.stringify({
+      payerName: $('#pn').value.trim(), amountFen,
+      method: $('#pm').value, collectedBy: $('#pc').value,
+      reference: $('#pr').value.trim() }) });
+    if (await shout(r)) load();
+  };
+  window.confirmPay = async id => {
+    const r = await api(`/api/loc/${LOC}/payments/${id}/confirm`, { method: 'POST' });
+    if (await shout(r)) load();
+  };
+  window.refund = async id => {
+    const amt = prompt('Refund how much (¥)? Empty = full amount.');
+    if (amt === null) return;
+    const reason = prompt('Reason (the partner sees this)') || '';
+    const body = { reason };
+    if (amt.trim()) {
+      const f = toFen(amt); if (f == null) return alert('Amount must be yuan.');
+      body.amountFen = f;
+    }
+    const r = await api(`/api/loc/${LOC}/payments/${id}/refund`,
+      { method: 'POST', body: JSON.stringify(body) });
+    if (await shout(r)) load();
+  };
+  window.draft = async m => {
+    const r = await api(`/api/loc/${LOC}/statements/${m}`, { method: 'POST' });
+    if (await shout(r)) alert('Draft ready — View to check it, Issue to freeze it.');
+  };
+  window.issue = async m => {
+    if (!confirm(`Issue the ${m} statement?\nOnce issued it is frozen forever — later settings changes never touch it.`)) return;
+    const r = await api(`/api/loc/${LOC}/statements/${m}/issue`, { method: 'POST' });
+    if (await shout(r)) load();
+  };
+  window.saveSplit = async () => {
+    const a = Math.round(parseFloat($('#sa').value) * 100);
+    const p = Math.round(parseFloat($('#sp').value) * 100);
+    const r = await api(`/api/loc/${LOC}/settings`, { method: 'PUT',
+      body: JSON.stringify({ pcts: { daily_aybkk_pct: a, daily_partner_pct: p } }) });
+    if (await shout(r)) { alert('Saved. Old issued statements are untouched.'); load(); }
+  };
+
+  if (KEY) { $('#key').value = KEY; unlock(); }
+})();
+</script>
+</body>
+</html>
