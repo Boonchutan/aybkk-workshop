@@ -210,7 +210,8 @@ const TOPICS = [
   {id:"story",    name:"Story & Emotion",       desc:"How feeling is built and moved"},
   {id:"action",   name:"Getting Someone To Act",desc:"The gap between wanting and doing"},
   {id:"offer",    name:"The Offer",             desc:"Price, risk, and the pain of paying"},
-  {id:"evidence", name:"Reading The Evidence",  desc:"Telling real findings from noise"}
+  {id:"evidence", name:"Reading The Evidence",  desc:"Telling real findings from noise"},
+  {id:"structure",name:"Storytelling Structure", desc:"How one creator builds a piece — verified"}
 ];
 
 const CARDS = [
@@ -720,7 +721,58 @@ body:"<p>How big is the effect, in units that mean something? How many people, a
 apply:"Run this on Sutherland, Hormozi and Godin as you read them. All three are worth reading; none of them are careful about evidence, and knowing which parts are load-bearing is what separates using their work from repeating it.",
 recall:"What are the four screening questions for a psychology claim?",
 answer:"Effect size in meaningful units; sample size and composition; predicted in advance or found post hoc; independently replicated.",
-src:"Synthesis of open-science practice"}
+src:"Synthesis of open-science practice"},
+
+/* ============ STORYTELLING STRUCTURE (Vibe Samurai) ============ */
+{id:"st1",topic:"structure",title:"The niche is the lens, not the subject",
+body:"<p>A creator with 443K followers, asked what his niche is, answers that it isn't a subject at all. One day relationships, the next consciousness, the next mushrooms. What stays constant is how each subject gets treated — curious but skeptical, serious without being solemn, willing to follow a strange question somewhere unexpected.</p><p>His own line: the niche is what happens when the subject passes through your mind. The audience follows a way of seeing, not a topic.</p>",
+apply:"Ashtanga is your subject. Your lens is direct transmission plus the willingness to say no. Every reel should carry the lens whether the subject is a posture, a correction, or a student's mistake — that is what makes a scattered feed feel like one voice.",
+recall:"In Bruno's own framing, what is a niche?",
+answer:"Not a subject — a consistent way of seeing that any subject passes through. The audience follows the lens.",
+src:"Vibe Samurai, Substack, 28 Aug 2026 — verified, his own words"},
+
+{id:"st2",topic:"structure",title:"Eight beats, and the fourth one is the hinge",
+body:"<p>His long pieces run the same order every time: a concrete ordinary scene, the same scene from a second vantage, a concession that the popular explanation is sometimes right, then one short sentence that turns it. After the turn: name the pattern with provenance, define it in a line, close on an inversion, hand two questions back.</p><p>Everything before the turn builds the reader's confidence in the story they already believe. Everything after dismantles it. That is why it reads as discovery rather than lecture.</p>",
+apply:"Draft the turn sentence first — 'But most of the time, that isn't it.' Then write the concession that makes the turn land, then the scene. Finish on one sentence that reverses what a practitioner assumes: 'The people practising hardest are often progressing slowest.'",
+recall:"Which beat carries the piece, and what do the beats before it do?",
+answer:"The turn — one short sentence reversing the popular explanation. The beats before it build the reader's confidence in that explanation so the reversal lands as discovery.",
+src:"Reconstructed from 'Idiot Compassion' and 'Nostalgia Is the Searching Mind' — verified against full text"},
+
+{id:"st3",topic:"structure",title:"Videos are filters, and views are diagnostics",
+body:"<p>He says it plainly: the videos are becoming filters. They ask whether you can hold science and mystery at once, whether you can entertain a strange idea without swallowing it. The people who respond are members of his club before they know it has a name.</p><p>Twenty-one million views in a month, in his words, is not the destination — it's evidence the transmitter is working. The reels broadcast the signal. The paid community is where the people who recognise it find each other.</p>",
+apply:"This is Name-Disqualify-Release running as a content strategy. Design reels so the wrong person scrolls past and the right ten recognise themselves. Read view counts as a diagnostic of the signal, not a target.",
+recall:"What job do his videos do in the funnel, and what are views for?",
+answer:"They filter — attracting people who already share the lens. Views are evidence the signal is working, not the goal.",
+src:"Vibe Samurai, Substack, 28 Aug 2026 — verified, his own words"},
+
+{id:"st4",topic:"structure",title:"Provocative titles, and one rule about origin stories",
+body:"<p>His sixty most-viewed shorts are titled like this: Gnomes are real. Single at 51. Childless cat dad. The most evil manipulation technique. Wolf in sheep's clothing. Short, contradictory, no explanation — a claim that makes you ask why anyone would say it.</p><p>He also opens with his own story: fifty years old, a career elsewhere, seven hundred and fifty thousand people found him in a hundred days. The story works because every number in it can be checked.</p>",
+apply:"Provocation works on curiosity; use it on true contradictions. An origin story works only when it is verifiable — yours is eighteen documented years and two hosted visits, which is why it works. Never let anyone, human or AI, hand you a personal story you did not live.",
+recall:"What makes his origin story usable as a hook, and what is the rule for yours?",
+answer:"Every claim in it is checkable. The rule: a personal-credibility hook must be true and verifiable, never supplied or embellished.",
+src:"60 YouTube Shorts titles + video '750,000 People Found Me in 100 Days' — verified. Caution: an AI-drafted adaptation invented a back injury for Boonchu; that is the failure mode.",
+flag:"His hook titles are verified. Whether the reels then withhold explanation entirely could not be checked — transcripts were blocked."},
+
+{id:"st5",topic:"structure",title:"Trace the word to its root, then reframe the cliché",
+body:"<p>Take an overused word and follow it home. Authenticity comes from the Greek authentikos, built on autos — self. Self-originating. So the real question, he argues, was never whether you showed your messy self to the world. It was: where did this come from?</p><p>The move does three things at once. It signals homework, it turns a worn word into a fresh one, and it works across cultures because roots are roots.</p>",
+apply:"You teach in a vocabulary most students use without knowing. Yoga from yuj — to yoke, not to stretch. Asana as seat — a place you inhabit, not a shape. Vinyasa — to place in a special way. Each is a reel, and each is unfakeable because it is simply true.",
+recall:"What is the etymology move, and why does it travel across cultures?",
+answer:"Trace a familiar word to its root and use the root meaning to reframe the modern cliché. Roots are shared, so the reframe lands regardless of audience.",
+src:"'Nobody Knows What Authenticity Actually Means', 23 Mar 2026 — verified verbatim"},
+
+{id:"st6",topic:"structure",title:"The loop lives in the body, so the interrupt happens there",
+body:"<p>His argument against insight: the unconscious does not respond to a good argument. It responds to what the body actually does. The body, in his phrase, is the unconscious mind's native language. Take a deep breath in a moment of panic and you change the chemistry — and the unconscious answers that immediately, in a way it never answers a thought.</p><p>So the interrupt cannot be a realisation. It has to be an action, repeated until the identity follows the behaviour.</p>",
+apply:"You already teach this — you just haven't said it out loud. Breath before alignment. The posture as a body-level interrupt to a mental pattern. A student's wobble reframed as the moment the old pattern is losing its grip. This is Ashtanga's native argument, and he has given you the words for it.",
+recall:"Why does he say insight alone does not change a pattern?",
+answer:"Because the pattern lives in the body and the unconscious responds to action, not argument. The interrupt must be physical and repeated; identity follows behaviour.",
+src:"'The Loop Lives in the Body', 10 May 2026 — verified verbatim"},
+
+{id:"st7",topic:"structure",title:"Four territories, and the awkward one in the middle has a name",
+body:"<p>His pattern-interrupt series moves through four territories: see the pattern — you can't see the frame from inside the painting; interrupt it — one moment of responding differently; the in-between — where the old identity dissolves and nothing has replaced it yet; and creation — designing the new pattern on purpose.</p><p>The third territory is the one everyone flees. He credits hypnotherapist Heather Keys with naming it the Sacred In-Between, and calls it the most important idea in the whole framework — because normalising the awkward phase is what keeps people from quitting inside it.</p>",
+apply:"Every intermediate student lives in territory three: the old movement no longer works, the new one isn't automatic yet, and it feels like regression. Name it for them. A student who knows the wobble is a stage, not a failure, stays.",
+recall:"Name the four territories, and say who named the third.",
+answer:"See, interrupt, the in-between, creation. The Sacred In-Between is Heather Keys's term, credited by Bruno.",
+src:"'You Are Not Living Your Life. You Are Living Your Patterns.', 7 May 2026 — verified; attribution to Heather Keys is in the source text"}
 
 ];
 
@@ -994,7 +1046,7 @@ function renderTopics(){
       [3,5,8,0].map(n => '<button class="btn' + (S.dailyLimit === n ? ' on' : '') + '" data-n="' + n + '">' +
         (n ? n : 'No cap') + '</button>').join("") +
     '</div>' +
-    '<div class="note">Ten topics, 70 cards, seven per topic. New cards a day is capped so the review queue stays survivable — reviews are never capped. Switching a topic off only hides it from the Feed; anything already stashed stays in your queue.</div>';
+    '<div class="note">Eleven topics, 77 cards, seven per topic. New cards a day is capped so the review queue stays survivable — reviews are never capped. Switching a topic off only hides it from the Feed; anything already stashed stays in your queue.</div>';
   el.querySelectorAll("#paceRow [data-n]").forEach(b => {
     b.onclick = () => { S.dailyLimit = parseInt(b.dataset.n, 10); save(); renderTopics();
                         toast(S.dailyLimit ? S.dailyLimit + " new cards a day" : "No daily cap"); };
