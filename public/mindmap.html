@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AYBKK Teaching Reference</title>
   <link rel="stylesheet" href="/tokens.css">
+  <script>
+  (function () {
+    var map = { hefei:'hefei', zhuhai:'zhuhai', guangzhou:'gz', suzhou:'suzhou', chengdu:'chengdu', xichang:'xichang', maoming:'maoming', huizhou:'huizhou', russia:'russia' };
+    var loc = (new URLSearchParams(window.location.search).get('location') || '').toLowerCase();
+    if (map[loc]) document.documentElement.setAttribute('data-ws', map[loc]);
+  })();
+  </script>
   <style>
     /* mindmap.html — teaching reference (admin). Surgical migration:
        chrome (header, panels, search) gets the wood/clay palette + Fraunces
@@ -17,7 +24,7 @@
 
     :root {
       /* Chrome: alias to tokens.css wood palette (--bg comes from tokens.css) */
-      --paper: var(--surface);
+      /* --paper comes from tokens.css (v2 aliases --surface to it; a local alias back would form a cycle) */
       --card: var(--surface);
       --border: var(--shadow-dark);
       --text: var(--ink);
@@ -1042,28 +1049,159 @@
 .view-switch-mm a.active {
   background: var(--text); color: var(--paper); border-color: var(--text);
 }
+
+/* ══════════ v2 layout (Jul 2026): sticky header, scrolling board, sheet detail ══════════ */
+body { overflow: auto; }
+.view-switch-mm, .zoom-controls, .hint, .legend { display: none !important; }
+
+.hdr {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--wall);
+  border-bottom: 2px solid var(--ink);
+  padding: 10px 14px 8px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.hdr-row1 { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.brand {
+  font-family: var(--font-display); font-weight: 800; font-size: 17px; line-height: 1.05;
+  color: var(--ink); text-decoration: none; white-space: nowrap;
+}
+.brand span { display: block; font-family: var(--font-note); font-size: 14px; font-weight: 400; color: var(--ink-soft); margin-top: 1px; }
+.hdr-nav { display: flex; gap: 6px; flex-shrink: 0; }
+.hdr-nav a {
+  padding: 6px 11px; border-radius: 999px;
+  border: 1.5px solid var(--hairline); background: var(--paper);
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  color: var(--ink-soft); text-decoration: none; white-space: nowrap;
+}
+.hdr-nav a.active { background: var(--shirt); color: var(--chalk); border-color: var(--ink); }
+.hdr-row2 { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.search-box { flex: 1 1 200px; max-width: none; }
+.search-box input {
+  font-size: 15px; padding: 9px 12px 9px 34px; border-radius: 999px;
+  border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink);
+}
+.search-box::before { font-size: 14px; left: 12px; }
+.search-results { border: 2px solid var(--ink); border-radius: 14px; box-shadow: var(--frame-shadow); }
+.search-result-item .name { font-size: 15px; }
+.search-result-item .meta { font-size: 12px; }
+.student-select-btn { font-size: 13px; padding: 8px 12px; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); }
+.student-dropdown { border: 2px solid var(--ink); border-radius: 14px; box-shadow: var(--frame-shadow); }
+.toggle-group { border: 1.5px solid var(--ink); background: var(--paper); }
+.toggle-btn { font-family: var(--font-display); font-weight: 700; font-size: 12px; padding: 6px 12px; }
+.toggle-btn.active { background: var(--shirt); color: var(--chalk); }
+
+.series-bar { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.series-bar::-webkit-scrollbar { display: none; }
+.series-chip {
+  display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
+  padding: 5px 11px; border-radius: 999px;
+  border: 1.5px solid var(--hairline); background: var(--paper);
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  color: var(--ink-soft); white-space: nowrap; cursor: pointer;
+}
+.series-chip .dot { width: 9px; height: 9px; border-radius: 50%; }
+.series-chip.active, .series-chip:hover { border-color: var(--ink); color: var(--ink); }
+.series-chip.legend-only { cursor: default; }
+.series-chip .dot.dashed { width: 12px; height: 3px; border-radius: 2px; border: 1.5px dashed var(--student-predicted); background: var(--student-predicted-bg); }
+
+/* the board: native scroll, no transform */
+.canvas-wrapper { position: static; overflow: visible; }
+.canvas { transform: none !important; cursor: default; width: auto; height: auto; overflow-x: auto; overflow-y: visible; scroll-snap-type: x proximity; scroll-padding: 14px; padding-bottom: 48px; }
+.columns { height: auto; padding: 14px; gap: 14px; min-width: max-content; align-items: flex-start; }
+.column { width: 340px; padding: 0; scroll-snap-align: start; }
+.col-header {
+  border: 2px solid var(--ink); border-radius: var(--frame-radius-sm);
+  background: var(--paper); color: var(--ink); box-shadow: var(--frame-shadow);
+}
+.col-header h2 { font-size: 16px; font-weight: 800; }
+.col-header .subtitle { font-family: var(--font-note); font-size: 15px; opacity: 1; color: var(--ink-soft); margin-top: 2px; }
+.stage { border: 2px solid var(--ink); border-radius: var(--frame-radius-sm); background: var(--paper); box-shadow: var(--frame-shadow); }
+.stage-header { padding: 9px 12px; border-bottom: 1.5px solid var(--hairline); }
+.stage-name { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
+.stage-count { font-size: 12px; font-weight: 700; background: var(--paper-2); color: var(--ink-soft); padding: 2px 9px; }
+.stage-desc { font-size: 13px; }
+.asana-list { padding: 8px; gap: 6px; }
+.asana-pill {
+  font-size: 13px; padding: 7px 12px; letter-spacing: 0.01em;
+  border: 1.5px solid; box-shadow: none !important; background: var(--paper);
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.asana-pill.green  { border-color: var(--accent-green);  color: var(--accent-green);  background: var(--accent-green-light); }
+.asana-pill.red    { border-color: var(--accent-red);    color: var(--accent-red);    background: var(--accent-red-light); }
+.asana-pill.purple { border-color: var(--accent-purple); color: var(--accent-purple); background: var(--accent-purple-light); }
+.asana-pill.dark   { border-color: var(--accent-dark);   color: var(--accent-dark);   background: var(--accent-dark-light); }
+.asana-pill.flash { outline: 3px solid var(--shirt); outline-offset: 2px; }
+.actions-label { font-size: 10px; letter-spacing: 0.12em; }
+.action-tag { font-size: 12px; padding: 3px 10px; border-color: var(--hairline); }
+@media (max-width: 720px) {
+  .hdr { padding: 8px 12px 8px; gap: 7px; }
+  .brand span { display: none; }
+  .search-box { flex: 1 1 100%; }
+  .hdr-row2 { gap: 7px; }
+  .brand { font-size: 15px; }
+  .brand span { font-size: 13px; }
+  .hdr-nav a { padding: 5px 9px; font-size: 11px; }
+  .column { width: 86vw; }
+  .asana-pill { font-size: 14px; padding: 8px 13px; }
+  .intel-panel { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 44vh; }
+}
+
+/* detail: bottom sheet on phones, side drawer on wide screens */
+.detail-overlay { background: color-mix(in oklab, var(--ink) 38%, transparent); }
+.detail-panel {
+  top: auto; left: 0; right: 0; bottom: 0; transform: none;
+  width: 100%; max-width: none; max-height: 88vh;
+  background: var(--paper);
+  border: 2.5px solid var(--ink); border-bottom: none;
+  border-radius: 22px 22px 0 0; box-shadow: none;
+}
+.detail-handle { width: 44px; height: 5px; border-radius: 3px; background: var(--hairline); margin: 10px auto 0; flex-shrink: 0; }
+.detail-header { padding: 12px 20px 12px; border-bottom: 1.5px solid var(--hairline); }
+.detail-badge { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; border: 1.5px solid currentColor; padding: 2px 9px; }
+.detail-title { font-size: 24px; font-weight: 800; }
+.detail-subtitle { font-family: var(--font-note); font-size: 18px; color: var(--shirt-deep); margin-top: 3px; }
+.detail-close { font-size: 26px; color: var(--ink-soft); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.detail-close:hover { background: var(--paper-2); color: var(--ink); }
+.detail-body { padding: 16px 20px 32px; font-size: 15px; }
+.detail-section { margin-bottom: 18px; }
+.detail-section-title { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.14em; color: var(--ink-soft); margin-bottom: 8px; }
+.detail-info-grid { gap: 8px; }
+.detail-info-item { background: var(--paper-2); border: 1.5px solid var(--hairline); border-radius: 10px; padding: 9px 12px; }
+.detail-info-item .label { font-size: 10px; letter-spacing: 0.12em; color: var(--ink-soft); }
+.detail-info-item .value { font-size: 15px; font-weight: 700; margin-top: 2px; }
+.detail-note { font-family: var(--font-note); font-size: 18px; line-height: 1.35; color: var(--ink-soft); margin: 2px 0 14px; transform: rotate(-0.6deg); }
+.detail-seq { display: flex; gap: 8px; }
+.seq-btn {
+  flex: 1; text-align: left; padding: 9px 12px; cursor: pointer;
+  border: 1.5px solid var(--ink); border-radius: 10px; background: var(--paper);
+  font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.25;
+}
+.seq-btn small { display: block; font-family: var(--font-display); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 2px; }
+.seq-btn.empty { opacity: 0.5; cursor: default; }
+.detail-action-btn, .detail-related-pill { font-size: 13px; padding: 5px 11px; }
+.student-context-box { font-size: 14px; }
+@media (min-width: 900px) {
+  .detail-panel { top: 0; bottom: 0; left: auto; right: 0; width: 460px; max-height: none; border-radius: 0; border-left: 2.5px solid var(--ink); border-top: none; border-bottom: none; }
+  .detail-handle { display: none; }
+}
 </style>
 
-<div class="view-switch-mm">
-  <a href="/student-report.html">📋 Reports</a>
-  <a href="/faces.html">📸 Faces grid</a>
-  <a class="active" href="/mindmap.html" aria-current="page">🧠 Knowledge</a>
-</div>
-
-<!-- HEADER -->
-<div class="header">
-  <div class="header-logo">
-    AYBKK Teaching Reference
-    <span>Every student is a project</span>
+<header class="hdr">
+  <div class="hdr-row1">
+    <a class="brand" href="/mindmap.html">AYBKK Teaching Reference<span>Every student is a project</span></a>
+    <nav class="hdr-nav">
+      <a href="/student-report.html">📋 Reports</a>
+      <a href="/faces.html">📸 Faces</a>
+      <a class="active" href="/mindmap.html" aria-current="page">🧠 Knowledge</a>
+    </nav>
   </div>
-
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Search asana..." autocomplete="off">
-    <div class="search-results" id="searchResults"></div>
-  </div>
-
-  <!-- Student Intelligence Selector -->
-  <div class="student-selector" id="studentSelector">
+  <div class="hdr-row2">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search asana or body area…" autocomplete="off">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <div class="student-selector" id="studentSelector">
     <button class="student-select-btn" id="studentSelectBtn" onclick="toggleStudentDropdown()">
       <span id="studentBtnLabel">👤 Student view</span>
       <span id="studentBtnArrow">▾</span>
@@ -1080,26 +1218,13 @@
       </div>
     </div>
   </div>
-
-  <div class="toggle-group">
-    <button class="toggle-btn active" id="btnTeacher" onclick="setView('teacher')">Teacher</button>
-    <button class="toggle-btn" id="btnStudent" onclick="setView('student')">Student</button>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="btnTeacher" onclick="setView('teacher')">Teacher</button>
+      <button class="toggle-btn" id="btnStudent" onclick="setView('student')">Student</button>
+    </div>
   </div>
-
-  <div class="zoom-controls">
-    <button class="zoom-btn" onclick="zoomIn()">+</button>
-    <button class="zoom-btn" onclick="zoomOut()">−</button>
-    <button class="zoom-btn" onclick="resetView()" style="font-size:10px;">⊙</button>
-  </div>
-
-  <a href="/student-report.html" style="
-    display:inline-flex;align-items:center;gap:6px;
-    padding:7px 14px;border-radius:6px;
-    background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);
-    color:#fff;text-decoration:none;font-size:12px;font-weight:600;
-    white-space:nowrap;
-  ">📋 Reports</a>
-</div>
+  <div class="series-bar" id="seriesBar"></div>
+</header>
 
 <!-- MAIN CANVAS -->
 <div class="canvas-wrapper">
@@ -1124,6 +1249,7 @@
 <!-- DETAIL OVERLAY & PANEL -->
 <div class="detail-overlay" id="detailOverlay" onclick="closeDetail()"></div>
 <div class="detail-panel" id="detailPanel">
+  <div class="detail-handle" aria-hidden="true"></div>
   <div class="detail-header">
     <div class="detail-header-text">
       <span class="detail-badge" id="detailBadge">—</span>
@@ -1134,27 +1260,6 @@
   </div>
   <div class="detail-body" id="detailBody"></div>
 </div>
-
-<!-- LEGEND -->
-<div class="legend">
-  <div class="legend-base">
-    <div class="legend-section-title">Series</div>
-    <div class="legend-item"><div class="legend-dot green"></div> Primary</div>
-    <div class="legend-item"><div class="legend-dot red"></div> Intermediate</div>
-    <div class="legend-item"><div class="legend-dot purple"></div> Advanced A</div>
-    <div class="legend-item"><div class="legend-dot dark"></div> Advanced B</div>
-  </div>
-  <div class="legend-student">
-    <div class="legend-section-title">Student overlay</div>
-    <div class="legend-item"><div class="legend-dot current"></div> Current position</div>
-    <div class="legend-item"><div class="legend-dot strength"></div> Strength area</div>
-    <div class="legend-item"><div class="legend-dot struggle"></div> Struggle area</div>
-    <div class="legend-item"><div class="legend-dot predicted" style="width:10px;height:3px;border-radius:2px;border:1.5px dashed var(--student-predicted);background:var(--student-predicted-bg);"></div> Predicted challenge</div>
-  </div>
-</div>
-
-<!-- HINT -->
-<div class="hint">Click asana for details · Drag to pan · Scroll to zoom</div>
 
 <script>
 // ─── STATE ───────────────────────────────────────────────────────
@@ -1218,14 +1323,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadData() {
   try {
-    const [treeRes, asanasRes, tagsRes] = await Promise.all([
+    const [treeRes, asanasRes, tagsRes, infoRes] = await Promise.all([
       fetch('/api/mindmap/tree'),
       fetch('/api/mindmap/asanas'),
-      fetch('/api/mindmap/tags')
+      fetch('/api/mindmap/tags'),
+      fetch('/asana-info.json').catch(() => null)
     ]);
     const tree = await treeRes.json();
     const asanas = await asanasRes.json();
     const tags = await tagsRes.json();
+    // Reference layer (English names, drishti, vinyasa counts) lives in
+    // /asana-info.json; the graph stays the source of structure and tags.
+    let info = {};
+    try { if (infoRes && infoRes.ok) info = await infoRes.json(); } catch (e) {}
+    (asanas.asanas || []).forEach(a => {
+      const x = info[a.name]; if (!x) return;
+      if (!a.englishName && x.en) a.englishName = x.en;
+      if (!a.vinyasaCount && x.vinyasa) a.vinyasaCount = x.vinyasa;
+      if (x.drishti) a.drishti = x.drishti;
+      if (x.note) a.note = x.note;
+    });
 
     allData = {
       structures: tree.structures,
@@ -1340,10 +1457,11 @@ function renderMindmap() {
       colDiv.appendChild(stageDiv);
     });
 
+    colDiv.dataset.series = struct.series;
     columns.appendChild(colDiv);
   });
 
-  updateTransform();
+  renderSeriesBar();
 
   // If a student is already selected, re-apply their overlay
   if (currentStudentData) {
@@ -1732,16 +1850,22 @@ function showAsanaDetail(name) {
   }
 
   const body = document.getElementById('detailBody');
+  const prevName = seqIdx > 0 ? sequenceOrder[seqIdx - 1] : null;
+  const nextName = seqIdx >= 0 && seqIdx < sequenceOrder.length - 1 ? sequenceOrder[seqIdx + 1] : null;
+  const seqBtn = (label, n) => n
+    ? `<button class="seq-btn" onclick="showAsanaDetail('${escJs(n)}');focusAsana('${escJs(n)}')"><small>${label}</small>${n}</button>`
+    : `<button class="seq-btn empty" disabled><small>${label}</small>—</button>`;
   body.innerHTML = `
+    ${asana.note ? `<div class="detail-note">${asana.note}</div>` : ''}
     <div class="detail-section">
       <div class="detail-info-grid">
         <div class="detail-info-item">
-          <div class="label">Vinyasa</div>
+          <div class="label">Vinyasa count</div>
           <div class="value">${asana.vinyasaCount || '—'}</div>
         </div>
         <div class="detail-info-item">
-          <div class="label">Section</div>
-          <div class="value">${asana.section || '—'}</div>
+          <div class="label">Drishti</div>
+          <div class="value">${asana.drishti || '—'}</div>
         </div>
         <div class="detail-info-item">
           <div class="label">Stage</div>
@@ -1749,10 +1873,14 @@ function showAsanaDetail(name) {
         </div>
         <div class="detail-info-item">
           <div class="label">Sequence #</div>
-          <div class="value">${seqIdx >= 0 ? seqIdx + 1 : '—'}</div>
+          <div class="value">${seqIdx >= 0 ? (seqIdx + 1) + ' of ' + sequenceOrder.length : '—'}</div>
         </div>
       </div>
       ${studentContextHtml}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">In the sequence</div>
+      <div class="detail-seq">${seqBtn('Before', prevName)}${seqBtn('After', nextName)}</div>
     </div>
     ${asana.tags && asana.tags.length ? `
     <div class="detail-section">
@@ -1881,7 +2009,7 @@ function doSearch(query) {
   });
   matches.forEach(a => {
     const color = seriesColor[a.series] || 'green';
-    html += `<div class="search-result-item" onclick="showAsanaDetail('${escJs(a.name)}');searchResults.classList.remove('show');searchInput.value='';">
+    html += `<div class="search-result-item" onclick="showAsanaDetail('${escJs(a.name)}');focusAsana('${escJs(a.name)}');searchResults.classList.remove('show');searchInput.value='';">
       <div class="name" style="color:var(--accent-${color})">${a.name}</div>
       <div class="meta">${a.englishName || ''} ${a.stage ? '· ' + a.stage : ''}</div>
     </div>`;
@@ -1896,45 +2024,43 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.student-selector')) document.getElementById('studentDropdown').classList.remove('show');
 });
 
-// ─── ZOOM & PAN ──────────────────────────────────────────────────
+// ─── BOARD NAVIGATION (native scroll, no transform) ───────────────
 const canvas = document.getElementById('canvas');
+function updateTransform() {}
+function zoomIn() {}
+function zoomOut() {}
+function resetView() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-canvas.addEventListener('mousedown', e => {
-  if (e.target.closest('.asana-pill') || e.target.closest('.action-tag') ||
-      e.target.closest('.detail-panel') || e.target.closest('.detail-overlay')) return;
-  isDragging = true;
-  dragStartX = e.clientX - panX;
-  dragStartY = e.clientY - panY;
-  canvas.style.cursor = 'grabbing';
-});
-
-window.addEventListener('mousemove', e => {
-  if (!isDragging) return;
-  panX = e.clientX - dragStartX;
-  panY = e.clientY - dragStartY;
-  updateTransform();
-});
-
-window.addEventListener('mouseup', () => {
-  if (isDragging) { isDragging = false; canvas.style.cursor = 'grab'; }
-});
-
-canvas.addEventListener('wheel', e => {
-  e.preventDefault();
-  const factor = e.deltaY > 0 ? 0.92 : 1.08;
-  scale = Math.min(Math.max(scale * factor, 0.3), 2.5);
-  updateTransform(true);
-}, { passive: false });
-
-function updateTransform(smooth = false) {
-  canvas.classList.toggle('smooth', smooth);
-  canvas.style.transform = `translate(${panX}px,${panY}px) scale(${scale})`;
-  canvas.style.transformOrigin = '0 0';
+function renderSeriesBar() {
+  const bar = document.getElementById('seriesBar');
+  if (!bar || !allData) return;
+  const base = allData.structures.map(st => {
+    const c = seriesColor[st.series] || 'green';
+    return `<button class="series-chip legend-base" data-series="${escAttr(st.series)}" onclick="jumpToSeries('${escJs(st.series)}')">
+      <span class="dot" style="background:var(--accent-${c})"></span>${seriesLabel[c]}</button>`;
+  }).join('');
+  const student = `
+    <span class="series-chip legend-student legend-only"><span class="dot" style="background:var(--student-current)"></span>Current</span>
+    <span class="series-chip legend-student legend-only"><span class="dot" style="background:var(--student-strength)"></span>Strength</span>
+    <span class="series-chip legend-student legend-only"><span class="dot" style="background:var(--student-struggle)"></span>Struggle</span>
+    <span class="series-chip legend-student legend-only"><span class="dot dashed"></span>Predicted challenge</span>`;
+  bar.innerHTML = base + student;
 }
 
-function zoomIn() { scale = Math.min(scale * 1.15, 2.5); updateTransform(true); }
-function zoomOut() { scale = Math.max(scale * 0.85, 0.3); updateTransform(true); }
-function resetView() { scale = 1; panX = 0; panY = 0; updateTransform(true); }
+function jumpToSeries(series) {
+  const col = document.querySelector(`.column[data-series="${CSS.escape(series)}"]`);
+  if (!col) return;
+  col.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
+  document.querySelectorAll('.series-chip[data-series]').forEach(c => c.classList.toggle('active', c.dataset.series === series));
+}
+
+function focusAsana(name) {
+  const pill = Array.from(document.querySelectorAll('.asana-pill')).find(p => p.dataset.name === name);
+  if (!pill) return;
+  pill.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+  pill.classList.add('flash');
+  setTimeout(() => pill.classList.remove('flash'), 1800);
+}
 
 // ─── VIEW TOGGLE ──────────────────────────────────────────────────
 function setView(view) {
