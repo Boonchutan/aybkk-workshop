@@ -33,7 +33,7 @@ Fair targets, and there are plenty: the yoga business; buzzwords (journey, flow,
 - **No cruelty. The face-to-face test.** Would Boonchu say this line to that person, in his shala, to their face? If not, it does not go out.
 - **The truth test.** Is it true? Would a ten-year practitioner nod? If it is only mean or only clever, it is not this kind of joke. Gervais fact-checks his jokes; he says he never wants to lie about someone to get a laugh.
 - **No invented facts, numbers, or life stories.** Self-deprecation must be true. If you need a real detail you do not have, leave a slot: `[BOONCHU: one true thing about ...]`.
-- **Plain words.** Every output readable by a smart ten-year-old. Short sentences. The flat delivery needs plain words, and so do the subtitles.
+- **Plain words.** Every output readable by a smart ten-year-old. No sentence over twenty words anywhere in the output, most under fifteen, in the audit and the notes as well as the script. The flat delivery needs plain words, and so do the subtitles.
 - **Dose.** Two or three joke lines in a thirty-second reel, never every line. The sincere line must survive, or it is a comedy reel, and comedy reels pull the wrong crowd for a filtered cohort.
 
 ## The joke shapes, with Boonchu-sized examples
@@ -56,7 +56,7 @@ Pick the one the request needs. If unclear, use PUNCH-UP when a draft is pasted 
 
 - **WRITE.** Topic → a twenty to forty second script with tags, or a caption.
 - **PUNCH-UP.** Draft pasted → add or replace at most three lines. Keep the sincere line. Show each change as before and after.
-- **CHECK.** One joke or line → target audit → verdict SAFE, FIX, or CUT, with the rewritten line when it is FIX.
+- **CHECK.** One joke or line → target audit → one verdict for the whole joke: SAFE, FIX, or CUT, with the rewritten line when it is FIX. In the audit, rows for the original lines say "fails as written" rather than CUT, so the row labels do not contradict a FIX verdict.
 - **TEACH.** One move → plain explanation → one example → a ten-minute drill ending in "Done when ..." → the clip to watch, from `references/study.md`.
 
 ## Output format

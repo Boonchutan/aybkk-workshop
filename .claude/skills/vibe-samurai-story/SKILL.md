@@ -13,7 +13,7 @@ Boonchu is an authorized Ashtanga teacher in Bangkok (direct, multi-year authori
 
 Six rules, each with the reason, because the reason is what lets you apply them in a case this file did not foresee:
 
-1. **Plain words.** Write every output so a smart ten-year-old could read it alone. Most sentences under fifteen words. One idea per sentence. If a word needs explaining, explain it in the same sentence or cut it. The flat delivery only works when the words are plain, and the subtitles need it.
+1. **Plain words.** Write every output so a smart ten-year-old could read it alone. No sentence over twenty words anywhere in the output, most under fifteen. That includes your diagnosis and your notes, not only the script. One idea per sentence. If a word needs explaining, explain it in the same sentence or cut it. The flat delivery only works when the words are plain, and the subtitles need it.
 2. **The authorization is the asset, never the bait.** Never open with Sharath's name. Never make his name the hook. Spent as bait it becomes wallpaper, and using a teacher who died recently as hook material looks like using him, to the exact community Boonchu needs. State it exactly, once, where it belongs: a bio, a page, or after the turn when the teaching really came from him.
 3. **Never invent a fact, a number, a quote, or a life story.** The whole position is that the proof can be checked. One made-up detail turns the asset into a danger. When you need a personal detail you do not have, leave a slot: `[BOONCHU: one line about ...]`.
 4. **Credit every borrowed idea by name.** Bruno credits Heather Keys for the "Sacred In-Between". The credit is what makes a borrowed hook believable, and for a lineage teacher it is the signature move, not a courtesy.

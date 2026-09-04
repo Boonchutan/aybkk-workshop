@@ -20,7 +20,7 @@ He cares about who shows up, not how many. Every pattern below is built to filte
 4. **The body-first argument.** "The unconscious doesn't respond to a good argument. It responds to what the body actually does." "The action is the interrupt. The repetition is the rewire. And the identity follows the behavior, not the other way around." (10 May 2026.) This is Ashtanga's own argument, and he has handed Boonchu the words for it.
 5. **Four stages, and the awkward one has a name.** See the pattern; interrupt it; the in-between; creation. He credits hypnotherapist Heather Keys for "the Sacred In-Between" and calls it the most important idea in the set. (7 May 2026.) Every intermediate student lives in stage three. Name it for them and they stay.
 6. **The numbered recap.** Podcast episodes become posts: contradiction title, "Summary:", numbered highlights, links to the guest. Each highlight is a complete thought.
-7. **The closing flip.** "Kindness without truth isn't compassion." "The peace you're looking for may have already visited you many times. You just called it an ordinary day." Built to be screenshotted.
+7. **The closing flip.** "Kindness without truth isn't compassion." (last line of "Idiot Compassion", 14 Jul 2026.) "The peace you're looking for may have already visited you many times. You just called it an ordinary day." Built to be screenshotted.
 
 Smaller moves, also checked: one-line paragraphs even in long pieces (62 of 105 paragraphs in "Where Does Sound Exist?" are twelve words or fewer); small everyday details carry the feeling; he names his tools so he can reuse them; he credits every borrowed idea; questions to the reader come in twos; calls to action are framed as recognition ("if you recognised yourself in this ...").
 
