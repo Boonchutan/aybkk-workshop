@@ -165,6 +165,15 @@
          font-weight:600;z-index:60;opacity:0;transition:.24s;pointer-events:none;white-space:nowrap}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+  .drill{background:var(--accent-soft);border:1px solid var(--accent);border-radius:12px;padding:16px 18px;margin-top:14px}
+  .drill .dl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:6px}
+  .drill .dt{font-size:16px;line-height:1.6;color:var(--ink)}
+  textarea#jrn{width:100%;min-height:120px;margin-top:12px;padding:12px 14px;border:1px solid var(--line-2);border-radius:12px;
+               background:var(--surface);color:var(--ink);font-family:inherit;font-size:16px;line-height:1.55;resize:vertical}
+  .jitem{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-bottom:8px}
+  .jitem .jd{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+  .jitem .jt{font-weight:600;font-size:14.5px;margin:3px 0 4px}
+  .jitem .jx{font-size:14px;color:var(--ink-2);white-space:pre-wrap}
   .note{font-size:13.5px;color:var(--ink-3);line-height:1.6;background:var(--surface-2);
         border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-top:16px}
 </style>
@@ -181,6 +190,7 @@
   <nav role="tablist">
     <button class="tab" role="tab" data-p="feed" aria-selected="true">Feed</button>
     <button class="tab" role="tab" data-p="study" aria-selected="false">Study<span class="pill" id="dueCount">0</span></button>
+    <button class="tab" role="tab" data-p="practice" aria-selected="false">Practice</button>
     <button class="tab" role="tab" data-p="stash" aria-selected="false">Stash</button>
     <button class="tab" role="tab" data-p="topics" aria-selected="false">Topics</button>
     <button class="tab" role="tab" data-p="progress" aria-selected="false">Progress</button>
@@ -190,6 +200,7 @@
 <main>
   <section class="panel" id="p-feed"></section>
   <section class="panel" id="p-study" hidden></section>
+  <section class="panel" id="p-practice" hidden></section>
   <section class="panel" id="p-stash" hidden></section>
   <section class="panel" id="p-topics" hidden></section>
   <section class="panel" id="p-progress" hidden></section>
@@ -785,7 +796,7 @@ const topicName = id => (TOPICS.find(t => t.id === id) || {}).name || id;
 
 function blank(){
   return { topics: TOPICS.map(t => t.id), srs:{}, stash:[], seen:[],
-           streak:0, lastDay:null, xp:0, theme:null, dailyLimit:5, newDay:null, newCount:0 };
+           streak:0, lastDay:null, xp:0, theme:null, dailyLimit:5, newDay:null, newCount:0, journal:{}, practiceSeed:0 };
 }
 let S = load();
 
@@ -916,7 +927,7 @@ function renderFeed(){
       '<button class="btn ' + (inStash ? "on" : "primary") + '" id="fStash">' +
         (inStash ? "In your stash" : "Stash & study") + '</button>' +
     '</div>' +
-    '<div class="note">Stashing adds the card to spaced repetition. It comes back for recall practice before you would forget it.</div>';
+    '<div class="note">Stash a card and it comes back to test you, right before you would forget it. Tap Practice for one small thing to do today.</div>';
 
   $("#fSkip").onclick = () => { S.seen.push(c.id); countNew(); save(); feedQueue.shift(); renderFeed(); };
   $("#fStash").onclick = () => {
@@ -956,7 +967,7 @@ function renderStudy(){
       '<h2>' + esc(c.title) + '</h2>' +
       '<div class="recall">' +
         '<p class="q">' + esc(c.recall) + '</p>' +
-        '<p class="hint">Answer it out loud before revealing. The effort is what builds the memory.</p>' +
+        '<p class="hint">Say your answer out loud first. Trying hard to remember is what makes it stick.</p>' +
         (revealed ? '<p class="a">' + esc(c.answer) + '</p>' : '') +
       '</div>' +
     '</article>' +
@@ -988,6 +999,52 @@ function renderStudy(){
   }else{
     $("#sReveal").onclick = () => { revealed = true; renderStudy(); };
   }
+}
+
+/* ================= PRACTICE ================= */
+function dayHash(str){ let h = 2166136261; for(let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return Math.abs(h); }
+function pickDrill(){
+  const pool0 = CARDS.filter(c => c.drill && S.topics.indexOf(c.topic) !== -1);
+  const stashed = pool0.filter(c => S.srs[c.id]);
+  const pool = stashed.length >= 3 ? stashed : pool0;
+  if(!pool.length) return null;
+  return pool[ dayHash(todayKey() + ":" + S.practiceSeed) % pool.length ];
+}
+function renderPractice(){
+  const el = $("#p-practice");
+  const t = todayKey();
+  const saved = S.journal[t];
+  const c = saved ? byId[saved.card] : pickDrill();
+  const hist = Object.keys(S.journal).sort().reverse().slice(0, 14);
+  if(!c){
+    el.innerHTML = '<div class="empty"><div class="big">No practice yet</div><p>Turn on a topic and the cards bring their own daily practice.</p></div>';
+    return;
+  }
+  el.innerHTML =
+    '<div class="meta"><span>Today’s practice</span><span>' + esc(topicName(c.topic)) + '</span></div>' +
+    '<article class="card">' +
+      '<div class="topic">From the card</div><h2>' + esc(c.title) + '</h2>' +
+      '<div class="drill"><div class="dl">Do this now · about 10 minutes</div><div class="dt">' + esc(c.drill) + '</div></div>' +
+      '<textarea id="jrn" placeholder="Write what you did, or paste the line you wrote.">' + esc(saved ? saved.text : "") + '</textarea>' +
+    '</article>' +
+    '<div class="actions">' +
+      (saved ? '<button class="btn" id="pEdit">Saved — edit</button>' : '<button class="btn" id="pOther">Give me another</button>') +
+      '<button class="btn primary" id="pSave">' + (saved ? 'Save changes' : 'Save today’s practice') + '</button>' +
+    '</div>' +
+    '<div class="note">One small thing a day, on your real work. Reading the card is study. Doing the drill is practice. Only the second one changes how you write.</div>' +
+    (hist.length ? '<h3 class="sec">What you did</h3>' + hist.map(d => {
+        const j = S.journal[d], cc = byId[j.card];
+        return '<div class="jitem"><div class="jd">' + esc(d) + '</div><div class="jt">' + esc(cc ? cc.title : j.card) + '</div><div class="jx">' + esc(j.text || "") + '</div></div>';
+      }).join("") : '');
+  const other = $("#pOther"); if(other) other.onclick = () => { S.practiceSeed++; save(); renderPractice(); };
+  const edit = $("#pEdit"); if(edit) edit.onclick = () => { $("#jrn").focus(); };
+  $("#pSave").onclick = () => {
+    const txt = $("#jrn").value.trim();
+    if(!txt) return toast("Write one line first");
+    S.journal[t] = { card: c.id, text: txt };
+    if(!saved){ S.xp += 5; touchStreak(); }
+    save(); renderPractice(); paintStats(); toast("Saved. That counts.");
+  };
 }
 
 /* ================= STASH ================= */
@@ -1076,6 +1133,7 @@ function renderProgress(){
       '<div class="sbox"><div class="n">' + mast + '</div><div class="l">mastered (21d+)</div></div>' +
       '<div class="sbox"><div class="n">' + lvl + '</div><div class="l">level · ' + S.xp + ' xp</div></div>' +
     '</div>' +
+    '<div class="sbox" style="margin-bottom:18px"><div class="n">' + Object.keys(S.journal).length + '</div><div class="l">days you practised, not just read</div></div>' +
     '<h3 class="sec">By topic</h3>' +
     TOPICS.map(t => {
       const all = CARDS.filter(c => c.topic === t.id);
@@ -1086,7 +1144,7 @@ function renderProgress(){
              '<span style="color:var(--ink-3)">' + m + '/' + all.length + '</span></div>' +
              '<div class="pbar"><i style="width:' + Math.round((r/all.length)*100) + '%"></i></div></div>';
     }).join("") +
-    '<div class="note"><b>How the schedule works.</b> A stashed card returns for recall before you would have forgotten it. Rate honestly — grading everything Easy just means you meet it again too late to matter. A card counts as mastered once its interval passes 21 days.</div>' +
+    '<div class="note"><b>How it works.</b> A stashed card comes back right before you would forget it. Be honest when you grade. If you say Easy to everything, the card comes back too late to help. A card is mastered when it can wait 21 days.</div>' +
     '<div class="actions" style="margin-top:16px"><button class="btn" id="wipe">Reset all progress</button></div>';
   $("#wipe").onclick = () => {
     if(confirm("Delete your streak, stash and all review schedules? This cannot be undone.")){
@@ -1103,7 +1161,7 @@ function paintStats(){
   const pill = $("#dueCount");
   pill.textContent = d; pill.style.display = d ? "" : "none";
 }
-const RENDER = { feed:renderFeed, study:renderStudy, stash:renderStash, topics:renderTopics, progress:renderProgress };
+const RENDER = { feed:renderFeed, study:renderStudy, practice:renderPractice, stash:renderStash, topics:renderTopics, progress:renderProgress };
 function show(p){
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.p === p)));
   document.querySelectorAll(".panel").forEach(s => { s.hidden = (s.id !== "p-" + p); });
