@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>In-Depth Admin</title>
+<style>
+  :root{--ink:#1a161d;--wall:#f6f3f5;--paper:#fff;--plum:#5c2160;--pink:#c92f74;
+    --soft:#6f6474;--line:rgba(26,22,29,.12);--good:#187a43}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--wall);color:var(--ink);
+    font:15px/1.6 -apple-system,'PingFang SC','Helvetica Neue',sans-serif}
+  header{background:#1a161d;color:#fdf7fa;padding:14px 16px;display:flex;gap:10px;align-items:center}
+  header h1{margin:0;font-size:17px;flex:1}
+  main{max-width:680px;margin:0 auto;padding:12px 12px 48px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:15px;margin-bottom:10px}
+  .card b.h{font-size:16px}
+  label{display:block;font-size:12.5px;color:var(--soft);margin:8px 0 3px}
+  input,select,textarea{width:100%;padding:10px;border:1.5px solid var(--line);border-radius:8px;
+    font:inherit;font-size:15px;background:#fff}
+  .btn{background:var(--plum);color:#fdf7fa;border:none;border-radius:8px;
+    padding:10px 14px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer}
+  .btn.gray{background:#3d3542}.btn.pink{background:var(--pink)}
+  .row{display:flex;gap:8px}.row>*{flex:1}
+  .muted{color:var(--soft);font-size:12.5px}
+  .stu{border-top:1px solid var(--line);padding:12px 0}
+  .stu .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .stu b{font-size:15px}
+  .pill{font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px}
+  .invited{background:#fff3d6;color:#8a6a12}.confirmed{background:#e6f6ec;color:#187a43}
+  .completed{background:#e8e4f7;color:#4b3a86}.withdrawn{background:#f2e5e5;color:#a33}
+  .passbox{background:#fff3d6;color:#8a6a12;border-radius:8px;padding:12px;margin-top:8px;
+    font-weight:700}
+  .passbox code{font-size:19px;font-family:ui-monospace,Menlo,monospace;user-select:all}
+  #gate{max-width:320px;margin:16vh auto;text-align:center;padding:0 16px}
+  .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h2 style="margin:0 0 12px">In-Depth Admin</h2>
+  <input id="key" type="password" placeholder="admin key" autocomplete="off">
+  <p><button class="btn" style="width:100%;margin-top:10px" onclick="unlock()">Enter</button></p>
+  <p class="muted" id="gateMsg"></p>
+</div>
+
+<div id="app" style="display:none">
+  <header><h1 id="hTitle">In-Depth Mysore #3 — admin</h1>
+    <button class="btn gray" onclick="logout()">Lock</button></header>
+  <main>
+    <div class="card">
+      <b class="h">Add a student 添加学员</b>
+      <div class="row">
+        <div><label>Name (latin) — becomes the link</label><input id="nEn" placeholder="Yang Yang"></div>
+        <div><label>中文名</label><input id="nZh" placeholder="杨杨"></div>
+      </div>
+      <div class="row">
+        <div><label>Link name (auto from latin name)</label><input id="nSlug" placeholder="yangyang"></div>
+        <div><label>Journal link (optional, paste later is fine)</label><input id="nJournal"></div>
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink);margin-top:10px">
+        <input type="checkbox" id="nAtt" style="width:20px;height:20px;accent-color:var(--pink)">
+        Full workshop / monthly attendee (extra −3%)</label>
+      <p style="margin:12px 0 0"><button class="btn" onclick="addStudent()">Create link + passcode</button></p>
+      <div id="newPass"></div>
+    </div>
+
+    <div class="card">
+      <b class="h">Syllabus links 教学大纲</b>
+      <p class="muted">One per line: <b>English title | 中文标题 | URL</b>. Shown to every confirmed student.</p>
+      <textarea id="linksBox" rows="5" placeholder="Week 1 — Breath | 第一周 · 呼吸 | https://…"></textarea>
+      <p style="margin:10px 0 0"><button class="btn" onclick="saveLinks()">Save links</button>
+        <span class="muted" id="linksMsg"></span></p>
+    </div>
+
+    <div class="card">
+      <b class="h">Students 学员</b> <span class="muted" id="count"></span>
+      <div id="list"><p class="muted">Loading…</p></div>
+    </div>
+  </main>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const COURSE = 'idcn3';
+  let KEY = localStorage.getItem('idcn_admin_key') || '';
+  const api = (u, o = {}) => fetch(u, { ...o,
+    headers: { 'Content-Type': 'application/json', 'x-bkk-key': KEY, ...(o.headers || {}) } });
+  const baht = st => '฿' + Math.floor(Number(st) / 100).toLocaleString('en-US')
+    + (Number(st) % 100 ? '.' + String(Number(st) % 100).padStart(2, '0') : '');
+
+  window.unlock = async () => {
+    KEY = $('#key').value.trim();
+    const r = await api(`/api/idcn/admin/${COURSE}/students`);
+    if (!r.ok) { $('#gateMsg').textContent = 'That key is not recognised.'; return; }
+    localStorage.setItem('idcn_admin_key', KEY);
+    $('#gate').style.display = 'none'; $('#app').style.display = 'block';
+    load();
+  };
+  window.logout = () => { localStorage.removeItem('idcn_admin_key'); location.reload(); };
+
+  async function load() {
+    const [sr, lr] = await Promise.all([
+      api(`/api/idcn/admin/${COURSE}/students`).then(r => r.json()),
+      api(`/api/idcn/admin/${COURSE}/links`).then(r => r.json()),
+    ]);
+    $('#linksBox').value = (lr.links || [])
+      .map(l => `${l.title_en} | ${l.title_zh} | ${l.url}`).join('\n');
+    const students = sr.students || [];
+    $('#count').textContent = `${students.length} total · ${students.filter(s => s.signed_at).length} signed`;
+    $('#list').innerHTML = students.map(s => `<div class="stu">
+      <div class="top">
+        <b>${esc(s.name_zh || '')} ${esc(s.name_en)}</b>
+        <span class="pill ${esc(s.status)}">${esc(s.status)}</span>
+        ${s.is_attendee ? '<span class="pill confirmed">−3%</span>' : ''}
+        <span style="flex:1"></span>
+        <button class="btn gray" onclick="copyLink('${esc(s.slug)}')">Copy link</button>
+      </div>
+      <div class="muted">/${COURSE}/${esc(s.slug)}
+        · ${s.payment_option ? 'Option ' + s.payment_option + (s.quote ? ' — ' + baht(s.quote.totalSatang) : '') : 'no option yet'}
+        · ${s.signed_at ? '✓ signed ' + String(s.signed_at).slice(0, 10) + ' as “' + esc(s.signed_name) + '”' : 'NOT signed'}
+        · ${s.proofs} proof${s.proofs === 1 ? '' : 's'}</div>
+      ${s.health_note ? `<div class="muted">健康: ${esc(s.health_note)}</div>` : ''}
+      ${s.signed_at ? `<div class="muted">public media: ${s.media_public ? 'YES' : 'no'}</div>` : ''}
+      <div class="acts">
+        <button class="btn" onclick="addProof(${s.id}, '${esc(s.slug)}')">+ Payment proof</button>
+        <button class="btn gray" onclick="setJournal(${s.id}, '${esc(s.journal_url || '')}')">Journal link</button>
+        <button class="btn gray" onclick="toggleAtt(${s.id}, ${s.is_attendee})">${s.is_attendee ? 'Remove −3%' : 'Give −3%'}</button>
+        <button class="btn gray" onclick="setStatus(${s.id}, '${esc(s.status)}')">Status</button>
+        <button class="btn gray" onclick="resetKey(${s.id})">Reset passcode</button>
+      </div>
+      <div id="proofRow${s.id}"></div>
+    </div>`).join('') || '<p class="muted">No students yet.</p>';
+  }
+
+  window.copyLink = slug => {
+    const url = location.origin + '/' + COURSE + '/' + slug;
+    navigator.clipboard.writeText(url).then(() => alert('Copied:\n' + url));
+  };
+
+  window.addStudent = async () => {
+    const nameEn = $('#nEn').value.trim();
+    if (!nameEn) return alert('Latin name required — it becomes the link.');
+    const r = await api(`/api/idcn/admin/${COURSE}/students`, { method: 'POST',
+      body: JSON.stringify({ nameEn, nameZh: $('#nZh').value.trim(),
+        slug: $('#nSlug').value.trim() || undefined,
+        journalUrl: $('#nJournal').value.trim(), isAttendee: $('#nAtt').checked }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) return alert(j.error || 'failed');
+    $('#newPass').innerHTML = `<div class="passbox">Shown ONCE — send both together:<br>
+      ${location.origin}${esc(j.link)}<br>passcode <code>${esc(j.passcode)}</code></div>`;
+    $('#nEn').value = $('#nZh').value = $('#nSlug').value = $('#nJournal').value = '';
+    $('#nAtt').checked = false;
+    load();
+  };
+
+  window.addProof = (id, slug) => {
+    const row = $('#proofRow' + id);
+    row.innerHTML = `<div style="margin-top:8px;border:1.5px solid var(--line);border-radius:8px;padding:10px">
+      <div class="row">
+        <div><label>Label (student sees this)</label><input id="pl${id}" placeholder="60% deposit 定金"></div>
+        <div><label>Amount ฿ (optional)</label><input id="pa${id}" inputmode="decimal"></div>
+      </div>
+      <label>Screenshot</label><input id="pf${id}" type="file" accept="image/*">
+      <label>Note (optional)</label><input id="pn${id}">
+      <p style="margin:10px 0 0"><button class="btn pink" onclick="sendProof(${id})">Upload to profile</button>
+        <button class="btn gray" onclick="document.getElementById('proofRow${id}').innerHTML=''">Cancel</button>
+        <span class="muted" id="pm${id}"></span></p></div>`;
+  };
+
+  window.sendProof = async id => {
+    const label = $('#pl' + id).value.trim();
+    if (!label) return alert('Label required.');
+    const amtStr = $('#pa' + id).value.trim();
+    let amountSatang = null;
+    if (amtStr) {
+      const m = amtStr.replace(/,/g, '').match(/^(\d+)(?:\.(\d{1,2}))?$/);
+      if (!m) return alert('Amount must be baht, e.g. 119400 or 119400.50');
+      amountSatang = Number(m[1]) * 100 + Number((m[2] || '').padEnd(2, '0') || 0);
+    }
+    const file = $('#pf' + id).files[0];
+    const send = async imageBase64 => {
+      $('#pm' + id).textContent = 'Uploading…';
+      const r = await api(`/api/idcn/admin/${COURSE}/students/${id}/payments`, { method: 'POST',
+        body: JSON.stringify({ label, amountSatang, imageBase64,
+          note: $('#pn' + id).value.trim() }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) { $('#pm' + id).textContent = j.error || 'failed'; return; }
+      $('#proofRow' + id).innerHTML = ''; load();
+    };
+    if (file) {
+      const rd = new FileReader();
+      rd.onload = () => send(rd.result);
+      rd.readAsDataURL(file);
+    } else send(null);
+  };
+
+  window.setJournal = async (id, current) => {
+    const url = prompt('Journal link for this student:', current);
+    if (url === null) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
+      { method: 'PUT', body: JSON.stringify({ journalUrl: url.trim() }) });
+    if (r.ok) load(); else alert('failed');
+  };
+  window.toggleAtt = async (id, cur) => {
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
+      { method: 'PUT', body: JSON.stringify({ isAttendee: !cur }) });
+    if (r.ok) load(); else alert('failed');
+  };
+  window.setStatus = async (id, cur) => {
+    const st = prompt('Status: invited / confirmed / completed / withdrawn', cur);
+    if (!st) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
+      { method: 'PUT', body: JSON.stringify({ status: st.trim() }) });
+    if (r.ok) load(); else alert((await r.json().catch(() => ({}))).error || 'failed');
+  };
+  window.resetKey = async id => {
+    if (!confirm('Reset this student’s passcode? The old one stops working.')) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
+      { method: 'PUT', body: JSON.stringify({ resetKey: true }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) return alert(j.error || 'failed');
+    alert('New passcode (shown once):\n\n' + j.passcode);
+  };
+
+  window.saveLinks = async () => {
+    const links = $('#linksBox').value.split('\n').map(line => {
+      const p = line.split('|').map(x => x.trim());
+      if (p.length < 3 || !p[2]) return null;
+      return { title_en: p[0], title_zh: p[1], url: p[2] };
+    }).filter(Boolean);
+    const r = await api(`/api/idcn/admin/${COURSE}/links`,
+      { method: 'PUT', body: JSON.stringify({ links }) });
+    $('#linksMsg').textContent = r.ok ? 'Saved ✓' : 'failed';
+  };
+
+  if (KEY) { $('#key').value = KEY; unlock(); }
+})();
+</script>
+</body>
+</html>

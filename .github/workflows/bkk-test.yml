@@ -39,3 +39,7 @@ jobs:
         env:
           TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest
         run: node test/partner-api.test.js
+      - name: Run In-Depth course tests (discounts, consent, passcode wall)
+        env:
+          TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest
+        run: node test/idcn-api.test.js

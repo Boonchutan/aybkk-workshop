@@ -11,6 +11,7 @@ const cors = require('cors');
 const { mountAttendance } = require('./attendance-api');
 const { mountBkk } = require('./bkk-api');
 const { mountPartner } = require('./partner-api');
+const { mountIdcn } = require('./idcn-api');
 const { mountShop } = require('./shop-api');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -535,6 +536,13 @@ mountShop(app);
 // AYBKK Bangkok: packages, PaySolutions payment, passes, booking, check-in
 mountBkk(app, { pgPool });
 mountPartner(app, { pgPool });
+mountIdcn(app, { pgPool });
+
+// In-Depth Mysore course profiles: /idcn3/yangyang ('#' can't appear in a URL
+// path, so generation 3 is idcn3). The page reads course+slug from the path.
+app.get('/:course(idcn\\d+)/:slug', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'idcn.html'));
+});
 
 // Student Journal API Routes
 const studentJournal = require('./api/student-journal');

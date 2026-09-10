@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK 深度迈索尔 In-Depth Mysore</title>
+<style>
+  :root{--ink:#1a161d;--wall:#f6f3f5;--paper:#fff;--plum:#5c2160;--pink:#c92f74;
+    --soft:#6f6474;--line:rgba(26,22,29,.12);--good:#187a43;--warnbg:#fff3d6;--warnink:#8a6a12}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--wall);color:var(--ink);
+    font:16px/1.65 -apple-system,'PingFang SC','Helvetica Neue',sans-serif}
+  header{background:#1a161d;color:#fdf7fa;padding:18px 16px;display:flex;gap:10px;align-items:center}
+  header .t h1{margin:0;font-size:19px;font-weight:600}
+  header .t p{margin:2px 0 0;font-size:12.5px;color:#d8c9d3}
+  header .t{flex:1}
+  .langbtn{background:#3d3542;color:#fdf7fa;border:none;border-radius:8px;
+    padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
+  main{max-width:560px;margin:0 auto;padding:12px 12px 48px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:16px;margin-bottom:10px}
+  .card b.h{font-size:16.5px;display:block;margin-bottom:4px}
+  .muted{color:var(--soft);font-size:13px}
+  .btn{background:var(--plum);color:#fdf7fa;border:none;border-radius:8px;
+    padding:12px 18px;font:inherit;font-weight:600;font-size:15px;cursor:pointer}
+  .btn.pink{background:var(--pink)}
+  .btn[disabled]{opacity:.45;cursor:default}
+  input,textarea{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:8px;
+    font:inherit;font-size:16px;background:#fff}
+  textarea{min-height:70px}
+  .warn{background:var(--warnbg);color:var(--warnink);border-radius:8px;padding:12px;
+    font-size:14px;font-weight:600}
+  .okbox{background:#e6f6ec;color:var(--good);border-radius:8px;padding:12px;
+    font-size:14px;font-weight:600}
+  .opt{border:1.5px solid var(--line);border-radius:10px;padding:13px;margin-top:8px;cursor:pointer}
+  .opt.sel{border-color:var(--pink);background:#fdf3f8}
+  .opt .price{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+  .opt .save{color:var(--pink);font-weight:700;font-size:13px}
+  .clause{border-top:1px solid var(--line);padding:12px 0}
+  .clause label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+  .clause input[type=checkbox]{width:22px;height:22px;margin:2px 0 0;flex:none;accent-color:var(--pink)}
+  .clause .zh{display:block;font-weight:600}
+  .clause .en{display:block;color:var(--soft);font-size:13px;margin-top:2px}
+  .pay{border-top:1px solid var(--line);padding:10px 0;display:flex;gap:10px;align-items:center;font-size:14px}
+  .pay img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+  .grid{display:flex;flex-wrap:wrap;gap:6px}
+  .grid img{width:calc(33.33% - 4px);aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer}
+  .daylbl{font-size:13px;color:var(--soft);margin:10px 0 6px;font-weight:600}
+  a.rowlink{display:flex;justify-content:space-between;align-items:center;gap:8px;
+    border-top:1px solid var(--line);padding:12px 2px;color:var(--plum);
+    text-decoration:none;font-weight:600}
+  a.rowlink:first-of-type{border-top:none}
+  .lb{position:fixed;inset:0;background:rgba(20,16,22,.94);display:none;
+    align-items:center;justify-content:center;z-index:50;flex-direction:column;gap:12px}
+  .lb img{max-width:96vw;max-height:82vh;border-radius:6px}
+  .lb .muted{color:#cabfd0}
+  #gate{max-width:330px;margin:14vh auto;text-align:center;padding:0 16px}
+  .steps{display:flex;gap:5px;margin:2px 0 12px}
+  .steps span{flex:1;height:5px;border-radius:9px;background:var(--line)}
+  .steps span.on{background:var(--pink)}
+  .en-only .l-zh,.zh-first .l-en-hide{display:none}
+</style>
+</head>
+<body class="zh-first">
+
+<div id="gate">
+  <h2 style="margin:0 0 2px">AYBKK 深度迈索尔</h2>
+  <p class="muted" style="margin:0 0 16px">In-Depth Mysore Course</p>
+  <input id="key" type="password" placeholder="你的密码 your passcode" autocomplete="off">
+  <p><button class="btn" style="width:100%;margin-top:10px" onclick="unlock()">进入 Enter</button></p>
+  <p class="muted" id="gateMsg"></p>
+  <p class="muted">密码在你的录取信息里 · Your passcode came with your acceptance message.</p>
+</div>
+
+<div id="app" style="display:none">
+  <header>
+    <div class="t"><h1 id="hName">—</h1><p id="hCourse"></p></div>
+    <button class="langbtn" onclick="flipLang()" id="langBtn">EN</button>
+  </header>
+  <main id="view"></main>
+</div>
+
+<div class="lb" id="lb" onclick="this.style.display='none'">
+  <img id="lbImg" alt=""><p class="muted">长按图片保存 · long-press to save</p>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const PARTS = location.pathname.split('/').filter(Boolean);   // /idcn3/yangyang
+  const COURSE = PARTS[0] || 'idcn3', SLUG = (PARTS[1] || '').toLowerCase();
+  const KEYNAME = 'idcn_key_' + COURSE + '_' + SLUG;
+  let KEY = localStorage.getItem(KEYNAME) || '';
+  let LANG = localStorage.getItem('idcn_lang') || 'zh';
+  let P = null;             // profile payload
+  const api = (u, o = {}) => fetch(u, { ...o,
+    headers: { 'Content-Type': 'application/json', 'x-idcn-key': KEY, ...(o.headers || {}) } });
+  const baht = st => {
+    const n = Number(st), a = Math.abs(n);
+    return '฿' + Math.floor(a / 100).toLocaleString('en-US')
+      + (a % 100 ? '.' + String(a % 100).padStart(2, '0') : '');
+  };
+  const T = (zh, en) => LANG === 'zh'
+    ? `${zh} <span class="muted" style="font-weight:400">${en}</span>` : en;
+
+  // ── the policy, bilingual, version idcn3-v1. Each entry is one consent box. ──
+  const POLICY = [
+    { k: 'payment_final',
+      zh: '我理解并同意：课程费用一经支付，在任何情况下都不予退款。若不能参加课程，已付款项将作为信用额度，可在课程开始之日起两年内用于购买 AYBKK 工作坊或支付 AYBKK 曼谷的练习费用。整个课程名额可以转让给经 Kru Boonchu 审核通过的另一人，但不可部分转让。若选择方案三而未按期支付第二笔款项，名额将被释放，已付款项按上述信用额度规则处理。',
+      en: 'I understand and agree: the course fee is NOT refundable in any case. If I do not attend, my payment is kept as credit for AYBKK workshops or practice fees at AYBKK Bangkok, valid 2 years from the date the course commences. The entire course may be transferred to another person who passes Kru Boonchu’s screening; partial transfer is not possible. Under Option 3, if the second payment is not made on time, my spot is released and the amount paid becomes credit under the same rule.' },
+    { k: 'adjustments',
+      zh: '我同意在课程中接受老师的手法调整（adjustment）。我知道我可以随时口头拒绝任何调整。',
+      en: 'I consent to receiving hands-on adjustments during the course. I know I may decline any adjustment at any time by saying so.' },
+    { k: 'risk_health',
+      zh: '我明白瑜伽是身体性的练习，存在受伤风险。我确认自己的身体状况适合参加，并已（或将在下方）如实告知伤病、身体状况或怀孕情况，且在课程期间如有变化会及时告知。我对在自己能力范围内练习负责。',
+      en: 'I understand yoga is a physical process and carries risk of injury. I confirm I am fit to participate, have disclosed (or will disclose below) any injuries, medical conditions or pregnancy, and will report changes during the course. I am responsible for practising within my own limits.' },
+    { k: 'instructions',
+      zh: '我同意遵守课程要求：参加全部两个阶段、听从课程指导、按时完成作业与考核。我理解只有完成全部要求才算完成课程，且课程结业不代表获得任何教师资格或认证；助教与学徒的选拔完全由 Kru Boonchu 决定。课程内容（教学大纲、方法、笔记、视频）仅供个人练习使用，未经书面许可不得传授、转发或用于开设课程。',
+      en: 'I agree to follow the course requirements: attend both sessions, follow instructions, and meet assignment and examination requirements. Completing the course does NOT confer any teaching qualification or certification; selection of assistants and apprentices is entirely at Kru Boonchu’s discretion. Course materials (syllabus, methods, notes, videos) are for my personal practice only and may not be taught, shared or used to run courses without written permission.' },
+    { k: 'travel',
+      zh: '签证、机票、保险及未包含的住宿由我自行负责（Khaoyaithieng 阶段的交通与住宿已包含）。我会购买覆盖瑜伽练习的旅行/医疗保险。',
+      en: 'Visas, flights, insurance and accommodation not listed as included are my own responsibility (Khaoyaithieng transport & accommodation are included). I will carry travel/medical insurance that covers yoga practice.' },
+    { k: 'schedule',
+      zh: '我理解如遇不可抗力（签证、疾病、政府规定等），课程日期或场地可能调整，AYBKK 将安排合理的替代方案；因此类调整不予退款。扰乱课堂或拒绝听从指导可能被终止课程且不退款。',
+      en: 'I understand dates or venues may change for reasons beyond AYBKK’s control (visas, illness, government restrictions); reasonable alternatives will be arranged and no refund is given for such changes. Disruptive conduct or refusal to follow instructions may end my participation without refund.' },
+    { k: 'media_course',
+      zh: '我同意课程期间拍摄的照片和视频出现在本课程的私密照片区（仅课程成员和教学团队可见）。',
+      en: 'I agree that photos and videos taken during the course may appear in the private course photo hub (visible to course members and the teaching team only).' },
+    { k: 'privacy',
+      zh: '我同意 AYBKK 为本课程存储我的资料：个人信息、练习日志、照片、作业与付款记录。这些资料仅本人与教学团队可见。',
+      en: 'I agree that AYBKK stores my data for this course: profile, practice journal, photos, homework and payment records, visible only to me and the teaching team.' },
+  ];
+  const MEDIA_PUBLIC = {
+    zh: '（可选）我额外同意 AYBKK 在公开渠道（Instagram、小红书等）使用课程照片/视频。',
+    en: '(Optional) I additionally allow AYBKK to use course photos/videos on public channels (Instagram, Xiaohongshu, etc.).' };
+
+  window.flipLang = () => { LANG = LANG === 'zh' ? 'en' : 'zh';
+    localStorage.setItem('idcn_lang', LANG); render(); };
+
+  window.unlock = async () => {
+    KEY = $('#key').value.trim();
+    await load(true);
+  };
+
+  async function load(fromGate) {
+    const r = await api(`/api/idcn/${COURSE}/students/${SLUG}`);
+    if (r.status === 401) {
+      $('#gate').style.display = 'block'; $('#app').style.display = 'none';
+      if (fromGate) $('#gateMsg').textContent = '密码不对 · That passcode is not recognised.';
+      return;
+    }
+    if (!r.ok) { $('#gateMsg').textContent = '找不到这个页面 · page not found'; return; }
+    P = await r.json();
+    localStorage.setItem(KEYNAME, KEY);
+    $('#gate').style.display = 'none'; $('#app').style.display = 'block';
+    render();
+  }
+
+  function render() {
+    $('#langBtn').textContent = LANG === 'zh' ? 'EN' : '中文';
+    const s = P.student, c = P.course;
+    $('#hName').textContent = (LANG === 'zh' && s.name_zh) ? s.name_zh : s.name_en;
+    $('#hCourse').textContent = LANG === 'zh' ? c.name_zh : c.name_en;
+    const signed = !!P.consent;
+    const step = !s.paymentOption ? 1 : (!signed ? 2 : 3);
+    let html = `<div class="steps"><span class="${step >= 1 ? 'on' : ''}"></span>
+      <span class="${step >= 2 ? 'on' : ''}"></span><span class="${step >= 3 ? 'on' : ''}"></span></div>`;
+
+    html += `<div class="card"><b class="h">${T('课程安排', 'Course schedule')}</b>
+      ${c.sessions.map((x, i) => `<div style="padding:6px 0">
+        <b>${T('第' + '一二'[i] + '阶段', 'Session ' + (i + 1))}</b> · ${esc(x.dates)}<br>
+        <span class="muted">${esc(LANG === 'zh' ? x.place_zh : x.place_en)}</span></div>`).join('')}
+    </div>`;
+
+    if (!signed) html += renderEnroll(s, c);
+    else html += renderConfirmed(s, c);
+
+    if (signed) {
+      html += renderPayments();
+      html += renderLinks(s);
+      html += `<div class="card"><b class="h">${T('课程照片', 'Course photos')}</b>
+        <p style="margin:8px 0 4px">
+          <button class="btn" onclick="pickPhoto()">${T('上传照片', 'Upload a photo')}</button>
+          <input id="photoFile" type="file" accept="image/*" hidden></p>
+        <p class="muted" id="upMsg"></p>
+        <div id="photos"><p class="muted">${T('加载中…', 'Loading…')}</p></div></div>`;
+    }
+    html += `<p class="muted" style="text-align:center">
+      ${T('有任何问题，直接联系 AYBKK。', 'Any question — contact AYBKK directly.')}</p>`;
+    $('#view').innerHTML = html;
+    if (signed) loadPhotos();
+  }
+
+  function renderEnroll(s, c) {
+    const optHtml = P.quotes.map(qt => {
+      const sel = s.paymentOption === qt.option;
+      let inner = `<b>${T('方案', 'Option')} ${qt.option}</b>
+        <span class="save">${(qt.discounts || []).map(d => '−' + d + '%').join(' ')}</span><br>
+        <span class="price">${baht(qt.totalSatang)}</span>
+        ${qt.totalSatang < qt.listSatang
+          ? `<span class="muted" style="text-decoration:line-through">${baht(qt.listSatang)}</span>` : ''}<br>
+        <span class="muted">${esc(LANG === 'zh' ? qt.label_zh : qt.label_en)}</span>`;
+      if (qt.depositSatang) inner += `<br><span class="muted">
+        ${T('定金', 'Deposit')} ${baht(qt.depositSatang)} · ${T('现金', 'Cash')} ${baht(qt.cashSatang)}
+        (${esc(qt.cashDue)})</span>`;
+      return `<div class="opt ${sel ? 'sel' : ''}" onclick="chooseOpt(${qt.option})">${inner}</div>`;
+    }).join('');
+
+    let html = `<div class="card">
+      <b class="h">${T('第一步 · 选择付款方案', 'Step 1 · Choose your payment option')}</b>
+      <p class="muted">${T('请在 ' + esc(c.confirmBy) + ' 前确认名额。付款链接由 AYBKK 单独发给你（支持微信/支付宝/信用卡）。',
+        'Confirm your spot by ' + esc(c.confirmBy) + '. AYBKK sends you the payment link separately (WeChat / Alipay / credit card).')}
+        ${s.isAttendee ? '<br>' + T('已含全程工作坊/月卡学员额外 −3% 优惠。', 'Includes your extra −3% full-workshop/monthly-attendee discount.') : ''}</p>
+      ${optHtml}</div>`;
+
+    if (s.paymentOption) {
+      html += `<div class="card"><b class="h">${T('第二步 · 课程条款与同意书', 'Step 2 · Course policy & consent')}</b>
+        <p class="muted">${T('请逐条阅读并勾选。这是你的报名确认。', 'Read and tick every clause. This is your enrolment confirmation.')}</p>
+        ${POLICY.map(p => `<div class="clause"><label>
+          <input type="checkbox" data-k="${p.k}">
+          <span><span class="zh">${LANG === 'zh' ? esc(p.zh) : esc(p.en)}</span>
+          ${LANG === 'zh' ? `<span class="en">${esc(p.en)}</span>` : ''}</span></label></div>`).join('')}
+        <div class="clause"><label><input type="checkbox" id="mediaPublic">
+          <span><span class="zh">${esc(LANG === 'zh' ? MEDIA_PUBLIC.zh : MEDIA_PUBLIC.en)}</span></span></label></div>
+        <p style="margin:12px 0 4px"><b>${T('伤病 / 身体状况说明（如无请写"无"）', 'Injuries / medical conditions (write "none" if none)')}</b></p>
+        <textarea id="healthNote" placeholder="${LANG === 'zh' ? '例如：右肩旧伤…' : 'e.g. old right-shoulder injury…'}"></textarea>
+        <p style="margin:12px 0 4px"><b>${T('输入你的全名作为签名', 'Type your full name to sign')}</b></p>
+        <input id="signName" autocomplete="off">
+        <p style="margin:14px 0 0"><button class="btn pink" onclick="sign()">
+          ${T('确认报名并签署', 'Confirm my spot & sign')}</button></p>
+        <p class="muted" style="margin-top:8px">${T('签署后将记录你的姓名、时间和条款版本（' + esc(c.policyVersion) + '）。',
+          'Your name, the time, and the policy version (' + esc(c.policyVersion) + ') are recorded.')}</p>
+        <p class="muted" id="signMsg"></p></div>`;
+    }
+    return html;
+  }
+
+  function renderConfirmed(s, c) {
+    const qt = P.quote, cs = P.consent;
+    return `<div class="card">
+      <div class="okbox">${T('名额已确认 ✓', 'Your spot is confirmed ✓')}
+        <span style="font-weight:400"> · ${esc(String(cs.signed_at).slice(0, 10))} · ${esc(cs.signed_name)}</span></div>
+      <div style="padding:10px 2px 0">
+        <b>${T('方案', 'Option')} ${qt.option}</b> — <span style="font-weight:700">${baht(qt.totalSatang)}</span>
+        ${(qt.discounts || []).length ? `<span class="save"> ${qt.discounts.map(d => '−' + d + '%').join(' ')}</span>` : ''}<br>
+        <span class="muted">${esc(LANG === 'zh' ? qt.label_zh : qt.label_en)}</span>
+        ${qt.depositSatang ? `<br><span class="muted">${T('定金', 'Deposit')} ${baht(qt.depositSatang)}
+          · ${T('现金', 'Cash')} ${baht(qt.cashSatang)} (${esc(qt.cashDue)})</span>` : ''}</div>
+      <p class="muted" style="margin:10px 0 0">${T('条款版本 ' + esc(cs.policy_version) + ' 已签署，条款全文可随时向 AYBKK 索取。',
+        'Policy ' + esc(cs.policy_version) + ' signed; ask AYBKK for the full text any time.')}</p></div>`;
+  }
+
+  function renderPayments() {
+    const pays = P.payments || [];
+    return `<div class="card"><b class="h">${T('付款记录', 'Payment record')}</b>
+      ${pays.length ? pays.map(p => `<div class="pay">
+          ${p.proof_url ? `<img src="${esc(p.proof_url)}" alt="proof" onclick="lightbox('${esc(p.proof_url)}')">` : ''}
+          <span style="flex:1"><b>${esc(p.label)}</b>
+            ${p.amount_satang ? ' · ' + baht(p.amount_satang) : ''}<br>
+            <span class="muted">${esc(String(p.created_at).slice(0, 10))}${p.note ? ' · ' + esc(p.note) : ''}</span></span>
+        </div>`).join('')
+        : `<p class="muted">${T('AYBKK 收到付款后会把凭证截图放在这里。', 'When AYBKK receives your payment, the proof screenshot appears here.')}</p>`}
+    </div>`;
+  }
+
+  function renderLinks(s) {
+    const links = P.links || [];
+    return `<div class="card"><b class="h">${T('我的课程', 'My course')}</b>
+      ${s.journalUrl ? `<a class="rowlink" href="${esc(s.journalUrl)}">
+        ${T('练习日志', 'My practice journal')} <span>→</span></a>` : ''}
+      ${links.map(l => `<a class="rowlink" href="${esc(l.url)}">
+        ${esc(LANG === 'zh' ? (l.title_zh || l.title_en) : (l.title_en || l.title_zh))} <span>→</span></a>`).join('')}
+      ${!s.journalUrl && !links.length
+        ? `<p class="muted">${T('教学大纲发布后会出现在这里。', 'Syllabus links appear here as they are published.')}</p>` : ''}
+    </div>`;
+  }
+
+  window.chooseOpt = async (option) => {
+    const r = await api(`/api/idcn/${COURSE}/students/${SLUG}/option`,
+      { method: 'POST', body: JSON.stringify({ option }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) return alert(j.error || 'failed');
+    await load();
+  };
+
+  window.sign = async () => {
+    const items = {};
+    document.querySelectorAll('input[data-k]').forEach(cb => { items[cb.dataset.k] = cb.checked; });
+    const missing = POLICY.filter(p => !items[p.k]);
+    if (missing.length) { $('#signMsg').textContent = LANG === 'zh'
+      ? '还有 ' + missing.length + ' 条未勾选。' : missing.length + ' clause(s) not ticked yet.'; return; }
+    const signedName = $('#signName').value.trim();
+    if (signedName.length < 2) { $('#signMsg').textContent = LANG === 'zh'
+      ? '请输入全名。' : 'Please type your full name.'; return; }
+    const r = await api(`/api/idcn/${COURSE}/students/${SLUG}/consent`, { method: 'POST',
+      body: JSON.stringify({ items, signedName,
+        healthNote: $('#healthNote').value.trim(),
+        mediaPublic: $('#mediaPublic').checked }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { $('#signMsg').textContent = j.error || 'failed'; return; }
+    await load();
+  };
+
+  async function loadPhotos() {
+    const r = await api(`/api/idcn/${COURSE}/photos?slug=${encodeURIComponent(SLUG)}`);
+    if (!r.ok) { $('#photos').innerHTML = ''; return; }
+    const d = await r.json();
+    $('#photos').innerHTML = (d.days || []).length
+      ? d.days.map(day => `<div class="daylbl">${esc(day.date)}</div>
+          <div class="grid">${day.items.map(it =>
+            `<img src="${esc(it.url)}" loading="lazy" alt="" onclick="lightbox('${esc(it.url)}')">`).join('')}</div>`).join('')
+      : `<p class="muted">${T('还没有照片。', 'No photos yet.')}</p>`;
+  }
+
+  window.lightbox = url => { $('#lbImg').src = url; $('#lb').style.display = 'flex'; };
+
+  window.pickPhoto = () => {
+    const f = $('#photoFile');
+    f.onchange = () => {
+      const file = f.files && f.files[0]; if (!file) return;
+      $('#upMsg').textContent = T2('上传中…', 'Uploading…');
+      const rd = new FileReader();
+      rd.onload = async () => {
+        const r = await api(`/api/idcn/${COURSE}/photos`, { method: 'POST',
+          body: JSON.stringify({ slug: SLUG, imageBase64: rd.result }) });
+        $('#upMsg').textContent = r.ok ? T2('已上传 ✓', 'Uploaded ✓') : T2('上传失败，请重试', 'Upload failed — try again');
+        if (r.ok) loadPhotos();
+      };
+      rd.readAsDataURL(file);
+      f.value = '';
+    };
+    f.click();
+  };
+  const T2 = (zh, en) => LANG === 'zh' ? zh : en;
+
+  if (SLUG && KEY) load(); else $('#gate').style.display = 'block';
+})();
+</script>
+</body>
+</html>
