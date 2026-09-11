@@ -67,7 +67,20 @@
     </div>
 
     <div class="card">
-      <b class="h">Syllabus links 教学大纲</b>
+      <b class="h">Send to everyone 群发</b>
+      <div class="row">
+        <div><label>Type</label><select id="bKind">
+          <option value="assignment">Assignment 作业</option>
+          <option value="note">Note 留言</option></select></div>
+        <div><label>Title (optional)</label><input id="bTitle" placeholder="Week 1 homework"></div>
+      </div>
+      <label>Message 内容</label><textarea id="bBody" rows="3"></textarea>
+      <p style="margin:10px 0 0"><button class="btn pink" onclick="broadcast()">Send to ALL students</button>
+        <span class="muted" id="bMsg"></span></p>
+    </div>
+
+    <div class="card">
+      <b class="h">Syllabus & video tutorials 教学大纲与视频教程</b>
       <p class="muted">One per line: <b>English title | 中文标题 | URL</b>. Shown to every confirmed student.</p>
       <textarea id="linksBox" rows="5" placeholder="Week 1 — Breath | 第一周 · 呼吸 | https://…"></textarea>
       <p style="margin:10px 0 0"><button class="btn" onclick="saveLinks()">Save links</button>
@@ -127,7 +140,10 @@
       ${s.health_note ? `<div class="muted">健康: ${esc(s.health_note)}</div>` : ''}
       ${s.signed_at ? `<div class="muted">public media: ${s.media_public ? 'YES' : 'no'}</div>` : ''}
       <div class="acts">
+        <a class="btn" style="text-decoration:none" href="/${COURSE}/${esc(s.slug)}" target="_blank">Open profile</a>
+        <button class="btn" onclick="addNote(${s.id})">+ Note / assignment</button>
         <button class="btn" onclick="addProof(${s.id}, '${esc(s.slug)}')">+ Payment proof</button>
+        <button class="btn gray" onclick="setOption(${s.id}, ${s.payment_option || 0})">Option</button>
         <button class="btn gray" onclick="setJournal(${s.id}, '${esc(s.journal_url || '')}')">Journal link</button>
         <button class="btn gray" onclick="toggleAtt(${s.id}, ${s.is_attendee})">${s.is_attendee ? 'Remove −3%' : 'Give −3%'}</button>
         <button class="btn gray" onclick="setStatus(${s.id}, '${esc(s.status)}')">Status</button>
@@ -197,6 +213,50 @@
       rd.onload = () => send(rd.result);
       rd.readAsDataURL(file);
     } else send(null);
+  };
+
+  window.setOption = async (id, cur) => {
+    const o = prompt('Payment option for this student (1, 2 or 3) — agreed with Jamsai:', cur || '');
+    if (o === null) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
+      { method: 'PUT', body: JSON.stringify({ paymentOption: Number(o.trim()) }) });
+    if (r.ok) load(); else alert((await r.json().catch(() => ({}))).error || 'failed');
+  };
+
+  window.addNote = id => {
+    const row = $('#proofRow' + id);
+    row.innerHTML = `<div style="margin-top:8px;border:1.5px solid var(--line);border-radius:8px;padding:10px">
+      <div class="row">
+        <div><label>Type</label><select id="nk${id}">
+          <option value="assignment">Assignment 作业</option>
+          <option value="note">Note 留言</option></select></div>
+        <div><label>Title (optional)</label><input id="nt${id}"></div>
+      </div>
+      <label>Message 内容</label><textarea id="nb${id}" rows="3"></textarea>
+      <p style="margin:10px 0 0"><button class="btn pink" onclick="sendNote(${id})">Send to this student</button>
+        <button class="btn gray" onclick="document.getElementById('proofRow${id}').innerHTML=''">Cancel</button>
+        <span class="muted" id="nm${id}"></span></p></div>`;
+  };
+  window.sendNote = async id => {
+    const body = $('#nb' + id).value.trim();
+    if (!body) return alert('Message required.');
+    const r = await api(`/api/idcn/admin/${COURSE}/notes`, { method: 'POST',
+      body: JSON.stringify({ studentId: id, kind: $('#nk' + id).value,
+        title: $('#nt' + id).value.trim(), body }) });
+    if (r.ok) { $('#proofRow' + id).innerHTML = ''; load(); }
+    else $('#nm' + id).textContent = (await r.json().catch(() => ({}))).error || 'failed';
+  };
+
+  window.broadcast = async () => {
+    const body = $('#bBody').value.trim();
+    if (!body) return alert('Message required.');
+    if (!confirm('Send this to EVERY student in the course?')) return;
+    const r = await api(`/api/idcn/admin/${COURSE}/notes`, { method: 'POST',
+      body: JSON.stringify({ all: true, kind: $('#bKind').value,
+        title: $('#bTitle').value.trim(), body }) });
+    const j = await r.json().catch(() => ({}));
+    $('#bMsg').textContent = r.ok ? `Sent to ${j.sentTo} students ✓` : (j.error || 'failed');
+    if (r.ok) { $('#bBody').value = ''; $('#bTitle').value = ''; }
   };
 
   window.setJournal = async (id, current) => {

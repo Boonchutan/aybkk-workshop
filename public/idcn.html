@@ -94,8 +94,11 @@
   let KEY = localStorage.getItem(KEYNAME) || '';
   let LANG = localStorage.getItem('idcn_lang') || 'zh';
   let P = null;             // profile payload
+  // Boonchu/Jamsai open any profile with the admin key remembered by idcn-admin
+  const ADMIN = localStorage.getItem('idcn_admin_key') || '';
   const api = (u, o = {}) => fetch(u, { ...o,
-    headers: { 'Content-Type': 'application/json', 'x-idcn-key': KEY, ...(o.headers || {}) } });
+    headers: { 'Content-Type': 'application/json', 'x-idcn-key': KEY,
+      ...(ADMIN ? { 'x-bkk-key': ADMIN } : {}), ...(o.headers || {}) } });
   const baht = st => {
     const n = Number(st), a = Math.abs(n);
     return '฿' + Math.floor(a / 100).toLocaleString('en-US')
@@ -163,7 +166,7 @@
     $('#hName').textContent = (LANG === 'zh' && s.name_zh) ? s.name_zh : s.name_en;
     $('#hCourse').textContent = LANG === 'zh' ? c.name_zh : c.name_en;
     const signed = !!P.consent;
-    const step = !s.paymentOption ? 1 : (!signed ? 2 : 3);
+    const step = !signed ? 1 : ((P.payments || []).length ? 3 : 2);
     let html = `<div class="steps"><span class="${step >= 1 ? 'on' : ''}"></span>
       <span class="${step >= 2 ? 'on' : ''}"></span><span class="${step >= 3 ? 'on' : ''}"></span></div>`;
 
@@ -177,6 +180,7 @@
     else html += renderConfirmed(s, c);
 
     if (signed) {
+      html += renderNotes();
       html += renderPayments();
       html += renderLinks(s);
       html += `<div class="card"><b class="h">${T('课程照片', 'Course photos')}</b>
@@ -192,31 +196,29 @@
     if (signed) loadPhotos();
   }
 
-  function renderEnroll(s, c) {
-    const optHtml = P.quotes.map(qt => {
-      const sel = s.paymentOption === qt.option;
-      let inner = `<b>${T('方案', 'Option')} ${qt.option}</b>
+  function planCard(qt, s) {
+    if (!qt) return `<div class="card"><b class="h">${T('付款方案', 'Payment plan')}</b>
+      <p class="muted">${T('你的付款方案由 AYBKK 与你直接确认，确认后会显示在这里。付款链接由 AYBKK 单独发给你（支持微信/支付宝/信用卡）。',
+        'Your payment plan is agreed with AYBKK directly and appears here once set. AYBKK sends you the payment link separately (WeChat / Alipay / credit card).')}</p></div>`;
+    return `<div class="card"><b class="h">${T('你的付款方案', 'Your payment plan')}</b>
+      <div class="opt sel"><b>${T('方案', 'Option')} ${qt.option}</b>
         <span class="save">${(qt.discounts || []).map(d => '−' + d + '%').join(' ')}</span><br>
         <span class="price">${baht(qt.totalSatang)}</span>
         ${qt.totalSatang < qt.listSatang
           ? `<span class="muted" style="text-decoration:line-through">${baht(qt.listSatang)}</span>` : ''}<br>
-        <span class="muted">${esc(LANG === 'zh' ? qt.label_zh : qt.label_en)}</span>`;
-      if (qt.depositSatang) inner += `<br><span class="muted">
-        ${T('定金', 'Deposit')} ${baht(qt.depositSatang)} · ${T('现金', 'Cash')} ${baht(qt.cashSatang)}
-        (${esc(qt.cashDue)})</span>`;
-      return `<div class="opt ${sel ? 'sel' : ''}" onclick="chooseOpt(${qt.option})">${inner}</div>`;
-    }).join('');
+        <span class="muted">${esc(LANG === 'zh' ? qt.label_zh : qt.label_en)}</span>
+        ${qt.depositSatang ? `<br><span class="muted">
+          ${T('定金', 'Deposit')} ${baht(qt.depositSatang)} · ${T('现金', 'Cash')} ${baht(qt.cashSatang)}
+          (${esc(qt.cashDue)})</span>` : ''}</div>
+      ${s.isAttendee ? `<p class="muted">${T('已含全程工作坊/月卡学员额外 −3% 优惠。', 'Includes your extra −3% full-workshop/monthly-attendee discount.')}</p>` : ''}</div>`;
+  }
 
-    let html = `<div class="card">
-      <b class="h">${T('第一步 · 选择付款方案', 'Step 1 · Choose your payment option')}</b>
-      <p class="muted">${T('请在 ' + esc(c.confirmBy) + ' 前确认名额。付款链接由 AYBKK 单独发给你（支持微信/支付宝/信用卡）。',
-        'Confirm your spot by ' + esc(c.confirmBy) + '. AYBKK sends you the payment link separately (WeChat / Alipay / credit card).')}
-        ${s.isAttendee ? '<br>' + T('已含全程工作坊/月卡学员额外 −3% 优惠。', 'Includes your extra −3% full-workshop/monthly-attendee discount.') : ''}</p>
-      ${optHtml}</div>`;
-
-    if (s.paymentOption) {
-      html += `<div class="card"><b class="h">${T('第二步 · 课程条款与同意书', 'Step 2 · Course policy & consent')}</b>
-        <p class="muted">${T('请逐条阅读并勾选。这是你的报名确认。', 'Read and tick every clause. This is your enrolment confirmation.')}</p>
+  function renderEnroll(s, c) {
+    let html = planCard(P.quote, s);
+    {
+      html += `<div class="card"><b class="h">${T('课程条款与同意书', 'Course policy & consent')}</b>
+        <p class="muted">${T('请在 ' + esc(c.confirmBy) + ' 前逐条阅读、勾选并签署 — 这就是你的报名确认。',
+          'Read, tick every clause and sign by ' + esc(c.confirmBy) + ' — this is your enrolment confirmation.')}</p>
         ${POLICY.map(p => `<div class="clause"><label>
           <input type="checkbox" data-k="${p.k}">
           <span><span class="zh">${LANG === 'zh' ? esc(p.zh) : esc(p.en)}</span>
@@ -241,14 +243,28 @@
     return `<div class="card">
       <div class="okbox">${T('名额已确认 ✓', 'Your spot is confirmed ✓')}
         <span style="font-weight:400"> · ${esc(String(cs.signed_at).slice(0, 10))} · ${esc(cs.signed_name)}</span></div>
-      <div style="padding:10px 2px 0">
+      ${qt ? `<div style="padding:10px 2px 0">
         <b>${T('方案', 'Option')} ${qt.option}</b> — <span style="font-weight:700">${baht(qt.totalSatang)}</span>
         ${(qt.discounts || []).length ? `<span class="save"> ${qt.discounts.map(d => '−' + d + '%').join(' ')}</span>` : ''}<br>
         <span class="muted">${esc(LANG === 'zh' ? qt.label_zh : qt.label_en)}</span>
         ${qt.depositSatang ? `<br><span class="muted">${T('定金', 'Deposit')} ${baht(qt.depositSatang)}
-          · ${T('现金', 'Cash')} ${baht(qt.cashSatang)} (${esc(qt.cashDue)})</span>` : ''}</div>
+          · ${T('现金', 'Cash')} ${baht(qt.cashSatang)} (${esc(qt.cashDue)})</span>` : ''}</div>`
+        : `<p class="muted" style="margin:10px 0 0">${T('付款方案由 AYBKK 与你直接确认。', 'Your payment plan is agreed with AYBKK directly.')}</p>`}
       <p class="muted" style="margin:10px 0 0">${T('条款版本 ' + esc(cs.policy_version) + ' 已签署，条款全文可随时向 AYBKK 索取。',
         'Policy ' + esc(cs.policy_version) + ' signed; ask AYBKK for the full text any time.')}</p></div>`;
+  }
+
+  function renderNotes() {
+    const notes = P.notes || [];
+    if (!notes.length) return '';
+    return `<div class="card"><b class="h">${T('作业与留言', 'Assignments & notes')}</b>
+      ${notes.map(n => `<div class="clause" style="cursor:default">
+        <span class="save" style="color:${n.kind === 'assignment' ? 'var(--pink)' : 'var(--soft)'}">
+          ${n.kind === 'assignment' ? T2('作业', 'ASSIGNMENT') : T2('留言', 'NOTE')}</span>
+        ${n.title ? `<b style="display:block">${esc(n.title)}</b>` : ''}
+        <span style="white-space:pre-wrap">${esc(n.body)}</span><br>
+        <span class="muted">${esc(String(n.created_at).slice(0, 10))} · ${esc(n.created_by || 'AYBKK')}</span>
+      </div>`).join('')}</div>`;
   }
 
   function renderPayments() {
@@ -266,7 +282,7 @@
 
   function renderLinks(s) {
     const links = P.links || [];
-    return `<div class="card"><b class="h">${T('我的课程', 'My course')}</b>
+    return `<div class="card"><b class="h">${T('课程内容 · 大纲与视频教程', 'Course content · syllabus & video tutorials')}</b>
       ${s.journalUrl ? `<a class="rowlink" href="${esc(s.journalUrl)}">
         ${T('练习日志', 'My practice journal')} <span>→</span></a>` : ''}
       ${links.map(l => `<a class="rowlink" href="${esc(l.url)}">
@@ -275,14 +291,6 @@
         ? `<p class="muted">${T('教学大纲发布后会出现在这里。', 'Syllabus links appear here as they are published.')}</p>` : ''}
     </div>`;
   }
-
-  window.chooseOpt = async (option) => {
-    const r = await api(`/api/idcn/${COURSE}/students/${SLUG}/option`,
-      { method: 'POST', body: JSON.stringify({ option }) });
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok) return alert(j.error || 'failed');
-    await load();
-  };
 
   window.sign = async () => {
     const items = {};

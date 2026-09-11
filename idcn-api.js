@@ -120,6 +120,18 @@ function mountIdcn(app, opts = {}) {
       note TEXT,
       uploaded_by TEXT,
       created_at TIMESTAMPTZ DEFAULT now())`);
+    // notes & assignments the teaching team sends into a student's profile
+    await q(`CREATE TABLE IF NOT EXISTS idc_notes (
+      id SERIAL PRIMARY KEY,
+      student_id INTEGER NOT NULL REFERENCES idc_students(id),
+      kind TEXT NOT NULL DEFAULT 'note',
+      title TEXT, body TEXT NOT NULL,
+      created_by TEXT,
+      created_at TIMESTAMPTZ DEFAULT now())`);
+    // Jamsai negotiates the tier with each student, so the option is admin-set
+    // and a student may sign the consent before their plan is settled
+    await q(`ALTER TABLE idc_consents ALTER COLUMN payment_option DROP NOT NULL`)
+      .catch(() => {});
     await q(`CREATE TABLE IF NOT EXISTS idc_settings (
       course_code TEXT NOT NULL REFERENCES idc_courses(code),
       key TEXT NOT NULL, value JSONB,
@@ -171,6 +183,9 @@ function mountIdcn(app, opts = {}) {
     const links = (await q(
       `SELECT value FROM idc_settings WHERE course_code=$1 AND key='links'`,
       [course.code])).rows[0];
+    const notes = (await q(
+      `SELECT id, kind, title, body, created_by, created_at
+       FROM idc_notes WHERE student_id=$1 ORDER BY id DESC LIMIT 100`, [s.id])).rows;
     return {
       course: { code: course.code, name_en: course.name_en, name_zh: course.name_zh,
         sessions: terms.sessions, confirmBy: terms.confirmBy,
@@ -180,7 +195,7 @@ function mountIdcn(app, opts = {}) {
         journalUrl: s.journal_url || null },
       quotes: [1, 2, 3].map(o => quote(terms, o, s.is_attendee)),
       quote: s.payment_option ? quote(terms, s.payment_option, s.is_attendee) : null,
-      consent, payments,
+      consent, payments, notes,
       links: (links && links.value) || [],
       requiredConsents: REQUIRED_CONSENTS,
     };
@@ -195,21 +210,6 @@ function mountIdcn(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // choose / change payment option — open until the consent is signed, locked after
-  app.post('/api/idcn/:course/students/:slug/option', async (req, res) => {
-    try {
-      const course = await courseFor(req, res); if (!course) return;
-      const s = await studentFrom(req, res, course, req.params.slug); if (!s) return;
-      const option = Number((req.body || {}).option);
-      if (![1, 2, 3].includes(option)) return res.status(400).json({ error: 'option must be 1, 2 or 3' });
-      const signed = (await q('SELECT 1 FROM idc_consents WHERE student_id=$1', [s.id])).rows[0];
-      if (signed && !isAdmin(req))
-        return res.status(409).json({ error: 'already confirmed — ask AYBKK to change it' });
-      await q('UPDATE idc_students SET payment_option=$1 WHERE id=$2', [option, s.id]);
-      res.json({ success: true, quote: quote(course.terms, option, s.is_attendee) });
-    } catch (e) { res.status(500).json({ error: e.message }); }
-  });
-
   app.post('/api/idcn/:course/students/:slug/consent', async (req, res) => {
     try {
       const course = await courseFor(req, res); if (!course) return;
@@ -217,7 +217,6 @@ function mountIdcn(app, opts = {}) {
       const b = req.body || {};
       const already = (await q('SELECT 1 FROM idc_consents WHERE student_id=$1', [s.id])).rows[0];
       if (already) return res.status(409).json({ error: 'already signed' });
-      if (!s.payment_option) return res.status(400).json({ error: 'choose a payment option first' });
       const items = b.items || {};
       const missing = REQUIRED_CONSENTS.filter(k => items[k] !== true);
       if (missing.length)
@@ -402,6 +401,36 @@ function mountIdcn(app, opts = {}) {
         [s.id, label, amount, proofUrl, String(b.note || '').trim() || null,
          String(b.uploadedBy || 'AYBKK').slice(0, 60)]);
       res.json({ success: true, payment: r.rows[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // a note or assignment into one profile, or every profile in the course
+  app.post('/api/idcn/admin/:course/notes', async (req, res) => {
+    if (!needAdmin(req, res)) return;
+    try {
+      const course = await courseFor(req, res); if (!course) return;
+      const b = req.body || {};
+      const kind = b.kind === 'assignment' ? 'assignment' : 'note';
+      const body = String(b.body || '').trim();
+      if (!body) return res.status(400).json({ error: 'body required' });
+      let ids;
+      if (b.all === true) {
+        ids = (await q(
+          `SELECT id FROM idc_students WHERE course_code=$1 AND status != 'withdrawn'`,
+          [course.code])).rows.map(r => r.id);
+      } else {
+        const s = (await q('SELECT id FROM idc_students WHERE id=$1 AND course_code=$2',
+          [Number(b.studentId), course.code])).rows[0];
+        if (!s) return res.status(404).json({ error: 'student not found' });
+        ids = [s.id];
+      }
+      for (const id of ids) {
+        await q(`INSERT INTO idc_notes (student_id, kind, title, body, created_by)
+                 VALUES ($1,$2,$3,$4,$5)`,
+          [id, kind, String(b.title || '').slice(0, 200) || null, body.slice(0, 8000),
+           String(b.createdBy || 'AYBKK').slice(0, 60)]);
+      }
+      res.json({ success: true, sentTo: ids.length });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

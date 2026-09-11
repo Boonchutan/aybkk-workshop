@@ -89,16 +89,16 @@ const B_THB = 100; // satang per baht
   ok('a made-up course is 404',
      (await J('/api/idcn/idcn9/students/yang-yang', {}, { 'x-idcn-key': YKEY })).status === 404);
 
-  console.log('\n— enrolment: option, then complete-or-nothing consent —');
+  console.log('\n— enrolment: Jamsai sets the tier, the student only signs —');
+  const YID = yy.body.student.id;
   const allTicked = {};
   for (const k of prof.body.requiredConsents) allTicked[k] = true;
-  ok('consent before choosing an option → 400',
-     (await J('/api/idcn/idcn3/students/yang-yang/consent', { method: 'POST',
-        body: JSON.stringify({ items: allTicked, signedName: '杨杨 Yang Yang' }) },
-        { 'x-idcn-key': YKEY })).status === 400);
-  ok('she chooses option 2',
+  ok('a student has NO route to set their own option (Jamsai negotiates it)',
      (await J('/api/idcn/idcn3/students/yang-yang/option', { method: 'POST',
-        body: JSON.stringify({ option: 2 }) }, { 'x-idcn-key': YKEY })).status === 200);
+        body: JSON.stringify({ option: 1 }) }, { 'x-idcn-key': YKEY })).status === 404);
+  ok('admin sets her option to 2',
+     (await J(`/api/idcn/admin/idcn3/students/${YID}`, { method: 'PUT',
+        body: JSON.stringify({ paymentOption: 2 }) }, A)).status === 200);
   const partial = { ...allTicked, adjustments: false };
   const inc = await J('/api/idcn/idcn3/students/yang-yang/consent', { method: 'POST',
     body: JSON.stringify({ items: partial, signedName: '杨杨 Yang Yang' }) }, { 'x-idcn-key': YKEY });
@@ -118,9 +118,15 @@ const B_THB = 100; // satang per baht
      (await J('/api/idcn/idcn3/students/yang-yang/consent', { method: 'POST',
         body: JSON.stringify({ items: allTicked, signedName: 'again' }) },
         { 'x-idcn-key': YKEY })).status === 409);
-  ok('changing the option after signing → 409 for the student',
-     (await J('/api/idcn/idcn3/students/yang-yang/option', { method: 'POST',
-        body: JSON.stringify({ option: 1 }) }, { 'x-idcn-key': YKEY })).status === 409);
+  const noOpt = await J('/api/idcn/admin/idcn3/students', { method: 'POST',
+    body: JSON.stringify({ nameEn: 'Chen Qiang', slug: 'chenqiang' }) }, A);
+  const signedNoOpt = await J('/api/idcn/idcn3/students/chenqiang/consent', { method: 'POST',
+    body: JSON.stringify({ items: allTicked, signedName: '陈强' }) },
+    { 'x-idcn-key': noOpt.body.passcode });
+  ok('signing works before the tier is settled (option recorded as empty)',
+     signedNoOpt.status === 200
+       && (await J('/api/idcn/idcn3/students/chenqiang', {}, { 'x-idcn-key': noOpt.body.passcode }))
+            .body.consent.payment_option == null);
   const after = await J('/api/idcn/idcn3/students/yang-yang', {}, { 'x-idcn-key': YKEY });
   ok('her profile carries the signed record: version, name, health note, no public media',
      after.body.consent.policy_version === 'idcn3-v1'
@@ -147,6 +153,29 @@ const B_THB = 100; // satang per baht
   ok("payment proofs never appear on someone else's profile",
      (await J('/api/idcn/idcn3/students/yang-yang', {}, { 'x-idcn-key': YKEY })).body.payments.length === 0);
 
+  console.log('\n— notes & assignments from the teaching team —');
+  ok('no admin key → 401',
+     (await J('/api/idcn/admin/idcn3/notes', { method: 'POST',
+        body: JSON.stringify({ studentId: YID, body: 'x' }) })).status === 401);
+  ok('a note with no message is refused',
+     (await J('/api/idcn/admin/idcn3/notes', { method: 'POST',
+        body: JSON.stringify({ studentId: YID, kind: 'assignment' }) }, A)).status === 400);
+  ok('an assignment lands on one student',
+     (await J('/api/idcn/admin/idcn3/notes', { method: 'POST',
+        body: JSON.stringify({ studentId: YID, kind: 'assignment',
+          title: 'Week 1', body: '练习 Surya A ×5，拍视频。', createdBy: 'Boonchu' }) }, A))
+       .body.sentTo === 1);
+  const bc = await J('/api/idcn/admin/idcn3/notes', { method: 'POST',
+    body: JSON.stringify({ all: true, kind: 'note', body: '欢迎大家 Welcome everyone' }) }, A);
+  ok('a broadcast reaches every non-withdrawn student', bc.body.sentTo === 3, JSON.stringify(bc.body));
+  const yNotes = (await J('/api/idcn/idcn3/students/yang-yang', {}, { 'x-idcn-key': YKEY })).body.notes;
+  ok('Yang Yang sees her assignment and the broadcast, newest first',
+     yNotes.length === 2 && yNotes[0].kind === 'note'
+       && yNotes[1].kind === 'assignment' && /Surya/.test(yNotes[1].body)
+       && yNotes[1].created_by === 'Boonchu', JSON.stringify(yNotes));
+  ok('Li Mei sees only the broadcast',
+     (await J('/api/idcn/idcn3/students/limei', {}, { 'x-idcn-key': LKEY })).body.notes.length === 1);
+
   console.log('\n— syllabus links + admin overview —');
   ok('links saved and cleaned',
      (await J('/api/idcn/admin/idcn3/links', { method: 'PUT',
@@ -159,7 +188,7 @@ const B_THB = 100; // satang per baht
        .body.links[0].title_zh === '第一周 · 呼吸');
   const list = await J('/api/idcn/admin/idcn3/students', {}, A);
   ok('admin overview: signature state, option, quote and proof count per student',
-     list.body.students.length === 2
+     list.body.students.length === 3
        && list.body.students.some(s => s.slug === 'yang-yang' && s.signed_at && s.quote.totalSatang === 18337850)
        && list.body.students.some(s => s.slug === 'limei' && !s.signed_at && s.proofs === 1),
      JSON.stringify(list.body.students.map(s => s.slug)));
