@@ -77,6 +77,13 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.
 
+## AYBKK Bangkok study fees (aybkk.net) — Boonchu asked to remember these, 11 Sep 2026
+
+- 1 month: 9,600 THB
+- 3 months: 25,800 THB (8,600 THB/month)
+- 6 months: 45,000 THB (7,500 THB/month)
+- 12 months: 78,000 THB (6,000 THB/month) — includes 1 free month, so 13 months total
+
 ## Environment
 
 Never commit `.env`. Required vars are documented in `check-env.js`.

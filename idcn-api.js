@@ -22,7 +22,7 @@ const crypto = require('crypto');
 const SATANG = 100;
 // bumped whenever the policy text in public/idcn.html changes, so every
 // signature records exactly which wording was on screen
-const IDCN3_POLICY_VERSION = 'idcn3-v2';
+const IDCN3_POLICY_VERSION = 'idcn3-v3';
 const sha = k => crypto.createHash('sha256').update(String(k)).digest('hex');
 const newPasscode = () => crypto.randomBytes(6).toString('base64url');
 

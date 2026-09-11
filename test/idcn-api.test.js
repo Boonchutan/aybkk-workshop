@@ -129,7 +129,7 @@ const B_THB = 100; // satang per baht
             .body.consent.payment_option == null);
   const after = await J('/api/idcn/idcn3/students/yang-yang', {}, { 'x-idcn-key': YKEY });
   ok('her profile carries the signed record: version, name, health note, no public media',
-     after.body.consent.policy_version === 'idcn3-v2'
+     after.body.consent.policy_version === 'idcn3-v3'
        && after.body.consent.signed_name === '杨杨 Yang Yang'
        && /右肩/.test(after.body.consent.health_note)
        && after.body.consent.media_public === false
