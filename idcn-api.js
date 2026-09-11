@@ -20,6 +20,9 @@
 const crypto = require('crypto');
 
 const SATANG = 100;
+// bumped whenever the policy text in public/idcn.html changes, so every
+// signature records exactly which wording was on screen
+const IDCN3_POLICY_VERSION = 'idcn3-v2';
 const sha = k => crypto.createHash('sha256').update(String(k)).digest('hex');
 const newPasscode = () => crypto.randomBytes(6).toString('base64url');
 
@@ -139,8 +142,10 @@ function mountIdcn(app, opts = {}) {
       PRIMARY KEY (course_code, key))`);
     await q(`INSERT INTO idc_courses (code, name_en, name_zh, terms, policy_version)
       VALUES ('idcn3', 'AYBKK In-Depth Mysore Course for Chinese Generation #3',
-              'AYBKK 深度迈索尔课程 · 中国第三期', $1, 'idcn3-v1')
-      ON CONFLICT (code) DO NOTHING`, [JSON.stringify(IDCN3_TERMS)]);
+              'AYBKK 深度迈索尔课程 · 中国第三期', $1, $2)
+      ON CONFLICT (code) DO NOTHING`, [JSON.stringify(IDCN3_TERMS), IDCN3_POLICY_VERSION]);
+    await q(`UPDATE idc_courses SET policy_version=$1 WHERE code='idcn3' AND policy_version <> $1`,
+      [IDCN3_POLICY_VERSION]);
   }
 
   const courseFor = async (req, res) => {
