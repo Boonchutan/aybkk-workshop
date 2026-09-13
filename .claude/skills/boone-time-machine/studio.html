@@ -1,0 +1,1255 @@
+<title>Boone's Time Machine Studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Mali:wght@400;600;700&display=swap">
+<style>
+:root{
+  --space:#0E1B2E; --space2:#17293F; --space3:#22385A;
+  --paper:#FFF6E3; --paper2:#F3E6C8; --ink:#2B2013; --ink-soft:#6B5B43;
+  --sun:#FFC53D; --sun-deep:#B57F17; --rope:#3A506B; --star:#EAF2FF; --dim:#AFC3DE; --dim2:#6E84A3;
+  --display:'Patrick Hand','Comic Sans MS','Chalkboard SE',cursive;
+  --body:'Mali','Comic Sans MS','Chalkboard SE',sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16.5px;scroll-behavior:smooth}
+body{
+  font-family:var(--body);color:var(--star);background:var(--space);line-height:1.55;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(234,242,255,.8) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 78% 9%, rgba(234,242,255,.6) 50%, transparent 51%),
+    radial-gradient(2px 2px at 90% 58%, rgba(255,197,61,.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 30% 71%, rgba(234,242,255,.55) 50%, transparent 51%),
+    radial-gradient(1px 1px at 66% 92%, rgba(234,242,255,.6) 50%, transparent 51%);
+}
+.wrap{max-width:46rem;margin:0 auto;padding:1.1rem 1.1rem 4rem}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px;border-radius:.4rem}
+a{color:var(--sun)}
+[hidden]{display:none!important}
+
+header.masthead{text-align:center;padding:1.8rem 0 .6rem}
+h1{font-family:var(--display);font-weight:400;color:var(--sun);font-size:2.3rem;line-height:1.05;text-wrap:balance}
+.masthead p{color:var(--dim);margin-top:.55rem;font-size:1rem;max-width:34rem;margin-left:auto;margin-right:auto}
+.masthead .clap{font-size:2.4rem;margin-bottom:.3rem}
+.posted-count{display:inline-block;margin-top:.7rem;background:var(--space2);border:2px solid var(--space3);
+  border-radius:2rem;padding:.3rem 1rem;color:var(--sun);font-weight:700;font-size:.95rem}
+
+nav.tripnav{
+  position:sticky;top:0;z-index:20;background:rgba(14,27,46,.94);backdrop-filter:blur(4px);
+  margin:1rem -1.1rem 0;padding:.55rem 1.1rem;border-bottom:2px solid var(--space3);
+  display:flex;gap:.4rem;overflow-x:auto;scrollbar-width:none;
+}
+nav.tripnav::-webkit-scrollbar{display:none}
+nav.tripnav a{
+  flex:0 0 auto;text-decoration:none;font-size:1.15rem;line-height:1;
+  background:var(--space2);border:2px solid var(--space3);border-radius:2rem;padding:.4rem .6rem;
+}
+nav.tripnav a.setup-link{font-family:var(--display);font-size:.95rem;color:var(--sun);display:flex;align-items:center}
+
+h2.sec{
+  font-family:var(--display);font-weight:400;color:var(--sun);font-size:1.7rem;
+  margin:2.4rem 0 .9rem;display:flex;align-items:center;gap:.55rem;text-wrap:balance;
+}
+h2.sec .n{
+  flex:0 0 auto;width:2.1rem;height:2.1rem;border-radius:50%;background:var(--sun);color:var(--space);
+  font-size:1.15rem;display:inline-flex;align-items:center;justify-content:center;
+}
+.panel{background:var(--space2);border:2px solid var(--space3);border-radius:1.1rem;padding:1.1rem 1.15rem;margin-bottom:1rem}
+.panel h3{font-family:var(--display);font-weight:400;color:var(--star);font-size:1.3rem;margin-bottom:.5rem}
+.panel p,.panel li{color:var(--dim);font-size:.98rem}
+.panel p b,.panel li b{color:var(--star)}
+.panel ol,.panel ul{padding-left:1.3rem;display:flex;flex-direction:column;gap:.45rem;margin-top:.4rem}
+.panel .why{color:var(--dim2);font-size:.88rem}
+
+.block{
+  position:relative;background:#0A1524;border:2px dashed var(--rope);border-radius:.8rem;
+  padding:.75rem .9rem .8rem .9rem;margin:.6rem 0;color:var(--star);font-size:.92rem;line-height:1.5;
+  font-family:var(--mono);overflow-wrap:break-word;
+}
+.stylepick{display:flex;flex-direction:column;gap:.45rem;margin:.8rem 0 .3rem}
+.stylepick label{display:flex;gap:.55rem;align-items:flex-start;color:var(--dim);font-size:.95rem;cursor:pointer}
+.stylepick input{accent-color:#FFC53D;width:1.05rem;height:1.05rem;margin-top:.2rem;flex:0 0 auto}
+.stylepick b{color:var(--star)}
+.block .lbl{display:block;margin:0 3.6rem .45rem 0;font-family:var(--body);font-weight:700;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sun);line-height:1.35}
+.copy{
+  position:absolute;top:.5rem;right:.5rem;background:var(--sun);color:#3A2A05;border-radius:.55rem;
+  font-family:var(--display);font-size:.95rem;padding:.25rem .6rem;border-bottom:3px solid var(--sun-deep);
+}
+.copy:active{transform:translateY(2px);border-bottom-width:1px}
+.copy.ok{background:#7BC98F;border-bottom-color:#4C9A6B;color:#0E2A17}
+
+table.cal{width:100%;border-collapse:collapse;font-size:.95rem}
+table.cal th{font-family:var(--display);font-weight:400;color:var(--sun);text-align:left;padding:.35rem .5rem;border-bottom:2px solid var(--space3);font-size:1.05rem}
+table.cal td{padding:.4rem .5rem;border-bottom:1px solid var(--space3);color:var(--dim)}
+table.cal td b{color:var(--star)}
+.tablewrap{overflow-x:auto}
+
+.check{display:flex;gap:.5rem;align-items:flex-start;color:var(--dim);font-size:.95rem;margin:.3rem 0}
+.check .bx{flex:0 0 auto}
+
+/* episode cards */
+.ep{
+  border:3px solid var(--era);border-radius:1.3rem;background:var(--space2);
+  margin:1.6rem 0;overflow:hidden;scroll-margin-top:4.2rem;
+}
+.ep-head{display:flex;align-items:center;gap:.9rem;padding:1rem 1.1rem;background:linear-gradient(180deg,var(--space3),var(--space2))}
+.ep-head .med{
+  flex:0 0 3.6rem;width:3.6rem;height:3.6rem;border-radius:50%;font-size:1.95rem;
+  display:flex;align-items:center;justify-content:center;background:var(--space);border:3px solid var(--era);
+}
+.ep-head .t{flex:1;min-width:0}
+.ep-head .chip{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--space);background:var(--era);border-radius:.5rem;padding:.08rem .55rem;margin-right:.35rem}
+.ep-head h3{font-family:var(--display);font-weight:400;font-size:1.65rem;line-height:1.05;color:var(--star)}
+.ep-head .postdate{flex:0 0 auto;text-align:right;font-size:.82rem;color:var(--dim)}
+.ep-head .postdate b{display:block;color:var(--sun);font-size:1rem}
+.ep-body{padding:1rem 1.1rem 1.3rem}
+
+.prog{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.prog label{
+  display:flex;align-items:center;gap:.4rem;background:var(--space);border:2px solid var(--space3);
+  border-radius:2rem;padding:.3rem .8rem;font-size:.88rem;color:var(--dim);cursor:pointer;
+}
+.prog label.done{border-color:var(--sun);color:var(--sun)}
+.prog input{accent-color:#FFC53D;width:1rem;height:1rem}
+
+.script{background:var(--paper);color:var(--ink);border-radius:1rem;border:2px solid var(--era);padding:1rem 1.05rem;margin:.6rem 0 1rem}
+.script .beat{margin:.65rem 0}
+.script .beat .tag{
+  font-weight:700;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--era-deep);
+  display:inline-block;margin-bottom:.15rem;
+}
+.script .beat p{font-size:1.05rem;line-height:1.55}
+.script .beat.boone p{font-family:var(--display);font-size:1.2rem}
+.script .beat.boone .tag::after{content:" · 🎤 Boone says this line"}
+.script .wc{font-size:.8rem;color:var(--ink-soft);text-align:right;margin-top:.5rem}
+
+.rec{background:var(--paper);color:var(--ink);border-radius:1rem;border:2px solid var(--era);padding:1rem 1.05rem;margin:.6rem 0 1rem}
+.rec ol,.rec ul{padding-left:1.3rem;display:flex;flex-direction:column;gap:.55rem}
+.rec li{font-size:1rem;line-height:1.45}
+.rec .cue{color:var(--ink-soft);font-size:.82rem}
+.rec b{font-family:var(--display);font-weight:400;font-size:1.15rem}
+.legend{color:var(--dim);font-size:.92rem;background:var(--space);border:2px dashed var(--rope);border-radius:.8rem;padding:.7rem .9rem;margin:.6rem 0 1rem}
+.legend b{color:var(--star)}
+.dlg{background:#101E33;border:2px dashed var(--era);border-radius:1rem;padding:.85rem .95rem;margin:.2rem 0 1rem}
+.dlg-h{font-family:var(--display);font-size:1.15rem;color:var(--era);margin-bottom:.5rem}
+.dlg ul{list-style:none;display:flex;flex-direction:column;gap:.55rem;padding:0}
+.dlg li{color:var(--dim);font-size:.95rem}
+.dlg li b{color:var(--star);font-family:var(--display);font-weight:400;font-size:1.15rem}
+.dlg .tagline{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sun);display:block;margin-bottom:.1rem}
+h4.shots-h{font-family:var(--display);font-weight:400;color:var(--star);font-size:1.25rem;margin:1rem 0 .2rem}
+.shot{border:2px solid var(--space3);border-radius:1rem;padding:.85rem .9rem .6rem;margin:.8rem 0;background:#101E33}
+.shot-top{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;margin-bottom:.35rem}
+.shot-top .sid{font-family:var(--display);font-size:1.15rem;color:var(--era)}
+.badge{font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-radius:.45rem;padding:.1rem .5rem}
+.badge.type{background:var(--era);color:var(--space)}
+.badge.mode{background:var(--space3);color:var(--dim)}
+.shot .cap{color:var(--dim);font-size:.9rem;margin:.3rem 0 .1rem}
+.shot .cap b{color:var(--star)}
+.shot .note{color:var(--dim2);font-size:.85rem;margin:.35rem 0}
+
+footer{margin-top:3rem;text-align:center;color:var(--dim2);font-size:.85rem}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+<header class="masthead">
+  <div class="clap">🎬</div>
+  <h1>BOONE&rsquo;S TIME MACHINE STUDIO</h1>
+  <p>The full production pack: <b>12 videos, twice a week, six weeks.</b> Every script, every Kling prompt, every caption — tap <b>copy</b>, paste into Kling, film the season.</p>
+  <span class="posted-count" id="postedCount">0 / 12 posted</span>
+</header>
+
+<nav class="tripnav" id="tripnav"><a class="setup-link" href="#setup">⚙️ Setup</a></nav>
+
+<h2 class="sec" id="setup"><span class="n">1</span>One-time setup (about 30 minutes, do once)</h2>
+
+<div class="panel">
+  <h3>📸 Boone's reference kit</h3>
+  <ol>
+    <li><b>Photo session with Boone</b> — phone camera, bright indirect daylight (near a window, not direct sun), plain wall behind. Take: front face neutral, front face smiling, slight left profile, slight right profile, full body standing front. 8–10 shots, pick the sharpest.</li>
+    <li><b>Choose ONE hero face photo</b> — sharp, eyes open, even light, nothing covering the face. This exact photo is the face reference for <i>every</i> shot in the season. Never switch it mid-season or Boone's face will drift between episodes.</li>
+    <li><b>The time-traveler outfit</b> — put Boone in the same outfit for the full-body photo: <b>bright orange t-shirt, khaki shorts, small brown backpack</b>. This outfit appears in every era — it's how viewers instantly spot "the visitor from now" among the ancients, and it keeps Kling consistent.</li>
+    <li><b>Keep the reference photos private.</b> They're your production asset — never post the raw reference set anywhere.</li>
+  </ol>
+</div>
+
+<div class="panel">
+  <h3>🧱 The three building blocks (every prompt in this pack is assembled from these)</h3>
+  <p>You never need to retype these — every shot below is pre-assembled with copy buttons. They're here so you understand the system and can build new shots yourself.</p>
+  <div class="block"><span class="lbl">BOONE token</span><button class="copy" data-copy="boone">copy</button><span id="blk-boone"></span></div>
+  <div class="stylepick" id="stylepick">
+    <label><input type="radio" name="stylemode" value="A"><span><b>Style A — hyperreal</b> · strict photoreal film look</span></label>
+    <label><input type="radio" name="stylemode" value="B"><span><b>Style B — storybook-real</b> · slightly stylized, warmer, dodges the uncanny valley and stays consistent much more easily. Pick this if you liked your first slightly-cartoony render.</span></label>
+  </div>
+  <div class="block"><span class="lbl">STYLE token A — hyperreal</span><button class="copy" data-copy="styleA">copy</button><span id="blk-styleA"></span></div>
+  <div class="block"><span class="lbl">STYLE token B — storybook-real</span><button class="copy" data-copy="styleB">copy</button><span id="blk-styleB"></span></div>
+  <div class="block"><span class="lbl">NEGATIVE prompt (paste once into Kling's negative field, it stays)</span><button class="copy" data-copy="neg">copy</button><span id="blk-neg"></span></div>
+  <p class="why">Formula: <b>Boone shots</b> = BOONE + scene + STYLE (with his face photo attached as reference). <b>World shots</b> = scene + STYLE, no reference needed. The radio above rewrites <b>every assembled prompt below</b> — pick one style and lock it for all 12 episodes. If Boone renders too short next to adults, add: "the boy stands chest-high to the adults".</p>
+</div>
+
+
+<div class="panel" style="border-color:var(--sun)">
+  <h3>🧑‍🎨 Step zero — Boone's master references (generate these before any shot)</h3>
+  <p>Three character-sheet images, all with his real hero photo attached as the face reference, all photoreal even though the show is storybook-real (identity extracts cleaner from a clean photo). Fill the two [bracketed] slots first. If he has a missing front tooth right now, put it in — it's the most Boone-specific thing an AI can lock onto.</p>
+  <div class="block"><span class="lbl">1 · FACE MASTER · aspect 1:1</span><button class="copy" data-text="1">copy</button><span class="ptxt">Studio character reference photo of a real 6-year-old Thai boy, match the attached face photo exactly. Head and shoulders, facing the camera straight on, eyes looking into the lens, gentle natural smile with his mouth slightly open showing his teeth [include his missing front tooth if he has one], wavy dark brown hair in his everyday style, [warm light-brown] skin with no retouching, soft even daylight from the front, plain light grey background, sharp focus on the eyes, photorealistic, 85mm portrait lens, no hat, no glasses, no filter.</span></div>
+  <div class="block"><span class="lbl">2 · BODY MASTER (base look) · aspect 3:4</span><button class="copy" data-text="1">copy</button><span class="ptxt">Full-body studio character reference photo of the same 6-year-old Thai boy, match the attached face photo exactly. Standing straight and facing the camera, relaxed, arms slightly away from his body, feet apart, whole body visible from head to shoes with space above the head and below the feet. Slim build, long legs for his age, natural six-year-old proportions with the head about one-sixth of his total height, not chibi, not toddler-like. He wears a plain white t-shirt, dark blue shorts, white sneakers, and a small red backpack with a bright yellow pencil sticking out of the side pocket. Plain light grey background, soft even daylight, photorealistic, sharp.</span></div>
+  <div class="block"><span class="lbl">3 · EPISODE 1 COSTUME SHEET · aspect 3:4</span><button class="copy" data-text="1">copy</button><span class="ptxt">Full-body studio character reference photo of the same 6-year-old Thai boy, match the attached face photo exactly. Standing straight and facing the camera, relaxed, arms slightly away from his body, whole body visible from head to boots. Slim build, long legs for his age, natural six-year-old proportions, head about one-sixth of his total height. He wears a bright yellow snow jacket with the hood down, dark navy pants, brown snow boots, a rainbow-striped knitted scarf, and a small red backpack with a bright yellow pencil sticking out of the side pocket. Plain light grey background, soft even daylight, photorealistic, sharp.</span></div>
+  <div class="block"><span class="lbl">NEGATIVE for the masters</span><button class="copy" data-text="1">copy</button><span class="ptxt">cartoon, anime, illustration, CGI, doll, plastic skin, airbrushed, adult proportions, toddler proportions, short legs, oversized head, extra fingers, missing fingers, blurry, text, watermark, logo, sunglasses, hat</span></div>
+  <p class="why">Generate 4 of each. The Grandma test: would his grandmother recognize him instantly? Then check both eyes the same size, five fingers per hand, hair like his real hair, legs long, red backpack, yellow pencil visible, plain background. Save the winners as MASTER-FACE, MASTER-BODY, MASTER-EP1. Every Boone shot from now on attaches MASTER-FACE + the episode's costume sheet, and the scene prompt can just say "the boy from the reference images". Keep the masters as private as the real photos.</p>
+</div>
+
+<h2 class="sec"><span class="n">2</span>How to get each shot in Kling</h2>
+
+<div class="panel" style="border-color:var(--sun)">
+  <h3>⚡ FORMAT UPDATE — the season shoots selfie-vlog</h3>
+  <p>Episode 1 (The Mammoth and the Pencil) is fully built in its card below — recording script, first-frame + motion prompts, sync method per clip. The story source of truth stays in Obsidian → <b>07 Personal &amp; Family / Boone's Time Machine</b>. Whispered wide-angle selfie from Boone's outstretched arm, deliberately handheld and imperfect. That script's grammar is now the series style; the cinematic shots below are the backup format until each trip is converted.</p>
+  <ul>
+    <li><b>Boone shots (vertical):</b> start every prompt with <i>"Wide angle selfie shot from a child's outstretched arm"</i> + the BOONE token + the scene. End with <i>"natural handheld movement, slightly shaky, vertical format, cinematic"</i> — never "35mm film still".</li>
+    <li><b>World shots (horizontal):</b> framed as what Boone films — documentary, slightly motion-blurred, photorealistic. Letterboxed in the vertical edit is part of the look; keep the key action center-frame so a crop also works.</li>
+    <li><b>Series props that never change:</b> the small red backpack + the bright yellow pencil visible in the side pocket. Wardrobe changes per era; the backpack, pencil and face are how viewers know it's Boone.</li>
+    <li><b>Credit tiers for a ~22-prompt episode:</b> 3.0 Turbo + face reference ONLY for the ~8 Boone selfie shots; cheaper model for every horizontal world shot; pure-scenery establishing shots can be stills with a CapCut move. That turns a ~2,200-credit episode into roughly half.</li>
+    <li><b>Lo-fi is the budget's friend:</b> in this style, grain, shake and slight AI weirdness read as "real phone footage" — cull for face-likeness and era accuracy, not for polish.</li>
+  </ul>
+</div>
+
+<div class="panel">
+  <h3>Every episode uses the same 6-shot pattern</h3>
+  <ul>
+    <li><b>S1 — Arrival</b> (Boone hero shot): Boone steps out of the glowing portal into the era. Same visual signature every episode.</li>
+    <li><b>S2 — The world</b> (no Boone): wide establishing shot of the era and the invention site.</li>
+    <li><b>S3 — The mechanism</b> (no Boone): close-up of the invention actually working.</li>
+    <li><b>S4 — Boone's job</b> (Boone action): he helps make the invention happen.</li>
+    <li><b>S5 — The payoff</b> (Boone hero shot): his face lit by the wonder of it.</li>
+    <li><b>S6 — The stamp</b> (free!): screen-record the app's stamp ceremony at <b>cn.aybkk.net/boone</b> — finish the trip on your phone, record the STAMPED! overlay. Every video ends with it. Zero credits, instant branding.</li>
+  </ul>
+</div>
+
+<div class="panel">
+  <h3>🅰️ Boone shots — the two-slot rule, then two steps</h3>
+  <ol>
+    <li><b>Two slots, two jobs.</b> REFERENCE images (MASTER-FACE + costume sheet + real photo) tell Kling <i>who</i>. The START FRAME is literally frame 1 of the video — <i>where and how the shot begins</i>. Never put a master sheet in the start-frame slot: you get a boy on a white studio background, animated there.</li>
+    <li><b>Step 1 — AI Images.</b> Attach the masters as references → paste the shot's FIRST-FRAME prompt → 9:16 → generate 4 → cull (Grandma test, hands, era, no modern objects).</li>
+    <li>The first-frame prompt is a <b>freeze of the shot's first second</b>, not the action. The action lives in the motion prompt.</li>
+    <li><b>Step 2 — AI Video → Frames tab.</b> Upload the approved still as START FRAME, leave end frame empty → paste the MOTION prompt → check the price on the pill → generate.</li>
+    <li><b>Dialogue.</b> Whisper lines: lips barely move, real whisper over it. Sacred lines: Kling Lip Sync with Boone's real audio. Quote-and-mute only where a clip card offers it — and MUTE the clip.</li>
+    <li>Check the face stays stable; if it melts, simplify to one action. Save as <span style="font-family:var(--mono)">t01-P7b.mp4</span> style names.</li>
+  </ol>
+</div>
+
+<div class="panel">
+  <h3>🅱️ Boone action shots (S4) — same recipe, one shortcut</h3>
+  <p>Same steps as 🅰️, but a <b>cheaper model is fine</b> — the face is smaller in frame. If Boone is seen from behind or far away, you can even skip the face reference and just describe the outfit; the orange shirt + backpack carries the identity.</p>
+</div>
+
+<div class="panel">
+  <h3>🅲 World shots (S2, S3) — the cheap ones</h3>
+  <ol>
+    <li>AI Images, <b>no reference</b> → paste IMAGE prompt → 9:16 → generate → pick the best.</li>
+    <li>AI Video → Frames tab → upload the still → paste MOTION prompt → switch the <b>model picker</b> (top right) to an older, cheaper model — scenery doesn't need 3.0 Turbo. For very simple motion (steam drifting, gears turning) direct Text-to-Video also works — but still-first wastes fewer credits, because you approve the look before paying for motion.</li>
+  </ol>
+</div>
+
+<div class="panel">
+  <h3>📱 Video 3.0 Turbo — three things to know</h3>
+  <ul>
+    <li><b>Quotation marks make characters SPEAK.</b> Any quoted line in the prompt becomes AI-voiced dialogue (that's what the placeholder text means). Never quote lines — record real Boone instead. Describe sound without quotes: <i>ambient sound: cold wind, distant hammering</i>.</li>
+    <li><b>Free sound bed.</b> 3.0 clips come with ambient audio — keep it playing low under the narration in CapCut and you may not need library sound effects at all.</li>
+    <li><b>Save the building blocks as presets.</b> Prompt box → <b>My Presets → Create</b>: make three presets named BOONE, STYLE and NEG with the blocks from section 1. New prompts become two taps instead of copy-paste.</li>
+  </ul>
+</div>
+
+<div class="panel">
+  <h3>🎙 The voice plan — real dialogue, no fake-voice trap</h3>
+  <p>Narration alone can feel flat. Dialogue is what makes it feel alive — but <b>Boone's mouth only ever speaks Boone's real voice.</b> An AI kid-voice on his AI face is what would actually make it feel cheap: wrong voice, different every clip, and a family channel's whole magic is that it's really him. Three layers instead:</p>
+  <ul>
+    <li><b>Layer 1 — the spine (every video):</b> your narration + Boone's real hook and STAMPED! lines. Already in every script.</li>
+    <li><b>Layer 2 — reaction dubs (every video):</b> 2–3 short shouted lines by real Boone, laid over action shots where his face is small, turned, or mid-motion — no lip-sync needed, the ear forgives everything when a kid is yelling "IT'S FLYING!". Each episode card below now has a 🎤 recording sheet with the exact lines. Record them in the same Sunday session as a game: say it normal, say it SUPER excited, say it whispering — keep the funniest take.</li>
+    <li><b>Layer 3 — the wow moment (one per video):</b> <b>Kling Lip Sync</b> on the S5 close-up. Generate the S5 clip first → open Lip Sync on it → upload Boone's recorded line (keep it under ~4 seconds) → the mouth syncs to his real voice. Works best when the face is front-facing and big in frame — which is exactly what S5 is. Costs extra credits, so exactly one per video.</li>
+    <li><b>Side characters — the one place AI voice is allowed:</b> Amun, Tilly, Gutenberg and friends aren't real people, so one short AI-spoken line each adds cinema for free. This is the single exception to the no-quotes rule: add the quoted line to that shot's motion prompt (each recording sheet says which shot). Maximum one per video — it's a spice, not the dish.</li>
+    <li><b>Sync methods (as labelled on the Episode 1 clips):</b> A = talk/pause motion + real whisper over it · B = quote-and-mute (quote the exact line so the mouth forms the right words, then MUTE the clip and lay Boone&rsquo;s take over) · C = Kling Lip Sync with Boone&rsquo;s recorded audio · D = voice-over a cutaway, no mouth on screen.</li>
+    <li><b>Mixing rule:</b> narration pauses for dialogue — never talk over Boone's lines. A half-second of silence before "IT'S FLYING!" is what makes it land.</li>
+  </ul>
+</div>
+
+<div class="panel">
+  <h3>💰 Credit strategy (make the credits last all season)</h3>
+  <ul>
+    <li>Animate only <b>5 clips per episode</b>, always <b>5 seconds</b> — never 10s, the edit only uses ~4s per shot anyway.</li>
+    <li>On Video 3.0 Turbo at 1080p / 5s / 2 outputs, one Generate costs <b>100 credits</b> — but gives <b>two takes</b>. Spend that on the face shots (S1, S5) where you want a choice of takes; tap the settings pill and drop to 1 output where your plan prices it cheaper.</li>
+    <li>Use <b>3.0 Turbo only for Boone shots</b>. Switch the model picker to an older model for S2/S3 world shots — same prompt, fraction of the price.</li>
+    <li>Season math at full price: 5 shots × 100 = ~500 credits per episode, ~6,000 for the season — so the cheap-model and 1-output levers matter. If credits run low: S2 can be a still image with a slow CapCut zoom — zero video credits, still cinematic.</li>
+    <li>Generation fails or looks wrong twice in a row? Stop, simplify the prompt (remove one clause), try once more. Don't brute-force — that's the credit killer.</li>
+  </ul>
+</div>
+
+<h2 class="sec"><span class="n">3</span>The weekly rhythm — twice a week for six weeks</h2>
+
+<div class="panel">
+  <h3>One week = two videos, about 3 hours total</h3>
+  <ul>
+    <li><b>Sunday (90 min, batch day):</b> generate ALL shots for this week's two episodes — stills first for both, cull, then animate the winners. Record both narrations with Boone while he's fresh: he says the 🎤 lines (the hook and the STAMPED! shout), you read the rest. Phone mic, quiet room, blanket fort = free sound booth.</li>
+    <li><b>Monday (40 min):</b> edit video 1 in CapCut. <b>Wednesday:</b> it posts.</li>
+    <li><b>Thursday (40 min):</b> edit video 2. <b>Saturday:</b> it posts.</li>
+    <li>Record VO <i>before</i> editing and cut clips to the voice — never the other way around.</li>
+  </ul>
+</div>
+
+<div class="panel">
+  <h3>📅 Season One calendar — Week 1 starts the week Episode 1 is ready (posts Wed + Sat)</h3>
+  <div class="tablewrap"><table class="cal">
+    <tr><th>Week</th><th>Wednesday</th><th>Saturday</th></tr>
+    <tr><td>1</td><td><b>W1 Wed</b> · 🦣 Ep 1 The Mammoth and the Pencil</td><td><b>W1 Sat</b> · 🐫 Trip 2 Egypt</td></tr>
+    <tr><td>2</td><td><b>W2 Wed</b> · 🐼 Trip 3 China</td><td><b>W2 Sat</b> · 🏛️ Trip 4 Rome</td></tr>
+    <tr><td>3</td><td><b>W3 Wed</b> · 🏰 Trip 5 Windmill</td><td><b>W3 Sat</b> · 📖 Trip 6 Press</td></tr>
+    <tr><td>4</td><td><b>W4 Wed</b> · 🚂 Trip 7 Steam</td><td><b>W4 Sat</b> · 💡 Trip 8 Light</td></tr>
+    <tr><td>5</td><td><b>W5 Wed</b> · 🛩️ Trip 9 Flight</td><td><b>W5 Sat</b> · 🧪 Trip 10 Medicine</td></tr>
+    <tr><td>6</td><td><b>W6 Wed</b> · 🚀 Trip 11 Moon</td><td><b>W6 Sat</b> · 📱 Trip 12 Finale</td></tr>
+  </table></div>
+</div>
+
+<h2 class="sec"><span class="n">4</span>Edit &amp; upload checklists</h2>
+
+<div class="panel">
+  <h3>✂️ CapCut edit order (same every time)</h3>
+  <ol>
+    <li>New project 9:16 → drop the narration audio FIRST.</li>
+    <li>Lay clips over the voice: S1 under the hook, S2–S4 under the story, S5 under the takeaway, S6 (stamp recording) last 3 seconds.</li>
+    <li>Captions: use the caption lines from each shot below — bold white with black stroke, bottom-center, <b>never more than 8 words on screen</b>.</li>
+    <li>Sound effects from CapCut's library: WHOOSH on the portal, CLANG / KA-CHUNK / rocket rumble where the script shouts them.</li>
+    <li>Music: quiet, playful, from the <b>YouTube Audio Library</b> only (copyright-safe forever). Voice loud, music low.</li>
+    <li>Export 1080×1920, highest quality.</li>
+  </ol>
+</div>
+
+<div class="panel">
+  <h3>⬆️ YouTube upload — every box, every time</h3>
+  <ul>
+    <li>Title format: <b>If a 6-Year-Old Built the Sphinx 🐫 | Boone's Time Machine · Trip 2</b></li>
+    <li><b>Made for Kids: YES.</b> Required (COPPA) — this also disables comments, which is why every video ends with a teaser, never "comment below".</li>
+    <li><b>Altered content / AI disclosure: YES.</b> Realistic AI scenes of a real person must be declared — it's one toggle and it protects the channel.</li>
+    <li>First frame = the hook caption over the portal shot (Shorts use the first frame as the cover).</li>
+    <li>Add every video to the <b>"Boone's Time Machine — Season 1"</b> playlist, in trip order.</li>
+    <li>Description: one line of story + "Play the trip yourself: cn.aybkk.net/boone" (once the PR is merged).</li>
+  </ul>
+</div>
+
+<h2 class="sec" id="episodes"><span class="n">5</span>The 12 episodes — scripts, prompts, captions</h2>
+<p style="color:var(--dim);margin-bottom:.4rem">Each script is ~110–130 words ≈ 50–58 seconds at storytelling pace. 🎤 marks Boone's two lines — the hook and the STAMPED! shout; you read the rest. Every IMAGE prompt is fully assembled (Boone token + scene + style) — just copy, paste, generate.</p>
+
+<div id="epRoot"></div>
+
+<footer>Boone's Time Machine Studio · Season 1 · progress saves on this device</footer>
+</div>
+
+<script>
+var BOONE = "a happy 6-year-old Thai boy (use attached face reference), slim and tall for his age with natural child proportions, wavy dark brown hair, wearing era-appropriate clothes and his small red backpack with a bright yellow pencil sticking out of the side pocket";
+var STYLE_A = "ultra-realistic cinematic film still, shot on 35mm lens, photorealistic skin and fabric texture, shallow depth of field, dramatic natural light, rich color grade, vertical 9:16 composition";
+var STYLE_B = "cinematic storybook realism, slightly stylized like a modern live-action family film, warm rich color grade, soft natural light, fine painterly detail, vertical 9:16 composition";
+var NEG = "cartoon, anime, illustration, painting, CGI look, plastic skin, deformed face, distorted hands, extra fingers, modern buildings, cars, phones, text, logo, watermark";
+
+var EPS = [
+{
+ "id": "t01",
+ "n": 1,
+ "emoji": "🦣",
+ "a": "#6FC7E3",
+ "deep": "#1D6E8C",
+ "title": "The Mammoth and the Pencil",
+ "when": "20,000 years ago",
+ "where": "The Great Ice",
+ "badge": "Mammoth Friend",
+ "post": "PILOT · shooting now",
+ "prod": {
+  "workflow": "Two slots, two jobs. REFERENCE images (MASTER-FACE + MASTER-EP1 + real photo) tell Kling WHO — attach them in AI Images. The START FRAME (Frames tab) is frame 1 of the video — it must be the scene still you generated in step 1, never a master sheet, or you get a boy on a white studio background. First-frame prompts are a FREEZE of the shot's first second; the action lives in the motion prompt.",
+  "lines": [
+   {
+    "cue": "normal voice, excited",
+    "t": "Okay. Today I'm going to see a mammoth. Backpack — check. Scarf — check. Pencil — check! THREE... TWO... ONE—"
+   },
+   {
+    "cue": "gasp, then whisper",
+    "t": "Whoa... It's SO cold. Like the freezer — but bigger."
+   },
+   {
+    "cue": "whisper",
+    "t": "Shh. What's that sound?"
+   },
+   {
+    "cue": "barely a breath",
+    "t": "...Mammoths."
+   },
+   {
+    "cue": "whisper, deciding who's who",
+    "t": "That's the mommy. And THAT'S the baby."
+   },
+   {
+    "cue": "whisper, longing",
+    "t": "I want to touch him."
+   },
+   {
+    "cue": "whisper to himself, frozen still",
+    "t": "Don't move. Don't move. Don't move."
+   },
+   {
+    "cue": "no words",
+    "t": "— a giggle when the baby sneezes —"
+   },
+   {
+    "cue": "whisper, confused",
+    "t": "...Me?"
+   },
+   {
+    "cue": "whisper, scared then brave",
+    "t": "Should I go in? ...I'm going in."
+   },
+   {
+    "cue": "whisper",
+    "t": "Ohh, it's warm. It smells like smoke."
+   },
+   {
+    "cue": "whisper, puzzled",
+    "t": "Where do they sleep? ...On the floor?"
+   },
+   {
+    "cue": "very soft, to the girl",
+    "t": "...Hi."
+   },
+   {
+    "cue": "whisper, misreading her",
+    "t": "Why is she looking at my backpack? ...You want a snack? I don't have snacks."
+   },
+   {
+    "cue": "whisper",
+    "t": "What is she doing?"
+   },
+   {
+    "cue": "whisper",
+    "t": "Is that a... bone? Why is she poking it in the fur?"
+   },
+   {
+    "cue": "whisper, realizing",
+    "t": "Ohh. It's a needle. My mom has a needle. But hers is not a bone."
+   },
+   {
+    "cue": "whisper, wrong guess",
+    "t": "Is she making a blanket? ...For a dog?"
+   },
+   {
+    "cue": "whisper, confused",
+    "t": "Wait — why is she measuring me?"
+   },
+   {
+    "cue": "gasp, two seconds of silence, then whisper, amazed",
+    "t": "It's a COAT. She made me a coat."
+   },
+   {
+    "cue": "whisper, feeling it",
+    "t": "It's so warm. It's SO warm."
+   },
+   {
+    "cue": "soft wonder",
+    "t": "She just... MADE it. With a bone."
+   },
+   {
+    "cue": "quiet",
+    "t": "...Thank you."
+   },
+   {
+    "cue": "whisper, finally getting it",
+    "t": "...Oh. Not a snack. THIS."
+   },
+   {
+    "cue": "whisper",
+    "t": "You can touch it. It's for school."
+   },
+   {
+    "cue": "whisper, amazed",
+    "t": "You don't have SCHOOL?"
+   },
+   {
+    "cue": "alarmed",
+    "t": "Uh oh. Storm. I have to go home."
+   },
+   {
+    "cue": "calling back, warm",
+    "t": "Thank you for the coat! Bye!"
+   }
+  ],
+  "wild": "Also record: 5 seconds of cold breathing, one big gasp, one shivering brrrr, one giggle, 10 seconds of room silence. For lines 13 and 20 (the Lip Sync lines) record a STAGE WHISPER — close to the mic, louder than a real whisper — plus a normal-voice backup take.",
+  "captions": [
+   "Scene 2, over the gasp: If Boone, who is 6, happened to be in the Ice Age…",
+   "Scene 3, first mammoth shot: 20,000 years ago",
+   "Scene 5, needle close-up: A needle. Made of bone.",
+   "Scene 5, Boone in the coat: Bone needles: how the Ice Age stayed warm.",
+   "End card, 3 seconds, wind only: People have been drawing ever since."
+  ],
+  "clips": [
+   {
+    "id": "P1",
+    "title": "Countdown",
+    "kind": "selfie",
+    "covers": "line 1",
+    "len": "10s",
+    "method": "B · quote-and-mute",
+    "frame": "Wide angle selfie shot from a child's outstretched arm, vertical 9:16. The boy from the reference images, in his yellow snow jacket, rainbow scarf and red backpack with the yellow pencil visible over his shoulder, stands in a cozy child's bedroom, warm lamp light, bed and toys softly blurred behind him. He looks straight into the lens, excited, mouth closed, about to speak, one hand gripping his backpack strap. Slight wide-angle distortion, natural handheld framing, photorealistic.",
+    "motion": "The boy talks excitedly to the camera with full natural mouth movement, taps his backpack strap, touches his scarf, tugs the yellow pencil up from the side pocket and pushes it back, then holds up three fingers, two, one, and grins. Handheld shake only, warm bedroom light.",
+    "quote": "The boy talks excitedly to the camera, taps his backpack strap, touches his scarf, tugs the yellow pencil up and pushes it back, then counts down on his fingers and grins. Handheld shake only, warm bedroom light. The boy says, \"Backpack — check. Scarf — check. Pencil — check! Three... two... one!\"",
+    "note": "The only normal-voice line, so the mouth can move fully. The fingers anchor the count — eyes follow fingers, not lips."
+   },
+   {
+    "id": "P2",
+    "title": "Lands in the tundra",
+    "kind": "selfie",
+    "covers": "line 2 (line 3 can play over P3)",
+    "len": "5s",
+    "method": "A",
+    "frame": "Wide angle selfie shot from a child's outstretched arm, vertical 9:16. The boy from the reference images stands in a vast frozen Ice Age tundra, endless snow, overcast sky with pale gold light. He looks straight into the lens with shocked wide eyes, mouth slightly open, breath misting in the freezing air, shoulders hunched against the cold. Wide-angle selfie distortion, photorealistic.",
+    "motion": "The boy's face is hit by cold: he gasps with his mouth open and silent, shivers, breath misting, then whispers one short sentence to the camera with lips barely moving, then puts a finger to his lips and goes still, listening. Snow drifting, handheld shake only."
+   },
+   {
+    "id": "P3",
+    "title": "Tundra establishing",
+    "kind": "world",
+    "model": "still",
+    "covers": "line 3 as voice-over",
+    "len": "still",
+    "method": "D",
+    "frame": "Vast Ice Age tundra landscape. Endless snow-covered plains, soft overcast sky with a break of pale gold light, sparse frost-dusted trees, frozen ground. No people visible. Cinematic wide horizontal shot, photorealistic, cold blue tones with warm light on the horizon, prehistoric atmosphere.",
+    "note": "Still only — slow push-in in CapCut. Zero video credits."
+   },
+   {
+    "id": "P3b",
+    "title": "Arctic ground squirrel (1s easter egg)",
+    "kind": "world",
+    "covers": "—",
+    "len": "5s (use 1s)",
+    "method": "—",
+    "frame": "Low ground-level shot in deep snow, a small arctic ground squirrel poking its head out of a burrow hole, snow crystals sparkling. Photorealistic, cinematic, wide horizontal format.",
+    "motion": "The squirrel darts across the frame kicking up powder and disappears into the burrow. Nothing else moves."
+   },
+   {
+    "id": "P4",
+    "title": "Mammoth family walking",
+    "kind": "world",
+    "covers": "lines 4–5 as voice-over",
+    "len": "5s",
+    "method": "D",
+    "frame": "A woolly mammoth family mid-stride on snowy Ice Age tundra in soft golden light: a huge mother with long curved tusks, a second adult, and a small fluffy calf close to its mother's legs. Shaggy brown fur, breath steaming. Gentle, majestic. Photorealistic, cinematic, wide horizontal format, low angle.",
+    "motion": "The herd walks slowly left to right, fur blowing in the wind, breath steaming, the calf staying close to its mother's legs. Peaceful, steady."
+   },
+   {
+    "id": "P4b",
+    "title": "Baby mammoth sneeze",
+    "kind": "world",
+    "covers": "the giggle",
+    "len": "5s",
+    "method": "D",
+    "frame": "Close-to-medium shot of a fluffy woolly mammoth calf lowering its small trunk to touch the snow, its mother's giant legs beside it. Soft golden light, snow sparkling. Adorable, photorealistic, cinematic, wide horizontal format.",
+    "motion": "The calf sneezes a puff of snow powder, shakes its head, blinks, then looks up toward its mother."
+   },
+   {
+    "id": "P5",
+    "title": "Behind the rock",
+    "kind": "selfie",
+    "covers": "lines 6–7",
+    "len": "5s",
+    "method": "A",
+    "frame": "Wide angle selfie shot from a child's outstretched arm, vertical 9:16. The boy from the reference images crouches behind a snow-covered boulder on a low ridge, peeking over it, eyes enormous with wonder, one finger raised to his lips, mouth closed. Far behind him a woolly mammoth family walks across the white plain. Photorealistic.",
+    "motion": "The boy peeks over the boulder toward the distance with a longing smile and whispers one short sentence to the camera, lips barely moving. Then his eyes go wide and he freezes completely, whispering through his teeth without moving his lips, holding perfectly still. Handheld shake only."
+   },
+   {
+    "id": "P6",
+    "title": "Cave kids waving",
+    "kind": "world",
+    "covers": "lines 9–10 as voice-over",
+    "len": "5s",
+    "method": "D",
+    "frame": "Two prehistoric Ice Age children in warm fur clothing at the mouth of a cave on a snowy hillside, mid-wave, smiling, warm firelight glowing from inside the cave behind them. Late afternoon light, light snow. Friendly, photorealistic, cinematic, wide horizontal format.",
+    "motion": "The two children wave and beckon warmly, one bouncing on her toes, snow falling lightly, firelight flickering behind them."
+   },
+   {
+    "id": "P7a",
+    "title": "Into the cave",
+    "kind": "selfie",
+    "covers": "line 11",
+    "len": "5s",
+    "method": "A",
+    "frame": "Wide angle selfie shot from a child's outstretched arm, vertical 9:16. The boy from the reference images stands just inside a warm prehistoric cave, flickering orange firelight on rough stone walls, animal furs on the floor blurred behind him. He looks into the lens with a cautious, curious face, mouth closed, cheeks pink from the warmth. Photorealistic.",
+    "motion": "The boy steps in cautiously, exhales with relief as the warmth hits him, sniffs the air twice, and whispers a short sentence to the camera with lips barely moving, cheeks pink in the firelight. Handheld shake only."
+   },
+   {
+    "id": "P7b",
+    "title": "“...Hi.”",
+    "kind": "selfie",
+    "covers": "line 13",
+    "len": "5s",
+    "method": "C · Lip Sync",
+    "frameNote": "Start frame: reuse the approved P7 still.",
+    "motion": "The boy looks off to the side, notices someone small, his face softens into a shy smile, and he whispers one tiny word, then goes quiet and keeps looking at her. Handheld, almost still.",
+    "note": "After generating, open the clip in Kling Lip Sync and upload Boone's real stage-whisper take of the line."
+   },
+   {
+    "id": "P8",
+    "title": "The family",
+    "kind": "world",
+    "covers": "line 12 as voice-over",
+    "len": "5s",
+    "method": "D",
+    "frame": "Wide horizontal cinematic shot inside an Ice Age cave lit by a central fire. A prehistoric Ice Age human extended family sits together — two mothers holding babies, an elderly man wrapped in fur near the fire, two older children playing with small stones, a toddler girl around 2 years old pressed against her mother's side. Animal furs on the floor, rough stone walls, flickering orange firelight. Warm, calm, photorealistic. This is home.",
+    "motion": "Fire flickering, a baby shifts in a mother's arms, the elderly man nods slowly, the toddler girl leans into her mother. Calm, nothing sudden."
+   },
+   {
+    "id": "P9",
+    "title": "Toddler notices the pencil (CRITICAL)",
+    "kind": "world",
+    "covers": "line 14 as voice-over — the audience sees the pencil, Boone doesn't",
+    "len": "5s",
+    "method": "D",
+    "frame": "Close-to-medium shot inside an Ice Age cave. A prehistoric Ice Age human toddler girl around 2 years old in small fur clothing stares with intense curiosity at something off-screen, warm orange firelight on her face. Quiet, intimate, cinematic, wide horizontal format, photorealistic.",
+    "motion": "Her eyes move slowly, then lock onto a bright yellow pencil sticking out of a small red backpack at the edge of frame, and hold there, unblinking, firelight moving on her face."
+   },
+   {
+    "id": "P10",
+    "title": "Bone needle",
+    "kind": "world",
+    "covers": "lines 15–18 as voice-over",
+    "len": "5s",
+    "method": "D",
+    "frame": "Close-up of an elderly prehistoric Ice Age woman's weathered hands holding a small carved bone needle with a tiny eye hole against thick brown fur, sinew thread, warm firelight inside a cave. The shape of the garment is not clear. Shallow focus, intimate, photorealistic, cinematic, wide horizontal format.",
+    "motion": "The hands push the bone needle through the fur, pull the sinew thread through the tiny eye, and stitch slowly and steadily. The garment's shape stays unclear."
+   },
+   {
+    "id": "P11",
+    "title": "Grandma measures the coat",
+    "kind": "world",
+    "covers": "line 19 (line 23 plays as he looks at her)",
+    "len": "5s",
+    "method": "D",
+    "frame": "Medium shot inside a firelit Ice Age cave. A kind elderly prehistoric woman in furs holds a newly sewn shaggy fur garment up against the shoulders of a small Thai boy in a bright yellow snow jacket and rainbow scarf. The boy looks up at her, confused. Warm orange firelight, gentle, photorealistic, cinematic, wide horizontal format.",
+    "motion": "The old woman turns the fur, wraps it around the boy and pulls the hood over his head. The boy's expression goes from confusion to astonishment."
+   },
+   {
+    "id": "P12a",
+    "title": "The reveal — “It's a COAT.”",
+    "kind": "selfie",
+    "covers": "line 20",
+    "len": "5s",
+    "method": "C · Lip Sync",
+    "frame": "Wide angle selfie shot from a child's outstretched arm, vertical 9:16. The boy from the reference images, now wearing a shaggy brown fur coat with the hood just pulled up over his head, over his yellow jacket, sits by a cave fire. He looks into the lens startled, eyes wide, mouth open in a silent gasp. Warm firelight, photorealistic.",
+    "motion": "The boy gasps, mouth open, eyes wide, completely silent for two full seconds, then whispers one short amazed sentence to the camera with lips barely moving. Firelight on his face, handheld, almost still.",
+    "note": "Hold his silent face two full seconds in the edit before the line — the gasp is the reveal, the line only confirms it. Then Lip Sync with his real take."
+   },
+   {
+    "id": "P12b",
+    "title": "The snuggle",
+    "kind": "selfie",
+    "covers": "lines 21–22",
+    "len": "5s",
+    "method": "A",
+    "frameNote": "Start frame: reuse the approved P12 still.",
+    "motion": "The boy snuggles his chin into the fur collar, grinning, rubs his cheek on it, whispers two short happy sentences to the camera with lips barely moving, then looks down at the fur sleeve in wonder. Handheld shake only."
+   },
+   {
+    "id": "P13",
+    "title": "Fire circle — “Not a snack. THIS.”",
+    "kind": "world",
+    "covers": "lines 24–26",
+    "len": "10s",
+    "method": "B or C",
+    "frame": "Close-to-medium shot by an Ice Age cave fire. A small Thai boy in a shaggy fur coat over a yellow jacket sits cross-legged holding a bright yellow pencil loosely in his hand, a prehistoric toddler girl around 2 years old in fur clothing pressed against his furry sleeve, staring at the pencil. Warm firelight, intimate, photorealistic, cinematic, wide horizontal format.",
+    "motion": "The boy glances at the girl beside him, looks down at the pencil in his hand, and realization crosses his face. He holds the pencil out toward her and whispers a few soft words. Her small finger touches the tip. He whispers two more short sentences, then his eyebrows shoot up in amazement and he laughs silently. Warm firelight.",
+    "quote": "The boy glances at the girl, looks down at the pencil, realization crosses his face, he holds the pencil out toward her and she touches the tip. Warm firelight. The boy whispers, \"Oh. Not a snack. This. You can touch it. It's for school. You don't have school?\""
+   },
+   {
+    "id": "P14",
+    "title": "The storm",
+    "kind": "selfie",
+    "covers": "lines 27–28",
+    "len": "5s",
+    "method": "A",
+    "frame": "Wide angle selfie shot from a child's outstretched arm, vertical 9:16. The boy from the reference images, in the fur coat with hood up, stands at the mouth of the cave, snowy tundra behind him beginning to blur with wind-blown snow, his rainbow scarf just starting to lift sideways. He looks into the lens with a calm face, about to glance upward. Photorealistic.",
+    "motion": "Wind hits: the boy's scarf whips sideways and snow flies behind him. He looks up, alarmed, and says three quick short words. Then he turns to look back into the cave, calls out warmly with a big smile and waves goodbye, then reaches for his backpack strap. Handheld shake, wind.",
+    "note": "Experiment: set the END FRAME to the P15 still (empty floor + pencil). Kling may interpolate the vanish for free."
+   },
+   {
+    "id": "P15",
+    "title": "Empty hold (CRITICAL)",
+    "kind": "world",
+    "covers": "silence",
+    "len": "5s (use 2s)",
+    "method": "—",
+    "frame": "Static wide horizontal shot of the stone floor just inside an Ice Age cave entrance, firelight from the side, a snowstorm blowing past the opening. The space where someone just stood is empty except for a single bright yellow pencil lying on the ground. Cinematic, photorealistic, quiet.",
+    "motion": "Nothing moves except snow blowing past the cave mouth and firelight flickering on the stone floor and the yellow pencil."
+   },
+   {
+    "id": "P16",
+    "title": "She finds the pencil",
+    "kind": "world",
+    "covers": "silence",
+    "len": "5s",
+    "method": "—",
+    "frame": "Inside an Ice Age cave entrance during a howling blizzard outside. The same toddler girl, around 2 years old in small animal fur clothing, stands looking down at a bright yellow pencil lying on the cave floor a step away. Flickering firelight. Wide horizontal format, photorealistic, cinematic.",
+    "motion": "The girl walks deliberately to the pencil, crouches, picks it up with quiet recognition, not surprise, and turns it over in her small hands."
+   },
+   {
+    "id": "P17",
+    "title": "First mark on the wall",
+    "kind": "world",
+    "covers": "silence",
+    "len": "5s",
+    "method": "—",
+    "frame": "Close shot. A toddler girl's small hand holding a yellow pencil, its tip touching a rough stone cave wall, no marks yet. Warm firelight flickering, blizzard sound outside. Cinematic, photorealistic, intimate, horizontal format.",
+    "motion": "The pencil presses and a single scratched line appears, then another. The child stares at what she made with enormous curious eyes."
+   },
+   {
+    "id": "P18",
+    "title": "Mother smiles",
+    "kind": "world",
+    "covers": "silence",
+    "len": "5s",
+    "method": "—",
+    "frame": "Medium shot inside a firelit Ice Age cave. A prehistoric Ice Age mother in furs stands beside a toddler girl holding a yellow pencil, both facing two small scratched lines on the stone wall. Warm, quiet, tender. Photorealistic, cinematic, wide horizontal format.",
+    "motion": "The mother looks at the two lines on the wall, then slowly smiles. Firelight flickers. Nothing else moves."
+   }
+  ]
+ }
+},
+{ id:"t02", n:2, emoji:"🐫", a:"#E8A33D", deep:"#8C5A14",
+  title:"The Sphinx Wakes Up", when:"4,500 years ago", where:"Giza, Egypt", badge:"Sphinx Helper", post:"W1 · Sat",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was in Egypt four and a half THOUSAND years ago…"},
+    {tag:"CONTEXT · 3–12s", t:"…he'd hear CLANG, CLANG, CLANG. Hundreds of workers carving one giant rock into a lion with a king's face. The Sphinx."},
+    {tag:"ORDEAL · 12–42s", t:"No cranes. No bulldozers. Just copper chisels — tap, tap, tap. And Boone gets a JOB: pouring water on the sand. Why? Wet sand is slippery, so stones as heavy as elephants SLIDE along on wooden sleds. Scientists tested this trick — it really works. At lunch, every builder gets fresh bread from the king's kitchen."},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: the hugest things on Earth aren't made by magic. They're made by many small hands — and very clever tricks."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Sphinx Helper!"},
+    {tag:"TEASER · 55–60s", t:"Next trip: China — where one book weighed as much as a DOG."}
+  ],
+  dlg:{ re:["That rock is HUGE!","Look — it's SLIDING!","Best job ever!"],
+    lip:{shot:"S5", line:"One rock?! The WHOLE lion?!"},
+    side:{who:"Amun the builder boy", shot:"S4", line:"Water makes heavy things easy!"} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"4,500 years ago 🐫",
+      scene:"stepping out of a glowing blue-and-gold ring of light onto hot desert sand, a colossal half-carved Sphinx and scaffolding in the background, blazing sun",
+      motion:"heat shimmer rising, the boy shields his eyes and looks up in awe, slow push-in"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"context", cap:"one rock. big as a hill.",
+      scene:"sweeping high wide shot of hundreds of ancient Egyptian workers on wooden scaffolding carving a colossal limestone lion statue, Giza plateau, pyramids rising behind, dust in golden light",
+      motion:"slow aerial drift across the site, dust hanging in the air, tiny figures hammering"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"no cranes. no bulldozers.",
+      scene:"close-up of sun-tanned hands striking a copper chisel with a wooden mallet against pale limestone, small stone chips flying, harsh desert sunlight",
+      motion:"rhythmic hammering, chips and dust bursting with each strike"},
+    {s:"S4", type:"B", mode:"budget model · 5s", use:"ordeal", cap:"Boone's job: water on the sand",
+      scene:"pouring water from a clay jar onto the sand in front of a massive stone block on a wooden sled, rows of Egyptian workers hauling ropes behind it",
+      motion:"water splashing dark onto sand, the sled inching forward as workers heave, boy steps backward pouring"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"many small hands + clever tricks",
+      scene:"laughing and eating flatbread beside a young Egyptian boy at sunset, the towering carved paw of the Sphinx behind them glowing orange",
+      motion:"warm sunset light, both boys laughing, slow pull-back revealing the giant paw's scale"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Sphinx Helper 🐫"}
+  ]},
+{ id:"t03", n:3, emoji:"🐼", a:"#E4574F", deep:"#A02D26",
+  title:"The Paper Secret", when:"1,900 years ago", where:"Han China", badge:"Paper Master", post:"W2 · Wed",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was in China one thousand nine hundred years ago…"},
+    {tag:"CONTEXT · 3–12s", t:"…a book could squash his toes. THUMP! Books were heavy bamboo sticks tied with string. One story weighed as much as a dog."},
+    {tag:"ORDEAL · 12–42s", t:"In the palace, a clever man named Cai Lun is tired of heavy books. Boone helps him mash tree bark, old rags, even fishing nets into grey mush. It looks like terrible porridge. Cai Lun dips in a flat screen, lifts it out, dries it in the sun — and peels off a thin white sheet. PAPER. The first paper! Boone writes his name with a brush. So light!"},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: when words became light, ideas could fly everywhere."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Paper Master!"},
+    {tag:"TEASER · 55–60s", t:"Next trip: Rome — where water walks fifty kilometres on a bridge."}
+  ],
+  dlg:{ re:["That book almost squashed me!","Ewww, terrible porridge!","It's so LIGHT!"],
+    lip:{shot:"S5", line:"I wrote my name on the first paper!"},
+    side:{who:"Cai Lun", shot:"S4", line:"Now ideas can fly."} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"1,900 years ago 🐼",
+      scene:"stepping out of a glowing blue-and-gold ring of light into a Han dynasty palace courtyard, red wooden pillars, silk banners, officials in flowing robes walking past",
+      motion:"silk banners swaying, the boy bows politely to a passing official, gentle push-in"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"context", cap:"books weighed like a DOG",
+      scene:"a young boy in Han dynasty robes struggling to carry a tall stack of heavy bamboo-slat scrolls tied with cords, the top bundle slipping and crashing to the stone floor",
+      motion:"the stack wobbles and the top bundle drops with a puff of dust, the boy winces"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"bark + rags + water",
+      scene:"close-up of a wooden tub full of grey fibrous pulp, hands kneading mashed tree bark and cloth rags in cloudy water, a sunny ancient Chinese workshop",
+      motion:"hands squishing and folding the pulp, ripples spreading, fibres swirling"},
+    {s:"S4", type:"B", mode:"budget model · 5s", use:"ordeal", cap:"terrible porridge → PAPER",
+      scene:"standing beside an elderly Chinese court official in Han robes who lifts a flat bamboo screen out of a pulp vat, a thin wet white sheet forming on it, sunny courtyard",
+      motion:"the screen rises dripping, water streaming off, the wet sheet glistening in sunlight"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"now ideas can FLY",
+      scene:"holding a dry white sheet of paper up to the sunlight with wonder, an ink brush and ink stone on the wooden table beside him, Han dynasty courtyard",
+      motion:"the paper glows translucent in the sun, the boy slowly turns it, soft lens flare"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Paper Master 🐼"}
+  ]},
+{ id:"t04", n:4, emoji:"🏛️", a:"#C56B4A", deep:"#8A3B22",
+  title:"The Water Road", when:"2,000 years ago", where:"Rome", badge:"Water Engineer", post:"W2 · Sat",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was in Ancient Rome…"},
+    {tag:"CONTEXT · 3–12s", t:"…he'd hear fountains everywhere. Cold, clean water in the middle of a giant city. But… where does it come from?"},
+    {tag:"ORDEAL · 12–42s", t:"An engineer named Marcus points to the mountains — fifty kilometres away. The water walks here on a bridge. An aqueduct! No pumps. No motors. The whole water road tilts down a titchy bit, so water runs to Rome all by itself. Then Marcus shows Boone the secret recipe: concrete with VOLCANO ash inside. It goes hard even under water. Strongest mud in the world."},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: the Romans moved rivers with a gentle slope and volcano mud. No engines. Just brains."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Water Engineer!"},
+    {tag:"TEASER · 55–60s", t:"Next trip: a castle — where the sky makes breakfast."}
+  ],
+  dlg:{ re:["Fountains EVERYWHERE!","Volcano mud?!","Sooo cold! I love it!"],
+    lip:{shot:"S5", line:"The water walked here all by itself!"},
+    side:{who:"Marcus the engineer", shot:"S4", line:"No pumps. Just a tiny slope."} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"2,000 years ago 🏛️",
+      scene:"stepping out of a glowing blue-and-gold ring of light into a busy ancient Roman forum street, marble columns, market stalls, citizens in togas, morning light",
+      motion:"crowd bustling past, the boy spins around taking it all in, slow push-in"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"context", cap:"water walks 50 km on a bridge",
+      scene:"majestic ancient Roman aqueduct with two tiers of tall stone arches crossing a green river valley, water channel glinting along the top, golden afternoon light",
+      motion:"slow aerial glide alongside the arches, birds crossing, light shifting on stone"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"secret recipe: VOLCANO ash",
+      scene:"close-up of Roman workers' hands mixing thick grey mortar in a wooden trough while dark volcanic ash pours in from a cloth sack, stone blocks waiting behind",
+      motion:"ash streaming into the mix, a wooden paddle folding the heavy mortar over"},
+    {s:"S4", type:"B", mode:"budget model · 5s", use:"ordeal", cap:"no pumps. just a tiny slope.",
+      scene:"stirring a trough of wet grey concrete with a wooden paddle next to a Roman engineer in a work tunic who points toward a distant aqueduct on the horizon",
+      motion:"paddle stirring, the engineer pointing and explaining, dust drifting in sunbeams"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"still standing TODAY",
+      scene:"splashing his hands in a gushing marble public fountain alongside two Roman children, water sparkling, golden hour light on ancient stone buildings",
+      motion:"water spray catching the light in slow motion, kids laughing and splashing"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Water Engineer 🏛️"}
+  ]},
+{ id:"t05", n:5, emoji:"🏰", a:"#7BA05B", deep:"#48622F",
+  title:"The Wind Catcher", when:"800 years ago", where:"A castle town", badge:"Wind Catcher", post:"W3 · Wed",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was in a castle town eight hundred years ago…"},
+    {tag:"CONTEXT · 3–12s", t:"…the coolest thing would NOT be the castle. On the hill, a wooden giant with four huge arms is spinning. WHOOM. WHOOM."},
+    {tag:"ORDEAL · 12–42s", t:"That's the windmill — it catches the wind! says Tilly, the miller's daughter. Inside, wooden wheels with teeth turn each other — clunk, clunk, clunk — all the way down to two giant stones. Tilly pours in wheat. Wind turns the sails, sails turn the wheels, wheels turn the stones — and out pours soft white FLOUR. Before the mill, people rubbed grain by hand all day long."},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: people borrowed power from nature — wind did the heavy work long before engines existed."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Wind Catcher!"},
+    {tag:"TEASER · 55–60s", t:"Next trip: Germany — where one book took a whole YEAR to make. Until…"}
+  ],
+  dlg:{ re:["Whoa — it's spinning!","Duck!","It's snowing FLOUR!"],
+    lip:{shot:"S5", line:"The SKY made my breakfast!"},
+    side:{who:"Tilly the miller's daughter", shot:"S4", line:"It catches the wind!"} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"800 years ago 🏰",
+      scene:"stepping out of a glowing blue-and-gold ring of light onto a green hillside, a medieval stone castle with banners behind, a wooden windmill spinning on the hill nearby",
+      motion:"windmill sails sweeping past, banners fluttering, the boy ducks playfully as a sail whooshes by"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"context", cap:"a giant that eats WIND",
+      scene:"a wooden post windmill with four canvas sails turning against fast-moving clouds, ripe wheat fields all around, medieval countryside",
+      motion:"sails rotating steadily, cloud shadows traveling across the wheat, stalks swaying"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"sails → wheels → stones",
+      scene:"inside the windmill: massive wooden gear wheels with carved teeth meshing together, oak beams, flour dust floating in shafts of light",
+      motion:"gears turning slowly and steadily, dust motes glittering in the light shafts"},
+    {s:"S4", type:"B", mode:"budget model · 5s", use:"ordeal", cap:"out pours FLOUR",
+      scene:"pouring wheat grain from a cloth sack into the wooden hopper above two huge round millstones, beside a medieval girl in an apron, both dusted with flour, warm interior light",
+      motion:"grain streaming down, flour dust drifting up, both kids grinning"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"the sky makes breakfast",
+      scene:"with flour-dusted cheeks, biting into warm fresh bread outside a stone bakery, the castle and spinning windmill behind him, late afternoon light",
+      motion:"steam rising off the bread, the boy grins with delight, gentle push-in"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Wind Catcher 🏰"}
+  ]},
+{ id:"t06", n:6, emoji:"📖", a:"#8A6FC7", deep:"#55418A",
+  title:"The Letter Machine", when:"575 years ago", where:"Mainz, Germany", badge:"Book Maker", post:"W3 · Sat",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was in Germany when the printing press was born…"},
+    {tag:"CONTEXT · 3–12s", t:"…he'd meet a monk copying a book by hand. Letter… by… letter. One book takes him a YEAR."},
+    {tag:"ORDEAL · 12–42s", t:"Down the street, Gutenberg shows Boone a box of tiny metal letters — a whole alphabet you can line up into any words you like. They lock the letters in a frame, roll on sticky black ink, lay paper on top, and pull the handle of a giant wooden squeezer. KA-CHUNK! A whole page, printed in one squeeze. They print it again. And again. Fifty pages before dinner!"},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: when books got fast and cheap, everyone could read — and the whole world sped up."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Book Maker!"},
+    {tag:"TEASER · 55–60s", t:"Next trip: England — a kettle strong enough to shove a house."}
+  ],
+  dlg:{ re:["A whole YEAR?!","Squelch, squelch!","Again! Print it again!"],
+    lip:{shot:"S5", line:"Fifty pages before dinner!"},
+    side:{who:"Gutenberg", shot:"S4", line:"Books will not be only for kings."} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"575 years ago 📖",
+      scene:"stepping out of a glowing blue-and-gold ring of light onto a cobbled medieval German street at dusk, half-timbered houses, warm candle-lit windows",
+      motion:"candlelight flickering in windows, the boy peeks curiously through a workshop window"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"context", cap:"one book = one YEAR",
+      scene:"a candle-lit medieval scriptorium, an elderly monk in robes hand-copying an enormous manuscript with a quill, shelves of huge chained books behind him",
+      motion:"the quill scratching slowly across parchment, candle flame swaying, the monk sighs"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"an alphabet made of METAL",
+      scene:"extreme close-up of ink-stained fingertips slotting rows of tiny metal letter blocks into a wooden frame, a 15th century print workshop bench",
+      motion:"letters clicking into place one by one, fingers moving deftly, shallow focus"},
+    {s:"S4", type:"B", mode:"budget model · 5s", use:"ordeal", cap:"KA-CHUNK! one squeeze = one page",
+      scene:"pulling the long wooden handle of a huge medieval printing press beside an older bearded printer in a leather apron, stacks of paper around the candle-lit workshop",
+      motion:"the press bar swings across, the platen presses down firmly, both lean into the pull"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"books for EVERYONE",
+      scene:"holding up a freshly printed page with glistening black ink, rows of printed pages hanging on lines to dry behind him like laundry, warm workshop light",
+      motion:"the page trembling slightly in his hands, hanging pages swaying gently, slow orbit"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Book Maker 📖"}
+  ]},
+{ id:"t07", n:7, emoji:"🚂", a:"#6B7B8C", deep:"#3D4C5C",
+  title:"The Iron Horse", when:"200 years ago", where:"England", badge:"Steam Rider", post:"W4 · Wed",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was in England two hundred years ago…"},
+    {tag:"CONTEXT · 3–12s", t:"…everyone travelled by horse. Clip-clop. Slow. But today, a crowd waits beside two iron rails for a brand-new machine called the Rocket."},
+    {tag:"ORDEAL · 12–42s", t:"CHUFF! CHUFF! CHUFF! Here it comes, puffing white steam. The driver shows Boone the secret: fire heats water, water becomes steam, and steam PUSHES the wheels — like a kettle strong enough to shove a house. Careful! warns an old man. Humans aren't built to go thirty miles an hour! Boone climbs on anyway. WHOOSH — fields fly past. His face stays on."},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: boiling water pushed trains, ships and factories — and shrank the whole world."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Steam Rider!"},
+    {tag:"TEASER · 55–60s", t:"Next trip: the night the dark ended."}
+  ],
+  dlg:{ re:["Here it COMES!","Faster! FASTER!","Woo-hoo-hoooo!"],
+    lip:{shot:"S5", line:"My face stayed on!"},
+    side:{who:"the worried old man", shot:"S1", line:"Your face might blow off, lad!"} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"200 years ago 🚂",
+      scene:"stepping out of a glowing blue-and-gold ring of light beside iron railway tracks in green English countryside, a crowd in 1820s top hats and bonnets waiting excitedly",
+      motion:"the crowd murmuring and pointing down the track, the boy steps up on a rail to see"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"context", cap:"faster than any horse ALIVE",
+      scene:"an early 1829 steam locomotive with a tall black chimney and brass boiler puffing thick white steam, charging along the rails toward camera through green fields",
+      motion:"the locomotive approaching, steam billowing, connecting rods pounding rhythmically"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"fire + water = PUSH",
+      scene:"close-up of an open locomotive firebox glowing orange, a driver in period clothes shoveling coal into the flames, brass gauges and pipes gleaming",
+      motion:"flames roaring as coal lands, steam hissing from a valve, gauge needle climbing"},
+    {s:"S4", type:"B", mode:"budget model · 5s", use:"ordeal", cap:"'your face might blow off!'",
+      scene:"standing on the open footplate of a steam locomotive, held safely by a friendly driver, hair and clothes whipping in the wind, countryside streaking past",
+      motion:"background streaking with speed, hair whipping, the boy laughing into the wind"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"his face stayed on 😎",
+      scene:"close-up of his amazed laughing face lit by flickering daylight, blurred green fields and cows rushing past behind him",
+      motion:"light strobing gently as scenery flies past, the boy laughs and shouts with joy"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Steam Rider 🚂"}
+  ]},
+{ id:"t08", n:8, emoji:"💡", a:"#FFC53D", deep:"#8C6A14",
+  title:"The Night the Dark Ended", when:"150 years ago", where:"Menlo Park, USA", badge:"Light Keeper", post:"W4 · Sat",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was in Thomas Edison's laboratory…"},
+    {tag:"CONTEXT · 3–12s", t:"…the world at night was DARK. Candles dripped. Gas lamps caught fire. In one busy workshop, a team is trying to trap light inside glass."},
+    {tag:"ORDEAL · 12–42s", t:"We need a tiny thread that glows when electricity runs through it, says Edison — without burning up. They've tried THOUSANDS: metal, cotton, even a hair from a man's beard. Boone hands them a sliver of baked bamboo. Wires on. Everyone leans in… it glows orange… then GOLDEN… and keeps glowing, hour after hour. We didn't fail a thousand times, Edison laughs. We found a thousand ways that don't work — then one that does."},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: keep-trying is the real invention hiding behind every light."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Light Keeper!"},
+    {tag:"TEASER · 55–60s", t:"Next trip: twelve seconds that changed the sky."}
+  ],
+  dlg:{ re:["THOUSANDS of tries?!","It's glowing…","Don't blink!"],
+    lip:{shot:"S5", line:"It worked! It's still glowing!"},
+    side:{who:"Edison", shot:"S4", line:"We found the one way that works."} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"150 years ago 💡",
+      scene:"stepping out of a glowing blue-and-gold ring of light into a cluttered 1879 inventor's laboratory at night, gas lamps, glass tubes, coils of copper wire on every bench",
+      motion:"lamp shadows flickering, the boy tiptoes wide-eyed between crowded workbenches"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"context", cap:"thousands of tries. all FAILED.",
+      scene:"a workbench covered in failed experiments: charred thread filaments, broken glass bulbs, labeled scraps of cotton and metal, an open notebook full of crossed-out entries, candlelight",
+      motion:"candlelight playing over the failures, a notebook page lifting in a draft"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"today's try: baked BAMBOO",
+      scene:"macro close-up of steady hands using tweezers to place a thin blackened bamboo filament inside a hand-blown glass bulb, warm lamplight reflecting off the glass",
+      motion:"tweezers moving with extreme care, the filament trembling, glass gleaming"},
+    {s:"S4", type:"B", mode:"budget model · 5s", use:"ordeal", cap:"it glows… and KEEPS glowing",
+      scene:"leaning in beside a mustached inventor in a waistcoat, both faces close to a glass bulb as its filament begins to glow warm orange in the dark laboratory",
+      motion:"the glow slowly brightening, both faces lighting up, breath held perfectly still"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"'a thousand ways that don't work'",
+      scene:"close-up of his wonder-struck face bathed in warm golden light, the glowing bulb filament reflected as a bright spark in his wide eyes, dark lab behind",
+      motion:"the glow intensifying softly, slow push-in toward the reflection in his eyes"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Light Keeper 💡"}
+  ]},
+{ id:"t09", n:9, emoji:"🛩️", a:"#5FA8D3", deep:"#2A6A94",
+  title:"12 Seconds in the Sky", when:"1903", where:"Kitty Hawk, USA", badge:"Sky Pioneer", post:"W5 · Wed",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was on a windy beach in 1903…"},
+    {tag:"CONTEXT · 3–12s", t:"…he'd see two bicycle-shop brothers with a machine of wood, wire and cloth. Like a giant kite with a bed on it. Everyone thinks they're silly."},
+    {tag:"ORDEAL · 12–42s", t:"The brothers flip a coin. Orville wins. He lies flat on the wing. The little engine buzzes like a thousand bees. The machine rolls down a wooden rail… and lifts OFF THE GROUND. It wobbles. It floats. It lands softly in the sand. Twelve seconds. Shorter than brushing your teeth. One man takes a photo — now the most famous photo in flying history."},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: gigantic dreams start embarrassingly small. Twelve wobbly seconds changed the sky forever."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Sky Pioneer!"},
+    {tag:"TEASER · 55–60s", t:"Next trip: the fuzzy mold that saved millions."}
+  ],
+  dlg:{ re:["It's a giant kite!","GO! GO! GO!","IT'S FLYING!"],
+    lip:{shot:"S5", line:"Twelve seconds — it really FLEW!"},
+    side:{who:"the fisherman", shot:"S2", line:"Humans? Flying? Ha!"} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"1903 🛩️",
+      scene:"stepping out of a glowing blue-and-gold ring of light onto windy grey sand dunes, a wooden shed and an early biplane glider in the background, overcast coastal sky",
+      motion:"wind whipping sand and his clothes, the boy holds onto his backpack straps and squints"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"context", cap:"a kite with a bed on it",
+      scene:"a 1903 wooden biplane with cloth wings sitting on a long wooden launch rail on a sandy beach, two men in flat caps and jackets making final adjustments, seagulls overhead",
+      motion:"fabric wings trembling in the wind, the men tightening wires, gulls wheeling"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"heads… or tails?",
+      scene:"close-up of a silver coin spinning in mid-air against a grey coastal sky, two weathered hands below waiting to catch it",
+      motion:"coin spinning in slow motion, caught and slapped onto the back of a hand"},
+    {s:"S4", type:"B", mode:"budget model · 5s", use:"ordeal", cap:"OFF. THE. GROUND.",
+      scene:"in the foreground jumping with both arms up cheering, while behind him an early biplane lifts a few feet off the sand with a man lying prone on the wing and another man running alongside",
+      motion:"the plane skimming forward just above the sand, dust kicking, the boy leaping and cheering"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"12 seconds changed the sky",
+      scene:"running along the wet beach at low golden sun with his arms stretched wide like wings, a trail of small footprints behind him",
+      motion:"tracking shot alongside the running boy, arms wide, wind in his hair, spray glinting"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Sky Pioneer 🛩️"}
+  ]},
+{ id:"t10", n:10, emoji:"🧪", a:"#58B893", deep:"#2A7257",
+  title:"The Fuzzy Mold Miracle", when:"1928", where:"A messy London lab", badge:"Medicine Hero", post:"W5 · Sat",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was in a messy London laboratory in 1928…"},
+    {tag:"CONTEXT · 3–12s", t:"…Dr Fleming is just back from holiday, and his lab is a MESS. Dirty dishes everywhere — little dishes where he grows germs to study them."},
+    {tag:"ORDEAL · 12–42s", t:"Wait. On one dish, fuzzy blue-green MOLD is growing — like on old bread. And all around it, the germs are GONE. The mold fights germs! Fleming names its juice penicillin. For years, almost nobody listens. Then, in a time of a big war, many hurt people are getting sick — so helpers grow the mold in giant tanks. Rivers of medicine. And the best mold of all came from an old melon in a market!"},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: even a moldy accident can save millions — if someone is curious enough to look twice."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Medicine Hero!"},
+    {tag:"TEASER · 55–60s", t:"Next trip: footprints that never blow away."}
+  ],
+  dlg:{ re:["Yuck! What a MESS!","The germs are GONE!","From a MELON?!"],
+    lip:{shot:"S5", line:"MOLD saved millions of people!"},
+    side:{who:"Dr Fleming", shot:"S3", line:"Always look twice."} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"1928 🧪",
+      scene:"stepping out of a glowing blue-and-gold ring of light into a cramped 1920s London laboratory, wooden benches crowded with brass microscopes and stacks of round glass dishes",
+      motion:"dust motes drifting in window light, the boy wrinkles his nose at the messy benches"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"context", cap:"the messiest lab in London",
+      scene:"macro shot of a glass petri dish holding a fuzzy blue-green mold colony surrounded by a perfectly clear ring, pale germ colonies dotted beyond the ring, soft window light",
+      motion:"extremely slow push-in on the clear ring around the mold, light shifting across the glass"},
+    {s:"S3", type:"A", mode:"3.0 Turbo · 5s", use:"ordeal", cap:"mold vs germs: mold WINS",
+      scene:"leaning over a laboratory bench beside a kind older scientist with round glasses, bow tie and white coat, both peering at a petri dish through a magnifying glass",
+      motion:"the magnifying glass lowering over the dish, both leaning closer, eyes widening"},
+    {s:"S4", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"rivers of medicine",
+      scene:"a vast 1940s factory hall with long rows of giant gleaming steel fermentation tanks, workers in white caps and coats checking pipes and valves, warm industrial light",
+      motion:"steady dolly down the row of tanks, wisps of steam rising, workers moving between them"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"millions and millions saved",
+      scene:"waving happily in a sunny 1940s hospital garden as smiling nurses in vintage uniforms walk with a recovering young man in a robe, flower beds, gentle morning light",
+      motion:"a gentle breeze in the garden, warm sun flare, everyone smiling and waving back"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Medicine Hero 🧪"}
+  ]},
+{ id:"t11", n:11, emoji:"🚀", a:"#9FA8DA", deep:"#4A5490",
+  title:"Footprints on the Moon", when:"1969", where:"Earth → the Moon", badge:"Moon Walker", post:"W6 · Wed",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was watching the day people flew to the Moon…"},
+    {tag:"CONTEXT · 3–12s", t:"…the rocket would be TALLER than a thirty-floor building. Three astronauts climb into a tiny room at the very top."},
+    {tag:"ORDEAL · 12–42s", t:"TEN… NINE… the ground SHAKES… THREE, TWO, ONE — fire like a volcano! Three days through black space. Earth shrinks to a beautiful blue marble. The ship's computer is weaker than a toy calculator — but four hundred thousand helpers on Earth did the maths. The lander touches the grey dust. The hatch opens. And a boot presses down into the Moon."},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: there's no wind on the Moon — so those footprints are STILL there, tonight. Four hundred thousand people. One giant footprint."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Moon Walker!"},
+    {tag:"TEASER · 55–60s", t:"Last trip: the whole world in a pocket."}
+  ],
+  dlg:{ re:["Taller than a BUILDING!","Ten! Nine! Eight!","The ground is SHAKING!"],
+    lip:{shot:"S5", line:"The footprints are still up there!"},
+    side:{who:"mission control radio", shot:"S4", line:"The Eagle has landed."} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"1969 🚀",
+      scene:"stepping out of a glowing blue-and-gold ring of light at night beside a colossal floodlit Saturn V rocket on its launch pad, gantry tower, searchlights sweeping the sky",
+      motion:"searchlights sweeping, vapor venting off the rocket, the boy cranes his neck up and up"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"3… 2… 1…",
+      scene:"a Saturn V rocket lifting off at night: engines igniting in blinding fire, huge steam clouds bursting sideways, the rocket rising slowly on a column of flame that turns night to day",
+      motion:"violent ignition, majestic slow rise, camera shaking slightly with the roar"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"Earth: one blue marble",
+      scene:"planet Earth seen as a small brilliant blue marble through the round window of a spacecraft, black starfield all around, part of the window frame in shot",
+      motion:"slow weightless drift, stars in gentle parallax, Earth glowing softly"},
+    {s:"S4", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"400,000 helpers. one rocket.",
+      scene:"a lunar landing module standing on grey moon dust, an astronaut in a white spacesuit carefully climbing down its ladder, pitch black sky, tiny blue Earth hanging above",
+      motion:"the astronaut stepping down carefully, moon dust puffing softly at each footstep"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"the footprints are STILL there",
+      scene:"standing in a garden at night pointing up at a huge bright full Moon, wonder on his upturned face, stars everywhere",
+      motion:"camera tilting from the boy's face up to the Moon, stars twinkling gently"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Moon Walker 🚀"}
+  ]},
+{ id:"t12", n:12, emoji:"📱", a:"#F08BAE", deep:"#A03A60",
+  title:"The Whole World in a Pocket", when:"Right about now", where:"Everywhere at once", badge:"Future Inventor", post:"W6 · Sat",
+  script:[
+    {tag:"HOOK · 0–3s", boone:true, t:"If Boone, who is six, was there when computers learned to talk to each other…"},
+    {tag:"CONTEXT · 3–12s", t:"…he'd find them lonely at first. Each computer alone in its own room, knowing only its own things."},
+    {tag:"ORDEAL · 12–42s", t:"Then scientists taught them to send messages. A man named Tim built a way for ALL of them to share pages — the World Wide Web. Ask a question here, get an answer from the other side of the Earth in one second. Then someone squeezed a computer, a camera, a map and a library into one glass rectangle that sleeps in a pocket. Now a kid holds more knowledge than ancient kings."},
+    {tag:"TAKEAWAY · 42–55s", t:"So Boone would learn: every invention started with a kid asking WHY. The needle. The paper. The rocket. The next one… is yours."},
+    {tag:"STAMP", boone:true, t:"STAMPED: Future Inventor — TIME MASTER, all twelve stamps!"},
+    {tag:"TEASER · 55–60s", t:"Season One complete — watch every trip from the very beginning in the playlist."}
+  ],
+  dlg:{ re:["The computers are TALKING!","Grandma! Can you see me?","All before breakfast!"],
+    lip:{shot:"S5", line:"The next invention… is MINE."} },
+  shots:[
+    {s:"S1", type:"A", mode:"3.0 Turbo · 5s", use:"hook", cap:"right about now 📱",
+      scene:"stepping out of a glowing blue-and-gold ring of light into a 1980s computer room: beige terminals with green text, blinking server cabinets, spinning tape reels, fluorescent light",
+      motion:"cursor blinking, tape reels spinning, the boy pokes one key and jumps at the beep"},
+    {s:"S2", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"computers were lonely once",
+      scene:"the Earth at night seen from space, city lights glowing, bright arcs of light pulsing between continents like a living network",
+      motion:"light pulses arcing across the dark globe, the network spreading and brightening"},
+    {s:"S3", type:"C", mode:"budget model · 5s", use:"ordeal", cap:"the whole world says hello",
+      scene:"close-up of a hand holding an early touchscreen smartphone in the dark, colorful app icons glowing, screen light reflecting on the fingers",
+      motion:"a thumb swiping slowly through glowing icons, screen light playing on skin"},
+    {s:"S4", type:"A", mode:"budget model · 5s", use:"ordeal", cap:"more knowledge than ancient KINGS",
+      scene:"laughing during a video call with a grandmother on a smartphone, cozy Thai living room in warm evening light, both waving at each other",
+      motion:"the boy waving at the screen, both laughing, soft warm bokeh in the background"},
+    {s:"S5", type:"A", mode:"3.0 Turbo · 5s", use:"takeaway", cap:"the next page is EMPTY",
+      scene:"at a desk in morning light, sketching a wild fantastic invention in a notebook with a pencil, his own taped-up drawings covering the wall behind him",
+      motion:"pencil scribbling fast, then the boy looks up straight into the camera and grins"},
+    {s:"S6", type:"D", mode:"free", use:"ending", cap:"STAMPED: Future Inventor 🌟 · TIME MASTER 🏆"}
+  ]}
+];
+
+function $(s){ return document.querySelector(s); }
+function loadJSON(k,f){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):f; }catch(e){ return f; } }
+function saveJSON(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+var progress = loadJSON("bts.progress", {});
+
+var styleMode = loadJSON("bts.style", "B");
+function curStyle(){ return styleMode === "A" ? STYLE_A : STYLE_B; }
+$("#blk-boone").textContent = BOONE;
+$("#blk-styleA").textContent = STYLE_A;
+$("#blk-styleB").textContent = STYLE_B;
+$("#blk-neg").textContent = NEG;
+
+function fullPrompt(ep, shot){
+  var scene = (shot.type === "C") ? shot.scene : BOONE + " " + shot.scene;
+  return scene + ", " + curStyle();
+}
+var TYPE_LABEL = { A:"🅰️ Boone hero · face ref ON", B:"🅱️ Boone action · face ref optional", C:"🅲 world shot · no reference", D:"📲 app capture · no Kling" };
+
+var nav = $("#tripnav");
+var root = $("#epRoot");
+EPS.forEach(function(ep){
+  var a = document.createElement("a");
+  a.href = "#" + ep.id; a.textContent = ep.emoji; a.title = ep.title;
+  nav.appendChild(a);
+});
+
+
+function renderProd(ep){
+  var p = ep.prod;
+  var stages = ["🎙 VO","🎬 Shots","✂️ Edit","⬆️ Posted"];
+  var st = progress[ep.id] || [0,0,0,0];
+  var progHTML = stages.map(function(sname,i){
+    return '<label class="'+(st[i]?'done':'')+'"><input type="checkbox" data-ep="'+ep.id+'" data-i="'+i+'"'+(st[i]?' checked':'')+'>'+sname+'</label>';
+  }).join("");
+  var linesHTML = p.lines.map(function(l,i){
+    return '<li><span class="cue">'+(i+1)+' · ('+l.cue+')</span><br><b>'+l.t+'</b></li>';
+  }).join("");
+  var capsHTML = p.captions.map(function(c){ return '<li>'+c+'</li>'; }).join("");
+  var clipsHTML = p.clips.map(function(c){
+    var selfie = c.kind === "selfie";
+    var typeBadge = selfie ? '<span class="badge type">SELFIE · 3.0 Turbo · masters attached</span>'
+      : (c.model === "still" ? '<span class="badge mode">WORLD · still only · CapCut push</span>' : '<span class="badge mode">WORLD · budget model · no reference</span>');
+    var x = '<div class="shot"><div class="shot-top"><span class="sid">'+c.id+' · '+c.title+'</span>'+typeBadge+
+      (c.covers ? '<span class="badge mode">covers: '+c.covers+'</span>' : '')+
+      (c.len ? '<span class="badge mode">'+c.len+'</span>' : '')+
+      (c.method && c.method !== "—" ? '<span class="badge mode">sync '+c.method+'</span>' : '')+'</div>';
+    if(c.frame) x += '<div class="block"><span class="lbl">step 1 · first frame · AI Images '+(selfie ? '9:16 · masters attached' : '16:9 · no reference')+'</span><button class="copy" data-text="1">copy</button><span class="ptxt">'+c.frame+'</span></div>';
+    if(c.frameNote) x += '<p class="note">'+c.frameNote+'</p>';
+    if(c.motion) x += '<div class="block"><span class="lbl">step 2 · motion · Frames tab · step-1 still as START FRAME</span><button class="copy" data-text="1">copy</button><span class="ptxt">'+c.motion+'</span></div>';
+    if(c.quote) x += '<div class="block"><span class="lbl">quote-and-mute · MUTE the clip, lay Boone&rsquo;s take over</span><button class="copy" data-text="1">copy</button><span class="ptxt">'+c.quote+'</span></div>';
+    if(c.note) x += '<p class="note">'+c.note+'</p>';
+    return x + '</div>';
+  }).join("");
+  var card = document.createElement("article");
+  card.className = "ep"; card.id = ep.id;
+  card.style.setProperty("--era", ep.a); card.style.setProperty("--era-deep", ep.deep);
+  card.innerHTML =
+    '<div class="ep-head"><div class="med">'+ep.emoji+'</div>'+
+    '<div class="t"><span class="chip">Episode '+ep.n+'</span><span class="chip">'+ep.when+'</span>'+
+    '<h3>'+ep.title+'</h3></div>'+
+    '<div class="postdate">status<br><b>'+ep.post+'</b></div></div>'+
+    '<div class="ep-body">'+
+    '<div class="prog">'+progHTML+'</div>'+
+    '<div class="legend"><b>Workflow.</b> '+p.workflow+'</div>'+
+    '<h4 class="shots-h">🎤 Recording script — record this FIRST, then build the story reel</h4>'+
+    '<div class="rec"><ol>'+linesHTML+'</ol><p class="cue" style="margin-top:.7rem">'+p.wild+'</p></div>'+
+    '<h4 class="shots-h">🏷 Caption layer (the teacher — max 8 words, never during a Boone line)</h4>'+
+    '<div class="rec"><ul>'+capsHTML+'</ul></div>'+
+    '<h4 class="shots-h">🎬 '+p.clips.length+' clips — two steps each</h4>'+
+    '<div class="legend"><b>Sync methods:</b> A = talk/pause motion + real whisper over it · B = quote-and-mute · C = Kling Lip Sync with Boone&rsquo;s real audio · D = voice-over a cutaway, no mouth on screen.<br>Selfie clips on 3.0 Turbo (9). World clips on a cheaper model (12). P3 is a still.</div>'+
+    clipsHTML+'</div>';
+  return card;
+}
+function renderCards(){
+root.innerHTML = "";
+EPS.forEach(function(ep){
+  if(ep.prod){ root.appendChild(renderProd(ep)); return; }
+  var stages = ["🎙 VO","🎬 Shots","✂️ Edit","⬆️ Posted"];
+  var st = progress[ep.id] || [0,0,0,0];
+  var progHTML = stages.map(function(sname,i){
+    return '<label class="'+(st[i]?'done':'')+'"><input type="checkbox" data-ep="'+ep.id+'" data-i="'+i+'"'+(st[i]?' checked':'')+'>'+sname+'</label>';
+  }).join("");
+
+  var scriptHTML = ep.script.map(function(b){
+    return '<div class="beat'+(b.boone?' boone':'')+'"><span class="tag">'+b.tag+'</span><p>'+b.t+'</p></div>';
+  }).join("");
+  var words = ep.script.reduce(function(n,b){ return n + b.t.split(/\s+/).length; }, 0);
+
+  var d = ep.dlg || {};
+  var dlgHTML = '<div class="dlg"><div class="dlg-h">🎤 Boone&rsquo;s recording sheet (record with the narration)</div><ul>';
+  (d.re || []).forEach(function(line, i){
+    dlgHTML += '<li><span class="tagline">Reaction ' + (i+1) + ' · real Boone · dub over any action shot</span><b>&ldquo;' + line + '&rdquo;</b></li>';
+  });
+  if(d.lip) dlgHTML += '<li><span class="tagline">Wow moment · real Boone&rsquo;s voice · Kling Lip Sync on ' + d.lip.shot + '</span><b>&ldquo;' + d.lip.line + '&rdquo;</b></li>';
+  if(d.side) dlgHTML += '<li><span class="tagline">Side character · ' + d.side.who + ' · AI voice OK — put in ' + d.side.shot + ' motion prompt, in quotes</span><b>&ldquo;' + d.side.line + '&rdquo;</b></li>';
+  dlgHTML += '</ul></div>';
+
+  var shotsHTML = ep.shots.map(function(sh){
+    if(sh.type === "D"){
+      return '<div class="shot"><div class="shot-top"><span class="sid">'+sh.s+'</span>'+
+        '<span class="badge type">'+TYPE_LABEL.D+'</span><span class="badge mode">0 credits</span></div>'+
+        '<p class="note">Finish this trip in the app on your phone and screen-record the STAMPED! overlay (about 3 seconds). Crop to 9:16 in CapCut. This is the last shot of every video.</p>'+
+        '<p class="cap">Caption: <b>'+sh.cap+'</b></p></div>';
+    }
+    var p = fullPrompt(ep, sh);
+    return '<div class="shot"><div class="shot-top"><span class="sid">'+sh.s+'</span>'+
+      '<span class="badge type">'+TYPE_LABEL[sh.type]+'</span>'+
+      '<span class="badge mode">'+sh.mode+'</span>'+
+      '<span class="badge mode">use under: '+sh.use+'</span></div>'+
+      '<div class="block"><span class="lbl">image prompt</span><button class="copy" data-text="1">copy</button><span class="ptxt">'+p+'</span></div>'+
+      '<div class="block"><span class="lbl">motion prompt (image-to-video)</span><button class="copy" data-text="1">copy</button><span class="ptxt">'+sh.motion+'</span></div>'+
+      '<p class="cap">Caption: <b>'+sh.cap+'</b></p></div>';
+  }).join("");
+
+  var card = document.createElement("article");
+  card.className = "ep"; card.id = ep.id;
+  card.style.setProperty("--era", ep.a);
+  card.style.setProperty("--era-deep", ep.deep);
+  card.innerHTML =
+    '<div class="ep-head"><div class="med">'+ep.emoji+'</div>'+
+    '<div class="t"><span class="chip">Trip '+ep.n+'</span><span class="chip">'+ep.when+'</span>'+
+    '<h3>'+ep.title+'</h3></div>'+
+    '<div class="postdate">posts<br><b>'+ep.post+'</b></div></div>'+
+    '<div class="ep-body">'+
+    '<div class="prog">'+progHTML+'</div>'+
+    '<div class="script">'+scriptHTML+'<div class="wc">'+words+' words ≈ '+Math.round(words/2.2)+'s spoken · badge: '+ep.badge+'</div></div>'+
+    dlgHTML+
+    '<h4 class="shots-h">🎬 The 6 shots</h4>'+shotsHTML+'</div>';
+  root.appendChild(card);
+});
+}
+renderCards();
+
+var styleRadios = document.querySelectorAll("#stylepick input");
+for(var ri=0; ri<styleRadios.length; ri++){
+  styleRadios[ri].checked = (styleRadios[ri].value === styleMode);
+  styleRadios[ri].addEventListener("change", function(){
+    styleMode = this.value;
+    saveJSON("bts.style", styleMode);
+    renderCards();
+  });
+}
+
+document.addEventListener("click", function(ev){
+  var btn = ev.target.closest(".copy");
+  if(!btn) return;
+  var text = "";
+  if(btn.getAttribute("data-copy") === "boone") text = BOONE;
+  else if(btn.getAttribute("data-copy") === "styleA") text = STYLE_A;
+  else if(btn.getAttribute("data-copy") === "styleB") text = STYLE_B;
+  else if(btn.getAttribute("data-copy") === "neg") text = NEG;
+  else {
+    var span = btn.parentElement.querySelector(".ptxt");
+    text = span ? span.textContent : "";
+  }
+  copyText(text, btn);
+});
+function copyText(text, btn){
+  function done(){
+    btn.classList.add("ok"); btn.textContent = "copied ✓";
+    setTimeout(function(){ btn.classList.remove("ok"); btn.textContent = "copy"; }, 1400);
+  }
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done, function(){ legacyCopy(text, done); });
+    } else legacyCopy(text, done);
+  }catch(e){ legacyCopy(text, done); }
+}
+function legacyCopy(text, done){
+  try{
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta); done();
+  }catch(e){}
+}
+
+document.addEventListener("change", function(ev){
+  var cb = ev.target;
+  if(!cb.matches || !cb.matches(".prog input")) return;
+  var id = cb.getAttribute("data-ep"), i = parseInt(cb.getAttribute("data-i"),10);
+  var st = progress[id] || [0,0,0,0];
+  st[i] = cb.checked ? 1 : 0;
+  progress[id] = st;
+  saveJSON("bts.progress", progress);
+  cb.parentElement.classList.toggle("done", cb.checked);
+  updateCount();
+});
+function updateCount(){
+  var posted = EPS.reduce(function(n,ep){
+    var st = progress[ep.id]; return n + (st && st[3] ? 1 : 0);
+  }, 0);
+  $("#postedCount").textContent = posted + " / 12 posted";
+}
+updateCount();
+</script>

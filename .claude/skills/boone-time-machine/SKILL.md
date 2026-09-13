@@ -1,0 +1,56 @@
+---
+name: boone-time-machine
+description: The project brain for Boone's Time Machine — Boonchu's YouTube series where his 6-year-old son Boone vlogs from moments in history where inventions happened (whispered wide-angle selfie format, made with Kling AI video), plus the companion story app at /boone. Use whenever Boonchu mentions Boone, the time machine, an episode/trip, Kling, the Studio pack, Boone's YouTube channel, mammoths, or continuing the series. Read this first, then the Studio pack and the Obsidian note, before doing anything.
+---
+
+# Boone's Time Machine — project brain
+
+One project, three homes:
+
+| What | Where |
+|---|---|
+| **Story source of truth** (Episode 1 script v5, kid-safe) | Obsidian vault → `07 Personal & Family/Boone's Time Machine.md` (Google Drive connector, read only; updates go to chat as paste-ready text — ONE note per topic, never companion notes) |
+| **Studio pack** (recording script, 22 clips with first-frame + motion prompts, master-reference prompts, workflow, calendar, progress checkboxes) | Artifact: https://claude.ai/code/artifact/54ca8c8a-bee5-4bc9-a694-4b4bad37b07a — source in this folder: `studio.html` (Episode 1 data: `ep1.json`). Republish from any session by passing that `url` to the Artifact tool after `read`. |
+| **Companion app** (12 tap-through "If Boone, who is 6, happened to be in…" trips, quiz, passport stamps) | `public/boone.html`, served at `/boone` (PR #14, branch `claude/history-app-child-perspective-75kn5a`). Preview artifact: https://claude.ai/code/artifact/28c0c420-ba8a-4975-8d42-d5cb5d0b2f57 |
+| **Kling** | claude.ai connector `Kling` (MCP at https://kling.ai/mcp): text_to_image, image_to_image (references), image_to_video (start frame), elements (reusable character), motion_control, credits query. |
+
+## Locked creative decisions (do not reopen without Boonchu)
+
+- **Format:** whispered, wide-angle selfie vlog from Boone's outstretched arm; deliberately handheld, lo-fi, "more real". Boone shots vertical 9:16; world/cutaway shots horizontal 16:9 (letterboxed is the look). Storybook-real over strict photoreal (Style B in the pack).
+- **Boone is 6** everywhere (app, scripts, prompts). Wavy dark brown hair. **Permanent props: small red backpack + bright yellow pencil in the side pocket.** Wardrobe changes per era (Ep 1: yellow snow jacket, navy pants, brown boots, rainbow scarf).
+- **Kid-safe:** no hunts, weapons, killing, gore, bone-cracking. Danger is only weather. Mammoths stay alive and majestic.
+- **Voice:** Boone's mouth only ever speaks Boone's REAL recorded voice. No AI voice for Boone (ElevenLabs = emergency backup for one missed pickup line). AI voice allowed only for one short side-character line per episode. Record whisper takes line by line, Boone repeats after Dad; stage whisper for Lip Sync lines.
+- **Three layers:** PICTURE shows what happens · BOONE says only what the picture can't show (cold, smell, warmth, what he *thinks* is happening, what he wants — and he guesses wrong) · CAPTIONS teach the facts (max 8 words, never during a Boone line). Never narrate what's on screen. Discovery over explanation; no adult lesson lines.
+- **Pixar order:** record voice FIRST → story reel (voice + silences in CapCut, listen eyes closed) → picture cut to the voice.
+- **The pencil "spark" ending** (Boone leaves something behind that echoes a future invention) is sacred: use it 3–4 times a season, not every episode.
+- **Season plan ("merge"):** Ep 1 = the long pilot (~1:40, 22 clips). Eps 2–12 = same whispered-selfie grammar but 60–75 s, 8–10 prompts, one invention each, ending on the app's STAMPED! screen. Twice a week (Wed + Sat), Week 1 = the week Ep 1 is ready. The 12 inventions in order: bone needle (Ice Age) · Sphinx · paper (Han China) · Roman aqueducts/concrete · windmill · printing press · steam train · light bulb · first flight · penicillin (gentle WW framing) · Moon landing · internet/phone.
+
+## Kling production rules
+
+1. **Masters first (Step zero):** MASTER-FACE (1:1), MASTER-BODY (3:4), MASTER-EP1 costume sheet (3:4) — prompts in the pack. Real hero photo is ALWAYS attached as the identity anchor; masters are second references, never a replacement. Save masters in Kling as an Element (`Boone`, `Boone-EP1-coat`) and in a private Drive folder `Boone TM / Masters`, versioned, never overwritten mid-season. Keep all reference photos and masters private.
+2. **Two-slot rule:** reference images say WHO; the START FRAME is literally frame 1 of the video (WHERE/HOW the shot begins). Never put a master sheet in the start-frame slot.
+3. **Two steps per Boone shot:** (1) image with references from the FIRST-FRAME prompt — a freeze of the shot's first second, 9:16; (2) image_to_video from that still with the MOTION prompt (the action + how the mouth moves). Boone shots on Video 3.0 Turbo; world shots on a cheaper model; pure scenery as stills with a CapCut push.
+4. **Sync methods:** A = talk/pause motion + real whisper over it · B = quote-and-mute (quoted text makes 3.0 speak — mute the clip, lay Boone's take over; only where the pack marks it) · C = Kling Lip Sync with Boone's real audio (the 2–3 sacred lines per episode) · D = voice-over a cutaway. Otherwise NEVER put quotation marks in a 3.0 prompt.
+5. **Credits:** every job is charged. Never submit a generation without Boonchu's explicit go-ahead for that batch; confirm model/aspect/duration first. 5 s clips, 2 outputs only for face shots. Cull stills hard before animating: Grandma test, hands, era, no modern objects.
+6. **Upload:** YouTube Shorts (vertical, ≤ 3 min); Made for Kids ON; AI/altered-content disclosure ON; playlist "Boone's Time Machine — Season 1"; end with a teaser, never "comment below".
+
+## Status (update this section as things move)
+
+- 2026-09-13: Ep 1 "The Mammoth and the Pencil" script v5 locked (kid-safe + dialogue pass) in Obsidian; production card live in the Studio pack. Boonchu generated the first MASTER-EP1 costume sheet (backpack not visible → regenerate a ¾-back sheet). Next: MASTER-FACE → body sheet → Element → record Boone's 28 lines → story reel → 22 clips. Kling MCP connected in-session (Pro, 2,368 credits; Element "Boone" id 305096535506070 already exists as a video subject with voice). PR #14 (app) open as draft — merge so `main` carries the app, this skill and the CLAUDE.md pointer.
+- Eps 2–12: still the old cinematic drafts in the pack; convert to the selfie grammar after the pilot proves the format.
+
+## Kling MCP — how to drive it from a session (verified 2026-09-13, mcpVersion 1.3.2)
+
+- **Start every Kling session with `who_am_i`** (the spec is ~110 KB — jq the saved tool-result file, don't read it raw). Then `query_membership_and_credits`. Boonchu's account: Pro (SVIP); 2,368 credits on 2026-09-13.
+- **Every generation is charged.** Get Boonchu's explicit go-ahead per batch (model, aspect, duration, count named). Never trial jobs. Pass a `rationale` and a UUID-v7 `taskTraceId` (same id for one chained intent).
+- **Uploads:** `file_upload(filename, contentType, size)` → one-time ticket + upload_url → POST multipart with fields `ticket` and `file` → response contains the file URL → use as an input URL. PNG/JPG only, < 4K, ≤ 30 MB, aspect no wider than 1:2. Reuse returned URLs; URLs from prior Kling tasks can be passed straight back in.
+- **Step 1 — stills with references → `image_to_image`, model `kling-image-v3_0_omni`.** arguments: prompt, aspect_ratio 9:16 (Boone) or 16:9 (world), img_resolution 2k, imageCount 1–4. inputs: image_1 = real hero photo, image_2 = MASTER-FACE, image_3 = MASTER-EP1 costume sheet; refer to them in the prompt as 图片1 / 图片2 / 图片3 ("the boy from 图片1 and 图片2, wearing the outfit in 图片3, …"). Image-subject Elements bind here too via `elements` = JSON `[{"id":"…","bindName":"Boone"}]` + `<<<id>>>` in the prompt.
+- **Step 2 — start frame → motion → `image_to_video`.**
+  - `kling-video-v3_0_turbo`: inputs first_image (the approved still); arguments duration 5, resolution 1080p, imageCount 1. Cheapest Turbo. No elements, no audio.
+  - `kling-video-v3_0`: first_image + optional tail_image (the vanish trick), supports `elements` (identity lock in motion — bind the Boone Element with `<<<305096535506070>>>` in the prompt); SET resolution 1080p (default is 4k) and prefer_multi_shots false (default true); enable_audio false.
+  - `kling-video-v2_6` / `v2_5`: first_image + tail_image, 1080p, enable_audio — the budget model for the 12 world shots.
+  - `kling-video-v3_0_omni`: reference images image_1..7 + elements + aspect_ratio, for shots without a start frame.
+  - Poll `query_tasks` with the returned generation_id.
+- **The existing Element "Boone" (id 305096535506070)** is a VIDEO subject: cover image + a 24 fps video + a VOICE clip, tag Characters. Video subjects work ONLY on image_to_video with kling-video-v3_0 / v3_0_omni — NOT on image_to_image, kling-image-o1 or kling-video-o1. For stills, create a separate IMAGE subject via `element_create` (cover = MASTER-FACE, secondary = MASTER-BODY + MASTER-EP1 + real photo, tag Characters) and bind that. The voice resource means Kling could make Boone speak with a cloned voice — by decision we don't (real recordings only); it stays a documented option.
+- text_to_image / text_to_video accept NO subjects and no reference images — never pass `elements` there.
+- The server reported newer tools available after a reconnect: a fresh session should re-run `who_am_i` and check for lip-sync or new element tools.

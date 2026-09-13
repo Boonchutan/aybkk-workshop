@@ -77,6 +77,11 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.
 
+## Boone's Time Machine (personal project)
+
+Boonchu's YouTube series: his 6-year-old son Boone vlogs, whispering, from the moment an invention happened (Kling AI video, real Boone voice). Companion story app at `public/boone.html` → `/boone`.
+**Before touching anything Boone-related, load the `boone-time-machine` skill** — it holds the locked creative decisions, the Kling production rules, where the script (Obsidian) and Studio pack (artifact) live, and current status.
+
 ## Environment
 
 Never commit `.env`. Required vars are documented in `check-env.js`.
