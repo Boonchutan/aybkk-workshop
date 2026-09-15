@@ -110,6 +110,23 @@ Cards never go to main or to a feature branch.
    content as `<p>` paragraphs, `attachments` = the uploaded media. Draft first.
 4. Never post from this skill to the AYBKK or Boonchu personal channels.
 
+### Step 7b — REST fallback (Routine sessions run without connector tools)
+Needs the environment variable `POSTIZ_API_KEY` (claude.ai/code → the environment → variables).
+Unset? Skip Postiz and say so in the report. Same channel rule, same `draft` type.
+```
+curl -sS -H "Authorization: $POSTIZ_API_KEY" https://api.postiz.com/public/v1/integrations
+# → pick the id whose name contains "Talk of the Town" / "trend"
+curl -sS -H "Authorization: $POSTIZ_API_KEY" -F "file=@cards/<file>.png" https://api.postiz.com/public/v1/upload
+# → {"id": "...", "path": "https://uploads.postiz.com/..."}
+curl -sS -H "Authorization: $POSTIZ_API_KEY" -H "Content-Type: application/json" https://api.postiz.com/public/v1/posts -d '{
+  "type": "draft", "date": "<slot, ISO 8601 UTC>", "shortLink": false, "tags": [],
+  "posts": [{ "integration": { "id": "<channel id>" },
+              "value": [{ "content": "<p>…</p><p>…</p><p>…</p><p>…</p>", "image": [{ "id": "<upload id>", "path": "<upload path>" }] }],
+              "settings": { "__type": "<platform of the channel, e.g. instagram>" } }] }'
+```
+Shapes are from docs.postiz.com/public-api and are untested until the key exists. If the API rejects
+`draft`, stop and put the response in the report; never switch to `schedule` or `now` on your own.
+
 ## Step 8 — Log and report
 Append to `log.json`: `{date, geo, term, volume, angle, sources[], card, postizId}`.
 The next run reads it for the 14-day rule.
