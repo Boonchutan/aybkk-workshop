@@ -60,6 +60,13 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 
 **Do not use for:** existing student questions, general inquiries, or anything unrelated to the China program.
 
+### `/trend`
+**Purpose:** Talk of the Town — a separate account that posts 3 times a day about what the world is searching (Google Trends, ~70% global / ~30% Thailand), Edward Sturm style: what is trending, why, and the one thing most people don't know. Text + a rendered card.
+
+Use when running or tuning the daily trend batch. The skill holds the selection rubric, the voice, the fetcher (`scripts/trends-fetch.js`), the card renderer (`scripts/trend-card.js`), image hosting (branch `trend-cards`) and the Postiz steps. A Routine ("Talk of the Town — daily trend batch") runs it every morning; say "pause the trend routine" to stop it.
+
+**Do not use for:** anything posted to AYBKK or Boonchu's personal channels.
+
 ---
 
 ## Key Facts for Any Claude Instance
@@ -76,7 +83,7 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 - **Inline JS gate:** After every Write/Edit, `scripts/check-inline-js.js` runs automatically (PostToolUse hook). If it fails, fix the JS syntax before proceeding.
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.
-- **Mind Stash:** Boonchu's psychology study app — a spaced-repetition card deck (91 cards, 13 topics: decision-making, value, attention, memory, persuasion, storytelling structure, deadpan humor, manipulation-spotting), published as a Claude artifact: https://claude.ai/code/artifact/194e1b0e-ea87-4166-a08c-2491baa69a44. The complete written-out lessons live in his Obsidian vault as "Mind Stash — Full Lessons"; the app-usage guide is the vault note "Mind Stash - Psychology Study App". When Boonchu says "mind stash", he means this system.
+- **Mind Stash:** Boonchu's psychology study app — a spaced-repetition card deck (91 cards, 13 topics: decision-making, value, attention, memory, persuasion, storytelling structure, deadpan humor, manipulation-spotting), published as a Claude artifact: https://claude.ai/code/artifact/194e1b0e-ea87-4166-a08c-2491baa69a44. The complete written-out lessons live in his Obsidian vault as 13 subject notes ("Psychology - …", "Persuasion - …", "Storytelling - …", "Humour - …") in the Boonchu Framework folder; the app-usage guide is the vault note "Mind Stash - Psychology Study App". When Boonchu says "mind stash", he means this system.
 
 ## Environment
 
