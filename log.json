@@ -1,0 +1,96 @@
+[
+ {
+  "date": "2026-09-15",
+  "geo": "Global",
+  "term": "iPhone Duo",
+  "volume": "2,000,000+ searches this week",
+  "angle": "Apple's first foldable starts at $1,999. The screen inside it is not made by Apple.",
+  "sources": [
+   "https://abcnews.com/Business/apple-set-announce-new-products/story?id=136299541",
+   "https://variety.com/2026/digital/news/apple-iphone-duo-18-foldable-price-availability-1236855996/",
+   "https://www.macrumors.com/2026/09/11/apple-pay-250-dollars-iphone-duo-display-samsung/",
+   "https://9to5mac.com/2026/09/11/leaker-says-apple-will-pay-250-per-iphone-duo-display-in-three-year-samsung-deal/"
+  ],
+  "card": "cards/2026-09-15-iphone-duo.png",
+  "postizId": null,
+  "status": "sample"
+ },
+ {
+  "date": "2026-09-15",
+  "geo": "Global",
+  "term": "FBI Ten Most Wanted",
+  "volume": "500+ searches today and rising",
+  "angle": "It began in 1950 because a reporter asked for the FBI's \"toughest guys\". The reward is now $1,000,000.",
+  "sources": [
+   "https://www.foxnews.com/politics/kash-patel-reveals-fbi-capture-all-10-members-most-wanted-fugitive-list-during-hearing",
+   "https://www.fbi.gov/news/stories/fbi-increases-ten-most-wanted-fugitives-reward",
+   "https://www.fbi.gov/news/press-releases/st-louis-fugitive-placed-on-fbis-ten-most-wanted-fugitives-list-rewards-for-ten-most-wanted-fugitives-increased-to-up-to-250000",
+   "https://www.state.gov/briefings-foreign-press-centers/fbi-top-ten-fugitives"
+  ],
+  "card": "cards/2026-09-15-fbi-ten-most-wanted.png",
+  "postizId": null,
+  "status": "sample"
+ },
+ {
+  "date": "2026-09-15",
+  "geo": "Global",
+  "term": "Clarity Act",
+  "volume": "Top-10 search in Thailand today",
+  "angle": "49 votes. It needed 60. The House had already passed it 294–134.",
+  "sources": [
+   "https://www.npr.org/2026/09/15/nx-s1-5968711/clarity-act-crypto-senate-vote",
+   "https://www.axios.com/2026/09/15/clarity-act-senate-no",
+   "https://www.coindesk.com/business/2026/09/15/live-updates-bitcoin-slides-from-nearly-usd80-000-as-senate-votes-on-clarity-act"
+  ],
+  "card": "cards/2026-09-15-clarity-act.png",
+  "postizId": null,
+  "status": "sample"
+ },
+ {
+  "date": "2026-09-15",
+  "geo": "Global",
+  "term": "Charlie Sheen & Emilio Estevez",
+  "volume": "500+ searches today",
+  "angle": "Charlie Sheen was born Carlos Estévez. Their father picked \"Sheen\" from a Catholic archbishop.",
+  "sources": [
+   "https://deadline.com/2026/09/young-guns-cast-reunion-photos-1237101198/",
+   "https://www.tvinsider.com/1288933/young-guns-cast-reunites-rare-photo-38-years-later/",
+   "https://en.wikipedia.org/wiki/Charlie_Sheen",
+   "https://en.wikipedia.org/wiki/Martin_Sheen"
+  ],
+  "card": "cards/2026-09-15-young-guns-reunion.png",
+  "postizId": null,
+  "status": "sample"
+ },
+ {
+  "date": "2026-09-15",
+  "geo": "Thailand",
+  "term": "ลิเวอร์พูล พบ สเปอร์ส",
+  "volume": "20,000+ searches today in Thailand",
+  "angle": "The cup is named after a Thai energy drink. Since 2017, now until 2029.",
+  "sources": [
+   "https://www.skysports.com/football/liverpool-vs-tottenham-hotspur/8876502199448594232",
+   "https://www.sportspro.com/news/sponsorship-marketing/efl-carabao-cup-sponsorship-history-march-2026/",
+   "https://www.nationthailand.com/business/corporate/40063989"
+  ],
+  "card": "cards/2026-09-15-liverpool-spurs-carabao.png",
+  "postizId": null,
+  "status": "sample"
+ },
+ {
+  "date": "2026-09-15",
+  "geo": "Thailand",
+  "term": "ทองคำ",
+  "volume": "20,000+ searches this week in Thailand",
+  "angle": "Thai gold is 96.5%, not 24K. One \"baht\" of gold weighs 15.244 g and costs about 67,000 baht.",
+  "sources": [
+   "https://www.thairath.co.th/news/society/2959855",
+   "https://www.infoquest.co.th/2026/648522",
+   "https://www.huasengheng.com/en/gold-investment/gold-bar96-5/",
+   "https://en.wikipedia.org/wiki/Thai_units_of_measurement"
+  ],
+  "card": "cards/2026-09-15-thai-gold.png",
+  "postizId": null,
+  "status": "sample"
+ }
+]
