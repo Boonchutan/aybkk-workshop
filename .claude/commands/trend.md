@@ -12,7 +12,7 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 | key | value |
 |---|---|
 | series label (card footer) | Talk of the Town |
-| Postiz channel | *not connected yet* — the new account's channel name in Postiz. Until it exists, deliver the batch in the report only. |
+| Postiz channel | the channel whose name contains "Talk of the Town" or "trend" (case-insensitive). *Not connected yet* — until it exists, deliver the batch in the report only. Never fall back to another channel. |
 | posts per day | 3 = 2 global + 1 Thailand (a 3rd global if the Thai pool has no angle that day) |
 | post times (Bangkok) | 08:00, 13:00, 19:00 = 01:00, 06:00, 12:00 UTC |
 | Postiz post type | `draft` until Boonchu says "go live", then `schedule` |
