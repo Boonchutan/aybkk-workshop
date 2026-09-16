@@ -159,5 +159,39 @@
    "What most people don't know: this one test is the gate to every civil service job in Thailand. Pass it once and the certificate never expires. You can use it decades later, whenever a post opens.",
    "Very simply put: for hundreds of thousands of Thais, a government career starts with a search for their own name."
   ]
+ },
+ {
+  "date": "2026-09-16",
+  "geo": "Global",
+  "term": "iPhone Duo",
+  "volume": "2,000,000+ searches this week",
+  "angle": "Apple's $1,999 foldable has a Samsung secret",
+  "carousel": "carousels/2026-09-16-iphone-duo/",
+  "facts": [
+   "It starts at $1,999. With 2TB, $3,199.",
+   "Open, it is one screen 80% bigger than the iPhone Pro's.",
+   "Open, it is the thinnest iPhone ever made.",
+   "The folding screen is not made by Apple.",
+   "Apple reportedly pays about $250 per screen.",
+   "LG and BOE tried. Neither could meet the spec.",
+   "Samsung stands to make 2.7 trillion won from it.",
+   "It was the first launch run by Apple's new CEO."
+  ],
+  "caption": [
+   "\"iPhone Duo\" — 2,000,000+ searches this week. The most searched product on Earth right now. Swipe for 10 things most people don't know.",
+   "Why: Apple showed its first folding iPhone on September 9. It opens like a book into one screen 80% bigger than the iPhone Pro's. $1,999 to start, $3,199 with 2TB. Pre-orders open October 16.",
+   "What most people don't know: the folding screen is not made by Apple. Samsung Display reportedly has a three-year exclusive deal to supply it, at about $250 per panel. LG and BOE could not meet the spec.",
+   "Very simply put: Apple's most expensive phone is built around its biggest rival's screen."
+  ],
+  "sources": [
+   "https://abcnews.com/Business/apple-set-announce-new-products/story?id=136299541",
+   "https://variety.com/2026/digital/news/apple-iphone-duo-18-foldable-price-availability-1236855996/",
+   "https://www.macrumors.com/2026/09/11/apple-pay-250-dollars-iphone-duo-display-samsung/",
+   "https://9to5mac.com/2026/09/11/leaker-says-apple-will-pay-250-per-iphone-duo-display-in-three-year-samsung-deal/",
+   "https://en.sedaily.com/finance/2026/09/15/samsung-display-to-gain-27-trillion-won-from-apples-first"
+  ],
+  "postizId": null,
+  "status": "sample carousel (style approval)",
+  "images": "Kling gemini-3.1-flash-image, 10 x 15 credits"
  }
 ]
