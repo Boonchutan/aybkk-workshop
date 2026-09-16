@@ -1,8 +1,9 @@
 # /trend — Talk of the Town: 3 posts a day from what the world is searching
 
-**Purpose:** Turn Google Trends (the top searches of the week and of today) into Edward Sturm-style
-text + image posts: what is trending, why, and the one thing most people don't know.
-3 posts a day, ~70% global (US trends stand in for "global") / ~30% Thailand.
+**Purpose:** Turn Google Trends (the top searches of the week and of today) into @wealth-style
+10-slide carousels: a photoreal image per slide, one big Anton headline per slide, one hidden fact
+per slide, with an Edward Sturm caption (what is trending, why, the one thing most people don't know).
+3 carousels a day, 100% global (US trends stand in for "global").
 Run by hand (`/trend`) or by the daily Routine "Talk of the Town — daily trend batch" (see Config).
 
 **Do not use for:** AYBKK marketing, the China cohort, student comms, or anything posted to the
@@ -13,10 +14,12 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 |---|---|
 | series label (card footer) | Talk of the Town |
 | Postiz channel | the channel whose name contains "Talk of the Town" or "trend" (case-insensitive). *Not connected yet* — until it exists, deliver the batch in the report only. Never fall back to another channel. |
-| posts per day | 3 = 2 global + 1 Thailand (a 3rd global if the Thai pool has no angle that day) |
+| posts per day | 3 carousels, all global. No Thailand quota (dropped 16 Sep 2026). |
+| slides per carousel | 10: cover, 8 facts, takeaway. 1080×1350. Anton headline over a photoreal image with a dark gradient. |
+| images | Kling `text_to_image`, model `gemini-3.1-flash-image`, aspect 4:5, 2k, 15 credits per image = 150 per carousel, 450 per day at 3 carousels. Check `query_membership_and_credits` first; under 200 credits, render on the dark gradient and say so in the report. Never use real people, logos or text in prompts. |
 | post times (Bangkok) | 08:00, 13:00, 19:00 = 01:00, 06:00, 12:00 UTC |
 | Postiz post type | `draft` until Boonchu says "go live", then `schedule` |
-| image hosting | branch `trend-cards` of this repo → `https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/cards/<file>.png` |
+| image hosting | branch `trend-cards` of this repo → `.../trend-cards/carousels/YYYY-MM-DD-<slug>/NN.png` (single cards under `cards/`) |
 | memory | `log.json` on the `trend-cards` branch (14-day no-repeat rule) |
 | Routine | "Talk of the Town — daily trend batch", 23:30 UTC = 06:30 Bangkok. It fires into the session "Postiz Social media" (session_01XThAVTVGUs4TK4ENsd9Yfh) because that session holds the repo, push access, Postiz and Gmail; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
 
@@ -30,7 +33,7 @@ node scripts/trends-fetch.js --geo US,TH --hours 168 --top 100 --out "$SCRATCH/t
 - Google has no world feed, so US = global. Add `--geo US,GB,IN,TH` when the US list is thin.
 
 ## Step 2 — Select (the rubric)
-Score every candidate 0–5 on each line; take the top 2 global + 1 Thailand.
+Score every candidate 0–5 on each line; take the top 3 (US weekly + daily lists only).
 1. **Volume** — weekly ≥ 100,000 (US) / ≥ 10,000 (TH), or daily ≥ 500+ (US) / ≥ 1000+ (TH).
 2. **Heat** — `active: true`, or started in the last 48 h. Ended trends only if the story is still moving.
 3. **Angle** — a verifiable "most people don't know" fact that changes how the reader sees the story
@@ -38,6 +41,8 @@ Score every candidate 0–5 on each line; take the top 2 global + 1 Thailand.
 4. **Explainable** — the reader gets it from the caption alone.
 5. **Range** — a different category from the other two posts that day, and not in `log.json` within
    14 days (a new development on a logged topic is fine).
+6. **Depth** — at least 8 distinct, verifiable facts exist (prices, dates, names, who supplies what,
+   who paid whom, what the rule actually says). Fewer than 8 and it is not a carousel topic.
 
 Skip: match fixtures, "X vs Y", lineups (category Sports) unless the angle is off the pitch
 (a sponsor, a rule, the money); lottery numbers; weather; allegations about private individuals
@@ -76,39 +81,51 @@ Rules:
 - Never explain your reasoning, never mention AI, never cite sources in the caption.
 - Opinion only in the last line, and only if it follows from the facts above it.
 - Report politics and religion; never judge them.
-- Thailand posts are in English (the account is global) with the Thai term on the card, and the
-  angle must interest a reader outside Thailand ("the cup is named after a Thai drink").
+- Slide copy: headline ≤ 12 words, written in sentence case (the renderer sets it in caps), one fact
+  per slide, the number or name inside the headline, a one-line `sub` with the qualifier ("reportedly",
+  the source's estimate, the date). Cover headline = the tension line ("Apple's $1,999 foldable has a
+  Samsung secret"); cover sub = "10 things most people don't know about <topic>, <size cue>". Slide 10
+  headline starts "Very simply put:" and its sub is the follow line. Slides 2–9 are ordered from the
+  fact everyone half-knows to the one nobody knows.
 - Banned words: journey, transformation, unlock, level up, game-changer, insane, wild, crazy,
   mind-blowing, "let that sink in", "you won't believe".
 
-## Step 5 — Card
-One spec JSON per post, then render (install playwright-core first; the install line is at the top
-of `scripts/trend-card.js`, Chromium is at `/opt/pw-browsers/chromium`):
+## Step 5 — Slides
+One folder per carousel: `<dir>/slides.json` + `<dir>/bg/slideN.img` → `<dir>/out/01..10.png`.
 ```
-{"kicker":"Trending now · Global","term":"iPhone Duo","volume":"2,000,000+ searches this week",
- "teaser":"<the don't-know fact in 20 words or fewer>","series":"Talk of the Town","date":"15 Sep 2026"}
-node scripts/trend-card.js spec.json cards/2026-09-15-iphone-duo.png
+{"topic":"iPhone Duo","slug":"iphone-duo","brand":"iPhone Duo · 10 facts","caption":["…4 paragraphs…"],
+ "slides":[{"n":1,"headline":"Apple's $1,999 foldable has a Samsung secret",
+            "sub":"10 things most people don't know about the iPhone Duo, the most searched product on Earth this week.",
+            "foot":"Swipe →","image":"<photoreal prompt, unbranded, no people's faces, no text, no logos>"}, … ,
+           {"n":10,"headline":"Very simply put: …","sub":"Follow Talk of the Town for the story behind what everyone is searching.","foot":"Follow","image":"…"}]}
 ```
-Kicker "Trending now · Thailand" for Thai posts; the card shows the Thai term itself.
-Filename `YYYY-MM-DD-<slug>.png`. Look at every PNG before publishing: nothing may overflow or clip.
+1. Images: for each slide call Kling `text_to_image` (model `gemini-3.1-flash-image`, arguments prompt +
+   `aspect_ratio` 4:5 + `img_resolution` 2k + `imageCount` 1, one `taskTraceId` per carousel), poll
+   `query_tasks`, download `urlWithoutWatermark` to `bg/slideN.img` (URLs expire in 24 h). A job still
+   queuing after 10 minutes: render that slide on the gradient, note it in the report, never resubmit on your own.
+2. Render: `NODE_PATH=<scratch>/node_modules node scripts/trend-carousel.js <dir>` (install playwright-core
+   first; the install line is at the top of `scripts/trend-card.js`; Chromium is at `/opt/pw-browsers/chromium`).
+3. Look at every PNG (Read) before publishing: nothing may overflow, clip or sit on a busy part of the photo.
+The single-card layout (`term`/`volume`/`teaser` spec) still exists in `scripts/trend-card.js` for one-image posts.
 
 ## Step 6 — Host
 ```
 git fetch origin trend-cards
 git worktree add "$SCRATCH/trend-cards" trend-cards      # orphan branch: cards/, log.json, README.md only
-cp cards/*.png "$SCRATCH/trend-cards/cards/" && update "$SCRATCH/trend-cards/log.json"
+mkdir -p "$SCRATCH/trend-cards/carousels/YYYY-MM-DD-<slug>" && cp <dir>/out/*.png there && update "$SCRATCH/trend-cards/log.json"
 git -C "$SCRATCH/trend-cards" add -A && git -C "$SCRATCH/trend-cards" commit -m "trend cards YYYY-MM-DD"
 git -C "$SCRATCH/trend-cards" push origin trend-cards
 ```
-Public URL: `https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/cards/<file>.png`.
+Public URL: `https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/YYYY-MM-DD-<slug>/NN.png`
+(single cards: `.../trend-cards/cards/<file>.png`).
 Cards never go to main or to a feature branch.
 
 ## Step 7 — Postiz
 1. `integrationList` → the channel named in Config. Missing? Stop here; put the full posts and card
    URLs in the report instead.
-2. `uploadFromUrlTool` with each card URL → the media path to attach.
+2. `uploadFromUrlTool` for each of the 10 slide URLs → 10 media paths.
 3. `integrationSchedulePostTool`: one post per slot, `type` from Config, `date` = the slot in UTC,
-   content as `<p>` paragraphs, `attachments` = the uploaded media. Draft first.
+   content as `<p>` paragraphs, `attachments` = the 10 media paths in order (that is the carousel). Draft first.
 4. Never post from this skill to the AYBKK or Boonchu personal channels.
 
 ### Step 7b — REST fallback (Routine sessions run without connector tools)
@@ -129,7 +146,7 @@ Shapes are from docs.postiz.com/public-api and are untested until the key exists
 `draft`, stop and put the response in the report; never switch to `schedule` or `now` on your own.
 
 ## Step 8 — Log and report
-Append to `log.json`: `{date, geo, term, volume, angle, sources[], card, postizId}`.
+Append to `log.json`: `{date, geo, term, volume, angle, sources[], card | carousel, facts[], postizId}`.
 The next run reads it for the 14-day rule.
 Report (final message / notification): the 3 captions in full, the 3 card URLs, what was skipped
 and why (one line each), and anything that needs Boonchu (channel missing, a fact that would not
