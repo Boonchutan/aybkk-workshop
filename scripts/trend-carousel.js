@@ -14,7 +14,8 @@ for (const s of d.slides) {
   if (only && !only.includes(s.n)) continue;
   const img = path.join(dir, "bg", "slide" + s.n + ".img");
   const spec = { layout: "slide", index: String(s.n).padStart(2, "0") + " / " + d.slides.length, kicker: d.kicker || "Talk of the Town",
-    headline: s.headline, sub: s.sub, brand: d.brand, foot: s.foot, image: fs.existsSync(img) ? img : "" };
+    headline: s.headline, sub: s.sub, brand: d.brand, foot: s.foot, image: fs.existsSync(img) ? img : "",
+    shade: s.shade || (s.n === 1 ? "light" : "") };
   const specPath = path.join(dir, "out", "spec" + s.n + ".json");
   fs.writeFileSync(specPath, JSON.stringify(spec));
   execFileSync("node", [path.join(__dirname, "trend-card.js"), specPath, path.join(dir, "out", String(s.n).padStart(2, "0") + ".png")], { stdio: "inherit" });

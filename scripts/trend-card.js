@@ -36,6 +36,8 @@ body{width:1080px;height:1350px;position:relative;overflow:hidden;background:#0b
 .bg{position:absolute;inset:0;background:${d.image ? `url("file://${d.image}") center/cover no-repeat` : "radial-gradient(120% 80% at 30% 20%, #24344f 0%, #0b1220 70%)"}}
 .shade{position:absolute;inset:0;background:linear-gradient(180deg, rgba(5,8,15,.50) 0%, rgba(5,8,15,.06) 30%, rgba(5,8,15,.40) 56%, rgba(5,8,15,.95) 100%)}
 body.zone-top .shade{background:linear-gradient(0deg, rgba(5,8,15,.50) 0%, rgba(5,8,15,.06) 30%, rgba(5,8,15,.45) 56%, rgba(5,8,15,.95) 100%)}
+body.shade-light .shade{background:linear-gradient(180deg, rgba(5,8,15,.22) 0%, rgba(5,8,15,0) 28%, rgba(5,8,15,.18) 58%, rgba(5,8,15,.86) 100%)}
+body.shade-light.zone-top .shade{background:linear-gradient(0deg, rgba(5,8,15,.22) 0%, rgba(5,8,15,0) 28%, rgba(5,8,15,.18) 58%, rgba(5,8,15,.86) 100%)}
 .top{position:absolute;left:72px;right:72px;top:72px;display:flex;justify-content:space-between;align-items:center;font-size:30px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);opacity:.92}
 .top .k{background:var(--accent);color:#0b1220;padding:10px 18px;border-radius:6px;letter-spacing:.14em}
 .text{position:absolute;left:72px;right:72px;bottom:176px}
@@ -45,8 +47,8 @@ body.zone-top .text{bottom:auto;top:200px}
 h1{margin:0;font-family:"Head","CardThai",sans-serif;font-weight:${Number(d.headWeight) || 600};font-size:${headSize}px;line-height:${Number(d.lineHeight) || 0.9};letter-spacing:${d.letterSpacing || "-0.008em"};text-transform:uppercase;text-wrap:balance;overflow-wrap:anywhere;text-shadow:0 4px 26px rgba(0,0,0,.55)}
 h1 .acc{color:var(--accent)}
 body.compact h1{font-size:${Math.round(headSize * 0.8)}px}
-.sub{margin-top:22px;font-size:40px;line-height:1.3;color:var(--primary);opacity:.9;font-weight:500;text-wrap:pretty;max-width:900px}
-body.compact .sub{font-size:34px}
+.sub{margin-top:14px;font-size:38px;line-height:1.14;letter-spacing:-.005em;color:var(--primary);opacity:.9;font-weight:500;text-wrap:pretty;max-width:900px}
+body.compact .sub{font-size:32px}
 .foot{position:absolute;left:72px;right:72px;bottom:64px;display:flex;justify-content:space-between;align-items:center;gap:40px;font-size:26px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);opacity:.8;white-space:nowrap}
 .foot span:first-child{overflow:hidden;text-overflow:ellipsis;min-width:0}
 .foot::before{content:"";position:absolute;left:-72px;right:-72px;top:-90px;bottom:-64px;z-index:-1;background:linear-gradient(180deg, rgba(5,8,15,0) 0%, rgba(5,8,15,.7) 45%, rgba(5,8,15,.85) 100%)}
@@ -77,16 +79,16 @@ body.compact .sub{font-size:34px}
       const th = emean + 0.8 * sd, rows = [];
       for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (e[y*W + x] > th) rows.push(y);
       const total = rows.length || 1, frac = (a, b) => rows.filter(y => y >= a*H && y < b*H).length / total;
-      let bo = frac(0.50, 0.90), to = frac(0.14, 0.54);
+      window.__lum = Math.round(mean * 100); let bo = frac(0.50, 0.90), to = frac(0.14, 0.54);
       zone = to < bo - 0.05 ? "top" : "bottom"; covered = Math.min(bo, to);
       if (covered > 0.6) { compact = true; bo = frac(0.60, 0.90); to = frac(0.14, 0.44); zone = to < bo - 0.05 ? "top" : "bottom"; covered = Math.min(bo, to); }
     } catch (err) { window.__focusError = String(err); }
   }
-  body.classList.add("zone-" + zone); if (compact) body.classList.add("compact");
+  body.classList.add("zone-" + zone); if (compact) body.classList.add("compact"); if (${JSON.stringify(d.shade || "")} === "light") body.classList.add("shade-light");
   const h = document.getElementById("h"), box = document.querySelector(".text");
   let hs = parseFloat(getComputedStyle(h).fontSize), limit = 1350 - 176 - 260;
   for (let i = 0; i < 60 && box.offsetHeight > limit && hs > 60; i++) { hs -= 4; h.style.fontSize = hs + "px"; }
-  window.__focus = { zone, compact, covered: covered === null ? null : Math.round(covered * 100) };
+  window.__focus = { zone, compact, covered: covered === null ? null : Math.round(covered * 100), lum: window.__lum === undefined ? null : window.__lum };
   window.__ready = true;
 })();
 </script></body></html>`;
@@ -142,5 +144,5 @@ h1{margin:110px 0 0;font-size:${Number(d.termSize) || 120}px;line-height:1.04;fo
   await page.screenshot({ path: out, type: "png" });
   await browser.close();
   fs.unlinkSync(tmp);
-  console.log("wrote " + out + " (" + fs.statSync(out).size + " bytes)" + (focus ? " focus: zone=" + focus.zone + (focus.covered === null ? "" : " covered=" + focus.covered + "%") + (focus.compact ? " compact" : "") : "") + (focusErr ? " focusError=" + focusErr : ""));
+  console.log("wrote " + out + " (" + fs.statSync(out).size + " bytes)" + (focus ? " focus: zone=" + focus.zone + (focus.covered === null ? "" : " covered=" + focus.covered + "%") + (focus.compact ? " compact" : "") + (focus.lum === null || focus.lum === undefined ? "" : " lum=" + focus.lum + "%" + (focus.lum < 22 && /^0?1\b/.test(String(d.index || "").trim()) ? " DARK-COVER" : "")) : "") + (focusErr ? " focusError=" + focusErr : ""));
 })().catch(e => { console.error("RENDER FAILED: " + e.message); process.exit(1); });

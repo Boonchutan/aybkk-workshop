@@ -17,6 +17,7 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 | posts per day | 3 carousels, all global. No Thailand quota (dropped 16 Sep 2026). |
 | slides per carousel | 10: cover, 8 facts, takeaway. 1080×1350. Oswald 600 headline (condensed, not heavy; `"font":"anton"` for the heavier look) over a photoreal image with a dark gradient and a scrim behind the text. |
 | text colours | 80/20: ivory `#F4EFE6` for the body of the headline, amber `#FFB92E` for the 1–3 stressed words (marked `*like this*` in the headline). The tag and "Swipe" use the same amber. Alternates Boonchu can switch to with one spec key: coral `#FF5A4E`, teal `#3BE0C8` (`"accent"`). |
+| cover = the hook | Slide 1 carries the whole carousel in the feed. Its image must be the brightest and most striking of the ten: subject large, vivid colour, high contrast, bright clean light, never a moody dark scene. The renderer prints `lum=NN%` per slide and flags `DARK` under 22%; a dark cover gets a new, brighter prompt (generate 2 candidates with `imageCount` 2 and keep the stronger). Cover slides render with the light shade (`"shade":"light"`, automatic for slide 1). |
 | text placement | `zone: "auto"` (default): the renderer maps the image's focus (edges, contrast, saturation on a 54×68 grid) and puts the text block at the bottom or the top, whichever covers less of the focus; it must cover ≤ 60%, otherwise it also shrinks the text. The chosen zone and coverage are printed per slide; a slide over 60% gets a new image prompt, not a smaller font. |
 | images | Kling `text_to_image`, model `gemini-3.1-flash-image`, aspect 4:5, 2k, 15 credits per image = 150 per carousel, 450 per day at 3 carousels. Check `query_membership_and_credits` first; under 200 credits, render on the dark gradient and say so in the report. Prompts: photoreal, unbranded, no real people's faces, no logos, no text, and **composed for text**: "subject in the upper third of the frame, the lower half is plain, dark and empty" (or the mirror for a top-zone slide). |
 | post times (Bangkok) | 08:00, 13:00, 19:00 = 01:00, 06:00, 12:00 UTC |
@@ -109,8 +110,9 @@ One folder per carousel: `<dir>/slides.json` + `<dir>/bg/slideN.img` → `<dir>/
 2. Render: `NODE_PATH=<scratch>/node_modules node scripts/trend-carousel.js <dir>` (install playwright-core
    first; the install line is at the top of `scripts/trend-card.js`; Chromium is at `/opt/pw-browsers/chromium`).
 3. Look at every PNG (Read) before publishing: nothing may overflow or clip, the subject of the photo must stay
-   visible (the renderer prints `focus: zone=… covered=…%`; anything over 60% means the image needs a new
-   prompt with the subject pushed to the other half), and the stressed words must be the fact, not filler.
+   visible (the renderer prints `focus: zone=… covered=…% lum=…%`; over 60% covered means the image needs a new
+   prompt with the subject pushed to the other half; a cover under 22% luminance needs a brighter image), and the
+   stressed words must be the fact, not filler.
 The single-card layout (`term`/`volume`/`teaser` spec) still exists in `scripts/trend-card.js` for one-image posts.
 
 ## Step 6 — Host
