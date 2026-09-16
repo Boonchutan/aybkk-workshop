@@ -3,7 +3,7 @@
 **Purpose:** Turn Google Trends (the top searches of the week and of today) into Edward Sturm-style
 text + image posts: what is trending, why, and the one thing most people don't know.
 3 posts a day, ~70% global (US trends stand in for "global") / ~30% Thailand.
-Run by hand (`/trend`) or by the daily Routine "Talk of the Town — daily trend batch".
+Run by hand (`/trend`) or by the daily Routine "Talk of the Town — daily trend batch" (see Config).
 
 **Do not use for:** AYBKK marketing, the China cohort, student comms, or anything posted to the
 AYBKK or Boonchu personal channels. This is a separate account with its own voice.
@@ -18,6 +18,7 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 | Postiz post type | `draft` until Boonchu says "go live", then `schedule` |
 | image hosting | branch `trend-cards` of this repo → `https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/cards/<file>.png` |
 | memory | `log.json` on the `trend-cards` branch (14-day no-repeat rule) |
+| Routine | "Talk of the Town — daily trend batch", 23:30 UTC = 06:30 Bangkok. It fires into the session "Postiz Social media" (session_01XThAVTVGUs4TK4ENsd9Yfh) because that session holds the repo, push access, Postiz and Gmail; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
 
 ## Step 1 — Fetch
 ```
