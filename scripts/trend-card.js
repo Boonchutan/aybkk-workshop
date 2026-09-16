@@ -42,10 +42,10 @@ body.zone-top .shade{background:linear-gradient(0deg, rgba(5,8,15,.50) 0%, rgba(
 .text::before{content:"";position:absolute;left:-72px;right:-72px;top:-140px;bottom:-150px;z-index:-1;background:linear-gradient(180deg, rgba(5,8,15,0) 0%, rgba(5,8,15,.72) 24%, rgba(5,8,15,.72) 76%, rgba(5,8,15,0) 100%)}
 .text{z-index:1}
 body.zone-top .text{bottom:auto;top:200px}
-h1{margin:0;font-family:"Head","CardThai",sans-serif;font-weight:${Number(d.headWeight) || 600};font-size:${headSize}px;line-height:1.0;letter-spacing:.012em;text-transform:uppercase;text-wrap:balance;overflow-wrap:anywhere;text-shadow:0 4px 26px rgba(0,0,0,.55)}
+h1{margin:0;font-family:"Head","CardThai",sans-serif;font-weight:${Number(d.headWeight) || 600};font-size:${headSize}px;line-height:${Number(d.lineHeight) || 0.9};letter-spacing:${d.letterSpacing || "-0.008em"};text-transform:uppercase;text-wrap:balance;overflow-wrap:anywhere;text-shadow:0 4px 26px rgba(0,0,0,.55)}
 h1 .acc{color:var(--accent)}
 body.compact h1{font-size:${Math.round(headSize * 0.8)}px}
-.sub{margin-top:30px;font-size:40px;line-height:1.3;color:var(--primary);opacity:.9;font-weight:500;text-wrap:pretty;max-width:900px}
+.sub{margin-top:22px;font-size:40px;line-height:1.3;color:var(--primary);opacity:.9;font-weight:500;text-wrap:pretty;max-width:900px}
 body.compact .sub{font-size:34px}
 .foot{position:absolute;left:72px;right:72px;bottom:64px;display:flex;justify-content:space-between;align-items:center;gap:40px;font-size:26px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);opacity:.8;white-space:nowrap}
 .foot span:first-child{overflow:hidden;text-overflow:ellipsis;min-width:0}
