@@ -92,5 +92,72 @@
   "card": "cards/2026-09-15-thai-gold.png",
   "postizId": null,
   "status": "sample"
+ },
+ {
+  "date": "2026-09-16",
+  "geo": "Global",
+  "term": "How do I register to vote",
+  "volume": "2,000,000+ searches this week",
+  "angle": "Not a government program. About 2,000 civic groups started it in 2012. 6 million registered since.",
+  "sources": [
+   "https://nationalvoterregistrationday.org/",
+   "https://en.wikipedia.org/wiki/National_Voter_Registration_Day",
+   "https://www.nonprofitvote.org/national-voter-registration-day/",
+   "https://oklahoma.gov/elections/voter-registration/national-voter-registration-day-2026.html"
+  ],
+  "card": "cards/2026-09-16-register-to-vote.png",
+  "postizId": null,
+  "status": "report-only (no Talk of the Town channel in Postiz yet)",
+  "caption": [
+   "\"how do i register to vote\" — 2,000,000+ searches this week. The most searched question in America.",
+   "Why: September 15 was National Voter Registration Day. The US midterm elections are on November 3, and in many states registration closes up to 30 days before Election Day, so the spike is people checking they are on the rolls in time.",
+   "What most people don't know: the day is not a government program. About 2,000 civic groups started it in 2012 because millions of Americans miss a deadline or move without updating their registration. Since then it has registered more than 6 million people.",
+   "Very simply put: America's most searched question this week was answered by volunteers, not the government."
+  ]
+ },
+ {
+  "date": "2026-09-16",
+  "geo": "Global",
+  "term": "Sydney Sweeney sports ad",
+  "volume": "1,000,000+ searches this week",
+  "angle": "Last time the outrage came, American Eagle got 700,000 new customers and a 25% stock jump.",
+  "sources": [
+   "https://www.cnn.com/2026/09/14/sport/sydney-sweeney-ad-backlash-scli-intl",
+   "https://www.nbcnews.com/sports/sports/female-athletes-hit-back-sydney-sweeneys-sexualized-just-sports-ad-rcna597489",
+   "https://www.cnn.com/business/american-eagle-sales-sydney-sweeney-ad",
+   "https://variety.com/2025/tv/news/american-eagle-sydney-sweeney-great-jeans-sales-boost-1236506947",
+   "https://www.cnbc.com/2026/06/16/novig-wins-cftc-approval-as-competition-intensifies-in-sports-prediction-markets.html"
+  ],
+  "card": "cards/2026-09-16-sydney-sweeney-novig-ad.png",
+  "postizId": null,
+  "status": "report-only (no Talk of the Town channel in Postiz yet)",
+  "caption": [
+   "\"sydney sweeney sports ad\" — 1,000,000+ searches this week.",
+   "Why: Sweeney fronts a new campaign for Novig, a sports prediction market regulated by the CFTC rather than a sportsbook, posing with sports gear and not much else. Olympians and female athletes called it hypersexualized. On Instagram she answered with photos of nude athletes, Serena Williams among them.",
+   "What most people don't know: this is the second time in a year. In August 2025 her American Eagle \"great jeans\" ad drew a week of outrage. American Eagle then reported 700,000 new customers, 40 billion impressions and a 25% jump in its share price.",
+   "Very simply put: the outrage is the media plan, and it has a track record."
+  ]
+ },
+ {
+  "date": "2026-09-16",
+  "geo": "Thailand",
+  "term": "ก.พ.",
+  "volume": "50,000+ searches this week in Thailand",
+  "angle": "One test gates every government job in Thailand. Pass once and the certificate never expires.",
+  "sources": [
+   "https://www.bangkokbiznews.com/news/news-update/1251903",
+   "https://www.thairath.co.th/news/society/2905264",
+   "https://www.ocsc.go.th/general-exam/",
+   "https://ratchakan.com/blog/phak-a-certificate-expiry"
+  ],
+  "card": "cards/2026-09-16-kor-por-exam.png",
+  "postizId": null,
+  "status": "report-only (no Talk of the Town channel in Postiz yet)",
+  "caption": [
+   "\"ก.พ.\" (the civil service exam) — 50,000+ searches in Thailand this week.",
+   "Why: results of the 2026 general aptitude test came out on September 15 at noon on the Office of the Civil Service Commission site. This year the office offered 693,117 seats: 450,000 on paper at 14 centres and 243,117 on computer at 26 centres. In 2024, 384,906 people applied.",
+   "What most people don't know: this one test is the gate to every civil service job in Thailand. Pass it once and the certificate never expires. You can use it decades later, whenever a post opens.",
+   "Very simply put: for hundreds of thousands of Thais, a government career starts with a search for their own name."
+  ]
  }
 ]
