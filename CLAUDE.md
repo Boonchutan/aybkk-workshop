@@ -61,9 +61,9 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 **Do not use for:** existing student questions, general inquiries, or anything unrelated to the China program.
 
 ### `/trend`
-**Purpose:** Talk of the Town — a separate account that posts 3 times a day about what the world is searching (Google Trends, 100% global), @wealth-style 10-slide carousels (Anton headline over a Kling-generated photoreal image, one hidden fact per slide) with an Edward Sturm caption: what is trending, why, and the one thing most people don't know.
+**Purpose:** No Cap Daily (working name was Talk of the Town) — a separate account that posts 3 times a day about what the world is searching (Google Trends, 100% global), @wealth-style 10-slide carousels (Anton headline over a Kling-generated photoreal image, one hidden fact per slide) with an Edward Sturm caption: what is trending, why, and the one thing most people don't know.
 
-Use when running or tuning the daily trend batch. The skill holds the selection rubric, the voice, the fetcher (`scripts/trends-fetch.js`), the renderers (`scripts/trend-card.js`, `scripts/trend-carousel.js`), image hosting (branch `trend-cards`) and the Postiz steps. A Routine ("Talk of the Town — daily trend batch") runs it every morning inside the "Postiz Social media" session, which holds the repo, push access and Postiz; say "pause the trend routine" to stop it.
+Use when running or tuning the daily trend batch. The skill holds the selection rubric, the voice, the fetcher (`scripts/trends-fetch.js`), the renderers (`scripts/trend-card.js`, `scripts/trend-carousel.js`), image hosting (branch `trend-cards`) and the Postiz steps. A Routine ("No Cap Daily — daily trend batch") runs it every morning inside the "Postiz Social media" session, which holds the repo, push access and Postiz; say "pause the trend routine" to stop it.
 
 **Do not use for:** anything posted to AYBKK or Boonchu's personal channels.
 

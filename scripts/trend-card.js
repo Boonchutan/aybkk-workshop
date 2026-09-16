@@ -56,7 +56,7 @@ body.compact .sub{font-size:32px}
 .foot .swipe{color:var(--accent);flex:none}
 </style></head><body>
 <div class="bg"></div><div class="shade"></div>
-<div class="top"><span class="k">${esc(d.kicker || "Talk of the Town")}</span><span>${esc(d.index || "")}</span></div>
+<div class="top"><span class="k">${esc(d.kicker || "No Cap Daily")}</span><span>${esc(d.index || "")}</span></div>
 <div class="text"><h1 id="h">${headline}</h1>${d.sub ? `<div class="sub" id="s">${esc(d.sub)}</div>` : ""}</div>
 <div class="foot"><span>${esc(d.brand || "")}</span><span class="swipe">${esc(d.foot || "")}</span></div>
 <script>

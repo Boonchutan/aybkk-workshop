@@ -1,10 +1,10 @@
-# /trend — Talk of the Town: 3 posts a day from what the world is searching
+# /trend — No Cap Daily: 3 posts a day from what the world is searching
 
 **Purpose:** Turn Google Trends (the top searches of the week and of today) into @wealth-style
 10-slide carousels: a photoreal image per slide, one big condensed headline per slide, one hidden fact
 per slide, with an Edward Sturm caption (what is trending, why, the one thing most people don't know).
 3 carousels a day, 100% global (US trends stand in for "global").
-Run by hand (`/trend`) or by the daily Routine "Talk of the Town — daily trend batch" (see Config).
+Run by hand (`/trend`) or by the daily Routine "No Cap Daily — daily trend batch" (see Config).
 
 **Do not use for:** AYBKK marketing, the China cohort, student comms, or anything posted to the
 AYBKK or Boonchu personal channels. This is a separate account with its own voice.
@@ -12,8 +12,8 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 ## Config
 | key | value |
 |---|---|
-| series label (card footer) | Talk of the Town |
-| Postiz channel | the channel whose name contains "Talk of the Town" or "trend" (case-insensitive). *Not connected yet* — until it exists, deliver the batch in the report only. Never fall back to another channel. |
+| brand / series label (slide tag) | No Cap Daily (chosen 16 Sep 2026; "Talk of the Town" was the working name) |
+| Postiz channel | the channel whose name contains "No Cap" or "Talk of the Town" (case-insensitive). *Not connected yet* — until it exists, deliver the batch in the report only. Never fall back to another channel. |
 | posts per day | 3 carousels, all global. No Thailand quota (dropped 16 Sep 2026). |
 | slides per carousel | 10: cover, 8 facts, takeaway. 1080×1350. Oswald 600 headline (condensed, not heavy; `"font":"anton"` for the heavier look) over a photoreal image with a dark gradient and a scrim behind the text. |
 | text colours | 80/20: ivory `#F4EFE6` for the body of the headline, amber `#FFB92E` for the 1–3 stressed words (marked `*like this*` in the headline). The tag and "Swipe" use the same amber. Alternates Boonchu can switch to with one spec key: coral `#FF5A4E`, teal `#3BE0C8` (`"accent"`). |
@@ -24,7 +24,7 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 | Postiz post type | `draft` until Boonchu says "go live", then `schedule` |
 | image hosting | branch `trend-cards` of this repo → `.../trend-cards/carousels/YYYY-MM-DD-<slug>/NN.png` (single cards under `cards/`) |
 | memory | `log.json` on the `trend-cards` branch (14-day no-repeat rule) |
-| Routine | "Talk of the Town — daily trend batch", 23:30 UTC = 06:30 Bangkok. It fires into the session "Postiz Social media" (session_01XThAVTVGUs4TK4ENsd9Yfh) because that session holds the repo, push access, Postiz and Gmail; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
+| Routine | "No Cap Daily — daily trend batch", 23:30 UTC = 06:30 Bangkok. It fires into the session "Postiz Social media" (session_01XThAVTVGUs4TK4ENsd9Yfh) because that session holds the repo, push access, Postiz and Gmail; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
 
 ## Step 1 — Fetch
 ```
@@ -101,7 +101,7 @@ One folder per carousel: `<dir>/slides.json` + `<dir>/bg/slideN.img` → `<dir>/
  "slides":[{"n":1,"headline":"Apple's $1,999 foldable has a Samsung secret",
             "sub":"10 things most people don't know about the iPhone Duo, the most searched product on Earth this week.",
             "foot":"Swipe →","image":"<photoreal prompt, unbranded, no people's faces, no text, no logos>"}, … ,
-           {"n":10,"headline":"Very simply put: …","sub":"Follow Talk of the Town for the story behind what everyone is searching.","foot":"Follow","image":"…"}]}
+           {"n":10,"headline":"Very simply put: …","sub":"Follow No Cap Daily for the story behind what everyone is searching.","foot":"Follow","image":"…"}]}
 ```
 1. Images: for each slide call Kling `text_to_image` (model `gemini-3.1-flash-image`, arguments prompt +
    `aspect_ratio` 4:5 + `img_resolution` 2k + `imageCount` 1, one `taskTraceId` per carousel), poll
