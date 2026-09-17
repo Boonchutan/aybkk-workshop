@@ -62,6 +62,40 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 
 ---
 
+## Installed Plugin Skills
+
+### `higgsfield` — AI image / video generation
+
+Registered as a marketplace in `.claude/settings.json` from
+[`higgsfield-ai/skills`](https://github.com/higgsfield-ai/skills) (MIT, v0.12.0).
+Adds nine `/higgsfield:*` commands.
+
+Needs the Higgsfield CLI installed and authed **on Boonchu's own machine** — a
+remote session has no persistent login:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/higgsfield-ai/cli/main/install.sh | sh
+higgsfield auth login
+```
+
+The ones that earn their place here:
+
+- `/higgsfield:generate` — Reel footage and b-roll, Marketing Studio UGC ads,
+  and Virality Predictor scoring on a finished video
+- `/higgsfield:soul-id` — train Boonchu's face once, reuse the `reference_id`
+- `/higgsfield:product-photoshoot` — workshop tee shots for
+  `cn.aybkk.net/shop.html` (`product_shot`, `lifestyle_scene`, `virtual_model_tryout`)
+- `/higgsfield:youtube-thumbnail` — vertical Reel and Short covers
+
+**Lineage rule:** never generate footage that depicts practice, adjustment, or
+Sharath transmission that did not happen. Product shots, covers, and b-roll only
+— nothing a student could read as a record of the lineage. This is the same
+constraint `/hook` already enforces on fabricated Sharath quotes.
+
+`/hook` and `/story` still write the words. Higgsfield only makes the pictures.
+
+---
+
 ## Key Facts for Any Claude Instance
 
 - **Server:** `server.js` — main Express app, runs on Railway
