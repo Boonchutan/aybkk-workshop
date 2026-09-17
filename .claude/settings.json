@@ -5,10 +5,17 @@
         "source": "github",
         "repo": "bradautomates/claude-video"
       }
+    },
+    "higgsfield": {
+      "source": {
+        "source": "github",
+        "repo": "higgsfield-ai/skills"
+      }
     }
   },
   "enabledPlugins": {
-    "watch@claude-video": true
+    "watch@claude-video": true,
+    "higgsfield@higgsfield": true
   },
   "hooks": {
     "PostToolUse": [
