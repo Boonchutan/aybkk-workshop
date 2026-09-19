@@ -99,6 +99,15 @@ Lead each paragraph with the bold sentence that matters.
 Several sessions can land on one day, so the heading is day · topic, not day alone.
 Diagnosis-only work gets an entry too, marked "no code shipped".
 
+With every Build Log entry, also give ONE line for that day's daily note (named
+like `Sat  Sep 19th, 2026` — weekday, two spaces, month, ordinal day, year), so
+Boonchu sees from the daily note alone that something happened, and can click
+through. Link to the entry's heading; the alias is the subject in a few words:
+
+```
+- 🤖 [[AYBKK App Build Log#<exact entry heading>|<subject in ≤6 words>]]
+```
+
 ## AYBKK Bangkok study fees (aybkk.net) — Boonchu asked to remember these, 11 Sep 2026
 
 - 1 month: 9,600 THB
