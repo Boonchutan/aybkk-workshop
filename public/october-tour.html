@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f1ede3">
+<title>AYBKK 十月泰国之旅 · October Tour</title>
+<!-- october-tour.html — student-facing price picker for the Oct 2-16 tour
+     (Khao Yai Thiang / Bangkok / Koh Samed). Bilingual zh + en, defaults to zh.
+     Course fee is fixed per leg; the room price is per person and falls as more
+     people share, so students pick occupancy per leg and see a live total.
+     Fonts come from the .cn mirror so the page renders inside mainland China. -->
+<style>
+html,body{margin:0;padding:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.cn">
+<link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.cn/css2?family=Shantell+Sans:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ground:#f1ede3; --paper:#faf7ef; --paper-2:#efe8d8;
+  --ink:#2a2117; --ink-soft:#6f6150; --ink-faint:#9a8b76;
+  --hairline:rgba(42,33,23,.16); --frame:rgba(42,33,23,.9);
+  --kyt:#3d7a4d; --kyt-tint:#e4efe3;
+  --bkk:#4f4fc4; --bkk-tint:#e6e5f6;
+  --sam:#c8542f; --sam-tint:#f9e6dd;
+  --shadow:3px 3px 0 rgba(42,33,23,.14);
+  --f-display:'Shantell Sans','Noto Sans SC','PingFang SC','Marker Felt',sans-serif;
+  --f-body:'Nunito','Noto Sans SC',-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  --f-note:'Caveat','Bradley Hand',cursive;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#191510; --paper:#231d16; --paper-2:#2c251c;
+  --ink:#f3ede1; --ink-soft:#b8aa95; --ink-faint:#8a7d6b;
+  --hairline:rgba(243,237,225,.18); --frame:rgba(243,237,225,.85);
+  --kyt:#84c492; --kyt-tint:#23301f;
+  --bkk:#a3a3ef; --bkk-tint:#232238;
+  --sam:#f0996f; --sam-tint:#33211a;
+  --shadow:3px 3px 0 rgba(0,0,0,.4);
+}}
+:root[data-theme="dark"]{
+  --ground:#191510; --paper:#231d16; --paper-2:#2c251c;
+  --ink:#f3ede1; --ink-soft:#b8aa95; --ink-faint:#8a7d6b;
+  --hairline:rgba(243,237,225,.18); --frame:rgba(243,237,225,.85);
+  --kyt:#84c492; --kyt-tint:#23301f;
+  --bkk:#a3a3ef; --bkk-tint:#232238;
+  --sam:#f0996f; --sam-tint:#33211a;
+  --shadow:3px 3px 0 rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--f-body);
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px;padding-block:28px 190px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;font-weight:800}
+
+/* header */
+.masthead{text-align:center;margin-bottom:22px;position:relative}
+.lang{display:flex;gap:0;border:1.5px solid var(--hairline);width:max-content;
+  margin:0 auto 12px;border-radius:999px;overflow:hidden;background:var(--paper)}
+.lang button{border:0;background:none;padding:5px 11px;font-size:12px;font-weight:700;
+  font-family:var(--f-body);color:var(--ink-soft);cursor:pointer}
+.lang button.on{background:var(--ink);color:var(--paper)}
+.sub{font-size:13px;color:var(--ink-faint);margin-top:2px}
+.eyebrow{font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-faint)}
+h1{font-size:clamp(30px,8vw,44px);line-height:1.05;margin:8px 0 6px}
+.dates{font-family:var(--f-note);font-size:22px;color:var(--ink-soft)}
+
+/* how it works */
+.how{background:var(--paper);border:2.5px solid var(--frame);
+  border-radius:14px 18px 15px 17px/17px 14px 18px 15px;box-shadow:var(--shadow);
+  padding:16px 18px;margin-bottom:26px}
+.how h2{font-size:15px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.formula{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--f-display);
+  font-size:14px;font-weight:700;margin-bottom:10px}
+.chip{padding:5px 12px;border-radius:999px;background:var(--paper-2);border:1.5px solid var(--hairline)}
+.chip.room{background:var(--sam-tint);border-color:var(--sam);color:var(--sam)}
+.how p{margin:0;font-size:14px;color:var(--ink-soft)}
+.how strong{color:var(--ink)}
+
+/* leg */
+.leg{margin-bottom:22px;border:2.5px solid var(--frame);border-radius:14px 18px 15px 17px/17px 14px 18px 15px;
+  box-shadow:var(--shadow);background:var(--paper);overflow:hidden}
+.leg-head{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;color:#fff}
+.leg[data-leg="kyt"] .leg-head{background:var(--kyt)}
+.leg[data-leg="bkk"] .leg-head{background:var(--bkk)}
+.leg[data-leg="sam"] .leg-head{background:var(--sam)}
+:root[data-theme="dark"] .leg-head,
+:root:not([data-theme="light"]) .leg-head{color:#191510}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .leg-head{color:#fff}}
+.leg-title{flex:1;min-width:0}
+.leg-title h2{font-size:22px;line-height:1.1}
+.leg-when{font-size:13px;font-weight:700;opacity:.92;margin-top:2px}
+.leg-fee{font-family:var(--f-display);font-size:19px;font-weight:800;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.leg-fee small{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  opacity:.85;font-weight:700}
+.leg-body{padding:16px 18px}
+
+/* included */
+.inc{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.inc-col h4{font-family:var(--f-display);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-faint);margin:0 0 5px}
+.inc-col ul{margin:0;padding-left:15px;font-size:13.5px;color:var(--ink-soft)}
+.inc-col li{margin-bottom:2px}
+
+.pick-label{font-family:var(--f-display);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:9px;padding-top:12px;border-top:1px dashed var(--hairline)}
+
+/* room */
+.room{border:1.5px solid var(--hairline);border-radius:12px;padding:12px 13px;margin-bottom:10px;
+  background:var(--paper-2);transition:border-color .15s}
+.room.on{border-width:2.5px}
+.leg[data-leg="kyt"] .room.on{border-color:var(--kyt);background:var(--kyt-tint)}
+.leg[data-leg="bkk"] .room.on{border-color:var(--bkk);background:var(--bkk-tint)}
+.leg[data-leg="sam"] .room.on{border-color:var(--sam);background:var(--sam-tint)}
+.room-name{font-family:var(--f-display);font-size:15.5px;font-weight:700;line-height:1.2}
+.room-th{font-size:12px;color:var(--ink-faint);font-weight:600}
+.room-meta{font-size:12.5px;color:var(--ink-soft);margin:4px 0 9px}
+.opts{display:flex;gap:7px;flex-wrap:wrap}
+.opt{flex:1 1 92px;min-width:0;border:1.5px solid var(--hairline);background:var(--paper);
+  color:var(--ink);border-radius:10px;padding:8px 6px;cursor:pointer;text-align:center;
+  font-family:var(--f-body);transition:transform .12s,border-color .12s}
+.opt:hover{transform:translateY(-1px)}
+.opt:focus-visible{outline:3px solid currentColor;outline-offset:2px}
+.opt .who{display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:2px}
+.opt .amt{display:block;font-family:var(--f-display);font-size:16px;font-weight:800;
+  font-variant-numeric:tabular-nums}
+.opt .per{display:block;font-size:9.5px;color:var(--ink-faint);font-weight:600}
+.leg[data-leg="kyt"] .opt.on{background:var(--kyt);border-color:var(--kyt)}
+.leg[data-leg="bkk"] .opt.on{background:var(--bkk);border-color:var(--bkk)}
+.leg[data-leg="sam"] .opt.on{background:var(--sam);border-color:var(--sam)}
+.opt.on .who,.opt.on .amt,.opt.on .per{color:#fff}
+:root[data-theme="dark"] .opt.on .who,:root[data-theme="dark"] .opt.on .amt,:root[data-theme="dark"] .opt.on .per{color:#191510}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .opt.on .who,
+:root:not([data-theme="light"]) .opt.on .amt,:root:not([data-theme="light"]) .opt.on .per{color:#191510}}
+.best{font-family:var(--f-note);font-size:15px;color:var(--ink-faint);margin-top:7px}
+
+/* join toggle */
+.join{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  background:rgba(255,255,255,.22);border:1.5px solid currentColor;border-radius:999px;
+  padding:5px 11px;cursor:pointer;color:inherit;font-family:var(--f-body);white-space:nowrap}
+.leg.off{opacity:.55}
+.leg.off .leg-body{display:none}
+
+/* total */
+.total{position:fixed;left:0;right:0;bottom:0;background:var(--paper);
+  border-top:2.5px solid var(--frame);padding:12px 16px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:20}
+.total-in{max-width:720px;margin:0 auto}
+.rows{display:flex;gap:8px;justify-content:space-between;font-size:13px;color:var(--ink-soft);
+  margin-bottom:6px;flex-wrap:wrap}
+.rows b{color:var(--ink);font-variant-numeric:tabular-nums}
+.grand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  border-top:1px dashed var(--hairline);padding-top:8px}
+.grand span{font-family:var(--f-display);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-faint)}
+.grand b{font-family:var(--f-display);font-size:clamp(24px,7vw,32px);font-weight:800;
+  font-variant-numeric:tabular-nums}
+.save{font-family:var(--f-note);font-size:16px;color:var(--sam)}
+.was{text-decoration:line-through;color:var(--ink-faint);font-weight:400;margin-right:5px}
+.tag{display:inline-block;background:var(--sam);color:#fff;font-size:10px;font-weight:800;
+  letter-spacing:.09em;padding:2px 7px;border-radius:999px;margin-left:6px;vertical-align:2px}
+:root[data-theme="dark"] .tag{color:#191510}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag{color:#191510}}
+
+footer{margin-top:24px;font-size:13px;color:var(--ink-soft);text-align:center}
+footer p{margin:6px 0}
+.moon{font-family:var(--f-note);font-size:17px;color:var(--ink-faint)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="lang"><button id="bZh">中文</button><button id="bEn">EN</button></div>
+    <div class="eyebrow">Ashtanga Yoga Bangkok</div>
+    <h1 id="hTitle">十月泰国之旅</h1>
+    <div class="dates" id="hDates">Khao Yai Thiang · 曼谷 · 沙美岛 — 10月2日至16日</div>
+  </header>
+
+  <section class="how">
+    <h2 id="hHow">价格怎么算</h2>
+    <div class="formula">
+      <span class="chip" id="cFee">课程费</span> <span>+</span>
+      <span class="chip room" id="cRoom">房费</span> <span>=</span>
+      <span class="chip" id="cPay">你的总价</span>
+    </div>
+    <p id="hNote1"></p>
+    <p id="hNote2" style="margin-top:6px"></p>
+  </section>
+
+  <div id="legs"></div>
+
+  <footer>
+    <p class="moon" id="fMoon"></p>
+    <p id="fBook"></p>
+  </footer>
+</div>
+
+<div class="total">
+  <div class="total-in">
+    <div class="rows">
+      <span id="lCourse"></span>
+      <span id="lRoom"></span>
+      <span id="tSave" class="save"></span>
+    </div>
+    <div class="grand"><span id="lTotal"></span><b id="tGrand">฿0</b></div>
+  </div>
+</div>
+
+<script>
+var L='zh';
+var T={
+ zh:{title:'十月泰国之旅',dates:'Khao Yai Thiang · 曼谷 · 沙美岛 — 10月2日至16日',
+  how:'价格怎么算',fee:'课程费',room:'房费',pay:'你的总价',
+  n1:'<strong>课程费每人相同。房费取决于几个人合住</strong> —— 两人合住，每人约付一半。',
+  n2:'下面所有房价都是 <strong>每人 · 全程</strong> 的价格，不是每晚价格。',
+  moon:'🌙 10月9日是月亮日，不练习 —— 从山上回曼谷的休息日。',
+  book:'价格为泰铢（฿）。报名时，请告诉我们你每一段想住的房型。',
+  pick:'选择你的房型',joined:'✓ 参加',join:'+ 参加',
+  course:'课程费',rooms:'房费',total:'你的总价',
+  save:function(v){return '三段全程 — 省 '+v;},
+  share:function(v){return '合住可省 '+v;},
+  who:{1:'单人住',2:'2人合住',3:'3人合住',4:'4人合住',8:'8人合住'},each:'每人',special:'特价'},
+ en:{title:'October Tour',dates:'Mountain · City · Island — 2–16 October',
+  how:'How the price works',fee:'Course fee',room:'Your room',pay:'What you pay',
+  n1:'<strong>The course fee is the same for everyone. The room price depends on how many people share it</strong> — a room split two ways costs each of you about half.',
+  n2:'Every room price below is <strong>per person, for the whole stay</strong> — not per night.',
+  moon:'🌙 9 October is a moon day — no practice, travel day.',
+  book:'Prices in Thai Baht. To book, tell us your room choice for each leg.',
+  pick:'Choose your room',joined:'✓ Joining',join:'+ Join',
+  course:'Course fees',rooms:'Rooms',total:'Your total',
+  save:function(v){return 'all three — you save '+v;},
+  share:function(v){return 'Sharing saves you '+v;},
+  who:{1:'Just me',2:'2 sharing',3:'3 sharing',4:'4 sharing',8:'8 sharing'},each:'each',special:'SPECIAL'}};
+
+var LEGS=[
+ {id:'kyt',fee:19500,
+  name:{en:'Khao Yai Thiang',zh:'Khao Yai Thiang 山'},
+  when:{en:'2–8 Oct · 7 nights · The Pan, Khao Yai Thiang',zh:'10月2–8日 · 7晚 · The Pan 度假村 · 呵叻府'},
+  inc:{en:[['6 practice days · 7 nights',['4 Mysore','1 Led Primary','1 Led Primary + Intermediate','Plus: 3 workshops · 1 Ashtanga talk']],
+           ['Included',['7 nights at The Pan','7 breakfasts','7 lunch boxes + coffee','1 BBQ dinner','Airport → Khao Yai Thiang → Bangkok']]],
+       zh:[['六天练习 · 7晚',['4节 迈索尔自习','1节 一级引导课','1节 一级+二级引导课','另有：3个工作坊 · 1场讲座']],
+           ['包含',['7晚 The Pan 住宿','7次早餐','7份午餐盒 + 咖啡','1次烧烤晚餐','机场 → Khao Yai Thiang → 曼谷 接送']]]},
+  rooms:[
+   {n:{en:'Camp Standard',zh:'标准帐篷房'},th:'แคมป์มาตรฐาน',
+    m:{en:'24 m² · 5-ft bed · vintage bathtub · no TV',zh:'24㎡ · 5尺床 · 复古浴缸 · 无电视'},p:{1:19600,2:9800}},
+   {n:{en:'Camp Suite',zh:'豪华帐篷套房'},th:'แคมป์สูท',
+    m:{en:'32 m² · 6-ft bed · sofa · vintage bathtub · no TV',zh:'32㎡ · 6尺床 · 沙发 · 复古浴缸 · 无电视'},p:{1:23100,2:11900,3:9100}},
+   {n:{en:'The Pan Box',zh:'盒子房 Pan Box'},th:'',
+    m:{en:'30 m² · 6-ft bed · TV · no bathtub',zh:'30㎡ · 6尺床 · 有电视 · 无浴缸'},p:{1:19600,2:9800,3:8400}},
+   {n:{en:'Cliff House',zh:'崖边别墅'},th:'บ้านริมผา',
+    m:{en:'2 bedrooms · 2 bathrooms + attic · sleeps 8 · TV',zh:'2卧2卫 + 阁楼 · 可住8人 · 有电视'},p:{8:9100}}]},
+
+ {id:'bkk',fee:7800,
+  name:{en:'Bangkok',zh:'曼谷'},
+  when:{en:'9–12 Oct · 4 nights · S31 Sukhumvit Hotel',zh:'10月9–12日 · 4晚 · S31 酒店'},
+  inc:{en:[['4 practices',['2 Mysore','2 Led (Primary or Intermediate)','Mornings of 10, 11, 12, 13 Oct']],
+           ['Included',['4 nights at S31','Breakfast daily','AYBKK → airport transfer if needed']]],
+       zh:[['四节课',['2节 迈索尔自习','2节 引导课（一级或二级）','10、11、12、13日早课']],
+           ['包含',['4晚 S31 酒店','每日早餐','AYBKK → 机场送机（如需要）']]]},
+  rooms:[
+   {n:{en:'Superior Room',zh:'高级房'},th:'ซูพีเรีย',
+    m:{en:'Kitchenette · marble bathroom',zh:'小厨房 · 大理石浴室'},p:{1:10400,2:5600}},
+   {n:{en:'Deluxe Room',zh:'豪华房'},th:'ดีลักซ์',
+    m:{en:'City view · bathtub',zh:'城市景观 · 浴缸'},p:{1:11200,2:6000}}]},
+
+ {id:'sam',fee:13000,
+  name:{en:'Koh Samed',zh:'沙美岛'},
+  when:{en:'13–16 Oct · 3 nights · beach resort',zh:'10月13–16日 · 3晚 · 海边度假村'},
+  inc:{en:[['3 practices',['3 Mysore','Mornings of 14, 15, 16 Oct']],
+           ['Included',['3 nights + breakfast','Bangkok ⇄ Samed transfer','Return speedboat','Island entry ticket']]],
+       zh:[['三节课',['3节 迈索尔自习','14、15、16日早课']],
+           ['包含',['3晚住宿 + 早餐','曼谷 ⇄ 沙美岛 接送','往返快艇','上岛门票']]]},
+  rooms:[
+   {n:{en:'Sea View House',zh:'海景屋'},th:'',
+    m:{en:'Two storey · beachfront · sea view from bed',zh:'两层 · 海滩前 · 床上看海'},p:{4:6500}},
+   {n:{en:'White Villa',zh:'白色别墅'},th:'',
+    m:{en:'Modern · living area · garden',zh:'现代风 · 带客厅 · 花园'},p:{4:5500}},
+   {n:{en:'Arch Villa',zh:'拱形别墅'},th:'',
+    m:{en:'Twin beds · arched terrace · wood interior',zh:'双床 · 拱形露台 · 木质内饰'},p:{1:13500,2:6750}},
+   {n:{en:'Loft Room',zh:'阁楼房'},th:'',
+    m:{en:'White room with loft ladder · bathtub',zh:'白色房 · 阁楼梯 · 带浴缸'},p:{1:7500,2:6000}},
+   {n:{en:'Triple Room',zh:'三人房'},th:'',
+    m:{en:'Three beds · TV · garden walkway',zh:'三张床 · 有电视 · 花园走廊'},p:{3:4500}},
+   {n:{en:'Garden Room',zh:'花园房'},th:'',
+    m:{en:'Simple · quiet · best value',zh:'简约 · 安静 · 最实惠'},p:{4:3500}}]}
+];
+var BUNDLE=39000;
+var state={};
+LEGS.forEach(function(l){
+  var k=Object.keys(l.rooms[0].p);
+  state[l.id]={on:true,room:0,occ:+(k.indexOf('2')>-1?2:k[0])};
+});
+var baht=function(n){return '฿'+n.toLocaleString('en-US');};
+
+function chrome(){
+  var t=T[L];
+  document.getElementById('hTitle').textContent=t.title;
+  document.getElementById('hDates').textContent=t.dates;
+  document.getElementById('hHow').textContent=t.how;
+  document.getElementById('cFee').textContent=t.fee;
+  document.getElementById('cRoom').textContent=t.room;
+  document.getElementById('cPay').textContent=t.pay;
+  document.getElementById('hNote1').innerHTML=t.n1;
+  document.getElementById('hNote2').innerHTML=t.n2;
+  document.getElementById('fMoon').textContent=t.moon;
+  document.getElementById('fBook').textContent=t.book;
+  document.getElementById('bZh').className=(L==='zh'?'on':'');
+  document.getElementById('bEn').className=(L==='en'?'on':'');
+  document.documentElement.lang=(L==='zh'?'zh':'en');
+}
+
+function render(){
+  var t=T[L];
+  document.getElementById('legs').innerHTML=LEGS.map(function(l){
+    var s=state[l.id];
+    return '<section class="leg'+(s.on?'':' off')+'" data-leg="'+l.id+'">'
+      +'<div class="leg-head"><div class="leg-title"><h2>'+l.name[L]+'</h2>'
+      +'<div class="leg-when">'+l.when[L]+'</div></div>'
+      +'<div class="leg-fee">'+baht(l.fee)+'<small>'+t.fee+'</small></div>'
+      +'<button class="join" data-join="'+l.id+'" aria-pressed="'+s.on+'">'
+      +(s.on?t.joined:t.join)+'</button></div><div class="leg-body">'
+      +'<div class="inc">'+l.inc[L].map(function(c){
+          return '<div class="inc-col"><h4>'+c[0]+'</h4><ul>'
+            +c[1].map(function(i){return '<li>'+i+'</li>';}).join('')+'</ul></div>';
+        }).join('')+'</div>'
+      +'<div class="pick-label">'+t.pick+'</div>'
+      +l.rooms.map(function(r,ri){
+          var keys=Object.keys(r.p).map(Number).sort(function(a,b){return a-b;});
+          var cheap=Math.min.apply(null,keys.map(function(k){return r.p[k];}));
+          return '<div class="room'+(s.room===ri?' on':'')+'">'
+            +'<div class="room-name">'+r.n[L]+(r.th?' <span class="room-th">'+r.th+'</span>':'')+'</div>'
+            +'<div class="room-meta">'+r.m[L]+'</div><div class="opts">'
+            +keys.map(function(k){
+                var on=(s.room===ri&&s.occ===k);
+                return '<button class="opt'+(on?' on':'')+'" data-r="'+l.id+'|'+ri+'|'+k+'">'
+                  +'<span class="who">'+t.who[k]+'</span>'
+                  +'<span class="amt">'+baht(r.p[k])+'</span>'
+                  +'<span class="per">'+t.each+'</span></button>';
+              }).join('')+'</div>'
+            +(keys.length>1?'<div class="best">'+t.share(baht(r.p[keys[0]]-cheap))+'</div>':'')
+            +'</div>';
+        }).join('')
+      +'</div></section>';
+  }).join('');
+  totals();
+}
+
+function totals(){
+  var t=T[L],course=0,room=0,all=true;
+  LEGS.forEach(function(l){
+    var s=state[l.id];
+    if(!s.on){all=false;return;}
+    course+=l.fee; room+=l.rooms[s.room].p[s.occ];
+  });
+  var saving=0;
+  var listed=course;
+  if(all){saving=course-BUNDLE;course=BUNDLE;}
+  document.getElementById('lCourse').innerHTML=t.course+' '
+    +(all?'<span class="was">'+baht(listed)+'</span>':'')
+    +'<b>'+baht(course)+'</b>'+(all?'<span class="tag">'+t.special+'</span>':'');
+  document.getElementById('lRoom').innerHTML=t.rooms+' <b>'+baht(room)+'</b>';
+  document.getElementById('lTotal').textContent=t.total;
+  document.getElementById('tGrand').textContent=baht(course+room);
+  document.getElementById('tSave').textContent=saving>0?t.save(baht(saving)):'';
+}
+
+document.addEventListener('click',function(e){
+  if(e.target.id==='bZh'){L='zh';chrome();render();return;}
+  if(e.target.id==='bEn'){L='en';chrome();render();return;}
+  var j=e.target.closest('[data-join]');
+  if(j){state[j.dataset.join].on=!state[j.dataset.join].on;render();return;}
+  var o=e.target.closest('[data-r]');
+  if(o){var q=o.dataset.r.split('|');state[q[0]].room=+q[1];state[q[0]].occ=+q[2];render();}
+});
+chrome();render();
+</script>
+</body>
+</html>
