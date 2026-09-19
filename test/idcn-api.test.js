@@ -176,6 +176,18 @@ const B_THB = 100; // satang per baht
   ok('Li Mei sees only the broadcast',
      (await J('/api/idcn/idcn3/students/limei', {}, { 'x-idcn-key': LKEY })).body.notes.length === 1);
 
+  console.log('\n— daily video submissions (auth + validation; Cloudinary is external) —');
+  ok('a submission without a passcode → 401',
+     (await J('/api/idcn/idcn3/submissions', { method: 'POST',
+        body: JSON.stringify({ slug: 'yang-yang' }) })).status === 401);
+  ok('a submission with no file attached → 400',
+     (await J('/api/idcn/idcn3/submissions', { method: 'POST',
+        body: JSON.stringify({ slug: 'yang-yang', body: 'forgot the video' }) },
+        { 'x-idcn-key': YKEY })).status === 400);
+  ok("one student cannot submit into another's profile",
+     (await J('/api/idcn/idcn3/submissions', { method: 'POST',
+        body: JSON.stringify({ slug: 'yang-yang' }) }, { 'x-idcn-key': LKEY })).status === 401);
+
   console.log('\n— syllabus links + admin overview —');
   ok('links saved and cleaned',
      (await J('/api/idcn/admin/idcn3/links', { method: 'PUT',
@@ -190,7 +202,8 @@ const B_THB = 100; // satang per baht
   ok('admin overview: signature state, option, quote and proof count per student',
      list.body.students.length === 3
        && list.body.students.some(s => s.slug === 'yang-yang' && s.signed_at && s.quote.totalSatang === 18337850)
-       && list.body.students.some(s => s.slug === 'limei' && !s.signed_at && s.proofs === 1),
+       && list.body.students.some(s => s.slug === 'limei' && !s.signed_at && s.proofs === 1)
+       && list.body.students.every(s => s.submissions === 0),
      JSON.stringify(list.body.students.map(s => s.slug)));
   const reset = await J(`/api/idcn/admin/idcn3/students/${LID}`, { method: 'PUT',
     body: JSON.stringify({ resetKey: true }) }, A);
