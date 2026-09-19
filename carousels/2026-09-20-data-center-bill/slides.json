@@ -1,0 +1,85 @@
+{
+ "topic": "Data center bill",
+ "slug": "data-center-bill",
+ "brand": "Data centers · 10 facts",
+ "geo": "Global",
+ "volume": "100,000+ searches this week",
+ "caption": [
+  "\"data center bill\" — 100,000+ searches this week. Swipe for 10 things most people don't know about who pays for AI's power.",
+  "Why: on September 18 Senator Martin Heinrich blocked a fast-track vote on the Ratepayer Protection Act, a day after the House passed it 417 to 3. It asks states to consider making data centers of 100 megawatts or more pay for their own grid upgrades. Heinrich says that is not enough.",
+  "What most people don't know: data centers used 4.4% of US electricity in 2023; the Energy Department expects 6.7% to 12% by 2028. Worldwide, 1.5% in 2024, set to more than double by 2030.",
+  "Very simply put: both parties say data centers pay. One word: must."
+ ],
+ "slides": [
+  {
+   "n": 1,
+   "headline": "One senator stopped the bill on who pays for *AI power*.",
+   "sub": "10 things most people don't know about the data center bill, 100,000+ searches this week.",
+   "foot": "Swipe →",
+   "image": "Long bright corridor of server racks with blue and white lights in a clean data hall, racks in the upper two thirds of the frame, lower third plain polished floor, vivid, high contrast, photorealistic, no people, no logos, no text"
+  },
+  {
+   "n": 2,
+   "headline": "The House passed it *417 to 3*.",
+   "sub": "The Ratepayer Protection Act, September 17. Sponsor: Rep. Gabe Evans of Colorado.",
+   "foot": "Swipe →",
+   "image": "A grand domed legislative building under a clear blue sky, dome in the upper half of the frame, lower half plain stone steps, photorealistic, no people, no flags, no text"
+  },
+  {
+   "n": 3,
+   "headline": "One senator blocked it the *next day*.",
+   "sub": "Martin Heinrich of New Mexico objected to a unanimous-consent vote on September 18. He says it does not go far enough.",
+   "foot": "Swipe →",
+   "image": "A single empty leather chair at a long polished wooden desk in a dim chamber, chair in the upper half of the frame, lower half plain dark wood, photorealistic, no people, no text"
+  },
+  {
+   "n": 4,
+   "headline": "It covers sites of *100 megawatts* or more.",
+   "sub": "States would have to consider making them pay the full cost of generation, transmission and distribution upgrades.",
+   "foot": "Swipe →",
+   "image": "High-voltage transmission towers marching across a plain at sunset, towers in the upper half of the frame, lower half plain dry grass, photorealistic, no people, no text"
+  },
+  {
+   "n": 5,
+   "headline": "The catch is one word: *consider*.",
+   "sub": "The bill suggests, but does not require, that data centers pay. Heinrich wants a federal rule with teeth.",
+   "foot": "Swipe →",
+   "image": "A single thick rulebook closed on a plain grey desk under a desk lamp, book in the upper half of the frame, lower half plain grey, photorealistic, no readable text"
+  },
+  {
+   "n": 6,
+   "headline": "Data centers used *4.4%* of US electricity in 2023.",
+   "sub": "176 terawatt-hours, up from 58 in 2014, according to the Energy Department.",
+   "foot": "Swipe →",
+   "image": "A large electricity substation with transformers and insulators under a bright sky, substation in the upper half of the frame, lower half plain gravel, photorealistic, no people, no text"
+  },
+  {
+   "n": 7,
+   "headline": "By 2028: *6.7% to 12%*.",
+   "sub": "325 to 580 terawatt-hours, the Energy Department's December 2024 estimate. Demand doubles or triples.",
+   "foot": "Swipe →",
+   "image": "Cooling towers and fans on the roof of a huge windowless building at dusk, roof in the upper half of the frame, lower half plain concrete wall, photorealistic, no logos, no text"
+  },
+  {
+   "n": 8,
+   "headline": "Worldwide: 415 terawatt-hours in 2024, *1.5%* of all electricity.",
+   "sub": "The IEA expects about 945 by 2030. The biggest single sites draw over 3,000 megawatts.",
+   "foot": "Swipe →",
+   "image": "A night view of a huge windowless data center campus lit by rows of white lights, buildings in the upper half of the frame, lower half plain dark ground, photorealistic, no logos, no text"
+  },
+  {
+   "n": 9,
+   "headline": "Heinrich's own bill was blocked *the same day*.",
+   "sub": "The GRID Savings Act, a mandatory rule for large loads; Ohio Republican Bernie Moreno objected. The Senate leaves in two weeks.",
+   "foot": "Swipe →",
+   "image": "Two identical closed doors side by side in a marble hallway, doors in the upper half of the frame, lower half plain marble floor, photorealistic, no people, no text"
+  },
+  {
+   "n": 10,
+   "headline": "Very simply put: both parties say data centers pay. One word: *must*.",
+   "sub": "Follow No Cap Daily for the story behind what everyone is searching.",
+   "foot": "Follow",
+   "image": "A single glowing power switch on a dark wall, switch in the upper half of the frame, lower half plain dark wall, photorealistic, no text"
+  }
+ ]
+}
