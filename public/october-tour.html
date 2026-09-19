@@ -139,6 +139,9 @@ h1{font-size:clamp(30px,8vw,44px);line-height:1.05;margin:8px 0 6px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .opt.on .who,
 :root:not([data-theme="light"]) .opt.on .amt,:root:not([data-theme="light"]) .opt.on .per{color:#191510}}
 .best{font-family:var(--f-note);font-size:15px;color:var(--ink-faint);margin-top:7px}
+.vid{display:inline-block;margin:-6px 0 14px;font-weight:700;font-size:13.5px;color:var(--kyt);
+  text-decoration:underline;text-underline-offset:3px}
+.vid small{display:block;font-weight:600;font-size:11px;color:var(--ink-faint);text-decoration:none}
 
 /* join toggle */
 .join{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
@@ -227,7 +230,7 @@ var T={
   course:'课程费',rooms:'房费',total:'你的总价',
   save:function(v){return '三段全程 — 省 '+v;},
   share:function(v){return '合住可省 '+v;},
-  who:{1:'单人住',2:'2人合住',3:'3人合住',4:'4人合住',8:'8人合住'},each:'每人',special:'特价'},
+  who:{1:'单人住',2:'2人合住',3:'3人合住',4:'4人合住',8:'8人合住'},each:'每人',special:'特价',video:'▶ 看 The Pan 房间视频（TikTok）',vidnote:'国内需要VPN才能打开 · 度假村官方账号'},
  en:{title:'October Tour',dates:'Mountain · City · Island — 2–16 October',
   how:'How the price works',fee:'Course fee',room:'Your room',pay:'What you pay',
   n1:'<strong>The course fee is the same for everyone. The room price depends on how many people share it</strong> — a room split two ways costs each of you about half.',
@@ -238,10 +241,10 @@ var T={
   course:'Course fees',rooms:'Rooms',total:'Your total',
   save:function(v){return 'all three — you save '+v;},
   share:function(v){return 'Sharing saves you '+v;},
-  who:{1:'Just me',2:'2 sharing',3:'3 sharing',4:'4 sharing',8:'8 sharing'},each:'each',special:'SPECIAL'}};
+  who:{1:'Just me',2:'2 sharing',3:'3 sharing',4:'4 sharing',8:'8 sharing'},each:'each',special:'SPECIAL',video:'▶ Watch The Pan room videos (TikTok)',vidnote:'Needs a VPN inside China · resort\'s own account'}};
 
 var LEGS=[
- {id:'kyt',fee:19500,
+ {id:'kyt',fee:19500,video:'https://www.tiktok.com/@the_pan_khao_yai_thiang/playlist/%E0%B8%A7%E0%B8%B4%E0%B8%A7%E0%B8%AB%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%9E%E0%B8%B1%E0%B8%81-7642232537175149333',
   name:{en:'Khao Yai Thiang',zh:'Khao Yai Thiang 山'},
   when:{en:'2–8 Oct · 7 nights · The Pan, Khao Yai Thiang',zh:'10月2–8日 · 7晚 · The Pan 度假村 · 呵叻府'},
   inc:{en:[['6 practice days · 7 nights',['4 Mysore','1 Led Primary','1 Led Primary + Intermediate','Plus: 3 workshops · 1 Ashtanga talk']],
@@ -331,6 +334,7 @@ function render(){
           return '<div class="inc-col"><h4>'+c[0]+'</h4><ul>'
             +c[1].map(function(i){return '<li>'+i+'</li>';}).join('')+'</ul></div>';
         }).join('')+'</div>'
+      +(l.video?'<a class="vid" href="'+l.video+'" target="_blank" rel="noopener">'+t.video+'<small>'+t.vidnote+'</small></a>':'')
       +'<div class="pick-label">'+t.pick+'</div>'
       +l.rooms.map(function(r,ri){
           var keys=Object.keys(r.p).map(Number).sort(function(a,b){return a-b;});
