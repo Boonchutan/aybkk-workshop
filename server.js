@@ -193,6 +193,7 @@ const ORIENTATION_SHORTCUTS = {
   hf: 'orientation-hefei.html',
   zh: 'orientation-zhuhai.html',
   oct: 'october-tour.html',
+  aybkkoct26tour: 'october-tour.html',
 };
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
