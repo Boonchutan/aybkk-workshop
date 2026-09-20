@@ -119,8 +119,8 @@
       zh: '我明白瑜伽是身体性的练习，存在受伤风险。我确认自己的身体状况适合参加，并已（或将在下方）如实告知伤病、身体状况或怀孕情况，且在课程期间如有变化会及时告知。我对在自己能力范围内练习负责。',
       en: 'I understand yoga is a physical process and carries risk of injury. I confirm I am fit to participate, have disclosed (or will disclose below) any injuries, medical conditions or pregnancy, and will report changes during the course. I am responsible for practising within my own limits.' },
     { k: 'instructions',
-      zh: '我同意遵守课程要求：参加全部两个阶段、听从课程指导、按时完成作业与考核。完成全部要求后，我将获得 AYBKK 深度迈索尔训练结业证书，并可以把所学用于帮助我自己的学生以及任何需要改善身体的人。课程资料本身（教学大纲、笔记、视频）不得复制或传播；未经书面许可，不得以 AYBKK 的名义开设课程或自称 AYBKK 认证教师。助教与学徒的选拔仍完全由 Kru Boonchu 决定。',
-      en: 'I agree to follow the course requirements: attend both sessions, follow instructions, and meet assignment and examination requirements. On completing all requirements I receive the AYBKK Certificate of Completion of In-Depth Mysore Training, and I may use what I have learned to benefit my own students and anyone who needs help improving their physical body. The course materials themselves (syllabus, notes, videos) may not be copied or redistributed, and without written permission I may not run courses under AYBKK’s name or present myself as AYBKK-certified. Selection of assistants and apprentices remains entirely at Kru Boonchu’s discretion.' },
+      zh: '我同意遵守课程要求：参加全部两个阶段、听从课程指导、按时完成作业与考核。完成全部要求后，我将获得 AYBKK 深度迈索尔训练结业证书，可以自称 "AYBKK In-Depth CN 认证"，并把所学用于帮助我自己的学生以及任何需要改善身体的人。但我的教学属于我自己：未经书面许可，不得表示我的课程隶属于 AYBKK 或以 AYBKK 的名义开设。课程资料本身（教学大纲、笔记、视频）不得复制或传播。助教与学徒的选拔仍完全由 Kru Boonchu 决定。',
+      en: 'I agree to follow the course requirements: attend both sessions, follow instructions, and meet assignment and examination requirements. On completing all requirements I receive the AYBKK Certificate of Completion of In-Depth Mysore Training, may present myself as “AYBKK In-Depth CN certified”, and may use what I have learned to benefit my own students and anyone who needs help improving their physical body. My teaching, however, is my own: without written permission I may not present my classes as being under AYBKK or run them in AYBKK’s name. The course materials themselves (syllabus, notes, videos) may not be copied or redistributed. Selection of assistants and apprentices remains entirely at Kru Boonchu’s discretion.' },
     { k: 'travel',
       zh: '签证、机票及未包含的住宿由我自行负责（Khaoyaithieng 阶段的交通与住宿已包含）。AYBKK 强烈建议购买覆盖瑜伽练习的旅行/医疗保险；如我选择不购买，练习及旅行期间的医疗费用由我自己承担。',
       en: 'Visas, flights and accommodation not listed as included are my own responsibility (Khaoyaithieng transport & accommodation are included). AYBKK strongly recommends travel/medical insurance that covers yoga practice; if I choose not to carry it, medical costs during practice and travel are my own responsibility.' },
@@ -172,7 +172,8 @@
 
     html += `<div class="card"><b class="h">${T('课程安排', 'Course schedule')}</b>
       ${c.sessions.map((x, i) => `<div style="padding:6px 0">
-        <b>${T('第' + '一二'[i] + '阶段', 'Session ' + (i + 1))}</b> · ${esc(x.dates)}<br>
+        <b>${c.sessions.length === 1 ? T('课程时间', 'Course dates')
+          : T('第' + '一二'[i] + '阶段', 'Session ' + (i + 1))}</b> · ${esc(x.dates)}<br>
         <span class="muted">${esc(LANG === 'zh' ? x.place_zh : x.place_en)}</span></div>`).join('')}
     </div>`;
 
@@ -180,6 +181,7 @@
     else html += renderConfirmed(s, c);
 
     if (signed) {
+      html += renderSubmit();
       html += renderNotes();
       html += renderPayments();
       html += renderLinks(s);
@@ -254,18 +256,69 @@
         'Policy ' + esc(cs.policy_version) + ' signed; ask AYBKK for the full text any time.')}</p></div>`;
   }
 
+  function renderSubmit() {
+    return `<div class="card"><b class="h">${T('每日作业视频', 'Daily assignment video')}</b>
+      <p class="muted">${T('每天把你的训练/作业视频传到这里，老师会在你的档案里看到。最大100MB。',
+        'Upload your daily drill video here — the teachers see it on your profile. Max 100MB.')}</p>
+      <input id="subNote" placeholder="${LANG === 'zh' ? '想说的话（可选）' : 'a note with it (optional)'}"
+        autocomplete="off" style="margin-bottom:8px">
+      <p style="margin:4px 0 0"><button class="btn pink" onclick="pickSubmission()">
+        ${T('上传今天的视频', 'Upload today’s video')}</button>
+        <input id="subFile" type="file" accept="video/*,image/*" hidden></p>
+      <p class="muted" id="subMsg"></p></div>`;
+  }
+
+  const MEDIA = n => !n.media_url ? '' : (n.media_type === 'video'
+    ? `<video controls playsinline preload="metadata" style="width:100%;border-radius:8px;margin:6px 0"
+         src="${esc(n.media_url)}"></video>`
+    : `<img src="${esc(n.media_url)}" style="max-width:100%;border-radius:8px;margin:6px 0"
+         onclick="lightbox('${esc(n.media_url)}')" alt="">`);
+
   function renderNotes() {
     const notes = P.notes || [];
     if (!notes.length) return '';
+    const BADGE = { assignment: ['作业', 'ASSIGNMENT', 'var(--pink)'],
+      submission: ['已提交', 'SUBMITTED', 'var(--good)'],
+      note: ['留言', 'NOTE', 'var(--soft)'] };
     return `<div class="card"><b class="h">${T('作业与留言', 'Assignments & notes')}</b>
-      ${notes.map(n => `<div class="clause" style="cursor:default">
-        <span class="save" style="color:${n.kind === 'assignment' ? 'var(--pink)' : 'var(--soft)'}">
-          ${n.kind === 'assignment' ? T2('作业', 'ASSIGNMENT') : T2('留言', 'NOTE')}</span>
+      ${notes.map(n => { const bd = BADGE[n.kind] || BADGE.note;
+        return `<div class="clause" style="cursor:default">
+        <span class="save" style="color:${bd[2]}">${T2(bd[0], bd[1])}</span>
         ${n.title ? `<b style="display:block">${esc(n.title)}</b>` : ''}
-        <span style="white-space:pre-wrap">${esc(n.body)}</span><br>
+        ${n.body ? `<span style="white-space:pre-wrap">${esc(n.body)}</span>` : ''}
+        ${MEDIA(n)}
         <span class="muted">${esc(String(n.created_at).slice(0, 10))} · ${esc(n.created_by || 'AYBKK')}</span>
-      </div>`).join('')}</div>`;
+      </div>`; }).join('')}</div>`;
   }
+
+  window.pickSubmission = () => {
+    const f = $('#subFile');
+    f.onchange = async () => {
+      const file = f.files && f.files[0]; if (!file) return;
+      if (file.size > 100 * 1024 * 1024) {
+        $('#subMsg').textContent = T2('视频太大了，请控制在100MB以内（1-2分钟足够）。',
+          'That file is over 100MB — a 1–2 minute clip is enough.'); f.value = ''; return;
+      }
+      $('#subMsg').textContent = T2('上传中… 视频较大时需要一点时间，请不要关闭页面。',
+        'Uploading… a video can take a while, keep the page open.');
+      const fd = new FormData();
+      fd.append('slug', SLUG);
+      fd.append('body', ($('#subNote') ? $('#subNote').value.trim() : ''));
+      fd.append('file', file);
+      try {
+        const r = await fetch(`/api/idcn/${COURSE}/submissions`, { method: 'POST',
+          headers: { 'x-idcn-key': KEY, ...(ADMIN ? { 'x-bkk-key': ADMIN } : {}) }, body: fd });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) { $('#subMsg').textContent = j.error || T2('上传失败，请重试', 'Upload failed — try again'); return; }
+        $('#subMsg').textContent = '';
+        await load();
+      } catch (_) {
+        $('#subMsg').textContent = T2('网络中断，请重试', 'Connection dropped — try again');
+      }
+      f.value = '';
+    };
+    f.click();
+  };
 
   function renderPayments() {
     const pays = P.payments || [];

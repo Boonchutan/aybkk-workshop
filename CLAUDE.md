@@ -85,6 +85,13 @@ Use when running or tuning the daily trend batch. The skill holds the selection 
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.
 - **Mind Stash:** Boonchu's psychology study app — a spaced-repetition card deck (91 cards, 13 topics: decision-making, value, attention, memory, persuasion, storytelling structure, deadpan humor, manipulation-spotting), published as a Claude artifact: https://claude.ai/code/artifact/194e1b0e-ea87-4166-a08c-2491baa69a44. The complete written-out lessons live in his Obsidian vault as 13 subject notes ("Psychology - …", "Persuasion - …", "Storytelling - …", "Humour - …") in the Boonchu Framework folder; the app-usage guide is the vault note "Mind Stash - Psychology Study App". When Boonchu says "mind stash", he means this system.
 
+## AYBKK Bangkok study fees (aybkk.net) — Boonchu asked to remember these, 11 Sep 2026
+
+- 1 month: 9,600 THB
+- 3 months: 25,800 THB (8,600 THB/month)
+- 6 months: 45,000 THB (7,500 THB/month)
+- 12 months: 78,000 THB (6,000 THB/month) — includes 1 free month, so 13 months total
+
 ## Environment
 
 Never commit `.env`. Required vars are documented in `check-env.js`.

@@ -22,7 +22,7 @@ const crypto = require('crypto');
 const SATANG = 100;
 // bumped whenever the policy text in public/idcn.html changes, so every
 // signature records exactly which wording was on screen
-const IDCN3_POLICY_VERSION = 'idcn3-v2';
+const IDCN3_POLICY_VERSION = 'idcn3-v3';
 const sha = k => crypto.createHash('sha256').update(String(k)).digest('hex');
 const newPasscode = () => crypto.randomBytes(6).toString('base64url');
 
@@ -41,9 +41,11 @@ const IDCN3_TERMS = {
       label_zh: '9月20日前支付60% + 2027年1月10日在AYBKK以泰铢现金支付40%',
     },
   },
+  // rescheduled 19 Sep 2026: one continuous 30-day block
   sessions: [
-    { dates: '10–24 Oct 2026', place_en: 'Edison & BeiBei Shala, Huizhou, China', place_zh: '中国惠州 Edison & BeiBei 瑜伽馆' },
-    { dates: '11–25 Jan 2027', place_en: 'AYBKK Bangkok (11–22) & Khaoyaithieng (22–25), Thailand', place_zh: '泰国曼谷 AYBKK (11–22日) 及 Khaoyaithieng (22–25日)' },
+    { dates: '11 Jan – 9 Feb 2027 (30 days)',
+      place_en: 'AYBKK Shala, Bangkok & Khaoyaithieng, Thailand',
+      place_zh: '泰国曼谷 AYBKK 及 Khaoyaithieng' },
   ],
   confirmBy: '2026-09-10',
 };
@@ -84,6 +86,26 @@ function mountIdcn(app, opts = {}) {
   const q = (sql, params = []) => pool.query(sql, params);
   const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || 'aybkk2026';
   const isAdmin = req => req.headers['x-bkk-key'] === ADMIN_KEY;
+
+  // Video uploads arrive as real multipart files (never base64 JSON — the app
+  // body limit is 10MB) and are pushed to Cloudinary from a temp file.
+  // 100MB is Cloudinary's per-video ceiling on this plan.
+  const multer = require('multer');
+  const os = require('os');
+  const fs = require('fs');
+  const mediaUpload = multer({ dest: os.tmpdir(),
+    limits: { fileSize: 100 * 1024 * 1024 } }).single('file');
+  async function pushMedia(file, folder) {
+    const cloudinary = require('cloudinary').v2;
+    const isVideo = /^video\//.test(file.mimetype || '');
+    try {
+      const up = isVideo
+        ? await cloudinary.uploader.upload_large(file.path,
+            { folder, resource_type: 'video', chunk_size: 6 * 1024 * 1024 })
+        : await cloudinary.uploader.upload(file.path, { folder, resource_type: 'image' });
+      return { url: up.secure_url, type: isVideo ? 'video' : 'image' };
+    } finally { fs.unlink(file.path, () => {}); }
+  }
 
   async function initSchema() {
     await q(`CREATE TABLE IF NOT EXISTS idc_courses (
@@ -146,6 +168,11 @@ function mountIdcn(app, opts = {}) {
       ON CONFLICT (code) DO NOTHING`, [JSON.stringify(IDCN3_TERMS), IDCN3_POLICY_VERSION]);
     await q(`UPDATE idc_courses SET policy_version=$1 WHERE code='idcn3' AND policy_version <> $1`,
       [IDCN3_POLICY_VERSION]);
+    // the code is the source of truth for idcn3's dates and deadlines
+    await q(`UPDATE idc_courses SET terms=$1 WHERE code='idcn3'`,
+      [JSON.stringify(IDCN3_TERMS)]);
+    await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS media_url TEXT`);
+    await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS media_type TEXT`);
   }
 
   const courseFor = async (req, res) => {
@@ -189,7 +216,7 @@ function mountIdcn(app, opts = {}) {
       `SELECT value FROM idc_settings WHERE course_code=$1 AND key='links'`,
       [course.code])).rows[0];
     const notes = (await q(
-      `SELECT id, kind, title, body, created_by, created_at
+      `SELECT id, kind, title, body, created_by, media_url, media_type, created_at
        FROM idc_notes WHERE student_id=$1 ORDER BY id DESC LIMIT 100`, [s.id])).rows;
     return {
       course: { code: course.code, name_en: course.name_en, name_zh: course.name_zh,
@@ -241,6 +268,27 @@ function mountIdcn(app, opts = {}) {
       res.json({ success: true, status: 'confirmed' });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
+
+  // daily drill videos: a student sends their assignment work into their own
+  // profile. Kept per-student (never in the shared course feed).
+  app.post('/api/idcn/:course/submissions', (req, res) => mediaUpload(req, res, async (mErr) => {
+    try {
+      if (mErr) return res.status(400).json({ error: mErr.code === 'LIMIT_FILE_SIZE'
+        ? 'video too large — keep it under 100MB' : mErr.message });
+      const course = await courseFor(req, res); if (!course) return;
+      const s = await studentFrom(req, res, course, (req.body || {}).slug); if (!s) return;
+      if (!req.file) return res.status(400).json({ error: 'attach the video (or photo) file' });
+      const media = await pushMedia(req.file, `aybkk/${course.code}/submissions/${s.slug}`);
+      const r = await q(
+        `INSERT INTO idc_notes (student_id, kind, title, body, created_by, media_url, media_type)
+         VALUES ($1,'submission',$2,$3,$4,$5,$6)
+         RETURNING id, kind, title, body, created_by, media_url, media_type, created_at`,
+        [s.id, String((req.body || {}).title || '').slice(0, 200) || null,
+         String((req.body || {}).body || '').slice(0, 4000),
+         s.name_zh || s.name_en, media.url, media.type]);
+      res.json({ success: true, note: r.rows[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  }));
 
   // ── course photo hub (Cloudinary, own tag so nothing leaks between feeds) ──
   const photoCache = new Map();
@@ -333,7 +381,9 @@ function mountIdcn(app, opts = {}) {
         `SELECT s.id, s.slug, s.name_en, s.name_zh, s.lang, s.status,
                 s.payment_option, s.is_attendee, s.journal_url,
                 c.signed_at, c.signed_name, c.health_note, c.media_public,
-                (SELECT count(*)::int FROM idc_payments p WHERE p.student_id=s.id) AS proofs
+                (SELECT count(*)::int FROM idc_payments p WHERE p.student_id=s.id) AS proofs,
+                (SELECT count(*)::int FROM idc_notes n
+                  WHERE n.student_id=s.id AND n.kind='submission') AS submissions
          FROM idc_students s
          LEFT JOIN idc_consents c ON c.student_id=s.id
          WHERE s.course_code=$1 ORDER BY s.name_en`, [course.code])).rows;
@@ -409,17 +459,23 @@ function mountIdcn(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // a note or assignment into one profile, or every profile in the course
-  app.post('/api/idcn/admin/:course/notes', async (req, res) => {
+  // a note or assignment into one profile, or every profile in the course —
+  // multipart so an assignment can carry a demo video (uploaded once, the URL
+  // shared by every recipient)
+  app.post('/api/idcn/admin/:course/notes', (req, res) => mediaUpload(req, res, async (mErr) => {
     if (!needAdmin(req, res)) return;
     try {
+      if (mErr) return res.status(400).json({ error: mErr.code === 'LIMIT_FILE_SIZE'
+        ? 'video too large — keep it under 100MB' : mErr.message });
       const course = await courseFor(req, res); if (!course) return;
       const b = req.body || {};
       const kind = b.kind === 'assignment' ? 'assignment' : 'note';
       const body = String(b.body || '').trim();
       if (!body) return res.status(400).json({ error: 'body required' });
+      let media = { url: null, type: null };
+      if (req.file) media = await pushMedia(req.file, `aybkk/${course.code}/assignments`);
       let ids;
-      if (b.all === true) {
+      if (b.all === true || b.all === 'true') {
         ids = (await q(
           `SELECT id FROM idc_students WHERE course_code=$1 AND status != 'withdrawn'`,
           [course.code])).rows.map(r => r.id);
@@ -430,14 +486,14 @@ function mountIdcn(app, opts = {}) {
         ids = [s.id];
       }
       for (const id of ids) {
-        await q(`INSERT INTO idc_notes (student_id, kind, title, body, created_by)
-                 VALUES ($1,$2,$3,$4,$5)`,
+        await q(`INSERT INTO idc_notes (student_id, kind, title, body, created_by, media_url, media_type)
+                 VALUES ($1,$2,$3,$4,$5,$6,$7)`,
           [id, kind, String(b.title || '').slice(0, 200) || null, body.slice(0, 8000),
-           String(b.createdBy || 'AYBKK').slice(0, 60)]);
+           String(b.createdBy || 'AYBKK').slice(0, 60), media.url, media.type]);
       }
       res.json({ success: true, sentTo: ids.length });
     } catch (e) { res.status(500).json({ error: e.message }); }
-  });
+  }));
 
   app.get('/api/idcn/admin/:course/links', async (req, res) => {
     if (!needAdmin(req, res)) return;

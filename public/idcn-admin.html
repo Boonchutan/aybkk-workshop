@@ -75,6 +75,8 @@
         <div><label>Title (optional)</label><input id="bTitle" placeholder="Week 1 homework"></div>
       </div>
       <label>Message 内容</label><textarea id="bBody" rows="3"></textarea>
+      <label>Video / photo (optional — e.g. your drill demo)</label>
+      <input id="bFile" type="file" accept="video/*,image/*">
       <p style="margin:10px 0 0"><button class="btn pink" onclick="broadcast()">Send to ALL students</button>
         <span class="muted" id="bMsg"></span></p>
     </div>
@@ -136,7 +138,8 @@
       <div class="muted">/${COURSE}/${esc(s.slug)}
         · ${s.payment_option ? 'Option ' + s.payment_option + (s.quote ? ' — ' + baht(s.quote.totalSatang) : '') : 'no option yet'}
         · ${s.signed_at ? '✓ signed ' + String(s.signed_at).slice(0, 10) + ' as “' + esc(s.signed_name) + '”' : 'NOT signed'}
-        · ${s.proofs} proof${s.proofs === 1 ? '' : 's'}</div>
+        · ${s.proofs} proof${s.proofs === 1 ? '' : 's'}
+        · ${s.submissions || 0} video submission${s.submissions === 1 ? '' : 's'}</div>
       ${s.health_note ? `<div class="muted">健康: ${esc(s.health_note)}</div>` : ''}
       ${s.signed_at ? `<div class="muted">public media: ${s.media_public ? 'YES' : 'no'}</div>` : ''}
       <div class="acts">
@@ -233,16 +236,32 @@
         <div><label>Title (optional)</label><input id="nt${id}"></div>
       </div>
       <label>Message 内容</label><textarea id="nb${id}" rows="3"></textarea>
+      <label>Video / photo (optional)</label><input id="nf${id}" type="file" accept="video/*,image/*">
       <p style="margin:10px 0 0"><button class="btn pink" onclick="sendNote(${id})">Send to this student</button>
         <button class="btn gray" onclick="document.getElementById('proofRow${id}').innerHTML=''">Cancel</button>
         <span class="muted" id="nm${id}"></span></p></div>`;
   };
+  // multipart, not JSON: a note may carry a demo video, and FormData must set
+  // its own Content-Type boundary
+  const sendNoteForm = fields => {
+    const fd = new FormData();
+    for (const [k, v] of Object.entries(fields)) if (v != null && v !== '') fd.append(k, v);
+    return fetch(`/api/idcn/admin/${COURSE}/notes`,
+      { method: 'POST', headers: { 'x-bkk-key': KEY }, body: fd });
+  };
+  const fileOk = f => {
+    if (f && f.size > 100 * 1024 * 1024) { alert('Video over 100MB — trim it to 1–2 minutes.'); return false; }
+    return true;
+  };
+
   window.sendNote = async id => {
     const body = $('#nb' + id).value.trim();
     if (!body) return alert('Message required.');
-    const r = await api(`/api/idcn/admin/${COURSE}/notes`, { method: 'POST',
-      body: JSON.stringify({ studentId: id, kind: $('#nk' + id).value,
-        title: $('#nt' + id).value.trim(), body }) });
+    const file = $('#nf' + id).files[0];
+    if (!fileOk(file)) return;
+    $('#nm' + id).textContent = file ? 'Uploading… keep the page open.' : 'Sending…';
+    const r = await sendNoteForm({ studentId: id, kind: $('#nk' + id).value,
+      title: $('#nt' + id).value.trim(), body, file });
     if (r.ok) { $('#proofRow' + id).innerHTML = ''; load(); }
     else $('#nm' + id).textContent = (await r.json().catch(() => ({}))).error || 'failed';
   };
@@ -251,12 +270,14 @@
     const body = $('#bBody').value.trim();
     if (!body) return alert('Message required.');
     if (!confirm('Send this to EVERY student in the course?')) return;
-    const r = await api(`/api/idcn/admin/${COURSE}/notes`, { method: 'POST',
-      body: JSON.stringify({ all: true, kind: $('#bKind').value,
-        title: $('#bTitle').value.trim(), body }) });
+    const file = $('#bFile').files[0];
+    if (!fileOk(file)) return;
+    $('#bMsg').textContent = file ? 'Uploading… keep the page open.' : 'Sending…';
+    const r = await sendNoteForm({ all: 'true', kind: $('#bKind').value,
+      title: $('#bTitle').value.trim(), body, file });
     const j = await r.json().catch(() => ({}));
     $('#bMsg').textContent = r.ok ? `Sent to ${j.sentTo} students ✓` : (j.error || 'failed');
-    if (r.ok) { $('#bBody').value = ''; $('#bTitle').value = ''; }
+    if (r.ok) { $('#bBody').value = ''; $('#bTitle').value = ''; $('#bFile').value = ''; }
   };
 
   window.setJournal = async (id, current) => {
