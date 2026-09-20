@@ -19,7 +19,7 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 | text colours | 80/20: ivory `#F4EFE6` for the body of the headline, amber `#FFB92E` for the 1–3 stressed words (marked `*like this*` in the headline). The tag and "Swipe" use the same amber. Alternates Boonchu can switch to with one spec key: coral `#FF5A4E`, teal `#3BE0C8` (`"accent"`). |
 | cover = the hook | Slide 1 carries the whole carousel in the feed. Its image must be the brightest and most striking of the ten: subject large, vivid colour, high contrast, bright clean light, never a moody dark scene. The renderer prints `lum=NN%` per slide and flags `DARK` under 22%; a dark cover gets a new, brighter prompt (generate 2 candidates with `imageCount` 2 and keep the stronger). Cover slides render with the light shade (`"shade":"light"`, automatic for slide 1). |
 | text placement | `zone: "auto"` (default): the renderer maps the image's focus (edges, contrast, saturation on a 54×68 grid) and puts the text block at the bottom or the top, whichever covers less of the focus; it must cover ≤ 60%, otherwise it also shrinks the text. The chosen zone and coverage are printed per slide; a slide over 60% gets a new image prompt, not a smaller font. |
-| images | Kling `text_to_image`, model `gemini-3.1-flash-image`, aspect 4:5, 2k, 15 credits per image = 150 per carousel, 450 per day at 3 carousels. Check `query_membership_and_credits` first; under 200 credits, render on the dark gradient and say so in the report. Prompts: photoreal, unbranded, no real people's faces, no logos, no text, and **composed for text**: "subject in the upper third of the frame, the lower half is plain, dark and empty" (or the mirror for a top-zone slide). |
+| images | **Gemini API first:** `node scripts/trend-image.js <dir> --cover-candidates 2` (needs env `GEMINI_API_KEY` from aistudio.google.com, paid tier only; default model `gemini-3.1-flash-image` at 1K ≈ $0.067 per image ≈ $2.20 a day for 33 images; `--size 2K` ≈ $0.10 per image; `--model gemini-3.1-flash-lite-image` ≈ $0.034; `--list-models` shows what the key can use; `--dry-run` prints the plan and cost). No key → Kling `text_to_image`, model `gemini-3.1-flash-image`, aspect 4:5, 2k, 15 credits per image = 150 per carousel, 450 per day; check `query_membership_and_credits` first and skip Kling under 200 credits. Neither → render on the dark gradient and say so in the report. Google Flow (labs.google/flow) has no API and cannot be used from here. Prompts: photoreal, unbranded, no real people's faces, no logos, no text, and **composed for text**: "subject in the upper third of the frame, the lower half is plain, dark and empty" (or the mirror for a top-zone slide). |
 | post times (Bangkok) | 08:00, 13:00, 19:00 = 01:00, 06:00, 12:00 UTC |
 | Postiz post type | `draft` until Boonchu says "go live", then `schedule` |
 | image hosting | branch `trend-cards` of this repo → `.../trend-cards/carousels/YYYY-MM-DD-<slug>/NN.png` (single cards under `cards/`) |
@@ -103,7 +103,10 @@ One folder per carousel: `<dir>/slides.json` + `<dir>/bg/slideN.img` → `<dir>/
             "foot":"Swipe →","image":"<photoreal prompt, unbranded, no people's faces, no text, no logos>"}, … ,
            {"n":10,"headline":"Very simply put: …","sub":"Follow No Cap Daily for the story behind what everyone is searching.","foot":"Follow","image":"…"}]}
 ```
-1. Images: for each slide call Kling `text_to_image` (model `gemini-3.1-flash-image`, arguments prompt +
+1. Images. With `GEMINI_API_KEY` set: `node scripts/trend-image.js <dir> --cover-candidates 2` writes
+   `bg/slideN.img` and `bg/cover-b.img` (Gemini API, 4:5, three requests at a time, retries on 429/5xx); a slide it
+   reports FAILED or blocked renders on the gradient (one reworded retry with `--only N` is fine). Without the key:
+   for each slide call Kling `text_to_image` (model `gemini-3.1-flash-image`, arguments prompt +
    `aspect_ratio` 4:5 + `img_resolution` 2k + `imageCount` 1, one `taskTraceId` per carousel), poll
    `query_tasks`, download `urlWithoutWatermark` to `bg/slideN.img` (URLs expire in 24 h). A job still
    queuing after 10 minutes: render that slide on the gradient, note it in the report, never resubmit on your own.
@@ -156,8 +159,8 @@ Shapes are from docs.postiz.com/public-api and are untested until the key exists
 Append to `log.json`: `{date, geo, term, volume, angle, sources[], card | carousel, facts[], postizId}`.
 The next run reads it for the 14-day rule.
 Report (final message / notification): the 3 captions in full, the 3 card URLs, what was skipped
-and why (one line each), and anything that needs Boonchu (channel missing, a fact that would not
-verify).
+and why (one line each), the image cost (Gemini images × price, or Kling credits used and remaining, or
+"gradient, no images"), and anything that needs Boonchu (channel missing, a fact that would not verify, no image key).
 
 ## Calibration — two posts that hit the voice
 "iPhone Duo" — 2,000,000+ searches this week. The most searched product on Earth right now.
