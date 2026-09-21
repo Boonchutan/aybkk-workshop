@@ -99,10 +99,11 @@ function mountIdcn(app, opts = {}) {
     const cloudinary = require('cloudinary').v2;
     const isVideo = /^video\//.test(file.mimetype || '');
     try {
-      const up = isVideo
-        ? await cloudinary.uploader.upload_large(file.path,
-            { folder, resource_type: 'video', chunk_size: 6 * 1024 * 1024 })
-        : await cloudinary.uploader.upload(file.path, { folder, resource_type: 'image' });
+      // upload_large rejects with a broken error in this SDK version; plain
+      // upload handles videos to ~100MB, which is also the multer cap here
+      const up = await cloudinary.uploader.upload(file.path, isVideo
+        ? { folder, resource_type: 'video', chunk_size: 6 * 1024 * 1024 }
+        : { folder, resource_type: 'image' });
       return { url: up.secure_url, type: isVideo ? 'video' : 'image' };
     } finally { fs.unlink(file.path, () => {}); }
   }

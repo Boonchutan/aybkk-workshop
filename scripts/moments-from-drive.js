@@ -42,9 +42,12 @@ if (cmd === 'fetch') {
       try {
         execFileSync('curl', ['-sL', '--max-time', '90', '-o', tmp,
           `https://drive.google.com/uc?export=download&id=${meta.id}`], { stdio: 'pipe' });
-        const head = fs.readFileSync(tmp).subarray(0, 3);
-        if (!(head[0] === 0xFF && head[1] === 0xD8 && head[2] === 0xFF)) {
-          bad++; console.log('BAD (not JPEG — is the folder still link-shared?):', title);
+        const head = fs.readFileSync(tmp).subarray(0, 12);
+        const isJpeg = head[0] === 0xFF && head[1] === 0xD8 && head[2] === 0xFF;
+        // MP4/MOV start with an 'ftyp' box at offset 4
+        const isVideo = head.subarray(4, 8).toString('latin1') === 'ftyp';
+        if (!isJpeg && !isVideo) {
+          bad++; console.log('BAD (not JPEG/MP4 — is the folder still link-shared?):', title);
           fs.unlinkSync(tmp); continue;
         }
         let date = meta.date;
@@ -86,16 +89,21 @@ if (cmd === 'fetch') {
   (async () => {
     let ok = 0, fail = 0;
     for (const f of fs.readdirSync(a1).sort()) {
-      const m = f.match(/^(\d{4}-\d{2}-\d{2})__(.+)\.(jpe?g|png|webp)$/i);
+      const m = f.match(/^(\d{4}-\d{2}-\d{2})__(.+)\.(jpe?g|png|webp|mp4|mov)$/i);
       if (!m) continue;
-      const [, date, base] = m;
+      const [, date, base, ext] = m;
+      const isVideo = /^(mp4|mov)$/i.test(ext);
       const full = path.join(a1, f);
       try {
-        const r = await cloudinary.uploader.upload(full, {
+        const opts = {
           public_id: `aybkk/daily/${date}/${base}-${Date.now()}`,
           tags: [`aybkk-daily-${date}`, 'aybkk-daily'],
-          resource_type: 'image',
-        });
+          resource_type: isVideo ? 'video' : 'image',
+        };
+        // upload_large in this SDK version rejects with a broken error; plain
+        // upload handles videos to ~100MB, which is also the plan's ceiling
+        const r = await cloudinary.uploader.upload(full,
+          isVideo ? { ...opts, chunk_size: 6 * 1024 * 1024 } : opts);
         console.log('↑', date, base, r.secure_url.slice(0, 80));
         fs.unlinkSync(full); ok++;
       } catch (e) { console.log('✗', f, e.message); fail++; }
