@@ -4,12 +4,16 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AYBKK — Timetable &amp; Packages</title>
 <link rel="preload" href="/fonts/longcang.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/patrickhand.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/plexthai.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* AYBKK Bangkok — Aubergine & Blush.
      Long Cang (brush) carries display only; body text is a plain face so the
      small print stays readable. Self-hosted font: the Google CDN is blocked in China. */
   @font-face{font-family:'Long Cang';src:url('/fonts/longcang.woff2') format('woff2');font-display:swap}
+  /* Patrick Hand: package names & prices — handwritten but instantly legible
+     (Boonchu's pick, 21 Sep). No ฿ glyph, so the stack falls back to Plex for it. */
+  @font-face{font-family:'Patrick Hand';src:url('/fonts/patrickhand.woff2') format('woff2');font-display:swap}
   /* Two cuts of one family under one name: the browser picks the Thai file only
      for Thai characters, so Thai and Latin sit on the same baseline. */
   @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
@@ -115,8 +119,8 @@
 
   .pkg{background:var(--paper);border-radius:var(--radius);padding:18px;margin-bottom:13px;border:1px solid var(--line)}
   .pkg.feature{background:var(--blush);border-color:var(--blush-line)}
-  .pkg h3{margin:0 0 2px;font-family:'Long Cang',cursive;font-weight:400;font-size:27px;line-height:1.2;color:var(--ink)}
-  .pkg .price{font-family:'Long Cang',cursive;font-size:42px;line-height:1.05;color:var(--pink)}
+  .pkg h3{margin:0 0 2px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:25px;line-height:1.2;color:var(--ink)}
+  .pkg .price{font-family:'Patrick Hand','Plex',cursive;font-size:38px;line-height:1.05;color:var(--pink)}
   .pkg .fee{font-size:12.5px;color:var(--soft);margin-top:2px}
   .pkg ul{margin:10px 0 15px;padding-left:17px;font-size:13.5px;color:var(--soft)}
   .pkg li{margin:3px 0}
@@ -125,7 +129,7 @@
   dialog{border:none;border-radius:12px;padding:22px;max-width:410px;width:92%;
     background:var(--paper);color:var(--ink);box-shadow:0 24px 60px rgba(23,18,26,.3)}
   dialog::backdrop{background:rgba(23,18,26,.55)}
-  dialog h3{margin:0 0 14px;font-family:'Long Cang',cursive;font-weight:400;font-size:28px;line-height:1.2}
+  dialog h3{margin:0 0 14px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:26px;line-height:1.2}
   label{display:block;font-size:12.5px;color:var(--soft);margin:11px 0 4px}
   input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
     font-family:inherit;background:var(--wall);color:var(--ink)}
