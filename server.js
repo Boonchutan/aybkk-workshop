@@ -222,7 +222,9 @@ cloudinary.config({
 // Cloudinary with the `aybkk-daily` tag (public_id aybkk/daily/<date>/…).
 // Student selfies live in the aybkk-students folder and are never tagged, so
 // they can't leak into the feed. Newest 50 per day, last 7 days with content.
-const MOMENTS_PER_DAY = 50;
+// high enough that a batch-upload day (Jamsai often processes several classes
+// at once) is never silently truncated
+const MOMENTS_PER_DAY = 120;
 const MOMENTS_MAX_DAYS = 7;
 let momentsCache = { at: 0, data: null };
 
