@@ -73,6 +73,24 @@
   main{max-width:640px;margin:0 auto;padding:18px 16px 40px}
   .day{margin:26px 0 10px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
 
+  .cal{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:12px 12px 14px;margin-bottom:16px}
+  .cal .head{display:flex;align-items:center;margin:2px 2px 10px}
+  .cal .head b{flex:1;text-align:center;font-size:15px;letter-spacing:.04em;color:var(--plum)}
+  .cal .nav{background:none;border:none;font:700 20px/1 inherit;color:var(--plum);
+    cursor:pointer;padding:4px 12px}
+  .cal .nav:disabled{opacity:.25;cursor:default}
+  .cal .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .cal .wd{text-align:center;font-size:10.5px;font-weight:700;letter-spacing:.08em;
+    color:var(--soft);padding:4px 0 6px}
+  .cal .d{aspect-ratio:1;border:none;background:none;border-radius:8px;font:600 14px/1 inherit;
+    color:var(--ink);cursor:pointer;position:relative;padding:0}
+  .cal .d.off{color:var(--soft);opacity:.35;cursor:default}
+  .cal .d.has::after{content:"";position:absolute;left:50%;bottom:5px;width:4px;height:4px;
+    border-radius:99px;background:var(--pink);transform:translateX(-50%)}
+  .cal .d.today{box-shadow:inset 0 0 0 1.5px var(--pink)}
+  .cal .d.sel{background:var(--plum);color:var(--on-dark)}
+  .cal .d.sel::after{background:var(--on-dark)}
   .cls{background:var(--paper);border-radius:var(--radius);padding:15px 16px;margin-bottom:11px;
     display:flex;gap:14px;align-items:center;border:1px solid var(--line)}
   .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
@@ -167,7 +185,7 @@
   async function load() {
     try {
       const [s, p] = await Promise.all([
-        fetch('/api/bkk/schedule?days=14').then(r => r.json()),
+        fetch('/api/bkk/schedule?days=62').then(r => r.json()),
         fetch('/api/bkk/products').then(r => r.json()),
       ]);
       CLASSES = s.classes || [];
@@ -179,12 +197,53 @@
     }
   }
 
+  // The calendar shows Bangkok's "today" regardless of the visitor's timezone —
+  // a student in China is 1h ahead and must not see tomorrow highlighted.
+  const bkkToday = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+  let selDate = null, calMonth = null;         // calMonth = 'YYYY-MM'
+  const MONTHS = ['January','February','March','April','May','June',
+    'July','August','September','October','November','December'];
+
   function renderSchedule() {
     if (!CLASSES.length) { $('#view').innerHTML = '<p class="note">No classes scheduled.</p>'; return; }
-    let html = '', lastDay = '';
-    for (const c of CLASSES) {
-      const day = fmtDay(c.startAt);
-      if (day !== lastDay) { html += `<div class="day">${esc(day)}</div>`; lastDay = day; }
+    const has = new Set(CLASSES.map(c => c.date));
+    const today = bkkToday();
+    if (!selDate) selDate = today;
+    if (!calMonth) calMonth = selDate.slice(0, 7);
+    const months = [...new Set([...has].map(d => d.slice(0, 7)))].sort();
+    const mi = months.indexOf(calMonth);
+    const [yy, mm] = calMonth.split('-').map(Number);
+    const firstDow = (new Date(Date.UTC(yy, mm - 1, 1)).getUTCDay() + 6) % 7;   // Monday-first
+    const daysIn = new Date(Date.UTC(yy, mm, 0)).getUTCDate();
+
+    let cells = '<div class="wd">Mo</div><div class="wd">Tu</div><div class="wd">We</div>'
+      + '<div class="wd">Th</div><div class="wd">Fr</div><div class="wd">Sa</div><div class="wd">Su</div>';
+    for (let i = 0; i < firstDow; i++) cells += '<span></span>';
+    for (let d = 1; d <= daysIn; d++) {
+      const iso = `${calMonth}-${String(d).padStart(2, '0')}`;
+      const open = has.has(iso);
+      cells += `<button class="d ${open ? 'has' : 'off'} ${iso === today ? 'today' : ''}
+        ${iso === selDate ? 'sel' : ''}" ${open ? `onclick="pickDay('${iso}')"` : 'disabled'}>${d}</button>`;
+    }
+    const cal = `<div class="cal">
+      <div class="head">
+        <button class="nav" ${mi > 0 ? `onclick="calGo('${months[mi - 1]}')"` : 'disabled'}>‹</button>
+        <b>${MONTHS[mm - 1]} ${yy}</b>
+        <button class="nav" ${mi >= 0 && mi < months.length - 1
+          ? `onclick="calGo('${months[mi + 1]}')"` : 'disabled'}>›</button>
+      </div>
+      <div class="grid">${cells}</div></div>`;
+
+    // Label from the Bangkok class date itself, never from the timestamp — in a
+    // viewer's local timezone a 05:30 class can fall on the previous calendar day.
+    const dsel = new Date(selDate + 'T12:00:00Z');
+    const dayLabel = DAYS[dsel.getUTCDay()] + ', ' + dsel.getUTCDate() + ' '
+      + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dsel.getUTCMonth()];
+    const dayClasses = CLASSES.filter(c => c.date === selDate);
+    let html = cal;
+    html += `<div class="day">${esc(dayLabel)}</div>`;
+    if (!dayClasses.length) html += '<p class="note">No classes this day — tap a date with a dot.</p>';
+    for (const c of dayClasses) {
       const full = c.seatsLeft < 1;
       html += `<div class="cls ${full ? 'full' : ''}">
         <div class="t">${fmtTime(c.startAt)}</div>
@@ -202,6 +261,8 @@
     }
     $('#view').innerHTML = html;
   }
+  window.pickDay = iso => { selDate = iso; renderSchedule(); };
+  window.calGo = m => { calMonth = m; renderSchedule(); };
 
   function renderPackages() {
     const html = PRODUCTS.map(p => {

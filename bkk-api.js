@@ -288,7 +288,8 @@ function mountBkk(app, opts = {}) {
   // Schedule is generated from the weekly pattern on read — no cron.
   app.get('/api/bkk/schedule', async (req, res) => {
     try {
-      const days = Math.min(30, Math.max(1, parseInt(req.query.days) || 14));
+      // 62 covers the booking page's calendar: the rest of this month + next
+      const days = Math.min(62, Math.max(1, parseInt(req.query.days) || 14));
       const slots = (await q('SELECT * FROM bkk_class_slots WHERE active')).rows;
       const from = new Date();
       const dates = [];
