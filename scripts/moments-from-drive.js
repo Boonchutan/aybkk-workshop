@@ -24,7 +24,27 @@ cloudinary.config({
 
 const [, , cmd, a1, a2, a3] = process.argv;
 
-if (cmd === 'decode') {
+if (cmd === 'fetch') {
+  // node moments-from-drive.js fetch <manifest.json> <photosDir>
+  // The photos_edited Drive folder is link-shared, so files download directly
+  // by id — no connector involved. Validates each file is a real JPEG.
+  const { execFileSync } = require('child_process');
+  const manifest = JSON.parse(fs.readFileSync(a1, 'utf8'));
+  fs.mkdirSync(a2, { recursive: true });
+  let ok = 0, bad = 0;
+  for (const [title, meta] of Object.entries(manifest)) {
+    const dest = path.join(a2, `${meta.date}__${title}`);
+    try {
+      execFileSync('curl', ['-sL', '--max-time', '90', '-o', dest,
+        `https://drive.google.com/uc?export=download&id=${meta.id}`], { stdio: 'pipe' });
+      const head = fs.readFileSync(dest).subarray(0, 3);
+      if (head[0] === 0xFF && head[1] === 0xD8 && head[2] === 0xFF) ok++;
+      else { bad++; console.log('BAD (not JPEG — is the folder still link-shared?):', title); fs.unlinkSync(dest); }
+    } catch (e) { bad++; console.log('FAIL:', title, e.message.slice(0, 80)); }
+  }
+  console.log(`fetched=${ok} bad=${bad}`);
+  process.exit(bad && !ok ? 1 : 0);
+} else if (cmd === 'decode') {
   const manifest = JSON.parse(fs.readFileSync(a3, 'utf8'));
   fs.mkdirSync(a2, { recursive: true });
   let n = 0;
