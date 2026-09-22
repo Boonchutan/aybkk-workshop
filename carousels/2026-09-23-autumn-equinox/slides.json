@@ -1,0 +1,85 @@
+{
+ "topic": "Autumn equinox",
+ "slug": "autumn-equinox",
+ "brand": "Equinox · 10 facts",
+ "geo": "Global",
+ "volume": "100,000+ searches this week",
+ "caption": [
+  "\"first day of fall\" — 100,000+ searches this week. Swipe for 10 things most people don't know about the equinox.",
+  "Why: the September equinox is the moment the Sun crosses the celestial equator. In 2026 that is September 23 at 00:06 UTC: 8:06 pm September 22 in New York, 7:06 am September 23 in Bangkok. Autumn in the north, spring in the south.",
+  "What most people don't know: day and night are not equal on the equinox. The atmosphere bends sunlight and the Sun is a disc, so the day runs about 14 minutes longer at the equator. The truly equal day, the equilux, comes a few days later.",
+  "Very simply put: equal night is the name, not the measurement."
+ ],
+ "slides": [
+  {
+   "n": 1,
+   "headline": "The equinox is *not* a day of equal day and night.",
+   "sub": "10 things most people don't know about the first day of fall, 100,000+ searches this week.",
+   "foot": "Swipe →",
+   "image": "A single bright orange maple leaf lying on pale wet stone in low golden sunlight, leaf in the upper two thirds of the frame, lower third plain grey stone, vivid, high contrast, photorealistic, no text"
+  },
+  {
+   "n": 2,
+   "headline": "It happens at *00:06 UTC* on September 23.",
+   "sub": "8:06 pm September 22 in New York, 7:06 am September 23 in Bangkok. The Sun crosses the celestial equator, heading south.",
+   "foot": "Swipe →",
+   "image": "The sun sitting exactly on a flat sea horizon in clear evening light, sun in the upper half of the frame, lower half plain calm water, photorealistic, no text"
+  },
+  {
+   "n": 3,
+   "headline": "The day is about *14 minutes* longer than the night.",
+   "sub": "At the equator, and more towards the poles. The atmosphere bends sunlight over the horizon and the Sun is a disc, not a point.",
+   "foot": "Swipe →",
+   "image": "A sundial casting a long shadow on a stone plinth in a bright garden, sundial in the upper half of the frame, lower half plain gravel, photorealistic, no readable text"
+  },
+  {
+   "n": 4,
+   "headline": "The truly equal day, the *equilux*, comes days later.",
+   "sub": "A few days towards winter at mid-latitudes. The word equinox is Latin: aequus, equal, and nox, night.",
+   "foot": "Swipe →",
+   "image": "An old brass balance scale perfectly level on a wooden table in soft window light, scale in the upper half of the frame, lower half plain wood, photorealistic, no text"
+  },
+  {
+   "n": 5,
+   "headline": "Everywhere on Earth the Sun rises *due east* today.",
+   "sub": "And sets due west. It is the one day the compass and the sunrise agree, from Bangkok to Buenos Aires.",
+   "foot": "Swipe →",
+   "image": "A vintage brass compass lying on a wooden dock at sunrise, compass in the upper half of the frame, lower half plain weathered planks, photorealistic, no readable text"
+  },
+  {
+   "n": 6,
+   "headline": "Seasons come from a *23.4 degree* tilt, not distance.",
+   "sub": "Earth is closest to the Sun in January and farthest in July. Distance changes the sunlight by only 7%.",
+   "foot": "Swipe →",
+   "image": "A classroom globe tilted on its stand, lit from one side against a dark background, globe in the upper half of the frame, lower half plain dark desk, photorealistic, no readable text"
+  },
+  {
+   "n": 7,
+   "headline": "South of the equator it is the first day of *spring*.",
+   "sub": "The hemispheres always sit in opposite seasons. Meteorologists started autumn on September 1 regardless.",
+   "foot": "Swipe →",
+   "image": "Pink cherry blossoms against a bright blue spring sky, blossoms in the upper half of the frame, lower half plain sky, photorealistic, no text"
+  },
+  {
+   "n": 8,
+   "headline": "It can fall anywhere from *September 21 to 24*.",
+   "sub": "The calendar year and the Sun's year do not match, so the moment drifts: 2025 was September 22, 2027 will be September 23 at 06:02 UTC.",
+   "foot": "Swipe →",
+   "image": "Pages of a paper wall calendar fanned in the breeze on a plain white wall, calendar in the upper half of the frame, lower half plain white, photorealistic, no readable text"
+  },
+  {
+   "n": 9,
+   "headline": "Japan gives it a *public holiday*; China eats mooncakes.",
+   "sub": "Autumnal Equinox Day in Japan. The Mid-Autumn Festival falls on Friday, September 25 this year, on the fullest moon of the harvest.",
+   "foot": "Swipe →",
+   "image": "A round golden mooncake on a dark plate beside a cup of tea under a full moon, mooncake in the upper half of the frame, lower half plain dark table, photorealistic, no text"
+  },
+  {
+   "n": 10,
+   "headline": "Very simply put: equal night is the *name*, not the measurement.",
+   "sub": "Follow No Cap Daily for the story behind what everyone is searching.",
+   "foot": "Follow",
+   "image": "A full harvest moon rising over a dark field at dusk, moon in the upper half of the frame, lower half plain dark field, photorealistic, no text"
+  }
+ ]
+}

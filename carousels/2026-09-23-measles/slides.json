@@ -1,0 +1,85 @@
+{
+ "topic": "Measles",
+ "slug": "measles",
+ "brand": "Measles · 10 facts",
+ "geo": "Global",
+ "volume": "50,000+ searches this week, up 1,000%",
+ "caption": [
+  "\"measles\" — 50,000+ searches this week, up 1,000% today. Swipe for 10 things most people don't know about the disease America beat in 2000.",
+  "Why: Pennsylvania hit 792 cases across 39 counties on Monday and asked the CDC for help. Nationally, 3,471 cases by September 17, the most in three decades, above all of 2025. A regional commission rules in November on America's measles-free status.",
+  "What most people don't know: nine in ten unprotected people who share a home with a case catch it, and the virus lingers airborne for two hours. Two MMR doses protect 97 to 99%. Kindergarten coverage slipped from 95.2% to 92.4% since 2019.",
+  "Very simply put: measles-free since 2000; the verdict comes in November."
+ ],
+ "slides": [
+  {
+   "n": 1,
+   "headline": "America beat measles in 2000. This year: *3,471 cases*.",
+   "sub": "10 things most people don't know about the outbreak, searches up 1,000% today.",
+   "foot": "Swipe →",
+   "image": "A single glass vaccine vial standing on a bright white surface in clean clinical light, vial in the upper two thirds of the frame, lower third plain white, vivid, high contrast, photorealistic, no text, no labels"
+  },
+  {
+   "n": 2,
+   "headline": "Pennsylvania: *792 cases* in 39 counties, and a call for help.",
+   "sub": "Its health secretary wrote to the CDC on Monday. The state recorded its first measles deaths in 35 years in August, both unvaccinated.",
+   "foot": "Swipe →",
+   "image": "A quiet Pennsylvania farm road with a white barn under a grey sky, barn in the upper half of the frame, lower half plain road, photorealistic, no people, no text"
+  },
+  {
+   "n": 3,
+   "headline": "*3,471* US cases by September 17, more than all of 2025.",
+   "sub": "2025 ended with 2,289, itself the worst year in decades. 89% of this year's cases were unvaccinated or of unknown status.",
+   "foot": "Swipe →",
+   "image": "Rows of small red dots pinned on a plain white map of the United States, map in the upper half of the frame, lower half plain white, photorealistic, no readable text"
+  },
+  {
+   "n": 4,
+   "headline": "It started with *two imported cases* in Texas, in early 2025.",
+   "sub": "That outbreak killed two children. The chain has since reached 45 states.",
+   "foot": "Swipe →",
+   "image": "An empty airport arrivals hall with a long window and bright light, hall in the upper half of the frame, lower half plain polished floor, photorealistic, no people, no text"
+  },
+  {
+   "n": 5,
+   "headline": "Nine in ten unprotected people in the same home *catch it*.",
+   "sub": "The virus stays in the air for up to two hours after an infected person leaves the room.",
+   "foot": "Swipe →",
+   "image": "Dust motes floating in a shaft of sunlight in an empty living room, light in the upper half of the frame, lower half plain wooden floor, photorealistic, no people, no text"
+  },
+  {
+   "n": 6,
+   "headline": "It kills *1 to 3* of every 1,000 children who get it.",
+   "sub": "About 30% of cases have complications: pneumonia, ear infections, encephalitis. It can wipe immune memory for up to three years.",
+   "foot": "Swipe →",
+   "image": "An empty hospital bed with white sheets in a bright ward, bed in the upper half of the frame, lower half plain floor, photorealistic, no people, no text"
+  },
+  {
+   "n": 7,
+   "headline": "Two MMR doses: *97 to 99%* protected.",
+   "sub": "One dose is about 95%. Herd immunity needs about 95% of the population covered.",
+   "foot": "Swipe →",
+   "image": "Two small adhesive bandages on a plain pale blue surface in soft light, bandages in the upper half of the frame, lower half plain blue, photorealistic, no text"
+  },
+  {
+   "n": 8,
+   "headline": "Kindergarten coverage fell from 95.2% to *92.4%*.",
+   "sub": "From 2019 to the 2025-26 school year. Only 10 states still reach the 95% threshold.",
+   "foot": "Swipe →",
+   "image": "A row of small empty school chairs in a bright classroom, chairs in the upper half of the frame, lower half plain floor, photorealistic, no people, no text"
+  },
+  {
+   "n": 9,
+   "headline": "*Canada* lost its measles-free status in 2025.",
+   "sub": "With 5,462 cases. The US, measles-free since 2000, gets its verdict from a regional commission in November.",
+   "foot": "Swipe →",
+   "image": "A red maple leaf frozen in clear ice on a plain white surface, leaf in the upper half of the frame, lower half plain white, photorealistic, no text"
+  },
+  {
+   "n": 10,
+   "headline": "Very simply put: measles-free since 2000; the verdict comes in *November*.",
+   "sub": "Follow No Cap Daily for the story behind what everyone is searching.",
+   "foot": "Follow",
+   "image": "A wall calendar page for November with one date circled, on a plain wall, calendar in the upper half of the frame, lower half plain white, photorealistic, no readable text"
+  }
+ ]
+}
