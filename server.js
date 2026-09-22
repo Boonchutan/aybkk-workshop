@@ -106,7 +106,8 @@ const upload = multer({
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+// index: false so '/' falls through to the host-aware front-door route below
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));
 
 // ─── Merged-identity alias ───────────────────────────────────────────────────
