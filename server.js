@@ -2729,7 +2729,15 @@ async function initSchema() {
 }
 
 // Serve dashboard
+// Front door by audience: cn.aybkk.net keeps the Chinese students' Practice
+// Journal home; every other hostname (my.aybkk.com, aybkk.net, …) opens on the
+// shala's main booking page. The journal home stays reachable everywhere at /planner.
 app.get('/', (req, res) => {
+  const host = String(req.headers.host || '').toLowerCase();
+  const file = host.startsWith('cn.') ? 'index.html' : 'bkk.html';
+  res.sendFile(path.join(__dirname, 'public', file));
+});
+app.get('/planner', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
