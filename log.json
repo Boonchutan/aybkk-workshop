@@ -1115,5 +1115,132 @@
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-24-fat-bear-week/09.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-24-fat-bear-week/10.png"
   ]
+ },
+ {
+  "date": "2026-09-25",
+  "geo": "Global",
+  "term": "kratom",
+  "volume": "500,000+ searches (7d, US weekly list)",
+  "angle": "Searches spiked after packaged kratom was found in two separate Ole Miss student death investigations on Sept 21 (officials: no confirmed link); Boulder Care's kratom share of new patients rose 3% (Sept 2025) to 14% (Aug 2026) per STAT; 7-OH is only a trace compound in the leaf but concentrated 7-OH is sold as kratom, and the DEA proposed Schedule I above a threshold in July 2026; Thailand banned kratom in 1943 amid a push to control the opium market and legalized it Aug 24, 2021",
+  "carousel": "carousels/2026-09-25-kratom",
+  "facts": [
+   "Kratom is a Southeast Asian tree leaf from the coffee family. Mitragyna speciosa, family Rubiaceae, native to Southeast Asia.",
+   "Low doses act like a stimulant. High doses act like an opioid. The effect depends on the dose. It is not approved for any medical use.",
+   "Federally legal in the US, yet the FDA approved no kratom product. The FDA says it cannot legally be sold as a supplement or added to food.",
+   "Poison center reports rose from 258 in 2015 to 3,434 in 2025. Up more than 1,200%, per a CDC report published March 26, 2026.",
+   "Kratom users rose from 3% to 14% of one clinic's new patients. Boulder Care, a telehealth addiction clinic: September 2025 to August 2026.",
+   "The strong stuff, 7-OH, exists in the leaf only in trace amounts. Concentrated 7-OH products are often marketed as kratom.",
+   "The DEA moved to put concentrated 7-OH in Schedule I, with heroin. Proposed in July 2026. It is not final yet.",
+   "Thailand banned kratom in 1943 while taking control of the opium market. It legalized the leaf in August 2021 and freed 121 people jailed for possession."
+  ],
+  "caption": "\"kratom\" — 500,000 searches this week. Swipe for 10 things most people don't know about it.\n\nWhy: on September 21, packaged kratom was found in two separate student death investigations at the University of Mississippi. Officials have not linked it to either death. The same week, one telehealth addiction clinic reported kratom users rising from 3% to 14% of new patients in a year.\n\nWhat most people don't know: the strong stuff is not the leaf. 7-OH exists in kratom only in trace amounts, but concentrated 7-OH products are sold as kratom, and the DEA has moved to put them in Schedule I, next to heroin.\n\nVery simply put: the leaf is old. The lab version is new.",
+  "sources": [
+   "https://www.statnews.com/2026/09/21/kratom-withdrawal-addiction-centers-report-surge/",
+   "https://medicalxpress.com/news/2026-09-kratom-cases-climb-sharply.html",
+   "https://hollywoodlife.com/2026/09/23/what-is-kratom-drug-ole-miss-student-deaths/",
+   "https://en.wikipedia.org/wiki/Kratom",
+   "https://www.fda.gov/news-events/public-health-focus/hiding-plain-sight-7-oh-products",
+   "https://www.uvahealth.com/news/kratom-calls-skyrocket-to-nation-s-poison-centers",
+   "https://www.tilleke.com/insights/thailand-decriminalizes-kratom-in-amended-narcotics-act/4/",
+   "https://seasia.yale.edu/news/thailand-legalizes-kratom"
+  ],
+  "postizId": null,
+  "status": "report-only (no No Cap channel in Postiz); gradient backgrounds, no images (Kling credits 137 < 200, no GEMINI_API_KEY)",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-kratom/10.png"
+  ]
+ },
+ {
+  "date": "2026-09-25",
+  "geo": "Global",
+  "term": "meta vr glasses",
+  "volume": "100,000+ searches (7d, US weekly list; \"muse\" also 100,000+)",
+  "angle": "Meta Connect Sept 23: VR Glasses at $1,299.99 for spring 2027, about 100 g (5x lighter than Quest 3's 515 g); Ray-Ban Meta Audio, the first camera-free pair, $349, ships Oct 13; Ray-Ban Meta Gen 3 $449; the Muse Charm (2-inch screen, by December) came from the design lab of ex-Apple interface chief Alan Dye, hired Dec 2025; Reality Labs lost $83.55B from 2020 to 2025",
+  "carousel": "carousels/2026-09-25-meta-connect",
+  "facts": [
+   "Meta VR Glasses cost $1,299.99 and arrive in spring 2027. Announced September 23 at Meta Connect.",
+   "They weigh about 100 grams, five times lighter than Quest 3. Quest 3 weighs 515 grams. The battery moves to a clip-on puck.",
+   "The new Ray-Ban Meta Audio has no camera at all. $349, 43 grams, ships October 13.",
+   "The camera version, Ray-Ban Meta Gen 3, costs $449. On sale September 23, with a 12MP camera and 3K video.",
+   "Muse is Meta's new AI agent, live in the US and Canada. Meta says it runs in a private system that not even Meta can access.",
+   "The Muse Charm is a 2-inch screen you carry like a Tamagotchi. On sale by December. Meta says it will cost about as much as a smartwatch.",
+   "Meta's hardware unit lost $83.55 billion from 2020 to 2025. Reality Labs operating losses; $19.19 billion in 2025 alone.",
+   "The Charm came from a lab run by Apple's former interface chief. Alan Dye led Apple's interface design for a decade. Meta hired him in December 2025."
+  ],
+  "caption": "\"meta vr glasses\" — 100,000 searches this week, plus 100,000 for \"muse\". Swipe for 10 things most people don't know about Meta Connect 2026.\n\nWhy: on September 23, Meta showed VR Glasses at $1,299.99 for spring 2027. They weigh about 100 grams, five times lighter than Quest 3. It also launched Ray-Ban Meta Audio, its first glasses with no camera, at $349.\n\nWhat most people don't know: Meta's new pocket AI gadget, the Muse Charm, came out of a design lab run by Alan Dye. He led Apple's interface design for a decade before Meta hired him in December 2025.\n\nVery simply put: the glasses got five times lighter. The losses did not.",
+  "sources": [
+   "https://www.meta.com/blog/meta-connect-2026-everything-we-announced/",
+   "https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/",
+   "https://9to5mac.com/2026/09/23/meta-announces-camera-free-glasses-dedicated-muse-ai-gadget-more/",
+   "https://www.socialmediatoday.com/news/meta-outlines-muse-ai-glasses-and-vr-device-updates-at-connect-2026/831223/",
+   "https://www.irishtimes.com/business/2026/09/24/theres-nothing-like-it-meta-unveils-dedicated-charm-device-for-using-muse-ai/",
+   "https://techcrunch.com/2025/12/03/meta-poaches-apple-design-exec-alan-dye/",
+   "https://www.gamedeveloper.com/business/meta-retains-optimism-in-vr-after-reality-labs-loses-83-6-billion-in-six-years",
+   "https://en.wikipedia.org/wiki/Reality_Labs"
+  ],
+  "postizId": null,
+  "status": "report-only (no No Cap channel in Postiz); gradient backgrounds, no images (Kling credits 137 < 200, no GEMINI_API_KEY)",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-meta-connect/10.png"
+  ]
+ },
+ {
+  "date": "2026-09-25",
+  "geo": "Global",
+  "term": "the love hypothesis",
+  "volume": "200,000+ searches (7d, US weekly list)",
+  "angle": "Prime Video film released Sept 23 (Lili Reinhart, Tom Bateman; dir. Claire Scanlon); Ali Hazelwood's 2021 debut, a NYT bestseller 40+ weeks, began as 2018 Star Wars Reylo fan fiction 'Head Over Feet'; hero Adam Carlsen is named after Adam Driver; Tom Bateman, who plays Adam, is married to Daisy Ridley, who played Rey",
+  "carousel": "carousels/2026-09-25-the-love-hypothesis",
+  "facts": [
+   "It premiered on Prime Video on September 23. Lili Reinhart and Tom Bateman star. Claire Scanlon directs.",
+   "The 2021 novel was a bestseller for 40-plus weeks. Ali Hazelwood's debut, on The New York Times list.",
+   "The author was a neuroscience professor before she wrote romance. Italian-born, PhD in neuroscience. She left academia in 2022. Ali Hazelwood is a pen name.",
+   "The film was shot in Montreal in summer 2025. Filming ran in July and August 2025.",
+   "Critics gave it 76% on Rotten Tomatoes. From its first 33 reviews. Metacritic: 50.",
+   "The story began in 2018 as Star Wars fan fiction. Titled Head Over Feet, about Rey and Kylo Ren, posted online.",
+   "The hero, Adam, is named after Adam Driver. Kylo Ren's actor. Star Wars references were cut for print.",
+   "The new Adam, Tom Bateman, is married to Rey: Daisy Ridley. Together since 2017. Ridley confirmed the marriage in January 2023."
+  ],
+  "caption": "\"the love hypothesis\" — 200,000 searches this week. Swipe for 10 things most people don't know about it.\n\nWhy: Prime Video released the movie on September 23. Lili Reinhart plays a PhD student who fake-dates a professor, played by Tom Bateman. It is based on Ali Hazelwood's 2021 debut, a New York Times bestseller for more than 40 weeks.\n\nWhat most people don't know: the book started in 2018 as Star Wars fan fiction about Rey and Kylo Ren. The hero is named after Adam Driver. And the actor who now plays him, Tom Bateman, is married to Daisy Ridley, the actress who played Rey.\n\nVery simply put: Rey's fan fiction boyfriend is played by her husband.",
+  "sources": [
+   "https://en.wikipedia.org/wiki/The_Love_Hypothesis_(film)",
+   "https://en.wikipedia.org/wiki/The_Love_Hypothesis",
+   "https://en.wikipedia.org/wiki/Ali_Hazelwood",
+   "https://www.avclub.com/the-love-hypothesis-reylo-fan-fiction-explained-interview-star-wars",
+   "https://www.hercampus.com/culture/love-hypothesis-movie-reylo-fanfic-lore-explained/",
+   "https://en.wikipedia.org/wiki/Tom_Bateman_(actor)"
+  ],
+  "postizId": null,
+  "status": "report-only (no No Cap channel in Postiz); gradient backgrounds, no images (Kling credits 137 < 200, no GEMINI_API_KEY)",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-25-the-love-hypothesis/10.png"
+  ]
  }
 ]
