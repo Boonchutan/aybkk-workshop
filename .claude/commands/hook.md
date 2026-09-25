@@ -42,6 +42,8 @@ Generate 5 distinct hook options for a single Reel topic, each under 12 words, e
 - Each hook must work without music, motion, or visual effects
 - Each hook must be specific enough that a competitor cannot post the same hook tomorrow
 - No buzzwords: "flow," "journey," "transformation," "unlock," "level up"
+- Spoken words only: every word must be one a 10-year practitioner says out loud. Test each line: would a student say it to you after class? If not, rewrite it
+- Never "chase" or "chasing" — not a pose, not a bind, not a series. Practitioners say "work on," "stuck at," "couldn't … for years"
 - Must work in English and translate cleanly to Thai or Chinese
 </rules>
 
