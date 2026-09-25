@@ -46,6 +46,17 @@ Use when turning a story or teaching point into a complete Reel script, or plann
 
 **Do not use for:** photo captions, carousels, sales copy, or long-form content.
 
+### `/cadence`
+**Purpose:** Publishing rhythm — sets how often, which slot, which channel, and what gets filmed when. Governs volume and consistency, not words. Two modes: set the cadence (built on the worst week, not the average), or fill a 7/30-day window with slotted, dated posts routed to the skill that writes each one.
+
+Four slots in rotation, one job each: TEACHING (give the technique away completely), STANDARD (what the practice demands — this does the disqualifying), PROOF (the room, accurately told), ASK (one per cycle, maximum).
+
+Capture and publish are separate activities. Film in batches next to teaching; never schedule a post that has to be shot the day it goes out. China and international never share a schedule or a cut — Instagram is blocked in China.
+
+`/hook` writes seconds 0–3, `/story` writes the rest, `/cadence` decides what gets made at all.
+
+**Do not use for:** writing the video, sales copy, DM replies, or shop operations.
+
 ### `/shop`
 **Purpose:** Shop builder & operations — the full recipe for AYBKK pre-order shops (tee shop live at cn.aybkk.net/shop.html; future: Bangkok price list with classes and courses).
 
