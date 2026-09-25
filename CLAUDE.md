@@ -77,6 +77,37 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.
 
+## Build Log — do this at the end of every session
+
+Boonchu keeps `AYBKK App Build Log.md` in his Obsidian vault: what Claude built on
+cn.aybkk.net, by day, newest entry on top. Whenever a session builds, changes, or
+deploys anything students or hosts will touch, END the session by putting a
+paste-ready entry in the chat reply (the Drive connector cannot edit the note, so
+Boonchu pastes it at the top himself). Also do it on request ("log today"). Format:
+
+```
+## YYYY-MM-DD · <what it is, in plain words> (<url if live>)
+
+**<The change, from the student's or Boonchu's side.>** One or two short paragraphs.
+Lead each paragraph with the bold sentence that matters.
+
+**Checks:** what was actually verified and how (browser, routes, CI) — never "should work".
+
+**Open items:** what still needs Boonchu (names, dates, merges, decisions).
+```
+
+Several sessions can land on one day, so the heading is day · topic, not day alone.
+Diagnosis-only work gets an entry too, marked "no code shipped".
+
+With every Build Log entry, also give ONE line for that day's daily note (named
+like `Sat  Sep 19th, 2026` — weekday, two spaces, month, ordinal day, year), so
+Boonchu sees from the daily note alone that something happened, and can click
+through. Link to the entry's heading; the alias is the subject in a few words:
+
+```
+- 🤖 [[AYBKK App Build Log#<exact entry heading>|<subject in ≤6 words>]]
+```
+
 ## AYBKK Bangkok study fees (aybkk.net) — Boonchu asked to remember these, 11 Sep 2026
 
 - 1 month: 9,600 THB
