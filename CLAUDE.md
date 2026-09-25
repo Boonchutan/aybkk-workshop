@@ -121,6 +121,7 @@ constraint `/hook` already enforces on fabricated Sharath quotes.
 - **Inline JS gate:** After every Write/Edit, `scripts/check-inline-js.js` runs automatically (PostToolUse hook). If it fails, fix the JS syntax before proceeding.
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.
+- **Spoken-word rule (every video script, any skill):** only words a 10-year practitioner says out loud — would a student say it to you after class? Never "chase" or "chasing"; say "work on," "stuck at." Full rule in `/hook` and `/story`.
 
 ## Environment
 
