@@ -49,6 +49,8 @@ Build a complete Reel script on the 4-beat skeleton — spoken to camera, or cap
 - Never name the structure on screen or in speech
 - Captions: max 8 words, one on screen at a time, must work with sound off
 - Written to stop a 10-year practitioner, not a beginner
+- Spoken words only: every word must be one a 10-year practitioner says out loud. Test each line: would a student say it to you after class? If not, rewrite it
+- Never "chase" or "chasing" — not a pose, not a bind, not a series. Practitioners say "work on," "stuck at," "couldn't … for years"
 - Must translate cleanly to Thai or Chinese
 - Footage of recognizable students (especially pregnant or elderly students) requires their permission — flag it in the output
 </rules>
