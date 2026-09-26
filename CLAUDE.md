@@ -60,6 +60,20 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 
 **Do not use for:** existing student questions, general inquiries, or anything unrelated to the China program.
 
+### `vibe-samurai-story` (skill)
+**Purpose:** Storytelling structure for reels, shorts, captions, and essays, borrowed from Vibe Samurai (Bruno) and adapted for Boonchu: flat statement hook → credited source → ladder of three → the turn → screenshot line → closing flip; the pitch lives only in the caption, which ends on who it is not for and the application.
+
+Use when writing or fixing any video script or caption, or when asking to be taught one pattern with a drill. Lives in `.claude/skills/vibe-samurai-story/`; the same folder uploads to claude.ai as a skill.
+
+**Do not use for:** hooks alone (use `/hook`), sales pages (use `/qualify`), or DMs.
+
+### `gervais-deadpan` (skill)
+**Purpose:** Dry, deadpan, punch-up humour in the Ricky Gervais style with Boonchu's floor: the target is the yoga business, buzzwords, trends, or Boonchu himself, never a student, the lineage, Sharath, or the practice. No swearing, no cruelty, no religion jokes. Modes: write, punch-up a draft, check whether a joke is safe, teach one move.
+
+Use when asking to make something funnier or drier, roast a trend, or check a joke. Lives in `.claude/skills/gervais-deadpan/`. Pair with `vibe-samurai-story` for the full structure.
+
+**Do not use for:** sincere teaching content, student replies, or anything for Chinese platforms that has not been through the no-swearing check.
+
 ---
 
 ## Key Facts for Any Claude Instance
