@@ -57,6 +57,15 @@ Capture and publish are separate activities. Film in batches next to teaching; n
 
 **Do not use for:** writing the video, sales copy, DM replies, or shop operations.
 
+### `/riff`
+**Purpose:** Natural talking-head riff — turns a real shala moment into a spoken script in a stand-up rhythm: flat open, a side taken twice, stacked specifics, an act-out, a silly rule, one teaching block, and a dry or dark close with a callback. Style studied from comedian Godfrey (@godfreycomic): copy how he talks, never his material.
+
+Humour follows the gervais-deadpan rules: one or two dry jokes, at most one dark line, and the target is never a student, the lineage, or the practice.
+
+Use when a message people don't like hearing needs humour to land (hygiene, lateness, phones), or when a script should sound like talking, not reading.
+
+**Do not use for:** the opening line alone (`/hook`), 4-beat story videos (`/story`), sales copy, or DMs.
+
 ### `/shop`
 **Purpose:** Shop builder & operations — the full recipe for AYBKK pre-order shops (tee shop live at cn.aybkk.net/shop.html; future: Bangkok price list with classes and courses).
 
