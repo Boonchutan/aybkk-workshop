@@ -35,11 +35,14 @@ const caption = args.caption || '';
 
 if (!photoPath && !photoUrlArg) die('Need --photo <path> or --photo-url <https://...>');
 if (!csvPath && !emailsArg) die('Need --attendees-csv <path> or --emails "a@b,c@d"');
+if (!photoUrlArg && (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET)) {
+  die('CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET must be set to upload --photo (run via railway run)');
+}
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dw1uubecu',
-  api_key: process.env.CLOUDINARY_API_KEY || '191765218532954',
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'kBwusl-gHqqNiZYykFgChJjt3MQ'
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 (async () => {
