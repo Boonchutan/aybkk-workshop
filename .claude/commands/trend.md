@@ -13,7 +13,7 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 | key | value |
 |---|---|
 | brand / series label (slide tag) | No Cap Daily (chosen 16 Sep 2026; "Talk of the Town" was the working name) |
-| Postiz channel | the channel whose name contains "No Cap" or "Talk of the Town" (case-insensitive). *Not connected yet* — until it exists, deliver the batch in the report only. Never fall back to another channel. |
+| Postiz channel | the channel whose name contains "No Cap" or "Talk of the Town" (case-insensitive): "No Cap Daily \| Trending Facts", `cmujmj95r11xco80yhyrtsp07`, instagram-standalone, connected 27 Sep 2026. If it is ever missing, deliver the batch in the report only. Never fall back to another channel. |
 | posts per day | 3 carousels, all global. No Thailand quota (dropped 16 Sep 2026). |
 | slides per carousel | 10: cover, 8 facts, takeaway. 1080×1350. Oswald 600 headline (condensed, not heavy; `"font":"anton"` for the heavier look) over a photoreal image with a dark gradient and a scrim behind the text. |
 | text colours | 80/20: ivory `#F4EFE6` for the body of the headline, amber `#FFB92E` for the 1–3 stressed words (marked `*like this*` in the headline). The tag and "Swipe" use the same amber. Alternates Boonchu can switch to with one spec key: coral `#FF5A4E`, teal `#3BE0C8` (`"accent"`). |
