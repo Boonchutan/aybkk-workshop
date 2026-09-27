@@ -1,0 +1,85 @@
+{
+ "topic": "Muse",
+ "slug": "muse",
+ "brand": "Meta's Muse · 10 facts",
+ "geo": "Global",
+ "volume": "200,000+ searches (7d, US weekly list)",
+ "caption": [
+  "\"muse\" — 200,000+ searches this week. Meta's new AI app.",
+  "Why: Meta launched Muse on September 8, an AI agent that does things instead of just answering: it sends email, books travel and shops. It has been No. 1 on the US App Store since September 18. Meta stock jumped more than 11% on September 21, its biggest one-day rise since April 2025.",
+  "What most people don't know: Muse is free because Meta expects to be paid at the checkout. At Meta Connect on September 23, Mark Zuckerberg said Meta will profit \"by taking a small fee from transactions.\" Walmart, Best Buy, Sephora and Instacart have signed on.",
+  "Very simply put: the app is free because the checkout isn't."
+ ],
+ "slides": [
+  {
+   "n": 1,
+   "headline": "Meta's new AI is free. The *checkout* is how it pays.",
+   "sub": "10 things most people don't know about Muse, searched 200,000+ times in the US this week.",
+   "image": "A glowing smartphone floating above a bright colorful shopping bag against a vivid gradient background, bright clean light, high contrast, the objects in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 2,
+   "headline": "Meta launched Muse on *September 8*, in the US only.",
+   "sub": "On iOS, Android and muse.ai. Meta says AI glasses are next.",
+   "image": "A smartphone on a white desk beside a pair of modern glasses in soft morning light, the objects in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 3,
+   "headline": "Muse doesn't just answer. It sends email and *books travel*.",
+   "sub": "It can turn a saved Instagram recipe reel into a grocery list, Meta says.",
+   "image": "A passport, a boarding pass shape without writing and a phone on a wooden table, the objects in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 4,
+   "headline": "It runs on *Muse Spark*, from Meta Superintelligence Labs.",
+   "sub": "Meta calls it its most capable model, “built for real-world agentic work.”",
+   "image": "Rows of glowing server racks in a dark data center with blue light, the servers in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 5,
+   "headline": "The lab is led by *Alexandr Wang*, Meta's chief AI officer.",
+   "sub": "Meta paid $14.3 billion for 49% of his company, Scale AI, in June 2025.",
+   "image": "A glass office tower at dusk with lit windows, the tower in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 6,
+   "headline": "No. 1 on the US App Store since *September 18*.",
+   "sub": "No. 1 on Google Play since September 19. 3.4 million downloads, per Sensor Tower.",
+   "image": "A close-up of a glowing smartphone home screen with abstract colorful app shapes in a dark room, the phone in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 7,
+   "headline": "*1.8 million* iPhone downloads in two weeks. ChatGPT had 1.3 million.",
+   "sub": "North America, per AFP. ChatGPT's app launched in May 2023.",
+   "image": "A long line of identical smartphones standing upright on a dark reflective table, the phones in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 8,
+   "headline": "Meta stock jumped more than *11%* in one day.",
+   "sub": "Monday, September 21: its biggest one-day rise since April 2025, per AFP.",
+   "image": "A rising green stock chart line glowing on a dark trading screen, the line in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 9,
+   "headline": "Muse is free. Meta plans to take a *fee* on purchases.",
+   "sub": "Zuckerberg at Meta Connect, September 23: profit “by taking a small fee from transactions.” Paid plans: $20 or $100 a month.",
+   "image": "A shopping cart icon shape made of light hovering over a dark surface, the object in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 10,
+   "headline": "Very simply put: the app is free because the *checkout* isn't.",
+   "sub": "Follow No Cap Daily for the story behind what everyone is searching.",
+   "image": "A card payment terminal glowing on a dark shop counter, the terminal in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Follow"
+  }
+ ]
+}
