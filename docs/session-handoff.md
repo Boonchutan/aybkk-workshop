@@ -37,13 +37,14 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
 - Profile picture: three stand-ins on `trend-cards` at `brand/nocap-daily-profile-A.png` (navy, "NO CAP" ivory and
   amber, amber "DAILY" tag; recommended), `-B` ("NC" monogram), `-C` (navy on amber). Boonchu asked for a
   Cloudflare-generated one: see the script below.
-- Drafts waiting in Postiz for 27 Sep: meat recall `cmujmp19v0cmeqr0y9rfu1ym6`, Taylor Swift Encore
-  `cmujmp4vx0cmfqr0y8i3b2qqw`, FAFSA `cmujmp81l0cmgqr0y40ymk6g5`. Boonchu publishes from Postiz.
+- Drafts waiting in Postiz for 27 Sep: Google's birthday `cmujp6h8i0d0wqr0y3nl73nmj` (11:30 UTC, made as the
+  account's first post), meat recall `cmujmp19v0cmeqr0y9rfu1ym6`, Taylor Swift Encore `cmujmp4vx0cmfqr0y8i3b2qqw`,
+  FAFSA `cmujmp81l0cmgqr0y40ymk6g5`. Boonchu publishes from Postiz.
 - Post type stays `draft` until Boonchu says "go live"; then change the Config row in trend.md to `schedule`.
 - Slide images: no `GEMINI_API_KEY`, Kling has 137 credits (under the 200 minimum), so slides render on the
   gradient. Cloudflare Workers AI (FLUX.1 schnell) could become the image source if its keys exist; that needs a
   new option in `scripts/trend-image.js` (not built yet).
-- `log.json` has 43 entries through 2026-09-27 (14-day no-repeat rule).
+- `log.json` has 44 entries through 2026-09-27 (14-day no-repeat rule).
 
 ### Cloudflare profile picture (needs env `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`, Workers AI token)
 
