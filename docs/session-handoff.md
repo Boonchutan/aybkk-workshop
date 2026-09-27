@@ -42,8 +42,14 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
   FAFSA `cmujmp81l0cmgqr0y40ymk6g5`. Boonchu publishes from Postiz.
 - Post type stays `draft` until Boonchu says "go live"; then change the Config row in trend.md to `schedule`.
 - Slide images: no `GEMINI_API_KEY`, Kling has 137 credits (under the 200 minimum), so slides render on the
-  gradient. Cloudflare Workers AI (FLUX.1 schnell) could become the image source if its keys exist; that needs a
-  new option in `scripts/trend-image.js` (not built yet).
+  gradient. `scripts/trend-image.js` now also runs on Cloudflare Workers AI (FLUX.2 [klein] 4B, 4:5, free tier
+  covers a carousel a day) once `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` are environment variables
+  (tested against a mock API only; the first real run is the test). A token pasted into chat cannot be used:
+  the session's safety check blocks it. Boonchu adds both variables in the environment settings, then a new session.
+- Google's birthday carousel with photos: `trend-cards/carousels/2026-09-27-googles-birthday/slides.json` holds the
+  text and FLUX prompts. Copy the folder's `slides.json` into a scratch dir, run
+  `node scripts/trend-image.js <dir> --cover-candidates 2`, render, review, overwrite the PNGs on `trend-cards`,
+  upload, make a new draft, update the log entry's `postizId`, and ask Boonchu to delete the old text-only draft.
 - `log.json` has 44 entries through 2026-09-27 (14-day no-repeat rule).
 
 ### Cloudflare profile picture (needs env `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`, Workers AI token)
