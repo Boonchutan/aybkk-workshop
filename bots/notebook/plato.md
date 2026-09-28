@@ -42,12 +42,13 @@ Guardrails: never use the "back injury" story from Boonchu Persuasion Framework 
 
 ## Life notes
 - 2026-09-28: At 53, cannot read anything close in low light. Buys reading glasses at the eye shop. [USED 2026-09-28, dristi Reel]
+- 2026-09-27: Three days of rain in Bangkok, stuck at home, and so is half the city. [USED: Vritra part 1 (27 Sep) and part 2 (28 Sep)]
 
 ## Stories used
 - 2026-09-28 | Trigger: Berlin Marathon 27 Sep 2026, Tigst Assefa on world record pace, faded in the last miles, still won in 2:11:04 (3rd fastest women's marathon ever) | Story: Vishvamitra loses his tapas more than once and starts again until he becomes a Brahmarshi (Valmiki Ramayana, Bala Kanda) | Asana: Vishvamitrasana
-- 2026-09-28 | Boonchu wrote this one himself, Plato edited | Trigger: his eyes at 53 | Story: Dhritarashtra refuses divine sight from Vyasa, Sanjaya gets it and narrates the Gita; his only Gita line is 1.1 ("my people"), last verse 18.78 (Mahabharata, Bhishma Parva; Bhagavad Gita) | Asana: dristi, nasagra (nose tip)
-
-- 2026-09-28 (Boonchu's own draft) | Trigger: his eyes at 53 | Story: Dhritarashtra refuses sight from Vyasa, Sanjaya narrates; his only Gita line is 1.1 "mamakah" (my people); Sanjaya's last line 18.78 | Asana: dristi, nasagrai | Line: "Dristi was never about seeing clearly. It's about not looking away."
+- 2026-09-28 | Boonchu wrote this one himself, Plato edited | Trigger: his eyes at 53 | Story: Dhritarashtra refuses divine sight from Vyasa, Sanjaya gets it and narrates the Gita; his only Gita line is 1.1 ("my people"), last verse 18.78 (Mahabharata, Bhishma Parva; Bhagavad Gita) | Asana: dristi, nasagra (nose tip) | Line: "Dristi was never about seeing clearly. It's about not looking away." | Toolkit: Triple Hook + /story
+- 2026-09-27 | Boonchu wrote this one himself, SERIES part 1 | Trigger: 3 days of Bangkok rain | Story: Vritra steals the waters; Dadhichi gives his bones for the vajra; Indra kills Vritra, rain returns (Rig Veda 1.32; Dadhichi in Puranas / Mahabharata) | Asana: Laghu Vajrasana
+- 2026-09-28 | SERIES part 2, Boonchu wrote the story, Plato added the asana | Story: Tvashtr's son Vishvarupa (3 heads) killed by Indra; Tvashtr chants "Indrashatru" with the wrong accent, Vritra is born to die by Indra (Taittiriya Samhita 2.4.12, 2.5.1; Shatapatha Brahmana 1.6.3; Bhagavata Purana 6.9; Paniniya Shiksha on the wrong accent as a "word thunderbolt") | Asana: Supta Vajrasana | Toolkit: Root and Wobble + /story
 
 ## What worked
 (no feedback yet)
