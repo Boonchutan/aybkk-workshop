@@ -80,8 +80,9 @@ Use when handling Instagram, LINE, or WeChat messages about the 180,000 THB prog
 ## AYBKK bot team (Claude routines on the Max plan, set up 28 Sep 2026)
 
 Replaces the Hermes agents that billed OpenRouter per message. Each run is a fresh cloud
-session on Boonchu's Claude Max plan (no API billing). Manage at claude.ai/code/routines.
-Neo (coder) is not a routine: it is Claude Code itself.
+session on Boonchu's Claude Max plan (no API billing), model Opus 5.5 (Boonchu's choice).
+Manage at claude.ai/code/routines. Neo (coder) is not a routine: it is Claude Code itself.
+The routines have no repo attached, so each run calls `add_repo` for push access first.
 
 | Bot | Job | Daily (Bangkok) | Trigger id |
 |---|---|---|---|
@@ -91,6 +92,9 @@ Neo (coder) is not a routine: it is Claude Code itself.
 
 - Memory and team chat live on the `claude/bots-memory` data branch: `bots/notebook/<bot>.md`,
   `bots/posts/<date>-<bot>.md`, `bots/board.md`. Never merge that branch into main.
+- This repo is public, so Carnegie's lead table is stored only as
+  `bots/notebook/carnegie-leads.md.enc` (openssl AES-256). The key lives in the Carnegie
+  routine prompt and with Boonchu, never in this repo. Posts carry counts, never names.
 - Boonchu talks to a bot by replying in its latest session. Standing orders go into its notebook;
   Nicco can route an order to the other bots.
 - Hard rules live in each routine prompt: drafts only, no logins to Meta, WeChat, Xiaohongshu,
