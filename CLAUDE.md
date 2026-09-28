@@ -82,13 +82,13 @@ Use when handling Instagram, LINE, or WeChat messages about the 180,000 THB prog
 Replaces the Hermes agents that billed OpenRouter per message. Each run is a fresh cloud
 session on Boonchu's Claude Max plan (no API billing), model Opus 5.5 (Boonchu's choice).
 Manage at claude.ai/code/routines. Neo (coder) is not a routine: it is Claude Code itself.
-The routines have no repo attached, so each run calls `add_repo` for push access first.
+This repo is attached to each routine (Boonchu set it in the routines UI), which gives push access.
 
-| Bot | Job | Daily (Bangkok) | Trigger id |
+| Bot (short name) | Job | Daily (Bangkok) | Trigger id |
 |---|---|---|---|
-| Carnegie | 180K lead list, reply and follow-up drafts | 06:37 | `trig_01NXpBtYBpHnsD6j9CWYB3si` |
-| Plato | one Reel package: hooks, script, EN/TH/ZH/RU captions, XHS title | 06:43 | `trig_018F4MLqhbuRom8kUVe4ARph` |
-| Nicco | chief of staff: reads the team chat, sends the one morning brief (the only phone ping) | 07:08 | `trig_01Awdy7kZdUgdu46mhfETVCT` |
+| Carnegie (Carne) | 180K lead list, reply and follow-up drafts | 06:37 | `trig_01NXpBtYBpHnsD6j9CWYB3si` |
+| Plato | daily story-series Reel: his life or safe news → Indian myth or history → behavior → asana; hooks, script, EN/TH/ZH/RU captions, XHS title | 06:43 | `trig_018F4MLqhbuRom8kUVe4ARph` |
+| Machiavelli (Machi) | chief of staff: reads the team chat, sends the morning brief, routes Boonchu's orders and life notes | 07:08 | `trig_01Awdy7kZdUgdu46mhfETVCT` |
 
 - Memory and team chat live on the `claude/bots-memory` data branch: `bots/notebook/<bot>.md`,
   `bots/posts/<date>-<bot>.md`, `bots/board.md`. Never merge that branch into main.
@@ -96,9 +96,11 @@ The routines have no repo attached, so each run calls `add_repo` for push access
   `bots/notebook/carnegie-leads.md.enc` (openssl AES-256). The key lives in the Carnegie
   routine prompt and with Boonchu, never in this repo. Posts carry counts, never names.
 - Boonchu talks to a bot by replying in its latest session. Standing orders go into its notebook;
-  Nicco can route an order to the other bots.
+  Machiavelli can route an order to the other bots.
 - Hard rules live in each routine prompt: drafts only, no logins to Meta, WeChat, Xiaohongshu,
-  TikTok, LINE or Rezerv, no spending, never a price in a DM draft.
+  TikTok, LINE or Rezerv, no spending, never a price in a DM draft. Plato also never touches
+  politics, war, royalty, government leaders, religious conflict or tragedies with victims:
+  the business runs in China, Russia and Thailand.
 - The routines hold no connectors. Giving a bot Gmail, Calendar or Postiz is done in the
   routines UI and needs Boonchu's yes first.
 
