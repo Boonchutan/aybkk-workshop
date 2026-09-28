@@ -41,12 +41,14 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
   amber, amber "DAILY" tag; recommended), `-B` ("NC" monogram), `-C` (navy on amber). Boonchu asked for a
   Cloudflare-generated one: see the script below.
 - Photo drafts for 28 Sep (made 28 Sep): Google's birthday `cmukrxufn001ult0y616w9lcw` (05:30 UTC, past tense,
-  "turned 28 on Sunday"), Kate Upton `cmukry9cd001wlt0yf5h3e43v` (06:30), Muse `cmukrygg1001xlt0yde9en9x3` (07:00),
+  "turned 28 on Sunday"), Kate Upton `cmukry9cd001wlt0yf5h3e43v` (06:30), Muse `cmukxc3uv00obuj0yy6xr4kao` (08:30;
+  slide 3 passport emblem swapped for a plain globe, slide 4 brightened with the text on the floor),
   Primetime `cmukx419s00ncuj0ypb0db3sl` (08:00; cover is the real Venice premiere photo from Commons, slide 2 a
   designed projector-beam image, the rest Cloudflare FLUX). They replace `cmujp6h8i0d0wqr0y3nl73nmj`,
   `cmukhdjf60gvhqr0yp8f0v7sw`, `cmukhdjgi0gviqr0yh6raj4g0`, `cmukhdji40gvjqr0y77z9a5ab` (text-only),
-  `cmukry1vz001vlt0yxewe4qag` (Primetime with an AI desk cover) and `cmukw4gsq00guuj0yq91pajif` (Primetime with a
-  blank white screen on slide 2), which Boonchu deletes in the Postiz app.
+  `cmukry1vz001vlt0yxewe4qag` (Primetime with an AI desk cover), `cmukw4gsq00guuj0yq91pajif` (Primetime with a
+  blank white screen on slide 2) and `cmukrygg1001xlt0yde9en9x3` (Muse before the slide 3 and 4 fixes), which
+  Boonchu deletes in the Postiz app.
 - Real people on covers (Boonchu, 28 Sep): a free Wikimedia Commons photo with its credit on the slide
   (`trend-image.js --photo`), never an AI face, a news or agency photo, or a screenshot. See trend.md "real people".
 - Drafts still waiting in Postiz for 27 Sep: meat recall `cmujmp19v0cmeqr0y9rfu1ym6`, Taylor Swift Encore
@@ -127,7 +129,7 @@ Boonchu's rules, learned over the Signs and Desire series:
 ## Open items for Boonchu
 
 - Pick the No Cap profile picture (A, B, C or a Cloudflare one) and publish the photo drafts.
-- Delete in Postiz: the six replaced No Cap drafts listed above, and the failed posts `cmudsdo0r0000qg0yeohrm2lv`
+- Delete in Postiz: the seven replaced No Cap drafts listed above, and the failed posts `cmudsdo0r0000qg0yeohrm2lv`
   (23 Sep), `cmugti7ma01a0qw0yof98blp1` (25 Sep), `cmugtwmzz01eiqw0yslt1cs4e` (26 Sep).
 - Cloudflare cap: the 28 Sep re-render used about 9,600 of that day's 10,000 free neurons, so the routine's run at
   about 23:35 UTC the same day may get quota errors and fall back to the gradient. Workers Paid ($5 a month) removes
