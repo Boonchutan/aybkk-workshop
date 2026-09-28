@@ -4,7 +4,7 @@
 (none yet)
 
 ## Open items
-- 2026-09-28: Digital product idea. Online half of anatomy (strength, flexibility) and philosophy (Yoga Sutras, Gita basics). Goal: find 180K buyers, credit toward 180K. Plan: pre-sell, teach live on Zoom, record. Plan v1 sent 28 Sep: 6 live sessions (2 strength, 2 flexibility, 2 philosophy), recorded, Tencent Meeting for China, credit toward 180K, pre-sell with a minimum number. Waiting on Boonchu: price, first language, dates, minimum buyers.
+- 2026-09-28: Digital product. Decided by Boonchu: languages Chinese + English, start 3 Nov 2026, two tiers (Essentials, Full). Machi proposed (NOT yet approved): Essentials 1,280 RMB / 179 USD, Full 2,980 RMB / 399 USD, Full capped at 20 seats, 6 classes Tue+Thu 3-19 Nov 19:00 BKK, Tencent Meeting/VooV, live Chinese translator, sales open 6 Oct, close 27 Oct, minimum 15 buyers. Waiting: price approval, translator, payment setup, check the Oct 2026 tour dates.
 
 - 2026-09-28: No Cap Daily (auto trend-facts IG) is Boonchu's test for future brand deals. Suggested: 90-day test to about 28 Dec 2026, judge on followers and reach, keep it in a separate Meta business from AYBKK, fix duplicate drafts. Ask him for numbers at the end.
 
