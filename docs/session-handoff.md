@@ -132,11 +132,12 @@ Boonchu's rules, learned over the Signs and Desire series:
 ## Open items for Boonchu
 
 - **No Cap channel is logged out.** The first post (Muse, "post now" at 11:32 UTC on 28 Sep, Postiz
-  `cmul64rl401i2uj0y9yizktm5`) failed: Postiz emailed "Could not refresh your instagram-standalone channel. Your
+  `cmul64rl401i2uj0y9yizktm5`; a second try at 11:50, `cmul6r8qb01p8uj0yovqi1g4p`, got "you need to reconnect it")
+  failed: Postiz emailed "Could not refresh your instagram-standalone channel. Your
   session has been invalidated... re-authenticate, and wait 1-2 days before posting again." Nothing reached
   Instagram. Reconnect the channel at platform.postiz.com/launches, then give it a day or two. Boonchu got the
   10 Muse JPEGs and the caption to post by hand in the Instagram app; if he did, delete the Muse draft
-  `cmukxc3uv00obuj0yy6xr4kao` and the failed post so Muse never goes out twice. Routine drafts are unaffected.
+  `cmukxc3uv00obuj0yy6xr4kao` and the two failed posts so Muse never goes out twice. Routine drafts are unaffected.
 - Slides now get a JPEG twin (`NN.jpg` next to `NN.png`, made by `scripts/trend-card.js`), and Postiz uploads use
   the JPEGs. The drafts made before 28 Sep 11:40 UTC carry PNGs; if one of them errors when published, re-upload
   its JPEGs (the Muse JPEGs are already on `trend-cards`).
