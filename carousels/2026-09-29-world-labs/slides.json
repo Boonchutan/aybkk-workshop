@@ -1,0 +1,90 @@
+{
+ "topic": "AMD buys World Labs",
+ "slug": "world-labs",
+ "brand": "AMD buys World Labs · 10 facts",
+ "geo": "Global",
+ "volume": "1,000+ searches today (US daily list)",
+ "caption": [
+  "\"world labs\" — 1,000+ searches today. AMD is buying Fei-Fei Li's AI lab.",
+  "Why: On September 28, AMD agreed to buy World Labs in an all-stock deal worth about $8.2 billion. World Labs builds AI that turns text, images or video into 3D worlds. Li, often called the \"godmother of AI,\" becomes AMD's chief scientist. The deal should close by the end of 2026.",
+  "What most people don't know: Nvidia, AMD's main rival in AI chips, helped fund World Labs. Its venture arm backed the lab's first $230 million, and Nvidia joined its $1 billion round in February.",
+  "Very simply put: AMD is buying a lab its rival helped pay for."
+ ],
+ "slides": [
+  {
+   "n": 1,
+   "headline": "AMD is paying *$8.2 billion* for a lab Nvidia helped fund.",
+   "sub": "10 things most people don't know about World Labs, the AI deal searched 1,000+ times in the US today.",
+   "foot": "Swipe →",
+   "image": "A glowing red computer chip on a bright circuit board, vivid color, high contrast, bright clean light, the chip in the upper half of the frame, photorealistic, no people, no text, no letters, no numbers, no logos, no markings",
+   "photo": "https://commons.wikimedia.org/wiki/File:Fei-Fei_Li_at_AI_for_Good_2017.jpg",
+   "credit": "Photo: ITU Pictures, Wikimedia Commons, CC BY 2.0 (2017, edited)",
+   "bgPos": "50% 0%",
+   "index": "",
+   "zone": "bottom"
+  },
+  {
+   "n": 2,
+   "headline": "AMD will buy Fei-Fei Li's World Labs for about *$8.2 billion*.",
+   "sub": "All in AMD stock. Announced September 28, expected to close by the end of 2026.",
+   "foot": "Swipe →",
+   "image": "A glowing computer chip on a dark circuit board with thin lines of red light running out from it, the chip in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos, no markings"
+  },
+  {
+   "n": 3,
+   "headline": "Li becomes AMD's *chief scientist*, reporting to CEO Lisa Su.",
+   "sub": "And executive vice president. She is often called the “godmother of AI”.",
+   "foot": "Swipe →",
+   "image": "A pair of glasses resting on an open notebook with a pen under a warm desk lamp in a dark room, the glasses in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 4,
+   "headline": "World Labs turns text and photos into explorable *3D worlds*.",
+   "sub": "It calls this “spatial intelligence”. Its first product, Marble, launched in November 2025.",
+   "foot": "Swipe →",
+   "image": "A small floating island with trees, rocks and a waterfall hovering in dark space, glowing softly like a miniature digital world, the island in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 5,
+   "headline": "It launched in 2024 with *$230 million*, at a $1 billion valuation.",
+   "sub": "It raised another $1 billion in February 2026.",
+   "foot": "Swipe →",
+   "image": "A tall neat stack of gold coins on a dark reflective table under a spotlight, the coins in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 6,
+   "headline": "Li built *ImageNet*: over 14 million hand-labeled images.",
+   "sub": "About 49,000 online workers in 167 countries helped label them.",
+   "foot": "Swipe →",
+   "image": "A huge wall covered in thousands of small colorful photo prints of landscapes, animals and objects arranged in a grid, softly lit, the wall in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no faces, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 7,
+   "headline": "The 2012 AI breakthrough trained on ImageNet in a *bedroom*.",
+   "sub": "AlexNet, on 2 Nvidia graphics cards at Alex Krizhevsky's parents' house.",
+   "foot": "Swipe →",
+   "image": "An old desktop computer tower with its side open and two graphics cards glowing green inside, on the floor of a dim bedroom at night, the computer in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 8,
+   "headline": "World Labs has trained its models on *AMD chips* since 2025.",
+   "sub": "AMD says the deal will help shape its future technology roadmaps.",
+   "foot": "Swipe →",
+   "image": "Rows of server racks glowing with red light in a dark data center, the racks in the upper half of the frame, the lower half of the frame is plain, dark and empty floor, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 9,
+   "headline": "Nvidia, AMD's main rival, *helped fund* World Labs.",
+   "sub": "Its venture arm backed the first $230 million. Nvidia joined the $1 billion round too.",
+   "foot": "Swipe →",
+   "image": "A red chess king and a green chess king facing each other on a dark chessboard under a spotlight, the pieces in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 10,
+   "headline": "Very simply put: AMD is buying what its rival helped *fund*.",
+   "sub": "Follow No Cap Daily for the story behind what everyone is searching.",
+   "foot": "Follow",
+   "image": "A small glowing 3D world floating above a dark computer chip, soft red light, the world in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  }
+ ]
+}
