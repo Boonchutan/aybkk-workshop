@@ -20,6 +20,8 @@
 
 - 2026-09-28: COLOR RULE (triad, colors about 120 degrees apart on the color wheel, from a public Reel). AYBKK triad: Plum #5C2160 (base, the brand color already on aybkk sites), Gold #E0B52B (accent: the ONE key word per frame), Teal #1F9E96 (second accent: series label, episode number). Text: white on plum or teal, near-black #1A161D on gold. Max 3 colors per frame. Series card: plum background, gold "Hidden Stories of Ashtanga", teal "Ep. N". Cover: face + max 5 words, one word in gold. Check every cover in black and white: if the words vanish, the light/dark contrast is too weak. Gold is an accent only: no all-yellow frames or yellow shirts (in Thailand yellow links to royalty and politics).
 
+- 2026-09-28: SERIES UNIFORM (proposed to Boonchu, waiting for his yes and which shirt he owns). Same shirt color every Hidden Stories episode, ideally a plum AYBKK tee. Cover: plum shirt on a light background (off-white or soft shala wall), one gold word, teal "Ep. N". Never match the cover to a new shirt each time.
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
