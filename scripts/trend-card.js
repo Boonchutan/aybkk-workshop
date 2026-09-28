@@ -25,6 +25,7 @@ const esc = s => String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").re
 const font = f => "file://" + path.join(__dirname, "..", "public", "fonts", f);
 const headline = esc(d.headline).replace(/\*([^*]+)\*/g, '<span class="acc">$1</span>');
 const headSize = Number(d.headSize) || 116;
+const bgPos = /^[\w.% -]+$/.test(d.bgPos || "") ? d.bgPos : "center";
 
 const slideHtml = `<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face{font-family:"Head";src:url("${font(d.font === "anton" ? "anton.ttf" : "oswald.ttf")}") format("truetype");font-weight:200 700}
@@ -33,7 +34,7 @@ const slideHtml = `<!doctype html><html><head><meta charset="utf-8"><style>
 :root{--primary:${esc(d.primary || "#F4EFE6")};--accent:${esc(d.accent || "#FFB92E")}}
 html,body{margin:0;padding:0}
 body{width:1080px;height:1350px;position:relative;overflow:hidden;background:#0b1220;color:var(--primary);font-family:"CardText","CardThai","Noto Color Emoji",sans-serif}
-.bg{position:absolute;inset:0;background:${d.image ? `url("file://${d.image}") center/cover no-repeat` : "radial-gradient(120% 80% at 30% 20%, #24344f 0%, #0b1220 70%)"}}
+.bg{position:absolute;inset:0;background:${d.image ? `url("file://${d.image}") ${bgPos}/cover no-repeat` : "radial-gradient(120% 80% at 30% 20%, #24344f 0%, #0b1220 70%)"}}
 .shade{position:absolute;inset:0;background:linear-gradient(180deg, rgba(5,8,15,.50) 0%, rgba(5,8,15,.06) 30%, rgba(5,8,15,.40) 56%, rgba(5,8,15,.95) 100%)}
 body.zone-top .shade{background:linear-gradient(0deg, rgba(5,8,15,.50) 0%, rgba(5,8,15,.06) 30%, rgba(5,8,15,.45) 56%, rgba(5,8,15,.95) 100%)}
 body.shade-light .shade{background:linear-gradient(180deg, rgba(5,8,15,.22) 0%, rgba(5,8,15,0) 28%, rgba(5,8,15,.18) 58%, rgba(5,8,15,.86) 100%)}
@@ -69,7 +70,13 @@ body.compact .sub{font-size:32px}
       // Focus map: edge energy + contrast against the mean + saturation, on a 54x68 grid.
       const im = new Image(); im.src = src; await im.decode();
       const W = 54, H = 68, c = document.createElement("canvas"); c.width = W; c.height = H;
-      const g = c.getContext("2d"); g.drawImage(im, 0, 0, W, H);
+      // Only the part of the photo that shows after cover + bgPos (a wide Commons photo is mostly cropped away).
+      let ox = null, oy = null; const rest = [];
+      for (const t of ${JSON.stringify(bgPos)}.trim().split(/ +/)) { if (t === "top" || t === "bottom") oy = t === "top" ? 0 : 1; else if (t === "left" || t === "right") ox = t === "left" ? 0 : 1; else rest.push(t === "center" ? 0.5 : parseFloat(t) / 100); }
+      for (const f of rest) { if (ox === null) ox = f; else if (oy === null) oy = f; }
+      if (ox === null || isNaN(ox)) ox = 0.5; if (oy === null || isNaN(oy)) oy = 0.5;
+      const k = Math.max(1080 / im.naturalWidth, 1350 / im.naturalHeight), vw = 1080 / k, vh = 1350 / k;
+      const g = c.getContext("2d"); g.drawImage(im, (im.naturalWidth - vw) * ox, (im.naturalHeight - vh) * oy, vw, vh, 0, 0, W, H);
       const px = g.getImageData(0, 0, W, H).data, lum = new Float32Array(W * H), sat = new Float32Array(W * H);
       let mean = 0;
       for (let i = 0; i < W * H; i++) { const r = px[i*4], gg = px[i*4+1], b = px[i*4+2]; const l = (0.299*r + 0.587*gg + 0.114*b) / 255; lum[i] = l; mean += l; const mx = Math.max(r, gg, b), mn = Math.min(r, gg, b); sat[i] = mx ? (mx - mn) / mx : 0; }
