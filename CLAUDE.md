@@ -3,7 +3,7 @@
 This is the Mission Control repo for Ashtanga Yoga Bangkok (AYBKK), covering:
 - Student tracking for the Huizhou workshop (43 students, March–April 2026)
 - Agent monitoring dashboard (Neo4j graph backend)
-- Marketing strategy for the China high-ticket cohort (150,000 THB, 10 students, 2026)
+- Marketing strategy for the China high-ticket cohort (180,000 THB, 10 to 12 students, 2026)
 
 **Stack:** Node.js · Neo4j · Railway · LINE Bot · Express
 
@@ -14,7 +14,7 @@ This is the Mission Control repo for Ashtanga Yoga Bangkok (AYBKK), covering:
 ### `/remotecontrol`
 **Purpose:** Positioning strategy session for the China high-ticket cohort.
 
-Use when you need to make any marketing decision about the 150,000 THB China program:
+Use when you need to make any marketing decision about the 180,000 THB China program:
 writing the sales page, drafting application criteria, briefing a copywriter,
 or testing whether the messaging is defensible vs. competitors.
 
@@ -56,7 +56,7 @@ Use when adding/changing shop products, stock, prices, sections, or order operat
 ### `/dm`
 **Purpose:** DM triage — reads an incoming inquiry about the China cohort, classifies the sender (tourist / beginner / serious), and drafts a response under 60 words that filters or routes. No selling in DMs.
 
-Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB program. Paste the incoming message after the command.
+Use when handling Instagram, LINE, or WeChat messages about the 180,000 THB program. Paste the incoming message after the command.
 
 **Do not use for:** existing student questions, general inquiries, or anything unrelated to the China program.
 
@@ -76,6 +76,27 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 - **Inline JS gate:** After every Write/Edit, `scripts/check-inline-js.js` runs automatically (PostToolUse hook). If it fails, fix the JS syntax before proceeding.
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.
+
+## AYBKK bot team (Claude routines on the Max plan, set up 28 Sep 2026)
+
+Replaces the Hermes agents that billed OpenRouter per message. Each run is a fresh cloud
+session on Boonchu's Claude Max plan (no API billing). Manage at claude.ai/code/routines.
+Neo (coder) is not a routine: it is Claude Code itself.
+
+| Bot | Job | Daily (Bangkok) | Trigger id |
+|---|---|---|---|
+| Carnegie | 180K lead list, reply and follow-up drafts | 06:37 | `trig_01NXpBtYBpHnsD6j9CWYB3si` |
+| Plato | one Reel package: hooks, script, EN/TH/ZH/RU captions, XHS title | 06:43 | `trig_018F4MLqhbuRom8kUVe4ARph` |
+| Nicco | chief of staff: reads the team chat, sends the one morning brief (the only phone ping) | 07:08 | `trig_01Awdy7kZdUgdu46mhfETVCT` |
+
+- Memory and team chat live on the `claude/bots-memory` data branch: `bots/notebook/<bot>.md`,
+  `bots/posts/<date>-<bot>.md`, `bots/board.md`. Never merge that branch into main.
+- Boonchu talks to a bot by replying in its latest session. Standing orders go into its notebook;
+  Nicco can route an order to the other bots.
+- Hard rules live in each routine prompt: drafts only, no logins to Meta, WeChat, Xiaohongshu,
+  TikTok, LINE or Rezerv, no spending, never a price in a DM draft.
+- The routines hold no connectors. Giving a bot Gmail, Calendar or Postiz is done in the
+  routines UI and needs Boonchu's yes first.
 
 ## AYBKK Bangkok study fees (aybkk.net) — Boonchu asked to remember these, 11 Sep 2026
 
