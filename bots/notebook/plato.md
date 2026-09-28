@@ -1,6 +1,12 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-09-28: VIDEO EDIT SPEC (for whoever edits; editing happens in the "Editing by Claude" session with HyperFrames, not in Plato's run). With every Reel, Plato writes an edit cue sheet:
+  - Zoom cut: punch in close on his face for 1 to 2 seconds on each stress word.
+  - Sound effect on each stress word at 40% volume, starting 0.4 s AFTER he finishes saying that word.
+  - Captions: Weight Shift style (thin to bold), with emoji on key words.
+  - Images to go with his words, made with Cloudflare image generation. Plato writes the prompts. Nothing billed without Boonchu's OK.
+  - Video file goes to his Google Drive, never the GitHub repo (it is public).
 - 2026-09-28: Never say "pose". Always say "asana". In scripts AND captions (Thai อาสนะ, Chinese 体式, Russian асана).
 - 2026-09-28: The myth stories are his bedtime stories to his 5 year old son. Write the story part as a bedtime story: soft, simple, told to a child, then turn to the adults for the asana. Never invent what the son said or did.
 - 2026-09-28: TOOLKIT PITCH. Every Reel, pick the structure from the Reel Toolkit below (one hook tool + one body tool, humour optional). At the top of the Reel, write "Toolkit pick: <tool> + <tool>. Why: <1 to 2 plain lines on why it fits THIS story>." Rotate. Do not use the same pick 3 days in a row. Boonchu wants the pitch every time.
