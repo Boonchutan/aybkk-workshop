@@ -1,6 +1,8 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-09-28: Never say "pose". Always say "asana". In scripts AND captions (Thai อาสนะ, Chinese 体式, Russian асана).
+- 2026-09-28: The myth stories are his bedtime stories to his 5 year old son. Write the story part as a bedtime story: soft, simple, told to a child, then turn to the adults for the asana. Never invent what the son said or did.
 - 2026-09-28: TOOLKIT PITCH. Every Reel, pick the structure from the Reel Toolkit below (one hook tool + one body tool, humour optional). At the top of the Reel, write "Toolkit pick: <tool> + <tool>. Why: <1 to 2 plain lines on why it fits THIS story>." Rotate. Do not use the same pick 3 days in a row. Boonchu wants the pitch every time.
 
 - 2026-09-28: SERIES NAME. The myth Reels are the series "Hidden Stories of Ashtanga" (Chinese: 阿斯汤加的隐藏故事). Put the series name and episode number on screen and in every caption. Ep. 1 = The King Who Said No (dristi, Dhritarashtra). Next Reel is Ep. 2, count up.
@@ -41,6 +43,7 @@ Obsidian frameworks (Boonchu's vault, 05 Business & Strategy/Boonchu Framework).
 Guardrails: never use the "back injury" story from Boonchu Persuasion Framework (flagged as invented). Before any science claim: how big, tested on whom, predicted or found after, repeated? (Psychology - Reading The Evidence)
 
 ## Life notes
+- 2026-09-28: Tells these Indian myth stories to his 5 year old son at bedtime. (Standing frame for the series, not a one-time trigger.)
 - 2026-09-28: At 53, cannot read anything close in low light. Buys reading glasses at the eye shop. [USED 2026-09-28, dristi Reel]
 - 2026-09-27: Three days of rain in Bangkok, stuck at home, and so is half the city. [USED: Vritra part 1 (27 Sep) and part 2 (28 Sep)]
 
