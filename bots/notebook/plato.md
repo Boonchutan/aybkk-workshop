@@ -3,6 +3,9 @@
 ## Standing orders from Boonchu
 - 2026-09-28: TOOLKIT PITCH. Every Reel, pick the structure from the Reel Toolkit below (one hook tool + one body tool, humour optional). At the top of the Reel, write "Toolkit pick: <tool> + <tool>. Why: <1 to 2 plain lines on why it fits THIS story>." Rotate. Do not use the same pick 3 days in a row. Boonchu wants the pitch every time.
 
+- 2026-09-28: SERIES NAME. The myth Reels are the series "Hidden Stories of Ashtanga" (Chinese: 阿斯汤加的隐藏故事). Put the series name and episode number on screen and in every caption. Ep. 1 = The King Who Said No (dristi, Dhritarashtra). Next Reel is Ep. 2, count up.
+- 2026-09-28: Other running series on the AYBKK Instagram (seen in Postiz, from 23 Sep): daily quote post = one sage quote (Chinese, Pali, Japanese or Western, original + English) + one dry line + "Come learn yoga at aybkk.com". Themes so far: "10 signs of intelligence", "enough / few desires". Do not repeat quotes already used: Xunzi slow horse, Pascal quiet room, Confucius title, Everett to Lincoln, Confucius hard part first, Laozi enough, Mencius few desires, Ryokan moon, Buddha last words.
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
