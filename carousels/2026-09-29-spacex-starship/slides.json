@@ -1,0 +1,89 @@
+{
+ "topic": "SpaceX Starship Flight 14",
+ "slug": "spacex-starship",
+ "brand": "Starship reaches orbit · 10 facts",
+ "geo": "Global",
+ "volume": "100,000+ searches (7d, US weekly list, active)",
+ "caption": [
+  "\"spacex\" — 100,000+ searches this week. Starship reached orbit for the first time.",
+  "Why: On September 28, Starship launched from Starbase, Texas on its 14th flight and reached orbital speed, about 17,500 mph, for the first time. It released 26 Starlink V3 satellites. Two engines quit on the way up, and a 10-hour flight was cut to about 3.",
+  "What most people don't know: the booster was never meant to come back. After it splashed down in the Gulf, SpaceX set off its self-destruct system on purpose, as a test of the safety hardware.",
+  "Very simply put: SpaceX blew up a booster just to prove it could."
+ ],
+ "slides": [
+  {
+   "n": 1,
+   "headline": "Starship finally reached *orbit*. Then SpaceX blew up the booster.",
+   "sub": "10 things most people don't know about Starship's first orbital flight, searched 100,000+ times in the US this week.",
+   "foot": "Swipe →",
+   "image": "A giant silver rocket lifting off into a bright blue sky with a huge white exhaust cloud, vivid, high contrast, bright daylight, the rocket in the upper half of the frame, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "photo": "https://commons.wikimedia.org/wiki/File:Starship_lifted_off_from_Starbase_during_flight_test_11.jpg",
+   "credit": "Photo: Shujianyang, Wikimedia Commons, CC BY-SA 4.0 (Flight 11, October 2025, edited)",
+   "bgPos": "50% 100%",
+   "zone": "bottom"
+  },
+  {
+   "n": 2,
+   "headline": "Starship launched on *September 28* from Starbase, Texas.",
+   "sub": "At 7:48 a.m. local time, on its 14th flight. Every flight before it was suborbital.",
+   "foot": "Swipe →",
+   "image": "A tall steel launch tower beside a silver rocket at sunrise over flat coastal marshland, the tower and rocket in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 3,
+   "headline": "It released *26* Starlink V3 satellites, its first real cargo in orbit.",
+   "sub": "3 of them carried cameras to film Starship's own heat shield.",
+   "foot": "Swipe →",
+   "image": "A neat stack of flat silver satellites inside the dark cargo bay of a spacecraft, the blue Earth glowing through the open door, the satellites in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 4,
+   "headline": "It hit about *17,500 mph*, orbital speed, for the first time.",
+   "sub": "Fast enough to keep circling the Earth instead of falling back.",
+   "foot": "Swipe →",
+   "image": "The curved blue horizon of Earth seen from orbit at sunrise with a thin glowing line of atmosphere, the horizon in the upper half of the frame, the lower half of the frame is plain, dark and empty space, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 5,
+   "headline": "Stacked, it stands *408 feet* tall. The Saturn V was 363.",
+   "sub": "More than 18 million pounds of thrust. The Apollo moon rocket had 7.6 million.",
+   "foot": "Swipe →",
+   "image": "Looking straight up at a towering silver rocket against a bright blue sky, the rocket in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 6,
+   "headline": "Two engines quit, and a 10-hour flight became *3 hours*.",
+   "sub": "1 of the booster's 33 Raptor engines and 1 of the ship's 6.",
+   "foot": "Swipe →",
+   "image": "Close-up of bright orange rocket engine flames against a dark night sky, the flames in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 7,
+   "headline": "One full Starship load equals *20* Falcon 9 launches of Starlink.",
+   "sub": "SpaceX's own claim, comparing V3 satellites with the older V2 Minis.",
+   "foot": "Swipe →",
+   "image": "Many small silver satellites spread across a black starry sky above the glowing blue Earth, the satellites in the upper half of the frame, the lower half of the frame is plain, dark and empty space, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 8,
+   "headline": "NASA picked Starship as its moon lander for *$2.89 billion*.",
+   "sub": "The Artemis contract, signed April 16, 2021.",
+   "foot": "Swipe →",
+   "image": "The gray cratered surface of the Moon with the blue Earth rising above the horizon, the Earth in the upper half of the frame, the lower half of the frame is plain, dark lunar ground, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 9,
+   "headline": "After splashdown, SpaceX *destroyed* the booster on purpose.",
+   "sub": "It set off the self-destruct system as a test of the safety hardware.",
+   "foot": "Swipe →",
+   "image": "A huge orange fireball exploding over dark ocean water at dusk, the fireball in the upper half of the frame, the lower half of the frame is plain, dark and empty water, photorealistic, no people, no text, no letters, no numbers, no logos"
+  },
+  {
+   "n": 10,
+   "headline": "Very simply put: SpaceX blew up a booster to prove it *could*.",
+   "sub": "Follow No Cap Daily for the story behind what everyone is searching.",
+   "foot": "Follow",
+   "image": "A glowing rocket launch trail arcing across a pink and orange dawn sky over the ocean, the trail in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos"
+  }
+ ]
+}
