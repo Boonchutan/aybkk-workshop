@@ -135,7 +135,7 @@ The single-card layout (`term`/`volume`/`teaser` spec) still exists in `scripts/
 ```
 git fetch origin trend-cards
 git worktree add "$SCRATCH/trend-cards" trend-cards      # orphan branch: cards/, log.json, README.md only
-mkdir -p "$SCRATCH/trend-cards/carousels/YYYY-MM-DD-<slug>" && cp <dir>/out/*.png there && update "$SCRATCH/trend-cards/log.json"
+mkdir -p "$SCRATCH/trend-cards/carousels/YYYY-MM-DD-<slug>" && cp <dir>/out/*.png <dir>/out/*.jpg there && update "$SCRATCH/trend-cards/log.json"
 git -C "$SCRATCH/trend-cards" add -A && git -C "$SCRATCH/trend-cards" commit -m "trend cards YYYY-MM-DD"
 git -C "$SCRATCH/trend-cards" push origin trend-cards
 ```
@@ -146,7 +146,8 @@ Cards never go to main or to a feature branch.
 ## Step 7 — Postiz
 1. `integrationList` → the channel named in Config. Missing? Stop here; put the full posts and card
    URLs in the report instead.
-2. `uploadFromUrlTool` for each of the 10 slide URLs → 10 media paths.
+2. `uploadFromUrlTool` for each of the 10 slide `.jpg` URLs (commit-SHA raw URLs) → 10 media paths. Instagram's
+   publishing API only takes JPEG; every AYBKK post that published through Postiz was a JPEG. The PNGs are for review.
 3. `integrationSchedulePostTool`: one post per slot, `type` from Config, `date` = the slot in UTC,
    content as `<p>` paragraphs, `attachments` = the 10 media paths in order (that is the carousel). Draft first.
 4. Never post from this skill to the AYBKK or Boonchu personal channels.

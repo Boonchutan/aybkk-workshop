@@ -150,6 +150,8 @@ h1{margin:110px 0 0;font-size:${Number(d.termSize) || 120}px;line-height:1.04;fo
   const focus = await page.evaluate(() => window.__focus || null);
   const focusErr = await page.evaluate(() => window.__focusError || null);
   await page.screenshot({ path: out, type: "png" });
+  // Instagram's publishing API only takes JPEG, so slides get a JPEG twin for Postiz; the PNG is for review.
+  if (d.layout === "slide" && /\.png$/i.test(out)) await page.screenshot({ path: out.replace(/\.png$/i, ".jpg"), type: "jpeg", quality: 95 });
   await browser.close();
   fs.unlinkSync(tmp);
   console.log("wrote " + out + " (" + fs.statSync(out).size + " bytes)" + (focus ? " focus: zone=" + focus.zone + (focus.covered === null ? "" : " covered=" + focus.covered + "%") + (focus.compact ? " compact" : "") + (focus.lum === null || focus.lum === undefined ? "" : " lum=" + focus.lum + "%" + (focus.lum < 22 && /^0?1\b/.test(String(d.index || "").trim()) ? " DARK-COVER" : "")) : "") + (focusErr ? " focusError=" + focusErr : ""));
