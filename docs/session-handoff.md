@@ -1,4 +1,4 @@
-# Session handoff: social media work (updated 27 Sep 2026)
+# Session handoff: social media work (updated 28 Sep 2026)
 
 Read this first in a new Claude Code session. It carries what the "Postiz Social media" session
 (session_01XThAVTVGUs4TK4ENsd9Yfh) learned, so the work can continue anywhere. Start the new session on
@@ -24,11 +24,14 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
 
 ## Routines
 
-- "No Cap Daily — daily trend batch", `trig_01HZvqejQMT7rQCVuhX4CNxB`, cron `30 23 * * *` (06:30 Bangkok),
-  fires into session_01XThAVTVGUs4TK4ENsd9Yfh. It runs the eight steps of `.claude/commands/trend.md`, saves
-  3 Postiz drafts on the No Cap channel (01:00, 06:00, 12:00 UTC), appends to `log.json` and emails
-  boonchutan@gmail.com. A routine cannot be re-pointed: to move it to another session, delete it and create it
-  again with `persistent_session_id` set to the new session and the same prompt.
+- "No Cap Daily — daily trend batch", `trig_01DYitUKqzHR7MaHzMvU3ABy`, cron `30 23 * * *` (06:30 Bangkok),
+  fires into session_013cU2g9aVQPL1g3eBUBUr3h ("Cloudflare image to postiz", which has the Cloudflare variables).
+  Created 28 Sep; it replaced `trig_01HZvqejQMT7rQCVuhX4CNxB` (fired into session_01XThAVTVGUs4TK4ENsd9Yfh,
+  deleted). It runs the eight steps of `.claude/commands/trend.md`, makes slide photos with
+  `node scripts/trend-image.js <dir> --cover-candidates 2` (Cloudflare, or Gemini if `GEMINI_API_KEY` is set;
+  no key means gradient), saves 3 Postiz drafts on the No Cap channel (01:00, 06:00, 12:00 UTC), appends to
+  `log.json` and emails boonchutan@gmail.com. A routine cannot be re-pointed: to move it to another session,
+  delete it and create it again with `persistent_session_id` set to the new session and the same prompt.
 
 ## No Cap Daily (separate account, never AYBKK)
 
@@ -37,23 +40,27 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
 - Profile picture: three stand-ins on `trend-cards` at `brand/nocap-daily-profile-A.png` (navy, "NO CAP" ivory and
   amber, amber "DAILY" tag; recommended), `-B` ("NC" monogram), `-C` (navy on amber). Boonchu asked for a
   Cloudflare-generated one: see the script below.
-- Drafts for 28 Sep (gradient, to be replaced by photo versions): Primetime `cmukhdjf60gvhqr0yp8f0v7sw`, Kate Upton
-  `cmukhdjgi0gviqr0yh6raj4g0`, Muse `cmukhdji40gvjqr0y77z9a5ab`. Google's birthday text is now past tense ("turned 28 on Sunday").
-- Drafts waiting in Postiz for 27 Sep: Google's birthday `cmujp6h8i0d0wqr0y3nl73nmj` (11:30 UTC, made as the
-  account's first post), meat recall `cmujmp19v0cmeqr0y9rfu1ym6`, Taylor Swift Encore `cmujmp4vx0cmfqr0y8i3b2qqw`,
-  FAFSA `cmujmp81l0cmgqr0y40ymk6g5`. Boonchu publishes from Postiz.
+- Photo drafts for 28 Sep (Cloudflare FLUX, made 28 Sep): Google's birthday `cmukrxufn001ult0y616w9lcw` (05:30 UTC,
+  past tense, "turned 28 on Sunday"), Primetime `cmukry1vz001vlt0yxewe4qag` (06:00), Kate Upton
+  `cmukry9cd001wlt0yf5h3e43v` (06:30), Muse `cmukrygg1001xlt0yde9en9x3` (07:00). They replace the text-only drafts
+  `cmujp6h8i0d0wqr0y3nl73nmj`, `cmukhdjf60gvhqr0yp8f0v7sw`, `cmukhdjgi0gviqr0yh6raj4g0` and
+  `cmukhdji40gvjqr0y77z9a5ab`, which Boonchu deletes in the Postiz app.
+- Drafts still waiting in Postiz for 27 Sep: meat recall `cmujmp19v0cmeqr0y9rfu1ym6`, Taylor Swift Encore
+  `cmujmp4vx0cmfqr0y8i3b2qqw`, FAFSA `cmujmp81l0cmgqr0y40ymk6g5`. Boonchu publishes from Postiz.
 - Post type stays `draft` until Boonchu says "go live"; then change the Config row in trend.md to `schedule`.
-- Slide images: no `GEMINI_API_KEY`, Kling has 137 credits (under the 200 minimum), so slides render on the
-  gradient. `scripts/trend-image.js` now also runs on Cloudflare Workers AI (FLUX.2 [klein] 4B, 4:5, free tier
-  covers a carousel a day) once `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` are environment variables
-  (tested against a mock API only; the first real run is the test). A token pasted into chat cannot be used:
-  the session's safety check blocks it. 28 Sep: both variables are set in the Bt code environment and a Workers AI
-  test call worked in the session "Cloudflare image to postiz"; that session re-renders the 27–28 Sep carousels with
-  photos and takes over the daily routine.
-- Google's birthday carousel with photos: `trend-cards/carousels/2026-09-27-googles-birthday/slides.json` holds the
-  text and FLUX prompts. Copy the folder's `slides.json` into a scratch dir, run
-  `node scripts/trend-image.js <dir> --cover-candidates 2`, render, review, overwrite the PNGs on `trend-cards`,
-  upload, make a new draft, update the log entry's `postizId`, and ask Boonchu to delete the old text-only draft.
+- Slide images: Cloudflare Workers AI through `scripts/trend-image.js` (FLUX.2 [klein] 4B, 1088x1360, about 234
+  neurons an image). First real run 28 Sep in "Cloudflare image to postiz": 41 images, no errors, about 9,600 of
+  the 10,000 free neurons a day (resets 00:00 UTC; on the Free plan calls stop at the cap, Workers Paid bills
+  $0.011 per 1,000 over it). A daily batch (33 images with 2 cover candidates) is about 7,700. The token has no
+  analytics permission, so usage cannot be checked from here. No `GEMINI_API_KEY`; Kling has 137 credits (under
+  the 200 minimum). A token pasted into chat cannot be used: the session's safety check blocks it.
+- FLUX habits seen on 28 Sep: "at night" prompts give dark covers (Primetime's first cover was lum 10%); offices
+  get Apple logos on monitor backs and gloves get a brand stamp, so zoom in on products before posting. Small
+  marks can be painted out (OpenCV inpaint) instead of spending neurons on a new image.
+- Re-rendering an old carousel with photos: copy its `slides.json` into a scratch dir, run
+  `node scripts/trend-image.js <dir> --cover-candidates 1`, render, review, overwrite the PNGs on `trend-cards`,
+  upload from the commit-SHA URLs, make a new draft, update the log entry's `postizId`, and ask Boonchu to delete
+  the old draft. Done 28 Sep for Google's birthday, Primetime, Kate Upton and Muse.
 - `log.json` has 47 entries through 2026-09-28 (14-day no-repeat rule).
 
 ### Cloudflare profile picture (needs env `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`, Workers AI token)
@@ -113,8 +120,10 @@ Boonchu's rules, learned over the Signs and Desire series:
 
 ## Open items for Boonchu
 
-- Pick the No Cap profile picture (A, B, C or a Cloudflare one) and publish the three drafts.
-- Delete the failed Postiz posts: `cmudsdo0r0000qg0yeohrm2lv` (23 Sep), `cmugti7ma01a0qw0yof98blp1` (25 Sep),
-  `cmugtwmzz01eiqw0yslt1cs4e` (26 Sep).
-- Photo backgrounds for No Cap slides: `GEMINI_API_KEY`, a Kling top-up (450 credits a day) or the Cloudflare option.
+- Pick the No Cap profile picture (A, B, C or a Cloudflare one) and publish the photo drafts.
+- Delete in Postiz: the four text-only No Cap drafts listed above, and the failed posts `cmudsdo0r0000qg0yeohrm2lv`
+  (23 Sep), `cmugti7ma01a0qw0yof98blp1` (25 Sep), `cmugtwmzz01eiqw0yslt1cs4e` (26 Sep).
+- Cloudflare cap: the 28 Sep re-render used about 9,600 of that day's 10,000 free neurons, so the routine's run at
+  about 23:35 UTC the same day may get quota errors and fall back to the gradient. Workers Paid ($5 a month) removes
+  the cap; after 28 Sep a daily batch fits the free tier.
 - Merge draft PR #15 when ready.

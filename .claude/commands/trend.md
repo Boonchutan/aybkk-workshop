@@ -24,7 +24,7 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 | Postiz post type | `draft` until Boonchu says "go live", then `schedule` |
 | image hosting | branch `trend-cards` of this repo → `.../trend-cards/carousels/YYYY-MM-DD-<slug>/NN.png` (single cards under `cards/`) |
 | memory | `log.json` on the `trend-cards` branch (14-day no-repeat rule) |
-| Routine | "No Cap Daily — daily trend batch", 23:30 UTC = 06:30 Bangkok. It fires into the session "Postiz Social media" (session_01XThAVTVGUs4TK4ENsd9Yfh) because that session holds the repo, push access, Postiz and Gmail; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
+| Routine | "No Cap Daily — daily trend batch", 23:30 UTC = 06:30 Bangkok. It fires into the session "Cloudflare image to postiz" (session_013cU2g9aVQPL1g3eBUBUr3h, routine `trig_01DYitUKqzHR7MaHzMvU3ABy` since 28 Sep) because that session holds the repo, push access, Postiz, Gmail and the Cloudflare variables; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
 
 ## Step 1 — Fetch
 ```
