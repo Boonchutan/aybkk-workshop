@@ -54,11 +54,12 @@ body.compact .sub{font-size:32px}
 .foot::before{content:"";position:absolute;left:-72px;right:-72px;top:-90px;bottom:-64px;z-index:-1;background:linear-gradient(180deg, rgba(5,8,15,0) 0%, rgba(5,8,15,.7) 45%, rgba(5,8,15,.85) 100%)}
 .foot{z-index:1}
 .foot .swipe{color:var(--accent);flex:none}
+.credit{position:absolute;left:72px;right:72px;bottom:122px;z-index:2;font-size:19px;letter-spacing:.02em;color:var(--primary);opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style></head><body>
 <div class="bg"></div><div class="shade"></div>
 <div class="top"><span class="k">${esc(d.kicker || "No Cap Daily")}</span><span>${esc(d.index || "")}</span></div>
 <div class="text"><h1 id="h">${headline}</h1>${d.sub ? `<div class="sub" id="s">${esc(d.sub)}</div>` : ""}</div>
-<div class="foot"><span>${esc(d.brand || "")}</span><span class="swipe">${esc(d.foot || "")}</span></div>
+<div class="foot"><span>${esc(d.brand || "")}</span><span class="swipe">${esc(d.foot || "")}</span></div>${d.credit ? `<div class="credit">${esc(d.credit)}</div>` : ""}
 <script>
 (async function(){
   const body=document.body, want=${JSON.stringify(d.zone || "auto")}, src=${d.image ? JSON.stringify("file://" + d.image) : "null"};
