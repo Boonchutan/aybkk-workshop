@@ -95,8 +95,11 @@ This repo is attached to each routine (Boonchu set it in the routines UI), which
 - This repo is public, so Carnegie's lead table is stored only as
   `bots/notebook/carnegie-leads.md.enc` (openssl AES-256). The key lives in the Carnegie
   routine prompt and with Boonchu, never in this repo. Posts carry counts, never names.
-- Boonchu talks to a bot by replying in its latest session. Standing orders go into its notebook;
-  Machiavelli can route an order to the other bots.
+- Boonchu talks to the whole team in one permanent session, "💬 Machi · AYBKK team chat"
+  (`session_01QRPtAqCjY8bjNihjxsdNLn`). It adds DMs to Carne's locked list, saves life notes
+  for Plato, and writes standing orders into any bot's notebook. Scheduled runs are separate
+  "⚡ AYBKK bot: …" sessions that don't show in the normal session list; find them under
+  each routine at claude.ai/code/routines.
 - Hard rules live in each routine prompt: drafts only, no logins to Meta, WeChat, Xiaohongshu,
   TikTok, LINE or Rezerv, no spending, never a price in a DM draft. Plato also never touches
   politics, war, royalty, government leaders, religious conflict or tragedies with victims:
