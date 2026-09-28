@@ -37,6 +37,8 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
 - Profile picture: three stand-ins on `trend-cards` at `brand/nocap-daily-profile-A.png` (navy, "NO CAP" ivory and
   amber, amber "DAILY" tag; recommended), `-B` ("NC" monogram), `-C` (navy on amber). Boonchu asked for a
   Cloudflare-generated one: see the script below.
+- Drafts for 28 Sep (gradient, to be replaced by photo versions): Primetime `cmukhdjf60gvhqr0yp8f0v7sw`, Kate Upton
+  `cmukhdjgi0gviqr0yh6raj4g0`, Muse `cmukhdji40gvjqr0y77z9a5ab`. Google's birthday text is now past tense ("turned 28 on Sunday").
 - Drafts waiting in Postiz for 27 Sep: Google's birthday `cmujp6h8i0d0wqr0y3nl73nmj` (11:30 UTC, made as the
   account's first post), meat recall `cmujmp19v0cmeqr0y9rfu1ym6`, Taylor Swift Encore `cmujmp4vx0cmfqr0y8i3b2qqw`,
   FAFSA `cmujmp81l0cmgqr0y40ymk6g5`. Boonchu publishes from Postiz.
@@ -45,12 +47,14 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
   gradient. `scripts/trend-image.js` now also runs on Cloudflare Workers AI (FLUX.2 [klein] 4B, 4:5, free tier
   covers a carousel a day) once `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` are environment variables
   (tested against a mock API only; the first real run is the test). A token pasted into chat cannot be used:
-  the session's safety check blocks it. Boonchu adds both variables in the environment settings, then a new session.
+  the session's safety check blocks it. 28 Sep: both variables are set in the Bt code environment and a Workers AI
+  test call worked in the session "Cloudflare image to postiz"; that session re-renders the 27–28 Sep carousels with
+  photos and takes over the daily routine.
 - Google's birthday carousel with photos: `trend-cards/carousels/2026-09-27-googles-birthday/slides.json` holds the
   text and FLUX prompts. Copy the folder's `slides.json` into a scratch dir, run
   `node scripts/trend-image.js <dir> --cover-candidates 2`, render, review, overwrite the PNGs on `trend-cards`,
   upload, make a new draft, update the log entry's `postizId`, and ask Boonchu to delete the old text-only draft.
-- `log.json` has 44 entries through 2026-09-27 (14-day no-repeat rule).
+- `log.json` has 47 entries through 2026-09-28 (14-day no-repeat rule).
 
 ### Cloudflare profile picture (needs env `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`, Workers AI token)
 
