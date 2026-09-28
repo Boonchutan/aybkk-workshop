@@ -29,15 +29,16 @@
    "n": 3,
    "headline": "Muse doesn't just answer. It sends email and *books travel*.",
    "sub": "It can turn a saved Instagram recipe reel into a grocery list, Meta says.",
-   "image": "A passport and a smartphone side by side on a sunlit wooden table, the objects in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "image": "A navy passport with a simple gold globe on the cover and a smartphone side by side on a sunlit wooden table, the objects in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no national emblem, no flags, no text, no letters, no numbers, no logos",
    "foot": "Swipe →"
   },
   {
    "n": 4,
    "headline": "It runs on *Muse Spark*, from Meta Superintelligence Labs.",
    "sub": "Meta calls it its most capable model, “built for real-world agentic work.”",
-   "image": "Rows of glowing server racks in a dark data center with blue light, the servers in the upper half of the frame, the lower half of the frame is plain, dark and empty, photorealistic, no people, no text, no letters, no numbers, no logos",
-   "foot": "Swipe →"
+   "image": "Long rows of server racks with blue status lights in a data center, clearly lit, the racks in the upper half of the frame, the lower half of the frame is a plain dark floor, photorealistic, no people, no text, no letters, no numbers, no logos",
+   "foot": "Swipe →",
+   "zone": "bottom"
   },
   {
    "n": 5,
