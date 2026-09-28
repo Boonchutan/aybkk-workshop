@@ -40,5 +40,7 @@ Guardrails: never use the "back injury" story from Boonchu Persuasion Framework 
 - 2026-09-28 | Trigger: Berlin Marathon 27 Sep 2026, Tigst Assefa on world record pace, faded in the last miles, still won in 2:11:04 (3rd fastest women's marathon ever) | Story: Vishvamitra loses his tapas more than once and starts again until he becomes a Brahmarshi (Valmiki Ramayana, Bala Kanda) | Asana: Vishvamitrasana
 - 2026-09-28 | Boonchu wrote this one himself, Plato edited | Trigger: his eyes at 53 | Story: Dhritarashtra refuses divine sight from Vyasa, Sanjaya gets it and narrates the Gita; his only Gita line is 1.1 ("my people"), last verse 18.78 (Mahabharata, Bhishma Parva; Bhagavad Gita) | Asana: dristi, nasagra (nose tip)
 
+- 2026-09-28 (Boonchu's own draft) | Trigger: his eyes at 53 | Story: Dhritarashtra refuses sight from Vyasa, Sanjaya narrates; his only Gita line is 1.1 "mamakah" (my people); Sanjaya's last line 18.78 | Asana: dristi, nasagrai | Line: "Dristi was never about seeing clearly. It's about not looking away."
+
 ## What worked
 (no feedback yet)
