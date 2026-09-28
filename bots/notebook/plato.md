@@ -8,6 +8,8 @@
 
 - 2026-09-28: BEDTIME-STORY ENGLISH. Most viewers are not native English speakers, and neither is Boonchu. Write every spoken line like a bedtime story for a 5-year-old: one idea per line, short common words, no "the former/latter", no clever grammar. Explain every name the first time (e.g. "Pandu, his brother"). If a line needs reading twice, rewrite it.
 
+- 2026-09-28: WORD RULE. Never say or write "pose" for Ashtanga practice. Always "asana" (plural "asanas"). Applies to scripts, on-screen text, captions and hooks.
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
