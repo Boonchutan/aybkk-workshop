@@ -24,12 +24,14 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
 
 ## Routines
 
-- "No Cap Daily — daily trend batch", `trig_01DYitUKqzHR7MaHzMvU3ABy`, cron `30 23 * * *` (06:30 Bangkok),
+- "No Cap Daily — daily trend batch", `trig_01DYitUKqzHR7MaHzMvU3ABy`, cron `49 20 * * *` (03:49 Bangkok; it was
+  `30 23 * * *` until 28 Sep, when the first post moved to 06:00 Bangkok),
   fires into session_013cU2g9aVQPL1g3eBUBUr3h ("Cloudflare image to postiz", which has the Cloudflare variables).
   Created 28 Sep; it replaced `trig_01HZvqejQMT7rQCVuhX4CNxB` (fired into session_01XThAVTVGUs4TK4ENsd9Yfh,
   deleted). It runs the eight steps of `.claude/commands/trend.md`, makes slide photos with
   `node scripts/trend-image.js <dir> --cover-candidates 2` (Cloudflare, or Gemini if `GEMINI_API_KEY` is set;
-  no key means gradient), saves 3 Postiz drafts on the No Cap channel (01:00, 06:00, 12:00 UTC), appends to
+  no key means gradient), saves 4 Postiz drafts on the No Cap channel for 06:00, 09:00, 20:00 and 23:00 Bangkok
+  (about 40% tech, the rest from the top 10; Boonchu, 28 Sep), appends to
   `log.json` and emails boonchutan@gmail.com. A routine cannot be re-pointed: to move it to another session,
   delete it and create it again with `persistent_session_id` set to the new session and the same prompt.
 
@@ -54,10 +56,11 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
 - Drafts still waiting in Postiz for 27 Sep: meat recall `cmujmp19v0cmeqr0y9rfu1ym6`, Taylor Swift Encore
   `cmujmp4vx0cmfqr0y8i3b2qqw`, FAFSA `cmujmp81l0cmgqr0y40ymk6g5`. Boonchu publishes from Postiz.
 - Post type stays `draft` until Boonchu says "go live"; then change the Config row in trend.md to `schedule`.
-- Slide images: Cloudflare Workers AI through `scripts/trend-image.js` (FLUX.2 [klein] 4B, 1088x1360, about 234
-  neurons an image). First real run 28 Sep in "Cloudflare image to postiz": 41 images, no errors, about 9,600 of
-  the 10,000 free neurons a day (resets 00:00 UTC; on the Free plan calls stop at the cap, Workers Paid bills
-  $0.011 per 1,000 over it). A daily batch (33 images with 2 cover candidates) is about 7,700. The token has no
+- Slide images: Cloudflare Workers AI through `scripts/trend-image.js` (FLUX.2 [klein] 4B at 1024x1280 since 28 Sep,
+  6 tiles, about 156 neurons an image; it was 1088x1360, 9 tiles, about 234). First real run 28 Sep in "Cloudflare
+  image to postiz": 41 images, no errors, about 9,600 of the 10,000 free neurons a day (resets 00:00 UTC; on the
+  Free plan calls stop at the cap, Workers Paid bills $0.011 per 1,000 over it). A daily batch of 4 carousels
+  (44 images with 2 cover candidates) is about 6,900 at the new size. The token has no
   analytics permission, so usage cannot be checked from here. No `GEMINI_API_KEY`; Kling has 137 credits (under
   the 200 minimum). A token pasted into chat cannot be used: the session's safety check blocks it.
 - FLUX habits seen on 28 Sep: "at night" prompts give dark covers (Primetime's first cover was lum 10%); offices
@@ -131,7 +134,10 @@ Boonchu's rules, learned over the Signs and Desire series:
 - Pick the No Cap profile picture (A, B, C or a Cloudflare one) and publish the photo drafts.
 - Delete in Postiz: the seven replaced No Cap drafts listed above, and the failed posts `cmudsdo0r0000qg0yeohrm2lv`
   (23 Sep), `cmugti7ma01a0qw0yof98blp1` (25 Sep), `cmugtwmzz01eiqw0yslt1cs4e` (26 Sep).
-- Cloudflare cap: the 28 Sep re-render used about 9,600 of that day's 10,000 free neurons, so the routine's run at
-  about 23:35 UTC the same day may get quota errors and fall back to the gradient. Workers Paid ($5 a month) removes
-  the cap; after 28 Sep a daily batch fits the free tier.
+- Cloudflare cap: the 28 Sep re-renders used nearly all of that UTC day's 10,000 free neurons, so the routine's run
+  at about 20:50 UTC the same day will likely get quota errors and fall back to the gradient. Workers Paid ($5 a
+  month) removes the cap; from 29 Sep a daily batch fits the free tier.
+- Update the Instagram bio: it says "3 carousels a day"; it is 4 now (or drop the number).
+- Drafts need a tap to publish. Say "go live" to switch the Config row to `schedule`, and they post themselves
+  at 06:00, 09:00, 20:00 and 23:00 Bangkok.
 - Merge draft PR #15 when ready.

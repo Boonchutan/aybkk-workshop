@@ -1,9 +1,9 @@
-# /trend — No Cap Daily: 3 posts a day from what the world is searching
+# /trend — No Cap Daily: 4 posts a day from what the world is searching
 
 **Purpose:** Turn Google Trends (the top searches of the week and of today) into @wealth-style
 10-slide carousels: a photoreal image per slide, one big condensed headline per slide, one hidden fact
 per slide, with an Edward Sturm caption (what is trending, why, the one thing most people don't know).
-3 carousels a day, 100% global (US trends stand in for "global").
+4 carousels a day, about 40% tech, 100% global (US trends stand in for "global").
 Run by hand (`/trend`) or by the daily Routine "No Cap Daily — daily trend batch" (see Config).
 
 **Do not use for:** AYBKK marketing, the China cohort, student comms, or anything posted to the
@@ -14,37 +14,42 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 |---|---|
 | brand / series label (slide tag) | No Cap Daily (chosen 16 Sep 2026; "Talk of the Town" was the working name) |
 | Postiz channel | the channel whose name contains "No Cap" or "Talk of the Town" (case-insensitive): "No Cap Daily \| Trending Facts", `cmujmj95r11xco80yhyrtsp07`, instagram-standalone, connected 27 Sep 2026. If it is ever missing, deliver the batch in the report only. Never fall back to another channel. |
-| posts per day | 3 carousels, all global. No Thailand quota (dropped 16 Sep 2026). |
+| posts per day | 4 carousels, all global (Boonchu, 28 Sep 2026). **About 40% tech:** 2 tech posts when tech is under 40% of the posts in `log.json` over the last 7 days, otherwise 1 (a week comes out near 11 of 28; entries without a `category` count as not tech). Tech means the story is about a tech product, company, app, AI, games hardware or the internet; judge the story, not Google's label (its "Technology" tag is rare and sometimes wrong). Tech may come from anywhere in the fetched lists with 10,000+ weekly or 200+ daily US searches. **The other posts come from the top 10:** the 10 biggest US searches of the week by volume, or today's US daily top 10. When fewer of those pass the rubric (in football season most of the top 10 are game results, which Step 2 skips), take the next ones by rank and say so in the report. No two tech posts in a row. No Thailand quota (dropped 16 Sep 2026). |
 | slides per carousel | 10: cover, 8 facts, takeaway. 1080×1350. Oswald 600 headline (condensed, not heavy; `"font":"anton"` for the heavier look) over a photoreal image with a dark gradient and a scrim behind the text. |
 | text colours | 80/20: ivory `#F4EFE6` for the body of the headline, amber `#FFB92E` for the 1–3 stressed words (marked `*like this*` in the headline). The tag and "Swipe" use the same amber. Alternates Boonchu can switch to with one spec key: coral `#FF5A4E`, teal `#3BE0C8` (`"accent"`). |
 | cover = the hook | Slide 1 carries the whole carousel in the feed. Its image must be the brightest and most striking of the ten: subject large, vivid colour, high contrast, bright clean light, never a moody dark scene. The renderer prints `lum=NN%` per slide and flags `DARK` under 22%; a dark cover gets a new, brighter prompt (generate 2 candidates with `imageCount` 2 and keep the stronger). Cover slides render with the light shade (`"shade":"light"`, automatic for slide 1). |
 | text placement | `zone: "auto"` (default): the renderer maps the image's focus (edges, contrast, saturation on a 54×68 grid) and puts the text block at the bottom or the top, whichever covers less of the focus; it must cover ≤ 60%, otherwise it also shrinks the text. The chosen zone and coverage are printed per slide; a slide over 60% gets a new image prompt, not a smaller font. |
-| images | **Gemini API first:** `node scripts/trend-image.js <dir> --cover-candidates 2` (needs env `GEMINI_API_KEY` from aistudio.google.com, paid tier only; default model `gemini-3.1-flash-image` at 1K ≈ $0.067 per image ≈ $2.20 a day for 33 images; `--size 2K` ≈ $0.10 per image; `--model gemini-3.1-flash-lite-image` ≈ $0.034; `--list-models` shows what the key can use; `--dry-run` prints the plan and cost). No Gemini key but `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN` set → the same command uses Cloudflare Workers AI, FLUX.2 [klein] 4B at 1088×1360 (≈ 234 neurons per image, a carousel fits the free 10,000 neurons a day; `--cf-model flux-2-klein-9b` for more detail at ≈ 1,450 neurons; `--provider cloudflare` forces it). Neither key → Kling `text_to_image`, model `gemini-3.1-flash-image`, aspect 4:5, 2k, 15 credits per image = 150 per carousel, 450 per day; check `query_membership_and_credits` first and skip Kling under 200 credits. Neither → render on the dark gradient and say so in the report. Google Flow (labs.google/flow) has no API and cannot be used from here. Prompts: photoreal, unbranded, no real people's faces, no logos, no text, no blank screens or monitors (they come out as flat white boxes), and **composed for text**: "subject in the upper third of the frame, the lower half is plain, dark and empty" (or the mirror for a top-zone slide). |
+| images | **Gemini API first:** `node scripts/trend-image.js <dir> --cover-candidates 2` (needs env `GEMINI_API_KEY` from aistudio.google.com, paid tier only; default model `gemini-3.1-flash-image` at 1K ≈ $0.067 per image ≈ $2.95 a day for 44 images; `--size 2K` ≈ $0.10 per image; `--model gemini-3.1-flash-lite-image` ≈ $0.034; `--list-models` shows what the key can use; `--dry-run` prints the plan and cost). No Gemini key but `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN` set → the same command uses Cloudflare Workers AI, FLUX.2 [klein] 4B at 1024×1280 (6 tiles ≈ 156 neurons per image, so a day of 4 carousels with 2 cover candidates, 44 images, is ≈ 6,900 of the free 10,000 neurons; 1088×1360 was 9 tiles and did not fit; `--cf-model flux-2-klein-9b` for more detail at ≈ 1,400 neurons; `--provider cloudflare` forces it). Neither key → Kling `text_to_image`, model `gemini-3.1-flash-image`, aspect 4:5, 2k, 15 credits per image = 150 per carousel, 450 per day; check `query_membership_and_credits` first and skip Kling under 200 credits. Neither → render on the dark gradient and say so in the report. Google Flow (labs.google/flow) has no API and cannot be used from here. Prompts: photoreal, unbranded, no real people's faces, no logos, no text, no blank screens or monitors (they come out as flat white boxes), and **composed for text**: "subject in the upper third of the frame, the lower half is plain, dark and empty" (or the mirror for a top-zone slide). |
 | real people | When the story is about a named person, the cover is a real photo of them from Wikimedia Commons, never an AI face, a Google, news or agency (Getty, AP) photo, or a screenshot: a screenshot of someone's photo is still a copy of it, and a credit line does not make it legal. Search commons.wikimedia.org for the person, prefer a photo from the event in the story, then run `node scripts/trend-image.js <dir> --photo 1 --commons "File:<name>" --pos "<x%> <y%>"`. It accepts only free licenses (CC0, public domain, CC BY, CC BY-SA), saves the photo as `bg/slide1.img` and writes `photo` and `credit` (and `bgPos`) into `slides.json`; the normal image run then skips that slide. The credit prints small on the slide and must stay. Choose `--pos` so faces sit in the upper half: no text over a face, hair or hands (set `"index": ""` on the slide if the NN / 10 counter would sit on them). A personality-rights warning means news posts only, never an ad. No usable Commons photo: an AI object image as before. |
-| post times (Bangkok) | 08:00, 13:00, 19:00 = 01:00, 06:00, 12:00 UTC |
+| post times (Bangkok) | 06:00, 09:00, 20:00, 23:00 (Boonchu, 28 Sep 2026) = 23:00 UTC the day before, then 02:00, 13:00, 16:00 UTC. In New York (EDT) that is 7 pm and 10 pm the day before, then 9 am and noon. |
 | Postiz post type | `draft` until Boonchu says "go live", then `schedule` |
 | image hosting | branch `trend-cards` of this repo → `.../trend-cards/carousels/YYYY-MM-DD-<slug>/NN.png` (single cards under `cards/`) |
 | memory | `log.json` on the `trend-cards` branch (14-day no-repeat rule) |
-| Routine | "No Cap Daily — daily trend batch", 23:30 UTC = 06:30 Bangkok. It fires into the session "Cloudflare image to postiz" (session_013cU2g9aVQPL1g3eBUBUr3h, routine `trig_01DYitUKqzHR7MaHzMvU3ABy` since 28 Sep) because that session holds the repo, push access, Postiz, Gmail and the Cloudflare variables; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
+| Routine | "No Cap Daily — daily trend batch", 20:49 UTC = 03:49 Bangkok (moved from 23:30 UTC on 28 Sep so the 06:00 Bangkok draft exists before its slot), making the 4 posts for that Bangkok day. It fires into the session "Cloudflare image to postiz" (session_013cU2g9aVQPL1g3eBUBUr3h, routine `trig_01DYitUKqzHR7MaHzMvU3ABy` since 28 Sep) because that session holds the repo, push access, Postiz, Gmail and the Cloudflare variables; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
 
 ## Step 1 — Fetch
 ```
-node scripts/trends-fetch.js --geo US,TH --hours 168 --top 100 --out "$SCRATCH/trends.json"
+node scripts/trends-fetch.js --geo US,TH --hours 168 --top 2000 --out "$SCRATCH/trends.json"
 ```
 - `geos.US.weekly` / `geos.TH.weekly`: the 7-day list (title, volume, growthPct, started, active,
-  related, categories) sorted by volume. This is the "top 50 of the week".
+  related, categories) sorted by volume, about 1,800 entries. The first 10 are "the top 10 of the week";
+  tech stories usually sit far below them (ranks 80 to 500 in the week of 28 Sep).
 - `geos.*.daily`: today's RSS top 10 with news headlines and URLs. Freshest; use for "today" posts.
 - Google has no world feed, so US = global. Add `--geo US,GB,IN,TH` when the US list is thin.
 
 ## Step 2 — Select (the rubric)
-Score every candidate 0–5 on each line; take the top 3 (US weekly + daily lists only).
-1. **Volume** — weekly ≥ 100,000 (US) / ≥ 10,000 (TH), or daily ≥ 500+ (US) / ≥ 1000+ (TH).
+Score every candidate 0–5 on each line (US weekly + daily lists only). Take 4: first the day's tech
+posts (1 or 2, see Config "posts per day"), then the best of the top 10 (weekly top 10 by volume, or
+today's daily top 10), then the next by rank if the top 10 runs out.
+1. **Volume** — weekly ≥ 100,000 (US) / ≥ 10,000 (TH), or daily ≥ 500+ (US) / ≥ 1000+ (TH). Tech posts:
+   weekly ≥ 10,000 or daily ≥ 200+ (US).
 2. **Heat** — `active: true`, or started in the last 48 h. Ended trends only if the story is still moving.
 3. **Angle** — a verifiable "most people don't know" fact that changes how the reader sees the story
    (origin, a number, who really owns it, what it actually does). No angle, no post.
 4. **Explainable** — the reader gets it from the caption alone.
-5. **Range** — a different category from the other two posts that day, and not in `log.json` within
-   14 days (a new development on a logged topic is fine).
+5. **Range** — the non-tech posts that day are in different categories from each other, two tech posts
+   are about different companies or products, and nothing is in `log.json` within 14 days (a new
+   development on a logged topic is fine).
 6. **Depth** — at least 8 distinct, verifiable facts exist (prices, dates, names, who supplies what,
    who paid whom, what the rule actually says). Fewer than 8 and it is not a carousel topic.
 
@@ -164,9 +169,11 @@ Shapes are from docs.postiz.com/public-api and are untested until the key exists
 `draft`, stop and put the response in the report; never switch to `schedule` or `now` on your own.
 
 ## Step 8 — Log and report
-Append to `log.json`: `{date, geo, term, volume, angle, sources[], card | carousel, facts[], postizId}`.
-The next run reads it for the 14-day rule.
-Report (final message / notification): the 3 captions in full, the 3 card URLs, what was skipped
+Append to `log.json`: `{date, geo, term, volume, category, angle, sources[], card | carousel, facts[], postizId}`,
+with `category` = `"tech"` for a tech post, otherwise Google's category. The next run reads it for the
+14-day rule and the 40% tech share.
+Report (final message / notification): the 4 captions in full, the 4 cover URLs, which posts are tech
+and the tech share of the last 7 days, where the non-tech posts ranked (top 10 or lower), what was skipped
 and why (one line each), the image cost (Gemini images × price, or Kling credits used and remaining, or
 "gradient, no images"), and anything that needs Boonchu (channel missing, a fact that would not verify, no image key).
 

@@ -38,7 +38,7 @@ const cf = { acct: process.env.CLOUDFLARE_ACCOUNT_ID, token: process.env.CLOUDFL
 const provider = flag("--provider", key || !(cf.acct && cf.token) ? "gemini" : "cloudflare");
 const cfModel = flag("--cf-model", "flux-2-klein-4b");
 const CF_API = "https://api.cloudflare.com/client/v4";
-const CF_W = 1088, CF_H = 1360; // 4:5 in multiples of 16; the renderer crops to 1080x1350
+const CF_W = 1024, CF_H = 1280; // 4:5 in 2x3 billed 512-px tiles (1088x1360 bills 3x3); the renderer scales to 1080x1350
 const tiles = (w, h) => Math.ceil(w / 512) * Math.ceil(h / 512);
 const CF = { // neurons per image, developers.cloudflare.com/workers-ai/platform/pricing (Sept 2026)
   "flux-2-klein-4b": { form: true, neurons: tiles(CF_W, CF_H) * 26.05 },
