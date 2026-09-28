@@ -34,10 +34,11 @@ Obsidian frameworks (Boonchu's vault, 05 Business & Strategy/Boonchu Framework).
 Guardrails: never use the "back injury" story from Boonchu Persuasion Framework (flagged as invented). Before any science claim: how big, tested on whom, predicted or found after, repeated? (Psychology - Reading The Evidence)
 
 ## Life notes
-(none yet)
+- 2026-09-28: At 53, cannot read anything close in low light. Buys reading glasses at the eye shop. [USED 2026-09-28, dristi Reel]
 
 ## Stories used
 - 2026-09-28 | Trigger: Berlin Marathon 27 Sep 2026, Tigst Assefa on world record pace, faded in the last miles, still won in 2:11:04 (3rd fastest women's marathon ever) | Story: Vishvamitra loses his tapas more than once and starts again until he becomes a Brahmarshi (Valmiki Ramayana, Bala Kanda) | Asana: Vishvamitrasana
+- 2026-09-28 | Boonchu wrote this one himself, Plato edited | Trigger: his eyes at 53 | Story: Dhritarashtra refuses divine sight from Vyasa, Sanjaya gets it and narrates the Gita; his only Gita line is 1.1 ("my people"), last verse 18.78 (Mahabharata, Bhishma Parva; Bhagavad Gita) | Asana: dristi, nasagra (nose tip)
 
 ## What worked
 (no feedback yet)
