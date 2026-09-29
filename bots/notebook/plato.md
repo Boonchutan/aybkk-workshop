@@ -42,7 +42,9 @@
   - Cards: rounded 586x346 card with a thin white border and soft shadow, centered under the header, above his head (shift his video down ~110 px so the card does not cover his face). Cards pop in (scale 0.82 to 1, ease-out-back) and fade out.
   - Two card kinds: (1) story pictures, slow zoom inside the card; (2) graphic "SVG" cards: navy gradient, big emoji/icon, gold Montserrat ExtraBold title, cream subtitle; lists reveal item by item with ❌/✅ as he says them.
   - Captions: Montserrat, lowercase, 2 balanced lines, white, soft shadow; word turns bold when spoken (Weight Shift), emoji inline at the end, emoji about 1.4x text height (bigger than Ep. 1).
-  - No full-screen cutaways, no zoom punches in this style.
+  - WEIGHT SHIFT (HyperFrames, his pick): 2 lines, lowercase Montserrat; the LINE he is saying is bold (800), the other line thin (300); shift over about 0.14 s. Big emoji (about 125 px on 70 px text) to the right of the block, popping in. (caps3.py)
+  - CUT ZOOM: 1.3x hard cut on his face for each important word (about 1 s), with a sound effect at 40%, 0.4 s after the word. Sounds: the HyperFrames set (pop, whoosh, sparkle, chime, ping, impact-bass-1/2, error, click-soft) from his "Story Edit Sheet" artifact https://claude.ai/artifact/1wze1oWWGujYe4XYVxkngg (files sfx/*.mp3), plus synth thunder for rain/thunderbolt. (build_audio2.py, fc5.txt)
+  - No full-screen cutaways.
   - Scripts saved in bots/tools/reel-edit/ (common.py, cards.py, caps2.py, build_audio.py, fc4.txt).
 - 2026-09-29: STORY PICTURES. Boonchu may make his own pictures (Isle of Dogs stop-motion style, he likes it: "fun"). Use his first. Fill gaps with Cloudflare flux in the same style ("stop-motion claymation, Wes Anderson Isle of Dogs style, handmade miniature set").
 
