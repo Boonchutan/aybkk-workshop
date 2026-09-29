@@ -1,4 +1,4 @@
-# Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), v4
+# Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), v5
 
 Toolkit pick: Boonchu's hook (links to the last post) + Vibe Samurai, run as fail, hero, payoff.
 Why: the old chanting book gives a real source to credit, and it calls the wrong word a thunderbolt, which ties to the series.
@@ -13,7 +13,7 @@ His father made one small mistake.
 
 ## SOURCE (credit it)
 There is an old book on how to chant. The Paniniya Shiksha.
-It says: chant a holy word with the wrong stress,
+It says: chant a holy word with the power in the wrong place,
 and it turns into a thunderbolt.
 It strikes the one who chanted it.
 Its example is this story.
@@ -32,9 +32,9 @@ Tvashtr lost his son.
 He lit a fire and chanted for a new one.
 A son who would kill Indra.
 The word was "Indrashatru."
-Stress the end: "the killer of Indra."
-Stress the start: "the one Indra kills."
-Tvashtr stressed the start.
+Say the end with power: "the killer of Indra."
+Say the start with power: "the one Indra kills."
+Tvashtr put the power on the start.
 Vritra rose from the fire.
 Born to destroy Indra.
 And born to die by Indra's hand.
@@ -44,18 +44,19 @@ On screen: "indra-SHATRU = killer of Indra", then "INDRA-shatru = the one Indra 
 ## LADDER 2: THE STUDENT (fail, no answer yet)
 On the mat, there is an asana with the same thunderbolt.
 Supta Vajrasana. The sleeping thunderbolt.
-Legs in lotus. Reach behind your back and hold your toes.
+Legs in lotus. Reach behind your back and hold your feet.
 Drop back until the top of your head touches the floor.
 Going down is easy.
 Coming up is where it goes wrong.
-You pull with your neck.
-Your hands let go.
-You fall back down.
-So you try harder.
-More abs. More pull.
+You pull with your abs.
+Your back pushes your arms.
+Your hands slide off your feet.
+So you grab your friend's hands.
+You squeeze your abs harder.
+You pull harder with your hands.
 It is like Tvashtr chanting louder.
-Louder does not fix a wrong stress.
-Your hands let go again.
+Louder does not fix power in the wrong place.
+Your hands cannot reach your feet.
 
 On screen (small): "Intermediate Series. Learn it with your teacher."
 
@@ -69,14 +70,14 @@ Maybe that is you.
 ## TURN + REVEAL (the hero)
 It isn't your body.
 It was never strength.
-It's where you put the stress.
-Not in the abs. Not in the neck.
+It's where you put the power.
+Not in the abs. Not in the hands.
 In the chest.
 Hold your bandhas. Breathe.
 And you come up in one piece.
 
 ## SCREENSHOT LINE
-Tvashtr put the stress in the wrong place, and got a demon.
+Tvashtr put the power in the wrong place, and got a demon.
 Put it in the right place, and you get a thunderbolt.
 
 ## CLOSE (flip, closes the hook)
@@ -86,14 +87,14 @@ You get a new one every morning.
 (hold the gaze one second, stop)
 
 ## CAPTION
-One wrong sound made a demon. One wrong place makes an asana fail.
+One wrong sound made a demon. Power in the wrong place makes an asana fail.
 
 Hidden Stories of Ashtanga, Ep. 2.
 I tell these old stories to my son at bedtime. This one is the father of the demon who stole the rain.
 
-The old chanting book, the Paniniya Shiksha, warns that a holy word chanted with the wrong stress becomes a thunderbolt. Its example is Tvashtr and the word "Indrashatru."
+The old chanting book, the Paniniya Shiksha, warns that a holy word chanted with the power in the wrong place becomes a thunderbolt. Its example is Tvashtr and the word "Indrashatru."
 
-On the mat it works the same way. In Supta Vajrasana, stress in the neck and the hands let go. Stress in the chest, bandhas held, breath moving, and you come up in one piece.
+On the mat it works the same way. In Supta Vajrasana, pull with the abs and the hands slide off the feet. Put the power in the chest, bandhas held, breath moving, and you come up in one piece.
 
 Supta Vajrasana is in the Ashtanga Intermediate Series. Learn it with your teacher.
 
@@ -110,13 +111,13 @@ Zoom punch 1 to 2 s + sound at 40%, 0.4 s after the word:
 - "Indrashatru": temple bell
 - "the start": low drum hit (nothing comic)
 - "Vritra": deep boom
-- "neck": soft warning tick
-- "fails": soft drop
+- "slide off": soft drop
+- "cannot reach": low drum
 - (silent second: no sound)
-- "stress" (turn): single bell
+- "power" (turn): single bell
 - "chest" / "bandhas": rising whoosh
 - "every morning": soft bell
-Weight Shift captions, emoji on key words: RAIN 🌧️, MISTAKE ⚠️, THUNDERBOLT ⚡, INDRASHATRU 🗣️, NECK ⚠️, CHEST 💪, EVERY MORNING 🌅
+Weight Shift captions, emoji on key words: RAIN 🌧️, MISTAKE ⚠️, THUNDERBOLT ⚡, INDRASHATRU 🗣️, SLIDE OFF ⚠️, CHEST 💪, EVERY MORNING 🌅
 Image prompts (storybook watercolor, gentle, no gore, nothing that mocks the gods):
 1. An old master craftsman with a sad, kind face pours an offering into a large ritual fire at night. Soft gold light.
 2. From the flames, a huge dark shape rolls up like a storm cloud and fills the sky. Awe, not horror.

@@ -32,6 +32,9 @@
 
 - 2026-09-29: His Vault note "05 Business & Strategy/Boonchu Framework/Vibe Samurai - Storytelling Structure" (Drive file 1jz1Q0-b6sSe1CFBzIHYfPj-biRs1_0gN) is the reference for Vibe Samurai. Key: hook = one flat statement, never a question; credit the source; ladder of 3 moving toward the viewer (beginner, 10-year practitioner, you); silent beat; turn "It isn't X. It's Y."; one screenshot line; closing inversion; pitch only in the caption.
 
+- 2026-09-29: WORD RULE 2. Do not use "stress" (non-native viewers do not get it). For accent or effort say "power" ("put the power in the wrong place"). Same test for any word: if a 10-year-old non-native speaker would stop on it, swap it.
+- 2026-09-29: REVEAL AT THE END. Do not teach the fix early. Beginning and middle must make the viewer feel they cannot do it (the fail gets worse when they try harder). The answer comes late, short, after a silent beat.
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
