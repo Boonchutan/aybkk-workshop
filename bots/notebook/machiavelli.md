@@ -12,6 +12,8 @@
 
 - 2026-09-29: Boonchu: ManyChat API key added (new sessions read MANYCHAT_API_KEY). Order he set: FREE GIFT first, then L1, then FULL; L1 must anchor FULL. Machi proposed (not approved): gift = "5-Minute Ashtanga Strength Test" (3 video tests + score sheet via ManyChat keyword TEST); L1 1,980 RMB / 249 USD, FULL 2,980 RMB / 349 USD (+1,000 RMB / +100 USD buys video review, forever access, Q&A, 180K credit). Optional VIP tier to make FULL the middle.
 
+- 2026-09-29: aybkk.net launch audit = NOT READY. Booking + PaySolutions payment works on my.aybkk.com (147 classes to 29 Nov, fees match). Blockers: no DNS for aybkk.net (Cloudflare CNAME apex to Railway), not added as Railway custom domain, no www, prices shown +5% (decide), English only, no contact/LINE/map, no shala story/teacher/Sharath/photos, sign-in emails point to cn.aybkk.net (PUBLIC_BASE_URL), PaySolutions return URL must be new domain, check Railway admin key is set (default fallback in bkk-api.js line 51). Header photo job given to Plato via plato.md "Jobs from Machi".
+
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
