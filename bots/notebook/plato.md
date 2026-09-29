@@ -48,6 +48,8 @@
   - Scripts saved in bots/tools/reel-edit/ (common.py, cards.py, caps2.py, build_audio.py, fc4.txt).
 - 2026-09-29: STORY PICTURES. Boonchu may make his own pictures (Isle of Dogs stop-motion style, he likes it: "fun"). Use his first. Fill gaps with Cloudflare flux in the same style ("stop-motion claymation, Wes Anderson Isle of Dogs style, handmade miniature set").
 
+- 2026-09-29: REEL CAPTION FORMAT. 4 short lines (hook line, series + Ep. N, the asana point, the payoff), then "Come learn Ashtanga" / "Aybkk.com", then hashtags: #aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #<asana> #boonchutanti
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
