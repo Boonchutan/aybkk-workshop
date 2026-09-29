@@ -8,7 +8,7 @@
 
 - 2026-09-28: No Cap Daily (auto trend-facts IG) is Boonchu's test for future brand deals. Suggested: 90-day test to about 28 Dec 2026, judge on followers and reach, keep it in a separate Meta business from AYBKK, fix duplicate drafts. Ask him for numbers at the end.
 
-- 2026-09-29: Sharathji birthday carousel. SCHEDULED cmum77qa80838uj0yncgbbkys for 11:55 Bangkok, 10 slides, approved by Boonchu ("go"). Old 9-slide draft cmum5qwrq07zbuj0yw43iicpc for Boonchu to delete. Images hosted in bots/media/2026-09-29-sharathji on this branch (same method as trend-cards). Publish only after Boonchu confirms. 29 Sep: post ERRORED (Postiz lost the AYBKK Instagram connection). Handed to Plato chat to repost after Boonchu reconnects.
+- 2026-09-29: Sharathji birthday carousel. SCHEDULED cmum77qa80838uj0yncgbbkys for 11:55 Bangkok, 10 slides, approved by Boonchu ("go"). Old 9-slide draft cmum5qwrq07zbuj0yw43iicpc for Boonchu to delete. Images hosted in bots/media/2026-09-29-sharathji on this branch (same method as trend-cards). Publish only after Boonchu confirms. 29 Sep: post ERRORED (Postiz lost the AYBKK Instagram connection). Handed to Plato chat to repost after Boonchu reconnects. DONE 29 Sep: Boonchu reconnected and published it himself. Postiz shows cmum77qa80838uj0yncgbbkys PUBLISHED 12:24 Bangkok. Old 9-slide draft no longer in the Postiz list.
 
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
