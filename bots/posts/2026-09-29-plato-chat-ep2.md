@@ -1,4 +1,4 @@
-# Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), FINAL (about 95 to 100 s)
+# Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), FINAL (about 115 to 120 s)
 
 Toolkit pick: Boonchu's hook (links to the last post) + Vibe Samurai, run as fail, hero, payoff.
 Series card: gold "Hidden Stories of Ashtanga", teal "Ep. 2".
@@ -18,7 +18,8 @@ On screen: "Paniniya Shiksha, verse 52"
 His father, Tvashtr, had a first son with three heads.
 He was the gods' priest.
 But in secret, he fed the demons.
-So Indra, king of the gods, cut off his heads.
+Indra, king of the gods, saw the danger.
+So he cut off his heads.
 Tvashtr chanted for a new son.
 One to kill Indra.
 He wanted to say: indrasha-TRU. The killer of Indra.
@@ -37,14 +38,17 @@ Legs in lotus. Hold your feet. Drop back.
 Now come up.
 You pull with your abs.
 Your back pushes your arms.
-Your hands slide off.
-So you grab your friend's hands, and pull harder.
+Your hands slide off your feet.
+So you grab your friend's hands.
+You squeeze and pull even harder.
 Like Tvashtr chanting louder.
 Louder does not fix the wrong place.
+Your hands cannot reach your feet.
 On screen (small): "Intermediate Series. Learn it with your teacher."
 
 ## LADDER 3: YOU
 Some people fall back for years.
+They start to think their body just can't.
 Maybe that is you.
 (one silent second)
 
@@ -59,6 +63,8 @@ You come up in one piece.
 ## CLOSE
 Wrong place, you get a demon.
 Right place, you get a thunderbolt.
+Tvashtr got one chance.
+You get a new one every morning.
 (hold the gaze one second, stop)
 
 ## CAPTION
