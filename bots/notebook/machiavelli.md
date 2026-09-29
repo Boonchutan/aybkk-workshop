@@ -14,6 +14,8 @@
 
 - 2026-09-29: aybkk.net launch audit = NOT READY. Booking + PaySolutions payment works on my.aybkk.com (147 classes to 29 Nov, fees match). Blockers: no DNS for aybkk.net (Cloudflare CNAME apex to Railway), not added as Railway custom domain, no www, prices shown +5% (decide), English only, no contact/LINE/map, no shala story/teacher/Sharath/photos, sign-in emails point to cn.aybkk.net (PUBLIC_BASE_URL), PaySolutions return URL must be new domain, check Railway admin key is set (default fallback in bkk-api.js line 51). Header photo job given to Plato via plato.md "Jobs from Machi".
 
+- 2026-09-29: Website facts found (aybkk.com, aybkk.org, Obsidian). Open questions for Boonchu: authorization year (bio 2011 vs certificate dated 25-10-2019), phone (+66 82 011 1433 vs +66 84 224 4246), email (aybkks31@gmail.com vs Contact@aybkk.org), 8th vs 9th floor. RISK: the Level 2 certificate text forbids "any teacher training program under any name"; aybkk.org runs a "Teaching Programme" and the 180K is a teacher program: Boonchu must decide framing before any 180K marketing. SECURITY: an Obsidian note stores shala account passwords in plain text (synced to Drive). Shop-window build running on branch claude/aybkk-net-shopwindow (not main, not live).
+
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
