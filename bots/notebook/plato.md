@@ -82,3 +82,10 @@ Guardrails: never use the "back injury" story from Boonchu Persuasion Framework 
 
 ## What worked
 (no feedback yet)
+
+## Edit method (worked 2026-09-29, Ep. 2 "TvashtrChant")
+- Boonchu shares a Drive link; the file downloads with curl from drive.usercontent.google.com/download?id=<id>&export=download&confirm=t (the Drive connector is too small for 500 MB).
+- He speeds the take up 1.2x himself. Plato: cut pauses (audio RMS, 10 ms frames, speech > -17 dB; gaps to 0.35 s, mid-phrase 0.28 s; keep his planned beats: smile 1.2 s, silent beat 0.9 s), synth SFX in numpy at 40%, 0.4 s after the word, render 1080x1920 30 fps H.264.
+- Story images: Cloudflare Workers AI flux-1-schnell (CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID are in the env; 7 images is far inside the free daily allowance). Style line: "Indian miniature painting style mixed with soft watercolor storybook illustration for a children's bedtime story. Deep plum and teal colors with small gold accents, dusk light, gentle and respectful, no text, no blood." Show the full square image over a blurred copy, slow zoom. Violent beats (heads cut) shown gently (heads become birds).
+- Top label: small white "HIDDEN STORIES OF ASHTANGA" + teal "EP. N", Gloock line with gold key word. Above his head, clear of the IG header.
+- Final video goes to Boonchu via the chat file card, never into the repo.
