@@ -22,6 +22,9 @@
 
 - 2026-09-28: SERIES UNIFORM (proposed to Boonchu, waiting for his yes and which shirt he owns). Same shirt color every Hidden Stories episode, ideally a plum AYBKK tee. Cover: plum shirt on a light background (off-white or soft shala wall), one gold word, teal "Ep. N". Never match the cover to a new shirt each time.
 
+## Jobs from Machi
+- 2026-09-29 WEBSITE HEADER (from Boonchu): use the photo of Boonchu, Jamsai and Sharathji in front of the shala wall as the background of the website header. Photo: bots/media/header/boonchu-jamsai-sharathji-wall.jpg (2576x1718). The site is public/bkk.html, served at my.aybkk.com (aybkk.net has no DNS record yet; Machi is checking launch readiness). Plato's rules forbid writing to main, so: make the header crops (desktop wide + phone tall; keep all three faces and the wall art; leave calm space for the AYBKK title), save them in bots/media/header/, write the exact code change as a patch file bots/media/header/bkk-header.patch, show Boonchu the mock-up, and ask him before anything touches the live site.
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
