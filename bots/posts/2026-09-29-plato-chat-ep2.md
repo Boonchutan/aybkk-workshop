@@ -1,4 +1,4 @@
-# Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), v3
+# Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), v4
 
 Toolkit pick: Boonchu's hook (links to the last post) + Vibe Samurai, run as fail, hero, payoff.
 Why: the old chanting book gives a real source to credit, and it calls the wrong word a thunderbolt, which ties to the series.
@@ -41,34 +41,43 @@ And born to die by Indra's hand.
 
 On screen: "indra-SHATRU = killer of Indra", then "INDRA-shatru = the one Indra kills".
 
-## LADDER 2: THE STUDENT (the fail on the mat)
-On the mat, we make the same mistake.
+## LADDER 2: THE STUDENT (fail, no answer yet)
+On the mat, there is an asana with the same thunderbolt.
 Supta Vajrasana. The sleeping thunderbolt.
-Legs in lotus. Hold your toes behind your back.
+Legs in lotus. Reach behind your back and hold your toes.
 Drop back until the top of your head touches the floor.
-Now come up.
-Crunch your abs, and pull up with your neck.
-Your hands let go. And it fails.
+Going down is easy.
+Coming up is where it goes wrong.
+You pull with your neck.
+Your hands let go.
+You fall back down.
+So you try harder.
+More abs. More pull.
+It is like Tvashtr chanting louder.
+Louder does not fix a wrong stress.
+Your hands let go again.
 
 On screen (small): "Intermediate Series. Learn it with your teacher."
 
-## LADDER 3: YOU
-And tomorrow morning, it is your turn.
+## LADDER 3: YOU (lowest point)
+Some people fall back for years.
+They start to think their body just can't.
+Maybe that is you.
 
 (one silent second, eye contact)
 
-## TURN
-It isn't the asana that fails you.
+## TURN + REVEAL (the hero)
+It isn't your body.
+It was never strength.
 It's where you put the stress.
-
-## HERO
-Put the stress in your chest.
-Hold your bandhas, and breathe.
-You come up in one piece.
-Then it makes you strong.
+Not in the abs. Not in the neck.
+In the chest.
+Hold your bandhas. Breathe.
+And you come up in one piece.
 
 ## SCREENSHOT LINE
-Same asana. A different stress. A different ending.
+Tvashtr put the stress in the wrong place, and got a demon.
+Put it in the right place, and you get a thunderbolt.
 
 ## CLOSE (flip, closes the hook)
 Tvashtr got one chance.
