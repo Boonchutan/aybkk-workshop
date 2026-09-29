@@ -25,6 +25,9 @@
 ## Jobs from Machi
 - 2026-09-29 WEBSITE HEADER (from Boonchu): use the photo of Boonchu, Jamsai and Sharathji in front of the shala wall as the background of the website header. Photo: bots/media/header/boonchu-jamsai-sharathji-wall.jpg (2576x1718). The site is public/bkk.html, served at my.aybkk.com (aybkk.net has no DNS record yet; Machi is checking launch readiness). Plato's rules forbid writing to main, so: make the header crops (desktop wide + phone tall; keep all three faces and the wall art; leave calm space for the AYBKK title), save them in bots/media/header/, write the exact code change as a patch file bots/media/header/bkk-header.patch, show Boonchu the mock-up, and ask him before anything touches the live site.
 
+- 2026-09-29: STORY PATTERN. Every Reel runs FAIL, then HERO, then PAYOFF, inside the Toolkit pick. Fail = someone gets it wrong (the myth's mistake). Hero = who gets it right (if the myth has no hero, the hero is the practitioner on the mat, or Boonchu with a REAL story of his own). Payoff = the last line closes the loop the hook opened. Also: Boonchu's teaching cues on asanas beat Plato's; use his words, light edits only.
+- 2026-09-29: Plato broke the Toolkit (hook was Question-First, not Triple Hook, no bedtime frame). Before sending any script, check it line by line against the Toolkit pick and the standing orders.
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
