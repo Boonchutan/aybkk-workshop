@@ -10,9 +10,9 @@ This is how he was born.
 His father made one small mistake.
 
 ## SOURCE
-An old book on chanting warns:
+An old Sanskrit book, the Paniniya Shiksha, warns:
 a holy word said wrong becomes a thunderbolt.
-On screen: "Paniniya Shiksha, verse 52"
+On screen: "Paniniya Shiksha: an old guide to Vedic chanting"
 
 ## LADDER 1: THE FATHER (bedtime voice)
 His father, Tvashtr, had a first son with three heads.
@@ -73,7 +73,7 @@ One sound in the wrong place made a demon. On the mat, the wrong place makes an 
 Hidden Stories of Ashtanga, Ep. 2.
 I tell these old stories to my son at bedtime. This one is the father of the demon who stole the rain.
 
-The old chanting book, the Paniniya Shiksha, warns that a holy word chanted with the voice high in the wrong place becomes a thunderbolt. Its example is Tvashtr and the word "Indrashatru."
+The Paniniya Shiksha, an old guide to Vedic chanting, warns that a holy word chanted with the voice high in the wrong place becomes a thunderbolt. Its example is Tvashtr and the word "Indrashatru."
 
 On the mat it works the same way. In Supta Vajrasana, pull with the abs and the hands slide off the feet. Lift from the chest, bandhas held, breath moving, and you come up in one piece.
 
