@@ -8,6 +8,8 @@
 
 - 2026-09-28: No Cap Daily (auto trend-facts IG) is Boonchu's test for future brand deals. Suggested: 90-day test to about 28 Dec 2026, judge on followers and reach, keep it in a separate Meta business from AYBKK, fix duplicate drafts. Ask him for numbers at the end.
 
+- 2026-09-29: Sharathji birthday carousel. Postiz DRAFT cmum5qwrq07zbuj0yw43iicpc on AYBKK Instagram, 9 slides (slide 10 = Boonchu with Sharathji, waiting for photo). Images hosted in bots/media/2026-09-29-sharathji on this branch (same method as trend-cards). Publish only after Boonchu confirms.
+
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
