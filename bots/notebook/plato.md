@@ -65,5 +65,7 @@ Guardrails: never use the "back injury" story from Boonchu Persuasion Framework 
 - 2026-09-27 | Boonchu wrote this one himself, SERIES part 1 | Trigger: 3 days of Bangkok rain | Story: Vritra steals the waters; Dadhichi gives his bones for the vajra; Indra kills Vritra, rain returns (Rig Veda 1.32; Dadhichi in Puranas / Mahabharata) | Asana: Laghu Vajrasana
 - 2026-09-28 | SERIES part 2 = Hidden Stories of Ashtanga Ep. 2, bedtime-story frame, Boonchu wrote the story, Plato added the asana | Story: Tvashtr's son Vishvarupa (3 heads) killed by Indra; Tvashtr chants "Indrashatru" with the wrong accent, Vritra is born to die by Indra (Taittiriya Samhita 2.4.12, 2.5.1; Shatapatha Brahmana 1.6.3; Bhagavata Purana 6.9; Paniniya Shiksha on the wrong accent as a "word thunderbolt") | Asana: Supta Vajrasana | Toolkit: Root and Wobble + /story
 
+- 2026-09-29 | Birthday tribute, Hero's Journey 5 beats: sick boy who hid from practice to play cricket, serious at 19, 20 years as assistant, took over 2007, world tours from 1996, students from 70+ countries; Boonchu's personal memories | No myth | Asana: none (tribute)
+
 ## What worked
 (no feedback yet)
