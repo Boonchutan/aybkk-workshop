@@ -1,0 +1,85 @@
+{
+ "topic": "The Spotify outage",
+ "slug": "spotify-outage",
+ "brand": "The Spotify outage · 10 facts",
+ "geo": "Global",
+ "volume": "100,000+ searches (7d, US weekly list)",
+ "caption": [
+  "\"is spotify down\" — 100,000+ searches this week. Yes, it was, on September 29.",
+  "Why: Just after 9:30 a.m. ET, Spotify's apps started failing with \"Something went wrong.\" Downdetector got over 200,000 reports from 173 countries, more than 100,000 from the US. At the peak it logged 3,000 reports a minute; a normal day brings 2. Spotify said it was fixed at 3:14 p.m. ET and has not named a cause.",
+  "What most people don't know: the music mostly kept playing. What broke was sign-in, search and browsing. Some people who logged out could not log back in.",
+  "Very simply put: in an outage, don't press log out."
+ ],
+ "slides": [
+  {
+   "n": 1,
+   "headline": "Spotify went down. Some who logged out couldn't get *back in*.",
+   "sub": "10 things most people don't know about the Spotify outage, searched 100,000+ times in the US this week.",
+   "foot": "Swipe →",
+   "image": "A pair of bright green over-ear headphones lying on a white table next to a smartphone lying face down, bright daylight, vivid color, high contrast, bright clean light, the headphones in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no letters, no logos, no screens"
+  },
+  {
+   "n": 2,
+   "headline": "Spotify broke on *September 29*, just after 9:30 a.m. ET.",
+   "sub": "Users saw \"Something went wrong.\" Search, playlists and Spotify Connect failed.",
+   "foot": "Swipe →",
+   "image": "A smartphone lying face down on a wooden table next to tangled white earphones, dim evening light, the objects in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no logos, no screens"
+  },
+  {
+   "n": 3,
+   "headline": "Downdetector got over *200,000* reports from 173 countries.",
+   "sub": "More than 100,000 from the US by 11:15 a.m. ET, per its owner, Ookla.",
+   "foot": "Swipe →",
+   "image": "A glowing world globe in a dark room covered in hundreds of tiny red points of light, the globe in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no letters, no logos"
+  },
+  {
+   "n": 4,
+   "headline": "At the peak: *3,000* reports a minute. A normal day: 2.",
+   "sub": "Around 10:41 a.m. ET, per Ookla's lead analyst.",
+   "foot": "Swipe →",
+   "image": "An hourglass on a dark table with bright red sand pouring through it fast, dramatic side light, the hourglass in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no logos"
+  },
+  {
+   "n": 5,
+   "headline": "Downdetector counts *complaints*, not the people affected.",
+   "sub": "Its numbers are user-submitted reports, Reuters notes. The real number affected may differ.",
+   "foot": "Swipe →",
+   "image": "A wooden suggestion box with a slot on top, overflowing with folded plain paper slips, on a dark table under a spotlight, the box in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no writing, no logos"
+  },
+  {
+   "n": 6,
+   "headline": "It hit the phone apps most. The web player mostly *worked*.",
+   "sub": "Mostly iOS and Android, per TechRadar and Quartz.",
+   "foot": "Swipe →",
+   "image": "A smartphone lying face down on a desk beside an open laptop seen from behind in a dark room, soft desk lamp light, the objects in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no logos, no screens visible"
+  },
+  {
+   "n": 7,
+   "headline": "Spotify said it was fixed at *3:14 p.m.* ET.",
+   "sub": "Almost 6 hours after the first reports. It has not named a cause.",
+   "foot": "Swipe →",
+   "image": "A steel wrench lying on a dark wooden workbench under a single warm light, the wrench in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no logos"
+  },
+  {
+   "n": 8,
+   "headline": "Spotify has *777 million* monthly users. 300 million pay.",
+   "sub": "Its quarter to June 30, 2026. About 100 million apps are connected at any moment, its engineers say.",
+   "foot": "Swipe →",
+   "image": "A huge dark stadium filled with thousands of tiny glowing lights like phone flashlights in the stands, seen from far away, no people visible, the lights in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no text, no logos"
+  },
+  {
+   "n": 9,
+   "headline": "The music mostly kept playing. *Logging in* was what broke.",
+   "sub": "Some who logged out couldn't sign back in. Spotify's support account: \"issues right now with logging in.\"",
+   "foot": "Swipe →",
+   "image": "A vinyl record spinning on a turntable with warm glowing light in a dark room, the turntable in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no labels, no logos"
+  },
+  {
+   "n": 10,
+   "headline": "Very simply put: in an outage, don't press *log out*.",
+   "sub": "Follow No Cap Daily for the story behind what everyone is searching.",
+   "foot": "Follow",
+   "image": "A brass key left in the lock of a closed wooden front door in a dim hallway, soft warm light, the key and lock in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no logos"
+  }
+ ]
+}
