@@ -29,6 +29,7 @@ Hook tools (seconds 0 to 3):
 Body tools:
 - /story (.claude/commands/story.md): 4 beats Hook, Context, Ordeal, Takeaway. Best for: one personal ordeal, one lesson.
 - Vibe Samurai (skill anthropic-skills:vibe-samurai-story): flat statement, credit the source, ladder of 3 examples, the turn (it isn't X, it's Y), one screenshot line, closing flip. Pitch stays in the caption. Best for: myth or history ideas with 3 parallel examples.
+- Hero's Journey (Joseph Campbell, The Hero with a Thousand Faces, 1949; the frame George Lucas used for Star Wars). Short Reel version, 5 steps: ordinary life, the call, the test, the dark moment, return with a gift. Campbell leaned on Hindu myth (worked with Indologist Heinrich Zimmer), so it fits Hidden Stories. Best for: a student's or Boonchu's own practice journey, or any myth with a clear hero. Fact note: Campbell did NOT write a dissertation on Finnegans Wake (he never finished a PhD); he co-wrote A Skeleton Key to Finnegans Wake (1944) and took the word "monomyth" from Joyce.
 Humour layer (optional):
 - Gervais deadpan (skill anthropic-skills:gervais-deadpan): flat delivery, punch up at trends, buzzwords, gurus or Boonchu himself, never a student, the lineage, Sharath or the practice, then one true line. Best for: yoga trends, self-mockery.
 Obsidian frameworks (Boonchu's vault, 05 Business & Strategy/Boonchu Framework). Name | shape | best for | note:
