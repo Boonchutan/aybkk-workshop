@@ -1,93 +1,64 @@
-# Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), v6
+# Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), FINAL (about 95 to 100 s)
 
 Toolkit pick: Boonchu's hook (links to the last post) + Vibe Samurai, run as fail, hero, payoff.
-Why: the old chanting book gives a real source to credit, and it calls the wrong word a thunderbolt, which ties to the series.
-
-On screen from frame 1 (sound off): "One wrong sound made this demon."
 Series card: gold "Hidden Stories of Ashtanga", teal "Ep. 2".
+On screen from frame 1 (sound off): "One wrong sound made this demon."
 
-## HOOK (flat statements)
+## HOOK
 In my last post, a demon stole the rain.
 This is how he was born.
 His father made one small mistake.
 
-## SOURCE (credit it)
-There is an old book on how to chant. The Paniniya Shiksha.
-It says: chant a holy word with your voice high in the wrong place,
-and it turns into a thunderbolt.
-It strikes the one who chanted it.
-Its example is this story.
+## SOURCE
+An old book on chanting warns:
+a holy word said wrong becomes a thunderbolt.
+On screen: "Paniniya Shiksha, verse 52"
 
-## LADDER 1: THE FATHER (bedtime voice, the fail)
-Tvashtr was the craftsman of the gods.
-His son had three heads.
-He was the gods' own priest.
-But his mother's family were demons.
-In public, he gave the offerings to the gods.
-In secret, he gave some to the demons too.
-Indra, the king of the gods, saw the danger.
-His own priest was making his enemies strong.
-So Indra cut off all three heads.
-Tvashtr lost his son.
-He lit a fire and chanted for a new one.
-A son who would kill Indra.
-The word was "Indrashatru."
-Say the end high, and it means "the killer of Indra."
-Say the start high, and it means "the one Indra kills."
+## LADDER 1: THE FATHER (bedtime voice)
+His father, Tvashtr, had a first son with three heads.
+He was the gods' priest.
+But in secret, he fed the demons.
+So Indra, king of the gods, cut off his heads.
+Tvashtr chanted for a new son.
+One to kill Indra.
 He wanted to say: indrasha-TRU. The killer of Indra.
 But he said: IN-drashatru. The one Indra kills.
+On screen: "indrasha-TRU↑ = killer of Indra", then "IN↑-drashatru = the one Indra kills"
 I sound a bit funny.
-If you know how to really say it, tell me in the comments.
-(pause, smile at the camera)
+Know the real way? Tell me in the comments.
+(smile, 2 seconds max)
 Vritra rose from the fire.
-Born to destroy Indra.
-And born to die by Indra's hand.
+Born to die by Indra's hand.
 
-On screen: "indrasha-TRU↑ = killer of Indra", then "IN↑-drashatru = the one Indra kills".
-
-## LADDER 2: THE STUDENT (fail, no answer yet)
-On the mat, there is an asana with the same thunderbolt.
-Supta Vajrasana. The sleeping thunderbolt.
-Legs in lotus. Reach behind your back and hold your feet.
-Drop back until the top of your head touches the floor.
-Going down is easy.
-Coming up is where it goes wrong.
+## LADDER 2: THE STUDENT
+On the mat, we have the same thunderbolt.
+Supta Vajrasana.
+Legs in lotus. Hold your feet. Drop back.
+Now come up.
 You pull with your abs.
 Your back pushes your arms.
-Your hands slide off your feet.
-So you grab your friend's hands.
-You squeeze your abs harder.
-You pull harder with your hands.
-It is like Tvashtr chanting louder.
+Your hands slide off.
+So you grab your friend's hands, and pull harder.
+Like Tvashtr chanting louder.
 Louder does not fix the wrong place.
-Your hands cannot reach your feet.
-
 On screen (small): "Intermediate Series. Learn it with your teacher."
 
-## LADDER 3: YOU (lowest point)
+## LADDER 3: YOU
 Some people fall back for years.
-They start to think their body just can't.
 Maybe that is you.
+(one silent second)
 
-(one silent second, eye contact)
-
-## TURN + REVEAL (the hero)
-It isn't your body.
-It was never strength.
+## TURN + REVEAL
+It isn't strength.
 It's where you lift from.
 Not the abs. Not the hands.
 The chest.
 Hold your bandhas. Breathe.
-And you come up in one piece.
+You come up in one piece.
 
-## SCREENSHOT LINE
+## CLOSE
 Wrong place, you get a demon.
 Right place, you get a thunderbolt.
-
-## CLOSE (flip, closes the hook)
-Tvashtr got one chance.
-You get a new one every morning.
-
 (hold the gaze one second, stop)
 
 ## CAPTION
@@ -121,8 +92,7 @@ Zoom punch 1 to 2 s + sound at 40%, 0.4 s after the word:
 - "lift from" (turn): single bell
 - "tell me in the comments": no sound, let the smile play
 - "chest" / "bandhas": rising whoosh
-- "every morning": soft bell
-Weight Shift captions, emoji on key words: RAIN 🌧️, MISTAKE ⚠️, THUNDERBOLT ⚡, INDRASHATRU 🗣️, SLIDE OFF ⚠️, CHEST 💪, EVERY MORNING 🌅
+Weight Shift captions, emoji on key words: RAIN 🌧️, MISTAKE ⚠️, THUNDERBOLT ⚡, INDRASHATRU 🗣️, SLIDE OFF ⚠️, CHEST 💪
 Image prompts (storybook watercolor, gentle, no gore, nothing that mocks the gods):
 1. An old master craftsman with a sad, kind face pours an offering into a large ritual fire at night. Soft gold light.
 2. From the flames, a huge dark shape rolls up like a storm cloud and fills the sky. Awe, not horror.
