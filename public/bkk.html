@@ -2,7 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AYBKK — Timetable &amp; Packages</title>
+<title>AYBKK · Ashtanga Yoga Bangkok · Mysore style</title>
+<meta name="description" content="AYBKK, Ashtanga Yoga Bangkok. Traditional Mysore-style Ashtanga since 2013, on the 8th floor of the S31 Sukhumvit Hotel, Sukhumvit 31. Timetable, packages and booking.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AYBKK">
+<meta property="og:title" content="AYBKK · Ashtanga Yoga Bangkok · Mysore style">
+<meta property="og:description" content="Ashtanga Yoga Bangkok. Mysore style since 2013. S31 Sukhumvit Hotel, 8th floor, Sukhumvit 31.">
+<meta property="og:image" content="https://aybkk.net/img/aybkk-hero-1600.jpg">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="1067">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="/fonts/longcang.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/patrickhand.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/plexthai.woff2" as="font" type="font/woff2" crossorigin>
@@ -66,6 +75,58 @@
   header .sub{margin:6px 0 0;font-size:15px;letter-spacing:.03em;color:#f0d6e3}
   header .where{margin:5px 0 0;font-size:13px;color:#b79cab}
   header .dot{color:var(--pink)}
+  html{scroll-behavior:smooth}
+  /* The wall photo is mostly white, so the shade is strongest where the text sits (the floor). */
+  header.hero{min-height:640px;display:flex;flex-direction:column;justify-content:flex-end;
+    padding:70px 20px 34px;background:
+      linear-gradient(180deg,rgba(23,18,26,.38) 0%,rgba(23,18,26,.08) 30%,rgba(23,18,26,.2) 55%,rgba(23,18,26,.86) 82%,rgba(23,18,26,.94) 100%),
+      #3a2a3a url('/img/aybkk-hero-900.jpg') center 30%/cover no-repeat}
+  @media (min-width:700px){
+    header.hero{min-height:640px;background:
+      linear-gradient(180deg,rgba(23,18,26,.3) 0%,rgba(23,18,26,.05) 30%,rgba(23,18,26,.2) 55%,rgba(23,18,26,.85) 84%,rgba(23,18,26,.94) 100%),
+      #3a2a3a url('/img/aybkk-hero-1600.jpg') center 40%/cover no-repeat}
+  }
+  header.hero .sub{font-size:17px;color:#fdf7fa;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+  header.hero .where{color:#e2cbd7}
+  .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
+  a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:46px}
+  header .btn.ghost{color:#fdf7fa;border-color:rgba(253,247,250,.55);background:rgba(23,18,26,.35)}
+  .langs{position:absolute;top:12px;right:12px;display:flex;gap:2px;background:rgba(23,18,26,.55);
+    border-radius:999px;padding:3px;z-index:2}
+  .langs button{border:none;background:none;color:#e2cbd7;font:600 12.5px/1 'Plex',-apple-system,'PingFang SC',sans-serif;
+    padding:8px 10px;border-radius:999px;cursor:pointer;min-width:36px}
+  .langs button[aria-pressed="true"]{background:var(--pink);color:#fff}
+
+  .sw{max-width:880px;margin:0 auto;padding:8px 16px 0}
+  .sw section{padding:30px 0 6px;scroll-margin-top:12px}
+  .sw h2{margin:0 0 14px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:30px;line-height:1.15;color:var(--plum)}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .teacher figure{margin:0 0 16px}
+  .teacher img{display:block;width:100%;height:auto;border-radius:var(--radius);aspect-ratio:9/10;object-fit:cover}
+  .teacher figcaption{font-size:12.5px;color:var(--soft);margin-top:6px}
+  .teacher .name{font-family:'Patrick Hand','Plex',cursive;font-size:25px;line-height:1.2}
+  .teacher .auth{display:inline-block;margin:4px 0 12px;font-size:13px;font-weight:600;letter-spacing:.02em;
+    color:var(--plum);background:var(--blush);border:1px solid var(--blush-line);border-radius:999px;padding:5px 12px}
+  .teacher p{margin:0 0 10px;font-size:15px}
+  .points{list-style:none;margin:0;padding:0}
+  .points li{position:relative;padding:0 0 0 24px;margin:0 0 11px;font-size:15px}
+  .points li::before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:99px;background:var(--pink)}
+  .addr{margin:0 0 6px;font-size:15px}
+  .addr.th{color:var(--soft);font-size:14px}
+  .links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .links .btn{width:100%;padding:11px 10px;text-align:center}
+  .links .wide{grid-column:1/-1}
+  .wechat{display:flex;align-items:center;gap:10px;justify-content:space-between;grid-column:1/-1;
+    border:1px solid var(--line);border-radius:8px;padding:6px 6px 6px 14px;font-size:14.5px}
+  .wechat b{user-select:all}
+  .links .wechat .btn{width:auto;flex:none;min-height:40px;padding:9px 16px}
+  .sw h3{margin:18px 0 8px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
+  @media (min-width:760px){
+    .teacher .card{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:26px;align-items:start}
+    .teacher figure{margin:0}
+    .pair{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+    .links{grid-template-columns:repeat(3,1fr)}
+  }
 
   nav.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
   nav.tabs button{flex:1;padding:15px 8px;border:none;background:none;font:600 14px/1 inherit;
@@ -142,19 +203,94 @@
 </style>
 </head>
 <body>
-<header>
+<header class="hero">
+  <div class="langs" role="group" aria-label="Language">
+    <button type="button" data-lang="en" lang="en">EN</button>
+    <button type="button" data-lang="th" lang="th">ไทย</button>
+    <button type="button" data-lang="zh" lang="zh-Hans">中文</button>
+    <button type="button" data-lang="ru" lang="ru">RU</button>
+  </div>
   <h1 class="brush">AYBKK</h1>
-  <p class="sub">Ashtanga Yoga Center of Bangkok</p>
-  <p class="where">Mysore &amp; Led, seven days a week <span class="dot">·</span> S31 Hotel, Sukhumvit 31</p>
+  <p class="sub" data-i18n="tagline">Ashtanga Yoga Bangkok. Mysore style since 2013.</p>
+  <p class="where">S31 Sukhumvit Hotel <span class="dot">·</span> 8th floor <span class="dot">·</span> Sukhumvit 31</p>
+  <div class="cta">
+    <a class="btn pink" href="#book" data-i18n="ctaTimetable">See timetable</a>
+    <a class="btn ghost" href="#mysore" data-i18n="ctaStart">First time? Start here</a>
+  </div>
 </header>
 
-<nav class="tabs">
-  <button id="t-schedule" class="on" onclick="tab('schedule')">Timetable</button>
-  <button id="t-packages" onclick="tab('packages')">Packages</button>
-  <button id="t-me" onclick="tab('me')">My pass</button>
+<div class="sw">
+  <section class="teacher" id="teacher">
+    <h2 data-i18n="teacherH">Your teacher</h2>
+    <div class="card">
+      <figure>
+        <img src="/img/aybkk-hero-900.jpg" width="900" height="1000" loading="lazy"
+          alt="Jamsai, R. Sharath Jois and Boonchu at the AYBKK shala wall">
+        <figcaption data-i18n="caption">Jamsai, R. Sharath Jois and Boonchu at AYBKK</figcaption>
+      </figure>
+      <div>
+        <div class="name">Boonchu Tanti</div>
+        <div class="auth" data-i18n="auth">Authorized Level 2 by R. Sharath Jois</div>
+        <p data-i18n="bio1">Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.</p>
+        <p data-i18n="bio2">He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.</p>
+        <p data-i18n="bio3">In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga.</p>
+        <p data-i18n="bio4">His teaching looks at how each body works, and at the student's own commitment. Every body is different, and so is every practice.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="pair">
+    <section id="mysore">
+      <h2 data-i18n="mysoreH">What is Mysore style?</h2>
+      <ul class="points">
+        <li data-i18n="m1">It is self-practice. You move through the Ashtanga sequence at your own pace, with your own breath.</li>
+        <li data-i18n="m2">The teacher walks the room and gives each student individual adjustments.</li>
+        <li data-i18n="m3">Beginners are welcome. You can start from scratch.</li>
+        <li data-i18n="m4">This is the traditional way Ashtanga is taught, as in Mysore, India.</li>
+      </ul>
+    </section>
+    <section id="first">
+      <h2 data-i18n="firstH">Your first class</h2>
+      <ul class="points">
+        <li data-i18n="f1">New to Mysore style? Start with a monthly package. Drop-in is only for students who already know the sequence.</li>
+        <li data-i18n="f2">Plan to practise at least 4 days a week, and book your classes in advance.</li>
+        <li data-i18n="f3">Bring your own mat and a towel, and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.</li>
+        <li data-i18n="f4">No phones, no photos and no talking in the shala during practice.</li>
+        <li data-i18n="f5">After practice, clean your mat and the floor around it with the spray we provide.</li>
+        <li data-i18n="f6">The shala is closed on full moon and new moon days.</li>
+      </ul>
+    </section>
+  </div>
+
+  <section id="find">
+    <h2 data-i18n="findH">Find us</h2>
+    <div class="card">
+      <p class="addr">545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor, Bangkok 10110</p>
+      <p class="addr th" lang="th">545 สุขุมวิท 31 (S31 Sukhumvit Hotel, 8th floor AYBKK) คลองเตยเหนือ วัฒนา กรุงเทพ 10110</p>
+      <div class="links">
+        <a class="btn wide" href="https://www.google.com/maps/search/?api=1&amp;query=S31+Sukhumvit+Hotel+Bangkok"
+          target="_blank" rel="noopener" data-i18n="maps">Open in Google Maps</a>
+      </div>
+      <h3 data-i18n="contactH">Message us</h3>
+      <div class="links">
+        <a class="btn pink" href="https://line.me/R/ti/p/@aybkk" target="_blank" rel="noopener">LINE @aybkk</a>
+        <a class="btn ghost" href="https://www.instagram.com/aybkk/" target="_blank" rel="noopener">Instagram @aybkk</a>
+        <a class="btn ghost" href="https://www.facebook.com/ashtangabkk" target="_blank" rel="noopener">Facebook</a>
+        <a class="btn ghost" href="https://www.tiktok.com/@aybkkashtanga" target="_blank" rel="noopener">TikTok</a>
+        <div class="wechat"><span>WeChat ID: <b>aybkkwechat</b></span>
+          <button type="button" class="btn ghost" id="wxCopy" data-i18n="copy">Copy</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs" id="book">
+  <button id="t-schedule" class="on" onclick="tab('schedule')" data-i18n="tabSchedule">Timetable</button>
+  <button id="t-packages" onclick="tab('packages')" data-i18n="tabPackages">Packages</button>
+  <button id="t-me" onclick="tab('me')" data-i18n="tabMe">My pass</button>
 </nav>
 
-<main id="view"><p class="note">Loading…</p></main>
+<main id="view"><p class="note" data-i18n="loading">Loading…</p></main>
 <footer><span class="brush">AYBKK</span>Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31<br><a href="/moments" style="color:var(--pink);text-decoration:none;font-weight:600">Daily practice photos · 每日练习照片 →</a></footer>
 
 <dialog id="dlg"><div id="dlgIn"></div></dialog>
@@ -165,8 +301,200 @@
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const baht = n => '฿' + Number(n).toLocaleString('en-US');
-  let CLASSES = [], PRODUCTS = [], SURCHARGE = 0;
+  let CLASSES = [], PRODUCTS = [], SURCHARGE = 0, LOADED = false;
   const myCode = () => localStorage.getItem('aybkk_member') || '';
+
+  const STR = {
+    en: {
+      tagline: 'Ashtanga Yoga Bangkok. Mysore style since 2013.',
+      ctaTimetable: 'See timetable', ctaStart: 'First time? Start here',
+      teacherH: 'Your teacher',
+      caption: 'Jamsai, R. Sharath Jois and Boonchu at AYBKK',
+      auth: 'Authorized Level 2 by R. Sharath Jois',
+      bio1: 'Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.',
+      bio2: 'He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.',
+      bio3: 'In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga.',
+      bio4: "His teaching looks at how each body works, and at the student's own commitment. Every body is different, and so is every practice.",
+      mysoreH: 'What is Mysore style?',
+      m1: 'It is self-practice. You move through the Ashtanga sequence at your own pace, with your own breath.',
+      m2: 'The teacher walks the room and gives each student individual adjustments.',
+      m3: 'Beginners are welcome. You can start from scratch.',
+      m4: 'This is the traditional way Ashtanga is taught, as in Mysore, India.',
+      firstH: 'Your first class',
+      f1: 'New to Mysore style? Start with a monthly package. Drop-in is only for students who already know the sequence.',
+      f2: 'Plan to practise at least 4 days a week, and book your classes in advance.',
+      f3: 'Bring your own mat and a towel, and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.',
+      f4: 'No phones, no photos and no talking in the shala during practice.',
+      f5: 'After practice, clean your mat and the floor around it with the spray we provide.',
+      f6: 'The shala is closed on full moon and new moon days.',
+      findH: 'Find us', maps: 'Open in Google Maps', contactH: 'Message us',
+      copy: 'Copy', copied: 'Copied',
+      tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
+      loading: 'Loading…',
+      noClasses: 'No classes scheduled.',
+      noDay: 'No classes this day — tap a date with a dot.',
+      full: 'Class full', left: n => n + ' places left', places: n => n + ' places',
+      book: 'Book', buy: 'Buy',
+      fee: (base, pct) => `${base} + ${pct}% online payment fee`,
+      unlim: d => `Unlimited classes for ${d} days`,
+      cap: n => `${n} class bookings per day`,
+      credits: n => `${n} class credit${n > 1 ? 's' : ''}`,
+      valid: d => `Valid ${d} day${d > 1 ? 's' : ''} from your first booking`,
+      pkgNote: 'Classes are at AYBKK, S31 Hotel. Every student books a class and checks in before practice. Cancel at least 5 hours before class to keep your credit.',
+      yourPass: 'Your pass', upcoming: 'Upcoming classes',
+      name: 'Your name', email: 'Email', phone: 'Phone (optional)',
+      pay: 'Continue to payment', cancel: 'Cancel',
+    },
+    th: {
+      tagline: 'อัษฎางคโยคะ กรุงเทพฯ ฝึกแบบไมซอร์ตั้งแต่ปี 2013',
+      ctaTimetable: 'ดูตารางเรียน', ctaStart: 'มาครั้งแรก? เริ่มที่นี่',
+      teacherH: 'ครูของคุณ',
+      caption: 'Jamsai, R. Sharath Jois และ Boonchu ที่ AYBKK',
+      auth: 'ได้รับ Authorization Level 2 จาก R. Sharath Jois',
+      bio1: 'Boonchu เคยเป็นวิศวกรเครื่องกล เขาเริ่มฝึกอัษฎางคโยคะในปี 2008 ขณะอาศัยอยู่ที่สหรัฐอเมริกา',
+      bio2: 'เขาเรียนกับ Sharath Jois ที่เมืองไมซอร์ตั้งแต่ปี 2008 และเป็นเจ้าภาพต้อนรับ R. Sharath Jois ที่กรุงเทพฯ ในปี 2018 และ 2024',
+      bio3: 'ปี 2013 เขาเปิด AYBKK ที่กรุงเทพฯ บ้านเกิดของเขา และยังสร้างเพจ Facebook "The Yoga Comics" ที่เล่าเรื่ององค์ 8 ของโยคะ',
+      bio4: 'การสอนของเขาใส่ใจว่าร่างกายแต่ละคนทำงานอย่างไร และความตั้งใจของผู้ฝึกเอง ร่างกายของแต่ละคนไม่เหมือนกัน การฝึกก็เช่นกัน',
+      mysoreH: 'ไมซอร์สไตล์คืออะไร',
+      m1: 'เป็นการฝึกด้วยตัวเอง คุณฝึกตามลำดับท่าของอัษฎางคโยคะ ตามจังหวะและลมหายใจของตัวเอง',
+      m2: 'ครูเดินดูทั่วห้อง และช่วยปรับท่าให้นักเรียนแต่ละคนเป็นรายบุคคล',
+      m3: 'ผู้เริ่มต้นมาได้ เริ่มจากศูนย์ได้เลย',
+      m4: 'นี่คือวิธีสอนอัษฎางคโยคะแบบดั้งเดิม เหมือนที่เมืองไมซอร์ ประเทศอินเดีย',
+      firstH: 'คลาสแรกของคุณ',
+      f1: 'ยังไม่เคยฝึกแบบไมซอร์? เริ่มด้วยแพ็กเกจรายเดือน แบบครั้งเดียว (drop-in) สำหรับผู้ที่จำลำดับท่าได้แล้วเท่านั้น',
+      f2: 'ตั้งใจฝึกอย่างน้อยสัปดาห์ละ 4 วัน และจองคลาสล่วงหน้า',
+      f3: 'นำเสื่อโยคะและผ้าเช็ดตัวมาเอง ใส่ชุดที่เคลื่อนไหวสะดวก มาก่อนเวลาเล็กน้อยเพื่อเตรียมตัวและคุยกับครู',
+      f4: 'ระหว่างการฝึก ห้ามใช้โทรศัพท์ ห้ามถ่ายรูป และงดพูดคุยในห้องฝึก',
+      f5: 'ฝึกเสร็จแล้ว ทำความสะอาดเสื่อและพื้นรอบ ๆ ด้วยสเปรย์ที่เราเตรียมไว้',
+      f6: 'AYBKK ปิดในวันพระจันทร์เต็มดวงและวันพระจันทร์ดับ (moon day)',
+      findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', contactH: 'ทักหาเรา',
+      copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
+      tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
+      loading: 'กำลังโหลด…',
+      noClasses: 'ยังไม่มีคลาส',
+      noDay: 'วันนี้ไม่มีคลาส แตะวันที่ที่มีจุด',
+      full: 'เต็มแล้ว', left: n => `เหลือ ${n} ที่`, places: n => `${n} ที่`,
+      book: 'จอง', buy: 'ซื้อ',
+      fee: (base, pct) => `${base} + ค่าธรรมเนียมชำระเงินออนไลน์ ${pct}%`,
+      unlim: d => `เรียนไม่จำกัด ${d} วัน`,
+      cap: n => `จองได้วันละ ${n} คลาส`,
+      credits: n => `${n} ครั้ง`,
+      valid: d => `ใช้ได้ ${d} วัน นับจากการจองครั้งแรก`,
+      pkgNote: 'เรียนที่ AYBKK โรงแรม S31 นักเรียนทุกคนต้องจองคลาสและเช็กอินก่อนฝึก ยกเลิกล่วงหน้าอย่างน้อย 5 ชั่วโมงเพื่อไม่เสียสิทธิ์',
+      yourPass: 'บัตรของคุณ', upcoming: 'คลาสที่จองไว้',
+      name: 'ชื่อของคุณ', email: 'อีเมล', phone: 'เบอร์โทร (ไม่บังคับ)',
+      pay: 'ไปชำระเงิน', cancel: 'ยกเลิก',
+    },
+    zh: {
+      tagline: '曼谷阿斯汤加瑜伽。2013年起，迈索尔式练习。',
+      ctaTimetable: '查看课程表', ctaStart: '第一次来？从这里开始',
+      teacherH: '你的老师',
+      caption: 'Jamsai、R. Sharath Jois 与 Boonchu 在 AYBKK',
+      auth: '获 R. Sharath Jois 授权 Level 2（Authorized Level 2）',
+      bio1: 'Boonchu 曾是一名机械工程师。2008年他在美国生活时，开始练习阿斯汤加瑜伽。',
+      bio2: '他自2008年起在迈索尔跟随 Sharath Jois 学习，并于2018年和2024年在曼谷接待 R. Sharath Jois。',
+      bio3: '2013年，他在家乡曼谷创办了 AYBKK。他还创作了 Facebook 主页 The Yoga Comics（瑜伽漫画），讲解瑜伽八支。',
+      bio4: '他的教学关注每个身体如何运作，也关注学生自己的投入。每个身体都不同，每个人的练习也不同。',
+      mysoreH: '什么是迈索尔练习？',
+      m1: '这是自我练习：你按照自己的节奏和呼吸，完成阿斯汤加的序列。',
+      m2: '老师在教室里走动，为每位学生做个别的指导和调整。',
+      m3: '欢迎初学者，可以从零开始。',
+      m4: '这是阿斯汤加的传统教学方式，和印度迈索尔一样。',
+      firstH: '你的第一堂课',
+      f1: '第一次上迈索尔课？请从月度套餐开始。单次课（drop-in）只适合已经熟悉序列的学生。',
+      f2: '请计划每周至少练习4天，并提前预约课程。',
+      f3: '请自带瑜伽垫和毛巾，穿方便活动的衣服。提前到达，有时间安顿下来并与老师交谈。',
+      f4: '练习期间，练习室内不可使用手机、拍照或交谈。',
+      f5: '练习结束后，请用我们准备的清洁喷雾擦干净垫子和周围的地面。',
+      f6: '每逢满月和新月（月亮日），AYBKK 停课。',
+      findH: '地址与联系方式', maps: '在 Google 地图中打开', contactH: '联系我们',
+      copy: '复制', copied: '已复制',
+      tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
+      loading: '加载中…',
+      noClasses: '暂无课程安排。',
+      noDay: '当天没有课，请点有圆点的日期。',
+      full: '已满', left: n => `剩余 ${n} 个名额`, places: n => `${n} 个名额`,
+      book: '预约', buy: '购买',
+      fee: (base, pct) => `${base} + ${pct}% 线上支付手续费`,
+      unlim: d => `${d} 天内不限次数`,
+      cap: n => `每天可预约 ${n} 节课`,
+      credits: n => `${n} 次课`,
+      valid: d => `自首次预约起 ${d} 天内有效`,
+      pkgNote: '课程在 S31 酒店的 AYBKK 进行。每位学生都需先预约，并在练习前签到。至少提前5小时取消，课时才会保留。',
+      yourPass: '你的会员卡', upcoming: '即将上的课',
+      name: '你的名字', email: '邮箱', phone: '电话（选填）',
+      pay: '继续付款', cancel: '取消',
+    },
+    ru: {
+      tagline: 'Аштанга-йога в Бангкоке. Майсор-стиль с 2013 года.',
+      ctaTimetable: 'Расписание', ctaStart: 'Впервые? Начните здесь',
+      teacherH: 'Ваш учитель',
+      caption: 'Jamsai, R. Sharath Jois и Boonchu в AYBKK',
+      auth: 'Авторизация Level 2 от R. Sharath Jois',
+      bio1: 'Boonchu — бывший инженер-механик. Он открыл для себя аштанга-йогу в 2008 году, когда жил в США.',
+      bio2: 'С 2008 года он учится у Sharath Jois в Майсоре. В 2018 и 2024 годах он принимал R. Sharath Jois в Бангкоке.',
+      bio3: 'В 2013 году он открыл AYBKK в родном Бангкоке. Он также создал страницу The Yoga Comics в Facebook — о восьми ступенях йоги.',
+      bio4: 'В преподавании он смотрит на то, как работает каждое тело, и на постоянство самого ученика. Каждое тело разное — и каждая практика тоже.',
+      mysoreH: 'Что такое Майсор-стиль?',
+      m1: 'Это самостоятельная практика: вы выполняете последовательность аштанги в своём темпе, со своим дыханием.',
+      m2: 'Учитель ходит по залу и даёт каждому ученику индивидуальные коррекции.',
+      m3: 'Новички приветствуются. Можно начать с нуля.',
+      m4: 'Это традиционный способ обучения аштанге, как в Майсоре, Индия.',
+      firstH: 'Ваше первое занятие',
+      f1: 'Впервые в Майсор-классе? Начните с месячного абонемента. Разовое посещение (drop-in) — только для тех, кто уже знает последовательность.',
+      f2: 'Планируйте практиковать не меньше 4 дней в неделю и записывайтесь на занятия заранее.',
+      f3: 'Возьмите свой коврик и полотенце, наденьте удобную одежду. Приходите пораньше, чтобы спокойно устроиться и поговорить с учителем.',
+      f4: 'Во время практики в зале нельзя пользоваться телефоном, фотографировать и разговаривать.',
+      f5: 'После практики протрите коврик и пол вокруг него спреем, который мы оставляем в зале.',
+      f6: 'В дни полнолуния и новолуния (лунные дни) занятий нет.',
+      findH: 'Как нас найти', maps: 'Открыть в Google Картах', contactH: 'Напишите нам',
+      copy: 'Копировать', copied: 'Скопировано',
+      tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
+      loading: 'Загрузка…',
+      noClasses: 'Занятий пока нет.',
+      noDay: 'В этот день занятий нет — выберите дату с точкой.',
+      full: 'Мест нет', left: n => `Осталось мест: ${n}`, places: n => `Мест: ${n}`,
+      book: 'Записаться', buy: 'Купить',
+      fee: (base, pct) => `${base} + ${pct}% комиссия за онлайн-оплату`,
+      unlim: d => `Без ограничений, ${d} дн.`,
+      cap: n => `До ${n} записей в день`,
+      credits: n => `Занятий: ${n}`,
+      valid: d => `Действует ${d} дн. с первой записи`,
+      pkgNote: 'Занятия проходят в AYBKK, отель S31. Каждый ученик записывается на занятие и отмечается перед практикой. Отмените запись минимум за 5 часов, чтобы сохранить занятие.',
+      yourPass: 'Ваш абонемент', upcoming: 'Ближайшие занятия',
+      name: 'Ваше имя', email: 'Эл. почта', phone: 'Телефон (необязательно)',
+      pay: 'Перейти к оплате', cancel: 'Отмена',
+    },
+  };
+  const HTML_LANG = { en: 'en', th: 'th', zh: 'zh-Hans', ru: 'ru' };
+  let LANG = (() => {
+    try { const s = localStorage.getItem('aybkk_lang'); if (STR[s]) return s; } catch (_) {}
+    const n = (navigator.language || 'en').slice(0, 2).toLowerCase();
+    return STR[n] ? n : 'en';
+  })();
+  const t = (k, ...a) => {
+    const s = STR[LANG][k] ?? STR.en[k];
+    return typeof s === 'function' ? s(...a) : s;
+  };
+  const pkgName = p => (LANG === 'th' && p.name_th) || p.name_en;
+  function applyLang() {
+    document.documentElement.lang = HTML_LANG[LANG];
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('.langs button').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
+  }
+  document.querySelectorAll('.langs button').forEach(b => b.addEventListener('click', () => {
+    LANG = b.dataset.lang;
+    try { localStorage.setItem('aybkk_lang', LANG); } catch (_) {}
+    applyLang();
+    if (LOADED) tab(current);
+  }));
+  $('#wxCopy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText('aybkkwechat'); } catch (_) { return; }
+    $('#wxCopy').textContent = t('copied');
+    setTimeout(() => { $('#wxCopy').textContent = t('copy'); }, 1800);
+  });
+  applyLang();
 
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const fmtDay = iso => {
@@ -195,6 +523,7 @@
       CLASSES = s.classes || [];
       PRODUCTS = p.products || [];
       SURCHARGE = p.surchargePct || 0;
+      LOADED = true;
       tab(current);
     } catch (e) {
       $('#view').innerHTML = '<p class="msg bad">Could not load. Please refresh.</p>';
@@ -209,7 +538,7 @@
     'July','August','September','October','November','December'];
 
   function renderSchedule() {
-    if (!CLASSES.length) { $('#view').innerHTML = '<p class="note">No classes scheduled.</p>'; return; }
+    if (!CLASSES.length) { $('#view').innerHTML = `<p class="note">${esc(t('noClasses'))}</p>`; return; }
     const has = new Set(CLASSES.map(c => c.date));
     const today = bkkToday();
     if (!selDate) selDate = today;
@@ -246,7 +575,7 @@
     const dayClasses = CLASSES.filter(c => c.date === selDate);
     let html = cal;
     html += `<div class="day">${esc(dayLabel)}</div>`;
-    if (!dayClasses.length) html += '<p class="note">No classes this day — tap a date with a dot.</p>';
+    if (!dayClasses.length) html += `<p class="note">${esc(t('noDay'))}</p>`;
     for (const c of dayClasses) {
       const full = c.seatsLeft < 1;
       html += `<div class="cls ${full ? 'full' : ''}">
@@ -255,12 +584,12 @@
           <div class="n">${esc(c.title)}${c.isOnline ? '<span class="pill">online</span>' : ''}</div>
           <div class="m">${c.durationMin} min${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
           <div class="seats ${c.booked ? '' : 'quiet'}">${
-            full ? 'Class full'
-            : c.booked ? c.seatsLeft + ' places left'
-            : c.capacity + ' places'   /* nothing booked yet — "42 left" reads odd */
+            full ? esc(t('full'))
+            : c.booked ? esc(t('left', c.seatsLeft))
+            : esc(t('places', c.capacity))   /* nothing booked yet — "42 left" reads odd */
           }</div>
         </div>
-        <button class="btn" ${full ? 'disabled' : ''} onclick="book(${c.slotId},'${c.date}')">Book</button>
+        <button class="btn" ${full ? 'disabled' : ''} onclick="book(${c.slotId},'${c.date}')">${esc(t('book'))}</button>
       </div>`;
     }
     $('#view').innerHTML = html;
@@ -271,20 +600,17 @@
   function renderPackages() {
     const html = PRODUCTS.map(p => {
       const lines = p.kind === 'unlimited'
-        ? [`Unlimited classes for ${p.valid_days} days`, `${p.daily_cap} class bookings per day`]
-        : [`${p.credits} class credit${p.credits > 1 ? 's' : ''}`,
-           `Valid ${p.valid_days} day${p.valid_days > 1 ? 's' : ''} from your first booking`];
+        ? [t('unlim', p.valid_days), t('cap', p.daily_cap)]
+        : [t('credits', p.credits), t('valid', p.valid_days)];
       return `<div class="pkg ${p.kind === 'unlimited' ? 'feature' : ''}">
-        <h3>${esc(p.name_en)}</h3>
+        <h3>${esc(pkgName(p))}</h3>
         <div class="price">${baht(p.total_thb)}</div>
-        <div class="fee">${baht(p.price_thb)} + ${SURCHARGE}% online payment fee</div>
+        <div class="fee">${esc(t('fee', baht(p.price_thb), SURCHARGE))}</div>
         <ul>${lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>
-        <button class="btn pink" onclick="buy('${esc(p.code)}')">Buy</button>
+        <button class="btn pink" onclick="buy('${esc(p.code)}')">${esc(t('buy'))}</button>
       </div>`;
     }).join('');
-    $('#view').innerHTML = html + `<p class="note">Classes are at AYBKK, S31 Hotel.
-      Every student books a class and checks in before practice.
-      Cancel at least 5 hours before class to keep your credit.</p>`;
+    $('#view').innerHTML = html + `<p class="note">${esc(t('pkgNote'))}</p>`;
   }
 
   async function renderMe() {
@@ -321,8 +647,8 @@
         <button class="btn ghost" onclick="cancelBooking(${b.id})">Cancel</button>
       </div>`).join('') || '<p class="note">No upcoming classes booked.</p>';
       $('#view').innerHTML = `<p class="note">Member <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}</p>
-        <div class="day">Your pass</div>${passes}
-        <div class="day">Upcoming classes</div>${bookings}`;
+        <div class="day">${esc(t('yourPass'))}</div>${passes}
+        <div class="day">${esc(t('upcoming'))}</div>${bookings}`;
     } catch (e) {
       $('#view').innerHTML = `<p class="msg bad">${esc(e.message)}</p>`;
     }
@@ -356,13 +682,13 @@
   window.buy = (code) => {
     const p = PRODUCTS.find(x => x.code === code);
     if (!p) return;
-    $('#dlgIn').innerHTML = `<h3>${esc(p.name_en)} · ${baht(p.total_thb)}</h3>
-      <label>Your name</label><input id="bn" autocomplete="name">
-      <label>Email</label><input id="be" type="email" autocomplete="email">
-      <label>Phone (optional)</label><input id="bp" autocomplete="tel">
+    $('#dlgIn').innerHTML = `<h3>${esc(pkgName(p))} · ${baht(p.total_thb)}</h3>
+      <label>${esc(t('name'))}</label><input id="bn" autocomplete="name">
+      <label>${esc(t('email'))}</label><input id="be" type="email" autocomplete="email">
+      <label>${esc(t('phone'))}</label><input id="bp" autocomplete="tel">
       <div id="bmsg"></div>
-      <p style="margin-top:14px"><button class="btn pink" id="bgo">Continue to payment</button>
-      <button class="btn ghost" onclick="document.getElementById('dlg').close()">Cancel</button></p>`;
+      <p style="margin-top:14px"><button class="btn pink" id="bgo">${esc(t('pay'))}</button>
+      <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>`;
     $('#dlg').showModal();
     $('#bgo').onclick = async () => {
       const name = $('#bn').value.trim(), email = $('#be').value.trim(), phone = $('#bp').value.trim();
