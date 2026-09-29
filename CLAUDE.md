@@ -60,6 +60,13 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
 
 **Do not use for:** existing student questions, general inquiries, or anything unrelated to the China program.
 
+### `/trend`
+**Purpose:** No Cap Daily (working name was Talk of the Town) — a separate account that posts 4 times a day (06:00, 09:00, 20:00, 23:00 Bangkok; about 40% tech, the rest from the top 10) about what the world is searching (Google Trends, 100% global), @wealth-style 10-slide carousels (condensed headline over an AI photoreal image, or a free Wikimedia Commons photo when the story is about a real person, one hidden fact per slide) with an Edward Sturm caption: what is trending, why, and the one thing most people don't know.
+
+Use when running or tuning the daily trend batch. The skill holds the selection rubric, the voice, the fetcher (`scripts/trends-fetch.js`), the renderers (`scripts/trend-card.js`, `scripts/trend-carousel.js`), image hosting (branch `trend-cards`) and the Postiz steps. A Routine ("No Cap Daily — daily trend batch") runs it every day at 03:49 Bangkok inside the "Cloudflare image to postiz" session, which holds the repo, push access, Postiz and the Cloudflare image keys; say "pause the trend routine" to stop it.
+
+**Do not use for:** anything posted to AYBKK or Boonchu's personal channels.
+
 ---
 
 ## Key Facts for Any Claude Instance
@@ -75,7 +82,9 @@ Use when handling Instagram, LINE, or WeChat messages about the 150,000 THB prog
   Thai for text) because the Google Fonts CDN is blocked in China.
 - **Inline JS gate:** After every Write/Edit, `scripts/check-inline-js.js` runs automatically (PostToolUse hook). If it fails, fix the JS syntax before proceeding.
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
+- **Social media handoff:** `docs/session-handoff.md` has the current state of the Instagram/Postiz work (channel ids, routines, Boonchu's carousel rules, open items). Read it before any posting work.
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.
+- **Mind Stash:** Boonchu's psychology study app — a spaced-repetition card deck (91 cards, 13 topics: decision-making, value, attention, memory, persuasion, storytelling structure, deadpan humor, manipulation-spotting), published as a Claude artifact: https://claude.ai/code/artifact/194e1b0e-ea87-4166-a08c-2491baa69a44. The complete written-out lessons live in his Obsidian vault as 13 subject notes ("Psychology - …", "Persuasion - …", "Storytelling - …", "Humour - …") in the Boonchu Framework folder; the app-usage guide is the vault note "Mind Stash - Psychology Study App". When Boonchu says "mind stash", he means this system.
 
 ## AYBKK Bangkok study fees (aybkk.net) — Boonchu asked to remember these, 11 Sep 2026
 
