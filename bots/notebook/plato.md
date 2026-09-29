@@ -35,6 +35,8 @@
 - 2026-09-29: WORD RULE 2. Do not use "stress" (non-native viewers do not get it). "Power" also failed. For the chant say "high" (the voice goes high on the start or the end: true to the Vedic accent); for the body say "lift from". Bridge = "wrong place". Same test for any word: if a 10-year-old non-native speaker would stop on it, swap it.
 - 2026-09-29: REVEAL AT THE END. Do not teach the fix early. Beginning and middle must make the viewer feel they cannot do it (the fail gets worse when they try harder). The answer comes late, short, after a silent beat.
 
+- 2026-09-29: CAPTIONS. Every caption line gets an emoji (1 to 3). Emoji BIG: about 2x the text height (150 px emoji on 72 px text at 1080x1920), popping in above the line. Weight Shift = words start thin and turn bold when spoken; key word gold. Also: story images for every myth character he names, and motion everywhere (zoom punches on his face at key words, slow zoom on images).
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
