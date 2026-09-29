@@ -37,6 +37,15 @@
 
 - 2026-09-29: CAPTIONS. Every caption line gets an emoji (1 to 3). Emoji BIG: about 2x the text height (150 px emoji on 72 px text at 1080x1920), popping in above the line. Weight Shift = words start thin and turn bold when spoken; key word gold. Also: story images for every myth character he names, and motion everywhere (zoom punches on his face at key words, slow zoom on images).
 
+- 2026-09-29: HOUSE EDIT STYLE = the Ep. 1 look (made in HyperFrames by the "Editing by Claude" session). Plato forgot it once; never again:
+  - Header: dark rounded pill (rgba 22,30,48,0.8), white Montserrat SemiBold ~38 px: "Hidden Stories of Ashtanga · Ep. N", top center, whole video.
+  - Cards: rounded 586x346 card with a thin white border and soft shadow, centered under the header, above his head (shift his video down ~110 px so the card does not cover his face). Cards pop in (scale 0.82 to 1, ease-out-back) and fade out.
+  - Two card kinds: (1) story pictures, slow zoom inside the card; (2) graphic "SVG" cards: navy gradient, big emoji/icon, gold Montserrat ExtraBold title, cream subtitle; lists reveal item by item with ❌/✅ as he says them.
+  - Captions: Montserrat, lowercase, 2 balanced lines, white, soft shadow; word turns bold when spoken (Weight Shift), emoji inline at the end, emoji about 1.4x text height (bigger than Ep. 1).
+  - No full-screen cutaways, no zoom punches in this style.
+  - Scripts saved in bots/tools/reel-edit/ (common.py, cards.py, caps2.py, build_audio.py, fc4.txt).
+- 2026-09-29: STORY PICTURES. Boonchu may make his own pictures (Isle of Dogs stop-motion style, he likes it: "fun"). Use his first. Fill gaps with Cloudflare flux in the same style ("stop-motion claymation, Wes Anderson Isle of Dogs style, handmade miniature set").
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
