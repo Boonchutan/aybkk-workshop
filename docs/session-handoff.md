@@ -1,4 +1,4 @@
-# Session handoff: social media work (updated 28 Sep 2026)
+# Session handoff: social media work (updated 29 Sep 2026)
 
 Read this first in a new Claude Code session. It carries what the "Postiz Social media" session
 (session_01XThAVTVGUs4TK4ENsd9Yfh) learned, so the work can continue anywhere. Start the new session on
@@ -24,18 +24,27 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
 
 ## Routines
 
-- "No Cap Daily — daily trend batch", `trig_01DYitUKqzHR7MaHzMvU3ABy`, cron `49 20 * * *` (03:49 Bangkok; it was
+- "No Cap Daily — daily trend batch", `trig_01UTsvmzGU6TnKaoSGpUX2Hu` (since 29 Sep; replaced `trig_01DYitUKqzHR7MaHzMvU3ABy`
+  because a routine's prompt can only be edited from the session it fires into), cron `49 20 * * *` (03:49 Bangkok; it was
   `30 23 * * *` until 28 Sep, when the first post moved to 06:00 Bangkok),
   fires into session_013cU2g9aVQPL1g3eBUBUr3h ("Cloudflare image to postiz", which has the Cloudflare variables).
   Created 28 Sep; it replaced `trig_01HZvqejQMT7rQCVuhX4CNxB` (fired into session_01XThAVTVGUs4TK4ENsd9Yfh,
   deleted). It runs the eight steps of `.claude/commands/trend.md`, makes slide photos with
   `node scripts/trend-image.js <dir> --cover-candidates 2` (Cloudflare, or Gemini if `GEMINI_API_KEY` is set;
-  no key means gradient), saves 4 Postiz drafts on the No Cap channel for 06:00, 09:00, 20:00 and 23:00 Bangkok
+  no key means gradient), schedules 4 Postiz posts on the No Cap channel for 06:00, 09:00, 20:00 and 23:00 Bangkok
+  (type `schedule` since 29 Sep: they publish themselves)
   (about 40% tech, the rest from the top 10; Boonchu, 28 Sep), appends to
   `log.json` and emails boonchutan@gmail.com. A routine cannot be re-pointed: to move it to another session,
   delete it and create it again with `persistent_session_id` set to the new session and the same prompt.
 
 ## No Cap Daily (separate account, never AYBKK)
+
+- **Live since 29 Sep 2026.** Boonchu reconnected the channel and said "post one now and set up as I told you".
+  First post: Madonna at the VMAs, Postiz `cmum6jbsi082euj0yffoki8aa`, published 04:31 UTC (JPEG slides). Scheduled the
+  same day: World Labs `cmum6la21082fuj0yo380icm3` (13:00 UTC) and Dante Moore `cmum6la54082guj0y3bu3yfiv` (16:00 UTC).
+  Their drafts are left over and can be deleted: Madonna `cmulrl6tj05ihuj0yq33v9gb1`, World Labs
+  `cmulrrhg105j9uj0yo9mkvqrc`, Dante Moore `cmulrvcp605kxuj0yrv8byahj`. SpaceX `cmulrcxwg05gvuj0ye5z4nhd7` (06:00 slot,
+  missed while the channel was down) is still a draft.
 
 - Instagram account created 27 Sep 2026 (professional). Name: `No Cap Daily | Trending Facts`.
   Bio: "What the world is searching, and the one thing most people don't know. / 3 carousels a day. Facts only. No cap."
@@ -55,7 +64,7 @@ Postiz tools cannot delete or edit posts: Boonchu deletes in the Postiz app.
   (`trend-image.js --photo`), never an AI face, a news or agency photo, or a screenshot. See trend.md "real people".
 - Drafts still waiting in Postiz for 27 Sep: meat recall `cmujmp19v0cmeqr0y9rfu1ym6`, Taylor Swift Encore
   `cmujmp4vx0cmfqr0y8i3b2qqw`, FAFSA `cmujmp81l0cmgqr0y40ymk6g5`. Boonchu publishes from Postiz.
-- Post type stays `draft` until Boonchu says "go live"; then change the Config row in trend.md to `schedule`.
+- Post type is `schedule` since 29 Sep (trend.md Config); back to `draft` only if Boonchu asks.
 - Slide images: Cloudflare Workers AI through `scripts/trend-image.js` (FLUX.2 [klein] 4B at 1024x1280 since 28 Sep,
   6 tiles, about 156 neurons an image; it was 1088x1360, 9 tiles, about 234). First real run 28 Sep in "Cloudflare
   image to postiz": 41 images, no errors, about 9,600 of the 10,000 free neurons a day (resets 00:00 UTC; on the
@@ -149,6 +158,5 @@ Boonchu's rules, learned over the Signs and Desire series:
   at about 20:50 UTC the same day will likely get quota errors and fall back to the gradient. Workers Paid ($5 a
   month) removes the cap; from 29 Sep a daily batch fits the free tier.
 - Update the Instagram bio: it says "3 carousels a day"; it is 4 now (or drop the number).
-- Drafts need a tap to publish. Say "go live" to switch the Config row to `schedule`, and they post themselves
-  at 06:00, 09:00, 20:00 and 23:00 Bangkok.
+- Posts now publish themselves at 06:00, 09:00, 20:00 and 23:00 Bangkok (since 29 Sep). Say "drafts only" to go back.
 - Merge draft PR #15 when ready.

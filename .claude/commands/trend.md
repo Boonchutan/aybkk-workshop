@@ -22,10 +22,10 @@ AYBKK or Boonchu personal channels. This is a separate account with its own voic
 | images | **Gemini API first:** `node scripts/trend-image.js <dir> --cover-candidates 2` (needs env `GEMINI_API_KEY` from aistudio.google.com, paid tier only; default model `gemini-3.1-flash-image` at 1K ≈ $0.067 per image ≈ $2.95 a day for 44 images; `--size 2K` ≈ $0.10 per image; `--model gemini-3.1-flash-lite-image` ≈ $0.034; `--list-models` shows what the key can use; `--dry-run` prints the plan and cost). No Gemini key but `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN` set → the same command uses Cloudflare Workers AI, FLUX.2 [klein] 4B at 1024×1280 (6 tiles ≈ 156 neurons per image, so a day of 4 carousels with 2 cover candidates, 44 images, is ≈ 6,900 of the free 10,000 neurons; 1088×1360 was 9 tiles and did not fit; `--cf-model flux-2-klein-9b` for more detail at ≈ 1,400 neurons; `--provider cloudflare` forces it). Neither key → Kling `text_to_image`, model `gemini-3.1-flash-image`, aspect 4:5, 2k, 15 credits per image = 150 per carousel, 450 per day; check `query_membership_and_credits` first and skip Kling under 200 credits. Neither → render on the dark gradient and say so in the report. Google Flow (labs.google/flow) has no API and cannot be used from here. Prompts: photoreal, unbranded, no real people's faces, no logos, no text, no blank screens or monitors (they come out as flat white boxes), and **composed for text**: "subject in the upper third of the frame, the lower half is plain, dark and empty" (or the mirror for a top-zone slide). |
 | real people | When the story is about a named person, the cover is a real photo of them from Wikimedia Commons, never an AI face, a Google, news or agency (Getty, AP) photo, or a screenshot: a screenshot of someone's photo is still a copy of it, and a credit line does not make it legal. Search commons.wikimedia.org for the person, prefer a photo from the event in the story, then run `node scripts/trend-image.js <dir> --photo 1 --commons "File:<name>" --pos "<x%> <y%>"`. It accepts only free licenses (CC0, public domain, CC BY, CC BY-SA), saves the photo as `bg/slide1.img` and writes `photo` and `credit` (and `bgPos`) into `slides.json`; the normal image run then skips that slide. The credit prints small on the slide and must stay. Choose `--pos` so faces sit in the upper half: no text over a face, hair or hands (set `"index": ""` on the slide if the NN / 10 counter would sit on them). A personality-rights warning means news posts only, never an ad. No usable Commons photo: an AI object image as before. |
 | post times (Bangkok) | 06:00, 09:00, 20:00, 23:00 (Boonchu, 28 Sep 2026) = 23:00 UTC the day before, then 02:00, 13:00, 16:00 UTC. In New York (EDT) that is 7 pm and 10 pm the day before, then 9 am and noon. |
-| Postiz post type | `draft` until Boonchu says "go live", then `schedule` |
+| Postiz post type | `schedule` since 29 Sep 2026 (Boonchu: "post one now and set up as I told you"), so each carousel publishes itself at its slot. A slot whose time has already passed when the post is created goes out 10 minutes from then instead. Back to `draft` only if Boonchu asks. |
 | image hosting | branch `trend-cards` of this repo → `.../trend-cards/carousels/YYYY-MM-DD-<slug>/NN.png` (single cards under `cards/`) |
 | memory | `log.json` on the `trend-cards` branch (14-day no-repeat rule) |
-| Routine | "No Cap Daily — daily trend batch", 20:49 UTC = 03:49 Bangkok (moved from 23:30 UTC on 28 Sep so the 06:00 Bangkok draft exists before its slot), making the 4 posts for that Bangkok day. It fires into the session "Cloudflare image to postiz" (session_013cU2g9aVQPL1g3eBUBUr3h, routine `trig_01DYitUKqzHR7MaHzMvU3ABy` since 28 Sep) because that session holds the repo, push access, Postiz, Gmail and the Cloudflare variables; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
+| Routine | "No Cap Daily — daily trend batch", 20:49 UTC = 03:49 Bangkok (moved from 23:30 UTC on 28 Sep so the 06:00 Bangkok draft exists before its slot), making the 4 posts for that Bangkok day. It fires into the session "Cloudflare image to postiz" (session_013cU2g9aVQPL1g3eBUBUr3h, routine `trig_01UTsvmzGU6TnKaoSGpUX2Hu` since 29 Sep, when it replaced `trig_01DYitUKqzHR7MaHzMvU3ABy` to switch the posts from drafts to scheduled) because that session holds the repo, push access, Postiz, Gmail and the Cloudflare variables; a fresh Routine session has none of those. Report goes to boonchutan@gmail.com. |
 
 ## Step 1 — Fetch
 ```
@@ -154,20 +154,20 @@ Cards never go to main or to a feature branch.
 
 ### Step 7b — REST fallback (Routine sessions run without connector tools)
 Needs the environment variable `POSTIZ_API_KEY` (claude.ai/code → the environment → variables).
-Unset? Skip Postiz and say so in the report. Same channel rule, same `draft` type.
+Unset? Skip Postiz and say so in the report. Same channel rule, same post type as Config.
 ```
 curl -sS -H "Authorization: $POSTIZ_API_KEY" https://api.postiz.com/public/v1/integrations
 # → pick the id whose name contains "Talk of the Town" / "trend"
 curl -sS -H "Authorization: $POSTIZ_API_KEY" -F "file=@cards/<file>.png" https://api.postiz.com/public/v1/upload
 # → {"id": "...", "path": "https://uploads.postiz.com/..."}
 curl -sS -H "Authorization: $POSTIZ_API_KEY" -H "Content-Type: application/json" https://api.postiz.com/public/v1/posts -d '{
-  "type": "draft", "date": "<slot, ISO 8601 UTC>", "shortLink": false, "tags": [],
+  "type": "schedule", "date": "<slot, ISO 8601 UTC>", "shortLink": false, "tags": [],
   "posts": [{ "integration": { "id": "<channel id>" },
               "value": [{ "content": "<p>…</p><p>…</p><p>…</p><p>…</p>", "image": [{ "id": "<upload id>", "path": "<upload path>" }] }],
               "settings": { "__type": "<platform of the channel, e.g. instagram>" } }] }'
 ```
 Shapes are from docs.postiz.com/public-api and are untested until the key exists. If the API rejects
-`draft`, stop and put the response in the report; never switch to `schedule` or `now` on your own.
+`schedule`, stop and put the response in the report; never switch to `now` on your own.
 
 ## Step 8 — Log and report
 Append to `log.json`: `{date, geo, term, volume, category, angle, sources[], card | carousel, facts[], postizId}`,
