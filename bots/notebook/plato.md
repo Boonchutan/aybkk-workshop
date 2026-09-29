@@ -32,7 +32,7 @@
 
 - 2026-09-29: His Vault note "05 Business & Strategy/Boonchu Framework/Vibe Samurai - Storytelling Structure" (Drive file 1jz1Q0-b6sSe1CFBzIHYfPj-biRs1_0gN) is the reference for Vibe Samurai. Key: hook = one flat statement, never a question; credit the source; ladder of 3 moving toward the viewer (beginner, 10-year practitioner, you); silent beat; turn "It isn't X. It's Y."; one screenshot line; closing inversion; pitch only in the caption.
 
-- 2026-09-29: WORD RULE 2. Do not use "stress" (non-native viewers do not get it). For accent or effort say "power" ("put the power in the wrong place"). Same test for any word: if a 10-year-old non-native speaker would stop on it, swap it.
+- 2026-09-29: WORD RULE 2. Do not use "stress" (non-native viewers do not get it). "Power" also failed. For the chant say "high" (the voice goes high on the start or the end: true to the Vedic accent); for the body say "lift from". Bridge = "wrong place". Same test for any word: if a 10-year-old non-native speaker would stop on it, swap it.
 - 2026-09-29: REVEAL AT THE END. Do not teach the fix early. Beginning and middle must make the viewer feel they cannot do it (the fail gets worse when they try harder). The answer comes late, short, after a silent beat.
 
 ## Reel Toolkit
