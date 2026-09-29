@@ -10,6 +10,8 @@
 
 - 2026-09-29: Sharathji birthday carousel. SCHEDULED cmum77qa80838uj0yncgbbkys for 11:55 Bangkok, 10 slides, approved by Boonchu ("go"). Old 9-slide draft cmum5qwrq07zbuj0yw43iicpc for Boonchu to delete. Images hosted in bots/media/2026-09-29-sharathji on this branch (same method as trend-cards). Publish only after Boonchu confirms. 29 Sep: post ERRORED (Postiz lost the AYBKK Instagram connection). Handed to Plato chat to repost after Boonchu reconnects. DONE 29 Sep: Boonchu reconnected and published it himself. Postiz shows cmum77qa80838uj0yncgbbkys PUBLISHED 12:24 Bangkok. Old 9-slide draft no longer in the Postiz list.
 
+- 2026-09-29: Boonchu: ManyChat API key added (new sessions read MANYCHAT_API_KEY). Order he set: FREE GIFT first, then L1, then FULL; L1 must anchor FULL. Machi proposed (not approved): gift = "5-Minute Ashtanga Strength Test" (3 video tests + score sheet via ManyChat keyword TEST); L1 1,980 RMB / 249 USD, FULL 2,980 RMB / 349 USD (+1,000 RMB / +100 USD buys video review, forever access, Q&A, 180K credit). Optional VIP tier to make FULL the middle.
+
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
