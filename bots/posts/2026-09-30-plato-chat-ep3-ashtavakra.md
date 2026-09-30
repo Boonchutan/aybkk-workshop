@@ -20,7 +20,7 @@ A boy was born crooked in eight places.
 His feet, his knees, his hands, his chest and his head.
 Before he was born, he heard his father chanting.
 He heard the mistakes.
-His father got angry, and the baby was born bent.
+His father got angry, and the baby was born crooked.
 So his grandfather raised him, on his lap.
 And his grandfather was his teacher.
 At twelve, the boy walked to the king's court.
@@ -29,9 +29,9 @@ The boy said, "Grey hair does not make you old.
 What you know makes you old."
 He won the contest.
 Then he stepped into a river,
-and his bent body came out straight.
+and his crooked body came out straight.
 His name was Ashtavakra.
-Ashta means eight. Vakra means bent.
+Ashta means eight. Vakra means crooked.
 
 ## LADDER 2: SHARATHJI
 Sharathji said,
@@ -57,7 +57,7 @@ In November that year, he passed away.
 (two seconds of silence, for him)
 
 ## TURN
-Maybe your body feels bent today.
+Maybe your body feels crooked today.
 It isn't a strong body that makes the practice.
 It's the practice that makes the body strong.
 
@@ -67,7 +67,7 @@ Your body twists and folds,
 and you stay up on your arms.
 
 ## LINE
-Ashtavakra was bent. Sharathji was sick.
+Ashtavakra was crooked. Sharathji was sick.
 The practice made them both strong.
 
 ## CLOSE
@@ -77,7 +77,7 @@ Yesterday he would have turned 55.
 Happy birthday, Sharathji.
 
 ## CAPTION (4 lines + format)
-A boy born bent became the wisest in the land.
+A boy born crooked became the wisest in the land.
 Hidden Stories of Ashtanga, Ep. 3: Ashtavakra, for Sharathji.
 Yesterday he would have turned 55.
 The practice made the body strong.
