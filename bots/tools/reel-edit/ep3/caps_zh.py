@@ -12,14 +12,30 @@ def zf(wg):
         f=ImageFont.truetype('NotoSansSC.ttf',SIZE); f.set_variation_by_axes([wg]); _zf[wg]=f
     return _zf[wg]
 NOSTART=set('，。！？、；：」”』）》…,.!?')
+PUNCT=set('，、：；。！？”」')
+KEEP=['6个序列','沙拉斯老师','帕塔比·乔伊斯','摩诃婆罗多','八曲仙人','八曲式','高级A序列','迈索尔','阿斯汤加','Guruji','Ashtavakra']
+def _ok(txt,i):
+    a,b=txt[i-1],txt[i]
+    if a.isdigit(): return False                       # keep a number with its measure word (6个, 12岁)
+    for w in KEEP:
+        j=txt.find(w)
+        while j>=0:
+            if j<i<j+len(w): return False
+            j=txt.find(w,j+1)
+    if b in NOSTART: return False
+    if a.isascii() and a.isalnum() and b.isascii() and b.isalnum(): return False   # never inside a number or word
+    if a in '“「《（': return False
+    return True
 def rows_for(txt,limit):
-    f=zf(800)
+    f=zf(800); L=len(txt)
     if f.getlength(txt)<=limit: return [txt]
     for n in (2,3):
-        L=len(txt); best=None
-        cuts=[round(L*k/n) for k in range(1,n)]
-        # nudge cuts so a row never starts with punctuation
-        cuts=[c+1 if c<L and txt[c] in NOSTART else c for c in cuts]
+        cuts=[]; prev=0
+        for k in range(1,n):
+            ideal=L*k/n
+            cand=[i for i in range(prev+1,L) if _ok(txt,i)]
+            i=min(cand,key=lambda i: abs(i-ideal)-(6 if txt[i-1] in PUNCT else 0))
+            cuts.append(i); prev=i
         parts=[txt[a:b] for a,b in zip([0]+cuts,cuts+[L])]
         if max(f.getlength(p) for p in parts)<=limit: return parts
     return parts
