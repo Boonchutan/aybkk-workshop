@@ -149,3 +149,7 @@ WeChat Channels (视频号) caption:
 
 WeChat Moments (朋友圈) line:
 为沙拉斯老师的生日，我讲了一个2000年前的故事：一个身体弯曲的男孩，和一个从小体弱多病的男孩。练习，让他们都变强了。🙏
+
+Titles (30 Sep):
+- Xiaohongshu (max 20): pick 2000年前的故事，写的是沙拉斯老师 (18). Options: 从小体弱多病，他扛起了整个道场 (15); 生来8处弯曲的男孩，成了一代大师 (15).
+- WeChat Channels short title (6 to 16): 献给沙拉斯老师：八曲仙人的故事 (15).
