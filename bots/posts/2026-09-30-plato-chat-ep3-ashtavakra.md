@@ -105,3 +105,10 @@ Add this style line to every prompt: Stop-motion puppet animation film still in 
 - 7_hall: Inside a great hall with carved wooden pillars, rows of old scholars with long grey beards sit on mats, amazed, as the small crooked boy stands in the middle and speaks with one finger raised. No throne, no crown.
 - 8_river: At sunrise a boy walks out of a calm river, his body now straight and tall, water drops shining gold around him. People on the bank watch in wonder. Lotus flowers float on the water.
 - No AI pictures of Sharathji (real person): use real photos only (2024 Bangkok WS photos in Drive folder 'sharath ashtavakra').
+
+## EDIT v1 (30 Sep, Plato chat)
+- Take: Drive folder 'sharath ashtavakra' (AYBKK/03_Reels_Content/Social media post), 3:09 raw -> 1.3x -> pauses cut -> 2:06. Silence after 'he passed away' stretched to 2.0 s (his pause was 1.2 s after speed-up).
+- Story pictures: Boonchu's own Isle of Dogs set IMG_6271..6278 (chant, angry, boy, eight stars, lap, gate, hall, river), same folder.
+- His 2020 animation for Sharathji's 50th birthday (his public Reel DHGbnh8zz8x, Mar 2025): clips used for baby, cricket, practice, teaching, 'a guru who touches our heart'.
+- Photos: Sharathji Bangkok 2024 WS (GC9A*), his photo with Guruji's portrait (Screenshot_20240110), May 2024 prayer photo (mmexport1715009473067), his 2023 photo with Sharathji (20230624 HEIC).
+- Spoken: 'the story goes' (Boonchu confirmed). Scripts: bots/tools/reel-edit/ep3/.

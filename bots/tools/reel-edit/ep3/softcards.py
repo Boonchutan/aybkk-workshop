@@ -83,3 +83,16 @@ def header():
     f=mont(38,600); tmp=ImageDraw.Draw(Image.new('RGB',(1,1))); w=tmp.textlength(HEADER_TEXT,font=f)
     pw,ph=int(w+80),78; im=Image.new('RGBA',(pw,ph),(0,0,0,0)); d=ImageDraw.Draw(im)
     d.rounded_rectangle((0,0,pw-1,ph-1),ph//2,fill=(22,30,48,205)); d.text((40,17),HEADER_TEXT,font=f,fill=(255,255,255,255)); return im
+
+CREAMBG=(236,233,226)
+_fr={}
+def anim_card(t0,t1,folder='ig/fr',fps=30,scale=0.66):
+    def frame(k):
+        if k not in _fr:
+            im=Image.open(f'{folder}/{k:04d}.jpg').convert('RGB')
+            w=int(CW*scale); h=int(im.height*w/im.width); im=im.resize((w,h),Image.LANCZOS)
+            bg=Image.new('RGB',(CW,CH),CREAMBG); bg.paste(im,((CW-w)//2,(CH-h)//2)); _fr[k]=bg
+        return _fr[k]
+    def f(lt,dur):
+        t=min(t1,t0+lt); return frame(int(t*fps)+1)
+    f.is_img=True; return f
