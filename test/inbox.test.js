@@ -11,8 +11,9 @@ const express = require('express');
 const { Pool } = require('pg');
 const { mountInbox } = require('../inbox.js');
 
+// Own schema, so the fake timetable never touches the bkk tests' tables
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
-  'postgres://test:test@127.0.0.1:5432/inboxtest' });
+  'postgres://test:test@127.0.0.1:5432/inboxtest', options: '-c search_path=inbox_test' });
 
 let PASS = 0, FAIL = 0;
 const ok = (name, cond, extra = '') => {
@@ -30,7 +31,8 @@ const fakeAi = { messages: { create: async params => {
 const alerts = [];
 
 (async () => {
-  await pool.query('DROP TABLE IF EXISTS aybkk_inbox, bkk_class_slots CASCADE');
+  await pool.query('DROP SCHEMA IF EXISTS inbox_test CASCADE');
+  await pool.query('CREATE SCHEMA inbox_test');
   await pool.query(`CREATE TABLE bkk_class_slots (id SERIAL PRIMARY KEY, code TEXT, title TEXT, weekday INTEGER,
     start_time TEXT, is_online BOOLEAN DEFAULT false, active BOOLEAN DEFAULT true)`);
   await pool.query(`INSERT INTO bkk_class_slots (code, title, weekday, start_time, is_online) VALUES
