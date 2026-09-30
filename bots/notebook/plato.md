@@ -1,7 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
-- SOFT-EDGE PICTURES (30 Sep): photos and story pictures over his head have soft blurred edges (feathered, fading into the dark), like a thought. NO border, NO stroke frame. Replaces the white-border card for pictures.
+- SOFT-EDGE PICTURES (30 Sep): photos and story pictures over his head have soft blurred edges (feathered, fading into the dark), like a thought. His pick: SOFT BOX (rounded rectangle, feather about 70 px), not the oval. NO border, NO stroke frame. Replaces the white-border card for pictures.
 - EP. 3 EDIT (30 Sep): speed his take 1.3x, cut all pauses EXCEPT the silence after 'In November that year, he passed away' (keep about 2 s). Everything else = house edit style.
 - POSTIZ LIMIT (30 Sep): Postiz allows max 10 photos per Instagram carousel (the app allows 20, Postiz does not). Plan carousels as 10 slides or fewer.
 - NEVER CUT A STUDENT'S HEAD (30 Sep): when cropping a photo, never cut any head (main student, teacher or people in the back). Cut the feet instead, or fit the whole photo and fill the sides with a blurred copy. Keep the watermark at the bottom. Check every crop by eye before sending.
