@@ -113,3 +113,20 @@ Add this style line to every prompt: Stop-motion puppet animation film still in 
 - Photos: Sharathji Bangkok 2024 WS (GC9A*), his photo with Guruji's portrait (Screenshot_20240110), May 2024 prayer photo (mmexport1715009473067), his 2023 photo with Sharathji (20230624 HEIC).
 - Spoken: 'the story goes' (Boonchu confirmed). Scripts: bots/tools/reel-edit/ep3/.
 - v2: cards 1080x640 (cover top half of his hair, his OK). Astavakrasana lines now show Sharathji practising Astavakrasana B (his 41 s clip from the 1999 Advanced A film, Drive file 1CiA78flCTRzSRgJ2g7nezbmtmR1CnHqV): wide entry, then close-up. Old film's yellow cast neutralised (gray-world white balance) so the frame is not all-yellow.
+
+## CHINESE VERSION (30 Sep)
+Subtitles translated + checked by 2 reviewers (terms, natural subtitle Chinese). Glossary: Sharathji 沙拉斯老师; Pattabhi Jois 帕塔比·乔伊斯; Guruji kept as Guruji; grandfather 外公, Amma = 外婆; Ashtavakra 八曲仙人; Astavakrasana 八曲式; Advanced A 高级A序列（第三序列）; shala 道场; series title 阿斯汤加背后的故事 · 第3集. Full lines: bots/tools/reel-edit/ep3/zh.json.
+
+Chinese post caption:
+一个男孩生来身上8处弯曲，一个男孩从小总是生病。
+阿斯汤加背后的故事 · 第3集：八曲仙人，献给沙拉斯（Sharath）老师
+八曲式A和B，都在高级A序列（第三序列）里。
+不是身体强壮了，才能练习；而是练习，让身体变强壮。
+
+9月29日，他本该满55岁。沙拉斯老师，生日快乐。🙏
+
+片中沙拉斯老师的八曲式，来自他1999年的高级A序列练习视频。
+
+想跟我学阿斯汤加，欢迎私信。
+
+#阿斯汤加 #阿斯汤加瑜伽 #瑜伽 #沙拉斯 #SharathJois #八曲仙人 #八曲式 #八角式 #摩诃婆罗多 #印度神话 #迈索尔 #aybkk
