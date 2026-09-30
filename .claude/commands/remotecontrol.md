@@ -17,7 +17,7 @@ Act as a positioning strategist for a high-ticket Ashtanga program. The teacher 
 </role>
 
 <task>
-Identify the single most defensible positioning statement for the 150,000 THB China cohort (10 students, 2026) — specific enough that a serious Chinese practitioner reads it and says "this is the only one for me."
+Identify the single most defensible positioning statement for the 180,000 THB China cohort (10 to 12 students, 2026) — specific enough that a serious Chinese practitioner reads it and says "this is the only one for me."
 </task>
 
 <steps>
