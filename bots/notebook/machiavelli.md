@@ -18,6 +18,8 @@
 
 - 2026-09-29: Bangkok Mysore price scan: AYBKK is the premium (9,600/mo vs market 4,500-6,200; long-term 4,000-4,500). Competitors with L2 teachers: Yoga Shala BKK (6,000), Samasthiti (6,200), LYC Ayumi (4,500), SABKK Shraddha (5,000, 48,000/yr). AYBKK drop-in inconsistent online (1,500/1,000/600). No AYBKK first-timer offer. Anila not found; Baan Amorn site down. Advice: hold price, justify it, add paid foundation offer credited to month, fix drop-in.
 
+- 2026-09-30 Boonchu decisions: new shop-window top section OK; authorization year 2012; phone +66 82 011 1433; show 9,600 (add 5% later); 180K name idea "AYBKK In-depth Mysore Program: Assistant Training" (Machi pushed back: still reads as training); campaign "buy 1 get 1 free" 29 Sep to 12 Nov (44 days, not 42; Machi pushed back: define as bring-a-new-friend, 1-month only). Email and floor still open (default 8th floor, no email).
+
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
