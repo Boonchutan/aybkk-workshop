@@ -1,0 +1,85 @@
+{
+ "topic": "Micron's record quarter",
+ "slug": "micron-earnings",
+ "brand": "Micron's record quarter · 10 facts",
+ "geo": "Global",
+ "volume": "20,000+ searches today (US daily list)",
+ "caption": [
+  "\"mu stock\" — 20,000+ searches today. Micron just had the biggest quarter in its history.",
+  "Why: On September 30, Micron reported record quarterly revenue of $54.23 billion, up 379% in a year, driven by demand from AI data centers. Its profit for the quarter, $37.7 billion, was more than its entire revenue for fiscal 2025. It expects about $61.5 billion next quarter.",
+  "What most people don't know: Micron quit selling memory to ordinary shoppers. In December 2025 it shut down Crucial, its 29-year-old consumer brand, to send supply to data centers. Shipments ended in February.",
+  "Very simply put: AI got the memory. Shoppers got the bill."
+ ],
+ "slides": [
+  {
+   "n": 1,
+   "headline": "Micron's profit in 3 months beat all its sales last *year*.",
+   "sub": "10 things most people don't know about Micron's record quarter, searched 20,000+ times in the US today.",
+   "foot": "Swipe →",
+   "image": "A glowing silicon wafer covered in rainbow-colored chip patterns held up in bright white light, vivid color, high contrast, bright clean light, the wafer in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no letters, no logos"
+  },
+  {
+   "n": 2,
+   "headline": "Micron makes memory: the *RAM* and storage inside your devices.",
+   "sub": "DRAM, NAND flash, and HBM, the stacked memory AI data centers need.",
+   "foot": "Swipe →",
+   "image": "A plain green circuit board with rows of black memory chips on a dark desk under a soft spotlight, no stickers, the board in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no labels, no logos"
+  },
+  {
+   "n": 3,
+   "headline": "Quarterly revenue: *$54.23 billion*, up 379% in a year.",
+   "sub": "A record, reported September 30. A year earlier: $11.32 billion.",
+   "foot": "Swipe →",
+   "image": "A tall stack of silicon wafers glowing with blue light in a dark clean room, the stack in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no logos"
+  },
+  {
+   "n": 4,
+   "headline": "Its core data center sales grew more than *11 times*.",
+   "sub": "From $1.58 billion to $18 billion in a year, in its Core Data Center unit.",
+   "foot": "Swipe →",
+   "image": "Rows of server racks glowing with cool blue lights in a dark data center aisle, the racks in the upper half of the frame, the lower half of the frame is plain dark floor, photorealistic, no people, no text, no logos, no screens"
+  },
+  {
+   "n": 5,
+   "headline": "Micron is now worth over *$1 trillion*.",
+   "sub": "It first crossed $1 trillion on May 26, 2026.",
+   "foot": "Swipe →",
+   "image": "A neat stack of shiny gold bars without engravings under a spotlight on a dark surface, the bars in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no numbers, no logos"
+  },
+  {
+   "n": 6,
+   "headline": "Customers put down *$32 billion* to lock in future supply.",
+   "sub": "26 multi-year take-or-pay deals, mostly cash deposits. Most of its 2027 HBM is already under contract.",
+   "foot": "Swipe →",
+   "image": "A heavy steel padlock on the door of a server rack glowing with blue light in a dark room, the padlock in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no logos"
+  },
+  {
+   "n": 7,
+   "headline": "Phones cost more: the average price may hit *$581* this year.",
+   "sub": "Up 27.6% in a year, IDC forecasts, as memory costs rose over 300%.",
+   "foot": "Swipe →",
+   "image": "A smartphone lying face down on a dark wooden table under a single spotlight, the phone in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no logos, no screens"
+  },
+  {
+   "n": 8,
+   "headline": "It started in 1978 in a *dental office* basement in Boise, Idaho.",
+   "sub": "4 people designing chips. It is still based in Boise.",
+   "foot": "Swipe →",
+   "image": "A dim old basement room with a wooden workbench, a soldering iron and a few early computer circuit boards under a single hanging bulb, 1970s, the workbench in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no logos"
+  },
+  {
+   "n": 9,
+   "headline": "It quit selling to shoppers: *Crucial* shut after 29 years.",
+   "sub": "Announced December 2025, shipments ended February 2026, to send memory to data centers.",
+   "foot": "Swipe →",
+   "image": "Empty metal store shelves in a dim electronics shop aisle under one flickering light, the shelves in the upper half of the frame, the lower half of the frame is plain dark floor, photorealistic, no people, no text, no signs, no logos, no price tags"
+  },
+  {
+   "n": 10,
+   "headline": "Very simply put: AI got the memory. Shoppers got the *bill*.",
+   "sub": "Follow No Cap Daily for the story behind what everyone is searching.",
+   "foot": "Follow",
+   "image": "A single memory chip glowing softly on a dark circuit board, close-up, the chip in the upper half of the frame, the lower half of the frame is plain and dark, photorealistic, no people, no text, no labels, no logos"
+  }
+ ]
+}
