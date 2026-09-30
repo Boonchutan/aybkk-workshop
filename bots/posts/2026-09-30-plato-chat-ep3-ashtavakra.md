@@ -67,7 +67,8 @@ Your body twists and folds,
 and you stay up on your arms.
 
 ## LINE
-Ashtavakra was crooked. Sharathji was sick.
+Ashtavakra was a crooked boy.
+Sharathji was a sick boy.
 The practice made them both strong.
 
 ## CLOSE
