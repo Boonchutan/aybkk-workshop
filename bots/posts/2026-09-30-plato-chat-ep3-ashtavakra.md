@@ -112,3 +112,4 @@ Add this style line to every prompt: Stop-motion puppet animation film still in 
 - His 2020 animation for Sharathji's 50th birthday (his public Reel DHGbnh8zz8x, Mar 2025): clips used for baby, cricket, practice, teaching, 'a guru who touches our heart'.
 - Photos: Sharathji Bangkok 2024 WS (GC9A*), his photo with Guruji's portrait (Screenshot_20240110), May 2024 prayer photo (mmexport1715009473067), his 2023 photo with Sharathji (20230624 HEIC).
 - Spoken: 'the story goes' (Boonchu confirmed). Scripts: bots/tools/reel-edit/ep3/.
+- v2: cards 1080x640 (cover top half of his hair, his OK). Astavakrasana lines now show Sharathji practising Astavakrasana B (his 41 s clip from the 1999 Advanced A film, Drive file 1CiA78flCTRzSRgJ2g7nezbmtmR1CnHqV): wide entry, then close-up. Old film's yellow cast neutralised (gray-world white balance) so the frame is not all-yellow.

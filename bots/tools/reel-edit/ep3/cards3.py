@@ -36,7 +36,8 @@ add(269,276,img_card('his/mmexport.jpg',(0.5,0.02)))
 add(277,284,img_card(P+'7807.jpg',(0.5,0.46)),pad_end=1.6)
 t0=ws(285)-0.12
 add(285,307,g_list('the truth',['a strong body makes the practice','the practice makes the body strong'],[ws(i)-t0 for i in (291,300)],['x','v']))
-add(308,328,g_title('🧘','Astavakrasana A and B','Advanced A series',50,34))
+s0=ws(308)-0.12
+add(308,328,clip_card([(0,4.6,0.62),(ws(319)-s0,10.0,0.5)]))
 t0=ws(329)-0.12
 add(329,344,g_list('both',['Ashtavakra: a crooked boy','Sharathji: a sick boy','the practice made them strong'],[ws(i)-t0 for i in (329,334,339)]))
 add(345,350,img_card('his/IMG_6275.jpg',(0.5,0.6)))

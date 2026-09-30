@@ -96,3 +96,21 @@ def anim_card(t0,t1,folder='ig/fr',fps=30,scale=0.76):
     def f(lt,dur):
         t=min(t1,t0+lt); return frame(int(t*fps)+1)
     f.is_img=True; return f
+import numpy as np
+def _wb(im,k=0.75):
+    a=np.asarray(im).astype(np.float32); m=a.reshape(-1,3).mean(0); g=(m.mean()/m)**k
+    return Image.fromarray(np.clip(a*g,0,255).astype('uint8'))
+_sj={}
+def clip_card(parts,folder='sj',t_offset=3.5,fps=30):
+    """parts: [(local_start, src_time, focus_y), ...] -> hard cuts inside one card"""
+    def frame(k,fy):
+        key=(k,fy)
+        if key not in _sj:
+            im=Image.open(f'{folder}/{k:04d}.jpg').convert('RGB'); im=im.crop((0,0,int(im.width*0.965),im.height))
+            _sj[key]=cover(_wb(im),1.0,(0.5,fy))
+        return _sj[key]
+    def f(lt,dur):
+        p=[x for x in parts if x[0]<=lt][-1]
+        t=p[1]+(lt-p[0]); n=len(__import__('os').listdir(folder))
+        return frame(max(1,min(n,int((t-t_offset)*fps)+1)),p[2])
+    f.is_img=True; return f
