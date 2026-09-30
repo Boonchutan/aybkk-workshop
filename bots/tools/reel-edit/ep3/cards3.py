@@ -1,4 +1,4 @@
-from softcards import *
+from softcards2 import *
 import subprocess, sys
 R_=remap
 def ws(i): return R_(words[i][0])
@@ -23,7 +23,7 @@ add(127,139,img_card('his/IMG_6278.jpg',(0.5,0.55)))
 add(140,149,g_eight)
 add(150,159,anim_card(0.4,4.3))
 add(160,180,anim_card(4.6,9.0))
-add(181,186,img_card('his/ig_shot.jpg',(0.5,0.02),box=(430,0,1635,1119)))
+add(181,186,img_card('his/ig_shot.jpg'))
 add(187,198,anim_card(9.3,14.0))
 add(199,208,anim_card(14.6,20.3))
 add(209,214,g_title('6️⃣','all six series','Guruji taught him everything',58,32))
@@ -48,7 +48,7 @@ for k in range(len(CARDS)-1):   # no overlaps: end where the next one starts
     CARDS[k][1]=min(CARDS[k][1],CARDS[k+1][0])
 HDR=header()
 TW,TH=1080,740      # band placed at screen y=60
-CARD_Y=88           # screen y 148..788
+YMID=380            # card centre in band => screen y 440
 def draw_top(t):
     band=Image.new('RGBA',(TW,TH),(0,0,0,0))
     band.alpha_composite(HDR,((TW-HDR.width)//2,10))
@@ -56,12 +56,14 @@ def draw_top(t):
         if not (s-0.01<=t<e+0.25): continue
         lt=t-s; dur=e-s
         content=fn(lt,dur) if getattr(fn,'is_img',False) else fn(lt)
-        card=soft_card(content)
+        card=round_card(content); xc=getattr(fn,'xc',540)
         pin=ease_out_back(lt/0.35); a_in=smooth(lt/0.2); a_out=1-smooth((t-e)/0.25) if t>e else 1
-        sc=0.86+0.14*pin; a=a_in*a_out
-        cw,ch=int(CW*sc),int(CH*sc); c=card.resize((cw,ch),Image.LANCZOS)
+        sc=(0.86+0.14*pin)*(1.0+0.03*min(1,lt/max(dur,0.1))); a=a_in*a_out
+        cw,ch=int(card.width*sc),int(card.height*sc); c=card.resize((cw,ch),Image.LANCZOS)
         if a<1: c.putalpha(c.getchannel('A').point(lambda v: int(v*a)))
-        band.alpha_composite(c,((TW-cw)//2,CARD_Y+(CH-ch)//2))
+        x=int(xc-cw/2); y=int(YMID-ch/2)
+        sh=Image.new('RGBA',(cw+60,ch+60),(0,0,0,0)); ImageDraw.Draw(sh).rounded_rectangle((30,40,30+cw,40+ch),RAD,fill=(0,0,0,int(110*a)))
+        band.alpha_composite(sh.filter(ImageFilter.GaussianBlur(14)),(x-30,y-30)); band.alpha_composite(c,(x,y))
     return band
 if __name__=='__main__':
     if len(sys.argv)>1:

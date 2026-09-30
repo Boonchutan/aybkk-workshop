@@ -2,7 +2,7 @@
 
 ## Standing orders from Boonchu
 - NO SIDE BARS on carousels (30 Sep): never pad photos with blurred side bars. Get 4:5 by cutting top and/or bottom only (feet before heads). If the bottom cut hides the watermark, paste the real watermark back (bots/tools/carousel/crop3.py lifts it from a clean photo).
-- SOFT-EDGE PICTURES (30 Sep): photos and story pictures over his head have soft blurred edges (feathered, fading into the dark), like a thought. His pick: SOFT BOX (rounded rectangle, feather about 70 px), not the oval. BIG: full width 1080 x 640, from just under the header down over the top half of his hair (he said OK, 30 Sep). NO border, NO stroke frame. Replaces the white-border card for pictures.
+- PICTURES OVER HIS HEAD (30 Sep, final): NO blur edge and NO stroke. Show the WHOLE picture, never crop important parts: fit inside 1000x560, rounded corners, soft shadow, pop in. Portrait photos: smaller (about 520 tall) and a bit to the side (right). May cover the top of his hair. (He tried soft edges first; they cut important parts.)
 - EP. 3 EDIT (30 Sep): speed his take 1.3x, cut all pauses EXCEPT the silence after 'In November that year, he passed away' (keep about 2 s). Everything else = house edit style.
 - POSTIZ LIMIT (30 Sep): Postiz allows max 10 photos per Instagram carousel (the app allows 20, Postiz does not). Plan carousels as 10 slides or fewer.
 - NEVER CUT A STUDENT'S HEAD (30 Sep): when cropping a photo, never cut any head (main student, teacher or people in the back). Cut the feet instead, or fit the whole photo and fill the sides with a blurred copy. Keep the watermark at the bottom. Check every crop by eye before sending.
