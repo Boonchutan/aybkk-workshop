@@ -46,8 +46,8 @@ add(363,365,g_title('🎂🙏','Happy birthday, Sharathji','29 September 1971',4
 for k in range(len(CARDS)-1):   # no overlaps: end where the next one starts
     CARDS[k][1]=min(CARDS[k][1],CARDS[k+1][0])
 HDR=header()
-TW,TH=1080,720      # band placed at screen y=60
-CARD_Y=88           # screen y 148..648
+TW,TH=1080,740      # band placed at screen y=60
+CARD_Y=88           # screen y 148..788
 def draw_top(t):
     band=Image.new('RGBA',(TW,TH),(0,0,0,0))
     band.alpha_composite(HDR,((TW-HDR.width)//2,10))

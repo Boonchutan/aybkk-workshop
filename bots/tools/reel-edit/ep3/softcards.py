@@ -1,7 +1,7 @@
 from common import *
 from PIL import Image, ImageDraw, ImageFilter, ImageOps
 import numpy as np
-CW,CH=1040,500; FEATHER=70; SAFE=820
+CW,CH=1080,640; FEATHER=70; SAFE=880; OFF=70
 NAVY1,NAVY2=(36,50,104),(18,27,66); GOLD=(227,185,76); CREAM=(243,233,210); RED=(226,92,92); GREEN=(92,196,140)
 def _soft_mask(f=FEATHER):
     m=Image.new('L',(CW,CH),0); ImageDraw.Draw(m).rounded_rectangle((f,f,CW-f,CH-f),60,fill=255)
@@ -14,7 +14,7 @@ def navy_bg():
     return Image.fromarray(np.repeat(a,CW,1).astype('uint8'),'RGB')
 def ctext(d,y,s,size,wg,fill):
     while size>22 and d.textlength(s,font=mont(size,wg))>SAFE: size-=2
-    f=mont(size,wg); w=d.textlength(s,font=f); d.text(((CW-w)/2,y),s,font=f,fill=fill); return w
+    f=mont(size,wg); w=d.textlength(s,font=f); d.text(((CW-w)/2,y+OFF),s,font=f,fill=fill); return w
 def fade(col,a,bg=NAVY1): return tuple(int(c*a+n*(1-a)) for c,n in zip(col,bg))
 def cover(im,zoom,focus=(0.5,0.5)):
     ar=CW/CH; w,h=im.size
@@ -34,7 +34,7 @@ def img_card(path,focus=(0.5,0.5),box=None):
 def g_title(emo,title,sub,tsize=60,ssize=36):
     def f(lt):
         im=navy_bg(); d=ImageDraw.Draw(im)
-        if emo: e=emoji(emo,100); im.paste(e,((CW-e.width)//2,88),e)
+        if emo: e=emoji(emo,100); im.paste(e,((CW-e.width)//2,88+OFF),e)
         ctext(d,205,title,tsize,800,GOLD)
         if sub: ctext(d,205+tsize+16,sub,ssize,500,CREAM)
         return im
@@ -42,9 +42,9 @@ def g_title(emo,title,sub,tsize=60,ssize=36):
 def g_quote(q1,q2,who,emo=None):
     def f(lt):
         im=navy_bg(); d=ImageDraw.Draw(im); y=120
-        if emo: e=emoji(emo,76); im.paste(e,((CW-e.width)//2,82),e); y=180
-        ctext(d,y,q1,42,800,GOLD)
-        if q2: ctext(d,y+58,q2,42,800,GOLD)
+        if emo: e=emoji(emo,76); im.paste(e,((CW-e.width)//2,82+OFF),e); y=180
+        ctext(d,y,q1,46,800,GOLD)
+        if q2: ctext(d,y+60,q2,46,800,GOLD)
         ctext(d,y+(128 if q2 else 70),who,30,500,CREAM); return im
     return f
 def g_list(title,items,times,marks=None):
@@ -59,8 +59,8 @@ def g_list(title,items,times,marks=None):
                 if marks:
                     e=emoji({'x':'❌','v':'✅'}[marks[i]],40)
                     if a<1: e=e.copy(); e.putalpha(e.getchannel('A').point(lambda v: int(v*a)))
-                    im.paste(e,(int(x0-58),y+6),e)
-                d.text((x0,y+2),it,font=mont(fs,600),fill=col)
+                    im.paste(e,(int(x0-58),y+6+OFF),e)
+                d.text((x0,y+2+OFF),it,font=mont(fs,600),fill=col)
             y+=56
         return im
     return f
@@ -86,7 +86,7 @@ def header():
 
 CREAMBG=(236,233,226)
 _fr={}
-def anim_card(t0,t1,folder='ig/fr',fps=30,scale=0.66):
+def anim_card(t0,t1,folder='ig/fr',fps=30,scale=0.76):
     def frame(k):
         if k not in _fr:
             im=Image.open(f'{folder}/{k:04d}.jpg').convert('RGB')
