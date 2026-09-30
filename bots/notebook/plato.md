@@ -54,6 +54,13 @@
 
 - 2026-09-30: Boonchu confirmed: Hanumanasana and Astavakrasana are both in the Ashtanga Advanced A series.
 
+- 2026-09-30: SHARATH FACTS from Boonchu (his own account, say "as I saw it" / label as Boonchu's account, not as a published fact):
+  - Got serious about the series around age 17 to 19, still in school (not university). Boonchu is not sure of the exact age.
+  - Known as the one Guruji taught to his deepest knowledge (use this wording, not "all six series" unless a source confirms).
+  - Mysore: about 300 to 450 students each morning per month in season (season Oct to Mar, last season Nov to Feb); some years a monsoon season Jun to Aug with 200 to 300 per month.
+  - Tours: at least 300 students per venue. Boonchu hosted him in Bangkok: 500 students in 2018, 450 in 2024. Last Shanghai workshop 1,200+ students.
+  - Do NOT say "millions of followers" unless a source shows it.
+
 ## Reel Toolkit
 Hook tools (seconds 0 to 3):
 - Triple Hook (from a public Reel, saved 2026-09-28): 1) Context: line one says exactly what the video is about. 2) Pull: make them care, pick one: Taboo (feels risky to say), Dark (expose something happening to them they did not know), Contradiction (opposite of what they believe), Proof (fact or number, show it on screen if possible). 3) Whiplash: say the opposite of what they expect. Context sets the trap, Pull loads it, Whiplash snaps it. Best for: myth-busting a common practice belief, technique topics.
