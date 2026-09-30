@@ -39,23 +39,23 @@ Hook: "On Sunday, she ran the best race of her life. It won bronze."
 
 ## 2026-09-29 · plato-chat-ep2
 
-# Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), FINAL (about 115 to 120 s)
+### Hidden Stories of Ashtanga, Ep. 2 (Vritra part 2), FINAL (about 115 to 120 s)
 
 Toolkit pick: Boonchu's hook (links to the last post) + Vibe Samurai, run as fail, hero, payoff.
 Series card: gold "Hidden Stories of Ashtanga", teal "Ep. 2".
 On screen from frame 1 (sound off): "One wrong sound made this demon."
 
-## HOOK
+### HOOK
 In my last post, a demon stole the rain.
 This is how he was born.
 His father made one small mistake.
 
-## SOURCE
+### SOURCE
 An old Sanskrit book, the Paniniya Shiksha, warns:
 a holy word said wrong becomes a thunderbolt.
 On screen: "Paniniya Shiksha: an old guide to Vedic chanting"
 
-## LADDER 1: THE FATHER (bedtime voice)
+### LADDER 1: THE FATHER (bedtime voice)
 His father, Tvashtr, had a first son with three heads.
 He was the gods' priest.
 But in secret, he fed the demons.
@@ -72,7 +72,7 @@ Know the real way? Tell me in the comments.
 Vritra rose from the fire.
 Born to die by Indra's hand.
 
-## LADDER 2: THE STUDENT
+### LADDER 2: THE STUDENT
 On the mat, we have the same thunderbolt.
 Supta Vajrasana.
 Legs in lotus. Hold your feet. Drop back.
@@ -87,13 +87,13 @@ Louder does not fix the wrong place.
 Your hands cannot reach your feet.
 On screen (small): "Intermediate Series. Learn it with your teacher."
 
-## LADDER 3: YOU
+### LADDER 3: YOU
 Some people fall back for years.
 They start to think their body just can't.
 Maybe that is you.
 (one silent second)
 
-## TURN + REVEAL
+### TURN + REVEAL
 It isn't strength.
 It's where you lift from.
 Not the abs. Not the hands.
@@ -101,14 +101,14 @@ The chest.
 Hold your bandhas. Breathe.
 You come up in one piece.
 
-## CLOSE
+### CLOSE
 Wrong place, you get a demon.
 Right place, you get a thunderbolt.
 Tvashtr got one chance.
 You get a new one every morning.
 (hold the gaze one second, stop)
 
-## CAPTION
+### CAPTION
 One sound in the wrong place made a demon. On the mat, the wrong place makes an asana fail.
 
 Hidden Stories of Ashtanga, Ep. 2.
@@ -124,7 +124,7 @@ Come practice with us at AYBKK. aybkk.com
 
 #aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #suptavajrasana #ashtangayoga #mysorestyle
 
-## EDIT CUE SHEET (short)
+### EDIT CUE SHEET (short)
 Zoom punch 1 to 2 s + sound at 40%, 0.4 s after the word:
 - "rain": soft thunder
 - "one small mistake": low drum
@@ -145,7 +145,7 @@ Image prompts (storybook watercolor, gentle, no gore, nothing that mocks the god
 2. From the flames, a huge dark shape rolls up like a storm cloud and fills the sky. Awe, not horror.
 3. An old palm-leaf manuscript glowing softly, a small golden thunderbolt drawn in its margin.
 
-## SOURCES
+### SOURCES
 - Paniniya Shiksha 52 (paraphrased): a mantra with a fault in accent or sound does not say what was meant; it becomes a word-thunderbolt (vag-vajra) that harms the one who offers it, as "Indrashatru" did through a fault in accent. Also quoted in Patanjali's Mahabhashya (Paspasha).
 - Taittiriya Samhita 2.5.1 (Vishvarupa, secret offerings, Indra afraid he was "diverting the sovereignty"), 2.4.12 and 2.5.2 (Indrashatru, Vritra).
 - Shatapatha Brahmana 1.6.3.1-10. Bhagavata Purana 6.9.1-18.
