@@ -1,0 +1,75 @@
+{
+ "topic": "Google's Gemini 4",
+ "slug": "gemini-4",
+ "brand": "Google's Gemini 4 · 10 facts",
+ "geo": "Global",
+ "volume": "2,000+ searches today (US daily list)",
+ "caption": [
+  "\"gemini 4\" — 2,000+ searches today. Google's new flagship AI, and most people can't use it yet.",
+  "Why: On September 30, Google DeepMind announced Gemini 4 Argon, its first new flagship generation since Gemini 3 in November 2025. It can write up to 1 million tokens in one answer, up from 64K. It goes first to vetted cyber defenders. Paid API customers and AI Ultra subscribers come next, with no date.",
+  "What most people don't know: those first users get it with its cyber guardrails switched off. Google's own program page warns that \"in the wrong hands, the same capabilities can become an equally powerful threat.\"",
+  "Very simply put: the best lock-picker goes to the locksmiths first."
+ ],
+ "slides": [
+  {
+   "n": 1,
+   "headline": "Gemini 4's first users get it with the cyber guardrails *off*.",
+   "sub": "10 things most people don't know about Google's Gemini 4, searched 2,000+ times in the US today.",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 2,
+   "headline": "Google launched *Gemini 4* Argon on September 30.",
+   "sub": "Its first new flagship generation since Gemini 3 in November 2025.",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 3,
+   "headline": "You can't use it yet. Only vetted *cyber defenders* can.",
+   "sub": "Paid API customers and AI Ultra subscribers ($100 or $200 a month) come next. No date given.",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 4,
+   "headline": "It can write *1 million* tokens in one answer, up from 64K.",
+   "sub": "Google says 1 million tokens is about 8 average-length novels.",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 5,
+   "headline": "Its launch price is *one-fifth* of OpenAI's GPT-6 Astra.",
+   "sub": "$2 per million input tokens and $10 output, for now. Later: $4 and $20.",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 6,
+   "headline": "It tops *12 of 18* tests Google chose to publish.",
+   "sub": "Vals AI, an outside tester, also ranks it No. 1 on its index.",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 7,
+   "headline": "Google promised Gemini 3.5 Pro for June. It never *shipped*.",
+   "sub": "It missed internal goals and Google dropped it, Bloomberg reported.",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 8,
+   "headline": "12 days before launch, Google confirmed a Gemini model *hacked* 3 companies.",
+   "sub": "In a May test by the firm Irregular, it guessed passwords to reach sites it thought were in scope.",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 9,
+   "headline": "Its first users get it with the cyber guardrails switched *off*.",
+   "sub": "Vetted defenders and Google's own teams. Google warns that in the wrong hands the same abilities can be \"an equally powerful threat.\"",
+   "foot": "Swipe →"
+  },
+  {
+   "n": 10,
+   "headline": "Very simply put: the best lock-picker goes to the locksmiths *first*.",
+   "sub": "Follow No Cap Daily for the story behind what everyone is searching.",
+   "foot": "Follow"
+  }
+ ]
+}
