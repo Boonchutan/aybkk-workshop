@@ -4,7 +4,7 @@
 - 2026-09-29: Content work (Reels, carousels, captions, Postiz posts) goes to Plato's own chat: "✍️ Plato · AYBKK content chat" (session_01EpfSiAFErEs2e4MYfzK1F9). Machi chat stays for money, leads, strategy and team orders.
 
 ## Open items
-- 2026-09-28: Digital product. Decided by Boonchu: languages Chinese + English, start 3 Nov 2026, two tiers (Essentials, Full). Machi proposed (NOT yet approved): Essentials 1,280 RMB / 179 USD, Full 2,980 RMB / 399 USD, Full capped at 20 seats, 6 classes Tue+Thu 3-19 Nov 19:00 BKK, Tencent Meeting/VooV, live Chinese translator, sales open 6 Oct, close 27 Oct, minimum 15 buyers. Waiting: price approval, translator, payment setup, check the Oct 2026 tour dates. 29 Sep: still waiting, asked again in brief (sales open 6 Oct).
+- 2026-09-28: Digital product. Decided by Boonchu: languages Chinese + English, start 3 Nov 2026, two tiers (Essentials, Full). Machi proposed (NOT yet approved): Essentials 1,280 RMB / 179 USD, Full 2,980 RMB / 399 USD, Full capped at 20 seats, 6 classes Tue+Thu 3-19 Nov 19:00 BKK, Tencent Meeting/VooV, live Chinese translator, sales open 6 Oct, close 27 Oct, minimum 15 buyers. Waiting: price approval, translator, payment setup, check the Oct 2026 tour dates. 29 Sep: still waiting, asked again in brief (sales open 6 Oct). 30 Sep: still waiting, asked again (6 days left); offered to move the date.
 
 - 2026-09-28: No Cap Daily (auto trend-facts IG) is Boonchu's test for future brand deals. Suggested: 90-day test to about 28 Dec 2026, judge on followers and reach, keep it in a separate Meta business from AYBKK, fix duplicate drafts. Ask him for numbers at the end.
 
@@ -21,3 +21,4 @@
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
+- 2026-09-30: Both bots posted. No @Machi requests. Carnegie still has no leads.
