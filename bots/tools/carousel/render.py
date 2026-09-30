@@ -19,7 +19,7 @@ def wrap(text,f,maxw):
         else: lines.append(cur); cur=w
     if cur: lines.append(cur)
     return lines
-MANUAL={'033':[(330,0,460,420),(100,300,700,1150)],'063':[(330,300,820,1080)]}
+MANUAL={'063':[(330,300,820,1080)]}
 def weighted_mask(n):
     m=(np.asarray(Image.open(f'mask/{n}.png'))>127)
     for x0,y0,x1,y1 in MANUAL.get(n,[]): m[y0:y1,x0:x1]=True

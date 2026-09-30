@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- NO SIDE BARS on carousels (30 Sep): never pad photos with blurred side bars. Get 4:5 by cutting top and/or bottom only (feet before heads). If the bottom cut hides the watermark, paste the real watermark back (bots/tools/carousel/crop3.py lifts it from a clean photo).
 - SOFT-EDGE PICTURES (30 Sep): photos and story pictures over his head have soft blurred edges (feathered, fading into the dark), like a thought. His pick: SOFT BOX (rounded rectangle, feather about 70 px), not the oval. NO border, NO stroke frame. Replaces the white-border card for pictures.
 - EP. 3 EDIT (30 Sep): speed his take 1.3x, cut all pauses EXCEPT the silence after 'In November that year, he passed away' (keep about 2 s). Everything else = house edit style.
 - POSTIZ LIMIT (30 Sep): Postiz allows max 10 photos per Instagram carousel (the app allows 20, Postiz does not). Plan carousels as 10 slides or fewer.
