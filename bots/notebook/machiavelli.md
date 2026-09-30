@@ -32,6 +32,8 @@
 
 - 2026-09-30: Inbox not connected. PR #21 merged 30 Sep 16:01 Bangkok; server answers 503 "INBOX_KEY is not set". Waiting on Boonchu: add INBOX_KEY in Railway.
 
+- 2026-09-30: Brand = welcoming. Tagline "Traditional Ashtanga. Open door." on site branch claude/aybkk-net-shopwindow (commit ae5626c2, not live). Next: change what Google shows (Google Business Profile description, aybkk.org and aybkk.com page text, Mindbody/Yogatrail listings, beginner Google reviews).
+
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
