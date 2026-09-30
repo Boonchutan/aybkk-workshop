@@ -45,8 +45,10 @@ He wrote, "I could feel my body heal and repair."
 In 2007, Guruji was too weak to teach.
 The boy took the whole shala on his shoulders.
 I can only imagine how heavy it felt.
-Every morning in Mysore, three to four hundred students.
+Every morning in Mysore, three to four hundred students came.
 When I hosted him in Bangkok, five hundred came.
+He came back to Bangkok in May 2024.
+In November that year, he passed away.
 
 ## LADDER 3: YOU
 Maybe your body feels bent today.
@@ -70,6 +72,7 @@ The bends hold you up.
 ## CLOSE
 The boy on his grandfather's lap
 became the teacher of the world.
+Yesterday he would have turned 55.
 Happy birthday, Sharathji.
 
 ## CAPTION (4 lines + format)
@@ -85,5 +88,5 @@ Aybkk.com
 
 ## SOURCES
 - Ashtavakra: Mahabharata, Vana Parva (Book 3) 132 to 134. The "grey hair" line is a paraphrase of 3.133. Ashtavakra was the daughter's son of his teacher Uddalaka (= Aruni, Adi Parva 3).
-- Sharath: his book Ageless (2018), quoted in Global Indian (Dec 2024): "As a child, I was always ill." "I could feel my body heal and repair." Cricket and back door: same interview. From 19 he assisted Guruji (NYT obituary, Nov 2024). Took over the institute in 2007 (NYT; Wikipedia). Mysore numbers and Bangkok 500 (2018): Boonchu's own account.
+- Sharath: his book Ageless (2018), quoted in Global Indian (Dec 2024): "As a child, I was always ill." "I could feel my body heal and repair." Cricket and back door: same interview. From 19 he assisted Guruji (NYT obituary, Nov 2024). Took over the institute in 2007 (NYT; Wikipedia). Mysore numbers, Bangkok 500 (2018) and his last Bangkok visit May 2024 (450): Boonchu's own account. Died 11 Nov 2024 (US date) / 12 Nov 2024 (India date, sharathyogacentre.com), while on a teaching tour in the US.
 - Astavakrasana: Advanced A (Boonchu confirmed).
