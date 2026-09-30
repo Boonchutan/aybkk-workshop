@@ -1,6 +1,8 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- NEVER CUT A STUDENT'S HEAD (30 Sep): when cropping a photo, never cut any head (main student, teacher or people in the back). Cut the feet instead, or fit the whole photo and fill the sides with a blurred copy. Keep the watermark at the bottom. Check every crop by eye before sending.
+- CAROUSEL TEXT (30 Sep): the meaning line in white must be bold and easy to read (Montserrat bold 33 on 1080 wide). Text never on faces or the main asana, check each slide by eye.
 - 2026-09-28: VIDEO EDIT SPEC (for whoever edits; editing happens in the "Editing by Claude" session with HyperFrames, not in Plato's run). With every Reel, Plato writes an edit cue sheet:
   - Zoom cut: punch in close on his face for 1 to 2 seconds on each stress word.
   - Sound effect on each stress word at 40% volume, starting 0.4 s AFTER he finishes saying that word.

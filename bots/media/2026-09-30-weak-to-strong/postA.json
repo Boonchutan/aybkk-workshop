@@ -1,5 +1,11 @@
 [
  {
+  "photo": "009",
+  "who": "Booker T. Washington · Up from Slavery, 1901",
+  "quote": "I have learned that success is to be measured not so much by the position that one has reached in life as by the obstacles which he has overcome while trying to succeed.",
+  "meaning": "Born a slave, he went 500 miles to find a school. In 1881 he opened his own school."
+ },
+ {
   "photo": "146",
   "who": "Ralph Waldo Emerson · Compensation, 1841",
   "quote": "Our strength grows out of our weakness.",
@@ -45,7 +51,7 @@
   "photo": "073",
   "who": "Frida Kahlo · Diary, 1953",
   "quote": "Feet, what do I need them for if I have wings to fly?",
-  "meaning": "Polio, then a bad accident. She painted from her bed and became famous."
+  "meaning": "Polio as a child. A bad accident at 18. She painted from her bed and became a famous artist."
  },
  {
   "photo": "057",
@@ -64,11 +70,5 @@
   "who": "Friedrich Nietzsche · Human, All Too Human, 163",
   "quote": "Do not talk of gifts, of inborn talents! We could mention great men of all kinds who were but little gifted.",
   "meaning": "Stop saying \"I have no talent.\" Many great people had little talent. They kept working."
- },
- {
-  "photo": "009",
-  "who": "Sri K. Pattabhi Jois · His daily teaching",
-  "quote": "Do your practice and all is coming.",
-  "meaning": "At 12, he walked into a yoga class. He practiced his whole life. Today people all over the world practice Ashtanga."
  }
 ]
