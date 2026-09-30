@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- CHINESE VERSION of Reels (30 Sep): same edit, Chinese burned-in captions (Noto Sans SC variable, Weight Shift) and Chinese card text; emoji BIGGER than the English cut (about 150 px vs 118 px). Translate with checks (terms: 阿斯汤加, 迈索尔; Guruji is Sharath's maternal grandfather = 外公). Scripts: bots/tools/reel-edit/ep3/caps_zh.py, make_cards_zh.py.
 - NO SIDE BARS on carousels (30 Sep): never pad photos with blurred side bars. Get 4:5 by cutting top and/or bottom only (feet before heads). If the bottom cut hides the watermark, paste the real watermark back (bots/tools/carousel/crop3.py lifts it from a clean photo).
 - PICTURES OVER HIS HEAD (30 Sep, final): NO blur edge and NO stroke. Show the WHOLE picture, never crop important parts: fit inside 1000x560, rounded corners, soft shadow, pop in. Portrait photos: smaller (about 520 tall) and a bit to the side (right). May cover the top of his hair. (He tried soft edges first; they cut important parts.)
 - EP. 3 EDIT (30 Sep): speed his take 1.3x, cut all pauses EXCEPT the silence after 'In November that year, he passed away' (keep about 2 s). Everything else = house edit style.
