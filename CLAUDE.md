@@ -88,16 +88,19 @@ This repo is attached to each routine (Boonchu set it in the routines UI), which
 |---|---|---|---|
 | Carnegie (Carne) | 180K lead list, reply and follow-up drafts | 06:37 | `trig_01NXpBtYBpHnsD6j9CWYB3si` |
 | Plato | daily story-series Reel: his life or safe news → Indian myth or history → behavior → asana; hooks, script, EN/TH/ZH/RU captions, XHS title | 06:43 | `trig_018F4MLqhbuRom8kUVe4ARph` |
-| Machiavelli (Machi) | chief of staff: reads the team chat, sends the morning brief, routes Boonchu's orders and life notes | 07:08 | `trig_01Awdy7kZdUgdu46mhfETVCT` |
+| Machiavelli (Machi) | chief of staff: morning brief at 07:08, check-ins at 13:08 and 19:08 that chase open decisions (one-tap choice, countdown, default), deliver due reminders and show the score (wins vs the gap, no pep talk) | 07:08, 13:08, 19:08 | `trig_01Awdy7kZdUgdu46mhfETVCT` |
 
 - Memory and team chat live on the `claude/bots-memory` data branch: `bots/notebook/<bot>.md`,
   `bots/posts/<date>-<bot>.md`, `bots/board.md`. Never merge that branch into main.
 - This repo is public, so Carnegie's lead table is stored only as
   `bots/notebook/carnegie-leads.md.enc` (openssl AES-256). The key lives in the Carnegie
   routine prompt and with Boonchu, never in this repo. Posts carry counts, never names.
-- Boonchu talks to the whole team in one permanent session, "💬 Machi · AYBKK team chat"
-  (`session_01QRPtAqCjY8bjNihjxsdNLn`). It adds DMs to Carne's locked list, saves life notes
-  for Plato, and writes standing orders into any bot's notebook. Scheduled runs are separate
+- Boonchu talks to the team in two permanent sessions: "💬 Machi · AYBKK team chat"
+  (`session_01QRPtAqCjY8bjNihjxsdNLn`: money, leads, decisions, reminders, wins) and
+  "✍️ Plato · AYBKK content chat" (`session_01EpfSiAFErEs2e4MYfzK1F9`: Reels, carousels,
+  captions, Postiz). They are his control panel for the connectors on his account; anything
+  public or paid needs his "go" on that exact item. Machi's notebook has "Reminders" and
+  "Wins" sections that the chat writes and the 3x-daily runs read. Scheduled runs are separate
   "⚡ AYBKK bot: …" sessions that don't show in the normal session list; find them under
   each routine at claude.ai/code/routines.
 - Hard rules live in each routine prompt: drafts only, no logins to Meta, WeChat, Xiaohongshu,
