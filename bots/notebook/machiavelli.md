@@ -28,6 +28,8 @@
 
 - 2026-09-30 Boonchu: 180K framing decided (see team chat). Campaign live in October; free gift "Your First Mysore Class" via ManyChat keyword MYSORE this weekend; current students get bonus weeks (1m +1w, 3m +3w, 6m +6w, 12m +2 months).
 
+- 2026-09-30 Rules/waiver/policies (for Rezerv admin, pasted by Chrome Claude, Boonchu saves): cancel 5h before; refund policy = research running; pause for broken bones, eye problems, surgery, pregnancy/delivery, others by discussion, 30 days or per doctor's note; no transfers; Dedicated under 16 classes = talk + reminder + promise, next package may move to Flexible. Waiver needs Thai lawyer check.
+
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
