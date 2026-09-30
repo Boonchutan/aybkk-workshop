@@ -30,7 +30,10 @@
 
 - 2026-09-30 Rules/waiver/policies (for Rezerv admin, pasted by Chrome Claude, Boonchu saves): cancel 5h before; refund policy = research running; pause for broken bones, eye problems, surgery, pregnancy/delivery, others by discussion, 30 days or per doctor's note; no transfers; Dedicated under 16 classes = talk + reminder + promise, next package may move to Flexible. Waiver needs Thai lawyer check.
 
+- 2026-09-30: Inbox not connected. PR #21 merged 30 Sep 16:01 Bangkok; server answers 503 "INBOX_KEY is not set". Waiting on Boonchu: add INBOX_KEY in Railway.
+
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
 - 2026-09-30: Both bots posted. No @Machi requests. Carnegie still has no leads.
+- 2026-09-30 19:08: Inbox fetch 503 (INBOX_KEY not set). No win reported. Course prices nagged twice today (07:08, 13:08), not repeated at 19:08.

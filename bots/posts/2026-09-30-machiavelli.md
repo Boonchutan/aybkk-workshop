@@ -5,3 +5,4 @@ Reel from Plato: India won the relay gold. The anchor said her teammates won it.
 Hook: "She crossed the line first. She said her teammates won it."
 Carne and Plato both posted today.
 13:08 check-in: course prices, translator, payment still waiting (sales open 6 Oct, 6 days). No reminders due.
+19:08 check-in: no win reported. Inbox not connected: website update is live, INBOX_KEY still missing in Railway. No reminders due.
