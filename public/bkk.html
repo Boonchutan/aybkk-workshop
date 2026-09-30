@@ -43,6 +43,8 @@
     --line:rgba(23,18,26,.11);
     --on-dark:#fdf7fa;
     --header:#17121a;   /* fixed: never flips with the theme */
+    --gold:#9a6b12;
+    --gold-soft:#fbf1dc;
     --radius:8px;
   }
   @media (prefers-color-scheme: dark){
@@ -51,17 +53,20 @@
       --plum:#c07ec8; --plum-deep:#d9a5de; --plum-soft:#a468ac;
       --pink:#ff6fae; --pink-deep:#ff8dc0; --soft:#b09cb6;
       --line:rgba(245,233,240,.14); --on-dark:#17121a; --header:#17121a;
+      --gold:#e6bf66; --gold-soft:#2e2416;
     }
   }
   :root[data-theme="dark"]{
     --ink:#f5e9f0; --wall:#140f18; --paper:#1e1723; --blush:#2b1c2b; --blush-line:#3d2740;
     --plum:#c07ec8; --plum-deep:#d9a5de; --plum-soft:#a468ac; --pink:#ff6fae; --pink-deep:#ff8dc0;
     --soft:#b09cb6; --line:rgba(245,233,240,.14); --on-dark:#17121a; --header:#17121a;
+    --gold:#e6bf66; --gold-soft:#2e2416;
   }
   :root[data-theme="light"]{
     --ink:#17121a; --wall:#f7f1f5; --paper:#ffffff; --blush:#fbe7f0; --blush-line:#f3d3e2;
     --plum:#5c2160; --plum-deep:#43164a; --plum-soft:#8b4c90; --pink:#e8458c; --pink-deep:#c92f74;
     --soft:#6b5d70; --line:rgba(23,18,26,.11); --on-dark:#fdf7fa; --header:#17121a;
+    --gold:#9a6b12; --gold-soft:#fbf1dc;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{margin:0;background:var(--wall);color:var(--ink);
@@ -121,7 +126,35 @@
   .wechat b{user-select:all}
   .links .wechat .btn{width:auto;flex:none;min-height:40px;padding:9px 16px}
   .sw h3{margin:18px 0 8px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
+  header .more{display:inline-block;margin-top:14px;font-size:14px;font-weight:600;letter-spacing:.03em;
+    color:#fdf7fa;text-decoration:underline;text-decoration-color:var(--pink);text-underline-offset:4px;padding:6px 8px}
+  .prices .lead{margin:-6px 0 16px;font-size:14.5px;color:var(--soft)}
+  .plans{display:grid;gap:13px}
+  .plan{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px;min-width:0}
+  .plan.feature{background:var(--blush);border:1.5px solid var(--pink)}
+  .plan.quiet{background:transparent;border-style:dashed}
+  .plan .badge{display:inline-block;margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--pink);color:#fff;border-radius:999px;padding:4px 10px}
+  .plan h3{margin:0 0 4px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:25px;line-height:1.2;
+    letter-spacing:0;text-transform:none;color:var(--ink)}
+  .plan .line{margin:0 0 6px;font-size:15px}
+  .plan .small{margin:0 0 4px;font-size:13px;color:var(--soft)}
+  .plan .camp{margin:10px 0 0;font-size:13px;font-weight:600;color:var(--gold);background:var(--gold-soft);
+    border-left:3px solid var(--gold);border-radius:4px;padding:8px 10px}
+  .rows{list-style:none;margin:10px 0 0;padding:0}
+  .rows li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+  .rows li:first-child{border-top:none}
+  .rows .pn{font-size:14.5px;font-weight:600;min-width:0}
+  .rows .pn small{display:block;font-weight:400;font-size:12.5px;color:var(--soft)}
+  .rows .pv{text-align:right;flex:none}
+  .rows .pv b{display:block;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:24px;line-height:1.1;color:var(--pink)}
+  .rows .pv small{display:block;font-size:12px;color:var(--soft);white-space:nowrap}
+  .plan.feature .rows li{border-top-color:var(--blush-line)}
+  .prices .fair{margin:18px 0 4px;font-size:16px;font-weight:700;color:var(--plum)}
+  .prices .fine{margin:0;font-size:12.5px;color:var(--soft)}
+  .prices .fine a{color:var(--pink);font-weight:600;text-decoration:none}
   @media (min-width:760px){
+    .plans{grid-template-columns:1fr 1fr;align-items:start}
     .teacher .card{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:26px;align-items:start}
     .teacher figure{margin:0}
     .pair{display:grid;grid-template-columns:1fr 1fr;gap:26px}
@@ -217,6 +250,7 @@
     <a class="btn pink" href="#mysore" data-i18n="ctaStart">New? Start here</a>
     <a class="btn ghost" href="#book" data-i18n="ctaTimetable">See timetable</a>
   </div>
+  <div><a class="more" href="#prices" data-i18n="ctaPrices">See prices</a></div>
 </header>
 
 <div class="sw">
@@ -261,6 +295,54 @@
       </ul>
     </section>
   </div>
+
+  <section class="prices" id="prices">
+    <h2 data-i18n="pricesH">From 288 baht a class.</h2>
+    <p class="lead" data-i18n="pricesSub">Counted at 4 mornings a week (16 classes a month).</p>
+    <div class="plans">
+      <div class="plan feature">
+        <span class="badge" data-i18n="dedBadge">Most students choose this</span>
+        <h3 data-i18n="dedH">Dedicated Student</h3>
+        <p class="line" data-i18n="dedLine">Cheaper because you promise to show up. In Ashtanga, the commitment is the practice.</p>
+        <p class="small" data-i18n="dedSmall">At least 16 classes a month. Book your month between the 1st and the 5th.</p>
+        <ul class="rows">
+          <li><span class="pn"><span data-i18n="mo3">3 months</span></span><span class="pv"><b>฿18,000</b><small>375 <span data-i18n="perClass">per class</span></small></span></li>
+          <li><span class="pn"><span data-i18n="mo6">6 months</span></span><span class="pv"><b>฿33,000</b><small>344 <span data-i18n="perClass">per class</span></small></span></li>
+          <li><span class="pn"><span data-i18n="mo12">12 months</span><small data-i18n="mo13">(13 months)</small><small data-i18n="dedDay">About 152 baht a day.</small></span><span class="pv"><b>฿59,900</b><small>288 <span data-i18n="perClass">per class</span></small></span></li>
+        </ul>
+      </div>
+      <div class="plan">
+        <h3 data-i18n="flexH">Flexible Schedule</h3>
+        <p class="line" data-i18n="flexLine">For busy lives. Come when you can.</p>
+        <ul class="rows">
+          <li><span class="pn"><span data-i18n="mo1">1 month</span></span><span class="pv"><b>฿9,600</b><small>600 <span data-i18n="perClass">per class</span></small></span></li>
+          <li><span class="pn"><span data-i18n="mo2">2 months</span></span><span class="pv"><b>฿18,200</b><small>569 <span data-i18n="perClass">per class</span></small></span></li>
+          <li><span class="pn"><span data-i18n="mo3">3 months</span></span><span class="pv"><b>฿25,800</b><small>538 <span data-i18n="perClass">per class</span></small></span></li>
+          <li><span class="pn"><span data-i18n="mo6">6 months</span></span><span class="pv"><b>฿45,000</b><small>469 <span data-i18n="perClass">per class</span></small></span></li>
+          <li><span class="pn"><span data-i18n="mo12">12 months</span><small data-i18n="mo13">(13 months)</small></span><span class="pv"><b>฿78,000</b><small>375 <span data-i18n="perClass">per class</span></small></span></li>
+        </ul>
+      </div>
+      <div class="plan">
+        <h3 data-i18n="ctaStart">New? Start here</h3>
+        <p class="line" data-i18n="newLine">Start with 1 month Flexible, so your teacher can guide you step by step.</p>
+        <p class="camp" data-i18n="newCamp">Until 12 Nov 2026: new students buy 1 month, get 1 month free.</p>
+      </div>
+      <div class="plan">
+        <h3 data-i18n="visitH">Visiting?</h3>
+        <ul class="rows">
+          <li><span class="pn"><span data-i18n="dropIn">Drop-in</span><small data-i18n="dropInSub">For students who know the sequence</small></span><span class="pv"><b>฿1,500</b></span></li>
+          <li><span class="pn"><span data-i18n="pack10">10-class pack</span><small data-i18n="pack10Sub">Valid 3 months</small></span><span class="pv"><b>฿14,000</b></span></li>
+        </ul>
+      </div>
+      <div class="plan quiet">
+        <h3 data-i18n="loyalH">Loyal students</h3>
+        <p class="line" data-i18n="loyalLine">After 12 months in a row, renew 12 months Dedicated at 54,900.</p>
+      </div>
+    </div>
+    <p class="fair" data-i18n="fair">One price for everyone. No secret deals.</p>
+    <p class="fine"><span data-i18n="fine">Prices in Thai baht. Buy online in the Packages tab below, or at the shala. Questions:</span>
+      <a href="https://line.me/R/ti/p/@aybkk" target="_blank" rel="noopener">LINE @aybkk</a></p>
+  </section>
 
   <section id="find">
     <h2 data-i18n="findH">Find us</h2>
@@ -327,6 +409,34 @@
       f4: 'No phones, no photos and no talking in the shala during practice.',
       f5: 'After practice, clean your mat and the floor around it with the spray we provide.',
       f6: 'The shala is closed on full moon and new moon days.',
+      ctaPrices: 'See prices',
+      pricesH: 'From 288 baht a class.',
+      pricesSub: 'Counted at 4 mornings a week (16 classes a month).',
+      dedBadge: 'Most students choose this',
+      dedH: 'Dedicated Student',
+      dedLine: 'Cheaper because you promise to show up. In Ashtanga, the commitment is the practice.',
+      dedSmall: 'At least 16 classes a month. Book your month between the 1st and the 5th.',
+      dedDay: 'About 152 baht a day.',
+      perClass: 'per class',
+      mo1: '1 month',
+      mo2: '2 months',
+      mo3: '3 months',
+      mo6: '6 months',
+      mo12: '12 months',
+      mo13: '(13 months)',
+      flexH: 'Flexible Schedule',
+      flexLine: 'For busy lives. Come when you can.',
+      newLine: 'Start with 1 month Flexible, so your teacher can guide you step by step.',
+      newCamp: 'Until 12 Nov 2026: new students buy 1 month, get 1 month free.',
+      visitH: 'Visiting?',
+      dropIn: 'Drop-in',
+      dropInSub: 'For students who know the sequence',
+      pack10: '10-class pack',
+      pack10Sub: 'Valid 3 months',
+      loyalH: 'Loyal students',
+      loyalLine: 'After 12 months in a row, renew 12 months Dedicated at 54,900.',
+      fair: 'One price for everyone. No secret deals.',
+      fine: 'Prices in Thai baht. Buy online in the Packages tab below, or at the shala. Questions:',
       findH: 'Find us', maps: 'Open in Google Maps', contactH: 'Message us',
       copy: 'Copy', copied: 'Copied',
       tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
@@ -367,6 +477,34 @@
       f4: 'ระหว่างการฝึก ห้ามใช้โทรศัพท์ ห้ามถ่ายรูป และงดพูดคุยในห้องฝึก',
       f5: 'ฝึกเสร็จแล้ว ทำความสะอาดเสื่อและพื้นรอบ ๆ ด้วยสเปรย์ที่เราเตรียมไว้',
       f6: 'AYBKK ปิดในวันพระจันทร์เต็มดวงและวันพระจันทร์ดับ (moon day)',
+      ctaPrices: 'ดูราคา',
+      pricesH: 'เริ่มต้นเพียง 288 บาทต่อครั้ง',
+      pricesSub: 'คิดจากการฝึกสัปดาห์ละ 4 เช้า (เดือนละ 16 ครั้ง)',
+      dedBadge: 'นักเรียนส่วนใหญ่เลือกแบบนี้',
+      dedH: 'นักเรียนตั้งใจฝึก (Dedicated)',
+      dedLine: 'ราคาถูกกว่า เพราะคุณสัญญาว่าจะมาฝึกสม่ำเสมอ ในอัษฎางคะ ความตั้งใจนี่แหละคือการฝึก',
+      dedSmall: 'ฝึกอย่างน้อยเดือนละ 16 ครั้ง และจองคลาสของทั้งเดือนระหว่างวันที่ 1 ถึง 5',
+      dedDay: 'ตกวันละประมาณ 152 บาท',
+      perClass: 'บาท/ครั้ง',
+      mo1: '1 เดือน',
+      mo2: '2 เดือน',
+      mo3: '3 เดือน',
+      mo6: '6 เดือน',
+      mo12: '12 เดือน',
+      mo13: '(ได้ 13 เดือน)',
+      flexH: 'ตารางยืดหยุ่น (Flexible)',
+      flexLine: 'สำหรับคนที่ชีวิตยุ่ง ว่างเมื่อไหร่ก็มาฝึกได้',
+      newLine: 'เริ่มด้วยแบบยืดหยุ่น 1 เดือน เพื่อให้ครูค่อย ๆ แนะนำคุณทีละขั้น',
+      newCamp: 'ถึง 12 พ.ย. 2026: นักเรียนใหม่ซื้อ 1 เดือน แถมฟรีอีก 1 เดือน',
+      visitH: 'มาเยือนชั่วคราว?',
+      dropIn: 'ครั้งเดียว (drop-in)',
+      dropInSub: 'สำหรับผู้ที่จำลำดับท่าได้แล้ว',
+      pack10: 'แพ็ก 10 ครั้ง',
+      pack10Sub: 'ใช้ได้ 3 เดือน',
+      loyalH: 'นักเรียนประจำ',
+      loyalLine: 'ฝึกต่อเนื่องครบ 12 เดือน ต่ออายุแบบ Dedicated 12 เดือนได้ในราคา 54,900 บาท',
+      fair: 'ราคาเดียวสำหรับทุกคน ไม่มีดีลลับ',
+      fine: 'ราคาเป็นเงินบาท ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:',
       findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', contactH: 'ทักหาเรา',
       copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
       tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
@@ -407,6 +545,34 @@
       f4: '练习期间，练习室内不可使用手机、拍照或交谈。',
       f5: '练习结束后，请用我们准备的清洁喷雾擦干净垫子和周围的地面。',
       f6: '每逢满月和新月（月亮日），AYBKK 停课。',
+      ctaPrices: '查看价格',
+      pricesH: '每节课低至 288 泰铢。',
+      pricesSub: '按每周练习4个早上计算（每月16节课）。',
+      dedBadge: '大多数学员的选择',
+      dedH: '专注学员（Dedicated）',
+      dedLine: '价格更低，因为你承诺会来练习。在阿斯汤加，坚持本身就是练习。',
+      dedSmall: '每月至少16节课。请在每月1日至5日之间预约整月的课程。',
+      dedDay: '约合每天 152 泰铢。',
+      perClass: '泰铢/节',
+      mo1: '1个月',
+      mo2: '2个月',
+      mo3: '3个月',
+      mo6: '6个月',
+      mo12: '12个月',
+      mo13: '（共13个月）',
+      flexH: '灵活时间（Flexible）',
+      flexLine: '适合忙碌的生活。有空就来。',
+      newLine: '先从1个月灵活套餐开始，让老师一步一步带你。',
+      newCamp: '2026年11月12日前：新学员买1个月，再送1个月。',
+      visitH: '短期来访？',
+      dropIn: '单次课（drop-in）',
+      dropInSub: '适合已熟悉序列的学生',
+      pack10: '10次课卡',
+      pack10Sub: '3个月内有效',
+      loyalH: '老学员',
+      loyalLine: '连续练习满12个月后，续订12个月专注套餐只需 54,900 泰铢。',
+      fair: '所有人同一个价格，没有私下优惠。',
+      fine: '价格以泰铢计。可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：',
       findH: '地址与联系方式', maps: '在 Google 地图中打开', contactH: '联系我们',
       copy: '复制', copied: '已复制',
       tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
@@ -447,6 +613,34 @@
       f4: 'Во время практики в зале нельзя пользоваться телефоном, фотографировать и разговаривать.',
       f5: 'После практики протрите коврик и пол вокруг него спреем, который мы оставляем в зале.',
       f6: 'В дни полнолуния и новолуния (лунные дни) занятий нет.',
+      ctaPrices: 'Цены',
+      pricesH: 'От 288 бат за занятие.',
+      pricesSub: 'Из расчёта 4 утра в неделю (16 занятий в месяц).',
+      dedBadge: 'Выбор большинства учеников',
+      dedH: 'Постоянный ученик (Dedicated)',
+      dedLine: 'Дешевле, потому что вы обещаете приходить. В аштанге постоянство — это и есть практика.',
+      dedSmall: 'Не меньше 16 занятий в месяц. Запишитесь на весь месяц с 1-го по 5-е число.',
+      dedDay: 'Около 152 бат в день.',
+      perClass: 'бат за занятие',
+      mo1: '1 месяц',
+      mo2: '2 месяца',
+      mo3: '3 месяца',
+      mo6: '6 месяцев',
+      mo12: '12 месяцев',
+      mo13: '(13 месяцев)',
+      flexH: 'Свободный график (Flexible)',
+      flexLine: 'Для занятых. Приходите, когда можете.',
+      newLine: 'Начните с 1 месяца Flexible, чтобы учитель вёл вас шаг за шагом.',
+      newCamp: 'До 12 ноября 2026: новые ученики покупают 1 месяц и получают ещё 1 месяц бесплатно.',
+      visitH: 'Вы проездом?',
+      dropIn: 'Разовое занятие (drop-in)',
+      dropInSub: 'Для тех, кто знает последовательность',
+      pack10: '10 занятий',
+      pack10Sub: 'Действует 3 месяца',
+      loyalH: 'Верные ученики',
+      loyalLine: 'После 12 месяцев подряд — продление Dedicated на 12 месяцев за 54,900 бат.',
+      fair: 'Одна цена для всех. Никаких тайных скидок.',
+      fine: 'Цены в тайских батах. Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:',
       findH: 'Как нас найти', maps: 'Открыть в Google Картах', contactH: 'Напишите нам',
       copy: 'Копировать', copied: 'Скопировано',
       tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
