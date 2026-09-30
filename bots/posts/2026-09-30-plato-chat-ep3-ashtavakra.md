@@ -20,21 +20,19 @@ Ashta means eight. Vakra means bent.
 Before he was born, he heard his father chanting.
 He heard the mistakes.
 His father got angry, and the baby was born bent.
-Then his father lost a contest at the king's court,
-and was taken away.
 So his grandfather raised him.
 At twelve, the boy walked to the king's court.
 The guard said, "Go home. You are too young."
 The boy said, "Grey hair does not make you old.
 What you know makes you old."
-He won. He brought his father home.
+He won the contest.
 Then he stepped into a river,
 and his bent body came out straight.
 
 ## LADDER 2: THE REAL BOY (the reveal)
 I knew a boy like this.
 Born in Mysore, 29 September 1971.
-In his own book he wrote,
+He wrote,
 "As a child, I was always ill."
 He ran out the back door to play cricket.
 His grandfather came looking for him.
