@@ -20,6 +20,8 @@
 
 - 2026-09-30 Boonchu decisions: new shop-window top section OK; authorization year 2012; phone +66 82 011 1433; show 9,600 (add 5% later); 180K name idea "AYBKK In-depth Mysore Program: Assistant Training" (Machi pushed back: still reads as training); campaign "buy 1 get 1 free" 29 Sep to 12 Nov (44 days, not 42; Machi pushed back: define as bring-a-new-friend, 1-month only). Email and floor still open (default 8th floor, no email).
 
+- 2026-09-30 Boonchu: 180K framing = "deepen your practice, understand the method, learn the biomechanics of the practice and how Ashtanga practice works" (no "assistant training"). Campaign: Buy 1 month get 1 month free, NEW students only, 29 Sep to 12 Nov. Wants a promotion for recent/current students too, all live in October, and a free gift working this weekend (3-4 Oct) to warm leads. Machi proposed: gift = "Your First Mysore Class at AYBKK" guide via ManyChat keyword MYSORE; current students = bring-a-friend reward (1 free week added when the friend joins).
+
 ## Log
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
