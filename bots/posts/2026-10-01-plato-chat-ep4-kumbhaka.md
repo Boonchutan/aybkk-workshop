@@ -63,6 +63,7 @@ Kumbhaka is real. It lives in pranayama.
 Guruji said: first you perfect asana, then you practice pranayama.
 The old book says, tame the breath slowly,
 like you tame a lion, an elephant, a tiger.
+(On screen, small: "Learn pranayama in person, from a qualified teacher.")
 
 ## LINE
 On the mat, don't be a pot.
@@ -96,3 +97,8 @@ Agastya = uh-GUST-yuh. Kumbhayoni = KOOM-bha-YO-nee. Kumbhaka = KOOM-bha-ka. Vay
 - Navasana: Yoga Mala (tr. Eddie Stern), asana 20: lift-up 7th to 8th vinyasa on puraka, back on rechaka (3 to 6 times); "While coming into the state of this asana, never do kumbhaka, that is, never hold your breath." Also: "kumbhaka ... does not occur either in the Surya Namaskara or the asanas."
 - "First you perfect asana, and then you practice pranayama": Pattabhi Jois, 1994 interview (Sandra Anderson). Yoga Mala: pranayama after asanas are practiced with ease.
 - Lion, elephant, tiger: Hatha Yoga Pradipika 2.15 (tr. Pancham Sinh): the breath is controlled by slow degrees, like lions, elephants and tigers (paraphrase in the script, label as the old book).
+
+## FINAL CHECK NOTES (workflow done 1 Oct)
+- Agastya DIGESTED the ocean (jirna); never say he 'held' it. The pot/kumbhaka link is a word link and a picture, not something the texts say.
+- The Mahabharata does not say 'in one sip'. Keep 'he drank the ocean. All of it.'
+- Add the on-screen safety line under the pranayama part.
