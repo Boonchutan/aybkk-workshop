@@ -1873,7 +1873,7 @@
    "https://simonwillison.net/2026/Sep/29/openai-devday-2026-live-blog/"
   ],
   "postizId": "cmun6h89p04r2my0ysevod252",
-  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 23:00 UTC on 29 Sep (06:00 Bangkok 30 Sep) by the daily routine; all 10 slides Cloudflare FLUX.2 [klein] 4B (slide 5 redone: the first coin carried a monarch's head and fake lettering); JPEG slides",
+  "status": "Published on No Cap Daily 29 Sep 23:05 UTC (scheduled for 23:00; Postiz reported \"Failed to create media\" at 23:04 and published on its retry)",
   "images": [
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-openai-dots/01.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-openai-dots/02.png",
@@ -1923,7 +1923,7 @@
    "https://commons.wikimedia.org/wiki/File:Case_Keenum_(38318757956)_(cropped).jpg"
   ],
   "postizId": "cmun6qmfq04simy0y0fc5mum4",
-  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 02:00 UTC on 30 Sep (09:00 Bangkok) by the daily routine; cover is a Wikimedia Commons photo of Case Keenum with the Vikings in 2017 (Keith Allison, CC BY-SA 2.0, credited on the slide), slides 2-10 Cloudflare FLUX.2 [klein] 4B (slide 10 redone: the first ball was a soccer ball); JPEG slides",
+  "status": "Published on No Cap Daily 30 Sep 02:00 UTC (scheduled post)",
   "images": [
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-case-keenum/01.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-case-keenum/02.png",
@@ -1969,7 +1969,7 @@
    "https://engineering.atspotify.com/2026/9/ai-changed-how-spotify-builds-what-we-learned-and-fixed-about-quality-at-higher-velocity"
   ],
   "postizId": "cmun6upt804szmy0y07isbl15",
-  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 13:00 UTC on 30 Sep (20:00 Bangkok) by the daily routine; all 10 slides Cloudflare FLUX.2 [klein] 4B (fake stamped characters painted out of the slide 7 wrench); JPEG slides",
+  "status": "Not published: Postiz ERROR at the 13:00 UTC slot on 30 Sep, \"Media fetch failed, please try again\" (Postiz email 13:12 UTC); Postiz did not retry",
   "images": [
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-spotify-outage/01.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-spotify-outage/02.png",
@@ -2018,7 +2018,7 @@
    "https://commons.wikimedia.org/wiki/File:Pete_Buttigieg,_Secretary_of_Transportation.jpg"
   ],
   "postizId": "cmun6utmq04t0my0yra32i6dr",
-  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 16:00 UTC on 30 Sep (23:00 Bangkok) by the daily routine; cover is the official 2022 US Department of Transportation portrait from Wikimedia Commons (public domain, credited on the slide), slides 2-10 Cloudflare FLUX.2 [klein] 4B (slide 5 redone: the first nozzle read as a pipe fitting); JPEG slides",
+  "status": "Published on No Cap Daily 30 Sep 16:00 UTC (scheduled post)",
   "images": [
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-pete-buttigieg/01.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-pete-buttigieg/02.png",
@@ -2030,6 +2030,206 @@
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-pete-buttigieg/08.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-pete-buttigieg/09.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-09-30-pete-buttigieg/10.png"
+  ]
+ },
+ {
+  "date": "2026-10-01",
+  "geo": "Global",
+  "term": "gemini 4",
+  "volume": "2,000+ searches today (US daily list)",
+  "category": "tech",
+  "angle": "Google DeepMind announced Gemini 4 Argon on September 30, 2026, its first new flagship generation since Gemini 3 (November 18, 2025): output limit up to 1M tokens from 64K (Google: 1M tokens is about 8 novels); rolling out first to vetted cyber defenders in the Fairwind Program, then paid API customers and Google AI Ultra subscribers ($100 or $200 a month), no date; introductory API price $2/$10 per million tokens, later $4/$20, one-fifth of GPT-6 Astra (VentureBeat); leads 12 of the 18 benchmarks Google disclosed and is No. 1 on the Vals Index; Gemini 3.5 Pro was promised for June and dropped (Bloomberg via TechCrunch, The Next Web); on September 18 Google confirmed a Gemini model hacked 3 companies in a May test by Irregular (Reuters, TechCrunch); hidden fact: the first users, vetted defenders and Google teams, get Argon without its cyber guardrails, and Google warns that in the wrong hands the same capabilities can be an equally powerful threat (Google blog, The Next Web, 9to5Google). Google category: none (daily list).",
+  "carousel": "carousels/2026-10-01-gemini-4",
+  "facts": [
+   "Google launched Gemini 4 Argon on September 30. Its first new flagship generation since Gemini 3 in November 2025.",
+   "You can't use it yet. Only vetted cyber defenders can. Paid API customers and AI Ultra subscribers ($100 or $200 a month) come next. No date given.",
+   "It can write 1 million tokens in one answer, up from 64K. Google says 1 million tokens is about 8 average-length novels.",
+   "Its launch price is one-fifth of OpenAI's GPT-6 Astra. $2 per million input tokens and $10 output, for now. Later: $4 and $20.",
+   "It tops 12 of 18 tests Google chose to publish. Vals AI, an outside tester, also ranks it No. 1 on its index.",
+   "Google promised Gemini 3.5 Pro for June. It never shipped. It missed internal goals and Google dropped it, Bloomberg reported.",
+   "12 days before launch, Google confirmed a Gemini model hacked 3 companies. In a May test by the firm Irregular, it guessed passwords to reach sites it thought were in scope.",
+   "Its first users get it with the cyber guardrails switched off. Vetted defenders and Google's own teams. Google warns that in the wrong hands the same abilities can be \"an equally powerful threat.\""
+  ],
+  "caption": "\"gemini 4\" — 2,000+ searches today. Google's new flagship AI, and most people can't use it yet.\n\nWhy: On September 30, Google DeepMind announced Gemini 4 Argon, its first new flagship generation since Gemini 3 in November 2025. It can write up to 1 million tokens in one answer, up from 64K. It goes first to vetted cyber defenders. Paid API customers and AI Ultra subscribers come next, with no date.\n\nWhat most people don't know: those first users get it with its cyber guardrails switched off. Google's own program page warns that \"in the wrong hands, the same capabilities can become an equally powerful threat.\"\n\nVery simply put: the best lock-picker goes to the locksmiths first.",
+  "sources": [
+   "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/",
+   "https://thenextweb.com/news/google-gemini-4-argon-cyber-defenders-fairwind",
+   "https://deepmind.google/fairwind-program/",
+   "https://1027wbow.com/2026/09/30/google-announces-gemini-4-flagship-ai-model-after-months-of-delays/",
+   "https://9to5google.com/2026/09/30/gemini-4-argon-announcement/",
+   "https://blog.google/products-and-platforms/products/gemini/gemini-3/",
+   "https://blog.google/innovation-and-ai/products/gemini-app/one-billion-monthly-users/",
+   "https://blog.google/products-and-platforms/products/google-one/google-ai-subscriptions/",
+   "https://ai.google.dev/gemini-api/docs/long-context",
+   "https://venturebeat.com/technology/google-unveils-gemini-4-argon-retaking-benchmark-lead-over-openai-and-anthropic-but-in-limited-release",
+   "https://www.vals.ai/benchmarks/vals_index",
+   "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5/",
+   "https://techcrunch.com/2026/07/21/google-releases-three-new-gemini-models-but-no-3-5-pro/",
+   "https://kfgo.com/2026/09/18/gemini-hacked-three-companies-in-first-known-breakout-by-googles-ai-wsj-reports/",
+   "https://techcrunch.com/2026/09/19/googles-gemini-is-the-latest-ai-model-to-hack-other-companies/"
+  ],
+  "postizId": "cmuom2ilx04ifp70yaq12uudg",
+  "status": "Published on No Cap Daily 30 Sep 23:00 UTC (06:00 Bangkok 1 Oct, scheduled post); all 10 backgrounds are designed glowing-network art drawn in code, because Cloudflare's free daily image quota was used up; JPEG slides",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-gemini-4/10.png"
+  ]
+ },
+ {
+  "date": "2026-10-01",
+  "geo": "Global",
+  "term": "wnba playoffs",
+  "volume": "5,000,000+ searches (7d, US weekly list, No. 1)",
+  "category": "Sports",
+  "angle": "The money behind the 2026 WNBA playoffs (presented by Google Pixel, began September 27), the first under the new 7-year CBA signed March 20, 2026: per-player playoff bonuses $60,000 champion (from $22,908), $20,000 runner-up, $10,000 semifinal exit, $5,000 first-round exit; all 8 teams split about $1.44M at 12 players a team (Front Office Sports), about one 2026 max salary ($1.4M, from a $249,244 supermax in 2025); minimum $270,000-$300,000 (from $66,079), cap $7M (from $1.5M); Caitlin Clark $78,066 to $530,000, but 99.3% of her estimated $16.1M in 2025 came from sponsors (Sportico); 11-year $3.1B media deal, about $281M a year vs $43M; NBA playoff pool $35.7M, NBA champions over $800,000 each (Forbes); No. 8 Liberty swept No. 1 Lynx (33-11) September 29, a WNBA first, so each Lynx player got $5,000; Clark's 27-point, 15-assist game, the first 25/15 game in WNBA history; Commissioner's Cup winners got $30,000 each (Liberty, June 30).",
+  "carousel": "carousels/2026-10-01-wnba-playoffs",
+  "facts": [
+   "The No. 8 Liberty swept the No. 1 Lynx, a WNBA first. 2-0, finished Tuesday, September 29. No No. 8 seed had ever beaten a No. 1.",
+   "Caitlin Clark scored 27 with 15 assists. Nobody had ever done that. The first 25-point, 15-assist game in WNBA history. Game 3 against the Aces is Thursday.",
+   "A WNBA title now pays $60,000 per player. Up from $22,908 in 2025, under the new deal signed in March.",
+   "The top salary jumped from $249,244 to $1.4 million. The minimum went from $66,079 to at least $270,000. The team cap from $1.5 million to $7 million.",
+   "Caitlin Clark's pay: $78,066 last year, $530,000 this year. But sponsors paid 99.3% of her estimated $16.1 million in 2025, per Sportico.",
+   "The new TV deal pays about $281 million a year. 11 years, $3.1 billion. The old deal paid about $43 million a year.",
+   "The Lynx went 33-11. Each player's playoff bonus: $5,000. The first-round exit bonus. Winning June's Commissioner's Cup paid $30,000 a player.",
+   "All 8 playoff teams split $1.44 million. About one max salary. At 12 players a team, per Front Office Sports. NBA playoff teams split $35.7 million."
+  ],
+  "caption": "\"wnba playoffs\" — 5,000,000+ searches this week. The first playoffs under the new pay deal.\n\nWhy: The playoffs began September 27. On September 29 the No. 8 Liberty swept the No. 1 Lynx, a first in WNBA history, and Caitlin Clark had the first 25-point, 15-assist game in WNBA history. A title now pays $60,000 per player, up from $22,908 last year.\n\nWhat most people don't know: all 8 playoff teams split about $1.44 million in bonuses, at 12 players a team. That is about one player's top salary this year, $1.4 million. NBA playoff teams split $35.7 million.\n\nVery simply put: the whole playoffs cost about one max contract.",
+  "sources": [
+   "https://pr.nba.com/wp-content/uploads/sites/46/2026/03/KEY-ELEMENTS-OF-THE-TENTATIVE-COLLECTIVE-BARGAINING-AGREEMENT-Final-.pdf",
+   "https://frontofficesports.com/article/wnba-player-pay-playoff-format/",
+   "https://www.wnba.com/news/2026-wnba-postseason-faq",
+   "https://www.wnba.com/news/2026-playoffs-series-preview-first-round",
+   "https://espnpressroom.com/press-release/espn-tips-off-its-coverage-of-the-2026-wnba-playoffs-presented-by-google-pixel/",
+   "https://www.cbssports.com/wnba/news/wnba-cba-news-deal-details-salaries-explainer/",
+   "https://www.cbssports.com/wnba/news/2026-wnba-playoffs-bracket-schedule/",
+   "https://www.cbssports.com/wnba/news/caitlin-clark-historic-performance-fever-aces-game-2-wnba-playoffs/",
+   "https://cbssports.com/wnba/news/lynx-fall-to-liberty-historic-upset-wnba-playoff-first-round",
+   "https://www.cbssports.com/wnba/news/wnba-commissioners-cup-format-schedule-prize-money/",
+   "https://frontofficesports.com/wnba-media-deals-growth/",
+   "https://sports.yahoo.com/wnba/article/heres-how-much-more-money-caitlin-clark-is-set-to-make-under-the-new-wnba-cba-003149327.html",
+   "https://sports.yahoo.com/articles/caitlin-clark-2025-salary-114k-105500703.html",
+   "https://sports.yahoo.com/articles/nba-players-split-34-million-125952648.html",
+   "https://sports.yahoo.com/articles/caitlin-clarks-fever-face-elimination-145448748.html"
+  ],
+  "postizId": "cmuolothe04h7p70y1zugjwki",
+  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 02:00 UTC on 1 Oct (09:00 Bangkok) by the daily routine; all 10 slides Cloudflare FLUX.2 [klein] 4B (cover brightened from 22% to 27% luminance); JPEG slides",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/10.png"
+  ]
+ },
+ {
+  "date": "2026-10-01",
+  "geo": "Global",
+  "term": "mu stock",
+  "volume": "20,000+ searches today (US daily list)",
+  "category": "tech",
+  "angle": "Micron fiscal Q4 2026 (reported September 30): record revenue $54.23B, up 379% from $11.32B; adjusted EPS $33.42 vs $31.61 expected (LSEG via Reuters); Core Data Center unit $18.002B vs $1.577B a year earlier (+1,042%); DRAM $39.8B, 73% of sales; GAAP net income $37.70B, more than all of fiscal 2025 revenue ($37.38B); guidance about $61.5B; market value over $1T (first crossed May 26, 2026); $32B of customer commitments under 26 take-or-pay deals, most of 2027 HBM supply under agreement; IDC forecasts the average smartphone at $581 in 2026 (+27.6%) as DRAM and NAND costs rose over 300%; founded October 5, 1978 in a Boise dental office basement; hidden fact: Micron exited its 29-year-old Crucial consumer brand (announced December 3, 2025, shipments ended February 2026) to redirect supply to data centers (Micron release, Blocks & Files). Google category: none (daily list).",
+  "carousel": "carousels/2026-10-01-micron-earnings",
+  "facts": [
+   "Micron makes memory: the RAM and storage inside your devices. DRAM, NAND flash, and HBM, the stacked memory AI data centers need.",
+   "Quarterly revenue: $54.23 billion, up 379% in a year. A record, reported September 30. A year earlier: $11.32 billion.",
+   "Its core data center sales grew more than 11 times. From $1.58 billion to $18 billion in a year, in its Core Data Center unit.",
+   "Micron is now worth over $1 trillion. It first crossed $1 trillion on May 26, 2026.",
+   "Customers put down $32 billion to lock in future supply. 26 multi-year take-or-pay deals, mostly cash deposits. Most of its 2027 HBM is already under contract.",
+   "Phones cost more: the average price may hit $581 this year. Up 27.6% in a year, IDC forecasts, as memory costs rose over 300%.",
+   "It started in 1978 in a dental office basement in Boise, Idaho. 4 people designing chips. It is still based in Boise.",
+   "It quit selling to shoppers: Crucial shut after 29 years. Announced December 2025, shipments ended February 2026, to send memory to data centers."
+  ],
+  "caption": "\"mu stock\" — 20,000+ searches today. Micron just had the biggest quarter in its history.\n\nWhy: On September 30, Micron reported record quarterly revenue of $54.23 billion, up 379% in a year, driven by demand from AI data centers. Its profit for the quarter, $37.7 billion, was more than its entire revenue for fiscal 2025. It expects about $61.5 billion next quarter.\n\nWhat most people don't know: Micron quit selling memory to ordinary shoppers. In December 2025 it shut down Crucial, its 29-year-old consumer brand, to send supply to data centers. Shipments ended in February.\n\nVery simply put: AI got the memory. Shoppers got the bill.",
+  "sources": [
+   "https://www.sec.gov/Archives/edgar/data/0000723125/000072312526000018/a2026q4ex991-pressrelease.htm",
+   "https://s25.q4cdn.com/621799436/files/doc_financials/2026/q4/Q4-FY26-Prepared-Remarks.pdf",
+   "https://s25.q4cdn.com/621799436/files/doc_financials/2026/q4/Q4-26-Earnings-Deck.pdf",
+   "https://1027wbow.com/2026/09/30/micron-forecasts-quarterly-revenue-above-estimates/",
+   "https://en.wikipedia.org/wiki/Micron_Technology",
+   "https://stockanalysis.com/stocks/mu/market-cap/",
+   "https://www.trendforce.com/presscenter/news/20260907-13219.html",
+   "https://www.idc.com/resource-center/blog/smartphone-shipments-set-for-record-16-7-drop-in-2026-as-the-memory-crisis-hits-full-force/",
+   "https://investors.micron.com/news/press-release/2026/Micron-Accelerates-U-S--Investments-Pours-First-Concrete-at-New-York-Fab/default.aspx",
+   "https://www.micron.com/about/company/company-timeline",
+   "https://finance.yahoo.com/news/micron-announces-exit-crucial-consumer-164000543.html",
+   "https://blocksandfiles.com/2025/12/04/micron-makes-crucial-decision-farewell/"
+  ],
+  "postizId": "cmuolsjvm04hgp70ycxjtsgo1",
+  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 13:00 UTC on 1 Oct (20:00 Bangkok) by the daily routine; all 10 slides Cloudflare FLUX.2 [klein] 4B; JPEG slides",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/10.png"
+  ]
+ },
+ {
+  "date": "2026-10-01",
+  "geo": "Global",
+  "term": "ynon kreiz",
+  "volume": "500+ searches today (US daily list)",
+  "category": "Business & Finance",
+  "angle": "On September 30, 2026 Paramount Skydance named Mattel CEO Ynon Kreiz co-CEO of the combined Paramount and Warner Bros. Discovery (Paramount pays $31 a share in cash, $81B equity and $110B enterprise value; closing expected October 6), minutes after Judge Araceli Martinez-Olguin approved the settlement with 12 state attorneys general ($1.5B of US production over 5 years, at least 30 theatrical films a year, an oversight board at CNN and CBS News); Kreiz runs day-to-day operations and integration from October 5 while David Ellison keeps strategy; Barbie, Mattel's first theatrical film, grossed $1,447,138,421 and is Warner Bros. Pictures' highest-grossing film ever; in 2018 he became Mattel's 4th CEO in 4 years after a $1.1B loss; sold Maker Studios to Disney in 2014 ($500M plus up to $450M); Roger Lynch succeeds him at Mattel; hidden fact: Mattel's stock rose just 5% in his 8 years as CEO while the S&P 500 gained nearly 200% (Reuters, Deadline). Cover photo: Gage Skidmore, CC BY-SA 2.0, VidCon 2014.",
+  "carousel": "carousels/2026-10-01-ynon-kreiz",
+  "facts": [
+   "Ynon Kreiz will be co-CEO of Paramount and Warner Bros. Announced September 30. He starts October 5, beside chairman and CEO David Ellison.",
+   "Paramount is paying $110 billion for Warner Bros. Discovery. $31 a share in cash. Closing is expected October 6.",
+   "He was named minutes after a judge cleared the merger. The settlement with 12 states requires $1.5 billion of US film and TV production over 5 years.",
+   "Ellison keeps the big picture. Kreiz runs the day to day. Strategy, creative, talent and money stay with Ellison. Kreiz merges the 2 companies.",
+   "Barbie was Mattel's first movie. It made over $1.4 billion. Warner Bros. released it in 2023. It is Warner Bros. Pictures' biggest film ever.",
+   "In 2018 he became Mattel's 4th CEO in 4 years. Mattel had lost $1.1 billion the year before, per The Times of Israel.",
+   "He sold 2 companies to Disney, including Maker Studios. The YouTube network went for $500 million in 2014, plus up to $450 million more.",
+   "In his 8 years, Mattel's stock rose just 5%. The S&P 500 gained nearly 200% over the same time, Reuters reports."
+  ],
+  "caption": "\"ynon kreiz\" — 500+ searches today. The man behind the Barbie movie will co-run Paramount and Warner Bros.\n\nWhy: On September 30, Paramount named Mattel CEO Ynon Kreiz co-CEO of the company it forms by buying Warner Bros. Discovery, a $110 billion deal. He starts October 5 and runs day-to-day operations. David Ellison keeps strategy. The news came minutes after a judge cleared the merger.\n\nWhat most people don't know: Barbie, Mattel's first movie, became Warner Bros. Pictures' biggest film ever, at over $1.4 billion. Yet Mattel's stock rose just 5% in Kreiz's 8 years as CEO, while the S&P 500 gained nearly 200%, Reuters reports.\n\nVery simply put: Barbie won the box office. Mattel's stock barely noticed.",
+  "sources": [
+   "https://www.prnewswire.com/news-releases/chairman-and-ceo-david-ellison-announces-ynon-kreiz-co-ceo-of-the-anticipated-combined-paramount-and-warner-bros-discovery-at-closing-to-help-build-the-next-generation-global-media-company-302894978.html",
+   "https://www.sec.gov/Archives/edgar/data/1437107/000143710726000018/exhibit991.htm",
+   "https://tvnewscheck.com/business/article/ynon-kreiz-anointed-co-ceo-of-newly-minted-parabros/",
+   "https://www.thewrap.com/industry-news/business/judge-approves-paramount-warner-bros-merger-settlement/",
+   "https://www.yahoo.com/entertainment/movies/articles/mattel-ynon-kreiz-named-co-202416209.html",
+   "https://www.boxofficemojo.com/title/tt1517268/",
+   "https://en.wikipedia.org/wiki/Barbie_(film)",
+   "https://www.sec.gov/Archives/edgar/data/0000063276/000119312526408403/d158681dex991.htm",
+   "https://www.timesofisrael.com/meet-the-israeli-american-mattel-ceo-who-ushered-barbie-to-the-screen/",
+   "https://techcrunch.com/2014/03/24/disney-maker-studios/",
+   "https://y94.com/2026/09/30/mattel-names-roger-lynch-ceo/",
+   "https://www.yahoo.com/entertainment/movies/articles/ex-mattel-ceo-ynon-kreiz-180234871.html",
+   "https://en.wikipedia.org/wiki/Ynon_Kreiz",
+   "https://commons.wikimedia.org/wiki/File:Ynon_Kreiz_(14332933147)_(cropped).jpg"
+  ],
+  "postizId": "cmuos1w2e053bp70ymlzlke0n",
+  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 16:00 UTC on 1 Oct (23:00 Bangkok) by the daily routine; cover is a Wikimedia Commons photo of Ynon Kreiz at VidCon 2014 (Gage Skidmore, CC BY-SA 2.0, credited on the slide), slides 2-5 Cloudflare FLUX.2 [klein] 4B on 30 Sep, slides 6-10 made on 1 Oct after the quota reset; JPEG slides",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/10.png"
   ]
  }
 ]
