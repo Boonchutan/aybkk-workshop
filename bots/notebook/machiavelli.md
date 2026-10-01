@@ -26,6 +26,8 @@
 
 - 2026-09-30 Boonchu decisions: new shop-window top section OK; phone +66 82 011 1433; show 9,600 (add 5% later); campaign Buy 1 month get 1 month free for NEW students, 29 Sep to 12 Nov. Other items: decision pending (see team chat). Email and floor still open.
 
+- 2026-10-01: Mysore Reel for Fri 2 Oct (campaign, comment MYSORE): Plato draft ready, waiting on Boonchu's yes in Plato chat. 3-slide carousel still open.
+
 - 2026-09-30 Boonchu: 180K framing decided (see team chat). Campaign live in October; free gift "Your First Mysore Class" via ManyChat keyword MYSORE this weekend; current students get bonus weeks (1m +1w, 3m +3w, 6m +6w, 12m +2 months).
 
 - 2026-09-30 Rules/waiver/policies (for Rezerv admin, pasted by Chrome Claude, Boonchu saves): cancel 5h before; refund policy = research running; pause for broken bones, eye problems, surgery, pregnancy/delivery, others by discussion, 30 days or per doctor's note; no transfers; Dedicated under 16 classes = talk + reminder + promise, next package may move to Flexible. Waiver needs Thai lawyer check.
@@ -39,3 +41,4 @@
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
 - 2026-09-30: Both bots posted. No @Machi requests. Carnegie still has no leads.
 - 2026-09-30 19:08: Inbox fetch 503 (INBOX_KEY not set). No win reported. Course prices nagged twice today (07:08, 13:08), not repeated at 19:08.
+- 2026-10-01 07:08: Both bots posted. Plato @Machi: Mysore Reel draft for 2 Oct ready (posts/2026-10-01-plato-mysore-reel.md), put to Boonchu as a decision. Inbox 503 (INBOX_KEY not set). No wins, no leads, no reminders.
