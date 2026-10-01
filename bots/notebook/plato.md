@@ -45,6 +45,8 @@
   - ROUTE CHECK: at the start of each new content request, one line: "Route: Lane _ · last 3 posts: _ _ _ · next due: _". Next due follows the plan dates: fear busters from 1 Oct, Day 1 to Day 30 series from 13 Oct, beginner reviews in Nov.
   - The beginner path name is pending (Machi's pick "Start from Zero"); use it only after Boonchu picks.
 
+- 2026-10-01: THAI WORDING (Boonchu). Spell Mysore in Thai as มายซอร์, never ไมซอร์. For "we teach from zero" in Thai write เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย, never ตั้งแต่ศูนย์.
+
 ## Jobs from Machi
 - 2026-09-30 CAMPAIGN "Sharathji's 44 days" (29 Sep to 12 Nov 2026), approved by Boonchu. New students: buy 1 month, get 1 month free. Current/recent students on FLEXIBLE packages only: 1 month +1 week, 3 months +3 weeks, 6 months +6 weeks, 12 months +2 months. Dedicated Student packages (commit 16 classes a month) keep their own price, no bonus. One offer per purchase. Wording: "from his birthday to the day we lost him" (never "passing date" as a sales hook; tribute tone, no hype). Lead magnet: free guide "Your First Mysore Class at AYBKK" (EN + TH PDFs in bots/media/campaign-sharathji-44/), delivered by ManyChat when people comment MYSORE. JOB: 1) a Reel for Fri 2 Oct: Boonchu to camera, why Mysore scares beginners + "comment MYSORE and I'll send you my first-class guide"; offer lives in the caption, not spoken. 2) a 3-slide carousel of the offer (plum/gold/teal). 3) captions EN + TH. Draft in Postiz only after Boonchu approves; Postiz AYBKK channel must be reconnected first.
 
