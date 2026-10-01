@@ -1,6 +1,8 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-10-01: ALWAYS show Boonchu the FINISHED slides (final images + final caption) and wait for his go BEFORE scheduling. 'Post it at 8pm' is not a go if he has not seen the final set.
+- 2026-10-01: Crops: never cut the main student's legs, feet, heels or hands (not only heads). If a 4:5 crop must cut, cut empty floor, ceiling or background. Check every slide full-size for cut limbs before showing him.
 - 2026-10-01: PROMO CHANGED by Boonchu (replaces 'buy 1 month get 1 month free'): new students buy 1 package, get the same package free: 1 month, 3 months or 6 months (12 months not included). Runs from Sharathji's birthday, 29 Sep, to the day we lost him, 12 Nov 2026. CTA: 'Comment aybkk and I'll send you the link.' Plato flagged: 6+6 = 3,750 THB/month undercuts the 12-month package (6,000/month) and the market low; suggested 6 months + 3 free. FINAL 1 Oct: 1 month + 1 free (4,800/mo), 3 months + 3 free (4,300/mo), 6 months + 5 free (about 4,090/mo); 12 months not included. Earlier he picked 6 months + 3 free. Per month: 1+1 = 4,800, 3+3 = 4,300, 6+3 = 5,000 (worst deal, so Plato suggested dropping the 6-month line). No prices in captions (Open Door rule); prices go on the link page.
 - 2026-10-01: Carousels: max 2 photos of the same student in one post. Slide 1 should show a beginner or an elder. Text must not cover the space that shows an asana lifting off the floor (e.g. Mayurasana): put it at the top instead.
 - CHINESE PLATFORMS (30 Sep): Ep. 1 and Ep. 2 were never posted in Chinese. Boonchu starts the Chinese series (WeChat / Xiaohongshu) from Ep. 3 onward, keeping the same numbers as Instagram (第3集); Chinese Ep. 1 and 2 may come later.
