@@ -3,7 +3,7 @@ process.env.BKK_ADMIN_KEY = 'testkey';
 process.env.MAIL_DRY_RUN = '1';   // capture mail in an outbox instead of sending
 const express = require('express');
 const { Pool } = require('pg');
-const { mountBkk } = require('../bkk-api.js');
+const { mountBkk, moonDaysBetween } = require('../bkk-api.js');
 
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
   'postgres://test:test@127.0.0.1:5432/bkktest' });
@@ -48,6 +48,17 @@ const ok = (name, cond, extra = '') => {
     sch.body.classes.filter(c => !c.isOnline).every(c => c.capacity === 42));
   const mysore = sch.body.classes.find(c => c.title.includes('Mysore'));
   ok('Mysore class present', !!mysore);
+
+  console.log('\n— moon days and Monday —');
+  const moonList = [...moonDaysBetween('2026-09-01', '2026-11-30').keys()].join(',');
+  ok('moon days Sep–Nov 2026 match the ephemeris',
+    moonList === '2026-09-11,2026-09-26,2026-10-10,2026-10-26,2026-11-09,2026-11-24', moonList);
+  const month = await J('/api/bkk/schedule?days=62');
+  const moonSet = moonDaysBetween(month.body.classes[0].date, month.body.classes.at(-1).date);
+  ok('no class is offered on a moon day', month.body.classes.every(c => !moonSet.has(c.date)));
+  const isMon = d => new Date(d + 'T12:00:00+07:00').getUTCDay() === 1;
+  ok('no Mysore on Monday', !month.body.classes.some(c => c.kind === 'mysore' && isMon(c.date)));
+  ok('Led Primary still on Monday', month.body.classes.some(c => c.kind === 'led_primary' && isMon(c.date)));
 
   console.log('\n— buy (gateway not configured) —');
   const order = await post('/api/bkk/orders',
@@ -271,6 +282,12 @@ const ok = (name, cond, extra = '') => {
     { name: 'Moon Day', email: 'moon@x.com', productCode: 'pack10' }, ADMIN);
   const moonCode = buyer.body.member.code;
   await post('/api/bkk/bookings', { memberCode: moonCode, slotId: target.slotId, date: target.date });
+  const today = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+  const in60 = new Date(Date.now() + 67 * 86400000).toISOString().slice(0, 10);
+  const nextMoon = [...moonDaysBetween(today, in60).keys()].find(d => d > today);
+  const moonTry = await post('/api/bkk/bookings', { memberCode: moonCode, slotId: target.slotId, date: nextMoon });
+  ok('booking on a moon day is refused', moonTry.status !== 200 && /moon day/.test(JSON.stringify(moonTry.body)),
+     `${nextMoon} ${JSON.stringify(moonTry.body)}`);
   const creditsBefore = (await J('/api/bkk/me/' + moonCode)).body.passes[0].creditsLeft;
   const closed = await post('/api/bkk/admin/classes/cancel',
     { slotId: target.slotId, date: target.date, reason: 'Full moon' }, ADMIN);
