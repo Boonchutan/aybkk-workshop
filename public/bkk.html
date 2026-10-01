@@ -93,6 +93,8 @@
   }
   header.hero .sub{font-size:17px;color:#fdf7fa;text-shadow:0 1px 8px rgba(0,0,0,.5)}
   header.hero .where{color:#e2cbd7}
+  header.hero{position:relative}
+  header.hero .logo{position:absolute;top:10px;left:12px;width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.35)}
   .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
   a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:46px}
   header .btn.ghost{color:#fdf7fa;border-color:rgba(253,247,250,.55);background:rgba(23,18,26,.35)}
@@ -243,6 +245,7 @@
     <button type="button" data-lang="zh" lang="zh-Hans">中文</button>
     <button type="button" data-lang="ru" lang="ru">RU</button>
   </div>
+  <img class="logo" src="/img/aybkk-logo-240.jpg" width="120" height="120" alt="Ashtanga Yoga Center of Bangkok logo">
   <h1 class="brush">AYBKK</h1>
   <p class="sub" data-i18n="tagline">Traditional Ashtanga. Open door.</p>
   <p class="where">S31 Sukhumvit Hotel <span class="dot">·</span> 8th floor <span class="dot">·</span> Sukhumvit 31</p>
@@ -310,6 +313,7 @@
           <li><span class="pn"><span data-i18n="mo6">6 months</span></span><span class="pv"><b>฿33,000</b><small>344 <span data-i18n="perClass">per class</span></small></span></li>
           <li><span class="pn"><span data-i18n="mo12">12 months</span><small data-i18n="mo13">(13 months)</small><small data-i18n="dedDay">About 152 baht a day.</small></span><span class="pv"><b>฿59,900</b><small>288 <span data-i18n="perClass">per class</span></small></span></li>
         </ul>
+        <p class="small"><a href="https://line.me/R/ti/p/@aybkk" target="_blank" rel="noopener" data-i18n="dedHow">To start Dedicated, message us on LINE @aybkk or ask at the shala.</a></p>
       </div>
       <div class="plan">
         <h3 data-i18n="flexH">Flexible Schedule</h3>
@@ -417,6 +421,7 @@
       dedLine: 'Cheaper because you promise to show up. In Ashtanga, the commitment is the practice.',
       dedSmall: 'At least 16 classes a month. Book your month between the 1st and the 5th.',
       dedDay: 'About 152 baht a day.',
+      dedHow: 'To start Dedicated, message us on LINE @aybkk or ask at the shala.',
       perClass: 'per class',
       mo1: '1 month',
       mo2: '2 months',
@@ -436,7 +441,7 @@
       loyalH: 'Loyal students',
       loyalLine: 'After 12 months in a row, renew 12 months Dedicated at 54,900.',
       fair: 'One price for everyone. Clear and simple.',
-      fine: 'Prices in Thai baht. Buy online in the Packages tab below, or at the shala. Questions:',
+      fine: 'Prices in Thai baht. Paying online adds 5%. Buy online in the Packages tab below, or at the shala. Questions:',
       findH: 'Find us', maps: 'Open in Google Maps', contactH: 'Message us',
       copy: 'Copy', copied: 'Copied',
       tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
@@ -485,6 +490,7 @@
       dedLine: 'ราคาถูกกว่า เพราะคุณสัญญาว่าจะมาฝึกสม่ำเสมอ ในอัษฎางคะ ความตั้งใจนี่แหละคือการฝึก',
       dedSmall: 'ฝึกอย่างน้อยเดือนละ 16 ครั้ง และจองคลาสของทั้งเดือนระหว่างวันที่ 1 ถึง 5',
       dedDay: 'ตกวันละประมาณ 152 บาท',
+      dedHow: 'สมัคร Dedicated ทักมาทาง LINE @aybkk หรือสอบถามที่ชาลาได้เลย',
       perClass: 'บาท/ครั้ง',
       mo1: '1 เดือน',
       mo2: '2 เดือน',
@@ -504,7 +510,7 @@
       loyalH: 'นักเรียนประจำ',
       loyalLine: 'ฝึกต่อเนื่องครบ 12 เดือน ต่ออายุแบบ Dedicated 12 เดือนได้ในราคา 54,900 บาท',
       fair: 'ราคาเดียวสำหรับทุกคน ชัดเจน ตรงไปตรงมา',
-      fine: 'ราคาเป็นเงินบาท ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:',
+      fine: 'ราคาเป็นเงินบาท ชำระออนไลน์บวกเพิ่ม 5% ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:',
       findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', contactH: 'ทักหาเรา',
       copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
       tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
@@ -553,6 +559,7 @@
       dedLine: '价格更低，因为你承诺会来练习。在阿斯汤加，坚持本身就是练习。',
       dedSmall: '每月至少16节课。请在每月1日至5日之间预约整月的课程。',
       dedDay: '约合每天 152 泰铢。',
+      dedHow: '开通 Dedicated，请在 LINE @aybkk 联系我们，或到馆咨询。',
       perClass: '泰铢/节',
       mo1: '1个月',
       mo2: '2个月',
@@ -572,7 +579,7 @@
       loyalH: '老学员',
       loyalLine: '连续练习满12个月后，续订12个月专注套餐只需 54,900 泰铢。',
       fair: '所有人同一个价格，清楚简单。',
-      fine: '价格以泰铢计。可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：',
+      fine: '价格以泰铢计。在线支付另加 5%。可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：',
       findH: '地址与联系方式', maps: '在 Google 地图中打开', contactH: '联系我们',
       copy: '复制', copied: '已复制',
       tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
@@ -621,6 +628,7 @@
       dedLine: 'Дешевле, потому что вы обещаете приходить. В аштанге постоянство — это и есть практика.',
       dedSmall: 'Не меньше 16 занятий в месяц. Запишитесь на весь месяц с 1-го по 5-е число.',
       dedDay: 'Около 152 бат в день.',
+      dedHow: 'Чтобы оформить Dedicated, напишите нам в LINE @aybkk или спросите в шале.',
       perClass: 'бат за занятие',
       mo1: '1 месяц',
       mo2: '2 месяца',
@@ -640,7 +648,7 @@
       loyalH: 'Верные ученики',
       loyalLine: 'После 12 месяцев подряд — продление Dedicated на 12 месяцев за 54,900 бат.',
       fair: 'Одна цена для всех. Всё просто и понятно.',
-      fine: 'Цены в тайских батах. Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:',
+      fine: 'Цены в тайских батах. При онлайн-оплате +5%. Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:',
       findH: 'Как нас найти', maps: 'Открыть в Google Картах', contactH: 'Напишите нам',
       copy: 'Копировать', copied: 'Скопировано',
       tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
