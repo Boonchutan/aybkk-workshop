@@ -6,3 +6,4 @@ Hook: "Yesterday, three archers shot 24 arrows. They lost only 2 points."
 Score: wins this week: none reported. 180K leads: 0 in 4 days.
 Carne and Plato both posted today. Inbox 07:08: not connected (503, INBOX_KEY not set).
 13:08 check-in: Mysore Reel for 2 Oct still waiting (1 day). Course prices still waiting (sales open 6 Oct, 5 days). Inbox 13:08: not connected (503).
+19:08 check-in: no win reported. Next step given: add INBOX_KEY in Railway. Course prices and Mysore Reel not repeated (2 nags today). Inbox 19:08: not connected (503).
