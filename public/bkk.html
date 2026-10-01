@@ -186,14 +186,30 @@
   .cal .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
   .cal .wd{text-align:center;font-size:10.5px;font-weight:700;letter-spacing:.08em;
     color:var(--soft);padding:4px 0 6px}
-  .cal .d{aspect-ratio:1;border:none;background:none;border-radius:8px;font:600 14px/1 inherit;
-    color:var(--ink);cursor:pointer;position:relative;padding:0}
-  .cal .d.off{color:var(--soft);opacity:.35;cursor:default}
-  .cal .d.has::after{content:"";position:absolute;left:50%;bottom:5px;width:4px;height:4px;
-    border-radius:99px;background:var(--pink);transform:translateX(-50%)}
+  .cal .grid{gap:3px;grid-template-columns:repeat(7,minmax(0,1fr))}
+  .cal .d{min-height:74px;border:1px solid var(--line);background:#fff;border-radius:8px;
+    font-family:inherit;font-weight:700;font-size:13px;line-height:1;color:var(--ink);cursor:pointer;padding:5px 3px 4px;min-width:0;
+    display:flex;flex-direction:column;align-items:stretch;gap:3px;text-align:left}
+  .cal .d .n{padding-left:2px}
+  .cal .d.off{opacity:.45;cursor:default;background:transparent}
   .cal .d.today{box-shadow:inset 0 0 0 1.5px var(--pink)}
-  .cal .d.sel{background:var(--plum);color:var(--on-dark)}
-  .cal .d.sel::after{background:var(--on-dark)}
+  .cal .d.sel{border-color:var(--plum);box-shadow:inset 0 0 0 1.5px var(--plum)}
+  .cal .ch{display:block;border-radius:4px;padding:2px 3px;font-weight:600;font-size:9.5px;line-height:1.2;overflow:hidden;text-overflow:ellipsis}
+  .cal .ch b{display:none}
+  .cal .ch i{display:block;font-style:normal;font-weight:700;font-size:10.5px;white-space:nowrap}
+  .ch.mysore{background:#f1e6f1;color:#5c2160}
+  .ch.led_primary{background:#e3f2f0;color:#14675f}
+  .ch.led_inter{background:#f8eecf;color:#7a5a06}
+  .ch.moon{background:#ededed;color:#666}
+  .cal .legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .cal .legend .ch{font-size:11px;padding:3px 7px}
+  @media (min-width:560px){
+    .cal .d{min-height:92px;padding:6px 5px}
+    .cal .ch{font-size:11px;padding:3px 5px}
+    .cal .ch b{display:block;font-weight:600}
+    .cal .ch i{display:inline;font-weight:500;font-size:10.5px}
+    .cal .ch i+i::before{content:" · "}
+  }
   .cls{background:var(--paper);border-radius:var(--radius);padding:15px 16px;margin-bottom:11px;
     display:flex;gap:14px;align-items:center;border:1px solid var(--line)}
   .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
@@ -391,7 +407,7 @@
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const baht = n => '฿' + Number(n).toLocaleString('en-US');
-  let CLASSES = [], PRODUCTS = [], SURCHARGE = 0, LOADED = false;
+  let MOON = {}, CLASSES = [], PRODUCTS = [], SURCHARGE = 0, LOADED = false;
   const myCode = () => localStorage.getItem('aybkk_member') || '';
 
   const STR = {
@@ -451,7 +467,8 @@
       tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
       loading: 'Loading…',
       noClasses: 'No classes scheduled.',
-      noDay: 'No classes this day — tap a date with a dot.',
+      noDay: 'No classes this day.',
+      moonDay: 'Moon day', newMoon: 'New moon', fullMoon: 'Full moon',
       full: 'Class full', left: n => n + ' places left', places: n => n + ' places',
       book: 'Book', buy: 'Buy',
       fee: (base, pct) => `${base} + ${pct}% online payment fee`,
@@ -520,7 +537,8 @@
       tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
       loading: 'กำลังโหลด…',
       noClasses: 'ยังไม่มีคลาส',
-      noDay: 'วันนี้ไม่มีคลาส แตะวันที่ที่มีจุด',
+      noDay: 'วันนี้ไม่มีคลาส',
+      moonDay: 'วันพระจันทร์', newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง',
       full: 'เต็มแล้ว', left: n => `เหลือ ${n} ที่`, places: n => `${n} ที่`,
       book: 'จอง', buy: 'ซื้อ',
       fee: (base, pct) => `${base} + ค่าธรรมเนียมชำระเงินออนไลน์ ${pct}%`,
@@ -589,7 +607,8 @@
       tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
       loading: '加载中…',
       noClasses: '暂无课程安排。',
-      noDay: '当天没有课，请点有圆点的日期。',
+      noDay: '当天没有课。',
+      moonDay: '月亮日', newMoon: '新月', fullMoon: '满月',
       full: '已满', left: n => `剩余 ${n} 个名额`, places: n => `${n} 个名额`,
       book: '预约', buy: '购买',
       fee: (base, pct) => `${base} + ${pct}% 线上支付手续费`,
@@ -658,7 +677,8 @@
       tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
       loading: 'Загрузка…',
       noClasses: 'Занятий пока нет.',
-      noDay: 'В этот день занятий нет — выберите дату с точкой.',
+      noDay: 'В этот день занятий нет.',
+      moonDay: 'Лунный день', newMoon: 'Новолуние', fullMoon: 'Полнолуние',
       full: 'Мест нет', left: n => `Осталось мест: ${n}`, places: n => `Мест: ${n}`,
       book: 'Записаться', buy: 'Купить',
       fee: (base, pct) => `${base} + ${pct}% комиссия за онлайн-оплату`,
@@ -727,6 +747,7 @@
         fetch('/api/bkk/products').then(r => r.json()),
       ]);
       CLASSES = s.classes || [];
+      MOON = s.moonDays || {};
       PRODUCTS = p.products || [];
       SURCHARGE = p.surchargePct || 0;
       LOADED = true;
@@ -743,6 +764,20 @@
   const MONTHS = ['January','February','March','April','May','June',
     'July','August','September','October','November','December'];
 
+  // One chip per class type in the shala (online twins are the same class),
+  // batches folded into one chip: "Mysore 5:30 · 7:30".
+  const CHIP = { mysore: 'Mysore', led_primary: 'Led Primary', led_inter: 'Led Inter.' };
+  function dayChips(iso) {
+    if (MOON[iso]) return `<span class="ch moon">${esc(t(MOON[iso] === 'new' ? 'newMoon' : 'fullMoon'))}</span>`;
+    const byKind = {};
+    for (const c of CLASSES) {
+      if (c.date !== iso || c.isOnline) continue;
+      (byKind[c.kind] = byKind[c.kind] || []).push(fmtTime(c.startAt).replace(/^0/, ''));
+    }
+    return Object.entries(byKind).map(([k, times]) =>
+      `<span class="ch ${esc(k)}"><b>${esc(CHIP[k] || k)}</b>${times.map(x => `<i>${esc(x)}</i>`).join('')}</span>`).join('');
+  }
+
   function renderSchedule() {
     if (!CLASSES.length) { $('#view').innerHTML = `<p class="note">${esc(t('noClasses'))}</p>`; return; }
     const has = new Set(CLASSES.map(c => c.date));
@@ -752,17 +787,17 @@
     const months = [...new Set([...has].map(d => d.slice(0, 7)))].sort();
     const mi = months.indexOf(calMonth);
     const [yy, mm] = calMonth.split('-').map(Number);
-    const firstDow = (new Date(Date.UTC(yy, mm - 1, 1)).getUTCDay() + 6) % 7;   // Monday-first
+    const firstDow = new Date(Date.UTC(yy, mm - 1, 1)).getUTCDay();   // Sunday-first, like the printed timetable
     const daysIn = new Date(Date.UTC(yy, mm, 0)).getUTCDate();
 
-    let cells = '<div class="wd">Mo</div><div class="wd">Tu</div><div class="wd">We</div>'
-      + '<div class="wd">Th</div><div class="wd">Fr</div><div class="wd">Sa</div><div class="wd">Su</div>';
+    let cells = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(w => `<div class="wd">${w}</div>`).join('');
     for (let i = 0; i < firstDow; i++) cells += '<span></span>';
     for (let d = 1; d <= daysIn; d++) {
       const iso = `${calMonth}-${String(d).padStart(2, '0')}`;
       const open = has.has(iso);
-      cells += `<button class="d ${open ? 'has' : 'off'} ${iso === today ? 'today' : ''}
-        ${iso === selDate ? 'sel' : ''}" ${open ? `onclick="pickDay('${iso}')"` : 'disabled'}>${d}</button>`;
+      cells += `<button class="d ${open ? '' : 'off'} ${iso === today ? 'today' : ''}
+        ${iso === selDate ? 'sel' : ''}" ${open ? `onclick="pickDay('${iso}')"` : 'disabled'}>
+        <span class="n">${d}</span>${dayChips(iso)}</button>`;
     }
     const cal = `<div class="cal">
       <div class="head">
@@ -771,7 +806,9 @@
         <button class="nav" ${mi >= 0 && mi < months.length - 1
           ? `onclick="calGo('${months[mi + 1]}')"` : 'disabled'}>›</button>
       </div>
-      <div class="grid">${cells}</div></div>`;
+      <div class="grid">${cells}</div>
+      <div class="legend"><span class="ch mysore">Mysore</span><span class="ch led_primary">Led Primary</span>
+        <span class="ch led_inter">Led Intermediate</span><span class="ch moon">${esc(t('moonDay'))}</span></div></div>`;
 
     // Label from the Bangkok class date itself, never from the timestamp — in a
     // viewer's local timezone a 05:30 class can fall on the previous calendar day.

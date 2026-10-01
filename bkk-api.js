@@ -364,7 +364,7 @@ function mountBkk(app, opts = {}) {
         }
       }
       out.sort((a, b) => a.startAt.localeCompare(b.startAt));
-      res.json({ classes: out });
+      res.json({ classes: out, moonDays: Object.fromEntries(moon) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
