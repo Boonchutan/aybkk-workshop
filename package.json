@@ -8,6 +8,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.129.0",
     "@fontsource/cormorant-garamond": "^5.2.11",
     "@fontsource/playfair-display": "^5.2.8",
     "@google-cloud/translate": "^9.3.0",

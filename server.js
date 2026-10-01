@@ -13,6 +13,7 @@ const { mountBkk } = require('./bkk-api');
 const { mountPartner } = require('./partner-api');
 const { mountIdcn } = require('./idcn-api');
 const { mountShop } = require('./shop-api');
+const { mountInbox } = require('./inbox');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -105,7 +106,10 @@ const upload = multer({
 
 // Middleware
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+// LINE and Meta sign the exact bytes they send; the inbox checks those signatures
+app.use(express.json({ limit: '10mb', verify: (req, res, buf) => {
+  if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf;
+} }));
 // index: false so '/' falls through to the host-aware front-door route below
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));
@@ -394,6 +398,7 @@ app.post('/line/webhook', express.json({ type: '*/*' }), async (req, res) => {
   try {
     const events = req.body.events || [];
     console.log('[LINE Webhook] Received events:', JSON.stringify(events).slice(0, 200));
+    inbox.takeLine(req);
 
     for (const event of events) {
       // Capture group ID when bot receives a message in a group
@@ -542,6 +547,10 @@ mountShop(app);
 mountBkk(app, { pgPool });
 mountPartner(app, { pgPool });
 mountIdcn(app, { pgPool });
+
+// One inbox for LINE, Instagram and Facebook chats: stored for Machi's briefs,
+// hot ones pinged to Boonchu at once when ANTHROPIC_API_KEY is set
+const inbox = mountInbox(app, { pgPool });
 
 // In-Depth Mysore course profiles: /idcn3/yangyang ('#' can't appear in a URL
 // path, so generation 3 is idcn3). The page reads course+slug from the path.
