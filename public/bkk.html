@@ -445,7 +445,7 @@
       loyalH: 'Loyal students',
       loyalLine: 'After 12 months in a row, renew 12 months Dedicated at 54,900.',
       fair: 'One price for everyone. Clear and simple.',
-      fine: 'Prices in Thai baht, before 7% VAT. Paying online adds 5%. Buy online in the Packages tab below, or at the shala. Questions:',
+      fine: (fee, vat = 7) => `Prices in Thai baht, before ${vat}% VAT. ${fee ? `Paying online adds ${fee}%.` : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
       findH: 'Find us', maps: 'Open in Google Maps', contactH: 'Message us',
       copy: 'Copy', copied: 'Copied',
       tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
@@ -514,7 +514,7 @@
       loyalH: 'นักเรียนประจำ',
       loyalLine: 'ฝึกต่อเนื่องครบ 12 เดือน ต่ออายุแบบ Dedicated 12 เดือนได้ในราคา 54,900 บาท',
       fair: 'ราคาเดียวสำหรับทุกคน ชัดเจน ตรงไปตรงมา',
-      fine: 'ราคาเป็นเงินบาท ยังไม่รวม VAT 7% ชำระออนไลน์บวกเพิ่ม 5% ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:',
+      fine: (fee, vat = 7) => `ราคาเป็นเงินบาท ยังไม่รวม VAT ${vat}% ${fee ? `ชำระออนไลน์บวกเพิ่ม ${fee}%` : ''} ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
       findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', contactH: 'ทักหาเรา',
       copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
       tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
@@ -583,7 +583,7 @@
       loyalH: '老学员',
       loyalLine: '连续练习满12个月后，续订12个月专注套餐只需 54,900 泰铢。',
       fair: '所有人同一个价格，清楚简单。',
-      fine: '价格以泰铢计，不含 7% 增值税。在线支付另加 5%。可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：',
+      fine: (fee, vat = 7) => `价格以泰铢计，不含 ${vat}% 增值税。${fee ? `在线支付另加 ${fee}%。` : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       findH: '地址与联系方式', maps: '在 Google 地图中打开', contactH: '联系我们',
       copy: '复制', copied: '已复制',
       tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
@@ -652,7 +652,7 @@
       loyalH: 'Верные ученики',
       loyalLine: 'После 12 месяцев подряд — продление Dedicated на 12 месяцев за 54,900 бат.',
       fair: 'Одна цена для всех. Всё просто и понятно.',
-      fine: 'Цены в тайских батах, без НДС 7%. При онлайн-оплате +5%. Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:',
+      fine: (fee, vat = 7) => `Цены в тайских батах, без НДС ${vat}%. ${fee ? `При онлайн-оплате +${fee}%.` : ''} Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
       findH: 'Как нас найти', maps: 'Открыть в Google Картах', contactH: 'Напишите нам',
       copy: 'Копировать', copied: 'Скопировано',
       tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
@@ -685,7 +685,7 @@
   const pkgName = p => (LANG === 'th' && p.name_th) || p.name_en;
   function applyLang() {
     document.documentElement.lang = HTML_LANG[LANG];
-    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n, SURCHARGE, VAT || 7); });
     document.querySelectorAll('.langs button').forEach(b =>
       b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
   }
@@ -730,6 +730,7 @@
       PRODUCTS = p.products || [];
       SURCHARGE = p.surchargePct || 0;
       VAT = p.vatPct || 0;
+      applyLang();
       LOADED = true;
       tab(current);
     } catch (e) {

@@ -205,7 +205,14 @@ function mountBkk(app, opts = {}) {
     }
     const st = await q(`SELECT value FROM bkk_settings WHERE key = 'surcharge_pct'`);
     if (!st.rows.length) {
-      await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct','5')`);
+      await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct','3')`);
+    }
+    // One-time move from the old 5% to PaySolutions' real 3% (Oct 2026). The
+    // marker keeps a later change in the admin page from being overwritten.
+    const moved = await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_set_3pct','true')
+                           ON CONFLICT (key) DO NOTHING RETURNING key`);
+    if (moved.rows.length) {
+      await q(`UPDATE bkk_settings SET value='3', updated_at=now() WHERE key='surcharge_pct' AND value='5'`);
     }
   }
 
@@ -216,7 +223,7 @@ function mountBkk(app, opts = {}) {
     } catch (e) { return fallback; }
   }
 
-  const surcharge = async () => Number(await getSetting('surcharge_pct', 5)) || 0;
+  const surcharge = async () => Number(await getSetting('surcharge_pct', 3)) || 0;
 
   // VAT is due on everything the student pays, the online fee included.
   function breakdown(base, pct) {
