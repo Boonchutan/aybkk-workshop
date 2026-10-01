@@ -3,8 +3,10 @@
 from PIL import Image, ImageFilter
 import numpy as np, sys
 from ai_edge_litert.interpreter import Interpreter
-T={'045':1/6,'066':1/6,'052':0.017,'053':0.017,'039':0.0,'008':1/6,'013':0.0,'019':0.158,'024':1/6,
-   '054':0.0,'060':1/6,'062':0.05,'068':0.04,'016':0.05,'032':0.0,'029':0.04,'037':0.05,'011':0.125}
+T={'045':1/6,'066':1/6,'052':0.13,'053':0.017,'039':0.0,'008':1/6,'013':0.13,'019':0.158,'024':1/6,
+   '054':0.0,'060':1/6,'062':0.13,'068':0.04,'016':0.05,'032':0.10,'029':0.04,'037':0.05,'011':0.125,'084':0.13,'014':0.13,'073':0.13,'055':0.13,'063':0.13,'048':0.13,'072':0.13,'017':0.13}
+# photos whose watermark must move: lift it, clean the old one away, paste it near the bottom (margin = share of height)
+MOVE={'032':0.025}
 it=Interpreter(model_path='deeplab.tflite'); it.allocate_tensors()
 inp=it.get_input_details()[0]; outd=it.get_output_details()[0]
 def mask(img):
@@ -15,10 +17,23 @@ def mask(img):
 for n in (sys.argv[1:] or T):
     t=T[n]; im=Image.open(f'raw/{n}.jpg').convert('RGB'); w,h=im.size
     top=int(round(h*t)); ch=int(round(w*1.25)); b=h-top-ch
-    assert not (0.047*h < b < 0.115*h), (n,'watermark would be half cut')
+    box=(1450,int(h*0.880),3190,int(h*0.955))
+    g=im.convert('L').crop(box); L=np.asarray(g).astype(float); bg=np.asarray(g.filter(ImageFilter.GaussianBlur(25))).astype(float)
+    A=np.clip((L-bg-4)/np.maximum(255-bg,1),0,1)
+    if n in MOVE:
+        from scipy import ndimage
+        m=ndimage.maximum_filter((A>0.04).astype(float),7); m=ndimage.gaussian_filter(m,2)
+        R=np.asarray(im.crop(box)).astype(float); keep=(1-np.clip(m*2,0,1))[...,None]
+        est=ndimage.gaussian_filter(R*keep,(18,18,0))/np.maximum(ndimage.gaussian_filter(keep,(18,18,0)),1e-3)
+        im.paste(Image.fromarray(np.clip(R*(1-m[...,None])+est*m[...,None],0,255).astype('uint8')),box[:2])
+    else:
+        assert not (0.047*h < b < 0.115*h), (n,'watermark would be half cut')
     out=im.crop((0,top,w,top+ch))
-    if b>0.06*h:
-        box=(1450,int(h*0.880),3190,int(h*0.955))
+    if n in MOVE:
+        rows=np.where(A.max(1)>0.3)[0]; tb=rows.max()
+        y=int(ch-MOVE[n]*h-tb)
+        out.paste(Image.new('RGB',(box[2]-box[0],box[3]-box[1]),(255,255,255)),(box[0],y),Image.fromarray((A*255).astype('uint8')))
+    if b>0.06*h and n not in MOVE:
         g=im.convert('L').crop(box); L=np.asarray(g).astype(float); bg=np.asarray(g.filter(ImageFilter.GaussianBlur(25))).astype(float)
         alpha=Image.fromarray((np.clip((L-bg-4)/np.maximum(255-bg,1),0,1)*255).astype('uint8'))
         # soft dark floor so the white text reads like the original
