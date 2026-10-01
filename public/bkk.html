@@ -25,6 +25,7 @@
   @font-face{font-family:'Patrick Hand';src:url('/fonts/patrickhand.woff2') format('woff2');font-display:swap}
   /* Two cuts of one family under one name: the browser picks the Thai file only
      for Thai characters, so Thai and Latin sit on the same baseline. */
+  @font-face{font-family:'Work Sans';src:url('/fonts/worksans.woff2') format('woff2');font-weight:100 900;font-display:swap}
   @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
   @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
     unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
@@ -84,16 +85,18 @@
   /* The wall photo is mostly white, so the shade is strongest where the text sits (the floor). */
   header.hero{min-height:640px;display:flex;flex-direction:column;justify-content:flex-end;
     padding:70px 20px 34px;background:
-      linear-gradient(180deg,rgba(23,18,26,.38) 0%,rgba(23,18,26,.08) 30%,rgba(23,18,26,.2) 55%,rgba(23,18,26,.86) 82%,rgba(23,18,26,.94) 100%),
+      linear-gradient(180deg,rgba(23,18,26,.38) 0%,rgba(23,18,26,.08) 30%,rgba(23,18,26,.45) 52%,rgba(23,18,26,.88) 74%,rgba(23,18,26,.94) 100%),
       #3a2a3a url('/img/aybkk-hero-900.jpg') center 30%/cover no-repeat}
   @media (min-width:700px){
     header.hero{min-height:640px;background:
-      linear-gradient(180deg,rgba(23,18,26,.3) 0%,rgba(23,18,26,.05) 30%,rgba(23,18,26,.2) 55%,rgba(23,18,26,.85) 84%,rgba(23,18,26,.94) 100%),
+      linear-gradient(180deg,rgba(23,18,26,.3) 0%,rgba(23,18,26,.05) 30%,rgba(23,18,26,.45) 52%,rgba(23,18,26,.88) 76%,rgba(23,18,26,.94) 100%),
       #3a2a3a url('/img/aybkk-hero-1600.jpg') center 40%/cover no-repeat}
   }
   header.hero .sub{font-size:17px;color:#fdf7fa;text-shadow:0 1px 8px rgba(0,0,0,.5)}
   header.hero .where{color:#e2cbd7}
   header.hero{position:relative}
+  header.hero h1{font-family:'Work Sans',sans-serif;font-weight:900;font-size:64px;line-height:1;letter-spacing:.01em;margin:0;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.45)}
+  header.hero .full{font-family:'Work Sans',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#f3e6ec;margin:6px 0 10px;text-shadow:0 1px 6px rgba(0,0,0,.7)}
   header.hero .logo{position:absolute;top:10px;left:12px;width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.35)}
   .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
   a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:46px}
@@ -246,7 +249,8 @@
     <button type="button" data-lang="ru" lang="ru">RU</button>
   </div>
   <img class="logo" src="/img/aybkk-logo-240.jpg" width="120" height="120" alt="Ashtanga Yoga Center of Bangkok logo">
-  <h1 class="brush">AYBKK</h1>
+  <h1>AYBKK</h1>
+  <p class="full">Ashtanga Yoga Center of Bangkok</p>
   <p class="sub" data-i18n="tagline">Traditional Ashtanga. Open door.</p>
   <p class="where">S31 Sukhumvit Hotel <span class="dot">·</span> 8th floor <span class="dot">·</span> Sukhumvit 31</p>
   <div class="cta">
