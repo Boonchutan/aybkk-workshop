@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-10-01: PROMO CHANGED by Boonchu (replaces 'buy 1 month get 1 month free'): new students buy 1 package, get the same package free: 1 month, 3 months or 6 months (12 months not included). Runs from Sharathji's birthday, 29 Sep, to the day we lost him, 12 Nov 2026. CTA: 'Comment aybkk and I'll send you the link.' Plato flagged: 6+6 = 3,750 THB/month undercuts the 12-month package (6,000/month) and the market low; suggested 6 months + 3 free. Waiting on his pick.
 - 2026-10-01: Carousels: max 2 photos of the same student in one post. Slide 1 should show a beginner or an elder. Text must not cover the space that shows an asana lifting off the floor (e.g. Mayurasana): put it at the top instead.
 - CHINESE PLATFORMS (30 Sep): Ep. 1 and Ep. 2 were never posted in Chinese. Boonchu starts the Chinese series (WeChat / Xiaohongshu) from Ep. 3 onward, keeping the same numbers as Instagram (第3集); Chinese Ep. 1 and 2 may come later.
 - CHINESE VERSION of Reels (30 Sep): same edit, Chinese burned-in captions (Noto Sans SC variable, Weight Shift) and Chinese card text; emoji BIGGER than the English cut (about 150 px vs 118 px). Translate with checks (terms: 阿斯汤加, 迈索尔; Guruji is Sharath's maternal grandfather = 外公). Scripts: bots/tools/reel-edit/ep3/caps_zh.py, make_cards_zh.py.
