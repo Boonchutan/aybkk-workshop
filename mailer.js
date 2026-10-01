@@ -97,7 +97,7 @@ const TEMPLATES = {
       text: [
         `Hello ${name},`, '',
         `Your ${product} is active.`,
-        `Paid ${baht(amount)} (${baht(base)} + ${baht(fee)} online payment fee + ${baht(vat)} VAT 7%).`,
+        `Paid ${baht(amount)} (${baht(base)} + ${baht(fee)} online transaction fee + ${baht(vat)} VAT 7%).`,
         `Reference ${refno}.`, '',
         `Book your classes here: ${link}`,
         'That link signs you in once. If you ever lose your place, use',
@@ -110,7 +110,7 @@ const TEMPLATES = {
         <table style="width:100%;font-size:14px;margin:16px 0">
           <tr><td style="color:#6b5d70">Package</td><td align="right">${esc(product)}</td></tr>
           <tr><td style="color:#6b5d70">Price</td><td align="right">${baht(base)}</td></tr>
-          <tr><td style="color:#6b5d70">Online payment fee</td><td align="right">${baht(fee)}</td></tr>
+          <tr><td style="color:#6b5d70">Online transaction fee</td><td align="right">${baht(fee)}</td></tr>
           <tr><td style="color:#6b5d70">VAT 7%</td><td align="right">${baht(vat)}</td></tr>
           <tr><td style="padding-top:8px"><b>Paid</b></td>
               <td align="right" style="padding-top:8px"><b>${baht(amount)}</b></td></tr>
