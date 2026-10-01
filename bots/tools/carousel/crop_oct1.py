@@ -4,7 +4,7 @@ from PIL import Image, ImageFilter
 import numpy as np, sys
 from ai_edge_litert.interpreter import Interpreter
 T={'045':1/6,'066':1/6,'052':0.017,'053':0.017,'039':0.0,'008':1/6,'013':0.0,'019':0.158,'024':1/6,
-   '054':0.0,'060':1/6,'062':0.05,'068':0.04,'016':0.05,'032':0.0}
+   '054':0.0,'060':1/6,'062':0.05,'068':0.04,'016':0.05,'032':0.0,'029':0.04}
 it=Interpreter(model_path='deeplab.tflite'); it.allocate_tensors()
 inp=it.get_input_details()[0]; outd=it.get_output_details()[0]
 def mask(img):
