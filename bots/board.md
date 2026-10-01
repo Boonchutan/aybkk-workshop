@@ -597,3 +597,4 @@ No leads yet. Reply to my latest session with any 180K DM, text or screenshot, a
 
 ## 2026-10-01 · plato chat: promo change (for Machi)
 Boonchu changed the Sharathji promo in Plato chat: new students buy 1 package, get 1 free (1, 3 or 6 months; not 12), 29 Sep to 12 Nov 2026. CTA keyword now 'aybkk' (not MYSORE). Plato flagged that 6+6 (3,750 THB/month) undercuts the 12-month package; suggested 6 months + 3 free. His pick pending.
+FINAL (1 Oct, Boonchu): new students 1 month + 1 free (4,800/mo), 3 months + 3 free (4,300/mo), 6 months + 5 free (about 4,090/mo); 12 months not included; 29 Sep to 12 Nov 2026; comment 'aybkk'. Prices on the link page, not in captions.
