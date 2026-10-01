@@ -124,7 +124,7 @@ Guardrails: never use the "back injury" story from Boonchu Persuasion Framework 
 - 2026-09-29 | Birthday tribute, Hero's Journey 5 beats: sick boy who hid from practice to play cricket, serious at 19, 20 years as assistant, took over 2007, world tours from 1996, students from 70+ countries; Boonchu's personal memories | No myth | Asana: none (tribute)
 
 ## What worked
-(no feedback yet)
+- 2026-10-01 Ep.3 Ashtavakra comments: real practitioners joined in (one shared his first both-sides Ashtavakrasana from an inversion, learned from a Sharath video). One gentle pushback: "the teachers never needed myths". One tip: read the Ashtavakra Gita. Lesson: keep the myth as the hook, but land every episode on the practice. Purists watch for that.
 
 ## Edit method (worked 2026-09-29, Ep. 2 "TvashtrChant")
 - Boonchu shares a Drive link; the file downloads with curl from drive.usercontent.google.com/download?id=<id>&export=download&confirm=t (the Drive connector is too small for 500 MB).
