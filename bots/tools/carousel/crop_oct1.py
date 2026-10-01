@@ -20,7 +20,7 @@ def mask(img):
     m=(np.argmax(it.get_tensor(outd['index'])[0],-1)==15).astype(np.uint8)*255
     return Image.fromarray(m).resize((1080,1350),Image.BILINEAR)
 
-T.update({'023':0.06,'041':0.02,'008':1/6,'054':1/6,'073':0.13,'016':1/6,'067':0.04,'018':1/6,'010':1/6,'076':1/6})
+T.update({'023':0.06,'041':0.02,'008':1/6,'054':1/6,'073':0.13,'016':1/6,'067':0.04,'018':1/6,'010':1/6,'076':1/6,'007':0.05,'078':0.02,'040':1/6,'014':0.13})
 for n in (sys.argv[1:] or T):
     t=T[n]; im=Image.open(f'raw/{n}.jpg').convert('RGB'); w,h=im.size
     top=int(round(h*t)); ch=int(round(w*1.25)); b=h-top-ch

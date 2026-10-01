@@ -3,7 +3,7 @@ import render as R
 from breath_slides import POSTS
 PH={'A':['042','015','070','020','048','028','044','085','057'],
     'B':['083','005','075','047','082','037','024','080','059'],
-    'C':['023','041','008','054','073','016','067','018','010','076']}
+    'C':['014','041','008','054','073','016','067','078','040','007']}
 POSTS={'A':[x for i,x in enumerate(POSTS['A']) if i!=2],'B':[x for i,x in enumerate(POSTS['B']) if i!=7],'C':POSTS['C']}
 LBL={'A':'STRONG HEART, STRONG LUNGS','B':'CALM MIND, GOOD SLEEP','C':'EVERY BODY, EVERY AGE'}
 F=json.loads(sys.argv[1]) if len(sys.argv)>1 else {}
