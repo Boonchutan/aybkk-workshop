@@ -4,9 +4,14 @@ from PIL import Image, ImageFilter
 import numpy as np, sys
 from ai_edge_litert.interpreter import Interpreter
 T={'045':1/6,'066':1/6,'052':0.13,'053':0.017,'039':0.0,'008':1/6,'013':0.13,'019':0.158,'024':1/6,
-   '054':0.0,'060':1/6,'062':0.13,'068':0.04,'016':0.05,'032':0.10,'029':0.04,'037':0.05,'011':0.125,'084':0.13,'014':0.13,'073':0.13,'055':0.13,'063':0.13,'048':0.13,'072':0.13,'017':0.13}
+   '054':0.0,'060':1/6,'062':0.13,'068':0.04,'016':0.05,'032':0.10,'029':0.04,'037':0.13,'011':0.125,'084':0.13,'014':0.13,'073':0.13,'055':0.13,'063':0.13,'048':0.13,'072':0.13,'017':0.13,'059':0.105}
 # photos whose watermark must move: lift it, clean the old one away, paste it near the bottom (margin = share of height)
-MOVE={'032':0.025}
+MOVE={'032':0.025,'059':0.025}
+import json as _j
+for _n,_v in _j.load(open('autot.json')).items():
+    if _v and _v.get('t') is not None and _n not in ('014','073','055','063','048','017','037','024'):
+        T.setdefault(_n,_v['t'])
+        if _v.get('move'): MOVE[_n]=0.025
 it=Interpreter(model_path='deeplab.tflite'); it.allocate_tensors()
 inp=it.get_input_details()[0]; outd=it.get_output_details()[0]
 def mask(img):
