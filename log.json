@@ -2120,7 +2120,7 @@
    "https://sports.yahoo.com/articles/caitlin-clarks-fever-face-elimination-145448748.html"
   ],
   "postizId": "cmuolothe04h7p70y1zugjwki",
-  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 02:00 UTC on 1 Oct (09:00 Bangkok) by the daily routine; all 10 slides Cloudflare FLUX.2 [klein] 4B (cover brightened from 22% to 27% luminance); JPEG slides",
+  "status": "Published on No Cap Daily 1 Oct 02:00 UTC (09:00 Bangkok, scheduled post; Postiz email 03:02 UTC, instagram.com/p/Dd7yYgeidk3/)",
   "images": [
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/01.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-wnba-playoffs/02.png",
@@ -2168,7 +2168,7 @@
    "https://blocksandfiles.com/2025/12/04/micron-makes-crucial-decision-farewell/"
   ],
   "postizId": "cmuolsjvm04hgp70ycxjtsgo1",
-  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 13:00 UTC on 1 Oct (20:00 Bangkok) by the daily routine; all 10 slides Cloudflare FLUX.2 [klein] 4B; JPEG slides",
+  "status": "Not published: Postiz ERROR at the 13:00 UTC slot on 1 Oct, \"Instagram blocked your request\" (Postiz email 13:13 UTC), Instagram's anti-spam block on the account",
   "images": [
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/01.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-micron-earnings/02.png",
@@ -2218,7 +2218,7 @@
    "https://commons.wikimedia.org/wiki/File:Ynon_Kreiz_(14332933147)_(cropped).jpg"
   ],
   "postizId": "cmuos1w2e053bp70ymlzlke0n",
-  "status": "Scheduled on \"No Cap Daily | Trending Facts\" (Postiz type schedule) for 16:00 UTC on 1 Oct (23:00 Bangkok) by the daily routine; cover is a Wikimedia Commons photo of Ynon Kreiz at VidCon 2014 (Gage Skidmore, CC BY-SA 2.0, credited on the slide), slides 2-5 Cloudflare FLUX.2 [klein] 4B on 30 Sep, slides 6-10 made on 1 Oct after the quota reset; JPEG slides",
+  "status": "Not published: Postiz ERROR at the 16:00 UTC slot on 1 Oct, \"Instagram blocked your request\" (Postiz email 16:13 UTC), Instagram's anti-spam block on the account",
   "images": [
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/01.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/02.png",
@@ -2230,6 +2230,202 @@
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/08.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/09.png",
    "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-01-ynon-kreiz/10.png"
+  ]
+ },
+ {
+  "date": "2026-10-02",
+  "geo": "Global",
+  "term": "nvidia",
+  "volume": "50,000+ searches this week (US weekly list, rank 204)",
+  "category": "tech",
+  "angle": "Nvidia's September 28, 2026 buyback: the board added $150B to its repurchase authorization (total remaining $235B, to be executed through fiscal 2028, which ends January 2028); Nvidia: 'the largest share repurchase authorization increase in history'; Apple's $110B (May 2024) was the previous record; stock closed +1.68% at $228.86; $150B exceeds the market value of about 84% of S&P 500 companies (LSEG via Reuters) and of Uber ($138.65B), Starbucks ($108.14B) or Nike ($52.14B) at the October 1 close; free cash flow $69.9B in February-July 2026 (+77%); 16.5x forward earnings, lowest since January 2015 vs a 15-year average of 30; $39.8B of shares repurchased February-July 2026 vs $40.4B in all of fiscal 2026; hidden fact: at about $5.5T, even the full $235B retires only about 4% of Nvidia, and the diluted share count (24,285M in the July 2026 quarter vs 24,532M a year earlier) fell only about 1% while stock awards keep adding shares (Nvidia/SEC, Motley Fool). Google category: Business & Finance, Technology (weekly rank 204).",
+  "carousel": "carousels/2026-10-02-nvidia-buyback",
+  "facts": [
+   "On September 28, Nvidia added $150 billion to its buyback plan. The total it may spend is now $235 billion, through January 2028.",
+   "Nvidia calls it the largest buyback increase in history. The old record: Apple's $110 billion, approved in May 2024.",
+   "$150 billion is more than 84% of S&P 500 companies are worth. LSEG data, reported by Reuters on September 28.",
+   "It is more than all of Uber, Starbucks or Nike. Their market values at the October 1 close: $138.65 billion, $108.14 billion and $52.14 billion.",
+   "It made $69.9 billion in free cash in six months. February to July 2026, up 77% on a year earlier. That cash pays for the buybacks.",
+   "By one measure, Nvidia stock is the cheapest since 2015. 16.5 times expected earnings, against a 15-year average of 30 (LSEG, via Reuters).",
+   "From February to July, it already bought back $39.8 billion. Almost as much as in its whole last fiscal year: $40.4 billion.",
+   "Yet its share count fell only 1% in a year. 24.29 billion shares in the July quarter, from 24.53 billion. Stock awards to staff keep adding new shares."
+  ],
+  "caption": "\"nvidia\" — 50,000+ searches this week. A record $150 billion, set aside for its own stock.\n\nWhy: On September 28, Nvidia added $150 billion to its share buyback plan, for $235 billion in total through January 2028. Nvidia calls it the largest buyback increase in history. Apple's $110 billion in 2024 was the old record.\n\nWhat most people don't know: Nvidia is worth about $5.5 trillion, so even $235 billion would buy back only about 4% of it. It spent $39.8 billion on buybacks from February to July. Its share count is down just 1% in a year.\n\nVery simply put: a record buyback buys about 4% of Nvidia.",
+  "sources": [
+   "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-a-150-Billion-Share-Repurchase-Authorization-Increase/default.aspx",
+   "https://www.investing.com/news/stock-market-news/nvidia-adds-150-billion-to-existing-share-repurchase-plan-4919956",
+   "https://stockanalysis.com/stocks/nvda/history/",
+   "https://www.apple.com/newsroom/2024/05/apple-reports-second-quarter-results/",
+   "https://stockanalysis.com/stocks/uber/",
+   "https://stockanalysis.com/stocks/sbux/",
+   "https://stockanalysis.com/stocks/nke/",
+   "https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000075/nvda-20260726.htm",
+   "https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000073/q2fy27pr.htm",
+   "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000019/q4fy26pr.htm",
+   "https://www.fool.com/investing/2026/09/29/history-says-nvidia-s-record-usd150-billion-buyback-is-good-news-for-the-stock/",
+   "https://tech-ish.com/2026/09/29/nvidia-now-has-235-billion-to-buy-back-its-own-shares-here-is-what-that-means/"
+  ],
+  "postizId": null,
+  "status": "Held, not scheduled: Instagram blocked the last 2 No Cap posts on 1 Oct (\"Instagram blocked your request\", 13:00 and 16:00 UTC), so the daily routine made the carousel and uploaded its 10 JPEGs to Postiz but did not schedule it; it posts when Boonchu says so; all 10 slides Cloudflare FLUX.2 [klein] 4B (slide 5 regenerated once so the cup, shoe and car sit above the text); JPEG slides",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nvidia-buyback/10.png"
+  ]
+ },
+ {
+  "date": "2026-10-02",
+  "geo": "Global",
+  "term": "portugal national football team",
+  "volume": "10,000+ searches today (US daily list)",
+  "category": "Sports",
+  "angle": "Off the pitch: on September 30, 2026 Portugal coach Jorge Jesus said Cristiano Ronaldo (41) would not start against Denmark ('No player will ever make a decision for me'); hours later Ronaldo said on Instagram he had left the camp after talking to federation president Pedro Proenca and would explain his reasons to the Portuguese people later; Portugal won 4-2 in Copenhagen on October 1 with Rafael Leao in No. 7; Ronaldo: 146 goals in 234 games, both men's records; debut August 20, 2003 at 18 vs Kazakhstan, replacing Luis Figo at half-time; wore 17 at Euro 2004 and the 2006 World Cup, 7 from Euro 2008; Goncalo Ramos started in his place at the 2022 World Cup (hat-trick) and in Norway on September 27 (winner); hidden fact: UEFA Nations League rules (Art. 37.01, 52.01) make teams list 23 players numbered 1 to 23, so someone had to wear No. 7 and the change is not permanent (UEFA, beIN, Goal). Cover photo: Bryan Berlin / WikiPortraits, CC BY-SA 4.0, 2026 World Cup. Daily top 10 (US).",
+  "carousel": "carousels/2026-10-02-ronaldo-portugal",
+  "facts": [
+   "On September 30, the coach said Ronaldo, 41, would not start. Jorge Jesus: \"No player will ever make a decision for me.\"",
+   "Hours later, Ronaldo said he had left the camp. On Instagram. He said he would explain his reasons to the Portuguese people later.",
+   "The next day, Portugal beat Denmark 4‑2 without him. October 1, in Copenhagen, in the Nations League.",
+   "He has 146 goals in 234 games for Portugal. Both are men's world records.",
+   "He made his debut at 18, replacing Luís Figo at half-time. August 20, 2003, against Kazakhstan.",
+   "He wore 17 until Figo's No. 7 became his. 17 at Euro 2004 and the 2006 World Cup. 7 from Euro 2008.",
+   "The same man replaced him in 2022 and in Norway. Gonçalo Ramos scored a hat-trick in his place at the 2022 World Cup, and the winner in Norway on September 27.",
+   "UEFA rules made someone wear No. 7. Each team lists 23 players, numbered 1 to 23, so every number is used. It is not a permanent change."
+  ],
+  "caption": "\"portugal national football team\" — 10,000+ searches today. Cristiano Ronaldo left the camp. His No. 7 played without him.\n\nWhy: On September 30, coach Jorge Jesus said Ronaldo, 41, would not start against Denmark. Hours later Ronaldo said on Instagram that he had left the camp and would explain his reasons later. Portugal won 4-2 in Copenhagen the next day. Rafael Leão wore No. 7.\n\nWhat most people don't know: Portugal had no choice about the shirt. UEFA Nations League rules make teams list 23 players numbered 1 to 23, so every number gets worn.\n\nVery simply put: the coach benched Ronaldo. The rulebook moved his shirt.",
+  "sources": [
+   "https://www.espn.com/soccer/story/_/id/50069045/cristiano-ronaldo-portugal-coach-jorge-jesus-bench-denmark",
+   "https://www.espn.com/soccer/story/_/id/50050997/cristiano-ronaldo-portugal-jorge-jesus-benched-decision-norway",
+   "https://www.aljazeera.com/sports/2026/10/1/why-did-ronaldo-leave-portugals-training-camp-and-will-he-play-again",
+   "https://www.record.pt/futebol/selecoes/detalhe/cristiano-ronaldo-quebra-o-silencio-a-seu-tempo-direi-a-verdade-a-todos-os-portugueses",
+   "https://www.aljazeera.com/sports/liveblog/2026/10/1/live-denmark-vs-portugal-uefa-nations-league-ronaldo",
+   "https://www.skysports.com/football/news/13593759/cristiano-ronaldo-portugal-captain-leaves-squad-amid-reported-rift-with-head-coach-jorge-jesus",
+   "https://en.wikipedia.org/wiki/Career_of_Cristiano_Ronaldo",
+   "https://www.national-football-teams.com/matches/report/18815/Portugal_Kazakhstan.html",
+   "https://portugoal.net/selecao/1743-timeline-of-cristiano-ronaldo-s-extraordinary-portugal-career",
+   "https://www.espn.com/soccer/story/_/id/50075485/cristiano-ronaldo-long-history-rows-portugal-manchester-united-real-madrid-juventus-coaches",
+   "https://documents.uefa.com/r/Regulations-of-the-UEFA-Nations-League-2026/27/Article-37-Numbers-and-names-Online",
+   "https://documents.uefa.com/r/Regulations-of-the-UEFA-Nations-League-2026/27/Article-52-Match-sheet-Online",
+   "https://www.beinsports.com/en-us/soccer/uefa-nations-league/articles/who-will-wear-cristiano-ronaldo-s-no-7-for-portugal-after-his-controversial-exit-2026-10-01",
+   "https://www.goal.com/en-in/news/uefa-regulations-settle-the-controversy-did-portugal-deliberately-use-ronaldo-s-shirt-after-his-crisis/blted4df4ec7ade4b29",
+   "https://commons.wikimedia.org/wiki/File:Cristiano_Ronaldo_Croatia_v_Portugal_2_July_2026-075.jpg"
+  ],
+  "postizId": null,
+  "status": "Held, not scheduled: Instagram blocked the last 2 No Cap posts on 1 Oct (\"Instagram blocked your request\", 13:00 and 16:00 UTC), so the daily routine made the carousel and uploaded its 10 JPEGs to Postiz but did not schedule it; it posts when Boonchu says so; cover is a Wikimedia Commons photo of Cristiano Ronaldo at the 2026 World Cup (Bryan Berlin / WikiPortraits, CC BY-SA 4.0, credited on the slide), slides 2-10 Cloudflare FLUX.2 [klein] 4B; JPEG slides",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-ronaldo-portugal/10.png"
+  ]
+ },
+ {
+  "date": "2026-10-02",
+  "geo": "Global",
+  "term": "anthropic ipo",
+  "volume": "10,000+ searches this week (US weekly list, rank 496)",
+  "category": "tech",
+  "angle": "Anthropic's IPO prospectus, a confidential draft filed June 1, 2026 and reported by Reuters on September 28 (not public on EDGAR as of October 2): reported target value above $2 trillion and a raise of up to $100 billion, likely after the November midterms (Reuters; Bloomberg says Nasdaq, as soon as October); last private value $965B post-money after a $65B Series H (May 28, 2026); 2025 revenue nearly $4.6B, up 12-fold; operating loss $8.06B; net loss about $42B, about $34B of it an accounting charge (Reuters); at least $518B of computing over a decade with six partners, about 80% non-cancelable (Google at least $111.1B, Amazon $110B); 47% of 2025 sales through Amazon's and Google's cloud marketplaces; hidden fact: the Long-Term Benefit Trust, whose trustees are financially disinterested, elects 4 of 7 directors per the draft, and a Founder LLC of the 7 co-founders reportedly directs a Class F share with 50.1% of the votes (Reuters, Anthropic). All prospectus figures labeled as reported from the draft.",
+  "carousel": "carousels/2026-10-02-anthropic-ipo",
+  "facts": [
+   "Anthropic filed its IPO papers confidentially on June 1. A draft to the SEC. Reuters reported details from it on September 28. It is not public yet.",
+   "It reportedly wants a value of more than $2 trillion. And to raise up to $100 billion, likely after the November midterms (Reuters).",
+   "In May, private investors valued it at $965 billion. After a $65 billion funding round, Anthropic said on May 28.",
+   "Its 2025 revenue was nearly $4.6 billion, up 12-fold. According to the draft filing, as reported by Reuters.",
+   "Its 2025 net loss was about $42 billion. About $34 billion of it was an accounting charge, not money spent running the business, Reuters reported.",
+   "It plans to spend at least $518 billion on computing. Over 10 years, with six partners, including Google ($111.1 billion) and Amazon ($110 billion). About 80% can't be canceled.",
+   "47% of its 2025 sales went through Amazon's and Google's clouds. Through their cloud marketplaces. Both companies are also major investors.",
+   "A trust with no financial stake elects 4 of 7 board seats. According to the draft. A company run by the 7 co-founders reportedly controls 50.1% of the votes (Reuters)."
+  ],
+  "caption": "\"anthropic ipo\" — 10,000+ searches this week. The maker of Claude is getting ready to go public.\n\nWhy: On September 28, Reuters reported details from Anthropic's draft IPO filing. It reportedly targets a value of more than $2 trillion and a raise of up to $100 billion, likely after the November midterms. Its 2025 net loss was about $42 billion, mostly an accounting charge.\n\nWhat most people don't know: buying the stock won't buy control. A trust whose members have no financial stake elects 4 of the 7 board seats, according to the draft. A company run by the 7 co-founders reportedly controls 50.1% of the votes.\n\nVery simply put: you can buy the shares. Not the steering wheel.",
+  "sources": [
+   "https://www.anthropic.com/news/confidential-draft-s1-sec",
+   "https://finance.yahoo.com/technology/ai/articles/exclusive-anthropics-ipo-prospectus-shows-231722972.html",
+   "https://fortune.com/2026/09/29/anthropic-leaked-ipo-prospectus-losses-growth-ai-end-humanity/",
+   "https://fortune.com/2026/09/29/anthropic-ipo-s-1-prospectus-income-statement/",
+   "https://techcrunch.com/2026/09/28/anthropics-prospectus-details-losses-growth-and-yes-a-warning-that-its-ai-could-end-humanity/",
+   "https://www.sec.gov/cgi-bin/browse-edgar?company=anthropic&owner=exclude&action=getcompany&count=100",
+   "https://www.thestar.com.my/business/business-news/2026/09/29/from-spacex-to-saudi-aramco-world039s-biggest-ipos-as-anthropic039s-blockbuster-listing-looms",
+   "https://finance.yahoo.com/markets/stocks/articles/anthropic-said-choose-nasdaq-much-180359465.html",
+   "https://www.anthropic.com/news/series-h",
+   "https://www.ksl.com/article/51629885/anthropics-518-billion-ai-buildout-hinges-largely-on-deals-that-cannot-be-canceled-filing-shows",
+   "https://www.yahoo.com/news/articles/exclusive-anthropic-ipo-prospectus-lays-205226515.html",
+   "https://ca.investing.com/news/stock-market-news/exclusiveanthropic-leaders-to-control-ai-lab-via-founder-llc-to-promote-public-good-over-market-forces-4856941",
+   "https://www.anthropic.com/news/the-long-term-benefit-trust"
+  ],
+  "postizId": null,
+  "status": "Held, not scheduled: Instagram blocked the last 2 No Cap posts on 1 Oct (\"Instagram blocked your request\", 13:00 and 16:00 UTC), so the daily routine made the carousel and uploaded its 10 JPEGs to Postiz but did not schedule it; it posts when Boonchu says so; all 10 slides Cloudflare FLUX.2 [klein] 4B (cover candidate B, brightened from 18% to 24% luminance); JPEG slides",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-anthropic-ipo/10.png"
+  ]
+ },
+ {
+  "date": "2026-10-02",
+  "geo": "Global",
+  "term": "nike stock",
+  "volume": "10,000+ searches today (US daily list)",
+  "category": "Business & Finance",
+  "angle": "Nike fiscal 2027 Q1 (June-August 2026, reported October 1): revenue $11.21B, down 4% (5% currency-neutral), below the $11.32B LSEG estimate; EPS $0.48; Greater China $1.18B, down 22% (26% currency-neutral); full-year revenue guided to fall high single digits; stock about 4% lower after hours from a $35.15 close, about 80% below the $177.51 record close of November 5, 2021; market value about $52B vs about $280B at end-2021; dropped from the S&P 100 in September after 18 years (Reuters); last quarter an expected $986M IEEPA tariff refund supplied $0.52 of $0.72 EPS; hidden fact: Anta Group's first-half 2026 revenue, RMB43.51B (about $6.1B), beat Nike Greater China's full fiscal 2026 revenue of $5.847B (Anta IR, Nike/SEC). Daily top 10 (US).",
+  "carousel": "carousels/2026-10-02-nike-china",
+  "facts": [
+   "Nike's sales fell 4% to $11.21 billion. June to August 2026, reported October 1. Analysts expected $11.32 billion (LSEG).",
+   "Sales in Greater China fell 22%. To $1.18 billion. Without currency changes, 26%.",
+   "Nike now expects full-year sales to fall. By a high single-digit percentage, for the year to May 2027.",
+   "The stock is about 80% below its 2021 record. $35.15 at the October 1 close, against $177.51 on November 5, 2021.",
+   "The whole company is now worth about $52 billion. It was worth about $280 billion at the end of 2021.",
+   "In September, Nike was dropped from the S&P 100. After 18 years, Reuters reported. It is still in the S&P 500 and the Dow.",
+   "Last quarter, a tariff refund made most of its profit. An expected $986 million refund after the Supreme Court struck down the tariffs: $0.52 of its $0.72 a share.",
+   "Chinese rival Anta made $6.1 billion in six months. January to June 2026. Nike's Greater China sales for its whole last fiscal year: $5.85 billion."
+  ],
+  "caption": "\"nike stock\" — 10,000+ searches today. Nike's sales fell again, and China fell hardest.\n\nWhy: On October 1, Nike reported $11.21 billion in revenue for June to August, down 4% and below estimates. Greater China fell 22% to $1.18 billion. Nike now expects full-year revenue to drop by a high single-digit percentage. The stock fell about 4% after hours.\n\nWhat most people don't know: Chinese rival Anta Group made about $6.1 billion from January to June 2026. That is more than Nike sold in Greater China in its whole last fiscal year: $5.85 billion.\n\nVery simply put: in China, the home team is winning.",
+  "sources": [
+   "https://www.sec.gov/Archives/edgar/data/0000320187/000032018726000184/q1fy27exhibit991er.htm",
+   "https://www.ksl.com/article/51631285/nike-quarterly-sales-miss-estimates-as-china-weakness-competition-weigh",
+   "https://finance.yahoo.com/markets/article/nike-stock-sinks-as-revenue-misses-estimates-203030510.html",
+   "https://investinglive.com/stocks/nike-beats-q1-profit-estimates-but-sees-fiscal-2027-revenue-falling-high-single-digits/",
+   "https://stockanalysis.com/stocks/nke/",
+   "https://www.trendfollowing.com/2026/09/21/nikes-stock-has-dropped-exactly-eighty-percent-from-its-all-time-high",
+   "https://finance.yahoo.com/markets/stocks/articles/nike-stock-slips-premarket-retail-085514072.html",
+   "https://www.sec.gov/Archives/edgar/data/0000320187/000032018726000076/q4fy26exhibit991er.htm",
+   "https://fortune.com/article/fortune-500-companies-billions-tariff-refunds-customers-08-19-2026/",
+   "https://www.modernretail.co/operations/nike-says-it-expects-986-million-in-ieepa-tariff-refunds/",
+   "https://ir.anta.com/en/news_detail.php?id=167844",
+   "https://retailnews.asia/anta-sports-lifts-first-half-revenue-12-9-to-6-1-billion"
+  ],
+  "postizId": null,
+  "status": "Held, not scheduled: Instagram blocked the last 2 No Cap posts on 1 Oct (\"Instagram blocked your request\", 13:00 and 16:00 UTC), so the daily routine made the carousel and uploaded its 10 JPEGs to Postiz but did not schedule it; it posts when Boonchu says so; all 10 slides Cloudflare FLUX.2 [klein] 4B (cover candidate B; a fake brand word on the slide 6 sneaker painted out); JPEG slides",
+  "images": [
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/01.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/02.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/03.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/04.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/05.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/06.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/07.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/08.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/09.png",
+   "https://raw.githubusercontent.com/Boonchutan/aybkk-workshop/trend-cards/carousels/2026-10-02-nike-china/10.png"
   ]
  }
 ]
