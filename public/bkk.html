@@ -391,7 +391,7 @@
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const baht = n => '฿' + Number(n).toLocaleString('en-US');
-  let CLASSES = [], PRODUCTS = [], SURCHARGE = 0, LOADED = false;
+  let CLASSES = [], PRODUCTS = [], SURCHARGE = 0, VAT = 0, LOADED = false;
   const myCode = () => localStorage.getItem('aybkk_member') || '';
 
   const STR = {
@@ -445,7 +445,7 @@
       loyalH: 'Loyal students',
       loyalLine: 'After 12 months in a row, renew 12 months Dedicated at 54,900.',
       fair: 'One price for everyone. Clear and simple.',
-      fine: 'Prices in Thai baht. Paying online adds 5%. Buy online in the Packages tab below, or at the shala. Questions:',
+      fine: 'Prices in Thai baht, before 7% VAT. Paying online adds 5%. Buy online in the Packages tab below, or at the shala. Questions:',
       findH: 'Find us', maps: 'Open in Google Maps', contactH: 'Message us',
       copy: 'Copy', copied: 'Copied',
       tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
@@ -454,7 +454,7 @@
       noDay: 'No classes this day — tap a date with a dot.',
       full: 'Class full', left: n => n + ' places left', places: n => n + ' places',
       book: 'Book', buy: 'Buy',
-      fee: (base, pct) => `${base} + ${pct}% online payment fee`,
+      fee: (base, pct, vat) => `${base} + ${pct}% online payment fee + ${vat}% VAT`,
       unlim: d => `Unlimited classes for ${d} days`,
       cap: n => `${n} class bookings per day`,
       credits: n => `${n} class credit${n > 1 ? 's' : ''}`,
@@ -514,7 +514,7 @@
       loyalH: 'นักเรียนประจำ',
       loyalLine: 'ฝึกต่อเนื่องครบ 12 เดือน ต่ออายุแบบ Dedicated 12 เดือนได้ในราคา 54,900 บาท',
       fair: 'ราคาเดียวสำหรับทุกคน ชัดเจน ตรงไปตรงมา',
-      fine: 'ราคาเป็นเงินบาท ชำระออนไลน์บวกเพิ่ม 5% ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:',
+      fine: 'ราคาเป็นเงินบาท ยังไม่รวม VAT 7% ชำระออนไลน์บวกเพิ่ม 5% ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:',
       findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', contactH: 'ทักหาเรา',
       copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
       tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
@@ -523,7 +523,7 @@
       noDay: 'วันนี้ไม่มีคลาส แตะวันที่ที่มีจุด',
       full: 'เต็มแล้ว', left: n => `เหลือ ${n} ที่`, places: n => `${n} ที่`,
       book: 'จอง', buy: 'ซื้อ',
-      fee: (base, pct) => `${base} + ค่าธรรมเนียมชำระเงินออนไลน์ ${pct}%`,
+      fee: (base, pct, vat) => `${base} + ค่าธรรมเนียมชำระเงินออนไลน์ ${pct}% + VAT ${vat}%`,
       unlim: d => `เรียนไม่จำกัด ${d} วัน`,
       cap: n => `จองได้วันละ ${n} คลาส`,
       credits: n => `${n} ครั้ง`,
@@ -583,7 +583,7 @@
       loyalH: '老学员',
       loyalLine: '连续练习满12个月后，续订12个月专注套餐只需 54,900 泰铢。',
       fair: '所有人同一个价格，清楚简单。',
-      fine: '价格以泰铢计。在线支付另加 5%。可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：',
+      fine: '价格以泰铢计，不含 7% 增值税。在线支付另加 5%。可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：',
       findH: '地址与联系方式', maps: '在 Google 地图中打开', contactH: '联系我们',
       copy: '复制', copied: '已复制',
       tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
@@ -592,7 +592,7 @@
       noDay: '当天没有课，请点有圆点的日期。',
       full: '已满', left: n => `剩余 ${n} 个名额`, places: n => `${n} 个名额`,
       book: '预约', buy: '购买',
-      fee: (base, pct) => `${base} + ${pct}% 线上支付手续费`,
+      fee: (base, pct, vat) => `${base} + ${pct}% 线上支付手续费 + ${vat}% 增值税`,
       unlim: d => `${d} 天内不限次数`,
       cap: n => `每天可预约 ${n} 节课`,
       credits: n => `${n} 次课`,
@@ -652,7 +652,7 @@
       loyalH: 'Верные ученики',
       loyalLine: 'После 12 месяцев подряд — продление Dedicated на 12 месяцев за 54,900 бат.',
       fair: 'Одна цена для всех. Всё просто и понятно.',
-      fine: 'Цены в тайских батах. При онлайн-оплате +5%. Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:',
+      fine: 'Цены в тайских батах, без НДС 7%. При онлайн-оплате +5%. Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:',
       findH: 'Как нас найти', maps: 'Открыть в Google Картах', contactH: 'Напишите нам',
       copy: 'Копировать', copied: 'Скопировано',
       tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
@@ -661,7 +661,7 @@
       noDay: 'В этот день занятий нет — выберите дату с точкой.',
       full: 'Мест нет', left: n => `Осталось мест: ${n}`, places: n => `Мест: ${n}`,
       book: 'Записаться', buy: 'Купить',
-      fee: (base, pct) => `${base} + ${pct}% комиссия за онлайн-оплату`,
+      fee: (base, pct, vat) => `${base} + ${pct}% комиссия за онлайн-оплату + ${vat}% НДС`,
       unlim: d => `Без ограничений, ${d} дн.`,
       cap: n => `До ${n} записей в день`,
       credits: n => `Занятий: ${n}`,
@@ -729,6 +729,7 @@
       CLASSES = s.classes || [];
       PRODUCTS = p.products || [];
       SURCHARGE = p.surchargePct || 0;
+      VAT = p.vatPct || 0;
       LOADED = true;
       tab(current);
     } catch (e) {
@@ -811,7 +812,7 @@
       return `<div class="pkg ${p.kind === 'unlimited' ? 'feature' : ''}">
         <h3>${esc(pkgName(p))}</h3>
         <div class="price">${baht(p.total_thb)}</div>
-        <div class="fee">${esc(t('fee', baht(p.price_thb), SURCHARGE))}</div>
+        <div class="fee">${esc(t('fee', baht(p.price_thb), SURCHARGE, VAT))}</div>
         <ul>${lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>
         <button class="btn pink" onclick="buy('${esc(p.code)}')">${esc(t('buy'))}</button>
       </div>`;

@@ -257,7 +257,7 @@
     const rows = (d.orders || []).map(o => `<tr>
       <td><b>${esc(o.member_name)}</b><br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span></td>
       <td>${esc(o.name_en)}<br><b>฿${o.amount_thb.toLocaleString()}</b>
-        <br><span class="muted">${o.base_thb.toLocaleString()} + fee ${o.fee_thb.toLocaleString()}</span></td>
+        <br><span class="muted">${o.base_thb.toLocaleString()} + fee ${o.fee_thb.toLocaleString()} + VAT ${(o.vat_thb || 0).toLocaleString()}</span></td>
       <td><span class="pill ${esc(o.status)}">${esc(o.status)}</span><br>
         <span class="muted">${(o.created_at || '').slice(5, 16).replace('T', ' ')}</span>
         ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}</td>

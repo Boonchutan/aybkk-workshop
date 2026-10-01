@@ -18,6 +18,7 @@ const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
 const SIGNIN_PER_EMAIL_HOUR = 3;               // and cheap to abuse without limits
 const SIGNIN_PER_IP_HOUR = 10;
 const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
+const VAT_PCT = 7;                             // Thai VAT, charged on price + online fee
 
 // ── seed data (from aybkk.com, captured 2026-08-05) ─────────────────────────
 // price_thb is the BASE price. The online surcharge is a setting, applied at
@@ -143,6 +144,7 @@ function mountBkk(app, opts = {}) {
              ON bkk_notes (member_id, created_at DESC)`);
     // Language the student last chose, so email matches the page they bought on.
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS lang TEXT`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS vat_thb INTEGER NOT NULL DEFAULT 0`);
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS reminded_at TIMESTAMPTZ`);
 
     // The things a shala actually does to a pass, which Rezerv has and this did
@@ -216,6 +218,13 @@ function mountBkk(app, opts = {}) {
 
   const surcharge = async () => Number(await getSetting('surcharge_pct', 5)) || 0;
 
+  // VAT is due on everything the student pays, the online fee included.
+  function breakdown(base, pct) {
+    const fee = Math.round(base * pct / 100);
+    const vat = Math.round((base + fee) * VAT_PCT / 100);
+    return { fee, vat, total: base + fee + vat };
+  }
+
   // ── helpers ───────────────────────────────────────────────────────────────
   const memberCode = () => 'B' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
   // PaySolutions requires a numeric refno; 10 digits, unique.
@@ -272,15 +281,15 @@ function mountBkk(app, opts = {}) {
       const r = await q('SELECT * FROM bkk_products WHERE active ORDER BY sort, id');
       res.json({
         surchargePct: pct,
+        vatPct: VAT_PCT,
         // Which way this shala can take money right now. Names only — never a
         // key, never a fragment of one. 'gateway' = verified auto-activation,
         // 'link' = pay.sn plus a human confirming, 'none' = cannot sell online.
         payment: paymentStatus(),
-        products: r.rows.map(p => ({
-          ...p,
-          fee_thb: Math.round(p.price_thb * pct / 100),
-          total_thb: p.price_thb + Math.round(p.price_thb * pct / 100),
-        })),
+        products: r.rows.map(p => {
+          const b = breakdown(p.price_thb, pct);
+          return { ...p, fee_thb: b.fee, vat_thb: b.vat, total_thb: b.total };
+        }),
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -339,8 +348,7 @@ function mountBkk(app, opts = {}) {
 
       const member = await findOrCreateMember({ name, email, phone });
       const pct = await surcharge();
-      const fee = Math.round(pr.price_thb * pct / 100);
-      const total = pr.price_thb + fee;
+      const { fee, vat, total } = breakdown(pr.price_thb, pct);
 
       // refno is unique-indexed and partly random, so a clash is possible if two
       // orders land in the same millisecond. Retry rather than 500 at a student.
@@ -348,9 +356,9 @@ function mountBkk(app, opts = {}) {
       for (let attempt = 0; attempt < 5 && !o; attempt++) {
         try {
           o = (await q(
-            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,amount_thb)
-             VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-            [newRefno(), pr.id, member.id, pr.price_thb, fee, total])).rows[0];
+            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb)
+             VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+            [newRefno(), pr.id, member.id, pr.price_thb, fee, vat, total])).rows[0];
         } catch (e) {
           if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
         }
@@ -558,7 +566,7 @@ function mountBkk(app, opts = {}) {
       [token, m.id, m.email]);
     const t = render('receipt', m.lang || 'en', {
       name: m.name, product: product.name_en,
-      amount: order.amount_thb, base: order.base_thb, fee: order.fee_thb,
+      amount: order.amount_thb, base: order.base_thb, fee: order.fee_thb, vat: order.vat_thb || 0,
       refno: order.refno, link: `${baseUrl()}/api/bkk/login/${token}`,
     });
     await sendMail({ to: m.email, subject: t.subject, html: t.html, text: t.text, tag: 'receipt' });

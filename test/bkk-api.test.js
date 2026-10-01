@@ -36,9 +36,9 @@ const ok = (name, cond, extra = '') => {
   ok('7 packages listed', prods.body.products.length === 7, `got ${prods.body.products.length}`);
   const dropin = prods.body.products.find(p => p.code === 'dropin');
   ok('drop-in base ฿1500', dropin.price_thb === 1500);
-  ok('5% surcharge → ฿1575 total', dropin.total_thb === 1575, `got ${dropin.total_thb}`);
+  ok('5% fee + 7% VAT → ฿1685 total', dropin.total_thb === 1685, `got ${dropin.total_thb}`);
   const unlim1 = prods.body.products.find(p => p.code === 'unlim1');
-  ok('1-month total ฿10080', unlim1.total_thb === 10080, `got ${unlim1.total_thb}`);
+  ok('1-month total ฿10786', unlim1.total_thb === 10786, `got ${unlim1.total_thb}`);
 
   console.log('\n— schedule —');
   const sch = await J('/api/bkk/schedule?days=7');
@@ -55,7 +55,7 @@ const ok = (name, cond, extra = '') => {
   ok('order created', order.status === 200 && order.body.order, JSON.stringify(order.body).slice(0, 120));
   const refno = Number(order.body.order.refno);
   const memberCode = order.body.member.code;
-  ok('amount is ฿14700', order.body.order.amount === 14700, `got ${order.body.order.amount}`);
+  ok('amount is ฿15729', order.body.order.amount === 15729, `got ${order.body.order.amount}`);
   ok('refno is numeric ≤12 digits', /^\d{1,12}$/.test(String(refno)), String(refno));
   ok('no pay form without credentials', order.body.pay === null);
 
