@@ -115,9 +115,7 @@ Sit on the floor. Stand up with no hands. Adults who could were far more often s
 Glaucoma patients who added daily yoga breathing to their eye drops lowered eye pressure about 2 points more in 6 months.
 *Next to eye drops, never instead of them.*
 
-28. **Mount Sinai, New York · 2015** (early)
-Careful: headstand doubled eye pressure. Downward dog raised it about three quarters.
-*It went back to normal in 2 minutes. Have glaucoma? Ask your eye doctor before going upside down.*
+28. REMOVED by Boonchu 1 Oct ("not good"): Mount Sinai headstand eye pressure caution. Do not use.
 
 29. ✂️ **ETH Zurich, Switzerland · 2012** (strong)
 46 studies: training the breathing muscles helped people last longer. Less fit people gained more.
