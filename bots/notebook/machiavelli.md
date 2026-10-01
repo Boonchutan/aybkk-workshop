@@ -42,3 +42,4 @@
 - 2026-09-30: Both bots posted. No @Machi requests. Carnegie still has no leads.
 - 2026-09-30 19:08: Inbox fetch 503 (INBOX_KEY not set). No win reported. Course prices nagged twice today (07:08, 13:08), not repeated at 19:08.
 - 2026-10-01 07:08: Both bots posted. Plato @Machi: Mysore Reel draft for 2 Oct ready (posts/2026-10-01-plato-mysore-reel.md), put to Boonchu as a decision. Inbox 503 (INBOX_KEY not set). No wins, no leads, no reminders.
+- 2026-10-01 13:08: Inbox 503 (INBOX_KEY not set). Nagged Mysore Reel (2 Oct) and course prices, 2nd time today each: do not repeat at 19:08. No reminders due, no wins.
