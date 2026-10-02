@@ -27,7 +27,6 @@ const SEED_PRODUCTS = [
   { code: 'dropin',    name_en: 'Drop-in',              name_th: 'ครั้งเดียว',        price_thb: 1500,  kind: 'credits',   credits: 1,  valid_days: 1,   daily_cap: null, sort: 10 },
   { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 20 },
   { code: 'unlim1',    name_en: '1 month unlimited',     name_th: '1 เดือน ไม่จำกัด',   price_thb: 9600,  kind: 'unlimited', credits: null, valid_days: 30,  daily_cap: 2, sort: 30 },
-  { code: 'unlim2',    name_en: '2 months unlimited',    name_th: '2 เดือน ไม่จำกัด',   price_thb: 18200, kind: 'unlimited', credits: null, valid_days: 60,  daily_cap: 2, sort: 40 },
   { code: 'unlim3',    name_en: '3 months unlimited',    name_th: '3 เดือน ไม่จำกัด',   price_thb: 25800, kind: 'unlimited', credits: null, valid_days: 90,  daily_cap: 2, sort: 50 },
   { code: 'unlim12',   name_en: '12 months unlimited (1 free month)', name_th: '12 เดือน ไม่จำกัด (ฟรี 1 เดือน)', price_thb: 78000, kind: 'unlimited', credits: null, valid_days: 395, daily_cap: 2, sort: 70 },
 ];
@@ -203,11 +202,11 @@ function mountBkk(app, opts = {}) {
           [`${s.code}_${wd}`, s.title]);
       }
     }
-    // No 6-month package any more (Oct 2026). Switch off the one earlier
+    // No 2- or 6-month package any more (Oct 2026). Switch off the ones earlier
     // databases were seeded with, once; a pass already sold keeps working.
-    const no6 = await q(`INSERT INTO bkk_settings (key,value) VALUES ('retired_unlim6','true')
-                         ON CONFLICT (key) DO NOTHING RETURNING key`);
-    if (no6.rows.length) await q(`UPDATE bkk_products SET active=false WHERE code='unlim6'`);
+    const no26 = await q(`INSERT INTO bkk_settings (key,value) VALUES ('retired_unlim2_6','true')
+                          ON CONFLICT (key) DO NOTHING RETURNING key`);
+    if (no26.rows.length) await q(`UPDATE bkk_products SET active=false WHERE code IN ('unlim2','unlim6')`);
     const st = await q(`SELECT value FROM bkk_settings WHERE key = 'surcharge_pct'`);
     if (!st.rows.length) {
       await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct','3')`);

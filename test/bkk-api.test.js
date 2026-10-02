@@ -33,7 +33,7 @@ const ok = (name, cond, extra = '') => {
 
   console.log('\n— catalogue —');
   const prods = await J('/api/bkk/products');
-  ok('6 packages listed, no 6-month', prods.body.products.length === 6 && !prods.body.products.some(p => p.code === 'unlim6'),
+  ok('5 packages listed, no 2- or 6-month', prods.body.products.length === 5 && !prods.body.products.some(p => ['unlim2', 'unlim6'].includes(p.code)),
     `got ${prods.body.products.map(p => p.code)}`);
   const dropin = prods.body.products.find(p => p.code === 'dropin');
   ok('drop-in base ฿1500', dropin.price_thb === 1500);
