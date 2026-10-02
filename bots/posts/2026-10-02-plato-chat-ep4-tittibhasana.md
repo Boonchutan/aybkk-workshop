@@ -1,22 +1,27 @@
-# Hidden Stories of Ashtanga, Ep. 4: The Bird Who Held Up the Sky (Tittibhasana)
+# Hidden Stories of Ashtanga, Ep. 4: The Bird Who Fought the Sea (Tittibhasana)
 
 Lane A. Route: last 7 IG posts were beginner carousels (Lane B), so Lane A is on route. Last posted episode: Ep. 3 Ashtavakra (Sharathji), so this is Ep. 4.
 
-Toolkit pick: Root and Wobble (word-root reveal) + Hero's Journey, run as fail, hero, payoff.
-Why: the asana's name hides the story. "Not a firefly" opens the loop; the bird with its legs up closes it on the mat.
+Toolkit pick: Interrupt Opener (narrative: Boonchu stops mid-answer for the rain) + Hero's Journey, run as fail, hero, payoff.
+Why: Boonchu's own hook opens a loop ("the real answer is...") and the rain cuts it off. The story answers it, and the payoff is the big prize: fear gives back what it took.
 
-On screen, first frame: "Tittibhasana is not a firefly" (gold: FIREFLY, small firefly icon)
+On screen, first frame: "When something hurt you before..." (gold: HURT)
 
-## HOOK
-Many yoga books call this asana "firefly".
-Sanskrit dictionaries say: tittibha is a bird.
-And that bird was afraid of the wrong thing.
-So are most of us, in this asana.
+## HOOK (Boonchu's words, light edit)
+When something hurt you before,
+you become afraid of it.
+But you do it anyway.
+Because doing it is how you heal.
+And one day, you find the way.
+But that's not the real answer.
+The real answer is...
 
-## TODAY
-Today Bangkok ran home early, afraid of a flood.
-So, a bedtime story.
-From the Panchatantra, an old Indian book of animal stories.
+## PATTERN INTERRUPT
+Oh. It started to rain again.
+My wife and I raced home.
+Afraid of a flood, like last week.
+So, a story from the Panchatantra,
+an old Indian book of animal stories.
 
 ## STORY (bedtime voice)
 Two little birds lived by the sea.
@@ -30,58 +35,51 @@ Next day, the birds went out for food.
 The tide came up...
 and took the eggs.
 (silent beat)
-Mama bird was so sad.
-Papa bird called every bird he knew.
+The sea had hurt them.
+And the sea was so big.
+But Papa bird fought back anyway.
+He called every bird he knew.
 They hit the sea with their wings.
-But the sea was too big.
-So they flew to Garuda, king of the birds.
+But the sea was too big for them.
+Then a wise old bird said,
+"Go to Garuda, king of the birds."
 And Garuda's master came: the great god Vishnu.
 He told the sea, "Give the bird his eggs."
-The sea shook with fear,
-and gave back every egg.
-
-## TURN (to the adults)
-There's an old saying about this bird.
-It lies on its back, legs up,
-to hold up the sky.
-It's afraid the sky will fall.
-And it's proud. It thinks its legs hold the sky.
 (beat)
-The sea was the real danger.
-Papa bird didn't see it.
-He was busy holding up the sky.
+And the big sea shook with fear.
+It gave back every egg.
 
 ## ASANA (the fail)
-Tittibha. Tittibhasana. Same word.
-In Primary, you pass through it for one breath.
-And most of us become Papa bird.
+In Sanskrit, this kind of bird is called tittibha.
+Many yoga books call Tittibhasana "firefly".
+But tittibha is a bird.
+Maybe you fell out of it once.
+Now you're afraid.
+So you do it anyway. Alone.
 Shoulders up. Breath gone.
-Holding up the sky.
-You hold harder...
-and you fall faster.
+Like a little bird hitting the sea with its wings.
 (silent beat, 1 s)
 
-## REVEAL (Boonchu's own cue, 2 Oct)
-Your legs don't hold you up.
-Your hands do.
-Legs around your shoulders. Feet up.
-Arms straight. Everything on your hands.
-Keep breathing.
+## THE REAL ANSWER
+The real answer:
+don't fight the sea alone.
+Even the little bird needed help.
+That's why Mysore class has a teacher in the room.
+Legs around your shoulders.
+Arms straight.
+Everything on your hands.
 
-## LINE (screenshot)
-Good fear watches the sea.
-Bad fear holds up the sky.
-
-## CLOSE
-Today, running home early was good fear.
-Tomorrow, on the mat,
-let the sky hold itself.
+## BIG PRIZE (payoff)
+The sea took the eggs.
+Then it gave back every one.
+Your fear took something from you too.
+One morning, it will give it all back.
 
 ## CAPTION (4 lines + format)
-Many yoga books call it firefly. Tittibha is a bird.
-Hidden Stories of Ashtanga, Ep. 4: The Bird Who Held Up the Sky.
+When something hurt you before, you become afraid of it.
+Hidden Stories of Ashtanga, Ep. 4: The Bird Who Fought the Sea.
 Tittibhasana: legs around your shoulders, arms straight, everything on your hands.
-Good fear watches the sea. Bad fear holds up the sky.
+Don't fight the sea alone. One day, fear gives back everything it took.
 
 Come learn Ashtanga
 Aybkk.com
@@ -89,18 +87,18 @@ Aybkk.com
 #aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #tittibhasana #boonchutanti
 
 ## COVER
-His face, plum gradient from the bottom third. Top: white letterspaced "HIDDEN STORIES OF ASHTANGA" + teal pill "EP. 4". Title: "NOT A FIREFLY" (Montserrat Black, gold: FIREFLY). Check in black and white.
+His face, plum gradient from the bottom third. Top: white letterspaced "HIDDEN STORIES OF ASHTANGA" + teal pill "EP. 4". Title: "NOT A FIREFLY" (Montserrat Black, gold: FIREFLY). Check in black and white. (Do not put the answer on the cover.)
 
 ## BOONCHU TO CONFIRM BEFORE FILMING
-1. The Primary passing breath: ashtangayoga.info counts one inhale in Tittibhasana coming out of Supta Kurmasana (and on the Bhujapidasana exit and Kurmasana entry); some counts go straight to Bakasana. The script only says "you pass through it for one breath". Change it if you count it differently.
-2. The REVEAL cue: now in your own words (2 Oct).
-3. Film the TODAY lines on a day it really rained. If not: "This week the sky over Bangkok kept going dark."
+1. The real answer is Plato's draft ("don't fight the sea alone"). Change it if you meant another answer.
+2. "Like last week": your own account of last week's flood. Keep it only if true.
 
 ## EDIT CUE SHEET (house style, Ep. 1 look)
 - Header pill all video: "Hidden Stories of Ashtanga · Ep. 4".
+- Pattern interrupt: hard cut + thunder SFX on "Oh. It started to rain again." Use his real rain clip from today if he has one.
 - Cards: "ṭiṭṭibha = a bird" (navy SVG card, dictionary icon) on the hook; "PANCHATANTRA" text when he says it; story pictures below, slow zoom inside the card.
 - Asana footage: Tittibhasana A (his own or a student's, with permission) on "this asana" (hook) and in the ASANA part.
-- Zoom cut 1.3x about 1 s + SFX at 40%, 0.4 s after the word: firefly (sparkle), bird (pop), wrong thing (error), dark (synth thunder), proud (impact-bass-1), test (click-soft), took the eggs (whoosh), Vishnu (chime), shook (impact-bass-2), sky (whoosh), fall faster (error), keep breathing (chime), good fear (ping).
+- Zoom cut 1.3x about 1 s + SFX at 40%, 0.4 s after the word: hurt (impact-bass-1), afraid (error), real answer (click-soft), rain (synth thunder), proud (impact-bass-1), test (click-soft), took the eggs (whoosh), fought back (impact-bass-2), Garuda (whoosh), Vishnu (chime), shook with fear (impact-bass-2), firefly (sparkle), alone (error), real answer (ping), give it all back (chime).
 - Keep beats: 1 s after "and took the eggs"; 1 s before the REVEAL.
 - Captions: Weight Shift, lowercase Montserrat, big emoji (🔥🐦🌊🥚🌧️🦅✨🙏 where they fit).
 
@@ -113,7 +111,7 @@ Add this style line to every prompt: Stop-motion puppet animation film still in 
 - 5_birds: Many small birds of every kind (sparrows, mynas, kingfishers, little herons) flap their wings at the waves and drop tiny beakfuls of dirt into the sea. The sea is huge and calm. Busy, brave, a bit funny.
 - 6_light: The small birds fly up toward a soft blue and gold light high in the sky above the sea. No figure, only light. Respectful.
 - 7_eggs_back: At sunrise, a gentle wave places the four eggs back in the nest. The mother bird covers them with her wings. The father bird bows his head.
-- 8_legs_up: The father lapwing lies on his back on the sand with his thin legs straight up, as if holding up the dark plum night sky full of stars. Funny and sweet.
+- 8_old_bird: A wise old gander with soft grey feathers and small round glasses talks to the worried father lapwing on a rock by the sea, pointing one wing up to the sky. Kind and calm.
 - No picture of Garuda (in Thailand, Garuda is the royal emblem) and no picture of Vishnu: show light only (6_light).
 
 ## SOURCES
