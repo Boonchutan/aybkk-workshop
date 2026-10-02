@@ -46,6 +46,10 @@
     --header:#17121a;   /* fixed: never flips with the theme */
     --gold:#9a6b12;
     --gold-soft:#fbf1dc;
+    /* Promotion = gold, a third of the colour wheel from the plum, so a deal
+       never looks like a normal price (Boonchu, 2 Oct). */
+    --promo:#d9a521; --promo-hi:#f2c94c; --promo-ink:#3e1442; --promo-deep:#7d5300;
+    --promo-soft:#fdf4dc; --promo-line:#e6c25a;
     --radius:8px;
   }
   @media (prefers-color-scheme: dark){
@@ -55,6 +59,8 @@
       --pink:#ff6fae; --pink-deep:#ff8dc0; --soft:#b09cb6;
       --line:rgba(245,233,240,.14); --on-dark:#17121a; --header:#17121a;
       --gold:#e6bf66; --gold-soft:#2e2416;
+      --promo:#e0b52b; --promo-hi:#f2d98a; --promo-ink:#1c1010; --promo-deep:#f2d98a;
+      --promo-soft:#2a2114; --promo-line:#6b5420;
     }
   }
   :root[data-theme="dark"]{
@@ -62,12 +68,16 @@
     --plum:#c07ec8; --plum-deep:#d9a5de; --plum-soft:#a468ac; --pink:#ff6fae; --pink-deep:#ff8dc0;
     --soft:#b09cb6; --line:rgba(245,233,240,.14); --on-dark:#17121a; --header:#17121a;
     --gold:#e6bf66; --gold-soft:#2e2416;
+    --promo:#e0b52b; --promo-hi:#f2d98a; --promo-ink:#1c1010; --promo-deep:#f2d98a;
+    --promo-soft:#2a2114; --promo-line:#6b5420;
   }
   :root[data-theme="light"]{
     --ink:#17121a; --wall:#f7f1f5; --paper:#ffffff; --blush:#fbe7f0; --blush-line:#f3d3e2;
     --plum:#5c2160; --plum-deep:#43164a; --plum-soft:#8b4c90; --pink:#e8458c; --pink-deep:#c92f74;
     --soft:#6b5d70; --line:rgba(23,18,26,.11); --on-dark:#fdf7fa; --header:#17121a;
     --gold:#9a6b12; --gold-soft:#fbf1dc;
+    --promo:#d9a521; --promo-hi:#f2c94c; --promo-ink:#3e1442; --promo-deep:#7d5300;
+    --promo-soft:#fdf4dc; --promo-line:#e6c25a;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{margin:0;background:var(--wall);color:var(--ink);
@@ -281,47 +291,55 @@
   .msg.bad{background:#fdeaea;color:#a33}
   [hidden]{display:none!important}
   /* Promotion: the first thing on the page, and the whole band is one tap. */
-  .promo-band{display:block;text-decoration:none;text-align:center;color:#fff;padding:12px 12px 14px;line-height:1.25;
-    background:linear-gradient(100deg,#c92f74,#5c2160)}
-  .promo-band .pb-k{display:block;white-space:nowrap;font-size:clamp(10px,3vw,13px);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#ffe3f0}
+  .promo-band{display:block;text-decoration:none;text-align:center;color:#3e1442;padding:12px 12px 14px;line-height:1.2;
+    background:linear-gradient(100deg,#f2c94c,#d9a521 55%,#c08a12)}
+  .promo-band .pb-k{display:block;white-space:nowrap;font-size:clamp(10px,3vw,13px);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
   .promo-band .pb-big{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:clamp(28px,8vw,44px);line-height:1.02;margin:2px 0 0}
-  .promo-band .pb-sub{display:block;font-size:clamp(13px,4vw,16px);font-weight:600;margin-top:2px}
-  .promo-band .pb-btn{display:inline-block;margin-top:8px;background:#fff;color:#c92f74;border-radius:999px;
-    padding:7px 26px;font-weight:700;font-size:16px;line-height:1.25;box-shadow:0 4px 14px rgba(0,0,0,.2)}
-  #promo .lead{margin:-6px 0 16px;font-size:16px}
-  .offers{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+  .promo-band .pb-sub{display:block;font-size:clamp(13px,4vw,16px);font-weight:700;margin-top:2px}
+  .promo-band .pb-btn{display:inline-block;margin-top:8px;background:#3e1442;color:#f2d98a;border-radius:999px;
+    padding:7px 26px;font-weight:700;font-size:16px;line-height:1.25;box-shadow:0 4px 14px rgba(62,20,66,.25)}
+  #promo{margin-top:22px;padding:18px 14px 16px;background:var(--promo-soft);border:2px solid var(--promo-line);border-radius:14px;line-height:1.35}
+  #promo h2{color:var(--promo-deep);margin-bottom:8px}
+  #promo .lead{margin:0 0 14px;font-size:15.5px}
+  .offers{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
   @media (min-width:640px){ .offers{grid-template-columns:repeat(2,minmax(0,1fr))} }
-  .offer{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);cursor:pointer;
-    background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:16px 16px 14px}
-  .offer[aria-pressed="true"]{border:2.5px solid var(--pink);background:var(--blush);padding:15px 15px 13px}
-  .offer .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-    border-radius:999px;padding:3px 10px;background:var(--plum);color:var(--on-dark)}
-  .offer .tag.past{background:var(--gold);color:#fff}
+  .offer{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);cursor:pointer;line-height:1.35;
+    background:var(--paper);border:1.5px solid var(--promo-line);border-radius:12px;padding:14px 14px 12px}
+  .offer[aria-pressed="true"]{border:3px solid var(--promo);padding:12.5px 12.5px 10.5px;box-shadow:0 4px 14px rgba(217,165,33,.25)}
+  .offer .tag{display:inline-block;font-size:15px;font-weight:800;letter-spacing:.02em;
+    border-radius:999px;padding:6px 14px;background:var(--promo);color:var(--promo-ink)}
+  .offer .tag.past{background:var(--promo-ink);color:var(--promo-hi)}
   .offer .ot{display:block;margin-top:8px;font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em}
-  .offer .ob{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:28px;line-height:1.1;color:var(--pink);margin:2px 0 6px}
+  .offer .ob{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:28px;line-height:1.05;color:var(--promo-deep);margin:2px 0 4px}
   .offer .ob s{font-weight:500;font-size:16px;color:var(--soft);margin-left:6px}
-  .offer .od{display:block;font-size:15px;line-height:1.5}
-  .calc{margin-top:16px;border:1.5px solid var(--pink);border-radius:12px}
-  .calc h3{margin:0 0 6px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:28px;letter-spacing:0;text-transform:none;color:var(--plum)}
-  .calc .q{margin:14px 0 6px;font-size:14px;font-weight:700;color:var(--soft)}
+  .offer .od{display:block;font-size:15px;line-height:1.4}
+  .calc{margin-top:14px;border:2px solid var(--promo);border-radius:12px;line-height:1.35}
+  .calc h3{margin:0 0 4px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:28px;line-height:1.15;letter-spacing:0;text-transform:none;color:var(--promo-deep)}
+  .calc .q{margin:12px 0 6px;font-size:14px;font-weight:700;color:var(--soft)}
   .calc .opts{display:flex;flex-wrap:wrap;gap:8px}
   .calc .opts button{font:600 16px/1 inherit;font-family:inherit;min-height:46px;padding:10px 16px;border-radius:999px;cursor:pointer;
-    background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
-  .calc .opts button[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#fff}
+    background:var(--paper);color:var(--ink);border:1.5px solid var(--promo-line)}
+  .calc .opts button[aria-pressed="true"]{background:var(--promo);border-color:var(--promo);color:var(--promo-ink);font-weight:800}
   .calc input[type=date]{max-width:260px;font-size:17px}
-  .res{margin-top:18px;background:var(--blush);border-radius:10px;padding:16px}
+  .res{margin-top:16px;background:var(--promo-soft);border:1px solid var(--promo-line);border-radius:10px;padding:14px}
   .res .pass{font-size:17px;font-weight:700}
   .res .each{font-size:15px;margin-top:2px}
-  .res .ph{margin-top:12px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
-  .res .total{font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:44px;line-height:1.05;color:var(--pink)}
+  .res .ph{margin-top:10px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+  .res .total{font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:44px;line-height:1.02;color:var(--promo-deep)}
   .res .brk{font-size:14px;color:var(--soft)}
-  .res .pc{margin-top:10px;font-size:17px;font-weight:700;color:var(--plum)}
-  .res .save{display:inline-block;margin-top:8px;font-size:14px;font-weight:700;color:#fff;background:var(--gold);border-radius:999px;padding:4px 12px}
-  .res .past{margin-top:10px;font-size:14px;font-weight:600;color:var(--gold)}
-  .buy-line{display:flex;width:100%;margin-top:16px;min-height:58px;font-size:19px;background:#06c755;color:#fff}
-  .buy-line:hover{background:#05a948}
+  .res .pc{margin-top:8px;font-size:17px;font-weight:700;color:var(--promo-ink)}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .res .pc{color:var(--promo-hi)} }
+  :root[data-theme="dark"] .res .pc{color:var(--promo-hi)}
+  .res .save{display:inline-block;margin-top:6px;font-size:14px;font-weight:800;color:var(--promo-hi);background:#3e1442;border-radius:999px;padding:4px 12px}
+  .res .past{margin-top:8px;font-size:14px;font-weight:700;color:var(--promo-deep)}
+  .buy{display:flex;width:100%;margin-top:14px;min-height:56px;font-size:19px;font-weight:800;background:var(--promo);color:var(--promo-ink)}
+  .buy:hover{background:var(--promo-hi)}
+  .alt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .alt .btn{width:100%;min-height:46px;padding:10px 8px;font-size:15px;background:var(--paper);color:var(--promo-deep);border:1.5px solid var(--promo)}
+  .alt .btn:hover{background:var(--promo-soft)}
   .res .how{margin:8px 0 0;font-size:14px}
-  .calc .fine{margin:12px 0 0;font-size:12.5px;color:var(--soft)}
+  .res .copied{margin:6px 0 0;font-size:14px;font-weight:700;color:var(--promo-deep)}
+  .calc .fine{margin:10px 0 0;font-size:12.5px;color:var(--soft)}
   .momgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0 4px}
   .momgrid img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:6px;background:var(--blush)}
   .momwhen{margin:10px 0 0;font-size:13px;font-weight:700;color:var(--soft)}
@@ -334,7 +352,7 @@
   <span class="pb-k" data-i18n="bandKicker">Until 11 Nov only · in memory of Sharathji</span>
   <span class="pb-big" data-i18n="bandBig">Buy 1, get 1 FREE</span>
   <span class="pb-sub" data-i18n="bandSub">or the Rookie Pack ฿5,900 for new students</span>
-  <span class="pb-btn" data-i18n="bandBtn">Work out my price →</span>
+  <span class="pb-btn" data-i18n="bandBtn">Calculate my price →</span>
 </a>
 <header class="hero">
   <div class="langs" role="group" aria-label="Language">
@@ -449,7 +467,7 @@
         <h3 data-i18n="ctaStart">New? Start here</h3>
         <p class="line" data-i18n="newLine">Start with 1 month, so your teacher can guide you step by step.</p>
         <p class="camp campWrap" data-i18n="newCamp">Until 11 Nov 2026: Duo, buy 1 get 1 free, or the Rookie Pack, 5,900. Book the promotion on LINE @aybkk. Start by 12 Nov.</p>
-        <p style="margin-top:12px" class="campWrap"><a class="btn pink" href="#promo" data-i18n="bandBtn">Work out my price →</a></p>
+        <p style="margin-top:12px" class="campWrap"><a class="btn buy" href="#promo" data-i18n="bandBtn">Calculate my price →</a></p>
       </div>
       <div class="plan">
         <h3 data-i18n="visitH">Visiting?</h3>
@@ -822,7 +840,7 @@
   // name check, so the team sends the payment link by hand.
   Object.assign(STR.en, {
     bandKicker: 'Until 11 Nov only · in memory of Sharathji', bandBig: 'Buy 1, get 1 FREE',
-    bandSub: 'or the Rookie Pack ฿5,900 for new students', bandBtn: 'Work out my price →',
+    bandSub: 'or the Rookie Pack ฿5,900 for new students', bandBtn: 'Calculate my price →',
     promoH: 'Sharathji promotion, 1 Oct to 11 Nov',
     promoLead: 'Pick an offer, pick your first day, and see exactly what you pay. Buy by 11 Nov, start by 12 Nov.',
     tagNew: 'New students', tagPast: 'Past AYBKK students',
@@ -830,21 +848,22 @@
     rookWas: 'normally ฿12,000', rookD: '6 practices in 1 month + 2 Ashtanga foundation workshops. The easy way to start.',
     resetD: '8 practices in 2 months + 1 free private alignment check with Kru Boonchu, to find hidden weak spots.',
     beatBig: '30% to 40% off', beatD: 'Monthly unlimited: 1 month 30% off, 2 months 35% off, 3 months 40% off.',
-    calcH: 'Work out your price', pkgQ: 'Package', pm1: '1 month', pm2: '2 months', pm3: '3 months',
+    calcH: 'Calculate your price', pkgQ: 'Package', pm1: '1 month', pm2: '2 months', pm3: '3 months',
     whoQ: 'Who is it for?', whoMe: 'Double for me', whoFriend: 'Share with a friend',
     startQ: 'Your first practice', dpwQ: 'Days a week you will come',
     passLine: (a, b, n) => `Your pass: ${a} to ${b} (${n} days)`, eachLine: (a, b) => `Each of you: ${a} to ${b}`,
     payH: 'You pay', payBreak: (p, v) => `${p} + 7% VAT ${v}`, eachPay: x => `${x} each`,
     perCls: (x, n) => `About ${x} a class (about ${n} classes)`, perSes: (x, n) => `About ${x} a session (${n} sessions)`,
     save: x => `You save ${x}`, buyBtn: 'Buy on LINE',
-    buyHow: 'LINE opens with your message ready. Press send. Our team replies with the payment link.',
+    buyHow: 'LINE or WhatsApp opens with your message ready. Press send, and Jamsai replies with the payment link.',
+    wcCopied: 'Message copied. On WeChat, add aybkkwechat and paste it.',
     pastNote: 'For past AYBKK students. We check your name when you message us.',
     calcFine: 'Prices include 7% VAT. Paying by card online adds a small transaction fee. Start by 12 Nov 2026.',
     momAll: 'See all daily photos', momLatest: d => `Latest photos, ${d}`, momMore: n => `More photos from this day (${n}) →`,
   });
   Object.assign(STR.th, {
     bandKicker: 'ถึง 11 พ.ย. เท่านั้น · น้อมรำลึก Sharathji', bandBig: 'ซื้อ 1 แถม 1 ฟรี',
-    bandSub: 'หรือ Rookie Pack ฿5,900 สำหรับนักเรียนใหม่', bandBtn: 'คำนวณราคาของฉัน →',
+    bandSub: 'หรือ Rookie Pack ฿5,900 สำหรับนักเรียนใหม่', bandBtn: 'คำนวณราคาเรียน →',
     promoH: 'โปรโมชัน Sharathji 1 ต.ค. ถึง 11 พ.ย.',
     promoLead: 'เลือกโปร เลือกวันเริ่มฝึก แล้วดูว่าต้องจ่ายเท่าไหร่ ซื้อภายใน 11 พ.ย. เริ่มใช้ภายใน 12 พ.ย.',
     tagNew: 'นักเรียนใหม่', tagPast: 'นักเรียนเก่า AYBKK',
@@ -852,21 +871,22 @@
     rookWas: 'ปกติ ฿12,000', rookD: 'ฝึก 6 ครั้งใน 1 เดือน + เวิร์กช็อปปรับพื้นฐานอาชทางก้า 2 ครั้ง เริ่มต้นแบบง่ายที่สุด',
     resetD: 'ฝึก 8 ครั้งใน 2 เดือน + ตรวจท่าส่วนตัวฟรี 1 ครั้งกับครูบุญชู หาจุดอ่อนที่ซ่อนอยู่',
     beatBig: 'ลด 30% ถึง 40%', beatD: 'แพ็กเกจรายเดือนไม่จำกัด: 1 เดือนลด 30%, 2 เดือนลด 35%, 3 เดือนลด 40%',
-    calcH: 'คำนวณราคาของคุณ', pkgQ: 'แพ็กเกจ', pm1: '1 เดือน', pm2: '2 เดือน', pm3: '3 เดือน',
+    calcH: 'คำนวณราคาเรียน', pkgQ: 'แพ็กเกจ', pm1: '1 เดือน', pm2: '2 เดือน', pm3: '3 เดือน',
     whoQ: 'ใช้กับใคร?', whoMe: 'ใช้เอง 2 เท่า', whoFriend: 'แบ่งกับเพื่อน',
     startQ: 'วันแรกที่มาฝึก', dpwQ: 'มาฝึกสัปดาห์ละกี่วัน',
     passLine: (a, b, n) => `บัตรของคุณ: ${a} ถึง ${b} (${n} วัน)`, eachLine: (a, b) => `แต่ละคน: ${a} ถึง ${b}`,
     payH: 'ยอดที่ต้องจ่าย', payBreak: (p, v) => `${p} + VAT 7% ${v}`, eachPay: x => `คนละ ${x}`,
     perCls: (x, n) => `ตกครั้งละประมาณ ${x} (ประมาณ ${n} ครั้ง)`, perSes: (x, n) => `ตกครั้งละประมาณ ${x} (${n} ครั้ง)`,
     save: x => `ประหยัด ${x}`, buyBtn: 'ซื้อผ่าน LINE',
-    buyHow: 'LINE จะเปิดพร้อมข้อความ กดส่งได้เลย ทีมงานจะส่งลิงก์ชำระเงินให้',
+    buyHow: 'LINE หรือ WhatsApp จะเปิดพร้อมข้อความ กดส่งได้เลย Jamsai จะส่งลิงก์ชำระเงินให้',
+    wcCopied: 'คัดลอกข้อความแล้ว เพิ่ม WeChat ID aybkkwechat แล้ววางข้อความได้เลย',
     pastNote: 'สำหรับนักเรียนเก่า AYBKK ทีมงานจะเช็กชื่อเมื่อคุณทักมา',
     calcFine: 'ราคารวม VAT 7% แล้ว ชำระด้วยบัตรออนไลน์มีค่าธรรมเนียมการทำรายการเล็กน้อย เริ่มใช้ภายใน 12 พ.ย. 2569',
     momAll: 'ดูรูปการฝึกทุกวัน', momLatest: d => `รูปล่าสุด ${d}`, momMore: n => `ดูรูปทั้งหมดของวันนี้ (${n}) →`,
   });
   Object.assign(STR.zh, {
     bandKicker: '仅限11月11日前 · 纪念 Sharathji', bandBig: '买一送一',
-    bandSub: '或新学员 Rookie Pack ฿5,900', bandBtn: '算算我的价格 →',
+    bandSub: '或新学员 Rookie Pack ฿5,900', bandBtn: '计算我的价格 →',
     promoH: 'Sharathji 纪念优惠：10月1日至11月11日',
     promoLead: '选择优惠和第一天练习的日期，马上看到要付多少。11月11日前购买，11月12日前开始。',
     tagNew: '新学员', tagPast: 'AYBKK 老学员',
@@ -874,14 +894,15 @@
     rookWas: '原价 ฿12,000', rookD: '1个月内练习6次 + 2次阿斯汤加基础工作坊。最轻松的开始。',
     resetD: '2个月内练习8次 + 免费1次 Boonchu 老师私人体式检查，找出隐藏的弱点。',
     beatBig: '立减30%至40%', beatD: '月卡不限次数：1个月减30%，2个月减35%，3个月减40%。',
-    calcH: '算算你的价格', pkgQ: '套餐', pm1: '1个月', pm2: '2个月', pm3: '3个月',
+    calcH: '计算你的价格', pkgQ: '套餐', pm1: '1个月', pm2: '2个月', pm3: '3个月',
     whoQ: '给谁用？', whoMe: '自己用双倍', whoFriend: '和朋友分享',
     startQ: '第一次练习', dpwQ: '每周来几天',
     passLine: (a, b, n) => `你的会员卡：${a} 至 ${b}（${n} 天）`, eachLine: (a, b) => `每人：${a} 至 ${b}`,
     payH: '你需要支付', payBreak: (p, v) => `${p} + 7% 增值税 ${v}`, eachPay: x => `每人 ${x}`,
     perCls: (x, n) => `约每节课 ${x}（约 ${n} 节课）`, perSes: (x, n) => `约每次 ${x}（${n} 次）`,
     save: x => `省下 ${x}`, buyBtn: '通过 LINE 购买',
-    buyHow: 'LINE 会打开并写好消息。点发送，我们的团队会回复付款链接。',
+    buyHow: 'LINE 或 WhatsApp 会打开并写好消息。点发送，Jamsai 会回复付款链接。',
+    wcCopied: '消息已复制。在微信添加 aybkkwechat，然后粘贴发送。',
     pastNote: '仅限 AYBKK 老学员。你联系我们时我们会核对名字。',
     calcFine: '价格已含7%增值税。线上刷卡付款另收少量手续费。需在2026年11月12日前开始。',
     momAll: '查看每日练习照片', momLatest: d => `最新照片：${d}`, momMore: n => `当天更多照片（${n}）→`,
@@ -896,14 +917,15 @@
     rookWas: 'обычно ฿12,000', rookD: '6 практик за 1 месяц + 2 базовых воркшопа по аштанге. Самый простой старт.',
     resetD: '8 практик за 2 месяца + 1 бесплатная личная проверка выравнивания с учителем Бунчу.',
     beatBig: 'Скидка от 30% до 40%', beatD: 'Безлимит: 1 месяц скидка 30%, 2 месяца 35%, 3 месяца 40%.',
-    calcH: 'Рассчитайте цену', pkgQ: 'Абонемент', pm1: '1 месяц', pm2: '2 месяца', pm3: '3 месяца',
+    calcH: 'Рассчитать цену', pkgQ: 'Абонемент', pm1: '1 месяц', pm2: '2 месяца', pm3: '3 месяца',
     whoQ: 'Для кого?', whoMe: 'Двойной срок для меня', whoFriend: 'Поделиться с другом',
     startQ: 'Первая практика', dpwQ: 'Сколько дней в неделю',
     passLine: (a, b, n) => `Ваш абонемент: ${a} по ${b} (${n} дн.)`, eachLine: (a, b) => `Каждому: ${a} по ${b}`,
     payH: 'К оплате', payBreak: (p, v) => `${p} + НДС 7% ${v}`, eachPay: x => `${x} каждому`,
     perCls: (x, n) => `Около ${x} за занятие (около ${n} занятий)`, perSes: (x, n) => `Около ${x} за занятие (${n} занятий)`,
     save: x => `Экономия ${x}`, buyBtn: 'Купить в LINE',
-    buyHow: 'LINE откроется с готовым сообщением. Нажмите «отправить», и команда пришлёт ссылку на оплату.',
+    buyHow: 'LINE или WhatsApp откроется с готовым сообщением. Нажмите «отправить», и Jamsai пришлёт ссылку на оплату.',
+    wcCopied: 'Сообщение скопировано. В WeChat добавьте aybkkwechat и вставьте его.',
     pastNote: 'Для бывших учеников AYBKK. Мы проверим имя, когда вы напишете.',
     calcFine: 'Цены с НДС 7%. При оплате картой онлайн добавляется небольшая комиссия. Начать до 12 ноября 2026.',
     momAll: 'Все фото практики', momLatest: d => `Последние фото: ${d}`, momMore: n => `Ещё фото этого дня (${n}) →`,
@@ -1014,9 +1036,14 @@
       <div class="pc">${esc(c.o.monthly ? t('perCls', baht(c.per), c.n) : t('perSes', baht(c.per), c.n))}</div>
       <span class="save">${esc(t('save', baht(c.save)))}</span>
       ${c.o.past ? `<div class="past">${esc(t('pastNote'))}</div>` : ''}
-      <a class="btn buy-line" target="_blank" rel="noopener"
+      <a class="btn buy" target="_blank" rel="noopener"
         href="https://line.me/R/oaMessage/%40aybkk/?${encodeURIComponent(lineMessage(c))}">${esc(t('buyBtn'))}</a>
-      <p class="how">${esc(t('buyHow'))}</p>`;
+      <div class="alt">
+        <a class="btn" target="_blank" rel="noopener" href="https://wa.me/66822244246?text=${encodeURIComponent(lineMessage(c))}">WhatsApp</a>
+        <button type="button" class="btn" data-wechat="1">WeChat</button>
+      </div>
+      <p class="how">${esc(t('buyHow'))}</p>
+      <p class="copied" id="wcMsg" hidden>${esc(t('wcCopied'))}</p>`;
   }
 
   function renderPromo() {
@@ -1051,9 +1078,15 @@
     renderPromoResult();
   }
 
-  $('#promo').addEventListener('click', e => {
+  $('#promo').addEventListener('click', async e => {
     const b = e.target.closest('button');
     if (!b) return;
+    if (b.dataset.wechat) {
+      // WeChat links cannot carry a message, so copy it for the student to paste
+      try { await navigator.clipboard.writeText(lineMessage(promoCalc())); } catch (_) {}
+      $('#wcMsg').hidden = false;
+      return;
+    }
     if (b.dataset.offer) { P.offer = b.dataset.offer; P.pkg = 0; }
     else if (b.dataset.pkg) P.pkg = Number(b.dataset.pkg);
     else if (b.dataset.who) P.who = b.dataset.who;
