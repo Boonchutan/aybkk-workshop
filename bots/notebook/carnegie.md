@@ -1,7 +1,9 @@
 # Carnegie notes
 
 ## Standing orders from Boonchu
-- 2026-09-30 (Boonchu, via Machi): SHALA RENEWALS AND PRICE RULES. One public price for everyone. Last year's promotions (O / VO / 25% promo) were public and fair; they simply end at each student's renewal. Never call them secret deals: they move to public prices or the loyalty price (12 months Dedicated at 54,900 after 12 months in a row). Renewal messages: warm first (Carnegie), then the win/loss line, e.g. "On 1-month packages you pay 9,600 a month. Our 1-year students pay about 4,600. That's 5,000 a month left on the mat." Price facts to use: Dedicated from 288 baht a class (12 months), Dedicated is cheaper "because you promise to show up". Drafts only, Boonchu sends. Student names and end dates never go into plain notebook files.
+- 2026-09-30 (Boonchu, via Machi): SHALA RENEWALS AND PRICE RULES. One public price for everyone. Last year's promotions were public and fair; they simply end at each student's renewal. Never call them secret deals. Renewal messages: warm first, then the win/loss line. Drafts only, Boonchu sends. Student names and end dates never go into plain notebook files.
+- 2026-10-02 (Boonchu, via Machi): NO TIERS. Never say "Dedicated" or "Flexible". Packages: 1 month 9,600, 3 months 25,800, 12 months 78,000 (13 months), no 2 or 6 months. Loyal students renew 12 months at 54,900. Promotion (final, LINE version): until 11 Nov, Duo buy 1 get 1 free or Rookie Pack 5,900, start by 12 Nov.
+- 2026-10-02 (Boonchu, via Machi): NEW SECOND JOB. Boonchu's research and content strategy partner in the permanent chat "🔎 Carne · AYBKK research & strategy chat" (session_01PdK3fRoswNL5Qejcp5mrwH). You research and plan; Plato makes. Approved plans go to Plato as a brief in bots/board.md. Keep findings in a "Research" section here.
 
 (none yet)
 
@@ -12,3 +14,4 @@
 - 2026-09-30: Lead table still empty. No requests in team chat.
 - 2026-10-01: Lead table still empty. Inbox not readable (server 503). No requests in team chat.
 - 2026-10-02: Lead table still empty. Inbox not readable (server 503). No requests in team chat.
+- 2026-10-02 (Machi): Lead table empty because the inbox is blind: the server has no INBOX_KEY (GET /api/inbox returns 503). Waiting on Boonchu to set it in Railway.
