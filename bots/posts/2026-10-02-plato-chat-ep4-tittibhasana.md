@@ -61,11 +61,11 @@ You hold harder...
 and you fall faster.
 (silent beat, 1 s)
 
-## REVEAL (Boonchu: your cue here, this is my draft)
+## REVEAL (Boonchu's own cue, 2 Oct)
 Your legs don't hold you up.
-Your arms do.
-Legs high on your arms. Squeeze.
-Press the floor away.
+Your hands do.
+Legs around your shoulders. Feet up.
+Arms straight. Everything on your hands.
 Keep breathing.
 
 ## LINE (screenshot)
@@ -80,7 +80,7 @@ let the sky hold itself.
 ## CAPTION (4 lines + format)
 Many yoga books call it firefly. Tittibha is a bird.
 Hidden Stories of Ashtanga, Ep. 4: The Bird Who Held Up the Sky.
-Tittibhasana: legs high on your arms, squeeze, press the floor, keep breathing.
+Tittibhasana: legs around your shoulders, arms straight, everything on your hands.
 Good fear watches the sea. Bad fear holds up the sky.
 
 Come learn Ashtanga
@@ -93,7 +93,7 @@ His face, plum gradient from the bottom third. Top: white letterspaced "HIDDEN S
 
 ## BOONCHU TO CONFIRM BEFORE FILMING
 1. The Primary passing breath: ashtangayoga.info counts one inhale in Tittibhasana coming out of Supta Kurmasana (and on the Bhujapidasana exit and Kurmasana entry); some counts go straight to Bakasana. The script only says "you pass through it for one breath". Change it if you count it differently.
-2. The REVEAL cue: use your own words. Reviewer note: do not cue "rest the legs" (passive legs slide down the arms) or "breathe out" (in the count you go into Tittibhasana on the inhale).
+2. The REVEAL cue: now in your own words (2 Oct).
 3. Film the TODAY lines on a day it really rained. If not: "This week the sky over Bangkok kept going dark."
 
 ## EDIT CUE SHEET (house style, Ep. 1 look)
@@ -120,6 +120,6 @@ Add this style line to every prompt: Stop-motion puppet animation film still in 
 - Story: Panchatantra Book I, "The Plover Who Fought the Ocean", Arthur W. Ryder (Univ. of Chicago Press, 1925), pp. 145-162, checked on two archive.org scans. Plovers Sprawl and Constance. Wife: "Here is the ocean near at hand. His tide might some day make a long reach and lick away my babies." Husband: "Sweetheart, he knows me, he knows Sprawl. Surely the great ocean cannot show such enmity to me." Ocean's thought (p. 151): "Of self-conceit all creatures show / An adequate supply: / The plover lies with claws upstretched / To prop the falling sky. / I will just put his power to the test." Next day, while both birds foraged, the ocean "made a long reach with his wave-hands" and took the eggs. Birds beat the water with their wings and carried "clods and dust" in their bills; an old gander sent them to Garuda; Vishnu went in person and told the ocean "Villain, give the plover his eggs"; the ocean "tremblingly" gave them back (p. 162). Spoken story lines are bedtime paraphrases, not quotes.
 - Sanskrit (GRETIL, Jha ed., Panc. 1.343): "utkṣipya ṭiṭṭibhaḥ pādāv āste bhaṅga-bhayād divaḥ | sva-citta-kalpito garvaḥ kasya nātrāpi vidyate" = the ṭiṭṭibha lies with feet raised for fear (bhaya) the sky will break; who does not have pride (garva) made up in his own mind? Just before it the sea thinks "aho garvaḥ pakṣi-kīṭasyāsya" (oh, the pride of this little bird). The ocean returns the eggs "sa-bhayena" (in fear).
 - Word: Monier-Williams p. 429: ṭiṭṭibha = a bird (ṭiṭṭibhaka = Parra jacana); Apte "a kind of bird". MW's only insect sense is the name of a bug character (Kathasaritsagara lx.128); Maehle calls the asana "Insect Posture"; "firefly" traces to Yoga Journal (2007, via Wikipedia). Likely the red-wattled lapwing. Do NOT say the asana was named after this fable: say "the same word".
-- Asana: Intermediate Tittibhasana A (arm balance, legs over the arms), B (standing fold, hands bound behind, 5 steps forward and back), C (standing fold, heels together, feet out); some lists call the walk C and add D. Primary: one-inhale passing position per ashtangayoga.info (Supta Kurmasana exit, Bhujapidasana exit, Kurmasana entry).
+- Asana, Boonchu's own words (2 Oct): A legs around the shoulders, legs straight, feet up, arms straight, all weight on the hands; B feet down in front of the hands, body pulled in between the legs, arms around the thighs, hands bound behind, legs straight; C walk right then left (1 step) with inhale and exhale, 5 forward, 5 back; D heels together, shoulders and body slide in between the legs, hands around the ankles, 5 breaths; then lift back to A, legs back to Bakasana, jump back to Chaturanga. Primary passing breath: ashtangayoga.info counts one inhale (Supta Kurmasana exit etc.); Boonchu to confirm.
 - Left out on purpose: the frame story (a jackal at a lion's court), the wife's dark line after the loss, Vishnu's fire-arrow threat, the 2004 tsunami-like "wave takes babies" image (we say tide and eggs).
 - Checked by: 3 finders + 4 verifiers (research) and 4 reviewers (orders, facts, plain English, Ashtanga) on 2 Oct.
