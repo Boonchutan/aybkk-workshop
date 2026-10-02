@@ -33,10 +33,42 @@ const SEED_PRODUCTS = [
 ];
 
 // weekday: 0=Sun … 6=Sat
+// Moon days: the shala is closed on the Bangkok date of every new and full moon.
+// Mean-lunation formula with the main periodic terms (Walker's moontool); checked
+// against an ephemeris for 2026–2028 with no date wrong.
+const rad = d => d * Math.PI / 180;
+function moonJD(k) {
+  const t = k / 1236.85, t2 = t * t, t3 = t2 * t;
+  let jd = 2415020.75933 + 29.53058868 * k + 0.0001178 * t2 - 0.000000155 * t3
+    + 0.00033 * Math.sin(rad(166.56 + 132.87 * t - 0.009173 * t2));
+  const m = rad(359.2242 + 29.10535608 * k - 0.0000333 * t2 - 0.00000347 * t3);
+  const mp = rad(306.0253 + 385.81691806 * k + 0.0107306 * t2 + 0.00001236 * t3);
+  const f = rad(21.2964 + 390.67050646 * k - 0.0016528 * t2 - 0.00000239 * t3);
+  jd += (0.1734 - 0.000393 * t) * Math.sin(m) + 0.0021 * Math.sin(2 * m)
+    - 0.4068 * Math.sin(mp) + 0.0161 * Math.sin(2 * mp) - 0.0004 * Math.sin(3 * mp)
+    + 0.0104 * Math.sin(2 * f) - 0.0051 * Math.sin(m + mp) - 0.0074 * Math.sin(m - mp)
+    + 0.0004 * Math.sin(2 * f + m) - 0.0004 * Math.sin(2 * f - m)
+    - 0.0006 * Math.sin(2 * f + mp) + 0.0010 * Math.sin(2 * f - mp) + 0.0005 * Math.sin(m + 2 * mp);
+  return jd;
+}
+function moonDaysBetween(fromYmd, toYmd) {
+  const out = new Map();
+  const y = Number(fromYmd.slice(0, 4)) + (Number(fromYmd.slice(5, 7)) - 1) / 12;
+  const k0 = Math.floor((y - 1900) * 12.3685) - 2;
+  for (let k = k0; k < k0 + 40; k++) {
+    for (const [ph, name] of [[0, 'new'], [0.5, 'full']]) {
+      const ms = (moonJD(k + ph) - 2440587.5) * 86400000;
+      const d = new Date(ms + 7 * 3600000).toISOString().slice(0, 10);
+      if (d >= fromYmd && d <= toYmd) out.set(d, name);
+    }
+  }
+  return out;
+}
+
 const SEED_SLOTS = [
   // Titles carry no times — the schedule already shows the time in its own column.
-  { code: 'my530',   title: 'Mysore (1st batch)',        kind: 'mysore',       weekdays: [1,2,3,4,5], start_time: '05:30', duration_min: 120, capacity: 42, is_online: false },
-  { code: 'my730',   title: 'Mysore (2nd batch)',        kind: 'mysore',       weekdays: [1,2,3,4,5], start_time: '07:30', duration_min: 120, capacity: 42, is_online: false },
+  { code: 'my530',   title: 'Mysore (1st batch)',        kind: 'mysore',       weekdays: [2,3,4,5],   start_time: '05:30', duration_min: 120, capacity: 42, is_online: false },
+  { code: 'my730',   title: 'Mysore (2nd batch)',        kind: 'mysore',       weekdays: [2,3,4,5],   start_time: '07:30', duration_min: 120, capacity: 42, is_online: false },
   { code: 'lp_mon',  title: 'Led Primary series',        kind: 'led_primary',  weekdays: [1],         start_time: '06:30', duration_min: 90,  capacity: 42, is_online: false },
   { code: 'lp_sat',  title: 'Led Primary series',        kind: 'led_primary',  weekdays: [6],         start_time: '07:00', duration_min: 90,  capacity: 42, is_online: false },
   { code: 'li_sat',  title: 'Led Intermediate series',   kind: 'led_inter',    weekdays: [6],         start_time: '08:45', duration_min: 120, capacity: 42, is_online: false },
@@ -201,6 +233,13 @@ function mountBkk(app, opts = {}) {
           [`${s.code}_${wd}`, s.title]);
       }
     }
+    // Monday is Led Primary only (Oct 2026). Earlier databases were seeded with
+    // Monday Mysore batches; switch those off once.
+    const monFix = await q(`INSERT INTO bkk_settings (key,value) VALUES ('no_monday_mysore','true')
+                            ON CONFLICT (key) DO NOTHING RETURNING key`);
+    if (monFix.rows.length) {
+      await q(`UPDATE bkk_class_slots SET active=false WHERE code IN ('my530_1','my730_1')`);
+    }
     const st = await q(`SELECT value FROM bkk_settings WHERE key = 'surcharge_pct'`);
     if (!st.rows.length) {
       await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct','5')`);
@@ -304,8 +343,10 @@ function mountBkk(app, opts = {}) {
          WHERE status = 'booked' AND class_date = ANY($1::date[])
          GROUP BY slot_id, class_date`, [dates])).rows;
 
+      const moon = moonDaysBetween(dates[0], dates[dates.length - 1]);
       const out = [];
       for (const dstr of dates) {
+        if (moon.has(dstr)) continue;
         const wd = new Date(`${dstr}T12:00:00${TZ_OFFSET}`).getUTCDay();
         for (const s of slots.filter(x => x.weekday === wd)) {
           const ov = overrides.find(o => o.slot_id === s.id && ymd(new Date(o.class_date)) === dstr);
@@ -323,7 +364,7 @@ function mountBkk(app, opts = {}) {
         }
       }
       out.sort((a, b) => a.startAt.localeCompare(b.startAt));
-      res.json({ classes: out });
+      res.json({ classes: out, moonDays: Object.fromEntries(moon) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -700,6 +741,7 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
 
       const slot = (await client.query('SELECT * FROM bkk_class_slots WHERE id=$1 AND active', [slotId])).rows[0];
       if (!slot) throw new Error('class not found');
+      if (moonDaysBetween(date, date).size) throw new Error('moon day: the shala is closed');
       const startAt = startAtISO(date, slot.start_time);
       // Students cannot book a class that has begun. Staff can, for the whole
       // length of the class — someone walks in at 05:35 and has to be put on the
@@ -1319,4 +1361,4 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
 const express = require('express');
 const express_urlencoded_safe = express.urlencoded({ extended: false });
 
-module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS };
+module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween };
