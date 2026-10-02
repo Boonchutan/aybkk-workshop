@@ -1105,6 +1105,83 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // Move students over from Rezerv in one paste (Oct 2026). Safe to run again:
+  // a student is matched by email, else by exact name, and a pass with the same
+  // package and end date is never added twice. A second run with emails fills
+  // them in, which is what lets the student sign in and see their profile.
+  const IMPORT_PLANS = [[/^1\s*month/i, 'unlim1'], [/^2\s*months?/i, 'unlim2'], [/^3\s*months?/i, 'unlim3'],
+    [/^6\s*months?/i, 'unlim6'], [/^12\s*months?/i, 'unlim12'], [/^10[\s-]*class/i, 'pack10']];
+  const RETIRED_PLANS = {
+    unlim2: { en: '2 months unlimited', th: '2 เดือน ไม่จำกัด', price: 18200, days: 60, sort: 40 },
+    unlim6: { en: '6 months unlimited', th: '6 เดือน ไม่จำกัด', price: 45000, days: 180, sort: 60 },
+  };
+  const MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+  function importDate(v) {
+    const s = String(v || '').trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    const m = s.match(/^(\d{1,2})\s+([A-Za-z]{3})[a-z]*\s+(\d{4})$/);
+    if (!m || !MONTHS[m[2].toLowerCase()]) return null;
+    return `${m[3]}-${String(MONTHS[m[2].toLowerCase()]).padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+  }
+  app.post('/api/bkk/admin/import', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const rows = Array.isArray((req.body || {}).rows) ? req.body.rows.slice(0, 500) : [];
+    const out = { members: 0, newMembers: 0, emailsAdded: 0, passes: 0, skipped: [] };
+    try {
+      for (const row of rows) {
+        const name = String(row.name || '').replace(/\s*\((renewed|staff)\)\s*/gi, ' ').trim();
+        const email = String(row.email || '').trim().toLowerCase();
+        const phone = String(row.phone || '').trim();
+        if (!name) continue;
+        const plan = IMPORT_PLANS.find(([re]) => re.test(String(row.plan || '').trim()));
+        const until = importDate(row.until);
+        if (!plan || !until) { out.skipped.push(`${name}: plan or end date not understood`); continue; }
+        let pr = (await q('SELECT * FROM bkk_products WHERE code=$1', [plan[1]])).rows[0];
+        // 2- and 6-month plans are no longer sold, but Rezerv students still hold
+        // them: keep the package as a retired (never for sale) record.
+        if (!pr && RETIRED_PLANS[plan[1]]) {
+          const r = RETIRED_PLANS[plan[1]];
+          pr = (await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort,active)
+                         VALUES ($1,$2,$3,$4,'unlimited',NULL,$5,2,$6,false)
+                         ON CONFLICT (code) DO UPDATE SET code=EXCLUDED.code RETURNING *`,
+            [plan[1], r.en, r.th, r.price, r.days, r.sort])).rows[0];
+        }
+        if (!pr) { out.skipped.push(`${name}: package ${plan[1]} missing`); continue; }
+
+        let m = email && email.includes('@')
+          ? (await q('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [email])).rows[0] : null;
+        if (!m) m = (await q('SELECT * FROM bkk_members WHERE lower(name)=lower($1) ORDER BY id LIMIT 1', [name])).rows[0];
+        if (!m) {
+          m = (await q(`INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,$2,$3,$4) RETURNING *`,
+            [memberCode(), name, email.includes('@') ? email : null, phone || null])).rows[0];
+          out.newMembers++;
+        } else if (email.includes('@') && !m.email) {
+          await q('UPDATE bkk_members SET email=$2 WHERE id=$1', [m.id, email]);
+          out.emailsAdded++;
+        }
+        if (phone && !m.phone) await q('UPDATE bkk_members SET phone=$2 WHERE id=$1', [m.id, phone]);
+        out.members++;
+
+        const dup = await q(`SELECT 1 FROM bkk_passes WHERE member_id=$1 AND product_id=$2 AND valid_until=$3`,
+          [m.id, pr.id, until]);
+        if (dup.rows.length) continue;
+        const from = new Date(Date.parse(until + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
+        const left = row.classesLeft != null && row.classesLeft !== '' ? Number(row.classesLeft) : null;
+        const total = pr.kind === 'credits' ? (pr.credits || 10) : null;
+        await q(`INSERT INTO bkk_passes
+            (member_id,product_id,order_id,kind,credits_total,credits_used,daily_cap,
+             valid_days,valid_from,valid_until,note,source)
+          VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,'rezerv')`,
+          [m.id, pr.id, pr.kind, total,
+           total != null && left != null && !isNaN(left) ? Math.max(0, total - left) : 0,
+           pr.daily_cap, pr.valid_days, from, until, 'moved from Rezerv']);
+        out.passes++;
+      }
+      console.log(`✓ bkk: Rezerv import ${JSON.stringify({ ...out, skipped: out.skipped.length })}`);
+      res.json({ success: true, ...out });
+    } catch (e) { res.status(500).json({ error: e.message, ...out }); }
+  });
+
   // Pause a pass — the injury case. The clock stops: the expiry moves out by the
   // frozen days, and the pass cannot book while it is paused.
   app.post('/api/bkk/admin/passes/:id/freeze', async (req, res) => {

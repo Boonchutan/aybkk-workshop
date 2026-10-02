@@ -86,6 +86,10 @@
       title: 'AYBKK Bangkok Admin', passcode: 'passcode', enter: 'Enter', wrongPass: 'wrong passcode', lock: 'Lock',
       tabToday: 'Today', tabStudents: 'Students', tabClasses: 'Classes', tabOrders: 'Payments', tabSettings: 'Settings',
       failed: 'failed',
+      impTitle: 'Move students from Rezerv', impBtn: 'Import',
+      impHelp: 'One student per line: name | email | plan | end date | classes left (packs only). Email can be empty now and added later by importing the same line again with the email. Safe to run twice: nobody and no pass is added twice.',
+      impDone: j => `Done. ${j.members} students (${j.newMembers} new), ${j.passes} passes added, ${j.emailsAdded} emails filled in.`,
+      impSkipped: 'Not imported:',
       team: 'Team passcodes', teamHelp: 'Each person on the team (teachers, Chay for photos) has their own passcode for /teach and /photos. It is shown once: write it down and give it to them.',
       addTeam: 'Add a person', qTeamName: 'Name of the person:',
       qTeamCode: 'Passcode (at least 8 characters). Leave empty for a random one:', teamCode: (n, c) => `Passcode for ${n}: ${c}\n\nGive it to them now. It cannot be shown again.`,
@@ -154,6 +158,10 @@
       title: 'AYBKK ระบบหลังบ้าน', passcode: 'รหัสผ่าน', enter: 'เข้าสู่ระบบ', wrongPass: 'รหัสผ่านไม่ถูกต้อง', lock: 'ล็อก',
       tabToday: 'วันนี้', tabStudents: 'นักเรียน', tabClasses: 'คลาส', tabOrders: 'การชำระเงิน', tabSettings: 'ตั้งค่า',
       failed: 'ทำไม่สำเร็จ',
+      impTitle: 'ย้ายนักเรียนจาก Rezerv', impBtn: 'นำเข้า',
+      impHelp: 'บรรทัดละหนึ่งคน: ชื่อ | อีเมล | แพ็กเกจ | วันหมดอายุ | ครั้งที่เหลือ (เฉพาะแพ็กครั้ง) อีเมลเว้นว่างไว้ก่อนได้ แล้วนำเข้าบรรทัดเดิมพร้อมอีเมลภายหลัง กดซ้ำได้ ไม่มีชื่อหรือบัตรซ้ำ',
+      impDone: j => `เสร็จแล้ว นักเรียน ${j.members} คน (ใหม่ ${j.newMembers}) เพิ่มบัตร ${j.passes} ใบ เติมอีเมล ${j.emailsAdded} คน`,
+      impSkipped: 'ไม่ได้นำเข้า:',
       team: 'รหัสผ่านทีมงาน', teamHelp: 'แต่ละคนในทีม (ครู และ Chay สำหรับรูป) มีรหัสผ่านของตัวเองสำหรับ /teach และ /photos รหัสจะแสดงครั้งเดียว จดไว้แล้วให้เจ้าตัว',
       addTeam: 'เพิ่มคน', qTeamName: 'ชื่อ:',
       qTeamCode: 'รหัสผ่าน (อย่างน้อย 8 ตัว) ปล่อยว่างเพื่อให้ระบบสุ่มให้:', teamCode: (n, c) => `รหัสผ่านของ ${n}: ${c}\n\nให้เจ้าตัวเลย ระบบจะไม่แสดงอีก`,
@@ -311,10 +319,31 @@
       <b>${T('giveTitle')}</b>
       <p class="muted">${esc(T('giveHelp'))}</p>
       <p><button class="btn pink" onclick="grantPass()">${T('giveBtn')}</button></p>
+    </div>
+    <div class="box">
+      <b>${T('impTitle')}</b>
+      <p class="muted">${esc(T('impHelp'))}</p>
+      <textarea id="imp" rows="8" style="width:100%;font:13px/1.5 ui-monospace,monospace;padding:10px;border:1.5px solid var(--line);border-radius:7px;background:var(--wall);color:var(--ink)"
+        placeholder="Mei Xu | mei@example.com | 1 month | 3 Oct 2026&#10;Diane Rostaing | | 10 class pack | 12 Dec 2026 | 7"></textarea>
+      <p><button class="btn pink" onclick="importRezerv()">${T('impBtn')}</button></p>
+      <div id="impOut"></div>
     </div>`;
     $('#q').onkeydown = e => { if (e.key === 'Enter') findStudents(); };
     if (term) findStudents();
   }
+
+  window.importRezerv = async () => {
+    const rows = $('#imp').value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+      const [name, email, plan, until, classesLeft] = l.split(/\s*[|\t]\s*/);
+      return { name, email, plan, until, classesLeft };
+    });
+    if (!rows.length) return;
+    const r = await api('/api/bkk/admin/import', { method: 'POST', body: JSON.stringify({ rows }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { alert(j.error || T('failed')); return; }
+    $('#impOut').innerHTML = `<div class="box" style="background:var(--blush)">${esc(T('impDone', j))}
+      ${j.skipped.length ? `<br><b>${T('impSkipped')}</b><br>${j.skipped.map(esc).join('<br>')}` : ''}</div>`;
+  };
 
   window.findStudents = async () => {
     const term = $('#q').value.trim();
