@@ -37,6 +37,7 @@
 - 2026-09-30: Brand = welcoming. Tagline "Traditional Ashtanga. Open door." on site branch claude/aybkk-net-shopwindow (commit ae5626c2, not live). Next: change what Google shows (Google Business Profile description, aybkk.org and aybkk.com page text, Mindbody/Yogatrail listings, beginner Google reviews).
 
 ## Log
+- 2026-10-02: Monthly calendar picture APPROVED by Boonchu ("perfect"): design B, plum #3E1442, shala wall photo cropped to the white wall only (wall text almost edge to edge, Jamsai waist up), "October" Work Sans 900 + gold Cormorant italic tagline, times in the same color as the class dot (Mysore #F0C6F2, Led Primary #7FD8CC, Led Inter #E0B52B), gold moons, logo bottom right. Design canvas: claude.ai/artifact/1zsJE6UaUjiFyN7zDojuRX (Plum.dc.html). Website month calendar uses the same look (PR #25 merged). PR #23 (VAT 7% + 3% fee) still waiting for his merge.
 - 2026-10-01: Boonchu asked for a rebrand plan: beginner friendly, simple technique, dedicated but not too serious. Machi gave a 4-phase plan (Oct 1 to Mar 2027): align team, build First Month Path, show it on content and aybkk.net, measure Day 30 renewals. Waiting on his pick of the path name and the team meeting. Saved to vault root as "AYBKK Rebrand - Open Door.md" (plan + marketing, one note).
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
 - 2026-09-29: Both bots posted. No @Machi requests. Carnegie still has no leads.
