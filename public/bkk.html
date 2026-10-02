@@ -118,6 +118,17 @@
   .teacher .auth{display:inline-block;margin:4px 0 12px;font-size:13px;font-weight:600;letter-spacing:.02em;
     color:var(--plum);background:var(--blush);border:1px solid var(--blush-line);border-radius:999px;padding:5px 12px}
   .teacher p{margin:0 0 10px;font-size:15px}
+  .bio + .bio{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+  /* 3 lines, then "Read more" (Boonchu, 2 Oct) */
+  .bio .txt{max-height:4.8em;overflow:hidden;line-height:1.6;position:relative}
+  .bio .txt::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.6em;
+    background:linear-gradient(rgba(255,255,255,0),var(--paper))}
+  .bio:not(.open) .txt p{display:inline;margin:0}
+  .bio:not(.open) .txt p::after{content:" "}
+  .bio.open .txt{max-height:none}
+  .bio.open .txt::after{display:none}
+  .readmore{border:none;background:none;padding:6px 0;min-height:36px;cursor:pointer;
+    font:700 14px/1.2 'Plex',sans-serif;color:var(--pink)}
   .points{list-style:none;margin:0;padding:0}
   .points li{position:relative;padding:0 0 0 24px;margin:0 0 11px;font-size:15px}
   .points li::before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:99px;background:var(--pink)}
@@ -360,13 +371,23 @@
           alt="Jamsai, R. Sharath Jois and Boonchu at the AYBKK shala wall">
         <figcaption data-i18n="caption">Jamsai, R. Sharath Jois and Boonchu at AYBKK</figcaption>
       </figure>
-      <div>
-        <div class="name">Boonchu Tanti</div>
-        <div class="auth" data-i18n="auth">Authorized Level 2 by R. Sharath Jois</div>
-        <p data-i18n="bio1">Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.</p>
-        <p data-i18n="bio2">He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.</p>
-        <p data-i18n="bio3">In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga. AYBKK has been the home shala of Bangkok’s Ashtanga community since 2013. Several of Bangkok’s Ashtanga teachers practised and assisted here before opening their own shalas.</p>
-        <p data-i18n="bio4">His teaching looks at how each body works, and at the student's own commitment. Every body is different, and so is every practice.</p>
+      <div class="bios">
+        <div class="bio">
+          <div class="name">Boonchu Tanti</div>
+          <div class="auth" data-i18n="auth">Authorized Level 2 by R. Sharath Jois</div>
+          <div class="txt" id="bioB">
+            <p data-i18n="bio1">Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.</p><p data-i18n="bio2">He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.</p><p data-i18n="bio3">In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga. AYBKK has been the home shala of Bangkok’s Ashtanga community since 2013. Several of Bangkok’s Ashtanga teachers practised and assisted here before opening their own shalas.</p><p data-i18n="bio4">His teaching looks at how each body works, and at the student's own commitment. Every body is different, and so is every practice.</p>
+          </div>
+          <button type="button" class="readmore" aria-expanded="false" aria-controls="bioB" data-i18n="readMore">Read more</button>
+        </div>
+        <div class="bio">
+          <div class="name">Jamsai Tanti</div>
+          <div class="auth" data-i18n="auth">Authorized Level 2 by R. Sharath Jois</div>
+          <div class="txt" id="bioJ">
+            <p data-i18n="jbio1">Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.</p><p data-i18n="jbio2">The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.</p><p data-i18n="jbio3">She runs AYBKK and teaches led, Mysore and private classes. She also organised Sharath Jois’s workshop in Bangkok. Her teaching puts breath, clear alignment and an active vinyasa first.</p><p data-i18n="jbio4">She kept practising through both of her pregnancies, into the Advanced series, and still practises and teaches as a mother.</p>
+          </div>
+          <button type="button" class="readmore" aria-expanded="false" aria-controls="bioJ" data-i18n="readMore">Read more</button>
+        </div>
       </div>
     </div>
   </section>
@@ -888,6 +909,36 @@
     momAll: 'Все фото практики', momLatest: d => `Последние фото: ${d}`, momMore: n => `Ещё фото этого дня (${n}) →`,
   });
 
+  // Jamsai's facts come from "Boonchu & JAMSAI bio.md" in Boonchu's Drive.
+  Object.assign(STR.en, {
+    teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
+    jbio1: 'Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.',
+    jbio2: 'The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.',
+    jbio3: 'She runs AYBKK and teaches led, Mysore and private classes. She also organised Sharath Jois’s workshop in Bangkok. Her teaching puts breath, clear alignment and an active vinyasa first.',
+    jbio4: 'She kept practising through both of her pregnancies, into the Advanced series, and still practises and teaches as a mother.',
+  });
+  Object.assign(STR.th, {
+    teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
+    jbio1: 'Jamsai เคยเป็นที่ปรึกษาด้านภาษี เธอเริ่มฝึกอัษฎางคโยคะในปี 2015 ระหว่างรับเคมีบำบัดรักษามะเร็งเต้านม โดยมี Boonchu เป็นครู',
+    jbio2: 'การฝึกทำให้เธอกลับมาแข็งแรง เธอจึงลาออกจากงานไปเรียนกับ Sharath Jois ที่มายซอร์ และได้รับ Authorization Level 2 จากท่านในฤดูกาล 2018 ถึง 2019',
+    jbio3: 'เธอดูแล AYBKK และสอนทั้งคลาส Led มายซอร์ และคลาสส่วนตัว เธอเป็นผู้จัดเวิร์กช็อปของ Sharath Jois ที่กรุงเทพฯ การสอนของเธอเน้นลมหายใจ การจัดท่าที่ชัดเจน และวินยาสะที่กระฉับกระเฉง',
+    jbio4: 'เธอฝึกต่อเนื่องตลอดการตั้งครรภ์ทั้งสองครั้ง จนถึงซีรีส์ Advanced และยังฝึกและสอนอยู่ในฐานะคุณแม่',
+  });
+  Object.assign(STR.zh, {
+    teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
+    jbio1: 'Jamsai 曾是一名税务顾问。2015年她在接受乳腺癌化疗期间开始练习阿斯汤加，老师是 Boonchu。',
+    jbio2: '练习让她重新找回力量，于是她辞去工作，去迈索尔跟随 Sharath Jois 学习，并在2018至2019季获得他授予的 Level 2 授权。',
+    jbio3: '她负责经营 AYBKK，教授引导课、迈索尔课和私教课。她也组织了 Sharath Jois 在曼谷的工作坊。她的教学重视呼吸、清晰的体位对齐和有力的串联（vinyasa）。',
+    jbio4: '两次怀孕期间她都坚持练习，一直练到高级序列。现在作为妈妈，她依然练习和教学。',
+  });
+  Object.assign(STR.ru, {
+    teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
+    jbio1: 'Jamsai работала налоговым консультантом. Она начала заниматься аштангой в 2015 году, во время химиотерапии от рака груди, и её учителем был Boonchu.',
+    jbio2: 'Практика вернула ей силы, и она ушла с работы, чтобы учиться у Шарата Джойса в Майсуре. В сезоне 2018–2019 она получила от него авторизацию Level 2.',
+    jbio3: 'Она руководит AYBKK и ведёт ведомые, майсор- и индивидуальные занятия. Она также организовала семинар Шарата Джойса в Бангкоке. В её преподавании главное: дыхание, точное выравнивание и активная виньяса.',
+    jbio4: 'Она продолжала практиковать во время обеих беременностей, вплоть до продвинутых серий, и сейчас практикует и преподаёт, будучи мамой.',
+  });
+
   const PROMO_LAST_SALE = '2026-11-11', PROMO_LAST_START = '2026-11-12';
   const MONTHLY = [[30, 9600], [60, 18200], [90, 25800]];   // days, baht (the broadcast's Duo prices)
   const OFFERS = {
@@ -1043,6 +1094,8 @@
     document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n, SURCHARGE, VAT || 7); });
     document.querySelectorAll('.langs button').forEach(b =>
       b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
+    document.querySelectorAll('.readmore').forEach(b =>
+      { b.textContent = t(b.parentElement.classList.contains('open') ? 'readLess' : 'readMore'); });
     renderPromo();
     renderMoments();
   }
@@ -1051,6 +1104,11 @@
     try { localStorage.setItem('aybkk_lang', LANG); } catch (_) {}
     applyLang();
     if (LOADED) tab(current);
+  }));
+  document.querySelectorAll('.readmore').forEach(b => b.addEventListener('click', () => {
+    const open = b.parentElement.classList.toggle('open');
+    b.setAttribute('aria-expanded', String(open));
+    b.textContent = t(open ? 'readLess' : 'readMore');
   }));
   $('#wxCopy').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText('aybkkwechat'); } catch (_) { return; }
