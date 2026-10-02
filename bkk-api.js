@@ -26,6 +26,9 @@ const VAT_PCT = 7;                             // Thai VAT, charged on price + o
 const SEED_PRODUCTS = [
   { code: 'dropin',    name_en: 'Drop-in',              name_th: 'ครั้งเดียว',        price_thb: 1500,  kind: 'credits',   credits: 1,  valid_days: 1,   daily_cap: null, sort: 10 },
   { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 20 },
+  { code: 'ded3',      name_en: 'Dedicated Student · 3 months',  name_th: 'นักเรียนตั้งใจฝึก (Dedicated) 3 เดือน',  price_thb: 18000, kind: 'unlimited', credits: null, valid_days: 90,  daily_cap: 2, sort: 25 },
+  { code: 'ded6',      name_en: 'Dedicated Student · 6 months',  name_th: 'นักเรียนตั้งใจฝึก (Dedicated) 6 เดือน',  price_thb: 33000, kind: 'unlimited', credits: null, valid_days: 180, daily_cap: 2, sort: 26 },
+  { code: 'ded12',     name_en: 'Dedicated Student · 12 months (13 months)', name_th: 'นักเรียนตั้งใจฝึก (Dedicated) 12 เดือน (ได้ 13 เดือน)', price_thb: 59900, kind: 'unlimited', credits: null, valid_days: 395, daily_cap: 2, sort: 27 },
   { code: 'unlim1',    name_en: '1 month unlimited',     name_th: '1 เดือน ไม่จำกัด',   price_thb: 9600,  kind: 'unlimited', credits: null, valid_days: 30,  daily_cap: 2, sort: 30 },
   { code: 'unlim2',    name_en: '2 months unlimited',    name_th: '2 เดือน ไม่จำกัด',   price_thb: 18200, kind: 'unlimited', credits: null, valid_days: 60,  daily_cap: 2, sort: 40 },
   { code: 'unlim3',    name_en: '3 months unlimited',    name_th: '3 เดือน ไม่จำกัด',   price_thb: 25800, kind: 'unlimited', credits: null, valid_days: 90,  daily_cap: 2, sort: 50 },
@@ -173,16 +176,16 @@ function mountBkk(app, opts = {}) {
     await q(`ALTER TABLE bkk_bookings
              DROP CONSTRAINT IF EXISTS bkk_bookings_slot_id_class_date_member_id_key`);
 
-    // seed catalogue + timetable once
-    const p = await q('SELECT count(*)::int AS n FROM bkk_products');
-    if (p.rows[0].n === 0) {
-      for (const s of SEED_PRODUCTS) {
-        await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort)
-                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (code) DO NOTHING`,
-          [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort]);
-      }
-      console.log(`✓ bkk: seeded ${SEED_PRODUCTS.length} products`);
+    // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
+    // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
+    // package retired in the admin page stays as staff set it.
+    const added = await q(`SELECT count(*)::int AS n FROM bkk_products`);
+    for (const s of SEED_PRODUCTS) {
+      await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort)
+               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (code) DO NOTHING`,
+        [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort]);
     }
+    if (added.rows[0].n === 0) console.log(`✓ bkk: seeded ${SEED_PRODUCTS.length} products`);
     const c = await q('SELECT count(*)::int AS n FROM bkk_class_slots');
     if (c.rows[0].n === 0) {
       for (const s of SEED_SLOTS) {
