@@ -87,7 +87,8 @@
       tabToday: 'Today', tabStudents: 'Students', tabClasses: 'Classes', tabOrders: 'Payments', tabSettings: 'Settings',
       failed: 'failed',
       team: 'Team passcodes', teamHelp: 'Each person on the team (teachers, Chay for photos) has their own passcode for /teach and /photos. It is shown once: write it down and give it to them.',
-      addTeam: 'Add a person', qTeamName: 'Name of the person:', teamCode: (n, c) => `Passcode for ${n}: ${c}\n\nGive it to them now. It cannot be shown again.`,
+      addTeam: 'Add a person', qTeamName: 'Name of the person:',
+      qTeamCode: 'Passcode (at least 8 characters). Leave empty for a random one:', teamCode: (n, c) => `Passcode for ${n}: ${c}\n\nGive it to them now. It cannot be shown again.`,
       resetTeam: 'New passcode', offTeam: 'Switch off', onTeam: 'Switch on', teamOff: 'off',
       students: 'Students', searchHelp: 'Search by name, email, phone or member code.',
       searchPh: 'e.g. Anna, or anna@…', search: 'Search',
@@ -154,7 +155,8 @@
       tabToday: 'วันนี้', tabStudents: 'นักเรียน', tabClasses: 'คลาส', tabOrders: 'การชำระเงิน', tabSettings: 'ตั้งค่า',
       failed: 'ทำไม่สำเร็จ',
       team: 'รหัสผ่านทีมงาน', teamHelp: 'แต่ละคนในทีม (ครู และ Chay สำหรับรูป) มีรหัสผ่านของตัวเองสำหรับ /teach และ /photos รหัสจะแสดงครั้งเดียว จดไว้แล้วให้เจ้าตัว',
-      addTeam: 'เพิ่มคน', qTeamName: 'ชื่อ:', teamCode: (n, c) => `รหัสผ่านของ ${n}: ${c}\n\nให้เจ้าตัวเลย ระบบจะไม่แสดงอีก`,
+      addTeam: 'เพิ่มคน', qTeamName: 'ชื่อ:',
+      qTeamCode: 'รหัสผ่าน (อย่างน้อย 8 ตัว) ปล่อยว่างเพื่อให้ระบบสุ่มให้:', teamCode: (n, c) => `รหัสผ่านของ ${n}: ${c}\n\nให้เจ้าตัวเลย ระบบจะไม่แสดงอีก`,
       resetTeam: 'รหัสใหม่', offTeam: 'ปิด', onTeam: 'เปิด', teamOff: 'ปิดอยู่',
       students: 'นักเรียน', searchHelp: 'ค้นหาด้วยชื่อ อีเมล เบอร์โทร หรือรหัสสมาชิก',
       searchPh: 'เช่น Anna หรือ anna@…', search: 'ค้นหา',
@@ -549,12 +551,14 @@
   let TEAM = [];
   window.addTeam = async () => {
     const name = ask(T('qTeamName')); if (!name) return;
-    const r = await api('/api/bkk/admin/teachers', { method: 'POST', body: JSON.stringify({ name }) });
+    const passcode = ask(T('qTeamCode')); if (passcode === null) return;
+    const r = await api('/api/bkk/admin/teachers', { method: 'POST', body: JSON.stringify({ name, passcode }) });
     const j = await shout(r);
     if (j && j.passcode) { alert(T('teamCode', j.teacher.name, j.passcode)); renderSettings(); }
   };
   window.resetTeam = async (id, name) => {
-    const r = await api(`/api/bkk/admin/teachers/${id}/reset`, { method: 'POST', body: '{}' });
+    const passcode = ask(T('qTeamCode')); if (passcode === null) return;
+    const r = await api(`/api/bkk/admin/teachers/${id}/reset`, { method: 'POST', body: JSON.stringify({ passcode }) });
     const j = await shout(r);
     if (j && j.passcode) alert(T('teamCode', name, j.passcode));
   };

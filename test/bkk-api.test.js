@@ -413,6 +413,13 @@ const ok = (name, cond, extra = '') => {
   console.log('\n— profile photos —');
   const IMG = 'data:image/jpeg;base64,/9j/4AAQSkZJRg==';
   const chay = await post('/api/bkk/admin/teachers', { name: 'Chay' }, ADMIN);
+  ok('a chosen team passcode shorter than 8 is refused',
+     (await post('/api/bkk/admin/teachers', { name: 'Short', passcode: 'abc123' }, ADMIN)).status === 400);
+  const own = await post('/api/bkk/admin/teachers', { name: 'Own Code', passcode: 'mysore-2026-ok' }, ADMIN);
+  ok('admin can set a team passcode of their own', own.status === 200 && own.body.passcode === 'mysore-2026-ok' &&
+     (await J('/api/bkk/teacher/me', { headers: { 'x-teacher-key': 'mysore-2026-ok' } })).body.teacher.name === 'Own Code');
+  ok('two people cannot share a passcode',
+     (await post('/api/bkk/admin/teachers', { name: 'Copy', passcode: 'mysore-2026-ok' }, ADMIN)).status === 400);
   const PKEY = { 'x-teacher-key': chay.body.passcode };
   const ann = (await post('/api/bkk/teacher/members', { name: 'Ann Photo', email: 'ann.photo@example.com' }, PKEY)).body.member;
   const bob = (await post('/api/bkk/teacher/members', { name: 'Bob Photo', email: 'bob.photo@example.com' }, PKEY)).body.member;

@@ -1409,6 +1409,20 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
 
   // Admin manages who is on the team. Passcodes are shown once, at creation —
   // they are stored hashed, so a forgotten one is reset, never recovered.
+  // Admin may type one instead of taking a random one (Boonchu, 2 Oct): at least
+  // 8 characters, and never one someone else on the team already uses, since
+  // teacherFrom() finds a person by passcode alone.
+  async function choosePasscode(wanted, exceptId) {
+    if (wanted == null || String(wanted).trim() === '') {
+      return { passcode: crypto.randomBytes(6).toString('base64url') };
+    }
+    const pc = String(wanted).trim();
+    if (pc.length < 8) return { error: 'passcode must be at least 8 characters' };
+    const taken = await q('SELECT 1 FROM bkk_teachers WHERE key_hash=$1 AND id <> $2',
+      [hashKey(pc), exceptId || 0]);
+    if (taken.rows.length) return { error: 'someone on the team already uses that passcode' };
+    return { passcode: pc };
+  }
   app.get('/api/bkk/admin/teachers', async (req, res) => {
     if (adminOnly(req, res)) return;
     try {
@@ -1430,8 +1444,8 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
         return res.json({ success: true, teacher: r.rows[0] });
       }
       if (!String(name || '').trim()) return res.status(400).json({ error: 'name required' });
-      // Readable enough to pass on in person, random enough not to be guessed.
-      const passcode = crypto.randomBytes(6).toString('base64url');
+      const { passcode, error } = await choosePasscode((req.body || {}).passcode);
+      if (error) return res.status(400).json({ error });
       const r = await q(
         `INSERT INTO bkk_teachers (name,email,key_hash) VALUES ($1,$2,$3)
          RETURNING id,name,email,active`,
@@ -1444,7 +1458,8 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
   app.post('/api/bkk/admin/teachers/:id/reset', async (req, res) => {
     if (adminOnly(req, res)) return;
     try {
-      const passcode = crypto.randomBytes(6).toString('base64url');
+      const { passcode, error } = await choosePasscode((req.body || {}).passcode, Number(req.params.id));
+      if (error) return res.status(400).json({ error });
       const r = await q('UPDATE bkk_teachers SET key_hash=$2 WHERE id=$1 RETURNING name',
         [req.params.id, hashKey(passcode)]);
       if (!r.rows.length) return res.status(404).json({ error: 'not found' });
