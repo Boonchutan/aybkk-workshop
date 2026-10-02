@@ -18,6 +18,7 @@ const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
 const SIGNIN_PER_EMAIL_HOUR = 3;               // and cheap to abuse without limits
 const SIGNIN_PER_IP_HOUR = 10;
 const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
+const VAT_PCT = 7;                             // Thai VAT, charged on price + online fee
 
 // ── seed data (from aybkk.com, captured 2026-08-05) ─────────────────────────
 // price_thb is the BASE price. The online surcharge is a setting, applied at
@@ -26,9 +27,7 @@ const SEED_PRODUCTS = [
   { code: 'dropin',    name_en: 'Drop-in',              name_th: 'ครั้งเดียว',        price_thb: 1500,  kind: 'credits',   credits: 1,  valid_days: 1,   daily_cap: null, sort: 10 },
   { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 20 },
   { code: 'unlim1',    name_en: '1 month unlimited',     name_th: '1 เดือน ไม่จำกัด',   price_thb: 9600,  kind: 'unlimited', credits: null, valid_days: 30,  daily_cap: 2, sort: 30 },
-  { code: 'unlim2',    name_en: '2 months unlimited',    name_th: '2 เดือน ไม่จำกัด',   price_thb: 18200, kind: 'unlimited', credits: null, valid_days: 60,  daily_cap: 2, sort: 40 },
   { code: 'unlim3',    name_en: '3 months unlimited',    name_th: '3 เดือน ไม่จำกัด',   price_thb: 25800, kind: 'unlimited', credits: null, valid_days: 90,  daily_cap: 2, sort: 50 },
-  { code: 'unlim6',    name_en: '6 months unlimited',    name_th: '6 เดือน ไม่จำกัด',   price_thb: 45000, kind: 'unlimited', credits: null, valid_days: 180, daily_cap: 2, sort: 60 },
   { code: 'unlim12',   name_en: '12 months unlimited (1 free month)', name_th: '12 เดือน ไม่จำกัด (ฟรี 1 เดือน)', price_thb: 78000, kind: 'unlimited', credits: null, valid_days: 395, daily_cap: 2, sort: 70 },
 ];
 
@@ -175,6 +174,8 @@ function mountBkk(app, opts = {}) {
              ON bkk_notes (member_id, created_at DESC)`);
     // Language the student last chose, so email matches the page they bought on.
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS lang TEXT`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS vat_thb INTEGER NOT NULL DEFAULT 0`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS method TEXT NOT NULL DEFAULT 'online'`);
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS reminded_at TIMESTAMPTZ`);
 
     // The things a shala actually does to a pass, which Rezerv has and this did
@@ -202,16 +203,16 @@ function mountBkk(app, opts = {}) {
     await q(`ALTER TABLE bkk_bookings
              DROP CONSTRAINT IF EXISTS bkk_bookings_slot_id_class_date_member_id_key`);
 
-    // seed catalogue + timetable once
-    const p = await q('SELECT count(*)::int AS n FROM bkk_products');
-    if (p.rows[0].n === 0) {
-      for (const s of SEED_PRODUCTS) {
-        await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort)
-                 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (code) DO NOTHING`,
-          [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort]);
-      }
-      console.log(`✓ bkk: seeded ${SEED_PRODUCTS.length} products`);
+    // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
+    // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
+    // package retired in the admin page stays as staff set it.
+    const added = await q(`SELECT count(*)::int AS n FROM bkk_products`);
+    for (const s of SEED_PRODUCTS) {
+      await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort)
+               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (code) DO NOTHING`,
+        [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort]);
     }
+    if (added.rows[0].n === 0) console.log(`✓ bkk: seeded ${SEED_PRODUCTS.length} products`);
     const c = await q('SELECT count(*)::int AS n FROM bkk_class_slots');
     if (c.rows[0].n === 0) {
       for (const s of SEED_SLOTS) {
@@ -240,9 +241,21 @@ function mountBkk(app, opts = {}) {
     if (monFix.rows.length) {
       await q(`UPDATE bkk_class_slots SET active=false WHERE code IN ('my530_1','my730_1')`);
     }
+    // No 2- or 6-month package any more (Oct 2026). Switch off the ones earlier
+    // databases were seeded with, once; a pass already sold keeps working.
+    const no26 = await q(`INSERT INTO bkk_settings (key,value) VALUES ('retired_unlim2_6','true')
+                          ON CONFLICT (key) DO NOTHING RETURNING key`);
+    if (no26.rows.length) await q(`UPDATE bkk_products SET active=false WHERE code IN ('unlim2','unlim6')`);
     const st = await q(`SELECT value FROM bkk_settings WHERE key = 'surcharge_pct'`);
     if (!st.rows.length) {
-      await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct','5')`);
+      await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct','3')`);
+    }
+    // One-time move from the old 5% to PaySolutions' real 3% (Oct 2026). The
+    // marker keeps a later change in the admin page from being overwritten.
+    const moved = await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_set_3pct','true')
+                           ON CONFLICT (key) DO NOTHING RETURNING key`);
+    if (moved.rows.length) {
+      await q(`UPDATE bkk_settings SET value='3', updated_at=now() WHERE key='surcharge_pct' AND value='5'`);
     }
   }
 
@@ -253,7 +266,14 @@ function mountBkk(app, opts = {}) {
     } catch (e) { return fallback; }
   }
 
-  const surcharge = async () => Number(await getSetting('surcharge_pct', 5)) || 0;
+  const surcharge = async () => Number(await getSetting('surcharge_pct', 3)) || 0;
+
+  // VAT is due on everything the student pays, the online fee included.
+  function breakdown(base, pct) {
+    const fee = Math.round(base * pct / 100);
+    const vat = Math.round((base + fee) * VAT_PCT / 100);
+    return { fee, vat, total: base + fee + vat };
+  }
 
   // ── helpers ───────────────────────────────────────────────────────────────
   const memberCode = () => 'B' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
@@ -311,15 +331,15 @@ function mountBkk(app, opts = {}) {
       const r = await q('SELECT * FROM bkk_products WHERE active ORDER BY sort, id');
       res.json({
         surchargePct: pct,
+        vatPct: VAT_PCT,
         // Which way this shala can take money right now. Names only — never a
         // key, never a fragment of one. 'gateway' = verified auto-activation,
         // 'link' = pay.sn plus a human confirming, 'none' = cannot sell online.
         payment: paymentStatus(),
-        products: r.rows.map(p => ({
-          ...p,
-          fee_thb: Math.round(p.price_thb * pct / 100),
-          total_thb: p.price_thb + Math.round(p.price_thb * pct / 100),
-        })),
+        products: r.rows.map(p => {
+          const b = breakdown(p.price_thb, pct);
+          return { ...p, fee_thb: b.fee, vat_thb: b.vat, total_thb: b.total };
+        }),
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -380,8 +400,7 @@ function mountBkk(app, opts = {}) {
 
       const member = await findOrCreateMember({ name, email, phone });
       const pct = await surcharge();
-      const fee = Math.round(pr.price_thb * pct / 100);
-      const total = pr.price_thb + fee;
+      const { fee, vat, total } = breakdown(pr.price_thb, pct);
 
       // refno is unique-indexed and partly random, so a clash is possible if two
       // orders land in the same millisecond. Retry rather than 500 at a student.
@@ -389,9 +408,9 @@ function mountBkk(app, opts = {}) {
       for (let attempt = 0; attempt < 5 && !o; attempt++) {
         try {
           o = (await q(
-            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,amount_thb)
-             VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-            [newRefno(), pr.id, member.id, pr.price_thb, fee, total])).rows[0];
+            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb)
+             VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+            [newRefno(), pr.id, member.id, pr.price_thb, fee, vat, total])).rows[0];
         } catch (e) {
           if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
         }
@@ -579,7 +598,7 @@ function mountBkk(app, opts = {}) {
         [order.member_id, pr.id, order.id, pr.kind, pr.credits, pr.daily_cap, pr.valid_days]);
       await client.query('COMMIT');
       console.log(`✓ bkk: pass activated for order ${order.id} (${pr.name_en})`);
-      notify(`💳 AYBKK payment\n${pr.name_en} · ฿${order.amount_thb}\nrefno ${order.refno}`);
+      notify(`💳 AYBKK payment (${order.method || 'online'})\n${pr.name_en} · ฿${order.amount_thb}\nrefno ${order.refno}`);
       // After COMMIT, and awaited only so failures are logged. The pass already
       // exists; a mail server having a bad day must not undo a paid order.
       emailReceipt(order, pr).catch(e => console.error('[bkk] receipt failed:', e.message));
@@ -599,7 +618,7 @@ function mountBkk(app, opts = {}) {
       [token, m.id, m.email]);
     const t = render('receipt', m.lang || 'en', {
       name: m.name, product: product.name_en,
-      amount: order.amount_thb, base: order.base_thb, fee: order.fee_thb,
+      amount: order.amount_thb, base: order.base_thb, fee: order.fee_thb, vat: order.vat_thb || 0,
       refno: order.refno, link: `${baseUrl()}/api/bkk/login/${token}`,
     });
     await sendMail({ to: m.email, subject: t.subject, html: t.html, text: t.text, tag: 'receipt' });
@@ -882,6 +901,37 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // Money taken at the desk. A real order, so it shows in Payments, the day's
+  // cash count and the books, with VAT and a receipt — unlike "Give a pass".
+  // No online fee: nothing went through the gateway.
+  const DESK_METHODS = ['cash', 'transfer', 'card'];
+  app.post('/api/bkk/admin/sales', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    try {
+      const { productCode, name, email, phone, method } = req.body || {};
+      if (!DESK_METHODS.includes(method)) return res.status(400).json({ error: 'method must be cash, transfer or card' });
+      if (!(name || '').trim()) return res.status(400).json({ error: 'name is required' });
+      const pr = (await q('SELECT * FROM bkk_products WHERE code = $1 AND active', [productCode])).rows[0];
+      if (!pr) return res.status(404).json({ error: 'product not found' });
+      const member = await findOrCreateMember({ name, email, phone });
+      const { vat, total } = breakdown(pr.price_thb, 0);
+      let o = null;
+      for (let attempt = 0; attempt < 5 && !o; attempt++) {
+        try {
+          o = (await q(
+            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,method)
+             VALUES ($1,$2,$3,$4,0,$5,$6,$7) RETURNING *`,
+            [newRefno(), pr.id, member.id, pr.price_thb, vat, total, method])).rows[0];
+        } catch (e) {
+          if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
+        }
+      }
+      await activateOrder(o, { note: `${method} at the desk` });
+      res.json({ success: true, member: { code: member.code, name: member.name },
+        order: { refno: String(o.refno), amount: total, vat, method } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   // Deliberate manual override for the day the gateway misbehaves — recorded
   // as such so the books show it was not a verified payment.
   app.post('/api/bkk/admin/orders/:id/force-activate', async (req, res) => {
@@ -904,7 +954,11 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
          JOIN bkk_members m ON m.id=b.member_id
          WHERE b.status='booked' AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
          ORDER BY b.start_at, m.name`);
-      res.json({ bookings: r.rows });
+      const money = (await q(
+        `SELECT method, count(*)::int AS n, sum(amount_thb)::int AS total FROM bkk_orders
+         WHERE status='paid' AND (verified_at AT TIME ZONE 'Asia/Bangkok')::date = (now() AT TIME ZONE 'Asia/Bangkok')::date
+         GROUP BY method ORDER BY method`)).rows;
+      res.json({ bookings: r.rows, money });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

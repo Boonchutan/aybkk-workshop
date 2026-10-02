@@ -33,12 +33,13 @@ const ok = (name, cond, extra = '') => {
 
   console.log('\n— catalogue —');
   const prods = await J('/api/bkk/products');
-  ok('7 packages listed', prods.body.products.length === 7, `got ${prods.body.products.length}`);
+  ok('5 packages listed, no 2- or 6-month', prods.body.products.length === 5 && !prods.body.products.some(p => ['unlim2', 'unlim6'].includes(p.code)),
+    `got ${prods.body.products.map(p => p.code)}`);
   const dropin = prods.body.products.find(p => p.code === 'dropin');
   ok('drop-in base ฿1500', dropin.price_thb === 1500);
-  ok('5% surcharge → ฿1575 total', dropin.total_thb === 1575, `got ${dropin.total_thb}`);
+  ok('3% fee + 7% VAT → ฿1653 total', dropin.total_thb === 1653, `got ${dropin.total_thb}`);
   const unlim1 = prods.body.products.find(p => p.code === 'unlim1');
-  ok('1-month total ฿10080', unlim1.total_thb === 10080, `got ${unlim1.total_thb}`);
+  ok('1-month total ฿10580', unlim1.total_thb === 10580, `got ${unlim1.total_thb}`);
 
   console.log('\n— schedule —');
   const sch = await J('/api/bkk/schedule?days=7');
@@ -66,7 +67,7 @@ const ok = (name, cond, extra = '') => {
   ok('order created', order.status === 200 && order.body.order, JSON.stringify(order.body).slice(0, 120));
   const refno = Number(order.body.order.refno);
   const memberCode = order.body.member.code;
-  ok('amount is ฿14700', order.body.order.amount === 14700, `got ${order.body.order.amount}`);
+  ok('amount is ฿15429', order.body.order.amount === 15429, `got ${order.body.order.amount}`);
   ok('refno is numeric ≤12 digits', /^\d{1,12}$/.test(String(refno)), String(refno));
   ok('no pay form without credentials', order.body.pay === null);
 
@@ -373,6 +374,26 @@ const ok = (name, cond, extra = '') => {
   ok('a saved link is served publicly', links.youtube === 'https://youtube.com/@aybkk',
      JSON.stringify(links));
   ok('a blank link is not served', links.tiktok === undefined, JSON.stringify(links));
+
+  console.log('\n— selling at the desk —');
+  const sale = await post('/api/bkk/admin/sales',
+    { productCode: 'unlim1', name: 'Cash Student', email: 'cash@x.com', method: 'cash' }, ADMIN);
+  ok('cash sale succeeds', sale.status === 200 && sale.body.success, JSON.stringify(sale.body));
+  ok('cash price is 9,600 + 7% VAT, no online fee', sale.body.order && sale.body.order.amount === 10272,
+     sale.body.order && sale.body.order.amount);
+  const cashMe = (await J('/api/bkk/me/' + sale.body.member.code)).body;
+  ok('the cash sale gives an active pass', (cashMe.passes || []).length === 1, JSON.stringify(cashMe.passes));
+  const ords = (await J('/api/bkk/admin/orders', { headers: ADMIN })).body.orders;
+  const cashOrd = ords.find(o => String(o.refno) === sale.body.order.refno);
+  ok('the sale is a paid order marked cash', cashOrd && cashOrd.status === 'paid' && cashOrd.method === 'cash',
+     JSON.stringify(cashOrd && { status: cashOrd.status, method: cashOrd.method }));
+  const todayMoney = (await J('/api/bkk/admin/today', { headers: ADMIN })).body.money || [];
+  ok("today's cash total includes the sale", (todayMoney.find(m => m.method === 'cash') || {}).total >= 10272,
+     JSON.stringify(todayMoney));
+  ok('a sale needs a payment method',
+     (await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: 'X', method: 'iou' }, ADMIN)).status === 400);
+  ok('selling needs the staff key',
+     (await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: 'X', method: 'cash' }, {})).status === 401);
 
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');

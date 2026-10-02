@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AYBKK Bangkok Admin</title>
 <style>
-  @font-face{font-family:'Long Cang';src:url('/fonts/longcang.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'Work Sans';src:url('/fonts/worksans.woff2') format('woff2');font-weight:100 900;font-display:swap}
   @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
   @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
     unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
@@ -15,45 +15,56 @@
   *{box-sizing:border-box}
   body{margin:0;background:var(--wall);color:var(--ink);font:16px/1.6 'Plex',-apple-system,'Helvetica Neue','PingFang SC',sans-serif}
   header{background:var(--header);color:#fdf7fa;padding:16px;display:flex;align-items:center;gap:12px}
-  header h1{margin:0;font-size:26px;flex:1;font-family:'Long Cang',cursive;font-weight:400;line-height:1.1}
+  header h1{margin:0;font-size:26px;flex:1;font-family:'Work Sans','Plex',sans-serif;font-weight:900;line-height:1.1;letter-spacing:.01em}
   nav{display:flex;background:var(--paper);border-bottom:1px solid var(--line)}
   nav button{flex:1;padding:13px;border:none;background:none;font:inherit;font-weight:700;font-size:15px;color:var(--soft);cursor:pointer}
   nav button.on{color:var(--plum);box-shadow:inset 0 -3px 0 var(--plum)}
   main{max-width:820px;margin:0 auto;padding:14px}
   .box{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:12px}
-  .box b{font-family:'Long Cang',cursive;font-weight:400}
+  .box b{font-family:'Work Sans','Plex',sans-serif;font-weight:800}
   table{width:100%;border-collapse:collapse;font-size:14px}
   th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
   th{color:var(--soft);font-size:12px}
   .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700}
   .pending{background:#fff3d6;color:#8a6a12}.paid{background:#e6f6ec;color:#187a43}
   .mismatch,.failed{background:#fdeaea;color:#a33}
-  .btn{padding:9px 14px;border:none;border-radius:7px;background:var(--plum);color:var(--on-dark);font-weight:700;font-size:14px;cursor:pointer;font-family:'Long Cang',cursive;font-weight:400}
+  .btn{padding:9px 14px;border:none;border-radius:7px;background:var(--plum);color:var(--on-dark);font-weight:700;font-size:14px;cursor:pointer;font-family:'Work Sans','Plex',sans-serif;font-weight:800}
   .btn.gray{background:var(--plum-deep)}.btn.pink{background:var(--pink)}.btn.red{background:#b3453c}
   input{padding:10px;border:1.5px solid var(--line);border-radius:7px;font-size:15px;font-family:inherit;background:var(--wall);color:var(--ink)}
   #gate{max-width:340px;margin:16vh auto;text-align:center}
   .muted{color:var(--soft);font-size:12.5px}
   .in{color:#187a43;font-weight:700}
+  .lang{display:flex;gap:4px}
+  .lang button{padding:6px 8px;border:1.5px solid rgba(253,247,250,.35);border-radius:6px;background:none;color:#fdf7fa;
+    font:700 13px/1 'Work Sans','Plex',sans-serif;cursor:pointer}
+  .lang button.on{background:#fdf7fa;color:#17121a;border-color:#fdf7fa}
+  #gate .lang{justify-content:center;margin-bottom:10px}
+  #gate .lang button{color:var(--soft);border-color:var(--line)}
+  #gate .lang button.on{background:var(--plum);color:var(--on-dark);border-color:var(--plum)}
+  @media (max-width:480px){nav button{padding:12px 4px;font-size:14px;line-height:1.3}header h1{font-size:22px}}
 </style>
 </head>
 <body>
 <div id="gate">
   <div class="box">
-    <h2 style="margin:4px 0 12px;font-family:'Long Cang',cursive;font-weight:400">AYBKK Bangkok Admin</h2>
-    <input id="key" type="password" placeholder="passcode" style="width:100%">
-    <button class="btn" style="width:100%;margin-top:12px" onclick="unlock()">Enter</button>
+    <div class="lang"><button data-lang="en" onclick="setLang('en')">EN</button><button data-lang="th" onclick="setLang('th')">ไทย</button></div>
+    <h2 data-t="title" style="margin:4px 0 12px;font-family:'Work Sans','Plex',sans-serif;font-weight:800">AYBKK Bangkok Admin</h2>
+    <input id="key" type="password" data-ph="passcode" placeholder="passcode" style="width:100%">
+    <button class="btn" data-t="enter" style="width:100%;margin-top:12px" onclick="unlock()">Enter</button>
     <p class="muted" id="gateMsg"></p>
   </div>
 </div>
 
 <div id="app" style="display:none">
-<header><h1>AYBKK Bangkok Admin</h1><button class="btn gray" onclick="logout()">Lock</button></header>
+<header><h1 data-t="title">AYBKK Bangkok Admin</h1>
+  <div class="lang"><button data-lang="en" onclick="setLang('en')">EN</button><button data-lang="th" onclick="setLang('th')">ไทย</button></div>
+  <button class="btn gray" data-t="lock" onclick="logout()">Lock</button></header>
 <nav>
-  <button id="t-today" class="on" onclick="tab('today')">Today</button>
-  <button id="t-students" onclick="tab('students')">Students</button>
-  <button id="t-classes" onclick="tab('classes')">Classes</button>
-  <button id="t-orders" onclick="tab('orders')">Payments</button>
-  <button id="t-settings" onclick="tab('settings')">Settings</button>
+  <button id="t-today" class="on" data-t="tabToday" onclick="tab('today')">Today</button>
+  <button id="t-students" data-t="tabStudents" onclick="tab('students')">Students</button>
+  <button id="t-classes" data-t="tabClasses" onclick="tab('classes')">Classes</button>
+  <button id="t-orders" data-t="tabOrders" onclick="tab('orders')">Payments</button>
+  <button id="t-settings" data-t="tabSettings" onclick="tab('settings')">Settings</button>
 </nav>
 <main id="view"></main>
 </div>
@@ -62,22 +73,197 @@
 (() => {
   "use strict";
   const $ = s => document.querySelector(s);
-  let KEY = localStorage.getItem('aybkk_bkk_key') || '';
+  const store = {
+    get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+    del: k => { try { localStorage.removeItem(k); } catch {} },
+  };
+  let KEY = store.get('aybkk_bkk_key') || '';
+  let LANG = store.get('aybkk_admin_lang') === 'en' ? 'en' : 'th';
+
+  const STR = {
+    en: {
+      title: 'AYBKK Bangkok Admin', passcode: 'passcode', enter: 'Enter', wrongPass: 'wrong passcode', lock: 'Lock',
+      tabToday: 'Today', tabStudents: 'Students', tabClasses: 'Classes', tabOrders: 'Payments', tabSettings: 'Settings',
+      failed: 'failed',
+      students: 'Students', searchHelp: 'Search by name, email, phone or member code.',
+      searchPh: 'e.g. Anna, or anna@…', search: 'Search',
+      sellTitle: 'Sell at the desk',
+      sellHelp: 'The student pays cash, bank transfer or the card machine. The money is recorded, VAT is added, the pass starts and a receipt is emailed.',
+      sellBtn: 'Sell a package',
+      giveTitle: 'Give a pass',
+      giveHelp: 'Only for a free pass (a gift) or a student moving over from Rezerv. No money is recorded and no receipt is sent. If the student pays, use Sell a package.',
+      giveBtn: 'Give a pass',
+      twoLetters: 'Type at least two letters.', nobody: 'Nobody matches that.',
+      noEmail: 'no email', upcoming: n => `${n} upcoming`,
+      unlimited: 'unlimited', left: n => `${n} left`, until: d => ` · until ${d}`, notStarted: ' · not started',
+      freeze: 'Freeze', unfreeze: 'Unfreeze', extend: 'Extend', void: 'Void', noPass: 'No pass.',
+      bookBtn: 'Book into a class',
+      qPauseDays: 'Pause for how many days?', qPauseWhy: 'Why? (injury, travel…)',
+      qAddDays: 'Add how many days? (0 for none)', qAddClasses: 'Add how many classes? (0 for none)', qNote: 'Note',
+      qVoid: 'Void this pass? The student will not be able to book with it.', qWhy: 'Why?',
+      qWhichCode: codes => `Which package? (${codes})`,
+      qName: 'Student name', qEmailFind: 'Email (used to find them again)',
+      qStart: 'Start date YYYY-MM-DD (blank = starts on first booking)', qExpires: 'Expires YYYY-MM-DD',
+      qNoteWhy: 'Note (why)',
+      doneMember: (name, code) => `Done. ${name} — member code ${code}`,
+      qWhichPkg: 'Which package?', inclVat: 'incl. VAT', noPkgNum: 'No package with that number.',
+      qEmailReceipt: 'Email (the receipt goes here; blank if none)', qPhone: 'Phone (optional)',
+      qPaidHow: 'Paid how?\n1. Cash\n2. Bank transfer\n3. Card machine', pick123: 'Pick 1, 2 or 3.',
+      confirmSale: (name, pkg, amt, method) => `${name}\n${pkg}\nTake ${amt} (${method}), VAT included.\n\nOnly press OK once you have the money.`,
+      doneSale: (amt, method, ref, name, code) => `Done. ${amt} ${method} · ref ${ref}\n${name} — member code ${code}`,
+      qWhichClass: 'Which class?', seatsLeft: n => `${n} left`, noClassNum: 'No class with that number.', booked: 'Booked.',
+      nextWeeks: 'Next three weeks',
+      classesHelp: 'Closing a class gives every booked student their credit back and emails them. A closed class disappears from the timetable.',
+      bookedOf: (b, c) => `${b} booked of ${c}`, close: 'Close', noClasses: 'no classes',
+      putBack: 'Put one back:', reopenBtn: 'Reopen a class',
+      qClose: (title, date) => `Close ${title} on ${date}?\nEveryone booked gets their credit back and an email.`,
+      qReason: 'Reason (students see this)', moonDay: 'Moon day',
+      closed: (r, n) => `Closed. ${r} booking(s) released, ${n} emailed.`,
+      qSlot: 'Class number (slotId)', qDate: 'Date YYYY-MM-DD',
+      moneyToday: 'Money in today', sales: n => `${n} sale${n === 1 ? '' : 's'}`,
+      countDrawer: 'Count the cash drawer against the cash line before you go home.',
+      noSales: 'No sales yet today.', today: 'Today', noBookings: 'No bookings today.',
+      bookedIn: (n, i) => ` — ${n} booked, ${i} checked in`, checkedIn: '✓ in', notYet: 'not yet',
+      payments: 'Payments', thStudent: 'Student', thPackage: 'Package', thStatus: 'Status', thRef: 'Ref',
+      fee: 'fee', vat: 'VAT', activate: 'Activate', noOrders: 'no orders yet',
+      ordersHelp: 'Find the reference number in the PaySolutions dashboard, check the amount matches, then activate. Every activation here is recorded as manual.',
+      qActivate: 'Activate this pass?\nOnly do this once you have seen the money arrive in PaySolutions.',
+      feeTitle: 'Online payment fee',
+      feeHelp: 'Added on top of every package price at checkout. It exists to cover the card fees — PaySolutions is cheaper than Stripe, so you may want to lower it.',
+      save: 'Save', packages: 'Packages',
+      pkgHelp: 'Change a price or retire one. What a package DOES — classes included, how long it lasts — is fixed once it exists, so passes already sold cannot be rewritten underneath the students who bought them.',
+      thBase: 'Base', thPays: 'Student pays', price: 'Price', retire: 'Retire', addPkg: 'Add a package',
+      links: 'Links',
+      linksHelp: 'Where students are sent from their page. Leave one blank to hide it. Paste the full address, starting https://',
+      saveLinks: 'Save links', saved: 'Saved.',
+      qNewPrice: code => `New base price for ${code} (฿), before the online fee`,
+      qRetire: code => `Stop selling ${code}?\nPasses already bought keep working.`,
+      qPkgName: 'Name, as students see it', qPkgCode: 'Short code (letters and numbers, no spaces)',
+      qPkgKind: 'Type: "credits" for a class pack, "unlimited" for a membership',
+      qPkgPrice: 'Price in ฿, before the online fee', qPkgDays: 'Valid for how many days after the first class?',
+      qPkgClasses: 'How many classes?',
+      linkNames: { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', line: 'LINE', wechat: 'WeChat', facebook: 'Facebook', shop: 'Shop' },
+      words: {},
+    },
+    th: {
+      title: 'AYBKK ระบบหลังบ้าน', passcode: 'รหัสผ่าน', enter: 'เข้าสู่ระบบ', wrongPass: 'รหัสผ่านไม่ถูกต้อง', lock: 'ล็อก',
+      tabToday: 'วันนี้', tabStudents: 'นักเรียน', tabClasses: 'คลาส', tabOrders: 'การชำระเงิน', tabSettings: 'ตั้งค่า',
+      failed: 'ทำไม่สำเร็จ',
+      students: 'นักเรียน', searchHelp: 'ค้นหาด้วยชื่อ อีเมล เบอร์โทร หรือรหัสสมาชิก',
+      searchPh: 'เช่น Anna หรือ anna@…', search: 'ค้นหา',
+      sellTitle: 'ขายที่หน้าเคาน์เตอร์',
+      sellHelp: 'นักเรียนจ่ายเงินสด โอนเงิน หรือรูดบัตร ระบบจะบันทึกยอดเงิน บวก VAT เริ่มแพ็กเกจ และส่งใบเสร็จทางอีเมล',
+      sellBtn: 'ขายแพ็กเกจ',
+      giveTitle: 'ให้แพ็กเกจ',
+      giveHelp: 'ใช้เฉพาะแพ็กเกจฟรี (ของขวัญ) หรือนักเรียนที่ย้ายมาจาก Rezerv ระบบจะไม่บันทึกยอดเงินและไม่ส่งใบเสร็จ ถ้านักเรียนจ่ายเงิน ให้ใช้ "ขายแพ็กเกจ"',
+      giveBtn: 'ให้แพ็กเกจ',
+      twoLetters: 'พิมพ์อย่างน้อยสองตัวอักษร', nobody: 'ไม่พบนักเรียน',
+      noEmail: 'ไม่มีอีเมล', upcoming: n => `จองไว้ ${n} คลาส`,
+      unlimited: 'ไม่จำกัด', left: n => `เหลือ ${n} ครั้ง`, until: d => ` · ถึง ${d}`, notStarted: ' · ยังไม่เริ่ม',
+      freeze: 'พักแพ็กเกจ', unfreeze: 'เลิกพัก', extend: 'ยืดวัน', void: 'ยกเลิกแพ็กเกจ', noPass: 'ไม่มีแพ็กเกจ',
+      bookBtn: 'จองคลาสให้',
+      qPauseDays: 'พักแพ็กเกจกี่วัน?', qPauseWhy: 'เหตุผล? (บาดเจ็บ เดินทาง…)',
+      qAddDays: 'เพิ่มกี่วัน? (ใส่ 0 ถ้าไม่เพิ่ม)', qAddClasses: 'เพิ่มกี่ครั้ง? (ใส่ 0 ถ้าไม่เพิ่ม)', qNote: 'หมายเหตุ',
+      qVoid: 'ยกเลิกแพ็กเกจนี้? นักเรียนจะใช้แพ็กเกจนี้จองคลาสไม่ได้อีก', qWhy: 'เหตุผล?',
+      qWhichCode: codes => `แพ็กเกจไหน? (${codes})`,
+      qName: 'ชื่อนักเรียน', qEmailFind: 'อีเมล (ใช้ค้นหานักเรียนภายหลัง)',
+      qStart: 'วันเริ่ม YYYY-MM-DD (เว้นว่าง = เริ่มเมื่อจองคลาสแรก)', qExpires: 'วันหมดอายุ YYYY-MM-DD',
+      qNoteWhy: 'หมายเหตุ (เหตุผล)',
+      doneMember: (name, code) => `เรียบร้อย ${name} — รหัสสมาชิก ${code}`,
+      qWhichPkg: 'แพ็กเกจไหน?', inclVat: 'รวม VAT', noPkgNum: 'ไม่มีแพ็กเกจหมายเลขนี้',
+      qEmailReceipt: 'อีเมล (ส่งใบเสร็จไปที่นี่ เว้นว่างถ้าไม่มี)', qPhone: 'เบอร์โทร (ไม่ใส่ก็ได้)',
+      qPaidHow: 'จ่ายแบบไหน?\n1. เงินสด\n2. โอนเงิน\n3. รูดบัตร', pick123: 'เลือก 1, 2 หรือ 3',
+      confirmSale: (name, pkg, amt, method) => `${name}\n${pkg}\nรับเงิน ${amt} (${method}) รวม VAT แล้ว\n\nกด OK หลังจากได้รับเงินแล้วเท่านั้น`,
+      doneSale: (amt, method, ref, name, code) => `เรียบร้อย ${amt} ${method} · เลขอ้างอิง ${ref}\n${name} — รหัสสมาชิก ${code}`,
+      qWhichClass: 'คลาสไหน?', seatsLeft: n => `ว่าง ${n} ที่`, noClassNum: 'ไม่มีคลาสหมายเลขนี้', booked: 'จองแล้ว',
+      nextWeeks: 'สามสัปดาห์ข้างหน้า',
+      classesHelp: 'เมื่อปิดคลาส นักเรียนที่จองไว้ทุกคนจะได้ครั้งคืนและได้รับอีเมลแจ้ง คลาสที่ปิดจะหายไปจากตารางเรียน',
+      bookedOf: (b, c) => `จอง ${b} จาก ${c} ที่`, close: 'ปิด', noClasses: 'ไม่มีคลาส',
+      putBack: 'เปิดคลาสกลับมา:', reopenBtn: 'เปิดคลาสอีกครั้ง',
+      qClose: (title, date) => `ปิดคลาส ${title} วันที่ ${date}?\nนักเรียนที่จองไว้ทุกคนจะได้ครั้งคืนและได้รับอีเมล`,
+      qReason: 'เหตุผล (นักเรียนจะเห็นข้อความนี้)', moonDay: 'Moon day (วันพระจันทร์)',
+      closed: (r, n) => `ปิดแล้ว คืนการจอง ${r} รายการ ส่งอีเมล ${n} คน`,
+      qSlot: 'หมายเลขคลาส (slotId)', qDate: 'วันที่ YYYY-MM-DD',
+      moneyToday: 'เงินเข้าวันนี้', sales: n => `${n} รายการ`,
+      countDrawer: 'นับเงินในลิ้นชักให้ตรงกับยอดเงินสด ก่อนกลับบ้าน',
+      noSales: 'วันนี้ยังไม่มียอดขาย', today: 'วันนี้', noBookings: 'วันนี้ไม่มีการจอง',
+      bookedIn: (n, i) => ` — จอง ${n} คน เช็คอินแล้ว ${i} คน`, checkedIn: '✓ เช็คอินแล้ว', notYet: 'ยังไม่มา',
+      payments: 'การชำระเงิน', thStudent: 'นักเรียน', thPackage: 'แพ็กเกจ', thStatus: 'สถานะ', thRef: 'อ้างอิง',
+      fee: 'ค่าธรรมเนียม', vat: 'VAT', activate: 'เปิดใช้', noOrders: 'ยังไม่มีรายการ',
+      ordersHelp: 'หาเลขอ้างอิงในหน้า PaySolutions ตรวจว่ายอดเงินตรงกัน แล้วกดเปิดใช้ ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
+      qActivate: 'เปิดใช้แพ็กเกจนี้?\nทำเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น',
+      feeTitle: 'ค่าธรรมเนียมจ่ายออนไลน์',
+      feeHelp: 'บวกเพิ่มจากราคาแพ็กเกจตอนจ่ายเงินออนไลน์ เพื่อครอบคลุมค่าธรรมเนียมบัตร PaySolutions ถูกกว่า Stripe จึงอาจลดลงได้',
+      save: 'บันทึก', packages: 'แพ็กเกจ',
+      pkgHelp: 'เปลี่ยนราคาหรือเลิกขายได้ ส่วนเนื้อหาของแพ็กเกจ (จำนวนครั้ง ระยะเวลา) แก้ไม่ได้หลังสร้างแล้ว เพื่อไม่ให้แพ็กเกจที่ขายไปแล้วเปลี่ยนไปจากที่นักเรียนซื้อ',
+      thBase: 'ราคาตั้ง', thPays: 'นักเรียนจ่าย', price: 'แก้ราคา', retire: 'เลิกขาย', addPkg: 'เพิ่มแพ็กเกจ',
+      links: 'ลิงก์',
+      linksHelp: 'ลิงก์ที่แสดงในหน้าของนักเรียน เว้นว่างเพื่อซ่อน ใส่ที่อยู่เต็ม เริ่มด้วย https://',
+      saveLinks: 'บันทึกลิงก์', saved: 'บันทึกแล้ว',
+      qNewPrice: code => `ราคาตั้งใหม่ของ ${code} (฿) ก่อนบวกค่าธรรมเนียมออนไลน์`,
+      qRetire: code => `เลิกขาย ${code}?\nแพ็กเกจที่ขายไปแล้วยังใช้ได้ตามปกติ`,
+      qPkgName: 'ชื่อแพ็กเกจ (ที่นักเรียนเห็น)', qPkgCode: 'รหัสสั้น (ตัวอักษรอังกฤษและตัวเลข ไม่มีช่องว่าง)',
+      qPkgKind: 'ประเภท: พิมพ์ "credits" สำหรับแพ็กเกจนับครั้ง หรือ "unlimited" สำหรับแบบไม่จำกัด',
+      qPkgPrice: 'ราคา (฿) ก่อนบวกค่าธรรมเนียมออนไลน์', qPkgDays: 'ใช้ได้กี่วันหลังคลาสแรก?',
+      qPkgClasses: 'กี่ครั้ง?',
+      linkNames: { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', line: 'LINE', wechat: 'WeChat', facebook: 'Facebook', shop: 'ร้านค้า' },
+      words: {
+        cash: 'เงินสด', transfer: 'โอนเงิน', card: 'รูดบัตร', online: 'ออนไลน์',
+        paid: 'ชำระแล้ว', pending: 'รอชำระ', mismatch: 'ยอดไม่ตรง', failed: 'ไม่สำเร็จ',
+        active: 'ใช้งานอยู่', frozen: 'พักอยู่', void: 'ยกเลิกแล้ว',
+      },
+    },
+  };
+  const T = (k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
+  const W = w => STR[LANG].words[w] || w;
+  let TH_NAMES = null;
+  const loadThNames = async () => {
+    if (TH_NAMES) return;
+    const d = await fetch('/api/bkk/products').then(r => r.json()).catch(() => ({}));
+    TH_NAMES = {};
+    for (const x of d.products || []) if (x.name_th) TH_NAMES[x.id] = x.name_th;
+  };
+  const pkgName = p => (LANG === 'th' && (p.name_th || (TH_NAMES || {})[p.product_id])) || p.name_en;
+  const CLASS_TH = [[/\[Online\]/g, '[ออนไลน์]'], [/Mysore/g, 'มายซอร์'], [/\(1st batch\)/g, '(รอบแรก)'],
+    [/\(2nd batch\)/g, '(รอบสอง)'], [/Sunday/g, 'วันอาทิตย์'], [/ series/g, '']];
+  const cls = t => LANG === 'th' ? CLASS_TH.reduce((s, [re, to]) => s.replace(re, to), String(t ?? '')) : t;
+  const locale = () => LANG === 'th' ? 'th-TH' : 'en-GB';
+
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const api = (url, opts = {}) => fetch(url, { ...opts,
     headers: { 'Content-Type': 'application/json', 'X-Bkk-Key': KEY, ...(opts.headers || {}) } });
   const time = iso => new Date(iso).toLocaleTimeString('en-GB',
     { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
 
+  function paintStatic() {
+    document.documentElement.lang = LANG;
+    document.title = T('title');
+    document.querySelectorAll('[data-t]').forEach(el => { el.textContent = T(el.dataset.t); });
+    document.querySelectorAll('[data-ph]').forEach(el => { el.placeholder = T(el.dataset.ph); });
+    document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === LANG));
+  }
+  window.setLang = l => {
+    LANG = l === 'en' ? 'en' : 'th';
+    store.set('aybkk_admin_lang', LANG);
+    paintStatic();
+    if ($('#gateMsg').textContent) $('#gateMsg').textContent = T('wrongPass');
+    if ($('#app').style.display !== 'none') {
+      const term = current === 'students' && $('#q') ? $('#q').value.trim() : '';
+      if (current === 'students') renderStudents(term); else tab(current);
+    }
+  };
+  paintStatic();
+
   window.unlock = async () => {
     KEY = $('#key').value.trim();
     const r = await api('/api/bkk/admin/orders');
-    if (r.status === 401) { $('#gateMsg').textContent = 'wrong passcode'; return; }
-    localStorage.setItem('aybkk_bkk_key', KEY);
+    if (r.status === 401) { $('#gateMsg').textContent = T('wrongPass'); return; }
+    store.set('aybkk_bkk_key', KEY);
     $('#gate').style.display = 'none'; $('#app').style.display = 'block';
     tab('today');
   };
-  window.logout = () => { localStorage.removeItem('aybkk_bkk_key'); location.reload(); };
+  window.logout = () => { store.del('aybkk_bkk_key'); location.reload(); };
 
   let current = 'today';
   window.tab = t => {
@@ -90,29 +276,33 @@
     if (t === 'settings') renderSettings();
   };
 
-  const day = iso => new Date(iso).toLocaleDateString('en-GB',
+  const day = iso => new Date(iso).toLocaleDateString(locale(),
     { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Bangkok' });
   const ask = (q, d = '') => { const v = prompt(q, d); return v === null ? null : v.trim(); };
   const shout = async (r) => {
     const j = await r.json().catch(() => ({}));
-    if (!r.ok) { alert(j.error || 'failed'); return null; }
+    if (!r.ok) { alert(j.error || T('failed')); return null; }
     return j;
   };
 
   // ── students ──────────────────────────────────────────────────────────────
   async function renderStudents(term) {
     $('#view').innerHTML = `<div class="box">
-      <b>Students</b>
-      <p class="muted">Search by name, email, phone or member code.</p>
-      <p><input id="q" placeholder="e.g. Anna, or anna@…" style="width:68%" value="${esc(term || '')}">
-      <button class="btn" onclick="findStudents()">Search</button></p>
+      <b>${T('students')}</b>
+      <p class="muted">${T('searchHelp')}</p>
+      <p><input id="q" placeholder="${esc(T('searchPh'))}" style="width:68%" value="${esc(term || '')}">
+      <button class="btn" onclick="findStudents()">${T('search')}</button></p>
       <div id="results"></div>
     </div>
     <div class="box">
-      <b>Give a pass</b>
-      <p class="muted">For a student who paid another way, a comp, or someone moving
-      over from Rezerv. No payment is recorded and no receipt is sent.</p>
-      <p><button class="btn pink" onclick="grantPass()">Give a pass</button></p>
+      <b>${T('sellTitle')}</b>
+      <p class="muted">${T('sellHelp')}</p>
+      <p><button class="btn pink" onclick="sellDesk()">${T('sellBtn')}</button></p>
+    </div>
+    <div class="box">
+      <b>${T('giveTitle')}</b>
+      <p class="muted">${esc(T('giveHelp'))}</p>
+      <p><button class="btn pink" onclick="grantPass()">${T('giveBtn')}</button></p>
     </div>`;
     $('#q').onkeydown = e => { if (e.key === 'Enter') findStudents(); };
     if (term) findStudents();
@@ -120,42 +310,43 @@
 
   window.findStudents = async () => {
     const term = $('#q').value.trim();
-    if (term.length < 2) { $('#results').innerHTML = '<p class="muted">Type at least two letters.</p>'; return; }
+    if (term.length < 2) { $('#results').innerHTML = `<p class="muted">${T('twoLetters')}</p>`; return; }
+    await loadThNames();
     const d = await api('/api/bkk/admin/members?q=' + encodeURIComponent(term)).then(r => r.json());
     const ms = d.members || [];
-    if (!ms.length) { $('#results').innerHTML = '<p class="muted">Nobody matches that.</p>'; return; }
+    if (!ms.length) { $('#results').innerHTML = `<p class="muted">${T('nobody')}</p>`; return; }
     $('#results').innerHTML = ms.map(m => `<div style="border-top:1px solid var(--line);padding:12px 0">
       <b>${esc(m.name)}</b> <span class="muted">${esc(m.code)}</span><br>
-      <span class="muted">${esc(m.email || 'no email')}${m.phone ? ' · ' + esc(m.phone) : ''}
-        · ${m.booked} upcoming</span>
+      <span class="muted">${esc(m.email || T('noEmail'))}${m.phone ? ' · ' + esc(m.phone) : ''}
+        · ${T('upcoming', m.booked)}</span>
       ${(m.passes || []).map(p => `<div style="margin-top:8px">
-        <span class="pill ${p.status === 'active' ? 'paid' : 'pending'}">${esc(p.status)}</span>
-        ${esc(p.name_en)} —
-        ${p.kind === 'unlimited' ? 'unlimited' : `${p.credits_total - p.credits_used} left`}
-        ${p.valid_until ? ' · until ' + String(p.valid_until).slice(0, 10) : ' · not started'}
+        <span class="pill ${p.status === 'active' ? 'paid' : 'pending'}">${esc(W(p.status))}</span>
+        ${esc(pkgName(p))} —
+        ${p.kind === 'unlimited' ? T('unlimited') : T('left', p.credits_total - p.credits_used)}
+        ${p.valid_until ? T('until', String(p.valid_until).slice(0, 10)) : T('notStarted')}
         <br>
-        <button class="btn gray" onclick="passAct(${p.id},'freeze')">Freeze</button>
-        <button class="btn gray" onclick="passAct(${p.id},'unfreeze')">Unfreeze</button>
-        <button class="btn gray" onclick="passAct(${p.id},'extend')">Extend</button>
-        <button class="btn red" onclick="passAct(${p.id},'void')">Void</button>
-      </div>`).join('') || '<p class="muted">No pass.</p>'}
-      <p style="margin-top:8px"><button class="btn" onclick="bookFor('${esc(m.code)}')">Book into a class</button></p>
+        <button class="btn gray" onclick="passAct(${p.id},'freeze')">${T('freeze')}</button>
+        <button class="btn gray" onclick="passAct(${p.id},'unfreeze')">${T('unfreeze')}</button>
+        <button class="btn gray" onclick="passAct(${p.id},'extend')">${T('extend')}</button>
+        <button class="btn red" onclick="passAct(${p.id},'void')">${T('void')}</button>
+      </div>`).join('') || `<p class="muted">${T('noPass')}</p>`}
+      <p style="margin-top:8px"><button class="btn" onclick="bookFor('${esc(m.code)}')">${T('bookBtn')}</button></p>
     </div>`).join('');
   };
 
   window.passAct = async (id, what) => {
     let body = {};
     if (what === 'freeze') {
-      const days = ask('Pause for how many days?', '30'); if (days === null) return;
-      const reason = ask('Why? (injury, travel…)', ''); if (reason === null) return;
+      const days = ask(T('qPauseDays'), '30'); if (days === null) return;
+      const reason = ask(T('qPauseWhy'), ''); if (reason === null) return;
       body = { days: Number(days), reason };
     } else if (what === 'extend') {
-      const days = ask('Add how many days? (0 for none)', '7'); if (days === null) return;
-      const credits = ask('Add how many classes? (0 for none)', '0'); if (credits === null) return;
-      body = { days: Number(days), credits: Number(credits), reason: ask('Note', '') || '' };
+      const days = ask(T('qAddDays'), '7'); if (days === null) return;
+      const credits = ask(T('qAddClasses'), '0'); if (credits === null) return;
+      body = { days: Number(days), credits: Number(credits), reason: ask(T('qNote'), '') || '' };
     } else if (what === 'void') {
-      if (!confirm('Void this pass? The student will not be able to book with it.')) return;
-      body = { reason: ask('Why?', '') || '' };
+      if (!confirm(T('qVoid'))) return;
+      body = { reason: ask(T('qWhy'), '') || '' };
     }
     const r = await api(`/api/bkk/admin/passes/${id}/${what}`, { method: 'POST', body: JSON.stringify(body) });
     if (await shout(r)) findStudents();
@@ -164,32 +355,54 @@
   window.grantPass = async () => {
     const d = await fetch('/api/bkk/products').then(r => r.json());
     const codes = d.products.map(p => p.code).join(', ');
-    const productCode = ask('Which package? (' + codes + ')', 'pack10'); if (!productCode) return;
-    const name = ask('Student name'); if (!name) return;
-    const email = ask('Email (used to find them again)'); if (email === null) return;
-    const validFrom = ask('Start date YYYY-MM-DD (blank = starts on first booking)', '');
+    const productCode = ask(T('qWhichCode', codes), 'pack10'); if (!productCode) return;
+    const name = ask(T('qName')); if (!name) return;
+    const email = ask(T('qEmailFind')); if (email === null) return;
+    const validFrom = ask(T('qStart'), '');
     if (validFrom === null) return;
     let validUntil = '';
-    if (validFrom) { validUntil = ask('Expires YYYY-MM-DD'); if (!validUntil) return; }
+    if (validFrom) { validUntil = ask(T('qExpires')); if (!validUntil) return; }
     const r = await api('/api/bkk/admin/passes', { method: 'POST', body: JSON.stringify({
       productCode, name, email, source: 'manual',
       validFrom: validFrom || null, validUntil: validUntil || null,
-      note: ask('Note (why)', '') || '' }) });
+      note: ask(T('qNoteWhy'), '') || '' }) });
     const j = await shout(r);
-    if (j) { alert(`Done. ${j.member.name} — member code ${j.member.code}`); renderStudents(name); }
+    if (j) { alert(T('doneMember', j.member.name, j.member.code)); renderStudents(name); }
+  };
+
+  window.sellDesk = async () => {
+    const d = await fetch('/api/bkk/products').then(r => r.json());
+    const ps = d.products || [];
+    const withVat = p => p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
+    const pick = ask(T('qWhichPkg') + '\n' + ps.map((p, i) =>
+      `${i + 1}. ${pkgName(p)} · ฿${withVat(p).toLocaleString()} ${T('inclVat')}`).join('\n'), '1');
+    if (!pick) return;
+    const p = ps[Number(pick) - 1];
+    if (!p) return alert(T('noPkgNum'));
+    const name = ask(T('qName')); if (!name) return;
+    const email = ask(T('qEmailReceipt'), ''); if (email === null) return;
+    const phone = ask(T('qPhone'), ''); if (phone === null) return;
+    const m = ask(T('qPaidHow'), '1'); if (!m) return;
+    const method = { 1: 'cash', 2: 'transfer', 3: 'card' }[m];
+    if (!method) return alert(T('pick123'));
+    if (!confirm(T('confirmSale', name, pkgName(p), '฿' + withVat(p).toLocaleString(), W(method)))) return;
+    const r = await api('/api/bkk/admin/sales', { method: 'POST',
+      body: JSON.stringify({ productCode: p.code, name, email, phone, method }) });
+    const j = await shout(r);
+    if (j) { alert(T('doneSale', '฿' + j.order.amount.toLocaleString(), W(j.order.method), j.order.refno, j.member.name, j.member.code)); renderStudents(name); }
   };
 
   window.bookFor = async (code) => {
     const d = await fetch('/api/bkk/schedule?days=14').then(r => r.json());
     const list = (d.classes || []).slice(0, 40);
-    const pick = ask('Which class?\n' + list.map((c, i) =>
-      `${i + 1}. ${day(c.startAt)} ${time(c.startAt)} ${c.title} (${c.seatsLeft} left)`).join('\n'), '1');
+    const pick = ask(T('qWhichClass') + '\n' + list.map((c, i) =>
+      `${i + 1}. ${day(c.startAt)} ${time(c.startAt)} ${cls(c.title)} (${T('seatsLeft', c.seatsLeft)})`).join('\n'), '1');
     if (!pick) return;
     const c = list[Number(pick) - 1];
-    if (!c) return alert('No class with that number.');
+    if (!c) return alert(T('noClassNum'));
     const r = await api('/api/bkk/bookings', { method: 'POST',
       body: JSON.stringify({ memberCode: code, slotId: c.slotId, date: c.date }) });
-    if (await shout(r)) { alert('Booked.'); findStudents(); }
+    if (await shout(r)) { alert(T('booked')); findStudents(); }
   };
 
   // ── classes ───────────────────────────────────────────────────────────────
@@ -197,29 +410,28 @@
     const d = await fetch('/api/bkk/schedule?days=21').then(r => r.json());
     const rows = (d.classes || []).map(c => `<tr>
       <td>${day(c.startAt)}<br><span class="muted">${time(c.startAt)}</span></td>
-      <td>${esc(c.title)}<br><span class="muted">${c.booked} booked of ${c.capacity}</span></td>
-      <td><button class="btn red" onclick="closeClass(${c.slotId},'${c.date}','${esc(c.title)}')">Close</button></td>
+      <td>${esc(cls(c.title))}<br><span class="muted">${T('bookedOf', c.booked, c.capacity)}</span></td>
+      <td><button class="btn red" onclick="closeClass(${c.slotId},'${c.date}','${esc(cls(c.title))}')">${T('close')}</button></td>
     </tr>`).join('');
-    $('#view').innerHTML = `<div class="box"><b>Next three weeks</b>
-      <p class="muted">Closing a class gives every booked student their credit back
-      and emails them. A closed class disappears from the timetable.</p>
-      <table>${rows || '<tr><td class="muted">no classes</td></tr>'}</table>
-      <p class="muted">Put one back: <button class="btn gray" onclick="reopenClass()">Reopen a class</button></p>
+    $('#view').innerHTML = `<div class="box"><b>${T('nextWeeks')}</b>
+      <p class="muted">${T('classesHelp')}</p>
+      <table>${rows || `<tr><td class="muted">${T('noClasses')}</td></tr>`}</table>
+      <p class="muted">${T('putBack')} <button class="btn gray" onclick="reopenClass()">${T('reopenBtn')}</button></p>
     </div>`;
   }
 
   window.closeClass = async (slotId, date, title) => {
-    if (!confirm(`Close ${title} on ${date}?\nEveryone booked gets their credit back and an email.`)) return;
-    const reason = ask('Reason (students see this)', 'Moon day'); if (reason === null) return;
+    if (!confirm(T('qClose', title, date))) return;
+    const reason = ask(T('qReason'), T('moonDay')); if (reason === null) return;
     const r = await api('/api/bkk/admin/classes/cancel', { method: 'POST',
       body: JSON.stringify({ slotId, date, reason }) });
     const j = await shout(r);
-    if (j) { alert(`Closed. ${j.released} booking(s) released, ${j.notified} emailed.`); renderClasses(); }
+    if (j) { alert(T('closed', j.released, j.notified)); renderClasses(); }
   };
 
   window.reopenClass = async () => {
-    const slotId = ask('Class number (slotId)'); if (!slotId) return;
-    const date = ask('Date YYYY-MM-DD'); if (!date) return;
+    const slotId = ask(T('qSlot')); if (!slotId) return;
+    const date = ask(T('qDate')); if (!date) return;
     const r = await api('/api/bkk/admin/classes/reopen', { method: 'POST',
       body: JSON.stringify({ slotId: Number(slotId), date }) });
     if (await shout(r)) renderClasses();
@@ -228,8 +440,14 @@
   async function renderToday() {
     const d = await api('/api/bkk/admin/today').then(r => r.json());
     const rows = (d.bookings || []);
+    const money = (d.money || []);
+    const moneyBox = `<div class="box"><b>${T('moneyToday')}</b>
+      ${money.length ? `<table>${money.map(x => `<tr><td>${esc(W(x.method))}</td><td class="muted">${T('sales', x.n)}</td>
+        <td><b>฿${(x.total || 0).toLocaleString()}</b></td></tr>`).join('')}</table>
+        <p class="muted">${T('countDrawer')}</p>`
+      : `<p class="muted">${T('noSales')}</p>`}</div>`;
     if (!rows.length) {
-      $('#view').innerHTML = '<div class="box"><b>Today</b><p class="muted">No bookings today.</p></div>';
+      $('#view').innerHTML = moneyBox + `<div class="box"><b>${T('today')}</b><p class="muted">${T('noBookings')}</p></div>`;
       return;
     }
     const byClass = {};
@@ -241,43 +459,43 @@
       const [title, startAt] = k.split('|');
       const inCount = list.filter(b => b.checked_in_at).length;
       return `<div class="box">
-        <b>${time(startAt)} · ${esc(title)}</b>
-        <span class="muted"> — ${list.length} booked, ${inCount} checked in</span>
+        <b>${time(startAt)} · ${esc(cls(title))}</b>
+        <span class="muted">${T('bookedIn', list.length, inCount)}</span>
         <table>${list.map(b => `<tr>
           <td>${esc(b.name)}</td>
           <td class="muted">${esc(b.code)}</td>
-          <td>${b.checked_in_at ? '<span class="in">✓ in</span>' : '<span class="muted">not yet</span>'}</td>
+          <td>${b.checked_in_at ? `<span class="in">${T('checkedIn')}</span>` : `<span class="muted">${T('notYet')}</span>`}</td>
         </tr>`).join('')}</table></div>`;
     }).join('');
-    $('#view').innerHTML = blocks;
+    $('#view').innerHTML = moneyBox + blocks;
   }
 
   async function renderOrders() {
+    await loadThNames();
     const d = await api('/api/bkk/admin/orders').then(r => r.json());
     const rows = (d.orders || []).map(o => `<tr>
       <td><b>${esc(o.member_name)}</b><br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span></td>
-      <td>${esc(o.name_en)}<br><b>฿${o.amount_thb.toLocaleString()}</b>
-        <br><span class="muted">${o.base_thb.toLocaleString()} + fee ${o.fee_thb.toLocaleString()}</span></td>
-      <td><span class="pill ${esc(o.status)}">${esc(o.status)}</span><br>
+      <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
+        <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
+      <td><span class="pill ${esc(o.status)}">${esc(W(o.status))}</span> <span class="muted">${esc(W(o.method || 'online'))}</span><br>
         <span class="muted">${(o.created_at || '').slice(5, 16).replace('T', ' ')}</span>
         ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}</td>
-      <td class="muted">${o.refno}</td>
+      <td class="muted" style="word-break:break-all;font-size:12px">${o.refno}</td>
       <td>${o.status !== 'paid'
-        ? `<button class="btn red" onclick="force(${o.id})">Activate</button>`
+        ? `<button class="btn red" onclick="force(${o.id})">${T('activate')}</button>`
         : ''}</td>
     </tr>`).join('');
-    $('#view').innerHTML = `<div class="box"><b>Payments</b>
+    $('#view').innerHTML = `<div class="box"><b>${T('payments')}</b>
       <button class="btn gray" style="float:right" onclick="tab('orders')">↻</button>
-      <table><tr><th>Student</th><th>Package</th><th>Status</th><th>Ref</th><th></th></tr>
-      ${rows || '<tr><td class="muted">no orders yet</td></tr>'}</table>
-      <p class="muted">Find the reference number in the PaySolutions dashboard, check the
-      amount matches, then activate. Every activation here is recorded as manual.</p></div>`;
+      <div style="overflow-x:auto"><table><tr><th>${T('thStudent')}</th><th>${T('thPackage')}</th><th>${T('thStatus')}</th><th>${T('thRef')}</th><th></th></tr>
+      ${rows || `<tr><td class="muted">${T('noOrders')}</td></tr>`}</table></div>
+      <p class="muted">${T('ordersHelp')}</p></div>`;
   }
 
   window.force = async (id) => {
-    if (!confirm('Activate this pass?\nOnly do this once you have seen the money arrive in PaySolutions.')) return;
+    if (!confirm(T('qActivate'))) return;
     const r = await api(`/api/bkk/admin/orders/${id}/force-activate`, { method: 'POST' });
-    if (!r.ok) alert((await r.json()).error || 'failed');
+    if (!r.ok) alert((await r.json()).error || T('failed'));
     renderOrders();
   };
 
@@ -288,38 +506,34 @@
     LINKS = await fetch('/api/bkk/settings').then(r => r.json())
       .then(d => d.links || {}).catch(() => ({}));
     $('#view').innerHTML = `<div class="box">
-      <b>Online payment fee</b>
-      <p class="muted">Added on top of every package price at checkout. It exists to
-      cover the card fees — PaySolutions is cheaper than Stripe, so you may want to lower it.</p>
+      <b>${T('feeTitle')}</b>
+      <p class="muted">${T('feeHelp')}</p>
       <p><input id="sur" type="number" min="0" max="20" step="0.5" value="${p.surchargePct}" style="width:90px"> %
-      <button class="btn" onclick="saveSur()">Save</button></p>
+      <button class="btn" onclick="saveSur()">${T('save')}</button></p>
       </div>
-      <div class="box"><b>Packages</b>
-      <p class="muted">Change a price or retire one. What a package DOES — classes
-      included, how long it lasts — is fixed once it exists, so passes already sold
-      cannot be rewritten underneath the students who bought them.</p>
-      <table><tr><th>Package</th><th>Base</th><th>Student pays</th><th></th></tr>
-      ${p.products.map(x => `<tr><td>${esc(x.name_en)}<br><span class="muted">${esc(x.code)}</span></td>
+      <div class="box"><b>${T('packages')}</b>
+      <p class="muted">${T('pkgHelp')}</p>
+      <table><tr><th>${T('thPackage')}</th><th>${T('thBase')}</th><th>${T('thPays')}</th><th></th></tr>
+      ${p.products.map(x => `<tr><td>${esc(pkgName(x))}<br><span class="muted">${esc(x.code)}</span></td>
         <td>฿${x.price_thb.toLocaleString()}</td>
         <td><b>฿${x.total_thb.toLocaleString()}</b></td>
-        <td><button class="btn gray" onclick="editProduct('${esc(x.code)}',${x.price_thb})">Price</button>
-            <button class="btn red" onclick="retireProduct('${esc(x.code)}')">Retire</button></td>
+        <td><button class="btn gray" onclick="editProduct('${esc(x.code)}',${x.price_thb})">${T('price')}</button>
+            <button class="btn red" onclick="retireProduct('${esc(x.code)}')">${T('retire')}</button></td>
       </tr>`).join('')}</table>
-      <p><button class="btn pink" onclick="newProduct()">Add a package</button></p>
+      <p><button class="btn pink" onclick="newProduct()">${T('addPkg')}</button></p>
       </div>
-      <div class="box"><b>Links</b>
-      <p class="muted">Where students are sent from their page. Leave one blank to
-      hide it. Paste the full address, starting https://</p>
+      <div class="box"><b>${T('links')}</b>
+      <p class="muted">${T('linksHelp')}</p>
       ${['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop']
-        .map(k => `<label style="display:block;margin-top:8px">${k}</label>
+        .map(k => `<label style="display:block;margin-top:8px">${T('linkNames')[k] || k}</label>
           <input id="lk_${k}" style="width:100%" placeholder="https://…"
                  value="${esc((LINKS || {})[k] || '')}">`).join('')}
-      <p style="margin-top:12px"><button class="btn" onclick="saveLinks()">Save links</button></p>
+      <p style="margin-top:12px"><button class="btn" onclick="saveLinks()">${T('saveLinks')}</button></p>
       </div>`;
   }
 
   window.editProduct = async (code, current) => {
-    const v = ask(`New base price for ${code} (฿), before the online fee`, String(current));
+    const v = ask(T('qNewPrice', code), String(current));
     if (v === null) return;
     const r = await api('/api/bkk/admin/products', { method: 'POST',
       body: JSON.stringify({ code, priceThb: Number(v) }) });
@@ -327,21 +541,21 @@
   };
 
   window.retireProduct = async (code) => {
-    if (!confirm(`Stop selling ${code}?\nPasses already bought keep working.`)) return;
+    if (!confirm(T('qRetire', code))) return;
     const r = await api('/api/bkk/admin/products', { method: 'POST',
       body: JSON.stringify({ code, active: false }) });
     if (await shout(r)) renderSettings();
   };
 
   window.newProduct = async () => {
-    const nameEn = ask('Name, as students see it'); if (!nameEn) return;
-    const code = ask('Short code (letters and numbers, no spaces)',
+    const nameEn = ask(T('qPkgName')); if (!nameEn) return;
+    const code = ask(T('qPkgCode'),
       nameEn.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12)); if (!code) return;
-    const kind = ask('Type: "credits" for a class pack, "unlimited" for a membership', 'credits');
+    const kind = ask(T('qPkgKind'), 'credits');
     if (!kind) return;
-    const priceThb = ask('Price in ฿, before the online fee'); if (!priceThb) return;
-    const validDays = ask('Valid for how many days after the first class?', '90'); if (!validDays) return;
-    const credits = kind === 'credits' ? ask('How many classes?', '10') : null;
+    const priceThb = ask(T('qPkgPrice')); if (!priceThb) return;
+    const validDays = ask(T('qPkgDays'), '90'); if (!validDays) return;
+    const credits = kind === 'credits' ? ask(T('qPkgClasses'), '10') : null;
     if (kind === 'credits' && !credits) return;
     const r = await api('/api/bkk/admin/products', { method: 'POST', body: JSON.stringify({
       code, nameEn, kind, priceThb: Number(priceThb),
@@ -356,14 +570,14 @@
     }
     const r = await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify({ links }) });
     const j = await shout(r);
-    if (j) { LINKS = links; alert('Saved.'); }
+    if (j) { LINKS = links; alert(T('saved')); }
   };
 
   window.saveSur = async () => {
     const v = Number($('#sur').value);
     const r = await api('/api/bkk/admin/settings', { method: 'POST',
       body: JSON.stringify({ surchargePct: v }) });
-    if (!r.ok) return alert('failed');
+    if (!r.ok) return alert(T('failed'));
     renderSettings();
   };
 
