@@ -79,6 +79,7 @@ const SEED_SLOTS = [
 
 function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
+  const cloudinary = opts.cloudinary || null;
   const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || 'aybkk2026';
   // Header only. A key in the query string ends up in access logs, browser
   // history and Referer headers.
@@ -177,6 +178,22 @@ function mountBkk(app, opts = {}) {
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS vat_thb INTEGER NOT NULL DEFAULT 0`);
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS method TEXT NOT NULL DEFAULT 'online'`);
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS reminded_at TIMESTAMPTZ`);
+
+    // Class photos on each student's own profile (Oct 2026). The public feed
+    // closed because students didn't want others saving their photos, so a
+    // photo is stored private and only shown to the students tagged in it.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_photos (
+      id SERIAL PRIMARY KEY,
+      public_id TEXT UNIQUE NOT NULL,
+      class_date DATE NOT NULL,
+      width INTEGER, height INTEGER,
+      uploaded_by INTEGER REFERENCES bkk_teachers(id),
+      created_at TIMESTAMPTZ DEFAULT now())`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_photo_members (
+      photo_id INTEGER REFERENCES bkk_photos(id) ON DELETE CASCADE,
+      member_id INTEGER REFERENCES bkk_members(id) ON DELETE CASCADE,
+      PRIMARY KEY (photo_id, member_id))`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_photo_members_member ON bkk_photo_members (member_id)`);
 
     // The things a shala actually does to a pass, which Rezerv has and this did
     // not: pause it for an injury, write off a mistake, note why.
@@ -1245,6 +1262,148 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
            AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
          ORDER BY b.start_at, m.name`);
       res.json({ students: r.rows });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── profile photos ────────────────────────────────────────────────────────
+  // Chay (on a teacher passcode) uploads the day's photos and taps who is in
+  // each one. Stored as Cloudinary "authenticated" assets: no plain URL works,
+  // only signed ones, and those are handed out only to the tagged students.
+  const photoUrl = (publicId, kind) => cloudinary.url(publicId, {
+    type: 'authenticated', sign_url: true, secure: true,
+    transformation: kind === 'thumb'
+      ? [{ width: 400, height: 500, crop: 'fill', gravity: 'auto', quality: 'auto', fetch_format: 'auto' }]
+      : [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto', fetch_format: 'auto' }],
+  });
+  const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
+  async function memberIds(codes) {
+    const list = [...new Set((Array.isArray(codes) ? codes : []).map(String))].slice(0, 30);
+    if (!list.length) return [];
+    return (await q('SELECT id FROM bkk_members WHERE code = ANY($1::text[])', [list])).rows.map(r => r.id);
+  }
+  async function photosWithTags(where, args) {
+    const rows = (await q(
+      `SELECT p.*, to_char(p.class_date, 'YYYY-MM-DD') AS day, coalesce(json_agg(json_build_object('code', m.code, 'name', m.name))
+                FILTER (WHERE m.id IS NOT NULL), '[]') AS members
+       FROM bkk_photos p
+       LEFT JOIN bkk_photo_members pm ON pm.photo_id = p.id
+       LEFT JOIN bkk_members m ON m.id = pm.member_id
+       WHERE ${where} GROUP BY p.id ORDER BY p.id`, args)).rows;
+    return rows.map(p => ({ id: p.id, date: p.day, members: p.members,
+      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full') }));
+  }
+
+  // Who Chay can tag: today's bookings first, then a name search, then a quick
+  // add for someone not in the system yet (most students are still on Rezerv).
+  app.get('/api/bkk/teacher/members', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    try {
+      const term = String(req.query.q || '').trim().toLowerCase();
+      if (term.length < 2) return res.json({ members: [] });
+      const r = await q(
+        `SELECT code, name FROM bkk_members
+         WHERE lower(name) LIKE $1 OR lower(coalesce(email,'')) LIKE $1
+         ORDER BY name LIMIT 20`, [`%${term}%`]);
+      res.json({ members: r.rows });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/teacher/members', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    try {
+      const { name, email } = req.body || {};
+      if (!String(name || '').trim()) return res.status(400).json({ error: 'name required' });
+      if (!String(email || '').includes('@')) {
+        return res.status(400).json({ error: 'email required: the student signs in with it to see their photos' });
+      }
+      const m = await findOrCreateMember({ name, email });
+      res.json({ success: true, member: { code: m.code, name: m.name } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.get('/api/bkk/teacher/photos', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    const date = isDate(req.query.date) ? req.query.date : ymd(bkkNow());
+    try {
+      res.json({ date, photos: await photosWithTags('p.class_date = $1', [date]) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/teacher/photos', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    try {
+      const { date, image, memberCodes } = req.body || {};
+      if (!isDate(date)) return res.status(400).json({ error: 'date required (YYYY-MM-DD)' });
+      if (!/^data:image\/(jpeg|png|webp);base64,/.test(String(image || ''))) {
+        return res.status(400).json({ error: 'image must be a JPEG, PNG or WebP data URL' });
+      }
+      const up = await cloudinary.uploader.upload(image, {
+        type: 'authenticated', folder: `aybkk/profile/${date}`, resource_type: 'image',
+        transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:good' }],
+      });
+      const photo = (await q(
+        `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by)
+         VALUES ($1,$2,$3,$4,$5) RETURNING id`,
+        [up.public_id, date, up.width || null, up.height || null, t.id])).rows[0];
+      for (const id of await memberIds(memberCodes)) {
+        await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2) ON CONFLICT DO NOTHING',
+          [photo.id, id]);
+      }
+      res.json({ success: true, photo: (await photosWithTags('p.id = $1', [photo.id]))[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Replace who is in a photo.
+  app.post('/api/bkk/teacher/photos/:id/tags', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    try {
+      const p = (await q('SELECT id FROM bkk_photos WHERE id=$1', [req.params.id])).rows[0];
+      if (!p) return res.status(404).json({ error: 'photo not found' });
+      const ids = await memberIds((req.body || {}).memberCodes);
+      await q('DELETE FROM bkk_photo_members WHERE photo_id=$1', [p.id]);
+      for (const id of ids) {
+        await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2)', [p.id, id]);
+      }
+      res.json({ success: true, photo: (await photosWithTags('p.id = $1', [p.id]))[0] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/teacher/photos/:id/delete', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    try {
+      const p = (await q('DELETE FROM bkk_photos WHERE id=$1 RETURNING public_id', [req.params.id])).rows[0];
+      if (!p) return res.status(404).json({ error: 'photo not found' });
+      await cloudinary.uploader.destroy(p.public_id, { type: 'authenticated', invalidate: true }).catch(() => {});
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // A student's own photos, newest day first. The member code is what the
+  // signed-in browser already holds; nobody else's photos can come back here.
+  app.get('/api/bkk/me/:code/photos', async (req, res) => {
+    if (!cloudinary) return res.json({ days: [] });
+    try {
+      const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'not found' });
+      const photos = await photosWithTags(
+        'p.id IN (SELECT photo_id FROM bkk_photo_members WHERE member_id = $1)', [m.id]);
+      const byDay = new Map();
+      for (const ph of photos.reverse()) {
+        if (!byDay.has(ph.date)) byDay.set(ph.date, []);
+        byDay.get(ph.date).push({ id: ph.id, thumb: ph.thumb, full: ph.full });
+      }
+      res.json({ days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]))
+        .map(([date, items]) => ({ date, items })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
