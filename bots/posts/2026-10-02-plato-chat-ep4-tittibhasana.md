@@ -63,22 +63,21 @@ The real answer is...
 don't fight the sea alone.
 Even little bird need help.
 That's why in Mysore class, there is a teacher in the room.
-Legs sore from walking.
-Butt and thighs feel heavy.
-Teacher comes, give you some tips...
-With practice, you can do it easily.
+Legs sore from walking. Butt and thighs feel heavy.
+Teacher comes, give you some tips. That's the trick.
+With practice, it become easier.
+(beat)
 
-## BIG PRIZE (payoff, Boonchu's words)
-If the sea took the eggs,
-find the trick to get it back.
-Your fear, it take something from you, and it also teach you.
-One day... it will remain your wise knowledge.
+## BIG PRIZE (payoff, Boonchu's words + Plato's light edits, approved)
+The sea took the eggs. The bird find the trick, get them back.
+Your fear, it take something from you... and it also teach you.
+One day... it become your wisdom.
 
 ## CAPTION (4 lines + format)
 When something has already hurt you, it creates fear.
 Hidden Stories of Ashtanga, Ep. 4: The Bird Who Fought the Sea.
 Tittibhasana: legs around your shoulders, arms straight, everything on your hands.
-Don't fight the sea alone. Fear takes something from you, and it also teaches you.
+Don't fight the sea alone. Fear takes something from you, and it also teaches you. One day, it becomes your wisdom.
 
 Come learn Ashtanga
 Aybkk.com
@@ -96,7 +95,7 @@ His face, plum gradient from the bottom third. Top: white letterspaced "HIDDEN S
 - Header pill all video: "Hidden Stories of Ashtanga · Ep. 4".
 - Pattern interrupt: hard cut + thunder SFX on "Oh. It started to rain again." Use his real rain clip from today if he has one.
 - Cards: "ṭiṭṭibha = a bird" (navy SVG card, dictionary icon) on the hook; "PANCHATANTRA" text when he says it; story pictures below, slow zoom inside the card.
-- Asana footage: Tittibhasana A (his own or a student's, with permission) on "this asana" (hook) and in the ASANA part.
+- Asana footage: Tittibhasana A (his own or a student's, with permission) in the ASANA part; Tittibhasana C (walking) clip on "Legs sore from walking".
 - Zoom cut 1.3x about 1 s + SFX at 40%, 0.4 s after the word: hurt (impact-bass-1), afraid (error), real answer (click-soft), rain (synth thunder), proud (impact-bass-1), test (click-soft), took the eggs (whoosh), fought back (impact-bass-2), Garuda (whoosh), Vishnu (chime), shook with fear (impact-bass-2), firefly (sparkle), alone (error), real answer (ping), give it all back (chime).
 - Keep beats: 1 s after "and took the eggs"; 1 s before the REVEAL.
 - Captions: Weight Shift, lowercase Montserrat, big emoji (🔥🐦🌊🥚🌧️🦅✨🙏 where they fit).
