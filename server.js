@@ -202,7 +202,7 @@ const ORIENTATION_SHORTCUTS = {
 };
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
-  door: 'bkk-door.html', teach: 'bkk-teacher.html', partner: 'partner.html' };
+  door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', partner: 'partner.html' };
 for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SHORTCUTS })) {
   app.get('/' + slug, (req, res) => {
     if (fs.existsSync(path.join(__dirname, 'public', file))) {
@@ -575,7 +575,7 @@ mountAttendance(app, { pgPool });
 mountShop(app);
 
 // AYBKK Bangkok: packages, PaySolutions payment, passes, booking, check-in
-mountBkk(app, { pgPool });
+mountBkk(app, { pgPool, cloudinary });
 mountPartner(app, { pgPool });
 mountIdcn(app, { pgPool });
 

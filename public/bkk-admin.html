@@ -86,6 +86,9 @@
       title: 'AYBKK Bangkok Admin', passcode: 'passcode', enter: 'Enter', wrongPass: 'wrong passcode', lock: 'Lock',
       tabToday: 'Today', tabStudents: 'Students', tabClasses: 'Classes', tabOrders: 'Payments', tabSettings: 'Settings',
       failed: 'failed',
+      team: 'Team passcodes', teamHelp: 'Each person on the team (teachers, Chay for photos) has their own passcode for /teach and /photos. It is shown once: write it down and give it to them.',
+      addTeam: 'Add a person', qTeamName: 'Name of the person:', teamCode: (n, c) => `Passcode for ${n}: ${c}\n\nGive it to them now. It cannot be shown again.`,
+      resetTeam: 'New passcode', offTeam: 'Switch off', onTeam: 'Switch on', teamOff: 'off',
       students: 'Students', searchHelp: 'Search by name, email, phone or member code.',
       searchPh: 'e.g. Anna, or anna@…', search: 'Search',
       sellTitle: 'Sell at the desk',
@@ -150,6 +153,9 @@
       title: 'AYBKK ระบบหลังบ้าน', passcode: 'รหัสผ่าน', enter: 'เข้าสู่ระบบ', wrongPass: 'รหัสผ่านไม่ถูกต้อง', lock: 'ล็อก',
       tabToday: 'วันนี้', tabStudents: 'นักเรียน', tabClasses: 'คลาส', tabOrders: 'การชำระเงิน', tabSettings: 'ตั้งค่า',
       failed: 'ทำไม่สำเร็จ',
+      team: 'รหัสผ่านทีมงาน', teamHelp: 'แต่ละคนในทีม (ครู และ Chay สำหรับรูป) มีรหัสผ่านของตัวเองสำหรับ /teach และ /photos รหัสจะแสดงครั้งเดียว จดไว้แล้วให้เจ้าตัว',
+      addTeam: 'เพิ่มคน', qTeamName: 'ชื่อ:', teamCode: (n, c) => `รหัสผ่านของ ${n}: ${c}\n\nให้เจ้าตัวเลย ระบบจะไม่แสดงอีก`,
+      resetTeam: 'รหัสใหม่', offTeam: 'ปิด', onTeam: 'เปิด', teamOff: 'ปิดอยู่',
       students: 'นักเรียน', searchHelp: 'ค้นหาด้วยชื่อ อีเมล เบอร์โทร หรือรหัสสมาชิก',
       searchPh: 'เช่น Anna หรือ anna@…', search: 'ค้นหา',
       sellTitle: 'ขายที่หน้าเคาน์เตอร์',
@@ -505,6 +511,8 @@
     const p = await fetch('/api/bkk/products').then(r => r.json());
     LINKS = await fetch('/api/bkk/settings').then(r => r.json())
       .then(d => d.links || {}).catch(() => ({}));
+    TEAM = await api('/api/bkk/admin/teachers').then(r => r.json())
+      .then(d => d.teachers || []).catch(() => []);
     $('#view').innerHTML = `<div class="box">
       <b>${T('feeTitle')}</b>
       <p class="muted">${T('feeHelp')}</p>
@@ -529,8 +537,31 @@
           <input id="lk_${k}" style="width:100%" placeholder="https://…"
                  value="${esc((LINKS || {})[k] || '')}">`).join('')}
       <p style="margin-top:12px"><button class="btn" onclick="saveLinks()">${T('saveLinks')}</button></p>
+      </div>
+      <div class="box"><b>${T('team')}</b>
+      <p class="muted">${T('teamHelp')}</p>
+      <table>${TEAM.map(x => `<tr><td>${esc(x.name)}${x.active ? '' : ` <span class="muted">(${T('teamOff')})</span>`}</td>
+        <td><button class="btn gray" onclick="resetTeam(${x.id},'${esc(x.name)}')">${T('resetTeam')}</button>
+            <button class="btn ${x.active ? 'red' : ''}" onclick="toggleTeam(${x.id},${!x.active})">${T(x.active ? 'offTeam' : 'onTeam')}</button></td></tr>`).join('')}</table>
+      <p><button class="btn pink" onclick="addTeam()">${T('addTeam')}</button></p>
       </div>`;
   }
+  let TEAM = [];
+  window.addTeam = async () => {
+    const name = ask(T('qTeamName')); if (!name) return;
+    const r = await api('/api/bkk/admin/teachers', { method: 'POST', body: JSON.stringify({ name }) });
+    const j = await shout(r);
+    if (j && j.passcode) { alert(T('teamCode', j.teacher.name, j.passcode)); renderSettings(); }
+  };
+  window.resetTeam = async (id, name) => {
+    const r = await api(`/api/bkk/admin/teachers/${id}/reset`, { method: 'POST', body: '{}' });
+    const j = await shout(r);
+    if (j && j.passcode) alert(T('teamCode', name, j.passcode));
+  };
+  window.toggleTeam = async (id, active) => {
+    const r = await api('/api/bkk/admin/teachers', { method: 'POST', body: JSON.stringify({ id, active }) });
+    if (await shout(r)) renderSettings();
+  };
 
   window.editProduct = async (code, current) => {
     const v = ask(T('qNewPrice', code), String(current));

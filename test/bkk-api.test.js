@@ -17,7 +17,18 @@ const ok = (name, cond, extra = '') => {
 };
 
 (async () => {
-  mountBkk(app, { pgPool: pool });
+  // Stand-in for Cloudinary: remembers uploads, signs nothing.
+  const uploads = [], destroyed = [];
+  const fakeCloud = {
+    url: (id, o) => `signed://${o.type}/${id}/${o.transformation[0].width}`,
+    uploader: {
+      upload: async (data, o) => { const r = { public_id: `${o.folder}/p${uploads.length + 1}`, width: 2048, height: 1365, type: o.type };
+        uploads.push(r); return r; },
+      destroy: async (id, o) => { destroyed.push({ id, type: o.type }); return { result: 'ok' }; },
+    },
+  };
+  global.__uploads = uploads; global.__destroyed = destroyed;
+  mountBkk(app, { pgPool: pool, cloudinary: fakeCloud });
   await new Promise(r => setTimeout(r, 1500));           // let schema init finish
   const srv = app.listen(0);
   const port = srv.address().port;
@@ -398,6 +409,40 @@ const ok = (name, cond, extra = '') => {
      (await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: 'X', method: 'iou' }, ADMIN)).status === 400);
   ok('selling needs the staff key',
      (await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: 'X', method: 'cash' }, {})).status === 401);
+
+  console.log('\n— profile photos —');
+  const IMG = 'data:image/jpeg;base64,/9j/4AAQSkZJRg==';
+  const chay = await post('/api/bkk/admin/teachers', { name: 'Chay' }, ADMIN);
+  const PKEY = { 'x-teacher-key': chay.body.passcode };
+  const ann = (await post('/api/bkk/teacher/members', { name: 'Ann Photo', email: 'ann.photo@example.com' }, PKEY)).body.member;
+  const bob = (await post('/api/bkk/teacher/members', { name: 'Bob Photo', email: 'bob.photo@example.com' }, PKEY)).body.member;
+  const cat = (await post('/api/bkk/teacher/members', { name: 'Cat Photo', email: 'cat.photo@example.com' }, PKEY)).body.member;
+  ok('a teacher can add a student for tagging', ann && ann.code && bob && cat);
+  ok('adding a student needs an email (they sign in with it)',
+     (await post('/api/bkk/teacher/members', { name: 'No Mail' }, PKEY)).status === 400);
+  ok('tagging needs a teacher passcode',
+     (await post('/api/bkk/teacher/photos', { date: '2026-10-03', image: IMG, memberCodes: [ann.code] }, ADMIN)).status === 401);
+  const up = await post('/api/bkk/teacher/photos', { date: '2026-10-03', image: IMG, memberCodes: [ann.code, bob.code] }, PKEY);
+  ok('photo uploaded with two students', up.status === 200 && up.body.photo.members.length === 2, JSON.stringify(up.body).slice(0, 160));
+  ok('stored as a private (authenticated) asset', global.__uploads[0] && global.__uploads[0].type === 'authenticated');
+  ok('a non-image is refused',
+     (await post('/api/bkk/teacher/photos', { date: '2026-10-03', image: 'data:text/html;base64,PGgxPg==', memberCodes: [] }, PKEY)).status === 400);
+  const annPics = (await J(`/api/bkk/me/${ann.code}/photos`)).body.days || [];
+  const catPics = (await J(`/api/bkk/me/${cat.code}/photos`)).body.days || [];
+  ok('a tagged student sees the photo, on its class date', annPics.length === 1 && annPics[0].date === '2026-10-03' && annPics[0].items.length === 1,
+     JSON.stringify(annPics));
+  ok('the photo link is a signed private one', /^signed:\/\/authenticated\//.test(annPics[0].items[0].thumb));
+  ok('a student who is not in the photo sees nothing', catPics.length === 0);
+  const day = (await J('/api/bkk/teacher/photos?date=2026-10-03', { headers: PKEY })).body.photos;
+  ok("the teacher's day view lists the photo", day.length === 1);
+  await post(`/api/bkk/teacher/photos/${up.body.photo.id}/tags`, { memberCodes: [cat.code] }, PKEY);
+  ok('re-tagging moves the photo to the right student',
+     ((await J(`/api/bkk/me/${ann.code}/photos`)).body.days || []).length === 0 &&
+     ((await J(`/api/bkk/me/${cat.code}/photos`)).body.days || []).length === 1);
+  const del = await post(`/api/bkk/teacher/photos/${up.body.photo.id}/delete`, {}, PKEY);
+  ok('deleting removes it from the profile and from storage',
+     del.status === 200 && ((await J(`/api/bkk/me/${cat.code}/photos`)).body.days || []).length === 0 &&
+     global.__destroyed.length === 1 && global.__destroyed[0].type === 'authenticated');
 
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');
