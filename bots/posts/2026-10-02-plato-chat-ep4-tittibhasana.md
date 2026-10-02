@@ -14,32 +14,25 @@ And that bird was afraid of the wrong thing.
 So are most of us, in this asana.
 
 ## TODAY
-Today the sky over Bangkok went dark.
-Everyone ran home early, afraid of a flood.
+Today Bangkok ran home early, afraid of a flood.
 So, a bedtime story.
-From an old Indian book of animal stories,
-the Panchatantra.
+From the Panchatantra, an old Indian book of animal stories.
 
 ## STORY (bedtime voice)
 Two little birds lived by the sea.
-Mama bird was ready to lay her eggs.
-She said, "The sea is so close.
-One day the tide might reach our nest,
-and take our eggs."
+Mama bird said, "The sea is so close.
+The tide might take our eggs."
 Papa bird was proud.
-"The sea knows me.
-It would never do that to me."
+"The sea knows me. It would never do that."
 The sea was listening.
-It thought, "What a proud little bird.
-Let me test him."
-The next day, the birds went out to find food.
+"What a proud little bird. Let me test him."
+Next day, the birds went out for food.
 The tide came up...
 and took the eggs.
 (silent beat)
 Mama bird was so sad.
 Papa bird called every bird he knew.
 They hit the sea with their wings.
-They carried dirt in their beaks to fill the sea.
 But the sea was too big.
 So they flew to Garuda, king of the birds.
 And Garuda's master came: the great god Vishnu.
@@ -48,21 +41,18 @@ The sea shook with fear,
 and gave back every egg.
 
 ## TURN (to the adults)
-There is an old saying about this bird.
-It lies on its back, legs up in the air,
+There's an old saying about this bird.
+It lies on its back, legs up,
 to hold up the sky.
-Why? It's afraid the sky will fall.
-And it's proud. It thinks only its little legs can hold it.
+It's afraid the sky will fall.
+And it's proud. It thinks its legs hold the sky.
 (beat)
 The sea was the real danger.
-Papa bird did not see it.
-He was too busy holding up the sky.
-Mama bird was afraid of the right thing.
+Papa bird didn't see it.
+He was busy holding up the sky.
 
 ## ASANA (the fail)
-In Sanskrit, this bird is tittibha.
-Tittibhasana has the same word.
-In Intermediate, it's a full asana.
+Tittibha. Tittibhasana. Same word.
 In Primary, you pass through it for one breath.
 And most of us become Papa bird.
 Shoulders up. Breath gone.
