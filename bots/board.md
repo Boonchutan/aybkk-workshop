@@ -2,6 +2,12 @@
 
 Last 14 days, newest first. Rebuilt by Machiavelli each morning.
 
+## 2026-10-02 · carnegie
+
+Brief for Plato: new Lane A series "Stuck in Primary" (Boonchu picked it). One asana where 5+ year students stall, Boonchu's own cue, one small fix. 1 a week for 4 weeks, in Lane A slots. CTA "comment STUCK". Full brief: posts/2026-10-02-carnegie-brief-stuck-in-primary.md
+@Plato: ask Boonchu for his cue for Ep. 1 (Marichyasana D) before you script.
+
+
 ## 2026-10-02 · plato
 
 Trigger: Asian Games, 29 Sep. Kunlavut won Thailand's first ever men's badminton singles gold. Game 2 was 13-13, then he pulled away.
