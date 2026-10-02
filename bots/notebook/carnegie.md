@@ -7,6 +7,21 @@
 
 (none yet)
 
+## Research
+
+### 2026-10-02: 180K buyer voice (r/ashtanga archive 2015-2026, CN/RU web, blogs)
+Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sina, Xiaoyuzhou, yoga-shala.ru, 2GIS, t.me/s previews. Zhihu, Douban, XHS, VK blocked: need manual reading.
+- BUYER EXISTS (fact): 15+ yr practitioner: "I'm happy to travel and pay for the right experience... not very price sensitive." Wants "highly skilled and experienced teacher", "intensity and seriousness", NOT "another certification". reddit.com/r/ashtanga/comments/1qlz09k/ (Jan 2026)
+- PRICE ANGER = NO ATTENTION (fact, many posts): "if I am not getting any adjustments, why am I wasting my money" (/1ome0tr, 2025). Loud "too expensive" posts come from beginners and tourists (guess, strong).
+- 5+ YR PAIN (fact): stuck in primary 5-7 years (Mari D, drop-back gate), boredom ("4 years later: no fire"), recurring injury, 3h practices, sunk cost ("am I throwing away all these years?"). They ask for permission to adapt, not more asana. Strength work is how many got unstuck.
+- WHY THEY LEAVE (fact): forceful adjustment, then a teacher who walks away; ego, harshness; poses held back without reason or behind paid privates; "culty". Praise: "never forceful", "observes first", "sees you", "personal treatment".
+- AUTHORIZATION (fact): West/RU = necessary, not enough, trust falling since 2025. China = 授权/认证 used as a purchase checklist. Russia knows авторизация vs сертификация. Sharath's death (Nov 2024) makes a real personal link scarcer.
+- AYBKK ON REDDIT (fact): "AYBKK: Authorized teachers, pretty strict, lots of hardcore advanced folks" (/1wmqaxt, Sep 2026). Drop-in called "out of the budget >45 USD" (/1i538c9, Jan 2025, tourist).
+- TIME IS A COST (fact): "taking a month off to study in Mysore isn't practical because of my job" (/1vapkbw, 2026).
+- BUYER WORDS. EN: stuck in primary, held back, next pose, burnout, sustainable, sees you, trust, red flag, forceful. ZH: 瓶颈, 突破, 坚持, 苦修, 掌控感, 授权老师, 少走弯路, 正统/传承. RU: застрял, не пускают дальше, поблажки, посидеть рядом, второй дом, внимательные.
+- PRICES SEEN: China Mysore ~1,500 RMB/month (2023), CN Mysore trip+TTC bundle 13,800-18,800 RMB (2019-20); RU unlimited 3,500-5,500 RUB/month, Moscow L2 seminar 16,000 RUB; Kino and Tim month intensive ~$4,200 (2017, called "exorbitant").
+- GAPS: no XHS/Douyin/VK voice; no replies on money threads (SYC worth it?). Next: Boonchu or helper reads XHS "阿斯汤加 瓶颈", "阿斯汤加 授权老师", VK "аштанга майсор".
+
 ## Log
 
 - 2026-09-28: First run. Memory branch created. Lead table empty.
@@ -15,3 +30,4 @@
 - 2026-10-01: Lead table still empty. Inbox not readable (server 503). No requests in team chat.
 - 2026-10-02: Lead table still empty. Inbox not readable (server 503). No requests in team chat.
 - 2026-10-02 (Machi): INBOX LIVE for LINE. INBOX_KEY and LINE webhook set, test message from Boonchu arrived. Instagram and Facebook not connected yet (needs a Meta app).
+- 2026-10-02 (chat): Research run on 180K buyer voice (6 questions, 4 researchers). Findings in Research. Plan for Plato not yet approved.
