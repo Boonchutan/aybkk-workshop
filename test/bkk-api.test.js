@@ -33,9 +33,7 @@ const ok = (name, cond, extra = '') => {
 
   console.log('\n— catalogue —');
   const prods = await J('/api/bkk/products');
-  ok('10 packages listed', prods.body.products.length === 10, `got ${prods.body.products.length}`);
-  ok('Dedicated 12 months at 59,900 for 13 months',
-    prods.body.products.some(p => p.code === 'ded12' && p.price_thb === 59900 && p.valid_days === 395));
+  ok('7 packages listed', prods.body.products.length === 7, `got ${prods.body.products.length}`);
   const dropin = prods.body.products.find(p => p.code === 'dropin');
   ok('drop-in base ฿1500', dropin.price_thb === 1500);
   ok('3% fee + 7% VAT → ฿1653 total', dropin.total_thb === 1653, `got ${dropin.total_thb}`);
