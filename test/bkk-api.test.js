@@ -41,6 +41,10 @@ const ok = (name, cond, extra = '') => {
   const unlim1 = prods.body.products.find(p => p.code === 'unlim1');
   ok('1-month total ฿10580', unlim1.total_thb === 10580, `got ${unlim1.total_thb}`);
 
+  const pm = Object.entries(prods.body.moonDays || {});
+  ok('catalogue lists moon days for the promotion calculator', pm.length >= 14 && pm.every(([d, n]) => /^\d{4}-\d{2}-\d{2}$/.test(d) && ['new', 'full'].includes(n)),
+    `got ${pm.length}`);
+
   console.log('\n— schedule —');
   const sch = await J('/api/bkk/schedule?days=7');
   ok('classes generated for the week', sch.body.classes.length > 10, `got ${sch.body.classes.length}`);

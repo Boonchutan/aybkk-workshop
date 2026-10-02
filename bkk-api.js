@@ -336,6 +336,9 @@ function mountBkk(app, opts = {}) {
         // key, never a fragment of one. 'gateway' = verified auto-activation,
         // 'link' = pay.sn plus a human confirming, 'none' = cannot sell online.
         payment: paymentStatus(),
+        // The promotion calculator counts real classes, and a doubled 3-month
+        // Duo bought on the last day runs about 7 months.
+        moonDays: Object.fromEntries(moonDaysBetween(ymd(new Date()), ymd(new Date(Date.now() + 260 * 86400000)))),
         products: r.rows.map(p => {
           const b = breakdown(p.price_thb, pct);
           return { ...p, fee_thb: b.fee, vat_thb: b.vat, total_thb: b.total };
