@@ -56,6 +56,9 @@
 
 - 2026-10-02: FINAL PROMOTION = the LINE broadcast version (Boonchu). New members: DUO buy 1 get 1 free (1 month 9,600 / 2 months 18,200 / 3 months 25,800; share with a friend or double for yourself) or ROOKIE PACK 5,900 (6 practices in 1 month + 2 Ashtanga foundation workshops). Past students (WELCOME BACK): RESET & RESTART 5,900 (8 practices in 2 months + 1 free private alignment check with Kru Boonchu) or BACK TO THE BEAT (monthly unlimited 1 month -30%, 2 months -35%, 3 months -40%). Buy by 11 Nov, start by 12 Nov, prices before 7% VAT. This REPLACES the 1 Oct 'buy 1 package get the same free / 6+5' version and the Flexible bonus weeks. Never show the crossed-out 12,000.
 
+- 2026-10-02: EPISODE NUMBERS (Boonchu): count only episodes he actually POSTED. Last posted = Ep. 3 Ashtavakra (Sharathji). The fear/plover Reel is Ep. 4. Daily-run scripts he has not filmed (Kumbhaka, Arjuna, Hanuman/Surasa) get no number until he films them; number each new script as last posted + 1.
+- 2026-10-02: ROUTE COUNT (Boonchu): carousels count in the Lane mix. The last 7 IG carousels were all beginner (Lane B) posts, so a Lane A Reel is on route. Check ALL recent IG posts (Postiz list), not only Reels, before pushing back.
+
 - 2026-10-02: NO TIERS (Boonchu): never show or name 'Dedicated' or 'Flexible' in any post, caption, menu or page. One 'Membership' only. 'Dedicated' scares people; 'Flexible' feels expensive.
 
 ## Jobs from Machi
