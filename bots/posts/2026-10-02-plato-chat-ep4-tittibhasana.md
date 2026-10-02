@@ -100,17 +100,49 @@ His face, plum gradient from the bottom third. Top: white letterspaced "HIDDEN S
 - Keep beats: 1 s after "and took the eggs"; 1 s before the REVEAL.
 - Captions: Weight Shift, lowercase Montserrat, big emoji (🔥🐦🌊🥚🌧️🦅✨🙏 where they fit).
 
-## PICTURE PROMPTS (his own pictures first; Isle of Dogs style)
-Add this style line to every prompt: Stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: handmade miniature set, felt, wool and carved wood textures, puppets with slightly big heads and glassy eyes, centered symmetrical composition, flat front-on camera, soft warm dusk light. Ancient India. Colors: deep plum, teal and warm gold. Gentle bedtime-story mood, respectful. No text, no letters. Wide frame, main subject in the center.
-- 1_bird: A small red-wattled lapwing bird (brown wings, white belly, black head and chest, a little red patch in front of each eye, long yellow legs) stands on wet sand by the sea at dusk. Two tiny fireflies float next to it and it looks at them, puzzled.
-- 2_nest: Two lapwing birds by a simple nest of pebbles on a sandy beach, four speckled eggs inside, the sea very close behind. The mother bird looks at the water, worried. The father bird stands with his chest puffed out, proud.
-- 3_sea: The sea as a huge calm face made of teal waves and white foam, one eye open, watching the two small birds on the shore, amused, not scary.
-- 4_tide: The tide flows softly up the beach like a gentle open hand and lifts the four eggs from the empty nest. The two birds are tiny and far away, looking for food. Calm water, no storm.
-- 5_birds: Many small birds of every kind (sparrows, mynas, kingfishers, little herons) flap their wings at the waves and drop tiny beakfuls of dirt into the sea. The sea is huge and calm. Busy, brave, a bit funny.
-- 6_light: The small birds fly up toward a soft blue and gold light high in the sky above the sea. No figure, only light. Respectful.
-- 7_eggs_back: At sunrise, a gentle wave places the four eggs back in the nest. The mother bird covers them with her wings. The father bird bows his head.
-- 8_old_bird: A wise old gander with soft grey feathers and small round glasses talks to the worried father lapwing on a rock by the sea, pointing one wing up to the sky. Kind and calm.
-- No picture of Garuda (in Thailand, Garuda is the royal emblem) and no picture of Vishnu: show light only (6_light).
+## PICTURE PROMPTS (in script order; copy one block per picture)
+
+1_nest
+```
+Two small red-wattled lapwing birds (brown wings, white belly, black head and chest, a small red patch in front of each eye, long yellow legs) stand by a simple nest of pebbles on a sandy beach, four speckled eggs inside, the sea very close behind them. The mother bird looks at the water, worried. The father bird puffs out his chest, proud. Stop-motion puppet film still, Wes Anderson Isle of Dogs style: handmade miniature set, felt, wool and carved wood, puppets with slightly big heads and glassy eyes, centered symmetrical composition, flat front-on camera, soft warm dusk light. Ancient India seashore. Colors: deep plum, teal and warm gold. Gentle bedtime-story mood. No text, no letters.
+```
+
+2_sea
+```
+The sea as a huge calm face made of teal waves and white foam, one big eye half open, listening to the two small birds on the shore. Amused, a little sly, not scary. Stop-motion puppet film still, Wes Anderson Isle of Dogs style: handmade miniature set, felt, wool and carved wood, puppets with slightly big heads and glassy eyes, centered symmetrical composition, flat front-on camera, soft warm dusk light. Ancient India seashore. Colors: deep plum, teal and warm gold. Gentle bedtime-story mood. No text, no letters.
+```
+
+3_tide
+```
+The tide flows softly up the beach like a gentle open hand and lifts the four speckled eggs out of the empty nest. The two small birds are tiny and far away, looking for food. Calm water, no storm. Stop-motion puppet film still, Wes Anderson Isle of Dogs style: handmade miniature set, felt, wool and carved wood, puppets with slightly big heads and glassy eyes, centered symmetrical composition, flat front-on camera, soft warm dusk light. Ancient India seashore. Colors: deep plum, teal and warm gold. Gentle bedtime-story mood. No text, no letters.
+```
+
+4_wings
+```
+Many small birds of every kind (sparrows, mynas, kingfishers, little herons) and the two red-wattled lapwing birds (brown wings, white belly, black head and chest, a small red patch in front of each eye, long yellow legs) beat their wings at the waves. The sea is huge and calm and does not move. Brave, busy, a bit funny. Stop-motion puppet film still, Wes Anderson Isle of Dogs style: handmade miniature set, felt, wool and carved wood, puppets with slightly big heads and glassy eyes, centered symmetrical composition, flat front-on camera, soft warm dusk light. Ancient India seashore. Colors: deep plum, teal and warm gold. Gentle bedtime-story mood. No text, no letters.
+```
+
+5_old_bird
+```
+A wise old grey gander with soft feathers stands on a rock by the sea and points one wing up to the sky. The worried father lapwing and many small birds listen to him. Kind and calm. Stop-motion puppet film still, Wes Anderson Isle of Dogs style: handmade miniature set, felt, wool and carved wood, puppets with slightly big heads and glassy eyes, centered symmetrical composition, flat front-on camera, soft warm dusk light. Ancient India seashore. Colors: deep plum, teal and warm gold. Gentle bedtime-story mood. No text, no letters.
+```
+
+6_light
+```
+All the small birds fly up together toward a soft blue and gold light high in the sky above the sea. No figure, only light. Respectful, full of hope. Stop-motion puppet film still, Wes Anderson Isle of Dogs style: handmade miniature set, felt, wool and carved wood, puppets with slightly big heads and glassy eyes, centered symmetrical composition, flat front-on camera, soft warm dusk light. Ancient India seashore. Colors: deep plum, teal and warm gold. Gentle bedtime-story mood. No text, no letters.
+```
+
+7_eggs_back
+```
+At sunrise, a small gentle wave sets the four speckled eggs back in the pebble nest. The mother lapwing covers them with her wings. The father lapwing bows his head. The sea looks small and shy. Stop-motion puppet film still, Wes Anderson Isle of Dogs style: handmade miniature set, felt, wool and carved wood, puppets with slightly big heads and glassy eyes, centered symmetrical composition, flat front-on camera, soft warm dusk light. Ancient India seashore. Colors: deep plum, teal and warm gold. Gentle bedtime-story mood. No text, no letters.
+```
+
+8_not_firefly
+```
+One small red-wattled lapwing bird (brown wings, white belly, black head and chest, a small red patch in front of each eye, long yellow legs) stands on wet sand at dusk. A tiny glowing firefly floats in front of its beak. The bird tilts its head and looks at the firefly, puzzled. Stop-motion puppet film still, Wes Anderson Isle of Dogs style: handmade miniature set, felt, wool and carved wood, puppets with slightly big heads and glassy eyes, centered symmetrical composition, flat front-on camera, soft warm dusk light. Ancient India seashore. Colors: deep plum, teal and warm gold. Gentle bedtime-story mood. No text, no letters.
+```
+
+No picture of Garuda (in Thailand, Garuda is the royal emblem) and no picture of Vishnu: show light only (6_light).
 
 ## SOURCES
 - Story: Panchatantra Book I, "The Plover Who Fought the Ocean", Arthur W. Ryder (Univ. of Chicago Press, 1925), pp. 145-162, checked on two archive.org scans. Plovers Sprawl and Constance. Wife: "Here is the ocean near at hand. His tide might some day make a long reach and lick away my babies." Husband: "Sweetheart, he knows me, he knows Sprawl. Surely the great ocean cannot show such enmity to me." Ocean's thought (p. 151): "Of self-conceit all creatures show / An adequate supply: / The plover lies with claws upstretched / To prop the falling sky. / I will just put his power to the test." Next day, while both birds foraged, the ocean "made a long reach with his wave-hands" and took the eggs. Birds beat the water with their wings and carried "clods and dust" in their bills; an old gander sent them to Garuda; Vishnu went in person and told the ocean "Villain, give the plover his eggs"; the ocean "tremblingly" gave them back (p. 162). Spoken story lines are bedtime paraphrases, not quotes.
