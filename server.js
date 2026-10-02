@@ -233,9 +233,13 @@ const MOMENTS_PICKS = 9;
 const MOMENTS_MAX_DAYS = 7;
 const momentsCache = new Map();   // key -> { at, data }
 
-app.get('/moments', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'moments.html'));
-});
+// Closed to the public 2 Oct 2026: some students don't want others saving
+// their photos. The list now needs the staff key; the page sends people home.
+const momentsStaff = req => {
+  const key = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY;
+  return !!key && req.get('x-bkk-key') === key;
+};
+app.get('/moments', (req, res) => res.redirect(302, '/'));
 
 async function momentsSearch(expression, enough) {
   const out = [];
@@ -279,6 +283,7 @@ function momentsPicks(items) {
 }
 
 app.get('/api/moments', async (req, res) => {
+  if (!momentsStaff(req)) return res.status(404).json({ error: 'not found' });
   const day = /^\d{4}-\d{2}-\d{2}$/.test(req.query.day || '') ? req.query.day : null;
   const key = day || 'all';
   const hit = momentsCache.get(key);
