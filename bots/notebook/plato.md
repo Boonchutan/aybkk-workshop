@@ -59,6 +59,7 @@
 - 2026-10-02: EPISODE NUMBERS (Boonchu): count only episodes he actually POSTED. Last posted = Ep. 3 Ashtavakra (Sharathji). The fear/plover Reel is Ep. 4. Daily-run scripts he has not filmed (Kumbhaka, Arjuna, Hanuman/Surasa) get no number until he films them; number each new script as last posted + 1.
 - 2026-10-02: ROUTE COUNT (Boonchu): carousels count in the Lane mix. The last 7 IG carousels were all beginner (Lane B) posts, so a Lane A Reel is on route. Check ALL recent IG posts (Postiz list), not only Reels, before pushing back.
 
+- 2026-10-02: HIS OWN LINES (Boonchu): when he writes his own hook or lines, keep HIS words and only fix the grammar. Do not rewrite them into Plato's words.
 - 2026-10-02: TITTIBHASANA, Boonchu's own words (use these, light edits only, never a book's version):
   - A: Wrap your legs around your shoulders. Legs straight, feet pointing up. Arms straight. All your weight is on your hands.
   - B: Put your feet down in front of your hands. Pull your body in, between your legs. Wrap your arms around your thighs and hold your hands behind your back. Legs straight.

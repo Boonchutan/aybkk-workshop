@@ -5,21 +5,20 @@ Lane A. Route: last 7 IG posts were beginner carousels (Lane B), so Lane A is on
 Toolkit pick: Interrupt Opener (narrative: Boonchu stops mid-answer for the rain) + Hero's Journey, run as fail, hero, payoff.
 Why: Boonchu's own hook opens a loop ("the real answer is...") and the rain cuts it off. The story answers it, and the payoff is the big prize: fear gives back what it took.
 
-On screen, first frame: "When something hurt you before..." (gold: HURT)
+On screen, first frame: "When something has already hurt you..." (gold: HURT)
 
-## HOOK (Boonchu's words, light edit)
-When something hurt you before,
-you become afraid of it.
-But you do it anyway.
-Because doing it is how you heal.
-And one day, you find the way.
-But that's not the real answer.
-The real answer is...
+## HOOK (Boonchu's words, grammar fixed only)
+When something has already hurt you,
+it creates fear.
+But you do it anyway,
+because it is the way to heal,
+and you will find the way.
+But the real answer is...
 
 ## PATTERN INTERRUPT
-Oh. It started to rain again.
-My wife and I raced home.
-Afraid of a flood, like last week.
+Oh... today it started to rain again.
+My wife and I raced home,
+afraid it would flood like last week.
 So, a story from the Panchatantra,
 an old Indian book of animal stories.
 
@@ -76,7 +75,7 @@ Your fear took something from you too.
 One morning, it will give it all back.
 
 ## CAPTION (4 lines + format)
-When something hurt you before, you become afraid of it.
+When something has already hurt you, it creates fear.
 Hidden Stories of Ashtanga, Ep. 4: The Bird Who Fought the Sea.
 Tittibhasana: legs around your shoulders, arms straight, everything on your hands.
 Don't fight the sea alone. One day, fear gives back everything it took.
