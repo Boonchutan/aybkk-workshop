@@ -145,6 +145,7 @@ function mountBkk(app, opts = {}) {
     // Language the student last chose, so email matches the page they bought on.
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS lang TEXT`);
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS vat_thb INTEGER NOT NULL DEFAULT 0`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS method TEXT NOT NULL DEFAULT 'online'`);
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS reminded_at TIMESTAMPTZ`);
 
     // The things a shala actually does to a pass, which Rezerv has and this did
@@ -553,7 +554,7 @@ function mountBkk(app, opts = {}) {
         [order.member_id, pr.id, order.id, pr.kind, pr.credits, pr.daily_cap, pr.valid_days]);
       await client.query('COMMIT');
       console.log(`✓ bkk: pass activated for order ${order.id} (${pr.name_en})`);
-      notify(`💳 AYBKK payment\n${pr.name_en} · ฿${order.amount_thb}\nrefno ${order.refno}`);
+      notify(`💳 AYBKK payment (${order.method || 'online'})\n${pr.name_en} · ฿${order.amount_thb}\nrefno ${order.refno}`);
       // After COMMIT, and awaited only so failures are logged. The pass already
       // exists; a mail server having a bad day must not undo a paid order.
       emailReceipt(order, pr).catch(e => console.error('[bkk] receipt failed:', e.message));
@@ -855,6 +856,37 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // Money taken at the desk. A real order, so it shows in Payments, the day's
+  // cash count and the books, with VAT and a receipt — unlike "Give a pass".
+  // No online fee: nothing went through the gateway.
+  const DESK_METHODS = ['cash', 'transfer', 'card'];
+  app.post('/api/bkk/admin/sales', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    try {
+      const { productCode, name, email, phone, method } = req.body || {};
+      if (!DESK_METHODS.includes(method)) return res.status(400).json({ error: 'method must be cash, transfer or card' });
+      if (!(name || '').trim()) return res.status(400).json({ error: 'name is required' });
+      const pr = (await q('SELECT * FROM bkk_products WHERE code = $1 AND active', [productCode])).rows[0];
+      if (!pr) return res.status(404).json({ error: 'product not found' });
+      const member = await findOrCreateMember({ name, email, phone });
+      const { vat, total } = breakdown(pr.price_thb, 0);
+      let o = null;
+      for (let attempt = 0; attempt < 5 && !o; attempt++) {
+        try {
+          o = (await q(
+            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,method)
+             VALUES ($1,$2,$3,$4,0,$5,$6,$7) RETURNING *`,
+            [newRefno(), pr.id, member.id, pr.price_thb, vat, total, method])).rows[0];
+        } catch (e) {
+          if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
+        }
+      }
+      await activateOrder(o, { note: `${method} at the desk` });
+      res.json({ success: true, member: { code: member.code, name: member.name },
+        order: { refno: String(o.refno), amount: total, vat, method } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   // Deliberate manual override for the day the gateway misbehaves — recorded
   // as such so the books show it was not a verified payment.
   app.post('/api/bkk/admin/orders/:id/force-activate', async (req, res) => {
@@ -877,7 +909,11 @@ setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></ht
          JOIN bkk_members m ON m.id=b.member_id
          WHERE b.status='booked' AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
          ORDER BY b.start_at, m.name`);
-      res.json({ bookings: r.rows });
+      const money = (await q(
+        `SELECT method, count(*)::int AS n, sum(amount_thb)::int AS total FROM bkk_orders
+         WHERE status='paid' AND (verified_at AT TIME ZONE 'Asia/Bangkok')::date = (now() AT TIME ZONE 'Asia/Bangkok')::date
+         GROUP BY method ORDER BY method`)).rows;
+      res.json({ bookings: r.rows, money });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

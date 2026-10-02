@@ -109,9 +109,15 @@
       <div id="results"></div>
     </div>
     <div class="box">
+      <b>Sell at the desk</b>
+      <p class="muted">The student pays cash, bank transfer or the card machine. The money
+      is recorded, VAT is added, the pass starts and a receipt is emailed.</p>
+      <p><button class="btn pink" onclick="sellDesk()">Sell a package</button></p>
+    </div>
+    <div class="box">
       <b>Give a pass</b>
-      <p class="muted">For a student who paid another way, a comp, or someone moving
-      over from Rezerv. No payment is recorded and no receipt is sent.</p>
+      <p class="muted">Only for a free pass (a gift) or a student moving over from Rezerv.
+      No money is recorded and no receipt is sent. If the student pays, use Sell a package.</p>
       <p><button class="btn pink" onclick="grantPass()">Give a pass</button></p>
     </div>`;
     $('#q').onkeydown = e => { if (e.key === 'Enter') findStudents(); };
@@ -179,6 +185,28 @@
     if (j) { alert(`Done. ${j.member.name} — member code ${j.member.code}`); renderStudents(name); }
   };
 
+  window.sellDesk = async () => {
+    const d = await fetch('/api/bkk/products').then(r => r.json());
+    const ps = d.products || [];
+    const withVat = p => p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
+    const pick = ask('Which package?\n' + ps.map((p, i) =>
+      `${i + 1}. ${p.name_en} · ฿${withVat(p).toLocaleString()} incl. VAT`).join('\n'), '1');
+    if (!pick) return;
+    const p = ps[Number(pick) - 1];
+    if (!p) return alert('No package with that number.');
+    const name = ask('Student name'); if (!name) return;
+    const email = ask('Email (the receipt goes here; blank if none)', ''); if (email === null) return;
+    const phone = ask('Phone (optional)', ''); if (phone === null) return;
+    const m = ask('Paid how?\n1. Cash\n2. Bank transfer\n3. Card machine', '1'); if (!m) return;
+    const method = { 1: 'cash', 2: 'transfer', 3: 'card' }[m];
+    if (!method) return alert('Pick 1, 2 or 3.');
+    if (!confirm(`${name}\n${p.name_en}\nTake ฿${withVat(p).toLocaleString()} (${method}), VAT included.\n\nOnly press OK once you have the money.`)) return;
+    const r = await api('/api/bkk/admin/sales', { method: 'POST',
+      body: JSON.stringify({ productCode: p.code, name, email, phone, method }) });
+    const j = await shout(r);
+    if (j) { alert(`Done. ฿${j.order.amount.toLocaleString()} ${j.order.method} · ref ${j.order.refno}\n${j.member.name} — member code ${j.member.code}`); renderStudents(name); }
+  };
+
   window.bookFor = async (code) => {
     const d = await fetch('/api/bkk/schedule?days=14').then(r => r.json());
     const list = (d.classes || []).slice(0, 40);
@@ -228,8 +256,14 @@
   async function renderToday() {
     const d = await api('/api/bkk/admin/today').then(r => r.json());
     const rows = (d.bookings || []);
+    const money = (d.money || []);
+    const moneyBox = `<div class="box"><b>Money in today</b>
+      ${money.length ? `<table>${money.map(x => `<tr><td>${esc(x.method)}</td><td class="muted">${x.n} sale${x.n === 1 ? '' : 's'}</td>
+        <td><b>฿${(x.total || 0).toLocaleString()}</b></td></tr>`).join('')}</table>
+        <p class="muted">Count the cash drawer against the cash line before you go home.</p>`
+      : '<p class="muted">No sales yet today.</p>'}</div>`;
     if (!rows.length) {
-      $('#view').innerHTML = '<div class="box"><b>Today</b><p class="muted">No bookings today.</p></div>';
+      $('#view').innerHTML = moneyBox + '<div class="box"><b>Today</b><p class="muted">No bookings today.</p></div>';
       return;
     }
     const byClass = {};
@@ -249,7 +283,7 @@
           <td>${b.checked_in_at ? '<span class="in">✓ in</span>' : '<span class="muted">not yet</span>'}</td>
         </tr>`).join('')}</table></div>`;
     }).join('');
-    $('#view').innerHTML = blocks;
+    $('#view').innerHTML = moneyBox + blocks;
   }
 
   async function renderOrders() {
@@ -258,7 +292,7 @@
       <td><b>${esc(o.member_name)}</b><br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span></td>
       <td>${esc(o.name_en)}<br><b>฿${o.amount_thb.toLocaleString()}</b>
         <br><span class="muted">${o.base_thb.toLocaleString()} + fee ${o.fee_thb.toLocaleString()} + VAT ${(o.vat_thb || 0).toLocaleString()}</span></td>
-      <td><span class="pill ${esc(o.status)}">${esc(o.status)}</span><br>
+      <td><span class="pill ${esc(o.status)}">${esc(o.status)}</span> <span class="muted">${esc(o.method || 'online')}</span><br>
         <span class="muted">${(o.created_at || '').slice(5, 16).replace('T', ' ')}</span>
         ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}</td>
       <td class="muted">${o.refno}</td>

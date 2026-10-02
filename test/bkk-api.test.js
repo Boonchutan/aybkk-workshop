@@ -357,6 +357,26 @@ const ok = (name, cond, extra = '') => {
      JSON.stringify(links));
   ok('a blank link is not served', links.tiktok === undefined, JSON.stringify(links));
 
+  console.log('\n— selling at the desk —');
+  const sale = await post('/api/bkk/admin/sales',
+    { productCode: 'unlim1', name: 'Cash Student', email: 'cash@x.com', method: 'cash' }, ADMIN);
+  ok('cash sale succeeds', sale.status === 200 && sale.body.success, JSON.stringify(sale.body));
+  ok('cash price is 9,600 + 7% VAT, no online fee', sale.body.order && sale.body.order.amount === 10272,
+     sale.body.order && sale.body.order.amount);
+  const cashMe = (await J('/api/bkk/me/' + sale.body.member.code)).body;
+  ok('the cash sale gives an active pass', (cashMe.passes || []).length === 1, JSON.stringify(cashMe.passes));
+  const ords = (await J('/api/bkk/admin/orders', { headers: ADMIN })).body.orders;
+  const cashOrd = ords.find(o => String(o.refno) === sale.body.order.refno);
+  ok('the sale is a paid order marked cash', cashOrd && cashOrd.status === 'paid' && cashOrd.method === 'cash',
+     JSON.stringify(cashOrd && { status: cashOrd.status, method: cashOrd.method }));
+  const todayMoney = (await J('/api/bkk/admin/today', { headers: ADMIN })).body.money || [];
+  ok("today's cash total includes the sale", (todayMoney.find(m => m.method === 'cash') || {}).total >= 10272,
+     JSON.stringify(todayMoney));
+  ok('a sale needs a payment method',
+     (await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: 'X', method: 'iou' }, ADMIN)).status === 400);
+  ok('selling needs the staff key',
+     (await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: 'X', method: 'cash' }, {})).status === 401);
+
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');
   ok('admin requires key', noKey.status === 401);
