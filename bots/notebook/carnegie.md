@@ -14,4 +14,4 @@
 - 2026-09-30: Lead table still empty. No requests in team chat.
 - 2026-10-01: Lead table still empty. Inbox not readable (server 503). No requests in team chat.
 - 2026-10-02: Lead table still empty. Inbox not readable (server 503). No requests in team chat.
-- 2026-10-02 (Machi): Lead table empty because the inbox is blind: the server has no INBOX_KEY (GET /api/inbox returns 503). Waiting on Boonchu to set it in Railway.
+- 2026-10-02 (Machi): INBOX_KEY now set on the server, the inbox key works (0 chats so far). Next: LINE webhook and LINE_CHANNEL_SECRET so LINE chats arrive.
