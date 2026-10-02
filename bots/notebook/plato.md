@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-10-02: Carousels are ALWAYS 10 slides unless Boonchu says otherwise. If I can only make fewer, ask him first, in one clear line, before building.
 - 2026-10-02: Crop/text rules UPDATED (replaces the stricter 1 Oct crop line where they clash): never cut a head. Cutting feet is OK, but keep the most body you can. Text may sit a little over the body; place it around the main person.
 - 2026-10-01: ALWAYS show Boonchu the FINISHED slides (final images + final caption) and wait for his go BEFORE scheduling. 'Post it at 8pm' is not a go if he has not seen the final set.
 - 2026-10-01: Crops: never cut the main student's legs, feet, heels or hands (not only heads). If a 4:5 crop must cut, cut empty floor, ceiling or background. Check every slide full-size for cut limbs before showing him.
