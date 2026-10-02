@@ -9,6 +9,7 @@ PLAN=[('b2','again','DO IT AGAIN',['047','012','004','019','005','033','025','03
       ('b5','body','THE BODY KNOWS',['101','103','003','072','078','080','082','095','105','107'])]
 F=json.loads(sys.argv[1]) if len(sys.argv)>1 else {}
 only=sys.argv[2:] or [p[0] for p in PLAN]
+ORD={'b2':[1,0,2,3,4,5,6,7,8,9]}
 def shortwho(w):
     w=re.sub(r'\s*\([^)]*\)','',w).replace('  ',' ').strip()
     return w
@@ -16,7 +17,8 @@ for key,sub,label,PH in PLAN:
     if key not in only: continue
     R.FORCE.clear(); R.FORCE.update(F.get(key,{}))
     d=f'out/{key}'; shutil.rmtree(d,ignore_errors=True); os.makedirs(d); js=[]
-    for i,(x,ph) in enumerate(zip(SETS[sub],PH),1):
+    pairs=list(zip(SETS[sub],PH)); pairs=[pairs[j] for j in ORD.get(key,range(10))]
+    for i,(x,ph) in enumerate(pairs,1):
         s=dict(who=shortwho(x['who']),quote=x['quote'].replace('’',"'"),meaning=x['meaning'])
         sl=dict(s); sl['counter']=f'{i:02d} / 10  ·  {label}'
         r=R.render_slide(ph,sl,f'{d}/{i:02d}_{ph}.jpg'); print(key,i,ph,r,'END',r[1]+r[3]); js.append(dict(photo=ph,**s))
