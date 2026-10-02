@@ -15,6 +15,7 @@ const { sendMail, render } = require('./mailer');
 
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
 const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
+const STAFF_LINK_DAYS = 7;                     // one M sends by LINE/WhatsApp/WeChat
 const SIGNIN_PER_EMAIL_HOUR = 3;               // and cheap to abuse without limits
 const SIGNIN_PER_IP_HOUR = 10;
 const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
@@ -706,6 +707,39 @@ function mountBkk(app, opts = {}) {
     }
   });
 
+  // M sends a student their own sign-in link by LINE, WhatsApp or WeChat: most
+  // Rezerv students have no email on file here. Same one-time token as the
+  // email link, just longer-lived because it waits in a chat.
+  app.post('/api/bkk/admin/members/:code/signin-link', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const m = (await q('SELECT id,name FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'member not found' });
+      const token = crypto.randomBytes(32).toString('hex');
+      await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at)
+               VALUES ($1,$2,NULL,'staff', now() + ($3 || ' days')::interval)`,
+        [token, m.id, String(STAFF_LINK_DAYS)]);
+      res.json({ success: true, name: m.name, days: STAFF_LINK_DAYS,
+        link: `${baseUrl()}/api/bkk/login/${token}` });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // A signed-in student adds their email, so they can sign in again on another
+  // phone. Only when none is set: changing one is a job for the shala.
+  app.post('/api/bkk/me/:code/email', async (req, res) => {
+    try {
+      const email = String((req.body || {}).email || '').trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'not an email address' });
+      const m = (await q('SELECT id,email FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'not found' });
+      if (m.email) return res.status(409).json({ error: 'an email is already set; ask the shala to change it' });
+      const taken = await q('SELECT 1 FROM bkk_members WHERE lower(email)=$1', [email]);
+      if (taken.rows.length) return res.status(409).json({ error: 'that email belongs to another profile; ask the shala' });
+      await q('UPDATE bkk_members SET email=$2 WHERE id=$1', [m.id, email]);
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   // Landing here consumes the token and hands the member code to the browser.
   // Deliberately not a redirect carrying the code in the URL — that would put it
   // in history and in any link the student pastes to a friend.
@@ -715,7 +749,7 @@ function mountBkk(app, opts = {}) {
 <body style="font-family:-apple-system,sans-serif;background:#f7f1f5;color:#17121a;
 text-align:center;padding:22vh 20px"><p>${msg}</p>
 <script>${code ? `try{localStorage.setItem('aybkk_member',${JSON.stringify(code)})}catch(e){}
-setTimeout(function(){location.replace('/book')},600)` : ''}</script></body></html>`;
+setTimeout(function(){location.replace('/book?me=1')},600)` : ''}</script></body></html>`;
     try {
       const r = await q(
         `UPDATE bkk_login_tokens SET used_at = now()

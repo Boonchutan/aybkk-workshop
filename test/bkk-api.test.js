@@ -473,6 +473,21 @@ const ok = (name, cond, extra = '') => {
   const pack = (await J('/api/bkk/admin/members?q=imp pack', { headers: ADMIN })).body.members[0].passes[0];
   ok('a 10-class pack keeps the classes left', pack.credits_total - pack.credits_used === 7, JSON.stringify(pack));
   ok('import needs the staff key', (await post('/api/bkk/admin/import', { rows: [] }, {})).status === 401);
+  const twoCode = (await J('/api/bkk/admin/members?q=imp two', { headers: ADMIN })).body.members[0].code;
+  const sl = await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, ADMIN);
+  ok('staff can make a sign-in link for a student with no email', sl.status === 200 && /\/api\/bkk\/login\/[0-9a-f]{64}$/.test(sl.body.link),
+     JSON.stringify(sl.body).slice(0, 120));
+  ok('the sign-in link needs the staff key', (await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, {})).status === 401);
+  const tok = sl.body.link.split('/').pop();
+  const land = await fetch(`${B}/api/bkk/login/${tok}`).then(r => r.text());
+  ok('the link signs the student in and opens their profile', land.includes(twoCode) && land.includes('/book?me=1'));
+  ok('the link works only once', (await fetch(`${B}/api/bkk/login/${tok}`)).status === 400);
+  ok('a student adds their email once',
+     (await post(`/api/bkk/me/${twoCode}/email`, { email: 'imp.two@example.com' })).status === 200 &&
+     (await post(`/api/bkk/me/${twoCode}/email`, { email: 'other@example.com' })).status === 409);
+  ok("a student cannot take another profile's email",
+     (await post(`/api/bkk/me/${(await J('/api/bkk/admin/members?q=imp pack', { headers: ADMIN })).body.members[0].code}/email`,
+       { email: 'imp.one@example.com' })).status === 409);
 
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');
