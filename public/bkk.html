@@ -401,7 +401,8 @@
       <div id="momLatest" hidden>
         <p class="momwhen" id="momWhen"></p>
         <div class="momgrid" id="momGrid"></div>
-        <div class="links"><a class="btn pink wide" href="/moments" data-i18n="momAll">See all daily photos</a></div>
+        <div class="links"><a class="btn pink wide" id="momMore" href="/moments"></a>
+          <a class="btn ghost wide" href="/moments" data-i18n="momAll">See all daily photos</a></div>
       </div>
       <div class="links">
         <a class="btn pink" href="https://www.instagram.com/aybkk/" target="_blank" rel="noopener" data-i18n="momIg">Today's practice on Instagram</a>
@@ -818,7 +819,7 @@
     buyHow: 'LINE opens with your message ready. Press send. Our team replies with the payment link.',
     pastNote: 'For past AYBKK students. We check your name when you message us.',
     calcFine: 'Prices include 7% VAT. Paying by card online adds a small transaction fee. Start by 12 Nov 2026.',
-    momAll: 'See all daily photos', momLatest: d => `Latest photos, ${d}`,
+    momAll: 'See all daily photos', momLatest: d => `Latest photos, ${d}`, momMore: n => `More photos from this day (${n}) →`,
   });
   Object.assign(STR.th, {
     bandKicker: 'ถึง 11 พ.ย. เท่านั้น · น้อมรำลึก Sharathji', bandBig: 'ซื้อ 1 แถม 1 ฟรี',
@@ -840,7 +841,7 @@
     buyHow: 'LINE จะเปิดพร้อมข้อความ กดส่งได้เลย ทีมงานจะส่งลิงก์ชำระเงินให้',
     pastNote: 'สำหรับนักเรียนเก่า AYBKK ทีมงานจะเช็กชื่อเมื่อคุณทักมา',
     calcFine: 'ราคารวม VAT 7% แล้ว ชำระด้วยบัตรออนไลน์มีค่าธรรมเนียมการทำรายการเล็กน้อย เริ่มใช้ภายใน 12 พ.ย. 2569',
-    momAll: 'ดูรูปการฝึกทุกวัน', momLatest: d => `รูปล่าสุด ${d}`,
+    momAll: 'ดูรูปการฝึกทุกวัน', momLatest: d => `รูปล่าสุด ${d}`, momMore: n => `ดูรูปทั้งหมดของวันนี้ (${n}) →`,
   });
   Object.assign(STR.zh, {
     bandKicker: '仅限11月11日前 · 纪念 Sharathji', bandBig: '买一送一',
@@ -862,7 +863,7 @@
     buyHow: 'LINE 会打开并写好消息。点发送，我们的团队会回复付款链接。',
     pastNote: '仅限 AYBKK 老学员。你联系我们时我们会核对名字。',
     calcFine: '价格已含7%增值税。线上刷卡付款另收少量手续费。需在2026年11月12日前开始。',
-    momAll: '查看每日练习照片', momLatest: d => `最新照片：${d}`,
+    momAll: '查看每日练习照片', momLatest: d => `最新照片：${d}`, momMore: n => `当天更多照片（${n}）→`,
   });
   Object.assign(STR.ru, {
     bandKicker: 'Только до 11 ноября · в память о Шарате', bandBig: 'Купи 1, получи 1 БЕСПЛАТНО',
@@ -884,7 +885,7 @@
     buyHow: 'LINE откроется с готовым сообщением. Нажмите «отправить», и команда пришлёт ссылку на оплату.',
     pastNote: 'Для бывших учеников AYBKK. Мы проверим имя, когда вы напишете.',
     calcFine: 'Цены с НДС 7%. При оплате картой онлайн добавляется небольшая комиссия. Начать до 12 ноября 2026.',
-    momAll: 'Все фото практики', momLatest: d => `Последние фото: ${d}`,
+    momAll: 'Все фото практики', momLatest: d => `Последние фото: ${d}`, momMore: n => `Ещё фото этого дня (${n}) →`,
   });
 
   const PROMO_LAST_SALE = '2026-11-11', PROMO_LAST_START = '2026-11-12';
@@ -1024,12 +1025,14 @@
     if (!MOM) return;
     $('#momWhen').textContent = t('momLatest', new Date(MOM.date + 'T00:00:00Z').toLocaleDateString(LOCALE[LANG] || 'en-GB',
       { timeZone: 'UTC', day: 'numeric', month: 'long' }));
+    $('#momMore').textContent = t('momMore', MOM.count || MOM.items.length);
   }
   fetch('/api/moments').then(r => r.json()).then(d => {
     const day = (d.days || []).find(x => x.items.some(i => i.type === 'photo'));
     if (!day) return;
     MOM = day;
-    $('#momGrid').innerHTML = day.items.filter(i => i.type === 'photo').slice(0, 6).map(i =>
+    $('#momMore').href = '/moments?day=' + day.date;
+    $('#momGrid').innerHTML = day.items.filter(i => i.type === 'photo').slice(0, 9).map(i =>
       `<a href="/moments"><img loading="lazy" alt="" src="${esc(String(i.url).replace('/upload/', '/upload/c_fill,g_auto,w_360,h_450,q_auto,f_auto/'))}"></a>`).join('');
     $('#momLatest').hidden = false;
     renderMoments();
