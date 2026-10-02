@@ -451,6 +451,29 @@ const ok = (name, cond, extra = '') => {
      del.status === 200 && ((await J(`/api/bkk/me/${cat.code}/photos`)).body.days || []).length === 0 &&
      global.__destroyed.length === 1 && global.__destroyed[0].type === 'authenticated');
 
+  console.log('\n— Rezerv import —');
+  const imp1 = await post('/api/bkk/admin/import', { rows: [
+    { name: 'Imp One (renewed)', plan: '12 months', until: '26 Oct 2026' },
+    { name: 'Imp Two', plan: '6 months', until: '2027-03-14' },
+    { name: 'Imp Pack', plan: '10 class pack', until: '12 Dec 2026', classesLeft: 7 },
+    { name: 'Imp Bad', plan: 'forever', until: 'soon' },
+  ] }, ADMIN);
+  ok('import adds students and their passes', imp1.body.newMembers === 3 && imp1.body.passes === 3 && imp1.body.skipped.length === 1,
+     JSON.stringify(imp1.body));
+  const imp2 = await post('/api/bkk/admin/import', { rows: [
+    { name: 'Imp One', email: 'imp.one@example.com', plan: '12 months', until: '26 Oct 2026' },
+  ] }, ADMIN);
+  ok('running it again with an email fills the email in, no duplicate pass',
+     imp2.body.newMembers === 0 && imp2.body.emailsAdded === 1 && imp2.body.passes === 0, JSON.stringify(imp2.body));
+  const one = (await J('/api/bkk/admin/members?q=imp.one', { headers: ADMIN })).body.members[0];
+  const onePass = one.passes[0];
+  ok('the imported pass keeps the Rezerv end date and the "(renewed)" note is dropped from the name',
+     one.name === 'Imp One' && String(onePass.valid_until).slice(0, 10) === '2026-10-26' && onePass.source === 'rezerv',
+     JSON.stringify({ name: one.name, until: onePass.valid_until, source: onePass.source }));
+  const pack = (await J('/api/bkk/admin/members?q=imp pack', { headers: ADMIN })).body.members[0].passes[0];
+  ok('a 10-class pack keeps the classes left', pack.credits_total - pack.credits_used === 7, JSON.stringify(pack));
+  ok('import needs the staff key', (await post('/api/bkk/admin/import', { rows: [] }, {})).status === 401);
+
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');
   ok('admin requires key', noKey.status === 401);
