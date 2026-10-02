@@ -63,21 +63,22 @@ The real answer is...
 don't fight the sea alone.
 Even little bird need help.
 That's why in Mysore class, there is a teacher in the room.
-Legs around the shoulders.
-Arms straight.
-Everything on your hands.
+Legs sore from walking.
+Butt and thighs feel heavy.
+Teacher comes, give you some tips...
+With practice, you can do it easily.
 
-## BIG PRIZE (payoff)
-The sea take the eggs.
-Then the sea give back every one.
-Your fear, it take something from you too.
-One morning... it will give everything back.
+## BIG PRIZE (payoff, Boonchu's words)
+If the sea took the eggs,
+find the trick to get it back.
+Your fear, it take something from you, and it also teach you.
+One day... it will remain your wise knowledge.
 
 ## CAPTION (4 lines + format)
 When something has already hurt you, it creates fear.
 Hidden Stories of Ashtanga, Ep. 4: The Bird Who Fought the Sea.
 Tittibhasana: legs around your shoulders, arms straight, everything on your hands.
-Don't fight the sea alone. One day, fear gives back everything it took.
+Don't fight the sea alone. Fear takes something from you, and it also teaches you.
 
 Come learn Ashtanga
 Aybkk.com
