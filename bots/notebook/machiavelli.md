@@ -1,5 +1,7 @@
 # Machiavelli notebook
 
+Inbox last read: 2026-10-02T12:09:54.270Z
+
 ## Standing orders from Boonchu
 - 2026-09-29: Content work (Reels, carousels, captions, Postiz posts) goes to Plato's own chat: "✍️ Plato · AYBKK content chat" (session_01EpfSiAFErEs2e4MYfzK1F9). Machi chat stays for money, leads, strategy and team orders.
 
@@ -10,7 +12,7 @@
 (none yet)
 
 ## Open items
-- 2026-09-28: Digital product (online anatomy + philosophy classes), CN + EN, start 3 Nov 2026, two tiers. Prices: decision pending (see team chat). Waiting: translator, payment setup.
+- 2026-09-28: Digital product (online anatomy + philosophy classes), CN + EN, start 3 Nov 2026, two tiers. Prices: decision pending (see team chat). 2 Oct 19:00: no answer, default B applied: sales open moved one week, 6 Oct to 13 Oct. Prices still waiting. Waiting: translator, payment setup.
 
 - 2026-09-28: No Cap Daily (auto trend-facts IG) is Boonchu's test for future brand deals. Suggested: 90-day test to about 28 Dec 2026, judge on followers and reach, keep it in a separate Meta business from AYBKK, fix duplicate drafts. Ask him for numbers at the end.
 
@@ -32,11 +34,12 @@
 
 - 2026-09-30 Rules/waiver/policies (for Rezerv admin, pasted by Chrome Claude, Boonchu saves): cancel 5h before; refund policy = research running; pause for broken bones, eye problems, surgery, pregnancy/delivery, others by discussion, 30 days or per doctor's note; no transfers; Dedicated under 16 classes = talk + reminder + promise, next package may move to Flexible. Waiver needs Thai lawyer check.
 
-- 2026-09-30: Inbox not connected. PR #21 merged 30 Sep 16:01 Bangkok; server answers 503 "INBOX_KEY is not set". Waiting on Boonchu: add INBOX_KEY in Railway.
+- 2026-09-30: Inbox not connected. PR #21 merged 30 Sep 16:01 Bangkok; server answers 503. DONE 2 Oct 19:08: inbox answers 200, LINE test message seen.
 
 - 2026-09-30: Brand = welcoming. Tagline "Traditional Ashtanga. Open door." on site branch claude/aybkk-net-shopwindow (commit ae5626c2, not live). Next: change what Google shows (Google Business Profile description, aybkk.org and aybkk.com page text, Mindbody/Yogatrail listings, beginner Google reviews).
 
 ## Log
+- 2026-10-02 19:08: Inbox CONNECTED (200). 1 LINE thread, a test message, no reply needed. Course prices: no answer by 19:00, default B (sales open 13 Oct). No win, no reminders. Next step given: yes to Mysore Reel for Mon 5 Oct in Plato chat.
 - 2026-10-02: Campaign dates FINAL: sales end 11 Nov 2026 (passing date), activation no later than 12 Nov. Website line, guide PDFs (EN/TH) updated. One-tier pricing (12m 59,900 anchor, 3m 18,000, 1m 9,600; 6m dropped) goes live 12 Nov, prepared but not live.
 - 2026-10-02 13:08: Inbox 503 (INBOX_KEY not set). Mysore Reel default B applied (moved to Mon 5 Oct). Course prices nagged 2nd time today: do not repeat at 19:08. No reminders due, no wins.
 - 2026-10-02: Monthly calendar picture APPROVED by Boonchu ("perfect"): design B, plum #3E1442, shala wall photo cropped to the white wall only (wall text almost edge to edge, Jamsai waist up), "October" Work Sans 900 + gold Cormorant italic tagline, times in the same color as the class dot (Mysore #F0C6F2, Led Primary #7FD8CC, Led Inter #E0B52B), gold moons, logo bottom right. Design canvas: claude.ai/artifact/1zsJE6UaUjiFyN7zDojuRX (Plum.dc.html). Website month calendar uses the same look (PR #25 merged). PR #23 (VAT 7% + 3% fee) still waiting for his merge.

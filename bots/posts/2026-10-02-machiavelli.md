@@ -5,3 +5,4 @@ Reel from Plato: Hanuman goes thumb-size to get past Surasa. Asana: Hanumanasana
 Score: wins this week: none reported. 180K leads pasted: 0 in 5 days.
 Carne and Plato both posted today. Inbox 07:08: not connected (503, INBOX_KEY not set).
 13:08 check-in: Mysore Reel no yes by 12:00, moved to Mon 5 Oct (default B). Course prices still waiting (sales 6 Oct: 4 days, answer by 19:00). Inbox: not connected (503).
+19:08 check-in: course prices no answer by 19:00, default B: sales open moved to 13 Oct. Inbox connected now: 1 new (test), 0 hot. No win today.
