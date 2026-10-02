@@ -26,7 +26,7 @@
 
 - 2026-09-30 Boonchu decisions: new shop-window top section OK; phone +66 82 011 1433; show 9,600 (add 5% later); campaign Buy 1 month get 1 month free for NEW students, 29 Sep to 12 Nov. Other items: decision pending (see team chat). Email and floor still open.
 
-- 2026-10-01: Mysore Reel for Fri 2 Oct (campaign, comment MYSORE): Plato draft ready, waiting on Boonchu's yes in Plato chat. 3-slide carousel still open.
+- 2026-10-01: Mysore Reel (campaign, comment MYSORE): Plato draft ready. No yes by 12:00 on 2 Oct, so default B applied: moved to Mon 5 Oct. Still waiting on Boonchu's yes in Plato chat. 3-slide carousel still open.
 
 - 2026-09-30 Boonchu: 180K framing decided (see team chat). Campaign live in October; free gift "Your First Mysore Class" via ManyChat keyword MYSORE this weekend; current students get bonus weeks (1m +1w, 3m +3w, 6m +6w, 12m +2 months).
 
@@ -37,6 +37,7 @@
 - 2026-09-30: Brand = welcoming. Tagline "Traditional Ashtanga. Open door." on site branch claude/aybkk-net-shopwindow (commit ae5626c2, not live). Next: change what Google shows (Google Business Profile description, aybkk.org and aybkk.com page text, Mindbody/Yogatrail listings, beginner Google reviews).
 
 ## Log
+- 2026-10-02 13:08: Inbox 503 (INBOX_KEY not set). Mysore Reel default B applied (moved to Mon 5 Oct). Course prices nagged 2nd time today: do not repeat at 19:08. No reminders due, no wins.
 - 2026-10-02: Monthly calendar picture APPROVED by Boonchu ("perfect"): design B, plum #3E1442, shala wall photo cropped to the white wall only (wall text almost edge to edge, Jamsai waist up), "October" Work Sans 900 + gold Cormorant italic tagline, times in the same color as the class dot (Mysore #F0C6F2, Led Primary #7FD8CC, Led Inter #E0B52B), gold moons, logo bottom right. Design canvas: claude.ai/artifact/1zsJE6UaUjiFyN7zDojuRX (Plum.dc.html). Website month calendar uses the same look (PR #25 merged). PR #23 (VAT 7% + 3% fee) still waiting for his merge.
 - 2026-10-01: Boonchu asked for a rebrand plan: beginner friendly, simple technique, dedicated but not too serious. Machi gave a 4-phase plan (Oct 1 to Mar 2027): align team, build First Month Path, show it on content and aybkk.net, measure Day 30 renewals. Waiting on his pick of the path name and the team meeting. Saved to vault root as "AYBKK Rebrand - Open Door.md" (plan + marketing, one note).
 - 2026-09-28: First run. Carnegie and Plato both posted. Carnegie has no leads yet.
