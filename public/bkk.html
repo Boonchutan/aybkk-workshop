@@ -933,6 +933,7 @@
 
   // Jamsai's facts come from "Boonchu & JAMSAI bio.md" in Boonchu's Drive.
   Object.assign(STR.en, {
+    addEmailH: 'Add your email', addEmailWhy: 'So you can open your profile again on another phone. We email you a one-time link, no password.', addEmailBtn: 'Save my email', addEmailDone: 'Saved. Next time, sign in with this email.',
     myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo. Long-press it to save.',
     teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
     jbio1: 'Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.',
@@ -941,6 +942,7 @@
     jbio4: 'She kept practising through both of her pregnancies, into the Advanced series, and still practises and teaches as a mother.',
   });
   Object.assign(STR.th, {
+    addEmailH: 'เพิ่มอีเมลของคุณ', addEmailWhy: 'เพื่อเปิดโปรไฟล์ได้อีกครั้งบนมือถือเครื่องอื่น เราส่งลิงก์ใช้ครั้งเดียวทางอีเมล ไม่ต้องมีรหัสผ่าน', addEmailBtn: 'บันทึกอีเมล', addEmailDone: 'บันทึกแล้ว ครั้งหน้าเข้าด้วยอีเมลนี้',
     myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ กดค้างที่รูปเพื่อบันทึก',
     teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
     jbio1: 'Jamsai เคยเป็นที่ปรึกษาด้านภาษี เธอเริ่มฝึกอัษฎางคโยคะในปี 2015 ระหว่างรับเคมีบำบัดรักษามะเร็งเต้านม โดยมี Boonchu เป็นครู',
@@ -949,6 +951,7 @@
     jbio4: 'เธอฝึกต่อเนื่องตลอดการตั้งครรภ์ทั้งสองครั้ง จนถึงซีรีส์ Advanced และยังฝึกและสอนอยู่ในฐานะคุณแม่',
   });
   Object.assign(STR.zh, {
+    addEmailH: '添加你的邮箱', addEmailWhy: '这样你可以在另一部手机上再次打开个人主页。我们会发一次性链接到邮箱，不需要密码。', addEmailBtn: '保存邮箱', addEmailDone: '已保存。下次用这个邮箱登录。',
     myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。长按即可保存。',
     teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
     jbio1: 'Jamsai 曾是一名税务顾问。2015年她在接受乳腺癌化疗期间开始练习阿斯汤加，老师是 Boonchu。',
@@ -957,6 +960,7 @@
     jbio4: '两次怀孕期间她都坚持练习，一直练到高级序列。现在作为妈妈，她依然练习和教学。',
   });
   Object.assign(STR.ru, {
+    addEmailH: 'Добавьте email', addEmailWhy: 'Чтобы открыть профиль на другом телефоне. Мы пришлём одноразовую ссылку, без пароля.', addEmailBtn: 'Сохранить email', addEmailDone: 'Сохранено. В следующий раз входите с этим email.',
     myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы. Нажмите и удерживайте, чтобы сохранить.',
     teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
     jbio1: 'Jamsai работала налоговым консультантом. Она начала заниматься аштангой в 2015 году, во время химиотерапии от рака груди, и её учителем был Boonchu.',
@@ -1144,7 +1148,8 @@
   const fmtTime = iso => new Date(iso).toLocaleTimeString('en-GB',
     { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
 
-  let current = 'schedule';
+  // A sign-in link lands on /book?me=1: open the student's profile straight away.
+  let current = new URLSearchParams(location.search).has('me') ? 'me' : 'schedule';
   window.tab = t => {
     current = t;
     document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.id === 't' + '-' + t));
@@ -1296,7 +1301,7 @@
         <div class="note">${p.kind === 'unlimited'
           ? 'Unlimited · ' + p.dailyCap + ' bookings per day'
           : (p.creditsLeft ?? 0) + ' classes left'}</div>
-        <div class="note">${p.validUntil ? 'Valid until ' + p.validUntil
+        <div class="note">${p.validUntil ? 'Valid until ' + fmtDay(String(p.validUntil).slice(0, 10) + 'T12:00:00+07:00')
           : 'Starts when you book your first class'}</div>
       </div>`).join('') || '<p class="note">No pass yet.</p>';
       const bookings = (d.bookings || []).map(b => `<div class="cls">
@@ -1305,7 +1310,13 @@
           <div class="m">${fmtDay(b.start_at)}</div></div>
         <button class="btn ghost" onclick="cancelBooking(${b.id})">Cancel</button>
       </div>`).join('') || '<p class="note">No upcoming classes booked.</p>';
+      const askEmail = d.member.email ? '' : `<div class="pkg" id="mailBox">
+          <h3>${esc(t('addEmailH'))}</h3><p class="note">${esc(t('addEmailWhy'))}</p>
+          <input id="myMail" type="email" autocomplete="email" placeholder="you@example.com">
+          <p style="margin-top:10px"><button class="btn pink" onclick="saveMyEmail()">${esc(t('addEmailBtn'))}</button></p>
+          <div id="mailMsg"></div></div>`;
       $('#view').innerHTML = `<p class="note">Member <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}</p>
+        ${askEmail}
         <div class="day">${esc(t('myPhotos'))}</div><div id="myPhotos"><p class="note">${esc(t('loading'))}</p></div>
         <div class="day">${esc(t('yourPass'))}</div>${passes}
         <div class="day">${esc(t('upcoming'))}</div>${bookings}`;
@@ -1335,6 +1346,15 @@
       <p style="margin-top:10px"><button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>`;
     $('#dlg').showModal();
   });
+
+  window.saveMyEmail = async () => {
+    const email = ($('#myMail').value || '').trim();
+    const r = await fetch('/api/bkk/me/' + encodeURIComponent(myCode()) + '/email', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok) $('#mailBox').innerHTML = `<p class="msg ok">${esc(t('addEmailDone'))}</p>`;
+    else $('#mailMsg').innerHTML = `<p class="msg bad">${esc(j.error || 'Could not save.')}</p>`;
+  };
 
   window.linkCode = () => {
     const v = $('#mc').value.trim();
