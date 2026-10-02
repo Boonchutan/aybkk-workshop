@@ -7,72 +7,71 @@ Why: Boonchu's own hook opens a loop ("the real answer is...") and the rain cuts
 
 On screen, first frame: "When something has already hurt you..." (gold: HURT)
 
-## HOOK (Boonchu's words, grammar fixed only)
-When something has already hurt you,
-it creates fear.
-But you do it anyway,
-because it is the way to heal,
-and you will find the way.
+## HOOK (Boonchu's spoken English)
+When something already hurt you... it create fear.
+But you do it anyway.
+Because it is the healing way.
+And you will find out the way.
 But the real answer is...
 
 ## PATTERN INTERRUPT
-Oh... today it started to rain again.
-My wife and I raced home,
-afraid it would flood like last week.
-So, a story from the Panchatantra,
-an old Indian book of animal stories.
+Oh... today, rain again.
+My wife and I, we race home.
+Afraid of flood, like last week.
+Okay. Let me tell you one story.
+From Panchatantra. Old Indian book, animal stories.
 
 ## STORY (bedtime voice)
-Two little birds lived by the sea.
-Mama bird said, "The sea is so close.
-The tide might take our eggs."
-Papa bird was proud.
-"The sea knows me. It would never do that."
-The sea was listening.
-"What a proud little bird. Let me test him."
-Next day, the birds went out for food.
-The tide came up...
-and took the eggs.
+There are two little birds. They live by the sea.
+Mama bird say, "The sea is too close.
+One day the water come, take our eggs."
+Papa bird, very proud.
+"No no. The sea know me. It will never do that."
+The sea, he is listening.
+"Ha. What a proud little bird. Okay, let me test him."
+Next day, the birds go out to find food.
+The water come up...
+and take all the eggs.
 (silent beat)
-The sea had hurt them.
-And the sea was so big.
-But Papa bird fought back anyway.
-He called every bird he knew.
+The sea hurt them.
+And the sea is so big.
+But Papa bird, he fight back anyway.
+He call every bird he know.
 They hit the sea with their wings.
-But the sea was too big for them.
-Then a wise old bird said,
-"Go to Garuda, king of the birds."
-And Garuda's master came: the great god Vishnu.
-He told the sea, "Give the bird his eggs."
+But the sea too big. Nothing happen.
+Then one wise old bird say,
+"Go to Garuda. King of the birds."
+And Garuda's master come. The great god Vishnu.
+He tell the sea, "Give back the eggs."
 (beat)
-And the big sea shook with fear.
-It gave back every egg.
+And the big sea... shaking with fear.
+Give back every egg.
 
 ## ASANA (the fail)
-In Sanskrit, this kind of bird is called tittibha.
-Many yoga books call Tittibhasana "firefly".
-But tittibha is a bird.
-Maybe you fell out of it once.
-Now you're afraid.
+This bird, in Sanskrit, we call tittibha.
+Many yoga book call Tittibhasana "firefly".
+But no. Tittibha is a bird.
+Maybe you fall from this asana before.
+Now you are afraid.
 So you do it anyway. Alone.
-Shoulders up. Breath gone.
-Like a little bird hitting the sea with its wings.
+Shoulder up. No breath.
+Like little bird, hitting the sea with the wings.
 (silent beat, 1 s)
 
 ## THE REAL ANSWER
-The real answer:
+The real answer is...
 don't fight the sea alone.
-Even the little bird needed help.
-That's why Mysore class has a teacher in the room.
-Legs around your shoulders.
+Even little bird need help.
+That's why in Mysore class, there is a teacher in the room.
+Legs around the shoulders.
 Arms straight.
 Everything on your hands.
 
 ## BIG PRIZE (payoff)
-The sea took the eggs.
-Then it gave back every one.
-Your fear took something from you too.
-One morning, it will give it all back.
+The sea take the eggs.
+Then the sea give back every one.
+Your fear, it take something from you too.
+One morning... it will give everything back.
 
 ## CAPTION (4 lines + format)
 When something has already hurt you, it creates fear.
