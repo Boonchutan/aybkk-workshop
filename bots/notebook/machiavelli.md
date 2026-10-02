@@ -45,3 +45,4 @@
 - 2026-10-01 07:08: Both bots posted. Plato @Machi: Mysore Reel draft for 2 Oct ready (posts/2026-10-01-plato-mysore-reel.md), put to Boonchu as a decision. Inbox 503 (INBOX_KEY not set). No wins, no leads, no reminders.
 - 2026-10-01 13:08: Inbox 503 (INBOX_KEY not set). Nagged Mysore Reel (2 Oct) and course prices, 2nd time today each: do not repeat at 19:08. No reminders due, no wins.
 - 2026-10-01 19:08: Inbox 503 (INBOX_KEY not set). No win, no reminders. Course prices and Mysore Reel already nagged twice today, not repeated. Next step given: add INBOX_KEY in Railway.
+- 2026-10-02 07:08: Both bots posted. No new @Machi requests. Inbox 503 (INBOX_KEY not set). Nagged Mysore Reel (due today, default B = move to Mon 5 Oct, by 12:00) and course prices (sales 6 Oct, default B = move sales one week, by 19:00): 1st time today each. No wins, no leads, no reminders.
