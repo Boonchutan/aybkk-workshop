@@ -132,6 +132,7 @@ Obsidian frameworks (Boonchu's vault, 05 Business & Strategy/Boonchu Framework).
 Guardrails: never use the "back injury" story from Boonchu Persuasion Framework (flagged as invented). Before any science claim: how big, tested on whom, predicted or found after, repeated? (Psychology - Reading The Evidence)
 
 ## Life notes
+- 2026-10-02: Heavy rain coming again in Bangkok; people rush home early, afraid the streets will flood again. Boonchu wants a fear Reel from it (myth/history: fear that stops you vs fear that protects you, plus an asana).
 - 2026-09-28: Tells these Indian myth stories to his 5 year old son at bedtime. (Standing frame for the series, not a one-time trigger.)
 - 2026-09-28: At 53, cannot read anything close in low light. Buys reading glasses at the eye shop. [USED 2026-09-28, dristi Reel]
 - 2026-09-27: Three days of rain in Bangkok, stuck at home, and so is half the city. [USED: Vritra part 1 (27 Sep) and part 2 (28 Sep)]
