@@ -1,5 +1,7 @@
 # Carnegie notes
 
+Inbox last read: 2026-10-02T23:38:36.851Z
+
 ## Standing orders from Boonchu
 - 2026-09-30 (Boonchu, via Machi): SHALA RENEWALS AND PRICE RULES. One public price for everyone. Last year's promotions were public and fair; they simply end at each student's renewal. Never call them secret deals. Renewal messages: warm first, then the win/loss line. Drafts only, Boonchu sends. Student names and end dates never go into plain notebook files.
 - 2026-10-02 (Boonchu, via Machi): NO TIERS. Never say "Dedicated" or "Flexible". Packages: 1 month 9,600, 3 months 25,800, 12 months 78,000 (13 months), no 2 or 6 months. Loyal students renew 12 months at 54,900. Promotion (final, LINE version): until 11 Nov, Duo buy 1 get 1 free or Rookie Pack 5,900, start by 12 Nov.
@@ -31,3 +33,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-02: Lead table still empty. Inbox not readable (server 503). No requests in team chat.
 - 2026-10-02 (Machi): INBOX LIVE for LINE. INBOX_KEY and LINE webhook set, test message from Boonchu arrived. Instagram and Facebook not connected yet (needs a Meta app).
 - 2026-10-02 (chat): Research run on 180K buyer voice (6 questions, 4 researchers). Findings in Research. Plan for Plato not yet approved.
+- 2026-10-03: Lead table still empty. Inbox read OK: 3 LINE threads, 0 about 180K. No requests in team chat.
