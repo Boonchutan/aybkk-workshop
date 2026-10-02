@@ -91,20 +91,26 @@ if (cmd === 'fetch') {
     for (const f of fs.readdirSync(a1).sort()) {
       const m = f.match(/^(\d{4}-\d{2}-\d{2})__(.+)\.(jpe?g|png|webp|mp4|mov)$/i);
       if (!m) continue;
-      const [, date, base, ext] = m;
+      const [, date, named, ext] = m;
+      // The routine marks the day's best 9 by renaming them best--<name>
+      const best = /^best--/i.test(named);
+      const base = named.replace(/^best--/i, '');
       const isVideo = /^(mp4|mov)$/i.test(ext);
       const full = path.join(a1, f);
       try {
         const opts = {
           public_id: `aybkk/daily/${date}/${base}-${Date.now()}`,
-          tags: [`aybkk-daily-${date}`, 'aybkk-daily'],
+          tags: [`aybkk-daily-${date}`, 'aybkk-daily', ...(best ? ['aybkk-best'] : [])],
           resource_type: isVideo ? 'video' : 'image',
         };
+        // Every photo of the day is kept, so store them at 2048px (plenty for
+        // Instagram) instead of 6000px camera files: the plan is the free one.
+        if (!isVideo) opts.transformation = [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:good' }];
         // upload_large in this SDK version rejects with a broken error; plain
         // upload handles videos to ~100MB, which is also the plan's ceiling
         const r = await cloudinary.uploader.upload(full,
           isVideo ? { ...opts, chunk_size: 6 * 1024 * 1024 } : opts);
-        console.log('↑', date, base, r.secure_url.slice(0, 80));
+        console.log('↑', date, best ? '★' : ' ', base, r.secure_url.slice(0, 80));
         fs.unlinkSync(full); ok++;
       } catch (e) { console.log('✗', f, e.message); fail++; }
     }

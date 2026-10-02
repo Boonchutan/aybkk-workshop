@@ -96,6 +96,15 @@
     }
     .state .big { font-size: 34px; display: block; margin-bottom: 10px; }
 
+    .more {
+      display: block; width: 100%; margin-top: 8px;
+      text-align: center; text-decoration: none;
+      font-size: 15px; font-weight: 700; color: #fff; background: #c92f74;
+      border-radius: 10px; padding: 12px 10px;
+    }
+    .back { display: inline-block; margin: 6px 4px 0; color: #c92f74; text-decoration: none; font-weight: 700; font-size: 14px; }
+    .optout { margin-top: 10px; font-size: 12px; color: #8b7d6b; line-height: 1.6; }
+    .optout a { color: #c92f74; font-weight: 600; text-decoration: none; }
     footer {
       text-align: center;
       padding: 40px 16px 20px;
@@ -158,6 +167,8 @@
       <div class="sub">Daily practice photos · 每日练习照片</div>
       <a href="/booking" style="display:inline-block;margin-top:10px;color:#c92f74;
         text-decoration:none;font-weight:600;font-size:14px">← AYBKK 主页 · Home &amp; booking</a>
+      <div class="optout">Find your photo, tap it, save it. 找到你的照片，点开保存。<br>
+        Don't want your photo here? 不想出现在这里？ <a href="https://line.me/R/ti/p/@aybkk">LINE @aybkk</a> · ไม่อยากให้มีรูปคุณ ทักไลน์ได้เลย</div>
     </header>
 
     <div id="feed">
@@ -212,6 +223,7 @@ function dayLabel(dateStr) {
   return { d1: nice, d2: wd[0] + ' · ' + wd[1] };
 }
 
+const DAY = (new URLSearchParams(location.search).get('day') || '').match(/^\d{4}-\d{2}-\d{2}$/)?.[0] || null;
 function render(days) {
   const feed = document.getElementById('feed');
   if (!days.length) {
@@ -225,7 +237,7 @@ function render(days) {
     html += '<section class="day"><div class="day-head">'
       + '<span class="d1">' + lbl.d1 + '</span>'
       + '<span class="d2">' + lbl.d2 + '</span>'
-      + '<span class="count">' + day.items.length + '</span>'
+      + '<span class="count">' + (day.count || day.items.length) + ' 📷</span>'
       + '</div><div class="grid">';
     for (const item of day.items) {
       const idx = FLAT.length;
@@ -235,8 +247,13 @@ function render(days) {
         + (item.type === 'video' ? '<span class="play">▶</span>' : '')
         + '</button>';
     }
-    html += '</div></section>';
+    html += '</div>';
+    if (!DAY && day.count > day.items.length) {
+      html += '<a class="more" href="/moments?day=' + day.date + '">More photos 更多照片 · ดูรูปทั้งหมด (' + day.count + ') →</a>';
+    }
+    html += '</section>';
   }
+  if (DAY) html = '<a class="back" href="/moments">← All days 全部日期 · ทุกวัน</a>' + html;
   feed.innerHTML = html;
 }
 
@@ -280,7 +297,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') stepLb(null, 1);
 });
 
-fetch('/api/moments')
+fetch('/api/moments' + (DAY ? '?day=' + DAY : ''))
   .then(r => r.json())
   .then(data => render(data.days || []))
   .catch(() => {

@@ -222,60 +222,86 @@ cloudinary.config({
 });
 
 // ─── Moments feed ────────────────────────────────────────────────────────────
-// WeChat-moments-style photo feed for oriented students: /moments (page) +
-// GET /api/moments (data). Sources class photos the photo-watcher uploads to
-// Cloudinary with the `aybkk-daily` tag (public_id aybkk/daily/<date>/…).
-// Student selfies live in the aybkk-students folder and are never tagged, so
-// they can't leak into the feed. Newest 50 per day, last 7 days with content.
-// high enough that a batch-upload day (Jamsai often processes several classes
-// at once) is never silently truncated
-const MOMENTS_PER_DAY = 120;
+// WeChat-moments-style photo feed: /moments (page) + GET /api/moments (data).
+// Sources class photos uploaded to Cloudinary with the `aybkk-daily` tag
+// (public_id aybkk/daily/<date>/…). Every photo of the day is uploaded; the
+// daily routine tags the best 9 `aybkk-best`. Student selfies live in the
+// aybkk-students folder and are never tagged, so they can't leak in.
+//   /api/moments            last 7 days with content, each day's 9 picks + count
+//   /api/moments?day=DATE   every photo and video of that one day
+const MOMENTS_PICKS = 9;
 const MOMENTS_MAX_DAYS = 7;
-let momentsCache = { at: 0, data: null };
+const momentsCache = new Map();   // key -> { at, data }
 
 app.get('/moments', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'moments.html'));
 });
 
+async function momentsSearch(expression, enough) {
+  const out = [];
+  let cursor;
+  // Cloudinary returns at most 500 per call; 8 pages covers a busy week
+  for (let page = 0; page < 8; page++) {
+    let q = cloudinary.search.expression(expression)
+      .with_field('tags').sort_by('created_at', 'desc').max_results(500);
+    if (cursor) q = q.next_cursor(cursor);
+    const r = await q.execute();
+    out.push(...(r.resources || []));
+    cursor = r.next_cursor;
+    if (!cursor || (enough && enough(out))) break;
+  }
+  return out;
+}
+
+function momentsDays(resources) {
+  const byDay = new Map();
+  for (const r of resources) {
+    // Day comes from the upload path (aybkk/daily/<date>/…), falling back to created_at
+    const m = String(r.public_id).match(/aybkk\/daily\/(\d{4}-\d{2}-\d{2})\//);
+    const day = m ? m[1] : String(r.created_at).slice(0, 10);
+    if (!byDay.has(day)) byDay.set(day, []);
+    byDay.get(day).push({
+      url: r.secure_url,
+      type: r.resource_type === 'video' ? 'video' : 'photo',
+      w: r.width || 0,
+      h: r.height || 0,
+      created: r.created_at,
+      best: (r.tags || []).includes('aybkk-best')
+    });
+  }
+  return [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+}
+
+// The day's 9: the routine's picks first, then photos, then videos to fill.
+function momentsPicks(items) {
+  const rank = i => (i.best ? 0 : i.type === 'photo' ? 1 : 2);
+  return [...items].sort((a, b) => rank(a) - rank(b)).slice(0, MOMENTS_PICKS);
+}
+
 app.get('/api/moments', async (req, res) => {
+  const day = /^\d{4}-\d{2}-\d{2}$/.test(req.query.day || '') ? req.query.day : null;
+  const key = day || 'all';
+  const hit = momentsCache.get(key);
   try {
-    if (momentsCache.data && Date.now() - momentsCache.at < 10 * 60 * 1000) {
-      return res.json(momentsCache.data);
+    if (hit && Date.now() - hit.at < 10 * 60 * 1000) return res.json(hit.data);
+    const kinds = '(resource_type:image OR resource_type:video)';
+    let days;
+    if (day) {
+      const all = momentsDays(await momentsSearch(`tags=aybkk-daily-${day} AND ${kinds}`));
+      days = all.map(([date, items]) => ({ date, count: items.length, items }));
+    } else {
+      const enough = rs => momentsDays(rs).length > MOMENTS_MAX_DAYS;
+      days = momentsDays(await momentsSearch(`tags=aybkk-daily AND ${kinds}`, enough))
+        .slice(0, MOMENTS_MAX_DAYS)
+        .map(([date, items]) => ({ date, count: items.length, items: momentsPicks(items) }));
     }
-    const result = await cloudinary.search
-      .expression('tags=aybkk-daily AND (resource_type:image OR resource_type:video)')
-      .sort_by('created_at', 'desc')
-      .max_results(MOMENTS_PER_DAY * MOMENTS_MAX_DAYS)
-      .execute();
-
-    const byDay = new Map();
-    for (const r of result.resources || []) {
-      // Day comes from the upload path (aybkk/daily/<date>/…), falling back to created_at
-      const m = String(r.public_id).match(/aybkk\/daily\/(\d{4}-\d{2}-\d{2})\//);
-      const day = m ? m[1] : String(r.created_at).slice(0, 10);
-      if (!byDay.has(day)) byDay.set(day, []);
-      const items = byDay.get(day);
-      if (items.length < MOMENTS_PER_DAY) {
-        items.push({
-          url: r.secure_url,
-          type: r.resource_type === 'video' ? 'video' : 'photo',
-          w: r.width || 0,
-          h: r.height || 0,
-          created: r.created_at
-        });
-      }
-    }
-    const days = [...byDay.entries()]
-      .sort((a, b) => b[0].localeCompare(a[0]))
-      .slice(0, MOMENTS_MAX_DAYS)
-      .map(([date, items]) => ({ date, items }));
-
     const data = { days, updatedAt: new Date().toISOString() };
-    momentsCache = { at: Date.now(), data };
+    if (momentsCache.size > 60) momentsCache.clear();
+    momentsCache.set(key, { at: Date.now(), data });
     res.json(data);
   } catch (err) {
     // Serve a stale cache over an error page — the feed is student-facing
-    if (momentsCache.data) return res.json(momentsCache.data);
+    if (hit) return res.json(hit.data);
     res.status(500).json({ error: err.message });
   }
 });
