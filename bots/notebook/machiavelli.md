@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-02T12:09:54.270Z
+Inbox last read: 2026-10-03T00:08:59.791Z
 
 ## Standing orders from Boonchu
 - 2026-09-29: Content work (Reels, carousels, captions, Postiz posts) goes to Plato's own chat: "✍️ Plato · AYBKK content chat" (session_01EpfSiAFErEs2e4MYfzK1F9). Machi chat stays for money, leads, strategy and team orders.
@@ -12,7 +12,7 @@ Inbox last read: 2026-10-02T12:09:54.270Z
 (none yet)
 
 ## Open items
-- 2026-09-28: Digital product (online anatomy + philosophy classes), CN + EN, start 3 Nov 2026, two tiers. Prices: decision pending (see team chat). 2 Oct 19:00: no answer, default B applied: sales open moved one week, 6 Oct to 13 Oct. Prices still waiting. Waiting: translator, payment setup.
+- 2026-09-28: Digital product (online anatomy + philosophy classes), CN + EN, start 3 Nov 2026, two tiers. Prices: decision pending (see team chat). 2 Oct 19:00: no answer, default B applied: sales open moved one week, 6 Oct to 13 Oct. Prices still waiting. 3 Oct 07:08: new choice set, answer by 19:00 Wed 7 Oct, default B = sales open moves one more week (to 20 Oct). Waiting: translator, payment setup.
 
 - 2026-09-28: No Cap Daily (auto trend-facts IG) is Boonchu's test for future brand deals. Suggested: 90-day test to about 28 Dec 2026, judge on followers and reach, keep it in a separate Meta business from AYBKK, fix duplicate drafts. Ask him for numbers at the end.
 
@@ -28,7 +28,7 @@ Inbox last read: 2026-10-02T12:09:54.270Z
 
 - 2026-09-30 Boonchu decisions: new shop-window top section OK; phone +66 82 011 1433; show 9,600 (add 5% later); campaign Buy 1 month get 1 month free for NEW students, 29 Sep to 12 Nov. Other items: decision pending (see team chat). Email and floor still open.
 
-- 2026-10-01: Mysore Reel (campaign, comment MYSORE): Plato draft ready. No yes by 12:00 on 2 Oct, so default B applied: moved to Mon 5 Oct. Still waiting on Boonchu's yes in Plato chat. 3-slide carousel still open.
+- 2026-10-01: Mysore Reel (campaign, comment MYSORE): Plato draft ready. No yes by 12:00 on 2 Oct, so default B applied: moved to Mon 5 Oct. Still waiting on Boonchu's yes in Plato chat. 3 Oct 07:08: asked A (post Mon 5 Oct) or B (move to Wed 7 Oct) by 19:00 Sun 4 Oct, default B. 3-slide carousel still open.
 
 - 2026-09-30 Boonchu: 180K framing decided (see team chat). Campaign live in October; free gift "Your First Mysore Class" via ManyChat keyword MYSORE this weekend; current students get bonus weeks (1m +1w, 3m +3w, 6m +6w, 12m +2 months).
 
@@ -39,6 +39,8 @@ Inbox last read: 2026-10-02T12:09:54.270Z
 - 2026-09-30: Brand = welcoming. Tagline "Traditional Ashtanga. Open door." on site branch claude/aybkk-net-shopwindow (commit ae5626c2, not live). Next: change what Google shows (Google Business Profile description, aybkk.org and aybkk.com page text, Mindbody/Yogatrail listings, beginner Google reviews).
 
 ## Log
+- 2026-10-03 07:08: Both bots posted. Plato @Machi: ask Boonchu for his Marichyasana D cue (Stuck in Primary Ep. 1): put in brief. Inbox: 3 new, 1 hot (booking problem). Nagged Mysore Reel and course prices, 1st time today each. No wins, no leads, no reminders.
+- 2026-10-03: OPEN: Boonchu's Marichyasana D cue for Plato (Stuck in Primary Ep. 1).
 - 2026-10-02 19:08: Inbox CONNECTED (200). 1 LINE thread, a test message, no reply needed. Course prices: no answer by 19:00, default B (sales open 13 Oct). No win, no reminders. Next step given: yes to Mysore Reel for Mon 5 Oct in Plato chat.
 - 2026-10-02: Campaign dates FINAL: sales end 11 Nov 2026 (passing date), activation no later than 12 Nov. Website line, guide PDFs (EN/TH) updated. One-tier pricing (12m 59,900 anchor, 3m 18,000, 1m 9,600; 6m dropped) goes live 12 Nov, prepared but not live.
 - 2026-10-02 13:08: Inbox 503 (INBOX_KEY not set). Mysore Reel default B applied (moved to Mon 5 Oct). Course prices nagged 2nd time today: do not repeat at 19:08. No reminders due, no wins.
