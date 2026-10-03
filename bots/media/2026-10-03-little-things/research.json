@@ -1,0 +1,583 @@
+[
+ {
+  "key": "east",
+  "found": [
+   {
+    "id": "laozi-64-thousand-li",
+    "kind": "quote",
+    "who": "Laozi · Tao Te Ching ch. 64 (tr. James Legge, 1891; Project Gutenberg #216)",
+    "quote": "The tree which fills the arms grew from the tiniest sprout; the tower of nine storeys rose from a (small) heap of earth; the journey of a thousand li commenced with a single step.",
+    "original": "合抱之木，生於毫末；九層之臺，起於累土；千里之行，始於足下。",
+    "source_url": "https://www.gutenberg.org/cache/epub/216/pg216.txt",
+    "meaning": "A tree so big you can only just hug it started as a tiny sprout, and a long journey starts with one step. Big things always begin very small.",
+    "notes": "Checked in Legge's text (64.2), including the brackets '(small)' exactly as printed. The Chinese was checked against the Wang Bi text on zh.wikisource. The popular line 'a journey of a thousand miles begins with a single step' is a loose modern paraphrase. 足下 literally means 'under your feet', and a li is about half a km, not a mile. Use Legge's wording if you attribute it. This is a different chapter from the used ch. 78 and ch. 10. The tree you can 'just hug' suits a yoga audience. A useful closing line from the same chapter, 64.3 (Legge): 'If they were careful at the end, as (they should be) at the beginning, they would not so ruin them.'"
+   },
+   {
+    "id": "laozi-63-great-from-small",
+    "kind": "quote",
+    "who": "Laozi · Tao Te Ching ch. 63 (tr. James Legge, 1891; Project Gutenberg #216)",
+    "quote": "All difficult things in the world are sure to arise from a previous state in which they were easy, and all great things from one in which they were small.",
+    "original": "圖難於其易，為大於其細；天下難事必作於易，天下大事必作於細。",
+    "source_url": "https://www.gutenberg.org/cache/epub/216/pg216.txt",
+    "meaning": "Every hard thing was once easy, and every great thing was once small. So do the small, easy part today.",
+    "notes": "Checked word for word in Legge 63.2. The next sentence can follow on a second slide: 'Therefore the sage, while he never does what is great, is able on that account to accomplish the greatest things.' The Chinese was checked on zh.wikisource (Wang Bi text). Chapter 63 is not on the used list. If only one Laozi slide is wanted, choose between this and ch. 64."
+   },
+   {
+    "id": "xunzi-quanxue-small-steps",
+    "kind": "quote",
+    "who": "Xunzi · 'An Encouragement to Study' (勸學, ch. 1), in The Works of Hsüntze, tr. Homer H. Dubs (London: Probsthain, 1928), p. 34",
+    "quote": "For unless a person adds steps and half-steps to each other, he cannot go a thousand li; unless little streams are gathered, rivers and seas cannot be formed.",
+    "original": "故不積跬步，無以至千里；不積小流，無以成江海。",
+    "source_url": "https://archive.org/download/in.ernet.dli.2015.103953/2015.103953.Works-Of-Hsuntze_djvu.txt",
+    "meaning": "You cannot walk a very long way without adding up many small steps, and there is no river or sea without many small streams. Each small practice is one of those steps.",
+    "notes": "This comes from the archive.org OCR of Dubs 1928 (DLI scan, item in.ernet.dli.2015.103953). The OCR reads 'Eor miless ... half -steps', which is a scan error for 'For unless ... half-steps'. Check the page image (p. 34) before printing. Dubs's own footnote says 'We should say, goes a step at a time.' WARNING: the very next sentence is the slow-horse line AYBKK already used (騏驥一躍，不能十步；駑馬十駕，功在不舍; Dubs: 'an old broken down nag can do it in ten days'). Do not quote past 'rivers and seas cannot be formed', and do not run both in one carousel. The Chinese was checked on zh.wikisource 荀子/勸學篇."
+   },
+   {
+    "id": "xunzi-xiushen-lame-tortoise",
+    "kind": "quote",
+    "who": "Xunzi · 'Self-Cultivation' (修身, ch. 2), in The Works of Hsüntze, tr. Homer H. Dubs (1928), pp. 60–61",
+    "quote": "For a lame tortoise can go a thousand li by not resting a half step; ... Yet the lame tortoise arrives at the goal and the six noble steeds do not. There is no other reason for it than that the one keeps on and the other does not.",
+    "original": "故蹞步而不休，跛鼈千里；累土而不輟，丘山崇成……然而跛鼈致之，六驥不致，是無它故焉，或爲之，或不爲爾。",
+    "source_url": "https://archive.org/download/in.ernet.dli.2015.103953/2015.103953.Works-Of-Hsuntze_djvu.txt",
+    "meaning": "A tortoise with a bad leg can walk a thousand li if it never stops, while six of the finest horses get nowhere if they keep stopping and turning. Keeping on matters more than talent.",
+    "notes": "A surprising and lesser-known Xunzi line from a different chapter than the used slow-horse line, but it makes the same point (slow plus steady beats fast). Pick only one of the two for a carousel. In the scan, 'Yet' sits on p. 60 and the rest is on p. 61 after a page break with footnotes. The OCR is clean here. Dubs notes the 'six noble steeds' are 'a famous legendary team of horses'. The same paragraph also has 'though a matter be small, if he does not do it, it will never be accomplished' (道雖邇，不行不至；事雖小，不爲不成), a good alternative short line. The Chinese was checked on zh.wikisource 荀子/修身篇."
+   },
+   {
+    "id": "confucius-analects-9-19-basket",
+    "kind": "quote",
+    "who": "Confucius · Analects IX.18 in Legge's numbering (= 9.19 in modern numbering), tr. James Legge (Project Gutenberg #3330)",
+    "quote": "The prosecution of learning may be compared to what may happen in raising a mound. ... Though but one basketful is thrown at a time, the advancing with it is my own going forward.",
+    "original": "子曰：「譬如爲山，未成一簣，止，吾止也！譬如平地，雖覆一簣，進，吾往也！」",
+    "source_url": "https://www.gutenberg.org/cache/epub/3330/pg3330.txt",
+    "meaning": "Learning is like building a hill one basket of earth at a time. Each basket you add moves you forward, and if you stop, nobody stopped you but yourself.",
+    "notes": "Checked in the Gutenberg Legge text, Book IX ('Tsze Han'), Chap. XVIII. The cut middle sentence is also strong: 'If there want but one basket of earth to complete the work, and I stop, the stopping is my own work.' This is a different text from the used Doctrine of the Mean 20. The Chinese was checked on zh.wikisource 論語/子罕第九 (marked 九之十九). Ninomiya Sontoku (below) repeats the same basket image, so the two pair well."
+   },
+   {
+    "id": "liezi-foolish-old-man-mountains",
+    "kind": "short story",
+    "who": "Liezi · ch. 5 'The Questions of T'ang' (湯問), 'Moving Mountains', in Taoist Teachings from the Book of Lieh Tzŭ, tr. Lionel Giles (London: John Murray, 1912), pp. 86–87",
+    "quote": "Though I myself must die, I shall leave a son behind me, and through him a grandson. ... the mountain will receive no increment or addition. Why then should I despair of levelling it to the ground at last?",
+    "original": "雖我之死，有子存焉；子又生孫，孫又生子；子又有子，子又有孫，子子孫孫無窮匱也，而山不加增，何苦而不平？",
+    "source_url": "https://archive.org/download/taoistteachingsf00liezrich/taoistteachingsf00liezrich_djvu.txt",
+    "meaning": "A 90-year-old man began moving two huge mountains, one basket of earth at a time. When people laughed, he said: the mountain cannot grow, but my work can keep going, so one day it will be done.",
+    "notes": "Giles calls him 'The Simpleton of the North Mountain' (北山愚公). He and his son and grandson carried earth 'away in baskets', and a neighbour's small boy came 'skipping along' to help. In the end a deity, touched by his sincerity, carries the mountains away. That is a respectful, happy ending and mocks no god. SAFETY FLAG: in mainland China this story is strongly linked to Mao Zedong's 1945 speech 'The Foolish Old Man Who Removed the Mountains', a political text. The story itself is far older (Liezi), but for cn.aybkk.net readers that link may be the first thing they think of. Leave it out of China-facing posts if in doubt. The Chinese was checked on zh.wikisource 列子/湯問篇. Giles's 1912 OCR is clean."
+   },
+   {
+    "id": "ninomiya-sontoku-sekisho-idai",
+    "kind": "quote",
+    "who": "Ninomiya Sontoku (1787–1856) · Ninomiya Ō Yawa 1:14 (積小為大), in R. C. Armstrong, Just Before the Dawn: The Life and Work of Ninomiya Sontoku (1912), p. 232",
+    "quote": "If you wish to do great things, you must not despise the little things. Great things are the result of an accumulation of little things. ... When you cultivate many acres of land, you do so spadeful by spadeful.",
+    "original": "大事をなさんと欲せば、小さなる事を、怠らず勤むべし、小積りて大となればなり……万町の田を耕すも、其業は一鍬づゝの功にあり、千里の道も一歩づゝ歩みて至る、山を作るも一簣の土よりなる（二宮翁夜話 巻之一 一四）",
+    "source_url": "https://archive.org/download/justbeforethedaw00armsuoft/justbeforethedaw00armsuoft_djvu.txt",
+    "meaning": "If you want to do something great, don't look down on small jobs, because great things are just many small things added together. You dig a big field one spadeful at a time. As a poor orphan boy, Ninomiya planted rice seedlings that farmers had thrown away and harvested his first bag of rice.",
+    "notes": "Armstrong's English (chapter 'Diligence') was checked word for word. The Japanese was checked in the Yawa text at http://sybrma.sakura.ne.jp/31ninomiyaouyawa.html (vol. 1, §14). Armstrong shortens the original a little. I left out his line 'When you walk twenty-five miles…' because it is an odd rendering of 千里. The boyhood fact in 'meaning' comes from Tadasu Yoshimoto, A Peasant Sage of Japan (1912), p. 15 (archive.org apeasantsagejap00yoshgoog), which has him say: 'To gather little by little ... is the way to make a fortune.' Uchimura's Representative Men of Japan (1908) tells the same story. Ninomiya was a farmer and rural reformer, not a politician; local lords hired him to rebuild ruined villages. Japanese audiences know him from the statue of a boy carrying firewood and reading a book, found at many schools."
+   },
+   {
+    "id": "japan-proverb-dust-mountain",
+    "kind": "quote",
+    "who": "Japanese proverb 塵も積もれば山となる · 'Japanese Proverbs' no. 43, The Phoenix: A Monthly Magazine for India, Burma, Siam, China, Japan & Eastern Asia, vol. 2 (1871–72)",
+    "quote": "Chiri mo tsumoreba yama to naru. Even dust if gathered up becomes a mountain.",
+    "original": "塵も積もれば山となる",
+    "source_url": "https://archive.org/download/the-phoenix-a-monthly-magazine-for-india-burma-siam-china-japan-eastern-asia-vol-ii-1871-1872/The%20Ph%C5%93nix%20-%20A%20Monthly%20Magazine%20for%20India%2C%20Burma%2C%20Siam%2C%20China%2C%20Japan%20%26%20Eastern%20Asia%20Vol%20II%201871-1872_djvu.txt",
+    "meaning": "Even tiny bits of dust, if you keep adding them, become a mountain. Korea has the same saying: 'gather dust and make a great mountain.'",
+    "notes": "Checked in the Phoenix OCR (it reads 'liven' for 'Even'). An even earlier printing is in Hepburn, A Japanese and English Dictionary (1867), entry TSZMORI: 'Chiri tszmotte yama to naru, (prov.) dust heaped up becomes a mountain' (archive.org japaneseenglishd00hepb). Origin per Kotobank (Kotowaza o shiru jiten, Koji seigo o shiru jiten): Nagarjuna's Dazhidulun 94, 「譬如積微塵成山難可得移動」. There it was originally a WARNING that small anger or desire piles up into an immovable mountain. The positive 'small effort' meaning is later Japanese usage, and a similar idea appears in the Kokinshū preface. Avoid saying 'the Buddha said this'. Kotobank also gives the Korean equivalent 티끌 모아 태산 and the Chinese 積少成多. For Southeast Asia, Malaysia's DBP (prpm.dbp.gov.my) lists 'Berdikit-dikit, lama-lama menjadi bukit', glossed 'Cermat' (thrift), so it is mostly about saving money. Possible extra true story: Kotobank quotes Sugawa Kunihiko, 無人島に生きる十六人 (1943). Shipwrecked sailors (all 16 survived) carry sand a little at a time to build a lookout mound, saying 「ちりもつもれば山だ」. I did not open the primary text."
+   },
+   {
+    "id": "ohtani-goal-sheet",
+    "kind": "short story",
+    "who": "Shohei Ohtani · his first-year high-school goal sheet at Hanamaki Higashi (reported by nippon.com, 'High School Days: Ohtani Shōhei and Hanamaki Higashi Manager Sasaki Hiroshi', 8 Mar 2022)",
+    "quote": "When a first-year high school student, he wrote in the center square of his goal sheet that he wanted to be the top draft pick for eight pro teams. Around this he wrote the elements he thought vital: ... character, and luck.",
+    "original": "大谷選手は1年生の時、マンダラチャートの中央に「プロ8球団からドラフト1位指名を受ける」という目標を掲げていた。そのために必要な技術や体力はもちろん、運をつかむのも必要なことだと考え、「ゴミ拾い」「部屋そうじ」「道具を大切に使う」「審判さんへの態度」などの8項目を記入し、実践していたという。（テレ東プラス, 2022）",
+    "source_url": "https://www.nippon.com/en/japan-topics/g01204/",
+    "meaning": "At 15, Ohtani wrote one huge dream in the middle of a grid and filled the squares around it with small daily jobs, such as picking up litter, cleaning his room and looking after his equipment. He became one of the best baseball players in the world.",
+    "notes": "The nippon.com English text was checked word for word. The cut is the list 'sharp ball movement, ball control, breaking ball, physical fitness, mental strength'. The small 'luck' tasks (ゴミ拾い, 部屋そうじ, 道具を大切に使う, 審判さんへの態度) are confirmed by TV Tokyo: https://www.tv-tokyo.co.jp/plus/lifestyle/entry/2022/026098.html. The school slogan there is 「ゴミ拾いは運拾い」 ('picking up litter is picking up luck'). The popular line 'trash is luck others dropped' is NOT confirmed as Ohtani's own words, so don't put it in quote marks under his name. Honesty note: the literal goal did not happen. In the 2012 draft only Nippon-Ham picked him, because he had said he wanted to go straight to the US. Say 'he aimed for…', not 'he achieved…'. Ichiro is on the used list, but Ohtani is a different person and story. This is a modern, very well-known example for the carousel."
+   },
+   {
+    "id": "zhuangzi-19-cicada-recheck",
+    "kind": "short story",
+    "who": "Zhuangzi · ch. 19 (達生), the old cicada catcher (tr. Herbert A. Giles, Chuang Tzŭ: Mystic, Moralist, and Social Reformer, 1889; Project Gutenberg #59709)",
+    "quote": "In the fifth and sixth moons I practise balancing two balls one on top of the other. ... When I can balance three balls, I only miss one in ten; and when five, then it is as though I caught the cicadas with my hand.",
+    "original": "五六月，累丸二而不墜，則失者錙銖；累三而不墜，則失者十一；累五而不墜，猶掇之也。",
+    "source_url": "https://www.gutenberg.org/cache/epub/59709/pg59709.txt",
+    "meaning": "An old man caught insects with a long pole as easily as picking them up by hand. His secret was months of practising balancing little balls on the tip of his pole: two, then three, then five.",
+    "notes": "This is a RE-CHECK of an item already on your allowed list, not a new candidate. The wording was checked in the Giles 1889 text on Gutenberg. Giles adds the bracketed gloss 'At the top of his pole.' and an aside about Chinese boys catching cicadas with bird-lime. These are notes, not part of the quote. The cut middle sentence is 'If they do not fall, I do not miss many cicadas.' Ambiguity: 五六月 can mean 'in the 5th–6th months of the year' (Giles) or 'for five or six months' (Legge and others). Don't print '6 months of practice' unless you name a translator who reads it that way. Giles calls him a 'hunchback' (痀僂丈人). Consider 'an old man with a bent back' in your own caption. The Chinese was checked on zh.wikisource 莊子/達生."
+   }
+  ],
+  "verdicts": [
+   {
+    "id": "laozi-64-thousand-li",
+    "verdict": "verified",
+    "who": "Laozi · Tao Te Ching ch. 64.2 (tr. James Legge, Sacred Books of the East vol. 39, 1891; Project Gutenberg #216)",
+    "quote": "The tree which fills the arms grew from the tiniest sprout; the tower of nine storeys rose from a (small) heap of earth; the journey of a thousand li commenced with a single step.",
+    "source_url_checked": "https://www.gutenberg.org/cache/epub/216/pg216.txt",
+    "meaning": "A tree so big you can only just hug it started as a tiny sprout, and a long journey starts with one step. Big things always begin very small.",
+    "problems": "None in wording. It matches the Gutenberg #216 text (Legge) exactly, at '64. ... 2.', including '(small)' in brackets. The closing line 64.3 is also confirmed word for word: 'If they were careful at the end, as (they should be) at the beginning, they would not so ruin them.' The Chinese matches the received Wang Bi text. This is not a misattribution. The popular 'thousand miles' version is a loose paraphrase, so print Legge's 'li'. The used list has ch. 78 and ch. 10, not 64. Use only one of the two Laozi slides (63 or 64).",
+    "safety_ok": true
+   },
+   {
+    "id": "laozi-63-great-from-small",
+    "verdict": "verified",
+    "who": "Laozi · Tao Te Ching ch. 63.2 (tr. James Legge, Sacred Books of the East vol. 39, 1891; Project Gutenberg #216)",
+    "quote": "All difficult things in the world are sure to arise from a previous state in which they were easy, and all great things from one in which they were small.",
+    "source_url_checked": "https://www.gutenberg.org/cache/epub/216/pg216.txt",
+    "meaning": "Every hard thing was once easy, and every great thing was once small. So do the small, easy part today.",
+    "problems": "None. The wording is exact in Legge 63.2. The follow-on sentence is also exact: 'Therefore the sage, while he never does what is great, is able on that account to accomplish the greatest things.' The Chinese 天下難事必作於易，天下大事必作於細 is the standard Wang Bi text. This overlaps with ch. 64, so pick one.",
+    "safety_ok": true
+   },
+   {
+    "id": "xunzi-quanxue-small-steps",
+    "verdict": "verified",
+    "who": "Xunzi · 'An Encouragement to Study' (勸學, ch. 1), in The Works of Hsüntze, tr. Homer H. Dubs (London: Probsthain, 1928), p. 34",
+    "quote": "For unless a person adds steps and half-steps to each other, he cannot go a thousand li; unless little streams are gathered, rivers and seas cannot be formed.",
+    "source_url_checked": "https://archive.org/download/in.ernet.dli.2015.103953/2015.103953.Works-Of-Hsuntze_djvu.txt",
+    "meaning": "You cannot walk a very long way without adding up many small steps, and there is no river or sea without many small streams. Each small practice is one of those steps.",
+    "problems": "The wording is confirmed on the OCR page headed '34 THE WORKS OF HSÜNTZE'. The OCR reads 'Eor miless a person adds steps and half -steps', and the candidate's correction is right. Footnote 6 is confirmed: 'We should say, goes a step at a time.' The sentence just before it also works: 'By gathering earth and making a hill, the wind and rain originate; ... by gathering goodness and making virtue ... the heart of the sage is perfected.' The OCR has 'raiu' for 'rain'. ADJACENCY RISK: the very next sentence is the slow-horse line AYBKK already used ('A fast horse in one leap cannot go a thousand paces; but an old broken down nag can do it in ten days'). This is a different sentence, so it is not refuted, but stop at 'cannot be formed' and do not run it in the same series as the slow horse. Zh.wikisource has 故不積跬步，無以至千里 (with 跬); 蹞 is a variant, as its note 跬與蹞同 says. Check the page image before print, because the source is a DLI scan.",
+    "safety_ok": true
+   },
+   {
+    "id": "xunzi-xiushen-lame-tortoise",
+    "verdict": "verified",
+    "who": "Xunzi · 'Self-Cultivation' (修身, ch. 2), in The Works of Hsüntze, tr. Homer H. Dubs (London: Probsthain, 1928), pp. 60–61",
+    "quote": "For a lame tortoise can go a thousand li by not resting a half step; ... Yet the lame tortoise arrives at the goal and the six noble steeds do not. There is no other reason for it than that the one keeps on and the other does not.",
+    "source_url_checked": "https://archive.org/download/in.ernet.dli.2015.103953/2015.103953.Works-Of-Hsuntze_djvu.txt",
+    "meaning": "A tortoise with a bad leg can walk a thousand li if it never stops, while a team of the six finest horses never arrives if it keeps going forward and back, left and right. Keeping on matters more than talent.",
+    "problems": "The wording is exact. 'For a lame tortoise ... half step' and '... Yet' are on p. 60; 'the lame tortoise arrives ... does not' is on p. 61. The OCR has 'Eor' for 'For'. I corrected the meaning: Dubs does not say the horses 'keep stopping'. He says 'by alternately advancing and retreating, going to the left and the right, the six noble steeds could not arrive at the goal.' The short alternative is confirmed on p. 61: 'though a matter be small, if he does not do it, it will never be accomplished'. The Chinese matches zh.wikisource 修身篇 exactly (故蹞步而不休，跛鼈千里 ... 是無它故焉，或爲之，或不爲爾). This passage is not on the used list, but it makes the same point as the used slow horse. Do not pair it with that line, and choose either this or the 勸學 half-steps line.",
+    "safety_ok": true
+   },
+   {
+    "id": "confucius-analects-9-19-basket",
+    "verdict": "verified",
+    "who": "Confucius · Analects IX.18 in Legge's numbering (= 9.19 in modern numbering), tr. James Legge (Project Gutenberg #3330)",
+    "quote": "The prosecution of learning may be compared to what may happen in raising a mound. ... Though but one basketful is thrown at a time, the advancing with it is my own going forward.",
+    "source_url_checked": "https://www.gutenberg.org/cache/epub/3330/pg3330.txt",
+    "meaning": "Learning is like building a hill one basket of earth at a time. Each basket you add moves you forward, and if you stop, nobody stopped you but yourself.",
+    "problems": "None. It is confirmed under 'BOOK IX. TSZE HAN.', CHAP. XVIII. The ellipsis leaves out 'If there want but one basket of earth to complete the work, and I stop, the stopping is my own work. It may be compared to throwing down the earth on the level ground.' 'The prosecution of learning' is Legge's own addition; the Chinese simply says 譬如爲山. Zh.wikisource marks it 九之十九, and the Chinese matches exactly. This is a different text from the used Doctrine of the Mean 20.",
+    "safety_ok": true
+   },
+   {
+    "id": "liezi-foolish-old-man-mountains",
+    "verdict": "fixed",
+    "who": "Liezi (Daoist classic, compiled c. 4th century CE) · ch. 5 'The Questions of T'ang' (湯問), 'Moving Mountains', in Taoist Teachings from the Book of Lieh Tzŭ, tr. Lionel Giles (London: John Murray, 1912), pp. 86–88 (quote on p. 87)",
+    "quote": "Though I myself must die, I shall leave a son behind me, and through him a grandson. ... the mountain will receive no increment or addition. Why then should I despair of levelling it to the ground at last?",
+    "source_url_checked": "https://archive.org/download/taoistteachingsf00liezrich/taoistteachingsf00liezrich_djvu.txt",
+    "meaning": "A 90-year-old man began moving two huge mountains, carrying away earth and stones in baskets with his son and grandson. When a neighbour laughed at him, he said: the mountain cannot grow, but my family can keep working, so one day it will be done.",
+    "problems": "The wording is exact in Giles (p. 87). The left-out middle reads: 'That grandson will beget sons in his turn, and those sons will also have sons and grandsons. With all this posterity, my line will not die out, while on the other hand'. I fixed the citation: the story runs to p. 88, where the mountains are carried away. Giles's wording there is 'God Almighty, who was touched by the old man's simple faith'. That is respectful and mocks no god. Only one man laughs (the 'Wise Old Man of the River-bend'), not 'people'. The Liezi was probably compiled around the 4th century CE, so attribute the story to 'the Liezi', not to Lie Yukou himself. The Chinese matches zh.wikisource 湯問篇 exactly. SAFETY: this fails the no-politicians rule for China-facing use. In mainland China, 愚公移山 is best known as Mao Zedong's 1945 speech of that name. That speech is one of the Cultural Revolution's 'Three Constantly Read Articles' (老三篇), and in it the two mountains stand for imperialism and feudalism. The text itself is fine, but leave it out of any cn.aybkk.net or WeChat post. If you use it at all, use it only for non-China audiences.",
+    "safety_ok": false
+   },
+   {
+    "id": "ninomiya-sontoku-sekisho-idai",
+    "verdict": "verified",
+    "who": "Ninomiya Sontoku (1787–1856) · Ninomiya Ō Yawa vol. 1 §14 (the 'accumulate small to make great' teaching), in R. C. Armstrong, Just Before the Dawn: The Life and Work of Ninomiya Sontoku (New York: Macmillan, 1912), ch. 'Diligence', p. 232",
+    "quote": "If you wish to do great things, you must not despise the little things. Great things are the result of an accumulation of little things. ... When you cultivate many acres of land, you do so spadeful by spadeful.",
+    "source_url_checked": "https://archive.org/download/justbeforethedaw00armsuoft/justbeforethedaw00armsuoft_djvu.txt",
+    "meaning": "If you want to do something great, don't look down on small jobs, because great things are just many small things added together. You dig a big field one spadeful at a time. As a poor orphan boy, Ninomiya planted rice seedlings that farmers had thrown away, and from them harvested his first bag of rice.",
+    "problems": "Armstrong's English is exact on p. 232. The ellipsis leaves out 'For example, 1,000,000 koku of rice is composed of many grains of rice.' Two more confirmed lines could close the slide: 'If you build a great mound, you do so basketful by basketful. In the same way, by being diligent in little things you may accomplish much.' The Japanese is confirmed at sybrma.sakura.ne.jp (二宮翁夜話 巻之一, item 一四), from 大事をなさんと欲せば through 山を作るも一簣の土よりなる. 積小為大 is the later four-character summary of this teaching, not the Yawa's own wording (小積りて大となればなり), so don't put it in quote marks as his words. The boyhood story is confirmed in Yoshimoto, A Peasant Sage of Japan (1912), p. 15: 'young rice shoots thrown away or dropped by the farmers', 'more than a bag of rice', and '\"To gather little by little,\" said he, \"is the way to make a fortune.\"' Yoshimoto says the plot was land ruined by a flood, so leave that detail out to stay clear of the disaster rule. Avoid the wartime history of the Kinjirō statues. He was a farmer-reformer and domain/shogunal steward, not a politician.",
+    "safety_ok": true
+   },
+   {
+    "id": "japan-proverb-dust-mountain",
+    "verdict": "verified",
+    "who": "Japanese proverb 塵も積もれば山となる · 'Japanese Proverbs' no. 43, The Phoenix: A Monthly Magazine for India, Burma, Siam, China, Japan & Eastern Asia, vol. 2 (1871–72); earlier in J. C. Hepburn, A Japanese and English Dictionary (1867), s.v. TSZMORI",
+    "quote": "Chiri mo tsumoreba yama to naru. Even dust if gathered up becomes a mountain.",
+    "source_url_checked": "https://archive.org/download/the-phoenix-a-monthly-magazine-for-india-burma-siam-china-japan-eastern-asia-vol-ii-1871-1872/The%20Ph%C5%93nix%20-%20A%20Monthly%20Magazine%20for%20India%2C%20Burma%2C%20Siam%2C%20China%2C%20Japan%20%26%20Eastern%20Asia%20Vol%20II%201871-1872_djvu.txt",
+    "meaning": "Even tiny bits of dust, if you keep adding them, become a mountain. Korea has the same saying: 'gather dust and make a great mountain.'",
+    "problems": "The Phoenix entry is confirmed as '(43) Chiri mo tsumoreba yama to naru. / liven [=Even] dust if gathered up becomes a mountain.' Hepburn 1867 is confirmed in the archive.org OCR (metadata date 1867), entry TSZMORI: 'Chiri tszmotte yama to naru, (prov.) dust heaped up becomes a mountain.' The origin is confirmed in the 大智度論 卷94 text on zh.wikisource: 生貪欲、瞋恚，於是中起諸重業，是為重縛…譬如積微塵成山，難可得移動. As the candidate says, it was originally a warning about piled-up greed and anger. The traditional attribution to Nagarjuna is disputed by modern scholars, so say 'a Buddhist commentary (Dazhidulun)'. Never say 'the Buddha said'. The Kotobank entry (569680) confirms the Dazhidulun origin, the Kokinshū preface parallel, Korean 티끌 모아 태산 and Chinese 積少成多. I did NOT confirm the 須川邦彦 'sixteen castaways' anecdote or the Malay DBP proverb, so do not use either without checking.",
+    "safety_ok": true
+   },
+   {
+    "id": "ohtani-goal-sheet",
+    "verdict": "verified",
+    "who": "Shohei Ohtani · his first-year high-school goal sheet at Hanamaki Higashi (reported by nippon.com, 'High School Days: Ohtani Shōhei and Hanamaki Higashi Manager Sasaki Hiroshi', 8 Mar 2022)",
+    "quote": "When a first-year high school student, he wrote in the center square of his goal sheet that he wanted to be the top draft pick for eight pro teams. Around this he wrote the elements he thought vital: ... character, and luck.",
+    "source_url_checked": "https://www.nippon.com/en/japan-topics/g01204/",
+    "meaning": "At 15, Ohtani wrote one huge goal in the middle of a grid. Around it he wrote what he would need, including ball control, fitness, mental strength, character and luck. Under 'luck' he listed small daily jobs: picking up litter, cleaning his room, looking after his equipment and being polite to umpires. He went on to become one of the best baseball players in the world.",
+    "problems": "The nippon.com wording is exact (dated Mar 8, 2022), and the cut is 'sharp ball movement, ball control, breaking ball, physical fitness, mental strength,'. The final square held Sasaki's 160 km/h prediction. I corrected the meaning: the litter, room and equipment tasks were sub-items under the 'luck' square, not the squares around the centre. TV Tokyo (テレ東プラス 2022/026098) confirms this: 運をつかむのも必要…「ゴミ拾い」「部屋そうじ」「道具を大切に使う」「審判さんへの態度」などの8項目, and the school slogan 「ゴミ拾いは運拾い」. The honesty note is correct: in the 2012 draft only Nippon-Ham made him a first-round pick, so write 'aimed for'. This is not on the used list (Ichiro is a different person).",
+    "safety_ok": true
+   },
+   {
+    "id": "zhuangzi-19-cicada-recheck",
+    "verdict": "verified",
+    "who": "Zhuangzi · ch. 19 'The Secret of Life' (達生), the old cicada catcher (tr. Herbert A. Giles, Chuang Tzŭ: Mystic, Moralist, and Social Reformer, London: Bernard Quaritch, 1889; Project Gutenberg #59709)",
+    "quote": "In the fifth and sixth moons I practise balancing two balls one on top of the other. ... When I can balance three balls, I only miss one in ten; and when five, then it is as though I caught the cicadas with my hand.",
+    "source_url_checked": "https://www.gutenberg.org/cache/epub/59709/pg59709.txt",
+    "meaning": "An old man caught insects with a long pole as easily as picking them up by hand. His secret was months of practising balancing little balls on the tip of his pole: two, then three, then five.",
+    "problems": "The wording is exact in the Giles 1889 text (CHAPTER XIX). 'At the top of his pole.' is Giles's gloss, not part of the quote, and the cut sentence is 'If they do not fall, I do not miss many cicadas.' A good closing line from the same passage, also confirmed: 'Singleness of purpose induces concentration of the faculties.' The Chinese matches zh.wikisource 莊子/達生 exactly. As noted, 五六月 can be read two ways, and Giles reads it as 'fifth and sixth moons'. Do not print 'six months of practice' under Giles's name. Giles calls him a 'hunchback', so use 'an old man with a bent back' in your own words. Confucius is shown respectfully.",
+    "safety_ok": true
+   }
+  ]
+ },
+ {
+  "key": "india",
+  "found": [
+   {
+    "id": "sn22-101-adze-handle",
+    "who": "The Buddha · Saṃyutta Nikāya 22.101, \"The Adze\" (tr. Bhikkhu Sujato, SuttaCentral, 2018)",
+    "quote": "Suppose a mason or their apprentice sees the marks of his fingers and thumb on the handle of his adze. They don’t know how much of the handle was worn away today, how much yesterday... They just know what has been worn away.",
+    "original": "Seyyathāpi, bhikkhave, palagaṇḍassa vā palagaṇḍantevāsissa vā vāsijaṭe dissanteva aṅgulipadāni dissati aṅguṭṭhapadaṁ. No ca khvassa evaṁ ñāṇaṁ hoti: ‘ettakaṁ vata me ajja vāsijaṭassa khīṇaṁ, ettakaṁ hiyyo, ettakaṁ pare’ti. Atha khvassa khīṇe khīṇantveva ñāṇaṁ hoti.",
+    "source_url": "https://raw.githubusercontent.com/suttacentral/bilara-data/published/translation/en/sujato/sutta/sn/sn22/sn22.101_translation-en-sujato.json",
+    "meaning": "A builder holds his tool every day. He never sees the wooden handle get thinner in one day, but after years his finger marks are worn deep into it. Daily practice changes you the same way: too slowly to see, but it really happens.",
+    "kind": "quote",
+    "notes": "Strongest fit. I read the exact wording in SuttaCentral's own published data file (segments sn22.101:6.1–6.4). The same text is on the reader page suttacentral.net/sn22.101/en/sujato. The cut '...' drops only 'and how much previously'. The Buddha then applies it: 'In the same way, when a mendicant is committed to development, they don’t know how much of the defilements were worn away today, how much yesterday... They just know what has been worn away.' The same sutta has two more images you could use on other slides: a hen who sits on her eggs properly so the chicks hatch, and a ship's ropes that rot away in wind, sun and rain. Sujato's translations are CC0 (free to reuse). No safety issues."
+   },
+   {
+    "id": "ys-2-28-worn-away",
+    "who": "Patañjali · Yoga Sūtra 2.28 (tr. Charles Johnston, The Yoga Sutras of Patanjali: The Book of the Spiritual Man, 1912)",
+    "quote": "From steadfastly following after the means of Yoga, until impurity is worn away, there comes the illumination of thought up to full discernment.",
+    "original": "yogāṅgānuṣṭhānād aśuddhikṣaye jñānadīptir ā vivekakhyāteḥ",
+    "source_url": "https://www.gutenberg.org/cache/epub/2526/pg2526.txt",
+    "meaning": "Keep doing the limbs of yoga, day after day, and the 'dust' in the mind slowly wears away until it shines clear. This is the sutra that introduces the eight limbs (ashta-anga), which is where the name Ashtanga comes from.",
+    "kind": "quote",
+    "notes": "Not the same as the Yoga Sutra 1.14 you already used. Right after the sutra, Johnston adds his own comment (his words, not Patañjali's): 'when we come to detail the means of Yoga, we may well be astonished at their simplicity. There is little in them that is mysterious. They are very familiar. The essence of the matter lies in carrying them out.' That would make a good second slide, but it must be credited to Johnston. 'Worn away' echoes the adze handle in SN 22.101, so the two work well together. No safety issues."
+   },
+   {
+    "id": "dhp-239-little-by-little-story",
+    "who": "The Buddha · Dhammapada 239, with its commentary story \"Little by Little\" (Buddhist Legends XVIII.2, tr. Eugene Watson Burlingame, Harvard Oriental Series 30, 1921)",
+    "quote": "One after another, little by little, time after time, a wise man / Should blow away his own impurities, even as a smith blows away the impurities of silver.",
+    "original": "Anupubbena medhāvī, thokaṁ thokaṁ khaṇe khaṇe; Kammāro rajatasseva, niddhame malamattano.",
+    "source_url": "https://archive.org/download/buddhistlegends03burluoft/buddhistlegends03burluoft_djvu.txt",
+    "meaning": "A silversmith cleans silver a tiny bit at a time until it shines. In the story behind this verse, a man saw the monks' robes getting wet in the grass where they dressed. Each time he saw a new problem he fixed one small thing: he cleared the grass, then spread sand, then put up a shade roof, and finally built a whole hall.",
+    "kind": "short story",
+    "notes": "The story is in Burlingame's printed translation (archive.org scan, pages 119–120). Before the verse, the Buddha tells the man: 'Brahman, a wise man by doing good works, time after time, little by little, gradually removes the stains of his own evil deeds.' I would not put the words 'evil deeds' on a slide. The story comes from the later Dhammapada commentary, so it is a traditional tale told with the verse, not the Buddha's own words. Another version of the verse is Max Müller's (Project Gutenberg #2017): 'Let a wise man blow off the impurities of his self, as a smith blows off the impurities of silver one by one, little by little, and from time to time.' Pali checked against the SuttaCentral root text. This is not the Dhammapada 122 or 204 you already used. No safety issues."
+   },
+   {
+    "id": "hyp-2-15-slow-degrees",
+    "who": "Svātmārāma · Haṭha Yoga Pradīpikā 2.15 (tr. Pancham Sinh, Sacred Books of the Hindus vol. 15 pt. 3, Allahabad, 1914–15)",
+    "quote": "Just as lions, elephants and tigers are controlled by and by, so the breath is controlled by slow degrees...",
+    "original": "yathā siṃho gajo vyāghro bhaved vaśyaḥ śanaiḥ śanaiḥ | tathaiva sevito vāyur anyathā hanti sādhakam ||",
+    "source_url": "https://archive.org/download/sacredbooksofthehindusvol15part3hathayogapradipikapanchamsinh_202002/Sacred%20Books%20of%20the%20Hindus%20Vol%2015%20Part%203%20Hatha%20Yoga%20Pradipika%20Pancham%20Sinh_djvu.txt",
+    "meaning": "Nobody tames a wild lion or elephant in one day, only slowly. The old yoga book says breathing practice is the same: go step by step, never by force.",
+    "kind": "quote",
+    "notes": "The printed line goes on: 'otherwise (i.e., by being hasty or using too much force) it kills the practiser himself.' The scanned text misreads 'kills' as 'hills'. The '...' leaves out this frightening warning, but the meaning stays the same: go slowly. If you show the full verse, keep it as printed. I checked it in the archive.org scan of the same Pancham Sinh translation, where it is chapter 2, verse 15. sacred-texts.com hosts this translation too but blocked my access. This is not one of the verses you already used (1.66, 1.19, 2.2). The quote mentions taming animals but has no violence."
+   },
+   {
+    "id": "gita-6-23-25-slow-steps",
+    "who": "Krishna · Bhagavad Gita 6.23 and 6.25 (tr. Kashinath Trimbak Telang, Sacred Books of the East vol. 8, 1882; 1908 reprint)",
+    "quote": "That devotion should be practised with steadiness and with an undesponding heart... one should by slow steps become quiescent, with a firm resolve coupled with courage...",
+    "original": "sa niścayena yoktavyo yogo 'nirviṇṇa-cetasā (6.23) ... śanaiḥ śanair uparamed buddhyā dhṛti-gṛhītayā (6.25)",
+    "source_url": "https://archive.org/download/bhagavadgtwithsa00tela/bhagavadgtwithsa00tela_djvu.txt",
+    "meaning": "Practise with a steady heart that does not give up. A calm mind comes slowly, step by step. In Sanskrit it is 'shanaih shanaih', which means 'little by little'.",
+    "kind": "quote",
+    "notes": "Telang uses 'devotion' for the Sanskrit word 'yoga'. I removed his footnote numbers. A well-known poetic version is Edwin Arnold's The Song Celestial (1885, Project Gutenberg #2388): 'Steadfastly the will / Must toil thereto, till efforts end in ease ... so, step by step, it comes / To gift of peace assured and heart assuaged'. Arnold's is a loose verse paraphrase, not a close translation. A good next slide is 6.26 (Telang): 'Wherever the active and unsteady mind breaks forth, there one should ever restrain it, and fix it steadily on the self alone.' None of these are the Gita 6.35 or 5.27 you already used."
+   },
+   {
+    "id": "an-8-19-ocean-slopes-gradually",
+    "who": "The Buddha · Aṅguttara Nikāya 8.19, \"With Pahārāda\" (tr. Bhikkhu Sujato, SuttaCentral, 2018)",
+    "quote": "The ocean gradually slants, slopes, and inclines, with no abrupt precipice. In the same way in this teaching and training the penetration to enlightenment comes from gradual training, progress, and practice, not abruptly.",
+    "original": "Seyyathāpi, pahārāda, mahāsamuddo anupubbaninno anupubbapoṇo anupubbapabbhāro, na āyatakeneva papāto; evamevaṁ kho, pahārāda, imasmiṁ dhammavinaye anupubbasikkhā anupubbakiriyā anupubbapaṭipadā, na āyatakeneva aññāpaṭivedho.",
+    "source_url": "https://raw.githubusercontent.com/suttacentral/bilara-data/published/translation/en/sujato/sutta/an/an8/an8.19_translation-en-sujato.json",
+    "meaning": "Walk into the sea from a beach: the water gets deeper slowly, with no sudden cliff. The Buddha said real learning works the same way. It grows through slow, steady practice, not in one big jump.",
+    "kind": "quote",
+    "notes": "Both sentences are as printed, one straight after the other (segments 10.6–10.7). The ocean simile also appears in Udāna 5.5. The Buddha is speaking to Pahārāda, a mythological 'lord of titans'. That detail can be left out. Sujato's translation is CC0. No safety issues."
+   },
+   {
+    "id": "kural-396-sand-spring",
+    "who": "Tiruvalluvar · Tirukkural 396, chapter 40 \"Learning\" (tr. G. U. Pope, The 'Sacred' Kurral, 1886)",
+    "quote": "In sandy soil, when deep you delve, you reach the springs below; The more you learn, the freer streams of wisdom flow.",
+    "original": "தொட்டனைத் தூறும் மணற்கேணி மாந்தர்க்குக் கற்றனைத் தூறும் அறிவு",
+    "source_url": "https://archive.org/download/tiruvalluvanayan00tiruuoft/tiruvalluvanayan00tiruuoft_djvu.txt",
+    "meaning": "Dig a well in sand: every scoop lets a little more water come up. Learn a little every day, and a little more wisdom comes up. The Tirukkural is a 2,000-year-old Tamil book of 1,330 two-line poems.",
+    "kind": "quote",
+    "notes": "The scanned text misreads 'In' as 'Tn'. A more literal translation, by V. V. S. Aiyar (The Kural, 1916, archive.org in.ernet.dli.2015.102804): 'Knowledge is like unto a sand-spring: the more thou diggest and drawest thereat, the more excellent is the flow thereof.' The Tamil text is from thirukkural.net. Pope prints this chapter under the heading 'Book II — Royalty', but the couplet itself is about learning and does not mention any king. I dropped Kural 475 (light peacock feathers piled too high break a cart's axle) because the commentary says it is about fighting too many enemies. This is not the Kural 611 you already used."
+   },
+   {
+    "id": "gita-2-40-even-a-little",
+    "who": "Krishna · Bhagavad Gita 2.40 (tr. Kashinath Trimbak Telang, Sacred Books of the East vol. 8, 1882; 1908 reprint)",
+    "quote": "In this (path to final emancipation) nothing that is commenced becomes abortive; no obstacles exist; and even a little of this (form of) piety protects one from great danger.",
+    "original": "nehābhikramanāśo 'sti pratyavāyo na vidyate | svalpam apy asya dharmasya trāyate mahato bhayāt ||",
+    "source_url": "https://archive.org/download/bhagavadgtwithsa00tela/bhagavadgtwithsa00tela_djvu.txt",
+    "meaning": "On this path no effort is ever wasted. Even a small amount of practice protects you from great fear.",
+    "kind": "quote",
+    "notes": "The brackets are Telang's own. I removed one footnote number. 'Abortive' is an old-fashioned word for 'wasted'. Edwin Arnold's version (Gutenberg #2388): 'Here shall no end be hindered, no hope marred, / No loss be feared: faith--yea, a little faith-- / Shall save thee from the anguish of thy dread.' The Gita is spoken on a battlefield, but this verse says nothing about war. It is a weaker fit than the others because it is about how a little practice is never wasted, not about small steps adding up to something big."
+   },
+   {
+    "id": "jataka-4-tiny-flame",
+    "who": "Jātaka tradition · Cullaka-seṭṭhi Jātaka, No. 4 (tr. Robert Chalmers, The Jātaka vol. 1, ed. E. B. Cowell, Cambridge, 1895)",
+    "quote": "With humblest start and trifling capital / A shrewd and able man will rise to wealth, / E'en as his breath can nurse a tiny flame.",
+    "original": "Appakena pi medhāvī, pābhatena vicakkhaṇo, samuṭṭhāpeti attānaṁ, aṇuṁ aggiṁva sandhamaṁ.",
+    "source_url": "https://archive.org/download/jatakaorstorieso01cowe/jatakaorstorieso01cowe_djvu.txt",
+    "meaning": "Blow gently on a tiny spark and it grows into a fire. In the story, a poor young man picks up a dead mouse and sells it for one small coin. Then, with many small clever steps (giving water to flower-pickers, collecting fallen branches), he turns that coin into a fortune in four months.",
+    "kind": "short story",
+    "notes": "The image of breath growing a tiny flame suits a pranayama audience, but the story itself is about money. Some steps are a bit sly: he pays children with sweets, and he buys up all the grass so the horse-dealer has to buy from him. A king and his garden appear only in passing. The Pali verse is from ancient-buddhist-texts.net. The opening story of the same Jātaka is about Little Wayman (Cūḷapanthaka). He could not learn one four-line verse in four months, so the Buddha gave him a clean cloth to rub while repeating 'Removal of Impurity'. His awakening in that story is sudden and involves miracles, so it fits gradual progress less well. One more lead I am not returning as a candidate: the ant-and-Garuda verse 'yojanānāṃ sahasraṃ tu śanair gacchet pipīlikā | agacchan vainateyo 'pi padam ekaṃ na gacchati'. Roughly: an ant that keeps walking slowly can cover a thousand yojanas, while even Garuda goes nowhere if he never moves. I confirmed the Sanskrit in the printed Subhāṣitaratnabhāṇḍāgāra (ed. N. R. Ācārya, Bombay: Nirnaya Sagar, 1952), section 'Udyamapraśaṃsā' (Praise of Effort), verse 11. However, I found no published English translation to quote. Any English would be our own wording and would need to be labelled that way, and Garuda, a divine bird, should be mentioned respectfully."
+   }
+  ],
+  "verdicts": [
+   {
+    "id": "sn22-101-adze-handle",
+    "verdict": "verified",
+    "who": "The Buddha · Saṃyutta Nikāya 22.101, \"The Adze\" (Vāsijaṭasutta) (tr. Bhikkhu Sujato, SuttaCentral, 2018)",
+    "quote": "Suppose a mason or their apprentice sees the marks of his fingers and thumb on the handle of his adze. They don’t know how much of the handle was worn away today, how much yesterday... They just know what has been worn away.",
+    "source_url_checked": "https://raw.githubusercontent.com/suttacentral/bilara-data/published/translation/en/sujato/sutta/sn/sn22/sn22.101_translation-en-sujato.json",
+    "meaning": "A builder holds his tool every day. He never sees the wooden handle get thinner in one day, yet the marks of his fingers and thumb end up worn into it. Daily practice changes you the same way: too slowly to see, but it really happens.",
+    "problems": "None. Segments sn22.101:6.1–6.4 match word for word; the '...' drops only 'and how much previously'. Title 'The Adze' (0.3) and Pali root (Vāsijaṭasutta, 6.1–6.4) match the given original. The application (6.5–6.6), the hen-and-eggs simile (5.1–5.8) and the ship's-ropes simile (6.7–6.8) are all present as described. Not on the used list.",
+    "safety_ok": true
+   },
+   {
+    "id": "ys-2-28-worn-away",
+    "verdict": "fixed",
+    "who": "Patañjali · Yoga Sūtra 2.28 (tr. Charles Johnston, The Yoga Sutras of Patanjali: The Book of the Spiritual Man, An Interpretation, New York, 1912)",
+    "quote": "From steadfastly following after the means of Yoga, until impurity is worn away, there comes the illumination of thought up to full discernment.",
+    "source_url_checked": "https://www.gutenberg.org/cache/epub/2526/pg2526.txt",
+    "meaning": "Keep doing the limbs of yoga, day after day, and the 'dust' in the mind slowly wears away until it shines clear. This sutra opens Patañjali's teaching on the limbs of yoga (yogāṅga). The very next sutra, 2.29, lists the eight limbs (aṣṭau aṅgāni), and that is where the name Ashtanga comes from.",
+    "problems": "The quote is exact (Gutenberg #2526, sutra 28 of Book II). Johnston's comment is also exact and is his own: 'And when we come to detail the means of Yoga, we may well be astonished at their simplicity. There is little in them that is mysterious. They are very familiar. The essence of the matter lies in carrying them out.' One fix to the meaning: 2.28 does not itself introduce the eight limbs. It says 'means/limbs of Yoga'. The list of eight, and the word ashta-anga, is in 2.29 ('The eight means of Yoga are: the Commandments, the Rules, right Poise...'). The 1912 first edition is confirmed by the LOC, HathiTrust and Rare Book Society of India records. A revised edition followed in 1917, and the Gutenberg file does not say which edition it uses. Johnston calls his book 'an interpretation', so it is a loose rendering, not a literal translation. Not YS 1.14, which is already used.",
+    "safety_ok": true
+   },
+   {
+    "id": "dhp-239-little-by-little-story",
+    "verdict": "verified",
+    "who": "The Buddha · Dhammapada 239, with its commentary story \"Little by Little\" (Buddhist Legends, Book XVIII, Story 2, tr. Eugene Watson Burlingame, Harvard Oriental Series vol. 30, Harvard University Press, 1921)",
+    "quote": "One after another, little by little, time after time, a wise man / Should blow away his own impurities, even as a smith blows away the impurities of silver.",
+    "source_url_checked": "https://archive.org/download/buddhistlegends03burluoft/buddhistlegends03burluoft_djvu.txt",
+    "meaning": "A silversmith cleans silver a tiny bit at a time until it shines. In the story told with this verse, a Brahman watches the monks dressing. Each time he sees a new problem he fixes one small thing. Dew-wet grass soaks their robes, so he clears the grass. Robes drag in the dust, so he spreads sand. They sweat in the heat, so he puts up a pavilion. Rain wets their robes, so finally he builds a whole hall.",
+    "problems": "Verse and story match Burlingame word for word on pp. 119–120. The copyright page reads '1921, by the Harvard University Press'. The Buddha's line before the verse ('a wise man by doing good works, time after time, little by little, gradually removes the stains of his own evil deeds') is exact; agree not to put 'evil deeds' on a slide. The Max Müller version is exact in Gutenberg #2017: 'Let a wise man blow off the impurities of his self, as a smith blows off the impurities of silver one by one, little by little, and from time to time.' The Pali matches the SuttaCentral root dhp239:1–4. The story comes from the later commentary, so label it as a traditional story told with the verse. Not Dhammapada 122 or 204, which are already used.",
+    "safety_ok": true
+   },
+   {
+    "id": "hyp-2-15-slow-degrees",
+    "verdict": "fixed",
+    "who": "Svātmārāma · Haṭha Yoga Pradīpikā 2.15 (tr. Pancham Sinh, The Sacred Books of the Hindus vol. XV, part III, Allahabad: Pāṇini Office, January 1915)",
+    "quote": "Just as lions, elephants and tigers are controlled by and by, so the breath is controlled by slow degrees...",
+    "source_url_checked": "https://archive.org/download/sacredbooksofthehindusvol15part3hathayogapradipikapanchamsinh_202002/Sacred%20Books%20of%20the%20Hindus%20Vol%2015%20Part%203%20Hatha%20Yoga%20Pradipika%20Pancham%20Sinh_djvu.txt",
+    "meaning": "Nobody tames a wild lion or elephant in one day, only slowly. The old yoga book says breathing practice is the same: go step by step, never by force.",
+    "problems": "The wording is exact and it is numbered verse 15 of chapter 2 in the scan. The printed line goes on: 'otherwise (i.e., by being hasty or using too much force) it kills the practiser himself.' The OCR has 'hills' for 'kills'. One fix to the citation: the scanned title page reads 'January, 1915. No. 67. ... Volume XV, Part III', so cite 1915, not 1914–15. The sacred-texts.com edition is often dated 1914. The '...' hides the 'kills the practiser' warning but keeps the meaning. Not verses 1.66, 1.19 or 2.2, which are already used.",
+    "safety_ok": true
+   },
+   {
+    "id": "gita-6-23-25-slow-steps",
+    "verdict": "fixed",
+    "who": "Krishna · Bhagavad Gita 6.23 and 6.25 (tr. Kashinath Trimbak Telang, Sacred Books of the East vol. 8, 1882; second edition, Oxford: Clarendon Press, 1908)",
+    "quote": "That devotion should be practised with steadiness and with an undesponding heart... one should by slow steps become quiescent, with a firm resolve coupled with courage...",
+    "source_url_checked": "https://archive.org/download/bhagavadgtwithsa00tela/bhagavadgtwithsa00tela_djvu.txt",
+    "meaning": "Practise with a steady heart that does not give up. A calm mind comes slowly, step by step. In Sanskrit it is 'shanaih shanaih', which means 'little by little'.",
+    "problems": "The wording is exact once footnote numbers 4 and 5 are removed. Telang prints the chapter as running prose without verse numbers. The first sentence is the second half of 6.23, the '...' skips 6.24 ('Abandoning, without exception, all desires...'), and 'by slow steps...courage' is 6.25. Citation fix: the scanned title page reads 'SECOND EDITION ... OXFORD AT THE CLARENDON PRESS 1908', not just '1908 reprint'. The Arnold lines are exact in Gutenberg #2388 ('Steadfastly the will / Must toil thereto, till efforts end in ease' ... 'so, step by step, it comes / To gift of peace assured and heart assuaged'). The suggested 6.26 line is also exact in Telang. Not Gita 6.35 or 5.27, which are already used.",
+    "safety_ok": true
+   },
+   {
+    "id": "an-8-19-ocean-slopes-gradually",
+    "verdict": "verified",
+    "who": "The Buddha · Aṅguttara Nikāya 8.19, \"With Pahārāda\" (tr. Bhikkhu Sujato, SuttaCentral, 2018)",
+    "quote": "The ocean gradually slants, slopes, and inclines, with no abrupt precipice. In the same way in this teaching and training the penetration to enlightenment comes from gradual training, progress, and practice, not abruptly.",
+    "source_url_checked": "https://raw.githubusercontent.com/suttacentral/bilara-data/published/translation/en/sujato/sutta/an/an8/an8.19_translation-en-sujato.json",
+    "meaning": "Walk into the sea from a beach: the water gets deeper slowly, with no sudden cliff. The Buddha said real learning works the same way. It grows through slow, steady practice, not in one big jump.",
+    "problems": "None. Segments an8.19:10.6 and 10.7 are exact and follow each other directly. The Pali root (10.6–10.7) matches the given original. Pahārāda is called 'lord of titans' (1.2), a mythological figure, and can be left out.",
+    "safety_ok": true
+   },
+   {
+    "id": "kural-396-sand-spring",
+    "verdict": "verified",
+    "who": "Tiruvalluvar · Tirukkural 396, chapter 40 \"Learning\" (tr. G. U. Pope, The 'Sacred' Kurral of Tiruvalluva-Nâyanâr, London: W. H. Allen, 1886)",
+    "quote": "In sandy soil, when deep you delve, you reach the springs below; The more you learn, the freer streams of wisdom flow.",
+    "source_url_checked": "https://archive.org/download/tiruvalluvanayan00tiruuoft/tiruvalluvanayan00tiruuoft_djvu.txt",
+    "meaning": "Dig a well in sand: every scoop lets a little more water come up. Learn a little every day, and a little more wisdom comes up. The Tirukkural is a 2,000-year-old Tamil book of 1,330 two-line poems.",
+    "problems": "The wording is exact, apart from the OCR reading 'Tn' for 'In'. It is under 'Chapter XL. Learning', and the preface is dated 1886. The Aiyar version is exact in the archive.org scan in.ernet.dli.2015.102804 (The Kural or The Maxims of Tiruvalluvar, 1916): 'Knowledge is like unto a sand-spring: the more thou diggest and drawest thereat, the more excellent is the flow thereof.' The Tamil text matches thirukkural.net. 'Book II — Royalty' appears only as a running head; the couplet does not mention a king. Not Kural 611, which is already used.",
+    "safety_ok": true
+   },
+   {
+    "id": "gita-2-40-even-a-little",
+    "verdict": "fixed",
+    "who": "Krishna · Bhagavad Gita 2.40 (tr. Kashinath Trimbak Telang, Sacred Books of the East vol. 8, 1882; second edition, Oxford: Clarendon Press, 1908)",
+    "quote": "In this (path to final emancipation) nothing that is commenced becomes abortive; no obstacles exist; and even a little of this (form of) piety protects one from great danger.",
+    "source_url_checked": "https://archive.org/download/bhagavadgtwithsa00tela/bhagavadgtwithsa00tela_djvu.txt",
+    "meaning": "On this path no effort is ever wasted. Even a small amount of practice protects you from great fear.",
+    "problems": "The wording is exact once footnote 2 is removed. Citation fix: the title page says 'Second edition ... 1908', not 'reprint'. The Arnold lines are exact in Gutenberg #2388. Safety note: two sentences earlier (2.38) Telang prints 'prepare for battle', so do not quote the lines around this verse. The verse itself has no war content. Weak fit: it says a little practice is never lost, not that small steps add up to something big.",
+    "safety_ok": true
+   },
+   {
+    "id": "jataka-4-tiny-flame",
+    "verdict": "verified",
+    "who": "Jātaka tradition · Cullaka-seṭṭhi Jātaka, No. 4 (tr. Robert Chalmers, The Jātaka vol. 1, ed. E. B. Cowell, Cambridge University Press, 1895)",
+    "quote": "With humblest start and trifling capital / A shrewd and able man will rise to wealth, / E'en as his breath can nurse a tiny flame.",
+    "source_url_checked": "https://archive.org/download/jatakaorstorieso01cowe/jatakaorstorieso01cowe_djvu.txt",
+    "meaning": "Blow gently on a tiny spark and it grows into a fire. In the story, a poor young man picks up a dead mouse and sells it for a farthing, to feed a tavern cat. Then, with many small clever steps (giving water and molasses to flower-gatherers, clearing fallen branches, giving water to 500 grass-cutters), he turns that coin into a fortune in four months.",
+    "problems": "The verse is exact (p. 20, [123]) and the story details match. The year 1895 and translator Chalmers are on the title page. The Pali matches the SuttaCentral root ja4:1.1–1.4, where it is spelled 'Appakenapi'. Safety and fit caveats: the story is about getting rich. Some steps are sly: he bribes children with molasses, and he corners the grass supply so the horse-dealer must pay a thousand pieces. A king appears as the time setting (Brahmadatta), along with the king's garden and the king's potter. The opening frame story starts with a merchant's daughter's affair with a slave and threats of violence from her parents. Only the verse is safe to use on its own; avoid retelling the frame story. Weakest fit of the set.",
+    "safety_ok": true
+   }
+  ]
+ },
+ {
+  "key": "west",
+  "found": [
+   {
+    "id": "eu-01",
+    "who": "Hesiod · Works and Days 361–363 (tr. Hugh G. Evelyn-White, 1914)",
+    "quote": "He who adds to what he has, will keep off bright-eyed hunger; for if you add only a little to a little and do this often, soon that little will become great.",
+    "original": "εἰ γάρ κεν καὶ σμικρὸν ἐπὶ σμικρῷ καταθεῖο / καὶ θαμὰ τοῦτ᾽ ἔρδοις, τάχα κεν μέγα καὶ τὸ γένοιτο.",
+    "source_url": "https://www.gutenberg.org/files/348/348-h/348-h.htm",
+    "meaning": "Put a little on top of a little, and do it again and again. Soon the small pile becomes big. Hesiod was a Greek farmer-poet who lived about 2,700 years ago.",
+    "kind": "quote",
+    "notes": "English checked word for word in the Gutenberg Evelyn-White text. Greek checked on Perseus (Perseus%3Atext%3A1999.01.0131), lines 361–363 by Perseus numbering. In the poem this is advice about building up household stores, not about practice. Using it for practice is a fair general reading, but don't claim Hesiod meant yoga. Safe: no gods, war or royalty in the lines. Dropped: Benjamin Franklin's 'Little Strokes fell great Oaks' (The Way to Wealth, 1758, checked in Gutenberg #20203). The wording is real, but Franklin was a statesman and government leader, so it fails the no-politicians rule."
+   },
+   {
+    "id": "eu-02",
+    "who": "Zeno of Citium, reported by Diogenes Laertius · Lives of Eminent Philosophers 7.26 (tr. R. D. Hicks, 1925)",
+    "quote": "Well-being is attained by little and little, and nevertheless it is no little thing itself.",
+    "original": "τὸ εὖ γίνεσθαι μὲν παρὰ μικρόν, οὐ μὴν μικρὸν εἶναι.",
+    "source_url": "https://en.wikisource.org/wiki/Lives_of_the_Eminent_Philosophers/Book_VII",
+    "meaning": "Living well comes from many small steps, but the result is not small at all. Zeno started the Stoic school. It is named after the painted porch (stoa) in Athens where he taught.",
+    "kind": "quote",
+    "notes": "Hicks wording checked on Wikisource. Greek checked on Perseus (1999.01.0257, book 7). Diogenes himself adds '[Others attribute this to Socrates.]', so say 'Zeno, as reported by Diogenes Laertius' or 'attributed to Zeno'. Dropped: Plutarch, Life of Sertorius 16, the horse-tail story. Perrin's Loeb text is checked on LacusCurtius ('perseverance is more efficacious than violence... yield when one masters them little by little. For irresistible is the force of continuity'). It is a Roman general's lesson to his troops after a lost battle in a civil war, so it fails the no-war rule."
+   },
+   {
+    "id": "eu-03",
+    "who": "Pliny the Elder on the painter Apelles · Natural History 35.84 (Bostock & Riley ch. 35.36, tr. 1855)",
+    "quote": "It was a custom with Apelles, to which he most tenaciously adhered, never to let any day pass, however busy he might be, without exercising himself by tracing some outline or other; a practice which has now passed into a proverb.",
+    "original": "Apelli fuit alioqui perpetua consuetudo numquam tam occupatum diem agendi, ut non lineam ducendo exerceret artem, quod ab eo in proverbium venit.",
+    "source_url": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.02.0137%3Abook%3D35%3Achapter%3D36",
+    "meaning": "The most famous painter of ancient Greece practised every single day, even on busy days, by drawing at least one line. People still use the saying 'no day without a line'.",
+    "kind": "short story",
+    "notes": "English checked on Perseus. Latin checked on penelope.uchicago.edu (Thayer's Pliny 35, section 84). The slogan 'nulla dies sine linea' is the later proverb form and does not appear in Pliny's sentence, so don't put it in quotation marks as Pliny's words. Two facts to leave out for safety: Pliny died in the Vesuvius eruption (a disaster with victims), and Apelles was court painter to Alexander (royalty). This fits a daily practice almost exactly."
+   },
+   {
+    "id": "eu-04",
+    "who": "Aristotle · Nicomachean Ethics 2.1 (tr. W. D. Ross)",
+    "quote": "For the things we have to learn before we can do them, we learn by doing them, e.g. men become builders by building and lyreplayers by playing the lyre ... Thus, in one word, states of character arise out of like activities.",
+    "original": "ἃ γὰρ δεῖ μαθόντας ποιεῖν, ταῦτα ποιοῦντες μανθάνομεν, οἷον οἰκοδομοῦντες οἰκοδόμοι γίνονται καὶ κιθαρίζοντες κιθαρισταί",
+    "source_url": "https://classics.mit.edu/Aristotle/nicomachaen.2.ii.html",
+    "meaning": "You learn a thing by doing it, again and again. Builders learn by building and musicians by playing, and the things we do every day shape who we become.",
+    "kind": "quote",
+    "notes": "Checked on the MIT Internet Classics Archive (Ross). That page prints 'lyreplayers' with no hyphen at this spot, so keep it or cite another printing. Greek is Bywater's text on Perseus (1103a). Misattribution to avoid: 'We are what we repeatedly do. Excellence, then, is not an act, but a habit' is Will Durant summarising Aristotle in The Story of Philosophy (1926), not Aristotle (see Snopes, UMass Boston Quote/Unquote). Same book, 1.7, also has 'one swallow does not make a summer, nor does one day', which could be a second slide."
+   },
+   {
+    "id": "eu-05",
+    "who": "Lucretius · On the Nature of Things 1.311–324 (tr. William Ellery Leonard, 1916)",
+    "quote": "A ring upon the finger thins away / Along the under side, with years and suns; ... Lastly whatever days and nature add / Little by little, constraining things to grow / In due proportion, no gaze however keen / Of these our eyes hath watched and known.",
+    "original": "anulus in digito subter tenuatur habendo ... Postremo quae cumque dies naturaque rebus / paulatim tribuit moderatim crescere cogens, / nulla potest oculorum acies contenta tueri",
+    "source_url": "https://www.gutenberg.org/cache/epub/785/pg785.txt",
+    "meaning": "A ring on your finger gets thinner every year, but you never see it happen. Growth is the same: it comes little by little, too small to see on any one day. Lucretius' poem was almost lost, and a copy was found again in 1417.",
+    "kind": "quote",
+    "notes": "Leonard checked in Gutenberg #785. Latin checked on thelatinlibrary.com (lucretius1). This is a surprising pick and a good one for students who feel no progress on any single day. I left out the middle line 'The drippings from the eaves will scoop the stone' because it repeats the Ovid drop-hollows-stone quote already used. The wider poem argues against fear of the gods, but these lines are only about nature, so they are safe."
+   },
+   {
+    "id": "eu-06",
+    "who": "Anthony Trollope · An Autobiography, ch. 7 (1883)",
+    "quote": "A small daily task, if it be really daily, will beat the labours of a spasmodic Hercules. It is the tortoise which always catches the hare.",
+    "original": "",
+    "source_url": "https://www.gutenberg.org/cache/epub/5978/pg5978.txt",
+    "meaning": "A small job done every single day beats a huge effort done only now and then. Trollope wrote at 5:30 every morning before going to his full-time job at the Post Office.",
+    "kind": "quote",
+    "notes": "Checked in Gutenberg #5978, chapter VII. The sentence just before it is 'It has the force of the water-drop that hollows the stone', which I left out because it overlaps the Ovid quote already used. The 5:30 story is real, from chapter XV: 'It was my practice to be at my table every morning at 5.30 A.M.; and it was also my practice to allow myself no mercy.' It suits the early Mysore practice crowd. 'Hercules' is a mythic hero used as a figure of speech and mocks no religion."
+   },
+   {
+    "id": "eu-07",
+    "who": "John Wooden · Wooden on Leadership, ch. 9 'Little Things Make Big Things Happen' (with Steve Jamison, 2005)",
+    "quote": "When you derive pleasure and pride in perfecting seemingly “minor” details—and teach those you lead to do the same—big things eventually start falling into place.",
+    "original": "",
+    "source_url": "https://archive.org/download/wooden-on-leadership-how-to-create-a-winning-organizaion-john-wooden-steve-jami/Wooden%20on%20Leadership-%20How%20to%20Create%20a%20Winning%20Organizaion%20-%20John%20Wooden%2C%20Steve%20Jamison_djvu.txt",
+    "meaning": "If you enjoy getting the small details right, the big results come by themselves. At the first team meeting each season, this championship coach showed his players how to put on their socks so they would not get blisters.",
+    "kind": "quote",
+    "notes": "Checked in the archive.org OCR text of the 2005 McGraw-Hill book. That copy is a user upload; the official lending copy is archive.org/details/woodenonleadersh0000wood. The socks lines, word for word from the same chapter: 'When it came to perfecting details I worked “feet first,” from the ground up. Socks? During our first team meeting I personally showed players how to put them on correctly.' The OCR shows '|' for 'I'. Leave out the Mother Teresa line that comes just before the quote. The famous 'When you improve a little each day, eventually big things occur... Seek the small improvement one day at a time' is usually credited to Wooden: A Lifetime of Observations and Reflections On and Off the Court (1997), but I could not open that text, so treat it as unverified. A checked alternative from the 2005 book: his task was 'teaching the team how to improve a little each day'. Ch. 10 has his father's refrain 'Make each day your masterpiece.' Reserve: Dave Brailsford, BBC Sport, 8 Aug 2012: 'They're tiny things but if you clump them together it makes a big difference.' The quote is checked, but Team Sky's later doping-ethics controversy makes him a reputational risk."
+   },
+   {
+    "id": "eu-08",
+    "who": "Anne Lamott · Bird by Bird: Some Instructions on Writing and Life (1994)",
+    "quote": "...immobilized by the hugeness of the task ahead. Then my father sat down beside him, put his arm around my brother's shoulder, and said, 'Bird by bird, buddy. Just take it bird by bird.'",
+    "original": "",
+    "source_url": "https://www.penguinrandomhouse.com/books/97395/bird-by-bird-by-anne-lamott/",
+    "meaning": "When a big job feels too big, do one small piece, then the next. Her ten-year-old brother had a whole report on birds to write in one night, and their father told him to do it one bird at a time.",
+    "kind": "short story",
+    "notes": "Checked on the publisher's own page (Penguin Random House), which quotes the full opening passage: 'Thirty years ago my older brother, who was ten years old at the time, was trying to get a report on birds written that he'd had three months to write. It was due the next day...' The book is still in copyright, so keep to this short quote. The book is a well-known modern classic on writing practice, and the gentle family story suits a carousel."
+   },
+   {
+    "id": "eu-09",
+    "who": "Michael Jordan · I Can't Accept Not Trying: Michael Jordan on the Pursuit of Excellence (with Mark Vancil, 1994)",
+    "quote": "I always had the ultimate goal of being the best, but I approached everything step by step. ... I had always set short-term goals. As I look back, each one of those steps or successes led to the next one. ... Step by step, I can't see any other way of accomplishing anything.",
+    "original": "",
+    "source_url": "https://www2.bellevuecollege.edu/artshum/materials/DevEd/Roberts/Fall04/065/MichaelJordan.htm",
+    "meaning": "Jordan reached his big goal through many small goals, one after another, and each small win led to the next. In the same passage he says he set these goals after he did not make his high school's top team at 15.",
+    "kind": "quote",
+    "notes": "Checked on a Bellevue College course handout that reproduces the passage from the book. That is a secondary copy; the page's encoding drops the apostrophes ('cant', 'Thats'), which I restored. Check against a print copy before publishing if possible. The phrase 'Step by step, I can't see any other way of accomplishing anything' is widely cited to this book. Jordan's own word is 'cut from the varsity team as a sophomore'; in fact he was placed on the junior varsity team, so say 'did not make the varsity team'. He is a famous athlete with no political or war problems."
+   }
+  ],
+  "verdicts": [
+   {
+    "id": "eu-01",
+    "verdict": "verified",
+    "who": "Hesiod · Works and Days 361–363 (tr. Hugh G. Evelyn-White, 1914)",
+    "quote": "He who adds to what he has, will keep off bright-eyed hunger; for if you add only a little to a little and do this often, soon that little will become great.",
+    "source_url_checked": "https://www.gutenberg.org/files/348/348-h/348-h.htm (English, in the paragraph headed ll. 352-369); https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0131%3Acard%3D342 (Greek)",
+    "meaning": "Put a little on top of a little, and do it again and again. Soon the small pile becomes big. Hesiod was a Greek farmer-poet who lived about 2,700 years ago.",
+    "problems": "None in the wording: it matches Gutenberg #348 exactly. The Greek on Perseus matches too. Perseus numbers the lines 361 (ὃς δ᾽ ἐπ᾽ ἐόντι φέρει... αἴθοπα λιμόν), 362 (εἰ γάρ κεν καὶ σμικρὸν ἐπὶ σμικρῷ καταθεῖο) and 363 (καὶ θαμὰ τοῦτ᾽ ἔρδοις...), so 361–363 is correct. Gutenberg prints the paragraph as 'll. 352-369', so a reader checking there will see that wider range. The 'original' field gives only lines 362–363 and leaves out the line about hunger. The surrounding text has 'Give is a good girl, but Take is bad and she brings death'; keep it out. As the candidate notes say, the passage is about household savings, not practice.",
+    "safety_ok": true
+   },
+   {
+    "id": "eu-02",
+    "verdict": "verified",
+    "who": "Zeno of Citium, as reported by Diogenes Laertius · Lives of Eminent Philosophers 7.26 (tr. R. D. Hicks, 1925)",
+    "quote": "Well-being is attained by little and little, and nevertheless it is no little thing itself.",
+    "source_url_checked": "https://en.wikisource.org/wiki/Lives_of_the_Eminent_Philosophers/Book_VII (Hicks, section 26); https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0257%3Abook%3D7%3Achapter%3D1 (Greek)",
+    "meaning": "Living well comes from many small steps, but the result is not small at all. Zeno started the Stoic school. It is named after the painted porch (stoa) in Athens where he taught.",
+    "problems": "The wording is exact, and it sits in section 26 on Wikisource, so 7.26 is correct. The Greek 'τὸ εὖ γίνεσθαι μὲν παρὰ μικρόν, οὐ μὴν μικρὸν εἶναι.' matches Perseus, which adds '[οἱ δὲ Σωκράτους.]' after it. Diogenes himself says some credit this saying to Socrates, so always present it as 'reported by Diogenes Laertius' or 'attributed to Zeno', never as Zeno's own writing. The sentence just before it is about Zeno relaxing at a drinking party; leave that out. Some scholars read παρὰ μικρόν as 'hangs on small things' rather than 'little by little', but Hicks's translation is the published reading.",
+    "safety_ok": true
+   },
+   {
+    "id": "eu-03",
+    "verdict": "verified",
+    "who": "Pliny the Elder on the painter Apelles · Natural History 35.84 (Bostock & Riley, book 35 ch. 36, 1855)",
+    "quote": "It was a custom with Apelles, to which he most tenaciously adhered, never to let any day pass, however busy he might be, without exercising himself by tracing some outline or other; a practice which has now passed into a proverb.",
+    "source_url_checked": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.02.0137%3Abook%3D35%3Achapter%3D36 (English); https://penelope.uchicago.edu/Thayer/L/Roman/Texts/Pliny_the_Elder/35*.html (Latin, section 84)",
+    "meaning": "The most famous painter of ancient Greece practised every single day, even on busy days, by drawing at least one line. People still use the saying 'no day without a line'.",
+    "problems": "The English is exact on Perseus. Perseus prints a footnote marker (46) after 'proverb'; drop it. The Latin 'Apelli fuit alioqui perpetua consuetudo numquam tam occupatum diem agendi, ut non lineam ducendo exerceret artem, quod ab eo in proverbium venit.' is exact on LacusCurtius and sits in section 84. As the notes say, 'nulla dies sine linea' is the later proverb and is not Pliny's wording. Leave out Alexander (royalty) and Pliny's death at Vesuvius (a disaster). Both are left out already.",
+    "safety_ok": true
+   },
+   {
+    "id": "eu-04",
+    "verdict": "verified",
+    "who": "Aristotle · Nicomachean Ethics 2.1, 1103a32–b2 (tr. W. D. Ross)",
+    "quote": "For the things we have to learn before we can do them, we learn by doing them, e.g. men become builders by building and lyreplayers by playing the lyre ... Thus, in one word, states of character arise out of like activities.",
+    "source_url_checked": "https://classics.mit.edu/Aristotle/nicomachaen.2.ii.html (Ross); https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0053%3Abekker%20page%3D1103a (Greek)",
+    "meaning": "You learn a thing by doing it, again and again. Builders learn by building and musicians by playing, and the things we do every day shape who we become.",
+    "problems": "Both parts are exact in the MIT Ross text. 'lyreplayers' is printed with no hyphen at this spot; a few lines later the same page prints 'lyre-players'. The Greek matches Bywater on Perseus at 1103a. The ellipsis skips 'so too we become just by doing just acts...' and a part about lawgivers, which is fine. The misattribution warning is correct: 'We are what we repeatedly do...' is Will Durant (1926), not Aristotle. Never mention that Aristotle tutored Alexander (royalty).",
+    "safety_ok": true
+   },
+   {
+    "id": "eu-05",
+    "verdict": "verified",
+    "who": "Lucretius · On the Nature of Things 1.311–324 (tr. William Ellery Leonard, 1916)",
+    "quote": "A ring upon the finger thins away / Along the under side, with years and suns; ... Lastly whatever days and nature add / Little by little, constraining things to grow / In due proportion, no gaze however keen / Of these our eyes hath watched and known.",
+    "source_url_checked": "https://www.gutenberg.org/cache/epub/785/pg785.txt (Leonard); https://www.thelatinlibrary.com/lucretius/lucretius1.shtml (Latin)",
+    "meaning": "A ring on your finger gets thinner every year, but you never see it happen. Growth is the same: it comes little by little, too small to see on any one day. Lucretius' poem was almost lost, and a copy was found again in 1417.",
+    "problems": "The English is exact in Gutenberg #785. The Latin matches thelatinlibrary: 'quin etiam multis solis redeuntibus annis / anulus in digito subter tenuatur habendo' is 1.311–312, and 'Postremo quae cumque dies naturaque rebus / paulatim tribuit moderatim crescere cogens, / nulla potest oculorum acies contenta tueri' is 1.322–324. The ellipsis leaves out the line about drips scooping the stone (which overlaps the Ovid quote already used), the ploughshare, the worn roads and the bronze statues. The 1417 rediscovery is correct: Poggio Bracciolini found it. The wider poem attacks religion, so frame it only as a poem about nature.",
+    "safety_ok": true
+   },
+   {
+    "id": "eu-06",
+    "verdict": "verified",
+    "who": "Anthony Trollope · An Autobiography, ch. 7 (1883)",
+    "quote": "A small daily task, if it be really daily, will beat the labours of a spasmodic Hercules. It is the tortoise which always catches the hare.",
+    "source_url_checked": "https://www.gutenberg.org/cache/epub/5978/pg5978.txt (chapter VII, and the 5.30 line in chapter XV)",
+    "meaning": "A small job done every single day beats a huge effort done only now and then. For years Trollope sat down to write at 5:30 every morning and finished before breakfast, while also holding a full-time job at the Post Office.",
+    "problems": "The wording is exact in chapter VII of Gutenberg #5978. The line before it ('the water-drop that hollows the stone') is rightly left out. The 5.30 line is exact in chapter XV. That chapter covers his Waltham Cross years (1859–1871), and he left the Post Office in 1867, so the job overlap is only part of that period. I adjusted the meaning to match. Small flag: Trollope once ran for Parliament (1868) and lost, but he was never an office-holder and is known as a novelist, so the no-politicians rule is not broken. 'Hercules' is used as a figure of speech for a mythic hero and mocks no religion.",
+    "safety_ok": true
+   },
+   {
+    "id": "eu-07",
+    "verdict": "fixed",
+    "who": "John Wooden · Wooden on Leadership, ch. 9 'Little Things Make Big Things Happen' (with Steve Jamison, McGraw-Hill, 2005)",
+    "quote": "When you derive pleasure and pride in perfecting seemingly “minor” details—and teach those you lead to do the same—big things eventually start falling into place.",
+    "source_url_checked": "https://archive.org/download/wooden-on-leadership-how-to-create-a-winning-organizaion-john-wooden-steve-jami/Wooden%20on%20Leadership-%20How%20to%20Create%20a%20Winning%20Organizaion%20-%20John%20Wooden%2C%20Steve%20Jamison_djvu.txt",
+    "meaning": "If you enjoy getting the small details right, the big results come by themselves. At his first team meeting, this championship coach showed his players how to put on their socks so they would not get blisters.",
+    "problems": "The quote is exact; only the meaning text was fixed. The book says 'During our first team meeting', not 'each season', so I removed 'each season'. Blisters are in the book ('sweat socks, put on correctly, reduce the chance of blisters'). The table of contents confirms this is chapter 9 (p. 135), with chapter 10 'Make Each Day Your Masterpiece'. The quote sits in a sidebar headed 'HER PERSPECTIVE IS CORRECT', right after a Mother Teresa line. Leave that out: she is a religious figure. Optional alternative, verified word for word in the same chapter opening: 'they must first learn there are no big things, only a logical accumulation of little things done at a very high standard of performance.' It fits the theme of big things from little things even better. Also verified: 'teaching the team how to improve a little each day'. The popular 1997 line 'When you improve a little each day, eventually big things occur' is still not verified.",
+    "safety_ok": true
+   },
+   {
+    "id": "eu-08",
+    "verdict": "fixed",
+    "who": "Anne Lamott · Bird by Bird: Some Instructions on Writing and Life (Pantheon, 1994)",
+    "quote": "...immobilized by the hugeness of the task ahead. Then my father sat down beside him, put his arm around my brother's shoulder, and said, 'Bird by bird, buddy. Just take it bird by bird.'",
+    "source_url_checked": "https://www.penguinrandomhouse.com/books/97395/bird-by-bird-by-anne-lamott/",
+    "meaning": "When a big job feels too big, do one small piece, then the next. Her ten-year-old brother had put off a report on birds for three months and it was due the next day. Their father told him to do it one bird at a time.",
+    "problems": "The quote is exact on the publisher's own page. Only the meaning text was fixed: the old version said he had the report 'to write in one night', but the source says he had had three months and it was due the next day. The book is still in copyright, so keep to this short extract. Small flag: Lamott comments on politics and religion elsewhere, but she is not a politician, and this passage has none of that.",
+    "safety_ok": true
+   },
+   {
+    "id": "eu-09",
+    "verdict": "verified",
+    "who": "Michael Jordan · I Can't Accept Not Trying: Michael Jordan on the Pursuit of Excellence (with Mark Vancil, HarperSanFrancisco, 1994), chapter 'Goals'",
+    "quote": "I always had the ultimate goal of being the best, but I approached everything step by step. ... I had always set short-term goals. As I look back, each one of those steps or successes led to the next one. ... Step by step, I can't see any other way of accomplishing anything.",
+    "source_url_checked": "https://www2.bellevuecollege.edu/artshum/materials/DevEd/Roberts/Fall04/065/MichaelJordan.htm; http://justdreams30.blogspot.com/2011/10/michael-jordan-i-cant-accept-not-trying.html; https://nrcgt.uconn.edu/underachievement_study/self-efficacy/se_jordan/",
+    "meaning": "Jordan reached his big goal through many small goals, one after another, and each small win led to the next. In the same passage he says he set these goals after he did not make his high school's varsity team at 15.",
+    "problems": "I could not open the book itself: both archive.org copies (icantacceptnottr00jord, lccn_0065211904) are restricted and the text download returned 401. Two separate secondary copies, the Bellevue handout and a blog that copies the 'GOALS' chapter, agree on the quoted sentences, with only small differences elsewhere. The blog prints 'Step by step. I can't see any other way of accomplishing anything.' as the chapter's opening line, with a full stop instead of a comma. A third copy (University of Connecticut NRCGT page) gives a shorter, different version: 'I approach everything step by step….' and 'each one of the steps or successes'. So check a print copy before publishing, and if one sentence must stand alone, use 'Step by step, I can't see any other way of accomplishing anything.' The passage also mentions advice to go to the Air Force Academy (military); keep it out. As the notes say, he was placed on the junior varsity team rather than cut outright, so 'did not make the varsity team' is the safe wording. Archive.org metadata confirms the 1994 date.",
+    "safety_ok": true
+   }
+  ]
+ }
+]
