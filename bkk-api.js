@@ -999,6 +999,44 @@ setTimeout(function(){location.replace('/book?me=1')},600)` : ''}</script></body
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // One look at whether the profile work is being done (Boonchu, 3 Oct): who is
+  // in the system, who got a link and opened it, photos and notes today.
+  app.get('/api/bkk/admin/progress', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const today = `(now() AT TIME ZONE 'Asia/Bangkok')::date`;
+      const one = async (sql) => (await q(sql)).rows[0];
+      const [members, links, photos, notes] = await Promise.all([
+        one(`SELECT count(*)::int AS total,
+               count(*) FILTER (WHERE email IS NOT NULL)::int AS with_email,
+               count(*) FILTER (WHERE EXISTS (SELECT 1 FROM bkk_passes p WHERE p.member_id = m.id AND p.status = 'active'
+                 AND (p.valid_until IS NULL OR p.valid_until >= ${today})))::int AS active
+             FROM bkk_members m`),
+        one(`SELECT count(DISTINCT member_id) FILTER (WHERE ip = 'staff')::int AS sent,
+               count(DISTINCT member_id) FILTER (WHERE used_at IS NOT NULL)::int AS opened,
+               count(*) FILTER (WHERE ip = 'staff' AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = ${today})::int AS sent_today
+             FROM bkk_login_tokens`),
+        one(`SELECT count(*) FILTER (WHERE p.class_date = ${today})::int AS today,
+               count(*) FILTER (WHERE p.class_date = ${today}
+                 AND NOT EXISTS (SELECT 1 FROM bkk_photo_members pm WHERE pm.photo_id = p.id))::int AS untagged_today,
+               (SELECT count(DISTINCT pm.member_id) FROM bkk_photo_members pm JOIN bkk_photos x ON x.id = pm.photo_id
+                 WHERE x.class_date = ${today})::int AS students_today,
+               count(*)::int AS total,
+               (SELECT count(DISTINCT member_id) FROM bkk_photo_members)::int AS students_total
+             FROM bkk_photos p`),
+        one(`SELECT count(*) FILTER (WHERE (created_at AT TIME ZONE 'Asia/Bangkok')::date = ${today})::int AS today,
+               count(*)::int AS total FROM bkk_notes`),
+      ]);
+      const byTeacher = (await q(
+        `SELECT t.name, count(*)::int AS n FROM bkk_notes n JOIN bkk_teachers t ON t.id = n.teacher_id
+         WHERE (n.created_at AT TIME ZONE 'Asia/Bangkok')::date = ${today} GROUP BY t.name ORDER BY n DESC`)).rows;
+      const uploaders = (await q(
+        `SELECT t.name, count(*)::int AS n FROM bkk_photos p JOIN bkk_teachers t ON t.id = p.uploaded_by
+         WHERE p.class_date = ${today} GROUP BY t.name ORDER BY n DESC`)).rows;
+      res.json({ members, links, photos, notes: { ...notes, byTeacher }, uploaders });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   app.get('/api/bkk/admin/today', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     try {

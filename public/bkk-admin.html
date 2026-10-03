@@ -86,6 +86,10 @@
       title: 'AYBKK Bangkok Admin', passcode: 'passcode', enter: 'Enter', wrongPass: 'wrong passcode', lock: 'Lock',
       tabToday: 'Today', tabStudents: 'Students', tabClasses: 'Classes', tabOrders: 'Payments', tabSettings: 'Settings',
       failed: 'failed',
+      progTitle: 'Progress today', progStudents: 'Students in the system', progActive: n => `${n} with an active pass`,
+      progEmail: 'Have an email', progLinks: 'Profile links sent', progToday: n => `${n} today`, progOpened: 'Opened their profile',
+      progPhotos: 'Photos added today', progStudentsIn: n => `${n} students in them`, progUntagged: 'Photos with nobody tagged',
+      progNotes: 'Teacher notes today', progAll: (ph, st, no) => `All time: ${ph} photos for ${st} students, ${no} notes.`,
       linkBtn: 'Sign-in link', linkCopied: 'Copied. Paste it into their LINE, WhatsApp or WeChat.', linkCopyHand: 'Copy this and send it to them:',
       impTitle: 'Move students from Rezerv', impBtn: 'Import',
       impHelp: 'One student per line: name | email | plan | end date | classes left (packs only). Email can be empty now and added later by importing the same line again with the email. Safe to run twice: nobody and no pass is added twice.',
@@ -159,6 +163,10 @@
       title: 'AYBKK ระบบหลังบ้าน', passcode: 'รหัสผ่าน', enter: 'เข้าสู่ระบบ', wrongPass: 'รหัสผ่านไม่ถูกต้อง', lock: 'ล็อก',
       tabToday: 'วันนี้', tabStudents: 'นักเรียน', tabClasses: 'คลาส', tabOrders: 'การชำระเงิน', tabSettings: 'ตั้งค่า',
       failed: 'ทำไม่สำเร็จ',
+      progTitle: 'ความคืบหน้าวันนี้', progStudents: 'นักเรียนในระบบ', progActive: n => `มีบัตรใช้งาน ${n} คน`,
+      progEmail: 'มีอีเมลแล้ว', progLinks: 'ส่งลิงก์โปรไฟล์แล้ว', progToday: n => `วันนี้ ${n}`, progOpened: 'เปิดโปรไฟล์แล้ว',
+      progPhotos: 'รูปที่ใส่วันนี้', progStudentsIn: n => `มีนักเรียน ${n} คนในรูป`, progUntagged: 'รูปที่ยังไม่แตะชื่อ',
+      progNotes: 'คำแนะนำครูวันนี้', progAll: (ph, st, no) => `ทั้งหมด: รูป ${ph} รูป ของนักเรียน ${st} คน คำแนะนำ ${no} รายการ`,
       linkBtn: 'ลิงก์เข้าโปรไฟล์', linkCopied: 'คัดลอกแล้ว วางในไลน์ WhatsApp หรือ WeChat ของนักเรียนได้เลย', linkCopyHand: 'คัดลอกข้อความนี้แล้วส่งให้นักเรียน:',
       impTitle: 'ย้ายนักเรียนจาก Rezerv', impBtn: 'นำเข้า',
       impHelp: 'บรรทัดละหนึ่งคน: ชื่อ | อีเมล | แพ็กเกจ | วันหมดอายุ | ครั้งที่เหลือ (เฉพาะแพ็กครั้ง) อีเมลเว้นว่างไว้ก่อนได้ แล้วนำเข้าบรรทัดเดิมพร้อมอีเมลภายหลัง กดซ้ำได้ ไม่มีชื่อหรือบัตรซ้ำ',
@@ -494,8 +502,26 @@
     if (await shout(r)) renderClasses();
   };
 
+  async function progressBox() {
+    const p = await api('/api/bkk/admin/progress').then(r => r.json()).catch(() => null);
+    if (!p || p.error) return '';
+    const row = (label, val, warn) => `<tr><td>${label}</td><td style="text-align:right"><b${warn ? ' style="color:#c33"' : ''}>${val}</b></td></tr>`;
+    const who = list => list.length ? ' · ' + list.map(x => `${esc(x.name)} ${x.n}`).join(', ') : '';
+    return `<div class="box"><b>${T('progTitle')}</b>
+      <table>
+        ${row(T('progStudents'), `${p.members.total} <span class="muted">(${T('progActive', p.members.active)})</span>`)}
+        ${row(T('progEmail'), `${p.members.with_email} / ${p.members.total}`)}
+        ${row(T('progLinks'), `${p.links.sent} <span class="muted">(${T('progToday', p.links.sent_today)})</span>`)}
+        ${row(T('progOpened'), `${p.links.opened} / ${p.links.sent}`)}
+        ${row(T('progPhotos') + `<span class="muted">${who(p.uploaders)}</span>`, `${p.photos.today} <span class="muted">(${T('progStudentsIn', p.photos.students_today)})</span>`)}
+        ${row(T('progUntagged'), p.photos.untagged_today, p.photos.untagged_today > 0)}
+        ${row(T('progNotes') + `<span class="muted">${who(p.notes.byTeacher)}</span>`, p.notes.today)}
+      </table>
+      <p class="muted">${T('progAll', p.photos.total, p.photos.students_total, p.notes.total)}</p></div>`;
+  }
+
   async function renderToday() {
-    const d = await api('/api/bkk/admin/today').then(r => r.json());
+    const [d, prog] = await Promise.all([api('/api/bkk/admin/today').then(r => r.json()), progressBox()]);
     const rows = (d.bookings || []);
     const money = (d.money || []);
     const moneyBox = `<div class="box"><b>${T('moneyToday')}</b>
@@ -504,7 +530,7 @@
         <p class="muted">${T('countDrawer')}</p>`
       : `<p class="muted">${T('noSales')}</p>`}</div>`;
     if (!rows.length) {
-      $('#view').innerHTML = moneyBox + `<div class="box"><b>${T('today')}</b><p class="muted">${T('noBookings')}</p></div>`;
+      $('#view').innerHTML = prog + moneyBox + `<div class="box"><b>${T('today')}</b><p class="muted">${T('noBookings')}</p></div>`;
       return;
     }
     const byClass = {};
@@ -524,7 +550,7 @@
           <td>${b.checked_in_at ? `<span class="in">${T('checkedIn')}</span>` : `<span class="muted">${T('notYet')}</span>`}</td>
         </tr>`).join('')}</table></div>`;
     }).join('');
-    $('#view').innerHTML = moneyBox + blocks;
+    $('#view').innerHTML = prog + moneyBox + blocks;
   }
 
   async function renderOrders() {
