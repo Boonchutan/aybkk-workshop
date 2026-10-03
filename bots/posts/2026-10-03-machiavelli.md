@@ -5,3 +5,4 @@ Plato asks Boonchu for his own Marichyasana D cue (Stuck in Primary Ep. 1), in â
 Reel from Plato: Dhruva stands still on one leg and becomes the Pole Star. Asana: Utthita Hasta Padangusthasana. Hook: "NASA's new telescope can hold a laser on a coin 240 km away. But a 5-year-old boy did it first."
 Score: wins this week: none reported. 180K leads pasted: 0 in 6 days. No reminders due.
 Carne and Plato both posted today. Inbox 07:08: 3 new, 1 hot.
+13:08 check-in: Mysore Reel yes still waiting (deadline Sun 4 Oct, 1 day). Course prices still waiting (4 days). Inbox: 2 new, 0 need a reply.
