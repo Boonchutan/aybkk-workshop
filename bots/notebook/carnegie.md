@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-02T23:38:36.851Z
+Inbox last read: 2026-10-03T23:37:59.384Z
 
 ## Standing orders from Boonchu
 - 2026-09-30 (Boonchu, via Machi): SHALA RENEWALS AND PRICE RULES. One public price for everyone. Last year's promotions were public and fair; they simply end at each student's renewal. Never call them secret deals. Renewal messages: warm first, then the win/loss line. Drafts only, Boonchu sends. Student names and end dates never go into plain notebook files.
