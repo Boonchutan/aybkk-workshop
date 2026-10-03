@@ -59,6 +59,7 @@
 - 2026-10-03: NO AI WORDS (Boonchu): never write 'voices' for quotes or people ('10 voices on...' sounds like AI). Say it plain: '10 quotes on...'.
 
 - 2026-10-02: EPISODE NUMBERS (Boonchu): count only episodes he actually POSTED. Last posted = Ep. 3 Ashtavakra (Sharathji). The fear/plover Reel is Ep. 4. Daily-run scripts he has not filmed (Kumbhaka, Arjuna, Hanuman/Surasa) get no number until he films them; number each new script as last posted + 1.
+- 2026-10-03: Ep. 4 'The Bird Who Fought the Sea' (Tittibhasana) is POSTED (Boonchu). Last posted = Ep. 4. The Foolish Old Man / Supta Kurmasana script = Ep. 5 (bots/posts/2026-10-03-plato-chat-ep5-foolish-old-man.md).
 - 2026-10-02: ROUTE COUNT (Boonchu): carousels count in the Lane mix. The last 7 IG carousels were all beginner (Lane B) posts, so a Lane A Reel is on route. Check ALL recent IG posts (Postiz list), not only Reels, before pushing back.
 
 - 2026-10-02: SPOKEN = HIS ENGLISH (Boonchu, replaces 'grammar fixed'): Plato drafts, but every line he SPEAKS must be in his own spoken English, not written English. Short, present tense, simple: 'it create fear', 'my wife and I, we race home', 'Mama bird say', 'okay', 'no no', '...' pauses. Keep his own words when he gives them. Do not make it sound polished. Do not overdo it into a joke either. Written text (IG caption, cover, cards) stays correct English.

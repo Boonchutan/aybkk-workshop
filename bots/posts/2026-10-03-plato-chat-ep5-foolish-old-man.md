@@ -1,7 +1,7 @@
 # Hidden Stories of Ashtanga, Ep. 5: The Mountain Does Not Grow
 
 Lane A · last 3 posts: B B B (Small Steps, Learn by Doing B5, B4) · next due: a Lane B fear buster after this (Day 1 to Day 30 starts 13 Oct).
-Ep. 5. Ep. 4 (Tittibhasana) is already edited with "Ep. 4" on screen, so it must go up first.
+Ep. 5. Ep. 4 (the bird, Tittibhasana) is POSTED (Boonchu, 3 Oct).
 
 Toolkit pick: Vibe Samurai + Curiosity Amplifier (contrast: the wise man laughs, the "foolish" man wins).
 Why: your idea is already a ladder of 3 (China, India, your shala), and Vibe Samurai is built on a ladder of 3. Not used since 29 Sep.
