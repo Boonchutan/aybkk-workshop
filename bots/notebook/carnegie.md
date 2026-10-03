@@ -33,4 +33,5 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-02: Lead table still empty. Inbox not readable (server 503). No requests in team chat.
 - 2026-10-02 (Machi): INBOX LIVE for LINE. INBOX_KEY and LINE webhook set, test message from Boonchu arrived. Instagram and Facebook not connected yet (needs a Meta app).
 - 2026-10-02 (chat): Research run on 180K buyer voice (6 questions, 4 researchers). Findings in Research. Plan for Plato not yet approved.
+- 2026-10-03 (chat): Plan "Letter from the Shala": weekly WeChat OA (boonchuaybkk) article + own WeChat groups + Telegram RU; LINE stays Lane B. Letter #1 draft: posts/2026-10-03-carnegie-letter-01-draft.md (needs Boonchu moment + Mari D cue). Lists: 10 WeChat groups (35-70 each), WeChat Channel 5,000, Telegram 3 groups (150), LINE OA 1,070+.
 - 2026-10-03: Lead table still empty. Inbox read OK: 3 LINE threads, 0 about 180K. No requests in team chat.
