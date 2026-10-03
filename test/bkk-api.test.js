@@ -146,7 +146,8 @@ const ok = (name, cond, extra = '') => {
   // Re-read the schedule: the capacity test above deliberately filled a class,
   // and booking into a full one would fail for the wrong reason. Pick a day that
   // still has three seats going, so the only thing under test is the daily cap.
-  const fresh = (await J('/api/bkk/schedule?days=14')).body.classes.filter(c => c.seatsLeft > 0);
+  // 28 days: only Saturdays have 3 classes, and a Saturday can be a moon day.
+  const fresh = (await J('/api/bkk/schedule?days=28')).body.classes.filter(c => c.seatsLeft > 0);
   const byDate = {};
   for (const c of fresh) (byDate[c.date] = byDate[c.date] || []).push(c);
   const capDay = Object.values(byDate).find(list => list.length >= 3);
@@ -488,6 +489,13 @@ const ok = (name, cond, extra = '') => {
   ok("a student cannot take another profile's email",
      (await post(`/api/bkk/me/${(await J('/api/bkk/admin/members?q=imp pack', { headers: ADMIN })).body.members[0].code}/email`,
        { email: 'imp.one@example.com' })).status === 409);
+
+  const prog = await J('/api/bkk/admin/progress', { headers: ADMIN });
+  ok('progress shows students, links opened and today\'s photos/notes',
+     prog.status === 200 && prog.body.members.total > 0 && prog.body.links.sent >= 1 && prog.body.links.opened >= 1
+       && typeof prog.body.photos.untagged_today === 'number' && typeof prog.body.notes.today === 'number',
+     JSON.stringify(prog.body).slice(0, 200));
+  ok('progress needs the staff key', (await J('/api/bkk/admin/progress')).status === 401);
 
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');
