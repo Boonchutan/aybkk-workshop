@@ -3,61 +3,61 @@
 Lane A · last 3 posts: B B B (Small Steps, Learn by Doing B5, B4) · next due: a Lane B fear buster after this (Day 1 to Day 30 starts 13 Oct).
 Ep. 5. Ep. 4 (the bird, Tittibhasana) is POSTED (Boonchu, 3 Oct).
 
-Toolkit pick: Vibe Samurai + Curiosity Amplifier (contrast: the wise man laughs, the "foolish" man wins).
-Why: your idea is already a ladder of 3 (China, India, your shala), and Vibe Samurai is built on a ladder of 3. Not used since 29 Sep.
+Toolkit pick: Name-the-Feeling + Vibe Samurai.
+Why: the hook names the voice every viewer hears (too old, too stiff, too late); the ladder of 3 (China, India, your shala) gives one mirror line per story; the turn shows the voice is in your head, then your technique and the 8-year lady as proof.
 Other options: B) Five-Lever Hook (stakes) + Root and Wobble ("Almost 90 years old. Two mountains. One basket."). C) Fork-First, the 8-year lady first.
 
-## SCRIPT (spoken = your English, under 90 s)
+## SCRIPT (spoken = your English, about 80 s; MIRROR RULE: every beat says 'that's me')
 
-**HOOK**
-Almost 90 years old, he want to move two mountains.
-With a basket.
+**HOOK** (on screen the whole video: HIDDEN STORIES OF ASHTANGA, teal "EP. 5")
+Too old. Too stiff. Too late.
+You hear this voice every morning.
 
 **SOURCE**
-The Foolish Old Man, from Liezi, an old Chinese book.
-Tonight's bedtime story.
+In an old Chinese book, Liezi, there is a story.
 
 **LADDER 1: CHINA** (bedtime voice)
-Long, long time ago, two big mountains block an old man's way.
+Long time ago, an old man, almost 90.
+Two big mountains block his way.
 So he dig. His sons dig. His grandsons dig.
 One basket at a time.
-One trip to the sea and back... about one year.
-A man called the Wise Old Man laugh at him.
-"You are too old!"
+To the sea and back... about one year.
+The Wise Old Man laugh at him: too old, too weak.
 The old man say:
 "When I die, my son keep going. Then his son.
-The mountain... it does not grow.
-So why I worry?"
-The god of the sky send two strong gods.
-They carry the mountains away.
+The mountain... it does not grow. So why I worry?"
+(mirror) Like you. One basket every morning. The mountain look the same.
 
 **LADDER 2: INDIA**
-India also have a mountain story. In the Mahabharata.
-The gods want amrita, the drink to live forever.
-They stir the ocean with a mountain, like making butter.
-A big tortoise hold the mountain on his back.
-Round and round, for a long, long time.
-Little by little, the sea turn to butter.
-The tortoise just hold. Steady.
+India have one too. In the Mahabharata.
+The gods stir the ocean with a mountain, to make amrita, the magic drink.
+A tortoise hold the mountain on his back.
+Round and round. Little by little.
+But still... no amrita.
+The gods say: no more strength.
+(mirror) You know this feeling.
+The god Vishnu give them strength.
+The tortoise just hold.
 At last, the amrita come up.
 
-**LADDER 3: MY SHALA** (normal voice, to the adults)
+**LADDER 3: MY SHALA** (normal voice)
 Tortoise, in Sanskrit, is kurma.
-Same name: Supta Kurmasana.
-Everybody have tight hamstrings. Everybody.
-They try to control the legs.
-They round the back, to get the legs around.
-They put the legs too far, over the head.
+Supta Kurmasana: the sleeping tortoise.
+Everybody have tight hamstrings.
+(mirror) So you control the legs.
+You round the back.
+You put the legs too far, over the head.
 Supta Kurmasana... it take 2 years.
-But one older lady, 8 years with me.
+(mirror) Too old? One older lady, 8 years with me.
 Few months ago... Dwi Pada Sirsasana. Both legs behind the head.
 (1 s silence, her photo)
 
 **TURN**
-It's not the hamstrings. It's the technique.
+The Wise Old Man? He live in your head.
+He say: too old, too stiff.
+Everybody tight. Not everybody know the technique.
 Bend the knees. Keep the foot close to your neck.
-Like the tortoise. Keep it close.
-Every morning. For years.
+With a teacher. Every morning. For years.
 
 **LINE** (screenshot card)
 The mountain does not grow. You do.
@@ -66,14 +66,15 @@ The mountain does not grow. You do.
 One basket at a time.
 In my shala, we call that practice.
 
+
 ## DELIVERY
 One take, straight to camera. Bedtime voice for China and India, normal voice from "Tortoise, in Sanskrit". Picture: the body. Under Ladder 3, show a student (or you) doing the 3 mistakes. Under the TURN, show the fix. Her Dwi Pada photo on the 1 s silence.
 Photos OK, names never: no name on screen, no tag, no @, no name in alt text. Same for the demo student.
 
 ## EDIT CUE SHEET (house style)
 - Header pill, whole video, top center: "Hidden Stories of Ashtanga · Ep. 5".
-- Zoom punch about 1 s + SFX at 40%, 0.4 s after the word: basket, one year, laugh, does not grow, tortoise, butter, Everybody, 2 years, 8 years, Dwi Pada, technique, close. Keep total under 90 s: if over, cut pauses tighter or speed 1.25x, never cut her 1 s silence.
-- Ladder 3 card (plum, gold title "SUPTA KURMASANA"), one row each time he says it: ❌ control the legs · ❌ round the back · ❌ legs too far over the head. In the TURN add: ✅ bend the knees, foot close to the neck.
+- Zoom punch about 1 s + SFX at 40%, 0.4 s after the word: Too late, basket, one year, too weak, does not grow, no amrita, tortoise, legs too far, 2 years, Too old?, Dwi Pada, in your head, technique. Keep total under 90 s: if over, cut pauses tighter or speed 1.25x, never cut her 1 s silence.
+- Ladder 3 card (plum, gold title "SUPTA KURMASANA"), one row each time he says it: ❌ control the legs · ❌ round the back · ❌ legs too far over the head. In the TURN add: ✅ bend the knees, foot close to the neck. Hook card: "TOO OLD. TOO STIFF. TOO LATE." (gold: LATE); bring the same card back on "He live in your head".
 - Her photo on the silence: never cut her head. Fit the whole photo.
 - LINE card: plum, Gloock, "The mountain does not grow. You do." with "You do." in gold.
 - Captions: Weight Shift, with emoji (⛰️ mountain, 🧺 basket, 🐢 tortoise, 🧈 butter, 🦵 hamstrings).
@@ -87,9 +88,10 @@ Photos OK, names never: no name on screen, no tag, no @, no name in alt text. Sa
 6. stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, felt and wool puppets with glassy bead eyes, painted cardboard sky, cotton-wool clouds on visible wires, cut-felt waves, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections. A small white clay pot rises out of soft butter-yellow felt waves, glowing gold, lifted by a carved wooden hand. Plum and teal tones, gold glow, no faces of gods, no text.
 
 ## CAPTION (written English)
-An old man tried to move two mountains with a basket.
+Too old. Too stiff. Too late. You hear this voice too.
 Hidden Stories of Ashtanga, Ep. 5: The Mountain Does Not Grow.
-Supta Kurmasana: everyone has tight hamstrings. Bend the knees and keep the foot close to your neck.
+In an old Chinese story, that voice has a name: the Wise Old Man.
+Supta Kurmasana: everyone has tight hamstrings. Bend the knees and keep the foot close to your neck, with a teacher.
 One older lady got Dwi Pada Sirsasana a few months ago, after 8 years with me.
 The mountain does not grow. You do.
 
@@ -106,5 +108,5 @@ His face, plum gradient from the bottom third. Top: white letterspaced "HIDDEN S
 - Mahabharata, Adi Parva, Astika Parva, sec. 18, tr. K. M. Ganguli: "O Tortoise-king, thou wilt have to hold the mountain on thy back!"; "By degrees, the milky water ... turned into clarified butter ... But nectar did not appear even then."; Dhanwantari with the white vessel of nectar. In the Mahabharata it is the king of tortoises, not said to be Vishnu. "The mountain need something to stand on" and the name Akupara come from the Sanskrit critical edition 1.16.10 (GRETIL: kūrmarājānam akūpāraṃ ... girer adhiṣṭhānam asya bhavān bhavitum arhati). Left out on purpose: the gods get tired and Narayana gives them strength (sec. 18), to avoid a third "a god saves them" ending after Ep. 4.
 - Kurma = tortoise (Monier-Williams). Kurmasana: Primary (Yoga Mala no. 22); Supta Kurmasana is the state of its 9th vinyasa. Dwi Pada Sirsasana: Intermediate (repo ashtanga-graph.js). "Same name", never "named after".
 - Student facts: Boonchu, 3 Oct chat: tight hamstrings; the 3 mistakes; the fix; 2 years; an older lady got Dwi Pada a few months ago after 8 years with him; photo OK, no name.
-- Left out: Mao and every political reading; the little neighbour boy, walking around the mountain, the Wise Old Man having no answer, the gods getting tired (all for time, under 90 s); the giant turtles in the same Liezi chapter (time); crushed sea animals, forest fire, Mohini, Rahu, the battle; Garuda.
+- Left out: Mao and every political reading; the little neighbour boy, walking around the mountain, the Wise Old Man having no answer, the gods carrying the mountains away (time; the script never says he moved them himself, and the caption must not either); the giant turtles in the same Liezi chapter (time); crushed sea animals, forest fire, Mohini, Rahu, the battle; Garuda.
 - China version later: never political, no wordplay on 愚公移山, god = 天帝, practice = 练习.
