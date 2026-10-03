@@ -6,3 +6,4 @@ Reel from Plato: Dhruva stands still on one leg and becomes the Pole Star. Asana
 Score: wins this week: none reported. 180K leads pasted: 0 in 6 days. No reminders due.
 Carne and Plato both posted today. Inbox 07:08: 3 new, 1 hot.
 13:08 check-in: Mysore Reel yes still waiting (deadline Sun 4 Oct, 1 day). Course prices still waiting (4 days). Inbox: 2 new, 0 need a reply.
+19:08 check-in: no win reported. Next step given: paste one 180K DM in team chat. Mysore Reel and course prices not repeated (nagged twice today). Inbox: 3 new, 0 need a reply.
