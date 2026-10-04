@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-10-04: OBSIDIAN SYNC LAG: the vault lives in Drive under 'My MacBook Pro > Documents > 1st obsidian vault'. A note Plato makes in Drive shows up in Obsidian only after his MacBook syncs, so it can take a while. If he can't see it: the Mac must be on and Google Drive running. (Letter 01 showed up after a short wait.)
 - 2026-10-04: LETTER HOME IN OBSIDIAN: vault '1st obsidian vault' > folder 'Boonchu Newsletter Monday' (Drive folder id 1uZJm3IXLNDuJNol5giJcok80uuesuUlq). One note per letter: 'Letter NN · <subject>.md' with all 4 languages + the line to type under the photo. The Drive connector cannot edit files: for changes, give Boonchu the full updated note in chat.
 - 2026-10-04: LETTER #1 SEND DATE (Boonchu): Monday 5 Oct 2026. Letter #2 'Am I flexible enough?' Monday 12 Oct. Chinese (WeChat) and Russian (Telegram) go out only after a native reader checks them; if none by send time, LINE (Thai + English) goes first.
 - 2026-10-04: LETTER FORMAT (Boonchu): the weekly letter goes out on MONDAY (it gets people to practice). Boonchu handwrites it in his notebook with a fountain pen, takes a photo, and posts the photo with the typed text. So the handwritten letter carries no channel offer: the channel P.S. (LINE promo / WeChat and Telegram reply ask) is typed under the photo. His own P.S. style: human, a little funny ('we are all growing old... I wish we could say we are growing young').
