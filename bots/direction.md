@@ -48,16 +48,16 @@ Master comparison line: **"Walking covers 2 of the 10. One Ashtanga morning cove
 **One practice vs four** (carousel / Reel / website):
 | | Walk/run | Gym | Pilates | Ashtanga |
 |---|---|---|---|---|
-| Strength | - | yes | some | yes |
+| Strength | lower body only | yes | some | yes |
 | Heart and lungs | yes | some | - | yes |
 | Mobility | - | - | yes | yes |
-| Balance and core | - | some | yes | yes |
+| Balance and core | lower body only | some | yes | yes |
 | Breath and calm | some | - | some | yes |
 | Better sleep | some | - | - | yes |
 | A teacher who notices you | - | - | some | yes |
-| Same people every day | some | - | - | yes |
+| Daily friends | some | - | - | yes |
 | Tradition and meaning | - | - | - | yes |
-| Habit system, same time daily | - | - | - | yes |
+| A habit that sticks | some, for strict people | - | - | yes |
 Line: "To cover these 10, most people need a run, a gym, a Pilates class and a meditation app. Or one morning."
 
 **"It's harder": flip it, never hide it.** "Easy things don't change you." / "Hard for 2 weeks. After that, the hard part is not coming." Always pair with: "We teach you from the very start."
