@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-03T12:09:37.490Z
+Inbox last read: 2026-10-04T00:09:33.236Z
 
 ## Standing orders from Boonchu
 - 2026-09-29: Content work (Reels, carousels, captions, Postiz posts) goes to Plato's own chat: "✍️ Plato · AYBKK content chat" (session_01EpfSiAFErEs2e4MYfzK1F9). Machi chat stays for money, leads, strategy and team orders.
@@ -39,6 +39,7 @@ Inbox last read: 2026-10-03T12:09:37.490Z
 - 2026-09-30: Brand = welcoming. Tagline "Traditional Ashtanga. Open door." on site branch claude/aybkk-net-shopwindow (commit ae5626c2, not live). Next: change what Google shows (Google Business Profile description, aybkk.org and aybkk.com page text, Mindbody/Yogatrail listings, beginner Google reviews).
 
 ## Log
+- 2026-10-04 07:08: Both bots posted. No new @Machi requests (Mari D cue still open). Inbox: 0 new. Nagged Mysore Reel (due 19:00 today, default B = Wed 7 Oct) and course prices (Wed 7 Oct, 3 days), 1st time today each. No wins, no leads (0 in 7 days), no reminders.
 - 2026-10-03 19:08: Inbox: 3 new, 0 need a reply (a promo, a follow-up note, a class count). No win, no reminders. Mysore Reel and course prices already nagged twice today, not repeated. Next step given: paste one 180K DM in team chat (leads 0 in 6 days).
 - 2026-10-03 13:08: Inbox: 2 new, 0 need a reply (a thank-you, a promo). Nagged Mysore Reel (Sun 4 Oct, 1 day) and course prices (Wed 7 Oct, 4 days), 2nd time today each: do not repeat at 19:08. No reminders due, no wins.
 - 2026-10-03 07:08: Both bots posted. Plato @Machi: ask Boonchu for his Marichyasana D cue (Stuck in Primary Ep. 1): put in brief. Inbox: 3 new, 1 hot (booking problem). Nagged Mysore Reel and course prices, 1st time today each. No wins, no leads, no reminders.
