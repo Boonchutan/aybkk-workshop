@@ -58,7 +58,8 @@ const ok = (name, cond, extra = '') => {
 
   console.log('\n— schedule —');
   const sch = await J('/api/bkk/schedule?days=7');
-  ok('classes generated for the week', sch.body.classes.length > 10, `got ${sch.body.classes.length}`);
+  // A moon day can close a whole Saturday (4 classes), so the floor is low.
+  ok('classes generated for the week', sch.body.classes.length > 5, `got ${sch.body.classes.length}`);
   ok('all classes are in the future', sch.body.classes.every(c => new Date(c.startAt) > new Date()));
   ok('capacity 42 on shala classes',
     sch.body.classes.filter(c => !c.isOnline).every(c => c.capacity === 42));
@@ -496,6 +497,17 @@ const ok = (name, cond, extra = '') => {
        && typeof prog.body.photos.untagged_today === 'number' && typeof prog.body.notes.today === 'number',
      JSON.stringify(prog.body).slice(0, 200));
   ok('progress needs the staff key', (await J('/api/bkk/admin/progress')).status === 401);
+
+  console.log('\n— 12-week proof check —');
+  const ck = (await post('/api/bkk/teacher/members', { name: 'Check Person', email: 'check.person@example.com' }, PKEY)).body.member.code;
+  ok('a check needs at least one number', (await post(`/api/bkk/me/${ck}/checks`, { note: 'hi' })).status === 400);
+  ok('a silly heart rate is refused', (await post(`/api/bkk/me/${ck}/checks`, { restingHr: 400 })).status === 400);
+  ok('a check is saved', (await post(`/api/bkk/me/${ck}/checks`, { restingHr: 68, sleepHours: 6.5, feel: 3, note: 'tired' })).status === 200);
+  await post(`/api/bkk/me/${ck}/checks`, { restingHr: 66, sleepHours: 7, feel: 4 });
+  const cks = (await J(`/api/bkk/me/${ck}/checks`)).body.checks;
+  ok('one check per day: saving again updates it', cks.length === 1 && cks[0].restingHr === 66 && cks[0].sleepHours === 7 && cks[0].feel === 4,
+     JSON.stringify(cks));
+  ok('an unknown member gets nothing', (await J('/api/bkk/me/NOPE/checks')).status === 404);
 
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');

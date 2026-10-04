@@ -126,6 +126,25 @@
   .sw section{padding:30px 0 6px;scroll-margin-top:12px}
   .sw h2{margin:0 0 14px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:30px;line-height:1.15;color:var(--plum)}
   .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .habsub{margin:-8px 0 14px;font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:19px;color:var(--pink)}
+  .habs{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+  @media (min-width:640px){ .habs{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  .hab{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+  .hab .hn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--plum);color:var(--on-dark);display:flex;align-items:center;justify-content:center;
+    font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:14px}
+  .hab b{display:block;font-size:15.5px;line-height:1.3}
+  .hab p{margin:2px 0 0;font-size:14px;line-height:1.45;color:var(--soft)}
+  #compare .lead{margin:-6px 0 14px;font-size:15px}
+  .cmpwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--line);background:var(--paper)}
+  table.cmp{width:100%;border-collapse:collapse;font-size:13px;line-height:1.25;min-width:340px}
+  table.cmp th,table.cmp td{padding:9px 6px;border-top:1px solid var(--line);text-align:center;vertical-align:middle}
+  table.cmp thead th{border-top:none;font-size:12px;font-weight:700;color:var(--soft)}
+  table.cmp tbody th{text-align:left;font-weight:600;font-size:13px;color:var(--ink);padding-left:10px}
+  table.cmp .c-yes{color:var(--plum);font-weight:700}
+  table.cmp .c-some{color:var(--soft);font-size:12px}
+  table.cmp .c-no{color:var(--line);font-weight:700}
+  table.cmp .ash{background:var(--plum);color:var(--on-dark);font-weight:800}
+  table.cmp thead th.ash{color:var(--on-dark);font-size:13px;border-radius:8px 8px 0 0}
   .teacher figure{margin:0 0 16px}
   .teacher img{display:block;width:100%;height:auto;border-radius:var(--radius);aspect-ratio:9/10;object-fit:cover}
   .teacher figcaption{font-size:12.5px;color:var(--soft);margin-top:6px}
@@ -283,6 +302,12 @@
   .pkg ul{margin:10px 0 15px;padding-left:17px;font-size:13.5px;color:var(--soft)}
   .pkg li{margin:3px 0}
   .note{font-size:13.5px;color:var(--soft);line-height:1.65}
+  table.chk{width:100%;border-collapse:collapse;font-size:15px}
+  table.chk th{text-align:left;font-size:12px;color:var(--soft);font-weight:700;padding:4px 6px}
+  table.chk td{padding:6px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+  .feel{display:flex;gap:8px}
+  .feel button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font:700 16px/1 inherit;cursor:pointer}
+  .feel button[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#fff}
   .myph{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
   .myph button{border:none;padding:0;background:none;cursor:pointer}
   .myph img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:6px;background:var(--blush)}
@@ -376,7 +401,7 @@
     <a class="btn pink" href="#mysore" data-i18n="ctaStart">New? Start here</a>
     <a class="btn ghost" href="#book" data-i18n="ctaTimetable">See timetable</a>
   </div>
-  <div><a class="more" href="#prices" data-i18n="ctaPrices">See prices</a></div>
+  <div><a class="more" href="#compare" data-i18n="cmpBtn">See how it compares →</a> <a class="more" href="#prices" data-i18n="ctaPrices">See prices</a></div>
 </header>
 
 <div class="sw">
@@ -385,6 +410,45 @@
     <p class="lead" data-i18n="promoLead">Pick an offer, pick your first day, and see exactly what you pay.</p>
     <div class="offers" id="offers"></div>
     <div class="card calc" id="calc"></div>
+  </section>
+
+  <section id="habits">
+    <h2 data-i18n="habH">10 things people do to stay healthy.</h2>
+    <p class="habsub" data-i18n="habSub">Ashtanga does all 10, in one morning.</p>
+    <div class="habs">
+      <div class="hab"><span class="hn">1</span><div><b data-i18n="hab1t">Track</b><p data-i18n="hab1d">Real proof: mornings practised, resting heart rate, sleep. Checked at week 0, 6 and 12.</p></div></div>
+      <div class="hab"><span class="hn">2</span><div><b data-i18n="hab2t">Get stronger</b><p data-i18n="hab2d">Strength from your own body weight, built at 30 and kept at 70.</p></div></div>
+      <div class="hab"><span class="hn">3</span><div><b data-i18n="hab3t">Partners</b><p data-i18n="hab3d">Like-minded people beside you. We struggle together and progress together.</p></div></div>
+      <div class="hab"><span class="hn">4</span><div><b data-i18n="hab4t">Sleep</b><p data-i18n="hab4d">Early practice, slow breath, early nights. Students tell us sleep changes first.</p></div></div>
+      <div class="hab"><span class="hn">5</span><div><b data-i18n="hab5t">Eat with purpose</b><p data-i18n="hab5d">No diet. You eat lighter because you want to feel light on the mat tomorrow.</p></div></div>
+      <div class="hab"><span class="hn">6</span><div><b data-i18n="hab6t">Calm the mind</b><p data-i18n="hab6d">90 minutes, no phone, only your breath. Calm you train, not buy.</p></div></div>
+      <div class="hab"><span class="hn">7</span><div><b data-i18n="hab7t">Hot and cold</b><p data-i18n="hab7d">Heat from inside, cooled by your breath. Your own warmth, no machine.</p></div></div>
+      <div class="hab"><span class="hn">8</span><div><b data-i18n="hab8t">Mind-body movement</b><p data-i18n="hab8d">Core, balance and breath with movement. The original, 100 years old.</p></div></div>
+      <div class="hab"><span class="hn">9</span><div><b data-i18n="hab9t">Together</b><p data-i18n="hab9d">A quiet room of people who show up. Belonging without noise.</p></div></div>
+      <div class="hab"><span class="hn">10</span><div><b data-i18n="hab10t">Traditional</b><p data-i18n="hab10d">A 100-year-old method, taught by an Authorized teacher.</p></div></div>
+    </div>
+    <p style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px"><a class="btn pink" href="#mysore" data-i18n="habCta">Start with one morning</a>
+      <a class="btn ghost" href="#compare" data-i18n="cmpBtn">See how it compares →</a></p>
+  </section>
+
+  <section id="compare">
+    <h2 data-i18n="cmpH">One morning vs four workouts</h2>
+    <p class="lead" data-i18n="cmpSub">To cover these 10, most people need a run, a gym, a Pilates class and a meditation app. Or one morning.</p>
+    <div class="cmpwrap"><table class="cmp">
+        <thead><tr><th></th><th data-i18n="cmpWalk">Walk / run</th><th data-i18n="cmpGym">Gym</th><th data-i18n="cmpPilates">Pilates</th><th class="ash" data-i18n="cmpAsh">Ashtanga</th></tr></thead>
+        <tbody>
+        <tr><th scope="row" data-i18n="cmpStrength">Strength</th><td class="c-some" data-i18n="cmpLower">Lower body only</td><td class="c-yes" data-i18n="cmpYes">Yes</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        <tr><th scope="row" data-i18n="cmpHeart">Heart and lungs</th><td class="c-yes" data-i18n="cmpYes">Yes</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        <tr><th scope="row" data-i18n="cmpMobility">Mobility</th><td class="c-no">–</td><td class="c-no">–</td><td class="c-yes" data-i18n="cmpYes">Yes</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        <tr><th scope="row" data-i18n="cmpCore">Balance and core</th><td class="c-some" data-i18n="cmpLower">Lower body only</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-yes" data-i18n="cmpYes">Yes</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        <tr><th scope="row" data-i18n="cmpCalm">Breath and calm</th><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-no">–</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        <tr><th scope="row" data-i18n="cmpSleep">Better sleep</th><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-no">–</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        <tr><th scope="row" data-i18n="cmpTeacher">A teacher who notices you</th><td class="c-no">–</td><td class="c-no">–</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        <tr><th scope="row" data-i18n="cmpFriends">Daily friends</th><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-no">–</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        <tr><th scope="row" data-i18n="cmpTradition">Tradition and meaning</th><td class="c-no">–</td><td class="c-no">–</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        <tr><th scope="row" data-i18n="cmpHabit">A habit that sticks</th><td class="c-some" data-i18n="cmpStrict">Some, for strict people</td><td class="c-no">–</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
+        </tbody></table></div>
+    <p style="margin-top:14px"><a class="btn pink" href="#mysore" data-i18n="cmpCta">Try one morning</a></p>
   </section>
 
   <section class="teacher" id="teacher">
@@ -931,9 +995,22 @@
    
   });
 
+  // The 10 health habits frame (Boonchu, 4 Oct 2026): what people do to stay healthy, all inside one practice.
+  Object.assign(STR.en, { habH: "10 things people do to stay healthy.", habSub: "Ashtanga does all 10, in one morning.", habCta: "Start with one morning", hab1t: "Track", hab1d: "Real proof: mornings practised, resting heart rate, sleep. Checked at week 0, 6 and 12.", hab2t: "Get stronger", hab2d: "Strength from your own body weight, built at 30 and kept at 70.", hab3t: "Partners", hab3d: "Like-minded people beside you. We struggle together and progress together.", hab4t: "Sleep", hab4d: "Early practice, slow breath, early nights. Students tell us sleep changes first.", hab5t: "Eat with purpose", hab5d: "No diet. You eat lighter because you want to feel light on the mat tomorrow.", hab6t: "Calm the mind", hab6d: "90 minutes, no phone, only your breath. Calm you train, not buy.", hab7t: "Hot and cold", hab7d: "Heat from inside, cooled by your breath. Your own warmth, no machine.", hab8t: "Mind-body movement", hab8d: "Core, balance and breath with movement. The original, 100 years old.", hab9t: "Together", hab9d: "A quiet room of people who show up. Belonging without noise.", hab10t: "Traditional", hab10d: "A 100-year-old method, taught by an Authorized teacher." });
+  Object.assign(STR.th, { habH: "10 สิ่งที่คนทำเพื่อสุขภาพ", habSub: "อัษฎางคโยคะทำครบทั้ง 10 ในเช้าเดียว", habCta: "เริ่มจากเช้าแรก", hab1t: "วัดผลได้", hab1d: "หลักฐานจริง: จำนวนเช้าที่ฝึก ชีพจรขณะพัก และการนอน เช็กสัปดาห์ที่ 0, 6 และ 12", hab2t: "แข็งแรงขึ้น", hab2d: "ความแข็งแรงจากน้ำหนักตัวเอง สร้างตอนอายุ 30 และยังอยู่ถึง 70", hab3t: "มีเพื่อนร่วมทาง", hab3d: "คนที่คิดเหมือนกันฝึกอยู่ข้างๆ เหนื่อยด้วยกัน ก้าวหน้าไปด้วยกัน", hab4t: "นอนหลับดีขึ้น", hab4d: "ฝึกแต่เช้า หายใจช้า เข้านอนเร็ว นักเรียนบอกว่าการนอนเปลี่ยนเป็นอย่างแรก", hab5t: "กินอย่างมีเป้าหมาย", hab5d: "ไม่ต้องไดเอต คุณจะกินเบาลงเองเพราะอยากตัวเบาบนเสื่อพรุ่งนี้", hab6t: "ใจสงบ", hab6d: "90 นาที ไม่มีมือถือ มีแต่ลมหายใจ ความสงบที่ฝึกได้ ไม่ต้องซื้อ", hab7t: "ร้อนและเย็น", hab7d: "ความร้อนจากข้างใน ลมหายใจช่วยให้เย็น ความอุ่นของคุณเอง ไม่ต้องใช้เครื่อง", hab8t: "กายและใจไปด้วยกัน", hab8d: "แกนกลาง การทรงตัว และลมหายใจกับการเคลื่อนไหว ต้นฉบับอายุ 100 ปี", hab9t: "ฝึกร่วมกัน", hab9d: "ห้องที่เงียบสงบของคนที่มาฝึกจริง อบอุ่นโดยไม่ต้องวุ่นวาย", hab10t: "ศาสตร์ดั้งเดิม", hab10d: "วิธีฝึกอายุกว่า 100 ปี สอนโดยครูที่ได้รับ Authorization" });
+  Object.assign(STR.zh, { habH: "人们为健康做的10件事。", habSub: "阿斯汤加一个早上就做到全部10件。", habCta: "从一个早上开始", hab1t: "记录数据", hab1d: "真实的证据：练习次数、静息心率、睡眠。第0、6、12周各检查一次。", hab2t: "变强壮", hab2d: "用自己的体重练出的力量，30岁练成，70岁还在。", hab3t: "有伙伴", hab3d: "志同道合的人在你身边。一起坚持，一起进步。", hab4t: "睡得好", hab4d: "早起练习，慢慢呼吸，早早入睡。学生说最先改变的是睡眠。", hab5t: "有目的地吃", hab5d: "不用节食。你会自然吃得更轻，因为想在明天的垫子上更轻盈。", hab6t: "让心安静", hab6d: "90分钟，没有手机，只有呼吸。安静是练出来的，不是买来的。", hab7t: "冷与热", hab7d: "身体由内发热，呼吸让它降温。自己产生的温暖，不需要机器。", hab8t: "身心合一", hab8d: "核心、平衡、呼吸与动作结合。百年的原版。", hab9t: "一起练", hab9d: "一间安静的房间，大家都认真来练习。有归属感，没有喧闹。", hab10t: "传统", hab10d: "有百年历史的方法，由获得授权的老师教授。" });
+  Object.assign(STR.ru, { habH: "10 вещей, которые люди делают ради здоровья.", habSub: "Аштанга делает все 10 за одно утро.", habCta: "Начните с одного утра", hab1t: "Отслеживать", hab1d: "Реальные данные: сколько утр вы практиковали, пульс в покое, сон. Проверка на 0, 6 и 12 неделе.", hab2t: "Сила", hab2d: "Сила на собственном весе: наберёте в 30 и сохраните в 70.", hab3t: "Партнёры", hab3d: "Единомышленники рядом. Вместе трудно, вместе растём.", hab4t: "Сон", hab4d: "Ранняя практика, медленное дыхание, ранний отбой. Ученики говорят: первым меняется сон.", hab5t: "Осознанное питание", hab5d: "Без диет. Вы едите легче, потому что хотите лёгкости на коврике завтра.", hab6t: "Спокойный ум", hab6d: "90 минут без телефона, только дыхание. Спокойствие тренируют, а не покупают.", hab7t: "Жар и прохлада", hab7d: "Тепло изнутри, дыхание охлаждает. Собственное тепло, без машин.", hab8t: "Тело и ум", hab8d: "Кор, баланс, дыхание с движением. Оригинал, которому 100 лет.", hab9t: "Вместе", hab9d: "Тихий зал людей, которые приходят. Принадлежность без шума.", hab10t: "Традиция", hab10d: "Метод возрастом 100 лет, его ведёт авторизованный учитель." });
+
+  // One practice vs four (Boonchu, 4 Oct 2026).
+  Object.assign(STR.en, { cmpBtn: "See how it compares →", cmpH: "One morning vs four workouts", cmpSub: "To cover these 10, most people need a run, a gym, a Pilates class and a meditation app. Or one morning.", cmpWalk: "Walk / run", cmpGym: "Gym", cmpPilates: "Pilates", cmpAsh: "Ashtanga", cmpYes: "Yes", cmpSome: "Some", cmpLower: "Lower body only", cmpStrict: "Some, for strict people", cmpStrength: "Strength", cmpHeart: "Heart and lungs", cmpMobility: "Mobility", cmpCore: "Balance and core", cmpCalm: "Breath and calm", cmpSleep: "Better sleep", cmpTeacher: "A teacher who notices you", cmpFriends: "Daily friends", cmpTradition: "Tradition and meaning", cmpHabit: "A habit that sticks", cmpCta: "Try one morning" });
+  Object.assign(STR.th, { cmpBtn: "ดูการเปรียบเทียบ →", cmpH: "เช้าเดียว เทียบกับออกกำลังกาย 4 แบบ", cmpSub: "ถ้าอยากได้ครบ 10 ข้อ คนส่วนใหญ่ต้องวิ่ง เข้ายิม เรียนพิลาทิส และใช้แอปทำสมาธิ หรือแค่ฝึกเช้าเดียว", cmpWalk: "เดิน / วิ่ง", cmpGym: "ยิม", cmpPilates: "พิลาทิส", cmpAsh: "อัษฎางคะ", cmpYes: "ได้", cmpSome: "บางส่วน", cmpLower: "เฉพาะช่วงล่าง", cmpStrict: "บางส่วน สำหรับคนมีวินัย", cmpStrength: "ความแข็งแรง", cmpHeart: "หัวใจและปอด", cmpMobility: "ความยืดหยุ่นของข้อต่อ", cmpCore: "การทรงตัวและแกนกลาง", cmpCalm: "ลมหายใจและความสงบ", cmpSleep: "นอนหลับดีขึ้น", cmpTeacher: "ครูที่สังเกตเห็นคุณ", cmpFriends: "เพื่อนฝึกทุกวัน", cmpTradition: "ศาสตร์ดั้งเดิมและความหมาย", cmpHabit: "นิสัยที่ติดตัว", cmpCta: "ลองฝึกหนึ่งเช้า" });
+  Object.assign(STR.zh, { cmpBtn: "看看对比 →", cmpH: "一个早上 vs 四种锻炼", cmpSub: "想要做到这10件，大多数人需要跑步、健身房、普拉提课和冥想app。或者，一个早上。", cmpWalk: "走路 / 跑步", cmpGym: "健身房", cmpPilates: "普拉提", cmpAsh: "阿斯汤加", cmpYes: "有", cmpSome: "部分", cmpLower: "只有下半身", cmpStrict: "部分，适合自律的人", cmpStrength: "力量", cmpHeart: "心肺", cmpMobility: "关节活动度", cmpCore: "平衡与核心", cmpCalm: "呼吸与平静", cmpSleep: "睡得更好", cmpTeacher: "一位会注意你的老师", cmpFriends: "每天的练习伙伴", cmpTradition: "传统与意义", cmpHabit: "能坚持的习惯", cmpCta: "试一个早上" });
+  Object.assign(STR.ru, { cmpBtn: "Сравнить →", cmpH: "Одно утро против четырёх тренировок", cmpSub: "Чтобы закрыть все 10, большинству нужны бег, зал, пилатес и приложение для медитации. Или одно утро.", cmpWalk: "Ходьба / бег", cmpGym: "Зал", cmpPilates: "Пилатес", cmpAsh: "Аштанга", cmpYes: "Да", cmpSome: "Частично", cmpLower: "Только низ тела", cmpStrict: "Частично, для дисциплинированных", cmpStrength: "Сила", cmpHeart: "Сердце и лёгкие", cmpMobility: "Подвижность", cmpCore: "Баланс и кор", cmpCalm: "Дыхание и спокойствие", cmpSleep: "Лучший сон", cmpTeacher: "Учитель, который вас замечает", cmpFriends: "Друзья каждый день", cmpTradition: "Традиция и смысл", cmpHabit: "Привычка, которая держится", cmpCta: "Попробуйте одно утро" });
+
   // Jamsai's facts come from "Boonchu & JAMSAI bio.md" in Boonchu's Drive.
   Object.assign(STR.en, {
     addEmailH: 'Add your email', addEmailWhy: 'So you can open your profile again on another phone. We email you a one-time link, no password.', addEmailBtn: 'Save my email', addEmailDone: 'Saved. Next time, sign in with this email.',
+    checkH: 'My 12-week check · Habit #1', chkWhy: 'Three numbers from your watch or phone, at week 0, 6 and 12. Proof, not promises.', chkStartH: 'Week 0: your starting point', chkDueH: 'Your next check is due', chkHrL: 'Resting heart rate (beats per minute)', chkSleepL: 'Average sleep last week (hours)', chkFeelL: 'How do you feel? (1 = tired, 5 = great)', chkNoteL: 'One line (optional)', chkSave: 'Save my check', chkWeek: 'Week', chkHr: 'Heart rate', chkSleep: 'Sleep', chkFeel: 'Feel', chkChange: (hr, sl) => `Since week 0: heart rate ${hr}, sleep ${sl}`, chkNext: d => `Next check: ${d}`, chkAll: 'All 3 checks done. Look how far you came.',
     fromTeachers: 'From your teachers', workOn: 'Work on',
     myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo. Long-press it to save.',
     teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
@@ -944,6 +1021,7 @@
   });
   Object.assign(STR.th, {
     addEmailH: 'เพิ่มอีเมลของคุณ', addEmailWhy: 'เพื่อเปิดโปรไฟล์ได้อีกครั้งบนมือถือเครื่องอื่น เราส่งลิงก์ใช้ครั้งเดียวทางอีเมล ไม่ต้องมีรหัสผ่าน', addEmailBtn: 'บันทึกอีเมล', addEmailDone: 'บันทึกแล้ว ครั้งหน้าเข้าด้วยอีเมลนี้',
+    checkH: 'เช็กผล 12 สัปดาห์ของฉัน · นิสัยที่ 1', chkWhy: 'ตัวเลข 3 ค่าจากนาฬิกาหรือมือถือ สัปดาห์ที่ 0, 6 และ 12 หลักฐานจริง ไม่ใช่คำสัญญา', chkStartH: 'สัปดาห์ที่ 0: จุดเริ่มต้นของคุณ', chkDueH: 'ถึงเวลาเช็กครั้งต่อไปแล้ว', chkHrL: 'ชีพจรขณะพัก (ครั้งต่อนาที)', chkSleepL: 'นอนเฉลี่ยสัปดาห์ที่แล้ว (ชั่วโมง)', chkFeelL: 'รู้สึกอย่างไร (1 = เหนื่อย, 5 = ดีมาก)', chkNoteL: 'หนึ่งบรรทัด (ไม่บังคับ)', chkSave: 'บันทึกผล', chkWeek: 'สัปดาห์', chkHr: 'ชีพจร', chkSleep: 'นอน', chkFeel: 'ความรู้สึก', chkChange: (hr, sl) => `ตั้งแต่สัปดาห์ที่ 0: ชีพจร ${hr} การนอน ${sl}`, chkNext: d => `เช็กครั้งต่อไป: ${d}`, chkAll: 'ครบ 3 ครั้งแล้ว ดูสิว่าคุณมาไกลแค่ไหน',
     fromTeachers: 'จากครูของคุณ', workOn: 'ฝึกต่อ',
     myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ กดค้างที่รูปเพื่อบันทึก',
     teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
@@ -954,6 +1032,7 @@
   });
   Object.assign(STR.zh, {
     addEmailH: '添加你的邮箱', addEmailWhy: '这样你可以在另一部手机上再次打开个人主页。我们会发一次性链接到邮箱，不需要密码。', addEmailBtn: '保存邮箱', addEmailDone: '已保存。下次用这个邮箱登录。',
+    checkH: '我的12周检查 · 习惯1', chkWhy: '手表或手机上的3个数字，第0、6、12周各记录一次。是证据，不是承诺。', chkStartH: '第0周：你的起点', chkDueH: '该做下一次检查了', chkHrL: '静息心率（次/分钟）', chkSleepL: '上周平均睡眠（小时）', chkFeelL: '感觉如何？（1 = 很累，5 = 很好）', chkNoteL: '一句话（可选）', chkSave: '保存', chkWeek: '周', chkHr: '心率', chkSleep: '睡眠', chkFeel: '感觉', chkChange: (hr, sl) => `从第0周起：心率 ${hr}，睡眠 ${sl}`, chkNext: d => `下次检查：${d}`, chkAll: '3次检查都完成了。看看你走了多远。',
     fromTeachers: '老师给你的话', workOn: '要练习的',
     myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。长按即可保存。',
     teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
@@ -964,6 +1043,7 @@
   });
   Object.assign(STR.ru, {
     addEmailH: 'Добавьте email', addEmailWhy: 'Чтобы открыть профиль на другом телефоне. Мы пришлём одноразовую ссылку, без пароля.', addEmailBtn: 'Сохранить email', addEmailDone: 'Сохранено. В следующий раз входите с этим email.',
+    checkH: 'Моя 12-недельная проверка · Привычка №1', chkWhy: 'Три числа с часов или телефона, на 0, 6 и 12 неделе. Доказательства, а не обещания.', chkStartH: 'Неделя 0: ваша отправная точка', chkDueH: 'Пора следующей проверки', chkHrL: 'Пульс в покое (уд/мин)', chkSleepL: 'Средний сон за неделю (часы)', chkFeelL: 'Как вы себя чувствуете? (1 = устал, 5 = отлично)', chkNoteL: 'Одна строка (по желанию)', chkSave: 'Сохранить', chkWeek: 'Неделя', chkHr: 'Пульс', chkSleep: 'Сон', chkFeel: 'Самочувствие', chkChange: (hr, sl) => `С недели 0: пульс ${hr}, сон ${sl}`, chkNext: d => `Следующая проверка: ${d}`, chkAll: 'Все 3 проверки готовы. Посмотрите, какой путь вы прошли.',
     fromTeachers: 'От ваших учителей', workOn: 'Над чем работать',
     myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы. Нажмите и удерживайте, чтобы сохранить.',
     teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
@@ -1325,13 +1405,62 @@
           <div class="note">${esc(fmtDay(String(n.class_date || n.created_at).slice(0, 10) + 'T12:00:00+07:00'))}${n.teacher ? ' · ' + esc(n.teacher) : ''}</div>
           ${n.to_work_on ? `<p style="margin:6px 0 0;font-weight:700;color:var(--plum)">${esc(t('workOn'))}: ${esc(n.to_work_on)}</p>` : ''}
           ${n.body ? `<p style="margin:6px 0 0">${esc(n.body)}</p>` : ''}</div>`).join('')}` : ''}
+        <div class="day">${esc(t('checkH'))}</div><div id="myChecks"><p class="note">${esc(t('loading'))}</p></div>
         <div class="day">${esc(t('myPhotos'))}</div><div id="myPhotos"><p class="note">${esc(t('loading'))}</p></div>
         <div class="day">${esc(t('yourPass'))}</div>${passes}
         <div class="day">${esc(t('upcoming'))}</div>${bookings}`;
       renderMyPhotos(code);
+      renderChecks(code);
     } catch (e) {
       $('#view').innerHTML = `<p class="msg bad">${esc(e.message)}</p>`;
     }
+  }
+
+  // Habit #1, Track: three numbers at week 0, 6 and 12, shown as change since week 0.
+  async function renderChecks(code) {
+    const box = $('#myChecks');
+    let checks = [];
+    try { checks = (await fetch('/api/bkk/me/' + encodeURIComponent(code) + '/checks').then(r => r.json())).checks || []; } catch (_) {}
+    const day = d => Date.parse(d + 'T00:00:00Z');
+    const today = bkkToday();
+    const first = checks[0];
+    const week = c => Math.round((day(c.date) - day(first.date)) / (7 * 86400e3));
+    const next = !first ? today : checks.length >= 3 ? null
+      : new Date(day(first.date) + (checks.length === 1 ? 42 : 84) * 86400e3).toISOString().slice(0, 10);
+    const due = !first || (next && day(today) >= day(next) - 3 * 86400e3);
+    const last = checks[checks.length - 1];
+    const diff = (a, b, unit) => (a == null || b == null) ? '–' : `${a > b ? '+' : ''}${Math.round((a - b) * 10) / 10}${unit}`;
+    const table = first ? `<div class="pkg"><table class="chk">
+        <tr><th>${esc(t('chkWeek'))}</th><th>${esc(t('chkHr'))}</th><th>${esc(t('chkSleep'))}</th><th>${esc(t('chkFeel'))}</th></tr>
+        ${checks.map(c => `<tr><td>${week(c)}</td><td>${c.restingHr ?? '–'}</td><td>${c.sleepHours ?? '–'}</td><td>${c.feel ? '★'.repeat(c.feel) : '–'}</td></tr>`).join('')}
+      </table>
+      ${checks.length > 1 ? `<p class="note" style="margin:8px 0 0;font-weight:700;color:var(--plum)">${esc(t('chkChange', diff(last.restingHr, first.restingHr, ''), diff(last.sleepHours, first.sleepHours, ' h')))}</p>` : ''}
+      <p class="note" style="margin:6px 0 0">${esc(next ? t('chkNext', fmtDay(next + 'T12:00:00+07:00')) : t('chkAll'))}</p></div>` : '';
+    const form = due ? `<div class="pkg">
+        <h3>${esc(first ? t('chkDueH') : t('chkStartH'))}</h3>
+        <p class="note">${esc(t('chkWhy'))}</p>
+        <label>${esc(t('chkHrL'))}</label><input id="ckHr" type="number" inputmode="numeric" min="30" max="200" placeholder="e.g. 64">
+        <label>${esc(t('chkSleepL'))}</label><input id="ckSleep" type="number" inputmode="decimal" step="0.5" min="0" max="14" placeholder="e.g. 7">
+        <label>${esc(t('chkFeelL'))}</label>
+        <div class="feel">${[1, 2, 3, 4, 5].map(n => `<button type="button" data-feel="${n}">${n}</button>`).join('')}</div>
+        <label>${esc(t('chkNoteL'))}</label><input id="ckNote" maxlength="300">
+        <p style="margin-top:12px"><button class="btn pink" id="ckSave">${esc(t('chkSave'))}</button></p>
+        <div id="ckMsg"></div></div>` : '';
+    box.innerHTML = table + form;
+    if (!due) return;
+    let feel = null;
+    box.querySelectorAll('.feel button').forEach(b => b.addEventListener('click', () => {
+      feel = Number(b.dataset.feel);
+      box.querySelectorAll('.feel button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    }));
+    $('#ckSave').addEventListener('click', async () => {
+      const r = await fetch('/api/bkk/me/' + encodeURIComponent(code) + '/checks', { method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ restingHr: $('#ckHr').value, sleepHours: $('#ckSleep').value, feel, note: $('#ckNote').value }) });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok) renderChecks(code);
+      else $('#ckMsg').innerHTML = `<p class="msg bad">${esc(j.error || 'Could not save.')}</p>`;
+    });
   }
 
   // Only the photos this student was tagged in; links are signed and private.
