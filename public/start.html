@@ -16,13 +16,16 @@
   @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
     unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
   :root{--ink:#17121a;--wall:#f7f1f5;--paper:#fff;--plum:#5c2160;--pink:#e8458c;--pink-deep:#c92f74;
-    --soft:#6b5d70;--line:rgba(23,18,26,.11);--on-pink:#fff}
+    --soft:#6b5d70;--line:rgba(23,18,26,.11);--on-pink:#fff;
+    --promo:#d9a521;--promo-ink:#3e1442;--promo-deep:#7d5300;--promo-soft:#fdf4dc}
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){--ink:#f5e9f0;--wall:#140f18;--paper:#1e1723;--plum:#c07ec8;
-      --pink:#ff6fae;--pink-deep:#ff8dc0;--soft:#b09cb6;--line:rgba(245,233,240,.14);--on-pink:#17121a}
+      --pink:#ff6fae;--pink-deep:#ff8dc0;--soft:#b09cb6;--line:rgba(245,233,240,.14);--on-pink:#17121a;
+      --promo:#e0b52b;--promo-ink:#1c1010;--promo-deep:#f2d98a;--promo-soft:#2a2114}
   }
   :root[data-theme="dark"]{--ink:#f5e9f0;--wall:#140f18;--paper:#1e1723;--plum:#c07ec8;
-    --pink:#ff6fae;--pink-deep:#ff8dc0;--soft:#b09cb6;--line:rgba(245,233,240,.14);--on-pink:#17121a}
+    --pink:#ff6fae;--pink-deep:#ff8dc0;--soft:#b09cb6;--line:rgba(245,233,240,.14);--on-pink:#17121a;
+    --promo:#e0b52b;--promo-ink:#1c1010;--promo-deep:#f2d98a;--promo-soft:#2a2114}
   *{box-sizing:border-box}
   body{margin:0;background:var(--wall);color:var(--ink);font:17px/1.5 'Work Sans','Plex',system-ui,sans-serif}
   main{max-width:520px;margin:0 auto;padding:12px 16px 32px}
@@ -40,6 +43,12 @@
   .alt{text-align:center;font-size:14px;color:var(--soft);margin:0}
   .alt a,.alt button{color:var(--soft);font:inherit;background:none;border:0;padding:4px;text-decoration:underline;cursor:pointer}
   .note{text-align:center;font-size:15px;color:var(--plum);min-height:1.5em;margin:6px 0 0}
+  .promo{display:block;margin:18px 0 0;padding:14px 16px;border:6px solid var(--promo);border-radius:14px;
+    background:var(--promo-soft);color:var(--ink);text-decoration:none;text-align:center;line-height:1.35}
+  .promo .k{display:block;font-size:14px;color:var(--promo-deep);font-weight:600}
+  .promo .big{display:block;font-size:26px;font-weight:800;color:var(--promo-deep);margin:2px 0}
+  .promo .s{display:block;font-size:15px}
+  .promo .b{display:inline-block;margin-top:10px;padding:8px 14px;border-radius:8px;background:var(--promo);color:var(--promo-ink);font-weight:700}
   ul.obj{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px}
   ul.obj li{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
   ul.obj b{display:block;color:var(--plum)}
@@ -67,6 +76,13 @@
   <p class="alt" id="alt"></p>
   <p class="note" id="note" aria-live="polite"></p>
 
+  <a class="promo" id="promo" href="/#promo" hidden>
+    <span class="k" data-t="pk">Until 11 Nov only · in memory of Sharathji</span>
+    <span class="big" data-t="pbig">Buy 1, get 1 FREE</span>
+    <span class="s" data-t="psub">or the Rookie Pack ฿5,900 for new students</span>
+    <span class="b" data-t="pbtn">Calculate my price →</span>
+  </a>
+
   <ul class="obj">
     <li><b data-t="o1t">Not flexible?</b><span data-t="o1d">Nobody is on day one. We teach you from zero.</span></li>
     <li><b data-t="o2t">Busy mornings?</b><span data-t="o2d">Mysore starts at 5:30 or 7:30. You are done before work.</span></li>
@@ -91,7 +107,8 @@
   ];
   const WECHAT = 'aybkkwechat';
   const STR = {
-    en: { h1: 'Stronger, calmer, better sleep. One morning a day.', sub: 'Traditional Ashtanga in Bangkok. Beginners welcome.',
+    en: { pk: 'Until 11 Nov only · in memory of Sharathji', pbig: 'Buy 1, get 1 FREE', psub: 'or the Rookie Pack ฿5,900 for new students', pbtn: 'Calculate my price →',
+      h1: 'Stronger, calmer, better sleep. One morning a day.', sub: 'Traditional Ashtanga in Bangkok. Beginners welcome.',
       ctx: 'A teacher walks the room and adjusts you by hand. You move at your own pace, with your own breath.',
       line: 'Book your first morning on LINE', whatsapp: 'Book your first morning on WhatsApp', wechat: 'Book your first morning on WeChat',
       or: 'Or:', copied: `Our WeChat ID is copied: ${WECHAT}. Add us and say "first morning".`,
@@ -100,7 +117,8 @@
       o3t: 'The price?', o3d: 'From 375 baht a class, with a teacher who knows your name.',
       auth: 'Authorized Level 2 by R. Sharath Jois', since: 'Mysore style in Bangkok since 2013',
       more: 'All prices and the timetable', privacy: 'This page saves no names or phone numbers. Your message goes straight to our chat.' },
-    th: { h1: 'แข็งแรงขึ้น ใจสงบขึ้น นอนหลับดีขึ้น วันละหนึ่งเช้า', sub: 'อัษฎางคโยคะแบบดั้งเดิมในกรุงเทพฯ มือใหม่มาได้เลย',
+    th: { pk: 'ถึง 11 พ.ย. เท่านั้น · น้อมรำลึก Sharathji', pbig: 'ซื้อ 1 แถม 1 ฟรี', psub: 'หรือ Rookie Pack ฿5,900 สำหรับนักเรียนใหม่', pbtn: 'คำนวณราคาเรียน →',
+      h1: 'แข็งแรงขึ้น ใจสงบขึ้น นอนหลับดีขึ้น วันละหนึ่งเช้า', sub: 'อัษฎางคโยคะแบบดั้งเดิมในกรุงเทพฯ มือใหม่มาได้เลย',
       ctx: 'ครูเดินดูทั้งห้องและปรับท่าให้คุณด้วยมือ คุณฝึกตามจังหวะของตัวเอง ตามลมหายใจของตัวเอง',
       line: 'จองเช้าแรกของคุณทาง LINE', whatsapp: 'จองเช้าแรกของคุณทาง WhatsApp', wechat: 'จองเช้าแรกของคุณทาง WeChat',
       or: 'หรือ:', copied: `คัดลอก WeChat ID แล้ว: ${WECHAT} เพิ่มเพื่อนแล้วพิมพ์ว่า "เช้าแรก"`,
@@ -109,7 +127,8 @@
       o3t: 'ราคาล่ะ?', o3d: 'เริ่มต้น 375 บาทต่อครั้ง กับครูที่จำชื่อคุณได้',
       auth: 'ได้รับ Authorization Level 2 จาก R. Sharath Jois', since: 'สอนแบบมายซอร์ในกรุงเทพฯ ตั้งแต่ปี 2013',
       more: 'ราคาทั้งหมดและตารางเรียน', privacy: 'หน้านี้ไม่เก็บชื่อหรือเบอร์โทร ข้อความของคุณส่งตรงถึงแชทของเรา' },
-    zh: { h1: '更强壮，更平静，睡得更好。每天一个早上。', sub: '曼谷的传统阿斯汤加。欢迎初学者。',
+    zh: { pk: '仅限11月11日前 · 纪念 Sharathji', pbig: '买一送一', psub: '或新学员 Rookie Pack ฿5,900', pbtn: '计算我的价格 →',
+      h1: '更强壮，更平静，睡得更好。每天一个早上。', sub: '曼谷的传统阿斯汤加。欢迎初学者。',
       ctx: '老师在教室里走动，亲手为你调整。你按自己的节奏、自己的呼吸练习。',
       line: '用 LINE 预约你的第一个早上', whatsapp: '用 WhatsApp 预约你的第一个早上', wechat: '加微信，预约你的第一个早上',
       or: '或者：', copied: `已复制我们的微信号：${WECHAT}。添加后发送“第一个早上”。`,
@@ -118,7 +137,8 @@
       o3t: '价格？', o3d: '每节课低至 375 泰铢，老师记得你的名字。',
       auth: '获 R. Sharath Jois 授权 Level 2（Authorized Level 2）', since: '自 2013 年起在曼谷教 Mysore',
       more: '全部价格和课程表', privacy: '本页不保存姓名或电话。你的消息直接发到我们的聊天。' },
-    ru: { h1: 'Сильнее, спокойнее, лучше сон. Одно утро в день.', sub: 'Традиционная аштанга в Бангкоке. Новичкам рады.',
+    ru: { pk: 'Только до 11 ноября · в память о Шарате', pbig: 'Купи 1, получи 1 БЕСПЛАТНО', psub: 'или Rookie Pack за ฿5,900 для новичков', pbtn: 'Рассчитать мою цену →',
+      h1: 'Сильнее, спокойнее, лучше сон. Одно утро в день.', sub: 'Традиционная аштанга в Бангкоке. Новичкам рады.',
       ctx: 'Учитель ходит по залу и поправляет вас руками. Вы двигаетесь в своём темпе, со своим дыханием.',
       line: 'Записаться на первое утро в LINE', whatsapp: 'Записаться на первое утро в WhatsApp', wechat: 'Записаться на первое утро в WeChat',
       or: 'Или:', copied: `WeChat ID скопирован: ${WECHAT}. Добавьте нас и напишите «первое утро».`,
@@ -129,6 +149,9 @@
       more: 'Все цены и расписание', privacy: 'Эта страница не сохраняет имена и телефоны. Ваше сообщение идёт прямо в наш чат.' },
   };
   // The channel each audience actually has: Thai and English on LINE, Chinese on WeChat, Russian on WhatsApp.
+  // Same end date as the homepage promotion (bkk.html PROMO_LAST_BUY).
+  const PROMO_LAST_BUY = '2026-11-11';
+  const promoLive = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok' }).format(new Date()) <= PROMO_LAST_BUY;
   const MAIN = { en: 'line', th: 'line', zh: 'wechat', ru: 'whatsapp' };
   const NAME = { line: 'LINE', whatsapp: 'WhatsApp', wechat: 'WeChat' };
   const MSG = 'Hi AYBKK, I want to book my first morning. (aybkk.net/start)\nสวัสดีครับ/ค่ะ อยากจองเช้าแรกครับ/ค่ะ';
@@ -187,6 +210,9 @@
     LANG = b.dataset.lang; try { store && store.setItem('aybkk_lang', LANG); } catch {}
     render();
   });
+  const promo = document.getElementById('promo');
+  promo.hidden = !promoLive;
+  promo.onclick = () => send('tap', 'promo');
   render();
   send('view');
 })();
