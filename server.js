@@ -217,9 +217,12 @@ for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SH
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
   cloud_name: 'dw1uubecu',
-  api_key: process.env.CLOUDINARY_API_KEY || '191765218532954',
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'kBwusl-gHqqNiZYykFgChJjt3MQ'
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
+if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  console.warn('[cloudinary] CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET not set: photo uploads and the Moments feed will fail');
+}
 
 // ─── Moments feed ────────────────────────────────────────────────────────────
 // WeChat-moments-style photo feed: /moments (page) + GET /api/moments (data).

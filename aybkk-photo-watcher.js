@@ -11,9 +11,10 @@
  *   node aybkk-photo-watcher.js
  *   node aybkk-photo-watcher.js --once   # one-shot scan, exit (use in cron)
  *
- * Env (optional):
- *   AYBKK_PHOTO_DIR   absolute folder to watch (defaults below)
- *   CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
+ * Env:
+ *   CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET   required (railway run loads them)
+ *   CLOUDINARY_CLOUD_NAME   optional, defaults to dw1uubecu
+ *   AYBKK_PHOTO_DIR   optional, absolute folder to watch (defaults below)
  */
 require('dotenv').config();
 const fs = require('fs');
@@ -30,10 +31,14 @@ const WATCH_DIR = process.env.AYBKK_PHOTO_DIR || DEFAULT_DIR;
 const STATE_FILE = path.join(__dirname, 'data', 'photo-watcher-state.json');
 const POLL_MS = 30_000;
 
+if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  console.error('CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET must be set (run via railway run).');
+  process.exit(1);
+}
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dw1uubecu',
-  api_key: process.env.CLOUDINARY_API_KEY || '191765218532954',
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'kBwusl-gHqqNiZYykFgChJjt3MQ'
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.png', '.heic', '.webp']);

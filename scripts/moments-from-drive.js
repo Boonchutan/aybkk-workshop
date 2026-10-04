@@ -1,6 +1,6 @@
 // Decode Drive tool-result files and upload to Cloudinary for the Moments feed.
-// Credentials are read from the repo's own aybkk-photo-watcher.js at runtime —
-// never passed on a command line or copied into another file.
+// Credentials come from the environment (CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET),
+// never from a command line or a file in the repo.
 //
 // Usage:
 //   node moments-upload.js decode <toolResultsDir> <outDir> <manifest.json>
@@ -13,13 +13,11 @@ const fs = require('fs');
 const path = require('path');
 
 const REPO = require('path').join(__dirname, '..');
-const src = fs.readFileSync(path.join(REPO, 'aybkk-photo-watcher.js'), 'utf8');
-const pick = re => (src.match(re) || [])[1];
 const cloudinary = require(path.join(REPO, 'node_modules', 'cloudinary')).v2;
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || pick(/cloud_name:[^']*'([^']+)'/),
-  api_key: process.env.CLOUDINARY_API_KEY || pick(/api_key:[^']*'([^']+)'/),
-  api_secret: process.env.CLOUDINARY_API_SECRET || pick(/api_secret:[^']*'([^']+)'/),
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dw1uubecu',
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const [, , cmd, a1, a2, a3] = process.argv;
@@ -86,6 +84,10 @@ if (cmd === 'fetch') {
   }
   console.log(n, 'decoded');
 } else if (cmd === 'upload') {
+  if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    console.log('CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET are not set: add them to the environment variables (claude.ai/code → environment) and start a new session');
+    process.exit(1);
+  }
   (async () => {
     let ok = 0, fail = 0;
     for (const f of fs.readdirSync(a1).sort()) {
