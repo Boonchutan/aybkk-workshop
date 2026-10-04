@@ -393,7 +393,7 @@
     const msg = `สวัสดีค่ะ คุณ${j.name} 🙏 โปรไฟล์ AYBKK ของคุณพร้อมแล้ว รูปการฝึกของคุณจะอยู่ที่นี่ เห็นได้เฉพาะคุณ\n`
       + `Hi ${j.name} 🙏 Your AYBKK profile is ready. Your class photos are here, only for you.\n\n`
       + `${j.link}\n\n`
-      + `(ลิงก์ใช้ได้ครั้งเดียว ภายใน ${j.days} วัน · This link works once, within ${j.days} days.)`;
+      + `(ลิงก์ใช้ได้ ${j.days} วัน · This link works for ${j.days} days.)`;
     let copied = false;
     try { await navigator.clipboard.writeText(msg); copied = true; } catch (_) {}
     $('#sl_' + code).innerHTML = `<div class="box" style="background:var(--blush);margin-top:8px">
