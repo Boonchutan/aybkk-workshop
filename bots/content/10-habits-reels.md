@@ -1,6 +1,6 @@
 # The 10 Habits: Reel series (30 seconds each, Boonchu to camera)
 
-Master line for the series: **"10 things people do to stay healthy. Ashtanga does 7 of them in one morning."**
+Master line for the series: **"10 things people do to stay healthy. Ashtanga does all 10, in one morning."**
 Format: 3 beats (hook / turn / takeaway). On-screen tag: "Habit #N of 10". Caption ends with one action.
 Plato: translate TH/ZH/RU, add XHS title, keep claims as written (no medical promises).
 
@@ -18,11 +18,11 @@ Plato: translate TH/ZH/RU, add XHS title, keep claims as written (no medical pro
 **Takeaway:** "Chaturanga, jump-backs, arm balances. Strength you build at 30 and keep at 70. That's Ashtanga."
 **Caption action:** Try a Mysore class this week.
 
-## #3 Walk and run (honest one)
-**Hook:** "I'm not going to tell you to stop running."
-**Turn:** "Running is great. It's cheap, easy, social. It also tightens your hips, your hamstrings and your lower back."
-**Takeaway:** "Ashtanga doesn't replace your run. It fixes what running breaks. Run in the evening, practise in the morning."
-**Caption action:** Runners: tell us your tight spot on LINE @aybkk.
+## #3 Partner (why people run: company)
+**Hook:** "People don't run for the miles. They run for the company."
+**Turn:** "Running clubs, walking groups. Everyone wants someone beside them. At 6am in a Mysore room, 30 people are on the same path as you."
+**Takeaway:** "We struggle together. We progress together. Same practice, same journey. That's a partner who shows up every morning."
+**Caption action:** Come meet your practice partners: LINE @aybkk.
 
 ## #4 Sleep
 **Hook:** "Everyone is tired. Nobody has fixed it with an app."
@@ -30,11 +30,11 @@ Plato: translate TH/ZH/RU, add XHS title, keep claims as written (no medical pro
 **Takeaway:** "Our students tell us the first thing that changes isn't their body. It's their sleep."
 **Caption action:** Come to one 7am class and see how you sleep that night.
 
-## #5 Eat with a purpose (honest one)
-**Hook:** "I'm not a nutritionist. I won't sell you collagen."
-**Turn:** "But something funny happens when you practise at 6am. You stop wanting the heavy dinner. Nobody tells you to. Your body does."
-**Takeaway:** "The practice doesn't change what you eat. It changes what you want to eat."
-**Caption action:** Try 2 weeks of morning practice and notice what you crave.
+## #5 Eat with a purpose
+**Hook:** "Nobody at AYBKK is on a diet. Most of them still got leaner."
+**Turn:** "Here's why. When you practise every morning, you want to feel light on the mat tomorrow. So tonight you eat lighter. Nobody tells you to."
+**Takeaway:** "It's not a direct way. It's the one that lasts: the practice changes what you want to eat."
+**Caption action:** Try 2 weeks of morning practice and watch what you crave.
 
 ## #6 Calm the mind
 **Hook:** "Most people don't exercise for their body any more. They exercise to calm down."
@@ -42,11 +42,11 @@ Plato: translate TH/ZH/RU, add XHS title, keep claims as written (no medical pro
 **Takeaway:** "90 minutes. No phone. No music. Just your breath counting the practice. That's where the calm is trained."
 **Caption action:** Book your first Mysore class: aybkk.net.
 
-## #7 Heat (honest one)
-**Hook:** "Cold plunge, sauna, red light. You can buy heat. Or you can make it."
-**Turn:** "Ashtanga builds heat from the inside: breath, bandha, movement. You sweat more on the mat than in most saunas."
-**Takeaway:** "No machine, no booking, no photo for Instagram. Just your own heat, every morning."
-**Caption action:** Come feel it: one Mysore class.
+## #7 Hot and cold
+**Hook:** "People pay for saunas and cold plunges. Your body can do both."
+**Turn:** "In the practice, movement heats you from the inside. Your breath cools you. Heat inside, air drying your skin outside."
+**Takeaway:** "You make your own warmth. No machine, no booking, no sweater. Hot and cold, built in."
+**Caption action:** Come feel it in one Mysore class.
 
 ## #8 Mind-body movement
 **Hook:** "Pilates studios are opening everywhere. Here's what they're copying."
@@ -70,6 +70,6 @@ Plato: translate TH/ZH/RU, add XHS title, keep claims as written (no medical pro
 
 ## Series closer (after all 10)
 **Hook:** "10 things people do to stay healthy."
-**Turn:** "Track, get strong, sleep, calm down, move with your mind, be with others, keep a tradition. That's 7."
-**Takeaway:** "Ashtanga does 7 of them in one morning. The other 3? We'll tell you honestly what we don't do."
+**Turn:** "Track, get strong, find partners, sleep, eat lighter, calm down, hot and cold, move with your mind, be with others, keep a tradition."
+**Takeaway:** "Ashtanga does all 10. In one morning. Every morning."
 **Caption action:** Your first month: aybkk.net.

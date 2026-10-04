@@ -10,23 +10,23 @@ One line: **"Your watch knows you slept badly. It won't get you on the mat at 6.
 
 ## THE 10 HABITS FRAME (Boonchu, 4 Oct 2026): our main content and sales frame
 All writing, Reels, captions, the website and the app point to one of these 10. Keep tapping on them.
-Master line: **"10 things people do to stay healthy. Ashtanga does 7 of them in one morning."**
+Master line: **"10 things people do to stay healthy. Ashtanga does all 10, in one morning."**
 
 | # | Habit | What we say (honest) | Strength |
 |---|---|---|---|
 | 1 | Track everything | Real proof: practices done, resting heart rate, sleep. The 12-week check in your profile. | full |
 | 2 | Get stronger | Body-weight strength you can keep for decades: chaturanga, jump-backs, arm balances. | full |
-| 3 | Walk / run | We don't replace your run. We fix what running breaks: hips, hamstrings, back. | partial |
+| 3 | Walk / run (people run for company) | Partners on the same path: like-minded people practising beside you. We struggle together, progress together, share the same journey. | full |
 | 4 | Sleep | Early practice, breath, early nights. Say "students tell us", never promise. | full, careful |
-| 5 | Eat with a purpose | Morning practice makes you want lighter food. We are not nutritionists. | partial |
+| 5 | Eat with a purpose | Indirect but it works: most students get leaner, not from a diet, but because you want to feel lighter in every practice. Never say "every student", never promise kilos. | full, careful |
 | 6 | Calm the mind | Breath-led practice, 90 minutes with no phone. | full |
-| 7 | Heat | Your own internal heat from breath and movement. No machine needed. | partial |
+| 7 | Hot and cold | The practice heats the body from inside; the breath cools it. Heat inside, air drying the skin outside. You make your own warmth, no machine, no sweater. Say what they feel, no medical claim. | full |
 | 8 | Mind-body movement | That is the whole practice. | full |
 | 9 | Do it with others | A quiet room of people who show up. Belonging without noise. | full |
 | 10 | Go traditional | A 100-year-old method, Authorized teacher. Never inflate the authorization. | full |
 
 Rules:
-- Never claim all 10. "7 of the 10" is the claim. Partial ones are told honestly (that honesty is the trust).
+- "All 10" is the claim (Boonchu, 4 Oct) and it stands only with the careful words: no "every student", no kilos, no medical claims for heat or sleep.
 - No medical promises (no "cures", "treats", "lose X kg"). Say what students report, or what the practice trains.
 - Every piece names its habit number in the brief, so we can count coverage. Rotate: each habit at least once every 2 weeks.
 - No statistic in public until it is checked against its source.
