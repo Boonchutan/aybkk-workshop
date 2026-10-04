@@ -13,7 +13,7 @@ Rules kept from Carne's #1: no price, no program name, no "apply", no "authorize
 
 Dear friend,
 
-This is the first of many letters. Every week, I will write you one thing that [BOONCHU: your real number] years of practice have taught me.
+This is the first of many letters. Every week, I will write you one thing that 20 years of Ashtanga have taught me. For 18 of those years, I have practiced six days a week.
 
 Practice. Breath. Rest. Getting up early. Being stuck. One letter a week. Three minutes to read.
 
@@ -33,7 +33,7 @@ That brings me to the one habit I would give you, if I could give you only one:
 
 **Practice at the same time every morning.**
 
-Alarm. Water. Mat. First breath. That's it.
+Alarm. Tea or coffee. Nauli, rolling the belly muscles. Mat. That's it.
 
 You don't need more motivation. You need fewer decisions, and a teacher who notices when you are gone. When the time is fixed, there is nothing left to decide.
 
@@ -41,7 +41,7 @@ If it sounds like I am making a big deal out of a small thing, I am. I have not 
 
 By the way, "every morning" means every practice day, not Saturdays or moon days. And it does not mean the full series. On a bad day, a few Sun Salutations count. The time is the habit. The length can change.
 
-[BOONCHU: confirm the routine line, the "nothing matters more" line and the "few Sun Salutations" line are how you teach it. Delete any that are not.]
+[BOONCHU: confirm the "nothing matters more" line and the "few Sun Salutations" line are how you teach it. Delete any that are not.]
 
 **This week, try this:** pick one time. Be on your mat at that time on your next 3 practice days. That's all.
 
@@ -52,7 +52,7 @@ P.S. (LINE, Thai) New to Mysore? Special promotion for new students: buy 1, get 
 
 P.S. (WeChat) One small favor. Send this account a message with two things: your city, and how many years you have practiced. One line is enough.
 
-P.S. (Telegram) One small favor. Message me at [@handle] with two things: your city, and how many years you have practiced. One line is enough.
+P.S. (Telegram) One small favor. Message me at @Boonchutanti with two things: your city, and how many years you have practiced. One line is enough.
 
 P.P.S. Next week: "Am I flexible enough?" My honest answer.
 
@@ -64,9 +64,9 @@ Put it after "How do you keep going when it feels like there is no way?":
 
 ## Fill-ins (never invented)
 1. [Thursday], [6:40 am]: the real day and time.
-2. [years of practice]: your real number. Team files disagree (14 teaching in Carne's draft, 16 teaching / 20 practice in the Halbert file, 18 in direction.md).
-3. The three teaching lines marked above.
-4. [@handle] for Telegram.
+2. Years: CONFIRMED by Boonchu 4 Oct: started Ashtanga 20 years ago, six days a week since 2008 (18 years).
+3. The two teaching lines marked above. (Routine CONFIRMED: alarm, tea or coffee, nauli, mat.)
+4. Telegram: @Boonchutanti (confirmed).
 
 ## Language notes
 - Thai (LINE): local dateline (the street, the rain, the sound). Mysore = มายซอร์. Asana = อาสนะ.
