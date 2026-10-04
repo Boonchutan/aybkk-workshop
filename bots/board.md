@@ -2,6 +2,10 @@
 
 Last 14 days, newest first. Built by Machiavelli.
 
+## 2026-10-04 · carnegie
+
+Script draft for Plato: Stuck in Primary Ep. 1, Marichyasana D, "Pull harder, or let go" (58 s, Fork-First + 3-second blocks). Idea from a @philosophyminis Reel on the law of reversed effort; source card = Yoga Sutra 2.47 (fact-checked). Waiting on Boonchu's Mari D cue before filming. Full package: posts/2026-10-04-carnegie-ep1-mari-d-script.md
+
 ## 2026-10-04 · plato
 
 Trigger: scientists say this week that even people in their 80s and 90s can build strength; one session a week helps (Newcastle Univ., 2 Oct).
