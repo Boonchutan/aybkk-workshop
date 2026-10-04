@@ -199,6 +199,7 @@ Guardrails: never use the "back injury" story from Boonchu Persuasion Framework 
 - 2026-09-29 | Birthday tribute, Hero's Journey 5 beats: sick boy who hid from practice to play cricket, serious at 19, 20 years as assistant, took over 2007, world tours from 1996, students from 70+ countries; Boonchu's personal memories | No myth | Asana: none (tribute)
 
 ## What worked
+- 2026-10-04 Adjustment Reel (talking, purple tee): within 17 min a practitioner commented that a teacher sharing the feelings of a new asana 'creates... trust'. Lesson: 'we cannot see ourselves / what to feel' lands with experienced viewers. Reply short + one question back.
 - 2026-10-04 Flexible-or-Stiff Reel: first comment within minutes was about the Gervais close ('Quite an anti climax at the end' + 4 laughing emojis). Lesson: the self-joke ending gets people to comment. Reply with another self-joke + a question back (Team flexible or Team stiff?) to keep the thread going.
 - 2026-10-01 Ep.3 Ashtavakra comments: real practitioners joined in (one shared his first both-sides Ashtavakrasana from an inversion, learned from a Sharath video). One gentle pushback: "the teachers never needed myths". One tip: read the Ashtavakra Gita. Lesson: keep the myth as the hook, but land every episode on the practice. Purists watch for that.
 
