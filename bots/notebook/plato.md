@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-10-04: PLAIN TRIGGER (Boonchu, after 'Thirteen all' in the Hanuman script): never use a sports score, jargon or a news detail that needs outside knowledge to make sense. Every line must make sense to a 10-year-old who knows nothing about the event. If the news link is weak, drop it and use the viewer's own body (stuck split, shaking legs) as the trigger. Script skeleton: Halbert (Attention, Interest, Desire, Action) or the 3-second Triple Hook. 10-year-old English.
 - 2026-10-04: OBSIDIAN SYNC LAG: the vault lives in Drive under 'My MacBook Pro > Documents > 1st obsidian vault'. A note Plato makes in Drive shows up in Obsidian only after his MacBook syncs, so it can take a while. If he can't see it: the Mac must be on and Google Drive running. (Letter 01 showed up after a short wait.)
 - 2026-10-04: LETTER HOME IN OBSIDIAN: vault '1st obsidian vault' > folder 'Boonchu Newsletter Monday' (Drive folder id 1uZJm3IXLNDuJNol5giJcok80uuesuUlq). One note per letter: 'Letter NN · <subject>.md' with all 4 languages + the line to type under the photo. The Drive connector cannot edit files: for changes, give Boonchu the full updated note in chat.
 - 2026-10-04: LETTER #1 SEND DATE (Boonchu): Monday 5 Oct 2026. Letter #2 'Am I flexible enough?' Monday 12 Oct. Chinese (WeChat) and Russian (Telegram) go out only after a native reader checks them; if none by send time, LINE (Thai + English) goes first.
