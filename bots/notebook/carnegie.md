@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-03T23:37:59.384Z
+Inbox last read: 2026-10-04T23:38:35.055Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -40,3 +40,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-03: Lead table still empty. Inbox read OK: 3 LINE threads, 0 about 180K. No requests in team chat.
 - 2026-10-04 (chat): Ep. 1 Mari D script built from @philosophyminis "law of reversed effort" Reel (workflow: verify sources, 3 drafts, 3 judges, red-team). Facts: Huxley did not coin the law (Baudouin 1920, from Coue); the Reel misquotes Huxley; YS 2.47 is about the seated asana, never claim it is about Mari D. Waiting on Boonchu cue.
 - 2026-10-04 (chat): Ep. 1 switched to The Roll Up (UMP) with Boonchu cue: less legs, belly a little flat and firm (not sucked in, not soft), belly and hips one piece; inhale, quick nod back into the floor, tiny kick; roll up straight knees, balance straight arms, then bend elbows and fold. SUPV = second-series payoff (verified 2nd series). Credit @philosophyminis approved. Script: posts/2026-10-04-carnegie-ep1-roll-up-script.md
+- 2026-10-05: Lead table still empty. Inbox read OK: 3 LINE threads, 0 about 180K. No requests in team chat.
