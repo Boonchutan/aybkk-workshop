@@ -44,7 +44,7 @@ Everybody have tight hamstrings.
 Legs behind the head... some people take 2, 3 years to start to feel comfortable.
 Some take much longer. They feel: no way I can do it.
 That's the Wise Old Man. He live in your head.
-Too old? One older lady, 8 years with me.
+No way? One student, 8 years with me.
 Few months ago... Dwi Pada Sirsasana. Both legs.
 (1 s silence, her photo)
 
@@ -71,7 +71,7 @@ Photos OK, names never: no name on screen, no tag, no @, no name in alt text. Sa
 
 ## EDIT CUE SHEET (house style)
 - Header pill, whole video, top center: "Hidden Stories of Ashtanga · Ep. 5".
-- Zoom punch about 1 s + SFX at 40%, 0.4 s after the word: Too late, basket, one year, too weak, does not grow, no amrita, tortoise, legs too far, 2 years, Too old?, Dwi Pada, in your head, technique. Keep total under 90 s: if over, cut pauses tighter or speed 1.25x, never cut her 1 s silence.
+- Zoom punch about 1 s + SFX at 40%, 0.4 s after the word: Too late, basket, one year, too weak, does not grow, no amrita, tortoise, legs too far, 2 years, No way?, Dwi Pada, in your head, technique. Keep total under 90 s: if over, cut pauses tighter or speed 1.25x, never cut her 1 s silence.
 - Ladder 3 / TURN card (plum, gold title "SUPTA KURMASANA"), shown silently while he says "which angle, what move is tight for you": ❌ control the legs · ❌ round the back · ❌ legs too far over the head · ✅ bend the knees, foot close to the neck. (Boonchu's own 3 mistakes; no longer spoken, for time.) Hook card: "TOO OLD. TOO STIFF. TOO LATE." (gold: LATE); bring the same card back on "He live in your head".
 - Her photo on the silence: never cut her head. Fit the whole photo.
 - LINE card: plum, Gloock, "The mountain does not grow. You do." with "You do." in gold.
@@ -90,7 +90,7 @@ Too old. Too stiff. Too late. You hear this voice too.
 Hidden Stories of Ashtanga, Ep. 5: The Mountain Does Not Grow.
 In an old Chinese story, that voice has a name: the Wise Old Man.
 Supta Kurmasana: some people take 2 to 3 years just to start to feel comfortable. Find the exact spot that is tight for you, and work there, with a teacher.
-One older lady got Dwi Pada Sirsasana a few months ago, after 8 years with me.
+One of our students got Dwi Pada Sirsasana a few months ago, after 8 years with me.
 The mountain does not grow. You do.
 
 Come learn Ashtanga
@@ -105,6 +105,6 @@ His face, plum gradient from the bottom third. Top: white letterspaced "HIDDEN S
 - Liezi, ch. 5 湯問 (zh.wikisource 列子/湯問篇); Lionel Giles, Taoist Teachings from the Book of Lieh Tzu (1912), pp. 86-88. Facts: 年且九十 (nearly 90); 懲山北之塞，出入之迂 (had to go around); 子孫荷擔者三夫 ... 箕畚 (sons and grandsons, baskets); 投諸渤海之尾 (to the sea); 寒暑易節，始一反焉 (one round trip about a year, school note); 河曲智叟笑而止之 (the Wise Old Man laughs); reply 子子孫孫無窮匱也，而山不加增，何苦而不平; 智叟亡以應 (no answer); 帝感其誠，命夸蛾氏二子負二山 (Wikisource spelling; the school textbook and Chinese captions use 夸娥氏). Chinese school textbook: Grade 8 (部编版), per two study sites; check before quoting a lesson number.
 - Mahabharata, Adi Parva, Astika Parva, sec. 18, tr. K. M. Ganguli: "O Tortoise-king, thou wilt have to hold the mountain on thy back!"; "By degrees, the milky water ... turned into clarified butter ... But nectar did not appear even then."; Dhanwantari with the white vessel of nectar. In the Mahabharata it is the king of tortoises, not said to be Vishnu. "The mountain need something to stand on" and the name Akupara come from the Sanskrit critical edition 1.16.10 (GRETIL: kūrmarājānam akūpāraṃ ... girer adhiṣṭhānam asya bhavān bhavitum arhati). Left out on purpose: the gods get tired and Narayana gives them strength (sec. 18), to avoid a third "a god saves them" ending after Ep. 4.
 - Kurma = tortoise (Monier-Williams). Kurmasana: Primary (Yoga Mala no. 22); Supta Kurmasana is the state of its 9th vinyasa. Dwi Pada Sirsasana: Intermediate (repo ashtanga-graph.js). "Same name", never "named after".
-- Student facts: Boonchu, 4 Oct chat: legs behind the head, some people take 2-3 years to start getting comfortable, some much longer and feel there is no way; muscles and joints can change; find the angle and move that is tight for you and work there; 'scratch where you don't itch'. Plato softened 'muscles get longer' to 'muscles can stretch more' (science is split on length vs stretch tolerance). Boonchu, 3 Oct chat: tight hamstrings; the 3 mistakes; the fix; 2 years; an older lady got Dwi Pada a few months ago after 8 years with him; photo OK, no name.
+- Student facts: Boonchu, 4 Oct chat: legs behind the head, some people take 2-3 years to start getting comfortable, some much longer and feel there is no way; muscles and joints can change; find the angle and move that is tight for you and work there; 'scratch where you don't itch'. Plato softened 'muscles get longer' to 'muscles can stretch more' (science is split on length vs stretch tolerance). Boonchu, 3 Oct chat: tight hamstrings; the 3 mistakes; the fix; 2 years; a student got Dwi Pada a few months ago after 8 years with him (Boonchu: never call her old or "older lady"); photo OK, no name.
 - Left out: Mao and every political reading; the little neighbour boy, walking around the mountain, the Wise Old Man having no answer, the gods carrying the mountains away (time; the script never says he moved them himself, and the caption must not either); the giant turtles in the same Liezi chapter (time); crushed sea animals, forest fire, Mohini, Rahu, the battle; Garuda.
 - China version later: never political, no wordplay on 愚公移山, god = 天帝, practice = 练习.
