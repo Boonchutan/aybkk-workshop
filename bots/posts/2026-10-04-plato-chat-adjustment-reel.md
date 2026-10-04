@@ -244,3 +244,35 @@ Tag location: AYBKK, Bangkok. Thai promo = the same Thai lines as the Flexible-o
 - Viewer (nice), no pause before the quote: applied.
 - Viewer (nice), "I need an adjustment" on the cover and cards: skipped. It is her exact quote, and the orders and invention checks ask for one exact version everywhere. The cover is 5 words.
 - Viewer (nice), the Chinese word for hands-on help: applied. It is in the edit cue sheet, Chinese cut line.
+## CAPTION v2 (4 Oct evening, after Boonchu confirmed Jamsai = Authorized Level 2; replaces the captions above)
+### English
+My wife @missjamsai is an Authorized Level 2 Ashtanga teacher.
+Today she asked me for an adjustment. 🧘
+We can't see ourselves. We think we are doing it, but we are still far away.
+Your practice is your own. But I believe even skilled people need experienced hands, once in a while. 🙌
+Gymnastics, ballet, Ashtanga. Same.
+What do you think? Let me know. 👇
+Beginners welcome. We teach you from zero. 🌱
+Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months.
+Bring a friend, or keep both for yourself.
+Buy by 11 Nov. (In honour of Sharathji's passing.)
+Comment aybkk and I'll send you the link.
+Come learn Ashtanga
+Aybkk.net
+#aybkk #ashtanga #ashtangabangkok #boonchutanti #mysorestyle
+
+### Thai
+ภรรยาผม @missjamsai เป็นครูอัษฎางคะ ระดับ Authorized Level 2
+วันนี้เธอขอให้ผมช่วยปรับอาสนะให้ 🧘
+เรามองไม่เห็นตัวเอง เราคิดว่าทำได้แล้ว แต่จริงๆ ยังห่างอีกไกล
+การฝึกเป็นของคุณเอง แต่ผมเชื่อว่า ต่อให้เก่งแค่ไหน บางครั้งก็ยังต้องการมือที่มีประสบการณ์ช่วยนำร่างกาย 🙌
+ยิมนาสติก บัลเลต์ อัษฎางคะ ก็เหมือนกัน
+คุณคิดยังไงครับ? บอกผมหน่อย 👇
+ยินดีต้อนรับมือใหม่ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย 🌱
+โปรโมชั่นพิเศษสำหรับนักเรียนใหม่:
+ซื้อ 1 แถม 1 สำหรับแพ็กเกจ 1, 2 หรือ 3 เดือน
+ชวนเพื่อนมาเรียนด้วยกัน หรือจะเก็บไว้ใช้เองทั้งสองแพ็กเกจก็ได้
+สมัครได้ถึงวันที่ 11 พ.ย. (น้อมรำลึกถึงชารัทจี ในวันครบรอบการจากไปของท่าน)
+คอมเมนต์คำว่า aybkk แล้วเราจะส่งลิงก์ไปให้
+มาเรียนอัษฎางคะกับเรา
+Aybkk.net
