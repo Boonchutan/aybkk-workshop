@@ -267,15 +267,16 @@
   .cal .cn{font-style:normal;font-weight:800;font-size:10px;line-height:1.1;letter-spacing:-.01em}
   .cal .cn .lg{display:none}
   .cal .cg.mysore .cn{color:#FC838B}.cal .cg.led_primary .cn{color:#8BFC83}.cal .cg.led_inter .cn{color:#9AA2FF}
-  .cal .ct{font-weight:800;font-size:11px;line-height:1.15;color:#FBF5F9;font-variant-numeric:tabular-nums}
+  .cal .ct{font-weight:800;font-size:11px;line-height:1.15;color:#7FD8CC;font-variant-numeric:tabular-nums}
   .cal .ct i{display:block;font-style:normal}
   .cal .ct .amp{display:none}
   .cal .tt{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
   .cal .cg,.cal .tt{width:100%}
+  .cal .d.past .cg{opacity:.55}
   .cal .d:has(.cg){padding-left:2px;padding-right:1px}
   .tg{display:inline-block;font-weight:900;font-size:8.5px;line-height:1;padding:2px 2px;border-radius:3px;letter-spacing:-.04em;
     background:#FBF5F9;color:#3E1442;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .tg.boon{background:#F2C94C;color:#3E1442}.tg.m{background:#F0C6F2;color:#3E1442}.tg.jam{background:#7FD8CC;color:#123a36}
+  .tg{background:#F2C94C;color:#3E1442}
   .cal .legend .lr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;width:100%;font-size:12px;font-weight:600;color:#C9AFCB}
   .cal .legend .tg{font-size:12px;padding:3px 6px}
   .cal .legend .cn{font-size:12px}
@@ -1332,11 +1333,18 @@
   const CAL_NAME = { mysore: ['Mysore', 'Mysore'], led_primary: ['Primary', 'Primary'], led_inter: ['Intermediate', 'Inter.'] };
   const TEACH_CLS = { Boonchu: 'boon', M: 'm', Jamsai: 'jam' };
   const teachTag = n => `<b class="tg ${TEACH_CLS[n] || ''}">${esc(n)}</b>`;
-  function dayChips(iso) {
+  function pastSource(iso) {
+    for (const k of [14, 28, 7, 21]) {
+      const d = new Date(Date.parse(iso + 'T12:00:00Z') + k * 86400e3).toISOString().slice(0, 10);
+      if (!MOON[d] && CLASSES.some(c => c.date === d)) return d;
+    }
+    return null;
+  }
+  function dayChips(iso, src = iso) {
     if (MOON[iso]) return `<span class="ch moon ${esc(MOON[iso])}" title="${esc(t(MOON[iso] === 'new' ? 'newMoon' : 'fullMoon'))}"><b>${esc(t(MOON[iso] === 'new' ? 'newMoon' : 'fullMoon'))}</b>&nbsp;</span>`;
     const byKind = {};
     for (const c of CLASSES) {
-      if (c.date !== iso || c.isOnline) continue;
+      if (c.date !== src || c.isOnline) continue;
       const g = byKind[c.kind] = byKind[c.kind] || { times: [], who: [] };
       g.times.push(fmtTime(c.startAt).replace(/^0/, ''));
       for (const w of String(c.teachers || '').split(/\s*[,&]\s*/).filter(Boolean)) if (!g.who.includes(w)) g.who.push(w);
@@ -1367,9 +1375,10 @@
     for (let d = 1; d <= daysIn; d++) {
       const iso = `${calMonth}-${String(d).padStart(2, '0')}`;
       const open = has.has(iso);
-      cells += `<button class="d ${open ? '' : 'off'} ${MOON[iso] ? 'moonday' : ''} ${iso === today ? 'today' : ''}
+      const src = !open && iso <= today ? pastSource(iso) : null;
+      cells += `<button class="d ${open ? '' : 'off'} ${src ? 'past' : ''} ${MOON[iso] ? 'moonday' : ''} ${iso === today ? 'today' : ''}
         ${iso === selDate ? 'sel' : ''}" ${open ? `onclick="pickDay('${iso}')"` : 'disabled'}>
-        <span class="n">${d}</span>${dayChips(iso)}</button>`;
+        <span class="n">${d}</span>${dayChips(iso, src || iso)}</button>`;
     }
     const cal = `<div class="cal">
       <div class="head">
