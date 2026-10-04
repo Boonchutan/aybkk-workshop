@@ -1,13 +1,14 @@
-# Letter from the Shala #1 · ready to copy
+# Letter from the Shala #1 · ready to copy (Monday letter)
 
-Send: Thursday 9 Oct. Fill [day] and [time] in the first line. Delete nothing else.
+Handwrite the English (or your language) in your notebook, take a photo, post the photo with the typed text.
+The line under "Type under the photo" goes in the message text, not in the handwritten letter.
 Thai: you check it. Chinese and Russian: a native speaker reads it out loud first.
 
-## English (master)
+## English (master, to handwrite)
 ```
 **Subject:** Why I'm going to write to you every week
 
-[Thursday], [6:40 am]. The shala, right after Mysore class.
+[Day], [time]. [Where you are writing.]
 
 Dear friend,
 
@@ -33,7 +34,7 @@ That brings me to the one habit I would give you, if I could give you only one:
 
 Alarm. Tea or coffee. Nauli, rolling the belly muscles. Mat. That's it.
 
-You don't need more motivation. You need fewer decisions, and a teacher who notices when you are gone. When the time is fixed, there is nothing left to decide.
+You don't need more motivation. You need fewer decisions, and a teacher who notices and asks when you are not in the shala. When the time is fixed, there is nothing left to decide.
 
 If it sounds like I am making a big deal out of a small thing, I am. I have not found anything that matters more.
 
@@ -44,20 +45,22 @@ By the way, "every morning" means every practice day, not Saturdays or moon days
 See you on the mat,
 Boonchu
 
-P.S. (LINE, Thai) New to Mysore? Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. (In honour of Sharathji's passing.) Ask us here on LINE @aybkk.
+P.S. Remember, we are all growing "old", and we want to keep our energy and strength for a long time. (I wish we could say we are growing young.)
 
-P.S. (WeChat) One small favor. Send this account a message with two things: your city, and how many years you have practiced. One line is enough.
-
-P.S. (Telegram) One small favor. Message me at @Boonchutanti with two things: your city, and how many years you have practiced. One line is enough.
-
-P.P.S. Next week: "Am I flexible enough?" My honest answer.
+P.P.S. Next Monday: "Am I flexible enough?" My honest answer.
+```
+Type under the photo:
+```
+TYPED UNDER THE PHOTO (LINE, Thai): New to Mysore? Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. (In honour of Sharathji's passing.) Ask us here on LINE @aybkk.
+TYPED UNDER THE PHOTO (WeChat): One small favor. Send this account a message with two things: your city, and how many years you have practiced. One line is enough.
+TYPED UNDER THE PHOTO (Telegram): One small favor. Message me at @Boonchutanti with two things: your city, and how many years you have practiced. One line is enough.
 ```
 
 ## Thai · LINE OA
 ```
 Subject: ทำไมถึงจะเขียนหาคุณทุกสัปดาห์
 
-[วันพฤหัสบดี] [6.40 น.] ที่ชาลา เพิ่งจบคลาสมายซอร์
+[วัน] [เวลา] [ตอนนี้นั่งเขียนอยู่ที่ไหน]
 
 เพื่อนที่รัก
 
@@ -70,11 +73,11 @@ Subject: ทำไมถึงจะเขียนหาคุณทุกส�
 
 งั้นขอเริ่มด้วยเรื่องของนักเรียนคนหนึ่ง ที่ฝึกกับเรามาเกือบ 10 ปี
 
-เมื่อไม่กี่เดือนก่อน เธอเริ่มเอาขาทั้งสองข้างไปไว้หลังศีรษะ ท่า Dwi Pada Sirsasana แรกๆ ก็ยังไม่สบายตัว เธอถามว่า "สักวันมันจะดีขึ้นไหม?" เราตอบว่า "ดีขึ้นสิ... ด้วยความอดทน"
+เมื่อไม่กี่เดือนก่อน เธอเริ่มเอาขาทั้งสองข้างไปไว้หลังศีรษะ อาสนะ Dwi Pada Sirsasana แรกๆ ก็ยังไม่สบายตัว เธอถามว่า "สักวันมันจะดีขึ้นไหม?" เราตอบว่า "ดีขึ้นสิ... ด้วยความอดทน"
 
-ท่าเอาขาไว้หลังศีรษะต้องใช้เวลา บางคนต้องใช้ 2 หรือ 3 ปี กว่าจะเริ่มรู้สึกสบาย บางคนใช้นานกว่านั้นมาก จนเริ่มรู้สึกว่าไม่มีทางแล้ว คุณอาจเคยรู้สึกแบบนี้ กับอาสนะสักท่าของคุณเอง
+การเอาขาไว้หลังศีรษะต้องใช้เวลา บางคนต้องใช้ 2 หรือ 3 ปี กว่าจะเริ่มรู้สึกสบาย บางคนใช้นานกว่านั้นมาก จนเริ่มรู้สึกว่าไม่มีทาง คุณอาจเคยรู้สึกแบบนี้ กับอาสนะสักท่าของคุณเอง
 
-เธอยังฝึกตามปกติ ไม่หยุด และช่วงหลังมานี้ เรารู้สึกได้ว่าเธอทำท่านี้ได้ง่ายขึ้นมาก
+เธอยังฝึกตามปกติ ไม่หยุด และช่วงหลังมานี้ เรารู้สึกได้ว่าเธอทำอาสนะนี้ได้ง่ายขึ้นมาก
 
 แล้วจะไปต่อยังไง ในวันที่รู้สึกว่าไม่มีทาง?
 
@@ -84,27 +87,31 @@ Subject: ทำไมถึงจะเขียนหาคุณทุกส�
 
 นาฬิกาปลุก ชาหรือกาแฟ เนาลิ (หมุนกล้ามเนื้อหน้าท้อง) ขึ้นเสื่อ แค่นั้นเอง
 
-คุณไม่ได้ต้องการแรงจูงใจเพิ่ม แต่ต้องการเรื่องให้ตัดสินใจน้อยลง และครูที่สังเกตเห็นเวลาคุณหายไป พอเวลาฝึกตายตัวแล้ว ก็ไม่เหลืออะไรให้ต้องตัดสินใจ
+คุณไม่ได้ต้องการแรงจูงใจเพิ่ม แต่ต้องการเรื่องให้ตัดสินใจน้อยลง และครูที่สังเกตเห็นและทักถาม เวลาคุณไม่ได้มาชาลา พอเวลาฝึกตายตัวแล้ว ก็ไม่เหลืออะไรให้ต้องตัดสินใจ
 
 ถ้าฟังดูเหมือนเรากำลังทำเรื่องเล็กให้เป็นเรื่องใหญ่ ก็ใช่เลย ยังไม่เคยเจออะไรที่สำคัญกว่านี้
 
-อีกอย่างนะ "ทุกเช้า" หมายถึงทุกวันที่ฝึก ไม่นับวันเสาร์หรือวัน moon day และไม่ได้หมายถึงต้องฝึกครบทั้งซีรีส์ วันไหนที่แย่ๆ แค่สุริยนมัสการไม่กี่รอบก็นับแล้ว สิ่งที่เป็นนิสัยคือเวลา ส่วนจะฝึกยาวแค่ไหน เปลี่ยนได้
+อีกอย่างนะ "ทุกเช้า" หมายถึงทุกวันที่ฝึก ไม่นับวันเสาร์หรือวันมูนเดย์ และไม่ได้หมายถึงต้องฝึกครบทั้งซีรีส์ วันไหนที่แย่ๆ แค่สุริยนมัสการไม่กี่รอบก็นับแล้ว สิ่งที่เป็นนิสัยคือเวลา ส่วนจะฝึกยาวแค่ไหน เปลี่ยนได้
 
 **สัปดาห์นี้ ลองทำแบบนี้ดู:** เลือกมาหนึ่งเวลา แล้วอยู่บนเสื่อให้ตรงเวลานั้น ใน 3 วันฝึกถัดไป แค่นั้นพอ
 
 แล้วเจอกันบนเสื่อ
 บุญชู
 
-ป.ล. ยังใหม่กับมายซอร์? โปรพิเศษสำหรับนักเรียนใหม่: ซื้อ 1 แถม 1 สำหรับแพ็กเกจ 1, 2 หรือ 3 เดือน (ซื้อแพ็กเกจไหน ได้แพ็กเกจเดียวกันฟรีอีก 1 แพ็กเกจ) ชวนเพื่อนมาด้วยกัน หรือจะเก็บไว้ใช้เองทั้งสองแพ็กเกจก็ได้ ซื้อภายในวันที่ 11 พ.ย. (เพื่อรำลึกถึงการจากไปของ Sharathji) สอบถามได้ที่นี่เลย LINE @aybkk
+ป.ล. อย่าลืมนะ เราทุกคนกำลัง "แก่" ขึ้นทุกวัน และเราอยากรักษาพลังกับความแข็งแรงไว้ไปอีกนานๆ (อยากพูดได้จังว่าเรากำลังเด็กลง)
 
-ป.ป.ล. สัปดาห์หน้า: "ตัวอ่อนพอไหม?" คำตอบตรงๆ จากเรา
+ป.ป.ล. วันจันทร์หน้า: "ตัวอ่อนพอไหม?" คำตอบตรงๆ จากเรา
+```
+Type under the photo:
+```
+ยังใหม่กับมายซอร์? โปรพิเศษสำหรับนักเรียนใหม่: ซื้อ 1 แถม 1 สำหรับแพ็กเกจ 1, 2 หรือ 3 เดือน ชวนเพื่อนมาด้วยกัน หรือจะเก็บไว้ใช้เองทั้งสองแพ็กเกจก็ได้ ซื้อภายในวันที่ 11 พ.ย. (เพื่อรำลึกถึงการจากไปของ Sharathji) สอบถามได้ที่นี่เลย LINE @aybkk
 ```
 
 ## Chinese · WeChat article (with the Foolish Old Man paragraph)
 ```
 Subject: 为什么我要每周给你写一封信
 
-[周四]，[早上6:40]。道场里，迈索尔课刚结束。
+[星期几]，[几点]。[你在哪里写这封信。]
 
 亲爱的朋友：
 
@@ -132,7 +139,7 @@ Subject: 为什么我要每周给你写一封信
 
 闹钟。茶或咖啡。Nauli（瑙力），滚动腹部肌肉。上垫。就这些。
 
-你需要的不是更多动力。你需要的是少做一些决定，还有一位老师，你一没来，他就会发现。时间定下来了，就没什么要再决定的了。
+你需要的不是更多动力。你需要的是少做一些决定，还有一位老师。你没来道场，他会发现，也会问你。时间定下来了，就没什么要再决定的了。
 
 如果你觉得我在小题大做，没错，我就是。我还没找到比这更重要的事。
 
@@ -143,16 +150,20 @@ Subject: 为什么我要每周给你写一封信
 垫子上见，
 Boonchu
 
-P.S. 想请你帮个小忙。给这个公众号发条消息，写两件事：你在哪个城市，你练了几年。一句话就够了。
+P.S. 记住，我们都在一天天变“老”。我们都想让自己的精力和力量，保持得久一点，再久一点。（真希望我们能说，自己在一天天变年轻。）
 
-P.P.S. 下周聊：“我的柔韧性够吗？”我会老实回答。
+P.P.S. 下周一聊：“我的柔韧性够吗？”我会老实回答。
+```
+Type under the photo:
+```
+想请你帮个小忙。给这个公众号发条消息，写两件事：你在哪个城市，你练了几年。一句话就够了。
 ```
 
 ## Russian · Telegram groups
 ```
 Subject: Почему я буду писать вам каждую неделю
 
-[Четверг], [6:40 утра]. Шала, сразу после класса Майсор.
+[День / Day], [время / time]. [Где я пишу / Where you are writing.]
 
 Дорогой друг,
 
@@ -164,9 +175,9 @@ Subject: Почему я буду писать вам каждую неделю
 
 Итак, начну с ученицы, которая практикует у меня почти 10 лет.
 
-Несколько месяцев назад она начала закидывать обе ноги за голову. Дви Пада Ширшасана. Сначала было неудобно. Она спросила меня: «Когда-нибудь станет лучше?» Мой ответ: «Станет... с терпением».
+Несколько месяцев назад она начала закидывать обе ноги за голову. Дви Пада Ширшасана. Сначала было неудобно. Она спросила меня: «Когда-нибудь станет лучше?» Мой ответ: «Станет... с вашим терпением».
 
-Ноги за голову требуют времени. Некоторым нужно 2 или 3 года, чтобы хотя бы начать чувствовать себя в этой позе комфортно. Другим гораздо больше, и им начинает казаться, что ничего не получится. Возможно, вам знакомо это чувство по какой-то своей асане.
+Ноги за голову требуют времени. Некоторым нужно 2 или 3 года, чтобы хотя бы начать чувствовать себя в этой асане комфортно. Другим гораздо больше, и им начинает казаться, что ничего не получится. Возможно, вам знакомо это чувство по какой-то своей асане.
 
 Она не бросала свой режим. И в последнее время я чувствую, что ей становится гораздо легче.
 
@@ -178,7 +189,7 @@ Subject: Почему я буду писать вам каждую неделю
 
 Будильник. Чай или кофе. Наули, вращение мышц живота. Коврик. Вот и всё.
 
-Вам не нужно больше мотивации. Вам нужно меньше решений. И учитель, который замечает, когда вас нет. Когда время одно и то же, решать уже нечего.
+Вам не нужно больше мотивации. Вам нужно меньше решений. И учитель, который замечает, когда вас нет в шале, и спрашивает, где вы. Когда время постоянное, решать уже нечего.
 
 Если вам кажется, что я придаю мелочи большое значение, то да, придаю. Ничего важнее мне найти не удалось.
 
@@ -189,7 +200,11 @@ Subject: Почему я буду писать вам каждую неделю
 До встречи на коврике,
 Бунчу
 
-P.S. Одна маленькая просьба. Напишите мне на @Boonchutanti две вещи: ваш город и сколько лет вы практикуете. Одной строчки достаточно.
+P.S. Помните: мы все «стареем», и нам хочется надолго сохранить энергию и силу. (Жаль, что нельзя сказать, что мы молодеем.)
 
-P.P.S. На следующей неделе: «Хватает ли мне гибкости?» Мой честный ответ.
+P.P.S. В следующий понедельник: «Хватает ли мне гибкости?» Мой честный ответ.
+```
+Type under the photo:
+```
+Одна маленькая просьба. Напишите мне на @Boonchutanti две вещи: ваш город и сколько лет вы практикуете. Одной строчки достаточно.
 ```
