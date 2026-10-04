@@ -1,4 +1,4 @@
-# Letter from the Shala #1 (DRAFT, English core) · Plato · 4 Oct 2026
+# Letter from the Shala #1 (APPROVED English core, Boonchu 'go' 4 Oct) · Plato · 4 Oct 2026
 
 Skeleton: Halbert Boron 1, "the first letter of a series" (bots/notebook/halbert-letter.md, Issue 1).
 Direction: Habit Gap core ("same practice, same time, a teacher who notices"). Habit numbers: #1 Track (count your practice days). Sleep (#4) not covered this week.
@@ -19,7 +19,7 @@ Practice. Breath. Rest. Getting up early. Being stuck. One letter a week. Three 
 
 These letters won't be polished. I would rather write to you every week than write one perfect letter a year.
 
-So let me start with a student who has practiced with me for many years.
+So let me start with a student who has practiced with me for nearly 10 years.
 
 A few months ago, she started to do both legs behind her head. Dwi Pada Sirsasana. It did not feel comfortable right away. She asked me, "Is it ever going to get better?" I said, "It will... with your patience."
 
@@ -71,3 +71,6 @@ Put it after "How do you keep going when it feels like there is no way?":
 - Chinese (WeChat article): asana = 体式. A native reader checks it out loud.
 - Russian (Telegram): asana = асана. A native reader checks it out loud.
 - The student: no name, no photo unless she says yes.
+
+## Approval
+- 4 Oct: Boonchu said go. He chose 'nearly 10 years' on purpose to keep the student a bit of a mystery (Plato noted the real number is about 8 and suggested 'for years'; his call).
