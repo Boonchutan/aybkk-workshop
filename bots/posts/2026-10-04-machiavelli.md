@@ -6,3 +6,4 @@ Reel from Plato: Bhima cannot lift an old monkey's tail; the monkey is Hanuman. 
 Score: wins this week: none reported. 180K leads pasted: 0 in 7 days. No reminders due.
 Carne and Plato both posted today. Inbox 07:08: 0 new, 0 hot.
 13:08 check-in: Mysore Reel still waiting (due 19:00 today, default B), course prices still waiting (3 days). Inbox 13:08: 3 new, 2 hot.
+19:08 check-in: Mysore Reel no answer by 19:00, default B applied (moved to Wed 7 Oct). Course prices not repeated (nagged twice today). Letter #1 due Mon 5 Oct. No win. Inbox 19:08: 2 new, 2 hot.
