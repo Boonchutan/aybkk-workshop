@@ -28,7 +28,23 @@ const ok = (name, cond, extra = '') => {
     },
   };
   global.__uploads = uploads; global.__destroyed = destroyed;
-  mountBkk(app, { pgPool: pool, cloudinary: fakeCloud });
+  // Stand-in for Drive's public folder view and download.
+  const entry = (id, name, folder) => `<div class="flip-entry" id="entry-${id}" tabindex="0"><div class="flip-entry-info"><a href="https://drive.google.com/${folder ? 'drive/folders/' + id : 'file/d/' + id + '/view'}" target="_blank"><div class="flip-entry-title">${name}</div></a></div></div>`;
+  const DRIVE_HTML = {
+    ROOTF: entry('DAY5aaaaaaaaaaaaaaaaaaaaa', '5Oct26', true) + entry('DAY4aaaaaaaaaaaaaaaaaaaaa', '4Oct26', true) + entry('RAWaaaaaaaaaaaaaaaaaaaaaa', 'RAW', true),
+    DAY5aaaaaaaaaaaaaaaaaaaaa: entry('IMG1aaaaaaaaaaaaaaaaaaaaa', 'AYBKK Oct5-002.jpg') + entry('IMG2aaaaaaaaaaaaaaaaaaaaa', 'AYBKK Oct5-001.jpg')
+      + entry('VIDaaaaaaaaaaaaaaaaaaaaaa', 'clip.mp4') + entry('SUBaaaaaaaaaaaaaaaaaaaaaa', '5Oct26LedP', true),
+    SUBaaaaaaaaaaaaaaaaaaaaaa: entry('IMG3aaaaaaaaaaaaaaaaaaaaa', 'led-01.jpg'),
+  };
+  const driveFetches = [];
+  const fakeFetch = async url => {
+    driveFetches.push(url);
+    const id = new URL(url).searchParams.get('id');
+    if (url.includes('embeddedfolderview')) return new Response(DRIVE_HTML[id] || '', { status: 200 });
+    return new Response(Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 1, 2, 3]), { status: 200 });
+  };
+  process.env.DRIVE_PHOTOS_FOLDER = 'ROOTF';
+  mountBkk(app, { pgPool: pool, cloudinary: fakeCloud, fetch: fakeFetch });
   await new Promise(r => setTimeout(r, 1500));           // let schema init finish
   const srv = app.listen(0);
   const port = srv.address().port;
@@ -456,6 +472,24 @@ const ok = (name, cond, extra = '') => {
   ok('deleting removes it from the profile and from storage',
      del.status === 200 && ((await J(`/api/bkk/me/${cat.code}/photos`)).body.days || []).length === 0 &&
      global.__destroyed.length === 1 && global.__destroyed[0].type === 'authenticated');
+
+  console.log('\n— photos straight from Drive —');
+  const dl = await J('/api/bkk/teacher/drive?date=2026-10-05', { headers: PKEY });
+  const names = (dl.body.files || []).map(f => f.name);
+  ok('the day folder is found by its name and photos listed (sub-folder too, videos left out, in order)',
+     dl.status === 200 && JSON.stringify(names) === JSON.stringify(['AYBKK Oct5-001.jpg', 'AYBKK Oct5-002.jpg', 'led-01.jpg']), JSON.stringify(dl.body));
+  ok('Drive list needs a passcode', (await J('/api/bkk/teacher/drive?date=2026-10-05')).status === 401);
+  const upBefore = uploads.length;
+  const fd = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code] }, PKEY);
+  ok('a Drive photo is saved and tagged', fd.status === 200 && uploads.length === upBefore + 1 && fd.body.photo.members.length === 1, JSON.stringify(fd.body));
+  const dl2 = await J('/api/bkk/teacher/drive?date=2026-10-05', { headers: PKEY });
+  ok('the list ticks it as saved', dl2.body.files.find(f => f.id === 'IMG2aaaaaaaaaaaaaaaaaaaaa').photoId === fd.body.photo.id);
+  const again = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code, bob.code] }, PKEY);
+  ok('the same Drive photo is never saved twice (only its tags change)', again.status === 200 && uploads.length === upBefore + 1 && again.body.photo.members.length === 2);
+  ok('a file that is not in that day\'s folder is refused',
+     (await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', driveId: 'SOMEOTHERFILEaaaaaaaaaaaa', memberCodes: [] }, PKEY)).status === 400);
+  ok("Ann's profile shows the Drive photo",
+     JSON.stringify((await J(`/api/bkk/me/${ann.code}/photos`)).body).includes(fd.body.photo.thumb));
 
   console.log('\n— Rezerv import —');
   const imp1 = await post('/api/bkk/admin/import', { rows: [

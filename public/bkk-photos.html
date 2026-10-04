@@ -66,11 +66,19 @@
       <div class="row">
         <div><span class="muted">Class date</span><input type="date" id="date"></div>
         <div style="flex:0 0 auto;align-self:flex-end">
-          <label class="btn pink" style="display:inline-flex;align-items:center">+ Add photos
-            <input type="file" id="files" accept="image/*" multiple hidden></label>
+          <button class="btn pink" id="driveBtn">From Drive</button>
         </div>
       </div>
-      <p class="muted" style="margin:8px 0 0">Each student sees only the photos you tag them in.</p>
+      <p class="muted" style="margin:8px 0 0">Each student sees only the photos you tag them in.
+        <label style="color:var(--plum);text-decoration:underline;cursor:pointer">Or add photos from this phone
+          <input type="file" id="files" accept="image/*" multiple hidden></label></p>
+    </div>
+
+    <div class="box" id="drivebox" hidden>
+      <b class="h">In Drive for this day <span class="muted" id="dCount"></span></b>
+      <p class="muted" id="dMsg" style="margin:0 0 10px"></p>
+      <button class="btn pink wide" id="dStart" hidden></button>
+      <div class="grid" id="dGrid"></div>
     </div>
 
     <div class="box" id="editor" hidden>
@@ -114,7 +122,8 @@
   // People Chay can tap without searching: today's bookings, everyone already
   // tagged on this date, and anyone found or added in this session.
   const PEOPLE = new Map();          // code -> name
-  let QUEUE = [], EDIT = null, PICKED = new Set(), PHOTOS = [];
+  let QUEUE = [], EDIT = null, PICKED = new Set(), PHOTOS = [], DRIVE = [];
+  const dthumb = (id, w) => `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w}`;
 
   window.unlock = async () => {
     KEY = $('#key').value.trim();
@@ -141,7 +150,54 @@
     for (const p of PHOTOS) for (const m of p.members) PEOPLE.set(m.code, m.name);
     renderGrid();
   }
-  $('#date').addEventListener('change', loadDay);
+  $('#date').addEventListener('change', () => { loadDay(); if (!$('#drivebox').hidden) loadDrive(); });
+
+  // The day's folder in Chay's Drive ("photos › 3Oct26"): every photo, with the
+  // ones already saved ticked, so nothing is missed and nothing goes in twice.
+  async function loadDrive(fresh) {
+    $('#drivebox').hidden = false;
+    $('#dMsg').textContent = 'Reading the Drive folder…';
+    $('#dStart').hidden = true; $('#dGrid').innerHTML = ''; $('#dCount').textContent = '';
+    const r = await api(`/api/bkk/teacher/drive?date=${$('#date').value}${fresh ? '&fresh=1' : ''}`);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { $('#dMsg').textContent = '✗ ' + (j.error || 'Could not read Drive.'); return; }
+    DRIVE = j.files || [];
+    renderDrive();
+  }
+  function renderDrive() {
+    const left = DRIVE.filter(f => !f.photoId).length;
+    $('#dCount').textContent = DRIVE.length ? `(${DRIVE.length - left} of ${DRIVE.length} saved)` : '';
+    $('#dMsg').textContent = !DRIVE.length
+      ? `No Drive folder with photos for this date. The folder must be named like "3Oct26" inside "photos".`
+      : left ? 'Ticked = already saved. Tap one photo, or tag all the new ones in a row.' : 'Every photo in this folder is saved. ✓';
+    $('#dStart').hidden = !left;
+    $('#dStart').textContent = `Tag the ${left} new photo${left === 1 ? '' : 's'}`;
+    $('#dGrid').innerHTML = DRIVE.map(f => `
+      <button class="tile" data-drive="${esc(f.id)}">
+        <img loading="lazy" src="${esc(dthumb(f.id, 400))}" alt="" style="${f.photoId ? 'opacity:.45' : ''}">
+        <span style="${f.photoId ? 'color:#2a8a4a;font-weight:700' : ''}">${f.photoId ? '✓ saved' : esc(f.name)}</span>
+      </button>`).join('');
+  }
+  $('#driveBtn').addEventListener('click', () => loadDrive(true));
+  $('#dStart').addEventListener('click', () => {
+    QUEUE = DRIVE.filter(f => !f.photoId).map(f => ({ drive: f }));
+    TOTAL = QUEUE.length; DONE = 0;
+    nextNew();
+  });
+  $('#dGrid').addEventListener('click', e => {
+    const b = e.target.closest('.tile'); if (!b) return;
+    const f = DRIVE.find(x => x.id === b.dataset.drive); if (!f) return;
+    const saved = f.photoId && PHOTOS.find(p => p.id === f.photoId);
+    if (saved) {
+      QUEUE = []; TOTAL = 0;
+      EDIT = { kind: 'edit', id: saved.id };
+      PICKED = new Set(saved.members.map(m => m.code));
+      openEditor(saved.full, 'Who is in this photo?');
+      return;
+    }
+    QUEUE = [{ drive: f }]; TOTAL = 1; DONE = 0;
+    nextNew();
+  });
 
   function renderGrid() {
     $('#count').textContent = PHOTOS.length ? `(${PHOTOS.length})` : '';
@@ -189,6 +245,12 @@
   async function nextNew() {
     if (!QUEUE.length) { closeEditor(); return; }
     const file = QUEUE[0];
+    if (file.drive) {
+      EDIT = { kind: 'drive', f: file.drive };
+      PICKED = new Set();
+      openEditor(dthumb(file.drive.id, 1600), `Photo ${DONE + 1} of ${TOTAL}: who is in it?`);
+      return;
+    }
     try {
       const data = await shrink(file);
       EDIT = { kind: 'new', data };
@@ -206,8 +268,8 @@
     $('#edMsg').textContent = '';
     $('#find').value = ''; $('#found').innerHTML = '';
     $('#prog').style.width = TOTAL ? `${Math.round(100 * DONE / TOTAL)}%` : '0';
-    $('#edSkip').textContent = EDIT.kind === 'new' ? 'Skip' : 'Delete photo';
-    $('#edSave').textContent = EDIT.kind === 'new' ? 'Save & next' : 'Save';
+    $('#edSkip').textContent = EDIT.kind !== 'edit' ? 'Skip' : 'Delete photo';
+    $('#edSave').textContent = EDIT.kind !== 'edit' ? 'Save & next' : 'Save';
     renderChips();
     $('#editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -261,13 +323,20 @@
       const r = EDIT.kind === 'new'
         ? await api('/api/bkk/teacher/photos', { method: 'POST',
             body: JSON.stringify({ date: $('#date').value, image: EDIT.data, memberCodes }) })
+        : EDIT.kind === 'drive'
+        ? await api('/api/bkk/teacher/photos/from-drive', { method: 'POST',
+            body: JSON.stringify({ date: $('#date').value, driveId: EDIT.f.id, memberCodes }) })
         : await api(`/api/bkk/teacher/photos/${EDIT.id}/tags`, { method: 'POST', body: JSON.stringify({ memberCodes }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || 'Could not save.');
-      if (EDIT.kind === 'new') { PHOTOS.push(j.photo); QUEUE.shift(); DONE++; }
-      else PHOTOS = PHOTOS.map(p => p.id === j.photo.id ? j.photo : p);
+      if (EDIT.kind === 'drive') EDIT.f.photoId = j.photo.id;
+      if (EDIT.kind !== 'edit') {
+        PHOTOS = PHOTOS.filter(p => p.id !== j.photo.id).concat(j.photo);
+        QUEUE.shift(); DONE++;
+      } else PHOTOS = PHOTOS.map(p => p.id === j.photo.id ? j.photo : p);
       renderGrid();
-      EDIT.kind === 'new' ? nextNew() : closeEditor();
+      if (DRIVE.length) renderDrive();
+      EDIT.kind !== 'edit' ? nextNew() : closeEditor();
     } catch (err) { $('#edMsg').textContent = '✗ NOT SAVED: ' + err.message + ' Press Save again.'; }
     btn.disabled = false;
     if (EDIT) btn.textContent = EDIT.kind === 'new' ? 'Save & next' : 'Save';
@@ -275,7 +344,7 @@
 
   $('#edSkip').addEventListener('click', async () => {
     if (!EDIT) return;
-    if (EDIT.kind === 'new') { QUEUE.shift(); DONE++; nextNew(); return; }
+    if (EDIT.kind !== 'edit') { QUEUE.shift(); DONE++; nextNew(); return; }
     if (!confirm('Delete this photo from every profile?')) return;
     const r = await api(`/api/bkk/teacher/photos/${EDIT.id}/delete`, { method: 'POST', body: '{}' });
     if (r.ok) { PHOTOS = PHOTOS.filter(p => p.id !== EDIT.id); renderGrid(); closeEditor(); }

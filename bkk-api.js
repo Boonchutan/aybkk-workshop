@@ -90,6 +90,7 @@ function rotationTeacher(code, ymdStr) {
 function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
   const cloudinary = opts.cloudinary || null;
+  const httpFetch = opts.fetch || fetch;
   const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || 'aybkk2026';
   // Header only. A key in the query string ends up in access logs, browser
   // history and Referer headers.
@@ -204,6 +205,10 @@ function mountBkk(app, opts = {}) {
       member_id INTEGER REFERENCES bkk_members(id) ON DELETE CASCADE,
       PRIMARY KEY (photo_id, member_id))`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_photo_members_member ON bkk_photo_members (member_id)`);
+    // Photos pulled from the Drive day folder remember their Drive file, so a
+    // second pass over the same folder skips what is already in.
+    await q(`ALTER TABLE bkk_photos ADD COLUMN IF NOT EXISTS drive_id TEXT`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_photos_drive ON bkk_photos (drive_id) WHERE drive_id IS NOT NULL`);
 
     // The 12-week proof check (habit #1, Track): numbers the student already
     // has on their watch or phone, at week 0, 6 and 12. One row per day.
@@ -1600,19 +1605,116 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
         return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
       }
-      const up = await cloudinary.uploader.upload(image, {
-        type: 'authenticated', folder: `aybkk/profile/${date}`, resource_type: 'image',
-        transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:good' }],
-      });
-      const photo = (await q(
-        `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by)
-         VALUES ($1,$2,$3,$4,$5) RETURNING id`,
-        [up.public_id, date, up.width || null, up.height || null, t.id])).rows[0];
-      for (const id of await memberIds(memberCodes)) {
-        await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2) ON CONFLICT DO NOTHING',
-          [photo.id, id]);
+      res.json({ success: true, photo: await storePhoto(t, date, image, memberCodes, null) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  async function storePhoto(t, date, image, memberCodes, driveId) {
+    const up = await cloudinary.uploader.upload(image, {
+      type: 'authenticated', folder: `aybkk/profile/${date}`, resource_type: 'image',
+      transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:good' }],
+    });
+    const photo = (await q(
+      `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by,drive_id)
+       VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
+      [up.public_id, date, up.width || null, up.height || null, t.id, driveId])).rows[0];
+    for (const id of await memberIds(memberCodes)) {
+      await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2) ON CONFLICT DO NOTHING',
+        [photo.id, id]);
+    }
+    return (await photosWithTags('p.id = $1', [photo.id]))[0];
+  }
+
+  // ── photos straight from the Drive day folder (Boonchu, 5 Oct) ────────────
+  // Chay's camera folder is "Daily Class Photos/Videos › photos › 3Oct26 …" and
+  // is link-shared, so the server lists it through Drive's public folder view and
+  // downloads files by id: no Google login, no file ever passes through a phone.
+  // Only files listed in that day's folder can be imported, so this is not an
+  // open proxy for any Drive file.
+  const DRIVE_ROOT = process.env.DRIVE_PHOTOS_FOLDER || '10A--d5dX4cGrt9M4deNod-zzEDJP_R90';
+  const MON = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+  const IMG = /\.(jpe?g|png|webp|heic)$/i;
+  const unent = s => s.replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  async function driveList(folderId) {
+    const r = await httpFetch(`https://drive.google.com/embeddedfolderview?id=${encodeURIComponent(folderId)}`,
+      { signal: AbortSignal.timeout(20000) });
+    if (!r.ok) throw new Error(`Drive folder could not be read (${r.status}). Is it still shared by link?`);
+    const html = await r.text();
+    const out = [];
+    const re = /class="flip-entry" id="entry-([\w-]+)"[\s\S]*?<a href="([^"]+)"[\s\S]*?class="flip-entry-title">([^<]*)</g;
+    for (let m; (m = re.exec(html));) out.push({ id: m[1], name: unent(m[3]), folder: m[2].includes('/folders/') });
+    return out;
+  }
+  // "3Oct26", "03 Oct 2026", "3October26" → 2026-10-03
+  function folderDate(name) {
+    const m = String(name).match(/^(\d{1,2})\s*([A-Za-z]{3})[A-Za-z]*\s*(\d{4}|\d{2})\b/);
+    if (!m || !MON[m[2].toLowerCase()]) return null;
+    const y = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]);
+    return `${y}-${String(MON[m[2].toLowerCase()]).padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+  }
+  const driveCache = new Map();          // date -> { at, files }
+  async function driveDay(date, fresh) {
+    const hit = driveCache.get(date);
+    if (hit && !fresh && Date.now() - hit.at < 10 * 60e3) return hit.files;
+    const days = (await driveList(DRIVE_ROOT)).filter(e => e.folder && folderDate(e.name) === date);
+    const files = [];
+    for (const d of days) {
+      for (const e of await driveList(d.id)) {
+        if (e.folder) {          // one level down: "3Oct26LedP" and the like
+          for (const f of await driveList(e.id)) if (!f.folder && IMG.test(f.name)) files.push({ ...f, sub: e.name });
+        } else if (IMG.test(e.name)) files.push(e);
       }
-      res.json({ success: true, photo: (await photosWithTags('p.id = $1', [photo.id]))[0] });
+    }
+    files.sort((a, b) => (a.sub || '').localeCompare(b.sub || '') || a.name.localeCompare(b.name, undefined, { numeric: true }));
+    driveCache.set(date, { at: Date.now(), files });
+    return files;
+  }
+  const sniff = b => b[0] === 0xFF && b[1] === 0xD8 ? 'image/jpeg'
+    : b[0] === 0x89 && b[1] === 0x50 ? 'image/png'
+    : b.subarray(0, 4).toString('latin1') === 'RIFF' ? 'image/webp'
+    : b.subarray(4, 8).toString('latin1') === 'ftyp' ? 'image/heic' : null;
+
+  app.get('/api/bkk/teacher/drive', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    const date = isDate(req.query.date) ? req.query.date : ymd(bkkNow());
+    try {
+      const files = await driveDay(date, req.query.fresh === '1');
+      const done = files.length ? (await q('SELECT id, drive_id FROM bkk_photos WHERE drive_id = ANY($1)',
+        [files.map(f => f.id)])).rows : [];
+      const byDrive = new Map(done.map(r => [r.drive_id, r.id]));
+      res.json({ date, files: files.map(f => ({ id: f.id, name: f.name, sub: f.sub || '', photoId: byDrive.get(f.id) || null })) });
+    } catch (e) { res.status(502).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/teacher/photos/from-drive', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    try {
+      const { date, driveId, memberCodes } = req.body || {};
+      if (!isDate(date)) return res.status(400).json({ error: 'date required (YYYY-MM-DD)' });
+      if (!(await driveDay(date)).some(f => f.id === driveId)) {
+        return res.status(400).json({ error: 'That file is not in the Drive folder for this day.' });
+      }
+      const had = (await q('SELECT id FROM bkk_photos WHERE drive_id=$1', [driveId])).rows[0];
+      if (had) {               // already in: just set who is in it
+        await q('DELETE FROM bkk_photo_members WHERE photo_id=$1', [had.id]);
+        for (const id of await memberIds(memberCodes)) {
+          await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2)', [had.id, id]);
+        }
+        return res.json({ success: true, photo: (await photosWithTags('p.id = $1', [had.id]))[0] });
+      }
+      if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
+        return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
+      }
+      const r = await httpFetch(`https://drive.google.com/uc?export=download&id=${encodeURIComponent(driveId)}`,
+        { signal: AbortSignal.timeout(60000) });
+      const buf = Buffer.from(await r.arrayBuffer());
+      const type = r.ok && sniff(buf);
+      if (!type) return res.status(502).json({ error: 'Drive did not send a photo. Is the folder still shared by link?' });
+      const photo = await storePhoto(t, date, `data:${type};base64,${buf.toString('base64')}`, memberCodes, driveId);
+      res.json({ success: true, photo });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
