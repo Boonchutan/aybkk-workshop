@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-04T00:09:33.236Z
+Inbox last read: 2026-10-04T06:09:18.576Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -42,6 +42,7 @@ Inbox last read: 2026-10-04T00:09:33.236Z
 - 2026-09-30: Brand = welcoming. Tagline "Traditional Ashtanga. Open door." on site branch claude/aybkk-net-shopwindow (commit ae5626c2, not live). Next: change what Google shows (Google Business Profile description, aybkk.org and aybkk.com page text, Mindbody/Yogatrail listings, beginner Google reviews).
 
 ## Log
+- 2026-10-04 13:08: Inbox: 3 new, 2 hot (both LINE). Nagged Mysore Reel (19:00 today) and course prices (Wed 7 Oct, 3 days), 2nd time today each: do not repeat at 19:08. No reminders, no wins.
 - 2026-10-04 07:08: Both bots posted. No new @Machi requests (Mari D cue still open). Inbox: 0 new. Nagged Mysore Reel (due 19:00 today, default B = Wed 7 Oct) and course prices (Wed 7 Oct, 3 days), 1st time today each. No wins, no leads (0 in 7 days), no reminders.
 - 2026-10-03 19:08: Inbox: 3 new, 0 need a reply (a promo, a follow-up note, a class count). No win, no reminders. Mysore Reel and course prices already nagged twice today, not repeated. Next step given: paste one 180K DM in team chat (leads 0 in 6 days).
 - 2026-10-03 13:08: Inbox: 2 new, 0 need a reply (a thank-you, a promo). Nagged Mysore Reel (Sun 4 Oct, 1 day) and course prices (Wed 7 Oct, 4 days), 2nd time today each: do not repeat at 19:08. No reminders due, no wins.

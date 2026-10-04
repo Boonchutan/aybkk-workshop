@@ -5,3 +5,4 @@ Plato still waits on Boonchu's own Marichyasana D cue (Stuck in Primary Ep. 1), 
 Reel from Plato: Bhima cannot lift an old monkey's tail; the monkey is Hanuman. Asana: Utkatasana. Hook: "This week, scientists said: even at ninety, you can get stronger."
 Score: wins this week: none reported. 180K leads pasted: 0 in 7 days. No reminders due.
 Carne and Plato both posted today. Inbox 07:08: 0 new, 0 hot.
+13:08 check-in: Mysore Reel still waiting (due 19:00 today, default B), course prices still waiting (3 days). Inbox 13:08: 3 new, 2 hot.
