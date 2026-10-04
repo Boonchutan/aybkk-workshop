@@ -19,13 +19,13 @@ Practice. Breath. Rest. Getting up early. Being stuck. One letter a week. Three 
 
 These letters won't be polished. I would rather write to you every week than write one perfect letter a year.
 
-So let me start with a student.
+So let me start with a student who has practiced with me for many years.
 
-She has practiced with me for 8 years. A few months ago, she put both legs behind her head. Dwi Pada Sirsasana.
+A few months ago, she started to do both legs behind her head. Dwi Pada Sirsasana. It did not feel comfortable right away. She asked me, "Is it ever going to get better?" I said, "It will... with your patience."
 
 Legs behind the head takes time. Some people need 2 or 3 years just to start to feel comfortable. Some need much longer, and they start to feel there is no way. Maybe you know that feeling, with an asana of your own.
 
-She did not stop practicing. And a few months ago, it came.
+She did not stop her routine. And recently, I can feel it getting much easier for her.
 
 How do you keep going when it feels like there is no way?
 
@@ -40,8 +40,6 @@ You don't need more motivation. You need fewer decisions, and a teacher who noti
 If it sounds like I am making a big deal out of a small thing, I am. I have not found anything that matters more.
 
 By the way, "every morning" means every practice day, not Saturdays or moon days. And it does not mean the full series. On a bad day, a few Sun Salutations count. The time is the habit. The length can change.
-
-[BOONCHU: confirm the "nothing matters more" line and the "few Sun Salutations" line are how you teach it. Delete any that are not.]
 
 **This week, try this:** pick one time. Be on your mat at that time on your next 3 practice days. That's all.
 
@@ -65,7 +63,7 @@ Put it after "How do you keep going when it feels like there is no way?":
 ## Fill-ins (never invented)
 1. [Thursday], [6:40 am]: the real day and time.
 2. Years: CONFIRMED by Boonchu 4 Oct: started Ashtanga 20 years ago, six days a week since 2008 (18 years).
-3. The two teaching lines marked above. (Routine CONFIRMED: alarm, tea or coffee, nauli, mat.)
+3. Teaching lines CONFIRMED by Boonchu 4 Oct (keep both). Routine CONFIRMED: alarm, tea or coffee, nauli, mat. Student story rewritten in his words (many years; started Dwi Pada a few months ago; asked if it gets better; 'It will... with your patience'; recently much easier).
 4. Telegram: @Boonchutanti (confirmed).
 
 ## Language notes
