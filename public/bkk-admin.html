@@ -90,6 +90,7 @@
       progTitle: 'Progress today', progStudents: 'Students in the system', progActive: n => `${n} with an active pass`,
       progEmail: 'Have an email', progLinks: 'Profile links sent', progToday: n => `${n} today`, progOpened: 'Opened their profile',
       progPhotos: 'Photos added today', progStudentsIn: n => `${n} students in them`, progUntagged: 'Photos with nobody tagged',
+      progNoKey: 'Photos are broken for students: CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET are missing in Railway Variables.',
       progNotes: 'Teacher notes today', progAll: (ph, st, no) => `All time: ${ph} photos for ${st} students, ${no} notes.`,
       linkBtn: 'Sign-in link', linkCopied: 'Copied. Paste it into their LINE, WhatsApp or WeChat.', linkCopyHand: 'Copy this and send it to them:',
       impTitle: 'Move students from Rezerv', impBtn: 'Import',
@@ -168,6 +169,7 @@
       progTitle: 'ความคืบหน้าวันนี้', progStudents: 'นักเรียนในระบบ', progActive: n => `มีบัตรใช้งาน ${n} คน`,
       progEmail: 'มีอีเมลแล้ว', progLinks: 'ส่งลิงก์โปรไฟล์แล้ว', progToday: n => `วันนี้ ${n}`, progOpened: 'เปิดโปรไฟล์แล้ว',
       progPhotos: 'รูปที่ใส่วันนี้', progStudentsIn: n => `มีนักเรียน ${n} คนในรูป`, progUntagged: 'รูปที่ยังไม่แตะชื่อ',
+      progNoKey: 'นักเรียนดูรูปไม่ได้: ยังไม่ได้ใส่ CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET ใน Railway Variables',
       progNotes: 'คำแนะนำครูวันนี้', progAll: (ph, st, no) => `ทั้งหมด: รูป ${ph} รูป ของนักเรียน ${st} คน คำแนะนำ ${no} รายการ`,
       linkBtn: 'ลิงก์เข้าโปรไฟล์', linkCopied: 'คัดลอกแล้ว วางในไลน์ WhatsApp หรือ WeChat ของนักเรียนได้เลย', linkCopyHand: 'คัดลอกข้อความนี้แล้วส่งให้นักเรียน:',
       impTitle: 'ย้ายนักเรียนจาก Rezerv', impBtn: 'นำเข้า',
@@ -509,7 +511,7 @@
     if (!p || p.error) return '';
     const row = (label, val, warn) => `<tr><td>${label}</td><td style="text-align:right"><b${warn ? ' style="color:#c33"' : ''}>${val}</b></td></tr>`;
     const who = list => list.length ? ' · ' + list.map(x => `${esc(x.name)} ${x.n}`).join(', ') : '';
-    return `<div class="box"><b>${T('progTitle')}</b>
+    return `<div class="box"><b>${T('progTitle')}</b>${p.photoKey === false ? `<p style="color:#c33;font-weight:700">${T('progNoKey')}</p>` : ''}
       <table>
         ${row(T('progStudents'), `${p.members.total} <span class="muted">(${T('progActive', p.members.active)})</span>`)}
         ${row(T('progEmail'), `${p.members.with_email} / ${p.members.total}`)}

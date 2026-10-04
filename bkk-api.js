@@ -1135,7 +1135,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const uploaders = (await q(
         `SELECT t.name, count(*)::int AS n FROM bkk_photos p JOIN bkk_teachers t ON t.id = p.uploaded_by
          WHERE p.class_date = ${today} GROUP BY t.name ORDER BY n DESC`)).rows;
-      res.json({ members, links, photos, notes: { ...notes, byTeacher }, uploaders });
+      // Without the secret, signed photo links come out broken and students see empty boxes.
+      const photoKey = !cloudinary || typeof cloudinary.config !== 'function' || !!cloudinary.config().api_secret;
+      res.json({ members, links, photos, notes: { ...notes, byTeacher }, uploaders, photoKey });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
