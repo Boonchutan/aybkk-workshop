@@ -2,14 +2,14 @@
 
 Skeleton: Halbert Boron 1, "the first letter of a series" (bots/notebook/halbert-letter.md, Issue 1).
 Direction: Habit Gap core ("same practice, same time, a teacher who notices"). Habit numbers: #1 Track (count your practice days). Sleep (#4) not covered this week.
-Send: Thursday 9 Oct, after Boonchu's OK. LINE OA (Thai, Lane B P.S.), WeChat OA article boonchuaybkk (Chinese, Lane A P.S.), Telegram 3 groups (Russian, Lane A P.S.).
+Send: MONDAY (Boonchu, 4 Oct: Monday letters motivate people to come and practice). Handwritten by Boonchu with a fountain pen, photo posted with the typed text. LINE OA (Thai, Lane B P.S.), WeChat OA article boonchuaybkk (Chinese, Lane A P.S.), Telegram 3 groups (Russian, Lane A P.S.).
 Rules kept from Carne's #1: no price, no program name, no "apply", no "authorized". Trust first. (The LINE promo line keeps Boonchu's own Sharathji honour words, as ordered on 3 Oct.)
 
 ---
 
 **Subject:** Why I'm going to write to you every week
 
-[Thursday], [6:40 am]. The shala, right after Mysore class.
+[Day], [time]. [Where you are writing.]
 
 Dear friend,
 
@@ -35,7 +35,7 @@ That brings me to the one habit I would give you, if I could give you only one:
 
 Alarm. Tea or coffee. Nauli, rolling the belly muscles. Mat. That's it.
 
-You don't need more motivation. You need fewer decisions, and a teacher who notices when you are gone. When the time is fixed, there is nothing left to decide.
+You don't need more motivation. You need fewer decisions, and a teacher who notices and asks when you are not in the shala. When the time is fixed, there is nothing left to decide.
 
 If it sounds like I am making a big deal out of a small thing, I am. I have not found anything that matters more.
 
@@ -46,13 +46,16 @@ By the way, "every morning" means every practice day, not Saturdays or moon days
 See you on the mat,
 Boonchu
 
-P.S. (LINE, Thai) New to Mysore? Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. (In honour of Sharathji's passing.) Ask us here on LINE @aybkk.
+P.S. Remember, we are all growing "old", and we want to keep our energy and strength for a long time. (I wish we could say we are growing young.)
 
-P.S. (WeChat) One small favor. Send this account a message with two things: your city, and how many years you have practiced. One line is enough.
+P.P.S. Next Monday: "Am I flexible enough?" My honest answer.
 
-P.S. (Telegram) One small favor. Message me at @Boonchutanti with two things: your city, and how many years you have practiced. One line is enough.
+TYPED UNDER THE PHOTO (LINE, Thai): New to Mysore? Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. (In honour of Sharathji's passing.) Ask us here on LINE @aybkk.
 
-P.P.S. Next week: "Am I flexible enough?" My honest answer.
+TYPED UNDER THE PHOTO (WeChat): One small favor. Send this account a message with two things: your city, and how many years you have practiced. One line is enough.
+
+TYPED UNDER THE PHOTO (Telegram): One small favor. Message me at @Boonchutanti with two things: your city, and how many years you have practiced. One line is enough.
+
 
 ---
 
