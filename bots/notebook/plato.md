@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-10-04 (Boonchu, via Machi): 10 HABITS FRAME. Every piece points to one of the 10 health habits in bots/direction.md and names its number. Master line: "10 things people do to stay healthy. Ashtanga does 7 of them in one morning." Never claim all 10, no medical promises.
 - 2026-10-04: NEVER CALL A STUDENT OLD (Boonchu): never write 'old lady', 'older lady', 'older woman' or 'old' about any student, even if over 50. Only they can say that about themselves. Say 'a student' or 'one of our students'. 'Too old' is fine only as the viewer's own inner voice, never as a label for a real person.
 - 2026-10-04 (Boonchu, via Machi): DIRECTION. Read bots/direction.md (The Habit Gap) before every run. AYBKK sells a habit system, not poses: "people don't lack tools, they quit". Every piece leads to a Mysore trial, a renewal or the 180K program. No public statistic until checked against its source.
 - 2026-10-03: MIRROR RULE (Boonchu, top priority for every story): every story must reflect the viewer's own psychology so they think 'oh... that's me'. Without that moment people get bored and scroll. How: (1) the hook names the viewer's own feeling or inner voice, specific not general; (2) each story beat gets one short mirror line tying it to a feeling the viewer has (no progress, wanting to quit, forcing, 'too old/too stiff'); (3) the turn shows them a new way to see that feeling, then the practice fix. Plato's caveat: the mirror stops the scroll, the turn and the proof make them come to AYBKK; never skip those.
