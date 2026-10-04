@@ -1,0 +1,153 @@
+{
+ "bios": [
+  {
+   "id": 1,
+   "text": "Beginners welcome. 14 yrs in Bangkok.\nNew: buy 1 get 1 free, 1-3 months, to 11 Nov\n@boonchutanti & @missjamsai\nLINE @aybkk · WeChat aybkkwechat",
+   "why": "143 characters, 4 lines, no emoji (the · counts as 1). It says who it is for first, so a beginner who came from a Reel knows they can come. The proof line is 14 years in Bangkok. The offer says exactly what it is (1, 2 or 3 months, ends 11 Nov) with no price, and both teachers keep their tags as in the current bio. You can still copy LINE and WeChat in one tap. Remove line 2 on 12 Nov. That frees up room to put back 'Traditional Ashtanga. Open door.' or '2000+ students'.",
+   "angle": "offer"
+  },
+  {
+   "id": 2,
+   "text": "Mysore in Bangkok. 14 yrs, 2000+ students.\nAuthorized teacher @boonchutanti\nNew students: buy 1 get 1 free to 11 Nov\nLINE @aybkk · WeChat aybkkwechat",
+   "why": "149 characters, 4 lines, no emoji. This version leads with proof (14 years, 2000+ students), then the authorization, which is only on @boonchutanti, with no 'certified', 'master' or 'senior' and nothing that says @missjamsai is authorized. It is made for serious and travelling practitioners who search for 'Mysore'. The cost: @missjamsai is not in it, because there is no room before 12 Nov. When the offer line comes out on 12 Nov, put '& @missjamsai' back or add 'Beginners welcome.'",
+   "angle": "offer"
+  },
+  {
+   "id": 3,
+   "text": "14 years in Bangkok. 2000+ students.\n@boonchutanti (Authorized) & @missjamsai\nMysore & Led. Beginners welcome.\nLINE @aybkk · WeChat aybkkwechat",
+   "why": "143 characters, 4 lines, no emoji. It opens with the two strongest proofs in plain words. 'Authorized' sits in brackets right after @boonchutanti, so it cannot be read as covering @missjamsai. Line 3 is the open door: the class types plus 'Beginners welcome'. It is simple English for non-native readers and has no expiry date, so it can stay up all year.",
+   "angle": "trust"
+  },
+  {
+   "id": 4,
+   "text": "14 years in Bangkok. 2000+ students.\n@boonchutanti (Authorized) & @missjamsai\nNew: buy 1 get 1 free, until 11 Nov\nLINE @aybkk · WeChat aybkkwechat",
+   "why": "146 characters, 4 lines, no emoji. It has the same proof lines as bio 1, and line 3 becomes the new-student offer (1, 2 or 3 months, no price), so the bio gives people a reason to message now. The end date is written in so readers don't feel misled. Line 3 must be replaced on 12 Nov 2026, for example with 'Mysore & Led. Beginners welcome.' from bio 1.",
+   "angle": "trust"
+  },
+  {
+   "id": 5,
+   "text": "Traditional Ashtanga. Open door.\nMysore & Led classes. Beginners welcome.\nBy @boonchutanti (Authorized) & @missjamsai\nLINE @aybkk · WeChat aybkkwechat",
+   "why": "Starts with the tagline under test. Line 2 says what the shala offers and invites beginners in plain English. Line 3 credits Boonchu's authorization as a fact, and putting it in brackets keeps it attached to him only, so the bio does not suggest @missjamsai is authorized. No emoji, 4 lines, exactly 150 characters by script count (no room left, so edit with care).",
+   "angle": "door"
+  },
+  {
+   "id": 6,
+   "text": "Same practice, same time.\nA teacher who notices when you are gone.\nBangkok, 14 years. Beginners welcome.\nLINE @aybkk · WeChat aybkkwechat",
+   "why": "Starts with the habit idea, the human reason people stay. A beginner feels looked after and a long-time practitioner sees real Mysore culture. '14 years' adds trust without hype. No emoji, 4 lines, 137 characters, which leaves 13 spare. Note: it does not name Boonchu, so keep his handle in the name field or a pinned post. A new-student line such as 'New: buy 1 month, get 1 free' would not fit inside 150 here, so any offer line has to replace a line, and it must be removed on 12 Nov 2026.",
+   "angle": "door"
+  }
+ ],
+ "judged": [
+  {
+   "judge": "beginner",
+   "scores": [
+    {
+     "id": 1,
+     "score": 7,
+     "problem": "The bio never says Ashtanga or yoga, so it relies on the display name to explain what this is. \"1-3 months\" does not say months of what. The offer line expires on 11 Nov, so the bio has to be rewritten on 12 Nov. 143 chars, fits."
+    },
+    {
+     "id": 2,
+     "score": 5,
+     "problem": "To an office worker who has never done Ashtanga, \"Mysore\" reads as a city in India, not a class, and the first line is the one that has to be clear in 3 seconds. Nothing says beginners are welcome, so it reads as a place for people who already practise. @missjamsai is dropped. 149 chars, almost no room left."
+    },
+    {
+     "id": 3,
+     "score": 6,
+     "problem": "It opens with proof (14 years, 2000+ students) before saying what this is or that a newcomer is welcome. \"Mysore & Led\" is jargon to a newcomer, and \"Beginners welcome\" is buried on line 3. It gives no reason to message now. 143 chars."
+    },
+    {
+     "id": 4,
+     "score": 6,
+     "problem": "It never says what the classes are and never says beginners are welcome. To a newcomer, \"2000+ students\" plus \"Authorized\" reads like a serious place for insiders, and the offer alone does not invite them in. It expires 11 Nov. 146 chars."
+    },
+    {
+     "id": 5,
+     "score": 7,
+     "problem": "It passes the 3-second test on what this is (\"Traditional Ashtanga\") and on welcome (\"Open door\", \"Beginners welcome\"), and LINE is the clear next tap. But \"Mysore & Led classes\" is jargon that eats the most useful line, and it is exactly 150 chars, so there is no room to change anything."
+    },
+    {
+     "id": 6,
+     "score": 6,
+     "problem": "It is the most distinctive bio, but in 3 seconds the first line does not tell a newcomer what this is: \"Same practice, same time\" of what? Neither yoga nor Ashtanga is mentioned, and the habit idea only lands for people who already practise. 137 chars."
+    }
+   ],
+   "best": 5,
+   "fix_for_best": "Replace the jargon line 2 \\\"Mysore & Led classes. Beginners welcome.\\\" with \\\"Beginners welcome. We teach you from zero.\\\" To stay under the limit, cut \\\"By \\\" from line 3. The result is 149 chars, 4 lines, with no emoji or long dash:\nTraditional Ashtanga. Open door.\nBeginners welcome. We teach you from zero.\n@boonchutanti (Authorized) & @missjamsai\nLINE @aybkk · WeChat aybkkwechat\nUntil 11 Nov you could test #1's offer as a pinned post or highlight instead of in the bio, so the evergreen bio never needs editing on 12 Nov."
+  },
+  {
+   "judge": "experienced",
+   "scores": [
+    {
+     "id": 1,
+     "score": 4,
+     "problem": "Nothing about the teacher's authorization, the word Ashtanga is missing, and the offer takes up the most space. To a 10-year practitioner this reads like a discount gym. It also has to be rewritten on 12 Nov. (143 chars)"
+    },
+    {
+     "id": 2,
+     "score": 7,
+     "problem": "Strong trust signals (Mysore, 14 yrs, 2000+, Authorized teacher), but @missjamsai is dropped and Beginners welcome / open door is missing. The offer line expires on 11 Nov, so the bio needs a second rewrite. At 149 chars there is almost no room to edit."
+    },
+    {
+     "id": 3,
+     "score": 8,
+     "problem": "The most credible and evergreen option: it has proof, the authorized teacher, both teachers, classes, beginners and contact. Its weak point is that the word Ashtanga never appears in the bio (only in the account name), so 'Mysore & Led' is unclear to a reader who skims or translates it. (143 chars)"
+    },
+    {
+     "id": 4,
+     "score": 6,
+     "problem": "Same trust lines as #3, but the offer replaces the class info (Mysore/Led) and Beginners welcome. A travelling practitioner can't tell what classes exist, and the bio expires on 11 Nov. (146 chars)"
+    },
+    {
+     "id": 5,
+     "score": 7,
+     "problem": "The tagline and authorization are good, but there is no Bangkok, no 14 years and no 2000+. 'Open door' is vague for B1 readers, and at exactly 150 chars it has zero margin."
+    },
+    {
+     "id": 6,
+     "score": 5,
+     "problem": "The habit-system idea is a nice line, but there is no authorization, no Ashtanga and no Mysore. 'A teacher who notices when you are gone' is unclear in B1 English and can read as odd without context. It doesn't earn a serious practitioner's trust. (137 chars)"
+    }
+   ],
+   "best": 3,
+   "fix_for_best": "Put the word Ashtanga in line 3 so the style is clear even to someone who skims or machine-translates. To stay within the limit, tighten line 1. The result is exactly 150 chars, no emoji, and nothing in it expires:\nBangkok, 14 years, 2000+ students.\n@boonchutanti (Authorized) & @missjamsai\nAshtanga Mysore & Led. Beginners welcome.\nLINE @aybkk · WeChat aybkkwechat\nLeave the buy-1-get-1 offer out of the bio. Put it in a pinned post or story highlight, so nothing in the bio has to be removed on 12 Nov."
+  },
+  {
+   "judge": "rules",
+   "scores": [
+    {
+     "id": 1,
+     "score": 6,
+     "problem": "143 chars, 4 lines, has an end date. 'New:' does not say the offer is for new students only, so current students may think it applies to them. No 'Authorized', so it loses the main trust anchor."
+    },
+    {
+     "id": 2,
+     "score": 7,
+     "problem": "149 chars (1 spare), 4 lines. Says 'New students' with an end date, which is good. Leaves out '1, 2 or 3 months', so readers may expect buy 1 get 1 free on any package. Drops @missjamsai. Must be edited on 12 Nov."
+    },
+    {
+     "id": 3,
+     "score": 8,
+     "problem": "143 chars, 4 lines, all facts true, 'Authorized' on @boonchutanti only, no promo. Weakness: it is all numbers with no brand voice (no 'Open door' or habit idea), and the current offer is not there."
+    },
+    {
+     "id": 4,
+     "score": 7,
+     "problem": "146 chars, 4 lines. 'New:' is ambiguous (the offer is for new students only) and the 1-3 month scope is missing. Must be edited on 12 Nov."
+    },
+    {
+     "id": 5,
+     "score": 8,
+     "problem": "Exactly 150 chars with 0 spare. If Instagram counts the middle dot or any character differently, it gets cut off. No rule broken: uses the tested tagline, 'Authorized' on @boonchutanti only, beginners welcome. It does not say Bangkok, 14 years or 2000+ students, but the account name already says Bangkok."
+    },
+    {
+     "id": 6,
+     "score": 8,
+     "problem": "137 chars, 4 lines, true and on-brand (habit-system idea). It never says Ashtanga, Mysore or Authorized, so a travelling practitioner gets no proof of the teacher. Line 2 does not say whose teacher it is."
+    }
+   ],
+   "best": 5,
+   "fix_for_best": "Change 'Mysore & Led classes. Beginners welcome.' to 'Mysore & Led. Beginners welcome. 14 yrs.' (the bio stays at 150 chars and adds the 14-year proof). If you want spare room instead, use 'Mysore & Led. Beginners welcome.' (142 chars). Final with spare room:\nTraditional Ashtanga. Open door.\nMysore & Led. Beginners welcome.\nBy @boonchutanti (Authorized) & @missjamsai\nLINE @aybkk · WeChat aybkkwechat"
+  }
+ ]
+}
