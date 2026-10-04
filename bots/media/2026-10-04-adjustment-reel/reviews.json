@@ -1,0 +1,382 @@
+[
+ {
+  "lens": "hook",
+  "verdict": "The opening is not good enough yet. The wife line is a real, specific story starter, but as a 3-second hook it only describes Boonchu's day. It does not name the viewer's own feeling, and the thing that makes it surprising (she is experienced) only arrives about 40 seconds in. With sound off, the lowercase captions can even read as \"Boonchu needs adjusting.\" Lead with his own mirror line, \"we think we are doing it... but we are still super far away\", and bring the wife in at seconds 5 to 9 as the proof.",
+  "problems": [
+   {
+    "where": "Opening line, sound off (0-3 s)",
+    "problem": "House captions are lowercase with no quote marks, so 'today my wife told me i need adjustment' reads as 'my wife says I (Boonchu) need adjusting'. A sound-off viewer cannot tell who needs what, or that it is about an asana.",
+    "fix": "Use a written top line that is clear: 'My wife asked me for an adjustment.' (7 words, gold 'adjustment'). Only keep the misread if he tells the joke on purpose (hook H1), and then pop 'Her asana. Not me.' at 3 s.",
+    "severity": "must"
+   },
+   {
+    "where": "Opening line, MIRROR RULE",
+    "problem": "It names Boonchu's day, not the viewer's feeling (Useful Over Diary). Neither the beginner nor the 10-year practitioner gets an 'oh... that's me' until his line 'we think we are doing it... but we are still super far away', which comes about 35 s in.",
+    "fix": "Open with that mirror line (H3) and use the wife at 5-9 s as the proof.",
+    "severity": "must"
+   },
+   {
+    "where": "Draft line 14: 'my wife, Jamsai, consider an experienced practitioner'",
+    "problem": "The only fact that makes the wife line surprising (she is experienced) comes about 40 s in. At 0-3 s, 'my wife wants an adjustment' sounds normal, so there is no Pull and no Whiplash.",
+    "fix": "Move it inside 3-9 s and say it in 10-year-old English: 'She is not a beginner.'",
+    "severity": "must"
+   },
+   {
+    "where": "Seconds 3-12: 'generally... once in a while' and 'if you dont know me, im the founder...'",
+    "problem": "The hedges kill the tension. A spoken CV at second 6 is the classic point where people leave.",
+    "fix": "Cut 'generally' and 'once in a while'. Put the credential in a silent lower-third pill ('Boonchu \u00b7 founder, AYBKK Bangkok', no number), or use it as one proof line late in the body.",
+    "severity": "must"
+   },
+   {
+    "where": "Close: 'special promo for new students this month'",
+    "problem": "'This month' breaks CAMPAIGN DATES (the promo ends 11 Nov). A spoken new-student offer is Lane B, but the topic (experienced practitioners, ballet, gymnastics) is Lane A, so the two lanes are mixed. Route: the last 4 posts were Lane B, so Lane A is due.",
+    "fix": "Pick the lane first. No spoken promo and never 'this month'. If Lane B, the caption carries the exact PROMO LINE WORDING plus 'Comment aybkk and I'll send you the link.' with no price.",
+    "severity": "must"
+   },
+   {
+    "where": "Double meaning of 'adjustment' (relationship vs asana)",
+    "problem": "For non-native viewers it mostly misses. 'Adjustment' is not a relationship word for them, written captions lose it, and it cannot survive Thai or Chinese captions (/hook rule: must translate cleanly).",
+    "fix": "Do not let the pun carry the hook. If he uses it, he says the misread out loud as a joke on himself ('Uh oh... what I do wrong?') so his face carries it in any language.",
+    "severity": "should"
+   },
+   {
+    "where": "Whole draft: 'adjustment' and 'assisting' used for the same thing",
+    "problem": "Two words for one thing confuse non-native viewers, and Bangkok beginners do not know 'adjustment' as a yoga word.",
+    "fix": "Say only 'adjustment'. Explain it once in his English: 'adjustment... the teacher's hands guide your body.'",
+    "severity": "should"
+   },
+   {
+    "where": "Hard words: 'contortion', 'knowledgeable', 'practitioner'",
+    "problem": "WORD RULE 2: a 10-year-old non-native viewer stops on these.",
+    "fix": "Drop 'contortion'. Change 'knowledgeable hands' to 'experienced hands' (his own 'a real experienced one'). Change 'experienced practitioner' to 'she is not a beginner'.",
+    "severity": "should"
+   },
+   {
+    "where": "First picture and any adjustment footage",
+    "problem": "Carnegie's research: people LEAVE over forceful adjustments and praise 'never forceful' and 'observes first'. A deep push on screen scares Bangkok beginners and 10-year practitioners alike.",
+    "fix": "Show light hands on the hips, the teacher watching first, both people relaxed. Never show a crank into a deep asana.",
+    "severity": "should"
+   },
+   {
+    "where": "Details about the wife",
+    "problem": "The draft does not say which asana she asked about or how many years she has practised, so these are easy to invent. She is also named and may be filmed.",
+    "fix": "Use '[fill-in: which asana]' only if Boonchu gives it. Add no years. Ask Jamsai's OK before naming or showing her.",
+    "severity": "should"
+   },
+   {
+    "where": "Numbers",
+    "problem": "The Reel says 14 years and 2000 students (the shala). Tomorrow's letter says 20 years of Ashtanga (his practice). A follower may read this as a clash.",
+    "fix": "Keep numbers out of the hook. If he says them, say '14 years teaching in Bangkok' so it is clearly about the shala.",
+    "severity": "nice"
+   },
+   {
+    "where": "Ending",
+    "problem": "It has two asks ('what do you think' and the promo), and no line closes the loop the hook opened.",
+    "fix": "Make the last spoken line pay off 'far away' (sample below), then 'What do you think?'. The promo goes in the caption only.",
+    "severity": "nice"
+   }
+  ],
+  "keep": [
+   "The wife line is real, specific and human. No other teacher can post it tomorrow (the /hook test). Keep it inside the first 9 seconds, as proof.",
+   "'we think we are doing it... but we are still super far away' is the best mirror line in the draft. It is his own words and works for a beginner and a 10-year practitioner alike.",
+   "'because we cannot see ourself' is short and true, says the reason in 5 words, and translates cleanly into Thai and Chinese.",
+   "'where's the hip... where's the arms... the legs...' is a natural ladder of 3 with pauses. It is perfect for cards revealed one by one.",
+   "'the shape and the feelings are big different' is the turn and the takeaway. Keep it for the end (REVEAL AT THE END).",
+   "The built-in contradiction: he believes 'the practice is your own practice', yet an experienced practitioner asks him for hands. That is a ready-made Triple Hook Pull for Lane A.",
+   "The gentle framing ('good assisting hands', 'a real experienced one', 'guide their body') fits Carnegie's research: people stay for teachers who observe first and are never forceful.",
+   "His spoken English as he wrote it: 'told me', 'super far away', 'ourself', 'big different'. Keep these and do not polish the spoken lines."
+  ],
+  "proposals": "**Route:** Lane A due \u00b7 last 4 posts: Hard Way (B), Flexible-or-Stiff (B), Mountain (B), Small Steps (B) \u00b7 next due: Lane A (Ep. 5 is written but not filmed). His draft is half Lane A (experienced practitioners, ballet, gymnastics) and half Lane B (new-student promo). He needs to pick one. My pick, H3, works for either lane. If he keeps the promo, this becomes the 5th Lane B post in a row, and the caption carries the promo.\n\n**Toolkit pick:** Triple Hook + /story (4 beats). Why: there is one ordeal (even an experienced practitioner cannot see herself) and one lesson (the shape and the feeling are different, so you need experienced hands). Other option: Vibe Samurai ladder (beginner, gymnast, you) if he wants the comparison to carry the whole video.\n**Habit:** #8 Mind-body movement, with the core idea \"a teacher who notices\". This goes in the brief only, never on screen.\n\n### 3-Second Audit of his opening (\"today my wife told me 'I need adjustment'\")\n| Test | Result |\n|---|---|\n| Sound off, top line | 8 words, so the length is fine. But the lowercase captions drop the quotes, so it reads as \"my wife told me I need adjustment\", meaning HE needs fixing. Nothing says \"asana\". |\n| 10-year practitioner, sound on | Half a stop: it is a peek at the teacher's home. There is no tension, because nobody knows she is experienced yet. |\n| Bangkok beginner, sound on | No stop. \"Adjustment\" is not their word yet, and there is nothing about them. |\n| Mirror | Fails. It names Boonchu's day, not the viewer's feeling. |\n| Triple Hook | Context: weak. Pull: buried (her experience comes about 40 s in). Whiplash: none. |\n| Double meaning | Native speakers might get a small \"marriage trouble?\" smile. Non-native viewers mostly miss it, and it dies in Thai or Chinese. It only works if he says the misread out loud. |\n\n### 5 hook options (0 to 3 s)\n**H1. Pattern interrupt (wife line, joke on himself)**\n- Spoken: \"Today my wife told me, 'I need adjustment.' ... Uh oh. What I do wrong?\" At 3 s: \"No no. Her asana.\"\n- On screen: \"My wife told me I need an adjustment.\" (gold: adjustment). Pop \"Her asana. Not me.\" at 3 s.\n- First picture: tight on his face, eyebrows up, a worried look to the side (a husband in trouble). Zoom punch on \"adjustment\" with the \"error\" sound at 40%.\n- Triple: Context = adjustment \u00b7 Pull = the marriage misread \u00b7 Whiplash = it is her asana, and she is not a beginner.\n\n**H2. Contrarian (wife line)**\n- Spoken: \"I always believe, the practice is your own practice. Then my wife told me: 'I need adjustment.'\"\n- On screen: \"Your practice is your own. Right?\" (gold: own)\n- First picture: wide shot of him alone on his mat in the empty shala, early light. Hard cut to his face on \"my wife\".\n- Triple: Context = self-practice \u00b7 Pull = contradiction (he believes in self-practice, then gets asked for hands) \u00b7 Whiplash = the one asking is not a beginner. It runs about 4 s.\n\n**H3. Mirror lead (pattern interrupt on the belief \"I'm doing it\")**\n- Spoken: \"We think we are doing it... but we are still super far away.\"\n- On screen: \"You think you're doing it right.\" (gold: think)\n- First picture: tight on his face. He closes his eyes on \"we think\" (you cannot see yourself) and opens them on \"far away\", with a zoom punch and a whoosh.\n- Triple: Context = doing an asana \u00b7 Pull = contradiction of what they believe \u00b7 Whiplash (3 to 9 s) = \"Because we cannot see ourself. Today my wife told me...\"\n\n**H4. Question (Lane A)**\n- Spoken: \"She is not a beginner... so why she still need adjustment?\" (or, without the wife: \"Many years of practice... do we still need adjustment?\")\n- On screen: \"Years of practice. Still need hands?\" (gold: hands)\n- First picture: a card with a gentle hand on a practitioner's lower back in a forward bend (his own photo, with permission).\n- Whiplash: \"Today my wife told me: 'I need adjustment.'\"\n\n**H5. Authority (borrowed from elite movement)**\n- Spoken: \"Ballet, gymnastic... even the best one still have a teacher. So why we think we don't need?\"\n- On screen: \"Even the best still have a teacher.\" (gold: still)\n- First picture: a navy SVG card with a ballet icon, a gymnast icon and an Ashtanga icon popping in one by one as he names them.\n- Triple: Context = high-level movement \u00b7 Pull = proof by comparison \u00b7 Whiplash = \"In Ashtanga, after 5 years, we stop asking.\"\n\n### Ranking\n1. **H3 + wife at 5 to 9 s (Plato's pick)**\n2. H1 (best charm, but no mirror in the first 3 s)\n3. H2 (strong for 10-year practitioners, lost on beginners)\n4. H5 (people think \"I'm not a ballet dancer\", so it creates distance instead of a mirror)\n5. H4 (question hooks are weaker than flat statements, and beginners skip it)\n\nWhy H3: it is the only hook that passes the Mirror Rule inside 3 seconds for both a beginner and a 10-year practitioner, in his own words, and it translates cleanly. The wife line arrives by second 5 to 9 and makes it his story, one nobody else can copy.\n\n### What seconds 3 to 9 must do (so people stay)\n1. Snap the whiplash with no pause and no CV. Never \"if you don't know me\". Never \"generally\" or \"once in a while\".\n2. Deepen the mirror in 5 words: **\"Because we cannot see ourself.\"** On screen: \"You can't see yourself.\" (gold: see). Zoom punch.\n3. Bring the proof and the twist in one breath: **\"Today my wife told me, 'I need adjustment.' (beat) She is not a beginner.\"** On screen: \"My wife asked for an adjustment.\" then \"She's not a beginner.\" (gold: not). A card pops above his head with Jamsai on her mat (only with her OK).\n4. Open the next loop: if she needs hands, what about me? Do NOT give the answer yet (experienced hands; the shape and the feeling are different). That is the reveal at the end.\n5. A new picture every 3 s: zoom punch, then a card, then the lower-third pill \"Boonchu \u00b7 founder, AYBKK Bangkok\" (silent, no number).\n6. Explain the word once for beginners, around 9 to 12 s: \"Adjustment... the teacher's hands guide your body.\"\n\n### Edit cues, 0 to 9 s\n- 0 to 3 s: tight face, eyes closed and then open. 1.3x zoom punch on \"far away\", whoosh at 40%, starting 0.4 s after the word.\n- 3 to 5 s: punch on \"see\", soft click.\n- 5 to 9 s: card pop with the photo of Jamsai on her mat, \"pop\" sound on \"wife\", lower-third pill from 6 to 9 s.\n\n### Payoff check (the last line closes the hook's loop)\nSample last line (Plato's draft; Boonchu should say it in his own words): \"Good hands don't push you. They show you where you really are.\" Then \"What do you think?\" The promo goes in the caption only, with the exact wording, and never \"this month\"."
+ },
+ {
+  "lens": "structure",
+  "verdict": "Not ready to film as it is. The material is strong: a real moment from today, a quote, and three very good lines in his own words. The order buries all of it, and the biggest problem is that the surprise comes 60 seconds late. That Jamsai is NOT a beginner only arrives at about 64 s, so the hook has no whiplash. A 16-second \"if you don't know me\" CV at about 13-29 s loses most viewers before the good part (39-55 s). The whole thing runs about 103 s, twice the target, and ends on a spoken Bangkok promo that mixes the lanes.",
+  "problems": [
+   {
+    "where": "Whole draft (237 spoken words)",
+    "problem": "About 103 s at 2.3 words per second, about 110 s with his '...' pauses. That is twice the 40-55 s target. About 20 of the roughly 35 three-second blocks fail the 'Do I care?' test.",
+    "fix": "Use the tightened skeleton below: about 123 words, about 54 s raw, under 50 s after the house pause cuts. Every line still comes from his draft, with light edits.",
+    "severity": "must"
+   },
+   {
+    "where": "Hook (0-3.5 s) + line 2 (3.5-8 s)",
+    "problem": "The hook itself is good: real, from today, a person plus a quote, 8 words. But nothing surprises yet, because viewers don't know who Jamsai is. 'My wife asked for adjustment' sounds normal, and any teacher could post it tomorrow. The whiplash (she is experienced) waits until about 64 s. Line 2, 'generally I always believe...', is soft and abstract right where the second block needs a jolt.",
+    "fix": "Keep his hook exactly. Put 'She is not a beginner.' at 3.5 s. Then plant his belief and snap it: 'I always believe... the practice is your own practice. But... she is right.' Optional: [fill-in: which asana] after the quote makes it specific, but only if he tells us.",
+    "severity": "must"
+   },
+   {
+    "where": "'if you don't know me, I'm the founder...' (about 13-29 s, 37 words)",
+    "problem": "This is the biggest drop-off. It is a 16 s CV right after the hook opened a loop about his wife. It has no mirror line and no new picture, and five 3-second blocks in a row fail. His own 'anyway' at 29 s admits it is a detour.",
+    "fix": "Cut the self-intro. Use the numbers as proof right before the turn: '14 years, more than 2000 students in our shala. It's not about how good you are. We cannot see ourself.' Tie '14 years' to 'our shala' so no one hears '14 years of Ashtanga' (the letter tomorrow says 20). Do not add '20 years' to the spoken lines; two numbers confuse.",
+    "severity": "must"
+   },
+   {
+    "where": "'adjustment... is necessary once in a while' (8-13 s) and 'anyway the adjustment is good when...' (29-39 s)",
+    "problem": "He gives the answer before the problem lands, which breaks REVEAL AT THE END. Agreeing with himself at 8 s kills the tension his own belief just set up.",
+    "fix": "Replace both with the whiplash 'But... she is right.' Hold the reason ('we cannot see ourself') for the turn at about 31-40 s, after a 1 s silent beat.",
+    "severity": "must"
+   },
+   {
+    "where": "Last two lines (89-103 s) + lane",
+    "problem": "The body is Lane A (an experienced practitioner, 'high level', athletes). The close is Lane B (Bangkok new-student promo), so it is a lane mix. The promo is also spoken (pitch belongs in the caption), says 'this month' (wrong: it ends 11 Nov), and uses 'we will send' instead of the approved 'I'll send'. The video has three endings, and the last word is 'link', so the hook loop never closes.",
+    "fix": "Take the promo out of the speech. Film two endings in one session. The IG cut (Lane B) ends 'Beginners... you need good hands. We teach you from zero.', with the exact promo wording in the caption. The China cut (Lane A) ends 'What do you think? Let me know.' with no promo. Details are in the proposals.",
+    "severity": "must"
+   },
+   {
+    "where": "Structure overall",
+    "problem": "There is no turn, no screenshot moment and no closing flip. 'The practice is your own practice' is planted at 4 s and never paid off. Under the /story rule, the draft also carries two lessons (help when starting a new asana, and experts still need hands) plus a CV and a promo: four jobs in one video.",
+    "fix": "One lesson: nobody can see themselves. Turn: 'It's not about how good you are. We cannot see ourself.' Screenshot line: 'We think we are doing it... but we are still super far away.' Flip: 'The practice is your own practice. But you need someone who can see it.' The flip pays off his planted belief and answers why Jamsai asked.",
+    "severity": "must"
+   },
+   {
+    "where": "Ladder: 'gymnastic, contortion or even ballet' (70-89 s)",
+    "problem": "It is a list, not a ladder. All three are other people's sports at the same distance from the viewer, none of them is 'you', and they are said in one breath inside a 42-word sentence at 75 s. Contortion is the wrong rung: it is the furthest from the viewer and sits in the middle, it is a hard word for a non-native 10-year-old, and it sells 'Ashtanga = flexibility show'. That clashes with BRAND = WELCOMING and the recent Flexible-or-Stiff Reel.",
+    "fix": "Drop contortion. Go far to near with one picture each, then the mirror: 'A top gymnast... still has a coach. A ballet dancer... still has a teacher. My wife... still asks. And you?' Jamsai as rung 3 calls back to the hook. Cards: coach beside the gymnast, teacher's hand on the dancer's arm, Jamsai on her mat (with her OK).",
+    "severity": "should"
+   },
+   {
+    "where": "'for beginner or intermediate students who still under 5 years' (55-64 s)",
+    "problem": "It talks about other people and draws a line that pushes viewers out: a 6-year practitioner hears 'not me'. That is the opposite of the MIRROR RULE. 'Intermediate' is also a hard word.",
+    "fix": "Cut it from the Lane A cut. In the Lane B cut, keep only his core line as the ending: 'Beginners... you need good hands.'",
+    "severity": "should"
+   },
+   {
+    "where": "Word choice across the draft",
+    "problem": "Hard words: generally, necessary, intermediate, considered, knowledgeable, athlete, highly skilled, 'high level practice of movements', contortion. The draft also uses four names for one thing: adjustment, assisting, assist, assisting hands.",
+    "fix": "Use Jamsai's word 'adjustment', plus 'hands'. Swap 'knowledgeable hands (a real experienced one)' for 'real experienced hands' or 'someone who can see it'. Keep his spoken English ('where's the arms', 'we cannot see ourself', 'big different'). Fix grammar only in the caption.",
+    "severity": "should"
+   },
+   {
+    "where": "Mirror lines per beat",
+    "problem": "Only 39-55 s carries mirror lines ('what to feel', 'where's the hip', 'we think we are doing it'). The first 39 s and the last 50 s are about Boonchu, Jamsai and athletes, not about the viewer.",
+    "fix": "Give each beat one mirror line: 'She is not a beginner' (the 5-10 year viewer), 'where's the hip...', 'And you?', 'It's not about how good you are', 'we think we are doing it...', 'someone who can see it'. All are listed in the skeleton table.",
+    "severity": "should"
+   },
+   {
+    "where": "Today's scene",
+    "problem": "There is no concrete detail of what happened: which asana, what he saw. The hook and the fail stay generic, and /story wants one real moment.",
+    "fix": "Ask Boonchu for [fill-in: which asana] and, if he wants, one thing he saw in her body. Never invent it. If he gives nothing, the skeleton still works without it.",
+    "severity": "nice"
+   },
+   {
+    "where": "Carnegie research vs 'adjustment'",
+    "problem": "People leave over forceful adjustments and praise teachers who are 'never forceful', 'observe first' and 'see you'. The draft says hands are needed but never what good hands are like, and a Lane B beginner may fear being pushed.",
+    "fix": "The flip 'someone who can see it' already carries 'sees you'. Optional line if Boonchu agrees (Plato's words, not his): 'Good hands don't push. They show you.' Otherwise put his 'real experienced hands' in the caption.",
+    "severity": "nice"
+   },
+   {
+    "where": "People and labels",
+    "problem": "Jamsai is named, quoted and may be shown. This is also not a Hidden Stories episode.",
+    "fix": "Get Jamsai's OK to name her, quote her and use a photo card. Give it no Ep. number (Ep. 5 is Foolish Old Man) and no Hidden Stories header pill. Keep the rest of the house edit style.",
+    "severity": "nice"
+   }
+  ],
+  "keep": [
+   "His hook 'Today my wife told me... \"I need adjustment.\"': it happened today, it has a real person and a quote, it is 8 words (passes the 3-Second Audit as on-screen text), and the double meaning makes it a little funny. Keep it word for word; it only needs 'She is not a beginner.' straight after.",
+   "'The practice is your own practice': the best plant in the draft. It sets up the contradiction (the teacher who says 'your own practice' agrees she needs hands) and gives the closing flip something to turn.",
+   "'Where's the hip... where's the arms... the legs...': a rhythm of three in his own spoken English, and the strongest mirror ('oh, that's me'). Keep it exactly, pauses included.",
+   "'Because we cannot see ourself': the reveal. Keep his words and save it for the turn.",
+   "'We think we are doing it... but we are still super far away': the screenshot line, his words, and a mirror for beginners and 10-year practitioners alike.",
+   "'The shape and the feeling are big different': his insight in his English. Spoken as is; the caption says 'very different'.",
+   "'14 years, more than 2000 students' (his words today): real proof. It stays, but it moves to right before the turn, tied to 'our shala'.",
+   "Jamsai being experienced and still asking: this is the whiplash and the hero of the story. It moves from 64 s to 3.5 s.",
+   "'What do you think? Let me know.': a comment ask, not a pitch. It is the spoken ending of the Lane A cut.",
+   "'Comment aybkk' CTA: matches the approved promo CTA. It moves to the caption as 'Comment aybkk and I'll send you the link.'"
+  ],
+  "proposals": "### Route (first line, per PUSH BACK rule)\nRoute: as written = Lane A body + Lane B ending (mixed) \u00b7 last 4 IG posts: B B B B (Hard Way, Flexible-or-Stiff, Mountain, Small Steps) \u00b7 next due: **Lane A** (Ep. 5 written, not filmed).\nPlain push-back: the topic is Lane A, and Lane A is overdue on IG. **Plato's on-route pick:** post the Lane A cut on IG and run the promo in that day's Story and in the next Lane B post. **If Boonchu keeps the promo in this post (his call):** the IG cut becomes Lane B (one ending swapped, promo only in the caption). That makes 5 Lane B posts in a row, so Ep. 5 must be the next IG post.\n\n**Toolkit pick:** Triple Hook + Vibe Samurai. Why: one real moment (Jamsai asks) creates a contradiction with his own belief (\"your practice is your own\"), and his draft already has the ladder, the turn, the screenshot line and the flip. They are just in the wrong order.\nOther option: /story 4-beat is weaker here, because there is no ordeal scene (we don't know the asana or what happened).\n\n### 1. His draft mapped (2.3 words per second)\n| Seconds | His lines | Job it does | Problem |\n|---|---|---|---|\n| 0-3.5 | today my wife told me \"i need adjustment\" | Hook | Good, but no surprise yet |\n| 3.5-8 | generally i always believe... your own practice | Belief | Soft; plants a flip that never comes |\n| 8-13 | adjustment... necessary once in a while | Answer | Gives the answer away, kills the tension |\n| **13-29** | **if you dont know me... 14 years... 2000 students** | CV | **Biggest drop-off** |\n| 29-39 | anyway the adjustment is good when... | Teaching | Fix before problem, 22-word sentence |\n| 39-55 | what to feel / where's the hip / cannot see ourself / super far away | Mirror + reveal | **The best part, too late** |\n| 55-64 | beginner or intermediate... under 5 years | Other people | Pushes viewers out |\n| 64-70 | my wife Jamsai... experienced... requested | Whiplash | 60 s late |\n| 70-89 | gymnastic, contortion, ballet... knowledgable hands | Ladder + claim | One 42-word sentence, hard words |\n| 89-93 | what do you think? let me know | Ending 1 | Fine |\n| 93-103 | promo this month, comment aybkk | Ending 2 | Lane mix, spoken pitch, \"this month\" wrong |\n\n### 2. Tightened skeleton (shared body, about 54 s raw)\n| # | Seconds | Job | Line (his words, light edits; *italic = Plato bridge, needs his OK*) | Mirror |\n|---|---|---|---|---|\n| 1 | 0-3.5 | Hook (Context) | Today my wife told me... \"I need adjustment.\" | The thing experienced students feel but don't say |\n| 2 | 3.5-11.3 | Pull + Whiplash | She is not a beginner. I always believe... the practice is your own practice. *But... she is right.* | \"Not a beginner\": the 5-10 year viewer |\n| 3 | 11.3-21.3 | Fail | When you start a new asana... you don't know what to feel. Where's the hip... where's the arms... the legs... The shape and the feeling... big different. | \"Where's the hip?\" |\n| 4 | 21.3-30 | Ladder, far to near | *A top gymnast... still has a coach. A ballet dancer... still has a teacher.* My wife... still asks. *And you?* | \"And you?\" |\n| - | 30-31 | Silent beat | (hold on his face) | |\n| 5 | 31-39.7 | Proof + Turn (reveal) | 14 years, more than 2000 students in our shala. It's not about how good you are. We cannot see ourself. | \"How good you are\" (ego) |\n| 6 | 39.7-45.4 | Screenshot line | We think we are doing it... but we are still super far away. | Core mirror |\n| 7 | 45.4-51.5 | Closing flip (pays off beat 2 and the hook) | The practice is your own practice. *But you need someone who can see it.* | Wish to be seen (\"a teacher who notices\") |\n| 8A | 51.5-54.5 | Lane A ending (China / on-route IG) | What do you think? Let me know. | |\n| 8B | 51.5-55.8 | Lane B ending (IG with promo) | Beginners... you need good hands. We teach you from zero. | Beginner welcomed |\n\nOptional deadpan (only if Jamsai likes it): after beat 1, a flat \"...in the practice.\" (+1.3 s). The joke is on Boonchu, not on her.\n\n### 3. Missy Elliott check (a new visual every 3 s)\nHook text card \"my wife: 'i need adjustment'\" -> zoom on \"not a beginner\" -> card \"the practice is your own practice\" -> zoom + sound on \"right\" -> SVG card: hip? arms? legs? revealed one by one -> 3 picture cards (gymnast + coach, ballet teacher's hand, Jamsai on her mat with her OK) -> zoom on \"And you?\" -> silence -> card \"14 years \u00b7 2000+ students\" -> zoom on \"see\" -> big screenshot caption, \"far away\" in gold -> flip card. No block is left as just a talking head.\n\n### 4. Lane, CTA, habit\n- **Habit: #8 Mind-body movement** (what to feel, where's the hip, shape vs feeling). Core thread: \"a teacher who notices\", which the flip says out loud.\n- **Spoken CTA:** none in the Lane B cut (its last line is the welcome); \"What do you think? Let me know.\" in the Lane A cut. **Promo: caption only.**\n- **IG caption (Lane B; Thai + English; tag location; no price; no Ep. number):**\n  My wife is not a beginner. Today she asked me for an adjustment.\n  We cannot see ourselves. We think we are doing it, but we are still far away.\n  Your practice is your own. But you need someone who can see it.\n  Beginners welcome. We teach you from zero.\n  Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months.\n  Bring a friend, or keep both for yourself.\n  Buy by 11 Nov. (In honour of Sharathji's passing.)\n  Comment aybkk and I'll send you the link.\n  #aybkk #ashtanga #ashtangabangkok #boonchutanti\n- **China cut (Lane A): yes, it serves China.** Same footage, ending 8A, no Bangkok promo, Chinese burned-in captions and a native reader check. Carnegie's research says experienced buyers pay for adjustments and attention (\"if I am not getting any adjustments, why am I wasting my money\"; praise for \"sees you\"). Caption CTA: a Lane A action (China workshops or the program), Boonchu picks. Lane B text never goes on WeChat or Xiaohongshu.\n\n### 5. Ask Boonchu before filming\n1. Promo in this IG post (Lane B cut, 5th B in a row), or the on-route Lane A cut with the promo in a Story?\n2. [fill-in] Which asana did Jamsai ask about? (Optional, makes the hook specific; never invented.)\n3. Are the Plato bridge lines OK in his mouth: \"But... she is right\", the gymnast/ballet rungs, \"And you?\", \"But you need someone who can see it\"?\n4. Jamsai's OK to be named, quoted and shown on a card."
+ },
+ {
+  "lens": "facts",
+  "verdict": "Not ready to film as written. The core story is true and strong: an experienced practitioner asked for hands, and none of us can see ourselves. But the draft mixes Lane A and Lane B, and it ends with a promo said as \"this month\", which is wrong because the promo runs to 11 Nov. The biggest risk if it goes viral: this is an adjustment video with no line on how the hands work, plus a claim that beginners \"definitely need\" hands. That invites the forceful-adjustment and consent comment thread. One line fixes it: \"She ask me. Good hands only show you where. The practice is still your own.\"",
+  "problems": [
+   {
+    "where": "Last spoken line: \"we have special promo for new students this month\"",
+    "problem": "False and goes stale. The promo runs to 11 Nov, so \"this month\" tells viewers it ends 31 Oct, which is false urgency. A Reel keeps getting views for weeks, so in November the spoken line is simply wrong. It also breaks CAMPAIGN DATES (\"never this month\").",
+    "fix": "Keep the offer details out of the spoken part. Spoken, in his English: \"If you are in Bangkok, and you are new... comment aybkk. I send you the link.\" The caption carries the exact approved wording: \"Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. / Bring a friend, or keep both for yourself. / Buy by 11 Nov. (In honour of Sharathji's passing.)\" then \"Comment aybkk and I'll send you the link.\" No price. On 12 Nov, edit the caption to remove the promo lines.",
+    "severity": "must"
+   },
+   {
+    "where": "Whole draft: experienced-practitioner topic plus Bangkok new-student promo",
+    "problem": "Two lanes in one video. \"Even highly skilled people need hands\" (gymnastics, ballet, an experienced wife) is Lane A depth. The Bangkok new-student promo is Lane B. OPEN DOOR ROUTE says never mixed. The route also says Lane A is due: the last 4 IG posts were Lane B, and Ep. 5 (Lane A) is not filmed yet. If this cut goes to WeChat or Xiaohongshu with the promo, it breaks the rule that Lane B never goes on those channels.",
+    "fix": "Pick one lane and label it at the top. Plato's pick is Lane A, which is on route: drop the promo from both speech and caption, keep the experienced-practitioner story, and it can also go to WeChat. If Boonchu wants the promo in it, make it Lane B: swap the gymnast and ballet ladder for \"When you are new, of course you need good hands. We teach you from the very start.\", keep the aybkk CTA, use Thai + English captions, and post on IG and LINE only, never WeChat or Xiaohongshu.",
+    "severity": "must"
+   },
+   {
+    "where": "Middle: \"adjustment or assisting is good when...\" through \"knowledgable hands\". No line anywhere says what the hands do.",
+    "problem": "Hands-on adjustment is a sensitive topic in yoga. Carnegie's checked research (line 22) says people leave a teacher over forceful adjustments. They praise \"never forceful\", \"observes first\" and \"sees you\". As it stands, the video praises hands and says beginners \"definitely need\" them, but never says how the hands work. The likely top comments: \"I got hurt by an adjustment\", \"did she consent?\", \"hands-on is outdated\". His best protection is already in his story: she ASKED. Right now the draft mentions that only in passing.",
+    "fix": "Add ONE line, said slowly, right after the wife reveal. It is true to his own words (\"what to feel, where's the hip, where's the arms\" and \"practice is your own practice\"): \"She ask me. Good hands only show you where... the practice is still your own.\" Optional add only if Boonchu confirms this is how he adjusts: \"Not push. Show.\" Do not write \"we always ask first\" or \"you can say no hands\" anywhere unless he confirms AYBKK really does this.",
+    "severity": "must"
+   },
+   {
+    "where": "\"my wife, Jamsai\" plus her words \"I need adjustment\" (and any footage of her)",
+    "problem": "A real person's name, her private words and possibly her body on camera, in a video about touch. Her consent has to come first. The draft also hints at what she practises, and no writer may fill in which asana it was or how many years she has practised.",
+    "fix": "Ask Boonchu one line before filming: \"Is Jamsai OK with her name, her words 'I need adjustment', and her face (if you film her) in a public Reel? And does she teach at AYBKK? If yes, we can say it. If no, we never hint it.\" If she says no to the name, say \"my wife\" only and use talking head only. Her years and the asana stay [fill-in] unless he gives them.",
+    "severity": "must"
+   },
+   {
+    "where": "\"if you dont know me, im the founder of aybkk... for the past 14 years and have more than 2000 students\"",
+    "problem": "Placed right after \"if you don't know me, I'm...\", a viewer hears \"14 years\" as HIS years. Tomorrow's letter says \"20 years of Ashtanga\". People who see both will ask \"14 or 20?\". The intro also breaks the story in the middle.",
+    "fix": "Always attach 14 to the shala and to Bangkok. Spoken: \"Our shala, AYBKK, teach Ashtanga in Bangkok 14 years. More than 2,000 students practice there.\" If he wants his own number too, put it in the same breath so the two numbers explain each other: \"Me, I practice Ashtanga 20 years. Our shala, in Bangkok, 14 years.\" On-screen card (correct English): \"AYBKK: teaching Ashtanga in Bangkok for 14 years. More than 2,000 students.\" Put it in one short line after the hook, or as a card only.",
+    "severity": "should"
+   },
+   {
+    "where": "\"for beginner or intermediate students who still under 5 years of experience, they would definitely need a good assisting hands\"",
+    "problem": "Three risks. (1) The 5-year cut labels everyone under 5 years \"beginner or intermediate\", so a 4-year practitioner hears \"you're still intermediate\". (2) \"Definitely need hands\" scares the touch-shy new students the promo is trying to bring in. (3) Together with \"high level practice\", \"highly skilled\" and \"contortion\", it feeds the image already on Reddit: \"AYBKK: pretty strict, lots of hardcore advanced folks\" (Carnegie line 24). That clashes with BRAND = WELCOMING.",
+    "fix": "Drop the year line and the labels. In his English: \"When you are new, of course you need good hands. You don't know the shape yet.\" In the Lane B version, add: \"We teach you from the very start.\" Keep his own \"once in a while\", which protects him from sounding like he puts hands on everyone every day.",
+    "severity": "should"
+   },
+   {
+    "where": "\"any high level practice of movements liek gymnastic, contortion or even ballet... athlete needs a knowledgable hands... eventhough they are considered already highly skilled\"",
+    "problem": "The general point is true: top gymnasts and dancers keep a coach. But \"needs hands to guide their body\" goes further than we can claim for every athlete. Any edit to \"every athlete\" or \"all the best in the world\" would be an overclaim. Gymnastics plus a coach's hands on bodies is also a sensitive pairing in comments. \"Contortion\" and \"knowledgeable\" fail the 10-year-old word test.",
+    "fix": "Keep \"I believe\" and say: \"Gymnast, ballet dancer... even the very good ones, they still have a teacher who watch them. Sometimes help with the hands.\" Drop \"contortion\" and \"high level practice\". Change \"knowledgeable hands\" to his own \"a real experienced one\", i.e. \"experienced hands\".",
+    "severity": "should"
+   },
+   {
+    "where": "Hook: \"today my wife told me 'I need adjustment'\"",
+    "problem": "Out of context, in a feed with the sound off, it reads as a marriage joke or innuendo, or as \"the husband who fixes his wife\". Comments will go there. Nothing in the first 3 seconds says this is about practice.",
+    "fix": "Put the practice context inside the first 3 seconds and on screen. Spoken: \"My wife is not a beginner. Today she ask me: 'I need adjustment.'\" On-screen top line (under 12 words): \"Experienced. Still asked for hands.\"",
+    "severity": "should"
+   },
+   {
+    "where": "\"what do you think about this? let me know.\"",
+    "problem": "On this topic, an open \"what do you think\" invites injury and bad-teacher stories as the top comments, and those set the tone for every new viewer.",
+    "fix": "Ask a specific, positive question instead: \"Which asana you wish somebody show you? Tell me.\" Have a calm reply ready (Boonchu sends it, in his words) for any \"I got hurt by an adjustment\" comment, for example: \"I'm sorry that happen to you. Good hands should look first, and listen.\"",
+    "severity": "should"
+   },
+   {
+    "where": "Sharath in this Reel (spoken part and any added authority line)",
+    "problem": "The draft rightly never names Sharath or Guruji. Writers may be tempted to add \"authorized by Sharath\" for authority, or to dress up \"practice is your own practice\" as a Guruji or Sharath quote. That would put their names into the adjustment debate in your comments, and the quote would be unsourced. Saying Sharath's name next to a sales promo also looks like using his passing to sell.",
+    "fix": "Keep \"I always believe: the practice is your own practice\" as Boonchu's own belief, with no attribution. No Sharath or Guruji in the spoken part. The only mention is the fixed caption line \"(In honour of Sharathji's passing.)\", and only in the Lane B version.",
+    "severity": "should"
+   },
+   {
+    "where": "If he films the actual assist on Jamsai",
+    "problem": "The clip becomes the debate. Any deep push (pressing down in a forward fold, deep backbend help, body weight on her) will be screenshotted as \"dangerous\", whatever was said.",
+    "fix": "Either talking head only, or show one light, clear touch (a hand guiding the hip, her face calm, a slow movement) that matches \"show you where\". No deep pressure on camera.",
+    "severity": "should"
+   },
+   {
+    "where": "\"more than 2000 students practiced in our shala\"",
+    "problem": "The number is his own. But direction.md has a Reel line \"I have watched 2,000 students\". In an adjustment video, any shift like that implies he has put hands on 2,000 people, and direction.md also says no public statistic until it is checked.",
+    "fix": "Keep exactly \"more than 2,000 students practice in our shala\". Never use \"I have adjusted / watched / taught 2,000\" or \"thousands\". If it comes from Rezerv records, note that as the source.",
+    "severity": "nice"
+   },
+   {
+    "where": "\"comment aybkk and we will send you the link\"",
+    "problem": "The ManyChat auto-reply was set up for the keyword MYSORE. If no one answers the \"aybkk\" comments, a public promise breaks right under the video.",
+    "fix": "Before posting, check that \"aybkk\" comments get the link (ManyChat or by hand, within a day). Spoken: \"comment aybkk, I send you the link.\"",
+    "severity": "nice"
+   },
+   {
+    "where": "\"adjustment or assisting\" used as two words",
+    "problem": "\"Adjust\" sounds like something is wrong with you and is the word people use in complaint threads. \"Assist\" or \"help\" sounds softer.",
+    "fix": "Keep her quote \"I need adjustment\" exactly as it is. After that, he can say \"help\" or \"show\": \"Somebody show you where.\"",
+    "severity": "nice"
+   }
+  ],
+  "keep": [
+   "Her real words \"I need adjustment\" and the fact that SHE ASKED. They are true, they make people curious, and they are his built-in consent proof. Move \"she ask me\" up and say it clearly.",
+   "\"because we cannot see ourself\" and \"we thought we are doing it... but we are still super far away\". This is the mirror line, and \"we\" includes Boonchu, so it never mocks a student. It is also the direction's core idea (a teacher who sees you) and matches Carnegie's praise words \"observes first\" and \"sees you\".",
+   "\"adjustment is necessary once in a while\". This protects him from promising daily hands to every student, and from sounding like a teacher who over-adjusts.",
+   "\"generally i always believe that the practice is your own practice\". It is his belief, with no Guruji or Sharath attribution. It sets up the contradiction the video pays off.",
+   "\"what to feel... where's the hip... where's the arms... the legs\" and \"the shape and the feelings are big different\". This is his own teaching English. It is true, concrete, and the basis of the protective line (hands show WHERE, they do not push).",
+   "\"I believe\" before the gymnast and ballet point. It is his opinion, not a claim about every athlete.",
+   "No price, no \"pose\", no medical claim, no invented years or asana for Jamsai, and the CTA keyword \"aybkk\" matches the approved promo CTA."
+  ],
+  "proposals": "Route: Lane A due \u00b7 last 4 IG posts: B B B B \u00b7 Ep. 5 (Lane A) written, not filmed. Push back: the draft mixes lanes. On-route version = Lane A, no promo. The Lane B swap lines are below if he wants the promo.\n\n**Hook options (his spoken English, all fact-safe)**\n1. Contradiction (his own belief, no attribution): \"I always say: your practice is your own practice. Today my wife say: 'I need adjustment.'\"\n2. Context + whiplash: \"My wife is not a beginner. Today she ask me: 'I need adjustment.'\"\n3. Mirror (viewer first): \"You practice many years. You think you don't need help anymore. Today my wife ask me: 'I need adjustment.'\"\nOn-screen top line for all three (under 12 words): **Experienced. Still asked for hands.**\nRisk pick: 1 or 3. Both put \"practice\" in the first second, so the line cannot be read as a marriage joke.\n\n**Safe skeleton, 60 s (Lane A)**\n- 0-3 Hook: option 1 or 3.\n- 3-10 Context: \"If you don't know me: I practice Ashtanga 20 years. Our shala, AYBKK, teach in Bangkok 14 years. More than 2,000 students practice there.\" (Or card only: \"AYBKK: teaching Ashtanga in Bangkok for 14 years. More than 2,000 students.\")\n- 10-35 Ordeal (mirror): \"When you start new asana... you don't know what to feel. Where is the hip... where is the arms... the legs. The shape and the feeling... big different. Because we cannot see ourself. We think we are doing it... but still super far away. Me too.\"\n- 35-45 Hero: \"My wife, Jamsai [only if she says yes], she is experienced. And still... she ask me. I believe it's the same for gymnast, ballet dancer. Even the very good ones, they still have a teacher who watch them.\"\n- 45-55 Payoff (closes the hook loop, and is the protective line): [beat] \"She ask me. Good hands only show you where... the practice is still your own.\"\n- 55-60 Return: \"Which asana you wish somebody show you? Tell me.\"\n- Caption (correct English): no promo, no price; end with one action (e.g. \"Come learn Ashtanga / aybkk.com\").\n\n**Lane B swap (only if he keeps the promo)**\n- Replace the gymnast and ballet line with: \"When you are new, of course you need good hands. You don't know the shape yet. We teach you from the very start.\"\n- Return: \"If you are in Bangkok, and you are new... comment aybkk. I send you the link.\"\n- Caption: the exact approved promo lines, \"Buy by 11 Nov\", no price, Thai + English. Never post this cut on WeChat or Xiaohongshu. Remove the promo lines on 12 Nov.\n\n**One check for Boonchu before filming**\n\"Is Jamsai OK with her name, her words 'I need adjustment', and her face (if filmed) in a public Reel? And does she teach at AYBKK? If yes, we say it. If no, we never hint it.\"\n\n**Joke lines (on Boonchu only, nothing invented)**\n- \"I always say: your practice is your own practice. Then my wife ask for adjustment. So... today I explain myself.\"\n- \"We cannot see ourself. Me too. Twenty years... I still cannot see my own back.\"\n\n**Prepared comment reply (draft; Boonchu sends it in his words)**\nTo \"I got hurt by an adjustment\": \"I'm sorry that happen to you. Good hands should look first, and listen.\"\n\n**Never write in this Reel or caption**\n\"this month\"; \"every athlete\" or \"all the best\"; \"under 5 years you are a beginner\"; \"high level practice\", \"contortion\" or \"highly skilled only\"; \"I have adjusted/watched 2,000 students\"; any Guruji or Sharath quote; Jamsai's years or asana (use [fill-in]); \"we always ask first\" (unless Boonchu confirms it)."
+ },
+ {
+  "lens": "humour",
+  "verdict": "Not ready yet, but the material is good. The hook is real, fresh and under 3 seconds, and the middle has his best mirror line (\"we think we are doing it... but we are still super far away\"). The biggest problem is that the hook opens a loop the draft never closes. Line 2 drops the joke straight away, the wife only comes back in the middle, and the video ends on a spoken promo (\"this month\") where the self-joke ending should be. The \"experienced hands to guide their body\" lines sitting next to \"my wife\" also invite innuendo comments. On Q1 my answer is FIX: the joke is safe if he tells it on himself and gives the real meaning within 5 seconds.",
+  "problems": [
+   {
+    "where": "Hook block, draft line 2 ('generally i always believe that the practice is your own practice')",
+    "problem": "The hook plants a double meaning, and then at second 3 an abstract belief kills it. There is no pause and no reaction, so the joke never happens and the viewer has no reason to stay.",
+    "fix": "After the hook, hold 1 s with a flat face. Then give his reaction: 'Uh oh... what I do? (beat) No no... she mean her asana.' Move 'your practice is your own practice' later, where it becomes the turn ('...But we cannot see ourself.').",
+    "severity": "must"
+   },
+   {
+    "where": "Ending ('what do you think... let me know' + spoken promo 'this month')",
+    "problem": "There is no callback, so the loop the hook opened closes nowhere. The spoken promo becomes the last line and steps on the ending. Yesterday's Reel showed that a self-joke ending is what gets comments. 'This month' also breaks CAMPAIGN DATES: the promo ends 11 Nov, and 'this month' is never used.",
+    "fix": "Take the promo out of the speech. Put the exact PROMO LINE WORDING in the caption only, then 'Comment aybkk and I'll send you the link.' Make the callback joke the last spoken line. Hold 1 s, stop, no music sting.",
+    "severity": "must"
+   },
+   {
+    "where": "Middle ('she requested the assist from me' + 'needs a knowledgable hands (a real experienced one) to guide their body')",
+    "problem": "'My wife', 'my hands', 'a real experienced one' and 'guide their body' sit together here. In English comments this is innuendo bait, and 'experienced hands' can carry the same tone in Chinese and Russian subtitles. It also sounds like self-praise ('me, the experienced one').",
+    "fix": "Split the two ideas. The wife part becomes only: 'She is experienced. And she still ask.' The hands line goes general and is about seeing, not touching: 'Good hands... look first. Then help. Never push.' This matches Carnegie's research: people praise 'observes first' and 'never forceful', and they leave over forceful adjustments.",
+    "severity": "must"
+   },
+   {
+    "where": "Whole piece: how long the double meaning stays open",
+    "problem": "If the 'what does she mean' question stays open as a reveal, people have time to read it as marriage trouble or as something sexual. REVEAL AT THE END is about the lesson, not about what the joke means.",
+    "fix": "Give the real meaning within 5 seconds ('she mean her asana'). Keep only the lesson (good hands look first) for the end.",
+    "severity": "must"
+   },
+   {
+    "where": "Cover, title cards, caption (risk, not in the draft yet)",
+    "problem": "An edit that turns her quote into the third person ('MY WIFE NEEDS ADJUSTMENT') reads as him saying his wife needs fixing. That puts the joke on her.",
+    "fix": "Always keep her own words in the first person: MY WIFE: \"I NEED ADJUSTMENT\". Never write 'my wife needs adjustment' or 'my wife needed adjusting' anywhere.",
+    "severity": "should"
+   },
+   {
+    "where": "Thai / Chinese / Russian subtitles",
+    "problem": "The pun does not reliably survive translation. Russian (\u043a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0430, \u043f\u043e\u0434\u0441\u0442\u0440\u043e\u0439\u043a\u0430) has no relationship meaning, so the pun is lost. Chinese \u8c03\u6574 and Thai \u0e1b\u0e23\u0e31\u0e1a can carry both meanings, but only if the translator picks that word. This is my best guess, so a native reader must check it.",
+    "fix": "Make the joke live in his reaction, not in the word. 'Uh oh... what I do?' plus his face plus on-screen text works with sound off and in every language. Ask the native readers to choose the word that keeps both meanings where one exists.",
+    "severity": "should"
+   },
+   {
+    "where": "Jamsai on camera and by name",
+    "problem": "She is named and is the centre of a Reel with a joke frame. A close-contact adjustment shot of a husband on his wife in a deep hip or back opener, with this hook, invites the wrong comments.",
+    "fix": "Ask Jamsai first whether she is OK with her name, the hook and the joke frame (the house rule is that everyone on camera says OK first). For the picture, use a calm, clearly asana-focused moment (light hands at the hips, both focused), or show her practising alone. Do not show a deep-contact assist.",
+    "severity": "should"
+   },
+   {
+    "where": "Caption emoji on the hook and close",
+    "problem": "Emoji can tip the reading. A smirk or fire reads as sexual, a broken heart reads as marriage trouble, and a flushed face is borderline.",
+    "fix": "Use \ud83d\ude05 \ud83d\ude4b\u200d\u2642\ufe0f \ud83e\udd14 on the hook and close. Never use \ud83d\ude0f \ud83d\udd25 \ud83d\udc94 \ud83d\ude33 on this Reel.",
+    "severity": "should"
+   },
+   {
+    "where": "'if you dont know me, im the founder... 14 years... 2000 students'",
+    "problem": "The r\u00e9sum\u00e9 sits between the plant and the payoff. It is also the one place a joke must never go (Gervais floor: laugh at habits, never at credentials).",
+    "fix": "Put it after the reaction beat, short and flat: 'I teach Ashtanga in Bangkok, 14 years. More than 2000 students practice in our shala.' Use the 'teaching in Bangkok, 14 years' phrasing so it never clashes with '20 years of Ashtanga' in tomorrow's letter.",
+    "severity": "should"
+   },
+   {
+    "where": "Route / lane",
+    "problem": "The topic is Lane A (experienced practitioners, ballet, gymnastics), but the draft ends with a Lane B promo. That mixes lanes. The last 4 IG posts were Lane B, so Lane A is due.",
+    "fix": "Plato says this in the first line to Boonchu. Option 1: Lane A, with no promo and the caption ending on the comment question. Option 2: keep Lane B and frame it as a fear buster ('even experienced people ask, so you don't need to be shy'). The humour works in either lane: 'The room is human: Gervais jokes about Boonchu' is a Lane B format.",
+    "severity": "should"
+   },
+   {
+    "where": "Joke dose",
+    "problem": "It is easy to overdo this into a husband-comedy Reel, and that pulls the wrong crowd and buries the lesson.",
+    "fix": "Use at most 3 light moments: the hook reaction, one middle beat and the close. Every other line is said straight.",
+    "severity": "should"
+   },
+   {
+    "where": "'gymnastic, contortion or even ballet'",
+    "problem": "'Contortion' is a hard word for a 10-year-old non-native viewer. It also sounds extreme or 'advanced only', which goes against BRAND = WELCOMING.",
+    "fix": "Use 'gymnastic, ballet...' as a ladder of two. That is enough.",
+    "severity": "nice"
+   },
+   {
+    "where": "'what do you think about this? let me know.'",
+    "problem": "The question is generic, so there is no mirror and no easy reply.",
+    "fix": "'And you... when was your last adjustment? Let me know.' Experienced viewers think 'years ago... oh, that's me', and the answer is easy to type.",
+    "severity": "nice"
+   }
+  ],
+  "keep": [
+   "The hook 'Today my wife told me... \"I need adjustment.\"' is under 3 seconds, true, specific and happened today. It is a perfect plant for a callback. Keep her exact words, unchanged.",
+   "'The shape and the feelings are big different' / 'we cannot see ourself' / 'we thought we are doing it... but we are still super far away' are the MIRROR lines. A practitioner of 10 years thinks 'oh... that's me' here. Keep them in his English.",
+   "'The practice is your own practice', set against 'but we cannot see ourself', is the real tension of the piece. Used as the turn, it powers the whole middle.",
+   "Jamsai as the hero (experienced, and she still asks) fits fail-hero-payoff with a REAL person. She is the smart one, never the joke.",
+   "'Where is the hip... where is the arms... the legs' is his own teaching cue. It is concrete and visual and beats any written version.",
+   "'Let me know' as the comment ask worked yesterday. Keep it, just sharpen the question.",
+   "14 years teaching in Bangkok and 2000+ students are confirmed numbers and the proof for 'good hands'. Keep them short and flat."
+  ],
+  "proposals": "## Q1. Is \"my wife told me: I need adjustment\" safe?\n\n**Verdict: FIX.** It is safe if three things happen:\n1. **He gives the real meaning within 5 seconds.**\n2. **The joke is his reaction, not the word.**\n3. **\"Hands\" and \"her body\" are never in the same breath.**\n\n| Line | Target | Bigger than the room? | Verdict |\n|---|---|---|---|\n| \"Today my wife told me... 'I need adjustment.'\" | none yet (plant). These are her real words, and she is not mocked. | n/a | SAFE |\n| \"Uh oh... what I do?\" | Boonchu: the husband who feels guilty by reflex | yes, himself | SAFE |\n| \"she requested the assist from me... knowledgable hands (a real experienced one) to guide their body\" | no joke meant, but it is innuendo bait | fails as written | FIX (split it, see below) |\n| a cover or card reading \"MY WIFE NEEDS ADJUSTMENT\" | her | no | CUT, never write it |\n| close \"It's the asana... most of the time.\" | him, but it hints she sometimes means his faults and invites \"what about the other times\" comments | borderline | FIX, so use \"not too much\" (option A) |\n\n**How each reading can go wrong, and the guard:**\n- **Marriage trouble:** this only happens if the meaning stays open. The guard is \"No no... she mean her asana\" at about second 4.\n- **Sexual:** this comes from the hands/body lines and the visuals, not from the hook itself. Guards:\n  - Keep the hands line general and about *seeing*.\n  - Use a calm assist shot.\n  - Avoid \ud83d\ude0f \ud83d\udd25 \ud83d\ude33.\n- **Making her the joke:** the guards are her quote in the first person only, and framing her asking as the smart move (\"she is experienced... and she still ask\").\n- **Languages** (my best guess, native reader must check):\n  - Russian loses the pun.\n  - Chinese \u8c03\u6574 and Thai \u0e1b\u0e23\u0e31\u0e1a can keep both meanings if the translator picks them.\n  - The reaction line plus his face works in every language.\n\n## Joke map on his skeleton (spoken lines in his English)\n\n```\n[PLANT 0-3]   Today my wife told me... \"I need adjustment.\"\n              (1 s, flat face, no smile)        card: MY WIFE: \"I NEED ADJUSTMENT\" \ud83d\ude05\n[JOKE 3-6]    Uh oh... what I do?  (beat)  No no... she mean her asana.   [fill-in: name the asana, only if she agrees]\n[6-10]        I teach Ashtanga in Bangkok, 14 years. More than 2000 students practice in our shala.   (flat, no joke)\n[TURN 10-16]  I always believe... your practice is your own practice.  (beat)  But... we cannot see ourself.\n[BEAT 16-19]  In our head... the leg is straight.  (beat)  The photo say no.\n[19-35]       (his own words) When you start new asana... you don't know what to feel. Where is the hip... the arms... the legs.\n              The shape and the feeling... big different. We think we are doing it... but we are still super far away.\n              Beginner, under 5 years... you definitely need good assisting hands.\n[HERO 35-42]  But my wife, Jamsai... she is experienced. And she still ask.\n              Gymnastic, ballet... I believe even the best... still need a good teacher.\n[TRUE 42-47]  Good hands... look first. Then help. Never push.   (slower; this is the reveal)\n[47-50]       And you... when was your last adjustment? Let me know.\n[CALLBACK]    (pick below)   hold 1 s. Stop. No music sting.\n```\n\"Good hands... look first. Then help. Never push.\" is Plato's line, built from Carnegie's research. Boonchu can say it his own way.\n\n## Q2. Three callback closes\n\n**A. The reflex returns.** This needs the \"Uh oh... what I do?\" plant.\n> So now... when my wife say \"I need adjustment\"... I don't panic. (beat) Not too much.\n\n**B. He needs it too.** Use this only if it is true that he still gets adjustments.\n> Me? Twenty years practice... I still need adjustment. (beat) Ask my wife.\n\n**C. The true line, then the joke. PLATO'S PICK.**\n> Good practitioner... still ask. (beat) Good husband... just say yes.\n\n**Why C:**\n- It carries the true line and the joke in one parallel pair.\n- She stays the hero, and the joke is on him and on husbands.\n- It closes the loop the hook opened: she asked, he said yes.\n- There is no marriage-trouble or innuendo reading.\n- It stands alone even if he cuts the reaction beat.\n- Husband-says-yes humour is mainstream in Thai, Chinese and Russian culture.\n- It is the kind of line people tag their partner in, which brings comments.\n\nIf he wants the more anti-climax ending that worked yesterday, use A instead.\n\n## Q3. Middle beats\n\n- **One beat only:** \"In our head... the leg is straight. (beat) The photo say no.\"\n  - Use \"we\", not \"I\", so it includes him and the viewer (mirror) and needs no invented fact about him.\n  - Avoid \"I'm straight\" without \"leg\", because it has a second meaning.\n- **A second middle joke is not needed.** With the hook reaction and the close, he already has 3 light moments, which is the maximum. Every other line is said straight.\n\n## Delivery and edit cues\n\n- Say the hook flat, like the weather. Hold 1 s.\n- On \"what I do?\": an eyebrow at most, never a laugh.\n- Say the true line slower than the jokes.\n- Zoom punch on \"adjustment\" (hook) and on \"yes\" (close). No SFX on the final line: hold, stop.\n- On-screen close card: GOOD HUSBAND: YES \ud83d\ude4b\u200d\u2642\ufe0f\n\n## Caption\n\n- **Lane B:** use the exact promo line (Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. / Bring a friend, or keep both for yourself. / Buy by 11 Nov. (In honour of Sharathji's passing.)), then \"Comment aybkk and I'll send you the link.\"\n- **Lane A:** no promo. End the caption on the question.\n\n**Comment replies:** use a self-joke plus a question back, for example: \"I learned this one fast \ud83d\ude05 And you, when did you last ask?\"\n\n## Cut list\n\n| Cut | Why |\n|---|---|\n| spoken promo / \"this month\" | wrong date rule, and it kills the ending |\n| \"contortion\" | hard word, sounds extreme |\n| \"a real experienced one... guide their body\" next to the wife | innuendo |\n| \"My wife needs adjustment\" in any written form | the joke lands on her |\n\n## Fill-ins\n\n- [ASANA she asked about]: only if Boonchu and Jamsai want it named.\n- Jamsai's OK for her name, the frame and the shot.\n- For B only: is it true that Boonchu still gets adjustments himself?\n\nDo not add her years of practice. Use his word: \"experienced\"."
+ }
+]

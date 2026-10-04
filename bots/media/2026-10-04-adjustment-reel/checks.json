@@ -1,0 +1,236 @@
+[
+ {
+  "check": "orders",
+  "pass": false,
+  "issues": [
+   {
+    "where": "Verdict (first line) + Route + Caption (English and Thai)",
+    "issue": "Route rules are not followed as written. (1) PUSH BACK says the off-route warning must be the FIRST line, but the package opens with 'Not ready yet...' and the route comes second. (2) The route line labels the post 'Lane B (your promo)' while the Lane fix says 'the video itself is Lane A', so there is no single lane label. (3) The delivered default captions keep the promo, so the package ships a mixed post (TWO LANES, NEVER MIXED) and a 5th Lane B post in a row (MIX = 1 Lane B in every 3), even though the package itself calls the no-promo version 'the on-route choice'. (4) If Boonchu picks the on-route version, he has no caption: no no-promo caption is written in English or Thai.",
+    "fix": "Make line 1 of the package the route push-back in one plain line, e.g. 'Off route: 4 Lane B posts in a row, so this one should be Lane A with no promo. Promo goes in today's Story.' Use one label (Lane A) for the default version. Make the default English and Thai captions the no-promo version (keep 'Beginners welcome. We teach you from zero.', 'Come learn Ashtanga / Aybkk.com' and the hashtags). Then add the 4 promo lines + 'Comment aybkk...' as a clearly marked block: 'Only if you still want Lane B (IG + LINE only, Ep. 5 next)'. Do the same for the silent 'New in Bangkok? Comment aybkk' end card.",
+    "severity": "must"
+   },
+   {
+    "where": "Hook (0-3 s), row 1. PICK, and 'Why PICK'",
+    "issue": "MIRROR RULE (top priority) part (1): the hook must name the viewer's own feeling or inner voice. The PICK hook names the wife's request only. The package admits experienced viewers get their 'that's me' at about 7 s and beginners at about 13 s. Nothing in 0-3 s or 3-7 s is the viewer's own inner voice.",
+    "fix": "Either mark Option 2 (Name-the-Feeling, 'We think we are doing it... but we are still super far away') as Plato's pick, or keep his spoken hook and add one viewer inner-voice line right after 'She is not a beginner', in his English, e.g. 'Maybe you think... I don't need it anymore.' (on screen: 'You think: I don't need it anymore.'). Say the trade-off in one line in the Verdict and let Boonchu choose.",
+    "severity": "must"
+   },
+   {
+    "where": "Toolkit pick",
+    "issue": "TOOLKIT PITCH says rotate and never use the same pick 3 days in a row. Triple Hook was the hook tool on 3 Oct (Dhruva), 4 Oct (Flex-or-Stiff, the last posted Reel) and 4 Oct (Hanuman v2). The last posted Reel also ended with a Gervais close on Boonchu. This pick repeats both. Also the Triple Hook mapping is not true to the timing: Pull ('not a beginner') lands at 3-7 s and Whiplash ('she still asks') at 29-33 s, so the 0-3 s hook is only the Context part.",
+    "fix": "Rotate: make One Dissenting Voice + Vibe Samurai (fresh) or Name-the-Feeling + Vibe Samurai Plato's pick, or say plainly why Triple Hook is used again. If Triple Hook stays, describe it truthfully (Context 0-3 s, Pull 3-7 s, Whiplash 'I always believe... your own practice' at 7-11 s), not 'she still asks' at 29 s.",
+    "severity": "should"
+   },
+   {
+    "where": "Teleprompter + Script, 29-44 s",
+    "issue": "The '14 years teaching in Bangkok... more than 2000 students in our shala' line sits between the silent beat after 'And you?' and the turn 'We cannot see ourself'. Vibe Samurai runs ladder, silent beat, turn; the credential breaks the silence-to-turn punch, and this beat has no mirror line (MIRROR RULE part 2). Also there is no 'It isn't X. It's Y.' turn, which the Vibe Samurai note asks for. And 'the best ones still have a teacher' at 24-29 s gives the answer before the silent beat (REVEAL AT THE END).",
+    "fix": "Move the numbers up to 7-11 s, right after 'I always believe... the practice is your own practice' (proof for his belief), or keep them only in the teal pill. Then go straight from the silence after 'And you?' to 'We cannot see ourself.' Optional turn for his OK, in his English: 'Adjustment is not because you are bad. It's because nobody can see themself.' Consider softening 24-29 s to the question side ('Gymnastic, ballet... the best ones... still have a teacher?') so the answer stays for the end.",
+    "severity": "should"
+   },
+   {
+    "where": "Script 33-37 s picture; Hook row 3 first picture",
+    "issue": "HOUSE EDIT STYLE says 'No full-screen cutaways'. 'Wide shot of the morning Mysore room, from behind' (33-37 s) and Option 3's 'Wide shot of you alone on your mat in the empty shala... Hard cut to your face' read as full-screen cutaways.",
+    "fix": "Put both in the 586x346 rounded card above his head (video moved down about 110 px), slow zoom inside the card, like the 7-11 s card.",
+    "severity": "should"
+   },
+   {
+    "where": "Script in 3-second blocks, On-screen column",
+    "issue": "CAPTIONS rule: every caption line gets an emoji, and the cue sheet itself says 'One emoji per line'. These rows have none: 3-7 s, 13-17 s, 17-21 s, 21-24 s, 33-37 s, 40-44 s, 48-50 s.",
+    "fix": "Add one emoji to each of those rows (e.g. 3-7 s \ud83d\ude42, 13-17 s \u2753, 17-21 s \ud83d\udc63, 21-24 s \u2764\ufe0f, 33-37 s \ud83c\udfe0, 40-44 s \ud83d\ude48, 48-50 s \ud83e\uddd8) and add them to the 'Emoji to use' list. None from the banned list.",
+    "severity": "should"
+   },
+   {
+    "where": "Caption (Thai), lines 3 and 5",
+    "issue": "Back-translation: L1 'My wife is not a beginner, but today she asked me to help adjust (her) asana' (OK, adds 'but'). L2 'We can't see ourselves. We think we can already do it, but really still far away' (OK, small drift: 'doing it' became 'can do it already'). L3 'Experienced hands just help you know where. The practice is still always your own' (sounds unfinished in Thai: 'know where' what?; 'always' added). L4 'Team practise myself, know myself, or Team please tell me where?' (OK). L5 '\u0e21\u0e37\u0e2d\u0e43\u0e2b\u0e21\u0e48\u0e22\u0e34\u0e19\u0e14\u0e35\u0e15\u0e49\u0e2d\u0e19\u0e23\u0e31\u0e1a' reads as 'beginners [are] welcoming', unnatural word order; the Flex-or-Stiff caption already used '\u0e22\u0e34\u0e19\u0e14\u0e35\u0e15\u0e49\u0e2d\u0e19\u0e23\u0e31\u0e1a\u0e21\u0e37\u0e2d\u0e43\u0e2b\u0e21\u0e48'. Promo lines match the English.",
+    "fix": "L5: '\u0e22\u0e34\u0e19\u0e14\u0e35\u0e15\u0e49\u0e2d\u0e19\u0e23\u0e31\u0e1a\u0e21\u0e37\u0e2d\u0e43\u0e2b\u0e21\u0e48 \u0e40\u0e23\u0e32\u0e2a\u0e2d\u0e19\u0e15\u0e31\u0e49\u0e07\u0e41\u0e15\u0e48\u0e40\u0e23\u0e34\u0e48\u0e21\u0e15\u0e49\u0e19 \u0e44\u0e21\u0e48\u0e40\u0e1b\u0e47\u0e19\u0e2d\u0e30\u0e44\u0e23\u0e40\u0e25\u0e22 \ud83c\udf31' (same as the Flex-or-Stiff caption). L3: '\u0e21\u0e37\u0e2d\u0e17\u0e35\u0e48\u0e21\u0e35\u0e1b\u0e23\u0e30\u0e2a\u0e1a\u0e01\u0e32\u0e23\u0e13\u0e4c\u0e41\u0e04\u0e48\u0e0a\u0e35\u0e49\u0e43\u0e2b\u0e49\u0e14\u0e39\u0e27\u0e48\u0e32\u0e15\u0e23\u0e07\u0e44\u0e2b\u0e19 \u0e01\u0e32\u0e23\u0e1d\u0e36\u0e01\u0e22\u0e31\u0e07\u0e40\u0e1b\u0e47\u0e19\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13\u0e40\u0e2d\u0e07 \ud83d\ude4c'. Have a native Thai reader check before posting.",
+    "severity": "should"
+   },
+   {
+    "where": "Hook row 1 on-screen text, Script 0-3 s, cue sheet Captions line, Cover",
+    "issue": "Her quote is written three ways: on screen 'My wife: \"I need an adjustment.\"', caption cue 'my wife: \"i need adjustment\"', cover 'My wife: \"I need adjustment\"'. The editor will not know which is right.",
+    "fix": "Use her exact words everywhere: My wife: \"I need adjustment\" (it is a quote, so keep it as she said it).",
+    "severity": "nice"
+   },
+   {
+    "where": "Edit cue sheet, Colours; Script 13-29 s SVG cards",
+    "issue": "COLOR RULE: gold is for ONE key word per frame, max 3 colours per frame. On the SVG-card frames (13-29 s) the house-style card title is gold AND the caption key word is gold, so two gold words, plus navy, cream and white: 4+ colours.",
+    "fix": "On frames with an SVG card, make the card title cream (or the caption key word white), so only one gold word shows per frame.",
+    "severity": "nice"
+   },
+   {
+    "where": "Edit cue sheet, sound effects; Script 17-21 s and 37-40 s",
+    "issue": "'click' (hip / arms / legs, and 'Click.' at 37-40 s) is not in the HyperFrames set (it has click-soft), and 37-40 s says 'Click.' while the cue sheet says see = click-soft. 'feel' is on the zoom punch list but has no sound.",
+    "fix": "Use click-soft for hip / arms / legs and for 'see'; give 'feel' a sound (e.g. ping) or drop it from the punch list.",
+    "severity": "nice"
+   },
+   {
+    "where": "Verdict, Teleprompter header and note, Script table",
+    "issue": "Timing numbers disagree: target 'under 55 s', teleprompter 'about 55 s', note 'about 50 s' after cuts, table runs to 57 s.",
+    "fix": "Pick one number and make the table match it (the table should end by 55 s; moving the numbers line or trimming 'Let me know' does it).",
+    "severity": "nice"
+   },
+   {
+    "where": "Teleprompter 50-53 s + Caption line 4 + Caption promo",
+    "issue": "Direction says close every piece with ONE action. The package asks three things: the spoken 'Which asana you wish somebody show you?', a different caption question ('Team ... or Team ...?'), and 'Comment aybkk'. Also SPOKEN = HIS ENGLISH says keep his own words when he gives them and do not overdo it: he gave 'What do you think about this? Let me know.', and the new line pushes the broken grammar further than he does.",
+    "fix": "Make the caption question the same as the spoken one (caption, correct English: 'Which asana do you wish someone would show you? \ud83d\udc47'). Offer his own 'What do you think? Let me know.' as the default spoken line, with the asana question as an option for his OK.",
+    "severity": "nice"
+   },
+   {
+    "where": "Toolkit pick, Other options",
+    "issue": "TOOLKIT CHOICE format: each option should be 'a 2 to 3 line sample hook + one line on how the body runs + why it gets the result', with one marked 'Plato's pick'. Option 3 has no body line ('+ Vibe Samurai' only), Option 2's body line is thin, and the pick is labelled 'PICK', not 'Plato's pick'.",
+    "fix": "Add one 'Body:' line to each option (e.g. Option 3: 'belief, wife, ladder to you, silence, turn, far away, flip') and label the chosen one 'Plato's pick'.",
+    "severity": "nice"
+   },
+   {
+    "where": "Caption (English/Thai) if Lane B is kept; Script 44-48 s picture",
+    "issue": "LANE B rule says 'tag the location'; the package does not mention it. The 44-48 s card needs a real photo of a student with OK, but there is no fallback if none exists (VIDEO EDIT SPEC: Plato writes the picture prompts).",
+    "fix": "If the promo version is posted, add 'Tag location: AYBKK, Bangkok'. For 44-48 s give a fallback: an SVG card (hand icon at a hip outline) or a Cloudflare prompt, with nothing billed without Boonchu's OK.",
+    "severity": "nice"
+   }
+  ]
+ },
+ {
+  "check": "invention",
+  "pass": false,
+  "issues": [
+   {
+    "where": "Teleprompter 44-48 s 'Knowledgeable hands... a real experienced one... only show you where.' + on-screen 'Experienced hands only show you where.' + EN caption line 3 + TH caption '\u0e41\u0e04\u0e48\u0e0a\u0e48\u0e27\u0e22\u0e43\u0e2b\u0e49\u0e04\u0e38\u0e13\u0e23\u0e39\u0e49\u0e27\u0e48\u0e32\u0e15\u0e23\u0e07\u0e44\u0e2b\u0e19'",
+    "issue": "Changes his meaning. His draft says the hands are there 'to guide their body'. 'Only show you where' is Plato's line (it comes from Carnegie's 'never forceful' research). It adds a claim about how Boonchu adjusts, and the word 'only', which he never said. 'Before you film' #3 asks him about it, but the teleprompter, screen and both captions already use it as the final text.",
+    "fix": "Reword to his words as the default. Spoken: 'Knowledgeable hands... a real experienced one... to guide your body.' Screen: 'Experienced hands guide your body.' Caption EN: 'Experienced hands guide your body. Your practice is still your own.' TH: '\u0e21\u0e37\u0e2d\u0e17\u0e35\u0e48\u0e21\u0e35\u0e1b\u0e23\u0e30\u0e2a\u0e1a\u0e01\u0e32\u0e23\u0e13\u0e4c\u0e0a\u0e48\u0e27\u0e22\u0e19\u0e33\u0e23\u0e48\u0e32\u0e07\u0e01\u0e32\u0e22\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13'. Keep 'only show you where' (and 'Not push. Show.') as an option that is used only after Boonchu says it is true.",
+    "severity": "must"
+   },
+   {
+    "where": "Whole spoken script (his core opinion)",
+    "issue": "His main opinion is gone. The draft says adjustment 'is necessary once in a while', and that even highly skilled practitioners 'needs knowledgable hands'. The notebook (line 165) sums it up as 'need knowledgeable hands now and then'. In the package the only 'need' left is in the quote 'I need adjustment'. The thesis is softened to 'still have a teacher', 'still ask' and 'only show'. 'Once in a while' was cut, so his balance (your own practice, plus hands now and then) is also lost.",
+    "fix": "Put 'need' back in his words. For example, at 24-29 s: 'Gymnastic, ballet... even highly skilled... I believe they still need knowledgeable hands.' Keep 'once in a while' somewhere short, e.g. 7-11 s: 'I always believe... the practice is your own practice. But adjustment... necessary once in a while.'",
+    "severity": "must"
+   },
+   {
+    "where": "24-29 s spoken 'I believe the best ones still have a teacher' + on-screen 'The best still have a teacher.'",
+    "issue": "'The best ones' is a new claim he did not make (a ranking claim about top athletes). 'Have a teacher' is not what he said ('needs knowledgeable hands to guide their body even though they are highly skilled'). The on-screen text also drops his 'I believe', so his opinion now reads as a general fact about gymnasts and dancers.",
+    "fix": "Spoken: 'Gymnastic, ballet... even highly skilled... I believe they still need knowledgeable hands.' Screen: 'Even the highly skilled still need hands.' (gold: still). Do not use 'the best' or 'the best ones'.",
+    "severity": "must"
+   },
+   {
+    "where": "53-57 s 'Good student... still ask. (beat) Good husband... just say yes.' + on-screen 'Good student: still asks. Good husband: yes.'",
+    "issue": "This is a new closing joke and is not in his draft. It has two facts that are not given. (1) It calls Jamsai a 'student'. He only said she is an experienced practitioner, and she appears on the shala calendar, so she may be a teacher. (2) 'Just say yes' says he gave her the adjustment, but the draft only says she asked. It also ends the video on a husband/wife joke, the marriage reading the cover rules work to avoid. And it replaces his own close.",
+    "fix": "Delete it, or keep it only after Boonchu OKs it and confirms that he said yes and that 'student' is fine for Jamsai. The safe default is to end on his own words: 'What do you think? Let me know.' Then hold 1 s and stop.",
+    "severity": "should"
+   },
+   {
+    "where": "50-53 s 'Which asana you wish somebody show you? Let me know.' + on-screen 'Which asana? Tell me below.' + EN caption 'Team \"I figure it out myself\" or Team \"please show me where\"?'",
+    "issue": "This changes his question. He asked 'what do you think about this? let me know', which asks for views on his opinion. Plato's lines ask something different. It is not a false fact, but it puts a new question in his mouth.",
+    "fix": "Use his line as the default: spoken 'What do you think about this? Let me know.', screen 'What do you think? Tell me below.' Keep the Team A/Team B line in the caption only if he OKs it.",
+    "severity": "should"
+   },
+   {
+    "where": "EN + TH caption promo block",
+    "issue": "His draft limits the promo to Bangkok ('if you are in bangkok, we have special promo for new students'). The caption has no 'Bangkok' anywhere near the promo, so people in other cities may comment 'aybkk' for an offer they cannot use. The approved promo wording itself is correct, word for word.",
+    "fix": "Add one line before the exact promo wording and do not change the promo text: EN 'In Bangkok?' / TH '\u0e2d\u0e22\u0e39\u0e48\u0e01\u0e23\u0e38\u0e07\u0e40\u0e17\u0e1e\u0e2f \u0e44\u0e2b\u0e21\u0e04\u0e23\u0e31\u0e1a?' Tag the location (Lane B rule).",
+    "severity": "should"
+   },
+   {
+    "where": "Notes > Risk left: 'A reply in your words: \"I'm sorry that happen to you. Good hands should look first, and listen.\"'",
+    "issue": "These are not his words. 'Should look first, and listen' is a new opinion taken from Carnegie's research ('observes first') and written in his voice.",
+    "fix": "Call it 'A reply for your OK', not 'in your words'. He decides whether it is true to how he teaches.",
+    "severity": "nice"
+   },
+   {
+    "where": "37-40 s on-screen 'You can't see yourself.'",
+    "issue": "He said 'we cannot see ourself', which includes himself. Changing 'we' to 'you' points at the viewer and drops his humility. The caption keeps 'We can't see ourselves.'",
+    "fix": "Screen: 'We can't see ourselves.' (gold: see), the same as the caption.",
+    "severity": "nice"
+   },
+   {
+    "where": "33-37 s spoken '14 years teaching in Bangkok... more than 2000 students in our shala.'",
+    "issue": "The numbers are correct and the wording follows notebook line 10. But with no subject, '14 years teaching' can be heard as Boonchu's personal teaching years. In his draft it is 'we' (the shala).",
+    "fix": "Light edit back to his words: 'We teach in Bangkok 14 years... more than 2000 students in our shala.' The screen can stay 'Teaching in Bangkok 14 years \u00b7 2,000+ students'.",
+    "severity": "nice"
+   },
+   {
+    "where": "0-3 s on-screen 'My wife: \"I need an adjustment.\"' vs cover and caption cue '\"I need adjustment\"'",
+    "issue": "This is the only direct quote from Jamsai, and the package gives it in two versions. His draft has 'i need adjustment'.",
+    "fix": "Use one version of the quote everywhere. Since it is her exact words, keep 'I need adjustment' on the screen too, or use 'an' everywhere. Do not mix them.",
+    "severity": "nice"
+   }
+  ]
+ },
+ {
+  "check": "viewer",
+  "pass": false,
+  "issues": [
+   {
+    "where": "Teleprompter header (\"about 55 s\"), the note \"brings it to about 50 s\", and the 3-second table",
+    "issue": "The length is wrong. The teleprompter has 137 spoken words (with \"14\" read as one word and \"2000\" as \"two thousand\"). At 2.3 words per second that is about 60 s, plus about 3.5 s of kept silences, so about 63 s. That is not 50 to 55 s. Cutting pauses does not help, because 2.3 words per second already leaves out the pauses. The table also puts too many words in some blocks: 33-37 s and 40-44 s each have 13 words in 4 s, 50-53 s has 10 words in 3 s, and 13-17 s has 11 words in 4 s. So the real Reel ends at about 63 s, not 57 s. The verdict says the target is under 55 s, and this misses it.",
+    "fix": "Cut about 15 to 20 words, then re-time the table. Make the 14 years / 2,000+ students line screen-only (-13 words, see next issue). Change \"Knowledgeable hands\" to \"Good hands\" (-1). Drop \"I believe\" from the gymnastic line (-2). Drop \"Let me know\" or the \"Good student\" line if more is needed. That brings it to about 55 to 57 s. If it stays near 58 s, say so honestly. It is still within the /story 60 s skeleton.",
+    "severity": "must"
+   },
+   {
+    "where": "33-44 s (the numbers block, then \"We cannot see ourself\" and \"super far away\")",
+    "issue": "The verdict calls \"we think we are doing it... but we are still super far away\" the line where both the beginner and the 10-year practitioner think \"oh... that's me\". But the script plays it at 40-44 s. Right before it, at 33-37 s, comes \"14 years teaching in Bangkok... more than 2000 students\". This is the same \"about me\" section the verdict cut from 13-29 s because people scroll away there. None of the three viewers cares at 33 s. Also, the beginner gets no \"that's me\" moment from 0 to 13 s, and at 5 s hears \"She is not a beginner\". So the shared mirror line comes too late.",
+    "fix": "Go back to Boonchu's own order. Put \"We cannot see ourself. We think we are doing it... but we are still super far away.\" right after \"The shape and the feeling... big different.\" It then lands at about 24-30 s. Then comes the ladder and \"And you?\", then \"Good hands... a real experienced one... only show you where. The practice is still your own.\" The fix still comes at the end, so REVEAL AT THE END holds. Take the numbers out of the spoken script. Show them as a small card or under the teal pill (\"Teaching in Bangkok 14 years \u00b7 2,000+ students\") during the \"experienced hands\" line, where they prove that claim. The card also stays in the China cut.",
+    "severity": "must"
+   },
+   {
+    "where": "Hook 0-3 s (first picture + on-screen text 'My wife: \"I need an adjustment.\" \ud83d\ude05')",
+    "issue": "Sound-off check: the shot is tight on his face, with no mat, no shala and no name pill until 7 s. Nothing says \"yoga\". A Bangkok beginner does not know that \"adjustment\" is a yoga word, so they may read it as a chiropractor or a marriage joke. The \ud83d\ude05 pushes it further toward a double meaning. The Triple Hook says line 1 must give the Context, and here the yoga context is missing. Experienced viewers know that hands-on adjustment and consent is a sensitive topic in Ashtanga, and Carnegie's research says people leave over forceful adjustments. A double meaning from a male teacher can land badly with them.",
+    "fix": "Film frame 1 with him sitting on his mat in the shala, so the mat and the shala wall show behind the tight shot. Use \ud83e\uddd8 on line 1, and move \ud83d\ude05 to the \"Good husband\" line, where the joke on himself belongs. Show the teal pill \"Boonchu \u00b7 AYBKK Bangkok\" from 0 s, not from 7 s. Pop the mat card in at the start of the 1 s silence (3.0 s). That way the 3-4 s window has movement, and sound-off viewers know it is yoga by 3 s.",
+    "severity": "must"
+   },
+   {
+    "where": "Ladder 24-33 s (\"Gymnastic, ballet... the best ones still have a teacher. My wife... still ask.\") and the pictures",
+    "issue": "Nothing spoken invites the beginner. They hear \"not a beginner\" and \"the best ones\", and they see gymnast, ballet and experienced-wife cards. This stacks into an \"advanced people only\" picture, and Carnegie found that AYBKK's Reddit reputation is already \"strict, lots of hardcore advanced folks\". BRAND = WELCOMING says every piece must make a beginner feel invited. The Vibe Samurai ladder in the notebook is beginner, then 10-year practitioner, then you, but the beginner rung was cut.",
+    "fix": "Add a beginner rung in his own words from the draft: \"Beginner... of course. Gymnastic, ballet... the best ones still have a teacher. My wife... still ask. And you?\" (+3 words). On screen: \"Beginners? Of course. \ud83c\udf31\". In the 44-48 s card (one light hand at the hip), show a newer student in a simple standing asana, with their OK. In the Mysore room shot, show mixed levels.",
+    "severity": "should"
+   },
+   {
+    "where": "Close 50-53 s (\"Which asana you wish somebody show you? Let me know.\") + caption \"Team...\" line",
+    "issue": "A beginner cannot name an asana, so they cannot answer. That kills comments from the Lane B audience. Viewers are also given three different comment tasks: the video asks \"which asana\", the caption asks Team A or Team B, and the caption asks for \"aybkk\". \"I figure it out myself\" is also an idiom that a B1 reader may stop on.",
+    "fix": "Use one question that anyone can answer in one word, as a callback to the list: \"Hip... arms... legs... which one you cannot feel?\" On screen: \"Hip, arms or legs? Tell me \ud83d\udc47\". Use the same question in the caption instead of the Team line, so \"Comment aybkk\" moves up. This is a new line from Plato, so it needs Boonchu's OK.",
+    "severity": "should"
+   },
+   {
+    "where": "44-48 s spoken \"Knowledgeable hands...\"",
+    "issue": "\"Knowledgeable\" is a word a 10-year-old non-native speaker, or a B1 viewer in Moscow, would stop on. WORD RULE 2 says to swap such words. The package kept it only because it is his word, but his own next phrase \"a real experienced one\" already says the same thing.",
+    "fix": "Say \"Good hands... a real experienced one... only show you where.\" This uses his words, gives one less hard word and is 1 word shorter. Keep \"Experienced hands only show you where\" on screen.",
+    "severity": "should"
+   },
+   {
+    "where": "IG cut end card (marked \"Optional\" in the edit cue sheet)",
+    "issue": "If the promo stays (a Lane B post), a Bangkok beginner who watches the whole Reel never sees an invitation on screen. The only door is caption line 6 onward, under \"...more\".",
+    "fix": "If the promo stays, make the 2 s silent end card required on the IG cut: \"New in Bangkok? Beginners welcome. Comment aybkk \ud83d\udc47\". It is not spoken and never says \"this month\". If he posts the no-promo Lane A cut, drop the card.",
+    "severity": "should"
+   },
+   {
+    "where": "29-33 s \"And you?\"",
+    "issue": "The MIRROR RULE wants the viewer's own feeling named in specific words. \"And you?\" is general and asks no clear question. Both beginners and 10-year students often hold back from asking for help.",
+    "fix": "Optional, needs Boonchu's OK: \"And you... too shy to ask?\" On screen: \"And you? Too shy to ask? \ud83d\udc49\". It is +3 words, so only use it if the cuts above make room.",
+    "severity": "nice"
+   },
+   {
+    "where": "37-40 s on-screen \"You can't see yourself. \ud83d\udc40\"",
+    "issue": "He says \"We cannot see ourself\", which includes himself. The screen says \"you\", which points at the viewer. A 10-year practitioner can feel lectured by this.",
+    "fix": "Match his words on screen: \"We can't **see** ourselves. \ud83d\udc40\".",
+    "severity": "nice"
+   },
+   {
+    "where": "Hook spoken line 0-3 s",
+    "issue": "With a \"...\" pause before the quote, \"Today my wife told me... 'I need adjustment.'\" takes about 3.5 to 4 s, so the key word \"adjustment\" is heard after 3 s.",
+    "fix": "Say it with no pause before the quote: \"Today my wife told me, 'I need adjustment.'\" Keep the 1 s flat-face silence after the line.",
+    "severity": "nice"
+   },
+   {
+    "where": "Cover / on-screen text / burned-in captions",
+    "issue": "The wording does not match. The on-screen table says \"I need an adjustment\", while the cover and the caption cue say \"I need adjustment\". Written text (cover, cards) should be correct English, but \"My wife: 'I need an adjustment'\" is 6 words, and the cover limit is 5.",
+    "fix": "Burned-in captions follow his speech (\"i need adjustment\"). Cards use correct English (\"an\"). The cover can be '\"I need an adjustment.\"' (4 words, gold: adjustment), with his face and the mat giving the context. Or ask Boonchu which cover he prefers.",
+    "severity": "nice"
+   },
+   {
+    "where": "Chinese cut, hook text",
+    "issue": "In Chinese, a plain \u6211\u9700\u8981\u8c03\u6574 can read as \"I need to adjust my life or my state\", not as hands-on help in an asana. Then the hook loses its context for China viewers, and the teacher-program prospect is the viewer who needs it to read as yoga.",
+    "fix": "Ask the native reader to use the word Chinese Ashtanga students use for a teacher's hands-on help in a \u4f53\u5f0f (for example \u8f85\u52a9 or \u624b\u6cd5\u8c03\u6574, whichever they really use), so line 1 clearly reads as yoga.",
+    "severity": "nice"
+   }
+  ]
+ }
+]
