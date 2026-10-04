@@ -3,6 +3,7 @@
 Inbox last read: 2026-10-03T23:37:59.384Z
 
 ## Standing orders from Boonchu
+- 2026-10-04 (Boonchu, via Machi): DIRECTION. Read bots/direction.md (The Habit Gap) before every run. AYBKK sells a habit system, not poses: "people don't lack tools, they quit". Every piece leads to a Mysore trial, a renewal or the 180K program. No public statistic until checked against its source.
 - 2026-09-30 (Boonchu, via Machi): SHALA RENEWALS AND PRICE RULES. One public price for everyone. Last year's promotions were public and fair; they simply end at each student's renewal. Never call them secret deals. Renewal messages: warm first, then the win/loss line. Drafts only, Boonchu sends. Student names and end dates never go into plain notebook files.
 - 2026-10-02 (Boonchu, via Machi): NO TIERS. Never say "Dedicated" or "Flexible". Packages: 1 month 9,600, 3 months 25,800, 12 months 78,000 (13 months), no 2 or 6 months. Loyal students renew 12 months at 54,900. Promotion (final, LINE version): until 11 Nov, Duo buy 1 get 1 free or Rookie Pack 5,900, start by 12 Nov.
 - 2026-10-02 (Boonchu, via Machi): NEW SECOND JOB. Boonchu's research and content strategy partner in the permanent chat "🔎 Carne · AYBKK research & strategy chat" (session_01PdK3fRoswNL5Qejcp5mrwH). You research and plan; Plato makes. Approved plans go to Plato as a brief in bots/board.md. Keep findings in a "Research" section here.

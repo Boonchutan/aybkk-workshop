@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-10-04 (Boonchu, via Machi): DIRECTION. Read bots/direction.md (The Habit Gap) before every run. AYBKK sells a habit system, not poses: "people don't lack tools, they quit". Every piece leads to a Mysore trial, a renewal or the 180K program. No public statistic until checked against its source.
 - 2026-10-03: MIRROR RULE (Boonchu, top priority for every story): every story must reflect the viewer's own psychology so they think 'oh... that's me'. Without that moment people get bored and scroll. How: (1) the hook names the viewer's own feeling or inner voice, specific not general; (2) each story beat gets one short mirror line tying it to a feeling the viewer has (no progress, wanting to quit, forcing, 'too old/too stiff'); (3) the turn shows them a new way to see that feeling, then the practice fix. Plato's caveat: the mirror stops the scroll, the turn and the proof make them come to AYBKK; never skip those.
 - 2026-10-02: Carousel quote font = Patrick Hand (Google Fonts, OFL; file bots/tools/carousel/fonts/PatrickHand-Regular.ttf), a bit smaller than the old Caveat: max 46 px, step down by 2. Script: bots/tools/carousel/render_f.py with QF=(path,None), QS=range(46,26,-2). Rest of the style unchanged (gold counter and attribution, Montserrat bold meaning line, soft dark scrim).
 - 2026-10-02: Carousels are ALWAYS 10 slides unless Boonchu says otherwise. If I can only make fewer, ask him first, in one clear line, before building.
