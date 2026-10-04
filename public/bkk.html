@@ -260,6 +260,27 @@
   .ch.moon{color:#F2D98A;padding-left:14px}
   .ch.moon::before{width:9px;height:9px;top:1px;background:transparent;box-shadow:inset 0 0 0 1.4px #E0B52B}
   .ch.moon.full::before{background:#E0B52B}
+  /* Poster format (Boonchu, 4 Oct): class name, time, teacher. Teachers sit on the
+     plum/gold/teal triad; class names on the second triad turned 60°, so a class
+     colour never reads as a teacher. Saturday puts the class after the time. */
+  .cal .cg{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
+  .cal .cn{font-style:normal;font-weight:800;font-size:10px;line-height:1.1;letter-spacing:-.01em}
+  .cal .cn .lg{display:none}
+  .cal .cg.mysore .cn{color:#FC838B}.cal .cg.led_primary .cn{color:#8BFC83}.cal .cg.led_inter .cn{color:#9AA2FF}
+  .cal .ct{font-weight:800;font-size:11px;line-height:1.15;color:#7FD8CC;font-variant-numeric:tabular-nums}
+  .cal .ct i{display:block;font-style:normal}
+  .cal .ct .amp{display:none}
+  .cal .tt{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+  .cal .cg,.cal .tt{width:100%}
+  .cal .d.past .cg{opacity:.55}
+  .cal .d:has(.cg){padding-left:2px;padding-right:1px}
+  .tg{display:inline-block;font-weight:900;font-size:8.5px;line-height:1;padding:2px 2px;border-radius:3px;letter-spacing:-.04em;
+    background:#FBF5F9;color:#3E1442;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tg{background:#F2C94C;color:#3E1442}
+  .cal .legend .lr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;width:100%;font-size:12px;font-weight:600;color:#C9AFCB}
+  .cal .legend .tg{font-size:12px;padding:3px 6px}
+  .cal .legend .cn{font-size:12px}
+  .cal .legend .cg{width:auto}
   .cal .legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;padding:0 4px}
   .cal .legend .ch{font-size:12px;font-weight:600}
   @media (min-width:560px){
@@ -269,6 +290,10 @@
     .cal .ch b{display:block;font-weight:700}
     .cal .ch i{display:inline;font-weight:700;font-size:12px;white-space:normal}
     .cal .ch i+i::before{content:" · "}
+    .cal .cn{font-size:12.5px}.cal .cn .lg{display:inline}.cal .cn .sm{display:none}
+    .cal .ct{font-size:13px}.cal .ct i{display:inline}.cal .ct .amp{display:inline}
+    .cal .cg.sat .cn{font-size:11px}
+    .tg{font-size:13px;padding:3px 5px}
     .cal .head b{font-size:40px}
     .cal .head{margin:-22px -20px 16px;min-height:280px;background-position:center 30%}
   }
@@ -661,7 +686,7 @@
       loading: 'Loading…',
       noClasses: 'No classes scheduled.',
       noDay: 'No classes this day.',
-      moonDay: 'Moon day', newMoon: 'New moon', fullMoon: 'Full moon',
+      calTeachers: 'Teachers:', calClasses: 'Classes:', moonDay: 'Moon day', newMoon: 'New moon', fullMoon: 'Full moon',
       full: 'Class full', left: n => n + ' places left', places: n => n + ' places',
       book: 'Book', buy: 'Buy',
       fee: (base, pct, vat) => `${base} + online transaction fee + ${vat}% VAT`,
@@ -734,7 +759,7 @@
       loading: 'กำลังโหลด…',
       noClasses: 'ยังไม่มีคลาส',
       noDay: 'วันนี้ไม่มีคลาส',
-      moonDay: 'วันพระจันทร์', newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง',
+      calTeachers: 'ครู:', calClasses: 'คลาส:', moonDay: 'วันพระจันทร์', newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง',
       full: 'เต็มแล้ว', left: n => `เหลือ ${n} ที่`, places: n => `${n} ที่`,
       book: 'จอง', buy: 'ซื้อ',
       fee: (base, pct, vat) => `${base} + ค่าธรรมเนียมการชำระเงินออนไลน์ + VAT ${vat}%`,
@@ -807,7 +832,7 @@
       loading: '加载中…',
       noClasses: '暂无课程安排。',
       noDay: '当天没有课。',
-      moonDay: '月亮日', newMoon: '新月', fullMoon: '满月',
+      calTeachers: '老师：', calClasses: '课程：', moonDay: '月亮日', newMoon: '新月', fullMoon: '满月',
       full: '已满', left: n => `剩余 ${n} 个名额`, places: n => `${n} 个名额`,
       book: '预约', buy: '购买',
       fee: (base, pct, vat) => `${base} + 线上支付手续费 + ${vat}% 增值税`,
@@ -880,7 +905,7 @@
       loading: 'Загрузка…',
       noClasses: 'Занятий пока нет.',
       noDay: 'В этот день занятий нет.',
-      moonDay: 'Лунный день', newMoon: 'Новолуние', fullMoon: 'Полнолуние',
+      calTeachers: 'Учителя:', calClasses: 'Занятия:', moonDay: 'Лунный день', newMoon: 'Новолуние', fullMoon: 'Полнолуние',
       full: 'Мест нет', left: n => `Осталось мест: ${n}`, places: n => `Мест: ${n}`,
       book: 'Записаться', buy: 'Купить',
       fee: (base, pct, vat) => `${base} + комиссия за онлайн-оплату + ${vat}% НДС`,
@@ -1305,16 +1330,32 @@
 
   // One chip per class type in the shala (online twins are the same class),
   // batches folded into one chip: "Mysore 5:30 · 7:30".
-  const CHIP = { mysore: 'Mysore', led_primary: 'Led Primary', led_inter: 'Led Inter.' };
-  function dayChips(iso) {
+  const CAL_NAME = { mysore: ['Mysore', 'Mysore'], led_primary: ['Primary', 'Primary'], led_inter: ['Intermediate', 'Inter.'] };
+  const TEACH_CLS = { Boonchu: 'boon', M: 'm', Jamsai: 'jam' };
+  const teachTag = n => `<b class="tg ${TEACH_CLS[n] || ''}">${esc(n)}</b>`;
+  function pastSource(iso) {
+    for (const k of [14, 28, 7, 21]) {
+      const d = new Date(Date.parse(iso + 'T12:00:00Z') + k * 86400e3).toISOString().slice(0, 10);
+      if (!MOON[d] && CLASSES.some(c => c.date === d)) return d;
+    }
+    return null;
+  }
+  function dayChips(iso, src = iso) {
     if (MOON[iso]) return `<span class="ch moon ${esc(MOON[iso])}" title="${esc(t(MOON[iso] === 'new' ? 'newMoon' : 'fullMoon'))}"><b>${esc(t(MOON[iso] === 'new' ? 'newMoon' : 'fullMoon'))}</b>&nbsp;</span>`;
     const byKind = {};
     for (const c of CLASSES) {
-      if (c.date !== iso || c.isOnline) continue;
-      (byKind[c.kind] = byKind[c.kind] || []).push(fmtTime(c.startAt).replace(/^0/, ''));
+      if (c.date !== src || c.isOnline) continue;
+      const g = byKind[c.kind] = byKind[c.kind] || { times: [], who: [] };
+      g.times.push(fmtTime(c.startAt).replace(/^0/, ''));
+      for (const w of String(c.teachers || '').split(/\s*[,&]\s*/).filter(Boolean)) if (!g.who.includes(w)) g.who.push(w);
     }
-    return Object.entries(byKind).map(([k, times]) =>
-      `<span class="ch ${esc(k)}"><b>${esc(CHIP[k] || k)}</b>${times.map(x => `<i>${esc(x)}</i>`).join('')}</span>`).join('');
+    const sat = new Date(iso + 'T12:00:00Z').getUTCDay() === 6;
+    return Object.entries(byKind).map(([k, g]) => {
+      const [lg, sm] = CAL_NAME[k] || [k, k];
+      const name = `<em class="cn"><span class="lg">${esc(lg)}</span><span class="sm">${esc(sm)}</span></em>`;
+      const times = `<span class="ct">${g.times.map(x => `<i>${esc(x)}</i>`).join('<span class="amp"> &amp; </span>')}</span>`;
+      return `<span class="cg ${esc(k)} ${sat ? 'sat' : ''}">${sat ? `<span class="ct">${g.times.map(x => `<i>${esc(x)}</i>`).join(' ')} ${name}</span>` : name + times}<span class="tt">${g.who.map(teachTag).join('')}</span></span>`;
+    }).join('');
   }
 
   function renderSchedule() {
@@ -1334,9 +1375,10 @@
     for (let d = 1; d <= daysIn; d++) {
       const iso = `${calMonth}-${String(d).padStart(2, '0')}`;
       const open = has.has(iso);
-      cells += `<button class="d ${open ? '' : 'off'} ${MOON[iso] ? 'moonday' : ''} ${iso === today ? 'today' : ''}
+      const src = !open && iso <= today ? pastSource(iso) : null;
+      cells += `<button class="d ${open ? '' : 'off'} ${src ? 'past' : ''} ${MOON[iso] ? 'moonday' : ''} ${iso === today ? 'today' : ''}
         ${iso === selDate ? 'sel' : ''}" ${open ? `onclick="pickDay('${iso}')"` : 'disabled'}>
-        <span class="n">${d}</span>${dayChips(iso)}</button>`;
+        <span class="n">${d}</span>${dayChips(iso, src || iso)}</button>`;
     }
     const cal = `<div class="cal">
       <div class="head">
@@ -1346,8 +1388,10 @@
           ? `onclick="calGo('${months[mi + 1]}')"` : 'disabled'}>›</button>
       </div>
       <div class="grid">${cells}</div>
-      <div class="legend"><span class="ch mysore">Mysore</span><span class="ch led_primary">Led Primary</span>
-        <span class="ch led_inter">Led Intermediate</span><span class="ch moon full">${esc(t('moonDay'))}</span></div></div>`;
+      <div class="legend">
+        <div class="lr">${esc(t('calTeachers'))} ${['Boonchu', 'M', 'Jamsai'].map(teachTag).join('')}</div>
+        <div class="lr">${esc(t('calClasses'))} <span class="cg mysore"><em class="cn">Mysore</em></span><span class="cg led_primary"><em class="cn">Led Primary</em></span><span class="cg led_inter"><em class="cn">Led Intermediate</em></span></div>
+        <div class="lr"><span class="ch moon full">${esc(t('moonDay'))}</span></div></div></div>`;
 
     // Label from the Bangkok class date itself, never from the timestamp — in a
     // viewer's local timezone a 05:30 class can fall on the previous calendar day.
