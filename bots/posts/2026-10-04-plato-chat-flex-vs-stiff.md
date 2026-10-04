@@ -9,6 +9,51 @@ Why: everybody thinks flexible is the gift. You flip it: stiff people get the re
 2. Pattern interrupt: (no music, only ujjayi breath) "'I'm not flexible.' Okay. You learn every part of your body." | On screen: "I'M NOT FLEXIBLE." OKAY. | Close-up of fingertips stopping a hand short of the toes, then cut to your face on "Okay".
 3. Contrarian: "Everybody want flexible body. But stiff people get the real benefit." | On screen: STIFF BODY, REAL BENEFIT | You to camera, a flexible fold behind you, whip-pan to a stiff fold.
 
+## TELEPROMPTER (read this, one take, about 38 s) · Hook 1 chosen by Boonchu, 4 Oct
+Everybody want naturally flexible body.
+But the real benefit?
+Stiff people.
+
+Natural flexible... it come with a problem.
+When they need strength...
+they might not control the flexibility.
+
+And stiff people?
+You think: I'm not flexible.
+You must learn to bend. Every part of your body.
+You go the hard way...
+But you absorb every bit.
+Every move. Every improvement.
+Then you know... and you understand every stiff people.
+
+That's the real benefit.
+(1 s silence)
+
+So which one you want?
+Natural flexible... or tight, then learn to bend?
+Let me know.
+
+For me... I also wanna be naturally flexible.
+(small beat)
+I will deal with the strength later.
+(hold 1 s)
+
+## SHOT LIST (film these; every student says OK first, no names)
+A. Two mats side by side, Paschimottanasana, side view, 10 s: flexible student folds flat, stiff student in front, hands at the shins. Both calm. (Used at 0-4 s and in the split screen at 28-32 s.)
+B. You, talking head, the whole teleprompter in one take, shala background.
+C. Students working at their edge, 2 s each: hips, hamstrings, shoulders, back.
+D. You kneel and give the stiff student a gentle adjustment, both smiling, 5 s.
+E. Close-up: the stiff student's hands slide a little closer to the feet (real, same session).
+F. The same stiff student, smiling, a bit deeper, 3 s.
+Made in the edit: plum card "FLEXIBLE + STRENGTH = ?".
+
+## EDIT CUE SHEET (house style)
+- Zoom punch about 1 s + SFX at 40%, 0.4 s after the word: Stiff people, problem, control, I'm not flexible, every part, hard way, absorb, understand, real benefit, naturally flexible (you), later.
+- Captions: Weight Shift with emoji. On-screen text per block as in the table above.
+- Colors: plum base, ONE gold word per frame (STIFF, REAL BENEFIT), teal for small labels.
+- Cover: your face + "FLEXIBLE OR STIFF?" (gold: STIFF). Check in black and white.
+- Speed: if your take runs over 40 s, speed 1.2x and cut pauses. Keep the 1 s silence after "real benefit" and the 1 s hold at the end.
+
 ## SCRIPT in 3-second blocks (spoken = your English, about 38 s)
 
 | Time | You say | On screen | Picture |
