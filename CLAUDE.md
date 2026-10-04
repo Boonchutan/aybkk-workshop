@@ -62,6 +62,21 @@ Use when handling Instagram, LINE, or WeChat messages about the 180,000 THB prog
 
 ---
 
+## Business direction: The Habit Gap (Boonchu, 4 Oct 2026)
+
+Wellness spending keeps rising; results don't. People don't lack tools, they quit.
+**AYBKK sells a habit system: same practice, same time, a teacher who notices when you're gone.**
+All writing, advice, Reels and builds follow this. Full brief: `bots/direction.md` on the
+`claude/bots-memory` branch.
+
+- Sell the outcome (stronger, calmer, better sleep, aging well) plus the habit, never "poses".
+- No equipment race (cold plunge, sauna, reformers): chains win there. We win on habit and teacher.
+- Pilates, runners, office-syndrome classes are front doors to Mysore, judged by conversions.
+- 180K program pitch: "how to build students who stay for years" (retention).
+- Builds: the student profile is the habit system (attendance streak, "we miss you" list,
+  12-week proof check, renewal shown with the proof).
+- Never use a statistic in public until it is checked against its source.
+
 ## Key Facts for Any Claude Instance
 
 - **Server:** `server.js` — main Express app, runs on Railway
