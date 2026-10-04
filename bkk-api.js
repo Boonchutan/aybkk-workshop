@@ -802,31 +802,48 @@ function mountBkk(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // Landing here consumes the token and hands the member code to the browser.
-  // Deliberately not a redirect carrying the code in the URL — that would put it
-  // in history and in any link the student pastes to a friend.
-  app.get('/api/bkk/login/:token', async (req, res) => {
-    const page = (msg, code) => `<!DOCTYPE html><html lang="en"><meta charset="utf-8">
+  // Opening the link (GET) never uses it up: LINE, WhatsApp and WeChat fetch every
+  // link to draw a preview, which used up one-time tokens before the student ever
+  // tapped (4 Oct). The page posts back to itself, which a preview bot never does.
+  // Staff-made links (sent in a private chat) keep working until they expire, so a
+  // second phone or a re-open is fine; emailed links stay one-time.
+  // The code is handed to the browser, never put in a URL, so it stays out of history.
+  const loginPage = (msg, extra = '') => `<!DOCTYPE html><html lang="en"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>AYBKK</title>
 <body style="font-family:-apple-system,sans-serif;background:#f7f1f5;color:#17121a;
-text-align:center;padding:22vh 20px"><p>${msg}</p>
-<script>${code ? `try{localStorage.setItem('aybkk_member',${JSON.stringify(code)})}catch(e){}
-setTimeout(function(){location.replace('/book?me=1')},600)` : ''}</script></body></html>`;
+text-align:center;padding:22vh 20px"><p>${msg}</p>${extra}</body></html>`;
+  const usable = `token = $1 AND expires_at > now() AND (used_at IS NULL OR ip = 'staff')`;
+  const deadLink = () => loginPage('That link has already been used, or it has expired.<br>'
+    + '<a href="/book" style="color:#5c2160">Ask for a new one</a>');
+
+  app.get('/api/bkk/login/:token', async (req, res) => {
+    try {
+      const ok = (await q(`SELECT 1 FROM bkk_login_tokens WHERE ${usable}`, [req.params.token])).rows.length;
+      if (!ok) return res.status(400).send(deadLink());
+      res.set('Cache-Control', 'no-store').send(loginPage('Opening your AYBKK profile…',
+        `<form method="post" id="f"><button style="font:inherit;font-weight:700;padding:14px 22px;border:0;
+border-radius:10px;background:#e8458c;color:#fff">Open my profile · เปิดโปรไฟล์</button></form>
+<script>document.getElementById('f').submit()</script>`));
+    } catch (e) {
+      console.error('[bkk login] check failed:', e.message);
+      res.status(500).send(loginPage('Something went wrong. Please try again.'));
+    }
+  });
+
+  app.post('/api/bkk/login/:token', async (req, res) => {
     try {
       const r = await q(
-        `UPDATE bkk_login_tokens SET used_at = now()
-         WHERE token = $1 AND used_at IS NULL AND expires_at > now()
-         RETURNING member_id`, [req.params.token]);
-      if (!r.rows.length) {
-        return res.status(400).send(page('That link has already been used, or it has expired.<br>'
-          + '<a href="/book" style="color:#5c2160">Ask for a new one</a>'));
-      }
+        `UPDATE bkk_login_tokens SET used_at = COALESCE(used_at, now())
+         WHERE ${usable} RETURNING member_id`, [req.params.token]);
+      if (!r.rows.length) return res.status(400).send(deadLink());
       const m = (await q('SELECT code FROM bkk_members WHERE id=$1', [r.rows[0].member_id])).rows[0];
-      if (!m) return res.status(404).send(page('We could not find that member.'));
-      res.send(page('Signing you in…', m.code));
+      if (!m) return res.status(404).send(loginPage('We could not find that member.'));
+      res.set('Cache-Control', 'no-store').send(loginPage('Signing you in…',
+        `<script>try{localStorage.setItem('aybkk_member',${JSON.stringify(m.code)})}catch(e){}
+setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) {
       console.error('[bkk login] consume failed:', e.message);
-      res.status(500).send(page('Something went wrong. Please try again.'));
+      res.status(500).send(loginPage('Something went wrong. Please try again.'));
     }
   });
 

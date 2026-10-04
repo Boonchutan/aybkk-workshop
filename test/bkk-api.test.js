@@ -216,12 +216,16 @@ const ok = (name, cond, extra = '') => {
   const link = lastMail.text.match(/login\/([a-f0-9]{64})/);
   ok('the mail carries a 64-character token', !!link, lastMail.text.slice(0, 80));
   if (link) {
-    const first = await fetch(B + '/api/bkk/login/' + link[1]);
+    const peek = await fetch(B + '/api/bkk/login/' + link[1]);
+    const peekHtml = await peek.text();
+    ok('opening the link (a chat app preview) does not use it up or show the code',
+       peek.status === 200 && !peekHtml.includes(memberCode) && peekHtml.includes('method="post"'));
+    const first = await fetch(B + '/api/bkk/login/' + link[1], { method: 'POST' });
     const firstHtml = await first.text();
     ok('token signs the student in', first.status === 200 && firstHtml.includes(memberCode),
        `status ${first.status}`);
-    const second = await fetch(B + '/api/bkk/login/' + link[1]);
-    ok('the same token cannot be used twice', second.status === 400, `status ${second.status}`);
+    const second = await fetch(B + '/api/bkk/login/' + link[1], { method: 'POST' });
+    ok('the same emailed token cannot be used twice', second.status === 400, `status ${second.status}`);
   }
   const bogus = await fetch(B + '/api/bkk/login/' + 'f'.repeat(64));
   ok('an invented token is refused', bogus.status === 400, `status ${bogus.status}`);
@@ -481,9 +485,11 @@ const ok = (name, cond, extra = '') => {
      JSON.stringify(sl.body).slice(0, 120));
   ok('the sign-in link needs the staff key', (await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, {})).status === 401);
   const tok = sl.body.link.split('/').pop();
-  const land = await fetch(`${B}/api/bkk/login/${tok}`).then(r => r.text());
+  await fetch(`${B}/api/bkk/login/${tok}`);
+  const land = await fetch(`${B}/api/bkk/login/${tok}`, { method: 'POST' }).then(r => r.text());
   ok('the link signs the student in and opens their profile', land.includes(twoCode) && land.includes('/book?me=1'));
-  ok('the link works only once', (await fetch(`${B}/api/bkk/login/${tok}`)).status === 400);
+  ok('a staff link still works a second time (re-open, second phone)',
+     (await fetch(`${B}/api/bkk/login/${tok}`, { method: 'POST' })).status === 200);
   ok('a student adds their email once',
      (await post(`/api/bkk/me/${twoCode}/email`, { email: 'imp.two@example.com' })).status === 200 &&
      (await post(`/api/bkk/me/${twoCode}/email`, { email: 'other@example.com' })).status === 409);
