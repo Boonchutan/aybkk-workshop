@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AYBKK · One morning a day · Bangkok</title>
+<meta name="description" content="Stronger, calmer, better sleep. One morning a day. Traditional Ashtanga in Bangkok, beginners welcome. Authorized Level 2 by R. Sharath Jois.">
+<meta property="og:title" content="Stronger, calmer, better sleep. One morning a day.">
+<meta property="og:description" content="Traditional Ashtanga in Bangkok. Beginners welcome, we teach you from zero.">
+<meta property="og:image" content="https://aybkk.net/img/aybkk-hero-1600.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  /* Hormozi landing page: one promise, one photo, one button, three objections,
+     proof, legal. Anything that doesn't get a qualified tap is cut. */
+  @font-face{font-family:'Work Sans';src:url('/fonts/worksans.woff2') format('woff2');font-weight:100 900;font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
+    unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
+  :root{--ink:#17121a;--wall:#f7f1f5;--paper:#fff;--plum:#5c2160;--pink:#e8458c;--pink-deep:#c92f74;
+    --soft:#6b5d70;--line:rgba(23,18,26,.11);--on-pink:#fff}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){--ink:#f5e9f0;--wall:#140f18;--paper:#1e1723;--plum:#c07ec8;
+      --pink:#ff6fae;--pink-deep:#ff8dc0;--soft:#b09cb6;--line:rgba(245,233,240,.14);--on-pink:#17121a}
+  }
+  :root[data-theme="dark"]{--ink:#f5e9f0;--wall:#140f18;--paper:#1e1723;--plum:#c07ec8;
+    --pink:#ff6fae;--pink-deep:#ff8dc0;--soft:#b09cb6;--line:rgba(245,233,240,.14);--on-pink:#17121a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--wall);color:var(--ink);font:17px/1.5 'Work Sans','Plex',system-ui,sans-serif}
+  main{max-width:520px;margin:0 auto;padding:12px 16px 32px}
+  .langs{display:flex;justify-content:flex-end;gap:4px}
+  .langs button{border:0;background:none;color:var(--soft);font:inherit;font-size:14px;padding:6px 8px;cursor:pointer;border-radius:6px}
+  .langs button[aria-pressed="true"]{color:var(--plum);font-weight:700}
+  .brand{font-weight:800;letter-spacing:.04em;color:var(--plum);font-size:26px;margin:4px 0 0}
+  h1{font-size:32px;line-height:1.15;margin:8px 0 10px;letter-spacing:-.01em}
+  .sub{font-size:19px;margin:0 0 6px;font-weight:600}
+  .ctx{color:var(--soft);margin:0 0 16px}
+  .hero{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:50% 45%;border-radius:10px;background:var(--line)}
+  .go{display:block;width:100%;margin:18px 0 8px;padding:18px 16px;border:0;border-radius:10px;cursor:pointer;
+    background:var(--pink);color:var(--on-pink);font:inherit;font-size:20px;font-weight:700;text-align:center;text-decoration:none}
+  .go:active{background:var(--pink-deep)}
+  .alt{text-align:center;font-size:14px;color:var(--soft);margin:0}
+  .alt a,.alt button{color:var(--soft);font:inherit;background:none;border:0;padding:4px;text-decoration:underline;cursor:pointer}
+  .note{text-align:center;font-size:15px;color:var(--plum);min-height:1.5em;margin:6px 0 0}
+  ul.obj{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px}
+  ul.obj li{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  ul.obj b{display:block;color:var(--plum)}
+  .proof{margin:28px 0 0;text-align:center}
+  .proof .auth{font-weight:700;color:var(--plum)}
+  blockquote{margin:12px 0 0;background:var(--paper);border-left:4px solid var(--pink);border-radius:6px;padding:12px 14px;text-align:left}
+  blockquote cite{display:block;margin-top:6px;font-style:normal;font-size:14px;color:var(--soft)}
+  footer{max-width:520px;margin:0 auto;padding:16px 16px 40px;font-size:13px;color:var(--soft);border-top:1px solid var(--line)}
+  footer a{color:var(--soft)}
+</style>
+</head>
+<body>
+<main>
+  <div class="langs" role="group" aria-label="Language">
+    <button type="button" data-lang="en">EN</button><button type="button" data-lang="th">ไทย</button>
+    <button type="button" data-lang="zh">中文</button><button type="button" data-lang="ru">RU</button>
+  </div>
+  <p class="brand">AYBKK</p>
+  <h1 data-t="h1">Stronger, calmer, better sleep. One morning a day.</h1>
+  <p class="sub" data-t="sub">Traditional Ashtanga in Bangkok. Beginners welcome.</p>
+  <p class="ctx" data-t="ctx">A teacher walks the room and adjusts you by hand. You move at your own pace, with your own breath.</p>
+  <img class="hero" src="/img/aybkk-hero-900.jpg" width="900" height="1000" alt="AYBKK teachers at the shala">
+
+  <a class="go" id="go" href="#">Book your first morning on LINE</a>
+  <p class="alt" id="alt"></p>
+  <p class="note" id="note" aria-live="polite"></p>
+
+  <ul class="obj">
+    <li><b data-t="o1t">Not flexible?</b><span data-t="o1d">Nobody is on day one. We teach you from zero.</span></li>
+    <li><b data-t="o2t">Busy mornings?</b><span data-t="o2d">Mysore starts at 5:30 or 7:30. You are done before work.</span></li>
+    <li><b data-t="o3t">The price?</b><span data-t="o3d">From 375 baht a class, with a teacher who knows your name.</span></li>
+  </ul>
+
+  <div class="proof">
+    <div class="auth" data-t="auth">Authorized Level 2 by R. Sharath Jois</div>
+    <div data-t="since">Mysore style in Bangkok since 2013</div>
+    <div id="quotes"></div>
+  </div>
+</main>
+<footer>
+  <p>S31 Sukhumvit Hotel, 8th floor, Sukhumvit 31, Bangkok · <a href="/#prices" data-t="more">All prices and the timetable</a></p>
+  <p data-t="privacy">This page saves no names or phone numbers. Your message goes straight to our chat.</p>
+</footer>
+<script>
+(() => {
+  // Real students only, with their OK. The block stays hidden while this is empty.
+  const QUOTES = [
+    // { text: { en: '...', th: '...' }, who: 'First name, 2 years' },
+  ];
+  const WECHAT = 'aybkkwechat';
+  const STR = {
+    en: { h1: 'Stronger, calmer, better sleep. One morning a day.', sub: 'Traditional Ashtanga in Bangkok. Beginners welcome.',
+      ctx: 'A teacher walks the room and adjusts you by hand. You move at your own pace, with your own breath.',
+      line: 'Book your first morning on LINE', whatsapp: 'Book your first morning on WhatsApp', wechat: 'Book your first morning on WeChat',
+      or: 'Or:', copied: `Our WeChat ID is copied: ${WECHAT}. Add us and say "first morning".`,
+      o1t: 'Not flexible?', o1d: 'Nobody is on day one. We teach you from zero.',
+      o2t: 'Busy mornings?', o2d: 'Mysore starts at 5:30 or 7:30. You are done before work.',
+      o3t: 'The price?', o3d: 'From 375 baht a class, with a teacher who knows your name.',
+      auth: 'Authorized Level 2 by R. Sharath Jois', since: 'Mysore style in Bangkok since 2013',
+      more: 'All prices and the timetable', privacy: 'This page saves no names or phone numbers. Your message goes straight to our chat.' },
+    th: { h1: 'แข็งแรงขึ้น ใจสงบขึ้น นอนหลับดีขึ้น วันละหนึ่งเช้า', sub: 'อัษฎางคโยคะแบบดั้งเดิมในกรุงเทพฯ มือใหม่มาได้เลย',
+      ctx: 'ครูเดินดูทั้งห้องและปรับท่าให้คุณด้วยมือ คุณฝึกตามจังหวะของตัวเอง ตามลมหายใจของตัวเอง',
+      line: 'จองเช้าแรกของคุณทาง LINE', whatsapp: 'จองเช้าแรกของคุณทาง WhatsApp', wechat: 'จองเช้าแรกของคุณทาง WeChat',
+      or: 'หรือ:', copied: `คัดลอก WeChat ID แล้ว: ${WECHAT} เพิ่มเพื่อนแล้วพิมพ์ว่า "เช้าแรก"`,
+      o1t: 'ตัวไม่อ่อน?', o1d: 'วันแรกไม่มีใครอ่อนหรอก เราสอนตั้งแต่เริ่มต้น',
+      o2t: 'เช้าๆ ยุ่ง?', o2d: 'มายซอร์เริ่ม 5:30 หรือ 7:30 ฝึกเสร็จก่อนไปทำงาน',
+      o3t: 'ราคาล่ะ?', o3d: 'เริ่มต้น 375 บาทต่อครั้ง กับครูที่จำชื่อคุณได้',
+      auth: 'ได้รับ Authorization Level 2 จาก R. Sharath Jois', since: 'สอนแบบมายซอร์ในกรุงเทพฯ ตั้งแต่ปี 2013',
+      more: 'ราคาทั้งหมดและตารางเรียน', privacy: 'หน้านี้ไม่เก็บชื่อหรือเบอร์โทร ข้อความของคุณส่งตรงถึงแชทของเรา' },
+    zh: { h1: '更强壮，更平静，睡得更好。每天一个早上。', sub: '曼谷的传统阿斯汤加。欢迎初学者。',
+      ctx: '老师在教室里走动，亲手为你调整。你按自己的节奏、自己的呼吸练习。',
+      line: '用 LINE 预约你的第一个早上', whatsapp: '用 WhatsApp 预约你的第一个早上', wechat: '加微信，预约你的第一个早上',
+      or: '或者：', copied: `已复制我们的微信号：${WECHAT}。添加后发送“第一个早上”。`,
+      o1t: '身体不够柔软？', o1d: '第一天谁都不柔软。我们从零开始教你。',
+      o2t: '早上很忙？', o2d: 'Mysore 5:30 或 7:30 开始，上班前就练完。',
+      o3t: '价格？', o3d: '每节课低至 375 泰铢，老师记得你的名字。',
+      auth: '获 R. Sharath Jois 授权 Level 2（Authorized Level 2）', since: '自 2013 年起在曼谷教 Mysore',
+      more: '全部价格和课程表', privacy: '本页不保存姓名或电话。你的消息直接发到我们的聊天。' },
+    ru: { h1: 'Сильнее, спокойнее, лучше сон. Одно утро в день.', sub: 'Традиционная аштанга в Бангкоке. Новичкам рады.',
+      ctx: 'Учитель ходит по залу и поправляет вас руками. Вы двигаетесь в своём темпе, со своим дыханием.',
+      line: 'Записаться на первое утро в LINE', whatsapp: 'Записаться на первое утро в WhatsApp', wechat: 'Записаться на первое утро в WeChat',
+      or: 'Или:', copied: `WeChat ID скопирован: ${WECHAT}. Добавьте нас и напишите «первое утро».`,
+      o1t: 'Нет гибкости?', o1d: 'В первый день её нет ни у кого. Учим с нуля.',
+      o2t: 'Утро занято?', o2d: 'Майсор начинается в 5:30 или 7:30. Вы успеете до работы.',
+      o3t: 'Цена?', o3d: 'От 375 бат за занятие, с учителем, который знает ваше имя.',
+      auth: 'Авторизация Level 2 от R. Sharath Jois', since: 'Майсор в Бангкоке с 2013 года',
+      more: 'Все цены и расписание', privacy: 'Эта страница не сохраняет имена и телефоны. Ваше сообщение идёт прямо в наш чат.' },
+  };
+  // The channel each audience actually has: Thai and English on LINE, Chinese on WeChat, Russian on WhatsApp.
+  const MAIN = { en: 'line', th: 'line', zh: 'wechat', ru: 'whatsapp' };
+  const NAME = { line: 'LINE', whatsapp: 'WhatsApp', wechat: 'WeChat' };
+  const MSG = 'Hi AYBKK, I want to book my first morning. (aybkk.net/start)\nสวัสดีครับ/ค่ะ อยากจองเช้าแรกครับ/ค่ะ';
+  const LINK = {
+    line: 'https://line.me/R/oaMessage/%40aybkk/?' + encodeURIComponent(MSG),
+    whatsapp: 'https://wa.me/66822244246?text=' + encodeURIComponent(MSG),
+  };
+  const qs = new URLSearchParams(location.search);
+  const src = qs.get('src') || (document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : 'direct');
+  let store = null; try { store = localStorage; } catch {}
+  const pick = l => STR[l] ? l : null;
+  let LANG = pick(qs.get('lang')) || pick(store && store.getItem('aybkk_lang'))
+    || pick((navigator.language || 'en').slice(0, 2)) || 'en';
+
+  const send = (kind, ch) => {
+    const body = JSON.stringify({ kind, src, lang: LANG, ch });
+    try { if (navigator.sendBeacon(`/api/bkk/start-event`, new Blob([body], { type: 'application/json' }))) return; } catch {}
+    fetch('/api/bkk/start-event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
+  };
+  const note = t => { document.getElementById('note').textContent = t; };
+  const open = ch => {
+    send('tap', ch);
+    if (ch !== 'wechat') { location.href = LINK[ch]; return; }
+    const done = () => note(STR[LANG].copied);
+    if (navigator.clipboard) navigator.clipboard.writeText(WECHAT).then(done, done); else done();
+  };
+
+  function render() {
+    const S = STR[LANG];
+    document.documentElement.lang = LANG === 'zh' ? 'zh-Hans' : LANG;
+    document.querySelectorAll('[data-t]').forEach(el => { el.textContent = S[el.dataset.t]; });
+    document.querySelectorAll('.langs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
+    const main = MAIN[LANG];
+    const go = document.getElementById('go');
+    go.textContent = S[main];
+    go.href = LINK[main] || '#';
+    go.onclick = e => { e.preventDefault(); open(main); };
+    const alt = document.getElementById('alt');
+    alt.textContent = S.or + ' ';
+    Object.keys(NAME).filter(c => c !== main).forEach((c, i) => {
+      if (i) alt.append(' · ');
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = NAME[c]; b.onclick = () => open(c);
+      alt.append(b);
+    });
+    note('');
+    const qbox = document.getElementById('quotes');
+    qbox.replaceChildren(...QUOTES.map(x => {
+      const bq = document.createElement('blockquote');
+      bq.textContent = x.text[LANG] || x.text.en;
+      const c = document.createElement('cite'); c.textContent = x.who; bq.append(c);
+      return bq;
+    }));
+  }
+  document.querySelectorAll('.langs button').forEach(b => b.onclick = () => {
+    LANG = b.dataset.lang; try { store && store.setItem('aybkk_lang', LANG); } catch {}
+    render();
+  });
+  render();
+  send('view');
+})();
+</script>
+</body>
+</html>
