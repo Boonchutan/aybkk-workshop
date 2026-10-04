@@ -64,7 +64,7 @@ Put it after "How do you keep going when it feels like there is no way?":
 "There is an old Chinese story. A man, nearly 90 years old, wanted to move the mountains in front of his house. He carried the earth away, one basket at a time. A wise old man laughed at him. He answered: when I die, my sons and grandsons will keep going. The mountains will not grow. In the end, the god of the sky had the mountains carried away." (Liezi, 愚公移山. Never political, no wordplay on the title, 天帝 for the god.)
 
 ## Fill-ins (never invented)
-1. [Thursday], [6:40 am]: the real day and time.
+1. [Monday 5 Oct], [time]: the real day and time Boonchu writes it.
 2. Years: CONFIRMED by Boonchu 4 Oct: started Ashtanga 20 years ago, six days a week since 2008 (18 years).
 3. Teaching lines CONFIRMED by Boonchu 4 Oct (keep both). Routine CONFIRMED: alarm, tea or coffee, nauli, mat. Student story rewritten in his words (many years; started Dwi Pada a few months ago; asked if it gets better; 'It will... with your patience'; recently much easier).
 4. Telegram: @Boonchutanti (confirmed).
