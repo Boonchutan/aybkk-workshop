@@ -276,3 +276,16 @@ Aybkk.net
 คอมเมนต์คำว่า aybkk แล้วเราจะส่งลิงก์ไปให้
 มาเรียนอัษฎางคะกับเรา
 Aybkk.net
+
+## CAPTION v3, 5 LINES (Boonchu: "I only need 5 lines")
+My wife @missjamsai is an Authorized Level 2 teacher. Today she asked me for an adjustment. 🧘
+We can't see ourselves. We think we are doing it, but we are still far away. 👀
+Your practice is your own. But I believe even skilled people need experienced hands, once in a while. 🙌
+New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇
+Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti
+
+ภรรยาผม @missjamsai เป็นครู Authorized Level 2 วันนี้เธอขอให้ผมช่วยปรับอาสนะให้ 🧘
+เรามองไม่เห็นตัวเอง เราคิดว่าทำได้แล้ว แต่จริงๆ ยังห่างอีกไกล 👀
+การฝึกเป็นของคุณเอง แต่ผมเชื่อว่า ต่อให้เก่งแค่ไหน บางครั้งก็ยังต้องการมือที่มีประสบการณ์ 🙌
+นักเรียนใหม่: ซื้อ 1 แถม 1 แพ็กเกจ 1, 2 หรือ 3 เดือน ถึง 11 พ.ย. คอมเมนต์ aybkk 👇
+Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti
