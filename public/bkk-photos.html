@@ -90,7 +90,7 @@
         <button class="btn" id="edSave">Save &amp; next</button>
       </div>
       <div class="bar"><i id="prog"></i></div>
-      <p class="muted" id="edMsg" style="margin:6px 0 0"></p>
+      <p id="edMsg" style="margin:6px 0 0;font-weight:700;color:#c33"></p>
     </div>
 
     <div class="box">
@@ -228,7 +228,7 @@
       if (term.length < 2) { $('#found').innerHTML = ''; return; }
       const d = await api('/api/bkk/teacher/members?q=' + encodeURIComponent(term)).then(r => r.json());
       $('#found').innerHTML = (d.members || []).map(m =>
-        `<button class="chip" data-code="${esc(m.code)}" data-name="${esc(m.name)}">+ ${esc(m.name)}</button>`).join('')
+        `<button class="chip" data-code="${esc(m.code)}" data-name="${esc(m.name)}">+ ${esc(m.name)}${m.hint ? ` <small style="opacity:.7">${esc(m.hint)}</small>` : ''}</button>`).join('')
         || '<span class="muted">Nobody found. Add them below.</span>';
     }, 250);
   });
@@ -254,7 +254,8 @@
   $('#edSave').addEventListener('click', async () => {
     if (!EDIT) return;
     const btn = $('#edSave'); btn.disabled = true;
-    $('#edMsg').textContent = 'Saving…';
+    $('#edMsg').textContent = '';
+    btn.textContent = 'Saving…';
     try {
       const memberCodes = [...PICKED];
       const r = EDIT.kind === 'new'
@@ -267,8 +268,9 @@
       else PHOTOS = PHOTOS.map(p => p.id === j.photo.id ? j.photo : p);
       renderGrid();
       EDIT.kind === 'new' ? nextNew() : closeEditor();
-    } catch (err) { $('#edMsg').textContent = err.message; }
+    } catch (err) { $('#edMsg').textContent = '✗ NOT SAVED: ' + err.message + ' Press Save again.'; }
     btn.disabled = false;
+    if (EDIT) btn.textContent = EDIT.kind === 'new' ? 'Save & next' : 'Save';
   });
 
   $('#edSkip').addEventListener('click', async () => {

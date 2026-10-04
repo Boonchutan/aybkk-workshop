@@ -1553,10 +1553,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const term = String(req.query.q || '').trim().toLowerCase();
       if (term.length < 2) return res.json({ members: [] });
       const r = await q(
-        `SELECT code, name FROM bkk_members
+        `SELECT code, name, email FROM bkk_members
          WHERE lower(name) LIKE $1 OR lower(coalesce(email,'')) LIKE $1
          ORDER BY name LIMIT 20`, [`%${term}%`]);
-      res.json({ members: r.rows });
+      // Two people (or one person twice) can share a name; a hint of the email
+      // tells them apart, without handing the team full addresses.
+      const hint = e => e ? String(e).replace(/^(.{2})[^@]*(@.*)$/, '$1…$2') : '';
+      res.json({ members: r.rows.map(m => ({ code: m.code, name: m.name, hint: hint(m.email) })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -1593,6 +1596,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!isDate(date)) return res.status(400).json({ error: 'date required (YYYY-MM-DD)' });
       if (!/^data:image\/(jpeg|png|webp);base64,/.test(String(image || ''))) {
         return res.status(400).json({ error: 'image must be a JPEG, PNG or WebP data URL' });
+      }
+      if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
+        return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
       }
       const up = await cloudinary.uploader.upload(image, {
         type: 'authenticated', folder: `aybkk/profile/${date}`, resource_type: 'image',
