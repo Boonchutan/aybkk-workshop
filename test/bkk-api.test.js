@@ -498,6 +498,15 @@ const ok = (name, cond, extra = '') => {
      JSON.stringify(prog.body).slice(0, 200));
   ok('progress needs the staff key', (await J('/api/bkk/admin/progress')).status === 401);
 
+  console.log('\n— /start counts —');
+  await post('/api/bkk/start-event', { kind: 'view', src: 'Reel-Sleep 1!', lang: 'th' });
+  await post('/api/bkk/start-event', { kind: 'view', src: 'reel-sleep1' });
+  await post('/api/bkk/start-event', { kind: 'tap', src: 'reel-sleep1', ch: 'line' });
+  const st = await J('/api/bkk/admin/start-stats', { headers: ADMIN });
+  const row = (st.body.sources || []).find(x => x.src === 'reel-sleep1');
+  ok('start page views and taps are counted per source, cleaned', row && row.views === 2 && row.taps === 1, JSON.stringify(st.body));
+  ok('start stats need the staff key', (await J('/api/bkk/admin/start-stats')).status === 401);
+
   console.log('\n— 12-week proof check —');
   const ck = (await post('/api/bkk/teacher/members', { name: 'Check Person', email: 'check.person@example.com' }, PKEY)).body.member.code;
   ok('a check needs at least one number', (await post(`/api/bkk/me/${ck}/checks`, { note: 'hi' })).status === 400);

@@ -206,6 +206,12 @@ function mountBkk(app, opts = {}) {
       created_at TIMESTAMPTZ DEFAULT now(),
       UNIQUE (member_id, taken_on))`);
 
+    // /start counts: which Reel (?src=) brings people, and how many tap the button.
+    // No IP, no name: only source, language, channel.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_start_events (
+      id SERIAL PRIMARY KEY, kind TEXT NOT NULL, src TEXT, lang TEXT, ch TEXT,
+      created_at TIMESTAMPTZ DEFAULT now())`);
+
     // The things a shala actually does to a pass, which Rezerv has and this did
     // not: pause it for an injury, write off a mistake, note why.
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS frozen_from DATE`);
@@ -1040,6 +1046,29 @@ setTimeout(function(){location.replace('/book?me=1')},600)` : ''}</script></body
       if (o.status === 'paid') return res.json({ success: true, already: true });
       await activateOrder(o, { note: 'MANUAL ACTIVATION by admin' });
       res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/start-event', async (req, res) => {
+    const b = req.body || {};
+    const kind = b.kind === 'tap' ? 'tap' : 'view';
+    const clean = (v, n) => String(v || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, n) || null;
+    try {
+      await q(`INSERT INTO bkk_start_events (kind,src,lang,ch) VALUES ($1,$2,$3,$4)`,
+        [kind, clean(b.src, 40), clean(b.lang, 5), clean(b.ch, 10)]);
+      res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.get('/api/bkk/admin/start-stats', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const { rows } = await q(
+        `SELECT coalesce(src, '-') AS src, count(*) FILTER (WHERE kind = 'view')::int AS views,
+           count(*) FILTER (WHERE kind = 'tap')::int AS taps
+         FROM bkk_start_events WHERE created_at > now() - interval '30 days'
+         GROUP BY 1 ORDER BY taps DESC, views DESC LIMIT 30`);
+      res.json({ success: true, sources: rows });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
