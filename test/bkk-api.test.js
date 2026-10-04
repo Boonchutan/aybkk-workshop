@@ -474,20 +474,25 @@ const ok = (name, cond, extra = '') => {
      global.__destroyed.length === 1 && global.__destroyed[0].type === 'authenticated');
 
   console.log('\n— photos straight from Drive —');
-  const dl = await J('/api/bkk/teacher/drive?date=2026-10-05', { headers: PKEY });
+  const fl = await J('/api/bkk/teacher/drive/folders', { headers: PKEY });
+  ok('the day folders inside "photos" are listed, newest first, with their dates',
+     fl.status === 200 && fl.body.folders[0].name === '5Oct26' && fl.body.folders[0].date === '2026-10-05' && fl.body.folders[1].date === '2026-10-04',
+     JSON.stringify(fl.body));
+  const dl = await J('/api/bkk/teacher/drive?folder=DAY5aaaaaaaaaaaaaaaaaaaaa', { headers: PKEY });
   const names = (dl.body.files || []).map(f => f.name);
   ok('the day folder is found by its name and photos listed (sub-folder too, videos left out, in order)',
      dl.status === 200 && JSON.stringify(names) === JSON.stringify(['AYBKK Oct5-001.jpg', 'AYBKK Oct5-002.jpg', 'led-01.jpg']), JSON.stringify(dl.body));
-  ok('Drive list needs a passcode', (await J('/api/bkk/teacher/drive?date=2026-10-05')).status === 401);
+  ok('Drive list needs a passcode', (await J('/api/bkk/teacher/drive?folder=DAY5aaaaaaaaaaaaaaaaaaaaa')).status === 401);
+  ok('only folders inside "photos" can be opened', (await J('/api/bkk/teacher/drive?folder=SUBaaaaaaaaaaaaaaaaaaaaaa', { headers: PKEY })).status === 400);
   const upBefore = uploads.length;
-  const fd = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code] }, PKEY);
+  const fd = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code] }, PKEY);
   ok('a Drive photo is saved and tagged', fd.status === 200 && uploads.length === upBefore + 1 && fd.body.photo.members.length === 1, JSON.stringify(fd.body));
-  const dl2 = await J('/api/bkk/teacher/drive?date=2026-10-05', { headers: PKEY });
+  const dl2 = await J('/api/bkk/teacher/drive?folder=DAY5aaaaaaaaaaaaaaaaaaaaa', { headers: PKEY });
   ok('the list ticks it as saved', dl2.body.files.find(f => f.id === 'IMG2aaaaaaaaaaaaaaaaaaaaa').photoId === fd.body.photo.id);
-  const again = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code, bob.code] }, PKEY);
+  const again = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code, bob.code] }, PKEY);
   ok('the same Drive photo is never saved twice (only its tags change)', again.status === 200 && uploads.length === upBefore + 1 && again.body.photo.members.length === 2);
   ok('a file that is not in that day\'s folder is refused',
-     (await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', driveId: 'SOMEOTHERFILEaaaaaaaaaaaa', memberCodes: [] }, PKEY)).status === 400);
+     (await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'SOMEOTHERFILEaaaaaaaaaaaa', memberCodes: [] }, PKEY)).status === 400);
   ok("Ann's profile shows the Drive photo",
      JSON.stringify((await J(`/api/bkk/me/${ann.code}/photos`)).body).includes(fd.body.photo.thumb));
 

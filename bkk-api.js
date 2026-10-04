@@ -1652,21 +1652,25 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const y = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]);
     return `${y}-${String(MON[m[2].toLowerCase()]).padStart(2, '0')}-${m[1].padStart(2, '0')}`;
   }
-  const driveCache = new Map();          // date -> { at, files }
-  async function driveDay(date, fresh) {
-    const hit = driveCache.get(date);
+  // M picks the day folder himself from the "photos" folder (Boonchu, 5 Oct);
+  // only folders directly inside it can be opened.
+  const driveCache = new Map();          // folder id -> { at, files }
+  async function driveFolders() {
+    const days = (await driveList(DRIVE_ROOT)).filter(e => e.folder).map(e => ({ id: e.id, name: e.name, date: folderDate(e.name) }));
+    return days.sort((a, b) => (b.date || '').localeCompare(a.date || '') || a.name.localeCompare(b.name));
+  }
+  async function driveFolder(folderId, fresh) {
+    const hit = driveCache.get(folderId);
     if (hit && !fresh && Date.now() - hit.at < 10 * 60e3) return hit.files;
-    const days = (await driveList(DRIVE_ROOT)).filter(e => e.folder && folderDate(e.name) === date);
+    if (!(await driveFolders()).some(d => d.id === folderId)) throw Object.assign(new Error('That folder is not inside the Drive "photos" folder.'), { status: 400 });
     const files = [];
-    for (const d of days) {
-      for (const e of await driveList(d.id)) {
-        if (e.folder) {          // one level down: "3Oct26LedP" and the like
-          for (const f of await driveList(e.id)) if (!f.folder && IMG.test(f.name)) files.push({ ...f, sub: e.name });
-        } else if (IMG.test(e.name)) files.push(e);
-      }
+    for (const e of await driveList(folderId)) {
+      if (e.folder) {          // one level down: "3Oct26LedP" and the like
+        for (const f of await driveList(e.id)) if (!f.folder && IMG.test(f.name)) files.push({ ...f, sub: e.name });
+      } else if (IMG.test(e.name)) files.push(e);
     }
     files.sort((a, b) => (a.sub || '').localeCompare(b.sub || '') || a.name.localeCompare(b.name, undefined, { numeric: true }));
-    driveCache.set(date, { at: Date.now(), files });
+    driveCache.set(folderId, { at: Date.now(), files });
     return files;
   }
   const sniff = b => b[0] === 0xFF && b[1] === 0xD8 ? 'image/jpeg'
@@ -1674,17 +1678,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     : b.subarray(0, 4).toString('latin1') === 'RIFF' ? 'image/webp'
     : b.subarray(4, 8).toString('latin1') === 'ftyp' ? 'image/heic' : null;
 
+  app.get('/api/bkk/teacher/drive/folders', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    try { res.json({ folders: await driveFolders() }); }
+    catch (e) { res.status(502).json({ error: e.message }); }
+  });
+
   app.get('/api/bkk/teacher/drive', async (req, res) => {
     const t = await teacherFrom(req);
     if (!t) return res.status(401).json({ error: 'bad passcode' });
-    const date = isDate(req.query.date) ? req.query.date : ymd(bkkNow());
     try {
-      const files = await driveDay(date, req.query.fresh === '1');
+      const files = await driveFolder(String(req.query.folder || ''), req.query.fresh === '1');
       const done = files.length ? (await q('SELECT id, drive_id FROM bkk_photos WHERE drive_id = ANY($1)',
         [files.map(f => f.id)])).rows : [];
       const byDrive = new Map(done.map(r => [r.drive_id, r.id]));
-      res.json({ date, files: files.map(f => ({ id: f.id, name: f.name, sub: f.sub || '', photoId: byDrive.get(f.id) || null })) });
-    } catch (e) { res.status(502).json({ error: e.message }); }
+      res.json({ files: files.map(f => ({ id: f.id, name: f.name, sub: f.sub || '', photoId: byDrive.get(f.id) || null })) });
+    } catch (e) { res.status(e.status || 502).json({ error: e.message }); }
   });
 
   app.post('/api/bkk/teacher/photos/from-drive', async (req, res) => {
@@ -1692,10 +1702,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const { date, driveId, memberCodes } = req.body || {};
+      const { date, folder, driveId, memberCodes } = req.body || {};
       if (!isDate(date)) return res.status(400).json({ error: 'date required (YYYY-MM-DD)' });
-      if (!(await driveDay(date)).some(f => f.id === driveId)) {
-        return res.status(400).json({ error: 'That file is not in the Drive folder for this day.' });
+      if (!(await driveFolder(String(folder || ''))).some(f => f.id === driveId)) {
+        return res.status(400).json({ error: 'That file is not in the chosen Drive folder.' });
       }
       const had = (await q('SELECT id FROM bkk_photos WHERE drive_id=$1', [driveId])).rows[0];
       if (had) {               // already in: just set who is in it
@@ -1715,7 +1725,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!type) return res.status(502).json({ error: 'Drive did not send a photo. Is the folder still shared by link?' });
       const photo = await storePhoto(t, date, `data:${type};base64,${buf.toString('base64')}`, memberCodes, driveId);
       res.json({ success: true, photo });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
 
   // Replace who is in a photo.

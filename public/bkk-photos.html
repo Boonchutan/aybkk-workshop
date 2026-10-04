@@ -75,7 +75,9 @@
     </div>
 
     <div class="box" id="drivebox" hidden>
-      <b class="h">In Drive for this day <span class="muted" id="dCount"></span></b>
+      <b class="h">From Drive <span class="muted" id="dCount"></span></b>
+      <span class="muted">Day folder in "photos"</span>
+      <select id="dFolder" style="width:100%;padding:11px;border:1.5px solid var(--line);border-radius:8px;font:inherit;font-size:16px;background:var(--wall);color:var(--ink);margin-bottom:8px"></select>
       <p class="muted" id="dMsg" style="margin:0 0 10px"></p>
       <button class="btn pink wide" id="dStart" hidden></button>
       <div class="grid" id="dGrid"></div>
@@ -150,15 +152,37 @@
     for (const p of PHOTOS) for (const m of p.members) PEOPLE.set(m.code, m.name);
     renderGrid();
   }
-  $('#date').addEventListener('change', () => { loadDay(); if (!$('#drivebox').hidden) loadDrive(); });
+  $('#date').addEventListener('change', loadDay);
 
   // The day's folder in Chay's Drive ("photos › 3Oct26"): every photo, with the
   // ones already saved ticked, so nothing is missed and nothing goes in twice.
-  async function loadDrive(fresh) {
+  // M picks the day folder; the class date follows the folder's name ("3Oct26").
+  let FOLDERS = [];
+  async function openDrive() {
     $('#drivebox').hidden = false;
     $('#dMsg').textContent = 'Reading the Drive folder…';
     $('#dStart').hidden = true; $('#dGrid').innerHTML = ''; $('#dCount').textContent = '';
-    const r = await api(`/api/bkk/teacher/drive?date=${$('#date').value}${fresh ? '&fresh=1' : ''}`);
+    const r = await api('/api/bkk/teacher/drive/folders');
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { $('#dMsg').textContent = '✗ ' + (j.error || 'Could not read Drive.'); return; }
+    FOLDERS = j.folders || [];
+    $('#dFolder').innerHTML = '<option value="">Choose a day…</option>' + FOLDERS.map(f => `<option value="${esc(f.id)}">${esc(f.name)}</option>`).join('');
+    const match = FOLDERS.find(f => f.date === $('#date').value);
+    if (match) { $('#dFolder').value = match.id; loadDrive(true); }
+    else $('#dMsg').textContent = 'Choose the day folder.';
+  }
+  $('#dFolder').addEventListener('change', () => {
+    const f = FOLDERS.find(x => x.id === $('#dFolder').value);
+    if (!f) return;
+    if (f.date && f.date !== $('#date').value) { $('#date').value = f.date; loadDay(); }
+    loadDrive(true);
+  });
+  async function loadDrive(fresh) {
+    const folder = $('#dFolder').value;
+    if (!folder) return;
+    $('#dMsg').textContent = 'Reading the Drive folder…';
+    $('#dStart').hidden = true; $('#dGrid').innerHTML = ''; $('#dCount').textContent = '';
+    const r = await api(`/api/bkk/teacher/drive?folder=${encodeURIComponent(folder)}${fresh ? '&fresh=1' : ''}`);
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { $('#dMsg').textContent = '✗ ' + (j.error || 'Could not read Drive.'); return; }
     DRIVE = j.files || [];
@@ -168,7 +192,7 @@
     const left = DRIVE.filter(f => !f.photoId).length;
     $('#dCount').textContent = DRIVE.length ? `(${DRIVE.length - left} of ${DRIVE.length} saved)` : '';
     $('#dMsg').textContent = !DRIVE.length
-      ? `No Drive folder with photos for this date. The folder must be named like "3Oct26" inside "photos".`
+      ? 'No photos in this folder.'
       : left ? 'Ticked = already saved. Tap one photo, or tag all the new ones in a row.' : 'Every photo in this folder is saved. ✓';
     $('#dStart').hidden = !left;
     $('#dStart').textContent = `Tag the ${left} new photo${left === 1 ? '' : 's'}`;
@@ -178,7 +202,7 @@
         <span style="${f.photoId ? 'color:#2a8a4a;font-weight:700' : ''}">${f.photoId ? '✓ saved' : esc(f.name)}</span>
       </button>`).join('');
   }
-  $('#driveBtn').addEventListener('click', () => loadDrive(true));
+  $('#driveBtn').addEventListener('click', openDrive);
   $('#dStart').addEventListener('click', () => {
     QUEUE = DRIVE.filter(f => !f.photoId).map(f => ({ drive: f }));
     TOTAL = QUEUE.length; DONE = 0;
@@ -325,7 +349,7 @@
             body: JSON.stringify({ date: $('#date').value, image: EDIT.data, memberCodes }) })
         : EDIT.kind === 'drive'
         ? await api('/api/bkk/teacher/photos/from-drive', { method: 'POST',
-            body: JSON.stringify({ date: $('#date').value, driveId: EDIT.f.id, memberCodes }) })
+            body: JSON.stringify({ date: $('#date').value, folder: $('#dFolder').value, driveId: EDIT.f.id, memberCodes }) })
         : await api(`/api/bkk/teacher/photos/${EDIT.id}/tags`, { method: 'POST', body: JSON.stringify({ memberCodes }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || 'Could not save.');
