@@ -1,9 +1,9 @@
 # Letter from the Shala #1 (DRAFT, English core) · Plato · 4 Oct 2026
 
 Skeleton: Halbert Boron 1, "the first letter of a series" (bots/notebook/halbert-letter.md, Issue 1).
-Direction: Habit Gap core ("same practice, same time, a teacher who notices"). Habit numbers: the habit itself, plus #1 Track (count your mornings) and #4 Sleep (same time every morning).
-Send: Thursday 9 Oct. LINE OA (Thai, Lane B P.S.), WeChat OA article boonchuaybkk (Chinese, Lane A P.S.), Telegram 3 groups (Russian, Lane A P.S.).
-Rules kept from Carne's #1: no price, no program name, no "apply", no "authorized", no Sharath. Trust first.
+Direction: Habit Gap core ("same practice, same time, a teacher who notices"). Habit numbers: #1 Track (count your practice days). Sleep (#4) not covered this week.
+Send: Thursday 9 Oct, after Boonchu's OK. LINE OA (Thai, Lane B P.S.), WeChat OA article boonchuaybkk (Chinese, Lane A P.S.), Telegram 3 groups (Russian, Lane A P.S.).
+Rules kept from Carne's #1: no price, no program name, no "apply", no "authorized". Trust first. (The LINE promo line keeps Boonchu's own Sharathji honour words, as ordered on 3 Oct.)
 
 ---
 
@@ -23,11 +23,11 @@ So let me start with a student.
 
 She has practiced with me for 8 years. A few months ago, she put both legs behind her head. Dwi Pada Sirsasana.
 
-Legs behind the head takes time. Some people need 2 or 3 years just to start to feel comfortable. Some need much longer, and they start to feel there is no way.
+Legs behind the head takes time. Some people need 2 or 3 years just to start to feel comfortable. Some need much longer, and they start to feel there is no way. Maybe you know that feeling, with an asana of your own.
 
-She kept coming.
+She did not stop practicing. And a few months ago, it came.
 
-There is an old Chinese story about a man who moved a mountain, one basket of earth at a time. Another man laughed at him. The old man answered: the mountain does not grow, but my work can keep going.
+How do you keep going when it feels like there is no way?
 
 That brings me to the one habit I would give you, if I could give you only one:
 
@@ -35,32 +35,41 @@ That brings me to the one habit I would give you, if I could give you only one:
 
 Alarm. Water. Mat. First breath. That's it.
 
-You don't need more motivation. You need fewer decisions. When the time is fixed, there is nothing left to decide.
-
-By the way, "every morning" does not mean the full series every morning. On a bad day, a few Sun Salutations count. The time is the habit. The length can change. [BOONCHU: keep only if this is how you teach it.]
+You don't need more motivation. You need fewer decisions, and a teacher who notices when you are gone. When the time is fixed, there is nothing left to decide.
 
 If it sounds like I am making a big deal out of a small thing, I am. I have not found anything that matters more.
 
-**This week, try this:** tomorrow, practice at the same time as today. Then do it again the day after. Count your mornings.
+By the way, "every morning" means every practice day, not Saturdays or moon days. And it does not mean the full series. On a bad day, a few Sun Salutations count. The time is the habit. The length can change.
+
+[BOONCHU: confirm the routine line, the "nothing matters more" line and the "few Sun Salutations" line are how you teach it. Delete any that are not.]
+
+**This week, try this:** pick one time. Be on your mat at that time on your next 3 practice days. That's all.
 
 See you on the mat,
 Boonchu
 
-P.S. (LINE, Thai) New to Mysore? Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Buy by 11 Nov. Ask us here on LINE.
+P.S. (LINE, Thai) New to Mysore? Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. (In honour of Sharathji's passing.) Ask us here on LINE @aybkk.
 
-P.S. (WeChat and Telegram) One small favor. Reply with two things: your city, and how many years you have practiced. One line is enough.
+P.S. (WeChat) One small favor. Send this account a message with two things: your city, and how many years you have practiced. One line is enough.
 
-P.P.S. Next week: the question almost every new student asks me. Most teachers answer it wrong.
+P.S. (Telegram) One small favor. Message me at [@handle] with two things: your city, and how many years you have practiced. One line is enough.
+
+P.P.S. Next week: "Am I flexible enough?" My honest answer.
 
 ---
 
+## WeChat-only extra (optional, Chinese readers know this story)
+Put it after "How do you keep going when it feels like there is no way?":
+"There is an old Chinese story. A man, nearly 90 years old, wanted to move the mountains in front of his house. He carried the earth away, one basket at a time. A wise old man laughed at him. He answered: when I die, my sons and grandsons will keep going. The mountains will not grow. In the end, the god of the sky had the mountains carried away." (Liezi, 愚公移山. Never political, no wordplay on the title, 天帝 for the god.)
+
 ## Fill-ins (never invented)
-1. [Thursday], [6:40 am]: the real day and time you finish writing or sending.
-2. [years of practice]: your real number. Team files disagree (Carne's draft says "taught for 14 years", the Halbert file says 16 teaching and 20 practice, direction.md says "18 years"). I will not pick one.
-3. The "bad day, a few Sun Salutations" line: keep only if it matches how you teach.
+1. [Thursday], [6:40 am]: the real day and time.
+2. [years of practice]: your real number. Team files disagree (14 teaching in Carne's draft, 16 teaching / 20 practice in the Halbert file, 18 in direction.md).
+3. The three teaching lines marked above.
+4. [@handle] for Telegram.
 
 ## Language notes
-- Thai (LINE): make the dateline local (the street, the rain, the sound). Promo line in the same words as the 3 Oct order. Mysore = มายซอร์. Asana = อาสนะ.
-- Chinese (WeChat article): the Foolish Old Man is 愚公移山; every reader learned it at school. Never political, never wordplay on the title, god of the sky = 天帝. Asana = 体式. A native reader checks it out loud.
+- Thai (LINE): local dateline (the street, the rain, the sound). Mysore = มายซอร์. Asana = อาสนะ.
+- Chinese (WeChat article): asana = 体式. A native reader checks it out loud.
 - Russian (Telegram): asana = асана. A native reader checks it out loud.
 - The student: no name, no photo unless she says yes.
