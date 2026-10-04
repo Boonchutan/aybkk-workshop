@@ -23,7 +23,7 @@ So let me start with a student who has practiced with me for nearly 10 years.
 
 A few months ago, she started to do both legs behind her head. Dwi Pada Sirsasana. It did not feel comfortable right away. She asked me, "Is it ever going to get better?" I said, "It will... with your patience."
 
-Legs behind the head takes time. Some people need 2 or 3 years just to start to feel comfortable. Some need much longer, and they start to feel there is no way. Maybe you know that feeling, with an asana of your own.
+Legs behind the head takes time. Some people need 2 or 3 years just to start to feel comfortable. Some need much longer, and they start to feel there is no way. Maybe you know that feeling, from an asana you are dealing with now.
 
 She did not stop her routine. And recently, I can feel it getting much easier for her.
 
