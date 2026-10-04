@@ -9,7 +9,7 @@ Inbox last read: 2026-10-04T06:09:18.576Z
 - 2026-09-29: Content work (Reels, carousels, captions, Postiz posts) goes to Plato's own chat: "✍️ Plato · AYBKK content chat" (session_01EpfSiAFErEs2e4MYfzK1F9). Machi chat stays for money, leads, strategy and team orders.
 
 ## Reminders
-(none yet)
+- 12 Nov 2026 (promotion ended 11 Nov): Boonchu said "change after Nov 11": switch the site's pink buttons and blush backgrounds (hue 334) to the plum + gold + teal triad, matching the calendar and comparison posters. Ask Boonchu for a go, then Neo builds it as a PR.
 
 ## Wins
 (none yet)
