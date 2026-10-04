@@ -67,16 +67,25 @@ function moonDaysBetween(fromYmd, toYmd) {
 
 const SEED_SLOTS = [
   // Titles carry no times — the schedule already shows the time in its own column.
-  { code: 'my530',   title: 'Mysore (1st batch)',        kind: 'mysore',       weekdays: [2,3,4,5],   start_time: '05:30', duration_min: 120, capacity: 42, is_online: false },
-  { code: 'my730',   title: 'Mysore (2nd batch)',        kind: 'mysore',       weekdays: [2,3,4,5],   start_time: '07:30', duration_min: 120, capacity: 42, is_online: false },
-  { code: 'lp_mon',  title: 'Led Primary series',        kind: 'led_primary',  weekdays: [1],         start_time: '06:30', duration_min: 90,  capacity: 42, is_online: false },
+  // teachers: one name, or a name per weekday. Saturday Led Primary rotates (SAT_PRIMARY_ROTATION).
+  { code: 'my530',   title: 'Mysore (1st batch)',        kind: 'mysore',       weekdays: [2,3,4,5],   start_time: '05:30', duration_min: 120, capacity: 42, is_online: false, teachers: { 2: 'Boonchu', 3: 'M', 4: 'M', 5: 'Boonchu' } },
+  { code: 'my730',   title: 'Mysore (2nd batch)',        kind: 'mysore',       weekdays: [2,3,4,5],   start_time: '07:30', duration_min: 120, capacity: 42, is_online: false, teachers: 'Boonchu' },
+  { code: 'lp_mon',  title: 'Led Primary series',        kind: 'led_primary',  weekdays: [1],         start_time: '06:30', duration_min: 90,  capacity: 42, is_online: false, teachers: 'Boonchu' },
   { code: 'lp_sat',  title: 'Led Primary series',        kind: 'led_primary',  weekdays: [6],         start_time: '07:00', duration_min: 90,  capacity: 42, is_online: false },
-  { code: 'li_sat',  title: 'Led Intermediate series',   kind: 'led_inter',    weekdays: [6],         start_time: '08:45', duration_min: 120, capacity: 42, is_online: false },
-  { code: 'my_sun',  title: 'Mysore Sunday',             kind: 'mysore',       weekdays: [0],         start_time: '07:00', duration_min: 150, capacity: 42, is_online: false },
-  { code: 'olp_mon', title: '[Online] Led Primary series',      kind: 'led_primary', weekdays: [1], start_time: '06:30', duration_min: 90,  capacity: 20, is_online: true },
+  { code: 'li_sat',  title: 'Led Intermediate series',   kind: 'led_inter',    weekdays: [6],         start_time: '08:45', duration_min: 120, capacity: 42, is_online: false, teachers: 'Boonchu' },
+  { code: 'my_sun',  title: 'Mysore Sunday',             kind: 'mysore',       weekdays: [0],         start_time: '07:00', duration_min: 150, capacity: 42, is_online: false, teachers: 'M' },
+  { code: 'olp_mon', title: '[Online] Led Primary series',      kind: 'led_primary', weekdays: [1], start_time: '06:30', duration_min: 90,  capacity: 20, is_online: true, teachers: 'Boonchu' },
   { code: 'olp_sat', title: '[Online] Led Primary series',      kind: 'led_primary', weekdays: [6], start_time: '07:00', duration_min: 90,  capacity: 10, is_online: true },
-  { code: 'oli_sat', title: '[Online] Led Intermediate series', kind: 'led_inter',   weekdays: [6], start_time: '09:00', duration_min: 120, capacity: 15, is_online: true },
+  { code: 'oli_sat', title: '[Online] Led Intermediate series', kind: 'led_inter',   weekdays: [6], start_time: '09:00', duration_min: 120, capacity: 15, is_online: true, teachers: 'Boonchu' },
 ];
+// Saturday Led Primary takes turns week by week, Jamsai first on 17 Oct 2026 (Boonchu, 4 Oct).
+const SAT_PRIMARY_ROTATION = { codes: ['lp_sat', 'olp_sat'], from: '2026-10-17', teachers: ['Jamsai', 'M'] };
+function rotationTeacher(code, ymdStr) {
+  if (!SAT_PRIMARY_ROTATION.codes.some(c => code === `${c}_6`)) return null;
+  const weeks = Math.round((Date.parse(ymdStr) - Date.parse(SAT_PRIMARY_ROTATION.from)) / (7 * 86400000));
+  const t = SAT_PRIMARY_ROTATION.teachers;
+  return t[((weeks % t.length) + t.length) % t.length];
+}
 
 function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
@@ -266,6 +275,9 @@ function mountBkk(app, opts = {}) {
       for (const wd of s.weekdays) {
         await q('UPDATE bkk_class_slots SET title=$2 WHERE code=$1 AND title <> $2',
           [`${s.code}_${wd}`, s.title]);
+        const who = s.teachers && typeof s.teachers === 'object' ? s.teachers[wd] : s.teachers;
+        if (who) await q('UPDATE bkk_class_slots SET teachers=$2 WHERE code=$1 AND teachers IS DISTINCT FROM $2',
+          [`${s.code}_${wd}`, who]);
       }
     }
     // Monday is Led Primary only (Oct 2026). Earlier databases were seeded with
@@ -415,7 +427,7 @@ function mountBkk(app, opts = {}) {
           if (new Date(startAt) < bkkNow()) continue;         // hide past classes
           out.push({
             slotId: s.id, date: dstr, startAt, title: s.title, kind: s.kind,
-            teachers: s.teachers || '', durationMin: s.duration_min,
+            teachers: rotationTeacher(s.code, dstr) || s.teachers || '', durationMin: s.duration_min,
             isOnline: s.is_online, capacity: cap, booked, seatsLeft: Math.max(0, cap - booked),
           });
         }
@@ -1814,4 +1826,4 @@ setTimeout(function(){location.replace('/book?me=1')},600)` : ''}</script></body
 const express = require('express');
 const express_urlencoded_safe = express.urlencoded({ extended: false });
 
-module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween };
+module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween, rotationTeacher };

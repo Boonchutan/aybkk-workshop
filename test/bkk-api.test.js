@@ -498,6 +498,16 @@ const ok = (name, cond, extra = '') => {
      JSON.stringify(prog.body).slice(0, 200));
   ok('progress needs the staff key', (await J('/api/bkk/admin/progress')).status === 401);
 
+  console.log('\n— teachers on the timetable —');
+  const tsch = (await J("/api/bkk/schedule")).body.classes || [];
+  const { rotationTeacher } = require('../bkk-api.js');
+  const wed = tsch.find(c => c.title === 'Mysore (1st batch)' && new Date(c.date + 'T12:00:00Z').getUTCDay() === 3);
+  const fri = tsch.find(c => c.title === 'Mysore (1st batch)' && new Date(c.date + 'T12:00:00Z').getUTCDay() === 5);
+  ok('Wednesday 5:30 is M, Friday 5:30 is Boonchu', wed && wed.teachers === 'M' && fri && fri.teachers === 'Boonchu', JSON.stringify([wed, fri]));
+  ok('Saturday Primary takes turns, Jamsai first on 17 Oct',
+     rotationTeacher('lp_sat_6', '2026-10-17') === 'Jamsai' && rotationTeacher('lp_sat_6', '2026-10-24') === 'M'
+       && rotationTeacher('li_sat_6', '2026-10-24') === null);
+
   console.log('\n— /start counts —');
   await post('/api/bkk/start-event', { kind: 'view', src: 'Reel-Sleep 1!', lang: 'th' });
   await post('/api/bkk/start-event', { kind: 'view', src: 'reel-sleep1' });
