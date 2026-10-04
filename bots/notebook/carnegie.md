@@ -3,6 +3,7 @@
 Inbox last read: 2026-10-03T23:37:59.384Z
 
 ## Standing orders from Boonchu
+- 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
 - 2026-10-04 (Boonchu, via Machi): 10 HABITS FRAME. Every piece points to one of the 10 health habits in bots/direction.md and names its number. Master line: "10 things people do to stay healthy. Ashtanga does all 10, in one morning." Careful words: no "every student", no kilos, no medical claims.
 - 2026-10-04 (Boonchu, via Machi): DIRECTION. Read bots/direction.md (The Habit Gap) before every run. AYBKK sells a habit system, not poses: "people don't lack tools, they quit". Every piece leads to a Mysore trial, a renewal or the 180K program. No public statistic until checked against its source.
 - 2026-09-30 (Boonchu, via Machi): SHALA RENEWALS AND PRICE RULES. One public price for everyone. Last year's promotions were public and fair; they simply end at each student's renewal. Never call them secret deals. Renewal messages: warm first, then the win/loss line. Drafts only, Boonchu sends. Student names and end dates never go into plain notebook files.

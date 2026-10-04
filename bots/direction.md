@@ -32,6 +32,38 @@ Rules:
 - No statistic in public until it is checked against its source.
 - Close every piece with one action: try Mysore, the 12-week check, or ask on LINE @aybkk.
 
+## HOW WE WIN THE COMPARISON (Boonchu, 4 Oct 2026)
+Goal: make clear that Ashtanga is one of the best ways to solve these 10 pains, better than walking/running alone, without attacking anything.
+
+**Never say walking or running "doesn't work".** It is well proven and we lose trust. Say what it misses.
+Master comparison line: **"Walking covers 2 of the 10. One Ashtanga morning covers all 10."**
+
+**The 5-step pattern for every piece:**
+1. The pain ("Everyone is tired.")
+2. What they try ("So they buy a sleep tracker.")
+3. What it misses ("It tells you that you slept badly. It doesn't change why.")  <- where we win; never attack, show the gap
+4. What Ashtanga does ("A 6am practice resets your day backwards: early, slow breath, done by 10pm.")
+5. Proof, then one invite ("Students check their sleep at week 0, 6 and 12. Try one morning.")
+
+**One practice vs four** (carousel / Reel / website):
+| | Walk/run | Gym | Pilates | Ashtanga |
+|---|---|---|---|---|
+| Strength | - | yes | some | yes |
+| Heart and lungs | yes | some | - | yes |
+| Mobility | - | - | yes | yes |
+| Balance and core | - | some | yes | yes |
+| Breath and calm | some | - | some | yes |
+| Better sleep | some | - | - | yes |
+| A teacher who notices you | - | - | some | yes |
+| Same people every day | some | - | - | yes |
+| Tradition and meaning | - | - | - | yes |
+| Habit system, same time daily | - | - | - | yes |
+Line: "To cover these 10, most people need a run, a gym, a Pilates class and a meditation app. Or one morning."
+
+**"It's harder": flip it, never hide it.** "Easy things don't change you." / "Hard for 2 weeks. After that, the hard part is not coming." Always pair with: "We teach you from the very start."
+
+**Proof:** real 12-week check numbers (with permission), one-student-one-habit stories in their own words, Boonchu's own 18 years. No invented numbers, ever.
+
 ## What people want (and how we answer)
 | They want | We say |
 |---|---|
