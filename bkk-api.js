@@ -196,6 +196,16 @@ function mountBkk(app, opts = {}) {
       PRIMARY KEY (photo_id, member_id))`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_photo_members_member ON bkk_photo_members (member_id)`);
 
+    // The 12-week proof check (habit #1, Track): numbers the student already
+    // has on their watch or phone, at week 0, 6 and 12. One row per day.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_checks (
+      id SERIAL PRIMARY KEY,
+      member_id INTEGER REFERENCES bkk_members(id) ON DELETE CASCADE,
+      taken_on DATE NOT NULL,
+      resting_hr INTEGER, sleep_hours NUMERIC(3,1), feel INTEGER, note TEXT,
+      created_at TIMESTAMPTZ DEFAULT now(),
+      UNIQUE (member_id, taken_on))`);
+
     // The things a shala actually does to a pass, which Rezerv has and this did
     // not: pause it for an injury, write off a mistake, note why.
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS frozen_from DATE`);
@@ -721,6 +731,40 @@ function mountBkk(app, opts = {}) {
         [token, m.id, String(STAFF_LINK_DAYS)]);
       res.json({ success: true, name: m.name, days: STAFF_LINK_DAYS,
         link: `${baseUrl()}/api/bkk/login/${token}` });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The student's own proof check. Same trust as the rest of /me: the member
+  // code the signed-in browser holds.
+  app.get('/api/bkk/me/:code/checks', async (req, res) => {
+    try {
+      const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'not found' });
+      const r = await q(
+        `SELECT to_char(taken_on,'YYYY-MM-DD') AS date, resting_hr, sleep_hours, feel, note
+         FROM bkk_checks WHERE member_id=$1 ORDER BY taken_on`, [m.id]);
+      res.json({ checks: r.rows.map(c => ({ date: c.date, restingHr: c.resting_hr,
+        sleepHours: c.sleep_hours == null ? null : Number(c.sleep_hours), feel: c.feel, note: c.note })) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/me/:code/checks', async (req, res) => {
+    try {
+      const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'not found' });
+      const b = req.body || {};
+      const hr = b.restingHr === '' || b.restingHr == null ? null : Number(b.restingHr);
+      const sleep = b.sleepHours === '' || b.sleepHours == null ? null : Number(b.sleepHours);
+      const feel = b.feel === '' || b.feel == null ? null : Number(b.feel);
+      if (hr != null && !(Number.isInteger(hr) && hr >= 30 && hr <= 200)) return res.status(400).json({ error: 'resting heart rate must be 30 to 200' });
+      if (sleep != null && !(sleep >= 0 && sleep <= 14)) return res.status(400).json({ error: 'sleep must be 0 to 14 hours' });
+      if (feel != null && !(Number.isInteger(feel) && feel >= 1 && feel <= 5)) return res.status(400).json({ error: 'feel must be 1 to 5' });
+      if (hr == null && sleep == null && feel == null) return res.status(400).json({ error: 'fill in at least one number' });
+      await q(`INSERT INTO bkk_checks (member_id,taken_on,resting_hr,sleep_hours,feel,note)
+               VALUES ($1,(now() AT TIME ZONE 'Asia/Bangkok')::date,$2,$3,$4,$5)
+               ON CONFLICT (member_id,taken_on) DO UPDATE SET resting_hr=$2, sleep_hours=$3, feel=$4, note=$5`,
+        [m.id, hr, sleep, feel, String(b.note || '').trim().slice(0, 300) || null]);
+      res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
