@@ -160,7 +160,8 @@
     whatsapp: 'https://wa.me/66822244246?text=' + encodeURIComponent(MSG),
   };
   const qs = new URLSearchParams(location.search);
-  const src = qs.get('src') || (document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : 'direct');
+  const pathTag = (location.pathname.match(/^\/start\/([\w-]+)/) || [])[1];
+  const src = pathTag || qs.get('src') || (document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : 'direct');
   let store = null; try { store = localStorage; } catch {}
   const pick = l => STR[l] ? l : null;
   let LANG = pick(qs.get('lang')) || pick(store && store.getItem('aybkk_lang'))
