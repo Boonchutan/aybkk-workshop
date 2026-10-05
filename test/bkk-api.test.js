@@ -496,6 +496,14 @@ const ok = (name, cond, extra = '') => {
   ok("Ann's profile shows the Drive photo",
      JSON.stringify((await J(`/api/bkk/me/${ann.code}/photos`)).body).includes(fd.body.photo.thumb));
 
+  const realUpload = fakeCloud.uploader.upload;
+  fakeCloud.uploader.upload = async () => { throw { error: { message: 'Server returned unexpected status code - 403', http_code: 403 } }; };
+  fakeCloud.api = { usage: async () => ({ credits: { usage: 25.3, limit: 25, used_percent: 101.2 } }) };
+  const refused = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG1aaaaaaaaaaaaaaaaaaaaa', memberCodes: [] }, PKEY);
+  ok('a Cloudinary 403 is explained in plain words, with the plan usage',
+     refused.status === 500 && /Error Reports/.test(refused.body.error) && /25.3 of 25 credits/.test(refused.body.error), JSON.stringify(refused.body));
+  fakeCloud.uploader.upload = realUpload; delete fakeCloud.api;
+
   console.log('\n— Rezerv import —');
   const imp1 = await post('/api/bkk/admin/import', { rows: [
     { name: 'Imp One (renewed)', plan: '12 months', until: '26 Oct 2026' },

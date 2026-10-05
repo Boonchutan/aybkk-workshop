@@ -363,7 +363,7 @@
       EDIT.kind !== 'edit' ? nextNew() : closeEditor();
     } catch (err) { $('#edMsg').textContent = '✗ NOT SAVED: ' + err.message + ' Press Save again.'; }
     btn.disabled = false;
-    if (EDIT) btn.textContent = EDIT.kind === 'new' ? 'Save & next' : 'Save';
+    if (EDIT) btn.textContent = EDIT.kind !== 'edit' ? 'Save & next' : 'Save';
   });
 
   $('#edSkip').addEventListener('click', async () => {
