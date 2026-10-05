@@ -1609,11 +1609,31 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // Cloudinary answers some refusals (403: plan limit reached, account paused)
+  // with no readable message, so the team saw only "unexpected status code -
+  // 403". Say what it means, with the plan usage when Cloudinary will tell us.
+  async function cloudUpload(file, date) {
+    try {
+      return await cloudinary.uploader.upload(file, {
+        type: 'authenticated', folder: `aybkk/profile/${date}`, resource_type: 'image',
+        transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:good' }],
+      });
+    } catch (e) {
+      const err = e && e.error ? e.error : e;
+      if (err && err.http_code === 403) {
+        let usage = '';
+        try {
+          const u = await cloudinary.api.usage();
+          if (u && u.credits) usage = ` Cloudinary plan usage: ${u.credits.usage} of ${u.credits.limit} credits (${u.credits.used_percent}%).`;
+        } catch (_) { /* usage is a bonus */ }
+        throw new Error('Cloudinary refused to store the photo (403): usually the free plan limit is reached or the account is paused. Check cloudinary.com.' + usage);
+      }
+      throw new Error((err && err.message) || String(e));
+    }
+  }
+
   async function storePhoto(t, date, image, memberCodes, driveId) {
-    const up = await cloudinary.uploader.upload(image, {
-      type: 'authenticated', folder: `aybkk/profile/${date}`, resource_type: 'image',
-      transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:good' }],
-    });
+    const up = await cloudUpload(image, date);
     const photo = (await q(
       `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by,drive_id)
        VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
