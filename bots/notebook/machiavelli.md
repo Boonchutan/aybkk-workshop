@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-04T12:09:52.058Z
+Inbox last read: 2026-10-05T00:09:33.643Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -31,7 +31,7 @@ Inbox last read: 2026-10-04T12:09:52.058Z
 
 - 2026-09-30 Boonchu decisions: new shop-window top section OK; phone +66 82 011 1433; show 9,600 (add 5% later); campaign Buy 1 month get 1 month free for NEW students, 29 Sep to 12 Nov. Other items: decision pending (see team chat). Email and floor still open.
 
-- 2026-10-01: Mysore Reel (campaign, comment MYSORE): Plato draft ready. No yes by 12:00 on 2 Oct, so default B applied: moved to Mon 5 Oct. Still waiting on Boonchu's yes in Plato chat. 3 Oct 07:08: asked A (post Mon 5 Oct) or B (move to Wed 7 Oct) by 19:00 Sun 4 Oct, default B. 3-slide carousel still open. 4 Oct 19:08: no answer by 19:00, default B applied: Reel moves to Wed 7 Oct.
+- 2026-10-01: Mysore Reel (campaign, comment MYSORE): Plato draft ready. No yes by 12:00 on 2 Oct, so default B applied: moved to Mon 5 Oct. Still waiting on Boonchu's yes in Plato chat. 3 Oct 07:08: asked A (post Mon 5 Oct) or B (move to Wed 7 Oct) by 19:00 Sun 4 Oct, default B. 3-slide carousel still open. 4 Oct 19:08: no answer by 19:00, default B applied: Reel moves to Wed 7 Oct. 5 Oct 07:08: asked A (post Wed 7 Oct) or B (move to Fri 9 Oct) by 19:00 Tue 6 Oct, default B.
 
 - 2026-09-30 Boonchu: 180K framing decided (see team chat). Campaign live in October; free gift "Your First Mysore Class" via ManyChat keyword MYSORE this weekend; current students get bonus weeks (1m +1w, 3m +3w, 6m +6w, 12m +2 months).
 
@@ -44,6 +44,7 @@ Inbox last read: 2026-10-04T12:09:52.058Z
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
 ## Log
+- 2026-10-05 07:08: Both bots posted. Inbox: 1 new thread, 0 need a reply (booking problem fixed itself after app update). Nagged course prices (Wed 7 Oct, 2 days) and Mysore Reel (new choice, by 19:00 Tue 6 Oct), 1st time today each. Letter #1 sends today: start weekly letter score. Flagged to Plato: "Fourteen years" in hook #1 vs confirmed 20 years. No wins, no leads (0 in 8 days), no reminders.
 - 2026-10-04 19:08: Inbox: 2 new, 2 hot (LINE: a start-12-Nov payment note, a booking problem for Wed 7/Thu 8). Mysore Reel default B applied (Wed 7 Oct). Course prices not repeated. Letter #1 Mon 5 Oct noted (from Plato handoff). No win, no reminders.
 - 2026-10-04 13:08: Inbox: 3 new, 2 hot (both LINE). Nagged Mysore Reel (19:00 today) and course prices (Wed 7 Oct, 3 days), 2nd time today each: do not repeat at 19:08. No reminders, no wins.
 - 2026-10-04 07:08: Both bots posted. No new @Machi requests (Mari D cue still open). Inbox: 0 new. Nagged Mysore Reel (due 19:00 today, default B = Wed 7 Oct) and course prices (Wed 7 Oct, 3 days), 1st time today each. No wins, no leads (0 in 7 days), no reminders.
