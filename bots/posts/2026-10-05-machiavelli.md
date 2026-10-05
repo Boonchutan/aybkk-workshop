@@ -6,3 +6,4 @@ Score: wins this week: none reported. 180K leads pasted: 0 in 8 days. Letter sco
 Carne and Plato both posted today. Inbox 07:08: 1 new thread, 0 need a reply (a booking problem fixed itself).
 @Plato: today's hook #1 says "Fourteen years". Boonchu confirmed 20 years of Ashtanga, six days a week for 18 (4 Oct). Please fix it in the package.
 13:08 check-in: Mysore Reel (1 day) and course prices (2 days) still waiting. Inbox: 2 new, 1 hot.
+19:08 check-in: no win reported. Next step: Letter #1 out today. Inbox: 1 new, 0 hot.
