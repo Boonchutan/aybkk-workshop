@@ -1626,7 +1626,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           const u = await cloudinary.api.usage();
           if (u && u.credits) usage = ` Cloudinary plan usage: ${u.credits.usage} of ${u.credits.limit} credits (${u.credits.used_percent}%).`;
         } catch (_) { /* usage is a bonus */ }
-        throw new Error('Cloudinary refused to store the photo (403): usually the free plan limit is reached or the account is paused. Check cloudinary.com.' + usage);
+        throw new Error('Cloudinary refused to store the photo (403). Check cloudinary.com: Error Reports shows the reason (API key without upload rights, plan limit, or paused account).' + usage);
       }
       throw new Error((err && err.message) || String(e));
     }

@@ -501,7 +501,7 @@ const ok = (name, cond, extra = '') => {
   fakeCloud.api = { usage: async () => ({ credits: { usage: 25.3, limit: 25, used_percent: 101.2 } }) };
   const refused = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG1aaaaaaaaaaaaaaaaaaaaa', memberCodes: [] }, PKEY);
   ok('a Cloudinary 403 is explained in plain words, with the plan usage',
-     refused.status === 500 && /free plan limit/.test(refused.body.error) && /25.3 of 25 credits/.test(refused.body.error), JSON.stringify(refused.body));
+     refused.status === 500 && /Error Reports/.test(refused.body.error) && /25.3 of 25 credits/.test(refused.body.error), JSON.stringify(refused.body));
   fakeCloud.uploader.upload = realUpload; delete fakeCloud.api;
 
   console.log('\n— Rezerv import —');
