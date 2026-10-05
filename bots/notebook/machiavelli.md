@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-05T00:09:33.643Z
+Inbox last read: 2026-10-05T06:09:57.296Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -44,6 +44,7 @@ Inbox last read: 2026-10-05T00:09:33.643Z
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
 ## Log
+- 2026-10-05 13:08: Inbox: 2 new, 1 hot (both LINE: a practice injury question, a check-in/cancel note). Nagged Mysore Reel (Tue 6 Oct, 1 day) and course prices (Wed 7 Oct, 2 days), 2nd time today each: do not repeat at 19:08. No reminders due, no wins.
 - 2026-10-05 07:08: Both bots posted. Inbox: 1 new thread, 0 need a reply (booking problem fixed itself after app update). Nagged course prices (Wed 7 Oct, 2 days) and Mysore Reel (new choice, by 19:00 Tue 6 Oct), 1st time today each. Letter #1 sends today: start weekly letter score. Flagged to Plato: "Fourteen years" in hook #1 vs confirmed 20 years. No wins, no leads (0 in 8 days), no reminders.
 - 2026-10-04 19:08: Inbox: 2 new, 2 hot (LINE: a start-12-Nov payment note, a booking problem for Wed 7/Thu 8). Mysore Reel default B applied (Wed 7 Oct). Course prices not repeated. Letter #1 Mon 5 Oct noted (from Plato handoff). No win, no reminders.
 - 2026-10-04 13:08: Inbox: 3 new, 2 hot (both LINE). Nagged Mysore Reel (19:00 today) and course prices (Wed 7 Oct, 3 days), 2nd time today each: do not repeat at 19:08. No reminders, no wins.
