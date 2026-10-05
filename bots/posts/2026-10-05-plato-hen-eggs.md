@@ -17,8 +17,8 @@ Other options: (1) Triple Hook (Contradiction): "Everyone says track your progre
 ## Hooks (/hook, answered myself)
 Topic: practice habit, why people quit in the first weeks.
 Consensus: "Track your progress every day so you stay motivated."
-Where Boonchu sharpens it: 14 years teaching in Bangkok. Daily checking makes people quit when the change is slow. Check at set times (week 0, 6, 12), sit on the eggs in between.
-1. Authority: "Fourteen years teaching. The students who stay stopped checking."
+Where Boonchu sharpens it: 20 years of Ashtanga (AYBKK open since 2013, per aybkk.net). Daily checking makes people quit when the change is slow. Check at set times (week 0, 6, 12), sit on the eggs in between.
+1. Authority: "Twenty years of Ashtanga. The students who stay stopped checking." (fixed 5 Oct per Machi: never "fourteen"; the site says the shala opened in 2013)
 2. Contrarian: "You don't quit because it's hard. You quit because you keep checking."
 3. Stakes: "Week three. No change. This is the morning you stay home."
 4. Question: "Do you look in the mirror after practice, for any change?"
