@@ -5,13 +5,16 @@ Shape: @philosophyminis order (scene, name the law, explain, ladder, back to you
 Replaces the Marichyasana D draft as Ep. 1 (Boonchu: "i did maricasana already").
 Cue: Boonchu's own words (chat, 4 Oct), lightly edited. Nod-back cue confirmed by Boonchu: "a little split second nodding the head back to push the floor to give a little kick".
 
-## Hooks
+## Hooks (5 levers, film all 5 in the same session; Plato posts one per platform)
 | | Hook | Lever |
 |---|---|---|
 | PICK | You try harder to roll up... and you miss more. | Pattern interrupt (flat, no question mark) |
-| Backup 1 | "Come on. Up." Another year. Still not up. | Mirror (viewer's inner voice) |
-| Backup 2 | Your roll up isn't missing strength. It's using the wrong strength. | Contrarian |
+| 2 | Your roll up isn't missing strength. It's using the wrong strength. | Contrarian |
+| 3 | Another year of rocking and hoping. Still not up. | Stakes (Reddit words: "rocking and rolling and hoping") |
+| 4 | "Come on. Up." Why does it never work? | Question (viewer's inner voice) |
+| 5 | Fourteen years of Mysore mornings. The roll up fails in the same place. | Authority (14 years = Boonchu's real number; "same place" = his cue: the legs) |
 
+Suggested split: PICK on IG, 2 on TikTok, 3 on Xiaohongshu, 4 on WeChat Channels, 5 on YT Shorts. Log it, check after 48 h.
 ZH: 越用力往上滚，越落空。 · RU: Чем сильнее вы стараетесь подняться, тем хуже получается.
 
 ## Script (about 63 s)
@@ -67,7 +70,7 @@ Legs over your head. Hold the sides of your feet.
 Tomorrow, try: less legs. Inhale, belly a little flat and firm (not sucked in). A quick nod back into the floor. Roll up with straight knees. Balance with straight arms. Then bend the elbows and fold.
 Less legs. More belly.
 
-Stuck on this one? Comment STUCK and tell me which asana.
+Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds.
 
 Second series rolls you again: Supta Urdhva Pada Vajrasana.
 Neck or knee injury? See a doctor and ask your teacher first.
@@ -91,7 +94,7 @@ ZH (Xiaohongshu / WeChat Channels / Douyin)
 明天试试：少用腿。吸气，腹部微平、微紧（不要用力吸进去）。头往后轻点地面，借一点劲。膝盖伸直滚上来，手臂伸直坐稳，再弯手肘向前折叠。
 少用腿，多用腹。
 
-你卡在哪个体式？评论告诉我。
+卡在哪个体式？评论"卡住"加上体式名。这周我会亲自回复每一条，给你一个小提示。只要两秒钟。
 
 第二序列还会再滚一次：Supta Urdhva Pada Vajrasana。
 颈部或膝盖有伤？先问医生和你的老师。
@@ -112,7 +115,7 @@ RU (IG / TikTok / YT Shorts, on the EN cut)
 Завтра попробуйте: меньше ног. На вдохе живот слегка плоский и плотный (не втягивайте его). Короткий кивок головой назад в пол, маленький толчок. Перекат вверх на прямых коленях, баланс на прямых руках, потом согните локти и сложитесь.
 Меньше ног. Больше живота.
 
-Застряли на этой асане? Напишите в комментариях «ЗАСТРЯЛ» (или STUCK) и название асаны.
+Застряли на асане? Напишите «ЗАСТРЯЛ» и её название. На этой неделе я сам отвечу каждому: одна подсказка. Это 2 секунды.
 
 Во второй серии вас снова ждёт перекат: Супта Урдхва Пада Ваджрасана.
 Травма шеи или колена? Сначала к врачу и к своему преподавателю.
@@ -133,7 +136,7 @@ Stuck in Primary · Ep. 1 · Urdhva Mukha Paschimattanasana
 พรุ่งนี้ลอง: ใช้ขาน้อยลง หายใจเข้า ท้องแบนและแน่นนิดๆ (ไม่แขม่วจนแฟบ) พยักหัวไปด้านหลังแตะพื้นเร็วๆ ส่งแรงนิดเดียว ม้วนขึ้นโดยเข่าตรง ทรงตัวด้วยแขนตรง แล้วงอศอกพับตัว
 ใช้ขาน้อยลง ใช้ท้องมากขึ้น
 
-ติดอยู่ที่อาสนะนี้เหมือนกันไหม คอมเมนต์ STUCK แล้วบอกว่าติดอาสนะไหน
+ติดอาสนะไหนอยู่? คอมเมนต์ STUCK พร้อมชื่ออาสนะ สัปดาห์นี้ผมจะตอบทุกคอมเมนต์เอง ให้คำแนะนำหนึ่งข้อ ใช้เวลาแค่ 2 วินาที
 
 ซีรีส์ที่สองจะม้วนอีกครั้ง: Supta Urdhva Pada Vajrasana
 คอหรือเข่าบาดเจ็บ? ไปพบแพทย์และถามครูของคุณก่อน
@@ -152,7 +155,7 @@ Stuck in Primary · Ep. 1 · Urdhva Mukha Paschimattanasana
 - Each row its own take, flat and slow. Act the water and bike with hands in frame. Real silence at 38-39. Hold 1 s and stop. File to Google Drive, never GitHub. Nothing posts without Boonchu's "go".
 
 ## Still open (Boonchu)
-1. Hook: the pick or Backup 1.
+1. Hook: all 5 get filmed. Only OK the split per platform (or change it).
 2. OK the 63 s length (or Plato trims to 60).
 3. OK the RU series name "Застряли в первой серии" and the tags #stuckinprimary #卡在第一序列 #застряливпервойсерии #lawofreversedeffort.
 

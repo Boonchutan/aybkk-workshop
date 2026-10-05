@@ -36,10 +36,24 @@ Goal of the series: a stuck practitioner watches, thinks "he sees exactly my pro
 - RU: застрял, не пускают дальше, поблажки, годы на одной асане
 Hook seeds (Boonchu edits): "Six years on Marichyasana D is not a flexibility problem." / "You are not lazy. You are stuck." / "Stuck in primary for years? Good. Now we can work."
 
-## CTA (caption only, never spoken)
-- IG / TikTok: "Stuck on this one? Comment STUCK and tell me which asana." Boonchu or Carne replies by hand from the /dm rules. No price in any reply. No auto-DM unless Boonchu sets it up himself.
-- Xiaohongshu / WeChat / Douyin: ask "你卡在哪个体式？评论告诉我" (which asana are you stuck on?). No links, no "add WeChat" in the post (platform risk, my guess). Replies by hand.
+## CTA (caption only, never spoken) · UPDATED 5 Oct 2026 (Boonchu approved)
+A CTA must say 5 things (Hormozi): what to do, why it matters, when, how easy, what happens next. No price, no link, ever.
+- EN (IG / TikTok / YT): "Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds."
+- ZH (XHS / Channels / Douyin): "卡在哪个体式？评论"卡住"加上体式名。这周我会亲自回复每一条，给你一个小提示。只要两秒钟。" No links, no "add WeChat" in the post (platform risk, my guess).
+- RU: "Застряли на асане? Напишите «ЗАСТРЯЛ» и её название. На этой неделе я сам отвечу каждому: одна подсказка. Это 2 секунды."
+- TH: "ติดอาสนะไหนอยู่? คอมเมนต์ STUCK พร้อมชื่ออาสนะ สัปดาห์นี้ผมจะตอบทุกคอมเมนต์เอง ให้คำแนะนำหนึ่งข้อ ใช้เวลาแค่ 2 วินาที"
+- The promise is real, so keep it: Carne drafts one short fix per comment (from Boonchu's own cues only, never invented), Boonchu reads and posts the reply himself. Public reply = proof of personal attention for everyone who reads the comments. If one week brings more than 50 comments, Carne tells Boonchu the same day so he decides how to keep the promise. Never quietly drop it.
+- Replies: no price, no program name, no "DM me for details". If the person asks about deeper study, move to DM and follow /dm rules.
 - Every comment that names an asana + years of practice = lead. Carne logs it (counts only in public files).
+
+## Hooks: 5 per episode, filmed in one session · NEW 5 Oct 2026 (Boonchu approved)
+- Every episode gets 5 hooks, one per lever: authority, contrarian, stakes, question, pattern interrupt. Boonchu films all 5 hook takes in the same session as the body (2 extra minutes).
+- Plato cuts the same body with different first 3 seconds and posts one hook per platform (IG, TikTok, Xiaohongshu, WeChat Channels, YT Shorts). Log which hook went where in the episode file.
+- After 48 hours, Plato records per platform: views, 3-second hold (if the app shows it), comments, STUCK comments. Carne keeps a running score per lever in carnegie.md "Research".
+- Honest limit: each platform has a different audience, so one test proves little. After 4 episodes (20 hooks) the pattern is worth trusting. Then the winning lever leads every episode, and a losing lever is dropped.
+
+## Meat formats still missing (Hormozi's 5: demonstration, testimonial, educational, story, faceless)
+- We have educational (this series) and story (Hidden Stories). Missing: testimonial (graduate stories, needs each student's written OK, no names in files) and demonstration (Boonchu adjusting softly, "never forceful"). Plan one of each inside the next 4 weeks, in Lane A slots.
 
 ## Do not
 - Do not blame the student, other teachers, KPJAYI/SYC, or "the system". Punch at nothing. The enemy is the plateau.

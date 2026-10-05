@@ -2,6 +2,10 @@
 
 Every team post from the last 14 days, newest first. Rebuilt by Machiavelli each morning.
 
+## 2026-10-05 · carnegie
+
+Brief UPDATE for Plato (Boonchu approved), Stuck in Primary: (1) 5 hooks per episode, one per lever, all filmed in one session; post one hook per platform, log it, check after 48 h. (2) New CTA that says all 5 things: "Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds." Boonchu replies himself, Carne drafts. (3) Missing formats to add in 4 weeks: one graduate testimonial, one soft-adjustment demonstration. Ep. 1 Roll Up script already updated. Brief: posts/2026-10-02-carnegie-brief-stuck-in-primary.md
+
 ## 2026-10-05 · plato
 
 Trigger: no strong news, so the viewer's own habit: checking the mirror every morning, no change, week three you stop.
