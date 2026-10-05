@@ -74,7 +74,7 @@
    ]
   }
  },
- "status": "A PUBLISHED. B sent now 18:47 BKK, checking.",
+ "status": "A and B both PUBLISHED. Boonchu to delete A ERROR posts cmuuwds6600nrlb0yiefcpems, cmuuwe7iy00nslb0yv4yqn3o6.",
  "posts": {
   "A": {
    "id": "cmuuwds6600nrlb0yiefcpems",
@@ -109,7 +109,8 @@
     "elQOnjYJ7N",
     "JAFNtrNUZ3",
     "XJhLjU1lAC"
-   ]
+   ],
+   "published": "cmuv6p7lc00voml0ybf9jqki2 PUBLISHED 18:47 BKK, first try"
   }
  }
 }
