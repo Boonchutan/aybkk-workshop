@@ -487,6 +487,7 @@ const ok = (name, cond, extra = '') => {
   const upBefore = uploads.length;
   const fd = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code] }, PKEY);
   ok('a Drive photo is saved and tagged', fd.status === 200 && uploads.length === upBefore + 1 && fd.body.photo.members.length === 1, JSON.stringify(fd.body));
+  ok('the server asks Drive for a 2048px copy, not the 5 MB original', driveFetches.some(u => u.includes('/thumbnail?') && u.includes('sz=s2048')));
   const dl2 = await J('/api/bkk/teacher/drive?folder=DAY5aaaaaaaaaaaaaaaaaaaaa', { headers: PKEY });
   ok('the list ticks it as saved', dl2.body.files.find(f => f.id === 'IMG2aaaaaaaaaaaaaaaaaaaaa').photoId === fd.body.photo.id);
   const again = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code, bob.code] }, PKEY);

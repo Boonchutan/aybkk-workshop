@@ -1738,10 +1738,17 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
         return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
       }
-      const r = await httpFetch(`https://drive.google.com/uc?export=download&id=${encodeURIComponent(driveId)}`,
-        { signal: AbortSignal.timeout(60000) });
-      const buf = Buffer.from(await r.arrayBuffer());
-      const type = r.ok && sniff(buf);
+      // Ask Drive for a 2048px copy (about 0.5 MB, the size we keep anyway) rather
+      // than the 5 MB camera original: smaller to send and store. Original if that fails.
+      const grab = async url => {
+        const r = await httpFetch(url, { signal: AbortSignal.timeout(60000) });
+        const b = Buffer.from(await r.arrayBuffer());
+        return r.ok && sniff(b) ? b : null;
+      };
+      const id = encodeURIComponent(driveId);
+      const buf = await grab(`https://drive.google.com/thumbnail?id=${id}&sz=s2048`)
+        || await grab(`https://drive.google.com/uc?export=download&id=${id}`);
+      const type = buf && sniff(buf);
       if (!type) return res.status(502).json({ error: 'Drive did not send a photo. Is the folder still shared by link?' });
       const photo = await storePhoto(t, date, `data:${type};base64,${buf.toString('base64')}`, memberCodes, driveId);
       res.json({ success: true, photo });
