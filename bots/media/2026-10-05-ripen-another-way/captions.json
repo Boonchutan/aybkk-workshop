@@ -74,7 +74,7 @@
    ]
   }
  },
- "status": "A PUBLISHED (3rd try). Boonchu to delete ERROR posts cmuuwds6600nrlb0yiefcpems and cmuuwe7iy00nslb0yv4yqn3o6. B waiting for time.",
+ "status": "A PUBLISHED. B sent now 18:47 BKK, checking.",
  "posts": {
   "A": {
    "id": "cmuuwds6600nrlb0yiefcpems",
@@ -94,6 +94,22 @@
    "retry": "cmuuwe7iy00nslb0yv4yqn3o6",
    "retry2": "cmuuwmbuc00oclb0yj7q01r4t (Boonchu said retry, 14:04 BKK)",
    "published": "cmuuwmbuc00oclb0yj7q01r4t PUBLISHED 14:04 BKK (third try)"
+  },
+  "B": {
+   "id": "cmuv6p7lc00voml0ybf9jqki2",
+   "sent": "now, 18:47 BKK 5 Oct (Boonchu: go, 6pm missed)",
+   "attachments": [
+    "uwgIelSUid",
+    "3VE3rs14qp",
+    "LgfdnYDw7S",
+    "MVWOW6sNtk",
+    "BKG6HfISAd",
+    "DQ1Mbq5PXs",
+    "o6lUWzuky3",
+    "elQOnjYJ7N",
+    "JAFNtrNUZ3",
+    "XJhLjU1lAC"
+   ]
   }
  }
 }
