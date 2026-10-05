@@ -74,7 +74,7 @@
    ]
   }
  },
- "status": "A sent now (go from Boonchu 13:57 BKK). B waiting for time.",
+ "status": "A FAILED twice in Postiz (ERROR: Failed to create media, 13:58 + 14:00 BKK). Asked Boonchu: retry later or post from phone. Boonchu to delete both ERROR posts.",
  "posts": {
   "A": {
    "id": "cmuuwds6600nrlb0yiefcpems",
@@ -90,7 +90,8 @@
     "9hSvaiImyp",
     "fdMyR33CXN",
     "UlPVvWLkEB"
-   ]
+   ],
+   "retry": "cmuuwe7iy00nslb0yv4yqn3o6"
   }
  }
 }
