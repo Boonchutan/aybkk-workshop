@@ -27,6 +27,10 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - PRICES SEEN: China Mysore ~1,500 RMB/month (2023), CN Mysore trip+TTC bundle 13,800-18,800 RMB (2019-20); RU unlimited 3,500-5,500 RUB/month, Moscow L2 seminar 16,000 RUB; Kino and Tim month intensive ~$4,200 (2017, called "exorbitant").
 - GAPS: no XHS/Douyin/VK voice; no replies on money threads (SYC worth it?). Next: Boonchu or helper reads XHS "阿斯汤加 瓶颈", "阿斯汤加 授权老师", VK "аштанга майсор".
 
+### 2026-10-05: Hormozi "50-5-3 Ad Method" (Reel DeFATG6umBR, 4 Oct 2026, 92 s)
+- What he says (fact, transcript): an ad = hook + meat + CTA. Write 50 hooks, 3 to 5 meats, 1 to 3 CTAs, film all in one session, edit into 150 to 750 ads a week, because Meta's ad system (Andromeda) rewards variety. Hook sources: own past winners, own free content, others' ads, others' free content, ad libraries. Spread hooks across levels of awareness (unaware, problem aware, solution aware, product aware, most aware). Meat formats: demonstration, testimonial, educational, story, faceless. A CTA says 5 things: what to do, why it matters, when, how easy, what happens next.
+- For AYBKK (my view): built for PAID Meta ads. No ad budget, and China apps have no Meta. Steal 3 things only: film many hooks per body in one session and test them across platforms; fill the missing meat formats (testimonial = graduate stories, demonstration = adjustment); make CTAs say all 5 things without a price.
+
 ## Log
 
 - 2026-09-28: First run. Memory branch created. Lead table empty.
@@ -41,3 +45,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-04 (chat): Ep. 1 Mari D script built from @philosophyminis "law of reversed effort" Reel (workflow: verify sources, 3 drafts, 3 judges, red-team). Facts: Huxley did not coin the law (Baudouin 1920, from Coue); the Reel misquotes Huxley; YS 2.47 is about the seated asana, never claim it is about Mari D. Waiting on Boonchu cue.
 - 2026-10-04 (chat): Ep. 1 switched to The Roll Up (UMP) with Boonchu cue: less legs, belly a little flat and firm (not sucked in, not soft), belly and hips one piece; inhale, quick nod back into the floor, tiny kick; roll up straight knees, balance straight arms, then bend elbows and fold. SUPV = second-series payoff (verified 2nd series). Credit @philosophyminis approved. Script: posts/2026-10-04-carnegie-ep1-roll-up-script.md
 - 2026-10-05: Lead table still empty. Inbox read OK: 3 LINE threads, 0 about 180K. No requests in team chat.
+- 2026-10-05 (chat): Studied Hormozi 50-5-3 ad Reel for Boonchu. Notes in Research.
