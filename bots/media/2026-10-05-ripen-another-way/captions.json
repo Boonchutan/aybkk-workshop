@@ -74,7 +74,7 @@
    ]
   }
  },
- "status": "A FAILED twice in Postiz (ERROR: Failed to create media, 13:58 + 14:00 BKK). Asked Boonchu: retry later or post from phone. Boonchu to delete both ERROR posts.",
+ "status": "A PUBLISHED (3rd try). Boonchu to delete ERROR posts cmuuwds6600nrlb0yiefcpems and cmuuwe7iy00nslb0yv4yqn3o6. B waiting for time.",
  "posts": {
   "A": {
    "id": "cmuuwds6600nrlb0yiefcpems",
@@ -92,7 +92,8 @@
     "UlPVvWLkEB"
    ],
    "retry": "cmuuwe7iy00nslb0yv4yqn3o6",
-   "retry2": "cmuuwmbuc00oclb0yj7q01r4t (Boonchu said retry, 14:04 BKK)"
+   "retry2": "cmuuwmbuc00oclb0yj7q01r4t (Boonchu said retry, 14:04 BKK)",
+   "published": "cmuuwmbuc00oclb0yj7q01r4t PUBLISHED 14:04 BKK (third try)"
   }
  }
 }
