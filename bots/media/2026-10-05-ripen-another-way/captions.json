@@ -1,4 +1,78 @@
-{"A": ["One way. Let it ripen. 🌱", "10 quotes on patience, from Mencius to Rilke. Photos: our Led Primary, 5 Oct.", "Same practice, same time. Some things only come in their season.", "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇", "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"],
- "B": ["Find another way. 🔑", "10 quotes on trying a new angle, from the Buddha to the Wright brothers. Photos: our Led Primary, 5 Oct.", "Let it ripen, or find another way? Which one helps you more? 🤔", "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇", "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"],
- "force": {"A": {"036":[940,70,30],"060":[940,70,30],"013":[470,50,30],"004":[360,40,30]}, "B": {"014":[400,40,30],"048":[360,40,30],"034":[470,560,30],"010":[330,30,430],"055":[300,750,830],"017":[360,680,30]}},
- "status": "shown to Boonchu 5 Oct, waiting for go + times"}
+{
+ "A": [
+  "One way. Let it ripen. 🌱",
+  "10 quotes on patience, from Mencius to Rilke. Photos: our Led Primary, 5 Oct.",
+  "Same practice, same time. Some things only come in their season.",
+  "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇",
+  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+ ],
+ "B": [
+  "Find another way. 🔑",
+  "10 quotes on trying a new angle, from the Buddha to the Wright brothers. Photos: our Led Primary, 5 Oct.",
+  "Let it ripen, or find another way? Which one helps you more? 🤔",
+  "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇",
+  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+ ],
+ "force": {
+  "A": {
+   "036": [
+    940,
+    70,
+    30
+   ],
+   "060": [
+    940,
+    70,
+    30
+   ],
+   "013": [
+    470,
+    50,
+    30
+   ],
+   "004": [
+    360,
+    40,
+    30
+   ]
+  },
+  "B": {
+   "014": [
+    400,
+    40,
+    30
+   ],
+   "048": [
+    360,
+    40,
+    30
+   ],
+   "034": [
+    360,
+    30,
+    429
+   ],
+   "010": [
+    330,
+    30,
+    430
+   ],
+   "055": [
+    300,
+    750,
+    830
+   ],
+   "017": [
+    360,
+    680,
+    30
+   ],
+   "018": [
+    370,
+    695,
+    635
+   ]
+  }
+ },
+ "status": "B7 text bottom-left, B10 bottom-right (Boonchu). Sona quote trimmed to the energy line. Waiting for go + times."
+}

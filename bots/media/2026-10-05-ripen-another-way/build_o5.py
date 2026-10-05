@@ -63,8 +63,8 @@ B=('FIND ANOTHER WAY',[
  "Build the house to suit the one who lives in it...",
  "Fit the way to the person."),
 ('018',"The Buddha to Sona · Anguttara Nikaya 6.55, tr. Bhikkhu Sujato, 2018",
- "When your harp’s strings were tuned too tight, was it resonant and playable?” ... “In the same way, Sona, when energy is too forceful it leads to restlessness. When energy is too slack it leads to laziness.",
- "Too tight or too loose, the harp makes no music. Your effort needs the same balance."),
+ "...when energy is too forceful it leads to restlessness. When energy is too slack it leads to laziness.",
+ "Like a harp string: not too tight, not too loose."),
 ])
 which=sys.argv[1]; LABEL,S={'A':A,'B':B}[which]
 F=json.loads(sys.argv[2]) if len(sys.argv)>2 else {}
