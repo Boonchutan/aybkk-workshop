@@ -462,6 +462,14 @@ const ok = (name, cond, extra = '') => {
      JSON.stringify(annPics));
   ok('the photo link is a signed private one', /^signed:\/\/authenticated\//.test(annPics[0].items[0].thumb));
   ok('a student who is not in the photo sees nothing', catPics.length === 0);
+  const annMe = (await J(`/api/bkk/me/${ann.code}`)).body.member;
+  ok('a student gets a workshop-journal id that is not their member code',
+     /^bkk-[\w-]{12}$/.test(annMe.journalId) && !annMe.journalId.includes(ann.code), annMe.journalId);
+  ok('the id never changes, and the teacher sees the same one',
+     (await J(`/api/bkk/me/${ann.code}`)).body.member.journalId === annMe.journalId &&
+     (await J(`/api/bkk/teacher/student/${ann.code}`, { headers: PKEY })).body.member.journalId === annMe.journalId);
+  ok('another student gets their own',
+     (await J(`/api/bkk/me/${cat.code}`)).body.member.journalId !== annMe.journalId);
   const day = (await J('/api/bkk/teacher/photos?date=2026-10-03', { headers: PKEY })).body.photos;
   ok("the teacher's day view lists the photo", day.length === 1);
   await post(`/api/bkk/teacher/photos/${up.body.photo.id}/tags`, { memberCodes: [cat.code] }, PKEY);
@@ -581,6 +589,21 @@ const ok = (name, cond, extra = '') => {
   ok('one check per day: saving again updates it', cks.length === 1 && cks[0].restingHr === 66 && cks[0].sleepHours === 7 && cks[0].feel === 4,
      JSON.stringify(cks));
   ok('an unknown member gets nothing', (await J('/api/bkk/me/NOPE/checks')).status === 404);
+
+  console.log('\n— tees —');
+  ok('no tees: the public list is empty', (await J('/api/bkk/tees')).body.tees.length === 0);
+  ok('adding a tee needs the admin key', (await post('/api/bkk/admin/tees', { name: 'T', priceThb: 900, payLink: 'https://pay.example/x' })).status === 401);
+  ok('a payment link must be https',
+     (await post('/api/bkk/admin/tees', { name: 'T', priceThb: 900, payLink: 'javascript:alert(1)' }, ADMIN)).status === 400);
+  ok('a price must be whole baht',
+     (await post('/api/bkk/admin/tees', { name: 'T', priceThb: 9.5, payLink: 'https://pay.example/x' }, ADMIN)).status === 400);
+  const tee = (await post('/api/bkk/admin/tees', { name: 'Mysore tee', priceThb: 900, payLink: 'https://pay.example/x',
+    photo: '/img/tees/1.jpg', sizes: 'S M L' }, ADMIN)).body.tee;
+  ok('admin adds a tee', tee && tee.id && tee.priceThb === 900 && tee.active === true);
+  ok('students see it', (await J('/api/bkk/tees')).body.tees.map(x => x.name).join() === 'Mysore tee');
+  await post('/api/bkk/admin/tees', { ...tee, active: false }, ADMIN);
+  ok('taken off sale: hidden from students, kept for admin',
+     (await J('/api/bkk/tees')).body.tees.length === 0 && (await J('/api/bkk/admin/tees', { headers: ADMIN })).body.tees.length === 1);
 
   console.log('\n— admin auth —');
   const noKey = await J('/api/bkk/admin/orders');

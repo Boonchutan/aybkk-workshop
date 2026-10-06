@@ -220,6 +220,18 @@ function mountBkk(app, opts = {}) {
       created_at TIMESTAMPTZ DEFAULT now(),
       UNIQUE (member_id, taken_on))`);
 
+    // A member's id in the workshop journal (Neo4j Student.id). Not the member
+    // code: that is their login, and the journal lists student ids publicly.
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS journal_id TEXT UNIQUE`);
+
+    // Tees sold on aybkk.net in baht. Payment is a PaySolutions link Boonchu
+    // makes per tee, so there is no cart here, only a button to that link.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_tees (
+      id SERIAL PRIMARY KEY, name TEXT NOT NULL, price_thb INTEGER NOT NULL,
+      pay_link TEXT NOT NULL, photo TEXT, sizes TEXT,
+      active BOOLEAN DEFAULT true, sort INTEGER DEFAULT 0,
+      created_at TIMESTAMPTZ DEFAULT now())`);
+
     // /start counts: which Reel (?src=) brings people, and how many tap the button.
     // No IP, no name: only source, language, channel.
     await q(`CREATE TABLE IF NOT EXISTS bkk_start_events (
@@ -853,6 +865,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   });
 
   // ── member view ───────────────────────────────────────────────────────────
+  // Made on first use, then fixed for good, so every entry lands on one journal.
+  async function journalId(m) {
+    if (m.journal_id) return m.journal_id;
+    await q(`UPDATE bkk_members SET journal_id=$2 WHERE id=$1 AND journal_id IS NULL`,
+      [m.id, 'bkk-' + crypto.randomBytes(9).toString('base64url')]);
+    return (await q('SELECT journal_id FROM bkk_members WHERE id=$1', [m.id])).rows[0].journal_id;
+  }
   app.get('/api/bkk/me/:code', async (req, res) => {
     try {
       const m = (await q('SELECT * FROM bkk_members WHERE code = $1', [req.params.code])).rows[0];
@@ -874,7 +893,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            AND (n.to_work_on IS NOT NULL OR n.body IS NOT NULL)
          ORDER BY n.created_at DESC LIMIT 10`, [m.id])).rows;
       res.json({
-        member: { code: m.code, name: m.name, email: m.email },
+        member: { code: m.code, name: m.name, email: m.email, journalId: await journalId(m) },
         notes,
         passes: passes.map(p => ({
           name: p.name_en, kind: p.kind, status: p.status,
@@ -1215,6 +1234,47 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return true;
   };
 
+  // ── tees (baht, PaySolutions link per tee) ───────────────────────────────
+  const teeOut = t => ({ id: t.id, name: t.name, priceThb: t.price_thb, payLink: t.pay_link,
+    photo: t.photo, sizes: t.sizes, active: t.active, sort: t.sort });
+  app.get('/api/bkk/tees', async (req, res) => {
+    try {
+      const r = await q('SELECT * FROM bkk_tees WHERE active ORDER BY sort, id');
+      res.json({ tees: r.rows.map(teeOut) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  app.get('/api/bkk/admin/tees', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const r = await q('SELECT * FROM bkk_tees ORDER BY sort, id');
+      res.json({ tees: r.rows.map(teeOut) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+  // With an id it changes that tee; without, it adds one.
+  app.post('/api/bkk/admin/tees', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const b = req.body || {};
+      const name = String(b.name || '').trim().slice(0, 120);
+      const price = Number(b.priceThb);
+      const link = String(b.payLink || '').trim();
+      const photo = String(b.photo || '').trim();
+      if (!name) return res.status(400).json({ error: 'name required' });
+      if (!(Number.isInteger(price) && price > 0)) return res.status(400).json({ error: 'price must be a whole number of baht' });
+      if (!/^https:\/\/\S+$/.test(link)) return res.status(400).json({ error: 'payment link must start with https://' });
+      if (photo && !/^(https:\/\/|\/)\S+$/.test(photo)) return res.status(400).json({ error: 'photo must be a link (https://…) or a site path (/img/…)' });
+      const vals = [name, price, link, photo || null, String(b.sizes || '').trim().slice(0, 120) || null,
+        b.active !== false, Number.isInteger(Number(b.sort)) ? Number(b.sort) : 0];
+      const r = b.id
+        ? await q(`UPDATE bkk_tees SET name=$1, price_thb=$2, pay_link=$3, photo=$4, sizes=$5, active=$6, sort=$7
+                   WHERE id=$8 RETURNING *`, [...vals, Number(b.id)])
+        : await q(`INSERT INTO bkk_tees (name, price_thb, pay_link, photo, sizes, active, sort)
+                   VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`, vals);
+      if (!r.rows.length) return res.status(404).json({ error: 'tee not found' });
+      res.json({ success: true, tee: teeOut(r.rows[0]) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   // Find a student. There was no way to do this at all, so "I lost my code" had
   // no answer from either side.
   app.get('/api/bkk/admin/members', async (req, res) => {
@@ -1477,7 +1537,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            ORDER BY b.start_at DESC LIMIT 20`, [m.id]),
       ]);
       res.json({
-        member: { code: m.code, name: m.name, email: m.email, phone: m.phone },
+        member: { code: m.code, name: m.name, email: m.email, phone: m.phone, journalId: await journalId(m) },
         passes: passes.rows, notes: notes.rows, recent: recent.rows,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
