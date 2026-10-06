@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-05T23:38:12.016Z
+Inbox last read: 2026-10-06T23:38:19.818Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -48,3 +48,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-05 (chat): Studied Hormozi 50-5-3 ad Reel for Boonchu. Notes in Research.
 - 2026-10-05 (chat): Boonchu approved: 5 hooks per episode + per-platform hook test, 5-part CTA with his personal reply promise, add testimonial + demonstration formats. Brief, Ep. 1 script and board updated. My job: draft one fix per STUCK comment from his cues; flag if >50 in a week; keep hook-lever scores in Research.
 - 2026-10-06: Lead table still empty. Inbox read OK: 3 LINE threads, 0 about 180K. No requests in team chat.
+- 2026-10-07: Lead table still empty. Inbox read OK: 1 LINE thread, 0 about 180K. No requests in team chat.
