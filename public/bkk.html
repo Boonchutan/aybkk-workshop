@@ -101,7 +101,6 @@
     background:linear-gradient(90deg,var(--plum),var(--pink))}
   header h1{margin:0;font-size:clamp(52px,14vw,80px);line-height:1;letter-spacing:.04em}
   header .sub{margin:6px 0 0;font-size:15px;letter-spacing:.03em;color:#f0d6e3}
-  header .where{margin:5px 0 0;font-size:13px;color:#b79cab}
   header .dot{color:var(--pink)}
   html{scroll-behavior:smooth}
   /* The wall photo is mostly white, so the shade is strongest where the text sits (the floor). */
@@ -116,30 +115,26 @@
       #3a2a3a url('/img/aybkk-hero-1600.jpg') center 40%/cover no-repeat}
   }
   header.hero .sub{font-size:17px;color:#fdf7fa;text-shadow:0 1px 8px rgba(0,0,0,.5)}
-  header.hero .where{color:#e2cbd7}
-  @media (max-width:699px){ header.hero .where{display:none} }
   /* Wide screens: the offer on the left on dark, the photo on the right, so no line sits on a face. */
   @media (min-width:960px){
     header.hero{min-height:620px;justify-content:center;text-align:left;padding:80px 52% 50px 6%;background:
       linear-gradient(90deg,#17121a 0%,#17121a 44%,rgba(23,18,26,.6) 52%,rgba(23,18,26,0) 64%),
       #17121a url('/img/aybkk-hero-1600.jpg') right center/auto 100% no-repeat}
     header.hero .cta{justify-content:flex-start}
-    header.hero .h12{margin-left:0}
     header.hero .more{padding-left:0;margin-right:14px}
   }
   header.hero{position:relative}
-  header.hero h1{font-family:'Work Sans',sans-serif;font-weight:900;font-size:46px;line-height:1;letter-spacing:.01em;margin:0;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.45)}
-  header.hero .full{font-family:'Work Sans',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#f3e6ec;margin:6px 0 10px;text-shadow:0 1px 6px rgba(0,0,0,.7)}
   header.hero .logo{position:absolute;top:10px;left:12px;width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.35)}
   .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
-  /* The 12-week offer leads the hero (Boonchu, 6 Oct): the promise, the price per day, the full total. */
-  .h12{margin:22px auto 0;max-width:560px}
-  .h12h{margin:0;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:clamp(30px,8.4vw,44px);line-height:1.05;
+  /* Hero, Equinox-minimal (Boonchu, 6 Oct): one line, one short line, one button with the price on it. */
+  header.hero .kick{font-family:'Work Sans','Plex',sans-serif;font-weight:700;font-size:13px;letter-spacing:.16em;
+    text-transform:uppercase;line-height:1.3;color:#fff;margin:0 0 14px;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+  header.hero .kick span{font-weight:500;color:#e2cbd7}
+  .h12h{margin:0;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:clamp(40px,11vw,64px);line-height:1;
     font-variant-numeric:lining-nums;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.5)}
-  .h12s{margin:10px 0 0;font-size:17px;font-weight:600;color:#fdf7fa;text-shadow:0 1px 8px rgba(0,0,0,.6)}
-  .h12s b{color:#f2c94c;font-weight:700}
-  .h12f{margin:4px 0 0;font-size:13px;color:#e2cbd7;text-shadow:0 1px 6px rgba(0,0,0,.7)}
-  .h12 .cta{margin-top:16px}
+  .h12s{margin:12px 0 0;font-size:17px;color:#f0d6e3;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+  header.hero .cta{margin-top:24px}
+  header.hero .btn.pink{min-height:54px;padding:14px 30px;font-size:17px}
   a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:48px}
   header .btn.ghost{color:#fdf7fa;box-shadow:inset 0 0 0 1.5px rgba(253,247,250,.6);background:rgba(23,18,26,.3)}
   .langs{position:absolute;top:12px;right:12px;display:flex;gap:2px;background:rgba(23,18,26,.55);
@@ -385,14 +380,6 @@
   .msg.ok{background:var(--blush);color:var(--plum)}
   .msg.bad{background:#fdeaea;color:#a33}
   [hidden]{display:none!important}
-  /* Promotion: the first thing on the page, and the whole band is one tap. */
-  .promo-band{display:block;text-decoration:none;text-align:center;color:#3e1442;padding:12px 12px 14px;line-height:1.2;
-    background:linear-gradient(100deg,#f2c94c,#d9a521 55%,#c08a12)}
-  .promo-band .pb-k{display:block;white-space:nowrap;font-size:clamp(10px,3vw,13px);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-  .promo-band .pb-big{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:clamp(28px,8vw,44px);line-height:1.02;margin:2px 0 0}
-  .promo-band .pb-sub{display:block;font-size:clamp(13px,4vw,16px);font-weight:700;margin-top:2px}
-  .promo-band .pb-btn{display:inline-block;margin-top:8px;background:#3e1442;color:#f2d98a;border-radius:999px;
-    padding:7px 26px;font-weight:700;font-size:16px;line-height:1.25;box-shadow:0 4px 14px rgba(62,20,66,.25)}
   #promo{margin-top:28px;padding:26px 18px 20px;background:var(--promo-soft);box-shadow:inset 0 0 0 1.5px var(--promo-line);border-radius:22px;line-height:1.35}
   #promo h2{color:var(--promo-deep);margin-bottom:8px}
   #promo .lead{margin:0 0 14px;font-size:15.5px}
@@ -449,12 +436,6 @@
 </style>
 </head>
 <body>
-<a class="promo-band" id="promoBand" href="#promo" hidden>
-  <span class="pb-k" data-i18n="bandKicker">Until 11 Nov only · in memory of Sharathji</span>
-  <span class="pb-big" data-i18n="bandBig">Buy 1, get 1 FREE</span>
-  <span class="pb-sub" data-i18n="bandSub">or the Rookie Pack ฿5,900 for new students</span>
-  <span class="pb-btn" data-i18n="bandBtn">Calculate my price →</span>
-</a>
 <header class="hero">
   <div class="langs" role="group" aria-label="Language">
     <button type="button" data-lang="en" lang="en">EN</button>
@@ -463,20 +444,11 @@
     <button type="button" data-lang="ru" lang="ru">RU</button>
   </div>
   <img class="logo" src="/img/aybkk-logo-240.jpg" width="120" height="120" alt="Ashtanga Yoga Center of Bangkok logo">
-  <h1>AYBKK</h1>
-  <p class="full">Ashtanga Yoga Center of Bangkok</p>
-  <p class="sub" data-i18n="tagline">Traditional Ashtanga. Open door.</p>
-  <p class="where">S31 Sukhumvit Hotel <span class="dot">·</span> 8th floor <span class="dot">·</span> Sukhumvit 31</p>
-  <div class="h12">
-    <p class="h12h" id="h12h"></p>
-    <p class="h12s" id="h12s"></p>
-    <p class="h12f" id="h12f"></p>
-    <div class="cta">
-      <a class="btn pink" href="#promo" id="h12Btn"></a>
-      <a class="btn ghost" href="#book" data-i18n="ctaTimetable">See timetable</a>
-    </div>
-  </div>
-  <div><a class="more" href="#mysore" data-i18n="ctaStart">New? Start here</a> <a class="more" href="#compare" data-i18n="cmpBtn">See how it compares →</a> <a class="more" href="#prices" data-i18n="ctaPrices">See prices</a></div>
+  <h1 class="kick">AYBKK <span>· Ashtanga Yoga Bangkok</span></h1>
+  <p class="h12h" id="h12h"></p>
+  <p class="h12s" id="h12s"></p>
+  <div class="cta"><a class="btn pink" href="#promo" id="h12Btn"></a></div>
+  <a class="more" href="#book" data-i18n="ctaTimetable">See timetable</a>
 </header>
 
 <div class="sw">
@@ -674,7 +646,6 @@
 
   const STR = {
     en: {
-      tagline: 'Traditional Ashtanga. Open door.',
       ctaTimetable: 'See timetable', ctaStart: 'New? Start here',
       teacherH: 'Your teacher',
       caption: 'Jamsai, R. Sharath Jois and Boonchu at AYBKK',
@@ -747,7 +718,6 @@
       pay: 'Continue to payment', cancel: 'Cancel',
     },
     th: {
-      tagline: 'อัษฎางคโยคะแบบดั้งเดิม ประตูเปิดต้อนรับทุกคน',
       ctaTimetable: 'ดูตารางเรียน', ctaStart: 'มือใหม่? เริ่มที่นี่',
       teacherH: 'ครูของคุณ',
       caption: 'Jamsai, R. Sharath Jois และ Boonchu ที่ AYBKK',
@@ -820,7 +790,6 @@
       pay: 'ไปชำระเงิน', cancel: 'ยกเลิก',
     },
     zh: {
-      tagline: '传统阿斯汤加。大门向每个人敞开。',
       ctaTimetable: '查看课程表', ctaStart: '新学员？从这里开始',
       teacherH: '你的老师',
       caption: 'Jamsai、R. Sharath Jois 与 Boonchu 在 AYBKK',
@@ -893,7 +862,6 @@
       pay: '继续付款', cancel: '取消',
     },
     ru: {
-      tagline: 'Традиционная аштанга. Двери открыты.',
       ctaTimetable: 'Расписание', ctaStart: 'Новичок? Начните здесь',
       teacherH: 'Ваш учитель',
       caption: 'Jamsai, R. Sharath Jois и Boonchu в AYBKK',
@@ -983,8 +951,7 @@
   // checkout: Duo can be for two people and the returning-student offers need a
   // name check, so the team sends the payment link by hand.
   Object.assign(STR.en, {
-    bandKicker: 'Until 11 Nov only · in memory of Sharathji', bandBig: 'Buy 1, get 1 FREE',
-    bandSub: 'or the Rookie Pack ฿5,900 for new students', bandBtn: 'Calculate my price →',
+    bandBtn: 'Calculate my price →',
     promoH: 'Sharathji promotion, 1 Oct to 11 Nov',
     promoLead: 'Pick an offer, pick your first day, and see exactly what you pay. Buy by 11 Nov, start by 12 Nov.',
     tagNew: 'New students', tagPast: 'Past AYBKK students',
@@ -1006,8 +973,7 @@
    
   });
   Object.assign(STR.th, {
-    bandKicker: 'ถึง 11 พ.ย. เท่านั้น · น้อมรำลึก Sharathji', bandBig: 'ซื้อ 1 แถม 1 ฟรี',
-    bandSub: 'หรือ Rookie Pack ฿5,900 สำหรับนักเรียนใหม่', bandBtn: 'คำนวณราคาเรียน →',
+    bandBtn: 'คำนวณราคาเรียน →',
     promoH: 'โปรโมชัน Sharathji 1 ต.ค. ถึง 11 พ.ย.',
     promoLead: 'เลือกโปร เลือกวันเริ่มฝึก แล้วดูว่าต้องจ่ายเท่าไหร่ ซื้อภายใน 11 พ.ย. เริ่มใช้ภายใน 12 พ.ย.',
     tagNew: 'นักเรียนใหม่', tagPast: 'นักเรียนเก่า AYBKK',
@@ -1029,8 +995,7 @@
    
   });
   Object.assign(STR.zh, {
-    bandKicker: '仅限11月11日前 · 纪念 Sharathji', bandBig: '买一送一',
-    bandSub: '或新学员 Rookie Pack ฿5,900', bandBtn: '计算我的价格 →',
+    bandBtn: '计算我的价格 →',
     promoH: 'Sharathji 纪念优惠：10月1日至11月11日',
     promoLead: '选择优惠和第一天练习的日期，马上看到要付多少。11月11日前购买，11月12日前开始。',
     tagNew: '新学员', tagPast: 'AYBKK 老学员',
@@ -1052,8 +1017,7 @@
    
   });
   Object.assign(STR.ru, {
-    bandKicker: 'Только до 11 ноября · в память о Шарате', bandBig: 'Купи 1, получи 1 БЕСПЛАТНО',
-    bandSub: 'или Rookie Pack за ฿5,900 для новичков', bandBtn: 'Рассчитать мою цену →',
+    bandBtn: 'Рассчитать мою цену →',
     promoH: 'Акция в честь Шарата, с 1 октября по 11 ноября',
     promoLead: 'Выберите предложение и первый день практики, и сразу увидите, сколько платить. Купить до 11 ноября, начать до 12 ноября.',
     tagNew: 'Новые ученики', tagPast: 'Бывшие ученики AYBKK',
@@ -1092,7 +1056,7 @@
     addEmailH: 'Add your email', addEmailWhy: 'So you can open your profile again on another phone. We email you a one-time link, no password.', addEmailBtn: 'Save my email', addEmailDone: 'Saved. Next time, sign in with this email.',
     checkH: 'My 12-week check · Habit #1', chkWhy: 'Three numbers from your watch or phone, at week 0, 6 and 12. Proof, not promises.', chkStartH: 'Week 0: your starting point', chkDueH: 'Your next check is due', chkHrL: 'Resting heart rate (beats per minute)', chkSleepL: 'Average sleep last week (hours)', chkFeelL: 'How do you feel? (1 = tired, 5 = great)', chkNoteL: 'One line (optional)', chkSave: 'Save my check', chkWeek: 'Week', chkHr: 'Heart rate', chkSleep: 'Sleep', chkFeel: 'Feel', chkChange: (hr, sl) => `Since week 0: heart rate ${hr}, sleep ${sl}`, chkNext: d => `Next check: ${d}`, chkAll: 'All 3 checks done. Look how far you came.',
     fromTeachers: 'From your teachers', workOn: 'Work on',
-    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo. Long-press it to save.', h12H: 'Start your 12 weeks. Get 3 more months free.', h12S: d => `3 months unlimited + 3 months free · <b>${d} a day</b>`, h12F: x => `${x} incl. VAT for 6 months (180 days) · Buy by 11 Nov, start by 12 Nov`, h12Btn: 'Start my 12 weeks →', h12Hp: 'Start your 12 weeks.', h12Sp: d => `3 months unlimited · <b>${d} a day</b>`, h12Fp: x => `${x} incl. VAT · 90 days`, jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Pay online, then send your size and payment slip to LINE @aybkk.', teeBuy: 'Pay now', teeSizes: 'Sizes',
+    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo. Long-press it to save.', h12H: 'Start your 12 weeks.', h12S: '3 months free on top. Until 11 Nov.', h12Sp: 'Traditional Ashtanga. A teacher who notices.', h12Btn: d => `Start · ${d} a day`, jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Pay online, then send your size and payment slip to LINE @aybkk.', teeBuy: 'Pay now', teeSizes: 'Sizes',
     teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
     jbio1: 'Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.',
     jbio2: 'The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.',
@@ -1103,7 +1067,7 @@
     addEmailH: 'เพิ่มอีเมลของคุณ', addEmailWhy: 'เพื่อเปิดโปรไฟล์ได้อีกครั้งบนมือถือเครื่องอื่น เราส่งลิงก์ใช้ครั้งเดียวทางอีเมล ไม่ต้องมีรหัสผ่าน', addEmailBtn: 'บันทึกอีเมล', addEmailDone: 'บันทึกแล้ว ครั้งหน้าเข้าด้วยอีเมลนี้',
     checkH: 'เช็กผล 12 สัปดาห์ของฉัน · นิสัยที่ 1', chkWhy: 'ตัวเลข 3 ค่าจากนาฬิกาหรือมือถือ สัปดาห์ที่ 0, 6 และ 12 หลักฐานจริง ไม่ใช่คำสัญญา', chkStartH: 'สัปดาห์ที่ 0: จุดเริ่มต้นของคุณ', chkDueH: 'ถึงเวลาเช็กครั้งต่อไปแล้ว', chkHrL: 'ชีพจรขณะพัก (ครั้งต่อนาที)', chkSleepL: 'นอนเฉลี่ยสัปดาห์ที่แล้ว (ชั่วโมง)', chkFeelL: 'รู้สึกอย่างไร (1 = เหนื่อย, 5 = ดีมาก)', chkNoteL: 'หนึ่งบรรทัด (ไม่บังคับ)', chkSave: 'บันทึกผล', chkWeek: 'สัปดาห์', chkHr: 'ชีพจร', chkSleep: 'นอน', chkFeel: 'ความรู้สึก', chkChange: (hr, sl) => `ตั้งแต่สัปดาห์ที่ 0: ชีพจร ${hr} การนอน ${sl}`, chkNext: d => `เช็กครั้งต่อไป: ${d}`, chkAll: 'ครบ 3 ครั้งแล้ว ดูสิว่าคุณมาไกลแค่ไหน',
     fromTeachers: 'จากครูของคุณ', workOn: 'ฝึกต่อ',
-    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ กดค้างที่รูปเพื่อบันทึก', h12H: 'เริ่ม 12 สัปดาห์ของคุณ รับเพิ่มอีก 3 เดือนฟรี', h12S: d => `ไม่จำกัด 3 เดือน + ฟรีอีก 3 เดือน · <b>วันละ ${d}</b>`, h12F: x => `${x} รวม VAT สำหรับ 6 เดือน (180 วัน) · ซื้อภายใน 11 พ.ย. เริ่มภายใน 12 พ.ย.`, h12Btn: 'เริ่ม 12 สัปดาห์ของฉัน →', h12Hp: 'เริ่ม 12 สัปดาห์ของคุณ', h12Sp: d => `ไม่จำกัด 3 เดือน · <b>วันละ ${d}</b>`, h12Fp: x => `${x} รวม VAT · 90 วัน`, jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'ชำระเงินออนไลน์ แล้วส่งไซซ์และสลิปทาง LINE @aybkk', teeBuy: 'ชำระเงิน', teeSizes: 'ไซซ์',
+    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ กดค้างที่รูปเพื่อบันทึก', h12H: 'เริ่ม 12 สัปดาห์ของคุณ', h12S: 'ฟรีอีก 3 เดือน ถึง 11 พ.ย.', h12Sp: 'อัษฎางคโยคะแบบดั้งเดิม กับครูที่สังเกตเห็นคุณ', h12Btn: d => `เริ่มเลย · วันละ ${d}`, jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'ชำระเงินออนไลน์ แล้วส่งไซซ์และสลิปทาง LINE @aybkk', teeBuy: 'ชำระเงิน', teeSizes: 'ไซซ์',
     teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
     jbio1: 'Jamsai เคยเป็นที่ปรึกษาด้านภาษี เธอเริ่มฝึกอัษฎางคโยคะในปี 2015 ระหว่างรับเคมีบำบัดรักษามะเร็งเต้านม โดยมี Boonchu เป็นครู',
     jbio2: 'การฝึกทำให้เธอกลับมาแข็งแรง เธอจึงลาออกจากงานไปเรียนกับ Sharath Jois ที่มายซอร์ และได้รับ Authorization Level 2 จากท่านในฤดูกาล 2018 ถึง 2019',
@@ -1114,7 +1078,7 @@
     addEmailH: '添加你的邮箱', addEmailWhy: '这样你可以在另一部手机上再次打开个人主页。我们会发一次性链接到邮箱，不需要密码。', addEmailBtn: '保存邮箱', addEmailDone: '已保存。下次用这个邮箱登录。',
     checkH: '我的12周检查 · 习惯1', chkWhy: '手表或手机上的3个数字，第0、6、12周各记录一次。是证据，不是承诺。', chkStartH: '第0周：你的起点', chkDueH: '该做下一次检查了', chkHrL: '静息心率（次/分钟）', chkSleepL: '上周平均睡眠（小时）', chkFeelL: '感觉如何？（1 = 很累，5 = 很好）', chkNoteL: '一句话（可选）', chkSave: '保存', chkWeek: '周', chkHr: '心率', chkSleep: '睡眠', chkFeel: '感觉', chkChange: (hr, sl) => `从第0周起：心率 ${hr}，睡眠 ${sl}`, chkNext: d => `下次检查：${d}`, chkAll: '3次检查都完成了。看看你走了多远。',
     fromTeachers: '老师给你的话', workOn: '要练习的',
-    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。长按即可保存。', h12H: '开启你的12周。再送3个月。', h12S: d => `3个月不限次 + 再送3个月 · <b>每天${d}</b>`, h12F: x => `${x}（含增值税）共6个月（180天）· 11月11日前购买，11月12日前开始`, h12Btn: '开始我的12周 →', h12Hp: '开启你的12周。', h12Sp: d => `3个月不限次 · <b>每天${d}</b>`, h12Fp: x => `${x}（含增值税）· 90天`, jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '在线付款，然后在 LINE @aybkk 发送尺码和付款截图。', teeBuy: '付款', teeSizes: '尺码',
+    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。长按即可保存。', h12H: '开启你的12周。', h12S: '再送3个月，至11月11日。', h12Sp: '传统阿斯汤加。老师会注意到你。', h12Btn: d => `开始 · 每天${d}`, jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '在线付款，然后在 LINE @aybkk 发送尺码和付款截图。', teeBuy: '付款', teeSizes: '尺码',
     teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
     jbio1: 'Jamsai 曾是一名税务顾问。2015年她在接受乳腺癌化疗期间开始练习阿斯汤加，老师是 Boonchu。',
     jbio2: '练习让她重新找回力量，于是她辞去工作，去迈索尔跟随 Sharath Jois 学习，并在2018至2019季获得他授予的 Level 2 授权。',
@@ -1125,7 +1089,7 @@
     addEmailH: 'Добавьте email', addEmailWhy: 'Чтобы открыть профиль на другом телефоне. Мы пришлём одноразовую ссылку, без пароля.', addEmailBtn: 'Сохранить email', addEmailDone: 'Сохранено. В следующий раз входите с этим email.',
     checkH: 'Моя 12-недельная проверка · Привычка №1', chkWhy: 'Три числа с часов или телефона, на 0, 6 и 12 неделе. Доказательства, а не обещания.', chkStartH: 'Неделя 0: ваша отправная точка', chkDueH: 'Пора следующей проверки', chkHrL: 'Пульс в покое (уд/мин)', chkSleepL: 'Средний сон за неделю (часы)', chkFeelL: 'Как вы себя чувствуете? (1 = устал, 5 = отлично)', chkNoteL: 'Одна строка (по желанию)', chkSave: 'Сохранить', chkWeek: 'Неделя', chkHr: 'Пульс', chkSleep: 'Сон', chkFeel: 'Самочувствие', chkChange: (hr, sl) => `С недели 0: пульс ${hr}, сон ${sl}`, chkNext: d => `Следующая проверка: ${d}`, chkAll: 'Все 3 проверки готовы. Посмотрите, какой путь вы прошли.',
     fromTeachers: 'От ваших учителей', workOn: 'Над чем работать',
-    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы. Нажмите и удерживайте, чтобы сохранить.', h12H: 'Начните свои 12 недель. Ещё 3 месяца в подарок.', h12S: d => `3 месяца безлимит + 3 месяца в подарок · <b>${d} в день</b>`, h12F: x => `${x} с НДС за 6 месяцев (180 дней) · Купить до 11 ноября, начать до 12 ноября`, h12Btn: 'Начать мои 12 недель →', h12Hp: 'Начните свои 12 недель.', h12Sp: d => `3 месяца безлимит · <b>${d} в день</b>`, h12Fp: x => `${x} с НДС · 90 дней`, jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Оплатите онлайн, затем пришлите размер и чек в LINE @aybkk.', teeBuy: 'Оплатить', teeSizes: 'Размеры',
+    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы. Нажмите и удерживайте, чтобы сохранить.', h12H: 'Начните свои 12 недель.', h12S: '3 месяца в подарок. До 11 ноября.', h12Sp: 'Традиционная аштанга. Учитель, который вас замечает.', h12Btn: d => `Начать · ${d} в день`, jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Оплатите онлайн, затем пришлите размер и чек в LINE @aybkk.', teeBuy: 'Оплатить', teeSizes: 'Размеры',
     teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
     jbio1: 'Jamsai работала налоговым консультантом. Она начала заниматься аштангой в 2015 году, во время химиотерапии от рака груди, и её учителем был Boonchu.',
     jbio2: 'Практика вернула ей силы, и она ушла с работы, чтобы учиться у Шарата Джойса в Майсуре. В сезоне 2018–2019 она получила от него авторизацию Level 2.',
@@ -1226,10 +1190,9 @@
   function renderHero12() {
     const live = promoLive(), price = MONTHLY[2][1];
     const total = price + Math.round(price * 0.07), days = live ? MONTHLY[2][0] * 2 : MONTHLY[2][0];
-    $('#h12h').textContent = t(live ? 'h12H' : 'h12Hp');
-    $('#h12s').innerHTML = t(live ? 'h12S' : 'h12Sp', esc(baht(Math.round(total / days))));
-    $('#h12f').textContent = t(live ? 'h12F' : 'h12Fp', baht(total));
-    $('#h12Btn').textContent = t('h12Btn');
+    $('#h12h').textContent = t('h12H');
+    $('#h12s').textContent = t(live ? 'h12S' : 'h12Sp');
+    $('#h12Btn').textContent = t('h12Btn', baht(Math.round(total / days)));
   }
   $('#h12Btn').addEventListener('click', e => {
     e.preventDefault();
@@ -1246,7 +1209,6 @@
   function renderPromo() {
     renderHero12();
     const live = promoLive();
-    $('#promoBand').hidden = !live;
     $('#promo').hidden = !live;
     document.querySelectorAll('.campWrap').forEach(el => { el.hidden = !live; });
     if (!live) return;
