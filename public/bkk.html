@@ -13,8 +13,8 @@
 <meta property="og:image:height" content="1067">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="/fonts/longcang.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/patrickhand.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/plexthai.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/worksans.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* AYBKK Bangkok — Aubergine & Blush.
      Long Cang (brush) carries display only; body text is a plain face so the
@@ -26,8 +26,12 @@
   /* Two cuts of one family under one name: the browser picks the Thai file only
      for Thai characters, so Thai and Latin sit on the same baseline. */
   @font-face{font-family:'Work Sans';src:url('/fonts/worksans.woff2') format('woff2');font-weight:100 900;font-display:swap}
-  @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
-  @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
+  /* Latin text was the SemiBold Plex file, so every sentence printed half-bold.
+     Work Sans (variable) gives real regular text and real bold. */
+  @font-face{font-family:'Plex';src:url('/fonts/worksans.woff2') format('woff2');font-weight:100 900;font-display:swap}
+  /* Headings: a classic serif, quiet and traditional. Latin only; Thai falls back to Plex. */
+  @font-face{font-family:'Cormorant';src:url('/fonts/cormorant.woff2') format('woff2');font-weight:300 700;font-display:swap}
+  @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');font-weight:100 900;
     unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
   :root{
     --ink:#17121a;          /* near-black, violet cast */
@@ -52,7 +56,8 @@
     --promo-soft:#fdf4dc; --promo-line:#e6c25a;
     /* Normal prices = plum, so they never look like the gold promotion. */
     --price-bg:#f4ebf5; --price-line:#d8bfdc;
-    --radius:8px;
+    --radius:14px;
+    --lift:0 1px 2px rgba(23,18,26,.04),0 10px 30px rgba(23,18,26,.06);
   }
   @media (prefers-color-scheme: dark){
     :root{
@@ -86,36 +91,52 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{margin:0;background:var(--wall);color:var(--ink);
-    font:16px/1.6 'Plex',-apple-system,'Helvetica Neue','PingFang SC',sans-serif}
+    font:400 16px/1.65 'Plex',-apple-system,'Helvetica Neue','PingFang SC',sans-serif}
   .brush{font-family:'Long Cang',cursive;font-weight:400}
+  /* Cormorant's default figures are old-style: 1 reads as I. */
+  .sw h2,.teacher .name,.plan h3,.pkg h3,dialog h3,.calc h3{font-variant-numeric:lining-nums}
 
   header{background:var(--header);color:#fdf7fa;padding:34px 20px 30px;text-align:center;position:relative;overflow:hidden}
   header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
     background:linear-gradient(90deg,var(--plum),var(--pink))}
   header h1{margin:0;font-size:clamp(52px,14vw,80px);line-height:1;letter-spacing:.04em}
   header .sub{margin:6px 0 0;font-size:15px;letter-spacing:.03em;color:#f0d6e3}
-  header .where{margin:5px 0 0;font-size:13px;color:#b79cab}
   header .dot{color:var(--pink)}
   html{scroll-behavior:smooth}
   /* The wall photo is mostly white, so the shade is strongest where the text sits (the floor). */
+  /* Phone: the photo sits on top at its own size; the text gets a dark floor below it. */
   header.hero{min-height:640px;display:flex;flex-direction:column;justify-content:flex-end;
-    padding:70px 20px 34px;background:
-      linear-gradient(180deg,rgba(23,18,26,.38) 0%,rgba(23,18,26,.08) 30%,rgba(23,18,26,.45) 52%,rgba(23,18,26,.88) 74%,rgba(23,18,26,.94) 100%),
-      #3a2a3a url('/img/aybkk-hero-900.jpg') center 30%/cover no-repeat}
+    padding:250px 20px 30px;background:
+      linear-gradient(180deg,rgba(23,18,26,.3) 0%,rgba(23,18,26,0) 18%,rgba(23,18,26,.55) 32%,rgba(23,18,26,.92) 44%,#17121a 60%),
+      #17121a url('/img/aybkk-hero-900.jpg') center top/100% auto no-repeat}
   @media (min-width:700px){
-    header.hero{min-height:640px;background:
+    header.hero{min-height:640px;padding-top:70px;background:
       linear-gradient(180deg,rgba(23,18,26,.3) 0%,rgba(23,18,26,.05) 30%,rgba(23,18,26,.45) 52%,rgba(23,18,26,.88) 76%,rgba(23,18,26,.94) 100%),
       #3a2a3a url('/img/aybkk-hero-1600.jpg') center 40%/cover no-repeat}
   }
   header.hero .sub{font-size:17px;color:#fdf7fa;text-shadow:0 1px 8px rgba(0,0,0,.5)}
-  header.hero .where{color:#e2cbd7}
+  /* Wide screens: the offer on the left on dark, the photo on the right, so no line sits on a face. */
+  @media (min-width:960px){
+    header.hero{min-height:620px;justify-content:center;text-align:left;padding:80px 52% 50px 6%;background:
+      linear-gradient(90deg,#17121a 0%,#17121a 44%,rgba(23,18,26,.6) 52%,rgba(23,18,26,0) 64%),
+      #17121a url('/img/aybkk-hero-1600.jpg') right center/auto 100% no-repeat}
+    header.hero .cta{justify-content:flex-start}
+    header.hero .more{padding-left:0;margin-right:14px}
+  }
   header.hero{position:relative}
-  header.hero h1{font-family:'Work Sans',sans-serif;font-weight:900;font-size:64px;line-height:1;letter-spacing:.01em;margin:0;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.45)}
-  header.hero .full{font-family:'Work Sans',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#f3e6ec;margin:6px 0 10px;text-shadow:0 1px 6px rgba(0,0,0,.7)}
   header.hero .logo{position:absolute;top:10px;left:12px;width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.35)}
   .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
-  a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:46px}
-  header .btn.ghost{color:#fdf7fa;border-color:rgba(253,247,250,.55);background:rgba(23,18,26,.35)}
+  /* Hero, Equinox-minimal (Boonchu, 6 Oct): one line, one short line, one button with the price on it. */
+  header.hero .kick{font-family:'Work Sans','Plex',sans-serif;font-weight:700;font-size:13px;letter-spacing:.16em;
+    text-transform:uppercase;line-height:1.3;color:#fff;margin:0 0 14px;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+  header.hero .kick span{font-weight:500;color:#e2cbd7}
+  .h12h{margin:0;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:clamp(40px,11vw,64px);line-height:1;
+    font-variant-numeric:lining-nums;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.5)}
+  .h12s{margin:12px 0 0;font-size:17px;color:#f0d6e3;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+  header.hero .cta{margin-top:24px}
+  header.hero .btn.pink{min-height:54px;padding:14px 30px;font-size:17px}
+  a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:48px}
+  header .btn.ghost{color:#fdf7fa;box-shadow:inset 0 0 0 1.5px rgba(253,247,250,.6);background:rgba(23,18,26,.3)}
   .langs{position:absolute;top:12px;right:12px;display:flex;gap:2px;background:rgba(23,18,26,.55);
     border-radius:999px;padding:3px;z-index:2}
   .langs button{border:none;background:none;color:#e2cbd7;font:600 12.5px/1 'Plex',-apple-system,'PingFang SC',sans-serif;
@@ -123,19 +144,19 @@
   .langs button[aria-pressed="true"]{background:var(--pink);color:#fff}
 
   .sw{max-width:880px;margin:0 auto;padding:8px 16px 0}
-  .sw section{padding:30px 0 6px;scroll-margin-top:12px}
-  .sw h2{margin:0 0 14px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:30px;line-height:1.15;color:var(--plum)}
-  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
-  .habsub{margin:-8px 0 14px;font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:19px;color:var(--pink)}
-  .habs{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+  .sw section{padding:52px 0 6px;scroll-margin-top:12px}
+  .sw h2{margin:0 0 18px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:clamp(32px,8vw,42px);line-height:1.08;letter-spacing:-.01em;color:var(--ink)}
+  .card{background:var(--paper);border-radius:var(--radius);padding:22px;box-shadow:var(--lift)}
+  .habsub{margin:-8px 0 20px;font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:18px;color:var(--pink)}
+  .habs{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
   @media (min-width:640px){ .habs{grid-template-columns:repeat(2,minmax(0,1fr))} }
-  .hab{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+  .hab{display:flex;gap:14px;align-items:flex-start;background:var(--paper);border-radius:var(--radius);padding:16px;box-shadow:var(--lift)}
   .hab .hn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--plum);color:var(--on-dark);display:flex;align-items:center;justify-content:center;
-    font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:14px}
-  .hab b{display:block;font-size:15.5px;line-height:1.3}
+    font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:13px}
+  .hab b{display:block;font-size:16px;font-weight:600;line-height:1.3}
   .hab p{margin:2px 0 0;font-size:14px;line-height:1.45;color:var(--soft)}
   #compare .lead{margin:-6px 0 14px;font-size:15px}
-  .cmpwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--line);background:var(--paper)}
+  .cmpwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);background:var(--paper);box-shadow:var(--lift)}
   table.cmp{width:100%;border-collapse:collapse;font-size:13px;line-height:1.25;min-width:340px}
   table.cmp th,table.cmp td{padding:9px 6px;border-top:1px solid var(--line);text-align:center;vertical-align:middle}
   table.cmp thead th{border-top:none;font-size:12px;font-weight:700;color:var(--soft)}
@@ -143,14 +164,14 @@
   table.cmp .c-yes{color:var(--plum);font-weight:700}
   table.cmp .c-some{color:var(--soft);font-size:12px}
   table.cmp .c-no{color:var(--line);font-weight:700}
-  table.cmp .ash{background:var(--plum);color:var(--on-dark);font-weight:800}
+  table.cmp .ash{background:var(--plum);color:var(--on-dark);font-weight:600}
   table.cmp thead th.ash{color:var(--on-dark);font-size:13px;border-radius:8px 8px 0 0}
   .teacher figure{margin:0 0 16px}
   .teacher img{display:block;width:100%;height:auto;border-radius:var(--radius);aspect-ratio:9/10;object-fit:cover}
   .teacher figcaption{font-size:12.5px;color:var(--soft);margin-top:6px}
-  .teacher .name{font-family:'Patrick Hand','Plex',cursive;font-size:25px;line-height:1.2}
-  .teacher .auth{display:inline-block;margin:4px 0 12px;font-size:13px;font-weight:600;letter-spacing:.02em;
-    color:var(--plum);background:var(--blush);border:1px solid var(--blush-line);border-radius:999px;padding:5px 12px}
+  .teacher .name{font-family:'Cormorant','Plex',serif;font-weight:600;font-size:30px;line-height:1.15}
+  .teacher .auth{display:inline-block;margin:4px 0 14px;font-size:13px;font-weight:500;
+    color:var(--plum);background:var(--blush);border-radius:999px;padding:5px 12px}
   .teacher p{margin:0 0 10px;font-size:15px}
   .bio + .bio{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
   /* 3 lines, then "Read more" (Boonchu, 2 Oct) */
@@ -162,48 +183,48 @@
   .bio.open .txt{max-height:none}
   .bio.open .txt::after{display:none}
   .readmore{border:none;background:none;padding:6px 0;min-height:36px;cursor:pointer;
-    font:700 14px/1.2 'Plex',sans-serif;color:var(--pink)}
+    font:600 14px/1.2 'Plex',sans-serif;color:var(--pink)}
   .points{list-style:none;margin:0;padding:0}
-  .points li{position:relative;padding:0 0 0 24px;margin:0 0 11px;font-size:15px}
-  .points li::before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:99px;background:var(--pink)}
+  .points li{position:relative;padding:0 0 0 24px;margin:0 0 12px;font-size:16px}
+  .points li::before{content:"";position:absolute;left:4px;top:.66em;width:6px;height:6px;border-radius:99px;background:var(--pink)}
   .addr{margin:0 0 6px;font-size:15px}
   .addr.th{color:var(--soft);font-size:14px}
   .links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
   .links .btn{width:100%;padding:11px 10px;text-align:center}
   .links .wide{grid-column:1/-1}
   .wechat{display:flex;align-items:center;gap:10px;justify-content:space-between;grid-column:1/-1;
-    border:1px solid var(--line);border-radius:8px;padding:6px 6px 6px 14px;font-size:14.5px}
+    background:var(--wall);border-radius:12px;padding:6px 6px 6px 14px;font-size:14.5px}
   .wechat b{user-select:all}
   .links .wechat .btn{width:auto;flex:none;min-height:40px;padding:9px 16px}
-  .sw h3{margin:18px 0 8px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
-  header .more{display:inline-block;margin-top:14px;font-size:14px;font-weight:600;letter-spacing:.03em;
+  .sw h3{margin:20px 0 8px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--pink)}
+  header .more{display:inline-block;margin-top:14px;font-size:14px;font-weight:500;
     color:#fdf7fa;text-decoration:underline;text-decoration-color:var(--pink);text-underline-offset:4px;padding:6px 8px}
-  .sw section.prices{margin-top:22px;padding:18px 14px 16px;background:var(--price-bg);border:6px solid var(--plum);border-radius:14px}
+  .sw section.prices{margin-top:44px;padding:28px 18px 22px;background:var(--price-bg);border-radius:22px}
   .prices .lead{margin:-6px 0 16px;font-size:14.5px;color:var(--soft)}
-  .plans{display:grid;gap:13px}
-  .plan{background:var(--paper);border:1px solid var(--price-line);border-radius:var(--radius);padding:18px;min-width:0}
-  .plan.feature{background:var(--paper);border:2px solid var(--plum)}
-  .plan.quiet{background:transparent;border-style:dashed}
+  .plans{display:grid;gap:14px}
+  .plan{background:var(--paper);border-radius:var(--radius);padding:22px;min-width:0;box-shadow:var(--lift)}
+  .plan.feature{background:var(--paper);box-shadow:inset 0 0 0 2px var(--plum),var(--lift)}
+  .plan.quiet{background:transparent;box-shadow:inset 0 0 0 1px var(--price-line)}
   .plan .badge{display:inline-block;margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
     background:var(--plum);color:var(--on-dark);border-radius:999px;padding:4px 10px}
-  .plan h3{margin:0 0 4px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:25px;line-height:1.2;
+  .plan h3{margin:0 0 6px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:28px;line-height:1.15;
     letter-spacing:0;text-transform:none;color:var(--ink)}
   .plan .line{margin:0 0 6px;font-size:15px}
   .plan .small{margin:0 0 4px;font-size:13px;color:var(--soft)}
-  .plan .camp{margin:10px 0 0;font-size:13px;font-weight:700;color:var(--promo-deep);background:var(--promo-soft);
+  .plan .camp{margin:12px 0 0;font-size:13.5px;font-weight:500;color:var(--promo-deep);background:var(--promo-soft);
     border-left:3px solid var(--promo);border-radius:4px;padding:8px 10px}
   .rows{list-style:none;margin:10px 0 0;padding:0}
   .rows li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
   .rows li:first-child{border-top:none}
-  .rows .pn{font-size:14.5px;font-weight:600;min-width:0}
+  .rows .pn{font-size:15px;font-weight:500;min-width:0}
   .rows .pn small{display:block;font-weight:400;font-size:12.5px;color:var(--soft)}
   .rows .pv{text-align:right;flex:none}
-  .rows .pv b{display:block;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:24px;line-height:1.1;color:var(--plum)}
+  .rows .pv b{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:21px;line-height:1.15;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--plum)}
   .rows .pv small{display:block;font-size:12px;color:var(--soft);white-space:nowrap}
   .plan.feature .rows li{border-top-color:var(--price-line)}
-  .prices .fair{margin:18px 0 4px;font-size:16px;font-weight:700;color:var(--plum)}
+  .prices .fair{margin:20px 0 4px;font-size:16px;font-weight:600;color:var(--plum)}
   .prices .fine{margin:0;font-size:12.5px;color:var(--soft)}
-  .prices .fine a{color:var(--plum);font-weight:700;text-decoration:none}
+  .prices .fine a{color:var(--plum);font-weight:600;text-decoration:none}
   @media (min-width:760px){
     .plans{grid-template-columns:1fr 1fr;align-items:start}
     .teacher .card{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:26px;align-items:start}
@@ -213,8 +234,8 @@
   }
 
   nav.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-  nav.tabs button{flex:1;padding:15px 8px;border:none;background:none;font:600 14px/1 inherit;
-    letter-spacing:.04em;color:var(--soft);cursor:pointer;position:relative}
+  nav.tabs button{flex:1;padding:16px 8px;border:none;background:none;font:500 15px/1 inherit;
+    color:var(--soft);cursor:pointer;position:relative}
   nav.tabs button.on{color:var(--plum)}
   nav.tabs button.on::after{content:"";position:absolute;left:18%;right:18%;bottom:0;height:3px;
     border-radius:3px 3px 0 0;background:var(--pink)}
@@ -297,8 +318,8 @@
     .cal .head b{font-size:40px}
     .cal .head{margin:-22px -20px 16px;min-height:280px;background-position:center 30%}
   }
-  .cls{background:var(--paper);border-radius:var(--radius);padding:15px 16px;margin-bottom:11px;
-    display:flex;gap:14px;align-items:center;border:1px solid var(--line)}
+  .cls{background:var(--paper);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;
+    display:flex;gap:14px;align-items:center;box-shadow:var(--lift)}
   .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
     color:var(--plum);min-width:62px}
   .cls .b{flex:1;min-width:0}
@@ -311,18 +332,18 @@
   .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
     background:var(--blush);color:var(--plum);border-radius:999px;padding:3px 9px;margin-left:6px}
 
-  .btn{background:var(--plum);color:var(--on-dark);border:none;border-radius:8px;padding:11px 22px;
-    font:600 14px/1 inherit;letter-spacing:.05em;cursor:pointer;transition:background .18s}
+  .btn{background:var(--plum);color:var(--on-dark);border:none;border-radius:999px;padding:12px 24px;
+    font:600 15px/1.2 inherit;cursor:pointer;transition:background .18s}
   .btn:hover{background:var(--plum-deep)}
   .btn.pink{background:var(--pink)}
   .btn.pink:hover{background:var(--pink-deep)}
-  .btn.ghost{background:transparent;color:var(--plum);border:1px solid var(--line)}
+  .btn.ghost{background:transparent;color:var(--plum);box-shadow:inset 0 0 0 1.5px var(--price-line)}
   .btn[disabled]{opacity:.4;cursor:not-allowed}
 
-  .pkg{background:var(--paper);border-radius:var(--radius);padding:18px;margin-bottom:13px;border:1px solid var(--line)}
-  .pkg.feature{background:var(--blush);border-color:var(--blush-line)}
-  .pkg h3{margin:0 0 2px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:25px;line-height:1.2;color:var(--ink)}
-  .pkg .price{font-family:'Patrick Hand','Plex',cursive;font-size:38px;line-height:1.05;color:var(--plum)}
+  .pkg{background:var(--paper);border-radius:var(--radius);padding:22px;margin-bottom:14px;box-shadow:var(--lift)}
+  .pkg.feature{background:var(--blush)}
+  .pkg h3{margin:0 0 4px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:28px;line-height:1.15;color:var(--ink)}
+  .pkg .price{font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:32px;line-height:1.1;letter-spacing:-.02em;color:var(--plum)}
   .pkg .fee{font-size:12.5px;color:var(--soft);margin-top:2px}
   .pkg ul{margin:10px 0 15px;padding-left:17px;font-size:13.5px;color:var(--soft)}
   .pkg li{margin:3px 0}
@@ -336,13 +357,13 @@
   .myph{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
   .myph button{border:none;padding:0;background:none;cursor:pointer}
   .myph img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:6px;background:var(--blush)}
-  .jrn{margin:8px 0 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper)}
+  .jrn{margin:8px 0 16px;border-radius:12px;background:var(--paper);box-shadow:var(--lift)}
   .jrn summary{padding:10px 12px;cursor:pointer;font-weight:700;color:var(--plum);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .jrn[open] summary{white-space:normal}
   .jrn .in{padding:0 12px 12px}
   .jrn .said{margin:0 0 8px;white-space:pre-wrap}
   .tees{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-  .tee{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .tee{background:var(--paper);box-shadow:var(--lift);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
   .tee img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:var(--blush)}
   .tee .tb{padding:10px;display:flex;flex-direction:column;gap:6px;flex:1}
   .tee .tb .btn{margin-top:auto;text-align:center}
@@ -350,7 +371,7 @@
   dialog{border:none;border-radius:12px;padding:22px;max-width:410px;width:92%;
     background:var(--paper);color:var(--ink);box-shadow:0 24px 60px rgba(23,18,26,.3)}
   dialog::backdrop{background:rgba(23,18,26,.55)}
-  dialog h3{margin:0 0 14px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:26px;line-height:1.2}
+  dialog h3{margin:0 0 14px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:30px;line-height:1.15}
   label{display:block;font-size:12.5px;color:var(--soft);margin:11px 0 4px}
   input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
     font-family:inherit;background:var(--wall);color:var(--ink)}
@@ -359,40 +380,32 @@
   .msg.ok{background:var(--blush);color:var(--plum)}
   .msg.bad{background:#fdeaea;color:#a33}
   [hidden]{display:none!important}
-  /* Promotion: the first thing on the page, and the whole band is one tap. */
-  .promo-band{display:block;text-decoration:none;text-align:center;color:#3e1442;padding:12px 12px 14px;line-height:1.2;
-    background:linear-gradient(100deg,#f2c94c,#d9a521 55%,#c08a12)}
-  .promo-band .pb-k{display:block;white-space:nowrap;font-size:clamp(10px,3vw,13px);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-  .promo-band .pb-big{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:clamp(28px,8vw,44px);line-height:1.02;margin:2px 0 0}
-  .promo-band .pb-sub{display:block;font-size:clamp(13px,4vw,16px);font-weight:700;margin-top:2px}
-  .promo-band .pb-btn{display:inline-block;margin-top:8px;background:#3e1442;color:#f2d98a;border-radius:999px;
-    padding:7px 26px;font-weight:700;font-size:16px;line-height:1.25;box-shadow:0 4px 14px rgba(62,20,66,.25)}
-  #promo{margin-top:22px;padding:18px 14px 16px;background:var(--promo-soft);border:6px solid var(--promo);border-radius:14px;line-height:1.35}
+  #promo{margin-top:28px;padding:26px 18px 20px;background:var(--promo-soft);box-shadow:inset 0 0 0 1.5px var(--promo-line);border-radius:22px;line-height:1.35}
   #promo h2{color:var(--promo-deep);margin-bottom:8px}
   #promo .lead{margin:0 0 14px;font-size:15.5px}
   .grp + .grp{margin-top:10px}
   .grp-h{display:flex;align-items:center;flex-wrap:wrap;gap:2px 10px;width:100%;text-align:left;cursor:pointer;
-    font:inherit;border:none;border-radius:12px;padding:14px 46px 14px 16px;position:relative;
+    font:inherit;border:none;border-radius:14px;padding:15px 46px 15px 18px;position:relative;
     background:var(--promo);color:var(--promo-ink)}
   .grp.past .grp-h{background:var(--promo-ink);color:var(--promo-hi)}
-  .grp-h span{font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:21px;line-height:1.15}
-  .grp-h small{font-size:13px;font-weight:700;opacity:.85}
+  .grp-h span{font-family:'Work Sans','Plex',sans-serif;font-weight:700;font-size:19px;line-height:1.15}
+  .grp-h small{font-size:13px;font-weight:500;opacity:.85}
   .grp-h i{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-style:normal;font-size:22px;font-weight:900}
   .offers{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:10px}
   .offer .oc{display:block;margin-top:8px;font-weight:800;font-size:15px;color:var(--promo-deep)}
   .offer[aria-expanded="true"]{border:3px solid var(--promo);padding:12.5px 12.5px 10.5px;box-shadow:0 4px 14px rgba(217,165,33,.25)}
   .offer{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);cursor:pointer;line-height:1.35;
-    background:var(--paper);border:1.5px solid var(--promo-line);border-radius:12px;padding:14px 14px 12px}
+    background:var(--paper);border:1.5px solid transparent;border-radius:14px;padding:16px 16px 14px;box-shadow:var(--lift)}
   .offer[aria-pressed="true"]{border:3px solid var(--promo);padding:12.5px 12.5px 10.5px;box-shadow:0 4px 14px rgba(217,165,33,.25)}
   .offer .tag{display:inline-block;font-size:15px;font-weight:800;letter-spacing:.02em;
     border-radius:999px;padding:6px 14px;background:var(--promo);color:var(--promo-ink)}
   .offer .tag.past{background:var(--promo-ink);color:var(--promo-hi)}
-  .offer .ot{display:block;margin-top:8px;font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em}
-  .offer .ob{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:28px;line-height:1.05;color:var(--promo-deep);margin:2px 0 4px}
+  .offer .ot{display:block;margin-top:8px;font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+  .offer .ob{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:700;font-size:28px;letter-spacing:-.01em;line-height:1.05;color:var(--promo-deep);margin:2px 0 4px}
   .offer .ob s{font-weight:500;font-size:16px;color:var(--soft);margin-left:6px}
   .offer .od{display:block;font-size:15px;line-height:1.4}
   .calc{margin-top:0;border:2px solid var(--promo);border-radius:12px;line-height:1.35}
-  .calc h3{margin:0 0 4px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:28px;line-height:1.15;letter-spacing:0;text-transform:none;color:var(--promo-deep)}
+  .calc h3{margin:0 0 4px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:30px;line-height:1.15;letter-spacing:0;text-transform:none;color:var(--promo-deep)}
   .calc .q{margin:12px 0 6px;font-size:14px;font-weight:700;color:var(--soft)}
   .calc .opts{display:flex;flex-wrap:wrap;gap:8px}
   .calc .opts button{font:600 16px/1 inherit;font-family:inherit;min-height:46px;padding:10px 16px;border-radius:999px;cursor:pointer;
@@ -423,12 +436,6 @@
 </style>
 </head>
 <body>
-<a class="promo-band" id="promoBand" href="#promo" hidden>
-  <span class="pb-k" data-i18n="bandKicker">Until 11 Nov only · in memory of Sharathji</span>
-  <span class="pb-big" data-i18n="bandBig">Buy 1, get 1 FREE</span>
-  <span class="pb-sub" data-i18n="bandSub">or the Rookie Pack ฿5,900 for new students</span>
-  <span class="pb-btn" data-i18n="bandBtn">Calculate my price →</span>
-</a>
 <header class="hero">
   <div class="langs" role="group" aria-label="Language">
     <button type="button" data-lang="en" lang="en">EN</button>
@@ -437,15 +444,11 @@
     <button type="button" data-lang="ru" lang="ru">RU</button>
   </div>
   <img class="logo" src="/img/aybkk-logo-240.jpg" width="120" height="120" alt="Ashtanga Yoga Center of Bangkok logo">
-  <h1>AYBKK</h1>
-  <p class="full">Ashtanga Yoga Center of Bangkok</p>
-  <p class="sub" data-i18n="tagline">Traditional Ashtanga. Open door.</p>
-  <p class="where">S31 Sukhumvit Hotel <span class="dot">·</span> 8th floor <span class="dot">·</span> Sukhumvit 31</p>
-  <div class="cta">
-    <a class="btn pink" href="#mysore" data-i18n="ctaStart">New? Start here</a>
-    <a class="btn ghost" href="#book" data-i18n="ctaTimetable">See timetable</a>
-  </div>
-  <div><a class="more" href="#compare" data-i18n="cmpBtn">See how it compares →</a> <a class="more" href="#prices" data-i18n="ctaPrices">See prices</a></div>
+  <h1 class="kick">AYBKK <span>· Ashtanga Yoga Bangkok</span></h1>
+  <p class="h12h" id="h12h"></p>
+  <p class="h12s" id="h12s"></p>
+  <div class="cta"><a class="btn pink" href="#promo" id="h12Btn"></a></div>
+  <a class="more" href="#book" data-i18n="ctaTimetable">See timetable</a>
 </header>
 
 <div class="sw">
@@ -643,7 +646,6 @@
 
   const STR = {
     en: {
-      tagline: 'Traditional Ashtanga. Open door.',
       ctaTimetable: 'See timetable', ctaStart: 'New? Start here',
       teacherH: 'Your teacher',
       caption: 'Jamsai, R. Sharath Jois and Boonchu at AYBKK',
@@ -716,7 +718,6 @@
       pay: 'Continue to payment', cancel: 'Cancel',
     },
     th: {
-      tagline: 'อัษฎางคโยคะแบบดั้งเดิม ประตูเปิดต้อนรับทุกคน',
       ctaTimetable: 'ดูตารางเรียน', ctaStart: 'มือใหม่? เริ่มที่นี่',
       teacherH: 'ครูของคุณ',
       caption: 'Jamsai, R. Sharath Jois และ Boonchu ที่ AYBKK',
@@ -789,7 +790,6 @@
       pay: 'ไปชำระเงิน', cancel: 'ยกเลิก',
     },
     zh: {
-      tagline: '传统阿斯汤加。大门向每个人敞开。',
       ctaTimetable: '查看课程表', ctaStart: '新学员？从这里开始',
       teacherH: '你的老师',
       caption: 'Jamsai、R. Sharath Jois 与 Boonchu 在 AYBKK',
@@ -862,7 +862,6 @@
       pay: '继续付款', cancel: '取消',
     },
     ru: {
-      tagline: 'Традиционная аштанга. Двери открыты.',
       ctaTimetable: 'Расписание', ctaStart: 'Новичок? Начните здесь',
       teacherH: 'Ваш учитель',
       caption: 'Jamsai, R. Sharath Jois и Boonchu в AYBKK',
@@ -952,8 +951,7 @@
   // checkout: Duo can be for two people and the returning-student offers need a
   // name check, so the team sends the payment link by hand.
   Object.assign(STR.en, {
-    bandKicker: 'Until 11 Nov only · in memory of Sharathji', bandBig: 'Buy 1, get 1 FREE',
-    bandSub: 'or the Rookie Pack ฿5,900 for new students', bandBtn: 'Calculate my price →',
+    bandBtn: 'Calculate my price →',
     promoH: 'Sharathji promotion, 1 Oct to 11 Nov',
     promoLead: 'Pick an offer, pick your first day, and see exactly what you pay. Buy by 11 Nov, start by 12 Nov.',
     tagNew: 'New students', tagPast: 'Past AYBKK students',
@@ -975,8 +973,7 @@
    
   });
   Object.assign(STR.th, {
-    bandKicker: 'ถึง 11 พ.ย. เท่านั้น · น้อมรำลึก Sharathji', bandBig: 'ซื้อ 1 แถม 1 ฟรี',
-    bandSub: 'หรือ Rookie Pack ฿5,900 สำหรับนักเรียนใหม่', bandBtn: 'คำนวณราคาเรียน →',
+    bandBtn: 'คำนวณราคาเรียน →',
     promoH: 'โปรโมชัน Sharathji 1 ต.ค. ถึง 11 พ.ย.',
     promoLead: 'เลือกโปร เลือกวันเริ่มฝึก แล้วดูว่าต้องจ่ายเท่าไหร่ ซื้อภายใน 11 พ.ย. เริ่มใช้ภายใน 12 พ.ย.',
     tagNew: 'นักเรียนใหม่', tagPast: 'นักเรียนเก่า AYBKK',
@@ -998,8 +995,7 @@
    
   });
   Object.assign(STR.zh, {
-    bandKicker: '仅限11月11日前 · 纪念 Sharathji', bandBig: '买一送一',
-    bandSub: '或新学员 Rookie Pack ฿5,900', bandBtn: '计算我的价格 →',
+    bandBtn: '计算我的价格 →',
     promoH: 'Sharathji 纪念优惠：10月1日至11月11日',
     promoLead: '选择优惠和第一天练习的日期，马上看到要付多少。11月11日前购买，11月12日前开始。',
     tagNew: '新学员', tagPast: 'AYBKK 老学员',
@@ -1021,8 +1017,7 @@
    
   });
   Object.assign(STR.ru, {
-    bandKicker: 'Только до 11 ноября · в память о Шарате', bandBig: 'Купи 1, получи 1 БЕСПЛАТНО',
-    bandSub: 'или Rookie Pack за ฿5,900 для новичков', bandBtn: 'Рассчитать мою цену →',
+    bandBtn: 'Рассчитать мою цену →',
     promoH: 'Акция в честь Шарата, с 1 октября по 11 ноября',
     promoLead: 'Выберите предложение и первый день практики, и сразу увидите, сколько платить. Купить до 11 ноября, начать до 12 ноября.',
     tagNew: 'Новые ученики', tagPast: 'Бывшие ученики AYBKK',
@@ -1061,7 +1056,7 @@
     addEmailH: 'Add your email', addEmailWhy: 'So you can open your profile again on another phone. We email you a one-time link, no password.', addEmailBtn: 'Save my email', addEmailDone: 'Saved. Next time, sign in with this email.',
     checkH: 'My 12-week check · Habit #1', chkWhy: 'Three numbers from your watch or phone, at week 0, 6 and 12. Proof, not promises.', chkStartH: 'Week 0: your starting point', chkDueH: 'Your next check is due', chkHrL: 'Resting heart rate (beats per minute)', chkSleepL: 'Average sleep last week (hours)', chkFeelL: 'How do you feel? (1 = tired, 5 = great)', chkNoteL: 'One line (optional)', chkSave: 'Save my check', chkWeek: 'Week', chkHr: 'Heart rate', chkSleep: 'Sleep', chkFeel: 'Feel', chkChange: (hr, sl) => `Since week 0: heart rate ${hr}, sleep ${sl}`, chkNext: d => `Next check: ${d}`, chkAll: 'All 3 checks done. Look how far you came.',
     fromTeachers: 'From your teachers', workOn: 'Work on',
-    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo. Long-press it to save.', jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Pay online, then send your size and payment slip to LINE @aybkk.', teeBuy: 'Pay now', teeSizes: 'Sizes',
+    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo. Long-press it to save.', h12H: 'Give us 12 weeks.', h12S: 'We’ll add 3 more months. Free, until 11\u00a0Nov.', h12Sp: 'See you tomorrow.', h12Btn: d => `I’m in · ${d} a day`, jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Pay online, then send your size and payment slip to LINE @aybkk.', teeBuy: 'Pay now', teeSizes: 'Sizes',
     teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
     jbio1: 'Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.',
     jbio2: 'The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.',
@@ -1072,7 +1067,7 @@
     addEmailH: 'เพิ่มอีเมลของคุณ', addEmailWhy: 'เพื่อเปิดโปรไฟล์ได้อีกครั้งบนมือถือเครื่องอื่น เราส่งลิงก์ใช้ครั้งเดียวทางอีเมล ไม่ต้องมีรหัสผ่าน', addEmailBtn: 'บันทึกอีเมล', addEmailDone: 'บันทึกแล้ว ครั้งหน้าเข้าด้วยอีเมลนี้',
     checkH: 'เช็กผล 12 สัปดาห์ของฉัน · นิสัยที่ 1', chkWhy: 'ตัวเลข 3 ค่าจากนาฬิกาหรือมือถือ สัปดาห์ที่ 0, 6 และ 12 หลักฐานจริง ไม่ใช่คำสัญญา', chkStartH: 'สัปดาห์ที่ 0: จุดเริ่มต้นของคุณ', chkDueH: 'ถึงเวลาเช็กครั้งต่อไปแล้ว', chkHrL: 'ชีพจรขณะพัก (ครั้งต่อนาที)', chkSleepL: 'นอนเฉลี่ยสัปดาห์ที่แล้ว (ชั่วโมง)', chkFeelL: 'รู้สึกอย่างไร (1 = เหนื่อย, 5 = ดีมาก)', chkNoteL: 'หนึ่งบรรทัด (ไม่บังคับ)', chkSave: 'บันทึกผล', chkWeek: 'สัปดาห์', chkHr: 'ชีพจร', chkSleep: 'นอน', chkFeel: 'ความรู้สึก', chkChange: (hr, sl) => `ตั้งแต่สัปดาห์ที่ 0: ชีพจร ${hr} การนอน ${sl}`, chkNext: d => `เช็กครั้งต่อไป: ${d}`, chkAll: 'ครบ 3 ครั้งแล้ว ดูสิว่าคุณมาไกลแค่ไหน',
     fromTeachers: 'จากครูของคุณ', workOn: 'ฝึกต่อ',
-    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ กดค้างที่รูปเพื่อบันทึก', jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'ชำระเงินออนไลน์ แล้วส่งไซซ์และสลิปทาง LINE @aybkk', teeBuy: 'ชำระเงิน', teeSizes: 'ไซซ์',
+    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ กดค้างที่รูปเพื่อบันทึก', h12H: 'ให้เวลาเรา 12 สัปดาห์', h12S: 'เราแถมให้อีก 3 เดือน ฟรี ถึง 11 พ.ย.', h12Sp: 'เจอกันพรุ่งนี้', h12Btn: d => `เอาเลย · วันละ ${d}`, jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'ชำระเงินออนไลน์ แล้วส่งไซซ์และสลิปทาง LINE @aybkk', teeBuy: 'ชำระเงิน', teeSizes: 'ไซซ์',
     teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
     jbio1: 'Jamsai เคยเป็นที่ปรึกษาด้านภาษี เธอเริ่มฝึกอัษฎางคโยคะในปี 2015 ระหว่างรับเคมีบำบัดรักษามะเร็งเต้านม โดยมี Boonchu เป็นครู',
     jbio2: 'การฝึกทำให้เธอกลับมาแข็งแรง เธอจึงลาออกจากงานไปเรียนกับ Sharath Jois ที่มายซอร์ และได้รับ Authorization Level 2 จากท่านในฤดูกาล 2018 ถึง 2019',
@@ -1083,7 +1078,7 @@
     addEmailH: '添加你的邮箱', addEmailWhy: '这样你可以在另一部手机上再次打开个人主页。我们会发一次性链接到邮箱，不需要密码。', addEmailBtn: '保存邮箱', addEmailDone: '已保存。下次用这个邮箱登录。',
     checkH: '我的12周检查 · 习惯1', chkWhy: '手表或手机上的3个数字，第0、6、12周各记录一次。是证据，不是承诺。', chkStartH: '第0周：你的起点', chkDueH: '该做下一次检查了', chkHrL: '静息心率（次/分钟）', chkSleepL: '上周平均睡眠（小时）', chkFeelL: '感觉如何？（1 = 很累，5 = 很好）', chkNoteL: '一句话（可选）', chkSave: '保存', chkWeek: '周', chkHr: '心率', chkSleep: '睡眠', chkFeel: '感觉', chkChange: (hr, sl) => `从第0周起：心率 ${hr}，睡眠 ${sl}`, chkNext: d => `下次检查：${d}`, chkAll: '3次检查都完成了。看看你走了多远。',
     fromTeachers: '老师给你的话', workOn: '要练习的',
-    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。长按即可保存。', jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '在线付款，然后在 LINE @aybkk 发送尺码和付款截图。', teeBuy: '付款', teeSizes: '尺码',
+    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。长按即可保存。', h12H: '给我们12周。', h12S: '我们再送你3个月，免费，到11月11日。', h12Sp: '明天见。', h12Btn: d => `我要开始 · 每天${d}`, jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '在线付款，然后在 LINE @aybkk 发送尺码和付款截图。', teeBuy: '付款', teeSizes: '尺码',
     teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
     jbio1: 'Jamsai 曾是一名税务顾问。2015年她在接受乳腺癌化疗期间开始练习阿斯汤加，老师是 Boonchu。',
     jbio2: '练习让她重新找回力量，于是她辞去工作，去迈索尔跟随 Sharath Jois 学习，并在2018至2019季获得他授予的 Level 2 授权。',
@@ -1094,7 +1089,7 @@
     addEmailH: 'Добавьте email', addEmailWhy: 'Чтобы открыть профиль на другом телефоне. Мы пришлём одноразовую ссылку, без пароля.', addEmailBtn: 'Сохранить email', addEmailDone: 'Сохранено. В следующий раз входите с этим email.',
     checkH: 'Моя 12-недельная проверка · Привычка №1', chkWhy: 'Три числа с часов или телефона, на 0, 6 и 12 неделе. Доказательства, а не обещания.', chkStartH: 'Неделя 0: ваша отправная точка', chkDueH: 'Пора следующей проверки', chkHrL: 'Пульс в покое (уд/мин)', chkSleepL: 'Средний сон за неделю (часы)', chkFeelL: 'Как вы себя чувствуете? (1 = устал, 5 = отлично)', chkNoteL: 'Одна строка (по желанию)', chkSave: 'Сохранить', chkWeek: 'Неделя', chkHr: 'Пульс', chkSleep: 'Сон', chkFeel: 'Самочувствие', chkChange: (hr, sl) => `С недели 0: пульс ${hr}, сон ${sl}`, chkNext: d => `Следующая проверка: ${d}`, chkAll: 'Все 3 проверки готовы. Посмотрите, какой путь вы прошли.',
     fromTeachers: 'От ваших учителей', workOn: 'Над чем работать',
-    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы. Нажмите и удерживайте, чтобы сохранить.', jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Оплатите онлайн, затем пришлите размер и чек в LINE @aybkk.', teeBuy: 'Оплатить', teeSizes: 'Размеры',
+    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы. Нажмите и удерживайте, чтобы сохранить.', h12H: 'Дайте нам 12 недель.', h12S: 'Мы добавим ещё 3 месяца. Бесплатно, до 11\u00a0ноября.', h12Sp: 'До завтра.', h12Btn: d => `Я в деле · ${d} в день`, jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Оплатите онлайн, затем пришлите размер и чек в LINE @aybkk.', teeBuy: 'Оплатить', teeSizes: 'Размеры',
     teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
     jbio1: 'Jamsai работала налоговым консультантом. Она начала заниматься аштангой в 2015 году, во время химиотерапии от рака груди, и её учителем был Boonchu.',
     jbio2: 'Практика вернула ей силы, и она ушла с работы, чтобы учиться у Шарата Джойса в Майсуре. В сезоне 2018–2019 она получила от него авторизацию Level 2.',
@@ -1189,9 +1184,31 @@
       <p class="copied" id="wcMsg" hidden>${esc(t('wcCopied'))}</p>`;
   }
 
+  // Hero offer: 3 months unlimited. During the promotion the Duo doubles it for
+  // yourself (180 days); after it, the same pass at its own 90 days. Per day is
+  // the VAT-inclusive total over calendar days, with the total shown beside it.
+  function renderHero12() {
+    const live = promoLive(), price = MONTHLY[2][1];
+    const total = price + Math.round(price * 0.07), days = live ? MONTHLY[2][0] * 2 : MONTHLY[2][0];
+    $('#h12h').textContent = t('h12H');
+    $('#h12s').textContent = t(live ? 'h12S' : 'h12Sp');
+    $('#h12Btn').textContent = t('h12Btn', baht(Math.round(total / days)));
+  }
+  $('#h12Btn').addEventListener('click', e => {
+    e.preventDefault();
+    if (promoLive()) {
+      P.group = 'new'; P.offer = 'duo'; P.pkg = 2; P.who = 'me';
+      renderPromo();
+      $('#calc').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      tab('packages');
+      $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
   function renderPromo() {
+    renderHero12();
     const live = promoLive();
-    $('#promoBand').hidden = !live;
     $('#promo').hidden = !live;
     document.querySelectorAll('.campWrap').forEach(el => { el.hidden = !live; });
     if (!live) return;
@@ -1258,7 +1275,7 @@
     if (b.dataset.group && P.group) $(`[data-group="${P.group}"]`).scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   // The band and the price-list button open the Duo calculator straight away.
-  document.querySelectorAll('a[href="#promo"]').forEach(a => a.addEventListener('click', () => {
+  document.querySelectorAll('a[href="#promo"]:not(#h12Btn)').forEach(a => a.addEventListener('click', () => {
     P.group = 'new'; P.offer = 'duo'; P.pkg = 0;
     renderPromo();
   }));
