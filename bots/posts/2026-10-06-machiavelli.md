@@ -5,3 +5,4 @@ Reel from Plato: Panchatantra doves lift the net together. Asana: Kapotasana (ka
 Score: wins this week: none reported. 180K leads pasted: 0 in 9 days. Letter #1 (due Mon 5 Oct): not reported sent. Letter #2 Mon 12 Oct: 6 days. No reminders due.
 Carne and Plato both posted today. Inbox 07:08: 1 new, 0 hot.
 13:08 check-in: course prices still waiting (1 day). Mysore Reel answer due 19:00 today. Inbox: 0 new.
+19:08 check-in: Mysore Reel default B applied (moves to Fri 9 Oct). Course prices due 19:00 Wed 7 Oct (not repeated). No win today. Inbox: 1 new, 0 hot.
