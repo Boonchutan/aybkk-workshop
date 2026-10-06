@@ -336,6 +336,16 @@
   .myph{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
   .myph button{border:none;padding:0;background:none;cursor:pointer}
   .myph img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:6px;background:var(--blush)}
+  .jrn{margin:8px 0 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper)}
+  .jrn summary{padding:10px 12px;cursor:pointer;font-weight:700;color:var(--plum);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .jrn[open] summary{white-space:normal}
+  .jrn .in{padding:0 12px 12px}
+  .jrn textarea{width:100%;min-height:84px;box-sizing:border-box;font:inherit;padding:8px;border:1.5px solid var(--line);border-radius:8px}
+  .tees{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .tee{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .tee img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:var(--blush)}
+  .tee .tb{padding:10px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .tee .tb .btn{margin-top:auto;text-align:center}
 
   dialog{border:none;border-radius:12px;padding:22px;max-width:410px;width:92%;
     background:var(--paper);color:var(--ink);box-shadow:0 24px 60px rgba(23,18,26,.3)}
@@ -581,6 +591,12 @@
     <p class="fair" data-i18n="fair">One price for everyone. Clear and simple.</p>
     <p class="fine"><span data-i18n="fine">Prices in Thai baht. Buy online in the Packages tab below, or at the shala. Questions:</span>
       <a href="https://line.me/R/ti/p/@aybkk" target="_blank" rel="noopener">LINE @aybkk</a></p>
+  </section>
+
+  <section id="tees" hidden>
+    <h2 data-i18n="teeH">AYBKK tees</h2>
+    <p class="lead" data-i18n="teeLead">Pay online, then send your size and payment slip to LINE @aybkk.</p>
+    <div class="tees" id="teeList"></div>
   </section>
 
   <section id="find">
@@ -1045,7 +1061,7 @@
     addEmailH: 'Add your email', addEmailWhy: 'So you can open your profile again on another phone. We email you a one-time link, no password.', addEmailBtn: 'Save my email', addEmailDone: 'Saved. Next time, sign in with this email.',
     checkH: 'My 12-week check · Habit #1', chkWhy: 'Three numbers from your watch or phone, at week 0, 6 and 12. Proof, not promises.', chkStartH: 'Week 0: your starting point', chkDueH: 'Your next check is due', chkHrL: 'Resting heart rate (beats per minute)', chkSleepL: 'Average sleep last week (hours)', chkFeelL: 'How do you feel? (1 = tired, 5 = great)', chkNoteL: 'One line (optional)', chkSave: 'Save my check', chkWeek: 'Week', chkHr: 'Heart rate', chkSleep: 'Sleep', chkFeel: 'Feel', chkChange: (hr, sl) => `Since week 0: heart rate ${hr}, sleep ${sl}`, chkNext: d => `Next check: ${d}`, chkAll: 'All 3 checks done. Look how far you came.',
     fromTeachers: 'From your teachers', workOn: 'Work on',
-    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo. Long-press it to save.',
+    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo. Long-press it to save.', jrnAsk: 'How was this practice?', jrnMine: 'My note', jrnPh: 'What did you feel today? What changed? One line is enough.', jrnWho: 'Only you and your teachers can read this.', jrnSave: 'Save', jrnSaved: 'Saved ✓', teeH: 'AYBKK tees', teeLead: 'Pay online, then send your size and payment slip to LINE @aybkk.', teeBuy: 'Pay now', teeSizes: 'Sizes',
     teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
     jbio1: 'Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.',
     jbio2: 'The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.',
@@ -1056,7 +1072,7 @@
     addEmailH: 'เพิ่มอีเมลของคุณ', addEmailWhy: 'เพื่อเปิดโปรไฟล์ได้อีกครั้งบนมือถือเครื่องอื่น เราส่งลิงก์ใช้ครั้งเดียวทางอีเมล ไม่ต้องมีรหัสผ่าน', addEmailBtn: 'บันทึกอีเมล', addEmailDone: 'บันทึกแล้ว ครั้งหน้าเข้าด้วยอีเมลนี้',
     checkH: 'เช็กผล 12 สัปดาห์ของฉัน · นิสัยที่ 1', chkWhy: 'ตัวเลข 3 ค่าจากนาฬิกาหรือมือถือ สัปดาห์ที่ 0, 6 และ 12 หลักฐานจริง ไม่ใช่คำสัญญา', chkStartH: 'สัปดาห์ที่ 0: จุดเริ่มต้นของคุณ', chkDueH: 'ถึงเวลาเช็กครั้งต่อไปแล้ว', chkHrL: 'ชีพจรขณะพัก (ครั้งต่อนาที)', chkSleepL: 'นอนเฉลี่ยสัปดาห์ที่แล้ว (ชั่วโมง)', chkFeelL: 'รู้สึกอย่างไร (1 = เหนื่อย, 5 = ดีมาก)', chkNoteL: 'หนึ่งบรรทัด (ไม่บังคับ)', chkSave: 'บันทึกผล', chkWeek: 'สัปดาห์', chkHr: 'ชีพจร', chkSleep: 'นอน', chkFeel: 'ความรู้สึก', chkChange: (hr, sl) => `ตั้งแต่สัปดาห์ที่ 0: ชีพจร ${hr} การนอน ${sl}`, chkNext: d => `เช็กครั้งต่อไป: ${d}`, chkAll: 'ครบ 3 ครั้งแล้ว ดูสิว่าคุณมาไกลแค่ไหน',
     fromTeachers: 'จากครูของคุณ', workOn: 'ฝึกต่อ',
-    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ กดค้างที่รูปเพื่อบันทึก',
+    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ กดค้างที่รูปเพื่อบันทึก', jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnMine: 'บันทึกของฉัน', jrnPh: 'วันนี้รู้สึกอย่างไร มีอะไรเปลี่ยนไปบ้าง เขียนบรรทัดเดียวก็พอ', jrnWho: 'เห็นได้เฉพาะคุณและครูของคุณ', jrnSave: 'บันทึก', jrnSaved: 'บันทึกแล้ว ✓', teeH: 'เสื้อ AYBKK', teeLead: 'ชำระเงินออนไลน์ แล้วส่งไซซ์และสลิปทาง LINE @aybkk', teeBuy: 'ชำระเงิน', teeSizes: 'ไซซ์',
     teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
     jbio1: 'Jamsai เคยเป็นที่ปรึกษาด้านภาษี เธอเริ่มฝึกอัษฎางคโยคะในปี 2015 ระหว่างรับเคมีบำบัดรักษามะเร็งเต้านม โดยมี Boonchu เป็นครู',
     jbio2: 'การฝึกทำให้เธอกลับมาแข็งแรง เธอจึงลาออกจากงานไปเรียนกับ Sharath Jois ที่มายซอร์ และได้รับ Authorization Level 2 จากท่านในฤดูกาล 2018 ถึง 2019',
@@ -1067,7 +1083,7 @@
     addEmailH: '添加你的邮箱', addEmailWhy: '这样你可以在另一部手机上再次打开个人主页。我们会发一次性链接到邮箱，不需要密码。', addEmailBtn: '保存邮箱', addEmailDone: '已保存。下次用这个邮箱登录。',
     checkH: '我的12周检查 · 习惯1', chkWhy: '手表或手机上的3个数字，第0、6、12周各记录一次。是证据，不是承诺。', chkStartH: '第0周：你的起点', chkDueH: '该做下一次检查了', chkHrL: '静息心率（次/分钟）', chkSleepL: '上周平均睡眠（小时）', chkFeelL: '感觉如何？（1 = 很累，5 = 很好）', chkNoteL: '一句话（可选）', chkSave: '保存', chkWeek: '周', chkHr: '心率', chkSleep: '睡眠', chkFeel: '感觉', chkChange: (hr, sl) => `从第0周起：心率 ${hr}，睡眠 ${sl}`, chkNext: d => `下次检查：${d}`, chkAll: '3次检查都完成了。看看你走了多远。',
     fromTeachers: '老师给你的话', workOn: '要练习的',
-    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。长按即可保存。',
+    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。长按即可保存。', jrnAsk: '今天的练习怎么样？', jrnMine: '我的笔记', jrnPh: '今天感觉如何？有什么变化？写一句就够了。', jrnWho: '只有你和你的老师能看到。', jrnSave: '保存', jrnSaved: '已保存 ✓', teeH: 'AYBKK T恤', teeLead: '在线付款，然后在 LINE @aybkk 发送尺码和付款截图。', teeBuy: '付款', teeSizes: '尺码',
     teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
     jbio1: 'Jamsai 曾是一名税务顾问。2015年她在接受乳腺癌化疗期间开始练习阿斯汤加，老师是 Boonchu。',
     jbio2: '练习让她重新找回力量，于是她辞去工作，去迈索尔跟随 Sharath Jois 学习，并在2018至2019季获得他授予的 Level 2 授权。',
@@ -1078,7 +1094,7 @@
     addEmailH: 'Добавьте email', addEmailWhy: 'Чтобы открыть профиль на другом телефоне. Мы пришлём одноразовую ссылку, без пароля.', addEmailBtn: 'Сохранить email', addEmailDone: 'Сохранено. В следующий раз входите с этим email.',
     checkH: 'Моя 12-недельная проверка · Привычка №1', chkWhy: 'Три числа с часов или телефона, на 0, 6 и 12 неделе. Доказательства, а не обещания.', chkStartH: 'Неделя 0: ваша отправная точка', chkDueH: 'Пора следующей проверки', chkHrL: 'Пульс в покое (уд/мин)', chkSleepL: 'Средний сон за неделю (часы)', chkFeelL: 'Как вы себя чувствуете? (1 = устал, 5 = отлично)', chkNoteL: 'Одна строка (по желанию)', chkSave: 'Сохранить', chkWeek: 'Неделя', chkHr: 'Пульс', chkSleep: 'Сон', chkFeel: 'Самочувствие', chkChange: (hr, sl) => `С недели 0: пульс ${hr}, сон ${sl}`, chkNext: d => `Следующая проверка: ${d}`, chkAll: 'Все 3 проверки готовы. Посмотрите, какой путь вы прошли.',
     fromTeachers: 'От ваших учителей', workOn: 'Над чем работать',
-    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы. Нажмите и удерживайте, чтобы сохранить.',
+    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы. Нажмите и удерживайте, чтобы сохранить.', jrnAsk: 'Как прошла практика?', jrnMine: 'Моя заметка', jrnPh: 'Что вы почувствовали сегодня? Что изменилось? Достаточно одной строки.', jrnWho: 'Это видите только вы и ваши учителя.', jrnSave: 'Сохранить', jrnSaved: 'Сохранено ✓', teeH: 'Футболки AYBKK', teeLead: 'Оплатите онлайн, затем пришлите размер и чек в LINE @aybkk.', teeBuy: 'Оплатить', teeSizes: 'Размеры',
     teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
     jbio1: 'Jamsai работала налоговым консультантом. Она начала заниматься аштангой в 2015 году, во время химиотерапии от рака груди, и её учителем был Boonchu.',
     jbio2: 'Практика вернула ей силы, и она ушла с работы, чтобы учиться у Шарата Джойса в Майсуре. В сезоне 2018–2019 она получила от него авторизацию Level 2.',
@@ -1263,6 +1279,7 @@
     document.querySelectorAll('.readmore').forEach(b =>
       { b.textContent = t(b.parentElement.classList.contains('open') ? 'readLess' : 'readMore'); });
     renderPromo();
+    renderTees();
   }
   document.querySelectorAll('.langs button').forEach(b => b.addEventListener('click', () => {
     LANG = b.dataset.lang;
@@ -1550,10 +1567,49 @@
       box.innerHTML = days.length ? days.map(day => `
         <p class="note" style="margin:10px 0 4px;font-weight:700">${esc(fmtDay(day.date + 'T12:00:00+07:00'))}</p>
         <div class="myph">${day.items.map(i =>
-          `<button type="button" data-full="${esc(i.full)}"><img loading="lazy" alt="" src="${esc(i.thumb)}"></button>`).join('')}</div>`).join('')
+          `<button type="button" data-full="${esc(i.full)}"><img loading="lazy" alt="" src="${esc(i.thumb)}"></button>`).join('')}</div>
+        ${journalBox(day.date, day.journal || '')}`).join('')
         : `<p class="note">${esc(t('noPhotos'))}</p>`;
     } catch (_) { box.innerHTML = `<p class="note">${esc(t('noPhotos'))}</p>`; }
   }
+  // The student's own words under the day's photos: seeing the photo is the moment they want to write.
+  function journalBox(date, text) {
+    return `<details class="jrn" data-date="${esc(date)}">
+      <summary>✍️ ${esc(text ? t('jrnMine') + ': ' + text : t('jrnAsk'))}</summary>
+      <div class="in"><textarea maxlength="2000" placeholder="${esc(t('jrnPh'))}">${esc(text)}</textarea>
+        <p class="note" style="margin:6px 0">${esc(t('jrnWho'))}</p>
+        <button type="button" class="btn pink jsave">${esc(t('jrnSave'))}</button> <span class="jmsg note"></span></div>
+    </details>`;
+  }
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('.jrn .jsave'); if (!b) return;
+    const box = b.closest('.jrn'), msg = box.querySelector('.jmsg');
+    const body = box.querySelector('textarea').value;
+    b.disabled = true;
+    try {
+      const r = await fetch('/api/bkk/me/' + encodeURIComponent(myCode()) + '/journal', { method: 'POST',
+        headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: box.dataset.date, body }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || 'Could not save.');
+      box.querySelector('summary').textContent = '✍️ ' + (j.body ? t('jrnMine') + ': ' + j.body : t('jrnAsk'));
+      msg.textContent = t('jrnSaved'); msg.style.color = '';
+    } catch (err) { msg.textContent = err.message; msg.style.color = '#c62828'; }
+    b.disabled = false;
+  });
+
+  async function renderTees() {
+    try {
+      const tees = (await fetch('/api/bkk/tees').then(r => r.json())).tees || [];
+      if (!tees.length) return;
+      $('#teeList').innerHTML = tees.map(x => `<div class="tee">
+        ${x.photo ? `<img loading="lazy" alt="${esc(x.name)}" src="${esc(x.photo)}">` : ''}
+        <div class="tb"><b>${esc(x.name)}</b><span><b>฿${Number(x.priceThb).toLocaleString()}</b></span>
+          ${x.sizes ? `<span class="note">${esc(t('teeSizes'))}: ${esc(x.sizes)}</span>` : ''}
+          <a class="btn pink" href="${esc(x.payLink)}" target="_blank" rel="noopener">${esc(t('teeBuy'))}</a></div></div>`).join('');
+      $('#tees').hidden = false;
+    } catch (_) {}
+  }
+
   document.addEventListener('click', e => {
     const b = e.target.closest('.myph button'); if (!b) return;
     $('#dlgIn').innerHTML = `<img src="${esc(b.dataset.full)}" alt="" style="display:block;width:100%;border-radius:8px">

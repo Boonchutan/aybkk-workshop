@@ -158,6 +158,8 @@
       qPkgPrice: 'Price in ฿, before the online fee', qPkgDays: 'Valid for how many days after the first class?',
       qPkgClasses: 'How many classes?',
       linkNames: { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', line: 'LINE', wechat: 'WeChat', facebook: 'Facebook', shop: 'Shop' },
+      teesTitle: 'Tee shop on aybkk.net', teesHelp: 'Make a PaySolutions payment link for each tee, paste it here with the name and price. Students see the tees on aybkk.net and tap Pay now. Untick "On sale" to hide one.',
+      teeName: 'Name', teePrice: 'Price ฿', teeLink: 'PaySolutions link', teePhoto: 'Photo link (https://… or /img/tees/1.jpg)', teeSizes: 'Sizes (e.g. S M L XL)', teeOn: 'On sale', teeAdd: 'Add tee', teeSaved: 'Saved',
       words: {},
     },
     th: {
@@ -236,6 +238,8 @@
       qPkgPrice: 'ราคา (฿) ก่อนบวกค่าธรรมเนียมออนไลน์', qPkgDays: 'ใช้ได้กี่วันหลังคลาสแรก?',
       qPkgClasses: 'กี่ครั้ง?',
       linkNames: { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', line: 'LINE', wechat: 'WeChat', facebook: 'Facebook', shop: 'ร้านค้า' },
+      teesTitle: 'ร้านเสื้อบน aybkk.net', teesHelp: 'สร้างลิงก์ชำระเงิน PaySolutions ของเสื้อแต่ละตัว แล้ววางที่นี่พร้อมชื่อและราคา นักเรียนจะเห็นเสื้อบน aybkk.net และกด ชำระเงิน เอาเครื่องหมายออกจาก "วางขาย" เพื่อซ่อน',
+      teeName: 'ชื่อ', teePrice: 'ราคา ฿', teeLink: 'ลิงก์ PaySolutions', teePhoto: 'ลิงก์รูป (https://… หรือ /img/tees/1.jpg)', teeSizes: 'ไซซ์ (เช่น S M L XL)', teeOn: 'วางขาย', teeAdd: 'เพิ่มเสื้อ', teeSaved: 'บันทึกแล้ว',
       words: {
         cash: 'เงินสด', transfer: 'โอนเงิน', card: 'รูดบัตร', online: 'ออนไลน์',
         paid: 'ชำระแล้ว', pending: 'รอชำระ', mismatch: 'ยอดไม่ตรง', failed: 'ไม่สำเร็จ',
@@ -602,6 +606,8 @@
       .then(d => d.links || {}).catch(() => ({}));
     TEAM = await api('/api/bkk/admin/teachers').then(r => r.json())
       .then(d => d.teachers || []).catch(() => []);
+    TEES = await api('/api/bkk/admin/tees').then(r => r.json())
+      .then(d => d.tees || []).catch(() => []);
     $('#view').innerHTML = `<div class="box">
       <b>${T('feeTitle')}</b>
       <p class="muted">${T('feeHelp')}</p>
@@ -619,6 +625,10 @@
       </tr>`).join('')}</table>
       <p><button class="btn pink" onclick="newProduct()">${T('addPkg')}</button></p>
       </div>
+      <div class="box"><b>${T('teesTitle')}</b>
+      <p class="muted">${T('teesHelp')}</p>
+      ${[...TEES, {}].map(teeForm).join('')}
+      </div>
       <div class="box"><b>${T('links')}</b>
       <p class="muted">${T('linksHelp')}</p>
       ${['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop']
@@ -635,6 +645,24 @@
       <p><button class="btn pink" onclick="addTeam()">${T('addTeam')}</button></p>
       </div>`;
   }
+  let TEES = [];
+  const teeForm = x => `<div class="teeRow" data-id="${x.id || ''}" style="border-top:1px solid #eee;padding:10px 0">
+      ${x.photo ? `<img src="${esc(x.photo)}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:6px;float:right">` : ''}
+      <input data-k="name" placeholder="${T('teeName')}" value="${esc(x.name || '')}" style="width:60%">
+      <input data-k="priceThb" type="number" min="1" placeholder="${T('teePrice')}" value="${x.priceThb || ''}" style="width:30%">
+      <input data-k="payLink" placeholder="${T('teeLink')}" value="${esc(x.payLink || '')}" style="width:100%;margin-top:6px">
+      <input data-k="photo" placeholder="${T('teePhoto')}" value="${esc(x.photo || '')}" style="width:100%;margin-top:6px">
+      <input data-k="sizes" placeholder="${T('teeSizes')}" value="${esc(x.sizes || '')}" style="width:100%;margin-top:6px">
+      <p style="margin-top:6px"><label style="display:inline"><input data-k="active" type="checkbox" ${x.id && !x.active ? '' : 'checked'} style="width:auto"> ${T('teeOn')}</label>
+      <button class="btn ${x.id ? '' : 'pink'}" onclick="saveTee(this)">${x.id ? T('save') : T('teeAdd')}</button></p></div>`;
+  window.saveTee = async (btn) => {
+    const row = btn.closest('.teeRow'), v = k => row.querySelector(`[data-k="${k}"]`);
+    const body = { id: row.dataset.id ? Number(row.dataset.id) : undefined, name: v('name').value,
+      priceThb: Number(v('priceThb').value), payLink: v('payLink').value, photo: v('photo').value,
+      sizes: v('sizes').value, active: v('active').checked };
+    const j = await shout(await api('/api/bkk/admin/tees', { method: 'POST', body: JSON.stringify(body) }));
+    if (j) { alert(T('teeSaved')); renderSettings(); }
+  };
   let TEAM = [];
   window.addTeam = async () => {
     const name = ask(T('qTeamName')); if (!name) return;

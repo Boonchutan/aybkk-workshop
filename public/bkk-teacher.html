@@ -135,6 +135,12 @@
         <p><button class="btn pink" onclick="save('${esc(d.member.code)}')">Save</button></p>
       </div>
 
+      ${(d.journal || []).length ? `<div class="box"><b>In their own words</b>
+        <p class="muted">What they wrote under their class photos.</p>
+        ${d.journal.map(j => `<div class="note"><span class="muted">${dateOnly(j.day)}</span>
+          <div style="margin-top:5px;white-space:pre-wrap">${esc(j.body)}</div></div>`).join('')}
+      </div>` : ''}
+
       <div class="box"><b>Practice history</b>
         ${(d.recent || []).length ? (d.recent || []).map(b => `<div class="note">
             ${dateOnly(b.class_date)} · ${esc(b.title)}
