@@ -462,17 +462,14 @@ const ok = (name, cond, extra = '') => {
      JSON.stringify(annPics));
   ok('the photo link is a signed private one', /^signed:\/\/authenticated\//.test(annPics[0].items[0].thumb));
   ok('a student who is not in the photo sees nothing', catPics.length === 0);
-  ok('a journal needs a real date', (await post(`/api/bkk/me/${ann.code}/journal`, { date: 'today', body: 'x' })).status === 400);
-  ok('a student writes under the day of their photo',
-     (await post(`/api/bkk/me/${ann.code}/journal`, { date: '2026-10-03', body: '  Hips opened today  ' })).body.body === 'Hips opened today');
-  await post(`/api/bkk/me/${ann.code}/journal`, { date: '2026-10-03', body: 'Hips opened. Slept well.' });
-  const annDay = ((await J(`/api/bkk/me/${ann.code}/photos`)).body.days || [])[0];
-  ok('saving again updates the same day, shown with the photos', annDay && annDay.journal === 'Hips opened. Slept well.', JSON.stringify(annDay));
-  const annT = (await J(`/api/bkk/teacher/student/${ann.code}`, { headers: PKEY })).body;
-  ok('teachers read it on the student profile', annT.journal.length === 1 && annT.journal[0].day === '2026-10-03');
-  await post(`/api/bkk/me/${ann.code}/journal`, { date: '2026-10-03', body: '   ' });
-  ok('an empty box deletes it', ((await J(`/api/bkk/me/${ann.code}/photos`)).body.days || [])[0].journal === '');
-  ok('an unknown member cannot write', (await post('/api/bkk/me/NOPE/journal', { date: '2026-10-03', body: 'x' })).status === 404);
+  const annMe = (await J(`/api/bkk/me/${ann.code}`)).body.member;
+  ok('a student gets a workshop-journal id that is not their member code',
+     /^bkk-[\w-]{12}$/.test(annMe.journalId) && !annMe.journalId.includes(ann.code), annMe.journalId);
+  ok('the id never changes, and the teacher sees the same one',
+     (await J(`/api/bkk/me/${ann.code}`)).body.member.journalId === annMe.journalId &&
+     (await J(`/api/bkk/teacher/student/${ann.code}`, { headers: PKEY })).body.member.journalId === annMe.journalId);
+  ok('another student gets their own',
+     (await J(`/api/bkk/me/${cat.code}`)).body.member.journalId !== annMe.journalId);
   const day = (await J('/api/bkk/teacher/photos?date=2026-10-03', { headers: PKEY })).body.photos;
   ok("the teacher's day view lists the photo", day.length === 1);
   await post(`/api/bkk/teacher/photos/${up.body.photo.id}/tags`, { memberCodes: [cat.code] }, PKEY);

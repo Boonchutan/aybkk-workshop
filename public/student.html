@@ -1340,6 +1340,13 @@ const isHuizhou = workshopLocation === 'huizhou';
 const isRussian = workshopLocation === 'russia';
 const isGuangzhou = workshopLocation === 'guangzhou';
 const studentPhoto = params.get('photo') || null; // photo URL for share card
+// ?date=YYYY-MM-DD writes the entry for that class day (Bangkok profile, under the
+// day's photos). Never a future day; anything else is today.
+function entryDate() {
+  const today = new Date().toISOString().split('T')[0];
+  const d = params.get('date') || '';
+  return /^\d{4}-\d{2}-\d{2}$/.test(d) && d <= today ? d : today;
+}
 if (params.has('id')) {
   studentId = params.get('id');
   if (params.has('name')) studentName = decodeURIComponent(params.get('name'));
@@ -1554,6 +1561,8 @@ async function init() {
   
   // Update share text
   window._wsTitleYear = wsTitleYear;
+  // Opened for one class day (Bangkok profile): go straight to that day's questions.
+  if (params.has('date') && studentId && studentName) startFromWelcome();
 }
 
 async function loadFromBoonchu() {
@@ -2089,8 +2098,9 @@ async function doSubmit() {
         difficultToday,
         lastAsanaNote: document.getElementById('lastAsanaNote').value,
         practiceNotes: window._practiceNotes,
-        sessionDate: new Date().toISOString().split('T')[0],
+        sessionDate: entryDate(),
         location: workshopLocation,
+        language: currentLang,
         platform: getPlatform()
       })
     });

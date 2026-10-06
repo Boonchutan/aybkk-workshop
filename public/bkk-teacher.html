@@ -135,11 +135,11 @@
         <p><button class="btn pink" onclick="save('${esc(d.member.code)}')">Save</button></p>
       </div>
 
-      ${(d.journal || []).length ? `<div class="box"><b>In their own words</b>
-        <p class="muted">What they wrote under their class photos.</p>
-        ${d.journal.map(j => `<div class="note"><span class="muted">${dateOnly(j.day)}</span>
-          <div style="margin-top:5px;white-space:pre-wrap">${esc(j.body)}</div></div>`).join('')}
-      </div>` : ''}
+      <div class="box" id="jrnBox" hidden><b>In their own words</b>
+        <p class="muted">Their practice journal, the same one the China workshops use.
+          <a href="/my-journal.html?id=${encodeURIComponent(d.member.journalId || '')}" target="_blank" rel="noopener">Open full journal</a></p>
+        <div id="jrnList"></div>
+      </div>
 
       <div class="box"><b>Practice history</b>
         ${(d.recent || []).length ? (d.recent || []).map(b => `<div class="note">
@@ -156,7 +156,25 @@
             ${n.body ? `<div style="margin-top:5px">${esc(n.body)}</div>` : ''}
           </div>`).join('') : '<p class="muted">No notes yet.</p>'}
       </div>`;
+    loadJournal(d.member.journalId);
   };
+
+  async function loadJournal(id) {
+    if (!id) return;
+    try {
+      const r = await fetch('/api/journal/student/' + encodeURIComponent(id));
+      if (!r.ok) return;
+      const list = ((await r.json()).assessments || []).slice(0, 20);
+      if (!list.length) return;
+      const tags = v => (Array.isArray(v) ? v : v ? [v] : []).join(', ');
+      $('#jrnList').innerHTML = list.map(a => `<div class="note">
+        <span class="muted">${esc(a.sessionDate || dateOnly(a.checkedInAt))}${a.lastAsana ? ' · last: ' + esc(a.lastAsana) : ''}</span>
+        <div class="muted" style="margin-top:3px">${esc([a.vinyasa, a.bandha].filter(Boolean).join(' · '))}${
+          tags(a.stableToday) ? ' · stable: ' + esc(tags(a.stableToday)) : ''}${tags(a.difficultToday) ? ' · hard: ' + esc(tags(a.difficultToday)) : ''}</div>
+        ${a.practiceNotes ? `<div style="margin-top:5px;white-space:pre-wrap">${esc(a.practiceNotes)}</div>` : ''}</div>`).join('');
+      $('#jrnBox').hidden = false;
+    } catch (_) {}
+  }
 
   window.save = async (code) => {
     const toWorkOn = $('#work').value.trim();

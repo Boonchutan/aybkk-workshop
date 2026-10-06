@@ -220,12 +220,9 @@ function mountBkk(app, opts = {}) {
       created_at TIMESTAMPTZ DEFAULT now(),
       UNIQUE (member_id, taken_on))`);
 
-    // The student's own words about a class day, written under that day's photos.
-    await q(`CREATE TABLE IF NOT EXISTS bkk_journal (
-      member_id INTEGER REFERENCES bkk_members(id) ON DELETE CASCADE,
-      day DATE NOT NULL, body TEXT NOT NULL,
-      updated_at TIMESTAMPTZ DEFAULT now(),
-      PRIMARY KEY (member_id, day))`);
+    // A member's id in the workshop journal (Neo4j Student.id). Not the member
+    // code: that is their login, and the journal lists student ids publicly.
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS journal_id TEXT UNIQUE`);
 
     // Tees sold on aybkk.net in baht. Payment is a PaySolutions link Boonchu
     // makes per tee, so there is no cart here, only a button to that link.
@@ -868,6 +865,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   });
 
   // ── member view ───────────────────────────────────────────────────────────
+  // Made on first use, then fixed for good, so every entry lands on one journal.
+  async function journalId(m) {
+    if (m.journal_id) return m.journal_id;
+    await q(`UPDATE bkk_members SET journal_id=$2 WHERE id=$1 AND journal_id IS NULL`,
+      [m.id, 'bkk-' + crypto.randomBytes(9).toString('base64url')]);
+    return (await q('SELECT journal_id FROM bkk_members WHERE id=$1', [m.id])).rows[0].journal_id;
+  }
   app.get('/api/bkk/me/:code', async (req, res) => {
     try {
       const m = (await q('SELECT * FROM bkk_members WHERE code = $1', [req.params.code])).rows[0];
@@ -889,7 +893,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            AND (n.to_work_on IS NOT NULL OR n.body IS NOT NULL)
          ORDER BY n.created_at DESC LIMIT 10`, [m.id])).rows;
       res.json({
-        member: { code: m.code, name: m.name, email: m.email },
+        member: { code: m.code, name: m.name, email: m.email, journalId: await journalId(m) },
         notes,
         passes: passes.map(p => ({
           name: p.name_en, kind: p.kind, status: p.status,
@@ -1521,7 +1525,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const m = (await q('SELECT * FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
       if (!m) return res.status(404).json({ error: 'not found' });
-      const [passes, notes, recent, journal] = await Promise.all([
+      const [passes, notes, recent] = await Promise.all([
         q(`SELECT p.*, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
            WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id]),
         q(`SELECT n.*, t.name AS teacher_name FROM bkk_notes n
@@ -1531,12 +1535,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            JOIN bkk_class_slots s ON s.id=b.slot_id
            WHERE b.member_id=$1 AND b.status='booked'
            ORDER BY b.start_at DESC LIMIT 20`, [m.id]),
-        q(`SELECT to_char(day,'YYYY-MM-DD') AS day, body FROM bkk_journal
-           WHERE member_id=$1 ORDER BY day DESC LIMIT 30`, [m.id]),
       ]);
       res.json({
-        member: { code: m.code, name: m.name, email: m.email, phone: m.phone },
-        passes: passes.rows, notes: notes.rows, recent: recent.rows, journal: journal.rows,
+        member: { code: m.code, name: m.name, email: m.email, phone: m.phone, journalId: await journalId(m) },
+        passes: passes.rows, notes: notes.rows, recent: recent.rows,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -1856,29 +1858,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         if (!byDay.has(ph.date)) byDay.set(ph.date, []);
         byDay.get(ph.date).push({ id: ph.id, thumb: ph.thumb, full: ph.full });
       }
-      const journal = new Map((await q(
-        `SELECT to_char(day,'YYYY-MM-DD') AS day, body FROM bkk_journal WHERE member_id=$1`, [m.id]))
-        .rows.map(r => [r.day, r.body]));
       res.json({ days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]))
-        .map(([date, items]) => ({ date, items, journal: journal.get(date) || '' })) });
-    } catch (e) { res.status(500).json({ error: e.message }); }
-  });
-
-  // The student writes about a day they have photos from. An empty box deletes it.
-  app.post('/api/bkk/me/:code/journal', async (req, res) => {
-    try {
-      const { date, body } = req.body || {};
-      if (!isDate(date)) return res.status(400).json({ error: 'date must be YYYY-MM-DD' });
-      const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
-      if (!m) return res.status(404).json({ error: 'not found' });
-      const text = String(body || '').trim().slice(0, 2000);
-      if (!text) {
-        await q('DELETE FROM bkk_journal WHERE member_id=$1 AND day=$2', [m.id, date]);
-        return res.json({ success: true, body: '' });
-      }
-      await q(`INSERT INTO bkk_journal (member_id, day, body) VALUES ($1,$2,$3)
-               ON CONFLICT (member_id, day) DO UPDATE SET body=$3, updated_at=now()`, [m.id, date, text]);
-      res.json({ success: true, body: text });
+        .map(([date, items]) => ({ date, items })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
