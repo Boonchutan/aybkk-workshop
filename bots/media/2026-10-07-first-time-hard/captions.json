@@ -128,7 +128,7 @@
    ]
   }
  },
- "status": "1 and 2 PUBLISHED. 3 queued 06:00 8 Oct.",
+ "status": "All 3 PUBLISHED, each on the first try.",
  "posts": {
   "1": {
    "id": "cmuy22nys01r5pd0yebzw5t2l",
@@ -178,7 +178,8 @@
     "v2WKV4ufU4",
     "luCMhBwT5Q",
     "5447wcL1uq"
-   ]
+   ],
+   "published": "PUBLISHED 06:00 BKK 8 Oct, first try"
   }
  }
 }
