@@ -128,7 +128,7 @@
    ]
   }
  },
- "status": "Boonchu go 18:59 BKK 7 Oct: 1 now, 2 at 9pm, 3 at 6am 8 Oct. All uploads verified.",
+ "status": "1 PUBLISHED. 2 queued 21:00, 3 queued 06:00 8 Oct.",
  "posts": {
   "1": {
    "id": "cmuy22nys01r5pd0yebzw5t2l",
@@ -144,7 +144,8 @@
     "3S1u5Lchc4",
     "B5MPx42yhg",
     "0oQxXJX6gN"
-   ]
+   ],
+   "published": "PUBLISHED 19:00 BKK 7 Oct, first try"
   },
   "2": {
    "id": "cmuy24ay901r9pd0ylvjar0cj",
