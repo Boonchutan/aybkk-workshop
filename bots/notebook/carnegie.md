@@ -49,3 +49,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-05 (chat): Boonchu approved: 5 hooks per episode + per-platform hook test, 5-part CTA with his personal reply promise, add testimonial + demonstration formats. Brief, Ep. 1 script and board updated. My job: draft one fix per STUCK comment from his cues; flag if >50 in a week; keep hook-lever scores in Research.
 - 2026-10-06: Lead table still empty. Inbox read OK: 3 LINE threads, 0 about 180K. No requests in team chat.
 - 2026-10-07: Lead table still empty. Inbox read OK: 1 LINE thread, 0 about 180K. No requests in team chat.
+- 2026-10-07 (chat): Sorted Boonchu's 40 joke skeletons for hooks (lists in the Stuck in Primary brief). Need his real numbers for the jokes before any goes on screen.

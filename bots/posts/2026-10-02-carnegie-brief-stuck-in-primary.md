@@ -52,6 +52,15 @@ A CTA must say 5 things (Hormozi): what to do, why it matters, when, how easy, w
 - After 48 hours, Plato records per platform: views, 3-second hold (if the app shows it), comments, STUCK comments. Carne keeps a running score per lever in carnegie.md "Research".
 - Honest limit: each platform has a different audience, so one test proves little. After 4 episodes (20 hooks) the pattern is worth trusting. Then the winning lever leads every episode, and a losing lever is dropped.
 
+## Joke skeletons as the pattern-interrupt hook · NEW 7 Oct 2026
+Boonchu's Obsidian note "Joke Series 40 Skeletons" (pasted in Carne chat 7 Oct). Use ONE skeleton as the pattern-interrupt hook per episode, then one true line, then serious teaching (Gervais rule).
+- Lane A hook-length (punch inside 3 to 5 s): 4, 6, 10, 16, 19, 21, 24, 26, 30, 35, 36, 37, 38, 39.
+- Lane B hook-length: 1, 3, 5, 9, 14, 17, 22, 23, 29, 32, 34, 13.
+- Middle or ending only (too long for a hook): 2, 12, 15, 18, 20, 25, 31, 40. 7 = workshop promo only (Lane B).
+- Do not use as written: 8 (a student is the butt), 11 (mocks paid trainings while we sell a 180K program), 12 (mocks other teachers, brief bans blame), 28 (knee-injury joke feeds the buyer's top fear), 33 only with no real brand named.
+- Every number in a joke must be Boonchu's real number (years practising, "since 2006", "twelve cities", "two years on Mari D", "six days a week", up at four). Ask him once, then reuse. Teaching years = 14.
+- Localize: 7-Eleven -> 便利店 in ZH; Russia has no 7-Eleven (use "даже круглосуточный магазин").
+
 ## Meat formats still missing (Hormozi's 5: demonstration, testimonial, educational, story, faceless)
 - We have educational (this series) and story (Hidden Stories). Missing: testimonial (graduate stories, needs each student's written OK, no names in files) and demonstration (Boonchu adjusting softly, "never forceful"). Plan one of each inside the next 4 weeks, in Lane A slots.
 
