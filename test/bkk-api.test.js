@@ -461,6 +461,7 @@ const ok = (name, cond, extra = '') => {
   ok('a tagged student sees the photo, on its class date', annPics.length === 1 && annPics[0].date === '2026-10-03' && annPics[0].items.length === 1,
      JSON.stringify(annPics));
   ok('the photo link is a signed private one', /^signed:\/\/authenticated\//.test(annPics[0].items[0].thumb));
+  ok('each photo also has a full-size save link', /^signed:\/\/authenticated\/.+\/2048$/.test(annPics[0].items[0].save || ''), annPics[0].items[0].save);
   ok('a student who is not in the photo sees nothing', catPics.length === 0);
   const annMe = (await J(`/api/bkk/me/${ann.code}`)).body.member;
   ok('a student gets a workshop-journal id that is not their member code',
