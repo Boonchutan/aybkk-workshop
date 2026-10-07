@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-07T00:10:19.466Z
+Inbox last read: 2026-10-07T06:09:36.876Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -44,6 +44,7 @@ Inbox last read: 2026-10-07T00:10:19.466Z
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
 ## Log
+- 2026-10-07 13:08: Inbox: 0 new. Nagged course prices (19:00 today, default B = sales open 20 Oct) and Mysore Reel (19:00 Thu 8 Oct, default B = Mon 12 Oct), 2nd time today each: do not repeat at 19:08 (except applying default). No reminders due, no wins.
 - 2026-10-07 07:08: Both bots posted. No new @Machi requests. Inbox: 0 new. Nagged course prices (due 19:00 today, default B = sales open 20 Oct) and Mysore Reel (new choice, by 19:00 Thu 8 Oct), 1st time today each. Letter #1 not reported sent. No wins, no leads (0 in 10 days), no reminders.
 - 2026-10-06 19:08: Inbox: 1 new, 0 hot (LINE: rich-menu "I have a question" tap, earlier practice injury question still unanswered here). Mysore Reel default B applied (Fri 9 Oct). Course prices not repeated (nagged twice today). No win, no reminders. Next step given: paste one 180K DM (leads 0 in 9 days).
 - 2026-10-06 13:08: Inbox: 0 new. Nagged course prices (Wed 7 Oct, 1 day) and Mysore Reel (19:00 today, default B = Fri 9 Oct), 2nd time today each: do not repeat at 19:08. No reminders due, no wins.
