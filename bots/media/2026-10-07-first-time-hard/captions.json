@@ -128,5 +128,55 @@
    ]
   }
  },
- "status": "Boonchu moves (7 Oct): B1 cover = 7-068, old B1 4/10 photo (7-032) to B3 3/10, 7-030 to B1 4/10; B3 cover = 7-037, 7-043 to B3 7/10. Photos moved, quotes kept in their batch. Waiting for go + times."
+ "status": "Boonchu go 18:59 BKK 7 Oct: 1 now, 2 at 9pm, 3 at 6am 8 Oct. All uploads verified.",
+ "posts": {
+  "1": {
+   "id": "cmuy22nys01r5pd0yebzw5t2l",
+   "when": "now 19:01 BKK 7 Oct",
+   "attachments": [
+    "YccGCqrm2D",
+    "p5Q0cXqdig",
+    "ogHZDphAeU",
+    "BhyRLHVAGG",
+    "u9jkSfOLS3",
+    "WRea3QILwT",
+    "7DjHop4GwS",
+    "3S1u5Lchc4",
+    "B5MPx42yhg",
+    "0oQxXJX6gN"
+   ]
+  },
+  "2": {
+   "id": "cmuy24ay901r9pd0ylvjar0cj",
+   "when": "21:00 BKK 7 Oct (14:00Z)",
+   "attachments": [
+    "6N7RtjAcmi",
+    "fhC20j65y9",
+    "Zl4LPMwkER",
+    "1BC1eQjWxN",
+    "cNKyvoy98G",
+    "2ECsHfOrIk",
+    "9fA2gZKREW",
+    "JBAok2f844",
+    "wwcZQgZd2C",
+    "haMD6rQzOo"
+   ]
+  },
+  "3": {
+   "id": "cmuy24b1y01rapd0y0uey9xsz",
+   "when": "06:00 BKK 8 Oct (23:00Z 7 Oct)",
+   "attachments": [
+    "SCWRtZ8xOJ",
+    "ydS6UpPqwO",
+    "IoPmcXDzxD",
+    "sAXSz55hVL",
+    "PtbyVsPKXu",
+    "0CqLHA2UGp",
+    "v9ANmH89eD",
+    "v2WKV4ufU4",
+    "luCMhBwT5Q",
+    "5447wcL1uq"
+   ]
+  }
+ }
 }
