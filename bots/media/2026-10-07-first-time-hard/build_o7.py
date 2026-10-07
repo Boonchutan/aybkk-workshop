@@ -4,7 +4,7 @@ import render_f as R
 R.QF=('fonts/PatrickHand-Regular.ttf',None); R.QS=tuple(range(46,34,-2)); R.QLINES=7
 R.PENS=((940,[70],0.0),(470,[50,560],0.06),(360,[40,680],0.22))
 B1=('THE FIRST TIME IS HARD',[
-('7-030',"Thomas Fuller · Gnomologia, no. 560, 1732",
+('7-068',"Thomas Fuller · Gnomologia, no. 560, 1732",
  "All things are difficult, before they are easy.",
  "Everything is hard the first time. It gets easy later."),
 ('7-002',"Russian proverb · V. I. Dal's collection, 1862",
@@ -13,9 +13,9 @@ B1=('THE FIRST TIME IS HARD',[
 ('7-033',"Seneca · Letters to Lucilius 104, tr. Richard M. Gummere, 1925",
  "To what man did they not seem easier in the doing? Our lack of confidence is not the result of difficulty; the difficulty comes from our lack of confidence.",
  "Things look hard because we are afraid to start. Once we start, they feel easier."),
-('7-032',"B. K. S. Iyengar · Light on Yoga, 1966",
- "Everything will seem at first to be completely unfamiliar... This is due to fear of a fall... To topple over while learning the head stand is not as terrible as we imagine... Then one will just roll over and smile.",
- "Going upside down feels strange and scary at first. A fall is not as bad as you fear."),
+('7-030',"B. K. S. Iyengar · Light on Yoga, 1966",
+ "Everything will seem at first to be completely unfamiliar... This is due to fear of a fall...",
+ "Going upside down feels strange and scary at first."),
 ('7-016',"Michael Phelps · speaking to TODAY, 2025",
  "When I first got into the water to swim... I didn't want to put my face under... Yes, me, Michael Phelps, afraid to put my face into the water. But naturally, you overcome those fears...",
  "Even Michael Phelps was scared to put his face in the water at first. He got over it."),
@@ -68,13 +68,13 @@ B2=('AGAIN AND AGAIN',[
  "Use your legs every day, and you keep strong legs."),
 ])
 B3=('THEN IT GETS EASY',[
-('7-043',"Peng Duanshu · On Learning, 18th century, tr. from Chinese",
+('7-037',"Peng Duanshu · On Learning, 18th century, tr. from Chinese",
  "Are the things of the world hard or easy? Do them, and even the hard become easy. Do not do them, and even the easy become hard.",
  "Hard or easy is up to you. Do it, and hard turns easy. Don't, and easy turns hard."),
 ('7-045',"Thomas Keller · chef, Kingdom Magazine, 2022",
  "At first... you really have to focus and concentrate, you're kind of slow... And you get better at it as time goes on... And then it becomes liberating, because you don't have to think about it, you just do it.",
  "A new skill is slow at first and takes all your focus. Keep practising, and soon you just do it."),
-('7-068',"Goethe · Maxims and Reflections, tr. T. Bailey Saunders, 1893",
+('7-032',"Goethe · Maxims and Reflections, tr. T. Bailey Saunders, 1893",
  "To see a difficult thing lightly handled gives us the impression of the impossible.",
  "Easy-looking skill is just a lot of practice."),
 ('7-019',"B. K. S. Iyengar · Light on Yoga, 1966",
@@ -86,7 +86,7 @@ B3=('THEN IT GETS EASY',[
 ('6-002',"Leo Tolstoy · Anna Karenina, tr. Constance Garnett, 1901",
  "...it seemed not his hands that swung the scythe, but the scythe mowing of itself... These were the most blissful moments.",
  "After long practice, the work seemed to do itself. Those were his happiest moments."),
-('7-037',"Japanese proverb · Monzen no kozo",
+('7-043',"Japanese proverb · Monzen no kozo",
  "The boy at the temple gate chants the sutra he was never taught.",
  "Hear and see it every day, and one day you can do it without lessons. That is a Mysore room."),
 ('7-015',"Ouyang Xiu · The Oil Seller, about 1067, tr. from Chinese",

@@ -1,5 +1,132 @@
-{"1": ["The first time is hard. For everyone. 🌱", "10 quotes on first tries, from Seneca to Michael Phelps. Photos: our Mysore class, 6 and 7 Oct.", "Your first Mysore morning will feel strange. That's normal. We teach you from zero.", "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇", "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"],
- "2": ["Again and again. 🔁", "10 quotes on doing it again, from Confucius to William James. Photos: our Mysore class, 7 Oct.", "Same asanas, same time, every morning. That is how hard turns easy.", "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇", "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"],
- "3": ["Then it gets easy. ✨", "10 quotes on how practice turns hard into easy, from Aristotle to the Bhagavad Gita. Photos: our Mysore class, 6 and 7 Oct.", "Which asana was hard for you once, and easy now? 👇", "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk", "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"],
- "force": {"1": {"7-038":[940,70,25],"7-027":[300,30,30],"7-032":[330,40,30]}, "2": {"7-052":[400,650,30],"7-051":[340,30,20],"7-034":[940,70,30],"7-059":[940,70,25],"7-028":[360,690,640],"7-049":[440,40,30],"7-046":[940,70,20],"7-071":[940,70,20]}, "3": {"7-037":[260,800,30],"7-066":[400,660,500],"6-002":[400,30,30],"7-068":[400,30,30],"7-056":[400,650,30],"7-061":[940,70,880],"7-015":[360,680,180]}},
- "status": "shown to Boonchu 7 Oct, waiting for go + times"}
+{
+ "1": [
+  "The first time is hard. For everyone. 🌱",
+  "10 quotes on first tries, from Seneca to Michael Phelps. Photos: our Mysore class, 6 and 7 Oct.",
+  "Your first Mysore morning will feel strange. That's normal. We teach you from zero.",
+  "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇",
+  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+ ],
+ "2": [
+  "Again and again. 🔁",
+  "10 quotes on doing it again, from Confucius to William James. Photos: our Mysore class, 7 Oct.",
+  "Same asanas, same time, every morning. That is how hard turns easy.",
+  "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇",
+  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+ ],
+ "3": [
+  "Then it gets easy. ✨",
+  "10 quotes on how practice turns hard into easy, from Aristotle to the Bhagavad Gita. Photos: our Mysore class, 6 and 7 Oct.",
+  "Which asana was hard for you once, and easy now? 👇",
+  "New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk",
+  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+ ],
+ "force": {
+  "1": {
+   "7-068": [
+    400,
+    30,
+    30
+   ],
+   "7-030": [
+    480,
+    570,
+    20
+   ],
+   "7-038": [
+    940,
+    70,
+    25
+   ],
+   "7-027": [
+    300,
+    30,
+    30
+   ]
+  },
+  "2": {
+   "7-052": [
+    400,
+    650,
+    30
+   ],
+   "7-051": [
+    340,
+    30,
+    20
+   ],
+   "7-034": [
+    940,
+    70,
+    30
+   ],
+   "7-059": [
+    940,
+    70,
+    25
+   ],
+   "7-028": [
+    360,
+    690,
+    640
+   ],
+   "7-049": [
+    440,
+    40,
+    30
+   ],
+   "7-046": [
+    940,
+    70,
+    20
+   ],
+   "7-071": [
+    940,
+    70,
+    20
+   ]
+  },
+  "3": {
+   "7-037": [
+    280,
+    790,
+    30
+   ],
+   "7-043": [
+    940,
+    70,
+    30
+   ],
+   "7-032": [
+    330,
+    40,
+    30
+   ],
+   "7-066": [
+    400,
+    660,
+    500
+   ],
+   "6-002": [
+    400,
+    30,
+    30
+   ],
+   "7-056": [
+    400,
+    650,
+    30
+   ],
+   "7-061": [
+    940,
+    70,
+    880
+   ],
+   "7-015": [
+    360,
+    680,
+    180
+   ]
+  }
+ },
+ "status": "Boonchu moves (7 Oct): B1 cover = 7-068, old B1 4/10 photo (7-032) to B3 3/10, 7-030 to B1 4/10; B3 cover = 7-037, 7-043 to B3 7/10. Photos moved, quotes kept in their batch. Waiting for go + times."
+}
