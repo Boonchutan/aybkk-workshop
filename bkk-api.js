@@ -1585,11 +1585,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // Chay (on a teacher passcode) uploads the day's photos and taps who is in
   // each one. Stored as Cloudinary "authenticated" assets: no plain URL works,
   // only signed ones, and those are handed out only to the tagged students.
+  // Tiles show the whole photo (no crop: a 4:5 fill cut off heads and feet).
+  // 'save' is a plain JPEG sent as a download: the WebP/AVIF that f_auto gives
+  // Android can't be long-pressed into a Samsung gallery or out of LINE's browser.
+  const PHOTO_SIZES = {
+    thumb: { width: 600, height: 600, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
+    full: { width: 2048, height: 2048, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
+    save: { width: 2048, height: 2048, crop: 'limit', quality: 90, fetch_format: 'jpg', flags: 'attachment:AYBKK-photo' },
+  };
   const photoUrl = (publicId, kind) => cloudinary.url(publicId, {
-    type: 'authenticated', sign_url: true, secure: true,
-    transformation: kind === 'thumb'
-      ? [{ width: 400, height: 500, crop: 'fill', gravity: 'auto', quality: 'auto', fetch_format: 'auto' }]
-      : [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto', fetch_format: 'auto' }],
+    type: 'authenticated', sign_url: true, secure: true, transformation: [PHOTO_SIZES[kind]],
   });
   const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
   async function memberIds(codes) {
@@ -1606,7 +1611,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
        LEFT JOIN bkk_members m ON m.id = pm.member_id
        WHERE ${where} GROUP BY p.id ORDER BY p.id`, args)).rows;
     return rows.map(p => ({ id: p.id, date: p.day, members: p.members,
-      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full') }));
+      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full'), save: photoUrl(p.public_id, 'save') }));
   }
 
   // Who Chay can tag: today's bookings first, then a name search, then a quick
@@ -1856,7 +1861,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const byDay = new Map();
       for (const ph of photos.reverse()) {
         if (!byDay.has(ph.date)) byDay.set(ph.date, []);
-        byDay.get(ph.date).push({ id: ph.id, thumb: ph.thumb, full: ph.full });
+        byDay.get(ph.date).push({ id: ph.id, thumb: ph.thumb, full: ph.full, save: ph.save });
       }
       res.json({ days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]))
         .map(([date, items]) => ({ date, items })) });
