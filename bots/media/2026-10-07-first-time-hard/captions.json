@@ -128,7 +128,7 @@
    ]
   }
  },
- "status": "1 PUBLISHED. 2 queued 21:00, 3 queued 06:00 8 Oct.",
+ "status": "1 and 2 PUBLISHED. 3 queued 06:00 8 Oct.",
  "posts": {
   "1": {
    "id": "cmuy22nys01r5pd0yebzw5t2l",
@@ -161,7 +161,8 @@
     "JBAok2f844",
     "wwcZQgZd2C",
     "haMD6rQzOo"
-   ]
+   ],
+   "published": "PUBLISHED 21:00 BKK 7 Oct, first try"
   },
   "3": {
    "id": "cmuy24b1y01rapd0y0uey9xsz",
