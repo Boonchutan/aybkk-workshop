@@ -1900,17 +1900,17 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const { date, folder, driveId, memberCodes } = req.body || {};
+      const { date, folder, driveId, memberCodes, add } = req.body || {};
       if (!isDate(date)) return res.status(400).json({ error: 'date required (YYYY-MM-DD)' });
       if (!(await driveFolder(String(folder || ''))).some(f => f.id === driveId)) {
         return res.status(400).json({ error: 'That file is not in the chosen Drive folder.' });
       }
       const had = (await q('SELECT id FROM bkk_photos WHERE drive_id=$1', [driveId])).rows[0];
-      if (had) {               // already in: just set who is in it
+      if (had) {               // already in: set who is in it (add: keep who is there)
         const ids = await memberIds(memberCodes);
-        await q('DELETE FROM bkk_photo_members WHERE photo_id=$1', [had.id]);
+        if (!add) await q('DELETE FROM bkk_photo_members WHERE photo_id=$1', [had.id]);
         for (const id of ids) {
-          await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2)', [had.id, id]);
+          await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [had.id, id]);
         }
         return res.json({ success: true, photo: (await photosWithTags('p.id = $1', [had.id]))[0] });
       }
@@ -1948,6 +1948,27 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2)', [p.id, id]);
       }
       res.json({ success: true, photo: (await photosWithTags('p.id = $1', [p.id]))[0] });
+    } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
+  });
+
+  // Pick many photos of one person, then the name once (Boonchu, 8 Oct): the
+  // name is ADDED to each photo, so other people already on a photo stay.
+  app.post('/api/bkk/teacher/photos/tags/add', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    try {
+      const b = req.body || {};
+      const photoIds = [...new Set((Array.isArray(b.photoIds) ? b.photoIds : []).map(Number))]
+        .filter(n => Number.isInteger(n) && n > 0);
+      if (!photoIds.length || photoIds.length > 200) return res.status(400).json({ error: 'choose 1 to 200 photos' });
+      const ids = await memberIds(b.memberCodes);
+      if (!ids.length) return res.status(400).json({ error: 'choose who is in them' });
+      const found = (await q('SELECT id FROM bkk_photos WHERE id = ANY($1::int[])', [photoIds])).rows.map(r => r.id);
+      if (found.length < photoIds.length) return res.status(409).json({ error: 'A photo was deleted meanwhile. Reload the page.' });
+      await q(`INSERT INTO bkk_photo_members (photo_id, member_id)
+               SELECT p, m FROM unnest($1::int[]) p CROSS JOIN unnest($2::int[]) m
+               ON CONFLICT DO NOTHING`, [photoIds, ids]);
+      res.json({ success: true, photos: await photosWithTags('p.id = ANY($1::int[])', [photoIds]) });
     } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
 
