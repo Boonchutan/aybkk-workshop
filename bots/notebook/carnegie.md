@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-07T23:38:03.425Z
+Inbox last read: 2026-10-08T23:37:54.361Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -51,3 +51,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-07: Lead table still empty. Inbox read OK: 1 LINE thread, 0 about 180K. No requests in team chat.
 - 2026-10-07 (chat): Sorted Boonchu's 40 joke skeletons for hooks (lists in the Stuck in Primary brief). Need his real numbers for the jokes before any goes on screen.
 - 2026-10-08: Lead table still empty. Inbox read OK: 1 LINE thread, 0 about 180K. No requests in team chat.
+- 2026-10-09: Lead table still empty. Inbox read OK: 0 threads. No requests in team chat.
