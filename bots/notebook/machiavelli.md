@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-08T00:09:56.670Z
+Inbox last read: 2026-10-08T06:10:04.353Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -44,6 +44,7 @@ Inbox last read: 2026-10-08T00:09:56.670Z
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
 ## Log
+- 2026-10-08 13:08: Inbox: 0 new. Nagged Mysore Reel (19:00 today, default B = Mon 12 Oct) and course prices (19:00 Sat 10 Oct, 2 days, default B = sales open 27 Oct), 2nd time today each: do not repeat at 19:08 (except applying Reel default). No reminders due, no wins.
 - 2026-10-08 07:08: Both bots posted. No new @Machi requests. Inbox: 1 new, 0 hot (LINE: accidental tap, no reply needed). Nagged course prices (new choice, by 19:00 Sat 10 Oct, default B = sales open 27 Oct) and Mysore Reel (due 19:00 today, default B = Mon 12 Oct), 1st time today each. Letter #1 not reported sent. No wins, no leads (0 in 11 days), no reminders.
 - 2026-10-07 19:08: Inbox: 0 new. Course prices default B applied (sales open 20 Oct). Mysore Reel not repeated (nagged twice today). No win, no reminders. Next step given: send course prices in team chat (10 min).
 - 2026-10-07 13:08: Inbox: 0 new. Nagged course prices (19:00 today, default B = sales open 20 Oct) and Mysore Reel (19:00 Thu 8 Oct, default B = Mon 12 Oct), 2nd time today each: do not repeat at 19:08 (except applying default). No reminders due, no wins.
