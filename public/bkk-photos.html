@@ -46,6 +46,20 @@
   #gate h1{font-family:'Work Sans',sans-serif;font-weight:800;font-size:40px;margin:0 0 4px}
   .bar{height:6px;background:var(--blush);border-radius:3px;overflow:hidden;margin-top:8px}
   .bar i{display:block;height:100%;background:var(--pink);width:0}
+  [hidden]{display:none!important}
+  /* Pick many photos of one person, then the name once. */
+  .tile.sel img{outline:4px solid var(--pink);outline-offset:-4px}
+  .tile.sel::after{content:"✓";position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;
+    background:var(--pink);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .picking .tile img{opacity:1!important}
+  .selhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .btn.small{padding:8px 12px;font-size:14px}
+  #selbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--ink);color:#fdf7fa;
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center}
+  #selbar b{flex:1;font-size:16px}
+  body.hasbar main{padding-bottom:84px}
+  .strip{display:flex;gap:4px;overflow-x:auto;margin-top:8px}
+  .strip img{width:56px;height:70px;object-fit:cover;border-radius:4px;flex:none}
 </style>
 </head>
 <body>
@@ -75,12 +89,28 @@
     </div>
 
     <div class="box" id="drivebox" hidden>
-      <b class="h">From Drive <span class="muted" id="dCount"></span></b>
+      <div class="selhead"><b class="h">From Drive <span class="muted" id="dCount"></span></b>
+        <button class="btn ghost small" data-pick="drive">Select many</button></div>
       <span class="muted">Day folder in "photos"</span>
       <select id="dFolder" style="width:100%;padding:11px;border:1.5px solid var(--line);border-radius:8px;font:inherit;font-size:16px;background:var(--wall);color:var(--ink);margin-bottom:8px"></select>
       <p class="muted" id="dMsg" style="margin:0 0 10px"></p>
       <button class="btn pink wide" id="dStart" hidden></button>
       <div class="grid" id="dGrid"></div>
+    </div>
+
+    <div class="box" id="batch" hidden>
+      <b class="h" id="bTitle">Who is in these photos?</b>
+      <p class="muted" style="margin:0">The name is added to every photo you picked. Anyone already on a photo stays.</p>
+      <div class="strip" id="bStrip"></div>
+      <div class="chips" id="bChips"></div>
+      <div class="row" style="margin-top:10px"><input id="bFind" placeholder="Search a name…" autocomplete="off"></div>
+      <div class="chips" id="bFound"></div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn ghost" id="bCancel">Back</button>
+        <button class="btn pink" id="bGo" disabled>Add</button>
+      </div>
+      <div class="bar"><i id="bProg"></i></div>
+      <p id="bMsg" style="margin:6px 0 0;font-weight:700"></p>
     </div>
 
     <div class="box" id="editor" hidden>
@@ -104,11 +134,15 @@
     </div>
 
     <div class="box">
-      <b class="h">Saved for this day <span class="muted" id="count"></span></b>
+      <div class="selhead"><b class="h">Saved for this day <span class="muted" id="count"></span></b>
+        <button class="btn ghost small" data-pick="saved">Select many</button></div>
       <p class="muted" style="margin:0">Tap a photo to change who is in it. Red = nobody tagged yet.</p>
       <div class="grid" id="grid"></div>
     </div>
   </main>
+  <div id="selbar" hidden><b id="selCount"></b>
+    <button class="btn ghost small" style="color:#fdf7fa;border-color:rgba(253,247,250,.4)" id="selClear">Clear</button>
+    <button class="btn pink small" id="selName">Add name →</button></div>
 </div>
 
 <script>
@@ -142,6 +176,7 @@
   window.logout = () => { localStorage.removeItem('aybkk_teacher_key'); location.reload(); };
 
   async function loadDay() {
+    resetSel();
     const date = $('#date').value;
     const [day, today] = await Promise.all([
       api('/api/bkk/teacher/photos?date=' + date).then(r => r.json()),
@@ -180,6 +215,7 @@
   async function loadDrive(fresh) {
     const folder = $('#dFolder').value;
     if (!folder) return;
+    resetSel();
     $('#dMsg').textContent = 'Reading the Drive folder…';
     $('#dStart').hidden = true; $('#dGrid').innerHTML = ''; $('#dCount').textContent = '';
     const r = await api(`/api/bkk/teacher/drive?folder=${encodeURIComponent(folder)}${fresh ? '&fresh=1' : ''}`);
@@ -194,10 +230,10 @@
     $('#dMsg').textContent = !DRIVE.length
       ? 'No photos in this folder.'
       : left ? 'Ticked = already saved. Tap one photo, or tag all the new ones in a row.' : 'Every photo in this folder is saved. ✓';
-    $('#dStart').hidden = !left;
+    $('#dStart').hidden = !left || PICK === 'drive';
     $('#dStart').textContent = `Tag the ${left} new photo${left === 1 ? '' : 's'}`;
     $('#dGrid').innerHTML = DRIVE.map(f => `
-      <button class="tile" data-drive="${esc(f.id)}">
+      <button class="tile${SEL.has('d:' + f.id) ? ' sel' : ''}" data-drive="${esc(f.id)}">
         <img loading="lazy" src="${esc(dthumb(f.id, 400))}" alt="" style="${f.photoId ? 'opacity:.45' : ''}">
         <span style="${f.photoId ? 'color:#2a8a4a;font-weight:700' : ''}">${f.photoId ? '✓ saved' : esc(f.name)}</span>
       </button>`).join('');
@@ -211,6 +247,7 @@
   $('#dGrid').addEventListener('click', e => {
     const b = e.target.closest('.tile'); if (!b) return;
     const f = DRIVE.find(x => x.id === b.dataset.drive); if (!f) return;
+    if (PICK === 'drive') { toggleSel(b, 'd:' + f.id, { kind: 'drive', f }); return; }
     const saved = f.photoId && PHOTOS.find(p => p.id === f.photoId);
     if (saved) {
       QUEUE = []; TOTAL = 0;
@@ -226,7 +263,7 @@
   function renderGrid() {
     $('#count').textContent = PHOTOS.length ? `(${PHOTOS.length})` : '';
     $('#grid').innerHTML = PHOTOS.map(p => `
-      <button class="tile${p.members.length ? '' : ' none'}" data-id="${p.id}">
+      <button class="tile${p.members.length ? '' : ' none'}${SEL.has('p:' + p.id) ? ' sel' : ''}" data-id="${p.id}">
         <img loading="lazy" src="${esc(p.thumb)}" alt="">
         <span>${p.members.length ? esc(p.members.map(m => m.name).join(', ')) : 'nobody tagged'}</span>
       </button>`).join('') || '<p class="muted">No photos yet for this day.</p>';
@@ -286,6 +323,7 @@
   }
 
   function openEditor(src, title) {
+    $('#batch').hidden = true;
     $('#editor').hidden = false;
     $('#edImg').src = src;
     $('#edTitle').textContent = title;
@@ -371,16 +409,183 @@
     if (EDIT.kind !== 'edit') { QUEUE.shift(); DONE++; nextNew(); return; }
     if (!confirm('Delete this photo from every profile?')) return;
     const r = await api(`/api/bkk/teacher/photos/${EDIT.id}/delete`, { method: 'POST', body: '{}' });
-    if (r.ok) { PHOTOS = PHOTOS.filter(p => p.id !== EDIT.id); renderGrid(); closeEditor(); }
+    if (r.ok) {
+      const gone = EDIT.id;
+      PHOTOS = PHOTOS.filter(p => p.id !== gone);
+      SEL.delete('p:' + gone);
+      for (const f of DRIVE) if (f.photoId === gone) { f.photoId = null; SEL.delete('d:' + f.id); }
+      renderGrid(); if (DRIVE.length) renderDrive(); updateBar(); closeEditor();
+    }
   });
 
   $('#grid').addEventListener('click', e => {
     const b = e.target.closest('.tile'); if (!b) return;
     const p = PHOTOS.find(x => x.id === Number(b.dataset.id)); if (!p) return;
+    if (PICK === 'saved') { toggleSel(b, 'p:' + p.id, { kind: 'photo', p }); return; }
     QUEUE = []; TOTAL = 0;
     EDIT = { kind: 'edit', id: p.id };
     PICKED = new Set(p.members.map(m => m.code));
     openEditor(p.full, 'Who is in this photo?');
+  });
+
+  // ── many photos, one name ──────────────────────────────────────────────
+  // "Select many", tap every photo of one person, then pick the name once
+  // (Boonchu, 8 Oct). The name is added: anyone already on a photo stays.
+  // Unsaved Drive photos are saved with the name; saved ones just gain it.
+  let PICK = null;                   // 'drive' | 'saved' | null
+  const SEL = new Map();             // 'd:<driveId>' | 'p:<photoId>' -> item
+  let BPICK = new Set(), flashTimer, BUSY = false, BATCH = [];
+  const keyOf = it => it.kind === 'photo' ? 'p:' + it.p.id : 'd:' + it.f.id;
+  // Drive picks are looked up live, so a re-read of the folder never leaves a stale copy.
+  const liveDrive = it => DRIVE.find(x => x.id === it.f.id) || it.f;
+  const savedId = it => it.kind === 'photo' ? it.p.id : liveDrive(it).photoId;
+  function resetSel() {
+    if (BUSY) return;
+    SEL.clear(); BATCH = [];
+    const b = document.getElementById('batch'); if (b) b.hidden = true;
+    if (typeof updateBar === 'function' && $('#selbar')) updateBar();
+  }
+
+  function renderPickButtons() {
+    document.querySelectorAll('[data-pick]').forEach(b => {
+      b.textContent = PICK === b.dataset.pick ? 'Done' : 'Select many';
+      b.closest('.box').classList.toggle('picking', PICK === b.dataset.pick);
+    });
+  }
+  function updateBar() {
+    const n = SEL.size;
+    clearTimeout(flashTimer);
+    $('#selbar').hidden = !n;
+    document.body.classList.toggle('hasbar', !!n);
+    $('#selCount').textContent = `${n} photo${n === 1 ? '' : 's'} selected`;
+    $('#selClear').hidden = $('#selName').hidden = false;
+  }
+  function flash(text) {
+    $('#selbar').hidden = false; document.body.classList.add('hasbar');
+    $('#selCount').textContent = text;
+    $('#selClear').hidden = $('#selName').hidden = true;
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(updateBar, 3500);
+  }
+  function toggleSel(tile, key, item) {
+    if (BUSY) return;
+    SEL.has(key) ? SEL.delete(key) : SEL.set(key, item);
+    tile.classList.toggle('sel', SEL.has(key));
+    updateBar();
+  }
+  function setPick(which) {
+    if (BUSY) return;
+    PICK = PICK === which ? null : which;
+    SEL.clear(); BATCH = [];
+    $('#batch').hidden = true;
+    renderPickButtons(); updateBar(); renderGrid();
+    if (DRIVE.length) renderDrive();
+  }
+  document.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => setPick(b.dataset.pick)));
+  $('#selClear').addEventListener('click', () => {
+    if (BUSY) return;
+    resetSel(); renderGrid(); if (DRIVE.length) renderDrive();
+  });
+
+  function renderBChips() {
+    const names = [...PEOPLE.entries()].sort((a, b) => a[1].localeCompare(b[1]));
+    $('#bChips').innerHTML = names.map(([code, name]) =>
+      `<button class="chip" data-code="${esc(code)}" aria-pressed="${BPICK.has(code)}">${esc(name)}</button>`).join('')
+      || '<p class="muted">Search a name below.</p>';
+    const n = BATCH.length;
+    $('#bGo').disabled = BUSY || !BPICK.size || !n;
+    $('#bGo').textContent = `Add to ${n} photo${n === 1 ? '' : 's'}`;
+  }
+  // The panel saves exactly the photos it shows: a tap on the grid after it
+  // opened does not sneak another photo into the batch.
+  $('#selName').addEventListener('click', () => {
+    if (!SEL.size || BUSY) return;
+    closeEditor(); QUEUE = [];
+    BPICK = new Set();
+    const items = BATCH = [...SEL.values()];
+    $('#bTitle').textContent = `Who is in these ${items.length} photo${items.length === 1 ? '' : 's'}?`;
+    $('#bStrip').innerHTML = items.map(it =>
+      `<img alt="" src="${esc(it.kind === 'photo' ? it.p.thumb : dthumb(it.f.id, 200))}">`).join('');
+    $('#bFind').value = ''; $('#bFound').innerHTML = ''; $('#bMsg').textContent = ''; $('#bProg').style.width = '0';
+    renderBChips();
+    $('#batch').hidden = false;
+    $('#batch').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  $('#bCancel').addEventListener('click', () => { if (!BUSY) $('#batch').hidden = true; });
+  $('#bChips').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b || BUSY) return;
+    const c = b.dataset.code;
+    BPICK.has(c) ? BPICK.delete(c) : BPICK.add(c);
+    renderBChips();
+  });
+  let bFindTimer;
+  $('#bFind').addEventListener('input', () => {
+    clearTimeout(bFindTimer);
+    bFindTimer = setTimeout(async () => {
+      const term = $('#bFind').value.trim();
+      if (term.length < 2) { $('#bFound').innerHTML = ''; return; }
+      const d = await api('/api/bkk/teacher/members?q=' + encodeURIComponent(term)).then(r => r.json());
+      $('#bFound').innerHTML = (d.members || []).map(m =>
+        `<button class="chip" data-code="${esc(m.code)}" data-name="${esc(m.name)}">+ ${esc(m.name)}${m.hint ? ` <small style="opacity:.7">${esc(m.hint)}</small>` : ''}</button>`).join('')
+        || '<span class="muted">Nobody found. Add new students one photo at a time.</span>';
+    }, 250);
+  });
+  $('#bFound').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b || BUSY) return;
+    PEOPLE.set(b.dataset.code, b.dataset.name);
+    BPICK.add(b.dataset.code);
+    $('#bFind').value = ''; $('#bFound').innerHTML = '';
+    renderBChips();
+  });
+
+  const upsertPhoto = ph => { PHOTOS = PHOTOS.filter(p => p.id !== ph.id).concat(ph); };
+  $('#bGo').addEventListener('click', async () => {
+    const codes = [...BPICK];
+    if (BUSY || !codes.length || !BATCH.length) return;
+    const who = codes.map(c => PEOPLE.get(c) || c).join(', ');
+    const total = BATCH.length;
+    BUSY = true; renderBChips();
+    $('#bMsg').style.color = ''; $('#bMsg').textContent = 'Saving…';
+    let done = 0, fail = null;
+    const finished = it => { BATCH = BATCH.filter(x => x !== it); SEL.delete(keyOf(it)); done++; };
+    try {
+      // Photos already saved: one call adds the name to all of them.
+      const saved = BATCH.filter(savedId);
+      if (saved.length) {
+        const r = await api('/api/bkk/teacher/photos/tags/add', { method: 'POST',
+          body: JSON.stringify({ photoIds: saved.map(savedId), memberCodes: codes }) });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(j.error || 'Could not save.');
+        j.photos.forEach(upsertPhoto);
+        saved.forEach(finished);
+      }
+      // Drive photos not saved yet: each is saved, with the name, one by one.
+      for (const it of [...BATCH]) {
+        const f = liveDrive(it);
+        $('#bMsg').textContent = `Saving photo ${done + 1} of ${total}…`;
+        $('#bProg').style.width = `${Math.round(100 * done / total)}%`;
+        const r = await api('/api/bkk/teacher/photos/from-drive', { method: 'POST',
+          body: JSON.stringify({ date: $('#date').value, folder: $('#dFolder').value, driveId: f.id, memberCodes: codes, add: true }) });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(j.error || 'Could not save.');
+        f.photoId = it.f.photoId = j.photo.id;
+        upsertPhoto(j.photo);
+        finished(it);
+      }
+    } catch (err) { fail = err.message; }
+    BUSY = false;
+    renderGrid(); if (DRIVE.length) renderDrive();
+    $('#bProg').style.width = `${Math.round(100 * done / total)}%`;
+    if (fail) {
+      $('#bMsg').style.color = '#c33';
+      $('#bMsg').textContent = `✗ ${done ? `Added to ${done}. ` : ''}${BATCH.length} NOT SAVED: ${fail} The ones left are still picked: press Add again.`;
+      $('#bTitle').textContent = `Who is in these ${BATCH.length} photo${BATCH.length === 1 ? '' : 's'}?`;
+      updateBar(); renderBChips();
+      return;
+    }
+    $('#batch').hidden = true;
+    updateBar();
+    flash(`✓ ${who} added to ${done} photo${done === 1 ? '' : 's'}`);
   });
 
   if (KEY) { $('#key').value = KEY; unlock(); }

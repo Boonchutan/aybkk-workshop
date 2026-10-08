@@ -509,6 +509,28 @@ const ok = (name, cond, extra = '') => {
   ok("Ann's profile shows the Drive photo",
      JSON.stringify((await J(`/api/bkk/me/${ann.code}/photos`)).body).includes(fd.body.photo.thumb));
 
+  // Many photos of one person, then the name once (8 Oct): the name is added.
+  const manyId = fd.body.photo.id;
+  const addCat = await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: [cat.code] }, PKEY);
+  const namesOn = ph => ph.members.map(m => m.code).sort().join();
+  ok('adding a name to picked photos keeps everyone already on them',
+     addCat.status === 200 && namesOn(addCat.body.photos[0]) === [ann.code, bob.code, cat.code].sort().join(), JSON.stringify(addCat.body).slice(0, 200));
+  ok('adding the same name again changes nothing',
+     namesOn((await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId, manyId], memberCodes: [cat.code, cat.code] }, PKEY)).body.photos[0]).split(',').length === 3);
+  ok('adding names needs a passcode', (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: [cat.code] }, {})).status === 401);
+  ok('no photos or no name is refused',
+     (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [], memberCodes: [cat.code] }, PKEY)).status === 400 &&
+     (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: [] }, PKEY)).status === 400);
+  ok('a code that changed meanwhile stops it, nothing added',
+     (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: ['BGONE0000000'] }, PKEY)).status === 409);
+  ok('a photo deleted meanwhile stops it',
+     (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId, 99999999], memberCodes: [cat.code] }, PKEY)).status === 409);
+  const upAdd = uploads.length;
+  const keepTags = await post('/api/bkk/teacher/photos/from-drive',
+    { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [cat.code], add: true }, PKEY);
+  ok('picking an already-saved Drive photo adds the name without saving it twice or dropping anyone',
+     keepTags.status === 200 && uploads.length === upAdd && namesOn(keepTags.body.photo).split(',').length === 3, JSON.stringify(keepTags.body).slice(0, 200));
+
   const realUpload = fakeCloud.uploader.upload;
   fakeCloud.uploader.upload = async () => { throw { error: { message: 'Server returned unexpected status code - 403', http_code: 403 } }; };
   fakeCloud.api = { usage: async () => ({ credits: { usage: 25.3, limit: 25, used_percent: 101.2 } }) };
