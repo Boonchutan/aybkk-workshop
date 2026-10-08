@@ -1,0 +1,72 @@
+[
+ {
+  "photo": "8-158",
+  "who": "Aristotle · as told by Diogenes Laertius, Lives V.18, tr. R. D. Hicks, 1925",
+  "quote": "The roots of education... are bitter, but the fruit is sweet.",
+  "meaning": "Learning tastes bitter at the start. Later it gives sweet fruit.",
+  "story": false
+ },
+ {
+  "photo": "8-120",
+  "who": "‘Standing in the snow at Cheng's gate’ · History of Song, juan 428, tr. from Chinese",
+  "quote": "Two students found their teacher Cheng Yi sitting with his eyes closed. They stood by him and waited. When he woke, the snow outside the door was a foot deep.",
+  "meaning": "They waited quietly for their teacher while a foot of snow fell outside.",
+  "story": true
+ },
+ {
+  "photo": "8-098",
+  "who": "Vidura, the wise counsellor · Mahabharata, Udyoga Parva 40, tr. K. M. Ganguli, 1883-96",
+  "quote": "Votaries of pleasure must give up knowledge, and votaries of knowledge must give up pleasure.",
+  "meaning": "You cannot have all the comfort and all the learning. To learn, give up some comfort.",
+  "story": false
+ },
+ {
+  "photo": "8-134",
+  "who": "Three Character Classic, 13th century · tr. Herbert A. Giles, 1900",
+  "quote": "...one who put fireflies in a bag, and again another who used the white glare from snow. Although their families were poor, these men studied unceasingly.",
+  "meaning": "No money for lamp oil? One boy read by fireflies, another by snow light.",
+  "story": false
+ },
+ {
+  "photo": "8-085",
+  "who": "Cleanthes · as told by Diogenes Laertius, Lives VII.168-174, tr. R. D. Hicks, 1925",
+  "quote": "Cleanthes drew water in gardens by night so he could study with Zeno by day. Too poor for paper, he wrote the lectures on oyster-shells and ox bones.",
+  "meaning": "He worked at night to learn by day. Later he took his teacher's place.",
+  "story": true
+ },
+ {
+  "photo": "8-137",
+  "who": "Antisthenes · Diogenes Laertius, Lives VI.2, tr. R. D. Hicks, 1925",
+  "quote": "Already a teacher, Antisthenes became a pupil of Socrates. He ‘every day would tramp the five miles to Athens in order to hear Socrates.’",
+  "meaning": "He became a student again, and walked about 8 km to class every day.",
+  "story": true
+ },
+ {
+  "photo": "8-140",
+  "who": "Mikhail Lomonosov · letter of 10 May 1753, tr. from Russian",
+  "quote": "At 19, fisherman's son Mikhail Lomonosov walked to Moscow to study. He lived on bread and kvass: ‘Thus I lived five years, and did not give up learning.’",
+  "meaning": "Five poor years on bread and kvass, a cheap drink. He kept studying.",
+  "story": true
+ },
+ {
+  "photo": "8-148",
+  "who": "Benjamin Franklin, printer's apprentice · Autobiography, 1771",
+  "quote": "Often I sat up in my room reading the greatest part of the night, when the book was borrowed in the evening and to be returned early in the morning...",
+  "meaning": "He read most of the night, because the borrowed book had to go back by morning.",
+  "story": false
+ },
+ {
+  "photo": "8-052",
+  "who": "Fukuzawa Yukichi, student in Osaka, 1850s · Autobiography, tr. Eiichi Kiyooka, 1934",
+  "quote": "Fukuzawa looked for his pillow: ‘I realized suddenly that I had not used one for the whole year... I had been studying without regard to day or night...’",
+  "meaning": "He studied day and night for a whole year and never once slept on a pillow.",
+  "story": true
+ },
+ {
+  "photo": "8-105",
+  "who": "T. Krishnamacharya · as told by his son T. K. V. Desikachar, The Heart of Yoga, 1995",
+  "quote": "As his son tells it, in 1916 Krishnamacharya went to the Himalayas to find his teacher, Ramamohan Brahmachari, and stayed more than seven years.",
+  "meaning": "He became Pattabhi Jois's teacher. Our Ashtanga line goes back to this search.",
+  "story": true
+ }
+]
