@@ -161,7 +161,7 @@
   .bio:not(.open) .txt p::after{content:" "}
   .bio.open .txt{max-height:none}
   .bio.open .txt::after{display:none}
-  .readmore{border:none;background:none;padding:6px 0;min-height:36px;cursor:pointer;
+  .readmore,.signout{border:none;background:none;padding:6px 0;min-height:36px;cursor:pointer;
     font:700 14px/1.2 'Plex',sans-serif;color:var(--pink)}
   .points{list-style:none;margin:0;padding:0}
   .points li{position:relative;padding:0 0 0 24px;margin:0 0 11px;font-size:15px}
@@ -1062,7 +1062,7 @@
     addEmailH: 'Add your email', addEmailWhy: 'So you can open your profile again on another phone. We email you a one-time link, no password.', addEmailBtn: 'Save my email', addEmailDone: 'Saved. Next time, sign in with this email.',
     checkH: 'My 12-week check · Habit #1', chkWhy: 'Three numbers from your watch or phone, at week 0, 6 and 12. Proof, not promises.', chkStartH: 'Week 0: your starting point', chkDueH: 'Your next check is due', chkHrL: 'Resting heart rate (beats per minute)', chkSleepL: 'Average sleep last week (hours)', chkFeelL: 'How do you feel? (1 = tired, 5 = great)', chkNoteL: 'One line (optional)', chkSave: 'Save my check', chkWeek: 'Week', chkHr: 'Heart rate', chkSleep: 'Sleep', chkFeel: 'Feel', chkChange: (hr, sl) => `Since week 0: heart rate ${hr}, sleep ${sl}`, chkNext: d => `Next check: ${d}`, chkAll: 'All 3 checks done. Look how far you came.',
     fromTeachers: 'From your teachers', workOn: 'Work on',
-    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo.', photoDl: 'Save photo', jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Pay online, then send your size and payment slip to LINE @aybkk.', teeBuy: 'Pay now', teeSizes: 'Sizes',
+    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo.', paidMail: 'Payment confirmed 🙏 Your pass is active. Open the link in your receipt email to see it on this phone.', haveProfile: 'This email already has an AYBKK profile. After you pay, open the link in your receipt email to see your pass.', codeNotFound: 'We could not find that member code. Check it, or ask for an email link above.', notYou: n => `Not ${n}? Sign out`, emailWho: n => `This is ${n}’s profile. Add your email only if you are ${n}.`, meGone: 'This sign-in has ended. Ask the shala for a new link on LINE @aybkk.', photoDl: 'Save photo', jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Pay online, then send your size and payment slip to LINE @aybkk.', teeBuy: 'Pay now', teeSizes: 'Sizes',
     teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
     jbio1: 'Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.',
     jbio2: 'The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.',
@@ -1073,7 +1073,7 @@
     addEmailH: 'เพิ่มอีเมลของคุณ', addEmailWhy: 'เพื่อเปิดโปรไฟล์ได้อีกครั้งบนมือถือเครื่องอื่น เราส่งลิงก์ใช้ครั้งเดียวทางอีเมล ไม่ต้องมีรหัสผ่าน', addEmailBtn: 'บันทึกอีเมล', addEmailDone: 'บันทึกแล้ว ครั้งหน้าเข้าด้วยอีเมลนี้',
     checkH: 'เช็กผล 12 สัปดาห์ของฉัน · นิสัยที่ 1', chkWhy: 'ตัวเลข 3 ค่าจากนาฬิกาหรือมือถือ สัปดาห์ที่ 0, 6 และ 12 หลักฐานจริง ไม่ใช่คำสัญญา', chkStartH: 'สัปดาห์ที่ 0: จุดเริ่มต้นของคุณ', chkDueH: 'ถึงเวลาเช็กครั้งต่อไปแล้ว', chkHrL: 'ชีพจรขณะพัก (ครั้งต่อนาที)', chkSleepL: 'นอนเฉลี่ยสัปดาห์ที่แล้ว (ชั่วโมง)', chkFeelL: 'รู้สึกอย่างไร (1 = เหนื่อย, 5 = ดีมาก)', chkNoteL: 'หนึ่งบรรทัด (ไม่บังคับ)', chkSave: 'บันทึกผล', chkWeek: 'สัปดาห์', chkHr: 'ชีพจร', chkSleep: 'นอน', chkFeel: 'ความรู้สึก', chkChange: (hr, sl) => `ตั้งแต่สัปดาห์ที่ 0: ชีพจร ${hr} การนอน ${sl}`, chkNext: d => `เช็กครั้งต่อไป: ${d}`, chkAll: 'ครบ 3 ครั้งแล้ว ดูสิว่าคุณมาไกลแค่ไหน',
     fromTeachers: 'จากครูของคุณ', workOn: 'ฝึกต่อ',
-    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ', photoDl: 'บันทึกรูป', jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'ชำระเงินออนไลน์ แล้วส่งไซซ์และสลิปทาง LINE @aybkk', teeBuy: 'ชำระเงิน', teeSizes: 'ไซซ์',
+    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ', paidMail: 'ชำระเงินเรียบร้อย 🙏 แพ็กเกจของคุณใช้งานได้แล้ว เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูบนมือถือเครื่องนี้', haveProfile: 'อีเมลนี้มีโปรไฟล์ AYBKK อยู่แล้ว หลังชำระเงิน เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูแพ็กเกจของคุณ', codeNotFound: 'ไม่พบรหัสสมาชิกนี้ ลองตรวจสอบอีกครั้ง หรือขอลิงก์ทางอีเมลด้านบน', notYou: n => `ไม่ใช่คุณ${n}? ออกจากระบบ`, emailWho: n => `นี่คือโปรไฟล์ของคุณ${n} ใส่อีเมลเฉพาะเมื่อคุณคือคุณ${n}`, meGone: 'การเข้าสู่ระบบนี้หมดอายุแล้ว ขอลิงก์ใหม่ได้ทาง LINE @aybkk', photoDl: 'บันทึกรูป', jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'ชำระเงินออนไลน์ แล้วส่งไซซ์และสลิปทาง LINE @aybkk', teeBuy: 'ชำระเงิน', teeSizes: 'ไซซ์',
     teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
     jbio1: 'Jamsai เคยเป็นที่ปรึกษาด้านภาษี เธอเริ่มฝึกอัษฎางคโยคะในปี 2015 ระหว่างรับเคมีบำบัดรักษามะเร็งเต้านม โดยมี Boonchu เป็นครู',
     jbio2: 'การฝึกทำให้เธอกลับมาแข็งแรง เธอจึงลาออกจากงานไปเรียนกับ Sharath Jois ที่มายซอร์ และได้รับ Authorization Level 2 จากท่านในฤดูกาล 2018 ถึง 2019',
@@ -1084,7 +1084,7 @@
     addEmailH: '添加你的邮箱', addEmailWhy: '这样你可以在另一部手机上再次打开个人主页。我们会发一次性链接到邮箱，不需要密码。', addEmailBtn: '保存邮箱', addEmailDone: '已保存。下次用这个邮箱登录。',
     checkH: '我的12周检查 · 习惯1', chkWhy: '手表或手机上的3个数字，第0、6、12周各记录一次。是证据，不是承诺。', chkStartH: '第0周：你的起点', chkDueH: '该做下一次检查了', chkHrL: '静息心率（次/分钟）', chkSleepL: '上周平均睡眠（小时）', chkFeelL: '感觉如何？（1 = 很累，5 = 很好）', chkNoteL: '一句话（可选）', chkSave: '保存', chkWeek: '周', chkHr: '心率', chkSleep: '睡眠', chkFeel: '感觉', chkChange: (hr, sl) => `从第0周起：心率 ${hr}，睡眠 ${sl}`, chkNext: d => `下次检查：${d}`, chkAll: '3次检查都完成了。看看你走了多远。',
     fromTeachers: '老师给你的话', workOn: '要练习的',
-    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。', photoDl: '保存照片', jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '在线付款，然后在 LINE @aybkk 发送尺码和付款截图。', teeBuy: '付款', teeSizes: '尺码',
+    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。', paidMail: '付款成功 🙏 你的课程卡已生效。打开收据邮件里的链接，即可在这部手机上查看。', haveProfile: '这个邮箱已有 AYBKK 个人主页。付款后，打开收据邮件里的链接即可查看你的课程卡。', codeNotFound: '找不到这个会员编号。请检查，或在上方用邮箱获取链接。', notYou: n => `不是${n}？退出`, emailWho: n => `这是${n}的个人主页。只有你是${n}本人时才添加邮箱。`, meGone: '此登录已失效。请在 LINE @aybkk 向道场索取新链接。', photoDl: '保存照片', jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '在线付款，然后在 LINE @aybkk 发送尺码和付款截图。', teeBuy: '付款', teeSizes: '尺码',
     teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
     jbio1: 'Jamsai 曾是一名税务顾问。2015年她在接受乳腺癌化疗期间开始练习阿斯汤加，老师是 Boonchu。',
     jbio2: '练习让她重新找回力量，于是她辞去工作，去迈索尔跟随 Sharath Jois 学习，并在2018至2019季获得他授予的 Level 2 授权。',
@@ -1095,7 +1095,7 @@
     addEmailH: 'Добавьте email', addEmailWhy: 'Чтобы открыть профиль на другом телефоне. Мы пришлём одноразовую ссылку, без пароля.', addEmailBtn: 'Сохранить email', addEmailDone: 'Сохранено. В следующий раз входите с этим email.',
     checkH: 'Моя 12-недельная проверка · Привычка №1', chkWhy: 'Три числа с часов или телефона, на 0, 6 и 12 неделе. Доказательства, а не обещания.', chkStartH: 'Неделя 0: ваша отправная точка', chkDueH: 'Пора следующей проверки', chkHrL: 'Пульс в покое (уд/мин)', chkSleepL: 'Средний сон за неделю (часы)', chkFeelL: 'Как вы себя чувствуете? (1 = устал, 5 = отлично)', chkNoteL: 'Одна строка (по желанию)', chkSave: 'Сохранить', chkWeek: 'Неделя', chkHr: 'Пульс', chkSleep: 'Сон', chkFeel: 'Самочувствие', chkChange: (hr, sl) => `С недели 0: пульс ${hr}, сон ${sl}`, chkNext: d => `Следующая проверка: ${d}`, chkAll: 'Все 3 проверки готовы. Посмотрите, какой путь вы прошли.',
     fromTeachers: 'От ваших учителей', workOn: 'Над чем работать',
-    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы.', photoDl: 'Сохранить фото', jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Оплатите онлайн, затем пришлите размер и чек в LINE @aybkk.', teeBuy: 'Оплатить', teeSizes: 'Размеры',
+    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы.', paidMail: 'Оплата получена 🙏 Абонемент активен. Откройте ссылку в письме с чеком, чтобы увидеть его на этом телефоне.', haveProfile: 'У этого email уже есть профиль AYBKK. После оплаты откройте ссылку в письме с чеком, чтобы увидеть абонемент.', codeNotFound: 'Такой код участника не найден. Проверьте его или запросите ссылку по email выше.', notYou: n => `Не ${n}? Выйти`, emailWho: n => `Это профиль: ${n}. Добавляйте email, только если вы ${n}.`, meGone: 'Этот вход больше не действует. Попросите новую ссылку в LINE @aybkk.', photoDl: 'Сохранить фото', jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Оплатите онлайн, затем пришлите размер и чек в LINE @aybkk.', teeBuy: 'Оплатить', teeSizes: 'Размеры',
     teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
     jbio1: 'Jamsai работала налоговым консультантом. Она начала заниматься аштангой в 2015 году, во время химиотерапии от рака груди, и её учителем был Boonchu.',
     jbio2: 'Практика вернула ей силы, и она ушла с работы, чтобы учиться у Шарата Джойса в Майсуре. В сезоне 2018–2019 она получила от него авторизацию Level 2.',
@@ -1457,10 +1457,14 @@
     $('#view').innerHTML = html + `<p class="note">${esc(t('pkgNote'))}</p>`;
   }
 
-  async function renderMe() {
+  // Only the latest renderMe may draw: a slow answer for a code that was just
+  // signed out must not paint that profile back.
+  let ME_SEQ = 0;
+  async function renderMe(gone) {
+    const seq = ++ME_SEQ;
     const code = myCode();
     if (!code) {
-      $('#view').innerHTML = `<p class="note">You have no pass on this device yet.</p>
+      $('#view').innerHTML = `${gone ? `<p class="msg bad">${esc(t('meGone'))}</p>` : ''}<p class="note">You have no pass on this device yet.</p>
         <div class="pkg">
           <h3>Already bought a pass?</h3>
           <p class="note">We will email you a link that opens it. No code to remember.</p>
@@ -1474,7 +1478,13 @@
       return;
     }
     try {
-      const d = await fetch('/api/bkk/me/' + encodeURIComponent(code)).then(r => r.json());
+      const res = await fetch('/api/bkk/me/' + encodeURIComponent(code));
+      const d = await res.json().catch(() => ({ error: 'Could not load your profile. Please try again.' }));
+      if (seq !== ME_SEQ) return;
+      // The shala gave this profile a new code (the wrong person had signed in):
+      // this phone's code is dead, so forget it and offer a fresh sign-in. Only
+      // the API's own answer counts; an outage must not sign everyone out.
+      if (res.status === 404 && d.error === 'not found') { forgetMe(); return renderMe(true); }
       if (d.error) throw new Error(d.error);
       const passes = (d.passes || []).map(p => `<div class="pkg">
         <h3>${esc(p.name)}</h3>
@@ -1492,10 +1502,13 @@
       </div>`).join('') || '<p class="note">No upcoming classes booked.</p>';
       const askEmail = d.member.email ? '' : `<div class="pkg" id="mailBox">
           <h3>${esc(t('addEmailH'))}</h3><p class="note">${esc(t('addEmailWhy'))}</p>
+          <p class="note" style="font-weight:600;color:var(--plum)">${esc(t('emailWho', d.member.name))}
+            <button type="button" class="signout" onclick="signOutMe()">${esc(t('notYou', d.member.name))}</button></p>
           <input id="myMail" type="email" autocomplete="email" placeholder="you@example.com">
           <p style="margin-top:10px"><button class="btn pink" onclick="saveMyEmail()">${esc(t('addEmailBtn'))}</button></p>
           <div id="mailMsg"></div></div>`;
-      $('#view').innerHTML = `<p class="note">Member <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}</p>
+      $('#view').innerHTML = `<p class="note">Member <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}
+        · <button type="button" class="signout" style="min-height:0;padding:0" onclick="signOutMe()">${esc(t('notYou', d.member.name))}</button></p>
         ${askEmail}
         ${(d.notes || []).length ? `<div class="day">${esc(t('fromTeachers'))}</div>${d.notes.map(n => `<div class="pkg">
           <div class="note">${esc(fmtDay(String(n.class_date || n.created_at).slice(0, 10) + 'T12:00:00+07:00'))}${n.teacher ? ' · ' + esc(n.teacher) : ''}</div>
@@ -1508,7 +1521,7 @@
       renderMyPhotos(code, d.member);
       renderChecks(code);
     } catch (e) {
-      $('#view').innerHTML = `<p class="msg bad">${esc(e.message)}</p>`;
+      if (seq === ME_SEQ) $('#view').innerHTML = `<p class="msg bad">${esc(e.message)}</p>`;
     }
   }
 
@@ -1517,6 +1530,7 @@
     const box = $('#myChecks');
     let checks = [];
     try { checks = (await fetch('/api/bkk/me/' + encodeURIComponent(code) + '/checks').then(r => r.json())).checks || []; } catch (_) {}
+    if (code !== myCode() || !box.isConnected) return;
     const day = d => Date.parse(d + 'T00:00:00Z');
     const today = bkkToday();
     const first = checks[0];
@@ -1565,6 +1579,7 @@
     try {
       const [d] = await Promise.all([
         fetch('/api/bkk/me/' + encodeURIComponent(code) + '/photos').then(r => r.json()), loadJournal(member)]);
+      if (code !== myCode() || !box.isConnected) return;
       const days = d.days || [];
       box.innerHTML = days.length ? days.map(day => `
         <p class="note" style="margin:10px 0 4px;font-weight:700">${esc(fmtDay(day.date + 'T12:00:00+07:00'))}</p>
@@ -1578,13 +1593,13 @@
   // (student.html, stored as the student's workshop journal), opened for that day.
   let JRN = { id: '', name: '', byDay: new Map() };
   async function loadJournal(member) {
-    JRN = { id: member.journalId || '', name: member.name || '', byDay: new Map() };
-    if (!JRN.id) return;
+    const j = JRN = { id: member.journalId || '', name: member.name || '', byDay: new Map() };
+    if (!j.id) return;
     try {
-      const r = await fetch('/api/journal/student/' + encodeURIComponent(JRN.id));
+      const r = await fetch('/api/journal/student/' + encodeURIComponent(j.id));
       if (!r.ok) return;
       for (const a of ((await r.json()).assessments || [])) {
-        if (a.sessionDate && !JRN.byDay.has(a.sessionDate)) JRN.byDay.set(a.sessionDate, a);
+        if (a.sessionDate && !j.byDay.has(a.sessionDate)) j.byDay.set(a.sessionDate, a);
       }
     } catch (_) {}
   }
@@ -1625,6 +1640,9 @@
     $('#dlg').showModal();
   });
 
+  const forgetMe = () => { try { localStorage.removeItem('aybkk_member'); } catch (_) {} };
+  window.signOutMe = () => { forgetMe(); renderMe(); };
+
   window.saveMyEmail = async () => {
     const email = ($('#myMail').value || '').trim();
     const r = await fetch('/api/bkk/me/' + encodeURIComponent(myCode()) + '/email', { method: 'POST',
@@ -1634,9 +1652,18 @@
     else $('#mailMsg').innerHTML = `<p class="msg bad">${esc(j.error || 'Could not save.')}</p>`;
   };
 
-  window.linkCode = () => {
-    const v = $('#mc').value.trim();
-    if (v) { localStorage.setItem('aybkk_member', v); renderMe(); }
+  // A typed code is checked before it is kept, so a typo reads "not found",
+  // never "your sign-in has ended".
+  window.linkCode = async () => {
+    const v = $('#mc').value.trim().toUpperCase();   // codes are upper case; phones type lower
+    if (!v) return;
+    const r = await fetch('/api/bkk/me/' + encodeURIComponent(v)).catch(() => null);
+    if (r && r.status === 404) {
+      if (!$('#mcMsg')) $('#mc').insertAdjacentHTML('afterend', '<p class="msg bad" id="mcMsg"></p>');
+      $('#mcMsg').textContent = t('codeNotFound');
+      return;
+    }
+    localStorage.setItem('aybkk_member', v); renderMe();
   };
 
   window.emailLink = async () => {
@@ -1677,15 +1704,21 @@
       try {
         const r = await fetch('/api/bkk/orders', { method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productCode: code, name, email, phone }) });
+          body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode() }) });
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || 'could not create order');
-        localStorage.setItem('aybkk_member', j.member.code);
+        // An email that already has a profile: its code is not handed to this
+        // browser (anyone can type an email). The receipt email signs them in.
+        // A phone signed in as someone else must not stay on that profile: the
+        // buyer would see (and book on) the other person's pass after paying.
+        const known = j.member.code;
+        if (known) localStorage.setItem('aybkk_member', known);
+        else { forgetMe(); if (j.pay) alert(t('haveProfile')); }
         if (j.pay) {
           // PaySolutions appends nothing to the return URL, so the only way to
           // know which order came back is to remember it before leaving.
           localStorage.setItem('aybkk_pending',
-            JSON.stringify({ refno: j.pay.refno || j.order.refno, at: Date.now() }));
+            JSON.stringify({ refno: j.pay.refno || j.order.refno, at: Date.now(), existing: !known }));
           // hand off to the gateway's hosted page
           const f = document.createElement('form');
           f.method = 'POST'; f.action = j.pay.action;
@@ -1697,14 +1730,15 @@
         } else if (j.payLink) {
           $('#bmsg').innerHTML = `<div class="msg ok">
             <b>${esc(j.order.product)} — ฿${j.payLink.amount.toLocaleString()}</b><br>
-            Reference <b>#${esc(j.payLink.refno)}</b> · member code <b>${esc(j.member.code)}</b><br>
+            Reference <b>#${esc(j.payLink.refno)}</b>${known ? ` · member code <b>${esc(known)}</b>` : ''}<br>
+            ${known ? '' : `${esc(t('haveProfile'))}<br>`}
             <span style="font-size:13px">${esc(j.payLink.note)}</span></div>
             <p style="margin-top:12px"><a class="btn pink" style="display:inline-block;text-decoration:none"
               href="${esc(j.payLink.url)}" target="_blank" rel="noopener">Pay ฿${j.payLink.amount.toLocaleString()}</a></p>`;
           $('#bgo').style.display = 'none';
         } else {
           $('#bmsg').innerHTML = `<div class="msg ok">Order ${esc(j.order.refno)} created.<br>
-            ${esc(j.payUnavailable || '')}<br>Your member code is <b>${esc(j.member.code)}</b>.</div>`;
+            ${esc(j.payUnavailable || '')}<br>${known ? `Your member code is <b>${esc(known)}</b>.` : esc(t('haveProfile'))}</div>`;
           $('#bgo').disabled = false;
         }
       } catch (e) {
@@ -1753,6 +1787,10 @@
       return p.refno;
     } catch (_) { return null; }
   }
+  // Paid for a profile this phone is not signed in to: the receipt email opens it.
+  const pendingForExisting = () => {
+    try { return !!(JSON.parse(localStorage.getItem('aybkk_pending') || 'null') || {}).existing; } catch (_) { return false; }
+  };
 
   (async () => {
     const m = pendingRefno();
@@ -1761,9 +1799,10 @@
         const j = await fetch('/api/bkk/pay/check/' + encodeURIComponent(m)).then(r => r.json());
         history.replaceState({}, '', location.pathname);
         if (j.status === 'paid') {
+          const viaMail = pendingForExisting();
           localStorage.removeItem('aybkk_pending');
           current = 'me';
-          alert('Payment confirmed — your pass is active 🙏');
+          alert(viaMail ? t('paidMail') : 'Payment confirmed — your pass is active 🙏');
         } else if (j.status === 'mismatch') {
           localStorage.removeItem('aybkk_pending');
           alert('The amount received does not match this order. Please contact the shala.');
