@@ -53,8 +53,8 @@ B2=('KEEPS SICKNESS AWAY',[
  "...there are five benefits of walking meditation... You get fit for traveling, fit for striving in meditation, and healthy. What's eaten, drunk, chewed, and tasted is properly digested...",
  "The Buddha said walking practice keeps you fit and well, and helps you digest food.",{}),
 ('',"Plutarch · Advice about Keeping Well 24, tr. F. C. Babbitt, 1928",
- "...health is not to be purchased by idleness and inactivity... the man who thinks to conserve his health by uselessness and ease does not differ from him who guards his eyes by not seeing, and his voice by not speaking.",
- "Sitting still won't save your health. That's like saving your eyes by never looking.",{}),
+ "...the man who thinks to conserve his health by uselessness and ease does not differ from him who guards his eyes by not seeing, and his voice by not speaking.",
+ "Sitting still won't save your health.",{}),
 ('',"Wat Pho hermit statues, Bangkok, 1830s · K. I. Matics, Journal of the Siam Society, 1977",
  "At Wat Pho in Bangkok, statues of hermits made in the 1830s show ‘ruesi dat ton’, Thai self-stretching exercises. Each figure was meant to ease a problem, such as stiff legs, sprained shoulders or dizziness.",
  "Thailand has its own old stretching practice for aches and stiffness.",{'s':1,'pre':'ฤๅษีดัดตน','pf':TH}),
@@ -62,8 +62,8 @@ B2=('KEEPS SICKNESS AWAY',[
  "A Chinese folk saying goes: ‘Walk a hundred steps after a meal, and live to ninety-nine.’ An English proverb book of 1732 says: ‘After Dinner, sit a while: After Supper, walk a Mile.’",
  "Two countries, same advice: after you eat, take a gentle walk.",{'s':1,'pre':'饭后百步走，活到九十九','pf':ZH,'ps':56}),
 ('',"B. K. S. Iyengar · Light on Life, 2005",
- "Physical health is not a commodity to be bargained for... it has to be earned through sweat. It is something that we must build up.",
- "You cannot buy good health. You build it yourself, with effort and sweat.",{}),
+ "...it has to be earned through sweat.",
+ "Earn your health with your own sweat.",{}),
 ])
 B3=('WHAT SCIENCE FOUND',[
 ('9-127',"Dallas Bed Rest and Training Study · Circulation, 1968 and 2001",
