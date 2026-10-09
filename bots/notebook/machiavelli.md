@@ -3,12 +3,15 @@
 Inbox last read: 2026-10-09T12:10:00.139Z
 
 ## Standing orders from Boonchu
+- 2026-10-09 (Boonchu): FAMILY CALENDAR, plan travel around it. Jai and Boone's school (AISB 2026-27, version 5 Oct 2026, moved after the flood; in Boonchu's Google Calendar as "🏫 AISB" all-day notes). Kids FREE: Sat 10 - Sun 18 Oct; Sat 5 - Mon 7 Dec; Sat 19 Dec - Sun 10 Jan (back MON 11 JAN, make-up day); Sat 20 - Sun 28 Feb (9 days: a 10-day trip costs Fri 19 Feb or Mon 1 Mar); Fri 9 - Mon 19 Apr; Tue 4 May; Thu 3 Jun; from Sat 12 Jun (summer; optional Summer School 14 Jun - 9 Jul). School OPEN on Fri 23 Oct (make-up day) and Thu 20 May. Boonchu's plans: Mysore trip in the winter break; 10-day family Japan trip in the February break. Before proposing any workshop, cohort or teaching trip date (China, Russia), check it against this list and say so.
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
 - 2026-10-04 (Boonchu, via Machi): 10 HABITS FRAME. Every piece points to one of the 10 health habits in bots/direction.md and names its number. Master line: "10 things people do to stay healthy. Ashtanga does all 10, in one morning." Careful words: no "every student", no kilos, no medical claims.
 - 2026-10-04 (Boonchu, via Machi): DIRECTION. Read bots/direction.md (The Habit Gap) before every run. AYBKK sells a habit system, not poses: "people don't lack tools, they quit". Every piece leads to a Mysore trial, a renewal or the 180K program. No public statistic until checked against its source.
 - 2026-09-29: Content work (Reels, carousels, captions, Postiz posts) goes to Plato's own chat: "✍️ Plato · AYBKK content chat" (session_01EpfSiAFErEs2e4MYfzK1F9). Machi chat stays for money, leads, strategy and team orders.
 
 ## Reminders
+- 1 Nov 2026 (Boonchu, family calendar): Mysore trip in the winter break (kids free Sat 19 Dec - Sun 10 Jan, back Mon 11 Jan). Ask: flights and stay booked? Who runs the shala while he is away, and is the January "Give us 12 weeks" push set up before he leaves (January is when people start)?
+- 15 Nov 2026 (Boonchu, family calendar): 10-day family Japan trip in the February break. Kids free Sat 20 - Sun 28 Feb = 9 days, so pick: Fri 19 - Sun 28 Feb (miss Fri 19) or Sat 20 Feb - Mon 1 Mar (miss Mon 1). Ask: dates picked, flights booked?
 - 12 Nov 2026 (promotion ended 11 Nov): Boonchu said "change after Nov 11": switch the site's pink buttons and blush backgrounds (hue 334) to the plum + gold + teal triad, matching the calendar and comparison posters. Ask Boonchu for a go, then Neo builds it as a PR.
 
 ## Wins
