@@ -5,3 +5,4 @@ Countdowns: Letter #2 Mon 12 Oct: 3 days. Course sales open Tue 20 Oct: 11 days.
 Reel from Plato: mice did 7 days of strength training, weight same, fat cells smaller inside (ScienceDaily 8 Oct); the Frog Hymn, frogs quiet for a year then sing. Asana: Bhekasana. Hook: "Scientists trained mice for 7 days. The scale? Same." Plato waits on Boonchu's Bhekasana cue.
 Score: wins this week: none reported. 180K leads pasted: 0 in 12 days. Letter #1 (due Mon 5 Oct): not reported sent. No reminders due.
 Carne and Plato both posted today. Inbox 07:08: 0 new.
+13:08 check-in: course prices still waiting (1 day), Mysore Reel still waiting (2 days). Inbox 13:08: 2 new, 2 hot.
