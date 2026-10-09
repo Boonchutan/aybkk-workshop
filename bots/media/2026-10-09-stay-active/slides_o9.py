@@ -88,7 +88,7 @@ B3=('WHAT SCIENCE FOUND',[
  "670 people aged 70 or older, who had fallen in the past year or were slow to get up and walk, took two one-hour classes a week for 24 weeks. The 224 doing tai chi had 152 falls; the 223 stretching had 363.",
  "A special tai chi class helped older people keep their balance and fall far less.",{'s':1}),
 ('',"M. A. Fiatarone et al. · JAMA, 1990",
- "Ten frail nursing-home residents aged about 90 (up to 96) did 8 weeks of strength training. The 9 who finished got on average 174% stronger, their mid-thigh muscle grew 9%, and their heel-to-toe walking got 48% faster.",
+ "Ten frail nursing-home residents aged about 90 did 8 weeks of strength training. The 9 who finished got on average 174% stronger and walked 48% faster.",
  "Even at 90, muscles grow stronger when you train them.",{'s':1}),
 ('',"N. R. Lazarus · NPR, 2018; Aging Cell, 2018",
  "At 82, Professor Norman Lazarus still cycled: ‘...I wasn't aging in the way that I'd sort of been taught in medical school.’ In his study, cyclists aged 55-79 had as many new T cells as young adults.",
