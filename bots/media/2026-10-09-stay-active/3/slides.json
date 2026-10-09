@@ -1,0 +1,72 @@
+[
+ {
+  "photo": "9-127",
+  "who": "Dallas Bed Rest and Training Study · Circulation, 1968 and 2001",
+  "quote": "In 1966, five healthy 20-year-old men spent 3 weeks in bed, which ‘had a more profound impact on physical work capacity than did 3 decades of aging.’ At 50, six months of training reversed their age-related loss of aerobic power.",
+  "meaning": "Three weeks in bed hurt their fitness more than 30 years of ageing. Training at 50 won it back.",
+  "story": true
+ },
+ {
+  "photo": "9-130",
+  "who": "J. N. Morris et al. · The Lancet, 1953; Med Sci Sports Exerc, 1994",
+  "quote": "In 1953 Dr Jerry Morris found London bus conductors, who climbed the double-decker stairs, had less heart disease than drivers, who sat at the wheel. In 1994 he wrote that physical activity ‘could be today's \"best buy\" in public health...’",
+  "meaning": "The bus workers who climbed stairs all day had healthier hearts than the drivers who sat.",
+  "story": true
+ },
+ {
+  "photo": "9-061",
+  "who": "R. S. Paffenbarger Jr. et al. · New England Journal of Medicine, 1986",
+  "quote": "Of 16,936 Harvard alumni, men who burned 2,000+ kcal a week walking, climbing stairs and playing sport had death rates ‘one quarter to one third lower’ than less active men. The study's leader, Ralph Paffenbarger, began running at 45.",
+  "meaning": "Men who walked, climbed stairs and played sport lived longer. The scientist himself began running at 45.",
+  "story": true
+ },
+ {
+  "photo": "9-022",
+  "who": "C. P. Wen et al. · The Lancet, 2011",
+  "quote": "A study of 416,175 adults in Taiwan (1996-2008) found that people who exercised about 15 minutes a day (92 minutes a week) had a 14% lower risk of death and a 3-year longer life expectancy than inactive people.",
+  "meaning": "Even about 15 minutes of exercise a day was linked to a longer life.",
+  "story": true
+ },
+ {
+  "photo": "9-077",
+  "who": "D. A. Bennett et al., China Kadoorie Biobank · JAMA Cardiology, 2017",
+  "quote": "China Kadoorie Biobank: 487,334 adults aged 30 to 79 in 10 areas of China. About one more hour of brisk walking a day went with a 6% lower risk of major heart and blood-vessel disease.",
+  "meaning": "In China, people who moved more each day had less heart and blood-vessel disease.",
+  "story": true
+ },
+ {
+  "photo": "9-091",
+  "who": "X. R. Pan et al., Da Qing study · Diabetes Care, 1997",
+  "quote": "In 1986, clinics in Da Qing, China, screened 110,660 people and found 577 with raised blood sugar. After 6 years, 41.1% of the exercise group had developed diabetes, against 67.7% of the control group.",
+  "meaning": "For people with high blood sugar, exercise lowered the chance of getting diabetes.",
+  "story": true
+ },
+ {
+  "photo": "9-075",
+  "who": "F. Li et al. · JAMA Internal Medicine, 2018",
+  "quote": "670 people aged 70 or older, who had fallen in the past year or were slow to get up and walk, took two one-hour classes a week for 24 weeks. The 224 doing tai chi had 152 falls; the 223 stretching had 363.",
+  "meaning": "A special tai chi class helped older people keep their balance and fall far less.",
+  "story": true
+ },
+ {
+  "photo": "9-107",
+  "who": "M. A. Fiatarone et al. · JAMA, 1990",
+  "quote": "Ten frail nursing-home residents aged about 90 (up to 96) did 8 weeks of strength training. The 9 who finished got on average 174% stronger, their mid-thigh muscle grew 9%, and their heel-to-toe walking got 48% faster.",
+  "meaning": "Even at 90, muscles grow stronger when you train them.",
+  "story": true
+ },
+ {
+  "photo": "9-098",
+  "who": "N. R. Lazarus · NPR, 2018; Aging Cell, 2018",
+  "quote": "At 82, Professor Norman Lazarus still cycled: ‘...I wasn't aging in the way that I'd sort of been taught in medical school.’ In his study, cyclists aged 55-79 had as many new T cells as young adults.",
+  "meaning": "People who kept cycling for years kept parts of their immune system young.",
+  "story": true
+ },
+ {
+  "photo": "9-076",
+  "who": "Daniel E. Lieberman, Harvard · Exercised, 2020",
+  "quote": "A mountain of evidence suggests that the Fountain of Youth runs with sweat. That sweat, moreover, needs to keep flowing as we age.",
+  "meaning": "Moving and sweating help keep you young. Keep doing it as you grow older.",
+  "story": false
+ }
+]

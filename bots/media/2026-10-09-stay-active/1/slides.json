@@ -1,0 +1,72 @@
+[
+ {
+  "photo": "9-081",
+  "who": "Lüshi Chunqiu, Chinese classic, about 239 BCE · tr. from Chinese",
+  "quote": "Flowing water does not go bad, and a door hinge is not eaten by insects, because they move. It is the same with body and qi: if the body does not move, the essence does not flow...",
+  "meaning": "Moving water stays fresh. A turning door hinge does not rot. A moving body stays healthy too.",
+  "story": false
+ },
+ {
+  "photo": "9-132",
+  "who": "Russian proverb · V. I. Dal's collection, 1862",
+  "quote": "Lying in one place, even a stone grows over with moss.",
+  "meaning": "Keep moving, or the moss grows on you too.",
+  "story": false
+ },
+ {
+  "photo": "9-053",
+  "who": "Seneca · Letters to Lucilius 55, tr. R. M. Gummere, 1917",
+  "quote": "...Nature gave us legs with which to do our own walking... Our luxuries have condemned us to weakness; we have ceased to be able to do that which we have long declined to do.",
+  "meaning": "Legs are made for walking. What you stop doing for a long time, you soon cannot do.",
+  "story": false
+ },
+ {
+  "photo": "9-065",
+  "who": "Suwen (Basic Questions), Chinese medical classic, ch. 23 · tr. from Chinese",
+  "quote": "Long looking harms the blood, long lying harms the qi, long sitting harms the flesh, long standing harms the bones, long walking harms the sinews.",
+  "meaning": "Too much of one thing, even sitting, harms the body. Mix moving and resting.",
+  "story": false
+ },
+ {
+  "photo": "9-060",
+  "who": "Socrates, in Xenophon's Memorabilia III.12, tr. E. C. Marchant, 1923",
+  "quote": "...it is a disgrace to grow old through sheer carelessness before seeing what manner of man you may become by developing your bodily strength and beauty to their highest limit... it will not come of its own accord.",
+  "meaning": "Don't grow old without finding out how strong your body can be. It won't happen by itself.",
+  "story": false
+ },
+ {
+  "photo": "9-099",
+  "who": "Leo Tolstoy · What Shall We Do?, 1886, tr. Free Age Press",
+  "quote": "Tolstoy told of a steward who kept a friend's best horses in the stable on oats but, afraid for them, never rode them or led them out. ‘Of course, all these horses became good for nothing.’",
+  "meaning": "Even the best horse gets weak if it never moves. Our bodies are the same.",
+  "story": true
+ },
+ {
+  "photo": "9-029",
+  "who": "Kaibara Ekiken · Yojokun (Lessons on Nourishing Life), 1713 · tr. from Japanese",
+  "quote": "Move the body a little every day. Do not sit still for long. After every meal, walk a few hundred steps quietly in the garden. When it rains, walk slowly inside the house, many times.",
+  "meaning": "Move a little every day. Walk after meals, even on rainy days.",
+  "story": false
+ },
+ {
+  "photo": "9-092",
+  "who": "Quoted in Dongui Bogam, Korea, 1613 · tr. from classical Chinese",
+  "quote": "...Whoever would nourish the arms always bends and stretches them; whoever would nourish the legs always walks.",
+  "meaning": "To keep your arms strong, bend and stretch them. To keep your legs strong, walk.",
+  "story": false
+ },
+ {
+  "photo": "9-069",
+  "who": "World Health Organization · Physical activity fact sheet, 2024",
+  "quote": "...any amount of physical activity is better than none; all physical activity counts; all age groups should limit the amount of time being sedentary; and muscle strengthening benefits everyone.",
+  "meaning": "Any movement is better than none. Sit less, and make your muscles work.",
+  "story": false
+ },
+ {
+  "photo": "9-002",
+  "who": "Gheranda Samhita 1.8 · tr. Srisa Chandra Vasu, 1914",
+  "quote": "Like unto an unbaked earthen pot thrown in water, the body is soon decayed (in this world). Bake it hard in the fire of Training in order to strengthen and purify the body.",
+  "meaning": "Your body is like a soft clay pot. Daily practice is the fire that makes it strong.",
+  "story": false
+ }
+]
