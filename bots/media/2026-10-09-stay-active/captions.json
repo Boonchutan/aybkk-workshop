@@ -53,8 +53,8 @@
    "published": "PUBLISHED 19:11 BKK 9 Oct, first try"
   },
   "2": {
-   "id": "cmv0xflad01tsnp0y88x9ou24",
-   "when": "22:00 BKK 9 Oct (15:00Z)",
+   "id": "cmv0y6y1a02a6np0yvnvsyx5b",
+   "when": "22:01 BKK 9 Oct (15:01Z)",
    "attachments": [
     "hhkTw1NnOG",
     "oiaYJtYZwu",
@@ -62,12 +62,13 @@
     "7lPZviXsqh",
     "pTpUbv1HZg",
     "W3kKYd2E3l",
-    "rLlulKzkyk",
+    "Dg8nxA5kMv",
     "oV19u0Q5Er",
     "BUvLZm4HCO",
-    "MG84PubueD"
+    "3mWoJzCwdi"
    ],
-   "published": "QUEUE"
+   "published": "QUEUE",
+   "replaces": "cmv0xflad01tsnp0y88x9ou24 (22:00, old slides 7 and 10; Boonchu to delete in Postiz)"
   },
   "3": {
    "id": "cmv0xflk901ttnp0y4wr2vop7",
