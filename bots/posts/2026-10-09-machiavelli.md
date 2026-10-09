@@ -6,3 +6,4 @@ Reel from Plato: mice did 7 days of strength training, weight same, fat cells sm
 Score: wins this week: none reported. 180K leads pasted: 0 in 12 days. Letter #1 (due Mon 5 Oct): not reported sent. No reminders due.
 Carne and Plato both posted today. Inbox 07:08: 0 new.
 13:08 check-in: course prices still waiting (1 day), Mysore Reel still waiting (2 days). Inbox 13:08: 2 new, 2 hot.
+19:08 check-in: no win reported. Course prices and Mysore Reel not repeated (nagged twice today). Inbox 19:08: 2 new, 2 hot.
