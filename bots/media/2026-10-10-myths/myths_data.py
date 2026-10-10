@@ -184,9 +184,10 @@ B_GROUPS = [
  ('What people believe about age', [
   dict(id='young', t='Ashtanga is only for the young', a='Every series, from Surya Namaskara A',
    m="Ashtanga is for twenty-year-olds.",
-   f="The Hatha Yoga Pradipika, about 600 years old: 'Whether young, old or too old, sick or lean, one who discards laziness, gets success if he practises Yoga.' Age is not the test. The only person the verse leaves out is the lazy one.",
-   src=("Hatha Yoga Pradipika 1.66 (Sinh, 1914)", "https://sacred-texts.com/hin/hyp/hyp03.htm"),
-   j=[(40, "Start at any age. The old book leaves out only one person: the lazy one. Don't be him. He's very comfortable, and he's not in the book.")]),
+   f="Some said yoga should stop at forty. In Yoga Mala, Pattabhi Jois answered: 'This is not borne out by experience.' And: 'In short, there is no age restriction for the practice of yoga.' He quotes the Hatha Yoga Pradipika: young, old or very old, sick or weak, practice brings success. 'Old', he wrote, means above sixty, and 'very old' beyond ninety. The only one left out is the lazy one.",
+   src=("Pattabhi Jois, Yoga Mala, section 39 Shirshasana (tr. Eddie Stern); Hatha Yoga Pradipika 1.66 (Sinh, 1914)", "https://sacred-texts.com/hin/hyp/hyp03.htm"),
+   j=[(3, "People think I'm getting old. Guruji wrote that 'old' means above sixty. So I'm not old. My hamstrings have lost their best excuse."),
+      (40, "Start at any age. The old book leaves out only one person: the lazy one. Don't be him. He's very comfortable, and he's not in the book.")]),
   dict(id='ninety', t='Too old to build muscle', a='Utkatasana · Surya Namaskara B (theme only)', used='Used in a carousel, 9 Oct',
    m="After a certain age, you can't build muscle.",
    f="In a 1990 study, ten frail nursing-home residents, average age 90 and up to 96, did eight weeks of heavy leg training. In the nine who finished, strength rose 174% on average, thigh muscle grew 9%, and walking speed improved 48%.",
