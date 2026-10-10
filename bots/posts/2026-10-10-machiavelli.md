@@ -6,3 +6,4 @@ Reel from Plato: a basketball player named best player of the year for the 5th t
 Score: wins this week: none reported. 180K leads pasted: 0 in 13 days. Letter #1 (due Mon 5 Oct): not reported sent. No reminders due.
 Carne and Plato both posted today. Inbox 07:08: 0 new.
 13:08 check-in: course prices still waiting (due 19:00 today), Mysore Reel still waiting (1 day). Inbox: 1 new, 1 hot.
+19:08 check-in: course prices default B applied, sales open now Tue 27 Oct. Mysore Reel still waiting (1 day). Inbox: 3 new, 1 hot.

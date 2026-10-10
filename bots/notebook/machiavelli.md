@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-10T06:09:40.816Z
+Inbox last read: 2026-10-10T12:10:35.494Z
 
 ## Standing orders from Boonchu
 - 2026-10-10 (Boonchu): WEEKLY LOG. Every Friday 21:47 Bangkok, routine trig_01UZnkK1DhEBZA29NrFEbM9o wakes the Machi team chat, which writes one new note "<date> Week Log.md" into the vault folder "01 Dashboard/Weekly Log" (first one: 2026-10-09). It reads this notebook (Wins, Open items, Reminders, Log) and the week's posts, so log every win, decision and default here, with a date. The log itself never goes into this repo (public).
@@ -19,7 +19,7 @@ Inbox last read: 2026-10-10T06:09:40.816Z
 (none yet)
 
 ## Open items
-- 2026-09-28: Digital product (online anatomy + philosophy classes), CN + EN, start 3 Nov 2026, two tiers. Prices: decision pending (see team chat). 2 Oct 19:00: no answer, default B applied: sales open moved one week, 6 Oct to 13 Oct. Prices still waiting. 3 Oct 07:08: new choice set, answer by 19:00 Wed 7 Oct, default B = sales open moves one more week (to 20 Oct). 7 Oct 19:08: no answer by 19:00, default B applied: sales open now Tue 20 Oct. Prices still waiting. 8 Oct 07:08: new choice set, answer by 19:00 Sat 10 Oct, default B = sales open moves to Tue 27 Oct. 10 Oct 07:08: reminded, due 19:00 today. Waiting: translator, payment setup.
+- 2026-09-28: Digital product (online anatomy + philosophy classes), CN + EN, start 3 Nov 2026, two tiers. Prices: decision pending (see team chat). 2 Oct 19:00: no answer, default B applied: sales open moved one week, 6 Oct to 13 Oct. Prices still waiting. 3 Oct 07:08: new choice set, answer by 19:00 Wed 7 Oct, default B = sales open moves one more week (to 20 Oct). 7 Oct 19:08: no answer by 19:00, default B applied: sales open now Tue 20 Oct. Prices still waiting. 8 Oct 07:08: new choice set, answer by 19:00 Sat 10 Oct, default B = sales open moves to Tue 27 Oct. 10 Oct 07:08: reminded, due 19:00 today. 10 Oct 19:08: no answer by 19:00, default B applied: sales open now Tue 27 Oct. Prices still waiting. Next run: new choice. Waiting: translator, payment setup.
 
 - 2026-09-28: No Cap Daily (auto trend-facts IG) is Boonchu's test for future brand deals. Suggested: 90-day test to about 28 Dec 2026, judge on followers and reach, keep it in a separate Meta business from AYBKK, fix duplicate drafts. Ask him for numbers at the end.
 
@@ -48,6 +48,7 @@ Inbox last read: 2026-10-10T06:09:40.816Z
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
 ## Log
+- 2026-10-10 19:08: Inbox: 3 new, 1 hot (LINE: a student's friend may start Sun 11 Oct Mysore 07:00; a past student missing AYBKK; a booked-Monday thanks, no reply). Course prices default B applied (sales open 27 Oct). Mysore Reel not repeated (nagged twice today). No win, no reminders. Next step given: answer the friend's start question tonight.
 - 2026-10-10 13:08: Inbox: 1 new, 1 hot (LINE: a teacher's student asks to buy the promo now and start in January). Nagged course prices (19:00 today, default B = sales open 27 Oct) and Mysore Reel (19:00 Sun 11 Oct, 1 day, default B = Wed 14 Oct), 2nd time today each: do not repeat at 19:08 (except applying prices default). No reminders due, no wins.
 - 2026-10-10 07:08: Both bots posted. No new @Machi requests. Inbox: 0 new. Nagged course prices (due 19:00 today, default B = sales open 27 Oct) and Mysore Reel (by 19:00 Sun 11 Oct, 1 day, default B = Wed 14 Oct), 1st time today each. Letter #1 not reported sent. No wins, no leads (0 in 13 days), no reminders.
 - 2026-10-09 19:08: Inbox: 2 new, 2 hot (both LINE: a start-date follow-up after payment, a friend's package check + Sunday start). Course prices and Mysore Reel not repeated (nagged twice today). No win, no reminders. Next step given: answer the paid student's start-date question.
