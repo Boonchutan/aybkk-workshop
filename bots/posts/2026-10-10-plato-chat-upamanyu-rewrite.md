@@ -66,3 +66,26 @@ On screen: AN OLD STORY FROM INDIA · UPAMANYU · SAMASTHITIH (Mahabharata goes 
 - Payoff promises only "your teacher notice" (his own Letter #1 line). No promise of calls or messages.
 - Many China/Russia viewers practise at home or online: the caption must invite, not scold.
 - Captions in 4 languages after his pick.
+
+## v2 (Boonchu: "mention [the source] in there, and how these 2 characters relate to the main characters")
+Checked by 15 agents (4 researchers, 2 skeptics each, writer, 2 readers), then 2 fresh readers on v2. Readers got lost when the family chain was SPOKEN inside the story (score 7, "I stopped listening to Upamanyu"), so: source spoken short + small card on screen, the link goes in the caption.
+
+HOOK: "One bad week. You don't come to class one morning. Then two. Who notice?"
+MIRROR: "Nobody ask. So... you don't come back."
+STORY: "Bedtime story. From the Mahabharata. The first book." [ON SCREEN 2-3 s: MAHABHARATA · Book 1 (Adi Parva), section 3]
+"A student, Upamanyu. Every day, he look after the cows. Every evening, he come back. Stand in front of his teacher... and bow." [small bow]
+"One day... he fall into a hole. A well. The sun go down. The teacher look: 'Upamanyu... not back.' He go to the forest. He shout: 'Upamanyu! Where are you?' From the well: 'I'm here!' The teacher help him. Upamanyu come home... and bow." [small bow]
+(1 s silence)
+TURN: "How the teacher know? Every evening, Upamanyu is there. One evening, he is not. Your bad week... is the well."
+ASANA: "Every morning, first thing: we stand. Feet together, hands together. Samasthitih. This is our bow." [small bow] "I see it every day." [BOONCHU'S OWN CUE]
+PAYOFF: "Alone... nobody notice. Come every day... the day you don't, your teacher notice."
+Optional spoken link (only at the very end, after the payoff): "P.S. Upamanyu's classmate later become the teacher of Arjuna's great-grandson."
+
+## The link to the main characters (checked in Ganguli; line numbers in adi.txt, Gutenberg 15474)
+- Upamanyu and his teacher never appear with Arjuna and his brothers. Upamanyu's name is only in Adi Parva sec. 3.
+- Teacher Ayoda-Dhaumya: "had three disciples, Upamanyu, Aruni, and Veda" (1786-1787).
+- Veda later became spiritual guide (Upadhyaya) of King Janamejaya (1994-1998); his student Utanka urged Janamejaya to hold the snake sacrifice against Takshaka, who killed his father Parikshit (2250-2280; sec. 4 calls it "one of the causes").
+- Janamejaya = son of Parikshit (sec. 3), son of Abhimanyu (sec. 40, 49), son of Arjuna and Subhadra (sec. 95).
+- At that sacrifice Vaisampayana, on Vyasa's order, "recited the whole of that history" (sec. 60). Do not say "first" told.
+- NOT KNOWN, never say as fact: that Ayoda-Dhaumya is (or is not) Dhaumya the Pandavas' priest (sec. 185, "younger brother of Devala"); that this Upamanyu is the one Krishna visits (Anushasana 14, "descendant of Vyaghrapada"); that classmate Aruni, renamed Uddalaka, is Ashtavakra's grandfather (tradition only).
+- In the book the teacher's help = "Glorify the twin Aswins"; never say he pulled him out.
