@@ -1,0 +1,160 @@
+{
+ "check": {
+  "claims": [
+   {
+    "claim": "Taking protein shakes is not going to work to gain strength (for someone who is exercising).",
+    "verdict": "overstated",
+    "evidence": "Morton RW et al., British Journal of Sports Medicine 2018;52(6):376-384 (online 2017), meta-analysis of 49 RCTs, 1,863 healthy adults, all doing resistance training for 6+ weeks. Adding protein increased 1RM strength by 2.49 kg (95% CI 0.64 to 4.33), fat-free mass by 0.30 kg (0.09 to 0.52), and muscle fibre CSA by 310 um2 (51 to 570). The paper's discussion puts the average 1RM gain from training itself at about 27 kg, so the protein adds about 9% on top. Above about 1.62 g/kg/day total protein (CI 1.03 to 2.20) there was no further gain in fat-free mass. The effect got smaller with age (-0.01 kg per year) and was bigger in people who already trained (0.75 kg). Nunes EA et al., J Cachexia Sarcopenia Muscle 2022 (74 RCTs) agrees: with resistance training, extra protein gave a small gain in lower-body strength (SMD 0.40 at 1.6+ g/kg/day, 19 studies, low certainty). So protein does help a little when you train. Saying it 'is not going to work' breaks the rule against calling a method useless when evidence says it helps.",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5867436/",
+    "safe_wording": "A protein shake can add a little, but only if you train. The training does the real work."
+   },
+   {
+    "claim": "Protein shakes on their own (no training) will not make you stronger.",
+    "verdict": "true",
+    "evidence": "Nunes EA et al., J Cachexia Sarcopenia Muscle 2022, subgroup with no resistance exercise: lower-body strength SMD 0.14 (95% CI -0.36 to 0.64, 4 studies), lean body mass SMD 0.21 (-0.15 to 0.58, 6 studies), handgrip SMD 0.20 (-0.17 to 0.57). None of these is significant, and the authors say the no-training evidence is small. Ten Haaf DSM et al., American Journal of Clinical Nutrition 2018: 36 RCTs, 1,682 non-frail older adults. Protein supplementation had no significant effect on lean mass (SMD 0.11, -0.06 to 0.28), lower-body strength (SMD 0.03, -0.20 to 0.27) or handgrip (SMD 0.58, -0.08 to 1.24). In this group it added nothing even with resistance training, because most of them already ate enough protein.",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8978023/",
+    "safe_wording": "A shake on its own won't make you stronger. Your body only gets stronger when you ask it to work."
+   },
+   {
+    "claim": "More supplements are not going to work to gain strength.",
+    "verdict": "overstated",
+    "evidence": "IOC Consensus Statement, Maughan RJ et al., Int J Sport Nutr Exerc Metab 2018 (also in BJSM): only a few performance supplements have good evidence (caffeine, creatine, specific buffering agents, nitrate). Results vary between people, and some supplements risk harm or contamination with banned substances. Creatine is the main exception for strength, and it works with training. Lanhers C et al., Sports Medicine 2017: 53 studies, upper-limb strength effect size 0.317 (95% CI 0.185 to 0.449). Kazeminasab F et al., Nutrients 2025: 69 studies, 1,937 people. Creatine plus resistance training added bench/chest press +1.43 kg and squat +5.64 kg versus placebo, with no significant effect on leg press or handgrip, and smaller or no effects in older adults and women. So most supplements do little for strength, and the few that help only add to training.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29589768/",
+    "safe_wording": "More pills won't do it for you. Most do very little, and the few that help only help if you train."
+   },
+   {
+    "claim": "Weight loss and strength are the same problem with the same fix (his line opens with 'not losing weight OR not getting stronger', then only answers strength).",
+    "verdict": "false",
+    "evidence": "Weak logic: the line asks two questions and answers one. The answer about protein is also wrong for weight. Wycherley TP et al., American Journal of Clinical Nutrition 2012: 24 RCTs, 1,063 adults on calorie-reduced diets. Higher-protein diets gave slightly MORE weight loss (-0.79 kg, 95% CI -1.50 to -0.08) and fat loss (-0.87 kg), and kept more fat-free mass (+0.43 kg). So 'protein won't work' is not true for weight. Exercise can also change the body while the scale stays still. Wewege M et al., Obesity Reviews 2017: 13 trials in overweight adults. Both HIIT and moderate continuous training cut fat mass and waist size 'without accompanying body-weight changes', and HIIT took about 40% less time. Plato's notebook rule says one problem per line and never promise kilos.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23097268/",
+    "safe_wording": "Cut weight from this line. If he wants a weight video, make it a separate one, with no kilos: 'Your body can change before the scale does.'"
+   },
+   {
+    "claim": "Doing more high intensity training will make you exceed your stamina.",
+    "verdict": "true",
+    "evidence": "Milanovic Z, Sporis G, Weston M., Sports Medicine 2015: meta-analysis of 28 controlled trials, 723 healthy adults aged 18 to 45. Compared with no exercise, high-intensity interval training raised VO2max by 5.5 mL/kg/min (+/-1.2), and steady endurance training by 4.9 (+/-1.4). HIIT added a small extra 1.2 mL/kg/min (+/-0.9) over endurance training. The science holds, but the words do not: 'exceed your stamina' is unclear English, and 'will make you' is a promise. The notebook rule is 'builds', not 'will make you'.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26243014/",
+    "safe_wording": "Hard training builds your stamina."
+   },
+   {
+    "claim": "High intensity training (or Ashtanga) will increase skill.",
+    "verdict": "overstated",
+    "evidence": "The HIIT studies (e.g. Milanovic 2015) measure VO2max, not movement skill, and none of the sources checked shows that HIIT builds skill. Skill comes from practising the same movement again and again (specificity of practice). That fits Ashtanga, which repeats the same set sequence every day, but not HIIT in general. No Ashtanga study that measures 'skill' was checked here, so this is about how the practice is built, not a research number.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26243014/",
+    "safe_wording": "Hard training builds stamina. Skill comes from doing the same practice every day, and that is what Ashtanga is."
+   },
+   {
+    "claim": "Ashtanga yoga is hard enough to build stamina (implied: it is high intensity training).",
+    "verdict": "overstated",
+    "evidence": "It depends on pace and level. Hagins M, Moore W, Rundle A., BMC Complementary and Alternative Medicine 2007;7:40: 20 practitioners did a 56-minute BEGINNER Ashtanga DVD ('Ashtanga Yoga Beginners Practice'). Whole session: 2.5 METs, 93.2 beats/min, 49.4% of predicted max heart rate, about the same as walking at 3.2 km/h. The sun salutation part was the hardest: 2.9 METs, 103.5 beats/min, 54.8% max heart rate. Authors: the whole session does not meet fitness guidelines, but sun salutations lasting more than 10 minutes may help unfit or sedentary people. Mody BS., Journal of Bodywork and Movement Therapies 2011;15(3):343-347: 6 young adults with 2+ years of Surya Namaskar practice did 4 rounds (about 30 minutes). They averaged 80% of max heart rate (84% in round 3, 90% in round 4), oxygen use was 26 ml/kg/min, and the energy cost was about 230 kcal per 30 minutes for a 60 kg person, enough for a cardio training effect. This was traditional Surya Namaskar with a very small sample, not a full Ashtanga series. Larson-Meyer DE., Medicine and Science in Sports and Exercise 2016, review of 17 studies: yoga averaged 3.3 +/- 1.6 METs (range 1.83 to 7.4) and is mostly light intensity, but Surya Namaskar can reach moderate to vigorous. So a steady practice of sun salutations can train the heart and lungs. A slow beginner practice is light. Do not call Ashtanga 'high intensity training'.",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2219995/",
+    "safe_wording": "Every Ashtanga practice starts with sun salutations, breath and movement with no stopping. Done at a steady pace, that works your heart and lungs. The pace grows as you grow."
+   }
+  ],
+  "light_edit": "If you do some exercise and don't feel like you're getting stronger, taking protein shakes or more supplements alone is not going to fix it. But do more high intensity training or Ashtanga yoga, and you build stamina. Ashtanga builds skill too."
+ },
+ "fill": {
+  "fills": [
+   {
+    "lane": "Lane A",
+    "habit": "2 Get stronger",
+    "line": "If you practise and stretch your hamstrings first so you won't get hurt, the stretch is not going to be your armour. In 25 sports trials, stretching made no real difference to injuries. But strength training cut them to under a third. Chaturanga builds strength.",
+    "source": "myths_data.py B_GROUPS id 'stretchfirst': Lauersen et al., Br J Sports Med 2014;48(11):871, https://doi.org/10.1136/bjsports-2013-092538"
+   },
+   {
+    "lane": "Lane B",
+    "habit": "3 Walk / run",
+    "line": "If you walk to hit 10,000 steps, that number is not a doctor's rule. It likely came from a 1965 step counter. In one study of older women, benefit levelled off near 7,500. Walking covers 2 of the 10. One Ashtanga morning covers all 10.",
+    "source": "myths_data.py B_GROUPS id 'steps': Lee et al., JAMA Intern Med 2019;179(8):1105, https://pmc.ncbi.nlm.nih.gov/articles/PMC6547157/ (closing line is the master comparison line in /home/user/bots-mem/bots/direction.md)"
+   },
+   {
+    "lane": "Lane A",
+    "habit": "7 Hot and cold",
+    "line": "If you practise in Bangkok heat and think your sweat is fat melting, more sweat is not going to burn more fat. Sweat is mostly water and salt. Burned fat mostly leaves when you breathe out. So watch the breath, not the puddle.",
+    "source": "myths_data.py B_GROUPS id 'sweatfat': Meerman and Brown, BMJ 2014;349:g7257, https://www.unsw.edu.au/newsroom/news/2018/03/when-we-lose-weight--where-does-it-go-"
+   },
+   {
+    "lane": "Lane B",
+    "habit": "8 Mind-body movement",
+    "line": "If you're over 60 and your balance feels shaky, calling it just age is not going to help. In six trials, yoga gave people your age a small gain in balance and a medium gain in moving around. But standing asanas train it.",
+    "source": "myths_data.py B_GROUPS id 'balance': Youkhana et al., Age and Ageing 2016;45(1):21, https://pubmed.ncbi.nlm.nih.gov/26707903/ (do not add falls: authors say it is not yet known)"
+   },
+   {
+    "lane": "Lane A",
+    "habit": "8 Mind-body movement",
+    "line": "If you do Marichyasana D to wring out toxins, a deeper twist is not going to clean you. A yoga researcher says there is 'no scientific basis'. A healthy liver does the cleaning. But keep twisting: twists still help you turn and move.",
+    "source": "myths_data.py B_GROUPS id 'twists': Yoga Journal, 18 Jan 2022 (Herpreet Thind, UMass Lowell), https://www.yogajournal.com/practice/does-yoga-detox-your-body/"
+   },
+   {
+    "lane": "Lane B",
+    "habit": "10 Go traditional (Patanjali's own definition of asana)",
+    "line": "If you're stiff and waiting to get flexible before yoga, waiting is not going to get you there. Patanjali says asana is 'stable and easy'. No toes. In one trial, inactive adults around 62 got more flexible in 8 weeks of yoga. Come stiff.",
+    "source": "myths_data.py B_GROUPS id 'flexstart': Yoga Sutra 2.46 (Woods, 1914); Gothe and McAuley, J Gerontol A 2016, https://pmc.ncbi.nlm.nih.gov/articles/PMC5864160/"
+   },
+   {
+    "lane": "Lane A",
+    "habit": "1 Track everything",
+    "line": "If you do Navasana and judge your day by how sore you are, chasing soreness is not the training. In one study, muscle damage did not predict muscle growth. Soreness is a poor scorecard. Sharp or joint pain is a stop sign. Count mornings instead.",
+    "source": "myths_data.py B_GROUPS id 'nopain': Damas et al., J Physiol 2016, https://pmc.ncbi.nlm.nih.gov/articles/PMC5023708/"
+   },
+   {
+    "lane": "Lane B",
+    "habit": "8 Mind-body movement",
+    "line": "If you're 45 and never really moved, saying it's too late is not going to help. In a US study, people who got active at 40 to 61 had 35% lower risk of dying. Lifelong movers: 36%. So start with Surya Namaskara A.",
+    "source": "myths_data.py B_GROUPS id 'midlife': Saint-Maurice et al., JAMA Network Open 2019;2(3):e190355, https://doi.org/10.1001/jamanetworkopen.2019.0355 (315,059 adults; 35% vs 36% compared with the always inactive)"
+   }
+  ]
+ },
+ "ver": {
+  "results": [
+   {
+    "line": "If you practise and stretch your hamstrings first so you won't get hurt, the stretch is not going to be your armour. In 25 sports trials, stretching made no real difference to injuries. But strength training cut them to under a third. Chaturanga builds strength.",
+    "verdict": "fix",
+    "fixed_line": "If you stretch your hamstrings before practice so you won't get hurt, the stretch alone is not going to be your armour. A review of 25 sports trials found stretching made no real difference to injuries. Strength training cut them to under a third. Stretching still helps you move further. Chaturanga builds strength.",
+    "why": "The facts match the stretchfirst entry: 25 trials, no real difference, strength training under a third. But the line leaves out the fair half of the source, 'Stretching still helps range of motion. It just isn't armour.' Without it the line reads as 'stretching does not work', and Ashtanga stretches every morning. The fix adds that half back in plain words. It also fixes the clumsy opening clause and adds 'alone', the wording plato.md asks for. 'Builds' is the approved verb. No long dash and no 'pose'."
+   },
+   {
+    "line": "If you walk to hit 10,000 steps, that number is not a doctor's rule. It likely came from a 1965 step counter. In one study of older women, benefit levelled off near 7,500. Walking covers 2 of the 10. One Ashtanga morning covers all 10.",
+    "verdict": "keep",
+    "fixed_line": "If you walk to hit 10,000 steps, that number is not a doctor's rule. It likely came from a 1965 step counter. In one study of older women, benefit levelled off near 7,500. Walking covers 2 of the 10. One Ashtanga morning covers all 10.",
+    "why": "The steps entry supports every fact: 'likely' 1965 pedometer (manpo-kei), Lee 2019, 16,741 women with average age 72, benefit levelling off near 7,500. 'Benefit levelled off' admits that walking helps, so it never says walking fails. The closing is the master line from direction.md word for word, and it shows the gap without attacking. No promise, plain words, no long dash, no 'pose'. Optional polish: 'the benefit'."
+   },
+   {
+    "line": "If you practise in Bangkok heat and think your sweat is fat melting, more sweat is not going to burn more fat. Sweat is mostly water and salt. Burned fat mostly leaves when you breathe out. So watch the breath, not the puddle.",
+    "verdict": "fix",
+    "fixed_line": "If you practise in Bangkok heat and think your sweat is fat melting, chasing more sweat is not the training. Sweat is mostly water and salt. Burned fat mostly leaves in the air you breathe out. So judge your practice by the breath, not the puddle.",
+    "why": "The facts match the sweatfat entry (Meerman and Brown: water and salt, fat breathed out as carbon dioxide). The closing 'watch the breath', right after 'fat leaves when you breathe out', suggests that breathing more burns more fat. That is a hidden weight-loss promise, and direction.md bans kilos and medical claims (habits 5 and 7). The fix keeps the breath cue but ties it to the practice, not to fat. 'Is not the training' is the wording plato.md asks for. No long dash and no 'pose'."
+   },
+   {
+    "line": "If you're over 60 and your balance feels shaky, calling it just age is not going to help. In six trials, yoga gave people your age a small gain in balance and a medium gain in moving around. But standing asanas train it.",
+    "verdict": "fix",
+    "fixed_line": "If you're over 60 and your balance feels shaky, calling it just age is not going to help. In six trials, yoga gave people your age a small gain in balance and a medium gain in getting up and moving around. Standing asanas train it.",
+    "why": "The balance entry supports the facts: Youkhana 2016, six trials, 307 people aged 60 and over, small gain in balance, medium gain in mobility. The line correctly says nothing about falls. 'But' does not make sense, because the sentence before it already backs yoga, so it is dropped. 'Moving around' becomes 'getting up and moving around', the file's own description of the mobility measure. 'Train it' says what the practice trains, which is allowed, and is no promise. No long dash and no 'pose'."
+   },
+   {
+    "line": "If you do Marichyasana D to wring out toxins, a deeper twist is not going to clean you. A yoga researcher says there is 'no scientific basis'. A healthy liver does the cleaning. But keep twisting: twists still help you turn and move.",
+    "verdict": "keep",
+    "fixed_line": "If you do Marichyasana D to wring out toxins, a deeper twist is not going to clean you. A yoga researcher says there is 'no scientific basis'. A healthy liver does the cleaning. But keep twisting: twists still help you turn and move.",
+    "why": "Each fact matches the twists entry: Herpreet Thind told Yoga Journal 'no scientific basis', a healthy liver cleans without twisting, and twists still help you turn and move. It is fair because it corrects the belief and keeps the asana, which is what the file says. No medical promise, plain words. The colon is fine (not a long dash), and it says 'asana', never 'pose'."
+   },
+   {
+    "line": "If you're stiff and waiting to get flexible before yoga, waiting is not going to get you there. Patanjali says asana is 'stable and easy'. No toes. In one trial, inactive adults around 62 got more flexible in 8 weeks of yoga. Come stiff.",
+    "verdict": "fix",
+    "fixed_line": "If you're stiff and waiting to get flexible before yoga, waiting is not going to get you there. Patanjali says asana is 'stable and easy'. Nothing about toes. In one trial, inactive adults, average age 62, got more flexible in 8 weeks of yoga. Come stiff.",
+    "why": "The flexstart entry backs the facts: Yoga Sutra 2.46 (Woods 'stable-and-easy'), and Gothe and McAuley with 118 inactive adults, average age 62, 8 weeks, flexibility improved. Two fixes. 'No toes' is unclear for a 10-year-old, so it becomes 'Nothing about toes' (the file says 'Toes are not mentioned'). 'Around 62' becomes 'average age 62', the file's wording, because an average does not mean everyone was about 62. 'Waiting' is not a method with evidence, so calling it wrong is fair. No promise, no long dash, no 'pose'."
+   },
+   {
+    "line": "If you do Navasana and judge your day by how sore you are, chasing soreness is not the training. In one study, muscle damage did not predict muscle growth. Soreness is a poor scorecard. Sharp or joint pain is a stop sign. Count mornings instead.",
+    "verdict": "keep",
+    "fixed_line": "If you do Navasana and judge your day by how sore you are, chasing soreness is not the training. In one study, muscle damage did not predict muscle growth. Soreness is a poor scorecard. Sharp or joint pain is a stop sign. Count mornings instead.",
+    "why": "The nopain entry (Damas 2016) supports it almost word for word: damage did not predict growth, soreness is a poor scorecard, sharp or joint pain is a stop sign. 'Is not the training' is the approved wording. 'Count mornings' fits habit 1 (practices done). The safety advice is not a medical promise. Plain words, no long dash, no 'pose'."
+   },
+   {
+    "line": "If you're 45 and never really moved, saying it's too late is not going to help. In a US study, people who got active at 40 to 61 had 35% lower risk of dying. Lifelong movers: 36%. So start with Surya Namaskara A.",
+    "verdict": "fix",
+    "fixed_line": "If you're 45 and never really moved, saying it's too late is not going to help. In a US study, people who got active at 40 to 61 had a 35% lower risk of dying during the study than people who stayed inactive. People active all their life: 36%. Almost the same. So start with Surya Namaskara A.",
+    "why": "The numbers match the midlife entry (Saint-Maurice 2019: 35% against 36%). But '35% lower risk of dying' with no comparison group and no time frame turns a study result into a sweeping health claim. The file says 'during the study than the always inactive', so the fix puts that back. 'Lifelong movers' becomes plainer words. 'Almost the same', from the file, keeps the point honest. The closing is an action, not a promise that Surya Namaskara A lowers death risk. No long dash and no 'pose'."
+   }
+  ]
+ }
+}
