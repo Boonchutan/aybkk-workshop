@@ -31,6 +31,13 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - What he says (fact, transcript): an ad = hook + meat + CTA. Write 50 hooks, 3 to 5 meats, 1 to 3 CTAs, film all in one session, edit into 150 to 750 ads a week, because Meta's ad system (Andromeda) rewards variety. Hook sources: own past winners, own free content, others' ads, others' free content, ad libraries. Spread hooks across levels of awareness (unaware, problem aware, solution aware, product aware, most aware). Meat formats: demonstration, testimonial, educational, story, faceless. A CTA says 5 things: what to do, why it matters, when, how easy, what happens next.
 - For AYBKK (my view): built for PAID Meta ads. No ad budget, and China apps have no Meta. Steal 3 things only: film many hooks per body in one session and test them across platforms; fill the missing meat formats (testimonial = graduate stories, demonstration = adjustment); make CTAs say all 5 things without a price.
 
+### 2026-10-10: Why fewer men practise yoga / Ashtanga (full report: posts/2026-10-10-carnegie-research-men-and-yoga.md)
+- US 2022: 23.3% of women vs 10.3% of men did yoga (CDC NHIS). Gap flat for 20 years. China: women ~95% of users (iResearch 2018), men 12.2% of teachers (36Kr 2021). India: men equal or ahead (NNMS, Mishra 2020). Ashtanga: 17.5% men in one small online survey.
+- Boonchu's guesses: "for girls" TRUE (West strong, Asia thin); "afraid of stretching" HALF (fear of looking stiff next to flexible women, not the stretch); "don't know" TRUE (don't know styles), "not educated" NOT SUPPORTED; "mentality" TRUE (traditional male norms predict no intention).
+- Missed reasons: no interest / prefer gym (top for men, Garnsey 2025), nobody brought them (Cagas 2024 "Men Need Role Models"), only man in the room.
+- History: 1930s Mysore youth thought yoga less "manly" than the bodybuilding gym next door (Wellcome citing Singleton 2010).
+- Money: Lane B test only (count Rezerv bookings by gender, occasional men's intro, "bring him" invites). 180K: gender barely matters, don't chase men there. Visible male teacher is rare in China (12%): an asset.
+
 ## Log
 
 - 2026-09-28: First run. Memory branch created. Lead table empty.
@@ -53,3 +60,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-08: Lead table still empty. Inbox read OK: 1 LINE thread, 0 about 180K. No requests in team chat.
 - 2026-10-09: Lead table still empty. Inbox read OK: 0 threads. No requests in team chat.
 - 2026-10-10: Lead table still empty. Inbox read OK: 3 LINE threads, 0 about 180K. No requests in team chat.
+- 2026-10-10 (chat): Research on why fewer men practise yoga (workflow, 4 angles + fact-checks). Summary in Research.
