@@ -1,0 +1,932 @@
+{
+ "source": {
+  "speaker": "Mohammed Qahtani, a security engineer from Saudi Arabia (confirmed by the Toastmasters International press release of 17 Aug 2015)",
+  "event": "Toastmasters International World Championship of Public Speaking. He won first place in the final on Saturday 15 Aug 2015 at Caesars Palace, Las Vegas, during the Toastmasters convention held 12-15 Aug. Source: https://mediacenter.toastmasters.org/2015-08-17-Saudi-Arabian-engineer-wins-Toastmasters-2015-World-Championship-of-Public-Speaking",
+  "year": "2015",
+  "speech_title": "The Power of Words",
+  "url": "https://www.youtube.com/watch?v=qasE4ecA57Y",
+  "wording_notes": "About the source: the URL above is the official video. It is on the Toastmasters International YouTube channel under the title \"2015 World Champion of Public Speaking - Mohammed Qahtani\" (checked through YouTube oEmbed), and the Toastmasters press release links to it (\"Watch Qahtani compete\"). YouTube blocked the caption download, so I could not check the clip against the official audio. I checked it against two independent transcripts that agree closely: Speakola (speakola.com/other-events/mohammed-qahtani-toastmasters-power-of-words-2015) and English Speeches Channel (library.englishspeecheschannel.com/speech/mohammed-qahtani-power-of-words). These clip.md lines differ from both transcripts:\n(1) Line 11: clip says \"three times as many AS people dying from smoking\". Both transcripts say \"three times as many people dying from smoking\", with no second \"as\".\n(2) Line 11: clip says \"Snickers bar\". Both transcripts say \"Snicker bar\". English Speeches has \"pulled\", which matches the clip; Speakola has \"put\".\n(3) Line 13: clip says \"nothing WILL ever happen to you\". Both transcripts say \"nothing WOULD ever happen to you\".\n(4) Line 16: clip says \"I USED these arguments\". Both transcripts say \"I USE these arguments\", which is how he says it on stage.\n(5) Line 12: the first word is unverified. The clip has \"Oh, you all think smoking kills?\", Speakola has \"Or you all think...\", and English Speeches has \"All you all think... Yes.\"\n(6) Beat B7 is a template, not the transcript, but it drops \"just\". The original is \"even though I JUST made them up\".\nLines 14 (DNA), 16 (tobacco farming), 15 (\"Mr. Contest Chair, fellow Toastmasters and guests\"), 17 (\"five of them believed what I said, two of them started smoking\") and 18 (\"Words, when said and articulated in the right way, can change someone's mind.\") match the transcripts word for word.\nThe stage directions are unverified: patting his pockets for a lighter, then dropping the act and opening his arms. Speakola only notes \"[Pretending to light up a cigarette]\".\nThe clip stops at \"change someone's mind\". The next line in the original is \"They can alter someone's belief.\"",
+  "claims_false": [
+   {
+    "claim": "The number of people dying from diabetes is three times the number dying from smoking",
+    "status": "false (it is the other way round). Worldwide, tobacco kills more than 7 million people a year, against 1.6 million deaths directly caused by diabetes in 2021, so roughly 4 times more. In the US, cigarette smoking and secondhand smoke cause more than 480,000 deaths a year, against 94,445 diabetes deaths in 2024, so roughly 5 times more.",
+    "source": "WHO Tobacco and nicotine fact sheet, 26 Jun 2026 (who.int/news-room/fact-sheets/detail/tobacco); WHO Diabetes fact sheet, 14 Nov 2024 (who.int/news-room/fact-sheets/detail/diabetes); CDC About Commercial Tobacco (cdc.gov/tobacco/about/index.html); CDC FastStats Diabetes (cdc.gov/nchs/fastats/diabetes.htm)"
+   },
+   {
+    "claim": "The leading cause of lung cancer is not cigarettes, it is your DNA",
+    "status": "false. CDC: 'Cigarette smoking is the number one risk factor for lung cancer', and in the US it is 'linked to about 80% of lung cancer deaths'. WHO: 'Smoking tobacco ... is the primary risk factor for lung cancer', and most preventable cases are attributable to tobacco smoking (60-70%). WHO lists 'genetic susceptibility' only as one of several secondary risk factors.",
+    "source": "CDC Lung Cancer Risk Factors (cdc.gov/lung-cancer/risk-factors/index.html, May 2026); WHO Lung cancer fact sheet, 16 Apr 2026 (who.int/news-room/fact-sheets/detail/lung-cancer)"
+   },
+   {
+    "claim": "You could smoke for years and nothing will ever happen to you",
+    "status": "false or misleading (a survivor anecdote). WHO: tobacco 'damages nearly every organ in the body' and 'there is no safe level of exposure'. CDC: cigarette smoking 'harms nearly every organ of the body'.",
+    "source": "WHO Tobacco and nicotine fact sheet, 26 Jun 2026; CDC About Commercial Tobacco (cdc.gov/tobacco/about/index.html)"
+   },
+   {
+    "claim": "The whole war against smoking is just to restrict the farming of tobacco",
+    "status": "false. Article 3 of the WHO Framework Convention on Tobacco Control (FCTC) states the treaty's goal as protecting 'present and future generations from the devastating health, social, environmental and economic consequences of tobacco consumption and exposure to tobacco smoke'. Article 17 requires countries to promote 'economically viable alternatives for tobacco workers, growers', and Article 4 includes providing assistance for tobacco workers and growers. Farmers are supported, not targeted.",
+    "source": "WHO FCTC overview (fctc.who.int/docs/librariesprovider12/technical-documents/who-fctc-summary.pdf)"
+   },
+   {
+    "claim": "He says himself that he made these arguments up",
+    "status": "confirmed. Both transcripts read 'I use these arguments — even though I just made them up — with a group of my friends'.",
+    "source": "Speakola transcript; English Speeches Channel transcript (both listed in wording_notes)"
+   }
+  ],
+  "credit_line": "Speech: Mohammed Qahtani, \"The Power of Words\", winner of the 2015 Toastmasters World Championship of Public Speaking (full video: Toastmasters International on YouTube)."
+ },
+ "rank": {
+  "ranking": [
+   {
+    "key": "reel_DeLPF08NYbq_v2_laneA_spot-the-lies",
+    "score": 8,
+    "why": "It is the Lane A post that is due, and it carries the lowest clip risk of the three. The 'SPOT THE LIES' banner and the 'LIE n/4' cards are burned in from frame 1, 'ALL 4 WERE LIES' shows at about 0:23 and the spoken truths start at about 0:29. All 4 lies are popular myths taken from the checked file (sweatfat, twists, stretchfirst, stretching). B8 claims no result from friends, only a question to the viewer. Practitioners will recognise themselves in the Marichyasana D and jump-back lines, and the caption is clean Lane A: no promo, LINE @aybkk, sources in a pinned comment. Two weak spots. The twist lie is labelled LIE, but the checked file only supports 'no evidence' (verified #67), and that lie names Marichyasana D, an asana Yoga Mala credits with digestive benefits (verified #44). The myths are also fairly gym-level for a 10-year practitioner."
+   },
+   {
+    "key": "v1_laneB_fear_buster_4_lies",
+    "score": 6.5,
+    "why": "This is the best-made and most purist-safe script. All 4 lies are checked false and very low harm, it quotes Yoga Mala word for word, the 'lies' pill stays on screen throughout and it has a warm 'from zero' close. But it is Lane B. Posted now, it would be the 12th Lane B post in a row, and its after-forty and after-sixty half repeats the 'Never too late' carousel posted today, 10 Oct. It also runs 60 to 62 s, and the truths only start at about 0:33. It should go after a Lane A post, as its own route line already says."
+   },
+   {
+    "key": "reel_DeLPF08NYbq_v3_hyp_bridge",
+    "score": 5,
+    "why": "It has the most depth for serious practitioners, but it scores worst on the two things Boonchu asked to keep low. Purist risk: the Hatha Yoga Pradipika, a text Guruji quotes in Yoga Mala, plays the false voice in a game, and the script itself says it is not purist-safe. Clip risk: 'six months upside down, grey hair gone', said with full confidence, could lead someone to hold headstand longer (verified #34 says never suggest long holds). It also breaks rule 1: grey hair and poison are untested, not checked false, and they are not popular myths. The truths start late, at about 0:34. The Lane B promo sits in a Lane A caption, the series header is still a placeholder, and it uses #hiddenstoriesofashtanga with no myth story in it."
+   }
+  ],
+  "pick": "reel_DeLPF08NYbq_v2_laneA_spot-the-lies",
+  "pick_why": "The last 11 posts were all Lane B, so a Lane A post is due. This is the only Lane A script that keeps both clip risk and purist risk low: the game is marked on screen from frame 1, and the truths start at about 0:29.\nThe 4 lies are real, checked myths that serious practitioners hear every week, and it ends on 'check first, then practise' with no promo. That builds trust, and LINE @aybkk gives people a door into AYBKK.",
+  "warnings": [
+   "The twist lie (v2) must be softened before filming. The checked file only says there is 'no scientific basis' for twist detox (verified #67), so it must be phrased as 'no evidence', never 'proven false'. Yoga Mala also credits the Marichyasanas with digestive benefits (verified #44). Right now the script names Marichyasana D in the lie, labels it 'LIE 2/4', shows 'ALL 4 WERE LIES' and the caption says 'all 4 are false'. A 10-year Ashtangi could hear that as you calling Guruji's teaching a lie. Fix: take 'Marichyasana D' out of the B3 spoken lie (say 'after a twist'), make the card read 'MYTH 2/4' or add 'no proof' to it, and change the caption to '3 are false, 1 has no proof'.",
+   "Clip risk is lower but not zero. From about 6 to 22 s you say 4 false things with full confidence. The 'SPOT THE LIES' banner and the LIE cards must be burned into the video file, not added as IG stickers. Take the cover and preview frame only from B6 to B9, and never post B1 to B5 alone as a Story or teaser. Nobody can stop someone ripping the audio alone.",
+   "Safety lines that must never be cut from v2: 'Sweat is not fat', 'Breathing faster... don't burn more' (never call the breath ujjayi, per Sharath), 'Stretching help your range' and 'Strength training help more'. 'Stretch first and you won't get hurt' is the one lie that gives false safety, so its truth must stay in.",
+   "v2 B0 uses 'What?', which is the speaker's own one-word line. The other two scripts avoided it on purpose. To keep the skeleton plan clean (his shape, never his words), change it to 'Eh?' or 'Yes?'.",
+   "B8 has no count. If you want a real number, first show the 4 lines to M and the media assistant as an open quiz, tell them the truth straight away, and use only the count they give, with their OK and no names. Never film a number before you have it.",
+   "Route check before posting: Postiz does not show Reels posted from the Instagram app. Confirm that no Reel has gone up since the Flexible-or-Stiff Reel on 4 Oct. The Matsyendra Hidden Stories episode is also a Lane A post in the queue. After 11 Lane B posts, two Lane A posts in a row is fine.",
+   "Reading glasses: that gag was already used in the dristi Reel (the life note is marked USED, and it says 53, an age that must never be used). By default, point at the sources line instead. Use the glasses only if you say yes.",
+   "v1 is a good next Lane B post, but only after a Lane A post. Trim it under 60 s (move 'Hello, I'm Boonchu' to on-screen text, cut 'Hmm.' and 'No no' in B1). Space it a few days from today's 'Never too late' carousel, which already asked the 'too old' question.",
+   "If v3 is ever used: it is not purist-safe. Take the new-student promo out of its Lane A caption (lanes are never mixed), do not brand it Hidden Stories (it has no myth story), and never show anyone upside down while the grey-hair promise is spoken.",
+   "None of the three points directly to the 180K program. That is correct for a myth-busting Reel: keep the price and the program out of the spoken lines, and let LINE @aybkk be the door. A comment-keyword DM funnel for the program belongs only on teaching Reels."
+  ]
+ },
+ "scripts": [
+  {
+   "final": {
+    "key": "v1_laneB_fear_buster_4_lies",
+    "lane": "B (open door) | Fear buster: \"Yoga is not for me\" (one fear, its 4 excuses). | Toolkit pick: Two-Voice Deadpan (hook) + Myth-Kill (body), on the clip's 10-beat skeleton. Why: the lie voice is the viewer's own inner voice, and the myths get one plain \"wrong\" and then a checked fact each, in the same order as the lies. | Route: Lane B · last 3 posts (Postiz, checked 10 Oct): What science found, Fit when old, Never too late (stay-active 3/5, 4/5, 5/5, 10 Oct, open-door, all with the promo line) · next due: Lane A (Matsyendra). Post this Reel after it. Instagram only, never WeChat or Xiaohongshu. Check Postiz again before Boonchu films.",
+    "habit_number": "#8 Mind-body movement (also #2 Get stronger, in truth 4)",
+    "title": "Too Stiff? Too Old? Lies.",
+    "beats": [
+     {
+      "beat": "B0",
+      "skeleton": "Silent for 2 to 3 seconds. Use a real prop to do the one thing a [your role] should never do. Then say one word that dares the viewer to judge you ('Yes?').",
+      "spoken": "[silent 3 s: he rolls up the mat that faces the camera, tucks it under his arm, sips his tea, looks into the lens] Yes?",
+      "on_screen": "Too stiff? Too old? 4 lies first. Then the truth.",
+      "truth_source": ""
+     },
+     {
+      "beat": "B1",
+      "skeleton": "[The kind thing everybody says]? Hmm. No no. Then turn it on the viewer in 3 words ('Not for you.').",
+      "spoken": "Yoga is for everybody? Hmm. No no. Not for you.",
+      "on_screen": "The voice in your head. Not me.",
+      "truth_source": ""
+     },
+     {
+      "beat": "B2",
+      "skeleton": "Lie 1, a false comparison with an everyday thing nobody questions: 'You can't [skill], you don't go to [class for that skill], right? Same same. Can't [body thing]? No [practice].'",
+      "spoken": "You can't cook... you don't go to cooking class, right? Same same. Can't touch your toes? No yoga.",
+      "on_screen": "LIE 1/4: 'Can't touch your toes? No yoga.'",
+      "truth_source": "Checked false: myths_data.py B_GROUPS id 'flexstart' (verified.json kept #57). Truth is given in B7 and B9: Yoga Sutra 2.46, tr. J. H. Woods 1914, 'Stable-and-easy posture'. Toes are not mentioned, so the truth says 'Nothing about toes', never 'no toes'."
+     },
+     {
+      "beat": "B3",
+      "skeleton": "Lie 2, the false cause: 'And the real reason? Not because [the thing you could change]. [A wrong reason nobody can change]. After [age]... finish.'",
+      "spoken": "And the real reason? Not because you never try. Your age. After forty... finish.",
+      "on_screen": "LIE 2/4: 'After forty, yoga is finished.'",
+      "truth_source": "Checked false: id 'young' (verified.json #35 + Yoga Mala sec. 39, ym.txt). Pattabhi Jois, Yoga Mala, sec. 39 Shirshasana (tr. Eddie Stern), on the claim that yoga should stop after forty: 'This is not borne out by experience...' and '...there is no age restriction for the practice of yoga.' Never quote the sentences around them ('the Science of yoga for the cure of diseases', 'suffering from a disease... can attain perfection'): those are medical claims. The 'except those who are lazy' line is also in ym.txt sec. 39 but is cut from this Reel."
+     },
+     {
+      "beat": "B4",
+      "skeleton": "Lie 3, the fixed-forever line: 'After [age]? [X] is [X]. [It is already decided]. Too late.'",
+      "spoken": "After sixty? Stiff is stiff. Your body already decide. Too late.",
+      "on_screen": "LIE 3/4: 'After sixty, stiff for life.'",
+      "truth_source": "Checked false: id 'flex60' (verified.json #55). Sivaramakrishnan et al., Int J Behav Nutr Phys Act 2019;16:33: a review of 22 trials, average age 60 or more (only 17 of the 22 measured physical function). Compared with no exercise, yoga improved lower-body flexibility, balance and leg strength. The gains were moderate, not miracles."
+     },
+     {
+      "beat": "B5",
+      "skeleton": "Lie 4, the hidden motive: 'And [practice]? Just [small thing]. [The viewer's own put-down]. They say \"[the true benefit]\"... just to sell you [product].' The motive pokes at the business, never at the practice.",
+      "spoken": "And yoga? Just stretching. Not real exercise. They say \"yoga make you strong\"... just to sell you yoga pants.",
+      "on_screen": "LIE 4/4: 'Yoga is just stretching.'",
+      "truth_source": "Checked false: id 'stretching' (verified.json #58). Tran et al., Prev Cardiol 2001;4(4):165: 10 untrained young adults (18-27) did hatha yoga at least twice a week for 8 weeks. Elbow strength rose 31% and knee-muscle endurance 57%. The study was small and had no control group. The 'yoga pants' motive is a joke at the yoga business, not a claim."
+     },
+     {
+      "beat": "B6",
+      "skeleton": "Drop the act. Put the prop down, use a softer voice and greet the viewer as yourself. Then say one line that names the voice they just heard. Then a 1 s silent beat before the truth.",
+      "spoken": "[puts the tea and the rolled mat down, softer voice] Okay. Stop. Hello, I'm Boonchu. You know that voice, right? [1 s silent beat: he looks at the rolled mat, then at the lens]",
+      "on_screen": "Lies over. Now the truth. Boonchu, teaching in Bangkok, 14 years.",
+      "truth_source": "14 years teaching in Bangkok: Boonchu's confirmed shala years (plato.md standing order, 4 Oct 2026)."
+     },
+     {
+      "beat": "B7",
+      "skeleton": "Confess in three words ('All four... wrong.'). Then one plain truth per lie, in the same order as the lies, each opened with the lie in the viewer's own words: '[Lie]? [Source, named so a beginner knows who] say [truth].'",
+      "spoken": "All four... wrong. Can't touch your toes? The old yoga book say: asana is stable and easy. Nothing about toes. After forty? Guruji... the teacher of my teacher... write in his book: no age limit. After sixty? A review of twenty-two trials, people sixty and up: with yoga, flexibility still improve. Not magic. But it move. Just stretching? Small study, young beginners... eight weeks of yoga, they get stronger.",
+      "on_screen": "4 flip cards, one per truth: TRUE 1/4: Touch your toes? Not needed to start. / TRUE 2/4: No age limit (Guruji, Yoga Mala). / TRUE 3/4: After 60, flexibility still improves (moderate). / TRUE 4/4: Stronger in 8 weeks (small study).",
+      "truth_source": "Each LIE card flips to its own TRUE card, timed to its spoken line, with a small source line under it. 1) Yoga Sutra 2.46, tr. Woods 1914: show only 'stable-and-easy' (verified.json #57). 2) Sri K. Pattabhi Jois (Guruji), Yoga Mala, sec. 39: '...there is no age restriction for the practice of yoga.' (verified.json #35 + ym.txt). 3) 2019 review of 22 trials, average age 60+: vs no exercise, lower-body flexibility improved (moderate) (Sivaramakrishnan et al. 2019, verified.json #55). 4) 2001 small study, 10 untrained young adults (18-27), no control group, 8 weeks: elbow strength +31% (Tran et al. 2001, verified.json #58). 'The teacher of my teacher': Sharath, who authorized Boonchu, learned from Guruji (plato.md). All four are myths_data.py ids flexstart, young, flex60 and stretching."
+     },
+     {
+      "beat": "B8",
+      "skeleton": "The result is about the viewer. Ask two questions, and make the second one cost more: 'How many you believe? And how many [years / mornings] they cost you?'",
+      "spoken": "So... how many you believe? And how many years... they cost you?",
+      "on_screen": "How many did you believe? How many years did they cost?",
+      "truth_source": "No result is claimed. It is a question to the viewer, with no invented counts."
+     },
+     {
+      "beat": "B9",
+      "skeleton": "Flip the B2 comparison into the truth and undo the B0 action: '[Class] is for people who can't [skill]. [Practice]... same same. [Our promise].'",
+      "spoken": "[unrolls the same mat toward the camera] Cooking class is for people who can't cook. Yoga... same same. We teach you from zero.",
+      "on_screen": "Can't touch your toes? Good. We teach you from zero.",
+      "truth_source": "'We teach you from zero' is the brand line (plato.md standing order, 30 Sep 2026: 'beginners welcome, we teach you from zero')."
+     }
+    ],
+    "prop_idea": "At the shala, one mat lies unrolled, facing the camera. It is the viewer's spot. Boonchu stands beside it holding his own cup of tea. For 3 silent seconds he looks down at the mat, slowly rolls it up, tucks it under his arm, sips the tea, looks into the lens and says 'Yes?'. In B6 he puts the tea and the rolled mat down to drop the act, then holds a 1 s silent look at the rolled mat and back at the lens. In B9 he unrolls the same mat toward the camera on 'We teach you from zero'. Only his own mat and his own cup are used, and no student is in frame.",
+    "caption": "I told you 4 lies about yoga. And I did not smile once.\nToo stiff? Too old? Not the yoga type? That voice sounds very sure.\nThe truth: no need to touch your toes. Guruji, the teacher of my teacher, wrote that there is no age limit for yoga. We teach you from zero.\nNew to exercise or have an injury? Tell your teacher before class.\nNew students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk\nAybkk.net · #aybkk #ashtanga #ashtangayoga #yogabangkok #bangkok #beginneryoga\n\nผมโกหกเรื่องโยคะ 4 ข้อ แบบหน้าตาย\nตัวแข็งไป? อายุเยอะไป? ไม่ใช่สายโยคะ? เสียงในหัวมั่นใจมาก\nความจริง: แตะปลายเท้าไม่ถึงก็เริ่มได้ คุรุจี ครูของครูผม เขียนไว้ว่าโยคะไม่จำกัดอายุ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย\nเพิ่งเริ่มออกกำลังกาย หรือมีอาการบาดเจ็บ? บอกครูก่อนเริ่มเรียน\nนักเรียนใหม่: ซื้อ 1 แถม 1 แพ็กเกจ 1, 2 หรือ 3 เดือน ถึง 11 พ.ย. คอมเมนต์ aybkk",
+    "ask_boonchu": [
+     "Are you OK playing 'the voice in your head' for about 25 seconds, saying 'Not for you' with a straight face? The '4 LIES, THEN THE TRUTH' pill and the LIE 1/4 to 4/4 labels stay burned into the picture the whole time.",
+     "Does this count as ONE fear for the fear-buster series: 'Yoga is not for me', with its 4 excuses (stiff, after forty, after sixty, just stretching)? If not, I split it into two Reels: stiff (toes + just stretching) and old (after forty + after sixty).",
+     "I cut the lazy line ('Only the lazy one... he leave out'). Next to the lie voice in B3, a beginner would hear: the real reason is you are lazy. Keep it only if you want the scold.",
+     "Optional self-joke at the end (+3 s, only if the take stays under 60 s): 'The old book never mention toes. I check. Twice. Then I try to reach mine. Also twice.' I dropped the 'Guruji say old mean over sixty' joke: next to the after-sixty truth it calls every viewer over 60 old.",
+     "B7 says 'Guruji... the teacher of my teacher...' so beginners know who he is. OK, or do you want your own words?",
+     "Do you have your own mat and tea cup at the shala for B0, B6 and B9? Morning light, no student in frame.",
+     "Please check the Thai caption: the new truth line ('แตะปลายเท้าไม่ถึงก็เริ่มได้ คุรุจี ครูของครูผม เขียนไว้ว่าโยคะไม่จำกัดอายุ...'), the new care line ('เพิ่งเริ่มออกกำลังกาย หรือมีอาการบาดเจ็บ? บอกครูก่อนเริ่มเรียน') and the promo line.",
+     "Cover: plum gradient, Montserrat Black, 'Too Stiff? Too Old? Lies.' with 'Lies' in gold, your face from B6 or B9 (never from a lie beat), checked in black and white before posting. OK?",
+     "Post order: the Matsyendra Lane A episode first, then this Reel. OK?"
+    ],
+    "risks": [
+     "The biggest risk is someone clipping the lie section (B1 to B5, about 25 s with his face). In the edit, the B0 card shrinks into a header pill, '4 LIES, THEN THE TRUTH · at 0:28', that stays burned in from 0 s until the 'Lies over' frame. The editor sets the time to the real frame. 'LIE n/4' is bigger than the myth quote on every lie line, and each myth gets a red strike-through when its line ends. All of this is burned in inside the safe area, not added as IG stickers, so a crop or re-upload keeps it. The cover and preview frame come only from B6 or B9. Never post B1 to B5 alone as a Story or teaser.",
+     "All 4 lies are real popular myths checked false in myths_data.py (flexstart, young, flex60, stretching). All are very low harm if clipped: they mostly keep someone at home. The one body risk: someone who believes 'just stretching' may walk into a vigorous class unprepared. The stretching entry has Mody 2011: 90% of predicted max heart rate by round 4 of Sun Salutation, in 6 trained young people. The caption's 'Tell your teacher before class' line covers it.",
+     "'After 50, no upside down' was dropped on purpose. With that myth the truth is the dangerous half: headstand doubled eye pressure, and NCCIH still says older adults may need to be cautious. A clipped truth line could lead someone with glaucoma to skip the eye doctor. Keep it for a separate, careful piece.",
+     "There is no invented number in B2. The clip's 'three times' comparison became a false comparison (the cooking class), because a made-up number would be a new false claim.",
+     "The science is modest. The 2019 review found moderate gains, and only 17 of its 22 trials measured physical function. 'People sixty and up' in B7 is a spoken shortcut: the trials had an average age of 60 or more, so the card says 'average age 60+'. The strength study had 10 untrained young adults (18-27) and no control group, and the 31% is elbow strength only. Say 'small study, young beginners'. Never say 'Ashtanga reverses ageing'.",
+     "Exact wording matters. Woods 1914: show only 'stable-and-easy'. 'Posture' breaks the asana rule, and 'steady and comfortable' is not confirmed. Quote Yoga Mala word for word, with the ellipsis: '...there is no age restriction for the practice of yoga.' and 'This is not borne out by experience...'. Never quote the sentences around them (cure of diseases, 'can attain perfection'). The caption's 'wrote that there is no age limit' is also word for word: a later Yoga Mala section has 'There is no age limit for the practice of yoga' (ym.txt). No Guruji or Sharath photo.",
+     "B5 targets the yoga business, which is a fair target. 'They say' marks the quote by ear. Clipped without the LIE 4/4 tag, though, the line could still look like Boonchu dismissing yoga. The tag must sit on that line.",
+     "'After forty' and 'after sixty' are said only in the lie voice and are labelled as lies. Never call a person old on screen, and no student appears in frame.",
+     "Length is about 60 to 62 s at 1.3x with the pauses cut: B0 0-3 s, lies 3-29 s, 'Lies over' at about 29 s, B6 plus the 1 s beat 29-33 s, truths 33-52 s, B8 52-56 s, B9 56-61 s. To land under 60 s, first move 'Hello, I'm Boonchu' to on-screen only, then cut 'Hmm.' and 'No no' in B1. The flip then lands at about 0:28 and the pill time holds. Never cut the 1 s beat or 'Not magic. But it move.'.",
+     "The speaker's own phrases were avoided: no 'Oh, you think' opener, no 'Let me tell you something', no 'What?' (it is 'Yes?' here), no Snickers, no 'for years and nothing will happen', no contest greeting, no 'Five of them believed', no 'said in the right way', no 'war against'. Only the shape and rhythm are kept.",
+     "'How many years did they cost you?' in B8 is a sharp line for an open-door Reel. B9's warm close and the mat unrolling must follow at once.",
+     "B8 stays a question. If Boonchu insists on a real count, the line must name who was asked and use only the count he reports: 'I tried it on 2 of my team. [Boonchu's real count] believed.' Never write a beginner count, and never film it before he gives the number.",
+     "The red strike-through adds a color. Keep lie frames to plum + gold + red (no teal) so a frame never has more than 3 colors. Red matches the ❌ already used on house SVG cards.",
+     "The English caption is 6 lines, one more than the 5-line default. The extra line is the care line ('New to exercise or have an injury?'). Keep it. The Thai line 1 keeps 'แบบหน้าตาย' because it is natural Thai. Only the English idiom was the problem.",
+     "Theme repeat: today's 'Never too late' carousel (14:00, 10 Oct) already asked 'Think you are too old to start yoga?'. The after-forty and after-sixty half of this Reel repeats a theme that is only a day old, which is another reason to post after the Matsyendra Lane A episode.",
+     "EDIT CUE SHEET (for the editor): Speed 1.2 to 1.3x. Cut the pauses except the 1 s silent beat before B7, and keep that beat as was done for Ep. 3. Header pill in house style (dark rounded pill, white Montserrat SemiBold): the B0 card shrinks into '4 LIES, THEN THE TRUTH · at 0:28' and stays until the 'Lies over' frame. Use 1.3x zoom punches of about 1 s on 'Yes?', 'No no', 'finish', 'Stiff is stiff', 'yoga pants', 'Stop', 'wrong', each truth, 'cost you' and 'from zero'. SFX at 40%, 0.4 s after the word: 'click-soft' on 'Yes?', 'error' on each LIE n/4 card, 'chime' on each TRUE n/4 flip. LIE n/4 is bigger than the myth quote, and each myth gets a red strike-through when its line ends. Each LIE card flips to its TRUE card on the spoken truth, with a small source line under it. Weight Shift captions in lowercase Montserrat, with emoji on key words (a toe or footprint on toes, a cake on age, a flexed arm on strong, a seedling on 'from zero'). No images, no Guruji or Sharath photo. The video file goes to his Google Drive, never the repo.",
+     "POSTING NOTE: Tag location: AYBKK, Bangkok. Instagram only, never WeChat or Xiaohongshu.",
+     "FIXED: The optional age joke ('Guruji say old mean over sixty. Me? Fifty-two...') is dropped. This covers both checks: the age was unconfirmed, and the joke labels viewers over 60 as old. No age for Boonchu appears anywhere. The checked flexstart self-joke is offered in its place.",
+     "FIXED: B4 spoken is now 'After sixty? Stiff is stiff. Your body already decide. Too late.', so it no longer follows the speaker's 'for years... nothing' frame. The skeleton is renamed 'the fixed-forever line'. The on-screen 'LIE 3/4' is kept.",
+     "FIXED: B1 spoken is now 'Yoga is for everybody? Hmm. No no. Not for you.', without the speaker's 'Oh, you think' opener. The skeleton is updated to match.",
+     "FIXED: B7 truth 3 spoken is now 'A review of twenty-two trials, people sixty and up: with yoga, flexibility still improve. Not magic. But it move.' The card reads 'TRUE 3/4: After 60, flexibility still improves (moderate).' and the source line says 'vs no exercise, lower-body flexibility improved (moderate)'.",
+     "FIXED: B7 truth 4 spoken is now 'Small study, young beginners... eight weeks of yoga, they get stronger.' The card reads 'TRUE 4/4: Stronger in 8 weeks (small study).' and the source line names '10 untrained young adults (18-27), no control group'.",
+     "FIXED: Citations. #60 is dropped from the age and lazy lines, which now cite 'verified.json #35 + Yoga Mala sec. 39 (ym.txt)'. The card quote is word for word ('...there is no age restriction for the practice of yoga.'). B3 uses 'This is not borne out by experience...' with the ellipsis. A note bans the surrounding medical sentences.",
+     "FIXED: 'No age limit' is now attributed. The card reads 'TRUE 2/4: No age limit (Guruji, Yoga Mala).'. The EN and TH captions say Guruji wrote it. A care line was added to both captions: 'New to exercise or have an injury? Tell your teacher before class.' / 'เพิ่งเริ่มออกกำลังกาย หรือมีอาการบาดเจ็บ? บอกครูก่อนเริ่มเรียน'.",
+     "FIXED: Clip risk. A persistent pill ('4 LIES, THEN THE TRUTH · at 0:28', which merges both checks' tag ideas) now runs from 0 s to the flip. LIE n/4 is bigger than the quote, and each myth gets a red strike-through. The risks line now reads 'very low harm: they mostly keep someone at home'.",
+     "FIXED: The B8 'test the 4 lies on M and the media assistant' option is deleted from ask_boonchu. B8 stays the question to the viewer, and the 'if he insists' rule is in risks.",
+     "FIXED: Toes wording. B7 now says 'Nothing about toes.' The card reads 'TRUE 1/4: Touch your toes? Not needed to start.' The EN caption reads 'no need to touch your toes', and the TH caption 'แตะปลายเท้าไม่ถึงก็เริ่มได้'.",
+     "FIXED: Lazy callback. B3 is now 'Not because you never try. Your age. After forty... finish.' 'Only the lazy one... he leave out' is cut from B7, and that ask_boonchu item is reworded to 'I cut the lazy line. Keep it only if you want the scold.'",
+     "FIXED: B1 on-screen is now 'The voice in your head. Not me.', and the header pill covers B1 and the gaps between lie lines.",
+     "FIXED: B7 on-screen is now 4 flip cards (TRUE 1/4 to 4/4), each under 12 words, each timed to its spoken line and each with a source line. This matches the B7 truth_source.",
+     "FIXED: 'Your birthday' is now 'Your age'.",
+     "FIXED: B5 is now 'And yoga? Just stretching. Not real exercise. They say \"yoga make you strong\"... just to sell you yoga pants.' This adds a mirror line, and 'They say' marks the quote by ear.",
+     "FIXED: B7 truth 1 opens with the exact lie the viewer heard ('Can't touch your toes?') instead of 'Flexible first? No.'.",
+     "FIXED: Guruji is explained for beginners: 'Guruji... the teacher of my teacher...'. The full name 'Sri K. Pattabhi Jois (Guruji), Yoga Mala, sec. 39' is on the source line. No Guruji photo.",
+     "FIXED: A 1 s silent beat (he looks at the rolled mat, then at the lens) comes after 'You know that voice, right?', and the editor is told to keep it.",
+     "FIXED: A one-fear brief line ('Fear buster: \"Yoga is not for me\" (one fear, its 4 excuses)') is added, with an ask about splitting into two Reels.",
+     "FIXED: A 'Toolkit pick' line is added at the top (lane field): Two-Voice Deadpan + Myth-Kill, on the 10-beat skeleton.",
+     "FIXED: The route line is filled in at the top (lane field), checked in Postiz on 10 Oct. The last 3 posts are What science found, Fit when old and Never too late, so Lane A (Matsyendra) is due next. It adds 'Instagram only, never WeChat or Xiaohongshu'.",
+     "FIXED: The edit cue sheet is added (zoom punches, SFX at 40% 0.4 s after the word, Weight Shift captions with emoji, speed, the kept beat, no images).",
+     "FIXED: English caption. Line 1 is now 'And I did not smile once.' (no idiom), #aybkk is added, and the 'Tag location: AYBKK, Bangkok.' posting note is added.",
+     "FIXED: Thai line 3 now reads 'ความจริง: แตะปลายเท้าไม่ถึงก็เริ่มได้ ... เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย', keeping the ordered brand line exactly.",
+     "FIXED: The cover brief now says plum gradient, Montserrat Black, 'Lies' in gold, face from B6 or B9, checked in black and white before posting."
+    ]
+   },
+   "checks": [
+    {
+     "verdict": "fix",
+     "problems": [
+      {
+       "where": "ask_boonchu, optional self-joke ('Guruji say old mean over sixty. Me? Fifty-two. Not old yet.')",
+       "problem": "States an age for Boonchu that has not been confirmed. The 52 comes only from his Telegram profile (plato.md, 4 Oct). The latest note (plato.md, 10 Oct, myth page) says 'no ages stated (page says 54, notes say 53: ask him)'. That is an invented fact about Boonchu (check 2).",
+       "fix": "Replace it with: 'Guruji say old mean over sixty. Me? Not there yet.' Or keep '[BOONCHU: your real age?]' and do not film the line until he answers."
+      },
+      {
+       "where": "B4 spoken (Lie 3)",
+       "problem": "'You stretch for years and years... nothing change' closely paraphrases the speaker's line 'You could smoke for years and nothing will ever happen to you'. It is the same sentence frame with the same 'for years' + 'nothing' wording and only the verb swapped. This is more than shape and rhythm (check 3), so the risks line 'Only the shape and rhythm are kept' is not yet true.",
+       "fix": "Spoken: 'After sixty? Stiff is stiff. Your body already decide. Too late.' Keep the on-screen 'LIE 3/4: After sixty, stiff for life.' Change the skeleton text from \"the 'for years' line\" to 'the fixed-forever line'."
+      },
+      {
+       "where": "B1 spoken",
+       "problem": "It opens with the speaker's exact first words and frame ('Oh, you all think smoking kills?' becomes 'Oh... you think yoga is for everybody?'). This is a minor copy of his opening line (check 3).",
+       "fix": "Spoken: 'Yoga is for everybody? Hmm. No no. Not for you.'"
+      },
+      {
+       "where": "B7 spoken truth 3 + on-screen 'After 60: still improves.'",
+       "problem": "'Scientists check twenty-two studies... with yoga, still more flexible' overstates the source (verified.json #55). Only 17 of the 22 RCTs measured physical function at all. The gain was in lower-body flexibility, it was moderate, and it was measured against no exercise. As spoken, it sounds like 22 studies all found people more flexible.",
+       "fix": "Spoken: 'After sixty? A review of twenty-two trials, people sixty and up: with yoga, flexibility still improve. Not magic. But it move.' On-screen: 'After 60: flexibility still improves (moderate).' Card stays: '2019 review of 22 trials, average age 60+: vs no exercise, lower-body flexibility improved (moderate).'"
+      },
+      {
+       "where": "B7 spoken truth 4, B7 on-screen 'Builds strength.', B7 truth card 4",
+       "problem": "The strength study (Tran 2001, verified.json #58) used 10 untrained YOUNG adults aged 18 to 27, with no control group. The spoken line ('people get stronger') and the card ('10 untrained adults') leave out 'young'. In a video about being too old, viewers will apply the result to people over 40 or 60. 'Builds strength' is also a general claim drawn from one 10-person uncontrolled study.",
+       "fix": "Spoken: 'Just stretching? Small study, young beginners... eight weeks of yoga, they get stronger.' On-screen: 'Small study: stronger in 8 weeks.' Card: '2001 small study, 10 untrained young adults (18-27), no control group, 8 weeks: elbow strength +31%.'"
+      },
+      {
+       "where": "B3 truth_source and B7 truth_source (Guruji / Yoga Mala lines)",
+       "problem": "(a) The lazy line cites verified.json #60. That entry says the Jois 'lazy' line had no primary source and must not go on screen. The line is in fact confirmed by #35 and by the saved Yoga Mala text (scratchpad ym.txt, sec. 39: 'anyone... can practice yoga, except those who are lazy'), so the citation is wrong. (b) The card quote 'There is no age restriction for the practice of yoga.' is not word for word. The original reads 'In short, there is no age restriction for the practice of yoga.' (c) The original 'This is not borne out by experience' continues 'or by the shastrakaras'.",
+       "fix": "Cite 'verified.json #35 + Yoga Mala sec. 39 (ym.txt)' for the age and lazy lines, and drop #60 from them. Card: \"Guruji (Pattabhi Jois), Yoga Mala, sec. 39: '...there is no age restriction for the practice of yoga.'\" In B3 truth_source write \"'This is not borne out by experience...'\" with the ellipsis. Never quote the sentences around it ('the Science of yoga for the cure of diseases', 'suffering from a disease... can attain perfection'), because those are medical claims."
+      },
+      {
+       "where": "Caption (EN + TH) and B7 on-screen 'Age: no limit.'",
+       "problem": "'No age limit' with no attribution reads as AYBKK clearing every age and every condition for practice. It is Guruji's written view, and NCCIH, cited in verified.json, still says older adults may need to be cautious. This is the closest the script comes to a medical promise (check 5).",
+       "fix": "On-screen: 'Age: no limit (Guruji, Yoga Mala).' EN caption line: 'The truth: no toes needed, Guruji wrote there is no age limit for yoga, and we teach you from zero. New to exercise or have an injury? Tell your teacher before class.' TH caption line: 'ความจริง: ไม่ต้องแตะปลายเท้าได้ คุรุจีเขียนไว้ว่าโยคะไม่จำกัดอายุ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย มีอาการบาดเจ็บ? บอกครูก่อนเริ่มเรียน' (Boonchu to check the Thai)."
+      },
+      {
+       "where": "Clip risk, 0:03 to 0:28 sound off (B1 to B5 on-screen)",
+       "problem": "Mostly safe: every lie line carries 'LIE n/4'. But B1 ('Not for you') and the gaps between lie lines have no lie tag, and the first 25 s never reach a truth. A cropped frame where the large text is 'After sixty, stiff for life.' and the 'LIE 3/4' tag is small can read as a real claim. The risks line 'they cannot hurt a body' also overstates: someone who believes 'just stretching' may walk into a vigorous class unprepared (Mody 2011 found 90% of predicted max heart rate by round 4 of Sun Salutation).",
+       "fix": "Burn in a persistent corner tag 'LIE MODE · truth at 0:28' from 0:03 to the 'Lies over' frame. Make 'LIE n/4' larger than the myth quote, and strike each myth through in red once its line ends. Change the risks line to: 'All are very low harm if clipped: they mostly keep someone at home.'"
+      },
+      {
+       "where": "ask_boonchu, B8 bullet (test the 4 lies on M and the media assistant 'for real numbers like the clip')",
+       "problem": "This re-creates the clip's experiment-and-results beat. The '[BOONCHU: ... give the real count]' placeholder invites a made-up or unrepresentative count (team reactions, check 2), and the team are Ashtanga insiders, not the audience.",
+       "fix": "Delete the option and keep B8 as the question. If Boonchu insists, the line must name who was asked and use only the count he reports: 'I tried it on 2 of my team. [Boonchu's real count] believed.' Never write a beginner count."
+      },
+      {
+       "where": "B7 spoken 'No toes.' + on-screen 'Toes: not needed.'",
+       "problem": "The source (verified.json #57, Woods 1914) says only that toes are not mentioned in the definition of asana. 'Toes: not needed' stretches that into a general rule. The myth listed false is about needing flexibility to START.",
+       "fix": "Spoken: 'The old yoga book say: asana is stable and easy. Nothing about toes.' On-screen: 'Toes: not needed to start.'"
+      }
+     ]
+    },
+    {
+     "verdict": "fix",
+     "problems": [
+      {
+       "where": "B3 spoken + B7 spoken (lazy callback)",
+       "problem": "B3 has the lie voice say 'Not because you lazy', and B7 answers with 'Only the lazy one... he leave out'. Put together, the truth tells a Lane B beginner the real reason is that they are lazy. This breaks BRAND = WELCOMING (30 Sep: every piece must make a beginner feel invited, rules framed as care) and comes close to mocking the viewer, who is a future student. It also adds about 3 s to a take that is already near 60 s.",
+       "fix": "B3 spoken: 'And the real reason? Not because you never try. Your age. After forty... finish.' B7 truth 2 spoken: 'After forty? Guruji... the teacher of my teacher... write in his book: no age limit.' Then stop, and cut 'Only the lazy one... he leave out.' B9 ('We teach you from zero') then answers 'never try'. Remove ask_boonchu item 3, or reword it as 'I cut the lazy line. Keep it only if you want the scold.'"
+      },
+      {
+       "where": "B1 on_screen, and the whole lie section B1 to B5",
+       "problem": "B1 ('Yoga is for everybody? No no. Not for you.') has no LIE tag. Its only card is 'I am the voice in your head.' The B0 game card leaves the screen at 3 s. A silent clip that starts at B1 shows Boonchu telling the viewer yoga is not for them, with nothing on screen to say it is a game. That fails big-risk rule 3 (a silent clip must never read as advice).",
+       "fix": "Add a header pill that stays on screen from 0 s until the B6 flip at about 28 s, burned in inside the safe area: '4 LIES, THEN THE TRUTH'. Change B1 on_screen to 'The voice in your head. Not me.' (7 words). Keep 'LIE n/4' on B2 to B5 as written."
+      },
+      {
+       "where": "B7 spoken 'No toes.', B7 on_screen 'Toes: not needed.', caption line 3 'no toes needed'",
+       "problem": "All three read as 'you don't need toes'. A non-native 10-year-old will stop on it (PLAIN WORDS / 10-year-old test).",
+       "fix": "B7 spoken: '...asana is stable and easy. Nothing about toes.' On-screen card: 'TRUE 1/4: Touch your toes? Not needed.' English caption line 3: 'The truth: no need to touch your toes. No age limit. We teach you from zero.'"
+      },
+      {
+       "where": "B7 on_screen",
+       "problem": "'Toes: not needed. Age: no limit. After 60: still improves. Builds strength.' is 12 words, so it fails the 3-Second Audit, which needs fewer than 12. It also puts 4 ideas in one frame, and 'still improves' has no subject. It contradicts the B7 truth_source, which says each LIE card flips to its own truth card. A truth card clipped alone also needs a label, just as each lie has one.",
+       "fix": "Show 4 flip cards, each timed to its spoken line, with a small source line under each. 'TRUE 1/4: Touch your toes? Not needed.' (Yoga Sutra 2.46, tr. Woods 1914: 'stable-and-easy'). 'TRUE 2/4: No age limit.' (Yoga Mala, sec. 39: 'There is no age restriction for the practice of yoga.'). 'TRUE 3/4: After 60, still gets more flexible.' (22 trials, 2019 review, moderate gains). 'TRUE 4/4: Yoga builds strength.' (small study, 10 adults, 8 weeks, elbow strength +31%)."
+      },
+      {
+       "where": "B3 spoken 'Your birthday.'",
+       "problem": "'Your birthday' is a figure of speech meaning age. A non-native 10-year-old will stop on it (WORD RULE 2 test).",
+       "fix": "Replace 'Your birthday.' with 'Your age.' (This is already part of the B3 line in fix 1.)"
+      },
+      {
+       "where": "B5 spoken",
+       "problem": "Heard aloud, the quote inside the line (\"'Yoga make you strong'... just to sell you yoga pants\") sounds like Boonchu himself saying 'yoga make you strong'. A listener can't hear quote marks. The beat also has no mirror line about the viewer's feeling (MIRROR RULE: one mirror line per beat).",
+       "fix": "B5 spoken: 'And yoga? Just stretching. Not real exercise. They say \"yoga make you strong\"... just to sell you yoga pants.' 'Not real exercise' is the viewer's own thought, and 'They say' marks the quote by ear. On-screen stays 'LIE 4/4: Yoga is just stretching.'"
+      },
+      {
+       "where": "B7 spoken, truth 1 label 'Flexible first?'",
+       "problem": "The lie the viewer heard and saw was 'Can't touch your toes? No yoga.', but the truth opens with a new phrase, 'Flexible first?'. The viewer has to work out which lie it answers. The rule is the same order and a plain callback.",
+       "fix": "B7 truth 1 spoken: 'Can't touch your toes? The old yoga book say: asana is stable and easy. Nothing about toes.'"
+      },
+      {
+       "where": "B7 spoken 'Guruji, Pattabhi Jois, write in his book'",
+       "problem": "BEDTIME-STORY ENGLISH says to explain every name the first time. Lane B beginners don't know who Guruji or Pattabhi Jois is, so the authority is lost on them.",
+       "fix": "Say 'Guruji... the teacher of my teacher... write in his book: no age limit.' This is true, because Sharath, who authorized Boonchu, learned from Guruji, and it inflates nothing. Put the full name on the source line under the card: 'Sri K. Pattabhi Jois (Guruji), Yoga Mala, sec. 39'. No Guruji photo."
+      },
+      {
+       "where": "Between B6 and B7",
+       "problem": "REVEAL AT THE END (29 Sep) says the answer comes late and short, after a silent beat. The script runs straight from 'You know that voice, right?' into 'All four... wrong.'",
+       "fix": "Add '[1 s silent beat: he looks at the rolled mat, then at the lens]' after 'You know that voice, right?' Tell the editor to keep this pause when cutting the other pauses, as was done for Ep. 3."
+      },
+      {
+       "where": "Brief header (key/title/habit_number)",
+       "problem": "The Lane B fear-buster format (1 Oct) says one fear per Reel. As written, the Reel busts 3 fears: too stiff, too old, and 'not real exercise'.",
+       "fix": "Add a brief line naming one umbrella fear: 'Fear buster: \"Yoga is not for me\" (one fear, its 4 excuses).' B1 ('Not for you') already sets this up. Ask Boonchu in one line whether this counts as one fear. If not, split it into two Reels: stiff (flexstart + stretching) and old (young + flex60)."
+      },
+      {
+       "where": "Top of script (missing)",
+       "problem": "There is no 'Toolkit pick' line. The TOOLKIT PITCH order (28 Sep) needs one at the top of every Reel, and the 29 Sep order says to check every script against it.",
+       "fix": "Add: 'Toolkit pick: Two-Voice Deadpan (hook) + Myth-Kill (body), on the clip's 10-beat skeleton. Why: the lie voice is the viewer's own inner voice, and each myth gets a plain No and a checked fact, in the same order as the lies.'"
+      },
+      {
+       "where": "Top of script (route), risks last item",
+       "problem": "The ROUTE CHECK order (1 Oct) needs a filled line at the top: 'Route: Lane _ · last 3 posts: _ _ _ · next due: _'. The script leaves it as an open risk. The notebook shows the last 3 posts as stay-active carousels B3, B4 and B5 on 10 Oct ('What science found', 'Fit when old', 'Never too late'), which are open-door themes. If they count as Lane B, the mix rule (1 B in 3) makes the Lane A Matsyendra episode due next. The Lane B rule 'never on WeChat or Xiaohongshu' is also missing.",
+       "fix": "Add at the top: 'Route: Lane B · last 3 posts: stay-active 3/5, 4/5, 5/5 (10 Oct, open-door) · next due: Lane A (Matsyendra). Post this Reel after it. Instagram only, never WeChat or Xiaohongshu.' Check the last 3 posts in Postiz before Boonchu films."
+      },
+      {
+       "where": "After the beats (missing edit cue sheet)",
+       "problem": "VIDEO EDIT SPEC (28 Sep) and HOUSE EDIT STYLE need an edit cue sheet with every Reel: zoom punches, SFX at 40% placed 0.4 s after the word, Weight Shift captions with emoji. This script has none.",
+       "fix": "Add a cue sheet. 1.3x zoom punch about 1 s on: 'Yes?', 'No no', 'finish', 'Stiff is stiff', 'yoga pants', 'Stop', 'wrong', each truth, 'cost you', 'from zero'. SFX at 40%, 0.4 s after the word: 'error' on each LIE n/4 card, 'chime' on each TRUE n/4 flip, 'click-soft' on 'Yes?'. Weight Shift captions in lowercase Montserrat with emoji (for example a toe or footprint on toes, a cake on age, a flexed arm on strong, a seedling on 'from zero'). Speed 1.2 to 1.3x, cut the pauses except the 1 s silent beat before B7. No images, no Guruji or Sharath photo."
+      },
+      {
+       "where": "caption (English)",
+       "problem": "Lane B rules (1 Oct) say to tag the location, and the caption has no location tag. 'With a straight face' is an idiom a non-native 10-year-old would stop on. #aybkk, which every earlier Reel caption carried, is missing.",
+       "fix": "Line 1: 'I told you 4 lies about yoga. And I did not smile once.' Line 5: 'Aybkk.net · #aybkk #ashtanga #ashtangayoga #yogabangkok #bangkok #beginneryoga'. Add a posting note: 'Tag location: AYBKK, Bangkok.'"
+      },
+      {
+       "where": "caption (Thai line 3)",
+       "problem": "'ไม่ต้องแตะปลายเท้าได้' reads awkwardly (roughly 'no need to be able to touch toes') and carries the same 'no toes' ambiguity.",
+       "fix": "Thai line 3: 'ความจริง: แตะปลายเท้าไม่ถึงก็เริ่มได้ ไม่จำกัดอายุ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย' (keeps the ordered Thai brand line exactly). Boonchu still checks it."
+      },
+      {
+       "where": "ask_boonchu item 4 (optional self-joke)",
+       "problem": "'Guruji say old mean over sixty. Me? Fifty-two. Not old yet.' comes right after the 'after sixty' truth in an open-door Reel, so it labels every viewer over 60 as 'old'. NEVER CALL A STUDENT OLD allows 'old' only as the viewer's own inner voice, never as a label for real people. The joke also undoes the 'no age limit' line.",
+       "fix": "Drop the optional joke from this Reel. If he wants a self-joke at the end, use the checked one from myths_data flexstart: 'The old book never mention toes. I check. Twice. Then I try to reach mine. Also twice.'"
+      },
+      {
+       "where": "ask_boonchu item 7 (cover)",
+       "problem": "The COLOR RULE (28 Sep) says to check every cover in black and white, and the cover brief leaves that out.",
+       "fix": "Add: 'Cover: plum gradient, Montserrat Black, \"Lies\" in gold, face from B6 or B9; checked in black and white before posting.'"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "final": {
+    "key": "reel_DeLPF08NYbq_v2_laneA_spot-the-lies",
+    "lane": "A",
+    "habit_number": "2 (Get stronger: chaturanga, jump-backs)",
+    "title": "Spot the Four Lies",
+    "beats": [
+     {
+      "beat": "B0",
+      "skeleton": "Silent, 2 to 3 s: do one odd, slightly 'wrong' thing with an everyday prop from the topic. Look into the lens. Say one word that dares the viewer to judge you. On screen from frame 1: the game banner and the viewer's own thought.",
+      "spoken": "(silent, 2 to 3 s: after practice he slowly wrings his soaked towel with both hands. Drops fall beside the mat. He looks up at the lens, one eyebrow up.) What?",
+      "on_screen": "SPOT THE LIES 0/4 · You think: \"It's just sweat.\"",
+      "truth_source": ""
+     },
+     {
+      "beat": "B1",
+      "skeleton": "Say the viewer's own thought back as a 2-word question. Laugh it off. Take the floor in 2 or 3 words.",
+      "spoken": "(big, confident yoga-salesman voice from here to the end of B5) Just sweat? (laughs) No no no. Sit. I explain.",
+      "on_screen": "SPOT THE LIES 0/4",
+      "truth_source": ""
+     },
+     {
+      "beat": "B2",
+      "skeleton": "Lie 1, the comparison: 'The more you ___, the more ___.' Hold up an everyday object, or the viewer's own, as the 'proof'. No numbers inside a lie.",
+      "spoken": "More you sweat... more fat you burn. (lifts the wet towel to the lens) Your towel after practice? Fat. Melting.",
+      "on_screen": "SPOT THE LIES · LIE 1/4: \"More sweat, more fat burned\"",
+      "truth_source": "LIE, checked false: 'The more you sweat, the more fat you burn.' myths_data.py B_GROUPS id='sweatfat'; verified.json kept #51; Meerman and Brown, BMJ 2014;349:g7257 (UNSW Newsroom, 14 Mar 2018)"
+     },
+     {
+      "beat": "B3",
+      "skeleton": "Lie 2, the false cause: 'You feel ___ after ___? Not the ___ (the plain cause). It's ___ (the magic cause).' Show the body part, then act it out with the prop.",
+      "spoken": "You feel fresh after Marichyasana D? Not the stretch. Your liver (touches his right ribs)... squeezed clean. (wrings the towel again) Like this towel.",
+      "on_screen": "SPOT THE LIES · LIE 2/4: \"Twists squeeze your liver clean\"",
+      "truth_source": "LIE, checked false: 'Twists squeeze toxins out of your organs like a wet towel.' myths_data.py id='twists'; verified.json kept #67 (Herpreet Thind, UMass Lowell, quoted by Shawn Radcliffe, Yoga Journal, 18 Jan 2022: 'no scientific basis') and #44 (Pam Peake, ACSM, CBS News, 15 Apr 2016). Aimed at the internet 'detox sponge' claim, never at Jois or the old texts (verified #44 safety). Asana: Marichyasana D, Primary"
+     },
+     {
+      "beat": "B4",
+      "skeleton": "Lie 3, the safety promise: 'You ___ first? Good. Then you won't ___. Guaranteed.'",
+      "spoken": "You stretch first, before practice? Good. Then you won't get hurt. (one finger up) Guaranteed.",
+      "on_screen": "SPOT THE LIES · LIE 3/4: \"Stretch first and you won't get hurt\"",
+      "truth_source": "LIE, checked false: myths_data.py id='stretchfirst', title 'Stretch first and you won't get hurt', myth 'A quick stretch before exercise prevents injury.'; verified.json kept #54; Lauersen et al., Br J Sports Med 2014;48(11):871"
+     },
+     {
+      "beat": "B5",
+      "skeleton": "Lie 4, the 'it's only' shrink, said with the most confidence: 'That ___ you hate? Relax. It's only ___.' Then show the 'proof' with your own body.",
+      "spoken": "(his most confident salesman voice) You hate the jump back? Relax. Yoga is only stretching. Your arms? (lets them hang loose) Just resting.",
+      "on_screen": "SPOT THE LIES · LIE 4/4: \"Yoga is only stretching\"",
+      "truth_source": "LIE, checked false: 'Yoga is only stretching.' myths_data.py id='stretching'; verified.json kept #58; Tran et al., Prev Cardiol 2001;4(4):165 (10 people, no control group); Mody, J Bodyw Mov Ther 2011;15(3):343 (6 trained people). Asana: Chaturanga Dandasana in Surya Namaskara A and B"
+     },
+     {
+      "beat": "B6",
+      "skeleton": "Frame break: put the prop down, switch to your real voice, say the plain count of lies, smile, greet the real audience in 2 to 4 words.",
+      "spoken": "(drops the towel on the mat, sits easy, his normal teacher voice, small smile) Four lies. Okay... okay. Hello, my friends.",
+      "on_screen": "ALL 4 WERE LIES",
+      "truth_source": ""
+     },
+     {
+      "beat": "B7",
+      "skeleton": "Confession with the twist: 'But... none of them is mine.' Name where people hear them (online, gyms; never a named person, never teachers). One mirror line: 'You hear them too.'",
+      "spoken": "But... none of them is mine. You find them online... in gyms. You hear them too, no?",
+      "on_screen": "Not mine. Online, in gyms: you hear them too.",
+      "truth_source": "Popular claims, myths_data.py group 'What people believe about yoga and exercise'. Verified #44 and #67 safety notes: aim at the internet claim, never at teachers, Jois or the old texts."
+     },
+     {
+      "beat": "B8",
+      "skeleton": "'The truth?' Then one plain true line per lie, in the same order, each from the checked file, each with its safety line. Then turn the count on the viewer: 'How many you believe? One? All ___?' Never invent anyone's results.",
+      "spoken": "The truth? (beat) Sweat is not fat. Fat go out mostly in your breath. Breathing faster... don't burn more. Twist? No proof it squeeze your liver clean. It help you turn. Stretching help your range (reaches one arm out long). But in sport... it don't stop you getting hurt. Strength training help more. Only stretching? No no. Chaturanga, jump back... it build your arms. (beat) And you? How many you believe? One? ... All four?",
+      "on_screen": "One card at a time, each lie crossed out: 'Sweat isn't fat. Fat leaves MOSTLY through your breath.' / 'Breathing faster won't burn more.' / 'No proof twists squeeze your liver clean. They help you turn.' / 'Stretching helps your range. Against sports injuries, strength training helps more.' / 'Yoga isn't only stretching. Chaturanga builds strength.' / 'How many did you believe?'",
+      "truth_source": "Sweat is not fat, sweat is mostly water and salt, fat leaves mostly through the lungs (8.4 of 10 kg as CO2, 1.6 kg as water), and breathing faster does not burn more: Meerman and Brown, BMJ 2014 (verified #51, myths_data 'sweatfat'). Twists: 'no scientific basis' for the detox claim: Thind via Radcliffe, Yoga Journal 2022 (verified #67). Twists help flexibility: Thind via Radcliffe, Yoga Journal 2022 ('enhanced muscle flexibility', verified #67); 'help you turn' is the myths_data 'twists' wording. Stretching made no real difference to sports injuries, while strength training cut them to under a third (few trials, wide CIs): Lauersen et al. 2014 (verified #54). Range of motion: myths_data stretchfirst f / verified #54 safety. Yoga is not only stretching, Chaturanga builds strength: myths_data 'stretching' and verified #58 (Tran et al., Prev Cardiol 2001, 10 people, no control group, so no number spoken; asana Chaturanga Dandasana in Surya Namaskara A and B); jump-backs as body-weight strength: direction.md habit #2. 'How many you believe?' is a rhetorical question about the viewer, so it has no number."
+     },
+     {
+      "beat": "B9",
+      "skeleton": "The moral in one plain sentence: '___ is not proof.' Then the action: 'So... check first. Then ___.' A small prop action on the action word.",
+      "spoken": "Big voice... sure voice... is not proof. So... (points down at the sources line at the bottom of the frame) check first. Then practise.",
+      "on_screen": "A sure voice is not proof. Check first. Then practise.",
+      "truth_source": ""
+     }
+    ],
+    "prop_idea": "B0, silent for 2 to 3 s: just after his own practice, still damp, Boonchu sits on his mat and slowly wrings his practice towel with both hands, hard, like a twist. Drops fall on the floor beside the mat, not on it. He looks up at the lens with one eyebrow raised and says 'What?'. The same towel is the 'proof' in B2. In B3 he touches his right ribs on 'Your liver' and wrings the towel again on 'like this towel'. In B5 he lets his arms hang loose on 'Just resting.' He drops the towel on the mat at the frame break in B6. In B8 he reaches one arm out long on 'range'. Callback in B9: on 'check first' he points down at the sources line burned in at the bottom of the frame. Only if Boonchu says yes (see ask_boonchu), he puts on his reading glasses on that word instead. Props used: mat, towel (glasses only on his yes). If he is not sweaty enough, a towel wetted with water is fine.",
+    "caption": "Spot the lies: all 4 are false. Sweat is not fat, and yoga is not only stretching.\nThe truth, in video order: 1. Fat leaves mostly through your breath, and breathing faster doesn't burn more. 2. There is no proof that twists squeeze your liver clean, but they still help you turn. 3. A 2014 review of 25 trials (26,610 people) found stretching made no real difference to sports injuries. In the few strength-training trials in that review, injuries fell to under a third. Stretching still helps range of motion. 4. Yoga is not only stretching: Chaturanga builds strength.\nThe 4 myths: more sweat, more fat burned; twists squeeze your liver clean; stretch first and you won't get hurt; yoga is only stretching. You've heard them too. How many did you believe? Comment the number.\nQuestions about your practice? LINE @aybkk\nAybkk.net · Sources in the first comment · #ashtanga #ashtangayoga #mysore #yogamyths #ashtangabangkok #boonchutanti #aybkk",
+    "ask_boonchu": [
+     "On screen and on the cover, do you want 'SPOT THE LIES' or 'SPOT THE MYTHS'? With 'lies', you are the liar in the game, which is a safe target. Each card now says 'LIE 1/4' and so on, so a muted clip never reads as advice. But a teacher who repeats one of these claims might feel called a liar. My pick is LIES. In B7 you only say 'none of them is mine... online, in gyms', and you never call any person a liar.",
+     "I swapped lie 4. It was 'a hot room sweats out toxins'. Many Ashtanga students know a teaching about heat, sweat and purification that is credited to Guruji, and a line about sweat and purification credited to Sharath. Under a 'LIE' card, a 10-year practitioner could hear you calling that teaching a lie. So lie 4 is now 'Yoga is only stretching'. Do you want the heat lie back? Only if you are sure it does not clash with what you teach about sweat. If yes: B5 becomes 'You hate the hot room? No no. Is a gift. Every drop of sweat... bad stuff going out. Free detox.' The B8 truth becomes 'Heat? In Ashtanga the heat come from your breath and your movement. Sweat is mostly water and salt. Your liver and kidney do the cleaning.' The habit goes back to #7, and the caption adds 'In the heat, drink water.'",
+     "The reading-glasses gag on 'check first' was already used in the dristi Reel (28 Sep). OK to reuse it here? If yes, you put your glasses on at that word. If no, you point at the sources line at the bottom of the frame. That is what the script says now.",
+     "Did you ever believe one of these four yourself, or say one in class (for example the twist detox)? If yes, tell me which one and I will add one true line in B7: 'Me too. I believed number ___.' If not, it stays out. I won't write it without your word.",
+     "For B0, are you OK to wring the towel after your own practice, with the drops falling beside the mat, and no students in the frame unless they have said yes? Do you want to film at the shala or at home?",
+     "If you want a real count for B8, show M and the media assistant the four lines as an open quiz ('which of these do you think are true?'), tell them the truth straight away, and ask if you may say the count on camera with no names. Until then B8 has no number.",
+     "Route check: Postiz shows only carousels since 3 Oct. The last 3 (10 Oct, 06:01, 11:00 and 14:00 BKK) were stay-active carousels with the new-student promo, so Lane B, and a Lane A Reel is on route. Reels you post from the Instagram app don't show in Postiz. Did you post any Reel since the Flexible-or-Stiff Reel on 4 Oct?",
+     "There is one more checked fact for the pinned sources comment: two Sydney researchers asked 150 doctors, dietitians and trainers where lost fat goes, and only 3 got it right (Meerman and Brown). Should I add it? I kept it out of the spoken lines so the video stays under a minute and no clip turns against doctors."
+    ],
+    "risks": [
+     "ROUTE (top of script): Route: Lane A · last 3 posts (Postiz, IG): 'What science found' 06:01, 'Fit when old' 11:00, 'Never too late' 14:00, all on 10 Oct, all stay-active carousels with the new-student promo, so Lane B · next due: Lane A, so this Reel is on route. Postiz has nothing scheduled up to 20 Oct. Reels posted from the IG app don't show in Postiz (asked in ask_boonchu).",
+     "TOOLKIT PICK (top of script): Toolkit pick: Skeleton plan (contest-speech beats B0 to B9, Boonchu agreed) + Two-Voice Deadpan (salesman voice, then the flat truth), with Myth-Kill in B8. Why: the spot-the-lies game holds people to the reveal, and the flat true voice at the end keeps Boonchu the teacher, not the salesman.",
+     "EDIT CUE SHEET (for the 'Editing by Claude' session): (1) Burn the 'SPOT THE LIES' banner into the video file on every frame from 0 s to the end, never as an IG sticker. Show the 0/4 counter in B0 and B1. B0 also shows the mirror line 'You think: \"It's just sweat.\"' from frame 1 to the end of B0. (2) Each lie card appears the moment its lie starts, already labelled 'LIE n/4' and in quotes, and the cards stack and stay on screen. (3) Zoom punch 1.3x on 'Fat. Melting.' (B2), 'squeezed clean' (B3), 'Guaranteed.' (B4), 'Just resting.' (B5) and 'check first' (B9). (4) Frame break at 'Four lies... Hello, my friends' (B6): cut wide, no punch. (5) Each punch gets a sound effect at 40%, starting 0.4 s after the word ends. (6) Burned-in captions in Weight Shift (thin to bold), with a lying-face emoji on every lie line and a check emoji on every truth line. Never put a fire or muscle emoji on a lie line. (7) B8: show one truth card at a time, in step with his voice, and strike each lie card through with a cross as its truth lands. The cards are listed in B8 on_screen, each 11 words or fewer. (8) B8 to B9: burn a small sources line in at the bottom of the frame ('Sources: Meerman & Brown 2014 · Radcliffe/Thind 2022 · Lauersen 2014 · Tran 2001'). He points at it on 'check first'. (9) Speed 1.2 to 1.3x and cut pauses, but keep the beat before 'The truth?'. (10) The video goes to his Google Drive, never the repo.",
+     "PINNED FIRST COMMENT (post it right after the Reel, then pin it): 'Sources: 1. Meerman & Brown, BMJ 2014;349:g7257. 2. Radcliffe, Yoga Journal, 18 Jan 2022 (quoting H. Thind, UMass Lowell). 3. Lauersen et al., Br J Sports Med 2014;48(11):871. 4. Tran et al., Prev Cardiol 2001 (a small study of 10 people).'",
+     "CLIP RISK, the main one: from about 6 to 22 s Boonchu says four false claims with full confidence. Fixes: the 'SPOT THE LIES' banner is burned into every frame from 0 s. Every claim card is labelled 'LIE n/4' the moment it appears, so no muted frame reads as advice. The cover says 'Spot the Four Lies'. The audio says 'Four lies' at about 23 to 24 s, 'ALL 4 WERE LIES' shows at about 23 s, and the spoken truths start at about 29 s, one plain line per lie in the same order, with each lie card crossed out as its truth is said. The caption now really opens with the truth. One risk is left that we cannot stop: someone ripping only the 6 to 22 s audio.",
+     "Why these four lies: I picked them for low harm if clipped. I left out 'No pain, no gain' on purpose. If clipped, it could push someone through joint pain, and the checked file calls sharp pain a stop sign. I also took out 'a hot room sweats out toxins', because it brushes against Ashtanga's sweat culture (verified #44) and could sound like calling Guruji's and Sharath's teaching a lie. Of the four I kept, 'stretch first and you won't get hurt' is the riskiest because it gives false safety. Its truth line keeps 'Stretching help your range', so it never sounds like 'stretching is useless' (verified #54 safety note).",
+     "The truth 'fat leaves by the breath' could be clipped as 'breathe hard to burn fat'. 'Sweat is not fat' and 'Breathing faster... don't burn more' must stay in the edit, spoken and on the cards (verified #51 safety note). Never present Ashtanga breathing as a way to lose fat, and do not call the breath 'ujjayi' (Sharath's own teaching, per verified #51).",
+     "The twist truth comes from a magazine article by Shawn Radcliffe quoting a researcher (Thind, Yoga Journal 2022). So say 'no proof', never 'proven false'. Do not name Iyengar, even though the article credits him with 'squeeze and soak'. Make no claim either way about organs. Keep 'It help you turn' so the asana and the practice are never made to look silly. Aim it at the internet claim, never at Jois or the old texts (Yoga Mala credits the Marichyasanas with digestive benefits, verified #44). Only Marichyasana D is named; Ardha Matsyendrasana is out.",
+     "The 'only stretching' truth: Tran 2001 is tiny (10 people, no control group), so no number is spoken and the line says 'it build your arms', not a promise of results. Never say 'better than the gym', never claim weight loss (verified #58 safety), and never call Ashtanga high-intensity training (Reel Toolkit, Wrong Fix note).",
+     "Lane A viewers who teach these claims may feel called out. The target is the internet and gym talk, never teachers, and no one is named. The mirror line is 'You hear them too', never 'you teach them'.",
+     "Shared with the original: the silent-prop opener and the word 'What?' (skeleton structure only). None of the speaker's lines are reused. There is no 'Oh, you think' opener, no 'made them up' and no 'words can change' moral, and there is no fake statistic anywhere. His B2 used a made-up number; ours has no number inside a lie. His B8 used made-up friend results; ours uses only checked facts plus a rhetorical question to the viewer.",
+     "Length: about 54 to 56 s after the 1.2 to 1.3x speed-up and pause cuts. B8 is the long beat, at about 20 s. If the cut runs long, cut 'One? ... All four?' first, then 'Your arms? Just resting.' in B5. Never cut 'Sweat is not fat', 'Breathing faster... don't burn more', 'It help you turn' or 'Stretching help your range'.",
+     "Habit #2: Chaturanga and jump back build arm strength (small study, so no number spoken). 'Strength training help more' in B8 backs it up.",
+     "FIXED (check 1): B8 on-screen. One card per truth, shown as it is spoken: 'MOSTLY' on the fat card, plus a separate 'Breathing faster won't burn more.' card, so a muted clip keeps the safety line. Each lie card is crossed out as its truth appears.",
+     "FIXED (check 1): B1 to B6 sound-off. Every claim card is labelled 'LIE n/4: \"...\"' under the 'SPOT THE LIES' banner. B1 shows only 'SPOT THE LIES 0/4'. 'Four lies' moved from B7 into B6, and B7 now starts with 'But...'.",
+     "FIXED (check 1 + check 2 merged): B0/B1 overlay. The mirror line shows from frame 1 in B0, as check 2 asked. It is written as the viewer's own thought in quotes ('You think: \"It's just sweat.\"'), not as a question, so a muted viewer never reads it as a hint that sweat is more than sweat. It leaves at B1, as check 1 asked.",
+     "FIXED (check 1 + check 2 merged): the caption now opens with the truth. L1 gives 'all 4 are false' plus two truths, L2 gives all four truths in video order, and L3 lists the myths after that, in video order. It uses the 5-line Lane A format with no promo, the sources moved to a pinned first comment, and #ashtangabangkok and #boonchutanti were added. 'In the heat, drink water' was dropped because the heat lie is out.",
+     "FIXED (check 1 + check 2 merged): B7 target. It is now 'none of them is mine... online, in gyms', with no 'the yoga world', no 'every day' (it overstated the source) and no 'studios' (check 2: never teachers). On-screen: 'Not mine. Online, in gyms: you hear them too.' truth_source now reads 'popular claims, myths_data group What people believe about yoga and exercise'.",
+     "FIXED (check 1): B4 now uses the checked wording: 'Then you won't get hurt. (one finger up) Guaranteed.' Card: 'LIE 3/4: \"Stretch first and you won't get hurt\"'. The caption myth list matches.",
+     "FIXED (check 1): the caption stretching sentence now ties the strength result to 'the few strength-training trials in that review' and adds 'Stretching still helps range of motion.'",
+     "FIXED (check 1): B1 spoken is now 'Just sweat? (laughs) No no no. Sit. I explain.' The overlap note is corrected.",
+     "FIXED (check 1): 'I did not make these up' / 'I didn't make up a single one' is gone everywhere. It is replaced by 'none of them is mine', and the old caption line 1 is dropped because the caption now opens with the truths.",
+     "FIXED (check 1 + check 2 merged): B9 moral. The old moral was 'Confident words can sell anything', which paraphrases the speaker (check 1) and uses 'confident' (check 2). Check 2's 'A sure voice can sell anything' kept the same 'can sell' shape, so it is now spoken 'Big voice... sure voice... is not proof. So... check first. Then practise.' On-screen: 'A sure voice is not proof. Check first. Then practise.' (10 words).",
+     "FIXED (check 1): B8 stretching truth is now 'Stretching help your range. But in sport... it don't stop you getting hurt. Strength training help more.' It merges in check 2's 'getting hurt' in place of 'injury', and he reaches one arm out on 'range' to show the word.",
+     "FIXED (check 1): B9 glasses. I deleted the '(a true fact: ...)' note. The default action is now pointing at the burned-in sources line, and the glasses come back only on Boonchu's yes (new ask_boonchu item). Note: the 28 Sep life note does say 'cannot read anything close in low light', so the detail was not invented, but that note is marked USED for the dristi Reel. The note's age (53) is not used.",
+     "FIXED (check 1): the sources credit 'Radcliffe, Yoga Journal 2022 (quoting H. Thind, UMass Lowell)' in the pinned comment, and B3's truth_source names Radcliffe as the author.",
+     "FIXED (check 1): B8 truth_source is rewritten. Strength result: 'few trials, wide CIs', Lauersen (verified #54). Range of motion: myths_data stretchfirst f / verified #54 safety. Twists help flexibility: Thind via Radcliffe (verified #67).",
+     "FIXED (check 1): the B8 count ask is reworded as an open quiz, with the truth told straight away and the count used only with their OK and no names. The bracketed [BOONCHU: ...] placeholder is deleted.",
+     "FIXED (check 2): lie 4 is swapped from the hot-room detox claim (lineage clash, verified #44) to myths_data id='stretching'. B5: 'You hate the jump back? Relax. Yoga is only stretching. Your arms? (lets them hang loose) Just resting.' B8 truth: 'Only stretching? No no. Chaturanga, jump back... it build your arms.' I wrote 'it build' in place of 'your arms get strong' to follow the Toolkit rule ('builds', not a promised result). The heat version and the Jois/Sharath sweat teaching are in ask_boonchu, to come back only with his explicit OK.",
+     "FIXED (check 2): the B8 truths now open with 'Sweat is not fat.' before 'Fat go out mostly in your breath. Breathing faster... don't burn more.'",
+     "FIXED (check 2): the B8 on-screen is now separate cards of 11 words or fewer, in correct written English, ending with the close card 'How many did you believe?'.",
+     "FIXED (check 2): the habit is now #2 (Get stronger), spoken in B8 and backed by 'Strength training help more'. The habit #7 bullet is replaced.",
+     "FIXED (check 2): word check. 'Toxin' is gone everywhere: B5 is swapped, B8 now says 'No proof it squeeze your liver clean', and the B3 card says 'Twists squeeze your liver clean' so it matches the spoken lie. 'Injury' became 'getting hurt', 'nod at' became 'believe', and 'confident' is gone from spoken and on-screen text (it stays only in stage directions). There is a '(touches his right ribs)' on 'Your liver' in B3.",
+     "FIXED (check 2): B7 is in present-tense spoken English ('none of them is mine').",
+     "FIXED (check 2): added the Toolkit pick line (top of this list).",
+     "FIXED (check 2): ran the Postiz posts list (3 to 20 Oct) and filled the Route line. The last 3 IG posts are Lane B carousels, so a Lane A Reel is due.",
+     "FIXED (check 2): added the edit cue sheet, with burned-in banner and cards, lying-face and check emoji, no fire or muscle emoji on a lie, and strike-through in B8.",
+     "FIXED (check 2): removed the Ardha Matsyendrasana option (HYP and sage risk; it is also the pitched Matsyendra episode). B3 keeps Marichyasana D, aimed at the internet claim.",
+     "FIXED (check 2): updated the risks for length (about 54 to 56 s, with the new cut order) and for habit #2."
+    ]
+   },
+   "checks": [
+    {
+     "verdict": "fix",
+     "problems": [
+      {
+       "where": "B8 on_screen",
+       "problem": "The on-screen truths overstate the checked wording and drop a required safety line. 'Fat: breathed out' leaves out 'mostly': only 8.4 of 10 kg leaves as CO2 and 1.6 kg becomes water (verified #51). 'Sweat: water, salt' reads as 'only water and salt', which breaks the #66 rule never to say sweat contains nothing else. With the sound off, the card also loses 'Breathing faster don't burn more', which #51 says must stay, so a muted clip can read as 'breathe hard to burn fat'.",
+       "fix": "Show one card per truth as it is spoken: 'Fat: MOSTLY breathed out. Breathing faster won't burn more.' / 'Twists: no proof of detox. They help you turn.' / 'Stretching: good for range, not injury armour. Strength helps more.' / 'Sweat: MOSTLY water and salt. Liver and kidneys clean.' Cross out each lie card as its truth appears."
+      },
+      {
+       "where": "B1 to B6, sound-off clip of the first 25 s",
+       "problem": "Each card reads 'SPOT THE LIES n/4: ...', which a muted viewer can take as 'statement n, maybe true'. Nothing marks a claim false until 'ALL 4 WERE LIES' at about 23 s. The B1 overlay 'You think it's just sweat?' is not in quotes and not counted, so muted it reads as a real hint that sweat is more than sweat. With sound on, nothing in the audio says 'lie' until B7 at about 25 s or later.",
+       "fix": "Label every card as false the moment it appears: banner 'SPOT THE LIES' plus card 'LIE 1/4: \"More sweat, more fat burned\"' (and the same for 2/4 to 4/4). Remove 'You think it's just sweat?' from the B1 overlay so B1 shows only 'SPOT THE LIES 0/4'. Move 'Four lies' from B7 into B6 so the audio says it at about 23 to 24 s: '(drops the towel...) Four lies. Okay... okay. Hello, my friends.' B7 then starts with 'But...'."
+      },
+      {
+       "where": "caption, lines 1 and 2",
+       "problem": "The risks section says 'the caption opens with the truth', but it does not. Line 2 lists the four myths in plain words, and that is what shows in the Instagram preview (about 125 characters) with no truth next to them. The caption also lists the myths in a different order from the video (twists first), so the 'how many did you nod at' count no longer matches the video.",
+       "fix": "Open with the truths in video order: 'Four popular myths, and the truth. 1. Fat leaves mostly through your breath, and breathing faster doesn't burn more. 2. There is no proof that twists squeeze out toxins, but they still help you turn. 3. ... 4. ...' Put the myth list after that, in video order: 'more sweat, more fat burned; twists wring out your liver; stretch first and you won't get hurt; a hot room sweats out toxins.'"
+      },
+      {
+       "where": "B7 spoken and on_screen ('The yoga world say them every day')",
+       "problem": "Two of the four claims (sweat = fat, stretch first) are general exercise myths: the file's group is 'yoga AND exercise', not the yoga world. 'Every day' overstates the only quoted source, where Thind says 'Sometimes yoga instructors mention...'. Under a 'LIES' banner, 'the yoga world' also aims at teachers and the lineage. Notes #44 and #67 say to frame the twist claim against the internet detox claim, never against teachers, Jois or the old texts (Yoga Mala credits the Marichyasanas with digestive benefits).",
+       "fix": "Spoken: 'But... none of them is mine. You find them online, in gyms, in studios. You hear them too, no?' On-screen: 'Not mine. Online, gyms, studios: you hear them too.' Update truth_source to 'popular claims, myths_data group What people believe about yoga and exercise'."
+      },
+      {
+       "where": "B4 spoken and on_screen",
+       "problem": "The quoted card ''Stretch first and you never get hurt'' is a stretched version of the checked myth. The file says 'A quick stretch before exercise prevents injury' and the title 'Stretch first and you won't get hurt', so the quote puts words in other people's mouths. 'Then you never get hurt. Never.' also closely echoes the speaker's 'You could smoke for years and nothing will ever happen to you.'",
+       "fix": "Spoken: 'You stretch first, before practice? Good. Then you won't get hurt. (one finger up) Guaranteed.' On-screen: 'LIE 3/4: \"Stretch first and you won't get hurt\"'. Caption myth list: 'stretch first and you won't get hurt'."
+      },
+      {
+       "where": "caption, stretching sentence",
+       "problem": "'In a review of 25 trials, stretching made no real difference..., while strength training cut them to under a third' makes the strength result sound like it rests on all 25 trials. Verified #54 says it comes from only a few trials with wide confidence intervals and must stay tied to those trials.",
+       "fix": "Replace with: 'A 2014 review of 25 trials (26,610 people) found stretching made no real difference to sports injuries. In the few strength-training trials in that review, injuries fell to under a third. Stretching still helps range of motion.'"
+      },
+      {
+       "where": "B1 spoken",
+       "problem": "'Oh... you think it's just sweat? No no no. Listen.' closely follows the speaker's own line 'Oh, you all think smoking kills? Let me tell you something.': the same 'Oh' opener, the same 'you think ___?', and 'Listen' standing in for 'Let me tell you something'. The risks section wrongly says only 'What?' overlaps.",
+       "fix": "Spoken: '(big, confident yoga-salesman voice from here to the end of B5) Just sweat? (laughs) No no no. Sit. I explain.' In risks, change the overlap note to: 'Shared with the original: the silent-prop opener and the word \"What?\" (skeleton structure only).'"
+      },
+      {
+       "where": "B7 spoken/on_screen and caption line 1",
+       "problem": "'I did not make these up' / 'I didn't make up a single one' is a direct negation of the speaker's distinctive twist line 'even though I just made them up', and it reuses his words 'made them up'.",
+       "fix": "Use 'none of them is mine' everywhere: B7 as in the B7 fix above, and caption line 1 'Spot the lies. I told you four. None of them is mine.' (or drop that line once the caption opens with the truths)."
+      },
+      {
+       "where": "B9 spoken, on_screen, caption",
+       "problem": "'Confident words can sell anything' closely paraphrases the speaker's moral 'Words, when said and articulated in the right way, can change someone's mind': same subject (words), same 'can' plus persuasion, same closing slot.",
+       "fix": "Spoken: 'Confidence is not proof. So... (prop action) check. Then practise.' On-screen and caption: 'Confidence is not proof. Check. Then practise.'"
+      },
+      {
+       "where": "B8 spoken, stretching truth",
+       "problem": "'Stretching help you move' is broader than the checked wording 'Stretching still helps range of motion' (myths_data f; #54 safety note). 'But it don't stop injury' carries the sports-injury finding (Lauersen pooled sports and military trials) over to practice injury in general.",
+       "fix": "Spoken: 'Stretching help your range. But in sport, it don't stop injury. Strength training help more.'"
+      },
+      {
+       "where": "B9 prop and prop_idea (reading glasses)",
+       "problem": "The note says 'a true fact: he needs them to read close up in low light'. The only life note found says 'reading glasses' and does not mention close-up or low light, so that detail is invented. The same life note is also already marked USED for Ep. 1 (dristi), so this would reuse it.",
+       "fix": "Delete '(a true fact: he needs them to read close up in low light)'. Either swap the action for a non-biographical one ('on \"check\" he points down at the burned-in sources line at the bottom of the frame') or add an ask_boonchu item: 'The glasses gag was used in Ep. 1. OK to reuse it here?'. Keep the glasses only if he says yes."
+      },
+      {
+       "where": "caption sources line",
+       "problem": "'Thind, Yoga Journal 2022' cites Thind as the author. The article is by Shawn Radcliffe and only quotes Thind (verified #67).",
+       "fix": "'Radcliffe, Yoga Journal 2022 (quoting H. Thind, UMass Lowell)'."
+      },
+      {
+       "where": "B8 truth_source",
+       "problem": "It credits 'stretching still helps range of motion' to Lauersen et al. That line comes from the myth file and the #54 safety note, not from the Lauersen abstract. 'Twists help you turn and move' is the myth file's paraphrase; Thind actually spoke of 'enhanced muscle flexibility'.",
+       "fix": "Rewrite as: '...strength training cut them to under a third (few trials, wide CIs): Lauersen et al. 2014 (verified #54). Range of motion: myths_data stretchfirst f / verified #54 safety. Twists help flexibility: Thind via Radcliffe, Yoga Journal 2022 (verified #67).'"
+      },
+      {
+       "where": "ask_boonchu item 5",
+       "problem": "'Test the four lines on M and the media assistant' copies the speaker's method of fooling people with false health claims. A count is fine only if no one is deceived. The bracketed placeholder '[BOONCHU: ...]' must never reach a filming card.",
+       "fix": "Reword: 'If you want a real count for B8, show M and the media assistant the four lines as an open quiz (\"which of these do you think are true?\"), tell them the truth straight away, and ask if you may say the count on camera with no names. Until then B8 has no number.' Delete the bracketed placeholder."
+      }
+     ]
+    },
+    {
+     "verdict": "fix",
+     "problems": [
+      {
+       "where": "B5 (lie 4, heat/sweat detox), and the matching B8 truth line, caption and habit field",
+       "problem": "This collides with the lineage. In Ashtanga circles, 'the heated blood removes impurities, which leave through the sweat during practice' is widely taught as Pattabhi Jois's own teaching, and one line is attributed to Sharath ('only through sweat... purification occurs'). In a Lane A Reel, 'Every drop of sweat... toxin going out' is labelled LIE 4/4 and 'ALL 4 WERE LIES', followed by 'Your liver and kidney do the cleaning'. A 10-year Ashtangi will hear a teacher authorized by Sharath calling Guruji's and Sharath's teaching a lie. The checked file warns about this already: verified #44 says 'leave out the sweat point... brushes against Ashtanga's sweat culture'. This breaks 'never mock the lineage, Sharath, Guruji'. The lie also uses 'toxin', which is a stop word.",
+       "fix": "Swap lie 4 for the checked myth id='stretching' ('Yoga is only stretching'), which is low-harm and has no lineage clash. B5 spoken: '(most confident) You hate the jump back? Relax. Yoga is only stretching. Your arms? (lets them hang loose) Just resting.' B5 on_screen: 'SPOT THE LIES 4/4: \\'Yoga is only stretching\\''. truth_source: myths_data id='stretching' (Tran et al., Prev Cardiol 2001; Mody, J Bodyw Mov Ther 2011). B8 truth line: 'Only stretching? No no. Chaturanga, jump back... your arms get strong.' Change habit_number to '2 (Get stronger: chaturanga, jump-backs)'. B8's 'Strength training help more' now also supports #2. If Boonchu still wants the heat lie, keep it only with his explicit OK that it does not clash with what he teaches about sweat, and change three things. Aim it at the trend: 'You hate the hot room? No no. Is a gift. Every drop of sweat... bad stuff going out. Free detox.' Make the B8 truth: 'Heat? In Ashtanga the heat come from your breath and your movement. Sweat is mostly water and salt. Your liver and kidney do the cleaning.' (verified #66 asana note). Add one line to ask_boonchu naming the Jois/Sharath sweat-purification teaching."
+      },
+      {
+       "where": "B7 spoken and on_screen ('The yoga world say them every day')",
+       "problem": "The target is wrong. 'The yoga world' takes in teachers, the lineage and Lane A viewers themselves. The fair targets are the yoga business, internet claims and trends. It is also inaccurate: 'sweat burns fat' and 'stretch first' are general fitness myths, not yoga ones.",
+       "fix": "Spoken: 'Four lies. But... these are not mine. The internet say them every day. You hear them too, no?' On_screen: 'I didn't make these up. The internet says them every day.' (11 words). Change the risks bullet to match: 'target = the internet, never teachers'."
+      },
+      {
+       "where": "Caption, and the risks bullet 'The caption opens with the truth'",
+       "problem": "The caption does not open with the truth. Line 1 is the game line, and line 2 lists all four lies again, so the IG preview (about 125 characters) shows the lies and not the truths. The risks bullet claims the opposite. The lies are also in a different order from the video (twists, sweat, stretch, heat). The format ignores the standing order for 5 short lines: line 3 is a 5-sentence paragraph and the sources block sits in the last line.",
+       "fix": "Use 5 short lines (Lane A, no promo). L1: 'Spot the lies: all 4 are false. Sweat is not fat, and yoga is not only stretching.' L2: 'You've heard them too. How many did you believe? Comment the number.' L3: 'The truth: fat leaves mostly in your breath, and breathing faster doesn't burn more. There's no proof twists squeeze your liver clean, but they help you turn. Stretching helps you move, but in a review of 25 trials, strength training did more to prevent injuries. Chaturanga builds strength.' L4: 'Questions about your practice? LINE @aybkk' L5: 'Aybkk.net · Sources in the first comment · #ashtanga #ashtangayoga #mysore #yogamyths #ashtangabangkok #boonchutanti #aybkk'. Post the four sources as the first (pinned) comment. If the heat lie is kept, L3 ends: 'Sweat is mostly water and salt. Your liver and kidneys do the cleaning. In the heat, drink water.'"
+      },
+      {
+       "where": "B8 spoken, truth for lie 1",
+       "problem": "The lie was 'more sweat, more fat burned', but the truth never says plainly that sweat is not fat. 'Fat go out mostly in your breath' on its own can be clipped as 'breathe to burn fat'. The brief requires each truth said plainly.",
+       "fix": "Open the truths with: 'The truth? (beat) Sweat is not fat. Fat go out mostly in your breath. Breathing faster... don't burn more.' (myths_data 'sweatfat' f: 'Sweat is mostly water and salt'; verified #51). Never cut the 'Breathing faster' line in the edit."
+      },
+      {
+       "where": "B8 on_screen ('Fat: breathed out / Twists: no proof / Strength helps more / Sweat: water, salt')",
+       "problem": "It is 12 words, which fails the 'under 12' rule of the 3-second audit. 'Fat: breathed out' appears on screen without the safety line 'breathing faster doesn't burn more', so a silent clip reads as 'breathe out fat'. 'Strength helps more' does not say what it is the truth for. Cards in shorthand are not correct written English.",
+       "fix": "Show four cards one by one, each in step with the spoken truth, each lie card struck through with a cross as its truth lands. (1a) 'Sweat isn't fat. Fat leaves mostly in your breath.' (1b) 'Breathing faster won't burn more.' (2) 'Twists: no proof they squeeze your liver clean. They help you turn.' (3) 'Stretching helps you move. Strength training helps more against injury.' (4) 'Yoga isn't only stretching. Chaturanga builds strength.' Close card: 'How many did you believe?' Each card has 11 words or fewer."
+      },
+      {
+       "where": "habit_number ('7, Hot and cold') vs the script",
+       "problem": "No spoken or written line delivers habit #7 ('the practice heats the body from inside... you make your own warmth'). Heat appears only as a lie, and the risks bullet says the careful #7 line exists when it does not. direction.md needs the piece to point to its named habit.",
+       "fix": "With the B5 swap, change it to habit #2 (Get stronger), which is now said in B8 ('Chaturanga, jump back... your arms get strong') and backed by 'Strength training help more'. Only if the heat lie is kept: stay on #7 and add the B8 line 'In Ashtanga the heat come from your breath and your movement' (verified #66 asana field)."
+      },
+      {
+       "where": "Word check: B5 'toxin', B8 'injury', B8 'toxin', B8 'nod at', B9 'Confident', B3 and B8 'liver/kidney'",
+       "problem": "Under the 10-year-old non-native test, 'toxin', 'injury', 'confident' and 'nod at' are words a child would stop on. B4 already uses the plain 'get hurt', so 'injury' also breaks consistency.",
+       "fix": "B8: 'But it don't stop you getting hurt.' B8: 'Twist? No proof it squeeze your liver clean. It help you turn.' (this echoes the B3 lie and drops 'toxin'). B8 close: 'And you? How many you believe? One? ... All four?' B9 spoken: 'Say it big and sure... people buy anything. So... (puts on reading glasses) check first. Then practise.' B9 on_screen: 'A sure voice can sell anything. Check first. Then practise.' (10 words). Keep 'liver', but add the stage direction '(touches his right ribs)' on 'Your liver' in B3 so the word is shown. 'detox' may stay only if the heat lie is kept, since it is the myth's own label."
+      },
+      {
+       "where": "B7 spoken ('I did not make these up')",
+       "problem": "This is past tense, written-English phrasing. The standing order asks for Boonchu's short, present-tense spoken English.",
+       "fix": "'But... these are not mine.' (already in the B7 fix above). On-screen text stays in correct written English."
+      },
+      {
+       "where": "B0 on_screen (seconds 0 to 3)",
+       "problem": "The mirror rule says the hook must name the viewer's own inner voice. In the first 3 seconds, a sound-off viewer sees only 'SPOT THE LIES 0/4'. The mirror line 'You think it's just sweat?' does not appear until B1, at about 3 to 5 s.",
+       "fix": "From frame 1, B0 on_screen should read: 'SPOT THE LIES 0/4 · You think it's just sweat?' (9 words). Keep it through B1."
+      },
+      {
+       "where": "Top of the script (missing)",
+       "problem": "The Toolkit standing order requires a 'Toolkit pick: <tool> + <tool>. Why: ...' line on every Reel. It is missing.",
+       "fix": "Add: 'Toolkit pick: Skeleton plan (contest-speech beats B0 to B9, Boonchu agreed) + Two-Voice Deadpan (salesman voice, then the flat truth), with Myth-Kill in B8. Why: the spot-the-lies game holds people to the reveal, and the flat true voice at the end keeps Boonchu the teacher, not the salesman.'"
+      },
+      {
+       "where": "Top of the script (missing route line); ask_boonchu #6",
+       "problem": "The ROUTE CHECK standing order needs 'Route: Lane _ · last 3 posts: _ _ _ · next due: _' at the top. The script only asks Boonchu. The notebook's 'Stories used' log has the last published IG posts (stay-active carousels B3 06:01, B4 11:00 and B5 14:00 on 10 Oct), and the standing order says to check all IG posts in the Postiz list.",
+       "fix": "Before sending, run the Postiz posts list and fill the line, e.g. 'Route: Lane A · last 3 posts: stay-active B3, B4, B5 carousels (10 Oct) · lanes: <from Postiz> · next due: <A or B>'. If the last 2 were Lane A, say in line 1 that a Lane B piece is due."
+      },
+      {
+       "where": "Edit plan (missing)",
+       "problem": "The VIDEO EDIT SPEC standing order requires an edit cue sheet with every Reel. There is none. Without one, the burned-in Weight Shift captions with emoji could put a celebrating emoji on a lie line, and the subtitles alone would then spread the myth.",
+       "fix": "Add a cue sheet. 1.3x zoom punches on 'Fat. Melting.' (B2), 'squeezed clean' (B3), 'Never.' (B4), 'Just resting.' (B5), 'check first' plus the glasses (B9). For the frame break at 'Hello, my friends' (B6), cut wide. Each punch gets a sound effect at 40%, starting 0.4 s after the word. Captions use Weight Shift, with a lying-face emoji on every lie line and a check emoji on every truth line, and never a fire or muscle emoji on a lie. Burn the 'SPOT THE LIES n/4' banner and the lie cards into the video file on every frame from 0 s to the end, not as an IG sticker. In B8, strike through each lie card with a cross as its truth is said."
+      },
+      {
+       "where": "ask_boonchu #3 (Marichyasana D vs Ardha Matsyendrasana) and B3",
+       "problem": "Ardha Matsyendrasana is the wrong offer. The Hatha Yoga Pradipika credits Matsyendra's asana with destroying 'the most deadly diseases', so busting a twist claim with his asana can read as mocking the sage or the old text. It is also the asana of the Matsyendra Hidden Stories episode Plato just pitched. Verified #44 says to aim the twist myth at the modern internet 'detox sponge', never at Jois or the old texts.",
+       "fix": "Remove the Ardha Matsyendrasana option and keep Marichyasana D. With the B7 'the internet' fix, the target stays the internet claim. Keep 'It help you turn' in B8 and never cut it."
+      },
+      {
+       "where": "risks list (length and habit bullets)",
+       "problem": "After the fixes, B8 is about 2 to 3 s longer, and the habit #7 bullet describes a line that is not in the script.",
+       "fix": "Update the length to about 54 to 56 s after the 1.2 to 1.3x speed-up. Cut order: 'One? ... All four?' first, then 'Your arms? Just resting.' in B5. Never cut 'Sweat is not fat', 'Breathing faster... don't burn more', 'It help you turn' or 'Stretching help you move'. Replace the habit #7 bullet with: 'Habit #2: Chaturanga and jump back build arm strength (small study, so no number spoken).'"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "final": {
+    "key": "reel_DeLPF08NYbq_v3_hyp_bridge",
+    "lane": "Lane A. Route: Lane A · last 3 posts: stay-active carousels B3, B4, B5 (10 Oct; check their lanes in Postiz) · next due: Day 1 to Day 30 (Lane B) from 13 Oct. Toolkit pick: Interrupt Opener (visual: silent phone-mirror check, started mid-action) + the speech's beat skeleton (B0 to B9, hidden-motive beat B5 cut), with Two-Voice Deadpan at the glasses-off switch and Myth-Kill in B8. Why: the vain-teacher bit stops the scroll; the sure voice, then the flat truth, makes viewers catch their own belief.",
+    "habit_number": "Habit #10 (+#2): 10 (Go traditional) is delivered by B9 'With a teacher. That part... we still do.'; 2 (Get stronger) is the B8 evidence line 'old muscle still answer training'. If Boonchu cuts 'That part... we still do.', relabel the Reel as habit #2.",
+    "title": "Old Book, Big Promises",
+    "beats": [
+     {
+      "beat": "B0",
+      "skeleton": "Silent prop, about 2 s, started mid-action: do the small 'wrong' thing the room would judge (here: a yoga teacher checking his own face like a vain man). Then one short line that turns the judgment back on the viewer: 'Eh? You never ___?'",
+      "spoken": "(silent, 2 s) ... Eh? You never check?",
+      "on_screen": "GAME: 3 old promises. Which do you believe? | [SERIES: Boonchu to pick]",
+      "truth_source": ""
+     },
+     {
+      "beat": "B1",
+      "skeleton": "Name the viewer's quiet worry as a question, refuse it with full confidence, and set the game out loud: '___ for years... still ___? No no no. Listen... and count.'",
+      "spoken": "Years on the mat... still getting older? No no no. Listen... and count.",
+      "on_screen": "GAME: 3 promises from an old yoga book",
+      "truth_source": ""
+     },
+     {
+      "beat": "B2",
+      "skeleton": "Promise 1: the book's practice in two words + a number + what it takes away, then the mirror: '___. [number]... ___, gone. ___, gone. [number]! And you... still ___. One by one.'",
+      "spoken": "Upside down. Six months... wrinkles, gone. Grey hair, gone. Six months! And you... still pull it out. One by one.",
+      "on_screen": "GAME 1/3 · Old book: six months upside down, no grey hair. True?",
+      "truth_source": "Hatha Yoga Pradipika 3.80 to 3.81, tr. Pancham Sinh 1914: 'Place the head on the ground and the feet up into the sky...' and 'After six months, the wrinkles and grey hair are not seen.' Myth file myths_data.py B_GROUPS id 'grey'; verified.json 'Six months upside down'. The book means Viparita Karani (a mudra); nearest Ashtanga forms are Sirsasana and Sarvangasana. 'Head on the floor. Feet to the sky.' is cut from the speech: said with full confidence it is a how-to for going upside down (verified.json 'In headstand, the head just rests': the head carries 40 to 48% of body weight; 'No upside-down after 50': headstand doubled eye pressure). 'Conquers death' (same verse) left out on purpose."
+     },
+     {
+      "beat": "B3",
+      "skeleton": "Promise 2, the wrong cause: '___? No no. [the real cause, per the act]... [its plain name]. Even ___... become ___. ___ and ___... like ___ again.'",
+      "spoken": "Cream? No no. Mula Bandha... root lock. Even an old man... become young. Breath and bandha... like sixteen again.",
+      "on_screen": "GAME 2/3 · Old book: Mula Bandha makes an old man young. True?",
+      "truth_source": "HYP 3.64 (Sinh): 'Even an old man becomes young by constantly practising Mula Bandha.' The card follows this verse and gives no 16 to Mula Bandha. HYP 2.47 (Sinh): 'By pulling up the Apana Vayu and by forcing the Prana Vayu down the throat, the Yogi... becomes young, as it were 16 years old'; Muktibodhananda 2.47: 'appears as if sixteen years of age' (verified.json 'The old man who becomes sixteen'). The 16 comes from that breath practice, so the line says 'breath and bandha', and 'like sixteen' keeps the book's own hedge ('as it were', 'as if'). 'Root lock' is the plain meaning of Mula Bandha, said once so the name is explained the first time. Myth file id 'sixteen'."
+     },
+     {
+      "beat": "B4",
+      "skeleton": "Promise 3, the biggest one, as a wrong belief corrected with full confidence: '[asana]? Just ___? No no. The ___... ___. The worst ___.'",
+      "spoken": "Mayurasana? Just an arm balance? No no. The peacock... kill poison. The worst poison.",
+      "on_screen": "GAME 3/3 · Old book: the peacock asana (Mayurasana) kills poison. True?",
+      "truth_source": "HYP 1.33 in Sinh (1.31 in modern editions): Mayurasana 'destroys the most deadly poison' (Sanskrit 'jarayet kala-kutam', kalakuta), so 'kill poison' follows Sinh's 'destroys'. Myth file id 'peacock'; verified.json 'The peacock that digests the world's worst poison'. 'Big mistake' (not in the book, pushes viewers to do a strong belly-pressure asana) is cut. Left out of speech: 'destroys all diseases' and 'digests unwholesome food taken in excess' (could push someone to do it on a full stomach). Shiva and the kalakuta legend kept out of the act."
+     },
+     {
+      "beat": "B6",
+      "skeleton": "Drop the act after a 1 s silent beat: take off the prop, change to the normal voice, catch the viewer: 'Okay, okay. You almost believe me. ... None of this is mine.'",
+      "spoken": "(1 s silent: takes the reading glasses off, folds them, small smile at himself; then normal voice) Okay, okay. You almost believe me. ... None of this is mine.",
+      "on_screen": "GAME OVER. All 3: no proof.",
+      "truth_source": "'No proof' sums up B8: the grey hair and poison promises have never been tested (myth file 'grey' f, 'peacock' f) and 'Nobody turns sixteen' (myth file 'sixteen' f)."
+     },
+     {
+      "beat": "B7",
+      "skeleton": "Name the real source, then one mirror line: 'A [age] ___ say it. [name]. You want it ___... I know.'",
+      "spoken": "A 500-year-old yoga book say it. Hatha Yoga Pradipika. You want it true... I know.",
+      "on_screen": "Hatha Yoga Pradipika, over 500 years old.",
+      "truth_source": "Age: verified.json ('Ashtanga is only for the young') gives the 15th century as the standard dating for Svatmarama, so 'over 500 years' is safe. The praise line and 'With a teacher' moved to B9, with their safety card."
+     },
+     {
+      "beat": "B8",
+      "skeleton": "The count, then one plain truth per promise, then the one true thing: 'So... how many you believe? One? ... All [n]? ... I wish. ___? No study test it. ___? Nobody ___. ___? No study. Keep away from ___. But ___. That one is true.'",
+      "spoken": "So... how many you believe? One? ... All three? ... I wish. Upside down for grey hair, for wrinkles? No study test it. Sixteen again? Nobody turn sixteen. Poison? No study. Keep away from poison. But old muscle still answer training. That one is true.",
+      "on_screen": "❌ Upside down for grey hair: never tested / ❌ Sixteen again: nobody / ❌ Poison: no study, then alone: ✅ Old muscle still answers training",
+      "truth_source": "'I wish': Boonchu's own letter P.S. ('I wish we could say we are growing young', Plato notebook, LETTER FORMAT); 'Me too' is cut because nothing checked says he believed all three. Grey hair and wrinkles: myth file 'grey' f 'No study has tested the second' (the six-month line, which names wrinkles and grey hair); verified.json 'Six months upside down: no wrinkles, no grey hair': 'No study of inversions on hair or wrinkles exists' (another verifier hedged it as 'we found no study'). Grey hair itself HAS been studied (Rosenberg et al., eLife 2021), so the line and the card name the upside-down promise, never grey hair alone. Sixteen: myth file 'sixteen' f 'Nobody turns sixteen.' Poison: myth file 'peacock' f ('No study has tested this... Keep away from poison.'). The old 'Go to hospital' line is cut; its source was verified.json 'The peacock that digests the world's worst poison' safety ('real poisoning needs emergency care'), not the myth file. Old muscle: Robinson et al., Cell Metabolism 2017 (Mayo Clinic), ages 65 to 80, 12 weeks of interval training, muscle cell energy capacity +69% (myth file 'sixteen' f). That was cycling intervals, not yoga and not bandhas, so the spoken line says 'training' and no number is spoken. No result from Boonchu's friends or students is claimed."
+     },
+     {
+      "beat": "B9",
+      "skeleton": "The moral in one line, aimed at the promise and at Boonchu (never the book), then the book's gold with the teacher, the habit line, and the book's own last word: 'Big ___... so easy to ___. Even when I ___. But the book has gold too. ___. With a teacher. That part... we still do. And the book say: ___. Only ___.' (prop callback closes the B0 loop)",
+      "spoken": "Big promise... so easy to love. Even when I say it. But the book has gold too. One second the first day... a little more each day. With a teacher. That part... we still do. And the book say: from reading, no success. Only from practice. (turns the phone face down, puts the folded glasses on it, steps onto the mat)",
+      "on_screen": "Start with one second. Learn inversions with a teacher. → Not from reading. From practice. (Hatha Yoga Pradipika 1.67, tr. Sinh 1914)",
+      "truth_source": "Moral: Boonchu's own words, aimed at the promise and at himself ('Even when I say it'), not at the book or its author, and no longer an echo of the speech's closing line. Gold line: HYP 3.80 (Sinh) 'for a second only the first day, and increase this time daily'. 'With a teacher': HYP 3.78 to 3.79 (Sinh) say Viparita Karani is learnt from the guru (verified.json 'Six months upside down, goodbye grey hair' evidence); verified.json 'Six months upside down: no wrinkles, no grey hair' safety: 'Do not suggest long holds' and inversions 'are learned step by step with a teacher', hence the first card. Last line: HYP 1.67 (Sinh): success comes from practice; 'by merely reading books' on yoga one never gets success. Confirmed in verified.json ('Too old after forty' evidence: 'Sinh 67 and 68 are by merely reading books and particular dress (Vesa), both confirmed'; 'Ashtanga is only for the young' evidence: 'The next verse says success comes only from practice, not from reading books'). Verse numbers differ by edition (on sacred-texts the Sanskrit 67 is the young/old verse), so the card names Sinh."
+     }
+    ],
+    "prop_idea": "B0, silent, about 2 s, started mid-action (film about 5 s; the editor keeps the best 2 s): on his mat in dim shala light he already holds his phone in selfie mode like a mirror, squinting. He pushes his reading glasses on and leans in at the lines by his eyes (and the grey at his temple, but only if he really has grey), then looks at the lens over the glasses: 'Eh? You never check?' The glasses stay ON for the whole act as the 'expert' costume. B6: 1 s silent, he takes them off and folds them, so sound-off viewers see the switch from act to truth. B9: he turns the phone face down (the B0 mirror, closing the hook's loop), puts the folded glasses on it ('not from reading') and steps onto the mat ('only from practice'). Props: mat, phone, reading glasses only; a cup of tea on the floor is optional and stays untouched.\nEDIT CUE SHEET: (1) Header pill, whole video: '[SERIES: Boonchu to pick]' until he answers. (2) Corner tag from 0:00 until the glasses fold (about 0:22): 'GAME: old-book promises. True or false? Answers at the end.' On the fold it changes to 'GAME OVER. All 3: no proof.' (3) Cards (house SVG style, pop in) as written in each beat's on-screen line. B8: reveal the list one line at a time as he says it, the three crosses first, then clear them and show the tick alone, so no frame holds more than 12 words. B9: 'Start with one second. Learn inversions with a teacher.' on the gold line, then the 1.67 card on the last line. (4) 1.3x zoom punch for about 1 s on 'gone', 'sixteen', 'poison', 'None of this is mine', 'practice'; SFX at 40%, starting 0.4 s after each of those words. (5) Weight Shift captions (lowercase Montserrat, the line being said turns bold) with big emoji. (6) Keep the 2 s B0 silence and the 1 s silent fold at B6; cut other pauses after his 1.2x speed-up. (7) No image of any god (no Shiva, no kalakuta). No student on screen during B2 or 'old man'. Mayurasana or Sirsasana B-roll only after the glasses come off (B7 to B9), never during a promise. No generated images needed (the props carry it). (8) Final video to Boonchu's Google Drive, never the repo.",
+    "caption": "Hidden Stories of Ashtanga: the old book that promised to make you young.\nYears on the mat, and a quiet hope that it keeps you young.\nA 15th-century yoga book makes 3 big promises. No study has tested the grey hair or the poison promise, and nobody turns sixteen. What holds: old muscle still answers training (Mayo Clinic 2017, ages 65 to 80, not a yoga study), and success comes from practice, not reading. Learn inversions step by step, with a teacher. Neck injury, high blood pressure or eye pressure problems? Ask your doctor first. Mayurasana: not in pregnancy, with a hernia or on a full stomach.\nNew students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk\nAybkk.net #aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #mayurasana #boonchutanti",
+    "ask_boonchu": [
+     "Toolkit pick (now at the top): Interrupt Opener (silent phone-mirror check) + the speech's beat skeleton, with Two-Voice Deadpan at the glasses-off switch and Myth-Kill in B8. OK, or do you want another tool?",
+     "Do you have grey hair? If yes, B0 can show you checking it. If not, B0 shows only the lines by your eyes. B2 stays the same either way, because it is the book's promise, not yours.",
+     "'Me too': B8 now says only 'All three? ... I wish.' ('I wish' echoes your letter P.S.: 'I wish we could say we are growing young.') Did you really once believe all three promises? Only if yes, 'Me too' goes back before 'I wish', and 'Same here.' goes back in caption line 2.",
+     "In your early years, did you ever believe one of these three promises? If yes, tell Plato the true line and it can go into B8. Never claim it if it didn't happen.",
+     "Can you hold Mayurasana and Sirsasana for B-roll? Plato's advice: show them only after the glasses come off (B7 to B9), never during the promises, so no clip ever pairs a promise with the asana.",
+     "Series label: the header says '[SERIES: Boonchu to pick]' until you answer. Keep it under Hidden Stories of Ashtanga (no Ep. number until filmed), or start a small side series ('Old book promises')? If side series: caption line 1 becomes 'Old book promises: how many did you believe?' and #hiddenstoriesofashtanga is dropped. Note: this Reel has no myth story and teaches no asana; purists have noticed that before ('the teachers never needed myths').",
+     "Are you OK with the corner tag 'GAME: old-book promises. True or false? Answers at the end.' on every frame from 0:00 until the glasses come off (about 0:22), then 'GAME OVER. All 3: no proof.'? Every promise card credits the old book and ends in '?'. It is the main safety net if someone clips the first 20 seconds.",
+     "Delivery: say the promises like a warm, sincere believer, not like a salesman you are making fun of. Then, after the 1 s silent fold, switch to your normal voice at B6. Does that feel natural to you?",
+     "B9 'With a teacher. That part... we still do.' says that at AYBKK inversions are learned step by step, with a teacher. Is that how you teach them? If not, cut the line, and the Reel becomes habit #2 only."
+    ],
+    "risks": [
+     "PURIST VERDICT (honest): NOT fully safe for strict purists. It is safe for most 5 to 20 year practitioners if it is delivered with respect. Why it is not purist-safe: (1) a respected yoga text plays the 'promiser' in a game frame, and some will hear 'the book's promises are false' as disrespect; (2) Guruji quotes the Hatha Yoga Pradipika in Yoga Mala (e.g. 1.66 on age), so some will feel we undercut his sources; (3) many read '16' and 'poison' as pictures of vitality or of the mind, so fact-checking them word for word can look shallow to them. Built-in mitigations: the cards say 'promises' and credit the 'old book', never 'lies' or 'myths'; Shiva and kalakuta stay out; Boonchu never says 'the book is wrong'; the moral aims at the promise and at Boonchu ('Even when I say it'), never at the book or Svatmarama; B9 praises the book ('the book has gold too') and ends on its own line. For a more purist-proof cut: in B6 say 'None of this is mine. It's from a book I respect, 500 years old.'",
+     "CLIP RISK: for about 21 s (B1 to B4) Boonchu says false things with full confidence. Mitigations: (a) corner tag 'GAME: old-book promises. True or false? Answers at the end.' on every frame from 0:00 until the glasses fold; (b) every promise card starts 'GAME n/3 · Old book:' and ends with '?', so a silent clip reads as a quiz about an old book, not as advice; (c) only low-harm promises; cut on purpose: 'destroys all diseases', 'conquers death', 'two hours daily', 'digests food taken in excess', 'Head on the floor. Feet to the sky.' (a how-to), 'Big mistake' (a push to do Mayurasana) and the B5 'secret' (a conspiracy frame); (d) glasses off and 'GAME OVER. All 3: no proof.' at about 0:22 to 0:23; the spoken truths start at about 0:34, each said plainly in B8.",
+     "INVERSION SAFETY: someone could clip B2 and hold Sirsasana longer for their hair. Mitigations: B2 no longer says how to go upside down; the B2 card credits the old book and asks 'True?'; 'With a teacher' is spoken in B9, shown on the B9 card ('Start with one second. Learn inversions with a teacher.') and in the caption with the neck, blood pressure and eye pressure line. Never show a student upside down during B2. Never suggest holding longer for looks.",
+     "B4 MAYURASANA: 'Big mistake' is gone, but a clip of B4 alone still says the peacock kills poison. The net is the corner tag, the '?' card, B8 'Keep away from poison' and the caption line (not in pregnancy, with a hernia or on a full stomach). The 'Go to hospital' line was cut as a punchline; if Boonchu wants a stronger net, the checked line is 'real poisoning needs emergency care' (verified.json, peacock safety).",
+     "B3 'Breath and bandha... like sixteen again' never says 'hold your breath', so a clip does not teach breath retention. Keep it that way in the take.",
+     "EVIDENCE WORDING: 'No study test it' is a claim that something is missing. One verifier could only hedge it ('we found no study'). Never upgrade it to 'proven false'. Never say 'grey hair: no study' (grey hair has been studied: Rosenberg et al., eLife 2021); always 'upside down for grey hair'. The Mayo +69% result is cycling intervals in adults who did not exercise before, not yoga: no number is spoken or shown, and the caption keeps 'not a yoga study' next to it.",
+     "'500 years': the book is 15th century, so on screen say 'over 500 years old'. The spoken '500-year-old' is a safe round number.",
+     "'Old man' is the book's own phrase (B3 spoken and card). Never cut to a student while it is spoken or shown, and never pair it with a student photo (the never-call-a-student-old rule).",
+     "SPEAKER'S WORDS: all the banned phrases are avoided ('What?', 'Do you know', 'And the results?', 'nothing will ever happen', 'this whole war against'); the hidden-motive beat is cut and the moral no longer echoes the speech's closing line. Only the rhythm and the shape of each beat are kept.",
+     "TIMING: about 182 spoken words plus 3 s of silence (2 s at B0, 1 s at B6) comes to about 57 to 60 s after his 1.2x speed-up and the pause cuts. If a test edit runs long, or the B8 truths land after about 0:33, cut 'Six months!' (B2), then 'One? ...' (B8), then 'Okay, okay.' (B6). Never cut the B8 truths, B9 'With a teacher', or the safety cards.",
+     "TONE: if the act sounds like a mocking salesman, it mocks the text. It must sound like a sincere believer, and the joke must be on the sure voice and on Boonchu, never on the book.",
+     "ROUTE: Lane A (route line at the top, in 'lane'). Check the last 3 IG posts in Postiz before posting. For WeChat or Xiaohongshu, drop caption line 4 (promo).",
+     "Viewers may feel tricked and say so in the comments. Reply short, with a self-joke and one question back (e.g. 'Which one did you want to be true?').",
+     "CAPTION LENGTH: line 3 is longer than the other four because it carries the two checked safety sentences (verified.json inversion and Mayurasana safety). They cannot be cut. If Boonchu wants line 3 shorter, cut 'and success comes from practice, not reading' first (the B9 card already says it).",
+     "ON-SCREEN LENGTH: the B2 and B3 cards are exactly 12 words, counting the 1/3 and 2/3 counters. The B8 list is 17 words in all, so the editor shows the three crosses (12 words), then clears them for the tick alone (5 words).",
+     "FIXED: B5 ('Why nobody tell you? ... It's secret. Secret keep it strong.' and card 'Why has nobody told you?') deleted with its truth_source; B4 goes straight to B6. The B5 question and the B5 risk line are removed. It was not in the myth file, B8 never answered it, it ended a silent clip as 'suppressed truth', and it made guru-to-student teaching sound like a con.",
+     "FIXED: every promise is credited to the book on screen and the corner tag says answers are coming: corner tag 'GAME: old-book promises. True or false? Answers at the end.'; B1 'GAME: 3 promises from an old yoga book'; B2 'GAME 1/3 · Old book: six months upside down, no grey hair. True?'; B3 'GAME 2/3 · Old book: Mula Bandha makes an old man young. True?'; B4 'GAME 3/3 · Old book: the peacock asana (Mayurasana) kills poison. True?'. B0 silence cut to 2 s; with B5 gone the glasses come off at about 0:22.",
+     "FIXED: B8 'Me too' cut (an invented belief): now 'All three? ... I wish.' ('I wish' is from his letter P.S.). Caption line 2 'Same here.' cut. Ask item 3 now asks only about 'Me too'; item 4 asks about a true early-years line.",
+     "FIXED: B8 grey-hair truth names the upside-down promise, not grey hair in general: spoken 'Upside down for grey hair, for wrinkles? No study test it.'; card '❌ Upside down for grey hair: never tested'. Wrinkles from B2 are now answered too.",
+     "FIXED: B3 card no longer gives 16 to Mula Bandha; it follows Sinh 3.64 ('Old book: Mula Bandha makes an old man young. True?').",
+     "FIXED: B3 spoken keeps the book's hedge: 'Breath and bandha... like sixteen again.'",
+     "FIXED (merged): Mula Bandha is explained the first time it is named. The B3 card could not hold the book credit, the 3.64 wording and '(root lock)' inside 12 words, so the gloss is spoken: 'Mula Bandha... root lock.' It also shows in the burned-in Weight Shift captions for sound-off viewers.",
+     "FIXED (merged): B4 'Big mistake' cut, and the stop word 'digest' (which also sounds like a food-poisoning fix) changed to 'kill' (Sinh: 'destroys'): 'Mayurasana? Just an arm balance? No no. The peacock... kill poison. The worst poison.' This is the script's own safer swap with the new verb.",
+     "FIXED: B2 'Head on the floor. Feet to the sky.' (a confident how-to for going upside down) cut: now 'Upside down. Six months...'.",
+     "FIXED: B8 says each truth plainly: 'Sixteen again? Nobody turn sixteen. Poison? No study. Keep away from poison.' The 'Poison? Go to hospital.' punchline is cut. On screen: the ❌ ❌ ❌ ✅ list in house style, revealed one line at a time; 'trainable' is gone ('Old muscle still answers training').",
+     "FIXED: B8 truth_source for poison now cites the myth file peacock f ('No study has tested this... Keep away from poison.'); it notes that the cut hospital line came from verified.json peacock safety ('real poisoning needs emergency care').",
+     "FIXED: caption safety added after 'Learn inversions step by step, with a teacher.': 'Neck injury, high blood pressure or eye pressure problems? Ask your doctor first. Mayurasana: not in pregnancy, with a hernia or on a full stomach.'",
+     "FIXED: caption 'No study has tested these.' replaced with 'No study has tested the grey hair or the poison promise, and nobody turns sixteen.'",
+     "FIXED: caption cut to 5 lines (hook, mirror, point, promo + 'Comment aybkk', link + hashtags) with the standard hashtags (#aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #mayurasana #boonchutanti). 'Digests' is gone, to match the new spoken wording.",
+     "FIXED (merged): the praise line ('One second the first day... a little more each day. With a teacher.') moved from B7 to B9, so no early clip ends on praise next to the promises. Its sound-off safety card moved with it: 'Start with one second. Learn inversions with a teacher.' B7 on screen is now 'Hatha Yoga Pradipika, over 500 years old.'",
+     "FIXED: B7 gets its mirror line: 'You want it true... I know.'",
+     "FIXED: B6 has a 1 s silent beat before the switch (glasses off, fold, small smile). On the fold the corner tag and card become 'GAME OVER. All 3: no proof.', so sound-off viewers get the answer at about 0:23.",
+     "FIXED: the B0 card now says what to believe: 'GAME: 3 old promises. Which do you believe?'. B1 spoken adds 'Listen... and count.', an audio game signal that sets up B8's count.",
+     "FIXED (merged): the B9 moral no longer paraphrases the speech's closing line ('Big promise... so easy to love', from check 1) and no longer points at the book or its author. The target is Boonchu ('Even when I say it.', from check 2's 'like mine'). 'Like mine' itself was not used because it clashes with B6 'None of this is mine'. 'This book' became 'the book' (no book on screen).",
+     "FIXED: the B9 payoff closes the hook's loop. He turns the phone (the B0 mirror) face down, puts the folded glasses on it and steps onto the mat. It adds the habit-10 line 'With a teacher. That part... we still do.' (ask item 9 checks that it is true).",
+     "FIXED: the B9 card names the translator: 'Not from reading. From practice. (Hatha Yoga Pradipika 1.67, tr. Sinh 1914)'.",
+     "FIXED: habit_number now names its habit-10 line (B9) and its habit-2 evidence line (B8), with the relabel rule.",
+     "FIXED: Route and Toolkit pick lines added at the top (in 'lane'). The Toolkit pick is no longer buried in ask_boonchu, and the hook tool is named as what B0 really does (Interrupt Opener).",
+     "FIXED: edit cue sheet added (in prop_idea): zoom punches, SFX at 40% 0.4 s after the word, Weight Shift captions, corner tag and GAME OVER switch, B8 list reveal, no god images, no student during B2 or 'old man', no generated images.",
+     "FIXED: the series header is '[SERIES: Boonchu to pick]' until he answers. Caption line 1 and the hashtag switch for a side series are in ask item 6."
+    ]
+   },
+   "checks": [
+    {
+     "verdict": "fix",
+     "problems": [
+      {
+       "where": "B5 (spoken 'Why nobody tell you? ... It's secret. Secret keep it strong.' and card 'GAME: Why has nobody told you?')",
+       "problem": "This fails four checks. (1) It is a 'lie' that is not in myths_data.py at all: B_GROUPS 'Old book promises' holds only grey, sixteen, peacock and stages, and HYP 1.11 appears nowhere in verified.json. (2) B8 never answers it, so the claim that a secret makes it strong is left standing. (3) 'Why has nobody told you?' is the classic hook of health misinformation. With sound off it is the last card before the reveal, so a clip of the first 25 s ends by endorsing the three promises as suppressed truth. (4) There is a precedent: flex_script.md records 'Nobody talk about it' being removed as 'Plato's invention'. B5 is the same move.",
+       "fix": "Delete B5 completely: the spoken line, the card and its truth_source. Go straight from B4 to B6. Remove the B5 item from ask_boonchu and from risks. That also saves about 3 to 4 s and brings the glasses-off reveal earlier."
+      },
+      {
+       "where": "Clip risk: on-screen cards for B0 to B4 (the first ~27 s; the reveal starts at about 0:27 to 0:28 by the script's own timing, about 79 of ~173 spoken words come before B6)",
+       "problem": "A 25 s clip with sound off has no truth in it at all. The 'GAME' tag says it is a quiz, but it does not say the claims are doubtful or who made them. A confident yoga teacher in an 'expert' costume over 'Years of practice. Still getting older?' and then 'Six months upside down, no grey hair?' / 'Mula Bandha makes you sixteen…?' reads like a teaser for anti-ageing advice. That is exactly what verified.json 22 and 34 forbid ('Never say inversions reverse grey hair or wrinkles'; 'Never present inversions as anti-ageing').",
+       "fix": "Credit every promise to the book on screen, and make the corner tag say the answers are coming. Corner tag from 0:00 until the glasses come off: 'GAME: old-book promises. True or false? Answers at the end.' B1 card: 'GAME: 3 promises from an old yoga book'. B2 card: 'GAME 1/3 · Old book: six months upside down, no grey hair. True?' B3 card: 'GAME 2/3 · Old book: Mula Bandha makes an old man young. True?' B4 card: 'GAME 3/3 · Old book: Mayurasana digests poison. True?' Also cut the B0 silence to 2 s. With B5 gone, the glasses come off at about 0:22, inside the 25 s window."
+      },
+      {
+       "where": "B8 spoken 'All three? Me too. I wish.'",
+       "problem": "This invents a fact about Boonchu. 'Me too' says he once believed all three promises, and no checked file supports that. ask_boonchu even asks whether he ever believed them. 'I wish' is supported: letter01.md P.S. says '(I wish we could say we are growing young.)'. 'Me too' is not.",
+       "fix": "Change it to: 'So... how many you believe? One? ... All three? ... I wish.' Put 'Me too' back only if Boonchu confirms he really believed them. Update the ask_boonchu item to ask only about 'Me too'."
+      },
+      {
+       "where": "B8 on-screen 'Grey hair: no study.'",
+       "problem": "As written this is false, and it overstates the evidence. A grey-hair study does exist: Rosenberg et al., eLife 2021, cited in the myth file's own 'grey' entry. What nobody has tested is the inversion promise. The myth file's f says 'No study has tested the second' (the six-month line). It does not say grey hair has never been studied.",
+       "fix": "Change the card to: 'Upside down for grey hair: never tested. Sixteen: nobody. Poison: hospital. Old muscle: still trainable.' Change the spoken line to match: 'Upside down for grey hair? No study test it.'"
+      },
+      {
+       "where": "B3 on-screen 'GAME 2/3: Mula Bandha makes you sixteen again?'",
+       "problem": "This contradicts the beat's own truth_source and the source. 'As it were 16 years old' is HYP 2.47, a breath practice (Apana up, Prana down). The Mula Bandha verse, HYP 3.64 in Sinh, says only 'even an old man becomes young'. The card gives the 16 to Mula Bandha alone.",
+       "fix": "Card: 'GAME 2/3 · Old book: Mula Bandha makes an old man young. True?' This matches Sinh 3.64 word for word."
+      },
+      {
+       "where": "B3 spoken 'Breath and bandha... sixteen again.'",
+       "problem": "This is a small overstatement of the source. Sinh 2.47 hedges: 'becomes young, as it were 16 years old', and Muktibodhananda has 'appears as if sixteen'. B7 then says 'the book say it', so the book's hedged wording should be kept.",
+       "fix": "Say: 'Breath and bandha... like sixteen again.'"
+      },
+      {
+       "where": "B4 spoken 'You skip Mayurasana? Big mistake.'",
+       "problem": "This pushes the viewer to do a strong belly-pressure asana for a health effect. 'Big mistake' is not in the book. verified.json 37 safety says: 'Never suggest that an arm balance treats poisoning or illness' and 'not for pregnancy, hernia or a full stomach'. A 25 s clip with sound on keeps this line and never reaches the correction.",
+       "fix": "Use the script's own safer swap: 'Mayurasana? Just an arm balance? No no. The peacock... digest poison. The worst poison.'"
+      },
+      {
+       "where": "Caption: safety lines",
+       "problem": "verified.json 34 safety says to add a line that inversions are not for people with a neck injury, uncontrolled high blood pressure or eye-pressure problems unless a doctor agrees. verified.json 37 says Mayurasana is not for pregnancy, hernia or a full stomach. The caption has only 'Learn inversions step by step, with a teacher'.",
+       "fix": "After 'Learn inversions step by step, with a teacher.' add: 'Neck injury, high blood pressure or eye pressure problems? Ask your doctor first. Mayurasana: not in pregnancy, with a hernia or on a full stomach.'"
+      },
+      {
+       "where": "Caption 'No study has tested these.'",
+       "problem": "This goes further than the myth file. 'No study has tested' appears only in the 'grey' and 'peacock' fact lines. For 'sixteen' the file says 'Nobody turns sixteen.' and nothing about studies.",
+       "fix": "Replace it with: 'No study has tested the grey hair or the poison promise, and nobody turns sixteen.'"
+      },
+      {
+       "where": "B7 on-screen 'Hatha Yoga Pradipika, over 500 years old. Some lines are gold.' (with spoken 'One second the first day... a little more each day. With a teacher.')",
+       "problem": "With sound off, the only safety line ('With a teacher') disappears. On its own, the praised 'a little more each day' has no upper limit, and verified.json 34 says 'Do not suggest long holds' (Muktibodhananda warns against 3-hour practice and against older people starting inversions late).",
+       "fix": "On-screen B7: 'Hatha Yoga Pradipika, over 500 years old. Start with one second. Learn inversions with a teacher.'"
+      },
+      {
+       "where": "B9 spoken 'A sure voice... so easy to believe.'",
+       "problem": "This is a close idea-level paraphrase of the original speech's closing thesis: 'Words, when said and articulated in the right way, can change someone's mind.' Since the whole reel is built on that famous speech, its moral line is the one place where the borrowing shows.",
+       "fix": "Move the moral onto the reel's own subject: 'Big promise... so easy to love. Even this book say: from reading, no success. Only from practice.'"
+      },
+      {
+       "where": "B8 truth_source for 'Poison? Go to hospital.'",
+       "problem": "The citation does not match. The myth-file f line is 'No study has tested this... Keep away from poison.' The 'go to hospital' content comes from verified.json 37 safety ('real poisoning needs emergency care').",
+       "fix": "Change the source to: 'Poison: myth file peacock f (\"No study has tested this\"); hospital line from verified.json \"The peacock that digests the world's worst poison\" safety: \"real poisoning needs emergency care\".'"
+      },
+      {
+       "where": "B9 on-screen '(Hatha Yoga Pradipika 1.67)'",
+       "problem": "The verse number depends on the edition. verified.json 60 notes that on sacred-texts the Sanskrit number 67 belongs to the young/old verse, while Sinh's English label 67 is the 'reading books' verse. Without the translator's name, the citation can point to the wrong verse.",
+       "fix": "On-screen: 'Not from reading. From practice. (Hatha Yoga Pradipika 1.67, tr. Sinh 1914)'."
+      }
+     ]
+    },
+    {
+     "verdict": "fix",
+     "problems": [
+      {
+       "where": "B6 to B8 (when the truths arrive), clip safety",
+       "problem": "The plain truths come too late. At the script's own rate (170 words plus 3.5 s comes to about 55 to 58 s), there are 126 spoken words before 'Grey hair in six months?', so the truths start at about 0:42, not about 0:30. The 0:27 switch only says 'None of this is mine'. A clip from 0:00 to about 0:40 ends on 'And some lines are gold... All three? Me too.' That sounds like Boonchu agreeing with all three promises.",
+       "fix": "(a) Cut B5 completely. (b) Cut 'Head on the floor. Feet to the sky.' from B2. (c) Move 'And some lines are gold. One second the first day... a little more each day. With a teacher.' out of B7 to the start of B9's ending (see the B9 fix). (d) Drop 'Me too'. The truths then start at about 0:30 to 0:31. Also change the B6 on-screen card to 'GAME OVER. All 3: no proof.' so sound-off viewers get the answer at about 0:24."
+      },
+      {
+       "where": "B8 spoken 'Me too. I wish.' (and caption line 2 'Same here.')",
+       "problem": "'Me too' says Boonchu believed all three promises. That is an invented life fact (the truth trap) and is still only a question in ask_boonchu. Said straight after 'All three?', it is also the worst line someone could clip. 'Same here' in the caption is the same unconfirmed claim.",
+       "fix": "Spoken: 'So... how many you believe? One? ... All three? ... I wish.' ('I wish' echoes his own letter P.S.) Caption line 2: 'Years on the mat, and a quiet hope that it keeps you young.' Put 'Me too' or 'Same here' back only after Boonchu answers questions 3 and 4 with a yes."
+      },
+      {
+       "where": "B8 truths, spoken and on-screen",
+       "problem": "Not every truth is said plainly. (1) B2 promises 'wrinkles, gone', but B8 never answers wrinkles. (2) 'Poison? Go to hospital.' is a punchline, not the checked truth (myth file 'peacock': 'No study has tested this... Keep away from poison'), and it jabs at the book. (3) The on-screen card 'Grey hair: no study. Sixteen: nobody. Poison: hospital. Old muscle: still trainable.' is 12 words, so it fails 'under 12'. It is also cryptic with the sound off, and 'trainable' is a word a non-native 10-year-old would stop on.",
+       "fix": "Spoken: 'Grey hair, wrinkles, in six months? No study test it. Sixteen again? Nobody turn sixteen. Poison? No study. Keep away from poison. But old muscle still answer training. That one is true.' On-screen, revealed one line at a time with the house-style crosses and tick: '❌ Grey hair in 6 months: no study' / '❌ Sixteen again: nobody' / '❌ Poison: no study' / '✅ Old muscle still answers training'."
+      },
+      {
+       "where": "B2 'Head on the floor. Feet to the sky.'",
+       "problem": "This is a how-to instruction for going upside down, said with full confidence. A clip with sound tells people to invert for their hair. The checked file says the head carries 40 to 48% of body weight in headstand and headstand doubled eye pressure. So this line fails rule 2 ('low-harm if clipped').",
+       "fix": "B2 spoken: 'Upside down. Six months... wrinkles, gone. Grey hair, gone. Six months! And you... still pull it out. One by one.' Keep the on-screen card ('GAME 1/3: Six months upside down, no grey hair?')."
+      },
+      {
+       "where": "B4 spoken 'You skip Mayurasana? Big mistake. The peacock... digest poison.' and on-screen 'Mayurasana digests poison?'",
+       "problem": "'Big mistake' pushes anyone who skips this Intermediate arm balance to do it (hernia, pregnancy, full stomach). 'Digest' is a stop word for a non-native 10-year-old, and 'digest poison' sounds like a fix for food poisoning, which is a 'skip the doctor' risk if clipped.",
+       "fix": "Spoken: 'You think the peacock is just an arm balance? No no. Mayurasana... kill poison. The worst poison.' (Sinh: 'destroys the most deadly poison'.) On-screen: 'GAME 3/3: The peacock asana kills poison?'"
+      },
+      {
+       "where": "B5 (whole beat)",
+       "problem": "HYP 1.11 is not in the checked file, so it breaks the 'only checked facts' rule. It is a true quote, not a myth, so B8 never answers it, and the card 'Why has nobody told you?' is left standing as a conspiracy. 'It's secret' makes teaching passed from guru to student sound like a con, which risks mocking the lineage. 'Secret keep it strong' has an unclear 'it'. The beat also adds about 4 s before the reveal.",
+       "fix": "Cut B5 completely. B4 goes straight into B6. Delete question 5 and the B5 risk line from ask_boonchu and risks."
+      },
+      {
+       "where": "B9 'A sure voice... so easy to believe. Even this book say:'",
+       "problem": "Right after B7 names the book, 'a sure voice' points at the book, and so at its author Svatmarama (a sage), as the trickster. The joke target must be Boonchu or internet claims, never a sage or a text Guruji quotes. Also, 'this book' makes no sense: no book is on screen (the props are a mat, a phone and glasses).",
+       "fix": "'A sure voice... like mine... so easy to believe.' and 'Even the same book say: from reading, no success. Only from practice.'"
+      },
+      {
+       "where": "B0 on-screen card and B1 spoken (game signal)",
+       "problem": "The 3-second sound-off test: 'GAME: How many will you believe?' never says believe WHAT, so a silent 3-second viewer cannot tell this is a quiz about claims. Nothing spoken marks it as a game either, so an audio-only clip of B1 to B4 plays as plain advice.",
+       "fix": "B0 card: 'GAME: 3 old promises. Which do you believe?' (7 words, 11 with the header). B1 spoken: 'Years on the mat... still getting older? No no no. Listen... and count.' This also sets up B8's 'how many you believe?'."
+      },
+      {
+       "where": "B6 stage direction",
+       "problem": "There is no silent beat before the switch (REVEAL AT THE END says the answer comes after a silent beat). For sound-off viewers, the switch rests only on the glasses.",
+       "fix": "'(1 s silent: takes the reading glasses off, folds them, small smile at himself) Okay, okay. You almost believe me. ... None of this is mine.' On the fold, the GAME corner tag changes to 'GAME OVER. All 3: no proof.'"
+      },
+      {
+       "where": "B7 (mirror rule)",
+       "problem": "B7 has no mirror line (the rule is one per beat). Once the gold line moves out (fix 1), B7 has only the source.",
+       "fix": "B7 spoken: 'A 500-year-old yoga book say it. Hatha Yoga Pradipika. You want it true... I know.' On-screen: 'Hatha Yoga Pradipika, over 500 years old.'"
+      },
+      {
+       "where": "B9 payoff (loop and prop)",
+       "problem": "The last line does not close the loop the hook opened (the B0 phone-mirror check and 'You never check?'). The story pattern says the payoff closes the hook's loop. The praise line also needs a new place after leaving B7.",
+       "fix": "B9 spoken: 'A sure voice... like mine... so easy to believe. But the book has gold too. One second the first day... a little more each day. With a teacher. That part... we still do. And: from reading, no success. Only from practice.' Action: '(turns the phone face down, puts the folded glasses on it, steps onto the mat)'. On-screen: 'Not from reading. From practice. (Hatha Yoga Pradipika 1.67, Sinh)'."
+      },
+      {
+       "where": "habit_number",
+       "problem": "It names habit 10 (Go traditional: a 100-year-old method, with a teacher), but no spoken or on-screen line delivers habit 10. The only evidence line is habit 2, and it comes from a cycling study.",
+       "fix": "Keep 'Habit #10 (+#2)'. The B9 add 'With a teacher. That part... we still do.' (fix above) is the habit 10 line. Without that line, relabel the Reel as habit #2."
+      },
+      {
+       "where": "Top of the script (missing Toolkit pick and Route check lines)",
+       "problem": "The standing orders need two lines at the top: 'Toolkit pick: <tool> + <tool>. Why:' and 'Route: Lane _ · last 3 posts · next due'. Here the toolkit pick is buried as a question in ask_boonchu, and the named hook tool (Two-Voice Deadpan) is not what B0 does. B0 is a silent visual opener.",
+       "fix": "Add at the top: 'Route: Lane A · last 3 posts: stay-active carousels B3, B4, B5 (10 Oct; check their lanes in Postiz) · next due: Day 1 to Day 30 (Lane B) from 13 Oct.' and 'Toolkit pick: Interrupt Opener (visual: silent phone-mirror check) + the speech's 10-beat skeleton (Two-Voice Deadpan at the glasses-off switch, Myth-Kill in B8). Why: the vain-teacher bit stops the scroll; the sure voice, then the flat truth, makes viewers catch their own belief.'"
+      },
+      {
+       "where": "Edit cue sheet (missing)",
+       "problem": "The VIDEO EDIT SPEC says Plato writes an edit cue sheet with every Reel. This script has none.",
+       "fix": "Add a cue sheet: 1.3x zoom punch for about 1 s on 'gone', 'sixteen', 'poison', 'None of this is mine', 'practice'; SFX at 40%, starting 0.4 s after each of those words; Weight Shift captions with big emoji; GAME corner tag from 0:00 until the glasses fold, then 'GAME OVER'; the B8 list revealed one line at a time with the crosses and tick; no image of any god; no student on screen during B2 or 'old man'; no generated images needed (the props carry it)."
+      },
+      {
+       "where": "caption",
+       "problem": "Line 3 is about 75 words, but SHORT CAPTIONS means 5 short lines. The hashtags miss the standard set (#aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #<asana> #boonchutanti). 'Same here' is unconfirmed (see the 'Me too' fix). 'digests' should match the new spoken wording.",
+       "fix": "Use 5 lines:\n'Hidden Stories of Ashtanga: the old book that promised to make you young.'\n'Years on the mat, and a quiet hope that it keeps you young.'\n'A 15th-century yoga book makes 3 big promises. No study has tested them. What holds: old muscle still answers training (Mayo Clinic 2017, ages 65 to 80, not a yoga study), and success comes from practice, not reading. Inversions: step by step, with a teacher.'\n'New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk'\n'Aybkk.net #aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #mayurasana #boonchutanti'.\nFor WeChat and Xiaohongshu, drop line 4."
+      },
+      {
+       "where": "B0 header 'Hidden Stories of Ashtanga', caption line 1, hashtag",
+       "problem": "Hidden Stories is the myth series in bedtime-story form. This Reel has no myth story and no bedtime frame, and the label is still open (ask_boonchu question 7). Hard-coding the header decides for Boonchu.",
+       "fix": "On-screen header: '[SERIES: Boonchu to pick]' until he answers. If he picks a side series, caption line 1 becomes 'Old book promises: how many did you believe?' and #hiddenstoriesofashtanga is dropped."
+      },
+      {
+       "where": "B3 on-screen 'GAME 2/3: Mula Bandha makes you sixteen again?'",
+       "problem": "Bedtime-story rule: explain every name the first time. 'Mula Bandha' is never explained (fine for most Lane A viewers, not for the rest).",
+       "fix": "On-screen: 'GAME 2/3: Mula Bandha (root lock) makes you sixteen again?' (10 words). The spoken line stays the same."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
