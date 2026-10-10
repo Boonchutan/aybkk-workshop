@@ -62,10 +62,13 @@ router.post('/checkin', async (req, res) => {
       }
     }
 
-    // If no studentId or student not found, try to find by name
-    if (!student && studentName) {
+    // If no studentId or student not found, try to find by name. Never for a
+    // Bangkok member's journal id (bkk-…): a name is not a person, and a match
+    // would write into someone else's journal. A node with no id of its own
+    // (old imports) can't take an entry either, so it doesn't count as found.
+    if (!student && studentName && !/^bkk-/.test(String(studentId || ''))) {
       const findByName = await session.run(
-        'MATCH (s:Student {name: $name}) RETURN s LIMIT 1',
+        'MATCH (s:Student {name: $name}) WHERE s.id IS NOT NULL RETURN s LIMIT 1',
         { name: studentName }
       );
       if (findByName.records.length > 0) {

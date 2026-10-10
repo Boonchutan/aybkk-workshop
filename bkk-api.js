@@ -339,7 +339,9 @@ function mountBkk(app, opts = {}) {
   }
 
   // ── helpers ───────────────────────────────────────────────────────────────
-  const memberCode = () => 'B' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
+  // The code in a browser is the sign-in, so it must not be guessable: 64 random
+  // bits (the old clock-plus-3-characters codes stay valid, but new ones are not).
+  const memberCode = () => 'B' + BigInt('0x' + crypto.randomBytes(8).toString('hex')).toString(36).toUpperCase().padStart(13, '0');
   // PaySolutions requires a numeric refno; 10 digits, unique.
   // PaySolutions wants a unique 12-digit numeric reference. 8 digits of clock
   // (unique for ~28h) + 4 random; the UNIQUE index on refno is the backstop.
@@ -464,7 +466,13 @@ function mountBkk(app, opts = {}) {
       const pr = (await q('SELECT * FROM bkk_products WHERE code = $1 AND active', [productCode])).rows[0];
       if (!pr) return res.status(404).json({ error: 'product not found' });
 
+      const before = (await q('SELECT id FROM bkk_members WHERE lower(email)=$1 LIMIT 1',
+        [String(email).trim().toLowerCase()])).rows[0];
       const member = await findOrCreateMember({ name, email, phone });
+      // Typing someone's email at checkout must not open their profile (photos,
+      // teacher notes): an existing profile's code goes back only to a browser
+      // that already holds it. Everyone else signs in from the receipt email.
+      const showCode = !before || req.body.memberCode === member.code;
       const pct = await surcharge();
       const { fee, vat, total } = breakdown(pr.price_thb, pct);
 
@@ -485,7 +493,7 @@ function mountBkk(app, opts = {}) {
       const cfg = paysoConfig();
       res.json({
         order: { id: o.id, refno: String(o.refno), amount: total, product: pr.name_en },
-        member: { code: member.code },
+        member: showCode ? { code: member.code } : { existing: true },
         pay: cfg ? buildPayForm(cfg, o, pr, member, req) : null,
         payLink: cfg ? null : paysnLink(o, pr),
         payUnavailable: (cfg || paysnLink(o, pr)) ? undefined :
@@ -769,6 +777,98 @@ function mountBkk(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // The shala fixes an email (8 Oct: a sign-in link went to the wrong student,
+  // who typed her own email into the other profile and then could not add it to
+  // her own). Empty clears it. An email another profile holds moves only when
+  // the request names that profile in takeFrom: a typo never silently steals one.
+  // An address that leaves a profile takes its sign-in and receipt links with it,
+  // or the person it belongs to could still open the profile it left.
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const stopLinks = (db, memberId, email) => db.query(
+    `UPDATE bkk_login_tokens SET expires_at=now()
+     WHERE member_id=$1 AND lower(email)=$2 AND expires_at > now()`, [memberId, email]);
+  app.post('/api/bkk/admin/members/:code/email', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const b = req.body || {};
+    const email = String(b.email || '').trim().toLowerCase();
+    if (email && !EMAIL_RE.test(email)) return res.status(400).json({ error: 'not an email address' });
+    const clash = async () => {
+      const o = (await q('SELECT code,name FROM bkk_members WHERE lower(email)=$1 AND code<>$2',
+        [email, req.params.code])).rows[0];
+      return o && res.status(409).json({ error: `that email is on ${o.name}'s profile (${o.code})`,
+        owner: { code: o.code, name: o.name } });
+    };
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      // Lock both profiles in id order, so two crossed moves can't deadlock.
+      const rows = (await client.query(
+        `SELECT id,code,name,email FROM bkk_members
+         WHERE code=$1 OR ($2 <> '' AND lower(email)=$2) ORDER BY id FOR UPDATE`,
+        [req.params.code, email])).rows;
+      const m = rows.find(r => r.code === req.params.code);
+      if (!m) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'member not found' }); }
+      const owner = rows.find(r => r !== m);
+      if (owner) {
+        if (b.takeFrom !== owner.code) { await client.query('ROLLBACK'); return clash(); }
+        await client.query('UPDATE bkk_members SET email=NULL WHERE id=$1', [owner.id]);
+        await stopLinks(client, owner.id, email);
+      }
+      const old = String(m.email || '').toLowerCase();
+      if (old && old !== email) await stopLinks(client, m.id, old);
+      await client.query('UPDATE bkk_members SET email=$2 WHERE id=$1', [m.id, email || null]);
+      await client.query('COMMIT');
+      console.log(`✓ bkk: email of ${m.code} ${email ? 'set' : 'cleared'} by admin${owner ? `, moved from ${owner.code}` : ''}`);
+      res.json({ success: true, member: { code: m.code, name: m.name, email: email || null } });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      // A student saved the same address a moment ago: same answer as a clash.
+      if (e.code === '23505' && email && await clash()) return;
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // The member code in a browser IS the sign-in: whoever opened a profile keeps
+  // it. When the wrong person got in, give the profile a new code and stop all
+  // its sign-in links, in one transaction, so every phone is signed out and the
+  // real owner gets a new link. clearEmail also removes an email that belongs to
+  // the wrong person; left on, it would let her sign straight back in.
+  // Bookings, passes, photos and journal hang off the member id, not the code.
+  app.post('/api/bkk/admin/members/:code/signout', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const m = (await client.query('SELECT id,name,email FROM bkk_members WHERE code=$1 FOR UPDATE',
+        [req.params.code])).rows[0];
+      if (!m) { await client.query('ROLLBACK'); return res.status(404).json({ error: 'member not found' }); }
+      // A profile with an email needs M's answer about THAT email (keep or
+      // remove), given against what it is now, not a search from before the
+      // wrong person typed hers in (8 Oct review: the stale screen let her back).
+      const b = req.body || {};
+      const now = m.email ? String(m.email).toLowerCase() : null;
+      const saw = b.expectEmail ? String(b.expectEmail).toLowerCase() : null;
+      if (now && (saw !== now || typeof b.clearEmail !== 'boolean')) {
+        await client.query('ROLLBACK');
+        return res.status(409).json({ error: `${m.name}'s profile has the email ${m.email}: keep it or remove it?`,
+          needEmailDecision: true, email: m.email });
+      }
+      const links = await client.query(`UPDATE bkk_login_tokens SET expires_at=now()
+                                        WHERE member_id=$1 AND expires_at > now()`, [m.id]);
+      const clear = !!now && b.clearEmail === true;
+      const code = (await client.query(
+        `UPDATE bkk_members SET code=$2${clear ? ', email=NULL' : ''} WHERE id=$1 RETURNING code`,
+        [m.id, memberCode()])).rows[0].code;
+      await client.query('COMMIT');
+      console.log(`✓ bkk: ${req.params.code} signed out everywhere, now ${code} (${links.rowCount} links stopped${clear ? ', email removed' : ''})`);
+      res.json({ success: true, member: { code, name: m.name, email: clear ? null : m.email },
+        linksStopped: links.rowCount, removedEmail: clear ? m.email : undefined });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
   // The student's own proof check. Same trust as the rest of /me: the member
   // code the signed-in browser holds.
   app.get('/api/bkk/me/:code/checks', async (req, res) => {
@@ -816,7 +916,10 @@ function mountBkk(app, opts = {}) {
       if (taken.rows.length) return res.status(409).json({ error: 'that email belongs to another profile; ask the shala' });
       await q('UPDATE bkk_members SET email=$2 WHERE id=$1', [m.id, email]);
       res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) {
+      if (e.code === '23505') return res.status(409).json({ error: 'that email belongs to another profile; ask the shala' });
+      res.status(500).json({ error: e.message });
+    }
   });
 
   // Opening the link (GET) never uses it up: LINE, WhatsApp and WeChat fetch every
@@ -849,12 +952,13 @@ border-radius:10px;background:#e8458c;color:#fff">Open my profile · เปิ�
 
   app.post('/api/bkk/login/:token', async (req, res) => {
     try {
-      const r = await q(
+      // One statement: a sign-out landing between "use the link" and "read the
+      // code" would otherwise hand this browser the profile's brand-new code.
+      const m = (await q(
         `UPDATE bkk_login_tokens SET used_at = COALESCE(used_at, now())
-         WHERE ${usable} RETURNING member_id`, [req.params.token]);
-      if (!r.rows.length) return res.status(400).send(deadLink());
-      const m = (await q('SELECT code FROM bkk_members WHERE id=$1', [r.rows[0].member_id])).rows[0];
-      if (!m) return res.status(404).send(loginPage('We could not find that member.'));
+         FROM bkk_members mb WHERE mb.id = bkk_login_tokens.member_id AND ${usable}
+         RETURNING mb.code`, [req.params.token])).rows[0];
+      if (!m) return res.status(400).send(deadLink());
       res.set('Cache-Control', 'no-store').send(loginPage('Signing you in…',
         `<script>try{localStorage.setItem('aybkk_member',${JSON.stringify(m.code)})}catch(e){}
 setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
@@ -1585,17 +1689,30 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // Chay (on a teacher passcode) uploads the day's photos and taps who is in
   // each one. Stored as Cloudinary "authenticated" assets: no plain URL works,
   // only signed ones, and those are handed out only to the tagged students.
+  // Tiles show the whole photo (no crop: a 4:5 fill cut off heads and feet).
+  // 'save' is a plain JPEG sent as a download: the WebP/AVIF that f_auto gives
+  // Android can't be long-pressed into a Samsung gallery or out of LINE's browser.
+  const PHOTO_SIZES = {
+    thumb: { width: 600, height: 600, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
+    full: { width: 2048, height: 2048, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
+    save: { width: 2048, height: 2048, crop: 'limit', quality: 90, fetch_format: 'jpg', flags: 'attachment:AYBKK-photo' },
+  };
   const photoUrl = (publicId, kind) => cloudinary.url(publicId, {
-    type: 'authenticated', sign_url: true, secure: true,
-    transformation: kind === 'thumb'
-      ? [{ width: 400, height: 500, crop: 'fill', gravity: 'auto', quality: 'auto', fetch_format: 'auto' }]
-      : [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto', fetch_format: 'auto' }],
+    type: 'authenticated', sign_url: true, secure: true, transformation: [PHOTO_SIZES[kind]],
   });
   const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
+  // A code that no longer exists (the shala gave that profile a new one while
+  // this page was open) stops the save: dropping it would silently untag a student.
   async function memberIds(codes) {
     const list = [...new Set((Array.isArray(codes) ? codes : []).map(String))].slice(0, 30);
     if (!list.length) return [];
-    return (await q('SELECT id FROM bkk_members WHERE code = ANY($1::text[])', [list])).rows.map(r => r.id);
+    const rows = (await q('SELECT id, code FROM bkk_members WHERE code = ANY($1::text[])', [list])).rows;
+    if (rows.length < list.length) {
+      const e = new Error('A student on this photo has a new code. Reload the page and pick them again. Nothing was saved.');
+      e.status = 409;
+      throw e;
+    }
+    return rows.map(r => r.id);
   }
   async function photosWithTags(where, args) {
     const rows = (await q(
@@ -1606,7 +1723,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
        LEFT JOIN bkk_members m ON m.id = pm.member_id
        WHERE ${where} GROUP BY p.id ORDER BY p.id`, args)).rows;
     return rows.map(p => ({ id: p.id, date: p.day, members: p.members,
-      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full') }));
+      thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full'), save: photoUrl(p.public_id, 'save') }));
   }
 
   // Who Chay can tag: today's bookings first, then a name search, then a quick
@@ -1666,7 +1783,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
       }
       res.json({ success: true, photo: await storePhoto(t, date, image, memberCodes, null) });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
 
   // Cloudinary answers some refusals (403: plan limit reached, account paused)
@@ -1693,12 +1810,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   }
 
   async function storePhoto(t, date, image, memberCodes, driveId) {
+    const ids = await memberIds(memberCodes);
     const up = await cloudUpload(image, date);
     const photo = (await q(
       `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by,drive_id)
        VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
       [up.public_id, date, up.width || null, up.height || null, t.id, driveId])).rows[0];
-    for (const id of await memberIds(memberCodes)) {
+    for (const id of ids) {
       await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2) ON CONFLICT DO NOTHING',
         [photo.id, id]);
     }
@@ -1782,16 +1900,17 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const { date, folder, driveId, memberCodes } = req.body || {};
+      const { date, folder, driveId, memberCodes, add } = req.body || {};
       if (!isDate(date)) return res.status(400).json({ error: 'date required (YYYY-MM-DD)' });
       if (!(await driveFolder(String(folder || ''))).some(f => f.id === driveId)) {
         return res.status(400).json({ error: 'That file is not in the chosen Drive folder.' });
       }
       const had = (await q('SELECT id FROM bkk_photos WHERE drive_id=$1', [driveId])).rows[0];
-      if (had) {               // already in: just set who is in it
-        await q('DELETE FROM bkk_photo_members WHERE photo_id=$1', [had.id]);
-        for (const id of await memberIds(memberCodes)) {
-          await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2)', [had.id, id]);
+      if (had) {               // already in: set who is in it (add: keep who is there)
+        const ids = await memberIds(memberCodes);
+        if (!add) await q('DELETE FROM bkk_photo_members WHERE photo_id=$1', [had.id]);
+        for (const id of ids) {
+          await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [had.id, id]);
         }
         return res.json({ success: true, photo: (await photosWithTags('p.id = $1', [had.id]))[0] });
       }
@@ -1829,7 +1948,28 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2)', [p.id, id]);
       }
       res.json({ success: true, photo: (await photosWithTags('p.id = $1', [p.id]))[0] });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
+  });
+
+  // Pick many photos of one person, then the name once (Boonchu, 8 Oct): the
+  // name is ADDED to each photo, so other people already on a photo stay.
+  app.post('/api/bkk/teacher/photos/tags/add', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    try {
+      const b = req.body || {};
+      const photoIds = [...new Set((Array.isArray(b.photoIds) ? b.photoIds : []).map(Number))]
+        .filter(n => Number.isInteger(n) && n > 0);
+      if (!photoIds.length || photoIds.length > 200) return res.status(400).json({ error: 'choose 1 to 200 photos' });
+      const ids = await memberIds(b.memberCodes);
+      if (!ids.length) return res.status(400).json({ error: 'choose who is in them' });
+      const found = (await q('SELECT id FROM bkk_photos WHERE id = ANY($1::int[])', [photoIds])).rows.map(r => r.id);
+      if (found.length < photoIds.length) return res.status(409).json({ error: 'A photo was deleted meanwhile. Reload the page.' });
+      await q(`INSERT INTO bkk_photo_members (photo_id, member_id)
+               SELECT p, m FROM unnest($1::int[]) p CROSS JOIN unnest($2::int[]) m
+               ON CONFLICT DO NOTHING`, [photoIds, ids]);
+      res.json({ success: true, photos: await photosWithTags('p.id = ANY($1::int[])', [photoIds]) });
+    } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
 
   app.post('/api/bkk/teacher/photos/:id/delete', async (req, res) => {
@@ -1856,7 +1996,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const byDay = new Map();
       for (const ph of photos.reverse()) {
         if (!byDay.has(ph.date)) byDay.set(ph.date, []);
-        byDay.get(ph.date).push({ id: ph.id, thumb: ph.thumb, full: ph.full });
+        byDay.get(ph.date).push({ id: ph.id, thumb: ph.thumb, full: ph.full, save: ph.save });
       }
       res.json({ days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]))
         .map(([date, items]) => ({ date, items })) });

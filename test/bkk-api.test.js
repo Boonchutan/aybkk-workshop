@@ -461,6 +461,7 @@ const ok = (name, cond, extra = '') => {
   ok('a tagged student sees the photo, on its class date', annPics.length === 1 && annPics[0].date === '2026-10-03' && annPics[0].items.length === 1,
      JSON.stringify(annPics));
   ok('the photo link is a signed private one', /^signed:\/\/authenticated\//.test(annPics[0].items[0].thumb));
+  ok('each photo also has a full-size save link', /^signed:\/\/authenticated\/.+\/2048$/.test(annPics[0].items[0].save || ''), annPics[0].items[0].save);
   ok('a student who is not in the photo sees nothing', catPics.length === 0);
   const annMe = (await J(`/api/bkk/me/${ann.code}`)).body.member;
   ok('a student gets a workshop-journal id that is not their member code',
@@ -476,6 +477,9 @@ const ok = (name, cond, extra = '') => {
   ok('re-tagging moves the photo to the right student',
      ((await J(`/api/bkk/me/${ann.code}/photos`)).body.days || []).length === 0 &&
      ((await J(`/api/bkk/me/${cat.code}/photos`)).body.days || []).length === 1);
+  const stale = await post(`/api/bkk/teacher/photos/${up.body.photo.id}/tags`, { memberCodes: [cat.code, 'BGONE0000000'] }, PKEY);
+  ok('a code that changed while the page was open stops the save instead of untagging someone',
+     stale.status === 409 && ((await J(`/api/bkk/me/${cat.code}/photos`)).body.days || []).length === 1, JSON.stringify(stale.body));
   const del = await post(`/api/bkk/teacher/photos/${up.body.photo.id}/delete`, {}, PKEY);
   ok('deleting removes it from the profile and from storage',
      del.status === 200 && ((await J(`/api/bkk/me/${cat.code}/photos`)).body.days || []).length === 0 &&
@@ -504,6 +508,28 @@ const ok = (name, cond, extra = '') => {
      (await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'SOMEOTHERFILEaaaaaaaaaaaa', memberCodes: [] }, PKEY)).status === 400);
   ok("Ann's profile shows the Drive photo",
      JSON.stringify((await J(`/api/bkk/me/${ann.code}/photos`)).body).includes(fd.body.photo.thumb));
+
+  // Many photos of one person, then the name once (8 Oct): the name is added.
+  const manyId = fd.body.photo.id;
+  const addCat = await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: [cat.code] }, PKEY);
+  const namesOn = ph => ph.members.map(m => m.code).sort().join();
+  ok('adding a name to picked photos keeps everyone already on them',
+     addCat.status === 200 && namesOn(addCat.body.photos[0]) === [ann.code, bob.code, cat.code].sort().join(), JSON.stringify(addCat.body).slice(0, 200));
+  ok('adding the same name again changes nothing',
+     namesOn((await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId, manyId], memberCodes: [cat.code, cat.code] }, PKEY)).body.photos[0]).split(',').length === 3);
+  ok('adding names needs a passcode', (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: [cat.code] }, {})).status === 401);
+  ok('no photos or no name is refused',
+     (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [], memberCodes: [cat.code] }, PKEY)).status === 400 &&
+     (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: [] }, PKEY)).status === 400);
+  ok('a code that changed meanwhile stops it, nothing added',
+     (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId], memberCodes: ['BGONE0000000'] }, PKEY)).status === 409);
+  ok('a photo deleted meanwhile stops it',
+     (await post('/api/bkk/teacher/photos/tags/add', { photoIds: [manyId, 99999999], memberCodes: [cat.code] }, PKEY)).status === 409);
+  const upAdd = uploads.length;
+  const keepTags = await post('/api/bkk/teacher/photos/from-drive',
+    { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [cat.code], add: true }, PKEY);
+  ok('picking an already-saved Drive photo adds the name without saving it twice or dropping anyone',
+     keepTags.status === 200 && uploads.length === upAdd && namesOn(keepTags.body.photo).split(',').length === 3, JSON.stringify(keepTags.body).slice(0, 200));
 
   const realUpload = fakeCloud.uploader.upload;
   fakeCloud.uploader.upload = async () => { throw { error: { message: 'Server returned unexpected status code - 403', http_code: 403 } }; };
@@ -552,6 +578,82 @@ const ok = (name, cond, extra = '') => {
   ok("a student cannot take another profile's email",
      (await post(`/api/bkk/me/${(await J('/api/bkk/admin/members?q=imp pack', { headers: ADMIN })).body.members[0].code}/email`,
        { email: 'imp.one@example.com' })).status === 409);
+
+  console.log('\n— the wrong student signed in (8 Oct: Kat got Kate\'s link) —');
+  const mkMember = async name => (await post('/api/bkk/admin/passes', { name, productCode: 'pack10' }, ADMIN)).body.member.code;
+  const kateCode = await mkMember('Kate Mixup'), katCode = await mkMember('Kat Mixup');
+  ok('new member codes are long and random, not the clock', /^B[0-9A-Z]{13}$/.test(kateCode), kateCode);
+  const kateLink = (await post(`/api/bkk/admin/members/${kateCode}/signin-link`, {}, ADMIN)).body.link.split('/').pop();
+  ok("Kat, holding Kate's link, puts her own email on Kate's profile",
+     (await post(`/api/bkk/me/${kateCode}/email`, { email: 'kat.mixup@example.com' })).status === 200);
+  ok('...so her own profile refuses it (the reported problem)',
+     (await post(`/api/bkk/me/${katCode}/email`, { email: 'kat.mixup@example.com' })).status === 409);
+  const nK = signins().length;
+  await post('/api/bkk/login/request', { email: 'kat.mixup@example.com' });
+  const katMailTok = (signins().slice(nK)[0] || { text: '' }).text.match(/login\/([a-f0-9]{64})/);
+  ok("while it sits there, Kat's email sign-in opens Kate's profile", !!katMailTok);
+  ok('checkout with an email that has a profile does not hand that profile to the browser',
+     (await post('/api/bkk/orders', { productCode: 'dropin', name: 'Kat', email: 'kat.mixup@example.com' })).body.member.code === undefined);
+  ok('...but a browser that already holds that profile keeps it',
+     (await post('/api/bkk/orders', { productCode: 'dropin', name: 'Kate', email: 'kat.mixup@example.com', memberCode: kateCode })).body.member.code === kateCode);
+  ok('...and a brand-new email gets its new profile', /^B/.test((await post('/api/bkk/orders',
+     { productCode: 'dropin', name: 'New One', email: 'brand.new.mixup@example.com' })).body.member.code || ''));
+
+  ok('changing an email needs the staff key',
+     (await post(`/api/bkk/admin/members/${katCode}/email`, { email: 'kat.mixup@example.com' })).status === 401);
+  const clash = await post(`/api/bkk/admin/members/${katCode}/email`, { email: 'Kat.Mixup@example.com' }, ADMIN);
+  ok('the shala is told whose profile holds the email', clash.status === 409 && clash.body.owner.code === kateCode, JSON.stringify(clash.body));
+  ok('naming the wrong profile moves nothing',
+     (await post(`/api/bkk/admin/members/${katCode}/email`, { email: 'kat.mixup@example.com', takeFrom: katCode }, ADMIN)).status === 409);
+  ok('the email moves to Kat once the shala confirms where it comes from',
+     (await post(`/api/bkk/admin/members/${katCode}/email`, { email: 'kat.mixup@example.com', takeFrom: kateCode }, ADMIN)).status === 200);
+  const who = async c => (await J(`/api/bkk/admin/members?q=${c}`, { headers: ADMIN })).body.members[0];
+  ok("Kat has it, Kate's profile has none", (await who(katCode)).email === 'kat.mixup@example.com' && (await who(kateCode)).email == null);
+  ok("the email link Kat got while it sat on Kate's profile no longer opens it",
+     katMailTok && (await fetch(`${B}/api/bkk/login/${katMailTok[1]}`, { method: 'POST' })).status === 400);
+  ok('a bad email is refused', (await post(`/api/bkk/admin/members/${kateCode}/email`, { email: 'kate@' }, ADMIN)).status === 400);
+  await post(`/api/bkk/admin/members/${kateCode}/email`, { email: 'kate.mixup@example.com' }, ADMIN);
+  ok('an empty email removes it',
+     (await post(`/api/bkk/admin/members/${kateCode}/email`, { email: '' }, ADMIN)).status === 200 && (await who(kateCode)).email == null);
+  ok('an unknown profile is a 404', (await post('/api/bkk/admin/members/NOPE/email', { email: '' }, ADMIN)).status === 404);
+
+  ok('signing a profile out everywhere needs the staff key', (await post(`/api/bkk/admin/members/${kateCode}/signout`, {}, {})).status === 401);
+  const out = await post(`/api/bkk/admin/members/${kateCode}/signout`, {}, ADMIN);
+  const kateNew = out.body.member && out.body.member.code;
+  ok("Kate's profile gets a new code and her sign-in link stops", out.status === 200 && kateNew && kateNew !== kateCode && out.body.linksStopped >= 1,
+     JSON.stringify(out.body));
+  ok("the old code (on Kat's phone) no longer opens anything", (await J(`/api/bkk/me/${kateCode}`)).status === 404);
+  ok('...and says so in the words the page listens for', (await J(`/api/bkk/me/${kateCode}`)).body.error === 'not found');
+  ok('the link M sent is dead', (await fetch(`${B}/api/bkk/login/${kateLink}`, { method: 'POST' })).status === 400);
+  const kateNow = await J(`/api/bkk/me/${kateNew}`);
+  ok("Kate's profile and pass are intact under the new code",
+     kateNow.status === 200 && kateNow.body.member.name === 'Kate Mixup' && kateNow.body.passes.length === 1, JSON.stringify(kateNow.body).slice(0, 160));
+  ok('a fresh link for Kate works', (await post(`/api/bkk/admin/members/${kateNew}/signin-link`, {}, ADMIN)).status === 200);
+  ok('signing out an unknown profile is a 404', (await post('/api/bkk/admin/members/NOPE/signout', {}, ADMIN)).status === 404);
+
+  // The other order: M signs out first, while the wrong email still sits there,
+  // from a search done before it was typed in (the 8 Oct steps exactly).
+  const lenaCode = await mkMember('Lena Mixup');
+  await post(`/api/bkk/me/${lenaCode}/email`, { email: 'wrong.person@example.com' });
+  const blind = await post(`/api/bkk/admin/members/${lenaCode}/signout`, { expectEmail: null }, ADMIN);
+  ok('a sign-out decided on a screen from before the email appeared is refused',
+     blind.status === 409 && blind.body.needEmailDecision && blind.body.email === 'wrong.person@example.com', JSON.stringify(blind.body));
+  ok('...and so is one with no keep-or-remove answer',
+     (await post(`/api/bkk/admin/members/${lenaCode}/signout`, { expectEmail: 'wrong.person@example.com' }, ADMIN)).status === 409);
+  ok('...and nothing changed: same code, same links', (await J(`/api/bkk/me/${lenaCode}`)).status === 200);
+  const keep = await post(`/api/bkk/admin/members/${lenaCode}/signout`,
+    { expectEmail: 'wrong.person@example.com', clearEmail: false }, ADMIN);
+  ok('keeping it is an answer M gives on purpose', keep.status === 200 && keep.body.member.email === 'wrong.person@example.com' && !keep.body.removedEmail);
+  const wipe = await post(`/api/bkk/admin/members/${keep.body.member.code}/signout`,
+    { expectEmail: 'Wrong.Person@example.com', clearEmail: true }, ADMIN);
+  ok('...removing it happens in the same step, and says what was removed',
+     wipe.status === 200 && wipe.body.member.email === null && wipe.body.removedEmail === 'wrong.person@example.com'
+       && (await who(wipe.body.member.code)).email == null, JSON.stringify(wipe.body));
+  const nL = signins().length;
+  await post('/api/bkk/login/request', { email: 'wrong.person@example.com' });
+  ok('so the wrong person cannot email herself back in', signins().length === nL);
+  ok('a profile with no email signs out without being asked',
+     (await post(`/api/bkk/admin/members/${wipe.body.member.code}/signout`, {}, ADMIN)).status === 200);
 
   const prog = await J('/api/bkk/admin/progress', { headers: ADMIN });
   ok('progress shows students, links opened and today\'s photos/notes',

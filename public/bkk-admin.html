@@ -91,6 +91,13 @@
       progEmail: 'Have an email', progLinks: 'Profile links sent', progToday: n => `${n} today`, progOpened: 'Opened their profile',
       progPhotos: 'Photos added today', progStudentsIn: n => `${n} students in them`, progUntagged: 'Photos with nobody tagged',
       progNotes: 'Teacher notes today', progAll: (ph, st, no) => `All time: ${ph} photos for ${st} students, ${no} notes.`,
+      emailBtn: 'Change email', qEmail: n => `New email for ${n}.\nLeave it empty to remove the email.`,
+      qMove: (e, o) => `${e} is on ${o.name}'s profile (${o.code}).\n\nMove it to this student? ${o.name}'s profile will have no email.`,
+      emailDone: 'Email saved.',
+      outBtn: 'Sign out all phones', qOut: n => `Sign ${n} out on every phone?\n\nUse this when the wrong person opened ${n}'s profile. Anyone holding it, the wrong person too, loses it. Old sign-in links stop working. Then send ${n} a new sign-in link.`,
+      qOutMail: (n, e) => `${e} is on ${n}'s profile right now.\n\nType KEEP if it is ${n}'s own email.\nType REMOVE if it belongs to someone else (or they can sign back in with it).\n\nCancel = stop, nothing changes.`,
+      qOutMailBad: 'Type KEEP or REMOVE. Nothing was changed.',
+      outDone: (n, k, gone) => `Done. ${n}'s profile has a new code and ${k} old link(s) stopped.${gone ? `\nRemoved email: ${gone} (put it back with Change email if that was a mistake).` : ''}\nSend ${n} a new sign-in link now.`,
       linkBtn: 'Sign-in link', linkCopied: 'Copied. Paste it into their LINE, WhatsApp or WeChat.', linkCopyHand: 'Copy this and send it to them:',
       impTitle: 'Move students from Rezerv', impBtn: 'Import',
       impHelp: 'One student per line: name | email | plan | end date | classes left (packs only). Email can be empty now and added later by importing the same line again with the email. Safe to run twice: nobody and no pass is added twice.',
@@ -171,6 +178,13 @@
       progEmail: 'มีอีเมลแล้ว', progLinks: 'ส่งลิงก์โปรไฟล์แล้ว', progToday: n => `วันนี้ ${n}`, progOpened: 'เปิดโปรไฟล์แล้ว',
       progPhotos: 'รูปที่ใส่วันนี้', progStudentsIn: n => `มีนักเรียน ${n} คนในรูป`, progUntagged: 'รูปที่ยังไม่แตะชื่อ',
       progNotes: 'คำแนะนำครูวันนี้', progAll: (ph, st, no) => `ทั้งหมด: รูป ${ph} รูป ของนักเรียน ${st} คน คำแนะนำ ${no} รายการ`,
+      emailBtn: 'เปลี่ยนอีเมล', qEmail: n => `อีเมลใหม่ของ ${n}\nเว้นว่างไว้เพื่อลบอีเมล`,
+      qMove: (e, o) => `${e} อยู่ในโปรไฟล์ของ ${o.name} (${o.code})\n\nย้ายมาที่นักเรียนคนนี้ไหม? โปรไฟล์ของ ${o.name} จะไม่มีอีเมล`,
+      emailDone: 'บันทึกอีเมลแล้ว',
+      qOutMail: (n, e) => `${e} อยู่ในโปรไฟล์ของ ${n} ตอนนี้\n\nพิมพ์ เก็บ ถ้าเป็นอีเมลของ ${n} เอง\nพิมพ์ ลบ ถ้าเป็นของคนอื่น (ไม่อย่างนั้นเขาเข้าได้อีกด้วยอีเมลนี้)\n\nยกเลิก = หยุด ไม่มีอะไรเปลี่ยน`,
+      qOutMailBad: 'พิมพ์ เก็บ หรือ ลบ ยังไม่มีอะไรเปลี่ยน',
+      outBtn: 'ออกจากระบบทุกเครื่อง', qOut: n => `ออกจากระบบโปรไฟล์ของ ${n} ในทุกเครื่องไหม?\n\nใช้เมื่อคนผิดเปิดโปรไฟล์ของ ${n} ทุกคนที่เปิดอยู่ (รวมคนผิด) จะเข้าไม่ได้อีก ลิงก์เก่าใช้ไม่ได้ แล้วส่งลิงก์ใหม่ให้ ${n}`,
+      outDone: (n, k, gone) => `เรียบร้อย โปรไฟล์ของ ${n} ได้รหัสใหม่ ลิงก์เก่า ${k} ลิงก์ใช้ไม่ได้แล้ว${gone ? `\nลบอีเมลแล้ว: ${gone} (ถ้าผิด ใส่คืนด้วยปุ่มเปลี่ยนอีเมล)` : ''}\nส่งลิงก์ใหม่ให้ ${n} เลย`,
       linkBtn: 'ลิงก์เข้าโปรไฟล์', linkCopied: 'คัดลอกแล้ว วางในไลน์ WhatsApp หรือ WeChat ของนักเรียนได้เลย', linkCopyHand: 'คัดลอกข้อความนี้แล้วส่งให้นักเรียน:',
       impTitle: 'ย้ายนักเรียนจาก Rezerv', impBtn: 'นำเข้า',
       impHelp: 'บรรทัดละหนึ่งคน: ชื่อ | อีเมล | แพ็กเกจ | วันหมดอายุ | ครั้งที่เหลือ (เฉพาะแพ็กครั้ง) อีเมลเว้นว่างไว้ก่อนได้ แล้วนำเข้าบรรทัดเดิมพร้อมอีเมลภายหลัง กดซ้ำได้ ไม่มีชื่อหรือบัตรซ้ำ',
@@ -367,6 +381,7 @@
     await loadThNames();
     const d = await api('/api/bkk/admin/members?q=' + encodeURIComponent(term)).then(r => r.json());
     const ms = d.members || [];
+    FOUND = Object.fromEntries(ms.map(m => [m.code, m]));
     if (!ms.length) { $('#results').innerHTML = `<p class="muted">${T('nobody')}</p>`; return; }
     $('#results').innerHTML = ms.map(m => `<div style="border-top:1px solid var(--line);padding:12px 0">
       <b>${esc(m.name)}</b> <span class="muted">${esc(m.code)}</span><br>
@@ -384,9 +399,65 @@
         <button class="btn red" onclick="passAct(${p.id},'void')">${T('void')}</button>
       </div>`).join('') || `<p class="muted">${T('noPass')}</p>`}
       <p style="margin-top:8px"><button class="btn" onclick="bookFor('${esc(m.code)}')">${T('bookBtn')}</button>
-        <button class="btn pink" onclick="signinLink('${esc(m.code)}')">${T('linkBtn')}</button></p>
+        <button class="btn pink" onclick="signinLink('${esc(m.code)}')">${T('linkBtn')}</button>
+        <button class="btn gray" onclick="changeEmail('${esc(m.code)}')">${T('emailBtn')}</button>
+        <button class="btn red" onclick="signOutAll('${esc(m.code)}')">${T('outBtn')}</button></p>
       <div id="sl_${esc(m.code)}"></div>
     </div>`).join('');
+  };
+
+  let FOUND = {};
+  // Fix a wrong email. One that sits on another profile moves only after M
+  // confirms which profile it leaves.
+  window.changeEmail = async (code) => {
+    const m = FOUND[code]; if (!m) return;
+    const email = ask(T('qEmail', m.name), m.email || ''); if (email === null) return;
+    const send = body => api(`/api/bkk/admin/members/${encodeURIComponent(code)}/email`,
+      { method: 'POST', body: JSON.stringify(body) });
+    let r = await send({ email });
+    if (r.status === 409) {
+      const j = await r.json().catch(() => ({}));
+      if (!j.owner || !confirm(T('qMove', email, j.owner))) { if (!j.owner) alert(j.error || T('failed')); return; }
+      r = await send({ email, takeFrom: j.owner.code });
+    }
+    if (await shout(r)) { alert(T('emailDone')); findStudents(); }
+  };
+  // An email left on the profile would let the wrong person straight back in
+  // (email link, checkout), so M says whose it is, against the email as it is
+  // now: the server refuses a sign-out decided on a stale search. Typed answers,
+  // so Cancel, Esc or Back never removes anyone's email.
+  const emailFate = (name, email) => {
+    const a = ask(T('qOutMail', name, email), '');
+    if (a === null) return null;
+    if (/^(keep|เก็บ)$/i.test(a)) return false;
+    if (/^(remove|ลบ)$/i.test(a)) return true;
+    alert(T('qOutMailBad'));
+    return null;
+  };
+  window.signOutAll = async (code) => {
+    const m = FOUND[code]; if (!m) return;
+    const now = ((await api('/api/bkk/admin/members?q=' + encodeURIComponent(code)).then(r => r.json())
+      .catch(() => ({}))).members || []).find(x => x.code === code);
+    if (!now) { alert(T('failed')); return; }
+    const body = { expectEmail: now.email || null };
+    if (now.email) { const c = emailFate(now.name, now.email); if (c === null) return; body.clearEmail = c; }
+    if (!confirm(T('qOut', now.name))) return;
+    const send = () => api(`/api/bkk/admin/members/${encodeURIComponent(code)}/signout`,
+      { method: 'POST', body: JSON.stringify(body) });
+    let r = await send();
+    if (r.status === 409) {
+      const j = await r.clone().json().catch(() => ({}));
+      if (j.needEmailDecision) {
+        const c = emailFate(now.name, j.email); if (c === null) return;
+        body.expectEmail = j.email; body.clearEmail = c;
+        r = await send();
+      }
+    }
+    const j = await shout(r);
+    if (!j) return;
+    $('#q').value = j.member.code;
+    await findStudents();
+    alert(T('outDone', now.name, j.linksStopped, j.removedEmail));
   };
 
   // A one-time link M pastes into the student's LINE, WhatsApp or WeChat.
