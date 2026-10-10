@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-09T12:10:00.139Z
+Inbox last read: 2026-10-10T00:10:00.867Z
 
 ## Standing orders from Boonchu
 - 2026-10-09 (Boonchu): FAMILY CALENDAR, plan travel around it. Jai and Boone's school (AISB 2026-27, version 5 Oct 2026, moved after the flood; in Boonchu's Google Calendar as "🏫 AISB" all-day notes). Kids FREE: Sat 10 - Sun 18 Oct; Sat 5 - Mon 7 Dec; Sat 19 Dec - Sun 10 Jan (back MON 11 JAN, make-up day); Sat 20 - Sun 28 Feb (9 days: a 10-day trip costs Fri 19 Feb or Mon 1 Mar); Fri 9 - Mon 19 Apr; Tue 4 May; Thu 3 Jun; from Sat 12 Jun (summer; optional Summer School 14 Jun - 9 Jul). School OPEN on Fri 23 Oct (make-up day) and Thu 20 May. Boonchu's plans: Mysore trip in the winter break; 10-day family Japan trip in the February break. Before proposing any workshop, cohort or teaching trip date (China, Russia), check it against this list and say so.
@@ -18,7 +18,7 @@ Inbox last read: 2026-10-09T12:10:00.139Z
 (none yet)
 
 ## Open items
-- 2026-09-28: Digital product (online anatomy + philosophy classes), CN + EN, start 3 Nov 2026, two tiers. Prices: decision pending (see team chat). 2 Oct 19:00: no answer, default B applied: sales open moved one week, 6 Oct to 13 Oct. Prices still waiting. 3 Oct 07:08: new choice set, answer by 19:00 Wed 7 Oct, default B = sales open moves one more week (to 20 Oct). 7 Oct 19:08: no answer by 19:00, default B applied: sales open now Tue 20 Oct. Prices still waiting. 8 Oct 07:08: new choice set, answer by 19:00 Sat 10 Oct, default B = sales open moves to Tue 27 Oct. Waiting: translator, payment setup.
+- 2026-09-28: Digital product (online anatomy + philosophy classes), CN + EN, start 3 Nov 2026, two tiers. Prices: decision pending (see team chat). 2 Oct 19:00: no answer, default B applied: sales open moved one week, 6 Oct to 13 Oct. Prices still waiting. 3 Oct 07:08: new choice set, answer by 19:00 Wed 7 Oct, default B = sales open moves one more week (to 20 Oct). 7 Oct 19:08: no answer by 19:00, default B applied: sales open now Tue 20 Oct. Prices still waiting. 8 Oct 07:08: new choice set, answer by 19:00 Sat 10 Oct, default B = sales open moves to Tue 27 Oct. 10 Oct 07:08: reminded, due 19:00 today. Waiting: translator, payment setup.
 
 - 2026-09-28: No Cap Daily (auto trend-facts IG) is Boonchu's test for future brand deals. Suggested: 90-day test to about 28 Dec 2026, judge on followers and reach, keep it in a separate Meta business from AYBKK, fix duplicate drafts. Ask him for numbers at the end.
 
@@ -47,6 +47,7 @@ Inbox last read: 2026-10-09T12:10:00.139Z
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
 ## Log
+- 2026-10-10 07:08: Both bots posted. No new @Machi requests. Inbox: 0 new. Nagged course prices (due 19:00 today, default B = sales open 27 Oct) and Mysore Reel (by 19:00 Sun 11 Oct, 1 day, default B = Wed 14 Oct), 1st time today each. Letter #1 not reported sent. No wins, no leads (0 in 13 days), no reminders.
 - 2026-10-09 19:08: Inbox: 2 new, 2 hot (both LINE: a start-date follow-up after payment, a friend's package check + Sunday start). Course prices and Mysore Reel not repeated (nagged twice today). No win, no reminders. Next step given: answer the paid student's start-date question.
 - 2026-10-09 13:08: Inbox: 2 new, 2 hot (both LINE: a payment + start-date question, a 3-month past-student promo request). Nagged course prices (by 19:00 Sat 10 Oct, 1 day) and Mysore Reel (by 19:00 Sun 11 Oct, 2 days), 2nd time today each: do not repeat at 19:08. No reminders due, no wins.
 - 2026-10-09 07:08: Both bots posted. No new @Machi requests. Inbox: 0 new. Nagged course prices (by 19:00 Sat 10 Oct, 1 day, default B = sales open 27 Oct) and Mysore Reel (new choice, by 19:00 Sun 11 Oct, default B = Wed 14 Oct), 1st time today each. Letter #1 not reported sent. No wins, no leads (0 in 12 days), no reminders.
