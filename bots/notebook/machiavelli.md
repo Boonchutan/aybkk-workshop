@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-11T00:09:13.120Z
+Inbox last read: 2026-10-11T06:09:28.256Z
 
 ## Standing orders from Boonchu
 - 2026-10-10 (Boonchu): WEEKLY LOG. Every Friday 21:47 Bangkok, routine trig_01UZnkK1DhEBZA29NrFEbM9o wakes the Machi team chat, which writes one new note "<date> Week Log.md" into the vault folder "01 Dashboard/Weekly Log" (first one: 2026-10-09). It reads this notebook (Wins, Open items, Reminders, Log) and the week's posts, so log every win, decision and default here, with a date. The log itself never goes into this repo (public).
@@ -48,6 +48,7 @@ Inbox last read: 2026-10-11T00:09:13.120Z
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
 ## Log
+- 2026-10-11 13:08: Inbox: 4 new, 2 hot (LINE: a past student asks about the restart promo; a student asks how a friend drops in Tue). Nagged Mysore Reel (19:00 today, default B = Wed 14 Oct) and course prices (19:00 Wed 14 Oct, 3 days), 2nd time today each: do not repeat at 19:08 (except applying Reel default). No reminders due, no wins.
 - 2026-10-11 07:08: Both bots posted. No new @Machi requests. Inbox: 0 new. Nagged course prices (new choice, by 19:00 Wed 14 Oct, default B = sales open Tue 3 Nov, course start Tue 10 Nov) and Mysore Reel (due 19:00 today, default B = Wed 14 Oct), 1st time today each. Letter #1 not reported sent; Letter #2 due Mon 12 Oct. No wins, no leads (0 in 14 days), no reminders.
 - 2026-10-10 19:08: Inbox: 3 new, 1 hot (LINE: a student's friend may start Sun 11 Oct Mysore 07:00; a past student missing AYBKK; a booked-Monday thanks, no reply). Course prices default B applied (sales open 27 Oct). Mysore Reel not repeated (nagged twice today). No win, no reminders. Next step given: answer the friend's start question tonight.
 - 2026-10-10 13:08: Inbox: 1 new, 1 hot (LINE: a teacher's student asks to buy the promo now and start in January). Nagged course prices (19:00 today, default B = sales open 27 Oct) and Mysore Reel (19:00 Sun 11 Oct, 1 day, default B = Wed 14 Oct), 2nd time today each: do not repeat at 19:08 (except applying prices default). No reminders due, no wins.
