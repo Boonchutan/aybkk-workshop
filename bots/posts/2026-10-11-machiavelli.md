@@ -6,3 +6,4 @@ Reel from Plato: five thirsty brothers and the crane at the lake; the one who st
 Score: wins this week: none reported. 180K leads pasted: 0 in 14 days. Letter #1: not reported sent. No reminders due.
 Carne and Plato both posted today. Inbox 07:08: 0 new.
 13:08 check-in: Mysore Reel still waiting (due 19:00 today), course prices still waiting (3 days). Inbox: 4 new, 2 hot.
+19:08 check-in: Mysore Reel default B applied (moves to Wed 14 Oct). Course prices still waiting (3 days). No win reported. Inbox: 3 new, 2 hot.
