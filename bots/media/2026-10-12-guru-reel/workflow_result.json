@@ -1,0 +1,625 @@
+{
+  "summary": "Fact and safety checks, then writers and judges for the Gu-Ru Hidden Stories Reel options and the shala-flood joke",
+  "agentCount": 7,
+  "logs": [
+    "storm safety: hold; facts: gu_ru=verified, blindfold=fix, silence=fix"
+  ],
+  "result": {
+    "safety": {
+      "storm_found": "I found no named storm or typhoon. What hit Bangkok was a run of monsoon thunderstorms and heavy rain, on top of a major flood that had just happened.\n- 24-27 Sep: Bangkok had nearly 300 mm of rain in about 48 hours. On 26 Sep the city declared a flood disaster in all 50 districts, with water waist-deep in some areas (Khaleej Times, 26 Sep 2026: https://www.khaleejtimes.com/world/asia/bangkok-flood-disaster-50-districts-heavy-rain ; AP via NY1, 26 Sep 2026: https://ny1.com/nyc/all-boroughs/ap-top-news/2026/09/26/heavy-rain-and-flooding-in-bangkok-disrupts-traffic-and-prompts-evacuations).\n- 2-4 Oct: the Thai Meteorological Department (TMD) warned of heavy rain in 13 Bangkok districts, then thundershowers, gusts and heavy rain for 4-7 Oct (Nation Thailand: https://www.nationthailand.com/news/40071792 ; https://www.nationthailand.com/news/40071761).\n- 6 Oct (Tue): heavy rain overnight flooded roads in Bang Kapi, Ramkhamhaeng, Lat Krabang and Min Buri. Most water was 5-10 cm deep, but it was deep enough at Suwinthawong Road in Min Buri to block cars (Nation Thailand, 6 Oct 2026: https://www.nationthailand.com/thailand/40071915). This is most likely Boonchu's \"last week storm\".\n- 7 Oct: Governor Chadchart warned that the city was still at risk because the canals and retention areas were full (Nation Thailand: https://www.nationthailand.com/news/40071959).\n- 9-13 Oct: TMD heavy-rain warning No. 6 (251/2569) covers 53 provinces plus Bangkok. It forecasts heavy to very heavy rain, hail, strong winds and flash-flood risk, with Bangkok named for 10-12 Oct (Khaosod English, 7 and 9 Oct 2026: https://www.khaosodenglish.com/featured/2026/10/09/thai-meteorological-department-warns-of-storms-hail-and-lightning-from-9-15-october/ ; Bangkok Biznews, 8 Oct 2026: https://www.bangkokbiznews.com/news/1255509).\nI found no news dated after about 9 Oct, so I could not confirm conditions in Bangkok for 10-12 Oct.",
+      "victims": "Yes. There is an ongoing flood disaster with deaths, including in Bangkok.\n- National death toll since 16 Sep: 31 (Xinhua via Bernama, 5 Oct 2026: https://bernama.com/en/world/news.php?id=2615896). Then 60 nationwide, according to the government via AFP. That report says 4 of the deaths were in Bangkok and 19 in Prachinburi, with floods still active in 27 of 77 provinces and river levels still rising (Cambodianess/AFP, 7 Oct 2026: https://cambodianess.com/article/thailand-floods-death-toll-rises-to-60-since-mid-september ; Malay Mail, 7 Oct 2026: https://www.malaymail.com/amp/news/world/2026/10/07/floods-kill-60-across-thailand-as-bangkok-races-to-clean-up-before-imf-meetings/238107). The disaster agency DDPM gave a separate count of 44 dead and more than 3.13 million people affected in 21 provinces and parts of Bangkok (Bernama/Malay Mail, 8 Oct 2026: https://www.malaymail.com/news/world/2026/10/08/thailand-floods-since-sept-16-leave-44-dead-as-more-than-31-million-people-affected/238255). The two counts differ, but both are serious.\n- Evacuations: about 4,200 people moved into more than 200 shelters in Bangkok, and schools closed for two days (AP via NY1, 26 Sep; AFP, 7 Oct). Prachinburi had homes flooded in 7 districts, affecting more than 188,000 people.\n- The Bangkok disaster declaration came on 26 Sep, 16 days ago. Floods in the capital had mostly receded by 7-8 Oct, but more heavy rain was forecast through 13 Oct.",
+      "verdict": "hold",
+      "advice": "Hold this version today. \"My shala flooded twice\", \"a storm hit Bangkok\" and \"a few Thai puddles\" all point at a flood that killed 44-60 people across Thailand, including 4 in Bangkok, and is still going, so it breaks the no-victims rule. If he wants a joke out today, keep only the sweat and slipping in led primary (the Russian lake can stay) and drop \"flood\", \"storm\", \"Bangkok\" and \"Thai puddles\", or wait until the floods and the death count have clearly ended."
+    },
+    "facts": {
+      "items": [
+        {
+          "key": "gu_ru",
+          "verdict": "verified",
+          "source": "Advayataraka Upanishad, verse 16, in 'The Yoga-Upanisad-s', translated into English (on the basis of the commentary of Sri Upanisad-Brahma-Yogin) by T. R. Srinivasa Ayyangar, edited by Pandit S. Subrahmanya Sastri, The Adyar Library, Madras, 1938 (preface by G. Srinivasa Murti, dated 15 Sept 1938), English translation p. 8. Real word root: Monier-Williams, Sanskrit-English Dictionary (1899), p. 359, col. 2, 'guru'.",
+          "url": "https://archive.org/details/TheYogaUpanishads",
+          "exact_text": "Ayyangar 1938, p. 8: \"The syllable 'Gu' indicates darkness, the syllable 'Ru' means its dispeller. Because of the quality of dispelling darkness, the Guru is so termed. (16)\"  |  Monier-Williams p. 359: \"guru mf(vi)n. ... heavy, weighty (opposed to laghu), RV. ...\"; \"venerable, respectable\"; \"m. any venerable or respectable person (father, mother, or any relative older than one's self) ...\"; \"a spiritual parent or preceptor ...\"; cognates \"[cf. βαρύς; Lat. gravis; Goth. kauriths; Lith. giéras.]\"  |  Guru Gita parallel (kamakoti.org, tr. P. R. Kannan, numbered 1:33): \"The letter 'Gu' means darkness and 'Ru' stands for its remover. Guru is so called because he destroys darkness (of ignorance).\"",
+          "plain_retelling": "There is an old yoga book called the Advayataraka Upanishad.\nIt plays a little game with the word 'guru'.\nIt says 'Gu' means darkness.\nIt says 'Ru' means the one who sends the darkness away.\nSo, the book says, a guru is someone who takes darkness away.\nThe dictionary adds one more meaning: 'guru' means 'heavy', someone with weight, worth respecting.",
+          "notes": "WORDING: Confirmed word for word, including 'so termed'. Wikipedia's English rendering ends 'thus termed', so quote the 1938 book, not Wikipedia. Sanskrit (per Wikipedia): gu-sabdas tv andhakarah syat, ru-sabdas tan-nirodhakah; andhakara-nirodhitvad gurur ity abhidhiyate. The verse number (16) is Ayyangar's numbering. The translation follows the commentary of Upanishad-Brahma-Yogin. COPYRIGHT: It is a 1938 Adyar Library book, free to read on archive.org (collection 'freeindological'), but its public-domain status is NOT confirmed. Quote the one verse with credit; don't reproduce pages. LINGUISTICS: Present gu/ru as 'what the old text says', NOT as where the word comes from. The dictionary root is 'heavy, weighty' (Monier-Williams p. 359), cognate with Latin gravis and Greek barys. Wikipedia's Guru article reports that Reender Kranenborg calls the gu/ru reading a folk etymology (I saw this via Wikipedia only, not Kranenborg's own text). DATE: Do not call it 'ancient' or give a date. Scholars disagree: Wikipedia cites Flood at 100 BCE-300 CE for the Yoga Upanishads as a group, and Mahony at 100 BCE-1100 CE, and Mallinson says some Yoga Upanishads were revised as late as the 18th century. Say 'an old yoga text' / 'a Yoga Upanishad'. GURU GITA: It has an almost identical Sanskrit verse (numbered 1:33 on kamakoti.org, translated by P. R. Kannan, a modern translation that is not public domain). Flag it: it is traditionally placed in the Skanda Purana (Uttara Khanda / Brahma Samhita, as a dialogue between Shiva and Parvati), but versions run from about 100 to 400+ verses with different verse numbers. Another tradition places it in the Vishvasara Tantra. Hans Bakker (cited on Wikipedia's Skanda Purana page) says texts that call themselves sections of the Skanda Purana came into existence after the 12th century. No firm date was found. Do NOT say Vyasa wrote it, call it ancient, or claim either text borrowed from the other. SAFETY/POSITIONING: Don't quote verses 17-18 ('The Guru alone is the transcendent Brahman...'). Spoken by a teacher in his own Reel, they read as self-glorification and break the 'never inflate' rule. Keep the frame as 'the text describes the role', never 'I am the dispeller of darkness'."
+        },
+        {
+          "key": "blindfold",
+          "verdict": "fix",
+          "source": "Chandogya Upanishad VI.14.1-2, tr. F. Max Müller, The Upanishads Part I, Sacred Books of the East vol. 1 (Oxford, Clarendon Press, 1879), pp. 105-106 (scan: archive.org 'upanishads01mluoft'). The speaker is named at VI.1.1 ('his father (Uddâlaka, the son of Aruna)') and VI.8.1 ('Uddâlaka Âruni said to his son Svetaketu'). Cross-check: R. E. Hume, The Thirteen Principal Upanishads (Oxford University Press, 1921), p. 248 (archive.org 'thirteenprincipa00hume').",
+          "url": "https://archive.org/details/upanishads01mluoft",
+          "exact_text": "Müller 1879, VI.14.1-2: \"'As one might lead a person with his eyes covered away from the Gandhâras, and leave him then in a place where there are no human beings; and as that person would turn towards the east, or the north, or the west, and shout, \"I have been brought here with my eyes covered, I have been left here with my eyes covered,\" 'And as thereupon some one might loose his bandage and say to him, \"Go in that direction, it is Gandhâra, go in that direction;\" and as thereupon, having been informed and being able to judge for himself, he would by asking his way from village to village arrive at last at Gandhâra,--in exactly the same manner does a man, who meets with a teacher to inform him, obtain the true knowledge. For him there is only delay so long as he is not delivered (from the body); then he will be perfect.\"  |  Hume 1921, p. 248: \"...as there he might be blown forth either to the east, to the north, or to the south... he would, if he were a sensible man, by asking [his way] from village to village, and being informed, arrive home at the Gandharas -- even so here on earth one who has a teacher knows: 'I belong here only so long as I shall not be released [from the body]. Then I shall arrive home.'\"",
+          "plain_retelling": "Long ago, a father named Uddalaka told his son Shvetaketu a story.\nSomeone covered a man's eyes, led him far away from his home in Gandhara, and left him where no people lived.\nThe man turned this way and that and called out, 'I was brought here with my eyes covered!'\nThen someone took the cover off his eyes and pointed: 'Go that way. That is Gandhara.'\nThe man asked the way from village to village, and at last he came home.\nThe father said a person with a teacher finds the way just like that.",
+          "notes": "FIX 1, mixed translations: The brief blends two translations. In Müller (1879) the man turns 'east, or the north, or the west' (NOT south) and 'shout[s]'. The place is 'a place where there are no human beings' (not 'a lonely place'), and he 'arrive[s] at last at Gandhâra'. Müller's closing line is 'a man, who meets with a teacher to inform him, obtain[s] the true knowledge'. The phrases 'east, north, south', 'one who has a teacher knows' and 'arrive home' are Hume's 1921 wording (p. 248). Pick ONE and quote it exactly. If you want the line 'a person who has a teacher knows', credit Hume 1921. Hume's 1921 book is public domain in the US (published before 1931; Hume died 1948). FIX 2, the commentary: Robbers, a forest, tigers, hunger and thirst are NOT in the Upanishad. They come from the Sanskrit commentary that Müller quotes in his footnote. Leave them out of the story, or say 'a later commentator imagined...'. NARRATOR: The father, Uddalaka Aruni, teaches his son Shvetaketu. In 6.14 itself Müller just says 'the father'. The person who removes the bandage is unnamed ('some one'), so don't name him or turn him into a teacher character. The text's own point: the teacher only removes the cover and points; the man still walks and asks village to village himself. That is a strong, accurate Reel angle. Do NOT say 'Gandhara is Kandahar' as fact. That is only Müller's footnote guess, and it pulls the post toward present-day Afghanistan/Pakistan. Say 'a faraway land called Gandhara'. The khanda ends with 'thou, O Svetaketu, art it' (tat tvam asi). The parable is about knowing the Self and final liberation, not about yoga technique, so don't say it is 'about asana teachers'. I could not open the sacred-texts.com mirror (blocked by a 403 error), so I verified against the archive.org page scan and the universalfreemasonry.org transcription, which match."
+        },
+        {
+          "key": "silence",
+          "verdict": "fix",
+          "source": "A traditional dhyana (meditation) verse chanted with the Dakshinamurti Stotram, of unknown authorship. English: P. R. Ramachander, 'Sri Dakshinamurthy Stotram', Hindupedia (he places it in an 'Appendix' of stanzas 'chanted after the main stotra'). Word meanings checked in Monier-Williams 1899: vyakhyana p. 1036 ('explaining, exposition, interpretation, gloss, comment'); chinna-samsaya p. 406 ('one whose doubts are dispelled'). For comparison: Alladi Mahadeva Sastry, Dakshinamurti Stotra of Sri Sankaracharya ... with Sri Sureswaracharya's Manasollasa (1st ed. 1899; 3rd ed. Samata Books 1978) treats the Hymn as ten stanzas and does not include this verse.",
+          "url": "https://hindupedia.com/en/Sri_Dakshinamurthy_Stotram",
+          "exact_text": "Sanskrit: citram vatataror mule vrddhah sisya gurur yuva | guros tu maunam vyakhyanam sisyas tu chinnasamsayah ||  |  Ramachander (Hindupedia): \"Chitram Vata tharor mole vruddha, / Sishya, Guror Yuva, / Gurostu mounam vykhyanam, / Sishyasthu china samsaya // It is strange to see, / The very old disciples, / And the very young teacher, / Who sit under a banyan tree, / With the teacher always observing silence, / And the students getting all the doubts cleared.\"",
+          "plain_retelling": "People chant an old verse about a teacher sitting under a big banyan tree.\nThe teacher is young, and his students are old.\nThe teacher does not say a single word.\nAnd still, all the students' doubts go away.\nThe verse calls this a wonder.\nIn the tradition, this silent teacher is Shiva, called Dakshinamurti.",
+          "notes": "FIX, attribution: Don't say 'Shankara wrote this' or 'from the Dakshinamurti Stotram by Shankara'. The hymn traditionally credited to Shankara is the ten stanzas beginning 'visvam darpana-drisyamana...' (the mirror stanza), which Sureshvara's Manasollasa comments on. Mahadeva Sastry's edition has those ten stanzas and not this verse, and Ramachander also lists it in an appendix 'chanted after the main stotra'. Safe wording: 'a traditional verse chanted with the Dakshinamurti hymn'. I found no earlier source text. The Dakshinamurti Upanishad was not checked line by line; the sanskritdocuments.org copy would not load. WORDING: The brief's 'the teacher's silence is the teaching' is a fair literal gloss, because vyakhyana means exposition or commentary (MW p. 1036). But it is NOT Ramachander's wording; his says 'With the teacher always observing silence'. The word 'always' is his own addition and is not in the Sanskrit. Quote him exactly with credit, or label your line as 'a literal rendering'. Ramachander's is a modern online translation, not public domain, so a short quote with credit is fine. The brief's 'doubts are cut' matches 'chinna' (cut), and MW renders chinna-samsaya as 'one whose doubts are dispelled'. Don't attach a number like 'a 16-year-old Shiva'. The sixteen-year-old detail and the story of the four sages (Sanaka and the others) come from later tradition and Ramana Maharshi's retelling, not from this verse. Mention them only as 'the tradition says'. SAFETY: Treat Shiva/Dakshinamurti reverently. No jokes about the 'young teacher, old students' image applied to Boonchu's own students, and no hint that the speaker is a silent guru."
+        }
+      ]
+    },
+    "jokes": [
+      {
+        "name": "A. Flooded twice (his words, exact punch). HOLD until the floods end",
+        "beats": [
+          {
+            "beat": "curiosity",
+            "seconds": "0-2.5",
+            "spoken": "My shala flooded twice.",
+            "on_screen": "My shala flooded twice.",
+            "shot": "Close on wet towels on the shala floor. Tilt up to his face. Flat, no smile."
+          },
+          {
+            "beat": "second hook",
+            "seconds": "2.5-5",
+            "spoken": "But... only one rain.",
+            "on_screen": "It only rained once.",
+            "shot": "His face to camera, still. Hold one second after the line."
+          },
+          {
+            "beat": "setup",
+            "seconds": "5-9.5",
+            "spoken": "Last week... storm in Bangkok. Roof leak. I put towels on the puddles.",
+            "on_screen": "Last week, a storm. The roof leaked.",
+            "shot": "Restaged. He looks up at the ceiling where it leaked, then down at the towels under it."
+          },
+          {
+            "beat": "payoff",
+            "seconds": "9.5-14",
+            "spoken": "Today... led primary. Sunny day. ... I almost break my arm.",
+            "on_screen": "Today: led primary. I almost broke my arm.",
+            "shot": "Sun through the window onto a wet floor. Keep the dark floor in frame so it is not all yellow. His bare foot slides a little on a wet spot. Small and safe, no real fall."
+          },
+          {
+            "beat": "punch",
+            "seconds": "14-18",
+            "spoken": "One Russian lake. A few Thai puddles.",
+            "on_screen": "One Russian lake. A few Thai puddles.",
+            "shot": "Wide on the empty floor after class: one big wet patch, a few small ones. He stands over them, small pause between the two lines, looks at camera, flat. Hold one second, cut. No students in frame."
+          }
+        ],
+        "why_funny": "Two floods but one rain is a riddle, so the viewer stays to solve it. Sunny day plus led primary narrows it down. The punch answers it with scale: one lake next to a few puddles. 'Puddles' also calls back to the storm towels, so the two floods meet in the last line. The target is the heat and Boonchu himself, the teacher who almost breaks his arm on his own floor.",
+        "risk": "HOLD today. 'Flooded', 'storm in Bangkok' and 'Thai puddles' point at the floods that killed 44 to 60 people, 4 in Bangkok. Heavy rain is forecast to 13 Oct. Post only when the floods and the death count have clearly ended. Even then, Thai viewers who lost homes may find 'flooded' light; 'My shala got wet twice' is the softer opener. Punch risk, medium: 'Russian lake' points at a real student in a real class. If one Russian was in the room, everyone there knows who it is. Russians are a main audience and buy the teacher program, and some will hear 'the big sweaty foreigner'. Defense: big sweat in led primary means hard work, and the joke is the heat on a body from a cold country. Before posting, ask that student. Film only the empty floor, never their mat or face. If they say no, use the punch from version C.",
+        "from": "light-edit"
+      },
+      {
+        "name": "B. Sunny day, wet floor (safe today, keeps the Russian lake)",
+        "beats": [
+          {
+            "beat": "curiosity",
+            "seconds": "0-3",
+            "spoken": "Sunny day.",
+            "on_screen": "Sunny day. So why the towels?",
+            "shot": "Start on the bright window, tilt down to towels all over the shala floor. Keep the dark floor in frame so it is not all yellow."
+          },
+          {
+            "beat": "second hook",
+            "seconds": "3-6",
+            "spoken": "I almost break my arm. ... Here.",
+            "on_screen": "I almost broke my arm here.",
+            "shot": "He points down at one wet spot. Face flat, no smile."
+          },
+          {
+            "beat": "setup",
+            "seconds": "6-9",
+            "spoken": "Today is led primary.",
+            "on_screen": "Today was led primary.",
+            "shot": "Empty shala after class. Sun on the floor, wet patches shining."
+          },
+          {
+            "beat": "payoff",
+            "seconds": "9-13",
+            "spoken": "Floor is wet... is sweat. Okay. I put towels on the puddles.",
+            "on_screen": "Sweat. I put towels on the puddles.",
+            "shot": "He drops towels on the wet patches, one by one. No expression."
+          },
+          {
+            "beat": "punch",
+            "seconds": "13-17",
+            "spoken": "One Russian lake. ... A few local puddles.",
+            "on_screen": "One Russian lake. A few local puddles.",
+            "shot": "Wide: one big wet patch, a few small ones. He looks at camera. Hold one second, cut. No students in frame."
+          }
+        ],
+        "why_funny": "The sun and the towels do not match, so the viewer wants to know why. 'Here' turns a wet spot into a near accident. Then the big word 'lake' lands on a sweat stain, said flat. 'Local' keeps his rhythm: one body from a cold country against bodies used to the heat. The target is the heat, not the student, because big sweat means hard work.",
+        "risk": "News: safe today. It has no flood, storm, rain, roof, 'Bangkok' or 'Thai', as the news check asked. Watch-out: 'local puddles' is my one-word swap for 'Thai puddles'. If a Thai viewer could still hear floods in it, use 'a few small puddles'. Student risk, medium, same as A: the Russian lake is one real student. Ask them first and film only the empty floor. Saying 'sweat' before the punch gives up a little surprise, but non-native viewers will get the joke.",
+        "from": "light-edit"
+      },
+      {
+        "name": "C. I almost broke my arm (safe today, joke on Boonchu only)",
+        "beats": [
+          {
+            "beat": "curiosity",
+            "seconds": "0-3",
+            "spoken": "Today... I almost break my arm.",
+            "on_screen": "Today I almost broke my arm.",
+            "shot": "Close on his face, flat. One hand on his elbow."
+          },
+          {
+            "beat": "second hook",
+            "seconds": "3-6",
+            "spoken": "Not in asana. No no. ... I almost slip.",
+            "on_screen": "Not in an asana. I almost slipped.",
+            "shot": "His bare feet step slowly across the shala floor."
+          },
+          {
+            "beat": "setup",
+            "seconds": "6-9",
+            "spoken": "Today is led primary. Sunny day.",
+            "on_screen": "Led primary. Sunny day.",
+            "shot": "Sun through the window onto the empty floor after class. Keep the floor in frame, not all yellow."
+          },
+          {
+            "beat": "payoff",
+            "seconds": "9-13",
+            "spoken": "Okay... I put towels on the puddles.",
+            "on_screen": "So I put towels on the puddles.",
+            "shot": "He drops towels on wet patches, one by one, no expression."
+          },
+          {
+            "beat": "punch",
+            "seconds": "13-16.5",
+            "spoken": "This one... not a puddle. ... Lake.",
+            "on_screen": "This one is not a puddle. A lake.",
+            "shot": "He stops at one big wet patch. Looks at it, then at camera. Hold one second."
+          },
+          {
+            "beat": "tag",
+            "seconds": "16.5-18",
+            "spoken": "(no words)",
+            "on_screen": "Two towels.",
+            "shot": "He drops a second towel on the lake. Cut. Optional: cut this if the punch must be the last frame."
+          }
+        ],
+        "why_funny": "It opens with a near accident and no answer, so the viewer stays. 'Not in an asana' takes away the obvious guess. The answer is the most boring one: a wet floor on a sunny day. The joke is on Boonchu, an Ashtanga teacher who is safe in the asana and almost loses to the floor. 'Lake' is the one big word, said flat, and the second towel is a quiet button.",
+        "risk": "Lowest risk. No weather words, no nationality, no student named or filmed. The only butt is Boonchu. Cost: it loses his best line, the Russian lake, and the two-floods riddle, so expect smiles more than laughs. Check one fact: the brief says he almost slipped. If he really fell, change line 2. The silent tag breaks his 'punch last' rule a little; cut it if he wants the punch to end the Reel.",
+        "from": "light-edit"
+      },
+      {
+        "name": "V1 Counting Is Dangerous (safe to post today)",
+        "beats": [
+          {
+            "beat": "curiosity",
+            "seconds": "0-3",
+            "spoken": "Outside... blue sky. Inside... floor is wet.",
+            "on_screen": "Blue sky outside. Wet floor inside.",
+            "shot": "Phone at the window: blue sky, no full-yellow sun glare. Tilt down to a shiny wet patch on the shala floor. No people in frame."
+          },
+          {
+            "beat": "second hook",
+            "seconds": "3-6",
+            "spoken": "And today... I almost break my arm.",
+            "on_screen": "And I almost broke my arm.",
+            "shot": "Close-up of Boonchu holding his elbow. Flat face, no smile."
+          },
+          {
+            "beat": "setup",
+            "seconds": "6-9",
+            "spoken": "Led primary. They do asana. I count.",
+            "on_screen": "Led primary. They do asana. I count.",
+            "shot": "Boonchu stands still at the front, counting. Students only from behind or feet only, no faces."
+          },
+          {
+            "beat": "payoff",
+            "seconds": "9-13",
+            "spoken": "End of class... floor is a lake. Sweat. I walk... whoop.",
+            "on_screen": "End of class. A lake of sweat.",
+            "shot": "Low angle on the wet floor. His bare foot slides a little, hand grabs the wall. Re-enact slowly and safely."
+          },
+          {
+            "beat": "punch",
+            "seconds": "13-17",
+            "spoken": "Everybody is wet. Only one person is dry. Me. ... I almost break my arm.",
+            "on_screen": "The only dry person almost broke an arm.",
+            "shot": "Back to his face, dry T-shirt, white towel on shoulder. Hold one second, flat."
+          },
+          {
+            "beat": "tag",
+            "seconds": "17-19",
+            "spoken": "Counting... is dangerous.",
+            "on_screen": "Counting is dangerous.",
+            "shot": "He folds the towel and walks out of frame."
+          }
+        ],
+        "why_funny": "The setup says he does nothing in led primary. He just counts. So he is the only dry person in the room, and he is the one who got hurt. The joke is on Boonchu, not the students. The tag says the easy job is the dangerous one, said flat.",
+        "risk": "Lowest risk. No roof, no weather, no flood, storm or Bangkok words, so it fits the news hold. Film the slip as a slow, safe re-enactment. Keep student faces out of frame so nobody looks like the butt.",
+        "from": "punch-up"
+      },
+      {
+        "name": "V2 The Roof Leaked Once",
+        "beats": [
+          {
+            "beat": "curiosity",
+            "seconds": "0-3",
+            "spoken": "Today... I almost break my arm.",
+            "on_screen": "I almost broke my arm today.",
+            "shot": "Close-up, flat face, white towel over his shoulder. Empty shala behind him."
+          },
+          {
+            "beat": "second hook",
+            "seconds": "3-6",
+            "spoken": "Sunny day. Blue sky. ... Floor is wet.",
+            "on_screen": "Sunny day. Wet floor.",
+            "shot": "Quick cut: blue sky in the window, then the wet floor shining."
+          },
+          {
+            "beat": "setup",
+            "seconds": "6-9",
+            "spoken": "Last week, roof leaks. Okay. I put towels. Done.",
+            "on_screen": "Last week the roof leaked. Towels down.",
+            "shot": "He looks up at the ceiling, then drops white towels on the floor and pats them flat with his foot."
+          },
+          {
+            "beat": "payoff",
+            "seconds": "9-13",
+            "spoken": "Today, led primary. I walk... whoop. No no. Not the roof.",
+            "on_screen": "Today, led primary. I slipped. Not the roof.",
+            "shot": "Low angle: bare foot slides, hand to the wall, safe re-enactment. Then he points up at the dry ceiling."
+          },
+          {
+            "beat": "punch",
+            "seconds": "13-16",
+            "spoken": "Roof leaks one time. Students leak... whole class.",
+            "on_screen": "The roof leaked once. Students leaked all class.",
+            "shot": "Flat face to camera, hold one second. Cutaway of wet mat edges or feet only, no faces."
+          },
+          {
+            "beat": "tag",
+            "seconds": "16-18",
+            "spoken": "Same towels.",
+            "on_screen": "Same towels.",
+            "shot": "He drops the same white towels on the new wet floor."
+          }
+        ],
+        "why_funny": "The sound-off hook makes you ask how. Sunny day plus wet floor deepens it. The roof sets up a normal small problem. The punch puts the roof next to the room: one leak against a whole class of sweat. The towels come back as the callback.",
+        "risk": "The roof leak is a weather echo while flood deaths are still in the news. It has no flood, storm or Bangkok words, but Thai viewers may still link it. Best to wait until the floods have clearly ended, or post V1 today. 'Students leaked' aims at the heat, but show feet only, no faces.",
+        "from": "punch-up"
+      },
+      {
+        "name": "V3 Puddles and a Lake",
+        "beats": [
+          {
+            "beat": "curiosity",
+            "seconds": "0-3",
+            "spoken": "This week... my floor gets wet two times.",
+            "on_screen": "My shala floor got wet twice this week.",
+            "shot": "Boonchu kneels, pressing a white towel on the floor, then looks up at the camera."
+          },
+          {
+            "beat": "second hook",
+            "seconds": "3-6",
+            "spoken": "Only one time is the roof.",
+            "on_screen": "Only once from the roof.",
+            "shot": "Tilt up to the ceiling, then back down to his flat face."
+          },
+          {
+            "beat": "setup",
+            "seconds": "6-9",
+            "spoken": "Last week, roof leaks. Small puddles. I put towels. Okay.",
+            "on_screen": "Last week: small puddles. Towels down.",
+            "shot": "White towels laid in a neat row on the floor."
+          },
+          {
+            "beat": "payoff",
+            "seconds": "9-13",
+            "spoken": "Today, sunny day. Led primary. Sweat... I slip. Almost break my arm.",
+            "on_screen": "Sunny day. Led primary. Sweat. I slipped.",
+            "shot": "Sunlight on the floor, not a full-yellow frame. Foot slides, hand to the wall, safe re-enactment."
+          },
+          {
+            "beat": "punch",
+            "seconds": "13-17",
+            "spoken": "The roof makes puddles. ... Led primary makes a lake.",
+            "on_screen": "Roof: puddles. Led primary: a lake.",
+            "shot": "Flat face to camera, hold one second."
+          },
+          {
+            "beat": "tag",
+            "seconds": "17-19",
+            "spoken": "I need bigger towels.",
+            "on_screen": "I need bigger towels.",
+            "shot": "He holds up one small white towel, looks at it, flat."
+          }
+        ],
+        "why_funny": "It keeps Boonchu's own lake line. The size goes up: puddles from a roof, then a lake from one class. The target is the heat and how hard led primary is, not any person. 'Bigger towels' calls back the towels and puts the joke on him.",
+        "risk": "Same roof echo as V2, and 'wet twice' is close to his 'flooded twice'. Hold until the floods have clearly ended. I cut 'Russian' from his lake line so no nationality is the butt. 'Puddles' alone is fine. 'Thai puddles' is not.",
+        "from": "punch-up"
+      }
+    ],
+    "joke_judge": {
+      "ranking": [
+        {
+          "name": "V1 Counting Is Dangerous (safe to post today)",
+          "scroll_stop": 6,
+          "laugh": 5,
+          "clarity": 8,
+          "offense_risk": 2,
+          "persona_notes": "SCROLLER: 'Blue sky outside. Wet floor inside.' is a fair riddle with sound off, but the window-to-floor tilt is slow. The arm line at 3 s is what really holds them, and it comes just after the 3-second window. THAI OFFICE WORKER: gets all of it. 'They do asana. I count.' needs no yoga knowledge, 'A lake of sweat' is written on screen, and the lazy-teacher-gets-hurt irony works in any language. RUSSIAN STUDENT: laughs at the teacher and feels included, because 'everybody is wet' names nobody. EDITOR: this is the only version that passes every house rule. The target is Boonchu, the curiosity beat is not a joke, and there are no weather or disaster words. Two faults: the punch repeats the hook ('I almost break my arm' twice), and the best line, 'Counting is dangerous', sits in a tag after the punch, which breaks punch-last. One fact to check: 'only one person is dry' must be true. Agreed: a solid smile, and a small laugh once the fix below is in.",
+          "fix": "Make the punch the last beat and cut the tag: spoken 'Everybody is wet. Only one is dry. Me. ... Counting is dangerous.' / on-screen 'Everybody is wet. I am dry. Counting is dangerous.'"
+        },
+        {
+          "name": "A. Flooded twice (his words, exact punch). HOLD until the floods end",
+          "scroll_stop": 7,
+          "laugh": 6,
+          "clarity": 3,
+          "offense_risk": 8,
+          "persona_notes": "SCROLLER: 'My shala flooded twice.' over wet towels is the strongest opener of the six. But this week a Bangkok feed is full of real flood news, so many will read it as news and swipe away out of respect. THAI OFFICE WORKER: 'flooded' and 'storm in Bangkok' are not funny this week. He does not know what led primary is. 'Sweat' is never said or written, so he cannot get the reveal. And 'a few Thai puddles' sounds like shrinking a disaster that killed people. RUSSIAN STUDENT: laughs loudest of any version, because the joke is built on a Russian working hardest in the heat. If she was in that class, she knows the lake is her or her friend, and she would want to be asked first. EDITOR: best structure of the six. The riddle (two floods, one rain) is answered by scale (a lake against puddles), the punch comes last, and the curiosity beat is not a joke. It fails two house rules. The punch lands on one real, identifiable student. And the weather and disaster words break content safety today: news reports from 7 to 8 Oct give 44 to 60 flood deaths nationally, 4 in Bangkok, a city-wide disaster declaration, and a heavy-rain warning to 13 Oct. Agreed: the only real laugh in the set, but only for insiders. It cannot be posted today.",
+          "fix": "Add the missing reveal: payoff spoken 'Today... led primary. Sunny day. Everybody sweat. I almost break my arm.' / on-screen 'Led primary. Sweat. I almost broke my arm.' Then post only after the floods clear, with the student's OK."
+        },
+        {
+          "name": "B. Sunny day, wet floor (safe today, keeps the Russian lake)",
+          "scroll_stop": 5,
+          "laugh": 5,
+          "clarity": 8,
+          "offense_risk": 5,
+          "persona_notes": "SCROLLER: 'Sunny day.' is the weakest first word of the six. The text 'So why the towels?' rescues it a little, but towels on a floor are not a striking image. THAI OFFICE WORKER: gets it, because 'Sweat' is on screen. Foreigners out-sweating locals is a joke Thais already tell, so it may land with him. RUSSIAN STUDENT: with no storm in this version, the punch is only 'one Russian against the locals'. The joke is now about her nationality and nothing bigger, so she feels more singled out than in A. EDITOR: the order is correct. 'Local' reads like a word swap made to hide something, and it is weaker than 'Thai'. Without the storm, the target shrinks from the weather to one student, which breaks the house rule more clearly than A does. Saying 'sweat' before the punch costs some surprise but buys clarity. Agreed: clear and safe on the news, but the butt is a student.",
+          "fix": "Swap beats 1 and 2 so the 0-3 s text is 'I almost broke my arm here.' and 'Sunny day. So why the towels?' becomes the second hook."
+        },
+        {
+          "name": "V3 Puddles and a Lake",
+          "scroll_stop": 5,
+          "laugh": 5,
+          "clarity": 7,
+          "offense_risk": 4,
+          "persona_notes": "SCROLLER: 'My shala floor got wet twice this week.' is soft and too long for a 2-second decision. Boonchu kneeling with a towel helps a little. THAI OFFICE WORKER: 'Sweat' on screen carries him through. 'Led primary: a lake' still needs him to know what led primary is. RUSSIAN STUDENT: smiles. 'I need bigger towels' is a warm button, and no person is the butt. EDITOR: it keeps A's riddle and A's scale punch, and the target is the class, the heat and Boonchu. The roof leak still echoes this week's storms. The tag comes after the punch. And it has a fact error: line 1 says 'this week', but the roof leaked LAST week (his own words and this version's own setup). Agreed: a clean, safe-ish shadow of A. Losing 'Russian' takes away the specific detail that made the line funny.",
+          "fix": "Fix the invented timing: on-screen 'My shala floor got wet twice.' / spoken 'My floor gets wet... two times.' (drop 'this week', because the roof leaked last week)."
+        },
+        {
+          "name": "V2 The Roof Leaked Once",
+          "scroll_stop": 6,
+          "laugh": 4,
+          "clarity": 4,
+          "offense_risk": 5,
+          "persona_notes": "SCROLLER: 'I almost broke my arm today.' stops people, but the shot is a plain talking head. THAI OFFICE WORKER: a roof leak this week touches the floods. 'Sweat' is never said, so 'Students leaked all class' is a puzzle. RUSSIAN STUDENT: 'leaked' does not translate well for a person; in Russian it is a word for roofs and pipes. In English slang 'take a leak' means to pee, so native speakers may hear a pee joke. EDITOR: in the punch, the students as a group become the thing that leaked, and that edges toward making students the butt. The tag 'Same towels' comes after the punch. The roof-against-room comparison is sound, but the wording is wrong. Agreed: weakest laugh after C, with confusing wording and a weather echo.",
+          "fix": "Put Boonchu inside the punch and name the sweat: spoken 'Roof leaks one time. We sweat... whole class.' / on-screen 'The roof leaked once. We sweated all class.'"
+        },
+        {
+          "name": "C. I almost broke my arm (safe today, joke on Boonchu only)",
+          "scroll_stop": 6,
+          "laugh": 4,
+          "clarity": 3,
+          "offense_risk": 1,
+          "persona_notes": "SCROLLER: 'Today I almost broke my arm.' with a hand on the elbow is a universal injury hook and works with sound off. THAI OFFICE WORKER: 'Not in an asana' gets a small smile. Then there are puddles on a sunny day, and nobody says why. 'Sweat' never appears, so he is lost at the reveal. RUSSIAN STUDENT: smiles and has no problem with it. She may still wonder whose lake it is. EDITOR: it follows every rule and the only target is Boonchu. But the punch ('not a puddle, a lake') only makes the same picture bigger; it is not a turn. The silent tag comes after the punch. Agreed: the safest version and the least funny one. Expect smiles, not laughs.",
+          "fix": "Name the reveal in the payoff: spoken 'Okay... is sweat. I put towels on the puddles.' / on-screen 'Sweat. So I put towels on the puddles.'"
+        }
+      ],
+      "winner": "V1 Counting Is Dangerous (safe to post today)",
+      "why": "Honest verdict: none of the six is a big laugh for a cold, non-yoga audience. Only A gets a real laugh, and mostly from insiders: Russians at AYBKK and Ashtanga practitioners. A cannot go out today. News from 7 to 8 Oct (malaymail.com/news/world/2026/10/08/thailand-floods-since-sept-16-leave-44-dead-as-more-than-31-million-people-affected/238255; malaymail.com/amp/news/world/2026/10/07/floods-kill-60-across-thailand-as-bangkok-races-to-clean-up-before-imf-meetings/238107; bernama.com/en/world/news.php?id=2615896) reports 44 to 60 flood deaths nationally, 4 in Bangkok, a city-wide disaster declaration, and a heavy-rain warning to 13 Oct. In that week, 'flooded', 'storm in Bangkok' and 'a few Thai puddles' break the disaster rule. A also never says 'sweat', so most non-native viewers miss the reveal. And its punch lands on one identifiable Russian student, which breaks Boonchu's own rule that a student is never the butt. B keeps the same student problem without A's storm comparison, so it is even more a nationality joke. V1 is the only version that passes every house rule and can post today. The butt is Boonchu, the teacher who only counts and still nearly breaks his arm. The sweat reveal is on screen. It has no weather or disaster words. And 'Counting is dangerous' is a true Gervais-style flat line. Apply its fix: end on 'Counting is dangerous', cut the repeated arm line, and drop the tag, so the punch is last. Keep A, with 'Sweat' added, on hold. Post it after the floods have clearly ended, and only if that student says yes."
+    },
+    "reel_options": [
+      {
+        "name": "Eyes Covered (recommended first)",
+        "tool_combo": "Fork-First Story (hook) + /story 4 beats, 60 s (hook, context, ordeal, takeaway)",
+        "story_key": "blindfold (Chandogya Upanishad 6.14, tr. Max Müller 1879, with the fixes applied), with the gu_ru line (Advayataraka Upanishad 16, tr. Ayyangar 1938) as the last line",
+        "sample_hook": "(to his son) Close your eyes. Okay... now you are far from home. No people. Which way?\nAn old Indian father tells his son this story. Tonight... I tell mine.\n[On screen, sound off: 'Eyes covered. Far from home. Which way?']",
+        "body": "CONTEXT: a father named Uddalaka tells his son Shvetaketu this story. FAIL (the ordeal): someone covers a man's eyes and leaves him in a place with no people. He turns east, north, west and shouts, 'I was brought here with my eyes covered!' HERO: someone (no name) takes the cover off and points: 'Go that way. That is Gandhara.' PAYOFF: the man still has to ask his way village to village, and he walks home himself. Then Boonchu turns to the adults for the Mysore point, and the last line answers 'which way?': 'An old text says Gu is darkness, Ru takes it away. It never says Ru walks for you.'",
+        "asana": "Mysore style, one asana at a time. The teacher takes the cover off and points to the next asana. The student walks there alone, morning after morning, 'village to village'. [Boonchu's cue] for how he gives a new asana goes in the PAYOFF only, never earlier. Bridge line before it: 'This story is about something bigger than asana. But I see it every morning in the shala.' The text is about knowing the Self, not about asana teachers, so it must not be presented as being about them.",
+        "why": "It is the only option with a real plot (a man, a cover, a road), so it holds people through the middle, where the last joke Reel lost 60%. The source is a father teaching his son, which is exactly the bedtime frame, so the series format feels true and not forced. The end line ('the walking is yours') is the Mysore idea in a few words, so 10-year practitioners save and share it, and it gives future teachers in his program a story to teach from. The fixes keep it honest: Müller's wording only (east, north, west; 'shout'; 'a place where there are no human beings'), no robbers, forest or tigers (those come from a later commentary), the helper stays unnamed and is not a teacher character, and it is 'a faraway land called Gandhara', never Kandahar. Credit in the caption: Chandogya Upanishad 6.14, tr. F. Max Müller (1879).",
+        "trigger": "The viewer's own life: every Mysore student who waits for the next asana, or wants the teacher to do the walking for them. It follows today's 'Someone lit the lamp' carousel: the same Gu-Ru line, now with a story behind it."
+      },
+      {
+        "name": "Lights Off",
+        "tool_combo": "Name-the-Feeling (hook) + Hero's Journey 5 steps (body: home, the dark, the helper, the trial, the return)",
+        "story_key": "gu_ru (Advayataraka Upanishad 16, tr. T. R. Srinivasa Ayyangar, Adyar Library 1938, p. 8)",
+        "sample_hook": "(to his son) Okay. Lights off... dark, yes?\nAn old yoga text has a word for this dark. 'Gu.'\nAnd every Ashtangi knows it... when you go back, and you cannot see the floor.\n[On screen, sound off: 'Every backbend goes into the dark.']",
+        "body": "FAIL: bedtime, lights off, the room is dark and you cannot see the door. Then to the adults: dropping back, you cannot see behind you, so you throw your head back and hope. HERO: the line goes on screen ('The syllable Gu indicates darkness, the syllable Ru means its dispeller.'). Ru is the one who sends the dark away, and in the shala that is a pair of hands that shows you where the floor is. PAYOFF: one morning you go back alone and it is not dark any more, because now your body knows where the floor is. The last line closes the hook: 'Gu is the dark behind you. Ru is the hand... until you don't need it.'",
+        "asana": "Dropping back into Urdhva Dhanurasana from standing. You cannot see behind you (the 'Gu'), and the teacher's hands guide you until your body knows where the floor is. [Boonchu's cue] goes in the HERO beat, where the hands come in, not before. Keep the frame as 'the text describes the role', never 'I am Ru' or 'I am the light'.",
+        "why": "The bedtime open is soft and unusual for a yoga feed, so people stay past the first 3 seconds. The fear of the dark behind you in a dropback is a feeling every serious practitioner has had, so people comment with their own first-dropback story. Quoting the text with credit and keeping the teacher as a role (not a boast) builds trust for the teacher program (Lane A). Hero's Journey gives a clean rise: dark, helper, trial, home. The 'until you don't need it' ending shows his teaching value: the goal is for the student to do it alone. Say 'an old yoga text', never 'ancient'. Do not quote verses 17-18.",
+        "trigger": "The viewer's own life: the first dropbacks, and the morning you finally go back alone. Post it the day after today's 'Someone lit the lamp' carousel so carousel readers get the story behind the line."
+      },
+      {
+        "name": "Guru Means Heavy",
+        "tool_combo": "Root and Wobble (word-root reveal hook) + Vibe Samurai (flat statement, credit the source, ladder of 3, the turn, screenshot line, closing flip), with light Gervais deadpan aimed only at himself",
+        "story_key": "gu_ru (Ayyangar 1938 line + Monier-Williams, Sanskrit-English Dictionary 1899, p. 359: 'heavy, weighty ... venerable')",
+        "sample_hook": "This morning I post it: 'Gu is darkness. Ru takes it away.' Beautiful line. Yoga teachers love it. Me too...\nBut the dictionary? It says guru means... heavy.\n[On screen, sound off: 'Guru = heavy?']",
+        "body": "FAIL: first the bedtime version for his son (Gu is the dark, Ru sends the dark away), then to the adults, dry and aimed at himself: 'My carousel title today: Someone lit the lamp. Very spiritual.' The old text is playing a word game; it is not where the word comes from. HERO: credit the source (Monier-Williams, 1899): guru means heavy, weighty, worth respect. Ladder of 3: 'Latin, gravis. Greek, barys. English... gravity. Same family.' The turn: 'Guru isn't only a light. It's a weight.' Screenshot line: 'Light shows you the floor. Weight keeps you on it.' PAYOFF: the asana reveal, then the closing flip back to the bedtime frame: 'My son gets the lamp story. You get the heavy one.'",
+        "asana": "Samasthitih, the first asana of every practice. Before any light, the practice teaches you to stand heavy, weight down into the feet. [Boonchu's cue] goes after the screenshot line, right before the closing flip, never earlier. Keep gu/ru as 'an old yoga text says', and say plainly that the dictionary root is 'heavy'.",
+        "why": "A teacher who adds the other half to his own post on the same day earns trust that no 'ancient wisdom' Reel can buy. That is strong authority for Lane A. Most 10-year practitioners have heard gu/ru a hundred times, so the guru, gravis, gravity reveal is new to them: they comment 'I never knew' and save it. The screenshot line is short and travels in Thai, Chinese and Russian subtitles. The joke is aimed at Boonchu himself, so it stays light without touching the lineage or the practice. Optional, check before use because it is not in the verified material: Thai 'kru' (teacher) is said to come from the same word, which would be a strong extra line for his Thai viewers.",
+        "trigger": "Today's news: his own carousel 'Someone lit the lamp' went up today with the gu/ru line. This Reel is 'the other half', posted today or tomorrow while the carousel is still showing in feeds."
+      }
+    ],
+    "reel_judge": {
+      "ranking": [
+        {
+          "name": "Eyes Covered (recommended first)",
+          "hook": 7,
+          "bedtime_english": 8,
+          "ashtanga_fit": 9,
+          "rules_ok": true,
+          "problems": "Small fixes only. (1) Two texts in one Reel: the story is Chandogya 6.14, but the last line quotes the Advayataraka Upanishad. Say 'another old yoga text says...', not 'an old text', so viewers do not think the Chandogya says Gu/Ru. Credit both in the caption: Chandogya Upanishad 6.14, tr. F. Max Muller 1879, and Advayataraka Upanishad 16, tr. T. R. Srinivasa Ayyangar 1938. (2) Name load for a 5-year-old and for non-native viewers: Uddalaka, Shvetaketu and Gandhara come in 15 seconds. Explain each one the first time ('Uddalaka, a father', 'a faraway land called Gandhara'), or drop Shvetaketu and just say 'his son'. (3) The shout on screen: if it is in quote marks, use Muller's exact words 'I have been brought here with my eyes covered'. Otherwise mark it as a retelling. (4) The hook is a story hook, not one aimed at practitioners. The 'Tonight... I tell mine' line has to land by 6 s, or 10-year practitioners will scroll. (5) Waiting on Boonchu's own words for how he gives a new asana. It goes in the PAYOFF only. Keep the bridge line so it is not presented as a text about asana teachers. The son is a verified fact (5 years old, standing series frame). Never invent what the son says. No 'pose' found."
+        },
+        {
+          "name": "Lights Off",
+          "hook": 8,
+          "bedtime_english": 7,
+          "ashtanga_fit": 6,
+          "rules_ok": false,
+          "problems": "(1) No myth: 'lights off' is a mood, not a story, so it breaks the Hidden Stories format, and the FAIL and HERO beats are thin. (2) It says 'Gu' in the first 3 seconds, which breaks his REVEAL AT THE END order. (3) It repeats the 7 Oct script 'The Hand That Knew the Way': lamp out, in the dark, Urdhva Dhanurasana and drop back. That is the same asana and the same dark image 5 days apart. (4) Inflation risk: 'Ru is the hand' in a Reel where Boonchu's own hands guide dropbacks reads as 'I am Ru', which the gu_ru note forbids. (5) 'An old yoga text has a word for this dark. Gu.' makes Gu sound like a real Sanskrit word for darkness. The text only plays with the syllable. Say 'An old yoga text says the sound Gu means darkness.' (6) 'Dispeller' in the on-screen quote is a hard word for non-native viewers. Keep the exact quote, but say it plainly out loud. No 'pose' found."
+        },
+        {
+          "name": "Guru Means Heavy",
+          "hook": 9,
+          "bedtime_english": 5,
+          "ashtanga_fit": 6,
+          "rules_ok": false,
+          "problems": "(1) Not a bedtime story: it is a word-root essay (Vibe Samurai) with no myth and no FAIL/HERO plot, and the reveal ('guru = heavy') comes in the hook, not at the end. (2) It argues with the very line Boonchu asked to turn into the Reel, on the same day as his own 'Someone lit the lamp' carousel. Calling the text a 'word game' with a dry 'Very spiritual' can read to devotional Indian, Thai and Chinese viewers as mocking an old sacred text. (3) Facts that are not in the verified set: 'English gravity, same family' (Monier-Williams lists only Latin gravis, Greek barys, Gothic and Lithuanian), and the Thai 'kru' line. Cut both or verify them first. (4) Hard words for a 5-year-old and for non-native viewers: gravis, barys, weighty, Monier-Williams. (5) 'Samasthitih, the first asana of every practice' needs Boonchu's OK on the wording. (6) It mixes deadpan into a Lane A authority piece on the same day as his separate flood joke. The hook is the strongest of the three, so save the 'guru = heavy' idea for a later episode with a real story."
+        }
+      ],
+      "pick": "Eyes Covered (recommended first)",
+      "why": "It is the only option with a real bedtime story, a father telling his son, so it fits the series and keeps people watching through the middle.\nThe Gu-Ru line comes last as the reveal, and the Mysore point (the teacher points, you walk) is pure Ashtanga with no boasting."
+    }
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Check"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Write"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 3,
+      "title": "Judge"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "safety:storm-news",
+      "phaseIndex": 1,
+      "phaseTitle": "Check",
+      "agentId": "ad63e71e64c6b8985",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791792900905,
+      "queuedAt": 1791792900826,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "I found no named storm or typhoon. What hit Bangkok was a r…",
+      "promptPreview": "News safety check for a light joke Reel. Boonchu (Ashtanga teacher, Bangkok) says: last week a storm hit Bangkok and his shala roof leaked; today (12 Oct 2026) was sunny and his led primary class was so sweaty he almost slipped. Use WebSearch (send several searches at once; use English and Thai queries such as \"Bangkok storm October 2026\", \"กรุงเทพ พายุ ฝนตกหนัก ตุลาคม 2569\", \"Thailand flood Octob…",
+      "promptFramed": true,
+      "lastProgressAt": 1791792954766,
+      "tokens": 71261,
+      "toolCalls": 15,
+      "durationMs": 53857,
+      "resultPreview": "{\"storm_found\":\"I found no named storm or typhoon. What hit Bangkok was a run of monsoon thunderstorms and heavy rain, on top of a major flood that had just happened.\\n- 24-27 Sep: Bangkok had nearly 300 mm of rain in about 48 hours. On 26 Sep the city declared a flood disaster in all 50 districts, with water waist-deep in some areas (Khaleej Times, 26 Sep 2026: https://www.khaleejtimes.com/world/…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "fact:guru-stories",
+      "phaseIndex": 1,
+      "phaseTitle": "Check",
+      "agentId": "a25a9f796e66ded3e",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791792900906,
+      "queuedAt": 1791792900827,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "Strict fact check for a \"Hidden Stories of Ashtanga\" Reel built on the line from the Advayataraka Upanishad 16 (tr. T. R. Srinivasa Ayyangar, 1938): \"The syllable 'Gu' indicates darkness, the syllable 'Ru' means its dispeller. Because of the quality of dispelling darkness, the Guru is so termed.\" Use WebSearch/WebFetch (archive.org, wisdomlib.org, sacred-texts.com, Wikisource, university pages). C…",
+      "promptFramed": true,
+      "lastProgressAt": 1791793414079,
+      "tokens": 142051,
+      "toolCalls": 67,
+      "durationMs": 513168,
+      "resultPreview": "{\"items\":[{\"key\":\"gu_ru\",\"verdict\":\"verified\",\"source\":\"Advayataraka Upanishad, verse 16, in 'The Yoga-Upanisad-s', translated into English (on the basis of the commentary of Sri Upanisad-Brahma-Yogin) by T. R. Srinivasa Ayyangar, edited by Pandit S. Subrahmanya Sastri, The Adyar Library, Madras, 1938 (preface by G. Srinivasa Murti, dated 15 Sept 1938), English translation p. 8. Real word root: Mo…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "write:joke-light-edit",
+      "phaseIndex": 2,
+      "phaseTitle": "Write",
+      "agentId": "af31627a80501ec75",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791793416276,
+      "queuedAt": 1791793416231,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "HOUSE RULES (Boonchu, owner of AYBKK Ashtanga Yoga Bangkok, 53, authorized Ashtanga teacher; audiences English, Thai, Chinese, Russian; most viewers are not native English speakers):\n- Plain 10-year-old English, short words, short lines, no long dash (em dash). Never the word \"pose\": always \"asana\".\n- Spoken lines must sound like HIS spoken English: short, present tense, simple (\"okay\", \"no no\", \"…",
+      "promptFramed": true,
+      "lastProgressAt": 1791793641808,
+      "tokens": 64860,
+      "toolCalls": 3,
+      "durationMs": 225531,
+      "resultPreview": "{\"versions\":[{\"name\":\"A. Flooded twice (his words, exact punch). HOLD until the floods end\",\"beats\":[{\"beat\":\"curiosity\",\"seconds\":\"0-2.5\",\"spoken\":\"My shala flooded twice.\",\"on_screen\":\"My shala flooded twice.\",\"shot\":\"Close on wet towels on the shala floor. Tilt up to his face. Flat, no smile.\"},{\"beat\":\"second hook\",\"seconds\":\"2.5-5\",\"spoken\":\"But... only one rain.\",\"on_screen\":\"It only rained …"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "write:joke-punch-up",
+      "phaseIndex": 2,
+      "phaseTitle": "Write",
+      "agentId": "a5437b8468904e990",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791793416277,
+      "queuedAt": 1791793416232,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "HOUSE RULES (Boonchu, owner of AYBKK Ashtanga Yoga Bangkok, 53, authorized Ashtanga teacher; audiences English, Thai, Chinese, Russian; most viewers are not native English speakers):\n- Plain 10-year-old English, short words, short lines, no long dash (em dash). Never the word \"pose\": always \"asana\".\n- Spoken lines must sound like HIS spoken English: short, present tense, simple (\"okay\", \"no no\", \"…",
+      "promptFramed": true,
+      "lastProgressAt": 1791793560738,
+      "tokens": 65595,
+      "toolCalls": 2,
+      "durationMs": 143835,
+      "resultPreview": "{\"versions\":[{\"name\":\"V1 Counting Is Dangerous (safe to post today)\",\"beats\":[{\"beat\":\"curiosity\",\"seconds\":\"0-3\",\"spoken\":\"Outside... blue sky. Inside... floor is wet.\",\"on_screen\":\"Blue sky outside. Wet floor inside.\",\"shot\":\"Phone at the window: blue sky, no full-yellow sun glare. Tilt down to a shiny wet patch on the shala floor. No people in frame.\"},{\"beat\":\"second hook\",\"seconds\":\"3-6\",\"spo…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "write:reel-options",
+      "phaseIndex": 2,
+      "phaseTitle": "Write",
+      "agentId": "acd2b61800d4dfd03",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791793562462,
+      "queuedAt": 1791793416232,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "HOUSE RULES (Boonchu, owner of AYBKK Ashtanga Yoga Bangkok, 53, authorized Ashtanga teacher; audiences English, Thai, Chinese, Russian; most viewers are not native English speakers):\n- Plain 10-year-old English, short words, short lines, no long dash (em dash). Never the word \"pose\": always \"asana\".\n- Spoken lines must sound like HIS spoken English: short, present tense, simple (\"okay\", \"no no\", \"…",
+      "promptFramed": true,
+      "lastProgressAt": 1791793872483,
+      "tokens": 69310,
+      "toolCalls": 4,
+      "durationMs": 310020,
+      "resultPreview": "{\"options\":[{\"name\":\"Eyes Covered (recommended first)\",\"tool_combo\":\"Fork-First Story (hook) + /story 4 beats, 60 s (hook, context, ordeal, takeaway)\",\"story_key\":\"blindfold (Chandogya Upanishad 6.14, tr. Max Müller 1879, with the fixes applied), with the gu_ru line (Advayataraka Upanishad 16, tr. Ayyangar 1938) as the last line\",\"sample_hook\":\"(to his son) Close your eyes. Okay... now you are far…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 6,
+      "label": "judge:joke-panel",
+      "phaseIndex": 3,
+      "phaseTitle": "Judge",
+      "agentId": "a51642d0b87ed582a",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791793874368,
+      "queuedAt": 1791793874316,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "V1 Counting Is Dangerous (safe to post today)",
+      "promptPreview": "HOUSE RULES (Boonchu, owner of AYBKK Ashtanga Yoga Bangkok, 53, authorized Ashtanga teacher; audiences English, Thai, Chinese, Russian; most viewers are not native English speakers):\n- Plain 10-year-old English, short words, short lines, no long dash (em dash). Never the word \"pose\": always \"asana\".\n- Spoken lines must sound like HIS spoken English: short, present tense, simple (\"okay\", \"no no\", \"…",
+      "promptFramed": true,
+      "lastProgressAt": 1791794025912,
+      "tokens": 67530,
+      "toolCalls": 3,
+      "durationMs": 151544,
+      "resultPreview": "{\"ranking\":[{\"name\":\"V1 Counting Is Dangerous (safe to post today)\",\"scroll_stop\":6,\"laugh\":5,\"clarity\":8,\"offense_risk\":2,\"persona_notes\":\"SCROLLER: 'Blue sky outside. Wet floor inside.' is a fair riddle with sound off, but the window-to-floor tilt is slow. The arm line at 3 s is what really holds them, and it comes just after the 3-second window. THAI OFFICE WORKER: gets all of it. 'They do asan…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 7,
+      "label": "judge:reel-options",
+      "phaseIndex": 3,
+      "phaseTitle": "Judge",
+      "agentId": "a5720dcbd578d92d6",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791793874368,
+      "queuedAt": 1791793874317,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Eyes Covered (recommended first)",
+      "promptPreview": "HOUSE RULES (Boonchu, owner of AYBKK Ashtanga Yoga Bangkok, 53, authorized Ashtanga teacher; audiences English, Thai, Chinese, Russian; most viewers are not native English speakers):\n- Plain 10-year-old English, short words, short lines, no long dash (em dash). Never the word \"pose\": always \"asana\".\n- Spoken lines must sound like HIS spoken English: short, present tense, simple (\"okay\", \"no no\", \"…",
+      "promptFramed": true,
+      "lastProgressAt": 1791794026802,
+      "tokens": 86839,
+      "toolCalls": 4,
+      "durationMs": 152433,
+      "resultPreview": "{\"ranking\":[{\"name\":\"Eyes Covered (recommended first)\",\"hook\":7,\"bedtime_english\":8,\"ashtanga_fit\":9,\"rules_ok\":true,\"problems\":\"Small fixes only. (1) Two texts in one Reel: the story is Chandogya 6.14, but the last line quotes the Advayataraka Upanishad. Say 'another old yoga text says...', not 'an old text', so viewers do not think the Chandogya says Gu/Ru. Credit both in the caption: Chandogya …"
+    }
+  ],
+  "totalTokens": 567446,
+  "totalToolCalls": 98
+}
