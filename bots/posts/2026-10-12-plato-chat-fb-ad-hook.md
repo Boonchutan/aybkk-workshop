@@ -17,3 +17,10 @@ Plato: yes, it is his recipe, but 'If you want to be successful' skips the 'and 
 A (work): If you work hard every day... and still don't see big results... working harder is not going to fix it alone. But one small win every morning, on your mat... that builds the best of you.
 B (morning): If you start your day with your phone and emails... more coffee is not going to fix it alone. But take the sunrise on your mat... and your day starts with a win.
 C (hours): If you want success... and you already work long hours... more hours is not the answer. But one small success every morning... it builds up.
+
+## CTA (Boonchu: 'give me cta')
+Spoken (last 5 s, closes the hook loop): "Your first small win... is easy. Send me the word MYSORE. I send you my first-class guide. Beginners welcome... we teach you from zero."
+On screen: Your first small win: send MYSORE | Thai: ชัยชนะเล็กๆ ครั้งแรกของคุณ: ส่งคำว่า MYSORE | เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย
+Button: Send message. Headline: Your first small win starts here.
+Ad text: hook line + 'Ashtanga at AYBKK, Bangkok. Beginners welcome. We teach you from zero.' + promo (standing wording, promo first, Sharathji last) + 'Send us MYSORE for the free First Mysore Class guide.'
+One spoken CTA only; offer only in the text; no price in the video. Check ManyChat covers Facebook Messenger, or reply by hand.
