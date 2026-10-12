@@ -5,3 +5,4 @@ Countdowns: Letter #2 due today. Promo ends 11 Nov: 30 days. No reminders due.
 Reel from Plato: Rama's bridge; strong monkeys bring rocks, the measuring line keeps the bridge straight. Asana: Setu Bandhasana. Hook: "Some people have sore knee. They walk every day. Still sore." Plato waits on Boonchu's Setu Bandhasana cue.
 Score: wins this week: none reported. 180K leads: 1 new today (first in 15 days). Letter #1: not reported sent.
 Carne and Plato both posted today. Inbox 07:08: 2 new, 2 hot.
+13:08 check-in: Mysore Reel due 19:00 Tue 13 Oct (1 day), course prices (2 days), online-teaching answer for Carne's lead (follow-up 14 Oct). Inbox: 1 new, 1 hot.
