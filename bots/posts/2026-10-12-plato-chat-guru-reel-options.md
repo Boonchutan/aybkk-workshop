@@ -1,3 +1,5 @@
+STATUS: DROPPED by Boonchu 12 Oct ('i dont like all 1,2,3. drop it. people will scroll away.')
+
 # Hidden Stories of Ashtanga (Ep. number = last posted + 1, ask Boonchu) · Gu-Ru Reel options (chat, 12 Oct)
 
 Route: Lane A. Last 3 IG posts were Lane B carousels (new-student promo), so Lane A is due.
