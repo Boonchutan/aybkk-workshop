@@ -1,0 +1,74 @@
+[
+ {
+  "id": 14,
+  "verdict": "keep",
+  "who": "Advayataraka Upanishad 16 · tr. T. R. Srinivasa Ayyangar, 1938",
+  "text": "The syllable 'Gu' indicates darkness, the syllable 'Ru' means its dispeller. Because of the quality of dispelling darkness, the Guru is so termed.",
+  "meaning": "Gu means darkness. Ru means the one who removes it. That is a guru.",
+  "source_url": "https://archive.org/details/TheYogaUpanishads",
+  "evidence": "Downloaded the archive.org OCR of The Yoga-Upanisad-s (tr. T. R. Srinivasa Ayyangar, ed. S. Subrahmanya Sastri, Adyar Library 1938); p. 8, verse (16) matches word for word. Not in either used file. Note: scholars call gu/ru a folk etymology, so present it as what the text says."
+ },
+ {
+  "id": 15,
+  "verdict": "keep",
+  "who": "Hatha Yoga Pradipika 1.3 · tr. Pancham Sinh, 1914",
+  "text": "Owing to the darkness arising from the multiplicity of opinions ... Compassionate Swatmarama composes the Hatha Yoga Pradipika like a torch to dispel it.",
+  "meaning": "Too many opinions make it dark. This book was written as a torch.",
+  "source_url": "https://archive.org/details/sacredbooksofthehindusvol15part3hathayogapradipikapanchamsinh_202002",
+  "evidence": "Downloaded the SBH vol. XV pt. III OCR (Panini Office; issue dated Jan. 1915): verse 3 reads exactly so; the cut words are 'people are unable to know the Raja Yoga.' HYP 1.64 and 1.67-68 were used before, but not 1.3."
+ },
+ {
+  "id": 16,
+  "verdict": "fix",
+  "who": "Kabir · tr. V. K. Sethi, Kabir: The Weaver of God's Name, 1984",
+  "text": "Kabir, I was trailing / The shadows ... / But my Master came / And placed a lamp in my hand.",
+  "meaning": "I was following shadows. Then my teacher came and gave me a lamp.",
+  "source_url": "https://archive.org/details/kabirtheweaverofgodsname",
+  "evidence": "Downloaded the archive.org OCR of Sethi's book (Radha Soami Satsang Beas, 1st ed. 1984, scan is the 3rd ed. 1998). The sakhi (cited K.G., p.2:11) reads in full 'Kabir, I was trailing / The shadows of rituals, / Of customs and holy books; / But my Master came / And placed a lamp in my hand.' Trimmed 'of rituals, of customs and holy books' so it cannot read as a dig at religion. The two Kabir lines used before are different poems."
+ },
+ {
+  "id": 17,
+  "verdict": "fix",
+  "who": "Shiva Samhita 3.18 · tr. Srisa Chandra Vasu, 1914",
+  "text": "The first condition of success is the firm belief that it (vidya) must succeed and be fruitful; the second condition is having faith in it; the third is respect towards the Guru...",
+  "meaning": "First, believe the method works. Then trust it. Then respect your teacher.",
+  "source_url": "https://archive.org/details/sacredbooksofthehindusvol15sivasamhitawithsanskrittextscvasu1914_202002",
+  "evidence": "Downloaded the OCR of Vasu's Siva Samhita (Panini Office, Allahabad, 1914), ch. 3 verse 18, p. 26-27: wording matches. Extended the text to include 'the third is respect towards the Guru' (exact words) so the slide matches the meaning, which mentions the teacher. Only 5.166 was used before."
+ },
+ {
+  "id": 18,
+  "verdict": "keep",
+  "who": "Vyasa, Yoga-bhashya on Yoga Sutra 1.20 · tr. James Haughton Woods, 1914",
+  "text": "Belief is the mental approval [of concentration]; for, like a good mother, it protects the yogin. For him [thus] believing ... there is the further (upa) attainment of energy.",
+  "meaning": "Trust in the path protects you like a mother. Then energy comes.",
+  "source_url": "https://archive.org/details/yogasystemofpata00wooduoft",
+  "evidence": "Downloaded the OCR of Woods, The Yoga-System of Patanjali (Harvard Oriental Series 17, 1914), p. 46: exact match, brackets included; the cut words are 'and setting discrimination [before him] as his goal'. Only YS 1.14 was used before, so this is new."
+ },
+ {
+  "id": 19,
+  "verdict": "keep",
+  "who": "Vivekachudamani 43 (attr. Shankara) · tr. Swami Madhavananda, 1921",
+  "text": "Fear not, O learned one ... there is a means of crossing this sea of relative existence; that very way by which sages have gone beyond it, I shall inculcate to thee.",
+  "meaning": "Don't be afraid. Others have crossed this sea. I will show you their way.",
+  "source_url": "https://archive.org/details/vivekachudamanio00sankrich",
+  "evidence": "Downloaded the OCR of the Advaita Ashrama, Mayavati 1921 edition, pp. 18-19, verse 43: exact match. The cut words are 'there is no death for thee;' (left out to keep death off the slide). Not in either used file."
+ },
+ {
+  "id": 27,
+  "verdict": "keep",
+  "who": "Bhagavad Gita 2.40 · tr. Annie Besant (4th ed., 1922)",
+  "text": "In this there is no loss of effort, nor is there transgression. Even a little of this knowledge protects from great fear.",
+  "meaning": "No effort on this road is wasted. Even a little guards you from fear.",
+  "source_url": "https://en.wikisource.org/wiki/Bhagavad-Gita_(Besant_4th)/Discourse_2",
+  "evidence": "Opened Wikisource (Besant 4th ed., 1922, from the scan): verse 40 matches, with a footnote saying 'knowledge' = Dharma. 2.40 has not been used, but the Gita has been used six times already, so keep it as a reserve only."
+ },
+ {
+  "id": 22,
+  "verdict": "fix",
+  "who": "Chandogya Upanishad IV.4-9 · tr. F. Max Müller, 1879",
+  "text": "His teacher gave Satyakama 'four hundred lean and weak cows'. 'I shall not return unless I bring back a thousand,' he said. Years later, with a thousand cows, he still asked to be taught: 'only knowledge which is learnt from a teacher ... leads to real good.'",
+  "meaning": "400 weak cows became 1,000. Still, he asked his teacher to teach him.",
+  "source_url": "https://archive.org/details/upanishads01mluoft",
+  "evidence": "Downloaded the OCR of SBE vol. 1 (Clarendon 1879). IV.4.5 (pp. 60-61) and IV.9.2-3 (p. 64) match the quoted words. Fixes: Müller writes '(Âkârya)', not 'Acharya', so that word was cut with '...'; the half-quote 'shone like one who knows' was dropped (the real line is 'you shine like one who knows Brahman'); the story was shortened. Only VI.14 of the Chandogya was used before."
+ }
+]

@@ -1,0 +1,92 @@
+[
+ {
+  "id": 200,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Seneca · Letters to Lucilius 6.5, tr. R. M. Gummere, 1917",
+  "text": "...the way is long if one follows precepts, but short and helpful, if one follows patterns.",
+  "meaning": "Rules make the road long. A living example makes it short.",
+  "source_url": "https://en.wikisource.org/wiki/Moral_letters_to_Lucilius/Letter_6",
+  "evidence": "Word for word on the Wikisource transcription of Gummere's 1917 Loeb vol. I, Letter 6 section 5. Not in used_quotes.txt, but the 8 Oct research.json kept the sentence just before it (6.5-6, 'the living voice...'), so keep the two posts well apart and leave out the Cleanthes line."
+ },
+ {
+  "id": 201,
+  "verdict": "fix",
+  "kind": "story",
+  "who": "Dante · Divine Comedy, cantos 1 and 34, tr. H. W. Longfellow, 1867",
+  "text": "In Dante's long poem, he is lost in a dark forest until the poet Virgil comes and offers to be his guide. After a long journey together, they climb a hidden road, Virgil going first, until Dante sees the sky through a round opening. 'Thence we came forth to rebehold the stars.'",
+  "meaning": "Lost in the dark? Follow the guide who knows the way out.",
+  "source_url": "https://www.gutenberg.org/ebooks/1001",
+  "evidence": "Gutenberg #1001 (Longfellow, Inferno) has I.113 'Thou follow me, and I will be thy guide,' (comma, and the next line is about the 'eternal place') and XXXIV.133-139 'that hidden road... We mounted up, he first and I the second, / Till I beheld through a round aperture... Thence we came forth to rebehold the stars.' Fixed: cut to one exact quote, dropped 'small' (not in text), no mention of Inferno or hell."
+ },
+ {
+  "id": 202,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "John Bunyan · The Pilgrim's Progress, Part I, 1678",
+  "text": "Do you see yonder shining light? He said, I think I do. Then said Evangelist, Keep that light in your eye...",
+  "meaning": "You may not see the goal yet. Keep your eyes on the light.",
+  "source_url": "https://www.gutenberg.org/ebooks/131",
+  "evidence": "Word for word in Gutenberg #131, section {17}; only the editorial bracketed Bible references [Ps. 119:105; 2 Pet. 1:19] are left out. Not on either used list; the sentences around it (wrath, family crying) are not quoted."
+ },
+ {
+  "id": 205,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Lucretius · On the Nature of Things 3.1-3, tr. W. E. Leonard, 1916",
+  "text": "O thou who first uplifted in such dark / So clear a torch aloft... / O thee I follow, glory of the Greeks",
+  "meaning": "Someone held up a light in the dark. I follow them.",
+  "source_url": "https://www.gutenberg.org/ebooks/785",
+  "evidence": "Word for word at the opening of Book III (Proem) in Gutenberg #785, Leonard's metrical translation; the '...' skips 'who first shed light / Upon the profitable ends of man,'. Library catalogs (Morgan, Wellcome) confirm first publication by Dent/Dutton in 1916."
+ },
+ {
+  "id": 206,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Plutarch · How a Man May Become Aware of His Progress in Virtue 15 (Moralia 85), tr. F. C. Babbitt, 1927",
+  "text": "...the thought and recollection of good men... gives support to those who are making progress... and in all difficulties keeps them upright and saves them from falling.",
+  "meaning": "Remembering good people helps you stay standing when things get hard.",
+  "source_url": "https://archive.org/details/plutarchsmoralia01plut_0",
+  "evidence": "Word for word in the archive.org full text of Babbitt's Loeb Moralia vol. I (1927), pp. 452-453 (running head 'Progress in Virtue, 85'), at the end of ch. 15. Plutarch's used quotes are different passages (kindling, health); the trims skip the generals/kings and the 'Idaean Dactyls' charms."
+ },
+ {
+  "id": 207,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Quintilian · Institutio Oratoria 10.2.2, tr. H. E. Butler, Loeb, 1920-22",
+  "text": "...it is a universal rule of life that we should wish to copy what we approve in others.",
+  "meaning": "Everyone learns by copying people who have already done it well.",
+  "source_url": "https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Quintilian/Institutio_Oratoria/10B*.html",
+  "evidence": "Word for word on LacusCurtius (Butler, Loeb vol. IV), Book X ch. 2 section 2, which begins 'And it is a universal rule of life...'. Catalogs give the Butler set as 1920-22 (vol. IV, Books X-XII, likely 1922); not on either used list."
+ },
+ {
+  "id": 208,
+  "verdict": "fix",
+  "kind": "story",
+  "who": "Homer · Odyssey, Books 2-3, tr. Samuel Butler, 1900",
+  "text": "In Homer's Odyssey, the goddess Athena takes the form of Mentor, an old family friend, to guide young Telemachus, who feels too shy to question a much older man. 'She then went quickly on, and Telemachus followed in her steps.' Through a French novel of 1699 based on the Odyssey, 'mentor' became our word for a trusted guide.",
+  "meaning": "A good guide walks ahead of you, so you can follow in their steps.",
+  "source_url": "https://www.gutenberg.org/ebooks/1727",
+  "evidence": "Butler (Gutenberg #1727, Book III, where he calls Athena 'Minerva') has 'ashamed to begin questioning one who is so much older than myself' then 'She then went quickly on, and Telemachus followed in her steps'; Merriam-Webster confirms Fenelon's Les aventures de Telemaque (1699) made 'mentor' a word for 'trusted guide'. Fixed: cut to one exact quote; no suitors, war or king named."
+ },
+ {
+  "id": 209,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Cennino Cennini · The Book of the Art, ch. 104, tr. Christiana J. Herringham, 1899",
+  "text": "There are many who say they have learned the art without having been with a master. Do not believe them...",
+  "meaning": "Don't believe people who say they learned the art without a teacher.",
+  "source_url": "https://archive.org/details/bookartcenninoc00herrgoog",
+  "evidence": "Word for word in the archive.org full text of Herringham (London: George Allen, 1899), ch. 104 'In what manner the art of painting pictures should be acquired', starting p. 87. Not on either used list; the harsher rest of the sentence is trimmed."
+ },
+ {
+  "id": 211,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Ralph Waldo Emerson · The Conduct of Life, 'Considerations by the Way', 1860",
+  "text": "Our chief want in life, is, somebody who shall make us do what we can. This is the service of a friend.",
+  "meaning": "What we need most is someone who makes us do what we can.",
+  "source_url": "https://www.gutenberg.org/ebooks/39827",
+  "evidence": "Word for word, with Emerson's own commas, in Gutenberg #39827 (copyright 1860 edition), inside 'Considerations by the Way'. Emerson's used quotes are different ones (strength from weakness; sunsets); he says 'friend', so don't label it a teacher."
+ }
+]

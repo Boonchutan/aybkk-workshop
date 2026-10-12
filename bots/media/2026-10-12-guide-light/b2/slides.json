@@ -1,0 +1,72 @@
+[
+ {
+  "photo": "12-021",
+  "who": "Eliud Kipchoge · Vienna, 12 Oct 2019, after a marathon in 1:59:40 · BBC",
+  "quote": "This shows no-one is limited. Now I've done it, I am expecting more people to do it after me.",
+  "meaning": "When one person does it, the rest of us know it can be done.",
+  "story": false
+ },
+ {
+  "photo": "12-049",
+  "who": "John Landy and Roger Bannister · the mile, 1954",
+  "quote": "John Landy ran the mile in 4:02 six times. Then, on 6 May 1954, Roger Bannister ran 3:59.4. Forty-six days later, Landy ran 3:58.0.",
+  "meaning": "A wall looks solid until someone walks through it. Then others follow.",
+  "story": true
+ },
+ {
+  "photo": "12-034",
+  "who": "Seneca · Letters to Lucilius 6.5, tr. R. M. Gummere, 1917",
+  "quote": "...the way is long if one follows precepts, but short and helpful, if one follows patterns.",
+  "meaning": "Rules make the road long. A living example makes it short.",
+  "story": false
+ },
+ {
+  "photo": "12-048",
+  "who": "Gertrude Ederle and her coach Bill Burgess · English Channel, 1926",
+  "quote": "In 1925, Gertrude Ederle's first try to swim the English Channel was stopped. Then she trained with Bill Burgess, who swam it in 1911. In 1926 she crossed in under 15 hours.",
+  "meaning": "Her coach had crossed that sea before. With him, she crossed it too.",
+  "story": true
+ },
+ {
+  "photo": "12-023",
+  "who": "Nainoa Thompson, student of navigator Mau Piailug · Polynesian Voyaging Society",
+  "quote": "In 1976, Mau Piailug guided the canoe Hokule'a to Tahiti with no instruments. His student Nainoa said: ‘I watched what he watched.’ In 1980, Nainoa navigated it to Tahiti in 33 days.",
+  "meaning": "He watched his teacher closely, then sailed the same long road.",
+  "story": true
+ },
+ {
+  "photo": "12-014",
+  "who": "Swami Vivekananda, on meeting his teacher Sri Ramakrishna · My Master, 1901",
+  "quote": "...when I myself saw this man, all scepticism was brushed aside. It could be done...",
+  "meaning": "He met someone who had done it, and his doubt disappeared.",
+  "story": false
+ },
+ {
+  "photo": "12-061",
+  "who": "Vivekachudamani 43 (attr. Shankara) · tr. Swami Madhavananda, 1921",
+  "quote": "...there is a means of crossing this sea of relative existence; that very way by which sages have gone beyond it, I shall inculcate to thee.",
+  "meaning": "Others have crossed this sea. I will show you the way they took.",
+  "story": false
+ },
+ {
+  "photo": "12-022",
+  "who": "Michelangelo, age 13 · Giorgio Vasari, Lives, 1568",
+  "quote": "In 1488, at 13, Michelangelo was placed for three years with the painter Domenico Ghirlandaio, ‘in order to learn to paint.’",
+  "meaning": "Even Michelangelo started as a boy learning from a master.",
+  "story": true
+ },
+ {
+  "photo": "12-024",
+  "who": "Isaac Newton · letter to Robert Hooke, February 1676",
+  "quote": "If I have seen further it is by standing on the shoulders of Giants.",
+  "meaning": "We see far because the people before us lift us up.",
+  "story": false
+ },
+ {
+  "photo": "12-036",
+  "who": "Japanese word origin · Daijisen; Nihon Kokugo Daijiten",
+  "quote": "Manabu, ‘to learn’, shares its root with manebu. Old meanings of manebu: ‘to copy a model’ and ‘to take in what a teacher teaches.’",
+  "meaning": "In Japanese, ‘to learn’ and ‘to copy’ grow from the same word.",
+  "story": true
+ }
+]

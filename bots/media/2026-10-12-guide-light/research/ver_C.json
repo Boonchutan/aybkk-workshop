@@ -1,0 +1,74 @@
+[
+ {
+  "id": 2,
+  "verdict": "fix",
+  "who": "Yoshida Kenko, Essays in Idleness 52 · tr. G. B. Sansom, 1911",
+  "text": "An old priest finally walked to a famous shrine on a hill. He prayed at the small temples at the foot, thought that was all, and went home, wondering why everyone else climbed the hill. The shrine was at the top. Kenko: 'A guide is desirable, even in small matters.'",
+  "meaning": "Without a guide, he missed the best part. Even small things need one.",
+  "source_url": "https://archive.org/details/in.ernet.dli.2015.69047",
+  "evidence": "Read the archive.org full text of Sansom's 1911 'The Tsuredzure Gusa of Yoshida no Kaneyoshi' (Trans. Asiatic Society of Japan vol. 39), section 52, p. 40: closes exactly 'A guide is desirable, even in small matters.' and its footnote says the shrine is at the hilltop, with the temples he saw at the foot. Swapped the Porter 1914 line for Sansom, as the brief asked (Keene 1967 is still in copyright and not online). Not used: the only Kenko line on the used list is a different section."
+ },
+ {
+  "id": 4,
+  "verdict": "keep",
+  "who": "Thai proverb",
+  "text": "เดินตามหลังผู้ใหญ่หมาไม่กัด 'Walk behind the elders and the dog won't bite.'",
+  "meaning": "Follow people who have walked the road before, and you stay safe.",
+  "source_url": "https://dictionary.orst.go.th/",
+  "evidence": "Live lookup in the Royal Institute (ORST) Thai dictionary returned the headword เดินตามหลังผู้ใหญ่หมาไม่กัด, marked (สำ) idiom, defined as 'ประพฤติตามอย่างผู้ใหญ่ย่อมปลอดภัย' (following the example of elders keeps you safe). The English is a literal translation of the proverb, not from a published translator. None of the Thai sayings on the used list is this one."
+ },
+ {
+  "id": 7,
+  "verdict": "keep",
+  "who": "Confucius, Analects IV.17 · tr. James Legge, 1861 (rev. 1893)",
+  "text": "When we see men of worth, we should think of equalling them; when we see men of a contrary character, we should turn inwards and examine ourselves.",
+  "meaning": "When you see someone good, try to become as good as them.",
+  "source_url": "https://www.gutenberg.org/ebooks/4094",
+  "evidence": "Gutenberg #4094 (Legge, The Chinese Classics, Confucian Analects), Book IV 'Le Jin', CHAP. XVII has this exact wording. It is not on the used list, but Confucius has been used about 9 times, so use him only once in this set."
+ },
+ {
+  "id": 9,
+  "verdict": "fix",
+  "who": "Japanese word origin · Digital Daijisen and Nihon Kokugo Daijiten (Shogakukan)",
+  "text": "Manabu (学ぶ), 'to learn', shares its root with manebu (まねぶ). Old meanings of manebu: 'to copy a model' and 'to take in what a teacher teaches.' (Own translation.)",
+  "meaning": "In Japanese, 'to learn' and 'to copy' grow from the same word.",
+  "source_url": "https://kotobank.jp/word/%E5%AD%A6%E3%81%B6-635400",
+  "evidence": "On Kotobank, Digital Daijisen's まなぶ【学ぶ】 entry says 《「まねぶ」と同語源》, and its sense 4 is まねをする (to imitate). The Nihon Kokugo Daijiten まねぶ entry gives ③ 手本にしてまねる (c. 830) and ④ 教えを受けて身につける (Tale of Genji), and its usage note says the two words share a root but nobody knows which came first. The English is my own and is shorter than the candidate's. Do not say 'learn comes from copy'."
+ },
+ {
+  "id": 12,
+  "verdict": "fix",
+  "who": "Shu-ha-ri (守破離), stages of learning in tea, kendo and other Japanese arts",
+  "text": "Shu: faithfully keep your teacher's teaching, forms and techniques until they are truly yours. Ha: take in good things from other teachers and grow. Ri: leave the school and create something new. (Own translation, condensed.)",
+  "meaning": "First copy your teacher exactly. Then grow. Only then make something new.",
+  "source_url": "https://kotobank.jp/word/%E5%AE%88%E7%A0%B4%E9%9B%A2-689006",
+  "evidence": "Kotobank's Digital Daijisen entry しゅはり【守破離】 is word for word what the candidate gave: 剣道や茶道などで…「守」は、師や流派の教え、型、技を忠実に守り、確実に身につける段階…「破」…良いものを取り入れ、心技を発展させる段階。「離」は、一つの流派から離れ、独自の新しいものを生み出し確立させる段階. I made the English shorter and closer to the Japanese. No author is printed, because the origin is uncertain."
+ },
+ {
+  "id": 20,
+  "verdict": "keep",
+  "who": "Swami Vivekananda, on meeting Sri Ramakrishna · My Master (1896 lecture; New York, 1901)",
+  "text": "...when I myself saw this man, all scepticism was brushed aside. It could be done...",
+  "meaning": "He met someone who had done it, and his doubt disappeared.",
+  "source_url": "https://archive.org/details/mymasterwithappe00vive",
+  "evidence": "The archive.org text of My Master (Baker & Taylor, copyright 1901), p. 52, has this exact wording. Vivekananda spoke in English, so there is no translator. In context, 'It could be done' means real spiritual change could be passed on by a teacher. That fits the 'proof' angle, but don't stretch it further. The same paragraph (pp. 51-52) holds the 'Do you believe in God, sir?' story. The tone toward God is respectful. Overlap flag: Vivekananda is used twice and Ramakrishna once, with different quotes."
+ },
+ {
+  "id": 23,
+  "verdict": "keep",
+  "who": "Tiruvalluvar, Tirukkural 415 · tr. G. U. Pope, 1886",
+  "text": "Like staff in hand of him in slippery ground who strays, / Are words from mouth of those who walk in righteous ways.",
+  "meaning": "Wise people's words are like a walking stick on slippery ground.",
+  "source_url": "https://archive.org/details/tiruvalluvanayan00tiruuoft",
+  "evidence": "The archive.org full text of Pope's Sacred Kurral (London: W. H. Allen, 1886) prints couplet 415 with this exact wording (414, before it, also uses 'a staff and stay'). Overlap flag: Tiruvalluvar is already on the used list twice, not once ('Say not, 'Tis hard'' and 'Who strive with undismayed'), both different couplets. Don't print the book's 'Royalty' running head."
+ },
+ {
+  "id": 24,
+  "verdict": "keep",
+  "who": "Mahabharata, Vana Parva (Section CCCXI) · tr. Kisari Mohan Ganguli, 1883-1896",
+  "text": "...the truth about religion and duty is hid in caves: therefore, that alone is the path along which the great have trod.",
+  "meaning": "When the truth is hidden, walk the road the great ones walked.",
+  "source_url": "https://www.gutenberg.org/ebooks/12333",
+  "evidence": "Gutenberg #12333 (Ganguli, Vana Parva), Section CCCXI, has exactly '...the truth about religion and duty is hid in caves: therefore, that alone is the path along which the great have trod.' On safety, the lines around it talk about death ('abode of Yama'), and the scene opens with the dead brothers. Keep the trim and name no speaker or setting. Not on the used list, where the only Mahabharata line is from Vidura."
+ }
+]

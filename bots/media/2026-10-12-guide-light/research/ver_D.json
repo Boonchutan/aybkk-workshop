@@ -1,0 +1,122 @@
+[
+ {
+  "id": 100,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Mau Piailug and his student Nainoa Thompson · Lana'i Lookout, Hawai'i, November 1979",
+  "text": "Mau: \"Can you see the island?\" Nainoa: \"I cannot see the island but I can see an image of the island in my mind.\" Mau: \"Good. Don't ever lose that image or you will be lost.\"",
+  "meaning": "Hold the picture of where you are going, and you won't get lost.",
+  "source_url": "https://archive.hokulea.com/nainoa80tahiti.html",
+  "evidence": "Word for word on the Polynesian Voyaging Society page in Nainoa Thompson's own account: 'In November of 1979, Mau and I went to observe the sky at Lana'i Lookout... it was over 2,200 miles away.' Same people as item 104, so run only one of them. Leave out Eddie Aikau and the 'I don't want you to die' line on the same page."
+ },
+ {
+  "id": 101,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Eliud Kipchoge · after running a marathon in 1:59:40, Vienna, 12 October 2019",
+  "text": "\"This shows no-one is limited. Now I've done it, I am expecting more people to do it after me.\"",
+  "meaning": "When one person does it, the rest of us know it can be done.",
+  "source_url": "https://www.bbc.com/sport/athletics/50025543",
+  "evidence": "BBC Sport prints both sentences word for word, one after the other, with the time 1:59:40 in Vienna on Saturday (12 Oct 2019). The BBC says it is not an official world record (pacemakers, not open competition), so never call it one."
+ },
+ {
+  "id": 102,
+  "verdict": "fix",
+  "kind": "story",
+  "who": "John Landy and Roger Bannister · the mile, 1954",
+  "text": "John Landy had run the mile in 4:02 six times. He said those last two seconds felt like a brick wall. On 6 May 1954 Roger Bannister ran 3:59.4 in Oxford. Forty-six days later, in Turku, Finland, Landy ran 3:57.9.",
+  "meaning": "A wall can feel solid right up to the day you get through it.",
+  "source_url": "https://worldathletics.org/news/news/john-landy-obituary",
+  "evidence": "World Athletics confirms Bannister's 3:59.4 at Iffley Road on 6 May 1954 and Landy's mile in Turku in June 1954 (3:57.9, ratified 3:58.0, 21 June); Hutchinson in Outside confirms 'run 4:02 on six different occasions' and '46 days'. The exact 'brick wall' sentence is only in secondary sources, so it is paraphrased. Hutchinson argues Landy may have broken four anyway, so do not say Bannister 'unlocked' it, and do not run this with item 103 (same race)."
+ },
+ {
+  "id": 103,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Franz Stampfl, coach, to Roger Bannister on 6 May 1954 · as Bannister recalled in The New Yorker, 2014",
+  "text": "\"Although the conditions are not ideal, if you don't take this opportunity, you might not forgive yourself for the rest of your life.\"",
+  "meaning": "A good teacher sees your chance and tells you to take it now.",
+  "source_url": "https://www.newyorker.com/sports/sporting-scene/the-four-minute-man-forever",
+  "evidence": "Word for word in Jesse Will, The New Yorker, 5 May 2014: Bannister recalls the blustery night of 6 May 1954 when 'Franz Stampfl, his coach' said it, and adds 'He was right.' Leave out his collapse at the finish."
+ },
+ {
+  "id": 104,
+  "verdict": "fix",
+  "kind": "story",
+  "who": "Nainoa Thompson, student of navigator Mau Piailug · Hokule'a, 1976 to 1980",
+  "text": "In 1976 Mau Piailug guided the canoe Hokule'a from Maui to Tahiti with no instruments. His student Nainoa Thompson said: \"I watched what he watched, listened to what he listened to, felt what he felt.\" In 1980, Nainoa guided Hokule'a from Hilo to Tahiti himself, in 33 days.",
+  "meaning": "He watched his teacher closely, then sailed the same long road himself.",
+  "source_url": "https://archive.hokulea.com/nainoa80tahiti.html",
+  "evidence": "Quote is word for word on the PVS page (said about daily lessons with Mau on his fishing boat). Ben Finney on PVS (finney80.html): left Hilo 15 March 1980, 'arrived in Tahiti 33 days later on April 17'; 1976 was 34 days (finney76.html). Removed '2,500 miles' because PVS pages disagree. Same people as item 100, so run only one."
+ },
+ {
+  "id": 105,
+  "verdict": "keep",
+  "kind": "quote",
+  "who": "Isaac Newton · letter to Robert Hooke, February 1676",
+  "text": "\"If I have seen further it is by standing on the shoulders of Giants.\"",
+  "meaning": "We see far because the people before us lift us up.",
+  "source_url": "https://mathshistory.st-andrews.ac.uk/Miscellaneous/messages/02-15/",
+  "evidence": "MacTutor (St Andrews) quotes the letter: 'If I have seen further it is by standing on the sholders of Giants' (old spelling; modern spelling used on the slide). Original is in the Historical Society of Pennsylvania (digitallibrary.hsp.org object 9792), dated 5 Feb 1675 Old Style, which is 1676 in modern dating."
+ },
+ {
+  "id": 106,
+  "verdict": "fix",
+  "kind": "story",
+  "who": "Michelangelo, age 13 · from Giorgio Vasari's Lives, 1568",
+  "text": "On 1 April 1488 Michelangelo's father placed him for three years in the workshop of the painter Domenico Ghirlandaio, \"in order to learn to paint.\" Before that, his friend Francesco Granacci, a boy in the workshop, brought him Ghirlandaio's drawings every day.",
+  "meaning": "Even Michelangelo started as a boy learning from a master.",
+  "source_url": "https://www.gutenberg.org/ebooks/32362",
+  "evidence": "Vasari (de Vere translation, vol. IX) copies the father's record: '1488, I record, this first day of April... placed Michelagnolo my son with Domenico and David... for the three years next to come... in order to learn to paint', and says Granacci 'supplied him daily with drawings by Ghirlandajo'. Born 6 March 1475, so he was 13. Cut the unsourced line 'began by copying a master'."
+ },
+ {
+  "id": 107,
+  "verdict": "fix",
+  "kind": "story",
+  "who": "Louis Braille, age 12 to 15 · Paris, 1821 to 1824",
+  "text": "In 1821, at a school for blind children in Paris, 12-year-old Louis Braille was shown Charles Barbier's raised-dot code. He found it too complicated and spent years on a version with six dots, not 12. By 1824, aged 15, he had 63 ways to use the six-dot cell.",
+  "meaning": "He took someone else's idea and made it simple enough for one fingertip.",
+  "source_url": "https://www.rnib.org.uk/living-with-sight-loss/education-and-learning/braille-tactile-codes/braille-through-the-years-past-present-and-future/",
+  "evidence": "RNIB: 'at this Institute in 1821 that Louis was first introduced to... raised dots' from Barbier's work; he 'thought it was too complicated'; 'six dots (instead of Barbier's 12)'; 'By 1824, aged just 15 years old, Louis had found 63 ways to use a six-dot cell in an area no larger than a fingertip.' Born 4 Jan 1809. Leave out his childhood accident and Barbier's military past."
+ },
+ {
+  "id": 108,
+  "verdict": "drop",
+  "kind": "quote",
+  "who": "Wilbur Wright · letter to the Smithsonian, 30 May 1899",
+  "text": "\"I wish to avail myself of all that is already known and then if possible add my mite to help on the future worker who will attain final success.\"",
+  "meaning": "Even the first to fly started by learning what others already knew.",
+  "source_url": "https://smithsonianeducation.org/educators/lesson_plans/wright/essay.html",
+  "evidence": "used: Wilbur Wright already appears twice in used_quotes.txt ('It is possible to fly without motors...' and 'Wright brothers Century 1908'), and the Wrights appear in the 8 Oct research.json."
+ },
+ {
+  "id": 109,
+  "verdict": "drop",
+  "kind": "quote",
+  "who": "Johann Nikolaus Forkel, about the young J. S. Bach · 1802",
+  "text": "\"...the young composer's first need is a model to instruct his efforts.\"",
+  "meaning": "Find the right road first. Then keep going, and you will arrive.",
+  "source_url": "https://www.gutenberg.org/ebooks/35041",
+  "evidence": "used: Bach is in used_quotes.txt (the 1705 Buxtehude walk), and research.json already holds several Forkel-on-Bach items."
+ },
+ {
+  "id": 110,
+  "verdict": "drop",
+  "kind": "story",
+  "who": "Tenzing Norgay · Everest, 1935 to 1953",
+  "text": "Tenzing Norgay took part in six Everest attempts from 1935. On 29 May 1953, with Edmund Hillary, he reached the top.",
+  "meaning": "Six tries taught him the road. The seventh time, he reached the top.",
+  "source_url": "https://www.nationalgeographic.com/adventure/article/sir-edmund-hillary-tenzing-norgay-1953",
+  "evidence": "used: Tenzing Norgay is already in used_quotes.txt ('It has been a long road...')."
+ },
+ {
+  "id": 111,
+  "verdict": "fix",
+  "kind": "story",
+  "who": "Gertrude Ederle and her trainer Bill Burgess · English Channel, 6 August 1926",
+  "text": "In 1925 Gertrude Ederle's first try at swimming the English Channel was stopped after almost nine hours. For 1926 she trained with Bill Burgess, who had swum the Channel himself in 1911. On 6 August 1926 she crossed in under 15 hours, about two hours faster than the record.",
+  "meaning": "Her coach had crossed that sea before. With him, she crossed it too.",
+  "source_url": "https://www.history.com/this-day-in-history/August-6/gertrude-ederle-becomes-first-woman-to-swim-english-channel",
+  "evidence": "HISTORY.com: 1925 stopped after 8 h 46 min; she then hired 'T.W. Burgess, a skilled Channel swimmer'; on 6 Aug 1926 she spent '14 hours and 31 minutes in the water' and 'bettered the previous record by two hours' (Dover sources say 14 h 39 min, hence 'under 15'). Olympedia and Dover Museum pages confirm Burgess crossed in September 1911, second person ever. Burgess urged her to stop twice in 1926, so do not call him a voice that never doubted."
+ }
+]

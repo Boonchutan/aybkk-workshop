@@ -1,0 +1,74 @@
+[
+ {
+  "id": 0,
+  "verdict": "keep",
+  "who": "Chan saying quoted by Wumen Huikai (1183-1260), Recorded Sayings, juan 2 · tr. from Chinese",
+  "text": "If you want to know the road down the mountain, ask the one who has walked it and come back.",
+  "meaning": "Want to know the way down? Ask someone who already walked it.",
+  "source_url": "https://cbetaonline.dila.edu.tw/zh/X1355_002",
+  "evidence": "CBETA full-text API confirms X69 no. 1355 (無門慧開禪師語錄) juan 2, p. 362b16: 不見道：要知山下路，須問去來人; later form 須問過來人 confirmed at X13 no. 285 juan 5 p. 301c19. No published English translation found, so own literal translation of the confirmed original; not on either used list."
+ },
+ {
+  "id": 1,
+  "verdict": "drop",
+  "who": "Han Yu, 'On the Teacher' (Shi Shuo), c. 802 · tr. Shih Shun Liu, Renditions No. 8, 1977",
+  "text": "He who was born before me learned the Way before me, and I take him as my teacher. ... where the Way is, there is my teacher.",
+  "meaning": "Whoever walked the road before you can be your teacher.",
+  "source_url": "https://cuhk.edu.hk/rct/renditions/sample/b08.html",
+  "evidence": "Reason: used. The same essay by Han Yu (On the Teacher, Liu translation) was posted on 8 Oct and is in used_quotes.txt and research.json. The wording here is verified word for word on the CUHK Renditions page, so it could come back later."
+ },
+ {
+  "id": 3,
+  "verdict": "fix",
+  "who": "Vimalakirti Sutra, ch. 4 'The Bodhisattvas' · tr. Burton Watson, 1997 (from Kumarajiva's Chinese)",
+  "text": "This Inexhaustible Lamp is like a single lamp that lights a hundred or a thousand other lamps, till the darkness is all made bright with a brightness that never ends.",
+  "meaning": "One light can light many more. Good teaching never runs out.",
+  "source_url": "https://cbetaonline.dila.edu.tw/zh/T0475_001",
+  "evidence": "A published translation exists, so the own translation is replaced with Burton Watson's wording, checked in his Columbia UP text, ch. 4. The original 譬如一燈，燃百千燈，冥者皆明，明終不盡 is confirmed at T14 no. 475 p. 543b19. Do not mention the setting (the devil's palace)."
+ },
+ {
+  "id": 5,
+  "verdict": "fix",
+  "who": "The Buddha, Samyutta Nikaya 45.49 · tr. Bhikkhu Sujato, 2018",
+  "text": "Mendicants, the dawn is the forerunner and harbinger of the sunrise. In the same way good friendship is the forerunner and harbinger of the noble eightfold path...",
+  "meaning": "Dawn comes before the sunrise. A good guide comes before the path.",
+  "source_url": "https://suttacentral.net/sn45.49/en/sujato",
+  "evidence": "SuttaCentral bilara API text sn45.49:1.2-1.3 matches word for word. Fix: the original sentence ends 'for a mendicant', so the cut needs '...'. This is the one Buddha item chosen for this set."
+ },
+ {
+  "id": 10,
+  "verdict": "drop",
+  "who": "The Buddha, Samyutta Nikaya 12.65 · tr. Bhikkhu Sujato, 2018",
+  "text": "I saw an ancient path, an ancient route traveled by fully awakened Buddhas in the past.",
+  "meaning": "Others walked this path long ago. You can follow it too.",
+  "source_url": "https://suttacentral.net/sn12.65/en/sujato",
+  "evidence": "Reason: Buddha rule, one Buddha item per set (SN 45.49 kept). The wording is verified word for word at sn12.65:7.1-7.3 and 7.10 via the SuttaCentral API, so it is a clean backup."
+ },
+ {
+  "id": 11,
+  "verdict": "drop",
+  "who": "The Buddha to Ananda, Samyutta Nikaya 45.2 · tr. Thanissaro Bhikkhu, 1997",
+  "text": "Admirable friendship, admirable companionship, admirable camaraderie is actually the whole of the holy life.",
+  "meaning": "Good friends are not half the path. They are the whole path.",
+  "source_url": "https://www.accesstoinsight.org/tipitaka/sn/sn45/sn45.002.than.html",
+  "evidence": "Reason: Buddha rule, one Buddha item per set (SN 45.49 kept). The Thanissaro wording is verified on Access to Insight, and Sujato's version (sn45.2:2.2, 'Good friends, companions, and associates are the whole of the spiritual life.') is also confirmed, so it is a clean backup."
+ },
+ {
+  "id": 13,
+  "verdict": "keep",
+  "who": "Chinese proverb (師父領進門，修行在個人) · tr. from Chinese",
+  "text": "The master leads you to the door; the practice is up to you.",
+  "meaning": "The teacher opens the door. You must walk through it yourself.",
+  "source_url": "https://dict.revised.moe.edu.tw/dictView.jsp?ID=127290",
+  "evidence": "Taiwan MOE Revised Mandarin Dictionary entry 127290 lists it as a proverb (諺語), defined as 老師只管指點門路，真正學到本領，還是要靠自己的努力 (checked in the page source). The English is our own plain translation; there is no documented origin text, so credit it only as a proverb."
+ },
+ {
+  "id": 6,
+  "verdict": "keep",
+  "who": "Yi Hwang (Toegye), Twelve Songs of Dosan, song 9, 1565 · tr. from Korean",
+  "text": "The ancients did not see me, and I did not see them. Though I cannot see them, the road they walked lies before me. The road they walked lies before me: how can I not walk it?",
+  "meaning": "The old masters are gone, but their road is here. So I walk it.",
+  "source_url": "https://ko.wikisource.org/wiki/%EB%8F%84%EC%82%B0%EC%8B%AD%EC%9D%B4%EA%B3%A1",
+  "evidence": "Korean Wikisource (Cheonggu Yeongeon, 1728) has the song: 古人도 날 못보고 나도 古人 못 뵈 / 古人을 못 봐도 녀ᄃᆞᆫ 길 알픠 잇ᄂᆡ / 녀ᄃᆞᆫ 길 알픠 잇거든 아니 녀고 엇졀고. The literal translation is accurate. No published English wording could be found online, so it is labelled our own translation; not on either used list."
+ }
+]
