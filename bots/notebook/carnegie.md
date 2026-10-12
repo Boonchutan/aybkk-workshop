@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-11T23:38:26.700Z
+Inbox last read: 2026-10-12T23:38:23.707Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -63,3 +63,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-10 (chat): Research on why fewer men practise yoga (workflow, 4 angles + fact-checks). Summary in Research.
 - 2026-10-11: Lead table still empty. Inbox read OK: 4 LINE threads, 0 about 180K. No requests in team chat.
 - 2026-10-12: First lead. Inbox read OK: 6 LINE threads, 1 about long study with Boonchu (serious, English). Reply drafted. Open question for Boonchu: do we offer online teaching? No requests in team chat.
+- 2026-10-13: Inbox read OK: 2 LINE threads, 0 about 180K. No new leads. 1 serious lead open, follow-up due 14 Oct, online-teaching answer still open. No reply from AYBKK seen in the inbox yet. No requests in team chat.
