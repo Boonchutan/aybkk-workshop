@@ -6,3 +6,4 @@ Reel from Plato: Rama's bridge; strong monkeys bring rocks, the measuring line k
 Score: wins this week: none reported. 180K leads: 1 new today (first in 15 days). Letter #1: not reported sent.
 Carne and Plato both posted today. Inbox 07:08: 2 new, 2 hot.
 13:08 check-in: Mysore Reel due 19:00 Tue 13 Oct (1 day), course prices (2 days), online-teaching answer for Carne's lead (follow-up 14 Oct). Inbox: 1 new, 1 hot.
+19:08 check-in: no win reported. Prices and Mysore Reel not repeated (asked twice today). Next step given: answer a renewal price request. Inbox: 2 new, 1 hot.

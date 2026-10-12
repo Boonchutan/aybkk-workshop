@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-12T06:09:54.502Z
+Inbox last read: 2026-10-12T12:09:57.212Z
 
 ## Standing orders from Boonchu
 - 2026-10-10 (Boonchu): WEEKLY LOG. Every Friday 21:47 Bangkok, routine trig_01UZnkK1DhEBZA29NrFEbM9o wakes the Machi team chat, which writes one new note "<date> Week Log.md" into the vault folder "01 Dashboard/Weekly Log" (first one: 2026-10-09). It reads this notebook (Wins, Open items, Reminders, Log) and the week's posts, so log every win, decision and default here, with a date. The log itself never goes into this repo (public).
@@ -50,6 +50,7 @@ Inbox last read: 2026-10-12T06:09:54.502Z
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
 ## Log
+- 2026-10-12 19:08: Inbox: 2 new, 1 hot (LINE: a current student says her package is nearly used up and asks for the price table; a sticker, no reply). Course prices and Mysore Reel not repeated (nagged twice today); Mysore Reel due 19:00 Tue 13 Oct, prices 19:00 Wed 14 Oct. No win, no reminders. Next step given: send the renewal price table tonight.
 - 2026-10-12 13:08: Inbox: 1 new, 1 hot (LINE: a student booked Tue 13 Oct 05:30 and asks how to send the pay-in slip). Nagged Mysore Reel (19:00 Tue 13 Oct, 1 day) and course prices (19:00 Wed 14 Oct, 2 days), 2nd time today each: do not repeat at 19:08. Online-teaching question for Carne's lead raised. No reminders due, no wins.
 - 2026-10-12 07:08: Both bots posted. No new @Machi requests. Inbox: 2 new, 2 hot (LINE: a student registering today for Tue 05:30; a serious third-series practitioner asking about online teaching, Carne logged it). Nagged course prices (by 19:00 Wed 14 Oct, 2 days) and Mysore Reel (new choice, by 19:00 Tue 13 Oct, default B = Fri 16 Oct), 1st time today each. Letter #2 due today; Letter #1 not reported sent. No wins. Leads: 1 (first in 15 days). No reminders.
 - 2026-10-11 19:08: Inbox: 3 new, 2 hot (LINE: a past student asks the 3-month restart price and the 12 Nov activation date; a student asks to practice Tue 13 Oct 05:30). 1 forwarded traffic notice, no reply. Mysore Reel default B applied (Wed 14 Oct). Course prices not repeated (nagged twice today). No win, no reminders. Next step given: answer the restart-package student tonight.
