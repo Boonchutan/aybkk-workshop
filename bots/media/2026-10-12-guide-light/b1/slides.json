@@ -1,5 +1,12 @@
 [
  {
+  "photo": "12-047",
+  "who": "John Bunyan · The Pilgrim's Progress, 1678",
+  "quote": "Do you see yonder shining light? He said, I think I do. Then said Evangelist, Keep that light in your eye...",
+  "meaning": "You may not see the goal yet. Keep your eyes on the light.",
+  "story": false
+ },
+ {
   "photo": "12-041",
   "who": "Advayataraka Upanishad 16 · tr. T. R. Srinivasa Ayyangar, 1938",
   "quote": "The syllable ‘Gu’ indicates darkness, the syllable ‘Ru’ means its dispeller...",
@@ -60,13 +67,6 @@
   "who": "Tiruvalluvar · Tirukkural 415, tr. G. U. Pope, 1886",
   "quote": "Like staff in hand of him in slippery ground who strays, / Are words from mouth of those who walk in righteous ways.",
   "meaning": "Wise people's words are like a walking stick on slippery ground.",
-  "story": false
- },
- {
-  "photo": "12-047",
-  "who": "John Bunyan · The Pilgrim's Progress, 1678",
-  "quote": "Do you see yonder shining light? He said, I think I do. Then said Evangelist, Keep that light in your eye...",
-  "meaning": "You may not see the goal yet. Keep your eyes on the light.",
   "story": false
  }
 ]

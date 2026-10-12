@@ -1,5 +1,12 @@
 [
  {
+  "photo": "12-034",
+  "who": "Seneca · Letters to Lucilius 6.5, tr. R. M. Gummere, 1917",
+  "quote": "...the way is long if one follows precepts, but short and helpful, if one follows patterns.",
+  "meaning": "Rules make the road long. A living example makes it short.",
+  "story": false
+ },
+ {
   "photo": "12-021",
   "who": "Eliud Kipchoge · Vienna, 12 Oct 2019, after a marathon in 1:59:40 · BBC",
   "quote": "This shows no-one is limited. Now I've done it, I am expecting more people to do it after me.",
@@ -12,13 +19,6 @@
   "quote": "John Landy ran the mile in 4:02 six times. Then, on 6 May 1954, Roger Bannister ran 3:59.4. Forty-six days later, Landy ran 3:58.0.",
   "meaning": "A wall looks solid until someone walks through it. Then others follow.",
   "story": true
- },
- {
-  "photo": "12-034",
-  "who": "Seneca · Letters to Lucilius 6.5, tr. R. M. Gummere, 1917",
-  "quote": "...the way is long if one follows precepts, but short and helpful, if one follows patterns.",
-  "meaning": "Rules make the road long. A living example makes it short.",
-  "story": false
  },
  {
   "photo": "12-048",
