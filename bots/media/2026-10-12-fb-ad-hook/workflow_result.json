@@ -1,0 +1,295 @@
+{
+  "summary": "Write and judge hooks for a Facebook ad video: small daily wins, Ashtanga mornings",
+  "agentCount": 3,
+  "logs": [],
+  "result": {
+    "hooks": [
+      {
+        "name": "Even the teacher starts small",
+        "lever": "authority",
+        "spoken_0_3": "I teach Ashtanga... and every day, I still start small.",
+        "on_screen_0_3": "Authorized Ashtanga teacher. Every day starts small.",
+        "shot": "Shala still dark before sunrise. Boonchu rolls out his mat, sits down and says the line to camera while the first light comes up behind him.",
+        "second_line_3_6": "Before sunrise. Sun salutations, breath. You can start here too.",
+        "why": "The credential is real and stated plainly. The surprise is that the expert also starts small, which tells a beginner they are welcome from zero. The text works with sound off and translates cleanly into Thai."
+      },
+      {
+        "name": "Hard work is not the answer",
+        "lever": "contrarian",
+        "spoken_0_3": "If you want success... working hard is not really the answer.",
+        "on_screen_0_3": "Working hard is not really the answer.",
+        "shot": "0-1 s: a hand closes a laptop lid at a desk. Cut to a tight close-up of Boonchu, calm, speaking straight to camera with a small shake of the head on \"not really\". At 3 s, cut to him at the front of the mat with hands together.",
+        "second_line_3_6": "It is one small win every day... that builds the best of you.",
+        "why": "These are his own words, and they push against Bangkok's work-harder culture, so the text alone stops a busy adult. The weakness is that other coaches say the same thing, so the yoga cut at 3 s has to make it his."
+      },
+      {
+        "name": "The sunrise most people miss",
+        "lever": "stakes",
+        "spoken_0_3": "Every sunrise is one small win. Most people sleep through it.",
+        "on_screen_0_3": "One small win every sunrise. Most miss it.",
+        "shot": "A 3-second time-lapse from a window or rooftop facing east: the Bangkok sky goes from dark blue to orange. Boonchu is a silhouette on his mat in the foreground.",
+        "second_line_3_6": "Ashtanga gives you a reason to get up... and take the sunrise.",
+        "why": "The loss is a missed sunrise, not a flaw in the viewer, so it stays inside Meta's personal-attributes policy. The time-lapse catches the eye with sound off, and the second line keeps his phrase \"take the sunrise\"."
+      },
+      {
+        "name": "How do morning people do it",
+        "lever": "question",
+        "spoken_0_3": "Okay... how do morning people actually do it?",
+        "on_screen_0_3": "How do morning people actually do it?",
+        "shot": "Pre-dawn light. Boonchu holds a cup of tea, raises his eyebrows at the camera and waits a beat. On \"like this\", cut to his arms rising in the first sun salutation as the light comes in.",
+        "second_line_3_6": "No big secret. One small win, first thing... like this.",
+        "why": "Most busy adults have wondered this. The promise of an answer holds them until the 3-6 s cut, where the answer is shown in movement instead of explained. It does not claim Ashtanga will make them a morning person."
+      },
+      {
+        "name": "Success plan under my arm",
+        "lever": "pattern interrupt",
+        "spoken_0_3": "This is my success plan. Okay... it fits under my arm.",
+        "on_screen_0_3": "My whole success plan fits under my arm.",
+        "shot": "Open on a desk with a planner, phone and laptop, the success plan the viewer expects. Boonchu's hand slides them aside. Cut to him walking out at first light with a rolled mat under his arm. He turns and taps the mat on \"under my arm\".",
+        "second_line_3_6": "One mat, one sunrise... breath that works heart and lungs.",
+        "why": "RECOMMENDED. The viewer expects an app or a planner and gets a yoga mat. That surprise links his success idea to Ashtanga in one image, works with sound off, and filters for people curious about the mat. The heart-and-lungs line stays within the checked facts and makes no claims about the viewer."
+      },
+      {
+        "name": "1. Triple Hook (context, pull, whiplash)",
+        "lever": "Contradiction then whiplash: states the common belief (work harder), denies it, then swerves to an answer nobody expects from a success ad.",
+        "spoken_0_3": "Success? Work harder, they say... not really. Go to bed earlier.",
+        "on_screen_0_3": "Work harder? Not really. Go to bed earlier.",
+        "shot": "0-1 s: night desk, laptop glow, Bangkok lights in the window, hands typing (context). 1-2 s: a hand closes the laptop and switches off the lamp, frame goes black (pull). 2-3 s: hard cut to first light falling on a mat in the shala (whiplash).",
+        "second_line_3_6": "Then take the sunrise. Small success, every day... it builds up.",
+        "why": "The whiplash is the stop: an ad about success that says 'go to bed' breaks the hustle script in one line. It sets up 'morning person' without saying it, and the second line brings in his own idea (small success daily builds up). There is nothing about the viewer's body, health or money, and no promise of results. Thai text: ทำงานหนักขึ้น? ไม่ใช่หรอก เข้านอนให้เร็วขึ้น"
+      },
+      {
+        "name": "2. Curiosity first",
+        "lever": "Open loop: it names 'the hardest part' and holds back what it is, so the viewer stays to find out. It is not the lesson yet.",
+        "spoken_0_3": "Okay... the hardest part of Ashtanga is not on the mat.",
+        "on_screen_0_3": "The hardest part isn't on the mat.",
+        "shot": "Dark bedroom, a phone alarm buzzing on the bedside table, a hand reaching for it (keep the clock time out of frame). On 'not on the mat', cut to an empty mat in the quiet shala with first light on the floor.",
+        "second_line_3_6": "It's getting up. You come to the mat... first small success.",
+        "why": "It quietly tells a beginner that the practice on the mat is not the scary part. That fits 'we teach you from zero' without saying it. The answer, getting up and coming, becomes the first small daily success, so the loop pays off his message. There is no jargon in the text, and it is not a claim about the viewer. Thai text: ส่วนที่ยากที่สุด ไม่ได้อยู่บนเสื่อ"
+      },
+      {
+        "name": "3. Reframe unit",
+        "lever": "Reframe: it shrinks 'success' to one unit people can picture and believe they can do, which is one sun salutation.",
+        "spoken_0_3": "Okay... today's success? One sun salutation. That's enough.",
+        "on_screen_0_3": "Today's success: one sun salutation.",
+        "shot": "Wide, locked-off shot of the shala at first light. One person on a mat raises both arms on the inhale of the first sun salutation as the light comes in. A small '1' appears in the corner and ticks to '2' during the second line.",
+        "second_line_3_6": "Tomorrow, one more. That builds up the best of you.",
+        "why": "This is the lowest barrier of the five. A non-practitioner reads 'one' and thinks 'I can do that', which is right for the beginner ad. It is his own idea put in a concrete unit, and the counter gives the eye something to track with the sound off. It makes no health or body claim. Thai text: ความสำเร็จวันนี้: สุริยนมัสการ 1 รอบ"
+      },
+      {
+        "name": "4. Two-voice deadpan",
+        "lever": "Pattern interrupt plus humour: a loud hustle-culture voice, then a flat, calm correction. The joke is aimed at the hustle slogan, never at the viewer.",
+        "spoken_0_3": "(hype voice) Rise and grind! ... (flat) Okay. Keep the rise. Drop the grind.",
+        "on_screen_0_3": "Rise and grind? Just the rise, thanks.",
+        "shot": "0-1.5 s: Boonchu in fake motivational-speaker mode, fist up, shaky push-in, harsh light, text card 'Rise and grind?'. 1.5-3 s: hard cut to a still, locked-off frame in soft sunrise light, the same man seated on his mat with a flat face, text card 'Just the rise, thanks.'",
+        "second_line_3_6": "Hustle is loud. Sunrise practice is quiet... and it builds up.",
+        "why": "Recommended pick. The visual contrast between loud and calm stops the scroll even with the sound off, and the text works alone as a joke. It turns his line 'working hard is not really the answer' into something people want to share. Every word is simple and splits cleanly in Thai, and the brand comes across as warm, not strict. Thai text: ตื่นเช้าแล้วลุยหนัก? ขอแค่ตื่นเช้าพอ"
+      },
+      {
+        "name": "5. Wrong Fix opener",
+        "lever": "Wrong fix: it names the fixes busy people already try (more hours, coffee, apps) and calls them not enough, which opens space for the real answer.",
+        "spoken_0_3": "More hours. More coffee. More apps... okay, not really the answer.",
+        "on_screen_0_3": "Working harder alone is not the answer.",
+        "shot": "Three fast cuts of under 1 s each: a laptop clock late at night, a coffee cup being refilled, a phone full of app notifications. Then Boonchu seated on his mat at sunrise, calm, saying 'okay' to camera with a small shake of the head.",
+        "second_line_3_6": "Sun salutations, steady, no stopping... it works heart and lungs.",
+        "why": "It uses his exact sentence (working hard is not really the answer) as the on-screen thesis. The wrong fixes are listed as habits, not as claims that the viewer is tired, so it stays inside Meta's personal-attributes rule. The second line carries the checked fact about heart and lungs in third person, with no promise and no 'high intensity'. Thai text: ทำงานหนักขึ้นอย่างเดียว ไม่ใช่คำตอบ"
+      }
+    ],
+    "judge": {
+      "ranking": [
+        {
+          "name": "Success plan under my arm",
+          "scroll_stop": 8,
+          "clarity_sound_off": 7,
+          "wants_to_try": 7,
+          "policy_ok": true,
+          "facts_ok": false,
+          "notes": "Office worker: the planner, phone and laptop being pushed aside for a rolled mat is a small story you get with the sound off, and yoga is on screen by second 3. That means the people who keep watching are curious about the mat, which suits a paid ad. Thai slow reader: every word is simple. 'Fits under my arm' needs half a second, but the mat answers it. Practitioner: 'success plan' leans a little self-help, but it stays honest because the plan is only the mat and the morning. It is his own success idea tied to a real object, so it is not generic. Policy: it speaks only about 'my', with nothing about the viewer. Fact check: the second line as written, 'breath that works heart and lungs', drifts from the checked fact. Heart and lungs work from breath and movement with no stopping at a steady pace, not from breath alone. Production risk: three actions in 3 s is tight.",
+          "fix": "Shoot it as one simple move (hand slides the desk items away, the same hand tucks the mat under the arm). Change the second line to his own idea and remove the heart-and-lungs wording: 'One mat. One sunrise. One small success... it builds up.' Keep the heart-and-lungs fact for the body, in its checked form."
+        },
+        {
+          "name": "How do morning people do it",
+          "scroll_stop": 7,
+          "clarity_sound_off": 8,
+          "wants_to_try": 6,
+          "policy_ok": true,
+          "facts_ok": true,
+          "notes": "Office worker: very relatable, and most busy adults have asked this. Thai slow reader: clear, and 'morning person' is already a known idea in Thai (สายตื่นเช้า). Practitioner: honest, and it does not claim Ashtanga makes you a morning person. Weaknesses: the question format is common in productivity content, so for its first 3 s it could pass for a sleep or coffee tip. Yoga only shows at 3-6 s, and his success idea only comes in the second line. 'Actually' adds a word without adding meaning for slow readers.",
+          "fix": "Cut to 'How do morning people do it?' (6 words) and have the first arm-raise of the sun salutation start by second 3, so yoga is visible inside the hook."
+        },
+        {
+          "name": "1. Triple Hook (context, pull, whiplash)",
+          "scroll_stop": 8,
+          "clarity_sound_off": 8,
+          "wants_to_try": 5,
+          "policy_ok": true,
+          "facts_ok": true,
+          "notes": "Office worker: 'Go to bed earlier' is a real surprise in an ad about success, and the words are very plain. The Thai text is clean. Problems: it reads as a sleep tip, not a yoga ad, until the last half-second. For people who work late it can sound like a lecture. A black frame at 1-2 s on Facebook looks like a dead video and loses viewers. Practitioner: it is true (early bed is how people practise at sunrise), but these are not his words.",
+          "fix": "Replace the black frame with the lamp going off and the window turning blue, show the mat by second 2, and let the spoken line run straight into the sunrise mat shot."
+        },
+        {
+          "name": "4. Two-voice deadpan",
+          "scroll_stop": 8,
+          "clarity_sound_off": 5,
+          "wants_to_try": 6,
+          "policy_ok": true,
+          "facts_ok": true,
+          "notes": "Office worker: the loud-to-calm cut is the strongest visual contrast of the ten, and the joke is aimed at hustle culture, not at the viewer. Thai slow reader: 'Rise and grind' is English slang many will not know, so the joke falls flat for a large part of the target. For the first 1.5 s it also looks like a real hustle ad, so some people scroll before the turn. Practitioner: 'drop the grind' slightly undersells a 6-day practice, though 'hustle is loud, practice is quiet' is true to a Mysore room. It depends a lot on how well Boonchu plays the fake speaker.",
+          "fix": "Run it as the expat/English-speaking variant only. For the Thai audience, lead with the Thai text card (ตื่นเช้าแล้วลุยหนัก? ขอแค่ตื่นเช้าพอ) as the main on-screen text."
+        },
+        {
+          "name": "3. Reframe unit",
+          "scroll_stop": 5,
+          "clarity_sound_off": 8,
+          "wants_to_try": 7,
+          "policy_ok": true,
+          "facts_ok": true,
+          "notes": "Lowest barrier of the ten. 'One' reads as 'I can do that.' Practitioner: 'Tomorrow, one more' mirrors how Mysore style really adds asanas one at a time, which is a nice true echo. Problems: a wide, locked-off calm shot is the weakest scroll-stopper in a busy feed. 'Sun salutation' is a term many non-practitioners do not know, though the footage shows it. 'That's enough' sells the practice short and weakens the reason to come to class. 'One person on a mat' must be Boonchu, not a staged student.",
+          "fix": "Open tight on the arms rising with the '1' counter already on screen, use Boonchu, and change 'That's enough' to 'That's a start.'"
+        },
+        {
+          "name": "Hard work is not the answer",
+          "scroll_stop": 6,
+          "clarity_sound_off": 8,
+          "wants_to_try": 4,
+          "policy_ok": true,
+          "facts_ok": true,
+          "notes": "His exact words, and very clear in English and Thai. Honest verdict: generic self-help. Any business coach could post this line, and nothing in the first 3 s says yoga, so the people who stop are not the people who would come to class. Wants-to-try is low because no mat appears in the hook.",
+          "fix": "Keep the text but put the mat at sunrise in frame from second 0 to 2 (for example, the laptop closes and the shot cuts straight to the mat), so the line belongs to a yoga teacher, not a coach."
+        },
+        {
+          "name": "2. Curiosity first",
+          "scroll_stop": 5,
+          "clarity_sound_off": 6,
+          "wants_to_try": 6,
+          "policy_ok": true,
+          "facts_ok": true,
+          "notes": "Practitioner: the truest line here, since every Ashtangi knows getting to the mat is the hard part. Office worker: the on-screen text drops 'of Ashtanga', so a non-practitioner does not know what is hard and does not yet care. 'Hardest' also puts the idea of difficulty in front of beginners. Thai slow reader: the contraction 'isn't' slows reading. The alarm shot is relatable.",
+          "fix": "On-screen: 'Ashtanga's hardest part is not on the mat.' (8 words, no contraction), and show the alarm hand clearly in the first second."
+        },
+        {
+          "name": "The sunrise most people miss",
+          "scroll_stop": 6,
+          "clarity_sound_off": 5,
+          "wants_to_try": 5,
+          "policy_ok": true,
+          "facts_ok": false,
+          "notes": "The time-lapse catches the eye, but a sunrise time-lapse looks like stock footage and could be any brand. Thai slow reader: 'Most miss it' is unclear (miss the win, or miss the sunrise?). Fact check: 'Most people sleep through it' is an invented generalisation, and in Bangkok many workers are already commuting at sunrise. 'Take the sunrise' is his phrase, but it will not translate cleanly. Policy is fine because the loss is a sunrise, not a flaw in the viewer.",
+          "fix": "Drop the 'most people' claim. On-screen: 'Every sunrise is one small win.' Use real footage of Boonchu on his mat, not a generic time-lapse."
+        },
+        {
+          "name": "5. Wrong Fix opener",
+          "scroll_stop": 5,
+          "clarity_sound_off": 5,
+          "wants_to_try": 5,
+          "policy_ok": true,
+          "facts_ok": true,
+          "notes": "The problem montage (late laptop, coffee, notifications) is the most common ad opener on Facebook. It is generic. The coffee refill comes close to implying the viewer is tired; it is not a policy breach because it shows habits, but it sits near the line. Thai slow reader: 'Working harder alone' is ambiguous ('alone' can be read as 'by yourself'). Strength: its second line is the cleanest statement of the checked heart-and-lungs fact in the set.",
+          "fix": "Use his original wording on screen, 'Working hard is not really the answer.', and keep the second line as the fact line for the body of whichever hook wins."
+        },
+        {
+          "name": "Even the teacher starts small",
+          "scroll_stop": 4,
+          "clarity_sound_off": 5,
+          "wants_to_try": 5,
+          "policy_ok": true,
+          "facts_ok": true,
+          "notes": "Practitioner: humble and true in spirit, though 'every day' is loose for a 6-day practice with moon days off. Office worker: 'Authorized Ashtanga teacher' means nothing to someone who has never done yoga, so it reads like a bio, not a hook. Thai slow reader: 'Authorized' is the hardest word in the set. The second line, 'You can start here too', is the most welcoming line of the ten and is worth reusing.",
+          "fix": "Remove the credential from the on-screen text for this cold audience. Lead with 'I still start small.' over the dark shala, and keep 'You can start here too' as the second line."
+        }
+      ],
+      "top3": [
+        "Success plan under my arm",
+        "How do morning people do it",
+        "1. Triple Hook (context, pull, whiplash)"
+      ],
+      "winner": "Success plan under my arm",
+      "winner_final": {
+        "spoken_0_3": "My whole success plan... okay, it fits under my arm.",
+        "on_screen_0_3": "My whole success plan fits under my arm.",
+        "shot": "Text on screen from frame 1, inside the 4:5 feed-safe area. 0-1.5 s: top-down on a desk in early light, with a laptop, a phone and a paper planner. Boonchu's hand slides all three off to the side. 1.5-3 s: the same hand lifts a rolled mat into frame. Cut to a medium shot of Boonchu at the shala door at first light, mat tucked under his arm, giving it one tap on 'under my arm' and looking calmly at camera. No clock times in frame.",
+        "second_line_3_6": "One mat. One sunrise. One small success... it builds up.",
+        "on_screen_thai": "แผนสู่ความสำเร็จทั้งหมดของผม หนีบไว้ใต้แขนได้"
+      },
+      "why": "We picked \"Success plan under my arm\" because it is the only hook that does three things in the first 3 seconds with the sound off. It stops a career-minded Bangkok commuter with the word \"success\". It answers its own riddle with a picture: the desk tools are pushed aside and a rolled mat takes their place. And yoga is on screen before second 3, so the people who keep watching are the ones curious about the mat, which is what a paid ad needs.\n\nIt carries Boonchu's own idea (working hard is not the whole answer, and small daily success builds up) in a concrete object, not a slogan. That is why it does not read as generic self-help.\n\nIt makes no claim about the viewer, no health promise and no invented facts. The words are simple enough for a slow Thai reader, and the Thai version is natural: หนีบไว้ใต้แขน matches the mat-under-arm image exactly.\n\nAs written, the second line drifted from the checked fact by saying breath alone works heart and lungs. The polished version replaces it with his small-success line, written as \"one sunrise\" instead of \"every day\" because the practice is 6 days a week. The heart-and-lungs fact moves to the body in its checked wording: \"sun salutations, breath and movement with no stopping; at a steady pace it works heart and lungs\".\n\n\"How do morning people do it\" is the strongest backup: it is the clearest text, but yoga appears too late. \"Triple Hook\" has the best surprise line but reads as a sleep tip and risks a dead black frame.\n\nHonest verdicts on the rest: \"Hard work is not the answer\" and \"Wrong Fix opener\" are generic self-help or problem-montage openers that any coach could run. \"Even the teacher starts small\" opens with a credential that means nothing to someone who has never done yoga. \"Two-voice deadpan\" is the funniest, but \"Rise and grind\" is slang a slow Thai reader may not know, so it fits the expats better as a separate English variant."
+    }
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Write"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Judge"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "write:five-levers",
+      "phaseIndex": 1,
+      "phaseTitle": "Write",
+      "agentId": "a10c144e77f39a0d7",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791806151258,
+      "queuedAt": 1791806151194,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "CONTEXT: Boonchu, 53, authorized Ashtanga teacher, owner of AYBKK (Ashtanga Yoga Bangkok). This is a PAID Facebook ad video for the Bangkok shala (Lane B: open door, beginners welcome, \"we teach you from zero\"). Target: busy Bangkok adults (Thai and expats, 25-50) who do not practise yoga yet. Facebook autoplays with sound OFF, so the first 3 seconds need on-screen text that works alone.\nHIS BODY …",
+      "promptFramed": true,
+      "lastProgressAt": 1791806247179,
+      "tokens": 59992,
+      "toolCalls": 2,
+      "durationMs": 95918,
+      "resultPreview": "{\"hooks\":[{\"name\":\"Even the teacher starts small\",\"lever\":\"authority\",\"spoken_0_3\":\"I teach Ashtanga... and every day, I still start small.\",\"on_screen_0_3\":\"Authorized Ashtanga teacher. Every day starts small.\",\"shot\":\"Shala still dark before sunrise. Boonchu rolls out his mat, sits down and says the line to camera while the first light comes up behind him.\",\"second_line_3_6\":\"Before sunrise. Sun…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "write:methods",
+      "phaseIndex": 1,
+      "phaseTitle": "Write",
+      "agentId": "a2956a7b5cf4501dd",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791806151259,
+      "queuedAt": 1791806151195,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "CONTEXT: Boonchu, 53, authorized Ashtanga teacher, owner of AYBKK (Ashtanga Yoga Bangkok). This is a PAID Facebook ad video for the Bangkok shala (Lane B: open door, beginners welcome, \"we teach you from zero\"). Target: busy Bangkok adults (Thai and expats, 25-50) who do not practise yoga yet. Facebook autoplays with sound OFF, so the first 3 seconds need on-screen text that works alone.\nHIS BODY …",
+      "promptFramed": true,
+      "lastProgressAt": 1791806327498,
+      "tokens": 60319,
+      "toolCalls": 3,
+      "durationMs": 175513,
+      "resultPreview": "{\"hooks\":[{\"name\":\"1. Triple Hook (context, pull, whiplash)\",\"lever\":\"Contradiction then whiplash: states the common belief (work harder), denies it, then swerves to an answer nobody expects from a success ad.\",\"spoken_0_3\":\"Success? Work harder, they say... not really. Go to bed earlier.\",\"on_screen_0_3\":\"Work harder? Not really. Go to bed earlier.\",\"shot\":\"0-1 s: night desk, laptop glow, Bangkok…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "judge:panel",
+      "phaseIndex": 2,
+      "phaseTitle": "Judge",
+      "agentId": "aabe5e07086c7d4e4",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791806329515,
+      "queuedAt": 1791806329450,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Success plan under my arm",
+      "promptPreview": "CONTEXT: Boonchu, 53, authorized Ashtanga teacher, owner of AYBKK (Ashtanga Yoga Bangkok). This is a PAID Facebook ad video for the Bangkok shala (Lane B: open door, beginners welcome, \"we teach you from zero\"). Target: busy Bangkok adults (Thai and expats, 25-50) who do not practise yoga yet. Facebook autoplays with sound OFF, so the first 3 seconds need on-screen text that works alone.\nHIS BODY …",
+      "promptFramed": true,
+      "lastProgressAt": 1791806498964,
+      "tokens": 58504,
+      "toolCalls": 1,
+      "durationMs": 169447,
+      "resultPreview": "{\"ranking\":[{\"name\":\"Success plan under my arm\",\"scroll_stop\":8,\"clarity_sound_off\":7,\"wants_to_try\":7,\"policy_ok\":true,\"facts_ok\":false,\"notes\":\"Office worker: the planner, phone and laptop being pushed aside for a rolled mat is a small story you get with the sound off, and yoga is on screen by second 3. That means the people who keep watching are curious about the mat, which suits a paid ad. Tha…"
+    }
+  ],
+  "totalTokens": 178815,
+  "totalToolCalls": 6
+}
