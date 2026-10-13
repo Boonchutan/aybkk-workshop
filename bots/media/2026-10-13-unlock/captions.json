@@ -79,6 +79,20 @@
    "md5": "all 10 OK",
    "go": "Boonchu: go with 9pm for batch 2"
   },
-  "3-5": "NOT approved yet. Wait for go."
+  "3": {
+   "id": "cmv6qyzdl0j87qw0y7p9na8hp",
+   "when": "06:00 BKK 14 Oct (23:00Z 13 Oct)",
+   "md5": "all 10 OK"
+  },
+  "4": {
+   "id": "cmv6qyzif0j88qw0ytuwie0xt",
+   "when": "09:00 BKK 14 Oct (02:00Z)",
+   "md5": "all 10 OK"
+  },
+  "5": {
+   "id": "cmv6qyzmy0j89qw0yx5i0qejp",
+   "when": "12:00 BKK 14 Oct (05:00Z)",
+   "md5": "all 10 OK"
+  }
  }
 }
