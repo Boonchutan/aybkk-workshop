@@ -6,3 +6,4 @@ Reel from Plato: Kumbhakarna sleeps six months and does everything in one day. A
 Score: wins this week: none reported. 180K leads: 0 new today, 1 serious in 16 days. Letters #1 and #2: not reported sent.
 Carne and Plato both posted today. Inbox 07:08: 1 new, 1 hot.
 13:08 check-in: Mysore Reel due 19:00 today (default B = Fri 16 Oct), course prices due 19:00 Wed 14 Oct (1 day). Inbox: 1 new, 1 hot.
+19:08 check-in: Mysore Reel default B applied (Fri 16 Oct). Course prices due 19:00 Wed 14 Oct. No win reported. Inbox: 2 new, 2 hot.
