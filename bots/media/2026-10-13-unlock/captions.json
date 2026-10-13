@@ -62,7 +62,8 @@
    "published": "PUBLISHED, seen about 19:13 BKK 13 Oct (sat in QUEUE ~10 min), first try"
   },
   "2": {
-   "prepared": "uploaded + md5 OK, waiting for go",
+   "id": "cmv6qrrkf0j7tqw0ypft3sget",
+   "when": "21:00 BKK 13 Oct (14:00Z)",
    "attachments": [
     "mH7tn6uYe6",
     "qD8FdfawYA",
@@ -73,8 +74,11 @@
     "VN5cKRJ1bU",
     "sngoQ8wa2T",
     "YsCXD9NGbk",
-    "qvoWOcfJ5B"
-   ]
-  }
+    "2SRyC3IT7I"
+   ],
+   "md5": "all 10 OK",
+   "go": "Boonchu: go with 9pm for batch 2"
+  },
+  "3-5": "NOT approved yet. Wait for go."
  }
 }
