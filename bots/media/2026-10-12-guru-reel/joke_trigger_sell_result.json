@@ -1,0 +1,432 @@
+{
+  "summary": "Joke, trigger, sell Reel built on Boonchu's 8 video rules and 8 caption rules, two writers and a rules judge",
+  "agentCount": 3,
+  "logs": [],
+  "result": {
+    "versions": [
+      {
+        "name": "Version A: Counting Is Dangerous (Breath Three)",
+        "trigger_idea": "Turn from the joke (\"I only count\") to the mistake students make inside the count without knowing it. In a hard asana, many people stop breathing or rush the breath at breath three, so five breaths feel like fifty. The story stops at the hard part: one student, filmed from behind, shaking at breath three. Freeze frame. Boonchu asks \"What do you do at breath three?\" and leaves a silence. Then he names the hidden mistake (the breath stops, and they do not notice) and gives his own cue. The sell calls back the joke (\"Counting is dangerous. I do it for you. You... just breathe.\") and asks for the DM with MYSORE. Runs about 44 seconds. Boonchu is on camera only twice. Everything else is the room, the students and his notes.",
+        "beats": [
+          {
+            "part": "joke",
+            "beat": "1. Curiosity (opens the loop, not a joke)",
+            "seconds": "0-3",
+            "spoken": "Outside... blue sky. Inside... floor is wet.",
+            "on_screen": "Blue sky outside. Wet floor inside.",
+            "shot": "After class: open door or window showing a real clear sky, slow tilt down to the shala floor shining with real sweat. No faces. Must work with sound off.",
+            "rule_used": "Joke order 1 (curiosity, sound off, opens a loop). Video rule 10 (the room)."
+          },
+          {
+            "part": "joke",
+            "beat": "2. Second hook",
+            "seconds": "3-6",
+            "spoken": "And this week... I almost break my arm.",
+            "on_screen": "This week, I almost broke my arm.",
+            "shot": "Boonchu close-up to camera, dry shirt, holding his elbow, flat deadpan face, no smile. This is one of only two times he talks on camera.",
+            "rule_used": "Joke order 2 (second hook). Gervais: the butt is Boonchu."
+          },
+          {
+            "part": "joke",
+            "beat": "3. Setup",
+            "seconds": "6-10",
+            "spoken": "Led primary. They do asana. I count.",
+            "on_screen": "Led primary. They do asana. I count.",
+            "shot": "Wide from the back corner of the room, students from behind all moving together. Boonchu stands at the front, hands behind his back, only his mouth moves. Use 12 Oct led footage, or film at the next led primary.",
+            "rule_used": "Joke order 3 (setup). Video rule 26 (no intro, followers already know him)."
+          },
+          {
+            "part": "joke",
+            "beat": "4. Payoff",
+            "seconds": "10-15",
+            "spoken": "End of class... floor is a lake. Sweat. I walk... whoop.",
+            "on_screen": "End of class: a lake of sweat.",
+            "shot": "Feet only: his bare foot steps onto the wet floor and slides a little, the camera jolts on \"whoop\". Slow re-enactment, holding the wall, no real fall.",
+            "rule_used": "Joke order 4 (payoff). Video rule 10 (show the work: real sweat, no added water)."
+          },
+          {
+            "part": "joke",
+            "beat": "5. Punch (joke last)",
+            "seconds": "15-20",
+            "spoken": "Everybody is wet. Only one is dry. Me. ... Counting is dangerous.",
+            "on_screen": "Card 1: Everyone is wet. Only I am dry. / Card 2: Counting is dangerous.",
+            "shot": "Boonchu to camera, bone dry, towel still folded and unused on his shoulder. A one-second pause before \"Counting is dangerous\", then hold the flat face for one more second.",
+            "rule_used": "Joke order 5 (punch last). Gervais: the butt is Boonchu and the situation, never a student."
+          },
+          {
+            "part": "trigger",
+            "beat": "6. Turn to their problem (the symptom they know)",
+            "seconds": "20-23",
+            "spoken": "Okay. I count five breaths. For many people... five feel like fifty.",
+            "on_screen": "Five breaths feel like fifty.",
+            "shot": "Wide from behind during class, the whole room breathing. His real counting voice, \"one... two...\", plays under the line.",
+            "rule_used": "Video rule 21 (teach them their own problem). Video rule 10 (the room)."
+          },
+          {
+            "part": "trigger",
+            "beat": "7. The hard part (stop the story here)",
+            "seconds": "23-27",
+            "spoken": "Breath three... everything shakes.",
+            "on_screen": "Breath three. Everything shakes.",
+            "shot": "One student who said yes, filmed from behind with the camera low at mat level, in [hard asana]. Frame the back and ribs, not the whole asana shape. You hear his real count say \"three\". The shake must be real.",
+            "rule_used": "Video rule 1 (stop at the hard part). Video rule 3 (show the source, the breath, not the asana shape)."
+          },
+          {
+            "part": "trigger",
+            "beat": "8. The question",
+            "seconds": "27-30",
+            "spoken": "What do you do at breath three? (then 1.5 seconds of silence)",
+            "on_screen": "What do you do at breath three?",
+            "shot": "Freeze frame on the shaking student from behind. His voice is voiceover only, no face. Keep the silence so the viewer answers in their head.",
+            "rule_used": "Video rule 1 (ask \"what would you do?\" before the ending)."
+          },
+          {
+            "part": "trigger",
+            "beat": "9. Show the answer (the mistake they do not know, then the cue)",
+            "seconds": "30-36",
+            "spoken": "Many people... stop breathing here. Or rush. And they don't know. [Boonchu's cue, draft: \"No no... don't hold. Breath out... long. Then four comes.\"]",
+            "on_screen": "Card 1: Many stop breathing here. They don't notice. / Card 2: [Boonchu's cue, max 8 words]",
+            "shot": "The freeze ends. Same student from behind, close on the back and ribs as the breath starts moving again. His real cue is recorded live in class. If the shake does not settle on camera, do not fake it. Show only the breath coming back.",
+            "rule_used": "Video rule 21 (the one thing they do wrong and do not know). Video rule 1 (then show). Video rule 3 (the source)."
+          },
+          {
+            "part": "sell",
+            "beat": "10. Callback",
+            "seconds": "36-40",
+            "spoken": "Counting is dangerous. I do it for you. You... just breathe.",
+            "on_screen": "Counting is dangerous. I do it for you.",
+            "shot": "After class: students meeting each other at the shoe rack, sharing water, talking, one laugh. Wide or from behind and feet, with faces only for students who agreed. Boonchu walks past in the background, still dry, towel still folded.",
+            "rule_used": "Video rule 12 (connection is the product: students meeting, not him talking). Joke callback."
+          },
+          {
+            "part": "sell",
+            "beat": "11. Sell the DM",
+            "seconds": "40-44",
+            "spoken": "First Mysore class? Okay. We teach you from zero. Send me... MYSORE.",
+            "on_screen": "DM MYSORE. We teach you from zero.",
+            "shot": "4:30 AM: phone clock showing 4:30, his hand turns on the shala light, the empty room. Last frame: his notebook after class, pen down, soft focus so no student names show.",
+            "rule_used": "Video rule 30 (the video sells the DM, no price). Video rule 10 (4:30 AM, the room, the notes). Lane B (from zero)."
+          }
+        ],
+        "caption_en": "At breath three, many people stop breathing. They do not know it.\nSo five breaths feel like fifty.\nYou want five breaths to feel like five.\nLed primary, 12 Oct, AYBKK Bangkok. Every mat wet. Only the one counting stayed dry.\nDM me MYSORE for your first Mysore class guide, then tell me:\nWhat happened the last time you shook at breath three?\n#aybkk #ashtanga #ashtangabangkok #boonchutanti",
+        "caption_th": "พอถึงลมหายใจที่สาม หลายคนหยุดหายใจ โดยไม่รู้ตัว\nห้าลมหายใจ เลยรู้สึกเหมือนห้าสิบ\nคุณอยากให้ห้าลมหายใจ รู้สึกแค่ห้า\nคลาส Led Primary วันที่ 12 ต.ค. ที่ AYBKK กรุงเทพฯ เสื่อเปียกเหงื่อทุกผืน คนเดียวที่ตัวแห้งคือคนนับ\nทักแชทมาว่า MYSORE รับคู่มือคลาสมายซอร์ครั้งแรก แล้วเล่าให้ผมฟังหน่อย\nครั้งล่าสุดที่คุณตัวสั่นตอนลมหายใจที่สาม เกิดอะไรขึ้น?\n#aybkk #ashtanga #ashtangabangkok #boonchutanti",
+        "what_to_film": "TOMORROW (Wed 14 Oct). Film everything vertical 9:16 and ask before filming anyone.\n\n4:30 AM, BEFORE ANYONE ARRIVES\n1. Phone lock screen showing the real time, 4:30 (2 s). For beat 11.\n2. Your hand turns on the shala light. Then the empty room, wide from the door, held still (3 s). For beat 11.\n\nBEFORE AND DURING CLASS (from behind, feet only, unless a student said yes)\n3. Students arriving: feet at the shoe rack, backs walking in (b-roll).\n4. Tripod in the back corner, wide on the whole room breathing. Record your real counting voice. For beat 6.\n5. Breath three shot: one student who agreed, from behind, camera low at mat level, framing the back and ribs in [hard asana]. Film 3 full five-breath holds so you catch a real shake at breath three and the breath coming back after your cue. Say your real cue live so it is recorded. For beats 7, 8 and 9.\n6. Setup shot (beat 3) needs a LED class from behind. If tomorrow is Mysore, use 12 Oct footage or film this one shot at the next led primary.\n\nAFTER CLASS\n7. The floor: real sweat only, no added water. Low angle, shiny. Then open the door or window on a clear sky and tilt down to the wet floor (beat 1). Only if the sky is really blue.\n8. Feet only: your bare foot steps on the wet floor and slides a little, camera jolts. Go slow, hold the wall, 3 takes (beat 4).\n9. Students meeting each other: shoe rack, sharing water, talking, laughing. Let it run 2 minutes and do not direct. Wide or from behind (beat 10).\n10. You walk past in the background: dry shirt, towel folded and unused on your shoulder (beat 10).\n11. Two deadpan close-ups to camera, 3 takes each, holding a flat face 1 s after: \"And this week... I almost break my arm.\" and \"Everybody is wet. Only one is dry. Me. ... Counting is dangerous.\" (beats 2 and 5).\n12. Notes after class: your notebook, your hand writing, pen down. Close and soft focus so no student names show (beat 11).\n13. Voiceover: record every other spoken line in a quiet corner, phone 20 cm from your mouth, slow, keeping the \"...\" pauses.",
+        "needs_from_boonchu": "1. [Boonchu's cue] (beat 9): your real words at breath three. Draft to replace: \"No no... don't hold. Breath out... long. Then four comes.\" Also a short version for the on-screen card, max 8 words.\n2. [hard asana] (beat 7): which asana to film, one where you really count five breaths and students really shake at breath three.\n3. Consent: the breath three student (filmed from behind), plus any student whose face shows in the after-class meeting shot. No names on screen or in the notebook shot.\n4. Confirm the teaching claim is yours: \"many people stop or rush the breath at breath three and do not notice.\" If you say it differently, use your words in beat 9 and in caption line 1.\n5. Setup shot (beat 3): do you have led primary footage from 12 Oct? If not, film it at the next led primary.\n6. Beat 2 wording: the approved line said \"today\", but the joke happened on Monday 12 Oct, so \"today\" is only true if you post that day. I changed it to \"this week\". This stays true only if you post by Sunday 18 Oct. Later than that, say \"on Monday\" or \"last week\".\n7. Beat 1 needs a real clear sky. If the sky is not blue, use \"Outside... dry. Inside... floor is wet.\" with on-screen \"Dry outside. Wet floor inside.\"\n8. Optional: the panel approved \"the floor is a lake\". With the floods, you may want no water pictures at all. Swap: \"floor is a mirror\" with on-screen \"End of class: a mirror of sweat.\" Your call.\n9. Callback fit: in Mysore class students keep their own count. If \"I do it for you\" feels wrong next to a Mysore guide, use this sell line instead: \"In Mysore... you count. Careful. Counting is dangerous. Send me... MYSORE.\"\n10. Confirm the ManyChat keyword MYSORE is live and still sends \"Your First Mysore Class\".\n11. Caption room and date line: \"Led primary, 12 Oct, AYBKK Bangkok\". Confirm the date and room name.\n12. Caption rule 18: reply to every story that comes in, in comments or DM.\n13. Read the Thai caption yourself before posting. It uses ผม for \"I\" and คนนับ (\"the one counting\") as the callback."
+      },
+      {
+        "name": "Counting Is Dangerous, Version B: \"The Last Time You Almost Quit\"",
+        "trigger_idea": "Stories, not opinions (rule 18) plus connection is the product (rule 12). After the joke, the camera leaves Boonchu and goes to the students meeting after class: towels, laughing, talking. Boonchu stays off camera and asks one student who agreed to speak: \"Tell me about the last time you almost quit.\" We cut at the hardest moment (rule 1). The sound drops and \"What would you do?\" sits on screen for a beat of silence, so the viewer decides before the ending. Then the student's real ending plays. The viewer sees their own almost-quit moment in someone else's face. Boonchu barely talks; the room and the people do the work. The sell comes after: the work behind the room (4:30 AM, lights on, notes after class), then one step, DM MYSORE, with the \"I count\" callback to the joke.",
+        "beats": [
+          {
+            "part": "joke",
+            "beat": "1. Curiosity (opens a loop, not a joke)",
+            "seconds": "0-3",
+            "spoken": "Outside... blue sky. Inside... floor is wet.",
+            "on_screen": "Blue sky outside. Wet floor inside.",
+            "shot": "Start on the open door with bright daylight outside, then tilt down to the shiny wet floor next to the mats. No face yet. Works with sound off.",
+            "rule_used": "Joke order 1 (curiosity, sound off). Video 26: no intro, no 'I am Boonchu'."
+          },
+          {
+            "part": "joke",
+            "beat": "2. Second hook",
+            "seconds": "3-5",
+            "spoken": "And Monday... I almost break my arm.",
+            "on_screen": "Monday I almost broke my arm.",
+            "shot": "Tight on Boonchu's face, deadpan, one hand on his elbow. Flat delivery, no smile.",
+            "rule_used": "Joke order 2 (second hook, stakes). The butt is Boonchu."
+          },
+          {
+            "part": "joke",
+            "beat": "3. Setup",
+            "seconds": "5-8",
+            "spoken": "Led primary. They do asana. I count. [Boonchu's cue: a real count from class, as audio under the shot]",
+            "on_screen": "Led primary. They do asana. I count.",
+            "shot": "Wide from the back corner during led class. Students from behind only. Boonchu at the front, dry T-shirt, counting.",
+            "rule_used": "Joke order 3 (setup). Gervais: film students from behind."
+          },
+          {
+            "part": "joke",
+            "beat": "4. Payoff",
+            "seconds": "8-12",
+            "spoken": "End of class... floor is a lake. Sweat. I walk... whoop.",
+            "on_screen": "End of class. The floor is a lake.",
+            "shot": "Low angle at floor level: the sweat shine on the floor, his bare foot steps in, a small wobble. Act out the wobble on a DRY spot; never slide on a wet floor.",
+            "rule_used": "Joke order 4 (payoff). The situation is the butt, not a student."
+          },
+          {
+            "part": "joke",
+            "beat": "5. Punch (joke last)",
+            "seconds": "12-16",
+            "spoken": "Everybody is wet. Only one is dry. Me. ... Counting is dangerous.",
+            "on_screen": "Card 1: Everyone is wet. One is dry. Me. / Card 2: Counting is dangerous.",
+            "shot": "Boonchu to camera, dry T-shirt, a clean folded towel over his shoulder he did not use. Hold one second of silence before 'Counting is dangerous.'",
+            "rule_used": "Joke order 5 (punch). Gervais self-deprecation, flat."
+          },
+          {
+            "part": "trigger",
+            "beat": "6. Connection: students meeting",
+            "seconds": "16-19",
+            "spoken": "(No talking. Room sound only: laughing, talking.)",
+            "on_screen": "After class. Everyone is still wet.",
+            "shot": "Real moments after class: towels, water bottles, students laughing and talking to each other. From behind or feet only. Do not stage it, just film it.",
+            "rule_used": "Video 12: connection is the product, show students meeting, not Boonchu talking. Video 10: the room."
+          },
+          {
+            "part": "trigger",
+            "beat": "7. The question",
+            "seconds": "19-22",
+            "spoken": "Boonchu, off camera: \"Tell me about the last time you almost quit.\"",
+            "on_screen": "Tell me the last time you almost quit.",
+            "shot": "One student who agreed to speak, sitting on their mat with a towel, phone at eye level. Boonchu stays out of the frame (voice only).",
+            "rule_used": "Video 18: stories, not opinions, asked on camera. Video 12: Boonchu not on screen."
+          },
+          {
+            "part": "trigger",
+            "beat": "8. The hard part (stop here)",
+            "seconds": "22-29",
+            "spoken": "[Student: real answer, ONLY up to the hardest moment. Cut before they say what happened next.]",
+            "on_screen": "[Student's real words, max 8, correct English]",
+            "shot": "Same student, closer. Keep their real pauses. No music over their voice.",
+            "rule_used": "Video 1: stop the story at the hard part. Video 3: show the source (a real person, real words), not a pretty asana shot."
+          },
+          {
+            "part": "trigger",
+            "beat": "9. Decide before the ending",
+            "seconds": "29-31",
+            "spoken": "Boonchu, off camera, quiet: \"...What would you do?\" Then silence.",
+            "on_screen": "What would you do?",
+            "shot": "Freeze on the student's last frame. Sound drops out for about 1.5 seconds.",
+            "rule_used": "Video 1: ask 'what would you do?' before you show."
+          },
+          {
+            "part": "trigger",
+            "beat": "10. The show (real ending)",
+            "seconds": "31-36",
+            "spoken": "[Student: what really happened next, in their own words]",
+            "on_screen": "[Student's real ending, max 8 words, correct English]",
+            "shot": "Back to the student, live again. If they laugh or look at a friend, keep it.",
+            "rule_used": "Video 1: then show. Video 18: their story, not Boonchu's opinion."
+          },
+          {
+            "part": "sell",
+            "beat": "11. Show the work",
+            "seconds": "36-39",
+            "spoken": "(No talking. Room sound only.)",
+            "on_screen": "4:30 AM. The room. Notes after class.",
+            "shot": "Fast 3-shot cut: phone screen showing 4:30 AM / the lights going on in the empty room / his hand writing in the notebook after class (no student names visible).",
+            "rule_used": "Video 10: show the work, 4:30 AM, the room, notes after class. Caption 10: what it took, not what it looks like."
+          },
+          {
+            "part": "sell",
+            "beat": "12. Sell the DM + callback",
+            "seconds": "39-45",
+            "spoken": "You want to try? From zero... okay. Send me MYSORE. ... You do asana. I count. Carefully.",
+            "on_screen": "Card 1: Start from zero. DM me MYSORE. / Card 2: You do asana. I count. Carefully.",
+            "shot": "Boonchu to camera, dry T-shirt. On 'Carefully' he steps around a wet patch slowly, walking, not sliding. Last frame: his dry feet next to the wet floor.",
+            "rule_used": "Video 30: the video sells the DM. Lane B: we teach you from zero. Callback to 'Counting is dangerous'. No price, no promo line."
+          }
+        ],
+        "caption_en": "[Student first name] almost quit. [Student: the hard part, one line, in their own words]\nAfter class, AYBKK room, [date filmed]. The floor is still wet.\nYou want a practice you keep, even if you start from zero.\nWhat it took: 4:30 AM, lights on, notes after class.\nDM me MYSORE. The free guide to your first Mysore class comes back to you.\nThen, in the same DM, tell me: when did you almost quit?\n#aybkk #ashtanga #ashtangabangkok #boonchutanti",
+        "caption_th": "[ชื่อนักเรียน] เกือบเลิกฝึกไปแล้ว [นักเรียน: ช่วงที่ยากที่สุด หนึ่งบรรทัด ด้วยคำพูดของเขาเอง]\nหลังเลิกคลาส ห้องฝึก AYBKK [วันที่ถ่าย] พื้นยังเปียกเหงื่ออยู่เลย\nคุณอยากได้การฝึกที่ทำต่อไปได้เรื่อย ๆ ถึงจะเริ่มจากศูนย์ก็ได้\nสิ่งที่ต้องทำ: ตื่นตีสี่ครึ่ง เปิดไฟห้อง จดโน้ตหลังเลิกคลาส\nทักมาหาผม พิมพ์คำว่า MYSORE แล้วรับคู่มือฟรีสำหรับคลาสมายซอร์ครั้งแรกของคุณ\nแล้วเล่าให้ผมฟังในแชทเดียวกันนะ ครั้งล่าสุดที่คุณเกือบเลิก คือตอนไหน?\n#aybkk #ashtanga #ashtangabangkok #boonchutanti",
+        "what_to_film": "BEFORE TOMORROW: ask one student if they agree to speak on camera about \"the last time you almost quit\". Get a clear yes (a voice note or a message is fine). Do not tell them what to say.\n\nA. 4:30 AM, the room (before anyone arrives)\n1. Phone screen or clock showing 4:30 AM. Handheld, 3 seconds.\n2. The empty, dark room, then the lights going on. Wide from the back corner, phone on a stand, 5 seconds.\n3. Slow pan across the empty floor and the mat spaces. 5 seconds.\n\nB. During class (led primary if tomorrow has one; if not, film B and C at the next led class)\n4. Wide from the back: students from behind only, you at the front counting. Record your real counting as audio. 20 to 30 seconds.\n5. Feet only: a few feet stepping during vinyasa, close and low. 10 seconds.\n\nC. End of class (the joke)\n6. Open door with daylight outside, then tilt down to the wet floor next to the mats (curiosity shot). Do 3 takes.\n7. Floor level: the sweat shine on the floor. 5 seconds.\n8. Your bare foot steps in with a small wobble. Do it on a DRY spot. Do not slide on the sweat.\n9. You to camera, dry T-shirt, a clean towel over your shoulder: say every joke line, flat, no smile. \"Outside... blue sky. Inside... floor is wet.\" / \"And Monday... I almost break my arm.\" / \"Led primary. They do asana. I count.\" / \"End of class... floor is a lake. Sweat. I walk... whoop.\" / \"Everybody is wet. Only one is dry. Me. ... Counting is dangerous.\" Do 3 takes of each.\n\nD. Students meeting after class (most important footage)\n10. Let the phone run for 1 to 2 minutes while students talk, laugh, use towels and drink water. From behind or feet only. Do not ask anyone to act.\n\nE. The question\n11. The student who agreed sits on their mat with a towel, phone at their eye level. You stay out of the frame. Ask exactly: \"Tell me about the last time you almost quit.\" Let them talk to the end. Do not help, do not finish their sentences. The editor cuts at the hard part later.\n\nF. Notes after class\n12. Top-down: your notebook, your hand writing after class. 5 seconds. No student names readable.\n\nG. The close\n13. You to camera: \"You want to try? From zero... okay. Send me MYSORE. ... You do asana. I count. Carefully.\" On \"Carefully\", walk slowly around a wet patch. Walk, do not slide. Do 3 takes.\n\nSound-off check before posting: every beat has its on-screen line (max 8 words).",
+        "needs_from_boonchu": "1. [Student: real answer, the hard part]: their real words from the interview. The editor cuts it right before they say what happened next. Never write it for them.\n2. [Student: what really happened next]: the real ending, from the same interview.\n3. [Student's real words, max 8] and [Student's real ending, max 8 words]: the on-screen versions of 1 and 2, cut from their real audio and written in correct English.\n4. The student's OK to be on camera and named. If they do not want their name used, remove [Student first name] / [ชื่อนักเรียน] from the caption and start with \"Someone in this room almost quit.\" All other students: from behind or feet only.\n5. [Student: the hard part, one line] in both captions: the same real words as item 1, shortened. Thai version too: [นักเรียน: ...].\n6. [date filmed] / [วันที่ถ่าย]: the real date of the after-class footage.\n7. [Boonchu's cue]: your real counting audio from led primary, used under the setup shot.\n8. Please confirm: \"Monday\" in the second hook. The panel version said \"today\", but the slip was Monday 12 Oct and you film later, so \"today\" would not be true. If you post after this week, say \"Last week\" instead.\n9. Please confirm: \"blue sky\" is still okay to post. The panel approved it, and it is not one of the banned words, but it is a sky word while the floods are in the news.\n10. Please confirm: 4:30 AM is the real time you are in the room (the caption says \"What it took: 4:30 AM\").\n11. Please confirm: the ManyChat keyword MYSORE works in DMs and sends the \"Your First Mysore Class\" guide.\n12. Caption rule 18: reply yourself to every \"almost quit\" story that comes in by DM, not with an automatic answer.\n13. If the student's answer holds two stories or two lessons, keep one. One video, one hard part.\n14. Total runtime is about 45 seconds. If the student talks longer, cut beat 6 to 2 seconds and beat 11 to 2 seconds before you cut their words."
+      }
+    ],
+    "judge": {
+      "checks": [
+        {
+          "name": "Version A: Counting Is Dangerous (Breath Three)",
+          "rules_broken": "Video 18 BROKEN: nobody is asked for a story on camera. The trigger is Boonchu's teaching claim, which is an opinion. Video 12 PARTLY BROKEN: in beat 10 his voice ('I do it for you. You... just breathe.') plays over the students meeting, so it is him talking again. Video 1 WEAK: 'What do you do at breath three?' asks about a habit, not a choice at the hard moment ('what would you do?'). House rule (never write his teaching words) BROKEN: beat 9 gives him a drafted cue ('No no... don't hold...'). SAFETY: 'floor is a lake' and the card 'a lake of sweat' put a water picture on screen during the disaster news. 'Outside... blue sky' is weather talk, which the safety rule bans. TRUTH: 'Counting is dangerous. I do it for you' is false next to the MYSORE guide it sells, because in Mysore the student counts. PHYSICAL SAFETY: in beat 4 a 53-year-old slides his bare foot on a real wet floor. FEASIBILITY: beat 6 needs his counting voice, which only exists in a led class, and tomorrow may be Mysore. Caption 1 BROKEN: the caption ends on hashtags, not on the question. Caption 30 BROKEN: it asks for two actions ('DM me MYSORE..., then tell me'). Caption 10 MISSING: no line about what it took. Caption 18 WEAK: 'the last time you shook at breath three' leaves a Lane B beginner with no story to send. PASSES: joke order 1 to 5, video rules 3, 10, 21, 26 and 30, caption rules 2, 6, 26 and 27, every card is 8 words or fewer, no price, no hello, no long dash, and the Gervais butt is Boonchu. PANEL: Office worker, sound off: 'The wet floor and the broken arm make me stop. The dry towel is funny. Breath three means nothing to me, but five feel like fifty does.' 3-year student: 'Breath three is exactly me. I would DM.'",
+          "scroll_stop": 7,
+          "laugh": 6.5,
+          "dm_pull": 6,
+          "feasible_to_film": 8,
+          "fixes": "1. Replace 'blue sky' with a curiosity line that has no weather in it: 'Floor is wet. ... Nobody spill anything.' 2. Replace 'lake' with 'mirror'. The card becomes 'The floor is all sweat.' 3. Second hook: use 'Monday' (true, concrete). 4. Film the wobble on a DRY spot next to the sweat. 5. Beat 6 audio: room breathing, not counting. 6. Question: 'Two more breaths. ... What would you do?' 7. Beat 9 speaks to the viewer: 'Here... you stop breathing. And you don't know.' Leave [Boonchu's cue] empty for his real words. 8. Beat 10: room sound only, with the callback on screen ('Still only one is dry'). 9. Add a 3 s work beat (4:30 AM, the room, notes after class). 10. New close: 'We teach you from zero. Send me MYSORE. And tell me... the last time you almost quit.' This asks for rule 18 on camera, inside one DM. 11. Caption: hard part first, one line about the hole, one line about what it took, room and date, one step, end on 'When was the last time you almost quit?', hashtags in the first comment."
+        },
+        {
+          "name": "Counting Is Dangerous, Version B: The Last Time You Almost Quit",
+          "rules_broken": "Video 21 BROKEN: the viewer is never taught their own hidden problem. The trigger is only a student's story. Joke-to-trigger bridge MISSING: the video jumps from sweat and counting to quitting with no link, so it plays like two videos stuck together. SOUND-OFF BROKEN in beats 8 and 10: a talking head squeezed into 8-word cards. The office worker on mute loses the story. FEASIBILITY: the whole trigger and caption line 1 are placeholders. They need a student to agree tonight and to give a clean hard part with one lesson. Nothing can be posted until the interview is cut, and a few long pauses push it past 45 s. SAFETY: the card 'The floor is a lake' puts a water picture on screen during the disaster news, and 'blue sky' is weather talk. TRUTH: 'You do asana. I count. Carefully.' is false for the Mysore class the DM sells. Caption 1 BROKEN: ends on hashtags. Caption 30 BROKEN: 'DM me MYSORE... Then, in the same DM, tell me' plus 'The free guide... comes back to you' is two steps and reads as promo. Caption 26 BROKEN: '[Student first name]' adds a who and names a student in public. PASSES: joke order 1 to 5, video rules 1, 3, 10, 12, 18, 26 and 30, caption rules 2, 6, 10, 18 and 27, Gervais (student filmed with consent, never the butt), no price, no hello. PANEL: Office worker, sound off: 'Same funny start, then a person talks and I cannot hear. I scroll.' 3-year student: 'A real almost-quit story could hit me hard, if the student is good on camera. That is a big if.'",
+          "scroll_stop": 7,
+          "laugh": 6.5,
+          "dm_pull": 5.5,
+          "feasible_to_film": 4,
+          "fixes": "Do not post this one now. Keep it as the NEXT reel (one ordeal per video). Before you film it: get a clear yes from one student tonight, add a bridge line from the joke, drop 'lake' and 'blue sky', change the close to a true line ('In Mysore... you count. Careful.'), let the picture carry the story for sound-off viewers with one true 8-word card per beat, take the student's name out of the caption, give one step only, and end on the question with the hashtags in the first comment. Film the interview question tomorrow if a student agrees. It costs nothing, and it gives you the next video."
+        }
+      ],
+      "pick": "Version A (Breath Three), fixed with the best parts of B: the no-talking connection beat, the 'last time you almost quit' ask on camera, the dry-spot wobble, 'Monday', and the 4:30 AM work beat.",
+      "why": "A is the only version that runs JOKE, then TRIGGER, then SELL as one line of thought. The joke is about counting. The trigger is what happens inside the count (breath three). The sell sends them to a DM where they tell their own almost-quit story. A teaches the viewer their own hidden problem (rule 21), stops at the hard part and asks before showing (rule 1), and works with sound off. Boonchu can film it tomorrow with one student who agrees, filmed from behind. B is warmer, but the whole trigger depends on an interview nobody has done yet. It breaks rule 21, loses sound-off viewers, and cannot be posted until a student's words are cut, so it becomes the next reel. The fixes clear every rule A broke: weather and water pictures are gone, there is no drafted teaching cue, the Mysore callback is true, beat 10 is room sound only, rule 18 is asked on camera inside the single DM step, and the caption ends on the question. Runtime is 44 seconds.",
+      "final": {
+        "beats": [
+          {
+            "part": "JOKE 1: curiosity (opens a loop, not a joke)",
+            "seconds": "0-3",
+            "spoken": "Floor is wet. ... Nobody spill anything.",
+            "on_screen": "The floor is wet. Nobody spilled anything.",
+            "shot": "After class, real sweat only, no added water. Phone low at floor level, slow push along the shiny floor between the mats. Capped, full water bottles stand dry by the wall. No faces. Must read with sound off."
+          },
+          {
+            "part": "JOKE 2: second hook",
+            "seconds": "3-6",
+            "spoken": "And Monday... I almost break my arm.",
+            "on_screen": "Monday, I almost broke my arm.",
+            "shot": "Tight on Boonchu, dry shirt, one hand holding his elbow. Flat face, no smile, hold 1 second after the line."
+          },
+          {
+            "part": "JOKE 3: setup",
+            "seconds": "6-9",
+            "spoken": "Led primary. They do asana. I count.",
+            "on_screen": "Led primary. They do asana. I count.",
+            "shot": "Wide from the back corner of a led class: students from behind only, all moving together. Boonchu at the front, hands behind his back, dry. Use 12 Oct footage or the next led primary (see needs)."
+          },
+          {
+            "part": "JOKE 4: payoff",
+            "seconds": "9-13",
+            "spoken": "End of class... floor is a mirror. Sweat. I walk... whoop.",
+            "on_screen": "End of class. The floor is all sweat.",
+            "shot": "Feet only. First the real sweat shine at floor level. Then his bare foot steps down and wobbles on a DRY spot right next to it, and the camera jolts on 'whoop'. Never slide on the real sweat."
+          },
+          {
+            "part": "JOKE 5: punch (joke last)",
+            "seconds": "13-17",
+            "spoken": "Everybody is wet. Only one is dry. Me. ... Counting is dangerous.",
+            "on_screen": "Card 1: Everyone is wet. One is dry. Me. / Card 2: Counting is dangerous.",
+            "shot": "Boonchu to camera, bone dry, a clean towel folded on his shoulder and never used. One second of silence before 'Counting is dangerous', then hold the flat face one more second. The joke ends here."
+          },
+          {
+            "part": "TRIGGER 6: turn to their problem",
+            "seconds": "17-20",
+            "spoken": "Okay. Five breaths... feel like fifty.",
+            "on_screen": "Five breaths can feel like fifty.",
+            "shot": "Wide from the back during class, students from behind, the real sound of the room breathing. No talking head."
+          },
+          {
+            "part": "TRIGGER 7: the hard part (stop the story here)",
+            "seconds": "20-23",
+            "spoken": "Breath three... everything shakes.",
+            "on_screen": "Breath three. Everything shakes.",
+            "shot": "The one student who said yes, filmed from behind, phone low at mat level. Frame the back and ribs in [hard asana], not the whole shape. The shake must be real. If you really count for this student in class, keep the real 'three' audio. If not, the card does the work."
+          },
+          {
+            "part": "TRIGGER 8: decide before the ending",
+            "seconds": "23-27",
+            "spoken": "Two more breaths. ... What would you do? (then 1.5 seconds of silence)",
+            "on_screen": "Two more breaths. What would you do?",
+            "shot": "Freeze frame on the shaking back. Boonchu's voice only, no face. Drop all sound for the silence so the viewer answers in their head."
+          },
+          {
+            "part": "TRIGGER 9: show (the thing they do and do not know)",
+            "seconds": "27-32",
+            "spoken": "Here... you stop breathing. And you don't know. ... [Boonchu's cue]",
+            "on_screen": "Card 1: Here, you stop breathing. You don't notice. / Card 2: [Boonchu's cue, max 8 words]",
+            "shot": "Unfreeze. The same student, close on the back and ribs as the breath starts moving again. Your real cue, recorded live in class. If the shake does not settle on camera, do not fake it. Show only the breath coming back."
+          },
+          {
+            "part": "SELL 10: connection (students meeting)",
+            "seconds": "32-35",
+            "spoken": "(No talking. Room sound only: talking, laughing.)",
+            "on_screen": "After class. Still only one is dry.",
+            "shot": "Students meeting each other after class: shoe rack, sharing water, towels, one real laugh. From behind or feet only, with faces only for students who agreed. Boonchu walks past in the background, dry, towel still folded. Do not direct it."
+          },
+          {
+            "part": "SELL 11: show the work",
+            "seconds": "35-38",
+            "spoken": "(No talking. Room sound only.)",
+            "on_screen": "4:30 AM. The room. Notes after class.",
+            "shot": "Quick 3-shot cut: the phone lock screen showing the real 4:30 / his hand switching on the shala light, then the empty room / his notebook after class, his hand writing, pen down, soft focus so no names show."
+          },
+          {
+            "part": "SELL 12: sell the DM",
+            "seconds": "38-44",
+            "spoken": "We teach you from zero. Send me MYSORE. ... And tell me... the last time you almost quit.",
+            "on_screen": "Card 1: We teach you from zero. / Card 2: DM MYSORE. Tell me when you almost quit.",
+            "shot": "Boonchu to camera, dry shirt, towel still folded, plain and warm. Last frame, no words: his dry feet next to the wet floor (the callback)."
+          }
+        ],
+        "caption_en": "Breath three. Everything shakes. Many people stop breathing here and do not know it.\nYou want five breaths to feel like five.\nLed primary, Monday 12 Oct, AYBKK. Lights on at 4:30 AM. Every mat wet. Only the one counting stayed dry.\nDM me MYSORE for your first Mysore class guide. In the same chat, tell me:\nWhen was the last time you almost quit?",
+        "caption_th": "ลมหายใจที่สาม ตัวสั่นไปหมด ตรงนี้หลายคนหยุดหายใจ โดยไม่รู้ตัว\nคุณอยากให้ห้าลมหายใจ รู้สึกแค่ห้า\nLed Primary วันจันทร์ที่ 12 ต.ค. ที่ AYBKK เปิดไฟตีสี่ครึ่ง เสื่อเปียกเหงื่อทุกผืน คนเดียวที่ตัวแห้งคือคนนับ\nทักมาว่า MYSORE รับคู่มือคลาสมายซอร์ครั้งแรก แล้วในแชทเดียวกัน เล่าให้ผมฟังหน่อย\nครั้งล่าสุดที่คุณเกือบเลิก คือตอนไหน?",
+        "what_to_film": "FILM TOMORROW, Wed 14 Oct. Everything vertical 9:16. Ask before you film anyone.\n\nTONIGHT\n0. Ask one student: may I film your back tomorrow in [hard asana]? No face, no name. Get a clear yes by message or voice note.\n\n4:30 AM, BEFORE ANYONE COMES\n1. Phone lock screen showing the real time, 2 s (beat 11).\n2. Your hand switches on the light, then the empty room, wide from the door, held still for 3 s (beat 11).\n\nDURING CLASS (from behind or feet only)\n3. Tripod in the back corner, wide on the room breathing, 30 s, room sound (beat 6).\n4. Breath three: the student who said yes, from behind, phone low at mat level, framing the back and ribs in [hard asana]. Film 3 full five-breath holds to catch a real shake at breath three and the breath coming back. Give your real cue live so it records (beats 7, 8, 9).\n5. If tomorrow is led primary: a wide from the back corner with you at the front counting (beat 3). If it is Mysore: use 12 Oct footage, or film this one shot at the next led primary.\n\nAFTER CLASS\n6. The floor, real sweat only: low and shiny, a slow push along it, capped water bottles by the wall. 3 takes (beat 1).\n7. Feet only: the sweat shine, then your foot wobbles on a DRY spot right next to it and the camera jolts. Go slow, hold the wall. 3 takes (beat 4).\n8. Let the phone run 2 minutes on students meeting: shoe rack, water, towels, talking. Do not direct. From behind or feet (beat 10).\n9. You walk past in the background: dry shirt, towel folded and unused (beat 10).\n10. Notebook: your hand writing after class, pen down, soft focus, no names readable (beat 11).\n11. To camera, dry shirt, folded towel, 3 takes of each line, flat face, hold 1 s after: 'And Monday... I almost break my arm.' / 'Everybody is wet. Only one is dry. Me. ... Counting is dangerous.' / 'We teach you from zero. Send me MYSORE. ... And tell me... the last time you almost quit.' (beats 2, 5, 12).\n12. Your dry feet next to the wet floor, 3 s (last frame of beat 12).\n13. Voiceover in a quiet corner, phone 20 cm from your mouth, slow, keep the '...' pauses: beats 1, 3, 4, 6, 7, 8, 9.\n\nBEFORE POSTING\n14. Watch it on mute. Every beat must have its card (max 8 words).\n15. Post by Sun 18 Oct. Hashtags go in the first comment: #aybkk #ashtanga #ashtangabangkok #boonchutanti",
+        "needs_from_boonchu": "1. [Boonchu's cue] (beat 9): your real words at breath three, said live in class, plus a card version of max 8 words. We did not write this for you.\n2. Confirm the one thing they do wrong: 'at the hard part, many people stop breathing and do not notice.' If yours is different, use your words in beat 9 and in caption line 1.\n3. [hard asana] (beats 7 to 9): an asana where you really hold five breaths and students really shake at breath three.\n4. Consent: the breath-three student (from behind, no name), plus anyone whose face shows in beat 10. No names on screen or in the notebook shot.\n5. Setup shot (beat 3): do you have 12 Oct led primary footage from behind? If not, film it at the next led primary.\n6. Confirm the facts in the caption: led primary on Monday 12 Oct, lights on at 4:30 AM that day, and the room name AYBKK. Also confirm nobody spilled anything that day (beat 1).\n7. Safety changes: I removed 'blue sky' (the safety rule bans weather talk) and 'lake' (a water picture during the disaster news). If you still want the approved 'Outside... blue sky' line, that is your call, but it is weather talk.\n8. 'Monday' is clear only if you post by Sun 18 Oct. After that, say 'Last Monday'.\n9. ManyChat: confirm MYSORE is live, still sends 'Your First Mysore Class', and fires when MYSORE is inside a longer message, because people may type their story in the same message.\n10. Caption rule 18: reply yourself to every 'almost quit' story, not with the bot.\n11. Read the Thai caption before posting. It uses ผม for 'I' and คนนับ ('the one counting') as the callback.\n12. Next reel: Version B (a student telling 'the last time I almost quit'). If a student agrees tomorrow, film the question too, but post it as its own video."
+      }
+    }
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Write"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Judge"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "write:A-breath-three",
+      "phaseIndex": 1,
+      "phaseTitle": "Write",
+      "agentId": "a501ddae1a5d06297",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791876545307,
+      "queuedAt": 1791876545253,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Version A: Counting Is Dangerous (Breath Three)",
+      "promptPreview": "BOONCHU'S NEW RULES (13 Oct, from his notes; follow every one):\nVIDEO, \"the video makes them want to talk to you. It never says the price.\"\n1 Decide before the ending: stop the story at the hard part, ask \"what would you do?\", then show.\n3 Not a railroad: show the source, not the pose.\n10 Show the work: film 4:30 AM, the room, the notes after class.\n12 Connection is the product: show students meet…",
+      "promptFramed": true,
+      "lastProgressAt": 1791876758377,
+      "tokens": 77322,
+      "toolCalls": 3,
+      "durationMs": 213067,
+      "resultPreview": "{\"name\":\"Version A: Counting Is Dangerous (Breath Three)\",\"trigger_idea\":\"Turn from the joke (\\\"I only count\\\") to the mistake students make inside the count without knowing it. In a hard asana, many people stop breathing or rush the breath at breath three, so five breaths feel like fifty. The story stops at the hard part: one student, filmed from behind, shaking at breath three. Freeze frame. Boo…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "write:B-almost-quit",
+      "phaseIndex": 1,
+      "phaseTitle": "Write",
+      "agentId": "abb6ccc5f78e1d8e2",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791876545308,
+      "queuedAt": 1791876545254,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Counting Is Dangerous, Version B: \"The Last Time You Almost…",
+      "promptPreview": "BOONCHU'S NEW RULES (13 Oct, from his notes; follow every one):\nVIDEO, \"the video makes them want to talk to you. It never says the price.\"\n1 Decide before the ending: stop the story at the hard part, ask \"what would you do?\", then show.\n3 Not a railroad: show the source, not the pose.\n10 Show the work: film 4:30 AM, the room, the notes after class.\n12 Connection is the product: show students meet…",
+      "promptFramed": true,
+      "lastProgressAt": 1791876737947,
+      "tokens": 73372,
+      "toolCalls": 5,
+      "durationMs": 191897,
+      "resultPreview": "{\"name\":\"Counting Is Dangerous, Version B: \\\"The Last Time You Almost Quit\\\"\",\"trigger_idea\":\"Stories, not opinions (rule 18) plus connection is the product (rule 12). After the joke, the camera leaves Boonchu and goes to the students meeting after class: towels, laughing, talking. Boonchu stays off camera and asks one student who agreed to speak: \\\"Tell me about the last time you almost quit.\\\" W…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "judge:rules-panel",
+      "phaseIndex": 2,
+      "phaseTitle": "Judge",
+      "agentId": "a653ee18e90dfad31",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791876760139,
+      "queuedAt": 1791876760096,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Version A (Breath Three), fixed with the best parts of B: t…",
+      "promptPreview": "BOONCHU'S NEW RULES (13 Oct, from his notes; follow every one):\nVIDEO, \"the video makes them want to talk to you. It never says the price.\"\n1 Decide before the ending: stop the story at the hard part, ask \"what would you do?\", then show.\n3 Not a railroad: show the source, not the pose.\n10 Show the work: film 4:30 AM, the room, the notes after class.\n12 Connection is the product: show students meet…",
+      "promptFramed": true,
+      "lastProgressAt": 1791877162412,
+      "tokens": 101910,
+      "toolCalls": 2,
+      "durationMs": 402271,
+      "resultPreview": "{\"checks\":[{\"name\":\"Version A: Counting Is Dangerous (Breath Three)\",\"rules_broken\":\"Video 18 BROKEN: nobody is asked for a story on camera. The trigger is Boonchu's teaching claim, which is an opinion. Video 12 PARTLY BROKEN: in beat 10 his voice ('I do it for you. You... just breathe.') plays over the students meeting, so it is him talking again. Video 1 WEAK: 'What do you do at breath three?' a…"
+    }
+  ],
+  "totalTokens": 252604,
+  "totalToolCalls": 10
+}
