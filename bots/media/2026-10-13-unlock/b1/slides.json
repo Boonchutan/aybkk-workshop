@@ -1,5 +1,12 @@
 [
  {
+  "photo": "13-062",
+  "who": "Panipak Wongpattanakit and coach Choi Young-seok · Thailand",
+  "quote": "Korean coach Choi Young-seok has led Thailand's taekwondo team since 2002. In 2021 his athlete Panipak Wongpattanakit won Thailand's first Olympic taekwondo gold.",
+  "meaning": "Patient work with the right coach can lift a whole team.",
+  "story": true
+ },
+ {
   "photo": "13-112",
   "who": "Ananda to the Buddha · Shurangama Sutra, tr. Charles Luk, 1966",
   "quote": "...although I have listened to His profound words, I am still unawakened as if I had not heard them.",
@@ -53,13 +60,6 @@
   "who": "Laozi · Tao Te Ching 56, tr. James Legge, 1891",
   "quote": "He who knows (the Tao) does not (care to) speak (about it); he who is (ever ready to) speak about it does not know it.",
   "meaning": "People who really know talk less. Big talkers often don't know.",
-  "story": false
- },
- {
-  "photo": "13-110",
-  "who": "Michel de Montaigne · Of Pedantry, tr. Charles Cotton",
-  "quote": "...though we could become learned by other men's learning, a man can never be wise but by his own wisdom...",
-  "meaning": "Others can teach you facts. Wisdom you have to grow yourself.",
   "story": false
  },
  {
