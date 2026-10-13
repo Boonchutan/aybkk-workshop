@@ -1,5 +1,12 @@
 [
  {
+  "photo": "13-026",
+  "who": "Mary Cassatt, painter, on Edgar Degas",
+  "quote": "I would go and flatten my nose against that window and absorb all I could of his art. It changed my life. I saw art then as I wanted to see it.",
+  "meaning": "Finding the right teacher's work can show you who you really are.",
+  "story": false
+ },
+ {
   "photo": "13-072",
   "who": "Stephen King, on editor John Gould",
   "quote": "This editor was the man who taught me everything I know about writing in 10 minutes.",
@@ -40,13 +47,6 @@
   "quote": "Andy Murray lost his first four Grand Slam finals. He hired Ivan Lendl, who had also lost his first four. In 2012 Murray won Olympic gold and the US Open, and in 2013 he won Wimbledon.",
   "meaning": "A coach who had walked the same hard road helped him finally win.",
   "story": true
- },
- {
-  "photo": "13-026",
-  "who": "Mary Cassatt, painter, on Edgar Degas",
-  "quote": "I would go and flatten my nose against that window and absorb all I could of his art. It changed my life. I saw art then as I wanted to see it.",
-  "meaning": "Finding the right teacher's work can show you who you really are.",
-  "story": false
  },
  {
   "photo": "13-057",
