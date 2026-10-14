@@ -83,17 +83,20 @@
   "3": {
    "id": "cmv6qyzdl0j87qw0y7p9na8hp",
    "when": "06:00 BKK 14 Oct (23:00Z 13 Oct)",
-   "md5": "all 10 OK"
+   "md5": "all 10 OK",
+   "published": "PUBLISHED 06:00 BKK 14 Oct, first try"
   },
   "4": {
    "id": "cmv6qyzif0j88qw0ytuwie0xt",
    "when": "09:00 BKK 14 Oct (02:00Z)",
-   "md5": "all 10 OK"
+   "md5": "all 10 OK",
+   "published": "PUBLISHED 09:00 BKK 14 Oct, first try"
   },
   "5": {
    "id": "cmv6qyzmy0j89qw0yx5i0qejp",
    "when": "12:00 BKK 14 Oct (05:00Z)",
-   "md5": "all 10 OK"
+   "md5": "all 10 OK",
+   "published": "ERROR 12:00 BKK (Failed to create media, please try again; images fine). Retried same post now 12:18 BKK: cmv7nsopz0rw8qw0yjc1arzxs PUBLISHED. Boonchu to delete the ERROR entry cmv6qyzmy0j89qw0yx5i0qejp in Postiz."
   }
  }
 }
