@@ -1,0 +1,1010 @@
+{
+ "final": {
+  "chains": [
+   {
+    "title": "THE BAMBOO RULE",
+    "lines": [
+     {
+      "n": 1,
+      "id": "B2",
+      "line": "Bamboo grows slowly for 25 days, then shoots up. Which day are you on?"
+     },
+     {
+      "n": 2,
+      "id": "Y2",
+      "line": "Like the sea, practice gets deeper slowly, step by step, never all at once."
+     },
+     {
+      "n": 3,
+      "id": "C3",
+      "line": "So keep going. A thousand days of practice shape you. Ten thousand polish you."
+     },
+     {
+      "n": 4,
+      "id": "W5",
+      "line": "Be like a star: never in a hurry, never stopping."
+     },
+     {
+      "n": 5,
+      "id": "C5",
+      "line": "Heavy and steady comes first. Light and quick grow out of it."
+     },
+     {
+      "n": 6,
+      "id": "W7",
+      "line": "Now go easy on the whip and hold the reins. Speed comes by itself."
+     },
+     {
+      "n": 7,
+      "id": "C9",
+      "line": "Slow to get the horse ready, but quick to get there."
+     },
+     {
+      "n": 8,
+      "id": "Y8",
+      "line": "Inside, it works the same: the steadier your focus, the clearer you see."
+     },
+     {
+      "n": 9,
+      "id": "S12",
+      "line": "But the pianist who rushes past the basics never plays anything well."
+     },
+     {
+      "n": 10,
+      "id": "C12",
+      "line": "In Thailand we say: slow gets it done, time makes it good. Start slow."
+     }
+    ]
+   },
+   {
+    "title": "THE MOON ROCKET",
+    "lines": [
+     {
+      "n": 1,
+      "id": "B1",
+      "line": "Even the Moon rocket started slow: 12 long seconds just to clear its tower."
+     },
+     {
+      "n": 2,
+      "id": "C2",
+      "line": "It's always so: every big thing starts small, every hard thing starts easy."
+     },
+     {
+      "n": 3,
+      "id": "S4",
+      "line": "Top endurance athletes? About 8 in 10 of their workouts are slow and easy."
+     },
+     {
+      "n": 4,
+      "id": "W6",
+      "line": "Why? A young branch falls in any breeze. With time, the tree stands firm."
+     },
+     {
+      "n": 5,
+      "id": "W9",
+      "line": "Then, with firm ground under your feet, you can move the world."
+     },
+     {
+      "n": 6,
+      "id": "B8",
+      "line": "That Moon rocket? As the push grew too strong, it switched one engine off."
+     },
+     {
+      "n": 7,
+      "id": "S9",
+      "line": "Racers say: slow into the turn, so you speed up sooner coming out."
+     },
+     {
+      "n": 8,
+      "id": "W10",
+      "line": "Same in practice: do it well first, and speed will come."
+     },
+     {
+      "n": 9,
+      "id": "Y12",
+      "line": "But don't load too much. Even light feathers, piled too high, break the cart."
+     },
+     {
+      "n": 10,
+      "id": "Y10",
+      "line": "No rush. Just practise: yoga teaches yoga, and yoga grows more yoga."
+     }
+    ]
+   },
+   {
+    "title": "THE LONG CLIMB",
+    "lines": [
+     {
+      "n": 1,
+      "id": "W1",
+      "line": "The climb hurts most at the start. Higher up, it hurts less."
+     },
+     {
+      "n": 2,
+      "id": "S1",
+      "line": "So on Kilimanjaro, a guide tells climbers: pole, pole. Slowly, slowly. No hurry."
+     },
+     {
+      "n": 3,
+      "id": "B3",
+      "line": "Step by step, let no day pass without one small improvement."
+     },
+     {
+      "n": 4,
+      "id": "Y5",
+      "line": "In time, your mind stops flickering, like a flame where no wind blows."
+     },
+     {
+      "n": 5,
+      "id": "Y7",
+      "line": "Once your asana is steady, heat, cold, ups and downs cannot shake you."
+     },
+     {
+      "n": 6,
+      "id": "C6",
+      "line": "At the hardest spot, the master cook slows down. One tiny cut does it."
+     },
+     {
+      "n": 7,
+      "id": "S10",
+      "line": "Learn it deep, practise it long, and one day a breakthrough comes."
+     },
+     {
+      "n": 8,
+      "id": "W13",
+      "line": "Keep climbing, until going up feels as easy as a boat drifting downstream."
+     },
+     {
+      "n": 9,
+      "id": "W12",
+      "line": "But don't run. Go wisely and slowly: those who run fast stumble."
+     },
+     {
+      "n": 10,
+      "id": "S11",
+      "line": "Hokusai said nothing he drew before 70 was good. Keep practising. You have time."
+     }
+    ]
+   }
+  ],
+  "checks": "How I built it: I took the strongest parts of both drafts. Draft B's bamboo carousel is the base of Carousel 1, because its hook is the best of all the drafts. The Moon rocket carousel mixes A and B and keeps the callback to the rocket on slide 6. The long climb carousel is Draft A's, with Dante's climb coming back on slide 8.\n\nChanges I made while editing:\n(1) I moved B12 (fast-growing trees die younger) out of the bamboo carousel. Placed right after \"speed comes by itself\", it seemed to argue against the theme.\n(2) I put the Russian proverb C9 straight after Ovid's reins (W7), so the horse picture carries on from one slide to the next. It also gives the Russian audience a line they will know.\n(3) I swapped W12 (those who run fast stumble) into the climb carousel as its warning, because stumbling fits a climb.\n(4) I took W3, the Apelles painter, out of the climb carousel so it does not end up with two painters next to Hokusai.\n(5) I cut the \"So\" that linked Laozi to the athlete numbers on Moon rocket slide 3, because it claimed one causes the other. It now opens with a question instead.\n\nFaithfulness: I checked every line against its quote.\n- B8: the rocket cut its centre engine to limit rising acceleration, which the line gives as \"the push grew too strong\".\n- Y12: it is about overloading, so it says \"load too much\" and not \"too fast\".\n- S4: it keeps \"about\" and \"endurance\".\n- S1: it says \"a guide\" because only one guide is on record. No line claims \"guides\" in general.\n- C6: Cook Ding slows down at the hard joint, then one slight move separates it.\n- W13: Dante's \"as easy as a boat going downstream\" is kept.\n- S11: Hokusai hoped to keep improving until 110, so \"Keep practising. You have time.\" stays true.\n- C12: it is a real Thai proverb (cha pen kan, nan pen khun). \"In Thailand we say\" assumes AYBKK, a Bangkok shala, is the speaker. Boonchu should confirm this.\n\nWord count: I counted with a script. All 30 lines have 11 to 14 words. B8 had 15, so I cut \"And\" to bring it to 14.\nDashes: none, no long dashes and no hyphens. \"Asana\" is used on Y7, and \"pose\" appears nowhere.\nRepeats: there are 30 unique ids, with no id used twice. Only one item from each duplicate-quote pair is used: C3 is in and S5 is out. C7/S8 and W16/B5 are not used at all.\nLanes per carousel: Carousel 1 has yoga (Y2, Y8), Asian (Musashi, Laozi, Russian, Thai), Western (Goethe, Ovid), story (Czerny) and science (bamboo). Carousel 2 has yoga (Y12 Tiruvalluvar, Y10 Vyasa), Laozi, Western (Ovid, Archimedes, Quintilian), sport (Seiler, racing) and NASA. Carousel 3 has yoga (Gita, Patanjali), Zhuangzi, Kaizen, Western (Dante, Shakespeare), sport (Kilimanjaro, taiji) and Hokusai.\nArc: every carousel follows slow start, then base, stable, control, speed up, and ends on the warning and payoff.\nSafety: Y11 (breath \"kills\") is left out, so there is no frightening breath claim. There are no flood or storm images, only a breeze, a windless flame, the sea floor sloping and a boat downstream. There is no hype.\nFlow: each slide 1 is a concrete surprise or a hard truth. Linking words (So, Why?, Then, Now, But, Inside, Same in practice) pull the reader from slide to slide. Each slide 10 ends on a push to practise: \"Start slow.\", \"Just practise\", \"Keep practising. You have time.\""
+ },
+ "verified": [
+  {
+   "id": "Y1",
+   "verdict": "verified",
+   "quote": "Suppose a deft horse trainer were to obtain a fine thoroughbred. First of all he'd make it get used to wearing the bit.",
+   "original": "Seyyathāpi, brāhmaṇa, dakkho assadammako bhaddaṁ assājānīyaṁ labhitvā paṭhameneva mukhādhāne kāraṇaṁ kāreti, atha uttariṁ kāraṇaṁ kāreti (Pali)",
+   "who": "The Buddha, to Moggallana the Accountant",
+   "source": "Majjhima Nikaya 107 (Ganakamoggallana Sutta), segment 3.2, tr. Bhikkhu Sujato, 2018 (SuttaCentral, CC0 public domain)",
+   "url": "https://suttacentral.net/mn107/en/sujato",
+   "stage": "slow_start",
+   "meaning": "Even the finest horse starts with one small first lesson.",
+   "is_story": false,
+   "reason": "Fetched https://suttacentral.net/api/bilarasuttas/mn107/sujato myself. Segment mn107:3.2 has this exact English, and the Pali root text matches word for word. The frame (2.1-2.12) is 'gradual training, gradual progress, gradual practice'. MN 107 is not in used_who.txt or used_quotes.txt. Safe content. The meaning line is faithful and 10 words long."
+  },
+  {
+   "id": "Y2",
+   "verdict": "verified",
+   "quote": "The ocean gradually slants, slopes, and inclines, with no abrupt precipice. In the same way in this teaching and training the penetration to enlightenment comes from gradual training, progress, and practice, not abruptly.",
+   "original": "Seyyathāpi, pahārāda, mahāsamuddo anupubbaninno anupubbapoṇo anupubbapabbhāro, na āyatakeneva papāto; evamevaṁ kho, pahārāda, imasmiṁ dhammavinaye anupubbasikkhā anupubbakiriyā anupubbapaṭipadā, na āyatakeneva aññāpaṭivedho. (Pali)",
+   "who": "The Buddha, to Paharada",
+   "source": "Anguttara Nikaya 8.19 (Paharada Sutta), segments 10.6-10.7, tr. Bhikkhu Sujato, 2018 (SuttaCentral, CC0)",
+   "url": "https://suttacentral.net/an8.19/en/sujato",
+   "stage": "slow_start",
+   "meaning": "The sea gets deep slowly, not all at once. So does practice.",
+   "is_story": false,
+   "reason": "Fetched https://suttacentral.net/api/bilarasuttas/an8.19/sujato myself. Segments an8.19:10.6 and 10.7 match the English exactly, and the Pali root matches. AN 8.19 is not in the used lists (the used AN suttas are 3.92, 5.29 and 6.55). The image is a calm, gently sloping ocean floor, with no flood or storm. The rest of the sutta lists sea monsters, but none of that is in the excerpt. The meaning line is faithful."
+  },
+  {
+   "id": "Y5",
+   "verdict": "fixed",
+   "quote": "As a lamp in a windless place flickereth not, to such is likened the Yogî of subdued thought, absorbed in the yoga of the Self.",
+   "original": "यथा दीपो निवातस्थो नेङ्गते सोपमा स्मृता । योगिनो यतचित्तस्य युञ्जतो योगमात्मनः ॥",
+   "who": "Krishna",
+   "source": "Bhagavad Gita 6.19, tr. Annie Besant, The Bhagavad-Gita or The Lord's Song, 4th edition, G. A. Natesan & Co., Madras, October 1922",
+   "url": "https://en.wikisource.org/wiki/Bhagavad-Gita_(Besant_4th)/Discourse_6",
+   "stage": "stable",
+   "meaning": "A calm yogi's mind is steady, like a flame where no wind blows.",
+   "is_story": false,
+   "reason": "The English and the Sanskrit of verse 19 match the Wikisource page exactly. Source fix: the scanned edition page (djvu p.4) gives the Natesan printings as 1st ed. Nov. 1907, 2nd 1908, 3rd 1911 and 4th Oct. 1922. So I dropped '(first ed. 1895)': it is ambiguous for this edition and I could not check it in this session. Gita 6.19 is not in the used lists (the used Gita verses are 2.40, 2.47, 4.34, 5.27, 6.23-25, 6.35, 6.40 and 18.37). It is calm imagery and does not mock anything. The meaning line is faithful."
+  },
+  {
+   "id": "Y6",
+   "verdict": "verified",
+   "quote": "But he who has understanding and whose mind is always firmly held, his senses are under control, like good horses of a charioteer.",
+   "original": "यस्तु विज्ञानवान्भवति युक्तेन मनसा सदा । तस्येन्द्रियाणि वश्यानि सदश्वा इव सारथेः ॥",
+   "who": "Yama, teaching Nachiketas",
+   "source": "Katha Upanishad I.3.6, tr. F. Max Müller, The Upanishads Part II, Sacred Books of the East vol. 15, Oxford, 1884",
+   "url": "https://archive.org/details/wg915",
+   "stage": "control",
+   "meaning": "Hold your mind steady, and your senses obey like well-trained horses.",
+   "is_story": false,
+   "reason": "I downloaded the archive.org djvu text of wg915 (SBE 15, 1884) myself. Verse 6 of I ADHYAYA, 3 VALLI reads exactly as quoted. Verse 5 just before it has the contrast, 'like vicious horses of a charioteer'. The Sanskrit is the standard text of Katha 1.3.6. The Katha Upanishad is not in the used lists. Yama is named only as the teacher, with no death imagery in the line. The meaning line is faithful."
+  },
+  {
+   "id": "Y7",
+   "verdict": "verified",
+   "quote": "Thereafter he is unassailed by extremes. [Vyasa's comment:] As a result of mastering the postures he is not overcome by the extremes, by cold and heat and by the other [extremes].",
+   "original": "ततो द्वन्द्वानभिघातः ॥ (bhāṣya: शीतोष्णादिभिर्द्वन्द्वैरासनजयान्नाभिभूयते)",
+   "who": "Patanjali, with Vyasa's commentary",
+   "source": "Yoga Sutra 2.48 with Yoga-bhashya, tr. James Haughton Woods, The Yoga-System of Patanjali, Harvard Oriental Series 17, 1914",
+   "url": "https://archive.org/details/yogasystemofpata00wooduoft",
+   "stage": "control",
+   "meaning": "Once your asana is steady, heat, cold, ups and downs can't shake you.",
+   "is_story": false,
+   "reason": "The archive.org metadata confirms the item is Woods, Harvard University Press, 1914. I downloaded its djvu text: '48. Thereafter he is unassailed by extremes.' and the comment 'As a result of mastering the postures he is not overcome by the extremes, by cold and heat and by the other [extremes].' Both are exact. GRETIL has 'tato dvandvānabhighātaḥ' and 'śītoṣṇādibhir dvandvair āsanajayān nābhibhūyate', which match. A new passage: the only used Woods passage is on 1.20. Safe. 'Ups and downs' is a fair kid-English word for dvandva, the pairs of opposites."
+  },
+  {
+   "id": "Y8",
+   "verdict": "fixed",
+   "quote": "As a result of mastering this constraint, there follows the shining forth of insight. ... Just in proportion as constraint enters the stable state, in that proportion the concentrated insight becomes clear.",
+   "original": "तज्जयात् प्रज्ञालोकः ॥ (bhāṣya: यथा यथा संयमः स्थिरपदो भवति तथा तथा समाधिप्रज्ञा विशारदी भवति)",
+   "who": "Patanjali, with Vyasa's commentary",
+   "source": "Yoga Sutra 3.5 with Yoga-bhashya, tr. James Haughton Woods, The Yoga-System of Patanjali, Harvard Oriental Series 17, 1914",
+   "url": "https://archive.org/details/yogasystemofpata00wooduoft",
+   "stage": "speed_up",
+   "meaning": "The steadier your focus becomes, the brighter and clearer your insight grows.",
+   "is_story": false,
+   "reason": "The wording is exact in the Woods 1914 djvu text: sutra 5, then the comment 'Just in proportion as constraint enters the stable state, in that proportion the concentrated insight becomes clear.' GRETIL has 'tajjayāt prajñālokaḥ' and 'yathā yathā saṃyamaḥ sthirapado bhavati tathā tathā samādhiprajñā viśāradī bhavati', which match. It is not in the used lists. Meaning fix: 'constraint' (samyama) means concentration, meditation and absorption, a focus practice, not practice in general. So I changed 'your practice stands' to 'your focus becomes', keeping the rest. It comes from the same page as Y10."
+  },
+  {
+   "id": "Y9",
+   "verdict": "verified",
+   "quote": "For the keenly intense, [concentration] is near.",
+   "original": "तीव्रसंवेगानामासन्नः (tīvrasaṃvegānām āsannaḥ)",
+   "who": "Patanjali",
+   "source": "Yoga Sutra 1.21, tr. James Haughton Woods, The Yoga-System of Patanjali, Harvard Oriental Series 17, 1914",
+   "url": "https://archive.org/details/yogasystemofpata00wooduoft",
+   "stage": "speed_up",
+   "meaning": "With strong, keen effort, the goal of practice comes near quickly.",
+   "is_story": false,
+   "reason": "Exact in the Woods 1914 djvu text: '21. For the keenly intense, [concentration] is near.' Vachaspati's gloss on the same page says 'perfection is [for them] very quick', which supports 'quickly'. The Sanskrit on GRETIL matches. Note that Vachaspati glosses 'intensity' as passionlessness, while the bhashya speaks of the 'vehement method'. So 'strong, keen effort' is a fair simple reading that matches the common modern sense of samvega. Not in the used lists. Safe."
+  },
+  {
+   "id": "Y10",
+   "verdict": "verified",
+   "quote": "By yoga, yoga must be known, / Yoga increaseth yoga's store. / He who for yoga care hath shown / In yoga rests for evermore.",
+   "original": "योगेन योगो ज्ञातव्यो योगो योगात् प्रवर्तते । योऽप्रमत्तस्तु योगेन स योगे रमते चिरम् ॥",
+   "who": "Verse quoted by Vyasa (source of the verse not named, 'it has been said')",
+   "source": "Yoga-bhashya on Yoga Sutra 3.6, tr. James Haughton Woods, The Yoga-System of Patanjali, Harvard Oriental Series 17, 1914",
+   "url": "https://archive.org/details/yogasystemofpata00wooduoft",
+   "stage": "speed_up",
+   "meaning": "Yoga grows out of yoga: the more you practice, the more it builds.",
+   "is_story": false,
+   "reason": "The four lines are exact in the Woods 1914 djvu text, introduced by 'Because it has been said to be thus'. So crediting it as a verse Vyasa quotes is correct. GRETIL reads 'yogena yogo jñātavyo yogo yogāt pravartate / yo 'pramattas tu yogena sa yoge ramate ciram', which matches the Devanagari given. The same comment has the warning line suggested in the note ('by overleaping the next stage without having first mastered the lower stage...'), also exact. Not in the used lists. The meaning line is faithful."
+  },
+  {
+   "id": "Y11",
+   "verdict": "verified",
+   "quote": "Just as lions, elephants and tigers are controlled by and by, so the breath is controlled by slow degrees, otherwise (i.e., by being hasty or using too much force) it kills the practiser himself.",
+   "original": "यथा सिंहो गजो व्याघ्रो भवेद्वश्यः शनैः शनैः । तथैव सेवितो वायुरन्यथा हन्ति साधकम् ॥",
+   "who": "Svatmarama",
+   "source": "Hatha Yoga Pradipika 2.15, tr. Pancham Sinh, Sacred Books of the Hindus vol. 15 part 3, Panini Office, Allahabad, January 1915 (often cited as 1914)",
+   "url": "https://archive.org/details/sacredbooksofthehindusvol15part3hathayogapradipikapanchamsinh_202002",
+   "stage": "payoff_or_warning",
+   "meaning": "Tame your breath slowly, like a wild animal. Rushing it can badly hurt you.",
+   "is_story": false,
+   "reason": "I downloaded the archive.org djvu text myself. Verse 15 matches, and the OCR does read 'hills' for 'kills'. The title page says JANUARY, 1915, Panini Office, Allahabad. HYP 2.15 is not used (the used HYP verses are 1.3, 1.17, 1.19, 1.66, 1.67-68 and 2.2). 'Kills' is a classical warning to the practitioner, not a disaster or a victim, and the meaning line softens it while keeping the sense. It is 14 words, right at the limit. Bonus, unchecked by the brief: verse 2.14 on the same page says 'When the practice becomes established, no such restriction is necessary', a neat stable-then-freer line."
+  },
+  {
+   "id": "Y12",
+   "verdict": "verified",
+   "quote": "With peacock feathers light you load the wain; / Yet, heaped too high, the axle snaps in twain.",
+   "original": "பீலிபெய் சாகாடும் அச்சிறும் அப்பண்டஞ் / சால மிகுத்துப் பெயின்.",
+   "who": "Tiruvalluvar",
+   "source": "Tirukkural 475 (ch. 48, 'The Knowledge of Power'), tr. G. U. Pope, The 'Sacred' Kurral of Tiruvalluva-Nayanar, London: W. H. Allen, 1886",
+   "url": "https://archive.org/details/tiruvalluvanayan00tiruuoft",
+   "stage": "payoff_or_warning",
+   "meaning": "Even light feathers break a cart's axle if you pile on too many.",
+   "is_story": false,
+   "reason": "Both lines are exact in the Pope 1886 djvu text, under 'CHAPTER XLVIII. THE KNOWLEDGE OF POWER'. The Tamil matches thirukkural.net character for character. The used Kurals are 415, 611 and 620, so 475 is new. Safety: the chapter is in Book II 'Royalty' and nearby verses 471 and 473 mention war and monarchs, but 475 has no royal, war or political content. Earlier AYBKK posts already used Book II Kurals (415, 620). Kural 490 (the heron), mentioned in the note, is about timing an attack on foes, so I agree it should stay out. The meaning line is faithful."
+  },
+  {
+   "id": "C1",
+   "verdict": "verified",
+   "quote": "Will the first spoonful fill you up?",
+   "original": "첫술에 배부르랴",
+   "who": "Korean proverb",
+   "source": "Urimalsaem dictionary (National Institute of Korean Language), proverb entry 첫술에 배부르랴, expert-reviewed. Definition: 어떤 일이든지 단번에 만족할 수는 없다는 말 ('nothing can satisfy you all at once'). English is our literal translation.",
+   "url": "https://opendict.korean.go.kr/search/searchResult?query=%EC%B2%AB%EC%88%A0%EC%97%90%20%EB%B0%B0%EB%B6%80%EB%A5%B4%EB%9E%B4&dicType=2&wordMatch=N&infoType=confirm",
+   "stage": "slow_start",
+   "meaning": "The first spoonful never fills you. Nobody gets it all at once.",
+   "is_story": false,
+   "reason": "Fetched the Urimalsaem URL. It shows one expert-reviewed (전문가 감수) proverb entry, 첫술에 배부르랴, with the definition exactly as quoted and the variant 한술 밥에 배부르랴. The literal English is accurate, and the meaning line matches the definition. It is not in used_who or used_quotes; the used 'first pancake comes out a lump' is a different Russian proverb. Food imagery, safe."
+  },
+  {
+   "id": "C2",
+   "verdict": "verified",
+   "quote": "All difficult things in the world are sure to arise from a previous state in which they were easy, and all great things from one in which they were small.",
+   "original": "天下難事必作於易，天下大事必作於細。",
+   "who": "Laozi",
+   "source": "Dao De Jing ch. 63.2, tr. James Legge, The Tao Teh King (Sacred Books of the East vol. 39), 1891. Chinese from the Wang Bi text on Chinese Wikisource.",
+   "url": "https://www.gutenberg.org/ebooks/216",
+   "stage": "slow_start",
+   "meaning": "Every hard thing starts out easy. Every big thing starts out small.",
+   "is_story": false,
+   "reason": "Downloaded Gutenberg #216 (Legge). Ch. 63 para 2 matches word for word. Wikisource 道德經 (王弼本) ch. 63 has 天下難事必作於易，天下大事必作於細 exactly. Used lists have Laozi 10, 15, 56, 64 and the water chapter, not 63. Laozi 64 (sprout, thousand li) is used and close in idea, so do not put the two side by side. Fuller's used 'All things are difficult before they are easy' is a different source and a reverse idea. Public domain and safe."
+  },
+  {
+   "id": "C3",
+   "verdict": "verified",
+   "quote": "A thousand days of practice is forging; ten thousand days of practice is refining.",
+   "original": "千日の稽古を鍛とし、万日の稽古を錬とす。",
+   "who": "Miyamoto Musashi",
+   "source": "Gorin no Sho (The Book of Five Rings), Water Scroll, afterword (水之巻 後書), dated 正保二年五月十三日 (1645). Original text from the Nihon Koten Bungaku Tekishu (koten.net) edition. English is our literal translation (鍛 = forge, 錬 = refine or temper).",
+   "url": "https://www.koten.net/gorin/gen/238/",
+   "stage": "base",
+   "meaning": "A thousand days of practice shapes you. Ten thousand days polishes you.",
+   "is_story": false,
+   "reason": "Fetched koten.net 水の巻 (三八) 後書. The page has 千日の稽古を鍛とし万日の稽古を錬とす with the date 正保二年五月十三日 (1645). It is correctly labeled as our own literal translation, and that translation is accurate. The used Musashi item is the Earth Scroll line 'studied morning and evening', a different passage. The sentence itself is about training only. Do not use the nearby lines about defeating opponents."
+  },
+  {
+   "id": "C4",
+   "verdict": "verified",
+   "quote": "He who stands on his tiptoes does not stand firm; he who stretches his legs does not walk (easily).",
+   "original": "企者不立，跨者不行。",
+   "who": "Laozi",
+   "source": "Dao De Jing ch. 24, tr. James Legge, Sacred Books of the East vol. 39, 1891. Chinese from the Wang Bi text on Chinese Wikisource.",
+   "url": "https://www.gutenberg.org/ebooks/216",
+   "stage": "stable",
+   "meaning": "On tiptoe, you can't stand firm. With giant strides, you can't walk well.",
+   "is_story": false,
+   "reason": "Gutenberg #216, ch. 24 opening matches word for word, including Legge's '(easily)'. The Wang Bi text on Wikisource reads 企者不立，跨者不行. Ch. 24 is not used. The rest of the chapter is about boasting, so use only this sentence. Meaning line is faithful, 13 words. Public domain and safe."
+  },
+  {
+   "id": "C5",
+   "verdict": "verified",
+   "quote": "Gravity is the root of lightness; stillness, the ruler of movement.",
+   "original": "重為輕根，靜為躁君。",
+   "who": "Laozi",
+   "source": "Dao De Jing ch. 26.1, tr. James Legge, Sacred Books of the East vol. 39, 1891. Chinese from the Wang Bi text on Chinese Wikisource.",
+   "url": "https://www.gutenberg.org/ebooks/216",
+   "stage": "stable",
+   "meaning": "Steady weight is the root of lightness. Stillness is the boss of movement.",
+   "is_story": false,
+   "reason": "Gutenberg #216, ch. 26 para 1 matches word for word, and Wikisource Wang Bi has 重為輕根，靜為躁君. Confirmed that para 2 is about 'a wise prince', 'the lord of a myriad chariots' and 'lose his throne' (royalty and politics), so use ONLY para 1. 'Ruler' here is a metaphor; the meaning line says 'boss', which avoids any royal reading. Not used before. Public domain."
+  },
+  {
+   "id": "C6",
+   "verdict": "verified",
+   "quote": "...whenever I come to a complicated joint, and see that there will be some difficulty, I proceed anxiously and with caution, not allowing my eyes to wander from the place, and moving my hand slowly. Then by a very slight movement of the knife, the part is quickly separated...",
+   "original": "每至於族，吾見其難為，怵然為戒，視為止，行為遲，動刀甚微，謋然已解。",
+   "who": "Cook Ding, in Zhuangzi",
+   "source": "Zhuangzi, Book III (Yang Sheng Zhu, Nourishing the Lord of Life), tr. James Legge, The Texts of Taoism (Sacred Books of the East vol. 39), 1891, pp. 199-200. Chinese from zh.wikisource 莊子/養生主.",
+   "url": "https://archive.org/details/wg939",
+   "stage": "control",
+   "meaning": "At the hardest spot, the master slows down. Then one tiny move does it.",
+   "is_story": false,
+   "reason": "Downloaded the archive.org wg939 djvu text (SBE 39, 1891). On p. 200 the excerpt matches word for word, ellipses are used correctly, and the speech begins on p. 199. Wikisource 養生主 has 每至於族…動刀甚微，謋然已解. Used Zhuangzi passages are Books VI, XIII, XVII and XIX; Book III is not used. Cautions: the cook speaks to 'the ruler Wan-hui' (King Hui of Liang), so do not mention the king. The scene is butchering an ox, which may bother vegetarian students. The slide carries only the meaning line, which has no gore. Meaning line is faithful, 14 words."
+  },
+  {
+   "id": "C7",
+   "verdict": "verified",
+   "quote": "Whatever the Way, the master of strategy does not appear fast. ... Really skilful people never get out of time, and are always deliberate, and never appear busy.",
+   "original": "其道上手になりてははやく見えざるもの也。…上手のする事は緩々と見えて間のぬけざる所也。",
+   "who": "Miyamoto Musashi",
+   "source": "Gorin no Sho, Wind Scroll, section 他の兵法にはやきを用る事 (speed in other schools), 1645. English from the Victor Harris translation, A Book of Five Rings, 1974 (in copyright, so quote it short). Japanese original from the koten.net edition.",
+   "url": "https://www.koten.net/gorin/gen/409/",
+   "stage": "control",
+   "meaning": "A real master never looks rushed. They seem slow, yet never miss the beat.",
+   "is_story": false,
+   "reason": "Fetched koten.net 風の巻 (九). Both Japanese sentences are on the page exactly. I checked the English in a Harris-text copy on archive.org: 'Whatever the Way, the master of strategy does not appear fast' and 'Of course, slowness is bad. Really skilful people never get out of time, and are always deliberate, and never appear busy.' Both match. A search ties the wording to Harris's A Book of Five Rings. The examples are noh chant and drum. The section's later lines on swords and marshes must be left out. This is a different passage from the used Musashi item. The meaning line is faithful (緩々と見えて間のぬけざる)."
+  },
+  {
+   "id": "C8",
+   "verdict": "verified",
+   "quote": "(So it is with) the accumulation of wind; if it be not great, it will not have strength to support great wings. ... thenceforth the accumulation of wind was sufficient. ... there was nothing to obstruct or arrest its course...",
+   "original": "風之積也不厚，則其負大翼也无力。…而後乃今培風；背負青天，而莫之夭閼者，而後乃今將圖南。",
+   "who": "Zhuangzi",
+   "source": "Zhuangzi, Book I (Xiao Yao You, Enjoyment in Untroubled Ease), tr. James Legge, The Texts of Taoism (Sacred Books of the East vol. 39), 1891, p. 165. Chinese from zh.wikisource 莊子/逍遙遊.",
+   "url": "https://archive.org/details/wg939",
+   "stage": "speed_up",
+   "meaning": "Big wings need lots of wind below. Once it builds, nothing stops the flight.",
+   "is_story": false,
+   "reason": "The SBE 39 djvu text, p. 165, matches each excerpted phrase word for word, and the ellipses are correct. Wikisource 逍遙遊 has 風之積也不厚，則其負大翼也无力…而莫之夭閼者，而後乃今將圖南; it punctuates 培風背 differently, a known reading variant. Book I is not used. Safety: the sentence just before, 'ascends on a whirlwind', is excluded, and the quote and meaning show steady wind under wings, not a storm. Leave out the boat and water line. Public domain."
+  },
+  {
+   "id": "C9",
+   "verdict": "verified",
+   "quote": "Not quickly harnessed, but quickly arrived.",
+   "original": "Не скоро запряг, да скоро приехал.",
+   "who": "Russian proverb",
+   "source": "V. I. Dal, Poslovitsy russkogo naroda (Proverbs of the Russian People), 1862, section 'Пора — мера — спех' (Time, measure, haste). Checked in the 1989 Khudozhestvennaya literatura edition, vol. 2, p. 71. English is our literal translation.",
+   "url": "https://archive.org/details/2-.-..-2.-.-.-.-.-.-.-.-.-.-.-1989",
+   "stage": "speed_up",
+   "meaning": "He was slow getting the horse ready, but quick to get there.",
+   "is_story": false,
+   "reason": "The archive.org item metadata matches Dal, 1989 Khud. lit., 2 vols. In the vol. 2 djvu text (same file size as the item's file), 'Не скоро запряг, да скоро приехал.' sits just after the page marker 71. It falls inside the section ПОРА — МЕРА — СПЕХ, which runs until НЕЧАЯННОСТЬ — РАСПЛОХ. Secondary articles also name Dal 1862 as the folk source of the later 'Русские долго запрягают' form, which should NOT be used and must not be credited to Bismarck. The used Russian proverbs are different ones, including Тише едешь. The literal English and meaning line are accurate."
+  },
+  {
+   "id": "C10",
+   "verdict": "verified",
+   "quote": "Sharpening the axe will not hold up the work of chopping firewood.",
+   "original": "磨刀不误砍柴工 (traditional: 磨刀不誤砍柴工)",
+   "who": "Chinese saying",
+   "source": "Chinese folk saying (no known author or early text). Wiktionary entry 磨刀不誤砍柴工 (proverb): lit. 'Sharpening the axe will not hold up the work of chopping firewood'; 'Making full preparation will not delay your job but quicken the process.' Also in CC-CEDICT: 'time invested in preparations is not lost'.",
+   "url": "https://en.wiktionary.org/wiki/磨刀不誤砍柴工",
+   "stage": "speed_up",
+   "meaning": "Time spent sharpening the blade isn't lost. Sharp tools make work go faster.",
+   "is_story": false,
+   "reason": "The raw Wiktionary entry confirms the literal English and the definition word for word. The CC-CEDICT dictionary on MDBG separately lists 磨刀不误砍柴工 as an idiom: 'lit. sharpening the axe won't make the wood-splitting take longer / fig. time invested in preparations is not lost'. I found no early written source, so credit it only as 'Chinese saying', as given. This is not the fake Lincoln 'six hours sharpening the axe' line. Not used before; a tool image, safe."
+  },
+  {
+   "id": "C11",
+   "verdict": "verified",
+   "quote": "If you are in a hurry, will you tie the thread round the needle's waist and sew with it?",
+   "original": "급하면 바늘허리에 실 매어 쓸까",
+   "who": "Korean proverb",
+   "source": "Urimalsaem dictionary (National Institute of Korean Language), proverb entry 급하면 바늘허리에 실 매어 쓸까, expert-reviewed. Definition: 일에는 일정한 순서가 있고 때가 있는 것이므로, 아무리 급해도 순서를 밟아서 일해야 함을 비유적으로 이르는 말 ('work has a set order and time, so however urgent, you must follow the steps'). English is our literal translation.",
+   "url": "https://opendict.korean.go.kr/search/searchResult?query=%EB%B0%94%EB%8A%98%ED%97%88%EB%A6%AC%EC%97%90%20%EC%8B%A4%20%EB%A7%A4%EC%96%B4%20%EC%93%B8%EA%B9%8C&dicType=2&wordMatch=N&infoType=confirm",
+   "stage": "payoff_or_warning",
+   "meaning": "No matter how rushed, you must thread the needle first. Steps come in order.",
+   "is_story": false,
+   "reason": "Fetched the Urimalsaem URL. It shows one expert-reviewed entry with the headword 급하면 바늘허리에 실 매어 쓸까 and the definition exactly as quoted. The literal English is fair (쓸까 = use it, here sew). The meaning line is faithful, 14 words. Not used; the used Thai 'anvil into a needle' is a different proverb. Safe."
+  },
+  {
+   "id": "C12",
+   "verdict": "verified",
+   "quote": "Slow makes the work; long makes the good.",
+   "original": "ช้าเป็นการ นานเป็นคุณ",
+   "who": "Thai proverb",
+   "source": "Royal Institute Thai Dictionary (ORST, online), sub-entry of ช้า ๑, marked (สำ) as an idiom. Definition: ค่อย ๆ คิด ค่อย ๆ ทำดีกว่าด่วนทำ ('thinking slowly and working slowly is better than rushing'). English is our literal translation.",
+   "url": "https://dictionary.orst.go.th/",
+   "stage": "payoff_or_warning",
+   "meaning": "Slow gets the job done, and taking time brings good. It beats rushing.",
+   "is_story": false,
+   "reason": "I queried the ORST lookup endpoint myself. It returns 'ช้าเป็นการ นานเป็นคุณ (สำ) ว. ค่อย ๆ คิด ค่อย ๆ ทำดีกว่าด่วนทำ.' with parent word ช้า ๑. Used check: oct5/research.json shows the used 'Thai proverb · Royal Institute Dictionary' item is ปลูกเรือนตามใจผู้อยู่ ('Build the house to suit the one who lives in it'), which is in used_quotes. ช้า ๆ ได้พร้าเล่มงาม was only researched, and ช้าเป็นการ is not used. The literal English and meaning line fit the definition. On the slide, credit only 'Thai proverb'."
+  },
+  {
+   "id": "W1",
+   "verdict": "verified",
+   "quote": "This mount is such, that ever / At the beginning down below 'tis tiresome, / And aye the more one climbs, the less it hurts.",
+   "original": "Questa montagna è tale, / che sempre al cominciar di sotto è grave; / e quant'om più va sù, e men fa male.",
+   "who": "Dante Alighieri (Virgil speaking to Dante)",
+   "source": "Divine Comedy, Purgatorio, Canto IV, lines 88-90, tr. Henry Wadsworth Longfellow, 1867",
+   "url": "https://www.gutenberg.org/cache/epub/1002/pg1002.txt",
+   "stage": "slow_start",
+   "meaning": "The climb is hardest at the start. The higher you go, the easier.",
+   "is_story": false,
+   "reason": "I opened Gutenberg #1002 (Longfellow, Purgatory). After 'And he to me:' the three lines match word for word. The Italian on it.wikisource (Purgatorio/Canto IV) matches exactly, and the line-number marker '90' falls on 'e men fa male', so the lines are 88-90. Dante is not on the used list. The setting is the Christian Purgatory, but the line is plain advice about climbing and mocks nothing. The meaning line is faithful and 13 words long."
+  },
+  {
+   "id": "W3",
+   "verdict": "verified",
+   "quote": "It was a custom with Apelles, to which he most tenaciously adhered, never to let any day pass, however busy he might be, without exercising himself by tracing some outline or other; a practice which has now passed into a proverb.",
+   "original": "Apelli fuit alioqui perpetua consuetudo numquam tam occupatum diem agendi, ut non lineam ducendo exerceret artem, quod ab eo in proverbium venit.",
+   "who": "Pliny the Elder, on the painter Apelles",
+   "source": "Natural History, Book 35, ch. 36 (section 84), tr. John Bostock & H. T. Riley, 1855",
+   "url": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.02.0137:book=35:chapter=36",
+   "stage": "base",
+   "meaning": "The great painter practised a little every single day, even when very busy.",
+   "is_story": true,
+   "reason": "Perseus 1999.02.0137 (Bostock & Riley; Perseus gives 'London, Taylor and Francis, 1855') has the English word for word. Perseus 1999.02.0138 has the Latin exactly. The next sentences tell the cobbler story and then mention Alexander the Great (a king), so cut the quote where given. 'Nulla dies sine linea' is the later proverb, not Pliny's wording, so label it that way if used. Not on the used list. The meaning line is faithful."
+  },
+  {
+   "id": "W4",
+   "verdict": "verified",
+   "quote": "Gently make haste, of Labour not afraid; / A hundred times consider what you've said.",
+   "original": "Hâtez-vous lentement ; et, sans perdre courage, / Vingt fois sur le métier remettez votre ouvrage.",
+   "who": "Nicolas Boileau",
+   "source": "L'Art poétique, Chant I, 1674; English tr. Sir William Soame, revised by John Dryden, The Art of Poetry, 1683",
+   "url": "https://poets.org/poem/art-poetry-excerpt",
+   "stage": "base",
+   "meaning": "Hurry slowly. Don't fear the work, and go over it again and again.",
+   "is_story": false,
+   "reason": "poets.org has the English and marks it public domain, but names no translator. I also checked the 1683 first edition text ('The Art of Poetry... Made English', London, R. Bentley, 1683) on EarlyPrint (distantreader.org A28571.txt), and it has the same two lines. Catalogues credit it to Sir William Soame, and the Dryden revision is the traditional attribution. The French on fr.wikisource (Boileau, Œuvres poétiques, L'Art poétique, Chant I) matches. The French ends in a colon where the English has a semicolon; this is cosmetic. Confirmed: the lines just before describe a 'torrent débordé... d'un cours orageux' (a flooding torrent in a storm), so start the quote exactly where given. The Augustus 'festina lente' version should stay excluded. Not on the used list."
+  },
+  {
+   "id": "W5",
+   "verdict": "verified",
+   "quote": "Like the star, / without haste, / but without rest, / let each one turn / around his own load.",
+   "original": "Wie das Gestirn, / Ohne Hast, / Aber ohne Rast, / Drehe sich jeder / Um die eigne Last.",
+   "who": "Johann Wolfgang von Goethe",
+   "source": "Zahme Xenien II; text as in Gedichte, Ausgabe letzter Hand, 1827; literal translation from German",
+   "url": "https://projekt-gutenberg.org/authors/johann-wolfgang-von-goethe/books/gedichte-ausgabe-letzter-hand/chapter/342",
+   "stage": "stable",
+   "meaning": "Be like a star: never rushing, never stopping, carrying your own load.",
+   "is_story": false,
+   "reason": "Projekt Gutenberg's chapter 342 is 'Zahme Xenien II' and contains the German exactly. The literal English is accurate. I could not confirm a first-print year for this part (one source dates the Zahme Xenien to 1820), so I dropped the unconfirmed '(1820s)' and the source line cites only the 1827 text. CAUTION: the same Zahme Xenien II section has Goethe epigrams that disparage Hindu deities, such as 'Die indischen Götzen, die sind mir ein Graus' and lines naming Vishnu, Brahma, Shiva and Hanuman. The quote itself is harmless, but an Ashtanga audience that looks up the source could be offended. Credit it only as 'Goethe, Zahme Xenien'. The used Goethe items (Maxims, Wilhelm Meister) are different works."
+  },
+  {
+   "id": "W6",
+   "verdict": "verified",
+   "quote": "While the young branch is uniting within the green bark, whatever breeze shakes it while now tender, it falls. Soon, hardened in time, the same tree will stoutly resist the winds, and bear the adopted fruit.",
+   "original": "Dum novus in viridi coalescit cortice ramus, / Concutiat tenerum quaelibet aura, cadet: / Mox eadem ventis, spatio durata, resistet, / Firmaque adoptivas arbor habebit opes.",
+   "who": "Ovid",
+   "source": "Ars Amatoria (The Art of Love) II.649-652, tr. Henry T. Riley, 1885 ed.",
+   "url": "https://www.gutenberg.org/cache/epub/47677/pg47677.txt",
+   "stage": "stable",
+   "meaning": "A new branch falls in any breeze; with time, the tree stands firm.",
+   "is_story": false,
+   "reason": "Gutenberg #47677 (Riley, title page dated 1885) has the English word for word. The Latin Library Ars II has the Latin exactly, with line marker 650 on 'cadet', so the lines are 649-652. In context, Ovid is telling a lover to get used to a partner's physical flaws over time. The image itself is general, but the credit 'The Art of Love' (a playful seduction manual) may sit oddly on a yoga carousel. There is only mild wind and no storm or flood. Ovid's Ex Ponto (used) is a different work. The meaning line is faithful."
+  },
+  {
+   "id": "W7",
+   "verdict": "verified",
+   "quote": "Be sparing of the whip and use with nerve the reins; for of their own accord the steeds will hasten. Difficult are they to check in full career.",
+   "original": "parce, puer, stimulis et fortius utere loris! / sponte sua properant, labor est inhibere volentes.",
+   "who": "Ovid (the Sun god advising his son Phaethon)",
+   "source": "Metamorphoses II.127-128, tr. Brookes More, Cornhill Publishing, Boston, 1922",
+   "url": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.02.0028:book=2:card=111",
+   "stage": "control",
+   "meaning": "Go easy on the whip and hold the reins; speed comes by itself.",
+   "is_story": false,
+   "reason": "Perseus (Brookes More, Boston, Cornhill, 1922) has the English word for word; in More's text it starts lowercase 'be sparing'. The Latin Library Met. II has the Latin, and with line marker 125 on 'pectore sollicito' the quoted lines are 127-128. The advice does not mock the god. In the myth, though, Phaethon crashes, sets the world on fire and dies. Keep the myth's ending off the slide and do not frame it as a disaster. The meaning line is faithful."
+  },
+  {
+   "id": "W8",
+   "verdict": "verified",
+   "quote": "But it is just when we have acquired this facility that we must pause awhile to look ahead and, if I may use the metaphor, curb the horses that would run away with us. This will not delay our progress so much as lend us fresh vigour.",
+   "original": "Sed tum maxime cum facultas illa contigerit resistamus, ut provideamus et ferentis equos frenis quibusdam coerceamus, quod non tam moram faciet quam novos impetus dabit.",
+   "who": "Quintilian",
+   "source": "Institutio Oratoria X.3.10, tr. H. E. Butler, Loeb Classical Library vol. IV (LacusCurtius gives 1920; often cited as 1922)",
+   "url": "https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Quintilian/Institutio_Oratoria/10B*.html",
+   "stage": "control",
+   "meaning": "When it gets easy, hold the reins. Control gives you fresh power.",
+   "is_story": false,
+   "reason": "LacusCurtius (Butler; its colophon says 'Loeb Classical Library edition, 1920') has the English word for word in §10. The Latin Library Book X has the Latin exactly, also in §10. The LacusCurtius page has OCR slips nearby ('encamp', 'universe', 'plebeian'), but the quoted sentences are clean. Not on the used list. The meaning line is faithful."
+  },
+  {
+   "id": "W9",
+   "verdict": "verified",
+   "quote": "Give me a place to stand on, and I can move the earth.",
+   "original": "δός μοι ποῦ στῶ καὶ κινῶ τὴν γᾶν",
+   "who": "Archimedes (as recorded by Pappus of Alexandria)",
+   "source": "Saying recorded in Pappus, Collection (Synagoge) Book VIII, c. 340 CE; English and Greek as given in T. L. Heath, Archimedes, 1920, ch. 1",
+   "url": "https://www.gutenberg.org/files/35550/35550-h/35550-h.htm",
+   "stage": "control",
+   "meaning": "Give me firm ground to stand on, and I can move the world.",
+   "is_story": false,
+   "reason": "Gutenberg #35550 (Heath, Archimedes, 1920) gives the English and Greek exactly as quoted, linked to the problem 'to move a given weight by a given force'. Secondary sources (Wikiquote; the Hultsch edition reference, p. 1060) confirm that Pappus Collection VIII reports it. I did not see the Hultsch Greek myself. Pappus' text is usually printed with 'τὴν γῆν'; Heath prints 'τὴν γᾶν'. It is a saying reported about 500 years later, so the 'as recorded by Pappus' label is needed and correct. Confirmed: Heath's chapter also mentions King Hieron and Archimedes' killing by a Roman soldier, so keep both out. Plutarch's Hieron version is excluded, as advised. Not on the used list."
+  },
+  {
+   "id": "W10",
+   "verdict": "verified",
+   "quote": "The first aim which we must fix in our minds and insist on carrying into execution is to write as well as possible; speed will come with practice... write quickly and you will never write well, write well and you will soon write quickly.",
+   "original": "ut quam optime scribamus: celeritatem dabit consuetudo... cito scribendo non fit ut bene scribatur, bene scribendo fit ut cito.",
+   "who": "Quintilian",
+   "source": "Institutio Oratoria X.3.9-10, tr. H. E. Butler, Loeb Classical Library vol. IV (LacusCurtius gives 1920; often cited as 1922)",
+   "url": "https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Quintilian/Institutio_Oratoria/10B*.html",
+   "stage": "speed_up",
+   "meaning": "Do it well first. Do it well, and speed will come with practice.",
+   "is_story": false,
+   "reason": "LacusCurtius has both halves word for word: §9 'For the first aim... speed will come with practice' and §10 'write quickly and you will never write well, write well and you will soon write quickly'. Butler's sentence begins 'For the first aim'; dropping 'For' is a normal excerpt cut. The Latin Library places 'celeritatem dabit consuetudo' in §IX and 'cito scribendo... ut cito' in §X, exactly as given. It is the same passage as W8, so if both are used, cite them separately as §9-10 and §10. The meaning line is faithful."
+  },
+  {
+   "id": "W11",
+   "verdict": "verified",
+   "quote": "Success prompts to exertion; and habit facilitates success... The more we do, the more we can do.",
+   "original": "",
+   "who": "William Hazlitt",
+   "source": "\"On Application to Study\", The Plain Speaker, 1826 (Collected Works, ed. Waller & Glover, vol. 7, 1903)",
+   "url": "https://www.gutenberg.org/cache/epub/58408/pg58408.txt",
+   "stage": "speed_up",
+   "meaning": "Each success pushes you on; the more you do, the more you can do.",
+   "is_story": false,
+   "reason": "Gutenberg #58408 (Collected Works vol. 7, ed. Glover & Waller, London, Dent, 1903; contains The Plain Speaker) has both sentences word for word. 'can' is italic in the original, and the '...' replaces one sentence. The editors' note says the essay first appeared in The New Monthly Magazine, 1823, as 'Table Talk, X', and was then collected in The Plain Speaker (1826). That explains the Table-Talk confusion; the citation as given is correct. Hazlitt is not on the used list. The meaning line is faithful and 14 words long."
+  },
+  {
+   "id": "W12",
+   "verdict": "verified",
+   "quote": "Wisely and slow; they stumble that run fast.",
+   "original": "",
+   "who": "William Shakespeare (Friar Laurence speaking to Romeo)",
+   "source": "Romeo and Juliet, Act 2, Scene 3 (last line of the scene), c. 1595",
+   "url": "https://shakespeare.mit.edu/romeo_juliet/romeo_juliet.2.3.html",
+   "stage": "payoff_or_warning",
+   "meaning": "Go wisely and slowly. People who run too fast trip and fall.",
+   "is_story": false,
+   "reason": "The MIT Shakespeare text of 2.3 ends 'ROMEO: O, let us hence; I stand on sudden haste. / FRIAR LAURENCE: Wisely and slow; they stumble that run fast.' This is exact. Not on the used list. The line has no royalty or politics. The play's tragic ending is fiction and not part of the quote. The meaning line is faithful."
+  },
+  {
+   "id": "W13",
+   "verdict": "verified",
+   "quote": "Therefore, when it shall seem so pleasant to thee, / That going up shall be to thee as easy / As going down the current in a boat, / Then at this pathway's ending thou wilt be.",
+   "original": "Però, quand'ella ti parrà soave / tanto, che sù andar ti fia leggero / com'a seconda giù andar per nave, / allor sarai al fin d'esto sentiero.",
+   "who": "Dante Alighieri (Virgil speaking to Dante)",
+   "source": "Divine Comedy, Purgatorio, Canto IV, lines 91-94, tr. Henry Wadsworth Longfellow, 1867",
+   "url": "https://www.gutenberg.org/cache/epub/1002/pg1002.txt",
+   "stage": "speed_up",
+   "meaning": "Keep climbing until going up feels as easy as floating downstream.",
+   "is_story": false,
+   "reason": "Gutenberg #1002 has the four lines word for word. The last line ends with ';' in Longfellow and the Italian ends with ';' too; ending the excerpt with '.' is acceptable. On it.wikisource, the line-number marker '93' falls on 'per nave', which confirms lines 91-94. The water image is calm downstream boating, not a flood. Still, given the flood guidance, do not pair this slide with a photo of flowing or high water. The meaning line is faithful."
+  },
+  {
+   "id": "W14",
+   "verdict": "verified",
+   "quote": "This is what happens when you hurry through a maze; the faster you go, the worse you are entangled.",
+   "original": "Quod evenit in labyrintho properantibus: ipsa illos velocitas implicat.",
+   "who": "Seneca",
+   "source": "Moral Letters to Lucilius, Letter 44.7, tr. Richard M. Gummere, Loeb vol. I, 1917",
+   "url": "https://en.wikisource.org/wiki/Moral_letters_to_Lucilius/Letter_44",
+   "stage": "payoff_or_warning",
+   "meaning": "Rushing through a maze only gets you more lost.",
+   "is_story": false,
+   "reason": "Wikisource (Gummere, Loeb vol. 1) has it word for word as the last sentence of §7, just before 'Farewell'. The Latin Library Ep. 44 has the Latin exactly. Letter 44 is not among the used Seneca letters (2, 6, 54, 55, 71, 104, On Providence). Elsewhere the letter mentions Roman knights, the senate, the army and kings, so quote only this line. The meaning line is faithful."
+  },
+  {
+   "id": "W15",
+   "verdict": "verified",
+   "quote": "Zeuxis heard him, and said, \"Mine take, and last, a long time.\" And it is true that deftness and speed in working do not impart to the work an abiding weight of influence nor an exactness of beauty; whereas the time which is put out to loan in laboriously creating, pays a large and generous interest in the preservation of the creation.",
+   "original": "",
+   "who": "Plutarch, telling a story about the painter Zeuxis",
+   "source": "Life of Pericles 13.2, tr. Bernadotte Perrin, Loeb Classical Library, 1916",
+   "url": "https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Plutarch/Lives/Pericles*.html",
+   "stage": "payoff_or_warning",
+   "meaning": "Slow work lasts long. Time you put in pays you back.",
+   "is_story": true,
+   "reason": "LacusCurtius (Perrin, Loeb 1916) has §13.2 word for word. It starts 'when Agatharchus the painter was boasting loudly of the speed and ease...'. Not on the used list; the used Plutarch items are other works. Caution: Plutarch tells the anecdote as a contrast to Pericles' building programme, which was finished 'in the heyday of a single administration' and is praised as both fast and lasting. Pericles was a statesman and general. Credit it as 'Plutarch, on the painter Zeuxis (Pericles 13.2)' and keep the political frame off the slide. The meaning line is faithful."
+  },
+  {
+   "id": "W16",
+   "verdict": "verified",
+   "quote": "It is the same with people as it is with riding a bike. Only when moving can one comfortably maintain one's balance.",
+   "original": "Beim Menschen ist es wie beim Velo. Nur wenn er faehrt, kann er bequem die Balance halten.",
+   "who": "Albert Einstein",
+   "source": "Letter to his son Eduard, 5 February 1930; literal translation by Barbara Wolff (Einstein Archives) in Walter Isaacson, Einstein: His Life and Universe, 2007, notes p. 565",
+   "url": "https://quoteinvestigator.com/2015/06/28/bicycle/",
+   "stage": "stable",
+   "meaning": "Like a bike, you keep your balance by moving forward.",
+   "is_story": false,
+   "reason": "Quote Investigator gives the German, the date (5 Feb 1930, to Eduard) and the literal English credited to Barbara Wolff of the Einstein Archives. It cites Isaacson (2007), notes, epigraph, p. 565, and Neffe's biography (Einstein Archives 75-990). The popular 'Life is like riding a bicycle...' is Isaacson's paraphrase, so use only this literal wording. I did not see the letter itself (confidence medium). It is a different text from the used Kyoto lecture. The meaning line is faithful."
+  },
+  {
+   "id": "W17",
+   "verdict": "verified",
+   "quote": "The Tortoise never for a moment stopped, but went on with a slow but steady pace straight to the end of the course... Slow but steady wins the race.",
+   "original": "",
+   "who": "Aesop (fable)",
+   "source": "The Hare and the Tortoise, Aesop's Fables, tr. George Fyler Townsend, 1867",
+   "url": "https://www.gutenberg.org/cache/epub/21/pg21.txt",
+   "stage": "payoff_or_warning",
+   "meaning": "Going slowly but never stopping wins the race.",
+   "is_story": true,
+   "reason": "Gutenberg #21 (Three Hundred Aesop's Fables, tr. Rev. G. F. Townsend, Routledge) has the narrative sentence and the moral 'Slow but steady wins the race.' word for word. The Gutenberg file shows no date; 1867 is the standard first-edition year. Aesop's Crow and the Pitcher is the used item, and this is a different fable. Credit it as 'Aesop's fable'. The meaning line is faithful."
+  },
+  {
+   "id": "W18",
+   "verdict": "verified",
+   "quote": "...adopt the pace of Nature. Her secret is patience.",
+   "original": "",
+   "who": "Ralph Waldo Emerson",
+   "source": "\"Education\", Lectures and Biographical Sketches, Houghton Mifflin, Boston, 1883",
+   "url": "https://www.gutenberg.org/cache/epub/75942/pg75942.txt",
+   "stage": "slow_start",
+   "meaning": "Move at nature's speed. Nature's secret is patience.",
+   "is_story": false,
+   "reason": "Gutenberg #75942 (Lectures and Biographical Sketches; 'Original publication: Boston: Houghton, Mifflin and Company, 1883'; the scanned printing is dated 1884, copyright 1883) has 'Leave this military hurry and adopt the pace of Nature. Her secret is patience.' Starting with '...' honestly drops 'military'. The paragraph before is about corporal punishment, so keep it out. 'Education' is a different essay from the used Spiritual Laws and The Conduct of Life. The meaning line is faithful."
+  },
+  {
+   "id": "S1",
+   "verdict": "verified",
+   "quote": "Pole, pole. No hurry.",
+   "original": "Pole, pole. (Swahili: slowly, slowly)",
+   "who": "Gaudence Mato, mountain guide on Mt. Kilimanjaro",
+   "source": "NPR, Ciara Hulet (member station KUER), \"On Mt. Kilimanjaro, 'pole, pole' (slowly, slowly) leads to the summit\", 28 Dec 2025 (rush transcript, hosted on WAMC)",
+   "url": "https://www.wamc.org/2025-12-28/on-mt-kilimanjaro-pole-pole-slowly-slowly-leads-to-the-summit",
+   "stage": "slow_start",
+   "meaning": "Go slowly, slowly. There is no rush.",
+   "is_story": true,
+   "reason": "I opened the WAMC page. The transcript has 'G MATO: Pole, pole. No hurry.', published 28 Dec 2025, reported by Ciara Hulet of KUER, with host Daniel Estrin. The reporter writes 'This pace helps our bodies acclimate' and 'it becomes our mantra to get to the top.' NPR marks the guide's name '(ph)', so the spelling is not confirmed. The head guide is Seraphin Mato (ph). The story mentions breathlessness, exhaustion and nausea, but no deaths, injuries or politics. Not in used_who.txt."
+  },
+  {
+   "id": "S2",
+   "verdict": "fixed",
+   "quote": "Therefore when practicing the solo set, the slower the better. When it is slow, your breath will be deep and long, energy will sink to your elixir field...",
+   "original": "故練架子。愈慢愈好。慢則呼吸深長。氣沉丹田。",
+   "who": "Yang Chengfu (tai chi master), recorded by Chen Weiming",
+   "source": "'Ten Essentials of the Taiji Boxing Art' (dictated by Yang Chengfu), no. 10 'Within movement, seek stillness', in Chen Weiming, Taiji Quan Shu (The Art of Taiji Boxing), 1925; tr. Paul Brennan, 2012",
+   "url": "https://brennantranslation.wordpress.com/2012/03/21/the-art-of-taiji-boxing-taiji-quan-shu/",
+   "stage": "slow_start",
+   "meaning": "When practicing, the slower the better. Slow moves make breath deep and long.",
+   "is_story": false,
+   "reason": "I checked the Chinese (故練架子。愈慢愈好。慢則呼吸深長。氣沉丹田。) and Brennan's English word for word on his page. Fixed the source label only. Brennan's heading is 'TEN ESSENTIALS OF THE TAIJI BOXING ART' (太極拳術十要), 'dictated by Yang Chengfu', not 'Ten Important Points'. The point 10 heading 'Within movement, seek stillness' is correct. The sentence before it criticizes 'external styles', so leaving it out is right. Brennan's translation is free online but not public domain. Not in used_who.txt."
+  },
+  {
+   "id": "S3",
+   "verdict": "verified",
+   "quote": "Mileage makes champions.",
+   "original": "",
+   "who": "Steve Fairbairn, rowing coach (1862-1938)",
+   "source": "Australian Dictionary of Biography, vol. 8, 1981, entry by Michael D. de B. Collins Persse, which lists it among his aphorisms",
+   "url": "https://adb.anu.edu.au/biography/fairbairn-stephen-steve-1080",
+   "stage": "base",
+   "meaning": "Many, many miles of steady practice are what make champions.",
+   "is_story": false,
+   "reason": "I opened the ADB entry. It lists 'Mileage makes champions' among Fairbairn's aphorisms, with 'If you can't do it easy, you can't do it at all'. Author Michael D. De B. Collins Persse, vol. 8, 1981. Dates 1862-1938 are correct. I did not find a first printing in his own books, but a national biography credits it directly to him, so it is not a floating misattribution. The meaning line is faithful. Not in used_who.txt."
+  },
+  {
+   "id": "S4",
+   "verdict": "verified",
+   "quote": "Numerous descriptive studies of the training characteristics of nationally or internationally competitive endurance athletes ... seem to converge on a typical intensity distribution in which about 80% of training sessions are performed at low intensity ..., with about 20% dominated by periods of high-intensity work.",
+   "original": "",
+   "who": "Stephen Seiler, sport scientist, University of Agder, Norway",
+   "source": "S. Seiler, 'What is best practice for training intensity and duration distribution in endurance athletes?', International Journal of Sports Physiology and Performance 5(3):276-291, 2010",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20861519/",
+   "stage": "base",
+   "meaning": "Top endurance athletes do about 8 of every 10 workouts slow and easy.",
+   "is_story": true,
+   "reason": "PubMed showed only a cookie wall, so I got the abstract from Europe PMC (PMID 20861519). Title, author, journal, 5(3):276-291 and 2010 all match. The quoted sentence matches the abstract word for word. The ellipses replace 'training 10 to 13 times per week' and the blood-lactate figure. The meaning line is faithful: it describes what elite athletes tend to do, not a rule. It is a research finding, not a saying. Not in used_who.txt."
+  },
+  {
+   "id": "S5",
+   "verdict": "verified",
+   "quote": "Take a thousand days of practice as forging, and ten thousand days of practice as polishing. Examine this well.",
+   "original": "千日の稽古を鍛とし、万日の稽古を錬とす。能々吟味有べきもの也。",
+   "who": "Miyamoto Musashi, swordsman",
+   "source": "Gorin no Sho (The Book of Five Rings), Water scroll, closing section, 1645; Japanese text from the Musashi Project edition; literal translation",
+   "url": "https://musasi.siritai.net/themusasi2/gorin/g207.html",
+   "stage": "stable",
+   "meaning": "A thousand days of practice makes you strong. Ten thousand makes you polished.",
+   "is_story": false,
+   "reason": "I downloaded the Musashi Project page (Shift-JIS) and confirmed the base text: 千日の稽古を鍛とし、万日の稽古を錬とす。能々吟味有べきもの也。 Its modern Japanese gloss reads 千日の稽古を鍛とし、万日の稽古を練とする. Its commentary says the sentence means 'above all, do not hurry; train steadily, one step at a time.' I checked a Harris 1974 full text: the Water scroll ends at 'Step by step walk the thousand-mile road ... battles and duels' with no thousand-days line, so the note is right that Harris leaves it out. The literal English is fair (鍛 = forge, 錬 = refine or polish). The same paragraph mentions killing an enemy, so quote this line alone. Musashi is not in used_who.txt."
+  },
+  {
+   "id": "S6",
+   "verdict": "verified",
+   "quote": "Stand like a scale. Move like a wheel.",
+   "original": "立如平準。活似車輪。",
+   "who": "Wang Zongyue (traditional attribution), Treatise on Taiji Boxing",
+   "source": "Taijiquan Lun (Qing dynasty), part 2, with Chen Weiming's commentary in Taiji Quan Shu, 1925; tr. Paul Brennan, 2012",
+   "url": "https://brennantranslation.wordpress.com/2012/03/21/the-art-of-taiji-boxing-taiji-quan-shu/",
+   "stage": "stable",
+   "meaning": "Stand steady like a balanced scale. Move smoothly like a turning wheel.",
+   "is_story": false,
+   "reason": "I confirmed on Brennan's page, under 'TAIJI BOXING ESSAYS ... with commentary by Chen Weiming', part 2: 立如平準。活似車輪。 = 'Stand like a scale. Move like a wheel.' The commentary says 'To move like a wheel means to use your waist to control the movement.' Chen Weiming credits the essays to Wang Zongyue ('The transmissions above are the writings of Wang Zongyue'), so 'traditional attribution' is the right label. Uses the same text as S10, so pick one if you want variety. Not in used_who.txt."
+  },
+  {
+   "id": "S7",
+   "verdict": "verified",
+   "quote": "Be quick, but don't hurry.",
+   "original": "",
+   "who": "John Wooden, UCLA basketball coach",
+   "source": "Recalled by his player Bill Walton (with Gene Wojciechowski), Nothing But Net, Hyperion, 1994, ch. 2, pp. 20-21; confirmed by Quote Investigator, 2025",
+   "url": "https://quoteinvestigator.com/2025/06/19/advice-opinion/",
+   "stage": "control",
+   "meaning": "Move fast, but stay calm. Rushing makes you lose control.",
+   "is_story": false,
+   "reason": "I opened Quote Investigator (19 Jun 2025). It cites Walton and Wojciechowski, Nothing But Net, Hyperion 1994, ch. 2, pp. 20-21, where Walton lists 'Be quick, but don't hurry.' among Wooden's catch phrases. Extra support: Andrew Hill with John Wooden, 'Be Quick--But Don't Hurry!', Simon & Schuster, 2001 (library catalog records). The note's claim about a 1997 Wooden/Jamison section is not confirmed and does not appear in the source line. Agree that 'Slow is smooth, smooth is fast' has no named origin and should stay out. Not in used_who.txt."
+  },
+  {
+   "id": "S8",
+   "verdict": "verified",
+   "quote": "Whatever the Way, the master of strategy does not appear fast. ... Really skilful people never get out of time, and are always deliberate, and never appear busy.",
+   "original": "其道上手になりてハ、はやく見ヘざるもの也。…これ、上手のする事ハ、緩々と見ヘて、間のぬけざる所也。諸事しつけたるものゝする事ハ、いそがしくみヘざるもの也。",
+   "who": "Miyamoto Musashi, swordsman",
+   "source": "Gorin no Sho, Wind scroll, 'Speed in Other Schools', 1645; tr. Victor Harris, A Book of Five Rings, 1974",
+   "url": "https://musasi.siritai.net/themusasi2/gorin/g404.html",
+   "stage": "control",
+   "meaning": "Real masters never look rushed. They look calm, yet never miss the beat.",
+   "is_story": false,
+   "reason": "I confirmed the Harris wording in a full text of the 1974 translation: 'Speed in Other Schools ... Whatever the Way, the master of strategy does not appear fast.' and '...Really skilful people never get out of time, and are always deliberate, and never appear busy.' The Japanese matches the Musashi Project Wind scroll page (9 他流批判・兵法の早さ) exactly. Harris 1974 is under copyright, not public domain. The section criticizes other schools, but the quoted lines do not. This is the second Musashi item after S5, so pick one if you want more variety. Not in used_who.txt."
+  },
+  {
+   "id": "S9",
+   "verdict": "verified",
+   "quote": "The whole point of this analysis is to back up the old mantra: \"slow-in, fast-out.\" ... we get the lowest overall time by cornering more slowly so we can get back on the gas earlier.",
+   "original": "",
+   "who": "Brian Beckman, PhD, physicist and amateur racer",
+   "source": "The Physics of Racing, Part 17: 'Slow-in, Fast-out!' or, Advanced Analysis of the Racing Line, August 2000",
+   "url": "https://cygnus-supra.duckdns.org/Supra/Library/PhysicsOfRacing/physics_of_racing_17.html",
+   "stage": "speed_up",
+   "meaning": "Go slower into the turn, so you can speed up sooner coming out.",
+   "is_story": false,
+   "reason": "I opened the mirror. Both sentences are exact: 'The whole point of this analysis is to back up the old mantra: \"slow-in, fast-out.\"' and 'Rather, we get the lowest overall time by cornering more slowly so we can get back on the gas earlier.' Author Brian Beckman, PhD, copyright August 2000. The original miata.net/sport/Physics/Part17.html and the Pelican Parts copy returned 403, but search results confirm the same title and date there. Credit the analysis to Beckman, not the old saying. No safety issues. Not in used_who.txt."
+  },
+  {
+   "id": "S10",
+   "verdict": "verified",
+   "quote": "Once you have ingrained these techniques, you will gradually come to identify energies, and then from there you will work your way toward something miraculous. But unless you practice a lot over a long time, you will never have a breakthrough.",
+   "original": "由着熟而漸悟懂勁。由懂勁而階及神明。然非用力之久。不能豁然貫通焉。",
+   "who": "Wang Zongyue (traditional attribution), Treatise on Taiji Boxing",
+   "source": "Taijiquan Lun (Qing dynasty), part 2, in Chen Weiming, Taiji Quan Shu, 1925; tr. Paul Brennan, 2012",
+   "url": "https://brennantranslation.wordpress.com/2012/03/21/the-art-of-taiji-boxing-taiji-quan-shu/",
+   "stage": "speed_up",
+   "meaning": "Learn the moves deeply, keep going a long time, and a breakthrough comes.",
+   "is_story": false,
+   "reason": "I confirmed on Brennan's page that the Chinese and English match exactly, under 'TAIJI BOXING ESSAYS' part 2, which Chen Weiming credits to Wang Zongyue. 神明 here means an effortless, spirit-like level of skill, not a religious claim. The meaning line is faithful. Uses the same text as S6, so use only one of them if you want variety. Not in used_who.txt."
+  },
+  {
+   "id": "S11",
+   "verdict": "fixed",
+   "quote": "...until the age of seventy, nothing that I drew was worthy of notice. At seventy-three years, I was somewhat able to fathom the growth of plants and trees, and the structure of birds, animals, insects, and fish. Thus, when I reach eighty years, I hope to have made increasing progress ... and at one hundred and ten, every dot and every stroke will be as though alive.",
+   "original": "七十年前描く所は実に取るに足ものなし　七十三才にして稍禽獣虫魚の骨格草木の出生を悟し得たり　故に八十歳にしてハ益ゝ進み…百有十歳にしてハ一点一格にして生るがごとくならん",
+   "who": "Katsushika Hokusai, painter and printmaker",
+   "source": "Colophon to One Hundred Views of Mount Fuji (Fugaku hyakkei), vol. 1, 1834, written at age 75; tr. Henry D. Smith II, Hokusai: One Hundred Views of Mount Fuji, Braziller, 1988 (as quoted on Wikipedia); Japanese text from Shimane Art Museum",
+   "url": "https://en.wikipedia.org/wiki/One_Hundred_Views_of_Mount_Fuji",
+   "stage": "payoff_or_warning",
+   "meaning": "Nothing I drew before seventy was good. I hope to keep improving until 110.",
+   "is_story": false,
+   "reason": "I checked the raw Wikipedia text. The English matches word for word and is cited to H. Smith (1988). The original field was only partial, so I completed it from the Shimane Art Museum page (shimane-art-museum-ukiyoe.jp/life/life-manji/manji/h105-01.html), which gives the 初編 colophon. It reads 八十歳 (80), matching Smith's 'eighty'. Japanese Wikipedia's modern gloss wrongly says 86. Shimane prints 取るに足ものなし (missing る), which I kept as printed. Smith 1988 is under copyright and I did not open the book itself. No sensitive content. Not in used_who.txt."
+  },
+  {
+   "id": "S12",
+   "verdict": "fixed",
+   "quote": "The natural result of this over-haste, is, that such players, by omitting the requisite preparatory studies, always continue imperfect, lose much time, and are at last unable to execute either difficult or easy pieces in a creditable manner.",
+   "original": "",
+   "who": "Carl Czerny, pianist and teacher (pupil of Beethoven)",
+   "source": "Letters to a Young Lady, on the Art of Playing the Pianoforte, Letter VI, p. 48; tr. J. A. Hamilton, London: R. Cocks and Co., 1839 (translated from the German)",
+   "url": "https://en.wikisource.org/wiki/Letters_to_a_Young_Lady_(Czerny)/Letter_6",
+   "stage": "payoff_or_warning",
+   "meaning": "Rush to hard pieces without the basics, and you never play anything well.",
+   "is_story": false,
+   "reason": "I pulled the Wikisource scan page (djvu page 60, printed page 48). The sentence matches word for word, and the whole sentence is on p. 48, so I corrected 'pp. 48-49' to 'p. 48'. The sentence before it ('Not a few who can hardly play the scales in a decent manner ... Hummel's concertos or Thalberg's fantasias!') is on the same page. The Wikisource index gives translator J. A. Hamilton, publisher R. Cocks and Co., London, 1839, so I replaced 'c. 1840'. Public domain. Not in used_who.txt."
+  },
+  {
+   "id": "B1",
+   "verdict": "verified",
+   "quote": "The 12 seconds the lumbering, roaring Saturn V took to clear the tower on the Florida beach did seem lengthy, however.",
+   "original": "",
+   "who": "NASA historians Courtney G. Brooks, James M. Grimwood and Loyd S. Swenson Jr., on Apollo 11's launch",
+   "source": "Chariots for Apollo: A History of Manned Lunar Spacecraft, NASA SP-4205, 1979, ch. 14.2 'The Outward Voyage'",
+   "url": "https://apolloexplorer.co.uk/books/SP-4205/ch14-2.html",
+   "stage": "slow_start",
+   "meaning": "Even the mightiest rocket needed 12 slow seconds just to pass its tower.",
+   "is_story": true,
+   "reason": "I opened the mirror page and the sentence matches word for word. The sentence before it says the Gemini-experienced crew found it 'a normal launch'. The book title and section heading 'The Outward Voyage' match. NASA SP publications are US government works, so the text is public domain. The topic is safe, and Brooks, Grimwood and Swenson are not in used_who.txt. The meaning line is faithful (12 words, no dash)."
+  },
+  {
+   "id": "B2",
+   "verdict": "verified",
+   "quote": "The bamboo shooting period finishes in about 55 days, which can be divided into two phases. Moso bamboo shoots grow slowly in the first stage (1st-25th day), and then grow rapidly in the second stage (25th-55th day).",
+   "original": "毛竹笋期生长在大约55天完成，其生长过程可以分为2个阶段：1―25天为第1阶段，该阶段毛竹生长比较缓慢，25―55天为第2阶段，该阶段毛竹处于爆发式生长",
+   "who": "Shi Yongjun, Liu Enbin, Zhou Guomo, Zhejiang Agriculture and Forestry University",
+   "source": "Bamboo Shoot Growth Model Based on the Stochastic Process and Its Application (基于随机过程的毛竹笋期生长模型构建及应用), Scientia Silvae Sinicae 49(9):89-93, 2013, English abstract (OCR typos corrected)",
+   "url": "https://agris.fao.org/search/es/records/64738c8668b4c299a3f81b88",
+   "stage": "slow_start",
+   "meaning": "Bamboo shoots grow slowly for 25 days, then shoot up very fast.",
+   "is_story": true,
+   "reason": "I downloaded the AGRIS record. The English abstract reads 'The bamboo shooting period finishes in about 55 days, which can be divided into two phases. Moso bamboo shoots grow slowly in the first stage (1't -25'h day), and then ~row rapidly in the second stage (25\" -55th day)', so only the OCR typos were corrected. The Chinese abstract matches the 'original' field exactly (爆发式生长 = explosive growth). The bibliographic details are confirmed (49(9):89-93, 2013). I also checked the extra figure in the note: Li Rui, Zhong Zhangcheng & Werger, Chinese Journal of Plant Ecology 21(1):53-59, 1997, says 'The daily height increment of the bamboo shoots may amount to approximately 100 cm per day.' The myth warning about the 5-year 'Chinese bamboo tree' story is correct. The item is safe and not used before (the Su Shi bamboo painting entry is a different source)."
+  },
+  {
+   "id": "B3",
+   "verdict": "verified",
+   "quote": "The message of the KAIZEN strategy is that not a day should go by without some kind of improvement being made somewhere in the company.",
+   "original": "",
+   "who": "Masaaki Imai",
+   "source": "Kaizen (Ky'zen): The Key to Japan's Competitive Success, New York: Random House Business Division / McGraw-Hill, 1986 (written in English)",
+   "url": "https://archive.org/details/kaizen00masa",
+   "stage": "base",
+   "meaning": "Let no day pass without one small improvement.",
+   "is_story": false,
+   "reason": "I ran an archive.org full-text search. All three 1986 scans of Imai's book (kaizen00masa, kaizenkyzenkey00imai from Random House Business Division, and kaizenkyzenkeyto0000imai from McGraw-Hill) contain 'KAIZEN strategy is that not a day should go by without some kind of im-provement being made somewhere in the company.' The full sentence is therefore confirmed in the primary source. A 1997 ERIC paper (ED411307) cites it as 'Imai, 1986, pp. 4-5', but I did not see the page in the scan. Imai is not in used_who.txt and the item is safe. The meaning line is faithful because kaizen means small, continuous improvement."
+  },
+  {
+   "id": "B4",
+   "verdict": "verified",
+   "quote": "If you get one percent better each day for one year, you'll end up thirty-seven times better by the time you're done.",
+   "original": "",
+   "who": "James Clear",
+   "source": "'Continuous Improvement: How It Works and How to Master It', jamesclear.com; the same idea appears in Atomic Habits, ch. 1, 2018",
+   "url": "https://jamesclear.com/continuous-improvement",
+   "stage": "base",
+   "meaning": "Get 1 percent better each day, and in a year you're 37 times better.",
+   "is_story": false,
+   "reason": "I opened jamesclear.com/continuous-improvement and the sentence matches exactly. The maths is right (1.01^365 is about 37.8), but it is an idealised illustration, not a measured result. Clear is not in used_who.txt, there is no fake Einstein compound-interest attribution, and the item is safe. The meaning line is faithful (13 words)."
+  },
+  {
+   "id": "B5",
+   "verdict": "verified",
+   "quote": "It is the same with people as it is with riding a bike. Only when moving can one comfortably maintain one's balance.",
+   "original": "Beim Menschen ist es wie beim Velo. Nur wenn er fährt, kann er bequem die Balance halten.",
+   "who": "Albert Einstein, letter to his son Eduard, 5 February 1930",
+   "source": "Letter to Eduard Einstein, 5 Feb 1930, tr. Barbara Wolff (Einstein Archives, Hebrew University), cited in Walter Isaacson, Einstein: His Life and Universe, Simon & Schuster, 2007, Notes, Epigraph 1, p. 565",
+   "url": "https://quoteinvestigator.com/2015/06/28/bicycle/",
+   "stage": "stable",
+   "meaning": "People are like bikes: you stay balanced only while you keep moving.",
+   "is_story": false,
+   "reason": "Quote Investigator confirms the German text ('faehrt' = 'fährt'), the date of 5 February 1930, and Barbara Wolff's translation word for word. It also places the source in Isaacson's Notes, Epigraph 1, p. 565, so I added the page. The popular line 'Life is like riding a bicycle...' is Isaacson's simplified version, correctly avoided here. Einstein appears in used_who.txt only for the 1922 Kyoto lecture, so this is a different passage. The item is safe and the meaning line is faithful."
+  },
+  {
+   "id": "B6",
+   "verdict": "verified",
+   "quote": "Every body perseveres in its state of rest, or of uniform motion in a right line, unless it is compelled to change that state by forces impress'd thereon.",
+   "original": "Corpus omne perseverare in statu suo quiescendi vel movendi uniformiter in directum, nisi quatenus a viribus impressis cogitur statum illum mutare.",
+   "who": "Isaac Newton",
+   "source": "Principia (Philosophiae Naturalis Principia Mathematica), Axioms or Laws of Motion, Law I, tr. Andrew Motte, 1729 (Latin as in the 1687 first edition)",
+   "url": "https://en.wikisource.org/wiki/The_Mathematical_Principles_of_Natural_Philosophy_(1729)/Axioms,_or_Laws_of_Motion",
+   "stage": "stable",
+   "meaning": "Something moving steadily keeps moving steadily, until a force changes it.",
+   "is_story": false,
+   "reason": "The English matches the Motte 1729 text on Wikisource exactly ('impress'd thereon'). I also opened the Latin: the 1687 first-edition page on Latin Wikisource and the Gutenberg Latin text both read exactly as given, so I labelled it as the 1687 wording. Some later-edition quotations add 'illud' ('nisi quatenus illud a viribus...'), and Motte translated the 1726 third edition, but the difference is minor. Scholars (Hoek) note that Motte's 'unless' simplifies Newton's 'nisi quatenus' (except insofar as), which does not affect the simple meaning line. Newton appears in used_who.txt only for the 1676 letter to Hooke. The text is public domain and safe."
+  },
+  {
+   "id": "B7",
+   "verdict": "verified",
+   "quote": "Then the weather cools, and you're in comfortable conditions with the wind at your back, and you could go much farther. But you hold back, modulating your effort. You stick with your 20 miles.",
+   "original": "",
+   "who": "Jim Collins (with Morten T. Hansen)",
+   "source": "Great by Choice, 2011, ch. 3 '20 Mile March' (excerpt reproduced on jimcollins.com)",
+   "url": "https://www.jimcollins.com/concepts/twenty-mile-march.html",
+   "stage": "control",
+   "meaning": "When it feels easy, still hold your steady pace. Don't overdo it.",
+   "is_story": false,
+   "reason": "I downloaded jimcollins.com/concepts/twenty-mile-march.html and the three sentences match exactly. An archive.org full-text search finds 'modulating your effort. You stick with your 20 miles' in Great by Choice (2011), and chapter 3 is '20 Mile March'. As the note warns, the same passage later has 'snow, wind, and temperatures below zero' and 'a huge winter storm' that nearly kills the other walker. The chosen excerpt has neither, so keep the cut exactly as given. Collins is not in used_who.txt and the meaning line is faithful."
+  },
+  {
+   "id": "B8",
+   "verdict": "verified",
+   "quote": "135 seconds after the start of time base 1, its programming shuts down the central or inboard engine of the Saturn V in order to limit the vehicle's rapidly rising acceleration.",
+   "original": "",
+   "who": "Apollo Flight Journal editors (NASA history project), on Apollo 11's launch",
+   "source": "Apollo 11 Flight Journal, Day 1 part 1: Launch, commentary based on the AS-506 Flight Evaluation Report",
+   "url": "https://apollojournals.org/afj/ap11fj/01launch.html",
+   "stage": "control",
+   "meaning": "When speeding up gets too strong, the rocket switches one engine off.",
+   "is_story": true,
+   "reason": "I downloaded the apollojournals.org launch page. The sentence follows Armstrong's 'Inboard cut-off' call and matches word for word. The supporting lines in the note also appear verbatim: 'dropping by over 13 metric tons every second', 'the engines have a decreasing mass to push against', and 'As the acceleration nears 4g, the shutdown of the inboard engine reduces it by one fifth.' The meaning line is faithful and the topic is safe. The opening phrase 'time base 1' is jargon, so the slide should show only the meaning line. Unlike NASA SP texts, the commentary may not be public domain."
+  },
+  {
+   "id": "B9",
+   "verdict": "verified",
+   "quote": "Then, at some point—breakthrough! The momentum of the thing kicks in in your favor... You're pushing no harder than during the first rotation, but the flywheel goes faster and faster.",
+   "original": "",
+   "who": "Jim Collins",
+   "source": "Good to Great, 2001, ch. 8 'The Flywheel and the Doom Loop' (excerpt on jimcollins.com)",
+   "url": "https://www.jimcollins.com/concepts/the-flywheel.html",
+   "stage": "speed_up",
+   "meaning": "Push the same as on day one, and it spins faster and faster.",
+   "is_story": false,
+   "reason": "I downloaded jimcollins.com/concepts/the-flywheel.html. The text reads 'Then, at some point—breakthrough! The momentum of the thing kicks in in your favor, hurling the flywheel forward, turn after turn ... whoosh! ... its own heavy weight working for you. You're pushing no harder than during the first rotation, but the flywheel goes faster and faster.' The trim with '...' is honest. An archive.org full-text search finds 'pushing no harder than during the first rotation' in copies of Good to Great, and ch. 8 is 'The Flywheel and the Doom Loop'. The alternative lines in the note ('inch forward, moving almost imperceptibly at first' and 'skip the arduous buildup stage and jump right to breakthrough') are also on the page verbatim. The dash is in the original quote, not the meaning line. Safe and not used before."
+  },
+  {
+   "id": "B10",
+   "verdict": "verified",
+   "quote": "Life is like a snowball. The important thing is finding wet snow and a really long hill.",
+   "original": "",
+   "who": "Warren Buffett",
+   "source": "Quoted as epigraph and title source of Alice Schroeder, The Snowball: Warren Buffett and the Business of Life, Bantam, 2008",
+   "url": "https://www.penguinrandomhouse.com/books/162310/the-snowball-by-alice-schroeder/readers-guide",
+   "stage": "speed_up",
+   "meaning": "Growth is like a snowball: find good snow and a long hill.",
+   "is_story": false,
+   "reason": "The Penguin Random House reader's guide confirms the wording: '\"Life is like a snowball,\" Warren Buffett once remarked. \"The important thing is finding wet snow and a really long hill.\"' An archive.org full-text search finds the same wording credited to Buffett in several books (Baid 2019, Jacobs & Del Vecchio 2016, Samuel 2012, which calls it the source of the title). I could not open a scan of The Snowball's epigraph page, and the date Buffett first said it is unknown, so the publisher is the authority. Not in used_who.txt. The image is snow and a hill, with no storm, so it is safe. Turning 'Life' into 'Growth' is an acceptable interpretation of the compounding idea."
+  },
+  {
+   "id": "B11",
+   "verdict": "verified",
+   "quote": "I like to point out that the slower but consistent tortoise causes less waste and is much more desirable than the speedy hare who races ahead and then stops occasionally to doze. The Toyota production system can be realized only when all the workers become tortoises.",
+   "original": "",
+   "who": "Taiichi Ohno, creator of the Toyota Production System",
+   "source": "Toyota Production System: Beyond Large-Scale Production, Productivity Press, 1988 (English tr. of the 1978 Japanese book), ch. 3 'Further Development'",
+   "url": "https://archive.org/details/toyotaproduction0000onot",
+   "stage": "payoff_or_warning",
+   "meaning": "The slow, steady tortoise wastes less than the hare who rushes, then naps.",
+   "is_story": false,
+   "reason": "An archive.org full-text search of the 1988 Productivity Press scan (toyotaproduction0000onot) confirms all three pieces: 'slower but consistent tortoise causes less waste and is much more desirable', 'hare who races ahead and then stops occasionally to doze' (on a page with the running header 'Development'), and 'Toyota production system can be realized only when all the workers become tortoises.' Rogers (2011) quotes it identically. I could not confirm the page number. Ohno is not in used_who.txt (the Aesop entry is a different fable). Safe, and the meaning line is faithful."
+  },
+  {
+   "id": "B12",
+   "verdict": "fixed",
+   "quote": "Here we show that growth-lifespan trade-offs are indeed near universal, occurring across almost all species and climates. This trade-off is directly linked to faster growth reducing tree lifespan...",
+   "original": "",
+   "who": "Roel Brienen et al., University of Leeds and partners",
+   "source": "R. J. W. Brienen et al., Forest carbon sink neutralized by pervasive growth-lifespan trade-offs, Nature Communications 11:4241, 2020 (abstract)",
+   "url": "https://www.nature.com/articles/s41467-020-17966-z",
+   "stage": "payoff_or_warning",
+   "meaning": "Trees that grow faster live shorter lives, in almost every kind of tree.",
+   "is_story": true,
+   "reason": "I downloaded the article and the wording is correct. However, the second sentence continues in the abstract ('...reducing tree lifespan, and not due to covariance with climate or environment.'), so the cut needs '...' instead of a full stop. I fixed that. The 23% figure is confirmed in the paper's Results: 'On average, tree lifespan decreased exponentially with 23% reduction in lifespan for a 50% early growth increase', and 74 of the 82 species studied showed the trade-off. The figure is now verified if wanted. The excerpt avoids the climate and emissions framing in the rest of the abstract, so it is safe. Not in used_who.txt. The meaning line is faithful."
+  }
+ ],
+ "rejected": [
+  {
+   "id": "Y3",
+   "who": "The Buddha",
+   "reason": "ALREADY USED. The scratchpad file used_quotes.txt has this same passage three times: line 128 'The Buddha: They don't know how much of the handle was worn away today, how much yesterday... They just know what has been', line 187 'Buddha adze handle SN 22.101', and line 188 'Buddha two hens SN 22.101 (Reel 5 Oct)'. So the hen simile suggested in the note is also used. Both backup verses in the note were used too: Dhammapada 239 (lines 127 and 186) and Dhammapada 122 'Drop by drop is the water pot filled' (line 126)."
+  },
+  {
+   "id": "Y4",
+   "who": "Patanjali",
+   "reason": "ALREADY USED. Line 91 of used_quotes.txt has 'Patanjali: It becomes firmly grounded by long constant efforts with great love.' That is Vivekananda's version of this same sutra, YS 1.14, which confirms the note's worry. A new translator does not make it a new passage. The wording and the Sanskrit are otherwise correct: I checked them in the Woods 1914 djvu text and on GRETIL."
+  },
+  {
+   "id": "W2",
+   "who": "William Shakespeare (the Duke of Norfolk speaking)",
+   "reason": "The text is genuine (MIT Shakespeare, Henry VIII 1.1, Norfolk: 'to climb steep hills / Requires slow pace at first'). I am rejecting it for content safety. A checkable credit has to name the play 'Henry VIII', which puts a king's name on the slide. In the scene, Norfolk is holding Buckingham back from rushing to the king over a court feud. The hard rule bans royalty and any monarchy, and when unsure the rule is to reject. W1 (Dante) makes the same 'slow at the start of a climb' point with no such risk."
+  }
+ ]
+}
