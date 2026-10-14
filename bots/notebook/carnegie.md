@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-13T23:38:42.886Z
+Inbox last read: 2026-10-14T23:38:51.179Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -67,3 +67,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-13 (chat): Boonchu asked if he should build a video schedule + funnel from a 30 "selling tricks" list (made in another chat, artifact Sj4qyBJkRkVBvnY7weisHu). My advice: no new schedule; map tricks onto the existing funnel (Reel > STUCK comment > reply > DM questions > call with price > application > full pay). Flagged: DM tricks #16/#23 put the price in DM (breaks rule), #19 income sum needs real numbers, "one-week trip"/"30 days one city" are not in our notes. Real blockers: course prices decision (3rd delay), online-teaching answer for the one serious lead, Letters #1-2 not sent.
 - 2026-10-13 (chat): Drafted the 180K Sales Kit (one-page plan EN/ZH, application form EN/ZH, call script EN+ZH lines, house rules). Lives ONLY in Boonchu's private Obsidian (05 Business & Strategy / 180K Sales Kit.md), not in this public repo. Funnel order fixed: DM > one-page plan (no price) > application > call (price) > full pay. 12 open questions wait on Boonchu. Older vault note "China Program, Application & Qualification Flow" (June) is now outdated.
 - 2026-10-14: Inbox read OK: 2 LINE threads, 0 about 180K (shala promo and bookings: Machi's job). No new leads. 1 serious lead due today: follow-up drafted. Online-teaching answer still open (3rd day). No requests in team chat.
+- 2026-10-15: Inbox read OK: 0 threads. No new leads. 1 serious lead open, next follow-up 16 Oct (not due). Online-teaching answer still open (4th day). No requests in team chat.
