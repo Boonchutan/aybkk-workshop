@@ -504,6 +504,9 @@ const ok = (name, cond, extra = '') => {
   ok('the list ticks it as saved', dl2.body.files.find(f => f.id === 'IMG2aaaaaaaaaaaaaaaaaaaaa').photoId === fd.body.photo.id);
   const again = await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code, bob.code] }, PKEY);
   ok('the same Drive photo is never saved twice (only its tags change)', again.status === 200 && uploads.length === upBefore + 1 && again.body.photo.members.length === 2);
+  const dl3 = (await J('/api/bkk/teacher/drive?folder=DAY5aaaaaaaaaaaaaaaaaaaaa', { headers: PKEY })).body.files || [];
+  ok('the list says how many people are on a saved photo, and 0 for a new one',
+     dl3.find(f => f.id === 'IMG2aaaaaaaaaaaaaaaaaaaaa').tagged === 2 && dl3.filter(f => !f.photoId).every(f => f.tagged === 0), JSON.stringify(dl3));
   ok('a file that is not in that day\'s folder is refused',
      (await post('/api/bkk/teacher/photos/from-drive', { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa', driveId: 'SOMEOTHERFILEaaaaaaaaaaaa', memberCodes: [] }, PKEY)).status === 400);
   ok("Ann's profile shows the Drive photo",

@@ -38,7 +38,7 @@
   .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
   .tile{position:relative;border:none;padding:0;background:none;cursor:pointer;text-align:left;color:var(--ink);font:inherit}
   .tile img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:6px;background:var(--blush)}
-  .tile span{display:block;font-size:11.5px;line-height:1.3;margin-top:3px;color:var(--soft)}
+  .tile span{display:block;font-size:11.5px;line-height:1.3;margin-top:3px;color:var(--soft);overflow-wrap:anywhere}
   .tile.none span{color:#c33;font-weight:700}
   .row{display:flex;gap:8px;align-items:center}
   .row > *{flex:1}
@@ -53,6 +53,8 @@
     background:var(--pink);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
   /* Drive photos already tagged go grey, in "Select many" too, so M and Chay see what is done. */
   .tile.done img{opacity:.4;filter:grayscale(1)}
+  @media (prefers-color-scheme:dark){.tile.done img{opacity:.55}}
+  @media (hover:hover){.tile.done:not(.sel):hover img{opacity:.8;filter:grayscale(.4)}}
   .tile.done span{color:#2a8a4a;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .tile.sel img{opacity:1;filter:none}
   .selhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -200,7 +202,7 @@
   async function openDrive() {
     $('#drivebox').hidden = false;
     $('#dMsg').textContent = 'Reading the Drive folder…';
-    $('#dStart').hidden = true; $('#dGrid').innerHTML = ''; $('#dCount').textContent = '';
+    DRIVE = []; $('#dStart').hidden = true; $('#dGrid').innerHTML = ''; $('#dCount').textContent = '';
     const r = await api('/api/bkk/teacher/drive/folders');
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { $('#dMsg').textContent = '✗ ' + (j.error || 'Could not read Drive.'); return; }
@@ -221,43 +223,43 @@
     if (!folder) return;
     resetSel();
     $('#dMsg').textContent = 'Reading the Drive folder…';
-    $('#dStart').hidden = true; $('#dGrid').innerHTML = ''; $('#dCount').textContent = '';
+    DRIVE = []; $('#dStart').hidden = true; $('#dGrid').innerHTML = ''; $('#dCount').textContent = '';
     const r = await api(`/api/bkk/teacher/drive?folder=${encodeURIComponent(folder)}${fresh ? '&fresh=1' : ''}`);
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { $('#dMsg').textContent = '✗ ' + (j.error || 'Could not read Drive.'); return; }
     DRIVE = j.files || [];
     renderDrive();
   }
-  // A saved photo from another class date is not in PHOTOS, so its names are unknown: it still counts as done.
+  // PHOTOS holds only the class date's photos; for one saved under another date the server's count decides.
   function driveState(f) {
     if (!f.photoId) return { cls: '', label: esc(f.name) };
     const ph = PHOTOS.find(p => p.id === f.photoId);
-    if (!ph) return { cls: ' done', label: '✓ saved' };
-    if (!ph.members.length) return { cls: ' none', label: 'saved · nobody tagged' };
-    return { cls: ' done', label: '✓ ' + esc(ph.members.map(m => m.name).join(', ')) };
+    if (ph) f.tagged = ph.members.length;
+    if (!f.tagged) return { cls: ' none', label: 'saved · no name yet' };
+    return { cls: ' done', label: '✓ ' + (ph ? esc(ph.members.map(m => m.name).join(', ')) : 'saved (other date)') };
   }
+  const notDone = () => DRIVE.filter(f => driveState(f).cls !== ' done');
   function renderDrive() {
-    const left = DRIVE.filter(f => !f.photoId).length;
+    const todo = notDone().length;
     const nobody = DRIVE.filter(f => driveState(f).cls === ' none').length;
-    $('#dCount').textContent = DRIVE.length ? `(${DRIVE.length - left} of ${DRIVE.length} saved)` : '';
-    $('#dMsg').textContent = !DRIVE.length
-      ? 'No photos in this folder.'
-      : (left ? 'Grey = already tagged. Tap one photo, or tag all the new ones in a row.' : 'Every photo in this folder is saved. ✓')
-        + (nobody ? ` ${nobody} saved with nobody tagged (red).` : '');
-    $('#dStart').hidden = !left || PICK === 'drive';
-    $('#dStart').textContent = `Tag the ${left} new photo${left === 1 ? '' : 's'}`;
+    $('#dCount').textContent = DRIVE.length ? `(${DRIVE.length - todo} of ${DRIVE.length} done)` : '';
+    $('#dMsg').textContent = !DRIVE.length ? 'No photos in this folder.'
+      : !todo ? 'Every photo in this folder is tagged. ✓'
+      : 'Grey = done. Tap any photo to add or change names.' + (nobody ? ' Red = saved, no name yet.' : '');
+    $('#dStart').hidden = !todo || PICK === 'drive';
+    $('#dStart').textContent = `Tag the ${todo} photo${todo === 1 ? '' : 's'} left`;
     $('#dGrid').innerHTML = DRIVE.map(f => {
-      const s = driveState(f);
+      const st = driveState(f);
       return `
-      <button class="tile${s.cls}${SEL.has('d:' + f.id) ? ' sel' : ''}" data-drive="${esc(f.id)}">
+      <button class="tile${st.cls}${SEL.has('d:' + f.id) ? ' sel' : ''}" data-drive="${esc(f.id)}">
         <img loading="lazy" src="${esc(dthumb(f.id, 400))}" alt="">
-        <span>${s.label}</span>
+        <span>${st.label}</span>
       </button>`;
     }).join('');
   }
   $('#driveBtn').addEventListener('click', openDrive);
   $('#dStart').addEventListener('click', () => {
-    QUEUE = DRIVE.filter(f => !f.photoId).map(f => ({ drive: f }));
+    QUEUE = notDone().map(f => ({ drive: f }));
     TOTAL = QUEUE.length; DONE = 0;
     nextNew();
   });
@@ -266,6 +268,8 @@
     const f = DRIVE.find(x => x.id === b.dataset.drive); if (!f) return;
     if (PICK === 'drive') { toggleSel(b, 'd:' + f.id, { kind: 'drive', f }); return; }
     const saved = f.photoId && PHOTOS.find(p => p.id === f.photoId);
+    // Its names are not loaded here; a blank editor would wipe them on Save.
+    if (f.photoId && !saved && f.tagged) { flash('Saved under another class date. Change the date to edit it.'); return; }
     if (saved) {
       QUEUE = []; TOTAL = 0;
       EDIT = { kind: 'edit', id: saved.id };
@@ -466,7 +470,6 @@
   function renderPickButtons() {
     document.querySelectorAll('[data-pick]').forEach(b => {
       b.textContent = PICK === b.dataset.pick ? 'Done' : 'Select many';
-      b.closest('.box').classList.toggle('picking', PICK === b.dataset.pick);
     });
   }
   function updateBar() {
