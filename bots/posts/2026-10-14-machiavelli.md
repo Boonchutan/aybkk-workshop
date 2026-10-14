@@ -5,3 +5,4 @@ Countdowns: course prices 19:00 today; Mysore Reel Fri 16 Oct: 2 days. No remind
 Reel from Plato: Bhagiratha stands on one big toe for a year and Ganga comes down. Asana: Padangusthasana. Hook: "One runner. Two year ago, he come third. Last year... second. This week?" Waiting on Boonchu's cue.
 Score: wins this week: none reported. 180K leads: 0 new today, 1 serious in 17 days. Letters #1 and #2: not reported sent.
 Carne and Plato both posted today. Inbox 07:08: 1 new, 0 hot.
+13:08 check-in: course prices due 19:00 today (default B: sales open 3 Nov). Mysore Reel due 19:00 Thu 15 Oct (1 day). Inbox: 0 new.
