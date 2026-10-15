@@ -1,13 +1,13 @@
 [
  {
   "slide": 1,
-  "photo": "15-017",
+  "photo": "15-037",
   "id": "C1",
   "line": "Watch a river. It never stops, day or night. Neither does your time.",
   "credit": "Confucius · Analects 9.16, tr. Legge",
-  "size": 70,
+  "size": 58,
   "width": 460,
-  "x0": 172,
+  "x0": 592,
   "y0": 42
  },
  {
@@ -56,13 +56,13 @@
  },
  {
   "slide": 6,
-  "photo": "15-037",
+  "photo": "15-017",
   "id": "S6",
   "line": "A cellist of 81 practised hours daily. Why? He felt he was still improving.",
   "credit": "Pablo Casals · via Leonard Lyons, 1958",
   "size": 64,
-  "width": 520,
-  "x0": 556,
+  "width": 460,
+  "x0": 172,
   "y0": 42
  },
  {
