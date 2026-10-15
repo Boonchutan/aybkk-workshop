@@ -11,6 +11,7 @@ Inbox last read: 2026-10-15T12:10:02.380Z
 - 2026-09-29: Content work (Reels, carousels, captions, Postiz posts) goes to Plato's own chat: "✍️ Plato · AYBKK content chat" (session_01EpfSiAFErEs2e4MYfzK1F9). Machi chat stays for money, leads, strategy and team orders.
 
 ## Reminders
+- 29 Oct 2026 (Boonchu, 15 Oct): judge the Google brand ad (campaign "AYBKK Brand - Search", THB 150/day cap, max CPC THB 20, exact-match aybkk keywords only, landing aybkk.net/start/google). Ask for: spend, clicks, and the staff page start-funnel numbers for src "google" (visits, book taps, LINE taps), plus any LINE chat that says it came from Google. Keep if one new student came from it, cut the budget if not. Also check the promotion sitelink stopped on 11 Nov.
 - 1 Nov 2026 (Boonchu, family calendar): Mysore trip in the winter break (kids free Sat 19 Dec - Sun 10 Jan, back Mon 11 Jan). Ask: flights and stay booked? Who runs the shala while he is away, and is the January "Give us 12 weeks" push set up before he leaves (January is when people start)?
 - 15 Nov 2026 (Boonchu, family calendar): 10-day family Japan trip in the February break. Kids free Sat 20 - Sun 28 Feb = 9 days, so pick: Fri 19 - Sun 28 Feb (miss Fri 19) or Sat 20 Feb - Mon 1 Mar (miss Mon 1). Ask: dates picked, flights booked?
 - 12 Nov 2026 (promotion ended 11 Nov): Boonchu said "change after Nov 11": switch the site's pink buttons and blush backgrounds (hue 334) to the plum + gold + teal triad, matching the calendar and comparison posters. Ask Boonchu for a go, then Neo builds it as a PR.
