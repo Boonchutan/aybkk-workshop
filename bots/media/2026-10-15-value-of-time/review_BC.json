@@ -1,0 +1,219 @@
+{
+  "summary": "Adversarial check of value-of-time sets 2 and 3: text over people, cut text, readability, same person in a row",
+  "agentCount": 2,
+  "logs": [],
+  "result": [
+    {
+      "post": "B",
+      "slides": [
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/01_15-042.jpg",
+          "verdict": "fix",
+          "problems": [],
+          "detail": "The text placement is fine, but the photo does not fill the frame. There are pure white pillarbox bars down the full height at x 0-87 and x 992-1079 (measured: RGB 255 with zero variance). The 2:3 source (904x1350) was fitted instead of cropped to fill 4:5. Text check: the yellow lines run x 118-660, y 60-400 over the window and foliage. 'is' at the end of line 3 ends about 55px left of the teacher's face (x 715+). The credit 'Anguttara Nikaya 7.74 · tr. Bhikkhu Sujato' (y 425-447) ends at x 640, clear of his shoulder. Nothing sits on a face, hand or foot, and nothing is cut off. Separately, the watermark word 'SHALA' (y ~1210) sits about 10px under the main student's toes (x 545-650, y ~1200). This is the first slide, so there is no previous-slide comparison.",
+          "better_spot": "Refill the frame full-bleed (scale to 1080 wide, then crop about 270px of height). Keep the text in the window area left of the teacher's head, about x 40-600, y 40-430. After the 1.2x scale his face moves to about x 750-935."
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/02_15-022.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The yellow lines run x 40-605, y 45-290 on the blurred white window and wall. 'one:' ends about 35px left of the blurred teal-capped background head (x 640-770, y 140-240), so they do not touch. The raised hands and feet start at x ~700. The credit 'Tao Yuanming · Miscellaneous Poems, no. 1' (y 318-340) is white on a near-white wall but its shadow keeps it readable. The student's face (x 290-500, y 440-560) is well clear. The watermark is clear. The main student is a woman in a black top and grey leggings, so not the same person as slide 1 (a man).",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/03_15-077.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The yellow lines run x 197-1035, y 45-300 over the window and foliage. The right margin is 45px and nothing is cut off. The credit 'Gilovich & Medvec · J Pers Soc Psychol, 1994' (y 340-362) sits over bright bokeh. It is a little busy but stays legible with its shadow. The main student's bun begins at y ~415, about 50px below the credit, so nothing touches her head, hands or the leg behind her neck. The background man and woman at the right are far below the text. The watermark is clear. The main student is a woman with a teal bra, bun and black shorts, so different from slide 2.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/04_15-005.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The yellow lines run x 40-1000, y 820-1000 on the dark wood floor. That is about 70px below his fingertips (y ~750) and below the pink mat edge (y ~790). The teal towel at the left ends at y ~770. The credit 'Marcus Aurelius · Meditations V.1, tr. Long' (y 1033-1055) has good contrast. The text is well above the watermark (y 1180+). Nothing is cut off. The main student is an older shirtless man in green shorts, so different from slide 3.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/05_15-004.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The yellow lines run x 40-1000, y 895-1045 on the dark floor. That is just below the lower mat corner (y ~885) and about 55px below her chin and face (x 460-560, y 740-840). The credit 'Yamanoue Soji · Yamanoue Soji ki, 1588' (y 1085-1107) is readable. There is a roughly 75px gap to the watermark. Nothing is cut off. The main student is a woman in a tan Calvin Klein bra in a feet-on-head pose, so different from slide 4.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/06_15-027.jpg",
+          "verdict": "fix",
+          "problems": [
+            "text_on_main_body"
+          ],
+          "detail": "There are two problems. (1) The yellow text sits on the main student's head. 'Mornings start the' (x 612-930, y ~790-835) lies across the back of her head and dark hair, just below her ear (ear at x 630-700, y 725-785). 'night before.' (y ~850-895) runs over her hair and bun where the head meets the mat. The lower three lines and the credit are on the pale mat and are fine. (2) There are white pillarbox bars down the full height at x 0-89 and x 990-1079, the same fit bug as slide 1: a 2:3 photo letterboxed instead of filled. The main student is a woman lying back with her hands in prayer, so different from slide 5. The man in green shorts is the slide 4 student, but here he is only blurred background.",
+          "better_spot": "Use the clear band below her elbow: x 100-980, y 1010-1185 in the current layout (pale mat, then floor). Set it as 2 wide lines with the credit under them, staying above the watermark at y 1205. After refilling the frame full-bleed and keeping the bottom, this becomes about x 40-1040, y 950-1180."
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/07_15-084.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The yellow lines run x 580-1010, y 45-195 on the window bokeh. 'Add', 'exercise' and 'food' start about 50px right of her hair bun (bun x 420-530, y 80-200). The credit 'Cicero · On Old Age, tr. Falconer' (y 222-245, x 580-982) ends about 60px above the blurred background man's head (y ~305). The text is readable against the bright background and nothing is cut off. The main student (tan 'Ashtanga' Calvin Klein bra) differs from slide 6. She appears to be the same woman as slide 5, which is not adjacent, so it is acceptable, but the two are close together.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/08_15-025.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The narrow yellow column runs x 808-1040, y 820-1165 on the dark mat border and wood floor. It is about 55px right of her watch and hand (x 605-750, y 910-1020) and well below the background man's foot (y 520-710). Nothing is cut off (42px right margin). One minor point: the credit 'Colette Maze / NPR, 2021' (x 808-972, y 1198-1255) sits on the same row as the watermark 'AYBKK SHALA BANGKOK' (ends x ~718, y 1210-1290). It is about 90px apart and not touching, but it reads as a crowded footer. Moving the whole block up about 60px (to start at y ~760) would separate it. The main student (grey top, brown shorts, reverse tabletop) differs from slide 7.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/09_15-018.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The yellow lines run x 568-1015, y 45-190 on the window bokeh. 'matters most.' ends about 40px right of and above the top of her hair (x 305-530, from y ~180). The credit 'Bhartrihari · Vairagya Shataka 75' (y 222-245, x 568-978) ends about 60px above the blurred background woman's head (x 820-900, y ~305). The text is readable and nothing is cut off. The watermark sits on the floor and towel, clear of the text. The main student (braids, blue bra and shorts, twist) differs from slide 8.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/10_15-007.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The yellow lines run x 40-1015, y 45-190 across the window and foliage. The right margin is 65px and 'playing' is not cut off. The credit 'Pablo Casals · Joys and Sorrows, 1970' (y 215-240) is legible over the bokeh. The main student's hair starts at y ~290 (x 280-455) and the background woman's bun at y ~330, so both are 50px+ clear. The watermark sits on a dim mat and floor, away from her hand at the left (y ~1130-1160) and her feet. The main student (older woman, grey-green tank, seated) differs from slide 9.",
+          "better_spot": "none"
+        }
+      ]
+    },
+    {
+      "post": "C",
+      "slides": [
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/01_15-062.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The headline (x 40-970, y 790-1040) and the credit (y 1065-1090) sit on blurred foreground mats and floor. The main student's hands (x 600-720, y 690-720) and the hand of the woman in the blue top (x 855-925, y ~700) are 70px or more above the text. The top of 'took' only touches a red towel, which is not a person. The rounded font with its dark outline reads well even over the light mat. The watermark at y 1180+ is about 90px below the credit. Nothing is cut off.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/02_15-023.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The headline (x 40-640, y 815-1030) sits on the teal mat and wood floor. Her elbow ends at y ~800 above it. Her raised foot (x 700-900, y 700-950) is about 60px to the right of the longest line, which ends at x ~640. Her face is far away at the top right. The credit (y 1060-1085) is on the floor and is clear of the watermark. This is a different student from slide 1 (a woman, where slide 1 is an older man).",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/03_15-015.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The headline (x 160-1020, y 870-1025) sits on the dark floor and a blurred towel, below the mat. His hands and foot (x 830-960, y 620-810) end about 60px above the text. A blurred hand at the far left edge (x 0-130, y 895-935) stays just left of the 'A' at x 160, so it does not overlap. Contrast is strong. The credit (y 1060-1085) is clear of the watermark. This is a different person from slide 2.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/04_15-045.jpg",
+          "verdict": "fix",
+          "problems": [
+            "text_on_main_body"
+          ],
+          "detail": "The worst problem is that the photo does not fill the frame. Pure white bars run down the full height at x 0-89 and x 990-1079 (I checked: pixel value 255,255,255), so the photo was letterboxed instead of cropped to fill. On the text itself, the top of 'time?' in line 1 ('No time? Five to ten minutes of slow', y ~930-990) touches the lowest strands of the main student's hair (hair x 230-480, ending at y ~925-930), and the dark outline blends into the hair. Her face (y 680-780) and hands (ending at y ~870) are clear. Line 2 and the credit sit on the folded towels and floor, which is fine. This is a different person from slide 3.",
+          "better_spot": "First re-crop the photo so it fills the full 1080 width. Then lower the text block by about 30-40px so line 1 starts at least 35px below her hair: in current coordinates about x 120-945, y 965-1170, on the folded towels and floor, which is still more than 40px above the watermark at y ~1210."
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/05_15-110.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The right-hand column (headline x 785-1040, y 800-1210; credit y 1240-1305) sits on the wood floor, the mat ends and a purple block. The teacher's legs and feet (x 505-730) and the student's forearms and hands (x 440-720, y 850-930) are 55px or more to the left. The text reads well. The watermark (x 365-718, y 1180-1265) sits beside 'strength.' and the credit with a gap of about 65px, so they do not touch. Nothing is cut off; the right margin is about 40px. The main student (a woman with light hair in a forearm balance) is not the woman from slide 4, though the teacher in yellow appears in both.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/06_15-074.jpg",
+          "verdict": "fix",
+          "problems": [
+            "text_on_main_body"
+          ],
+          "detail": "The left edge of the yellow column (starting at x ~772) runs into the main student's blurred folded knee. The right edge of her knee is at about x 765-780 between y 1060 and 1160, so the 'm' of 'means', the 'a' of 'action:' and the 'e' of 'each' sit on that edge, with their dark outline lying over her skin. Everything else in the block is on the pink and maroon mats. The background student in child's pose (y 720-930) and the man's hand (y 910-970) are above the text, which is fine. Separately, the watermark itself (x 365-720, y 1180-1260) sits on her folded shin and foot. This is a different person from slide 5.",
+          "better_spot": "Move the whole column about 40px right, to x 815-1055, y 1010-1310 (headline and credit). That area is empty pink and maroon mat (average RGB about 115/88/65, so the yellow keeps its contrast), and the column then clears her knee by 35px or more. Leave a right margin of at least 25px, or reduce the font slightly."
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/07_15-101.jpg",
+          "verdict": "fix",
+          "problems": [
+            "text_on_background_person"
+          ],
+          "detail": "The headline (x 40-430, y 155-520) is clean. It sits on the windows and wall, about 75px left of the headstand student's legs, which start at x ~505. Only the white credit has minor problems. 'Guinness World' (y 592-612) sits on the top of a blurred seated student at the lower left (x 0-180, from y ~575). The final 's' of 'Records' (x ~350) touches the thigh of the blurred student in downward dog (x 350-500, y 470-780). The main student (inverted, in a light-green AYBKK top) is a different person from slide 6.",
+          "better_spot": "Move the whole block up about 80-90px to x 40-440, y 70-530, on the window and wall. The credit then ends above the seated student at the lower left, and its right end (x ~350) stays on the wall, left of the downward-dog student's hips (x 365 and beyond)."
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/08_15-095.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The headline (x 40-280, y 955-1205) and the credit (y 1240-1300) sit on the floor and mat corner at the lower left. The main student's left arm and hand (x 285-520, y 860-1030) are 70px or more to the right. The blurred background student in green pants (x 0-260) ends at y ~920, about 35px above the text. Contrast is good. The watermark (x 365+) is more than 90px away. This is a different person from slide 7.",
+          "better_spot": "none"
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/09_15-026.jpg",
+          "verdict": "fix",
+          "problems": [
+            "text_on_background_person",
+            "text_on_hand_or_foot"
+          ],
+          "detail": "A blurred, skin-toned hand or forearm of another person comes in from the right frame edge (about x 940-1080, y 985-1200). The right half of the headline sits on it: 'over' (y 995-1035), 'like' (y 1045-1085), 'men 40' (y 1095-1140) and the end of 'younger.' The main student's knee and foot (x 530-690) are clear of the text, which starts at x 770. The credit (x 770-1015, y 1215-1280) is about 55px from the watermark, so they do not touch. This is a different person from slide 8.",
+          "better_spot": "Upper left, x 30-265, y 50-500. That is flat, plain teal glass, left of her raised arms and elbow (which start at x ~290) and above the background student's head (y ~540). Rewrap the text or drop the font about 10% to fit the narrower 235px column. Another option is the lower left, x 30-310, y 1050-1320, on dark mat and floor, but it crowds the watermark that starts at x 365."
+        },
+        {
+          "file": "/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/10_15-087.jpg",
+          "verdict": "ok",
+          "problems": [],
+          "detail": "The headline (x 40-1035, y 45-210) and the credit (x 40-625, y 245-275) sit on the windows and palms at the top. Her highest foot (toes at y ~350, x 600-640) and her other foot (x 790-835, y 420+) are 75px or more below the credit, and her face is at y 470+. The background is busy palm bokeh, but the dark outline and drop shadow keep the yellow and white legible. 'Müller' crosses a light window frame and is still readable. The margins are fine and nothing is cut off. The watermark is far away. This is a different person from slide 9 (short hair, in a bikini top).",
+          "better_spot": "none"
+        }
+      ]
+    }
+  ],
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Review"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "review:B",
+      "phaseIndex": 1,
+      "phaseTitle": "Review",
+      "agentId": "a1f2e9fbdd4c69db9",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1792065934099,
+      "queuedAt": 1792065934026,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "You are a strict photo editor for an Ashtanga yoga studio's Instagram. Open each of these 10 slides (1080x1350) with the Read tool, in order: /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/01_15-042.jpg, /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/02_15-022.jpg, /tmp/claude-0/-home-us…",
+      "promptFramed": true,
+      "lastProgressAt": 1792066151972,
+      "tokens": 114575,
+      "toolCalls": 29,
+      "durationMs": 217871,
+      "resultPreview": "{\"slides\":[{\"file\":\"/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/B/01_15-042.jpg\",\"verdict\":\"fix\",\"problems\":[],\"detail\":\"The text placement is fine, but the photo does not fill the frame. There are pure white pillarbox bars down the full height at x 0-87 and x 992-1079 (measured: RGB 255 with zero variance). The 2:3 source (904x1350) was fit…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "review:C",
+      "phaseIndex": 1,
+      "phaseTitle": "Review",
+      "agentId": "aadf6bcade1e96fdf",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1792065934099,
+      "queuedAt": 1792065934026,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "You are a strict photo editor for an Ashtanga yoga studio's Instagram. Open each of these 10 slides (1080x1350) with the Read tool, in order: /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/01_15-062.jpg, /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/02_15-023.jpg, /tmp/claude-0/-home-us…",
+      "promptFramed": true,
+      "lastProgressAt": 1792066247079,
+      "tokens": 112013,
+      "toolCalls": 33,
+      "durationMs": 312079,
+      "resultPreview": "{\"slides\":[{\"file\":\"/tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/work/out/C/01_15-062.jpg\",\"verdict\":\"ok\",\"problems\":[],\"detail\":\"The headline (x 40-970, y 790-1040) and the credit (y 1065-1090) sit on blurred foreground mats and floor. The main student's hands (x 600-720, y 690-720) and the hand of the woman in the blue top (x 855-925, y ~700) are 70…"
+    }
+  ],
+  "totalTokens": 226588,
+  "totalToolCalls": 62
+}
