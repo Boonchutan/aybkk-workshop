@@ -13,6 +13,8 @@ Inbox last read: 2026-10-14T23:38:51.179Z
 (none yet)
 - 2026-10-15 (Boonchu): SWIPE RULE. Never copy an ad straight. Keep the FRAME (structure, order, move), change the LANGUAGE to Boonchu's plain dry voice, and frame the PROMISE our way: a true process or real proof, never a miracle, money or health claim, never fake urgency.
 
+- 2026-10-15 (Boonchu): WEEKLY BATCH + BEDTIME ENGLISH. He films 21 takes a week (10 hooks, 7 stories, 4 CTAs) = 7 Reels. Plato writes the Batch Sheet, Carne checks it (research fit + rules) and writes "Carne OK" before Boonchu films. All my writing to him and in scripts: bedtime-story English, 10-year-old level, short sentences, no AI words, no bold-label stacks.
+
 ## Research
 
 ### 2026-10-02: 180K buyer voice (r/ashtanga archive 2015-2026, CN/RU web, blogs)
