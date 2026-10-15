@@ -155,13 +155,13 @@
   const promoLive = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok' }).format(new Date()) <= PROMO_LAST_BUY;
   const MAIN = { en: 'line', th: 'line', zh: 'wechat', ru: 'whatsapp' };
   const NAME = { line: 'LINE', whatsapp: 'WhatsApp', wechat: 'WeChat' };
-  const MSG = 'Hi AYBKK, I want to book my first morning. (aybkk.net/start)\nสวัสดีครับ/ค่ะ อยากจองเช้าแรกครับ/ค่ะ';
+  const pathTag = (location.pathname.match(/^\/start\/([\w-]+)/) || [])[1];
+  const MSG = `Hi AYBKK, I want to book my first morning. (aybkk.net/start${pathTag ? '/' + pathTag : ''})\nสวัสดีครับ/ค่ะ อยากจองเช้าแรกครับ/ค่ะ`;
   const LINK = {
     line: 'https://line.me/R/oaMessage/%40aybkk/?' + encodeURIComponent(MSG),
     whatsapp: 'https://wa.me/66822244246?text=' + encodeURIComponent(MSG),
   };
   const qs = new URLSearchParams(location.search);
-  const pathTag = (location.pathname.match(/^\/start\/([\w-]+)/) || [])[1];
   const src = pathTag || qs.get('src') || (document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : 'direct');
   let store = null; try { store = localStorage; } catch {}
   const pick = l => STR[l] ? l : null;
@@ -176,7 +176,9 @@
   const note = t => { document.getElementById('note').textContent = t; };
   const open = ch => {
     send('tap', ch);
-    if (ch !== 'wechat') { location.href = LINK[ch]; return; }
+    const book = window.aybkkBook || (f => f && f());
+    if (ch !== 'wechat') { book(() => { location.href = LINK[ch]; }); return; }
+    book();
     const done = () => note(STR[LANG].copied);
     if (navigator.clipboard) navigator.clipboard.writeText(WECHAT).then(done, done); else done();
   };
@@ -217,6 +219,74 @@
   promo.onclick = () => send('tap', 'promo');
   render();
   send('view');
+})();
+</script>
+<div id="ckbar" hidden><p id="ckTxt"></p><div><button type="button" id="ckNo"></button><button type="button" id="ckOk"></button></div></div>
+<style>
+#ckbar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto;
+  display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;
+  background:#17121a;color:#fdf7fa;font:500 13px/1.35 'Work Sans','Plex',sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+#ckbar[hidden]{display:none}
+#ckbar p{margin:0}
+#ckbar div{display:flex;gap:6px;flex:none}
+#ckbar button{border:1px solid transparent;border-radius:999px;padding:8px 12px;min-height:36px;font:600 13px/1 'Work Sans','Plex',sans-serif;cursor:pointer}
+#ckNo{background:transparent;color:#fdf7fa;border-color:rgba(253,247,250,.35)!important}
+#ckOk{background:#F2C94C;color:#3E1442}
+</style>
+<script>
+// Google Ads tag (Boonchu, 15 Oct): which ads bring students. Thai PDPA: nothing is sent to Google
+// until the visitor taps OK. cn.aybkk.net skips it because Google is blocked in China.
+(function () {
+  var ID = 'AW-18515292394', SEND = ID + '/xHlZCOjHgZ4dEOrh4_xE', KEY = 'aybkk_ads_ok', on = false;
+  // then() runs once Google has the click, or after 0.9 s at most, so a blocked script never strands anyone.
+  window.aybkkBook = function (then) {
+    var done = false, go = function () { if (!done) { done = true; if (then) then(); } };
+    if (!on) return go();
+    gtag('event', 'conversion', { send_to: SEND, value: 1.0, currency: 'THB', transport_type: 'beacon', event_callback: go, event_timeout: 800 });
+    setTimeout(go, 900);
+  };
+  if (/^cn\./.test(location.hostname)) return;
+  var T = {
+    en: ['We use one Google cookie to see which ads bring new students.', 'No thanks', 'OK'],
+    th: ['เราใช้คุกกี้ของ Google เพื่อดูว่าโฆษณาไหนพานักเรียนใหม่มา', 'ไม่ใช้', 'ตกลง'],
+    zh: ['我们使用一个 Google cookie，了解哪些广告带来新学员。', '不用了', '好的'],
+    ru: ['Мы используем один cookie Google, чтобы понять, какая реклама приводит новых учеников.', 'Нет, спасибо', 'OK']
+  };
+  var bar = document.getElementById('ckbar');
+  function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function save(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+  function load() {
+    if (on) return;
+    on = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', ID);
+    var s = document.createElement('script');
+    s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID;
+    document.head.appendChild(s);
+  }
+  function words() {
+    var t = T[(document.documentElement.lang || 'en').slice(0, 2)] || T.en;
+    document.getElementById('ckTxt').textContent = t[0];
+    document.getElementById('ckNo').textContent = t[1];
+    document.getElementById('ckOk').textContent = t[2];
+  }
+  var v = saved();
+  if (v === '1') load();
+  else if (v !== '0') {
+    words(); bar.hidden = false;
+    new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  }
+  document.getElementById('ckOk').onclick = function () { save('1'); bar.hidden = true; load(); };
+  document.getElementById('ckNo').onclick = function () { save('0'); bar.hidden = true; };
+  // The booking page's own LINE / WhatsApp links. The start page calls aybkkBook() itself.
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a || a.id === 'go') return;
+    var h = a.getAttribute('href').toLowerCase();
+    if (h.indexOf('line.me') > -1 || h.indexOf('wa.me') > -1) window.aybkkBook();
+  }, true);
 })();
 </script>
 </body>
