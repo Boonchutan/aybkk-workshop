@@ -2778,6 +2778,16 @@ async function initSchema() {
 // Front door by audience: cn.aybkk.net keeps the Chinese students' Practice
 // Journal home; every other hostname (my.aybkk.com, aybkk.net, …) opens on the
 // shala's main booking page. The journal home stays reachable everywhere at /planner.
+// The booking page is served on several hostnames (aybkk.net, my.aybkk.com, cn.aybkk.net/shala);
+// its canonical tag and this sitemap tell Google that aybkk.net is the one to show.
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send('User-agent: *\nAllow: /\n\nSitemap: https://aybkk.net/sitemap.xml\n');
+});
+app.get('/sitemap.xml', (req, res) => {
+  const urls = ['https://aybkk.net/', 'https://aybkk.net/start'];
+  res.type('application/xml').send('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n') + '\n</urlset>\n');
+});
 app.get('/', (req, res) => {
   const host = String(req.headers.host || '').toLowerCase();
   const file = host.startsWith('cn.') ? 'index.html' : 'bkk.html';
