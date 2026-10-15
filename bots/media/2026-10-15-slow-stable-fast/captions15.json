@@ -55,12 +55,31 @@
   "C": {
    "id": "cmv999yer001vlo0yjm8ahvvg",
    "when": "18:00 BKK 15 Oct (11:00Z)",
-   "md5": "all 10 OK"
+   "md5": "all 10 OK",
+   "published": "PUBLISHED 18:00 BKK"
   },
   "D": {
    "id": "cmv999ykv001wlo0yb4wvaxt4",
    "when": "21:00 BKK 15 Oct (14:00Z)",
-   "md5": "all 10 OK"
+   "md5": "all 10 OK",
+   "moved": {
+    "new_id": "cmv9gygzg0125le0yg1udnr8e",
+    "when": "10:00 BKK 16 Oct (03:00Z)",
+    "attachments": [
+     "eydS7VnqxF",
+     "hTNdmHLEt9",
+     "u78DUduIAU",
+     "g0hwrQFrZR",
+     "nQgy7ha1lP",
+     "Epr5DNM7q2",
+     "DmNYLBJP7c",
+     "VmFsDZ62V0",
+     "r887py2tSF",
+     "KGHnqqrLKh"
+    ],
+    "md5": "all 10 OK",
+    "old": "cmv999ykv001wlo0yb4wvaxt4 (21:00) to be deleted by Boonchu"
+   }
   }
  },
  "style": "A: Playfair ExtraBold mustard #F7B700 wide glow (Boonchu disliked). B-D: Merriweather Black #FFCC29, tight dark shadow (blur 4, 85%)."
