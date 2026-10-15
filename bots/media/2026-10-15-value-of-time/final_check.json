@@ -1,0 +1,350 @@
+{
+  "summary": "Adversarially re-check the 40 final carousel lines against their sources and AYBKK content rules",
+  "agentCount": 5,
+  "logs": [
+    "14 lines flagged"
+  ],
+  "result": {
+    "flags": [
+      {
+        "post": "A",
+        "id": "C1",
+        "verdict": "fix",
+        "problem": "In Legge's numbering this passage is Analects IX.16 (I checked Gutenberg #4094, CHAP. XVI), and Legge's 9.17 is a different saying ('loves virtue as he loves beauty'), so '9.17, tr. Legge' sends the reader to the wrong passage. The line itself matches the quote.",
+        "new_credit": "Confucius · Analects 9.16, tr. Legge"
+      },
+      {
+        "post": "A",
+        "id": "B3",
+        "verdict": "fix",
+        "problem": "'Did nearly as well' does not say what was measured (only the risk of death: HR 0.65 against 0.64), uses no 'linked to' wording, and readers may take it to mean the same health or fitness gains.",
+        "new_line": "Too late? Midlife starters had nearly the same low death risk as lifelong movers."
+      },
+      {
+        "post": "B",
+        "id": "B2",
+        "verdict": "fix",
+        "problem": "The paper says the greatest regrets were things not done (63% vs 37% of 213 regrets), but 'They regretted what they never did' makes it sound as if every regret was something never done.",
+        "new_line": "Looking back, no one regretted learning a skill. Most regrets were things never done."
+      },
+      {
+        "post": "B",
+        "id": "S11",
+        "verdict": "fix",
+        "problem": "The NPR article says her sixth album came out in May 2021, and she turned 107 only on 16 June, so she did not release it at 107. In September she was 107 and had just released it.",
+        "new_line": "At 107, she had just released her sixth piano album. 'Youth is inside us.'"
+      },
+      {
+        "post": "B",
+        "id": "S12",
+        "verdict": "fix",
+        "problem": "The final slide never mentions practising today as the brief requires, and 'music he loved' is not in the quote, which says he played Bach preludes and fugues.",
+        "new_line": "For 80 years, Casals began each day playing Bach. Today, begin yours with practice."
+      },
+      {
+        "post": "C",
+        "id": "S1",
+        "verdict": "fix",
+        "problem": "\"A happy life\" is not in the source; he only said he married and had six children and 10 grandchildren. GWR also gives the time as 54 years 246 days, so the line should say \"more than 54 years\".",
+        "new_line": "His Olympic marathon took more than 54 years. Meanwhile he married and had children."
+      },
+      {
+        "post": "C",
+        "id": "Y7",
+        "verdict": "fix",
+        "problem": "\"And care\" is not in the verse, which says only \"yoga is skill in action\". \"That is what yoga means\" also wrongly says the Bible line on the slide before is the Gita's meaning of yoga.",
+        "new_line": "And yoga itself means skill in action: doing each task well."
+      },
+      {
+        "post": "C",
+        "id": "C9",
+        "verdict": "fix",
+        "problem": "The romanization in the credit is wrong: Kotobank reads 腹八分目 as はらはちぶんめ, which is \"hara hachibunme\", not \"hachibu-me\".",
+        "new_credit": "Japanese proverb · Hara hachibunme"
+      },
+      {
+        "post": "C",
+        "id": "B12",
+        "verdict": "fix",
+        "problem": "The athletes were men aged 80 to 91, one of them a 91-year-old Olympian, so \"in their 80s\" is not exact. The paper also says their VO2max was \"comparable to\" younger men, which is weaker than \"had the fitness of\".",
+        "new_line": "Lifelong skiers aged 80 and over had fitness like ordinary men 40 years younger."
+      },
+      {
+        "post": "C",
+        "id": "Y14",
+        "verdict": "fix",
+        "problem": "\"Make it today\" is an idiom a learner may misread, and the closing slide must land on \"practise today\". \"Beats\" is also less clear than \"is better than\", the wording of the verse.",
+        "new_line": "One day of full effort is better than a hundred lazy years. Practise today."
+      },
+      {
+        "post": "D",
+        "id": "B5",
+        "verdict": "fix",
+        "problem": "'That costs us happiness' says mind wandering causes unhappiness, but science lines must say 'linked to'. The 46.9% figure is fine as 'almost half'.",
+        "new_line": "But our minds wander almost half the time, which is linked to less happiness."
+      },
+      {
+        "post": "D",
+        "id": "Y9",
+        "verdict": "fix",
+        "problem": "'Richer than gold' is not in Charaka Sutrasthana 1.15. The source only says health is the supreme foundation of virtue, wealth, enjoyment and salvation, so the line adds a claim.",
+        "new_line": "Health is the highest root of goodness, wealth, joy and inner freedom."
+      },
+      {
+        "post": "D",
+        "id": "B10",
+        "verdict": "fix",
+        "problem": "The paper says 'up to 75 min/wk', not 'under 75', and it measured any leisure activity equal to brisk walking, not walking alone.",
+        "new_line": "Exercise like brisk walking, up to 75 minutes weekly, went with 1.8 more years."
+      },
+      {
+        "post": "D",
+        "id": "C11",
+        "verdict": "fix",
+        "problem": "'Pays interest' is a money idiom with a double meaning a language learner may misread, and it is not in Ekiken's text. He says long life brings much joy and much benefit.",
+        "new_line": "Long life brings joy: each day you learn, each month you can do more."
+      }
+    ],
+    "judged": [
+      {
+        "id": "C1",
+        "real": true,
+        "why": "Confirmed in Gutenberg #4094: Legge's CHAP. XVI is 'The Master standing by a stream', and his CHAP. XVII is 'loves virtue as he loves beauty'. The credit names Legge, so it should use Legge's numbering. The used list already does this (IX.10 Yan Yuan and IX.18 basketful are Legge numbers). With 9.17, a reader of Legge lands on the wrong saying. The line itself is fine.",
+        "final_line": "Watch a river. It never stops, day or night. Neither does your time.",
+        "final_credit": "Confucius · Analects 9.16, tr. Legge"
+      },
+      {
+        "id": "B3",
+        "real": true,
+        "why": "'Did nearly as well' never says what was measured, which was only the risk of death (HR 0.65 vs 0.64). A reader could take it to mean the same fitness or health gains. The checker's line names the outcome, makes no cause claim, keeps the 'Too late?' pull from Seneca's slide, and is 14 words.",
+        "final_line": "Too late? Midlife starters had nearly the same low death risk as lifelong movers.",
+        "final_credit": "Saint-Maurice et al. · JAMA Netw Open, 2019"
+      },
+      {
+        "id": "B2",
+        "real": true,
+        "why": "The source says the GREATEST regrets were things not done (63% vs 37%). 'They regretted what they never did' makes it sound like every regret was something not done, which overclaims. My fix follows the paper's own wording ('the greatest regret') more closely than the checker's 'most regrets'. 14 words.",
+        "final_line": "Looking back, no one regretted learning a skill. The biggest regrets: things never done.",
+        "final_credit": "Gilovich & Medvec · J Pers Soc Psychol, 1994"
+      },
+      {
+        "id": "S11",
+        "real": true,
+        "why": "I checked the NPR text. Her son says the sixth album 'was released in May', and she was born 16 June 1914, so she was 106 at release. She was 107 when interviewed in September. NPR's lead loosely says 'just released ... at the age of 107', but the true-story rule needs her age to be right. 'Had just released' is NPR's own framing and is accurate. The quote is word for word. 14 words.",
+        "final_line": "At 107, she had just released her sixth piano album. 'Youth is inside us.'",
+        "final_credit": "Colette Maze · NPR, 2021"
+      },
+      {
+        "id": "S12",
+        "real": true,
+        "why": "This is slide 10, and it ends on 'Begin yours', not on practising today, so it breaks the closing rule. 'Music he loved' is also not in the source, which says he played two Bach preludes and fugues. My version names Bach and ends exactly on 'practise today'. 13 words.",
+        "final_line": "For 80 years, Casals began each day playing Bach. Begin yours: practise today.",
+        "final_credit": "Pablo Casals · Joys and Sorrows, 1970"
+      },
+      {
+        "id": "S1",
+        "real": true,
+        "why": "'A happy life' adds a claim: Kanakuri only said he married and had six children and 10 grandchildren. GWR gives 54 years 246 days in the article and 249 on the record page, so 'over 54 years' is exact either way. I kept the source's 'six children', a real number from the quote. 14 words, and it still works as a hook.",
+        "final_line": "His Olympic marathon took over 54 years. Meanwhile, he married and had six children.",
+        "final_credit": "Shiso Kanakuri · Guinness World Records"
+      },
+      {
+        "id": "Y7",
+        "real": true,
+        "why": "'And care' is added: Gita 2.50 (Besant) says only 'yoga is skill in action'. 'That is what yoga means' also presents the Ecclesiastes line on the slide before as the Gita's definition of yoga, which blends two scriptures in a way neither text supports. The checker's line is faithful, plain and 11 words, and 'And' keeps the flow.",
+        "final_line": "And yoga itself means skill in action: doing each task well.",
+        "final_credit": "Bhagavad Gita 2.50 · tr. Annie Besant"
+      },
+      {
+        "id": "C9",
+        "real": true,
+        "why": "Kotobank reads the headword 腹八分目に医者いらず as 'はらはちぶんめにいしゃいらず', so 腹八分目 is 'hara hachibunme'. 'Hachibu-me' mixes the shorter form はちぶ with め and is not a real reading. The line is fine.",
+        "final_line": "And health starts at the table: stop eating at about 80% full.",
+        "final_credit": "Japanese proverb · Hara hachibunme"
+      },
+      {
+        "id": "B12",
+        "real": true,
+        "why": "The PMC full text says the study sets limits 'in men 80–91 years of age', and the Discussion names 'a 91-yr-old former Olympic champion' in the athlete group. 'In their 80s' is therefore wrong for one subject. The source says VO2max was 'comparable to' younger men, so 'fitness like' is truer than 'had the fitness of'. 14 words.",
+        "final_line": "Lifelong skiers aged 80 and over had fitness like ordinary men 40 years younger.",
+        "final_credit": "S. Trappe et al. · J Appl Physiol, 2013"
+      },
+      {
+        "id": "Y14",
+        "real": true,
+        "why": "Slide 10 must land on 'practise today', and 'Make it today' does not. A learner may not follow the idiom. 'Is better than' is the verse's own wording (Müller: 'is better'). 'Full effort' and 'lazy' fairly render 'firm strength' and 'idle and weak'. 14 words.",
+        "final_line": "One day of full effort is better than a hundred lazy years. Practise today.",
+        "final_credit": "The Buddha · Dhammapada 112, tr. Max Müller"
+      },
+      {
+        "id": "B5",
+        "real": true,
+        "why": "'That costs us happiness' says mind wandering causes unhappiness, but the data are correlational, and the rule says science lines must say 'linked to'. 'Costs us' is also a mild idiom. The checker's line keeps 'almost half' for 46.9%, uses 'linked to', and still sets up the next slide's 'The fix'. 14 words.",
+        "final_line": "But our minds wander almost half the time, which is linked to less happiness.",
+        "final_credit": "Killingsworth & Gilbert · Science, 2010"
+      },
+      {
+        "id": "Y9",
+        "real": true,
+        "why": "'Richer than gold' is a claim the text does not make: Sutrasthana 1.15 says only that health is the supreme root or foundation of dharma, artha, kama and moksha. 'Highest root' is a literal rendering of mulam uttamam. 12 words.",
+        "final_line": "Health is the highest root of goodness, wealth, joy and inner freedom.",
+        "final_credit": "Charaka Samhita · Sutrasthana 1.15"
+      },
+      {
+        "id": "B10",
+        "real": true,
+        "why": "The paper counts any leisure activity equal in amount to brisk walking, 'up to 75 min/wk'. The line says walking only and changes 'up to' to 'under'. The checker's line restores both and uses 'went with'. In this longevity carousel, '1.8 more years' clearly means years of life. 14 words.",
+        "final_line": "Exercise like brisk walking, up to 75 minutes weekly, went with 1.8 more years.",
+        "final_credit": "S. C. Moore et al. · PLoS Medicine, 2012"
+      },
+      {
+        "id": "C11",
+        "real": true,
+        "why": "'Pays interest' is a money idiom that is not in Ekiken's text and that a language learner may misread. The source says long life brings 'much joy and much benefit'. The checker's line keeps the day-by-day and month-by-month structure faithfully. 14 words.",
+        "final_line": "Long life brings joy: each day you learn, each month you can do more.",
+        "final_credit": "Kaibara Ekiken · Yojokun, 1713"
+      }
+    ],
+    "notes": [
+      {
+        "post": "A",
+        "flow": "The slides read well in order. The river on slide 1 (time never stops) comes back on slide 10 (don't let time flow past), so the post ends where it began. Slides 2 to 5 build urgency: later, too late, today, one arrow. Slide 6 (Casals) turns this into daily practice, and slide 7 adds balance. Slide 8 ('longer life') sets up slide 9's 'Not just longer'. Slide 7's 'And yoga asks for balance' is the only soft jump, and it works as a counterweight to Casals's long hours. The fixed B3 line still opens with 'Too late?' and leads into Y5's 'So'."
+      },
+      {
+        "post": "B",
+        "flow": "The order works: a dewdrop hook, then urgency (no second morning, regret for things not done), then getting up and treating practice as a once-in-a-lifetime meeting. Slides 6-7 (sleep, then exercise and food) wander off the morning-practice thread, but 'Mornings start the night before' keeps it tied in. Slides 8-10 (Maze at 107, acting while the body is well, Casals) build toward the call to act. Slide 5's 'Then' only makes sense right after slide 4, and slide 8's 'she' only makes sense with the credit, so keep both in place."
+      },
+      {
+        "post": "C",
+        "flow": "The order works. The marathon hook opens on a long effort, slides 2 to 4 move from losing muscle to starting late and starting small, slides 5 and 6 turn this into wisdom about effort and skill, and slides 7 to 9 come back to old athletes and health before slide 10 closes on effort today. Slide 8's \\\"And health...\\\" picks up slide 7's \\\"health comes first\\\" well. The jump from the slide 1 story to the slide 2 statistic is abrupt but acceptable. Slide 10 needed \\\"Practise today\\\" in plain words to land the call to action."
+      },
+      {
+        "post": "D",
+        "flow": "The carousel reads in order: time is gold, we put it off, today is the day, Kramer says do it, the wandering mind, one thing at a time on the mat, health, a little exercise, long life keeps growing, now on the mat. Slide 10 brings back 'spend' from slide 1. The weakest step is slide 6 to slide 7, which jumps from attention to health. Removing 'Richer than gold' makes that step plainer but keeps it faithful to the source."
+      }
+    ]
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Check"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Judge"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "check:A",
+      "phaseIndex": 1,
+      "phaseTitle": "Check",
+      "agentId": "a5f8c5907275e5f13",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1792057039326,
+      "queuedAt": 1792057039272,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "The slides read well in order. The river on slide 1 (time n…",
+      "promptPreview": "You are a skeptical fact-checker for an Instagram carousel. Read the JSON file /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/check_input.json (a list of 40 lines). Check ONLY the 10 entries with \"post\": \"A\", in slide order.\nEach entry has the slide line, its credit, and the verified source data (quote, source, url, who, verify_note).\nTry hard to REFUTE…",
+      "promptFramed": true,
+      "lastProgressAt": 1792057257793,
+      "tokens": 89743,
+      "toolCalls": 13,
+      "durationMs": 218465,
+      "resultPreview": "{\"lines\":[{\"id\":\"C1\",\"verdict\":\"fix\",\"problem\":\"In Legge's numbering this passage is Analects IX.16 (I checked Gutenberg #4094, CHAP. XVI), and Legge's 9.17 is a different saying ('loves virtue as he loves beauty'), so '9.17, tr. Legge' sends the reader to the wrong passage. The line itself matches the quote.\",\"new_credit\":\"Confucius · Analects 9.16, tr. Legge\"},{\"id\":\"W3\",\"verdict\":\"ok\",\"problem\"…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "check:B",
+      "phaseIndex": 1,
+      "phaseTitle": "Check",
+      "agentId": "ae2e38423cfc3fd10",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1792057039327,
+      "queuedAt": 1792057039273,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "The order works: a dewdrop hook, then urgency (no second mo…",
+      "promptPreview": "You are a skeptical fact-checker for an Instagram carousel. Read the JSON file /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/check_input.json (a list of 40 lines). Check ONLY the 10 entries with \"post\": \"B\", in slide order.\nEach entry has the slide line, its credit, and the verified source data (quote, source, url, who, verify_note).\nTry hard to REFUTE…",
+      "promptFramed": true,
+      "lastProgressAt": 1792057263449,
+      "tokens": 97955,
+      "toolCalls": 17,
+      "durationMs": 223471,
+      "resultPreview": "{\"lines\":[{\"id\":\"Y1\",\"verdict\":\"ok\",\"problem\":\"Checked against Sujato AN 7.74 segments 2.1-2.2. The dewdrop on a grass tip and the rising sun are both in the text, the urgency comes from the same passage ('short, brief, and fleeting'), and the credit is correct.\"},{\"id\":\"C4\",\"verdict\":\"ok\",\"problem\":\"Matches 盛年不重來，一日難再晨。及時當勉勵，歲月不待人 on Wikisource (雜詩 其一). 'No day gets' for 難再晨 is the usual reading,…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "check:C",
+      "phaseIndex": 1,
+      "phaseTitle": "Check",
+      "agentId": "afabc08b11139b4b7",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1792057259602,
+      "queuedAt": 1792057039273,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "The order works. The marathon hook opens on a long effort, …",
+      "promptPreview": "You are a skeptical fact-checker for an Instagram carousel. Read the JSON file /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/check_input.json (a list of 40 lines). Check ONLY the 10 entries with \"post\": \"C\", in slide order.\nEach entry has the slide line, its credit, and the verified source data (quote, source, url, who, verify_note).\nTry hard to REFUTE…",
+      "promptFramed": true,
+      "lastProgressAt": 1792057440178,
+      "tokens": 87782,
+      "toolCalls": 16,
+      "durationMs": 180574,
+      "resultPreview": "{\"lines\":[{\"id\":\"S1\",\"verdict\":\"fix\",\"problem\":\"\\\"A happy life\\\" is not in the source; he only said he married and had six children and 10 grandchildren. GWR also gives the time as 54 years 246 days, so the line should say \\\"more than 54 years\\\".\",\"new_line\":\"His Olympic marathon took more than 54 years. Meanwhile he married and had children.\"},{\"id\":\"B1\",\"verdict\":\"ok\",\"problem\":\"None. Both sente…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "check:D",
+      "phaseIndex": 1,
+      "phaseTitle": "Check",
+      "agentId": "ac6ba1f4b3382087c",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1792057265129,
+      "queuedAt": 1792057039274,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "The carousel reads in order: time is gold, we put it off, t…",
+      "promptPreview": "You are a skeptical fact-checker for an Instagram carousel. Read the JSON file /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/vot/check_input.json (a list of 40 lines). Check ONLY the 10 entries with \"post\": \"D\", in slide order.\nEach entry has the slide line, its credit, and the verified source data (quote, source, url, who, verify_note).\nTry hard to REFUTE…",
+      "promptFramed": true,
+      "lastProgressAt": 1792057459952,
+      "tokens": 89013,
+      "toolCalls": 13,
+      "durationMs": 194823,
+      "resultPreview": "{\"lines\":[{\"id\":\"C2\",\"verdict\":\"ok\",\"problem\":\"Matches the Wikisource text of Wang Zhenbai's poem (一寸光陰一寸金). The second sentence is a hook, not a claim about the source. 13 words.\"},{\"id\":\"C5\",\"verdict\":\"ok\",\"problem\":\"The literal gloss of ผัด/วัน/ประกัน/พรุ่ง is right, and 'keep saying tomorrow' matches the ORST definition (postponing again and again). 14 words.\"},{\"id\":\"Y3\",\"verdict\":\"ok\",\"probl…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "judge",
+      "phaseIndex": 2,
+      "phaseTitle": "Judge",
+      "agentId": "adbfe28eb0a6bc8e9",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1792057461841,
+      "queuedAt": 1792057461795,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "You are the final judge. Fact-checkers flagged these carousel lines as needing a fix:\n[\n {\n  \"post\": \"A\",\n  \"id\": \"C1\",\n  \"verdict\": \"fix\",\n  \"problem\": \"In Legge's numbering this passage is Analects IX.16 (I checked Gutenberg #4094, CHAP. XVI), and Legge's 9.17 is a different saying ('loves virtue as he loves beauty'), so '9.17, tr. Legge' sends the reader to the wrong passage. The line itself ma…",
+      "promptFramed": true,
+      "lastProgressAt": 1792057723923,
+      "tokens": 110967,
+      "toolCalls": 17,
+      "durationMs": 262080,
+      "resultPreview": "{\"judged\":[{\"id\":\"C1\",\"real\":true,\"why\":\"Confirmed in Gutenberg #4094: Legge's CHAP. XVI is 'The Master standing by a stream', and his CHAP. XVII is 'loves virtue as he loves beauty'. The credit names Legge, so it should use Legge's numbering. The used list already does this (IX.10 Yan Yuan and IX.18 basketful are Legge numbers). With 9.17, a reader of Legge lands on the wrong saying. The line its…"
+    }
+  ],
+  "totalTokens": 475460,
+  "totalToolCalls": 76
+}

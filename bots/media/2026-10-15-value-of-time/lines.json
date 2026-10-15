@@ -5,7 +5,7 @@
    {
     "id": "C1",
     "line": "Watch a river. It never stops, day or night. Neither does your time.",
-    "credit": "Confucius · Analects 9.17, tr. Legge"
+    "credit": "Confucius · Analects 9.16, tr. Legge"
    },
    {
     "id": "W3",
@@ -14,7 +14,7 @@
    },
    {
     "id": "B3",
-    "line": "Too late to start? Midlife starters did nearly as well as lifelong movers.",
+    "line": "Too late? Midlife starters had nearly the same low death risk as lifelong movers.",
     "credit": "Saint-Maurice et al. · JAMA Netw Open, 2019"
    },
    {
@@ -69,7 +69,7 @@
    },
    {
     "id": "B2",
-    "line": "Looking back, no one regretted learning a skill. They regretted what they never did.",
+    "line": "Looking back, no one regretted learning a skill. The biggest regrets: things never done.",
     "credit": "Gilovich & Medvec · J Pers Soc Psychol, 1994"
    },
    {
@@ -94,7 +94,7 @@
    },
    {
     "id": "S11",
-    "line": "At 107 she released her sixth piano album. She said youth lives inside us.",
+    "line": "At 107, she had just released her sixth piano album. 'Youth is inside us.'",
     "credit": "Colette Maze · NPR, 2021"
    },
    {
@@ -104,7 +104,7 @@
    },
    {
     "id": "S12",
-    "line": "For 80 years, a master began each morning playing music he loved. Begin yours.",
+    "line": "For 80 years, Casals began each day playing Bach. Begin yours: practise today.",
     "credit": "Pablo Casals · Joys and Sorrows, 1970"
    }
   ]
@@ -114,7 +114,7 @@
   "lines": [
    {
     "id": "S1",
-    "line": "One Olympic marathon took him 54 years. A happy life happened along the way.",
+    "line": "His Olympic marathon took over 54 years. Meanwhile, he married and had six children.",
     "credit": "Shiso Kanakuri · Guinness World Records"
    },
    {
@@ -139,7 +139,7 @@
    },
    {
     "id": "Y7",
-    "line": "That is what yoga means: doing each action with skill and care.",
+    "line": "And yoga itself means skill in action: doing each task well.",
     "credit": "Bhagavad Gita 2.50 · tr. Annie Besant"
    },
    {
@@ -150,16 +150,16 @@
    {
     "id": "C9",
     "line": "And health starts at the table: stop eating at about 80% full.",
-    "credit": "Japanese proverb · Hara hachibu-me"
+    "credit": "Japanese proverb · Hara hachibunme"
    },
    {
     "id": "B12",
-    "line": "Lifelong skiers in their 80s had the fitness of ordinary men 40 years younger.",
+    "line": "Lifelong skiers aged 80 and over had fitness like ordinary men 40 years younger.",
     "credit": "S. Trappe et al. · J Appl Physiol, 2013"
    },
    {
     "id": "Y14",
-    "line": "One day lived with full effort beats a hundred lazy years. Make it today.",
+    "line": "One day of full effort is better than a hundred lazy years. Practise today.",
     "credit": "The Buddha · Dhammapada 112, tr. Max Müller"
    }
   ]
@@ -189,7 +189,7 @@
    },
    {
     "id": "B5",
-    "line": "But our minds wander almost half the time, and that costs us happiness.",
+    "line": "But our minds wander almost half the time, which is linked to less happiness.",
     "credit": "Killingsworth & Gilbert · Science, 2010"
    },
    {
@@ -199,17 +199,17 @@
    },
    {
     "id": "Y9",
-    "line": "Richer than gold: health. It's the root of goodness, wealth, joy and inner freedom.",
+    "line": "Health comes first. It is the root of goodness, wealth, joy and inner freedom.",
     "credit": "Charaka Samhita · Sutrasthana 1.15"
    },
    {
     "id": "B10",
-    "line": "Walking briskly under 75 minutes a week was linked to 1.8 more years.",
+    "line": "Exercise like brisk walking, up to 75 minutes weekly, went with 1.8 more years.",
     "credit": "S. C. Moore et al. · PLoS Medicine, 2012"
    },
    {
     "id": "C11",
-    "line": "Long life pays interest: each day you learn, each month you can do more.",
+    "line": "Long life brings joy: each day you learn, each month you can do more.",
     "credit": "Kaibara Ekiken · Yojokun, 1713"
    },
    {
