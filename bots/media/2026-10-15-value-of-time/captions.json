@@ -25,8 +25,59 @@
    ],
    "md5": "all 10 OK",
    "note": "Boonchu moved slide 6 photo (15-037) to cover, 15-017 to slide 6"
+  },
+  "B": {
+   "title": "The Morning",
+   "id": "cmv9i559o018ple0ywozi7qty",
+   "when": "05:00 BKK 16 Oct (2026-10-15T22:00Z)",
+   "attachments": [
+    "kWg8XbVY8s",
+    "FveHBtguUg",
+    "qJ156d0OoJ",
+    "2j4u8prBff",
+    "FzeEP4JEU6",
+    "HPEZJErHuh",
+    "HcegM2TU2B",
+    "tfBDxtQ8FO",
+    "jz5mah8Sjg",
+    "m6vBpzOcrG"
+   ],
+   "md5": "all 10 OK"
+  },
+  "C": {
+   "title": "The Finish Line",
+   "id": "cmv9i55ek018qle0ywsc226in",
+   "when": "09:00 BKK 16 Oct (02:00Z)",
+   "attachments": [
+    "3v07Jf5gZa",
+    "d031l1Hjop",
+    "6va51SjOKW",
+    "jWv3FB0oXx",
+    "Xuxs2zQEqv",
+    "T73tVjS9so",
+    "nrfoGpKFMG",
+    "AnnWP9vXEc",
+    "RCzdWk5Lnm",
+    "u4jCBw4djW"
+   ],
+   "md5": "all 10 OK",
+   "note": "strict reviewer moved text on 5 slides (B6, C4, C6, C7, C9); force15.json"
   }
  },
  "plan": "Set 2 Morning 05:00 BKK 16 Oct, Set 3 Finish Line 09:00 BKK 16 Oct, Gold waits for new photos (only 30 photos on 15 Oct)",
- "style": "Slide 1 Londrina Solid + Londrina Shadow inner lines (60,35,0); slides 2-10 Yanone Kaffeesatz Bold; #FFCC29; tight shadow"
+ "style": "Slide 1 Londrina Solid + Londrina Shadow inner lines (60,35,0); slides 2-10 Yanone Kaffeesatz Bold; #FFCC29; tight shadow",
+ "B": [
+  "No day gets a second morning. ☀️",
+  "10 slides on mornings, from the Buddha and Marcus Aurelius to a pianist of 107. Photos: Mysore class at AYBKK, 15 Oct.",
+  "The hardest asana is getting out of bed.",
+  "What gets you up on a hard morning? 👇",
+  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+ ],
+ "C": [
+  "His marathon took over 54 years. He still finished. 🏃",
+  "10 slides on staying strong for a long life, from the Bhagavad Gita to a nun who finished an Ironman at 82. Photos: Mysore class at AYBKK, 15 Oct.",
+  "A strong body gives you more years to do what you love.",
+  "Who is the oldest person you know who still trains? 👇",
+  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+ ]
 }
