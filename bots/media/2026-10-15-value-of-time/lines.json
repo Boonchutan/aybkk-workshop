@@ -1,0 +1,222 @@
+{
+ "A": {
+  "title": "The River",
+  "lines": [
+   {
+    "id": "C1",
+    "line": "Watch a river. It never stops, day or night. Neither does your time.",
+    "credit": "Confucius · Analects 9.17, tr. Legge"
+   },
+   {
+    "id": "W3",
+    "line": "And while we keep saying 'later', life speeds right past us.",
+    "credit": "Seneca · Letters to Lucilius 1, tr. Gummere"
+   },
+   {
+    "id": "B3",
+    "line": "Too late to start? Midlife starters did nearly as well as lifelong movers.",
+    "credit": "Saint-Maurice et al. · JAMA Netw Open, 2019"
+   },
+   {
+    "id": "Y5",
+    "line": "So move tomorrow's job to today, and today's job to right now.",
+    "credit": "Hindi saying, attributed to Kabir"
+   },
+   {
+    "id": "C6",
+    "line": "Then shoot like you have one arrow. No second try. This one counts.",
+    "credit": "Yoshida Kenko · Essays in Idleness 92"
+   },
+   {
+    "id": "S6",
+    "line": "A cellist of 81 practised hours daily. Why? He felt he was still improving.",
+    "credit": "Pablo Casals · via Leonard Lyons, 1958"
+   },
+   {
+    "id": "Y8",
+    "line": "And yoga asks for balance: food, sleep, work, never too much or too little.",
+    "credit": "Bhagavad Gita 6.16-17 · tr. Annie Besant"
+   },
+   {
+    "id": "B8",
+    "line": "Can you get down to the floor and up easily? That predicted longer life.",
+    "credit": "L. B. Brito et al. · Eur J Prev Cardiol, 2014"
+   },
+   {
+    "id": "W12",
+    "line": "Not just longer. Real life is living in good health.",
+    "credit": "Martial · Epigrams VI.70, tr. Ker"
+   },
+   {
+    "id": "C14",
+    "line": "So, to all who practise: don't let your time flow past unused. Practise today.",
+    "credit": "Shitou Xiqian · Sandokai, 8th century"
+   }
+  ]
+ },
+ "B": {
+  "title": "The Morning",
+  "lines": [
+   {
+    "id": "Y1",
+    "line": "Our life is a dewdrop on the grass. The sun is already rising.",
+    "credit": "Anguttara Nikaya 7.74 · tr. Bhikkhu Sujato"
+   },
+   {
+    "id": "C4",
+    "line": "No day gets a second morning. Use this one: the years won't wait.",
+    "credit": "Tao Yuanming · Miscellaneous Poems, no. 1"
+   },
+   {
+    "id": "B2",
+    "line": "Looking back, no one regretted learning a skill. They regretted what they never did.",
+    "credit": "Gilovich & Medvec · J Pers Soc Psychol, 1994"
+   },
+   {
+    "id": "W7",
+    "line": "Hard to get up? Remember: you rise to do a human being's work.",
+    "credit": "Marcus Aurelius · Meditations V.1, tr. Long"
+   },
+   {
+    "id": "C7",
+    "line": "Then treat this morning's practice as a meeting that comes once in a lifetime.",
+    "credit": "Yamanoue Soji · Yamanoue Soji ki, 1588"
+   },
+   {
+    "id": "B7",
+    "line": "Mornings start the night before. Basketball players who slept more ran faster, shot better.",
+    "credit": "C. D. Mah et al. · Sleep, 2011"
+   },
+   {
+    "id": "W10",
+    "line": "Add the basics: moderate exercise, and just enough food to refuel, not overload.",
+    "credit": "Cicero · On Old Age, tr. Falconer"
+   },
+   {
+    "id": "S11",
+    "line": "At 107 she released her sixth piano album. She said youth lives inside us.",
+    "credit": "Colette Maze · NPR, 2021"
+   },
+   {
+    "id": "Y13",
+    "line": "While your body is well, put your biggest effort into what matters most.",
+    "credit": "Bhartrihari · Vairagya Shataka 75"
+   },
+   {
+    "id": "S12",
+    "line": "For 80 years, a master began each morning playing music he loved. Begin yours.",
+    "credit": "Pablo Casals · Joys and Sorrows, 1970"
+   }
+  ]
+ },
+ "C": {
+  "title": "The Finish Line",
+  "lines": [
+   {
+    "id": "S1",
+    "line": "One Olympic marathon took him 54 years. A happy life happened along the way.",
+    "credit": "Shiso Kanakuri · Guinness World Records"
+   },
+   {
+    "id": "B1",
+    "line": "After 30, muscle slowly fades. Training and good food can change that a lot.",
+    "credit": "E. Volpi et al. · Curr Opin Clin Nutr, 2004"
+   },
+   {
+    "id": "S4",
+    "line": "A nun began training at 48. At 82, she crossed an Ironman finish line.",
+    "credit": "Madonna Buder · Guinness World Records, 2012"
+   },
+   {
+    "id": "B4",
+    "line": "No time? Five to ten minutes of slow running daily went with longer life.",
+    "credit": "D. C. Lee et al. · J Am Coll Cardiol, 2014"
+   },
+   {
+    "id": "W6",
+    "line": "Small or big, whatever task you find, give it all your strength.",
+    "credit": "Ecclesiastes 9:10 · King James Bible"
+   },
+   {
+    "id": "Y7",
+    "line": "That is what yoga means: doing each action with skill and care.",
+    "credit": "Bhagavad Gita 2.50 · tr. Annie Besant"
+   },
+   {
+    "id": "S7",
+    "line": "At 105 he sprinted 100 metres in Kyoto. His secret: health comes first.",
+    "credit": "Hidekichi Miyazaki · Guinness World Records"
+   },
+   {
+    "id": "C9",
+    "line": "And health starts at the table: stop eating at about 80% full.",
+    "credit": "Japanese proverb · Hara hachibu-me"
+   },
+   {
+    "id": "B12",
+    "line": "Lifelong skiers in their 80s had the fitness of ordinary men 40 years younger.",
+    "credit": "S. Trappe et al. · J Appl Physiol, 2013"
+   },
+   {
+    "id": "Y14",
+    "line": "One day lived with full effort beats a hundred lazy years. Make it today.",
+    "credit": "The Buddha · Dhammapada 112, tr. Max Müller"
+   }
+  ]
+ },
+ "D": {
+  "title": "Gold",
+  "lines": [
+   {
+    "id": "C2",
+    "line": "An inch of time is an inch of gold. You're spending some now.",
+    "credit": "Wang Zhenbai · White Deer Grotto (Tang)"
+   },
+   {
+    "id": "C5",
+    "line": "Yet we keep saying 'tomorrow.' Thai calls it: put off the day, promise tomorrow.",
+    "credit": "ผัดวันประกันพรุ่ง · Thai idiom"
+   },
+   {
+    "id": "Y3",
+    "line": "Yesterday is gone. Tomorrow hasn't come. Today is the day to work hard.",
+    "credit": "The Buddha · Majjhima Nikaya 131, tr. Sujato"
+   },
+   {
+    "id": "S3",
+    "line": "Still dancing at 100, she heard 'I wish I could.' Her answer: do it.",
+    "credit": "Eileen Kramer · AFP, 2015"
+   },
+   {
+    "id": "B5",
+    "line": "But our minds wander almost half the time, and that costs us happiness.",
+    "credit": "Killingsworth & Gilbert · Science, 2010"
+   },
+   {
+    "id": "W8",
+    "line": "The fix: give each thing your whole mind. On the mat, only the mat.",
+    "credit": "Montaigne · Of Experience, tr. Cotton"
+   },
+   {
+    "id": "Y9",
+    "line": "Richer than gold: health. It's the root of goodness, wealth, joy and inner freedom.",
+    "credit": "Charaka Samhita · Sutrasthana 1.15"
+   },
+   {
+    "id": "B10",
+    "line": "Walking briskly under 75 minutes a week was linked to 1.8 more years.",
+    "credit": "S. C. Moore et al. · PLoS Medicine, 2012"
+   },
+   {
+    "id": "C11",
+    "line": "Long life pays interest: each day you learn, each month you can do more.",
+    "credit": "Kaibara Ekiken · Yojokun, 1713"
+   },
+   {
+    "id": "C13",
+    "line": "Now is the only time you can use. So spend it on the mat.",
+    "credit": "Leo Tolstoy · Three Questions, 1903"
+   }
+  ]
+ }
+}
