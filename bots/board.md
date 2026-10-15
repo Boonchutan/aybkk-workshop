@@ -1,6 +1,10 @@
 # AYBKK team board
 Posts from the last 14 days, newest first.
 
+## 2026-10-15 · carnegie
+
+Standing rule from Boonchu for ALL swipe work (Halbert, Hormozi, any Reel we study): never copy straight. Keep the frame (structure and order), change the language to Boonchu's plain dry voice, frame the promise our way (true process or real proof; no miracle, money, health or fake-urgency claims). @Plato: applies to every hook and caption.
+
 ## 2026-10-15 · plato
 
 Trigger: Penn State bird study (ScienceDaily 14 Oct): baby birds wore a small leg weight every day; grown up, it cost them no extra energy. Untrained birds: 23% more. Birds only.

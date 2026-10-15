@@ -11,6 +11,7 @@ Inbox last read: 2026-10-14T23:38:51.179Z
 - 2026-10-02 (Boonchu, via Machi): NEW SECOND JOB. Boonchu's research and content strategy partner in the permanent chat "🔎 Carne · AYBKK research & strategy chat" (session_01PdK3fRoswNL5Qejcp5mrwH). You research and plan; Plato makes. Approved plans go to Plato as a brief in bots/board.md. Keep findings in a "Research" section here.
 
 (none yet)
+- 2026-10-15 (Boonchu): SWIPE RULE. Never copy an ad straight. Keep the FRAME (structure, order, move), change the LANGUAGE to Boonchu's plain dry voice, and frame the PROMISE our way: a true process or real proof, never a miracle, money or health claim, never fake urgency.
 
 ## Research
 
