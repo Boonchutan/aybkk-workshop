@@ -24,7 +24,8 @@
     "Ff40v1IyUd"
    ],
    "md5": "all 10 OK",
-   "note": "Boonchu moved slide 6 photo (15-037) to cover, 15-017 to slide 6"
+   "note": "Boonchu moved slide 6 photo (15-037) to cover, 15-017 to slide 6",
+   "published": "PUBLISHED 20:00 BKK 15 Oct (old version: slides 3 and 9 still had white side bars; Boonchu did not answer before 8pm)"
   },
   "B": {
    "title": "The Morning",
@@ -42,7 +43,8 @@
     "jz5mah8Sjg",
     "m6vBpzOcrG"
    ],
-   "md5": "all 10 OK"
+   "md5": "all 10 OK",
+   "status": "gone from Postiz at 21:16 BKK (deleted by Boonchu); v2 ready, waiting for go"
   },
   "C": {
    "title": "The Finish Line",
@@ -61,7 +63,8 @@
     "u4jCBw4djW"
    ],
    "md5": "all 10 OK",
-   "note": "strict reviewer moved text on 5 slides (B6, C4, C6, C7, C9); force15.json"
+   "note": "strict reviewer moved text on 5 slides (B6, C4, C6, C7, C9); force15.json",
+   "status": "gone from Postiz at 21:16 BKK (deleted by Boonchu); v2 ready, waiting for go"
   }
  },
  "plan": "Set 2 Morning 05:00 BKK 16 Oct, Set 3 Finish Line 09:00 BKK 16 Oct, Gold waits for new photos (only 30 photos on 15 Oct)",
