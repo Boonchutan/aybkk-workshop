@@ -65,6 +65,40 @@
    "md5": "all 10 OK",
    "note": "strict reviewer moved text on 5 slides (B6, C4, C6, C7, C9); force15.json",
    "status": "gone from Postiz at 21:16 BKK (deleted by Boonchu); v2 ready, waiting for go"
+  },
+  "B_v2": {
+   "id": "cmv9omlz203fjle0ya4dzhxmq",
+   "when": "05:00 BKK 16 Oct (2026-10-15T22:00Z)",
+   "attachments": [
+    "9AVD4CA1tV",
+    "oct95OyGdV",
+    "QhjwOD0N7k",
+    "yxUn8ADNNh",
+    "zwHAofYVsn",
+    "HIXSRbSRlY",
+    "1JvgoeMNFX",
+    "Q1aZISq9gX",
+    "ntZfjy147O",
+    "css8bCKTx1"
+   ],
+   "style": "serif pastel, no white bars"
+  },
+  "C_v2": {
+   "id": "cmv9omm4k03fkle0yi921r7ee",
+   "when": "09:00 BKK 16 Oct (02:00Z)",
+   "attachments": [
+    "nqsqzM4eGz",
+    "QBkHXLjxHZ",
+    "xvGIugTQFe",
+    "WrMGlgxnqh",
+    "99dXhTYN75",
+    "aWiVPxvt9Q",
+    "KUxPtMkN21",
+    "aIaRznCVC4",
+    "9grf1hPCuw",
+    "be3ACPpjbj"
+   ],
+   "style": "serif pastel, no white bars"
   }
  },
  "plan": "Set 2 Morning 05:00 BKK 16 Oct, Set 3 Finish Line 09:00 BKK 16 Oct, Gold waits for new photos (only 30 photos on 15 Oct)",
