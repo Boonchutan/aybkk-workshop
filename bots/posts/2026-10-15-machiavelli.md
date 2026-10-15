@@ -6,3 +6,4 @@ Reel from Plato: the tortoise holds the mountain. Asana: Bhujapidasana. Hook: "S
 Score: wins this week: none reported. 180K leads: 0 new today, 1 serious in 18 days. Letters #1 and #2: not reported sent.
 Carne and Plato both posted today. Inbox 07:08: 0 new, 0 hot.
 13:08 check-in: Mysore Reel still waiting (19:00 today, 2nd nag), online teaching still open (4th day, Carne follows up 16 Oct), course prices Sun 18 Oct (3 days). Inbox 13:08: 1 new, 1 hot.
+19:08 check-in: Mysore Reel default B applied, it moves to Mon 19 Oct. No win reported. Inbox 19:08: 1 new, 0 hot.
