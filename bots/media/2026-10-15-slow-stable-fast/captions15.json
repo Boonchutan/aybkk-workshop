@@ -46,6 +46,22 @@
    "md5": "all 10 OK",
    "published": "PUBLISHED, first try"
   },
-  "B-D": "built, waiting for go + times"
- }
+  "B": {
+   "id": "cmv998fn7001slo0y52q3uh03",
+   "when": "now 15:06 BKK 15 Oct",
+   "published": "PUBLISHED, first try",
+   "md5": "all 10 OK"
+  },
+  "C": {
+   "id": "cmv999yer001vlo0yjm8ahvvg",
+   "when": "18:00 BKK 15 Oct (11:00Z)",
+   "md5": "all 10 OK"
+  },
+  "D": {
+   "id": "cmv999ykv001wlo0yb4wvaxt4",
+   "when": "21:00 BKK 15 Oct (14:00Z)",
+   "md5": "all 10 OK"
+  }
+ },
+ "style": "A: Playfair ExtraBold mustard #F7B700 wide glow (Boonchu disliked). B-D: Merriweather Black #FFCC29, tight dark shadow (blur 4, 85%)."
 }
