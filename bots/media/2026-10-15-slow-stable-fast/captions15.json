@@ -81,7 +81,8 @@
     "old": "cmv999ykv001wlo0yb4wvaxt4 (21:00) to be deleted by Boonchu",
     "status": "19:15 BKK: 10am copy cmv9gygzg gone (deleted by Boonchu); original cmv999ykv shows 15:00Z (22:00 BKK), moved by him in app"
    },
-   "final": "22:00 BKK ERROR Failed to create media (cmv999ykv); retried once type now 22:17 BKK = cmv9oms1a03flle0yx4d47f23 with the md5-checked re-upload set"
+   "final": "22:00 BKK ERROR Failed to create media (cmv999ykv, Boonchu to delete); retry type now 22:17 BKK cmv9oms1a03flle0yx4d47f23 PUBLISHED",
+   "published": "PUBLISHED 22:17 BKK 15 Oct (retry)"
   }
  },
  "style": "A: Playfair ExtraBold mustard #F7B700 wide glow (Boonchu disliked). B-D: Merriweather Black #FFCC29, tight dark shadow (blur 4, 85%)."
