@@ -1,35 +1,35 @@
 [
  {
   "slide": 1,
-  "photo": "14-068",
+  "photo": "14-177",
   "id": "C1",
   "line": "Want it all now? The first spoonful never fills anyone up.",
   "credit": "Korean proverb · 첫술에 배부르랴",
-  "size": 80,
-  "width": 340,
-  "x0": 688,
-  "y0": 42
+  "size": 60,
+  "width": 520,
+  "x0": 508,
+  "y0": 786
  },
  {
   "slide": 2,
-  "photo": "14-155",
+  "photo": "14-018",
   "id": "Y11",
   "line": "Go slow. Tigers are tamed bit by bit, and so is your breath.",
   "credit": "Hatha Yoga Pradipika 2.15",
-  "size": 40,
-  "width": 340,
-  "x0": 712,
-  "y0": 54
+  "size": 36,
+  "width": 300,
+  "x0": 572,
+  "y0": 45
  },
  {
   "slide": 3,
-  "photo": "14-174",
+  "photo": "14-133",
   "id": "W3",
   "line": "A great painter drew one line every day, even on his busiest days.",
   "credit": "Pliny the Elder, on the painter Apelles",
-  "size": 66,
-  "width": 600,
-  "x0": 460,
+  "size": 40,
+  "width": 520,
+  "x0": 40,
   "y0": 42
  },
  {
@@ -38,75 +38,75 @@
   "id": "S3",
   "line": "Looks small? Champions are made from miles and miles of it.",
   "credit": "Steve Fairbairn, rowing coach",
-  "size": 60,
-  "width": 600,
+  "size": 44,
+  "width": 460,
+  "x0": 40,
+  "y0": 114
+ },
+ {
+  "slide": 5,
+  "photo": "14-136",
+  "id": "S6",
+  "line": "Now you stand steady like a scale, and move like a turning wheel.",
+  "credit": "Taiji Classic · Taijiquan Lun",
+  "size": 44,
+  "width": 520,
   "x0": 40,
   "y0": 42
  },
  {
-  "slide": 5,
-  "photo": "14-167",
-  "id": "S6",
-  "line": "Now you stand steady like a scale, and move like a turning wheel.",
-  "credit": "Taiji Classic · Taijiquan Lun",
-  "size": 40,
-  "width": 400,
-  "x0": 333,
-  "y0": 42
- },
- {
   "slide": 6,
-  "photo": "14-051",
+  "photo": "14-164",
   "id": "S7",
   "line": "Be quick, but don't hurry. They are not the same thing.",
   "credit": "John Wooden, basketball coach",
-  "size": 72,
-  "width": 1000,
+  "size": 44,
+  "width": 490,
   "x0": 40,
   "y0": 42
  },
  {
   "slide": 7,
-  "photo": "14-152",
+  "photo": "14-118",
   "id": "W14",
   "line": "Hurry through a maze, and the faster you go, the more tangled you get.",
   "credit": "Seneca · Letters 44",
-  "size": 54,
-  "width": 260,
-  "x0": 772,
-  "y0": 774
+  "size": 48,
+  "width": 520,
+  "x0": 532,
+  "y0": 42
  },
  {
   "slide": 8,
-  "photo": "14-177",
+  "photo": "14-153",
   "id": "B11",
   "line": "Be the steady tortoise, not the hare who sprints ahead, then naps.",
   "credit": "Taiichi Ohno · Toyota Production System",
-  "size": 60,
-  "width": 600,
-  "x0": 508,
-  "y0": 786
+  "size": 54,
+  "width": 400,
+  "x0": 273,
+  "y0": 66
  },
  {
   "slide": 9,
-  "photo": "14-139",
+  "photo": "14-150",
   "id": "B9",
   "line": "Then, breakthrough. Same push as day one, but the wheel spins faster and faster.",
   "credit": "Jim Collins · Good to Great, 2001",
-  "size": 48,
-  "width": 1000,
+  "size": 44,
+  "width": 520,
   "x0": 40,
-  "y0": 954
+  "y0": 66
  },
  {
   "slide": 10,
-  "photo": "14-159",
+  "photo": "14-155",
   "id": "W11",
   "line": "So roll out your mat. The more you do, the more you can do.",
   "credit": "William Hazlitt · 1826",
-  "size": 60,
-  "width": 300,
-  "x0": 760,
+  "size": 40,
+  "width": 260,
+  "x0": 712,
   "y0": 42
  }
 ]
