@@ -1728,7 +1728,8 @@
             const i = document.createElement('input');
             i.type = 'hidden'; i.name = k; i.value = v; f.appendChild(i);
           }
-          document.body.appendChild(f); f.submit();
+          document.body.appendChild(f);
+          (window.aybkkBook || (g => g()))(() => f.submit());
         } else if (j.payLink) {
           $('#bmsg').innerHTML = `<div class="msg ok">
             <b>${esc(j.order.product)} — ฿${j.payLink.amount.toLocaleString()}</b><br>
@@ -1736,7 +1737,7 @@
             ${known ? '' : `${esc(t('haveProfile'))}<br>`}
             <span style="font-size:13px">${esc(j.payLink.note)}</span></div>
             <p style="margin-top:12px"><a class="btn pink" style="display:inline-block;text-decoration:none"
-              href="${esc(j.payLink.url)}" target="_blank" rel="noopener">Pay ฿${j.payLink.amount.toLocaleString()}</a></p>`;
+              onclick="window.aybkkBook && aybkkBook()" href="${esc(j.payLink.url)}" target="_blank" rel="noopener">Pay ฿${j.payLink.amount.toLocaleString()}</a></p>`;
           $('#bgo').style.display = 'none';
         } else {
           $('#bmsg').innerHTML = `<div class="msg ok">Order ${esc(j.order.refno)} created.<br>
@@ -1827,10 +1828,12 @@
 #ckbar button{border:1px solid transparent;border-radius:999px;padding:8px 12px;min-height:36px;font:600 13px/1 'Work Sans','Plex',sans-serif;cursor:pointer}
 #ckNo{background:transparent;color:#fdf7fa;border-color:rgba(253,247,250,.35)!important}
 #ckOk{background:#F2C94C;color:#3E1442}
+.cklink{display:block;margin:8px auto 0;background:none;border:0;padding:4px;color:inherit;font:inherit;text-decoration:underline;cursor:pointer}
 </style>
 <script>
 // Google Ads tag (Boonchu, 15 Oct): which ads bring students. Thai PDPA: nothing is sent to Google
-// until the visitor taps OK. cn.aybkk.net skips it because Google is blocked in China.
+// until the visitor taps OK, and "Cookies" in the footer takes it back. cn.aybkk.net skips it
+// because Google is blocked in China.
 (function () {
   var ID = 'AW-18515292394', SEND = ID + '/xHlZCOjHgZ4dEOrh4_xE', KEY = 'aybkk_ads_ok', on = false;
   // then() runs once Google has the click, or after 0.9 s at most, so a blocked script never strands anyone.
@@ -1842,12 +1845,12 @@
   };
   if (/^cn\./.test(location.hostname)) return;
   var T = {
-    en: ['We use one Google cookie to see which ads bring new students.', 'No thanks', 'OK'],
-    th: ['เราใช้คุกกี้ของ Google เพื่อดูว่าโฆษณาไหนพานักเรียนใหม่มา', 'ไม่ใช้', 'ตกลง'],
-    zh: ['我们使用一个 Google cookie，了解哪些广告带来新学员。', '不用了', '好的'],
-    ru: ['Мы используем один cookie Google, чтобы понять, какая реклама приводит новых учеников.', 'Нет, спасибо', 'OK']
+    en: ['We use Google ad cookies to see which ads bring new students.', 'No thanks', 'OK', 'Cookies'],
+    th: ['เราใช้คุกกี้โฆษณาของ Google เพื่อดูว่าโฆษณาไหนพานักเรียนใหม่มา', 'ไม่ใช้', 'ตกลง', 'คุกกี้'],
+    zh: ['我们使用 Google 广告 cookie，了解哪些广告带来新学员。', '不用了', '好的', 'Cookie'],
+    ru: ['Мы используем рекламные cookie Google, чтобы понять, какая реклама приводит новых учеников.', 'Нет, спасибо', 'OK', 'Cookie']
   };
-  var bar = document.getElementById('ckbar');
+  var bar = document.getElementById('ckbar'), link = document.createElement('button');
   function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
   function save(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
   function load() {
@@ -1856,7 +1859,8 @@
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { dataLayer.push(arguments); };
     gtag('js', new Date());
-    gtag('config', ID);
+    // No remarketing lists: the notice only asks to see which ads bring new students.
+    gtag('config', ID, { allow_ad_personalization_signals: false });
     var s = document.createElement('script');
     s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID;
     document.head.appendChild(s);
@@ -1866,17 +1870,55 @@
     document.getElementById('ckTxt').textContent = t[0];
     document.getElementById('ckNo').textContent = t[1];
     document.getElementById('ckOk').textContent = t[2];
+    link.textContent = t[3];
   }
-  var v = saved();
+  // A fixed bar would hide the end of the page, so the page gets room under it.
+  function show(x) {
+    bar.hidden = !x;
+    if (getComputedStyle(bar).position === 'fixed') document.body.style.paddingBottom = x ? (bar.offsetHeight + 24) + 'px' : '';
+  }
+  // An order number in ?paid= must not ride along in the page address Google gets.
+  // The booking script has already read it.
+  if (/[?&]paid=/.test(location.search)) history.replaceState(null, '', location.pathname + location.hash);
+  link.type = 'button'; link.className = 'cklink';
+  link.onclick = function () {
+    show(true);
+    if (getComputedStyle(bar).position !== 'fixed') bar.scrollIntoView({ block: 'center' });
+  };
+  document.querySelector('footer').appendChild(link);
+  words();
+  new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  var v = saved(), hold = document.querySelector('header.hero .cta');
   if (v === '1') load();
   else if (v !== '0') {
-    words(); bar.hidden = false;
-    new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    // Booking page: the bar waits until the hero buttons are off screen, so it never covers them.
+    if (hold && window.IntersectionObserver) {
+      var io = new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) return;
+        io.disconnect();
+        if (saved() === null) show(true);
+      });
+      io.observe(hold);
+    } else show(true);
   }
-  document.getElementById('ckOk').onclick = function () { save('1'); bar.hidden = true; load(); };
-  document.getElementById('ckNo').onclick = function () { save('0'); bar.hidden = true; };
-  // The booking page's own LINE / WhatsApp links. The start page calls aybkkBook() itself.
+  document.getElementById('ckOk').onclick = function () { save('1'); show(false); load(); };
+  // Saying no after an OK (PDPA: as easy to take back as to give): drop Google's
+  // cookies on this site and reload, so the tag is gone.
+  document.getElementById('ckNo').onclick = function () {
+    save('0'); show(false);
+    if (!on) return;
+    var root = location.hostname.replace(/^.*?([^.]+\.[^.]+)$/, '$1');
+    document.cookie.split(/; */).forEach(function (c) {
+      var n = c.split('=')[0];
+      if (!/^_gcl_/.test(n)) return;
+      document.cookie = n + '=; Max-Age=0; path=/';
+      document.cookie = n + '=; Max-Age=0; path=/; domain=' + root;
+    });
+    location.reload();
+  };
+  // The booking page's own LINE / WhatsApp / WeChat buttons. The start page calls aybkkBook() itself.
   document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('button[data-wechat], #wxCopy')) { window.aybkkBook(); return; }
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || a.id === 'go') return;
     var h = a.getAttribute('href').toLowerCase();
