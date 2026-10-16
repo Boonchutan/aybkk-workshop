@@ -147,13 +147,14 @@
    "old_when": "00:00 BKK 17 Oct (17:00Z)",
    "old_copy_status_18:20": "still QUEUE, Boonchu reminded to delete",
    "old_copy_status_21:20": "still QUEUE, reminded again",
-   "old_copy_status_23:30": "still QUEUE at 23:30 BKK; no reply from Boonchu, not deleted (his call)"
+   "old_copy_status_23:30": "still QUEUE at 23:30 BKK; no reply from Boonchu, not deleted (his call)",
+   "note": "double live on Instagram (00:00 + 05:00); Boonchu to delete one in the Instagram app"
   },
   "F": {
    "title": "Bread for a Week",
    "id": "cmvaigyo006pjqt0ynm2pgsxs",
    "when": "08:00 BKK 17 Oct (01:00Z)",
-   "state": "old cmvai3m08 PUBLISHED 03:00 BKK; new cmvaigyo0 still QUEUE 08:00 (would double)",
+   "state": "PUBLISHED 03:00 BKK 17 Oct (old copy cmvai3m08); new copy cmvaigyo0 deleted by Plato 06:30 BKK on Boonchu \"Delete\"",
    "attachments": [
     "nkqwnVIGWw",
     "a1LJhhofi3",
@@ -177,7 +178,7 @@
    "title": "The Day's Hidden Gifts",
    "id": "cmvaigyqx06pkqt0yvt8w3u03",
    "when": "11:00 BKK 17 Oct (04:00Z)",
-   "state": "old cmvai3m46 PUBLISHED 06:00 BKK; new cmvaigyqx still QUEUE 11:00 (would double)",
+   "state": "PUBLISHED 06:00 BKK 17 Oct (old copy cmvai3m46); new copy cmvaigyqx deleted by Plato 06:30 BKK on Boonchu \"Delete\"",
    "attachments": [
     "48SgfpdZFA",
     "zeIlQvWazT",
