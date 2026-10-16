@@ -110,7 +110,7 @@
    "title": "The Snapped String",
    "id": "cmvai3lu506mpqt0yxxnipeba",
    "when": "21:00 BKK (14:00Z)",
-   "state": "QUEUE",
+   "state": "PUBLISHED 21:00 BKK",
    "attachments": [
     "4UNSRkK78x",
     "91XMGbob0U",
@@ -145,7 +145,8 @@
    "md5": "all 10 OK",
    "old_id_to_delete": "cmvai3lx506mqqt0yfw3dn7fk",
    "old_when": "00:00 BKK 17 Oct (17:00Z)",
-   "old_copy_status_18:20": "still QUEUE, Boonchu reminded to delete"
+   "old_copy_status_18:20": "still QUEUE, Boonchu reminded to delete",
+   "old_copy_status_21:20": "still QUEUE, reminded again"
   },
   "F": {
    "title": "Bread for a Week",
@@ -167,7 +168,8 @@
    "md5": "all 10 OK",
    "old_id_to_delete": "cmvai3m0806mrqt0ynxjuzfy4",
    "old_when": "03:00 BKK 17 Oct (20:00Z)",
-   "old_copy_status_18:20": "still QUEUE, Boonchu reminded to delete"
+   "old_copy_status_18:20": "still QUEUE, Boonchu reminded to delete",
+   "old_copy_status_21:20": "still QUEUE, reminded again"
   },
   "G": {
    "title": "The Day's Hidden Gifts",
@@ -189,7 +191,8 @@
    "md5": "all 10 OK",
    "old_id_to_delete": "cmvai3m4606msqt0ywjdd8n6i",
    "old_when": "06:00 BKK 17 Oct (23:00Z)",
-   "old_copy_status_18:20": "still QUEUE, Boonchu reminded to delete"
+   "old_copy_status_18:20": "still QUEUE, Boonchu reminded to delete",
+   "old_copy_status_21:20": "still QUEUE, reminded again"
   }
  }
 }
