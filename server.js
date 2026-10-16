@@ -218,6 +218,9 @@ for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SH
     }
   });
 }
+// The Google review form for the AYBKK place (checked 16 Oct 2026). Short enough to say after
+// class, put in LINE or print on the desk QR card; 302 so the target can change later.
+app.get(['/review', '/reviews'], (req, res) => res.redirect(302, 'https://search.google.com/local/writereview?placeid=ChIJOWhLf_2e4jARi25S9GpEmWk'));
 
 // ─── Cloudinary Setup ────────────────────────────────────────────────────────
 const cloudinary = require('cloudinary').v2;
