@@ -1889,10 +1889,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     try {
       const files = await driveFolder(String(req.query.folder || ''), req.query.fresh === '1');
-      const done = files.length ? (await q('SELECT id, drive_id FROM bkk_photos WHERE drive_id = ANY($1)',
-        [files.map(f => f.id)])).rows : [];
-      const byDrive = new Map(done.map(r => [r.drive_id, r.id]));
-      res.json({ files: files.map(f => ({ id: f.id, name: f.name, sub: f.sub || '', photoId: byDrive.get(f.id) || null })) });
+      // tagged: how many people are on it, so the page can grey a done photo from any class date.
+      const done = files.length ? (await q(`SELECT p.id, p.drive_id, count(pm.member_id)::int AS tagged
+          FROM bkk_photos p LEFT JOIN bkk_photo_members pm ON pm.photo_id = p.id
+          WHERE p.drive_id = ANY($1) GROUP BY p.id`, [files.map(f => f.id)])).rows : [];
+      const byDrive = new Map(done.map(r => [r.drive_id, r]));
+      res.json({ files: files.map(f => {
+        const d = byDrive.get(f.id);
+        return { id: f.id, name: f.name, sub: f.sub || '', photoId: d ? d.id : null, tagged: d ? d.tagged : 0 };
+      }) });
     } catch (e) { res.status(e.status || 502).json({ error: e.message }); }
   });
 
