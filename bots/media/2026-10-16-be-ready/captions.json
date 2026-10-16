@@ -129,7 +129,7 @@
    "title": "The Astronaut's Secret",
    "id": "cmvaigyl906piqt0yz7pu2dqj",
    "when": "05:00 BKK 17 Oct (22:00Z 16 Oct)",
-   "state": "QUEUE",
+   "state": "DOUBLE: old cmvai3lx5 PUBLISHED 00:00 BKK + new cmvaigyl9 PUBLISHED 05:00 BKK",
    "attachments": [
     "mmc0TiWH4d",
     "UkWkdh8XvQ",
@@ -153,7 +153,7 @@
    "title": "Bread for a Week",
    "id": "cmvaigyo006pjqt0ynm2pgsxs",
    "when": "08:00 BKK 17 Oct (01:00Z)",
-   "state": "QUEUE",
+   "state": "old cmvai3m08 PUBLISHED 03:00 BKK; new cmvaigyo0 still QUEUE 08:00 (would double)",
    "attachments": [
     "nkqwnVIGWw",
     "a1LJhhofi3",
@@ -177,7 +177,7 @@
    "title": "The Day's Hidden Gifts",
    "id": "cmvaigyqx06pkqt0yvt8w3u03",
    "when": "11:00 BKK 17 Oct (04:00Z)",
-   "state": "QUEUE",
+   "state": "old cmvai3m46 PUBLISHED 06:00 BKK; new cmvaigyqx still QUEUE 11:00 (would double)",
    "attachments": [
     "48SgfpdZFA",
     "zeIlQvWazT",
