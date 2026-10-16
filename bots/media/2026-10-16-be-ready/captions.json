@@ -127,8 +127,8 @@
   },
   "E": {
    "title": "The Astronaut's Secret",
-   "id": "cmvai3lx506mqqt0yfw3dn7fk",
-   "when": "00:00 BKK 17 Oct (17:00Z)",
+   "id": "cmvaigyl906piqt0yz7pu2dqj",
+   "when": "05:00 BKK 17 Oct (22:00Z 16 Oct)",
    "state": "QUEUE",
    "attachments": [
     "mmc0TiWH4d",
@@ -142,12 +142,14 @@
     "Op7x8RTge6",
     "cw2zBy4Dl1"
    ],
-   "md5": "all 10 OK"
+   "md5": "all 10 OK",
+   "old_id_to_delete": "cmvai3lx506mqqt0yfw3dn7fk",
+   "old_when": "00:00 BKK 17 Oct (17:00Z)"
   },
   "F": {
    "title": "Bread for a Week",
-   "id": "cmvai3m0806mrqt0ynxjuzfy4",
-   "when": "03:00 BKK 17 Oct (20:00Z)",
+   "id": "cmvaigyo006pjqt0ynm2pgsxs",
+   "when": "08:00 BKK 17 Oct (01:00Z)",
    "state": "QUEUE",
    "attachments": [
     "nkqwnVIGWw",
@@ -161,12 +163,14 @@
     "ox9U1od5VB",
     "RFrbzekwAF"
    ],
-   "md5": "all 10 OK"
+   "md5": "all 10 OK",
+   "old_id_to_delete": "cmvai3m0806mrqt0ynxjuzfy4",
+   "old_when": "03:00 BKK 17 Oct (20:00Z)"
   },
   "G": {
    "title": "The Day's Hidden Gifts",
-   "id": "cmvai3m4606msqt0ywjdd8n6i",
-   "when": "06:00 BKK 17 Oct (23:00Z)",
+   "id": "cmvaigyqx06pkqt0yvt8w3u03",
+   "when": "11:00 BKK 17 Oct (04:00Z)",
    "state": "QUEUE",
    "attachments": [
     "48SgfpdZFA",
@@ -180,7 +184,9 @@
     "v1fzYOo0zm",
     "JS5N7kh1U2"
    ],
-   "md5": "all 10 OK"
+   "md5": "all 10 OK",
+   "old_id_to_delete": "cmvai3m4606msqt0ywjdd8n6i",
+   "old_when": "06:00 BKK 17 Oct (23:00Z)"
   }
  }
 }
