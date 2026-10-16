@@ -46,6 +46,7 @@
   .note{text-align:center;font-size:15px;color:var(--plum);min-height:1.5em;margin:6px 0 0}
   .promo{display:block;margin:18px 0 0;padding:14px 16px;border:6px solid var(--promo);border-radius:14px;
     background:var(--promo-soft);color:var(--ink);text-decoration:none;text-align:center;line-height:1.35}
+  .promo[hidden]{display:none}
   .promo .k{display:block;font-size:14px;color:var(--promo-deep);font-weight:600}
   .promo .big{display:block;font-size:26px;font-weight:800;color:var(--promo-deep);margin:2px 0}
   .promo .s{display:block;font-size:15px}
@@ -76,6 +77,7 @@
   <a class="go" id="go" href="#">Book your first morning on LINE</a>
   <p class="alt" id="alt"></p>
   <p class="note" id="note" aria-live="polite"></p>
+  <div id="ckbar" hidden><div class="ckt"><p id="ckTxt"></p><button type="button" id="ckMore" aria-expanded="false"></button><p id="ckInfo" hidden></p></div><div class="ckb"><button type="button" id="ckNo"></button><button type="button" id="ckOk"></button></div></div>
 
   <a class="promo" id="promo" href="/#promo" hidden>
     <span class="k" data-t="pk">Until 11 Nov only · in memory of Sharathji</span>
@@ -174,10 +176,13 @@
     fetch('/api/bkk/start-event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
   };
   const note = t => { document.getElementById('note').textContent = t; };
+  // One tap, one count: more taps during the short wait for Google do nothing.
+  let leaving = false;
   const open = ch => {
+    if (leaving) return;
     send('tap', ch);
     const book = window.aybkkBook || (f => f && f());
-    if (ch !== 'wechat') { book(() => { location.href = LINK[ch]; }); return; }
+    if (ch !== 'wechat') { leaving = true; book(() => { leaving = false; location.href = LINK[ch]; }); return; }
     book();
     const done = () => note(STR[LANG].copied);
     if (navigator.clipboard) navigator.clipboard.writeText(WECHAT).then(done, done); else done();
@@ -221,38 +226,49 @@
   send('view');
 })();
 </script>
-<div id="ckbar" hidden><p id="ckTxt"></p><div><button type="button" id="ckNo"></button><button type="button" id="ckOk"></button></div></div>
 <style>
-#ckbar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto;
+#ckbar{margin:10px 0 0;text-align:left;
   display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;
   background:#17121a;color:#fdf7fa;font:500 13px/1.35 'Work Sans','Plex',sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.25)}
 #ckbar[hidden]{display:none}
 #ckbar p{margin:0}
-#ckbar div{display:flex;gap:6px;flex:none}
+#ckbar .ckt{flex:1;min-width:0}
+#ckbar .ckb{display:flex;gap:6px;flex:none}
+#ckMore{background:none!important;border:0!important;padding:2px 0!important;min-height:0!important;color:inherit;font:inherit!important;text-decoration:underline;cursor:pointer}
+#ckInfo{margin-top:6px!important;font-size:12px;opacity:.9}
 #ckbar button{border:1px solid transparent;border-radius:999px;padding:8px 12px;min-height:36px;font:600 13px/1 'Work Sans','Plex',sans-serif;cursor:pointer}
 #ckNo{background:transparent;color:#fdf7fa;border-color:rgba(253,247,250,.35)!important}
 #ckOk{background:#F2C94C;color:#3E1442}
+.cklink{display:block;margin:8px auto 0;background:none;border:0;padding:4px;color:inherit;font:inherit;text-decoration:underline;cursor:pointer}
 </style>
 <script>
 // Google Ads tag (Boonchu, 15 Oct): which ads bring students. Thai PDPA: nothing is sent to Google
-// until the visitor taps OK. cn.aybkk.net skips it because Google is blocked in China.
+// until the visitor taps OK, and "Cookies" in the footer takes it back. cn.aybkk.net skips it
+// because Google is blocked in China.
 (function () {
   var ID = 'AW-18515292394', SEND = ID + '/xHlZCOjHgZ4dEOrh4_xE', KEY = 'aybkk_ads_ok', on = false;
   // then() runs once Google has the click, or after 0.9 s at most, so a blocked script never strands anyone.
   window.aybkkBook = function (then) {
     var done = false, go = function () { if (!done) { done = true; if (then) then(); } };
-    if (!on) return go();
+    if (!on || saved() !== '1') return go();
     gtag('event', 'conversion', { send_to: SEND, value: 1.0, currency: 'THB', transport_type: 'beacon', event_callback: go, event_timeout: 800 });
     setTimeout(go, 900);
   };
   if (/^cn\./.test(location.hostname)) return;
   var T = {
-    en: ['We use one Google cookie to see which ads bring new students.', 'No thanks', 'OK'],
-    th: ['เราใช้คุกกี้ของ Google เพื่อดูว่าโฆษณาไหนพานักเรียนใหม่มา', 'ไม่ใช้', 'ตกลง'],
-    zh: ['我们使用一个 Google cookie，了解哪些广告带来新学员。', '不用了', '好的'],
-    ru: ['Мы используем один cookie Google, чтобы понять, какая реклама приводит новых учеников.', 'Нет, спасибо', 'OK']
+    en: ['We use Google ad cookies to see which ads bring new students.', 'No thanks', 'OK', 'Cookies'],
+    th: ['เราใช้คุกกี้โฆษณาของ Google เพื่อดูว่าโฆษณาไหนพานักเรียนใหม่มา', 'ไม่ใช้', 'ตกลง', 'คุกกี้'],
+    zh: ['我们使用 Google 广告 cookie，了解哪些广告带来新学员。', '不用了', '好的', 'Cookie'],
+    ru: ['Мы используем рекламные cookie Google, чтобы понять, какая реклама приводит новых учеников.', 'Нет, спасибо', 'OK', 'Cookie']
   };
-  var bar = document.getElementById('ckbar');
+  // What "More" says (PDPA s.23: what goes to Google, why, for how long, how to take it back, who runs the site).
+  var INFO = {
+    en: ['More', 'If you tap OK, Google Ads gets the address and title of the pages you open here, your browser and screen size, and a Google cookie ID. We use it only to count which ads bring new students, and ad personalization is off. The Google cookies on this site last up to 90 days. To change your mind, tap Cookies at the bottom of the page. AYBKK (Ashtanga Yoga Center of Bangkok) runs this site. Questions: LINE @aybkk.'],
+    th: ['อ่านเพิ่ม', 'ถ้าคุณกดตกลง Google Ads จะได้รับที่อยู่และชื่อของหน้าที่คุณเปิดในเว็บนี้ ข้อมูลเบราว์เซอร์และขนาดหน้าจอ และรหัสคุกกี้ของ Google เราใช้เพื่อนับว่าโฆษณาไหนพานักเรียนใหม่มาเท่านั้น และปิดการแสดงโฆษณาที่ปรับตามตัวคุณไว้ คุกกี้ของ Google ในเว็บนี้อยู่ได้นานสุด 90 วัน ถ้าเปลี่ยนใจ กด “คุกกี้” ที่ด้านล่างของหน้า เว็บนี้ดูแลโดย AYBKK (Ashtanga Yoga Center of Bangkok) มีคำถาม ติดต่อ LINE @aybkk'],
+    zh: ['详情', '如果您点“好的”，Google Ads 会收到您在本站打开的页面地址和标题、浏览器和屏幕信息，以及一个 Google cookie 编号。我们只用它来统计哪些广告带来新学员，并已关闭个性化广告。本站的 Google cookie 最长保留 90 天。想改变主意，请点页面底部的“Cookie”。本站由 AYBKK（Ashtanga Yoga Center of Bangkok）运营。有问题请联系 LINE @aybkk。'],
+    ru: ['Подробнее', 'Если вы нажмёте OK, Google Ads получит адреса и заголовки страниц, которые вы открываете на этом сайте, данные о браузере и размере экрана и идентификатор cookie Google. Мы используем это только чтобы понять, какая реклама приводит новых учеников; персонализация рекламы отключена. Cookie Google на этом сайте хранятся до 90 дней. Чтобы передумать, нажмите «Cookie» внизу страницы. Сайт ведёт AYBKK (Ashtanga Yoga Center of Bangkok). Вопросы: LINE @aybkk.']
+  };
+  var bar = document.getElementById('ckbar'), link = document.createElement('button');
   function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
   function save(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
   function load() {
@@ -261,27 +277,78 @@
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { dataLayer.push(arguments); };
     gtag('js', new Date());
-    gtag('config', ID);
+    // No remarketing lists: the notice only asks to see which ads bring new students.
+    gtag('config', ID, { allow_ad_personalization_signals: false });
     var s = document.createElement('script');
     s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID;
     document.head.appendChild(s);
   }
   function words() {
-    var t = T[(document.documentElement.lang || 'en').slice(0, 2)] || T.en;
+    var l = (document.documentElement.lang || 'en').slice(0, 2), t = T[l] || T.en, m = INFO[l] || INFO.en;
     document.getElementById('ckTxt').textContent = t[0];
+    document.getElementById('ckMore').textContent = m[0];
+    document.getElementById('ckInfo').textContent = m[1];
     document.getElementById('ckNo').textContent = t[1];
     document.getElementById('ckOk').textContent = t[2];
+    link.textContent = t[3];
   }
-  var v = saved();
+  // A fixed bar would hide the end of the page, so the page gets room under it.
+  function show(x) {
+    bar.hidden = !x;
+    if (getComputedStyle(bar).position === 'fixed') document.body.style.paddingBottom = x ? (bar.offsetHeight + 24) + 'px' : '';
+  }
+  // Google gets the page address, so drop what it has no need for: an order number in ?paid=
+  // (the booking script has already read it) and Meta's click id from Instagram and Facebook links.
+  var qs = new URLSearchParams(location.search), drop = ['paid', 'fbclid'].filter(function (k) { return qs.has(k); });
+  if (drop.length) {
+    drop.forEach(function (k) { qs.delete(k); });
+    history.replaceState(null, '', location.pathname + (qs.toString() ? '?' + qs : '') + location.hash);
+  }
+  link.type = 'button'; link.className = 'cklink';
+  link.onclick = function () {
+    show(true);
+    if (getComputedStyle(bar).position !== 'fixed') bar.scrollIntoView({ block: 'center' });
+  };
+  document.querySelector('footer').appendChild(link);
+  words();
+  new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  var v = saved(), hold = document.querySelector('header.hero .cta');
   if (v === '1') load();
   else if (v !== '0') {
-    words(); bar.hidden = false;
-    new MutationObserver(words).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    // Booking page: the bar waits until the hero buttons have scrolled up past the top of the
+    // screen (or the visit starts lower down, like /#prices), so it never covers them.
+    if (hold) {
+      var check = function () {
+        if (hold.getBoundingClientRect().bottom > 0) return;
+        removeEventListener('scroll', check);
+        if (saved() === null) show(true);
+      };
+      addEventListener('scroll', check, { passive: true });
+      check();
+    } else show(true);
   }
-  document.getElementById('ckOk').onclick = function () { save('1'); bar.hidden = true; load(); };
-  document.getElementById('ckNo').onclick = function () { save('0'); bar.hidden = true; };
-  // The booking page's own LINE / WhatsApp links. The start page calls aybkkBook() itself.
+  document.getElementById('ckMore').onclick = function () {
+    var i = document.getElementById('ckInfo');
+    i.hidden = !i.hidden; this.setAttribute('aria-expanded', String(!i.hidden)); show(true);
+  };
+  document.getElementById('ckOk').onclick = function () { save('1'); show(false); load(); };
+  // Saying no after an OK (PDPA: as easy to take back as to give): drop what Google left on
+  // this phone (cookies, and the ad click id gtag keeps in localStorage) and reload, so the tag is gone.
+  document.getElementById('ckNo').onclick = function () {
+    save('0'); show(false);
+    var root = location.hostname.replace(/^.*?([^.]+\.[^.]+)$/, '$1');
+    document.cookie.split(/; */).forEach(function (c) {
+      var n = c.split('=')[0];
+      if (!/^_gcl_/.test(n)) return;
+      document.cookie = n + '=; Max-Age=0; path=/';
+      document.cookie = n + '=; Max-Age=0; path=/; domain=' + root;
+    });
+    try { Object.keys(localStorage).forEach(function (k) { if (/^_gcl/.test(k)) localStorage.removeItem(k); }); } catch (e) {}
+    if (on) location.reload();
+  };
+  // The booking page's own LINE / WhatsApp / WeChat buttons. The start page calls aybkkBook() itself.
   document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('button[data-wechat], #wxCopy')) { window.aybkkBook(); return; }
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || a.id === 'go') return;
     var h = a.getAttribute('href').toLowerCase();

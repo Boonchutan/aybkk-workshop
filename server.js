@@ -105,6 +105,10 @@ const upload = multer({
 });
 
 // Middleware
+// Same-origin pages get only "https://aybkk.net/" as document.referrer, never a path:
+// the Google Ads tag sends the referrer to Google, and some paths are secrets
+// (/api/bkk/login/<token>, /p/<slug>).
+app.use((req, res, next) => { res.set('Referrer-Policy', 'strict-origin'); next(); });
 app.use(cors());
 // LINE and Meta sign the exact bytes they send; the inbox checks those signatures
 app.use(express.json({ limit: '10mb', verify: (req, res, buf) => {

@@ -929,6 +929,7 @@ function mountBkk(app, opts = {}) {
   // second phone or a re-open is fine; emailed links stay one-time.
   // The code is handed to the browser, never put in a URL, so it stays out of history.
   const loginPage = (msg, extra = '') => `<!DOCTYPE html><html lang="en"><meta charset="utf-8">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>AYBKK</title>
 <body style="font-family:-apple-system,sans-serif;background:#f7f1f5;color:#17121a;
 text-align:center;padding:22vh 20px"><p>${msg}</p>${extra}</body></html>`;
