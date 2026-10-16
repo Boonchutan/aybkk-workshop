@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-15T23:38:23.539Z
+Inbox last read: 2026-10-16T23:38:20.257Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -77,3 +77,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-15 (chat): Read all 22 Halbert ads on swiped.co (scans). Wrote "Part 8" for Boonchu to paste into his vault note "Halbert Swipe File". Best 5: Attractive Women in Miami (Name-Disqualify-Release), Coat of Arms, Dollar Letter, Million Dollar Smile, Lead Gen. Applied swipe rule; removed a draft hook that used Sharath.
 - 2026-10-15 (chat): Built "100 Days of Halbert" (https://claude.ai/artifact/FtHziumgDVFKfcw5CT5eb1): 100 lessons from his Halbert Swipe File (372 units extracted), 15 review days, one move per day applied to one slot of that week's batch Reels. Progress saves to the page db, collection "progress" (docs d001-d100: done, wrote, link). Read it weekly and tell him which moves his Reels use.
 - 2026-10-16: Inbox read OK: 1 LINE thread (Thai shala promo question: Machi's job), 0 about 180K. No new leads. 1 serious lead due today: 2nd follow-up drafted, next check 18 Oct. Online-teaching answer still open (5th day). No requests in team chat.
+- 2026-10-17: Inbox read OK: 4 LINE threads, 1 about 180K. The serious lead wrote: no reply in 5 days, asks if they should find another teacher. Urgent reply drafted, flagged to Machi. 3 others are shala bookings (Machi's job). Online-teaching answer still open (6th day). No requests in team chat.
