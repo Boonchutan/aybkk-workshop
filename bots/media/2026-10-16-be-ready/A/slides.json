@@ -1,0 +1,112 @@
+[
+ {
+  "slide": 1,
+  "photo": "16-142",
+  "id": "C2",
+  "line": "An inch of time is an inch of gold. You're spending some now.",
+  "credit": "Wang Zhenbai · White Deer Grotto (Tang)",
+  "size": 72,
+  "width": 1000,
+  "x0": 40,
+  "y0": 30
+ },
+ {
+  "slide": 2,
+  "photo": "16-035",
+  "id": "C5",
+  "line": "Yet we keep saying 'tomorrow.' Thai calls it: put off the day, promise tomorrow.",
+  "credit": "ผัดวันประกันพรุ่ง · Thai idiom",
+  "size": 48,
+  "width": 1000,
+  "x0": 40,
+  "y0": 42
+ },
+ {
+  "slide": 3,
+  "photo": "16-107",
+  "id": "Y3",
+  "line": "Yesterday is gone. Tomorrow hasn't come. Today is the day to work hard.",
+  "credit": "The Buddha · Majjhima Nikaya 131, tr. Sujato",
+  "size": 44,
+  "width": 920,
+  "x0": 220,
+  "y0": 966
+ },
+ {
+  "slide": 4,
+  "photo": "16-100",
+  "id": "S3",
+  "line": "Still dancing at 100, she heard 'I wish I could.' Her answer: do it.",
+  "credit": "Eileen Kramer · AFP, 2015",
+  "size": 40,
+  "width": 360,
+  "x0": 40,
+  "y0": 895
+ },
+ {
+  "slide": 5,
+  "photo": "16-084",
+  "id": "B5",
+  "line": "But our minds wander almost half the time, which is linked to less happiness.",
+  "credit": "Killingsworth & Gilbert · Science, 2010",
+  "size": 40,
+  "width": 340,
+  "x0": 712,
+  "y0": 126
+ },
+ {
+  "slide": 6,
+  "photo": "16-123",
+  "id": "W8",
+  "line": "The fix: give each thing your whole mind. On the mat, only the mat.",
+  "credit": "Montaigne · Of Experience, tr. Cotton",
+  "size": 40,
+  "width": 520,
+  "x0": 64,
+  "y0": 42
+ },
+ {
+  "slide": 7,
+  "photo": "16-030",
+  "id": "Y9",
+  "line": "Health comes first. It is the root of goodness, wealth, joy and inner freedom.",
+  "credit": "Charaka Samhita · Sutrasthana 1.15",
+  "size": 40,
+  "width": 340,
+  "x0": 724,
+  "y0": 42
+ },
+ {
+  "slide": 8,
+  "photo": "16-121",
+  "id": "B10",
+  "line": "Exercise like brisk walking, up to 75 minutes weekly, went with 1.8 more years.",
+  "credit": "S. C. Moore et al. · PLoS Medicine, 2012",
+  "size": 48,
+  "width": 460,
+  "x0": 592,
+  "y0": 750
+ },
+ {
+  "slide": 9,
+  "photo": "16-173",
+  "id": "C11",
+  "line": "Long life brings joy: each day you learn, each month you can do more.",
+  "credit": "Kaibara Ekiken · Yojokun, 1713",
+  "size": 36,
+  "width": 460,
+  "x0": 580,
+  "y0": 965
+ },
+ {
+  "slide": 10,
+  "photo": "16-120",
+  "id": "C13",
+  "line": "Now is the only time you can use. So spend it on the mat.",
+  "credit": "Leo Tolstoy · Three Questions, 1903",
+  "size": 36,
+  "width": 383,
+  "x0": 592,
+  "y0": 920
+ }
+]
