@@ -6,3 +6,4 @@ Reel from Plato: an old man throws sand in the Ganga to dam it ("go learn from a
 Score: wins this week: none reported. 180K leads: 0 new today, 1 serious in 19 days. Letters #1 and #2: not reported sent.
 Carne and Plato both posted today. Inbox 07:08: 0 new, 0 hot.
 13:08 check-in: course prices and Mysore Reel still waiting (2 days, 2nd nudge today). Inbox: 1 new, 1 hot.
+19:08 check-in: no win reported. Course prices and Mysore Reel not repeated (nagged twice today). Next step: send the online-teaching lead Carne's 2nd follow-up. Inbox: 0 new, 0 hot; the 1 hot booking from this morning shows no AYBKK reply.

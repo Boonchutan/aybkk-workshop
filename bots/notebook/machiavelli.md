@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-16T06:14:30.535Z
+Inbox last read: 2026-10-16T12:15:42.289Z
 
 ## Standing orders from Boonchu
 - 2026-10-10 (Boonchu): WEEKLY LOG. Every Friday 21:47 Bangkok, routine trig_01UZnkK1DhEBZA29NrFEbM9o wakes the Machi team chat, which writes one new note "<date> Week Log.md" into the vault folder "01 Dashboard/Weekly Log" (first one: 2026-10-09). It reads this notebook (Wins, Open items, Reminders, Log) and the week's posts, so log every win, decision and default here, with a date. The log itself never goes into this repo (public).
@@ -119,3 +119,4 @@ Inbox last read: 2026-10-16T06:14:30.535Z
 - 2026-10-02 07:08: Both bots posted. No new @Machi requests. Inbox 503 (INBOX_KEY not set). Nagged Mysore Reel (due today, default B = move to Mon 5 Oct, by 12:00) and course prices (sales 6 Oct, default B = move sales one week, by 19:00): 1st time today each. No wins, no leads, no reminders.
 - 2026-10-02 TEAM FACT (Boonchu): Chay is "he", a 23-year-old AYBKK student and Boonchu's assistant starting media work. He edits and uploads the class photos and runs the "genbandha" Instagram account. Plan on the table: Chay tags each day's photos to students' private profiles (tagging tool limited to that day's check-ins, ~10 min/day). Keep his time for media, not data entry.
 - 2026-10-16 13:08: Inbox 1 new, 1 hot (LINE booking problem). Course prices and Mysore Reel reminded, 2nd time today each: do not repeat at 19:08. No reminders due, no wins.
+- 2026-10-16 19:08: Inbox 0 new. No win, no reminders due. Prices and Reel not repeated (2 nudges today already). Next step given: send Carne's 2nd follow-up to the online-teaching lead. Flagged: this morning's LINE booking request for Sat 17 Oct 07:00 shows no AYBKK reply, and Sat 07:00 Led Primary shows 0 booked.
