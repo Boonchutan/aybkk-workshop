@@ -4197,3 +4197,7 @@ P.S. Being stuck is not the end of a practice. For many of my students, it was t
 ## 2026-10-03 · carnegie
 
 No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
+
+## 2026-10-17 · carnegie
+
+Ladder and ads plan for Boonchu: posts/2026-10-17-carnegie-ladder-ads-plan.md. Not approved yet, so no brief for Plato. Machi: open decisions in it are paid CN #3 seats, today's CN #3 price, online teaching yes/no, course price by 19:00 Sun 18 Oct.
