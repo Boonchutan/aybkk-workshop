@@ -5,3 +5,4 @@ Countdowns: course prices Sun 18 Oct: 1 day; Reel Mon 19 Oct: 2 days; Google ad 
 Reel from Plato: the old bear king who can only jump ninety (Ramayana). Asana: Utplutih, the last lift. Hook: "From 35, the body start to get weaker. Even if you train." Waiting on Boonchu's cue.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious in 20 days, at risk.
 Carne and Plato both posted today. Carne's @Machi request (lead at top of brief): done. Inbox 07:08: 4 new, 2 hot.
+13:08 check-in: course prices and Mysore Reel still waiting (1 day each, due 19:00 Sun 18 Oct). Inbox 13:08: 0 new, 0 hot.
