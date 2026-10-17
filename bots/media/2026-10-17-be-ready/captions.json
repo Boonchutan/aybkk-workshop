@@ -19,5 +19,64 @@
   "Gather your dry wood on the mat, every morning.",
   "What do you get ready the night before? 👇",
   "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
- ]
+ ],
+ "posts": {
+  "G": {
+   "title": "The Tool You Carry",
+   "id": "cmvc9x36y0pafqt0yqe5fq31o",
+   "when": "NOW 17:48 BKK 17 Oct",
+   "state": "PUBLISHED",
+   "attachments": [
+    "OV1p2tsHWU",
+    "cOrgW2hRTJ",
+    "LRcd7fjIoi",
+    "JXqGRuAtmV",
+    "QZjf5avfyr",
+    "qMeWQltOIr",
+    "baDKevWpvN",
+    "3vI2Vdyrkp",
+    "LWxNUnr55x",
+    "6eE6Gcezxn"
+   ],
+   "md5": "all 10 OK"
+  },
+  "H": {
+   "title": "The Alarm Before Dawn",
+   "id": "cmvc9yira0paiqt0y4p6q9ep2",
+   "when": "20:00 BKK 17 Oct (13:00Z)",
+   "state": "QUEUE",
+   "attachments": [
+    "fzgjNagzcl",
+    "Q9xRgHLnpV",
+    "qdMGi16Ddo",
+    "k10prgD7vT",
+    "twUj479xVl",
+    "jLjDoUPyTV",
+    "DByGtkikoG",
+    "MYNQTa0owD",
+    "xZ5L52xxuf",
+    "GhoVZS1II7"
+   ],
+   "md5": "all 10 OK"
+  },
+  "I": {
+   "title": "Dry Wood for Tomorrow",
+   "id": "cmvc9yiuy0pajqt0ytn44pcxu",
+   "when": "06:00 BKK 18 Oct (23:00Z 17 Oct)",
+   "state": "QUEUE",
+   "attachments": [
+    "jl5IexL0Kq",
+    "VxI06K83Dq",
+    "7uCqpyV6Q7",
+    "3uMTWKMQNu",
+    "wQX0pkgLN6",
+    "Xx1wnbmOA2",
+    "iicBvsBGwv",
+    "x11uk9BHDb",
+    "RTyWj7Om8e",
+    "RF13ooGkrv"
+   ],
+   "md5": "all 10 OK"
+  }
+ }
 }
