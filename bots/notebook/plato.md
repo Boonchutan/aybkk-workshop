@@ -201,6 +201,15 @@ Obsidian frameworks (Boonchu's vault, 05 Business & Strategy/Boonchu Framework).
 - Useful Over Diary | one transferable principle, never "my morning" | daily topic filter | AYBKK Growth OS
 Guardrails: never use the "back injury" story from Boonchu Persuasion Framework (flagged as invented). Before any science claim: how big, tested on whom, predicted or found after, repeated? (Psychology - Reading The Evidence)
 
+## Persuasion
+- 2026-10-17 ELICITATION (Boonchu: "save this technique as persuasion"). Source: Chase Hughes clip, @chasehughesclips Reel DebBWc5lGGU (2:39, watched and transcribed 17 Oct; his military and intelligence background is his own claim, not checked). Idea: get people to tell you more WITHOUT asking questions. Questions set off a little "security alarm". Statements make people feel they are volunteering. 3 layers:
+  1. Correction bait: say something a bit wrong and they correct you. His example: "I read that Whole Foods staff just got 26 dollars an hour" and the worker says "What? No, I make 17."
+  2. Statement, not question: "I bet you had some interesting experiences doing that." "I can imagine that was challenging."
+  3. Disbelief: "So the whole trip was 100% perfect?" or "No way." They say "no, actually..." and give more.
+  Then stack them: statement, then statement, then disbelief, and never ask a single question.
+  AYBKK use: (a) DMs and calls for the 180K program (fits /dm): "Sounds like your practice has been stuck for a while." "I bet nobody back home has time to look at your backbend." The student tells you the real problem, which tells you if they are serious. (b) Reels and captions: name a common belief as a belief ("Most people think Ashtanga is only for flexible people."), so practitioners correct it in the comments.
+  GUARDRAIL: never invent a fact as bait. His "I read an article" lines are made up, so do not copy them (hard rule 3: no invented numbers or studies). Correction bait is OK only as a named common belief, or as an honest guess about the person ("You look like you have practised for years").
+
 ## Life notes
 - 2026-10-13: Another Instagram account shared his Ep. 3 (Ashtavakra) Reel in a story: 'Maybe the myth of Ashtavakra was always about extreme hypermobility... maybe we can finally have THAT conversation (but probably not)'. Half joke, half jab: hypermobility and injury in Ashtanga, and the feeling that the community avoids the topic. Possible Lane A trigger (hypermobility: strength vs stretch), only in his own words. Text check: in the Mahabharata (Vana Parva 132) Ashtavakra is bent by his father's curse, not by flexibility.
 - 2026-10-12: Last week a storm made the shala roof leak; he put towels on the puddles. Today, sunny, led primary: the floor was so wet with sweat he almost slipped and broke his arm. [USED 2026-10-12, joke Reel draft; flood version ON HOLD]
