@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-16T23:38:20.257Z
+Inbox last read: 2026-10-17T23:38:12.829Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -81,3 +81,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-16: Inbox read OK: 1 LINE thread (Thai shala promo question: Machi's job), 0 about 180K. No new leads. 1 serious lead due today: 2nd follow-up drafted, next check 18 Oct. Online-teaching answer still open (5th day). No requests in team chat.
 - 2026-10-17: Inbox read OK: 4 LINE threads, 1 about 180K. The serious lead wrote: no reply in 5 days, asks if they should find another teacher. Urgent reply drafted, flagged to Machi. 3 others are shala bookings (Machi's job). Online-teaching answer still open (6th day). No requests in team chat.
 - 2026-10-17 (chat): Schwartz 5 groups + value ladder + ads plan (Reel DeG_3SeI0AB). We sell almost only to group 5, which has no clear CN #3 price (code: 199,000 list, early deals ended Sep). Best next paid step: capped practice video review. Course: warm list only, if priced by 18 Oct. Tees: pre-order only. No coaching. Only ad test: Google search for the Bangkok shala, 14 Nov to 12 Dec, Google tag first. No China, Russia or Meta ads this quarter. Plan: posts/2026-10-17-carnegie-ladder-ads-plan.md. Waiting on: paid CN #3 seats, today's price, online-teaching yes/no, what "theory consulting" means.
+- 2026-10-18: Inbox read OK: 2 LINE threads, 1 about 180K. Boonchu's reply reached the serious lead; they thanked him and plan Bangkok mid or late Jan to Feb, after Mysore. New question from them: saw an online led class by an AYBKK teacher, asks if it is invite only. Boonchu to answer. Follow-up drafted, next check 20 Oct. Other thread is a Thai shala question (Machi's job). No requests in team chat.
