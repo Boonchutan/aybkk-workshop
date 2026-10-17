@@ -73,7 +73,7 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
 - No equipment race (cold plunge, sauna, reformers): chains win there. We win on habit and teacher.
 - Pilates, runners, office-syndrome classes are front doors to Mysore, judged by conversions.
 - 180K program pitch: "how to build students who stay for years" (retention).
-- Builds: the student profile is the habit system (attendance streak, "we miss you" list,
+- Builds: the student profile is the habit system (attendance streak, "see you tomorrow" list,
   12-week proof check, renewal shown with the proof).
 - Never use a statistic in public until it is checked against its source.
 
