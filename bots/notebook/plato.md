@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-10-17 (Boonchu, HOUSE RULE for every student or customer message and review reply): never write "sorry". For a late answer write "Thank you for your patience with our reply." Keep replies brief, friendly and precise.
 - 2026-10-16: NO ABSTRACT CAPTIONS (Boonchu on the Hidden Gifts Reel caption: 'This is too much abstract. Just use the kids 10 year old English'). Reel captions use simple, picture words a child can see (a present, a mat, the morning), no philosophy lines, no quoted thinkers, no 'highest art'. Save the sources for the slides.
 - 2026-10-16: MIX CLASS TIME (Boonchu): 'make sure you mix photo from early and later time.' Each carousel gets photos spread across the whole class (photo number = time). Tool: assign gives each post the 10 time-deciles in shuffled order (cost +0.6 per decile off).
 - 2026-10-15: NO WHITE SIDE BARS (Boonchu): 'all photos that you dont crop but create the white border, just crop the bottom part. if you can move the watermark up.' Now: fill 4:5 by keeping the top and cutting the bottom; cut the photographer's watermark out with a text mask (bright, low-saturation pixels above a median background) and stamp it 270 px higher (same spot as other slides, y ~1147); inpaint any leftover piece at the bottom edge. Tool: bots/media/2026-10-15-value-of-time/recrop.py. Move people zones by (x-padx)*k, y*k, k=(1620-t)/1350.
