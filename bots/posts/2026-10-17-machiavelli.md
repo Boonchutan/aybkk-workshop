@@ -6,3 +6,4 @@ Reel from Plato: the old bear king who can only jump ninety (Ramayana). Asana: U
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious in 20 days, at risk.
 Carne and Plato both posted today. Carne's @Machi request (lead at top of brief): done. Inbox 07:08: 4 new, 2 hot.
 13:08 check-in: course prices and Mysore Reel still waiting (1 day each, due 19:00 Sun 18 Oct). Inbox 13:08: 0 new, 0 hot.
+19:08 check-in: no win reported, no reminders due. Prices and Reel not repeated (2 nudges today). Next step: send the online-teaching lead reply. Inbox 19:08: 0 new, 0 hot.

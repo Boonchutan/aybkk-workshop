@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-17T06:09:46.447Z
+Inbox last read: 2026-10-17T12:09:50.040Z
 
 ## Standing orders from Boonchu
 - 2026-10-17 (Boonchu, HOUSE RULE for every student or customer message and review reply): never write "sorry". For a late answer write "Thank you for your patience with our reply." Keep replies brief, friendly and precise.
@@ -126,3 +126,4 @@ Inbox last read: 2026-10-17T06:09:46.447Z
 - 2026-10-02 TEAM FACT (Boonchu): Chay is "he", a 23-year-old AYBKK student and Boonchu's assistant starting media work. He edits and uploads the class photos and runs the "genbandha" Instagram account. Plan on the table: Chay tags each day's photos to students' private profiles (tagging tool limited to that day's check-ins, ~10 min/day). Keep his time for media, not data entry.
 - 2026-10-16 13:08: Inbox 1 new, 1 hot (LINE booking problem). Course prices and Mysore Reel reminded, 2nd time today each: do not repeat at 19:08. No reminders due, no wins.
 - 2026-10-16 19:08: Inbox 0 new. No win, no reminders due. Prices and Reel not repeated (2 nudges today already). Next step given: send Carne's 2nd follow-up to the online-teaching lead. Flagged: this morning's LINE booking request for Sat 17 Oct 07:00 shows no AYBKK reply, and Sat 07:00 Led Primary shows 0 booked.
+- 2026-10-17 19:08: Inbox 0 new. No win, no reminders due. Prices and Reel not repeated (2 nudges today already; both due 19:00 Sun 18 Oct). Next step given: send the shala-first reply to the online-teaching lead from LINE OA if not sent yet.
