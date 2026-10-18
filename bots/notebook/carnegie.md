@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-17T23:38:12.829Z
+Inbox last read: 2026-10-18T23:38:14.519Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -93,3 +93,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-18: Inbox read OK: 2 LINE threads, 1 about 180K. Boonchu's reply reached the serious lead; they thanked him and plan Bangkok mid or late Jan to Feb, after Mysore. New question from them: saw an online led class by an AYBKK teacher, asks if it is invite only. Boonchu to answer. Follow-up drafted, next check 20 Oct. Other thread is a Thai shala question (Machi's job). No requests in team chat.
 - 2026-10-18 (chat): Boonchu could not find the "50 golden age ads" study file: it was a Google Doc in My Drive root (19 Aug, another chat), not in the vault. Fact-checked all 50 entries (8 checkers + 8 adversarial re-checkers): 22 facts fixed (key: #43 Pepsodent did NOT create tooth brushing, that is Duhigg 2012, Hopkins wrote "No one can profitably change habits in paid print"; #44 Schlitz was early 1900s and "fifth to neck and neck with first" is only Hopkins's claim), 4 AYBKK lines fixed (no "certification", no made-up 25 students or five checkpoints). Saved as vault root "50 Golden Age Ads Study File.md" with a dated Fixes section. He can delete the Google Doc. Hopkins research workflow still running.
 - 2026-10-18 (chat): Hopkins research (21 agents: 7 readers, 7 fact-checkers, 3 apply lenses, writer, 2 critics, fixer). Saved vault root "Claude Hopkins Swipe File.md". Removed an invented "not 14" line and a vague Sharath line before saving. Summary in Research.
+- 2026-10-19: Inbox read OK: 1 LINE thread (Thai old-student 3-month price question: Machi's job), 0 about 180K. No new leads. 1 serious lead, next check 20 Oct (not due). Invite-only question still waits on Boonchu. No requests in team chat.
