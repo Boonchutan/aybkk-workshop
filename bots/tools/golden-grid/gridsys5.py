@@ -108,7 +108,8 @@ def render(img, C):
     return base.convert('RGB'), ink
 
 def best(s):
-    ts = [s['t']] if 't' in s else [270, 225, 180, 135, 90, 45, 0]
+    lo, hi = t_range(s['photo'])
+    ts = [s['t']] if 't' in s else sorted({t for t in [270, 225, 180, 135, 90, 45, 0, lo, hi] if lo <= t <= hi}, reverse=True)
     res = []
     for t in ts:
         img, person, crit = crop_at(s['photo'], t, s.get('wm', 'center'))
@@ -127,3 +128,50 @@ if __name__ == '__main__':
         out, ink = render(img, C)
         out.save(os.path.join(GD, f"v5demo{k+1}.jpg"), quality=93); g.overlay(out).save(os.path.join(GD, f"v5demo{k+1}_grid.jpg"), quality=90)
         print(s['photo'], 't', t, C['corner'], C['side'], C['cw'], C['vert'], C['order'], 'word', C['bs'], 'ink', ink, {k2: round(v, 1) for k2, v in st.items()}, 'score', round(sc, 2))
+
+# ---- additions 18 Oct (2): keep the whole student in frame; split layout (big word in one corner, dense justified sentence in another)
+def t_range(n, gap=24):
+    sh = INFO[n]['t']; z = ZONES[n]
+    boxes = z['main_body'] + [b for b in z['faces'] + z['hands_feet'] if b.get('who') == 'main']
+    top = min(b['y0'] for b in boxes) + sh; bot = max(b['y1'] for b in boxes) + sh
+    return max(0, bot + gap - 1350), min(270, max(0, top - gap))
+
+def justify(d, x0, x1, y, words, f, fill, last):
+    if last or len(words) == 1:
+        d.text((x0, y), ' '.join(words), font=f, fill=fill, anchor='ls'); return
+    wsum = sum(f.getlength(w) for w in words); gap = (x1 - x0 - wsum) / (len(words) - 1); x = x0
+    for w in words:
+        d.text((x, y), w, font=f, fill=fill, anchor='ls'); x += f.getlength(w) + gap
+
+def render_split(img, word, line, credit, word_size, sent_x0, sent_x1, sent_bottom, word_ink=None, sent_ink=None, lead_k=1.0, sent_size=None, just_max=14):
+    SZ = sent_size or g.SENT
+    fb, fs, fc = g.F('Bold', word_size), g.F('Serif', SZ), g.F('Bold', g.CRED)
+    cap = fb.getbbox('H')[3] - fb.getbbox('H')[1]; wbase = M + cap
+    sl = g.wrap(line, fs, sent_x1 - sent_x0); lead = round(SZ * lead_k)
+    cr = credit.upper(); cw = sent_x1 - sent_x0
+    cl = [cr] if g.tlen(cr, fc, g.TRK_CRED) <= cw else [p.strip() for p in cr.split('·')]
+    ch = (len(cl) - 1) * round(g.CRED * 1.7)
+    cy0 = sent_bottom - ch                         # last credit baseline = sent_bottom
+    sy_last = cy0 - g.CRED - 26
+    sy0 = sy_last - (len(sl) - 1) * lead
+    gray = np.asarray(img.convert('L'), np.float32)
+    wb = (slice(M, wbase), slice(M, int(M + g.tlen(word, fb, g.TRK_BIG))))
+    sb = (slice(int(sy0 - SZ), int(sent_bottom)), slice(sent_x0, sent_x1))
+    word_ink = word_ink or ('dark' if np.median(gray[wb]) > 140 else 'light')
+    sent_ink = sent_ink or ('dark' if np.median(gray[sb]) > 140 else 'light')
+    def layer(base, draw_fn, ink):
+        txt = Image.new('L', (W, H), 0); draw_fn(ImageDraw.Draw(txt), 255)
+        col = g.SHADOW if ink == 'light' else g.GLOW
+        sh = Image.new('L', (W, H), 0); sh.paste(txt.filter(ImageFilter.GaussianBlur(7)).point(lambda v: int(min(255, v * 1.5) * (0.55 if ink == 'light' else 0.4))), (0, 4 if ink == 'light' else 0))
+        base = Image.alpha_composite(base, Image.merge('RGBA', [Image.new('L', (W, H), c) for c in col] + [sh]))
+        c = g.LIGHT if ink == 'light' else g.DARK
+        draw_fn(ImageDraw.Draw(base), c + (255,)); return base
+    def dw(d, fill): g.ttext(d, (M, wbase), word, fb, g.TRK_BIG, fill)
+    def ds(d, fill):
+        for i, t in enumerate(sl):
+            ws = t.split(); gap = (sent_x1 - sent_x0 - sum(fs.getlength(w) for w in ws)) / max(1, len(ws) - 1) - fs.getlength(' ')
+            justify(d, sent_x0, sent_x1, sy0 + i * lead, ws, fs, fill, i == len(sl) - 1 or gap > just_max)   # only justify when the gaps stay tight
+        for j, c in enumerate(cl): g.ttext(d, (sent_x0, cy0 + j * round(g.CRED * 1.7)), c, fc, g.TRK_CRED, fill)
+    base = layer(img.convert('RGBA'), dw, word_ink); base = layer(base, ds, sent_ink)
+    boxes = dict(word=(M, M, int(M + g.tlen(word, fb, g.TRK_BIG)), wbase + 10), sent=(sent_x0, int(sy0 - SZ * 0.8), sent_x1, sent_bottom + 8))
+    return base.convert('RGB'), boxes, (word_ink, sent_ink), len(sl)
