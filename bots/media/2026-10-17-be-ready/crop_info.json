@@ -72,12 +72,17 @@
   "wm_moved": false
  },
  "17-087": {
-  "t": 270,
+  "t": 0,
   "kind": "crop",
   "padx": 0,
   "wm_top": 1147,
-  "body_top": 38,
-  "wm_moved": false
+  "mode": "crop",
+  "spec": {
+   "mode": "crop",
+   "t": 0,
+   "stamp_y": 1170
+  },
+  "wm_moved": true
  },
  "17-091": {
   "t": 270,
@@ -136,14 +141,14 @@
   "wm_moved": true
  },
  "17-138": {
-  "t": 270,
+  "t": 190,
   "kind": "crop",
   "padx": 0,
   "wm_top": 1147,
   "mode": "crop",
   "spec": {
    "mode": "crop",
-   "t": 270
+   "t": 190
   },
   "wm_moved": false
  },

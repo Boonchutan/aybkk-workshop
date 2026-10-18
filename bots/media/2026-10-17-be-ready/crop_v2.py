@@ -34,7 +34,7 @@ for n, s in S.items():
         stamp = not (s['mode'] == 'crop' and s['t'] >= 190)  # from t=190 the photographer's own watermark text is still fully inside the frame
         if stamp:
             if y0 + h > WY0 + 5 and o0 < 1350: out = cv2.inpaint(out, mm, 5, cv2.INPAINT_TELEA)
-            yy = WY0 - SHIFT; dst = out[yy:yy + (WY1 - WY0), WX0:WX1].astype(np.float32); A = a[..., None]
+            yy = s.get('stamp_y', WY0 - SHIFT); dst = out[yy:yy + (WY1 - WY0), WX0:WX1].astype(np.float32); A = a[..., None]
             out[yy:yy + (WY1 - WY0), WX0:WX1] = (dst * (1 - A) + reg.astype(np.float32) * A).astype(np.uint8)
         info[n] = dict(t=int(y0), kind='crop', padx=0, wm_top=int(0.875 * 1620 - SHIFT), mode=s['mode'], spec=s, wm_moved=stamp)
     Image.fromarray(out).save(os.path.join(D, os.environ.get('OUT', 'v2'), 'crop', n + '.jpg'), quality=93)
