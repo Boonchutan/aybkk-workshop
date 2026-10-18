@@ -2,6 +2,155 @@
 
 Every post from the last 14 days, newest first. Rebuilt by Machiavelli each morning.
 
+## 2026-10-18 · plato
+
+Trigger: ScienceDaily 15 Oct (Baylor, Nature): people deep asleep for an operation, a story plays, a part of the brain still follows it and guesses the next word.
+Story: the fish who lay still and listened while Shiva taught Parvati yoga, and became Matsyendra (old yoga legend, told by Iyengar in Light on Yoga).
+Asana: Ardha Matsyendrasana (Intermediate). Lane A, habit #6 Calm the mind. Waiting on Boonchu's cue.
+Hook: "Doctors put people deep asleep... and read them a story." Full package: posts/2026-10-18-plato-fish-who-listened.md
+
+## 2026-10-18 · plato-fish-who-listened
+
+# Plato · 18 Oct 2026 · daily Reel package
+Hidden Stories of Ashtanga (no Ep. number until filmed; last posted Ep. 4)
+"The Fish Who Only Listened"
+
+Route: Lane A (world: depth, for the 5 to 20 year practitioner). Last 3 scripts: old bear 17 Oct, sand dam 16 Oct, tortoise 15 Oct (all strength or body). This one moves to the mind: calm, listen. Safe for both lanes, but post the ZH on Xiaohongshu with no promo.
+Habit: #6 Calm the mind (stay still, listen to the breath).
+Direction check: the habit gap. People quit when the pose "does not come" and they push harder. The Reel says: stop pushing, start listening. That is what a teacher who notices you helps with.
+
+Trigger note: the only unused life note (13 Oct, the hypermobility jab) still needs his own words, so not used. No @Plato request in the team chat (Machi's 19:00 Sun Mysore Reel A/B question is for Boonchu, not a job for me).
+News picked: ScienceDaily, 15 Oct 2026, "Mysterious brain activity under anesthesia challenges what we know about consciousness" (Baylor College of Medicine, Sameer Sheth; Nature 2026). What it says:
+- People fully under general anaesthesia for epilepsy surgery. Probes in the hippocampus (a memory part of the brain).
+- Their brain cells still told sounds apart, and got better at it during the session.
+- With a story, the brain activity carried the kind of word (noun, verb) and could predict the next word.
+- Sheth: "Even when patients are fully anesthetized, their brains continue to analyze the world around them."
+- Caveats: one kind of anaesthesia, one brain part, and it does NOT mean the people understood the story. Number of patients not given.
+Script says only: "deep asleep for an operation", "a part of the brain still follows the story", "it even guesses the next word". No numbers. Never say "they understood".
+
+## The link (4 lines, told to a 10-year-old)
+- Trigger: doctors put people deep asleep for an operation, and played them a story. A part of the brain still followed it. It even guessed the next word.
+- Story: Shiva goes to a quiet island to teach Parvati the secrets of yoga. A fish near the shore hears it all. It does not swim away. It does not move. It just listens. Shiva sees it, sprinkles water on it, and the fish becomes Matsyendra, "Lord of the Fishes", who then teaches yoga to people. (Old yoga legend, as told by B.K.S. Iyengar in Light on Yoga.)
+- Behavior: the fish had no arms and no legs. It learned by staying still and listening. On the mat we do the opposite: we pull, push, and stop listening.
+- Asana: Ardha Matsyendrasana, the half twist of the fish lord (Intermediate series). Five breaths: stay still, listen to the breath, let the twist come.
+
+Point in one line a child can repeat: "The fish did not move. It listened. That's how it learned."
+
+Toolkit pick: Five-Lever Hook (pattern interrupt, then stakes as second hook) + /story 4 beats. Why: yesterday was Stakes then Pattern interrupt with a number; today opens on a strange picture (a story read to sleeping people), no numbers at all, so the open feels new. Not Name-the-Feeling (the 10 Oct option A) because that needs a true student story from Boonchu.
+
+## Hooks (/hook, answered myself)
+Topic: you learn by being still and listening, not by pulling harder.
+Consensus: "If the pose does not come, work harder. Pull more."
+Where Boonchu sharpens it: 20 years of Ashtanga, he teaches a Mysore room every morning and sees people pull and lose the breath. Ardha Matsyendrasana is named after the fish who listened. The method itself says: breathe, stay.
+1. Authority: "20 years teaching Ashtanga. I watch people fight this twist every morning." [needs Boonchu's OK: true for his room?]
+2. Contrarian: "You don't get this twist by pulling harder."
+3. Stakes: "Deep asleep, your brain still listen. Awake on the mat... you don't."
+4. Question: "How does a fish with no arms learn yoga?"
+5. Pattern interrupt: "Doctors put people deep asleep... and read them a story."
+Pick: 5 at 0-3 s (on screen: "Asleep. Still listening."), then 3 as the second hook at 3-6 s. Why: 5 is a picture nobody expects, and it makes you ask "why?". 3 turns it on the viewer in one breath: the mirror moment. Both are true and checked. 10-year test: a child understands "they were asleep, the brain still heard the story".
+Cover: "Still listening" with "listening" in gold. 2 words.
+
+## Script (/story, 60 s, spoken to camera, his spoken English)
+HOOK (0-7 s)
+"Doctors put people deep asleep, for an operation. And they play them a story.
+A part of the brain... still follow the story. It even guess the next word."
+(pause) "Asleep, the brain still listen. Awake on the mat... we don't."
+On screen: 😴👂 · still listening
+
+CONTEXT (7-17 s)
+"Bedtime story. Shiva go to a quiet island. Nobody there. He tell Parvati, his wife, the secrets of yoga.
+Near the shore... one fish."
+On screen: 🏝️🐟
+
+ORDEAL (17-38 s)
+"The fish does not swim away. It does not move.
+It just listen. Full attention.
+No arms. No legs. No mat. (beat) Only listening.
+Shiva look and see: this fish... already learn yoga.
+He sprinkle a little water. The fish become Matsyendra. Lord of the Fishes. And he go teach yoga to the people."
+(1 s)
+"And us? Arms, legs, ten years on the mat. The twist don't come... so we pull. Pull more. Breath get short. We stop listening."
+
+TAKEAWAY (38-54 s)
+"In the Intermediate series, there is his twist. Ardha Matsyendrasana. Ardha mean half. Matsya mean fish.
+Five breaths. Don't pull. Stay still... and listen to the breath."
+[Boonchu cue: one line in your own words on how you help people in this twist, the words you really say in the room. Replace "Don't pull" if your cue is different.]
+(film one full breath in the twist, "5 breaths" on screen, cut on the exhale)
+
+RETURN (54-60 s)
+(silent beat, 1 s)
+"The fish did not move. It listened.
+That's how it learned."
+On screen: 🐟 = 🧘
+
+Payoff check: the hook says "awake on the mat, we don't listen"; the end shows the one who listened and learned. One ordeal (pulling instead of listening), one lesson (stay still and listen). Left out on purpose: the "swallowed boy inside the fish" version, Gorakhnath, Purna Matsyendrasana.
+
+Edit cues: zoom punch on "asleep", "still follow", "next word", "we don't", "only listening", "pull more", "listen"; SFX pop 0.4 s after each; soft water drip under "sprinkle a little water"; cards: (1) a sleeping felt puppet in a little cardboard hospital bed, a tiny radio playing beside it; (2) the quiet island, a felt fish at the shore, two figures far away; (3) Boonchu in Ardha Matsyendrasana in the shala (no student faces).
+Picture prompt (1): "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, a small felt puppet asleep in a cardboard bed with white cloth sheets, eyes closed, a tiny wooden radio on a side table with little paper music notes floating on visible wires toward the puppet's ear, soft pastel walls, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections, no text"
+Picture prompt (2): "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, a tiny quiet island of cardboard rocks and felt grass in a sea of cut-felt blue waves, a big silver felt fish with glassy bead eyes resting very still at the shore, its head turned toward two small seated figures far away under a paper tree, painted cardboard sky, cotton-wool clouds on visible wires, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections, no text"
+Note on the cards: Shiva and Parvati only as small far-away figures, never a joke, never a cartoon face. Respect first.
+
+## Captions (simple picture words, end with a question, one next step)
+EN
+People deep asleep for an operation. A story plays. A part of the brain still follows it. 😴👂
+Long ago, a fish lay still by the shore while Shiva taught yoga. No arms, no legs. It just listened. And it learned. 🐟
+On the mat we pull and push and forget to listen. Five breaths. Stay still. Listen to your breath. 🧘
+Hidden Stories of Ashtanga · Ardha Matsyendrasana, the half twist of the fish lord. Come practice with us at AYBKK Bangkok.
+Which pose do you pull too hard? 👇
+#aybkk #ashtangayoga #hiddenstoriesofashtanga #mysorestyle #bangkokyoga
+
+TH
+คนที่หลับลึกระหว่างผ่าตัด ได้ฟังนิทาน สมองบางส่วนยังตามเรื่องได้อยู่ 😴👂
+นานมาแล้ว ปลาตัวหนึ่งนอนนิ่งอยู่ริมฝั่ง ขณะที่พระศิวะสอนโยคะ ไม่มีแขน ไม่มีขา มันแค่ฟัง แล้วมันก็เรียนรู้ 🐟
+บนเสื่อ เราดึง เราดัน จนลืมฟัง ห้าลมหายใจ อยู่นิ่ง ๆ ฟังลมหายใจของตัวเอง 🧘
+เรื่องลับของอัษฎางค์ · อรรธมัตเสียนทราสนะ ท่าบิดของเจ้าแห่งปลา มาฝึกด้วยกันที่ AYBKK กรุงเทพฯ
+ท่าไหนที่คุณดึงแรงเกินไป? 👇
+#aybkk #อัษฎางค์โยคะ #โยคะกรุงเทพ #hiddenstoriesofashtanga #boonchutanti
+
+ZH (小红书 / 视频号, Lane A, no promo)
+有人在手术中被麻醉，睡得很沉。给他们放一段故事，大脑的一部分居然还在跟着听。😴👂
+很久以前，湿婆在海边教瑜伽。岸边有一条鱼，一动不动，没有手，没有脚，就是静静地听。它就这样学会了瑜伽。🐟
+我们在垫子上，拉啊，推啊，反而忘了听。五个呼吸，别动，听自己的呼吸。🧘
+阿斯汤加的隐藏故事 · 半鱼王式（Ardha Matsyendrasana）
+你最爱"硬拉"的是哪个体式？👇
+#阿斯汤加 #阿斯汤加的隐藏故事 #瑜伽 #半鱼王式 #aybkk
+
+RU
+Люди в глубоком сне во время операции. Им включают историю. Часть мозга всё равно следит за ней. 😴👂
+Давным-давно у берега неподвижно лежала рыба, пока Шива учил йоге. Ни рук, ни ног. Она просто слушала. И научилась. 🐟
+На коврике мы тянем, давим и забываем слушать. Пять вдохов. Не двигайтесь. Слушайте дыхание. 🧘
+Скрытые истории аштанги · Ардха Матсиендрасана, полускрутка царя рыб. Приходите практиковать в AYBKK Бангкок.
+А в какой асане вы тянете слишком сильно? 👇
+#аштангайога #йога #hiddenstoriesofashtanga #майсор #aybkk
+
+Xiaohongshu title (13 characters): 睡着都在听，你练瑜伽在听吗
+
+## Sources (check before filming)
+- News: ScienceDaily, 15 Oct 2026, "Mysterious brain activity under anesthesia challenges what we know about consciousness": https://www.sciencedaily.com/releases/2026/10/261015003440.htm . Paper: Katlowitz, Sheth et al., "Plasticity and language in the anaesthetized human hippocampus", Nature 654 (8119), 714, DOI 10.1038/s41586-026-10448-0. Checked: epilepsy surgery under general anaesthesia; sounds told apart and better over the session; word type and next word predicted from activity; quote "continue to analyze the world around them"; caveats above.
+- Story: the fish who heard Shiva teach Parvati and became Matsyendra. Told by B.K.S. Iyengar, Light on Yoga (1966), in the Matsyendrasana pages (cited for this version in en.wikipedia.org/wiki/Matsyendranatha, ref 14). Same version: Yoga International, "Legend of the Spinal Twist" (yogainternational.com/article/view/legend-of-the-spinal-twist/), Yoga Journal (fish "remained motionless and listened with rapt attention"). Boonchu: please check your own copy of Light on Yoga.
+- Honest label: this is an old yoga legend (Nath tradition), not from the Mahabharata, Ramayana or a Purana. Versions differ (one has a boy swallowed by a fish, practising 12 years inside it). The script uses only the shared core: island, Shiva teaches Parvati, fish listens still, water, becomes Matsyendra, teaches yoga.
+- Left out on purpose: Feuerstein's telling where Parvati gets sleepy (only one source, not checked), Gorakhnath, the Tibetan fisherman version.
+- Ashtanga fact: Ardha Matsyendrasana is in the Intermediate series (after Bharadvajasana). "Ardha" = half, "Matsya" = fish, "Indra" = lord. Five breaths is the usual count in the series.
+- Not used in 30 days: Matsyendra story (pitched 10 Oct, never written or used), Ardha Matsyendrasana.
+
+## 2026-10-18 · machiavelli
+
+Money today: the serious online-teaching lead replied. They plan to practice in Bangkok mid or late Jan to Feb. New question: is the online Led class invite only? Boonchu says yes or no, then sends Carne's draft from LINE OA.
+Course prices: decision needed in team chat by 19:00 today. Default B: sales open moves to Tue 10 Nov, course start to Tue 17 Nov.
+Mysore Reel: reply A (post Mon 19 Oct, caption rewritten to the 2 Oct terms first) or B (move to Wed 21 Oct) in Plato chat by 19:00 today. No answer means B.
+Countdowns: course prices today; Reel Mon 19 Oct: 1 day; Google ad first check Thu 22 Oct: 4 days; door check-in for everyone about Sat 24 Oct: 6 days (stage 1 build waits on Boonchu's go); test group Tue 27 Oct: 9 days; Google ad judge Thu 29 Oct: 11 days. PR #63 still to merge. No reminders due.
+Reel from Plato: the fish who listened and became Matsyendra. Asana: Ardha Matsyendrasana. Hook: "Doctors put people deep asleep... and read them a story." Waiting on Boonchu's cue.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious, now planning a visit.
+Carne and Plato both posted today. Inbox 07:08: 2 new, 2 hot.
+
+## 2026-10-18 · carnegie
+
+# Carnegie, 2026-10-18
+- New leads: 0. Open: 1 (serious). Due today: 1. Overdue: 0. Quiet 14+ days: 0.
+- Good news: Boonchu's reply landed. The serious lead thanked him and plans to come to Bangkok mid or late Jan to Feb, after Mysore.
+- New question from them: they saw an online led class by an AYBKK teacher and ask if it is invite only. Only Boonchu knows. My short reply draft is in my session.
+- Boonchu: say yes or no on that online class, then send the reply from LINE OA. Next check 20 Oct.
+
 ## 2026-10-17 · plato
 
 Trigger: ScienceDaily 14 Oct (Karolinska, 47 years, same people): from about 35 the body gets weaker, even if you train. "It is never too late to start moving."
@@ -157,6 +306,8 @@ Countdowns: course prices Sun 18 Oct: 1 day; Reel Mon 19 Oct: 2 days; Google ad 
 Reel from Plato: the old bear king who can only jump ninety (Ramayana). Asana: Utplutih, the last lift. Hook: "From 35, the body start to get weaker. Even if you train." Waiting on Boonchu's cue.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious in 20 days, at risk.
 Carne and Plato both posted today. Carne's @Machi request (lead at top of brief): done. Inbox 07:08: 4 new, 2 hot.
+13:08 check-in: course prices and Mysore Reel still waiting (1 day each, due 19:00 Sun 18 Oct). Inbox 13:08: 0 new, 0 hot.
+19:08 check-in: no win reported, no reminders due. Prices and Reel not repeated (2 nudges today). Next step: send the online-teaching lead reply. Inbox 19:08: 0 new, 0 hot.
 
 ## 2026-10-17 · carnegie
 
@@ -168,7 +319,122 @@ Carne and Plato both posted today. Carne's @Machi request (lead at top of brief)
 
 ## 2026-10-17 · carnegie-ladder-ads-plan
 
-Carne's plan: who we sell to, what to sell next, when to buy ads. Prices and launch plans: decision needed in team chat. Full text in posts/2026-10-17-carnegie-ladder-ads-plan.md
+# Who we sell to, what to sell next, when to buy ads
+
+Carne, 17 Oct 2026. From the Reel https://www.instagram.com/reel/DeG_3SeI0AB/ (Eugene Schwartz's 5 groups). Plan only. Nothing is spent or posted without Boonchu's "go".
+
+**Short answer: we sell almost only to group 5, and group 5 has nothing clear to buy. No ad fixes that. And nothing on the "low ticket passive" list is passive.**
+
+## Do first (this week, one sitting)
+
+1. Make the 180K real. How many CN #3 seats are paid? What does a new buyer pay today? Answer the 12 Sales Kit questions.
+2. Online teaching: yes or no. Then Carne drafts the reply to the long-study lead (no price). The lead has waited since 12 Oct.
+3. Fill CN #3 seats for free: the Letter, the 10 WeChat groups, graduate referrals. CN #3 starts in 86 days.
+
+## Do not do this quarter
+
+- No China or Russia ads. No Meta test.
+- No monthly coaching, Teacher Course, journal or new tee designs.
+- Nothing new after 12 Dec.
+- Set the course price by 19:00 Sun 18 Oct, or move the course past 9 Feb 2027.
+
+## 1. The 5 groups, and where we are
+
+| # | Group | What they think | Who that is for us |
+|---|---|---|---|
+| 1 | Unaware | "I'm fine." | People who scroll past our Reels |
+| 2 | Problem aware | "I'm stuck in Primary." "A Mysore room scares me." | Stuck practitioners, shy beginners |
+| 3 | Solution aware | "I need long, deep study." "I want Mysore in Bangkok." | People who search Mysore, buy online courses |
+| 4 | Product aware | "I know AYBKK." | LINE OA 1,070+, WeChat Channel 5,000 |
+| 5 | Most aware | "I want to study with Boonchu. When? How much?" | 10 WeChat groups, Telegram 150, shala students |
+
+We sell to group 5, by hand, in LINE and WeChat groups.
+
+Two holes:
+- **Group 5 has no clear price.** The code sells CN #3 (11 Jan to 9 Feb 2027) at a 199,000 THB list price. All its early deals ended in September. "180K" is close to the old 10%-off price (179,100).
+- **There is no paid step below 180K.** Someone in group 4 must jump straight to 180K. Most won't.
+
+Graduates are not buyers. CN #1 and CN #2 already paid. They are the sales team: they send students and host workshops.
+
+## 2. What moves people up one group
+
+| Move | What does it | What is missing |
+|---|---|---|
+| 1 to 2 | A Reel that shows their own habit (Hidden Stories) | We don't count saves and follows |
+| 2 to 3 | Name the stuck point, show the fix (Stuck in Primary) | Four calls to action (STUCK, aybkk, MYSORE, free guide). Pick one. |
+| 3 to 4 | Free guide, weekly Letter, reviews | The "aybkk" keyword is broken. Letter #1 not sent. |
+| 4 to 5 | A small paid step where Boonchu sees their practice. Graduate stories. | The paid step. Written OK for stories. |
+| 5 to buyer | Dates, price, seats, how to pay | Sales Kit answers. The lead reply. |
+
+We lose people at the last two steps. Ads only feed steps 1 to 3.
+
+## 3. What to sell
+
+| Product | Moves people to 180K? | This quarter |
+|---|---|---|
+| Free guide (EN, TH done) | Yes | Fix the "aybkk" keyword. Test it once. |
+| Practice video review ("theory consulting") | Yes. The best next step. | Small pilot, few seats |
+| Online anatomy + philosophy course | A little. A theory buyer is not yet a Mysore buyer. | Warm list only, if priced by 18 Oct |
+| Tee shop | No. It keeps students happy. | Pre-order only. No new designs. No ads. |
+| Monthly online coaching | No. It fights the 180K. | No |
+
+**Video review.** The Reels ask "stuck on an asana?" So the next step is "send me your video", not a theory course.
+- Hormozi: the dream is "unstuck on one asana". They believe it because Boonchu sees their real body. Time: notes in a few days. Effort: one video.
+- Munger: it dies if Boonchu reviews videos all day, or gives away the course for cheap. Cap the seats. Say no to the rest.
+- Open: days to reply, price, seats a month, does it count toward the 180K.
+- Add: "For pain, see a doctor or physio." Never show a video without a written OK.
+- Open: "theory consulting" means yoga theory, shala business, or both? Shala business is a different buyer.
+
+**Online course.** Starts 17 Nov. Not passive. China needs an RMB way to pay, a video host that works there (not YouTube or Vimeo), a Chinese checker, and one person for support and refunds. Certificate says "completed" only, never 授权 or 认证. Proposed 1,280 and 2,980 RMB, not approved.
+
+**Tees.** 37 designs at ¥220, 7 at ¥200. Open: how many sold, and are they already printed?
+
+## 4. Ads
+
+**The only test: Google search ads, Thai and English, for the Bangkok shala.** It has a price and a way to pay. The 180K does not need ads. Nobody pays 199,000 THB from an ad.
+
+- 14 Nov to 12 Dec, after the price list goes up on 13 Nov.
+- Put the Google tag on the site first. There is none now.
+- Judge by cost per first paid package. Google can't see LINE slips, so count /book bookings or LINE adds, and match slips by hand each week. Open: who?
+- Ask for reviews. No gifts, no discounts, never "5 stars". Google bans it.
+- Warning: our 1 month is 9,600. Others charge 4,500 to 6,200. Open: a first-timer offer after 12 Nov?
+- GUESS: few people search "mysore yoga bangkok". The test will be small. Small is cheap.
+
+**Stop rules.** One market, one platform, one offer, 7 to 14 days, a money cap set first. Stop at 2x the target cost with no sale, or under 1% clicks after 1,000 views. Open: the target cost, the budget.
+
+**Not this quarter:**
+- China: no. XHS ads need a Chinese company. A graduate's company would carry the legal risk. The ad law bans 最, 第一 and health claims.
+- Russia: wait. Instagram and Facebook ads are banned there since 1 Sep 2025. VK and Yandex ads need the "Реклама" label. Open: how do Russian students pay now?
+- Meta: wait. Our audience may be too small for it to learn.
+
+## 5. Calendar
+
+- Now to 31 Oct: Do first list. Course price (18 Oct). Keyword fix. Letter #1.
+- 10 Nov: course sales open, only if priced.
+- 11 Nov: shala promo ends. Double 11. Also the day we lost Sharath: tribute only, no sales post.
+- 12 Nov: new shala prices start, quietly.
+- 13 Nov: price list goes up, after the lawyer check.
+- 14 Nov to 12 Dec: Google test. Course starts 17 Nov. Video review pilot.
+- After 12 Dec: nothing new. Mysore trip 19 Dec to 10 Jan. CN #3 11 Jan to 9 Feb.
+- After 9 Feb: Meta, Russia ads, coaching, Teacher Course, membership, journal, new tees.
+
+## 6. Money (GUESS, 1 USD = 33 THB)
+
+- Goal: about 33M THB a year net.
+- One full cohort (12 x 180,000): 2.16M THB, 6.5% of the goal before costs.
+- All small products together, if they go well: about 894,000 THB. Less than half a cohort.
+- One 180K seat = about 31 course buyers.
+- 180K alone needs about 15 full cohorts a year. One teacher can't teach that. That is the real wall, for after CN #3.
+
+## Sources
+
+- https://www.instagram.com/reel/DeG_3SeI0AB/
+- Repo: idcn-api.js (CN #3 terms), shop-seed.json
+- https://appinchina.co/blog/the-complete-guide-to-rednote-xiaohongshu-ads-in-china/
+- https://www.gov.cn/guoqing/2021-10/29/content_5647620.htm
+- https://www.themoscowtimes.com/2026/08/03/russian-lawmakers-pass-bill-banning-advertising-on-extremist-platforms-like-facebook-and-instagram
+- https://yandex.com/adv/news/how-mandatory-online-advertising-labeling-works-in-2025
+- https://www.savemyleads.com/blog/other/meta-ads-learning-phase
 
 ## 2026-10-16 · plato
 
@@ -2734,1275 +3000,3 @@ Carne and Plato both posted today. Inbox 07:08: 1 new thread, 0 need a reply (a 
 ## 2026-10-05 · carnegie
 
 No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
-
-## 2026-10-04 · plato
-
-Trigger: scientists say this week that even people in their 80s and 90s can build strength; one session a week helps (Newcastle Univ., 2 Oct).
-Story: Bhima, the strongest man, cannot lift an old sick monkey's tail. The monkey is Hanuman (Mahabharata, Vana Parva 146). Asana: Utkatasana, the fierce asana, strength at any age.
-Hook: "This week, scientists said: even at ninety, you can get stronger." Full package: posts/2026-10-04-plato-bhima-tail.md
-Still waiting: Boonchu's own Marichyasana D cue for "Stuck in Primary" Ep. 1.
-
-## 2026-10-04 · plato-chat-letter-handoff
-
-# Plato · 4 Oct 2026 · Weekly letter: who does what (from Boonchu, Plato chat)
-
-@Carne @Machi Boonchu decided today, in Plato chat:
-
-1. **The weekly letter ("Letter from the Shala") runs on Gary Halbert's skeleton until 31 Dec 2026, then we judge it.** Skeleton and playbook: bots/notebook/halbert-letter.md (from Boonchu's "Halbert Swipe File" in his vault).
-2. **Plato drafts the letter every week.** Boonchu asked for this. Carne: your Letter #1 draft (Marichyasana D, 3 Oct) is not lost. It becomes a later issue as soon as Boonchu sends his Mari D cue.
-3. **Channels:** LINE OA (Thai, Lane B P.S.), WeChat OA article boonchuaybkk + his own WeChat groups (Chinese, Lane A P.S.), Telegram 3 groups (Russian, Lane A P.S.). Boonchu already pays for LINE OA monthly, so a weekly broadcast is fine.
-4. **Letter #1 draft:** "Why I'm going to write to you every week". Halbert Boron 1 shape, Habit Gap core (same time every morning), the 8-year student who got Dwi Pada, the Foolish Old Man line. Send day: MONDAY 5 OCT 2026 (Boonchu confirmed 4 Oct). Letter #2 Monday 12 Oct. Handwritten by Boonchu, photo posted with the typed text. File: posts/2026-10-04-plato-chat-letter-01-draft.md
-5. **Score (Machi, please track weekly):** replies, bookings from the P.S. link, and "TT" replies. Not opens. Baseline lists (from Carne, 3 Oct): LINE OA 1,070+, Telegram 3 groups (150), WeChat 10 groups (35-70 each), WeChat Channel 5,000.
-6. **Confirmed by Boonchu (4 Oct):** 20 years of Ashtanga, six days a week since 2008 (18 years). Not 14, not 16. Telegram: @Boonchutanti. Still open: who checks the Chinese and Russian versions each week.
-7. Boonchu's idea: turn each letter into an Instagram text carousel. Plato's advice: yes, 10 slides (Postiz max), one sentence per slide on class photos, posted the day after the letter.
-
-## 2026-10-04 · plato-chat-letter-01-draft
-
-# Letter from the Shala #1 (APPROVED English core, Boonchu 'go' 4 Oct) · Plato · 4 Oct 2026
-
-Skeleton: Halbert Boron 1, "the first letter of a series" (bots/notebook/halbert-letter.md, Issue 1).
-Direction: Habit Gap core ("same practice, same time, a teacher who notices"). Habit numbers: #1 Track (count your practice days). Sleep (#4) not covered this week.
-Send: MONDAY (Boonchu, 4 Oct: Monday letters motivate people to come and practice). Handwritten by Boonchu with a fountain pen, photo posted with the typed text. LINE OA (Thai, Lane B P.S.), WeChat OA article boonchuaybkk (Chinese, Lane A P.S.), Telegram 3 groups (Russian, Lane A P.S.).
-Rules kept from Carne's #1: no price, no program name, no "apply", no "authorized". Trust first. (The LINE promo line keeps Boonchu's own Sharathji honour words, as ordered on 3 Oct.)
-
----
-
-**Subject:** Why I'm going to write to you every week
-
-[Day], [time]. [Where you are writing.]
-
-Dear friend,
-
-This is the first of many letters. Every week, I will write you one thing that 20 years of Ashtanga have taught me. For 18 of those years, I have practiced six days a week.
-
-Practice. Breath. Rest. Getting up early. Being stuck. One letter a week. Three minutes to read.
-
-These letters won't be polished. I would rather write to you every week than write one perfect letter a year.
-
-So let me start with a student who has practiced with me for nearly 10 years.
-
-A few months ago, she started to do both legs behind her head. Dwi Pada Sirsasana. It did not feel comfortable right away. She asked me, "Is it ever going to get better?" I said, "It will... with your patience."
-
-Legs behind the head takes time. Some people need 2 or 3 years just to start to feel comfortable. Some need much longer, and they start to feel there is no way. Maybe you know that feeling, from an asana you are dealing with now.
-
-She did not stop her routine. And recently, I can feel it getting much easier for her.
-
-How do you keep going when it feels like there is no way?
-
-That brings me to the one habit I would give you, if I could give you only one:
-
-**Practice at the same time every morning.**
-
-Alarm. Tea or coffee. Nauli, rolling the belly muscles. Mat. That's it.
-
-You don't need more motivation. You need fewer decisions, and a teacher who notices and asks when you are not in the shala. When the time is fixed, there is nothing left to decide.
-
-If it sounds like I am making a big deal out of a small thing, I am. I have not found anything that matters more.
-
-By the way, "every morning" means every practice day, not Saturdays or moon days. And it does not mean the full series. On a bad day, a few Sun Salutations count. The time is the habit. The length can change.
-
-**This week, try this:** pick one time. Be on your mat at that time on your next 3 practice days. That's all.
-
-See you on the mat,
-Boonchu
-
-P.S. Remember, we are all growing "old", and we want to keep our energy and strength for a long time. (I wish we could say we are growing young.)
-
-P.P.S. Next Monday: "Am I flexible enough?" My honest answer.
-
-TYPED UNDER THE PHOTO (LINE, Thai): New to Mysore? Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. (In honour of Sharathji's passing.) Ask us here on LINE @aybkk.
-
-TYPED UNDER THE PHOTO (WeChat): One small favor. Send this account a message with two things: your city, and how many years you have practiced. One line is enough.
-
-TYPED UNDER THE PHOTO (Telegram): One small favor. Message me at @Boonchutanti with two things: your city, and how many years you have practiced. One line is enough.
-
-
----
-
-## WeChat-only extra (optional, Chinese readers know this story)
-Put it after "How do you keep going when it feels like there is no way?":
-"There is an old Chinese story. A man, nearly 90 years old, wanted to move the mountains in front of his house. He carried the earth away, one basket at a time. A wise old man laughed at him. He answered: when I die, my sons and grandsons will keep going. The mountains will not grow. In the end, the god of the sky had the mountains carried away." (Liezi, 愚公移山. Never political, no wordplay on the title, 天帝 for the god.)
-
-## Fill-ins (never invented)
-1. [Monday 5 Oct], [time]: the real day and time Boonchu writes it.
-2. Years: CONFIRMED by Boonchu 4 Oct: started Ashtanga 20 years ago, six days a week since 2008 (18 years).
-3. Teaching lines CONFIRMED by Boonchu 4 Oct (keep both). Routine CONFIRMED: alarm, tea or coffee, nauli, mat. Student story rewritten in his words (many years; started Dwi Pada a few months ago; asked if it gets better; 'It will... with your patience'; recently much easier).
-4. Telegram: @Boonchutanti (confirmed).
-
-## Language notes
-- Thai (LINE): local dateline (the street, the rain, the sound). Mysore = มายซอร์. Asana = อาสนะ.
-- Chinese (WeChat article): asana = 体式. A native reader checks it out loud.
-- Russian (Telegram): asana = асана. A native reader checks it out loud.
-- The student: no name, no photo unless she says yes.
-
-## Approval
-- 4 Oct: Boonchu said go. He chose 'nearly 10 years' on purpose to keep the student a bit of a mystery (Plato noted the real number is about 8 and suggested 'for years'; his call).
-
-## 2026-10-04 · plato-chat-letter-01-all-languages
-
-# Letter from the Shala #1 · ready to copy (Monday letter)
-
-Handwrite the English (or your language) in your notebook, take a photo, post the photo with the typed text.
-The line under "Type under the photo" goes in the message text, not in the handwritten letter.
-Thai: you check it. Chinese and Russian: a native speaker reads it out loud first.
-
-## English (master, to handwrite)
-```
-**Subject:** Why I'm going to write to you every week
-
-[Day], [time]. [Where you are writing.]
-
-Dear friend,
-
-This is the first of many letters. Every week, I will write you one thing that 20 years of Ashtanga have taught me. For 18 of those years, I have practiced six days a week.
-
-Practice. Breath. Rest. Getting up early. Being stuck. One letter a week. Three minutes to read.
-
-These letters won't be polished. I would rather write to you every week than write one perfect letter a year.
-
-So let me start with a student who has practiced with me for nearly 10 years.
-
-A few months ago, she started to do both legs behind her head. Dwi Pada Sirsasana. It did not feel comfortable right away. She asked me, "Is it ever going to get better?" I said, "It will... with your patience."
-
-Legs behind the head takes time. Some people need 2 or 3 years just to start to feel comfortable. Some need much longer, and they start to feel there is no way. Maybe you know that feeling, from an asana you are dealing with now.
-
-She did not stop her routine. And recently, I can feel it getting much easier for her.
-
-How do you keep going when it feels like there is no way?
-
-That brings me to the one habit I would give you, if I could give you only one:
-
-**Practice at the same time every morning.**
-
-Alarm. Tea or coffee. Nauli, rolling the belly muscles. Mat. That's it.
-
-You don't need more motivation. You need fewer decisions, and a teacher who notices and asks when you are not in the shala. When the time is fixed, there is nothing left to decide.
-
-If it sounds like I am making a big deal out of a small thing, I am. I have not found anything that matters more.
-
-By the way, "every morning" means every practice day, not Saturdays or moon days. And it does not mean the full series. On a bad day, a few Sun Salutations count. The time is the habit. The length can change.
-
-**This week, try this:** pick one time. Be on your mat at that time on your next 3 practice days. That's all.
-
-See you on the mat,
-Boonchu
-
-P.S. Remember, we are all growing "old", and we want to keep our energy and strength for a long time. (I wish we could say we are growing young.)
-
-P.P.S. Next Monday: "Am I flexible enough?" My honest answer.
-```
-Type under the photo:
-```
-TYPED UNDER THE PHOTO (LINE, Thai): New to Mysore? Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. (In honour of Sharathji's passing.) Ask us here on LINE @aybkk.
-TYPED UNDER THE PHOTO (WeChat): One small favor. Send this account a message with two things: your city, and how many years you have practiced. One line is enough.
-TYPED UNDER THE PHOTO (Telegram): One small favor. Message me at @Boonchutanti with two things: your city, and how many years you have practiced. One line is enough.
-```
-
-## Thai · LINE OA
-```
-Subject: ทำไมถึงจะเขียนหาคุณทุกสัปดาห์
-
-[วัน] [เวลา] [ตอนนี้นั่งเขียนอยู่ที่ไหน]
-
-เพื่อนที่รัก
-
-นี่คือจดหมายฉบับแรก และจะมีอีกหลายฉบับตามมา ทุกสัปดาห์จะเขียนเล่าให้ฟังหนึ่งเรื่อง ที่ได้เรียนรู้จากการฝึกอัษฎางคะมา 20 ปี ใน 20 ปีนั้น มี 18 ปีที่ฝึกสัปดาห์ละ 6 วัน
-
-การฝึก ลมหายใจ การพักผ่อน การตื่นเช้า ช่วงที่ย่ำอยู่กับที่
-สัปดาห์ละฉบับ อ่านจบใน 3 นาที
-
-จดหมายพวกนี้จะไม่เนี้ยบหรอก เราขอเขียนถึงคุณทุกสัปดาห์ ดีกว่าเขียนจดหมายที่สมบูรณ์แบบปีละฉบับ
-
-งั้นขอเริ่มด้วยเรื่องของนักเรียนคนหนึ่ง ที่ฝึกกับเรามาเกือบ 10 ปี
-
-เมื่อไม่กี่เดือนก่อน เธอเริ่มเอาขาทั้งสองข้างไปไว้หลังศีรษะ อาสนะ Dwi Pada Sirsasana แรกๆ ก็ยังไม่สบายตัว เธอถามว่า "สักวันมันจะดีขึ้นไหม?" เราตอบว่า "ดีขึ้นสิ... ด้วยความอดทน"
-
-การเอาขาไว้หลังศีรษะต้องใช้เวลา บางคนต้องใช้ 2 หรือ 3 ปี กว่าจะเริ่มรู้สึกสบาย บางคนใช้นานกว่านั้นมาก จนเริ่มรู้สึกว่าไม่มีทาง คุณอาจรู้จักความรู้สึกนี้ดี จากอาสนะที่คุณกำลังติดอยู่ตอนนี้
-
-เธอยังฝึกตามปกติ ไม่หยุด และช่วงหลังมานี้ เรารู้สึกได้ว่าเธอทำอาสนะนี้ได้ง่ายขึ้นมาก
-
-แล้วจะไปต่อยังไง ในวันที่รู้สึกว่าไม่มีทาง?
-
-เรื่องนี้พามาถึงนิสัยหนึ่งข้อ ที่ถ้าให้คุณได้แค่ข้อเดียว ก็จะให้ข้อนี้:
-
-**ฝึกในเวลาเดิมทุกเช้า**
-
-นาฬิกาปลุก ชาหรือกาแฟ เนาลิ (หมุนกล้ามเนื้อหน้าท้อง) ขึ้นเสื่อ แค่นั้นเอง
-
-คุณไม่ได้ต้องการแรงจูงใจเพิ่ม แต่ต้องการเรื่องให้ตัดสินใจน้อยลง และครูที่สังเกตเห็นและทักถาม เวลาคุณไม่ได้มาชาลา พอเวลาฝึกตายตัวแล้ว ก็ไม่เหลืออะไรให้ต้องตัดสินใจ
-
-ถ้าฟังดูเหมือนเรากำลังทำเรื่องเล็กให้เป็นเรื่องใหญ่ ก็ใช่เลย ยังไม่เคยเจออะไรที่สำคัญกว่านี้
-
-อีกอย่างนะ "ทุกเช้า" หมายถึงทุกวันที่ฝึก ไม่นับวันเสาร์หรือวันมูนเดย์ และไม่ได้หมายถึงต้องฝึกครบทั้งซีรีส์ วันไหนที่แย่ๆ แค่สุริยนมัสการไม่กี่รอบก็นับแล้ว สิ่งที่เป็นนิสัยคือเวลา ส่วนจะฝึกยาวแค่ไหน เปลี่ยนได้
-
-**สัปดาห์นี้ ลองทำแบบนี้ดู:** เลือกมาหนึ่งเวลา แล้วอยู่บนเสื่อให้ตรงเวลานั้น ใน 3 วันฝึกถัดไป แค่นั้นพอ
-
-แล้วเจอกันบนเสื่อ
-บุญชู
-
-ป.ล. อย่าลืมนะ เราทุกคนกำลัง "แก่" ขึ้นทุกวัน และเราอยากรักษาพลังกับความแข็งแรงไว้ไปอีกนานๆ (อยากพูดได้จังว่าเรากำลังเด็กลง)
-
-ป.ป.ล. วันจันทร์หน้า: "ตัวอ่อนพอไหม?" คำตอบตรงๆ จากเรา
-```
-Type under the photo:
-```
-ยังใหม่กับมายซอร์? โปรพิเศษสำหรับนักเรียนใหม่: ซื้อ 1 แถม 1 สำหรับแพ็กเกจ 1, 2 หรือ 3 เดือน ชวนเพื่อนมาด้วยกัน หรือจะเก็บไว้ใช้เองทั้งสองแพ็กเกจก็ได้ ซื้อภายในวันที่ 11 พ.ย. (เพื่อรำลึกถึงการจากไปของ Sharathji) สอบถามได้ที่นี่เลย LINE @aybkk
-```
-
-## Chinese · WeChat article (with the Foolish Old Man paragraph)
-```
-Subject: 为什么我要每周给你写一封信
-
-[星期几]，[几点]。[你在哪里写这封信。]
-
-亲爱的朋友：
-
-这是第一封信，后面还会有很多封。每周，我会给你写一件事，一件20年的阿斯汤加教会我的事。其中18年，我都是一周练六天。
-
-练习。呼吸。休息。早起。卡住的时候。每周一封。三分钟读完。
-
-这些信不会写得很精致。我宁愿每周给你写一封，也不想一年才写一封完美的信。
-
-那就先从一位学生说起吧。她跟我练习，快十年了。
-
-几个月前，她开始把两条腿都放到头后面。Dwi Pada Sirsasana，双腿绕头式。一开始并不舒服。她问我：“这个到底会不会好起来？”我说：“会的……只要你有耐心。”
-
-腿绕头，需要时间。有的人要两三年，才刚开始觉得舒服一点。有的人要久得多，久到开始觉得：根本不可能。也许你现在正在练的某个体式，也让你有过这种感觉。
-
-她每天的练习一直没停。最近，我能感觉到，她做起来轻松多了。
-
-当你觉得根本不可能的时候，要怎么坚持下去？
-
-中国有个老故事，叫愚公移山。愚公快九十岁了，想把家门前的两座大山搬走。他一筐一筐地把土石运走。有个叫智叟的老人笑他。愚公回答：“就算我死了，还有儿子，还有孙子，子子孙孙会一直挖下去。山却不会再长高。”最后，天帝派夸娥氏的两个儿子，把山背走了。
-
-这就说到了我想送你的那个习惯。如果只能送你一个，我会送这个：
-
-**每天早上，在同一个时间练习。**
-
-闹钟。茶或咖啡。Nauli（瑙力），滚动腹部肌肉。上垫。就这些。
-
-你需要的不是更多动力。你需要的是少做一些决定，还有一位老师。你没来道场，他会发现，也会问你。时间定下来了，就没什么要再决定的了。
-
-如果你觉得我在小题大做，没错，我就是。我还没找到比这更重要的事。
-
-顺便说一下，“每天早上”是指每个练习日，不包括周六和月亮日。也不是说一定要练完整个序列。状态不好的日子，做几个拜日式也算。时间，才是习惯。长短可以变。
-
-**这周，试试这个：**选一个时间。接下来的三个练习日，都在这个时间站上垫子。就这些。
-
-垫子上见，
-Boonchu
-
-P.S. 记住，我们都在一天天变“老”。我们都想让自己的精力和力量，保持得久一点，再久一点。（真希望我们能说，自己在一天天变年轻。）
-
-P.P.S. 下周一聊：“我的柔韧性够吗？”我会老实回答。
-```
-Type under the photo:
-```
-想请你帮个小忙。给这个公众号发条消息，写两件事：你在哪个城市，你练了几年。一句话就够了。
-```
-
-## Russian · Telegram groups
-```
-Subject: Почему я буду писать вам каждую неделю
-
-[День / Day], [время / time]. [Где я пишу / Where you are writing.]
-
-Дорогой друг,
-
-Это первое из многих писем. Каждую неделю я буду писать вам про одну вещь, которой меня научили 20 лет аштанги. Из них 18 лет я практикую шесть дней в неделю.
-
-Практика. Дыхание. Отдых. Ранние подъёмы. Застой. Одно письмо в неделю. Три минуты на чтение.
-
-Эти письма я не буду шлифовать. Лучше я буду писать вам каждую неделю, чем одно идеальное письмо в год.
-
-Итак, начну с ученицы, которая практикует у меня почти 10 лет.
-
-Несколько месяцев назад она начала закидывать обе ноги за голову. Дви Пада Ширшасана. Сначала было неудобно. Она спросила меня: «Когда-нибудь станет лучше?» Мой ответ: «Станет... с вашим терпением».
-
-Ноги за голову требуют времени. Некоторым нужно 2 или 3 года, чтобы хотя бы начать чувствовать себя в этой асане комфортно. Другим гораздо больше, и им начинает казаться, что ничего не получится. Возможно, вам знакомо это чувство по асане, с которой вы сейчас боретесь.
-
-Она не бросала свой режим. И в последнее время я чувствую, что ей становится гораздо легче.
-
-Как продолжать, когда кажется, что ничего не получится?
-
-И тут я подхожу к одной привычке. Если бы можно было дать вам только одну, то вот она:
-
-**Практикуйте каждое утро в одно и то же время.**
-
-Будильник. Чай или кофе. Наули, вращение мышц живота. Коврик. Вот и всё.
-
-Вам не нужно больше мотивации. Вам нужно меньше решений. И учитель, который замечает, когда вас нет в шале, и спрашивает, где вы. Когда время постоянное, решать уже нечего.
-
-Если вам кажется, что я придаю мелочи большое значение, то да, придаю. Ничего важнее мне найти не удалось.
-
-Кстати, «каждое утро» значит каждый день практики, кроме суббот и лунных дней. И это не значит, что нужна вся серия. В плохой день засчитываются и несколько кругов Сурья Намаскар. Время и есть привычка. Длительность может меняться.
-
-**На этой неделе попробуйте вот что:** выберите одно время. В ближайшие 3 дня практики будьте на коврике именно в это время. И всё.
-
-До встречи на коврике,
-Бунчу
-
-P.S. Помните: мы все «стареем», и нам хочется надолго сохранить энергию и силу. (Жаль, что нельзя сказать, что мы молодеем.)
-
-P.P.S. В следующий понедельник: «Хватает ли мне гибкости?» Мой честный ответ.
-```
-Type under the photo:
-```
-Одна маленькая просьба. Напишите мне на @Boonchutanti две вещи: ваш город и сколько лет вы практикуете. Одной строчки достаточно.
-```
-
-## 2026-10-04 · plato-chat-flex-vs-stiff
-
-# Reel: Flexible or Stiff? (Lane B, fear buster "I'm not flexible")
-
-Lane B · last posts: Small Steps (B), Ep. 4 bird (A), Ep. 5 Foolish Old Man coming (A) · Lane B is due.
-Toolkit pick: Triple Hook (Contradiction) + 3-second blocks (Missy Elliott method) + Gervais close on Boonchu himself.
-Why: everybody thinks flexible is the gift. You flip it: stiff people get the real benefit. Then the last joke is on you.
-
-## OPENING HOOK (0-3 s), top 3 from 10 tested
-1. PICK (Triple Hook): "Everybody want naturally flexible body. But the real benefit? Stiff people." | On screen: THE REAL BENEFIT? STIFF PEOPLE. (gold: STIFF) | Two mats side by side in Paschimottanasana: one folds flat, one (in front) hands at the shins. Hard cut to the stiff one on "Stiff people".
-2. Pattern interrupt: (no music, only ujjayi breath) "'I'm not flexible.' Okay. You learn every part of your body." | On screen: "I'M NOT FLEXIBLE." OKAY. | Close-up of fingertips stopping a hand short of the toes, then cut to your face on "Okay".
-3. Contrarian: "Everybody want flexible body. But stiff people get the real benefit." | On screen: STIFF BODY, REAL BENEFIT | You to camera, a flexible fold behind you, whip-pan to a stiff fold.
-
-## TELEPROMPTER (read this, one take, about 38 s) · Hook 1 chosen by Boonchu, 4 Oct
-Everybody want naturally flexible body.
-But the real benefit?
-Stiff people.
-
-Natural flexible... it come with a problem.
-When they need strength...
-they might not control the flexibility.
-
-And stiff people?
-You think: I'm not flexible.
-You must learn to bend. Every part of your body.
-You go the hard way...
-But you absorb every bit.
-Every move. Every improvement.
-Then you know... and you understand every stiff people.
-
-That's the real benefit.
-(1 s silence)
-
-So which one you want?
-Natural flexible... or tight, then learn to bend?
-Let me know.
-
-For me... I also wanna be naturally flexible.
-(small beat)
-I will deal with the strength later.
-(hold 1 s)
-
-## SHOT LIST (film these; every student says OK first, no names)
-A. Two mats side by side, Paschimottanasana, side view, 10 s: flexible student folds flat, stiff student in front, hands at the shins. Both calm. (Used at 0-4 s and in the split screen at 28-32 s.)
-B. You, talking head, the whole teleprompter in one take, shala background.
-C. Students working at their edge, 2 s each: hips, hamstrings, shoulders, back.
-D. You kneel and give the stiff student a gentle adjustment, both smiling, 5 s.
-E. Close-up: the stiff student's hands slide a little closer to the feet (real, same session).
-F. The same stiff student, smiling, a bit deeper, 3 s.
-Made in the edit: plum card "FLEXIBLE + STRENGTH = ?".
-
-## EDIT CUE SHEET (house style)
-- Zoom punch about 1 s + SFX at 40%, 0.4 s after the word: Stiff people, problem, control, I'm not flexible, every part, hard way, absorb, understand, real benefit, naturally flexible (you), later.
-- Captions: Weight Shift with emoji. On-screen text per block as in the table above.
-- Colors: plum base, ONE gold word per frame (STIFF, REAL BENEFIT), teal for small labels.
-- Cover: your face + "FLEXIBLE OR STIFF?" (gold: STIFF). Check in black and white.
-- Speed: if your take runs over 40 s, speed 1.2x and cut pauses. Keep the 1 s silence after "real benefit" and the 1 s hold at the end.
-
-## SCRIPT in 3-second blocks (spoken = your English, about 38 s)
-
-| Time | You say | On screen | Picture |
-|---|---|---|---|
-| 0-4 | Everybody want naturally flexible body. But the real benefit? Stiff people. | THE REAL BENEFIT? STIFF PEOPLE. | Two mats, Paschimottanasana: flat fold + stiff fold (stiff one in front). Cut to the stiff one on "Stiff people". |
-| 4-7 | Natural flexible... it come with a problem. | FLEXIBLE HAS A PROBLEM 🤔 | Punch in on your face, sound hit. |
-| 7-10 | When they need strength... they might not control the flexibility. | BENDY. BUT CONTROL? | Plum card "FLEXIBLE + STRENGTH = ?" (do NOT film a student failing). |
-| 10-13 | And stiff people? You think: I'm not flexible. | STIFF? 🙋 | Back to the stiff student from block 1. |
-| 13-16 | You must learn to bend. Every part of your body. | EVERY PART | 0.5 s cuts: hips, hamstrings, shoulders, back, students at their edge. |
-| 16-19 | You go the hard way... | PIECE BY PIECE 🧩 | Teacher kneels, gentle adjustment, both smiling. |
-| 19-22 | But you absorb every bit. Every move. Every improvement. | YOU FEEL EVERY BIT | Close-up: the stiff student's hands slide a little closer to the feet (real, same session). |
-| 22-25 | Then you know... and you understand every stiff people. | YOU UNDERSTAND 🤝 | Same student, smiling, a bit deeper. |
-| 25-28 | That's the real benefit. (1 s silence) | THE REAL BENEFIT (gold) | Your face, punch in, chime, hold. |
-| 28-32 | So which one you want? Natural flexible... or tight, then learn to bend? Let me know. | FLEXIBLE OR STIFF? 👇 | Split screen: the two students from block 1, both at their best. |
-| 32-35 | For me... I also wanna be naturally flexible. | ME? I PICK FLEXIBLE 🙋 | Your face, small smile, pop sound. |
-| 35-38 | I will deal with the strength later. | STRENGTH? LATER 😅 | Deadpan. Hold 1 s. Stop. No music sting. |
-
-Filming: every student on camera says OK first. No names, no tags. Tag the location (AYBKK) when posting.
-
-## CAPTION (English)
-Everyone wants a naturally flexible body. Me too.
-But flexible people might not be able to control it when they need strength.
-Stiff people must learn to bend every part of the body, the hard way. Then they understand every stiff person.
-So which one do you want? 🤔
-Beginners welcome. We teach you from zero.
-Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months.
-Bring a friend, or keep both for yourself.
-Buy by 11 Nov. (In honour of Sharathji's passing.)
-Comment aybkk and I'll send you the link.
-Come learn Ashtanga
-Aybkk.com
-#aybkk #ashtanga #ashtangabangkok #boonchutanti
-
-## CAPTION (Thai)
-ใครๆ ก็อยากเป็นคนตัวอ่อนโดยธรรมชาติ
-เราเองก็อยากเหมือนกัน
-แต่คนตัวอ่อนอาจคุมร่างกายไม่ได้ เวลาที่ต้องใช้ความแข็งแรง
-คนตัวตึงต้องเรียนรู้ร่างกายทุกส่วน แบบยากๆ
-จากนั้นก็จะเข้าใจคนตัวตึงทุกคน
-แล้วคุณอยากเป็นแบบไหน ตัวอ่อนหรือตัวตึง? 🤔
-ยินดีต้อนรับมือใหม่ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย
-โปรโมชั่นพิเศษสำหรับนักเรียนใหม่:
-ซื้อ 1 แถม 1 สำหรับแพ็กเกจ 1, 2 หรือ 3 เดือน
-ชวนเพื่อนมาเรียนด้วยกัน หรือจะเก็บไว้ใช้เองทั้งสองแพ็กเกจก็ได้
-สมัครได้ถึงวันที่ 11 พ.ย. (น้อมรำลึกถึงชารัทจี ในวันครบรอบการจากไปของท่าน)
-คอมเมนต์คำว่า aybkk แล้วเราจะส่งลิงก์ไปให้
-มาเรียนอัษฎางคะกับเรา
-Aybkk.com
-#aybkk #ashtanga #ashtangabangkok #boonchutanti
-
-## NOTES
-- Source: Boonchu's own words, 4 Oct chat. His "might" is kept so flexible students don't feel attacked. No science or injury claims.
-- Removed from the first draft: "Nobody talk about it" (Plato's invention), slow-mo of a flexible student wobbling with a red X (makes a student the joke), the brick emoji and "THE HARD WAY" in big letters (scares beginners), "EVERY STIFF PERSON" over the whole room (labels everyone stiff).
-- One instruction in the caption only: "Comment aybkk". The spoken "let me know" invites answers; that is fine.
-- Full review: bots/media/2026-10-04-flex-vs-stiff/review.json
-
-## 2026-10-04 · plato-chat-adjustment-reel
-
-# Reel: My wife asked for an adjustment (Plato chat, 4 Oct 2026)
-
-Plato's note on the lane: the reviewers say Lane A with no promo (the last 4 posts were Lane B). Plato's own view: the promo is for people NEW TO AYBKK, and that includes experienced people in Bangkok who practise alone at home. They are exactly who this video moves. So the promo in the CAPTION (never spoken) is fine. Boonchu's call. Either way, Ep. 5 (Lane A) is the next post, and the China cut has no promo.
-
-## Verdict
-- **Your draft is not ready yet. Your words are good, but they are in the wrong order.** This version is ready to film once you answer "Before you film" 1, 3 and 4.
-- The biggest weak point in your draft is timing. The surprise ("she is not a beginner") comes at about 64 s. The "if you don't know me" part runs from about 13 s to 29 s, and that is where people scroll away. Your draft is about 100 s. This version runs about 55 s, inside the /story 60 s skeleton.
-- Your 3-second hook works if two things are true. First, you sit on your mat in the shala, so it reads as yoga even with the sound off. Second, "...in her practice. She is not a beginner." comes right after it. On its own, it can read as "Boonchu needs adjustment".
-- Trade-off: keeping your hook first means the viewer's own "that's me" line ("Maybe you think... I don't need it anymore.") comes at about 7 s, not inside 0-3 s. If you want it inside 3 s, take Option 2. You choose.
-- What is good: the hook really happened today, so no other teacher can post it. And "we think we are doing it... but we are still super far away" is the line where a beginner and a 10-year practitioner both think "oh... that's me". Both stay, in your words.
-
-## Route
-Route: Lane A (default cut, no promo) · last 3 posts: B B B (4 Lane B in a row, with Hard Way) · next due: Lane A
-
-Lane fix: this version is Lane A. There is no promo in the post. The promo goes in today's Story. The same cut, with Chinese captions, can go on WeChat. If you still want the promo in the post, use the Lane B block under each caption. Then it becomes the 5th Lane B post in a row. It goes on IG and LINE only, never on WeChat or Xiaohongshu, and Ep. 5 (Lane A, written, not filmed) must be the next post.
-
-## Toolkit pick
-Toolkit pick: Name-the-Feeling + Vibe Samurai. Why: Triple Hook was the hook tool on the last 3 Reel scripts (3 Oct, and 4 Oct twice), and the last posted Reel ended on a Gervais joke. So we rotate: no Triple Hook and no Gervais close this time. Your draft already has the Vibe Samurai parts:
-- a belief: "the practice is your own practice"
-- a ladder: beginner, my wife, you
-- a turn: "we cannot see ourself". An "It isn't X. It's Y." line is offered for your OK below.
-- a screenshot line: "super far away"
-- a flip: "the practice is still your own"
-
-Options:
-1. **Plato's pick: Name-the-Feeling (your story first) + Vibe Samurai**
-   - Hook: "Today my wife told me, 'I need adjustment.' (1 s) ...in her practice. She is not a beginner. Maybe you think... I don't need it anymore."
-   - Body: your belief + "once in a while", then new asana, hip / arms / legs, "we cannot see ourself... super far away", the ladder (beginner, my wife, you), 1 s silence, the answer (gymnastic, ballet... still need experienced hands), the flip.
-   - Why: your real story stays first, and nobody else can post it. The viewer hears their own inner voice by about 7 s.
-2. **Name-the-Feeling (feeling first) + /story 4 beats**
-   - Hook: "We think we are doing it... but we are still super far away. Today my wife told me, 'I need adjustment.'"
-   - Body: Hook (far away), Context (my wife, not a beginner, your own practice), Ordeal (new asana, hip / arms / legs, we cannot see ourself), Takeaway (even highly skilled still need experienced hands; the practice is still your own).
-   - Why: the "that's me" lands in 0-3 s for everyone. The cost: "today" moves to 3-6 s, and the screenshot line is used up at the start.
-3. **One Dissenting Voice + Vibe Samurai**
-   - Hook: "I always believe... the practice is your own practice. Today my wife told me, 'I need adjustment.'"
-   - Body: belief, wife, ladder to you, silence, turn, far away, flip.
-   - Why: "practice" comes in the first second, so nobody misreads it. It is strongest for 10-year practitioners and the China cut, and weaker for beginners.
-
-## Hook (0-3 s)
-**bold** = the gold word
-
-| # | Spoken line | On-screen text | First picture |
-|---|---|---|---|
-| **1. Plato's pick** | Today my wife told me, "I need adjustment." (1 s, flat face) ...in her practice. She is not a beginner. Maybe you think... I don't need it anymore. | 0-3 s: My wife: "I need **adjustment**" 🧘. Then 3-7 s: In her practice. **Not** a beginner. 🙂. Then 7-11 s: You think: I don't **need** it anymore. 🤔 | You sit on your mat in the shala. The shot is tight on your face, with the mat and the shala wall behind you. Teal pill "Boonchu · AYBKK Bangkok" from 0 s. Your eyes go to the side (where she would be), then back to the lens. Zoom punch on "adjustment" with the error sound. At 3.0 s (start of the silence) a card pops in above your head: Jamsai on her mat (with her OK), or an SVG card with a mat icon. |
-| 2 | We think we are doing it... but we are still super far away. (wife line at 3-6 s) | We **think** we're doing it. 🤔 | Same mat-and-wall frame, tight face. Close your eyes on "we think" and open them on "far away". Zoom punch + whoosh. |
-| 3 | I always believe... the practice is your own practice. Today my wife told me, "I need adjustment." | Your practice is your **own**. Right? 🧘 | Card above your head: you alone on your mat in the empty shala, early light, slow zoom inside the card. Your face is below the card. Zoom punch on "my wife". |
-
-Why Plato's pick: it keeps your real story first and fixes the misread in two ways. First, the mat and the shala are in the shot from frame 1, so it reads as yoga with the sound off. Second, the 1 s silence plus "...in her practice" clears up the meaning inside 7 s. "Maybe you think... I don't need it anymore." gives experienced viewers their "that's me" at about 7 s. Beginners get theirs at "When you start new asana" (about 18 s) and "super far away" (about 30 s).
-
-## Teleprompter (read this, about 55 s)
-```
-Today my wife told me, "I need adjustment."
-(1 s silence. Flat face.)
-...in her practice.        (or: ...in her [fill-in: which asana], only if you want to say it)
-She is not a beginner.
-Maybe you think... I don't need it anymore.
-I always believe... the practice is your own practice.
-But adjustment... necessary once in a while.
-When you start new asana... you don't know what to feel.
-Where's the hip... the arms... the legs...
-The shape and the feeling... big different.
-We cannot see ourself.
-We think we are doing it... but we are still super far away.
-Beginner... of course.
-My wife... still ask.
-And you?
-(1 s silence.)
-Gymnastic, ballet... even highly skilled...
-I believe they still need experienced hands... to guide their body.
-The practice is still your own.
-What do you think about this? Let me know.
-(hold 1 s. Stop.)
-```
-There is no spoken promo and there are no spoken numbers. The script is about 120 words. The edit cuts all pauses except the 3 marked silences, so it runs about 55 s.
-
-## Script in 3-second blocks
-| Time | You say | On screen | Picture |
-|---|---|---|---|
-| 0-3 s | Today my wife told me, "I need adjustment." (no pause before the quote) | My wife: "I need **adjustment**" 🧘 | You sit on your mat in the shala, tight on your face, with the mat and the wall behind you. Teal pill "Boonchu · AYBKK Bangkok" from 0 s. Your eyes go to the side, then back. Zoom punch on "adjustment", error sound. |
-| 3-7 s | (1 s silence) ...in her practice. She is not a beginner. | In her practice. **Not** a beginner. 🙂 | At 3.0 s a card pops in: Jamsai on her mat (only with her OK; otherwise an SVG card with a mat icon). Hold the flat face through the silence. Zoom punch on "not", pop. |
-| 7-11 s | Maybe you think... I don't need it anymore. | You think: I don't **need** it anymore. 🤔 | Tight face, one eyebrow up. Zoom punch on "need", ping. |
-| 11-15 s | I always believe... the practice is your own practice. | Your practice is your **own**. 🙏 | Card: you alone on your mat, empty shala, early light (your own photo), slow zoom. Zoom punch on "own", click-soft. |
-| 15-18 s | But adjustment... necessary once in a while. | Adjustment: needed **once** in a while. ⏳ | SVG card: navy, a hand icon, cream title "once in a while". Zoom punch on "once", pop. |
-| 18-23 s | When you start new asana... you don't know what to feel. | New asana. What should I **feel**? ❓ | SVG card: navy, a body outline with a big ❓, cream title. Zoom punch on "feel", chime. |
-| 23-25 s | Where's the hip... the arms... the legs... | hip? · arms? · legs? (one by one, **hip** gold) 👣 | SVG list card: each word pops with click-soft as you say it. Your hand touches your own hip. |
-| 25-28 s | The shape and the feeling... big different. | Shape and **feeling**: very different. ❤️ | Split SVG card: a body shape on the left, a heart on the right, cream titles. Whoosh on "different". |
-| 28-30 s | We cannot see ourself. | We can't **see** ourselves. 👀 | Zoom punch on "see", click-soft. |
-| 30-35 s | We think we are doing it... but we are still super far away. | We think we're doing it. Still **far** away. 🙈 | Eyes closed on "we think", open on "far away". Zoom punch + whoosh. This is the screenshot frame. |
-| 35-37 s | Beginner... of course. | Beginners? Of **course**. 🌱 | Card: the morning Mysore room from behind, mixed levels, slow zoom (no faces without OK). Pop on "course". |
-| 37-40 s | My wife... still ask. And you? (1 s silence) | My wife still asks. And **you**? 👉 | The Jamsai card (or the mat icon card) comes back, then a hard zoom on your face for "And you?". Hold the silence, no sound. |
-| 40-42 s | Gymnastic, ballet... even highly skilled... | Gymnastic. Ballet. Even the highly **skilled**. 🤸 | Two SVG icon cards pop in turn: a gymnast with a coach beside, and a ballet dancer with a teacher watching. Cream titles. Chime on "skilled". |
-| 42-47 s | I believe they still need experienced hands... to guide their body. | I believe they still **need** experienced hands. 🙌 | Card: one light hand at the hip of a newer student in a simple standing asana, both calm (your own photo, with their OK). Fallback: SVG card (hand icon at a hip outline). The teal pill grows to "AYBKK · teaching in Bangkok 14 years · 2,000+ students". Sparkle on "need". |
-| 47-50 s | The practice is still your own. | The practice is still your **own**. 🧘 | The same picture as 11-15 s (you alone on the mat), as a callback. Click-soft on "own". |
-| 50-54 s | What do you think about this? Let me know. | What do you think? Tell me **below**. 👇 | Tight, warm face. Pop. |
-| 54-55 s | (hold 1 s. Stop.) | (text stays) | Hold, no sound, cut. |
-
-## Edit cue sheet
-- No "Hidden Stories" header pill and no Ep. number. This is not a Hidden Stories episode. Everything else follows the house style.
-- Cut all pauses except: the 1 s silence after the hook, the 1 s silence after "And you?", and the final 1 s hold. Length: about 55 s.
-- Zoom punch: a 1.3x hard cut on your face for about 1 s on each of these punch words: adjustment, not, need (7-11 s), own, once, feel, hip / arms / legs, different, see, far away, course, you, skilled, need (42-47 s), own (47-50 s), below.
-- Sound effects at 40% volume, starting 0.4 s after the word (HyperFrames set only):
-  - adjustment = error
-  - not = pop
-  - need (7-11 s) = ping
-  - own = click-soft
-  - once = pop
-  - feel = chime
-  - hip / arms / legs = click-soft each
-  - different = whoosh
-  - see = click-soft
-  - far away = whoosh
-  - course = pop
-  - skilled = chime
-  - need (42-47 s) = sparkle
-  - own (47-50 s) = click-soft
-  - below = pop
-  - nothing on "you" (silence), nothing on the final hold (no music sting)
-- Captions: Weight Shift, Montserrat lowercase, 2 lines. The line being spoken is bold (800) and the other line thin (300), with a 0.14 s shift. One emoji per line, about 125 px on 70 px text, to the right, popping in. Keep the quote marks on line 1, `my wife: "i need adjustment"`, so nobody reads it as you needing it. Her quote is "I need adjustment" everywhere: screen, captions, cover.
-- Emoji to use: 🧘 🙂 🤔 🙏 ⏳ ❓ 👣 ❤️ 👀 🙈 🌱 👉 🤸 🙌 👇. Never 😏 🔥 💔 😳 or 😅 on this Reel (😅 next to "I need adjustment" pushes a double meaning).
-- Cards: 586x346, rounded, thin white border, soft shadow. They pop in (scale 0.82 to 1, ease-out-back) and fade out. Move your video down about 110 px so cards never cover your face. Photo cards slow-zoom inside the card. There are no full-screen cutaways. SVG cards: navy gradient, Montserrat ExtraBold title in cream on this Reel (not gold), cream subtitle. Lists reveal item by item.
-- Colours: plum #5C2160 is the base. Gold #E0B52B is for ONE word per frame (the caption key word), so SVG card titles are cream. Teal #1F9E96 is for the name pill. White text on plum or teal, near-black #1A161D on gold. Max 3 colours per frame. No yellow shirt; the plum AYBKK tee is best.
-- Teal pill: "Boonchu · AYBKK Bangkok" from 0 s. At 42-47 s it reads "AYBKK · teaching in Bangkok 14 years · 2,000+ students". These are shala years, so they never clash with "20 years of Ashtanga" in tomorrow's letter.
-- Cover: your face on your mat + `My wife: "I need adjustment"` (5 words, gold: adjustment). Never write "my wife needs adjustment". Check the cover in black and white: if the words disappear, raise the contrast.
-- Adjustment footage: one light hand at the hip, both calm, her OK. No deep push on camera.
-- Lane B version only (IG): a 2 s silent end card after the final hold, "New in Bangkok? Beginners welcome. Comment aybkk 👇". It is required if the promo is in the caption, and it is never on the Lane A cut. It is never spoken and never says "this month". That version runs about 57 s.
-- Chinese cut (Lane A): same edit, Chinese captions (Noto Sans SC, Weight Shift), emoji about 150 px, 体式 for asana, no promo card, and a native reader checks it. Ask the reader to use the word Chinese Ashtanga students really use for a teacher's hands-on help in a 体式 (for example 辅助 or 手法调整), so line 1 clearly reads as yoga, not "adjust my life".
-- The video file goes to Google Drive, never to the GitHub repo.
-
-## Caption (English)
-My wife is not a beginner. Today she asked me for an adjustment. 🧘
-We can't see ourselves. We think we are doing it, but we are still far away. 🤔
-Experienced hands guide your body. Your practice is still your own. 🙌
-What do you think? Tell me below. 👇
-Beginners welcome. We teach you from zero. 🌱
-Come learn Ashtanga
-Aybkk.com
-#aybkk #ashtanga #ashtangabangkok #boonchutanti #mysorestyle #ashtangayoga
-
-**Only if you still want Lane B (IG + LINE only, Ep. 5 next):** take out line 4 (the question, so the caption has one action) and put these lines after "Beginners welcome...":
-In Bangkok? 📍
-Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months.
-Bring a friend, or keep both for yourself.
-Buy by 11 Nov. (In honour of Sharathji's passing.)
-Comment aybkk and I'll send you the link.
-Then "Come learn Ashtanga / Aybkk.com" and the hashtags. Tag location: AYBKK, Bangkok. Add the 2 s silent end card (see the edit cue sheet).
-
-## Caption (Thai)
-ภรรยาผมไม่ใช่มือใหม่ แต่วันนี้เธอขอให้ผมช่วยปรับอาสนะให้ 🧘
-เรามองไม่เห็นตัวเอง เราคิดว่าทำได้แล้ว แต่จริงๆ ยังห่างอีกไกล 🤔
-มือที่มีประสบการณ์ช่วยนำร่างกายของคุณ การฝึกยังเป็นของคุณเอง 🙌
-คุณคิดยังไงครับ? คอมเมนต์บอกผมได้เลย 👇
-ยินดีต้อนรับมือใหม่ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย 🌱
-มาเรียนอัษฎางคะกับเรา
-Aybkk.com
-#aybkk #ashtanga #ashtangabangkok #boonchutanti #mysorestyle #ashtangayoga
-
-**Only if you still want Lane B (IG + LINE only, Ep. 5 next):** take out line 4 and put these lines after "ยินดีต้อนรับมือใหม่...":
-อยู่กรุงเทพฯ ไหมครับ? 📍
-โปรโมชั่นพิเศษสำหรับนักเรียนใหม่:
-ซื้อ 1 แถม 1 สำหรับแพ็กเกจ 1, 2 หรือ 3 เดือน
-ชวนเพื่อนมาเรียนด้วยกัน หรือจะเก็บไว้ใช้เองทั้งสองแพ็กเกจก็ได้
-สมัครได้ถึงวันที่ 11 พ.ย. (น้อมรำลึกถึงชารัทจี ในวันครบรอบการจากไปของท่าน)
-คอมเมนต์คำว่า aybkk แล้วเราจะส่งลิงก์ไปให้
-Tag location: AYBKK, Bangkok. Thai promo = the same Thai lines as the Flexible-or-Stiff caption. Boonchu checks the Thai.
-
-## Before you film
-1. Ask Jamsai: is she OK with a public Reel that uses her words "I need adjustment" and a photo card of her? Her name is not in the script. Add "my wife, Jamsai" only if she says yes.
-2. Which asana did she ask about? If you want to say it, it goes at about 5 s ("...in her [fill-in: which asana]"). If not, keep "in her practice". I will not guess it.
-3. New lines from Plato that need your OK:
-   - In the script: "Maybe you think... I don't need it anymore." (the mirror line at 7-11 s).
-   - Optional, not in the script, each adds about 2 to 4 s, and you use them only if they are true and you like them:
-     - "Adjustment is not because you are bad. It's because nobody can see themself." (a turn, after "far away")
-     - "only show you where" or "Not push. Show." (only if this is how you adjust)
-     - a close anyone can answer in one word, instead of your "What do you think about this?": "Hip... arms... legs... which one you cannot feel?" (on screen: "Hip, arms or legs? Tell me 👇")
-4. Lane: post the Lane A cut (default) and put the promo in a Story, or use the Lane B block? If Lane B, make sure someone sends the link to every "aybkk" comment, because ManyChat is set up for MYSORE.
-5. The 42-47 s card needs a real photo: one light hand at a newer student's hip in a simple standing asana, with their OK. If there is none, use the SVG card (hand icon at a hip outline). Or use a Cloudflare picture from this prompt (nothing billed without your OK): "stop-motion claymation, Wes Anderson Isle of Dogs style, handmade miniature set: a calm teacher puppet rests one light hand on a student puppet's hip in a simple standing asana on a felt mat, quiet morning room, soft light, flat front-on camera".
-6. Frame 1: sit on your mat in the shala, with the mat and the wall in the shot. Wear the plum AYBKK tee.
-7. If you film a real adjustment with her: one light touch at the hip, her face calm, and her OK. No deep push.
-
-## Notes
-**What changed and why**
-- "She is not a beginner" moved from about 64 s to about 5 s. It is the surprise that keeps people watching.
-- Added "...in her practice." after a 1 s silence. You sit on your mat from frame 1, so it reads as yoga by 3 s, even with the sound off.
-- New mirror line at about 7 s: "Maybe you think... I don't need it anymore." Experienced viewers hear their own inner voice.
-- Your own order is back: "We cannot see ourself... super far away" comes right after "big different" (about 28-35 s), so the line everyone shares lands earlier.
-- Your opinion is back in your words: "necessary once in a while" (about 15 s), and "even highly skilled... I believe they still need experienced hands... to guide their body" as the answer after the silence.
-- Ladder of 3 toward the viewer: "Beginner... of course" (from your own line), "My wife... still ask", "And you?". Gymnastic and ballet are now part of the answer.
-- The "if you don't know me" numbers are on screen only (teal pill at 42-47 s), as "AYBKK · teaching in Bangkok 14 years · 2,000+ students".
-- "Knowledgeable hands (a real experienced one)" became "experienced hands". It is your own word, easier for non-native viewers, and 4 words shorter.
-- One word for one thing: "adjustment" (no more "assist" or "assisting").
-- The close is your own line: "What do you think about this? Let me know."
-
-**Cut**
-- "generally", "anyway", "if you don't know me, I'm the founder..." (the numbers moved to the screen).
-- "intermediate... under 5 years". A 4-year student hears "you are still intermediate". Only "Beginner... of course" stays.
-- "contortion", "high level practice of movements", "athlete", "considered".
-- The spoken promo and "this month". "This month" was wrong: the promo runs to 11 Nov. It is now only in the Lane B caption block, with the exact wording and no price.
-- Jamsai's name in the spoken part.
-- Plato lines from the last draft: "So... why she ask?", "Which asana you wish somebody show you?", "Good student... still ask. Good husband... just say yes.", "the best ones still have a teacher", "only show you where".
-
-**Risk left**
-- The viewer's "that's me" comes at about 7 s, not inside 0-3 s. Option 2 fixes that if you prefer.
-- "highly skilled" and "experienced" are the two harder words left. Both are yours, and the cards help.
-- Some comments may say "I got hurt by an adjustment". A reply for your OK (these are not your words yet): "I'm sorry that happen to you. Good hands should look first, and listen." You decide if it is true to how you teach.
-- If you use the Lane B block: Ep. 5 (Lane A) must be the next post, and on 12 Nov take the promo lines out of the caption.
-- The Thai and Chinese captions still need a native reader.
-
-**Habit:** #8 Mind-body movement (what to feel, where's the hip). The core idea is "a teacher who notices": experienced hands see what you cannot see. This is for the brief only, never on screen.
-
-## Checker log
-- Orders (must), route: applied. Line 1 of the package is now the route push-back. Lane A is the one label for the default. The default English and Thai captions have no promo. The promo, "In Bangkok?" and the end card are in clearly marked Lane B blocks (IG + LINE only, Ep. 5 next).
-- Orders (must), mirror in the hook: applied. I kept your hook (your words win) and added "Maybe you think... I don't need it anymore." right after "She is not a beginner". The trade-off is in the Verdict, and Option 2 is there if you want the mirror inside 0-3 s.
-- Orders (should), toolkit rotation: applied. The pick is now Name-the-Feeling + Vibe Samurai, with no Triple Hook and no Gervais close.
-- Orders (should), numbers line breaks the silence and the turn; answer too early: applied. The numbers are screen-only. Nothing sits between the silence and the answer. "The best ones still have a teacher" is gone, and your "still need" line comes after the silence. Partly skipped: the line after the silence is the answer, not "We cannot see ourself", because the viewer check (must) moved that line back to your order. The "It isn't X. It's Y." turn is offered for your OK, not put in the script.
-- Orders (should), full-screen cutaways: applied. The Mysore room shot and the Option 3 picture are now cards above your head with a slow zoom.
-- Orders (should), emoji on every caption row: applied. Every row has one, and they are all in the "Emoji to use" list.
-- Orders (should), Thai L5 and L3: applied. L5 is now "ยินดีต้อนรับมือใหม่...". L3 uses the invention check's wording ("ช่วยนำร่างกายของคุณ") instead of "แค่ชี้ให้ดูว่าตรงไหน", because "only show" is not his claim. "เสมอ" is dropped. A native reader is still needed.
-- Orders (nice), one version of her quote: applied. "I need adjustment" is used everywhere.
-- Orders (nice), one gold word per frame: applied. SVG card titles are cream on this Reel.
-- Orders (nice), sound names: applied. Every "click" is now click-soft, and "feel" gets chime.
-- Orders (nice), timing numbers: applied. "About 55 s" is used everywhere, and the table ends at 55 s.
-- Orders (nice), one action and his own words: applied. The spoken line is his "What do you think about this? Let me know." The caption asks the same question. In the Lane B version the caption question is removed, so "Comment aybkk" is the only action there.
-- Orders (nice), toolkit format: applied. Each option has a hook, a "Body:" line and a "Why:" line, and the chosen one is labelled "Plato's pick".
-- Orders (nice), location tag and photo fallback: applied. "Tag location" is in the Lane B blocks. The 42-47 s card has an SVG fallback and a Cloudflare prompt (nothing billed without your OK).
-- Invention (must), "only show you where": applied. It is now "experienced hands... to guide their body" (spoken), "Experienced hands guide your body" (caption), and the Thai to match. "Only show you where" and "Not push. Show." are options only.
-- Invention (must), his main opinion was lost: applied. "But adjustment... necessary once in a while" is back at 15-18 s, and "I believe they still need experienced hands" at 42-47 s.
-- Invention (must), "the best ones still have a teacher": applied. It is removed. "I believe" is kept in the spoken line and on screen.
-- Invention (should), "Good student / Good husband" joke: applied. It is deleted, and the video ends on his own words plus a 1 s hold.
-- Invention (should), the question was changed: applied. His line is the default, and the "Team A / Team B" line is dropped.
-- Invention (should), "Bangkok" next to the promo: applied. "In Bangkok?" / "อยู่กรุงเทพฯ ไหมครับ?" comes before the exact promo wording, which is not changed.
-- Invention (nice), comment reply: applied. It is now called "A reply for your OK".
-- Invention (nice), "you" vs "we" on screen: applied. The screen now says "We can't see ourselves."
-- Invention (nice), spoken "We teach in Bangkok 14 years": skipped as a spoken line, because the viewer check (must) made the numbers screen-only. The pill says "AYBKK · teaching in Bangkok 14 years", so the years read as the shala's.
-- Invention (nice), one quote version: applied (same fix as orders, above).
-- Viewer (must), length: applied. About 120 spoken words: numbers screen-only, "knowledgeable hands... a real experienced one" became "experienced hands", and the hip line was trimmed. That gives about 55 s. "I believe" and "Let me know" stay, because the invention check and his own words win over the word cut.
-- Viewer (must), the shared mirror line came too late: applied. "We cannot see ourself... super far away" is back in his order at 28-35 s.
-- Viewer (must), sound-off hook frame: applied. He sits on his mat with the shala wall behind, the teal pill shows from 0 s, 🧘 is on line 1, and the card pops at 3.0 s. 😅 is dropped (the husband line it was to move to is gone).
-- Viewer (should), beginner rung: applied. "Beginner... of course." (from his own line 14), the Mysore room card shows mixed levels, and the hand card shows a newer student.
-- Viewer (should), a close anyone can answer: partly applied. His own question stays the default (his words win). "Hip... arms... legs... which one you cannot feel?" is offered for his OK.
-- Viewer (should), "Knowledgeable" is hard: applied as "experienced hands" (his own word), not "Good hands". The screen and caption already say "experienced", and it saves 4 more words.
-- Viewer (should), end card if the promo stays: applied. The card is required in the Lane B version and never used on the Lane A cut.
-- Viewer (nice), "And you... too shy to ask?": skipped. It adds 3 words over the 55 s budget, and the 7 s mirror line now does this job.
-- Viewer (nice), "We" on screen: applied (same fix as invention, above).
-- Viewer (nice), no pause before the quote: applied.
-- Viewer (nice), "I need an adjustment" on the cover and cards: skipped. It is her exact quote, and the orders and invention checks ask for one exact version everywhere. The cover is 5 words.
-- Viewer (nice), the Chinese word for hands-on help: applied. It is in the edit cue sheet, Chinese cut line.
-## CAPTION v2 (4 Oct evening, after Boonchu confirmed Jamsai = Authorized Level 2; replaces the captions above)
-### English
-My wife @missjamsai is an Authorized Level 2 Ashtanga teacher.
-Today she asked me for an adjustment. 🧘
-We can't see ourselves. We think we are doing it, but we are still far away.
-Your practice is your own. But I believe even skilled people need experienced hands, once in a while. 🙌
-Gymnastics, ballet, Ashtanga. Same.
-What do you think? Let me know. 👇
-Beginners welcome. We teach you from zero. 🌱
-Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months.
-Bring a friend, or keep both for yourself.
-Buy by 11 Nov. (In honour of Sharathji's passing.)
-Comment aybkk and I'll send you the link.
-Come learn Ashtanga
-Aybkk.net
-#aybkk #ashtanga #ashtangabangkok #boonchutanti #mysorestyle
-
-### Thai
-ภรรยาผม @missjamsai เป็นครูอัษฎางคะ ระดับ Authorized Level 2
-วันนี้เธอขอให้ผมช่วยปรับอาสนะให้ 🧘
-เรามองไม่เห็นตัวเอง เราคิดว่าทำได้แล้ว แต่จริงๆ ยังห่างอีกไกล
-การฝึกเป็นของคุณเอง แต่ผมเชื่อว่า ต่อให้เก่งแค่ไหน บางครั้งก็ยังต้องการมือที่มีประสบการณ์ช่วยนำร่างกาย 🙌
-ยิมนาสติก บัลเลต์ อัษฎางคะ ก็เหมือนกัน
-คุณคิดยังไงครับ? บอกผมหน่อย 👇
-ยินดีต้อนรับมือใหม่ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย 🌱
-โปรโมชั่นพิเศษสำหรับนักเรียนใหม่:
-ซื้อ 1 แถม 1 สำหรับแพ็กเกจ 1, 2 หรือ 3 เดือน
-ชวนเพื่อนมาเรียนด้วยกัน หรือจะเก็บไว้ใช้เองทั้งสองแพ็กเกจก็ได้
-สมัครได้ถึงวันที่ 11 พ.ย. (น้อมรำลึกถึงชารัทจี ในวันครบรอบการจากไปของท่าน)
-คอมเมนต์คำว่า aybkk แล้วเราจะส่งลิงก์ไปให้
-มาเรียนอัษฎางคะกับเรา
-Aybkk.net
-
-## CAPTION v3, 5 LINES (Boonchu: "I only need 5 lines")
-My wife @missjamsai is an Authorized Level 2 teacher. Today she asked me for an adjustment. 🧘
-We can't see ourselves. We think we are doing it, but we are still far away. 👀
-Your practice is your own. But I believe even skilled people need experienced hands, once in a while. 🙌
-New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇
-Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti
-
-ภรรยาผม @missjamsai เป็นครู Authorized Level 2 วันนี้เธอขอให้ผมช่วยปรับอาสนะให้ 🧘
-เรามองไม่เห็นตัวเอง เราคิดว่าทำได้แล้ว แต่จริงๆ ยังห่างอีกไกล 👀
-การฝึกเป็นของคุณเอง แต่ผมเชื่อว่า ต่อให้เก่งแค่ไหน บางครั้งก็ยังต้องการมือที่มีประสบการณ์ 🙌
-นักเรียนใหม่: ซื้อ 1 แถม 1 แพ็กเกจ 1, 2 หรือ 3 เดือน ถึง 11 พ.ย. คอมเมนต์ aybkk 👇
-Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti
-
-## 2026-10-04 · plato-bhima-tail
-
-# Plato · 4 Oct 2026 · Hidden Stories of Ashtanga (no Ep. number until filmed; next = Ep. 6 if Ep. 5 Foolish Old Man is posted first) · "The Tail Nobody Could Lift"
-
-Route: Lane A · last 3 posts: Small Steps carousel (B), Learn by doing B5 (B), Ep. 4 Tittibhasana (A) · next due: Lane A is on route; Day 1 to Day 30 (Lane B) from 13 Oct.
-Toolkit pick: Myth-Kill (hook) + Hero's Journey, cut to the 4 /story beats. Why: the news kills a belief ("strength is for the young"), and Bhima's walk is a small hero's test: proud, fails, bows, comes back wiser. Not Triple Hook or Fork-First (used 1, 2, 3 Oct).
-Other options (ask for a rewrite): (1) Win/Loss Frame + /story: "Lose your legs, you lose your freedom" vs "one session a week keeps them". (2) Gervais deadpan opener: "I'm 53. Science says I still have 37 years to get strong. Great. No excuse now."
-
-## The link
-- Trigger: a strength review out this week (Newcastle University, The Conversation, ScienceDaily 2 Oct 2026): even one strength session a week helps; "Even people in their 80s and 90s can build or maintain muscle strength."
-- Story: Bhima, the strongest man, tells an old sick monkey to move. He cannot lift the old monkey's tail with both arms. The monkey is Hanuman, his brother (Mahabharata, Vana Parva, sec. 146).
-- Behavior: Bhima judged strength by age. He was wrong.
-- Asana: Utkatasana ("fierce" asana). A bodyweight squat, in every Sun Salutation B and held 5 breaths at the end of the standing asanas. Strength you train every practice, at any age.
-
-## Hooks (/hook, answered by Plato)
-Topic: strength and age. Consensus: strength belongs to the young; after 60 you only lose it. Teacher's view: in the shala, strength comes from what you repeat each week, not your birth year.
-1. Authority: "I am 53. Science says my strongest years can still come."
-2. Contrarian: "Everybody say strength leave you at 60. It's not true."
-3. Stakes: "Weak legs take your freedom first. One session a week stops it."
-4. Question: "How old is too old to get stronger? Scientists just answered."
-5. Pattern interrupt: "This week, scientists said: even at ninety, you can get stronger."
-Plato's pick: 5. It opens with the news, has a number people can see on screen, and kills a belief everyone over 40 carries. A 10-year practitioner over 40 stops on it.
-
-## Script (60 s, spoken to camera, his spoken English)
-HOOK (0-4 s)
-"This week, scientists say... even at ninety... you can get stronger."
-[card: "80s and 90s can still build strength" · Newcastle Univ. 2026]
-
-CONTEXT (4-12 s)
-"One strength session a week. Already enough to start.
-But most people still believe... strength is for the young.
-Tonight, I tell my son a story about this."
-
-ORDEAL (12-42 s), bedtime voice
-"Bhima. The strongest man in the Mahabharata.
-He walk in the forest. On the path... an old monkey, lying down.
-Bhima say: 'Move.'
-The monkey say: 'I am old. I am sick. I cannot get up. You move my tail.'
-Bhima smile. One hand. ...The tail don't move.
-Two hands. ...Don't move.
-He sweat. His face all wrinkle.
-[silent beat, 1 s]
-The old monkey... was Hanuman. Bhima's brother."
-(to the adults) "Bhima looked at the age. He never looked at the strength."
-
-TAKEAWAY (42-55 s)
-"In Ashtanga, we have Utkatasana. Fierce asana.
-Bend the knees. Sit back, like a chair. Arms up. Breathe.
-It's a squat. The same thing the scientists talk about.
-Every practice. At twenty. At seventy. Same asana."
-(Boonchu: swap these cue lines for your own Utkatasana words.)
-
-RETURN (55-60 s)
-"Ninety is not too old. ... Only stopping is too old."
-
-Payoff: the hook says "even at ninety you can get stronger"; the last line closes it: age is not the limit, stopping is.
-One ordeal: Bhima cannot lift the tail. One lesson: strength is not about age.
-
-Check before filming:
-- The study is a review article (a summary of many studies), not one new trial. Say "scientists say", not "a new study proves". Do not say Utkatasana was in the study.
-- Text: Bhima wants to send the monkey to Yama (death). Left out for the bedtime voice. Hanuman says "In consequence of age, I have no strength to get up" (Ganguli). Hanuman is shown with respect, never mocked.
-- Hanuman also appeared 2 Oct (Surasa story, Hanumanasana). This is a different story and a different asana. If two Hanuman stories in one week feels like too much, hold this one a week.
-- Any student shown in Utkatasana needs their OK (elders especially).
-
-## Edit cue sheet
-- Zoom punch 1.3x + SFX 40%, 0.4 s after: "ninety" (chime), "Move" (impact-bass-1), "One hand" (click-soft), "Two hands" (impact-bass-2), "Hanuman" (sparkle), "Fierce" (whoosh), "stopping" (ping).
-- Cards: (1) graphic card "80s & 90s can still build strength", gold title; (2) story pictures below; (3) graphic card "Utkatasana · fierce asana" with ✅ "every practice".
-- Image prompts (Isle of Dogs style, keep every handmade cue): "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, felt and wool puppets with glassy bead eyes, painted cardboard sky, cotton-wool clouds on visible wires, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections" +
-  a) "a strong young man puppet in a plum cloth wrap walking on a forest path of felt banana leaves, an old grey wool monkey lying across the path, long tail on the ground"
-  b) "the strong man pulling the old monkey's tail with both hands, sweat drops made of glass beads, the tail does not move, the monkey calm and smiling"
-  c) "the strong man bowing with joined hands to the calm old monkey, soft dusk light, gentle and respectful"
-- Captions: Weight Shift, big emoji: 🧓💪 ninety · 🐒 monkey · ✋ one hand · 🙌 two hands · 💦 sweat · 🙏 Hanuman · 🪑 chair · 🔥 fierce.
-
-## Captions
-EN
-Even at 90, you can still get stronger. 💪
-Hidden Stories of Ashtanga · Ep. N
-The strongest man could not lift an old monkey's tail. 🐒
-Utkatasana: the fierce asana, at any age. 🪑
-Ninety is not too old. Only stopping is too old.
-Come learn Ashtanga, beginners welcome. Aybkk.com
-#aybkk #ashtanga #hiddenstoriesofashtanga #utkatasana #boonchutanti
-
-TH
-นักวิทยาศาสตร์บอกว่า อายุ 90 ก็ยังแข็งแรงขึ้นได้ 💪
-Hidden Stories of Ashtanga · ตอนที่ N
-ภีมะ ชายที่แข็งแรงที่สุด ยกหางลิงแก่ตัวหนึ่งไม่ขึ้น 🐒
-ลิงตัวนั้นคือหนุมาน
-อุตกฏาสนะ อาสนะแห่งพลัง ฝึกได้ทุกวัย 🪑
-อายุไม่เคยแก่เกินไป มีแต่การหยุดฝึกที่ทำให้เราแก่
-มาฝึกอัษฎางคโยคะกับเรา เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย Aybkk.com
-#aybkk #อัษฎางคโยคะ #ashtanga #hiddenstoriesofashtanga #utkatasana
-
-ZH (小红书 / 视频号)
-阿斯汤加的隐藏故事 · 第N集
-最新研究：八九十岁，肌肉照样能练出来。💪
-《摩诃婆罗多》里，力气最大的怖军，在林间小路上遇见一只老猴子。
-老猴子说：我老了，起不来，你把我的尾巴挪开吧。
-怖军单手去提，纹丝不动；双手去拽，满头大汗，还是不动。🐒
-原来，这只老猴子就是哈奴曼。
-在阿斯汤加里，我们每天练幻椅式（Utkatasana），屈膝坐低，双臂上举，呼吸稳住。🪑
-力量从来不属于年轻人，只属于不停下来的人。
-#阿斯汤加 #阿斯汤加的隐藏故事 #瑜伽体式 #幻椅式 #力量训练
-
-RU
-Даже в 90 лет можно стать сильнее. 💪
-Hidden Stories of Ashtanga · Эп. N
-Бхима, самый сильный герой «Махабхараты», не смог поднять хвост старой обезьяны. 🐒
-Эта обезьяна была Хануманом.
-Уткатасана, «яростная» асана: сила в любом возрасте. 🪑
-Девяносто лет не поздно. Поздно только тогда, когда ты остановился.
-Приходите практиковать аштангу в AYBKK Бангкок, новичкам рады. Aybkk.com
-#aybkk #аштанга #ashtanga #hiddenstoriesofashtanga #уткатасана
-
-Xiaohongshu title (16 characters): 90岁也能变强？神猴的尾巴告诉你
-
-## Sources
-- News: ScienceDaily, 2 Oct 2026, "Even one strength training session a week could make a difference" (Newcastle University, via The Conversation): http://www.sciencedaily.com/releases/2026/09/260930020317.htm
-- Story: Mahabharata, Vana Parva, section 146 (Ganguli translation), Project Gutenberg: https://www.gutenberg.org/ebooks/15474 . Key lines: "In consequence of age, I have no strength to get up. From pity for me, do thou go, moving aside my tail." / "Still the mighty Bhima could not raise the tail with both his arms."
-
-## 2026-10-04 · machiavelli
-
-Money today: a yes on the Mysore Reel. Deadline is 19:00 today.
-Mysore Reel: reply A (post Mon 5 Oct as drafted) or B (move to Wed 7 Oct) in ✍️ Plato chat by 19:00 today. No answer means B.
-Course prices: decision needed in team chat by 19:00 Wed 7 Oct. Default B: sales open moves one more week. Wed 7 Oct: 3 days. Sales open 13 Oct: 9 days.
-Plato still waits on Boonchu's own Marichyasana D cue (Stuck in Primary Ep. 1), in ✍️ Plato chat.
-Reel from Plato: Bhima cannot lift an old monkey's tail; the monkey is Hanuman. Asana: Utkatasana. Hook: "This week, scientists said: even at ninety, you can get stronger."
-Score: wins this week: none reported. 180K leads pasted: 0 in 7 days. No reminders due.
-Carne and Plato both posted today. Inbox 07:08: 0 new, 0 hot.
-13:08 check-in: Mysore Reel still waiting (due 19:00 today, default B), course prices still waiting (3 days). Inbox 13:08: 3 new, 2 hot.
-19:08 check-in: Mysore Reel no answer by 19:00, default B applied (moved to Wed 7 Oct). Course prices not repeated (nagged twice today). Letter #1 due Mon 5 Oct. No win. Inbox 19:08: 2 new, 2 hot.
-
-## 2026-10-04 · carnegie
-
-No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
-
-## 2026-10-04 · carnegie-ep1-roll-up-script
-
-# Stuck in Primary · Ep. 1 · The Roll Up · "Less Legs. More Belly." (FINAL DRAFT, with Boonchu's cue)
-
-Asana: Urdhva Mukha Paschimattanasana (primary, right after Ubhaya Padangusthasana). Payoff: Supta Urdhva Pada Vajrasana (second series, after Gomukhasana).
-Shape: @philosophyminis order (scene, name the law, explain, ladder, back to you) in 3-second blocks, Vibe Samurai ending (silent beat, turn, screenshot line). About 63 s. Lane A, leads to 180K.
-Replaces the Marichyasana D draft as Ep. 1 (Boonchu: "i did maricasana already").
-Cue: Boonchu's own words (chat, 4 Oct), lightly edited. Nod-back cue confirmed by Boonchu: "a little split second nodding the head back to push the floor to give a little kick".
-
-## Hooks (5 levers, film all 5 in the same session; Plato posts one per platform)
-| | Hook | Lever |
-|---|---|---|
-| PICK | You try harder to roll up... and you miss more. | Pattern interrupt (flat, no question mark) |
-| 2 | Your roll up isn't missing strength. It's using the wrong strength. | Contrarian |
-| 3 | Another year of rocking and hoping. Still not up. | Stakes (Reddit words: "rocking and rolling and hoping") |
-| 4 | "Come on. Up." Why does it never work? | Question (viewer's inner voice) |
-| 5 | Fourteen years of Mysore mornings. The roll up fails in the same place. | Authority (14 years = Boonchu's real number; "same place" = his cue: the legs) |
-
-Suggested split: PICK on IG, 2 on TikTok, 3 on Xiaohongshu, 4 on WeChat Channels, 5 on YT Shorts. Log it, check after 48 h.
-ZH: 越用力往上滚，越落空。 · RU: Чем сильнее вы стараетесь подняться, тем хуже получается.
-
-## Script (about 63 s)
-VO = voice-over on the asana shot. [Brackets] = the one gold word in a frame. "/" splits two caption frames.
-
-| Sec | We see | He says | On-screen EN (max 8 words) | On-screen ZH |
-|---|---|---|---|---|
-| 0-4 | HOOK. Side view, wide: whole head, hands, feet. Legs over head, hands on the sides of the feet. Legs yank, knees bend, roll stalls, falls back onto shoulders. | (VO) "You try harder to roll up... and you miss more." | you try harder. you miss more. | 越用力往上滚，越落空 |
-| 4-8 | 4-6 close on face, legs over head, jaw tight. 6-8 wide: rushed second try, knees bend again, fall back. | (VO, near a whisper) "Inhale... 'Come on. Up.'" (normal) "You fall back." | inhale. "come on. up." / you fall back. | 吸气。"快，起来！" / 又倒了回去 |
-| 8-11 | Side view: Boonchu holds the full asana 2 s, face to the knees. Tease only. Name card above. | (VO) "Urdhva Mukha Paschimattanasana." | (name card) | (ZH name card) |
-| 11-17 | SCENE. Talking head, acted: shoulders up, hands paddle fast. Then lean back, arms open, long breath out. Tag: "idea: Alan Watts, writer · 1951". Wave emoji. | "Fight to stay up in water... you sink. Lie back... you float." | fight to stay up in water. you [sink]. / lie back. you [float]. | 在水里拼命想浮着，你会[沉] / 躺下来，你就[浮]起来 |
-| 17-22 | NAME. Talking head, law card slides in above his head. | "The writer Aldous Huxley called it... the law of reversed effort." | (law card) | (ZH law card) |
-| 22-27 | EXPLAIN. Huxley card replaces it. He speaks under it, does not read the quote. | "For some things... the more you try, the worse it gets." | (Huxley card) | (ZH Huxley card) |
-| 27-33 | LADDER. Talking head. Tag: "Baudouin's example · 1920". Bike emoji. | "Learning to ride a bike... you try not to hit a stone. You hit it." | learning to ride a bike. / you try not to hit a stone. / you [hit] it. | 学骑车时 / 越想躲开那块石头 / 越是[撞]上去 |
-| 33-38 | BACK TO YOU. Same side view as the hook. Legs pull, knees bend, fall back. | (VO) "And you. You pull with your legs. The knees bend. You fall back." | you pull with your legs. / the knees bend. you fall back. | 你用腿去拉 / 膝盖一弯，又倒回去 |
-| 38-39 | SILENT BEAT. His face, eyes in the lens. Music out, breath only. | (silence) | (none) | (none) |
-| 39-43 | TURN. Tight on his face. | "Not harder. Not softer. Effort in the right place." | not harder. not softer. / the right [place]. | 不是更用力，也不是更放松 / 是用对[地方] |
-| 43-47 | CUE 1, THE MISTAKE. Side view, legs over head, just before the roll. | "Your legs work. Your belly sleeps. Belly and hips come apart." | legs work. belly [sleeps]. / belly and hips come apart. | 腿在用力，腹部在[睡觉] / 腹部和髋分开了 |
-| 47-51 | CUE 2, THE CHANGE. Same angle. Hand on belly. | "Belly a little flat, a little firm. Not sucked in. Not soft. Now belly and hips are one piece." | belly flat and firm. not sucked in. / belly and hips: [one] piece. | 腹部微平、微紧，不要用力吸进去 / 腹部和髋连成[一体] |
-| 51-55 | CUE 3, TOMORROW. Same angle, real speed: inhale, quick nod back, roll up with straight knees, balance with straight arms, then bend the elbows and fold. | "Tomorrow, try: less legs. Inhale, firm the belly. A quick nod back into the floor. Just a tiny kick." | less legs. inhale, firm belly. / quick nod back. tiny [kick]. | 明天试试：少用腿，吸气收紧腹部 / 头往后轻点地面，借一点[劲] |
-| 55-59 | PAYOFF. Side view of Supta Urdhva Pada Vajrasana: half lotus bound, roll forward onto the knees, up into the twist. Tag: "Supta Urdhva Pada Vajrasana · second series". | (VO) "Learn it here. Second series rolls you again." | learn it here. / second series rolls you [again]. | 在这里学会 / 第二序列还会[再]滚一次 |
-| 59-62 | LINE. Talking head, straight to the lens. | "Less legs. More belly." | less legs. / more [belly]. | 少用腿，多用[腹] |
-| 62-63 | Hold gaze 1 s. Stop. Series card fades in. | (hold) | Stuck in Primary · Ep. 1 | 卡在第一序列 · 第1集 |
-
-Timing: about 63 s. Over the 60 s rule by 3 s on purpose, because Boonchu asked for the law to be explained like the reference (94 s). If Plato must cut: shorten the 8-11 tease to 2 s and the 27-33 bike row to 5 s.
-Edit: header pill "Stuck in Primary · Ep. 1" all the way. Cards and tags above his head, never on face, asana or gap. Zoom punch (1.3x, 1 s) + sound at 40% on each gold word said on his face: sink, float, hit, place, sleeps, one, kick, belly. Soft thud on the two falls (0-8 s). No emoji in the hook frame. Lowercase Weight Shift captions, max 3 colors, one gold word per frame. ZH cut: Noto Sans SC.
-Cover: his face + "You try harder. You miss." (only "miss" gold #E0B52B, plum #5C2160 gradient). ZH cover: 越用力，越[落空].
-
-## Cards (plum, white text, one gold word)
-Law card (17-22 s)
-- THE LAW OF REVERSED EFFORT ("REVERSED" gold)
-- For some things, trying harder makes it worse.
-- Small: Émile Coué found it. Charles Baudouin named it, 1920.
-- ZH: [反向]努力定律 / 有些事，越用力越糟 / 埃米尔·库埃发现，夏尔·博杜安于1920年命名
-- Citation: Charles Baudouin, Suggestion and Autosuggestion (London: George Allen & Unwin, 1920), p. 116 and pp. 124 to 125. Never say "Huxley's law".
-
-Huxley card (22-27 s)
-- ALDOUS HUXLEY, writer · 1956
-- Big: the more you try, the worse it gets ("worse" gold)
-- Small, exact: "The harder we try with the conscious will to do something, the less we shall succeed." "Knowledge and Understanding" (1956)
-- ZH label: 《美丽新世界》作者阿道司·赫胥黎（1956）; big: 越用力，越[糟]; small (summary, no quote marks): 我们越是有意识地用意志去做一件事，就越难成功
-- Never use the Reel's "paradoxical art..." line: it is a misquote.
-
-Name card (8-11 s): Urdhva Mukha Paschimattanasana · face up, back body stretched / primary series, right after Ubhaya Padangusthasana. ZH: Urdhva Mukha Paschimattanasana（面朝上背部伸展式）/ 第一序列 · 紧接 Ubhaya Padangusthasana
-
-## Captions (CTA here only, never spoken; no links, no price)
-
-EN (IG / TikTok / YT Shorts)
-```
-You try harder to roll up. You miss more.
-Stuck in Primary · Ep. 1 · Urdhva Mukha Paschimattanasana
-Legs over your head. Hold the sides of your feet.
-Tomorrow, try: less legs. Inhale, belly a little flat and firm (not sucked in). A quick nod back into the floor. Roll up with straight knees. Balance with straight arms. Then bend the elbows and fold.
-Less legs. More belly.
-
-Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds.
-
-Second series rolls you again: Supta Urdhva Pada Vajrasana.
-Neck or knee injury? See a doctor and ask your teacher first.
-
-The law of reversed effort: Émile Coué found it, Charles Baudouin named it in 1920.
-"The harder we try with the conscious will to do something, the less we shall succeed." Aldous Huxley, "Knowledge and Understanding" (1956).
-The water picture: Alan Watts (1951), in my words. The bike: Baudouin's own example.
-Idea and shape from a Reel by @philosophyminis (Jonny Thomson). Thank you, Jonny.
-Further reading: Trying Not to Try, Edward Slingerland (2014).
-
-#aybkk #ashtanga #stuckinprimary #lawofreversedeffort #boonchutanti
-```
-
-ZH (Xiaohongshu / WeChat Channels / Douyin)
-- XHS title: 越用力往上滚，越坐不稳
-- Channels short title: 越用力往上滚 越坐不稳
-```
-越用力往上滚，越落空。
-卡在第一序列 · 第1集 · Urdhva Mukha Paschimattanasana（面朝上背部伸展式）
-在阿斯汤加里，这个体式是滚进去的：双腿过头，抓住双脚外侧。
-明天试试：少用腿。吸气，腹部微平、微紧（不要用力吸进去）。头往后轻点地面，借一点劲。膝盖伸直滚上来，手臂伸直坐稳，再弯手肘向前折叠。
-少用腿，多用腹。
-
-卡在哪个体式？评论"卡住"加上体式名。这周我会亲自回复每一条，给你一个小提示。只要两秒钟。
-
-第二序列还会再滚一次：Supta Urdhva Pada Vajrasana。
-颈部或膝盖有伤？先问医生和你的老师。
-
-反向努力定律：埃米尔·库埃发现，夏尔·博杜安于1920年命名。
-《美丽新世界》作者阿道司·赫胥黎（1956）大意：我们越是有意识地用意志去做一件事，就越难成功。
-水的比喻参考艾伦·沃茨（1951），骑车的例子出自博杜安。
-灵感和结构来自哲学博主 Jonny Thomson（乔尼·汤姆森）的短片。
-
-#阿斯汤加瑜伽 #卡在第一序列 #瑜伽体式 #反向努力定律 #瑜伽瓶颈
-```
-
-RU (IG / TikTok / YT Shorts, on the EN cut)
-```
-Чем сильнее вы стараетесь подняться, тем хуже получается.
-Застряли в первой серии · Выпуск 1 · Урдхва Мукха Пашчимоттанасана
-В аштанге в эту асану входят перекатом: ноги за головой, руки держат внешние края стоп.
-Завтра попробуйте: меньше ног. На вдохе живот слегка плоский и плотный (не втягивайте его). Короткий кивок головой назад в пол, маленький толчок. Перекат вверх на прямых коленях, баланс на прямых руках, потом согните локти и сложитесь.
-Меньше ног. Больше живота.
-
-Застряли на асане? Напишите «ЗАСТРЯЛ» и её название. На этой неделе я сам отвечу каждому: одна подсказка. Это 2 секунды.
-
-Во второй серии вас снова ждёт перекат: Супта Урдхва Пада Ваджрасана.
-Травма шеи или колена? Сначала к врачу и к своему преподавателю.
-
-Закон обратного усилия: открыл Эмиль Куэ, название дал Шарль Бодуэн (1920).
-Писатель Олдос Хаксли (1956), если коротко: чем сильнее мы стараемся усилием воли, тем меньше получается.
-Образ с водой: по Алану Уотсу (1951). Пример с велосипедом: из книги Бодуэна.
-Идея и форма ролика: видео @philosophyminis (Джонни Томсон). Спасибо ему.
-
-#aybkk #аштанга #ashtanga #застряливпервойсерии #законобратногоусилия
-```
-
-TH (IG / TikTok)
-```
-ยิ่งพยายามม้วนตัวขึ้นแรงเท่าไหร่ ก็ยิ่งพลาด
-Stuck in Primary · Ep. 1 · Urdhva Mukha Paschimattanasana
-ยกขาข้ามศีรษะ จับขอบด้านนอกของเท้า
-พรุ่งนี้ลอง: ใช้ขาน้อยลง หายใจเข้า ท้องแบนและแน่นนิดๆ (ไม่แขม่วจนแฟบ) พยักหัวไปด้านหลังแตะพื้นเร็วๆ ส่งแรงนิดเดียว ม้วนขึ้นโดยเข่าตรง ทรงตัวด้วยแขนตรง แล้วงอศอกพับตัว
-ใช้ขาน้อยลง ใช้ท้องมากขึ้น
-
-ติดอาสนะไหนอยู่? คอมเมนต์ STUCK พร้อมชื่ออาสนะ สัปดาห์นี้ผมจะตอบทุกคอมเมนต์เอง ให้คำแนะนำหนึ่งข้อ ใช้เวลาแค่ 2 วินาที
-
-ซีรีส์ที่สองจะม้วนอีกครั้ง: Supta Urdhva Pada Vajrasana
-คอหรือเข่าบาดเจ็บ? ไปพบแพทย์และถามครูของคุณก่อน
-
-กฎแห่งความพยายามย้อนกลับ (law of reversed effort): Émile Coué ค้นพบ และ Charles Baudouin ตั้งชื่อในปี 1920
-นักเขียน Aldous Huxley (1956) โดยสรุป: ยิ่งเราตั้งใจพยายามทำอะไรมากเท่าไหร่ ก็ยิ่งทำสำเร็จน้อยลง
-ภาพเรื่องน้ำมาจาก Alan Watts (1951) ตัวอย่างจักรยานมาจากหนังสือของ Baudouin
-ไอเดียและโครงคลิปจาก @philosophyminis (Jonny Thomson) ขอบคุณครับ
-
-#aybkk #อัษฎางคโยคะ #ashtanga #stuckinprimary #lawofreversedeffort
-```
-
-## Filming notes
-- Boonchu shows the misses himself (legs pull, knees bend, fall back). Low energy, soft mat, no real crash. Empty shala, no students, no yellow shirt.
-- Safety in every legs-over shot: weight on the shoulders, head straight, hands on the sides of the feet. The nod back is a split second, never a push with the neck.
-- Each row its own take, flat and slow. Act the water and bike with hands in frame. Real silence at 38-39. Hold 1 s and stop. File to Google Drive, never GitHub. Nothing posts without Boonchu's "go".
-
-## Still open (Boonchu)
-1. Hook: all 5 get filmed. Only OK the split per platform (or change it).
-2. OK the 63 s length (or Plato trims to 60).
-3. OK the RU series name "Застряли в первой серии" and the tags #stuckinprimary #卡在第一序列 #застряливпервойсерии #lawofreversedeffort.
-
-Sources fact-checked 4 Oct (Yoga Mala asanas 29 to 30; AshtangaYoga.info count sheets series 1 and 2; Maehle 2006 and 2009; Baudouin 1920; Huxley 1956; Watts 1951). Supta Urdhva Pada Vajrasana is second series: never call it primary. Roll up on the INHALE. Hands on the sides of the feet, not the big toes.
-
-## 2026-10-04 · carnegie-ep1-mari-d-script
-
-# Stuck in Primary · Ep. 1 · Marichyasana D · "Pull Harder, or Let Go" (DRAFT)
-
-**Framework: Fork-First + Missy Elliott 3-second blocks · 58 s · Lane A (IG, TikTok, YT Shorts, WeChat Channels, Xiaohongshu, Douyin)**
-
-**Provisional:** the whole "pull harder, or let go" angle waits on your Mari D cue. Every line that diagnoses Mari D (the knot, the turn, the source card, the LINE and the captions) stays a draft until your cue arrives. If your cue says strength, not letting go, they get rewritten together (see Before filming, item 2).
-
-Toolkit options:
-- **Fork-First + Missy Elliott 3-second blocks (Plato's pick).** Why: every morning a stuck practitioner stands at the same fork at the one-inch gap. The Reel opens there, and the fork is only answered in the last line. Every 3 s gets a new picture.
-- Vibe Samurai ladder (flat statement, three matching examples, turn, flip). The knot rungs fit it, but it has run four times since 29 Sep.
-- /story 4-beat (Hook, Context, Ordeal, Takeaway). One ordeal fits it, but /story was in the pick 1 to 4 Oct.
-
-Rotation: Fork-First was last used 2 Oct (Hanuman). Missy Elliott ran 1 Oct and 4 Oct, so a 5 Oct post is 2 days in a row, not 3. There is no /story body here, because /story was in the pick 1 to 4 Oct. Vibe Samurai ran 29 Sep, 30 Sep, 1 Oct and 3 Oct (the earlier "29 Sep" note was wrong).
-Route: Lane A · last 3 posts (board, 4 Oct): Small Steps carousel B, Learn by doing B5 B, Ep. 4 Tittibhasana A · next due: Lane A on route. Bhima (A) and Flex vs Stiff (B) were both drafted 4 Oct, so Plato should check what actually posted before using this slot.
-Habit: #8 Mind-body movement is likely, or #2 Get stronger if your cue is about strength. Pick it after the cue. Leads to: 180K.
-30-day flag: Marichyasana A ran 30 Sep. D is a different asana, but it is inside 30 days. Please OK it.
-
----
-
-## 1. Hooks
-
-**Topic:** Marichyasana D, fingertips one inch from the bind, year after year.
-**Consensus (what the viewer believes):** more effort closes the gap, so you pull harder every morning.
-**Refinement:** the real moment is the fork at the gap, "pull harder, or let go", and the fear inside "let go" is "am I throwing away these years?". Which side wins waits on your cue.
-
-| | Hook | Lever |
-|---|---|---|
-| **PICK** | **Your six years. One inch. Pull harder, or let go.** (10 words) | Fork-First exception (brief rule 1), said flat, with no question mark |
-| Backup 1 | Pull harder in Marichyasana D. Your fingers move further apart. (10) [BOONCHU check: true in your room?] | Pattern interrupt |
-| Backup 2 | Six years on Marichyasana D is not a flexibility problem. (9) | Contrarian (the brief seed. Use it only if your cue agrees) |
-| Backup 3 | Fourteen years teaching the Mysore room. Same inch, every morning. (10) [BOONCHU check: true in your room?] | Authority (Mysore room only, no Sharath) |
-| Backup 4 | One inch. Six years. It starts to feel wasted. (9) | Stakes |
-
-Why the pick: it names the private moment at the gap, and the 5 to 7 years of being stuck. "Let go" sounds like quitting for a moment, which brings the fear "am I throwing away these years?" to the front. The last line answers it: let go of that one inch, not the practice. "Your six years" is the brief's number and points at the viewer, so it never reads as your own story while you show the stuck version. It is a Question-lever fork, which (B) says not to pick; the Fork-First exception in brief rule 1 is why it is the pick.
-ZH: 你的第六年。就差一点。要么更用力，要么放手。 · RU: Ваши шесть лет. Пара сантиметров. Тянуть сильнее или отпустить.
-
----
-
-## 2. Script (58 s)
-
-The spoken lines are a guide in simple English. Say them your own way, flat and slow. The burned-in text follows what you really say, lightly cleaned. The gold word is shown in [brackets], at most one per frame, and each one gets a zoom punch on your face. Rows with no brackets have no gold word. On-screen text is lowercase in Weight Shift style.
-
-| Sec | We see | He says | On screen EN (max 8 words) | On screen ZH |
-|---|---|---|---|---|
-| 0-4 | From behind, framed wide enough to keep his whole head and both hands in. Boonchu in Mari D, the stuck version: fingertips one inch apart, shaking a little. Caption sits in the empty background above his head, never over the hands or the gap. No zoom punch (no face in this frame). | "Your six years. One inch. Pull harder... or let go." | your six years. pull harder, or let go. | 你的六年：要么更用力，要么放手 |
-| 4-7 | Hard cut to his face in the shala, calm. A small beat before he speaks. Zoom punch on "harder". | "So you pull harder. That's normal." | so you pull [harder]. that's normal. | 你会更[用力]。很正常。 |
-| 7-10 | The series card above his head (plum, gold "Stuck in Primary", teal "Ep. 1"). Below it, a side view of him in the asana. The caption has no gold, so the series name is the only gold in the frame. | "Marichyasana D. Half lotus, twist, bind." | marichyasana d: half lotus, twist, bind | 马里奇D：半莲花，扭转，扣手 |
-| 10-13 | Talking head. A small card above his head shows the empty shala at first light, with no people. Grade the room shot neutral or cool, never warm, so the frame never reads yellow or gold. Zoom punch on "same". | "Every morning. Same one inch." | every morning. [same] one inch. | 每天早上，[同样]差这一点 |
-| 13-17 | Slow push-in on his face. He looks down. Zoom punch on "years". | "You think... am I throwing away all these years?" | am i throwing away all these [years]? | 这么多年，是不是[白练]了？ |
-| 17-20 | From behind, framed wide enough to keep his whole head and both hands in: his hands grab and pull. His jaw is tight and his breath is held. Caption sits above his head, never over the hands or the gap. | "You pull. You twist. Your breath stops." | you pull. you twist. breath stops. | 拉，扭，呼吸停了 |
-| 20-23 | Medium shot. His own hands pull a knot in a plain cord in front of his chest. He stays in frame (no cutaway). A knot emoji pops in. | "Pull a knot... it gets tighter." | pull a knot. it gets tighter. | 绳结越拉越紧 |
-| 23-27 | To camera. His shoulders creep up to his ears. Dry. A grimace emoji pops in. | "You tell yourself 'relax'... everything goes tight." | "relax," you say. everything goes tight. | 你一说“放松”，全身更紧 |
-| 27-31 | From behind again, framed the same way (whole head, both hands in): the same gap. Caption sits above his head, never over the hands or the gap. | "You pull for the bind. Still one inch." | pull for the bind. still one inch. | 拉着去扣手，还是差一点 |
-| 31-34 | Talking head. He lifts the knotted cord up next to his face. Zoom punch on "knot". [BOONCHU check: depends on your cue] | "Marichyasana D... is a knot." | marichyasana d is a [knot]. | 马里奇D，是一个[结] |
-| 34-35 | **SILENT BEAT.** He looks into the lens. No music, no sound effect, only breath. | (silence) | (none) | (none) |
-| 35-40 | **TURN.** Tight on his face. Two caption frames, one after the other. Zoom punch on "wasted", then on "pulling". [BOONCHU check: does this match your cue?] | "Your years are not wasted. The pulling blocks you." | your years are not [wasted]. / the [pulling] blocks you. | 这些年没有[白费] / 挡住你的，是[硬拉] |
-| 40-44 | The source card slides in above his head, and he stays in frame (see section 3). | "An old yoga book says: use less force... and asana gets steady." | (source card) | (ZH source card) |
-| 44-47 | Side view. He shows the place where the bind stops. | [BOONCHU: what really blocks the bind in Mari D. One short line, about 6 words.] | [BOONCHU: same idea, max 8 words] | [BOONCHU: ZH of your line, one gold word] |
-| 47-50 | Same angle. He makes the one small change, slowly. | [BOONCHU: the one small thing you change. One short line.] | [BOONCHU: max 8 words] | [BOONCHU: ZH of your line] |
-| 50-53 | Same shot, calm breath. Do not cut to a sudden full bind, because it reads as a promise. | [BOONCHU: one gentle line that starts "Tomorrow, try...". Nothing forceful.] | [BOONCHU: max 8 words] | [BOONCHU: ZH of your line] |
-| 53-57 | **LINE.** Talking head, straight to camera. Two caption frames. Zoom punch on "go". [BOONCHU check: depends on your cue] | "Keep the practice. Let go of that one inch." | keep the practice. / let [go] of that one inch. | 练习继续。 / 那一点点，先[放下] |
-| 57-58 | He holds his gaze for 1 s. Stop. The series card fades in above his head over the hold. There is no extra end card time. | (hold) | Stuck in Primary · Ep. 1 | 卡在第一序列 · 第1集 |
-
-About 98 spoken words outside the cue, about 47 s at his slow pace. Add 9 s for the cue and 2 s for the silent beat and the hold: 58 s in total. If the cue runs long, cut the 4-7 row first (its "harder" punch goes with it).
-The loop: the hook opens on "pull harder, or let go". The last line closes it: let go of that one inch, keep the practice.
-
-**Edit cue sheet**
-
-| Sec | Zoom 1.3x on his face, about 1 s | Sound effect 40%, 0.4 s after the word | Notes |
-|---|---|---|---|
-| 0-4 | none | none | Shot from behind, so no gold word and no punch. No emoji in the hook frame. |
-| 4-7 | harder | yes | First punch, on his face |
-| 10-13 | same | yes | |
-| 13-17 | years | yes | |
-| 17-20 | none | none | Shot from behind, no gold word |
-| 20-27 | none | none | Emoji pops at about 125 px on 70 px text (knot, then grimace). No gold word: the emoji carries these rows, and a punch would crop the shoulders at 23-27. |
-| 27-31 | none | none | Shot from behind; its punch moved to "knot" at 31-34 |
-| 31-34 | knot | yes | |
-| 34-35 | none | none | True silence. Music out. |
-| 35-40 | wasted, then pulling | yes, both | |
-| 40-44 | none | none | The card's gold word "less" stands on its own; he stays still under the card |
-| 53-57 | go | yes | |
-
-- The header is a dark pill, "Stuck in Primary · Ep. 1", the whole way through.
-- Every card sits above his head. Text never goes on his face, on the asana or over the gap. In the shots from behind, the caption sits above his head or in empty background.
-- Max 3 colors per frame, and at most one gold word per frame. Every gold word outside the cards gets a punch on his face (7 punches).
-- The ZH cut uses Noto Sans SC Weight Shift, with emoji at about 150 px.
-- **Cover:** his face + "Pull harder, or let go." (5 words, only "go" in gold #E0B52B).
-  - Plum #5C2160 gradient from the bottom third.
-  - Montserrat Black, kept inside y 285 to 1635.
-  - It must pass a black-and-white check.
-  - ZH cover: 要么用力，要么[放手] (only 放手 in gold).
-
----
-
-## 3. Source card (40-44 s) [BOONCHU check: depends on your cue]
-
-The card sits above his head and he stays in frame. Plum background, white text, white label, one gold word (3 colors).
-
-- **Label (white):** YOGA SUTRA 2.47
-- **Main line (white, "less" in gold):** A steady asana comes from using less force.
-- **Small line:** Patanjali, Yoga Sutra 2.47 (written about the sitting asana) · prayatna = effort · shaithilya = relaxation
-- **Exact citation (for replies only, never in the public captions):** Patanjali, Yoga Sutra 2.47, *prayatna-shaithilya-ananta-samapattibhyam*. Edwin F. Bryant, *The Yoga Sutras of Patanjali: A New Edition, Translation, and Commentary* (New York: North Point Press, 2009). Bryant's line, word for word ("posture" is the translator's own word): "[Such posture should be attained] by the relaxation of effort and by absorption in the infinite."
-- **ZH card:** 《瑜伽经》2.47：放下多余的力气，体式才会稳。 (gold word: 放下). Small line: 原文讲的是静坐的体式
-- **RU:** there is no RU card and no RU cut. RU viewers watch the EN cut with the RU caption.
-
-Rules for this card:
-- The main line is a summary, so it has no quote marks.
-- Never say Patanjali wrote it about Marichyasana D. His asana is a still seat.
-- Never put "effortless" on screen as his word.
-- Always write "Yoga Sutra 2.47". Gita 2.47 is a different famous verse.
-- The verse means relax the extra effort, not stop trying. That is why the last line says "Keep the practice."
-
----
-
-## 4. End card
-
-- **On screen:** the series card only, laid over the final 1 s hold (plum, gold "Stuck in Primary", teal "Ep. 1"). Nothing is read on it, so there is no dead air.
-- **Further reading, caption footer only (EN, RU, TH):** *The Yoga Sutras of Patanjali*, Edwin F. Bryant (2009). Each of the three captions carries it as its own line (EN "Further reading", RU "Подробнее", TH "อ่านเพิ่มเติม"). This is a real, verified book (North Point Press, 2009), and it is the source of the card.
-- **ZH:** no book. The Zhuangzi line in the caption plays that part.
-
----
-
-## 5. Captions
-
-The CTA lives here only and is never spoken. There are no links and no price.
-
-**EN (IG / TikTok / YT Shorts)**
-```
-Six years. One inch. You pull harder.
-Stuck in Primary · Ep. 1 · Marichyasana D
-Tomorrow, try one small thing: [BOONCHU: your fix in one short line]
-Your years are not wasted. The pulling blocks you.
-Keep the practice. Let go of that one inch.
-
-Stuck on this one? Comment STUCK and tell me which asana.
-[optional, needs your OK: And how many years?]
-
-Yoga Sutra 2.47, in short: a steady asana comes from using less force.
-Further reading: The Yoga Sutras of Patanjali, Edwin F. Bryant (2009).
-The "law of reversed effort" was named by Charles Baudouin (1920), from the work of Émile Coué.
-Idea from a Reel by @philosophyminis.
-"The harder we try with the conscious will to do something, the less we shall succeed." Aldous Huxley, "Knowledge and Understanding" (1956).
-
-#aybkk #ashtanga #stuckinprimary #marichyasana #boonchutanti
-```
-
-**ZH (Xiaohongshu / WeChat Channels / Douyin)**
-- Xiaohongshu title (18 characters): **马里奇D第六年：要么更用力，要么放手**
-- WeChat Channels short title (11 characters): **卡在第一序列：马里奇D** (check in 视频号助手 that the colon is accepted; if not, use a space)
-```
-第六年。就差一点。于是，你又加了把劲。
-卡在第一序列 · 第1集 · 马里奇D
-绳结越拉越紧，扣手也是一样。
-明天试试一个小改变：[BOONCHU：你的提示，一句话]
-你坚持的这些年，没有白费。挡住你的，是那股硬拉的劲。
-练习继续。那一点点，先放下。
-
-《瑜伽经》2.47：放下多余的力气，体式才会稳。
-《庄子·养生主》：“每至于族……行为迟，动刀甚微。”
-遇到最难的地方，庖丁反而放慢，只动一点点。
-反向努力定律：博杜安（1920），源自库埃的研究。
-灵感来自一位海外哲学博主的短片。
-
-你卡在哪个体式？评论告诉我。
-
-#阿斯汤加瑜伽 #卡在第一序列 #马里奇D #瑜伽体式 #瑜伽瓶颈
-```
-Notes for the ZH caption: it uses words only, with no meat pictures. Call Zhuangzi "a Daoist story", not "the wu wei passage". There are no links and no WeChat ID, and comments are answered by hand. The Reel credit has no handle on these platforms (see OKs).
-
-**RU (IG / TikTok / YT Shorts, on the EN cut)**
-```
-Шесть лет. Пара сантиметров. И вы тянете сильнее.
-Застряли в первой серии · Выпуск 1 · Маричиасана D
-Завтра попробуйте изменить одну мелочь: [BOONCHU: ваша подсказка, одна строка]
-Годы практики не прошли зря. Мешает то, как сильно вы тянете.
-Практику продолжайте. Отпустите эти сантиметры.
-
-Застряли на этой асане? Напишите в комментариях «ЗАСТРЯЛ» (или STUCK) и название асаны.
-
-«Йога-сутры» 2.47, кратко: асана становится устойчивой, когда уходит лишнее усилие.
-Подробнее: Эдвин Брайант, The Yoga Sutras of Patanjali (2009).
-«Закон обратного усилия»: Шарль Бодуэн (1920), по работам Эмиля Куэ. Идея ролика: @philosophyminis.
-
-#aybkk #аштанга #ashtanga #застряливпервойсерии #маричиасана
-```
-Note for the RU caption: Carne counts both «ЗАСТРЯЛ» and STUCK.
-
-**TH (IG / TikTok, rule 46)**
-```
-หกปีแล้ว ห่างอีกนิดเดียว แล้วคุณก็ดึงแรงขึ้นอีก
-Stuck in Primary · Ep. 1 · Marichyasana D
-พรุ่งนี้ลองเปลี่ยนเรื่องเล็กๆ หนึ่งอย่าง: [BOONCHU: คิวของคุณ หนึ่งบรรทัด]
-หลายปีที่ฝึกมาไม่สูญเปล่า สิ่งที่ขวางอยู่คือแรงดึง
-ฝึกต่อไป แต่ปล่อยระยะนิดเดียวนั้นไป
-
-ติดอยู่ที่อาสนะนี้เหมือนกันไหม คอมเมนต์ STUCK แล้วบอกว่าติดอาสนะไหน
-
-Yoga Sutra 2.47 · อ่านเพิ่มเติม: The Yoga Sutras of Patanjali, Edwin F. Bryant (2009)
-กฎแห่งความพยายามย้อนกลับ (law of reversed effort): Charles Baudouin (1920) จากงานของ Émile Coué · แรงบันดาลใจ: @philosophyminis
-
-#aybkk #อัษฎางคโยคะ #ashtanga #stuckinprimary #marichyasana
-```
-
----
-
-## 6. Filming notes
-
-- **Who is on camera:** you show the stuck version yourself. Never film a student failing, and never use a wide shot of students. The room shots are the empty shala. The knot is your own hands, in frame. No yellow shirt.
-- **How to speak:** film each row as its own take, flat and slow, in your own words. The silent beat is real silence. Hold your gaze 1 s at the end and stop. After the cue, stay on calm breath and never cut to a sudden full bind.
-- **Where it goes:** this is a draft only. The video goes to Google Drive, never GitHub. Nothing posts or schedules without your "go" on this exact item.
-
----
-
-## Before filming (fill-ins and approvals)
-
-1. **Your Mari D cue, for 44-53 s:** the stuck point, the one small change, and "Tomorrow, try...", each in one short line.
-   - Do not use "Fold first, armpit past the knee". Plato wrote it, about Mari A.
-   - Use "Scratch where you don't itch" only if you say yes. You said it about Supta Kurmasana.
-2. **[BOONCHU check] on the angle:** does forcing make Mari D worse in your room? If your fix is strength, not letting go, these must be rewritten together: the hook fork, the knot rungs, the turn, the source card, the LINE and the captions.
-3. **OKs needed:**
-   - The series tags #stuckinprimary, #卡在第一序列 and #застряливпервойсерии.
-   - The RU series name "Застряли в первой серии · Выпуск 1" in place of the brief's "Застрял в первой серии · Эп. 1" ("Застрял" is male only, and "Выпуск" is the normal Russian word). If you say no, it goes back to the brief's name and #застрялвпервойсерии.
-   - The wording of the @philosophyminis credit. A credit is required, because the reversed-effort idea came from that Reel. On Xiaohongshu, WeChat Channels and Douyin the credit has no handle ("灵感来自一位海外哲学博主的短片"), because those platforms can limit posts that point elsewhere (rule 48). Tell me if the credit rule should win there instead.
-   - Backup hooks 1 and 3: true in your room?
-   - The RU and TH CTA wording (not set in the brief, so they mirror the EN one).
-   - The optional "And how many years?" line.
-   - The habit number.
-   - The 30-day flag.
-4. **Lineage:** there is no lineage footer in Ep. 1. The 2019 Sharath line ("You can never will yoga to happen.") has only been seen in reposts. Open the Wayback copy of the original page before it is ever used.
-5. **Students:** none are needed. If one appears, get written permission, and keep their name out of every file.
-
-**Checks:** each of these passes.
-- The hook is flat, 10 words, with no question mark, no emoji and no Sharath. "Six years" is the brief's number, and the line points at the viewer.
-- There is one ordeal and one lesson.
-- The silent beat comes right before the turn, and the fix is revealed after 44 s.
-- The LINE is 9 words, in two caption frames of 8 words or fewer.
-- There is no selling in the spoken video.
-- The one source card is credited. Every caption marks the Yoga Sutra line as a summary, with no translator label on it, and Bryant's exact line is for replies only.
-- Credits per language: EN names the law of reversed effort, Huxley, Baudouin, Coué and @philosophyminis. RU and TH name the law, Baudouin, Coué and @philosophyminis. ZH names the law, Baudouin and Coué, and credits the Reel without the handle (OK needed).
-- No cue, student or number is invented: "six years" is the brief's seed, "fourteen years" (Backup 3) is your teaching number, and every cue line is still yours to fill.
-- "Asana" every time, in every language, and no long or short dashes.
-- There are 5 hashtags per language.
-- At most one gold word and max 3 colors per frame. 7 zoom punches, all on his face, one for every gold word outside the cards.
-- The picture only Boonchu has is in it: his room and his own body.
