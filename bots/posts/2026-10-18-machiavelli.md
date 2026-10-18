@@ -6,3 +6,4 @@ Reel from Plato: the fish who listened and became Matsyendra. Asana: Ardha Matsy
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, now planning a visit.
 Carne and Plato both posted today. Inbox 07:08: 2 new, 2 hot.
 13:08 check-in: course prices and Mysore Reel due 19:00 today (2nd nudge). Inbox: 0 new.
+19:08 check-in: no answer on prices or Reel by 19:00, default B applied (sales open Tue 10 Nov, course start Tue 17 Nov; Reel Wed 21 Oct). No win reported. Inbox: 1 new, 1 hot.
