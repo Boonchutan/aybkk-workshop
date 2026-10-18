@@ -104,20 +104,28 @@
   "wm_moved": false
  },
  "17-116": {
-  "t": 0,
+  "t": 205,
   "kind": "crop",
   "padx": 0,
   "wm_top": 1147,
-  "body_top": 366,
-  "wm_moved": true
+  "mode": "crop",
+  "spec": {
+   "mode": "crop",
+   "t": 205
+  },
+  "wm_moved": false
  },
  "17-122": {
-  "t": 270,
+  "t": 145,
   "kind": "crop",
   "padx": 0,
   "wm_top": 1147,
-  "body_top": 372,
-  "wm_moved": false
+  "mode": "crop",
+  "spec": {
+   "mode": "crop",
+   "t": 145
+  },
+  "wm_moved": true
  },
  "17-124": {
   "t": 128,
@@ -128,12 +136,16 @@
   "wm_moved": true
  },
  "17-138": {
-  "t": 0,
+  "t": 270,
   "kind": "crop",
   "padx": 0,
   "wm_top": 1147,
-  "body_top": 0,
-  "wm_moved": true
+  "mode": "crop",
+  "spec": {
+   "mode": "crop",
+   "t": 270
+  },
+  "wm_moved": false
  },
  "17-147": {
   "t": 270,
@@ -192,12 +204,16 @@
   "wm_moved": false
  },
  "17-241": {
-  "t": 270,
+  "t": 0,
   "kind": "crop",
   "padx": 0,
   "wm_top": 1147,
-  "body_top": 334,
-  "wm_moved": false
+  "mode": "crop",
+  "spec": {
+   "mode": "crop",
+   "t": 0
+  },
+  "wm_moved": true
  },
  "17-245": {
   "t": 270,
@@ -233,10 +249,9 @@
  },
  "17-326": {
   "t": 0,
-  "kind": "crop",
-  "padx": 0,
-  "wm_top": 1147,
-  "body_top": 0,
-  "wm_moved": true
+  "kind": "pad",
+  "padx": 90,
+  "wm_top": 1161,
+  "mode": "pad"
  }
 }
