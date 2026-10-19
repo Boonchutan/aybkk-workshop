@@ -5,3 +5,4 @@ Countdowns: Carne checks the serious lead Tue 20 Oct: 1 day; Google ad first che
 Reel from Plato: Dilipa walks at the cow's pace for 21 days (Raghuvamsha). Asana: Gomukhasana. Hook: "This car is slower than you walk. And it just broke a world record." Waiting on Boonchu's cue.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb). Letter #1 planned today: not approved yet.
 Carne and Plato both posted today. Inbox 07:08: 0 new, 1 hot carried from yesterday.
+13:08 check-in: Mysore Reel still waiting (1 day), course prices still waiting (3 days). Inbox: 4 new, 2 hot.
