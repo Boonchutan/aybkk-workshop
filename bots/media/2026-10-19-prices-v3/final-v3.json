@@ -1,0 +1,144 @@
+{
+ "en": {
+  "title": "Membership",
+  "date": "New prices from 12 Nov 2026",
+  "sec1": "Unlimited membership",
+  "sec1note": "Mysore and Led, as often as you like",
+  "rows": [
+   {
+    "name": "12 months",
+    "tag": "you get 13",
+    "note": "Month by month for 13 months: ฿124,800. You save ฿64,900.",
+    "price": "59,900",
+    "per": "about 4,600 / month"
+   },
+   {
+    "name": "6 months",
+    "badge": "Teacher's pick",
+    "note": "Long enough for the habit to stick. You save ฿25,600.",
+    "price": "32,000",
+    "per": "about 5,300 / month",
+    "pick": true
+   },
+   {
+    "name": "3 months",
+    "note": "For ฿10,000 more, you get 6 months instead of 3.",
+    "price": "22,000",
+    "per": "about 7,300 / month"
+   },
+   {
+    "name": "1 month",
+    "note": "The price of trying. New or stiff, come as you are.",
+    "price": "9,600",
+    "per": "9,600 / month"
+   }
+  ],
+  "sec2": "Package membership",
+  "sec2note": "",
+  "packs": [
+   {
+    "name": "Drop-in",
+    "note": "One class.",
+    "price": "1,500"
+   },
+   {
+    "name": "10 classes",
+    "note": "Use within 3 months. 3+ classes left? You can pass them on.",
+    "price": "14,000"
+   }
+  ],
+  "vat": "+VAT = plus 7% VAT. Paying online adds a transaction fee.",
+  "polH": "Member notes",
+  "pol": [
+   [
+    "All passes are final once purchased,",
+    " unless we can't give the classes you paid for (if we close or move). Long passes are priced for people who stay."
+   ],
+   [
+    "Your pass is just for you.",
+    " Please don't share it."
+   ],
+   [
+    "Moving away, or your doctor says stop?",
+    " If a freeze doesn't fit, a 3, 6 or 12-month membership can pass once to someone new to AYBKK. Same end date. Fee ฿1,500. Ask us on LINE @aybkk first."
+   ],
+   [
+    "Freeze up to 30 days",
+    " (or as your doctor’s note says, up to 2 months) for a broken bone, an eye problem, surgery, or pregnancy and birth. Other cases: talk with us. Please tell us on LINE @aybkk before it starts."
+   ]
+  ],
+  "bye": "See you tomorrow.",
+  "vatTag": "+VAT"
+ },
+ "th": {
+  "title": "สมาชิก",
+  "date": "ราคาใหม่ เริ่ม 12 พ.ย. 2569",
+  "sec1": "สมาชิกรายเดือน (Unlimited)",
+  "sec1note": "ฝึกมายซอร์และคลาส Led ได้ไม่จำกัด",
+  "rows": [
+   {
+    "name": "12 เดือน",
+    "tag": "ใช้ได้ 13 เดือน",
+    "note": "ซื้อรายเดือน 13 เดือน รวม ฿124,800 ประหยัด ฿64,900",
+    "price": "59,900",
+    "per": "ตกเดือนละราว 4,600"
+   },
+   {
+    "name": "6 เดือน",
+    "badge": "ครูแนะนำ",
+    "note": "นานพอให้การฝึกติดเป็นนิสัย ประหยัด ฿25,600",
+    "price": "32,000",
+    "per": "ตกเดือนละราว 5,300",
+    "pick": true
+   },
+   {
+    "name": "3 เดือน",
+    "note": "เพิ่มอีก ฿10,000 ขยับเป็นแพ็ก 6 เดือนได้",
+    "price": "22,000",
+    "per": "ตกเดือนละราว 7,300"
+   },
+   {
+    "name": "1 เดือน",
+    "note": "ลองฝึกดูสักเดือน มือใหม่หรือตัวแข็งก็เริ่มได้",
+    "price": "9,600",
+    "per": "เดือนละ 9,600"
+   }
+  ],
+  "sec2": "สมาชิกแพ็กเกจ",
+  "sec2note": "",
+  "packs": [
+   {
+    "name": "รายครั้ง (Drop-in)",
+    "note": "ฝึก 1 ครั้ง",
+    "price": "1,500"
+   },
+   {
+    "name": "แพ็ก 10 ครั้ง",
+    "note": "ใช้ภายใน 3 เดือน เหลือ 3 ครั้งขึ้นไป โอนให้ผู้อื่นได้",
+    "price": "14,000"
+   }
+  ],
+  "vat": "+VAT = ยังไม่รวม VAT 7% หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม",
+  "polH": "ข้อควรรู้สำหรับสมาชิก",
+  "pol": [
+   [
+    "ขอสงวนสิทธิ์ไม่คืนเงินหลังชำระ",
+    " ยกเว้นกรณีที่เราให้บริการตามที่ชำระไว้ไม่ได้ (เช่น ปิดหรือย้ายสถานที่) ราคาแพ็กยาวคิดไว้ให้คนที่ฝึกกันยาว ๆ"
+   ],
+   [
+    "1 แพ็กเกจต่อ 1 ท่าน",
+    " ขอความกรุณาไม่แบ่งกันใช้"
+   ],
+   [
+    "ต้องย้ายออกจากกรุงเทพฯ หรือแพทย์ให้หยุดฝึก?",
+    " หากการพักแพ็กเกจไม่ตอบโจทย์ สมาชิก 3, 6 และ 12 เดือน โอนให้ผู้ที่ยังไม่เคยเป็นสมาชิก AYBKK ได้ 1 ครั้ง วันหมดอายุเดิม ค่าธรรมเนียม ฿1,500 กรุณาแจ้งทาง LINE @aybkk ก่อน"
+   ],
+   [
+    "เราพักแพ็กเกจให้ได้สูงสุด 30 วัน",
+    " (หรือตามใบรับรองแพทย์ ไม่เกิน 2 เดือน) กรณีกระดูกหัก ปัญหาดวงตา ผ่าตัด หรือตั้งครรภ์และคลอดบุตร กรณีอื่นคุยกับเราได้ กรุณาแจ้งทาง LINE @aybkk ก่อนเริ่มพักทุกครั้ง"
+   ]
+  ],
+  "bye": "เจอกันพรุ่งนี้",
+  "vatTag": "+VAT"
+ }
+}
