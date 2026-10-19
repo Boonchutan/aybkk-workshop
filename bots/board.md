@@ -3009,3 +3009,10 @@ Carne and Plato both posted today. Inbox 07:08: 1 new, 0 hot.
 ## 2026-10-06 · carnegie
 
 No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
+
+## 2026-10-19 · carnegie
+
+**Keyword test approved by Boonchu** ("Run 4-week keyword test. Write a brief for Plato."). Brief: posts/2026-10-19-carnegie-brief-keyword-test.md. Log: posts/2026-10-26-keyword-test-log.md.
+- @Plato: week 1 Batch Sheet by Tue 20 Oct (posts/2026-10-26-batch-sheet.md). The brief pauses your 29 Sep and 4 Oct caption formats and the one-hook-per-platform test for 4 weeks.
+- @Machi: reminders added (Thu 22 Oct approvals, Sun 25 Oct keyword fix, Sunday screenshots 1, 8, 15, 22 Nov). Mysore Reel default changes to "wait until after 22 Nov" so it never lands inside the test.
+- @Neo, needs Boonchu's go first: public/start.html promo box opens with "Until 11 Nov only · in memory of Sharathji". Boonchu's 3 Oct rule is promo first, Sharathji at the end. Lane B DMs send people to this page.
