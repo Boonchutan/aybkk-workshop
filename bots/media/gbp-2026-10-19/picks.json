@@ -6,31 +6,35 @@
    "n": 1,
    "day": "Wed 21 Oct 10:00 BKK",
    "photo": "1-wed-14Oct26-099.jpg",
-   "en": "Mysore style: one room, everyone on their own breath and their own asanas. The teacher walks between the mats. 🌿",
-   "th": "สไตล์มัยซอร์: ห้องเดียวกัน ทุกคนฝึกอาสนะตามลมหายใจของตัวเอง ครูเดินดูอยู่ระหว่างเสื่อ",
+   "en": "At home you skip the asana you hate. Nobody sees. 🙈 In our Mysore room, everyone breathes on their own count, side by side. You don't skip. The room keeps you honest.",
+   "th": "อยู่บ้าน คุณข้ามอาสนะที่ไม่ชอบ ไม่มีใครเห็น ในห้องมัยซอร์ของเรา ทุกคนหายใจตามจังหวะของตัวเอง เคียงข้างกัน คุณจะไม่ข้าม",
    "cta": "BOOK https://aybkk.net/start/gp-261021",
-   "chars": 198
+   "chars": 285,
+   "old_en": "Mysore style: one room, everyone on their own breath and their own asanas. The teacher walks between the mats. 🌿"
   },
   {
    "n": 2,
    "day": "Fri 23 Oct 10:00 BKK",
    "photo": "2-fri-17Oct26-440.jpg",
-   "en": "In Mysore class the teacher comes to your mat. A teacher who knows your practice sees what you can't. 🤲",
-   "th": "ในคลาสมัยซอร์ ครูจะมาช่วยถึงเสื่อของคุณ ครูที่รู้จักการฝึกของคุณจะเห็นสิ่งที่คุณมองไม่เห็นเอง",
+   "en": "You can't see your own back. So you fold the same way for years. 🤔 Then the teacher puts one hand in the right spot. You feel what no video could explain.",
+   "th": "คุณมองไม่เห็นหลังตัวเอง เลยพับตัวแบบเดิมมาหลายปี แล้วครูก็วางมือลงตรงจุดที่ใช่ คุณรู้สึกได้ทันที",
    "cta": "BOOK https://aybkk.net/start/gp-261023",
    "note": "teacher's side face shows: needs Boonchu's OK that he is on the team",
-   "chars": 197
+   "chars": 251,
+   "old_en": "In Mysore class the teacher comes to your mat. A teacher who knows your practice sees what you can't. 🤲"
   },
   {
    "n": 3,
    "day": "Sun 25 Oct 10:00 BKK",
    "photo": "3-sun-16Oct26-129.jpg",
-   "en": "Same time. Same mat. Same practice. The habit does the hard work. 🌅",
-   "th": "เวลาเดิม เสื่อเดิม การฝึกเดิม แล้วนิสัยจะทำงานหนักแทนคุณ",
+   "en": "You start on Monday. By Thursday, you stop. 😅 Here: same time, same mat, and a teacher who notices when you're missing. Habit shows up when motivation doesn't.",
+   "th": "เริ่มวันจันทร์ พอวันพฤหัสก็เลิก ที่นี่ เวลาเดิม เสื่อเดิม และครูที่สังเกตเมื่อคุณหายไป",
    "cta": "BOOK https://aybkk.net/start/gp-261025",
-   "chars": 124
+   "chars": 246,
+   "old_en": "Same time. Same mat. Same practice. The habit does the hard work. 🌅"
   }
  ],
  "backup": "backup-16Oct26-148.jpg",
- "rejected": "16Oct26-022 (two background faces only half blurred), 16-151/12-006/12-011 (lineage decals or altar-like frame in view)"
+ "rejected": "16Oct26-022 (two background faces only half blurred), 16-151/12-006/12-011 (lineage decals or altar-like frame in view)",
+ "structure": "FAIL -> HERO -> PAYOFF (house story pattern): reader's own fail moment as the hook, what happens in the shala, one closing line"
 }
