@@ -6,3 +6,4 @@ Reel from Plato: Dilipa walks at the cow's pace for 21 days (Raghuvamsha). Asana
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb). Letter #1 planned today: not approved yet.
 Carne and Plato both posted today. Inbox 07:08: 0 new, 1 hot carried from yesterday.
 13:08 check-in: Mysore Reel still waiting (1 day), course prices still waiting (3 days). Inbox: 4 new, 2 hot.
+19:08 check-in: no new decisions (Reel and prices reminded twice today). Inbox: 3 new threads, 1 needs an answer, 0 hot; yesterday's renewal thread looks answered.

@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-19T06:18:25.650Z
+Inbox last read: 2026-10-19T12:13:03.323Z
 
 ## Standing orders from Boonchu
 - 2026-10-17 (Boonchu, HOUSE RULE for every student or customer message and review reply): never write "sorry". For a late answer write "Thank you for your patience with our reply." Keep replies brief, friendly and precise.
@@ -141,3 +141,4 @@ Inbox last read: 2026-10-19T06:18:25.650Z
 - 2026-10-18 19:08: Inbox 1 new, 1 hot (LINE renewal question). No answer on prices or Reel by 19:00: default B applied on both (sales open Tue 10 Nov, start Tue 17 Nov; Reel Wed 21 Oct). No win, no reminders due. Next step given: answer the LINE renewal question.
 - 2026-10-19 07:08: Both bots posted. Inbox 07:08: 0 new; 1 hot carried (LINE renewal question from 18 Oct, no reply seen). New choice sets: prices by 19:00 Thu 22 Oct (B = sales Tue 17 Nov, start Tue 24 Nov), Reel by 19:00 Tue 20 Oct (B = Fri 23 Oct). No reminders due, no wins.
 - 2026-10-19 13:08: Inbox 4 new, 2 hot (LINE renewal: now asks next month's schedule and bank account; LINE class-status fix). Reel (1 day) and prices (3 days) reminded, 2nd time today each: do not repeat at 19:08. No reminders due, no wins.
+- 2026-10-19 19:08: Inbox 3 new, 1 needs an answer, 0 hot (renewal thread from 18 Oct now ends with the student's OK: looks answered in the LINE OA app). Prices and Reel not repeated (2 nudges today already). No win, no reminders due. Next step given: answer Carne's invite-only question (Led online class) before Carne's 20 Oct check.
