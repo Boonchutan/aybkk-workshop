@@ -5,3 +5,4 @@ Countdowns: Google ad first check and Batch Sheet Thu 22 Oct: 2 days; door check
 Reel from Plato: Arjuna loses to a hunter who is Shiva, stays, gets the gift. Asana: Virabhadrasana. Hook: "She lost the first race. Then she made history." Waiting on Boonchu's cue.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
 Carne and Plato both posted today. Inbox 07:08: 0 new; 1 carried (LINE class-status fix, may be answered).
+13:08 check-in: Mysore Reel due 19:00 today (B = Fri 23 Oct), course prices 2 days (by Thu 22 Oct), 2nd nudge today each. Inbox: 0 new.
