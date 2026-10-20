@@ -4,7 +4,26 @@
   "id": "ES2",
   "word": "candle",
   "line": "My candle burns at both ends. It will not last the night.",
-  "credit": "Edna St. Vincent Millay · First Fig, 1918"
+  "credit": "Edna St. Vincent Millay · First Fig, 1918",
+  "t": 0,
+  "layout": "split",
+  "spos": "top-right",
+  "bs": 110,
+  "wpos": [
+   1020,
+   262
+  ],
+  "wbs": 178,
+  "ink_w": "dark",
+  "wmxy": [
+   660,
+   1210
+  ],
+  "sxy": [
+   "R",
+   60
+  ],
+  "ink_s": "dark"
  },
  {
   "photo": "20-066",
@@ -23,7 +42,8 @@
   "layout": "split",
   "pos": "top-left",
   "spos": "top-right",
-  "bs": 178
+  "bs": 178,
+  "shadow": 1.4
  },
  {
   "photo": "20-114",
@@ -53,14 +73,21 @@
   "id": "ER2",
   "word": "nap",
   "line": "After little sleep, a 10-minute nap made people more alert right away.",
-  "credit": "Brooks & Lack · Sleep, 2006"
+  "credit": "Brooks & Lack · Sleep, 2006",
+  "t": 248,
+  "wmxy": [
+   660,
+   1210
+  ]
  },
  {
   "photo": "20-061",
   "id": "EY3",
   "word": "breath",
   "line": "Yogis count life in breaths, not days, and breathe slow and deep.",
-  "credit": "B. K. S. Iyengar · Light on Yoga, 1966"
+  "credit": "B. K. S. Iyengar · Light on Yoga, 1966",
+  "sz": 50,
+  "wscale": 0.9
  },
  {
   "photo": "20-087",

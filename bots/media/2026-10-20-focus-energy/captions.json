@@ -41,5 +41,11 @@
   "C": "energy, Burn Slow Last Long, 8 slides",
   "D": "energy, Breath Has Wings, 8 slides"
  },
- "state": "slides built, in review; waiting for Boonchu's crop check and go"
+ "state": "36 slides final (out5), 2 review rounds done; sent to Boonchu 21 Oct ~03:00 for crop check; waiting for go",
+ "order": {
+  "1st (on go)": "A",
+  "2nd 06:00 BKK (23:00Z)": "C",
+  "3rd 09:00 BKK (02:00Z)": "B",
+  "4th 12:00 noon BKK (05:00Z), confirm noon": "D"
+ }
 }

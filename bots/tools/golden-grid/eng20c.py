@@ -33,7 +33,7 @@ def ttext(d, xy, t, f, trk, fill):
     for i, ch in enumerate(t):
         d.text((x, y), ch, font=_fc(f, ch), fill=fill, anchor='ls')
         x += (_fc(f, ch).getlength(ch) if mixed else f.getlength(t[:i + 1]) - f.getlength(t[:i])) + trk * f.size
-WEAK = {'a', 'an', 'the', 'of', 'to', 'and', 'in', 'on', 'at', 'for'}
+WEAK = {'a', 'an', 'the', 'of', 'to', 'and', 'in', 'on', 'at', 'for', 'but', 'so', 'or'}
 def _greedy(words, f, width):
     out, cur = [], []
     for w in words:
@@ -97,7 +97,7 @@ def clean(n):
         _CLEAN[n] = (cv2.inpaint(B, mm, 5, cv2.INPAINT_TELEA), reg, a)
     return _CLEAN[n]
 
-def frame(n, t, wm=None, tight=False):
+def frame(n, t, wm=None, tight=False, wmxy=None):
     """t = int (crop window top in the 1080x1620 photo) or 'pad'. Returns the slide photo and its masks."""
     B = big(n)
     if t == 'pad':
@@ -117,7 +117,7 @@ def frame(n, t, wm=None, tight=False):
     def hit(r, pad=8):
         a_ = keep[max(0, int(r[1]) - pad):min(H, int(r[3]) + pad), max(0, int(r[0]) - pad):min(W, int(r[2]) + pad)]
         return a_.size > 0 and a_.mean() > 0.0
-    if orig_r is not None and wm in (None, 'orig') and not hit(orig_r):
+    if orig_r is not None and wm in (None, 'orig') and not wmxy and not hit(orig_r):
         img = build(B); wmode = 'orig'; wmr = orig_r
     else:
         src, reg, a = clean(n); img = build(src)
@@ -132,6 +132,7 @@ def frame(n, t, wm=None, tight=False):
                 c = (10 if hit(r) else 0) + 2 * main[sl].mean() + 0.6 * float(g[sl].mean()) / 255 + 0.08 * yi + (0 if xn == 'center' else 0.12)
                 opts.append((c, xn, r))
         c, wmode, wmr = min(opts)
+        if wmxy: wmode, wmr = 'hand', (wmxy[0], wmxy[1], wmxy[0] + 360, wmxy[1] + 80)
         tx, ty = int(wmr[0]), int(wmr[1])
         # soft dark backing so the thin lines read on a light floor (the original has the photographer's dark gradient)
         lum = float(g[ty:ty + 80, tx:tx + 360].mean()); strength = float(np.clip((lum - 60) / 110, 0, 1)) * 0.5
@@ -282,7 +283,7 @@ def best(s, prev_corner=None):
     top, bot = body_span(n); res = []
     for allow_feet in (False, True):
         for t in ts:
-            fr = frame(n, t, s.get('wm'), s.get('tight', False)); st = Stats(fr)
+            fr = frame(n, t, s.get('wm'), s.get('tight', False), s.get('wmxy')); st = Stats(fr)
             frame_pen = 0 if t == 'pad' else max(0, (t + H) - bot - 90) / 350
             for L in layouts(fr, st, s['word'], s['line'], s['credit'], allow_feet, s):
                 L['score'] += frame_pen + (0.35 if prev_corner and L['corner'] == prev_corner else 0); L['t'] = t; L['fr'] = fr
@@ -315,7 +316,8 @@ def render(L, word, ink_w=None, ink_s=None, shadow=1.0):
     def layer(base, fn, ink):
         txt = Image.new('L', (W, H), 0); fn(ImageDraw.Draw(txt), 255)
         col = SHADOW if ink == 'light' else GLOW
-        sh = Image.new('L', (W, H), 0); sh.paste(txt.filter(ImageFilter.GaussianBlur(7 * k)).point(lambda v: int(min(255, v * 1.5 * k) * (0.55 if ink == 'light' else 0.4))), (0, 4 if ink == 'light' else 0))
+        a_l, a_d = (0.55, 0.4) if fn is dw else (0.68, 0.6)
+        sh = Image.new('L', (W, H), 0); sh.paste(txt.filter(ImageFilter.GaussianBlur(7 * k)).point(lambda v: int(min(255, v * 1.5 * k) * (a_l if ink == 'light' else a_d))), (0, 4 if ink == 'light' else 0))
         base = Image.alpha_composite(base, Image.merge('RGBA', [Image.new('L', (W, H), c) for c in col] + [sh]))
         fn(ImageDraw.Draw(base), (LIGHT if ink == 'light' else DARK) + (255,)); return base
     k = 1.0; base = layer(img.convert('RGBA'), dw, wi); k = shadow; base = layer(base, ds, si)
@@ -332,8 +334,20 @@ if __name__ == '__main__':
         r = best(s, prev)
         if not r: print(k + 1, s['photo'], 'NO SPOT'); log[k + 1] = dict(n=k + 1, photo=s['photo'], fail=True); continue
         L = r[0]
+        if s.get('sxy'):    # hand placement of the sentence block (top-left corner)
+            x, y = s['sxy']; w_, h_ = L['sr'][2] - L['sr'][0], L['sr'][3] - L['sr'][1]
+            if x == 'R': x = W - M - w_; L['sright'] = True     # right-aligned on the margin
+            L['sr'] = (x, y, x + w_, y + h_)
+            if s.get('ink_s'): L['sink'] = s['ink_s']
+        if s.get('wscale'):  # shrink the keyword in place: same baseline, same aligned edge
+            old = L['wg']; nb = round(L['bs'] * s['wscale']); wg = word_geom(s['word'], nb); base = L['wr'][1] + old['asc']
+            right = L['right']; x0 = L['wr'][2] - wg['w'] if right else L['wr'][0]
+            L['wr'] = (x0, base - wg['asc'], x0 + wg['w'], base + wg['desc']); L['wg'] = wg; L['bs'] = nb
         if s.get('wpos'):   # hand placement of the keyword (x of its right edge, y of its top), for frames the search cannot solve
-            wg = L['wg']; xr, y = s['wpos']; L['wr'] = (xr - wg['w'], y, xr, y + wg['asc'] + wg['desc']); L['wink'] = s.get('ink_w', 'light')
+            if s.get('wbs'): L['wg'] = word_geom(s['word'], s['wbs']); L['bs'] = s['wbs']
+            wg = L['wg']; xr, y = s['wpos']
+            if xr == 'L': xr = M + wg['w']; L['right'] = False
+            L['wr'] = (xr - wg['w'], y, xr, y + wg['asc'] + wg['desc']); L['wink'] = s.get('ink_w', 'light')
         out = render(L, s['word'], s.get('ink_w'), s.get('ink_s'), s.get('shadow', 1.0))
         out.save(os.path.join(out_dir, f"{k+1:02d}.jpg"), quality=93)
         lo, hi = t_range(s['photo'])

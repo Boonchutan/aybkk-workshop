@@ -24,19 +24,28 @@
    280
   ],
   "layout": "split",
-  "spos": "top-right"
+  "spos": "top-right",
+  "wmxy": [
+   60,
+   1085
+  ]
  },
  {
   "photo": "20-095",
   "id": "FW6",
   "word": "eat",
   "line": "A Zen master's practice: when hungry, I eat. When tired, I sleep.",
-  "credit": "Dazhu Huihai · tr. John Blofeld, 1962",
-  "t": 60,
+  "credit": "Dazhu Huihai · tr. Blofeld, 1962",
+  "t": 105,
   "layout": "split",
   "pos": "top-right",
+  "bs": 178,
   "spos": "top-left",
-  "bs": 178
+  "cws": [
+   320,
+   300
+  ],
+  "sz": 48
  },
  {
   "photo": "20-084",
@@ -55,7 +64,8 @@
   "id": "FR7",
   "word": "gaze",
   "line": "Better basketball shooters held a still gaze on the hoop longer.",
-  "credit": "Joan Vickers · J Exp Psychol, 1996"
+  "credit": "Joan Vickers · J Exp Psychol, 1996",
+  "sz": 50
  },
  {
   "photo": "20-057",
@@ -92,6 +102,6 @@
   "word": "drishti",
   "line": "So in every Sun Salutation, never forget drishti (gaze), bandhas and breath.",
   "credit": "K. Pattabhi Jois · Yoga Mala",
-  "t": 20
+  "t": 80
  }
 ]

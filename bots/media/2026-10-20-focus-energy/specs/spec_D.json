@@ -20,9 +20,10 @@
   "bs": 110,
   "wpos": [
    963,
-   826
+   836
   ],
-  "ink_w": "light"
+  "ink_w": "light",
+  "wbs": 100
  },
  {
   "photo": "20-102",
@@ -41,7 +42,11 @@
   "id": "EB7",
   "word": "six",
   "line": "Fifteen, six or three breaths a minute? Six wasted the least air.",
-  "credit": "Russo et al. · Breathe, 2017"
+  "credit": "Russo et al. · Breathe, 2017",
+  "wmxy": [
+   60,
+   1215
+  ]
  },
  {
   "photo": "20-163",
@@ -52,7 +57,8 @@
   "t": 210,
   "layout": "stack",
   "pos": "bottom-right",
-  "bs": 110
+  "bs": 110,
+  "shadow": 1.6
  },
  {
   "photo": "20-001",
@@ -72,13 +78,27 @@
   "t": "pad",
   "layout": "stack",
   "pos": "bottom-left",
-  "tight": true
+  "tight": true,
+  "sxy": [
+   125,
+   700
+  ],
+  "wpos": [
+   975,
+   1245
+  ],
+  "ink_w": "light",
+  "wmxy": [
+   125,
+   1250
+  ]
  },
  {
   "photo": "20-169",
   "id": "EY11",
   "word": "bird",
   "line": "Tied to uddiyana bandha, the great bird, prana, flies without tiring.",
-  "credit": "Hatha Yoga Pradipika 3.55 · tr. Sinh, 1915"
+  "credit": "Hatha Yoga Pradipika · 3.55, tr. Sinh, 1915",
+  "t": 160
  }
 ]

@@ -4,7 +4,23 @@
   "id": "FR1",
   "word": "elsewhere",
   "line": "In 46.9% of random phone check-ins, people's minds were elsewhere.",
-  "credit": "Killingsworth & Gilbert · Science, 2010"
+  "credit": "Killingsworth & Gilbert · Science, 2010",
+  "t": 168,
+  "bs": 178,
+  "sz": 46,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   "R",
+   205
+  ],
+  "ink_s": "dark",
+  "wpos": [
+   "L",
+   60
+  ],
+  "ink_w": "dark"
  },
  {
   "photo": "20-046",
@@ -32,7 +48,8 @@
   "id": "FR3",
   "word": "trees",
   "line": "One way back: walking among trees refreshed focus more than city streets.",
-  "credit": "Berman et al. · Psychol Science, 2008"
+  "credit": "Berman et al., 2008 · Psychol Science",
+  "t": 220
  },
  {
   "photo": "20-112",
@@ -72,6 +89,7 @@
   "id": "FY15",
   "word": "ashtanga",
   "line": "So how do we make the mind one-pointed? Ashtanga yoga teaches this.",
-  "credit": "K. Pattabhi Jois · Yoga Mala"
+  "credit": "K. Pattabhi Jois · Yoga Mala",
+  "t": 100
  }
 ]
