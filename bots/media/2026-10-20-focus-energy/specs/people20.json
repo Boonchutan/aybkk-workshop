@@ -1,0 +1,124 @@
+{
+ "groups": [
+  {
+   "ids": [
+    "20-024",
+    "20-069",
+    "20-095",
+    "20-106",
+    "20-112",
+    "20-129"
+   ],
+   "who": "Adjusting teacher: man, short black hair, purple AYBKK sleeveless tank, cream leaf/floral-print shorts (main figure in all six)",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-032",
+    "20-114"
+   ],
+   "who": "Woman, dark hair clipped up, red-and-white Champion crop top, cream/white leggings, wristwatch",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-054",
+    "20-075"
+   ],
+   "who": "Older Asian man, short grey-black hair, shirtless, bright/light blue shorts, dark mat (same face)",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-066",
+    "20-095"
+   ],
+   "who": "Older Asian woman, dark hair tied back, salmon-pink strappy sports bra, dark brown shorts, white towel on navy-edged mat (student lying under the teacher in 095)",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-106",
+    "20-138"
+   ],
+   "who": "Woman, dark hair pulled back/headband, maroon-brown top with white trim and pink stripes, brown shorts, purple mat",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-087",
+    "20-148",
+    "20-155"
+   ],
+   "who": "Man, short grey hair, stubble, hairy chest/belly, shirtless, black shorts, pink/maroon mat by the window under the framed print",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-151",
+    "20-163",
+    "20-171",
+    "20-174"
+   ],
+   "who": "Woman, curly dark hair in a bun, white racerback sports bra, purple AYBKK shorts with pink lettering",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-146",
+    "20-157"
+   ],
+   "who": "Woman, shoulder-length dark hair, bright orange AYBKK crop top and orange shorts (right-hand woman in 157)",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-034",
+    "20-084",
+    "20-057"
+   ],
+   "who": "Woman, dark hair in a bun, earrings, pink/lavender Under Armour sports bra, black shorts, pink tie-dye mat (the woman with hands in prayer in 057)",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-003",
+    "20-057"
+   ],
+   "who": "Woman, long dark hair in a high bun, multicolour zigzag-stripe bikini top and bottoms (the woman folded in front in 057)",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "20-102",
+    "20-169"
+   ],
+   "who": "Young man, short black hair, shirtless, black shorts, on a grey-white towel with a green edge",
+   "sure": "medium"
+  },
+  {
+   "ids": [
+    "20-009",
+    "20-024"
+   ],
+   "who": "Lean young man, short black hair, shirtless, dark teal-grey shorts (the student lifted by the teacher in 024)",
+   "sure": "medium"
+  },
+  {
+   "ids": [
+    "20-069",
+    "20-157"
+   ],
+   "who": "Woman, long dark hair, black sports bra, short black high-cut shorts, pale mat with pink/red edge (the student in 069, the left-hand woman in 157)",
+   "sure": "medium"
+  },
+  {
+   "ids": [
+    "20-095",
+    "20-112"
+   ],
+   "who": "Woman, dark hair in a bun, purple top and purple shorts, black mat near the wooden door (the seated woman on the left in 095, the student under the teacher in 112)",
+   "sure": "medium"
+  }
+ ]
+}

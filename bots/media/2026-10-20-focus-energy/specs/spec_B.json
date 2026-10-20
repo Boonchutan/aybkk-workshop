@@ -1,0 +1,97 @@
+[
+ {
+  "photo": "20-146",
+  "id": "FR2",
+  "word": "seconds",
+  "line": "Average attention on one screen: 2.5 minutes in 2004. Now, 47 seconds.",
+  "credit": "Gloria Mark, UC Irvine · CNN, 2023"
+ },
+ {
+  "photo": "20-054",
+  "id": "FW7",
+  "word": "swan",
+  "line": "Imagine two students. One daydreams of a swan, and falls behind.",
+  "credit": "Mencius 6A9 · tr. James Legge, 1861"
+ },
+ {
+  "photo": "20-154",
+  "id": "FW8",
+  "word": "fish",
+  "line": "Thais say: grab two fish at once, and you may catch neither.",
+  "credit": "Thai saying · Royal Institute Dictionary",
+  "cws": [
+   300,
+   280
+  ],
+  "layout": "split",
+  "spos": "top-right"
+ },
+ {
+  "photo": "20-095",
+  "id": "FW6",
+  "word": "eat",
+  "line": "A Zen master's practice: when hungry, I eat. When tired, I sleep.",
+  "credit": "Dazhu Huihai · tr. John Blofeld, 1962",
+  "t": 60,
+  "layout": "split",
+  "pos": "top-right",
+  "spos": "top-left",
+  "bs": 178
+ },
+ {
+  "photo": "20-084",
+  "id": "FS8",
+  "word": "seams",
+  "line": "To focus deeper, don't just see the ball. Watch its spinning seams.",
+  "credit": "W. Timothy Gallwey · Inner Game of Tennis",
+  "t": 210,
+  "layout": "split",
+  "pos": "top-right",
+  "spos": "bottom-right",
+  "bs": 110
+ },
+ {
+  "photo": "20-138",
+  "id": "FR7",
+  "word": "gaze",
+  "line": "Better basketball shooters held a still gaze on the hoop longer.",
+  "credit": "Joan Vickers · J Exp Psychol, 1996"
+ },
+ {
+  "photo": "20-057",
+  "id": "FY7",
+  "word": "nose",
+  "line": "Long before basketball, the Gita taught: sit still, eyes on nose tip.",
+  "credit": "Bhagavad Gita 6.13 · tr. Annie Besant"
+ },
+ {
+  "photo": "20-106",
+  "id": "FW9",
+  "word": "root",
+  "line": "Bringing wandering attention back, again and again, is the root of willpower.",
+  "credit": "William James · Principles, 1890",
+  "t": 270,
+  "layout": "split",
+  "pos": "bottom-right",
+  "spos": "top-left",
+  "bs": 110,
+  "cws": [
+   280
+  ]
+ },
+ {
+  "photo": "20-171",
+  "id": "FY16",
+  "word": "dharana",
+  "line": "Yoga has a word for holding the mind in place: dharana.",
+  "credit": "T. Krishnamacharya · Yoga Makaranda, 1934"
+ },
+ {
+  "photo": "20-075",
+  "id": "FY13",
+  "word": "drishti",
+  "line": "So in every Sun Salutation, never forget drishti (gaze), bandhas and breath.",
+  "credit": "K. Pattabhi Jois · Yoga Mala",
+  "t": 20
+ }
+]
