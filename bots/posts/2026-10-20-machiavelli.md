@@ -6,3 +6,4 @@ Reel from Plato: Arjuna loses to a hunter who is Shiva, stays, gets the gift. As
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
 Carne and Plato both posted today. Inbox 07:08: 0 new; 1 carried (LINE class-status fix, may be answered).
 13:08 check-in: Mysore Reel due 19:00 today (B = Fri 23 Oct), course prices 2 days (by Thu 22 Oct), 2nd nudge today each. Inbox: 0 new.
+19:08 check-in: no answer on the Mysore Reel by 19:00, default B applied (Reel moves to Fri 23 Oct). Prices due Thu 22 Oct (2 days), not repeated. No win reported. Inbox: 0 new.
