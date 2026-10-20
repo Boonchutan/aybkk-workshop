@@ -1,0 +1,382 @@
+{
+ "A": {
+  "title": "Like the Wind",
+  "lines": [
+   {
+    "photo": "20-157",
+    "id": "FR1",
+    "word": "elsewhere",
+    "line": "In 46.9% of random phone check-ins, people's minds were elsewhere.",
+    "credit": "Killingsworth & Gilbert · Science, 2010",
+    "quote": "A phone app checked in on 2,250 adults (average age 34) at random moments. At 46.9% of the check-ins, they were thinking about something other than what they were doing. Killingsworth: \"Mind-wandering appears ubiquitous across all activities.\"",
+    "source": "Killingsworth MA, Gilbert DT. A wandering mind is an unhappy mind. Science, 12 Nov 2010; 330(6006): 932, doi:10.1126/science.1192439 (analysed sample: 2,250 adults, 58.8% male, 73.9% living in the US, mean age 34). Killingsworth quote from Harvard Gazette, 11 Nov 2010",
+    "url": "https://news.harvard.edu/gazette/story/2010/11/wandering-mind-not-a-happy-mind/"
+   },
+   {
+    "photo": "20-046",
+    "id": "FS1",
+    "word": "tangerine",
+    "line": "A monk's friend ate tangerine slices, hardly aware he was eating them.",
+    "credit": "Thich Nhat Hanh · Miracle of Mindfulness",
+    "quote": "He popped a section of tangerine in his mouth and, before he had begun chewing it, had another slice ready to pop into his mouth again. He was hardly aware he was eating a tangerine. All I had to say was, \"You ought to eat the tangerine section you've already taken.\"",
+    "source": "Thich Nhat Hanh, The Miracle of Mindfulness, ch. 1 'The Essential Discipline', section 'Eating a tangerine'; tr. Mobi Ho; Beacon Press, Boston, rev. ed. 1987 (copyright 1975, 1976)",
+    "url": "https://archive.org/details/miracle-of-mindfulness"
+   },
+   {
+    "photo": "20-003",
+    "id": "FY1",
+    "word": "wind",
+    "line": "Long ago, Arjuna said: the mind is hard to hold, like wind.",
+    "credit": "Bhagavad Gita 6.34 · tr. Annie Besant",
+    "quote": "For the mind is verily restless, O Krishna; it is impetuous, strong and difficult to bend. I deem it as hard to curb as the wind.",
+    "source": "Bhagavad Gita 6.34, tr. Annie Besant, The Bhagavad-Gita or The Lord's Song, 4th ed., Madras: G. A. Natesan, Nov. 1922, p. 98",
+    "url": "https://archive.org/download/bhagavadgitaorlo00besa/bhagavadgitaorlo00besa_djvu.txt"
+   },
+   {
+    "photo": "20-032",
+    "id": "FW3",
+    "word": "habit",
+    "line": "Let attention slip briefly, and not paying attention becomes a habit.",
+    "credit": "Epictetus · Discourses IV.12 · tr. Long",
+    "quote": "When you have remitted your attention for a short time, do not imagine this, that you will recover it when you choose... For first, and what causes most trouble, a habit of not attending is formed in you; then a habit of deferring your attention.",
+    "source": "Discourses IV.12 'On Attention' (Peri prosoches), 12.1-2, tr. George Long (1877); text from Project Gutenberg 'A Selection from the Discourses of Epictetus with the Encheiridion'",
+    "url": "https://www.gutenberg.org/cache/epub/10661/pg10661.txt"
+   },
+   {
+    "photo": "20-151",
+    "id": "FR3",
+    "word": "trees",
+    "line": "One way back: walking among trees refreshed focus more than city streets.",
+    "credit": "Berman et al. · Psychol Science, 2008",
+    "quote": "38 University of Michigan students took a 50 to 55 minute, 2.8-mile walk in the Ann Arbor Arboretum and, a week later, the same distance along a busy downtown street (order swapped for half). After the nature walk their backwards digit-span score rose by 1.5 digits; after the city walk, by 0.5.",
+    "source": "Berman MG, Jonides J, Kaplan S. The cognitive benefits of interacting with nature. Psychological Science 2008; 19(12): 1207-1212, doi:10.1111/j.1467-9280.2008.02225.x, Experiment 1 and Table 1",
+    "url": "https://www.Gwern.net/doc/psychology/nature/2008-berman.pdf"
+   },
+   {
+    "photo": "20-112",
+    "id": "FR6",
+    "word": "sleep",
+    "line": "Sleep matters too: short nights slowly weakened focus, and people barely noticed.",
+    "credit": "Van Dongen et al. · Sleep, 2003",
+    "quote": "48 healthy adults (ages 21 to 38) lived in a sleep lab. People allowed only 6 hours (or 4) in bed a night for 14 days built up attention and thinking deficits equal to up to 2 full nights without sleep, yet their own sleepiness ratings rose only a little after the first days.",
+    "source": "Van Dongen HP, Maislin G, Mullington JM, Dinges DF. The cumulative cost of additional wakefulness: dose-response effects on neurobehavioral functions and sleep physiology from chronic sleep restriction and total sleep deprivation. Sleep 2003; 26(2): 117-126, doi:10.1093/sleep/26.2.117 (PMID 12683469)",
+    "url": "https://academic.oup.com/sleep/article/26/2/117/2709164"
+   },
+   {
+    "photo": "20-173",
+    "id": "FY10",
+    "word": "breath",
+    "line": "The mind rules the senses. But the breath rules the mind.",
+    "credit": "Hatha Yoga Pradipika 4.29 · tr. P. Sinh",
+    "quote": "Mind is the master of the senses, and the breath is the master of the mind.",
+    "source": "Hatha Yoga Pradipika 4.29, tr. Pancham Sinh, Sacred Books of the Hindus vol. XV part III, Allahabad: Panini Office, 1915 (first published January 1915; often cited as 1914)",
+    "url": "https://www.wisdomlib.org/hinduism/book/hatha-yoga-pradipika-english/d/doc7977.html"
+   },
+   {
+    "photo": "20-155",
+    "id": "FR9",
+    "word": "count",
+    "line": "In a trial, four weeks of counting breaths cut mind wandering.",
+    "credit": "Levinson et al. · Front Psychol, 2014",
+    "quote": "Researchers had people count their breaths from 1 to 9, again and again, pressing a key on each breath. Long-term meditators kept count more accurately and wandered less than novices. In an online trial, 4 weeks of breath-counting practice (two 25-minute sessions each weekday) cut mind wandering compared with working-memory training or no training.",
+    "source": "Levinson DB, Stoll EL, Kindy SD, Merry HL, Davidson RJ. A mind you can count on: validating breath counting as a behavioral measure of mindfulness. Frontiers in Psychology 2014; 5: 1202, doi:10.3389/fpsyg.2014.01202 (PMC4208398)",
+    "url": "https://www.frontiersin.org/articles/10.3389/fpsyg.2014.01202/full"
+   },
+   {
+    "photo": "20-161",
+    "id": "FS10",
+    "word": "steady",
+    "line": "On game day, the Lakers breathed together, then stayed steady in overtime.",
+    "credit": "Phil Jackson · foreword, Mindful Athlete",
+    "quote": "When we made it to our banquet room, five minutes ahead of schedule, every player was already in his spot ready to sit and breathe together. As the game went into overtime that afternoon, the team stayed steady with the same collected calm they had shown before brunch.",
+    "source": "Phil Jackson, Foreword to George Mumford, The Mindful Athlete: Secrets to Pure Performance, Parallax Press, Berkeley, 2015",
+    "url": "https://archive.org/details/the-mindful-athlete-secrets-to-pure-performance"
+   },
+   {
+    "photo": "20-174",
+    "id": "FY15",
+    "word": "ashtanga",
+    "line": "So how do we make the mind one-pointed? Ashtanga yoga teaches this.",
+    "credit": "K. Pattabhi Jois · Yoga Mala",
+    "quote": "How can we make the mind one-pointed so that we may see the Universal Self? This is what ashtanga yoga teaches.",
+    "source": "K. Pattabhi Jois, Yoga Mala, tr. Eddie Stern, North Point Press, 2010 ed., opening of the eight-limbs discussion (just before 'Yama'); check the page against print",
+    "url": "https://terebess.hu/english/Yoga-Mala.pdf"
+   }
+  ]
+ },
+ "B": {
+  "title": "One Point",
+  "lines": [
+   {
+    "photo": "20-146",
+    "id": "FR2",
+    "word": "seconds",
+    "line": "Average attention on one screen: 2.5 minutes in 2004. Now, 47 seconds.",
+    "credit": "Gloria Mark, UC Irvine · CNN, 2023",
+    "quote": "\"Now we find people can only pay attention to one screen for an average of 47 seconds.\" In 2004 her team measured about 2.5 minutes, and some years later about 75 seconds.",
+    "source": "Interview by Sandee LaMotte, CNN, 30 May 2023 (CNN Newsource, carried by KTVZ), about her book Attention Span: A Groundbreaking Way to Restore Balance, Happiness and Productivity",
+    "url": "https://ktvz.com/health/cnn-health/2023/05/30/your-attention-span-is-shrinking-studies-say-heres-how-to-stay-focused-2/"
+   },
+   {
+    "photo": "20-054",
+    "id": "FW7",
+    "word": "swan",
+    "line": "Imagine two students. One daydreams of a swan, and falls behind.",
+    "credit": "Mencius 6A9 · tr. James Legge, 1861",
+    "quote": "Suppose that [Chess Qiu] is teaching two men to play. The one gives to the subject his whole mind and bends to it all his will, doing nothing but listening to Chess Qiu. The other, although he seems to be listening to him, has his whole mind running on a swan which he thinks is approaching... Although he is learning along with the other, he does not come up to him. Why? Because his intelligence is not equal? Not so.",
+    "source": "Mencius Book VI (Gaozi) Part I, ch. 9 (6A9; numbered 11.9 in the bilingual edition), tr. James Legge, The Chinese Classics vol. 2, 1861; text as printed in the Chinese-English 《孟子》 edition on chinakongzi.org, pp. 223-224",
+    "url": "https://chinakongzi.org/eBook/worksmencius/three/files/basic-html/page224.html"
+   },
+   {
+    "photo": "20-154",
+    "id": "FW8",
+    "word": "fish",
+    "line": "Thais say: grab two fish at once, and you may catch neither.",
+    "credit": "Thai saying · Royal Institute Dictionary",
+    "quote": "จับปลาสองมือ (chap pla song mue): 'Catching fish with two hands.'",
+    "source": "Royal Institute Thai Dictionary (ORST, online), sub-entry of จับ, marked (สำ). I looked it up through the site's func_lookup.php endpoint.",
+    "url": "https://dictionary.orst.go.th/"
+   },
+   {
+    "photo": "20-095",
+    "id": "FW6",
+    "word": "eat",
+    "line": "A Zen master's practice: when hungry, I eat. When tired, I sleep.",
+    "credit": "Dazhu Huihai · tr. John Blofeld, 1962",
+    "quote": "\"When hungry, I eat; when tired, I sleep.\" ... \"When they are eating, they think of a hundred kinds of necessities and when they are going to sleep they ponder over affairs of a thousand different kind.\"",
+    "source": "Jingde Chuandeng Lu (1004), juan 6, entry on Dazhu Huihai (Chinese at https://zh.wikisource.org/zh-hant/景德傳燈錄_(四部叢刊本)/卷第六). English: John Blofeld, The Zen Teaching of Hui Hai on Sudden Illumination (London: Rider, 1962), Part Two 'The Tsung Ching Record', section 7",
+    "url": "https://terebess.hu/zen/huihai-eng1.html"
+   },
+   {
+    "photo": "20-084",
+    "id": "FS8",
+    "word": "seams",
+    "line": "To focus deeper, don't just see the ball. Watch its spinning seams.",
+    "credit": "W. Timothy Gallwey · Inner Game of Tennis",
+    "quote": "I have found that the most effective way to deepen concentration through sight is to focus on something subtle, not easily perceived. It's easy to see the ball, but not so easy to notice the exact pattern made by its seams as it spins.",
+    "source": "W. Timothy Gallwey, The Inner Game of Tennis, ch. 7 'Concentration' (pp. 89-106), section 'Watching the Ball' (p. 91); Random House, New York, 1974",
+    "url": "https://archive.org/details/innergameoftenni00gall"
+   },
+   {
+    "photo": "20-138",
+    "id": "FR7",
+    "word": "gaze",
+    "line": "Better basketball shooters held a still gaze on the hoop longer.",
+    "credit": "Joan Vickers · J Exp Psychol, 1996",
+    "quote": "Joan Vickers fitted elite basketball players with eye trackers as they took free throws. The better shooters (78% success) fixed their gaze on the hoop early and held it, averaging 972 milliseconds on hits and 806 on misses. Their near-elite teammates (56%) averaged 400 and 250 milliseconds. She called this final steady gaze the 'quiet eye'.",
+    "source": "Vickers JN. Visual control when aiming at a far target. J Exp Psychol Hum Percept Perform 1996; 22(2): 342-354 (shooting percentages from the abstract). Millisecond figures from Vickers JN, Causer J, Vanhooren D. Front Psychol 2019; 10: 2424 (PMC6836760). Meta-analysis: Lebeau JC et al., J Sport Exerc Psychol 2016; 38(5): 441-457",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6836760"
+   },
+   {
+    "photo": "20-057",
+    "id": "FY7",
+    "word": "nose",
+    "line": "Long before basketball, the Gita taught: sit still, eyes on nose tip.",
+    "credit": "Bhagavad Gita 6.13 · tr. Annie Besant",
+    "quote": "Holding the body, head and neck erect, immovably steady, looking fixedly at the point of the nose, with unseeing gaze...",
+    "source": "Bhagavad Gita 6.13, tr. Annie Besant, The Bhagavad-Gita or The Lord's Song, 4th ed., Madras: G. A. Natesan, Nov. 1922, p. 91",
+    "url": "https://archive.org/download/bhagavadgitaorlo00besa/bhagavadgitaorlo00besa_djvu.txt"
+   },
+   {
+    "photo": "20-106",
+    "id": "FW9",
+    "word": "root",
+    "line": "Bringing wandering attention back, again and again, is the root of willpower.",
+    "credit": "William James · Principles, ch. 11, 1890",
+    "quote": "...the faculty of voluntarily bringing back a wandering attention, over and over again, is the very root of judgment, character, and will. No one is compos sui if he have it not. An education which should improve this faculty would be the education par excellence.",
+    "source": "The Principles of Psychology, vol. 1 (New York: Henry Holt, 1890), ch. XI 'Attention', p. 424; web edition by C. D. Green, Classics in the History of Psychology, York University",
+    "url": "https://psychclassics.yorku.ca/James/Principles/prin11.htm"
+   },
+   {
+    "photo": "20-171",
+    "id": "FY16",
+    "word": "dharana",
+    "line": "Yoga has a word for holding the mind in place: dharana.",
+    "credit": "T. Krishnamacharya · Yoga Makaranda, 1934",
+    "quote": "To stop the mind and hold it in its proper place is called dharana. This is an essential (very important) step in order to achieve ekagrata (one-pointedness) of the mind.",
+    "source": "T. Krishnamacharya, Yoga Makaranda (Kannada ed. 1934; Tamil ed. 1938, Madurai C.M.V. Press, tr. C. M. V. Krishnamacharya), English tr. Lakshmi Ranganathan and Nandini Ranganathan (translators' note dated 15 Oct 2006), ch. 1 'Introduction', section 1.4 'Dharana and Dhyana', p. 14",
+    "url": "https://terebess.hu/english/Yoga-Makaranda.pdf"
+   },
+   {
+    "photo": "20-075",
+    "id": "FY13",
+    "word": "drishti",
+    "line": "So in every Sun Salutation, never forget drishti (gaze), bandhas and breath.",
+    "credit": "K. Pattabhi Jois · Yoga Mala",
+    "quote": "Those who practice the Surya Namaskara in accordance with scriptural rules must never forget to be mindful of the drishti, bandhas, dhyana, rechaka, and puraka, as discussed earlier.",
+    "source": "K. Pattabhi Jois, Yoga Mala, tr. Eddie Stern, North Point Press, 2010 ed., 'Method for Doing the Second Surya Namaskara' (closing notes of the Surya Namaskara section); check the page against print",
+    "url": "https://terebess.hu/english/Yoga-Mala.pdf"
+   }
+  ]
+ },
+ "C": {
+  "title": "Burn Slow, Last Long",
+  "lines": [
+   {
+    "photo": "20-148",
+    "id": "ES2",
+    "word": "candle",
+    "line": "My candle burns at both ends. It will not last the night.",
+    "credit": "Edna St. Vincent Millay · First Fig, 1918",
+    "quote": "My candle burns at both ends; / It will not last the night; / But ah, my foes, and oh, my friends— / It gives a lovely light!",
+    "source": "\"First Fig\", in A Few Figs from Thistles (first published 1920). Text checked in Project Gutenberg eBook #4399, lines 64-67, which follows a later, enlarged edition.",
+    "url": "https://www.gutenberg.org/ebooks/4399"
+   },
+   {
+    "photo": "20-066",
+    "id": "ER6",
+    "word": "candy",
+    "line": "Candy gave energy, but briefly. An hour later, people felt more tired.",
+    "credit": "Robert Thayer · J Pers Soc Psychol, 1987",
+    "quote": "Over 12 days, 18 volunteers either ate a candy bar or took a brisk 10-minute walk, chosen at random each day. The walk raised energy and lowered tension for 2 hours. The candy bar gave a short lift, then more tiredness and less energy an hour later.",
+    "source": "Thayer RE. 'Energy, tiredness, and tension effects of a sugar snack versus moderate exercise', Journal of Personality and Social Psychology 52(1):119-125, 1987, doi 10.1037/0022-3514.52.1.119.",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:3820066&resultType=core&format=json"
+   },
+   {
+    "photo": "20-009",
+    "id": "ER9",
+    "word": "marathon",
+    "line": "Old marathon records: fast start, then slowing. Since 1988: a steadier pace.",
+    "credit": "Díaz et al. · Eur J Sport Sci, 2018",
+    "quote": "An analysis of every marathon world record over 50 years: record holders from 1967 to 1988 started faster, then slowed sharply after 25 km. Record holders since 1988 kept a much more even pace.",
+    "source": "Díaz JJ, Fernández-Ozcorta EJ, Santos-Concejero J. 'The influence of pacing strategy on marathon world records', European Journal of Sport Science 18(6):781-786, 2018, doi 10.1080/17461391.2018.1450899. Relative speed per 5 km section for each record.",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:29557279&resultType=core&format=json"
+   },
+   {
+    "photo": "20-114",
+    "id": "ES4",
+    "word": "stream",
+    "line": "A thin stream flows long: use a little at a time.",
+    "credit": "细水长流 · Chinese idiom",
+    "quote": "A thin stream flows long: use a little at a time so it does not run out; work steadily, little by little.",
+    "source": "Wiktionary entry 細水長流 (Idiom): literally \"a trickle flows for a long time\"; senses \"to economize to avoid running short\" and \"to work steadily at something little by little\". CC-CEDICT (MDBG): \"lit. thin streams flow forever / fig. economy will get you a long way / to work steadily at something little by little\".",
+    "url": "https://en.wiktionary.org/wiki/細水長流"
+   },
+   {
+    "photo": "20-176",
+    "id": "ES7",
+    "word": "bow",
+    "line": "A bow always kept bent soon breaks. Loosen it, and it's ready.",
+    "credit": "Phaedrus, Fables III.14 · tr. Riley, 1887",
+    "quote": "You will soon break the bow, if you always keep it bent; but if you loosen it, it will be fit for use when you want it.",
+    "source": "Phaedrus, Fables, Book III, Fable 14, 'Aesop at Play' (Latin title: De Lusu et Severitate), tr. Henry T. Riley, The Comedies of Terence and The Fables of Phaedrus (London: George Bell & Sons, 1887), Project Gutenberg #25512. Riley's moral: 'Thus ought recreation sometimes to be given to the mind, that it may return to you better fitted for thought.' Perry Index 505 (fablesofaesop.com).",
+    "url": "https://gutenberg.org/cache/epub/25512/pg25512-images.html"
+   },
+   {
+    "photo": "20-024",
+    "id": "ER2",
+    "word": "nap",
+    "line": "After little sleep, a 10-minute nap made people more alert right away.",
+    "credit": "Brooks & Lack · Sleep, 2006",
+    "quote": "After a short night of about 5 hours, a 10-minute afternoon nap right away improved sleepiness, fatigue, vigor and thinking, and some gains lasted up to 155 minutes. A 5-minute nap did little. A 30-minute nap left people groggy at first.",
+    "source": "Brooks A, Lack L. 'A brief afternoon nap following nocturnal sleep restriction: which nap duration is most recuperative?' Sleep 29(6):831-840, 2006, doi 10.1093/sleep/29.6.831. 24 healthy young adults (good sleepers, not regular nappers), repeated-measures design, naps of exactly 5, 10, 20 or 30 minutes of sleep at 3 pm, testing in the lab.",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:16796222&resultType=core&format=json"
+   },
+   {
+    "photo": "20-061",
+    "id": "EY3",
+    "word": "breath",
+    "line": "Yogis count life in breaths, not days, and breathe slow and deep.",
+    "credit": "B. K. S. Iyengar · Light on Yoga, 1966",
+    "quote": "The yogi's life is not measured by the number of his days but by the number of his breaths. Therefore, he follows the proper rhythmic patterns of slow deep breathing.",
+    "source": "B. K. S. Iyengar, Light on Yoga (George Allen & Unwin, 1966), Introduction, Pranayama section; p. 45 in the full edition (Schocken Books scan, archive.org lightonyogayogad00iyen); p. 25 in the abridged The Illustrated Light on Yoga (HarperCollins Publishers India, 1997)",
+    "url": "https://archive.org/download/TheIllustratedLightOnYogaIyengarBKS/The_Illustrated_Light_On_Yoga-Iyengar_B_K_S_djvu.txt"
+   },
+   {
+    "photo": "20-177",
+    "id": "EY13",
+    "word": "bandha",
+    "line": "Breathe with the three bandhas in asana. The mind follows the breath.",
+    "credit": "K. Pattabhi Jois · Yoga Mala, Pranayama",
+    "quote": "Only these kriyas, practiced in conjunction with the three bandhas [muscle contractions, or locks] and in accordance with the rules, can be called pranayama. What are the three bandhas? They are mula bandha, uddiyana bandha, and jalandhara bandha, and they should be performed while practicing asana and the like. Through the practice of pranayama, the mind becomes arrested in a single direction and follows the movement of the breath.",
+    "source": "K. Pattabhi Jois, Yoga Mala (Kannada 1962); first English ed. Eddie Stern/Patanjali Yoga Shala, 1999 (translators credited in the acknowledgments: Sri Vishwanath Kadam and Dr. H. L. Chandrashekar); North Point Press, New York, 2002; 2010 edition, section 'Pranayama'",
+    "url": "https://terebess.hu/english/Yoga-Mala.pdf"
+   }
+  ]
+ },
+ "D": {
+  "title": "Breath Has Wings",
+  "lines": [
+   {
+    "photo": "20-069",
+    "id": "EY8",
+    "word": "bee",
+    "line": "Breath is the queen bee. When it leaves, mind and senses follow.",
+    "credit": "Prasna Upanishad 2.3-4 · tr. Müller, 1884",
+    "quote": "Then Prâna (breath, spirit, life), as the best, said to them: Be not deceived, I alone, dividing myself fivefold, support this body and keep it. They were incredulous; so he, from pride, did as if he were going out from above. Thereupon, as he went out, all the others went out, and as he returned, all the others returned. As bees go out when their queen goes out, and return when she returns, thus (did) speech, mind, eye, and ear.",
+    "source": "Prasna Upanishad, Second Question, 3-4, tr. F. Max Müller, The Upanishads Part II, Sacred Books of the East vol. 15, Clarendon Press, Oxford, 1884, pp. 274-275",
+    "url": "https://neonvagabond.xyz/mirrors/sacred-texts/hin/sbe15/sbe15107.htm"
+   },
+   {
+    "photo": "20-034",
+    "id": "EY1",
+    "word": "shaky",
+    "line": "A scattered mind comes with a shaky body and uneven breath.",
+    "credit": "Yoga Sutra 1.31 & Vyasa · tr. Woods, 1914",
+    "quote": "Pain and despondency and unsteadiness of the body and inspiration and expiration are the accompaniments of the distractions. [Vyasa:] These occur in one whose mind-stuff is distracted. These do not occur in one whose mind-stuff is concentrated.",
+    "source": "Yoga Sutra 1.31 with Vyasa's Yoga-bhashya, tr. James Haughton Woods, The Yoga-System of Patanjali, Harvard Oriental Series vol. 17, Harvard University Press, Cambridge, Mass., 1914, p. 65",
+    "url": "https://archive.org/download/yogasystemofpata00wooduoft/yogasystemofpata00wooduoft_djvu.txt"
+   },
+   {
+    "photo": "20-102",
+    "id": "ER14",
+    "word": "cyclists",
+    "line": "Breathing costs energy: a machine eased it, and cyclists lasted 14% longer.",
+    "credit": "Harms et al. · J Appl Physiol, 2000",
+    "quote": "7 trained cyclists rode at 90% of their maximum until exhaustion, 11 times each. When a machine took over part of the work of breathing, they lasted 14% longer on average. When breathing was made harder, they stopped 15% sooner.",
+    "source": "Harms CA, Wetter TJ, St Croix CM, Pegelow DF, Dempsey JA. 'Effects of respiratory muscle work on exercise performance', Journal of Applied Physiology 89(1):131-138, 2000. Related: Harms et al., J Appl Physiol 85(2):609-618, 1998 (8 male cyclists): at maximal exercise up to 14-16% of cardiac output goes to the breathing muscles.",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:10904044&resultType=core&format=json"
+   },
+   {
+    "photo": "20-129",
+    "id": "EB7",
+    "word": "six",
+    "line": "Fifteen, six or three breaths a minute? Six wasted the least air.",
+    "credit": "Russo et al. · Breathe, 2017",
+    "quote": "A review of slow-breathing research describes a study comparing 15, 6 and 3 breaths a minute: 6 a minute was best for getting air to where oxygen is taken in, with the least wasted air, and was easy to sustain. Heart-rate variability and the body's blood-pressure reflex also tend to peak near 6 a minute, though the best pace varies between people.",
+    "source": "Russo MA, Santarelli DM, O'Rourke D. The physiological effects of slow breathing in the healthy human. Breathe (European Respiratory Society), 2017, 13(4):298-309. doi:10.1183/20734735.009817. Narrative review; the 6/min result comes from a cited study (ref 24) of healthy subjects and heart-failure patients",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5709795/"
+   },
+   {
+    "photo": "20-163",
+    "id": "ES13",
+    "word": "long",
+    "line": "In Japanese, a 'long breath' means steady work that lasts.",
+    "credit": "息が長い · Japanese idiom · Shogakukan",
+    "quote": "'The breath is long': you hold a drawn breath for a long time. By extension, a piece of work or an activity keeps a steady level and goes on for a long time.",
+    "source": "Seisen-ban Nihon Kokugo Daijiten (精選版 日本国語大辞典, Shogakukan), entry 息が長い, on Kotobank. Also Digital Daijisen (Shogakukan), sense 1: 長期にわたって続いている, example 「―・い仕事」 (息が長い仕事, 'long-breathed work'). Translation mine.",
+    "url": "https://kotobank.jp/word/息が長い-433001"
+   },
+   {
+    "photo": "20-001",
+    "id": "EY4",
+    "word": "nose",
+    "line": "In asana, breathe in and out equally, only through the nose.",
+    "credit": "T. Krishnamacharya · Yoga Makaranda, 1934",
+    "quote": "When practising asana, the breath that is inhaled into the body and the breath that is exhaled out must be kept equal. Moreover, practise the asana with their vinyasas by breathing only through the nose. Just as music without sruti and laya will not give any pleasure, similarly asana practice done without vinyasa krama will not give good health.",
+    "source": "T. Krishnamacharya, Yoga Makaranda, First Part (Kannada ed. 1934; Tamil ed. 1938, Madurai C.M.V. Press), English tr. from the Tamil by Lakshmi Ranganathan and Nandini Ranganathan (translators' note dated 15 Oct 2006), section 2.4 'Important Observations', p. 27",
+    "url": "https://terebess.hu/english/Yoga-Makaranda.pdf"
+   },
+   {
+    "photo": "20-087",
+    "id": "ER16",
+    "word": "floor",
+    "line": "As 8 women breathed, scans showed diaphragm and pelvic floor moving together.",
+    "credit": "Talasz et al. · Int Urogynecol J, 2011",
+    "quote": "Real-time MRI scans of 8 healthy women: as they breathed in, the diaphragm and the pelvic floor moved down together; as they breathed out, both moved up together.",
+    "source": "Talasz H, Kremser C, Kofler M, Kalchschmid E, Lechleitner M, Rudisch A. 'Phase-locked parallel movement of diaphragm and pelvic floor during breathing and coughing: a dynamic MRI investigation in healthy females', International Urogynecology Journal 22(1):61-68, 2011 (pilot study, 8 women who had not given birth).",
+    "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:20809211&resultType=core&format=json"
+   },
+   {
+    "photo": "20-169",
+    "id": "EY11",
+    "word": "bird",
+    "line": "Tied to uddiyana bandha, the great bird, prana, flies without tiring.",
+    "credit": "Hatha Yoga Pradipika 3.55 · tr. Sinh, 1915",
+    "quote": "Uḍḍiyâna is so called, because the great bird, Prâṇa, tied to it, flies without being fatigued.",
+    "source": "Hatha Yoga Pradipika 3.55 (Sinh's English numbering; Sanskrit verse 56 in the same edition, and 3.56 in most modern editions), tr. Pancham Sinh, Panini Office, Allahabad, 1915, p. 37 (translator's preface dated 31 January 1915; sacred-texts.com gives '[1914]')",
+    "url": "https://neonvagabond.xyz/mirrors/sacred-texts/hin/hyp/hyp05.htm"
+   }
+  ]
+ }
+}
