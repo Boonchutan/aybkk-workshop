@@ -716,34 +716,40 @@ const ok = (name, cond, extra = '') => {
   const queryKey = await J('/api/bkk/admin/orders?key=testkey');
   ok('a key in the query string is not accepted', queryKey.status === 401, String(queryKey.status));
 
-  console.log('\n— Bangkok calendar dates —');
   console.log('\n— the Monday letter (email sign-ups) —');
   {
     const { outbox } = require('../mailer');
     const asks = () => outbox.filter(m => m.tag === 'letter-confirm');
+    const tokOf = m => ((m || { text: '' }).text.match(/newsletter\/confirm\/([A-Za-z0-9_-]+)/) || [])[1];
+    const lastTok = to => tokOf(asks().filter(m => m.to === to).pop());
+    const mailsTo = to => asks().filter(m => m.to === to).length;
     const raw = async (path, opts) => { const r = await fetch(B + path, opts); return { status: r.status, text: await r.text(), headers: r.headers }; };
+    const sign = (email, ip, extra = {}) => post('/api/bkk/newsletter', { email, consent: true, ...extra }, { 'x-forwarded-for': ip });
+    const row = async email => (await pool.query('SELECT * FROM bkk_newsletter WHERE email=$1', [email])).rows[0];
+    const ago = (email, iv) => pool.query(`UPDATE bkk_newsletter SET asked_at = now() - interval '${iv}' WHERE email=$1`, [email]);
+    const confirmed = async () => ((await J('/api/bkk/admin/newsletter', { headers: ADMIN })).body.counts || []).some(c => c.status === 'confirmed');
     ok('a bad email is refused', (await post('/api/bkk/newsletter', { email: 'nope', consent: true })).status === 400);
     ok('no tick, no sign-up', (await post('/api/bkk/newsletter', { email: 'reader@example.com' })).status === 400);
 
     const a0 = asks().length;
-    const first = await post('/api/bkk/newsletter', { email: ' Reader@Example.com ', consent: true, lang: 'th', src: 'site' });
+    const first = await sign(' Reader@Example.com ', '198.51.100.1', { lang: 'th', src: 'site' });
     ok('a sign-up is accepted', first.status === 200 && first.body.ok, JSON.stringify(first.body));
     ok('a confirm mail goes out in the reader\'s language', asks().length === a0 + 1 &&
        /ยืนยัน/.test(asks()[asks().length - 1].subject) && asks()[asks().length - 1].to === 'reader@example.com',
        JSON.stringify(asks().slice(-1)));
-    const again = await post('/api/bkk/newsletter', { email: 'reader@example.com', consent: true });
+    const again = await sign('reader@example.com', '198.51.100.1');
     ok('signing up twice in a row sends no second mail', again.status === 200 && asks().length === a0 + 1, String(asks().length));
+    ok('not counted before it is confirmed', !(await confirmed()));
 
-    const before = await J('/api/bkk/admin/newsletter', { headers: ADMIN });
-    ok('not counted before it is confirmed',
-       !(before.body.counts || []).some(c => c.status === 'confirmed'), JSON.stringify(before.body));
-
-    const token = (asks()[asks().length - 1].text.match(/newsletter\/confirm\/([A-Za-z0-9_-]+)/) || [])[1];
+    const token = lastTok('reader@example.com');
     const peek = await raw(`/api/bkk/newsletter/confirm/${token}`);
-    ok('opening the confirm link (a mail scanner) does not confirm', peek.status === 200 &&
-       !((await J('/api/bkk/admin/newsletter', { headers: ADMIN })).body.counts || []).some(c => c.status === 'confirmed'));
+    ok('opening the confirm link (a mail scanner, even one that runs scripts) does not confirm',
+       peek.status === 200 && !/<script/i.test(peek.text) && !(await confirmed()), peek.text.slice(0, 300));
+    ok('the confirm page is in the reader\'s language', /lang="th"/.test(peek.text) && /ยืนยัน ส่งจดหมายให้ฉัน/.test(peek.text));
     const yes = await raw(`/api/bkk/newsletter/confirm/${token}`, { method: 'POST' });
-    ok('tapping Confirm confirms', yes.status === 200 && /every Monday/.test(yes.text), yes.text.slice(0, 200));
+    ok('tapping Confirm confirms', yes.status === 200 && /ทุกวันจันทร์/.test(yes.text) && await confirmed(), yes.text.slice(0, 300));
+    ok('opening the link again just says thank you',
+       /ขอบคุณ/.test((await raw(`/api/bkk/newsletter/confirm/${token}`)).text));
 
     const after = await J('/api/bkk/admin/newsletter', { headers: ADMIN });
     ok('the staff count shows one confirmed Thai reader',
@@ -754,13 +760,13 @@ const ok = (name, cond, extra = '') => {
     ok('the send list needs the staff key', (await raw('/api/bkk/admin/newsletter?csv=1')).status === 401);
 
     const a1 = asks().length;
-    const known = await post('/api/bkk/newsletter', { email: 'reader@example.com', consent: true });
+    const known = await sign('reader@example.com', '198.51.100.2');
     ok('a confirmed reader signing up again gets the same answer and no mail',
        known.status === 200 && known.body.ok && asks().length === a1);
 
     const peekOut = await raw(`/api/bkk/newsletter/unsubscribe/${token}`);
-    ok('opening the unsubscribe link alone changes nothing', peekOut.status === 200 &&
-       ((await J('/api/bkk/admin/newsletter', { headers: ADMIN })).body.counts || []).some(c => c.status === 'confirmed'));
+    ok('opening the unsubscribe link alone changes nothing', peekOut.status === 200 && /lang="th"/.test(peekOut.text) && await confirmed());
+    await pool.query(`UPDATE bkk_newsletter SET confirmed_at = now() - interval '200 days' WHERE email='reader@example.com'`);
     const out = await raw(`/api/bkk/newsletter/unsubscribe/${token}`, { method: 'POST', body: 'List-Unsubscribe=One-Click',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
     ok('one-click unsubscribe works', out.status === 200);
@@ -770,26 +776,83 @@ const ok = (name, cond, extra = '') => {
        (await raw(`/api/bkk/newsletter/confirm/${token}`, { method: 'POST' })).status === 400);
     ok('a made-up token is refused', (await raw('/api/bkk/newsletter/confirm/nope', { method: 'POST' })).status === 400);
 
-    const back = await post('/api/bkk/newsletter', { email: 'reader@example.com', consent: true, lang: 'en' });
-    ok('a leaver can sign up again and gets a fresh confirm mail', back.status === 200 &&
-       asks().length === a1 + 1 && /Confirm your AYBKK/.test(asks()[asks().length - 1].subject));
+    const back = await sign('reader@example.com', '198.51.100.3', { lang: 'en' });
+    const newTok = lastTok('reader@example.com');
+    ok('a leaver can sign up again and gets a fresh confirm mail with a new link', back.status === 200 &&
+       asks().length === a1 + 1 && /Confirm your AYBKK/.test(asks()[asks().length - 1].subject) && newTok && newTok !== token);
+    ok('the old link in a forwarded letter cannot confirm the new ask',
+       (await raw(`/api/bkk/newsletter/confirm/${token}`, { method: 'POST' })).status === 400 &&
+       (await row('reader@example.com')).status === 'pending');
+    await raw(`/api/bkk/newsletter/confirm/${newTok}`, { method: 'POST' });
+    const rejoined = await row('reader@example.com');
+    ok('rejoining records the new consent date and keeps the date they left', rejoined.status === 'confirmed' &&
+       Date.now() - rejoined.confirmed_at < 60000 && !!rejoined.unsubscribed_at, JSON.stringify(rejoined));
 
-    for (let i = 0; i < 6; i++) await post('/api/bkk/newsletter', { email: `flood${i}@example.com`, consent: true });
-    ok('one place cannot sign up an inbox flood', asks().filter(m => /^flood/.test(m.to)).length <= 5,
-       String(asks().filter(m => /^flood/.test(m.to)).length));
+    await sign('slow@example.com', '198.51.100.10');
+    const slow1 = lastTok('slow@example.com');
+    await ago('slow@example.com', '11 minutes');
+    await sign('slow@example.com', '198.51.100.11');
+    ok('a pending address can be asked again after 10 minutes, with a new link',
+       mailsTo('slow@example.com') === 2 && lastTok('slow@example.com') !== slow1);
+    ok('the first link stops working once a newer one is sent',
+       (await raw(`/api/bkk/newsletter/confirm/${slow1}`, { method: 'POST' })).status === 400);
+    await ago('slow@example.com', '11 minutes');
+    await sign('slow@example.com', '198.51.100.12');
+    await ago('slow@example.com', '11 minutes');
+    await sign('slow@example.com', '198.51.100.13');
+    ok('one address gets at most 3 confirm mails a day', mailsTo('slow@example.com') === 3, String(mailsTo('slow@example.com')));
+    await ago('slow@example.com', '25 hours');
+    await sign('slow@example.com', '198.51.100.14');
+    ok('the next day it can be asked again', mailsTo('slow@example.com') === 4, String(mailsTo('slow@example.com')));
+    await ago('slow@example.com', '8 days');
+    const stale = lastTok('slow@example.com');
+    ok('a confirm link stops working after 7 days',
+       (await raw(`/api/bkk/newsletter/confirm/${stale}`)).status === 400 &&
+       (await raw(`/api/bkk/newsletter/confirm/${stale}`, { method: 'POST' })).status === 400);
+
+    const keep = { dry: process.env.MAIL_DRY_RUN, key: process.env.RESEND_API_KEY };
+    process.env.MAIL_DRY_RUN = '0'; delete process.env.RESEND_API_KEY;
+    const off = await sign('off@example.com', '198.51.100.20');
+    process.env.MAIL_DRY_RUN = keep.dry; if (keep.key) process.env.RESEND_API_KEY = keep.key;
+    ok('when mail is off, the reader is told it failed (not "check your inbox")', off.status === 503, String(off.status));
+    const retry = await sign('off@example.com', '198.51.100.20');
+    ok('and a retry once mail works sends at once', retry.status === 200 && mailsTo('off@example.com') === 1, String(mailsTo('off@example.com')));
+
+    const flood = [];
+    for (let i = 0; i < 11; i++) flood.push(await sign(`flood${i}@example.com`, '192.0.2.50'));
+    ok('a class on the shala wifi can sign up, but one place cannot send a flood',
+       asks().filter(m => /^flood/.test(m.to)).length === 10 && flood[10].status === 429,
+       `${asks().filter(m => /^flood/.test(m.to)).length} ${flood[10].status}`);
+
+    await pool.query('DELETE FROM bkk_letter_asks');
+    await pool.query(`INSERT INTO bkk_letter_asks (ip) SELECT '10.0.0.' || g FROM generate_series(1, 30) g`);
+    const busy = await sign('busy@example.com', '198.51.100.30');
+    ok('past the hourly total, sign-ups are told to come back, and no mail goes out',
+       busy.status === 429 && mailsTo('busy@example.com') === 0, String(busy.status));
+    await pool.query(`UPDATE bkk_letter_asks SET at = now() - interval '2 hours'`);
+    await pool.query(`INSERT INTO bkk_letter_asks (ip, at) SELECT '10.0.1.' || g, now() - interval '3 hours' FROM generate_series(1, 30) g`);
+    ok('the same for the daily total', (await sign('busy@example.com', '198.51.100.31')).status === 429);
+    await pool.query('DELETE FROM bkk_letter_asks');
 
     const evil = '=hyperlink("x")@example.com';
-    await post('/api/bkk/newsletter', { email: evil, consent: true }, { 'x-forwarded-for': '203.0.113.9' });
-    const evilTok = (asks().filter(m => m.to === evil).pop() || { text: '' }).text.match(/confirm\/([A-Za-z0-9_-]+)/);
-    if (evilTok) await raw(`/api/bkk/newsletter/confirm/${evilTok[1]}`, { method: 'POST' });
+    await sign(evil, '203.0.113.9');
+    const evilTok = lastTok(evil);
+    if (evilTok) await raw(`/api/bkk/newsletter/confirm/${evilTok}`, { method: 'POST' });
     const csv3 = await raw('/api/bkk/admin/newsletter?csv=1', { headers: ADMIN });
     ok('a formula-looking address cannot run in a spreadsheet', !!evilTok && csv3.text.includes(`"'=hyperlink(""x"")@example.com"`), csv3.text.slice(0, 400));
+
+    await post('/api/bkk/start-event', { kind: 'tap', src: 'letter', ch: 'line' });
+    const stats = await J('/api/bkk/admin/start-stats', { headers: ADMIN });
+    ok('a letter tap is not counted as a booking tap', !(stats.body.sources || []).some(x => x.src === 'letter'), JSON.stringify(stats.body));
+    ok('staff see which door letter readers take',
+       ((await J('/api/bkk/admin/newsletter', { headers: ADMIN })).body.doors || []).some(d => d.ch === 'line' && d.n === 1));
 
     await post('/api/bkk/admin/settings', { links: { telegram: 'https://t.me/aybkk_letter' } }, ADMIN);
     ok('the Telegram channel link is served for the letter box',
        (await J('/api/bkk/settings')).body.links.telegram === 'https://t.me/aybkk_letter');
   }
 
+  console.log('\n— Bangkok calendar dates —');
   // The schedule window is built from ymd(); in UTC it drifts a day during the
   // 00:00–07:00 Bangkok window, exactly when the 05:30 Mysore is booked.
   const todayBkk = new Date(new Date().getTime() + 7 * 3600000).toISOString().slice(0, 10);

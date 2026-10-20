@@ -191,6 +191,9 @@
   .nlok{display:flex;gap:10px;align-items:flex-start;margin:12px 0;font-size:14px;line-height:1.5;cursor:pointer}
   .nlok input{width:auto;margin-top:3px;flex:none}
   .nlmsg{margin:10px 0 0;font-weight:600}
+  .nlmsg:empty{display:none}
+  #letter details.fine summary{cursor:pointer;text-decoration:underline}
+  #letter details.fine p{margin:6px 0 0}
   #letter .fine{margin:10px 0 0;font-size:12.5px;color:var(--soft)}
   .sw h3{margin:18px 0 8px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
   header .more{display:inline-block;margin-top:14px;font-size:14px;font-weight:600;letter-spacing:.03em;
@@ -643,11 +646,12 @@
       </div>
       <form class="nlpane" data-pane="email" id="nlForm" novalidate hidden>
         <label class="nlq" for="nlEmail" data-i18n="letterEmailL">Your email</label>
-        <input type="email" id="nlEmail" autocomplete="email" inputmode="email" placeholder="you@example.com" maxlength="200">
+        <input type="email" id="nlEmail" autocomplete="email" inputmode="email" placeholder="you@example.com" maxlength="200" aria-describedby="nlMsg">
         <label class="nlok"><input type="checkbox" id="nlConsent"> <span data-i18n="letterConsent">Send me the AYBKK Monday letter. I can unsubscribe any time.</span></label>
         <button class="btn pink" type="submit" id="nlGo" data-i18n="letterBtn">Sign up</button>
-        <p class="nlmsg" id="nlMsg" role="status" hidden></p>
-        <p class="fine" data-i18n="letterPrivacy">We use your email only for this letter and never share it.</p>
+        <p class="nlmsg" id="nlMsg" role="status"></p>
+        <p class="fine" data-i18n="letterPrivacy">We use your email only for this letter. We never sell it or give it to other businesses.</p>
+        <details class="fine"><summary data-i18n="letterMoreH">More</summary><p data-i18n="letterMore"></p></details>
       </form>
     </div>
   </section>
@@ -990,10 +994,10 @@
   };
 
   // The Monday letter sign-up (one question, four doors).
-  Object.assign(STR.en, {"letterH": "The Monday letter", "letterLead": "A short letter from the shala every Monday, with one small thing to try on your mat that week. Free. Leave any time.", "letterQ": "Where should we send it?", "letterEmail": "Email", "letterLine": "Add LINE @aybkk as a friend. The letter comes there every Monday.", "letterLineBtn": "Add LINE @aybkk", "letterWx": "Add aybkkwechat on WeChat and send the word: letter", "letterTg": "Join our Telegram channel. The letter comes there every Monday.", "letterTgBtn": "Join on Telegram", "letterEmailL": "Your email", "letterConsent": "Send me the AYBKK Monday letter. I can unsubscribe any time.", "letterBtn": "Sign up", "letterPrivacy": "We use your email only for this letter and never share it.", "letterBadEmail": "Please check the email address.", "letterNeedOk": "Please tick the box first.", "letterSent": "Almost done: open the email we just sent and tap Confirm.", "letterFail": "That did not work. Please try again."});
-  Object.assign(STR.th, {"letterH": "จดหมายวันจันทร์", "letterLead": "จดหมายสั้น ๆ จากชาลาทุกวันจันทร์ พร้อมสิ่งเล็ก ๆ หนึ่งอย่างให้ลองบนเสื่อในสัปดาห์นั้น ฟรี ยกเลิกได้ทุกเมื่อ", "letterQ": "อยากให้ส่งทางไหน?", "letterEmail": "อีเมล", "letterLine": "เพิ่มเพื่อน LINE @aybkk จดหมายจะส่งไปทาง LINE ทุกวันจันทร์", "letterLineBtn": "เพิ่มเพื่อน LINE @aybkk", "letterWx": "เพิ่ม WeChat ID aybkkwechat แล้วพิมพ์คำว่า letter", "letterTg": "เข้าร่วมช่อง Telegram ของเรา จดหมายจะส่งไปที่นั่นทุกวันจันทร์", "letterTgBtn": "เข้าร่วมทาง Telegram", "letterEmailL": "อีเมลของคุณ", "letterConsent": "ส่งจดหมาย AYBKK ทุกวันจันทร์ให้ฉัน ยกเลิกได้ทุกเมื่อ", "letterBtn": "สมัครรับจดหมาย", "letterPrivacy": "เราใช้อีเมลของคุณเพื่อส่งจดหมายนี้เท่านั้น และไม่ส่งต่อให้ใคร", "letterBadEmail": "กรุณาตรวจสอบอีเมลอีกครั้ง", "letterNeedOk": "กรุณาติ๊กช่องยินยอมก่อน", "letterSent": "อีกขั้นเดียว: เปิดอีเมลที่เราเพิ่งส่งไป แล้วกดยืนยัน", "letterFail": "ยังไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"});
-  Object.assign(STR.zh, {"letterH": "每周一来信", "letterLead": "每周一来自 AYBKK 的一封短信，附上一件本周可以在垫子上尝试的小事。免费，随时可以退订。", "letterQ": "您想通过哪里收信？", "letterEmail": "邮箱", "letterLine": "添加 LINE @aybkk 为好友，每周一在 LINE 收信。", "letterLineBtn": "添加 LINE @aybkk", "letterWx": "在微信添加 aybkkwechat，留言“来信”即可。", "letterTg": "加入我们的 Telegram 频道，每周一在那里收信。", "letterTgBtn": "加入 Telegram 频道", "letterEmailL": "您的邮箱", "letterConsent": "每周一给我发送 AYBKK 来信。我可以随时退订。", "letterBtn": "订阅", "letterPrivacy": "您的邮箱只用于发送这封来信，绝不外传。", "letterBadEmail": "请检查邮箱地址。", "letterNeedOk": "请先勾选同意。", "letterSent": "还差一步：打开我们刚发出的邮件，点击“确认订阅”。", "letterFail": "没有成功，请再试一次。"});
-  Object.assign(STR.ru, {"letterH": "Письмо по понедельникам", "letterLead": "Короткое письмо из шалы каждый понедельник и одно небольшое задание на коврик на эту неделю. Бесплатно. Отписаться можно в любой момент.", "letterQ": "Куда его присылать?", "letterEmail": "Email", "letterLine": "Добавьте LINE @aybkk в друзья. Письмо будет приходить туда каждый понедельник.", "letterLineBtn": "Добавить LINE @aybkk", "letterWx": "Добавьте aybkkwechat в WeChat и отправьте слово: letter", "letterTg": "Подпишитесь на наш канал в Telegram. Письмо будет приходить туда каждый понедельник.", "letterTgBtn": "Открыть канал в Telegram", "letterEmailL": "Ваш email", "letterConsent": "Присылайте мне письмо AYBKK по понедельникам. Я могу отписаться в любой момент.", "letterBtn": "Подписаться", "letterPrivacy": "Мы используем ваш email только для этого письма и никому его не передаём.", "letterBadEmail": "Пожалуйста, проверьте адрес email.", "letterNeedOk": "Пожалуйста, сначала поставьте галочку.", "letterSent": "Почти готово: откройте письмо, которое мы только что отправили, и нажмите «Да, присылайте письмо».", "letterFail": "Не получилось. Попробуйте ещё раз."});
+  Object.assign(STR.en, {"letterH": "The Monday letter", "letterLead": "A short letter from the shala every Monday, with one small thing to try on your mat that week. Free. Leave any time.", "letterQ": "Where should we send it?", "letterEmail": "Email", "letterLine": "Add LINE @aybkk as a friend. The letter comes there every Monday.", "letterLineBtn": "Add LINE @aybkk", "letterWx": "Add aybkkwechat on WeChat and send the word: letter", "letterTg": "Join our Telegram channel. The letter comes there every Monday.", "letterTgBtn": "Join on Telegram", "letterEmailL": "Your email", "letterConsent": "Send me the AYBKK Monday letter. I can unsubscribe any time.", "letterBtn": "Sign up", "letterPrivacy": "We use your email only for this letter. We never sell it or give it to other businesses.", "letterBadEmail": "Please check the email address.", "letterNeedOk": "Please tick the box first.", "letterSent": "Almost done: open the email we just sent and tap “Yes, send me the letter”.", "letterFail": "That did not work just now. Please try again later, or pick another way above.", "letterMoreH": "More", "letterMore": "AYBKK (Ashtanga Yoga Center of Bangkok) keeps your email, your language and the dates you signed up, confirmed and left. A sign-up that is not confirmed is deleted after 7 days. To stop spam, we keep the internet address you signed up from for 1 day. The emails go out through our email service, Resend, in the USA. Every letter has a link to leave. To see or delete your data, message LINE @aybkk."});
+  Object.assign(STR.th, {"letterH": "จดหมายวันจันทร์", "letterLead": "จดหมายสั้น ๆ จากชาลาทุกวันจันทร์ พร้อมสิ่งเล็ก ๆ หนึ่งอย่างให้ลองบนเสื่อในสัปดาห์นั้น ฟรี ยกเลิกได้ทุกเมื่อ", "letterQ": "อยากให้ส่งทางไหน?", "letterEmail": "อีเมล", "letterLine": "เพิ่มเพื่อน LINE @aybkk จดหมายจะส่งไปทาง LINE ทุกวันจันทร์", "letterLineBtn": "เพิ่มเพื่อน LINE @aybkk", "letterWx": "เพิ่ม WeChat ID aybkkwechat แล้วพิมพ์คำว่า letter", "letterTg": "เข้าร่วมช่อง Telegram ของเรา จดหมายจะส่งไปที่นั่นทุกวันจันทร์", "letterTgBtn": "เข้าร่วมทาง Telegram", "letterEmailL": "อีเมลของคุณ", "letterConsent": "ส่งจดหมาย AYBKK ทุกวันจันทร์ให้ฉัน ยกเลิกได้ทุกเมื่อ", "letterBtn": "สมัครรับจดหมาย", "letterPrivacy": "เราใช้อีเมลของคุณเพื่อส่งจดหมายนี้เท่านั้น ไม่ขายหรือส่งต่อให้ธุรกิจอื่น", "letterBadEmail": "กรุณาตรวจสอบอีเมลอีกครั้ง", "letterNeedOk": "กรุณาติ๊กช่องยินยอมก่อน", "letterSent": "อีกขั้นเดียว: เปิดอีเมลที่เราเพิ่งส่งไป แล้วกดยืนยัน", "letterFail": "ยังไม่สำเร็จในตอนนี้ กรุณาลองใหม่ภายหลัง หรือเลือกช่องทางอื่นด้านบน", "letterMoreH": "รายละเอียด", "letterMore": "AYBKK (Ashtanga Yoga Center of Bangkok) เก็บอีเมล ภาษา และวันที่คุณสมัคร ยืนยัน และยกเลิก หากไม่ได้ยืนยัน เราจะลบภายใน 7 วัน เพื่อป้องกันสแปม เราเก็บหมายเลข IP ที่ใช้สมัครไว้ 1 วัน อีเมลส่งผ่านผู้ให้บริการอีเมลของเรา Resend ในสหรัฐอเมริกา จดหมายทุกฉบับมีลิงก์ยกเลิก หากต้องการดูหรือลบข้อมูลของคุณ ทักมาที่ LINE @aybkk"});
+  Object.assign(STR.zh, {"letterH": "每周一来信", "letterLead": "每周一，AYBKK 寄来一封简短的信，附上一件本周可以在垫子上尝试的小事。免费，随时可以退订。", "letterQ": "您想通过哪里收信？", "letterEmail": "邮箱", "letterLine": "添加 LINE @aybkk 为好友，每周一在 LINE 收信。", "letterLineBtn": "添加 LINE @aybkk", "letterWx": "在微信添加 aybkkwechat，留言“来信”即可。", "letterTg": "加入我们的 Telegram 频道，每周一在那里收信。", "letterTgBtn": "加入 Telegram 频道", "letterEmailL": "您的邮箱", "letterConsent": "每周一给我发送 AYBKK 来信。我可以随时退订。", "letterBtn": "订阅", "letterPrivacy": "您的邮箱只用于发送这封来信，绝不出售或提供给其他商家。", "letterBadEmail": "请检查邮箱地址。", "letterNeedOk": "请先勾选同意。", "letterSent": "还差一步：打开我们刚发出的邮件，点击“确认订阅”。", "letterFail": "暂时没有成功，请稍后再试，或选择上面的其他方式。", "letterMoreH": "详情", "letterMore": "AYBKK（Ashtanga Yoga Center of Bangkok）保存您的邮箱、语言，以及订阅、确认和退订的日期。未确认的订阅会在 7 天后删除。为防止垃圾信息，我们会保存您订阅时的 IP 地址 1 天。邮件通过我们的邮件服务商 Resend（美国）发送。每封来信都有退订链接。如需查看或删除您的资料，请联系 LINE @aybkk。"});
+  Object.assign(STR.ru, {"letterH": "Письмо по понедельникам", "letterLead": "Короткое письмо из шалы каждый понедельник и одно небольшое задание на коврик на эту неделю. Бесплатно. Отписаться можно в любой момент.", "letterQ": "Куда его присылать?", "letterEmail": "Email", "letterLine": "Добавьте LINE @aybkk в друзья. Письмо будет приходить туда каждый понедельник.", "letterLineBtn": "Добавить LINE @aybkk", "letterWx": "Добавьте aybkkwechat в WeChat и отправьте слово: letter", "letterTg": "Подпишитесь на наш канал в Telegram. Письмо будет приходить туда каждый понедельник.", "letterTgBtn": "Открыть канал в Telegram", "letterEmailL": "Ваш email", "letterConsent": "Присылайте мне письмо AYBKK по понедельникам. Я могу отписаться в любой момент.", "letterBtn": "Подписаться", "letterPrivacy": "Мы используем ваш email только для этого письма и никогда не продаём и не передаём его другим компаниям.", "letterBadEmail": "Пожалуйста, проверьте адрес email.", "letterNeedOk": "Пожалуйста, сначала поставьте галочку.", "letterSent": "Почти готово: откройте письмо, которое мы только что отправили, и нажмите «Да, присылайте письмо».", "letterFail": "Сейчас не получилось. Попробуйте позже или выберите другой способ выше.", "letterMoreH": "Подробнее", "letterMore": "AYBKK (Ashtanga Yoga Center of Bangkok) хранит ваш email, язык и даты подписки, подтверждения и отписки. Неподтверждённая подписка удаляется через 7 дней. Чтобы бороться со спамом, мы храним IP-адрес, с которого вы подписались, 1 день. Письма отправляются через наш почтовый сервис Resend (США). В каждом письме есть ссылка для отписки. Чтобы посмотреть или удалить свои данные, напишите в LINE @aybkk."});
   const HTML_LANG = { en: 'en', th: 'th', zh: 'zh-Hans', ru: 'ru' };
   let LANG = (() => {
     try { const s = localStorage.getItem('aybkk_lang'); if (STR[s]) return s; } catch (_) {}
@@ -1372,6 +1376,8 @@
     NL.picked = b.dataset.ch;
     nlShow(NL.picked);
   });
+  // Typing in a pane counts as a pick, so a late Telegram link never swaps the form away.
+  document.querySelectorAll('.nlpane').forEach(p => p.addEventListener('focusin', () => { NL.picked = NL.picked || p.dataset.pane; }));
   document.querySelectorAll('a[data-nl]').forEach(a => a.addEventListener('click', () => nlTap(a.dataset.nl)));
   $('#nlWxCopy').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText('aybkkwechat'); } catch (_) { return; }
@@ -1389,8 +1395,11 @@
   $('#nlForm').addEventListener('submit', async e => {
     e.preventDefault();
     const msg = $('#nlMsg'), email = $('#nlEmail').value.trim();
-    const say = k => { msg.textContent = t(k); msg.hidden = false; };
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return say('letterBadEmail');
+    // Emptied first, so a screen reader announces the same message twice too.
+    const say = k => { msg.textContent = ''; setTimeout(() => { msg.textContent = t(k); }, 60); };
+    const bad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    $('#nlEmail').setAttribute('aria-invalid', String(bad));
+    if (bad) return say('letterBadEmail');
     if (!$('#nlConsent').checked) return say('letterNeedOk');
     $('#nlGo').disabled = true;
     try {
