@@ -1,0 +1,102 @@
+[
+ {
+  "photo": "20-148",
+  "id": "ES2",
+  "word": "CANDLE",
+  "line": "My candle burns at both ends. It will not last the night.",
+  "credit": "Edna St. Vincent Millay · First Fig, 1918",
+  "t": 0,
+  "spos": "top-right",
+  "wpos": [
+   1020,
+   262
+  ],
+  "ink_w": "dark",
+  "wmxy": [
+   660,
+   1210
+  ],
+  "sxy": [
+   "R",
+   60
+  ],
+  "ink_s": "dark",
+  "wwidth": 540
+ },
+ {
+  "photo": "20-066",
+  "id": "ER6",
+  "word": "CANDY",
+  "line": "Candy gave energy, but briefly. An hour later, people felt more tired.",
+  "credit": "Robert Thayer · J Pers Soc Psychol, 1987",
+  "t": 210,
+  "spos": "bottom-right"
+ },
+ {
+  "photo": "20-009",
+  "id": "ER9",
+  "word": "MARATHON",
+  "line": "Old marathon records: fast start, then slowing. Since 1988: a steadier pace.",
+  "credit": "Díaz et al. · Eur J Sport Sci, 2018",
+  "t": 60,
+  "spos": "top-right",
+  "shadow": 1.4
+ },
+ {
+  "photo": "20-114",
+  "id": "ES4",
+  "word": "STREAM",
+  "line": "A thin stream flows long: use a little at a time.",
+  "credit": "细水长流 · Chinese idiom",
+  "t": 108,
+  "spos": "bottom-right"
+ },
+ {
+  "photo": "20-176",
+  "id": "ES7",
+  "word": "BOW",
+  "line": "A bow always kept bent soon breaks. Loosen it, and it's ready.",
+  "credit": "Phaedrus, Fables III.14 · tr. Riley, 1887",
+  "t": 240,
+  "spos": "bottom-right"
+ },
+ {
+  "photo": "20-024",
+  "id": "ER2",
+  "line": "After little sleep, a 10-minute nap made people more alert right away.",
+  "credit": "Brooks & Lack · Sleep, 2006",
+  "word": "ALERT",
+  "t": 248,
+  "wmxy": [
+   660,
+   1210
+  ],
+  "tight": true,
+  "widths": [
+   540
+  ]
+ },
+ {
+  "photo": "20-061",
+  "id": "EY3",
+  "word": "BREATH",
+  "line": "Yogis count life in breaths, not days, and breathe slow and deep.",
+  "credit": "B. K. S. Iyengar · Light on Yoga, 1966",
+  "sz": 50,
+  "t": 202,
+  "spos": "top-right"
+ },
+ {
+  "photo": "20-087",
+  "id": "EY13",
+  "word": "BANDHA",
+  "line": "Breathe with the three bandhas in asana. The mind follows the breath.",
+  "credit": "K. Pattabhi Jois · Yoga Mala, Pranayama",
+  "cws": [
+   300,
+   280
+  ],
+  "t": 210,
+  "spos": "bottom-left"
+ }
+]
