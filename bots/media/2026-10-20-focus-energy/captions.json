@@ -41,7 +41,7 @@
   "C": "energy, Burn Slow Last Long, 8 slides",
   "D": "energy, Breath Has Wings, 8 slides"
  },
- "state": "A published; B, C, D caps versions sent to Boonchu for go; 06:00 slot missed (caps change), proposed C 09:00, B 12:00, D 15:00",
+ "state": "A published 05:50 (smaller caps words, Boonchu: leave it). C, B, D scheduled with big words (approved by Boonchu 21 Oct ~06:10: \"All good\", times 9am, 12 noon, 2pm). C6 keyword ALERT, D2 SCATTERED.",
  "order": {
   "1st (on go)": "A",
   "2nd 06:00 BKK (23:00Z)": "C",
@@ -68,6 +68,65 @@
     "Wj8TRjYzsj"
    ],
    "md5": "all 10 OK"
+  },
+  "C": {
+   "title": "Burn Slow, Last Long",
+   "id": "cmvhaqfee0bmppm0yx34sam7x",
+   "when": "09:00 BKK 21 Oct (02:00Z)",
+   "state": "QUEUE",
+   "slides": "C_big",
+   "attachments": [
+    "mAL9KUKOoM",
+    "mMHFDjVyFm",
+    "settQeYM7D",
+    "mmgCMEWdMk",
+    "5UIYUSch8X",
+    "MyLZsH97lz",
+    "sWq4l26vs2",
+    "Ue4pO6NLmL"
+   ],
+   "md5": "all 8 OK",
+   "checkin": "trig_01BzWjpcUuUXr6Rkjhh8kber"
+  },
+  "B": {
+   "title": "One Point",
+   "id": "cmvhaqfit0bmqpm0y3lfddijk",
+   "when": "12:00 BKK 21 Oct (05:00Z)",
+   "state": "QUEUE",
+   "slides": "B_big",
+   "attachments": [
+    "2EfMOkRU40",
+    "LKF9tYlC4D",
+    "Cui9s93Q0G",
+    "AbndW2xur8",
+    "WTDOGipEF8",
+    "bzvsMOAwAR",
+    "vQdxqx6sWM",
+    "5dtvo0akhH",
+    "VheVcvM9eX",
+    "MBEt2YH5TI"
+   ],
+   "md5": "all 10 OK",
+   "checkin": "trig_01PeDbhzX57c92Tm95PGNMne"
+  },
+  "D": {
+   "title": "Breath Has Wings",
+   "id": "cmvhaqfmj0bmrpm0yudyby6rh",
+   "when": "14:00 BKK 21 Oct (07:00Z)",
+   "state": "QUEUE",
+   "slides": "D_big",
+   "attachments": [
+    "FcrfYw4gLw",
+    "65Ggd6f9fo",
+    "Gpd9t0Iqr9",
+    "vfh66kYIjD",
+    "eiIjvyln78",
+    "K3uz4KeHe0",
+    "5gXmvh4YiE",
+    "7D8yPBPs3H"
+   ],
+   "md5": "all 8 OK",
+   "checkin": "trig_01L4rxacEfw8yxeHLF2wE3f7"
   }
  }
 }
