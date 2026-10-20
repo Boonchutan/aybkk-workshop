@@ -819,9 +819,10 @@ const ok = (name, cond, extra = '') => {
     ok('and a retry once mail works sends at once', retry.status === 200 && mailsTo('off@example.com') === 1, String(mailsTo('off@example.com')));
 
     const flood = [];
-    for (let i = 0; i < 6; i++) flood.push(await sign(`flood${i}@example.com`, '192.0.2.50'));
-    ok('one place cannot send an inbox flood', asks().filter(m => /^flood/.test(m.to)).length === 5 &&
-       flood[5].status === 429, `${asks().filter(m => /^flood/.test(m.to)).length} ${flood[5].status}`);
+    for (let i = 0; i < 11; i++) flood.push(await sign(`flood${i}@example.com`, '192.0.2.50'));
+    ok('a class on the shala wifi can sign up, but one place cannot send a flood',
+       asks().filter(m => /^flood/.test(m.to)).length === 10 && flood[10].status === 429,
+       `${asks().filter(m => /^flood/.test(m.to)).length} ${flood[10].status}`);
 
     await pool.query('DELETE FROM bkk_letter_asks');
     await pool.query(`INSERT INTO bkk_letter_asks (ip) SELECT '10.0.0.' || g FROM generate_series(1, 30) g`);
