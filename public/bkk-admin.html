@@ -158,13 +158,17 @@
       links: 'Links',
       linksHelp: 'Where students are sent from their page. Leave one blank to hide it. Paste the full address, starting https://',
       saveLinks: 'Save links', saved: 'Saved.',
+      letterTitle: 'Monday letter: email sign-ups',
+      letterHelp: 'People who signed up on aybkk.net by email. Only confirmed addresses get the letter. The download is the send list, each row with its own unsubscribe link for the letter footer. LINE, WeChat and Telegram readers join in those apps.',
+      letterStatus: { confirmed: 'Confirmed', pending: 'Waiting to confirm', unsubscribed: 'Left' },
+      letterCsv: 'Download confirmed emails (CSV)', letterNone: 'No sign-ups yet.',
       qNewPrice: code => `New base price for ${code} (฿), before the online fee`,
       qRetire: code => `Stop selling ${code}?\nPasses already bought keep working.`,
       qPkgName: 'Name, as students see it', qPkgCode: 'Short code (letters and numbers, no spaces)',
       qPkgKind: 'Type: "credits" for a class pack, "unlimited" for a membership',
       qPkgPrice: 'Price in ฿, before the online fee', qPkgDays: 'Valid for how many days after the first class?',
       qPkgClasses: 'How many classes?',
-      linkNames: { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', line: 'LINE', wechat: 'WeChat', facebook: 'Facebook', shop: 'Shop' },
+      linkNames: { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', line: 'LINE', wechat: 'WeChat', facebook: 'Facebook', shop: 'Shop', telegram: 'Telegram (Monday letter channel)' },
       teesTitle: 'Tee shop on aybkk.net', teesHelp: 'Make a PaySolutions payment link for each tee, paste it here with the name and price. Students see the tees on aybkk.net and tap Pay now. Untick "On sale" to hide one.',
       teeName: 'Name', teePrice: 'Price ฿', teeLink: 'PaySolutions link', teePhoto: 'Photo link (https://… or /img/tees/1.jpg)', teeSizes: 'Sizes (e.g. S M L XL)', teeOn: 'On sale', teeAdd: 'Add tee', teeSaved: 'Saved',
       words: {},
@@ -245,13 +249,17 @@
       links: 'ลิงก์',
       linksHelp: 'ลิงก์ที่แสดงในหน้าของนักเรียน เว้นว่างเพื่อซ่อน ใส่ที่อยู่เต็ม เริ่มด้วย https://',
       saveLinks: 'บันทึกลิงก์', saved: 'บันทึกแล้ว',
+      letterTitle: 'จดหมายวันจันทร์: ผู้สมัครทางอีเมล',
+      letterHelp: 'คนที่สมัครทางอีเมลบน aybkk.net ส่งจดหมายเฉพาะอีเมลที่ยืนยันแล้ว ไฟล์ที่ดาวน์โหลดคือรายชื่อสำหรับส่ง แต่ละแถวมีลิงก์ยกเลิกของตัวเองสำหรับท้ายจดหมาย คนที่เลือก LINE, WeChat หรือ Telegram จะเข้าร่วมในแอปนั้น',
+      letterStatus: { confirmed: 'ยืนยันแล้ว', pending: 'รอยืนยัน', unsubscribed: 'ยกเลิกแล้ว' },
+      letterCsv: 'ดาวน์โหลดอีเมลที่ยืนยันแล้ว (CSV)', letterNone: 'ยังไม่มีผู้สมัคร',
       qNewPrice: code => `ราคาตั้งใหม่ของ ${code} (฿) ก่อนบวกค่าธรรมเนียมออนไลน์`,
       qRetire: code => `เลิกขาย ${code}?\nแพ็กเกจที่ขายไปแล้วยังใช้ได้ตามปกติ`,
       qPkgName: 'ชื่อแพ็กเกจ (ที่นักเรียนเห็น)', qPkgCode: 'รหัสสั้น (ตัวอักษรอังกฤษและตัวเลข ไม่มีช่องว่าง)',
       qPkgKind: 'ประเภท: พิมพ์ "credits" สำหรับแพ็กเกจนับครั้ง หรือ "unlimited" สำหรับแบบไม่จำกัด',
       qPkgPrice: 'ราคา (฿) ก่อนบวกค่าธรรมเนียมออนไลน์', qPkgDays: 'ใช้ได้กี่วันหลังคลาสแรก?',
       qPkgClasses: 'กี่ครั้ง?',
-      linkNames: { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', line: 'LINE', wechat: 'WeChat', facebook: 'Facebook', shop: 'ร้านค้า' },
+      linkNames: { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', line: 'LINE', wechat: 'WeChat', facebook: 'Facebook', shop: 'ร้านค้า', telegram: 'Telegram (ช่องจดหมายวันจันทร์)' },
       teesTitle: 'ร้านเสื้อบน aybkk.net', teesHelp: 'สร้างลิงก์ชำระเงิน PaySolutions ของเสื้อแต่ละตัว แล้ววางที่นี่พร้อมชื่อและราคา นักเรียนจะเห็นเสื้อบน aybkk.net และกด ชำระเงิน เอาเครื่องหมายออกจาก "วางขาย" เพื่อซ่อน',
       teeName: 'ชื่อ', teePrice: 'ราคา ฿', teeLink: 'ลิงก์ PaySolutions', teePhoto: 'ลิงก์รูป (https://… หรือ /img/tees/1.jpg)', teeSizes: 'ไซซ์ (เช่น S M L XL)', teeOn: 'วางขาย', teeAdd: 'เพิ่มเสื้อ', teeSaved: 'บันทึกแล้ว',
       words: {
@@ -679,6 +687,10 @@
       .then(d => d.teachers || []).catch(() => []);
     TEES = await api('/api/bkk/admin/tees').then(r => r.json())
       .then(d => d.tees || []).catch(() => []);
+    const letter = await api('/api/bkk/admin/newsletter').then(r => r.json())
+      .then(d => d.counts || []).catch(() => []);
+    const byStatus = {};
+    for (const c of letter) byStatus[c.status] = (byStatus[c.status] || 0) + c.n;
     $('#view').innerHTML = `<div class="box">
       <b>${T('feeTitle')}</b>
       <p class="muted">${T('feeHelp')}</p>
@@ -700,9 +712,17 @@
       <p class="muted">${T('teesHelp')}</p>
       ${[...TEES, {}].map(teeForm).join('')}
       </div>
+      <div class="box"><b>${T('letterTitle')}</b>
+      <p class="muted">${T('letterHelp')}</p>
+      ${letter.length ? `<table>${['confirmed', 'pending', 'unsubscribed'].map(k => `<tr><td>${T('letterStatus')[k]}</td>
+        <td><b>${byStatus[k] || 0}</b> <span class="muted">${letter.filter(c => c.status === k)
+          .map(c => `${esc(c.lang)} ${c.n}`).join(' · ')}</span></td></tr>`).join('')}</table>`
+        : `<p class="muted">${T('letterNone')}</p>`}
+      <p><button class="btn" onclick="letterCsv()">${T('letterCsv')}</button></p>
+      </div>
       <div class="box"><b>${T('links')}</b>
       <p class="muted">${T('linksHelp')}</p>
-      ${['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop']
+      ${['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop', 'telegram']
         .map(k => `<label style="display:block;margin-top:8px">${T('linkNames')[k] || k}</label>
           <input id="lk_${k}" style="width:100%" placeholder="https://…"
                  value="${esc((LINKS || {})[k] || '')}">`).join('')}
@@ -784,9 +804,19 @@
     if (await shout(r)) renderSettings();
   };
 
+  window.letterCsv = async () => {
+    const r = await api('/api/bkk/admin/newsletter?csv=1');
+    if (!r.ok) { alert(T('failed')); return; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(await r.blob());
+    a.download = 'aybkk-letter-emails.csv';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+
   window.saveLinks = async () => {
     const links = {};
-    for (const k of ['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop']) {
+    for (const k of ['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop', 'telegram']) {
       links[k] = $('#lk_' + k).value.trim();
     }
     const r = await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify({ links }) });
