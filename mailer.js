@@ -167,6 +167,50 @@ const TEMPLATES = {
         If you did not ask for this, ignore it — nothing has changed.</p>`),
     }),
   },
+
+  // The Monday letter: double opt-in. Nothing is sent until this is tapped.
+  letterConfirm: {
+    en: ({ link }) => ({
+      subject: 'Confirm your AYBKK Monday letter',
+      text: ['Tap the button to get the AYBKK letter every Monday: a short read from the shala, with one small thing to try on your mat that week.', '', link, '', 'If you did not sign up, ignore this email. We will send you nothing.'].join('\n'),
+      html: shell(`
+        <p>Tap the button to get the AYBKK letter every Monday: a short read from the shala, with one small thing to try on your mat that week.</p>
+        <p style="text-align:center;margin:22px 0">
+          <a href="${esc(link)}" style="background:#5c2160;color:#fdf7fa;text-decoration:none;
+             padding:12px 26px;border-radius:8px;display:inline-block;font-weight:600">Yes, send me the letter</a></p>
+        <p style="font-size:13px;color:#6b5d70">If you did not sign up, ignore this email. We will send you nothing.</p>`),
+    }),
+    th: ({ link }) => ({
+      subject: 'ยืนยันการรับจดหมาย AYBKK ทุกวันจันทร์',
+      text: ['กดปุ่มด้านล่างเพื่อรับจดหมายจาก AYBKK ทุกวันจันทร์ อ่านสั้น ๆ พร้อมสิ่งเล็ก ๆ หนึ่งอย่างให้ลองบนเสื่อในสัปดาห์นั้น', '', link, '', 'หากคุณไม่ได้สมัคร ไม่ต้องทำอะไร เราจะไม่ส่งอะไรถึงคุณ'].join('\n'),
+      html: shell(`
+        <p>กดปุ่มด้านล่างเพื่อรับจดหมายจาก AYBKK ทุกวันจันทร์ อ่านสั้น ๆ พร้อมสิ่งเล็ก ๆ หนึ่งอย่างให้ลองบนเสื่อในสัปดาห์นั้น</p>
+        <p style="text-align:center;margin:22px 0">
+          <a href="${esc(link)}" style="background:#5c2160;color:#fdf7fa;text-decoration:none;
+             padding:12px 26px;border-radius:8px;display:inline-block;font-weight:600">ยืนยัน ส่งจดหมายให้ฉัน</a></p>
+        <p style="font-size:13px;color:#6b5d70">หากคุณไม่ได้สมัคร ไม่ต้องทำอะไร เราจะไม่ส่งอะไรถึงคุณ</p>`),
+    }),
+    zh: ({ link }) => ({
+      subject: '请确认订阅 AYBKK 每周一来信',
+      text: ['点击下方按钮，每周一收到 AYBKK 的来信：几分钟就能读完，附上一件本周可以在垫子上尝试的小事。', '', link, '', '如果不是您本人订阅，请忽略此邮件，我们不会发送任何内容。'].join('\n'),
+      html: shell(`
+        <p>点击下方按钮，每周一收到 AYBKK 的来信：几分钟就能读完，附上一件本周可以在垫子上尝试的小事。</p>
+        <p style="text-align:center;margin:22px 0">
+          <a href="${esc(link)}" style="background:#5c2160;color:#fdf7fa;text-decoration:none;
+             padding:12px 26px;border-radius:8px;display:inline-block;font-weight:600">确认订阅</a></p>
+        <p style="font-size:13px;color:#6b5d70">如果不是您本人订阅，请忽略此邮件，我们不会发送任何内容。</p>`),
+    }),
+    ru: ({ link }) => ({
+      subject: 'Подтвердите подписку на письмо AYBKK по понедельникам',
+      text: ['Нажмите кнопку, чтобы получать письмо AYBKK каждый понедельник: короткое чтение из шалы и одно небольшое задание на коврик на эту неделю.', '', link, '', 'Если вы не подписывались, просто проигнорируйте это письмо. Мы ничего не пришлём.'].join('\n'),
+      html: shell(`
+        <p>Нажмите кнопку, чтобы получать письмо AYBKK каждый понедельник: короткое чтение из шалы и одно небольшое задание на коврик на эту неделю.</p>
+        <p style="text-align:center;margin:22px 0">
+          <a href="${esc(link)}" style="background:#5c2160;color:#fdf7fa;text-decoration:none;
+             padding:12px 26px;border-radius:8px;display:inline-block;font-weight:600">Да, присылайте письмо</a></p>
+        <p style="font-size:13px;color:#6b5d70">Если вы не подписывались, просто проигнорируйте это письмо. Мы ничего не пришлём.</p>`),
+    }),
+  },
 };
 
 // Falls back to English for any language not written yet, rather than sending
