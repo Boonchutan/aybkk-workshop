@@ -2,11 +2,10 @@
  {
   "photo": "20-157",
   "id": "FR1",
-  "word": "elsewhere",
+  "word": "ELSEWHERE",
   "line": "In 46.9% of random phone check-ins, people's minds were elsewhere.",
   "credit": "Killingsworth & Gilbert · Science, 2010",
   "t": 168,
-  "bs": 178,
   "sz": 46,
   "cws": [
    353
@@ -20,62 +19,94 @@
    "L",
    60
   ],
-  "ink_w": "dark"
+  "ink_w": "dark",
+  "layout": "split",
+  "wbs": 160
  },
  {
   "photo": "20-046",
   "id": "FS1",
-  "word": "tangerine",
+  "word": "TANGERINE",
   "line": "A monk's friend ate tangerine slices, hardly aware he was eating them.",
-  "credit": "Thich Nhat Hanh · Miracle of Mindfulness"
+  "credit": "Thich Nhat Hanh · Miracle of Mindfulness",
+  "t": 210,
+  "layout": "split",
+  "pos": "bottom-right",
+  "spos": "top-right",
+  "bs": 178
  },
  {
   "photo": "20-003",
   "id": "FY1",
-  "word": "wind",
+  "word": "WIND",
   "line": "Long ago, Arjuna said: the mind is hard to hold, like wind.",
-  "credit": "Bhagavad Gita 6.34 · tr. Annie Besant"
+  "credit": "Bhagavad Gita 6.34 · tr. Annie Besant",
+  "t": "pad",
+  "layout": "split",
+  "pos": "bottom-right",
+  "spos": "bottom-left",
+  "bs": 178
  },
  {
   "photo": "20-032",
   "id": "FW3",
-  "word": "habit",
+  "word": "HABIT",
   "line": "Let attention slip briefly, and not paying attention becomes a habit.",
-  "credit": "Epictetus · Discourses IV.12 · tr. Long"
+  "credit": "Epictetus · Discourses IV.12 · tr. Long",
+  "t": 0,
+  "layout": "stack",
+  "pos": "top-right",
+  "spos": "top-right",
+  "bs": 178
  },
  {
   "photo": "20-151",
   "id": "FR3",
-  "word": "trees",
+  "word": "TREES",
   "line": "One way back: walking among trees refreshed focus more than city streets.",
   "credit": "Berman et al., 2008 · Psychol Science",
-  "t": 220
+  "t": 220,
+  "layout": "split",
+  "pos": "bottom-left",
+  "spos": "bottom-right",
+  "bs": 178
  },
  {
   "photo": "20-112",
   "id": "FR6",
-  "word": "sleep",
+  "word": "SLEEP",
   "line": "Sleep matters too: short nights slowly weakened focus, and people barely noticed.",
-  "credit": "Van Dongen et al. · Sleep, 2003"
+  "credit": "Van Dongen et al. · Sleep, 2003",
+  "t": 210,
+  "layout": "split",
+  "pos": "top-left",
+  "spos": "bottom-left",
+  "bs": 110
  },
  {
   "photo": "20-173",
   "id": "FY10",
-  "word": "breath",
+  "word": "BREATH",
   "line": "The mind rules the senses. But the breath rules the mind.",
-  "credit": "Hatha Yoga Pradipika 4.29 · tr. P. Sinh"
+  "credit": "Hatha Yoga Pradipika 4.29 · tr. P. Sinh",
+  "t": 98,
+  "layout": "stack",
+  "pos": "top-right",
+  "spos": "top-right"
  },
  {
   "photo": "20-155",
   "id": "FR9",
-  "word": "count",
+  "word": "COUNT",
   "line": "In a trial, four weeks of counting breaths cut mind wandering.",
-  "credit": "Levinson et al. · Front Psychol, 2014"
+  "credit": "Levinson et al. · Front Psychol, 2014",
+  "t": 210,
+  "layout": "split"
  },
  {
   "photo": "20-161",
   "id": "FS10",
-  "word": "steady",
+  "word": "STEADY",
   "line": "On game day, the Lakers breathed together, then stayed steady in overtime.",
   "credit": "Phil Jackson · The Mindful Athlete",
   "t": 210,
@@ -87,9 +118,13 @@
  {
   "photo": "20-174",
   "id": "FY15",
-  "word": "ashtanga",
+  "word": "ASHTANGA",
   "line": "So how do we make the mind one-pointed? Ashtanga yoga teaches this.",
   "credit": "K. Pattabhi Jois · Yoga Mala",
-  "t": 100
+  "t": 100,
+  "layout": "split",
+  "pos": "bottom-right",
+  "spos": "top-right",
+  "bs": 178
  }
 ]

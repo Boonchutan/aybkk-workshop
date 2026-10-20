@@ -2,7 +2,7 @@
  {
   "photo": "20-148",
   "id": "ES2",
-  "word": "candle",
+  "word": "CANDLE",
   "line": "My candle burns at both ends. It will not last the night.",
   "credit": "Edna St. Vincent Millay · First Fig, 1918",
   "t": 0,
@@ -28,14 +28,19 @@
  {
   "photo": "20-066",
   "id": "ER6",
-  "word": "candy",
+  "word": "CANDY",
   "line": "Candy gave energy, but briefly. An hour later, people felt more tired.",
-  "credit": "Robert Thayer · J Pers Soc Psychol, 1987"
+  "credit": "Robert Thayer · J Pers Soc Psychol, 1987",
+  "t": 210,
+  "layout": "split",
+  "pos": "top-left",
+  "spos": "bottom-right",
+  "bs": 178
  },
  {
   "photo": "20-009",
   "id": "ER9",
-  "word": "marathon",
+  "word": "MARATHON",
   "line": "Old marathon records: fast start, then slowing. Since 1988: a steadier pace.",
   "credit": "Díaz et al. · Eur J Sport Sci, 2018",
   "t": 60,
@@ -48,7 +53,7 @@
  {
   "photo": "20-114",
   "id": "ES4",
-  "word": "stream",
+  "word": "STREAM",
   "line": "A thin stream flows long: use a little at a time.",
   "credit": "细水长流 · Chinese idiom",
   "t": 108,
@@ -60,44 +65,59 @@
  {
   "photo": "20-176",
   "id": "ES7",
-  "word": "bow",
+  "word": "BOW",
   "line": "A bow always kept bent soon breaks. Loosen it, and it's ready.",
   "credit": "Phaedrus, Fables III.14 · tr. Riley, 1887",
   "t": 240,
   "layout": "stack",
   "pos": "bottom-right",
-  "bs": 110
+  "bs": 110,
+  "spos": "bottom-right"
  },
  {
   "photo": "20-024",
   "id": "ER2",
-  "word": "nap",
+  "word": "NAP",
   "line": "After little sleep, a 10-minute nap made people more alert right away.",
   "credit": "Brooks & Lack · Sleep, 2006",
   "t": 248,
   "wmxy": [
    660,
    1210
-  ]
+  ],
+  "layout": "split",
+  "pos": "top-left",
+  "spos": "top-right",
+  "bs": 110
  },
  {
   "photo": "20-061",
   "id": "EY3",
-  "word": "breath",
+  "word": "BREATH",
   "line": "Yogis count life in breaths, not days, and breathe slow and deep.",
   "credit": "B. K. S. Iyengar · Light on Yoga, 1966",
   "sz": 50,
-  "wscale": 0.9
+  "wscale": 0.9,
+  "t": 202,
+  "layout": "split",
+  "pos": "bottom-right",
+  "spos": "top-right",
+  "bs": 110
  },
  {
   "photo": "20-087",
   "id": "EY13",
-  "word": "bandha",
+  "word": "BANDHA",
   "line": "Breathe with the three bandhas in asana. The mind follows the breath.",
   "credit": "K. Pattabhi Jois · Yoga Mala, Pranayama",
   "cws": [
    300,
    280
-  ]
+  ],
+  "t": 210,
+  "layout": "split",
+  "pos": "top-left",
+  "spos": "bottom-left",
+  "bs": 110
  }
 ]

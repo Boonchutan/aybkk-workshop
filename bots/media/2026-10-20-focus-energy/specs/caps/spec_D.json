@@ -1,0 +1,125 @@
+[
+ {
+  "photo": "20-177",
+  "id": "EY8",
+  "word": "BEE",
+  "line": "Breath is the queen bee. When it leaves, mind and senses follow.",
+  "credit": "Prasna Upanishad 2.3-4 · tr. Müller, 1884",
+  "t": 30,
+  "layout": "split",
+  "pos": "top-left",
+  "spos": "bottom-right",
+  "bs": 288
+ },
+ {
+  "photo": "20-034",
+  "id": "EY1",
+  "word": "SHAKY",
+  "line": "A scattered mind comes with a shaky body and uneven breath.",
+  "credit": "Yoga Sutra 1.31 & Vyasa · tr. Woods, 1914",
+  "sz": 46,
+  "t": "pad",
+  "layout": "split",
+  "pos": "bottom-left",
+  "spos": "bottom-right",
+  "bs": 110,
+  "wpos": [
+   963,
+   836
+  ],
+  "ink_w": "light",
+  "wbs": 100
+ },
+ {
+  "photo": "20-102",
+  "id": "ER14",
+  "word": "CYCLISTS",
+  "line": "Breathing costs energy: a machine eased it, and cyclists lasted 14% longer.",
+  "credit": "Harms et al. · J Appl Physiol, 2000",
+  "t": 30,
+  "layout": "split",
+  "pos": "top-left",
+  "spos": "bottom-left",
+  "bs": 110
+ },
+ {
+  "photo": "20-129",
+  "id": "EB7",
+  "word": "SIX",
+  "line": "Fifteen, six or three breaths a minute? Six wasted the least air.",
+  "credit": "Russo et al. · Breathe, 2017",
+  "wmxy": [
+   60,
+   1215
+  ],
+  "t": 210,
+  "layout": "split",
+  "pos": "bottom-right",
+  "spos": "bottom-left",
+  "bs": 178
+ },
+ {
+  "photo": "20-163",
+  "id": "ES13",
+  "word": "LONG",
+  "line": "In Japanese, a 'long breath' means steady work that lasts.",
+  "credit": "息が長い · Japanese idiom · Shogakukan",
+  "t": 210,
+  "layout": "stack",
+  "pos": "bottom-right",
+  "bs": 110,
+  "shadow": 1.6,
+  "spos": "bottom-right"
+ },
+ {
+  "photo": "20-001",
+  "id": "EY4",
+  "word": "NOSE",
+  "line": "In asana, breathe in and out equally, only through the nose.",
+  "credit": "T. Krishnamacharya · Yoga Makaranda, 1934",
+  "t": "pad",
+  "layout": "split",
+  "pos": "bottom-left",
+  "spos": "bottom-right",
+  "bs": 110
+ },
+ {
+  "photo": "20-069",
+  "id": "ER16",
+  "word": "FLOOR",
+  "line": "As 8 women breathed, scans showed diaphragm and pelvic floor moving together.",
+  "credit": "Talasz et al. · Int Urogynecol J, 2011",
+  "sz": 46,
+  "shadow": 1.6,
+  "t": "pad",
+  "layout": "stack",
+  "pos": "bottom-left",
+  "tight": true,
+  "sxy": [
+   125,
+   700
+  ],
+  "wpos": [
+   975,
+   1245
+  ],
+  "ink_w": "light",
+  "wmxy": [
+   125,
+   1250
+  ],
+  "bs": 110
+ },
+ {
+  "photo": "20-169",
+  "id": "EY11",
+  "word": "BIRD",
+  "line": "Tied to uddiyana bandha, the great bird, prana, flies without tiring.",
+  "credit": "Hatha Yoga Pradipika · 3.55, tr. Sinh, 1915",
+  "t": 160,
+  "layout": "split",
+  "pos": "top-left",
+  "spos": "bottom-left",
+  "bs": 178
+ }
+]
