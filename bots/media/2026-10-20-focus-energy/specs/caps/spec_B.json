@@ -68,9 +68,12 @@
   "credit": "W. Timothy Gallwey · Inner Game of Tennis",
   "t": 210,
   "layout": "split",
-  "pos": "top-right",
-  "spos": "bottom-right",
-  "bs": 110
+  "wpos": [
+   1020,
+   290
+  ],
+  "wbs": 100,
+  "ink_w": "light"
  },
  {
   "photo": "20-138",
@@ -110,7 +113,12 @@
   "bs": 110,
   "cws": [
    280
-  ]
+  ],
+  "wpos": [
+   1020,
+   1040
+  ],
+  "ink_w": "light"
  },
  {
   "photo": "20-171",

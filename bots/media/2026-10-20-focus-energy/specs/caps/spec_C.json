@@ -13,7 +13,7 @@
    1020,
    262
   ],
-  "wbs": 178,
+  "wbs": 140,
   "ink_w": "dark",
   "wmxy": [
    660,
@@ -59,8 +59,7 @@
   "t": 108,
   "layout": "split",
   "pos": "top-right",
-  "spos": "bottom-right",
-  "bs": 288
+  "spos": "bottom-right"
  },
  {
   "photo": "20-176",
@@ -88,7 +87,8 @@
   "layout": "split",
   "pos": "top-left",
   "spos": "top-right",
-  "bs": 110
+  "bs": 110,
+  "wscale": 0.82
  },
  {
   "photo": "20-061",

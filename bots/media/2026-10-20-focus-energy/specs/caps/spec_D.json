@@ -25,10 +25,10 @@
   "bs": 110,
   "wpos": [
    963,
-   836
+   845
   ],
   "ink_w": "light",
-  "wbs": 100
+  "wbs": 80
  },
  {
   "photo": "20-102",
@@ -37,10 +37,7 @@
   "line": "Breathing costs energy: a machine eased it, and cyclists lasted 14% longer.",
   "credit": "Harms et al. · J Appl Physiol, 2000",
   "t": 30,
-  "layout": "split",
-  "pos": "top-left",
-  "spos": "bottom-left",
-  "bs": 110
+  "layout": "split"
  },
  {
   "photo": "20-129",

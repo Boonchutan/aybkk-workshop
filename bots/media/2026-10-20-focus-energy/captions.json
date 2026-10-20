@@ -41,11 +41,33 @@
   "C": "energy, Burn Slow Last Long, 8 slides",
   "D": "energy, Breath Has Wings, 8 slides"
  },
- "state": "36 slides final (out5), 2 review rounds done; sent to Boonchu 21 Oct ~03:00 for crop check; waiting for go",
+ "state": "A published; B, C, D caps versions sent to Boonchu for go; 06:00 slot missed (caps change), proposed C 09:00, B 12:00, D 15:00",
  "order": {
   "1st (on go)": "A",
   "2nd 06:00 BKK (23:00Z)": "C",
   "3rd 09:00 BKK (02:00Z)": "B",
   "4th 12:00 noon BKK (05:00Z), confirm noon": "D"
+ },
+ "posts": {
+  "A": {
+   "title": "Like the Wind",
+   "id": "cmvha0f0u0bd9pm0yybpb364p",
+   "when": "NOW 05:50 BKK 21 Oct (22:50Z 20 Oct)",
+   "state": "PUBLISHED (checked 05:55)",
+   "slides": "A_caps (big word ALL CAPS per Boonchu)",
+   "attachments": [
+    "46ntaftyXt",
+    "geKNfM8hL1",
+    "uPL9eBz1Tf",
+    "WVkwxTpIs0",
+    "XpLaJ607PC",
+    "JDsDljhHnp",
+    "nlW9yerAuu",
+    "am8bqDpNrI",
+    "GV0uD1gV4A",
+    "Wj8TRjYzsj"
+   ],
+   "md5": "all 10 OK"
+  }
  }
 }
