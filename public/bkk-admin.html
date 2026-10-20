@@ -162,6 +162,7 @@
       letterHelp: 'People who signed up on aybkk.net by email. Only confirmed addresses get the letter. The download is the send list, each row with its own unsubscribe link for the letter footer. LINE, WeChat and Telegram readers join in those apps.',
       letterStatus: { confirmed: 'Confirmed', pending: 'Waiting to confirm', unsubscribed: 'Left' },
       letterCsv: 'Download confirmed emails (CSV)', letterNone: 'No sign-ups yet.',
+      letterDoors: 'Taps in the letter box, last 30 days:',
       qNewPrice: code => `New base price for ${code} (฿), before the online fee`,
       qRetire: code => `Stop selling ${code}?\nPasses already bought keep working.`,
       qPkgName: 'Name, as students see it', qPkgCode: 'Short code (letters and numbers, no spaces)',
@@ -253,6 +254,7 @@
       letterHelp: 'คนที่สมัครทางอีเมลบน aybkk.net ส่งจดหมายเฉพาะอีเมลที่ยืนยันแล้ว ไฟล์ที่ดาวน์โหลดคือรายชื่อสำหรับส่ง แต่ละแถวมีลิงก์ยกเลิกของตัวเองสำหรับท้ายจดหมาย คนที่เลือก LINE, WeChat หรือ Telegram จะเข้าร่วมในแอปนั้น',
       letterStatus: { confirmed: 'ยืนยันแล้ว', pending: 'รอยืนยัน', unsubscribed: 'ยกเลิกแล้ว' },
       letterCsv: 'ดาวน์โหลดอีเมลที่ยืนยันแล้ว (CSV)', letterNone: 'ยังไม่มีผู้สมัคร',
+      letterDoors: 'การกดในกล่องจดหมาย 30 วันล่าสุด:',
       qNewPrice: code => `ราคาตั้งใหม่ของ ${code} (฿) ก่อนบวกค่าธรรมเนียมออนไลน์`,
       qRetire: code => `เลิกขาย ${code}?\nแพ็กเกจที่ขายไปแล้วยังใช้ได้ตามปกติ`,
       qPkgName: 'ชื่อแพ็กเกจ (ที่นักเรียนเห็น)', qPkgCode: 'รหัสสั้น (ตัวอักษรอังกฤษและตัวเลข ไม่มีช่องว่าง)',
@@ -687,8 +689,7 @@
       .then(d => d.teachers || []).catch(() => []);
     TEES = await api('/api/bkk/admin/tees').then(r => r.json())
       .then(d => d.tees || []).catch(() => []);
-    const letter = await api('/api/bkk/admin/newsletter').then(r => r.json())
-      .then(d => d.counts || []).catch(() => []);
+    const { counts: letter = [], doors = [] } = await api('/api/bkk/admin/newsletter').then(r => r.json()).catch(() => ({}));
     const byStatus = {};
     for (const c of letter) byStatus[c.status] = (byStatus[c.status] || 0) + c.n;
     $('#view').innerHTML = `<div class="box">
@@ -718,6 +719,7 @@
         <td><b>${byStatus[k] || 0}</b> <span class="muted">${letter.filter(c => c.status === k)
           .map(c => `${esc(c.lang)} ${c.n}`).join(' · ')}</span></td></tr>`).join('')}</table>`
         : `<p class="muted">${T('letterNone')}</p>`}
+      ${doors.length ? `<p class="muted">${T('letterDoors')} ${doors.map(d => `${esc(d.ch)} <b>${d.n}</b>`).join(' · ')}</p>` : ''}
       <p><button class="btn" onclick="letterCsv()">${T('letterCsv')}</button></p>
       </div>
       <div class="box"><b>${T('links')}</b>
