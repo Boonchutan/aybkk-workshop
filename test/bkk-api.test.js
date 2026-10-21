@@ -62,6 +62,9 @@ const ok = (name, cond, extra = '') => {
   const prods = await J('/api/bkk/products');
   ok('5 packages listed, no 2- or 6-month', prods.body.products.length === 5 && !prods.body.products.some(p => ['unlim2', 'unlim6'].includes(p.code)),
     `got ${prods.body.products.map(p => p.code)}`);
+  const year = prods.body.products.find(p => p.code === 'unlim12m');
+  ok('a year is 12 months (365 days), no free 13th month on sale', year && year.valid_days === 365 && year.price_thb === 78000 &&
+     !prods.body.products.some(p => p.code === 'unlim12' || /free/i.test(p.name_en)), JSON.stringify(year));
   const dropin = prods.body.products.find(p => p.code === 'dropin');
   ok('drop-in base ฿1500', dropin.price_thb === 1500);
   ok('3% fee + 7% VAT → ฿1653 total', dropin.total_thb === 1653, `got ${dropin.total_thb}`);
@@ -558,6 +561,10 @@ const ok = (name, cond, extra = '') => {
      imp2.body.newMembers === 0 && imp2.body.emailsAdded === 1 && imp2.body.passes === 0, JSON.stringify(imp2.body));
   const one = (await J('/api/bkk/admin/members?q=imp.one', { headers: ADMIN })).body.members[0];
   const onePass = one.passes[0];
+  const onePassPkg = (await pool.query(`SELECT p.code, p.valid_days, p.active FROM bkk_passes x JOIN bkk_products p ON p.id = x.product_id
+    JOIN bkk_members m ON m.id = x.member_id WHERE m.name = 'Imp One'`)).rows[0] || {};
+  ok('a Rezerv 12-month pass (sold with 13 months) imports to the old package, kept off sale',
+     onePassPkg.code === 'unlim12' && onePassPkg.valid_days === 395 && onePassPkg.active === false, JSON.stringify(onePassPkg));
   ok('the imported pass keeps the Rezerv end date and the "(renewed)" note is dropped from the name',
      one.name === 'Imp One' && String(onePass.valid_until).slice(0, 10) === '2026-10-26' && onePass.source === 'rezerv',
      JSON.stringify({ name: one.name, until: onePass.valid_until, source: onePass.source }));

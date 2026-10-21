@@ -136,7 +136,8 @@ This repo is attached to each routine (Boonchu set it in the routines UI), which
 - 1 month: 9,600 THB
 - 3 months: 25,800 THB (8,600 THB/month)
 - 6 months: 45,000 THB (7,500 THB/month)
-- 12 months: 78,000 THB (6,000 THB/month) — includes 1 free month, so 13 months total
+- 12 months: 78,000 THB (6,500 THB/month), 12 months only. Boonchu, 21 Oct 2026: no more free 13th month.
+  Passes sold before 21 Oct keep their 13 months. From 12 Nov 2026 the year is 59,900 + VAT, also 12 months.
 
 ## Environment
 
