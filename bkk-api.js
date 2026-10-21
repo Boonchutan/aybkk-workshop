@@ -286,18 +286,20 @@ function mountBkk(app, opts = {}) {
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
     // package retired in the admin page stays as staff set it.
     const added = await q(`SELECT count(*)::int AS n FROM bkk_products`);
-    const fresh = [];
     for (const s of SEED_PRODUCTS) {
-      const r = await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort)
-               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (code) DO NOTHING RETURNING code`,
+      await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort)
+               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (code) DO NOTHING`,
         [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort]);
-      if (r.rows.length) fresh.push(s.code);
     }
     // From 21 Oct 2026 a year is 12 months, no free 13th (Boonchu). valid_days
     // never changes under passes already sold, so the 13-month package is
-    // retired once, the day its 12-month successor arrives, and kept for the
-    // passes and Rezerv imports that still point at it.
-    if (fresh.includes('unlim12m')) await q(`UPDATE bkk_products SET active=false WHERE code='unlim12'`);
+    // retired once and kept for the passes and Rezerv imports that point at it.
+    // The marker is written after the UPDATE, so a failed boot tries again.
+    const year12 = await q(`SELECT 1 FROM bkk_settings WHERE key = 'year_is_12_months'`);
+    if (!year12.rows.length) {
+      await q(`UPDATE bkk_products SET active=false WHERE code='unlim12'`);
+      await q(`INSERT INTO bkk_settings (key,value) VALUES ('year_is_12_months','true') ON CONFLICT (key) DO NOTHING`);
+    }
     if (added.rows[0].n === 0) console.log(`✓ bkk: seeded ${SEED_PRODUCTS.length} products`);
     const c = await q('SELECT count(*)::int AS n FROM bkk_class_slots');
     if (c.rows[0].n === 0) {
@@ -1330,7 +1332,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     try {
       const r = await q(
-        `SELECT o.*, pr.name_en, m.name AS member_name, m.email, m.code AS member_code
+        `SELECT o.*, pr.name_en, pr.name_th, m.name AS member_name, m.email, m.code AS member_code
          FROM bkk_orders o JOIN bkk_products pr ON pr.id=o.product_id
          JOIN bkk_members m ON m.id=o.member_id ORDER BY o.id DESC LIMIT 200`);
       res.json({ orders: r.rows });
@@ -1600,7 +1602,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
          ORDER BY m.name LIMIT 25`, [like]);
       const ids = r.rows.map(m => m.id);
       const passes = ids.length ? (await q(
-        `SELECT p.*, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+        `SELECT p.*, pr.name_en, pr.name_th FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.member_id = ANY($1::int[]) ORDER BY p.id DESC`, [ids])).rows : [];
       res.json({
         members: r.rows.map(m => ({
@@ -1662,6 +1664,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     unlim6: { en: '6 months unlimited', th: '6 เดือน ไม่จำกัด', price: 45000, days: 180, sort: 60 },
     unlim12: { en: '12 months unlimited (1 free month)', th: '12 เดือน ไม่จำกัด (ฟรี 1 เดือน)', price: 78000, days: 395, sort: 70 },
   };
+  // Rezerv years stay on the 13-month package: valid_from is worked back from
+  // the end date, and 365 days on a pass that really runs 395 would start it a
+  // month late and block the student's bookings. Too early is harmless.
   const MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
   function importDate(v) {
     const s = String(v || '').trim();
