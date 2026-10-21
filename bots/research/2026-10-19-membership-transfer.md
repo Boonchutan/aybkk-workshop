@@ -28,4 +28,4 @@ Why not the window: (1) wrong problem: a friend trying 1-2 classes is LENDING, a
 - Condition text at least 1/4 of main text size (min 2 mm) on print.
 
 ## Posters
-bots/media/2026-10-19-prices-v3/: draft (Boonchu's 30-70% rule) and recommended (hardship transfer, refund exception, +VAT by each price, "you get 13"). render-v3.js + JSON. Not for posting until Boonchu picks the rule and a lawyer checks the refund line.
+bots/media/2026-10-19-prices-v3/: draft (Boonchu's 30-70% rule) and recommended (hardship transfer, refund exception, +VAT by each price, "you get 13"). render-v3.js + JSON. 21 Oct: draft and recommended moved to old-13-months/ (superseded; the year is 12 months only); post only the final-v3 set. Not for posting until Boonchu picks the rule and a lawyer checks the refund line.
