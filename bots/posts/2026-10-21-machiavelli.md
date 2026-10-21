@@ -6,3 +6,4 @@ Reel from Plato: a golfer, 63, "very lazy", went back to practice and won; Arjun
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
 Carne and Plato both posted today. Inbox 07:08: 5 new in 1 thread, 0 waiting (ends with thanks). Shala flag: a student found the shala under construction at 06:08 today; the schedule still lists classes today and tomorrow. Check in team chat.
 13:08 check-in: course prices (1 day) and Mysore Reel (by 19:00 Thu 22 Oct) still waiting, 2nd nudge today. Inbox: 2 new in 1 thread, 1 hot (shala package renewal).
+19:08 check-in: no new decisions, prices and Reel due Thu 22 Oct 19:00 (not repeated). Inbox: 0 new, 1 hot carried (shala renewal).
