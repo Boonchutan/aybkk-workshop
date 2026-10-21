@@ -1,0 +1,7 @@
+Money today: answer the "is the online Led class invite only?" question (open since 18 Oct, 4th day). Carne's draft waits; his next check is Thu 22 Oct.
+Course prices: decision needed in team chat by 19:00 Thu 22 Oct (1 day). Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
+Mysore Reel: reply A (post Fri 23 Oct, caption rewritten to the 2 Oct terms first) or B (wait until after the keyword test, 22 Nov) in Plato chat by 19:00 Thu 22 Oct. No answer means B.
+Countdowns: Batch Sheet + filming day + Google ad first check Thu 22 Oct: 1 day; door check-in for everyone about Sat 24 Oct: 3 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 4 days; keyword test Mon 26 Oct: 5 days; test group Tue 27 Oct: 6 days; Google ad judge Thu 29 Oct: 8 days; Mysore trip check Sun 1 Nov: 11 days. PR #63 and PR #67 still to merge. No reminders due.
+Reel from Plato: a golfer, 63, "very lazy", went back to practice and won; Arjuna asks Krishna if a stopped practice is lost ("Nothing is lost"). Asana: Padmasana. Hook: "Champion, 63 years old: 'I have been very lazy.'" Waiting on Boonchu's cue.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
+Carne and Plato both posted today. Inbox 07:08: 5 new in 1 thread, 0 waiting (ends with thanks). Shala flag: a student found the shala under construction at 06:08 today; the schedule still lists classes today and tomorrow. Check in team chat.

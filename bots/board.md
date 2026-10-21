@@ -2,6 +2,163 @@
 
 Every post from the last 14 days, newest first. Rebuilt by Machiavelli each morning.
 
+## 2026-10-21 · plato
+
+Trigger: a golfer, 63, won on Sun 18 Oct, his first win in 3+ years, after saying "I have been very lazy practicing" and going back to practice (News Tribune/AP, 19 Oct).
+Story: Arjuna asks Krishna "if I stop yoga, is it all lost, like a torn cloud?" Krishna: "No. Nothing is lost. The old practice pulls you back." (Bhagavad Gita 6.37-44)
+Asana: Padmasana, the seat at the end of every practice (Gita 6.13 tells how to sit). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "Champion, 63 years old: 'I have been very lazy.'" Full package: posts/2026-10-21-plato-nothing-is-lost.md
+
+## 2026-10-21 · plato-nothing-is-lost
+
+# Plato · 21 Oct 2026 · daily Reel package
+Hidden Stories of Ashtanga (no Ep. number until filmed; last posted Ep. 4)
+"Nothing Is Lost"
+
+Route: Lane A story (myth, depth) with a Lane B caption line ("beginners welcome"). The keyword test starts Mon 26 Oct, so no STUCK or aybkk ask yet.
+Habit: #2 Get stronger (strength you keep for decades). Direction check: the habit gap, straight on. People stop, then think the gap wiped them out, so they never come back. This Reel says: come back, the old practice is still in you.
+
+Trigger note: the only unused life note (13 Oct, the hypermobility jab) still needs his own words, so not used. No @Plato request in the team chat.
+News picked: a golfer, 63, won a pro event on Sunday 18 Oct. His first win in more than three years. Reported Fulton/Jefferson City News Tribune (AP), 19 Oct 2026. Facts:
+- Event: SAS Championship, PGA Tour Champions (the over-50 tour), Cary, North Carolina. He won by 2 shots.
+- Last win: August 2023. No top-10 finish at all in 2026 before this week.
+- Second-oldest winner in the history of that tour.
+- His own words: "I have been very lazy practicing." He said he went back to practice, and he thinks that is why he won.
+Script says only: "a golfer, 63", "no win for three years", "he said: I have been very lazy practicing", "he went back to practice", "Sunday he won".
+Name: the script does not say his name (not needed, and a 10-year-old does not need to know golf). Caption may name him only if Boonchu wants; default no name.
+
+## The link (4 lines, told to a 10-year-old)
+- Trigger: a golfer, 63 years old, did not win for three years. He said, "I was lazy. I stopped practicing." He went back to practice. Last Sunday he won.
+- Story: Arjuna asked his friend Krishna, "What if a person starts yoga, and then stops? Is it all gone, like a little cloud the wind tears apart?" Krishna said, "No. Nothing is lost. The old practice pulls him back."
+- Behavior: we stop for a week, a month, a year. Then we think, "It's all gone. Too late." So we never come back. That is the real loss.
+- Asana: Padmasana, the lotus seat at the end of every practice. In the same talk, Krishna tells how to sit: body, neck and head straight, still. Come back, even for one Sun Salute and the seat.
+
+Point in one line a child can repeat: "You stopped. It's not gone. Come back."
+
+## Hooks (/hook, answered myself)
+Topic: coming back after a gap. Nothing is lost.
+Consensus: "If you stop, you lose it all. You have to start from zero, so why bother."
+Where Boonchu sharpens it: 18 years of six days a week. In Mysore he sees students come back after months away. The body picks it up again faster than they think. (Plato wording, not a quote from him; he says it in his own words only if true for him.)
+1. Authority: "I watch people come back after a year away. Every week."  [only if true for him]
+2. Contrarian: "Stopping is not the problem. Thinking it's all gone is."
+3. Stakes: "You stopped for a month. Now you think it's too late."
+4. Question: "63 years old. No win for three years. What changed?"
+5. Pattern interrupt: "Champion, 63 years old: 'I have been very lazy.'"
+Pick: 5 at 0-3 s (on screen: "63. 'I was lazy.'"), then 3 at 3-6 s as the second hook (the mirror: "that's me, I stopped and now I think it's too late"). Why: a champion saying "lazy" is a surprise and true, it opens the loop (so what happened?), and a 10-year-old gets it with no golf knowledge. 3 turns it on the viewer.
+Cover: "63. Lazy." with "Lazy" in gold. 2 words.
+
+## Script (/story, 60 s, spoken to camera, his spoken English)
+HOOK (0-8 s)
+"A champion. Sixty-three years old. He say: I have been very lazy practicing."
+(photo of the golfer from the news, credit shown, fit in frame, no crop; or no photo)
+"Three years, no win. This year, nothing.
+So he go back. He practice again.
+Last Sunday... he win."
+(pause) "And you? You stop one month... and you think: too late."
+On screen: 63 · 3 years · won
+
+CONTEXT (8-16 s)
+"Bedtime story. Long ago, Arjuna ask his friend Krishna a question.
+The same question you have."
+On screen: same question
+
+ORDEAL (16-38 s)
+"Arjuna say: Krishna. A person start yoga. Then he stop.
+Is it all gone?
+Like a small cloud... the wind tear it, and it disappear?
+Krishna say: No.
+Nothing is lost.
+The old practice... it pull him back. Even when he don't try."
+(1 s)
+"The real loss is not the stop.
+The real loss is... you never come back."
+On screen: stopped · not lost · come back
+
+TAKEAWAY (38-54 s)
+"Same talk, Krishna tell him how to sit.
+Body, neck, head. Straight. Still.
+Every practice, we finish like this. Padmasana.
+You stop a long time? Come back small.
+Sun Salutation. Then sit. Ten breaths."
+[Boonchu cue: one line in your own words about a student who came back after a long break and what happened. Only if it is true. Never a name.]
+(film yourself coming into Padmasana, hands on knees, one full breath, "10 breaths" on screen, cut on the exhale)
+
+RETURN (54-60 s)
+(silent beat, 1 s)
+"He was lazy. He came back.
+Your mat... is waiting.
+แล้วเจอกันครับ"
+On screen: lazy · back · won, then small subtitle "see you"
+
+Payoff check: the hook opens "a champion says he was lazy, and you think it's too late"; the end closes it: he came back and won, nothing is lost, come back small tomorrow. One lesson only: a gap does not erase you, come back. Left out on purpose: his caddie coming back for the week and "don't try to win on the cold front nine" (two more lessons; the caddie one, "someone who notices when you're gone", could be its own Reel later).
+
+Edit cue sheet: zoom cut 1-2 s on "lazy", "three years", "he win", "nothing is lost", "never come back", "Padmasana". Sound effect 40%, 0.4 s after each stress word. Picture prompt for the myth (Isle of Dogs style, nothing billed without Boonchu's OK): "stop-motion puppet animation, felt and wood, two friends sitting on a grassy hill talking at dawn, one asks, the other smiles kindly, a small cloud drifting above them, soft warm light, muted colours". No chariot, no armies, no weapons (hard rule 8; the Gita is spoken before a war, never show or say that). Show Krishna with respect only: calm, kind, no jokes.
+
+## Captions (picture words, 10-year-old level, max 5 hashtags, no price)
+EN
+A champion, 63 years old, said: "I have been very lazy practicing."
+He went back to practice. Last Sunday he won.
+Long ago, Arjuna asked Krishna: "If I stop yoga, is it all gone?" Krishna said: "No. Nothing is lost."
+You stopped? It's still in you. Come back small. One Sun Salute. Then sit.
+Hidden Stories of Ashtanga. Come practise with us at AYBKK Bangkok. Beginners welcome, we teach you from the start. Aybkk.net
+#ashtanga #mysorestyle #hiddenstoriesofashtanga #aybkk #bangkokyoga
+
+TH
+นักกอล์ฟแชมป์วัย 63 พูดว่า "ช่วงนี้ผมขี้เกียจซ้อมมาก"
+เขากลับไปซ้อมใหม่ แล้ววันอาทิตย์ที่ผ่านมา เขาชนะ
+นานมาแล้ว อรชุนถามพระกฤษณะว่า "ถ้าฝึกโยคะแล้วหยุดไป ทุกอย่างหายหมดไหม" พระกฤษณะตอบว่า "ไม่หาย ไม่มีอะไรสูญเปล่าเลย"
+หยุดไปนานแล้วเหรอ มันยังอยู่ในตัวเรา กลับมาทีละนิด สุริยนมัสการ 1 รอบ แล้วนั่งหายใจ
+เรื่องลับของอัษฎางค์ มาฝึกกับเราที่ AYBKK กรุงเทพฯ มือใหม่ก็มาได้ เราสอนตั้งแต่เริ่มต้น Aybkk.net
+#อัษฎางค์โยคะ #มายซอร์ #โยคะกรุงเทพ #aybkk #ashtanga
+
+ZH (Xiaohongshu / WeChat Channels, no promo)
+一位63岁的高尔夫冠军说：“我最近练得太懒了。”
+三年没赢过一场。今年连前十都没进。
+后来他重新回去练。上周日，他赢了。
+很久以前，阿周那问克里希那：“一个人开始修瑜伽，后来停了，是不是全白费了？就像一朵被风吹散的云？”
+克里希那说：“不会。什么都不会丢。以前的练习，会把他拉回来。”
+停了很久？没关系，它还在你身上。
+先回来一点点：一组拜日式，然后坐下，呼吸十次。
+阿斯汤加的隐藏故事
+#阿斯汤加 #迈索尔 #瑜伽日常 #重新开始 #阿斯汤加的隐藏故事
+
+RU
+Чемпион, 63 года, сказал: «Я очень обленился с тренировками».
+Он вернулся к тренировкам. И в прошлое воскресенье победил.
+Давным-давно Арджуна спросил Кришну: «Если я брошу йогу, всё пропадёт?» Кришна ответил: «Нет. Ничего не теряется».
+Ты бросил? Это всё ещё в тебе. Вернись понемногу. Один Сурья Намаскар. Потом просто сядь.
+Тайные истории аштанги. Приходи практиковать в AYBKK, Бангкок. Новичкам рады, учим с самого начала. Aybkk.net
+#аштанга #майсор #йогабангкок #aybkk #ashtanga
+
+Xiaohongshu title (11 characters): 停练了？什么都没丢
+
+## Sources (check before filming)
+- Win, age, score, last win Aug 2023, no top-10 in 2026, second-oldest winner, "I have been very lazy practicing", went back to practice: News Tribune (AP), 19 Oct 2026, https://www.newstribune.com/news/2026/oct/19/singh-wins-first-title-since-2023-captures-sas-championship/
+- Story: Bhagavad Gita, chapter 6 (in the Mahabharata, Bhishma Parva). 6.37-38 Arjuna asks about the one who falls from yoga, "like a broken cloud"; 6.40 "neither here nor hereafter is he destroyed"; 6.43-44 he picks up the understanding of before and "by that former practice he is carried on, even against his will"; 6.11-13 the seat: "holding body, neck and head erect and still, gazing at the tip of the nose". Edwin Arnold translation (public domain): https://www.gutenberg.org/files/2388/2388-h/2388-h.htm ("He is not lost, thou Son of Pritha! No! For by the old desire he is drawn on unwittingly"). Arnold says "old desire"; most translations say "former practice" (abhyasa). Script uses "old practice", the common reading.
+- Honest note on the asana: the Gita does not name Padmasana. The script says only that Krishna tells how to sit (body, neck, head straight), and that we finish every practice in Padmasana. Both true.
+- Left out on purpose: the war setting of the Gita (hard rule 8), "rebirth" (6.41-43 says he is born again in a good home; too much for 60 s and not needed), the golfer's name and nationality, his caddie and the cold-wind plan (second lessons).
+- Note: the 28 Sep Reel used the Gita too (Dhritarashtra and Sanjaya, verse 1.1). That was a different story; this one is Arjuna's question in chapter 6.
+
+Items to verify before filming: the golfer's photo credit (use a news photo with credit or no photo); hook 1 only if it is true for Boonchu; the Boonchu cue line only if he has a real case.
+
+## 2026-10-21 · machiavelli
+
+Money today: answer the "is the online Led class invite only?" question (open since 18 Oct, 4th day). Carne's draft waits; his next check is Thu 22 Oct.
+Course prices: decision needed in team chat by 19:00 Thu 22 Oct (1 day). Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
+Mysore Reel: reply A (post Fri 23 Oct, caption rewritten to the 2 Oct terms first) or B (wait until after the keyword test, 22 Nov) in Plato chat by 19:00 Thu 22 Oct. No answer means B.
+Countdowns: Batch Sheet + filming day + Google ad first check Thu 22 Oct: 1 day; door check-in for everyone about Sat 24 Oct: 3 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 4 days; keyword test Mon 26 Oct: 5 days; test group Tue 27 Oct: 6 days; Google ad judge Thu 29 Oct: 8 days; Mysore trip check Sun 1 Nov: 11 days. PR #63 and PR #67 still to merge. No reminders due.
+Reel from Plato: a golfer, 63, "very lazy", went back to practice and won; Arjuna asks Krishna if a stopped practice is lost ("Nothing is lost"). Asana: Padmasana. Hook: "Champion, 63 years old: 'I have been very lazy.'" Waiting on Boonchu's cue.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
+Carne and Plato both posted today. Inbox 07:08: 5 new in 1 thread, 0 waiting (ends with thanks). Shala flag: a student found the shala under construction at 06:08 today; the schedule still lists classes today and tomorrow. Check in team chat.
+
+## 2026-10-21 · carnegie
+
+180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb). No new message from them since 17 Oct.
+Next check Thu 22 Oct. Nothing to send today if one of my drafts already went out.
+Boonchu: answer "is the online Led class invite only?" (open since 18 Oct).
+@Machiavelli: inbox has 1 LINE thread for you: a shala student came for class at 06:08 today, found it under construction, asked about class with Matt.
+Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
+
 ## 2026-10-20 · plato
 
 Trigger: a South African runner lost the first race of the year, was 3rd in September, then won a 10 km race series for the 4th time, a first (The Citizen, 19 Oct; race Sat 18 Oct).
@@ -151,6 +308,8 @@ Countdowns: Google ad first check and Batch Sheet Thu 22 Oct: 2 days; door check
 Reel from Plato: Arjuna loses to a hunter who is Shiva, stays, gets the gift. Asana: Virabhadrasana. Hook: "She lost the first race. Then she made history." Waiting on Boonchu's cue.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
 Carne and Plato both posted today. Inbox 07:08: 0 new; 1 carried (LINE class-status fix, may be answered).
+13:08 check-in: Mysore Reel due 19:00 today (B = Fri 23 Oct), course prices 2 days (by Thu 22 Oct), 2nd nudge today each. Inbox: 0 new.
+19:08 check-in: no answer on the Mysore Reel by 19:00, default B applied (Reel moves to Fri 23 Oct). Prices due Thu 22 Oct (2 days), not repeated. No win reported. Inbox: 0 new.
 
 ## 2026-10-20 · carnegie
 
@@ -2642,6 +2801,7 @@ Ashtanga history: FACT: in 1930s Mysore, young men scorned yoga and preferred th
 - UMSU, 2015: https://umsu.unimelb.edu.au/news/article/7797/2015-02-23-the-trouble-with-broga
 - UP OVPAA, 2026: https://ovpaa.up.edu.ph/?p=7668
 - YouGov UK, 2015: https://yougov.com/en-gb/articles/11434-yoga-reduces-stress
+
 ## 2026-10-09 · plato
 
 Trigger: ScienceDaily 8 Oct: mice did strength training for 7 days. Their weight stayed the same, but inside the fat cells got smaller.
@@ -2933,149 +3093,3 @@ Carne and Plato both posted today. Inbox 07:08: 1 new, 0 hot.
 ## 2026-10-08 · carnegie
 
 No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
-
-## 2026-10-07 · plato
-
-Trigger: a golfer won his first big title this week, on his 100th try (PGA Tour, 4 Oct).
-Story: the lamp blows out at dinner, Arjuna's hand still finds his mouth "from habit", so he practises his bow at night (Mahabharata, Adi Parva 134). Asana: Urdhva Dhanurasana and the drop back. Habit #1: count the mornings.
-Hook: "This week a golfer won on his 100th try. The 99 before were not failures."
-Full package: posts/2026-10-07-plato-hand-in-the-dark.md. Waiting on Boonchu's own drop-back cue.
-
-## 2026-10-07 · plato-hand-in-the-dark
-
-# Plato · 7 Oct 2026 · daily Reel package
-Hidden Stories of Ashtanga (no Ep. number until filmed; last posted Ep. 4)
-"The Hand That Knew the Way"
-
-Route: Lane A (Hidden Stories), beginner-safe, Habit Gap message · last 3: doves script (A, not filmed), hen script (A, not filmed), carousels 5 Oct · next due: a Lane B fear buster (this one stays open-door: "nobody does it on day one").
-Habit #1 Track everything: count the mornings, not the wins (the 12-week check).
-Trigger note: no unused life note. News checked: a golfer won his first PGA Tour title on his 100th start, Sun 4 Oct 2026 (US time). Plain enough for a 10-year-old: "100th try". No score, no tour name, no golfer name in the spoken script.
-
-## The link (4 lines)
-- Trigger: this week a golfer won his first big title. On his 100th try. 99 times before, no win.
-- Story: young Arjuna is eating dinner. The wind blows out the lamp. He keeps eating in the dark: his hand finds his mouth "from habit". So he starts to practise his bow at night too (Mahabharata, Adi Parva, section 134, Ganguli).
-- Behavior: the 99 tries were not nothing. They were the dinners in the dark. Habit teaches the body a way you cannot see yet.
-- Asana: Urdhva Dhanurasana, the upward bow, and the drop back. Standing, you bend back to a floor you cannot see. Nobody does it on day one. One morning, the hands just find the floor.
-
-Toolkit pick: Triple Hook (Proof + Whiplash) + /story beats, fail-hero-payoff (fail = "nothing changes, I quit at week three"; hero = Arjuna's hand, then the practitioner; payoff = "count the mornings"). Why: "100th try" is a number anyone gets in one second, and the whiplash ("the 99 were not failures") flips what the viewer believes about his own slow progress. Not used in the last 3 days (Name-the-Feeling 5 Oct, One Dissenting Voice 6 Oct).
-Other options: (1) Gervais close: "Me? I needed more than 100 tries for my drop back. Don't ask how many." (only if true for him). (2) Fork-First: "Week three. No change. Do you quit, or do you eat in the dark?"
-
-## Hooks (/hook, answered myself)
-Topic: practice habit, why people quit before it works.
-Consensus: "If you see no progress, the method is wrong for you. Try something else."
-Where Boonchu sharpens it: 20 years of Ashtanga, six days a week since 2008. Progress hides inside the habit until one morning it shows. The drop back is the classic: months of nothing, then one day the hands land.
-1. Authority: "Twenty years of Ashtanga. Most progress I never saw coming." (his own claim: OK it first)
-2. Contrarian: "No progress for weeks? That is not a sign to stop."
-3. Stakes: "Quit at try 99, and you never meet try 100."
-4. Question: "What were the 99 tries before the win doing?"
-5. Pattern interrupt: "This week a golfer won on his 100th try. The 99 before were not failures."
-Pick: #5. It opens with the trigger (rule), the number makes sense with sound off, and it turns the viewer's own "I failed" into "I was building". A 10-year practitioner stuck on a drop back stops for that.
-
-## Script (60 s, spoken to camera, his English)
-
-HOOK (0-4 s)
-"This week, a golfer win his first big title. On his 100th try.
-The 99 before... not failures."
-
-CONTEXT + MIRROR (4-12 s)
-"You practise three weeks. Nothing change.
-You think: maybe I'm not made for this.
-Okay. Listen this story."
-
-STORY, bedtime voice (12-32 s)
-"Long time ago in India. A boy, Arjuna. He is learning the bow.
-One night he eat dinner. Wind come... whoosh. The lamp go out.
-All dark.
-But his hand... still go to his mouth. Every time.
-(mirror) He cannot see. But his hand know the way.
-The old book say: from habit.
-... (silent beat, 1 s)
-So Arjuna think: if my hand can eat in the dark... my bow can shoot in the dark.
-And he start to practise. At night."
-
-ORDEAL / TURN (32-42 s)
-"The 99 tries... they are the dinners in the dark.
-You don't see anything. But your body is learning the way."
-
-TAKEAWAY, the reveal (42-54 s)
-"In Ashtanga we have Urdhva Dhanurasana. Upward bow.
-Standing, you bend back... to the floor. You cannot see it.
-Nobody do it on day one.
-Then one morning... the hands just find the floor."
-
-RETURN, payoff (54-60 s)
-"So don't count the wins.
-Count the mornings."
-
-Payoff check: the hook says "the 99 before were not failures"; the close "count the mornings" tells the viewer what the 99 were for. One ordeal (the dark), one lesson (habit builds what you cannot see yet).
-
-## Edit cue sheet (house style, for the "Editing by Claude" session)
-- Header pill: "Hidden Stories of Ashtanga · Ep. N" (N only once filmed).
-- Zoom punch + SFX at 40% (0.4 s after the word): "100th" (ping), "failures" (error), "nothing" (click-soft), "whoosh" (whoosh), "dark" (impact-bass-1), "habit" (chime), "night" (sparkle), "floor" (pop), "mornings" (chime).
-- Cards: (1) graphic card "❌ 1 ❌ 2 ❌ ... ❌ 99 ✅ 100", items pop in fast, the 100 in gold; (2) boy eating by a small oil lamp; (3) lamp blown out, dark, only the hand moving to the mouth; (4) boy with a bow under the stars; (5) graphic card "dhanu = bow 🏹 → Urdhva Dhanurasana"; (6) a real AYBKK drop-back class photo only if the student gave permission; (7) last card "Count the mornings ✅✅✅✅✅".
-- Picture prompts (Isle of Dogs, keep every handmade cue): "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, [SCENE], felt and wool puppets with glassy bead eyes, painted cardboard sky, cotton-wool clouds on visible wires, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections". Scenes: (1) a young felt boy sitting cross-legged eating rice from a leaf plate, a tiny clay oil lamp glowing beside him, cardboard hut wall; (2) the same scene with the lamp just blown out, a curl of cotton-wool smoke, deep blue darkness, his small hand lifting rice to his mouth; (3) the boy holding a wooden toy bow under a painted cardboard night sky with tin-foil stars, no target, no arrow flying at anyone. No weapons aimed at people. Cloudflare only after Boonchu's OK.
-
-## Captions (max 5 hashtags, no price)
-EN
-A golfer won his first title this week. On his 100th try. ⛳
-Hidden Stories of Ashtanga · The Hand That Knew the Way
-The lamp went out. Arjuna's hand still found his mouth, from habit. 🪔
-Urdhva Dhanurasana: nobody drops back on day one. One morning the hands just find the floor. 🙏
-Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. (In honour of Sharathji's passing.)
-Come practise with us. Beginners welcome, we teach you from the very start. Comment aybkk and I'll send you the link. Aybkk.net
-#aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #urdhvadhanurasana
-
-TH
-นักกอล์ฟคนหนึ่งเพิ่งได้แชมป์ครั้งแรก ในการลงแข่งครั้งที่ 100 ⛳
-เรื่องเล่าที่ซ่อนอยู่ในอัษฏางค์ · มือที่รู้ทาง
-ตะเกียงดับ แต่มือของอรชุนยังหาปากเจอ เพราะความเคยชิน 🪔
-อูรธวะ ธนุราสนะ: ไม่มีใครดร็อปแบ็กได้ตั้งแต่วันแรก แล้ววันหนึ่ง มือก็หาพื้นเจอเอง 🙏
-โปรพิเศษสำหรับนักเรียนใหม่: ซื้อ 1 แถม 1 สำหรับแพ็กเกจ 1, 2 หรือ 3 เดือน ชวนเพื่อนมา หรือเก็บไว้ใช้เองทั้งสองก็ได้ ซื้อภายใน 11 พ.ย. (เพื่อระลึกถึงท่านชารัธ)
-มาฝึกมายซอร์ด้วยกัน มือใหม่ยินดีต้อนรับ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย คอมเมนต์ aybkk แล้วเราจะส่งลิงก์ให้ Aybkk.net
-#aybkk #อัษฏางค์โยคะ #โยคะกรุงเทพ #hiddenstoriesofashtanga #urdhvadhanurasana
-
-ZH (Xiaohongshu / WeChat Channels; Lane A, no beginner promo)
-练了好几周，一点变化都没有？⛳
-这周有位高尔夫球手，前99次参赛都没拿过冠军，第100次终于赢了。
-阿斯汤加的隐藏故事：《摩诃婆罗多》里，少年阿周那吃晚饭时，一阵风吹灭了灯。四周一片漆黑，他的手却照样把饭送进嘴里，靠的就是习惯。于是他开始在夜里练弓。🪔
-Urdhva Dhanurasana（上弓式），站着向后弯，去找你看不见的地面。没人第一天就做得到。直到某个早晨，双手自己就找到了地板。🙏
-别数赢了几次，数你来了多少个早晨。来曼谷 AYBKK 的迈索尔课堂，一起练。
-#阿斯汤加 #迈索尔 #瑜伽 #上弓式 #阿斯汤加的隐藏故事
-
-Xiaohongshu title (15 characters): 前99次都没赢，第100次赢了
-
-RU
-Гольфист на этой неделе выиграл свой первый титул. С сотой попытки. ⛳
-Скрытые истории аштанги · Рука, которая знала путь
-Лампа погасла. А рука Арджуны всё равно находила рот, по привычке. 🪔
-Урдхва Дханурасана: никто не делает прогиб из положения стоя в первый день. Но однажды утром руки сами находят пол. 🙏
-Не считай победы. Считай утра. Приходи практиковать с нами в Бангкоке, в класс майсор. Новичкам рады, учим с самого начала. Aybkk.net
-#аштанга #аштангайога #майсор #урдхвадханурасана #aybkk
-
-## Sources (check before filming)
-- News: PGA Tour, 4 Oct 2026, Bank of Utah Championship: Austin Smotherman wins his first PGA Tour title in his 100th career start, two shots clear. https://www.pgatour.com/article/news/daily-wrapup/2026/10/04/round-4-bank-of-utah-championship-black-desert-resort-storylines-scores-leaderboard-results-austin-smotherman (also Washington Post 4 Oct, Korea Herald). His own words there: "It didn't have to be pretty... this game doesn't have to be perfect." Final score differs between reports (25 or 26 under): do not use it.
-- Story: The Mahabharata, tr. K. M. Ganguli, Adi Parva (Sambhava Parva), section CXXXIV (134). Checked word for word on Project Gutenberg #15474: "when Arjuna was taking his food, a wind arose, and thereupon the lamp that had been burning went out. But Arjuna... continued eating in the dark, his hand, from habit, going to his mouth. His attention being thus called to the force of habit... set his heart upon practising with his bow in the night." Drona then hears the bowstring at night and promises him no archer will equal him.
-- Word: dhanu / dhanus = bow; urdhva = upward.
-
-## Flags for Boonchu
-- Drop-back cue: please give 1 or 2 lines in your own words (what you tell a student learning to drop back). The script line "the hands just find the floor" is general; swap in yours.
-- Arjuna was also in the 1 Oct story (the bird's head, Dhanurasana). Different story and different asana, but the same hero and the bow a week apart. If that feels too close, post this one next week.
-- Left out on purpose: Drona telling the cook "never give Arjuna food in the dark" (the book does not say why), and anything about fighting or weapons aimed at people.
-- Hook #1 is your own claim: use only if true for you.
-- Promo line in EN/TH only. Chinese and Russian: invite, no promo, no price.
-
-## 2026-10-07 · machiavelli
-
-Money today: answer course prices in team chat by 19:00 today. Sales open 13 Oct (6 days) only works with prices set.
-Course prices: decision needed in team chat by 19:00 today (0 days). Default B: sales open moves one more week (to 20 Oct).
-Mysore Reel: reply A (post Fri 9 Oct as drafted) or B (move to Mon 12 Oct) in ✍️ Plato chat by 19:00 Thu 8 Oct. No answer means B.
-Reel from Plato: golfer wins on his 100th try; Arjuna eats in the dark "from habit" and practises his bow at night. Asana: Urdhva Dhanurasana, the drop back. Hook: "This week a golfer won on his 100th try. The 99 before were not failures." Plato waits on Boonchu's drop-back cue.
-Score: wins this week: none reported. 180K leads pasted: 0 in 10 days. Letter #1 (due Mon 5 Oct): not reported sent. Letter #2 Mon 12 Oct: 5 days. No reminders due.
-Carne and Plato both posted today. Inbox 07:08: 0 new, 0 hot.
-13:08 check-in: course prices due 19:00 today (default B = sales open 20 Oct), Mysore Reel by 19:00 Thu 8 Oct, 2nd nag today each. Inbox 13:08: 0 new, 0 hot.
-19:08 check-in: course prices no answer, default B applied: sales open moves to 20 Oct. No win today. Inbox 19:08: 0 new, 0 hot.
-
-## 2026-10-07 · carnegie
-
-No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
-
