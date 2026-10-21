@@ -41,7 +41,7 @@
   "C": "energy, Burn Slow Last Long, 8 slides",
   "D": "energy, Breath Has Wings, 8 slides"
  },
- "state": "A published 05:50 (smaller caps words, Boonchu: leave it). C, B, D scheduled with big words (approved by Boonchu 21 Oct ~06:10: \"All good\", times 9am, 12 noon, 2pm). C6 keyword ALERT, D2 SCATTERED.",
+ "state": "ALL 4 PUBLISHED 21 Oct: A 05:50, C 09:00, B 12:00, D 14:00",
  "order": {
   "1st (on go)": "A",
   "2nd 06:00 BKK (23:00Z)": "C",
@@ -113,7 +113,7 @@
    "title": "Breath Has Wings",
    "id": "cmvhaqfmj0bmrpm0yudyby6rh",
    "when": "14:00 BKK 21 Oct (07:00Z)",
-   "state": "QUEUE",
+   "state": "PUBLISHED 14:00 BKK 21 Oct (checked 14:17)",
    "slides": "D_big",
    "attachments": [
     "FcrfYw4gLw",
