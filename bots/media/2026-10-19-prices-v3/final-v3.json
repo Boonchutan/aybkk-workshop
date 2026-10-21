@@ -7,10 +7,9 @@
   "rows": [
    {
     "name": "12 months",
-    "tag": "you get 13",
-    "note": "Month by month for 13 months: ฿124,800. You save ฿64,900.",
+    "note": "Month by month for 12 months: ฿115,200. You save ฿55,300.",
     "price": "59,900",
-    "per": "about 4,600 / month"
+    "per": "about 5,000 / month"
    },
    {
     "name": "6 months",
@@ -78,10 +77,9 @@
   "rows": [
    {
     "name": "12 เดือน",
-    "tag": "ใช้ได้ 13 เดือน",
-    "note": "ซื้อรายเดือน 13 เดือน รวม ฿124,800 ประหยัด ฿64,900",
+    "note": "ซื้อรายเดือน 12 เดือน รวม ฿115,200 ประหยัด ฿55,300",
     "price": "59,900",
-    "per": "ตกเดือนละราว 4,600"
+    "per": "ตกเดือนละราว 5,000"
    },
    {
     "name": "6 เดือน",

@@ -24,7 +24,7 @@ Why not the window: (1) wrong problem: a friend trying 1-2 classes is LENDING, a
 - Non-transferable terms are lawful (CCC s.303, by agreement).
 - "No refunds" with no exception can be cut down (Unfair Contract Terms Act B.E. 2540 s.4). OCPB direction: beauty/spa 15 Sep 2025 lists transfer bans and refund refusal as unfair; swim school ordered to refund unused lessons after a branch closed (Pattaya Mail 12 Aug 2026). Safer wording: non-refundable after purchase, except if AYBKK cannot provide the classes paid for (close or move) or where Thai law requires.
 - Price display: กกร. 73/2569 (1 Jul 2026, https://www.dit.go.th/media/cejpahs1/20260707163750_4880.pdf), exercise venues listed: show VAT next to EVERY price (or VAT-inclusive prices), Thai wording next to prices, never charge more than shown. Poster now shows "+VAT" by each price.
-- "Free month" claims need their conditions stated (OCPB ad guideline): 12-month tag reverted to "you get 13" / "ใช้ได้ 13 เดือน".
+- "Free month" claims need their conditions stated (OCPB ad guideline): 12-month tag reverted to "you get 13" / "ใช้ได้ 13 เดือน". 21 Oct: Boonchu dropped the 13th month (12 months, same 59,900), so no free claim is left on the poster.
 - Condition text at least 1/4 of main text size (min 2 mm) on print.
 
 ## Posters
