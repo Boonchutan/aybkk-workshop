@@ -60,3 +60,11 @@ Notes
 - Lane A captions: story lines, then the approved STUCK line, nothing else. Chinese lines: no 最, 第一, 保证; R1b on Xiaohongshu shows Boonchu only.
 - R6 cannot be filmed without your Mari D cue. If no cue by filming day, swap in a spare body: the Archer and the Hunter (posts/2026-10-20-plato-archer-and-hunter.md, Virabhadrasana), with "last Saturday" changed to "this month". That keeps R6 as Hidden Stories.
 - Gap check: Pasasana, Padmasana, Gomukhasana, Marichyasana all differ; no story repeats.
+
+## Carne check (23 Oct 2026): Carne OK, with 4 small fixes
+Checked against the brief and the team rules. Good: mix A B A A B A B, pair P on IG and R on XHS for week 1, Lane B on IG only with share to FB off, one word per Reel, no MYSORE, no price, no link line, every Reel has a habit number, "since 2008, six days a week" is confirmed (4 Oct), study and golfer quote have sources.
+1. R1, Xiaohongshu caption: "有个研究" gives no source. China Ad Law Art. 11 says data must show its source. Change to: "美国宾夕法尼亚州立大学医学院2026年的一项研究，" (keep the rest).
+2. R3, Chinese caption: "我最近练得太懒了" has 最. It means "recently", not "best", but the brief says no 最 and XHS filters can catch it. Change to: "我这段时间练得太懒了。"
+3. R6 swap: if there is no Mari D cue, the Archer body does not fit H6 ("You are not lazy. You are stuck."). Film the Archer hook ("Lost first. Made history.") in the H10 spare slot on filming day, so the swap has its own hook. The runner photo needs a credit, or no photo.
+4. Lane B offer line says "1, 2 or 3 months", but the 2 Oct package rule says no 2 months. It matches the LINE promo, so it may be right. Boonchu: confirm once that 2 months is in the promo. If not, use "1 or 3 months".
+Dates: Machi's 22 Oct default says the test starts the Monday after filming. If filming is not Fri 23 or Sat 24, every date in this sheet moves one week.

@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-21T23:38:56.036Z
+Inbox last read: 2026-10-22T23:38:51.361Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -98,3 +98,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-20: Inbox read OK: 4 LINE threads, 0 about 180K (shala bookings, schedule and a car note: Machi's job). No new leads. 1 serious lead due today, no new message from them: follow-up drafted, next check 22 Oct. Invite-only question still waits on Boonchu. No new Batch Sheet. Keyword test not started (26 Oct). No requests in team chat.
 - 2026-10-21: Inbox read OK: 1 LINE thread (shala student found the shala under construction, asked about class: Machi's job), 0 about 180K. No new leads. 1 serious lead, next check 22 Oct (not due). Invite-only question still waits on Boonchu. No new Batch Sheet. Keyword test starts 26 Oct. No requests in team chat.
 - 2026-10-22: Inbox read OK: 2 LINE threads, 0 about 180K (a class cancel and a shala package renewal: Machi's job). No new leads. 1 serious lead due today, no new message since 17 Oct: short follow-up drafted, next check 24 Oct. Invite-only question still waits on Boonchu (5th day). No new Batch Sheet. Keyword test starts 26 Oct. No requests in team chat.
+- 2026-10-23: Inbox read OK: 1 LINE thread (returning shala student, 1-month pass: Machi's job), 0 about 180K. No new leads. 1 serious lead, next check 24 Oct (not due). Invite-only question still waits on Boonchu (6th day). Checked week 1 Batch Sheet: Carne OK with 4 fixes (XHS source line, 最 in R3 ZH, R6 swap hook, "2 months" in promo). No requests in team chat besides the sheet.
