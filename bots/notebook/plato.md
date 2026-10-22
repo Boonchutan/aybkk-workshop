@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-10-22: STOP WRITING HIDDEN STORIES SCRIPTS (Boonchu: 'stop writing. I'll read and screen some out'). 21 scripts wait unfilmed (3 to 22 Oct). The daily 06:43 routine 'AYBKK bot: Plato (daily story Reel)' (trig_018F4MLqhbuRom8kUVe4ARph) is PAUSED (enabled=false), not deleted. Write no new story script until Boonchu says to start again. He screens the list on the Hidden Stories page and keeps or drops each one; film from the kept ones.
 - 2026-10-21: BIG WORD WIDTH = EXACTLY 1/2 OR 2/3 OF THE SLIDE (Boonchu: 'Big words must be 1/2 or 3/2 of the width. The height is the font proportion', then confirmed: 'It's 2/3 or 1/2'). On a 1080 px slide the keyword is exactly 540 px or exactly 720 px wide, nothing in between and never smaller. The height is whatever the font gives at that width. Replaces the fixed 288/178/110 scale.
 - 2026-10-21: BIG WORD IN ALL CAPS (Boonchu: 'For the big word, make it all capital.'). Magazine carousels: the big Nimbus Sans keyword is always UPPERCASE from now on. Caps are wider, so re-check every slide after the change (some need a smaller size or a hand placement).
 - 2026-10-20: SIGN-OFF. Boonchu ends every Reel with 'แล้วเจอกันครับ' (see you then), said the same way each time; add a small 'see you' subtitle for non-Thai viewers.
