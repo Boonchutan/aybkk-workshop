@@ -1,0 +1,7 @@
+Money today: answer "is the online Led class invite only?" (open since 18 Oct, 5th day) and send ONE follow-up to the serious lead (Carne's draft in his run session; no word from the lead since 17 Oct).
+Course prices: decision needed in team chat by 19:00 TODAY. Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
+Mysore Reel: reply A (post Fri 23 Oct, caption rewritten to the 2 Oct terms first) or B (wait until after the keyword test, 22 Nov) in Plato chat by 19:00 TODAY. No answer means B.
+Due today: Google brand ad first check (paste impressions, lost IS (rank), search terms, cost, book clicks; is the Google tag fix PR #63 merged?). At 19:00: approve the week 1 Batch Sheet, pick the filming day (Plato's picks: plum tee, post 19:00), send the R6 cue.
+Countdowns: door check-in for everyone about Sat 24 Oct: 2 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 3 days; keyword test Mon 26 Oct: 4 days; test group Tue 27 Oct: 5 days; Google ad judge Thu 29 Oct: 7 days; Mysore trip check Sun 1 Nov: 10 days. PR #63 and PR #67 still to merge.
+Reel from Plato: 4 minutes a day for 12 weeks made people over 65 stronger (Penn State); a soft rope cuts a line in hard stone (old Hindi poem). Asana: Pasasana. Hook: "Four minutes a day. That's all. And they got stronger."
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious. Carne and Plato both posted today. Inbox 07:08: 2 new in 1 thread, 1 waiting (LINE class cancel request), 0 hot.

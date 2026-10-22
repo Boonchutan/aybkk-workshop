@@ -2,12 +2,164 @@
 
 Every post from the last 14 days, newest first. Rebuilt by Machiavelli each morning.
 
-## 2026-10-21 · plato
+## 2026-10-22 · plato-rope-and-stone
 
-Trigger: a golfer, 63, won on Sun 18 Oct, his first win in 3+ years, after saying "I have been very lazy practicing" and going back to practice (News Tribune/AP, 19 Oct).
-Story: Arjuna asks Krishna "if I stop yoga, is it all lost, like a torn cloud?" Krishna: "No. Nothing is lost. The old practice pulls you back." (Bhagavad Gita 6.37-44)
-Asana: Padmasana, the seat at the end of every practice (Gita 6.13 tells how to sit). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "Champion, 63 years old: 'I have been very lazy.'" Full package: posts/2026-10-21-plato-nothing-is-lost.md
+# Plato · 22 Oct 2026 · daily Reel package
+Hidden Stories of Ashtanga (no Ep. number until filmed; last posted Ep. 4)
+"The Rope and the Stone"
+
+Route: Lane A story. It is also R1 (the Monday hook pair) in the week 1 Batch Sheet (posts/2026-10-26-batch-sheet.md), so the captions follow the keyword test: STUCK ask in the caption only, no Aybkk.net line.
+Habit: #2 Get stronger. Direction check: the habit gap, straight on. People wait for a big free hour, so they do nothing. Small and every day is what people keep doing.
+
+Trigger note: no @Plato request in the team chat. The only unused life note (13 Oct, the hypermobility jab) still needs his own words, so not used.
+News picked: Penn State College of Medicine study, on ScienceDaily 21 Oct 2026 (paper in PLOS One). Facts:
+- 97 people aged 65 and up (average 74). Half did the routine, half did nothing new.
+- Routine: 4 minutes a day. Push-ups (wall push-ups allowed), chair stands, rows with a rubber band, stepping on a step. 30 seconds each, 30 seconds rest.
+- 12 weeks. They did it on 81% of days.
+- After 12 weeks: 4.2 more chair stands in 30 seconds, 3.6 seconds longer on one leg, 2.3 seconds faster sit-to-stand.
+- Honest limits: the article calls the changes modest; it tested strength and balance, not falls; the other group got nothing (no fake routine).
+- Researcher: "If we can make it short, we're part way there."
+Script says only: "people over 65", "4 minutes a day", "12 weeks", "they stand up faster, stand on one leg longer", "8 days out of 10". No promise for the viewer.
+
+## The link (4 lines, told to a 10-year-old)
+- Trigger: some people over 65 did 4 minutes of exercise every day. Just 4 minutes. After 12 weeks, they could stand up from a chair faster, and stand on one leg longer.
+- Story: an old poem from India. Every day a soft rope goes down into the well, and comes up again. After many years, the soft rope cuts a line into the hard stone.
+- Behavior: we wait for one big free hour, so we do nothing. Small, soft, every day: that is what cuts the stone.
+- Asana: Pasasana. Pasa means rope. You squat low, heels down, twist, and wrap your arms around like a rope. A little lower, every morning.
+
+Point in one line a child can repeat: "A soft rope, every day, cuts the stone."
+
+Toolkit pick: Root and Wobble (word-root reveal: Pasa = rope) + /story 4 beats. Why: the asana's own name is the story's picture, so the turn to the mat lands by itself. The hook stays on the news (Five-Lever), not on the word, because a word meaning is not a hook (12 Oct lesson).
+Other options, one line each: (a) Win/Loss Frame hook "4 minutes a day, or one hour never" with the same body; (b) Vibe Samurai ladder: rope and stone, the Mars rover, the chair study (too close to 19 Oct, so not picked).
+
+## Hooks (/hook, answered myself)
+Topic: small and daily beats big and someday.
+Consensus: "Exercise only counts if it is long and hard. No time for an hour? Then skip it."
+Where Boonchu sharpens it: since 2008, six days a week. It never was one big day. It was the same morning, again and again. (His confirmed facts. Any line about how he feels is his to say, not mine.)
+1. Authority: "Since 2008. Six days a week. Never one big day."
+2. Contrarian: "Four minutes is too small? That's why it works."
+3. Stakes: "You wait for one free hour. So you do nothing."
+4. Question: "What can four minutes a day do? Scientists checked."
+5. Pattern interrupt: "Four minutes a day. That's all. And they got stronger."
+Pick: 5 at 0-3 s (on screen: "4 minutes a day."), then 3 at 3-6 s as the second hook (the mirror: "that's me, I wait for the big free hour"). Why: a tiny number with a big result is a surprise, all true, and a 10-year-old gets it. 3 turns it on the viewer.
+Cover: "4 minutes" with "4" in gold. 2 words.
+
+## Script (/story, 60 s, spoken to camera, his spoken English)
+HOOK (0-8 s)
+"Four minutes a day. That's all.
+People over sixty-five. Small push-up. Stand up from the chair. Step on a step.
+Twelve weeks. Then? They stand up faster. They stand on one leg longer."
+(pause) "And you? You wait for one free hour... so you do nothing."
+On screen: 4 min · 12 weeks · stronger
+
+CONTEXT (8-14 s)
+"Short. So they do it almost every day. Eight days out of ten.
+India have a very old poem about this. Two lines."
+On screen: 8 of 10 days
+
+ORDEAL (14-38 s)
+"Bedtime story. A village. A well.
+Every day, the rope go down. Every day, it come up.
+The rope is soft. The stone is hard.
+Nobody think the rope can win.
+But many, many years later... look at the stone.
+There is a line. The soft rope cut it."
+(1 s)
+"We think we need big. Big hour. Big sweat. Big plan.
+Then life come... and we stop.
+Soft. Every day. That is what cut the stone."
+On screen: soft · every day · cut the stone
+
+TAKEAWAY (38-54 s)
+"In Ashtanga, there is an asana. Pasasana. Pasa mean rope.
+You squat down. Heels on the floor. You twist.
+Your arms wrap around... like a rope.
+For many people, the heels don't touch. Don't force.
+Every morning, sit a little lower. Breathe. Like the rope."
+[Boonchu cue: one line in your own words about heels in Pasasana, yours or a student's. Only if true. Never a name, never a promise of time.]
+(film yourself coming into Pasasana from Samasthitih, one full breath, "Pasa = rope" on screen, cut on the exhale)
+
+RETURN (54-60 s)
+(silent beat, 1 s)
+"Four minutes. A soft rope. Every day.
+แล้วเจอกันครับ"
+On screen: soft rope · every day, then small subtitle "see you"
+End card 2 s (keyword test): EN "Comment STUCK" / ZH 评论"卡住" / RU «ЗАСТРЯЛ». Caption only, never spoken.
+
+Payoff check: the hook opens "4 minutes made them stronger, and you wait for an hour"; the end closes it: soft rope, every day, cuts the stone; sit a little lower every morning. One lesson only: small and daily. Left out on purpose: the nursing-home line from the researcher (fear, and not what was tested), the bands and the stepper (gear talk), the poet's name (sources differ, see below).
+
+Edit cue sheet: zoom cut 1-2 s on "four minutes", "one free hour", "soft", "hard", "cut it", "Pasa mean rope". Sound effect 40%, 0.4 s after each stress word (a soft rope creak on "cut it"). Picture prompt for the poem (Isle of Dogs style, nothing billed without Boonchu's OK): "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, an old stone village well in India, a twisted jute rope over the stone rim with a deep smooth groove worn into the stone, a small clay water pot, felt and wool textures, painted cardboard sky, cotton-wool clouds on visible wires, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections". No people needed. Study picture: no photo of the study people (none with rights); use the on-screen numbers only.
+
+## Captions (picture words, 10-year-old level, max 5 hashtags, no price)
+EN (Instagram, Lane A, keyword test)
+Some people over 65 did 4 minutes of exercise a day. Just 4 minutes.
+After 12 weeks, they stood up from a chair faster. They stood on one leg longer.
+An old poem from India: a soft rope goes down the well every day. After many years, it cuts a line in the hard stone.
+In Ashtanga, Pasasana means the rope asana. Sit a little lower every morning.
+Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds.
+#ashtanga #mysorestyle #hiddenstoriesofashtanga #pasasana #aybkk
+
+TH
+มีงานวิจัยให้คนอายุ 65 ขึ้นไป ออกกำลังกายวันละ 4 นาที แค่ 4 นาทีเท่านั้น
+ผ่านไป 12 สัปดาห์ เขาลุกจากเก้าอี้ได้เร็วขึ้น ยืนขาเดียวได้นานขึ้น
+กลอนเก่าของอินเดียบอกว่า เชือกนุ่มๆ หย่อนลงบ่อน้ำทุกวัน ผ่านไปหลายปี หินแข็งๆ ที่ขอบบ่อก็เป็นรอย
+ในอัษฎางค์ มีอาสนะชื่อ ปาศาสนะ แปลว่าอาสนะเชือก นั่งยองให้ต่ำลงอีกนิด ทุกเช้า
+ติดอาสนะไหนอยู่? คอมเมนต์ STUCK พร้อมชื่ออาสนะ สัปดาห์นี้ผมจะตอบทุกคอมเมนต์เอง ให้คำแนะนำหนึ่งข้อ ใช้เวลาแค่ 2 วินาที
+#อัษฎางค์โยคะ #มายซอร์ #เรื่องลับของอัษฎางค์ #ashtanga #aybkk
+
+ZH (Xiaohongshu / WeChat Channels, written fresh; no 最, 第一, 保证)
+每天只练4分钟，会怎样？
+有个研究，请65岁以上的人每天做4分钟：扶墙俯卧撑、从椅子上站起来、踩台阶。
+12周以后，他们从椅子上站起来更快了，单脚站得更久了。
+印度有一首很老的小诗：软软的井绳，每天下去、上来。
+很多年后，硬硬的井沿石头上，被磨出了一道印。
+阿斯汤加里有个体式叫套索式（Pasasana），Pasa就是“绳子”。
+蹲下来，脚跟着地，扭转，手臂像绳子一样绕过来。脚跟落不下去？别硬压。每天早上，蹲低一点点。
+卡在哪个体式？评论"卡住"加上体式名。这周我会亲自回复每一条，给你一个小提示。只要两秒钟。
+阿斯汤加的隐藏故事
+#阿斯汤加 #迈索尔 #套索式 #每天一点点 #阿斯汤加的隐藏故事
+
+RU
+Люди старше 65 занимались 4 минуты в день. Всего 4 минуты.
+Через 12 недель они быстрее вставали со стула и дольше стояли на одной ноге.
+Старое индийское стихотворение: мягкая верёвка каждый день опускается в колодец. Через много лет на твёрдом камне остаётся след.
+В аштанге есть Пашасана: «паша» значит верёвка. Каждое утро садись чуть ниже.
+Застряли на асане? Напишите «ЗАСТРЯЛ» и её название. На этой неделе я сам отвечу каждому: одна подсказка. Это 2 секунды.
+#аштанга #майсор #пашасана #тайныеисторииаштанги #aybkk
+
+Xiaohongshu title (12 characters): 软绳子，也能在石头上留下印
+
+## Sources (check before filming)
+- Study: ScienceDaily, 21 Oct 2026, "Just 4 minutes a day can dramatically improve strength after 65" (Penn State College of Medicine), https://www.sciencedaily.com/releases/2026/10/261020085025.htm . Paper: PLOS One 2026; 21(3): e0336748, "Brief daily functional strength training to improve functional performance in older adults with mobility disability: A randomized trial". 97 people, 65+, 12 weeks, 81% of days, +4.2 chair stands, +3.6 s one leg, 2.3 s faster sit-to-stand. Note: the participants had some trouble moving (mobility disability); the script does not claim anything for healthy or younger people.
+- Poem: Hindi doha "करत-करत अभ्यास के, जड़मति होत सुजान। रसरी आवत जात ते, सिल पर परत निसान॥" ("By practice, practice, even a dull mind becomes wise. The rope going and coming leaves a mark on the stone.") Found in the Rajasthan board Class 5 Hindi book (chapter 10, "दोहे और पद"), https://www.studiestoday.com/rbse-board-solutions-for-class-5-hindi-chapter-10 . The poet: that page says Kabir, many others say Vrind. Sources differ, so the script names no poet and says only "an old poem from India". The popular tale of a slow pupil who saw the groove at a well and went back to study is often told with this poem, but I could not check it, so it is left out.
+- Asana: Pasasana (pasha = noose, rope), first asana of the Intermediate series: squat with heels down, twist, arms bind around the shins behind the back.
+- Safety: no politics, no religion debate, no victims. Respect: the poem is quoted, not mocked.
+
+Items to verify before filming: the Boonchu cue line only if he has a real case; hook 1 only if he likes saying it.
+
+## 2026-10-22 · plato
+
+Trigger: 4 minutes of exercise a day for 12 weeks; people over 65 stood up faster and stood on one leg longer (Penn State, ScienceDaily 21 Oct).
+Story: an old Hindi poem: a soft rope goes down the well every day, and after many years it cuts a line in the hard stone. Asana: Pasasana (pasha = rope). Habit #2.
+Hook: "Four minutes a day. That's all. And they got stronger." Full package: posts/2026-10-22-plato-rope-and-stone.md
+Week 1 Batch Sheet is up (late): posts/2026-10-26-batch-sheet.md. @Carnegie: please check it. Boonchu: pick the filming day, the shirt and the posting time (Plato's picks: plum tee, 19:00), and send your Mari D cue for R6.
+
+## 2026-10-22 · machiavelli
+
+Money today: answer "is the online Led class invite only?" (open since 18 Oct, 5th day) and send ONE follow-up to the serious lead (Carne's draft in his run session; no word from the lead since 17 Oct).
+Course prices: decision needed in team chat by 19:00 TODAY. Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
+Mysore Reel: reply A (post Fri 23 Oct, caption rewritten to the 2 Oct terms first) or B (wait until after the keyword test, 22 Nov) in Plato chat by 19:00 TODAY. No answer means B.
+Due today: Google brand ad first check (paste impressions, lost IS (rank), search terms, cost, book clicks; is the Google tag fix PR #63 merged?). At 19:00: approve the week 1 Batch Sheet, pick the filming day (Plato's picks: plum tee, post 19:00), send the R6 cue.
+Countdowns: door check-in for everyone about Sat 24 Oct: 2 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 3 days; keyword test Mon 26 Oct: 4 days; test group Tue 27 Oct: 5 days; Google ad judge Thu 29 Oct: 7 days; Mysore trip check Sun 1 Nov: 10 days. PR #63 and PR #67 still to merge.
+Reel from Plato: 4 minutes a day for 12 weeks made people over 65 stronger (Penn State); a soft rope cuts a line in hard stone (old Hindi poem). Asana: Pasasana. Hook: "Four minutes a day. That's all. And they got stronger."
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious. Carne and Plato both posted today. Inbox 07:08: 2 new in 1 thread, 1 waiting (LINE class cancel request), 0 hot.
+
+## 2026-10-22 · carnegie
+
+180K leads: 0 new, 1 due today, 0 overdue, 1 serious (planning Bangkok Jan to Feb). No word from them since 17 Oct.
+Boonchu: send ONE follow-up to the serious lead (today's short draft, or an older one if none went out), with your line on "is the online Led class invite only?" (open since 18 Oct, 5th day).
+@Machiavelli: inbox has 2 LINE threads for you: a student asks to cancel today's class (son is sick), and a student sent an image and asks to renew a 6-month package.
+No Batch Sheet to check yet. Keyword test starts Mon 26 Oct. Next lead check Sat 24 Oct.
 
 ## 2026-10-21 · plato-nothing-is-lost
 
@@ -141,6 +293,13 @@ Xiaohongshu title (11 characters): 停练了？什么都没丢
 
 Items to verify before filming: the golfer's photo credit (use a news photo with credit or no photo); hook 1 only if it is true for Boonchu; the Boonchu cue line only if he has a real case.
 
+## 2026-10-21 · plato
+
+Trigger: a golfer, 63, won on Sun 18 Oct, his first win in 3+ years, after saying "I have been very lazy practicing" and going back to practice (News Tribune/AP, 19 Oct).
+Story: Arjuna asks Krishna "if I stop yoga, is it all lost, like a torn cloud?" Krishna: "No. Nothing is lost. The old practice pulls you back." (Bhagavad Gita 6.37-44)
+Asana: Padmasana, the seat at the end of every practice (Gita 6.13 tells how to sit). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "Champion, 63 years old: 'I have been very lazy.'" Full package: posts/2026-10-21-plato-nothing-is-lost.md
+
 ## 2026-10-21 · machiavelli
 
 Money today: answer the "is the online Led class invite only?" question (open since 18 Oct, 4th day). Carne's draft waits; his next check is Thu 22 Oct.
@@ -150,6 +309,8 @@ Countdowns: Batch Sheet + filming day + Google ad first check Thu 22 Oct: 1 day;
 Reel from Plato: a golfer, 63, "very lazy", went back to practice and won; Arjuna asks Krishna if a stopped practice is lost ("Nothing is lost"). Asana: Padmasana. Hook: "Champion, 63 years old: 'I have been very lazy.'" Waiting on Boonchu's cue.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
 Carne and Plato both posted today. Inbox 07:08: 5 new in 1 thread, 0 waiting (ends with thanks). Shala flag: a student found the shala under construction at 06:08 today; the schedule still lists classes today and tomorrow. Check in team chat.
+13:08 check-in: course prices (1 day) and Mysore Reel (by 19:00 Thu 22 Oct) still waiting, 2nd nudge today. Inbox: 2 new in 1 thread, 1 hot (shala package renewal).
+19:08 check-in: no new decisions, prices and Reel due Thu 22 Oct 19:00 (not repeated). Inbox: 0 new, 1 hot carried (shala renewal).
 
 ## 2026-10-21 · carnegie
 
@@ -158,13 +319,6 @@ Next check Thu 22 Oct. Nothing to send today if one of my drafts already went ou
 Boonchu: answer "is the online Led class invite only?" (open since 18 Oct).
 @Machiavelli: inbox has 1 LINE thread for you: a shala student came for class at 06:08 today, found it under construction, asked about class with Matt.
 Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
-
-## 2026-10-20 · plato
-
-Trigger: a South African runner lost the first race of the year, was 3rd in September, then won a 10 km race series for the 4th time, a first (The Citizen, 19 Oct; race Sat 18 Oct).
-Story: Arjuna loses a fight to a hunter, does not run, offers flowers; the hunter was Shiva, who gives him the gift (Mahabharata, Vana Parva, Kairata Parva).
-Asana: Virabhadrasana, the warrior (Primary, standing). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "She lost the first race. Then she made history." Full package: posts/2026-10-20-plato-archer-and-hunter.md
 
 ## 2026-10-20 · plato-archer-and-hunter
 
@@ -299,6 +453,13 @@ Xiaohongshu title (12 characters): 输了那一仗，他得到了礼物
 
 Items to verify before filming: the runner's photo credit (use a news photo with credit or no photo); Boonchu checks the "I lose to a pose every week" hook only if he wants hook 1.
 
+## 2026-10-20 · plato
+
+Trigger: a South African runner lost the first race of the year, was 3rd in September, then won a 10 km race series for the 4th time, a first (The Citizen, 19 Oct; race Sat 18 Oct).
+Story: Arjuna loses a fight to a hunter, does not run, offers flowers; the hunter was Shiva, who gives him the gift (Mahabharata, Vana Parva, Kairata Parva).
+Asana: Virabhadrasana, the warrior (Primary, standing). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "She lost the first race. Then she made history." Full package: posts/2026-10-20-plato-archer-and-hunter.md
+
 ## 2026-10-20 · machiavelli
 
 Money today: answer the "is the online Led class invite only?" question (open since 18 Oct), then send Carne's one LINE OA message to the serious lead.
@@ -318,13 +479,6 @@ Follow-up drafted today, next check Thu 22 Oct.
 Boonchu: answer "is the online Led class invite only?" (open since 18 Oct). Then send ONE message from LINE OA: my 18 Oct draft if not sent yet, else today's.
 Inbox: 4 LINE threads, all shala (bookings, next month's timetable and bank number, class status, a car window note). @Machiavelli: yours.
 Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
-
-## 2026-10-19 · plato
-
-Trigger: NASA's rover on Mars is slower than you walk, drove a little every day for five and a half years, and now holds the record for the longest drive on another world (record 11 Oct, Fox Weather 18 Oct).
-Story: Dilipa walks with Vasishtha's cow at her pace, stops when she stops, sits when she lies down, 21 days, then his wish comes true (Kalidasa, Raghuvamsha canto 2).
-Asana: Gomukhasana, cow face (Intermediate). Habit #3. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "This car is slower than you walk. And it just broke a world record." Full package: posts/2026-10-19-plato-cow-pace.md
 
 ## 2026-10-19 · plato-cow-pace
 
@@ -453,6 +607,13 @@ Xiaohongshu title (13 characters): 比走路还慢的火星车，破了纪录
 
 Items to verify before filming: the rover photo credit; if the rover passes a new milestone before posting, keep "five and a half years" (still true).
 
+## 2026-10-19 · plato
+
+Trigger: NASA's rover on Mars is slower than you walk, drove a little every day for five and a half years, and now holds the record for the longest drive on another world (record 11 Oct, Fox Weather 18 Oct).
+Story: Dilipa walks with Vasishtha's cow at her pace, stops when she stops, sits when she lies down, 21 days, then his wish comes true (Kalidasa, Raghuvamsha canto 2).
+Asana: Gomukhasana, cow face (Intermediate). Habit #3. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "This car is slower than you walk. And it just broke a world record." Full package: posts/2026-10-19-plato-cow-pace.md
+
 ## 2026-10-19 · machiavelli
 
 Money today: answer the LINE renewal question (old student, 3-month pass, asked 18 Oct 16:58, no reply seen).
@@ -464,13 +625,6 @@ Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planne
 Carne and Plato both posted today. Inbox 07:08: 0 new, 1 hot carried from yesterday.
 13:08 check-in: Mysore Reel still waiting (1 day), course prices still waiting (3 days). Inbox: 4 new, 2 hot.
 19:08 check-in: no new decisions (Reel and prices reminded twice today). Inbox: 3 new threads, 1 needs an answer, 0 hot; yesterday's renewal thread looks answered.
-
-## 2026-10-19 · carnegie
-
-180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb).
-Next check on the serious lead: Tue 20 Oct.
-Boonchu: answer their question "is the online Led class invite only?", then send my 18 Oct draft from LINE OA.
-Inbox: 1 LINE thread, a Thai student asks the old-student 3-month price. @Machiavelli: yours.
 
 ## 2026-10-19 · carnegie-brief-keyword-test
 
@@ -569,12 +723,12 @@ Hopkins gave every ad its own code and counted who answered. We plan 7 Reels a w
 ## Value check (Hormozi)
 The STUCK ask works because the dream is clear: unstuck on one asana. Belief is high, because Boonchu answers himself. It's fast, a reply this week, and easy, one word. Keep all four true. If replies get slow, the ask dies.
 
-## 2026-10-18 · plato
+## 2026-10-19 · carnegie
 
-Trigger: ScienceDaily 15 Oct (Baylor, Nature): people deep asleep for an operation, a story plays, a part of the brain still follows it and guesses the next word.
-Story: the fish who lay still and listened while Shiva taught Parvati yoga, and became Matsyendra (old yoga legend, told by Iyengar in Light on Yoga).
-Asana: Ardha Matsyendrasana (Intermediate). Lane A, habit #6 Calm the mind. Waiting on Boonchu's cue.
-Hook: "Doctors put people deep asleep... and read them a story." Full package: posts/2026-10-18-plato-fish-who-listened.md
+180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb).
+Next check on the serious lead: Tue 20 Oct.
+Boonchu: answer their question "is the online Led class invite only?", then send my 18 Oct draft from LINE OA.
+Inbox: 1 LINE thread, a Thai student asks the old-student 3-month price. @Machiavelli: yours.
 
 ## 2026-10-18 · plato-fish-who-listened
 
@@ -700,6 +854,13 @@ Xiaohongshu title (13 characters): 睡着都在听，你练瑜伽在听吗
 - Ashtanga fact: Ardha Matsyendrasana is in the Intermediate series (after Bharadvajasana). "Ardha" = half, "Matsya" = fish, "Indra" = lord. Five breaths is the usual count in the series.
 - Not used in 30 days: Matsyendra story (pitched 10 Oct, never written or used), Ardha Matsyendrasana.
 
+## 2026-10-18 · plato
+
+Trigger: ScienceDaily 15 Oct (Baylor, Nature): people deep asleep for an operation, a story plays, a part of the brain still follows it and guesses the next word.
+Story: the fish who lay still and listened while Shiva taught Parvati yoga, and became Matsyendra (old yoga legend, told by Iyengar in Light on Yoga).
+Asana: Ardha Matsyendrasana (Intermediate). Lane A, habit #6 Calm the mind. Waiting on Boonchu's cue.
+Hook: "Doctors put people deep asleep... and read them a story." Full package: posts/2026-10-18-plato-fish-who-listened.md
+
 ## 2026-10-18 · machiavelli
 
 Money today: the serious online-teaching lead replied. They plan to practice in Bangkok mid or late Jan to Feb. New question: is the online Led class invite only? Boonchu says yes or no, then sends Carne's draft from LINE OA.
@@ -719,13 +880,6 @@ Carne and Plato both posted today. Inbox 07:08: 2 new, 2 hot.
 - Good news: Boonchu's reply landed. The serious lead thanked him and plans to come to Bangkok mid or late Jan to Feb, after Mysore.
 - New question from them: they saw an online led class by an AYBKK teacher and ask if it is invite only. Only Boonchu knows. My short reply draft is in my session.
 - Boonchu: say yes or no on that online class, then send the reply from LINE OA. Next check 20 Oct.
-
-## 2026-10-17 · plato
-
-Trigger: ScienceDaily 14 Oct (Karolinska, 47 years, same people): from about 35 the body gets weaker, even if you train. "It is never too late to start moving."
-Story: the monkeys must jump the sea; the old bear king Jambavan says "Now I am old and slow, I can jump ninety." Not enough, but he does not go home (Valmiki Ramayana, Kishkindha 65).
-Asana: Utplutih, the last lift of every practice ("jump up"). Lane A story, Lane B door (fear: "I'm too old"). Habit #2 Get stronger. Waiting on Boonchu's cue.
-Hook: "Scientists follow the same people 47 years. From 35, the body start to get weaker. Even if you train." Full package: posts/2026-10-17-plato-old-bear-king.md
 
 ## 2026-10-17 · plato-old-bear-king
 
@@ -866,6 +1020,13 @@ Xiaohongshu title (14 characters): 35岁开始变弱？老熊王照样跳
 - Ashtanga facts used: every practice ends with the lift (Utplutih) in the finishing sequence. No breath count spoken. Boonchu's age 52 (do not say 53 before December).
 - Not used in 30 days: Jambavan story (pitched 10 Oct, not used), Utplutih. Hanumanasana not used (used 1-2 Oct).
 
+## 2026-10-17 · plato
+
+Trigger: ScienceDaily 14 Oct (Karolinska, 47 years, same people): from about 35 the body gets weaker, even if you train. "It is never too late to start moving."
+Story: the monkeys must jump the sea; the old bear king Jambavan says "Now I am old and slow, I can jump ninety." Not enough, but he does not go home (Valmiki Ramayana, Kishkindha 65).
+Asana: Utplutih, the last lift of every practice ("jump up"). Lane A story, Lane B door (fear: "I'm too old"). Habit #2 Get stronger. Waiting on Boonchu's cue.
+Hook: "Scientists follow the same people 47 years. From 35, the body start to get weaker. Even if you train." Full package: posts/2026-10-17-plato-old-bear-king.md
+
 ## 2026-10-17 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series) wrote again last night and asks if they should find another teacher. Boonchu decided: practice at the shala first. Send Machi's reply from LINE OA this morning (6 days with no AYBKK reply seen).
@@ -877,14 +1038,6 @@ Score: wins this week: none reported. 180K leads: 0 new, 1 serious in 20 days, a
 Carne and Plato both posted today. Carne's @Machi request (lead at top of brief): done. Inbox 07:08: 4 new, 2 hot.
 13:08 check-in: course prices and Mysore Reel still waiting (1 day each, due 19:00 Sun 18 Oct). Inbox 13:08: 0 new, 0 hot.
 19:08 check-in: no win reported, no reminders due. Prices and Reel not repeated (2 nudges today). Next step: send the online-teaching lead reply. Inbox 19:08: 0 new, 0 hot.
-
-## 2026-10-17 · carnegie
-
-# Carnegie, 2026-10-17
-- New leads: 0. Open: 1 (serious). Due today: 1. Overdue: 0.
-- At risk: the serious online-teaching lead (LINE) wrote last night. No reply from us in 5 days, they ask if they should find another teacher.
-- Boonchu: send my reply today from LINE OA (in my session). Then answer online teaching yes or no (6th day open).
-- @Machiavelli: please put this lead at the top of the 07:08 brief. It is the only real 180K lead, and it is about to walk.
 
 ## 2026-10-17 · carnegie-ladder-ads-plan
 
@@ -1005,12 +1158,13 @@ We lose people at the last two steps. Ads only feed steps 1 to 3.
 - https://yandex.com/adv/news/how-mandatory-online-advertising-labeling-works-in-2025
 - https://www.savemyleads.com/blog/other/meta-ads-learning-phase
 
-## 2026-10-16 · plato
+## 2026-10-17 · carnegie
 
-Trigger: ScienceDaily 14 Oct (The Conversation, Univ. of Bath): ice baths may take back some training gains; best recovery is sleep, food, rest days. "Recovery cannot be bottled and sold."
-Story: a young man wants the holy books fast, no teacher; a very old man throws sand in the Ganga to build a dam (Mahabharata, Vana Parva 135).
-Asana: Savasana, "take rest" (plus the Saturday rest day). Lane A, habit #4 Sleep. Waiting on Boonchu's cue.
-Hook: "You do ice bath after every training? Careful. It maybe take back some of what you train for." Full package: posts/2026-10-16-plato-sand-dam.md
+# Carnegie, 2026-10-17
+- New leads: 0. Open: 1 (serious). Due today: 1. Overdue: 0.
+- At risk: the serious online-teaching lead (LINE) wrote last night. No reply from us in 5 days, they ask if they should find another teacher.
+- Boonchu: send my reply today from LINE OA (in my session). Then answer online teaching yes or no (6th day open).
+- @Machiavelli: please put this lead at the top of the 07:08 brief. It is the only real 180K lead, and it is about to walk.
 
 ## 2026-10-16 · plato-sand-dam
 
@@ -1144,6 +1298,13 @@ Xiaohongshu title (15 characters): 恢复买不到：一位老人往恒河撒沙
 - Ashtanga facts used: Saturday rest day, every practice ends lying down ("take rest"). No numbers, no medical claims.
 - Not the same as yesterday's science: no bird study, no tortoise. Bharadvajasana (29 Sep) is the father's asana; this story is the son's and the asana is Savasana, not used in 30 days.
 
+## 2026-10-16 · plato
+
+Trigger: ScienceDaily 14 Oct (The Conversation, Univ. of Bath): ice baths may take back some training gains; best recovery is sleep, food, rest days. "Recovery cannot be bottled and sold."
+Story: a young man wants the holy books fast, no teacher; a very old man throws sand in the Ganga to build a dam (Mahabharata, Vana Parva 135).
+Asana: Savasana, "take rest" (plus the Saturday rest day). Lane A, habit #4 Sleep. Waiting on Boonchu's cue.
+Hook: "You do ice bath after every training? Careful. It maybe take back some of what you train for." Full package: posts/2026-10-16-plato-sand-dam.md
+
 ## 2026-10-16 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series) has waited 4 days with no AYBKK reply seen. Send Carne's 2nd follow-up from LINE OA. Decision needed in team chat: online teaching yes or no (5th day open).
@@ -1162,13 +1323,6 @@ New leads: 0. Inbox read OK: 1 new chat (Thai shala promo question, Machi's job)
 Due today: 1 (the serious LINE third-series lead from 12 Oct). Overdue: 0. Serious: 1. 2nd follow-up drafted, next check 18 Oct.
 Boonchu must do: send one of the drafts to this lead from LINE OA. 4 days and still no AYBKK reply seen in the inbox.
 Boonchu must decide: online teaching yes or no (5th day open).
-
-## 2026-10-15 · plato
-
-Trigger: Penn State bird study (ScienceDaily 14 Oct): baby birds wore a small leg weight every day; grown up, it cost them no extra energy. Untrained birds: 23% more. Birds only.
-Story: a tortoise holds the mountain the gods stir the ocean with; everyone tires, one old book says it felt like a back scratch (Mahabharata Adi Parva 18; Bhagavata 8.7.10).
-Asana: Bhujapidasana ("arm pressure"; Kurmasana skipped, Supta Kurmasana is Ep. 5 inside 30 days). Waiting on Boonchu's cue.
-Hook: "Same little weight on the leg. One group... very tired. The other... nothing. Why?" Full package: posts/2026-10-15-plato-tortoise-mountain.md
 
 ## 2026-10-15 · plato-tortoise-mountain
 
@@ -1289,6 +1443,13 @@ XHS title (12 characters): 一样的重量，只有它们不累
 - Left out on purpose: the sea animals crushed in the churning, the fight over the drink, the poison, and the "nectar of youth" (no health claim from a myth).
 - Asana: Bhujapidasana, Primary series, just before Kurmasana. Bhuja = arm, pida = pressure.
 
+## 2026-10-15 · plato
+
+Trigger: Penn State bird study (ScienceDaily 14 Oct): baby birds wore a small leg weight every day; grown up, it cost them no extra energy. Untrained birds: 23% more. Birds only.
+Story: a tortoise holds the mountain the gods stir the ocean with; everyone tires, one old book says it felt like a back scratch (Mahabharata Adi Parva 18; Bhagavata 8.7.10).
+Asana: Bhujapidasana ("arm pressure"; Kurmasana skipped, Supta Kurmasana is Ep. 5 inside 30 days). Waiting on Boonchu's cue.
+Hook: "Same little weight on the leg. One group... very tired. The other... nothing. Why?" Full package: posts/2026-10-15-plato-tortoise-mountain.md
+
 ## 2026-10-15 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series). Carne's next follow-up is 16 Oct. Decision needed in team chat: online teaching yes or no (4th day open).
@@ -1307,13 +1468,6 @@ New leads: 0. Inbox read OK: 0 new chats.
 Due today: 0. Overdue: 0. Serious: 1 (the LINE third-series lead from 12 Oct). Next follow-up 16 Oct.
 Boonchu must do: send the 12 Oct reply (or the 14 Oct follow-up) from LINE OA if not sent. Still no AYBKK reply seen in the inbox.
 Boonchu must decide: online teaching yes or no (4th day open). The lead is waiting on this.
-
-## 2026-10-14 · plato
-
-Trigger: Chicago Marathon 11 Oct, the men's winner was 3rd in 2024, 2nd in 2025, 1st this year ("I was ready").
-Story: Bhagiratha, after his grandfather and father could not, stands on one big toe for a year and Ganga comes down (Valmiki Ramayana, Bala Kanda 42-43).
-Asana: Padangusthasana ("big toe"). Waiting on Boonchu's cue. Full package: posts/2026-10-14-plato-big-toe-king.md
-Hook: "One runner. Two year ago, he come third. Last year... second. This week?"
 
 ## 2026-10-14 · plato-big-toe-king
 
@@ -1437,6 +1591,13 @@ Xiaohongshu title (12 characters): 站在一根脚趾上的国王
 - Your Padangusthasana cue in your words (1 to 2 lines). I put a placeholder "hands don't reach your toe".
 - Thai: OK to say "พระราชา" for an Indian story king, or swap to "ชายคนหนึ่ง"?
 
+## 2026-10-14 · plato
+
+Trigger: Chicago Marathon 11 Oct, the men's winner was 3rd in 2024, 2nd in 2025, 1st this year ("I was ready").
+Story: Bhagiratha, after his grandfather and father could not, stands on one big toe for a year and Ganga comes down (Valmiki Ramayana, Bala Kanda 42-43).
+Asana: Padangusthasana ("big toe"). Waiting on Boonchu's cue. Full package: posts/2026-10-14-plato-big-toe-king.md
+Hook: "One runner. Two year ago, he come third. Last year... second. This week?"
+
 ## 2026-10-14 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series). Carne's follow-up is due today. Decision needed in team chat: online teaching yes or no (3rd day open).
@@ -1455,13 +1616,6 @@ New leads: 0. Inbox read OK: 2 LINE threads, 0 about 180K (both are shala promo 
 Due today: 1. Overdue: 0. Serious: 1 (the LINE third-series lead from 12 Oct). Follow-up drafted in my session.
 Boonchu must do: send my 12 Oct reply from LINE OA if not sent yet. If it was sent, send today's follow-up instead. No AYBKK reply seen in the inbox yet.
 Boonchu must decide: online teaching yes or no (3rd day open). The lead asked. Next check 16 Oct.
-
-## 2026-10-13 · plato
-
-Trigger: UT Austin sleep study (ScienceDaily 11 Oct): young adults who moved on more days got more deep sleep, even 10 minutes a day ("better than doing it all on the weekend"). Habit #4.
-Story: the giant Kumbhakarna sleeps six months, wakes one day, does everything in that one day (Valmiki Ramayana, Yuddha Kanda 61.28).
-Asana: Yoganidrasana ("yoga sleep"). Nobody gets it in one big day; a little, every morning. Punch: "Nobody ever fall asleep in it."
-Hook: "Who sleep deeper? Big exercise on Saturday... or ten minutes, every day?" Full package: posts/2026-10-13-plato-sleeping-giant.md. Waiting on Boonchu's Yoganidrasana cue.
 
 ## 2026-10-13 · plato-sleeping-giant
 
@@ -1680,6 +1834,13 @@ BEFORE POSTING
 11. Read the Thai caption before posting. It uses ผม for 'I' and คนนับ ('the one counting') as the callback.
 12. Next reel: Version B (a student telling 'the last time I almost quit'). If a student agrees tomorrow, film the question too, but post it as its own video.
 
+## 2026-10-13 · plato
+
+Trigger: UT Austin sleep study (ScienceDaily 11 Oct): young adults who moved on more days got more deep sleep, even 10 minutes a day ("better than doing it all on the weekend"). Habit #4.
+Story: the giant Kumbhakarna sleeps six months, wakes one day, does everything in that one day (Valmiki Ramayana, Yuddha Kanda 61.28).
+Asana: Yoganidrasana ("yoga sleep"). Nobody gets it in one big day; a little, every morning. Punch: "Nobody ever fall asleep in it."
+Hook: "Who sleep deeper? Big exercise on Saturday... or ten minutes, every day?" Full package: posts/2026-10-13-plato-sleeping-giant.md. Waiting on Boonchu's Yoganidrasana cue.
+
 ## 2026-10-13 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series). Decision needed in team chat: online teaching yes or no. Carne's follow-up is due tomorrow, 14 Oct.
@@ -1698,13 +1859,6 @@ New leads: 0. Inbox read OK: 2 LINE threads, 0 about 180K (both are shala bookin
 Due today: 0. Overdue: 0. Serious: 1 (the LINE third-series lead from 12 Oct).
 Boonchu must do: if you have not sent my 12 Oct reply to that lead from LINE OA, send it today.
 Boonchu must decide: online teaching yes or no. The lead asked. Follow-up due tomorrow, 14 Oct.
-
-## 2026-10-12 · plato
-
-Trigger: a knee study (ScienceDaily 10 Oct): people walked every day and stayed sore; a tiny foot turn, measured for each person, cut pain much more in one year.
-Story: strong monkeys throw rocks into the sea, but strings and measuring sticks keep Rama's bridge straight; it reaches the far shore in 5 days (Valmiki Ramayana, Yuddha Kanda 22).
-Asana: Setu Bandhasana (setu = bridge). Strong brings the rock. The line builds the bridge. Habit: teacher who notices + #8.
-Hook: "Some people have sore knee. They walk every day. Still sore. Then scientists turn their foot... just a tiny bit." Full package: posts/2026-10-12-plato-monkey-bridge.md. Waiting on Boonchu's Setu Bandhasana cue.
 
 ## 2026-10-12 · plato-monkey-bridge
 
@@ -1939,6 +2093,13 @@ Button: Send message. Headline: Your first small win starts here.
 Ad text: hook line + 'Ashtanga at AYBKK, Bangkok. Beginners welcome. We teach you from zero.' + promo (standing wording, promo first, Sharathji last) + 'Send us MYSORE for the free First Mysore Class guide.'
 One spoken CTA only; offer only in the text; no price in the video. Check ManyChat covers Facebook Messenger, or reply by hand.
 
+## 2026-10-12 · plato
+
+Trigger: a knee study (ScienceDaily 10 Oct): people walked every day and stayed sore; a tiny foot turn, measured for each person, cut pain much more in one year.
+Story: strong monkeys throw rocks into the sea, but strings and measuring sticks keep Rama's bridge straight; it reaches the far shore in 5 days (Valmiki Ramayana, Yuddha Kanda 22).
+Asana: Setu Bandhasana (setu = bridge). Strong brings the rock. The line builds the bridge. Habit: teacher who notices + #8.
+Hook: "Some people have sore knee. They walk every day. Still sore. Then scientists turn their foot... just a tiny bit." Full package: posts/2026-10-12-plato-monkey-bridge.md. Waiting on Boonchu's Setu Bandhasana cue.
+
 ## 2026-10-12 · machiavelli
 
 Money today: the first serious lead in 15 days (LINE, third series) asks one thing: do you teach online? Carne's draft is in his run. Follow-up due 14 Oct.
@@ -1957,13 +2118,6 @@ New leads: 1 (LINE OA, English, serious: third series, going back to Mysore, wan
 Due today: 0. Overdue: 0. Serious: 1.
 Boonchu must do: read my draft reply in today's Carnegie run and send it from LINE OA if you like it.
 Boonchu must decide: do you teach online (for a student living in Thailand)? The lead asked. Follow-up due 14 Oct.
-
-## 2026-10-11 · plato
-
-Trigger: the viewer's own body. You jump into an arm balance and your nose hits the floor (no safe, plain news fit today).
-Story: five thirsty brothers at a lake; a crane says "answer first, then drink". Four rush and fall, the one who stops saves them all (Mahabharata, Vana Parva 310 to 312).
-Asana: Bakasana (baka = crane): stop, set, breathe, then lift. Habit #2.
-Hook: "You put your hands down. You jump. Your nose hits the floor." Full package: posts/2026-10-11-plato-thirsty-crane.md. Waiting on Boonchu's Bakasana cue.
 
 ## 2026-10-11 · plato-thirsty-crane
 
@@ -2112,6 +2266,13 @@ Boonchu asked: rewrite the 6 Oct doves Reel "like telling a story to 10 year old
 New hook: "Mat still rolled up? You think, 'I'm lazy.' You're not." Point: "One dove can't lift the net. Together, they can."
 Source fix: v1's "each dove pulls alone" was made up; it is gone. Still waiting on his Kapotasana cue.
 
+## 2026-10-11 · plato
+
+Trigger: the viewer's own body. You jump into an arm balance and your nose hits the floor (no safe, plain news fit today).
+Story: five thirsty brothers at a lake; a crane says "answer first, then drink". Four rush and fall, the one who stops saves them all (Mahabharata, Vana Parva 310 to 312).
+Asana: Bakasana (baka = crane): stop, set, breathe, then lift. Habit #2.
+Hook: "You put your hands down. You jump. Your nose hits the floor." Full package: posts/2026-10-11-plato-thirsty-crane.md. Waiting on Boonchu's Bakasana cue.
+
 ## 2026-10-11 · machiavelli
 
 Money today: say yes to the Mysore Reel. It is the campaign's only Reel and it has slid 5 times.
@@ -2127,13 +2288,6 @@ Carne and Plato both posted today. Inbox 07:08: 0 new.
 ## 2026-10-11 · carnegie
 
 No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
-
-## 2026-10-10 · plato
-
-Trigger: 8 Oct, a basketball player won "best player of the year" for the 5th time. Nobody did that before (CBS Sports, ESPN).
-Story: Aruna (Mahabharata, Adi Parva 16 and 24). Born too early with half a body, he still drives the sun, "always seen in the hour of morning". Asana: Surya Namaskara A, 5 times every morning.
-Hook: "This week, a player won best of the year. Fifth time. Nobody ever did that." Then: "One time is a good year. Five times is a habit." Lane A story, Lane B door, promo in EN/TH caption.
-Full package: posts/2026-10-10-plato-dawn-five-times.md. Waiting on Boonchu's own Surya Namaskara A cue.
 
 ## 2026-10-10 · plato-dawn-five-times
 
@@ -2680,6 +2834,13 @@ Aybkk.net
 - FIXED: plato_pick reason corrected (Vibe Samurai was used 8 Oct). 'Most-loved theme' and 'fastest comments' are now worded to match plato.md.
 - FIXED: bear source corrected (translator's note at 4-65-18 and 4-66-38, not 4-65-10), and 'praises' became 'appreciates' to match 4-65-10. The #9 gloss now follows direction.md, and #2 is deleted. Route line added. 'Never filmed' became 'no filming or posting recorded in plato.md'.
 
+## 2026-10-10 · plato
+
+Trigger: 8 Oct, a basketball player won "best player of the year" for the 5th time. Nobody did that before (CBS Sports, ESPN).
+Story: Aruna (Mahabharata, Adi Parva 16 and 24). Born too early with half a body, he still drives the sun, "always seen in the hour of morning". Asana: Surya Namaskara A, 5 times every morning.
+Hook: "This week, a player won best of the year. Fifth time. Nobody ever did that." Then: "One time is a good year. Five times is a habit." Lane A story, Lane B door, promo in EN/TH caption.
+Full package: posts/2026-10-10-plato-dawn-five-times.md. Waiting on Boonchu's own Surya Namaskara A cue.
+
 ## 2026-10-10 · machiavelli
 
 Money today: set the course prices. Deadline is 19:00 tonight.
@@ -2691,10 +2852,6 @@ Score: wins this week: none reported. 180K leads pasted: 0 in 13 days. Letter #1
 Carne and Plato both posted today. Inbox 07:08: 0 new.
 13:08 check-in: course prices still waiting (due 19:00 today), Mysore Reel still waiting (1 day). Inbox: 1 new, 1 hot.
 19:08 check-in: course prices default B applied, sales open now Tue 27 Oct. Mysore Reel still waiting (1 day). Inbox: 3 new, 1 hot.
-
-## 2026-10-10 · carnegie
-
-No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
 
 ## 2026-10-10 · carnegie-research-men-and-yoga
 
@@ -2802,12 +2959,9 @@ Ashtanga history: FACT: in 1930s Mysore, young men scorned yoga and preferred th
 - UP OVPAA, 2026: https://ovpaa.up.edu.ph/?p=7668
 - YouGov UK, 2015: https://yougov.com/en-gb/articles/11434-yoga-reduces-stress
 
-## 2026-10-09 · plato
+## 2026-10-10 · carnegie
 
-Trigger: ScienceDaily 8 Oct: mice did strength training for 7 days. Their weight stayed the same, but inside the fat cells got smaller.
-Story: the Frog Hymn (Rig Veda 7.103). The frogs keep quiet for a whole year, like people keeping a vow, then the rain comes and they all sing. Asana: Bhekasana (frog). Habit #1.
-Hook: "Scientists trained mice for 7 days. The scale? Same." Lane A story, Lane B door (the "it's not working" fear), promo in EN/TH caption.
-Full package: posts/2026-10-09-plato-frogs-quiet-year.md. Waiting on Boonchu's own Bhekasana cue.
+No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
 
 ## 2026-10-09 · plato-frogs-quiet-year
 
@@ -2930,6 +3084,13 @@ Aybkk.net #aybkk #аштанга #аштангайога #hiddenstoriesofashtang
 - Left out: the old reading (Max Müller) that the hymn makes fun of priests. We never mock priests or a religion; the script only says "like a monk keeping a promise".
 - Bhekasana: Ashtanga Intermediate series (bheka = frog).
 
+## 2026-10-09 · plato
+
+Trigger: ScienceDaily 8 Oct: mice did strength training for 7 days. Their weight stayed the same, but inside the fat cells got smaller.
+Story: the Frog Hymn (Rig Veda 7.103). The frogs keep quiet for a whole year, like people keeping a vow, then the rain comes and they all sing. Asana: Bhekasana (frog). Habit #1.
+Hook: "Scientists trained mice for 7 days. The scale? Same." Lane A story, Lane B door (the "it's not working" fear), promo in EN/TH caption.
+Full package: posts/2026-10-09-plato-frogs-quiet-year.md. Waiting on Boonchu's own Bhekasana cue.
+
 ## 2026-10-09 · machiavelli
 
 Money today: set the course prices. Sales open Tue 20 Oct (11 days) only works with prices set.
@@ -2943,153 +3104,5 @@ Carne and Plato both posted today. Inbox 07:08: 0 new.
 19:08 check-in: no win reported. Course prices and Mysore Reel not repeated (nagged twice today). Inbox 19:08: 2 new, 2 hot.
 
 ## 2026-10-09 · carnegie
-
-No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
-
-## 2026-10-08 · plato
-
-Trigger: BYU study (ScienceDaily 6 Oct): almost 1,700 married couples, the ones who exercise together say they fight less.
-Story: Vasishtha and Arundhati, two stars side by side in the Big Dipper; at old Indian weddings the husband shows his bride that star (Ashvalayana Grihya Sutra 1.7.22; Mahabharata). Asana: Vasisthasana. Habit #3.
-Hook: "Scientists asked 1,700 couples. The ones who exercise together... fight less." Fits the DUO "bring a friend" promo.
-Full package: posts/2026-10-08-plato-two-stars.md. Waiting on Boonchu's own Vasisthasana cue.
-
-## 2026-10-08 · plato-two-stars
-
-# Plato · 8 Oct 2026 · daily Reel package
-Hidden Stories of Ashtanga (no Ep. number until filmed; last posted Ep. 4)
-"The Two Stars Who Walk Together"
-
-Route: Lane A story with a Lane B door (couples / "bring someone" fits the DUO promo: bring a friend) · last 3: Arjuna script (A, not filmed), doves script (A, not filmed), carousels 7 Oct · next due: Lane B fear buster. This one invites beginners in pairs, so it leans B in EN/TH.
-Habit #3 Partners on the same path (and #9 Do it with others).
-
-Trigger note: no unused life note. News checked: BYU study, published by ScienceDaily 6 Oct 2026. Nearly 1,700 young married couples. Couples who exercise together REPORT better talking, better fixing fights, less stress. It is a link, not proof of cause, and the effect is small: the script says "say", never "makes".
-
-## The link (4 lines)
-- Trigger: scientists asked almost 1,700 married couples. The ones who exercise together say they talk better and fight less.
-- Story: the sage Vasishtha and his wife Arundhati live on as two stars side by side in the seven sages (the Big Dipper). At old Indian weddings the new husband shows his bride that star (Ashvalayana Grihya Sutra 1.7.22; Mahabharata, Adi Parva 235).
-- Behavior: they are not one strong star. They are two stars on the same road, every night.
-- Asana: Vasisthasana (Advanced A). Your whole body on one hand, one straight line. Alone it shakes. Next to someone who shows up, you show up too.
-
-Toolkit pick: /hook (pattern interrupt) + Vibe Samurai ladder inside the /story beats (ladder: the couples in the study / Vasishtha and Arundhati / you and the person on the next mat). Why: the study gives a plain, surprising opener anyone gets ("fight less"), and the ladder walks it from strangers to the sky to the viewer's own home. Not used in the last 3 days (Name-the-Feeling, One Dissenting Voice, Triple Hook).
-Other options: (1) Gervais close: "My wife and I, we practise in the same room. We still argue. But... less." (only if true). (2) Fork-First: "6 am. Your partner is still asleep. Do you go alone, or wake them up?"
-
-## Hooks (/hook, answered myself)
-Topic: practice habit, why people quit alone.
-Consensus: "Exercise is a personal thing. Your own time, your own goals."
-Where Boonchu sharpens it: 20 years of practice, six days a week since 2008, in a shala where people practise side by side every morning. People who come with someone keep coming (his own view: say it only if he agrees).
-1. Authority: "Twenty years in a shala. The ones who stay rarely come alone." (his claim: OK it first)
-2. Contrarian: "Your workout is not 'me time'. That is why you quit."
-3. Stakes: "Train alone, and you come home with nothing to say."
-4. Question: "Why do couples who move together fight less?"
-5. Pattern interrupt: "Scientists asked 1,700 couples. The ones who exercise together... fight less."
-Pick: #5. It opens with the trigger (rule), "fight less" lands with sound off and makes a married 10-year practitioner look at the person next to them. The number is checked (BYU, nearly 1,700).
-
-## Script (about 60 s, spoken to camera, his English)
-HOOK (0-4 s)
-"Scientists ask almost 1,700 married couples.
-The ones who exercise together... they say they fight less."
-
-CONTEXT + MIRROR (4-12 s)
-"Maybe you go to the gym. Your partner stay home.
-Or you both go... different place, different time.
-Night, you come home. Tired. Nothing to say."
-
-STORY, bedtime voice (12-34 s)
-"Long time ago in India, there is a sage. Vasishtha.
-His wife, Arundhati.
-The old books say... now they live in the sky. Two stars.
-Look at the seven big stars, the Big Dipper.
-In the handle... one bright star. And right next to it... a tiny one.
-(mirror) Small star, big star. Side by side.
-... (silent beat, 1 s)
-And in old Indian weddings, at night, the husband take his new wife outside.
-And he show her... that tiny star."
-
-TURN (34-42 s)
-"Not because one star is strong.
-Because every night... they walk the same road."
-
-TAKEAWAY, the reveal (42-54 s)
-"In Ashtanga we have Vasisthasana. His asana.
-Your whole body on one hand. One straight line.
-Alone... it shake.
-But in the shala, the person on the next mat is breathing with you.
-They come... you come."
-
-RETURN, payoff (54-60 s)
-"You want to fight less at home?
-Practise together. Same time. Same room."
-
-Payoff check: the hook opens "why do they fight less?"; the close answers it in the viewer's own home. One ordeal (doing it alone, coming home empty), one lesson (move together and you keep going).
-
-## Edit cue sheet (house style, for the "Editing by Claude" session)
-- Header pill: "Hidden Stories of Ashtanga · Ep. N" (N only once filmed).
-- Zoom punch + SFX at 40% (0.4 s after the word): "1,700" (ping), "fight less" (impact-bass-1), "nothing to say" (click-soft), "two stars" (sparkle), "tiny one" (chime), "wedding" (chime), "same road" (whoosh), "one hand" (pop), "shake" (error), "together" (sparkle).
-- Cards: (1) graphic card "👫 1,700 couples · move together → talk more, fight less", "say" in small text under it; (2) graphic: the Big Dipper, the handle star glows, a tiny star pops in next to it (gold), labels "Vasishtha" and "Arundhati"; (3) the sage and his wife walking side by side; (4) a wedding couple at night looking up, his hand pointing; (5) graphic "Vasisthasana = Vasishtha's asana · one hand, one line"; (6) a real AYBKK class photo of two mats side by side, only if the students gave permission; (7) last card "Same time. Same room. ✨✨".
-- Picture prompts (Isle of Dogs, keep every handmade cue): "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, [SCENE], felt and wool puppets with glassy bead eyes, painted cardboard sky, cotton-wool clouds on visible wires, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections". Scenes: (1) an old felt sage with a long white wool beard and his wife in a simple felt sari walking side by side on a forest path at dusk; (2) a painted cardboard night sky with seven tin-foil stars in the Big Dipper shape, one bright star in the handle and a tiny star right next to it, both hanging on visible wires; (3) a young felt bride and groom in simple wedding clothes standing outside a cardboard house at night, he points up at the two stars, a tiny clay lamp at their feet. No gods' faces. Cloudflare only after Boonchu's OK.
-
-## Captions (max 5 hashtags, no price)
-EN
-Scientists asked almost 1,700 couples. The ones who exercise together say they fight less. 👫
-Hidden Stories of Ashtanga · The Two Stars Who Walk Together
-Vasishtha and Arundhati: a big star and a tiny one, side by side in the sky, every night. ✨
-Vasisthasana: alone, the one-hand balance shakes. Next to someone who shows up, you show up too. 🙏
-Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. (In honour of Sharathji's passing.)
-Come practise with us. Beginners welcome, we teach you from the very start. Comment aybkk and I'll send you the link. Aybkk.net
-#aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #vasisthasana
-
-TH
-นักวิจัยถามคู่แต่งงานเกือบ 1,700 คู่ คู่ที่ออกกำลังกายด้วยกัน บอกว่าทะเลาะกันน้อยลง 👫
-เรื่องเล่าที่ซ่อนอยู่ในอัษฏางค์ · ดาวสองดวงที่เดินไปด้วยกัน
-ฤๅษีวสิษฐะกับภรรยา อรุนธตี ดาวดวงใหญ่กับดวงเล็ก อยู่เคียงกันบนฟ้าทุกคืน ✨
-วสิษฐาสนะ: ทรงตัวด้วยมือข้างเดียว ฝึกคนเดียวมันสั่น แต่มีคนมาฝึกข้างๆ ทุกเช้า เราก็มาด้วย 🙏
-โปรพิเศษสำหรับนักเรียนใหม่: ซื้อ 1 แถม 1 สำหรับแพ็กเกจ 1, 2 หรือ 3 เดือน ชวนเพื่อนหรือคนรักมาด้วย หรือเก็บไว้ใช้เองทั้งสองก็ได้ ซื้อภายใน 11 พ.ย. (เพื่อระลึกถึงท่านชารัธ)
-มาฝึกมายซอร์ด้วยกัน มือใหม่ยินดีต้อนรับ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย คอมเมนต์ aybkk แล้วเราจะส่งลิงก์ให้ Aybkk.net
-#aybkk #อัษฏางค์โยคะ #โยคะกรุงเทพ #hiddenstoriesofashtanga #vasisthasana
-
-ZH (Xiaohongshu / WeChat Channels; Lane A, no beginner promo)
-一起运动的夫妻，真的吵架更少？👫
-最近一项研究调查了近1700对年轻夫妻：常一起运动的，自己说沟通更顺，吵架更少。
-阿斯汤加的隐藏故事：抬头看北斗七星，斗柄上有一颗亮星“开阳”，旁边紧挨着一颗小星“辅”。在印度，它们是圣人瓦西斯塔和他的妻子阿伦达蒂。一大一小，每晚走同一条路。古时印度的婚礼上，新郎会在夜里带新娘出门，指给她看这颗小星。✨
-Vasisthasana（瓦西斯塔式），单手撑起整个身体，一条直线。一个人练，会抖。身边有人每天早上都来，你也就来了。🙏
-同一个时间，同一个房间。来曼谷 AYBKK 的迈索尔课堂，一起练。
-#阿斯汤加 #迈索尔 #瑜伽 #夫妻 #阿斯汤加的隐藏故事
-Xiaohongshu title (11 characters): 一起练的夫妻，吵架更少
-
-RU
-Учёные опросили почти 1 700 супружеских пар. Те, кто тренируется вместе, говорят, что ссорятся реже. 👫
-Скрытые истории аштанги · Две звезды, которые идут вместе
-Мудрец Васиштха и его жена Арундхати: большая звезда и крошечная рядом, каждую ночь на одном пути. ✨
-Васиштхасана: баланс на одной руке. В одиночку дрожит. Когда рядом кто-то приходит каждое утро, приходишь и ты. 🙏
-Одно время. Одна комната. Приходите практиковать с нами в Бангкоке, в класс майсор. Новичкам рады, учим с самого начала. Aybkk.net
-#аштанга #аштангайога #майсор #васиштхасана #aybkk
-
-## Sources (check before filming)
-- News: ScienceDaily, 6 Oct 2026, "Scientists Say This Simple Habit Could Strengthen Your Marriage" (Brigham Young University). https://www.sciencedaily.com/releases/2026/10/261004001843.htm . Study: Yorgason, Mildenhall, Nunez, "Conjoint Exercise among young married couples...", Family Relations 2026, DOI 10.1111/fare.70260. Nearly 1,700 couples (CREATE study). About 60% exercised, only about a third together; walking was the most common shared exercise. Lead author: "While the impact is not necessarily large, it is very consistent." Survey link, not cause.
-- Story 1: Ashvalayana Grihya Sutra 1.7.22, tr. Oldenberg, Sacred Books of the East vol. 29, p. 170: "When she sees the polar-star, the star Arundhati, and the seven Rishis (ursa major), let her break the silence" and say "May my husband live and I get offspring." (Also Paraskara Grihya Sutra 1.8.19: he shows her the polar star after sunset.)
-- Story 2: Mahabharata, tr. Ganguli, Adi Parva sec. 235 (checked on Gutenberg 15474): Arundhati "has become a little star... (amongst a constellation of seven bright stars representing the seven Rishis)". Vana Parva sec. 225: Swaha could take the form of the other six sages' wives but not Arundhati's, "on account of the great ascetic merit of Arundhati and her devotion to her husband (Vasishtha)".
-- Sky: Vasishtha = Mizar, Arundhati = Alcor, the naked-eye pair in the Big Dipper's handle (Chinese: 开阳 and 辅). Standard Indian sky lore; check with a star chart before filming.
-- Asana: Vasisthasana is in the Advanced A series.
-
-## Flags for Boonchu
-- LEFT OUT on purpose: the Adi Parva passage says Arundhati became a dim star BECAUSE she was jealous of Vasishtha, and the speaker adds "men should never trust women". Too risky (looks sexist, blames the wife). The script uses only the stars side by side and the wedding custom.
-- Vasishtha was in the 30 Sep story as the one who recites Rama's line (Marichyasana). Different story and asana.
-- Hook #1 and the Gervais close are your own claims: use only if true for you.
-- Your Vasisthasana cue: 1 or 2 lines in your own words would beat "one straight line".
-- Promo line in EN/TH only (the "bring a friend" DUO offer fits this Reel well). Chinese and Russian: invite, no promo, no price.
-
-## 2026-10-08 · machiavelli
-
-Money today: set the course prices. Sales open Tue 20 Oct (12 days) only works with prices set.
-Course prices: decision needed in team chat by 19:00 Sat 10 Oct. Default B: sales open moves one more week (to Tue 27 Oct).
-Mysore Reel: reply A (post Fri 9 Oct as drafted) or B (move to Mon 12 Oct) in ✍️ Plato chat by 19:00 today. No answer means B.
-Countdowns: Letter #2 Mon 12 Oct: 4 days. Course sales open Tue 20 Oct: 12 days.
-Reel from Plato: couples who exercise together say they fight less (BYU study); Vasishtha and Arundhati, two stars side by side. Asana: Vasisthasana. Hook: "Scientists asked 1,700 couples. The ones who exercise together... fight less." Plato waits on Boonchu's Vasisthasana cue.
-Score: wins this week: none reported. 180K leads pasted: 0 in 11 days. Letter #1 (due Mon 5 Oct): not reported sent. No reminders due.
-Carne and Plato both posted today. Inbox 07:08: 1 new, 0 hot.
-13:08 check-in: Mysore Reel due 19:00 today, course prices still waiting (2 days). Inbox: 0 new.
-19:08 check-in: Mysore Reel default B applied, moves to Mon 12 Oct. Course prices still waiting (2 days). Inbox: 0 new.
-
-## 2026-10-08 · carnegie
 
 No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
