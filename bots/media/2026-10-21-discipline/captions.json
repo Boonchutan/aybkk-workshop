@@ -19,7 +19,7 @@
   "A": "The Mood Comes After",
   "B": "Continuing Is Power"
  },
- "state": "A PUBLISHED. B rebuilt 22 Oct (CHARACTER full width on top; review fixes), waiting for Boonchu: go + time + per-slide captions in app or one caption via Postiz.",
+ "state": "A PUBLISHED 22 Oct 20:53 BKK. B scheduled 23 Oct 05:30 BKK (check-in send_later 22:42Z).",
  "posts": {
   "A": {
    "title": "The Mood Comes After",
@@ -39,6 +39,28 @@
     "FAVxqtafmd"
    ],
    "md5": "all 10 OK"
+  },
+  "B": {
+   "id": "cmvjnrxtm097zpt0ynutzpp0h",
+   "type": "schedule",
+   "date_utc": "2026-10-22T22:30:00Z",
+   "date_bkk": "2026-10-23 05:30",
+   "state": "QUEUE (scheduled 22 Oct 21:2x BKK, Boonchu: \"schedule B at 5.30 am tomorrow morning\")",
+   "caption": "captions.B (kid version), one caption, no per-slide captions (Postiz cannot send them)",
+   "attachments": [
+    "RBuSPqpIyM",
+    "KNmi0Z9wIc",
+    "K2uHZ9r0NP",
+    "zJdB0Q7VXS",
+    "fPJHLJ9okb",
+    "aY8RgPEm5H",
+    "IW9HMdAwWy",
+    "5jI1dMBVZ6",
+    "c9QNWV2ywg",
+    "nfyo0eNozX"
+   ],
+   "source_sha": "07120b1ee4b1bc54e0d46bf7a80f5b1e7d30d7f5",
+   "md5_checked": true
   }
  },
  "slide_captions": {
