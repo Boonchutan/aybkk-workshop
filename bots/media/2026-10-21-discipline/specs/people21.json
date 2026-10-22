@@ -1,0 +1,113 @@
+{
+ "groups": [
+  {
+   "ids": [
+    "21-042",
+    "21-045",
+    "21-018"
+   ],
+   "who": "Woman with dark curly hair in a bun, white Calvin Klein sports bra, black shorts with red drawstring/side ties. She is the main student in 042 and 045. In 018 she is the large left-foreground co-main figure (face visible in profile, same CK bra band and red-lettered black shorts).",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "21-018",
+    "21-032",
+    "21-042",
+    "21-045"
+   ],
+   "who": "Same Calvin Klein woman. In 032 she is the large left-foreground figure, seen from behind in a squat: black shorts with red side ties and a white top, on a pale towel. Her face is not visible, so this extends the high group above only if prominent secondary appearances count.",
+   "sure": "medium"
+  },
+  {
+   "ids": [
+    "21-018",
+    "21-033"
+   ],
+   "who": "Woman with black hair in a top bun, black/dark-camo strappy criss-cross sports bra, sage-green shorts, on the same teal mat with navy border next to a purple floral mat. She is the forearm-stand woman in 018 and the main student in 033.",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "21-032",
+    "21-144"
+   ],
+   "who": "Dark-skinned woman, dark hair tied with a purple scrunchie, small stud earrings, matching dark-teal strappy sports bra and teal shorts, a plaster on her elbow/upper arm in both, blue mat. She is the main student in 032 and the adjusted student in 144.",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "21-031",
+    "21-032",
+    "21-144"
+   ],
+   "who": "Same teal-outfit woman. She also stands large on the left of 031, seen from behind with hands on hips in the teal bra and shorts, beside the main man. Prominent but secondary in 031.",
+   "sure": "medium"
+  },
+  {
+   "ids": [
+    "21-085",
+    "21-144"
+   ],
+   "who": "Adjusting teacher: man with thick short black hair, olive-green sleeveless AYBKK tank (circular Ashtanga graphic on the back, as seen in 085 and the 016 background; 'AYBKK' on the front in 144), white/light shorts.",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "21-031",
+    "21-040"
+   ],
+   "who": "Shirtless man with short dark wavy hair, maroon patchwork Thai elephant-print shorts with a navy/white tribal band. He is the main figure in 031 (looking up) and 040 (leg behind head).",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "21-030",
+    "21-031",
+    "21-040"
+   ],
+   "who": "Same elephant-shorts man. In 030 he is the large seated figure left of centre, behind the main woman, in the identical maroon/navy elephant shorts on the same green mat. Co-main but secondary in 030.",
+   "sure": "medium"
+  },
+  {
+   "ids": [
+    "21-025",
+    "21-161"
+   ],
+   "who": "Woman with light/blonde hair, blue racerback full-length unitard (lululemon logo), lilac towel over a green mat. She backbends in the centre of 025 and is the main student in 161.",
+   "sure": "high"
+  },
+  {
+   "ids": [
+    "21-025",
+    "21-026"
+   ],
+   "who": "Woman in a magenta crop top with light grey/taupe bottoms, upside down with legs up. She is the main student in 026 and the large right-third figure in 025. Co-main in 025.",
+   "sure": "medium"
+  },
+  {
+   "ids": [
+    "21-026",
+    "21-038"
+   ],
+   "who": "Woman with shoulder-length dark hair and a hair clip, purple AYBKK sports top and purple shorts with pink/red AYBKK lettering. She is the large right-foreground figure in 026 and the main student lying down in 038. This is AYBKK merch, so another student could own the same set.",
+   "sure": "medium"
+  },
+  {
+   "ids": [
+    "21-016",
+    "21-028"
+   ],
+   "who": "Lean shirtless man with very short black hair, dark-green drawstring shorts with an elastic waistband, light blue towel. He is the main student in 016 and the handstand man in 028. Faces are hard to compare.",
+   "sure": "medium"
+  },
+  {
+   "ids": [
+    "21-014",
+    "21-028"
+   ],
+   "who": "Young shirtless man with short black hair (longer on top), side stubble, dark olive/charcoal shorts, dark grey textured mat. He is the close-up main figure in 014 and the seated foreground man in 028 (seen from behind).",
+   "sure": "medium"
+  }
+ ]
+}
