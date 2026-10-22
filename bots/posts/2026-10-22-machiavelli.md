@@ -5,3 +5,4 @@ Due today: Google brand ad first check (paste impressions, lost IS (rank), searc
 Countdowns: door check-in for everyone about Sat 24 Oct: 2 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 3 days; keyword test Mon 26 Oct: 4 days; test group Tue 27 Oct: 5 days; Google ad judge Thu 29 Oct: 7 days; Mysore trip check Sun 1 Nov: 10 days. PR #63 and PR #67 still to merge.
 Reel from Plato: 4 minutes a day for 12 weeks made people over 65 stronger (Penn State); a soft rope cuts a line in hard stone (old Hindi poem). Asana: Pasasana. Hook: "Four minutes a day. That's all. And they got stronger."
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious. Carne and Plato both posted today. Inbox 07:08: 2 new in 1 thread, 1 waiting (LINE class cancel request), 0 hot.
+13:08 check-in: course prices and Mysore Reel still waiting, both due 19:00 today (2nd nudge). Inbox: 0 new.
