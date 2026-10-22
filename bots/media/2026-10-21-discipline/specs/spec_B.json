@@ -7,14 +7,17 @@
   "credit": "Xunzi · Encouraging Learning, ch. 1"
  },
  {
-  "photo": "21-030",
+  "photo": "21-009",
   "id": "DR2",
   "word": "BOOST",
   "line": "Audiobooks only at the gym: 51% more visits, then the boost shrank.",
-  "credit": "Milkman et al. · Management Science, 2014"
+  "credit": "Milkman et al. · Management Science, 2014",
+  "t": 263,
+  "sz": 44,
+  "tight": true
  },
  {
-  "photo": "21-009",
+  "photo": "21-045",
   "id": "DR6",
   "word": "HABIT",
   "line": "What lasts? Habits are likely to keep going after motivation fades.",
@@ -28,7 +31,7 @@
   "credit": "Fournier et al. · Health Psychology, 2017"
  },
  {
-  "photo": "21-032",
+  "photo": "21-031",
   "id": "DM9",
   "word": "ENJOY",
   "line": "Motivation matters too: people who enjoyed exercise tended to keep doing it.",
@@ -42,14 +45,14 @@
   "credit": "Cal Ripken Jr. · SI Kids, 2013"
  },
  {
-  "photo": "21-014",
+  "photo": "21-030",
   "id": "DW8",
   "word": "POWER",
   "line": "Motivation or discipline? A Japanese saying: continuing is power.",
   "credit": "Japanese saying · Daijisen"
  },
  {
-  "photo": "21-031",
+  "photo": "21-032",
   "id": "DM12",
   "word": "CHARACTER",
   "line": "Vivekananda: character is repeated habits, and only repeated habits can reshape it.",
@@ -63,7 +66,7 @@
   "credit": "Yoga Sutra 1.13 & Vyasa · tr. Woods, 1914"
  },
  {
-  "photo": "21-045",
+  "photo": "21-014",
   "id": "DY6",
   "word": "PRACTICE",
   "line": "Pattabhi Jois put it simply: do your practice, and all is coming.",

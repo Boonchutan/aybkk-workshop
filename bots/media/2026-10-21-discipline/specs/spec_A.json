@@ -7,21 +7,43 @@
   "credit": "Rhodes & de Bruijn · BJHP, 2013"
  },
  {
-  "photo": "21-016",
+  "photo": "21-028",
   "id": "DW2",
   "word": "WISHING",
   "line": "An old fable book: good goals don't come by wishing. Get up!",
-  "credit": "Hitopadesha · tr. Edwin Arnold, 1861"
+  "credit": "Hitopadesha · tr. Edwin Arnold, 1861",
+  "t": "pad",
+  "tight": true,
+  "sz": 42,
+  "cws": [
+   480
+  ],
+  "wwidth": 540,
+  "wpos": [
+   "L",
+   430
+  ],
+  "sxy": [
+   479,
+   60
+  ],
+  "ink_w": "light",
+  "ink_s": "light"
  },
  {
   "photo": "21-007",
   "id": "DS2",
   "word": "SPARK",
   "line": "Sparks are real: Murakami's idea came suddenly. Then he wrote every night.",
-  "credit": "Haruki Murakami · Wind/Pinball, 2015"
+  "credit": "Haruki Murakami · Wind/Pinball, 2015",
+  "wys": [
+   180,
+   170,
+   190
+  ]
  },
  {
-  "photo": "21-018",
+  "photo": "21-026",
   "id": "DM1",
   "word": "BATH",
   "line": "Zig Ziglar: motivation doesn't last. Neither does a bath. Take both regularly.",
@@ -42,7 +64,7 @@
   "credit": "Anthony Trollope · An Autobiography, 1883"
  },
  {
-  "photo": "21-028",
+  "photo": "21-040",
   "id": "DM6",
   "word": "ENERGY",
   "line": "Low energy? In 158 studies, one cardio workout went with more energy.",
@@ -56,17 +78,22 @@
   "credit": "Rabbi Tarfon · Pirkei Avot 2:16, tr. Kulp"
  },
  {
-  "photo": "21-026",
+  "photo": "21-016",
   "id": "DY2",
   "word": "MIND",
   "line": "The Gita: each time the restless mind wanders off, bring it back.",
   "credit": "Bhagavad Gita 6.26 · tr. Annie Besant"
  },
  {
-  "photo": "21-040",
+  "photo": "21-018",
   "id": "DY5",
   "word": "DAILY",
   "line": "Krishnamacharya: yoga's benefits come only with daily practice, same time, same place.",
-  "credit": "T. Krishnamacharya · Yoga Makaranda, 1934"
+  "credit": "T. Krishnamacharya · Yoga Makaranda, 1934",
+  "wys": [
+   270,
+   260,
+   280
+  ]
  }
 ]
