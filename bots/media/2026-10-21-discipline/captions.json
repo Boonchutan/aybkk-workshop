@@ -9,8 +9,8 @@
   ],
   "B": [
    "Fast horse or slow horse? 🐎",
-   "10 slides on why discipline lasts, from Xunzi and a Japanese saying to habit studies and Pattabhi Jois. Photos: Mysore class at AYBKK, 21 Oct.",
-   "Motivation starts you. Practice, day after day, keeps you going.",
+   "Motivation means wanting to do it. Discipline means doing it day after day, even when you don't feel like it. Which one gets you there? Here are 10 slides. Photos: Mysore class at AYBKK, 21 Oct.",
+   "Wanting gets you started. Doing it again and again keeps you going.",
    "How many days in a row have you practised? 👇",
    "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
   ]
@@ -19,13 +19,13 @@
   "A": "The Mood Comes After",
   "B": "Continuing Is Power"
  },
- "state": "A posted 22 Oct 20:53 (kid-English caption, Boonchu asked). B waiting for go and a time.",
+ "state": "A PUBLISHED. B rebuilt 22 Oct (CHARACTER full width on top; review fixes), waiting for Boonchu: go + time + per-slide captions in app or one caption via Postiz.",
  "posts": {
   "A": {
    "title": "The Mood Comes After",
    "id": "cmvjlphsj07idpt0y233eskxw",
    "when": "NOW 20:53 BKK 22 Oct",
-   "state": "QUEUE at 20:54",
+   "state": "PUBLISHED 2026-10-22 13:53Z (checked 14:12Z)",
    "attachments": [
     "GOCrZtt6L0",
     "gYPzol70Eh",
@@ -40,5 +40,33 @@
    ],
    "md5": "all 10 OK"
   }
- }
+ },
+ "slide_captions": {
+  "note": "Per-slide captions (Instagram 'Multiple captions', app only, only when posting; Postiz cannot send them; old posts cannot get them). Kid English.",
+  "A": [
+   "Scientists checked 10 studies. Almost half of the people who planned to exercise did not do it. Wanting to is not the same as doing it.",
+   "The Hitopadesha is a very old book of animal stories from India. It teaches that goals come from getting up and working, not from wishing.",
+   "Haruki Murakami is a famous writer from Japan. The idea for his first book came to him in one sudden moment. Then he wrote late every night after work.",
+   "Zig Ziglar was a famous teacher of selling and goal setting. His joke: motivation does not last, and a bath does not last either. So you take both again and again.",
+   "Igor Stravinsky wrote famous music. He said hunger often comes once you start eating. In the same way, new ideas come once you start working.",
+   "Anthony Trollope wrote dozens of books in the 1800s. He joked that sticky wax on his chair, to keep him sitting and working, helped more than waiting for ideas.",
+   "Scientists combined 158 studies. After one cardio workout (anything that makes your heart beat faster), people often felt more energy. Moving can wake you up.",
+   "Rabbi Tarfon was a Jewish teacher who lived long ago. He said: you don't have to finish all the work, but you are not free to skip your part.",
+   "The Bhagavad Gita is an old holy book from India. It says the mind runs off again and again. Each time, gently bring it back. That is the practice.",
+   "Krishnamacharya was the teacher of Pattabhi Jois. In 1934 he wrote that yoga helps only when you do it every day, at the same time, in the same place."
+  ],
+  "B": [
+   "Xunzi was a thinker in old China. He said a fast horse can't get far in one jump. A slow horse that keeps walking, and never quits, gets there.",
+   "In a study, people could listen to a gripping audiobook only at the gym. At first they went 51% more often. Later, the extra push got smaller.",
+   "A habit is something you do without having to think about it. Scientists say habits are likely to keep you going even after the wanting fades.",
+   "In a study, people did one stretch every day. Done in the morning, it took about 106 days (an estimate) to become automatic. In the evening, about 154. Automatic means it happens without a fight.",
+   "Wanting still matters. In many studies, people who enjoyed exercise were more likely to keep doing it. Find what you love in your practice.",
+   "Cal Ripken was a baseball player in the USA. He played 2,632 games in a row without missing one. Every day, he just came ready to play.",
+   "Japan has a saying: keizoku wa chikara nari. It means: continuing is power. A little every day adds up.",
+   "Swami Vivekananda was a teacher from India who taught yoga in America and England in the 1890s. He said your character is made of what you do again and again. To change it, change what you repeat.",
+   "Patanjali wrote the Yoga Sutras, a very old guide to yoga. His word for practice is abhyasa: trying again and again to keep the mind steady.",
+   "Pattabhi Jois taught Ashtanga yoga in Mysore, India, to students from all over the world. His famous words: do your practice, and all is coming. Keep going. The rest will come."
+  ]
+ },
+ "review_22oct": "Final review on posted A found: A3 SPARK K touches the assistant's face; A4 BATH covers the seated student's half-lotus foot; A2/A5/A8 small credit or sentence contrast issues. Told Boonchu."
 }

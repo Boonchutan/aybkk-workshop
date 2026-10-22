@@ -46,6 +46,7 @@ def _greedy(words, f, width):
             else: out.append(' '.join(cur)); cur = [w]
     return out + [' '.join(cur)]
 def wrap(text, f, width):
+    if '|' in text: return [x.strip() for x in text.split('|')]   # hand-set line breaks
     words = text.split(); best = _greedy(words, f, width)
     if len(best) < 2: return best
     lo, hi = width * 0.55, width          # narrowest width that keeps the same line count = balanced lines
@@ -100,7 +101,7 @@ def clean(n):
         _CLEAN[n] = (cv2.inpaint(B, mm, 5, cv2.INPAINT_TELEA), reg, a)
     return _CLEAN[n]
 
-def frame(n, t, wm=None, tight=False, wmxy=None):
+def frame(n, t, wm=None, tight=False, wmxy=None, wmk=1.0):
     """t = int (crop window top in the 1080x1620 photo) or 'pad'. Returns the slide photo and its masks."""
     B = big(n)
     if t == 'pad':
@@ -139,7 +140,7 @@ def frame(n, t, wm=None, tight=False, wmxy=None):
         if wmxy: wmode, wmr = 'hand', (wmxy[0], wmxy[1], wmxy[0] + 360, wmxy[1] + 80)
         tx, ty = int(wmr[0]), int(wmr[1])
         # soft dark backing so the thin lines read on a light floor (the original has the photographer's dark gradient)
-        lum = float(g[ty:ty + 80, tx:tx + 360].mean()); strength = float(np.clip((lum - 60) / 110, 0, 1)) * 0.5
+        lum = float(g[ty:ty + 80, tx:tx + 360].mean()); strength = min(0.85, float(np.clip((lum - 60) / 110, 0, 1)) * 0.5 * wmk)
         if strength > 0:
             m = np.zeros((H, W), np.float32); m[ty - 22:ty + 102, tx - 40:tx + 400] = 1; m = cv2.GaussianBlur(m, (0, 0), 26) * strength
             img = (img.astype(np.float32) * (1 - m[..., None])).astype(np.uint8)
@@ -234,7 +235,7 @@ def layouts(fr, st, word, line, credit, allow_feet=False, want=None):
         bs = size_for(word, tw); WG[bs] = word_geom(word, bs)
     # stacked: word on top of the sentence or under it, one column, one alignment
     CWS = want.get('cws', CW)
-    for cw in CWS:
+    for cw in ([] if want.get('wys') else CWS):
         sg = sent_geom(line, credit, cw, sz=SZ)
         if not sg: continue
         for bs in WG:
@@ -264,8 +265,8 @@ def layouts(fr, st, word, line, credit, allow_feet=False, want=None):
         for bs in WG:
             wg = WG[bs]
             for xn, x in XS(fr, wg['w']):
-                for yn, y in ys(wg['asc'] + wg['desc']):
-                    if yn not in ('top', 'bot', 'foot'): continue
+                for yn, y in ([('hand', v) for v in want['wys']] if want.get('wys') else ys(wg['asc'] + wg['desc'])):
+                    if yn not in ('top', 'bot', 'foot', 'hand'): continue
                     wr = (x, y, x + wg['w'], y + wg['asc'] + wg['desc']); a = st.part(wr, 'w', allow_feet)
                     if a: W_.append((a[0] + size_pen(wg) + (0.15 if yn.startswith('b') else 0), wr, bs, a, corner(x, wg['w'], y, wr[3] - wr[1]), xn in ('R', 'G1r', 'G0r')))
         S_ = []
@@ -291,9 +292,9 @@ def best(s, prev_corner=None):
     n = s['photo']; lo, hi = t_range(n)
     ts = ['pad'] if (lo > hi or s.get('t') == 'pad') else ([s['t']] if 't' in s else sorted({t for t in list(range(0, 271, 30)) + [lo, hi] if lo <= t <= hi}))
     top, bot = body_span(n); res = []
-    for allow_feet in (False, True):
+    for allow_feet in ((False, True) if s.get('feet_ok') else (False,)):   # never put text on the main student's feet unless told
         for t in ts:
-            fr = frame(n, t, s.get('wm'), s.get('tight', False), s.get('wmxy')); st = Stats(fr)
+            fr = frame(n, t, s.get('wm'), s.get('tight', False), s.get('wmxy'), s.get('wmk', 1.0)); st = Stats(fr)
             frame_pen = 0 if t == 'pad' else max(0, (t + H) - bot - 90) / 350
             for L in layouts(fr, st, s['word'], s['line'], s['credit'], allow_feet, s):
                 L['score'] += frame_pen + (0.35 if prev_corner and L['corner'] == prev_corner else 0); L['t'] = t; L['fr'] = fr
