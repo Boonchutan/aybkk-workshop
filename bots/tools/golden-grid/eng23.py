@@ -20,6 +20,9 @@ ZONES = {z['id']: z for z in json.load(open(os.path.join(WD, 'zones20.json')))}
 _FC = {}
 BIG = os.environ.get('BIG', 'inter')   # Boonchu 23 Oct picked option 2: Inter Black 900 (thick = Nimbus Bold with a 3.2% stroke)
 THICK = 0.032 if BIG == 'thick' else 0.0
+WMAIN = float(os.environ.get('WMAIN', 0.08))
+DARK_K = float(os.environ.get('DARK_K', 0.014))   # Boonchu 23 Oct: black text looked thinner than white (white gets a dark shadow), so dark ink gets a small stroke
+DARK_SENT = int(os.environ.get('DARK_SENT', 1))
 SENT_STROKE = 1                         # Boonchu 23 Oct: the italic sentence a bit bold
 def F(w, s):
     if (w, s) not in _FC:
@@ -39,10 +42,10 @@ def _fc(f, ch):
 def tlen(t, f, trk):
     if not any(_cjk(c) for c in t): return f.getlength(t) + trk * f.size * max(0, len(t) - 1)
     return sum(_fc(f, c).getlength(c) for c in t) + trk * f.size * max(0, len(t) - 1)
-def ttext(d, xy, t, f, trk, fill, sw=0):
+def ttext(d, xy, t, f, trk, fill, sw=0, extra=0):
     x, y = xy; mixed = any(_cjk(c) for c in t); x += sw
     for i, ch in enumerate(t):
-        d.text((x, y), ch, font=_fc(f, ch), fill=fill, anchor='ls', stroke_width=sw, stroke_fill=fill if sw else None)
+        d.text((x, y), ch, font=_fc(f, ch), fill=fill, anchor='ls', stroke_width=sw + extra, stroke_fill=fill if sw + extra else None)
         x += (_fc(f, ch).getlength(ch) if mixed else f.getlength(t[:i + 1]) - f.getlength(t[:i])) + trk * f.size + sw * 1.6
 WEAK = {'a', 'an', 'the', 'of', 'to', 'and', 'in', 'on', 'at', 'for', 'but', 'so', 'or'}
 def _greedy(words, f, width):
@@ -192,6 +195,7 @@ class Stats:
         if fp > 0.001 and not allow_feet: return None
         bd, bl = self.mean('bd', r), self.mean('bl', r); ink = 'dark' if bd < bl else 'light'; bad = min(bd, bl)
         mu = self.mean('g', r); std = max(0.0, self.mean('g2', r) - mu * mu) ** .5; pf = self.mean('p', r); mf = self.mean('m', r)
+        if kind == 'w' and mf > getattr(self, 'wmain', WMAIN): return None   # Boonchu 23 Oct: the big word goes on empty space, never across the main student's asana
         ring = self.mean('m', (r[0] - 30, r[1] - 30, r[2] + 30, r[3] + 30))
         tangent = 0.6 if (mf < 0.01 and ring > 0.006) else 0          # text that just touches a body looks like an accident
         s = (3 * bad + std / 70 + 3.0 * pf + 4.0 * mf) if kind == 'w' else (5 * bad + std / 45 + 1.0 * pf + 2.0 * mf)   # Boonchu 23 Oct: the big word goes on the empty space
@@ -302,7 +306,7 @@ def best(s, prev_corner=None):
     top, bot = body_span(n); res = []
     for allow_feet in ((False, True) if s.get('feet_ok') else (False,)):   # never put text on the main student's feet unless told
         for t in ts:
-            fr = frame(n, t, s.get('wm'), s.get('tight', False), s.get('wmxy'), s.get('wmk', 1.0)); st = Stats(fr)
+            fr = frame(n, t, s.get('wm'), s.get('tight', False), s.get('wmxy'), s.get('wmk', 1.0)); st = Stats(fr); st.wmain = s.get('wmain', WMAIN)   # close-ups with no empty space may allow more
             frame_pen = 0 if t == 'pad' else max(0, (t + H) - bot - 90) / 350
             for L in layouts(fr, st, s['word'], s['line'], s['credit'], allow_feet, s):
                 L['score'] += frame_pen + (0.35 if prev_corner and L['corner'] == prev_corner else 0); L['t'] = t; L['fr'] = fr
@@ -315,7 +319,7 @@ def render(L, word, ink_w=None, ink_s=None, shadow=1.0):
     fr = L['fr']; img = fr['img']; fb, fs, fc = F('Big', L['bs']), F('Serif', L['sg']['sz']), F('Bold', CRED)
     wi, si = ink_w or L['wink'], ink_s or L['sink']; sg = L['sg']
     def dw(d, fill):
-        ttext(d, (L['wr'][0], L['wr'][1] + L['wg']['asc']), word, fb, TRK_BIG, fill, L['wg'].get('sw', 0))
+        ttext(d, (L['wr'][0], L['wr'][1] + L['wg']['asc']), word, fb, TRK_BIG, fill, L['wg'].get('sw', 0), round(DARK_K * L['bs']) if wi == 'dark' else 0)
     def ds(d, fill):
         x0, x1 = L['sr'][0], L['sr'][2]; right = L.get('sright', L['right'])
         for i, t in enumerate(sg['sl']):
@@ -328,7 +332,7 @@ def render(L, word, ink_w=None, ink_s=None, shadow=1.0):
                     for w in ws: d.text((x, yb), w, font=fs, fill=fill, anchor='ls'); x += fs.getlength(w) + gap
                     continue
             x = x1 - fs.getlength(t) if right else x0
-            d.text((x, yb), t, font=fs, fill=fill, anchor='ls', stroke_width=SENT_STROKE, stroke_fill=fill)
+            d.text((x, yb), t, font=fs, fill=fill, anchor='ls', stroke_width=SENT_STROKE + (DARK_SENT if si == 'dark' else 0), stroke_fill=fill)
         for j, c in enumerate(sg['cl']):
             x = x1 - tlen(c, fc, TRK_CRED) if right else x0
             ttext(d, (x, L['sr'][1] + sg['cbase'][j]), c, fc, TRK_CRED, fill)
