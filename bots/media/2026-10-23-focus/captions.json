@@ -1,23 +1,156 @@
 {
- "A": [
-  "Do you play better when the prize is big? 🥇",
-  "To expect means to wait for a reward. To focus means to put your whole mind on what you are doing right now. Here are 10 slides on why the mind works better on the work than on the prize. Photos: Mysore class at AYBKK, 23 Oct.",
-  "Do your best. Let the result come.",
-  "What do you think about while you practise? 👇",
-  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
- ],
- "B": [
-  "How does an archer hit the mark? 🎯",
-  "Focus means putting your whole mind on one thing. Here are 10 slides on aiming well, and then letting go. Photos: Mysore class at AYBKK, 23 Oct.",
-  "Aim with all your heart. Then let the arrow fly.",
-  "Where does your mind go in your hardest asana? 👇",
-  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
- ],
- "C": [
-  "Can a few trees a day become a forest? 🌳",
-  "A result is what you get at the end. Here are 10 slides about people who kept working without waiting for a reward, and the result came anyway. Photos: Mysore class at AYBKK, 23 Oct.",
-  "Do the work every day. The forest grows by itself.",
-  "What would you keep doing even if no one saw it? 👇",
-  "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
- ]
+ "captions": {
+  "A": [
+   "Do you play better when the prize is big? 🥇",
+   "To expect means to wait for a reward. To focus means to put your whole mind on what you are doing right now. Here are 10 slides on why the mind works better on the work than on the prize. Photos: Mysore class at AYBKK, 23 Oct.",
+   "Do your best. Let the result come.",
+   "What do you think about while you practise? 👇",
+   "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+  ],
+  "B": [
+   "How does an archer hit the mark? 🎯",
+   "Focus means putting your whole mind on one thing. Here are 10 slides on aiming well, and then letting go. Photos: Mysore class at AYBKK, 23 Oct.",
+   "Aim with all your heart. Then let the arrow fly.",
+   "Where does your mind go in your hardest asana? 👇",
+   "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+  ],
+  "C": [
+   "Can a few trees a day become a forest? 🌳",
+   "A result is what you get at the end. Here are 10 slides about people who kept working without waiting for a reward, and the result came anyway. Photos: Mysore class at AYBKK, 23 Oct.",
+   "Do the work every day. The forest grows by itself.",
+   "What would you keep doing even if no one saw it? 👇",
+   "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
+  ]
+ },
+ "titles": {
+  "A": "Playing for Gold",
+  "B": "The Archer's Mind",
+  "C": "The Forest Comes Anyway"
+ },
+ "order": {
+  "A": [
+   "GOLD",
+   "PRESSURE",
+   "AWARD",
+   "HAPPINESS",
+   "POINT",
+   "FAME",
+   "ZERO",
+   "LEARNING",
+   "CONTROL",
+   "PAY"
+  ],
+  "B": [
+   "CARVER",
+   "FLOW",
+   "GOGGLES",
+   "SPORT",
+   "COOK",
+   "PALACE",
+   "SKY",
+   "MARK",
+   "ARROW",
+   "BREATH"
+  ],
+  "C": [
+   "FOREST",
+   "SESAME",
+   "POTTER",
+   "JOY",
+   "QUALITY",
+   "GOAL",
+   "SCORE",
+   "BALANCE",
+   "FRUIT",
+   "MYSORE"
+  ]
+ },
+ "slide_captions": {
+  "A": [
+   "In the old Chinese book Zhuangzi, Confucius tells a student: a player bets tokens and plays well. He bets gold and cannot think clearly. His skill is the same. The prize just distracts him.",
+   "Psychologist Roy Baumeister reported six experiments in 1984. Pressure, like rivals, cash or an audience, made skilled people do worse. His idea: we start watching ourselves, and a skill that usually runs by itself gets jammed.",
+   "In Mark Lepper's 1973 experiment, preschoolers who liked drawing were promised a 'Good Player Award'. Later, in free play, they drew 8.59% of the time. Kids with no award drew 16.73%. The promised-award kids' drawings were rated lower too.",
+   "In a 2011 experiment by Iris Mauss's team, young women read an article praising happiness, or a plain one. After a happy film clip, the happiness readers felt less happy than the others. Their own feelings disappointed them.",
+   "Tennis star Roger Federer won almost 80% of his matches but only 54% of the points. In a 2024 speech he said: while you play a point, it matters most. When it's over, it's behind you. Then play the next one.",
+   "Emily Dickinson, an American poet, wrote this to her mentor in 1862. Only about 10 of her nearly 1,800 poems were printed while she lived. She did not chase fame. She kept writing.",
+   "Bill Walsh coached the San Francisco 49ers in American football. In his book, he says he once scored himself like this: a win earned zero points, a loss cost points. So he could never get ahead.",
+   "Edwin Locke and Gary Latham summed up 35 years of goal research. Clear, hard goals beat 'just do your best'. But on new, tricky tasks, a goal fixed on the result can make people too anxious to learn.",
+   "John Wooden coached UCLA basketball. In a 2001 TED talk, he said trying to be your best is under your control. Getting too caught up in what you can't control hurts what you can.",
+   "T. Krishnamacharya, teacher of Pattabhi Jois, wrote this in Yoga Makaranda in 1934. Yoga is not a job that pays you after one hour. So put your mind on the practice, and let benefits come in time."
+  ],
+  "B": [
+   "Qing, a master woodworker in the old Chinese book Zhuangzi, stilled his mind before carving a bell stand. Day by day, reward, fame and even his body slipped from his mind. Then his skill gathered, and the stand looked magical.",
+   "Psychologist Mihaly Csikszentmihalyi, who named 'flow', wrote this in 1990. Some things we do not for a future prize, but because the doing itself is the reward. Like the carver, the mind rests in the work.",
+   "In the 2008 Olympic 200 m butterfly final, Michael Phelps could not see. His coach Bob Bowman had once made him swim in the dark. Bowman says in races, Phelps's habits take over, and winning follows naturally.",
+   "Ollie Williamson's team reviewed 27 sport studies in 2022. Goals about how to do the skill went with the biggest gains. Goals on the end result showed no clear effect, but only 2 findings tested that.",
+   "Dogen, founder of Soto Zen in Japan, wrote in 1237 about an old temple cook, aged 68. His words mean: no one else can do your work for you, and now is the time to do it.",
+   "Ferdinand Cheval, a French country postman, tripped on an odd stone in 1879. He wheeled stones home and built his palace alone, at night, until 1912. On its wall: 'Let someone more stubborn than me get to work.'",
+   "George Herbert, an English poet and priest, wrote this poem, printed in 1633. Keep your behaviour humble and your plans high. Someone aiming at the sky shoots higher than someone aiming at a tree. Goals do matter.",
+   "Cicero, a Roman writer, explained the Stoic view: when you aim at a mark, your real goal is to do all you can to aim straight. Hitting it is welcome, not the goal. Aim fully, hold the result loosely.",
+   "The Mundaka Upanishad, an old Indian scripture, says Om is the bow and the Self is the arrow. A careful, attentive mind hits the target. Then, like the arrow, you become one with it.",
+   "In the Bhagavad Gita, Krishna calls this firmness pure: a steady will that, through yoga, holds mind, breath and senses without wavering. Our own reading: on the mat, this means staying with the next breath, the next asana."
+  ],
+  "C": [
+   "From 1979, Jadav Payeng planted a few young trees every day on a bare river island in Assam, India. A reporter wrote that no one, not even he, imagined a forest. By 2014 it covered about 550 hectares.",
+   "The Buddha told the monk Bhumija about a person who needed oil. Press wet sesame flour, and oil comes out, whether you make a wish or not. Results come from the right method, not from wishing.",
+   "Kawai Kanjiro, a Japanese folk-craft potter in Kyoto, turned down Living National Treasure status. Pots from his friend Kawakatsu's collection won Grand Prizes in Paris (1937) and Milan (1957). One report says they were entered without asking him.",
+   "Barbara McClintock studied the genes of corn. For years she was rarely asked to lecture, and she called that long quiet time a delight: freedom to keep working for pure joy. In 1983, aged 81, she won the Nobel Prize.",
+   "Christopher Cerasoli's team pooled 40 years of studies from school, work and physical activity, with 212,468 people. Doing work because it is interesting went with better quality. Incentives went more with doing more, so both have a place.",
+   "Swami Vivekananda, an Indian monk, said this in 1900. Goals matter: choose yours and the way to reach it. Then you can almost let the goal go: he was sure it would be there once the steps were done well.",
+   "John Wooden, the UCLA basketball coach, said in a 2001 TED talk that his rivals never heard him mention winning. He wanted the score to come as a by-product of doing other things well, not to be the goal.",
+   "In the Bhagavad Gita, Krishna teaches: do your work without clinging, and stay balanced whether you succeed or fail. That balance, he says, is yoga. Good to remember on days you cannot do an asana.",
+   "Patanjali's Yoga Sutra 2.1 names yoga in action: tapas (discipline), self-study, and devotion to Ishvara, the Lord. Vyasa's old commentary says this devotion means offering all actions to the Lord, or letting go of their fruit, the results.",
+   "In 1948, Pattabhi Jois set up his Ashtanga yoga institute in his small Mysore home. His student Eddie Stern wrote that he taught neither for fame nor money. Ashtanga spread 'gradually, gradually', like daily practice: one breath, one asana."
+  ]
+ },
+ "postiz_media": {
+  "A": [
+   "WCwBFMIcmX",
+   "JXW2xaBknO",
+   "x85wn5NCVy",
+   "g8iBp5pTza",
+   "8Jbsq3EUWB",
+   "JQKafrplGy",
+   "2ia1xg3Q9h",
+   "91PlatQj29",
+   "dwj6BzrhrA",
+   "Zb16aoZ9Ja"
+  ],
+  "B": [
+   "v2O8fr3Muf",
+   "uWXuC2UDUu",
+   "1g0FEdOR5K",
+   "c1PZigZmdr",
+   "X72VL20kvL",
+   "PksbSoethi",
+   "HfQuHl363A",
+   "O2jpbwQLRt",
+   "8J8e8q4cYo",
+   "XW1IVAjIQU"
+  ],
+  "C": [
+   "LhucLss370",
+   "ZH3sKSlCIq",
+   "Oi5KoZyAKq",
+   "FOp0GmvbmX",
+   "xMcCquSECT",
+   "matI3LeASM",
+   "BRC7q0ZobU",
+   "Qm2oKgf0Ol",
+   "YWbMAgEGOi",
+   "xWLEyjbHlu"
+  ]
+ },
+ "posts": {
+  "A": {
+   "id": "cmvku8r440cnhpr1cn3tzbex2",
+   "type": "now",
+   "sent": "2026-10-23 17:39 BKK",
+   "state": "QUEUE (check-in 10:50Z)"
+  }
+ },
+ "plan": {
+  "B": "21:00 BKK 23 Oct (waiting for go)",
+  "C": "06:00 BKK 24 Oct (waiting for go)"
+ }
 }
