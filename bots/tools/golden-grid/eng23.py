@@ -208,7 +208,7 @@ def word_geom(word, bs):
 def sent_geom(line, credit, cw, lead_k=1.12, sz=SENT):
     fs, fc = F('Serif', sz), F('Bold', CRED)
     sl = wrap(smart(line), fs, cw); cr = credit.upper()
-    cl = [cr] if tlen(cr, fc, TRK_CRED) <= cw else [p.strip() for p in cr.split('·')]
+    cl = [p.strip() for p in cr.split('|')] if '|' in cr else ([cr] if tlen(cr, fc, TRK_CRED) <= cw else [p.strip() for p in cr.split('·')])
     cl2 = []
     for c in cl:   # a credit part still too long for the column wraps by words
         cur = ''
@@ -254,7 +254,7 @@ def layouts(fr, st, word, line, credit, allow_feet=False, want=None):
             wg = WG[bs]
             if wg['w'] > fr['R'] - fr['L']: continue
             for order in ('word_top', 'sent_top'):
-                if order == 'word_top': wy, sy = 0, wg['asc'] + wg['desc'] + 26; h = sy + sg['h']
+                if order == 'word_top': wy, sy = 0, wg['asc'] + wg['desc'] + 44; h = sy + sg['h']
                 else: sy = 0; wy = sg['h'] + 18; h = wy + wg['asc'] + wg['desc'] + 8
                 bw = max(wg['w'], sg['w'])
                 for xn, x in XS(fr, bw):
@@ -319,7 +319,14 @@ def render(L, word, ink_w=None, ink_s=None, shadow=1.0):
     fr = L['fr']; img = fr['img']; fb, fs, fc = F('Big', L['bs']), F('Serif', L['sg']['sz']), F('Bold', CRED)
     wi, si = ink_w or L['wink'], ink_s or L['sink']; sg = L['sg']
     def dw(d, fill):
-        ttext(d, (L['wr'][0], L['wr'][1] + L['wg']['asc']), word, fb, TRK_BIG, fill, L['wg'].get('sw', 0), round(DARK_K * L['bs']) if wi == 'dark' else 0)
+        if wi == 'dark' and DARK_K > 0:   # keep the gaps open: the extra stroke also goes into each letter's advance, and the size shrinks to keep the exact width
+            ex = DARK_K * L['bs']; k2 = L['wg']['w'] / (L['wg']['w'] + 2 * ex * (len(word) - 1) + 2 * ex); f2 = F('Big', round(L['bs'] * k2)); ex2 = max(1, round(DARK_K * f2.size))
+            x0 = L['wr'][0] + ex2; yb = L['wr'][1] + L['wg']['asc']
+            for i, ch in enumerate(word):
+                d.text((x0, yb), ch, font=f2, fill=fill, anchor='ls', stroke_width=ex2, stroke_fill=fill)
+                x0 += f2.getlength(word[:i + 1]) - f2.getlength(word[:i]) + TRK_BIG * f2.size + 2 * ex2
+            return
+        ttext(d, (L['wr'][0], L['wr'][1] + L['wg']['asc']), word, fb, TRK_BIG, fill, L['wg'].get('sw', 0))
     def ds(d, fill):
         x0, x1 = L['sr'][0], L['sr'][2]; right = L.get('sright', L['right'])
         for i, t in enumerate(sg['sl']):
@@ -354,6 +361,7 @@ if __name__ == '__main__':
     prev = None
     for k, s in enumerate(S):
         if only and str(k + 1) not in only.split(','): prev = log.get(k + 1, {}).get('corner'); continue
+        if s.get('direct'): print(k + 1, s['photo'], 'DIRECT'); continue   # hand-placed: render with direct20.py
         r = best(s, prev)
         if not r: print(k + 1, s['photo'], 'NO SPOT'); log[k + 1] = dict(n=k + 1, photo=s['photo'], fail=True); continue
         L = r[0]

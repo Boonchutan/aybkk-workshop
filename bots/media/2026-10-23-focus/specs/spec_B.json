@@ -4,7 +4,26 @@
   "id": "FW2",
   "word": "CARVER",
   "line": "A master carver forgot the reward, then the fame, then even his body.",
-  "credit": "Zhuangzi 19 · tr. H. A. Giles, 1889"
+  "credit": "Zhuangzi 19 · tr. H. A. Giles, 1889",
+  "direct": true,
+  "t": 180,
+  "wwidth": 541,
+  "wpos": [
+   479,
+   1205
+  ],
+  "cws": [
+   400
+  ],
+  "sz": 50,
+  "sxy": [
+   413,
+   60
+  ],
+  "ink_w": "light",
+  "ink_s": "light",
+  "sright": false,
+  "line_br": "A master carver | forgot the reward, | then the fame, then | even his body."
  },
  {
   "photo": "23-128",
@@ -33,7 +52,7 @@
   "id": "FW4",
   "word": "COOK",
   "line": "Old cook: 'Others are not me. What other time should I wait for?'",
-  "credit": "Dogen, Tenzo Kyokun, 1237",
+  "credit": "Dogen | Tenzo Kyokun, 1237",
   "photo": "23-075",
   "tight": true,
   "wmain": 0.45
@@ -59,7 +78,7 @@
   "id": "FW6",
   "word": "MARK",
   "line": "Aim as straight as you can. Hitting the mark: welcome, not the goal.",
-  "credit": "Cicero, De Finibus III.22 · tr. Rackham"
+  "credit": "Cicero, De Finibus III.22 | tr. Rackham"
  },
  {
   "photo": "23-118",

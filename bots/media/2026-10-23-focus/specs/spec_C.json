@@ -11,7 +11,25 @@
   "id": "FW10",
   "word": "SESAME",
   "line": "How? Press sesame the right way, and oil comes, wish or no wish.",
-  "credit": "Majjhima Nikaya 126 · tr. Sujato"
+  "credit": "Majjhima Nikaya 126 · tr. Sujato",
+  "direct": true,
+  "t": 33,
+  "wwidth": 540,
+  "wpos": [
+   480,
+   60
+  ],
+  "cws": [
+   360
+  ],
+  "sz": 36,
+  "sxy": [
+   60,
+   34
+  ],
+  "ink_w": "dark",
+  "ink_s": "dark",
+  "sright": false
  },
  {
   "id": "FS9",
@@ -43,7 +61,25 @@
   "id": "FS8",
   "word": "JOY",
   "line": "Rarely invited to speak, she kept working for pure joy. Nobel at 81.",
-  "credit": "B. McClintock · Nobel Banquet, 1983"
+  "credit": "B. McClintock · Nobel Banquet, 1983",
+  "direct": true,
+  "t": 263,
+  "wwidth": 540,
+  "wpos": [
+   80,
+   30
+  ],
+  "cws": [
+   413
+  ],
+  "sz": 54,
+  "sxy": [
+   693,
+   993
+  ],
+  "ink_w": "dark",
+  "ink_s": "light",
+  "sright": true
  },
  {
   "id": "FR13",
@@ -59,7 +95,25 @@
   "id": "FM10",
   "word": "GOAL",
   "line": "Pick the goal and the steps, then almost let the goal go.",
-  "credit": "Vivekananda · Work and its Secret, 1900"
+  "credit": "Vivekananda · Work and its Secret, 1900",
+  "direct": true,
+  "t": 58,
+  "wwidth": 540,
+  "wpos": [
+   340,
+   30
+  ],
+  "cws": [
+   440
+  ],
+  "sz": 36,
+  "sxy": [
+   340,
+   223
+  ],
+  "ink_w": "dark",
+  "ink_s": "dark",
+  "sright": false
  },
  {
   "id": "FP15",
