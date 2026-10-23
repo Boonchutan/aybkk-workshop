@@ -1,0 +1,78 @@
+[
+ {
+  "photo": "23-201",
+  "id": "FW2",
+  "word": "CARVER",
+  "line": "A master carver forgot the reward, then the fame, then even his body.",
+  "credit": "Zhuangzi 19 · tr. H. A. Giles, 1889"
+ },
+ {
+  "photo": "23-128",
+  "id": "FR7",
+  "word": "FLOW",
+  "line": "The scientist who named 'flow' said: the doing itself is the reward.",
+  "credit": "Csikszentmihalyi · Flow, 1990, ch. 3"
+ },
+ {
+  "photo": "23-165",
+  "id": "FP7",
+  "word": "GOGGLES",
+  "line": "Goggles full of water, Phelps counted his strokes and set a world record.",
+  "credit": "Phelps, Beijing 2008 · Duhigg, 2012"
+ },
+ {
+  "id": "FR9",
+  "word": "SPORT",
+  "line": "In sport studies, 'how to do it' goals went with the biggest gains.",
+  "credit": "Williamson et al. · meta-analysis, 2022",
+  "photo": "23-205",
+  "tight": true,
+  "wmain": 0.45
+ },
+ {
+  "id": "FW4",
+  "word": "COOK",
+  "line": "Old cook: 'Others are not me. What other time should I wait for?'",
+  "credit": "Dogen, Tenzo Kyokun, 1237",
+  "photo": "23-075",
+  "tight": true,
+  "wmain": 0.45
+ },
+ {
+  "photo": "23-007",
+  "id": "FS4",
+  "word": "PALACE",
+  "line": "A postman built a palace alone: 10,000 days, 93,000 hours, 33 years.",
+  "credit": "Ferdinand Cheval · Palais Idéal"
+ },
+ {
+  "id": "FM5",
+  "word": "SKY",
+  "line": "Aim at the sky, and you shoot higher than aiming at a tree.",
+  "credit": "George Herbert · The Church-porch, 1633",
+  "photo": "23-048",
+  "tight": true,
+  "wmain": 0.45
+ },
+ {
+  "photo": "23-210",
+  "id": "FW6",
+  "word": "MARK",
+  "line": "Aim as straight as you can. Hitting the mark: welcome, not the goal.",
+  "credit": "Cicero, De Finibus III.22 · tr. Rackham"
+ },
+ {
+  "photo": "23-118",
+  "id": "FY3",
+  "word": "ARROW",
+  "line": "Om is the bow, the self the arrow. Aim with a careful mind.",
+  "credit": "Mundaka Upanishad II.2.4 · tr. Müller"
+ },
+ {
+  "photo": "23-080",
+  "id": "FY4",
+  "word": "BREATH",
+  "line": "Through yoga, a steady will holds the mind, the breath and the senses.",
+  "credit": "Bhagavad Gita 18.33 · tr. Annie Besant"
+ }
+]

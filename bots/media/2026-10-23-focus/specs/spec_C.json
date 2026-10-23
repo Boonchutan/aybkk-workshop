@@ -1,0 +1,128 @@
+[
+ {
+  "photo": "23-208",
+  "id": "FS10",
+  "word": "FOREST",
+  "line": "A teen planted a few saplings a day. 34 years later: a forest.",
+  "credit": "Jadav Payeng · Al Jazeera, 2014"
+ },
+ {
+  "photo": "23-078",
+  "id": "FW10",
+  "word": "SESAME",
+  "line": "How? Press sesame the right way, and oil comes, wish or no wish.",
+  "credit": "Majjhima Nikaya 126 · tr. Sujato"
+ },
+ {
+  "id": "FS9",
+  "word": "POTTER",
+  "line": "A potter refused honours. His pots, from a friend's collection, won Grand Prizes.",
+  "credit": "Kawai Kanjiro · Art Platform Japan",
+  "photo": "23-188",
+  "direct": true,
+  "t": "pad",
+  "tight": true,
+  "wwidth": 540,
+  "wpos": [
+   132,
+   770
+  ],
+  "cws": [
+   440
+  ],
+  "sz": 42,
+  "sxy": [
+   492,
+   40
+  ],
+  "ink_w": "dark",
+  "ink_s": "light"
+ },
+ {
+  "photo": "23-171",
+  "id": "FS8",
+  "word": "JOY",
+  "line": "Rarely invited to speak, she kept working for pure joy. Nobel at 81.",
+  "credit": "B. McClintock · Nobel Banquet, 1983"
+ },
+ {
+  "id": "FR13",
+  "word": "QUALITY",
+  "line": "Across 40 years of studies, liking the work itself went with better quality.",
+  "credit": "Cerasoli et al. · Psychol Bull, 2014",
+  "photo": "23-134",
+  "tight": true,
+  "wmain": 0.45
+ },
+ {
+  "photo": "23-159",
+  "id": "FM10",
+  "word": "GOAL",
+  "line": "Pick the goal and the steps, then almost let the goal go.",
+  "credit": "Vivekananda · Work and its Secret, 1900"
+ },
+ {
+  "id": "FP15",
+  "word": "SCORE",
+  "line": "Coach Wooden never mentioned winning. He wanted the score to be a by-product.",
+  "credit": "John Wooden · TED talk, 2001",
+  "photo": "23-179",
+  "direct": true,
+  "t": "pad",
+  "tight": true,
+  "wwidth": 720,
+  "wpos": [
+   113,
+   540
+  ],
+  "cws": [
+   320
+  ],
+  "sz": 38,
+  "sxy": [
+   113,
+   40
+  ],
+  "ink_w": "light",
+  "ink_s": "dark"
+ },
+ {
+  "photo": "23-019",
+  "id": "FY7",
+  "word": "BALANCE",
+  "line": "Act without clinging, balanced in success and failure. That balance is yoga.",
+  "credit": "Bhagavad Gita 2.48 · tr. Annie Besant"
+ },
+ {
+  "photo": "23-211",
+  "id": "FM14",
+  "word": "FRUIT",
+  "line": "Discipline, study, and giving up the fruit: that is yoga in action.",
+  "credit": "Yoga Sutra 2.1 & Vyasa · tr. Woods, 1914"
+ },
+ {
+  "photo": "23-006",
+  "id": "FY12",
+  "word": "MYSORE",
+  "line": "Jois taught in a two-room Mysore home, not for fame. Ashtanga spread gradually.",
+  "credit": "Eddie Stern · Yoga Mala foreword, 2010",
+  "t": 130,
+  "tight": true,
+  "wwidth": 540,
+  "wpos": [
+   60,
+   40
+  ],
+  "cws": [
+   520
+  ],
+  "sz": 40,
+  "sxy": [
+   60,
+   640
+  ],
+  "ink_w": "light",
+  "ink_s": "light",
+  "direct": true
+ }
+]

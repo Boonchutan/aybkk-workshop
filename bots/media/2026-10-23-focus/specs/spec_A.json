@@ -1,0 +1,129 @@
+[
+ {
+  "photo": "23-097",
+  "id": "FW1",
+  "word": "GOLD",
+  "line": "Same skill. For tokens, he plays well. For gold, he can't think clearly.",
+  "credit": "Zhuangzi 19 · tr. H. A. Giles, 1889"
+ },
+ {
+  "photo": "23-009",
+  "id": "FR3",
+  "word": "PRESSURE",
+  "line": "In tests, pressure from rivals, cash or an audience made practised skills worse.",
+  "credit": "Baumeister · J Pers Soc Psychol, 1984"
+ },
+ {
+  "photo": "23-203",
+  "id": "FR1",
+  "word": "AWARD",
+  "line": "Prizes too. Kids who liked drawing, promised an award, later drew less.",
+  "credit": "Lepper et al. · J Pers Soc Psychol, 1973"
+ },
+ {
+  "photo": "23-024",
+  "id": "FR6",
+  "word": "HAPPINESS",
+  "line": "Women who read that happiness matters felt less happy after a happy film.",
+  "credit": "Mauss et al. · Emotion, 2011",
+  "t": 148,
+  "wwidth": 720,
+  "wpos": [
+   60,
+   60
+  ],
+  "cws": [
+   413
+  ],
+  "sz": 54,
+  "sxy": [
+   "R",
+   684
+  ],
+  "ink_w": "light",
+  "ink_s": "light",
+  "sright": true,
+  "direct": true
+ },
+ {
+  "photo": "23-001",
+  "id": "FP2",
+  "word": "POINT",
+  "line": "Federer: while you play a point, it matters most. Then it's behind you.",
+  "credit": "Roger Federer · Dartmouth speech, 2024"
+ },
+ {
+  "photo": "23-042",
+  "id": "FS1",
+  "word": "FAME",
+  "line": "If fame is mine, it'll find me. If not, chasing won't catch it.",
+  "credit": "Emily Dickinson, letter, 7 June 1862"
+ },
+ {
+  "id": "FP1",
+  "word": "ZERO",
+  "line": "A coach scored wins as zero, losses as minus. He never got ahead.",
+  "credit": "Bill Walsh · The Score Takes Care…, 2009",
+  "photo": "23-114",
+  "direct": true,
+  "t": 205,
+  "tight": true,
+  "wwidth": 540,
+  "wpos": [
+   60,
+   580
+  ],
+  "cws": [
+   280
+  ],
+  "sz": 38,
+  "sxy": [
+   760,
+   40
+  ],
+  "ink_w": "light",
+  "ink_s": "dark"
+ },
+ {
+  "photo": "23-043",
+  "id": "FR11",
+  "word": "LEARNING",
+  "line": "Clear, hard goals help. On new, tricky tasks, chasing results can block learning.",
+  "credit": "Locke & Latham · Am Psychologist, 2002",
+  "widths": [
+   720
+  ]
+ },
+ {
+  "photo": "23-198",
+  "id": "FP5",
+  "word": "CONTROL",
+  "line": "Your best is in your control. Worrying about the rest hurts it.",
+  "credit": "John Wooden · TED talk, 2001",
+  "t": 120,
+  "wwidth": 720,
+  "wpos": [
+   180,
+   312
+  ],
+  "cws": [
+   607
+  ],
+  "sz": 54,
+  "sxy": [
+   60,
+   60
+  ],
+  "ink_w": "dark",
+  "ink_s": "dark",
+  "lead": 1.0,
+  "direct": true
+ },
+ {
+  "photo": "23-196",
+  "id": "FY1",
+  "word": "PAY",
+  "line": "So in yoga practice, don't expect pay right after an hour's work.",
+  "credit": "Krishnamacharya · Yoga Makaranda, 1934"
+ }
+]
