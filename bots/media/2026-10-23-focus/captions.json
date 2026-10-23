@@ -162,15 +162,26 @@
   "B": {
    "id": "cmvll3dhn01ljn61cbhl4r67o",
    "type": "now",
-   "sent": "2026-10-24 06:11 BKK",
-   "state": "QUEUE (check 23:22Z)"
+   "state": "PUBLISHED 2026-10-23 23:11Z (06:11 BKK 24 Oct), checked 23:23Z",
+   "attachments": [
+    "v2O8fr3Muf",
+    "uWXuC2UDUu",
+    "1g0FEdOR5K",
+    "c1PZigZmdr",
+    "X72VL20kvL",
+    "PksbSoethi",
+    "HfQuHl363A",
+    "O2jpbwQLRt",
+    "8J8e8q4cYo",
+    "XW1IVAjIQU"
+   ]
   },
   "C": {
    "id": "cmvll3dlg01lkn61czqj6bri1",
    "type": "schedule",
    "date_bkk": "2026-10-24 09:00",
    "date_utc": "2026-10-24T02:00:00Z",
-   "state": "QUEUE (check 02:12Z)"
+   "state": "QUEUE for 02:00Z (checked 23:23Z)"
   }
  },
  "plan": {
