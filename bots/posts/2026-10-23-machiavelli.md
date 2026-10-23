@@ -5,3 +5,4 @@ Countdowns: door check-in for everyone Sat 24 Oct: 1 day (stage 1 build waits on
 Reel: Plato's daily run is paused (Boonchu, 22 Oct). No Plato post is expected. 21 Hidden Stories scripts wait for his screening.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent since 17 Oct. Carne posted today.
 Inbox 07:08: 0 new; 1 hot carried (LINE, past student coming back next month, may be answered already).
+13:08 check-in: Batch Sheet still waiting (due Sat 24 Oct 19:00, 1 day); course prices still waiting (3 days). Inbox 13:08: 0 new, 0 hot.
