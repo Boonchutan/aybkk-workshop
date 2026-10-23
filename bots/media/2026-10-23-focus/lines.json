@@ -1,0 +1,346 @@
+[
+ {
+  "title": "Playing for Gold",
+  "lines": [
+   {
+    "id": "FW1",
+    "word": "GOLD",
+    "line": "Same skill. For tokens, he plays well. For gold, he can't think clearly.",
+    "credit": "Zhuangzi 19 · tr. H. A. Giles, 1889",
+    "explain": "In the old Chinese book Zhuangzi, Confucius tells a student: a player bets tokens and plays well. He bets gold and cannot think clearly. His skill is the same. The prize just distracts him.",
+    "quote": "A man who plays for counters will play well. If he stakes his girdle, he will be nervous; if yellow gold, he will lose his wits. His skill is the same in each case, but he is distracted by the value of his stake. And every one who attaches importance to the external, becomes internally without resource.",
+    "source": "Zhuangzi, ch. 19 'Da Sheng' (達生), ferryman passage; tr. Herbert A. Giles, Chuang Tzu: Mystic, Moralist, and Social Reformer (London: Bernard Quaritch, 1889), ch. XIX. Chinese text: Wikisource 莊子/達生.",
+    "url": "https://www.gutenberg.org/ebooks/59709",
+    "who": "Confucius as a character in the Zhuangzi (Zhuangzi, c. 4th to 3rd century BCE), answering his student Yan Yuan"
+   },
+   {
+    "id": "FR3",
+    "word": "PRESSURE",
+    "line": "In tests, pressure from rivals, cash or an audience made practised skills worse.",
+    "credit": "Baumeister · J Pers Soc Psychol, 1984",
+    "explain": "Psychologist Roy Baumeister reported six experiments in 1984. Pressure, like rivals, cash or an audience, made skilled people do worse. His idea: we start watching ourselves, and a skill that usually runs by itself gets jammed.",
+    "quote": "In six experiments, Roy Baumeister found that paying conscious attention to one's own performance made skilled performance worse, and that pressure (implicit competition, a cash incentive, an audience) produced similar drops. His explanation is that pressure makes people consciously watch their own performance, which disrupts a skill that normally runs automatically.",
+    "source": "Baumeister RF. Choking under pressure: Self-consciousness and paradoxical effects of incentives on skillful performance. Journal of Personality and Social Psychology, 1984; 46(3): 610-620. doi:10.1037/0022-3514.46.3.610 (abstract).",
+    "url": "https://api.openalex.org/works/https://doi.org/10.1037/0022-3514.46.3.610",
+    "who": "Roy F. Baumeister, psychologist"
+   },
+   {
+    "id": "FR1",
+    "word": "AWARD",
+    "line": "Prizes too. Kids who liked drawing, promised an award, later drew less.",
+    "credit": "Lepper et al. · J Pers Soc Psychol, 1973",
+    "explain": "In Mark Lepper's 1973 experiment, preschoolers who liked drawing were promised a 'Good Player Award'. Later, in free play, they drew 8.59% of the time. Kids with no award drew 16.73%. The promised-award kids' drawings were rated lower too.",
+    "quote": "At Stanford's Bing Nursery School, 51 preschoolers who already liked drawing were split into three groups. Children who drew to earn a promised 'Good Player Award' later chose to draw in free play only 8.59% of the time. Children who got no award drew 16.73% of the time, and children who got a surprise award drew 18.09%. The promised-award group's drawings were also rated lower in quality (2.18 vs 2.85 and 2.69 on a 1-5 scale).",
+    "source": "Lepper MR, Greene D, Nisbett RE. Undermining children's intrinsic interest with extrinsic reward: A test of the 'overjustification' hypothesis. Journal of Personality and Social Psychology, 1973; 28(1): 129-137. doi:10.1037/h0035519. Field experiment, children aged 40-64 months chosen for high baseline interest in drawing (final n = 18 expected award, 15 no award, 18 unexpected award). Free play observed covertly through a one-way mirror 7-14 days later; three blind judges rated drawing quality. Table 1, Results and Discussion.",
+    "url": "http://web.mit.edu/curhan/www/docs/Articles/15341_Readings/Motivation/Lepper_et_al_Undermining_Childrens_Intrinsic_Interest.pdf",
+    "who": "Mark R. Lepper and David Greene (Stanford University), Richard E. Nisbett (University of Michigan)"
+   },
+   {
+    "id": "FR6",
+    "word": "HAPPINESS",
+    "line": "Women who read that happiness matters felt less happy after a happy film.",
+    "credit": "Mauss et al. · Emotion, 2011",
+    "explain": "In a 2011 experiment by Iris Mauss's team, young women read an article praising happiness, or a plain one. After a happy film clip, the happiness readers felt less happy than the others. Their own feelings disappointed them.",
+    "quote": "Seventy young women (mean age 21; 69 analysed) read either a mock newspaper article praising the importance of happiness or a control article, then watched a happy or a sad film clip. Those led to value happiness felt less positive than controls after the happy clip, but not after the sad one. On a self-report measure, this was explained by their disappointment with their own feelings.",
+    "source": "Mauss IB, Tamir M, Anderson CL, Savino NS. Can seeking happiness make people unhappy? Paradoxical effects of valuing happiness. Emotion, 2011; 11(4): 807-815. doi:10.1037/a0022010. Study 2 (experiment: 70 women recruited, 1 excluded, mean age 21.1; the control article replaced 'happiness' with 'making accurate judgments'). Study 1 was correlational, with 59 women.",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3160511/",
+    "who": "Iris B. Mauss, Maya Tamir, Craig L. Anderson and Nicole S. Savino"
+   },
+   {
+    "id": "FP1",
+    "word": "ZERO",
+    "line": "A coach scored wins as zero, losses as minus. He never got ahead.",
+    "credit": "Bill Walsh · The Score Takes Care…, 2009",
+    "explain": "Bill Walsh coached the San Francisco 49ers in American football. In his book, he says he once scored himself like this: a win earned zero points, a loss cost points. So he could never get ahead.",
+    "quote": "...you've imposed an internal accounting system on yourself that awards zero points for winning and minus points for losing. You can never get ahead on points. That's exactly what happened to me.",
+    "source": "Bill Walsh with Steve Jamison and Craig Walsh, The Score Takes Care of Itself: My Philosophy of Leadership (New York: Portfolio/Penguin, 2009), Part V, section 'Zero Points for Winning (Means You're Losing)'. The e-book text has no page numbers.",
+    "url": "https://archive.org/details/the-score-takes-care-of-itself-my-philosophy-of-leadership_202208",
+    "who": "Bill Walsh, American football head coach, San Francisco 49ers"
+   },
+   {
+    "id": "FP2",
+    "word": "POINT",
+    "line": "Federer: while you play a point, it matters most. Then it's behind you.",
+    "credit": "Roger Federer · Dartmouth speech, 2024",
+    "explain": "Tennis star Roger Federer won almost 80% of his matches but only 54% of the points. In a 2024 speech he said: while you play a point, it matters most. When it's over, it's behind you. Then play the next one.",
+    "quote": "When you're playing a point, it is the most important thing in the world. But when it's behind you, it's behind you... This mindset is really crucial, because it frees you to fully commit to the next point... with intensity, clarity and focus.",
+    "source": "Roger Federer, Commencement Address, Dartmouth College, 9 June 2024",
+    "url": "https://home.dartmouth.edu/news/2024/06/2024-commencement-address-roger-federer"
+   },
+   {
+    "id": "FS1",
+    "word": "FAME",
+    "line": "If fame is mine, it'll find me. If not, chasing won't catch it.",
+    "credit": "Emily Dickinson, letter, 7 June 1862",
+    "explain": "Emily Dickinson, an American poet, wrote this to her mentor in 1862. Only about 10 of her nearly 1,800 poems were printed while she lived. She did not chase fame. She kept writing.",
+    "quote": "If fame belonged to me, I could not escape her – if she did not, the longest day would pass me on the chase ... My Barefoot-Rank is better.",
+    "source": "Letter to T. W. Higginson, 7 June 1862 (Johnson letter no. 265, The Letters of Emily Dickinson, ed. Thomas H. Johnson and Theodora Ward, Harvard UP, 1958), text from the Dickinson Electronic Archives. Context: Emily Dickinson Museum, 'Poems Published in Dickinson's Lifetime': 'only eleven of her nearly eighteen hundred poems were published'; scholars believe 'most of the poems published in her lifetime were shared without her direct consent'.",
+    "url": "https://archive.emilydickinson.org/correspondence/higginson/l265.html",
+    "who": "Emily Dickinson, poet, Amherst, Massachusetts, writing to her mentor Thomas Wentworth Higginson"
+   },
+   {
+    "id": "FR11",
+    "word": "LEARNING",
+    "line": "Clear, hard goals help. On new, tricky tasks, chasing results can block learning.",
+    "credit": "Locke & Latham · Am Psychologist, 2002",
+    "explain": "Edwin Locke and Gary Latham summed up 35 years of goal research. Clear, hard goals beat 'just do your best'. But on new, tricky tasks, a goal fixed on the result can make people too anxious to learn.",
+    "quote": "Summing up 35 years of research, Locke and Latham found that specific, hard goals consistently beat 'just do your best' (effect sizes of .42 to .80 in earlier meta-analyses). But on tasks that are new and complex for the person, a goal fixed on the result can make people 'so anxious to succeed' that they fail to learn what works. There, they recommend specific learning goals instead.",
+    "source": "Locke EA, Latham GP. Building a practically useful theory of goal setting and task motivation: A 35-year odyssey. American Psychologist, 2002; 57(9): 705-717. doi:10.1037/0003-066X.57.9.705. Sections on goal difficulty and specificity (effect sizes from Locke and Latham 1990) and on task complexity (citing Earley, Connolly and Ekegren 1989; Kanfer and Ackerman 1989; Winters and Latham 1996; Seijts and Latham 2001).",
+    "url": "https://goal-lab.psych.umn.edu/orgpsych/2020/readings/5.%20Motivation/Locke%20&%20Latham%20(2002).pdf",
+    "who": "Edwin A. Locke and Gary P. Latham, goal-setting researchers"
+   },
+   {
+    "id": "FP5",
+    "word": "CONTROL",
+    "line": "Your best is in your control. Worrying about the rest hurts it.",
+    "credit": "John Wooden · TED talk, 2001",
+    "explain": "John Wooden coached UCLA basketball. In a 2001 TED talk, he said trying to be your best is under your control. Getting too caught up in what you can't control hurts what you can.",
+    "quote": "Never cease trying to be the best you can be -- that's under your control. If you get too engrossed and involved and concerned in regard to the things over which you have no control, it will adversely affect the things over which you have control.",
+    "source": "John Wooden, 'The difference between winning and succeeding', TED2001, recorded 1 Feb 2001 (official TED transcript).",
+    "url": "https://www.ted.com/talks/john_wooden_the_difference_between_winning_and_succeeding/transcript",
+    "who": "John Wooden, UCLA basketball coach"
+   },
+   {
+    "id": "FY1",
+    "word": "PAY",
+    "line": "So in yoga practice, don't expect pay right after an hour's work.",
+    "credit": "Krishnamacharya · Yoga Makaranda, 1934",
+    "explain": "T. Krishnamacharya, teacher of Pattabhi Jois, wrote this in Yoga Makaranda in 1934. Yoga is not a job that pays you after one hour. So put your mind on the practice, and let benefits come in time.",
+    "quote": "One cannot have such a trivial attitude as expecting immediate benefits in auspicious matters like yogabhyasa, worship, sandhya vandanam (salutation to the sun) or chanting of mantras as though one were a labourer who does one hour of work and expects immediate payment.",
+    "source": "T. Krishnamacharya, Yoga Makaranda, First Part (Kannada ed. 1934, Madurai C.M.V. Press; Tamil ed. 1938, tr. C. M. V. Krishnamacharya); English tr. Lakshmi Ranganathan and Nandini Ranganathan (translators' note 15 Oct 2006), ch. 1 Introduction, section 1.1 'Why should Yogabhyasa be done', book p. 1 (PDF p. 9)",
+    "url": "https://terebess.hu/english/Yoga-Makaranda.pdf",
+    "who": "T. Krishnamacharya"
+   }
+  ]
+ },
+ {
+  "title": "The Archer's Mind",
+  "lines": [
+   {
+    "id": "FW2",
+    "word": "CARVER",
+    "line": "A master carver forgot the reward, then the fame, then even his body.",
+    "credit": "Zhuangzi 19 · tr. H. A. Giles, 1889",
+    "explain": "Qing, a master woodworker in the old Chinese book Zhuangzi, stilled his mind before carving a bell stand. Day by day, reward, fame and even his body slipped from his mind. Then his skill gathered, and the stand looked magical.",
+    "quote": "I first reduce my mind to absolute quiescence. Three days in this condition, and I become oblivious of any reward to be gained. Five days, and I become oblivious of any fame to be acquired. Seven days, and I become unconscious of my four limbs and my physical frame. Then... my skill becomes concentrated, and all disturbing elements from without are gone.",
+    "source": "Zhuangzi, ch. 19 'Da Sheng' (達生), the woodworker Qing carving a bell stand (梓慶削木為鐻); tr. Herbert A. Giles, Chuang Tzu: Mystic, Moralist, and Social Reformer, 1889, ch. XIX. Chinese: Wikisource 莊子/達生.",
+    "url": "https://www.gutenberg.org/ebooks/59709",
+    "who": "Qing, a master woodworker, in the Zhuangzi (c. 4th to 3rd century BCE)"
+   },
+   {
+    "id": "FR7",
+    "word": "FLOW",
+    "line": "The scientist who named 'flow' said: the doing itself is the reward.",
+    "credit": "Csikszentmihalyi · Flow, 1990, ch. 3",
+    "explain": "Psychologist Mihaly Csikszentmihalyi, who named 'flow', wrote this in 1990. Some things we do not for a future prize, but because the doing itself is the reward. Like the carver, the mind rests in the work.",
+    "quote": "The term 'autotelic' ... refers to a self-contained activity, one that is done not with the expectation of some future benefit, but simply because the doing itself is the reward.",
+    "source": "Csikszentmihalyi M. Flow: The Psychology of Optimal Experience. New York: Harper & Row, 1990. Chapter 3, 'Enjoyment and the Quality of Life', section 'The Autotelic Experience'. A few paragraphs later he writes: 'The autotelic experience, or flow, lifts the course of life to a different level.'",
+    "url": "https://archive.org/details/flowpsychologyof00csik",
+    "who": "Mihaly Csikszentmihalyi, psychologist (University of Chicago), who named 'flow'"
+   },
+   {
+    "id": "FP7",
+    "word": "GOGGLES",
+    "line": "Goggles full of water, Phelps counted his strokes and set a world record.",
+    "credit": "Phelps, Beijing 2008 · Duhigg, 2012",
+    "explain": "In the 2008 Olympic 200 m butterfly final, Michael Phelps could not see. His coach Bob Bowman had once made him swim in the dark. Bowman says in races, Phelps's habits take over, and winning follows naturally.",
+    "quote": "Story: In the 2008 Olympic 200 m butterfly final, Michael Phelps's goggles filled with water and he could not see. His coach Bob Bowman had once made him swim in a pool in the dark. Phelps counted his strokes, made a 'twenty-first, huge stroke', touched the wall and set a world record. Bowman: 'It's more like his habits have taken over... Winning is a natural extension.'",
+    "source": "Charles Duhigg, The Power of Habit (New York: Random House, 2012), ch. 4 'Keystone Habits, or The Ballad of Paul O'Neill', pp. 112-115 (Bowman's words from Duhigg's own interview). Phelps's quote: Baltimore Sun, '1 day, 2 golds' (online date 24 Aug 2008; the race was 13 Aug 2008).",
+    "url": "https://archive.org/details/charles-duhigg.-the-power-of-habit",
+    "who": "Michael Phelps, swimmer, and his coach Bob Bowman"
+   },
+   {
+    "id": "FR9",
+    "word": "SPORT",
+    "line": "In sport studies, 'how to do it' goals went with the biggest gains.",
+    "credit": "Williamson et al. · meta-analysis, 2022",
+    "explain": "Ollie Williamson's team reviewed 27 sport studies in 2022. Goals about how to do the skill went with the biggest gains. Goals on the end result showed no clear effect, but only 2 findings tested that.",
+    "quote": "A 2022 review of 27 sport studies (most of them not randomised) found that process goals (what an athlete focuses on while doing the skill) went with the biggest performance gains (d = 1.36, from 9 effects). Performance goals (a set level of performance, such as a score) went with smaller gains (d = 0.44), and outcome goals (a focus on the end result) showed no clear effect (d = 0.09, from only 2 effects). Long-term goals alone showed no effect (d = -0.08), while short-term goals did (d = 0.43).",
+    "source": "Williamson O, Swann C, Bennett KJM, et al. The performance and psychological effects of goal setting in sport: A systematic review and meta-analysis. International Review of Sport and Exercise Psychology, 2024; 17(2): 1050-1078 (online 2 Sept 2022). doi:10.1080/1750984X.2022.2116723. Table 3 moderators: process k = 9 (95% CI 0.57 to 2.16); performance k = 16; outcome k = 2 (p = .636); long-term k = 4; short-term k = 23. Definitions in notes 1, 5 and 6.",
+    "url": "https://ndownloader.figshare.com/files/51173669",
+    "who": "Ollie Williamson, Christian Swann, Kyle J. M. Bennett, Matthew D. Bird, Scott G. Goddard, Matthew J. Schweickle and Patricia C. Jackman"
+   },
+   {
+    "id": "FW4",
+    "word": "COOK",
+    "line": "Old cook: 'Others are not me. What other time should I wait for?'",
+    "credit": "Dogen, Tenzo Kyokun, 1237",
+    "explain": "Dogen, founder of Soto Zen in Japan, wrote in 1237 about an old temple cook, aged 68. His words mean: no one else can do your work for you, and now is the time to do it.",
+    "quote": "\"Other people are not me.\" ... \"And just what other time should I wait for?\"",
+    "source": "Dogen, Tenzo Kyokun (Instructions for the Cook), 1237. English wording from Sotoshu's retelling 'Living in the Here and Now', sotozen.com Stories vol. 7. Japanese text: Antaiji archive (antaiji.org/archives/jap/ten.shtml).",
+    "url": "https://www.sotozen.com/eng/library/stories/vol07.html",
+    "who": "An old temple cook (tenzo) named Yong, recorded by Dogen (1200 to 1253), founder of Soto Zen in Japan"
+   },
+   {
+    "id": "FS4",
+    "word": "PALACE",
+    "line": "A postman built a palace alone: 10,000 days, 93,000 hours, 33 years.",
+    "credit": "Ferdinand Cheval · Palais Idéal",
+    "explain": "Ferdinand Cheval, a French country postman, tripped on an odd stone in 1879. He wheeled stones home and built his palace alone, at night, until 1912. On its wall: 'Let someone more stubborn than me get to work.'",
+    "quote": "10,000 days, 93,000 hours, 33 years of trials. Let someone more stubborn than me get to work.",
+    "source": "Inscription on the north façade of his Palais Idéal (built 1879-1912), quoted by the French Ministry of Culture, 'Plus de cent ans de rêve avec le Palais idéal du facteur Cheval', culture.gouv.fr, 14 Aug 2024. The same page: in 1879 on his round he tripped on a stone 'à la forme si bizarre'; his daily round on foot was 32-43 km; he brought stones home by wheelbarrow and built the palace alone, at night, finishing in 1912 at 77. Literal English translation by the researcher.",
+    "url": "https://www.culture.gouv.fr/fr/actualites/plus-de-cent-ans-de-reve-avec-le-palais-ideal-du-facteur-cheval",
+    "who": "Ferdinand Cheval (1836-1924), country postman, Hauterives, Drôme, France"
+   },
+   {
+    "id": "FM5",
+    "word": "SKY",
+    "line": "Aim at the sky, and you shoot higher than aiming at a tree.",
+    "credit": "George Herbert · The Church-porch, 1633",
+    "explain": "George Herbert, an English poet and priest, wrote this poem, printed in 1633. Keep your behaviour humble and your plans high. Someone aiming at the sky shoots higher than someone aiming at a tree. Goals do matter.",
+    "quote": "Pitch thy behaviour low, thy projects high; / So shalt thou humble and magnanimous be: / Sink not in spirit: who aimeth at the sky, / Shoots higher much then he that means a tree.",
+    "source": "George Herbert, The Temple (1633), 'The Church-porch' (Perirrhanterium), stanza 56",
+    "url": "https://logoslibrary.org/herbert/temple/porch1.html",
+    "who": "George Herbert (1593-1633), English poet and priest"
+   },
+   {
+    "id": "FW6",
+    "word": "MARK",
+    "line": "Aim as straight as you can. Hitting the mark: welcome, not the goal.",
+    "credit": "Cicero, De Finibus III.22 · tr. Rackham",
+    "explain": "Cicero, a Roman writer, explained the Stoic view: when you aim at a mark, your real goal is to do all you can to aim straight. Hitting it is welcome, not the goal. Aim fully, hold the result loosely.",
+    "quote": "...if a man were to make it his purpose to take a true aim ... at some mark, his ultimate end ... would be to do all he could to aim straight ... whereas the actual hitting of the mark would be in our phrase 'to be chosen' but not 'to be desired.'",
+    "source": "Cicero, De Finibus Bonorum et Malorum III.22 (Book III, ch. vi), tr. H. Rackham, Loeb Classical Library 40 (London: Heinemann, 1914)",
+    "url": "https://archive.org/details/CiceroRackhamDeFinibusBonorumEtMalorum",
+    "who": "Cicero (106 to 43 BCE), Roman philosopher and writer, explaining the Stoic view"
+   },
+   {
+    "id": "FY3",
+    "word": "ARROW",
+    "line": "Om is the bow, the self the arrow. Aim with a careful mind.",
+    "credit": "Mundaka Upanishad II.2.4 · tr. Müller",
+    "explain": "The Mundaka Upanishad, an old Indian scripture, says Om is the bow and the Self is the arrow. A careful, attentive mind hits the target. Then, like the arrow, you become one with it.",
+    "quote": "Om is the bow, the Self is the arrow. Brahman is called its aim. It is to be hit by a man who is not thoughtless; and then, as the arrow (becomes one with the target), he will become one with Brahman.",
+    "source": "Mundaka Upanishad II.2.4 (Second Mundaka, Second Khanda, verse 4), tr. F. Max Müller, The Upanishads Part II, Sacred Books of the East vol. 15 (Oxford, 1884), Wikisource transcription; gloss from Monier-Williams, Sanskrit-English Dictionary (1899), p. 58",
+    "url": "https://en.wikisource.org/wiki/Sacred_Books_of_the_East/Volume_15/Mundaka-upanishad",
+    "who": "Mundaka Upanishad"
+   },
+   {
+    "id": "FY4",
+    "word": "BREATH",
+    "line": "Through yoga, a steady will holds the mind, the breath and the senses.",
+    "credit": "Bhagavad Gita 18.33 · tr. Annie Besant",
+    "explain": "In the Bhagavad Gita, Krishna calls this firmness pure: a steady will that, through yoga, holds mind, breath and senses without wavering. Our own reading: on the mat, this means staying with the next breath, the next asana.",
+    "quote": "The unwavering firmness by which, through Yoga, one restraineth the activity of the mind, of the life breaths and of the sense-organs, that firmness, O Pârtha, is pure.",
+    "source": "Bhagavad Gita 18.33, tr. Annie Besant, The Bhagavad-Gita, 4th ed. (Madras: G. A. Natesan, Oct. 1922; this edition first published Nov. 1907), Wikisource transcription, Discourse 18",
+    "url": "https://en.wikisource.org/wiki/Bhagavad-Gita_(Besant_4th)/Discourse_18",
+    "who": "Krishna, in the Bhagavad Gita"
+   }
+  ]
+ },
+ {
+  "title": "The Forest Comes Anyway",
+  "lines": [
+   {
+    "id": "FS10",
+    "word": "FOREST",
+    "line": "A teen planted a few saplings a day. 34 years later: a forest.",
+    "credit": "Jadav Payeng · Al Jazeera, 2014",
+    "explain": "From 1979, Jadav Payeng planted a few young trees every day on a bare river island in Assam, India. A reporter wrote that no one, not even he, imagined a forest. By 2014 it covered about 550 hectares.",
+    "quote": "From 1979, as a teenager, Jadav 'Molai' Payeng planted a few saplings every day for 34 years on a bare river island in the Brahmaputra, Assam. 'No one, including him, had the slightest idea' it would become a forest. By 2014 it covered about 550 hectares.",
+    "source": "Amarjyoti Borah, 'India's forest man', Al Jazeera, 23 Jan 2014. Julie McCarthy, 'A Lifetime Of Planting Trees On A Remote River Island: Meet India's Forest Man', NPR, 26 Dec 2017. The 'no one... had the slightest idea' line is the reporter's wording, not Payeng's.",
+    "url": "https://www.aljazeera.com/features/2014/1/23/indias-forest-man",
+    "who": "Jadav 'Molai' Payeng, tree planter of the Mishing community, Jorhat district, Assam, India"
+   },
+   {
+    "id": "FW10",
+    "word": "SESAME",
+    "line": "How? Press sesame the right way, and oil comes, wish or no wish.",
+    "credit": "Majjhima Nikaya 126 · tr. Sujato",
+    "explain": "The Buddha told the monk Bhumija about a person who needed oil. Press wet sesame flour, and oil comes out, whether you make a wish or not. Results come from the right method, not from wishing.",
+    "quote": "Suppose there was a person in need of oil... they tried heaping sesame flour in a bucket, sprinkling it little by little with water, and pressing it out. By doing this, they could extract oil, regardless of whether they made a wish, didn't make a wish, both did and did not make a wish, or neither did nor did not make a wish.",
+    "source": "Majjhima Nikaya 126 (Bhumija Sutta), segments 10.1-10.7 (sand) and 15.1-15.7 (sesame), tr. Bhikkhu Sujato, SuttaCentral, 2018 (CC0), with Pali root",
+    "url": "https://suttacentral.net/mn126/en/sujato",
+    "who": "The Buddha, speaking to the monk Bhumija"
+   },
+   {
+    "id": "FS8",
+    "word": "JOY",
+    "line": "Rarely invited to speak, she kept working for pure joy. Nobel at 81.",
+    "credit": "B. McClintock · Nobel Banquet, 1983",
+    "explain": "Barbara McClintock studied the genes of corn. For years she was rarely asked to lecture, and she called that long quiet time a delight: freedom to keep working for pure joy. In 1983, aged 81, she won the Nobel Prize.",
+    "quote": "In the interim I was not invited to give lectures or seminars, except on rare occasions ... Instead of causing personal difficulties, this long interval proved to be a delight. It allowed complete freedom to continue investigations without interruption, and for the pure joy they provided.",
+    "source": "McClintock's speech at the Nobel Banquet, 10 Dec 1983 (Les Prix Nobel. The Nobel Prizes 1983, ed. Wilhelm Odelberg, Nobel Foundation, Stockholm, 1984), nobelprize.org. In the speech she dates her finding, 'totally at odds with the dogma of the times', to 'the mid-nineteen forties'. Context: Nobel Prize story 'Women who changed science: Barbara McClintock': her 1951 Cold Spring Harbor talk 'didn't go well'; she 'stopped publishing and lecturing... but she never stopped pursuing her theories'. Nobel Prize in Physiology or Medicine 1983, aged 81. Counterpoint: Nathaniel Comfort, The Tangled Field (Harvard UP, 2001), argues the 'ignored' story is partly a myth.",
+    "url": "https://www.nobelprize.org/prizes/medicine/1983/mcclintock/speech/",
+    "who": "Barbara McClintock (1902-1992), maize geneticist, Cold Spring Harbor Laboratory, USA"
+   },
+   {
+    "id": "FS9",
+    "word": "POTTER",
+    "line": "A potter refused honours. His pots, from a friend's collection, won Grand Prizes.",
+    "credit": "Kawai Kanjiro · Art Platform Japan",
+    "explain": "Kawai Kanjiro, a Japanese folk-craft potter in Kyoto, turned down Living National Treasure status. Pots from his friend Kawakatsu's collection won Grand Prizes in Paris (1937) and Milan (1957). One report says they were entered without asking him.",
+    "quote": "Kawai Kanjiro declined Japan's Living National Treasure status and other national honours, and kept to life as a potter with no rank and no title. His Grand Prizes at Paris (1937) and Milan (1957) went to pots from his friend Kawakatsu Ken'ichi's collection, entered without his permission.",
+    "source": "Art Platform Japan (Agency for Cultural Affairs), artist entry A1263, Kawai Kanjirō. Mikio Furukawa, exhibition report on '河井寬次郎と棟方志功 日本民藝館所蔵品を中心に' (Chiba City Museum of Art, 6 Jul-28 Aug 2016), Internet Museum (museum.or.jp), July 2016, which is the only source for 'without his permission' (無断で). Tenpyodo biography: Grand Prix Paris 1937, Milan Triennale 1957. Literal Japanese translation by the researcher.",
+    "url": "https://artplatform.go.jp/artists/A1263",
+    "who": "Kawai Kanjiro (1890-1966), potter of the Mingei (folk craft) movement, Kyoto, Japan"
+   },
+   {
+    "id": "FR13",
+    "word": "QUALITY",
+    "line": "Across 40 years of studies, liking the work itself went with better quality.",
+    "credit": "Cerasoli et al. · Psychol Bull, 2014",
+    "explain": "Christopher Cerasoli's team pooled 40 years of studies from school, work and physical activity, with 212,468 people. Doing work because it is interesting went with better quality. Incentives went more with doing more, so both have a place.",
+    "quote": "Pooling 40 years of studies from school, work and physical activity (k = 183, 212,468 people), the authors found that intrinsic motivation (doing the work because it is interesting in itself) was a medium-to-strong predictor of performance (rho = .21 to .45), whether or not incentives were present. Intrinsic motivation best predicted the quality of work; incentives best predicted its quantity.",
+    "source": "Cerasoli CP, Nicklin JM, Ford MT. Intrinsic motivation and extrinsic incentives jointly predict performance: A 40-year meta-analysis. Psychological Bulletin, 2014; 140(4): 980-1008. doi:10.1037/a0035661 (abstract).",
+    "url": "https://api.openalex.org/works/https://doi.org/10.1037/a0035661",
+    "who": "Christopher P. Cerasoli, Jessica M. Nicklin and Michael T. Ford"
+   },
+   {
+    "id": "FP15",
+    "word": "SCORE",
+    "line": "Coach Wooden never mentioned winning. He wanted the score to be a by-product.",
+    "credit": "John Wooden · TED talk, 2001",
+    "explain": "John Wooden, the UCLA basketball coach, said in a 2001 TED talk that his rivals never heard him mention winning. He wanted the score to come as a by-product of doing other things well, not to be the goal.",
+    "quote": "...my opponents will tell you -- you never heard me mention winning. Never mention winning. ... I wanted the score of a game to be the byproduct of these other things, and not the end itself.",
+    "source": "John Wooden, 'The difference between winning and succeeding', TED2001, recorded 1 Feb 2001 (official TED transcript).",
+    "url": "https://www.ted.com/talks/john_wooden_the_difference_between_winning_and_succeeding/transcript",
+    "who": "John Wooden, UCLA basketball coach"
+   },
+   {
+    "id": "FM10",
+    "word": "GOAL",
+    "line": "Pick the goal and the steps, then almost let the goal go.",
+    "credit": "Vivekananda · Work and its Secret, 1900",
+    "explain": "Swami Vivekananda, an Indian monk, said this in 1900. Goals matter: choose yours and the way to reach it. Then you can almost let the goal go: he was sure it would be there once the steps were done well.",
+    "quote": "Once the ideal is chosen and the means determined, we may almost let go the ideal, because we are sure it will be there, when the means are perfected.",
+    "source": "Swami Vivekananda, 'Work and its Secret', lecture delivered at Los Angeles, California, 4 January 1900; Complete Works of Swami Vivekananda, Vol. 2",
+    "url": "https://www.ramakrishnavivekananda.info/vivekananda/volume_2/work_and_its_secret.htm",
+    "who": "Swami Vivekananda (1863-1902), Indian monk and teacher"
+   },
+   {
+    "id": "FY7",
+    "word": "BALANCE",
+    "line": "Act without clinging, balanced in success and failure. That balance is yoga.",
+    "credit": "Bhagavad Gita 2.48 · tr. Annie Besant",
+    "explain": "In the Bhagavad Gita, Krishna teaches: do your work without clinging, and stay balanced whether you succeed or fail. That balance, he says, is yoga. Good to remember on days you cannot do an asana.",
+    "quote": "Perform action, O Dhananjaya, dwelling in union with the divine, renouncing attachments and balanced evenly in success and failure: equilibrium is called yoga.",
+    "source": "Bhagavad Gita 2.48, tr. Annie Besant, The Bhagavad-Gita, 4th ed. (Madras: G. A. Natesan, 1922), Wikisource transcription, Discourse 2 (her footnote 25: 'Dwelling in yoga, union')",
+    "url": "https://en.wikisource.org/wiki/Bhagavad-Gita_(Besant_4th)/Discourse_2",
+    "who": "Krishna, in the Bhagavad Gita"
+   },
+   {
+    "id": "FM14",
+    "word": "FRUIT",
+    "line": "Discipline, study, and giving up the fruit: that is yoga in action.",
+    "credit": "Yoga Sutra 2.1 & Vyasa · tr. Woods, 1914",
+    "explain": "Patanjali's Yoga Sutra 2.1 names yoga in action: tapas (discipline), self-study, and devotion to Ishvara, the Lord. Vyasa's old commentary says this devotion means offering all actions to the Lord, or letting go of their fruit, the results.",
+    "quote": "Self-castigation and study and devotion to the Icvara are the Yoga of action. ... <Devotion to the Icvara> is the offering up of all actions to the Supreme Teacher or the renunciation of the fruit of [all] these [actions].",
+    "source": "Yoga Sutra 2.1 with Vyasa's Yoga-bhashya, tr. James Haughton Woods, The Yoga-System of Patanjali, Harvard Oriental Series vol. 17, 1914",
+    "url": "https://archive.org/details/yogasystemofpata00wooduoft",
+    "who": "Patanjali, with the commentary (Yoga-bhashya) attributed to Vyasa"
+   },
+   {
+    "id": "FY12",
+    "word": "MYSORE",
+    "line": "Jois taught in a two-room Mysore home, not for fame. Ashtanga spread gradually.",
+    "credit": "Eddie Stern · Yoga Mala foreword, 2010",
+    "explain": "In 1948, Pattabhi Jois set up his Ashtanga yoga institute in his small Mysore home. His student Eddie Stern wrote that he taught neither for fame nor money. Ashtanga spread 'gradually, gradually', like daily practice: one breath, one asana.",
+    "quote": "In 1948 Pattabhi Jois set up his Ashtanga Yoga Research Institute in his home in Lakshmipuram, Mysore, which then had only two rooms and a kitchen and bath; the yoga hall was not built until 1964. In 1975 he travelled to California. He often said that only twenty or thirty students practised Ashtanga in America then, but 'gradually, gradually, in twenty years, it will be fully spreading.' His student Eddie Stern wrote: 'He taught without hesitation, neither for fame nor money, although these things may have come to him.'",
+    "source": "Eddie Stern, Foreword to K. Pattabhi Jois, Yoga Mala (North Point Press, 2010 ed.), dated New York City, 10 March 2010 (PDF pp. 7-8 of the terebess copy)",
+    "url": "https://terebess.hu/english/Yoga-Mala.pdf",
+    "who": "K. Pattabhi Jois, as told by his student Eddie Stern"
+   }
+  ]
+ }
+]
