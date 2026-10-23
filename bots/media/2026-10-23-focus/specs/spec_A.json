@@ -147,10 +147,10 @@
   "credit": "Krishnamacharya · Yoga Makaranda, 1934",
   "direct": true,
   "t": 43,
-  "wwidth": 540,
+  "wwidth": 720,
   "wpos": [
    60,
-   36
+   30
   ],
   "cws": [
    353
@@ -160,7 +160,7 @@
    60,
    580
   ],
-  "ink_w": "dark",
+  "ink_w": "light",
   "ink_s": "dark",
   "sright": false,
   "tight": false
