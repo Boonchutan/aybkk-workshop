@@ -145,8 +145,19 @@
   "A": {
    "id": "cmvku8r440cnhpr1cn3tzbex2",
    "type": "now",
-   "sent": "2026-10-23 17:39 BKK",
-   "state": "QUEUE (check-in 10:50Z)"
+   "state": "PUBLISHED 2026-10-23 10:39Z (17:39 BKK), checked 10:51Z",
+   "attachments": [
+    "WCwBFMIcmX",
+    "JXW2xaBknO",
+    "x85wn5NCVy",
+    "g8iBp5pTza",
+    "8Jbsq3EUWB",
+    "JQKafrplGy",
+    "2ia1xg3Q9h",
+    "91PlatQj29",
+    "dwj6BzrhrA",
+    "Zb16aoZ9Ja"
+   ]
   }
  },
  "plan": {
