@@ -105,6 +105,10 @@ const upload = multer({
 });
 
 // Middleware
+// Same-origin pages get only "https://aybkk.net/" as document.referrer, never a path:
+// the Google Ads tag sends the referrer to Google, and some paths are secrets
+// (/api/bkk/login/<token>, /p/<slug>).
+app.use((req, res, next) => { res.set('Referrer-Policy', 'strict-origin'); next(); });
 app.use(cors());
 // LINE and Meta sign the exact bytes they send; the inbox checks those signatures
 app.use(express.json({ limit: '10mb', verify: (req, res, buf) => {
@@ -214,6 +218,9 @@ for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SH
     }
   });
 }
+// The Google review form for the AYBKK place (checked 16 Oct 2026). Short enough to say after
+// class, put in LINE or print on the desk QR card; 302 so the target can change later.
+app.get(['/review', '/reviews'], (req, res) => res.redirect(302, 'https://search.google.com/local/writereview?placeid=ChIJOWhLf_2e4jARi25S9GpEmWk'));
 
 // ─── Cloudinary Setup ────────────────────────────────────────────────────────
 const cloudinary = require('cloudinary').v2;
@@ -2778,6 +2785,16 @@ async function initSchema() {
 // Front door by audience: cn.aybkk.net keeps the Chinese students' Practice
 // Journal home; every other hostname (my.aybkk.com, aybkk.net, …) opens on the
 // shala's main booking page. The journal home stays reachable everywhere at /planner.
+// The booking page is served on several hostnames (aybkk.net, my.aybkk.com, cn.aybkk.net/shala);
+// its canonical tag and this sitemap tell Google that aybkk.net is the one to show.
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send('User-agent: *\nAllow: /\n\nSitemap: https://aybkk.net/sitemap.xml\n');
+});
+app.get('/sitemap.xml', (req, res) => {
+  const urls = ['https://aybkk.net/', 'https://aybkk.net/start'];
+  res.type('application/xml').send('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n') + '\n</urlset>\n');
+});
 app.get('/', (req, res) => {
   const host = String(req.headers.host || '').toLowerCase();
   const file = host.startsWith('cn.') ? 'index.html' : 'bkk.html';

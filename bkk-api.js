@@ -18,6 +18,10 @@ const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
 const STAFF_LINK_DAYS = 7;                     // one M sends by LINE/WhatsApp/WeChat
 const SIGNIN_PER_EMAIL_HOUR = 3;               // and cheap to abuse without limits
 const SIGNIN_PER_IP_HOUR = 10;
+const LETTER_PER_IP_HOUR = 10;                 // letter confirm mails asked from one place (shala wifi)
+const LETTER_PER_HOUR = 30;                    // and from everywhere (x-forwarded-for can be faked)
+const LETTER_PER_DAY = 60;                     // the same mail account sends receipts and sign-in links
+const LETTER_ASKS_PER_DAY = 3;                 // confirm mails to one address
 const CANCEL_CUTOFF_HOURS = 5;                 // cancel ≥5h before start → credit back
 const VAT_PCT = 7;                             // Thai VAT, charged on price + online fee
 
@@ -237,6 +241,21 @@ function mountBkk(app, opts = {}) {
     await q(`CREATE TABLE IF NOT EXISTS bkk_start_events (
       id SERIAL PRIMARY KEY, kind TEXT NOT NULL, src TEXT, lang TEXT, ch TEXT,
       created_at TIMESTAMPTZ DEFAULT now())`);
+
+    // The Monday letter, email door. LINE, WeChat and Telegram readers join in
+    // those apps, so only email lives here. An address counts once it is
+    // confirmed from its own inbox. asks = confirm mails sent since asked_at's day.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_newsletter (
+      id SERIAL PRIMARY KEY, email TEXT NOT NULL UNIQUE, lang TEXT, src TEXT,
+      status TEXT NOT NULL DEFAULT 'pending', token TEXT NOT NULL UNIQUE,
+      created_at TIMESTAMPTZ DEFAULT now(), asked_at TIMESTAMPTZ DEFAULT now(),
+      confirmed_at TIMESTAMPTZ, unsubscribed_at TIMESTAMPTZ)`);
+    await q(`ALTER TABLE bkk_newsletter ADD COLUMN IF NOT EXISTS asks INTEGER NOT NULL DEFAULT 1`);
+    await q(`ALTER TABLE bkk_newsletter DROP COLUMN IF EXISTS ip`);
+    // One row per confirm mail sent, kept a day: the caps count mails, not
+    // addresses, because one address can be asked again and again.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_letter_asks (
+      id SERIAL PRIMARY KEY, ip TEXT, at TIMESTAMPTZ DEFAULT now())`);
 
     // The things a shala actually does to a pass, which Rezerv has and this did
     // not: pause it for an injury, write off a mistake, note why.
@@ -928,11 +947,160 @@ function mountBkk(app, opts = {}) {
   // Staff-made links (sent in a private chat) keep working until they expire, so a
   // second phone or a re-open is fine; emailed links stay one-time.
   // The code is handed to the browser, never put in a URL, so it stays out of history.
-  const loginPage = (msg, extra = '') => `<!DOCTYPE html><html lang="en"><meta charset="utf-8">
+  const loginPage = (msg, extra = '', lang = 'en') => `<!DOCTYPE html><html lang="${lang}"><meta charset="utf-8">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>AYBKK</title>
 <body style="font-family:-apple-system,sans-serif;background:#f7f1f5;color:#17121a;
 text-align:center;padding:22vh 20px"><p>${msg}</p>${extra}</body></html>`;
   const usable = `token = $1 AND expires_at > now() AND (used_at IS NULL OR ip = 'staff')`;
+
+  // ── the Monday letter (email sign-ups) ────────────────────────────────────
+  // Double opt-in: the address joins only when its owner taps Confirm, so nobody
+  // can sign up someone else. Every row came with the consent tick; asked_at and
+  // confirmed_at date the latest consent, unsubscribed_at the latest withdrawal.
+  // The answer never says whether an address is already on the list. The token
+  // in every link is the only key; there is no login.
+  const LETTER_LANGS = ['en', 'th', 'zh', 'ru'];
+  const letterLang = v => (LETTER_LANGS.includes(String(v || '').slice(0, 2)) ? String(v).slice(0, 2) : 'en');
+  const letterOk = { ok: true };
+  app.post('/api/bkk/newsletter', async (req, res) => {
+    const b = req.body || {};
+    const email = String(b.email || '').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) {
+      return res.status(400).json({ error: 'email' });
+    }
+    if (b.consent !== true) return res.status(400).json({ error: 'consent' });
+    const lang = letterLang(b.lang);
+    const src = String(b.src || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40) || null;
+    try {
+      const ip = clientIp(req);
+      const sent = (await q(`SELECT count(*) FILTER (WHERE ip=$1 AND at > now() - interval '1 hour')::int AS ip,
+          count(*) FILTER (WHERE at > now() - interval '1 hour')::int AS hour, count(*)::int AS day
+        FROM bkk_letter_asks WHERE at > now() - interval '1 day'`, [ip])).rows[0];
+      // Said out loud, not "check your inbox": a reader on a busy shared
+      // network can come back later or take LINE.
+      if (sent.ip >= LETTER_PER_IP_HOUR || sent.hour >= LETTER_PER_HOUR || sent.day >= LETTER_PER_DAY) {
+        console.warn(`[bkk letter] throttled ${ip}`);
+        return res.status(429).json({ error: 'busy' });
+      }
+      // Every ask gets a new token, so an old link (a forwarded letter's footer)
+      // can never confirm a later ask. One address gets at most 3 confirm mails
+      // a day, 10 minutes apart, except that someone who left can come back at
+      // once. A confirmed reader is left alone.
+      const row = (await q(
+        `INSERT INTO bkk_newsletter (email,lang,src,token) VALUES ($1,$2,$3,$4)
+         ON CONFLICT (email) DO UPDATE SET lang=EXCLUDED.lang, token=EXCLUDED.token, status='pending', asked_at=now(),
+           asks = CASE WHEN bkk_newsletter.asked_at < now() - interval '1 day' THEN 1 ELSE bkk_newsletter.asks + 1 END
+         WHERE bkk_newsletter.status <> 'confirmed'
+           AND (bkk_newsletter.asks < ${LETTER_ASKS_PER_DAY} OR bkk_newsletter.asked_at < now() - interval '1 day')
+           AND (bkk_newsletter.status = 'unsubscribed' OR bkk_newsletter.asked_at < now() - interval '10 minutes')
+         RETURNING id, token`,
+        [email, lang, src, crypto.randomBytes(24).toString('base64url')])).rows[0];
+      if (row) {
+        const t = render('letterConfirm', lang, { link: `${baseUrl()}/api/bkk/newsletter/confirm/${row.token}` });
+        const r = await sendMail({ to: email, subject: t.subject, html: t.html, text: t.text, tag: 'letter-confirm' });
+        if (!r.sent) {
+          // Mail is off or Resend said no. Undo the ask so a retry goes straight
+          // out, and tell the reader instead of sending them to an empty inbox.
+          await q(`UPDATE bkk_newsletter SET asks = asks - 1, asked_at = now() - interval '11 minutes' WHERE id=$1`, [row.id]);
+          return res.status(503).json({ error: 'mail' });
+        }
+        await q(`INSERT INTO bkk_letter_asks (ip) VALUES ($1)`, [ip]);
+      }
+      res.json(letterOk);
+    } catch (e) {
+      console.error('[bkk letter] sign-up failed:', e.message);
+      res.status(500).json({ error: 'failed' });
+    }
+  });
+
+  // The pages open in the language the reader signed up in.
+  const LETTER_PAGE = {
+    en: {
+      confirm: 'Last step: tap the button to get the AYBKK Monday letter.',
+      confirmBtn: 'Yes, send me the letter',
+      confirmed: 'Thank you. You are on the list: the AYBKK letter comes every Monday.',
+      leave: 'Stop the AYBKK Monday letter?',
+      leaveBtn: 'Unsubscribe',
+      left: 'Done. You will not get the letter any more. You can sign up again on aybkk.net any time.',
+    },
+    th: {
+      confirm: 'ขั้นสุดท้าย: กดปุ่มด้านล่างเพื่อรับจดหมาย AYBKK ทุกวันจันทร์',
+      confirmBtn: 'ยืนยัน ส่งจดหมายให้ฉัน',
+      confirmed: 'ขอบคุณค่ะ คุณจะได้รับจดหมายจาก AYBKK ทุกวันจันทร์',
+      leave: 'ยกเลิกการรับจดหมาย AYBKK ทุกวันจันทร์ใช่ไหม?',
+      leaveBtn: 'ยกเลิกการรับจดหมาย',
+      left: 'ยกเลิกเรียบร้อยแล้ว คุณจะไม่ได้รับจดหมายอีก สมัครใหม่ได้ที่ aybkk.net ทุกเมื่อ',
+    },
+    zh: {
+      confirm: '最后一步：点击下方按钮，每周一收到 AYBKK 来信。',
+      confirmBtn: '确认订阅',
+      confirmed: '谢谢！订阅成功，AYBKK 来信每周一送达。',
+      leave: '要退订 AYBKK 每周一来信吗？',
+      leaveBtn: '退订',
+      left: '已退订，您将不再收到来信。随时可以在 aybkk.net 重新订阅。',
+    },
+    ru: {
+      confirm: 'Последний шаг: нажмите кнопку, чтобы получать письмо AYBKK по понедельникам.',
+      confirmBtn: 'Да, присылайте письмо',
+      confirmed: 'Спасибо! Вы подписаны: письмо AYBKK приходит каждый понедельник.',
+      leave: 'Отписаться от письма AYBKK по понедельникам?',
+      leaveBtn: 'Отписаться',
+      left: 'Готово. Письмо больше не будет приходить. Подписаться снова можно на aybkk.net в любой момент.',
+    },
+  };
+  const letterDead = () => loginPage('This link is not valid any more. You can sign up again on '
+    + '<a href="/book#letter" style="color:#5c2160">aybkk.net</a>.<br>ลิงก์นี้ใช้ไม่ได้แล้ว สมัครใหม่ได้ที่ aybkk.net');
+  const letterBtn = (label, bg) => `<form method="post"><button style="font:inherit;font-weight:700;padding:14px 22px;
+border:0;border-radius:10px;background:${bg};color:#fff">${label}</button></form>`;
+  // A confirm link works for 7 days; then the unconfirmed address is deleted.
+  const confirmable = `(status = 'confirmed' OR (status = 'pending' AND asked_at > now() - interval '7 days'))`;
+  const letterPurge = () => q(`DELETE FROM bkk_newsletter WHERE status='pending' AND asked_at < now() - interval '7 days'`)
+    .then(() => q(`DELETE FROM bkk_letter_asks WHERE at < now() - interval '1 day'`))
+    .catch(e => console.error('[bkk letter] purge failed:', e.message));
+  setInterval(letterPurge, 24 * 3600 * 1000).unref();
+  // GET only shows a page: mail scanners and chat previews open every link,
+  // and some run its scripts, so confirming and leaving each take a real tap.
+  app.get('/api/bkk/newsletter/confirm/:token', async (req, res) => {
+    try {
+      const row = (await q(`SELECT status, lang FROM bkk_newsletter WHERE token=$1 AND ${confirmable}`,
+        [req.params.token])).rows[0];
+      if (!row) return res.status(400).send(letterDead());
+      const lang = letterLang(row.lang), p = LETTER_PAGE[lang];
+      res.set('Cache-Control', 'no-store').send(row.status === 'confirmed'
+        ? loginPage(p.confirmed, '', lang)
+        : loginPage(p.confirm, letterBtn(p.confirmBtn, '#e8458c'), lang));
+    } catch (e) { res.status(500).send(loginPage('Something went wrong. Please try again.')); }
+  });
+  app.post('/api/bkk/newsletter/confirm/:token', async (req, res) => {
+    try {
+      const r = await q(`UPDATE bkk_newsletter SET status='confirmed',
+          confirmed_at = CASE WHEN status = 'pending' THEN now() ELSE confirmed_at END
+        WHERE token=$1 AND ${confirmable} RETURNING lang`, [req.params.token]);
+      if (!r.rows.length) return res.status(400).send(letterDead());
+      const lang = letterLang(r.rows[0].lang);
+      res.set('Cache-Control', 'no-store').send(loginPage(LETTER_PAGE[lang].confirmed, '', lang));
+    } catch (e) { res.status(500).send(loginPage('Something went wrong. Please try again.')); }
+  });
+  app.get('/api/bkk/newsletter/unsubscribe/:token', async (req, res) => {
+    try {
+      const row = (await q(`SELECT lang FROM bkk_newsletter WHERE token=$1`, [req.params.token])).rows[0];
+      if (!row) return res.status(400).send(letterDead());
+      const lang = letterLang(row.lang), p = LETTER_PAGE[lang];
+      res.set('Cache-Control', 'no-store').send(loginPage(p.leave, letterBtn(p.leaveBtn, '#5c2160'), lang));
+    } catch (e) { res.status(500).send(loginPage('Something went wrong. Please try again.')); }
+  });
+  // Also the RFC 8058 one-click target: mail apps POST here straight from the
+  // List-Unsubscribe header, so this must work with any body and no script.
+  app.post('/api/bkk/newsletter/unsubscribe/:token', async (req, res) => {
+    try {
+      const r = await q(`UPDATE bkk_newsletter SET status='unsubscribed', unsubscribed_at=now()
+        WHERE token=$1 RETURNING lang`, [req.params.token]);
+      if (!r.rows.length) return res.status(400).send(letterDead());
+      const lang = letterLang(r.rows[0].lang);
+      res.set('Cache-Control', 'no-store').send(loginPage(LETTER_PAGE[lang].left, '', lang));
+    } catch (e) { res.status(500).send(loginPage('Something went wrong. Please try again.')); }
+  });
   const deadLink = () => loginPage('That link has already been used, or it has expired.<br>'
     + '<a href="/book" style="color:#5c2160">Ask for a new one</a>');
 
@@ -1217,13 +1385,41 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // Who gets the Monday letter by email. csv=1 gives the send list: confirmed
+  // addresses only, each with its own unsubscribe link for the letter footer.
+  app.get('/api/bkk/admin/newsletter', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const counts = (await q(`SELECT status, coalesce(lang,'en') AS lang, count(*)::int AS n
+        FROM bkk_newsletter GROUP BY 1,2 ORDER BY 1,2`)).rows;
+      if (req.query.csv) {
+        const rows = (await q(`SELECT email, coalesce(lang,'en') AS lang, confirmed_at, token
+          FROM bkk_newsletter WHERE status='confirmed' ORDER BY confirmed_at`)).rows;
+        // A spreadsheet runs a cell that starts with = + - @ as a formula, and the
+        // local part of an address is the signer's to choose.
+        const cell = v => `"${String(v ?? '').replace(/^[=+\-@\t\r]/, "'$&").replace(/"/g, '""')}"`;
+        const lines = [['email', 'lang', 'confirmed_at', 'unsubscribe_url'].join(',')].concat(rows.map(r =>
+          [r.email, r.lang, r.confirmed_at && r.confirmed_at.toISOString(),
+           `${baseUrl()}/api/bkk/newsletter/unsubscribe/${r.token}`].map(cell).join(',')));
+        res.set('Content-Type', 'text/csv; charset=utf-8')
+          .set('Content-Disposition', 'attachment; filename="aybkk-letter-emails.csv"')
+          .set('Cache-Control', 'no-store');
+        return res.send('\ufeff' + lines.join('\n'));
+      }
+      // Which door the letter box's visitors take (LINE, WeChat, Telegram, email).
+      const doors = (await q(`SELECT coalesce(ch,'-') AS ch, count(*)::int AS n FROM bkk_start_events
+        WHERE src='letter' AND kind='tap' AND created_at > now() - interval '30 days' GROUP BY 1 ORDER BY n DESC`)).rows;
+      res.json({ success: true, counts, doors });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   app.get('/api/bkk/admin/start-stats', async (req, res) => {
     if (adminOnly(req, res)) return;
     try {
       const { rows } = await q(
         `SELECT coalesce(src, '-') AS src, count(*) FILTER (WHERE kind = 'view')::int AS views,
            count(*) FILTER (WHERE kind = 'tap')::int AS taps
-         FROM bkk_start_events WHERE created_at > now() - interval '30 days'
+         FROM bkk_start_events WHERE created_at > now() - interval '30 days' AND src IS DISTINCT FROM 'letter'
          GROUP BY 1 ORDER BY taps DESC, views DESC LIMIT 30`);
       res.json({ success: true, sources: rows });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1287,7 +1483,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // Links Boonchu can change himself. An allowlist, not a free-for-all: this
   // writes a table the public read below serves, so an arbitrary key here would
   // be an arbitrary value on the student page.
-  const LINK_KEYS = ['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop'];
+  const LINK_KEYS = ['instagram', 'youtube', 'tiktok', 'line', 'wechat', 'facebook', 'shop', 'telegram'];
 
   app.get('/api/bkk/settings', async (req, res) => {
     try {
@@ -1888,10 +2084,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     try {
       const files = await driveFolder(String(req.query.folder || ''), req.query.fresh === '1');
-      const done = files.length ? (await q('SELECT id, drive_id FROM bkk_photos WHERE drive_id = ANY($1)',
-        [files.map(f => f.id)])).rows : [];
-      const byDrive = new Map(done.map(r => [r.drive_id, r.id]));
-      res.json({ files: files.map(f => ({ id: f.id, name: f.name, sub: f.sub || '', photoId: byDrive.get(f.id) || null })) });
+      // tagged: how many people are on it, so the page can grey a done photo from any class date.
+      const done = files.length ? (await q(`SELECT p.id, p.drive_id, count(pm.member_id)::int AS tagged
+          FROM bkk_photos p LEFT JOIN bkk_photo_members pm ON pm.photo_id = p.id
+          WHERE p.drive_id = ANY($1) GROUP BY p.id`, [files.map(f => f.id)])).rows : [];
+      const byDrive = new Map(done.map(r => [r.drive_id, r]));
+      res.json({ files: files.map(f => {
+        const d = byDrive.get(f.id);
+        return { id: f.id, name: f.name, sub: f.sub || '', photoId: d ? d.id : null, tagged: d ? d.tagged : 0 };
+      }) });
     } catch (e) { res.status(e.status || 502).json({ error: e.message }); }
   });
 
@@ -2179,7 +2380,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   });
 
   initSchema()
-    .then(() => console.log('✓ bkk-api mounted (/api/bkk/*)'))
+    .then(() => { console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message));
 }
 
