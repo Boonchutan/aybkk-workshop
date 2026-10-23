@@ -158,10 +158,23 @@
     "dwj6BzrhrA",
     "Zb16aoZ9Ja"
    ]
+  },
+  "B": {
+   "id": "cmvll3dhn01ljn61cbhl4r67o",
+   "type": "now",
+   "sent": "2026-10-24 06:11 BKK",
+   "state": "QUEUE (check 23:22Z)"
+  },
+  "C": {
+   "id": "cmvll3dlg01lkn61czqj6bri1",
+   "type": "schedule",
+   "date_bkk": "2026-10-24 09:00",
+   "date_utc": "2026-10-24T02:00:00Z",
+   "state": "QUEUE (check 02:12Z)"
   }
  },
  "plan": {
-  "B": "21:00 BKK 23 Oct (waiting for go)",
-  "C": "06:00 BKK 24 Oct (waiting for go)"
+  "B": "go from Boonchu 24 Oct 06:10: post now",
+  "C": "go from Boonchu: 09:00 BKK 24 Oct"
  }
 }
