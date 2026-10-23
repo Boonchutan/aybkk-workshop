@@ -18,7 +18,8 @@
   "id": "FR1",
   "word": "AWARD",
   "line": "Prizes too. Kids who liked drawing, promised an award, later drew less.",
-  "credit": "Lepper et al. · J Pers Soc Psychol, 1973"
+  "credit": "Lepper et al. · J Pers Soc Psychol, 1973",
+  "t": 100
  },
  {
   "photo": "23-024",
@@ -70,8 +71,8 @@
   "tight": true,
   "wwidth": 540,
   "wpos": [
-   60,
-   580
+   255,
+   578
   ],
   "cws": [
    280
@@ -92,7 +93,26 @@
   "credit": "Locke & Latham · Am Psychologist, 2002",
   "widths": [
    720
-  ]
+  ],
+  "direct": true,
+  "t": 98,
+  "wwidth": 720,
+  "wpos": [
+   "R",
+   1031
+  ],
+  "cws": [
+   560
+  ],
+  "sz": 54,
+  "sxy": [
+   616,
+   668
+  ],
+  "ink_w": "light",
+  "ink_s": "light",
+  "sright": true,
+  "tight": false
  },
  {
   "photo": "23-198",
@@ -124,6 +144,25 @@
   "id": "FY1",
   "word": "PAY",
   "line": "So in yoga practice, don't expect pay right after an hour's work.",
-  "credit": "Krishnamacharya · Yoga Makaranda, 1934"
+  "credit": "Krishnamacharya · Yoga Makaranda, 1934",
+  "direct": true,
+  "t": 43,
+  "wwidth": 540,
+  "wpos": [
+   60,
+   36
+  ],
+  "cws": [
+   353
+  ],
+  "sz": 54,
+  "sxy": [
+   60,
+   580
+  ],
+  "ink_w": "dark",
+  "ink_s": "dark",
+  "sright": false,
+  "tight": false
  }
 ]

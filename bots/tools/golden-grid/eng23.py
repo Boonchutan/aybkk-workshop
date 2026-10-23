@@ -21,8 +21,8 @@ _FC = {}
 BIG = os.environ.get('BIG', 'inter')   # Boonchu 23 Oct picked option 2: Inter Black 900 (thick = Nimbus Bold with a 3.2% stroke)
 THICK = 0.032 if BIG == 'thick' else 0.0
 WMAIN = float(os.environ.get('WMAIN', 0.08))
-DARK_K = float(os.environ.get('DARK_K', 0.014))   # Boonchu 23 Oct: black text looked thinner than white (white gets a dark shadow), so dark ink gets a small stroke
-DARK_SENT = int(os.environ.get('DARK_SENT', 1))
+DARK_K = float(os.environ.get('DARK_K', 0.008))   # Boonchu 23 Oct: black text looked thinner than white (white gets a dark shadow), so dark ink gets a small stroke
+DARK_SENT = int(os.environ.get('DARK_SENT', 0))
 SENT_STROKE = 1                         # Boonchu 23 Oct: the italic sentence a bit bold
 def F(w, s):
     if (w, s) not in _FC:
