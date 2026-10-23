@@ -18,7 +18,7 @@ def size_for(word, width): return max(20, round(width / (tlen(word, F('Big', 100
 def size_pen(wg): return 0.0 if wg['w'] > 700 else 0.35
 ZONES = {z['id']: z for z in json.load(open(os.path.join(WD, 'zones20.json')))}
 _FC = {}
-BIG = os.environ.get('BIG', 'thick')   # Boonchu 23 Oct picked 'Helvetica made thicker': Nimbus Bold with a 3.2% stroke (inter = Inter Black 900)
+BIG = os.environ.get('BIG', 'inter')   # Boonchu 23 Oct picked option 2: Inter Black 900 (thick = Nimbus Bold with a 3.2% stroke)
 THICK = 0.032 if BIG == 'thick' else 0.0
 SENT_STROKE = 1                         # Boonchu 23 Oct: the italic sentence a bit bold
 def F(w, s):
