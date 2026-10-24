@@ -131,13 +131,19 @@ This repo is attached to each routine (Boonchu set it in the routines UI), which
 - The routines hold no connectors. Giving a bot Gmail, Calendar or Postiz is done in the
   routines UI and needs Boonchu's yes first.
 
-## AYBKK Bangkok study fees (aybkk.net) — Boonchu asked to remember these, 11 Sep 2026
+## AYBKK Bangkok study fees (aybkk.net), check here before quoting a price
 
+Now, until 11 Nov 2026:
 - 1 month: 9,600 THB
 - 3 months: 25,800 THB (8,600 THB/month)
-- 6 months: 45,000 THB (7,500 THB/month)
 - 12 months: 78,000 THB (6,500 THB/month), 12 months only. Boonchu, 21 Oct 2026: no more free 13th month.
-  Passes sold before 21 Oct keep their 13 months. From 12 Nov 2026 the year is 59,900 + VAT, also 12 months.
+  Passes sold before 21 Oct keep their 13 months.
+- 6 months: not sold now (2 Oct 2026). Old 45,000 THB passes from Rezerv are still honored.
+- Drop-in 1,500 THB. 10 classes 14,000 THB, use within 3 months.
+
+From 12 Nov 2026 (every price + 7% VAT, posters bots/media/2026-10-19-prices-v3 on claude/bots-memory):
+- 1 month 9,600 · 3 months 22,000 · 6 months 32,000 (teacher's pick) · 12 months 59,900 (12 months only)
+- Drop-in 1,500 · 10 classes 14,000, use within 3 months
 
 ## Environment
 
