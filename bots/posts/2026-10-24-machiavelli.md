@@ -6,3 +6,4 @@ Reminders due this morning: none.
 Reel: Plato's daily run is paused (Boonchu, 22 Oct). No Plato post expected. Carne posted today.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent since 17 Oct.
 Inbox 07:08: 2 new, 0 hot (2 LINE students excusing themselves from today's class). @Machi from Carne: done (both in the brief).
+13:08 check-in: Batch Sheet due 19:00 today (default B: hold), course prices still waiting (2 days). Inbox: 0 new, 0 hot.
