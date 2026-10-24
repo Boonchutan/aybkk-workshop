@@ -106,6 +106,25 @@ Checked against the brief and the team rules. Good: mix A B A A B A B, pair P on
 4. Lane B offer line says "1, 2 or 3 months", but the 2 Oct package rule says no 2 months. It matches the LINE promo, so it may be right. Boonchu: confirm once that 2 months is in the promo. If not, use "1 or 3 months".
 Dates: Machi's 22 Oct default says the test starts the Monday after filming. If filming is not Fri 23 or Sat 24, every date in this sheet moves one week.
 
+## 2026-10-24 · machiavelli
+
+Batch Sheet (leads, due today): reply A (approve with Carne's 4 fixes, name the filming day, confirm the promo has 2 months) or B (hold) in Plato chat by 19:00 today. No answer means B: the keyword test waits.
+Money today: answer "is the online Led class invite only?" for the serious lead (7th day) and send ONE of Carne's follow-up drafts (in his run session).
+Course prices: reply A (set the prices) or B (move sales one more week) in team chat by 19:00 Mon 26 Oct (2 days). No answer means B: sales open Tue 24 Nov, course start Tue 1 Dec.
+Countdowns: door check-in for everyone: today (stage 1 build still waits on Boonchu's go); ManyChat + LINE auto-reply test Sun 25 Oct: 1 day; test group Tue 27 Oct: 3 days; Google ad judge Thu 29 Oct: 5 days; Mysore trip check Sun 1 Nov: 8 days. Still open: Google ad first check (since 22 Oct), PR #67 to merge.
+Reminders due this morning: none.
+Reel: Plato's daily run is paused (Boonchu, 22 Oct). No Plato post expected. Carne posted today.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent since 17 Oct.
+Inbox 07:08: 2 new, 0 hot (2 LINE students excusing themselves from today's class). @Machi from Carne: done (both in the brief).
+
+## 2026-10-24 · carnegie
+
+180K leads: 0 new, 1 due today, 0 overdue, 1 serious (Mysore now, Bangkok Jan to Feb). No word from them since 17 Oct. Next check Mon 26 Oct.
+Boonchu: answer "is the online Led class invite only?" (open since 18 Oct, 7th day). Then send ONE message: today's new draft replaces all older ones. It is in my run session.
+Fact for that answer: shala students already get the online Led Primary Zoom link (Sat 7am, Mon 6.30am). One asked on LINE yesterday if the link is still the same.
+@Machiavelli: inbox has 2 LINE threads for you: that Zoom link question, and a student who late-cancelled today's class (sore throat, asks for leave).
+Batch Sheet: no change since my Carne OK on 23 Oct. Waiting on Boonchu's A or B by 19:00 today.
+
 ## 2026-10-23 · machiavelli
 
 Money today: answer "is the online Led class invite only?" for the serious lead (open since 18 Oct, 6th day) and send ONE of Carne's follow-up drafts (in his run session).
@@ -115,6 +134,8 @@ Countdowns: door check-in for everyone Sat 24 Oct: 1 day (stage 1 build waits on
 Reel: Plato's daily run is paused (Boonchu, 22 Oct). No Plato post is expected. 21 Hidden Stories scripts wait for his screening.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent since 17 Oct. Carne posted today.
 Inbox 07:08: 0 new; 1 hot carried (LINE, past student coming back next month, may be answered already).
+13:08 check-in: Batch Sheet still waiting (due Sat 24 Oct 19:00, 1 day); course prices still waiting (3 days). Inbox 13:08: 0 new, 0 hot.
+19:08 check-in: no win reported; prices and Batch Sheet not repeated (2 nudges today). Next step: answer the online Led invite-only question. Inbox 19:08: 3 new, 1 hot.
 
 ## 2026-10-23 · carnegie
 
@@ -122,13 +143,6 @@ Inbox 07:08: 0 new; 1 hot carried (LINE, past student coming back next month, ma
 Boonchu: answer "is the online Led class invite only?" (open since 18 Oct, 6th day), and send only ONE of the open follow-up drafts.
 Week 1 Batch Sheet: Carne OK, with 4 small fixes written in the sheet (source line on XHS, one Chinese word, a hook for the R6 swap, "2 months" in the promo line). Boonchu: confirm the promo includes 2 months, and pick the filming day.
 @Machiavelli: inbox has 1 LINE thread for you: a past student wants to come back next month on a 1-month pass, will confirm after talking with family.
-
-## 2026-10-22 · plato
-
-Trigger: 4 minutes of exercise a day for 12 weeks; people over 65 stood up faster and stood on one leg longer (Penn State, ScienceDaily 21 Oct).
-Story: an old Hindi poem: a soft rope goes down the well every day, and after many years it cuts a line in the hard stone. Asana: Pasasana (pasha = rope). Habit #2.
-Hook: "Four minutes a day. That's all. And they got stronger." Full package: posts/2026-10-22-plato-rope-and-stone.md
-Week 1 Batch Sheet is up (late): posts/2026-10-26-batch-sheet.md. @Carnegie: please check it. Boonchu: pick the filming day, the shirt and the posting time (Plato's picks: plum tee, 19:00), and send your Mari D cue for R6.
 
 ## 2026-10-22 · plato-rope-and-stone
 
@@ -265,6 +279,13 @@ Xiaohongshu title (12 characters): 软绳子，也能在石头上留下印
 
 Items to verify before filming: the Boonchu cue line only if he has a real case; hook 1 only if he likes saying it.
 
+## 2026-10-22 · plato
+
+Trigger: 4 minutes of exercise a day for 12 weeks; people over 65 stood up faster and stood on one leg longer (Penn State, ScienceDaily 21 Oct).
+Story: an old Hindi poem: a soft rope goes down the well every day, and after many years it cuts a line in the hard stone. Asana: Pasasana (pasha = rope). Habit #2.
+Hook: "Four minutes a day. That's all. And they got stronger." Full package: posts/2026-10-22-plato-rope-and-stone.md
+Week 1 Batch Sheet is up (late): posts/2026-10-26-batch-sheet.md. @Carnegie: please check it. Boonchu: pick the filming day, the shirt and the posting time (Plato's picks: plum tee, 19:00), and send your Mari D cue for R6.
+
 ## 2026-10-22 · machiavelli
 
 Money today: answer "is the online Led class invite only?" (open since 18 Oct, 5th day) and send ONE follow-up to the serious lead (Carne's draft in his run session; no word from the lead since 17 Oct).
@@ -283,13 +304,6 @@ Score: wins this week: none reported. 180K leads: 0 new, 1 serious. Carne and Pl
 Boonchu: send ONE follow-up to the serious lead (today's short draft, or an older one if none went out), with your line on "is the online Led class invite only?" (open since 18 Oct, 5th day).
 @Machiavelli: inbox has 2 LINE threads for you: a student asks to cancel today's class (son is sick), and a student sent an image and asks to renew a 6-month package.
 No Batch Sheet to check yet. Keyword test starts Mon 26 Oct. Next lead check Sat 24 Oct.
-
-## 2026-10-21 · plato
-
-Trigger: a golfer, 63, won on Sun 18 Oct, his first win in 3+ years, after saying "I have been very lazy practicing" and going back to practice (News Tribune/AP, 19 Oct).
-Story: Arjuna asks Krishna "if I stop yoga, is it all lost, like a torn cloud?" Krishna: "No. Nothing is lost. The old practice pulls you back." (Bhagavad Gita 6.37-44)
-Asana: Padmasana, the seat at the end of every practice (Gita 6.13 tells how to sit). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "Champion, 63 years old: 'I have been very lazy.'" Full package: posts/2026-10-21-plato-nothing-is-lost.md
 
 ## 2026-10-21 · plato-nothing-is-lost
 
@@ -423,6 +437,13 @@ Xiaohongshu title (11 characters): 停练了？什么都没丢
 
 Items to verify before filming: the golfer's photo credit (use a news photo with credit or no photo); hook 1 only if it is true for Boonchu; the Boonchu cue line only if he has a real case.
 
+## 2026-10-21 · plato
+
+Trigger: a golfer, 63, won on Sun 18 Oct, his first win in 3+ years, after saying "I have been very lazy practicing" and going back to practice (News Tribune/AP, 19 Oct).
+Story: Arjuna asks Krishna "if I stop yoga, is it all lost, like a torn cloud?" Krishna: "No. Nothing is lost. The old practice pulls you back." (Bhagavad Gita 6.37-44)
+Asana: Padmasana, the seat at the end of every practice (Gita 6.13 tells how to sit). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "Champion, 63 years old: 'I have been very lazy.'" Full package: posts/2026-10-21-plato-nothing-is-lost.md
+
 ## 2026-10-21 · machiavelli
 
 Money today: answer the "is the online Led class invite only?" question (open since 18 Oct, 4th day). Carne's draft waits; his next check is Thu 22 Oct.
@@ -442,13 +463,6 @@ Next check Thu 22 Oct. Nothing to send today if one of my drafts already went ou
 Boonchu: answer "is the online Led class invite only?" (open since 18 Oct).
 @Machiavelli: inbox has 1 LINE thread for you: a shala student came for class at 06:08 today, found it under construction, asked about class with Matt.
 Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
-
-## 2026-10-20 · plato
-
-Trigger: a South African runner lost the first race of the year, was 3rd in September, then won a 10 km race series for the 4th time, a first (The Citizen, 19 Oct; race Sat 18 Oct).
-Story: Arjuna loses a fight to a hunter, does not run, offers flowers; the hunter was Shiva, who gives him the gift (Mahabharata, Vana Parva, Kairata Parva).
-Asana: Virabhadrasana, the warrior (Primary, standing). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "She lost the first race. Then she made history." Full package: posts/2026-10-20-plato-archer-and-hunter.md
 
 ## 2026-10-20 · plato-archer-and-hunter
 
@@ -583,6 +597,13 @@ Xiaohongshu title (12 characters): 输了那一仗，他得到了礼物
 
 Items to verify before filming: the runner's photo credit (use a news photo with credit or no photo); Boonchu checks the "I lose to a pose every week" hook only if he wants hook 1.
 
+## 2026-10-20 · plato
+
+Trigger: a South African runner lost the first race of the year, was 3rd in September, then won a 10 km race series for the 4th time, a first (The Citizen, 19 Oct; race Sat 18 Oct).
+Story: Arjuna loses a fight to a hunter, does not run, offers flowers; the hunter was Shiva, who gives him the gift (Mahabharata, Vana Parva, Kairata Parva).
+Asana: Virabhadrasana, the warrior (Primary, standing). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "She lost the first race. Then she made history." Full package: posts/2026-10-20-plato-archer-and-hunter.md
+
 ## 2026-10-20 · machiavelli
 
 Money today: answer the "is the online Led class invite only?" question (open since 18 Oct), then send Carne's one LINE OA message to the serious lead.
@@ -602,13 +623,6 @@ Follow-up drafted today, next check Thu 22 Oct.
 Boonchu: answer "is the online Led class invite only?" (open since 18 Oct). Then send ONE message from LINE OA: my 18 Oct draft if not sent yet, else today's.
 Inbox: 4 LINE threads, all shala (bookings, next month's timetable and bank number, class status, a car window note). @Machiavelli: yours.
 Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
-
-## 2026-10-19 · plato
-
-Trigger: NASA's rover on Mars is slower than you walk, drove a little every day for five and a half years, and now holds the record for the longest drive on another world (record 11 Oct, Fox Weather 18 Oct).
-Story: Dilipa walks with Vasishtha's cow at her pace, stops when she stops, sits when she lies down, 21 days, then his wish comes true (Kalidasa, Raghuvamsha canto 2).
-Asana: Gomukhasana, cow face (Intermediate). Habit #3. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "This car is slower than you walk. And it just broke a world record." Full package: posts/2026-10-19-plato-cow-pace.md
 
 ## 2026-10-19 · plato-cow-pace
 
@@ -737,6 +751,13 @@ Xiaohongshu title (13 characters): 比走路还慢的火星车，破了纪录
 
 Items to verify before filming: the rover photo credit; if the rover passes a new milestone before posting, keep "five and a half years" (still true).
 
+## 2026-10-19 · plato
+
+Trigger: NASA's rover on Mars is slower than you walk, drove a little every day for five and a half years, and now holds the record for the longest drive on another world (record 11 Oct, Fox Weather 18 Oct).
+Story: Dilipa walks with Vasishtha's cow at her pace, stops when she stops, sits when she lies down, 21 days, then his wish comes true (Kalidasa, Raghuvamsha canto 2).
+Asana: Gomukhasana, cow face (Intermediate). Habit #3. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "This car is slower than you walk. And it just broke a world record." Full package: posts/2026-10-19-plato-cow-pace.md
+
 ## 2026-10-19 · machiavelli
 
 Money today: answer the LINE renewal question (old student, 3-month pass, asked 18 Oct 16:58, no reply seen).
@@ -748,13 +769,6 @@ Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planne
 Carne and Plato both posted today. Inbox 07:08: 0 new, 1 hot carried from yesterday.
 13:08 check-in: Mysore Reel still waiting (1 day), course prices still waiting (3 days). Inbox: 4 new, 2 hot.
 19:08 check-in: no new decisions (Reel and prices reminded twice today). Inbox: 3 new threads, 1 needs an answer, 0 hot; yesterday's renewal thread looks answered.
-
-## 2026-10-19 · carnegie
-
-180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb).
-Next check on the serious lead: Tue 20 Oct.
-Boonchu: answer their question "is the online Led class invite only?", then send my 18 Oct draft from LINE OA.
-Inbox: 1 LINE thread, a Thai student asks the old-student 3-month price. @Machiavelli: yours.
 
 ## 2026-10-19 · carnegie-brief-keyword-test
 
@@ -853,12 +867,12 @@ Hopkins gave every ad its own code and counted who answered. We plan 7 Reels a w
 ## Value check (Hormozi)
 The STUCK ask works because the dream is clear: unstuck on one asana. Belief is high, because Boonchu answers himself. It's fast, a reply this week, and easy, one word. Keep all four true. If replies get slow, the ask dies.
 
-## 2026-10-18 · plato
+## 2026-10-19 · carnegie
 
-Trigger: ScienceDaily 15 Oct (Baylor, Nature): people deep asleep for an operation, a story plays, a part of the brain still follows it and guesses the next word.
-Story: the fish who lay still and listened while Shiva taught Parvati yoga, and became Matsyendra (old yoga legend, told by Iyengar in Light on Yoga).
-Asana: Ardha Matsyendrasana (Intermediate). Lane A, habit #6 Calm the mind. Waiting on Boonchu's cue.
-Hook: "Doctors put people deep asleep... and read them a story." Full package: posts/2026-10-18-plato-fish-who-listened.md
+180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb).
+Next check on the serious lead: Tue 20 Oct.
+Boonchu: answer their question "is the online Led class invite only?", then send my 18 Oct draft from LINE OA.
+Inbox: 1 LINE thread, a Thai student asks the old-student 3-month price. @Machiavelli: yours.
 
 ## 2026-10-18 · plato-fish-who-listened
 
@@ -984,6 +998,13 @@ Xiaohongshu title (13 characters): 睡着都在听，你练瑜伽在听吗
 - Ashtanga fact: Ardha Matsyendrasana is in the Intermediate series (after Bharadvajasana). "Ardha" = half, "Matsya" = fish, "Indra" = lord. Five breaths is the usual count in the series.
 - Not used in 30 days: Matsyendra story (pitched 10 Oct, never written or used), Ardha Matsyendrasana.
 
+## 2026-10-18 · plato
+
+Trigger: ScienceDaily 15 Oct (Baylor, Nature): people deep asleep for an operation, a story plays, a part of the brain still follows it and guesses the next word.
+Story: the fish who lay still and listened while Shiva taught Parvati yoga, and became Matsyendra (old yoga legend, told by Iyengar in Light on Yoga).
+Asana: Ardha Matsyendrasana (Intermediate). Lane A, habit #6 Calm the mind. Waiting on Boonchu's cue.
+Hook: "Doctors put people deep asleep... and read them a story." Full package: posts/2026-10-18-plato-fish-who-listened.md
+
 ## 2026-10-18 · machiavelli
 
 Money today: the serious online-teaching lead replied. They plan to practice in Bangkok mid or late Jan to Feb. New question: is the online Led class invite only? Boonchu says yes or no, then sends Carne's draft from LINE OA.
@@ -1003,13 +1024,6 @@ Carne and Plato both posted today. Inbox 07:08: 2 new, 2 hot.
 - Good news: Boonchu's reply landed. The serious lead thanked him and plans to come to Bangkok mid or late Jan to Feb, after Mysore.
 - New question from them: they saw an online led class by an AYBKK teacher and ask if it is invite only. Only Boonchu knows. My short reply draft is in my session.
 - Boonchu: say yes or no on that online class, then send the reply from LINE OA. Next check 20 Oct.
-
-## 2026-10-17 · plato
-
-Trigger: ScienceDaily 14 Oct (Karolinska, 47 years, same people): from about 35 the body gets weaker, even if you train. "It is never too late to start moving."
-Story: the monkeys must jump the sea; the old bear king Jambavan says "Now I am old and slow, I can jump ninety." Not enough, but he does not go home (Valmiki Ramayana, Kishkindha 65).
-Asana: Utplutih, the last lift of every practice ("jump up"). Lane A story, Lane B door (fear: "I'm too old"). Habit #2 Get stronger. Waiting on Boonchu's cue.
-Hook: "Scientists follow the same people 47 years. From 35, the body start to get weaker. Even if you train." Full package: posts/2026-10-17-plato-old-bear-king.md
 
 ## 2026-10-17 · plato-old-bear-king
 
@@ -1150,6 +1164,13 @@ Xiaohongshu title (14 characters): 35岁开始变弱？老熊王照样跳
 - Ashtanga facts used: every practice ends with the lift (Utplutih) in the finishing sequence. No breath count spoken. Boonchu's age 52 (do not say 53 before December).
 - Not used in 30 days: Jambavan story (pitched 10 Oct, not used), Utplutih. Hanumanasana not used (used 1-2 Oct).
 
+## 2026-10-17 · plato
+
+Trigger: ScienceDaily 14 Oct (Karolinska, 47 years, same people): from about 35 the body gets weaker, even if you train. "It is never too late to start moving."
+Story: the monkeys must jump the sea; the old bear king Jambavan says "Now I am old and slow, I can jump ninety." Not enough, but he does not go home (Valmiki Ramayana, Kishkindha 65).
+Asana: Utplutih, the last lift of every practice ("jump up"). Lane A story, Lane B door (fear: "I'm too old"). Habit #2 Get stronger. Waiting on Boonchu's cue.
+Hook: "Scientists follow the same people 47 years. From 35, the body start to get weaker. Even if you train." Full package: posts/2026-10-17-plato-old-bear-king.md
+
 ## 2026-10-17 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series) wrote again last night and asks if they should find another teacher. Boonchu decided: practice at the shala first. Send Machi's reply from LINE OA this morning (6 days with no AYBKK reply seen).
@@ -1161,14 +1182,6 @@ Score: wins this week: none reported. 180K leads: 0 new, 1 serious in 20 days, a
 Carne and Plato both posted today. Carne's @Machi request (lead at top of brief): done. Inbox 07:08: 4 new, 2 hot.
 13:08 check-in: course prices and Mysore Reel still waiting (1 day each, due 19:00 Sun 18 Oct). Inbox 13:08: 0 new, 0 hot.
 19:08 check-in: no win reported, no reminders due. Prices and Reel not repeated (2 nudges today). Next step: send the online-teaching lead reply. Inbox 19:08: 0 new, 0 hot.
-
-## 2026-10-17 · carnegie
-
-# Carnegie, 2026-10-17
-- New leads: 0. Open: 1 (serious). Due today: 1. Overdue: 0.
-- At risk: the serious online-teaching lead (LINE) wrote last night. No reply from us in 5 days, they ask if they should find another teacher.
-- Boonchu: send my reply today from LINE OA (in my session). Then answer online teaching yes or no (6th day open).
-- @Machiavelli: please put this lead at the top of the 07:08 brief. It is the only real 180K lead, and it is about to walk.
 
 ## 2026-10-17 · carnegie-ladder-ads-plan
 
@@ -1289,12 +1302,13 @@ We lose people at the last two steps. Ads only feed steps 1 to 3.
 - https://yandex.com/adv/news/how-mandatory-online-advertising-labeling-works-in-2025
 - https://www.savemyleads.com/blog/other/meta-ads-learning-phase
 
-## 2026-10-16 · plato
+## 2026-10-17 · carnegie
 
-Trigger: ScienceDaily 14 Oct (The Conversation, Univ. of Bath): ice baths may take back some training gains; best recovery is sleep, food, rest days. "Recovery cannot be bottled and sold."
-Story: a young man wants the holy books fast, no teacher; a very old man throws sand in the Ganga to build a dam (Mahabharata, Vana Parva 135).
-Asana: Savasana, "take rest" (plus the Saturday rest day). Lane A, habit #4 Sleep. Waiting on Boonchu's cue.
-Hook: "You do ice bath after every training? Careful. It maybe take back some of what you train for." Full package: posts/2026-10-16-plato-sand-dam.md
+# Carnegie, 2026-10-17
+- New leads: 0. Open: 1 (serious). Due today: 1. Overdue: 0.
+- At risk: the serious online-teaching lead (LINE) wrote last night. No reply from us in 5 days, they ask if they should find another teacher.
+- Boonchu: send my reply today from LINE OA (in my session). Then answer online teaching yes or no (6th day open).
+- @Machiavelli: please put this lead at the top of the 07:08 brief. It is the only real 180K lead, and it is about to walk.
 
 ## 2026-10-16 · plato-sand-dam
 
@@ -1428,6 +1442,13 @@ Xiaohongshu title (15 characters): 恢复买不到：一位老人往恒河撒沙
 - Ashtanga facts used: Saturday rest day, every practice ends lying down ("take rest"). No numbers, no medical claims.
 - Not the same as yesterday's science: no bird study, no tortoise. Bharadvajasana (29 Sep) is the father's asana; this story is the son's and the asana is Savasana, not used in 30 days.
 
+## 2026-10-16 · plato
+
+Trigger: ScienceDaily 14 Oct (The Conversation, Univ. of Bath): ice baths may take back some training gains; best recovery is sleep, food, rest days. "Recovery cannot be bottled and sold."
+Story: a young man wants the holy books fast, no teacher; a very old man throws sand in the Ganga to build a dam (Mahabharata, Vana Parva 135).
+Asana: Savasana, "take rest" (plus the Saturday rest day). Lane A, habit #4 Sleep. Waiting on Boonchu's cue.
+Hook: "You do ice bath after every training? Careful. It maybe take back some of what you train for." Full package: posts/2026-10-16-plato-sand-dam.md
+
 ## 2026-10-16 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series) has waited 4 days with no AYBKK reply seen. Send Carne's 2nd follow-up from LINE OA. Decision needed in team chat: online teaching yes or no (5th day open).
@@ -1446,13 +1467,6 @@ New leads: 0. Inbox read OK: 1 new chat (Thai shala promo question, Machi's job)
 Due today: 1 (the serious LINE third-series lead from 12 Oct). Overdue: 0. Serious: 1. 2nd follow-up drafted, next check 18 Oct.
 Boonchu must do: send one of the drafts to this lead from LINE OA. 4 days and still no AYBKK reply seen in the inbox.
 Boonchu must decide: online teaching yes or no (5th day open).
-
-## 2026-10-15 · plato
-
-Trigger: Penn State bird study (ScienceDaily 14 Oct): baby birds wore a small leg weight every day; grown up, it cost them no extra energy. Untrained birds: 23% more. Birds only.
-Story: a tortoise holds the mountain the gods stir the ocean with; everyone tires, one old book says it felt like a back scratch (Mahabharata Adi Parva 18; Bhagavata 8.7.10).
-Asana: Bhujapidasana ("arm pressure"; Kurmasana skipped, Supta Kurmasana is Ep. 5 inside 30 days). Waiting on Boonchu's cue.
-Hook: "Same little weight on the leg. One group... very tired. The other... nothing. Why?" Full package: posts/2026-10-15-plato-tortoise-mountain.md
 
 ## 2026-10-15 · plato-tortoise-mountain
 
@@ -1573,6 +1587,13 @@ XHS title (12 characters): 一样的重量，只有它们不累
 - Left out on purpose: the sea animals crushed in the churning, the fight over the drink, the poison, and the "nectar of youth" (no health claim from a myth).
 - Asana: Bhujapidasana, Primary series, just before Kurmasana. Bhuja = arm, pida = pressure.
 
+## 2026-10-15 · plato
+
+Trigger: Penn State bird study (ScienceDaily 14 Oct): baby birds wore a small leg weight every day; grown up, it cost them no extra energy. Untrained birds: 23% more. Birds only.
+Story: a tortoise holds the mountain the gods stir the ocean with; everyone tires, one old book says it felt like a back scratch (Mahabharata Adi Parva 18; Bhagavata 8.7.10).
+Asana: Bhujapidasana ("arm pressure"; Kurmasana skipped, Supta Kurmasana is Ep. 5 inside 30 days). Waiting on Boonchu's cue.
+Hook: "Same little weight on the leg. One group... very tired. The other... nothing. Why?" Full package: posts/2026-10-15-plato-tortoise-mountain.md
+
 ## 2026-10-15 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series). Carne's next follow-up is 16 Oct. Decision needed in team chat: online teaching yes or no (4th day open).
@@ -1591,13 +1612,6 @@ New leads: 0. Inbox read OK: 0 new chats.
 Due today: 0. Overdue: 0. Serious: 1 (the LINE third-series lead from 12 Oct). Next follow-up 16 Oct.
 Boonchu must do: send the 12 Oct reply (or the 14 Oct follow-up) from LINE OA if not sent. Still no AYBKK reply seen in the inbox.
 Boonchu must decide: online teaching yes or no (4th day open). The lead is waiting on this.
-
-## 2026-10-14 · plato
-
-Trigger: Chicago Marathon 11 Oct, the men's winner was 3rd in 2024, 2nd in 2025, 1st this year ("I was ready").
-Story: Bhagiratha, after his grandfather and father could not, stands on one big toe for a year and Ganga comes down (Valmiki Ramayana, Bala Kanda 42-43).
-Asana: Padangusthasana ("big toe"). Waiting on Boonchu's cue. Full package: posts/2026-10-14-plato-big-toe-king.md
-Hook: "One runner. Two year ago, he come third. Last year... second. This week?"
 
 ## 2026-10-14 · plato-big-toe-king
 
@@ -1721,6 +1735,13 @@ Xiaohongshu title (12 characters): 站在一根脚趾上的国王
 - Your Padangusthasana cue in your words (1 to 2 lines). I put a placeholder "hands don't reach your toe".
 - Thai: OK to say "พระราชา" for an Indian story king, or swap to "ชายคนหนึ่ง"?
 
+## 2026-10-14 · plato
+
+Trigger: Chicago Marathon 11 Oct, the men's winner was 3rd in 2024, 2nd in 2025, 1st this year ("I was ready").
+Story: Bhagiratha, after his grandfather and father could not, stands on one big toe for a year and Ganga comes down (Valmiki Ramayana, Bala Kanda 42-43).
+Asana: Padangusthasana ("big toe"). Waiting on Boonchu's cue. Full package: posts/2026-10-14-plato-big-toe-king.md
+Hook: "One runner. Two year ago, he come third. Last year... second. This week?"
+
 ## 2026-10-14 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series). Carne's follow-up is due today. Decision needed in team chat: online teaching yes or no (3rd day open).
@@ -1739,13 +1760,6 @@ New leads: 0. Inbox read OK: 2 LINE threads, 0 about 180K (both are shala promo 
 Due today: 1. Overdue: 0. Serious: 1 (the LINE third-series lead from 12 Oct). Follow-up drafted in my session.
 Boonchu must do: send my 12 Oct reply from LINE OA if not sent yet. If it was sent, send today's follow-up instead. No AYBKK reply seen in the inbox yet.
 Boonchu must decide: online teaching yes or no (3rd day open). The lead asked. Next check 16 Oct.
-
-## 2026-10-13 · plato
-
-Trigger: UT Austin sleep study (ScienceDaily 11 Oct): young adults who moved on more days got more deep sleep, even 10 minutes a day ("better than doing it all on the weekend"). Habit #4.
-Story: the giant Kumbhakarna sleeps six months, wakes one day, does everything in that one day (Valmiki Ramayana, Yuddha Kanda 61.28).
-Asana: Yoganidrasana ("yoga sleep"). Nobody gets it in one big day; a little, every morning. Punch: "Nobody ever fall asleep in it."
-Hook: "Who sleep deeper? Big exercise on Saturday... or ten minutes, every day?" Full package: posts/2026-10-13-plato-sleeping-giant.md. Waiting on Boonchu's Yoganidrasana cue.
 
 ## 2026-10-13 · plato-sleeping-giant
 
@@ -1964,6 +1978,13 @@ BEFORE POSTING
 11. Read the Thai caption before posting. It uses ผม for 'I' and คนนับ ('the one counting') as the callback.
 12. Next reel: Version B (a student telling 'the last time I almost quit'). If a student agrees tomorrow, film the question too, but post it as its own video.
 
+## 2026-10-13 · plato
+
+Trigger: UT Austin sleep study (ScienceDaily 11 Oct): young adults who moved on more days got more deep sleep, even 10 minutes a day ("better than doing it all on the weekend"). Habit #4.
+Story: the giant Kumbhakarna sleeps six months, wakes one day, does everything in that one day (Valmiki Ramayana, Yuddha Kanda 61.28).
+Asana: Yoganidrasana ("yoga sleep"). Nobody gets it in one big day; a little, every morning. Punch: "Nobody ever fall asleep in it."
+Hook: "Who sleep deeper? Big exercise on Saturday... or ten minutes, every day?" Full package: posts/2026-10-13-plato-sleeping-giant.md. Waiting on Boonchu's Yoganidrasana cue.
+
 ## 2026-10-13 · machiavelli
 
 Money today: the serious online-teaching lead (LINE, third series). Decision needed in team chat: online teaching yes or no. Carne's follow-up is due tomorrow, 14 Oct.
@@ -1982,13 +2003,6 @@ New leads: 0. Inbox read OK: 2 LINE threads, 0 about 180K (both are shala bookin
 Due today: 0. Overdue: 0. Serious: 1 (the LINE third-series lead from 12 Oct).
 Boonchu must do: if you have not sent my 12 Oct reply to that lead from LINE OA, send it today.
 Boonchu must decide: online teaching yes or no. The lead asked. Follow-up due tomorrow, 14 Oct.
-
-## 2026-10-12 · plato
-
-Trigger: a knee study (ScienceDaily 10 Oct): people walked every day and stayed sore; a tiny foot turn, measured for each person, cut pain much more in one year.
-Story: strong monkeys throw rocks into the sea, but strings and measuring sticks keep Rama's bridge straight; it reaches the far shore in 5 days (Valmiki Ramayana, Yuddha Kanda 22).
-Asana: Setu Bandhasana (setu = bridge). Strong brings the rock. The line builds the bridge. Habit: teacher who notices + #8.
-Hook: "Some people have sore knee. They walk every day. Still sore. Then scientists turn their foot... just a tiny bit." Full package: posts/2026-10-12-plato-monkey-bridge.md. Waiting on Boonchu's Setu Bandhasana cue.
 
 ## 2026-10-12 · plato-monkey-bridge
 
@@ -2223,6 +2237,13 @@ Button: Send message. Headline: Your first small win starts here.
 Ad text: hook line + 'Ashtanga at AYBKK, Bangkok. Beginners welcome. We teach you from zero.' + promo (standing wording, promo first, Sharathji last) + 'Send us MYSORE for the free First Mysore Class guide.'
 One spoken CTA only; offer only in the text; no price in the video. Check ManyChat covers Facebook Messenger, or reply by hand.
 
+## 2026-10-12 · plato
+
+Trigger: a knee study (ScienceDaily 10 Oct): people walked every day and stayed sore; a tiny foot turn, measured for each person, cut pain much more in one year.
+Story: strong monkeys throw rocks into the sea, but strings and measuring sticks keep Rama's bridge straight; it reaches the far shore in 5 days (Valmiki Ramayana, Yuddha Kanda 22).
+Asana: Setu Bandhasana (setu = bridge). Strong brings the rock. The line builds the bridge. Habit: teacher who notices + #8.
+Hook: "Some people have sore knee. They walk every day. Still sore. Then scientists turn their foot... just a tiny bit." Full package: posts/2026-10-12-plato-monkey-bridge.md. Waiting on Boonchu's Setu Bandhasana cue.
+
 ## 2026-10-12 · machiavelli
 
 Money today: the first serious lead in 15 days (LINE, third series) asks one thing: do you teach online? Carne's draft is in his run. Follow-up due 14 Oct.
@@ -2241,13 +2262,6 @@ New leads: 1 (LINE OA, English, serious: third series, going back to Mysore, wan
 Due today: 0. Overdue: 0. Serious: 1.
 Boonchu must do: read my draft reply in today's Carnegie run and send it from LINE OA if you like it.
 Boonchu must decide: do you teach online (for a student living in Thailand)? The lead asked. Follow-up due 14 Oct.
-
-## 2026-10-11 · plato
-
-Trigger: the viewer's own body. You jump into an arm balance and your nose hits the floor (no safe, plain news fit today).
-Story: five thirsty brothers at a lake; a crane says "answer first, then drink". Four rush and fall, the one who stops saves them all (Mahabharata, Vana Parva 310 to 312).
-Asana: Bakasana (baka = crane): stop, set, breathe, then lift. Habit #2.
-Hook: "You put your hands down. You jump. Your nose hits the floor." Full package: posts/2026-10-11-plato-thirsty-crane.md. Waiting on Boonchu's Bakasana cue.
 
 ## 2026-10-11 · plato-thirsty-crane
 
@@ -2396,6 +2410,13 @@ Boonchu asked: rewrite the 6 Oct doves Reel "like telling a story to 10 year old
 New hook: "Mat still rolled up? You think, 'I'm lazy.' You're not." Point: "One dove can't lift the net. Together, they can."
 Source fix: v1's "each dove pulls alone" was made up; it is gone. Still waiting on his Kapotasana cue.
 
+## 2026-10-11 · plato
+
+Trigger: the viewer's own body. You jump into an arm balance and your nose hits the floor (no safe, plain news fit today).
+Story: five thirsty brothers at a lake; a crane says "answer first, then drink". Four rush and fall, the one who stops saves them all (Mahabharata, Vana Parva 310 to 312).
+Asana: Bakasana (baka = crane): stop, set, breathe, then lift. Habit #2.
+Hook: "You put your hands down. You jump. Your nose hits the floor." Full package: posts/2026-10-11-plato-thirsty-crane.md. Waiting on Boonchu's Bakasana cue.
+
 ## 2026-10-11 · machiavelli
 
 Money today: say yes to the Mysore Reel. It is the campaign's only Reel and it has slid 5 times.
@@ -2409,823 +2430,5 @@ Carne and Plato both posted today. Inbox 07:08: 0 new.
 19:08 check-in: Mysore Reel default B applied (moves to Wed 14 Oct). Course prices still waiting (3 days). No win reported. Inbox: 3 new, 2 hot.
 
 ## 2026-10-11 · carnegie
-
-No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
-
-## 2026-10-10 · plato
-
-Trigger: 8 Oct, a basketball player won "best player of the year" for the 5th time. Nobody did that before (CBS Sports, ESPN).
-Story: Aruna (Mahabharata, Adi Parva 16 and 24). Born too early with half a body, he still drives the sun, "always seen in the hour of morning". Asana: Surya Namaskara A, 5 times every morning.
-Hook: "This week, a player won best of the year. Fifth time. Nobody ever did that." Then: "One time is a good year. Five times is a habit." Lane A story, Lane B door, promo in EN/TH caption.
-Full package: posts/2026-10-10-plato-dawn-five-times.md. Waiting on Boonchu's own Surya Namaskara A cue.
-
-## 2026-10-10 · plato-dawn-five-times
-
-# Plato · 10 Oct 2026 · daily Reel package
-Hidden Stories of Ashtanga (no Ep. number until filmed; last posted Ep. 4)
-"The One Who Comes Before the Sun"
-
-Route: Lane A story with a Lane B door. Surya Namaskara is the first thing a beginner learns on Day 1, so the door is wide open. Last 3: frogs script (A, not filmed), Vasishtha script (A, not filmed), Arjuna script (A, not filmed) · next due: Lane B. EN/TH captions carry the promo. Chinese stays Lane A (no promo).
-Habit: the core of The Habit Gap (same practice, same time) + #4 Sleep (early mornings; careful: no sleep promise anywhere).
-
-Trigger note: no unused life note, no @Plato request. News checked: on Thu 8 Oct 2026 the WNBA named A'ja Wilson (Las Vegas Aces) its Most Valuable Player for the 2026 season. It is her 5th time, the most in league history, and her 3rd year in a row (first ever). 65 of 74 first-place votes. Plain words for the Reel: "best player of the year". No score, no team, no "MVP" in the spoken lines (PLAIN TRIGGER order). We do NOT know her morning routine, so the script never says what she does each day.
-
-## The link (4 lines)
-- Trigger: this week a basketball player won "best player of the year" for the fifth time. Nobody did that before.
-- Story: Aruna's egg was broken too early, so he was born with only half a body. He still became the driver of the sun's chariot, "always seen in the hour of morning". He stands in front of the sun and takes its heat, so the world does not burn (Mahabharata, Adi Parva sections 16 and 24).
-- Behavior: one time is a good year. Five times is a habit. The big thing people see (the sun, the trophy) stands on the quiet thing that comes first, every morning.
-- Asana: Surya Namaskara A, five times, the first thing every Ashtanga morning. Same nine movements, same breath. It trains turning up before you feel ready.
-
-Toolkit pick: Triple Hook (Proof + Whiplash) + /story beats, fail-hero-payoff. Why: the news is a clean Proof line a 10-year-old gets ("fifth time, nobody ever"), and the Whiplash ("one time is a good year, five times is a habit") moves it from her to the viewer's own mornings. Triple Hook was last used 7 Oct, not 3 days in a row.
-Other options: (1) Vibe Samurai ladder: her five trophies / Aruna every dawn / you, five Surya Namaskaras tomorrow. (2) Reframe Unit: "Five trophies. That's about 1,800 mornings." (only if Boonchu wants a number; Plato did not use it because we do not know her mornings).
-
-## Hooks (/hook, answered myself)
-Topic: practice habit, coming back every morning.
-Consensus: "Champions are born with talent."
-Where Boonchu sharpens it: 20 years of Ashtanga, six days a week since 2008, and every one of those mornings started the same way: Surya Namaskara.
-1. Authority: "Twenty years of mornings. The first five minutes never changed." (his claim: OK it first)
-2. Contrarian: "Best player of the year, five times. That's not talent. That's mornings."
-3. Stakes: "She was best player five times. Most of us can't do five mornings."
-4. Question: "How do you become the best... five times?"
-5. Pattern interrupt: "This week, a player won best of the year. Fifth time. Nobody ever did that."
-Pick: 5, then the Whiplash line right after it. It opens with the trigger, makes sense with sound off and no basketball knowledge, and sets the trap ("she must be so talented") that the next line snaps ("one time is a good year; five times is a habit"). Hook 2 goes on the cover ("Not talent. Mornings." with "Mornings" in gold).
-
-## Script (60 s, spoken to camera, his spoken English)
-HOOK (0-5 s)
-"This week, a basketball player win best player of the year. ... Fifth time.
-Nobody ever do that before.
-One time... is a good year. Five times... is a habit."
-[card: five small gold trophies in a row, pop in one by one] [zoom punch: "Fifth time." / "habit"]
-
-CONTEXT + MIRROR (5-13 s)
-"Maybe you think: she is special. Born with it. Not me.
-I start, I stop. I start again, I stop again."
-[card: ❌ "born with it"]
-
-ORDEAL: THE STORY, bedtime voice (13-38 s)
-"At night I tell my son a story. From the Mahabharata.
-A mother have two eggs. She wait, and wait... she cannot wait anymore.
-She break one egg. Too early.
-Inside, a baby bird. The top is ready... the legs, not finished.
-His name is Aruna.
-And this little one... every morning, he drive the sun across the sky.
-The sun is so hot, it can burn the whole world.
-So Aruna stand in front. He take the heat. So for us... the morning is soft.
-Every morning. Not some mornings. Every morning."
-[silent beat, 2 s, soft dawn sound]
-"We all look at the sun. Nobody look at the one who come first."
-
-TAKEAWAY: THE TURN + ASANA (38-55 s)
-"In Ashtanga, every morning start the same. Surya Namaskara. Sun salutation.
-Five times. Same nine movement. Same breath.
-[BOONCHU'S OWN CUE GOES HERE: what he tells a student in Surya Namaskara A, 1-2 lines]
-Not exciting. Nobody clap for it.
-But the big asana later... stand on these five."
-
-RETURN / PAYOFF (55-60 s)
-"So I don't know her mornings. But I know this.
-Five times is not luck. ... It's the morning."
-
-Payoff check: the hook opens "fifth time, how?"; the last line closes it ("five times is not luck, it's the morning"). One lesson only: the big thing stands on the small thing you do first, every morning. The broken egg is only how Aruna was born; the Reel does NOT teach "be patient" (that was the 5 Oct hen Reel).
-
-Verify before filming:
-- His Surya Namaskara A cue in his own words (Plato did not write one).
-- Hook 1 claim, if used.
-- Never say what A'ja Wilson does each morning: we do not know. "I don't know her mornings" stays in.
-- Aruna's body: say "not finished", never "broken", "crippled" or anything that sounds like a joke. He is the hero.
-- Flag: eggs again (5 Oct hen Reel). Different lesson and asana, but if Boonchu posted the hen Reel this week, leave the egg out and start at "A bird called Aruna, born too early".
-
-## Edit cue sheet (for the edit session)
-- Header pill: "Hidden Stories of Ashtanga · Ep. N" (N = last posted + 1 when filmed).
-- Zoom punches 1.3x on: "Fifth time", "habit", "Too early", "Aruna", "Every morning", "first", "Surya Namaskara", "Five times", "It's the morning". SFX at 40%, 0.4 s after the word: ping (Fifth time), chime (habit), click-soft (Too early), whoosh (Aruna), sparkle (Every morning), impact-bass-1 (It's the morning). Soft dawn birdsong under the silent beat.
-- Captions: Weight Shift, big emoji: 🏀 🏆 🥚 🐦 🌅 ☀️ 🙏
-- Cards (Isle of Dogs stop-motion prompts, keep the handmade cues):
-  1. "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, five small painted wooden trophies in a straight row on a felt shelf, painted cardboard wall, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections"
-  2. "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, two large speckled clay eggs resting in warm woven baskets, one egg cracked open early with a small felt bird peeking out, glassy bead eyes, painted cardboard sky, cotton-wool clouds on visible wires, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections"
-  3. "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama at dawn, a small brave felt bird with red-orange wool feathers standing on the front of a carved wooden chariot, holding thin string reins, a big glowing paper-and-wire sun behind him, seven cut-felt horses, pink and orange painted cardboard sky, cotton-wool clouds on visible wires, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections"
-  4. "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama of a small shala at sunrise, a row of tiny felt people on felt mats all raising their arms at the same time, warm paper-lantern light, painted cardboard window with a rising paper sun, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections"
-- No god's face: the sun (Surya) is only a glowing paper sun. Seven horses is the common picture of the sun's chariot; it is not in these two Mahabharata sections, so it stays in the picture only, never in the spoken lines.
-
-## Captions
-EN (5 lines)
-This week a player won best player of the year. For the fifth time. Nobody did that before. 🏆
-Hidden Stories of Ashtanga: Aruna, the one who comes before the sun, every morning. 🌅
-Surya Namaskara trains the same thing: the big asanas stand on the five you do first. ☀️
-Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Bring a friend, or keep both for yourself. Buy by 11 Nov. Beginners welcome, we teach you from zero. Comment aybkk and I'll send you the link.
-Aybkk.net #aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #suryanamaskar
-
-TH
-สัปดาห์นี้ มีนักบาสได้รางวัลผู้เล่นยอดเยี่ยมแห่งปี เป็นครั้งที่ 5 ยังไม่เคยมีใครทำได้มาก่อน 🏆
-เรื่องเล่าที่ซ่อนอยู่ในอัษฎางคะ: อรุณ ผู้มาก่อนพระอาทิตย์ทุกเช้า 🌅
-สุริยนมัสการฝึกสิ่งเดียวกัน: อาสนะใหญ่ ๆ ทั้งหมด ยืนอยู่บน 5 รอบแรกของทุกเช้า ☀️
-โปรโมชั่นพิเศษสำหรับนักเรียนใหม่: ซื้อ 1 แถม 1 แพ็กเกจ 1, 2 หรือ 3 เดือน ชวนเพื่อนมาด้วย หรือเก็บไว้ใช้เองก็ได้ ซื้อภายใน 11 พ.ย. มือใหม่ก็มาได้ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย คอมเมนต์ aybkk แล้วเราจะส่งลิงก์ให้
-Aybkk.net #aybkk #อัษฎางคะโยคะ #ashtangabangkok #hiddenstoriesofashtanga #มายซอร์
-
-ZH (Xiaohongshu / WeChat Channels, Lane A, no promo)
-阿斯汤加的隐藏故事 🌅
-这周，一位篮球运动员第五次拿下年度最佳球员，联盟历史上从没有人做到过。
-拿一次，是状态好；拿五次，是习惯。
-《摩诃婆罗多》里有个小故事：阿鲁那还没孵好，蛋就被提前打破了，他生下来身体只长了一半。可后来，正是他替太阳驾车，每天清晨最先出现，挡在太阳前面，让早晨变得温柔。
-阿斯汤加的每一个早晨，也都从同一件事开始：拜日式A，五遍。同样的九个动作，同样的呼吸。
-后面所有的体式，都站在这五遍上面。
-#阿斯汤加 #迈索尔 #拜日式 #阿斯汤加的隐藏故事 #坚持
-
-Xiaohongshu title (15 chars): 第五次年度最佳，靠的是每个早晨
-
-RU
-На этой неделе баскетболистка стала лучшим игроком года в пятый раз. До неё такого не делал никто. 🏆
-Скрытые истории аштанги: Аруна, тот, кто приходит раньше солнца, каждое утро. 🌅
-Сурья Намаскар учит тому же: все большие асаны стоят на пяти первых кругах. ☀️
-Новичкам рады, мы учим с самого начала. Напишите «aybkk» в комментариях, и я пришлю ссылку.
-Aybkk.net #aybkk #аштанга #аштангайога #hiddenstoriesofashtanga #сурьянамаскар
-
-## Sources (check before filming)
-- News: CBS Sports, 8 Oct 2026, "A'ja Wilson named 2026 WNBA MVP: Aces star wins third straight, becomes first five-time honoree" https://www.cbssports.com/wnba/news/aja-wilson-2026-wnba-mvp-las-vegas-aces/ (65 of 74 first-place votes, 713 points). Also ESPN https://www.espn.com/wnba/story/_/id/50135041/sources-aces-star-aja-wilson-wins-record-5th-wnba-mvp-award and Olympics.com https://www.olympics.com/en/news/aja-wilson-named-wnba-mvp-fifth-time-full-list-2026-awards
-- Story: Mahabharata, Adi Parva (Astika Parva), Ganguli translation, checked on Project Gutenberg #15474:
-  - Section 16: Vinata "broke one of the eggs and found in it an embryo with the upper part developed but the lower one undeveloped"... "even he is the charioteer of Surya, always seen in the hour of morning!"
-  - Section 24: Brahma says Aruna "shall stay in front of Surya, doing the duty of his charioteer and taking away all the energy of the former"; "Surya rose veiled by Aruna's person."
-- Left out on purpose: Aruna's curse that makes his mother a slave, Garuda and the snakes, and why the sun was angry (Rahu). Too much story, and the curse is a sad mother line for a bedtime frame.
-- Surya Namaskara A: nine vinyasas (movements, one breath each), five rounds to open every Ashtanga practice.
-
-## 2026-10-10 · plato-chat-upamanyu-rewrite
-
-# Plato chat · 10 Oct 2026 · rewrite of the 8 Oct "Two Stars" script
-Boonchu: "this is not 10 years old story telling style. i am 53 years old and i dont get the point of this."
-Why it failed: no plot (two stars sit in the sky), three loose ideas, and the asana (alone on one hand) said the opposite of "together".
-Process: 4 writers (keep Arundhati / new myth / animal fable / own-life trigger), 3 judges each (child test, 53-year-old viewer, facts and rules), 1 editor, 3 final checks, then 2 fresh readers on the edited script (child 7, viewer 7.5; their fixes applied below). 25 agents.
-Scores: own-life + Upamanyu 21.5 (won) · tree spirits Jataka 74 19.5 · Manu's fish 17 FATAL (world flood while Thailand floods) · Arundhati jujubes 16 FATAL (Navasana repeat; husband away 12 years, another man keeps her company).
-
-Point (one line): If you come every day, your teacher notices the day you don't.
-Trigger: the viewer's own bad week (no news, no numbers).
-Story: Upamanyu, Mahabharata, Adi Parva sec. 3 (Ganguli, Gutenberg 15474).
-Asana: Samasthitih. Habit-system line: a teacher who notices when you're gone.
-
-## Script (about 60 s, his spoken English)
-HOOK (0-4 s), to camera
-"One bad week. You don't come one morning. Then two.
-Who notice?"
-
-MIRROR (4-7 s)
-"Nobody ask. So... you don't come back."
-
-STORY, bedtime voice (7-36 s)
-"A bedtime story from India.
-A student. Upamanyu.
-Every day, he look after the cows.
-Every evening, he come back. Stand in front of his teacher... and bow." [small bow]
-"One day... he fall into a well. A deep hole.
-The sun go down.
-The teacher look: 'Upamanyu... not back.'
-He go to the forest. He shout: 'Upamanyu! Where are you?'
-From the well: 'I'm here!'
-The teacher help him. Upamanyu come home... and bow." [small bow]
-
-(1 s silence)
-
-TURN (37-43 s)
-"How the teacher know?
-Every evening, Upamanyu is there. One evening he is not... the teacher see it.
-Your bad week... is the well."
-
-ASANA (43-54 s), stand up and do it
-"First thing in our yoga room: we stand. Feet together. Don't move.
-Samasthitih. This is our bow." [small bow]
-[BOONCHU'S OWN CUE: 5 words or less, about being here, not alignment]
-"Every morning you stand there... your teacher see you."
-
-PAYOFF (54-60 s)
-"Alone... nobody notice.
-With a teacher... the morning you don't come, your teacher notice."
-
-About 155 spoken words. Loop: hook asks "Who notice?", payoff answers "your teacher".
-On screen: AN OLD STORY FROM INDIA · UPAMANYU · SAMASTHITIH (Mahabharata goes in the caption).
-
-## Sources (Ganguli, Adi Parva sec. 3, adi.txt lines 1786-1975)
-- "Ayoda-Dhaumya had three disciples, Upamanyu, Aruni, and Veda."
-- "'Go, my child, Upamanyu, look after the kine.'"
-- "he returned in the evening to his preceptor's house and standing before him he saluted him respectfully." (Sanskrit 1.3.34: agratah sthitva namaschakre, "standing in front, he bowed")
-- "he fell into a pit" ... "'Here I am at the bottom of a well.'"
-- "when the sun was sinking down behind the summit of the western mountains, the preceptor observed to his disciples that Upamanyu was not yet come."
-- "he went with his disciples into the forest and began to shout, saying, 'Ho Upamanyu, where art thou?'"
-- "answered in a loud tone"
-- "thus directed by his preceptor" ... "having gone to his preceptor's presence he saluted him and told him all."
-
-## Flags
-- The point changed: no couples, no study. If he still wants the couples Reel, option B = tree spirits (Jataka 74): spirits leave the forest for lone giant trees, a storm breaks every lone tree, the forest stands. Overlaps the 6 Oct doves Reel.
-- In the book, the teacher is TESTING Upamanyu: he takes away all his food, the boy eats bitter leaves, goes blind, and that is why he falls. "The teacher help him" = he tells him to pray to the twin healer gods, who give his sight back; the book never says how he climbs out. The script leaves this out and adds nothing. Someone who knows the story could say the teacher caused the fall.
-- Samasthitih is also the first and last frame of Surya Namaskara A (10 Oct Aruna Reel); hook overlaps the 6 Oct doves Reel. Post apart.
-- Payoff promises only "your teacher notice" (his own Letter #1 line). No promise of calls or messages.
-- Many China/Russia viewers practise at home or online: the caption must invite, not scold.
-- Captions in 4 languages after his pick.
-
-## v2 (Boonchu: "mention [the source] in there, and how these 2 characters relate to the main characters")
-Checked by 15 agents (4 researchers, 2 skeptics each, writer, 2 readers), then 2 fresh readers on v2. Readers got lost when the family chain was SPOKEN inside the story (score 7, "I stopped listening to Upamanyu"), so: source spoken short + small card on screen, the link goes in the caption.
-
-HOOK: "One bad week. You don't come to class one morning. Then two. Who notice?"
-MIRROR: "Nobody ask. So... you don't come back."
-STORY: "Bedtime story. From the Mahabharata. The first book." [ON SCREEN 2-3 s: MAHABHARATA · Book 1 (Adi Parva), section 3]
-"A student, Upamanyu. Every day, he look after the cows. Every evening, he come back. Stand in front of his teacher... and bow." [small bow]
-"One day... he fall into a hole. A well. The sun go down. The teacher look: 'Upamanyu... not back.' He go to the forest. He shout: 'Upamanyu! Where are you?' From the well: 'I'm here!' The teacher help him. Upamanyu come home... and bow." [small bow]
-(1 s silence)
-TURN: "How the teacher know? Every evening, Upamanyu is there. One evening, he is not. Your bad week... is the well."
-ASANA: "Every morning, first thing: we stand. Feet together, hands together. Samasthitih. This is our bow." [small bow] "I see it every day." [BOONCHU'S OWN CUE]
-PAYOFF: "Alone... nobody notice. Come every day... the day you don't, your teacher notice."
-Optional spoken link (only at the very end, after the payoff): "P.S. Upamanyu's classmate later become the teacher of Arjuna's great-grandson."
-
-## The link to the main characters (checked in Ganguli; line numbers in adi.txt, Gutenberg 15474)
-- Upamanyu and his teacher never appear with Arjuna and his brothers. Upamanyu's name is only in Adi Parva sec. 3.
-- Teacher Ayoda-Dhaumya: "had three disciples, Upamanyu, Aruni, and Veda" (1786-1787).
-- Veda later became spiritual guide (Upadhyaya) of King Janamejaya (1994-1998); his student Utanka urged Janamejaya to hold the snake sacrifice against Takshaka, who killed his father Parikshit (2250-2280; sec. 4 calls it "one of the causes").
-- Janamejaya = son of Parikshit (sec. 3), son of Abhimanyu (sec. 40, 49), son of Arjuna and Subhadra (sec. 95).
-- At that sacrifice Vaisampayana, on Vyasa's order, "recited the whole of that history" (sec. 60). Do not say "first" told.
-- NOT KNOWN, never say as fact: that Ayoda-Dhaumya is (or is not) Dhaumya the Pandavas' priest (sec. 185, "younger brother of Devala"); that this Upamanyu is the one Krishna visits (Anushasana 14, "descendant of Vyaghrapada"); that classmate Aruni, renamed Uddalaka, is Ashtavakra's grandfather (tradition only).
-- In the book the teacher's help = "Glorify the twin Aswins"; never say he pulled him out.
-
-## 2026-10-10 · plato-chat-spot-the-myths
-
-# Lane A Reel: Spot the Four Myths (chat, 10 Oct 2026)
-
-Boonchu sent a repost of Mohammed Qahtani, "The Power of Words", winner of the 2015 Toastmasters World Championship of Public Speaking (Toastmasters press release, 17 Aug 2015; official video youtube.com/watch?v=qasE4ecA57Y). He asked to use the speaker's whole lines; Plato pushed back; he agreed to the SKELETON PLAN (shape only, no words). He picked the Lane A version.
-14 agents: source check, 3 drafts, truth + rules checks, revise, rank. Lane A ranked first (8/10). Final fixes by Plato after the rank warnings: 'LIES' -> 'MYTHS' (the twist claim is 'no proof', not proven false), Marichyasana D taken out of the lie (Yoga Mala credits the Marichyasanas with digestion), 'What?' -> 'Eh?' (his word), glasses only on Boonchu's yes.
-
-Route: Lane A · last 11 posts: Lane B carousels · next due: Lane A (ask: any Reel posted from the IG app since 4 Oct?)
-Toolkit pick: Qahtani beat skeleton + Two-Voice Deadpan (salesman voice, then flat truth), Myth-Kill in B8.
-Habit: #2 Get stronger.
-
-| Beat | Spoken (his English) | On screen |
-|---|---|---|
-| B0 | (silent 2-3 s: after practice, wrings his wet towel hard; drops fall beside the mat; looks up, one eyebrow) Eh? | SPOT THE MYTHS 0/4 · You think: "It's just sweat." |
-| B1 | (salesman voice to the end of B5) Just sweat? (laughs) No no no. Sit. I explain. | SPOT THE MYTHS 0/4 |
-| B2 | More you sweat... more fat you burn. (lifts the towel to the lens) Your towel after practice? Fat. Melting. | MYTH 1/4: "More sweat, more fat burned" |
-| B3 | You feel fresh after a twist? Not the stretch. Your liver (touches right ribs)... squeezed clean. (wrings the towel) Like this towel. | MYTH 2/4: "Twists squeeze your liver clean" |
-| B4 | You stretch first, before practice? Good. Then you won't get hurt. (one finger up) Guaranteed. | MYTH 3/4: "Stretch first and you won't get hurt" |
-| B5 | You hate the jump back? Relax. Yoga is only stretching. Your arms? (arms hang loose) Just resting. | MYTH 4/4: "Yoga is only stretching" |
-| B6 | (drops the towel, normal teacher voice, small smile) Four myths. Okay... okay. Hello, my friends. | ALL 4: MYTHS |
-| B7 | But... none of them is mine. You find them online... in gyms. You hear them too, no? | Not mine. Online, in gyms: you hear them too. |
-| B8 | The truth? (beat) Sweat is not fat. Fat go out mostly in your breath. Breathing faster... don't burn more. Twist? No proof it squeeze your liver clean. It help you turn. Stretching help your range (one arm out long). But in sport... it don't stop you getting hurt. Strength training help more. Only stretching? No no. Chaturanga, jump back... it build your arms. (beat) And you? How many you believe? One? ... All four? | One card at a time, each myth crossed out: Sweat isn't fat. Fat leaves MOSTLY through your breath. / Breathing faster won't burn more. / No proof twists squeeze your liver clean. They help you turn. / Stretching helps your range. Against sports injuries, strength training helps more. / Yoga isn't only stretching. Chaturanga builds strength. / How many did you believe? |
-| B9 | Big voice... sure voice... is not proof. So... (points at the sources line) check first. Then practise. | A sure voice is not proof. Check first. Then practise. |
-
-Never cut: 'Sweat is not fat', 'Breathing faster... don't burn more', 'It help you turn', 'Stretching help your range'. If long, cut 'One? ... All four?' first, then 'Your arms? Just resting.'
-
-Edit: burn 'SPOT THE MYTHS' into every frame (never an IG sticker); myth cards stack and stay; cover and preview frames only from B6 to B9; never post B1-B5 alone as a Story. Zoom punch 1.3x on 'Fat. Melting.', 'squeezed clean', 'Guaranteed.', 'Just resting.', 'check first'; SFX 40%, 0.4 s after. Wide cut, no punch, at B6. Lying-face emoji on myth lines, check emoji on truths. Sources line at the bottom in B8-B9.
-
-Caption:
-Spot the myths. 3 are false. 1 has no proof. 🤥
-1. Sweat is not fat. Fat leaves mostly through your breath.
-2. No proof twists squeeze your liver clean. They help you turn.
-3. Stretching helps your range. For sports injuries, strength training helps more.
-4. Yoga is not only stretching. Chaturanga builds strength.
-How many did you believe? Comment the number 👇
-Come learn Ashtanga · Aybkk.net
-#aybkk #ashtanga #ashtangabangkok #yogamyths #boonchutanti
-
-Pinned first comment: Sources: 1. Meerman & Brown, BMJ 2014;349:g7257. 2. Radcliffe, Yoga Journal, 18 Jan 2022 (quoting H. Thind, UMass Lowell). 3. Lauersen et al., Br J Sports Med 2014;48(11):871. 4. Tran et al., Prev Cardiol 2001 (small study, 10 people). Shape inspired by Mohammed Qahtani's 2015 speech "The Power of Words".
-
-Waiting on Boonchu: film it; optional real count from M and the assistant (open quiz, told the truth straight away, no names); glasses yes/no; any Reel posted from the IG app since 4 Oct.
-
-## 2026-10-10 · plato-chat-next-ep-pitch
-
-# Hidden Stories of Ashtanga, next episode pitch (chat, 10 Oct 2026)
-
-Boonchu asked: "i want the myth to do hidden story of ashtanga next ep". Source: the checked myths on his joke page (bots/media/2026-10-10-myths).
-
-Judge ranking (4 lenses: mirror, money, practice, freshness): matsyendra 28, jambavan 25, gonika 25, guruji_no_age 22, akupara 21, tithonus 16, krishnamacharya_7000 16, bhusunda 16, marichi 15
-
-Waiting on Boonchu: myth pick, option pick, his own asana cue, Ep. number (Ep. 5 if nothing posted since Ep. 4).
-
-## The Fish Who Stayed to Listen (matsyendra)
-
-- Asana: Ardha Matsyendrasana, Intermediate series (after Bharadvajasana, before Eka Pada Sirsasana). Purna Matsyendrasana (Advanced A) is left out on purpose so the focus stays on one asana.
-- Habit: #6 Calm the mind (breath-led practice: stay still, listen to the breath)
-- Lane: Lane A (world: authority, depth). Route: Lane A · last posts: the stay-active carousels (open-door health theme; B5 'Never too late' scheduled 14:00 10 Oct) · next due: a Lane A Reel, so this is on route. Boonchu asked for this myth as the next Hidden Stories episode. Check the Postiz list before posting.
-- Mirror: "Ten years on the mat. This bind still don't come. So I pull harder."
-- Fail: You on the mat in Ardha Matsyendrasana. After years of practice the bind still does not come, so you pull, push, and move and move. The breath goes short [PENDING Boonchu cue, ask 1; 'the twist gets smaller' only if he confirms it]. You do more and hear less. The words stay 'you'. Footage: Boonchu acts it out (his OK, ask 5) or a puppet image. Never film a student failing.
-- Hero: The fish near the shore. It does not swim away and does not move. It listens with full attention and learns yoga. Shiva sprinkles water on it, it becomes Matsyendra ("Lord of the Fishes"), and then he spreads yoga. The viewer is the fish: the one who listens with full attention is the one who later passes yoga on.
-- Payoff: This closes the loop the hook opened ("Ten years. Still no bind... How?"): the fish had no arms and no legs, it did not move, it only listened with full attention, and it learned yoga. Spoken close: "You are not stuck. You are too busy pulling to listen." Then Boonchu's own cue [PENDING], one full breath in the twist on camera, "5 breaths" on screen, and cut on the exhale.
-- Reveal: (silent beat) The fish... only listen. Full attention. That's how it learn.
-- Plato's pick (workflow): Name-the-Feeling + Hero's Journey. The hook names the inner voice the judges said was missing ("ten years, still no bind, so I pull harder"), it stays in Lane A for 5 to 20 year practitioners, and the fish's road from listener to the one who teaches yoga points quietly at Mysore and the teacher program. It also moves away from today's Triple Hook + /story. It needs one true student story from Boonchu. Without one, run Five-Lever Hook (contrarian) + Hero's Journey.
-
-### Bedtime story lines
-- Long, long ago... Shiva, a great god, go to a quiet island. Nobody there.
-- Parvati, his wife, is with him.
-- He tell her the secrets of yoga.
-- Near the shore, one fish... hear everything.
-- It does not swim away. It does not move.
-- It just listen. Full attention.
-- Shiva look. He see... this fish, it already learn yoga.
-- He put a little water on the fish.
-- The fish become Matsyendra. 'Matsya'... means fish.
-- Then Matsyendra go out... and teach yoga to many people.
-
-### Options
-**Name-the-Feeling + Hero's Journey**
-
-Ten years. Still no bind. So you pull more... no?
-Okay. A fish. No arms, no legs.
-It learn yoga. How?
-
-On screen: Years of practice. Still no bind. A fish knows why.
-
-Body: The hook ends on 'How?'. Then 'Ardha Matsyendrasana. Ardha... means half.' Ordinary life and the call: story lines 1 to 4, stopping at 'hear everything'. Mirror: 'Like you. Same mat. Every morning.' Dark moment: cut to you pulling in the twist (footage is Boonchu acting it out or a puppet image, never a student). Mirror: 'You pull. Breath get short.' [PENDING Boonchu cue]. Then a draft joke by Plato that needs Boonchu's OK (skeleton 10): 'Good news: I still practise six days a week. Bad news: my spine only agree to twist on Tuesday.' Mirror: 'You do more... and hear less.' Silent beat. The test, held until now: the reveal_line (it stands in for story lines 5 and 6). Return with a gift: story lines 7 to 10, then the mirror 'The one who listen... later, the one who teach.' Then one true 2-sentence student story (required, ask 4), the close 'You are not stuck. You are too busy pulling to listen.', Boonchu's cue [PENDING], and one full breath on camera with '5 breaths' on screen, cut on the exhale. If there is no true student story, the pick becomes Five-Lever Hook (contrarian) + Hero's Journey, with the hook 'You don't get this bind by pulling more.' [PENDING Boonchu cue].
-
-Why: It opens on the feeling the judges said was missing (years in, still no bind, so you pull harder) and stays in Lane A for the 5 to 20 year practitioner. It follows this week's stay-active carousels (B5 'Never too late' scheduled 14:00 10 Oct; check it published in Postiz). The viewer walks the fish's road from quiet listener to the one who teaches yoga, which points quietly to Mysore and the teacher path without a pitch.
-
-**Joke skeleton 24 (Head vs mirror) as /hook pattern interrupt + Root and Wobble**
-
-In my head, in this twist... I am a statue.
-In the mirror... a twisted towel.
-(cut / card) Ardha Matsyendrasana. 'Ardha'... half. 'Matsya'... fish.
-
-On screen: In my head: a statue. In the mirror: a twisted towel.
-
-Body: The self-joke (skeleton 24, a draft by Plato that needs Boonchu's OK; the fish is never in the joke). Then a cut or card, then the true line and the root reveal ('Ardha... half. Matsya... fish.', with 'Lord of the Fishes' on the card only). The bedtime story runs up to 'hear everything'. Then name the stuck middle as a normal stage (pulling, breath short [PENDING Boonchu cue: where the middle really sits, e.g. arm almost past the knee]). Mirror line: 'You are not stuck. You are in the middle.' Silent beat, the reveal_line, story lines 7 to 10, Boonchu's cue [PENDING], and one full breath with '5 breaths' on screen.
-
-Why: The self-joke stops the thumb and gets comments (the Flexible-or-Stiff self-joke close drew its first comment within minutes). Naming the middle stage speaks straight to the 10-year practitioner who feels stuck. The joke stays on Boonchu only, and the fish stays out of it.
-
-**Vibe Samurai (flat statement, ladder of 3) + Gervais deadpan close**
-
-A fish learn yoga. It did not move. It only listen.
-B.K.S. Iyengar tell this old story in his book, Light on Yoga.
-And you? Years on the mat... still pulling, pulling.
-
-On screen: A fish learned yoga. It just listened.
-
-Body: Flat statement, then credit the source: Iyengar tells this old story (credit him for the story only, never for how the asana is done). Then a ladder of 3: the beginner who grabs the foot, the 10-year practitioner who forces the bind, and you, pulling harder every year. Silent beat, then the turn 'It isn't doing more. It's listening more.', the screenshot line 'The fish only listened. That was the lesson.', and a deadpan close on Boonchu talking too much (skeleton 21 line, a draft by Plato that needs his OK). Boonchu's cue [PENDING] still comes last. The pitch goes only in the caption.
-
-Why: This is the judges' strongest sound-off line. The ladder moves toward the viewer and ends on their own voice (pulling harder every year), and crediting Iyengar early labels it honestly as an old story he tells.
-
-### Five hooks
-- authority: Twenty years of Ashtanga. Six days a week since 2008. And the hero of this story... a fish.
-- contrarian: You don't get this bind by pulling more. [PENDING Boonchu cue: say it only if he agrees]
-- stakes: You can fight this twist for ten more years. Or stop... and listen, like the fish.
-- question: How does a fish learn yoga?
-- pattern interrupt (joke skeleton 21, The confession; the checked joke angle on Boonchu's talking): I'll be honest. Twenty years of practice... and I still cannot stay quiet for five breaths in this twist. (cut / card) Ardha Matsyendrasana. 'Ardha'... half. 'Matsya'... fish.
-
-### Ask Boonchu
-- Your own cue for Ardha Matsyendrasana: how you get the bind, where people force it (arm past the knee? hips lifting? breath going short? does the twist get smaller?), how many breaths, and the exact words you say in the room. Every line marked [PENDING Boonchu cue] (the fail, the contrarian hook, the stuck middle in option B, caption line 3) waits for this.
-- Do you tell this fish story to your son at bedtime? The series frame says you tell these myths, but please confirm this one before we say it on camera.
-- Do you have a real moment of your own in this twist, for example a time you pushed and it got worse, or a time it came when you stayed still? Only if it is true. Until you answer, nothing is said about your own bind, and the fail stays with 'you'.
-- Option A needs this: a real student (no name, no age) who found this twist by staying still instead of pulling, told in 2 true sentences. If there is none, Option A becomes Five-Lever Hook (contrarian) + Hero's Journey.
-- Who is on camera? The plan: you act out the fail and the dark moment (pulling, breath short), or we use a puppet image. We never show a student failing. A student who gave permission (class photo) appears only in the calm, still twist at the end. It is an Intermediate asana.
-- Episode number: you asked for this as the next ep. Has anything posted since Ep. 4 (Tittibhasana, posted by 3 Oct)? If not, and this is filmed before the Foolish Old Man / Supta Kurmasana script, this is Ep. 5.
-- Are you happy with these self-jokes? Plato drafted all of them, and every one is about you. Option A, skeleton 10: 'Good news: I still practise six days a week. Bad news: my spine only agree to twist on Tuesday.' Option B, skeleton 24: 'In my head, in this twist... I am a statue. In the mirror... a twisted towel.' The pattern-interrupt hook and Option C close, skeleton 21: 'I'll be honest. Twenty years of practice... and I still cannot stay quiet for five breaths in this twist.'
-- Which option do you pick: A (Name-the-Feeling + Hero's Journey), B (Joke 24 + Root and Wobble) or C (Vibe Samurai)? The full script comes after you pick.
-
-### Caption draft
-
-Years of practice. Still no bind. A fish knows why.
-Hidden Stories of Ashtanga · Ep. [N] (a legend, as told in Iyengar's Light on Yoga)
-Ardha Matsyendrasana: [Boonchu's cue, his words, light edit only]
-The fish did not do more. It listened more.
-Come learn Ashtanga
-Aybkk.net
-#aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #ardhamatsyendrasana #boonchutanti
-
-### Facts used
-- The fish story is a legend that B.K.S. Iyengar retells ('It is related that...') under Ardha Matsyendrasana I. It is not in the Hatha Yoga Pradipika. (B.K.S. Iyengar, Light on Yoga (George Allen & Unwin, 1966); wording checked in The Illustrated Light on Yoga, entry 55, p. 112 (archive.org copy), via ep_candidates.json key 'matsyendra'; same passage in the full-text copy at scratchpad fc3/loy.txt (Ardha Matsyendrasana I entry))
-- Shiva went to a lonely island (spoken: 'a quiet island. Nobody there.') and explained the mysteries (spoken: 'the secrets') of yoga to Parvati, his consort (spoken: 'his wife'). (Iyengar, The Illustrated Light on Yoga p. 112: 'once Lord Siva went to a lonely island and explained to his consort Parvati the mysteries of Yoga')
-- A fish near the shore heard everything with concentration and stayed still (motionless) while listening. (Iyengar, The Illustrated Light on Yoga p. 112: 'A fish near the shore heard everything with concentration and remained motionless while listening')
-- Shiva saw that the fish had learned yoga and sprinkled water on it (spoken: 'put a little water on the fish'). (Iyengar, The Illustrated Light on Yoga p. 112: 'Siva, realizing that the fish had learnt Yoga, sprinkled water upon it')
-- The fish became Matsyendra, 'Lord of the Fishes' (card only), and then spread the knowledge of yoga (spoken: 'teach yoga to many people'). (Iyengar, The Illustrated Light on Yoga p. 112: 'the fish gained divine form and became Matsyendra (Lord of the Fishes) and thereafter spread the knowledge of Yoga')
-- 'Ardha' means half; 'Matsya' means fish. (Iyengar, Light on Yoga, full-text copy (scratchpad fc3/loy.txt): Ardha Matsyendrasana I entry, 'Ardha means half'; Matsyasana entry, 'Matsya means a fish')
-- Ardha Matsyendrasana is in the Ashtanga Intermediate series, after Bharadvajasana and before Eka Pada Sirsasana. Purna Matsyendrasana is in Advanced A. (AshtangaYoga.info Intermediate sheet and the Robson chart, plus the AshtangaYoga.info third-series list, as checked in ep_candidates.json key 'matsyendra')
-- Boonchu started Ashtanga 20 years ago and has practised strictly six days a week since 2008. (plato.md standing order 2026-10-04 'BOONCHU'S NUMBERS' (confirmed by him); task context)
-- Boonchu tells these myths to his 5-year-old son as bedtime stories. (plato.md standing order 2026-09-28 and Life notes 2026-09-28; task context)
-- Ep. 4 (Tittibhasana) was filmed and edited on the night of 2 Oct and marked POSTED in the 3 Oct note. The exact post date is not recorded. (plato.md standing order 2026-10-03 and Stories used 2026-10-02)
-- The Flexible-or-Stiff Reel's self-joke close drew its first comment within minutes. (plato.md 'What worked' 2026-10-04 ('Quite an anti climax at the end' plus 4 laughing emojis))
-- Stay-active carousel B5 'Never too late' is scheduled for 14:00 10 Oct and is not yet marked PUBLISHED. (plato.md Stories used 2026-10-09 stay-active x5 (cmv0xfm1h01tvnp0ywwq0g6mp))
-
-### Risks and fixes
-- Less 'hidden': serious practitioners may know Iyengar's retelling. Lean on the name meaning (Matsya = fish, 'Lord of the Fishes' on the card) and the listening lesson. Label it plainly as a legend on a card ('A legend, as told by B.K.S. Iyengar in Light on Yoga') and in the caption. Credit Iyengar only for the story, never for how the asana is done (his Ardha Matsyendrasana I sits on the left foot, which is not the Ashtanga form).
-- Leave out: the version where the parents throw the baby into the sea, Feuerstein's 'sleepy spouse' line, and the Hatha Yoga Pradipika lines about destroying 'the most deadly diseases' and awakening Kundalini. Never say stillness or this twist keeps you young or heals anything.
-- Shiva and Parvati are deities, and Matsyendra is honoured as a siddha (worshipped in Nepal as Machhindranath). No joke goes near any of them or near the fish. The joke stays on Boonchu only. Pictures show no divine faces: Shiva as a carved wooden hand putting water on the fish, Parvati as a felt shawl seen from behind, and Matsyendra after the change as a glowing felt fish outline. Keep every Isle of Dogs handmade cue (stop-motion puppet film still in the style of Wes Anderson's Isle of Dogs, a handmade tabletop diorama, felt and wool puppets with glassy bead eyes, cut-felt waves, flat front-on camera, visible fibers).
-- 'No arms, no legs' is our framing, not part of the legend. Never add details the source does not give: how long the fish listened, what it felt, what Shiva said word for word, 'all', 'little', 'silent', 'never moved'.
-- The fix is a gap: there is no Boonchu cue for Ardha Matsyendrasana on file. Every [PENDING Boonchu cue] line (the fail's 'breath goes short', the contrarian hook, option B's stuck middle, caption line 3) stays unfilmed and unposted until he gives his own words. Do not post the caption with a placeholder.
-- Intermediate reaches fewer viewers than Primary. Open on the feeling (years in, still no bind), not the asana name, so Primary practitioners stay.
-- Lane: 'too old to learn' is a Lane B fear-buster ('I'm too old'). It is kept out of this Lane A Reel and saved for a Lane B Reel. Never state Boonchu's age.
-- Episode number: Boonchu asked for this as the next ep. Fill in Ep. 5 on post day only if nothing has posted since Ep. 4 and this is filmed before the Foolish Old Man / Supta Kurmasana script (that script then takes the next number).
-- The unfilmed Bharadvajasana script is also an Intermediate twist. If both get filmed, space them apart.
-- The mirror can turn intellectual. Keep the turn in the body (the pulling, the breath going short) so viewers feel 'that's me', not just 'good point'.
-- Keep the student-to-teacher hint quiet: no 180K program or price in the spoken video. The caption carries only 'Come learn Ashtanga / Aybkk.net'.
-- Footage: never film a student failing as the 'problem' shot (4 Oct lesson). The fail and dark moment show Boonchu acting it out or a puppet image. A student with permission appears only in the calm, still twist at the end.
-- The stakes hook ('Or stop... and listen, like the fish') says 'listen' at second 3. If Boonchu picks it, the reveal must lean on 'full attention', and the fish's stillness stays held until after the silent beat. Option C states the fish's listening up front on purpose (Vibe Samurai flat statement). The fix (Boonchu's cue) still comes last, after the silent beat.
-- FIXED: removed 'never moved / never move / without moving once' everywhere (title, hooks, options B and C, caption). Iyengar says only that the fish 'remained motionless while listening', and later it goes out to spread yoga. The title is now 'The Fish Who Stayed to Listen'. Check 2 gave this 5-word title; Check 1 had offered 'The Fish Who Stayed Still'.
-- FIXED: removed 'did nothing / do nothing' from the reveal, the payoff and option C. The fish 'heard everything with concentration', and 'do nothing' reads as 'don't practise'. The reveal is now 'The fish... only listen. Full attention. That's how it learn.' The payoff now reads 'it did not move, it only listened with full attention'.
-- FIXED: the authority hook now says 'Six days a week since 2008' (that is 18 years, not 20). Cut 'this twist still teach me something' because it is not on file. Cut 'little' because the source does not say it. The close is now 'And the hero of this story... a fish.' Check 2 had offered 'the best teacher in this story'; I changed it to 'hero' so the fish is never ranked above Shiva, the teacher in the story.
-- FIXED: lane mix. Took 'too old to learn' out of the mirror feeling, hook A, the on-screen text, the payoff, the caption and option C rung 3. Replaced it with the Lane A feeling 'years in, still no bind, so I pull harder'. The spoken close is now 'You are not stuck. You are too busy pulling to listen.' Option C rung 3 is now 'and you, pulling harder every year', and its hook line 3 is now 'still pulling, pulling' to match.
-- FIXED: reveal at the end. Hook A now ends on 'How?'. The story runs only to 'hear everything', then the dark moment. The fish's stillness and listening (story lines 5 and 6) is held until after the silent beat, where the reveal_line stands in for them.
-- FIXED: mirror rule part 2. Option A now has four short spoken mirror lines, one per beat: 'Like you. Same mat. Every morning.' / 'You pull. Breath get short.' / 'You do more... and hear less.' / 'The one who listen... later, the one who teach.'
-- FIXED: removed 'a fish on the floor of a boat' (a caught, dying fish; the fish as joke target; an invented claim about Boonchu's bind). Option B keeps skeleton 24 with the fish out of the joke ('a twisted towel'), drops 'Funny.', and puts a cut or card before the true line. The five_hooks pattern interrupt now uses the checked joke angle on Boonchu's talking, on Lane A skeleton 21 (The confession). I left out the fish half of that checked line ('A fish learn all of yoga... silent, not moving'): 'all' and 'silent' are not in the source, and it gives the answer at second 3. I also replaced 'carry the name' (a hard phrase) with the plain root line 'Ardha... half. Matsya... fish.'
-- FIXED: the fail field no longer says 'with Boonchu as the self-joke'. The failing bind is about 'you' only. Nothing is said about Boonchu's own bind until he answers ask 3.
-- FIXED: option A's joke is now labelled as a draft by Plato that needs Boonchu's OK. Dropped 'no arms, no legs, no tight hamstrings... I am a little jealous': the punch leaned on the fish's body, and hamstrings are not what limits this twist. It is replaced with skeleton 10 on Boonchu: 'Good news: I still practise six days a week. Bad news: my spine only agree to twist on Tuesday.'
-- FIXED: teaching claims written by Plato are now marked [PENDING Boonchu cue]: the fail's 'breath goes short' (kept; 'twist gets smaller' cut until he confirms), the contrarian hook (now 'You don't get this bind by pulling more.'), option B's 'arm almost past the knee', and caption line 3. The stakes hook is now '...Or stop... and listen, like the fish.', which no longer promises that stillness alone gets the bind.
-- FIXED: caption. 'Ep. 5' is now 'Ep. [N]'. Iyengar is credited as the teller ('a legend, as told in Iyengar's Light on Yoga'), not as the author. The caption is now 4 short lines. Line 3 is a placeholder for Boonchu's cue. Line 1 is now 'Years of practice. Still no bind. A fish knows why.' Line 4 is now 'The fish did not do more. It listened more.' (no 'too old', no 'without moving once').
-- FIXED: bedtime lines. Cut 'all' and 'little'. 'lonely island' is now 'quiet island. Nobody there.' 'sprinkle' is now 'put a little water'. 'spread yoga' is now 'teach yoga to many people'. 'Lord of the Fishes' moved to the card, and the spoken line is now 'Matsya... means fish'. 'He know... this fish learn yoga' is now 'Shiva look. He see... this fish, it already learn yoga.' Check 2 had offered 'it learn everything'; 'already learn yoga' keeps the past tense and stays on the source's 'had learnt Yoga'. 'Ardha... means half' is added at the first asana name.
-- FIXED: hero. Cut 'little'. 'listens long enough' is now 'listens with full attention'.
-- FIXED: Name-the-Feeling now requires one true 2-sentence student story (ask 4 is required). The fallback pick is Five-Lever Hook (contrarian) + Hero's Journey with 'You don't get this bind by pulling more.' [PENDING Boonchu cue].
-- FIXED: option B's why now says 'drew its first comment within minutes' (one comment is on record, not several). Option A's why and the pick now refer to 'this week's stay-active carousels (B5 Never too late scheduled 14:00 10 Oct; check it published in Postiz)', and 'proven' is dropped. Ask 6 now says 'posted by 3 Oct'.
-- FIXED: option C credits the source as 'B.K.S. Iyengar tell this old story in his book, Light on Yoga.' This combines 'credit the book' with 'story' instead of the hard word 'legend'. On-screen text is now 'A fish learned yoga. It just listened.' (Check 2; Check 1 had offered 'A fish learned yoga by staying still.'). The screenshot line is now 'The fish only listened. That was the lesson.' (Check 1). Check 2's 'The fish did not do more. It listened more.' became caption line 4 so the turn is not said twice in the video.
-- FIXED: habit is now '#6 Calm the mind (breath-led practice: stay still, listen to the breath)'. The 'quiet Mysore room' clause belongs to habit #9 and is dropped.
-- FIXED: 'five still breaths' on camera (about 25 s of near silence) is now one full breath on camera, '5 breaths' on screen, and a cut on the exhale.
-
-## The Bear Who Said Ninety (jambavan)
-
-- Asana: Hanumanasana, Advanced A (third series). The asana recalls the leap across the sea that comes soon after this scene (Sundara Kanda 1).
-- Habit: #9 Do it with others ('a quiet room of people who show up'; somebody next to you sees what you can't), landing on the core idea 'a teacher who notices'. No second habit: #2 was dropped because next to 'keep your ninety' it read as a promise that practice holds off ageing.
-- Lane: Route: Lane A · last 3 posts: stay-active carousels 3, 4, 5 (10 Oct; Lane B, with the new-student promo) · next due: Lane A is on route (the last 3 posts are all Lane B). By the plan dates, the Lane B Day 1 to Day 30 series starts 13 Oct. Note: this is the 5th Lane A script in a row (Arjuna, Vasishtha, frogs, dawn, this one), and the 9 and 10 Oct route lines said Lane B next. Lane B is due after 2 Lane A posts.
-- Mirror: "I used to do more. Now I do a little less. All I see is what I lost... maybe my best practice is behind me."
-- Fail: Everyone counts only their own jump. The eight leaders call out 10, 20 and up to 80. The oldest one can do 90, but 'by that much endeavour that task will be unaccomplished' (4-65-17). The quiet one sits alone and says nothing (4-66-2). The viewer's version: counting only the ten you lose.
-- Hero: Jambavan the bear, 'the oldest one among all of them' (4-65-10). First he appreciates the others (4-65-10). Then he says his ninety out loud, with no shame (4-65-13). Then he looks up from his own number to the quiet one and says 'Arise... leap over this vast ocean' (4-66-36). He is the hidden hero behind Hanuman's leap.
-- Payoff: Hanuman gets up and jumps the whole sea. Hanumanasana is named for Hanuman and remembers his leap. For the viewer: your ninety still counts (Jambavan's ninety is more than all eight before him), and while you only see the ten you lose, somebody next to you sees the ninety. That needs someone who sees you every morning: that is Mysore, a teacher plus a quiet room of people who show up (#9). It also points to the 180K program (learning to see a student) without a pitch. The practice landing is Boonchu's own Hanumanasana cue, then the last line flips the hook: 'You see the ten you lose. Somebody next to you see the ninety.'
-- Reveal: (after the silent beat, Hanuman's jump and the turn) Keep your ninety.
-- Plato's pick (workflow): Win/Loss Frame + Vibe Samurai (number ladder). Why: the 10-to-90 card is the strongest sound-off hold, and the hook is the viewer's own inner voice. Win/Loss Frame has never been a pick (it was only offered as an option on 4 Oct). Vibe Samurai's ladder was last used 8 Oct (Two Stars), so it repeats within 3 days, but not 3 days in a row. /story, which was in every pick from 7 to 10 Oct, gets a rest, and the pick also avoids today's Triple Hook.
-
-### Bedtime story lines
-- Long time ago... many monkeys stand at the edge of the sea. They have to go to the other side.
-- One hundred yojana. Yojana... old Indian way to say how far. One hundred... very, very far.
-- One monkey say: I can jump ten. Next one: twenty. Thirty... forty... all the way to eighty.
-- (to camera) Everybody count only their own jump. Same on the mat.
-- Then Jambavan speak. He is a bear. The oldest one of all.
-- He say: when I was young, nobody strong like me. Now... I can do ninety.
-- Ninety. More than everybody before him. But not one hundred... (to camera) Not enough. You know this feeling.
-- Then he look at Hanuman, the monkey god. Sitting alone. Quiet. 'Hanuman... why you say nothing?'
-- (to camera) Sometimes the quiet one in the room... is you.
-- 'I am old now. But you... you have everything. Get up. Jump over this sea.'
-
-### Options
-**Win/Loss Frame + Vibe Samurai (number ladder)**
-
-Your practice used to be a hundred. Now... ninety.
-And all you see is the ten you lose.
-In an old Indian story, the Ramayana, the oldest one say his number out loud. Ninety.
-
-On screen: Your practice used to be 100. Now 90.
-
-Body: A flat line, then the source as small on-screen text only ('Valmiki Ramayana, Book 4', never spoken). Then the bedtime lines, one mirror line per beat. The numbers beat (story lines 3 to 7) is spoken as 3 rungs while the card counts 10 to 80, then 90 in gold, then a silent '?': 'The younger ones: ten... twenty... up to eighty.' / 'The oldest one, Jambavan the bear: ninety. More than all eight before him.' / 'And you, on your mat: you count only the ten you lose.' The third rung is that beat's mirror line. Lines 8 to 10 end on 'Get up. Jump over this sea.' (silent beat) 'And Hanuman get up... and jump the whole sea.' Turn: 'It's not the ten he's missing. It's Hanuman he see.' Reveal: 'Keep your ninety.' Then [your own Hanumanasana cue, waiting for you]. Close, the flip of the hook: 'You see the ten you lose. Somebody next to you see the ninety.' No promo and no price, spoken or in the caption.
-
-Why: The numbers are the story, so the 10-to-90 card works like a progress bar: people stay to see it finish, even with sound off. 'Used to be 100, now 90' is the viewer's own inner voice in one line, and it stays the viewer's (Jambavan only says his ninety). It is on the theme of this week's stay-active carousels (fit when old, never too late).
-
-**Fork-First Story + Hero's Journey (5 quick steps)**
-
-You have the most years on the mat. Everybody look at you.
-The sea is one hundred. You can do ninety.
-What you say?
-
-On screen: Sea: 100. You: 90. What do you say?
-
-Body: A 1 s pause, then the answer as a quick Hero's Journey: the monkeys at the sea (ordinary life), one hundred yojana (the call), 10 to 80 (the test), his ninety is not enough and Hanuman sits quiet (the dark moment), then he appreciates them all, says his ninety with no shame, and tells the quiet one 'Get up. Jump over this sea.' (the gift). One mirror line per beat. Then the silent beat, Hanuman's jump, the turn, 'Keep your ninety.', your Hanumanasana cue and the closing flip.
-
-Why: It puts a 10 to 20-year practitioner in the shoes of the one with the most years on the mat at the moment of choice, without calling anyone old. His answer (say your number, then see the other one) is a Mysore teacher's job, so it points to the 180K program with no pitch. Hero's Journey (last used 4 Oct) replaces /story, which was in every pick from 7 to 10 Oct. Flag: Fork-First was also the hook tool of 'Go Small' (2 Oct), on the same asana.
-
-**Joke skeleton 10 (Good news, bad news) + Honest Flaw, body Hero's Journey (the oldest one as the hidden mentor)**
-
-Good news: twenty years, still on the mat six days a week.
-Bad news: small letters, low light... I need glasses. (glasses on)
-Everybody lose something. In an old Indian story, the Ramayana, the oldest one say it out loud.
-
-On screen: Good news: 6 days a week. Bad news: glasses.
-
-Body: The joke, one true line, then the Hero's Journey in 5 quick steps: the sea, the call, the ladder 10 to 90, Hanuman's silence, and the oldest one's 'Get up. Jump.' as the mentor's gift. One mirror line per beat. Then the silent beat, Hanuman's jump, the turn, 'Keep your ninety.', your Hanumanasana cue and the closing flip.
-
-Why: Boonchu owns the loss first, with a true fact and a laugh, so 'losing something' lands on him and never on the viewer. The self-joke close on the 4 Oct Flexible-or-Stiff Reel drew the first comment within minutes (plato.md What worked; that was a joke at the end, not in the hook). The glasses are also a callback to Ep. 1 for followers.
-
-### Five hooks
-- Authority: An old Indian story, the Ramayana. Before the big jump... the oldest one say his number.
-- Contrarian: People say: when you get older, stop counting. In an old Indian story, the Ramayana, the oldest one count out loud. Ninety. More than all eight before him.
-- Stakes: Count only the ten you lose... and one morning you stop coming to the mat.
-- Question: Ten. Twenty. Thirty... eighty. Ninety. So who jump the sea?
-- Pattern interrupt (joke skeleton 10: Good news, bad news): Good news: twenty years, still on the mat six days a week. Bad news: small letters... glasses. (glasses on) Everybody lose something. In an old Indian story, the Ramayana, the oldest one say it out loud.
-
-### Ask Boonchu
-- Your own Hanumanasana cue, in your words: what you tell a student, and what you look for that they cannot see themselves. The practice landing and caption line 3 wait for this, and Plato will not write one for you.
-- Your words on what you watch for when you walk a Mysore room, so the closing line 'Somebody next to you see the ninety' is your voice, not Plato's.
-- Your real 'ninety': is there something your body does a little less now than before? Use it only if you want to say it. If not, we use only the true reading-glasses line. We will never use the '10 cm lost from Hanumanasana' line in the research note, because it is invented.
-- Your age on camera: 52, 53 or 54? (Telegram says 52, the 28 Sep note says 53, the joke page says 54.) Until you answer, the joke says 'twenty years, still on the mat six days a week' and gives no age.
-- Is it OK to use the reading glasses again (they were in Ep. 1) as the skeleton 10 joke and a series callback?
-- Has anything posted since Ep. 4 (3 Oct)? The Foolish Old Man / Supta Kurmasana script was given Ep. 5 on 3 Oct, and plato.md records no filming or posting of it. Whichever one you film and post first takes Ep. 5. The caption says 'Ep. N' until then.
-- This would be a third Hanuman script in 10 days, and a second Hanumanasana script after 'Go Small' (Surasa). If you film this one, should 'Go Small' be dropped or moved to another asana?
-- Who shows Hanumanasana on camera: you, or a student? A student needs to give a written OK and is never named.
-- Promo: this caption follows the Lane A format, so it has no promo. The 9 and 10 Oct scripts carried the promo in EN/TH. If you want it here too, add this before 'Aybkk.net', EN/TH only, never Chinese: 'New students: buy 1, get 1 free on 1, 2 or 3 months, till 11 Nov. Comment aybkk 👇'
-
-### Caption draft
-
-Your practice used to be 100. Now 90.
-Hidden Stories of Ashtanga, Ep. N
-Hanumanasana remembers Hanuman's leap: [Boonchu's one-line point, in his words]
-Keep your ninety. Someone next to you can see it.
-Come learn Ashtanga
-Aybkk.net
-#aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #hanumanasana #boonchutanti
-
-### Facts used
-- The eight leaders say how far they can jump: 10, 20, 30, 40, 50, 60, 70 and 80 yojanas (Gaja, Gavaksha, Sharabha, Rishabha, Gandhamadana, Mainda, Dvivida, Sushena) (Valmiki Ramayana, Kishkindha Kanda, Sarga 65 (4-65-3 onward), trans. Desiraju Hanumanta Rao, valmikiramayan.net (2003, revised 2005))
-- The sea is a hundred yojanas wide; a yojana is an old unit of distance (Valmiki Ramayana 4-65-19 (the number is said by Angada, who is left out); checked candidate note)
-- Jambavan is 'the oldest one among all of them', and first appreciates the others for their numbers; he is a bear (4-65-10 (oldest; 'appreciating them'); bear: translator's note at 4-65-18 ('Though Jambavanta is a bear') and 4-66-38, valmikiramayan.net (both pages re-read 10 Oct 2026))
-- 'My energy in youth was unmatchable and unsurpassable' (his own words about himself; 'old and decrepit' is never spoken about the viewer) (Valmiki Ramayana 4-65-16)
-- He gives no number for his youth: his capability 'was not definitely limited only thereunto'. Used only to block the invented '100 then 90' line for Jambavan; '100 to 90' is only ever the viewer's (Valmiki Ramayana 4-65-14 (re-read 10 Oct 2026))
-- 'We can go up to ninety yojana-s, undoubtedly' (Valmiki Ramayana 4-65-13)
-- Ninety is not enough: 'by that much endeavour that task will be unaccomplished' (Valmiki Ramayana 4-65-17)
-- Hanuman sits quiet and alone: 'why do not you mumble something, why do you resort to a calmly loneliness' (Valmiki Ramayana, Kishkindha Kanda 4-66-2)
-- 'I am now aged and my valiance is completely lessened ... you alone are endowed with all endowments among us' (Valmiki Ramayana 4-66-34)
-- 'Arise, oh, lion-like monkey, leap over this vast ocean' (Valmiki Ramayana 4-66-36)
-- Angada says he can vault the hundred yojanas but is not sure he can come back. This is used only to block a wrong line, never in the script (Valmiki Ramayana 4-65-19, Sarga 65 page re-read 10 Oct 2026)
-- Hanumanasana is in Advanced A (third series); it is dedicated to Hanuman and remembers his leaps (Placement: AshtangaYoga.info 3rd series list + Boonchu 30 Sep (plato.md). Leap link: B.K.S. Iyengar, Light on Yoga (1966), no. 169: 'dedicated to Hanuman and commemorates his fabulous leaps'.)
-- The leap itself comes soon after this scene, in Sundara Kanda 1 (Kishkindha Kanda Sarga 67 comes between) (Valmiki Ramayana, Sundara Kanda 1 (also cited for the Surasa scene in plato.md, 2 Oct 'Go Small'); check report 10 Oct)
-- Boonchu: 20 years of Ashtanga, six days a week since 2008, 14 years teaching in Bangkok, needs reading glasses for close reading in low light. His age is not said on camera until he confirms it (plato.md 4 Oct standing orders (confirmed by him) and 28 Sep life note; age clash in plato.md Stories used, 10 Oct (Telegram 52, notes 53, joke page 54))
-- 'We cannot see ourselves' lands with experienced viewers (plato.md 'What worked': practitioner comment on the 4 Oct adjustment Reel)
-- The self-joke close on the 4 Oct Flexible-or-Stiff Reel drew the first comment within minutes (plato.md 'What worked', 4 Oct)
-- This week's five stay-active carousels were on the theme fit when old, never too late (no likes or comments are recorded, so 'most-loved' is not claimed) (plato.md Stories used, 9 Oct stay-active x5)
-- Tool rotation: Vibe Samurai ladder last picked 8 Oct; /story in every pick 7 to 10 Oct; Fork-First picked 2 Oct ('Go Small', Hanumanasana); Hero's Journey picked 4 Oct; Win/Loss Frame only offered as an option on 4 Oct, never picked (plato.md Stories used + 'Toolkit pick' lines in bots/posts/2026-10-02 to 2026-10-10 (checked 10 Oct))
-
-### Risks and fixes
-- FACT TRAP: in 4-65-19 Angada says he CAN vault the hundred yojanas (he is just not sure he can come back). So we must never say Jambavan's 90 is 'the farthest jump in the room' or that 'nobody could do 100'. The only true line is 'more than all eight before him'.
-- 'The old one steps aside for the young' would confirm 'too old'. The reveal talks to the viewer ('Keep your ninety'), and Jambavan is the one who makes the leap happen, not one who quits. 'Old and decrepit' stays out of the spoken lines. 'I am old now' is only his own line about himself, and no student is ever called old. Option 2 now says 'the most years on the mat', never 'you are the oldest one'.
-- Freshness: this is the third Hanuman script in 10 days (after 'Go Small' with Surasa and Bhima's tail; plato.md records no filming or posting of either). It is the second Hanumanasana script, and the leap is the same one where Surasa appears. The sea also comes back after Ep. 4. To soften this, the hero is Jambavan, Hanuman stays silent until the last line, and the hook avoids the 'stuck split' line from 'Go Small'.
-- Hanumanasana is in Advanced A, so many viewers aged 40 to 60 may feel 'not for me'. The practice point is 'seeing what you can't see yourself', to be filled from Boonchu's answer, never 'advanced only', and the brand stays welcoming.
-- Purists say 'the teachers never needed myths', and Hanumanasana already carries a known story (Iyengar ties it to Hanuman's leaps). The landing must be Boonchu's own Hanumanasana cue, so the full script waits for it. Caption line 3 is a placeholder for his words.
-- Content safety: leave out Angada (a prince), Sugriva (a king), why they cross the sea (Sita and Ravana), the translator's 'fear of Ravana' note, Emperor Bali (4-65-15), and Hanuman's birth story and curse (Sarga 66). 'King of bears' (4-66-38) is a citation only, never spoken. The bedtime 'why' stays only 'they have to go to the other side'.
-- Never use the research note's joke about '10 cm lost from Boonchu's Hanumanasana' (it is invented). Skeleton 10 uses only the true reading-glasses fact, needs his OK because the glasses were already in Ep. 1, and says no age until he confirms it.
-- No medical claims: never say Hanumanasana keeps you young or is safe at any age. 'Keep your ninety' is about practice, not a health promise. Habit #2 was dropped for this reason.
-- Hanuman is a deity, so show him with respect and never as a comic image. Image notes: Hanuman shown from behind, a carved wooden figure sitting on a cut-felt rock, no puppet face; Jambavan as a felt bear puppet; every handmade Isle of Dogs cue kept.
-- Ep. number: the caption says 'Ep. N'. N = last posted + 1, set when filmed: Ep. 5 if Foolish Old Man is still unposted and this one posts first.
-- CONFLICT (promo): checker 1 asked to add the promo line before 'Aybkk.net'; checker 2 asked for no promo in a Lane A caption. Kept the Lane A caption format from the brief (no promo), removed 'The promo stays in the caption' from Option 1, and put the exact promo line in ask_boonchu for Boonchu to add to EN/TH only if he wants it (never Chinese).
-- MERGED (route): checker 1 said Lane A is on route; checker 2 said next due is Lane B (Day 1 to Day 30 from 13 Oct). The route line now says both: Lane A is on route now by the mix rule, and the Lane B Day 1 to Day 30 series starts 13 Oct by the plan dates.
-- FIXED: Jambavan no longer says '100 then 90' or 'lost ten'. The hook and on-screen text say 'Your practice used to be 100. Now 90.' (checker 2), so the 100 is clearly the viewer's. Checker 1's on-screen 'Used to do more. Now 90.' was not used: with the sound off, 'Now 90' reads as an age. Jambavan only says his number, ninety (4-65-13).
-- FIXED: turn line merged from both checkers: 'It's not the ten he's missing. It's Hanuman he see.' (the ten is how far short of the sea he is, not ten lost to age).
-- FIXED: 'Ramayana' is explained as 'an old Indian story' in every spoken hook; 'Valmiki Ramayana, Book 4' is on screen only. The Authority hook no longer says he 'stand up' (not in Sarga 65).
-- FIXED: Contrarian hook sets no age against the myth (no 'after forty', no 'go down'). The Stakes hook no longer uses the sea metaphor at second 0.
-- FIXED: 'fifty-two' became 'twenty years, still on the mat six days a week'. 'Everybody lose a little' became 'Everybody lose something' (4-66-34 says 'completely lessened').
-- FIXED: one mirror line after each story beat (MIRROR RULE 2). Bedtime line 3 became 'old Indian way to say how far' and line 6 became 'nobody strong like me'. To stay at 10 lines, 'why you say nothing?' joins the 'look at Hanuman' line, and the second mirror sits on the 'not one hundred' line.
-- FIXED: reveal order. Story, then 'Get up. Jump over this sea.', silent beat, Hanuman's jump, the turn, 'Keep your ninety.', Boonchu's cue, then the closing flip. 'Let somebody see your hundred' is gone (it made the viewer Hanuman).
-- FIXED: Vibe Samurai ladder is 3 spoken rungs ending on 'you'. Checker 2's 'The young ones' is written 'The younger ones', because the text only says Jambavan is the oldest. Rung 2 also names him and keeps the one true comparison.
-- FIXED: Option 2 is no longer Fork-First + /story (the 'Go Small' combo, and /story ran 7 to 10 Oct). The body is now Hero's Journey, and the shared Fork-First hook tool is flagged.
-- FIXED: the leap link is now cited to Iyengar, Light on Yoga no. 169. 'Hanumanasana IS that leap', 'the most-told leap in yoga' and 'right after this scene' are removed everywhere, including the risks.
-- FIXED: caption says 'Ep. N'. Line 3 is one line with a placeholder for Boonchu's point. The Plato-made 'back leg' cue is removed from the caption and the risks.
-- FIXED: plato_pick reason corrected (Vibe Samurai was used 8 Oct). 'Most-loved theme' and 'fastest comments' are now worded to match plato.md.
-- FIXED: bear source corrected (translator's note at 4-65-18 and 4-66-38, not 4-65-10), and 'praises' became 'appreciates' to match 4-65-10. The #9 gloss now follows direction.md, and #2 is deleted. Route line added. 'Never filmed' became 'no filming or posting recorded in plato.md'.
-
-## 2026-10-10 · machiavelli
-
-Money today: set the course prices. Deadline is 19:00 tonight.
-Course prices: decision needed in team chat by 19:00 today, Sat 10 Oct (0 days). Default B: sales open moves to Tue 27 Oct.
-Mysore Reel: reply A (post Mon 12 Oct as drafted) or B (move to Wed 14 Oct) in ✍️ Plato chat by 19:00 Sun 11 Oct (1 day). No answer means B.
-Countdowns: Letter #2 Mon 12 Oct: 2 days. Course sales open Tue 20 Oct: 10 days.
-Reel from Plato: a basketball player named best player of the year for the 5th time; Aruna, half a body, still drives the sun every dawn. Asana: Surya Namaskara A, 5 times. Hook: "This week, a player won best of the year. Fifth time. Nobody ever did that." Plato waits on Boonchu's Surya A cue.
-Score: wins this week: none reported. 180K leads pasted: 0 in 13 days. Letter #1 (due Mon 5 Oct): not reported sent. No reminders due.
-Carne and Plato both posted today. Inbox 07:08: 0 new.
-13:08 check-in: course prices still waiting (due 19:00 today), Mysore Reel still waiting (1 day). Inbox: 1 new, 1 hot.
-19:08 check-in: course prices default B applied, sales open now Tue 27 Oct. Mysore Reel still waiting (1 day). Inbox: 3 new, 1 hot.
-
-## 2026-10-10 · carnegie
-
-No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
-
-## 2026-10-10 · carnegie-research-men-and-yoga
-
-# Why fewer men practise yoga (and Ashtanga)
-
-FACT = seen in a source. GUESS = my inference.
-
-## 1. The answer
-
-Your "not educated" guess is the weak one: no study shows less schooling keeps men away. What does: the idea that yoga is for women, a "men go to the gym" mindset, and fear of looking stiff next to flexible women (small studies only). The biggest reason you missed: many men are just not interested and pick the gym or a sport.
-
-## 2. Your 4 guesses
-
-**"For girls": TRUE** (strong in the West, little data for Asia).
-- FACT: 21 Australian men who don't do yoga named two barriers: they prefer other exercise, and yoga is seen as feminine, plus "bloke" culture ([Cagas 2020](https://www.qigonginstitute.org/abstract-print/16156)).
-- FACT: "Men go to the gym; girls go to the yoga class. That's how things go." (James, 28, now practises; [Cagas 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11580054/), 11 men, 4 women.)
-
-**"Afraid of stretching": HALF TRUE.** They fear looking stiff, not the stretch.
-- FACT: UK adults not interested in yoga most often said "not flexible enough", women too ([YouGov 2015](https://yougov.com/en-gb/articles/11434-yoga-reduces-stress)). So it cannot explain the gap alone.
-- FACT: Men compared themselves "to the more flexible women" and felt incompetent (Cagas 2024). A Russian teacher hears: "When I get more flexible, then I'll come" ([Lifehacker 2020](https://lifehacker.ru/zanyatiya-jogoj-dlya-muzhchin/)).
-
-**"Don't know / not educated": "don't know" TRUE, "not educated" NOT SUPPORTED.**
-- FACT: "Most male participants did not realize the existence of many different yoga styles" (Cagas 2024).
-- FACT: US college graduates do more yoga, but that is everyone, not split by sex ([Birdee 2008](https://pmc.ncbi.nlm.nih.gov/articles/PMC2533368/), n=31,044). GUESS: men have wrong ideas, not less school.
-
-**"Mentality": TRUE.**
-- FACT: 155 Canadian men, mostly students: the more they held to traditional male norms, the less they planned to try yoga ([Motzkus thesis 2022](https://uwindsor.scholaris.ca/server/api/core/bitstreams/4f7eb6d7-af7f-4fa9-9df8-78bcf2d2c731/content)).
-- FACT: "Like you wanna go in there, be good at it straight away" (Oliver, 36, Cagas 2024).
-
-## 3. Reasons you did not list (strongest first)
-
-1. **No interest.** FACT: 351 US students. Non-practising men: no interest 47%, prefer other exercise 22%, no time 20%. Women's top reason: no time, 47% ([Garnsey 2025](https://doi.org/10.1016/j.jbmt.2025.01.055); average age 19). GUESS: "no interest" is often the polite form of "it's for girls".
-2. **Nobody brought them.** FACT: men started because a partner, friend, family member or physio pushed them. The paper is titled "Men Need Role Models" (Cagas 2024).
-3. **The only man in the room.** FACT: "I didn't try yoga earlier as I didn't feel comfortable going to yoga as the only man in the studio." (Liam, 30, Cagas 2024). In China, a gym man in a yoga class "需要很大的勇气" (needs a lot of courage) ([36Kr 2021](https://www.36kr.com/p/1398510405483529)).
-
-## 4. Country differences
-
-| Where | What we know | Strength |
-|---|---|---|
-| West | US 2022: 23.3% of women vs 10.3% of men ([CDC 2024](https://www.cdc.gov/nchs/products/databriefs/db501.htm)). No marked change in 20 years ([Davies 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11217305/), n=134,959). | Strong |
-| China | Women 94.9% of users ([iResearch 2018](https://www.jiemian.com/article/2438265.html)). Men 13.6% of fans, 12.2% of teachers; they like strength-led classes like Rocket yoga (36Kr 2021). | Weak |
-| Russia | One St Petersburg survey: 70% women, 30% men ([Snob blog 2025](https://snob.ru/profile/414702/blog/3103824/), 1,000+). A teacher blames "stereotypes that it's a girls' activity" (Lifehacker 2020). | Very weak |
-| Thailand | No data found. Editors say men "might feel a bit shy and not know how to start" ([Sanook Men 2024](https://www.sanook.com/men/88937/)). | None |
-| India | Men practise as much or more: 4.7% vs 2.3% ([NNMS 2020](https://www.ncdirindia.org/nnms/resources/Chapter_4_6.pdf), about 12,000 households); 11.9% vs 11.7% ([Mishra 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC7168227/), n=112,735). GUESS: "for girls" is learned culture, not yoga. | Good |
-
-Ashtanga only: FACT: 17.5% men (29 of 166, a self-selected online survey; [Ramirez-Duran 2022](https://internationaljournalofwellbeing.org/index.php/ijow/article/download/2027/1065/8541)). Too small to compare with national numbers, but there is no sign Ashtanga draws more men.
-
-Ashtanga history: FACT: in 1930s Mysore, young men scorned yoga and preferred the "more fashionable and 'manly'" bodybuilding gym of K.V. Iyer, next to Krishnamacharya's yogashala ([Wellcome Collection 2018](https://wellcomecollection.org/stories/yoga-adapts-to-time-and-place), citing Singleton, *Yoga Body*, 2010). The palace yogashala trained boys (weak source: [Bhavan's Journal 2024](https://esamskriti.com/e/History/Indian-History/How-MAHARAJA-of-Mysore-support-to-T-Krishnamacharya-led-to-the-REVIVAL-of-Modern-Day-YOGA---1.aspx)). So the doubt was never "it's for girls" back then. It was "it's not as manly as the gym". Same fight, 90 years old.
-
-## 5. What this means for money
-
-**Lane B (Bangkok open door): worth a small test.**
-- FACT: men are about 30% of US yoga users (Davies 2024). GUESS: stiff men are a group few studios talk to.
-- Count your Rezerv bookings by gender, and who stops in month 1. No other Bangkok data exists.
-- Try an occasional men's intro class. The 2024 study says regular ones "may not be necessary". A Danish centre had 2 men in a mixed class, 25 in a men-only one ([Copenhagen Post 2016](https://cphpost.dk/2016-10-21/news/men-only-yoga-classes-a-hit-in-denmark/), one story).
-- Use "bring him along" invites. Men come when someone pushes.
-
-**180K: gender barely matters. Don't chase men here.**
-- GUESS: these barriers hit before a man starts. Your buyer started years ago. One small online survey found 17.5% men among regular Ashtanga practitioners, so most buyers are likely women, but that sample is too small to be sure. Sell depth, personal attention and getting unstuck to everyone.
-- Helps both: FACT: only 12.2% of China's yoga teachers are men (2021). GUESS: a visible male teacher is rare and worth showing.
-
-## 6. Value equation (Hormozi)
-
-- **Dream outcome:** a body that moves without pain and keeps up with his sport. ("I didn't go for relaxation, for example." Jack, 40, Cagas 2024.)
-- **Doubt:** "Too stiff, only man." Show stiff beginners and other men.
-- **Time:** "When will I feel it?" Ask for a few sessions, not one (Cagas 2024).
-- **Effort:** early mornings, a set sequence, flexible women around him. Shrink it: a guided first class, a friend beside him.
-
-## 7. Inversion: how this could hurt AYBKK
-
-- **Gym-bro tone loses the women.** GUESS, but women are the large majority in every source outside India (FACT). The 4 women in the 2024 study warned against "losing the true message and values of yoga".
-- **"Manly yoga" gimmicks die.** FACT: broga.com is now a domain-for-sale page (checked 10 Oct 2026). One opinion piece said "broga" makes masculinity look "so fragile" ([UMSU 2015](https://umsu.unimelb.edu.au/news/article/7797/2015-02-23-the-trouble-with-broga)).
-- **Selling challenge, then he gets stuck.** GUESS: a man who wants to be good straight away meets an asana he can't do yet, feels embarrassed, and quits. Always pair "hard work" with "stiff is normal".
-
-## 8. Three content ideas
-
-1. **Lane B: "Stiff is the start."** A stiff man's first week, filmed honestly. Men think yoga "primarily requires flexibility"; that idea "often dissipated" once they tried ([UP 2026](https://ovpaa.up.edu.ph/?p=7668)).
-   Hook: "Can't touch your toes? That's not a reason to wait. It's the reason to start."
-2. **Lane B: "Who brought you?"** A man and the partner or friend who pushed him in, one line each about week one.
-   Hook: "Most men don't find yoga. Someone brings them."
-3. **China workshops: "Yoga for your other training."** Ashtanga as support for lifting, running or fighting; breath and sweat, no chanting. Men score higher on yoga as support for another sport (2.74 vs 2.31 of 5, [Cagas 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8776006/)).
-   Hook: "你会撸铁，会跑步。不用手扶，你能盘腿坐下吗？" (You lift. You run. Can you sit cross-legged without your hands?)
-
-## 9. Sources
-
-- Wellcome Collection, 2018 (citing Singleton 2010): https://wellcomecollection.org/stories/yoga-adapts-to-time-and-place
-- Birdee, J Gen Intern Med, 2008: https://pmc.ncbi.nlm.nih.gov/articles/PMC2533368/
-- Cagas, Complement Ther Clin Pract, 2020: https://www.qigonginstitute.org/abstract-print/16156
-- Cagas, IJERPH, 2022: https://pmc.ncbi.nlm.nih.gov/articles/PMC8776006/
-- Cagas, Am J Men's Health, 2024: https://pmc.ncbi.nlm.nih.gov/articles/PMC11580054/
-- CDC NCHS, 2024: https://www.cdc.gov/nchs/products/databriefs/db501.htm
-- Copenhagen Post, 2016: https://cphpost.dk/2016-10-21/news/men-only-yoga-classes-a-hit-in-denmark/
-- Davies, Sci Rep, 2024: https://pmc.ncbi.nlm.nih.gov/articles/PMC11217305/
-- Garnsey, J Bodyw Mov Ther, 2025: https://doi.org/10.1016/j.jbmt.2025.01.055
-- iResearch via Jiemian, 2018: https://www.jiemian.com/article/2438265.html
-- Lifehacker.ru, 2020: https://lifehacker.ru/zanyatiya-jogoj-dlya-muzhchin/
-- Mishra, Medicines, 2020: https://pmc.ncbi.nlm.nih.gov/articles/PMC7168227/
-- Motzkus, Windsor thesis, 2022: https://uwindsor.scholaris.ca/server/api/core/bitstreams/4f7eb6d7-af7f-4fa9-9df8-78bcf2d2c731/content
-- NNMS (ICMR-NCDIR), 2020: https://www.ncdirindia.org/nnms/resources/Chapter_4_6.pdf
-- Ramirez-Duran, Int J Wellbeing, 2022: https://internationaljournalofwellbeing.org/index.php/ijow/article/download/2027/1065/8541
-- Sanook Men, 2024: https://www.sanook.com/men/88937/
-- Snob.ru blog, 2025: https://snob.ru/profile/414702/blog/3103824/
-- 36Kr / GymSquare, 2021: https://www.36kr.com/p/1398510405483529
-- UMSU, 2015: https://umsu.unimelb.edu.au/news/article/7797/2015-02-23-the-trouble-with-broga
-- UP OVPAA, 2026: https://ovpaa.up.edu.ph/?p=7668
-- YouGov UK, 2015: https://yougov.com/en-gb/articles/11434-yoga-reduces-stress
-
-## 2026-10-09 · plato
-
-Trigger: ScienceDaily 8 Oct: mice did strength training for 7 days. Their weight stayed the same, but inside the fat cells got smaller.
-Story: the Frog Hymn (Rig Veda 7.103). The frogs keep quiet for a whole year, like people keeping a vow, then the rain comes and they all sing. Asana: Bhekasana (frog). Habit #1.
-Hook: "Scientists trained mice for 7 days. The scale? Same." Lane A story, Lane B door (the "it's not working" fear), promo in EN/TH caption.
-Full package: posts/2026-10-09-plato-frogs-quiet-year.md. Waiting on Boonchu's own Bhekasana cue.
-
-## 2026-10-09 · plato-frogs-quiet-year
-
-# Plato · 9 Oct 2026 · daily Reel package
-Hidden Stories of Ashtanga (no Ep. number until filmed; last posted Ep. 4)
-"The Frogs Who Kept Quiet for a Year"
-
-Route: Lane A story with a Lane B door (the fear "I practise and nothing changes") · last 3: Vasishtha script (A, not filmed), Arjuna script (A, not filmed), doves script (A, not filmed) · next due: Lane B. The hook and the turn speak to beginners, so EN/TH captions carry the promo. Chinese stays Lane A (no promo).
-Habit #1 Track everything (track the right thing: count your mornings, not the mirror). Also #2 Get stronger.
-
-Trigger note: no unused life note, no @Plato request. News checked: UNICAMP (Brazil) study in Life Sciences, on ScienceDaily 8 Oct 2026 (via FAPESP). Obese mice did 7 strength sessions. Body weight did NOT change. But the fat around the gut went down and the fat cells got smaller. It is a mouse study (male mice only, one fat area). The script says "mice" and never says it works the same in people.
-
-## The link (4 lines)
-- Trigger: scientists trained mice for 7 days. The scale did not move. Inside, the fat cells were already getting smaller.
-- Story: in the Rig Veda's Frog Hymn, the frogs lie quiet for a whole year "like Brahmans who fulfil their vows". When the rain comes, they all lift their voice together (Rig Veda 7.103.1).
-- Behavior: the quiet season is not empty. It is a promise kept while nothing shows.
-- Asana: Bhekasana (frog, Intermediate series). For months the feet do not come down. Same, same, same. The knees and thighs learn quietly. It trains keeping the promise before you see proof.
-
-Toolkit pick: Myth-Kill ("nothing shows = nothing happens". No. The fact.) + Root and Wobble (name the awkward middle as a stage: "the quiet season") inside the /story beats. Why: the study IS a myth-kill in one line (scale same, inside changed), and the frog year gives the viewer a name for the weeks where they want to quit. Not used in the last 3 days (8 Oct /hook + Vibe Samurai, 7 Oct Triple Hook, 6 Oct One Dissenting Voice).
-Other options: (1) Name-the-Feeling: "That voice in week three, 'it's not working'... I know it." (2) Gervais close on himself: "Twenty years. My Bhekasana still... is having its quiet year." (only if he likes it).
-
-## Hooks (/hook, answered myself)
-Topic: practice habit, quitting in the weeks when nothing shows.
-Consensus: "If you don't see results in a month, change the program."
-Where Boonchu sharpens it: 20 years of Ashtanga, six days a week since 2008. Change in the body comes before you can see it; the job is to keep coming.
-1. Authority: "Twenty years on the mat. Most of the change, nobody saw." (his claim: OK it first)
-2. Contrarian: "The mirror is the worst teacher you will ever have."
-3. Stakes: "Quit in the quiet weeks, and you quit while it's working."
-4. Question: "If nothing changes outside, is anything changing inside?"
-5. Pattern interrupt: "Scientists trained mice for 7 days. The scale? Same."
-Pick: 5. It opens with the trigger, a 10-year-old gets it, and it sets a trap ("so it failed?") that the next line snaps ("inside, it already changed"). Hook 2 goes on the cover.
-
-## Script (60 s, spoken to camera, his spoken English)
-HOOK (0-5 s)
-"This week, scientists train mice. Seven days. The scale? ... Same.
-But inside... the fat cells already getting smaller."
-[card: mouse puppet on a tiny scale, needle not moving] [zoom punch: "Same."]
-
-CONTEXT + MIRROR (5-13 s)
-"Maybe this is you. One month on the mat. You look in the mirror... nothing.
-And a small voice say: it's not working. Stop."
-[card: mirror, ❌ "nothing"]
-
-ORDEAL: THE STORY, bedtime voice (13-38 s)
-"At night I tell my son a story. From a very old book, the Rig Veda.
-In the dry time, the frogs go quiet. One whole year. No song.
-Like a monk keeping a promise.
-People walk by the dry pond and say: nothing living here.
-But the frogs are there. Under the mud. Keeping the promise.
-Then one day... the rain come.
-And all the frogs... sing. Together."
-[silent beat, 2 s, rain sound]
-"The quiet year was not empty. It was the promise."
-
-TAKEAWAY: THE TURN + ASANA (38-55 s)
-"In Ashtanga we also have a frog. Bhekasana.
-You lie on your belly. You press your feet down, next to your hips.
-[BOONCHU'S OWN CUE GOES HERE: what he tells a student in Bhekasana, 1-2 lines]
-For many months, the feet don't come down. Same, same, same.
-But the knees, the thighs... they are learning. Quietly."
-
-RETURN / PAYOFF (55-60 s)
-"So don't ask the mirror. Ask: did I come today?
-Mice, frogs, you... the change start inside first."
-
-Payoff check: the hook opens "scale same, so did it fail?"; the last line closes it ("the change starts inside first"). One lesson only: keep the promise in the quiet season.
-
-Verify before filming:
-- His Bhekasana cue in his own words (Plato did not write one).
-- Hook 1 claim, if used.
-- Say "mice" every time. Never "this works for people" or any kilo or weight-loss promise.
-- Bhekasana is Intermediate series: if he wants a Primary link for beginners, say "in Ashtanga, the frog comes later; the promise starts on day one".
-
-## Edit cue sheet (for the edit session)
-- Header pill: "Hidden Stories of Ashtanga · Ep. N" (N = last posted + 1 when filmed).
-- Zoom punches 1.3x on: "Same.", "inside", "nothing", "one whole year", "sing", "promise", "Bhekasana", "did I come today". SFX at 40%, 0.4 s after the word: click-soft (Same), whoosh (inside), error (nothing), chime (sing), soft rain + low thunder under the silent beat.
-- Captions: Weight Shift, big emoji: 🐭 ⚖️ 🪞 🐸 🌧️ 🎶 🤞
-- Cards (Isle of Dogs stop-motion prompts, keep the handmade cues):
-  1. "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, a small felt mouse with glassy bead eyes standing on a tiny brass kitchen scale, the needle at the same mark, painted cardboard lab wall, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections"
-  2. "... a dry cracked clay pond in a handmade tabletop diorama, two felt frogs, one green and one spotty, sitting very still half in the mud, eyes closed, painted cardboard sky, cotton-wool clouds on visible wires, warm dusk light ..." (verse 6 names a green frog and a spotty one)
-  3. "... the same pond full of cut-felt water, rain made of glass beads on threads, many felt frogs with mouths open singing together, cotton-wool rain clouds on visible wires ..."
-- No god's face needed (Parjanya, the rain, is only rain).
-
-## Captions
-EN (5 lines)
-Scientists trained mice for 7 days. The scale didn't move. Inside, it already changed. 🐭
-Hidden Stories of Ashtanga: the frogs who kept quiet for a whole year. 🐸
-Bhekasana trains the same thing: keep your promise before you see proof. 🌧️
-Special promotion for new students: buy 1, get 1 free on 1, 2 or 3 months. Buy by 11 Nov. Beginners welcome, we teach you from zero. Comment aybkk and I'll send you the link.
-Aybkk.net #aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #bhekasana
-
-TH
-นักวิทยาศาสตร์ให้หนูออกกำลัง 7 วัน น้ำหนักไม่เปลี่ยน แต่ข้างในเปลี่ยนไปแล้ว 🐭
-เรื่องเล่าที่ซ่อนอยู่ในอัษฎางคะ: กบที่เงียบอยู่ทั้งปี 🐸
-อาสนะ Bhekasana (ท่ากบ) ฝึกสิ่งเดียวกัน: รักษาคำสัญญากับตัวเอง ก่อนจะเห็นผล 🌧️
-โปรโมชั่นพิเศษสำหรับนักเรียนใหม่: ซื้อ 1 แถม 1 แพ็กเกจ 1, 2 หรือ 3 เดือน ซื้อภายใน 11 พ.ย. มือใหม่ก็มาได้ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย คอมเมนต์ aybkk แล้วเราจะส่งลิงก์ให้
-Aybkk.net #aybkk #อัษฎางคะโยคะ #ashtangabangkok #hiddenstoriesofashtanga #มายซอร์
-
-ZH (Xiaohongshu / WeChat Channels, Lane A, no promo)
-阿斯汤加的隐藏故事 🐸
-这周看到一个研究：小鼠做了7天力量训练，体重一点没变，可身体里的脂肪细胞已经在变小了。
-《梨俱吠陀》里有一首青蛙之歌：旱季里，青蛙整整一年不出声，像修行人守着誓言。雨一来，它们一起开口唱。
-练习也是这样。看不见变化的那段日子，不是白练，是在守约。
-阿斯汤加里也有一个青蛙体式：Bhekasana。脚掌很久都压不下去，膝盖和大腿却一直在悄悄学。
-别天天问镜子，问问自己：今天来练了吗？
-#阿斯汤加 #迈索尔 #瑜伽 #阿斯汤加的隐藏故事 #坚持
-
-Xiaohongshu title (13 chars): 体重没变，身体却已经在变了
-
-RU
-Учёные тренировали мышей 7 дней. Вес не изменился. А внутри всё уже начало меняться. 🐭
-Скрытые истории аштанги: лягушки, которые молчали целый год. 🐸
-Асана Бхекасана учит тому же: держать обещание, пока результат ещё не виден. 🌧️
-Новичкам рады, мы учим с самого начала. Напишите «aybkk» в комментариях, и я пришлю ссылку.
-Aybkk.net #aybkk #аштанга #аштангайога #hiddenstoriesofashtanga #бхекасана
-
-## Sources (check before filming)
-- News: ScienceDaily, 8 Oct 2026, "Just 7 Days of Strength Training Started Shrinking Fat Cells in Mice" https://www.sciencedaily.com/releases/2026/10/261006234509.htm (UNICAMP, Life Sciences vol. 401, 124546; male mice, mesenteric fat, body weight unchanged).
-- Story: Rig Veda 7.103 (the Frog Hymn), Griffith 1896: "They who lay quiet for a year, the Brahmans who fulfil their vows, The Frogs have lifted up their voice, the voice Parjanya hath inspired." https://sacred-texts.com/hin/rigveda/rv07103.htm (verse 6: one frog green, one spotty). Also in Doniger O'Flaherty, The Rig Veda (Penguin 1981).
-- Left out: the old reading (Max Müller) that the hymn makes fun of priests. We never mock priests or a religion; the script only says "like a monk keeping a promise".
-- Bhekasana: Ashtanga Intermediate series (bheka = frog).
-
-## 2026-10-09 · machiavelli
-
-Money today: set the course prices. Sales open Tue 20 Oct (11 days) only works with prices set.
-Course prices: decision needed in team chat by 19:00 Sat 10 Oct (1 day). Default B: sales open moves to Tue 27 Oct.
-Mysore Reel: reply A (post Mon 12 Oct as drafted) or B (move to Wed 14 Oct) in ✍️ Plato chat by 19:00 Sun 11 Oct. No answer means B.
-Countdowns: Letter #2 Mon 12 Oct: 3 days. Course sales open Tue 20 Oct: 11 days.
-Reel from Plato: mice did 7 days of strength training, weight same, fat cells smaller inside (ScienceDaily 8 Oct); the Frog Hymn, frogs quiet for a year then sing. Asana: Bhekasana. Hook: "Scientists trained mice for 7 days. The scale? Same." Plato waits on Boonchu's Bhekasana cue.
-Score: wins this week: none reported. 180K leads pasted: 0 in 12 days. Letter #1 (due Mon 5 Oct): not reported sent. No reminders due.
-Carne and Plato both posted today. Inbox 07:08: 0 new.
-13:08 check-in: course prices still waiting (1 day), Mysore Reel still waiting (2 days). Inbox 13:08: 2 new, 2 hot.
-19:08 check-in: no win reported. Course prices and Mysore Reel not repeated (nagged twice today). Inbox 19:08: 2 new, 2 hot.
-
-## 2026-10-09 · carnegie
 
 No leads yet. Paste any 180K DM from WeChat, Xiaohongshu or your personal LINE, text or screenshot, in 💬 Machi · AYBKK team chat.
