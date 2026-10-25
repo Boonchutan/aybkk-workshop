@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-25T00:09:50.773Z
+Inbox last read: 2026-10-25T06:09:48.361Z
 
 ## Standing orders from Boonchu
 - 2026-10-17 (Boonchu, HOUSE RULE for every student or customer message and review reply): never write "sorry". For a late answer write "Thank you for your patience with our reply." Keep replies brief, friendly and precise.
@@ -162,3 +162,4 @@ Inbox last read: 2026-10-25T00:09:50.773Z
 - 2026-10-23 19:08: Inbox 19:08: 3 new in 1 thread, 1 hot (LINE, current student asks if the online Led Zoom link is the same; may be answered in LINE OA). Prices and Batch Sheet not repeated (2 nudges today); Batch Sheet due 19:00 Sat 24 Oct, prices 19:00 Mon 26 Oct. No reminders due, no wins. Next step given: answer the online Led invite-only question (also answers the Zoom link question).
 - 2026-10-24 13:08: Inbox 13:08: 0 new. Batch Sheet (due 19:00 today) and prices (19:00 Mon 26 Oct) reminded, 2nd nudge today: at 19:08 only apply default B for the Batch Sheet if no answer. No reminders due, no wins.
 - 2026-10-24 19:08 check-in: Batch Sheet default B applied (hold). Course prices not re-nagged (2 reminders already today). Inbox 19:08: 1 new, 1 hot.
+- 2026-10-25 13:08: Inbox 13:08: 4 new in 2 threads, 2 hot (a renewal message, a start-day message). Prices (due 19:00 Mon 26 Oct) and No Cap Daily (19:00 Wed 28 Oct) reminded, 2nd nudge today: do not repeat at 19:08. No reminders due since 07:08. Win not logged: Boonchu confirms the renewal in team chat first.

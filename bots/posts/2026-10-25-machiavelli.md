@@ -6,3 +6,4 @@ Reminder due today: ManyChat (aybkk + MYSORE) and LINE auto-reply for aybkk fixe
 Reel: Plato's daily run is paused (Boonchu, 22 Oct). No Plato post expected. Carne posted today. Keyword test on hold (Batch Sheet default B).
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent since 17 Oct.
 Inbox 07:08: 0 new since last read; 2 LINE threads carried from yesterday (Carne @Machi), 0 hot. @Machi from Carne: done.
+13:08 check-in: course prices still waiting (1 day, due 19:00 Mon 26 Oct); No Cap Daily waiting (3 days). Inbox 13:08: 4 new in 2 threads, 2 hot.
