@@ -1,0 +1,1202 @@
+[
+ {
+  "n": 1,
+  "cat": "teach",
+  "template": "How to learn {skill} dangerously fast",
+  "aybkk": "How to learn Ashtanga slowly, so you don't keep starting over",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Drop 'dangerously fast' and the absolute 'never'; Mysore adds the next asana when you are ready, so promise steady steps, not speed."
+ },
+ {
+  "n": 2,
+  "cat": "teach",
+  "template": "How to {skill} so well people think you're {trait}",
+  "aybkk": "How to do chaturanga so well your teacher stops correcting it",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 2,
+  "note": "Practice is not about impressing people, so swap that part for a teacher's quiet nod and show real chaturanga form."
+ },
+ {
+  "n": 3,
+  "cat": "teach",
+  "template": "If I had to learn {skill} from scratch, I'd do this",
+  "aybkk": "If I had to start Ashtanga from scratch in Bangkok, I'd do this",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 10,
+  "note": "Strong for beginners if the answer is real Mysore steps (first few asanas, same time each day), not a sales pitch."
+ },
+ {
+  "n": 4,
+  "cat": "teach",
+  "template": "Everything you need to learn for {skill} (in order)",
+  "aybkk": "Everything you learn in your first Mysore class (in order)",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 10,
+  "note": "Changed 'need to learn for' to 'learn in' because beginners learn the first asanas in class, not before; keep to those few, in order."
+ },
+ {
+  "n": 5,
+  "cat": "teach",
+  "template": "How to replace {bad habit} with {good habit}",
+  "aybkk": "How to replace your morning scroll with a morning practice",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 6,
+  "note": "This is the Habit Gap in one line; do not promise a beginner 90 minutes, a short first practice is the honest picture."
+ },
+ {
+  "n": 6,
+  "cat": "teach",
+  "template": "The fastest way to stop {frustration}",
+  "aybkk": "The simplest way to stop skipping practice: a teacher who notices",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "'Fastest' oversells, so use 'simplest'; the answer is the core AYBKK promise of a teacher who sees when you are gone."
+ },
+ {
+  "n": 7,
+  "cat": "teach",
+  "template": "How to become addicted to {hard thing}",
+  "aybkk": "How to make a 6 am practice something you miss on rest days",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 3,
+  "note": "'Addicted' is a heavy word; 'miss it on rest days' says the same thing honestly and answers the too-early fear."
+ },
+ {
+  "n": 8,
+  "cat": "teach",
+  "template": "How to actually get good at {hard skill}",
+  "aybkk": "How to actually get good at jump-backs",
+  "fit": "use",
+  "goal": "reach",
+  "habit": 2,
+  "note": "Practitioners look for jump-back help, so show real steps on video and never add an 'in 7 days' promise."
+ },
+ {
+  "n": 9,
+  "cat": "teach",
+  "template": "How to find your {goal} when you feel stuck",
+  "aybkk": "How to find your way back to the mat when you feel stuck",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 3,
+  "note": "Speaks to people who quit; ask viewers to comment aybkk, not STUCK, so it stays in Lane B and does not mix with Lane A."
+ },
+ {
+  "n": 10,
+  "cat": "teach",
+  "template": "How to be happy with {ordinary thing}",
+  "aybkk": "How to be happy with the same practice every morning",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 10,
+  "note": "Mysore is the same practice each day, so this turns 'boring' into the point; show it, do not promise happiness."
+ },
+ {
+  "n": 11,
+  "cat": "teach",
+  "template": "How to actually {goal} in your {age range}",
+  "aybkk": "How to actually get stronger in your [40s] using only your body",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 2,
+  "note": "Fill [40s] with the age group Boonchu really teaches; show chaturanga as body-weight strength, with no promise of results by age."
+ },
+ {
+  "n": 12,
+  "cat": "teach",
+  "template": "How to make your brain enjoy {hard task}",
+  "aybkk": "How to make your brain stop arguing about 6 am practice",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 0,
+  "note": "Skip brain-science talk; the honest answer is same time, same practice, so there is nothing left to decide."
+ },
+ {
+  "n": 13,
+  "cat": "teach",
+  "template": "The complete guide to getting better at {skill}",
+  "aybkk": "The complete guide to getting better at Ashtanga: show up tomorrow",
+  "fit": "adapt",
+  "goal": "trust",
+  "habit": 9,
+  "note": "A Reel cannot be 'complete', so turn it into a dry one-line answer that keeps the title honest."
+ },
+ {
+  "n": 14,
+  "cat": "teach",
+  "template": "Stuck on {problem}? Watch this.",
+  "aybkk": "Stuck in Primary series for years? Watch this.",
+  "fit": "use",
+  "goal": "180K",
+  "habit": 1,
+  "note": "Fits Lane A, so end by asking viewers to comment STUCK, and never promise they will get the next series."
+ },
+ {
+  "n": 15,
+  "cat": "teach",
+  "template": "Scared to {action}? Watch this.",
+  "aybkk": "Scared to try your first Mysore class? Watch this.",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 3,
+  "note": "Answer the real fears (too stiff, too strict) by showing a calm room, and film a beginner only with their OK."
+ },
+ {
+  "n": 16,
+  "cat": "teach",
+  "template": "The exact system I use to {result}",
+  "aybkk": "The exact system I use to track a student's progress over 12 weeks",
+  "fit": "use",
+  "goal": "180K",
+  "habit": 1,
+  "note": "Shows teachers how Boonchu works, a good 180K signal; show only the real 12-week check and no made-up results."
+ },
+ {
+  "n": 17,
+  "cat": "teach",
+  "template": "How to become impossible to replace at {work}",
+  "aybkk": "How to become the yoga teacher students keep coming back to",
+  "fit": "adapt",
+  "goal": "180K",
+  "habit": 9,
+  "note": "'Impossible to replace' is a boast, so make it about noticing who is missing, and never compare to other teachers."
+ },
+ {
+  "n": 18,
+  "cat": "teach",
+  "template": "{Tool} 101: the best tricks already inside it",
+  "aybkk": "Breath basics: the free tool you bring to every practice",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 7,
+  "note": "Drop 'tricks' (no shortcuts) and '101' (a 10-year-old won't know it); talk about how breath feels and sets the pace, no health claims."
+ },
+ {
+  "n": 19,
+  "cat": "teach",
+  "template": "How to {result} with {tool} (full workflow)",
+  "aybkk": "How to get on the mat at 6 with a teacher, not an app",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 6,
+  "note": "'Workflow' is office talk, so show the real morning step by step with the phone left in the bag."
+ },
+ {
+  "n": 20,
+  "cat": "teach",
+  "template": "How to get {result} as a total beginner",
+  "aybkk": "How to start Ashtanga as a total beginner (even if you're stiff)",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 8,
+  "note": "Hits the top local fear; show the first few asanas and that the teacher gives the next step when you are ready."
+ },
+ {
+  "n": 21,
+  "cat": "proof",
+  "template": "I tried {habit} for {number} days. Here's what changed.",
+  "aybkk": "I tracked my own practice for 12 weeks. Here's what changed.",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 1,
+  "note": "This shows off the 12-week check, but only post it after he has really tracked himself, and show his real notes, not a body makeover."
+ },
+ {
+  "n": 22,
+  "cat": "proof",
+  "template": "How I'm doing after {number} years of {habit}",
+  "aybkk": "How I'm doing after [years] years of Ashtanga practice",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 10,
+  "note": "Simple proof of a long practice; he fills in the real years and talks about how he feels, never about cures."
+ },
+ {
+  "n": 23,
+  "cat": "proof",
+  "template": "I studied {topic} for {number} years. Here's what works.",
+  "aybkk": "I studied Ashtanga for [years] years. Here's what works when you're stuck in Primary.",
+  "fit": "use",
+  "goal": "180K",
+  "habit": 10,
+  "note": "Speaks to serious practitioners and teachers and fits Lane A, so end by asking them to comment STUCK."
+ },
+ {
+  "n": 24,
+  "cat": "proof",
+  "template": "I fixed my {problem} in one {week}. Here's how.",
+  "aybkk": "I fixed my [habit problem, like late wake-ups] in one week. Here's how.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 3,
+  "note": "Use only a habit problem he truly fixed, never a body one like back pain, show that people waiting in the room helped, and say one week is only a start."
+ },
+ {
+  "n": 25,
+  "cat": "proof",
+  "template": "I tried {creator}'s {method}. Honest review.",
+  "aybkk": "I wore a fitness watch for [number] days. Honest review from a yoga teacher.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Review a tool, not a person or brand, and land on the Habit Gap line: it knows you slept badly, but it won't get you on the mat."
+ },
+ {
+  "n": 26,
+  "cat": "proof",
+  "template": "POV: what happens when you start {habit}",
+  "aybkk": "POV: what happens when you start Mysore class as a stiff beginner",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 8,
+  "note": "Show the real first class: a few asanas, the teacher showing the next step, others at their own breath, and no magic after-shot."
+ },
+ {
+  "n": 27,
+  "cat": "proof",
+  "template": "The {simple tool} that got me {big result}",
+  "aybkk": "The simple thing that kept me practising [years] years: people who show up",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 9,
+  "note": "Say it only if the room is truly what kept him going; it keeps the big result honest (years on the mat, not a new body) and sells the Habit Gap."
+ },
+ {
+  "n": 28,
+  "cat": "proof",
+  "template": "My honest {time of day} routine as a {identity}",
+  "aybkk": "My honest [wake-up time] routine as an Ashtanga teacher in Bangkok",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 6,
+  "note": "Film his real morning with no phone, and leave out any food, supplement or sleep claims."
+ },
+ {
+  "n": 29,
+  "cat": "proof",
+  "template": "Why I changed my {method}: a {beginner}'s story",
+  "aybkk": "Why I changed from [what I did before] to Ashtanga when I started",
+  "fit": "adapt",
+  "goal": "trust",
+  "habit": 10,
+  "note": "Calling himself a beginner now would mislead, so frame it as his true start, told kindly, without putting down the old method or any other style."
+ },
+ {
+  "n": 30,
+  "cat": "proof",
+  "template": "How I {result} with {method} at {age}",
+  "aybkk": "How I stay strong with body-weight practice at [age]",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 2,
+  "note": "Show chaturanga and jump-backs on camera with his real age, and don't promise viewers the same result."
+ },
+ {
+  "n": 31,
+  "cat": "proof",
+  "template": "Why I don't {common habit} (as a {identity})",
+  "aybkk": "Why I don't play music in Mysore class (as an Ashtanga teacher)",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 6,
+  "note": "Explain that quiet helps you hear your breath, without calling music wrong or pointing at studios that use it, and keep the tone warm, not strict."
+ },
+ {
+  "n": 32,
+  "cat": "proof",
+  "template": "I took on a {expert} at their own {game}",
+  "aybkk": "I took on [gym coach friend, with his OK] at his own push-up test",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 2,
+  "note": "Keep it a friendly game filmed with his OK, so nobody is mocked whoever wins, and show what chaturanga builds."
+ },
+ {
+  "n": 33,
+  "cat": "proof",
+  "template": "How many {topic} questions can I get right?",
+  "aybkk": "How many Sanskrit asana names can I get right?",
+  "fit": "use",
+  "goal": "reach",
+  "habit": 10,
+  "note": "Let a student read out the cards and keep the real score, even the misses, because it makes the teacher human."
+ },
+ {
+  "n": 34,
+  "cat": "proof",
+  "template": "How my {friend} got {result} (with no {hard part})",
+  "aybkk": "How [student's name, with her OK] got [her real result] without being flexible first",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 8,
+  "note": "Use 'no hard part' only to remove a false barrier like being stiff, never to promise no effort, and never a weight or medical result."
+ },
+ {
+  "n": 35,
+  "cat": "proof",
+  "template": "Testing a {expert}'s advice on {topic} for a week",
+  "aybkk": "Testing [real sleep expert]'s advice for one week, as a 6 am teacher",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 4,
+  "note": "Name a real expert, quote the advice correctly, share only his own week and never promise better sleep to viewers."
+ },
+ {
+  "n": 36,
+  "cat": "proof",
+  "template": "What happened when I stopped {habit}",
+  "aybkk": "What happened when I stopped practising for [number] weeks",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "Only if he really took a break; tell it plainly with no body or weight talk, then show why a room and a teacher who notices bring you back."
+ },
+ {
+  "n": 37,
+  "cat": "proof",
+  "template": "I quit {habit} and got {result}",
+  "aybkk": "I quit my phone before practice and got [the real change I noticed]",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 6,
+  "note": "The result must be his own small, true change in his own words, with no sleep or health promise."
+ },
+ {
+  "n": 38,
+  "cat": "proof",
+  "template": "Alone at {time}: my honest {routine} routine",
+  "aybkk": "Alone at [time] before class starts: my honest morning routine",
+  "fit": "adapt",
+  "goal": "trust",
+  "habit": 3,
+  "note": "Swapped 'shala' for 'class' so a child gets it; end with the room filling up so solo practice never looks like the goal."
+ },
+ {
+  "n": 39,
+  "cat": "proof",
+  "template": "My {result} system, working {number} hours a day",
+  "aybkk": "My own practice system, teaching [number] hours a day",
+  "fit": "use",
+  "goal": "180K",
+  "habit": 1,
+  "note": "Speaks straight to busy teachers who lose their own mat time; 'teaching' drops the hustle feel, and he uses his real hours."
+ },
+ {
+  "n": 40,
+  "cat": "proof",
+  "template": "I gave {method} one month. My honest results.",
+  "aybkk": "[Student's first name, with her OK] gave Mysore one month. Her honest results.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Needs a real student and her OK, so it is adapt; use her own words, no kilos or sleep claims, and point to the 12-week check as the fuller test."
+ },
+ {
+  "n": 41,
+  "cat": "warn",
+  "template": "Why {common habit} is costing you {result}",
+  "aybkk": "Why practising only when you feel like it is costing you the habit",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 3,
+  "note": "This is the Habit Gap in one line, and the answer is a set time and a teacher who notices when you're gone."
+ },
+ {
+  "n": 42,
+  "cat": "warn",
+  "template": "The problem with {popular advice}",
+  "aybkk": "The problem with 'wait until you're flexible enough to start yoga'",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 8,
+  "note": "It answers the 'too stiff' fear: in Mysore class you learn only the first few asanas, at your own breath."
+ },
+ {
+  "n": 43,
+  "cat": "warn",
+  "template": "A {expert} explains: never {action} this way",
+  "aybkk": "An authorized Ashtanga teacher explains: never drop into chaturanga this way",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 2,
+  "note": "Show the better way within seconds and say what it builds, never that the old way causes injury."
+ },
+ {
+  "n": 44,
+  "cat": "warn",
+  "template": "A warning to every {group} who {does thing}",
+  "aybkk": "A warning to every yoga teacher who has no teacher of their own",
+  "fit": "adapt",
+  "goal": "180K",
+  "habit": 10,
+  "note": "'Warning' can sound like shaming other teachers, so say it with care: every teacher needs a teacher too."
+ },
+ {
+  "n": 45,
+  "cat": "warn",
+  "template": "The real reason {group} {does odd thing}",
+  "aybkk": "The real reason Mysore students in Bangkok get up before the sun",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 9,
+  "note": "It faces the 'too early' and 'too strict' fears: the reason is a quiet room of people who show up, not toughness."
+ },
+ {
+  "n": 46,
+  "cat": "warn",
+  "template": "You're {doing thing} wrong. Here's a better way.",
+  "aybkk": "You're building your morning routine wrong. Here's a better way.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "'Wrong' can sound bossy, so make the better way warm and simple: same practice, same time, a teacher who notices."
+ },
+ {
+  "n": 47,
+  "cat": "warn",
+  "template": "Worst vs best {habits} for {goal}",
+  "aybkk": "Worst vs best morning habits for a calm mind",
+  "fit": "use",
+  "goal": "reach",
+  "habit": 6,
+  "note": "Show phone first against breath first, and keep it about calm with no health claims."
+ },
+ {
+  "n": 48,
+  "cat": "warn",
+  "template": "These {hobbies} will save you from {bad habit}",
+  "aybkk": "These quiet 90 minutes on the mat can save you from morning scrolling",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 6,
+  "note": "Practice is a daily habit, not a hobby, so swap that word, and 'can' keeps the promise honest."
+ },
+ {
+  "n": 49,
+  "cat": "warn",
+  "template": "The death of {thing} (and what comes next)",
+  "aybkk": "When your fitness app streak dies (and what comes next)",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 1,
+  "note": "Never say apps are dead or mock them; a streak breaks when you miss a day, but a teacher notices you're gone."
+ },
+ {
+  "n": 50,
+  "cat": "warn",
+  "template": "It's over: {thing} is now {change}",
+  "aybkk": "It's over: Mysore class at AYBKK now starts at [new time]",
+  "fit": "skip",
+  "goal": "shala",
+  "habit": 0,
+  "note": "'It's over' is fake drama for a yoga school; if the class time really changes, just tell locals plainly."
+ },
+ {
+  "n": 51,
+  "cat": "warn",
+  "template": "You'll wish you found this before {milestone}",
+  "aybkk": "You'll wish you found this before you taught your first Mysore class",
+  "fit": "use",
+  "goal": "180K",
+  "habit": 10,
+  "note": "Follow it with one real teaching lesson from Boonchu, not a pitch."
+ },
+ {
+  "n": 52,
+  "cat": "warn",
+  "template": "Your future self is begging you to watch this",
+  "aybkk": "Your future self in 12 weeks wants you on the mat tomorrow",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Drop 'begging' because it sounds pushy, and tie it to the real 12-week check instead of a vague 'this'."
+ },
+ {
+  "n": 53,
+  "cat": "warn",
+  "template": "Break the {bad habit} cycle for good",
+  "aybkk": "Break the start-and-quit yoga cycle for good",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 3,
+  "note": "'For good' sounds like a promise, so back it with the system (same time, a teacher who notices), never a guarantee."
+ },
+ {
+  "n": 54,
+  "cat": "warn",
+  "template": "Why your {method} is wasting your {time}",
+  "aybkk": "Why your sleep tracker is wasting your mornings",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 1,
+  "note": "Don't knock the gadget; the point is that data can't get you up at 6, but people expecting you can."
+ },
+ {
+  "n": 55,
+  "cat": "warn",
+  "template": "The real reason you can't {goal}",
+  "aybkk": "The real reason you can't move past Primary series",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 2,
+  "note": "Pair it with Lane A (comment STUCK), give one honest reason like jump-back strength, and never promise the next series."
+ },
+ {
+  "n": 56,
+  "cat": "warn",
+  "template": "The problem with {popular habit} for beginners",
+  "aybkk": "The problem with learning yoga from videos alone for beginners",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 3,
+  "note": "Say videos are a fine start; the gap is that no one sees you or shows you the next asana."
+ },
+ {
+  "n": 57,
+  "cat": "warn",
+  "template": "Before you {big decision}, watch this",
+  "aybkk": "Before you apply to my program for yoga teachers, watch this",
+  "fit": "use",
+  "goal": "180K",
+  "habit": 0,
+  "note": "'Program' is simpler than 'mentorship'; use it to say who the program is not for, because filtering builds trust."
+ },
+ {
+  "n": 58,
+  "cat": "warn",
+  "template": "Why you're always {bad feeling} (and how to fix it)",
+  "aybkk": "Why you're always too busy for yoga (and how to fix it)",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 9,
+  "note": "It turns the 6 am fear into the answer: practise before the day can take your time."
+ },
+ {
+  "n": 59,
+  "cat": "warn",
+  "template": "Don't {give up thing} just to {small win}",
+  "aybkk": "Don't give up your breath just to go deeper into an asana",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 8,
+  "note": "A real teaching point that shows care, so make no claim about injury."
+ },
+ {
+  "n": 60,
+  "cat": "warn",
+  "template": "You're wasting {number} hours a week on {thing}",
+  "aybkk": "You're wasting time every week deciding which workout to do today",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 10,
+  "note": "Drop the made-up number and the vague 'hours'; Mysore is the same practice every day, so there is nothing to choose."
+ },
+ {
+  "n": 61,
+  "cat": "numbers",
+  "template": "{Number} cheat codes to beat every level of {area}",
+  "aybkk": "3 honest steps for when you feel stuck in Primary series",
+  "fit": "adapt",
+  "goal": "trust",
+  "habit": 1,
+  "note": "Took 'cheat codes' out of the line as the note asked; good Lane A video that ends with comment STUCK."
+ },
+ {
+  "n": 62,
+  "cat": "numbers",
+  "template": "{Number} years of {topic} advice in {number} minutes",
+  "aybkk": "[years] years of Mysore teaching in 60 seconds: start here",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 10,
+  "note": "Boonchu fills his real teaching years, and the video must really be 60 seconds."
+ },
+ {
+  "n": 63,
+  "cat": "numbers",
+  "template": "{Number} rules to make your brain enjoy {hard task}",
+  "aybkk": "3 simple rules that make 6 am practice feel normal",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "Swap 'brain enjoy' for 'feel normal' and skip brain science; one rule can be the room that expects you."
+ },
+ {
+  "n": 64,
+  "cat": "numbers",
+  "template": "{Tool} just got cheap. Here are {number} wild uses.",
+  "aybkk": "Your watch knows you slept badly. It won't get you up. We will.",
+  "fit": "skip",
+  "goal": "shala",
+  "habit": 9,
+  "note": "Price drops and 'wild uses' are gadget hype; the old line made an unchecked price claim, so post the real watch line as its own hook."
+ },
+ {
+  "n": 65,
+  "cat": "numbers",
+  "template": "A science-backed {time} routine: {number} habits",
+  "aybkk": "The 6 am Mysore routine: 10 habits, one practice",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 0,
+  "note": "Drop 'science-backed'; changed 'in one practice' because sleep and food happen off the mat; it opens all ten, so no single habit."
+ },
+ {
+  "n": 66,
+  "cat": "numbers",
+  "template": "How {name} makes {amount} in {time} (no {hard part})",
+  "aybkk": "How [graduate's first name, with her OK] opened her own shala in [time]",
+  "fit": "adapt",
+  "goal": "180K",
+  "habit": 0,
+  "note": "Never show a graduate's income; show the real shala she built, with her permission."
+ },
+ {
+  "n": 67,
+  "cat": "numbers",
+  "template": "The {amount}/month {method} nobody talks about",
+  "aybkk": "The 9,600 THB a month habit: a teacher who notices you're gone",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "9,600 THB is the real 1-month fee, now and from 12 Nov (then plus 7% VAT). Post it only after the new price list goes out on 13 Nov, and drop 'nobody talks about'."
+ },
+ {
+  "n": 68,
+  "cat": "numbers",
+  "template": "How to {goal} working {number} hours a week",
+  "aybkk": "How to practise at 6 am while working full time in Bangkok",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 4,
+  "note": "Answers the 6 am fear; say what students tell us about going to bed earlier, and never promise better sleep."
+ },
+ {
+  "n": 69,
+  "cat": "numbers",
+  "template": "{Number} {hobbies} that save you from {bad habit}",
+  "aybkk": "1 morning habit that keeps you off your phone for 90 minutes",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 6,
+  "note": "True of Mysore class; just don't claim it cures phone addiction."
+ },
+ {
+  "n": 70,
+  "cat": "numbers",
+  "template": "{Number} minutes a day to fix your {problem}",
+  "aybkk": "[minutes] minutes a morning to stop quitting your practice",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "Never pair 'fix' with a body part; aim it at quitting, which is the Habit Gap."
+ },
+ {
+  "n": 71,
+  "cat": "numbers",
+  "template": "{Number} years of {habit}: was it worth it?",
+  "aybkk": "[years] years of Ashtanga practice: was it worth it?",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 10,
+  "note": "Took out 'daily' because Ashtanga has rest days; Boonchu fills in his real years and answers honestly, hard parts too."
+ },
+ {
+  "n": 72,
+  "cat": "numbers",
+  "template": "Make {number} {videos} that suck",
+  "aybkk": "Give it 12 weeks of messy practices before you judge yourself",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Drop 'suck'; it speaks to the 'too stiff' fear and links to the real 12-week check, with no promised results."
+ },
+ {
+  "n": 73,
+  "cat": "numbers",
+  "template": "The best {tools} already on your {device}",
+  "aybkk": "The best health apps are already on your phone. So why do we quit?",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 9,
+  "note": "Pure Habit Gap; answer with a teacher who notices, and never mock the apps."
+ },
+ {
+  "n": 74,
+  "cat": "numbers",
+  "template": "One {test} that shows your true {skill}",
+  "aybkk": "One chaturanga test that shows your real body-weight strength",
+  "fit": "use",
+  "goal": "reach",
+  "habit": 2,
+  "note": "Visual and easy to share; show good form and make no fitness or injury promises."
+ },
+ {
+  "n": 75,
+  "cat": "numbers",
+  "template": "{Number} {skill} lessons in {number} minutes",
+  "aybkk": "3 Mysore lessons for beginners in 60 seconds",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 3,
+  "note": "Use the 3 real beginner facts: first few asanas, the next step when you're ready, your own breath beside others."
+ },
+ {
+  "n": 76,
+  "cat": "numbers",
+  "template": "Learn {skill} in {number} weeks (the fast way)",
+  "aybkk": "Learn your first Ashtanga asanas in [weeks] weeks, the slow way",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 8,
+  "note": "Turn 'fast way' into 'slow way'; Boonchu fills in a real time range, because it is different for each person."
+ },
+ {
+  "n": 77,
+  "cat": "numbers",
+  "template": "If you have these {number} {traits}, you're unstoppable",
+  "aybkk": "[number] things I look for before I mentor a yoga teacher",
+  "fit": "adapt",
+  "goal": "180K",
+  "habit": 0,
+  "note": "Changed 'traits' to 'things' to keep the words simple; drop 'unstoppable', and the real list should turn the wrong people away."
+ },
+ {
+  "n": 78,
+  "cat": "numbers",
+  "template": "Become unrecognizable before {month} ends",
+  "aybkk": "Before [month] ends, show up on the mat [number] mornings",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Was tagged skip but the line works; drop 'unrecognizable', promise no body change, and keep it a personal goal, not a sales deadline."
+ },
+ {
+  "n": 79,
+  "cat": "numbers",
+  "template": "The {amount} {method} system, {number} hour a day",
+  "aybkk": "The 100-year-old Mysore system, about [time] each morning",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 10,
+  "note": "Keep '100-year-old' honest and fill in the real class length instead of promising '1 hour'."
+ },
+ {
+  "n": 80,
+  "cat": "numbers",
+  "template": "Part {number}: the best free {tools} for {goal}",
+  "aybkk": "Part 6 of 10 habits: the best free tool to calm your mind",
+  "fit": "use",
+  "goal": "reach",
+  "habit": 6,
+  "note": "Turns the 10 habits into a series; the answer is your breath, not an app."
+ },
+ {
+  "n": 81,
+  "cat": "story",
+  "template": "I'm starting over with {area}...",
+  "aybkk": "[Student's name, with her OK] starts over with yoga. Week 1 of 12.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Said as Boonchu, 'I'm starting over' would be a made-up fact, so tell a real student's story with her OK and post her week 12."
+ },
+ {
+  "n": 82,
+  "cat": "story",
+  "template": "The first time I ever {did thing} (where it started)",
+  "aybkk": "The first time I ever did Mysore practice: [where and when]. Where it started.",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 10,
+  "note": "A real origin story builds trust; fill in only true details and keep the authorization plain, with no level or title."
+ },
+ {
+  "n": 83,
+  "cat": "story",
+  "template": "How do you start over after {wasting years}?",
+  "aybkk": "How do you start over after years of starting yoga and quitting?",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 3,
+  "note": "Speaks to the Habit Gap without blame; the answer is the same room, the same time and a teacher who notices."
+ },
+ {
+  "n": 84,
+  "cat": "story",
+  "template": "You went through {hard time} and something changed",
+  "aybkk": "You went through a hard year. Something changed: you came back to the mat.",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 6,
+  "note": "Keep the hard time general, never name a disaster or illness, and never claim yoga fixed it; for a real student's story, get her OK first."
+ },
+ {
+  "n": 85,
+  "cat": "story",
+  "template": "When you're ready to {change}, this will find you",
+  "aybkk": "When you're ready to stop starting over, a Mysore room in Bangkok is waiting.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "'This will find you' is vague fate talk, so turn it into a plain invite to a real room."
+ },
+ {
+  "n": 86,
+  "cat": "story",
+  "template": "This video will find you when you need it most",
+  "aybkk": "This video is for the day you want to skip practice.",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 3,
+  "note": "'When you need it most' is empty hype; name a real moment everyone knows, the skip day."
+ },
+ {
+  "n": 87,
+  "cat": "story",
+  "template": "If you found this before {month}, your life changes",
+  "aybkk": "If you found this before January, don't wait for New Year to start.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Dropped 'your life changes' and the push of 'start now'; post it only in Nov or Dec, and link it to the 12-week check, not a deadline."
+ },
+ {
+  "n": 88,
+  "cat": "story",
+  "template": "I finally understand why some people {make it}",
+  "aybkk": "I finally understand why some teachers keep their students for years.",
+  "fit": "use",
+  "goal": "180K",
+  "habit": 9,
+  "note": "A strong teacher-to-teacher hook for the 180K; the answer must be what Boonchu really sees, like noticing who is missing."
+ },
+ {
+  "n": 89,
+  "cat": "story",
+  "template": "{Person} just lost everything...",
+  "aybkk": "[Student's name, with her OK] lost her routine. How she came back.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "'Lost everything' is drama and can drift into disaster or crime; shrink it to a real, small loss, told with her OK."
+ },
+ {
+  "n": 90,
+  "cat": "story",
+  "template": "{Series name} is back",
+  "aybkk": "[Series name] is back. This week: the jump-back, step by step.",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 2,
+  "note": "Only works if a real series already ran; if not, launch it first instead of saying it's back."
+ },
+ {
+  "n": 91,
+  "cat": "story",
+  "template": "A {weekend} on my own, {surprise} and big news",
+  "aybkk": "A weekend in [city], teaching at a graduate's own shala, and [real news].",
+  "fit": "adapt",
+  "goal": "180K",
+  "habit": 0,
+  "note": "Only post it if that weekend and the news are real, like a new cohort date; teasing news that isn't there is fake hype."
+ },
+ {
+  "n": 92,
+  "cat": "story",
+  "template": "POV: your {side project} now pays more than {job}",
+  "aybkk": "POV: your weekend yoga classes now pay more than your office job.",
+  "fit": "skip",
+  "goal": "180K",
+  "habit": 0,
+  "note": "An income promise is hype for a teacher program; the 180K sells depth and trust, not money."
+ },
+ {
+  "n": 93,
+  "cat": "story",
+  "template": "You built your {career}. Did you build your {life}?",
+  "aybkk": "You built your career. Did you build a morning that's yours?",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 6,
+  "note": "Speaks to busy Bangkok office workers; answer with the 6 am room and 90 minutes with no phone."
+ },
+ {
+  "n": 94,
+  "cat": "story",
+  "template": "The {thing} that changed how I {live}",
+  "aybkk": "The one thing my teacher said that changed how I teach: [his words].",
+  "fit": "use",
+  "goal": "180K",
+  "habit": 10,
+  "note": "Use only if one real line truly changed his teaching; quote it exactly, never polish it, and never use it to claim a special title."
+ },
+ {
+  "n": 95,
+  "cat": "story",
+  "template": "The {old idea} that will change how you {work}",
+  "aybkk": "The 100-year-old idea that could change your mornings: same practice, same time.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 10,
+  "note": "Say 'could', not 'will'; the old idea is plain: same practice, same time, a teacher who notices."
+ },
+ {
+  "n": 96,
+  "cat": "story",
+  "template": "Why I left {path} for {new path}",
+  "aybkk": "Why I left [old path] for a 6 am Mysore room in Bangkok.",
+  "fit": "adapt",
+  "goal": "trust",
+  "habit": 10,
+  "note": "Only use it if he really left a path, and never put down the old path, a studio or a style."
+ },
+ {
+  "n": 97,
+  "cat": "story",
+  "template": "How {name} went from {start} to {result}",
+  "aybkk": "How [student's name, with her OK] went from 'too stiff' to [real result].",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Hits the top local fear; the result must be real and shared with her OK, and never kilos or a cure."
+ },
+ {
+  "n": 98,
+  "cat": "story",
+  "template": "The morning routine of {hero} (full breakdown)",
+  "aybkk": "The morning routine of [student's name, with her OK]: practice at [time], then work.",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 4,
+  "note": "The time was a made-up fact, so it is now a bracket; it answers the 'too early' fear, and any sleep change must be in her own words."
+ },
+ {
+  "n": 99,
+  "cat": "story",
+  "template": "How {hero} learned {skill} (and you can too)",
+  "aybkk": "How [student's name, with her OK] learned her first jump-back, step by step.",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 2,
+  "note": "Drop 'and you can too' because it is a promise; post only if she really got it, show her real steps and let viewers decide."
+ },
+ {
+  "n": 100,
+  "cat": "story",
+  "template": "{Name}, the {type of} {role} everyone's talking about",
+  "aybkk": "[Graduate's name, with OK], the teacher who now runs her own shala in [city].",
+  "fit": "adapt",
+  "goal": "180K",
+  "habit": 0,
+  "note": "Drop 'everyone's talking about' because it is hype; the proof is a real graduate's shala, named only with her OK."
+ },
+ {
+  "n": 101,
+  "cat": "bold",
+  "template": "When will people realize {belief}?",
+  "aybkk": "When will people realize 'strict' often just means someone is paying attention?",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 10,
+  "note": "Own the 'strict' word kindly, and never sound defensive or argue with the review."
+ },
+ {
+  "n": 102,
+  "cat": "bold",
+  "template": "Why {default} when you can {alternative}?",
+  "aybkk": "Why wait to get flexible when you can start Mysore stiff?",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 8,
+  "note": "Hits the top beginner fear; follow with the fact that you learn the first few asanas at your own breath."
+ },
+ {
+  "n": 103,
+  "cat": "bold",
+  "template": "{Skill A} vs {skill B}: which one wins?",
+  "aybkk": "Breath vs flexibility: which one wins in Ashtanga?",
+  "fit": "use",
+  "goal": "reach",
+  "habit": 8,
+  "note": "Give Boonchu's real answer early so the 'vs' is not empty bait."
+ },
+ {
+  "n": 104,
+  "cat": "bold",
+  "template": "The {choice} you make decides how much you {result}",
+  "aybkk": "The room you choose decides how long you keep practising.",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 3,
+  "note": "Strong Habit Gap line; show the quiet room, never a made-up dropout number."
+ },
+ {
+  "n": 105,
+  "cat": "bold",
+  "template": "Some people are built for {area}. Are you?",
+  "aybkk": "Some teachers are built for a Mysore room. Are you?",
+  "fit": "adapt",
+  "goal": "180K",
+  "habit": 10,
+  "note": "'Built for' sounds like talent, so answer with what the work asks, like early mornings and your own practice, to filter, not flatter."
+ },
+ {
+  "n": 106,
+  "cat": "bold",
+  "template": "I don't want to {trade-off} just to {benefit}",
+  "aybkk": "I don't want to give you new asanas just to keep you interested.",
+  "fit": "use",
+  "goal": "trust",
+  "habit": 10,
+  "note": "Speaks to the 'stuck in Primary' fear; then explain why the next asana waits until the student is ready."
+ },
+ {
+  "n": 107,
+  "cat": "bold",
+  "template": "{Popular advice} is ruining {group}",
+  "aybkk": "'Practise when you feel like it' is ruining your yoga habit.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 3,
+  "note": "Aim at the advice, never at a studio, teacher or app that gives it."
+ },
+ {
+  "n": 108,
+  "cat": "bold",
+  "template": "The psychology of people who {behavior}",
+  "aybkk": "The mindset of people who show up at 6 am.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "Swapped 'psychology' for the plainer 'mindset'; share what Boonchu sees in the room, with no fake studies or 'science says'."
+ },
+ {
+  "n": 109,
+  "cat": "bold",
+  "template": "Be so {trait} it makes people {reaction}",
+  "aybkk": "Be so consistent your teacher notices the one day you miss.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 9,
+  "note": "The template invites showing off, so turn the reaction into being noticed, which is the Habit Gap."
+ },
+ {
+  "n": 110,
+  "cat": "bold",
+  "template": "The {tradition} idea every {role} needs",
+  "aybkk": "The old Mysore idea every yoga teacher needs: one student at a time.",
+  "fit": "use",
+  "goal": "180K",
+  "habit": 10,
+  "note": "Good for teachers who want depth; back it with how Boonchu teaches, never a dig at other trainings."
+ },
+ {
+  "n": 111,
+  "cat": "bold",
+  "template": "{Old way} is dead. Do this instead.",
+  "aybkk": "Stop guessing your progress. Do this instead: a 12-week check.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "'Is dead' is hype, so the line drops it and points at a habit, never at a style or studio."
+ },
+ {
+  "n": 112,
+  "cat": "bold",
+  "template": "{Goal} is simpler than you've been told",
+  "aybkk": "Starting Ashtanga is simpler than you've been told.",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 10,
+  "note": "Answers the 'hardcore' fear with beginner facts: first few asanas, next step when you're ready."
+ },
+ {
+  "n": 113,
+  "cat": "bold",
+  "template": "The untapped {skill} most people never use",
+  "aybkk": "The hidden strength most people never use: their own body weight.",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 2,
+  "note": "Swap 'untapped' for the plainer 'hidden', show chaturanga and jump-backs, and promise no results or timeline."
+ },
+ {
+  "n": 114,
+  "cat": "bold",
+  "template": "{Tool} is now your {teammate}",
+  "aybkk": "Your watch is now your sleep coach. It won't get you on the mat.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 0,
+  "note": "Flip the tool hype into the Habit Gap, and never name a watch brand or knock the device."
+ },
+ {
+  "n": 115,
+  "cat": "bold",
+  "template": "{Option A} or {option B}? Which to pick now",
+  "aybkk": "1 month or 3 months? Which to pick when you start Mysore.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 1,
+  "note": "Drop 'now' so there is no fake urgency, and answer the cost fear honestly, as 3 months fits a 12-week check."
+ },
+ {
+  "n": 116,
+  "cat": "bold",
+  "template": "The real cost of {popular choice}",
+  "aybkk": "The real cost of practising alone: nobody notices when you stop.",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 9,
+  "note": "Don't knock home practice; the point is the missing teacher and room, not guilt."
+ },
+ {
+  "n": 117,
+  "cat": "bold",
+  "template": "The {thing} nobody is talking about",
+  "aybkk": "The part of teaching Mysore nobody sees: noticing who didn't come.",
+  "fit": "adapt",
+  "goal": "180K",
+  "habit": 9,
+  "note": "'Nobody is talking about' is rarely true, so say 'nobody sees' for the quiet work and never claim other teachers ignore it."
+ },
+ {
+  "n": 118,
+  "cat": "bold",
+  "template": "Hot take: {thing} is the future of {field}",
+  "aybkk": "Hot take: a 100-year-old method is the future of fitness.",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 10,
+  "note": "It is a big claim, so say it as his opinion and never knock gyms, apps or other styles."
+ },
+ {
+  "n": 119,
+  "cat": "bold",
+  "template": "What {activity} actually does to your brain",
+  "aybkk": "What 90 minutes on the mat with no phone does to your mind.",
+  "fit": "adapt",
+  "goal": "reach",
+  "habit": 6,
+  "note": "Drop the brain science and speak only from what he notices and what students tell him."
+ },
+ {
+  "n": 120,
+  "cat": "bold",
+  "template": "Ranking every {thing} from worst to best",
+  "aybkk": "Ranking every excuse for skipping 6 am practice, from worst to best.",
+  "fit": "adapt",
+  "goal": "shala",
+  "habit": 0,
+  "note": "Rank excuses kindly and answer each one, and never rank styles, studios or teachers."
+ }
+]
