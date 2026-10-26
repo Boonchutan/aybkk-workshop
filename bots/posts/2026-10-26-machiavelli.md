@@ -6,3 +6,4 @@ Reminders due this morning: none new.
 Reel: Plato's daily run is paused (Boonchu, 22 Oct). No Plato post expected. Carne posted today. Keyword test on hold (Batch Sheet default B).
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 9 days.
 Inbox 07:08: 1 new (sticker), 1 LINE thread carried (start day Tue 27 Oct), 0 hot. @Machi from Carne: the renewal photo needs Boonchu's check before it is logged as a win (6 months is not on sale now).
+13:08 check-in: course prices due 19:00 today (2nd nudge); No Cap Daily 2 days. Inbox 13:08: 0 new, 0 hot.
