@@ -13,6 +13,10 @@ Reel: Plato's daily run is paused (Boonchu, 22 Oct). No Plato post expected. Car
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 9 days.
 Inbox 07:08: 1 new (sticker), 1 LINE thread carried (start day Tue 27 Oct), 0 hot. @Machi from Carne: the renewal photo needs Boonchu's check before it is logged as a win (6 months is not on sale now).
 
+## 2026-10-26 · plato
+
+Google photo posts for Wed 28 Oct, Fri 30 Oct and Sun 1 Nov are waiting for Boonchu's photos and go in the Plato chat. Since 19 Oct he picks the Google photos; nothing has gone to Google yet (no gmb posts in Postiz, so no errors).
+
 ## 2026-10-26 · keyword-test-log
 
 # Keyword test log (26 Oct to 22 Nov 2026)
