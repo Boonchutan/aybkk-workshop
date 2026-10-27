@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-27T06:10:53.102Z
+Inbox last read: 2026-10-27T12:27:33.320Z
 
 ## Standing orders from Boonchu
 - 2026-10-17 (Boonchu, HOUSE RULE for every student or customer message and review reply): never write "sorry". For a late answer write "Thank you for your patience with our reply." Keep replies brief, friendly and precise.
@@ -168,3 +168,4 @@ Inbox last read: 2026-10-27T06:10:53.102Z
 - 2026-10-26 13:08: Inbox 13:08: 0 new. Prices (due 19:00 today) and No Cap Daily (19:00 Wed 28 Oct) reminded, 2nd nudge today: at 19:08 only apply default B for prices if no answer. No reminders due, no wins.
 - 2026-10-26 19:08: Prices default B applied (sales open Tue 24 Nov, start Tue 1 Dec). Inbox 19:08: 1 new, 0 hot. No Cap Daily (19:00 Wed 28 Oct) not repeated (2 nudges today). No reminders due, no wins. Next step given: answer the online Led invite-only question, send Carne's draft.
 - 2026-10-27 07:08: Carne posted; Plato paused (expected). Inbox 07:08: 2 new in 1 thread, 1 hot (LINE payment slip, may be answered); Carne @Machi leave-early thread carried. No Cap Daily reminded (due 19:00 Wed 28 Oct, 1st nudge today). Stage 1 test day (27 Oct) passed without the build go; Rezerv stop Mon 2 Nov at risk. No reminders due, no wins. Board rebuilt.
+- 2026-10-27 19:08: Inbox 19:08: 4 new in 2 threads, 2 hot (LINE booking question after payment; new person asking about classes). No Cap Daily and booking move stage 1 not repeated (2 nudges today). No reminders due, no wins. Next step given: answer the online Led invite-only question (day 11).
