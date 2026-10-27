@@ -6,3 +6,4 @@ Reminders due this morning: none new.
 Reel: Plato's daily run is paused (Boonchu, 22 Oct). No Plato post expected. Carne posted today. Keyword test on hold.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 10 days.
 Inbox 07:08: 2 new in 1 thread, 1 hot (a payment slip, may be answered). 1 LINE thread carried (Carne @Machi: leave-early request for today, may be answered). Payment: Boonchu confirms before any win is logged.
+13:08 check-in: No Cap Daily still waiting (1 day, 2nd today). Booking move stage 1 still waits on go, Rezerv stops selling in 6 days. Inbox 13:08: 0 new, 0 hot.
