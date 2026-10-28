@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-10-27T23:38:32.224Z
+Inbox last read: 2026-10-28T23:38:49.636Z
 
 ## Standing orders from Boonchu
 - 2026-10-04 (Boonchu, via Machi): COMPARISON. Use the 5-step pattern (pain, what they try, what it misses, what Ashtanga does, proof + invite) in bots/direction.md. Never say walking or running "does not work": say "Walking covers 2 of the 10. One Ashtanga morning covers all 10." Flip "harder" ("easy things don't change you"), always add "we teach you from the very start".
@@ -105,3 +105,4 @@ Sources: Arctic Shift public Reddit archive (reddit.com blocks fetch), Sohu, Sin
 - 2026-10-26: Inbox read OK: 2 LINE threads, 0 about 180K (a shala student says they renewed a 6-month package, a Thai student starts Tue 27 Oct: Machi's job). No new leads. 1 serious lead due today, silent since 17 Oct (9 days): one short follow-up drafted to replace the 24 Oct draft, next check 28 Oct. Invite-only question still waits on Boonchu (9th day). Batch Sheet unchanged; keyword test still on hold (default B), so no Monday score. No requests in team chat.
 - 2026-10-27: Inbox read OK: 2 LINE threads, 0 about 180K (a student leaving class early for work, a Thai student sent a transfer slip: Machi's job). No new leads. 1 serious lead, next check 28 Oct (not due), silent since 17 Oct (10 days). Invite-only question still waits on Boonchu (10th day). Batch Sheet unchanged; keyword test on hold. No requests in team chat.
 - 2026-10-28: Inbox read OK: 2 LINE threads, 0 about 180K (a Thai student who paid asks if she must book in the app, starts tomorrow; a new person sent 'Hi' and the aybkk.com/class link: Machi's job). No new leads. 1 serious lead due today, silent since 17 Oct (11 days): one short follow-up drafted to replace the 26 Oct draft, next check 31 Oct (14 days). Invite-only question still waits on Boonchu (11th day). Batch Sheet unchanged; keyword test on hold. No requests in team chat.
+- 2026-10-29: Inbox read OK: 0 threads. No new leads. 1 serious lead, next check 31 Oct (not due), silent since 17 Oct (12 days). Invite-only question still waits on Boonchu (12th day). Batch Sheet unchanged; keyword test on hold. No requests in team chat.
