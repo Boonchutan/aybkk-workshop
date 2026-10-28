@@ -328,6 +328,12 @@
   /* pink is for scarcity; an empty class is just information */
   .cls .seats.quiet{color:var(--soft);font-weight:400}
   .cls.full{opacity:.45}
+  .cls.came{padding:11px 16px;margin-bottom:8px}
+  .cls.came .t{font-size:17px;color:var(--soft)}
+  .pkg.habit{display:flex;align-items:center;gap:16px;background:var(--blush);border-color:var(--blush-line)}
+  .pkg.habit .hn{font-family:'Patrick Hand','Plex',cursive;font-size:54px;line-height:1;color:var(--plum);
+    min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
+  .pkg.habit b{font-size:17px}
   .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
     background:var(--blush);color:var(--plum);border-radius:999px;padding:3px 9px;margin-left:6px}
 
@@ -1196,6 +1202,45 @@
     paidBookedMail: 'Откройте ссылку в письме с чеком, чтобы увидеть запись на этом телефоне.',
     paidNotBooked: (c, w) => `Оплата получена, но записать вас на ${c}, ${w} не удалось. Разовое посещение сохранено для другого занятия, шала свяжется с вами.`,
   });
+  // My pass keeps the habit proof: every class they came to, the ones moved over
+  // from Rezerv included (28 Oct 2026).
+  Object.assign(STR.en, {
+    practisedL: 'Mornings practised', practisedMonth: n => `This month: ${n}`,
+    practisedZero: 'Your count starts with your first class.',
+    cameH: 'Classes you came to', noCame: 'No classes yet. They appear here after you practise.',
+    passUnlim: n => `Unlimited · ${n} bookings per day`, passUnlimOnly: 'Unlimited classes',
+    passLeft: n => `${n} classes left`, validUntil: d => `Valid until ${d}`,
+    startsFirst: 'Starts when you book your first class', noPassYet: 'No pass yet.',
+    noUpcoming: 'No upcoming classes booked.', member: 'Member', cancelBk: 'Cancel',
+  });
+  Object.assign(STR.th, {
+    practisedL: 'จำนวนเช้าที่มาฝึก', practisedMonth: n => `เดือนนี้ ${n} ครั้ง`,
+    practisedZero: 'เริ่มนับตั้งแต่คลาสแรกของคุณ',
+    cameH: 'คลาสที่คุณมาเรียน', noCame: 'ยังไม่มีคลาส หลังจากมาฝึก คลาสจะขึ้นที่นี่',
+    passUnlim: n => `เรียนไม่จำกัด · จองได้วันละ ${n} คลาส`, passUnlimOnly: 'เรียนไม่จำกัด',
+    passLeft: n => `เหลือ ${n} ครั้ง`, validUntil: d => `ใช้ได้ถึง ${d}`,
+    startsFirst: 'เริ่มนับเมื่อคุณจองคลาสแรก', noPassYet: 'ยังไม่มีแพ็กเกจ',
+    noUpcoming: 'ยังไม่มีคลาสที่จองไว้', member: 'สมาชิก', cancelBk: 'ยกเลิก',
+  });
+  Object.assign(STR.zh, {
+    practisedL: '已练习的早晨', practisedMonth: n => `本月：${n} 次`,
+    practisedZero: '从你的第一节课开始计算。',
+    cameH: '你上过的课', noCame: '还没有记录。练习之后，课程会显示在这里。',
+    passUnlim: n => `不限次数 · 每天可预约 ${n} 节课`, passUnlimOnly: '不限次数',
+    passLeft: n => `剩余 ${n} 次课`, validUntil: d => `有效期至 ${d}`,
+    startsFirst: '从你预约第一节课开始计算', noPassYet: '还没有会员卡。',
+    noUpcoming: '还没有预约的课程。', member: '会员', cancelBk: '取消预约',
+  });
+  Object.assign(STR.ru, {
+    practisedL: 'Утренних практик', practisedMonth: n => `В этом месяце: ${n}`,
+    practisedZero: 'Счёт начнётся с вашего первого занятия.',
+    cameH: 'Занятия, на которых вы были', noCame: 'Пока пусто. После практики занятия появятся здесь.',
+    passUnlim: n => `Без ограничений · до ${n} записей в день`, passUnlimOnly: 'Без ограничений',
+    passLeft: n => `Осталось занятий: ${n}`, validUntil: d => `Действует до: ${d}`,
+    startsFirst: 'Начнётся, когда вы запишетесь на первое занятие', noPassYet: 'Абонемента пока нет.',
+    noUpcoming: 'Нет записей на ближайшие занятия.', member: 'Участник', cancelBk: 'Отменить',
+  });
+
   // Class names in the page language, for the drop-in class list and the
   // "you are booked" message. Anything not listed stays as the shala wrote it.
   const CLASS_WORDS = {
@@ -1469,10 +1514,17 @@
   applyLang();
 
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MON3 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  // The Bangkok day, like fmtTime: read on the phone's own clock, a 05:30 class
+  // showed the day before on a phone that is not on Bangkok time.
   const fmtDay = iso => {
-    const d = new Date(iso);
-    return DAYS[d.getDay()] + ', ' + d.getDate() + ' ' +
-      ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+    const d = new Date(Date.parse(iso) + 7 * 3600e3);
+    const en = DAYS[d.getUTCDay()] + ', ' + d.getUTCDate() + ' ' + MON3[d.getUTCMonth()];
+    if (LANG === 'en') return en;
+    try {
+      return new Date(iso).toLocaleDateString(LOCALE[LANG] || 'en-GB',
+        { timeZone: 'Asia/Bangkok', weekday: 'long', day: 'numeric', month: 'short' });
+    } catch (_) { return en; }
   };
   const fmtTime = iso => new Date(iso).toLocaleTimeString('en-GB',
     { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
@@ -1581,9 +1633,7 @@
 
     // Label from the Bangkok class date itself, never from the timestamp — in a
     // viewer's local timezone a 05:30 class can fall on the previous calendar day.
-    const dsel = new Date(selDate + 'T12:00:00Z');
-    const dayLabel = DAYS[dsel.getUTCDay()] + ', ' + dsel.getUTCDate() + ' '
-      + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dsel.getUTCMonth()];
+    const dayLabel = fmtDay(selDate + 'T12:00:00+07:00');
     const dayClasses = CLASSES.filter(c => c.date === selDate);
     let html = cal;
     html += `<div class="day">${esc(dayLabel)}</div>`;
@@ -1655,19 +1705,29 @@
       if (res.status === 404 && d.error === 'not found') { forgetMe(); return renderMe(true); }
       if (d.error) throw new Error(d.error);
       const passes = (d.passes || []).map(p => `<div class="pkg">
-        <h3>${esc(p.name)}</h3>
-        <div class="note">${p.kind === 'unlimited'
-          ? 'Unlimited · ' + p.dailyCap + ' bookings per day'
-          : (p.creditsLeft ?? 0) + ' classes left'}</div>
-        <div class="note">${p.validUntil ? 'Valid until ' + fmtDay(String(p.validUntil).slice(0, 10) + 'T12:00:00+07:00')
-          : 'Starts when you book your first class'}</div>
-      </div>`).join('') || '<p class="note">No pass yet.</p>';
+        <h3>${esc((LANG === 'th' && p.nameTh) || p.name)}</h3>
+        <div class="note">${esc(p.kind === 'unlimited'
+          ? (p.dailyCap ? t('passUnlim', p.dailyCap) : t('passUnlimOnly'))
+          : t('passLeft', p.creditsLeft ?? 0))}</div>
+        <div class="note">${esc(p.validUntil ? t('validUntil', fmtDay(String(p.validUntil).slice(0, 10) + 'T12:00:00+07:00'))
+          : t('startsFirst'))}</div>
+      </div>`).join('') || `<p class="note">${esc(t('noPassYet'))}</p>`;
       const bookings = (d.bookings || []).map(b => `<div class="cls">
         <div class="t">${fmtTime(b.start_at)}</div>
-        <div class="b"><div class="n">${esc(b.title)}</div>
-          <div class="m">${fmtDay(b.start_at)}</div></div>
-        <button class="btn ghost" onclick="cancelBooking(${b.id})">Cancel</button>
-      </div>`).join('') || '<p class="note">No upcoming classes booked.</p>';
+        <div class="b"><div class="n">${esc(clsName(b.title))}</div>
+          <div class="m">${esc(fmtDay(b.start_at))}</div></div>
+        <button class="btn ghost" onclick="cancelBooking(${b.id})">${esc(t('cancelBk'))}</button>
+      </div>`).join('') || `<p class="note">${esc(t('noUpcoming'))}</p>`;
+      // Mornings, not classes: Saturday's two led classes are one morning.
+      const h = d.history || { days: 0, thisMonth: 0, recent: [] };
+      const habit = `<div class="pkg habit"><div class="hn">${Number(h.days) || 0}</div>
+        <div><b>${esc(t('practisedL'))}</b>
+          <div class="note">${esc(h.days ? t('practisedMonth', h.thisMonth || 0) : t('practisedZero'))}</div></div></div>`;
+      const came = (h.recent || []).map(v => `<div class="cls came">
+        <div class="t">${esc(v.time || '✓')}</div>
+        <div class="b"><div class="n">${esc(v.class ? clsName(v.class) : fmtDay(v.date + 'T12:00:00+07:00'))}</div>
+          ${v.class ? `<div class="m">${esc(fmtDay(v.date + 'T12:00:00+07:00'))}</div>` : ''}</div>
+      </div>`).join('') || `<p class="note">${esc(t('noCame'))}</p>`;
       const askEmail = d.member.email ? '' : `<div class="pkg" id="mailBox">
           <h3>${esc(t('addEmailH'))}</h3><p class="note">${esc(t('addEmailWhy'))}</p>
           <p class="note" style="font-weight:600;color:var(--plum)">${esc(t('emailWho', d.member.name))}
@@ -1675,8 +1735,9 @@
           <input id="myMail" type="email" autocomplete="email" placeholder="you@example.com">
           <p style="margin-top:10px"><button class="btn pink" onclick="saveMyEmail()">${esc(t('addEmailBtn'))}</button></p>
           <div id="mailMsg"></div></div>`;
-      $('#view').innerHTML = `<p class="note">Member <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}
+      $('#view').innerHTML = `<p class="note">${esc(t('member'))} <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}
         · <button type="button" class="signout" style="min-height:0;padding:0" onclick="signOutMe()">${esc(t('notYou', d.member.name))}</button></p>
+        ${habit}
         ${askEmail}
         ${(d.notes || []).length ? `<div class="day">${esc(t('fromTeachers'))}</div>${d.notes.map(n => `<div class="pkg">
           <div class="note">${esc(fmtDay(String(n.class_date || n.created_at).slice(0, 10) + 'T12:00:00+07:00'))}${n.teacher ? ' · ' + esc(n.teacher) : ''}</div>
@@ -1685,7 +1746,8 @@
         <div class="day">${esc(t('checkH'))}</div><div id="myChecks"><p class="note">${esc(t('loading'))}</p></div>
         <div class="day">${esc(t('myPhotos'))}</div><div id="myPhotos"><p class="note">${esc(t('loading'))}</p></div>
         <div class="day">${esc(t('yourPass'))}</div>${passes}
-        <div class="day">${esc(t('upcoming'))}</div>${bookings}`;
+        <div class="day">${esc(t('upcoming'))}</div>${bookings}
+        <div class="day">${esc(t('cameH'))}</div>${came}`;
       renderMyPhotos(code, d.member);
       renderChecks(code);
     } catch (e) {

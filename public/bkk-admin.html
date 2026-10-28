@@ -25,7 +25,7 @@
   table{width:100%;border-collapse:collapse;font-size:14px}
   th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
   th{color:var(--soft);font-size:12px}
-  .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700}
+  .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
   .pending{background:#fff3d6;color:#8a6a12}.paid{background:#e6f6ec;color:#187a43}
   .mismatch,.failed{background:#fdeaea;color:#a33}
   .btn{padding:9px 14px;border:none;border-radius:7px;background:var(--plum);color:var(--on-dark);font-weight:700;font-size:14px;cursor:pointer;font-family:'Work Sans','Plex',sans-serif;font-weight:800}
@@ -41,7 +41,38 @@
   #gate .lang{justify-content:center;margin-bottom:10px}
   #gate .lang button{color:var(--soft);border-color:var(--line)}
   #gate .lang button.on{background:var(--plum);color:var(--on-dark);border-color:var(--plum)}
-  @media (max-width:480px){nav button{padding:12px 4px;font-size:14px;line-height:1.3}header h1{font-size:22px}}
+  .attended,.active{background:#e6f6ec;color:#187a43}.upcoming{background:#fff3d6;color:#8a6a12}
+  .noshow{background:#fdeaea;color:#a33}.cancelled,.void,.past{background:#eeeaf0;color:#5d5463}
+  .refund,.frozen{background:#e3eefa;color:#2a5d8f}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.sm{padding:7px 11px;font-size:13px}
+  select{padding:9px;border:1.5px solid var(--line);border-radius:7px;font-size:15px;font-family:inherit;
+    background:var(--wall);color:var(--ink);max-width:100%}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:12px 0}
+  .tile{background:var(--wall);border:1px solid var(--line);border-radius:8px;padding:9px 11px;min-width:0}
+  .tile span,.tile small{display:block;color:var(--soft);font-size:12px;line-height:1.4}
+  .box .tile b{display:block;font-size:20px;line-height:1.3;overflow-wrap:anywhere}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .scroll.wide table{min-width:560px}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .nowrap{white-space:nowrap}
+  .seg{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+  .seg button{padding:8px 13px;border:1.5px solid var(--line);border-radius:99px;background:var(--paper);color:var(--ink);
+    font:700 13.5px/1.2 'Plex',sans-serif;cursor:pointer}
+  .seg button.on{background:var(--plum);border-color:var(--plum);color:var(--on-dark)}
+  .row2{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:6px 0}
+  .row2 label{font-size:13px;color:var(--soft)}
+  .cimap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:8px 12px;align-items:center;margin:8px 0}
+  .cimap label{font-size:14px}
+  .cimap select{width:100%}
+  .list{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:7px;padding:8px 10px;
+    background:var(--paper);font-size:13.5px;line-height:1.5}
+  .list div{padding:2px 0;border-bottom:1px solid var(--line)}
+  .warnline{background:#fff3d6;color:#6b520e;border-radius:7px;padding:8px 10px;font-size:14px}
+  .hhead h2{margin:4px 0 2px;font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:24px;line-height:1.2}
+  @media (max-width:480px){nav{overflow-x:auto}nav button{flex:1 0 auto;padding:12px 4px;font-size:13px;line-height:1.3;white-space:nowrap}
+    header h1{font-size:22px}
+    .cimap{grid-template-columns:1fr;gap:2px}.cimap label{margin-top:8px}}
 </style>
 </head>
 <body>
@@ -64,6 +95,7 @@
   <button id="t-students" data-t="tabStudents" onclick="tab('students')">Students</button>
   <button id="t-classes" data-t="tabClasses" onclick="tab('classes')">Classes</button>
   <button id="t-orders" data-t="tabOrders" onclick="tab('orders')">Payments</button>
+  <button id="t-reports" data-t="tabReports" onclick="tab('reports')">Reports</button>
   <button id="t-settings" data-t="tabSettings" onclick="tab('settings')">Settings</button>
 </nav>
 <main id="view"></main>
@@ -273,16 +305,197 @@
       },
     },
   };
+  // History, reports and the move from Rezerv (Oct 2026).
+  Object.assign(STR.en, {
+    tabReports: 'Reports', loadingTxt: 'Loading…', back: '← Back', histBtn: 'History', noneYet: 'None yet.',
+    hRezerv: 'moved from Rezerv', hHere: 'made on aybkk.net', hRezervId: id => `Rezerv ID ${id}`,
+    hJoined: d => `joined ${d}`, hSince: d => `in this system since ${d}`,
+    tCame: 'Classes came', tFirst: d => `first ${d}`, tLastVisit: 'Last visit', tNever: 'never',
+    tLast30: 'Last 30 days', tLast90: n => `last 90 days: ${n}`,
+    tPaid: 'Total paid', tPayN: n => `${n} payment${n === 1 ? '' : 's'}`,
+    tPass: 'Active pass', tNoPass: 'none', tLeftN: n => `${n} classes left`, tUntil: d => `until ${d}`,
+    tStartsFirst: 'starts on the first booking', tMissed: 'No-shows · cancelled', tPhotos: n => `${n} photos`,
+    hVisits: 'Visits', hPays: 'Payments', hPasses: 'Passes', hNotes: 'Teacher notes', hChecks: '12-week checks',
+    thDate: 'Date', thTime: 'Time', thClass: 'Class', thFrom: 'From', thItem: 'Item', thAmount: 'Amount',
+    thMethod: 'Paid by', thClasses: 'Classes', thValid: 'Valid', thNote: 'Note', thTeacher: 'Teacher',
+    thHr: 'Resting HR', thSleep: 'Sleep', thFeel: 'Feel', thCount: 'Count', thTotal: 'Total', thAvg: 'Per class',
+    thHeld: 'Days held', thLast: 'Last visit', thUntil: 'Until', thPass: 'Pass', thCame: 'Came', thBooked: 'Booked',
+    thMoney: 'Money', thRow: 'Row', thMonth: 'Month',
+    showAll: n => `Show all ${n}`, teamOnly: 'team only', shared: 'the student sees it', workOnTxt: 'Work on',
+    paused: (a, b) => `paused ${a} to ${b}`, inAt: x => `in ${x}`, unlimCap: n => `unlimited, ${n} a day`,
+    unlimOnly: 'unlimited', leftOf: (a, b) => `${a} of ${b} left`,
+    csv_visits: 'Visits (CSV)', csv_payments: 'Payments (CSV)', csv_members: 'Students (CSV)',
+    repTitle: 'Reports', r_today: 'Today', r_week: 'This week', r_month: 'This month', r_lastMonth: 'Last month',
+    r_year: 'This year', r_custom: 'Custom', rFrom: 'From', rTo: 'To', rShow: 'Show',
+    rRange: (a, b) => a === b ? a : `${a} to ${b}`,
+    rBadRange: 'Pick a start and an end date, at most 400 days apart.',
+    rVisitsH: 'Classes', kCame: 'Came', kBooked: 'Booked', kNoShows: 'No-shows', kCancelled: 'Cancelled',
+    kStudents: 'Students who came', kNew: 'First visit ever',
+    rMoneyH: 'Money', kMoney: 'Money in', kVat: 'VAT in it', kPayments: 'Payments', kSold: 'Packages sold',
+    rByDay: 'By day', rByMonth: 'By month', rByClass: 'By class', rBySource: 'Booked through', rByMethod: 'By payment method',
+    rByItem: 'By item', rMoneySource: 'Where the money came in', rNothing: 'Nothing in these days.',
+    rExpH: 'Passes ending in the next 14 days', rExpHelp: 'Counted from today. Anyone who already has a next pass is left out.',
+    rNotSeenH: 'Not seen for 14 days', rNotSeenHelp: 'Has a pass they can use, but no class in the last 14 days. Counted from today. Send them a message.',
+    neverCame: 'never came',
+    ciTitle: 'Move everything from Rezerv (CSV files)',
+    ciHelp: 'Export each list from Rezerv as a CSV file. Import Students first, then Passes, Visits and Payments. Check shows what will happen and saves nothing. Running the same file again adds nothing twice.',
+    ciKind: 'What is in the file?', ciFile: 'CSV file',
+    kind_members: 'Students', kind_visits: 'Visits (classes booked or attended)', kind_payments: 'Payments',
+    kind_passes: 'Passes (packages students hold now)',
+    ciRead: (f, n, h) => `${f}: ${n} rows, headings on row ${h}`,
+    ciEmpty: 'No rows found in this file.', ciBadFile: 'Could not read this file.',
+    ciExcel: 'This is an Excel file. In Excel choose Save As, then "CSV UTF-8", and pick that file here.',
+    ciMapH: 'Match the columns',
+    ciMapHelp: 'We matched what we could. Check each line and pick the right column where needed. Columns not picked here are never sent: no birthdays, addresses or card numbers.',
+    ciNotUsed: '(not used)', ciNeed: list => `Pick a column for: ${list}`,
+    ciNeedWho: 'Pick at least one way to find the student: customer ID, email, phone or name.',
+    ciPreviewH: 'First 5 rows, as they will be read',
+    ciPastBooked: 'Past classes still marked "booked" count as attended (tick this if Rezerv never marked who came)',
+    ciCheck: 'Check (saves nothing)', ciImport: 'Import',
+    ciCheckFirst: 'Press Check first. Import opens after a check with these settings.',
+    ciChecking: (a, b) => `Checking ${a.toLocaleString()} of ${b.toLocaleString()} rows…`,
+    ciImporting: (a, b) => `Importing ${a.toLocaleString()} of ${b.toLocaleString()} rows… Keep this page open.`,
+    ciCheckDone: 'Check finished. Nothing was saved.', ciImportDone: 'Import finished.',
+    ciStopped: (row, e) => `Stopped at row ${row}: ${e}. Rows before it are saved. Fix it and import again: nothing is added twice.`,
+    ciConfirm: (n, k) => `Import ${n} rows of ${k} now?\nThis saves them in the system.`,
+    ciTotal: 'Rows', ciAdded: 'Added', ciMatched: 'Already there', ciUpdated: 'Updated', ciNewMembers: 'New students',
+    ciSkipped: 'Skipped', ciSkippedH: 'Skipped rows', ciSkippedCsv: 'Download skipped rows (CSV)', ciWarnH: 'Notes',
+    ciRow: n => `Row ${n}`,
+    ciPastNote: n => `Past classes still marked "booked" in the file, not attended: ${n}. They stay booked and do not count as classes practised. If Rezerv never marked who came, tick the box above and run it again.`,
+    ciBatchNote: 'A check looks at each 1,000 rows on its own, so a student made from a name in an earlier part shows as new again. The real import does not do this.',
+    f_rezervId: 'Rezerv customer ID', f_visits_rezervId: 'Booking ID', f_payments_rezervId: 'Payment ID',
+    f_memberRezervId: 'Customer ID', f_name: 'Name', f_lastName: 'Last name (added after the name)', f_email: 'Email',
+    f_phone: 'Phone', f_joinedOn: 'Joined on', f_date: 'Date', f_visits_date: 'Class date', f_payments_date: 'Payment date',
+    f_time: 'Class time', f_className: 'Class', f_status: 'Status', f_checkedInAt: 'Checked in at', f_amount: 'Amount paid',
+    f_item: 'Item', f_method: 'Paid by', f_vat: 'VAT', f_note: 'Note', f_plan: 'Package', f_until: 'End date',
+    f_start: 'Start date', f_classesLeft: 'Classes left', f_payments_status: 'Payment status (paid, refund, failed…)',
+  });
+  Object.assign(STR.en.words, {
+    attended: 'came', booked: 'booked', past: 'booked, never checked in', noshow: 'no-show', cancelled: 'cancelled',
+    refund: 'refund', rezerv: 'Rezerv', aybkk: 'aybkk.net', door: 'at the door', student: 'student online',
+    staff: 'staff', order: 'with a payment', manual: 'given by staff', pass: 'pass', bought: 'bought',
+  });
+  const CI_THEN_TH = { hand: 'ตรวจสอบเอง', made: 'สร้างเป็นนักเรียนใหม่', madeNoEmail: 'สร้างเป็นนักเรียนใหม่โดยไม่ใส่อีเมลนี้' };
+  Object.assign(STR.th, {
+    tabReports: 'รายงาน', loadingTxt: 'กำลังโหลด…', back: '← กลับ', histBtn: 'ประวัติ', noneYet: 'ยังไม่มี',
+    hRezerv: 'ย้ายมาจาก Rezerv', hHere: 'สมัครบน aybkk.net', hRezervId: id => `รหัส Rezerv ${id}`,
+    hJoined: d => `สมัครเมื่อ ${d}`, hSince: d => `อยู่ในระบบนี้ตั้งแต่ ${d}`,
+    tCame: 'มาเรียน (ครั้ง)', tFirst: d => `ครั้งแรก ${d}`, tLastVisit: 'มาครั้งล่าสุด', tNever: 'ยังไม่เคยมา',
+    tLast30: '30 วันล่าสุด', tLast90: n => `90 วันล่าสุด: ${n}`,
+    tPaid: 'จ่ายแล้วทั้งหมด', tPayN: n => `${n} รายการ`,
+    tPass: 'แพ็กเกจที่ใช้อยู่', tNoPass: 'ไม่มี', tLeftN: n => `เหลือ ${n} ครั้ง`, tUntil: d => `ถึง ${d}`,
+    tStartsFirst: 'เริ่มเมื่อจองคลาสแรก', tMissed: 'จองแล้วไม่มา · ยกเลิก', tPhotos: n => `รูป ${n} รูป`,
+    hVisits: 'การเข้าเรียน', hPays: 'การชำระเงิน', hPasses: 'แพ็กเกจ', hNotes: 'คำแนะนำครู', hChecks: 'เช็กผล 12 สัปดาห์',
+    thDate: 'วันที่', thTime: 'เวลา', thClass: 'คลาส', thFrom: 'มาจาก', thItem: 'รายการ', thAmount: 'ยอดเงิน',
+    thMethod: 'ชำระโดย', thClasses: 'ครั้ง', thValid: 'ช่วงเวลา', thNote: 'หมายเหตุ', thTeacher: 'ครู',
+    thHr: 'ชีพจรขณะพัก', thSleep: 'การนอน', thFeel: 'ความรู้สึก', thCount: 'จำนวน', thTotal: 'รวม', thAvg: 'เฉลี่ยต่อคลาส',
+    thHeld: 'จำนวนวัน', thLast: 'มาครั้งล่าสุด', thUntil: 'ถึง', thPass: 'แพ็กเกจ', thCame: 'มาเรียน', thBooked: 'จอง',
+    thMoney: 'เงิน', thRow: 'แถว', thMonth: 'เดือน',
+    showAll: n => `แสดงทั้งหมด ${n} รายการ`, teamOnly: 'เฉพาะทีม', shared: 'นักเรียนเห็น', workOnTxt: 'ฝึกต่อ',
+    paused: (a, b) => `พัก ${a} ถึง ${b}`, inAt: x => `เช็คอิน ${x}`, unlimCap: n => `ไม่จำกัด วันละ ${n} คลาส`,
+    unlimOnly: 'ไม่จำกัด', leftOf: (a, b) => `เหลือ ${a} จาก ${b} ครั้ง`,
+    csv_visits: 'การเข้าเรียน (CSV)', csv_payments: 'การชำระเงิน (CSV)', csv_members: 'รายชื่อนักเรียน (CSV)',
+    repTitle: 'รายงาน', r_today: 'วันนี้', r_week: 'สัปดาห์นี้', r_month: 'เดือนนี้', r_lastMonth: 'เดือนที่แล้ว',
+    r_year: 'ปีนี้', r_custom: 'เลือกวันเอง', rFrom: 'ตั้งแต่', rTo: 'ถึง', rShow: 'แสดง',
+    rRange: (a, b) => a === b ? a : `${a} ถึง ${b}`,
+    rBadRange: 'เลือกวันเริ่มและวันสิ้นสุด ห่างกันไม่เกิน 400 วัน',
+    rVisitsH: 'การเข้าเรียน', kCame: 'มาเรียน', kBooked: 'จอง', kNoShows: 'จองแล้วไม่มา', kCancelled: 'ยกเลิก',
+    kStudents: 'นักเรียนที่มา', kNew: 'มาครั้งแรก',
+    rMoneyH: 'เงิน', kMoney: 'เงินเข้า', kVat: 'VAT ในยอดนี้', kPayments: 'รายการชำระ', kSold: 'แพ็กเกจที่ขาย',
+    rByDay: 'รายวัน', rByMonth: 'รายเดือน', rByClass: 'รายคลาส', rBySource: 'จองผ่าน', rByMethod: 'ตามวิธีชำระ',
+    rByItem: 'ตามรายการ', rMoneySource: 'เงินเข้าผ่าน', rNothing: 'ไม่มีข้อมูลในช่วงนี้',
+    rExpH: 'แพ็กเกจที่จะหมดใน 14 วัน', rExpHelp: 'นับจากวันนี้ ไม่รวมคนที่มีแพ็กเกจถัดไปแล้ว',
+    rNotSeenH: 'ไม่ได้มา 14 วัน', rNotSeenHelp: 'มีแพ็กเกจที่ใช้ได้ แต่ไม่ได้มาเรียนใน 14 วันล่าสุด นับจากวันนี้ ลองส่งข้อความหา',
+    neverCame: 'ยังไม่เคยมา',
+    ciTitle: 'ย้ายข้อมูลทั้งหมดจาก Rezerv (ไฟล์ CSV)',
+    ciHelp: 'ดาวน์โหลดแต่ละรายการจาก Rezerv เป็นไฟล์ CSV นำเข้านักเรียนก่อน แล้วจึงแพ็กเกจ การเข้าเรียน และการชำระเงิน ปุ่มตรวจสอบจะแสดงผลที่จะเกิดขึ้นโดยยังไม่บันทึก นำเข้าไฟล์เดิมซ้ำได้ ไม่มีข้อมูลซ้ำ',
+    ciKind: 'ในไฟล์คืออะไร', ciFile: 'ไฟล์ CSV',
+    kind_members: 'นักเรียน', kind_visits: 'การเข้าเรียน (คลาสที่จองหรือมาเรียน)', kind_payments: 'การชำระเงิน',
+    kind_passes: 'แพ็กเกจ (ที่นักเรียนถืออยู่ตอนนี้)',
+    ciRead: (f, n, h) => `${f}: ${n} แถว หัวตารางอยู่แถวที่ ${h}`,
+    ciEmpty: 'ไม่พบข้อมูลในไฟล์นี้', ciBadFile: 'อ่านไฟล์นี้ไม่ได้',
+    ciExcel: 'นี่คือไฟล์ Excel ใน Excel ให้เลือก Save As แล้วเลือก "CSV UTF-8" แล้วเลือกไฟล์นั้นที่นี่',
+    ciMapH: 'จับคู่คอลัมน์',
+    ciMapHelp: 'ระบบจับคู่ให้เท่าที่ทำได้ ตรวจทีละบรรทัด และเลือกคอลัมน์ที่ถูกต้องถ้าจำเป็น คอลัมน์ที่ไม่ได้เลือกจะไม่ถูกส่ง (ไม่มีวันเกิด ที่อยู่ หรือเลขบัตร)',
+    ciNotUsed: '(ไม่ใช้)', ciNeed: list => `เลือกคอลัมน์สำหรับ: ${list}`,
+    ciNeedWho: 'เลือกอย่างน้อยหนึ่งอย่างเพื่อหานักเรียน: รหัสลูกค้า อีเมล เบอร์โทร หรือชื่อ',
+    ciPreviewH: '5 แถวแรก ตามที่ระบบจะอ่าน',
+    ciPastBooked: 'คลาสที่ผ่านไปแล้วแต่ยังเป็น "จอง" ให้นับว่ามาเรียน (ติ๊กถ้า Rezerv ไม่เคยบันทึกว่าใครมา)',
+    ciCheck: 'ตรวจสอบ (ยังไม่บันทึก)', ciImport: 'นำเข้า',
+    ciCheckFirst: 'กดตรวจสอบก่อน ปุ่มนำเข้าจะใช้ได้หลังตรวจสอบด้วยการตั้งค่านี้',
+    ciChecking: (a, b) => `กำลังตรวจ ${a.toLocaleString()} จาก ${b.toLocaleString()} แถว…`,
+    ciImporting: (a, b) => `กำลังนำเข้า ${a.toLocaleString()} จาก ${b.toLocaleString()} แถว… อย่าปิดหน้านี้`,
+    ciCheckDone: 'ตรวจเสร็จแล้ว ยังไม่มีอะไรถูกบันทึก', ciImportDone: 'นำเข้าเสร็จแล้ว',
+    ciStopped: (row, e) => `หยุดที่แถว ${row}: ${e} แถวก่อนหน้านี้บันทึกแล้ว แก้ไขแล้วนำเข้าอีกครั้งได้ ไม่มีข้อมูลซ้ำ`,
+    ciConfirm: (n, k) => `นำเข้า ${n} แถว (${k}) ตอนนี้เลยไหม?\nข้อมูลจะถูกบันทึกในระบบ`,
+    ciTotal: 'แถว', ciAdded: 'เพิ่มใหม่', ciMatched: 'มีอยู่แล้ว', ciUpdated: 'อัปเดต', ciNewMembers: 'นักเรียนใหม่',
+    ciSkipped: 'ข้าม', ciSkippedH: 'แถวที่ข้าม', ciSkippedCsv: 'ดาวน์โหลดแถวที่ข้าม (CSV)', ciWarnH: 'หมายเหตุ',
+    ciRow: n => `แถว ${n}`,
+    ciPastNote: n => `${n} คลาสที่ผ่านไปแล้วในไฟล์ยังเป็น "จอง" ไม่ใช่ "มาเรียน" ระบบเก็บไว้เป็นจอง และไม่นับเป็นครั้งที่มาฝึก ถ้า Rezerv ไม่เคยบันทึกว่าใครมา ให้ติ๊กช่องด้านบนแล้วทำอีกครั้ง`,
+    ciBatchNote: 'การตรวจสอบดูทีละ 1,000 แถว นักเรียนที่สร้างจากชื่อในส่วนก่อนหน้าจึงขึ้นเป็นนักเรียนใหม่อีก ตอนนำเข้าจริงจะไม่เป็นแบบนี้',
+    f_rezervId: 'รหัสลูกค้าใน Rezerv', f_visits_rezervId: 'รหัสการจอง', f_payments_rezervId: 'รหัสการชำระเงิน',
+    f_memberRezervId: 'รหัสลูกค้า', f_name: 'ชื่อ', f_lastName: 'นามสกุล (ต่อท้ายชื่อ)', f_email: 'อีเมล',
+    f_phone: 'เบอร์โทร', f_joinedOn: 'วันที่สมัคร', f_date: 'วันที่', f_visits_date: 'วันที่เรียน', f_payments_date: 'วันที่ชำระ',
+    f_time: 'เวลาเรียน', f_className: 'คลาส', f_status: 'สถานะ', f_checkedInAt: 'เวลาเช็คอิน', f_amount: 'ยอดที่ชำระ',
+    f_item: 'รายการ', f_method: 'ชำระโดย', f_vat: 'VAT', f_note: 'หมายเหตุ', f_plan: 'แพ็กเกจ', f_until: 'วันหมดอายุ',
+    f_start: 'วันเริ่ม', f_classesLeft: 'ครั้งที่เหลือ', f_payments_status: 'สถานะการชำระ (ชำระแล้ว คืนเงิน ไม่สำเร็จ…)',
+    // The server's skip reasons and notes, by code (English comes from the server).
+    ci_noName: 'ไม่มีชื่อ',
+    ci_sharePhone: (n, p) => `นักเรียน ${n} คนใช้เบอร์ ${p} เดียวกัน: เพิ่มอีเมล`,
+    ci_sameName: (n, name) => `มีนักเรียนชื่อ ${name} ${n} คน: เพิ่มอีเมลหรือเบอร์โทร`,
+    ci_noWho: 'แถวนี้ไม่มีข้อมูลนักเรียน: เลือกคอลัมน์รหัสลูกค้า อีเมล เบอร์โทร หรือชื่อ',
+    ci_notFound: 'ไม่พบนักเรียน: ใส่ชื่อเพื่อสร้างนักเรียนใหม่',
+    ci_clashEmail: (e, name, code, rz, then) => `${e} เป็นอีเมลของ ${name} (${code}, รหัส Rezerv ${rz}): ${CI_THEN_TH[then]}`,
+    ci_clashPhone: (p, name, code, fileName, then) => `เบอร์ ${p} เป็นของ ${name} (${code}) แต่ในไฟล์เป็น ${fileName}: ${CI_THEN_TH[then]}`,
+    ci_clashOtherEmail: (name, code, e, then) => `นักเรียนชื่อ ${name} (${code}) ใช้อีเมลอื่น (${e}): ${CI_THEN_TH[then]}`,
+    ci_excelId: v => `รหัส "${v}" ถูก Excel เปลี่ยนไปแล้ว: ดาวน์โหลดจาก Rezerv ใหม่ และอย่าเปิดด้วย Excel ก่อนนำเข้า`,
+    ci_badDate: v => `อ่านวันที่ "${v}" ไม่ได้`,
+    ci_badTime: v => `อ่านเวลา "${v}" ไม่ได้`,
+    ci_badStatus: v => `อ่านสถานะ "${v}" ไม่ได้`,
+    ci_waitlist: 'เป็นคิวสำรอง ไม่ใช่การเข้าเรียน',
+    ci_noSlot: (time, d) => `ไม่มีคลาสในตาราง เวลา ${time || '(ไม่มีเวลา)'} ${ymdLong(d, true)}: จองให้นักเรียนเอง`,
+    ci_moonDay: d => `${ymdLong(d, true)} เป็นวัน Moon day: ชาลาปิด`,
+    ci_classOff: (title, d) => `คลาส ${title} ${ymdLong(d, true)} ถูกยกเลิก`,
+    ci_idReused: (id, what) => `รหัส Rezerv ${id} ใช้กับ${what === 'payment' ? 'การชำระเงิน' : 'การเข้าเรียน'}รายการอื่นแล้ว: เลือกคอลัมน์รหัสที่ไม่ซ้ำกันในแต่ละแถว หรือไม่ต้องเลือก`,
+    ci_badAmount: v => `อ่านยอดเงิน "${v}" ไม่ได้`,
+    ci_payStatus: v => `อ่านสถานะการชำระ "${v}" ไม่ได้`,
+    ci_notMoney: v => `สถานะการชำระ "${v}": ไม่มีเงินเข้า จึงไม่บันทึก`,
+    ci_badPlan: v => `อ่านแพ็กเกจ "${v}" ไม่ได้`,
+    ci_badUntil: v => `อ่านวันหมดอายุ "${v}" ไม่ได้`,
+    ci_badStart: v => `อ่านวันเริ่ม "${v}" ไม่ได้`,
+    ci_startsAfterEnd: 'วันเริ่มอยู่หลังวันหมดอายุ',
+    ci_noPackage: c => `ไม่มีแพ็กเกจ ${c} ในระบบ`,
+    ci_badLeft: v => `อ่านจำนวนครั้งที่เหลือ "${v}" ไม่ได้`,
+    ci_duplicate: 'มีอยู่แล้ว (ซ้ำ)',
+    ci_notEmail: v => `"${v}" ไม่ใช่อีเมล: ไม่ได้ใส่`,
+    ci_badJoined: v => `อ่านวันที่สมัคร "${v}" ไม่ได้: ไม่ได้ใส่`,
+    ci_badCheckIn: v => `อ่านเวลาเช็คอิน "${v}" ไม่ได้: ไม่ได้ใส่`,
+    ci_overCap: (n, cap, title, d) => `เกินจำนวนที่รับ: ${n} คน จากที่รับได้ ${cap} คน ในคลาส ${title} ${ymdLong(d, true)}`,
+    ci_badVat: v => `อ่าน VAT "${v}" ไม่ได้: ใส่เป็น 0`,
+    ci_emailTaken: (e, name, code, to) => `${e} เป็นอีเมลของ ${name} (${code}): ไม่ได้ใส่ให้ ${to}`,
+    ci_keepsEmail: (name, e, fe) => `${name} ใช้อีเมล ${e} ต่อไป (ในไฟล์เป็น ${fe})`,
+    ci_keepsRezervId: (name, id, fid) => `${name} ใช้รหัส Rezerv ${id} ต่อไป (ในไฟล์เป็น ${fid})`,
+    ci_leftOver: (left, total) => `เหลือ ${left} ครั้ง มากกว่า ${total} ครั้งในแพ็กเกจ: ใส่เป็น ${total}`,
+    ci_keptHere: (here, file) => `Rezerv เป็น "${W(file)}" แต่ในระบบนี้เป็น "${W(here)}": เก็บตามระบบนี้`,
+    ci_cameDoor: file => `เช็คอินที่หน้าประตูแล้ว แต่ Rezerv เป็น "${W(file)}": ไม่ได้เพิ่ม`,
+    ci_newStudent: name => `นักเรียนใหม่: ${name}`,
+  });
+  Object.assign(STR.th.words, {
+    attended: 'มาเรียน', booked: 'จองไว้', past: 'จองแต่ไม่ได้เช็คอิน', noshow: 'จองแล้วไม่มา', cancelled: 'ยกเลิก',
+    refund: 'คืนเงิน', other: 'อื่นๆ', rezerv: 'Rezerv', aybkk: 'aybkk.net', door: 'หน้าประตู', student: 'นักเรียนจองเอง',
+    staff: 'ทีมงานจองให้', order: 'จองพร้อมจ่ายเงิน', manual: 'ทีมงานให้', pass: 'แพ็กเกจ', bought: 'ซื้อ',
+  });
   const T = (k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
-  let TH_NAMES = null;
+  let TH_NAMES = null, TH_BY_EN = {};
   const loadThNames = async () => {
     if (TH_NAMES) return;
     const d = await fetch('/api/bkk/products').then(r => r.json()).catch(() => ({}));
     TH_NAMES = {};
-    for (const x of d.products || []) if (x.name_th) TH_NAMES[x.id] = x.name_th;
+    for (const x of d.products || []) if (x.name_th) { TH_NAMES[x.id] = x.name_th; TH_BY_EN[x.name_en] = x.name_th; }
   };
   const pkgName = p => (LANG === 'th' && (p.name_th || (TH_NAMES || {})[p.product_id])) || p.name_en;
+  const itemName = n => (LANG === 'th' && TH_BY_EN[n]) || n;
   const CLASS_TH = [[/\[Online\]/g, '[ออนไลน์]'], [/Mysore/g, 'มายซอร์'], [/\(1st batch\)/g, '(รอบแรก)'],
     [/\(2nd batch\)/g, '(รอบสอง)'], [/Sunday/g, 'วันอาทิตย์'], [/ series/g, '']];
   const cls = t => LANG === 'th' ? CLASS_TH.reduce((s, [re, to]) => s.replace(re, to), String(t ?? '')) : t;
@@ -307,6 +520,7 @@
     paintStatic();
     if ($('#gateMsg').textContent) $('#gateMsg').textContent = T('wrongPass');
     if ($('#app').style.display !== 'none') {
+      if (SUB === 'history') { if (HIST) paintHistory(); return; }
       const term = current === 'students' && $('#q') ? $('#q').value.trim() : '';
       if (current === 'students') renderStudents(term); else tab(current);
     }
@@ -323,14 +537,15 @@
   };
   window.logout = () => { store.del('aybkk_bkk_key'); location.reload(); };
 
-  let current = 'today';
+  let current = 'today', SUB = null;    // SUB: a view opened on top of a tab ('history')
   window.tab = t => {
-    current = t;
+    current = t; SUB = null;
     document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.id === 't-' + t));
     if (t === 'today') renderToday();
     if (t === 'students') renderStudents();
     if (t === 'classes') renderClasses();
     if (t === 'orders') renderOrders();
+    if (t === 'reports') renderReports();
     if (t === 'settings') renderSettings();
   };
 
@@ -362,6 +577,7 @@
       <p class="muted">${esc(T('giveHelp'))}</p>
       <p><button class="btn pink" onclick="grantPass()">${T('giveBtn')}</button></p>
     </div>
+    <div class="box" id="ciBox">${importInner()}</div>
     <div class="box">
       <b>${T('impTitle')}</b>
       <p class="muted">${esc(T('impHelp'))}</p>
@@ -396,9 +612,10 @@
     FOUND = Object.fromEntries(ms.map(m => [m.code, m]));
     if (!ms.length) { $('#results').innerHTML = `<p class="muted">${T('nobody')}</p>`; return; }
     $('#results').innerHTML = ms.map(m => `<div style="border-top:1px solid var(--line);padding:12px 0">
-      <b>${esc(m.name)}</b> <span class="muted">${esc(m.code)}</span><br>
+      <b>${esc(m.name)}</b> <span class="muted">${esc(m.code)}</span>
+      <button class="btn sm" style="float:right" onclick="showHistory('${esc(m.code)}')">${T('histBtn')}</button><br>
       <span class="muted">${esc(m.email || T('noEmail'))}${m.phone ? ' · ' + esc(m.phone) : ''}
-        · ${T('upcoming', m.booked)}</span>
+        · ${T('upcoming', m.booked)}${m.source === 'rezerv' ? ' · Rezerv' + (m.rezerv_id ? ' ' + esc(m.rezerv_id) : '') : ''}</span>
       ${(m.passes || []).map(p => `<div style="margin-top:8px">
         <span class="pill ${p.status === 'active' ? 'paid' : 'pending'}">${esc(W(p.status))}</span>
         ${esc(pkgName(p))} —
@@ -659,11 +876,11 @@
       <td><b>${esc(o.member_name)}</b><br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span></td>
       <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
         <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
-      <td><span class="pill ${esc(o.status)}">${esc(W(o.status))}</span> <span class="muted">${esc(W(o.method || 'online'))}</span><br>
-        <span class="muted">${(o.created_at || '').slice(5, 16).replace('T', ' ')}</span>
+      <td><span class="pill ${esc(o.status)}">${esc(W(o.status))}</span> <span class="muted">${esc(W(o.method || 'online'))}${o.source === 'rezerv' ? ' · Rezerv' : ''}</span><br>
+        <span class="muted">${o.created_at ? `${bkkYmd(Date.parse(o.created_at)).slice(5)} ${time(o.created_at)}` : ''}</span>
         ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}</td>
       <td class="muted" style="word-break:break-all;font-size:12px">${o.refno}</td>
-      <td>${o.status !== 'paid'
+      <td>${o.status !== 'paid' && o.source !== 'rezerv'
         ? `<button class="btn red" onclick="force(${o.id})">${T('activate')}</button>`
         : ''}</td>
     </tr>`).join('');
@@ -683,6 +900,518 @@
     // is live but nobody is on the list, and this list does not show the class.
     else if (j.bookingError) alert(T('activatedNoClass', j.bookingError));
     renderOrders();
+  };
+
+  // ── shared by history, reports and the import ─────────────────────────────
+  const baht = n => (n < 0 ? '-' : '') + '฿' + Math.abs(Number(n) || 0).toLocaleString('en-US');
+  const bkkYmd = (ms = Date.now()) => new Date(ms + 7 * 3600e3).toISOString().slice(0, 10);
+  const ymdLong = (ymd, weekday) => {
+    if (!ymd) return '';
+    try {
+      return new Date(ymd + 'T12:00:00+07:00').toLocaleDateString(locale(), { timeZone: 'Asia/Bangkok',
+        ...(weekday ? { weekday: 'short' } : {}), day: 'numeric', month: 'short', year: 'numeric' });
+    } catch { return ymd; }
+  };
+  const tile = (label, val, sub) =>
+    `<div class="tile"><span>${esc(label)}</span><b>${esc(val)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
+  // heads: [label, 'n' for a number column]; wide tables scroll sideways on a phone.
+  const tbl = (heads, rows, empty, wide) => rows.length
+    ? `<div class="scroll ${wide ? 'wide' : ''}"><table><tr>${heads.map(h => `<th class="${h[1] || ''}">${esc(h[0])}</th>`).join('')}</tr>
+      ${rows.join('')}</table></div>`
+    : `<p class="muted">${esc(empty || T('noneYet'))}</p>`;
+  const saveBlob = (blob, name) => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  // The key travels in a header, so a download is a fetch, not a plain link.
+  const csvDownload = async (what, qs) => {
+    const r = await api(`/api/bkk/admin/export/${what}.csv?${new URLSearchParams(qs)}`).catch(() => null);
+    if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; alert(j.error || T('failed')); return; }
+    const name = ((r.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/) || [])[1] || `aybkk-${what}.csv`;
+    saveBlob(await r.blob(), name);
+  };
+  const histBtn = code => `<button class="btn sm" onclick="showHistory('${esc(code)}')">${T('histBtn')}</button>`;
+
+  // ── one student, all of it ────────────────────────────────────────────────
+  let HIST = null, HIST_FROM = null, HIST_SEQ = 0, HIST_ALL = {};
+  const HIST_ROWS = 60;
+  const backBtn = () => `<button class="btn gray sm" onclick="histBack()">${T('back')}</button>`;
+  window.showHistory = async code => {
+    const seq = ++HIST_SEQ;
+    if (SUB !== 'history') HIST_FROM = { tab: current, term: current === 'students' && $('#q') ? $('#q').value.trim() : '' };
+    SUB = 'history'; HIST = null; HIST_ALL = {};
+    $('#view').innerHTML = `<p>${backBtn()}</p><p class="muted">${T('loadingTxt')}</p>`;
+    window.scrollTo(0, 0);
+    await loadThNames();
+    const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/history`).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== HIST_SEQ || SUB !== 'history') return;
+    if (!r || !r.ok) { $('#view').innerHTML = `<p>${backBtn()}</p><div class="box">${esc(j.error || T('failed'))}</div>`; return; }
+    HIST = j;
+    paintHistory();
+  };
+  window.histBack = () => {
+    const f = HIST_FROM || { tab: 'students', term: '' };
+    SUB = null; HIST = null;
+    if (f.tab === 'students') renderStudents(f.term);
+    else if (f.tab === 'reports') renderReports(true);
+    else tab(f.tab);
+  };
+  window.histMore = k => { HIST_ALL[k] = true; paintHistory(); };
+  window.histCsv = what => { if (HIST) csvDownload(what, { member: HIST.member.code }); };
+
+  function paintHistory() {
+    const h = HIST, m = h.member, s = h.summary, ap = s.activePass;
+    const passTh = name => (LANG === 'th' && ((h.passes.find(p => p.name === name) || {}).nameTh || TH_BY_EN[name])) || name;
+    const more = (k, list) => !HIST_ALL[k] && list.length > HIST_ROWS
+      ? `<p><button class="btn gray sm" onclick="histMore('${k}')">${T('showAll', list.length.toLocaleString())}</button></p>` : '';
+    const cut = (k, list) => HIST_ALL[k] ? list : list.slice(0, HIST_ROWS);
+    const about = [m.source === 'rezerv' ? T('hRezerv') : T('hHere'), m.rezervId ? T('hRezervId', m.rezervId) : '',
+      m.joinedOn ? T('hJoined', ymdLong(m.joinedOn)) : '', m.createdAt ? T('hSince', ymdLong(bkkYmd(Date.parse(m.createdAt)))) : ''];
+    const head = `<div class="box hhead">${backBtn()}
+      <h2>${esc(m.name)}</h2>
+      <div class="muted">${[m.code, m.email, m.phone].filter(Boolean).map(esc).join(' · ')}</div>
+      <div class="muted">${about.filter(Boolean).map(esc).join(' · ')}</div>
+      <div class="tiles">
+        ${tile(T('tCame'), s.visits.toLocaleString(), s.firstVisit ? T('tFirst', ymdLong(s.firstVisit)) : '')}
+        ${tile(T('tLastVisit'), s.lastVisit ? ymdLong(s.lastVisit, true) : T('tNever'))}
+        ${tile(T('tLast30'), String(s.visitsLast30), T('tLast90', s.visitsLast90))}
+        ${tile(T('tPaid'), baht(s.totalPaid), T('tPayN', s.payments))}
+        ${tile(T('tPass'), ap ? passTh(ap.name) : T('tNoPass'), ap ? [ap.creditsLeft != null ? T('tLeftN', ap.creditsLeft) : '',
+          ap.until ? T('tUntil', ymdLong(ap.until)) : T('tStartsFirst')].filter(Boolean).join(' · ') : '')}
+        ${tile(T('tMissed'), `${s.noShows} · ${s.cancellations}`, T('tPhotos', h.photos))}
+      </div>
+      <p>${['visits', 'payments'].map(w => `<button class="btn gray sm" onclick="histCsv('${w}')">${T('csv_' + w)}</button>`).join(' ')}</p>
+    </div>`;
+
+    // A past "booked" that never got a check-in reads differently from one still to come.
+    const vState = v => v.status === 'booked' ? (v.upcoming ? 'upcoming' : 'past') : v.status;
+    const visits = cut('visits', h.visits).map(v => {
+      const st = vState(v);
+      return `<tr><td class="nowrap">${esc(ymdLong(v.date, true))}</td><td>${esc(v.time || '')}</td>
+        <td>${esc(cls(v.class || ''))}</td>
+        <td><span class="pill ${st}">${esc(W(st === 'upcoming' ? 'booked' : st))}</span>
+          ${st === 'attended' && v.checkedInAt && v.source !== 'rezerv' ? `<br><span class="muted">${esc(T('inAt', time(v.checkedInAt)))}</span>` : ''}
+          ${v.cancelReason ? `<br><span class="muted">${esc(v.cancelReason)}</span>` : ''}</td>
+        <td class="muted">${esc([W(v.source || 'aybkk'), v.cover === 'rezerv' && v.source !== 'rezerv' ? 'Rezerv' : ''].filter(Boolean).join(' · '))}</td></tr>`;
+    });
+    const pays = cut('payments', h.payments).map(o => `<tr>
+      <td class="nowrap">${esc(ymdLong(o.date))}${o.time && !(o.source === 'rezerv' && o.time === '00:00') ? `<br><span class="muted">${esc(o.time)}</span>` : ''}</td>
+      <td>${esc(itemName(o.item || '–'))}</td>
+      <td class="n"><b>${baht(o.amount)}</b>${o.vat ? `<br><span class="muted">${T('vat')} ${baht(o.vat)}</span>` : ''}</td>
+      <td>${esc(W(o.method || 'online'))}</td>
+      <td><span class="pill ${esc(o.status)}">${esc(W(o.status))}</span><br><span class="muted">${esc(W(o.source))}</span></td>
+      <td class="muted" style="word-break:break-all;font-size:12px">${esc(o.refno)}${o.note ? `<br>${esc(String(o.note).slice(0, 80))}` : ''}</td></tr>`);
+    const passes = h.passes.map(p => `<tr>
+      <td>${esc((LANG === 'th' && p.nameTh) || p.name || '–')}</td>
+      <td><span class="pill ${esc(p.status)}">${esc(W(p.status))}</span><br><span class="muted">${esc(W(p.source === 'order' ? 'bought' : p.source))}</span></td>
+      <td>${esc(p.kind === 'unlimited' ? (p.dailyCap ? T('unlimCap', p.dailyCap) : T('unlimOnly')) : T('leftOf', p.creditsLeft, p.creditsTotal))}</td>
+      <td>${esc(p.validFrom || p.validUntil ? T('rRange', p.validFrom ? ymdLong(p.validFrom) : '…', p.validUntil ? ymdLong(p.validUntil) : '…') : T('tStartsFirst'))}
+        ${p.frozenFrom ? `<br><span class="muted">${esc(T('paused', ymdLong(p.frozenFrom), ymdLong(p.frozenUntil)))}</span>` : ''}</td>
+      <td class="muted" style="font-size:12.5px">${esc(p.note || '')}</td></tr>`);
+    const notes = h.notes.map(n => `<tr>
+      <td class="nowrap">${esc(ymdLong(n.date || bkkYmd(Date.parse(n.createdAt))))}</td><td>${esc(n.teacher || '')}</td>
+      <td>${n.toWorkOn ? `<b>${esc(T('workOnTxt'))}:</b> ${esc(n.toWorkOn)}<br>` : ''}${esc(n.body || '')}</td>
+      <td class="muted">${esc(n.shared ? T('shared') : T('teamOnly'))}</td></tr>`);
+    const checks = (h.checks || []).map(c => `<tr><td class="nowrap">${esc(ymdLong(c.date))}</td>
+      <td class="n">${esc(c.restingHr ?? '–')}</td><td class="n">${esc(c.sleepHours ?? '–')}</td>
+      <td>${c.feel ? '★'.repeat(Math.min(5, c.feel)) : '–'}</td><td class="muted">${esc(c.note || '')}</td></tr>`);
+    const box = (title, n, body) => `<div class="box"><b>${esc(title)}</b>${n != null ? ` <span class="muted">${n.toLocaleString()}</span>` : ''}${body}</div>`;
+    $('#view').innerHTML = head
+      + box(T('hVisits'), h.visits.length, tbl([[T('thDate')], [T('thTime')], [T('thClass')], [T('thStatus')], [T('thFrom')]], visits, '', true)
+        + more('visits', h.visits))
+      + box(T('hPays'), h.payments.length, tbl([[T('thDate')], [T('thItem')], [T('thAmount'), 'n'], [T('thMethod')], [T('thStatus')], [T('thRef')]], pays, '', true)
+        + more('payments', h.payments))
+      + box(T('hPasses'), h.passes.length, tbl([[T('thPass')], [T('thStatus')], [T('thClasses')], [T('thValid')], [T('thNote')]], passes, '', true))
+      + box(T('hNotes'), h.notes.length, tbl([[T('thDate')], [T('thTeacher')], [T('thNote')], ['']], notes, '', true))
+      + (checks.length ? box(T('hChecks'), null, tbl([[T('thDate')], [T('thHr'), 'n'], [T('thSleep'), 'n'], [T('thFeel')], [T('thNote')]], checks)) : '');
+  }
+
+  // ── reports ───────────────────────────────────────────────────────────────
+  // Quick picks run up to today, so "came" and "booked" compare like with like.
+  const REP = { pick: 'month', from: '', to: '', data: null, seq: 0 };
+  function rangeFor(pick) {
+    const today = bkkYmd();
+    const [y, m, d] = today.split('-').map(Number);
+    const iso = ms => new Date(ms).toISOString().slice(0, 10);
+    if (pick === 'week') return [iso(Date.UTC(y, m - 1, d - (new Date(Date.UTC(y, m - 1, d)).getUTCDay() + 6) % 7)), today];
+    if (pick === 'month') return [iso(Date.UTC(y, m - 1, 1)), today];
+    if (pick === 'lastMonth') return [iso(Date.UTC(y, m - 2, 1)), iso(Date.UTC(y, m - 1, 0))];
+    if (pick === 'year') return [`${y}-01-01`, today];
+    return [today, today];
+  }
+  const repShell = () => `<div class="box"><b>${T('repTitle')}</b>
+    <div class="seg">${['today', 'week', 'month', 'lastMonth', 'year', 'custom'].map(p =>
+      `<button class="${REP.pick === p ? 'on' : ''}" onclick="repPick('${p}')">${T('r_' + p)}</button>`).join('')}</div>
+    ${REP.pick === 'custom' ? `<div class="row2">
+      <label>${T('rFrom')}<br><input type="date" id="rFrom" value="${esc(REP.from)}"></label>
+      <label>${T('rTo')}<br><input type="date" id="rTo" value="${esc(REP.to)}"></label>
+      <button class="btn" onclick="repCustom()">${T('rShow')}</button></div>` : ''}
+    <p class="muted">${esc(T('rRange', ymdLong(REP.from, true), ymdLong(REP.to, true)))}</p>
+    <p>${['visits', 'payments', 'members'].map(w => `<button class="btn gray sm" onclick="repCsv('${w}')">${T('csv_' + w)}</button>`).join(' ')}</p>
+    </div><div id="repOut"><p class="muted">${T('loadingTxt')}</p></div>`;
+
+  async function renderReports(cached) {
+    if (!REP.from) [REP.from, REP.to] = rangeFor(REP.pick);
+    $('#view').innerHTML = repShell();
+    await loadThNames();
+    if (cached && REP.data && REP.data.from === REP.from && REP.data.to === REP.to) { paintReport(); return; }
+    const seq = ++REP.seq;
+    const r = await api(`/api/bkk/admin/report?${new URLSearchParams({ from: REP.from, to: REP.to })}`).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== REP.seq || current !== 'reports' || SUB) return;
+    if (!r || !r.ok) { $('#repOut').innerHTML = `<div class="box">${esc(j.error || T('failed'))}</div>`; return; }
+    REP.data = j;
+    paintReport();
+  }
+  window.repPick = p => {
+    REP.pick = p;
+    if (p !== 'custom') { [REP.from, REP.to] = rangeFor(p); renderReports(); return; }
+    renderReports(true);
+  };
+  window.repCustom = () => {
+    const f = $('#rFrom').value, t = $('#rTo').value;
+    if (!f || !t || f > t || (Date.parse(t) - Date.parse(f)) / 864e5 + 1 > 400) { alert(T('rBadRange')); return; }
+    REP.from = f; REP.to = t;
+    renderReports();
+  };
+  window.repCsv = what => csvDownload(what, { from: REP.from, to: REP.to });
+
+  function paintReport() {
+    const out = $('#repOut'), d = REP.data;
+    if (!out || !d) return;
+    const v = d.visits, m = d.money;
+    // Over two months, a row per day is too long to read: a row per month.
+    const long = (Date.parse(d.to) - Date.parse(d.from)) / 864e5 > 62;
+    const key = x => long ? x.slice(0, 7) : x;
+    const rows = new Map();
+    const at = k => { if (!rows.has(k)) rows.set(k, { came: 0, booked: 0, money: 0 }); return rows.get(k); };
+    for (const x of v.byDay) { const b = at(key(x.date)); b.came += x.attended; b.booked += x.booked; }
+    for (const x of m.byDay) at(key(x.date)).money += x.total;
+    const monthName = k => new Date(k + '-15T12:00:00+07:00').toLocaleDateString(locale(),
+      { timeZone: 'Asia/Bangkok', month: 'long', year: 'numeric' });
+    const days = [...rows.keys()].sort().map(k => { const b = rows.get(k); return `<tr>
+      <td class="nowrap">${esc(long ? monthName(k) : ymdLong(k, true))}</td><td class="n">${b.came}</td>
+      <td class="n">${b.booked}</td><td class="n">${b.money ? baht(b.money) : ''}</td></tr>`; });
+    const money = (list, label) => list.map(x => `<tr><td>${esc(label(x))}</td><td class="n">${x.n}</td><td class="n">${baht(x.total)}</td></tr>`);
+    const moneyHeads = first => [[first], [T('thCount'), 'n'], [T('thTotal'), 'n']];
+    // The call lists are worked from a phone: History sits under the name, never off to the side.
+    const who = x => `${esc(x.name)}<br><span class="muted">${esc(x.code)}</span> ${histBtn(x.code)}`;
+    out.innerHTML = `<div class="box"><b>${T('rVisitsH')}</b>
+        <div class="tiles">${tile(T('kCame'), v.total.toLocaleString())}${tile(T('kBooked'), v.booked.toLocaleString())}
+          ${tile(T('kNoShows'), String(v.noShows))}${tile(T('kCancelled'), String(v.cancelled))}
+          ${tile(T('kStudents'), String(v.uniqueStudents))}${tile(T('kNew'), String(v.newStudents))}</div>
+        <p><b>${T('rByClass')}</b></p>
+        ${tbl([[T('thClass')], [T('thTime')], [T('thCame'), 'n'], [T('thHeld'), 'n'], [T('thAvg'), 'n']],
+          v.byClass.map(c => `<tr><td>${esc(cls(c.title))}</td><td>${esc(c.time || '')}</td><td class="n">${c.attended}</td>
+            <td class="n">${c.classes}</td><td class="n">${c.avgPerClass}</td></tr>`), T('rNothing'), true)}
+        ${v.bySource.length ? `<p><b>${T('rBySource')}</b></p>${tbl([[T('thFrom')], [T('thCount'), 'n']],
+          v.bySource.map(x => `<tr><td>${esc(W(x.source))}</td><td class="n">${x.n}</td></tr>`))}` : ''}
+      </div>
+      <div class="box"><b>${T('rMoneyH')}</b>
+        <div class="tiles">${tile(T('kMoney'), baht(m.total))}${tile(T('kVat'), baht(m.vat))}
+          ${tile(T('kPayments'), String(m.count))}${tile(T('kSold'), String(d.passes.sold))}</div>
+        ${m.byMethod.length ? `<p><b>${T('rByMethod')}</b></p>${tbl(moneyHeads(T('thMethod')), money(m.byMethod, x => W(x.method || 'online')))}` : ''}
+        ${m.byItem.length ? `<p><b>${T('rByItem')}</b></p>${tbl(moneyHeads(T('thItem')), money(m.byItem, x => itemName(x.item)))}` : ''}
+        ${m.bySource.length ? `<p><b>${T('rMoneySource')}</b></p>${tbl(moneyHeads(T('thFrom')), money(m.bySource, x => W(x.source)))}` : ''}
+      </div>
+      <div class="box"><b>${T(long ? 'rByMonth' : 'rByDay')}</b>
+        ${tbl([[T(long ? 'thMonth' : 'thDate')], [T('thCame'), 'n'], [T('thBooked'), 'n'], [T('thMoney'), 'n']], days, T('rNothing'))}</div>
+      <div class="box"><b>${T('rExpH')}</b> <span class="muted">${d.passes.expiringNext14.length}</span>
+        <p class="muted">${T('rExpHelp')}</p>
+        ${tbl([[T('thStudent')], [T('thPass')], [T('thUntil')]], d.passes.expiringNext14.map(x => `<tr>
+          <td>${who(x)}</td><td>${esc(itemName(x.item || ''))}</td>
+          <td class="nowrap">${esc(ymdLong(x.until, true))}</td></tr>`))}</div>
+      <div class="box"><b>${T('rNotSeenH')}</b> <span class="muted">${d.notSeen.length}</span>
+        <p class="muted">${T('rNotSeenHelp')}</p>
+        ${tbl([[T('thStudent')], [T('thLast')], [T('thPass')], [T('thUntil')]], d.notSeen.map(x => `<tr>
+          <td>${who(x)}</td>
+          <td class="nowrap">${esc(x.lastVisit ? ymdLong(x.lastVisit) : T('neverCame'))}</td>
+          <td>${esc(itemName(x.pass || ''))}</td><td class="nowrap">${esc(x.until ? ymdLong(x.until) : '')}</td></tr>`), '', true)}</div>`;
+  }
+
+  // ── the move from Rezerv: CSV files read here, sent in batches ────────────
+  // Columns are matched to our fields by their headings, English or Thai; an
+  // alias list's order is its priority. Only matched columns are ever sent, so
+  // a birthday, an address or a card number in the file never leaves this page.
+  const AL = {
+    customer: ['customer id', 'member id', 'client id', 'user id', 'customer no', 'customer number', 'member no',
+      'member number', 'rezerv id', 'รหัสลูกค้า', 'รหัสสมาชิก'],
+    name: ['name', 'full name', 'customer name', 'member name', 'client name', 'student name', 'customer', 'member',
+      'client', 'student', 'first name', 'firstname', 'given name', 'ชื่อ', 'ชื่อลูกค้า', 'ชื่อสมาชิก', 'ชื่อนามสกุล', 'ชื่อจริง'],
+    lastName: ['last name', 'lastname', 'surname', 'family name', 'นามสกุล'],
+    email: ['email', 'e-mail', 'email address', 'e-mail address', 'mail', 'อีเมล', 'อีเมล์'],
+    phone: ['phone', 'mobile', 'phone number', 'mobile number', 'mobile phone', 'tel', 'telephone', 'contact number',
+      'เบอร์โทร', 'เบอร์โทรศัพท์', 'โทรศัพท์', 'มือถือ', 'เบอร์มือถือ', 'เบอร์'],
+  };
+  const WHO = { memberRezervId: AL.customer, name: AL.name, lastName: AL.lastName, email: AL.email, phone: AL.phone };
+  const CI_KINDS = {
+    members: { need: ['name'], fields: { rezervId: ['id', ...AL.customer], name: AL.name, lastName: AL.lastName,
+      email: AL.email, phone: AL.phone,
+      joinedOn: ['joined', 'joined on', 'join date', 'date joined', 'member since', 'registered', 'registration date',
+        'sign up date', 'signup date', 'created', 'created at', 'created date', 'วันที่สมัคร', 'สมัครเมื่อ', 'วันที่ลงทะเบียน'] } },
+    visits: { need: ['date'], who: true, fields: {
+      rezervId: ['booking id', 'reservation id', 'booking ref', 'booking reference', 'booking number', 'booking no', 'id',
+        'รหัสการจอง', 'เลขที่การจอง'],
+      ...WHO,
+      date: ['class date', 'session date', 'date', 'booking date', 'class start', 'datetime', 'date time', 'start',
+        'วันที่เรียน', 'วันที่', 'วันที่จอง'],
+      time: ['time', 'start time', 'class time', 'session time', 'เวลา', 'เวลาเริ่ม', 'เวลาเรียน'],
+      className: ['class', 'class name', 'service', 'service name', 'session', 'session name', 'activity', 'program',
+        'course', 'class type', 'คลาส', 'ชื่อคลาส', 'บริการ'],
+      status: ['status', 'booking status', 'attendance status', 'attendance', 'สถานะ', 'สถานะการจอง'],
+      checkedInAt: ['checked in at', 'checked in', 'check in time', 'check in', 'checkin', 'checkin time',
+        'เวลาเช็คอิน', 'เช็คอิน', 'เช็กอิน'] } },
+    payments: { need: ['date', 'amount'], who: true, fields: {
+      rezervId: ['payment id', 'transaction id', 'receipt no', 'receipt number', 'invoice no', 'invoice number', 'order id',
+        'order no', 'order number', 'reference', 'ref', 'id', 'เลขที่ใบเสร็จ', 'เลขที่อ้างอิง', 'เลขที่ชำระเงิน'],
+      ...WHO,
+      date: ['payment date', 'paid at', 'paid on', 'date paid', 'transaction date', 'purchase date', 'date', 'created',
+        'created at', 'วันที่ชำระ', 'วันที่ชำระเงิน', 'วันที่จ่าย', 'วันที่'],
+      amount: ['amount', 'amount paid', 'paid', 'total', 'total paid', 'grand total', 'net', 'price', 'ยอดเงิน', 'ยอดชำระ',
+        'จำนวนเงิน', 'ยอดรวม', 'ราคา', 'รวม'],
+      item: ['item', 'item name', 'package', 'package name', 'product', 'product name', 'description', 'plan', 'membership',
+        'pass', 'service', 'รายการ', 'แพ็กเกจ', 'แพ็คเกจ', 'สินค้า'],
+      method: ['method', 'payment method', 'payment type', 'paid by', 'paid with', 'channel', 'payment channel', 'gateway',
+        'วิธีชำระ', 'วิธีชำระเงิน', 'ช่องทางชำระเงิน', 'ชำระโดย'],
+      vat: ['vat', 'vat amount', 'tax', 'tax amount', 'ภาษี', 'ภาษีมูลค่าเพิ่ม'],
+      note: ['note', 'notes', 'remark', 'remarks', 'comment', 'comments', 'หมายเหตุ'],
+      status: ['status', 'payment status', 'transaction status', 'payment state', 'state', 'transaction type',
+        'สถานะ', 'สถานะการชำระ', 'สถานะการชำระเงิน', 'type'] } },
+    passes: { need: ['plan', 'until'], who: true, fields: {
+      ...WHO,
+      plan: ['plan', 'package', 'package name', 'membership', 'pass', 'product', 'item', 'แพ็กเกจ', 'แพ็คเกจ'],
+      until: ['until', 'valid until', 'end date', 'end', 'expiry', 'expiry date', 'expires', 'expires on',
+        'expiration date', 'expiration', 'วันหมดอายุ', 'หมดอายุ', 'ใช้ได้ถึง'],
+      start: ['start', 'start date', 'valid from', 'from', 'activated', 'activation date', 'วันเริ่ม', 'วันที่เริ่ม', 'เริ่ม'],
+      classesLeft: ['classes left', 'credits left', 'remaining', 'remaining classes', 'remaining credits', 'sessions left',
+        'balance', 'ครั้งที่เหลือ', 'คงเหลือ', 'เหลือ'] } },
+  };
+  const nh = s => String(s ?? '').normalize('NFC').toLowerCase().replace(/[\s\-_./:()#*'"]+/g, '');
+  const CI_ALL = new Set(Object.values(CI_KINDS).flatMap(k => Object.values(k.fields).flat()).map(nh));
+  const CI_BATCH = 1000;
+  const CI = { kind: 'members', file: '', rows: [], heads: [], headRow: 0, map: {}, pastBooked: false,
+    busy: false, prog: '', msg: '', result: null, checkedSig: null };
+  const fieldName = f => STR.en[`f_${CI.kind}_${f}`] ? T(`f_${CI.kind}_${f}`) : T('f_' + f);
+
+  // Excel on a Thai Windows saves "CSV" in the Thai code page, not UTF-8.
+  function decodeFile(buf) {
+    const b = new Uint8Array(buf);
+    if ((b[0] === 0x50 && b[1] === 0x4B) || (b[0] === 0xD0 && b[1] === 0xCF)) return null;   // .xlsx or .xls
+    if (b[0] === 0xFF && b[1] === 0xFE) return new TextDecoder('utf-16le').decode(b);
+    if (b[0] === 0xFE && b[1] === 0xFF) return new TextDecoder('utf-16be').decode(b);
+    try { return new TextDecoder('utf-8', { fatal: true }).decode(b); }
+    catch { return new TextDecoder('windows-874').decode(b); }
+  }
+  // Quotes, commas or new lines inside quotes, CRLF; the separator is whichever
+  // of , ; or tab the top of the file uses most.
+  function parseCsv(text) {
+    text = text.replace(/^﻿/, '');
+    const n = { ',': 0, ';': 0, '\t': 0 };
+    let inQ = false;
+    for (const ch of text.slice(0, 4000)) { if (ch === '"') inQ = !inQ; else if (!inQ && ch in n) n[ch]++; }
+    const sep = Object.keys(n).reduce((a, b) => n[b] > n[a] ? b : a);
+    const recs = [];
+    let row = [], cell = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) {
+        if (ch !== '"') cell += ch;
+        else if (text[i + 1] === '"') { cell += '"'; i++; }
+        else q = false;
+      } else if (ch === '"' && cell === '') q = true;
+      else if (ch === sep) { row.push(cell); cell = ''; }
+      else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && text[i + 1] === '\n') i++;
+        row.push(cell); recs.push(row); row = []; cell = '';
+      } else cell += ch;
+    }
+    if (cell !== '' || row.length) { row.push(cell); recs.push(row); }
+    return recs.map((cells, i) => ({ n: i + 1, cells }));
+  }
+  function autoMap(kind, heads) {
+    const norm = heads.map(nh), used = new Set(), map = {};
+    for (const [f, aliases] of Object.entries(CI_KINDS[kind].fields)) {
+      for (const a of aliases) {
+        const i = norm.findIndex((h, j) => h === nh(a) && !used.has(j));
+        if (i >= 0) { map[f] = i; used.add(i); break; }
+      }
+    }
+    return map;
+  }
+  // One file row as the server reads it: only mapped fields, trimmed, no blanks.
+  function rowFor(r) {
+    const o = {}, val = i => String(r.cells[i] ?? '').trim();
+    for (const f of Object.keys(CI_KINDS[CI.kind].fields)) {
+      if (f === 'lastName' || CI.map[f] == null) continue;
+      const v = val(CI.map[f]);
+      if (v) o[f] = v;
+    }
+    if (CI.map.lastName != null && val(CI.map.lastName)) o.name = [o.name, val(CI.map.lastName)].filter(Boolean).join(' ');
+    return o;
+  }
+  // What makes a row with no Rezerv ID that row, as the server tells them apart.
+  const CI_SAME = { visits: ['memberRezervId', 'email', 'phone', 'name', 'date', 'time', 'className'],
+    payments: ['memberRezervId', 'email', 'phone', 'name', 'date', 'item', 'amount'] };
+  // Batches of consecutive file rows, so the server's row numbers match the file.
+  // Identical rows (two drop-ins on one day, no payment ID) are numbered over
+  // the whole file: the server sees one batch, and would take the second one,
+  // sent in the next batch, for the first.
+  function ciBatches() {
+    const out = [], seen = new Map(), same = CI_SAME[CI.kind];
+    for (const r of CI.rows) {
+      const o = rowFor(r);
+      if (same && !o.rezervId) {
+        const k = JSON.stringify(same.map(f => o[f] ?? ''));
+        const n = (seen.get(k) || 0) + 1;
+        seen.set(k, n);
+        if (n > 1) o.nth = n;
+      }
+      const cur = out[out.length - 1];
+      if (cur && cur.rows.length < CI_BATCH && r.n === cur.first + cur.rows.length) cur.rows.push(o);
+      else out.push({ first: r.n, rows: [o] });
+    }
+    return out;
+  }
+  // The server's reasons and notes come in English, with a code to say them in Thai.
+  const ciSay = (x, text) => LANG !== 'en' && x.code && STR[LANG]['ci_' + x.code] ? T('ci_' + x.code, ...(x.vals || [])) : text;
+  const ciSig = () => JSON.stringify([CI.kind, CI.file, CI.rows.length,
+    Object.keys(CI_KINDS[CI.kind].fields).map(f => CI.map[f] ?? null), CI.kind === 'visits' && CI.pastBooked]);
+  const ciReset = () => { CI.result = null; CI.prog = ''; };
+  function paintImport() { const b = $('#ciBox'); if (b) b.innerHTML = importInner(); }
+
+  window.ciKind = k => { if (CI.busy || !CI_KINDS[k]) return; CI.kind = k; CI.map = autoMap(k, CI.heads); ciReset(); paintImport(); };
+  window.ciMap = (f, v) => { if (CI.busy) return; if (v === '') delete CI.map[f]; else CI.map[f] = Number(v); ciReset(); paintImport(); };
+  window.ciPast = on => { if (CI.busy) return; CI.pastBooked = !!on; ciReset(); paintImport(); };
+  window.ciPick = async input => {
+    const f = input.files && input.files[0];
+    if (!f || CI.busy) return;
+    Object.assign(CI, { file: f.name, rows: [], heads: [], headRow: 0, map: {}, msg: '', checkedSig: null });
+    ciReset();
+    let text;
+    try { text = decodeFile(await f.arrayBuffer()); } catch { CI.msg = T('ciBadFile'); paintImport(); return; }
+    if (text == null) { CI.msg = T('ciExcel'); paintImport(); return; }
+    const filled = parseCsv(text).filter(r => r.cells.some(c => c.trim()));
+    // The headings are the row, of the first ten, that names the most fields we know.
+    let head = filled[0], best = 0;
+    for (const r of filled.slice(0, 10)) {
+      const k = r.cells.filter(c => CI_ALL.has(nh(c))).length;
+      if (k > best) { best = k; head = r; }
+    }
+    const rows = head ? filled.filter(r => r.n > head.n) : [];
+    if (!rows.length) { CI.msg = T('ciEmpty'); paintImport(); return; }
+    CI.headRow = head.n;
+    CI.heads = head.cells.map((c, i) => c.trim() || `#${i + 1}`);
+    CI.rows = rows;
+    CI.map = autoMap(CI.kind, CI.heads);
+    paintImport();
+  };
+
+  function importInner() {
+    const k = CI.kind, K = CI_KINDS[k], dis = CI.busy ? 'disabled' : '';
+    let h = `<b>${T('ciTitle')}</b><p class="muted">${esc(T('ciHelp'))}</p>
+      <div class="row2"><label>${T('ciKind')}<br><select onchange="ciKind(this.value)" ${dis}>
+        ${Object.keys(CI_KINDS).map(x => `<option value="${x}" ${x === k ? 'selected' : ''}>${esc(T('kind_' + x))}</option>`).join('')}</select></label>
+      <label>${T('ciFile')}<br><input type="file" accept=".csv,.tsv,.txt,text/csv" onchange="ciPick(this)" ${dis} style="max-width:100%"></label></div>`;
+    if (CI.msg) h += `<p class="warnline">${esc(CI.msg)}</p>`;
+    if (!CI.rows.length) return h;
+    const fields = Object.keys(K.fields);
+    h += `<p class="muted">${esc(T('ciRead', CI.file, CI.rows.length.toLocaleString(), CI.headRow))}</p>
+      <p style="margin-bottom:0"><b>${T('ciMapH')}</b></p><p class="muted" style="margin-top:2px">${esc(T('ciMapHelp'))}</p>
+      <div class="cimap">${fields.map(f => `<label for="cm_${f}">${esc(fieldName(f))}${K.need.includes(f) ? ' *' : ''}</label>
+        <select id="cm_${f}" onchange="ciMap('${f}',this.value)" ${dis}><option value="">${esc(T('ciNotUsed'))}</option>
+          ${CI.heads.map((c, i) => `<option value="${i}" ${CI.map[f] === i ? 'selected' : ''}>${esc(CI.heads.indexOf(c) === i ? c : `${c} (${i + 1})`)}</option>`).join('')}
+        </select>`).join('')}</div>`;
+    const cols = fields.filter(f => f !== 'lastName' && (CI.map[f] != null || (f === 'name' && CI.map.lastName != null)));
+    h += `<p style="margin-bottom:4px"><b>${T('ciPreviewH')}</b></p>
+      ${tbl([[T('thRow'), 'n'], ...cols.map(f => [fieldName(f)])], CI.rows.slice(0, 5).map(r => {
+        const o = rowFor(r);
+        return `<tr><td class="n muted">${r.n}</td>${cols.map(f => `<td>${o[f] != null ? esc(o[f]) : '<span class="muted">–</span>'}</td>`).join('')}</tr>`;
+      }), '', cols.length > 3)}`;
+    if (k === 'visits') h += `<p><label style="display:flex;gap:8px;align-items:flex-start;font-size:14px">
+      <input type="checkbox" style="width:auto;margin-top:4px" ${CI.pastBooked ? 'checked' : ''} onchange="ciPast(this.checked)" ${dis}>
+      <span>${esc(T('ciPastBooked'))}</span></label></p>`;
+    const miss = K.need.filter(f => CI.map[f] == null);
+    const noWho = K.who && !Object.keys(WHO).some(f => CI.map[f] != null);
+    if (miss.length) h += `<p class="warnline">${esc(T('ciNeed', miss.map(fieldName).join(', ')))}</p>`;
+    if (noWho) h += `<p class="warnline">${esc(T('ciNeedWho'))}</p>`;
+    const ready = !miss.length && !noWho, checked = CI.checkedSig === ciSig();
+    h += `<p><button class="btn" onclick="ciRun(true)" ${!ready || CI.busy ? 'disabled' : ''}>${T('ciCheck')}</button>
+      <button class="btn pink" onclick="ciRun(false)" ${!ready || CI.busy || !checked ? 'disabled' : ''}>${T('ciImport')}</button></p>
+      ${ready && !checked && !CI.busy && !CI.result ? `<p class="muted">${T('ciCheckFirst')}</p>` : ''}
+      <p id="ciProg" class="muted" aria-live="polite">${esc(CI.prog)}</p>`;
+    if (CI.result) h += ciResult(CI.result);
+    return h;
+  }
+
+  function ciResult(s) {
+    const n = [['ciTotal', s.total], ['ciAdded', s.added], ['ciMatched', s.matched], ['ciUpdated', s.updated],
+      ['ciNewMembers', s.newMembers], ['ciSkipped', s.skipped.length]];
+    return `<div class="box" style="background:var(--blush);margin-bottom:0">
+      <b>${T(s.dry ? 'ciCheckDone' : 'ciImportDone')}</b>
+      ${s.stopped ? `<p class="warnline">${esc(T('ciStopped', s.stopped.row, s.stopped.error))}</p>` : ''}
+      <div class="tiles">${n.map(([k, v]) => tile(T(k), v.toLocaleString())).join('')}</div>
+      ${s.pastBooked ? `<p class="warnline">${esc(T('ciPastNote', s.pastBooked))}</p>` : ''}
+      ${s.dry && s.batches > 1 && s.newMembers ? `<p class="muted">${esc(T('ciBatchNote'))}</p>` : ''}
+      ${s.skipped.length ? `<p style="margin-bottom:4px"><b>${T('ciSkippedH')}</b>
+        <button class="btn gray sm" onclick="ciSkippedCsv()">${T('ciSkippedCsv')}</button></p>
+        <div class="list">${s.skipped.map(x => `<div><span class="muted">${esc(T('ciRow', x.row))}</span> ${esc(ciSay(x, x.reason))}</div>`).join('')}</div>` : ''}
+      ${s.warnings.length ? `<p style="margin-bottom:4px"><b>${T('ciWarnH')}</b></p>
+        <div class="list">${s.warnings.map(w => `<div>${w.row != null ? `<span class="muted">${esc(T('ciRow', w.row))}</span> ` : ''}${esc(ciSay(w, w.message))}</div>`).join('')}</div>` : ''}
+    </div>`;
+  }
+
+  // Check (dryRun) or Import, every batch in turn. A batch that fails stops the
+  // run: what came before it is saved, and running again adds nothing twice.
+  window.ciRun = async dry => {
+    if (CI.busy || !CI.rows.length) return;
+    const k = CI.kind, total = CI.rows.length;
+    if (!dry && (CI.checkedSig !== ciSig() || !confirm(T('ciConfirm', total.toLocaleString(), T('kind_' + k))))) return;
+    const sig = ciSig(), batches = ciBatches();
+    const sum = { dry, total: 0, added: 0, matched: 0, updated: 0, newMembers: 0, skipped: [], warnings: [],
+      pastBooked: 0, batches: batches.length, stopped: null };
+    CI.busy = true; CI.result = null; CI.prog = T(dry ? 'ciChecking' : 'ciImporting', 0, total);
+    window.onbeforeunload = () => true;
+    paintImport();
+    let done = 0;
+    for (const b of batches) {
+      let r = null, j = {};
+      try {
+        r = await api('/api/bkk/admin/import/' + k, { method: 'POST', body: JSON.stringify({ rows: b.rows, dryRun: dry,
+          firstRow: b.first, ...(k === 'visits' && CI.pastBooked ? { pastBookedAttended: true } : {}) }) });
+        j = await r.json().catch(() => ({}));
+      } catch (e) { j = { error: e.message }; }
+      if (!r || !r.ok) { sum.stopped = { row: b.first, error: j.error || (r ? 'HTTP ' + r.status : T('failed')) }; break; }
+      for (const x of ['total', 'added', 'matched', 'updated', 'newMembers']) sum[x] += j[x] || 0;
+      sum.skipped.push(...(j.skipped || []));
+      for (const w of j.warnings || []) {
+        if (w.row == null && w.code === 'pastBooked') sum.pastBooked += Number(w.vals[0]) || 0; else sum.warnings.push(w);
+      }
+      done += b.rows.length;
+      CI.prog = T(dry ? 'ciChecking' : 'ciImporting', done, total);
+      const p = $('#ciProg'); if (p) p.textContent = CI.prog;
+    }
+    CI.busy = false; window.onbeforeunload = null;
+    CI.prog = '';
+    CI.result = sum;
+    CI.checkedSig = dry && !sum.stopped ? sig : null;
+    paintImport();
+  };
+
+  window.ciSkippedCsv = () => {
+    const s = CI.result;
+    if (!s || !s.skipped.length) return;
+    const byN = new Map(CI.rows.map(r => [r.n, r]));
+    const fields = Object.keys(CI_KINDS[CI.kind].fields).filter(f => CI.map[f] != null);
+    const cell = v => `"${String(v ?? '').replace(/^[=+\-@\t\r]/, "'$&").replace(/"/g, '""')}"`;
+    const lines = [['row', 'reason', ...fields].join(',')].concat(s.skipped.map(x => {
+      const r = byN.get(x.row);
+      return [x.row, cell(ciSay(x, x.reason)), ...fields.map(f => cell(r ? r.cells[CI.map[f]] : ''))].join(',');
+    }));
+    saveBlob(new Blob(['﻿' + lines.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' }),
+      `${CI.file.replace(/\.[^.]*$/, '')}-skipped.csv`);
   };
 
   let LINKS = {};                       // social links, loaded with the tab

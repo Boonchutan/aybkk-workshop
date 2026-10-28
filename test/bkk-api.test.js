@@ -3,7 +3,7 @@ process.env.BKK_ADMIN_KEY = 'testkey';
 process.env.MAIL_DRY_RUN = '1';   // capture mail in an outbox instead of sending
 const express = require('express');
 const { Pool } = require('pg');
-const { mountBkk, moonDaysBetween } = require('../bkk-api.js');
+const { mountBkk, moonDaysBetween, parseWhen } = require('../bkk-api.js');
 
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
   'postgres://test:test@127.0.0.1:5432/bkktest' });
@@ -423,6 +423,8 @@ const ok = (name, cond, extra = '') => {
      sale.body.order && sale.body.order.amount);
   const cashMe = (await J('/api/bkk/me/' + sale.body.member.code)).body;
   ok('the cash sale gives an active pass', (cashMe.passes || []).length === 1, JSON.stringify(cashMe.passes));
+  ok("...with the package's Thai name for the Thai profile", cashMe.passes[0].nameTh === '1 เดือน ไม่จำกัด',
+     JSON.stringify(cashMe.passes[0]));
   const ords = (await J('/api/bkk/admin/orders', { headers: ADMIN })).body.orders;
   const cashOrd = ords.find(o => String(o.refno) === sale.body.order.refno);
   ok('the sale is a paid order marked cash', cashOrd && cashOrd.status === 'paid' && cashOrd.method === 'cash',
@@ -1112,6 +1114,591 @@ const ok = (name, cond, extra = '') => {
     ok("a student cannot book one weekday's class on another day", otherDay.status === 409
        && otherDay.body.error === 'that class is not on that day', JSON.stringify(otherDay.body));
     ok('...and keeps the credit', (await J('/api/bkk/me/' + twice)).body.passes[0].creditsLeft === 9);
+  }
+
+  console.log('\n— keep all history: the Rezerv import —');
+  {
+    const { outbox } = require('../mailer');
+    const imp = (kind, rows, extra = {}, h = ADMIN) => post(`/api/bkk/admin/import/${kind}`, { rows, dryRun: false, ...extra }, h);
+    const dry = (kind, rows, extra = {}) => post(`/api/bkk/admin/import/${kind}`, { rows, dryRun: true, ...extra }, ADMIN);
+    // fetch's text() drops a BOM, so the bytes are read as they came.
+    const raw = async (path, opts) => {
+      const r = await fetch(B + path, opts);
+      const buf = Buffer.from(await r.arrayBuffer());
+      return { status: r.status, text: buf.toString('utf8'), bom: buf.subarray(0, 3).equals(Buffer.from([0xEF, 0xBB, 0xBF])), headers: r.headers };
+    };
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    const sizes = async () => (await Promise.all(['bkk_members', 'bkk_bookings', 'bkk_orders', 'bkk_passes']
+      .map(t => one(`SELECT count(*)::int AS n FROM ${t}`)))).map(r => r.n).join();
+    const settle = () => new Promise(r => setTimeout(r, 300));
+    const bkkMs = ms => new Date(ms + 7 * 3600000).toISOString();
+    const todayB = bkkMs(Date.now()).slice(0, 10);
+    const addD = (d, k) => new Date(Date.parse(d + 'T12:00:00Z') + k * 86400000).toISOString().slice(0, 10);
+    const isMoon = d => moonDaysBetween(d, d).size > 0;
+    const codeOf = async rz => (await one('SELECT code FROM bkk_members WHERE rezerv_id=$1', [rz])).code;
+
+    ok('every import needs the staff key', (await imp('members', [], {}, {})).status === 401);
+    ok('an unknown kind is refused', (await imp('cats', [])).status === 404);
+    ok('more than 1000 rows in one call is refused',
+       (await imp('members', Array.from({ length: 1001 }, () => ({ name: 'Too Many' })))).status === 400);
+    ok('no dryRun:false means only a look', (await post('/api/bkk/admin/import/members', { rows: [] }, ADMIN)).body.dryRun === true);
+
+    // ── students ──
+    const people = [
+      { rezervId: 'RZ-1001', name: 'Ploy Testimport', email: 'Ploy.Testimport@example.com', phone: '081-234-5678', joinedOn: '12/11/2569',
+        dateOfBirth: '1990-01-01', address: '99 Moo 9 Test Road', passport: 'AA1234567', cardNumber: '4111 1111 1111 1111' },
+      { rezervId: 'RZ-1002', name: 'Niran Testimport', phone: '+66 89 765 4321', joinedOn: '12 Nov 2026' },
+      { rezervId: 'RZ-1003', name: 'Same Name', email: 'same.one@example.com', joinedOn: '2026-11-12' },
+      { rezervId: 'RZ-1004', name: 'Same Name', email: 'same.two@example.com', joinedOn: '12-Nov-2026' },
+      { rezervId: 'RZ-1005', name: 'Date Shapes', joinedOn: '12/11/26' },
+      { rezervId: 'RZ-1006', name: 'Thai Month', joinedOn: '12 พ.ย. 2569 05:30 น.' },
+      { email: 'no.name@example.com' },
+    ];
+    const s0 = await sizes();
+    const d1 = await dry('members', people);
+    ok('a dry run of students says what the import would do', d1.status === 200 && d1.body.dryRun === true && d1.body.total === 7
+       && d1.body.added === 6 && d1.body.skipped.length === 1 && d1.body.skipped[0].row === 7, JSON.stringify(d1.body));
+    ok('...and writes nothing', (await sizes()) === s0);
+    const r1 = await imp('members', people);
+    ok('the real run does exactly what the dry run said', r1.status === 200 && r1.body.dryRun === false && r1.body.added === 6
+       && r1.body.skipped.length === 1, JSON.stringify(r1.body));
+    const ploy = await one(`SELECT m.*, row_to_json(m)::text AS j, to_char(joined_on,'YYYY-MM-DD') AS joined FROM bkk_members m WHERE rezerv_id='RZ-1001'`);
+    ok('a student keeps name, email (lower case), phone, joined date, Rezerv id and source', ploy.name === 'Ploy Testimport'
+       && ploy.email === 'ploy.testimport@example.com' && ploy.phone === '081-234-5678' && ploy.joined === '2026-11-12' && ploy.source === 'rezerv',
+       JSON.stringify(ploy));
+    ok('...and nothing we do not keep: no birthday, address, passport or card number', !/1990-01-01|Test Road|AA1234567|4111/.test(ploy.j), ploy.j);
+    const joined = (await pool.query(`SELECT to_char(joined_on,'YYYY-MM-DD') AS d FROM bkk_members
+      WHERE rezerv_id LIKE 'RZ-100%' ORDER BY rezerv_id`)).rows.map(r => r.d);
+    ok('every date shape is read: ISO, dd/mm/yyyy, dd/mm/yy, 12 Nov 2026, 12-Nov-2026, Buddhist years, Thai months',
+       joined.length === 6 && joined.every(d => d === '2026-11-12'), JSON.stringify(joined));
+    const r2 = await imp('members', people);
+    ok('importing the same students again adds nobody twice', r2.body.added === 0 && r2.body.matched === 6 && r2.body.updated === 0,
+       JSON.stringify(r2.body));
+    const fill = await imp('members', [
+      { rezervId: 'RZ-1002', name: 'Niran Testimport', email: 'niran.testimport@example.com' },
+      { rezervId: 'RZ-1001', name: 'Ploy Testimport', email: 'someone.else@example.com' },
+    ]);
+    ok('a found student gets a missing email filled in', fill.body.updated === 1
+       && (await one(`SELECT email FROM bkk_members WHERE rezerv_id='RZ-1002'`)).email === 'niran.testimport@example.com', JSON.stringify(fill.body));
+    ok('...but a different email is never overwritten: a warning says so', fill.body.matched === 1
+       && (await one(`SELECT email FROM bkk_members WHERE rezerv_id='RZ-1001'`)).email === 'ploy.testimport@example.com'
+       && fill.body.warnings.some(w => w.row === 2 && /someone\.else@example\.com/.test(w.message)), JSON.stringify(fill.body));
+    const ployCode = ploy.code, niranCode = await codeOf('RZ-1002');
+
+    // ── visits ──
+    await post('/api/bkk/admin/passes', { memberCode: niranCode, productCode: 'pack10' }, ADMIN);
+    // Held for a month: a pass bought today is a new student, not one who stopped coming.
+    await pool.query(`UPDATE bkk_passes SET created_at = now() - interval '30 days'
+      WHERE member_id=(SELECT id FROM bkk_members WHERE code=$1)`, [niranCode]);
+    const sched = async () => (await J('/api/bkk/schedule?days=14')).body.classes;
+    const fut = (await sched()).find(c => !c.isOnline && c.kind !== 'test' && c.seatsLeft > 0 && c.date > todayB);
+    const seatsOf = async () => ((await sched()).find(c => c.slotId === fut.slotId && c.date === fut.date) || {}).booked;
+    let far = addD(todayB, 20);
+    while (isMoon(far)) far = addD(far, 1);
+    const vis = [
+      { rezervId: 'V-1', memberRezervId: 'RZ-1001', name: 'Wrong Name On Purpose', date: '06/10/2026', time: '5:30 AM', className: 'Mysore (1st batch)', status: 'Attended' },
+      { rezervId: 'V-2', email: 'PLOY.TESTIMPORT@example.com', date: '2569-10-07 05:30:00', className: 'Mysore', status: 'เข้าเรียน' },
+      { rezervId: 'V-3', phone: '66-81-234-5678', date: '8 Oct 2026', time: '05:30', status: 'no-show' },
+      { rezervId: 'V-4', name: '  date   SHAPES ', date: '13 ต.ค. 2569', time: '18:00', className: 'Evening Yin', status: 'Checked in' },
+      { rezervId: 'V-5', memberRezervId: 'RZ-1001', date: '2026-10-09', time: '05:30', status: 'Late cancel' },
+      { rezervId: 'V-6', name: 'Same Name', date: '2026-10-09', time: '05:30', status: 'attended' },
+      { rezervId: 'V-7', name: 'Brand New Visitor', date: '2026-10-09', time: '07:30', status: 'attended' },
+      { rezervId: 'V-8', memberRezervId: 'RZ-1001', date: 'someday', status: 'attended' },
+      { rezervId: 'V-9', memberRezervId: 'RZ-1001', date: far, time: '23:45', status: 'booked' },
+      { rezervId: 'V-10', memberRezervId: 'RZ-1002', date: fut.date, time: fut.startAt.slice(11, 16), className: fut.title, status: 'Booked' },
+      { rezervId: 'V-11', memberRezervId: 'RZ-1005', date: '14/10/2026', time: '07:30', status: 'booked' },
+      { rezervId: 'V-12', memberRezervId: 'RZ-1006', date: '2026-10-15', time: '05:30', status: 'maybe later' },
+    ];
+    const seats0 = await seatsOf();
+    const sv = await sizes();
+    const dv = await dry('visits', vis, { firstRow: 2 });
+    ok('a dry run of visits writes nothing, not even the new student', (await sizes()) === sv && (await seatsOf()) === seats0);
+    const rv = await imp('visits', vis, { firstRow: 2 });
+    ok('visits: the real run matches the dry run', rv.status === 200 && rv.body.added === 8 && rv.body.skipped.length === 4 && rv.body.newMembers === 1
+       && dv.body.added === rv.body.added && JSON.stringify(dv.body.skipped) === JSON.stringify(rv.body.skipped), JSON.stringify([dv.body, rv.body]));
+    const vrow = async ref => one(`SELECT b.*, m.rezerv_id AS mrz, m.name AS mname, m.source AS msource, s.code AS scode,
+        to_char(b.class_date,'YYYY-MM-DD') AS d FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+        LEFT JOIN bkk_class_slots s ON s.id=b.slot_id WHERE b.source='rezerv' AND b.source_ref=$1`, [ref]);
+    const [v1, v2, v3, v4, v5, v7, v10, v11] = await Promise.all(['V-1', 'V-2', 'V-3', 'V-4', 'V-5', 'V-7', 'V-10', 'V-11'].map(vrow));
+    ok('the student is found by Rezerv id first (even with another name on the row)', v1.mrz === 'RZ-1001', JSON.stringify(v1));
+    ok('...then by email', v2.mrz === 'RZ-1001');
+    ok('...then by phone, the last 9 digits (66-81… is 081…)', v3.mrz === 'RZ-1001');
+    ok('...then by exact name, case and spaces aside', v4.mname === 'Date Shapes');
+    ok('two students with the same name: the row is skipped with the reason',
+       rv.body.skipped.some(s => s.row === 7 && /2 students named Same Name: add email or phone/.test(s.reason)), JSON.stringify(rv.body.skipped));
+    ok('an attended visit is on its slot by weekday and time, checked in at the class start (05:30 Bangkok)',
+       v1.scode === 'my530_2' && v1.status === 'booked' && v1.checked_in_at && v1.checked_in_at.toISOString() === '2026-10-05T22:30:00.000Z'
+       && v1.cover === 'rezerv', JSON.stringify(v1));
+    ok('Thai status words and Buddhist dates with seconds read right', v2.scode === 'my530_3' && !!v2.checked_in_at && v2.d === '2026-10-07');
+    ok('a no-show and a late cancel keep what happened', v3.status === 'noshow' && !v3.checked_in_at
+       && v5.status === 'cancelled' && /late/.test(v5.cancel_reason), JSON.stringify([v3.status, v5.status, v5.cancel_reason]));
+    ok('a past class that matches no slot keeps its own title', v4.slot_id === null && v4.class_title === 'Evening Yin'
+       && v4.d === '2026-10-13' && !!v4.checked_in_at, JSON.stringify(v4));
+    ok('a name nobody has makes a new student, and the import says so', v7.mname === 'Brand New Visitor' && v7.msource === 'rezerv'
+       && rv.body.warnings.some(w => w.row === 8 && /new student: Brand New Visitor/.test(w.message)), JSON.stringify(rv.body.warnings));
+    ok('unreadable dates and statuses are skipped with the reason', rv.body.skipped.some(s => s.row === 9 && /date/.test(s.reason))
+       && rv.body.skipped.some(s => s.row === 13 && /status/.test(s.reason)), JSON.stringify(rv.body.skipped));
+    ok('a booking still to come that matches no class is skipped', rv.body.skipped.some(s => s.row === 10 && /timetable/.test(s.reason)));
+    ok('a booking still to come takes a real seat: one more on the timetable', (await seatsOf()) === seats0 + 1 && v10.slot_id === fut.slotId
+       && v10.status === 'booked' && v10.source === 'rezerv' && v10.cover === 'rezerv', `${seats0} -> ${await seatsOf()}`);
+    const niranMe = (await J('/api/bkk/me/' + niranCode)).body;
+    ok("...it is on the student's own list, and no pass credit moved",
+       niranMe.bookings.some(b => b.source === 'rezerv' && b.pass_id === null) && niranMe.passes.find(p => p.kind === 'credits').creditsLeft === 10,
+       JSON.stringify(niranMe).slice(0, 300));
+    ok('a past booking with no attendance stays booked, and the import says how many',
+       v11.status === 'booked' && !v11.checked_in_at && rv.body.warnings.some(w => w.row === null && /^1 past visits say booked/.test(w.message)));
+    const rv2 = await imp('visits', vis, { firstRow: 2 });
+    ok('importing the same visits again adds nothing twice', rv2.body.added === 0 && rv2.body.matched === 8 && rv2.body.newMembers === 0
+       && (await seatsOf()) === seats0 + 1, JSON.stringify(rv2.body));
+    const pba = await imp('visits', [vis[10]], { pastBookedAttended: true });
+    ok('importing again with past bookings counted as attended checks them in', pba.body.updated === 1 && !!(await vrow('V-11')).checked_in_at,
+       JSON.stringify(pba.body));
+    const gone = await imp('visits', [{ ...vis[9], status: 'Cancelled' }]);
+    ok('a booking cancelled in Rezerv since: importing again frees the seat', gone.body.updated === 1 && (await seatsOf()) === seats0
+       && (await vrow('V-10')).status === 'cancelled', JSON.stringify(gone.body));
+
+    // A booking today goes on the door's list.
+    const wdT = new Date(todayB + 'T12:00:00Z').getUTCDay();
+    const tSlot = (await one(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity)
+      VALUES ('test_hist_today','History Today','test',$1,'23:58',60,5) RETURNING id`, [wdT])).id;
+    const vt = await imp('visits', [{ rezervId: 'V-13', memberRezervId: 'RZ-1003', date: todayB, time: '23:58', className: 'History Today', status: 'booked' }]);
+    if (isMoon(todayB)) {
+      ok('moon day today: a booking for today is skipped', vt.body.skipped.length === 1 && /moon day/.test(vt.body.skipped[0].reason));
+      console.log('  - SKIPPED (moon day today): an imported booking today shows at the door');
+    } else {
+      const td = (await J('/api/bkk/admin/today', { headers: ADMIN })).body;
+      ok("an imported booking for today is on the door's list, as a Rezerv seat", vt.body.added === 1
+         && td.bookings.some(b => b.slot_id === tSlot && b.name === 'Same Name' && b.cover === 'rezerv' && b.source === 'rezerv')
+         && (td.classes.find(c => c.slotId === tSlot) || {}).booked === 1, JSON.stringify([vt.body, td.classes.find(c => c.slotId === tSlot)]));
+      if (new Date(`${todayB}T23:58:00+07:00`) > new Date()) {
+        ok('...and counts in the timetable', ((await J('/api/bkk/schedule?days=1')).body.classes.find(c => c.slotId === tSlot) || {}).booked === 1);
+      }
+    }
+
+    // ── payments ──
+    const receipts = () => outbox.filter(m => m.tag === 'receipt').length;
+    const cashToday = async () => ((((await J('/api/bkk/admin/today', { headers: ADMIN })).body.money || []).find(m => m.method === 'cash')) || {}).total || 0;
+    const xferToday = async () => ((((await J('/api/bkk/admin/today', { headers: ADMIN })).body.money || []).find(m => m.method === 'transfer')) || {}).total || 0;
+    const pays = [
+      { rezervId: 'P-1', memberRezervId: 'RZ-1001', date: '15/10/2026 23:30', amount: '9,600.00', vat: '628', item: '1 Month Unlimited',
+        method: 'Bank transfer', note: 'card 4111 1111 1111 1111 on file' },
+      { rezervId: 'P-2', memberRezervId: 'RZ-1001', date: '16/10/2026', amount: '฿1,500', item: 'Drop-in', method: 'เงินสด' },
+      { memberRezervId: 'RZ-1002', date: '2026-10-16 00:15', amount: 14000, item: 'Rezerv Promo Pack', method: 'Visa' },
+      { memberRezervId: 'RZ-1002', date: 'never', amount: 100 },
+      { memberRezervId: 'RZ-1002', date: '2026-10-16', amount: 'free' },
+      { rezervId: 'P-6', memberRezervId: 'RZ-1005', date: '2026-10-20', amount: 100, item: '=cmd|" /c calc"!A1', method: 'cash' },
+      { rezervId: 'P-7', memberRezervId: 'RZ-1005', date: `${todayB} 00:01`, amount: 500, item: 'Mat rental', method: 'cash' },
+      { rezervId: 'P-8', memberRezervId: 'RZ-1001', date: '2026-10-16', amount: '-1,500', item: 'Drop-in refund', method: 'transfer' },
+    ];
+    const [cash0, xfer0, rc0, sp] = [await cashToday(), await xferToday(), receipts(), await sizes()];
+    const dp = await dry('payments', pays);
+    ok('a dry run of payments writes nothing', (await sizes()) === sp && dp.body.added === 6 && dp.body.skipped.length === 2, JSON.stringify(dp.body));
+    const rp = await imp('payments', pays);
+    ok('payments: 6 added, the unreadable date and amount skipped', rp.body.added === 6 && rp.body.skipped.length === 2
+       && rp.body.skipped.some(s => /amount/.test(s.reason)) && rp.body.skipped.some(s => /date/.test(s.reason)), JSON.stringify(rp.body));
+    const prow = async ref => one(`SELECT o.*, pr.code AS pcode FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id
+      WHERE o.source='rezerv' AND o.source_ref LIKE $1`, [ref]);
+    const p1 = await prow('P-1'), p2 = await prow('P-2'), ph = await prow('h:%'), p8 = await prow('P-8');
+    ok('an imported payment is a paid order on the day it was paid (23:30 Bangkok), with its VAT, method and package',
+       p1.status === 'paid' && p1.amount_thb === 9600 && p1.vat_thb === 628 && p1.base_thb === 8972 && p1.fee_thb === 0
+       && p1.method === 'transfer' && p1.pcode === 'unlim1' && p1.item_name === '1 Month Unlimited'
+       && p1.verified_at.toISOString() === '2026-10-15T16:30:00.000Z' && p1.created_at.toISOString() === p1.verified_at.toISOString(),
+       JSON.stringify(p1));
+    ok('...the raw method is kept, and a card number in a note is not', /Bank transfer/.test(p1.gateway_note) && !/4111/.test(p1.gateway_note),
+       p1.gateway_note);
+    ok('Thai "cash" is cash, Visa is card, and an item not in the catalogue keeps its own name',
+       p2.method === 'cash' && p2.pcode === 'dropin' && ph.method === 'card' && ph.product_id === null && ph.item_name === 'Rezerv Promo Pack');
+    ok('a refund is kept as money going back', p8.status === 'refund' && p8.amount_thb === -1500, JSON.stringify(p8));
+    ok('no pass is made for an imported payment',
+       (await one(`SELECT count(*)::int AS n FROM bkk_passes p JOIN bkk_orders o ON o.id=p.order_id WHERE o.source='rezerv'`)).n === 0);
+    await settle();
+    ok('...and no receipt is mailed', receipts() === rc0, `${rc0} -> ${receipts()}`);
+    ok("an old payment is not in today's money; one dated today is", (await cashToday()) === cash0 + 500 && (await xferToday()) === xfer0,
+       `${cash0} -> ${await cashToday()}`);
+    const rp2 = await imp('payments', pays);
+    ok('importing the same payments again adds nothing twice', rp2.body.added === 0 && rp2.body.matched === 6, JSON.stringify(rp2.body));
+    ok('a Rezerv payment cannot be activated', (await post(`/api/bkk/admin/orders/${p8.id}/force-activate`, {}, ADMIN)).status === 409);
+
+    // ── passes ──
+    const pp = [
+      { memberRezervId: 'RZ-1002', plan: '3 months', start: '01/10/2026', until: '31/12/2026' },
+      { name: 'Pass Only Person (renewed)', email: 'pass.only@example.com', plan: '10 class pack', until: '12 Dec 2026', classesLeft: 4 },
+      { memberRezervId: 'RZ-1002', plan: 'forever', until: '2026-12-31' },
+      { memberRezervId: 'RZ-1002', plan: '1 month', start: '2026-12-01', until: '2026-11-01' },
+    ];
+    const sps = await sizes();
+    const dps = await dry('passes', pp);
+    ok('a dry run of passes writes nothing', (await sizes()) === sps && dps.body.added === 2 && dps.body.skipped.length === 2, JSON.stringify(dps.body));
+    const rps = await imp('passes', pp);
+    const nPass = await one(`SELECT p.*, pr.code, to_char(valid_from,'YYYY-MM-DD') AS f, to_char(valid_until,'YYYY-MM-DD') AS u
+      FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id
+      WHERE m.rezerv_id='RZ-1002' AND p.source='rezerv'`);
+    ok('a Rezerv pass keeps its start and end dates', rps.body.added === 2 && nPass.code === 'unlim3' && nPass.f === '2026-10-01' && nPass.u === '2026-12-31',
+       JSON.stringify([rps.body, nPass]));
+    const only = await one(`SELECT m.name, m.email, p.credits_total - p.credits_used AS left FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id
+      WHERE m.email='pass.only@example.com'`);
+    ok('...a new student comes with it, with the classes left', only.name === 'Pass Only Person' && only.left === 4 && rps.body.newMembers === 1,
+       JSON.stringify(only));
+    ok('importing the same passes again adds nothing twice', (await imp('passes', pp)).body.matched === 2);
+
+    // ── one student, everything: native and imported together ──
+    const sale = await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: 'Ploy Testimport', email: 'ploy.testimport@example.com', method: 'card' }, ADMIN);
+    ok('a desk sale finds the imported student by email', sale.status === 200 && sale.body.member.code === ployCode);
+    let doorDate = todayB;
+    while (isMoon(doorDate)) doorDate = addD(doorDate, 1);
+    const onToday = doorDate === todayB;
+    const startNow = !onToday ? '06:00'
+      : bkkMs(Date.now() - 60000).slice(0, 10) === todayB ? bkkMs(Date.now() - 60000).slice(11, 16) : '00:00';
+    const hSlot = (await one(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity)
+      VALUES ('test_hist_now','History Walk-in','test',$1,$2,180,10) RETURNING id`, [new Date(doorDate + 'T12:00:00Z').getUTCDay(), startNow])).id;
+    const walked = await post('/api/bkk/admin/walkin', { slotId: hSlot, ...(onToday ? {} : { date: doorDate }), memberCode: ployCode, cover: 'pass' }, ADMIN);
+    ok('...and the door checks her in on her new pass', walked.status === 200, JSON.stringify(walked.body));
+    await post('/api/bkk/teacher/notes', { memberCode: ployCode, body: 'Team only: watch the left knee', shareWithStudent: false }, PKEY);
+
+    ok('history needs the staff key', (await J(`/api/bkk/admin/members/${ployCode}/history`)).status === 401);
+    ok('history of an unknown code is a 404', (await J('/api/bkk/admin/members/NOPE/history', { headers: ADMIN })).status === 404);
+    const h = (await J(`/api/bkk/admin/members/${ployCode}/history`, { headers: ADMIN })).body;
+    ok('history: who they are, from Rezerv', h.member && h.member.joinedOn === '2026-11-12' && h.member.source === 'rezerv'
+       && h.member.rezervId === 'RZ-1001' && h.member.phone === '081-234-5678', JSON.stringify(h.member));
+    const came = ['2026-10-06', '2026-10-07', doorDate];
+    ok('history: the summary counts native and imported visits together', h.summary.visits === 3 && h.summary.noShows === 1
+       && h.summary.cancellations === 1 && h.summary.firstVisit === '2026-10-06' && h.summary.lastVisit === doorDate
+       && h.summary.visitsLast30 === came.filter(d => d > addD(todayB, -30)).length
+       && h.summary.visitsLast90 === came.filter(d => d > addD(todayB, -90)).length, JSON.stringify(h.summary));
+    ok('history: money paid, refunds taken off, and the pass in use', h.summary.totalPaid === 9600 + 1500 - 1500 + 10272
+       && h.summary.payments === 3 && h.summary.activePass && h.summary.activePass.name === '1 month unlimited', JSON.stringify(h.summary));
+    const vDates = h.visits.map(v => v.date);
+    ok('history: every visit, newest first, with how each got there', h.visits.length === 5 && vDates.join() === [...vDates].sort().reverse().join()
+       && h.visits[0].source === 'door' && h.visits[0].status === 'attended'
+       && h.visits.some(v => v.status === 'noshow' && v.source === 'rezerv' && v.class === 'Mysore (1st batch)' && v.time === '05:30'),
+       JSON.stringify(h.visits));
+    ok('history: every payment, newest first, native and imported', h.payments.length === 4 && h.payments[0].source === 'aybkk'
+       && h.payments[0].method === 'card' && h.payments.some(p => p.source === 'rezerv' && p.item === '1 month unlimited'
+         && p.amount === 9600 && p.vat === 628 && p.date === '2026-10-15' && p.time === '23:30'), JSON.stringify(h.payments));
+    ok('history: passes and every note, the team-only one too, with who wrote it', h.passes.length === 1 && h.passes[0].source === 'order'
+       && h.notes.some(n => n.teacher === 'Chay' && n.shared === false && /left knee/.test(n.body)) && h.photos === 0 && Array.isArray(h.checks),
+       JSON.stringify([h.passes, h.notes]));
+
+    // ── the student's own profile ──
+    const meH = (await J('/api/bkk/me/' + ployCode)).body.history;
+    ok("a student's profile counts every class they came to, Rezerv ones too", meH && meH.practised === 3 && meH.recent.length === 3
+       && meH.recent[0].date === doorDate && meH.recent.some(r => r.date === '2026-10-06' && r.class === 'Mysore (1st batch)' && r.time === '05:30')
+       && meH.thisMonth === came.filter(d => d.slice(0, 7) === todayB.slice(0, 7)).length, JSON.stringify(meH));
+    ok('...and the student never sees the team-only note', !JSON.stringify((await J('/api/bkk/me/' + ployCode)).body.notes).includes('left knee'));
+    const dsH = (await J('/api/bkk/me/' + await codeOf('RZ-1005'))).body.history;
+    ok('...a class with no slot shows under its Rezerv name', dsH.practised === 2 && dsH.recent.some(r => r.class === 'Evening Yin' && r.time === '18:00'),
+       JSON.stringify(dsH));
+    ok('...and nobody else is counted', (await J('/api/bkk/me/' + await codeOf('RZ-1006'))).body.history.practised === 0);
+
+    // ── reports ──
+    const exp = await post('/api/bkk/admin/passes', { name: 'Expiring Testperson', productCode: 'unlim1',
+      validFrom: addD(todayB, -20), validUntil: addD(todayB, 7) }, ADMIN);
+    const ren = await post('/api/bkk/admin/passes', { name: 'Renewed Testperson', productCode: 'unlim1',
+      validFrom: addD(todayB, -25), validUntil: addD(todayB, 5) }, ADMIN);
+    await post('/api/bkk/admin/passes', { memberCode: ren.body.member.code, productCode: 'unlim3',
+      validFrom: addD(todayB, 6), validUntil: addD(todayB, 95) }, ADMIN);
+    ok('the report needs the staff key', (await J('/api/bkk/admin/report?from=2026-10-06&to=2026-10-16')).status === 401);
+    ok('the report needs a range of at most 400 days, in order',
+       (await J('/api/bkk/admin/report', { headers: ADMIN })).status === 400
+       && (await J('/api/bkk/admin/report?from=2025-01-01&to=2026-12-31', { headers: ADMIN })).status === 400
+       && (await J('/api/bkk/admin/report?from=2026-10-16&to=2026-10-06', { headers: ADMIN })).status === 400
+       && (await J('/api/bkk/admin/report?from=2026-02-30&to=2026-03-06', { headers: ADMIN })).status === 400);
+    const rep = await J('/api/bkk/admin/report?from=2026-10-06&to=2026-10-16', { headers: ADMIN });
+    const rv_ = rep.body.visits || {}, rm = rep.body.money || {};
+    ok('report: visits came, booked, no-shows, cancelled, students, new students', rep.status === 200 && rv_.total === 5 && rv_.booked === 5
+       && rv_.noShows === 1 && rv_.cancelled === 1 && rv_.uniqueStudents === 3 && rv_.newStudents === 3, JSON.stringify(rv_));
+    const day = d => (rv_.byDay || []).find(x => x.date === d) || {};
+    ok('report: a 05:30 class lands on its own Bangkok day', day('2026-10-06').attended === 1 && day('2026-10-05').attended === undefined,
+       JSON.stringify(rv_.byDay));
+    const cls = (t, tm) => (rv_.byClass || []).find(c => c.title === t && c.time === tm) || {};
+    ok('report: by class, with the average per class', cls('Mysore (1st batch)', '05:30').attended === 2 && cls('Mysore (1st batch)', '05:30').avgPerClass === 1
+       && cls('Mysore (2nd batch)', '07:30').attended === 2 && cls('Evening Yin', '18:00').attended === 1
+       && JSON.stringify(rv_.bySource) === JSON.stringify([{ source: 'rezerv', n: 5 }]), JSON.stringify([rv_.byClass, rv_.bySource]));
+    const mday = d => ((rm.byDay || []).find(x => x.date === d) || {}).total;
+    ok('report: money total, VAT and count', rm.total === 9600 + 1500 + 14000 - 1500 && rm.vat === 628 && rm.count === 4, JSON.stringify(rm));
+    ok('report: a payment at 23:30 and one at 00:15 Bangkok land on the right days', mday('2026-10-15') === 9600 && mday('2026-10-16') === 14000,
+       JSON.stringify(rm.byDay));
+    const by = (list, k, v) => (list || []).find(x => x[k] === v) || {};
+    ok('report: money by method, item and source', by(rm.byMethod, 'method', 'transfer').total === 8100 && by(rm.byMethod, 'method', 'card').total === 14000
+       && by(rm.byItem, 'item', '1 month unlimited').total === 9600 && by(rm.byItem, 'item', 'Rezerv Promo Pack').n === 1
+       && by(rm.bySource, 'source', 'rezerv').total === 23600, JSON.stringify(rm));
+    ok('report: packages sold in the range', rep.body.passes.sold === 2, JSON.stringify(rep.body.passes));
+    const expiring = rep.body.passes.expiringNext14.map(x => x.name);
+    ok('report: passes ending in 14 days, but not for someone who already renewed',
+       expiring.includes('Expiring Testperson') && !expiring.includes('Renewed Testperson')
+       && rep.body.passes.expiringNext14.find(x => x.name === 'Expiring Testperson').until === addD(todayB, 7), JSON.stringify(rep.body.passes.expiringNext14));
+    const miss = rep.body.notSeen.map(x => x.code);
+    ok('report: "not seen for 14 days" lists pass holders who stopped coming, not those who came',
+       miss.includes(niranCode) && !miss.includes(ployCode) && rep.body.notSeen.find(x => x.code === niranCode).lastVisit === null,
+       JSON.stringify(rep.body.notSeen).slice(0, 300));
+
+    // ── payments list and spreadsheets ──
+    const ordR = (await J('/api/bkk/admin/orders?source=rezerv&from=2026-10-15&to=2026-10-16', { headers: ADMIN })).body.orders || [];
+    ok('the payments list filters by source and Bangkok days', ordR.length === 4 && ordR.every(o => o.source === 'rezerv')
+       && ordR.some(o => o.item === 'Rezerv Promo Pack' && o.name_en === 'Rezerv Promo Pack'), JSON.stringify(ordR.map(o => [o.source, o.item])));
+    const ordAll = (await J('/api/bkk/admin/orders', { headers: ADMIN })).body.orders || [];
+    ok('...and by default the newest orders still come first, not old Rezerv ones', ordAll[0] && String(ordAll[0].refno) === sale.body.order.refno,
+       JSON.stringify(ordAll.slice(0, 2).map(o => [o.refno, o.source, o.created_at])));
+    ok('...a bad date is refused', (await J('/api/bkk/admin/orders?from=yesterday', { headers: ADMIN })).status === 400);
+
+    ok('exports need the staff key', (await raw('/api/bkk/admin/export/visits.csv')).status === 401);
+    ok('only visits, payments and members can be exported', (await raw('/api/bkk/admin/export/notes.csv', { headers: ADMIN })).status === 404
+       && (await raw('/api/bkk/admin/export/visits.csv?from=2026-10-06', { headers: ADMIN })).status === 400);
+    const vc = await raw('/api/bkk/admin/export/visits.csv?from=2026-10-06&to=2026-10-16', { headers: ADMIN });
+    const vLines = vc.text.trim().split('\r\n');
+    ok('visits CSV: a BOM for Excel, one row per visit in the range', vc.status === 200 && vc.bom
+       && /text\/csv/.test(vc.headers.get('content-type')) && /attachment/.test(vc.headers.get('content-disposition'))
+       && vLines.length === 1 + 7 && vc.text.includes('"Evening Yin"') && vc.text.includes('"noshow"'), vc.text.slice(0, 400));
+    const mine = await raw(`/api/bkk/admin/export/visits.csv?member=${ployCode}`, { headers: ADMIN });
+    ok("one student's visits as a CSV", mine.text.trim().split('\r\n').length === 1 + 5 && !mine.text.includes('Date Shapes'), mine.text.slice(0, 300));
+    const pc = await raw('/api/bkk/admin/export/payments.csv?from=2026-10-16&to=2026-10-20', { headers: ADMIN });
+    ok('payments CSV: a formula cannot run, a refund stays a number', pc.text.includes(`"'=cmd|"" /c calc""!A1"`) && pc.text.includes(',-1500,'),
+       pc.text.slice(0, 600));
+    const mc = await raw('/api/bkk/admin/export/members.csv?from=2026-10-06&to=2026-10-16', { headers: ADMIN });
+    ok('members CSV for a range: those who came or paid in it', mc.bom && mc.text.includes('"RZ-1001"')
+       && mc.text.includes('"Brand New Visitor"') && mc.text.includes('"Niran Testimport"') && !mc.text.includes('"Thai Month"'), mc.text.slice(0, 400));
+
+    // ── what a second look at the import found (28 Oct) ──
+    console.log('\n— keep all history: import edge cases —');
+    ok('every skip reason and note carries a code and its values, so the Thai admin page can say it',
+       rv.body.skipped.every(s => s.code && Array.isArray(s.vals)) && rv.body.warnings.every(w => w.code)
+       && rv.body.skipped.find(s => s.row === 9).vals[0] === 'someday', JSON.stringify(rv.body.skipped));
+
+    // Dates and times as files hold them.
+    const t0 = Date.now();
+    ok('a long date cell is refused at once, not after minutes of work', parseWhen('1' + ', '.repeat(4000) + 'x') === null
+       && Date.now() - t0 < 200, `${Date.now() - t0} ms`);
+    const shapes = { '06/10/2026 05:30-07:30': '2026-10-06 05:30', 'Tue 6 Oct 2026, 5:30 AM - 7:30 AM': '2026-10-06 05:30',
+      '6 ต.ค. พ.ศ. 2569': '2026-10-06 null', 'วันอังคารที่ 6 ตุลาคม พ.ศ. 2569': '2026-10-06 null' };
+    const shapesGot = Object.keys(shapes).map(x => { const w = parseWhen(x); return w && `${w.date} ${w.time}`; });
+    ok('a class time given as a range, and Thai dates with the era, are read', JSON.stringify(shapesGot) === JSON.stringify(Object.values(shapes)),
+       JSON.stringify(shapesGot));
+    const sunSlot = (await one(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity,active)
+      VALUES ('test_hist_sun','History Sunday','test',0,'09:15',60,5,false) RETURNING id`)).id;
+    const edge = await imp('visits', [
+      { rezervId: 'V-40', memberRezervId: 'RZ-1005', date: '06/10/2026', time: '05:30 - 07:30', status: 'Attended' },
+      { rezervId: 'V-41', memberRezervId: 'RZ-1005', date: '04/10/2026 0:00', className: 'History Sunday', status: 'Attended' },
+      { rezervId: 'V-42', memberRezervId: 'RZ-1005', date: 'วันพุธที่ 30 กันยายน พ.ศ. 2569 05:30 - 07:30', status: 'Attended' },
+    ]);
+    const [v40, v41, v42] = await Promise.all(['V-40', 'V-41', 'V-42'].map(vrow));
+    ok('visits: a class time range is its start, and finds the class', edge.body.added === 3 && v40.scode === 'my530_2' && !!v40.checked_in_at,
+       JSON.stringify([edge.body, v40]));
+    ok('...a date-only cell Excel saved as "0:00" is no time, so the class is found by its name',
+       v41.slot_id === sunSlot && v41.start_at.toISOString() === '2026-10-04T02:15:00.000Z', JSON.stringify(v41));
+    ok('...and a Thai date with the era and a time range is read', v42.d === '2026-09-30' && !!v42.checked_in_at, JSON.stringify(v42));
+
+    // Statuses that say they did not come.
+    const neg = ['Not checked in', 'No check-in', 'Unattended', 'Not completed', 'Incomplete', 'ไม่ได้เช็คอิน', 'ยังไม่เข้าเรียน',
+      'Not present', 'Check-in pending'];
+    const rn = await imp('visits', neg.map((status, i) => ({ rezervId: `V-5${i}`, memberRezervId: 'RZ-1006', date: addD('2026-09-01', i),
+      time: '05:30', status })));
+    const nrows = await Promise.all(neg.map((_, i) => vrow(`V-5${i}`)));
+    ok('"Not checked in", "Unattended", "ยังไม่เข้าเรียน" and the like are no-shows, never attended', rn.body.added === neg.length
+       && nrows.every(v => v.status === 'noshow' && !v.checked_in_at), JSON.stringify([rn.body, nrows.map(v => [v.status, !!v.checked_in_at])]));
+    const yn = await imp('visits', [
+      { rezervId: 'V-60', memberRezervId: 'RZ-1006', date: '2026-09-21', time: '05:30', status: 'Booked', checkedInAt: 'Yes' },
+      { rezervId: 'V-61', memberRezervId: 'RZ-1006', date: '2026-09-22', time: '05:30', status: 'Booked', checkedInAt: 'No' },
+      { rezervId: 'V-62', memberRezervId: 'RZ-1006', date: '2026-09-23', time: '05:30', status: 'Booked', checkedInAt: 'ไม่' },
+    ], { pastBookedAttended: true });
+    const [v60, v61, v62] = await Promise.all(['V-60', 'V-61', 'V-62'].map(vrow));
+    ok('a Yes/No "Checked in" column: Yes came at the class start, No is a no-show even with past bookings counted as attended',
+       yn.body.added === 3 && !yn.body.warnings.length && v60.checked_in_at && v60.checked_in_at.toISOString() === v60.start_at.toISOString()
+       && v61.status === 'noshow' && !v61.checked_in_at && v62.status === 'noshow', JSON.stringify([yn.body, v60, v61.status, v62.status]));
+
+    // One person is never filed under another.
+    const fam = await imp('members', [
+      { name: 'Somchai Testa', email: 'somchai.testa@example.com', phone: '081-234-0001' },
+      { name: 'Malee Testa', email: 'malee.testa@example.com', phone: '+66 81 234 0001' },
+    ]);
+    ok('two people on one family phone, each with their own email, are two students', fam.body.added === 2
+       && (await one(`SELECT email FROM bkk_members WHERE name='Malee Testa'`)).email === 'malee.testa@example.com'
+       && fam.body.warnings.some(w => w.row === 2 && /made a new student/.test(w.message)), JSON.stringify(fam.body));
+    const anns = await imp('members', [{ name: 'Ann Example', email: 'ann1@example.com' }, { name: 'Ann Example', email: 'ann2@example.com' }]);
+    const annV = await imp('visits', [{ rezervId: 'V-70', email: 'ann2@example.com', name: 'Ann Example', date: '2026-09-24', time: '05:30', status: 'attended' }]);
+    ok('two students with one name and two emails are two, and a visit by the second email is hers', anns.body.added === 2 && annV.body.added === 1
+       && (await one(`SELECT m.email FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id WHERE b.source_ref='V-70'`)).email === 'ann2@example.com',
+       JSON.stringify([anns.body, annV.body]));
+    const ph0 = await imp('members', [{ name: 'Ann One', phone: '0000000000' }, { name: 'Bee Two', phone: '000-000-0000' }]);
+    ok('a placeholder phone on two people does not make them one', ph0.body.added === 2, JSON.stringify(ph0.body));
+    const fe = await imp('members', [
+      { rezervId: 'C-1', name: 'Somchai Family', email: 'family.testa@example.com' },
+      { rezervId: 'C-2', name: 'Malee Family', email: 'family.testa@example.com' },
+    ]);
+    const mf = await one(`SELECT * FROM bkk_members WHERE rezerv_id='C-2'`);
+    ok('two Rezerv customers on one email are two students: the second without it, and the import says so', fe.body.added === 2
+       && mf.name === 'Malee Family' && mf.email === null
+       && fe.body.warnings.some(w => w.row === 2 && w.code === 'clashEmail' && /without the email/.test(w.message)), JSON.stringify(fe.body));
+    const fv = await imp('visits', [
+      { rezervId: 'V-71', memberRezervId: 'C-2', email: 'family.testa@example.com', date: '2026-09-24', time: '05:30', status: 'attended' },
+      { rezervId: 'V-72', memberRezervId: 'C-3', email: 'family.testa@example.com', name: 'Kid Family', date: '2026-09-24', time: '05:30', status: 'attended' },
+    ]);
+    ok("...her visit is on her own profile, and a third customer on that email is skipped, not merged", fv.body.added === 1
+       && (await vrow('V-71')).mrz === 'C-2' && fv.body.newMembers === 0
+       && fv.body.skipped.some(x => x.row === 2 && /family\.testa@example\.com is on Somchai Family's profile/.test(x.reason) && /check by hand/.test(x.reason)),
+       JSON.stringify(fv.body));
+    const anna = await post('/api/bkk/admin/passes', { name: 'Anna Lee', email: 'anna.lee@example.test', phone: '081-234-0009', productCode: 'dropin' }, ADMIN);
+    const ben = await imp('members', [{ rezervId: 'C-900', name: 'Ben Lee', email: 'ben.lee@example.test', phone: '+66 81 234 0009' }]);
+    ok("a Rezerv customer on a native student's phone, with another name and email, is a new student",
+       ben.body.added === 1 && (await one('SELECT rezerv_id FROM bkk_members WHERE code=$1', [anna.body.member.code])).rezerv_id === null
+       && (await codeOf('C-900')) !== anna.body.member.code, JSON.stringify(ben.body));
+    const nok = await post('/api/bkk/admin/passes', { name: 'Nok', email: 'nok.native@example.test', productCode: 'unlim1' }, ADMIN);
+    const nokPay = await imp('payments', [{ rezervId: 'P-90', name: 'Nok', email: 'nok.other@example.test', date: '2026-09-25', amount: 9600, item: '3 months' }]);
+    const nokPass = await imp('passes', [{ name: 'Nok', email: 'nok.other@example.test', plan: '3 months', until: '2026-12-25' }]);
+    ok("a payment or pass for someone with a native student's name but another email is skipped, not merged",
+       nokPay.body.added === 0 && /a student named Nok \(.*\) has another email \(nok\.native@example\.test\): check by hand/.test((nokPay.body.skipped[0] || {}).reason)
+       && nokPass.body.added === 0 && nokPass.body.skipped.length === 1
+       && (await one('SELECT count(*)::int AS n FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id WHERE m.code=$1', [nok.body.member.code])).n === 1,
+       JSON.stringify([nokPay.body, nokPass.body]));
+
+    // Ids are ids: no card scrub, and Excel's changes are seen.
+    const lu = await imp('members', [
+      { rezervId: '1730000000001', name: 'Mai Example', email: 'mai@example.test' },
+      { rezervId: '1730000000019', name: 'Nok Sample', email: 'nok@example.test', phone: '+86 13812345678' },
+    ]);
+    const luv = await imp('visits', [
+      { rezervId: '1730000000001', memberRezervId: '1730000000019', date: '2026-09-25', time: '05:30', status: 'attended' },
+      { rezervId: '1730000000019', memberRezervId: '1730000000001', date: '2026-09-25', time: '05:30', status: 'attended' },
+    ]);
+    ok('long ids that look like card numbers are kept as they are: two students, two visits, the phone intact', lu.body.added === 2
+       && luv.body.added === 2 && (await vrow('1730000000001')).mrz === '1730000000019' && (await vrow('1730000000019')).mrz === '1730000000001'
+       && (await one(`SELECT phone FROM bkk_members WHERE rezerv_id='1730000000019'`)).phone === '+86 13812345678', JSON.stringify([lu.body, luv.body]));
+    await imp('members', [{ rezervId: '123', name: 'Dao Sample', phone: '0897776666' }]);
+    const daoV = await imp('visits', [
+      { rezervId: 'V-80', memberRezervId: '00123', name: 'Dao Sample', phone: '0897776666', date: '2026-09-26', time: '05:30', status: 'attended' },
+      { rezervId: 'V-81', memberRezervId: '1.23E+15', name: 'Dao Sample', date: '2026-09-26', time: '05:30', status: 'attended' },
+    ]);
+    ok('a Rezerv id Excel stripped of its leading zeros still finds the student', daoV.body.added === 1 && daoV.body.newMembers === 0
+       && (await vrow('V-80')).mname === 'Dao Sample' && (await one(`SELECT count(*)::int AS n FROM bkk_members WHERE name='Dao Sample'`)).n === 1,
+       JSON.stringify(daoV.body));
+    ok('...and an id Excel wrote as 1.23E+15 is skipped with the reason', daoV.body.skipped.some(x => x.row === 2 && /Excel changed this id/.test(x.reason)));
+
+    // Importing again moves a visit forward only: what happened here stays.
+    let rd = addD(todayB, 2);
+    while (isMoon(rd)) rd = addD(rd, 1);
+    const rSlot = (await one(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity)
+      VALUES ('test_hist_reimp','History Reimport','test',$1,'10:10',60,5) RETURNING id`, [new Date(rd + 'T12:00:00Z').getUTCDay()])).id;
+    const reRows = [
+      { rezervId: 'V-90', memberRezervId: 'RZ-1003', date: rd, time: '10:10', className: 'History Reimport', status: 'Booked' },
+      { rezervId: 'V-91', memberRezervId: 'RZ-1005', date: rd, time: '10:10', className: 'History Reimport', status: 'Booked' },
+    ];
+    const re1 = await imp('visits', reRows);
+    const door = await post('/api/bkk/admin/walkin', { slotId: rSlot, date: rd, memberCode: await codeOf('RZ-1003'), cover: 'rezerv' }, ADMIN);
+    const cx = await post(`/api/bkk/bookings/${(await vrow('V-91')).id}/cancel`, { memberCode: await codeOf('RZ-1005') });
+    const re2 = await imp('visits', reRows);
+    const [a90, a91] = await Promise.all(['V-90', 'V-91'].map(vrow));
+    ok('importing visits again never undoes a check-in at our door', re1.body.added === 2 && door.body.already === true
+       && a90.status === 'booked' && !!a90.checked_in_at, JSON.stringify([re1.body, door.body, a90]));
+    ok('...nor books again a seat the student cancelled here', cx.status === 200 && a91.status === 'cancelled' && re2.body.matched === 2
+       && re2.body.updated === 0 && re2.body.warnings.some(w => w.row === 2 && w.code === 'keptHere'), JSON.stringify([cx.body, re2.body, a91.status]));
+    const re3 = await imp('visits', [{ ...reRows[0], status: 'No show' }]);
+    ok('...a later "no-show" in Rezerv keeps the check-in, with a note', re3.body.matched === 1 && !!(await vrow('V-90')).checked_in_at
+       && (await vrow('V-90')).status === 'booked' && re3.body.warnings.some(w => w.code === 'keptHere'), JSON.stringify(re3.body));
+    const plain = await imp('visits', [vis[10]]);
+    ok('...and a plain run after one that counted past bookings as attended keeps them attended', plain.body.matched === 1
+       && !!(await vrow('V-11')).checked_in_at, JSON.stringify(plain.body));
+    const nd = await imp('visits', [{ rezervId: 'V-95', memberRezervId: 'RZ-1001', date: doorDate, time: startNow, className: 'History Walk-in', status: 'No show' }]);
+    ok('a Rezerv no-show for a class our door checked them into is not added next to the visit', nd.body.matched === 1
+       && !(await vrow('V-95')).id && nd.body.warnings.some(w => w.code === 'cameDoor'), JSON.stringify(nd.body));
+
+    // One Rezerv id on two different rows.
+    const ordRows = [
+      { rezervId: 'ORD-77', memberRezervId: 'RZ-1005', date: '2026-09-20', amount: '9600', item: '1 month' },
+      { rezervId: 'ORD-77', memberRezervId: 'RZ-1005', date: '2026-09-20', amount: '300', item: 'Mat rental' },
+    ];
+    const ord1 = await imp('payments', ordRows), ord2 = await imp('payments', ordRows);
+    ok('one Rezerv id on two different payments: the second is skipped with the reason, never taken as already there',
+       ord1.body.added === 1 && ord1.body.matched === 0 && ord1.body.skipped.some(x => x.row === 2 && /ORD-77 is already used for a different payment/.test(x.reason))
+       && ord2.body.matched === 1 && ord2.body.skipped.length === 1, JSON.stringify([ord1.body, ord2.body]));
+    const cls5 = await imp('visits', [
+      { rezervId: 'CLS-5', memberRezervId: 'RZ-1005', date: '2026-09-27', time: '05:30', status: 'attended' },
+      { rezervId: 'CLS-5', memberRezervId: 'RZ-1006', date: '2026-09-27', time: '05:30', status: 'attended' },
+    ]);
+    ok('...and the same for one id on two visits', cls5.body.added === 1 && cls5.body.skipped.some(x => x.row === 2 && /different visit/.test(x.reason)),
+       JSON.stringify(cls5.body));
+
+    // Money: only what came in, the VAT as it was paid, and every identical row.
+    const ps = await imp('payments', ['Failed', 'Pending', 'Voided', 'Refunded', 'Paid', 'Maybe'].map((status, i) => ({
+      rezervId: `P-2${i}`, memberRezervId: 'RZ-1005', date: '2026-09-28', amount: i < 3 ? 9600 : 1500, status })));
+    const [p23, p24] = [await prow('P-23'), await prow('P-24')];
+    ok('a payment status column: failed, pending and voided rows are not money, a refund goes back, an unknown word is skipped',
+       ps.body.added === 2 && ps.body.skipped.length === 4 && ps.body.skipped.filter(x => x.code === 'notMoney').length === 3
+       && ps.body.skipped.some(x => x.row === 6 && x.code === 'payStatus') && p23.status === 'refund' && p23.amount_thb === -1500
+       && p24.status === 'paid' && p24.amount_thb === 1500, JSON.stringify([ps.body, p23, p24]));
+    await imp('payments', [
+      { rezervId: 'P-30', memberRezervId: 'RZ-1005', date: '2026-09-29', amount: '9600', vat: '7%', item: '1 month' },
+      { rezervId: 'P-31', memberRezervId: 'RZ-1005', date: '2026-09-29', amount: '-1,605', vat: '105', item: 'Drop-in refund' },
+    ]);
+    const [p30, p31] = [await prow('P-30'), await prow('P-31')];
+    ok('a VAT column holding the rate (7%) is the VAT inside the amount, not 7 baht', p30.vat_thb === 628 && p30.base_thb === 8972, JSON.stringify(p30));
+    ok('a refund takes its VAT back: VAT and base have the sign of the amount', p31.amount_thb === -1605 && p31.vat_thb === -105
+       && p31.base_thb === -1500, JSON.stringify(p31));
+    const drop = { memberRezervId: 'RZ-1005', date: '30/09/2026', amount: '1,500', item: 'Drop-in', method: 'cash' };
+    const b1 = await imp('payments', [drop], { firstRow: 1000 });
+    const b2 = await imp('payments', [{ ...drop, nth: 2 }], { firstRow: 1001 });
+    const b3 = await imp('payments', [drop, { ...drop, nth: 2 }]);
+    const nDrop = (await one(`SELECT count(*)::int AS n FROM bkk_orders o WHERE o.source='rezerv' AND o.amount_thb=1500
+      AND (o.created_at AT TIME ZONE 'Asia/Bangkok')::date = '2026-09-30'`)).n;
+    ok('two identical payments in two batches are both kept: the page numbers them over the whole file', b1.body.added === 1
+       && b2.body.added === 1 && b3.body.matched === 2 && nDrop === 2, JSON.stringify([b1.body, b2.body, b3.body, nDrop]));
+
+    // Passes: classes left as written, and the 12-month package.
+    const cl = await imp('passes', [
+      { memberRezervId: 'RZ-1006', plan: '10 class pack', until: '2026-12-01', classesLeft: '3/10' },
+      { memberRezervId: 'RZ-1006', plan: '10 class pack', until: '2026-12-02', classesLeft: '3 classes' },
+      { memberRezervId: 'RZ-1006', plan: '10 class pack', until: '2026-12-03', classesLeft: 'lots' },
+      { memberRezervId: 'RZ-1006', plan: '10 class pack', until: '2026-12-04', classesLeft: '12' },
+      { memberRezervId: 'RZ-1006', plan: '3 months', until: '2026-12-05', classesLeft: 'Unlimited' },
+      { memberRezervId: 'RZ-1006', plan: '12 months', start: '22/10/2026', until: '21/10/2027' },
+      { memberRezervId: 'RZ-1006', plan: '12 months', start: '01/10/2025', until: '31/10/2026' },
+    ]);
+    const held = (await pool.query(`SELECT to_char(p.valid_until,'YYYY-MM-DD') AS u, p.credits_total - p.credits_used AS left, pr.code
+      FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id
+      WHERE m.rezerv_id='RZ-1006'`)).rows;
+    const heldOn = u => held.find(x => x.u === u) || {};
+    ok('classes left "3/10" and "3 classes" are 3 left, not all 10', heldOn('2026-12-01').left === 3 && heldOn('2026-12-02').left === 3,
+       JSON.stringify(held));
+    ok('...unreadable is skipped with the reason, more than the pack is kept with a note, an unlimited pass ignores it',
+       cl.body.skipped.length === 1 && cl.body.skipped[0].row === 3 && /classes left "lots"/.test(cl.body.skipped[0].reason)
+       && heldOn('2026-12-04').left === 10 && cl.body.warnings.some(w => w.row === 4 && w.code === 'leftOver')
+       && heldOn('2026-12-05').code === 'unlim3', JSON.stringify(cl.body));
+    ok('a 12-month pass that runs one year is the 12-month package; an older 13-month one keeps its own',
+       heldOn('2027-10-21').code === 'unlim12m' && heldOn('2026-10-31').code === 'unlim12', JSON.stringify(held));
+
+    // Reports and the profile.
+    const repT = (await J(`/api/bkk/admin/report?from=${todayB}&to=${todayB}`, { headers: ADMIN })).body;
+    ok('"not seen for 14 days" leaves out someone who bought their first pass today', !repT.notSeen.some(x => x.code === anna.body.member.code)
+       && repT.notSeen.some(x => x.code === niranCode), JSON.stringify(repT.notSeen.map(x => x.name)));
+    await pool.query(`INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,status,source,cover)
+      VALUES ($1,'2026-09-13','2026-09-13T02:15:00Z',(SELECT id FROM bkk_members WHERE code=$2),'booked','student','pass')`,
+      [sunSlot, anna.body.member.code]);
+    const repNs = (await J('/api/bkk/admin/report?from=2026-09-13&to=2026-09-13', { headers: ADMIN })).body.visits;
+    const annaH = (await J(`/api/bkk/admin/members/${anna.body.member.code}/history`, { headers: ADMIN })).body.summary;
+    ok('a seat booked here and never checked in is a no-show once its day is over, in the report and the history',
+       repNs.noShows === 1 && repNs.booked === 1 && annaH.noShows === 1, JSON.stringify([repNs, annaH]));
+    await imp('members', [{ rezervId: 'RZ-2000', name: 'Two Classes Testimport' }]);
+    await imp('visits', [
+      { rezervId: 'V-96', memberRezervId: 'RZ-2000', date: todayB, time: '00:01', className: 'Early One', status: 'attended' },
+      { rezervId: 'V-97', memberRezervId: 'RZ-2000', date: todayB, time: '00:02', className: 'Early Two', status: 'attended' },
+    ]);
+    const twoH = (await J('/api/bkk/me/' + await codeOf('RZ-2000'))).body.history;
+    ok('two classes on one morning are one morning practised, this month too', twoH.practised === 2 && twoH.days === 1 && twoH.thisMonth === 1,
+       JSON.stringify(twoH));
+
+    // No admin key set: the admin is closed, not open on a default.
+    const keep = [process.env.BKK_ADMIN_KEY, process.env.SHOP_ADMIN_KEY];
+    delete process.env.BKK_ADMIN_KEY; delete process.env.SHOP_ADMIN_KEY;
+    const app2 = express();
+    app2.use(express.json());
+    mountBkk(app2, { pgPool: pool });
+    process.env.BKK_ADMIN_KEY = keep[0];
+    if (keep[1] != null) process.env.SHOP_ADMIN_KEY = keep[1];
+    const srv2 = app2.listen(0);
+    const st2 = async key => (await fetch(`http://127.0.0.1:${srv2.address().port}/api/bkk/admin/export/members.csv`,
+      { headers: key == null ? {} : { 'x-bkk-key': key } })).status;
+    ok('with no admin key set, nothing opens the admin: not the old default key, not an empty one',
+       (await st2('aybkk2026')) === 401 && (await st2('')) === 401 && (await st2(null)) === 401);
+    await new Promise(r => setTimeout(r, 1500));           // let its schema check finish
+    srv2.close();
   }
 
   console.log('\n— Bangkok calendar dates —');
