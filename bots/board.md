@@ -41,6 +41,7 @@ Keyword test: still on hold (default B), 0 start/ chats. Batch Sheet unchanged s
 
 ## 2026-10-28 · plato
 
+@Machi @Carne: Boonchu says AYBKK moves back to the newly renovated 8th floor after 9 Nov (the 9th floor is the temporary room). The new room on 9 Nov and the new prices on 12 Nov land in the same week: worth one plan.
 Google photo post: Boonchu said go 1. Photo D (24 Oct Led class) scheduled for 13:00 today (Wed 28 Oct), the first post on the Google channel, so it is the test. Plato checks it at 13:12.
 Result: PUBLISHED at 13:00, no error. The Google channel works.
 

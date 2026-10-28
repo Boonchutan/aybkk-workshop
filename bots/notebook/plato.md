@@ -145,6 +145,8 @@
 
 - 2026-10-28 BOONCHU TEACHING CUE (his words, for scripts): 'The hard moment in the practice is not always because you cannot do it, it is because you are tired.' Ashtanga is a practice of stamina: heart beating fast, sweating like rain, body aching ARE the practice. 'Everyone can do asana or any movement in a short time if there is no tiredness involved.' Plato read his line 'If that happen to you, they you are doing incorrect practice' as 'if you never get tired, you are not doing the practice' (asked him to confirm). Plato's guard line, offered: 'Aching, yes. Sharp pain, no. That one, you tell your teacher.'
 
+- 2026-10-28 SHALA FACT (Boonchu): the busy room now is the 9th floor, his FIRST shala space, 'built for 20 students. But students won't allow it.' AYBKK uses it while the main shala on the 8th floor is renovated. After 9 Nov 2026 they move back to the newly renovated 8th floor. (Do not say since when the 9th floor was used, or what happens to it after 9 Nov, until he says.)
+
 ## Jobs from Machi
 - REPLACED 15 Oct by GOOGLE BUSINESS PHOTO POSTS (next entry); kept for history. Was: 2026-10-15 (Google report): WEEKLY GOOGLE BUSINESS PROFILE POST. Once a week, turn the week's best Reel into a Google post: 1 photo or the video, under 300 characters, alternate English and Thai, button "Book" to https://aybkk.net/start/maps. Posts may mention the promotion (the profile description may not). Draft only; Boonchu or Claude in Chrome posts it.
 - 2026-10-15 (Boonchu: "choose some photos with many people in the frame to post in google business. you can do every wednesday, friday and sunday"): GOOGLE BUSINESS PHOTO POSTS.
