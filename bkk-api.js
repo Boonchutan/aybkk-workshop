@@ -264,6 +264,18 @@ function mountBkk(app, opts = {}) {
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS note TEXT`);
     await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS source TEXT`);
     await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS cancel_reason TEXT`);
+    // Every way into a class puts a name on its list (28 Oct 2026). cover is what
+    // pays for the seat: 'pass' (an aybkk.net pass) or 'rezerv' (a Rezerv package
+    // not moved over yet, so no pass here). source is how the name got there:
+    // student, staff, door, order. Older rows stay NULL.
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS cover TEXT`);
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS source TEXT`);
+    // A drop-in is bought for one class, and paying for it books that class.
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS slot_id INTEGER REFERENCES bkk_class_slots(id)`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS class_date DATE`);
+    // The door's add sheet sends one id per person added, so a second tap after
+    // a lost reply finds the first one's seat instead of adding them again.
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS request_id TEXT`);
 
     // findOrCreateMember and login/request both take the first row for an email
     // with no ORDER BY. Two rows for one address means one of them — and any
@@ -281,6 +293,8 @@ function mountBkk(app, opts = {}) {
     // Existing databases still carry the old table-level constraint.
     await q(`ALTER TABLE bkk_bookings
              DROP CONSTRAINT IF EXISTS bkk_bookings_slot_id_class_date_member_id_key`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_bookings_request_id
+             ON bkk_bookings (request_id) WHERE request_id IS NOT NULL`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -381,6 +395,16 @@ function mountBkk(app, opts = {}) {
   // Calendar date in Bangkok, NOT UTC. toISOString() would put 01:00 Bangkok on
   // the previous day — and 05:30 Mysore is booked in exactly those hours.
   const ymd = d => new Date(d.getTime() + 7 * 3600000).toISOString().slice(0, 10);
+  const bkkToday = () => ymd(bkkNow());
+  const isYmd = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
+  // "Wed 28 Oct 2026, 07:30" for receipts and the Telegram ping, from the
+  // Bangkok class date itself, so the server's own timezone never shifts it.
+  const WD3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const classWhen = (dateStr, hhmm) => {
+    const d = new Date(`${dateStr}T12:00:00Z`);
+    return `${WD3[d.getUTCDay()]} ${d.getUTCDate()} ${MON3[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${hhmm}`;
+  };
 
   async function findOrCreateMember({ name, email, phone }) {
     const em = (email || '').trim().toLowerCase();
@@ -441,10 +465,11 @@ function mountBkk(app, opts = {}) {
   });
 
   // Schedule is generated from the weekly pattern on read — no cron.
+  // 62 days covers the booking page's calendar: the rest of this month + next.
+  const SCHEDULE_DAYS = 62;
   app.get('/api/bkk/schedule', async (req, res) => {
     try {
-      // 62 covers the booking page's calendar: the rest of this month + next
-      const days = Math.min(62, Math.max(1, parseInt(req.query.days) || 14));
+      const days = Math.min(SCHEDULE_DAYS, Math.max(1, parseInt(req.query.days) || 14));
       const slots = (await q('SELECT * FROM bkk_class_slots WHERE active')).rows;
       const from = new Date();
       const dates = [];
@@ -494,6 +519,25 @@ function mountBkk(app, opts = {}) {
       const pr = (await q('SELECT * FROM bkk_products WHERE code = $1 AND active', [productCode])).rows[0];
       if (!pr) return res.status(404).json({ error: 'product not found' });
 
+      // A drop-in is one class, so it is bought FOR a class and paying books it.
+      // Checked here as a student booking would be; the seat itself is taken
+      // only once the payment is confirmed.
+      let cls = null;
+      if (singleClass(pr)) {
+        const { slotId, date } = req.body;
+        if (!slotId || !isYmd(date) || !Number.isInteger(Number(slotId)))
+          return res.status(400).json({ error: 'Pick the class for your drop-in.' });
+        // No further than the timetable shows: a seat sold for a class years
+        // off would outlive any change to the timetable before then.
+        if (date > ymd(new Date(bkkNow().getTime() + (SCHEDULE_DAYS - 1) * 86400000)))
+          return res.status(409).json({ error: 'You can buy a drop-in for the next 2 months only.' });
+        try {
+          const c = await classCheck(pool, slotId, date);
+          if (await seatsTaken(pool, slotId, date) >= c.capacity) throw new Error('class is full');
+          cls = { slotId: Number(slotId), date };
+        } catch (e) { return res.status(409).json({ error: e.message }); }
+      }
+
       const before = (await q('SELECT id FROM bkk_members WHERE lower(email)=$1 LIMIT 1',
         [String(email).trim().toLowerCase()])).rows[0];
       const member = await findOrCreateMember({ name, email, phone });
@@ -510,9 +554,10 @@ function mountBkk(app, opts = {}) {
       for (let attempt = 0; attempt < 5 && !o; attempt++) {
         try {
           o = (await q(
-            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb)
-             VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-            [newRefno(), pr.id, member.id, pr.price_thb, fee, vat, total])).rows[0];
+            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,slot_id,class_date)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+            [newRefno(), pr.id, member.id, pr.price_thb, fee, vat, total,
+             cls && cls.slotId, cls && cls.date])).rows[0];
         } catch (e) {
           if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
         }
@@ -616,7 +661,7 @@ function mountBkk(app, opts = {}) {
   async function verifyAndActivate(refno) {
     const o = (await q('SELECT * FROM bkk_orders WHERE refno = $1', [refno])).rows[0];
     if (!o) return { status: 'unknown' };
-    if (o.status === 'paid') return { status: 'paid', already: true };
+    if (o.status === 'paid') return { status: 'paid', already: true, ...await orderBooking(o) };
 
     const cfg = paysoConfig();
     if (!cfg) return { status: o.status, note: 'gateway not configured' };
@@ -638,7 +683,29 @@ function mountBkk(app, opts = {}) {
       return { status: 'mismatch' };
     }
     await activateOrder(o, verdict);
-    return { status: 'paid' };
+    return { status: 'paid', ...await orderBooking(o) };
+  }
+
+  // The class a paid drop-in booked, for the "you are booked into…" message.
+  // Read back from the database, so a second check (or a postback that won
+  // the race) gets the same answer as the first. The buyer's live seat in the
+  // order's class: the one the order's pass took, or one they already had.
+  // No seat (the class was cancelled or over by the time the payment came
+  // through) is said out loud: the student picked that class and would
+  // otherwise travel to it.
+  async function orderBooking(o) {
+    if (!o.slot_id) return {};
+    const b = (await q(
+      `SELECT s.title, b.start_at FROM bkk_orders o
+       JOIN bkk_bookings b ON b.slot_id=o.slot_id AND b.class_date=o.class_date
+         AND b.member_id=o.member_id AND b.status='booked'
+       JOIN bkk_class_slots s ON s.id=b.slot_id
+       WHERE o.id=$1 LIMIT 1`, [o.id])).rows[0];
+    if (b) return { booking: { title: b.title, startAt: b.start_at } };
+    const c = (await q(
+      `SELECT s.title, s.start_time, to_char(o.class_date,'YYYY-MM-DD') AS class_date
+       FROM bkk_orders o JOIN bkk_class_slots s ON s.id=o.slot_id WHERE o.id=$1`, [o.id])).rows[0];
+    return c ? { notBooked: { title: c.title, startAt: startAtISO(c.class_date, c.start_time) } } : {};
   }
 
   // POST /order/orderdetailpost. Header casing is theirs and is inconsistent
@@ -684,34 +751,79 @@ function mountBkk(app, opts = {}) {
     };
   }
 
-  async function activateOrder(order, verdict = {}) {
+  // An order bought for a class (a drop-in) also takes its seat, with the new
+  // pass. opts.checkIn, opts.source and opts.requestId are for a drop-in paid
+  // at the door. Returns { booking, bookingError }, { unsold, seat } when the
+  // door's sale was not needed after all (seat: what takeSeat found), or null
+  // when the order was already paid.
+  async function activateOrder(order, verdict = {}, opts = {}) {
     const pr = (await q('SELECT * FROM bkk_products WHERE id = $1', [order.product_id])).rows[0];
     const client = await pool.connect();
+    let seat = null, cls = null;
     try {
       await client.query('BEGIN');
       const upd = await client.query(
         `UPDATE bkk_orders SET status='paid', verified_at=now(), gateway_ref=$2, gateway_note=$3
-         WHERE id=$1 AND status <> 'paid' RETURNING id`,
+         WHERE id=$1 AND status <> 'paid' RETURNING slot_id, to_char(class_date,'YYYY-MM-DD') AS class_date`,
         [order.id, verdict.raw ? JSON.stringify(verdict.raw).slice(0, 400) : null, verdict.note || null]);
-      if (!upd.rows.length) { await client.query('ROLLBACK'); return; }   // already activated
-      await client.query(
+      if (!upd.rows.length) { await client.query('ROLLBACK'); return null; }   // already activated
+      const pass = (await client.query(
         `INSERT INTO bkk_passes (member_id,product_id,order_id,kind,credits_total,daily_cap,valid_days)
-         VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-        [order.member_id, pr.id, order.id, pr.kind, pr.credits, pr.daily_cap, pr.valid_days]);
+         VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+        [order.member_id, pr.id, order.id, pr.kind, pr.credits, pr.daily_cap, pr.valid_days])).rows[0];
+      const { slot_id: slotId, class_date: date } = upd.rows[0];
+      if (slotId && date) {
+        // The seat must never cost the student the payment. A class cancelled
+        // (or over) while they paid rolls back to here: the order stays paid,
+        // the pass stays a 1-class credit, and the shala is told to sort it out.
+        // Staff timing: a payment confirmed after 07:30 still books until the end.
+        await client.query('SAVEPOINT seat');
+        try {
+          seat = await takeSeat(client, { member: { id: order.member_id }, slotId, date, staff: true,
+            allowOver: true, cover: 'pass', passId: pass.id, checkIn: !!opts.checkIn,
+            source: opts.source || 'order', requestId: opts.requestId });
+          await client.query('RELEASE SAVEPOINT seat');
+        } catch (e) {
+          await client.query('ROLLBACK TO SAVEPOINT seat');
+          seat = { error: e.message };
+        }
+        // At the door the money is still in the hand. Another phone (or a
+        // second tap) put them on the list while this sale was on its way:
+        // they stay checked in, and nothing is sold twice.
+        if (opts.source === 'door' && seat.already) {
+          await client.query('DELETE FROM bkk_passes WHERE id=$1', [pass.id]);
+          await client.query('DELETE FROM bkk_orders WHERE id=$1', [order.id]);
+          await client.query('COMMIT');
+          return { unsold: true, seat };
+        }
+        const s = (await client.query('SELECT title, start_time FROM bkk_class_slots WHERE id=$1', [slotId])).rows[0];
+        cls = { name: s ? s.title : `class ${slotId}`, when: classWhen(date, s ? s.start_time : '') };
+      }
       await client.query('COMMIT');
-      console.log(`✓ bkk: pass activated for order ${order.id} (${pr.name_en})`);
-      notify(`💳 AYBKK payment (${order.method || 'online'})\n${pr.name_en} · ฿${order.amount_thb}\nrefno ${order.refno}`);
-      // After COMMIT, and awaited only so failures are logged. The pass already
-      // exists; a mail server having a bad day must not undo a paid order.
-      emailReceipt(order, pr).catch(e => console.error('[bkk] receipt failed:', e.message));
     } catch (e) {
       await client.query('ROLLBACK'); throw e;
     } finally { client.release(); }
+
+    const booked = cls && !seat.error;
+    console.log(`✓ bkk: pass activated for order ${order.id} (${pr.name_en})${cls ? (booked
+      ? `, booked ${cls.name} ${cls.when}` : `, could NOT book ${cls.name} ${cls.when}: ${seat.error}`) : ''}`);
+    const lines = [`💳 AYBKK payment (${order.method || 'online'})`, `${pr.name_en} · ฿${order.amount_thb}`, `refno ${order.refno}`];
+    if (booked) lines.push(`📅 ${seat.already ? 'Already on the list' : 'Booked'}: ${cls.name}, ${cls.when}`
+      + (seat.overCapacity ? `\n⚠ over capacity: ${seat.taken + 1} for ${seat.capacity} places` : ''));
+    else if (cls) lines.push(`⚠ Paid, but could not book ${cls.name}, ${cls.when}: ${seat.error}. Book them by hand.`);
+    notify(lines.join('\n'));
+    // After COMMIT, and awaited only so failures are logged. The pass already
+    // exists; a mail server having a bad day must not undo a paid order.
+    emailReceipt(order, pr, cls && { ...cls, booked }).catch(e => console.error('[bkk] receipt failed:', e.message));
+    return {
+      booking: booked ? { title: cls.name, startAt: seat.startAt, overCapacity: seat.overCapacity, already: seat.already } : null,
+      bookingError: cls && seat.error ? seat.error : null,
+    };
   }
 
   // The receipt doubles as the student's way back in: it carries a sign-in link,
   // so nobody has to keep a member code safe to keep their pass.
-  async function emailReceipt(order, product) {
+  async function emailReceipt(order, product, cls) {
     const m = (await q('SELECT * FROM bkk_members WHERE id=$1', [order.member_id])).rows[0];
     if (!m || !m.email) return;
     const token = crypto.randomBytes(32).toString('hex');
@@ -721,7 +833,7 @@ function mountBkk(app, opts = {}) {
     const t = render('receipt', m.lang || 'en', {
       name: m.name, product: product.name_en,
       amount: order.amount_thb, base: order.base_thb, fee: order.fee_thb, vat: order.vat_thb || 0,
-      refno: order.refno, link: `${baseUrl()}/api/bkk/login/${token}`,
+      refno: order.refno, link: `${baseUrl()}/api/bkk/login/${token}`, cls,
     });
     await sendMail({ to: m.email, subject: t.subject, html: t.html, text: t.text, tag: 'receipt' });
   }
@@ -1187,56 +1299,105 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   });
 
   // ── booking ───────────────────────────────────────────────────────────────
-  app.post('/api/bkk/bookings', async (req, res) => {
-    const { memberCode: mcode, slotId, date } = req.body || {};
-    if (!mcode || !slotId || !date) return res.status(400).json({ error: 'memberCode, slotId and date required' });
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      const m = (await client.query('SELECT * FROM bkk_members WHERE code=$1', [mcode])).rows[0];
-      if (!m) throw new Error('member not found');
+  // Every way into a class goes through takeSeat: a student booking, staff
+  // booking for someone, a walk-in added at the door, a paid drop-in. So every
+  // one of them puts a name on the list and counts against the same capacity.
 
-      const slot = (await client.query('SELECT * FROM bkk_class_slots WHERE id=$1 AND active', [slotId])).rows[0];
-      if (!slot) throw new Error('class not found');
-      if (moonDaysBetween(date, date).size) throw new Error('moon day: the shala is closed');
-      const startAt = startAtISO(date, slot.start_time);
-      // Students cannot book a class that has begun. Staff can, for the whole
-      // length of the class — someone walks in at 05:35 and has to be put on the
-      // list before they can be checked in.
-      const startedAgoMin = (bkkNow() - new Date(startAt)) / 60000;
-      const graceMin = isAdmin(req) ? (slot.duration_min || 120) : 0;
-      if (startedAgoMin > graceMin) throw new Error('that class has already started');
+  const singleClass = pr => pr.kind === 'credits' && Number(pr.credits) === 1;
+  const CLASS_ENDED = 'that class has already ended';
+  const seatsTaken = async (db, slotId, date) => (await db.query(
+    `SELECT count(*)::int AS n FROM bkk_bookings
+     WHERE slot_id=$1 AND class_date=$2 AND status='booked'`, [slotId, date])).rows[0].n;
 
-      const ov = (await client.query(
-        'SELECT * FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2', [slotId, date])).rows[0];
-      if (ov && ov.cancelled) throw new Error('class cancelled');
-      const capacity = (ov && ov.capacity != null) ? ov.capacity : slot.capacity;
+  // Can this class take a name at all? The checks run in the order the student
+  // booking always used, so its messages stay the same. The date must be the
+  // slot's weekday: each weekday is its own slot with its own capacity and
+  // overrides, so Tuesday's slot on a Friday would dodge Friday's full or
+  // cancelled class.
+  async function classCheck(db, slotId, date, { staff = false, endedMsg } = {}) {
+    const slot = (await db.query('SELECT * FROM bkk_class_slots WHERE id=$1 AND active', [slotId])).rows[0];
+    if (!slot) throw new Error('class not found');
+    if (moonDaysBetween(date, date).size) throw new Error('moon day: the shala is closed');
+    if (new Date(`${date}T12:00:00${TZ_OFFSET}`).getUTCDay() !== slot.weekday)
+      throw new Error('that class is not on that day');
+    const startAt = startAtISO(date, slot.start_time);
+    // Students cannot book a class that has begun. Staff can, for the whole
+    // length of the class — someone walks in at 05:35 and has to be put on the
+    // list before they can be checked in.
+    const startedAgoMin = (bkkNow() - new Date(startAt)) / 60000;
+    const graceMin = staff ? (slot.duration_min || 120) : 0;
+    if (startedAgoMin > graceMin) throw new Error(endedMsg || 'that class has already started');
 
-      // Serialise everyone booking this same class: a transaction-scoped
-      // advisory lock keyed on (slot, date). Counting rows cannot be locked
-      // directly (Postgres forbids FOR UPDATE with aggregates), and without
-      // this two students can each read "41 booked" and both take seat 42.
-      await client.query('SELECT pg_advisory_xact_lock($1::int, $2::int)',
-        [slotId, Number(String(date).replace(/-/g, ''))]);
+    const ov = (await db.query(
+      'SELECT * FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2', [slotId, date])).rows[0];
+    if (ov && ov.cancelled) throw new Error('class cancelled');
+    const capacity = (ov && ov.capacity != null) ? ov.capacity : slot.capacity;
+    return { slot, startAt, capacity };
+  }
 
-      const taken = (await client.query(
-        `SELECT count(*)::int AS n FROM bkk_bookings
-         WHERE slot_id=$1 AND class_date=$2 AND status='booked'`, [slotId, date])).rows[0].n;
-      if (taken >= capacity) throw new Error('class is full');
+  // Runs inside the caller's transaction; throws to refuse.
+  //   staff     may book a class that has begun, until it ends
+  //   allowOver past capacity: the person is standing in the room, or has paid
+  //   cover     'pass' (an aybkk.net pass, passId to use one in particular),
+  //             'rezerv' (no pass here), or null: only an existing seat counts
+  //   source    'student' | 'staff' | 'door' | 'order'
+  //   requestId the door's id for this add: a seat already carrying it is the
+  //             same add sent twice (out.repeat), even for a second new profile
+  // The door and paid orders treat a seat the member already holds as "on the
+  // list" and just check it in; a student is told they already booked it.
+  async function takeSeat(db, { member, slotId, date, staff = false, allowOver = false,
+    cover = 'pass', passId = null, checkIn = false, source = 'student', requestId = null }) {
+    const door = source === 'door' || source === 'order';
+    const { slot, startAt, capacity } = await classCheck(db, slotId, date,
+      { staff, endedMsg: door ? CLASS_ENDED : undefined });
 
-      const pass = (await client.query(
+    // Serialise everyone booking this same class: a transaction-scoped
+    // advisory lock keyed on (slot, date). Counting rows cannot be locked
+    // directly (Postgres forbids FOR UPDATE with aggregates), and without
+    // this two students can each read "41 booked" and both take seat 42.
+    await db.query('SELECT pg_advisory_xact_lock($1::int, $2::int)',
+      [slotId, Number(String(date).replace(/-/g, ''))]);
+
+    const out = { slot, startAt, capacity, taken: 0, overCapacity: false, already: false };
+    if (door) {
+      const on = (await db.query(
+        `SELECT * FROM bkk_bookings WHERE slot_id=$1 AND class_date=$2 AND status='booked'
+           AND (member_id=$3 OR request_id=$4) ORDER BY request_id IS NOT DISTINCT FROM $4 DESC LIMIT 1`,
+        [slotId, date, member.id, requestId])).rows[0];
+      if (on) {
+        out.booking = checkIn ? (await db.query(
+          `UPDATE bkk_bookings SET checked_in_at = COALESCE(checked_in_at, now()) WHERE id=$1 RETURNING *`,
+          [on.id])).rows[0] : on;
+        out.already = true;
+        out.repeat = !!requestId && on.request_id === requestId;
+        return out;
+      }
+      if (!cover) return null;
+    }
+
+    out.taken = await seatsTaken(db, slotId, date);
+    if (out.taken >= capacity) {
+      if (!allowOver) throw new Error('class is full');
+      out.overCapacity = true;
+    }
+
+    let pass = null;
+    if (cover === 'pass') {
+      pass = (await db.query(
         `SELECT p.* FROM bkk_passes p
          WHERE p.member_id=$1 AND p.status='active'
            AND (p.valid_until IS NULL OR p.valid_until >= $2::date)
            AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
-         ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 FOR UPDATE`, [m.id, date])).rows[0];
-      if (!pass) throw new Error('no active pass — please buy a package first');
+           ${passId ? 'AND p.id=$3' : ''}
+         ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 FOR UPDATE`,
+        passId ? [member.id, date, passId] : [member.id, date])).rows[0];
+      if (!pass) throw Object.assign(new Error('no active pass — please buy a package first'), { noPass: true });
 
       // daily cap (memberships: 2 bookings per day)
       if (pass.daily_cap) {
-        const today = (await client.query(
+        const today = (await db.query(
           `SELECT count(*)::int AS n FROM bkk_bookings
-           WHERE member_id=$1 AND class_date=$2 AND status='booked'`, [m.id, date])).rows[0].n;
+           WHERE member_id=$1 AND class_date=$2 AND status='booked'`, [member.id, date])).rows[0].n;
         if (today >= pass.daily_cap)
           throw new Error(`limit is ${pass.daily_cap} classes per day`);
       }
@@ -1245,21 +1406,35 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // no window yet. A pass imported from Rezerv carries an expiry the student
       // already paid for; testing valid_from alone would overwrite that expiry
       // with today + valid_days the moment they booked, silently and invisibly.
-      let validFrom = pass.valid_from, validUntil = pass.valid_until;
-      if (!validFrom && !validUntil) {
-        validFrom = date;
+      if (!pass.valid_from && !pass.valid_until) {
         const vu = new Date(`${date}T00:00:00${TZ_OFFSET}`);
         vu.setDate(vu.getDate() + pass.valid_days);
-        validUntil = ymd(vu);
-        await client.query('UPDATE bkk_passes SET valid_from=$2, valid_until=$3 WHERE id=$1',
-          [pass.id, validFrom, validUntil]);
+        await db.query('UPDATE bkk_passes SET valid_from=$2, valid_until=$3 WHERE id=$1',
+          [pass.id, date, ymd(vu)]);
       }
       if (pass.kind !== 'unlimited') {
-        await client.query('UPDATE bkk_passes SET credits_used = credits_used + 1 WHERE id=$1', [pass.id]);
+        await db.query('UPDATE bkk_passes SET credits_used = credits_used + 1 WHERE id=$1', [pass.id]);
       }
-      const b = (await client.query(
-        `INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,pass_id)
-         VALUES ($1,$2,$3,$4,$5) RETURNING *`, [slotId, date, startAt, m.id, pass.id])).rows[0];
+    } else if (cover !== 'rezerv') throw new Error('unknown cover');
+
+    out.booking = (await db.query(
+      `INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,pass_id,cover,source,request_id,checked_in_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,${checkIn ? 'now()' : 'NULL'}) RETURNING *`,
+      [slotId, date, startAt, member.id, pass ? pass.id : null, cover, source, requestId])).rows[0];
+    return out;
+  }
+
+  app.post('/api/bkk/bookings', async (req, res) => {
+    const { memberCode: mcode, slotId, date } = req.body || {};
+    if (!mcode || !slotId || !date) return res.status(400).json({ error: 'memberCode, slotId and date required' });
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const m = (await client.query('SELECT * FROM bkk_members WHERE code=$1', [mcode])).rows[0];
+      if (!m) throw new Error('member not found');
+      const staff = isAdmin(req);
+      const { booking: b } = await takeSeat(client, { member: m, slotId, date, staff,
+        cover: 'pass', source: staff ? 'staff' : 'student' });
       await client.query('COMMIT');
       res.json({ success: true, booking: b });
     } catch (e) {
@@ -1343,30 +1518,134 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // cash count and the books, with VAT and a receipt — unlike "Give a pass".
   // No online fee: nothing went through the gateway.
   const DESK_METHODS = ['cash', 'transfer', 'card'];
+  // With a class (slotId, date), the sale also books it: staff timing (until the
+  // class ends) and over capacity allowed, since the person is at the desk.
+  async function deskSale({ member, pr, method, slotId, date, checkIn, source, requestId }) {
+    const { vat, total } = breakdown(pr.price_thb, 0);
+    let o = null;
+    for (let attempt = 0; attempt < 5 && !o; attempt++) {
+      try {
+        o = (await q(
+          `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,method,slot_id,class_date)
+           VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9) RETURNING *`,
+          [newRefno(), pr.id, member.id, pr.price_thb, vat, total, method, slotId || null, slotId ? date : null])).rows[0];
+      } catch (e) {
+        if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
+      }
+    }
+    const act = await activateOrder(o, { note: `${method} at the desk` }, { checkIn, source, requestId });
+    return { o, vat, total, act };
+  }
+
   app.post('/api/bkk/admin/sales', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     try {
-      const { productCode, name, email, phone, method } = req.body || {};
+      const { productCode, name, email, phone, method, slotId, checkIn } = req.body || {};
       if (!DESK_METHODS.includes(method)) return res.status(400).json({ error: 'method must be cash, transfer or card' });
       if (!(name || '').trim()) return res.status(400).json({ error: 'name is required' });
       const pr = (await q('SELECT * FROM bkk_products WHERE code = $1 AND active', [productCode])).rows[0];
       if (!pr) return res.status(404).json({ error: 'product not found' });
-      const member = await findOrCreateMember({ name, email, phone });
-      const { vat, total } = breakdown(pr.price_thb, 0);
-      let o = null;
-      for (let attempt = 0; attempt < 5 && !o; attempt++) {
+      const date = req.body.date || bkkToday();
+      if (slotId) {
+        if (!Number.isInteger(Number(slotId)) || !isYmd(date)) return res.status(400).json({ error: 'slotId and date (YYYY-MM-DD) needed for a class' });
         try {
-          o = (await q(
-            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,method)
-             VALUES ($1,$2,$3,$4,0,$5,$6,$7) RETURNING *`,
-            [newRefno(), pr.id, member.id, pr.price_thb, vat, total, method])).rows[0];
-        } catch (e) {
-          if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
-        }
+          await classCheck(pool, slotId, date, { staff: true, endedMsg: CLASS_ENDED });
+        } catch (e) { return res.status(409).json({ error: e.message }); }
       }
-      await activateOrder(o, { note: `${method} at the desk` });
+      const member = await findOrCreateMember({ name, email, phone });
+      const { o, vat, total, act } = await deskSale({ member, pr, method,
+        slotId: slotId ? Number(slotId) : null, date, checkIn: !!checkIn });
       res.json({ success: true, member: { code: member.code, name: member.name },
-        order: { refno: String(o.refno), amount: total, vat, method } });
+        order: { refno: String(o.refno), amount: total, vat, method },
+        booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The door: whoever is here goes on the class list, checked in. A student with
+  // an aybkk.net pass uses it; most students still hold a Rezerv package that is
+  // not in this system yet, so 'rezerv' seats them with no pass; anyone else
+  // buys a drop-in on the spot (a real desk sale: today's money, VAT, receipt).
+  // Over capacity is allowed and reported: the person is already in the room.
+  const WALKIN_COVERS = ['pass', 'rezerv', 'dropin'];
+  // What a door add with this requestId already did, answered again as it was
+  // the first time: staff tap a second time when the first reply is lost.
+  async function walkinDone(rid) {
+    const r = (await q(
+      `SELECT m.name, m.code, s.title, b.start_at, b.cover, o.refno
+       FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id JOIN bkk_class_slots s ON s.id=b.slot_id
+       LEFT JOIN bkk_passes p ON p.id=b.pass_id
+       LEFT JOIN bkk_orders o ON o.id=p.order_id AND o.slot_id=b.slot_id AND o.class_date=b.class_date
+       WHERE b.request_id=$1`, [rid])).rows[0];
+    return r && { success: true, repeat: true, name: r.name, code: r.code, className: r.title, startAt: r.start_at,
+      overCapacity: false, already: false, cover: r.refno ? 'dropin' : r.cover, ...(r.refno ? { refno: String(r.refno) } : {}) };
+  }
+
+  app.post('/api/bkk/admin/walkin', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const b = req.body || {};
+    const date = b.date || bkkToday();
+    const cover = b.cover;
+    if (!WALKIN_COVERS.includes(cover)) return res.status(400).json({ error: 'cover must be pass, rezerv or dropin' });
+    if (!b.slotId || !Number.isInteger(Number(b.slotId)) || !isYmd(date))
+      return res.status(400).json({ error: 'slotId and date (YYYY-MM-DD) required' });
+    if (cover === 'dropin' && !DESK_METHODS.includes(b.method))
+      return res.status(400).json({ error: 'method must be cash, transfer or card' });
+    const slotId = Number(b.slotId);
+    const rid = b.requestId ? String(b.requestId).slice(0, 64) : null;
+    try {
+      const first = rid && await walkinDone(rid);
+      if (first) return res.json(first);
+    } catch (e) { return res.status(500).json({ error: e.message }); }
+    // Checked again under the lock below; this only spares a new person's
+    // profile when the class cannot take them anyway.
+    try { await classCheck(pool, slotId, date, { staff: true, endedMsg: CLASS_ENDED }); }
+    catch (e) { return res.status(409).json({ error: e.message }); }
+    let member;
+    try {
+      if (b.memberCode) {
+        member = (await q('SELECT * FROM bkk_members WHERE code=$1', [b.memberCode])).rows[0];
+        if (!member) return res.status(404).json({ error: 'member not found' });
+      } else {
+        if (!String(b.name || '').trim()) return res.status(400).json({ error: 'name is required for a new person' });
+        member = await findOrCreateMember({ name: b.name, email: b.email, phone: b.phone });
+      }
+    } catch (e) { return res.status(500).json({ error: e.message }); }
+
+    const reply = (seat, extra = {}) => res.json({ success: true, name: member.name, code: member.code,
+      className: seat.title, startAt: seat.startAt, overCapacity: !!seat.overCapacity, already: !!seat.already, ...extra });
+    // A seat takeSeat found rather than made: the same add sent twice, or
+    // someone already on the list (checked in, nothing sold).
+    const listed = s => s.repeat ? walkinDone(rid).then(r => res.json(r))
+      : reply({ title: s.slot.title, startAt: s.startAt, overCapacity: s.overCapacity, already: s.already },
+        { cover: s.already ? (s.booking.cover || (s.booking.pass_id ? 'pass' : 'rezerv')) : cover });
+    // A drop-in is only sold to someone not on the list yet: takeSeat with no
+    // cover checks the class and checks in a seat they already hold.
+    const client = await pool.connect();
+    let seat;
+    try {
+      await client.query('BEGIN');
+      seat = await takeSeat(client, { member, slotId, date, staff: true, allowOver: true,
+        cover: cover === 'dropin' ? null : cover, checkIn: true, source: 'door', requestId: rid });
+      await client.query('COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      if (e.noPass) return res.status(409).json({ error:
+        `${member.name} has no aybkk.net pass for that day. Choose Rezerv package or Drop-in.` });
+      return res.status(409).json({ error: /duplicate key/.test(e.message) ? 'already on the list' : e.message });
+    } finally { client.release(); }
+
+    try {
+      if (seat) return await listed(seat);
+      const pr = (await q(`SELECT * FROM bkk_products WHERE code='dropin' AND active`)).rows[0];
+      if (!pr) return res.status(404).json({ error: 'the drop-in is not on sale' });
+      const { o, act } = await deskSale({ member, pr, method: b.method, slotId, date, checkIn: true,
+        source: 'door', requestId: rid });
+      if (act && act.unsold) return await listed(act.seat);
+      // Paid, but the seat went in the moment between: the money and the pass
+      // stand, and the shala has the Telegram ping to put them on by hand.
+      if (!act || !act.booking) return res.status(409).json({ paid: true, refno: String(o.refno),
+        error: `Paid (ref ${o.refno}), but could not add to the class: ${act ? act.bookingError : 'already paid'}. Book them by hand.` });
+      reply(act.booking, { cover: 'dropin', refno: String(o.refno) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -1378,8 +1657,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const o = (await q('SELECT * FROM bkk_orders WHERE id=$1', [req.params.id])).rows[0];
       if (!o) return res.status(404).json({ error: 'not found' });
       if (o.status === 'paid') return res.json({ success: true, already: true });
-      await activateOrder(o, { note: 'MANUAL ACTIVATION by admin' });
-      res.json({ success: true });
+      const act = await activateOrder(o, { note: 'MANUAL ACTIVATION by admin' });
+      res.json({ success: true, booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -1475,17 +1754,40 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   app.get('/api/bkk/admin/today', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     try {
+      const today = bkkToday();
+      // pass_name / dropin let the door label a row: a drop-in, or a Rezerv seat.
       const r = await q(
-        `SELECT s.title, b.class_date, b.start_at, m.name, m.code, b.checked_in_at
+        `SELECT s.title, b.class_date, b.start_at, m.name, m.code, b.checked_in_at,
+           b.slot_id, b.cover, b.source, pr.name_en AS pass_name,
+           coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
          FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id
          JOIN bkk_members m ON m.id=b.member_id
-         WHERE b.status='booked' AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
-         ORDER BY b.start_at, m.name`);
+         LEFT JOIN bkk_passes p ON p.id=b.pass_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
+         WHERE b.status='booked' AND b.class_date = $1::date
+         ORDER BY b.start_at, m.name`, [today]);
       const money = (await q(
         `SELECT method, count(*)::int AS n, sum(amount_thb)::int AS total FROM bkk_orders
          WHERE status='paid' AND (verified_at AT TIME ZONE 'Asia/Bangkok')::date = (now() AT TIME ZONE 'Asia/Bangkok')::date
          GROUP BY method ORDER BY method`)).rows;
-      res.json({ bookings: r.rows, money });
+      // Today's whole timetable, booked or not: the door built its tabs from
+      // bookings, so a class nobody had booked could not take a walk-in.
+      let classes = [];
+      if (!moonDaysBetween(today, today).size) {
+        const wd = new Date(`${today}T12:00:00${TZ_OFFSET}`).getUTCDay();
+        const [slots, ovs] = await Promise.all([
+          q('SELECT * FROM bkk_class_slots WHERE active AND weekday=$1 ORDER BY start_time, id', [wd]),
+          q('SELECT * FROM bkk_class_overrides WHERE class_date=$1::date', [today]),
+        ]);
+        classes = slots.rows.map(s => {
+          const ov = ovs.rows.find(o => o.slot_id === s.id);
+          if (ov && ov.cancelled) return null;
+          const list = r.rows.filter(b => b.slot_id === s.id);
+          return { slotId: s.id, date: today, title: s.title, startAt: startAtISO(today, s.start_time),
+            durationMin: s.duration_min, isOnline: s.is_online, capacity: (ov && ov.capacity != null) ? ov.capacity : s.capacity,
+            booked: list.length, checkedIn: list.filter(b => b.checked_in_at).length };
+        }).filter(Boolean);
+      }
+      res.json({ bookings: r.rows, money, classes });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -1595,7 +1897,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const r = await q(
         `SELECT m.*,
            (SELECT count(*)::int FROM bkk_bookings b
-             WHERE b.member_id = m.id AND b.status='booked') AS booked
+             WHERE b.member_id = m.id AND b.status='booked') AS booked,
+           EXISTS (SELECT 1 FROM bkk_passes p WHERE p.member_id = m.id AND p.status='active'
+             AND (p.valid_until IS NULL OR p.valid_until >= (now() AT TIME ZONE 'Asia/Bangkok')::date)
+             AND (p.kind='unlimited' OR p.credits_used < p.credits_total)) AS has_pass
          FROM bkk_members m
          WHERE lower(m.name) LIKE $1 OR lower(m.email) LIKE $1
             OR lower(m.code) LIKE $1 OR coalesce(m.phone,'') LIKE $1

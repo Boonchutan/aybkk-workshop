@@ -150,6 +150,7 @@
       fee: 'fee', vat: 'VAT', activate: 'Activate', noOrders: 'no orders yet',
       ordersHelp: 'Find the reference number in the PaySolutions dashboard, check the amount matches, then activate. Every activation here is recorded as manual.',
       qActivate: 'Activate this pass?\nOnly do this once you have seen the money arrive in PaySolutions.',
+      activatedNoClass: e => `Activated. Could not book the class: ${e}. Book them by hand.`,
       feeTitle: 'Online payment fee',
       feeHelp: 'Added on top of every package price at checkout. It exists to cover the card fees — PaySolutions is cheaper than Stripe, so you may want to lower it.',
       save: 'Save', packages: 'Packages',
@@ -242,6 +243,7 @@
       fee: 'ค่าธรรมเนียม', vat: 'VAT', activate: 'เปิดใช้', noOrders: 'ยังไม่มีรายการ',
       ordersHelp: 'หาเลขอ้างอิงในหน้า PaySolutions ตรวจว่ายอดเงินตรงกัน แล้วกดเปิดใช้ ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
       qActivate: 'เปิดใช้แพ็กเกจนี้?\nทำเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น',
+      activatedNoClass: e => `เปิดใช้แล้ว แต่จองคลาสให้ไม่ได้ (${e}) กรุณาจองให้นักเรียนเอง`,
       feeTitle: 'ค่าธรรมเนียมจ่ายออนไลน์',
       feeHelp: 'บวกเพิ่มจากราคาแพ็กเกจตอนจ่ายเงินออนไลน์ เพื่อครอบคลุมค่าธรรมเนียมบัตร PaySolutions ถูกกว่า Stripe จึงอาจลดลงได้',
       save: 'บันทึก', packages: 'แพ็กเกจ',
@@ -675,7 +677,11 @@
   window.force = async (id) => {
     if (!confirm(T('qActivate'))) return;
     const r = await api(`/api/bkk/admin/orders/${id}/force-activate`, { method: 'POST' });
-    if (!r.ok) alert((await r.json()).error || T('failed'));
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) alert(j.error || T('failed'));
+    // A drop-in bought for a class that was cancelled or over by now: the pass
+    // is live but nobody is on the list, and this list does not show the class.
+    else if (j.bookingError) alert(T('activatedNoClass', j.bookingError));
     renderOrders();
   };
 

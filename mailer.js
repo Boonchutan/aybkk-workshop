@@ -92,11 +92,16 @@ function shell(bodyHtml) {
 
 const TEMPLATES = {
   receipt: {
-    en: ({ name, product, amount, base, fee, vat, refno, link }) => ({
+    // cls: the class a drop-in was bought for, { name, when, booked } in
+    // Bangkok time. booked false: the class was cancelled or over by the time
+    // the payment came through, so the student must not travel to it.
+    en: ({ name, product, amount, base, fee, vat, refno, link, cls }) => ({
       subject: `Your AYBKK pass — ${product}`,
       text: [
         `Hello ${name},`, '',
         `Your ${product} is active.`,
+        ...(cls ? [cls.booked ? `You are booked into ${cls.name}, ${cls.when} (Bangkok time).`
+          : `We could not book ${cls.name}, ${cls.when} (Bangkok time). Your ${product} is kept for another class, and the shala will contact you.`] : []),
         `Paid ${baht(amount)} (${baht(base)} + ${baht(fee)} online transaction fee + ${baht(vat)} VAT 7%).`,
         `Reference ${refno}.`, '',
         `Book your classes here: ${link}`,
@@ -107,6 +112,9 @@ const TEMPLATES = {
       html: shell(`
         <p>Hello ${esc(name)},</p>
         <p>Your <b>${esc(product)}</b> is active.</p>
+        ${cls ? (cls.booked ? `<p>You are booked into <b>${esc(cls.name)}</b>, ${esc(cls.when)} (Bangkok time).</p>`
+          : `<p>We could not book <b>${esc(cls.name)}</b>, ${esc(cls.when)} (Bangkok time). Your ${esc(product)}
+             is kept for another class, and the shala will contact you.</p>`) : ''}
         <table style="width:100%;font-size:14px;margin:16px 0">
           <tr><td style="color:#6b5d70">Package</td><td align="right">${esc(product)}</td></tr>
           <tr><td style="color:#6b5d70">Price</td><td align="right">${baht(base)}</td></tr>

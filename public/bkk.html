@@ -373,9 +373,11 @@
   dialog::backdrop{background:rgba(23,18,26,.55)}
   dialog h3{margin:0 0 14px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:26px;line-height:1.2}
   label{display:block;font-size:12.5px;color:var(--soft);margin:11px 0 4px}
-  input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
+  input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
     font-family:inherit;background:var(--wall);color:var(--ink)}
-  input:focus{outline:2px solid var(--pink);outline-offset:1px}
+  input:focus,select:focus{outline:2px solid var(--pink);outline-offset:1px}
+  .linkbtn{background:none;border:none;padding:6px 0;font:inherit;font-size:14px;color:var(--plum);
+    text-decoration:underline;cursor:pointer}
   .msg{padding:12px 14px;border-radius:8px;margin-top:12px;font-size:14px}
   .msg.ok{background:var(--blush);color:var(--plum)}
   .msg.bad{background:#fdeaea;color:#a33}
@@ -1161,6 +1163,55 @@
     jbio4: 'Она продолжала практиковать во время обеих беременностей, вплоть до продвинутых серий, и сейчас практикует и преподаёт, будучи мамой.',
   });
 
+  // A drop-in is bought for one class, and paying books it (28 Oct 2026).
+  Object.assign(STR.en, {
+    dropWhich: 'Which class is it for?', dropPick: 'Choose a class', dropNeed: 'Please choose the class for your drop-in.',
+    dropNone: 'No class has free places right now.', noPassDrop: 'You need a pass to book. Buy a drop-in for this class:',
+    havePass: 'I already have a pass',
+    paidBooked: (c, w) => `Payment confirmed 🙏 You are booked into ${c}, ${w}. See you in the shala.`,
+    paidBookedMail: 'Open the link in your receipt email to see it on this phone.',
+    paidNotBooked: (c, w) => `Payment confirmed. We could not book ${c}, ${w}. Your drop-in is kept for another class, and the shala will contact you.`,
+  });
+  Object.assign(STR.th, {
+    dropWhich: 'ใช้กับคลาสไหน', dropPick: 'เลือกคลาส', dropNeed: 'กรุณาเลือกคลาสที่จะมาเรียน',
+    dropNone: 'ตอนนี้ไม่มีคลาสที่ยังมีที่ว่าง', noPassDrop: 'ต้องมีแพ็กเกจก่อนจึงจะจองได้ ซื้อแบบครั้งเดียวสำหรับคลาสนี้ได้เลย',
+    havePass: 'ฉันมีแพ็กเกจอยู่แล้ว',
+    paidBooked: (c, w) => `ชำระเงินเรียบร้อย 🙏 จองคลาส ${c} ${w} ให้แล้ว แล้วเจอกันที่ชาลา`,
+    paidBookedMail: 'เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูบนมือถือเครื่องนี้',
+    paidNotBooked: (c, w) => `ชำระเงินเรียบร้อย แต่จองคลาส ${c} ${w} ไม่ได้ ยังใช้สิทธิ์นี้กับคลาสอื่นได้ ทางชาลาจะติดต่อไป`,
+  });
+  Object.assign(STR.zh, {
+    dropWhich: '要上哪一节课？', dropPick: '请选择课程', dropNeed: '请选择这次单次课要上的课程。',
+    dropNone: '现在没有还有空位的课程。', noPassDrop: '预约需要会员卡。你可以为这节课购买单次课：',
+    havePass: '我已经有会员卡',
+    paidBooked: (c, w) => `付款成功 🙏 已为你预约 ${c}，${w}。道场见。`,
+    paidBookedMail: '打开收据邮件里的链接，即可在这部手机上查看。',
+    paidNotBooked: (c, w) => `付款成功，但未能预约 ${c}，${w}。这次单次课会保留给其他课程使用，道场会联系你。`,
+  });
+  Object.assign(STR.ru, {
+    dropWhich: 'На какое занятие?', dropPick: 'Выберите занятие', dropNeed: 'Выберите занятие для разового посещения.',
+    dropNone: 'Сейчас нет занятий со свободными местами.', noPassDrop: 'Чтобы записаться, нужен абонемент. Купите разовое посещение на это занятие:',
+    havePass: 'У меня уже есть абонемент',
+    paidBooked: (c, w) => `Оплата получена 🙏 Вы записаны: ${c}, ${w}. До встречи в шале.`,
+    paidBookedMail: 'Откройте ссылку в письме с чеком, чтобы увидеть запись на этом телефоне.',
+    paidNotBooked: (c, w) => `Оплата получена, но записать вас на ${c}, ${w} не удалось. Разовое посещение сохранено для другого занятия, шала свяжется с вами.`,
+  });
+  // Class names in the page language, for the drop-in class list and the
+  // "you are booked" message. Anything not listed stays as the shala wrote it.
+  const CLASS_WORDS = {
+    th: [[/\[Online\]/g, '[ออนไลน์]'], [/Mysore Sunday/g, 'มายซอร์ วันอาทิตย์'], [/Mysore/g, 'มายซอร์'],
+      [/\(1st batch\)/g, '(รอบแรก)'], [/\(2nd batch\)/g, '(รอบสอง)'], [/ series/g, '']],
+    zh: [[/\[Online\]/g, '[线上]'], [/Mysore Sunday/g, '周日迈索尔'], [/Mysore/g, '迈索尔'],
+      [/\(1st batch\)/g, '（第一批）'], [/\(2nd batch\)/g, '（第二批）'],
+      [/Led Primary series/g, '初级序列引导课'], [/Led Intermediate series/g, '中级序列引导课']],
+    ru: [[/\[Online\]/g, '[Онлайн]'], [/Mysore Sunday/g, 'Майсор, воскресенье'], [/Mysore/g, 'Майсор'],
+      [/\(1st batch\)/g, '(1-й поток)'], [/\(2nd batch\)/g, '(2-й поток)'],
+      [/Led Primary series/g, 'Led: первая серия'], [/Led Intermediate series/g, 'Led: промежуточная серия']],
+  };
+  const clsName = s => (CLASS_WORDS[LANG] || []).reduce((x, [re, to]) => x.replace(re, to), String(s ?? ''));
+  const clsWhen = iso => new Date(iso).toLocaleString(LOCALE[LANG] || 'en-GB', { timeZone: 'Asia/Bangkok',
+    weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
   const PROMO_LAST_SALE = '2026-11-11', PROMO_LAST_START = '2026-11-12';
   const MONTHLY = [[30, 9600], [60, 18200], [90, 25800]];   // days, baht (the broadcast's Duo prices)
   const OFFERS = {
@@ -1803,25 +1854,47 @@
     }
   };
 
-  window.buy = (code) => {
+  // A drop-in (one class) is bought for a class: the student picks it here, and
+  // paying books it. pre = { slotId, date } when they came from a class's Book.
+  const singleClass = p => p.kind === 'credits' && Number(p.credits) === 1;
+  window.buy = (code, pre, intro) => {
     const p = PRODUCTS.find(x => x.code === code);
     if (!p) return;
+    const single = singleClass(p);
+    const last = addDays(bkkToday(), 13);
+    const key = c => c.slotId + '|' + c.date;
+    const preKey = pre ? pre.slotId + '|' + pre.date : '';
+    // The next two weeks, plus the class they tapped Book on, however far off.
+    const opts = single ? CLASSES.filter(c => c.seatsLeft > 0 && new Date(c.startAt) > Date.now()
+      && (c.date <= last || key(c) === preKey)) : [];
+    const picker = !single ? '' : opts.length
+      ? `<label>${esc(t('dropWhich'))}</label><select id="bc"><option value="">${esc(t('dropPick'))}</option>${
+          opts.map(c => `<option value="${esc(key(c))}" ${key(c) === preKey ? 'selected' : ''}>${
+            esc(clsWhen(c.startAt))} · ${esc(clsName(c.title))}</option>`).join('')}</select>`
+      : `<div class="msg bad">${esc(t('dropNone'))}</div>`;
     $('#dlgIn').innerHTML = `<h3>${esc(pkgName(p))} · ${baht(p.total_thb)}</h3>
+      ${intro ? `<p class="note" style="margin:0 0 4px">${esc(intro)}</p>` : ''}
+      ${picker}
       <label>${esc(t('name'))}</label><input id="bn" autocomplete="name">
       <label>${esc(t('email'))}</label><input id="be" type="email" autocomplete="email">
       <label>${esc(t('phone'))}</label><input id="bp" autocomplete="tel">
       <div id="bmsg"></div>
-      <p style="margin-top:14px"><button class="btn pink" id="bgo">${esc(t('pay'))}</button>
-      <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>`;
+      <p style="margin-top:14px"><button class="btn pink" id="bgo" ${single && !opts.length ? 'disabled' : ''}>${esc(t('pay'))}</button>
+      <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>
+      ${intro ? `<p><button class="linkbtn" id="bhave">${esc(t('havePass'))}</button></p>` : ''}`;
     $('#dlg').showModal();
+    if ($('#bhave')) $('#bhave').onclick = () => { $('#dlg').close(); tab('me'); };
     $('#bgo').onclick = async () => {
       const name = $('#bn').value.trim(), email = $('#be').value.trim(), phone = $('#bp').value.trim();
+      const [slotId, date] = single && $('#bc') ? $('#bc').value.split('|') : [];
+      if (single && !date) { $('#bmsg').innerHTML = `<div class="msg bad">${esc(t('dropNeed'))}</div>`; return; }
       if (!name || !email) { $('#bmsg').innerHTML = '<div class="msg bad">Name and email are required.</div>'; return; }
       $('#bgo').disabled = true;
       try {
         const r = await fetch('/api/bkk/orders', { method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode() }) });
+          body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode(),
+            ...(single ? { slotId: Number(slotId), date } : {}) }) });
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || 'could not create order');
         // An email that already has a profile: its code is not handed to this
@@ -1866,15 +1939,28 @@
     };
   };
 
+  // No pass yet: offer a drop-in for this very class instead of a dead end.
+  const offerDropin = (slotId, date) => {
+    const p = PRODUCTS.find(singleClass);
+    if (!p) return false;
+    buy(p.code, { slotId, date }, t('noPassDrop'));
+    return true;
+  };
   window.book = async (slotId, date) => {
     const code = myCode();
-    if (!code) { alert('Please buy a package first, or open "My pass" and enter your member code.'); return; }
+    if (!code) {
+      if (!offerDropin(slotId, date)) alert('Please buy a package first, or open "My pass" and enter your member code.');
+      return;
+    }
     try {
       const r = await fetch('/api/bkk/bookings', { method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ memberCode: code, slotId, date }) });
       const j = await r.json();
-      if (!r.ok) throw new Error(j.error);
+      if (!r.ok) {
+        if (/no active pass/.test(j.error || '') && offerDropin(slotId, date)) return;
+        throw new Error(j.error);
+      }
       alert('Booked. See you in the shala 🙏');
       load();
     } catch (e) { alert(e.message); }
@@ -1920,7 +2006,13 @@
           const viaMail = pendingForExisting();
           localStorage.removeItem('aybkk_pending');
           current = 'me';
-          alert(viaMail ? t('paidMail') : 'Payment confirmed — your pass is active 🙏');
+          if (j.booking) alert(t('paidBooked', clsName(j.booking.title), clsWhen(j.booking.startAt))
+            + (viaMail ? '\n\n' + t('paidBookedMail') : ''));
+          // The class they picked was cancelled or over by the time the payment
+          // came through: they must not travel to it.
+          else if (j.notBooked) alert(t('paidNotBooked', clsName(j.notBooked.title), clsWhen(j.notBooked.startAt))
+            + (viaMail ? '\n\n' + t('paidBookedMail') : ''));
+          else alert(viaMail ? t('paidMail') : 'Payment confirmed — your pass is active 🙏');
         } else if (j.status === 'mismatch') {
           localStorage.removeItem('aybkk_pending');
           alert('The amount received does not match this order. Please contact the shala.');
