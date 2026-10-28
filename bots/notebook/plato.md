@@ -147,6 +147,8 @@
 
 - 2026-10-28 SHALA FACT (Boonchu): the busy room now is the 9th floor, his FIRST shala space, 'built for 20 students. But students won't allow it.' AYBKK uses it while the main shala on the 8th floor is renovated. After 9 Nov 2026 they move back to the newly renovated 8th floor. (Do not say since when the 9th floor was used, or what happens to it after 9 Nov, until he says.)
 
+- 2026-10-28 (Boonchu: 'The script is good but your English is AI. Do the broken English. Some slang'): HIS SPOKEN VOICE. Every line he says to camera is written the way HE talks: Thai-English, short, articles often dropped ('Why people squeeze in small room?'), 'nobody see', 'super tired', 'Right?', 'For real', 'Come on', 'OK, OK...', his own 'Damn' and 'nobody give a damn'. No polished AI lines ('Only one thing changes it', 'That is what it gives you'). Keep it clear, never a joke about his English. On-screen text follows his words. Captions: casual too, a Thai 'na' is fine.
+
 ## Jobs from Machi
 - REPLACED 15 Oct by GOOGLE BUSINESS PHOTO POSTS (next entry); kept for history. Was: 2026-10-15 (Google report): WEEKLY GOOGLE BUSINESS PROFILE POST. Once a week, turn the week's best Reel into a Google post: 1 photo or the video, under 300 characters, alternate English and Thai, button "Book" to https://aybkk.net/start/maps. Posts may mention the promotion (the profile description may not). Draft only; Boonchu or Claude in Chrome posts it.
 - 2026-10-15 (Boonchu: "choose some photos with many people in the frame to post in google business. you can do every wednesday, friday and sunday"): GOOGLE BUSINESS PHOTO POSTS.
