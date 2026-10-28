@@ -13,6 +13,8 @@
   :root{--ink:#f5e9f0;--wall:#120d16;--paper:#1e1723;--line:rgba(245,233,240,.13);
     --plum:#c07ec8;--pink:#ff6fae;--soft:#b09cb6;--in:#3ddc97}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  /* An id rule such as #chosen{display:flex} beats the browser's own [hidden]. */
+  [hidden]{display:none!important}
   body{margin:0;background:var(--wall);color:var(--ink);
     font:16px/1.5 'Plex',-apple-system,'Helvetica Neue',sans-serif;
     -webkit-user-select:none;user-select:none}
@@ -67,6 +69,54 @@
     transition:transform .22s,opacity .22s;opacity:0;z-index:20;max-width:90vw;text-align:center}
   #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   #toast.bad{background:#ff6b6b;color:#2a0d0d}
+  #toast.warn{background:#ffc857;color:#2a1d05}
+
+  .row .tag{font-style:normal;font-size:11px;font-weight:600;letter-spacing:.02em;margin-left:6px;
+    padding:1px 6px;border-radius:5px;border:1px solid var(--line);color:var(--soft)}
+  .row .tag.rz{color:#8fc7ff;border-color:rgba(143,199,255,.4)}
+  .row .tag.dp{color:var(--pink);border-color:rgba(255,111,174,.4)}
+  .add{width:100%;margin:0 0 12px;padding:13px;border-radius:8px;border:1px dashed var(--plum);
+    background:none;color:var(--plum);font:inherit;font-weight:600;font-size:15px;cursor:pointer}
+  .add:disabled{opacity:.35;cursor:default}
+
+  /* "Add someone who is here": a full-screen sheet, so the phone keyboard
+     never covers the button that confirms. */
+  #sheet{position:fixed;inset:0;z-index:15;display:none;overflow-y:auto;
+    background:rgba(8,5,10,.78);padding:12px 16px 40px}
+  #sheet.open{display:block}
+  #sheet .box{max-width:520px;margin:2vh auto 0;background:var(--paper);border:1px solid var(--line);
+    border-radius:12px;padding:16px}
+  #sheet .top{display:flex;align-items:flex-start;gap:10px}
+  #sheet h3{margin:0;font-size:18px;flex:1;min-width:0}
+  #sheet .x{background:none;border:1px solid var(--line);color:var(--soft);border-radius:7px;
+    width:38px;height:38px;font-size:20px;line-height:1;cursor:pointer;flex-shrink:0}
+  #sheet .sub{color:var(--soft);font-size:13.5px;margin:2px 0 14px;overflow-wrap:anywhere}
+  #sheet input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:var(--wall);
+    color:var(--ink);font:inherit;font-size:16px;margin-bottom:8px;-webkit-user-select:text;user-select:text}
+  #sheet input:focus{outline:2px solid var(--plum);outline-offset:1px}
+  #sheet .lbl{font-size:13px;color:var(--soft);margin:14px 0 6px}
+  #sheet .link{background:none;border:none;color:var(--plum);font:inherit;font-size:14px;font-weight:600;
+    padding:6px 0;cursor:pointer}
+  .hit{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--wall);
+    border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:10px 12px;margin-bottom:6px;
+    font:inherit;cursor:pointer}
+  .hit b{font-size:15.5px;overflow-wrap:anywhere}
+  .hit span{font-size:12px;color:var(--soft);overflow-wrap:anywhere}
+  .hit em{font-style:normal;font-size:12.5px;color:var(--soft)}
+  .hit em.ok{color:var(--in);font-weight:600}
+  #chosen{background:var(--wall);border:1px solid var(--plum);border-radius:8px;padding:10px 12px;
+    display:flex;align-items:center;gap:10px}
+  #chosen span{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{flex:1 1 140px;background:var(--wall);border:1px solid var(--line);color:var(--ink);border-radius:8px;
+    padding:12px 10px;font:inherit;font-size:15px;cursor:pointer;text-align:center}
+  .opt.on{background:var(--plum);border-color:var(--plum);color:#17121a;font-weight:600}
+  .opt:disabled{opacity:.35;cursor:default}
+  .opt small{display:block;font-size:12px;opacity:.8}
+  #shHint{min-height:1.2em;color:var(--soft);font-size:13px;margin:10px 0 0}
+  #shGo{width:100%;margin-top:12px;padding:14px;border:none;border-radius:8px;background:var(--in);
+    color:#0d1a14;font:inherit;font-weight:700;font-size:16px;cursor:pointer}
+  #shGo:disabled{opacity:.35;cursor:default}
 </style>
 </head>
 <body>
@@ -88,9 +138,45 @@
   <div class="classes" id="classes"></div>
   <main>
     <div class="bar"><h2 id="ctitle">—</h2><span class="cnt" id="ccount"></span></div>
+    <button class="add" id="addBtn" disabled>+ Add someone who is here</button>
     <input id="q" placeholder="Search a name…" autocomplete="off">
     <div id="list"></div>
   </main>
+</div>
+
+<div id="sheet" role="dialog" aria-modal="true" aria-labelledby="shH">
+  <div class="box">
+    <div class="top"><h3 id="shH">Add someone who is here</h3>
+      <button class="x" id="shX" aria-label="Close">×</button></div>
+    <p class="sub" id="shCls"></p>
+    <div id="who">
+      <input id="ws" placeholder="Search name, email, phone or code" autocomplete="off">
+      <div id="wsList"></div>
+      <button class="link" id="newBtn">+ New person</button>
+      <div id="newForm" hidden>
+        <input id="nn" placeholder="Name (required)" autocomplete="off">
+        <input id="ne" type="email" placeholder="Email (optional, for the receipt)" autocomplete="off">
+        <input id="np" type="tel" placeholder="Phone (optional)" autocomplete="off">
+      </div>
+    </div>
+    <div id="chosen" hidden><span id="chosenName"></span><button class="link" id="chosenX">Change</button></div>
+    <p class="lbl">What pays for today's class?</p>
+    <div class="opts" id="covers">
+      <button class="opt" data-cover="pass">aybkk.net pass</button>
+      <button class="opt" data-cover="rezerv">Rezerv package</button>
+      <button class="opt" data-cover="dropin">Drop-in, paid now<small id="dpPrice"></small></button>
+    </div>
+    <div id="methods" hidden>
+      <p class="lbl">Paid how?</p>
+      <div class="opts">
+        <button class="opt" data-method="cash">Cash</button>
+        <button class="opt" data-method="transfer">Transfer</button>
+        <button class="opt" data-method="card">Card</button>
+      </div>
+    </div>
+    <p id="shHint"></p>
+    <button id="shGo" disabled>Add and check in</button>
+  </div>
 </div>
 <div id="toast"></div>
 
@@ -100,19 +186,20 @@
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   let KEY = localStorage.getItem('aybkk_bkk_key') || '';
-  let bookings = [], groups = [], picked = null, timer = null;
+  let bookings = [], groups = [], picked = null, timer = null, dropPrice = null;
 
   const api = (url, opts = {}) => fetch(url, { ...opts,
     headers: { 'Content-Type': 'application/json', 'X-Bkk-Key': KEY, ...(opts.headers || {}) } });
   const time = iso => new Date(iso).toLocaleTimeString('en-GB',
     { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
 
-  function toast(msg, bad) {
+  // kind: true = something went wrong, 'warn' = done, but look (over capacity).
+  function toast(msg, kind) {
     const t = $('#toast');
     t.textContent = msg;
-    t.className = 'show' + (bad ? ' bad' : '');
+    t.className = 'show' + (kind === 'warn' ? ' warn' : kind ? ' bad' : '');
     clearTimeout(t._h);
-    t._h = setTimeout(() => { t.className = ''; }, 2600);
+    t._h = setTimeout(() => { t.className = ''; }, kind === 'warn' ? 4500 : 2600);
   }
 
   window.unlock = async () => {
@@ -136,68 +223,218 @@
     load();
     // Someone books on the way to the shala; without this the door list is stale.
     timer = setInterval(load, 45000);
+    // The desk price of a drop-in (VAT in, no online fee), for the add panel.
+    fetch('/api/bkk/products').then(r => r.json()).then(d => {
+      const p = (d.products || []).find(x => x.code === 'dropin');
+      if (p) dropPrice = p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
+    }).catch(() => {});
   }
 
   async function load() {
     let d;
     try { d = await api('/api/bkk/admin/today').then(r => r.json()); }
     catch (_) { return; }                       // keep showing the last list offline
+    if (!d || d.error) return;
     bookings = d.bookings || [];
+    // Tabs come from today's timetable, so a class nobody booked still shows
+    // and can take a walk-in. A booking on a class no longer on it keeps a tab.
     const by = new Map();
+    for (const c of d.classes || []) by.set(String(c.slotId), { ...c, key: String(c.slotId), list: [] });
     for (const b of bookings) {
-      const k = b.start_at + '|' + b.title;
-      if (!by.has(k)) by.set(k, { startAt: b.start_at, title: b.title, list: [] });
+      const k = String(b.slot_id);
+      if (!by.has(k)) by.set(k, { key: k, slotId: b.slot_id, title: b.title, startAt: b.start_at, list: [] });
       by.get(k).list.push(b);
     }
     groups = [...by.values()].sort((a, b) => new Date(a.startAt) - new Date(b.startAt));
     if (!groups.length) { picked = null; renderClasses(); renderList(); return; }
     // Default to the class nearest to now, so nobody has to choose at 05:20.
-    if (picked === null || !groups.some(g => g.startAt === picked)) {
+    if (picked === null || !groups.some(g => g.key === picked)) {
       const now = Date.now();
       picked = groups.reduce((best, g) =>
         Math.abs(new Date(g.startAt) - now) < Math.abs(new Date(best.startAt) - now) ? g : best
-      ).startAt;
+      ).key;
     }
     renderClasses(); renderList();
   }
 
+  const online = g => g.isOnline || /^\[Online\]/.test(g.title || '');
+
   function renderClasses() {
     $('#classes').innerHTML = groups.map(g => {
       const inC = g.list.filter(b => b.checked_in_at).length;
-      return `<button class="${g.startAt === picked ? 'on' : ''}" data-at="${esc(g.startAt)}">
-        ${time(g.startAt)}<span class="c">${inC}/${g.list.length}</span></button>`;
+      return `<button class="${g.key === picked ? 'on' : ''}" data-k="${esc(g.key)}">
+        ${time(g.startAt)}${online(g) ? ' online' : ''}<span class="c">${inC}/${g.list.length}</span></button>`;
     }).join('');
     $('#classes').querySelectorAll('button').forEach(b =>
-      b.onclick = () => { picked = b.dataset.at; renderClasses(); renderList(); });
+      b.onclick = () => { picked = b.dataset.k; renderClasses(); renderList(); });
   }
 
+  // Rezerv: no aybkk.net pass yet. Drop-in: a 1-class pass. walk-in: added here.
+  const tags = b => [b.cover === 'rezerv' && ['Rezerv', 'rz'], b.dropin && ['Drop-in', 'dp'],
+    b.source === 'door' && ['walk-in', '']].filter(Boolean);
+
+  // The server refuses a walk-in once the class is over: say so on the button
+  // before staff fill in the whole form.
+  const ended = g => Date.now() > new Date(g.startAt).getTime() + (g.durationMin || 120) * 60000;
+
   function renderList() {
-    const g = groups.find(x => x.startAt === picked);
+    const g = groups.find(x => x.key === picked);
+    $('#addBtn').disabled = !g || ended(g);
+    $('#addBtn').textContent = g && ended(g) ? 'This class has ended' : '+ Add someone who is here';
     if (!g) {
-      $('#ctitle').textContent = 'Nothing booked today';
+      $('#ctitle').textContent = 'No classes today';
       $('#ccount').textContent = '';
-      $('#list').innerHTML = '<p class="empty">No bookings for today.</p>';
+      $('#list').innerHTML = '<p class="empty">Nothing on the timetable today.</p>';
       return;
     }
     const term = $('#q').value.trim().toLowerCase();
     const inC = g.list.filter(b => b.checked_in_at).length;
     $('#ctitle').textContent = time(g.startAt) + ' · ' + g.title;
-    $('#ccount').innerHTML = `<b>${inC}</b> in / ${g.list.length} booked`;
+    $('#ccount').innerHTML = `<b>${inC}</b> in / ${g.list.length} booked`
+      + (g.capacity != null ? ` / ${esc(g.capacity)} places` : '');
     const rows = g.list.filter(b =>
       !term || String(b.name).toLowerCase().includes(term) || String(b.code).toLowerCase().includes(term));
     $('#list').innerHTML = rows.length ? rows.map(b => `
       <button class="row ${b.checked_in_at ? 'in' : ''}" data-code="${esc(b.code)}">
-        <span class="nm">${esc(b.name)}<span class="cd">${esc(b.code)}</span></span>
+        <span class="nm">${esc(b.name)}<span class="cd">${esc(b.code)}${tags(b).map(([t, c]) =>
+          `<i class="tag ${c}">${esc(t)}</i>`).join('')}</span></span>
         <span class="st">${b.checked_in_at ? '✓ in ' + time(b.checked_in_at) : 'tap to check in'}</span>
       </button>`).join('')
-      : '<p class="empty">No one matches that.</p>';
+      : `<p class="empty">${g.list.length ? 'No one matches that.' : 'No one on the list yet.'}</p>`;
     $('#list').querySelectorAll('.row').forEach(el => el.onclick = () => checkin(el.dataset.code));
   }
 
   $('#q').addEventListener('input', renderList);
 
+  // ── add someone who is here ─────────────────────────────────────────────
+  // Find them (or type a new person), say what pays for today, confirm: they
+  // go on the list already checked in.
+  // sent: the last add tried, and its requestId. Tapping again after a lost
+  // reply resends the same id, so the server answers instead of adding twice.
+  const W = { member: null, isNew: false, cover: null, method: null, hits: [], seq: 0, sent: null };
+  const newId = () => (crypto.randomUUID ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2));
+  // Their seat on the picked class, if they already have one.
+  const seatOf = m => { const g = groups.find(x => x.key === picked);
+    return m && g ? g.list.find(b => b.code === m.code) : null; };
+
+  function openSheet() {
+    const g = groups.find(x => x.key === picked);
+    if (!g) return;
+    Object.assign(W, { member: null, isNew: false, cover: null, method: null, hits: [], sent: null });
+    for (const id of ['ws', 'nn', 'ne', 'np']) $('#' + id).value = '';
+    $('#wsList').innerHTML = '';
+    $('#shCls').textContent = time(g.startAt) + ' · ' + g.title;
+    $('#dpPrice').textContent = dropPrice ? '฿' + dropPrice.toLocaleString('en-US') : '';
+    $('#sheet').classList.add('open');
+    renderSheet();
+    $('#ws').focus();
+  }
+  const closeSheet = () => $('#sheet').classList.remove('open');
+
+  function renderSheet() {
+    const chosen = W.member || W.isNew;
+    $('#who').hidden = !!W.member;
+    $('#newForm').hidden = !W.isNew;
+    $('#newBtn').hidden = W.isNew;
+    $('#chosen').hidden = !W.member;
+    if (W.member) $('#chosenName').textContent = W.member.name + ' · ' + W.member.code;
+    const hasPass = !!(W.member && W.member.has_pass);
+    // Already on this class's list: their seat is paid for, so nothing is
+    // chosen or sold here. Add only checks them in.
+    const on = seatOf(W.member);
+    if (on || (W.cover === 'pass' && !hasPass)) W.cover = null;
+    document.querySelectorAll('#covers .opt').forEach(b => {
+      b.disabled = !!on || (b.dataset.cover === 'pass' && !hasPass);
+      b.classList.toggle('on', b.dataset.cover === W.cover);
+    });
+    $('#methods').hidden = W.cover !== 'dropin';
+    document.querySelectorAll('#methods .opt').forEach(b => b.classList.toggle('on', b.dataset.method === W.method));
+    const name = $('#nn').value.trim();
+    const ready = on || ((W.member || (W.isNew && name)) && W.cover && (W.cover !== 'dropin' || W.method));
+    $('#shGo').disabled = !ready;
+    $('#shHint').textContent = on ? 'Already on this list: tap Add to check them in.'
+      : !chosen ? 'Find the person, or add a new person.'
+      : W.isNew && !name ? 'Type their name.'
+      : !W.cover ? (W.member && !hasPass ? 'No aybkk.net pass: choose Rezerv package or Drop-in.' : 'Choose what pays for today.')
+      : W.cover === 'dropin' && !W.method ? 'Choose how they paid.' : '';
+  }
+
+  function renderHits(term) {
+    const g = groups.find(x => x.key === picked);
+    const onList = new Set(((g && g.list) || []).map(b => b.code));
+    $('#wsList').innerHTML = term.length < 2 ? ''
+      : !W.hits.length ? '<p class="empty" style="padding:10px">No one found. Add them as a new person.</p>'
+      : W.hits.map((m, i) => `<button class="hit" data-i="${i}"><b>${esc(m.name)}</b>
+          <span>${esc(m.code)}${m.email ? ' · ' + esc(m.email) : ''}${m.phone ? ' · ' + esc(m.phone) : ''}</span>
+          <em class="${m.has_pass ? 'ok' : ''}">${onList.has(m.code) ? 'already on this list · ' : ''}${m.has_pass
+            ? '✓ aybkk.net pass' : 'no aybkk.net pass'}</em></button>`).join('');
+    $('#wsList').querySelectorAll('.hit').forEach(el => el.onclick = () => {
+      W.member = W.hits[Number(el.dataset.i)]; W.isNew = false; renderSheet();
+    });
+  }
+
+  let searchT = null;
+  $('#ws').addEventListener('input', () => {
+    clearTimeout(searchT);
+    const term = $('#ws').value.trim();
+    if (term.length < 2) { W.hits = []; renderHits(term); return; }
+    searchT = setTimeout(async () => {
+      const seq = ++W.seq;
+      try {
+        const d = await api('/api/bkk/admin/members?q=' + encodeURIComponent(term)).then(r => r.json());
+        if (seq !== W.seq) return;           // a newer search is on its way
+        W.hits = d.members || [];
+        renderHits(term);
+      } catch (_) { if (seq === W.seq) $('#wsList').innerHTML = '<p class="empty" style="padding:10px">No connection. Try again.</p>'; }
+    }, 250);
+  });
+  $('#newBtn').onclick = () => { W.isNew = true; W.member = null; renderSheet(); $('#nn').focus(); };
+  $('#nn').addEventListener('input', renderSheet);
+  $('#chosenX').onclick = () => { W.member = null; renderSheet(); $('#ws').focus(); };
+  document.querySelectorAll('#covers .opt').forEach(b => b.onclick = () => { W.cover = b.dataset.cover; renderSheet(); });
+  document.querySelectorAll('#methods .opt').forEach(b => b.onclick = () => { W.method = b.dataset.method; renderSheet(); });
+  $('#addBtn').onclick = openSheet;
+  $('#shX').onclick = closeSheet;
+  $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
+
+  $('#shGo').onclick = async () => {
+    const g = groups.find(x => x.key === picked);
+    if (!g || $('#shGo').disabled) return;
+    // No cover chosen: they are already on the list, and the server checks in
+    // a seat they hold whatever the cover says.
+    const on = seatOf(W.member);
+    const body = { slotId: g.slotId, date: g.date, cover: W.cover || (on && on.cover === 'rezerv' ? 'rezerv' : 'pass') };
+    if (body.cover === 'dropin') body.method = W.method;
+    if (W.member) body.memberCode = W.member.code;
+    else Object.assign(body, { name: $('#nn').value.trim(), email: $('#ne').value.trim(), phone: $('#np').value.trim() });
+    const what = JSON.stringify(body);
+    if (!W.sent || W.sent.what !== what) W.sent = { what, id: newId() };
+    body.requestId = W.sent.id;
+    $('#shGo').disabled = true;
+    try {
+      const r = await api('/api/bkk/admin/walkin', { method: 'POST', body: JSON.stringify(body) });
+      const d = await r.json().catch(() => ({}));
+      // The drop-in is sold (in today's money) but they are not on the list:
+      // the cash stays in the drawer and someone books them by hand.
+      if (d.paid) { closeSheet(); load(); alert(d.error || `Paid (ref ${d.refno}), but not added to the class. Book them by hand.`); return; }
+      if (!r.ok || !d.success) { toast(d.error || 'Could not add them. Try again.', true); renderSheet(); return; }
+      closeSheet();
+      load();
+      // Someone else put them on the list first: no drop-in was sold.
+      if (d.already && body.cover === 'dropin') { toast(`${d.name} was already on the list. No drop-in was sold, nothing to charge.`, 'warn'); return; }
+      const done = d.already ? `✓ ${d.name} was on the list, now checked in` : `✓ ${d.name} added and checked in`;
+      if (d.overCapacity) toast(done + '. Over capacity now.', 'warn'); else toast(done);
+    } catch (_) {
+      // Tapping Add again is safe: it sends the same requestId.
+      toast('No connection. Try again.', true);
+      renderSheet();
+      load();
+    }
+  };
+
   async function checkin(code) {
-    const b = bookings.find(x => x.code === code && x.start_at === picked);
+    const b = bookings.find(x => x.code === code && String(x.slot_id) === picked);
     if (b && b.checked_in_at) { toast(b.name + ' is already in'); return; }
     // Paint it green immediately — the teacher is not going to wait for the network.
     if (b) { b.checked_in_at = new Date().toISOString(); renderList(); renderClasses(); }

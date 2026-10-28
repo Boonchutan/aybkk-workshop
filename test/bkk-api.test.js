@@ -145,12 +145,12 @@ const ok = (name, cond, extra = '') => {
   await pool.query(`INSERT INTO bkk_class_overrides (slot_id, class_date, capacity)
                     VALUES ($1,$2,2) ON CONFLICT (slot_id,class_date) DO UPDATE SET capacity=2`,
                    [slot.slotId, slot.date]);
+  // A drop-in order now books its own class when paid, so the racers get a
+  // 1-class pass by hand instead: the race below is what is under test.
   const codes = [];
   for (let i = 0; i < 5; i++) {
-    const o = await post('/api/bkk/orders', { productCode: 'dropin', name: 'R' + i, email: `r${i}@x.com` });
-    const oid = (await J('/api/bkk/admin/orders', { headers: ADMIN })).body.orders[0].id;
-    await post(`/api/bkk/admin/orders/${oid}/force-activate`, {}, ADMIN);
-    codes.push(o.body.member.code);
+    const g = await post('/api/bkk/admin/passes', { productCode: 'dropin', name: 'R' + i, email: `r${i}@x.com` }, ADMIN);
+    codes.push(g.body.member.code);
   }
   const races = await Promise.all(codes.map(c =>
     post('/api/bkk/bookings', { memberCode: c, slotId: slot.slotId, date: slot.date })));
@@ -602,12 +602,15 @@ const ok = (name, cond, extra = '') => {
   await post('/api/bkk/login/request', { email: 'kat.mixup@example.com' });
   const katMailTok = (signins().slice(nK)[0] || { text: '' }).text.match(/login\/([a-f0-9]{64})/);
   ok("while it sits there, Kat's email sign-in opens Kate's profile", !!katMailTok);
+  // A drop-in is bought for a class.
+  const dropCls = (await J('/api/bkk/schedule?days=14')).body.classes.find(c => c.seatsLeft > 0);
+  const forCls = { slotId: dropCls.slotId, date: dropCls.date };
   ok('checkout with an email that has a profile does not hand that profile to the browser',
-     (await post('/api/bkk/orders', { productCode: 'dropin', name: 'Kat', email: 'kat.mixup@example.com' })).body.member.code === undefined);
+     (await post('/api/bkk/orders', { productCode: 'dropin', name: 'Kat', email: 'kat.mixup@example.com', ...forCls })).body.member.code === undefined);
   ok('...but a browser that already holds that profile keeps it',
-     (await post('/api/bkk/orders', { productCode: 'dropin', name: 'Kate', email: 'kat.mixup@example.com', memberCode: kateCode })).body.member.code === kateCode);
+     (await post('/api/bkk/orders', { productCode: 'dropin', name: 'Kate', email: 'kat.mixup@example.com', memberCode: kateCode, ...forCls })).body.member.code === kateCode);
   ok('...and a brand-new email gets its new profile', /^B/.test((await post('/api/bkk/orders',
-     { productCode: 'dropin', name: 'New One', email: 'brand.new.mixup@example.com' })).body.member.code || ''));
+     { productCode: 'dropin', name: 'New One', email: 'brand.new.mixup@example.com', ...forCls })).body.member.code || ''));
 
   ok('changing an email needs the staff key',
      (await post(`/api/bkk/admin/members/${katCode}/email`, { email: 'kat.mixup@example.com' })).status === 401);
@@ -857,6 +860,258 @@ const ok = (name, cond, extra = '') => {
     await post('/api/bkk/admin/settings', { links: { telegram: 'https://t.me/aybkk_letter' } }, ADMIN);
     ok('the Telegram channel link is served for the letter box',
        (await J('/api/bkk/settings')).body.links.telegram === 'https://t.me/aybkk_letter');
+  }
+
+  console.log('\n— every way in puts a name on the class list —');
+  {
+    const { outbox } = require('../mailer');
+    const sched = async () => (await J('/api/bkk/schedule?days=14')).body.classes;
+    const seatOf = (list, c) => list.find(x => x.slotId === c.slotId && x.date === c.date) || {};
+    const receiptTo = to => outbox.filter(m => m.tag === 'receipt' && m.to === to).pop();
+    const settle = () => new Promise(r => setTimeout(r, 300));     // receipts are sent after the reply
+    // Classes far enough off that none starts while this runs.
+    const later = (await sched()).filter(c => c.seatsLeft > 1 && new Date(c.startAt) - Date.now() > 30 * 60000);
+    const dc = later[0], gone = later.find(c => c.slotId !== dc.slotId || c.date !== dc.date);
+    const addD = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+    const wdOf = d => new Date(d + 'T12:00:00Z').getUTCDay();
+    const isMoon = d => moonDaysBetween(d, d).size > 0;
+    // A working day that is not dc's weekday, so only the weekday rule can refuse it.
+    let wrongDay = addD(dc.date, 1);
+    while (isMoon(wrongDay) || wdOf(wrongDay) === wdOf(dc.date)) wrongDay = addD(wrongDay, 1);
+
+    const noCls = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Drop Without', email: 'drop.without@example.com' });
+    ok('a drop-in bought without a class is refused', noCls.status === 400 && /Pick the class/.test(noCls.body.error), JSON.stringify(noCls.body));
+    const pack = await post('/api/bkk/orders', { productCode: 'pack10', name: 'Pack Buyer', email: 'pack.buyer@example.com' });
+    ok('...other packages need no class', pack.status === 200, JSON.stringify(pack.body).slice(0, 120));
+    const wrongWd = await post('/api/bkk/orders', { productCode: 'dropin',
+      name: 'Wrong Day', email: 'wrong.day@example.com', slotId: dc.slotId, date: wrongDay });
+    ok('a drop-in for a class on the wrong weekday is refused', wrongWd.status === 409 && /not on that day/.test(wrongWd.body.error),
+       `${wrongDay} ${JSON.stringify(wrongWd.body)}`);
+    // Same weekday as dc, a working day: n weeks on, stepped past a moon day.
+    const weeksOn = n => { let d = addD(dc.date, 7 * n); while (isMoon(d)) d = addD(d, 7); return d; };
+    const far = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Far Off', email: 'far.off@example.com',
+      slotId: dc.slotId, date: weeksOn(104) });
+    ok('a drop-in for a class two years off is refused', far.status === 409 && /next 2 months/.test(far.body.error), JSON.stringify(far.body));
+    const month = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Month Off', email: 'month.off@example.com',
+      slotId: dc.slotId, date: weeksOn(4) });
+    ok('...but a class a month off, past the two-week list, is fine', month.status === 200 && month.body.order, JSON.stringify(month.body).slice(0, 160));
+
+    const booked0 = seatOf(await sched(), dc).booked;
+    const dOrd = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Drop In', email: 'drop.in@example.com',
+      slotId: dc.slotId, date: dc.date });
+    ok('a drop-in bought for a class is accepted', dOrd.status === 200 && dOrd.body.order, JSON.stringify(dOrd.body).slice(0, 160));
+    ok('...and holds no seat until it is paid', seatOf(await sched(), dc).booked === booked0);
+    const dRow = (await pool.query('SELECT id, slot_id FROM bkk_orders WHERE refno=$1', [dOrd.body.order.refno])).rows[0];
+    ok('...the class is kept on the order', dRow.slot_id === dc.slotId);
+    await post(`/api/bkk/admin/orders/${dRow.id}/force-activate`, {}, ADMIN);
+    ok('paying for the drop-in books its class: one more on the timetable', seatOf(await sched(), dc).booked === booked0 + 1,
+       `${booked0} → ${seatOf(await sched(), dc).booked}`);
+    const dMe = (await J('/api/bkk/me/' + dOrd.body.member.code)).body;
+    ok("...it is on the student's own list, and the drop-in is used",
+       dMe.bookings.length === 1 && dMe.bookings[0].slot_id === dc.slotId && dMe.passes[0].creditsLeft === 0, JSON.stringify(dMe).slice(0, 240));
+    const chk = await J('/api/bkk/pay/check/' + dOrd.body.order.refno);
+    ok('pay/check on the paid order says which class it booked',
+       chk.body.status === 'paid' && chk.body.booking && chk.body.booking.title === dc.title && !!chk.body.booking.startAt, JSON.stringify(chk.body));
+    await settle();
+    const rc = receiptTo('drop.in@example.com');
+    ok('the receipt names the booked class', rc && rc.text.includes('booked into ' + dc.title) && rc.html.includes(dc.title), rc && rc.text.slice(0, 300));
+
+    await pool.query(`INSERT INTO bkk_class_overrides (slot_id, class_date, capacity) VALUES ($1,$2,$3)
+      ON CONFLICT (slot_id, class_date) DO UPDATE SET capacity=$3`, [dc.slotId, dc.date, booked0 + 1]);
+    const fullTry = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Too Full', email: 'too.full@example.com',
+      slotId: dc.slotId, date: dc.date });
+    ok('a drop-in for a full class is refused before anyone pays', fullTry.status === 409 && /full/.test(fullTry.body.error), JSON.stringify(fullTry.body));
+    await pool.query('UPDATE bkk_class_overrides SET capacity=NULL WHERE slot_id=$1 AND class_date=$2', [dc.slotId, dc.date]);
+
+    const gOrd = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Paid Late', email: 'paid.late@example.com',
+      slotId: gone.slotId, date: gone.date });
+    await post('/api/bkk/admin/classes/cancel', { slotId: gone.slotId, date: gone.date, reason: 'test' }, ADMIN);
+    const gRow = (await pool.query('SELECT id FROM bkk_orders WHERE refno=$1', [gOrd.body.order.refno])).rows[0];
+    const gAct = await post(`/api/bkk/admin/orders/${gRow.id}/force-activate`, {}, ADMIN);
+    const gStatus = (await pool.query('SELECT status FROM bkk_orders WHERE id=$1', [gRow.id])).rows[0].status;
+    const gMe = (await J('/api/bkk/me/' + gOrd.body.member.code)).body;
+    ok('a class cancelled while the student paid: the order still goes through as paid', gAct.status === 200 && gStatus === 'paid',
+       `${gAct.status} ${gStatus}`);
+    ok('...the drop-in is kept unused for another class, and nothing is booked',
+       gMe.passes.length === 1 && gMe.passes[0].creditsLeft === 1 && gMe.bookings.length === 0, JSON.stringify(gMe).slice(0, 240));
+    const gChk = (await J('/api/bkk/pay/check/' + gOrd.body.order.refno)).body;
+    ok('...and pay/check does not claim a booking, but names the class it could not book',
+       gChk.booking === undefined && gChk.notBooked && gChk.notBooked.title === gone.title && gChk.notBooked.startAt === gone.startAt,
+       JSON.stringify(gChk));
+    await settle();
+    const grc = receiptTo('paid.late@example.com');
+    ok('...and so does the receipt', grc && grc.text.includes('could not book ' + gone.title) && !grc.text.includes('booked into')
+       && grc.html.includes('could not book'), grc && grc.text.slice(0, 300));
+    await post('/api/bkk/admin/classes/reopen', { slotId: gone.slotId, date: gone.date }, ADMIN);
+
+    // The door. A class made for this: running right now (started a minute ago,
+    // never before midnight), 3 hours long, 3 places. On a moon day the shala
+    // is shut, so it goes on the next working day instead (staff may add
+    // someone before a class starts), and only admin/today's own checks wait.
+    const bkkMs = ms => new Date(ms + 7 * 3600000).toISOString();
+    const todayB = bkkMs(Date.now()).slice(0, 10);
+    let doorDate = todayB;
+    while (isMoon(doorDate)) doorDate = addD(doorDate, 1);
+    const onToday = doorDate === todayB;
+    const skipped = what => console.log(`  - SKIPPED (moon day today, walk-ins tested on ${doorDate}): ${what}`);
+    const startNow = !onToday ? '06:00'
+      : bkkMs(Date.now() - 60000).slice(0, 10) === todayB ? bkkMs(Date.now() - 60000).slice(11, 16) : '00:00';
+    const mkSlot = async (code, weekday, start, minutes, cap) => (await pool.query(
+      `INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity)
+       VALUES ($1,'Door Test','test',$2,$3,$4,$5) RETURNING id`, [code, weekday, start, minutes, cap])).rows[0].id;
+    const doorSlot = await mkSlot('test_door_now', wdOf(doorDate), startNow, 180, 3);
+    const onDay = onToday ? {} : { date: doorDate };      // today is the default
+    const walk = (body, h = ADMIN) => post('/api/bkk/admin/walkin', { slotId: doorSlot, ...onDay, ...body }, h);
+    const today0 = await J('/api/bkk/admin/today', { headers: ADMIN });
+    const dcl = r => (r.body.classes || []).find(x => x.slotId === doorSlot);
+    // The door class's list: admin/today's rows, or on a moon day the same
+    // columns read from the table, since admin/today shows today only.
+    const doorRows = async () => onToday
+      ? ((await J('/api/bkk/admin/today', { headers: ADMIN })).body.bookings || []).filter(b => b.slot_id === doorSlot)
+      : (await pool.query(`SELECT m.name, b.checked_in_at, b.cover, b.source,
+           coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
+         FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+         LEFT JOIN bkk_passes p ON p.id=b.pass_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
+         WHERE b.slot_id=$1 AND b.status='booked'`, [doorSlot])).rows;
+
+    if (onToday) {
+      ok("the door lists today's class with nobody booked", dcl(today0) && dcl(today0).booked === 0 && dcl(today0).capacity === 3,
+         JSON.stringify(today0.body.classes));
+    } else {
+      ok('moon day today: the door lists no class', today0.body.classes.length === 0);
+      skipped("the door lists today's class with nobody booked");
+    }
+    ok('...and still gives bookings and money as before', Array.isArray(today0.body.bookings) && Array.isArray(today0.body.money));
+    ok('adding someone at the door needs the staff key', (await walk({ name: 'No Key', cover: 'rezerv' }, {})).status === 401);
+    ok('...and a cover', (await walk({ name: 'No Cover' })).status === 400);
+
+    const rz = await walk({ name: 'Rezerv Walker', cover: 'rezerv' });
+    ok('a Rezerv student is put on the list, no pass needed', rz.status === 200 && rz.body.success && rz.body.cover === 'rezerv'
+       && rz.body.className === 'Door Test' && rz.body.overCapacity === false, JSON.stringify(rz.body));
+    const np = await walk({ memberCode: pack.body.member.code, cover: 'pass' });
+    ok("'aybkk.net pass' with no usable pass is refused, pointing to Rezerv or Drop-in",
+       np.status === 409 && /Rezerv/.test(np.body.error) && /Drop-in/.test(np.body.error), JSON.stringify(np.body));
+    const holder = (await post('/api/bkk/admin/passes', { name: 'Pass Walker', email: 'pass.walker@example.com', productCode: 'pack10' }, ADMIN)).body.member.code;
+    const pw = await walk({ memberCode: holder, cover: 'pass' });
+    ok('a student with an aybkk.net pass is put on the list on it', pw.status === 200 && pw.body.cover === 'pass', JSON.stringify(pw.body));
+    ok('...using one credit', (await J('/api/bkk/me/' + holder)).body.passes[0].creditsLeft === 9);
+
+    // Booked ahead (staff may book a class that has begun), not in yet.
+    const ahead = (await post('/api/bkk/admin/passes', { name: 'Booked Ahead', email: 'booked.ahead@example.com', productCode: 'pack10' }, ADMIN)).body.member.code;
+    const aheadBk = await post('/api/bkk/bookings', { memberCode: ahead, slotId: doorSlot, date: doorDate }, ADMIN);
+    const aw = await walk({ memberCode: ahead, cover: 'pass' });
+    const aheadRows = (await pool.query(`SELECT count(*)::int AS n, bool_and(checked_in_at IS NOT NULL) AS inn FROM bkk_bookings
+      WHERE slot_id=$1 AND member_id=(SELECT id FROM bkk_members WHERE code=$2)`, [doorSlot, ahead])).rows[0];
+    ok('someone already booked is just checked in: no second row, no second credit',
+       aheadBk.status === 200 && aw.status === 200 && aw.body.already === true && aheadRows.n === 1 && aheadRows.inn
+         && (await J('/api/bkk/me/' + ahead)).body.passes[0].creditsLeft === 9, JSON.stringify({ aheadBk: aheadBk.body, aw: aw.body, aheadRows }));
+    ok('...and asking again changes nothing', (await walk({ memberCode: ahead, cover: 'rezerv' })).body.already === true);
+    // Who has paid for what at the door, by member.
+    const held = async code => (await pool.query(
+      `SELECT (SELECT count(*)::int FROM bkk_orders o WHERE o.member_id=m.id) AS orders,
+              (SELECT count(*)::int FROM bkk_passes p WHERE p.member_id=m.id) AS passes,
+              (SELECT count(*)::int FROM bkk_bookings b WHERE b.member_id=m.id AND b.slot_id=$2 AND b.status='booked') AS seats
+       FROM bkk_members m WHERE m.code=$1`, [code, doorSlot])).rows[0];
+    const aheadCash = await walk({ memberCode: ahead, cover: 'dropin', method: 'cash' });
+    const aheadHeld = await held(ahead);
+    ok('...and a drop-in for them sells nothing: no order, no second pass, and the reply says so',
+       aheadCash.status === 200 && aheadCash.body.already === true && !aheadCash.body.refno
+         && aheadHeld.orders === 0 && aheadHeld.passes === 1 && aheadHeld.seats === 1, JSON.stringify({ body: aheadCash.body, aheadHeld }));
+
+    ok('a drop-in at the door needs how it was paid', (await walk({ name: 'No Method', cover: 'dropin' })).status === 400);
+    const cash0 = ((today0.body.money || []).find(m => m.method === 'cash') || {}).total || 0;
+    const dw = await walk({ name: 'Cash Walker', email: 'cash.walker@example.com', cover: 'dropin', method: 'cash' });
+    ok('a full class still takes the person at the door, and says it is over capacity',
+       dw.status === 200 && dw.body.cover === 'dropin' && dw.body.overCapacity === true && /^\d+$/.test(dw.body.refno || ''), JSON.stringify(dw.body));
+
+    const t1 = await J('/api/bkk/admin/today', { headers: ADMIN });
+    const mine = await doorRows();
+    const row = n => mine.find(b => b.name === n) || {};
+    ok("pass, Rezerv and drop-in walk-ins are all on the class list, checked in",
+       ['Rezerv Walker', 'Pass Walker', 'Cash Walker'].every(n => row(n).checked_in_at), JSON.stringify(mine));
+    ok('...with what the door needs to label them', row('Rezerv Walker').cover === 'rezerv' && row('Rezerv Walker').source === 'door'
+       && row('Cash Walker').dropin === true && row('Pass Walker').dropin === false && row('Booked Ahead').source === 'staff', JSON.stringify(mine));
+    if (onToday) ok('...and every one counts toward the class', dcl(t1).booked === 4 && dcl(t1).checkedIn === 4 && dcl(t1).capacity === 3, JSON.stringify(dcl(t1)));
+    else ok('...and every one counts toward the class', seatOf(await sched(), { slotId: doorSlot, date: doorDate }).booked === 4
+       && mine.length === 4 && mine.every(b => b.checked_in_at));
+    ok("the door's drop-in is a real sale: in today's money with VAT", (((t1.body.money || []).find(m => m.method === 'cash') || {}).total || 0) === cash0 + 1605,
+       JSON.stringify(t1.body.money));
+    await settle();
+    const dwr = receiptTo('cash.walker@example.com');
+    ok('...with a receipt that names the class', dwr && dwr.text.includes('booked into Door Test'), dwr && dwr.text.slice(0, 200));
+
+    const ds = await post('/api/bkk/admin/sales', { productCode: 'dropin', name: 'Desk Booker', method: 'card', slotId: doorSlot, checkIn: true, ...onDay }, ADMIN);
+    const mine2 = await doorRows();
+    ok('a desk sale for a class books it: the buyer is on the class list, checked in',
+       ds.status === 200 && ds.body.booking && ds.body.booking.title === 'Door Test'
+         && mine2.some(b => b.name === 'Desk Booker' && b.checked_in_at) && mine2.length === 5, JSON.stringify(ds.body));
+    if (onToday) ok("...and in admin/today's count", dcl(await J('/api/bkk/admin/today', { headers: ADMIN })).booked === 5);
+    else skipped("...and in admin/today's count");
+
+    // Two staff phones (or a tap while the first is still on its way) add the
+    // same person with a drop-in at the same moment: one sale, one seat.
+    const racers = [];
+    for (let i = 0; i < 3; i++) racers.push((await pool.query(
+      `INSERT INTO bkk_members (code,name) VALUES ($1,$2) RETURNING code`, [`BTESTRACER${i}`, `Door Racer ${i}`])).rows[0].code);
+    const rounds = await Promise.all(racers.map(c => Promise.all([1, 2].map(() => walk({ memberCode: c, cover: 'dropin', method: 'cash' })))));
+    const racerHeld = await Promise.all(racers.map(held));
+    ok('two phones adding the same person with a drop-in at once: one sale, one pass, one seat',
+       racerHeld.every(x => x.orders === 1 && x.passes === 1 && x.seats === 1)
+         && rounds.every(two => two.every(r => r.status === 200) && two.filter(r => r.body.refno).length === 1),
+       JSON.stringify({ racerHeld, rounds: rounds.map(two => two.map(r => r.body)) }));
+    ok('...and the reply that sold nothing says they were already on the list',
+       rounds.every(two => two.some(r => r.body.already === true && !r.body.refno)));
+
+    // The reply is lost on bad wifi and staff tap Add again: the same requestId
+    // comes back, and the first add is answered instead of done twice.
+    const lost = { name: 'Anna NoMail', cover: 'dropin', method: 'cash', requestId: 'test-walkin-lost-reply' };
+    const lost1 = await walk(lost), lost2 = await walk(lost);
+    const annas = (await pool.query(`SELECT code FROM bkk_members WHERE name='Anna NoMail'`)).rows;
+    const annaHeld = annas.length === 1 ? await held(annas[0].code) : {};
+    ok('tapping Add again after a lost reply adds no one twice: one profile, one sale, one seat',
+       lost1.status === 200 && lost2.status === 200 && annas.length === 1
+         && annaHeld.orders === 1 && annaHeld.seats === 1, JSON.stringify({ lost1: lost1.body, lost2: lost2.body, annas, annaHeld }));
+    ok('...and the second reply is the first one again, sale and all',
+       lost2.body.repeat === true && lost2.body.already === false && lost2.body.refno === lost1.body.refno
+         && lost2.body.cover === 'dropin' && lost2.body.name === 'Anna NoMail', JSON.stringify(lost2.body));
+    const rzAgain = { name: 'Rezerv Again', cover: 'rezerv', requestId: 'test-walkin-rezerv-again' };
+    await walk(rzAgain);
+    const rzAgain2 = await walk(rzAgain);
+    ok('...a Rezerv add too', rzAgain2.status === 200 && rzAgain2.body.repeat === true && rzAgain2.body.cover === 'rezerv'
+       && (await pool.query(`SELECT count(*)::int AS n FROM bkk_members WHERE name='Rezerv Again'`)).rows[0].n === 1, JSON.stringify(rzAgain2.body));
+    const atOnce = { name: 'Cy NoMail', cover: 'dropin', method: 'card', requestId: 'test-walkin-at-once' };
+    const cy = await Promise.all([walk(atOnce), walk(atOnce)]);
+    const cyHeld = (await pool.query(
+      `SELECT (SELECT count(*)::int FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id WHERE m.name='Cy NoMail') AS orders,
+              (SELECT count(*)::int FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+                WHERE m.name='Cy NoMail' AND b.slot_id=$1 AND b.status='booked') AS seats`, [doorSlot])).rows[0];
+    ok('...even when both taps arrive at once', cy.every(r => r.status === 200 && r.body.refno === cy[0].body.refno)
+       && cyHeld.orders === 1 && cyHeld.seats === 1, JSON.stringify({ cy: cy.map(r => r.body), cyHeld }));
+
+    // The last working day before today: any class on it has ended.
+    let past = new Date(Date.parse(todayB + 'T12:00:00Z') - 86400000).toISOString().slice(0, 10);
+    while (moonDaysBetween(past, past).size) past = new Date(Date.parse(past + 'T12:00:00Z') - 86400000).toISOString().slice(0, 10);
+    const doneSlot = await mkSlot('test_door_done', wdOf(past), '06:00', 60, 10);
+    const late = await post('/api/bkk/admin/walkin', { slotId: doneSlot, date: past, name: 'Late Walker', cover: 'rezerv' }, ADMIN);
+    const lateProfiles = (await pool.query(`SELECT count(*)::int AS n FROM bkk_members WHERE name='Late Walker'`)).rows[0].n;
+    ok('a walk-in after the class has ended is refused, and leaves no profile behind',
+       late.status === 409 && /ended/.test(late.body.error) && lateProfiles === 0, JSON.stringify(late.body));
+    const lateCash = await post('/api/bkk/admin/walkin', { slotId: doneSlot, date: past, name: 'Late Cash', cover: 'dropin', method: 'cash' }, ADMIN);
+    const lateOrders = (await pool.query(`SELECT count(*)::int AS n FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id WHERE m.name='Late Cash'`)).rows[0].n;
+    ok('...and no drop-in is sold for it', lateCash.status === 409 && lateOrders === 0, JSON.stringify(lateCash.body));
+
+    const twice = (await post('/api/bkk/admin/passes', { name: 'Twice Booker', email: 'twice.booker@example.com', productCode: 'pack10' }, ADMIN)).body.member.code;
+    const tw1 = await post('/api/bkk/bookings', { memberCode: twice, slotId: dc.slotId, date: dc.date });
+    const tw2 = await post('/api/bkk/bookings', { memberCode: twice, slotId: dc.slotId, date: dc.date });
+    ok('a student booking a class twice is still told "you already booked this class"',
+       tw1.status === 200 && tw1.body.booking.source === 'student' && tw1.body.booking.cover === 'pass'
+         && tw2.status === 409 && tw2.body.error === 'you already booked this class', JSON.stringify([tw1.body, tw2.body]).slice(0, 300));
+    // Each weekday is its own slot with its own capacity and cancellations, so
+    // one day's slot sent with another day's date would get past both.
+    const otherDay = await post('/api/bkk/bookings', { memberCode: twice, slotId: dc.slotId, date: wrongDay });
+    ok("a student cannot book one weekday's class on another day", otherDay.status === 409
+       && otherDay.body.error === 'that class is not on that day', JSON.stringify(otherDay.body));
+    ok('...and keeps the credit', (await J('/api/bkk/me/' + twice)).body.passes[0].creditsLeft === 9);
   }
 
   console.log('\n— Bangkok calendar dates —');
