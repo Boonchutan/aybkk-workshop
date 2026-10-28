@@ -6,3 +6,4 @@ Reminders due this morning: none. Reel: Plato's daily run is paused (Boonchu, 22
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 11 days.
 Inbox 07:08: 0 new since last night. 2 LINE threads carried from 19:08 (Carne @Machi: payment slip + "must I book in the app?", and a new person), both hot, may be answered already.
 13:08 check-in: No Cap Daily due 19:00 today (2nd nudge). PR #71 (door walk-in, drop-in) merge: decision needed in team chat by 19:00 Fri 30 Oct. Inbox: 0 new.
+19:08 check-in: No Cap Daily: no answer by 19:00, stays paused. Course prices still waiting (4 days). aybkk.net buyer gap before Rezerv stops selling Mon 2 Nov: decision needed in team chat. Inbox 19:08: 0 new, 0 hot.
