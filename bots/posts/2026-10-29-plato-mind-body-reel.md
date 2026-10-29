@@ -1,0 +1,4 @@
+# Reel for the Mysore class: "mind body connection" (Boonchu's draft, Plato light edit)
+
+His points: don't just do yoga with the body, most of the time you have no idea what you are doing; "mind body connection" = you feel that body part while you control the movement; in class a brief physiology so students understand the feeling and direction of the body in the movement; for people who want the science behind the practice; aybkk.net.
+Edits: hook = his "no idea what are you doing" line (the "should know about this" opener is generic); "mind body connection" is a buzzword every studio uses, so define it plainly and show it (Schwartz stage 3: show the mechanism); dropped "most effective learning" (an adjective claim with no proof); aybkk.net moved to the caption; uses his mechanism name "Function over shape". Needs HIS real cue for the demo line (asana + body part + direction).
