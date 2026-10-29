@@ -60,6 +60,13 @@ Use when handling Instagram, LINE, or WeChat messages about the 180,000 THB prog
 
 **Do not use for:** existing student questions, general inquiries, or anything unrelated to the China program.
 
+### `/design-taste-frontend`
+**Purpose:** Third-party design skill (Leonxlnx/taste-skill v2.1.5, MIT) in `.claude/skills/design-taste-frontend/`. Art direction and "looks AI-made" checks for web pages and app screens.
+
+Use when redesigning a public page (aybkk.net, cn.aybkk.net shop, sales pages). Always pass `--keep palette,type`: our fonts are self-hosted because Google Fonts is blocked in China, so ignore any advice to load fonts from a CDN.
+
+**Do not use for:** copy, Reels, or admin screens nobody outside the team sees.
+
 ---
 
 ## Business direction: The Habit Gap (Boonchu, 4 Oct 2026)
