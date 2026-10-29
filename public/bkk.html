@@ -317,6 +317,83 @@
     .cal .head b{font-size:40px}
     .cal .head{margin:-22px -20px 16px;min-height:280px;background-position:center 30%}
   }
+  /* Each class time in a day cell opens that class; the rest of the cell picks the day. */
+  .cal .dn{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;line-height:1;cursor:pointer}
+  /* Full cell width and about 26px tall on a phone, with a gap: a bare "5:30"
+     is a 23px-wide target, and 5:30 sits right on top of 7:30. */
+  .cal .ct{align-self:stretch}
+  .cal .ct .tm{display:block;width:100%;background:none;border:0;margin:2px 0;padding:6px 0;font:inherit;color:inherit;letter-spacing:inherit;
+    line-height:inherit;text-align:left;cursor:pointer}
+  .cal .ct .tm.mine{color:#F2C94C}
+  .cal .ct .tm .ol{display:block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  .cal .bk{display:inline-block;width:6px;height:6px;margin-left:4px;border-radius:50%;background:#F2C94C;vertical-align:2px}
+  .cal .legend .lmine{color:#F2C94C;font-weight:700}
+  .cal button:focus-visible{outline:2px solid #F2C94C;outline-offset:1px;border-radius:3px}
+  @media (min-width:560px){ .cal .ct .tm{display:inline;margin:0;padding:1px 0} .cal .ct .tm .ol{display:inline;margin-left:3px} }
+  /* Week view: same plum card, one column per day, scrolls sideways inside its own box. */
+  .cal .head b.wkl{font-size:22px}
+  .cal .head b.wkl small{font-size:14px}
+  .cal .wkbox{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;position:relative}
+  .cal .wkgrid{display:grid;grid-template-columns:repeat(7,minmax(100px,1fr));column-gap:4px}
+  .cal .wcol{display:flex;flex-direction:column;gap:6px;min-width:0;padding-bottom:8px}
+  .cal .wcol.moonday{background:rgba(224,181,43,.08)}
+  .cal .wh{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;min-height:64px;margin:0;padding:0 5px 8px;
+    border:0;border-bottom:1px solid rgba(251,245,249,.28);border-radius:0;background:none;color:#FBF5F9;font:inherit;text-align:left}
+  .cal button.wh{cursor:pointer}
+  .cal .wh .w{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#C9AFCB}
+  .cal .wh .dd{font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:20px;line-height:1;font-variant-numeric:tabular-nums}
+  .cal .wh.today .dd{color:#E0B52B}
+  .cal .wh.past .dd{opacity:.4}
+  .cal .wh.sel{box-shadow:inset 0 -3px 0 #E0B52B}
+  .cal .wh .ml{font-size:10px;font-weight:700;color:#F2D98A}
+  .cal .wb{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;margin:0;padding:7px 6px 8px 8px;
+    border:0;border-left:3px solid #C9AFCB;border-radius:4px;background:rgba(251,245,249,.07);color:#FBF5F9;font:inherit;
+    text-align:left;cursor:pointer}
+  .cal .wb.mysore{border-left-color:#FC838B}.cal .wb.led_primary{border-left-color:#8BFC83}.cal .wb.led_inter{border-left-color:#9AA2FF}
+  .cal .wb .wt{font-weight:800;font-size:14px;line-height:1.15;color:#7FD8CC;font-variant-numeric:tabular-nums}
+  .cal .wb .cn{font-size:12px}
+  .cal .wb.mysore .cn{color:#FC838B}.cal .wb.led_primary .cn{color:#8BFC83}.cal .wb.led_inter .cn{color:#9AA2FF}
+  .cal .wb .wtt{display:flex;flex-wrap:wrap;gap:3px}
+  .cal .wb .tg{font-size:11px;padding:2px 4px}
+  .cal .wb .on{display:inline-block;margin-left:4px;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    border:1px solid rgba(251,245,249,.45);border-radius:999px;padding:1px 4px;color:#FBF5F9;vertical-align:2px}
+  .cal .wb .st{font-size:11px;font-weight:700;line-height:1.25;color:#C9AFCB}
+  .cal .wb .st.ok{color:#F2C94C}
+  .cal .wb .st.full{color:#FF8DC0}
+  .cal .wb.mine{background:rgba(242,201,76,.14);box-shadow:inset 0 0 0 1.5px #F2C94C}
+  .cal .wb.isfull{opacity:.6}
+  @media (min-width:560px){ .cal .head b.wkl{font-size:30px} .cal .head b.wkl small{font-size:18px} }
+  @media (min-width:600px){ .cal .wkgrid{grid-template-columns:repeat(7,minmax(74px,1fr))} }
+  .calsw{display:flex;gap:6px;margin:0 0 10px}
+  .calsw button{font-weight:600;font-size:14px;line-height:1;font-family:inherit;min-height:40px;padding:8px 18px;border-radius:999px;cursor:pointer;
+    background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
+  .calsw button[aria-pressed="true"]{background:var(--plum);border-color:var(--plum);color:var(--on-dark)}
+  #dayList{scroll-margin-top:64px}
+  .cls[data-cls]{cursor:pointer}
+  .cls .open{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+  .cls .open:hover{text-decoration:underline}
+  .cls.mine{border-color:var(--promo-line);box-shadow:inset 3px 0 0 var(--promo)}
+  .pill.ok{background:var(--promo-soft);color:var(--promo-deep)}
+  /* Inside a class: tall enough that the tabs can sit at the top of the screen. */
+  .inside{min-height:calc(100vh - 110px)}
+  .backbtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:0 0 12px;padding:8px 16px 8px 12px;border-radius:999px;
+    border:1.5px solid var(--line);background:var(--paper);color:var(--plum);font-weight:700;font-size:15px;line-height:1;font-family:inherit;cursor:pointer}
+  .clsv{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--plum);border-radius:var(--radius);padding:18px;margin-bottom:12px}
+  .clsv .k{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
+  .clsv h3{margin:6px 0 2px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:29px;line-height:1.15;color:var(--ink)}
+  .clsv .when{font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:26px;line-height:1.15;color:var(--plum);font-variant-numeric:tabular-nums}
+  .clsv .m{font-size:14.5px;color:var(--soft);margin-top:6px}
+  .clsv .seats{font-size:14px;font-weight:700;color:var(--pink);margin-top:4px}
+  .clsv .seats.quiet{color:var(--soft);font-weight:400}
+  .mystate{border:2px solid var(--line);border-radius:var(--radius);padding:18px;background:var(--paper)}
+  .mystate .big{font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:26px;line-height:1.15}
+  .mystate.yes{background:var(--promo-soft);border-color:var(--promo)}
+  .mystate.yes .big{color:var(--promo-deep)}
+  .mystate.no{background:var(--blush);border-color:var(--blush-line)}
+  .mystate.no .big{color:var(--plum)}
+  .mystate.full .big{color:var(--soft)}
+  .mystate .btn{margin-top:14px;min-height:50px;padding:14px 30px;font-size:16px}
+  .mystate .note{margin:12px 0 0}
   .cls{background:var(--paper);border-radius:var(--radius);padding:15px 16px;margin-bottom:11px;
     display:flex;gap:14px;align-items:center;border:1px solid var(--line)}
   .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
@@ -704,7 +781,8 @@
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const baht = n => '฿' + Number(n).toLocaleString('en-US');
   let MOON = {}, CLASSES = [], PRODUCTS = [], SURCHARGE = 0, VAT = 0, LOADED = false;
-  const myCode = () => localStorage.getItem('aybkk_member') || '';
+  // Storage can be blocked (privacy settings, some in-app browsers): then nobody is signed in.
+  const myCode = () => { try { return localStorage.getItem('aybkk_member') || ''; } catch (_) { return ''; } };
 
   const STR = {
     en: {
@@ -1240,6 +1318,47 @@
     startsFirst: 'Начнётся, когда вы запишетесь на первое занятие', noPassYet: 'Абонемента пока нет.',
     noUpcoming: 'Нет записей на ближайшие занятия.', member: 'Участник', cancelBk: 'Отменить',
   });
+  // Timetable: month and week views, what this student booked, and the class view (29 Oct 2026).
+  Object.assign(STR.en, {
+    calView: 'Calendar view', viewMonth: 'Month', viewWeek: 'Week', prev: 'Previous', next: 'Next',
+    booked: 'Booked', bookedByYou: 'Booked by you', youBooked: 'You are booked', notBooked: 'Not booked yet',
+    cancelRule: h => `Cancel at least ${h} hours before class to get your credit back.`,
+    back: 'Back', teacherL: 'Teacher', online: 'online', mins: n => `${n} min`,
+    timeRange: (a, b) => `${a} to ${b}`, dateRange: (a, b) => `${a} to ${b}`,
+    bookOk: 'Booked. See you in the shala 🙏', cancelAsk: 'Cancel this booking?',
+    cancelBack: 'Cancelled. Your credit is back.',
+    cancelLate: h => `Cancelled. It was less than ${h} hours before class, so the credit is used.`,
+  });
+  Object.assign(STR.th, {
+    calView: 'มุมมองปฏิทิน', viewMonth: 'เดือน', viewWeek: 'สัปดาห์', prev: 'ก่อนหน้า', next: 'ถัดไป',
+    booked: 'จองแล้ว', bookedByYou: 'คลาสที่คุณจอง', youBooked: 'คุณจองคลาสนี้แล้ว', notBooked: 'ยังไม่ได้จอง',
+    cancelRule: h => `ยกเลิกล่วงหน้าอย่างน้อย ${h} ชั่วโมงก่อนคลาส เพื่อไม่เสียสิทธิ์`,
+    back: 'กลับ', teacherL: 'ครู', online: 'ออนไลน์', mins: n => `${n} นาที`,
+    timeRange: (a, b) => `${a} ถึง ${b}`, dateRange: (a, b) => `${a} ถึง ${b}`,
+    bookOk: 'จองแล้ว แล้วเจอกันที่ชาลา 🙏', cancelAsk: 'ยกเลิกการจองนี้ใช่ไหม',
+    cancelBack: 'ยกเลิกแล้ว ได้สิทธิ์คืนแล้ว',
+    cancelLate: h => `ยกเลิกแล้ว เหลือเวลาน้อยกว่า ${h} ชั่วโมงก่อนคลาส จึงไม่ได้สิทธิ์คืน`,
+  });
+  Object.assign(STR.zh, {
+    calView: '日历视图', viewMonth: '月', viewWeek: '周', prev: '往前', next: '往后',
+    booked: '已预约', bookedByYou: '你已预约', youBooked: '你已预约这节课', notBooked: '还没有预约',
+    cancelRule: h => `至少提前${h}小时取消，课时才会退回。`,
+    back: '返回', teacherL: '老师', online: '线上', mins: n => `${n} 分钟`,
+    timeRange: (a, b) => `${a} 至 ${b}`, dateRange: (a, b) => `${a} 至 ${b}`,
+    bookOk: '预约成功，道场见 🙏', cancelAsk: '要取消这个预约吗？',
+    cancelBack: '已取消，课时已退回。',
+    cancelLate: h => `已取消。距离上课不到${h}小时，这次课时已扣除。`,
+  });
+  Object.assign(STR.ru, {
+    calView: 'Вид календаря', viewMonth: 'Месяц', viewWeek: 'Неделя', prev: 'Раньше', next: 'Дальше',
+    booked: 'Вы записаны', bookedByYou: 'Ваши записи', youBooked: 'Вы записаны', notBooked: 'Вы ещё не записаны',
+    cancelRule: h => `Отмените запись минимум за ${h} ч до начала, чтобы сохранить занятие.`,
+    back: 'Назад', teacherL: 'Учитель', online: 'онлайн', mins: n => `${n} мин`,
+    timeRange: (a, b) => `с ${a} до ${b}`, dateRange: (a, b) => `с ${a} по ${b}`,
+    bookOk: 'Вы записаны. До встречи в шале 🙏', cancelAsk: 'Отменить эту запись?',
+    cancelBack: 'Запись отменена. Занятие вернулось на абонемент.',
+    cancelLate: h => `Запись отменена. До занятия было меньше ${h} ч, поэтому занятие списано.`,
+  });
 
   // Class names in the page language, for the drop-in class list and the
   // "you are booked" message. Anything not listed stays as the shala wrote it.
@@ -1532,6 +1651,7 @@
   // A sign-in link lands on /book?me=1: open the student's profile straight away.
   let current = new URLSearchParams(location.search).has('me') ? 'me' : 'schedule';
   window.tab = t => {
+    if (t !== current) OPEN = null;
     current = t;
     document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.id === 't' + '-' + t));
     if (t === 'schedule') renderSchedule();
@@ -1539,14 +1659,17 @@
     if (t === 'me') renderMe();
   };
 
+  const SCHEDULE_URL = '/api/bkk/schedule?days=62';
   async function load() {
     try {
       const [s, p] = await Promise.all([
-        fetch('/api/bkk/schedule?days=62').then(r => r.json()),
+        fetch(SCHEDULE_URL).then(r => r.json()),
         fetch('/api/bkk/products').then(r => r.json()),
+        loadMine(),
       ]);
       CLASSES = s.classes || [];
       MOON = s.moonDays || {};
+      takeSchedule(s);
       PRODUCTS = p.products || [];
       SURCHARGE = p.surchargePct || 0;
       VAT = p.vatPct || 0;
@@ -1563,6 +1686,15 @@
   // a student in China is 1h ahead and must not see tomorrow highlighted.
   const bkkToday = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
   let selDate = null, calMonth = null;         // calMonth = 'YYYY-MM'
+  // calWeek = the Sunday the week view starts on. OPEN = the class the student
+  // is inside ('slotId|date'); OPEN_Y = where they were on the calendar.
+  let CALVIEW = 'month', calWeek = null, OPEN = null, OPEN_Y = 0, CLOSE_KB = false;
+  // The server's cancel rule (CANCEL_CUTOFF_HOURS) and the last day it loaded.
+  let CANCEL_HOURS = 5, LOAD_TO = null;
+  function takeSchedule(s) {
+    if (Number(s.cutoffHours) > 0) CANCEL_HOURS = Number(s.cutoffHours);
+    LOAD_TO = /^\d{4}-\d{2}-\d{2}$/.test(s.to || '') ? s.to : null;
+  }
   const MONTHS = ['January','February','March','April','May','June',
     'July','August','September','October','November','December'];
 
@@ -1571,6 +1703,52 @@
   const CAL_NAME = { mysore: ['Mysore', 'Mysore'], led_primary: ['Primary', 'Primary'], led_inter: ['Intermediate', 'Inter.'] };
   const TEACH_CLS = { Boonchu: 'boon', M: 'm', Jamsai: 'jam' };
   const teachTag = n => `<b class="tg ${TEACH_CLS[n] || ''}">${esc(n)}</b>`;
+  const teacherList = c => String(c.teachers || '').split(/\s*[,&]\s*/).filter(Boolean);
+  const clsKey = c => c.slotId + '|' + c.date;
+  const bkkDate = iso => new Date(Date.parse(iso) + 7 * 3600e3).toISOString().slice(0, 10);
+  const weekOf = iso => addDays(iso, -new Date(iso + 'T12:00:00Z').getUTCDay());
+  const dateOnly = (iso, opts, en) => {
+    if (LANG === 'en') return en;
+    try { return new Date(iso + 'T12:00:00Z').toLocaleDateString(LOCALE[LANG] || 'en-GB', { timeZone: 'UTC', ...opts }); }
+    catch (_) { return en; }
+  };
+  const wkDay = iso => dateOnly(iso, { weekday: 'short' }, DAYS[new Date(iso + 'T12:00:00Z').getUTCDay()].slice(0, 3));
+  const shortDate = iso => dateOnly(iso, { day: 'numeric', month: 'short' },
+    Number(iso.slice(8)) + ' ' + MON3[Number(iso.slice(5, 7)) - 1]);
+  const seatsText = c => c.seatsLeft < 1 ? t('full')
+    : c.booked ? t('left', c.seatsLeft)
+    : t('places', c.capacity);   /* nothing booked yet: "42 left" reads odd */
+
+  // What this student booked, keyed like the schedule (slotId|Bangkok date).
+  // Only a hint for the timetable: a failed or 404 /me never signs anyone out
+  // here, renderMe keeps that job.
+  let MINE = { code: '', ok: false, map: new Map() }, MINE_LOAD = null;
+  function setMine(code, d) {
+    const map = new Map();
+    for (const b of (d && d.bookings) || []) map.set(b.slot_id + '|' + (b.classDate || bkkDate(b.start_at)), b);
+    MINE = { code, ok: !!(d && d.member), map };
+  }
+  async function loadMine() {
+    const code = myCode();
+    if (!code) return;
+    let d = null;
+    try {
+      const r = await fetch('/api/bkk/me/' + encodeURIComponent(code));
+      if (r.ok) d = await r.json();
+    } catch (_) {}
+    if (code === myCode()) setMine(code, d);
+  }
+  const mine = () => (MINE.code && MINE.code === myCode() ? MINE : { ok: false, map: new Map() });
+
+  // After a booking or a cancel: new seat counts and booked marks, same screen.
+  async function refreshSchedule() {
+    try {
+      const [s] = await Promise.all([fetch(SCHEDULE_URL).then(r => r.json()), loadMine()]);
+      if (Array.isArray(s.classes)) { CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); }
+    } catch (_) {}
+    if (current === 'schedule') renderSchedule();
+  }
+
   function pastSource(iso) {
     for (const k of [14, 28, 7, 21]) {
       const d = new Date(Date.parse(iso + 'T12:00:00Z') + k * 86400e3).toISOString().slice(0, 10);
@@ -1578,86 +1756,288 @@
     }
     return null;
   }
-  function dayChips(iso, src = iso) {
+  // A past day shows another week's classes as a guide (src); only a day's own
+  // classes are tappable.
+  function dayChips(iso, src = iso, my = mine()) {
     if (MOON[iso]) return `<span class="ch moon ${esc(MOON[iso])}" title="${esc(t(MOON[iso] === 'new' ? 'newMoon' : 'fullMoon'))}"><b>${esc(t(MOON[iso] === 'new' ? 'newMoon' : 'fullMoon'))}</b>&nbsp;</span>`;
+    const live = src === iso;
     const byKind = {};
     for (const c of CLASSES) {
-      if (c.date !== src || c.isOnline) continue;
+      if (c.date !== src) continue;
+      const key = live ? clsKey(c) : '', mine = !!key && my.map.has(key);
+      // An online twin is the same class, so it only gets a time of its own
+      // when this student booked it: the day's dot always has a marked time.
+      if (c.isOnline && !mine) continue;
       const g = byKind[c.kind] = byKind[c.kind] || { times: [], who: [] };
-      g.times.push(fmtTime(c.startAt).replace(/^0/, ''));
-      for (const w of String(c.teachers || '').split(/\s*[,&]\s*/).filter(Boolean)) if (!g.who.includes(w)) g.who.push(w);
+      g.times.push({ x: fmtTime(c.startAt).replace(/^0/, ''), key, title: c.title, mine, online: c.isOnline });
+      if (!c.isOnline) for (const w of teacherList(c)) if (!g.who.includes(w)) g.who.push(w);
     }
+    const tm = x => x.key
+      ? `<button type="button" class="tm${x.mine ? ' mine' : ''}" data-cls="${esc(x.key)}" aria-label="${
+          esc(x.x + ' ' + clsName(x.title) + (x.online ? ', ' + t('online') : '') + (x.mine ? ', ' + t('bookedByYou') : ''))}">${
+          x.mine ? '<span aria-hidden="true">✓</span>' : ''}${esc(x.x)}${x.online ? `<span class="ol">${esc(t('online'))}</span>` : ''}</button>`
+      : `<i>${esc(x.x)}</i>`;
     const sat = new Date(iso + 'T12:00:00Z').getUTCDay() === 6;
     return Object.entries(byKind).map(([k, g]) => {
       const [lg, sm] = CAL_NAME[k] || [k, k];
       const name = `<em class="cn"><span class="lg">${esc(lg)}</span><span class="sm">${esc(sm)}</span></em>`;
-      const times = `<span class="ct">${g.times.map(x => `<i>${esc(x)}</i>`).join('<span class="amp"> &amp; </span>')}</span>`;
-      return `<span class="cg ${esc(k)} ${sat ? 'sat' : ''}">${sat ? `<span class="ct">${g.times.map(x => `<i>${esc(x)}</i>`).join(' ')} ${name}</span>` : name + times}<span class="tt">${g.who.map(teachTag).join('')}</span></span>`;
+      const times = `<span class="ct">${g.times.map(tm).join('<span class="amp"> &amp; </span>')}</span>`;
+      return `<span class="cg ${esc(k)} ${sat ? 'sat' : ''}">${sat ? `<span class="ct">${g.times.map(tm).join(' ')} ${name}</span>` : name + times}<span class="tt">${g.who.map(teachTag).join('')}</span></span>`;
     }).join('');
   }
 
-  function renderSchedule() {
-    if (!CLASSES.length) { $('#view').innerHTML = `<p class="note">${esc(t('noClasses'))}</p>`; return; }
-    const has = new Set(CLASSES.map(c => c.date));
-    const today = bkkToday();
-    if (!selDate) selDate = today;
+  const calNav = (dir, act, to) => `<button type="button" class="nav" data-dir="${dir}" aria-label="${esc(t(dir))}" ${
+    to ? `data-act="${act}" data-to="${to}"` : 'disabled'}>${dir === 'prev' ? '‹' : '›'}</button>`;
+  const legend = my => `<div class="legend">
+        <div class="lr">${esc(t('calTeachers'))} ${['Boonchu', 'M', 'Jamsai'].map(teachTag).join('')}</div>
+        <div class="lr">${esc(t('calClasses'))} <span class="cg mysore"><em class="cn">Mysore</em></span><span class="cg led_primary"><em class="cn">Led Primary</em></span><span class="cg led_inter"><em class="cn">Led Intermediate</em></span></div>
+        <div class="lr"><span class="ch moon full">${esc(t('moonDay'))}</span></div>${
+        my.ok ? `<div class="lr"><span class="lmine"><i class="bk" aria-hidden="true"></i> ✓ ${esc(t('bookedByYou'))}</span></div>` : ''}</div>`;
+
+  function monthCal(has, today, my) {
+    // Today's month stays reachable even after its last class is over.
+    const months = [...new Set([today.slice(0, 7), ...[...has].map(d => d.slice(0, 7))])].sort();
     if (!calMonth) calMonth = selDate.slice(0, 7);
-    const months = [...new Set([...has].map(d => d.slice(0, 7)))].sort();
+    if (calMonth < months[0]) calMonth = months[0];
+    if (calMonth > months[months.length - 1]) calMonth = months[months.length - 1];
     const mi = months.indexOf(calMonth);
     const [yy, mm] = calMonth.split('-').map(Number);
     const firstDow = new Date(Date.UTC(yy, mm - 1, 1)).getUTCDay();   // Sunday-first, like the printed timetable
     const daysIn = new Date(Date.UTC(yy, mm, 0)).getUTCDate();
+    const myDays = new Set([...my.map.keys()].map(k => k.split('|')[1]));
 
+    // A day is a plain div (it holds the time buttons): the number is its own
+    // button for the keyboard, and a tap anywhere else in the cell picks the day.
     let cells = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(w => `<div class="wd">${w}</div>`).join('');
     for (let i = 0; i < firstDow; i++) cells += '<span></span>';
     for (let d = 1; d <= daysIn; d++) {
       const iso = `${calMonth}-${String(d).padStart(2, '0')}`;
       const open = has.has(iso);
       const src = !open && iso <= today ? pastSource(iso) : null;
-      cells += `<button class="d ${open ? '' : 'off'} ${src ? 'past' : ''} ${MOON[iso] ? 'moonday' : ''} ${iso === today ? 'today' : ''}
-        ${iso === selDate ? 'sel' : ''}" ${open ? `onclick="pickDay('${iso}')"` : 'disabled'}>
-        <span class="n">${d}</span>${dayChips(iso, src || iso)}</button>`;
+      const booked = open && myDays.has(iso);
+      const num = open ? `<button type="button" class="dn" aria-pressed="${iso === selDate}" aria-label="${
+        esc(fmtDay(iso + 'T12:00:00+07:00') + (booked ? ', ' + t('bookedByYou') : ''))}">${d}</button>` : d;
+      cells += `<div class="d ${open ? '' : 'off'} ${src ? 'past' : ''} ${MOON[iso] ? 'moonday' : ''} ${iso === today ? 'today' : ''}
+        ${iso === selDate ? 'sel' : ''}"${open ? ` data-day="${iso}"` : ''}>
+        <span class="n">${num}${booked ? '<i class="bk" aria-hidden="true"></i>' : ''}</span>${dayChips(iso, src || iso, my)}</div>`;
     }
-    const cal = `<div class="cal">
+    return `<div class="cal">
       <div class="head">
-        <button class="nav" ${mi > 0 ? `onclick="calGo('${months[mi - 1]}')"` : 'disabled'}>‹</button>
+        ${calNav('prev', 'month', mi > 0 ? months[mi - 1] : '')}
         <b>${MONTHS[mm - 1]}<small>${yy}</small></b>
-        <button class="nav" ${mi >= 0 && mi < months.length - 1
-          ? `onclick="calGo('${months[mi + 1]}')"` : 'disabled'}>›</button>
+        ${calNav('next', 'month', mi >= 0 && mi < months.length - 1 ? months[mi + 1] : '')}
       </div>
       <div class="grid">${cells}</div>
-      <div class="legend">
-        <div class="lr">${esc(t('calTeachers'))} ${['Boonchu', 'M', 'Jamsai'].map(teachTag).join('')}</div>
-        <div class="lr">${esc(t('calClasses'))} <span class="cg mysore"><em class="cn">Mysore</em></span><span class="cg led_primary"><em class="cn">Led Primary</em></span><span class="cg led_inter"><em class="cn">Led Intermediate</em></span></div>
-        <div class="lr"><span class="ch moon full">${esc(t('moonDay'))}</span></div></div></div>`;
+      ${legend(my)}</div>`;
+  }
 
+  // Weeks inside the loaded 62 days, Sunday to Saturday. A week the student
+  // moves to brings its own day list: the first day there with classes.
+  // The last week is the last one loaded in full: a day past the load would
+  // look like a day with no class.
+  function lastWeek() {
+    const end = LOAD_TO || CLASSES[CLASSES.length - 1].date, w = weekOf(end);
+    const w1 = new Date(end + 'T12:00:00Z').getUTCDay() === 6 ? w : addDays(w, -7);
+    const w0 = weekOf(bkkToday());
+    return w1 < w0 ? w0 : w1;
+  }
+  function goWeek(w) {
+    if (!CLASSES.length) return;
+    const w0 = weekOf(bkkToday()), w1 = lastWeek();
+    calWeek = w < w0 ? w0 : w > w1 ? w1 : w;
+    const end = addDays(calWeek, 6);
+    if (!selDate || selDate < calWeek || selDate > end) {
+      const first = CLASSES.find(c => c.date >= calWeek && c.date <= end);
+      if (first) selDate = first.date;
+    }
+  }
+  function weekBlock(c, my) {
+    const booked = my.map.has(clsKey(c)), full = c.seatsLeft < 1;
+    const who = teacherList(c);
+    return `<button type="button" class="wb ${esc(c.kind)}${booked ? ' mine' : full ? ' isfull' : ''}" data-cls="${esc(clsKey(c))}">
+        <span class="wt">${esc(fmtTime(c.startAt))}${c.isOnline ? `<span class="on">${esc(t('online'))}</span>` : ''}</span>
+        <em class="cn">${esc((CAL_NAME[c.kind] || [c.title, c.title])[1])}</em>
+        ${who.length ? `<span class="wtt">${who.map(teachTag).join('')}</span>` : ''}
+        <span class="st${booked ? ' ok' : full ? ' full' : ''}">${esc(booked ? '✓ ' + t('booked') : full ? t('full') : t('places', c.seatsLeft))}</span>
+      </button>`;
+  }
+  function weekCal(has, today, my) {
+    goWeek(calWeek || weekOf(selDate));
+    const w0 = weekOf(today), w1 = lastWeek();
+    const days = [0, 1, 2, 3, 4, 5, 6].map(i => addDays(calWeek, i));
+    const cols = days.map(iso => {
+      const moon = MOON[iso];
+      const cls = `wh${iso === today ? ' today' : ''}${iso === selDate ? ' sel' : ''}${iso < today ? ' past' : ''}`;
+      const head = `<span class="w">${esc(wkDay(iso))}</span><span class="dd">${Number(iso.slice(8))}</span>${
+        moon ? `<span class="ml">${esc(t(moon === 'new' ? 'newMoon' : 'fullMoon'))}</span>` : ''}`;
+      const hd = has.has(iso)
+        ? `<button type="button" class="${cls}" data-act="day" data-day="${iso}" aria-pressed="${iso === selDate}" aria-label="${
+            esc(fmtDay(iso + 'T12:00:00+07:00'))}">${head}</button>`
+        : `<div class="${cls}">${head}</div>`;
+      return `<div class="wcol${moon ? ' moonday' : ''}" data-col="${iso}">${hd}${
+        CLASSES.filter(c => c.date === iso).map(c => weekBlock(c, my)).join('')}</div>`;
+    }).join('');
+    return `<div class="cal wk">
+      <div class="head">
+        ${calNav('prev', 'week', calWeek > w0 ? addDays(calWeek, -7) : '')}
+        <b class="wkl">${esc(t('dateRange', shortDate(days[0]), shortDate(days[6])))}<small>${days[6].slice(0, 4)}</small></b>
+        ${calNav('next', 'week', calWeek < w1 ? addDays(calWeek, 7) : '')}
+      </div>
+      <div class="wkbox"><div class="wkgrid">${cols}</div></div>
+      ${legend(my)}</div>`;
+  }
+
+  function dayList(my) {
     // Label from the Bangkok class date itself, never from the timestamp — in a
     // viewer's local timezone a 05:30 class can fall on the previous calendar day.
     const dayLabel = fmtDay(selDate + 'T12:00:00+07:00');
     const dayClasses = CLASSES.filter(c => c.date === selDate);
-    let html = cal;
-    html += `<div class="day">${esc(dayLabel)}</div>`;
+    let html = `<div class="day" id="dayList">${esc(dayLabel)}</div>`;
     if (!dayClasses.length) html += `<p class="note">${esc(t('noDay'))}</p>`;
     for (const c of dayClasses) {
-      const full = c.seatsLeft < 1;
-      html += `<div class="cls ${full ? 'full' : ''}">
+      const key = clsKey(c), b = my.map.get(key), full = c.seatsLeft < 1;
+      html += `<div class="cls ${full && !b ? 'full' : ''} ${b ? 'mine' : ''}" data-cls="${esc(key)}">
         <div class="t">${fmtTime(c.startAt)}</div>
         <div class="b">
-          <div class="n">${esc(c.title)}${c.isOnline ? '<span class="pill">online</span>' : ''}</div>
-          <div class="m">${c.durationMin} min${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
-          <div class="seats ${c.booked ? '' : 'quiet'}">${
-            full ? esc(t('full'))
-            : c.booked ? esc(t('left', c.seatsLeft))
-            : esc(t('places', c.capacity))   /* nothing booked yet — "42 left" reads odd */
-          }</div>
+          <div class="n"><button type="button" class="open" data-cls="${esc(key)}">${esc(clsName(c.title))}</button>${
+            c.isOnline ? `<span class="pill">${esc(t('online'))}</span>` : ''}${
+            b ? `<span class="pill ok">✓ ${esc(t('booked'))}</span>` : ''}</div>
+          <div class="m">${esc(t('mins', c.durationMin))}${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
+          <div class="seats ${c.booked ? '' : 'quiet'}">${esc(seatsText(c))}</div>
         </div>
-        <button class="btn" ${full ? 'disabled' : ''} onclick="book(${c.slotId},'${c.date}')">${esc(t('book'))}</button>
+        ${b ? `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`
+          : `<button type="button" class="btn" ${full ? 'disabled' : ''} data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button>`}
       </div>`;
     }
-    $('#view').innerHTML = html;
+    return html;
+  }
+
+  // Inside a class: the class itself, then this student's state, big and clear.
+  function renderClass() {
+    const c = CLASSES.find(x => clsKey(x) === OPEN);
+    if (!c) { OPEN = null; return renderSchedule(); }   // started or closed since
+    const b = mine().map.get(OPEN), full = c.seatsLeft < 1;
+    const end = new Date(Date.parse(c.startAt) + (Number(c.durationMin) || 0) * 60e3).toISOString();
+    const state = b ? `<div class="mystate yes"><div class="big">✓ ${esc(t('youBooked'))}</div>
+        <button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>
+        <p class="note">${esc(t('cancelRule', CANCEL_HOURS))}</p></div>`
+      : full ? `<div class="mystate full"><div class="big">${esc(t('full'))}</div></div>`
+      : `<div class="mystate no"><div class="big">${esc(t('notBooked'))}</div>
+        <button type="button" class="btn pink" data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button></div>`;
+    $('#view').innerHTML = `<div class="inside"><button type="button" class="backbtn" data-act="back">‹ ${esc(t('back'))}</button>
+      <div class="clsv">
+        <div class="k">${esc(fmtDay(c.date + 'T12:00:00+07:00'))}</div>
+        <h3>${esc(clsName(c.title))}${c.isOnline ? `<span class="pill">${esc(t('online'))}</span>` : ''}</h3>
+        <div class="when">${esc(t('timeRange', fmtTime(c.startAt), fmtTime(end)))}</div>
+        <div class="m">${c.teachers ? esc(t('teacherL')) + ': ' + esc(c.teachers) + ' · ' : ''}${esc(t('mins', c.durationMin))}</div>
+        <div class="seats ${c.booked ? '' : 'quiet'}">${esc(seatsText(c))}</div>
+      </div>
+      ${state}</div>`;
+  }
+
+  function renderSchedule() {
+    if (myCode() && MINE.code !== myCode() && !MINE_LOAD)
+      MINE_LOAD = loadMine().then(() => { MINE_LOAD = null; if (current === 'schedule') renderSchedule(); });
+    if (OPEN) return renderClass();
+    if (!CLASSES.length) { $('#view').innerHTML = `<p class="note">${esc(t('noClasses'))}</p>`; return; }
+    const has = new Set(CLASSES.map(c => c.date));
+    const today = bkkToday();
+    if (!selDate) selDate = today;
+    const my = mine();
+    const sw = `<div class="calsw" role="group" aria-label="${esc(t('calView'))}">${['month', 'week'].map(v =>
+      `<button type="button" data-act="view" data-v="${v}" aria-pressed="${CALVIEW === v}">${esc(t(v === 'month' ? 'viewMonth' : 'viewWeek'))}</button>`).join('')}</div>`;
+    $('#view').innerHTML = sw + (CALVIEW === 'week' ? weekCal(has, today, my) : monthCal(has, today, my)) + dayList(my);
+    if (CALVIEW === 'week') {
+      // Phones scroll the week sideways: start at the chosen day, or today.
+      const box = $('#view .wkbox');
+      const col = box.querySelector(`[data-col="${selDate}"]`) || box.querySelector(`[data-col="${today}"]`);
+      box.scrollLeft = col ? Math.max(0, col.offsetLeft - 8) : 0;
+    }
   }
   window.pickDay = iso => { selDate = iso; renderSchedule(); };
   window.calGo = m => { calMonth = m; renderSchedule(); };
+
+  function setView(v) {
+    if (v === CALVIEW) return;
+    if (v === 'week') goWeek(weekOf(calMonth && selDate.slice(0, 7) !== calMonth ? calMonth + '-01' : selDate));
+    else {
+      const today = bkkToday(), inWeek = selDate >= calWeek && selDate <= addDays(calWeek, 6);
+      calMonth = (inWeek ? selDate : calWeek < today ? today : calWeek).slice(0, 7);
+    }
+    CALVIEW = v;
+  }
+
+  // Without a page change, so the phone's own Back button closes the class too.
+  const jump = y => {
+    const h = document.documentElement, was = h.style.scrollBehavior;
+    h.style.scrollBehavior = 'auto'; scrollTo(0, y); h.style.scrollBehavior = was;
+  };
+  function openCls(key, kb) {
+    OPEN_Y = scrollY; OPEN = key;
+    try { history.pushState({ aybkkCls: key }, ''); } catch (_) {}
+    renderSchedule();
+    // The tabs are sticky, so measure from the view under them: tabs at the top of the screen.
+    jump($('#view').getBoundingClientRect().top + scrollY - $('#book').offsetHeight);
+    if (kb) { const b = $('#view [data-act="back"]'); if (b) b.focus({ preventScroll: true }); }
+  }
+  function shutCls() {
+    const key = OPEN;
+    OPEN = null;
+    if (current !== 'schedule') return;
+    renderSchedule();
+    jump(OPEN_Y);
+    const el = CLOSE_KB && key && $('#view').querySelector(`[data-cls="${key}"]`);
+    if (el) el.focus({ preventScroll: true });
+    CLOSE_KB = false;
+  }
+  function closeCls(kb) {
+    CLOSE_KB = kb;
+    if (history.state && history.state.aybkkCls === OPEN) history.back();
+    else shutCls();
+  }
+  addEventListener('popstate', e => {
+    const key = e.state && e.state.aybkkCls;
+    if (key) {
+      if (current === 'schedule' && OPEN !== key) { OPEN_Y = scrollY; OPEN = key; renderSchedule(); }
+    } else if (OPEN) shutCls();
+  });
+
+  $('#view').addEventListener('click', e => {
+    if (current !== 'schedule') return;
+    const kb = e.detail === 0;                  // Enter or Space on a button
+    const focus = (...sels) => {
+      if (!kb) return;
+      for (const s of sels) {
+        const el = $('#view').querySelector(s);
+        if (el && !el.disabled) { el.focus({ preventScroll: true }); return; }
+      }
+    };
+    const a = e.target.closest('[data-act]');
+    if (a) {
+      const act = a.dataset.act;
+      if (act === 'book') return book(Number(a.dataset.slot), a.dataset.date);
+      if (act === 'cancel') return cancelBooking(Number(a.dataset.id));
+      if (act === 'back') return closeCls(kb);
+      if (act === 'view') { setView(a.dataset.v); renderSchedule(); return focus(`[data-act="view"][data-v="${a.dataset.v}"]`); }
+      if (act === 'month' || act === 'week') {
+        if (act === 'month') calMonth = a.dataset.to; else goWeek(a.dataset.to);
+        renderSchedule();
+        return focus(`.nav[data-dir="${a.dataset.dir}"]`, '.cal .nav');
+      }
+      if (act === 'day') {
+        selDate = a.dataset.day;
+        renderSchedule();
+        focus(`.wh[data-day="${selDate}"]`);
+        const list = $('#dayList');
+        if (list && list.getBoundingClientRect().top > innerHeight * 0.6) list.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
+      return;
+    }
+    const c = e.target.closest('[data-cls]');
+    if (c) return openCls(c.dataset.cls, kb);
+    const d = e.target.closest('.cal .d[data-day]');
+    if (d) { selDate = d.dataset.day; renderSchedule(); focus(`.d[data-day="${selDate}"] .dn`); }
+  });
 
   function renderPackages() {
     const html = PRODUCTS.map(p => {
@@ -1704,6 +2084,7 @@
       // the API's own answer counts; an outage must not sign everyone out.
       if (res.status === 404 && d.error === 'not found') { forgetMe(); return renderMe(true); }
       if (d.error) throw new Error(d.error);
+      setMine(code, d);
       const passes = (d.passes || []).map(p => `<div class="pkg">
         <h3>${esc((LANG === 'th' && p.nameTh) || p.name)}</h3>
         <div class="note">${esc(p.kind === 'unlimited'
@@ -2008,12 +2389,18 @@
     buy(p.code, { slotId, date }, t('noPassDrop'));
     return true;
   };
+  // Book and cancel keep the student where they are (calendar, day list or
+  // inside the class) and refresh the seats and their booked marks. BUSY stops
+  // a double tap from sending twice.
+  let BUSY = false;
   window.book = async (slotId, date) => {
     const code = myCode();
     if (!code) {
       if (!offerDropin(slotId, date)) alert('Please buy a package first, or open "My pass" and enter your member code.');
       return;
     }
+    if (BUSY) return;
+    BUSY = true;
     try {
       const r = await fetch('/api/bkk/bookings', { method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2023,22 +2410,30 @@
         if (/no active pass/.test(j.error || '') && offerDropin(slotId, date)) return;
         throw new Error(j.error);
       }
-      alert('Booked. See you in the shala 🙏');
-      load();
+      BUSY = false;
+      // Said at once; the new seats and marks come in behind the message.
+      refreshSchedule();
+      alert(t('bookOk'));
     } catch (e) { alert(e.message); }
+    finally { BUSY = false; }
   };
 
   window.cancelBooking = async (id) => {
-    if (!confirm('Cancel this booking?')) return;
+    if (BUSY || !confirm(t('cancelAsk'))) return;
+    BUSY = true;
     try {
       const r = await fetch(`/api/bkk/bookings/${id}/cancel`, { method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ memberCode: myCode() }) });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error);
-      alert(j.message);
-      renderMe();
+      BUSY = false;
+      if (current === 'me') renderMe();
+      refreshSchedule();
+      const h = Number(j.cutoffHours) > 0 ? Number(j.cutoffHours) : CANCEL_HOURS;
+      alert(j.creditReturned ? t('cancelBack') : t('cancelLate', h));
     } catch (e) { alert(e.message); }
+    finally { BUSY = false; }
   };
 
   // Coming back from the gateway. There is no parameter on the return URL, so

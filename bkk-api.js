@@ -684,7 +684,8 @@ function mountBkk(app, opts = {}) {
         }
       }
       out.sort((a, b) => a.startAt.localeCompare(b.startAt));
-      res.json({ classes: out, moonDays: Object.fromEntries(moon) });
+      // to: the last day loaded, so a page knows a later day is not "no class".
+      res.json({ classes: out, moonDays: Object.fromEntries(moon), to: dates[dates.length - 1], cutoffHours: CANCEL_CUTOFF_HOURS });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -962,16 +963,16 @@ function mountBkk(app, opts = {}) {
         try {
           seat = await takeSeat(client, { member: { id: order.member_id }, slotId, date, staff: true,
             allowOver: true, cover: 'pass', passId: pass.id, checkIn: !!opts.checkIn,
-            source: opts.source || 'order', requestId: opts.requestId });
+            source: opts.source || 'order', requestId: opts.requestId, onList: true });
           await client.query('RELEASE SAVEPOINT seat');
         } catch (e) {
           await client.query('ROLLBACK TO SAVEPOINT seat');
           seat = { error: e.message };
         }
-        // At the door the money is still in the hand. Another phone (or a
-        // second tap) put them on the list while this sale was on its way:
-        // they stay checked in, and nothing is sold twice.
-        if (opts.source === 'door' && seat.already) {
+        // At the door (or staff adding from the calendar) the money is still in
+        // the hand. Another phone (or a second tap) put them on the list while
+        // this sale was on its way: they keep that seat, and nothing is sold twice.
+        if ((opts.source === 'door' || opts.source === 'staff') && seat.already) {
           await client.query('DELETE FROM bkk_passes WHERE id=$1', [pass.id]);
           await client.query('DELETE FROM bkk_orders WHERE id=$1', [order.id]);
           await client.query('COMMIT');
@@ -1453,8 +1454,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const passes = (await q(
         `SELECT p.*, pr.name_en, pr.name_th FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id])).rows;
+      // classDate is the Bangkok day as text: class_date comes back as a JS
+      // Date, which a browser in another timezone can shift a day.
       const bookings = (await q(
-        `SELECT b.*, s.title, s.start_time, s.is_online FROM bkk_bookings b
+        `SELECT b.*, to_char(b.class_date,'YYYY-MM-DD') AS "classDate", s.title, s.start_time, s.is_online FROM bkk_bookings b
          JOIN bkk_class_slots s ON s.id=b.slot_id
          WHERE b.member_id=$1 AND b.status='booked' AND b.start_at >= now()
          ORDER BY b.start_at`, [m.id])).rows;
@@ -1499,6 +1502,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   const singleClass = pr => pr.kind === 'credits' && Number(pr.credits) === 1;
   const CLASS_ENDED = 'that class has already ended';
+  // A visit moved from Rezerv that matched no slot is history as Rezerv kept it.
+  const REZERV_READONLY = 'moved from Rezerv: it cannot be changed here';
   const seatsTaken = async (db, slotId, date) => (await db.query(
     `SELECT count(*)::int AS n FROM bkk_bookings
      WHERE slot_id=$1 AND class_date=$2 AND status='booked'`, [slotId, date])).rows[0].n;
@@ -1537,11 +1542,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   //   source    'student' | 'staff' | 'door' | 'order'
   //   requestId the door's id for this add: a seat already carrying it is the
   //             same add sent twice (out.repeat), even for a second new profile
-  // The door and paid orders treat a seat the member already holds as "on the
-  // list" and just check it in; a student is told they already booked it.
+  //   onList    treat a seat the member already holds as "on the list"
+  // The door and paid orders (and staff adding from the calendar) treat a seat
+  // the member already holds as "on the list" and just check it in (when
+  // checkIn); a student is told they already booked it.
   async function takeSeat(db, { member, slotId, date, staff = false, allowOver = false,
-    cover = 'pass', passId = null, checkIn = false, source = 'student', requestId = null }) {
-    const door = source === 'door' || source === 'order';
+    cover = 'pass', passId = null, checkIn = false, source = 'student', requestId = null,
+    onList = source === 'door' || source === 'order' }) {
+    const door = onList;
     const { slot, startAt, capacity } = await classCheck(db, slotId, date,
       { staff, endedMsg: door ? CLASS_ENDED : undefined });
 
@@ -1651,6 +1659,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // it skipped the ownership check entirely and let anyone cancel any booking
       // by guessing its id. Staff cancel through the admin, not through here.
       if (!isAdmin(req) && b.mcode !== String(mcode || '')) throw new Error('not your booking');
+      if (b.slot_id == null) throw new Error(REZERV_READONLY);
       if (b.status !== 'booked') throw new Error('already ' + b.status);
 
       const hoursLeft = (new Date(b.start_at) - bkkNow()) / 3600000;
@@ -1664,7 +1673,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       await client.query('COMMIT');
       res.json({
-        success: true, creditReturned: refund,
+        success: true, creditReturned: refund, cutoffHours: CANCEL_CUTOFF_HOURS,
         message: refund ? 'Cancelled — your credit is back.'
           : `Cancelled. Less than ${CANCEL_CUTOFF_HOURS}h before class, so the credit is used.`,
       });
@@ -1779,6 +1788,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // not in this system yet, so 'rezerv' seats them with no pass; anyone else
   // buys a drop-in on the spot (a real desk sale: today's money, VAT, receipt).
   // Over capacity is allowed and reported: the person is already in the room.
+  // The calendar adds the same way, with checkIn: false for a class that has
+  // not started: the seat is taken, nobody is checked in, source 'staff'.
   const WALKIN_COVERS = ['pass', 'rezerv', 'dropin'];
   // What a door add with this requestId already did, answered again as it was
   // the first time: staff tap a second time when the first reply is lost.
@@ -1803,8 +1814,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       return res.status(400).json({ error: 'slotId and date (YYYY-MM-DD) required' });
     if (cover === 'dropin' && !DESK_METHODS.includes(b.method))
       return res.status(400).json({ error: 'method must be cash, transfer or card' });
+    if (b.checkIn !== undefined && typeof b.checkIn !== 'boolean')
+      return res.status(400).json({ error: 'checkIn must be true or false' });
     const slotId = Number(b.slotId);
     const rid = b.requestId ? String(b.requestId).slice(0, 64) : null;
+    const checkIn = b.checkIn !== false;
+    const source = checkIn ? 'door' : 'staff';
+    // Nobody is in the room for a class on a later day: the rule of the
+    // check-in from inside a class. The door only ever sends today.
+    if (checkIn && date > bkkToday()) return res.status(409).json({ error: 'that class is not today yet' });
     try {
       const first = rid && await walkinDone(rid);
       if (first) return res.json(first);
@@ -1827,7 +1845,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const reply = (seat, extra = {}) => res.json({ success: true, name: member.name, code: member.code,
       className: seat.title, startAt: seat.startAt, overCapacity: !!seat.overCapacity, already: !!seat.already, ...extra });
     // A seat takeSeat found rather than made: the same add sent twice, or
-    // someone already on the list (checked in, nothing sold).
+    // someone already on the list (checked in unless checkIn is false, nothing sold).
     const listed = s => s.repeat ? walkinDone(rid).then(r => res.json(r))
       : reply({ title: s.slot.title, startAt: s.startAt, overCapacity: s.overCapacity, already: s.already },
         { cover: s.already ? (s.booking.cover || (s.booking.pass_id ? 'pass' : 'rezerv')) : cover });
@@ -1838,7 +1856,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       await client.query('BEGIN');
       seat = await takeSeat(client, { member, slotId, date, staff: true, allowOver: true,
-        cover: cover === 'dropin' ? null : cover, checkIn: true, source: 'door', requestId: rid });
+        cover: cover === 'dropin' ? null : cover, checkIn, source, requestId: rid, onList: true });
       await client.query('COMMIT');
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
@@ -1851,8 +1869,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (seat) return await listed(seat);
       const pr = (await q(`SELECT * FROM bkk_products WHERE code='dropin' AND active`)).rows[0];
       if (!pr) return res.status(404).json({ error: 'the drop-in is not on sale' });
-      const { o, act } = await deskSale({ member, pr, method: b.method, slotId, date, checkIn: true,
-        source: 'door', requestId: rid });
+      const { o, act } = await deskSale({ member, pr, method: b.method, slotId, date, checkIn,
+        source, requestId: rid });
       if (act && act.unsold) return await listed(act.seat);
       // Paid, but the seat went in the moment between: the money and the pass
       // stand, and the shala has the Telegram ping to put them on by hand.
@@ -3652,6 +3670,165 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                WHERE slot_id=$1 AND class_date=$2`, [slotId, date]);
       res.json({ success: true });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── the class calendar (admin) ───────────────────────────────────────────
+  // Every class over a stretch of days with its counts, past ones included:
+  // the timetable as generated (moon days off), a closed class kept so staff
+  // can see it and reopen it, and any class with names on it, even one no
+  // longer run or on a moon day, so history never drops off the calendar.
+  // A Rezerv class moved over with no slot is one read-only class per
+  // (day, title, start time). key is what the page sends back for one class.
+  const CAL_TIME = `to_char(b.start_at AT TIME ZONE 'Asia/Bangkok','HH24:MI')`;
+  const bkkISO = ms => new Date(ms + 7 * 3600000).toISOString().slice(0, 16) + ':00' + TZ_OFFSET;
+  function calClass({ slot, date, ov, n = {}, time, title }) {
+    const counts = { booked: n.booked || 0, checkedIn: n.checkedIn || 0, noShows: n.noShows || 0 };
+    if (!slot) {
+      // The import stores a Rezerv visit with no time at 00:00 (VISIT_TIME):
+      // the key keeps it, so the class still opens by time=00:00.
+      return { key: `x:${date}:${time}:${title}`, slotId: null, date, startAt: startAtISO(date, time),
+        timeKnown: time !== '00:00', title,
+        kind: null, teachers: '', durationMin: null, isOnline: /online|zoom|ออนไลน์/i.test(title), capacity: null,
+        ...counts, cancelled: false, note: null };
+    }
+    const cancelled = !!(ov && ov.cancelled);
+    return { key: `s:${slot.id}:${date}`, slotId: slot.id, date, startAt: startAtISO(date, slot.start_time), timeKnown: true,
+      title: slot.title, kind: slot.kind, teachers: rotationTeacher(slot.code, date) || slot.teachers || '',
+      durationMin: slot.duration_min, isOnline: slot.is_online,
+      // ?? not || — an override capacity of 0 ("closed today") is a real value.
+      capacity: ov && ov.capacity != null ? ov.capacity : slot.capacity,
+      ...counts, cancelled, note: cancelled ? ov.note : null };
+  }
+
+  app.get('/api/bkk/admin/calendar', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const r = dayRange(req.query, { required: true, maxDays: SCHEDULE_DAYS });
+    if (r.error) return res.status(400).json({ error: r.error });
+    const { from, to } = r;
+    try {
+      const [slots, ovs, counts] = await Promise.all([
+        q('SELECT * FROM bkk_class_slots'),
+        q(`SELECT slot_id, to_char(class_date,'YYYY-MM-DD') AS date, cancelled, capacity, note
+           FROM bkk_class_overrides WHERE class_date BETWEEN $1::date AND $2::date`, [from, to]),
+        q(`SELECT b.slot_id, to_char(b.class_date,'YYYY-MM-DD') AS date,
+             CASE WHEN b.slot_id IS NULL THEN coalesce(b.class_title,'') END AS title,
+             CASE WHEN b.slot_id IS NULL THEN ${CAL_TIME} END AS time,
+             count(*) FILTER (WHERE b.status='booked')::int AS booked,
+             count(*) FILTER (WHERE b.status='booked' AND b.checked_in_at IS NOT NULL)::int AS checked_in,
+             count(*) FILTER (WHERE b.status='noshow')::int AS no_shows
+           FROM bkk_bookings b
+           WHERE b.class_date BETWEEN $1::date AND $2::date AND b.status IN ('booked','noshow')
+           GROUP BY 1, 2, 3, 4`, [from, to]),
+      ]);
+      const slotById = new Map(slots.rows.map(s => [s.id, s]));
+      const ovOf = new Map(ovs.rows.map(o => [`${o.slot_id}:${o.date}`, o]));
+      const moon = moonDaysBetween(from, to);
+      const found = new Map(), out = [];
+      for (let t = Date.parse(`${from}T12:00:00Z`); t <= Date.parse(`${to}T12:00:00Z`); t += 86400000) {
+        const date = new Date(t).toISOString().slice(0, 10);
+        if (moon.has(date)) continue;
+        const wd = new Date(t).getUTCDay();
+        for (const s of slots.rows) if (s.active && s.weekday === wd) found.set(`${s.id}:${date}`, { slot: s, date });
+      }
+      for (const row of counts.rows) {
+        const n = { booked: row.booked, checkedIn: row.checked_in, noShows: row.no_shows };
+        if (row.slot_id == null) { out.push(calClass({ date: row.date, time: row.time, title: row.title, n })); continue; }
+        if (!slotById.has(row.slot_id)) continue;
+        found.set(`${row.slot_id}:${row.date}`, { slot: slotById.get(row.slot_id), date: row.date, n });
+      }
+      for (const [k, c] of found) out.push(calClass({ ...c, ov: ovOf.get(k) }));
+      // A class with no time on file goes last in its day, not first at 00:00.
+      out.sort((a, b) => a.date.localeCompare(b.date) || (a.timeKnown ? 0 : 1) - (b.timeKnown ? 0 : 1)
+        || a.startAt.localeCompare(b.startAt) || (a.isOnline - b.isOnline) || a.title.localeCompare(b.title));
+      res.json({ from, to, today: bkkToday(), moonDays: Object.fromEntries(moon), classes: out });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Inside one class: ?slotId=&date=, or ?date=&time=&title= for a slotless
+  // class moved over from Rezerv. No email, phone or birthday on the roster.
+  app.get('/api/bkk/admin/class', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const { slotId, date } = req.query;
+    const bySlot = slotId != null && slotId !== '';
+    const time = String(req.query.time || ''), title = String(req.query.title || '');
+    if (!realYmd(date)) return res.status(400).json({ error: 'date must be a date (YYYY-MM-DD)' });
+    if (bySlot ? !/^\d{1,9}$/.test(String(slotId)) : !/^\d{2}:\d{2}$/.test(time))
+      return res.status(400).json({ error: 'slotId, or time (HH:MM) and title, needed' });
+    try {
+      let slot = null, ov = null;
+      if (bySlot) {
+        slot = (await q('SELECT * FROM bkk_class_slots WHERE id=$1', [Number(slotId)])).rows[0];
+        if (!slot) return res.status(404).json({ error: 'class not found' });
+        ov = (await q('SELECT * FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2::date', [slot.id, date])).rows[0];
+      }
+      const rows = (await q(
+        `SELECT b.id, b.status, b.checked_in_at, b.booked_at, b.cancelled_at, b.cancel_reason, b.cover, b.source,
+           m.code, m.name, pr.name_en AS pass_name, coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
+         FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+         LEFT JOIN bkk_passes p ON p.id=b.pass_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
+         WHERE b.class_date=$1::date AND ${bySlot ? 'b.slot_id=$2'
+           : `b.slot_id IS NULL AND ${CAL_TIME}=$2 AND coalesce(b.class_title,'')=$3`}`,
+        bySlot ? [date, slot.id] : [date, time, title])).rows;
+      if (!bySlot && !rows.length) return res.status(404).json({ error: 'class not found' });
+      const live = rows.filter(b => b.status === 'booked' || b.status === 'noshow');
+      // Another weekday's slot is not a class on this day, unless names are
+      // already on it: then it is history and is shown.
+      const offDay = slot && new Date(`${date}T12:00:00Z`).getUTCDay() !== slot.weekday;
+      if (offDay && !live.length) return res.status(400).json({ error: 'that class is not on that day' });
+      const c = calClass({ slot, date, ov, time, title, n: {
+        booked: live.filter(b => b.status === 'booked').length,
+        checkedIn: live.filter(b => b.status === 'booked' && b.checked_in_at).length,
+        noShows: live.filter(b => b.status === 'noshow').length } });
+      const startMs = Date.parse(c.startAt), now = bkkNow().getTime();
+      const dur = slot ? (slot.duration_min || 120) : null;
+      const started = now >= startMs;
+      // classCheck's staff rule: a name can go on the list until the class ends.
+      // A slotless class only exists as Rezerv history, so it is over once begun.
+      const ended = slot ? (now - startMs) / 60000 > dur : started;
+      const canAdd = !!slot && slot.active && !offDay && !c.cancelled && !ended && !moonDaysBetween(date, date).size;
+      res.json({
+        class: { ...c, endAt: slot ? bkkISO(startMs + dur * 60000) : null, started, ended, canAdd },
+        roster: live.map(b => ({ bookingId: b.id, code: b.code, name: b.name, status: b.status,
+          checkedInAt: b.checked_in_at, bookedAt: b.booked_at, cover: b.cover, source: b.source,
+          passName: b.pass_name, dropin: b.dropin }))
+          .sort((a, b) => String(a.name).localeCompare(String(b.name)) || a.bookingId - b.bookingId),
+        cancelledList: rows.filter(b => b.status === 'cancelled')
+          .sort((a, b) => (b.cancelled_at || 0) - (a.cancelled_at || 0) || b.id - a.id)
+          .map(b => ({ code: b.code, name: b.name, cancelledAt: b.cancelled_at, reason: b.cancel_reason })),
+      });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Check one name in from inside a class, or undo it. A past class is
+  // checked in at its start (as the Rezerv import does), a no-show seen after
+  // all becomes a visit, and a class not reached yet cannot be: nobody is in
+  // the room. Pass credits are never touched here.
+  app.post('/api/bkk/admin/bookings/:id/checkin', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    if (!/^\d{1,9}$/.test(req.params.id)) return res.status(404).json({ error: 'booking not found' });
+    const undo = (req.body || {}).undo === true;
+    try {
+      const b = (await q(`SELECT id, slot_id, status, to_char(class_date,'YYYY-MM-DD') AS date FROM bkk_bookings WHERE id=$1`,
+        [Number(req.params.id)])).rows[0];
+      if (!b) return res.status(404).json({ error: 'booking not found' });
+      if (b.slot_id == null) return res.status(409).json({ error: REZERV_READONLY });
+      if (b.status === 'cancelled') return res.status(409).json({ error: 'that booking was cancelled' });
+      const today = bkkToday();
+      if (!undo && b.date > today) return res.status(409).json({ error: 'that class is not today yet' });
+      const r = (await q(undo
+        ? `UPDATE bkk_bookings SET checked_in_at=NULL
+           WHERE id=$1 AND status IN ('booked','noshow') RETURNING id, status, checked_in_at`
+        : `UPDATE bkk_bookings SET status='booked',
+             checked_in_at=COALESCE(checked_in_at, CASE WHEN class_date < $2::date THEN start_at ELSE now() END)
+           WHERE id=$1 AND status IN ('booked','noshow') RETURNING id, status, checked_in_at`,
+        undo ? [b.id] : [b.id, today])).rows[0];
+      if (!r) return res.status(409).json({ error: 'that booking was cancelled' });
+      res.json({ success: true, booking: { id: r.id, status: r.status, checkedInAt: r.checked_in_at } });
+    } catch (e) {
+      // A no-show whose student is on the same class again (booked twice in Rezerv).
+      if (/duplicate key/.test(e.message)) return res.status(409).json({ error: 'already on this class list' });
+      res.status(500).json({ error: e.message });
+    }
   });
 
   initSchema()

@@ -70,6 +70,145 @@
   .list div{padding:2px 0;border-bottom:1px solid var(--line)}
   .warnline{background:#fff3d6;color:#6b520e;border-radius:7px;padding:8px 10px;font-size:14px}
   .hhead h2{margin:4px 0 2px;font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:24px;line-height:1.2}
+  /* An id or class rule such as .chosen{display:flex} beats the browser's own [hidden]. */
+  [hidden]{display:none!important}
+  main.wide{max-width:1100px}
+  .calbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}
+  .calbar .seg{margin:0;flex:1 1 auto}
+  /* Month calendar, design B, as on the booking page: deep plum, hairlines, gold moons. */
+  .cal{background:#3E1442;color:#FBF5F9;border-radius:12px;padding:12px 10px 14px;margin-bottom:12px}
+  .cal .head{display:flex;align-items:center;margin:0 0 10px}
+  .cal .head b{flex:1;text-align:center;font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:24px;line-height:1.15;
+    letter-spacing:.01em;color:#FBF5F9}
+  .cal .head b small{font-weight:300;font-size:17px;margin-left:8px;color:#F2D98A}
+  .cal.wk .head b{font-size:19px}
+  .cal .nav{background:none;border:none;font-family:inherit;font-weight:700;font-size:26px;line-height:1;color:#F2D98A;
+    cursor:pointer;padding:6px 14px;min-height:44px;min-width:44px}
+  .cal .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+  .cal .grid > span{border-bottom:1px solid rgba(251,245,249,.28)}
+  .cal .wd{text-align:left;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:#C9AFCB;padding:0 5px 8px;border-bottom:1px solid rgba(251,245,249,.28)}
+  .cal .d{min-height:78px;border-bottom:1px solid rgba(251,245,249,.28);padding:6px 1px 6px 2px;min-width:0;
+    display:flex;flex-direction:column;align-items:stretch;gap:4px;cursor:pointer}
+  .cal .d .n{align-self:flex-start;background:none;border:0;padding:0 2px;min-height:20px;color:#FBF5F9;cursor:pointer;
+    font:700 15px/1 'Plex',sans-serif;font-variant-numeric:tabular-nums}
+  .cal .d.moonday{background:rgba(224,181,43,.08)}
+  .cal .d.moonday .n{color:#F2D98A}
+  .cal .d.today .n{color:#E0B52B}
+  .cal .d.was .cl{opacity:.82}
+  .cal .ch{display:block;font-weight:700;font-size:10px;line-height:1.2;overflow-wrap:break-word;padding-left:10px;position:relative}
+  .cal .ch::before{content:"";position:absolute;left:0;top:3px;width:7px;height:7px;border-radius:50%;background:currentColor}
+  .cal .ch b{display:none}
+  .cal .ch.moon{color:#F2D98A;padding-left:14px}
+  .cal .ch.moon::before{width:9px;height:9px;top:1px;background:transparent;box-shadow:inset 0 0 0 1.4px #E0B52B}
+  .cal .ch.moon.full::before{background:#E0B52B}
+  /* One tappable line per class: time, class, booked/places, checked in. */
+  .cal .cl{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;min-width:0;margin:0;
+    background:none;border:0;border-radius:4px;padding:2px 1px 3px;color:#FBF5F9;font:inherit;text-align:left;cursor:pointer}
+  .cal .cl:hover{background:rgba(251,245,249,.1)}
+  .cal .cl:focus-visible,.cal .d .n:focus-visible,.cal .nav:focus-visible,.wh:focus-visible,.wb:focus-visible{outline:2px solid #E0B52B;outline-offset:1px}
+  .cal .ct{font-weight:800;font-size:11px;line-height:1.15;color:#7FD8CC;font-variant-numeric:tabular-nums}
+  .cal .cn{font-style:normal;font-weight:800;font-size:10px;line-height:1.15;letter-spacing:-.01em;max-width:100%;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#F0C6F2}
+  .cal .mysore .cn{color:#FC838B}.cal .led_primary .cn{color:#8BFC83}.cal .led_inter .cn{color:#9AA2FF}
+  .cal .cc{display:flex;flex-wrap:wrap;column-gap:4px;font-size:11px;line-height:1.25;font-variant-numeric:tabular-nums}
+  .cal .cc b{font-weight:800;color:#FBF5F9;border-radius:3px}
+  .cal .cc i{font-style:normal;font-weight:700;color:#C9AFCB}
+  .cal .full .cc b{background:#FF6FAE;color:#3E1442;padding:0 3px}
+  .cal .off{opacity:.55}
+  .cal .off .ct,.cal .off .cn,.cal .off .cc b{text-decoration:line-through}
+  .cal .ol{display:inline-block;font:900 8.5px/1 'Plex',sans-serif;padding:2px 3px;border-radius:3px;
+    background:#F2C94C;color:#3E1442;white-space:nowrap}
+  .cal .legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;padding:0 4px}
+  .cal .legend .lr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;width:100%;font-size:12px;font-weight:600;color:#C9AFCB}
+  .cal .legend .cl{display:inline-flex;width:auto;padding:0;cursor:default}
+  .cal .legend .cn,.cal .legend .ch,.cal .legend .cc{font-size:12px}
+  /* Week: a column a day, scrolling sideways inside the card on a phone. */
+  .wkscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;position:relative}
+  .wkgrid{display:grid;grid-template-columns:repeat(7,minmax(108px,1fr))}
+  .wcol{min-width:0;padding:0 4px 10px;border-left:1px solid rgba(251,245,249,.16);display:flex;flex-direction:column;gap:6px}
+  .wcol:first-child{border-left:0}
+  .wcol.moonday{background:rgba(224,181,43,.06)}
+  .wcol.today{background:rgba(224,181,43,.1);border-radius:6px}
+  .wh{display:block;width:100%;min-height:44px;background:none;border:0;border-bottom:1px solid rgba(251,245,249,.28);
+    color:#C9AFCB;font:700 11px/1.2 'Plex',sans-serif;letter-spacing:.12em;text-transform:uppercase;text-align:left;
+    padding:6px 3px 8px;cursor:pointer}
+  :lang(th) .wh,:lang(th) .cal .wd{letter-spacing:0}
+  .wh .wn{display:block;margin-top:2px;font:900 22px/1.1 'Work Sans','Plex',sans-serif;letter-spacing:0;color:#FBF5F9}
+  .wcol.today .wh,.wcol.today .wh .wn{color:#E0B52B}
+  .wh .ch{margin-top:4px;text-transform:none;letter-spacing:0}
+  .cal .wh .ch b{display:inline;color:#F2D98A}
+  .wb{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-width:0;text-align:left;
+    background:rgba(251,245,249,.07);border:0;border-left:3px solid #C9AFCB;border-radius:6px;padding:7px 7px 8px;
+    color:#FBF5F9;font:inherit;cursor:pointer}
+  .wb:hover{background:rgba(251,245,249,.13)}
+  .wb.mysore{border-left-color:#FC838B}.wb.led_primary{border-left-color:#8BFC83}.wb.led_inter{border-left-color:#9AA2FF}
+  .cal .wb .ct{font-size:13.5px}
+  .cal .wb .cn{font-size:12.5px;line-height:1.2;white-space:normal;overflow:visible;overflow-wrap:anywhere}
+  .wb .tc{font-size:11.5px;line-height:1.25;color:#C9AFCB;overflow-wrap:anywhere}
+  .cal .wb .cc{font-size:12px}
+  .wb .ci{font-size:12px;font-weight:700;color:#7FD8CC}
+  .wcol.was .wb{opacity:.85}
+  /* Day: rows in the page's own colours. */
+  .dayhead{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .dayhead b{flex:1;text-align:center;font-size:19px;line-height:1.25}
+  .dnav{background:none;border:1.5px solid var(--line);border-radius:8px;color:var(--plum);font:700 22px/1 'Plex',sans-serif;
+    min-width:44px;min-height:44px;cursor:pointer}
+  .drow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--wall);border:1px solid var(--line);
+    border-left:5px solid var(--soft);border-radius:9px;padding:12px;margin-top:8px;font:inherit;color:var(--ink);cursor:pointer;min-height:68px}
+  .drow:hover{box-shadow:0 0 0 1.5px var(--plum)}
+  .drow.mysore{border-left-color:#FC838B}.drow.led_primary{border-left-color:#4cc95a}.drow.led_inter{border-left-color:#7f88ff}
+  .drow .tm{font:800 21px/1 'Work Sans','Plex',sans-serif;color:var(--plum);min-width:58px;font-variant-numeric:tabular-nums}
+  .drow .bd{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .drow .bd b{font-size:16px;line-height:1.3;overflow-wrap:anywhere}
+  .drow .cnt{display:flex;flex-direction:column;align-items:flex-end;text-align:right;white-space:nowrap;font-size:12.5px;line-height:1.3}
+  .drow .cnt b{font:800 19px/1.1 'Work Sans','Plex',sans-serif;font-variant-numeric:tabular-nums}
+  .drow.full .cnt b{color:var(--pink)}
+  .drow.off .tm,.drow.off .bd b,.drow.off .cnt b{text-decoration:line-through;opacity:.6}
+  .drow .go{font-size:24px;line-height:1;color:var(--soft)}
+  .pill.onl{background:var(--blush);color:var(--plum);vertical-align:2px}
+  /* Inside one class. */
+  .tile.hot b{color:var(--pink)}
+  .flash{border-radius:7px;padding:8px 10px;font-size:14px;margin:10px 0 0;background:#e6f6ec;color:#187a43}
+  .flash.warn{background:#fff3d6;color:#6b520e}
+  .rr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 0;border-top:1px solid var(--line)}
+  .rr .rm{flex:1 1 210px;min-width:0;line-height:1.35}
+  .rr .rm b{overflow-wrap:anywhere}
+  .rr .rs{flex:0 0 auto;font-size:14px}
+  .rr .ra{display:flex;flex-wrap:wrap;gap:6px}
+  .rr.miss .rm{opacity:.7}
+  .cxl div{font-size:13px;color:var(--soft);padding:5px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
+  #addBox input:not([type=checkbox]){width:100%;margin-bottom:8px}
+  .link{background:none;border:0;color:var(--plum);font:inherit;font-size:14px;font-weight:700;padding:6px 0;cursor:pointer}
+  .hit{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--wall);border:1px solid var(--line);
+    color:var(--ink);border-radius:8px;padding:10px 12px;margin-bottom:6px;font:inherit;cursor:pointer}
+  .hit b{font-size:15px;overflow-wrap:anywhere}
+  .hit span,.hit em{font-size:12.5px;color:var(--soft);font-style:normal;overflow-wrap:anywhere}
+  .hit em.ok{color:#187a43;font-weight:700}
+  .chosen{display:flex;align-items:center;gap:10px;background:var(--wall);border:1.5px solid var(--plum);border-radius:8px;padding:6px 12px}
+  .chosen span{flex:1;min-width:0;font-weight:700;overflow-wrap:anywhere}
+  .lbl{font-size:13px;color:var(--soft);margin:14px 0 6px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{flex:1 1 140px;min-height:44px;background:var(--wall);border:1.5px solid var(--line);color:var(--ink);border-radius:8px;
+    padding:10px;font:inherit;font-size:14.5px;cursor:pointer;text-align:center}
+  .opt.on{background:var(--plum);border-color:var(--plum);color:var(--on-dark);font-weight:700}
+  .opt:disabled{opacity:.4;cursor:default}
+  .opt small{display:block;font-size:12px;opacity:.85}
+  .here{display:flex;align-items:flex-start;gap:9px;margin:16px 0 0;font-size:15px;cursor:pointer}
+  .here input{width:20px;height:20px;padding:0;margin:2px 0 0;flex-shrink:0;accent-color:var(--plum)}
+  .here small{display:block;color:var(--soft);font-size:12.5px}
+  .hint{min-height:1.2em;font-size:13.5px;color:var(--soft);margin:10px 0 0}
+  .hint.bad{background:#fdeaea;color:#a33;border-radius:7px;padding:8px 10px;font-weight:700}
+  #adGo{width:100%;margin-top:12px;padding:13px;font-size:15px}
+  @media (prefers-color-scheme:dark){.rr .in,.drow .in,.hit em.ok{color:#3ddc97}}
+  @media (min-width:560px){
+    .cal{padding:18px 16px}
+    .cal .head b{font-size:34px}.cal .head b small{font-size:22px}.cal.wk .head b{font-size:24px}
+    .cal .d{min-height:98px;padding:8px 4px}
+    .cal .ch{font-size:12px}.cal .ch b{display:block;font-weight:700}
+    .cal .cl{flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:5px;row-gap:1px;padding:3px}
+    .cal .ct{font-size:12.5px}.cal .cn{font-size:12px}.cal .cc{font-size:12px}
+  }
   @media (max-width:480px){nav{overflow-x:auto}nav button{flex:1 0 auto;padding:12px 4px;font-size:13px;line-height:1.3;white-space:nowrap}
     header h1{font-size:22px}
     .cimap{grid-template-columns:1fr;gap:2px}.cimap label{margin-top:8px}}
@@ -93,7 +232,7 @@
 <nav>
   <button id="t-today" class="on" data-t="tabToday" onclick="tab('today')">Today</button>
   <button id="t-students" data-t="tabStudents" onclick="tab('students')">Students</button>
-  <button id="t-classes" data-t="tabClasses" onclick="tab('classes')">Classes</button>
+  <button id="t-calendar" data-t="tabCalendar" onclick="tab('calendar')">Calendar</button>
   <button id="t-orders" data-t="tabOrders" onclick="tab('orders')">Payments</button>
   <button id="t-reports" data-t="tabReports" onclick="tab('reports')">Reports</button>
   <button id="t-settings" data-t="tabSettings" onclick="tab('settings')">Settings</button>
@@ -116,7 +255,7 @@
   const STR = {
     en: {
       title: 'AYBKK Bangkok Admin', passcode: 'passcode', enter: 'Enter', wrongPass: 'wrong passcode', lock: 'Lock',
-      tabToday: 'Today', tabStudents: 'Students', tabClasses: 'Classes', tabOrders: 'Payments', tabSettings: 'Settings',
+      tabToday: 'Today', tabStudents: 'Students', tabOrders: 'Payments', tabSettings: 'Settings',
       failed: 'failed',
       startTitle: 'Start page, last 30 days', startNone: 'Nobody yet. Put aybkk.net/start/reel-name in a bio or Reel.', startSrc: 'From', startViews: 'Views', startTaps: 'Tapped book',
       progTitle: 'Progress today', progStudents: 'Students in the system', progActive: n => `${n} with an active pass`,
@@ -166,14 +305,9 @@
       confirmSale: (name, pkg, amt, method) => `${name}\n${pkg}\nTake ${amt} (${method}), VAT included.\n\nOnly press OK once you have the money.`,
       doneSale: (amt, method, ref, name, code) => `Done. ${amt} ${method} · ref ${ref}\n${name} — member code ${code}`,
       qWhichClass: 'Which class?', seatsLeft: n => `${n} left`, noClassNum: 'No class with that number.', booked: 'Booked.',
-      nextWeeks: 'Next three weeks',
-      classesHelp: 'Closing a class gives every booked student their credit back and emails them. A closed class disappears from the timetable.',
-      bookedOf: (b, c) => `${b} booked of ${c}`, close: 'Close', noClasses: 'no classes',
-      putBack: 'Put one back:', reopenBtn: 'Reopen a class',
       qClose: (title, date) => `Close ${title} on ${date}?\nEveryone booked gets their credit back and an email.`,
-      qReason: 'Reason (students see this)', moonDay: 'Moon day',
+      qReason: 'Reason (students see this)',
       closed: (r, n) => `Closed. ${r} booking(s) released, ${n} emailed.`,
-      qSlot: 'Class number (slotId)', qDate: 'Date YYYY-MM-DD',
       moneyToday: 'Money in today', sales: n => `${n} sale${n === 1 ? '' : 's'}`,
       countDrawer: 'Count the cash drawer against the cash line before you go home.',
       noSales: 'No sales yet today.', today: 'Today', noBookings: 'No bookings today.',
@@ -209,7 +343,7 @@
     },
     th: {
       title: 'AYBKK ระบบหลังบ้าน', passcode: 'รหัสผ่าน', enter: 'เข้าสู่ระบบ', wrongPass: 'รหัสผ่านไม่ถูกต้อง', lock: 'ล็อก',
-      tabToday: 'วันนี้', tabStudents: 'นักเรียน', tabClasses: 'คลาส', tabOrders: 'การชำระเงิน', tabSettings: 'ตั้งค่า',
+      tabToday: 'วันนี้', tabStudents: 'นักเรียน', tabOrders: 'การชำระเงิน', tabSettings: 'ตั้งค่า',
       failed: 'ทำไม่สำเร็จ',
       startTitle: 'หน้า Start ย้อนหลัง 30 วัน', startNone: 'ยังไม่มีคนเข้า ใส่ aybkk.net/start/ชื่อคลิป ในไบโอหรือรีล', startSrc: 'มาจาก', startViews: 'เข้าชม', startTaps: 'กดจอง',
       progTitle: 'ความคืบหน้าวันนี้', progStudents: 'นักเรียนในระบบ', progActive: n => `มีบัตรใช้งาน ${n} คน`,
@@ -259,14 +393,9 @@
       confirmSale: (name, pkg, amt, method) => `${name}\n${pkg}\nรับเงิน ${amt} (${method}) รวม VAT แล้ว\n\nกด OK หลังจากได้รับเงินแล้วเท่านั้น`,
       doneSale: (amt, method, ref, name, code) => `เรียบร้อย ${amt} ${method} · เลขอ้างอิง ${ref}\n${name} — รหัสสมาชิก ${code}`,
       qWhichClass: 'คลาสไหน?', seatsLeft: n => `ว่าง ${n} ที่`, noClassNum: 'ไม่มีคลาสหมายเลขนี้', booked: 'จองแล้ว',
-      nextWeeks: 'สามสัปดาห์ข้างหน้า',
-      classesHelp: 'เมื่อปิดคลาส นักเรียนที่จองไว้ทุกคนจะได้ครั้งคืนและได้รับอีเมลแจ้ง คลาสที่ปิดจะหายไปจากตารางเรียน',
-      bookedOf: (b, c) => `จอง ${b} จาก ${c} ที่`, close: 'ปิด', noClasses: 'ไม่มีคลาส',
-      putBack: 'เปิดคลาสกลับมา:', reopenBtn: 'เปิดคลาสอีกครั้ง',
       qClose: (title, date) => `ปิดคลาส ${title} วันที่ ${date}?\nนักเรียนที่จองไว้ทุกคนจะได้ครั้งคืนและได้รับอีเมล`,
-      qReason: 'เหตุผล (นักเรียนจะเห็นข้อความนี้)', moonDay: 'Moon day (วันพระจันทร์)',
+      qReason: 'เหตุผล (นักเรียนจะเห็นข้อความนี้)',
       closed: (r, n) => `ปิดแล้ว คืนการจอง ${r} รายการ ส่งอีเมล ${n} คน`,
-      qSlot: 'หมายเลขคลาส (slotId)', qDate: 'วันที่ YYYY-MM-DD',
       moneyToday: 'เงินเข้าวันนี้', sales: n => `${n} รายการ`,
       countDrawer: 'นับเงินในลิ้นชักให้ตรงกับยอดเงินสด ก่อนกลับบ้าน',
       noSales: 'วันนี้ยังไม่มียอดขาย', today: 'วันนี้', noBookings: 'วันนี้ไม่มีการจอง',
@@ -485,14 +614,100 @@
     refund: 'คืนเงิน', other: 'อื่นๆ', rezerv: 'Rezerv', aybkk: 'aybkk.net', door: 'หน้าประตู', student: 'นักเรียนจองเอง',
     staff: 'ทีมงานจองให้', order: 'จองพร้อมจ่ายเงิน', manual: 'ทีมงานให้', pass: 'แพ็กเกจ', bought: 'ซื้อ',
   });
-  const T = (k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
+  // The class calendar (Oct 2026).
+  Object.assign(STR.en, {
+    tabCalendar: 'Calendar', v_month: 'Month', v_week: 'Week', v_day: 'Day', prev: 'Previous', next: 'Next',
+    wdShort: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    newMoon: 'New moon', fullMoon: 'Full moon', calMoon: 'Moon day', moonShut: 'Moon day: the shala is closed.',
+    lgCount: 'booked / places', lgIn: 'checked in', lgFull: 'full', lgClosed: 'closed', lgOnline: 'online', lgBookedWord: 'booked',
+    nBooked: (b, c) => c == null ? `${b} booked` : `${b}/${c} booked`, nIn: n => `${n} in`, nMin: n => `${n} min`,
+    nNoShows: n => `${n} no-show${n === 1 ? '' : 's'}`,
+    closedNote: r => r ? `Closed: ${r}` : 'Closed', dayEmpty: 'No classes on this day.',
+    tBooked: 'Booked', tIn: 'Checked in', tLeft: 'Places left', full: 'Full', nOver: n => `${n} over`,
+    slotless: 'Moved from Rezerv. You can look, not change.', ended: 'This class has ended.',
+    noTime: 'Time not known', rCame: 'Came',
+    rosterH: 'On the list', rosterNone: 'Nobody booked yet.',
+    rIn: x => `In ${x}`, rNotYet: 'Not yet', rNoShow: 'No-show', covPass: 'aybkk.net pass', covDrop: 'Drop-in',
+    btnIn: 'Check in', btnUndo: 'Undo', btnCancelBk: 'Cancel booking',
+    qCancelBk: (n, title, when) => `Cancel ${n}'s booking?\n${title}, ${when}`,
+    bkCancelled: (n, back, h, rezerv) => rezerv ? `${n}'s booking is cancelled.`
+      : back ? `${n}'s booking is cancelled. The credit is back on their pass.`
+      : `${n}'s booking is cancelled. It was too close to the class${h ? ` (less than ${h} hours)` : ''}, so the credit is used.`,
+    cancelledH: 'Cancelled',
+    addH: 'Add student', addJump: '+ Add student', addSearchPh: 'Search name, code, phone or email',
+    addNew: '+ New person', addName: 'Name (required)', addPhone: 'Phone (optional)', addEmail: 'Email (optional, for the receipt)',
+    addChange: 'Change', addNoHits: 'No one found. Add them as a new person.', addNoNet: 'No connection. Try again.',
+    hitPass: '✓ aybkk.net pass', hitNoPass: 'no aybkk.net pass', hitOn: 'already on this list',
+    coverQ: 'What pays for this class?', covPassOpt: 'Their aybkk.net pass', covRezervOpt: 'Rezerv package', covDropOpt: 'Drop-in sale',
+    methodQ: 'Paid how?', m_cash: 'Cash', m_transfer: 'Transfer', m_card: 'Card',
+    hereNow: 'Here now, check them in', hereLater: 'Check-in opens on the day of the class.',
+    addGo: 'Add to the class', addGoIn: 'Add and check in',
+    hFind: 'Find the person, or add a new person.', hName: 'Type their name.',
+    hNoPass: 'No aybkk.net pass: choose Rezerv package or Drop-in.', hCover: 'Choose what pays for this class.',
+    hMethod: 'Choose how they paid.', hOnIn: 'Already on this list: tap Add to check them in.', hOnOnly: 'Already on this list.',
+    hFull: 'This class is full: adding goes over capacity.',
+    addDone: (n, inn) => inn ? `${n} added and checked in.` : `${n} added to the class.`,
+    addWasIn: n => `${n} was on the list, now checked in.`, addWasOn: n => `${n} is already on the list.`,
+    addWasDrop: n => `${n} was already on the list. No drop-in was sold, nothing to charge.`,
+    addOver: 'Over capacity now.', addRef: r => `Receipt ref ${r}.`,
+    addPaidNot: r => `Paid (ref ${r}), but not added to the class. Book them by hand.`,
+    addFail: 'Could not add them. Try again.',
+    closeH: 'Close this class', closeHelp: 'Everyone booked gets their credit back and an email with the reason.',
+    reopenH: 'Reopen this class', reopenHelp: 'Students who were booked are not put back. They book again, with their credit back.',
+    reopened: 'Reopened. Students can book it again.',
+  });
+  Object.assign(STR.th, {
+    tabCalendar: 'ปฏิทิน', v_month: 'เดือน', v_week: 'สัปดาห์', v_day: 'วัน', prev: 'ก่อนหน้า', next: 'ถัดไป',
+    wdShort: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+    newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง', calMoon: 'วันพระจันทร์', moonShut: 'วันพระจันทร์ ชาลาปิด',
+    lgCount: 'จอง / ที่รับได้', lgIn: 'เช็คอินแล้ว', lgFull: 'เต็ม', lgClosed: 'ปิด', lgOnline: 'ออนไลน์', lgBookedWord: 'จอง',
+    nBooked: (b, c) => c == null ? `จอง ${b}` : `จอง ${b}/${c}`, nIn: n => `เช็คอิน ${n}`, nMin: n => `${n} นาที`,
+    nNoShows: n => `ไม่มา ${n} คน`,
+    closedNote: r => r ? `ปิดคลาส: ${r}` : 'ปิดคลาส', dayEmpty: 'ไม่มีคลาสในวันที่เลือก',
+    tBooked: 'จองแล้ว', tIn: 'เช็คอินแล้ว', tLeft: 'ที่ว่าง', full: 'เต็ม', nOver: n => `เกิน ${n} คน`,
+    slotless: 'ย้ายมาจาก Rezerv ดูได้อย่างเดียว', ended: 'คลาสนี้จบแล้ว',
+    noTime: 'ไม่ทราบเวลา', rCame: 'มาเรียน',
+    rosterH: 'รายชื่อ', rosterNone: 'ยังไม่มีคนจอง',
+    rIn: x => `เช็คอิน ${x}`, rNotYet: 'ยังไม่มา', rNoShow: 'จองแล้วไม่มา', covPass: 'แพ็กเกจ aybkk.net', covDrop: 'Drop-in',
+    btnIn: 'เช็คอิน', btnUndo: 'ยกเลิกเช็คอิน', btnCancelBk: 'ยกเลิกการจอง',
+    qCancelBk: (n, title, when) => `ยกเลิกการจองของ ${n}?\n${title} ${when}`,
+    bkCancelled: (n, back, h, rezerv) => rezerv ? `ยกเลิกการจองของ ${n} แล้ว`
+      : back ? `ยกเลิกการจองของ ${n} แล้ว คืนครั้งเข้าแพ็กเกจแล้ว`
+      : `ยกเลิกการจองของ ${n} แล้ว ยกเลิกช้าเกินไป${h ? ` (น้อยกว่า ${h} ชั่วโมงก่อนคลาส)` : ''} จึงไม่คืนครั้ง`,
+    cancelledH: 'ยกเลิกแล้ว',
+    addH: 'เพิ่มนักเรียน', addJump: '+ เพิ่มนักเรียน', addSearchPh: 'ค้นหาชื่อ รหัส เบอร์โทร หรืออีเมล',
+    addNew: '+ คนใหม่', addName: 'ชื่อ (ต้องใส่)', addPhone: 'เบอร์โทร (ไม่ใส่ก็ได้)', addEmail: 'อีเมล (ไม่ใส่ก็ได้ ใช้ส่งใบเสร็จ)',
+    addChange: 'เปลี่ยน', addNoHits: 'ไม่พบ เพิ่มเป็นคนใหม่ได้', addNoNet: 'ไม่มีสัญญาณ ลองอีกครั้ง',
+    hitPass: '✓ มีแพ็กเกจ aybkk.net', hitNoPass: 'ไม่มีแพ็กเกจ aybkk.net', hitOn: 'อยู่ในรายชื่อแล้ว',
+    coverQ: 'ใช้อะไรจ่ายค่าคลาสนี้?', covPassOpt: 'แพ็กเกจ aybkk.net', covRezervOpt: 'แพ็กเกจ Rezerv', covDropOpt: 'ขาย Drop-in',
+    methodQ: 'จ่ายแบบไหน?', m_cash: 'เงินสด', m_transfer: 'โอนเงิน', m_card: 'รูดบัตร',
+    hereNow: 'มาถึงแล้ว เช็คอินให้เลย', hereLater: 'เช็คอินได้ในวันที่มีคลาส',
+    addGo: 'เพิ่มเข้าคลาส', addGoIn: 'เพิ่มและเช็คอิน',
+    hFind: 'ค้นหาคน หรือเพิ่มคนใหม่', hName: 'พิมพ์ชื่อ',
+    hNoPass: 'ไม่มีแพ็กเกจ aybkk.net เลือกแพ็กเกจ Rezerv หรือ Drop-in', hCover: 'เลือกว่าใช้อะไรจ่ายค่าคลาส',
+    hMethod: 'เลือกวิธีจ่าย', hOnIn: 'อยู่ในรายชื่อแล้ว กดเพิ่มเพื่อเช็คอิน', hOnOnly: 'อยู่ในรายชื่อแล้ว',
+    hFull: 'คลาสเต็มแล้ว ถ้าเพิ่มจะเกินจำนวนที่รับ',
+    addDone: (n, inn) => inn ? `เพิ่ม ${n} และเช็คอินแล้ว` : `เพิ่ม ${n} เข้าคลาสแล้ว`,
+    addWasIn: n => `${n} อยู่ในรายชื่อแล้ว เช็คอินให้แล้ว`, addWasOn: n => `${n} อยู่ในรายชื่อแล้ว`,
+    addWasDrop: n => `${n} อยู่ในรายชื่อแล้ว ไม่ได้ขาย Drop-in ไม่ต้องเก็บเงิน`,
+    addOver: 'ตอนนี้เกินจำนวนที่รับแล้ว', addRef: r => `เลขอ้างอิงใบเสร็จ ${r}`,
+    addPaidNot: r => `จ่ายแล้ว (เลขอ้างอิง ${r}) แต่ยังไม่ได้เพิ่มเข้าคลาส กรุณาจองให้เอง`,
+    addFail: 'เพิ่มไม่สำเร็จ ลองอีกครั้ง',
+    closeH: 'ปิดคลาสนี้', closeHelp: 'นักเรียนที่จองไว้ทุกคนจะได้ครั้งคืน และได้รับอีเมลพร้อมเหตุผล',
+    reopenH: 'เปิดคลาสนี้อีกครั้ง', reopenHelp: 'นักเรียนที่เคยจองจะไม่กลับเข้ามาเอง ต้องจองใหม่ (ได้ครั้งคืนไปแล้ว)',
+    reopened: 'เปิดคลาสแล้ว นักเรียนจองได้อีกครั้ง',
+  });
+  const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
   let TH_NAMES = null, TH_BY_EN = {};
+  let DROP_PRICE = null;                // the desk price of a drop-in: VAT in, no online fee
   const loadThNames = async () => {
     if (TH_NAMES) return;
     const d = await fetch('/api/bkk/products').then(r => r.json()).catch(() => ({}));
     TH_NAMES = {};
     for (const x of d.products || []) if (x.name_th) { TH_NAMES[x.id] = x.name_th; TH_BY_EN[x.name_en] = x.name_th; }
+    const p = (d.products || []).find(x => x.code === 'dropin');
+    if (p) DROP_PRICE = p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
   };
   const pkgName = p => (LANG === 'th' && (p.name_th || (TH_NAMES || {})[p.product_id])) || p.name_en;
   const itemName = n => (LANG === 'th' && TH_BY_EN[n]) || n;
@@ -521,6 +736,8 @@
     if ($('#gateMsg').textContent) $('#gateMsg').textContent = T('wrongPass');
     if ($('#app').style.display !== 'none') {
       if (SUB === 'history') { if (HIST) paintHistory(); return; }
+      if (SUB === 'class') { if (CV.data) paintClass(); return; }
+      if (current === 'calendar') { renderCalendar(true); return; }
       const term = current === 'students' && $('#q') ? $('#q').value.trim() : '';
       if (current === 'students') renderStudents(term); else tab(current);
     }
@@ -537,13 +754,14 @@
   };
   window.logout = () => { store.del('aybkk_bkk_key'); location.reload(); };
 
-  let current = 'today', SUB = null;    // SUB: a view opened on top of a tab ('history')
+  let current = 'today', SUB = null;    // SUB: a view opened on top of a tab ('history', 'class')
   window.tab = t => {
     current = t; SUB = null;
+    $('#view').classList.remove('wide');
     document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.id === 't-' + t));
     if (t === 'today') renderToday();
     if (t === 'students') renderStudents();
-    if (t === 'classes') renderClasses();
+    if (t === 'calendar') renderCalendar();
     if (t === 'orders') renderOrders();
     if (t === 'reports') renderReports();
     if (t === 'settings') renderSettings();
@@ -776,37 +994,476 @@
     if (await shout(r)) { alert(T('booked')); findStudents(); }
   };
 
-  // ── classes ───────────────────────────────────────────────────────────────
-  async function renderClasses() {
-    const d = await fetch('/api/bkk/schedule?days=21').then(r => r.json());
-    const rows = (d.classes || []).map(c => `<tr>
-      <td>${day(c.startAt)}<br><span class="muted">${time(c.startAt)}</span></td>
-      <td>${esc(cls(c.title))}<br><span class="muted">${T('bookedOf', c.booked, c.capacity)}</span></td>
-      <td><button class="btn red" onclick="closeClass(${c.slotId},'${c.date}','${esc(cls(c.title))}')">${T('close')}</button></td>
-    </tr>`).join('');
-    $('#view').innerHTML = `<div class="box"><b>${T('nextWeeks')}</b>
-      <p class="muted">${T('classesHelp')}</p>
-      <table>${rows || `<tr><td class="muted">${T('noClasses')}</td></tr>`}</table>
-      <p class="muted">${T('putBack')} <button class="btn gray" onclick="reopenClass()">${T('reopenBtn')}</button></p>
-    </div>`;
+  // ── calendar: month, week, day, and inside one class ──────────────────────
+  // Days are Bangkok dates as 'YYYY-MM-DD' strings moved with UTC arithmetic,
+  // so a laptop in another timezone never shifts a class to the wrong day.
+  const pad2 = n => String(n).padStart(2, '0');
+  const addDays = (ymd, n) => { const [y, m, d] = ymd.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10); };
+  const dowOf = ymd => new Date(ymd + 'T12:00:00Z').getUTCDay();
+  const ymdFmt = (ymd, o) => new Date(ymd + 'T12:00:00+07:00').toLocaleDateString(locale(), { timeZone: 'Asia/Bangkok', ...o });
+  const hm = iso => time(iso).replace(/^0/, '');
+  // A Rezerv visit with no time on file: the server says so (stored at 00:00).
+  const noTime = c => c.timeKnown === false;
+  const calHm = c => noTime(c) ? '--:--' : hm(c.startAt);
+  const KIND_SHORT = { mysore: 'Mysore', led_primary: 'Primary', led_inter: 'Inter.' };
+  const KIND_LONG = { mysore: 'Mysore', led_primary: 'Led Primary', led_inter: 'Led Intermediate' };
+  const kindCls = k => KIND_SHORT[k] ? k : 'other';
+  const plainTitle = c => cls(String(c.title || '').replace(/^\[Online\]\s*/i, ''));
+  const shortName = c => KIND_SHORT[c.kind] || plainTitle(c);
+  const isFull = c => c.capacity != null && c.booked >= c.capacity;
+  const countTxt = c => c.capacity != null ? `${c.booked}/${c.capacity}` : String(c.booked);
+  const shows = (c, today) => c.date <= today && !c.cancelled;      // checked-in counts: today and past only
+
+  const calView0 = store.get('aybkk_admin_calview');
+  const CAL = { view: ['month', 'week', 'day'].includes(calView0) ? calView0 : 'month',
+    date: null, data: null, seq: 0, y: 0, keepY: null, x: null, keepX: null };
+
+  function calRange() {
+    const d = CAL.date;
+    if (CAL.view === 'month') {
+      const [y, m] = d.split('-').map(Number);
+      return [`${y}-${pad2(m)}-01`, new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10)];
+    }
+    if (CAL.view === 'week') { const s = addDays(d, -dowOf(d)); return [s, addDays(s, 6)]; }
+    return [d, d];
   }
 
-  window.closeClass = async (slotId, date, title) => {
-    if (!confirm(T('qClose', title, date))) return;
-    const reason = ask(T('qReason'), T('moonDay')); if (reason === null) return;
-    const r = await api('/api/bkk/admin/classes/cancel', { method: 'POST',
-      body: JSON.stringify({ slotId, date, reason }) });
-    const j = await shout(r);
-    if (j) { alert(T('closed', j.released, j.notified)); renderClasses(); }
+  // Paints at once (the last counts for this stretch, or an empty grid), then
+  // again with fresh counts. noFetch: a language change, nothing new to ask.
+  async function renderCalendar(noFetch) {
+    if (!CAL.date) CAL.date = bkkYmd();
+    const [from, to] = calRange();
+    const have = CAL.data && CAL.data.from === from && CAL.data.to === to && !CAL.data.error;
+    if (!have) CAL.data = { from, to, today: bkkYmd(), moonDays: {}, classes: [], loading: true };
+    paintCalendar();
+    if (noFetch && have) return;
+    const seq = ++CAL.seq;
+    const r = await api(`/api/bkk/admin/calendar?${new URLSearchParams({ from, to })}`).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== CAL.seq || current !== 'calendar' || SUB) return;
+    CAL.data = r && r.ok
+      ? { ...j, from, to, moonDays: j.moonDays || {}, classes: j.classes || [] }
+      : { from, to, today: bkkYmd(), moonDays: {}, classes: [], error: j.error || T('failed') };
+    paintCalendar();
+  }
+
+  function paintCalendar() {
+    const d = CAL.data, v = CAL.view, view = $('#view');
+    // The week box keeps its sideways place over a repaint, and over a visit into a class.
+    const old = $('#wkScroll'), back = CAL.keepX && CAL.keepX.from === d.from ? CAL.keepX.left : null;
+    const keepX = old && old.dataset.from === d.from ? old.scrollLeft : back;
+    view.classList.add('wide');
+    view.innerHTML = `<div class="calbar"><div class="seg">${['month', 'week', 'day'].map(x =>
+        `<button class="${v === x ? 'on' : ''}" onclick="calView('${x}')">${T('v_' + x)}</button>`).join('')}</div>
+        ${d.loading ? `<span class="muted">${T('loadingTxt')}</span>` : ''}
+        <button class="btn gray sm" onclick="calToday()">${T('today')}</button></div>
+      ${d.error ? `<p class="warnline">${esc(d.error)}</p>` : ''}
+      ${v === 'month' ? monthHtml(d) : v === 'week' ? weekHtml(d) : dayHtml(d)}`;
+    const sc = $('#wkScroll');
+    if (sc) {
+      const col = sc.querySelector('.wcol.today');
+      sc.scrollLeft = keepX != null ? keepX : col ? Math.max(0, col.offsetLeft - 8) : 0;
+    }
+    if (CAL.keepY != null && !d.loading) { window.scrollTo(0, CAL.keepY); CAL.keepY = null; }
+    if (!d.loading) CAL.keepX = null;
+  }
+
+  const calHead = label => `<div class="head">
+      <button class="nav" onclick="calNav(-1)" aria-label="${esc(T('prev'))}">‹</button><b>${label}</b>
+      <button class="nav" onclick="calNav(1)" aria-label="${esc(T('next'))}">›</button></div>`;
+  const moonChip = k => { const w = esc(T(k === 'new' ? 'newMoon' : 'fullMoon'));
+    return `<span class="ch moon ${k === 'new' ? 'new' : 'full'}" title="${w}"><b>${w}</b>&nbsp;</span>`; };
+  const olTag = c => c.isOnline ? `<b class="ol">${esc(T('lgOnline'))}</b>` : '';
+  const lineTitle = (c, today) => [noTime(c) ? T('noTime') : hm(c.startAt), plainTitle(c), c.isOnline ? T('lgOnline') : '', c.teachers,
+    T('nBooked', c.booked, c.capacity), shows(c, today) ? T('nIn', c.checkedIn) : '',
+    c.cancelled ? T('closedNote', c.note) : ''].filter(Boolean).join(' · ');
+  const kindLegend = () => ['mysore', 'led_primary', 'led_inter'].map(k =>
+    `<span class="cl ${k}"><em class="cn">${KIND_LONG[k]}</em></span>`).join('');
+
+  function monthHtml(d) {
+    const today = d.today || bkkYmd();
+    const [y, m] = d.from.split('-').map(Number);
+    const byDate = {};
+    d.classes.forEach((c, i) => (byDate[c.date] = byDate[c.date] || []).push(i));
+    const line = i => { const c = d.classes[i];
+      return `<button class="cl ${kindCls(c.kind)}${isFull(c) ? ' full' : ''}${c.cancelled ? ' off' : ''}"
+        onclick="calOpen(event,${i})" title="${esc(lineTitle(c, today))}"><span class="ct">${calHm(c)}</span><em
+        class="cn">${esc(shortName(c))}</em>${olTag(c)}<span class="cc"><b>${esc(countTxt(c))}</b>${shows(c, today)
+          ? `<i>✓${esc(c.checkedIn)}</i>` : ''}</span></button>`; };
+    let cells = T('wdShort').map(w => `<div class="wd">${esc(w)}</div>`).join('');
+    for (let i = 0; i < dowOf(d.from); i++) cells += '<span></span>';
+    for (let iso = d.from, n = 1; iso <= d.to; iso = addDays(iso, 1), n++) {
+      const moon = d.moonDays[iso];
+      // The cell holds buttons, so it is a div: a tap on the number or on an
+      // empty part opens the day, a tap on a class line opens the class.
+      cells += `<div class="d${moon ? ' moonday' : ''}${iso === today ? ' today' : ''}${iso < today ? ' was' : ''}"
+        onclick="calDay('${iso}')"><button class="n" aria-label="${esc(ymdLong(iso, true))}">${n}</button>${moon ? moonChip(moon) : ''}
+        ${(byDate[iso] || []).map(line).join('')}</div>`;
+    }
+    const month = new Date(Date.UTC(y, m - 1, 15)).toLocaleDateString(locale(), { month: 'long', timeZone: 'UTC' });
+    return `<div class="cal">${calHead(`${esc(month)}<small>${LANG === 'th' ? y + 543 : y}</small>`)}
+      <div class="grid">${cells}</div>
+      <div class="legend">
+        <div class="lr">${kindLegend()}</div>
+        <div class="lr"><span class="cc"><b>18/42</b></span> ${esc(T('lgCount'))}
+          <span class="cc"><i>✓15</i></span> ${esc(T('lgIn'))}
+          <span class="cl full"><span class="cc"><b>42/42</b></span></span> ${esc(T('lgFull'))}
+          <span class="cl off"><span class="cc"><b>9/42</b></span></span> ${esc(T('lgClosed'))}
+          <b class="ol">${esc(T('lgOnline'))}</b>
+          <span class="ch moon full">${esc(T('calMoon'))}</span></div></div></div>`;
+  }
+
+  function weekHtml(d) {
+    const today = d.today || bkkYmd();
+    const a = d.from, b = d.to, full = { day: 'numeric', month: 'short', year: 'numeric' };
+    const label = a.slice(0, 7) === b.slice(0, 7) ? T('rRange', String(Number(a.slice(8))), ymdFmt(b, full))
+      : a.slice(0, 4) === b.slice(0, 4) ? T('rRange', ymdFmt(a, { day: 'numeric', month: 'short' }), ymdFmt(b, full))
+      : T('rRange', ymdFmt(a, full), ymdFmt(b, full));
+    const block = (c, i) => `<button class="wb ${kindCls(c.kind)}${isFull(c) ? ' full' : ''}${c.cancelled ? ' off' : ''}"
+        onclick="calOpen(event,${i})"><span class="ct">${calHm(c)}</span><em class="cn">${esc(plainTitle(c))}</em>${olTag(c)}
+        ${c.teachers ? `<span class="tc">${esc(c.teachers)}</span>` : ''}
+        <span class="cc"><b>${esc(T('nBooked', c.booked, c.capacity))}</b></span>
+        ${shows(c, today) ? `<span class="ci">${esc(T('nIn', c.checkedIn))}</span>` : ''}
+        ${c.cancelled ? `<span class="tc">${esc(T('closedNote', c.note))}</span>` : ''}</button>`;
+    const cols = [0, 1, 2, 3, 4, 5, 6].map(k => {
+      const iso = addDays(a, k), moon = d.moonDays[iso];
+      const list = d.classes.map((c, i) => [c, i]).filter(([c]) => c.date === iso);
+      return `<div class="wcol${iso === today ? ' today' : ''}${moon ? ' moonday' : ''}${iso < today ? ' was' : ''}">
+        <button class="wh" onclick="calDay('${iso}')" aria-label="${esc(ymdLong(iso, true))}">${esc(ymdFmt(iso, { weekday: 'short' }))}<span
+          class="wn">${Number(iso.slice(8))}</span>${moon ? moonChip(moon) : ''}</button>
+        ${list.map(([c, i]) => block(c, i)).join('')}</div>`;
+    }).join('');
+    return `<div class="cal wk">${calHead(esc(label))}
+      <div class="wkscroll" id="wkScroll" data-from="${a}"><div class="wkgrid">${cols}</div></div>
+      <div class="legend"><div class="lr">${kindLegend()}</div></div></div>`;
+  }
+
+  function dayHtml(d) {
+    const today = d.today || bkkYmd(), iso = d.from, moon = d.moonDays[iso];
+    const rows = d.classes.map((c, i) => [c, i]).filter(([c]) => c.date === iso).map(([c, i]) => `<button
+        class="drow ${kindCls(c.kind)}${isFull(c) ? ' full' : ''}${c.cancelled ? ' off' : ''}" onclick="calOpen(event,${i})">
+        <span class="tm">${noTime(c) ? '--:--' : time(c.startAt)}</span>
+        <span class="bd"><b>${esc(plainTitle(c))}${c.isOnline ? ` <span class="pill onl">${esc(T('lgOnline'))}</span>` : ''}</b>
+          <span class="muted">${esc([noTime(c) ? T('noTime') : '', c.teachers, c.durationMin ? T('nMin', c.durationMin) : '',
+            c.cancelled ? T('closedNote', c.note) : ''].filter(Boolean).join(' · '))}</span></span>
+        <span class="cnt"><b>${esc(countTxt(c))}</b><span class="muted">${esc(T('lgBookedWord'))}</span>${shows(c, today)
+          ? `<span class="in">${esc(T('nIn', c.checkedIn))}</span>` : ''}</span>
+        <span class="go" aria-hidden="true">›</span></button>`).join('');
+    return `<div class="box"><div class="dayhead">
+        <button class="dnav" onclick="calNav(-1)" aria-label="${esc(T('prev'))}">‹</button>
+        <b>${esc(ymdFmt(iso, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))}${iso === today
+          ? ` <span class="pill upcoming">${T('today')}</span>` : ''}</b>
+        <button class="dnav" onclick="calNav(1)" aria-label="${esc(T('next'))}">›</button></div>
+      ${moon ? `<p class="warnline">${esc(T(moon === 'new' ? 'newMoon' : 'fullMoon'))}. ${esc(T('moonShut'))}</p>` : ''}
+      ${rows || (d.loading ? '' : `<p class="muted">${T('dayEmpty')}</p>`)}</div>`;
+  }
+
+  window.calView = v => { CAL.view = v; store.set('aybkk_admin_calview', v); renderCalendar(); };
+  window.calToday = () => { CAL.date = bkkYmd(); renderCalendar(); };
+  window.calDay = iso => { CAL.view = 'day'; CAL.date = iso; window.scrollTo(0, 0); renderCalendar(); };
+  // A month opens on today when today is in it, else on its first day: the
+  // day a switch to Week or Day lands on.
+  window.calNav = dir => {
+    if (CAL.view === 'month') {
+      const [y, m] = CAL.date.split('-').map(Number);
+      const first = new Date(Date.UTC(y, m - 1 + dir, 1)).toISOString().slice(0, 10), today = bkkYmd();
+      CAL.date = today.slice(0, 7) === first.slice(0, 7) ? today : first;
+    } else CAL.date = addDays(CAL.date, dir * (CAL.view === 'week' ? 7 : 1));
+    renderCalendar();
   };
 
-  window.reopenClass = async () => {
-    const slotId = ask(T('qSlot')); if (!slotId) return;
-    const date = ask(T('qDate')); if (!date) return;
-    const r = await api('/api/bkk/admin/classes/reopen', { method: 'POST',
-      body: JSON.stringify({ slotId: Number(slotId), date }) });
-    if (await shout(r)) renderClasses();
+  // ── inside one class ──────────────────────────────────────────────────────
+  const CV = { ref: null, data: null, seq: 0, flash: null };
+  const calBackBtn = () => `<button class="btn gray sm" onclick="calBack()">${T('back')}</button>`;
+  window.calOpen = (e, i) => {
+    if (e) e.stopPropagation();
+    const c = CAL.data && CAL.data.classes[i];
+    if (!c) return;
+    CAL.y = window.scrollY;
+    const sc = $('#wkScroll'); CAL.x = sc ? { from: sc.dataset.from, left: sc.scrollLeft } : null;
+    CV.ref = c.slotId != null ? { slotId: c.slotId, date: c.date } : { date: c.date, time: time(c.startAt), title: c.title };
+    CV.data = null; CV.flash = null;
+    SUB = 'class';
+    loadClass(true);
   };
+  window.calBack = () => { SUB = null; CV.data = null; CAL.keepY = CAL.y; CAL.keepX = CAL.x; renderCalendar(); };
+
+  async function loadClass(top) {
+    const seq = ++CV.seq, ref = CV.ref;
+    $('#view').classList.remove('wide');
+    if (top) { $('#view').innerHTML = `<p>${calBackBtn()}</p><p class="muted">${T('loadingTxt')}</p>`; window.scrollTo(0, 0); }
+    await loadThNames();
+    const r = await api('/api/bkk/admin/class?' + new URLSearchParams(ref)).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== CV.seq || SUB !== 'class' || CV.ref !== ref) return;
+    if (!r || !r.ok || !j.class) { $('#view').innerHTML = `<p>${calBackBtn()}</p><div class="box">${esc(j.error || T('failed'))}</div>`; return; }
+    CV.data = { ...j, roster: j.roster || [], cancelledList: j.cancelledList || [] };
+    const key = JSON.stringify(ref);
+    if (AD.key !== key) resetAdd(key);
+    paintClass();
+  }
+
+  function paintClass() {
+    const { class: c, roster, cancelledList } = CV.data;
+    const today = bkkYmd(), canIn = c.date <= today;
+    const end = c.endAt || (c.durationMin ? new Date(Date.parse(c.startAt) + c.durationMin * 60000).toISOString() : null);
+    const moon = CAL.data && CAL.data.moonDays && CAL.data.moonDays[c.date];
+    const left = c.capacity != null ? c.capacity - c.booked : null;
+    const head = `<div class="box hhead"><p style="margin:0">${calBackBtn()}${c.canAdd
+        ? ` <button class="btn pink sm" onclick="addJump()">${T('addJump')}</button>` : ''}</p>
+      <h2>${esc(plainTitle(c))}${c.isOnline ? ` <span class="pill onl">${esc(T('lgOnline'))}</span>` : ''}</h2>
+      <div class="muted">${esc([ymdLong(c.date, true), noTime(c) ? T('noTime')
+        : end ? T('rRange', time(c.startAt), time(end)) : time(c.startAt), c.teachers].filter(Boolean).join(' · '))}</div>
+      ${c.cancelled ? `<p class="warnline">${esc(T('closedNote', c.note))}</p>` : ''}
+      ${moon ? `<p class="warnline">${esc(T('moonShut'))}</p>` : ''}
+      ${c.slotId == null ? `<p class="muted">${esc(T('slotless'))}</p>` : c.ended ? `<p class="muted">${esc(T('ended'))}</p>` : ''}
+      <div class="tiles">
+        ${tile(T('tBooked'), c.capacity != null ? `${c.booked} / ${c.capacity}` : String(c.booked), c.noShows ? T('nNoShows', c.noShows) : '')}
+        ${tile(T('tIn'), String(c.checkedIn))}
+        ${left != null ? `<div class="tile${left <= 0 ? ' hot' : ''}"><span>${esc(T('tLeft'))}</span><b>${esc(left > 0 ? String(left)
+          : left === 0 ? T('full') : T('nOver', -left))}</b></div>` : ''}
+      </div>
+      ${CV.flash ? `<p class="flash ${CV.flash.kind === 'warn' ? 'warn' : ''}" role="status">${esc(CV.flash.text)}</p>` : ''}</div>`;
+
+    // A class with no slot is Rezerv history: it can be looked at, not changed.
+    const fixed = c.slotId == null;
+    const rows = roster.map(b => {
+      const id = Number(b.bookingId);
+      const st = b.status === 'noshow' ? `<span class="pill noshow">${esc(T('rNoShow'))}</span>`
+        : b.checkedInAt ? `<span class="in">${esc(noTime(c) ? T('rCame') : T('rIn', time(b.checkedInAt)))}</span>`
+        : `<span class="muted">${esc(T('rNotYet'))}</span>`;
+      const cover = b.dropin ? T('covDrop') : b.cover === 'rezerv' ? 'Rezerv' : b.passName ? itemName(b.passName) : T('covPass');
+      // A visit moved from Rezerv is cover and source Rezerv: say it once.
+      const src = b.source && b.source !== 'student' && W(b.source) !== cover ? W(b.source) : '';
+      const acts = [
+        !fixed && canIn && !b.checkedInAt ? `<button class="btn sm" onclick="cvCheck(${id},false)">${T('btnIn')}</button>` : '',
+        !fixed && b.checkedInAt ? `<button class="btn gray sm" onclick="cvCheck(${id},true)">${T('btnUndo')}</button>` : '',
+        !fixed && b.status === 'booked' && !b.checkedInAt ? `<button class="btn red sm" onclick="cvCancel(${id})">${T('btnCancelBk')}</button>` : '',
+        histBtn(b.code)].filter(Boolean).join('');
+      return `<div class="rr${b.status === 'noshow' ? ' miss' : ''}">
+        <div class="rm"><b>${esc(b.name)}</b><br><span class="muted">${esc([b.code, cover, src].filter(Boolean).join(' · '))}</span></div>
+        <div class="rs">${st}</div><div class="ra">${acts}</div></div>`;
+    });
+    const rosterBox = `<div class="box"><b>${T('rosterH')}</b> <span class="muted">${roster.length}</span>
+      ${rows.length ? rows.join('') : `<p class="muted">${T('rosterNone')}</p>`}</div>`;
+    const cancelBox = cancelledList.length ? `<div class="box cxl"><b>${T('cancelledH')}</b> <span class="muted">${cancelledList.length}</span>
+      ${cancelledList.map(x => `<div>${esc(x.name)} · ${esc([x.code, x.cancelledAt
+        ? `${ymdLong(bkkYmd(Date.parse(x.cancelledAt)))} ${time(x.cancelledAt)}` : '', cxlWhy(x.reason)].filter(Boolean).join(' · '))}</div>`).join('')}</div>` : '';
+    const closeBox = c.slotId == null ? '' : c.cancelled
+      ? `<div class="box"><b>${T('reopenH')}</b><p class="muted">${T('reopenHelp')}</p>
+          <p><button class="btn" onclick="cvReopen()">${T('reopenH')}</button></p></div>`
+      : !c.started ? `<div class="box"><b>${T('closeH')}</b><p class="muted">${T('closeHelp')}</p>
+          <p><button class="btn red" onclick="cvClose()">${T('closeH')}</button></p></div>` : '';
+    $('#view').innerHTML = head + rosterBox + cancelBox + (c.canAdd ? addBoxHtml(c) : '') + closeBox;
+    if (c.canAdd) wireAdd();
+    // The result shows in the header; the button tapped may be far below it.
+    if (CV.flash && CV.flash.fresh) {
+      CV.flash.fresh = false;
+      const f = $('#view .hhead .flash');
+      if (f) f.scrollIntoView({ block: 'center' });
+    }
+  }
+
+  // The server writes "class cancelled: <reason>" in English; say it in the page's language.
+  const cxlWhy = r => { const m = /^class cancelled: ([\s\S]*)$/.exec(r || '');
+    return m ? T('closedNote', m[1] === 'no reason given' ? '' : m[1]) : r || ''; };
+
+  window.cvCheck = async (id, undo) => {
+    const r = await api(`/api/bkk/admin/bookings/${id}/checkin`, { method: 'POST',
+      body: JSON.stringify(undo ? { undo: true } : {}) }).catch(() => null);
+    if (!r) { alert(T('addNoNet')); return; }
+    if (await shout(r)) { CV.flash = null; loadClass(); }
+  };
+  window.cvCancel = async id => {
+    const c = CV.data && CV.data.class, b = c && CV.data.roster.find(x => Number(x.bookingId) === id);
+    if (!b || !confirm(T('qCancelBk', b.name, plainTitle(c), `${ymdLong(c.date, true)} ${time(c.startAt)}`))) return;
+    const r = await api(`/api/bkk/bookings/${id}/cancel`, { method: 'POST', body: '{}' }).catch(() => null);
+    if (!r) { alert(T('addNoNet')); return; }
+    const j = await shout(r);
+    if (!j) return;
+    // The server's rule decides the credit, and says its number of hours.
+    const hrs = j.cutoffHours ?? (String(j.message || '').match(/(\d+)\s*h/) || [])[1];
+    const rezerv = b.cover === 'rezerv' && !b.passName;
+    CV.flash = { kind: j.creditReturned || rezerv ? 'ok' : 'warn', fresh: true,
+      text: T('bkCancelled', b.name, !!j.creditReturned, hrs, rezerv) };
+    loadClass();
+  };
+  window.cvClose = async () => {
+    const c = CV.data && CV.data.class;
+    if (!c || !confirm(T('qClose', plainTitle(c), `${ymdLong(c.date, true)} ${time(c.startAt)}`))) return;
+    const reason = ask(T('qReason'), ''); if (reason === null) return;
+    const r = await api('/api/bkk/admin/classes/cancel', { method: 'POST',
+      body: JSON.stringify({ slotId: c.slotId, date: c.date, reason }) });
+    const j = await shout(r);
+    if (j) { alert(T('closed', j.released, j.notified)); CV.flash = null; loadClass(); }
+  };
+  window.cvReopen = async () => {
+    const c = CV.data && CV.data.class;
+    if (!c) return;
+    const r = await api('/api/bkk/admin/classes/reopen', { method: 'POST',
+      body: JSON.stringify({ slotId: c.slotId, date: c.date }) });
+    if (await shout(r)) { CV.flash = { kind: 'ok', fresh: true, text: T('reopened') }; loadClass(); }
+  };
+
+  // ── add a student to the class (the door's walk-in, any day) ─────────────
+  // sent: the last add tried and its requestId. Tapping again after a lost
+  // reply resends the same id, so the server answers instead of adding twice.
+  const AD = { key: null };
+  const resetAdd = key => Object.assign(AD, { key, member: null, isNew: false, cover: null, method: null,
+    hits: [], seq: (AD.seq || 0) + 1, sent: null, here: null, term: '', nn: '', ne: '', np: '', err: '', busy: false });
+  const newId = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2));
+  const seatOf = m => m && CV.data ? CV.data.roster.find(b => b.code === m.code) : null;
+  // "Here now" only on the class's own day; ticked from an hour before it starts.
+  const hereOk = c => c.date <= bkkYmd();
+  const hereOn = c => hereOk(c) && (AD.here != null ? AD.here : Date.parse(c.startAt) - Date.now() <= 3600e3);
+  window.addJump = () => {
+    const box = $('#addBox'); if (!box) return;
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => { const q = $('#adQ'); if (q && !AD.member) q.focus({ preventScroll: true }); }, 350);
+  };
+
+  const addBoxHtml = c => `<div class="box" id="addBox"><b>${T('addH')}</b>
+    <div id="adWho" style="margin-top:10px">
+      <input id="adQ" placeholder="${esc(T('addSearchPh'))}" autocomplete="off" value="${esc(AD.term)}">
+      <div id="adHits"></div>
+      <button class="link" id="adNewBtn">${T('addNew')}</button>
+      <div id="adNew" hidden>
+        <input id="adNn" placeholder="${esc(T('addName'))}" autocomplete="off" value="${esc(AD.nn)}">
+        <input id="adNp" type="tel" placeholder="${esc(T('addPhone'))}" autocomplete="off" value="${esc(AD.np)}">
+        <input id="adNe" type="email" placeholder="${esc(T('addEmail'))}" autocomplete="off" value="${esc(AD.ne)}">
+      </div>
+    </div>
+    <div id="adChosen" class="chosen" style="margin-top:10px" hidden><span id="adChosenName"></span>
+      <button class="link" id="adChange">${T('addChange')}</button></div>
+    <p class="lbl">${T('coverQ')}</p>
+    <div class="opts" id="adCovers">
+      <button class="opt" data-cover="pass">${T('covPassOpt')}</button>
+      <button class="opt" data-cover="rezerv">${T('covRezervOpt')}</button>
+      <button class="opt" data-cover="dropin">${T('covDropOpt')}<small>${DROP_PRICE ? '฿' + DROP_PRICE.toLocaleString('en-US') : ''}</small></button>
+    </div>
+    <div id="adMethods" hidden><p class="lbl">${T('methodQ')}</p><div class="opts">
+      ${['cash', 'transfer', 'card'].map(m => `<button class="opt" data-method="${m}">${T('m_' + m)}</button>`).join('')}</div></div>
+    <label class="here"><input type="checkbox" id="adHere"><span>${T('hereNow')}${hereOk(c) ? ''
+      : `<small>${T('hereLater')}</small>`}</span></label>
+    <p id="adHint" class="hint" aria-live="polite"></p>
+    <button class="btn" id="adGo" disabled>${T('addGo')}</button></div>`;
+
+  function wireAdd() {
+    let wait = null;
+    $('#adQ').addEventListener('input', () => {
+      clearTimeout(wait);
+      AD.term = $('#adQ').value;
+      const term = AD.term.trim(), seq = ++AD.seq;
+      AD.hits = term.length < 2 ? [] : null;           // null: a search is on its way
+      paintHits();
+      if (term.length < 2) return;
+      wait = setTimeout(async () => {
+        try {
+          const d = await api('/api/bkk/admin/members?q=' + encodeURIComponent(term)).then(r => r.json());
+          if (seq !== AD.seq) return;
+          AD.hits = d.members || [];
+        } catch (_) { if (seq !== AD.seq) return; AD.hits = 'offline'; }
+        paintHits();
+      }, 250);
+    });
+    $('#adNewBtn').onclick = () => { AD.isNew = true; AD.member = null; AD.err = ''; paintAdd(); $('#adNn').focus(); };
+    for (const k of ['nn', 'ne', 'np']) {
+      const el = $('#ad' + k[0].toUpperCase() + k[1]);
+      el.addEventListener('input', () => { AD[k] = el.value; AD.err = ''; paintAdd(); });
+    }
+    $('#adChange').onclick = () => { AD.member = null; AD.err = ''; paintAdd(); $('#adQ').focus(); };
+    document.querySelectorAll('#adCovers .opt').forEach(b => b.onclick = () => { AD.cover = b.dataset.cover; AD.err = ''; paintAdd(); });
+    document.querySelectorAll('#adMethods .opt').forEach(b => b.onclick = () => { AD.method = b.dataset.method; AD.err = ''; paintAdd(); });
+    $('#adHere').onchange = e => { AD.here = e.target.checked; paintAdd(); };
+    $('#adGo').onclick = addGo;
+    paintHits();
+    paintAdd();
+  }
+
+  function paintHits() {
+    const box = $('#adHits'); if (!box) return;
+    const term = AD.term.trim(), onList = new Set(CV.data.roster.map(b => b.code));
+    box.innerHTML = term.length < 2 || AD.hits === null ? ''
+      : AD.hits === 'offline' ? `<p class="muted">${T('addNoNet')}</p>`
+      : !AD.hits.length ? `<p class="muted">${T('addNoHits')}</p>`
+      : AD.hits.map((m, i) => `<button class="hit" data-i="${i}"><b>${esc(m.name)}</b>
+          <span>${esc([m.code, m.email, m.phone].filter(Boolean).join(' · '))}</span>
+          <em class="${m.has_pass ? 'ok' : ''}">${onList.has(m.code) ? esc(T('hitOn')) + ' · ' : ''}${esc(T(m.has_pass ? 'hitPass' : 'hitNoPass'))}</em></button>`).join('');
+    box.querySelectorAll('.hit').forEach(el => el.onclick = () => {
+      AD.member = AD.hits[Number(el.dataset.i)]; AD.isNew = false; AD.err = ''; paintAdd();
+    });
+  }
+
+  // Already on this class's list: the seat is paid for, so nothing is chosen
+  // or sold here. Add only checks them in (or says they are on it).
+  function paintAdd() {
+    if (!$('#addBox') || !CV.data) return;
+    const c = CV.data.class, chosen = AD.member || AD.isNew;
+    $('#adWho').hidden = !!AD.member;
+    $('#adNew').hidden = !AD.isNew;
+    $('#adNewBtn').hidden = AD.isNew;
+    $('#adChosen').hidden = !AD.member;
+    if (AD.member) $('#adChosenName').textContent = AD.member.name + ' · ' + AD.member.code;
+    const hasPass = !!(AD.member && AD.member.has_pass), on = seatOf(AD.member);
+    if (on || (AD.cover === 'pass' && !hasPass)) AD.cover = null;
+    document.querySelectorAll('#adCovers .opt').forEach(b => {
+      b.disabled = !!on || (b.dataset.cover === 'pass' && !hasPass);
+      b.classList.toggle('on', b.dataset.cover === AD.cover);
+    });
+    $('#adMethods').hidden = AD.cover !== 'dropin';
+    document.querySelectorAll('#adMethods .opt').forEach(b => b.classList.toggle('on', b.dataset.method === AD.method));
+    const here = hereOn(c), name = AD.nn.trim();
+    $('#adHere').checked = here;
+    $('#adHere').disabled = !hereOk(c);
+    const ready = on ? here : (AD.member || (AD.isNew && name)) && AD.cover && (AD.cover !== 'dropin' || AD.method);
+    $('#adGo').disabled = !ready || AD.busy;
+    $('#adGo').textContent = T(here ? 'addGoIn' : 'addGo');
+    const hint = on ? T(here ? 'hOnIn' : 'hOnOnly')
+      : !chosen ? T('hFind') : AD.isNew && !name ? T('hName')
+      : !AD.cover ? (AD.member && !hasPass ? T('hNoPass') : T('hCover'))
+      : AD.cover === 'dropin' && !AD.method ? T('hMethod') : '';
+    const full = !on && isFull(c) ? T('hFull') : '';
+    $('#adHint').className = 'hint' + (AD.err ? ' bad' : '');
+    $('#adHint').textContent = AD.err || [hint, full].filter(Boolean).join(' ');
+  }
+
+  async function addGo() {
+    const c = CV.data && CV.data.class, ref = CV.ref;
+    if (!c || AD.busy || $('#adGo').disabled) return;
+    // No cover chosen: they are already on the list, and the server checks in
+    // a seat they hold whatever the cover says. checkIn is the box as shown:
+    // its default moves with the clock, and the box is only redrawn on a change.
+    const box = $('#adHere'), on = seatOf(AD.member), checkIn = !!box && box.checked && !box.disabled;
+    const body = { slotId: c.slotId, date: c.date, checkIn,
+      cover: AD.cover || (on && on.cover === 'rezerv' ? 'rezerv' : 'pass') };
+    if (body.cover === 'dropin') body.method = AD.method;
+    if (AD.member) body.memberCode = AD.member.code;
+    else Object.assign(body, { name: AD.nn.trim(), email: AD.ne.trim(), phone: AD.np.trim() });
+    const what = JSON.stringify(body);
+    if (!AD.sent || AD.sent.what !== what) AD.sent = { what, id: newId() };
+    body.requestId = AD.sent.id;
+    AD.busy = true; AD.err = ''; paintAdd();
+    let r = null, d = {};
+    try {
+      r = await api('/api/bkk/admin/walkin', { method: 'POST', body: JSON.stringify(body) });
+      d = await r.json().catch(() => ({}));
+    } catch (_) { d = { error: T('addNoNet') }; }
+    AD.busy = false;
+    if (SUB !== 'class' || CV.ref !== ref) return;
+    // The drop-in is sold but they are not on the list: the money stays,
+    // and someone books them by hand.
+    if (d.paid) { resetAdd(AD.key); alert(d.error || T('addPaidNot', d.refno)); loadClass(); return; }
+    if (!r || !r.ok || !d.success) { AD.err = d.error || T('addFail'); paintAdd(); return; }
+    const msg = d.already
+      ? (body.cover === 'dropin' ? T('addWasDrop', d.name) : checkIn ? T('addWasIn', d.name) : T('addWasOn', d.name))
+      : T('addDone', d.name, checkIn);
+    CV.flash = { kind: d.overCapacity ? 'warn' : 'ok', fresh: true,
+      text: [msg, d.overCapacity ? T('addOver') : '', d.refno && !d.already ? T('addRef', d.refno) : ''].filter(Boolean).join(' ') };
+    resetAdd(AD.key);
+    loadClass();
+  }
 
   async function progressBox() {
     const p = await api('/api/bkk/admin/progress').then(r => r.json()).catch(() => null);
@@ -837,6 +1494,8 @@
 
   async function renderToday() {
     const [d, prog0, start] = await Promise.all([api('/api/bkk/admin/today').then(r => r.json()), progressBox(), startBox()]);
+    // Another tab was opened while this loaded (Calendar tapped right after unlock).
+    if (current !== 'today' || SUB) return;
     const prog = prog0 + start;
     const rows = (d.bookings || []);
     const money = (d.money || []);
@@ -872,6 +1531,7 @@
   async function renderOrders() {
     await loadThNames();
     const d = await api('/api/bkk/admin/orders').then(r => r.json());
+    if (current !== 'orders' || SUB) return;
     const rows = (d.orders || []).map(o => `<tr>
       <td><b>${esc(o.member_name)}</b><br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span></td>
       <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
@@ -940,7 +1600,8 @@
   const backBtn = () => `<button class="btn gray sm" onclick="histBack()">${T('back')}</button>`;
   window.showHistory = async code => {
     const seq = ++HIST_SEQ;
-    if (SUB !== 'history') HIST_FROM = { tab: current, term: current === 'students' && $('#q') ? $('#q').value.trim() : '' };
+    if (SUB !== 'history') HIST_FROM = { tab: current, term: current === 'students' && $('#q') ? $('#q').value.trim() : '',
+      cls: SUB === 'class' ? CV.ref : null };
     SUB = 'history'; HIST = null; HIST_ALL = {};
     $('#view').innerHTML = `<p>${backBtn()}</p><p class="muted">${T('loadingTxt')}</p>`;
     window.scrollTo(0, 0);
@@ -955,6 +1616,7 @@
   window.histBack = () => {
     const f = HIST_FROM || { tab: 'students', term: '' };
     SUB = null; HIST = null;
+    if (f.cls) { SUB = 'class'; CV.ref = f.cls; loadClass(true); return; }
     if (f.tab === 'students') renderStudents(f.term);
     else if (f.tab === 'reports') renderReports(true);
     else tab(f.tab);
@@ -1425,6 +2087,7 @@
     TEES = await api('/api/bkk/admin/tees').then(r => r.json())
       .then(d => d.tees || []).catch(() => []);
     const { counts: letter = [], doors = [] } = await api('/api/bkk/admin/newsletter').then(r => r.json()).catch(() => ({}));
+    if (current !== 'settings' || SUB) return;
     const byStatus = {};
     for (const c of letter) byStatus[c.status] = (byStatus[c.status] || 0) + c.n;
     $('#view').innerHTML = `<div class="box">

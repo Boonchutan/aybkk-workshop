@@ -3,7 +3,7 @@ process.env.BKK_ADMIN_KEY = 'testkey';
 process.env.MAIL_DRY_RUN = '1';   // capture mail in an outbox instead of sending
 const express = require('express');
 const { Pool } = require('pg');
-const { mountBkk, moonDaysBetween, parseWhen } = require('../bkk-api.js');
+const { mountBkk, moonDaysBetween, parseWhen, CANCEL_CUTOFF_HOURS } = require('../bkk-api.js');
 
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
   'postgres://test:test@127.0.0.1:5432/bkktest' });
@@ -189,6 +189,8 @@ const ok = (name, cond, extra = '') => {
   if (hoursOut >= 5) ok('credit returned when >5h out', after === before + 1, `${before}→${after}`);
   else ok('credit kept when <5h out', after === before, `${before}→${after}`);
   ok('cancel reports the rule', typeof can.body.message === 'string', can.body.message);
+  ok("...and the rule's hours, so the page never says another number", can.body.cutoffHours === CANCEL_CUTOFF_HOURS
+     && (await J('/api/bkk/schedule?days=1')).body.cutoffHours === CANCEL_CUTOFF_HOURS, JSON.stringify(can.body));
 
   console.log('\n— rebooking after a cancellation —');
   // The cancel above freed the seat. A student who changes their mind must be
@@ -948,20 +950,22 @@ const ok = (name, cond, extra = '') => {
 
     // The door. A class made for this: running right now (started a minute ago,
     // never before midnight), 3 hours long, 3 places. On a moon day the shala
-    // is shut, so it goes on the next working day instead (staff may add
-    // someone before a class starts), and only admin/today's own checks wait.
+    // is shut, so it goes on the last working day before, in a class long
+    // enough to be running still (the door never checks in for a day still to
+    // come), and only admin/today's own checks wait.
     const bkkMs = ms => new Date(ms + 7 * 3600000).toISOString();
     const todayB = bkkMs(Date.now()).slice(0, 10);
     let doorDate = todayB;
-    while (isMoon(doorDate)) doorDate = addD(doorDate, 1);
+    while (isMoon(doorDate)) doorDate = addD(doorDate, -1);
     const onToday = doorDate === todayB;
     const skipped = what => console.log(`  - SKIPPED (moon day today, walk-ins tested on ${doorDate}): ${what}`);
     const startNow = !onToday ? '06:00'
       : bkkMs(Date.now() - 60000).slice(0, 10) === todayB ? bkkMs(Date.now() - 60000).slice(11, 16) : '00:00';
+    const doorMin = onToday ? 180 : Math.ceil((Date.now() - Date.parse(`${doorDate}T06:00:00+07:00`)) / 60000) + 180;
     const mkSlot = async (code, weekday, start, minutes, cap) => (await pool.query(
       `INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity)
        VALUES ($1,'Door Test','test',$2,$3,$4,$5) RETURNING id`, [code, weekday, start, minutes, cap])).rows[0].id;
-    const doorSlot = await mkSlot('test_door_now', wdOf(doorDate), startNow, 180, 3);
+    const doorSlot = await mkSlot('test_door_now', wdOf(doorDate), startNow, doorMin, 3);
     const onDay = onToday ? {} : { date: doorDate };      // today is the default
     const walk = (body, h = ADMIN) => post('/api/bkk/admin/walkin', { slotId: doorSlot, ...onDay, ...body }, h);
     const today0 = await J('/api/bkk/admin/today', { headers: ADMIN });
@@ -1034,8 +1038,8 @@ const ok = (name, cond, extra = '') => {
     ok('...with what the door needs to label them', row('Rezerv Walker').cover === 'rezerv' && row('Rezerv Walker').source === 'door'
        && row('Cash Walker').dropin === true && row('Pass Walker').dropin === false && row('Booked Ahead').source === 'staff', JSON.stringify(mine));
     if (onToday) ok('...and every one counts toward the class', dcl(t1).booked === 4 && dcl(t1).checkedIn === 4 && dcl(t1).capacity === 3, JSON.stringify(dcl(t1)));
-    else ok('...and every one counts toward the class', seatOf(await sched(), { slotId: doorSlot, date: doorDate }).booked === 4
-       && mine.length === 4 && mine.every(b => b.checked_in_at));
+    else ok('...and every one counts toward the class', (await J(`/api/bkk/admin/class?slotId=${doorSlot}&date=${doorDate}`,
+       { headers: ADMIN })).body.class.booked === 4 && mine.length === 4 && mine.every(b => b.checked_in_at));
     ok("the door's drop-in is a real sale: in today's money with VAT", (((t1.body.money || []).find(m => m.method === 'cash') || {}).total || 0) === cash0 + 1605,
        JSON.stringify(t1.body.money));
     await settle();
@@ -1344,13 +1348,14 @@ const ok = (name, cond, extra = '') => {
     // ── one student, everything: native and imported together ──
     const sale = await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: 'Ploy Testimport', email: 'ploy.testimport@example.com', method: 'card' }, ADMIN);
     ok('a desk sale finds the imported student by email', sale.status === 200 && sale.body.member.code === ployCode);
-    let doorDate = todayB;
-    while (isMoon(doorDate)) doorDate = addD(doorDate, 1);
+    let doorDate = todayB;                        // a moon day: the last working day, as at the door above
+    while (isMoon(doorDate)) doorDate = addD(doorDate, -1);
     const onToday = doorDate === todayB;
     const startNow = !onToday ? '06:00'
       : bkkMs(Date.now() - 60000).slice(0, 10) === todayB ? bkkMs(Date.now() - 60000).slice(11, 16) : '00:00';
+    const hMin = onToday ? 180 : Math.ceil((Date.now() - Date.parse(`${doorDate}T06:00:00+07:00`)) / 60000) + 180;
     const hSlot = (await one(`INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity)
-      VALUES ('test_hist_now','History Walk-in','test',$1,$2,180,10) RETURNING id`, [new Date(doorDate + 'T12:00:00Z').getUTCDay(), startNow])).id;
+      VALUES ('test_hist_now','History Walk-in','test',$1,$2,$3,10) RETURNING id`, [new Date(doorDate + 'T12:00:00Z').getUTCDay(), startNow, hMin])).id;
     const walked = await post('/api/bkk/admin/walkin', { slotId: hSlot, ...(onToday ? {} : { date: doorDate }), memberCode: ployCode, cover: 'pass' }, ADMIN);
     ok('...and the door checks her in on her new pass', walked.status === 200, JSON.stringify(walked.body));
     await post('/api/bkk/teacher/notes', { memberCode: ployCode, body: 'Team only: watch the left knee', shareWithStudent: false }, PKEY);
@@ -1582,7 +1587,10 @@ const ok = (name, cond, extra = '') => {
       { rezervId: 'V-91', memberRezervId: 'RZ-1005', date: rd, time: '10:10', className: 'History Reimport', status: 'Booked' },
     ];
     const re1 = await imp('visits', reRows);
-    const door = await post('/api/bkk/admin/walkin', { slotId: rSlot, date: rd, memberCode: await codeOf('RZ-1003'), cover: 'rezerv' }, ADMIN);
+    // Staff find her on the list; the door checks in on the day, so for a
+    // class days ahead the check-in is written here.
+    const door = await post('/api/bkk/admin/walkin', { slotId: rSlot, date: rd, memberCode: await codeOf('RZ-1003'), cover: 'rezerv', checkIn: false }, ADMIN);
+    await pool.query('UPDATE bkk_bookings SET checked_in_at=now() WHERE id=$1', [(await vrow('V-90')).id]);
     const cx = await post(`/api/bkk/bookings/${(await vrow('V-91')).id}/cancel`, { memberCode: await codeOf('RZ-1005') });
     const re2 = await imp('visits', reRows);
     const [a90, a91] = await Promise.all(['V-90', 'V-91'].map(vrow));
@@ -1701,6 +1709,297 @@ const ok = (name, cond, extra = '') => {
     srv2.close();
   }
 
+  console.log('\n— the class calendar (admin month, week, day and inside a class) —');
+  {
+    const addD = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+    const wdOf = d => new Date(d + 'T12:00:00Z').getUTCDay();
+    const isMoon = d => moonDaysBetween(d, d).size > 0;
+    const todayB = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+    const back = n => { let d = addD(todayB, -n); while (isMoon(d)) d = addD(d, -1); return d; };
+    const P = back(3), P3 = back(5), P2 = back(7);              // past working days, all different
+    let F = addD(todayB, 2); while (isMoon(F)) F = addD(F, 1);   // a working day ahead, inside two weeks
+    const from = addD(todayB, -20), to = addD(todayB, 20);
+    const M = [...moonDaysBetween(from, addD(todayB, -1)).keys()].pop();      // a moon day gone by
+    const M2 = [...moonDaysBetween(addD(todayB, 1), to).keys()][0];            // and one to come
+    const cal = (f, t, h = ADMIN) => J(`/api/bkk/admin/calendar?from=${f}&to=${t}`, { headers: h });
+    const cls = (qs, h = ADMIN) => J('/api/bkk/admin/class?' + new URLSearchParams(qs), { headers: h });
+    const checkin = (id, body = {}, h = ADMIN) => post(`/api/bkk/admin/bookings/${id}/checkin`, body, h);
+    const mkSlot = async (code, weekday, start, minutes, cap, active = true) => (await pool.query(
+      `INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity,active)
+       VALUES ($1,'Cal Test','test',$2,$3,$4,$5,$6) RETURNING id`, [code, weekday, start, minutes, cap, active])).rows[0].id;
+    const mkMember = async (code, name) => (await pool.query(
+      `INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,$2,$3,'080-000-0000') RETURNING id`,
+      [code, name, code.toLowerCase() + '@example.com'])).rows[0].id;
+    const addBk = async o => (await pool.query(
+      `INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,pass_id,status,checked_in_at,cancelled_at,cancel_reason,cover,source,class_title,source_ref)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id`,
+      [o.slot ?? null, o.date, o.at, o.member, o.pass ?? null, o.status || 'booked', o.ci ?? null, o.cancelledAt ?? null,
+       o.reason ?? null, o.cover || 'rezerv', o.source || 'staff', o.title ?? null, o.ref ?? null])).rows[0].id;
+    const at = (d, t) => `${d}T${t}:00+07:00`;
+
+    ok('the calendar needs the staff key', (await cal(from, to, {})).status === 401);
+    const bad = await Promise.all([
+      J('/api/bkk/admin/calendar', { headers: ADMIN }), cal('2026-02-30', '2026-03-02'), cal(to, from),
+      cal('yesterday', to), cal(todayB, addD(todayB, 62))]);
+    ok('...and a real range: missing, impossible or backwards dates, or more than 62 days, are refused',
+       bad.every(r => r.status === 400 && r.body.error), JSON.stringify(bad.map(r => [r.status, r.body.error])));
+    ok('...62 days is fine', (await cal(todayB, addD(todayB, 61))).status === 200);
+
+    // A past class with every kind of name on it.
+    const slotA = await mkSlot('test_cal_a', wdOf(P), '06:00', 60, 5);
+    const mem = {};
+    for (const [k, n] of [['zed', 'Cal Zed'], ['amy', 'Cal Amy'], ['moe', 'Cal Moe'], ['bea', 'Cal Bea'], ['kim', 'Cal Kim'], ['lee', 'Cal Lee']])
+      mem[k] = await mkMember('BTESTCAL' + k.toUpperCase(), n);
+    const dropPass = (await pool.query(
+      `INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,status)
+       VALUES ($1,(SELECT id FROM bkk_products WHERE code='dropin'),'credits',1,1,1,'active') RETURNING id`, [mem.bea])).rows[0].id;
+    const sA = at(P, '06:00');
+    const bk = {
+      zed: await addBk({ slot: slotA, date: P, at: sA, member: mem.zed, ci: sA }),
+      amy: await addBk({ slot: slotA, date: P, at: sA, member: mem.amy }),
+      bea: await addBk({ slot: slotA, date: P, at: sA, member: mem.bea, ci: sA, pass: dropPass, cover: 'pass', source: 'door' }),
+      moe: await addBk({ slot: slotA, date: P, at: sA, member: mem.moe, status: 'noshow' }),
+      kim: await addBk({ slot: slotA, date: P, at: sA, member: mem.kim, status: 'cancelled',
+        cancelledAt: new Date(Date.now() - 3600000), reason: 'cal test reason' }),
+      lee: await addBk({ slot: slotA, date: P, at: sA, member: mem.lee, status: 'cancelled', cancelledAt: new Date() }),
+    };
+
+    // A slot no longer run, with a visit on its day and one on another weekday.
+    const slotOff = await mkSlot('test_cal_off', wdOf(P2), '09:00', 90, 20, false);
+    const offMem = await mkMember('BTESTCALOFF', 'Cal Off');
+    await addBk({ slot: slotOff, date: P2, at: at(P2, '09:00'), member: offMem, ci: at(P2, '09:00') });
+    await addBk({ slot: slotOff, date: addD(P2, 1), at: at(addD(P2, 1), '09:00'), member: offMem, status: 'noshow' });
+    // A visit on a moon day gone by, in a class the timetable runs on that weekday.
+    const moonSlot = (await pool.query(`SELECT id FROM bkk_class_slots WHERE active AND weekday=$1 AND kind <> 'test'
+      ORDER BY start_time, id LIMIT 1`, [wdOf(M)])).rows[0].id;
+    const moonStart = (await pool.query('SELECT start_time FROM bkk_class_slots WHERE id=$1', [moonSlot])).rows[0].start_time;
+    await addBk({ slot: moonSlot, date: M, at: at(M, moonStart), member: offMem, ci: at(M, moonStart) });
+    // Rezerv classes that matched no slot: kept with their own title.
+    const wsMem = [];
+    for (let i = 0; i < 5; i++) wsMem.push(await mkMember('BTESTCALWS' + i, 'Cal Workshop ' + i));
+    const ws = (i, o) => addBk({ date: P3, at: at(P3, '10:00'), member: wsMem[i], title: 'Cal Workshop', source: 'rezerv',
+      ref: 'test-cal-ws-' + i, ...o });
+    const wsIn = await ws(0, { ci: at(P3, '10:00') });
+    const wsNo = await ws(1, { status: 'noshow' });
+    const wsBk = await ws(2, {});
+    await ws(3, { status: 'cancelled', cancelledAt: new Date(), reason: 'cancelled in Rezerv' });
+    await ws(4, { at: at(P3, '14:00'), ci: at(P3, '14:00') });
+    // A Rezerv visit with no time on file is stored at 00:00.
+    const wsMid = await mkMember('BTESTCALMID', 'Cal Midnight');
+    await addBk({ date: P3, at: at(P3, '00:00'), member: wsMid, title: 'Cal No Time', source: 'rezerv', ref: 'test-cal-mid', ci: at(P3, '00:00') });
+
+    const c1 = await cal(from, to);
+    const list = c1.body.classes || [];
+    const byKey = k => list.find(c => c.key === k);
+    ok('the calendar answers with its range, today in Bangkok and the moon days',
+       c1.status === 200 && c1.body.from === from && c1.body.to === to && c1.body.today === todayB
+         && c1.body.moonDays[M] && c1.body.moonDays[M2] && Object.keys(c1.body.moonDays).every(d => d >= from && d <= to),
+       JSON.stringify({ ...c1.body, classes: list.length }));
+    const order = c => c.date + (c.timeKnown ? '0' : '1') + c.startAt;
+    ok('...classes in time order, each once', list.every((c, i) => !i || order(list[i - 1]) <= order(c))
+       && new Set(list.map(c => c.key)).size === list.length);
+    const active = (await pool.query('SELECT id, weekday FROM bkk_class_slots WHERE active')).rows;
+    const missing = [];
+    for (let d = from; d <= to; d = addD(d, 1)) {
+      if (isMoon(d)) continue;
+      for (const s of active) if (s.weekday === wdOf(d) && !byKey(`s:${s.id}:${d}`)) missing.push(`${s.id}:${d}`);
+    }
+    ok('every class the timetable runs is there, past days included', !missing.length && list.some(c => c.date < todayB && c.slotId),
+       missing.slice(0, 5).join(' '));
+    ok('a moon day to come has no class on it', !list.some(c => c.date === M2), M2);
+    const onM = list.filter(c => c.date === M);
+    ok('...a moon day gone by shows only a class with names on it',
+       onM.length >= 1 && onM.every(c => c.booked + c.noShows > 0) && byKey(`s:${moonSlot}:${M}`)
+         && byKey(`s:${moonSlot}:${M}`).booked >= 1, JSON.stringify(onM));
+
+    const a = byKey(`s:${slotA}:${P}`) || {};
+    ok('a past class counts booked, checked in and no-shows (cancelled seats are not counted)',
+       a.booked === 3 && a.checkedIn === 2 && a.noShows === 1 && a.capacity === 5 && a.cancelled === false && a.note === null,
+       JSON.stringify(a));
+    ok('...with what the page needs to draw it', a.slotId === slotA && a.date === P && a.startAt === sA && a.title === 'Cal Test'
+       && a.kind === 'test' && a.teachers === '' && a.durationMin === 60 && a.isOnline === false, JSON.stringify(a));
+    const off = byKey(`s:${slotOff}:${P2}`);
+    ok('a slot no longer run still shows the class it had names in',
+       off && off.booked === 1 && off.checkedIn === 1, JSON.stringify(off));
+    ok('...on another weekday too (history), and nowhere it had none',
+       byKey(`s:${slotOff}:${addD(P2, 1)}`) && byKey(`s:${slotOff}:${addD(P2, 1)}`).noShows === 1
+         && list.filter(c => c.slotId === slotOff).length === 2);
+    const wsKey = `x:${P3}:10:00:Cal Workshop`;
+    const w = byKey(wsKey);
+    ok('Rezerv visits with no slot are one class per day, title and time',
+       w && w.slotId === null && w.title === 'Cal Workshop' && w.capacity === null && w.startAt === at(P3, '10:00')
+         && w.booked === 2 && w.checkedIn === 1 && w.noShows === 1 && w.cancelled === false, JSON.stringify(w));
+    ok('...another time is another class', byKey(`x:${P3}:14:00:Cal Workshop`) && byKey(`x:${P3}:14:00:Cal Workshop`).booked === 1
+       && list.filter(c => c.title === 'Cal Workshop').length === 2);
+    const p3 = list.filter(c => c.date === P3), mid = byKey(`x:${P3}:00:00:Cal No Time`);
+    ok('a Rezerv visit with no time says so, and comes last in its day, not first at 00:00',
+       mid && mid.timeKnown === false && w.timeKnown === true && a.timeKnown === true && p3[p3.length - 1] === mid
+         && p3.length > 1, JSON.stringify(p3.map(c => [c.key, c.timeKnown])));
+
+    await pool.query(`INSERT INTO bkk_class_overrides (slot_id, class_date, capacity) VALUES ($1,$2,0)`, [slotA, P]);
+    const cap0 = ((await cal(P, P)).body.classes || []).find(c => c.slotId === slotA);
+    ok("the day's own capacity is used, 0 included", cap0 && cap0.capacity === 0, JSON.stringify(cap0));
+    await pool.query(`UPDATE bkk_class_overrides SET capacity=4 WHERE slot_id=$1 AND class_date=$2`, [slotA, P]);
+    ok('...and any other number', ((await cal(P, P)).body.classes || []).find(c => c.slotId === slotA).capacity === 4);
+
+    console.log('  inside a class');
+    ok('inside a class needs the staff key', (await cls({ slotId: slotA, date: P }, {})).status === 401);
+    const inA = await cls({ slotId: slotA, date: P });
+    const r = inA.body.roster || [];
+    ok('the roster is everyone booked or no-show, by name',
+       inA.status === 200 && r.map(x => x.name).join() === 'Cal Amy,Cal Bea,Cal Moe,Cal Zed', JSON.stringify(inA.body).slice(0, 400));
+    const bea = r.find(x => x.name === 'Cal Bea') || {}, moe = r.find(x => x.name === 'Cal Moe') || {};
+    ok('...each row with what staff need, and no email, phone or birthday',
+       bea.bookingId === bk.bea && bea.code === 'BTESTCALBEA' && bea.status === 'booked' && !!bea.checkedInAt && !!bea.bookedAt
+         && bea.cover === 'pass' && bea.source === 'door' && bea.passName === 'Drop-in' && bea.dropin === true
+         && moe.status === 'noshow' && moe.checkedInAt === null && moe.dropin === false && moe.passName === null
+         && r.every(x => Object.keys(x).sort().join() === 'bookedAt,bookingId,checkedInAt,code,cover,dropin,name,passName,source,status')
+         && !JSON.stringify(inA.body).includes('@example.com') && !JSON.stringify(inA.body).includes('080-000'),
+       JSON.stringify(r));
+    const cl = inA.body.cancelledList || [];
+    ok('...then who cancelled, newest first, with the reason',
+       cl.length === 2 && cl[0].name === 'Cal Lee' && cl[0].reason === null && cl[1].name === 'Cal Kim' && cl[1].reason === 'cal test reason'
+         && cl[1].code === 'BTESTCALKIM' && !!cl[1].cancelledAt, JSON.stringify(cl));
+    const ca = inA.body.class || {};
+    ok('...and the class: counts, end time, over, nobody more to add',
+       ca.key === `s:${slotA}:${P}` && ca.booked === 3 && ca.checkedIn === 2 && ca.noShows === 1 && ca.capacity === 4
+         && ca.endAt === at(P, '07:00') && ca.started === true && ca.ended === true && ca.canAdd === false, JSON.stringify(ca));
+    const inWs = await cls({ date: P3, time: '10:00', title: 'Cal Workshop' });
+    ok('a Rezerv class with no slot opens by day, time and title, read-only',
+       inWs.status === 200 && inWs.body.class.slotId === null && inWs.body.class.key === wsKey && inWs.body.class.canAdd === false
+         && inWs.body.roster.length === 3 && inWs.body.cancelledList.length === 1
+         && inWs.body.cancelledList[0].reason === 'cancelled in Rezerv', JSON.stringify(inWs.body).slice(0, 300));
+    ok('...an unknown one is not found', (await cls({ date: P3, time: '11:00', title: 'Cal Workshop' })).status === 404);
+    const inMid = await cls({ date: P3, time: '00:00', title: 'Cal No Time' });
+    ok('...one with no time still opens by 00:00, and says the time is not known', inMid.status === 200
+       && inMid.body.class.timeKnown === false && inMid.body.roster.length === 1, JSON.stringify(inMid.body.class));
+    ok('an unknown slot is not found', (await cls({ slotId: 999999, date: P })).status === 404);
+    ok('a bad date is refused', (await cls({ slotId: slotA, date: '2026-13-01' })).status === 400
+       && (await cls({ slotId: slotA })).status === 400 && (await cls({ date: P })).status === 400);
+    const slotF = await mkSlot('test_cal_fut', wdOf(F), '06:00', 60, 4);
+    const wrongWd = await cls({ slotId: slotF, date: addD(F, 1) });
+    ok("a slot on a day that is not its weekday, with nobody on it, is refused", wrongWd.status === 400
+       && /not on that day/.test(wrongWd.body.error), JSON.stringify(wrongWd.body));
+    const offOther = await cls({ slotId: slotOff, date: addD(P2, 1) });
+    ok('...with names on it, it is history and opens (nothing can be added)', offOther.status === 200
+       && offOther.body.roster.length === 1 && offOther.body.class.canAdd === false, JSON.stringify(offOther.body).slice(0, 200));
+    const fut0 = await cls({ slotId: slotF, date: F });
+    ok('a class to come can take names', fut0.status === 200 && fut0.body.class.canAdd === true && fut0.body.class.started === false
+       && fut0.body.class.ended === false && fut0.body.class.endAt === at(F, '07:00') && fut0.body.roster.length === 0,
+       JSON.stringify(fut0.body.class));
+
+    console.log('  checking in from the class');
+    ok('checking in needs the staff key', (await checkin(bk.amy, {}, {})).status === 401);
+    const amyIn = await checkin(bk.amy);
+    ok('a past class is checked in at its start', amyIn.status === 200 && amyIn.body.success && amyIn.body.booking.id === bk.amy
+       && amyIn.body.booking.status === 'booked' && Date.parse(amyIn.body.booking.checkedInAt) === Date.parse(sA), JSON.stringify(amyIn.body));
+    const moeIn = await checkin(bk.moe);
+    ok('a no-show who came after all becomes a visit', moeIn.status === 200 && moeIn.body.booking.status === 'booked'
+       && Date.parse(moeIn.body.booking.checkedInAt) === Date.parse(sA), JSON.stringify(moeIn.body));
+    const zedOut = await checkin(bk.zed, { undo: true });
+    ok('undo clears the check-in, the seat stays', zedOut.status === 200 && zedOut.body.booking.status === 'booked'
+       && zedOut.body.booking.checkedInAt === null, JSON.stringify(zedOut.body));
+    const aAfter = ((await cal(P, P)).body.classes || []).find(c => c.slotId === slotA) || {};
+    ok('...and the calendar counts follow', aAfter.booked === 4 && aAfter.checkedIn === 3 && aAfter.noShows === 0, JSON.stringify(aAfter));
+    ok('a cancelled seat cannot be checked in', (await checkin(bk.kim)).status === 409);
+    ok('an unknown booking is not found', (await checkin(99999999)).status === 404 && (await checkin('abc')).status === 404);
+    const wsState = async () => (await pool.query(`SELECT id, status, checked_in_at FROM bkk_bookings WHERE id = ANY($1) ORDER BY id`,
+      [[wsIn, wsNo, wsBk]])).rows.map(x => `${x.status}:${!!x.checked_in_at}`).join();
+    const ws0 = await wsState();
+    const wsTries = [await checkin(wsIn, { undo: true }), await checkin(wsNo), await checkin(wsBk),
+      await post(`/api/bkk/bookings/${wsBk}/cancel`, {}, ADMIN)];
+    ok('a Rezerv class with no slot stays as Rezerv kept it: no undo, check-in or cancel',
+       wsTries.every(x => x.status === 409 && /moved from Rezerv/.test(x.body.error)) && (await wsState()) === ws0
+         && ws0 === 'booked:true,noshow:false,booked:false', JSON.stringify([ws0, wsTries.map(x => x.body)]));
+    const twiceD = addD(P2, 2);
+    await addBk({ slot: slotOff, date: twiceD, at: at(twiceD, '09:00'), member: offMem });
+    const twiceNo = await addBk({ slot: slotOff, date: twiceD, at: at(twiceD, '09:00'), member: offMem, status: 'noshow' });
+    const twiceIn = await checkin(twiceNo);
+    ok('a no-show for someone who also holds a seat in that class stays a no-show', twiceIn.status === 409
+       && /already on this class list/.test(twiceIn.body.error), JSON.stringify(twiceIn.body));
+    const todaySlot = await mkSlot('test_cal_today', wdOf(todayB), '23:30', 30, 10, false);
+    const todayBk = await addBk({ slot: todaySlot, date: todayB, at: at(todayB, '23:30'), member: mem.zed });
+    const tIn = await checkin(todayBk);
+    ok("today's class is checked in now", tIn.status === 200 && Math.abs(Date.parse(tIn.body.booking.checkedInAt) - Date.now()) < 60000,
+       JSON.stringify(tIn.body));
+    const credits = async code => (await pool.query(`SELECT coalesce(sum(credits_used),0)::int AS n FROM bkk_passes p
+      JOIN bkk_members m ON m.id=p.member_id WHERE m.code=$1`, [code])).rows[0].n;
+
+    console.log('  adding from the calendar');
+    const walk = body => post('/api/bkk/admin/walkin', { slotId: slotF, date: F, ...body }, ADMIN);
+    const rowOf = async name => (await pool.query(`SELECT b.id, b.checked_in_at, b.source, b.cover FROM bkk_bookings b
+      JOIN bkk_members m ON m.id=b.member_id WHERE b.slot_id=$1 AND b.class_date=$2 AND b.status='booked' AND m.name=$3`,
+      [slotF, F, name])).rows;
+    const nw = await walk({ name: 'Cal New', cover: 'rezerv', checkIn: false, requestId: 'test-cal-new' });
+    const nwRows = await rowOf('Cal New');
+    ok('a class to come takes a name without checking it in, added by staff',
+       nw.status === 200 && nw.body.already === false && nw.body.cover === 'rezerv' && nwRows.length === 1
+         && nwRows[0].checked_in_at === null && nwRows[0].source === 'staff', JSON.stringify({ body: nw.body, nwRows }));
+    const nw2 = await walk({ name: 'Cal New', cover: 'rezerv', checkIn: false, requestId: 'test-cal-new' });
+    ok('...a second tap with the same request adds no one twice', nw2.status === 200 && nw2.body.repeat === true
+       && (await pool.query(`SELECT count(*)::int AS n FROM bkk_members WHERE name='Cal New'`)).rows[0].n === 1, JSON.stringify(nw2.body));
+    const nw3 = await walk({ memberCode: nw.body.code, cover: 'rezerv', checkIn: false });
+    ok('...someone already on the list is said so, and not checked in', nw3.status === 200 && nw3.body.already === true
+       && (await rowOf('Cal New')).every(x => x.checked_in_at === null) && (await rowOf('Cal New')).length === 1, JSON.stringify(nw3.body));
+    ok('...checking in a class not reached yet is refused', /not today yet/.test((await checkin(nwRows[0].id)).body.error || ''));
+    const nwCash = await walk({ memberCode: nw.body.code, cover: 'dropin', method: 'cash', checkIn: false });
+    const nwOrders = (await pool.query(`SELECT count(*)::int AS n FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id
+      WHERE m.name='Cal New'`)).rows[0].n;
+    ok('...and a drop-in for them sells nothing', nwCash.status === 200 && nwCash.body.already === true && !nwCash.body.refno
+       && nwOrders === 0 && (await rowOf('Cal New')).every(x => x.checked_in_at === null), JSON.stringify(nwCash.body));
+    const cash = await walk({ name: 'Cal Cash', cover: 'dropin', method: 'cash', checkIn: false });
+    const cashRows = await rowOf('Cal Cash');
+    ok('...a drop-in sold for it books the seat, not checked in', cash.status === 200 && cash.body.cover === 'dropin'
+       && /^\d+$/.test(cash.body.refno || '') && cashRows.length === 1 && cashRows[0].checked_in_at === null
+       && cashRows[0].source === 'staff', JSON.stringify({ body: cash.body, cashRows }));
+    const holder = (await post('/api/bkk/admin/passes', { name: 'Cal Holder', email: 'cal.holder@example.com', productCode: 'pack10' }, ADMIN)).body.member.code;
+    const pw = await walk({ memberCode: holder, cover: 'pass', checkIn: false });
+    const pwRows = await rowOf('Cal Holder');
+    ok('...an aybkk.net pass too, using one credit', pw.status === 200 && pw.body.cover === 'pass' && pwRows.length === 1
+       && pwRows[0].checked_in_at === null && (await credits(holder)) === 1, JSON.stringify(pw.body));
+    // The door's add checks in, and nobody is in the room for a later day.
+    const doorTries = [await walk({ name: 'Cal Door', cover: 'rezerv' }), await walk({ name: 'Cal Door', cover: 'rezerv', checkIn: true }),
+      await walk({ memberCode: nw.body.code, cover: 'rezerv' })];
+    ok('with no checkIn (the door\'s add) or checkIn true, a class on a later day is refused', doorTries.every(x => x.status === 409
+       && x.body.error === 'that class is not today yet') && !(await rowOf('Cal Door')).length
+       && (await pool.query(`SELECT count(*)::int AS n FROM bkk_members WHERE name='Cal Door'`)).rows[0].n === 0
+       && (await rowOf('Cal New')).every(x => x.checked_in_at === null), JSON.stringify(doorTries.map(x => x.body)));
+    const oddIn = await walk({ name: 'Cal Odd', cover: 'rezerv', checkIn: 'false' });
+    ok('...and checkIn must be true or false, never the text "false"', oddIn.status === 400 && !(await rowOf('Cal Odd')).length,
+       JSON.stringify(oddIn.body));
+    const fourth = await walk({ name: 'Cal Fourth', cover: 'rezerv', checkIn: false });
+    const sch14 = (await J('/api/bkk/schedule?days=14')).body.classes.find(c => c.slotId === slotF && c.date === F) || {};
+    ok('everyone added counts on the timetable students see', fourth.status === 200 && sch14.booked === 4 && sch14.seatsLeft === 0,
+       JSON.stringify(sch14));
+    const inF = await cls({ slotId: slotF, date: F });
+    ok('...and inside the class', inF.body.class.booked === 4 && inF.body.class.checkedIn === 0 && inF.body.roster.length === 4
+       && inF.body.roster.find(x => x.name === 'Cal Cash').dropin === true, JSON.stringify(inF.body.class));
+
+    console.log('  closing and reopening from the calendar');
+    await post('/api/bkk/admin/classes/cancel', { slotId: slotF, date: F, reason: 'Cal Holiday' }, ADMIN);
+    const fOff = ((await cal(F, F)).body.classes || []).find(c => c.slotId === slotF) || {};
+    ok('a closed class stays on the calendar, marked, with the reason', fOff.cancelled === true && fOff.note === 'Cal Holiday'
+       && fOff.booked === 0, JSON.stringify(fOff));
+    const inOff = await cls({ slotId: slotF, date: F });
+    ok('...inside it nobody can be added, and the released seats are listed', inOff.body.class.canAdd === false
+       && inOff.body.class.cancelled === true && inOff.body.roster.length === 0 && inOff.body.cancelledList.length === 4
+       && inOff.body.cancelledList.every(x => x.reason === 'class cancelled: Cal Holiday'), JSON.stringify(inOff.body).slice(0, 300));
+    await post('/api/bkk/admin/classes/reopen', { slotId: slotF, date: F }, ADMIN);
+    const fBack = ((await cal(F, F)).body.classes || []).find(c => c.slotId === slotF) || {};
+    ok('...reopened, it is a plain class again', fBack.cancelled === false && fBack.note === null, JSON.stringify(fBack));
+
+    // The student's own bookings carry the Bangkok day as text: a 05:30 class
+    // is the previous day in UTC.
+    const early = (await J('/api/bkk/schedule?days=14')).body.classes.find(c => c.startAt.endsWith('T05:30:00+07:00') && c.seatsLeft > 0);
+    const eCode = (await post('/api/bkk/admin/passes', { name: 'Cal Early', email: 'cal.early@example.com', productCode: 'pack10' }, ADMIN)).body.member.code;
+    await post('/api/bkk/bookings', { memberCode: eCode, slotId: early.slotId, date: early.date });
+    const eMe = (await J('/api/bkk/me/' + eCode)).body.bookings || [];
+    ok("/me bookings carry classDate, the Bangkok day of a 05:30 class", eMe.length === 1 && eMe[0].classDate === early.date
+       && typeof eMe[0].classDate === 'string' && eMe[0].slot_id === early.slotId && eMe[0].title === early.title,
+       JSON.stringify({ early, eMe }));
+    await pool.query(`UPDATE bkk_class_slots SET active=false WHERE code IN ('test_cal_a','test_cal_fut')`);
+  }
+
   console.log('\n— Bangkok calendar dates —');
   // The schedule window is built from ymd(); in UTC it drifts a day during the
   // 00:00–07:00 Bangkok window, exactly when the 05:30 Mysore is booked.
@@ -1709,6 +2008,8 @@ const ok = (name, cond, extra = '') => {
   ok('schedule never offers a date before today in Bangkok',
      sch2.body.classes.every(c => c.date >= todayBkk),
      `today(BKK)=${todayBkk} earliest=${sch2.body.classes.map(c => c.date).sort()[0]}`);
+  ok('...and names the last Bangkok day it loaded', sch2.body.to === new Date(Date.parse(todayBkk + 'T12:00:00Z') + 2 * 86400000).toISOString().slice(0, 10),
+     `today(BKK)=${todayBkk} to=${sch2.body.to}`);
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
