@@ -6,3 +6,4 @@ Reminder due today: judge the Google brand ad (spend, clicks, src "google" start
 Reel: Plato's daily run is paused (expected). Two Reels from Plato chat 28 Oct are ready to film: "My first shala was built for 20" (post before 9 Nov) and "One class is not a practice". Carne posted today.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 12 days.
 Inbox 07:08: 0 new, 0 hot.
+13:08 check-in: course prices (Sun 1 Nov, 3 days) and aybkk.net buyers (Fri 30 Oct, 1 day) reminded, 2nd nudge today. Inbox 13:08: 1 new, 1 hot.

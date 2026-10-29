@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-29T00:10:18.100Z
+Inbox last read: 2026-10-29T06:13:16.859Z
 
 ## Standing orders from Boonchu
 - 2026-10-17 (Boonchu, HOUSE RULE for every student or customer message and review reply): never write "sorry". For a late answer write "Thank you for your patience with our reply." Keep replies brief, friendly and precise.
@@ -176,3 +176,4 @@ Inbox last read: 2026-10-29T00:10:18.100Z
 - 2026-10-28 13:08: Inbox 13:08: 0 new. No Cap Daily reminded (due 19:00 today, 2nd nudge today: at 19:08 only apply the default, stays paused). PR #71 asked: A merge before Mon 2 Nov or B hold, by 19:00 Fri 30 Oct, default B. Prices (Sun 1 Nov) not repeated. Plato chat: first Google photo post published 13:00. No reminders due, no wins.
 - 2026-10-28 19:08: No Cap Daily default applied (stays paused). Inbox 19:08: 0 new, 0 hot. Prices (Sun 1 Nov) reminded, 2nd nudge today. aybkk.net buyer gap asked (Rezerv stops selling Mon 2 Nov, 5 days). No reminders due, no wins. Next step given: answer the online Led invite-only question (day 12), send Carne's 28 Oct draft.
 - 2026-10-29 07:08: Carne posted; Plato paused (expected). Inbox 07:08: 0 new, 0 hot. Google brand ad judge reminder sent. Prices (Sun 1 Nov) reminded, 1st nudge today. aybkk.net buyer gap: choice set, by 19:00 Fri 30 Oct, default B = add each buyer to Rezerv by hand. PR #71 already merged (28 Oct), its A/B ask dropped. No wins. Board rebuilt.
+- 2026-10-29 13:08: Inbox 13:08: 1 new in 1 thread, 1 hot (LINE booking question, may be answered). Prices (Sun 1 Nov) and aybkk.net buyers (19:00 Fri 30 Oct) reminded, 2nd nudge today: do not repeat at 19:08. No reminders due since 07:08, no wins.
