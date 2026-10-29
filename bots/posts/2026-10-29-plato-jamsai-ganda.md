@@ -1,3 +1,4 @@
 # Reel idea: Jamsai in Ganda Bherundasana, her own voiceover (Boonchu, 29 Oct)
 
 His title idea: "The deep feeling of Ganda behrundhasana" (spelling: Ganda Bherundasana). Plato: the shape is the hook; the title must add a question. Pick: "What does this feel like inside?" with a small second line "Ganda Bherundasana · Jamsai". Options: "It looks painful. It feels quiet." (only if Jamsai says so), "Inside an authorized teacher's deepest backbend" (Jamsai = Authorized Level 2, confirmed 4 Oct). Caption should say it took years with a teacher; do not try from a video.
+Boonchu chose option 1. Caption EN+TH written: sound on, Jamsai in her own words, Authorized Level 2 by R. Sharath Jois, third series (Advanced A, checked on ashtangayoga.info), years of daily practice with a teacher, don't try from a video, CTA aybkk.net. No feelings put in Jamsai's mouth (her voiceover says them).
