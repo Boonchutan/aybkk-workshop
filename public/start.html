@@ -161,7 +161,7 @@
   const MSG = `Hi AYBKK, I want to book my first morning. (aybkk.net/start${pathTag ? '/' + pathTag : ''})\nสวัสดีครับ/ค่ะ อยากจองเช้าแรกครับ/ค่ะ`;
   const LINK = {
     line: 'https://line.me/R/oaMessage/%40aybkk/?' + encodeURIComponent(MSG),
-    whatsapp: 'https://wa.me/66822244246?text=' + encodeURIComponent(MSG),
+    whatsapp: 'https://wa.me/66842244246?text=' + encodeURIComponent(MSG),
   };
   const qs = new URLSearchParams(location.search);
   const src = pathTag || qs.get('src') || (document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : 'direct');

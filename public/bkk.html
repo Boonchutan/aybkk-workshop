@@ -13,7 +13,7 @@
 <meta property="og:image:height" content="1067">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://aybkk.net/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SportsActivityLocation","name":"AYBKK","alternateName":"Ashtanga Yoga Bangkok","url":"https://aybkk.net/","logo":"https://aybkk.net/img/aybkk-logo-240.jpg","image":"https://aybkk.net/img/aybkk-hero-1600.jpg","description":"Traditional Ashtanga, Mysore style, in Bangkok since 2013. Beginners welcome: we teach you from zero.","foundingDate":"2013","address":{"@type":"PostalAddress","streetAddress":"545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor","addressLocality":"Bangkok","postalCode":"10110","addressCountry":"TH"},"sameAs":["https://www.instagram.com/aybkk","https://www.facebook.com/ashtangabkk"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SportsActivityLocation","name":"AYBKK","alternateName":["Ashtanga Yoga Center of Bangkok","Ashtanga Yoga Bangkok"],"telephone":"+66842244246","url":"https://aybkk.net/","logo":"https://aybkk.net/img/aybkk-logo-240.jpg","image":"https://aybkk.net/img/aybkk-hero-1600.jpg","description":"Traditional Ashtanga, Mysore style, in Bangkok since 2013. Beginners welcome: we teach you from zero.","foundingDate":"2013","address":{"@type":"PostalAddress","streetAddress":"545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor","addressLocality":"Bangkok","postalCode":"10110","addressCountry":"TH"},"geo":{"@type":"GeoCoordinates","latitude":13.7336594,"longitude":100.5658621},"hasMap":"https://www.google.com/maps/search/?api=1&query=AYBKK&query_place_id=ChIJOWhLf_2e4jARi25S9GpEmWk","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Monday","opens":"06:30","closes":"08:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Tuesday","Wednesday","Thursday","Friday"],"opens":"05:30","closes":"09:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"07:00","closes":"10:45"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Sunday","opens":"07:00","closes":"09:30"}],"sameAs":["https://www.instagram.com/aybkk","https://www.facebook.com/ashtangabkk","https://www.tiktok.com/@aybkkashtanga","https://www.youtube.com/@AshtangaAYBKK","https://line.me/R/ti/p/@aybkk"]}</script>
 <link rel="preload" href="/fonts/longcang.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/patrickhand.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/plexthai.woff2" as="font" type="font/woff2" crossorigin>
@@ -173,6 +173,9 @@
   .links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
   .links .btn{width:100%;padding:11px 10px;text-align:center}
   .links .wide{grid-column:1/-1}
+  /* Google is blocked on most Chinese phones, so in Chinese the Amap button leads. */
+  html[lang="zh-Hans"] #find .amap{order:-1;background:var(--plum);color:var(--on-dark);border-color:var(--plum)}
+  html[lang="zh-Hans"] #find .gmap{background:transparent;color:var(--plum);border:1px solid var(--line)}
   .wechat{display:flex;align-items:center;gap:10px;justify-content:space-between;grid-column:1/-1;
     border:1px solid var(--line);border-radius:8px;padding:6px 6px 6px 14px;font-size:14.5px}
   .wechat b{user-select:all}
@@ -664,8 +667,10 @@
       <p class="addr">545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor, Bangkok 10110</p>
       <p class="addr th" lang="th">545 สุขุมวิท 31 (S31 Sukhumvit Hotel, 8th floor AYBKK) คลองเตยเหนือ วัฒนา กรุงเทพ 10110</p>
       <div class="links">
-        <a class="btn wide" href="https://www.google.com/maps/search/?api=1&amp;query=S31+Sukhumvit+Hotel+Bangkok"
+        <a class="btn wide gmap" href="https://www.google.com/maps/search/?api=1&amp;query=AYBKK&amp;query_place_id=ChIJOWhLf_2e4jARi25S9GpEmWk"
           target="_blank" rel="noopener" data-i18n="maps">Open in Google Maps</a>
+        <a class="btn wide ghost amap" href="https://uri.amap.com/marker?position=100.5658621,13.7336594&amp;name=AYBKK&amp;src=aybkk&amp;coordinate=wgs84&amp;callnative=1"
+          target="_blank" rel="noopener" data-i18n="amap">Open in Amap (高德地图)</a>
       </div>
       <h3 data-i18n="contactH">Message us</h3>
       <div class="links">
@@ -754,7 +759,7 @@
       fine: (fee, vat = 7) => `Prices in Thai baht, before ${vat}% VAT. ${fee ? 'Paying online adds an online transaction fee.' : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
       momH: 'Today at the shala', momLine: 'Every morning we share moments from the shala: the practice, the people, news and updates.',
       momIg: 'Today’s practice on Instagram', momFb: 'News and updates on Facebook',
-      findH: 'Find us', maps: 'Open in Google Maps', contactH: 'Message us',
+      findH: 'Find us', maps: 'Open in Google Maps', amap: 'Open in Amap (高德地图)', contactH: 'Message us',
       copy: 'Copy', copied: 'Copied',
       tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
       loading: 'Loading…',
@@ -826,7 +831,7 @@
       fine: (fee, vat = 7) => `ราคาเป็นเงินบาท ยังไม่รวม VAT ${vat}% ${fee ? 'ชำระออนไลน์มีค่าธรรมเนียมการชำระเงิน' : ''} ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
       momH: 'วันนี้ที่ชาลา', momLine: 'ทุกเช้าเราแบ่งปันบรรยากาศการฝึก ผู้คน ข่าวสาร และอัปเดตจากชาลา',
       momIg: 'ดูการฝึกวันนี้ใน Instagram', momFb: 'ข่าวสารและอัปเดตใน Facebook',
-      findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', contactH: 'ทักหาเรา',
+      findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', amap: 'เปิดใน Amap (高德地图)', contactH: 'ทักหาเรา',
       copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
       tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
       loading: 'กำลังโหลด…',
@@ -898,7 +903,7 @@
       fine: (fee, vat = 7) => `价格以泰铢计，不含 ${vat}% 增值税。${fee ? '在线支付另收线上支付手续费。' : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       momH: '今天的道场', momLine: '每天早上我们分享道场的瞬间：练习、学员、新闻和动态。',
       momIg: '在 Instagram 看今天的练习', momFb: '在 Facebook 看新闻和动态',
-      findH: '地址与联系方式', maps: '在 Google 地图中打开', contactH: '联系我们',
+      findH: '地址与联系方式', maps: '在 Google 地图中打开', amap: '在高德地图中打开', contactH: '联系我们',
       copy: '复制', copied: '已复制',
       tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
       loading: '加载中…',
@@ -970,7 +975,7 @@
       fine: (fee, vat = 7) => `Цены в тайских батах, без НДС ${vat}%. ${fee ? 'При онлайн-оплате взимается комиссия.' : ''} Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
       momH: 'Сегодня в шале', momLine: 'Каждое утро мы делимся моментами из шалы: практика, люди, новости.',
       momIg: 'Сегодняшняя практика в Instagram', momFb: 'Новости в Facebook',
-      findH: 'Как нас найти', maps: 'Открыть в Google Картах', contactH: 'Напишите нам',
+      findH: 'Как нас найти', maps: 'Открыть в Google Картах', amap: 'Открыть в Amap (高德地图)', contactH: 'Напишите нам',
       copy: 'Копировать', copied: 'Скопировано',
       tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
       loading: 'Загрузка…',
@@ -1292,7 +1297,7 @@
       <a class="btn buy" target="_blank" rel="noopener"
         href="https://line.me/R/oaMessage/%40aybkk/?${encodeURIComponent(lineMessage(c))}">${esc(t('buyBtn'))}</a>
       <div class="alt">
-        <a class="btn" target="_blank" rel="noopener" href="https://wa.me/66822244246?text=${encodeURIComponent(lineMessage(c))}">WhatsApp</a>
+        <a class="btn" target="_blank" rel="noopener" href="https://wa.me/66842244246?text=${encodeURIComponent(lineMessage(c))}">WhatsApp</a>
         <button type="button" class="btn" data-wechat="1">WeChat</button>
       </div>
       <p class="how">${esc(t('buyHow'))}</p>
