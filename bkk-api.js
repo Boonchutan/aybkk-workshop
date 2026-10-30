@@ -3799,10 +3799,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  // Check one name in from inside a class, or undo it. A past class is
-  // checked in at its start (as the Rezerv import does), a no-show seen after
-  // all becomes a visit, and a class not reached yet cannot be: nobody is in
-  // the room. Pass credits are never touched here.
+  // Check one name in from inside a class, or undo it. A class that has ended
+  // is checked in at its start (as the Rezerv import does; Boonchu, 30 Oct: a
+  // tap at 19:33 must not read "In 19:33" for a 05:30 class), a no-show seen
+  // after all becomes a visit, and a class not reached yet cannot be: nobody
+  // is in the room. Pass credits are never touched here.
   app.post('/api/bkk/admin/bookings/:id/checkin', async (req, res) => {
     if (adminOnly(req, res)) return;
     if (!/^\d{1,9}$/.test(req.params.id)) return res.status(404).json({ error: 'booking not found' });
@@ -3818,9 +3819,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const r = (await q(undo
         ? `UPDATE bkk_bookings SET checked_in_at=NULL
            WHERE id=$1 AND status IN ('booked','noshow') RETURNING id, status, checked_in_at`
-        : `UPDATE bkk_bookings SET status='booked',
-             checked_in_at=COALESCE(checked_in_at, CASE WHEN class_date < $2::date THEN start_at ELSE now() END)
-           WHERE id=$1 AND status IN ('booked','noshow') RETURNING id, status, checked_in_at`,
+        : `UPDATE bkk_bookings b SET status='booked',
+             checked_in_at=COALESCE(b.checked_in_at, CASE WHEN b.class_date < $2::date
+               OR now() > b.start_at + make_interval(mins => s.duration_min) THEN b.start_at ELSE now() END)
+           FROM bkk_class_slots s
+           WHERE b.id=$1 AND s.id=b.slot_id AND b.status IN ('booked','noshow')
+           RETURNING b.id, b.status, b.checked_in_at`,
         undo ? [b.id] : [b.id, today])).rows[0];
       if (!r) return res.status(409).json({ error: 'that booking was cancelled' });
       res.json({ success: true, booking: { id: r.id, status: r.status, checkedInAt: r.checked_in_at } });
