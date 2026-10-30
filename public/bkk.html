@@ -13,7 +13,7 @@
 <meta property="og:image:height" content="1067">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://aybkk.net/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SportsActivityLocation","name":"AYBKK","alternateName":"Ashtanga Yoga Bangkok","url":"https://aybkk.net/","logo":"https://aybkk.net/img/aybkk-logo-240.jpg","image":"https://aybkk.net/img/aybkk-hero-1600.jpg","description":"Traditional Ashtanga, Mysore style, in Bangkok since 2013. Beginners welcome: we teach you from zero.","foundingDate":"2013","address":{"@type":"PostalAddress","streetAddress":"545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor","addressLocality":"Bangkok","postalCode":"10110","addressCountry":"TH"},"sameAs":["https://www.instagram.com/aybkk","https://www.facebook.com/ashtangabkk"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SportsActivityLocation","name":"AYBKK","alternateName":["Ashtanga Yoga Center of Bangkok","Ashtanga Yoga Bangkok"],"telephone":"+66842244246","url":"https://aybkk.net/","logo":"https://aybkk.net/img/aybkk-logo-240.jpg","image":"https://aybkk.net/img/aybkk-hero-1600.jpg","description":"Traditional Ashtanga, Mysore style, in Bangkok since 2013. Beginners welcome: we teach you from zero.","foundingDate":"2013","address":{"@type":"PostalAddress","streetAddress":"545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor","addressLocality":"Bangkok","postalCode":"10110","addressCountry":"TH"},"geo":{"@type":"GeoCoordinates","latitude":13.7336594,"longitude":100.5658621},"hasMap":"https://www.google.com/maps/search/?api=1&query=AYBKK&query_place_id=ChIJOWhLf_2e4jARi25S9GpEmWk","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Monday","opens":"06:30","closes":"08:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Tuesday","Wednesday","Thursday","Friday"],"opens":"05:30","closes":"09:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"07:00","closes":"10:45"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Sunday","opens":"07:00","closes":"09:30"}],"sameAs":["https://www.instagram.com/aybkk","https://www.facebook.com/ashtangabkk","https://www.tiktok.com/@aybkkashtanga","https://www.youtube.com/@AshtangaAYBKK","https://line.me/R/ti/p/@aybkk"]}</script>
 <link rel="preload" href="/fonts/longcang.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/worksans.woff2" as="font" type="font/woff2" crossorigin>
@@ -194,6 +194,9 @@
   .links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
   .links .btn{width:100%;padding:11px 10px;text-align:center}
   .links .wide{grid-column:1/-1}
+  /* Google is blocked on most Chinese phones, so in Chinese the Amap button leads. */
+  html[lang="zh-Hans"] #find .amap{order:-1;background:var(--plum);color:var(--on-dark);border-color:var(--plum)}
+  html[lang="zh-Hans"] #find .gmap{background:transparent;color:var(--plum);border:1px solid var(--line)}
   .wechat{display:flex;align-items:center;gap:10px;justify-content:space-between;grid-column:1/-1;
     background:var(--wall);border-radius:12px;padding:6px 6px 6px 14px;font-size:14.5px}
   .wechat b{user-select:all}
@@ -338,6 +341,83 @@
     .cal .head b{font-size:40px}
     .cal .head{margin:-22px -20px 16px;min-height:280px;background-position:center 30%}
   }
+  /* Each class time in a day cell opens that class; the rest of the cell picks the day. */
+  .cal .dn{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;line-height:1;cursor:pointer}
+  /* Full cell width and about 26px tall on a phone, with a gap: a bare "5:30"
+     is a 23px-wide target, and 5:30 sits right on top of 7:30. */
+  .cal .ct{align-self:stretch}
+  .cal .ct .tm{display:block;width:100%;background:none;border:0;margin:2px 0;padding:6px 0;font:inherit;color:inherit;letter-spacing:inherit;
+    line-height:inherit;text-align:left;cursor:pointer}
+  .cal .ct .tm.mine{color:#F2C94C}
+  .cal .ct .tm .ol{display:block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  .cal .bk{display:inline-block;width:6px;height:6px;margin-left:4px;border-radius:50%;background:#F2C94C;vertical-align:2px}
+  .cal .legend .lmine{color:#F2C94C;font-weight:700}
+  .cal button:focus-visible{outline:2px solid #F2C94C;outline-offset:1px;border-radius:3px}
+  @media (min-width:560px){ .cal .ct .tm{display:inline;margin:0;padding:1px 0} .cal .ct .tm .ol{display:inline;margin-left:3px} }
+  /* Week view: same plum card, one column per day, scrolls sideways inside its own box. */
+  .cal .head b.wkl{font-size:22px}
+  .cal .head b.wkl small{font-size:14px}
+  .cal .wkbox{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;position:relative}
+  .cal .wkgrid{display:grid;grid-template-columns:repeat(7,minmax(100px,1fr));column-gap:4px}
+  .cal .wcol{display:flex;flex-direction:column;gap:6px;min-width:0;padding-bottom:8px}
+  .cal .wcol.moonday{background:rgba(224,181,43,.08)}
+  .cal .wh{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;min-height:64px;margin:0;padding:0 5px 8px;
+    border:0;border-bottom:1px solid rgba(251,245,249,.28);border-radius:0;background:none;color:#FBF5F9;font:inherit;text-align:left}
+  .cal button.wh{cursor:pointer}
+  .cal .wh .w{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#C9AFCB}
+  .cal .wh .dd{font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:20px;line-height:1;font-variant-numeric:tabular-nums}
+  .cal .wh.today .dd{color:#E0B52B}
+  .cal .wh.past .dd{opacity:.4}
+  .cal .wh.sel{box-shadow:inset 0 -3px 0 #E0B52B}
+  .cal .wh .ml{font-size:10px;font-weight:700;color:#F2D98A}
+  .cal .wb{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;margin:0;padding:7px 6px 8px 8px;
+    border:0;border-left:3px solid #C9AFCB;border-radius:4px;background:rgba(251,245,249,.07);color:#FBF5F9;font:inherit;
+    text-align:left;cursor:pointer}
+  .cal .wb.mysore{border-left-color:#FC838B}.cal .wb.led_primary{border-left-color:#8BFC83}.cal .wb.led_inter{border-left-color:#9AA2FF}
+  .cal .wb .wt{font-weight:800;font-size:14px;line-height:1.15;color:#7FD8CC;font-variant-numeric:tabular-nums}
+  .cal .wb .cn{font-size:12px}
+  .cal .wb.mysore .cn{color:#FC838B}.cal .wb.led_primary .cn{color:#8BFC83}.cal .wb.led_inter .cn{color:#9AA2FF}
+  .cal .wb .wtt{display:flex;flex-wrap:wrap;gap:3px}
+  .cal .wb .tg{font-size:11px;padding:2px 4px}
+  .cal .wb .on{display:inline-block;margin-left:4px;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    border:1px solid rgba(251,245,249,.45);border-radius:999px;padding:1px 4px;color:#FBF5F9;vertical-align:2px}
+  .cal .wb .st{font-size:11px;font-weight:700;line-height:1.25;color:#C9AFCB}
+  .cal .wb .st.ok{color:#F2C94C}
+  .cal .wb .st.full{color:#FF8DC0}
+  .cal .wb.mine{background:rgba(242,201,76,.14);box-shadow:inset 0 0 0 1.5px #F2C94C}
+  .cal .wb.isfull{opacity:.6}
+  @media (min-width:560px){ .cal .head b.wkl{font-size:30px} .cal .head b.wkl small{font-size:18px} }
+  @media (min-width:600px){ .cal .wkgrid{grid-template-columns:repeat(7,minmax(74px,1fr))} }
+  .calsw{display:flex;gap:6px;margin:0 0 10px}
+  .calsw button{font-weight:600;font-size:14px;line-height:1;font-family:inherit;min-height:40px;padding:8px 18px;border-radius:999px;cursor:pointer;
+    background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
+  .calsw button[aria-pressed="true"]{background:var(--plum);border-color:var(--plum);color:var(--on-dark)}
+  #dayList{scroll-margin-top:64px}
+  .cls[data-cls]{cursor:pointer}
+  .cls .open{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+  .cls .open:hover{text-decoration:underline}
+  .cls.mine{border-color:var(--promo-line);box-shadow:inset 3px 0 0 var(--promo)}
+  .pill.ok{background:var(--promo-soft);color:var(--promo-deep)}
+  /* Inside a class: tall enough that the tabs can sit at the top of the screen. */
+  .inside{min-height:calc(100vh - 110px)}
+  .backbtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:0 0 12px;padding:8px 16px 8px 12px;border-radius:999px;
+    border:1.5px solid var(--line);background:var(--paper);color:var(--plum);font-weight:700;font-size:15px;line-height:1;font-family:inherit;cursor:pointer}
+  .clsv{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--plum);border-radius:var(--radius);padding:18px;margin-bottom:12px}
+  .clsv .k{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
+  .clsv h3{margin:6px 0 2px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:29px;line-height:1.15;color:var(--ink)}
+  .clsv .when{font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:26px;line-height:1.15;color:var(--plum);font-variant-numeric:tabular-nums}
+  .clsv .m{font-size:14.5px;color:var(--soft);margin-top:6px}
+  .clsv .seats{font-size:14px;font-weight:700;color:var(--pink);margin-top:4px}
+  .clsv .seats.quiet{color:var(--soft);font-weight:400}
+  .mystate{border:2px solid var(--line);border-radius:var(--radius);padding:18px;background:var(--paper)}
+  .mystate .big{font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:26px;line-height:1.15}
+  .mystate.yes{background:var(--promo-soft);border-color:var(--promo)}
+  .mystate.yes .big{color:var(--promo-deep)}
+  .mystate.no{background:var(--blush);border-color:var(--blush-line)}
+  .mystate.no .big{color:var(--plum)}
+  .mystate.full .big{color:var(--soft)}
+  .mystate .btn{margin-top:14px;min-height:50px;padding:14px 30px;font-size:16px}
+  .mystate .note{margin:12px 0 0}
   .cls{background:var(--paper);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;
     display:flex;gap:14px;align-items:center;box-shadow:var(--lift)}
   .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
@@ -349,6 +429,12 @@
   /* pink is for scarcity; an empty class is just information */
   .cls .seats.quiet{color:var(--soft);font-weight:400}
   .cls.full{opacity:.45}
+  .cls.came{padding:11px 16px;margin-bottom:8px}
+  .cls.came .t{font-size:17px;color:var(--soft)}
+  .pkg.habit{display:flex;align-items:center;gap:16px;background:var(--blush);border-color:var(--blush-line)}
+  .pkg.habit .hn{font-family:'Patrick Hand','Plex',cursive;font-size:54px;line-height:1;color:var(--plum);
+    min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
+  .pkg.habit b{font-size:17px}
   .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
     background:var(--blush);color:var(--plum);border-radius:999px;padding:3px 9px;margin-left:6px}
 
@@ -394,9 +480,11 @@
   dialog::backdrop{background:rgba(23,18,26,.55)}
   dialog h3{margin:0 0 14px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:30px;line-height:1.15}
   label{display:block;font-size:12.5px;color:var(--soft);margin:11px 0 4px}
-  input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
+  input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
     font-family:inherit;background:var(--wall);color:var(--ink)}
-  input:focus{outline:2px solid var(--pink);outline-offset:1px}
+  input:focus,select:focus{outline:2px solid var(--pink);outline-offset:1px}
+  .linkbtn{background:none;border:none;padding:6px 0;font:inherit;font-size:14px;color:var(--plum);
+    text-decoration:underline;cursor:pointer}
   .msg{padding:12px 14px;border-radius:8px;margin-top:12px;font-size:14px}
   .msg.ok{background:var(--blush);color:var(--plum)}
   .msg.bad{background:#fdeaea;color:#a33}
@@ -582,7 +670,7 @@
   </section>
 
   <section class="prices" id="prices">
-    <h2 data-i18n="pricesH">From 375 baht a class.</h2>
+    <h2 data-i18n="pricesH">From 406 baht a class.</h2>
     <p class="lead" data-i18n="pricesSub">Counted at 4 mornings a week (16 classes a month).</p>
     <div class="plans">
       <div class="plan feature">
@@ -591,7 +679,7 @@
         <ul class="rows">
           <li><span class="pn"><span data-i18n="mo1">1 month</span></span><span class="pv"><b>฿9,600</b><small>600 <span data-i18n="perClass">per class</span></small></span></li>
           <li><span class="pn"><span data-i18n="mo3">3 months</span></span><span class="pv"><b>฿25,800</b><small>538 <span data-i18n="perClass">per class</span></small></span></li>
-          <li><span class="pn"><span data-i18n="mo12">12 months</span><small data-i18n="mo13">(13 months)</small></span><span class="pv"><b>฿78,000</b><small>375 <span data-i18n="perClass">per class</span></small></span></li>
+          <li><span class="pn"><span data-i18n="mo12">12 months</span></span><span class="pv"><b>฿78,000</b><small>406 <span data-i18n="perClass">per class</span></small></span></li>
         </ul>
       </div>
       <div class="plan">
@@ -665,8 +753,10 @@
       <p class="addr">545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor, Bangkok 10110</p>
       <p class="addr th" lang="th">545 สุขุมวิท 31 (S31 Sukhumvit Hotel, 8th floor AYBKK) คลองเตยเหนือ วัฒนา กรุงเทพ 10110</p>
       <div class="links">
-        <a class="btn wide" href="https://www.google.com/maps/search/?api=1&amp;query=S31+Sukhumvit+Hotel+Bangkok"
+        <a class="btn wide gmap" href="https://www.google.com/maps/search/?api=1&amp;query=AYBKK&amp;query_place_id=ChIJOWhLf_2e4jARi25S9GpEmWk"
           target="_blank" rel="noopener" data-i18n="maps">Open in Google Maps</a>
+        <a class="btn wide ghost amap" href="https://uri.amap.com/marker?position=100.5658621,13.7336594&amp;name=AYBKK&amp;src=aybkk&amp;coordinate=wgs84&amp;callnative=1"
+          target="_blank" rel="noopener" data-i18n="amap">Open in Amap (高德地图)</a>
       </div>
       <h3 data-i18n="contactH">Message us</h3>
       <div class="links">
@@ -699,7 +789,8 @@
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const baht = n => '฿' + Number(n).toLocaleString('en-US');
   let MOON = {}, CLASSES = [], PRODUCTS = [], SURCHARGE = 0, VAT = 0, LOADED = false;
-  const myCode = () => localStorage.getItem('aybkk_member') || '';
+  // Storage can be blocked (privacy settings, some in-app browsers): then nobody is signed in.
+  const myCode = () => { try { return localStorage.getItem('aybkk_member') || ''; } catch (_) { return ''; } };
 
   const STR = {
     en: {
@@ -724,7 +815,7 @@
       f5: 'After practice, clean your mat and the floor around it with the spray we provide.',
       f6: 'The shala is closed on full moon and new moon days.',
       ctaPrices: 'See prices',
-      pricesH: 'From 375 baht a class.',
+      pricesH: 'From 406 baht a class.',
       pricesSub: 'Counted at 4 mornings a week (16 classes a month).',
       dedBadge: 'Most students choose this',
       dedH: 'Dedicated Student',
@@ -738,7 +829,6 @@
       mo3: '3 months',
       mo6: '6 months',
       mo12: '12 months',
-      mo13: '(13 months)',
       flexH: 'Membership',
       flexLine: 'Unlimited classes. Best results at 4 mornings a week.',
       newLine: 'Start with 1 month, so your teacher can guide you step by step.',
@@ -755,7 +845,7 @@
       fine: (fee, vat = 7) => `Prices in Thai baht, before ${vat}% VAT. ${fee ? 'Paying online adds an online transaction fee.' : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
       momH: 'Today at the shala', momLine: 'Every morning we share moments from the shala: the practice, the people, news and updates.',
       momIg: 'Today’s practice on Instagram', momFb: 'News and updates on Facebook',
-      findH: 'Find us', maps: 'Open in Google Maps', contactH: 'Message us',
+      findH: 'Find us', maps: 'Open in Google Maps', amap: 'Open in Amap (高德地图)', contactH: 'Message us',
       copy: 'Copy', copied: 'Copied',
       tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
       loading: 'Loading…',
@@ -796,7 +886,7 @@
       f5: 'ฝึกเสร็จแล้ว ทำความสะอาดเสื่อและพื้นรอบ ๆ ด้วยสเปรย์ที่เราเตรียมไว้',
       f6: 'AYBKK ปิดในวันพระจันทร์เต็มดวงและวันพระจันทร์ดับ (moon day)',
       ctaPrices: 'ดูราคา',
-      pricesH: 'เริ่มต้นเพียง 375 บาทต่อครั้ง',
+      pricesH: 'เริ่มต้นเพียง 406 บาทต่อครั้ง',
       pricesSub: 'คิดจากการฝึกสัปดาห์ละ 4 เช้า (เดือนละ 16 ครั้ง)',
       dedBadge: 'นักเรียนส่วนใหญ่เลือกแบบนี้',
       dedH: 'นักเรียนตั้งใจฝึก (Dedicated)',
@@ -810,7 +900,6 @@
       mo3: '3 เดือน',
       mo6: '6 เดือน',
       mo12: '12 เดือน',
-      mo13: '(ได้ 13 เดือน)',
       flexH: 'สมาชิก',
       flexLine: 'เข้าเรียนได้ไม่จำกัด ฝึกสัปดาห์ละ 4 เช้าจะเห็นผลดีที่สุด',
       newLine: 'เริ่มด้วยแพ็กเกจ 1 เดือน เพื่อให้ครูค่อย ๆ แนะนำคุณทีละขั้น',
@@ -827,7 +916,7 @@
       fine: (fee, vat = 7) => `ราคาเป็นเงินบาท ยังไม่รวม VAT ${vat}% ${fee ? 'ชำระออนไลน์มีค่าธรรมเนียมการชำระเงิน' : ''} ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
       momH: 'วันนี้ที่ชาลา', momLine: 'ทุกเช้าเราแบ่งปันบรรยากาศการฝึก ผู้คน ข่าวสาร และอัปเดตจากชาลา',
       momIg: 'ดูการฝึกวันนี้ใน Instagram', momFb: 'ข่าวสารและอัปเดตใน Facebook',
-      findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', contactH: 'ทักหาเรา',
+      findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', amap: 'เปิดใน Amap (高德地图)', contactH: 'ทักหาเรา',
       copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
       tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
       loading: 'กำลังโหลด…',
@@ -868,7 +957,7 @@
       f5: '练习结束后，请用我们准备的清洁喷雾擦干净垫子和周围的地面。',
       f6: '每逢满月和新月（月亮日），AYBKK 停课。',
       ctaPrices: '查看价格',
-      pricesH: '每节课低至 375 泰铢。',
+      pricesH: '每节课低至 406 泰铢。',
       pricesSub: '按每周练习4个早上计算（每月16节课）。',
       dedBadge: '大多数学员的选择',
       dedH: '专注学员（Dedicated）',
@@ -882,7 +971,6 @@
       mo3: '3个月',
       mo6: '6个月',
       mo12: '12个月',
-      mo13: '（共13个月）',
       flexH: '会员',
       flexLine: '不限次数。每周练习4个早上效果最好。',
       newLine: '先从1个月套餐开始，让老师一步一步带你。',
@@ -899,7 +987,7 @@
       fine: (fee, vat = 7) => `价格以泰铢计，不含 ${vat}% 增值税。${fee ? '在线支付另收线上支付手续费。' : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       momH: '今天的道场', momLine: '每天早上我们分享道场的瞬间：练习、学员、新闻和动态。',
       momIg: '在 Instagram 看今天的练习', momFb: '在 Facebook 看新闻和动态',
-      findH: '地址与联系方式', maps: '在 Google 地图中打开', contactH: '联系我们',
+      findH: '地址与联系方式', maps: '在 Google 地图中打开', amap: '在高德地图中打开', contactH: '联系我们',
       copy: '复制', copied: '已复制',
       tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
       loading: '加载中…',
@@ -940,7 +1028,7 @@
       f5: 'После практики протрите коврик и пол вокруг него спреем, который мы оставляем в зале.',
       f6: 'В дни полнолуния и новолуния (лунные дни) занятий нет.',
       ctaPrices: 'Цены',
-      pricesH: 'От 375 бат за занятие.',
+      pricesH: 'От 406 бат за занятие.',
       pricesSub: 'Из расчёта 4 утра в неделю (16 занятий в месяц).',
       dedBadge: 'Выбор большинства учеников',
       dedH: 'Постоянный ученик (Dedicated)',
@@ -954,7 +1042,6 @@
       mo3: '3 месяца',
       mo6: '6 месяцев',
       mo12: '12 месяцев',
-      mo13: '(13 месяцев)',
       flexH: 'Абонемент',
       flexLine: 'Без ограничений. Лучший результат — 4 утра в неделю.',
       newLine: 'Начните с 1 месяца, чтобы учитель вёл вас шаг за шагом.',
@@ -971,7 +1058,7 @@
       fine: (fee, vat = 7) => `Цены в тайских батах, без НДС ${vat}%. ${fee ? 'При онлайн-оплате взимается комиссия.' : ''} Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
       momH: 'Сегодня в шале', momLine: 'Каждое утро мы делимся моментами из шалы: практика, люди, новости.',
       momIg: 'Сегодняшняя практика в Instagram', momFb: 'Новости в Facebook',
-      findH: 'Как нас найти', maps: 'Открыть в Google Картах', contactH: 'Напишите нам',
+      findH: 'Как нас найти', maps: 'Открыть в Google Картах', amap: 'Открыть в Amap (高德地图)', contactH: 'Напишите нам',
       copy: 'Копировать', copied: 'Скопировано',
       tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
       loading: 'Загрузка…',
@@ -1160,6 +1247,135 @@
     jbio4: 'Она продолжала практиковать во время обеих беременностей, вплоть до продвинутых серий, и сейчас практикует и преподаёт, будучи мамой.',
   });
 
+  // A drop-in is bought for one class, and paying books it (28 Oct 2026).
+  Object.assign(STR.en, {
+    dropWhich: 'Which class is it for?', dropPick: 'Choose a class', dropNeed: 'Please choose the class for your drop-in.',
+    dropNone: 'No class has free places right now.', noPassDrop: 'You need a pass to book. Buy a drop-in for this class:',
+    havePass: 'I already have a pass',
+    paidBooked: (c, w) => `Payment confirmed 🙏 You are booked into ${c}, ${w}. See you in the shala.`,
+    paidBookedMail: 'Open the link in your receipt email to see it on this phone.',
+    paidNotBooked: (c, w) => `Payment confirmed. We could not book ${c}, ${w}. Your drop-in is kept for another class, and the shala will contact you.`,
+  });
+  Object.assign(STR.th, {
+    dropWhich: 'ใช้กับคลาสไหน', dropPick: 'เลือกคลาส', dropNeed: 'กรุณาเลือกคลาสที่จะมาเรียน',
+    dropNone: 'ตอนนี้ไม่มีคลาสที่ยังมีที่ว่าง', noPassDrop: 'ต้องมีแพ็กเกจก่อนจึงจะจองได้ ซื้อแบบครั้งเดียวสำหรับคลาสนี้ได้เลย',
+    havePass: 'ฉันมีแพ็กเกจอยู่แล้ว',
+    paidBooked: (c, w) => `ชำระเงินเรียบร้อย 🙏 จองคลาส ${c} ${w} ให้แล้ว แล้วเจอกันที่ชาลา`,
+    paidBookedMail: 'เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูบนมือถือเครื่องนี้',
+    paidNotBooked: (c, w) => `ชำระเงินเรียบร้อย แต่จองคลาส ${c} ${w} ไม่ได้ ยังใช้สิทธิ์นี้กับคลาสอื่นได้ ทางชาลาจะติดต่อไป`,
+  });
+  Object.assign(STR.zh, {
+    dropWhich: '要上哪一节课？', dropPick: '请选择课程', dropNeed: '请选择这次单次课要上的课程。',
+    dropNone: '现在没有还有空位的课程。', noPassDrop: '预约需要会员卡。你可以为这节课购买单次课：',
+    havePass: '我已经有会员卡',
+    paidBooked: (c, w) => `付款成功 🙏 已为你预约 ${c}，${w}。道场见。`,
+    paidBookedMail: '打开收据邮件里的链接，即可在这部手机上查看。',
+    paidNotBooked: (c, w) => `付款成功，但未能预约 ${c}，${w}。这次单次课会保留给其他课程使用，道场会联系你。`,
+  });
+  Object.assign(STR.ru, {
+    dropWhich: 'На какое занятие?', dropPick: 'Выберите занятие', dropNeed: 'Выберите занятие для разового посещения.',
+    dropNone: 'Сейчас нет занятий со свободными местами.', noPassDrop: 'Чтобы записаться, нужен абонемент. Купите разовое посещение на это занятие:',
+    havePass: 'У меня уже есть абонемент',
+    paidBooked: (c, w) => `Оплата получена 🙏 Вы записаны: ${c}, ${w}. До встречи в шале.`,
+    paidBookedMail: 'Откройте ссылку в письме с чеком, чтобы увидеть запись на этом телефоне.',
+    paidNotBooked: (c, w) => `Оплата получена, но записать вас на ${c}, ${w} не удалось. Разовое посещение сохранено для другого занятия, шала свяжется с вами.`,
+  });
+  // My pass keeps the habit proof: every class they came to, the ones moved over
+  // from Rezerv included (28 Oct 2026).
+  Object.assign(STR.en, {
+    practisedL: 'Mornings practised', practisedMonth: n => `This month: ${n}`,
+    practisedZero: 'Your count starts with your first class.',
+    cameH: 'Classes you came to', noCame: 'No classes yet. They appear here after you practise.',
+    passUnlim: n => `Unlimited · ${n} bookings per day`, passUnlimOnly: 'Unlimited classes',
+    passLeft: n => `${n} classes left`, validUntil: d => `Valid until ${d}`,
+    startsFirst: 'Starts when you book your first class', noPassYet: 'No pass yet.',
+    noUpcoming: 'No upcoming classes booked.', member: 'Member', cancelBk: 'Cancel',
+  });
+  Object.assign(STR.th, {
+    practisedL: 'จำนวนเช้าที่มาฝึก', practisedMonth: n => `เดือนนี้ ${n} ครั้ง`,
+    practisedZero: 'เริ่มนับตั้งแต่คลาสแรกของคุณ',
+    cameH: 'คลาสที่คุณมาเรียน', noCame: 'ยังไม่มีคลาส หลังจากมาฝึก คลาสจะขึ้นที่นี่',
+    passUnlim: n => `เรียนไม่จำกัด · จองได้วันละ ${n} คลาส`, passUnlimOnly: 'เรียนไม่จำกัด',
+    passLeft: n => `เหลือ ${n} ครั้ง`, validUntil: d => `ใช้ได้ถึง ${d}`,
+    startsFirst: 'เริ่มนับเมื่อคุณจองคลาสแรก', noPassYet: 'ยังไม่มีแพ็กเกจ',
+    noUpcoming: 'ยังไม่มีคลาสที่จองไว้', member: 'สมาชิก', cancelBk: 'ยกเลิก',
+  });
+  Object.assign(STR.zh, {
+    practisedL: '已练习的早晨', practisedMonth: n => `本月：${n} 次`,
+    practisedZero: '从你的第一节课开始计算。',
+    cameH: '你上过的课', noCame: '还没有记录。练习之后，课程会显示在这里。',
+    passUnlim: n => `不限次数 · 每天可预约 ${n} 节课`, passUnlimOnly: '不限次数',
+    passLeft: n => `剩余 ${n} 次课`, validUntil: d => `有效期至 ${d}`,
+    startsFirst: '从你预约第一节课开始计算', noPassYet: '还没有会员卡。',
+    noUpcoming: '还没有预约的课程。', member: '会员', cancelBk: '取消预约',
+  });
+  Object.assign(STR.ru, {
+    practisedL: 'Утренних практик', practisedMonth: n => `В этом месяце: ${n}`,
+    practisedZero: 'Счёт начнётся с вашего первого занятия.',
+    cameH: 'Занятия, на которых вы были', noCame: 'Пока пусто. После практики занятия появятся здесь.',
+    passUnlim: n => `Без ограничений · до ${n} записей в день`, passUnlimOnly: 'Без ограничений',
+    passLeft: n => `Осталось занятий: ${n}`, validUntil: d => `Действует до: ${d}`,
+    startsFirst: 'Начнётся, когда вы запишетесь на первое занятие', noPassYet: 'Абонемента пока нет.',
+    noUpcoming: 'Нет записей на ближайшие занятия.', member: 'Участник', cancelBk: 'Отменить',
+  });
+  // Timetable: month and week views, what this student booked, and the class view (29 Oct 2026).
+  Object.assign(STR.en, {
+    calView: 'Calendar view', viewMonth: 'Month', viewWeek: 'Week', prev: 'Previous', next: 'Next',
+    booked: 'Booked', bookedByYou: 'Booked by you', youBooked: 'You are booked', notBooked: 'Not booked yet',
+    cancelRule: h => `Cancel at least ${h} hours before class to get your credit back.`,
+    back: 'Back', teacherL: 'Teacher', online: 'online', mins: n => `${n} min`,
+    timeRange: (a, b) => `${a} to ${b}`, dateRange: (a, b) => `${a} to ${b}`,
+    bookOk: 'Booked. See you in the shala 🙏', cancelAsk: 'Cancel this booking?',
+    cancelBack: 'Cancelled. Your credit is back.',
+    cancelLate: h => `Cancelled. It was less than ${h} hours before class, so the credit is used.`,
+  });
+  Object.assign(STR.th, {
+    calView: 'มุมมองปฏิทิน', viewMonth: 'เดือน', viewWeek: 'สัปดาห์', prev: 'ก่อนหน้า', next: 'ถัดไป',
+    booked: 'จองแล้ว', bookedByYou: 'คลาสที่คุณจอง', youBooked: 'คุณจองคลาสนี้แล้ว', notBooked: 'ยังไม่ได้จอง',
+    cancelRule: h => `ยกเลิกล่วงหน้าอย่างน้อย ${h} ชั่วโมงก่อนคลาส เพื่อไม่เสียสิทธิ์`,
+    back: 'กลับ', teacherL: 'ครู', online: 'ออนไลน์', mins: n => `${n} นาที`,
+    timeRange: (a, b) => `${a} ถึง ${b}`, dateRange: (a, b) => `${a} ถึง ${b}`,
+    bookOk: 'จองแล้ว แล้วเจอกันที่ชาลา 🙏', cancelAsk: 'ยกเลิกการจองนี้ใช่ไหม',
+    cancelBack: 'ยกเลิกแล้ว ได้สิทธิ์คืนแล้ว',
+    cancelLate: h => `ยกเลิกแล้ว เหลือเวลาน้อยกว่า ${h} ชั่วโมงก่อนคลาส จึงไม่ได้สิทธิ์คืน`,
+  });
+  Object.assign(STR.zh, {
+    calView: '日历视图', viewMonth: '月', viewWeek: '周', prev: '往前', next: '往后',
+    booked: '已预约', bookedByYou: '你已预约', youBooked: '你已预约这节课', notBooked: '还没有预约',
+    cancelRule: h => `至少提前${h}小时取消，课时才会退回。`,
+    back: '返回', teacherL: '老师', online: '线上', mins: n => `${n} 分钟`,
+    timeRange: (a, b) => `${a} 至 ${b}`, dateRange: (a, b) => `${a} 至 ${b}`,
+    bookOk: '预约成功，道场见 🙏', cancelAsk: '要取消这个预约吗？',
+    cancelBack: '已取消，课时已退回。',
+    cancelLate: h => `已取消。距离上课不到${h}小时，这次课时已扣除。`,
+  });
+  Object.assign(STR.ru, {
+    calView: 'Вид календаря', viewMonth: 'Месяц', viewWeek: 'Неделя', prev: 'Раньше', next: 'Дальше',
+    booked: 'Вы записаны', bookedByYou: 'Ваши записи', youBooked: 'Вы записаны', notBooked: 'Вы ещё не записаны',
+    cancelRule: h => `Отмените запись минимум за ${h} ч до начала, чтобы сохранить занятие.`,
+    back: 'Назад', teacherL: 'Учитель', online: 'онлайн', mins: n => `${n} мин`,
+    timeRange: (a, b) => `с ${a} до ${b}`, dateRange: (a, b) => `с ${a} по ${b}`,
+    bookOk: 'Вы записаны. До встречи в шале 🙏', cancelAsk: 'Отменить эту запись?',
+    cancelBack: 'Запись отменена. Занятие вернулось на абонемент.',
+    cancelLate: h => `Запись отменена. До занятия было меньше ${h} ч, поэтому занятие списано.`,
+  });
+
+  // Class names in the page language, for the drop-in class list and the
+  // "you are booked" message. Anything not listed stays as the shala wrote it.
+  const CLASS_WORDS = {
+    th: [[/\[Online\]/g, '[ออนไลน์]'], [/Mysore Sunday/g, 'มายซอร์ วันอาทิตย์'], [/Mysore/g, 'มายซอร์'],
+      [/\(1st batch\)/g, '(รอบแรก)'], [/\(2nd batch\)/g, '(รอบสอง)'], [/ series/g, '']],
+    zh: [[/\[Online\]/g, '[线上]'], [/Mysore Sunday/g, '周日迈索尔'], [/Mysore/g, '迈索尔'],
+      [/\(1st batch\)/g, '（第一批）'], [/\(2nd batch\)/g, '（第二批）'],
+      [/Led Primary series/g, '初级序列引导课'], [/Led Intermediate series/g, '中级序列引导课']],
+    ru: [[/\[Online\]/g, '[Онлайн]'], [/Mysore Sunday/g, 'Майсор, воскресенье'], [/Mysore/g, 'Майсор'],
+      [/\(1st batch\)/g, '(1-й поток)'], [/\(2nd batch\)/g, '(2-й поток)'],
+      [/Led Primary series/g, 'Led: первая серия'], [/Led Intermediate series/g, 'Led: промежуточная серия']],
+  };
+  const clsName = s => (CLASS_WORDS[LANG] || []).reduce((x, [re, to]) => x.replace(re, to), String(s ?? ''));
+  const clsWhen = iso => new Date(iso).toLocaleString(LOCALE[LANG] || 'en-GB', { timeZone: 'Asia/Bangkok',
+    weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
   const PROMO_LAST_SALE = '2026-11-11', PROMO_LAST_START = '2026-11-12';
   const MONTHLY = [[30, 9600], [60, 18200], [90, 25800]];   // days, baht (the broadcast's Duo prices)
   const OFFERS = {
@@ -1240,7 +1456,7 @@
       <a class="btn buy" target="_blank" rel="noopener"
         href="https://line.me/R/oaMessage/%40aybkk/?${encodeURIComponent(lineMessage(c))}">${esc(t('buyBtn'))}</a>
       <div class="alt">
-        <a class="btn" target="_blank" rel="noopener" href="https://wa.me/66822244246?text=${encodeURIComponent(lineMessage(c))}">WhatsApp</a>
+        <a class="btn" target="_blank" rel="noopener" href="https://wa.me/66842244246?text=${encodeURIComponent(lineMessage(c))}">WhatsApp</a>
         <button type="button" class="btn" data-wechat="1">WeChat</button>
       </div>
       <p class="how">${esc(t('buyHow'))}</p>
@@ -1439,10 +1655,17 @@
   applyLang();
 
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MON3 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  // The Bangkok day, like fmtTime: read on the phone's own clock, a 05:30 class
+  // showed the day before on a phone that is not on Bangkok time.
   const fmtDay = iso => {
-    const d = new Date(iso);
-    return DAYS[d.getDay()] + ', ' + d.getDate() + ' ' +
-      ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+    const d = new Date(Date.parse(iso) + 7 * 3600e3);
+    const en = DAYS[d.getUTCDay()] + ', ' + d.getUTCDate() + ' ' + MON3[d.getUTCMonth()];
+    if (LANG === 'en') return en;
+    try {
+      return new Date(iso).toLocaleDateString(LOCALE[LANG] || 'en-GB',
+        { timeZone: 'Asia/Bangkok', weekday: 'long', day: 'numeric', month: 'short' });
+    } catch (_) { return en; }
   };
   const fmtTime = iso => new Date(iso).toLocaleTimeString('en-GB',
     { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
@@ -1450,6 +1673,7 @@
   // A sign-in link lands on /book?me=1: open the student's profile straight away.
   let current = new URLSearchParams(location.search).has('me') ? 'me' : 'schedule';
   window.tab = t => {
+    if (t !== current) OPEN = null;
     current = t;
     document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.id === 't' + '-' + t));
     if (t === 'schedule') renderSchedule();
@@ -1457,14 +1681,17 @@
     if (t === 'me') renderMe();
   };
 
+  const SCHEDULE_URL = '/api/bkk/schedule?days=62';
   async function load() {
     try {
       const [s, p] = await Promise.all([
-        fetch('/api/bkk/schedule?days=62').then(r => r.json()),
+        fetch(SCHEDULE_URL).then(r => r.json()),
         fetch('/api/bkk/products').then(r => r.json()),
+        loadMine(),
       ]);
       CLASSES = s.classes || [];
       MOON = s.moonDays || {};
+      takeSchedule(s);
       PRODUCTS = p.products || [];
       SURCHARGE = p.surchargePct || 0;
       VAT = p.vatPct || 0;
@@ -1481,6 +1708,15 @@
   // a student in China is 1h ahead and must not see tomorrow highlighted.
   const bkkToday = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
   let selDate = null, calMonth = null;         // calMonth = 'YYYY-MM'
+  // calWeek = the Sunday the week view starts on. OPEN = the class the student
+  // is inside ('slotId|date'); OPEN_Y = where they were on the calendar.
+  let CALVIEW = 'month', calWeek = null, OPEN = null, OPEN_Y = 0, CLOSE_KB = false;
+  // The server's cancel rule (CANCEL_CUTOFF_HOURS) and the last day it loaded.
+  let CANCEL_HOURS = 5, LOAD_TO = null;
+  function takeSchedule(s) {
+    if (Number(s.cutoffHours) > 0) CANCEL_HOURS = Number(s.cutoffHours);
+    LOAD_TO = /^\d{4}-\d{2}-\d{2}$/.test(s.to || '') ? s.to : null;
+  }
   const MONTHS = ['January','February','March','April','May','June',
     'July','August','September','October','November','December'];
 
@@ -1489,6 +1725,52 @@
   const CAL_NAME = { mysore: ['Mysore', 'Mysore'], led_primary: ['Primary', 'Primary'], led_inter: ['Intermediate', 'Inter.'] };
   const TEACH_CLS = { Boonchu: 'boon', M: 'm', Jamsai: 'jam' };
   const teachTag = n => `<b class="tg ${TEACH_CLS[n] || ''}">${esc(n)}</b>`;
+  const teacherList = c => String(c.teachers || '').split(/\s*[,&]\s*/).filter(Boolean);
+  const clsKey = c => c.slotId + '|' + c.date;
+  const bkkDate = iso => new Date(Date.parse(iso) + 7 * 3600e3).toISOString().slice(0, 10);
+  const weekOf = iso => addDays(iso, -new Date(iso + 'T12:00:00Z').getUTCDay());
+  const dateOnly = (iso, opts, en) => {
+    if (LANG === 'en') return en;
+    try { return new Date(iso + 'T12:00:00Z').toLocaleDateString(LOCALE[LANG] || 'en-GB', { timeZone: 'UTC', ...opts }); }
+    catch (_) { return en; }
+  };
+  const wkDay = iso => dateOnly(iso, { weekday: 'short' }, DAYS[new Date(iso + 'T12:00:00Z').getUTCDay()].slice(0, 3));
+  const shortDate = iso => dateOnly(iso, { day: 'numeric', month: 'short' },
+    Number(iso.slice(8)) + ' ' + MON3[Number(iso.slice(5, 7)) - 1]);
+  const seatsText = c => c.seatsLeft < 1 ? t('full')
+    : c.booked ? t('left', c.seatsLeft)
+    : t('places', c.capacity);   /* nothing booked yet: "42 left" reads odd */
+
+  // What this student booked, keyed like the schedule (slotId|Bangkok date).
+  // Only a hint for the timetable: a failed or 404 /me never signs anyone out
+  // here, renderMe keeps that job.
+  let MINE = { code: '', ok: false, map: new Map() }, MINE_LOAD = null;
+  function setMine(code, d) {
+    const map = new Map();
+    for (const b of (d && d.bookings) || []) map.set(b.slot_id + '|' + (b.classDate || bkkDate(b.start_at)), b);
+    MINE = { code, ok: !!(d && d.member), map };
+  }
+  async function loadMine() {
+    const code = myCode();
+    if (!code) return;
+    let d = null;
+    try {
+      const r = await fetch('/api/bkk/me/' + encodeURIComponent(code));
+      if (r.ok) d = await r.json();
+    } catch (_) {}
+    if (code === myCode()) setMine(code, d);
+  }
+  const mine = () => (MINE.code && MINE.code === myCode() ? MINE : { ok: false, map: new Map() });
+
+  // After a booking or a cancel: new seat counts and booked marks, same screen.
+  async function refreshSchedule() {
+    try {
+      const [s] = await Promise.all([fetch(SCHEDULE_URL).then(r => r.json()), loadMine()]);
+      if (Array.isArray(s.classes)) { CLASSES = s.classes; MOON = s.moonDays || {}; takeSchedule(s); }
+    } catch (_) {}
+    if (current === 'schedule') renderSchedule();
+  }
+
   function pastSource(iso) {
     for (const k of [14, 28, 7, 21]) {
       const d = new Date(Date.parse(iso + 'T12:00:00Z') + k * 86400e3).toISOString().slice(0, 10);
@@ -1496,88 +1778,288 @@
     }
     return null;
   }
-  function dayChips(iso, src = iso) {
+  // A past day shows another week's classes as a guide (src); only a day's own
+  // classes are tappable.
+  function dayChips(iso, src = iso, my = mine()) {
     if (MOON[iso]) return `<span class="ch moon ${esc(MOON[iso])}" title="${esc(t(MOON[iso] === 'new' ? 'newMoon' : 'fullMoon'))}"><b>${esc(t(MOON[iso] === 'new' ? 'newMoon' : 'fullMoon'))}</b>&nbsp;</span>`;
+    const live = src === iso;
     const byKind = {};
     for (const c of CLASSES) {
-      if (c.date !== src || c.isOnline) continue;
+      if (c.date !== src) continue;
+      const key = live ? clsKey(c) : '', mine = !!key && my.map.has(key);
+      // An online twin is the same class, so it only gets a time of its own
+      // when this student booked it: the day's dot always has a marked time.
+      if (c.isOnline && !mine) continue;
       const g = byKind[c.kind] = byKind[c.kind] || { times: [], who: [] };
-      g.times.push(fmtTime(c.startAt).replace(/^0/, ''));
-      for (const w of String(c.teachers || '').split(/\s*[,&]\s*/).filter(Boolean)) if (!g.who.includes(w)) g.who.push(w);
+      g.times.push({ x: fmtTime(c.startAt).replace(/^0/, ''), key, title: c.title, mine, online: c.isOnline });
+      if (!c.isOnline) for (const w of teacherList(c)) if (!g.who.includes(w)) g.who.push(w);
     }
+    const tm = x => x.key
+      ? `<button type="button" class="tm${x.mine ? ' mine' : ''}" data-cls="${esc(x.key)}" aria-label="${
+          esc(x.x + ' ' + clsName(x.title) + (x.online ? ', ' + t('online') : '') + (x.mine ? ', ' + t('bookedByYou') : ''))}">${
+          x.mine ? '<span aria-hidden="true">✓</span>' : ''}${esc(x.x)}${x.online ? `<span class="ol">${esc(t('online'))}</span>` : ''}</button>`
+      : `<i>${esc(x.x)}</i>`;
     const sat = new Date(iso + 'T12:00:00Z').getUTCDay() === 6;
     return Object.entries(byKind).map(([k, g]) => {
       const [lg, sm] = CAL_NAME[k] || [k, k];
       const name = `<em class="cn"><span class="lg">${esc(lg)}</span><span class="sm">${esc(sm)}</span></em>`;
-      const times = `<span class="ct">${g.times.map(x => `<i>${esc(x)}</i>`).join('<span class="amp"> &amp; </span>')}</span>`;
-      return `<span class="cg ${esc(k)} ${sat ? 'sat' : ''}">${sat ? `<span class="ct">${g.times.map(x => `<i>${esc(x)}</i>`).join(' ')} ${name}</span>` : name + times}<span class="tt">${g.who.map(teachTag).join('')}</span></span>`;
+      const times = `<span class="ct">${g.times.map(tm).join('<span class="amp"> &amp; </span>')}</span>`;
+      return `<span class="cg ${esc(k)} ${sat ? 'sat' : ''}">${sat ? `<span class="ct">${g.times.map(tm).join(' ')} ${name}</span>` : name + times}<span class="tt">${g.who.map(teachTag).join('')}</span></span>`;
     }).join('');
   }
 
-  function renderSchedule() {
-    if (!CLASSES.length) { $('#view').innerHTML = `<p class="note">${esc(t('noClasses'))}</p>`; return; }
-    const has = new Set(CLASSES.map(c => c.date));
-    const today = bkkToday();
-    if (!selDate) selDate = today;
+  const calNav = (dir, act, to) => `<button type="button" class="nav" data-dir="${dir}" aria-label="${esc(t(dir))}" ${
+    to ? `data-act="${act}" data-to="${to}"` : 'disabled'}>${dir === 'prev' ? '‹' : '›'}</button>`;
+  const legend = my => `<div class="legend">
+        <div class="lr">${esc(t('calTeachers'))} ${['Boonchu', 'M', 'Jamsai'].map(teachTag).join('')}</div>
+        <div class="lr">${esc(t('calClasses'))} <span class="cg mysore"><em class="cn">Mysore</em></span><span class="cg led_primary"><em class="cn">Led Primary</em></span><span class="cg led_inter"><em class="cn">Led Intermediate</em></span></div>
+        <div class="lr"><span class="ch moon full">${esc(t('moonDay'))}</span></div>${
+        my.ok ? `<div class="lr"><span class="lmine"><i class="bk" aria-hidden="true"></i> ✓ ${esc(t('bookedByYou'))}</span></div>` : ''}</div>`;
+
+  function monthCal(has, today, my) {
+    // Today's month stays reachable even after its last class is over.
+    const months = [...new Set([today.slice(0, 7), ...[...has].map(d => d.slice(0, 7))])].sort();
     if (!calMonth) calMonth = selDate.slice(0, 7);
-    const months = [...new Set([...has].map(d => d.slice(0, 7)))].sort();
+    if (calMonth < months[0]) calMonth = months[0];
+    if (calMonth > months[months.length - 1]) calMonth = months[months.length - 1];
     const mi = months.indexOf(calMonth);
     const [yy, mm] = calMonth.split('-').map(Number);
     const firstDow = new Date(Date.UTC(yy, mm - 1, 1)).getUTCDay();   // Sunday-first, like the printed timetable
     const daysIn = new Date(Date.UTC(yy, mm, 0)).getUTCDate();
+    const myDays = new Set([...my.map.keys()].map(k => k.split('|')[1]));
 
+    // A day is a plain div (it holds the time buttons): the number is its own
+    // button for the keyboard, and a tap anywhere else in the cell picks the day.
     let cells = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(w => `<div class="wd">${w}</div>`).join('');
     for (let i = 0; i < firstDow; i++) cells += '<span></span>';
     for (let d = 1; d <= daysIn; d++) {
       const iso = `${calMonth}-${String(d).padStart(2, '0')}`;
       const open = has.has(iso);
       const src = !open && iso <= today ? pastSource(iso) : null;
-      cells += `<button class="d ${open ? '' : 'off'} ${src ? 'past' : ''} ${MOON[iso] ? 'moonday' : ''} ${iso === today ? 'today' : ''}
-        ${iso === selDate ? 'sel' : ''}" ${open ? `onclick="pickDay('${iso}')"` : 'disabled'}>
-        <span class="n">${d}</span>${dayChips(iso, src || iso)}</button>`;
+      const booked = open && myDays.has(iso);
+      const num = open ? `<button type="button" class="dn" aria-pressed="${iso === selDate}" aria-label="${
+        esc(fmtDay(iso + 'T12:00:00+07:00') + (booked ? ', ' + t('bookedByYou') : ''))}">${d}</button>` : d;
+      cells += `<div class="d ${open ? '' : 'off'} ${src ? 'past' : ''} ${MOON[iso] ? 'moonday' : ''} ${iso === today ? 'today' : ''}
+        ${iso === selDate ? 'sel' : ''}"${open ? ` data-day="${iso}"` : ''}>
+        <span class="n">${num}${booked ? '<i class="bk" aria-hidden="true"></i>' : ''}</span>${dayChips(iso, src || iso, my)}</div>`;
     }
-    const cal = `<div class="cal">
+    return `<div class="cal">
       <div class="head">
-        <button class="nav" ${mi > 0 ? `onclick="calGo('${months[mi - 1]}')"` : 'disabled'}>‹</button>
+        ${calNav('prev', 'month', mi > 0 ? months[mi - 1] : '')}
         <b>${MONTHS[mm - 1]}<small>${yy}</small></b>
-        <button class="nav" ${mi >= 0 && mi < months.length - 1
-          ? `onclick="calGo('${months[mi + 1]}')"` : 'disabled'}>›</button>
+        ${calNav('next', 'month', mi >= 0 && mi < months.length - 1 ? months[mi + 1] : '')}
       </div>
       <div class="grid">${cells}</div>
-      <div class="legend">
-        <div class="lr">${esc(t('calTeachers'))} ${['Boonchu', 'M', 'Jamsai'].map(teachTag).join('')}</div>
-        <div class="lr">${esc(t('calClasses'))} <span class="cg mysore"><em class="cn">Mysore</em></span><span class="cg led_primary"><em class="cn">Led Primary</em></span><span class="cg led_inter"><em class="cn">Led Intermediate</em></span></div>
-        <div class="lr"><span class="ch moon full">${esc(t('moonDay'))}</span></div></div></div>`;
+      ${legend(my)}</div>`;
+  }
 
+  // Weeks inside the loaded 62 days, Sunday to Saturday. A week the student
+  // moves to brings its own day list: the first day there with classes.
+  // The last week is the last one loaded in full: a day past the load would
+  // look like a day with no class.
+  function lastWeek() {
+    const end = LOAD_TO || CLASSES[CLASSES.length - 1].date, w = weekOf(end);
+    const w1 = new Date(end + 'T12:00:00Z').getUTCDay() === 6 ? w : addDays(w, -7);
+    const w0 = weekOf(bkkToday());
+    return w1 < w0 ? w0 : w1;
+  }
+  function goWeek(w) {
+    if (!CLASSES.length) return;
+    const w0 = weekOf(bkkToday()), w1 = lastWeek();
+    calWeek = w < w0 ? w0 : w > w1 ? w1 : w;
+    const end = addDays(calWeek, 6);
+    if (!selDate || selDate < calWeek || selDate > end) {
+      const first = CLASSES.find(c => c.date >= calWeek && c.date <= end);
+      if (first) selDate = first.date;
+    }
+  }
+  function weekBlock(c, my) {
+    const booked = my.map.has(clsKey(c)), full = c.seatsLeft < 1;
+    const who = teacherList(c);
+    return `<button type="button" class="wb ${esc(c.kind)}${booked ? ' mine' : full ? ' isfull' : ''}" data-cls="${esc(clsKey(c))}">
+        <span class="wt">${esc(fmtTime(c.startAt))}${c.isOnline ? `<span class="on">${esc(t('online'))}</span>` : ''}</span>
+        <em class="cn">${esc((CAL_NAME[c.kind] || [c.title, c.title])[1])}</em>
+        ${who.length ? `<span class="wtt">${who.map(teachTag).join('')}</span>` : ''}
+        <span class="st${booked ? ' ok' : full ? ' full' : ''}">${esc(booked ? '✓ ' + t('booked') : full ? t('full') : t('places', c.seatsLeft))}</span>
+      </button>`;
+  }
+  function weekCal(has, today, my) {
+    goWeek(calWeek || weekOf(selDate));
+    const w0 = weekOf(today), w1 = lastWeek();
+    const days = [0, 1, 2, 3, 4, 5, 6].map(i => addDays(calWeek, i));
+    const cols = days.map(iso => {
+      const moon = MOON[iso];
+      const cls = `wh${iso === today ? ' today' : ''}${iso === selDate ? ' sel' : ''}${iso < today ? ' past' : ''}`;
+      const head = `<span class="w">${esc(wkDay(iso))}</span><span class="dd">${Number(iso.slice(8))}</span>${
+        moon ? `<span class="ml">${esc(t(moon === 'new' ? 'newMoon' : 'fullMoon'))}</span>` : ''}`;
+      const hd = has.has(iso)
+        ? `<button type="button" class="${cls}" data-act="day" data-day="${iso}" aria-pressed="${iso === selDate}" aria-label="${
+            esc(fmtDay(iso + 'T12:00:00+07:00'))}">${head}</button>`
+        : `<div class="${cls}">${head}</div>`;
+      return `<div class="wcol${moon ? ' moonday' : ''}" data-col="${iso}">${hd}${
+        CLASSES.filter(c => c.date === iso).map(c => weekBlock(c, my)).join('')}</div>`;
+    }).join('');
+    return `<div class="cal wk">
+      <div class="head">
+        ${calNav('prev', 'week', calWeek > w0 ? addDays(calWeek, -7) : '')}
+        <b class="wkl">${esc(t('dateRange', shortDate(days[0]), shortDate(days[6])))}<small>${days[6].slice(0, 4)}</small></b>
+        ${calNav('next', 'week', calWeek < w1 ? addDays(calWeek, 7) : '')}
+      </div>
+      <div class="wkbox"><div class="wkgrid">${cols}</div></div>
+      ${legend(my)}</div>`;
+  }
+
+  function dayList(my) {
     // Label from the Bangkok class date itself, never from the timestamp — in a
     // viewer's local timezone a 05:30 class can fall on the previous calendar day.
-    const dsel = new Date(selDate + 'T12:00:00Z');
-    const dayLabel = DAYS[dsel.getUTCDay()] + ', ' + dsel.getUTCDate() + ' '
-      + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dsel.getUTCMonth()];
+    const dayLabel = fmtDay(selDate + 'T12:00:00+07:00');
     const dayClasses = CLASSES.filter(c => c.date === selDate);
-    let html = cal;
-    html += `<div class="day">${esc(dayLabel)}</div>`;
+    let html = `<div class="day" id="dayList">${esc(dayLabel)}</div>`;
     if (!dayClasses.length) html += `<p class="note">${esc(t('noDay'))}</p>`;
     for (const c of dayClasses) {
-      const full = c.seatsLeft < 1;
-      html += `<div class="cls ${full ? 'full' : ''}">
+      const key = clsKey(c), b = my.map.get(key), full = c.seatsLeft < 1;
+      html += `<div class="cls ${full && !b ? 'full' : ''} ${b ? 'mine' : ''}" data-cls="${esc(key)}">
         <div class="t">${fmtTime(c.startAt)}</div>
         <div class="b">
-          <div class="n">${esc(c.title)}${c.isOnline ? '<span class="pill">online</span>' : ''}</div>
-          <div class="m">${c.durationMin} min${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
-          <div class="seats ${c.booked ? '' : 'quiet'}">${
-            full ? esc(t('full'))
-            : c.booked ? esc(t('left', c.seatsLeft))
-            : esc(t('places', c.capacity))   /* nothing booked yet — "42 left" reads odd */
-          }</div>
+          <div class="n"><button type="button" class="open" data-cls="${esc(key)}">${esc(clsName(c.title))}</button>${
+            c.isOnline ? `<span class="pill">${esc(t('online'))}</span>` : ''}${
+            b ? `<span class="pill ok">✓ ${esc(t('booked'))}</span>` : ''}</div>
+          <div class="m">${esc(t('mins', c.durationMin))}${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
+          <div class="seats ${c.booked ? '' : 'quiet'}">${esc(seatsText(c))}</div>
         </div>
-        <button class="btn" ${full ? 'disabled' : ''} onclick="book(${c.slotId},'${c.date}')">${esc(t('book'))}</button>
+        ${b ? `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`
+          : `<button type="button" class="btn" ${full ? 'disabled' : ''} data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button>`}
       </div>`;
     }
-    $('#view').innerHTML = html;
+    return html;
+  }
+
+  // Inside a class: the class itself, then this student's state, big and clear.
+  function renderClass() {
+    const c = CLASSES.find(x => clsKey(x) === OPEN);
+    if (!c) { OPEN = null; return renderSchedule(); }   // started or closed since
+    const b = mine().map.get(OPEN), full = c.seatsLeft < 1;
+    const end = new Date(Date.parse(c.startAt) + (Number(c.durationMin) || 0) * 60e3).toISOString();
+    const state = b ? `<div class="mystate yes"><div class="big">✓ ${esc(t('youBooked'))}</div>
+        <button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>
+        <p class="note">${esc(t('cancelRule', CANCEL_HOURS))}</p></div>`
+      : full ? `<div class="mystate full"><div class="big">${esc(t('full'))}</div></div>`
+      : `<div class="mystate no"><div class="big">${esc(t('notBooked'))}</div>
+        <button type="button" class="btn pink" data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button></div>`;
+    $('#view').innerHTML = `<div class="inside"><button type="button" class="backbtn" data-act="back">‹ ${esc(t('back'))}</button>
+      <div class="clsv">
+        <div class="k">${esc(fmtDay(c.date + 'T12:00:00+07:00'))}</div>
+        <h3>${esc(clsName(c.title))}${c.isOnline ? `<span class="pill">${esc(t('online'))}</span>` : ''}</h3>
+        <div class="when">${esc(t('timeRange', fmtTime(c.startAt), fmtTime(end)))}</div>
+        <div class="m">${c.teachers ? esc(t('teacherL')) + ': ' + esc(c.teachers) + ' · ' : ''}${esc(t('mins', c.durationMin))}</div>
+        <div class="seats ${c.booked ? '' : 'quiet'}">${esc(seatsText(c))}</div>
+      </div>
+      ${state}</div>`;
+  }
+
+  function renderSchedule() {
+    if (myCode() && MINE.code !== myCode() && !MINE_LOAD)
+      MINE_LOAD = loadMine().then(() => { MINE_LOAD = null; if (current === 'schedule') renderSchedule(); });
+    if (OPEN) return renderClass();
+    if (!CLASSES.length) { $('#view').innerHTML = `<p class="note">${esc(t('noClasses'))}</p>`; return; }
+    const has = new Set(CLASSES.map(c => c.date));
+    const today = bkkToday();
+    if (!selDate) selDate = today;
+    const my = mine();
+    const sw = `<div class="calsw" role="group" aria-label="${esc(t('calView'))}">${['month', 'week'].map(v =>
+      `<button type="button" data-act="view" data-v="${v}" aria-pressed="${CALVIEW === v}">${esc(t(v === 'month' ? 'viewMonth' : 'viewWeek'))}</button>`).join('')}</div>`;
+    $('#view').innerHTML = sw + (CALVIEW === 'week' ? weekCal(has, today, my) : monthCal(has, today, my)) + dayList(my);
+    if (CALVIEW === 'week') {
+      // Phones scroll the week sideways: start at the chosen day, or today.
+      const box = $('#view .wkbox');
+      const col = box.querySelector(`[data-col="${selDate}"]`) || box.querySelector(`[data-col="${today}"]`);
+      box.scrollLeft = col ? Math.max(0, col.offsetLeft - 8) : 0;
+    }
   }
   window.pickDay = iso => { selDate = iso; renderSchedule(); };
   window.calGo = m => { calMonth = m; renderSchedule(); };
+
+  function setView(v) {
+    if (v === CALVIEW) return;
+    if (v === 'week') goWeek(weekOf(calMonth && selDate.slice(0, 7) !== calMonth ? calMonth + '-01' : selDate));
+    else {
+      const today = bkkToday(), inWeek = selDate >= calWeek && selDate <= addDays(calWeek, 6);
+      calMonth = (inWeek ? selDate : calWeek < today ? today : calWeek).slice(0, 7);
+    }
+    CALVIEW = v;
+  }
+
+  // Without a page change, so the phone's own Back button closes the class too.
+  const jump = y => {
+    const h = document.documentElement, was = h.style.scrollBehavior;
+    h.style.scrollBehavior = 'auto'; scrollTo(0, y); h.style.scrollBehavior = was;
+  };
+  function openCls(key, kb) {
+    OPEN_Y = scrollY; OPEN = key;
+    try { history.pushState({ aybkkCls: key }, ''); } catch (_) {}
+    renderSchedule();
+    // The tabs are sticky, so measure from the view under them: tabs at the top of the screen.
+    jump($('#view').getBoundingClientRect().top + scrollY - $('#book').offsetHeight);
+    if (kb) { const b = $('#view [data-act="back"]'); if (b) b.focus({ preventScroll: true }); }
+  }
+  function shutCls() {
+    const key = OPEN;
+    OPEN = null;
+    if (current !== 'schedule') return;
+    renderSchedule();
+    jump(OPEN_Y);
+    const el = CLOSE_KB && key && $('#view').querySelector(`[data-cls="${key}"]`);
+    if (el) el.focus({ preventScroll: true });
+    CLOSE_KB = false;
+  }
+  function closeCls(kb) {
+    CLOSE_KB = kb;
+    if (history.state && history.state.aybkkCls === OPEN) history.back();
+    else shutCls();
+  }
+  addEventListener('popstate', e => {
+    const key = e.state && e.state.aybkkCls;
+    if (key) {
+      if (current === 'schedule' && OPEN !== key) { OPEN_Y = scrollY; OPEN = key; renderSchedule(); }
+    } else if (OPEN) shutCls();
+  });
+
+  $('#view').addEventListener('click', e => {
+    if (current !== 'schedule') return;
+    const kb = e.detail === 0;                  // Enter or Space on a button
+    const focus = (...sels) => {
+      if (!kb) return;
+      for (const s of sels) {
+        const el = $('#view').querySelector(s);
+        if (el && !el.disabled) { el.focus({ preventScroll: true }); return; }
+      }
+    };
+    const a = e.target.closest('[data-act]');
+    if (a) {
+      const act = a.dataset.act;
+      if (act === 'book') return book(Number(a.dataset.slot), a.dataset.date);
+      if (act === 'cancel') return cancelBooking(Number(a.dataset.id));
+      if (act === 'back') return closeCls(kb);
+      if (act === 'view') { setView(a.dataset.v); renderSchedule(); return focus(`[data-act="view"][data-v="${a.dataset.v}"]`); }
+      if (act === 'month' || act === 'week') {
+        if (act === 'month') calMonth = a.dataset.to; else goWeek(a.dataset.to);
+        renderSchedule();
+        return focus(`.nav[data-dir="${a.dataset.dir}"]`, '.cal .nav');
+      }
+      if (act === 'day') {
+        selDate = a.dataset.day;
+        renderSchedule();
+        focus(`.wh[data-day="${selDate}"]`);
+        const list = $('#dayList');
+        if (list && list.getBoundingClientRect().top > innerHeight * 0.6) list.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
+      return;
+    }
+    const c = e.target.closest('[data-cls]');
+    if (c) return openCls(c.dataset.cls, kb);
+    const d = e.target.closest('.cal .d[data-day]');
+    if (d) { selDate = d.dataset.day; renderSchedule(); focus(`.d[data-day="${selDate}"] .dn`); }
+  });
 
   function renderPackages() {
     const html = PRODUCTS.map(p => {
@@ -1624,20 +2106,31 @@
       // the API's own answer counts; an outage must not sign everyone out.
       if (res.status === 404 && d.error === 'not found') { forgetMe(); return renderMe(true); }
       if (d.error) throw new Error(d.error);
+      setMine(code, d);
       const passes = (d.passes || []).map(p => `<div class="pkg">
-        <h3>${esc(p.name)}</h3>
-        <div class="note">${p.kind === 'unlimited'
-          ? 'Unlimited · ' + p.dailyCap + ' bookings per day'
-          : (p.creditsLeft ?? 0) + ' classes left'}</div>
-        <div class="note">${p.validUntil ? 'Valid until ' + fmtDay(String(p.validUntil).slice(0, 10) + 'T12:00:00+07:00')
-          : 'Starts when you book your first class'}</div>
-      </div>`).join('') || '<p class="note">No pass yet.</p>';
+        <h3>${esc((LANG === 'th' && p.nameTh) || p.name)}</h3>
+        <div class="note">${esc(p.kind === 'unlimited'
+          ? (p.dailyCap ? t('passUnlim', p.dailyCap) : t('passUnlimOnly'))
+          : t('passLeft', p.creditsLeft ?? 0))}</div>
+        <div class="note">${esc(p.validUntil ? t('validUntil', fmtDay(String(p.validUntil).slice(0, 10) + 'T12:00:00+07:00'))
+          : t('startsFirst'))}</div>
+      </div>`).join('') || `<p class="note">${esc(t('noPassYet'))}</p>`;
       const bookings = (d.bookings || []).map(b => `<div class="cls">
         <div class="t">${fmtTime(b.start_at)}</div>
-        <div class="b"><div class="n">${esc(b.title)}</div>
-          <div class="m">${fmtDay(b.start_at)}</div></div>
-        <button class="btn ghost" onclick="cancelBooking(${b.id})">Cancel</button>
-      </div>`).join('') || '<p class="note">No upcoming classes booked.</p>';
+        <div class="b"><div class="n">${esc(clsName(b.title))}</div>
+          <div class="m">${esc(fmtDay(b.start_at))}</div></div>
+        <button class="btn ghost" onclick="cancelBooking(${b.id})">${esc(t('cancelBk'))}</button>
+      </div>`).join('') || `<p class="note">${esc(t('noUpcoming'))}</p>`;
+      // Mornings, not classes: Saturday's two led classes are one morning.
+      const h = d.history || { days: 0, thisMonth: 0, recent: [] };
+      const habit = `<div class="pkg habit"><div class="hn">${Number(h.days) || 0}</div>
+        <div><b>${esc(t('practisedL'))}</b>
+          <div class="note">${esc(h.days ? t('practisedMonth', h.thisMonth || 0) : t('practisedZero'))}</div></div></div>`;
+      const came = (h.recent || []).map(v => `<div class="cls came">
+        <div class="t">${esc(v.time || '✓')}</div>
+        <div class="b"><div class="n">${esc(v.class ? clsName(v.class) : fmtDay(v.date + 'T12:00:00+07:00'))}</div>
+          ${v.class ? `<div class="m">${esc(fmtDay(v.date + 'T12:00:00+07:00'))}</div>` : ''}</div>
+      </div>`).join('') || `<p class="note">${esc(t('noCame'))}</p>`;
       const askEmail = d.member.email ? '' : `<div class="pkg" id="mailBox">
           <h3>${esc(t('addEmailH'))}</h3><p class="note">${esc(t('addEmailWhy'))}</p>
           <p class="note" style="font-weight:600;color:var(--plum)">${esc(t('emailWho', d.member.name))}
@@ -1645,8 +2138,9 @@
           <input id="myMail" type="email" autocomplete="email" placeholder="you@example.com">
           <p style="margin-top:10px"><button class="btn pink" onclick="saveMyEmail()">${esc(t('addEmailBtn'))}</button></p>
           <div id="mailMsg"></div></div>`;
-      $('#view').innerHTML = `<p class="note">Member <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}
+      $('#view').innerHTML = `<p class="note">${esc(t('member'))} <b>${esc(d.member.code)}</b> · ${esc(d.member.name)}
         · <button type="button" class="signout" style="min-height:0;padding:0" onclick="signOutMe()">${esc(t('notYou', d.member.name))}</button></p>
+        ${habit}
         ${askEmail}
         ${(d.notes || []).length ? `<div class="day">${esc(t('fromTeachers'))}</div>${d.notes.map(n => `<div class="pkg">
           <div class="note">${esc(fmtDay(String(n.class_date || n.created_at).slice(0, 10) + 'T12:00:00+07:00'))}${n.teacher ? ' · ' + esc(n.teacher) : ''}</div>
@@ -1655,7 +2149,8 @@
         <div class="day">${esc(t('checkH'))}</div><div id="myChecks"><p class="note">${esc(t('loading'))}</p></div>
         <div class="day">${esc(t('myPhotos'))}</div><div id="myPhotos"><p class="note">${esc(t('loading'))}</p></div>
         <div class="day">${esc(t('yourPass'))}</div>${passes}
-        <div class="day">${esc(t('upcoming'))}</div>${bookings}`;
+        <div class="day">${esc(t('upcoming'))}</div>${bookings}
+        <div class="day">${esc(t('cameH'))}</div>${came}`;
       renderMyPhotos(code, d.member);
       renderChecks(code);
     } catch (e) {
@@ -1824,25 +2319,47 @@
     }
   };
 
-  window.buy = (code) => {
+  // A drop-in (one class) is bought for a class: the student picks it here, and
+  // paying books it. pre = { slotId, date } when they came from a class's Book.
+  const singleClass = p => p.kind === 'credits' && Number(p.credits) === 1;
+  window.buy = (code, pre, intro) => {
     const p = PRODUCTS.find(x => x.code === code);
     if (!p) return;
+    const single = singleClass(p);
+    const last = addDays(bkkToday(), 13);
+    const key = c => c.slotId + '|' + c.date;
+    const preKey = pre ? pre.slotId + '|' + pre.date : '';
+    // The next two weeks, plus the class they tapped Book on, however far off.
+    const opts = single ? CLASSES.filter(c => c.seatsLeft > 0 && new Date(c.startAt) > Date.now()
+      && (c.date <= last || key(c) === preKey)) : [];
+    const picker = !single ? '' : opts.length
+      ? `<label>${esc(t('dropWhich'))}</label><select id="bc"><option value="">${esc(t('dropPick'))}</option>${
+          opts.map(c => `<option value="${esc(key(c))}" ${key(c) === preKey ? 'selected' : ''}>${
+            esc(clsWhen(c.startAt))} · ${esc(clsName(c.title))}</option>`).join('')}</select>`
+      : `<div class="msg bad">${esc(t('dropNone'))}</div>`;
     $('#dlgIn').innerHTML = `<h3>${esc(pkgName(p))} · ${baht(p.total_thb)}</h3>
+      ${intro ? `<p class="note" style="margin:0 0 4px">${esc(intro)}</p>` : ''}
+      ${picker}
       <label>${esc(t('name'))}</label><input id="bn" autocomplete="name">
       <label>${esc(t('email'))}</label><input id="be" type="email" autocomplete="email">
       <label>${esc(t('phone'))}</label><input id="bp" autocomplete="tel">
       <div id="bmsg"></div>
-      <p style="margin-top:14px"><button class="btn pink" id="bgo">${esc(t('pay'))}</button>
-      <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>`;
+      <p style="margin-top:14px"><button class="btn pink" id="bgo" ${single && !opts.length ? 'disabled' : ''}>${esc(t('pay'))}</button>
+      <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>
+      ${intro ? `<p><button class="linkbtn" id="bhave">${esc(t('havePass'))}</button></p>` : ''}`;
     $('#dlg').showModal();
+    if ($('#bhave')) $('#bhave').onclick = () => { $('#dlg').close(); tab('me'); };
     $('#bgo').onclick = async () => {
       const name = $('#bn').value.trim(), email = $('#be').value.trim(), phone = $('#bp').value.trim();
+      const [slotId, date] = single && $('#bc') ? $('#bc').value.split('|') : [];
+      if (single && !date) { $('#bmsg').innerHTML = `<div class="msg bad">${esc(t('dropNeed'))}</div>`; return; }
       if (!name || !email) { $('#bmsg').innerHTML = '<div class="msg bad">Name and email are required.</div>'; return; }
       $('#bgo').disabled = true;
       try {
         const r = await fetch('/api/bkk/orders', { method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode() }) });
+          body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode(),
+            ...(single ? { slotId: Number(slotId), date } : {}) }) });
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || 'could not create order');
         // An email that already has a profile: its code is not handed to this
@@ -1887,31 +2404,58 @@
     };
   };
 
+  // No pass yet: offer a drop-in for this very class instead of a dead end.
+  const offerDropin = (slotId, date) => {
+    const p = PRODUCTS.find(singleClass);
+    if (!p) return false;
+    buy(p.code, { slotId, date }, t('noPassDrop'));
+    return true;
+  };
+  // Book and cancel keep the student where they are (calendar, day list or
+  // inside the class) and refresh the seats and their booked marks. BUSY stops
+  // a double tap from sending twice.
+  let BUSY = false;
   window.book = async (slotId, date) => {
     const code = myCode();
-    if (!code) { alert('Please buy a package first, or open "My pass" and enter your member code.'); return; }
+    if (!code) {
+      if (!offerDropin(slotId, date)) alert('Please buy a package first, or open "My pass" and enter your member code.');
+      return;
+    }
+    if (BUSY) return;
+    BUSY = true;
     try {
       const r = await fetch('/api/bkk/bookings', { method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ memberCode: code, slotId, date }) });
       const j = await r.json();
-      if (!r.ok) throw new Error(j.error);
-      alert('Booked. See you in the shala 🙏');
-      load();
+      if (!r.ok) {
+        if (/no active pass/.test(j.error || '') && offerDropin(slotId, date)) return;
+        throw new Error(j.error);
+      }
+      BUSY = false;
+      // Said at once; the new seats and marks come in behind the message.
+      refreshSchedule();
+      alert(t('bookOk'));
     } catch (e) { alert(e.message); }
+    finally { BUSY = false; }
   };
 
   window.cancelBooking = async (id) => {
-    if (!confirm('Cancel this booking?')) return;
+    if (BUSY || !confirm(t('cancelAsk'))) return;
+    BUSY = true;
     try {
       const r = await fetch(`/api/bkk/bookings/${id}/cancel`, { method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ memberCode: myCode() }) });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error);
-      alert(j.message);
-      renderMe();
+      BUSY = false;
+      if (current === 'me') renderMe();
+      refreshSchedule();
+      const h = Number(j.cutoffHours) > 0 ? Number(j.cutoffHours) : CANCEL_HOURS;
+      alert(j.creditReturned ? t('cancelBack') : t('cancelLate', h));
     } catch (e) { alert(e.message); }
+    finally { BUSY = false; }
   };
 
   // Coming back from the gateway. There is no parameter on the return URL, so
@@ -1941,7 +2485,13 @@
           const viaMail = pendingForExisting();
           localStorage.removeItem('aybkk_pending');
           current = 'me';
-          alert(viaMail ? t('paidMail') : 'Payment confirmed — your pass is active 🙏');
+          if (j.booking) alert(t('paidBooked', clsName(j.booking.title), clsWhen(j.booking.startAt))
+            + (viaMail ? '\n\n' + t('paidBookedMail') : ''));
+          // The class they picked was cancelled or over by the time the payment
+          // came through: they must not travel to it.
+          else if (j.notBooked) alert(t('paidNotBooked', clsName(j.notBooked.title), clsWhen(j.notBooked.startAt))
+            + (viaMail ? '\n\n' + t('paidBookedMail') : ''));
+          else alert(viaMail ? t('paidMail') : 'Payment confirmed — your pass is active 🙏');
         } else if (j.status === 'mismatch') {
           localStorage.removeItem('aybkk_pending');
           alert('The amount received does not match this order. Please contact the shala.');

@@ -25,7 +25,7 @@
   table{width:100%;border-collapse:collapse;font-size:14px}
   th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
   th{color:var(--soft);font-size:12px}
-  .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700}
+  .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
   .pending{background:#fff3d6;color:#8a6a12}.paid{background:#e6f6ec;color:#187a43}
   .mismatch,.failed{background:#fdeaea;color:#a33}
   .btn{padding:9px 14px;border:none;border-radius:7px;background:var(--plum);color:var(--on-dark);font-weight:700;font-size:14px;cursor:pointer;font-family:'Work Sans','Plex',sans-serif;font-weight:800}
@@ -41,7 +41,177 @@
   #gate .lang{justify-content:center;margin-bottom:10px}
   #gate .lang button{color:var(--soft);border-color:var(--line)}
   #gate .lang button.on{background:var(--plum);color:var(--on-dark);border-color:var(--plum)}
-  @media (max-width:480px){nav button{padding:12px 4px;font-size:14px;line-height:1.3}header h1{font-size:22px}}
+  .attended,.active{background:#e6f6ec;color:#187a43}.upcoming{background:#fff3d6;color:#8a6a12}
+  .noshow{background:#fdeaea;color:#a33}.cancelled,.void,.past{background:#eeeaf0;color:#5d5463}
+  .refund,.frozen{background:#e3eefa;color:#2a5d8f}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.sm{padding:7px 11px;font-size:13px}
+  select{padding:9px;border:1.5px solid var(--line);border-radius:7px;font-size:15px;font-family:inherit;
+    background:var(--wall);color:var(--ink);max-width:100%}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:12px 0}
+  .tile{background:var(--wall);border:1px solid var(--line);border-radius:8px;padding:9px 11px;min-width:0}
+  .tile span,.tile small{display:block;color:var(--soft);font-size:12px;line-height:1.4}
+  .box .tile b{display:block;font-size:20px;line-height:1.3;overflow-wrap:anywhere}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .scroll.wide table{min-width:560px}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .nowrap{white-space:nowrap}
+  .seg{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+  .seg button{padding:8px 13px;border:1.5px solid var(--line);border-radius:99px;background:var(--paper);color:var(--ink);
+    font:700 13.5px/1.2 'Plex',sans-serif;cursor:pointer}
+  .seg button.on{background:var(--plum);border-color:var(--plum);color:var(--on-dark)}
+  .row2{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:6px 0}
+  .row2 label{font-size:13px;color:var(--soft)}
+  .cimap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:8px 12px;align-items:center;margin:8px 0}
+  .cimap label{font-size:14px}
+  .cimap select{width:100%}
+  .list{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:7px;padding:8px 10px;
+    background:var(--paper);font-size:13.5px;line-height:1.5}
+  .list div{padding:2px 0;border-bottom:1px solid var(--line)}
+  .warnline{background:#fff3d6;color:#6b520e;border-radius:7px;padding:8px 10px;font-size:14px}
+  .hhead h2{margin:4px 0 2px;font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:24px;line-height:1.2}
+  /* An id or class rule such as .chosen{display:flex} beats the browser's own [hidden]. */
+  [hidden]{display:none!important}
+  main.wide{max-width:1100px}
+  .calbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}
+  .calbar .seg{margin:0;flex:1 1 auto}
+  /* Month calendar, design B, as on the booking page: deep plum, hairlines, gold moons. */
+  .cal{background:#3E1442;color:#FBF5F9;border-radius:12px;padding:12px 10px 14px;margin-bottom:12px}
+  .cal .head{display:flex;align-items:center;margin:0 0 10px}
+  .cal .head b{flex:1;text-align:center;font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:24px;line-height:1.15;
+    letter-spacing:.01em;color:#FBF5F9}
+  .cal .head b small{font-weight:300;font-size:17px;margin-left:8px;color:#F2D98A}
+  .cal.wk .head b{font-size:19px}
+  .cal .nav{background:none;border:none;font-family:inherit;font-weight:700;font-size:26px;line-height:1;color:#F2D98A;
+    cursor:pointer;padding:6px 14px;min-height:44px;min-width:44px}
+  .cal .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+  .cal .grid > span{border-bottom:1px solid rgba(251,245,249,.28)}
+  .cal .wd{text-align:left;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:#C9AFCB;padding:0 5px 8px;border-bottom:1px solid rgba(251,245,249,.28)}
+  .cal .d{min-height:78px;border-bottom:1px solid rgba(251,245,249,.28);padding:6px 1px 6px 2px;min-width:0;
+    display:flex;flex-direction:column;align-items:stretch;gap:4px;cursor:pointer}
+  .cal .d .n{align-self:flex-start;background:none;border:0;padding:0 2px;min-height:20px;color:#FBF5F9;cursor:pointer;
+    font:700 15px/1 'Plex',sans-serif;font-variant-numeric:tabular-nums}
+  .cal .d.moonday{background:rgba(224,181,43,.08)}
+  .cal .d.moonday .n{color:#F2D98A}
+  .cal .d.today .n{color:#E0B52B}
+  .cal .d.was .cl{opacity:.82}
+  .cal .ch{display:block;font-weight:700;font-size:10px;line-height:1.2;overflow-wrap:break-word;padding-left:10px;position:relative}
+  .cal .ch::before{content:"";position:absolute;left:0;top:3px;width:7px;height:7px;border-radius:50%;background:currentColor}
+  .cal .ch b{display:none}
+  .cal .ch.moon{color:#F2D98A;padding-left:14px}
+  .cal .ch.moon::before{width:9px;height:9px;top:1px;background:transparent;box-shadow:inset 0 0 0 1.4px #E0B52B}
+  .cal .ch.moon.full::before{background:#E0B52B}
+  /* One tappable line per class: time, class, booked/places, checked in. */
+  .cal .cl{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;min-width:0;margin:0;
+    background:none;border:0;border-radius:4px;padding:2px 1px 3px;color:#FBF5F9;font:inherit;text-align:left;cursor:pointer}
+  .cal .cl:hover{background:rgba(251,245,249,.1)}
+  .cal .cl:focus-visible,.cal .d .n:focus-visible,.cal .nav:focus-visible,.wh:focus-visible,.wb:focus-visible{outline:2px solid #E0B52B;outline-offset:1px}
+  .cal .ct{font-weight:800;font-size:11px;line-height:1.15;color:#7FD8CC;font-variant-numeric:tabular-nums}
+  .cal .cn{font-style:normal;font-weight:800;font-size:10px;line-height:1.15;letter-spacing:-.01em;max-width:100%;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#F0C6F2}
+  .cal .mysore .cn{color:#FC838B}.cal .led_primary .cn{color:#8BFC83}.cal .led_inter .cn{color:#9AA2FF}
+  .cal .cc{display:flex;flex-wrap:wrap;column-gap:4px;font-size:11px;line-height:1.25;font-variant-numeric:tabular-nums}
+  .cal .cc b{font-weight:800;color:#FBF5F9;border-radius:3px}
+  .cal .cc i{font-style:normal;font-weight:700;color:#C9AFCB}
+  .cal .full .cc b{background:#FF6FAE;color:#3E1442;padding:0 3px}
+  .cal .off{opacity:.55}
+  .cal .off .ct,.cal .off .cn,.cal .off .cc b{text-decoration:line-through}
+  .cal .ol{display:inline-block;font:900 8.5px/1 'Plex',sans-serif;padding:2px 3px;border-radius:3px;
+    background:#F2C94C;color:#3E1442;white-space:nowrap}
+  .cal .legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;padding:0 4px}
+  .cal .legend .lr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;width:100%;font-size:12px;font-weight:600;color:#C9AFCB}
+  .cal .legend .cl{display:inline-flex;width:auto;padding:0;cursor:default}
+  .cal .legend .cn,.cal .legend .ch,.cal .legend .cc{font-size:12px}
+  /* Week: a column a day, scrolling sideways inside the card on a phone. */
+  .wkscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;position:relative}
+  .wkgrid{display:grid;grid-template-columns:repeat(7,minmax(108px,1fr))}
+  .wcol{min-width:0;padding:0 4px 10px;border-left:1px solid rgba(251,245,249,.16);display:flex;flex-direction:column;gap:6px}
+  .wcol:first-child{border-left:0}
+  .wcol.moonday{background:rgba(224,181,43,.06)}
+  .wcol.today{background:rgba(224,181,43,.1);border-radius:6px}
+  .wh{display:block;width:100%;min-height:44px;background:none;border:0;border-bottom:1px solid rgba(251,245,249,.28);
+    color:#C9AFCB;font:700 11px/1.2 'Plex',sans-serif;letter-spacing:.12em;text-transform:uppercase;text-align:left;
+    padding:6px 3px 8px;cursor:pointer}
+  :lang(th) .wh,:lang(th) .cal .wd{letter-spacing:0}
+  .wh .wn{display:block;margin-top:2px;font:900 22px/1.1 'Work Sans','Plex',sans-serif;letter-spacing:0;color:#FBF5F9}
+  .wcol.today .wh,.wcol.today .wh .wn{color:#E0B52B}
+  .wh .ch{margin-top:4px;text-transform:none;letter-spacing:0}
+  .cal .wh .ch b{display:inline;color:#F2D98A}
+  .wb{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-width:0;text-align:left;
+    background:rgba(251,245,249,.07);border:0;border-left:3px solid #C9AFCB;border-radius:6px;padding:7px 7px 8px;
+    color:#FBF5F9;font:inherit;cursor:pointer}
+  .wb:hover{background:rgba(251,245,249,.13)}
+  .wb.mysore{border-left-color:#FC838B}.wb.led_primary{border-left-color:#8BFC83}.wb.led_inter{border-left-color:#9AA2FF}
+  .cal .wb .ct{font-size:13.5px}
+  .cal .wb .cn{font-size:12.5px;line-height:1.2;white-space:normal;overflow:visible;overflow-wrap:anywhere}
+  .wb .tc{font-size:11.5px;line-height:1.25;color:#C9AFCB;overflow-wrap:anywhere}
+  .cal .wb .cc{font-size:12px}
+  .wb .ci{font-size:12px;font-weight:700;color:#7FD8CC}
+  .wcol.was .wb{opacity:.85}
+  /* Day: rows in the page's own colours. */
+  .dayhead{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .dayhead b{flex:1;text-align:center;font-size:19px;line-height:1.25}
+  .dnav{background:none;border:1.5px solid var(--line);border-radius:8px;color:var(--plum);font:700 22px/1 'Plex',sans-serif;
+    min-width:44px;min-height:44px;cursor:pointer}
+  .drow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--wall);border:1px solid var(--line);
+    border-left:5px solid var(--soft);border-radius:9px;padding:12px;margin-top:8px;font:inherit;color:var(--ink);cursor:pointer;min-height:68px}
+  .drow:hover{box-shadow:0 0 0 1.5px var(--plum)}
+  .drow.mysore{border-left-color:#FC838B}.drow.led_primary{border-left-color:#4cc95a}.drow.led_inter{border-left-color:#7f88ff}
+  .drow .tm{font:800 21px/1 'Work Sans','Plex',sans-serif;color:var(--plum);min-width:58px;font-variant-numeric:tabular-nums}
+  .drow .bd{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .drow .bd b{font-size:16px;line-height:1.3;overflow-wrap:anywhere}
+  .drow .cnt{display:flex;flex-direction:column;align-items:flex-end;text-align:right;white-space:nowrap;font-size:12.5px;line-height:1.3}
+  .drow .cnt b{font:800 19px/1.1 'Work Sans','Plex',sans-serif;font-variant-numeric:tabular-nums}
+  .drow.full .cnt b{color:var(--pink)}
+  .drow.off .tm,.drow.off .bd b,.drow.off .cnt b{text-decoration:line-through;opacity:.6}
+  .drow .go{font-size:24px;line-height:1;color:var(--soft)}
+  .pill.onl{background:var(--blush);color:var(--plum);vertical-align:2px}
+  /* Inside one class. */
+  .tile.hot b{color:var(--pink)}
+  .flash{border-radius:7px;padding:8px 10px;font-size:14px;margin:10px 0 0;background:#e6f6ec;color:#187a43}
+  .flash.warn{background:#fff3d6;color:#6b520e}
+  .rr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 0;border-top:1px solid var(--line)}
+  .rr .rm{flex:1 1 210px;min-width:0;line-height:1.35}
+  .rr .rm b{overflow-wrap:anywhere}
+  .rr .rs{flex:0 0 auto;font-size:14px}
+  .rr .ra{display:flex;flex-wrap:wrap;gap:6px}
+  .rr.miss .rm{opacity:.7}
+  .cxl div{font-size:13px;color:var(--soft);padding:5px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
+  #addBox input:not([type=checkbox]){width:100%;margin-bottom:8px}
+  .link{background:none;border:0;color:var(--plum);font:inherit;font-size:14px;font-weight:700;padding:6px 0;cursor:pointer}
+  .hit{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--wall);border:1px solid var(--line);
+    color:var(--ink);border-radius:8px;padding:10px 12px;margin-bottom:6px;font:inherit;cursor:pointer}
+  .hit b{font-size:15px;overflow-wrap:anywhere}
+  .hit span,.hit em{font-size:12.5px;color:var(--soft);font-style:normal;overflow-wrap:anywhere}
+  .hit em.ok{color:#187a43;font-weight:700}
+  .chosen{display:flex;align-items:center;gap:10px;background:var(--wall);border:1.5px solid var(--plum);border-radius:8px;padding:6px 12px}
+  .chosen span{flex:1;min-width:0;font-weight:700;overflow-wrap:anywhere}
+  .lbl{font-size:13px;color:var(--soft);margin:14px 0 6px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{flex:1 1 140px;min-height:44px;background:var(--wall);border:1.5px solid var(--line);color:var(--ink);border-radius:8px;
+    padding:10px;font:inherit;font-size:14.5px;cursor:pointer;text-align:center}
+  .opt.on{background:var(--plum);border-color:var(--plum);color:var(--on-dark);font-weight:700}
+  .opt:disabled{opacity:.4;cursor:default}
+  .opt small{display:block;font-size:12px;opacity:.85}
+  .here{display:flex;align-items:flex-start;gap:9px;margin:16px 0 0;font-size:15px;cursor:pointer}
+  .here input{width:20px;height:20px;padding:0;margin:2px 0 0;flex-shrink:0;accent-color:var(--plum)}
+  .here small{display:block;color:var(--soft);font-size:12.5px}
+  .hint{min-height:1.2em;font-size:13.5px;color:var(--soft);margin:10px 0 0}
+  .hint.bad{background:#fdeaea;color:#a33;border-radius:7px;padding:8px 10px;font-weight:700}
+  #adGo{width:100%;margin-top:12px;padding:13px;font-size:15px}
+  @media (prefers-color-scheme:dark){.rr .in,.drow .in,.hit em.ok{color:#3ddc97}}
+  @media (min-width:560px){
+    .cal{padding:18px 16px}
+    .cal .head b{font-size:34px}.cal .head b small{font-size:22px}.cal.wk .head b{font-size:24px}
+    .cal .d{min-height:98px;padding:8px 4px}
+    .cal .ch{font-size:12px}.cal .ch b{display:block;font-weight:700}
+    .cal .cl{flex-direction:row;flex-wrap:wrap;align-items:baseline;column-gap:5px;row-gap:1px;padding:3px}
+    .cal .ct{font-size:12.5px}.cal .cn{font-size:12px}.cal .cc{font-size:12px}
+  }
+  @media (max-width:480px){nav{overflow-x:auto}nav button{flex:1 0 auto;padding:12px 4px;font-size:13px;line-height:1.3;white-space:nowrap}
+    header h1{font-size:22px}
+    .cimap{grid-template-columns:1fr;gap:2px}.cimap label{margin-top:8px}}
 </style>
 </head>
 <body>
@@ -62,8 +232,9 @@
 <nav>
   <button id="t-today" class="on" data-t="tabToday" onclick="tab('today')">Today</button>
   <button id="t-students" data-t="tabStudents" onclick="tab('students')">Students</button>
-  <button id="t-classes" data-t="tabClasses" onclick="tab('classes')">Classes</button>
+  <button id="t-calendar" data-t="tabCalendar" onclick="tab('calendar')">Calendar</button>
   <button id="t-orders" data-t="tabOrders" onclick="tab('orders')">Payments</button>
+  <button id="t-reports" data-t="tabReports" onclick="tab('reports')">Reports</button>
   <button id="t-settings" data-t="tabSettings" onclick="tab('settings')">Settings</button>
 </nav>
 <main id="view"></main>
@@ -84,7 +255,7 @@
   const STR = {
     en: {
       title: 'AYBKK Bangkok Admin', passcode: 'passcode', enter: 'Enter', wrongPass: 'wrong passcode', lock: 'Lock',
-      tabToday: 'Today', tabStudents: 'Students', tabClasses: 'Classes', tabOrders: 'Payments', tabSettings: 'Settings',
+      tabToday: 'Today', tabStudents: 'Students', tabOrders: 'Payments', tabSettings: 'Settings',
       failed: 'failed',
       startTitle: 'Start page, last 30 days', startNone: 'Nobody yet. Put aybkk.net/start/reel-name in a bio or Reel.', startSrc: 'From', startViews: 'Views', startTaps: 'Tapped book',
       progTitle: 'Progress today', progStudents: 'Students in the system', progActive: n => `${n} with an active pass`,
@@ -134,14 +305,9 @@
       confirmSale: (name, pkg, amt, method) => `${name}\n${pkg}\nTake ${amt} (${method}), VAT included.\n\nOnly press OK once you have the money.`,
       doneSale: (amt, method, ref, name, code) => `Done. ${amt} ${method} · ref ${ref}\n${name} — member code ${code}`,
       qWhichClass: 'Which class?', seatsLeft: n => `${n} left`, noClassNum: 'No class with that number.', booked: 'Booked.',
-      nextWeeks: 'Next three weeks',
-      classesHelp: 'Closing a class gives every booked student their credit back and emails them. A closed class disappears from the timetable.',
-      bookedOf: (b, c) => `${b} booked of ${c}`, close: 'Close', noClasses: 'no classes',
-      putBack: 'Put one back:', reopenBtn: 'Reopen a class',
       qClose: (title, date) => `Close ${title} on ${date}?\nEveryone booked gets their credit back and an email.`,
-      qReason: 'Reason (students see this)', moonDay: 'Moon day',
+      qReason: 'Reason (students see this)',
       closed: (r, n) => `Closed. ${r} booking(s) released, ${n} emailed.`,
-      qSlot: 'Class number (slotId)', qDate: 'Date YYYY-MM-DD',
       moneyToday: 'Money in today', sales: n => `${n} sale${n === 1 ? '' : 's'}`,
       countDrawer: 'Count the cash drawer against the cash line before you go home.',
       noSales: 'No sales yet today.', today: 'Today', noBookings: 'No bookings today.',
@@ -150,6 +316,7 @@
       fee: 'fee', vat: 'VAT', activate: 'Activate', noOrders: 'no orders yet',
       ordersHelp: 'Find the reference number in the PaySolutions dashboard, check the amount matches, then activate. Every activation here is recorded as manual.',
       qActivate: 'Activate this pass?\nOnly do this once you have seen the money arrive in PaySolutions.',
+      activatedNoClass: e => `Activated. Could not book the class: ${e}. Book them by hand.`,
       feeTitle: 'Online payment fee',
       feeHelp: 'Added on top of every package price at checkout. It exists to cover the card fees — PaySolutions is cheaper than Stripe, so you may want to lower it.',
       save: 'Save', packages: 'Packages',
@@ -176,7 +343,7 @@
     },
     th: {
       title: 'AYBKK ระบบหลังบ้าน', passcode: 'รหัสผ่าน', enter: 'เข้าสู่ระบบ', wrongPass: 'รหัสผ่านไม่ถูกต้อง', lock: 'ล็อก',
-      tabToday: 'วันนี้', tabStudents: 'นักเรียน', tabClasses: 'คลาส', tabOrders: 'การชำระเงิน', tabSettings: 'ตั้งค่า',
+      tabToday: 'วันนี้', tabStudents: 'นักเรียน', tabOrders: 'การชำระเงิน', tabSettings: 'ตั้งค่า',
       failed: 'ทำไม่สำเร็จ',
       startTitle: 'หน้า Start ย้อนหลัง 30 วัน', startNone: 'ยังไม่มีคนเข้า ใส่ aybkk.net/start/ชื่อคลิป ในไบโอหรือรีล', startSrc: 'มาจาก', startViews: 'เข้าชม', startTaps: 'กดจอง',
       progTitle: 'ความคืบหน้าวันนี้', progStudents: 'นักเรียนในระบบ', progActive: n => `มีบัตรใช้งาน ${n} คน`,
@@ -226,14 +393,9 @@
       confirmSale: (name, pkg, amt, method) => `${name}\n${pkg}\nรับเงิน ${amt} (${method}) รวม VAT แล้ว\n\nกด OK หลังจากได้รับเงินแล้วเท่านั้น`,
       doneSale: (amt, method, ref, name, code) => `เรียบร้อย ${amt} ${method} · เลขอ้างอิง ${ref}\n${name} — รหัสสมาชิก ${code}`,
       qWhichClass: 'คลาสไหน?', seatsLeft: n => `ว่าง ${n} ที่`, noClassNum: 'ไม่มีคลาสหมายเลขนี้', booked: 'จองแล้ว',
-      nextWeeks: 'สามสัปดาห์ข้างหน้า',
-      classesHelp: 'เมื่อปิดคลาส นักเรียนที่จองไว้ทุกคนจะได้ครั้งคืนและได้รับอีเมลแจ้ง คลาสที่ปิดจะหายไปจากตารางเรียน',
-      bookedOf: (b, c) => `จอง ${b} จาก ${c} ที่`, close: 'ปิด', noClasses: 'ไม่มีคลาส',
-      putBack: 'เปิดคลาสกลับมา:', reopenBtn: 'เปิดคลาสอีกครั้ง',
       qClose: (title, date) => `ปิดคลาส ${title} วันที่ ${date}?\nนักเรียนที่จองไว้ทุกคนจะได้ครั้งคืนและได้รับอีเมล`,
-      qReason: 'เหตุผล (นักเรียนจะเห็นข้อความนี้)', moonDay: 'Moon day (วันพระจันทร์)',
+      qReason: 'เหตุผล (นักเรียนจะเห็นข้อความนี้)',
       closed: (r, n) => `ปิดแล้ว คืนการจอง ${r} รายการ ส่งอีเมล ${n} คน`,
-      qSlot: 'หมายเลขคลาส (slotId)', qDate: 'วันที่ YYYY-MM-DD',
       moneyToday: 'เงินเข้าวันนี้', sales: n => `${n} รายการ`,
       countDrawer: 'นับเงินในลิ้นชักให้ตรงกับยอดเงินสด ก่อนกลับบ้าน',
       noSales: 'วันนี้ยังไม่มียอดขาย', today: 'วันนี้', noBookings: 'วันนี้ไม่มีการจอง',
@@ -242,6 +404,7 @@
       fee: 'ค่าธรรมเนียม', vat: 'VAT', activate: 'เปิดใช้', noOrders: 'ยังไม่มีรายการ',
       ordersHelp: 'หาเลขอ้างอิงในหน้า PaySolutions ตรวจว่ายอดเงินตรงกัน แล้วกดเปิดใช้ ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
       qActivate: 'เปิดใช้แพ็กเกจนี้?\nทำเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น',
+      activatedNoClass: e => `เปิดใช้แล้ว แต่จองคลาสให้ไม่ได้ (${e}) กรุณาจองให้นักเรียนเอง`,
       feeTitle: 'ค่าธรรมเนียมจ่ายออนไลน์',
       feeHelp: 'บวกเพิ่มจากราคาแพ็กเกจตอนจ่ายเงินออนไลน์ เพื่อครอบคลุมค่าธรรมเนียมบัตร PaySolutions ถูกกว่า Stripe จึงอาจลดลงได้',
       save: 'บันทึก', packages: 'แพ็กเกจ',
@@ -271,16 +434,283 @@
       },
     },
   };
-  const T = (k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
+  // History, reports and the move from Rezerv (Oct 2026).
+  Object.assign(STR.en, {
+    tabReports: 'Reports', loadingTxt: 'Loading…', back: '← Back', histBtn: 'History', noneYet: 'None yet.',
+    hRezerv: 'moved from Rezerv', hHere: 'made on aybkk.net', hRezervId: id => `Rezerv ID ${id}`,
+    hJoined: d => `joined ${d}`, hSince: d => `in this system since ${d}`,
+    tCame: 'Classes came', tFirst: d => `first ${d}`, tLastVisit: 'Last visit', tNever: 'never',
+    tLast30: 'Last 30 days', tLast90: n => `last 90 days: ${n}`,
+    tPaid: 'Total paid', tPayN: n => `${n} payment${n === 1 ? '' : 's'}`,
+    tPass: 'Active pass', tNoPass: 'none', tLeftN: n => `${n} classes left`, tUntil: d => `until ${d}`,
+    tStartsFirst: 'starts on the first booking', tMissed: 'No-shows · cancelled', tPhotos: n => `${n} photos`,
+    hVisits: 'Visits', hPays: 'Payments', hPasses: 'Passes', hNotes: 'Teacher notes', hChecks: '12-week checks',
+    thDate: 'Date', thTime: 'Time', thClass: 'Class', thFrom: 'From', thItem: 'Item', thAmount: 'Amount',
+    thMethod: 'Paid by', thClasses: 'Classes', thValid: 'Valid', thNote: 'Note', thTeacher: 'Teacher',
+    thHr: 'Resting HR', thSleep: 'Sleep', thFeel: 'Feel', thCount: 'Count', thTotal: 'Total', thAvg: 'Per class',
+    thHeld: 'Days held', thLast: 'Last visit', thUntil: 'Until', thPass: 'Pass', thCame: 'Came', thBooked: 'Booked',
+    thMoney: 'Money', thRow: 'Row', thMonth: 'Month',
+    showAll: n => `Show all ${n}`, teamOnly: 'team only', shared: 'the student sees it', workOnTxt: 'Work on',
+    paused: (a, b) => `paused ${a} to ${b}`, inAt: x => `in ${x}`, unlimCap: n => `unlimited, ${n} a day`,
+    unlimOnly: 'unlimited', leftOf: (a, b) => `${a} of ${b} left`,
+    csv_visits: 'Visits (CSV)', csv_payments: 'Payments (CSV)', csv_members: 'Students (CSV)',
+    repTitle: 'Reports', r_today: 'Today', r_week: 'This week', r_month: 'This month', r_lastMonth: 'Last month',
+    r_year: 'This year', r_custom: 'Custom', rFrom: 'From', rTo: 'To', rShow: 'Show',
+    rRange: (a, b) => a === b ? a : `${a} to ${b}`,
+    rBadRange: 'Pick a start and an end date, at most 400 days apart.',
+    rVisitsH: 'Classes', kCame: 'Came', kBooked: 'Booked', kNoShows: 'No-shows', kCancelled: 'Cancelled',
+    kStudents: 'Students who came', kNew: 'First visit ever',
+    rMoneyH: 'Money', kMoney: 'Money in', kVat: 'VAT in it', kPayments: 'Payments', kSold: 'Packages sold',
+    rByDay: 'By day', rByMonth: 'By month', rByClass: 'By class', rBySource: 'Booked through', rByMethod: 'By payment method',
+    rByItem: 'By item', rMoneySource: 'Where the money came in', rNothing: 'Nothing in these days.',
+    rExpH: 'Passes ending in the next 14 days', rExpHelp: 'Counted from today. Anyone who already has a next pass is left out.',
+    rNotSeenH: 'Not seen for 14 days', rNotSeenHelp: 'Has a pass they can use, but no class in the last 14 days. Counted from today. Send them a message.',
+    neverCame: 'never came',
+    ciTitle: 'Move everything from Rezerv (CSV files)',
+    ciHelp: 'Export each list from Rezerv as a CSV file. Import Students first, then Passes, Visits and Payments. Check shows what will happen and saves nothing. Running the same file again adds nothing twice.',
+    ciKind: 'What is in the file?', ciFile: 'CSV file',
+    kind_members: 'Students', kind_visits: 'Visits (classes booked or attended)', kind_payments: 'Payments',
+    kind_passes: 'Passes (packages students hold now)',
+    ciRead: (f, n, h) => `${f}: ${n} rows, headings on row ${h}`,
+    ciEmpty: 'No rows found in this file.', ciBadFile: 'Could not read this file.',
+    ciExcel: 'This is an Excel file. In Excel choose Save As, then "CSV UTF-8", and pick that file here.',
+    ciMapH: 'Match the columns',
+    ciMapHelp: 'We matched what we could. Check each line and pick the right column where needed. Columns not picked here are never sent: no birthdays, addresses or card numbers.',
+    ciNotUsed: '(not used)', ciNeed: list => `Pick a column for: ${list}`,
+    ciNeedWho: 'Pick at least one way to find the student: customer ID, email, phone or name.',
+    ciPreviewH: 'First 5 rows, as they will be read',
+    ciPastBooked: 'Past classes still marked "booked" count as attended (tick this if Rezerv never marked who came)',
+    ciCheck: 'Check (saves nothing)', ciImport: 'Import',
+    ciCheckFirst: 'Press Check first. Import opens after a check with these settings.',
+    ciChecking: (a, b) => `Checking ${a.toLocaleString()} of ${b.toLocaleString()} rows…`,
+    ciImporting: (a, b) => `Importing ${a.toLocaleString()} of ${b.toLocaleString()} rows… Keep this page open.`,
+    ciCheckDone: 'Check finished. Nothing was saved.', ciImportDone: 'Import finished.',
+    ciStopped: (row, e) => `Stopped at row ${row}: ${e}. Rows before it are saved. Fix it and import again: nothing is added twice.`,
+    ciConfirm: (n, k) => `Import ${n} rows of ${k} now?\nThis saves them in the system.`,
+    ciTotal: 'Rows', ciAdded: 'Added', ciMatched: 'Already there', ciUpdated: 'Updated', ciNewMembers: 'New students',
+    ciSkipped: 'Skipped', ciSkippedH: 'Skipped rows', ciSkippedCsv: 'Download skipped rows (CSV)', ciWarnH: 'Notes',
+    ciRow: n => `Row ${n}`,
+    ciPastNote: n => `Past classes still marked "booked" in the file, not attended: ${n}. They stay booked and do not count as classes practised. If Rezerv never marked who came, tick the box above and run it again.`,
+    ciBatchNote: 'A check looks at each 1,000 rows on its own, so a student made from a name in an earlier part shows as new again. The real import does not do this.',
+    f_rezervId: 'Rezerv customer ID', f_visits_rezervId: 'Booking ID', f_payments_rezervId: 'Payment ID',
+    f_memberRezervId: 'Customer ID', f_name: 'Name', f_lastName: 'Last name (added after the name)', f_email: 'Email',
+    f_phone: 'Phone', f_joinedOn: 'Joined on', f_date: 'Date', f_visits_date: 'Class date', f_payments_date: 'Payment date',
+    f_time: 'Class time', f_className: 'Class', f_status: 'Status', f_checkedInAt: 'Checked in at', f_amount: 'Amount paid',
+    f_item: 'Item', f_method: 'Paid by', f_vat: 'VAT', f_note: 'Note', f_plan: 'Package', f_until: 'End date',
+    f_start: 'Start date', f_classesLeft: 'Classes left', f_payments_status: 'Payment status (paid, refund, failed…)',
+  });
+  Object.assign(STR.en.words, {
+    attended: 'came', booked: 'booked', past: 'booked, never checked in', noshow: 'no-show', cancelled: 'cancelled',
+    refund: 'refund', rezerv: 'Rezerv', aybkk: 'aybkk.net', door: 'at the door', student: 'student online',
+    staff: 'staff', order: 'with a payment', manual: 'given by staff', pass: 'pass', bought: 'bought',
+  });
+  const CI_THEN_TH = { hand: 'ตรวจสอบเอง', made: 'สร้างเป็นนักเรียนใหม่', madeNoEmail: 'สร้างเป็นนักเรียนใหม่โดยไม่ใส่อีเมลนี้' };
+  Object.assign(STR.th, {
+    tabReports: 'รายงาน', loadingTxt: 'กำลังโหลด…', back: '← กลับ', histBtn: 'ประวัติ', noneYet: 'ยังไม่มี',
+    hRezerv: 'ย้ายมาจาก Rezerv', hHere: 'สมัครบน aybkk.net', hRezervId: id => `รหัส Rezerv ${id}`,
+    hJoined: d => `สมัครเมื่อ ${d}`, hSince: d => `อยู่ในระบบนี้ตั้งแต่ ${d}`,
+    tCame: 'มาเรียน (ครั้ง)', tFirst: d => `ครั้งแรก ${d}`, tLastVisit: 'มาครั้งล่าสุด', tNever: 'ยังไม่เคยมา',
+    tLast30: '30 วันล่าสุด', tLast90: n => `90 วันล่าสุด: ${n}`,
+    tPaid: 'จ่ายแล้วทั้งหมด', tPayN: n => `${n} รายการ`,
+    tPass: 'แพ็กเกจที่ใช้อยู่', tNoPass: 'ไม่มี', tLeftN: n => `เหลือ ${n} ครั้ง`, tUntil: d => `ถึง ${d}`,
+    tStartsFirst: 'เริ่มเมื่อจองคลาสแรก', tMissed: 'จองแล้วไม่มา · ยกเลิก', tPhotos: n => `รูป ${n} รูป`,
+    hVisits: 'การเข้าเรียน', hPays: 'การชำระเงิน', hPasses: 'แพ็กเกจ', hNotes: 'คำแนะนำครู', hChecks: 'เช็กผล 12 สัปดาห์',
+    thDate: 'วันที่', thTime: 'เวลา', thClass: 'คลาส', thFrom: 'มาจาก', thItem: 'รายการ', thAmount: 'ยอดเงิน',
+    thMethod: 'ชำระโดย', thClasses: 'ครั้ง', thValid: 'ช่วงเวลา', thNote: 'หมายเหตุ', thTeacher: 'ครู',
+    thHr: 'ชีพจรขณะพัก', thSleep: 'การนอน', thFeel: 'ความรู้สึก', thCount: 'จำนวน', thTotal: 'รวม', thAvg: 'เฉลี่ยต่อคลาส',
+    thHeld: 'จำนวนวัน', thLast: 'มาครั้งล่าสุด', thUntil: 'ถึง', thPass: 'แพ็กเกจ', thCame: 'มาเรียน', thBooked: 'จอง',
+    thMoney: 'เงิน', thRow: 'แถว', thMonth: 'เดือน',
+    showAll: n => `แสดงทั้งหมด ${n} รายการ`, teamOnly: 'เฉพาะทีม', shared: 'นักเรียนเห็น', workOnTxt: 'ฝึกต่อ',
+    paused: (a, b) => `พัก ${a} ถึง ${b}`, inAt: x => `เช็คอิน ${x}`, unlimCap: n => `ไม่จำกัด วันละ ${n} คลาส`,
+    unlimOnly: 'ไม่จำกัด', leftOf: (a, b) => `เหลือ ${a} จาก ${b} ครั้ง`,
+    csv_visits: 'การเข้าเรียน (CSV)', csv_payments: 'การชำระเงิน (CSV)', csv_members: 'รายชื่อนักเรียน (CSV)',
+    repTitle: 'รายงาน', r_today: 'วันนี้', r_week: 'สัปดาห์นี้', r_month: 'เดือนนี้', r_lastMonth: 'เดือนที่แล้ว',
+    r_year: 'ปีนี้', r_custom: 'เลือกวันเอง', rFrom: 'ตั้งแต่', rTo: 'ถึง', rShow: 'แสดง',
+    rRange: (a, b) => a === b ? a : `${a} ถึง ${b}`,
+    rBadRange: 'เลือกวันเริ่มและวันสิ้นสุด ห่างกันไม่เกิน 400 วัน',
+    rVisitsH: 'การเข้าเรียน', kCame: 'มาเรียน', kBooked: 'จอง', kNoShows: 'จองแล้วไม่มา', kCancelled: 'ยกเลิก',
+    kStudents: 'นักเรียนที่มา', kNew: 'มาครั้งแรก',
+    rMoneyH: 'เงิน', kMoney: 'เงินเข้า', kVat: 'VAT ในยอดนี้', kPayments: 'รายการชำระ', kSold: 'แพ็กเกจที่ขาย',
+    rByDay: 'รายวัน', rByMonth: 'รายเดือน', rByClass: 'รายคลาส', rBySource: 'จองผ่าน', rByMethod: 'ตามวิธีชำระ',
+    rByItem: 'ตามรายการ', rMoneySource: 'เงินเข้าผ่าน', rNothing: 'ไม่มีข้อมูลในช่วงนี้',
+    rExpH: 'แพ็กเกจที่จะหมดใน 14 วัน', rExpHelp: 'นับจากวันนี้ ไม่รวมคนที่มีแพ็กเกจถัดไปแล้ว',
+    rNotSeenH: 'ไม่ได้มา 14 วัน', rNotSeenHelp: 'มีแพ็กเกจที่ใช้ได้ แต่ไม่ได้มาเรียนใน 14 วันล่าสุด นับจากวันนี้ ลองส่งข้อความหา',
+    neverCame: 'ยังไม่เคยมา',
+    ciTitle: 'ย้ายข้อมูลทั้งหมดจาก Rezerv (ไฟล์ CSV)',
+    ciHelp: 'ดาวน์โหลดแต่ละรายการจาก Rezerv เป็นไฟล์ CSV นำเข้านักเรียนก่อน แล้วจึงแพ็กเกจ การเข้าเรียน และการชำระเงิน ปุ่มตรวจสอบจะแสดงผลที่จะเกิดขึ้นโดยยังไม่บันทึก นำเข้าไฟล์เดิมซ้ำได้ ไม่มีข้อมูลซ้ำ',
+    ciKind: 'ในไฟล์คืออะไร', ciFile: 'ไฟล์ CSV',
+    kind_members: 'นักเรียน', kind_visits: 'การเข้าเรียน (คลาสที่จองหรือมาเรียน)', kind_payments: 'การชำระเงิน',
+    kind_passes: 'แพ็กเกจ (ที่นักเรียนถืออยู่ตอนนี้)',
+    ciRead: (f, n, h) => `${f}: ${n} แถว หัวตารางอยู่แถวที่ ${h}`,
+    ciEmpty: 'ไม่พบข้อมูลในไฟล์นี้', ciBadFile: 'อ่านไฟล์นี้ไม่ได้',
+    ciExcel: 'นี่คือไฟล์ Excel ใน Excel ให้เลือก Save As แล้วเลือก "CSV UTF-8" แล้วเลือกไฟล์นั้นที่นี่',
+    ciMapH: 'จับคู่คอลัมน์',
+    ciMapHelp: 'ระบบจับคู่ให้เท่าที่ทำได้ ตรวจทีละบรรทัด และเลือกคอลัมน์ที่ถูกต้องถ้าจำเป็น คอลัมน์ที่ไม่ได้เลือกจะไม่ถูกส่ง (ไม่มีวันเกิด ที่อยู่ หรือเลขบัตร)',
+    ciNotUsed: '(ไม่ใช้)', ciNeed: list => `เลือกคอลัมน์สำหรับ: ${list}`,
+    ciNeedWho: 'เลือกอย่างน้อยหนึ่งอย่างเพื่อหานักเรียน: รหัสลูกค้า อีเมล เบอร์โทร หรือชื่อ',
+    ciPreviewH: '5 แถวแรก ตามที่ระบบจะอ่าน',
+    ciPastBooked: 'คลาสที่ผ่านไปแล้วแต่ยังเป็น "จอง" ให้นับว่ามาเรียน (ติ๊กถ้า Rezerv ไม่เคยบันทึกว่าใครมา)',
+    ciCheck: 'ตรวจสอบ (ยังไม่บันทึก)', ciImport: 'นำเข้า',
+    ciCheckFirst: 'กดตรวจสอบก่อน ปุ่มนำเข้าจะใช้ได้หลังตรวจสอบด้วยการตั้งค่านี้',
+    ciChecking: (a, b) => `กำลังตรวจ ${a.toLocaleString()} จาก ${b.toLocaleString()} แถว…`,
+    ciImporting: (a, b) => `กำลังนำเข้า ${a.toLocaleString()} จาก ${b.toLocaleString()} แถว… อย่าปิดหน้านี้`,
+    ciCheckDone: 'ตรวจเสร็จแล้ว ยังไม่มีอะไรถูกบันทึก', ciImportDone: 'นำเข้าเสร็จแล้ว',
+    ciStopped: (row, e) => `หยุดที่แถว ${row}: ${e} แถวก่อนหน้านี้บันทึกแล้ว แก้ไขแล้วนำเข้าอีกครั้งได้ ไม่มีข้อมูลซ้ำ`,
+    ciConfirm: (n, k) => `นำเข้า ${n} แถว (${k}) ตอนนี้เลยไหม?\nข้อมูลจะถูกบันทึกในระบบ`,
+    ciTotal: 'แถว', ciAdded: 'เพิ่มใหม่', ciMatched: 'มีอยู่แล้ว', ciUpdated: 'อัปเดต', ciNewMembers: 'นักเรียนใหม่',
+    ciSkipped: 'ข้าม', ciSkippedH: 'แถวที่ข้าม', ciSkippedCsv: 'ดาวน์โหลดแถวที่ข้าม (CSV)', ciWarnH: 'หมายเหตุ',
+    ciRow: n => `แถว ${n}`,
+    ciPastNote: n => `${n} คลาสที่ผ่านไปแล้วในไฟล์ยังเป็น "จอง" ไม่ใช่ "มาเรียน" ระบบเก็บไว้เป็นจอง และไม่นับเป็นครั้งที่มาฝึก ถ้า Rezerv ไม่เคยบันทึกว่าใครมา ให้ติ๊กช่องด้านบนแล้วทำอีกครั้ง`,
+    ciBatchNote: 'การตรวจสอบดูทีละ 1,000 แถว นักเรียนที่สร้างจากชื่อในส่วนก่อนหน้าจึงขึ้นเป็นนักเรียนใหม่อีก ตอนนำเข้าจริงจะไม่เป็นแบบนี้',
+    f_rezervId: 'รหัสลูกค้าใน Rezerv', f_visits_rezervId: 'รหัสการจอง', f_payments_rezervId: 'รหัสการชำระเงิน',
+    f_memberRezervId: 'รหัสลูกค้า', f_name: 'ชื่อ', f_lastName: 'นามสกุล (ต่อท้ายชื่อ)', f_email: 'อีเมล',
+    f_phone: 'เบอร์โทร', f_joinedOn: 'วันที่สมัคร', f_date: 'วันที่', f_visits_date: 'วันที่เรียน', f_payments_date: 'วันที่ชำระ',
+    f_time: 'เวลาเรียน', f_className: 'คลาส', f_status: 'สถานะ', f_checkedInAt: 'เวลาเช็คอิน', f_amount: 'ยอดที่ชำระ',
+    f_item: 'รายการ', f_method: 'ชำระโดย', f_vat: 'VAT', f_note: 'หมายเหตุ', f_plan: 'แพ็กเกจ', f_until: 'วันหมดอายุ',
+    f_start: 'วันเริ่ม', f_classesLeft: 'ครั้งที่เหลือ', f_payments_status: 'สถานะการชำระ (ชำระแล้ว คืนเงิน ไม่สำเร็จ…)',
+    // The server's skip reasons and notes, by code (English comes from the server).
+    ci_noName: 'ไม่มีชื่อ',
+    ci_sharePhone: (n, p) => `นักเรียน ${n} คนใช้เบอร์ ${p} เดียวกัน: เพิ่มอีเมล`,
+    ci_sameName: (n, name) => `มีนักเรียนชื่อ ${name} ${n} คน: เพิ่มอีเมลหรือเบอร์โทร`,
+    ci_noWho: 'แถวนี้ไม่มีข้อมูลนักเรียน: เลือกคอลัมน์รหัสลูกค้า อีเมล เบอร์โทร หรือชื่อ',
+    ci_notFound: 'ไม่พบนักเรียน: ใส่ชื่อเพื่อสร้างนักเรียนใหม่',
+    ci_clashEmail: (e, name, code, rz, then) => `${e} เป็นอีเมลของ ${name} (${code}, รหัส Rezerv ${rz}): ${CI_THEN_TH[then]}`,
+    ci_clashPhone: (p, name, code, fileName, then) => `เบอร์ ${p} เป็นของ ${name} (${code}) แต่ในไฟล์เป็น ${fileName}: ${CI_THEN_TH[then]}`,
+    ci_clashOtherEmail: (name, code, e, then) => `นักเรียนชื่อ ${name} (${code}) ใช้อีเมลอื่น (${e}): ${CI_THEN_TH[then]}`,
+    ci_excelId: v => `รหัส "${v}" ถูก Excel เปลี่ยนไปแล้ว: ดาวน์โหลดจาก Rezerv ใหม่ และอย่าเปิดด้วย Excel ก่อนนำเข้า`,
+    ci_badDate: v => `อ่านวันที่ "${v}" ไม่ได้`,
+    ci_badTime: v => `อ่านเวลา "${v}" ไม่ได้`,
+    ci_badStatus: v => `อ่านสถานะ "${v}" ไม่ได้`,
+    ci_waitlist: 'เป็นคิวสำรอง ไม่ใช่การเข้าเรียน',
+    ci_noSlot: (time, d) => `ไม่มีคลาสในตาราง เวลา ${time || '(ไม่มีเวลา)'} ${ymdLong(d, true)}: จองให้นักเรียนเอง`,
+    ci_moonDay: d => `${ymdLong(d, true)} เป็นวัน Moon day: ชาลาปิด`,
+    ci_classOff: (title, d) => `คลาส ${title} ${ymdLong(d, true)} ถูกยกเลิก`,
+    ci_idReused: (id, what) => `รหัส Rezerv ${id} ใช้กับ${what === 'payment' ? 'การชำระเงิน' : 'การเข้าเรียน'}รายการอื่นแล้ว: เลือกคอลัมน์รหัสที่ไม่ซ้ำกันในแต่ละแถว หรือไม่ต้องเลือก`,
+    ci_badAmount: v => `อ่านยอดเงิน "${v}" ไม่ได้`,
+    ci_payStatus: v => `อ่านสถานะการชำระ "${v}" ไม่ได้`,
+    ci_notMoney: v => `สถานะการชำระ "${v}": ไม่มีเงินเข้า จึงไม่บันทึก`,
+    ci_badPlan: v => `อ่านแพ็กเกจ "${v}" ไม่ได้`,
+    ci_badUntil: v => `อ่านวันหมดอายุ "${v}" ไม่ได้`,
+    ci_badStart: v => `อ่านวันเริ่ม "${v}" ไม่ได้`,
+    ci_startsAfterEnd: 'วันเริ่มอยู่หลังวันหมดอายุ',
+    ci_noPackage: c => `ไม่มีแพ็กเกจ ${c} ในระบบ`,
+    ci_badLeft: v => `อ่านจำนวนครั้งที่เหลือ "${v}" ไม่ได้`,
+    ci_duplicate: 'มีอยู่แล้ว (ซ้ำ)',
+    ci_notEmail: v => `"${v}" ไม่ใช่อีเมล: ไม่ได้ใส่`,
+    ci_badJoined: v => `อ่านวันที่สมัคร "${v}" ไม่ได้: ไม่ได้ใส่`,
+    ci_badCheckIn: v => `อ่านเวลาเช็คอิน "${v}" ไม่ได้: ไม่ได้ใส่`,
+    ci_overCap: (n, cap, title, d) => `เกินจำนวนที่รับ: ${n} คน จากที่รับได้ ${cap} คน ในคลาส ${title} ${ymdLong(d, true)}`,
+    ci_badVat: v => `อ่าน VAT "${v}" ไม่ได้: ใส่เป็น 0`,
+    ci_emailTaken: (e, name, code, to) => `${e} เป็นอีเมลของ ${name} (${code}): ไม่ได้ใส่ให้ ${to}`,
+    ci_keepsEmail: (name, e, fe) => `${name} ใช้อีเมล ${e} ต่อไป (ในไฟล์เป็น ${fe})`,
+    ci_keepsRezervId: (name, id, fid) => `${name} ใช้รหัส Rezerv ${id} ต่อไป (ในไฟล์เป็น ${fid})`,
+    ci_leftOver: (left, total) => `เหลือ ${left} ครั้ง มากกว่า ${total} ครั้งในแพ็กเกจ: ใส่เป็น ${total}`,
+    ci_keptHere: (here, file) => `Rezerv เป็น "${W(file)}" แต่ในระบบนี้เป็น "${W(here)}": เก็บตามระบบนี้`,
+    ci_cameDoor: file => `เช็คอินที่หน้าประตูแล้ว แต่ Rezerv เป็น "${W(file)}": ไม่ได้เพิ่ม`,
+    ci_newStudent: name => `นักเรียนใหม่: ${name}`,
+  });
+  Object.assign(STR.th.words, {
+    attended: 'มาเรียน', booked: 'จองไว้', past: 'จองแต่ไม่ได้เช็คอิน', noshow: 'จองแล้วไม่มา', cancelled: 'ยกเลิก',
+    refund: 'คืนเงิน', other: 'อื่นๆ', rezerv: 'Rezerv', aybkk: 'aybkk.net', door: 'หน้าประตู', student: 'นักเรียนจองเอง',
+    staff: 'ทีมงานจองให้', order: 'จองพร้อมจ่ายเงิน', manual: 'ทีมงานให้', pass: 'แพ็กเกจ', bought: 'ซื้อ',
+  });
+  // The class calendar (Oct 2026).
+  Object.assign(STR.en, {
+    tabCalendar: 'Calendar', v_month: 'Month', v_week: 'Week', v_day: 'Day', prev: 'Previous', next: 'Next',
+    wdShort: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    newMoon: 'New moon', fullMoon: 'Full moon', calMoon: 'Moon day', moonShut: 'Moon day: the shala is closed.',
+    lgCount: 'booked / places', lgIn: 'checked in', lgFull: 'full', lgClosed: 'closed', lgOnline: 'online', lgBookedWord: 'booked',
+    nBooked: (b, c) => c == null ? `${b} booked` : `${b}/${c} booked`, nIn: n => `${n} in`, nMin: n => `${n} min`,
+    nNoShows: n => `${n} no-show${n === 1 ? '' : 's'}`,
+    closedNote: r => r ? `Closed: ${r}` : 'Closed', dayEmpty: 'No classes on this day.',
+    tBooked: 'Booked', tIn: 'Checked in', tLeft: 'Places left', full: 'Full', nOver: n => `${n} over`,
+    slotless: 'Moved from Rezerv. You can look, not change.', ended: 'This class has ended.',
+    noTime: 'Time not known', rCame: 'Came',
+    rosterH: 'On the list', rosterNone: 'Nobody booked yet.',
+    rIn: x => `In ${x}`, rNotYet: 'Not yet', rNoShow: 'No-show', covPass: 'aybkk.net pass', covDrop: 'Drop-in',
+    btnIn: 'Check in', btnUndo: 'Undo', btnCancelBk: 'Cancel booking',
+    qCancelBk: (n, title, when) => `Cancel ${n}'s booking?\n${title}, ${when}`,
+    bkCancelled: (n, back, h, rezerv) => rezerv ? `${n}'s booking is cancelled.`
+      : back ? `${n}'s booking is cancelled. The credit is back on their pass.`
+      : `${n}'s booking is cancelled. It was too close to the class${h ? ` (less than ${h} hours)` : ''}, so the credit is used.`,
+    cancelledH: 'Cancelled',
+    addH: 'Add student', addJump: '+ Add student', addSearchPh: 'Search name, code, phone or email',
+    addNew: '+ New person', addName: 'Name (required)', addPhone: 'Phone (optional)', addEmail: 'Email (optional, for the receipt)',
+    addChange: 'Change', addNoHits: 'No one found. Add them as a new person.', addNoNet: 'No connection. Try again.',
+    hitPass: '✓ aybkk.net pass', hitNoPass: 'no aybkk.net pass', hitOn: 'already on this list',
+    coverQ: 'What pays for this class?', covPassOpt: 'Their aybkk.net pass', covRezervOpt: 'Rezerv package', covDropOpt: 'Drop-in sale',
+    methodQ: 'Paid how?', m_cash: 'Cash', m_transfer: 'Transfer', m_card: 'Card',
+    hereNow: 'Here now, check them in', hereLater: 'Check-in opens on the day of the class.',
+    addGo: 'Add to the class', addGoIn: 'Add and check in',
+    hFind: 'Find the person, or add a new person.', hName: 'Type their name.',
+    hNoPass: 'No aybkk.net pass: choose Rezerv package or Drop-in.', hCover: 'Choose what pays for this class.',
+    hMethod: 'Choose how they paid.', hOnIn: 'Already on this list: tap Add to check them in.', hOnOnly: 'Already on this list.',
+    hFull: 'This class is full: adding goes over capacity.',
+    addDone: (n, inn) => inn ? `${n} added and checked in.` : `${n} added to the class.`,
+    addWasIn: n => `${n} was on the list, now checked in.`, addWasOn: n => `${n} is already on the list.`,
+    addWasDrop: n => `${n} was already on the list. No drop-in was sold, nothing to charge.`,
+    addOver: 'Over capacity now.', addRef: r => `Receipt ref ${r}.`,
+    addPaidNot: r => `Paid (ref ${r}), but not added to the class. Book them by hand.`,
+    addFail: 'Could not add them. Try again.',
+    closeH: 'Close this class', closeHelp: 'Everyone booked gets their credit back and an email with the reason.',
+    reopenH: 'Reopen this class', reopenHelp: 'Students who were booked are not put back. They book again, with their credit back.',
+    reopened: 'Reopened. Students can book it again.',
+  });
+  Object.assign(STR.th, {
+    tabCalendar: 'ปฏิทิน', v_month: 'เดือน', v_week: 'สัปดาห์', v_day: 'วัน', prev: 'ก่อนหน้า', next: 'ถัดไป',
+    wdShort: ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'],
+    newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง', calMoon: 'วันพระจันทร์', moonShut: 'วันพระจันทร์ ชาลาปิด',
+    lgCount: 'จอง / ที่รับได้', lgIn: 'เช็คอินแล้ว', lgFull: 'เต็ม', lgClosed: 'ปิด', lgOnline: 'ออนไลน์', lgBookedWord: 'จอง',
+    nBooked: (b, c) => c == null ? `จอง ${b}` : `จอง ${b}/${c}`, nIn: n => `เช็คอิน ${n}`, nMin: n => `${n} นาที`,
+    nNoShows: n => `ไม่มา ${n} คน`,
+    closedNote: r => r ? `ปิดคลาส: ${r}` : 'ปิดคลาส', dayEmpty: 'ไม่มีคลาสในวันที่เลือก',
+    tBooked: 'จองแล้ว', tIn: 'เช็คอินแล้ว', tLeft: 'ที่ว่าง', full: 'เต็ม', nOver: n => `เกิน ${n} คน`,
+    slotless: 'ย้ายมาจาก Rezerv ดูได้อย่างเดียว', ended: 'คลาสนี้จบแล้ว',
+    noTime: 'ไม่ทราบเวลา', rCame: 'มาเรียน',
+    rosterH: 'รายชื่อ', rosterNone: 'ยังไม่มีคนจอง',
+    rIn: x => `เช็คอิน ${x}`, rNotYet: 'ยังไม่มา', rNoShow: 'จองแล้วไม่มา', covPass: 'แพ็กเกจ aybkk.net', covDrop: 'Drop-in',
+    btnIn: 'เช็คอิน', btnUndo: 'ยกเลิกเช็คอิน', btnCancelBk: 'ยกเลิกการจอง',
+    qCancelBk: (n, title, when) => `ยกเลิกการจองของ ${n}?\n${title} ${when}`,
+    bkCancelled: (n, back, h, rezerv) => rezerv ? `ยกเลิกการจองของ ${n} แล้ว`
+      : back ? `ยกเลิกการจองของ ${n} แล้ว คืนครั้งเข้าแพ็กเกจแล้ว`
+      : `ยกเลิกการจองของ ${n} แล้ว ยกเลิกช้าเกินไป${h ? ` (น้อยกว่า ${h} ชั่วโมงก่อนคลาส)` : ''} จึงไม่คืนครั้ง`,
+    cancelledH: 'ยกเลิกแล้ว',
+    addH: 'เพิ่มนักเรียน', addJump: '+ เพิ่มนักเรียน', addSearchPh: 'ค้นหาชื่อ รหัส เบอร์โทร หรืออีเมล',
+    addNew: '+ คนใหม่', addName: 'ชื่อ (ต้องใส่)', addPhone: 'เบอร์โทร (ไม่ใส่ก็ได้)', addEmail: 'อีเมล (ไม่ใส่ก็ได้ ใช้ส่งใบเสร็จ)',
+    addChange: 'เปลี่ยน', addNoHits: 'ไม่พบ เพิ่มเป็นคนใหม่ได้', addNoNet: 'ไม่มีสัญญาณ ลองอีกครั้ง',
+    hitPass: '✓ มีแพ็กเกจ aybkk.net', hitNoPass: 'ไม่มีแพ็กเกจ aybkk.net', hitOn: 'อยู่ในรายชื่อแล้ว',
+    coverQ: 'ใช้อะไรจ่ายค่าคลาสนี้?', covPassOpt: 'แพ็กเกจ aybkk.net', covRezervOpt: 'แพ็กเกจ Rezerv', covDropOpt: 'ขาย Drop-in',
+    methodQ: 'จ่ายแบบไหน?', m_cash: 'เงินสด', m_transfer: 'โอนเงิน', m_card: 'รูดบัตร',
+    hereNow: 'มาถึงแล้ว เช็คอินให้เลย', hereLater: 'เช็คอินได้ในวันที่มีคลาส',
+    addGo: 'เพิ่มเข้าคลาส', addGoIn: 'เพิ่มและเช็คอิน',
+    hFind: 'ค้นหาคน หรือเพิ่มคนใหม่', hName: 'พิมพ์ชื่อ',
+    hNoPass: 'ไม่มีแพ็กเกจ aybkk.net เลือกแพ็กเกจ Rezerv หรือ Drop-in', hCover: 'เลือกว่าใช้อะไรจ่ายค่าคลาส',
+    hMethod: 'เลือกวิธีจ่าย', hOnIn: 'อยู่ในรายชื่อแล้ว กดเพิ่มเพื่อเช็คอิน', hOnOnly: 'อยู่ในรายชื่อแล้ว',
+    hFull: 'คลาสเต็มแล้ว ถ้าเพิ่มจะเกินจำนวนที่รับ',
+    addDone: (n, inn) => inn ? `เพิ่ม ${n} และเช็คอินแล้ว` : `เพิ่ม ${n} เข้าคลาสแล้ว`,
+    addWasIn: n => `${n} อยู่ในรายชื่อแล้ว เช็คอินให้แล้ว`, addWasOn: n => `${n} อยู่ในรายชื่อแล้ว`,
+    addWasDrop: n => `${n} อยู่ในรายชื่อแล้ว ไม่ได้ขาย Drop-in ไม่ต้องเก็บเงิน`,
+    addOver: 'ตอนนี้เกินจำนวนที่รับแล้ว', addRef: r => `เลขอ้างอิงใบเสร็จ ${r}`,
+    addPaidNot: r => `จ่ายแล้ว (เลขอ้างอิง ${r}) แต่ยังไม่ได้เพิ่มเข้าคลาส กรุณาจองให้เอง`,
+    addFail: 'เพิ่มไม่สำเร็จ ลองอีกครั้ง',
+    closeH: 'ปิดคลาสนี้', closeHelp: 'นักเรียนที่จองไว้ทุกคนจะได้ครั้งคืน และได้รับอีเมลพร้อมเหตุผล',
+    reopenH: 'เปิดคลาสนี้อีกครั้ง', reopenHelp: 'นักเรียนที่เคยจองจะไม่กลับเข้ามาเอง ต้องจองใหม่ (ได้ครั้งคืนไปแล้ว)',
+    reopened: 'เปิดคลาสแล้ว นักเรียนจองได้อีกครั้ง',
+  });
+  const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
-  let TH_NAMES = null;
+  let TH_NAMES = null, TH_BY_EN = {};
+  let DROP_PRICE = null;                // the desk price of a drop-in: VAT in, no online fee
   const loadThNames = async () => {
     if (TH_NAMES) return;
     const d = await fetch('/api/bkk/products').then(r => r.json()).catch(() => ({}));
     TH_NAMES = {};
-    for (const x of d.products || []) if (x.name_th) TH_NAMES[x.id] = x.name_th;
+    for (const x of d.products || []) if (x.name_th) { TH_NAMES[x.id] = x.name_th; TH_BY_EN[x.name_en] = x.name_th; }
+    const p = (d.products || []).find(x => x.code === 'dropin');
+    if (p) DROP_PRICE = p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
   };
   const pkgName = p => (LANG === 'th' && (p.name_th || (TH_NAMES || {})[p.product_id])) || p.name_en;
+  const itemName = n => (LANG === 'th' && TH_BY_EN[n]) || n;
   const CLASS_TH = [[/\[Online\]/g, '[ออนไลน์]'], [/Mysore/g, 'มายซอร์'], [/\(1st batch\)/g, '(รอบแรก)'],
     [/\(2nd batch\)/g, '(รอบสอง)'], [/Sunday/g, 'วันอาทิตย์'], [/ series/g, '']];
   const cls = t => LANG === 'th' ? CLASS_TH.reduce((s, [re, to]) => s.replace(re, to), String(t ?? '')) : t;
@@ -305,6 +735,9 @@
     paintStatic();
     if ($('#gateMsg').textContent) $('#gateMsg').textContent = T('wrongPass');
     if ($('#app').style.display !== 'none') {
+      if (SUB === 'history') { if (HIST) paintHistory(); return; }
+      if (SUB === 'class') { if (CV.data) paintClass(); return; }
+      if (current === 'calendar') { renderCalendar(true); return; }
       const term = current === 'students' && $('#q') ? $('#q').value.trim() : '';
       if (current === 'students') renderStudents(term); else tab(current);
     }
@@ -321,14 +754,16 @@
   };
   window.logout = () => { store.del('aybkk_bkk_key'); location.reload(); };
 
-  let current = 'today';
+  let current = 'today', SUB = null;    // SUB: a view opened on top of a tab ('history', 'class')
   window.tab = t => {
-    current = t;
+    current = t; SUB = null;
+    $('#view').classList.remove('wide');
     document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.id === 't-' + t));
     if (t === 'today') renderToday();
     if (t === 'students') renderStudents();
-    if (t === 'classes') renderClasses();
+    if (t === 'calendar') renderCalendar();
     if (t === 'orders') renderOrders();
+    if (t === 'reports') renderReports();
     if (t === 'settings') renderSettings();
   };
 
@@ -360,6 +795,7 @@
       <p class="muted">${esc(T('giveHelp'))}</p>
       <p><button class="btn pink" onclick="grantPass()">${T('giveBtn')}</button></p>
     </div>
+    <div class="box" id="ciBox">${importInner()}</div>
     <div class="box">
       <b>${T('impTitle')}</b>
       <p class="muted">${esc(T('impHelp'))}</p>
@@ -394,9 +830,10 @@
     FOUND = Object.fromEntries(ms.map(m => [m.code, m]));
     if (!ms.length) { $('#results').innerHTML = `<p class="muted">${T('nobody')}</p>`; return; }
     $('#results').innerHTML = ms.map(m => `<div style="border-top:1px solid var(--line);padding:12px 0">
-      <b>${esc(m.name)}</b> <span class="muted">${esc(m.code)}</span><br>
+      <b>${esc(m.name)}</b> <span class="muted">${esc(m.code)}</span>
+      <button class="btn sm" style="float:right" onclick="showHistory('${esc(m.code)}')">${T('histBtn')}</button><br>
       <span class="muted">${esc(m.email || T('noEmail'))}${m.phone ? ' · ' + esc(m.phone) : ''}
-        · ${T('upcoming', m.booked)}</span>
+        · ${T('upcoming', m.booked)}${m.source === 'rezerv' ? ' · Rezerv' + (m.rezerv_id ? ' ' + esc(m.rezerv_id) : '') : ''}</span>
       ${(m.passes || []).map(p => `<div style="margin-top:8px">
         <span class="pill ${p.status === 'active' ? 'paid' : 'pending'}">${esc(W(p.status))}</span>
         ${esc(pkgName(p))} —
@@ -557,37 +994,476 @@
     if (await shout(r)) { alert(T('booked')); findStudents(); }
   };
 
-  // ── classes ───────────────────────────────────────────────────────────────
-  async function renderClasses() {
-    const d = await fetch('/api/bkk/schedule?days=21').then(r => r.json());
-    const rows = (d.classes || []).map(c => `<tr>
-      <td>${day(c.startAt)}<br><span class="muted">${time(c.startAt)}</span></td>
-      <td>${esc(cls(c.title))}<br><span class="muted">${T('bookedOf', c.booked, c.capacity)}</span></td>
-      <td><button class="btn red" onclick="closeClass(${c.slotId},'${c.date}','${esc(cls(c.title))}')">${T('close')}</button></td>
-    </tr>`).join('');
-    $('#view').innerHTML = `<div class="box"><b>${T('nextWeeks')}</b>
-      <p class="muted">${T('classesHelp')}</p>
-      <table>${rows || `<tr><td class="muted">${T('noClasses')}</td></tr>`}</table>
-      <p class="muted">${T('putBack')} <button class="btn gray" onclick="reopenClass()">${T('reopenBtn')}</button></p>
-    </div>`;
+  // ── calendar: month, week, day, and inside one class ──────────────────────
+  // Days are Bangkok dates as 'YYYY-MM-DD' strings moved with UTC arithmetic,
+  // so a laptop in another timezone never shifts a class to the wrong day.
+  const pad2 = n => String(n).padStart(2, '0');
+  const addDays = (ymd, n) => { const [y, m, d] = ymd.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10); };
+  const dowOf = ymd => new Date(ymd + 'T12:00:00Z').getUTCDay();
+  const ymdFmt = (ymd, o) => new Date(ymd + 'T12:00:00+07:00').toLocaleDateString(locale(), { timeZone: 'Asia/Bangkok', ...o });
+  const hm = iso => time(iso).replace(/^0/, '');
+  // A Rezerv visit with no time on file: the server says so (stored at 00:00).
+  const noTime = c => c.timeKnown === false;
+  const calHm = c => noTime(c) ? '--:--' : hm(c.startAt);
+  const KIND_SHORT = { mysore: 'Mysore', led_primary: 'Primary', led_inter: 'Inter.' };
+  const KIND_LONG = { mysore: 'Mysore', led_primary: 'Led Primary', led_inter: 'Led Intermediate' };
+  const kindCls = k => KIND_SHORT[k] ? k : 'other';
+  const plainTitle = c => cls(String(c.title || '').replace(/^\[Online\]\s*/i, ''));
+  const shortName = c => KIND_SHORT[c.kind] || plainTitle(c);
+  const isFull = c => c.capacity != null && c.booked >= c.capacity;
+  const countTxt = c => c.capacity != null ? `${c.booked}/${c.capacity}` : String(c.booked);
+  const shows = (c, today) => c.date <= today && !c.cancelled;      // checked-in counts: today and past only
+
+  const calView0 = store.get('aybkk_admin_calview');
+  const CAL = { view: ['month', 'week', 'day'].includes(calView0) ? calView0 : 'month',
+    date: null, data: null, seq: 0, y: 0, keepY: null, x: null, keepX: null };
+
+  function calRange() {
+    const d = CAL.date;
+    if (CAL.view === 'month') {
+      const [y, m] = d.split('-').map(Number);
+      return [`${y}-${pad2(m)}-01`, new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10)];
+    }
+    if (CAL.view === 'week') { const s = addDays(d, -dowOf(d)); return [s, addDays(s, 6)]; }
+    return [d, d];
   }
 
-  window.closeClass = async (slotId, date, title) => {
-    if (!confirm(T('qClose', title, date))) return;
-    const reason = ask(T('qReason'), T('moonDay')); if (reason === null) return;
-    const r = await api('/api/bkk/admin/classes/cancel', { method: 'POST',
-      body: JSON.stringify({ slotId, date, reason }) });
-    const j = await shout(r);
-    if (j) { alert(T('closed', j.released, j.notified)); renderClasses(); }
+  // Paints at once (the last counts for this stretch, or an empty grid), then
+  // again with fresh counts. noFetch: a language change, nothing new to ask.
+  async function renderCalendar(noFetch) {
+    if (!CAL.date) CAL.date = bkkYmd();
+    const [from, to] = calRange();
+    const have = CAL.data && CAL.data.from === from && CAL.data.to === to && !CAL.data.error;
+    if (!have) CAL.data = { from, to, today: bkkYmd(), moonDays: {}, classes: [], loading: true };
+    paintCalendar();
+    if (noFetch && have) return;
+    const seq = ++CAL.seq;
+    const r = await api(`/api/bkk/admin/calendar?${new URLSearchParams({ from, to })}`).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== CAL.seq || current !== 'calendar' || SUB) return;
+    CAL.data = r && r.ok
+      ? { ...j, from, to, moonDays: j.moonDays || {}, classes: j.classes || [] }
+      : { from, to, today: bkkYmd(), moonDays: {}, classes: [], error: j.error || T('failed') };
+    paintCalendar();
+  }
+
+  function paintCalendar() {
+    const d = CAL.data, v = CAL.view, view = $('#view');
+    // The week box keeps its sideways place over a repaint, and over a visit into a class.
+    const old = $('#wkScroll'), back = CAL.keepX && CAL.keepX.from === d.from ? CAL.keepX.left : null;
+    const keepX = old && old.dataset.from === d.from ? old.scrollLeft : back;
+    view.classList.add('wide');
+    view.innerHTML = `<div class="calbar"><div class="seg">${['month', 'week', 'day'].map(x =>
+        `<button class="${v === x ? 'on' : ''}" onclick="calView('${x}')">${T('v_' + x)}</button>`).join('')}</div>
+        ${d.loading ? `<span class="muted">${T('loadingTxt')}</span>` : ''}
+        <button class="btn gray sm" onclick="calToday()">${T('today')}</button></div>
+      ${d.error ? `<p class="warnline">${esc(d.error)}</p>` : ''}
+      ${v === 'month' ? monthHtml(d) : v === 'week' ? weekHtml(d) : dayHtml(d)}`;
+    const sc = $('#wkScroll');
+    if (sc) {
+      const col = sc.querySelector('.wcol.today');
+      sc.scrollLeft = keepX != null ? keepX : col ? Math.max(0, col.offsetLeft - 8) : 0;
+    }
+    if (CAL.keepY != null && !d.loading) { window.scrollTo(0, CAL.keepY); CAL.keepY = null; }
+    if (!d.loading) CAL.keepX = null;
+  }
+
+  const calHead = label => `<div class="head">
+      <button class="nav" onclick="calNav(-1)" aria-label="${esc(T('prev'))}">‹</button><b>${label}</b>
+      <button class="nav" onclick="calNav(1)" aria-label="${esc(T('next'))}">›</button></div>`;
+  const moonChip = k => { const w = esc(T(k === 'new' ? 'newMoon' : 'fullMoon'));
+    return `<span class="ch moon ${k === 'new' ? 'new' : 'full'}" title="${w}"><b>${w}</b>&nbsp;</span>`; };
+  const olTag = c => c.isOnline ? `<b class="ol">${esc(T('lgOnline'))}</b>` : '';
+  const lineTitle = (c, today) => [noTime(c) ? T('noTime') : hm(c.startAt), plainTitle(c), c.isOnline ? T('lgOnline') : '', c.teachers,
+    T('nBooked', c.booked, c.capacity), shows(c, today) ? T('nIn', c.checkedIn) : '',
+    c.cancelled ? T('closedNote', c.note) : ''].filter(Boolean).join(' · ');
+  const kindLegend = () => ['mysore', 'led_primary', 'led_inter'].map(k =>
+    `<span class="cl ${k}"><em class="cn">${KIND_LONG[k]}</em></span>`).join('');
+
+  function monthHtml(d) {
+    const today = d.today || bkkYmd();
+    const [y, m] = d.from.split('-').map(Number);
+    const byDate = {};
+    d.classes.forEach((c, i) => (byDate[c.date] = byDate[c.date] || []).push(i));
+    const line = i => { const c = d.classes[i];
+      return `<button class="cl ${kindCls(c.kind)}${isFull(c) ? ' full' : ''}${c.cancelled ? ' off' : ''}"
+        onclick="calOpen(event,${i})" title="${esc(lineTitle(c, today))}"><span class="ct">${calHm(c)}</span><em
+        class="cn">${esc(shortName(c))}</em>${olTag(c)}<span class="cc"><b>${esc(countTxt(c))}</b>${shows(c, today)
+          ? `<i>✓${esc(c.checkedIn)}</i>` : ''}</span></button>`; };
+    let cells = T('wdShort').map(w => `<div class="wd">${esc(w)}</div>`).join('');
+    for (let i = 0; i < dowOf(d.from); i++) cells += '<span></span>';
+    for (let iso = d.from, n = 1; iso <= d.to; iso = addDays(iso, 1), n++) {
+      const moon = d.moonDays[iso];
+      // The cell holds buttons, so it is a div: a tap on the number or on an
+      // empty part opens the day, a tap on a class line opens the class.
+      cells += `<div class="d${moon ? ' moonday' : ''}${iso === today ? ' today' : ''}${iso < today ? ' was' : ''}"
+        onclick="calDay('${iso}')"><button class="n" aria-label="${esc(ymdLong(iso, true))}">${n}</button>${moon ? moonChip(moon) : ''}
+        ${(byDate[iso] || []).map(line).join('')}</div>`;
+    }
+    const month = new Date(Date.UTC(y, m - 1, 15)).toLocaleDateString(locale(), { month: 'long', timeZone: 'UTC' });
+    return `<div class="cal">${calHead(`${esc(month)}<small>${LANG === 'th' ? y + 543 : y}</small>`)}
+      <div class="grid">${cells}</div>
+      <div class="legend">
+        <div class="lr">${kindLegend()}</div>
+        <div class="lr"><span class="cc"><b>18/42</b></span> ${esc(T('lgCount'))}
+          <span class="cc"><i>✓15</i></span> ${esc(T('lgIn'))}
+          <span class="cl full"><span class="cc"><b>42/42</b></span></span> ${esc(T('lgFull'))}
+          <span class="cl off"><span class="cc"><b>9/42</b></span></span> ${esc(T('lgClosed'))}
+          <b class="ol">${esc(T('lgOnline'))}</b>
+          <span class="ch moon full">${esc(T('calMoon'))}</span></div></div></div>`;
+  }
+
+  function weekHtml(d) {
+    const today = d.today || bkkYmd();
+    const a = d.from, b = d.to, full = { day: 'numeric', month: 'short', year: 'numeric' };
+    const label = a.slice(0, 7) === b.slice(0, 7) ? T('rRange', String(Number(a.slice(8))), ymdFmt(b, full))
+      : a.slice(0, 4) === b.slice(0, 4) ? T('rRange', ymdFmt(a, { day: 'numeric', month: 'short' }), ymdFmt(b, full))
+      : T('rRange', ymdFmt(a, full), ymdFmt(b, full));
+    const block = (c, i) => `<button class="wb ${kindCls(c.kind)}${isFull(c) ? ' full' : ''}${c.cancelled ? ' off' : ''}"
+        onclick="calOpen(event,${i})"><span class="ct">${calHm(c)}</span><em class="cn">${esc(plainTitle(c))}</em>${olTag(c)}
+        ${c.teachers ? `<span class="tc">${esc(c.teachers)}</span>` : ''}
+        <span class="cc"><b>${esc(T('nBooked', c.booked, c.capacity))}</b></span>
+        ${shows(c, today) ? `<span class="ci">${esc(T('nIn', c.checkedIn))}</span>` : ''}
+        ${c.cancelled ? `<span class="tc">${esc(T('closedNote', c.note))}</span>` : ''}</button>`;
+    const cols = [0, 1, 2, 3, 4, 5, 6].map(k => {
+      const iso = addDays(a, k), moon = d.moonDays[iso];
+      const list = d.classes.map((c, i) => [c, i]).filter(([c]) => c.date === iso);
+      return `<div class="wcol${iso === today ? ' today' : ''}${moon ? ' moonday' : ''}${iso < today ? ' was' : ''}">
+        <button class="wh" onclick="calDay('${iso}')" aria-label="${esc(ymdLong(iso, true))}">${esc(ymdFmt(iso, { weekday: 'short' }))}<span
+          class="wn">${Number(iso.slice(8))}</span>${moon ? moonChip(moon) : ''}</button>
+        ${list.map(([c, i]) => block(c, i)).join('')}</div>`;
+    }).join('');
+    return `<div class="cal wk">${calHead(esc(label))}
+      <div class="wkscroll" id="wkScroll" data-from="${a}"><div class="wkgrid">${cols}</div></div>
+      <div class="legend"><div class="lr">${kindLegend()}</div></div></div>`;
+  }
+
+  function dayHtml(d) {
+    const today = d.today || bkkYmd(), iso = d.from, moon = d.moonDays[iso];
+    const rows = d.classes.map((c, i) => [c, i]).filter(([c]) => c.date === iso).map(([c, i]) => `<button
+        class="drow ${kindCls(c.kind)}${isFull(c) ? ' full' : ''}${c.cancelled ? ' off' : ''}" onclick="calOpen(event,${i})">
+        <span class="tm">${noTime(c) ? '--:--' : time(c.startAt)}</span>
+        <span class="bd"><b>${esc(plainTitle(c))}${c.isOnline ? ` <span class="pill onl">${esc(T('lgOnline'))}</span>` : ''}</b>
+          <span class="muted">${esc([noTime(c) ? T('noTime') : '', c.teachers, c.durationMin ? T('nMin', c.durationMin) : '',
+            c.cancelled ? T('closedNote', c.note) : ''].filter(Boolean).join(' · '))}</span></span>
+        <span class="cnt"><b>${esc(countTxt(c))}</b><span class="muted">${esc(T('lgBookedWord'))}</span>${shows(c, today)
+          ? `<span class="in">${esc(T('nIn', c.checkedIn))}</span>` : ''}</span>
+        <span class="go" aria-hidden="true">›</span></button>`).join('');
+    return `<div class="box"><div class="dayhead">
+        <button class="dnav" onclick="calNav(-1)" aria-label="${esc(T('prev'))}">‹</button>
+        <b>${esc(ymdFmt(iso, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))}${iso === today
+          ? ` <span class="pill upcoming">${T('today')}</span>` : ''}</b>
+        <button class="dnav" onclick="calNav(1)" aria-label="${esc(T('next'))}">›</button></div>
+      ${moon ? `<p class="warnline">${esc(T(moon === 'new' ? 'newMoon' : 'fullMoon'))}. ${esc(T('moonShut'))}</p>` : ''}
+      ${rows || (d.loading ? '' : `<p class="muted">${T('dayEmpty')}</p>`)}</div>`;
+  }
+
+  window.calView = v => { CAL.view = v; store.set('aybkk_admin_calview', v); renderCalendar(); };
+  window.calToday = () => { CAL.date = bkkYmd(); renderCalendar(); };
+  window.calDay = iso => { CAL.view = 'day'; CAL.date = iso; window.scrollTo(0, 0); renderCalendar(); };
+  // A month opens on today when today is in it, else on its first day: the
+  // day a switch to Week or Day lands on.
+  window.calNav = dir => {
+    if (CAL.view === 'month') {
+      const [y, m] = CAL.date.split('-').map(Number);
+      const first = new Date(Date.UTC(y, m - 1 + dir, 1)).toISOString().slice(0, 10), today = bkkYmd();
+      CAL.date = today.slice(0, 7) === first.slice(0, 7) ? today : first;
+    } else CAL.date = addDays(CAL.date, dir * (CAL.view === 'week' ? 7 : 1));
+    renderCalendar();
   };
 
-  window.reopenClass = async () => {
-    const slotId = ask(T('qSlot')); if (!slotId) return;
-    const date = ask(T('qDate')); if (!date) return;
-    const r = await api('/api/bkk/admin/classes/reopen', { method: 'POST',
-      body: JSON.stringify({ slotId: Number(slotId), date }) });
-    if (await shout(r)) renderClasses();
+  // ── inside one class ──────────────────────────────────────────────────────
+  const CV = { ref: null, data: null, seq: 0, flash: null };
+  const calBackBtn = () => `<button class="btn gray sm" onclick="calBack()">${T('back')}</button>`;
+  window.calOpen = (e, i) => {
+    if (e) e.stopPropagation();
+    const c = CAL.data && CAL.data.classes[i];
+    if (!c) return;
+    CAL.y = window.scrollY;
+    const sc = $('#wkScroll'); CAL.x = sc ? { from: sc.dataset.from, left: sc.scrollLeft } : null;
+    CV.ref = c.slotId != null ? { slotId: c.slotId, date: c.date } : { date: c.date, time: time(c.startAt), title: c.title };
+    CV.data = null; CV.flash = null;
+    SUB = 'class';
+    loadClass(true);
   };
+  window.calBack = () => { SUB = null; CV.data = null; CAL.keepY = CAL.y; CAL.keepX = CAL.x; renderCalendar(); };
+
+  async function loadClass(top) {
+    const seq = ++CV.seq, ref = CV.ref;
+    $('#view').classList.remove('wide');
+    if (top) { $('#view').innerHTML = `<p>${calBackBtn()}</p><p class="muted">${T('loadingTxt')}</p>`; window.scrollTo(0, 0); }
+    await loadThNames();
+    const r = await api('/api/bkk/admin/class?' + new URLSearchParams(ref)).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== CV.seq || SUB !== 'class' || CV.ref !== ref) return;
+    if (!r || !r.ok || !j.class) { $('#view').innerHTML = `<p>${calBackBtn()}</p><div class="box">${esc(j.error || T('failed'))}</div>`; return; }
+    CV.data = { ...j, roster: j.roster || [], cancelledList: j.cancelledList || [] };
+    const key = JSON.stringify(ref);
+    if (AD.key !== key) resetAdd(key);
+    paintClass();
+  }
+
+  function paintClass() {
+    const { class: c, roster, cancelledList } = CV.data;
+    const today = bkkYmd(), canIn = c.date <= today;
+    const end = c.endAt || (c.durationMin ? new Date(Date.parse(c.startAt) + c.durationMin * 60000).toISOString() : null);
+    const moon = CAL.data && CAL.data.moonDays && CAL.data.moonDays[c.date];
+    const left = c.capacity != null ? c.capacity - c.booked : null;
+    const head = `<div class="box hhead"><p style="margin:0">${calBackBtn()}${c.canAdd
+        ? ` <button class="btn pink sm" onclick="addJump()">${T('addJump')}</button>` : ''}</p>
+      <h2>${esc(plainTitle(c))}${c.isOnline ? ` <span class="pill onl">${esc(T('lgOnline'))}</span>` : ''}</h2>
+      <div class="muted">${esc([ymdLong(c.date, true), noTime(c) ? T('noTime')
+        : end ? T('rRange', time(c.startAt), time(end)) : time(c.startAt), c.teachers].filter(Boolean).join(' · '))}</div>
+      ${c.cancelled ? `<p class="warnline">${esc(T('closedNote', c.note))}</p>` : ''}
+      ${moon ? `<p class="warnline">${esc(T('moonShut'))}</p>` : ''}
+      ${c.slotId == null ? `<p class="muted">${esc(T('slotless'))}</p>` : c.ended ? `<p class="muted">${esc(T('ended'))}</p>` : ''}
+      <div class="tiles">
+        ${tile(T('tBooked'), c.capacity != null ? `${c.booked} / ${c.capacity}` : String(c.booked), c.noShows ? T('nNoShows', c.noShows) : '')}
+        ${tile(T('tIn'), String(c.checkedIn))}
+        ${left != null ? `<div class="tile${left <= 0 ? ' hot' : ''}"><span>${esc(T('tLeft'))}</span><b>${esc(left > 0 ? String(left)
+          : left === 0 ? T('full') : T('nOver', -left))}</b></div>` : ''}
+      </div>
+      ${CV.flash ? `<p class="flash ${CV.flash.kind === 'warn' ? 'warn' : ''}" role="status">${esc(CV.flash.text)}</p>` : ''}</div>`;
+
+    // A class with no slot is Rezerv history: it can be looked at, not changed.
+    const fixed = c.slotId == null;
+    const rows = roster.map(b => {
+      const id = Number(b.bookingId);
+      const st = b.status === 'noshow' ? `<span class="pill noshow">${esc(T('rNoShow'))}</span>`
+        : b.checkedInAt ? `<span class="in">${esc(noTime(c) ? T('rCame') : T('rIn', time(b.checkedInAt)))}</span>`
+        : `<span class="muted">${esc(T('rNotYet'))}</span>`;
+      const cover = b.dropin ? T('covDrop') : b.cover === 'rezerv' ? 'Rezerv' : b.passName ? itemName(b.passName) : T('covPass');
+      // A visit moved from Rezerv is cover and source Rezerv: say it once.
+      const src = b.source && b.source !== 'student' && W(b.source) !== cover ? W(b.source) : '';
+      const acts = [
+        !fixed && canIn && !b.checkedInAt ? `<button class="btn sm" onclick="cvCheck(${id},false)">${T('btnIn')}</button>` : '',
+        !fixed && b.checkedInAt ? `<button class="btn gray sm" onclick="cvCheck(${id},true)">${T('btnUndo')}</button>` : '',
+        !fixed && b.status === 'booked' && !b.checkedInAt ? `<button class="btn red sm" onclick="cvCancel(${id})">${T('btnCancelBk')}</button>` : '',
+        histBtn(b.code)].filter(Boolean).join('');
+      return `<div class="rr${b.status === 'noshow' ? ' miss' : ''}">
+        <div class="rm"><b>${esc(b.name)}</b><br><span class="muted">${esc([b.code, cover, src].filter(Boolean).join(' · '))}</span></div>
+        <div class="rs">${st}</div><div class="ra">${acts}</div></div>`;
+    });
+    const rosterBox = `<div class="box"><b>${T('rosterH')}</b> <span class="muted">${roster.length}</span>
+      ${rows.length ? rows.join('') : `<p class="muted">${T('rosterNone')}</p>`}</div>`;
+    const cancelBox = cancelledList.length ? `<div class="box cxl"><b>${T('cancelledH')}</b> <span class="muted">${cancelledList.length}</span>
+      ${cancelledList.map(x => `<div>${esc(x.name)} · ${esc([x.code, x.cancelledAt
+        ? `${ymdLong(bkkYmd(Date.parse(x.cancelledAt)))} ${time(x.cancelledAt)}` : '', cxlWhy(x.reason)].filter(Boolean).join(' · '))}</div>`).join('')}</div>` : '';
+    const closeBox = c.slotId == null ? '' : c.cancelled
+      ? `<div class="box"><b>${T('reopenH')}</b><p class="muted">${T('reopenHelp')}</p>
+          <p><button class="btn" onclick="cvReopen()">${T('reopenH')}</button></p></div>`
+      : !c.started ? `<div class="box"><b>${T('closeH')}</b><p class="muted">${T('closeHelp')}</p>
+          <p><button class="btn red" onclick="cvClose()">${T('closeH')}</button></p></div>` : '';
+    $('#view').innerHTML = head + rosterBox + cancelBox + (c.canAdd ? addBoxHtml(c) : '') + closeBox;
+    if (c.canAdd) wireAdd();
+    // The result shows in the header; the button tapped may be far below it.
+    if (CV.flash && CV.flash.fresh) {
+      CV.flash.fresh = false;
+      const f = $('#view .hhead .flash');
+      if (f) f.scrollIntoView({ block: 'center' });
+    }
+  }
+
+  // The server writes "class cancelled: <reason>" in English; say it in the page's language.
+  const cxlWhy = r => { const m = /^class cancelled: ([\s\S]*)$/.exec(r || '');
+    return m ? T('closedNote', m[1] === 'no reason given' ? '' : m[1]) : r || ''; };
+
+  window.cvCheck = async (id, undo) => {
+    const r = await api(`/api/bkk/admin/bookings/${id}/checkin`, { method: 'POST',
+      body: JSON.stringify(undo ? { undo: true } : {}) }).catch(() => null);
+    if (!r) { alert(T('addNoNet')); return; }
+    if (await shout(r)) { CV.flash = null; loadClass(); }
+  };
+  window.cvCancel = async id => {
+    const c = CV.data && CV.data.class, b = c && CV.data.roster.find(x => Number(x.bookingId) === id);
+    if (!b || !confirm(T('qCancelBk', b.name, plainTitle(c), `${ymdLong(c.date, true)} ${time(c.startAt)}`))) return;
+    const r = await api(`/api/bkk/bookings/${id}/cancel`, { method: 'POST', body: '{}' }).catch(() => null);
+    if (!r) { alert(T('addNoNet')); return; }
+    const j = await shout(r);
+    if (!j) return;
+    // The server's rule decides the credit, and says its number of hours.
+    const hrs = j.cutoffHours ?? (String(j.message || '').match(/(\d+)\s*h/) || [])[1];
+    const rezerv = b.cover === 'rezerv' && !b.passName;
+    CV.flash = { kind: j.creditReturned || rezerv ? 'ok' : 'warn', fresh: true,
+      text: T('bkCancelled', b.name, !!j.creditReturned, hrs, rezerv) };
+    loadClass();
+  };
+  window.cvClose = async () => {
+    const c = CV.data && CV.data.class;
+    if (!c || !confirm(T('qClose', plainTitle(c), `${ymdLong(c.date, true)} ${time(c.startAt)}`))) return;
+    const reason = ask(T('qReason'), ''); if (reason === null) return;
+    const r = await api('/api/bkk/admin/classes/cancel', { method: 'POST',
+      body: JSON.stringify({ slotId: c.slotId, date: c.date, reason }) });
+    const j = await shout(r);
+    if (j) { alert(T('closed', j.released, j.notified)); CV.flash = null; loadClass(); }
+  };
+  window.cvReopen = async () => {
+    const c = CV.data && CV.data.class;
+    if (!c) return;
+    const r = await api('/api/bkk/admin/classes/reopen', { method: 'POST',
+      body: JSON.stringify({ slotId: c.slotId, date: c.date }) });
+    if (await shout(r)) { CV.flash = { kind: 'ok', fresh: true, text: T('reopened') }; loadClass(); }
+  };
+
+  // ── add a student to the class (the door's walk-in, any day) ─────────────
+  // sent: the last add tried and its requestId. Tapping again after a lost
+  // reply resends the same id, so the server answers instead of adding twice.
+  const AD = { key: null };
+  const resetAdd = key => Object.assign(AD, { key, member: null, isNew: false, cover: null, method: null,
+    hits: [], seq: (AD.seq || 0) + 1, sent: null, here: null, term: '', nn: '', ne: '', np: '', err: '', busy: false });
+  const newId = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2));
+  const seatOf = m => m && CV.data ? CV.data.roster.find(b => b.code === m.code) : null;
+  // "Here now" only on the class's own day; ticked from an hour before it starts.
+  const hereOk = c => c.date <= bkkYmd();
+  const hereOn = c => hereOk(c) && (AD.here != null ? AD.here : Date.parse(c.startAt) - Date.now() <= 3600e3);
+  window.addJump = () => {
+    const box = $('#addBox'); if (!box) return;
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => { const q = $('#adQ'); if (q && !AD.member) q.focus({ preventScroll: true }); }, 350);
+  };
+
+  const addBoxHtml = c => `<div class="box" id="addBox"><b>${T('addH')}</b>
+    <div id="adWho" style="margin-top:10px">
+      <input id="adQ" placeholder="${esc(T('addSearchPh'))}" autocomplete="off" value="${esc(AD.term)}">
+      <div id="adHits"></div>
+      <button class="link" id="adNewBtn">${T('addNew')}</button>
+      <div id="adNew" hidden>
+        <input id="adNn" placeholder="${esc(T('addName'))}" autocomplete="off" value="${esc(AD.nn)}">
+        <input id="adNp" type="tel" placeholder="${esc(T('addPhone'))}" autocomplete="off" value="${esc(AD.np)}">
+        <input id="adNe" type="email" placeholder="${esc(T('addEmail'))}" autocomplete="off" value="${esc(AD.ne)}">
+      </div>
+    </div>
+    <div id="adChosen" class="chosen" style="margin-top:10px" hidden><span id="adChosenName"></span>
+      <button class="link" id="adChange">${T('addChange')}</button></div>
+    <p class="lbl">${T('coverQ')}</p>
+    <div class="opts" id="adCovers">
+      <button class="opt" data-cover="pass">${T('covPassOpt')}</button>
+      <button class="opt" data-cover="rezerv">${T('covRezervOpt')}</button>
+      <button class="opt" data-cover="dropin">${T('covDropOpt')}<small>${DROP_PRICE ? '฿' + DROP_PRICE.toLocaleString('en-US') : ''}</small></button>
+    </div>
+    <div id="adMethods" hidden><p class="lbl">${T('methodQ')}</p><div class="opts">
+      ${['cash', 'transfer', 'card'].map(m => `<button class="opt" data-method="${m}">${T('m_' + m)}</button>`).join('')}</div></div>
+    <label class="here"><input type="checkbox" id="adHere"><span>${T('hereNow')}${hereOk(c) ? ''
+      : `<small>${T('hereLater')}</small>`}</span></label>
+    <p id="adHint" class="hint" aria-live="polite"></p>
+    <button class="btn" id="adGo" disabled>${T('addGo')}</button></div>`;
+
+  function wireAdd() {
+    let wait = null;
+    $('#adQ').addEventListener('input', () => {
+      clearTimeout(wait);
+      AD.term = $('#adQ').value;
+      const term = AD.term.trim(), seq = ++AD.seq;
+      AD.hits = term.length < 2 ? [] : null;           // null: a search is on its way
+      paintHits();
+      if (term.length < 2) return;
+      wait = setTimeout(async () => {
+        try {
+          const d = await api('/api/bkk/admin/members?q=' + encodeURIComponent(term)).then(r => r.json());
+          if (seq !== AD.seq) return;
+          AD.hits = d.members || [];
+        } catch (_) { if (seq !== AD.seq) return; AD.hits = 'offline'; }
+        paintHits();
+      }, 250);
+    });
+    $('#adNewBtn').onclick = () => { AD.isNew = true; AD.member = null; AD.err = ''; paintAdd(); $('#adNn').focus(); };
+    for (const k of ['nn', 'ne', 'np']) {
+      const el = $('#ad' + k[0].toUpperCase() + k[1]);
+      el.addEventListener('input', () => { AD[k] = el.value; AD.err = ''; paintAdd(); });
+    }
+    $('#adChange').onclick = () => { AD.member = null; AD.err = ''; paintAdd(); $('#adQ').focus(); };
+    document.querySelectorAll('#adCovers .opt').forEach(b => b.onclick = () => { AD.cover = b.dataset.cover; AD.err = ''; paintAdd(); });
+    document.querySelectorAll('#adMethods .opt').forEach(b => b.onclick = () => { AD.method = b.dataset.method; AD.err = ''; paintAdd(); });
+    $('#adHere').onchange = e => { AD.here = e.target.checked; paintAdd(); };
+    $('#adGo').onclick = addGo;
+    paintHits();
+    paintAdd();
+  }
+
+  function paintHits() {
+    const box = $('#adHits'); if (!box) return;
+    const term = AD.term.trim(), onList = new Set(CV.data.roster.map(b => b.code));
+    box.innerHTML = term.length < 2 || AD.hits === null ? ''
+      : AD.hits === 'offline' ? `<p class="muted">${T('addNoNet')}</p>`
+      : !AD.hits.length ? `<p class="muted">${T('addNoHits')}</p>`
+      : AD.hits.map((m, i) => `<button class="hit" data-i="${i}"><b>${esc(m.name)}</b>
+          <span>${esc([m.code, m.email, m.phone].filter(Boolean).join(' · '))}</span>
+          <em class="${m.has_pass ? 'ok' : ''}">${onList.has(m.code) ? esc(T('hitOn')) + ' · ' : ''}${esc(T(m.has_pass ? 'hitPass' : 'hitNoPass'))}</em></button>`).join('');
+    box.querySelectorAll('.hit').forEach(el => el.onclick = () => {
+      AD.member = AD.hits[Number(el.dataset.i)]; AD.isNew = false; AD.err = ''; paintAdd();
+    });
+  }
+
+  // Already on this class's list: the seat is paid for, so nothing is chosen
+  // or sold here. Add only checks them in (or says they are on it).
+  function paintAdd() {
+    if (!$('#addBox') || !CV.data) return;
+    const c = CV.data.class, chosen = AD.member || AD.isNew;
+    $('#adWho').hidden = !!AD.member;
+    $('#adNew').hidden = !AD.isNew;
+    $('#adNewBtn').hidden = AD.isNew;
+    $('#adChosen').hidden = !AD.member;
+    if (AD.member) $('#adChosenName').textContent = AD.member.name + ' · ' + AD.member.code;
+    const hasPass = !!(AD.member && AD.member.has_pass), on = seatOf(AD.member);
+    if (on || (AD.cover === 'pass' && !hasPass)) AD.cover = null;
+    document.querySelectorAll('#adCovers .opt').forEach(b => {
+      b.disabled = !!on || (b.dataset.cover === 'pass' && !hasPass);
+      b.classList.toggle('on', b.dataset.cover === AD.cover);
+    });
+    $('#adMethods').hidden = AD.cover !== 'dropin';
+    document.querySelectorAll('#adMethods .opt').forEach(b => b.classList.toggle('on', b.dataset.method === AD.method));
+    const here = hereOn(c), name = AD.nn.trim();
+    $('#adHere').checked = here;
+    $('#adHere').disabled = !hereOk(c);
+    const ready = on ? here : (AD.member || (AD.isNew && name)) && AD.cover && (AD.cover !== 'dropin' || AD.method);
+    $('#adGo').disabled = !ready || AD.busy;
+    $('#adGo').textContent = T(here ? 'addGoIn' : 'addGo');
+    const hint = on ? T(here ? 'hOnIn' : 'hOnOnly')
+      : !chosen ? T('hFind') : AD.isNew && !name ? T('hName')
+      : !AD.cover ? (AD.member && !hasPass ? T('hNoPass') : T('hCover'))
+      : AD.cover === 'dropin' && !AD.method ? T('hMethod') : '';
+    const full = !on && isFull(c) ? T('hFull') : '';
+    $('#adHint').className = 'hint' + (AD.err ? ' bad' : '');
+    $('#adHint').textContent = AD.err || [hint, full].filter(Boolean).join(' ');
+  }
+
+  async function addGo() {
+    const c = CV.data && CV.data.class, ref = CV.ref;
+    if (!c || AD.busy || $('#adGo').disabled) return;
+    // No cover chosen: they are already on the list, and the server checks in
+    // a seat they hold whatever the cover says. checkIn is the box as shown:
+    // its default moves with the clock, and the box is only redrawn on a change.
+    const box = $('#adHere'), on = seatOf(AD.member), checkIn = !!box && box.checked && !box.disabled;
+    const body = { slotId: c.slotId, date: c.date, checkIn,
+      cover: AD.cover || (on && on.cover === 'rezerv' ? 'rezerv' : 'pass') };
+    if (body.cover === 'dropin') body.method = AD.method;
+    if (AD.member) body.memberCode = AD.member.code;
+    else Object.assign(body, { name: AD.nn.trim(), email: AD.ne.trim(), phone: AD.np.trim() });
+    const what = JSON.stringify(body);
+    if (!AD.sent || AD.sent.what !== what) AD.sent = { what, id: newId() };
+    body.requestId = AD.sent.id;
+    AD.busy = true; AD.err = ''; paintAdd();
+    let r = null, d = {};
+    try {
+      r = await api('/api/bkk/admin/walkin', { method: 'POST', body: JSON.stringify(body) });
+      d = await r.json().catch(() => ({}));
+    } catch (_) { d = { error: T('addNoNet') }; }
+    AD.busy = false;
+    if (SUB !== 'class' || CV.ref !== ref) return;
+    // The drop-in is sold but they are not on the list: the money stays,
+    // and someone books them by hand.
+    if (d.paid) { resetAdd(AD.key); alert(d.error || T('addPaidNot', d.refno)); loadClass(); return; }
+    if (!r || !r.ok || !d.success) { AD.err = d.error || T('addFail'); paintAdd(); return; }
+    const msg = d.already
+      ? (body.cover === 'dropin' ? T('addWasDrop', d.name) : checkIn ? T('addWasIn', d.name) : T('addWasOn', d.name))
+      : T('addDone', d.name, checkIn);
+    CV.flash = { kind: d.overCapacity ? 'warn' : 'ok', fresh: true,
+      text: [msg, d.overCapacity ? T('addOver') : '', d.refno && !d.already ? T('addRef', d.refno) : ''].filter(Boolean).join(' ') };
+    resetAdd(AD.key);
+    loadClass();
+  }
 
   async function progressBox() {
     const p = await api('/api/bkk/admin/progress').then(r => r.json()).catch(() => null);
@@ -618,6 +1494,8 @@
 
   async function renderToday() {
     const [d, prog0, start] = await Promise.all([api('/api/bkk/admin/today').then(r => r.json()), progressBox(), startBox()]);
+    // Another tab was opened while this loaded (Calendar tapped right after unlock).
+    if (current !== 'today' || SUB) return;
     const prog = prog0 + start;
     const rows = (d.bookings || []);
     const money = (d.money || []);
@@ -653,15 +1531,16 @@
   async function renderOrders() {
     await loadThNames();
     const d = await api('/api/bkk/admin/orders').then(r => r.json());
+    if (current !== 'orders' || SUB) return;
     const rows = (d.orders || []).map(o => `<tr>
       <td><b>${esc(o.member_name)}</b><br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span></td>
       <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
         <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
-      <td><span class="pill ${esc(o.status)}">${esc(W(o.status))}</span> <span class="muted">${esc(W(o.method || 'online'))}</span><br>
-        <span class="muted">${(o.created_at || '').slice(5, 16).replace('T', ' ')}</span>
+      <td><span class="pill ${esc(o.status)}">${esc(W(o.status))}</span> <span class="muted">${esc(W(o.method || 'online'))}${o.source === 'rezerv' ? ' · Rezerv' : ''}</span><br>
+        <span class="muted">${o.created_at ? `${bkkYmd(Date.parse(o.created_at)).slice(5)} ${time(o.created_at)}` : ''}</span>
         ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}</td>
       <td class="muted" style="word-break:break-all;font-size:12px">${o.refno}</td>
-      <td>${o.status !== 'paid'
+      <td>${o.status !== 'paid' && o.source !== 'rezerv'
         ? `<button class="btn red" onclick="force(${o.id})">${T('activate')}</button>`
         : ''}</td>
     </tr>`).join('');
@@ -675,8 +1554,526 @@
   window.force = async (id) => {
     if (!confirm(T('qActivate'))) return;
     const r = await api(`/api/bkk/admin/orders/${id}/force-activate`, { method: 'POST' });
-    if (!r.ok) alert((await r.json()).error || T('failed'));
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) alert(j.error || T('failed'));
+    // A drop-in bought for a class that was cancelled or over by now: the pass
+    // is live but nobody is on the list, and this list does not show the class.
+    else if (j.bookingError) alert(T('activatedNoClass', j.bookingError));
     renderOrders();
+  };
+
+  // ── shared by history, reports and the import ─────────────────────────────
+  const baht = n => (n < 0 ? '-' : '') + '฿' + Math.abs(Number(n) || 0).toLocaleString('en-US');
+  const bkkYmd = (ms = Date.now()) => new Date(ms + 7 * 3600e3).toISOString().slice(0, 10);
+  const ymdLong = (ymd, weekday) => {
+    if (!ymd) return '';
+    try {
+      return new Date(ymd + 'T12:00:00+07:00').toLocaleDateString(locale(), { timeZone: 'Asia/Bangkok',
+        ...(weekday ? { weekday: 'short' } : {}), day: 'numeric', month: 'short', year: 'numeric' });
+    } catch { return ymd; }
+  };
+  const tile = (label, val, sub) =>
+    `<div class="tile"><span>${esc(label)}</span><b>${esc(val)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
+  // heads: [label, 'n' for a number column]; wide tables scroll sideways on a phone.
+  const tbl = (heads, rows, empty, wide) => rows.length
+    ? `<div class="scroll ${wide ? 'wide' : ''}"><table><tr>${heads.map(h => `<th class="${h[1] || ''}">${esc(h[0])}</th>`).join('')}</tr>
+      ${rows.join('')}</table></div>`
+    : `<p class="muted">${esc(empty || T('noneYet'))}</p>`;
+  const saveBlob = (blob, name) => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  // The key travels in a header, so a download is a fetch, not a plain link.
+  const csvDownload = async (what, qs) => {
+    const r = await api(`/api/bkk/admin/export/${what}.csv?${new URLSearchParams(qs)}`).catch(() => null);
+    if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; alert(j.error || T('failed')); return; }
+    const name = ((r.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/) || [])[1] || `aybkk-${what}.csv`;
+    saveBlob(await r.blob(), name);
+  };
+  const histBtn = code => `<button class="btn sm" onclick="showHistory('${esc(code)}')">${T('histBtn')}</button>`;
+
+  // ── one student, all of it ────────────────────────────────────────────────
+  let HIST = null, HIST_FROM = null, HIST_SEQ = 0, HIST_ALL = {};
+  const HIST_ROWS = 60;
+  const backBtn = () => `<button class="btn gray sm" onclick="histBack()">${T('back')}</button>`;
+  window.showHistory = async code => {
+    const seq = ++HIST_SEQ;
+    if (SUB !== 'history') HIST_FROM = { tab: current, term: current === 'students' && $('#q') ? $('#q').value.trim() : '',
+      cls: SUB === 'class' ? CV.ref : null };
+    SUB = 'history'; HIST = null; HIST_ALL = {};
+    $('#view').innerHTML = `<p>${backBtn()}</p><p class="muted">${T('loadingTxt')}</p>`;
+    window.scrollTo(0, 0);
+    await loadThNames();
+    const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/history`).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== HIST_SEQ || SUB !== 'history') return;
+    if (!r || !r.ok) { $('#view').innerHTML = `<p>${backBtn()}</p><div class="box">${esc(j.error || T('failed'))}</div>`; return; }
+    HIST = j;
+    paintHistory();
+  };
+  window.histBack = () => {
+    const f = HIST_FROM || { tab: 'students', term: '' };
+    SUB = null; HIST = null;
+    if (f.cls) { SUB = 'class'; CV.ref = f.cls; loadClass(true); return; }
+    if (f.tab === 'students') renderStudents(f.term);
+    else if (f.tab === 'reports') renderReports(true);
+    else tab(f.tab);
+  };
+  window.histMore = k => { HIST_ALL[k] = true; paintHistory(); };
+  window.histCsv = what => { if (HIST) csvDownload(what, { member: HIST.member.code }); };
+
+  function paintHistory() {
+    const h = HIST, m = h.member, s = h.summary, ap = s.activePass;
+    const passTh = name => (LANG === 'th' && ((h.passes.find(p => p.name === name) || {}).nameTh || TH_BY_EN[name])) || name;
+    const more = (k, list) => !HIST_ALL[k] && list.length > HIST_ROWS
+      ? `<p><button class="btn gray sm" onclick="histMore('${k}')">${T('showAll', list.length.toLocaleString())}</button></p>` : '';
+    const cut = (k, list) => HIST_ALL[k] ? list : list.slice(0, HIST_ROWS);
+    const about = [m.source === 'rezerv' ? T('hRezerv') : T('hHere'), m.rezervId ? T('hRezervId', m.rezervId) : '',
+      m.joinedOn ? T('hJoined', ymdLong(m.joinedOn)) : '', m.createdAt ? T('hSince', ymdLong(bkkYmd(Date.parse(m.createdAt)))) : ''];
+    const head = `<div class="box hhead">${backBtn()}
+      <h2>${esc(m.name)}</h2>
+      <div class="muted">${[m.code, m.email, m.phone].filter(Boolean).map(esc).join(' · ')}</div>
+      <div class="muted">${about.filter(Boolean).map(esc).join(' · ')}</div>
+      <div class="tiles">
+        ${tile(T('tCame'), s.visits.toLocaleString(), s.firstVisit ? T('tFirst', ymdLong(s.firstVisit)) : '')}
+        ${tile(T('tLastVisit'), s.lastVisit ? ymdLong(s.lastVisit, true) : T('tNever'))}
+        ${tile(T('tLast30'), String(s.visitsLast30), T('tLast90', s.visitsLast90))}
+        ${tile(T('tPaid'), baht(s.totalPaid), T('tPayN', s.payments))}
+        ${tile(T('tPass'), ap ? passTh(ap.name) : T('tNoPass'), ap ? [ap.creditsLeft != null ? T('tLeftN', ap.creditsLeft) : '',
+          ap.until ? T('tUntil', ymdLong(ap.until)) : T('tStartsFirst')].filter(Boolean).join(' · ') : '')}
+        ${tile(T('tMissed'), `${s.noShows} · ${s.cancellations}`, T('tPhotos', h.photos))}
+      </div>
+      <p>${['visits', 'payments'].map(w => `<button class="btn gray sm" onclick="histCsv('${w}')">${T('csv_' + w)}</button>`).join(' ')}</p>
+    </div>`;
+
+    // A past "booked" that never got a check-in reads differently from one still to come.
+    const vState = v => v.status === 'booked' ? (v.upcoming ? 'upcoming' : 'past') : v.status;
+    const visits = cut('visits', h.visits).map(v => {
+      const st = vState(v);
+      return `<tr><td class="nowrap">${esc(ymdLong(v.date, true))}</td><td>${esc(v.time || '')}</td>
+        <td>${esc(cls(v.class || ''))}</td>
+        <td><span class="pill ${st}">${esc(W(st === 'upcoming' ? 'booked' : st))}</span>
+          ${st === 'attended' && v.checkedInAt && v.source !== 'rezerv' ? `<br><span class="muted">${esc(T('inAt', time(v.checkedInAt)))}</span>` : ''}
+          ${v.cancelReason ? `<br><span class="muted">${esc(v.cancelReason)}</span>` : ''}</td>
+        <td class="muted">${esc([W(v.source || 'aybkk'), v.cover === 'rezerv' && v.source !== 'rezerv' ? 'Rezerv' : ''].filter(Boolean).join(' · '))}</td></tr>`;
+    });
+    const pays = cut('payments', h.payments).map(o => `<tr>
+      <td class="nowrap">${esc(ymdLong(o.date))}${o.time && !(o.source === 'rezerv' && o.time === '00:00') ? `<br><span class="muted">${esc(o.time)}</span>` : ''}</td>
+      <td>${esc(itemName(o.item || '–'))}</td>
+      <td class="n"><b>${baht(o.amount)}</b>${o.vat ? `<br><span class="muted">${T('vat')} ${baht(o.vat)}</span>` : ''}</td>
+      <td>${esc(W(o.method || 'online'))}</td>
+      <td><span class="pill ${esc(o.status)}">${esc(W(o.status))}</span><br><span class="muted">${esc(W(o.source))}</span></td>
+      <td class="muted" style="word-break:break-all;font-size:12px">${esc(o.refno)}${o.note ? `<br>${esc(String(o.note).slice(0, 80))}` : ''}</td></tr>`);
+    const passes = h.passes.map(p => `<tr>
+      <td>${esc((LANG === 'th' && p.nameTh) || p.name || '–')}</td>
+      <td><span class="pill ${esc(p.status)}">${esc(W(p.status))}</span><br><span class="muted">${esc(W(p.source === 'order' ? 'bought' : p.source))}</span></td>
+      <td>${esc(p.kind === 'unlimited' ? (p.dailyCap ? T('unlimCap', p.dailyCap) : T('unlimOnly')) : T('leftOf', p.creditsLeft, p.creditsTotal))}</td>
+      <td>${esc(p.validFrom || p.validUntil ? T('rRange', p.validFrom ? ymdLong(p.validFrom) : '…', p.validUntil ? ymdLong(p.validUntil) : '…') : T('tStartsFirst'))}
+        ${p.frozenFrom ? `<br><span class="muted">${esc(T('paused', ymdLong(p.frozenFrom), ymdLong(p.frozenUntil)))}</span>` : ''}</td>
+      <td class="muted" style="font-size:12.5px">${esc(p.note || '')}</td></tr>`);
+    const notes = h.notes.map(n => `<tr>
+      <td class="nowrap">${esc(ymdLong(n.date || bkkYmd(Date.parse(n.createdAt))))}</td><td>${esc(n.teacher || '')}</td>
+      <td>${n.toWorkOn ? `<b>${esc(T('workOnTxt'))}:</b> ${esc(n.toWorkOn)}<br>` : ''}${esc(n.body || '')}</td>
+      <td class="muted">${esc(n.shared ? T('shared') : T('teamOnly'))}</td></tr>`);
+    const checks = (h.checks || []).map(c => `<tr><td class="nowrap">${esc(ymdLong(c.date))}</td>
+      <td class="n">${esc(c.restingHr ?? '–')}</td><td class="n">${esc(c.sleepHours ?? '–')}</td>
+      <td>${c.feel ? '★'.repeat(Math.min(5, c.feel)) : '–'}</td><td class="muted">${esc(c.note || '')}</td></tr>`);
+    const box = (title, n, body) => `<div class="box"><b>${esc(title)}</b>${n != null ? ` <span class="muted">${n.toLocaleString()}</span>` : ''}${body}</div>`;
+    $('#view').innerHTML = head
+      + box(T('hVisits'), h.visits.length, tbl([[T('thDate')], [T('thTime')], [T('thClass')], [T('thStatus')], [T('thFrom')]], visits, '', true)
+        + more('visits', h.visits))
+      + box(T('hPays'), h.payments.length, tbl([[T('thDate')], [T('thItem')], [T('thAmount'), 'n'], [T('thMethod')], [T('thStatus')], [T('thRef')]], pays, '', true)
+        + more('payments', h.payments))
+      + box(T('hPasses'), h.passes.length, tbl([[T('thPass')], [T('thStatus')], [T('thClasses')], [T('thValid')], [T('thNote')]], passes, '', true))
+      + box(T('hNotes'), h.notes.length, tbl([[T('thDate')], [T('thTeacher')], [T('thNote')], ['']], notes, '', true))
+      + (checks.length ? box(T('hChecks'), null, tbl([[T('thDate')], [T('thHr'), 'n'], [T('thSleep'), 'n'], [T('thFeel')], [T('thNote')]], checks)) : '');
+  }
+
+  // ── reports ───────────────────────────────────────────────────────────────
+  // Quick picks run up to today, so "came" and "booked" compare like with like.
+  const REP = { pick: 'month', from: '', to: '', data: null, seq: 0 };
+  function rangeFor(pick) {
+    const today = bkkYmd();
+    const [y, m, d] = today.split('-').map(Number);
+    const iso = ms => new Date(ms).toISOString().slice(0, 10);
+    if (pick === 'week') return [iso(Date.UTC(y, m - 1, d - (new Date(Date.UTC(y, m - 1, d)).getUTCDay() + 6) % 7)), today];
+    if (pick === 'month') return [iso(Date.UTC(y, m - 1, 1)), today];
+    if (pick === 'lastMonth') return [iso(Date.UTC(y, m - 2, 1)), iso(Date.UTC(y, m - 1, 0))];
+    if (pick === 'year') return [`${y}-01-01`, today];
+    return [today, today];
+  }
+  const repShell = () => `<div class="box"><b>${T('repTitle')}</b>
+    <div class="seg">${['today', 'week', 'month', 'lastMonth', 'year', 'custom'].map(p =>
+      `<button class="${REP.pick === p ? 'on' : ''}" onclick="repPick('${p}')">${T('r_' + p)}</button>`).join('')}</div>
+    ${REP.pick === 'custom' ? `<div class="row2">
+      <label>${T('rFrom')}<br><input type="date" id="rFrom" value="${esc(REP.from)}"></label>
+      <label>${T('rTo')}<br><input type="date" id="rTo" value="${esc(REP.to)}"></label>
+      <button class="btn" onclick="repCustom()">${T('rShow')}</button></div>` : ''}
+    <p class="muted">${esc(T('rRange', ymdLong(REP.from, true), ymdLong(REP.to, true)))}</p>
+    <p>${['visits', 'payments', 'members'].map(w => `<button class="btn gray sm" onclick="repCsv('${w}')">${T('csv_' + w)}</button>`).join(' ')}</p>
+    </div><div id="repOut"><p class="muted">${T('loadingTxt')}</p></div>`;
+
+  async function renderReports(cached) {
+    if (!REP.from) [REP.from, REP.to] = rangeFor(REP.pick);
+    $('#view').innerHTML = repShell();
+    await loadThNames();
+    if (cached && REP.data && REP.data.from === REP.from && REP.data.to === REP.to) { paintReport(); return; }
+    const seq = ++REP.seq;
+    const r = await api(`/api/bkk/admin/report?${new URLSearchParams({ from: REP.from, to: REP.to })}`).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    if (seq !== REP.seq || current !== 'reports' || SUB) return;
+    if (!r || !r.ok) { $('#repOut').innerHTML = `<div class="box">${esc(j.error || T('failed'))}</div>`; return; }
+    REP.data = j;
+    paintReport();
+  }
+  window.repPick = p => {
+    REP.pick = p;
+    if (p !== 'custom') { [REP.from, REP.to] = rangeFor(p); renderReports(); return; }
+    renderReports(true);
+  };
+  window.repCustom = () => {
+    const f = $('#rFrom').value, t = $('#rTo').value;
+    if (!f || !t || f > t || (Date.parse(t) - Date.parse(f)) / 864e5 + 1 > 400) { alert(T('rBadRange')); return; }
+    REP.from = f; REP.to = t;
+    renderReports();
+  };
+  window.repCsv = what => csvDownload(what, { from: REP.from, to: REP.to });
+
+  function paintReport() {
+    const out = $('#repOut'), d = REP.data;
+    if (!out || !d) return;
+    const v = d.visits, m = d.money;
+    // Over two months, a row per day is too long to read: a row per month.
+    const long = (Date.parse(d.to) - Date.parse(d.from)) / 864e5 > 62;
+    const key = x => long ? x.slice(0, 7) : x;
+    const rows = new Map();
+    const at = k => { if (!rows.has(k)) rows.set(k, { came: 0, booked: 0, money: 0 }); return rows.get(k); };
+    for (const x of v.byDay) { const b = at(key(x.date)); b.came += x.attended; b.booked += x.booked; }
+    for (const x of m.byDay) at(key(x.date)).money += x.total;
+    const monthName = k => new Date(k + '-15T12:00:00+07:00').toLocaleDateString(locale(),
+      { timeZone: 'Asia/Bangkok', month: 'long', year: 'numeric' });
+    const days = [...rows.keys()].sort().map(k => { const b = rows.get(k); return `<tr>
+      <td class="nowrap">${esc(long ? monthName(k) : ymdLong(k, true))}</td><td class="n">${b.came}</td>
+      <td class="n">${b.booked}</td><td class="n">${b.money ? baht(b.money) : ''}</td></tr>`; });
+    const money = (list, label) => list.map(x => `<tr><td>${esc(label(x))}</td><td class="n">${x.n}</td><td class="n">${baht(x.total)}</td></tr>`);
+    const moneyHeads = first => [[first], [T('thCount'), 'n'], [T('thTotal'), 'n']];
+    // The call lists are worked from a phone: History sits under the name, never off to the side.
+    const who = x => `${esc(x.name)}<br><span class="muted">${esc(x.code)}</span> ${histBtn(x.code)}`;
+    out.innerHTML = `<div class="box"><b>${T('rVisitsH')}</b>
+        <div class="tiles">${tile(T('kCame'), v.total.toLocaleString())}${tile(T('kBooked'), v.booked.toLocaleString())}
+          ${tile(T('kNoShows'), String(v.noShows))}${tile(T('kCancelled'), String(v.cancelled))}
+          ${tile(T('kStudents'), String(v.uniqueStudents))}${tile(T('kNew'), String(v.newStudents))}</div>
+        <p><b>${T('rByClass')}</b></p>
+        ${tbl([[T('thClass')], [T('thTime')], [T('thCame'), 'n'], [T('thHeld'), 'n'], [T('thAvg'), 'n']],
+          v.byClass.map(c => `<tr><td>${esc(cls(c.title))}</td><td>${esc(c.time || '')}</td><td class="n">${c.attended}</td>
+            <td class="n">${c.classes}</td><td class="n">${c.avgPerClass}</td></tr>`), T('rNothing'), true)}
+        ${v.bySource.length ? `<p><b>${T('rBySource')}</b></p>${tbl([[T('thFrom')], [T('thCount'), 'n']],
+          v.bySource.map(x => `<tr><td>${esc(W(x.source))}</td><td class="n">${x.n}</td></tr>`))}` : ''}
+      </div>
+      <div class="box"><b>${T('rMoneyH')}</b>
+        <div class="tiles">${tile(T('kMoney'), baht(m.total))}${tile(T('kVat'), baht(m.vat))}
+          ${tile(T('kPayments'), String(m.count))}${tile(T('kSold'), String(d.passes.sold))}</div>
+        ${m.byMethod.length ? `<p><b>${T('rByMethod')}</b></p>${tbl(moneyHeads(T('thMethod')), money(m.byMethod, x => W(x.method || 'online')))}` : ''}
+        ${m.byItem.length ? `<p><b>${T('rByItem')}</b></p>${tbl(moneyHeads(T('thItem')), money(m.byItem, x => itemName(x.item)))}` : ''}
+        ${m.bySource.length ? `<p><b>${T('rMoneySource')}</b></p>${tbl(moneyHeads(T('thFrom')), money(m.bySource, x => W(x.source)))}` : ''}
+      </div>
+      <div class="box"><b>${T(long ? 'rByMonth' : 'rByDay')}</b>
+        ${tbl([[T(long ? 'thMonth' : 'thDate')], [T('thCame'), 'n'], [T('thBooked'), 'n'], [T('thMoney'), 'n']], days, T('rNothing'))}</div>
+      <div class="box"><b>${T('rExpH')}</b> <span class="muted">${d.passes.expiringNext14.length}</span>
+        <p class="muted">${T('rExpHelp')}</p>
+        ${tbl([[T('thStudent')], [T('thPass')], [T('thUntil')]], d.passes.expiringNext14.map(x => `<tr>
+          <td>${who(x)}</td><td>${esc(itemName(x.item || ''))}</td>
+          <td class="nowrap">${esc(ymdLong(x.until, true))}</td></tr>`))}</div>
+      <div class="box"><b>${T('rNotSeenH')}</b> <span class="muted">${d.notSeen.length}</span>
+        <p class="muted">${T('rNotSeenHelp')}</p>
+        ${tbl([[T('thStudent')], [T('thLast')], [T('thPass')], [T('thUntil')]], d.notSeen.map(x => `<tr>
+          <td>${who(x)}</td>
+          <td class="nowrap">${esc(x.lastVisit ? ymdLong(x.lastVisit) : T('neverCame'))}</td>
+          <td>${esc(itemName(x.pass || ''))}</td><td class="nowrap">${esc(x.until ? ymdLong(x.until) : '')}</td></tr>`), '', true)}</div>`;
+  }
+
+  // ── the move from Rezerv: CSV files read here, sent in batches ────────────
+  // Columns are matched to our fields by their headings, English or Thai; an
+  // alias list's order is its priority. Only matched columns are ever sent, so
+  // a birthday, an address or a card number in the file never leaves this page.
+  const AL = {
+    customer: ['customer id', 'member id', 'client id', 'user id', 'customer no', 'customer number', 'member no',
+      'member number', 'rezerv id', 'รหัสลูกค้า', 'รหัสสมาชิก'],
+    name: ['name', 'full name', 'customer name', 'member name', 'client name', 'student name', 'customer', 'member',
+      'client', 'student', 'first name', 'firstname', 'given name', 'ชื่อ', 'ชื่อลูกค้า', 'ชื่อสมาชิก', 'ชื่อนามสกุล', 'ชื่อจริง'],
+    lastName: ['last name', 'lastname', 'surname', 'family name', 'นามสกุล'],
+    email: ['email', 'e-mail', 'email address', 'e-mail address', 'mail', 'อีเมล', 'อีเมล์'],
+    phone: ['phone', 'mobile', 'phone number', 'mobile number', 'mobile phone', 'tel', 'telephone', 'contact number',
+      'เบอร์โทร', 'เบอร์โทรศัพท์', 'โทรศัพท์', 'มือถือ', 'เบอร์มือถือ', 'เบอร์'],
+  };
+  const WHO = { memberRezervId: AL.customer, name: AL.name, lastName: AL.lastName, email: AL.email, phone: AL.phone };
+  const CI_KINDS = {
+    members: { need: ['name'], fields: { rezervId: ['id', ...AL.customer], name: AL.name, lastName: AL.lastName,
+      email: AL.email, phone: AL.phone,
+      joinedOn: ['joined', 'joined on', 'join date', 'date joined', 'member since', 'registered', 'registration date',
+        'sign up date', 'signup date', 'created', 'created at', 'created date', 'วันที่สมัคร', 'สมัครเมื่อ', 'วันที่ลงทะเบียน'] } },
+    visits: { need: ['date'], who: true, fields: {
+      rezervId: ['booking id', 'reservation id', 'booking ref', 'booking reference', 'booking number', 'booking no', 'id',
+        'รหัสการจอง', 'เลขที่การจอง'],
+      ...WHO,
+      date: ['class date', 'session date', 'date', 'booking date', 'class start', 'datetime', 'date time', 'start',
+        'วันที่เรียน', 'วันที่', 'วันที่จอง'],
+      time: ['time', 'start time', 'class time', 'session time', 'เวลา', 'เวลาเริ่ม', 'เวลาเรียน'],
+      className: ['class', 'class name', 'service', 'service name', 'session', 'session name', 'activity', 'program',
+        'course', 'class type', 'คลาส', 'ชื่อคลาส', 'บริการ'],
+      status: ['status', 'booking status', 'attendance status', 'attendance', 'สถานะ', 'สถานะการจอง'],
+      checkedInAt: ['checked in at', 'checked in', 'check in time', 'check in', 'checkin', 'checkin time',
+        'เวลาเช็คอิน', 'เช็คอิน', 'เช็กอิน'] } },
+    payments: { need: ['date', 'amount'], who: true, fields: {
+      rezervId: ['payment id', 'transaction id', 'receipt no', 'receipt number', 'invoice no', 'invoice number', 'order id',
+        'order no', 'order number', 'reference', 'ref', 'id', 'เลขที่ใบเสร็จ', 'เลขที่อ้างอิง', 'เลขที่ชำระเงิน'],
+      ...WHO,
+      date: ['payment date', 'paid at', 'paid on', 'date paid', 'transaction date', 'purchase date', 'date', 'created',
+        'created at', 'วันที่ชำระ', 'วันที่ชำระเงิน', 'วันที่จ่าย', 'วันที่'],
+      amount: ['amount', 'amount paid', 'paid', 'total', 'total paid', 'grand total', 'net', 'price', 'ยอดเงิน', 'ยอดชำระ',
+        'จำนวนเงิน', 'ยอดรวม', 'ราคา', 'รวม'],
+      item: ['item', 'item name', 'package', 'package name', 'product', 'product name', 'description', 'plan', 'membership',
+        'pass', 'service', 'รายการ', 'แพ็กเกจ', 'แพ็คเกจ', 'สินค้า'],
+      method: ['method', 'payment method', 'payment type', 'paid by', 'paid with', 'channel', 'payment channel', 'gateway',
+        'วิธีชำระ', 'วิธีชำระเงิน', 'ช่องทางชำระเงิน', 'ชำระโดย'],
+      vat: ['vat', 'vat amount', 'tax', 'tax amount', 'ภาษี', 'ภาษีมูลค่าเพิ่ม'],
+      note: ['note', 'notes', 'remark', 'remarks', 'comment', 'comments', 'หมายเหตุ'],
+      status: ['status', 'payment status', 'transaction status', 'payment state', 'state', 'transaction type',
+        'สถานะ', 'สถานะการชำระ', 'สถานะการชำระเงิน', 'type'] } },
+    passes: { need: ['plan', 'until'], who: true, fields: {
+      ...WHO,
+      plan: ['plan', 'package', 'package name', 'membership', 'pass', 'product', 'item', 'แพ็กเกจ', 'แพ็คเกจ'],
+      until: ['until', 'valid until', 'end date', 'end', 'expiry', 'expiry date', 'expires', 'expires on',
+        'expiration date', 'expiration', 'วันหมดอายุ', 'หมดอายุ', 'ใช้ได้ถึง'],
+      start: ['start', 'start date', 'valid from', 'from', 'activated', 'activation date', 'วันเริ่ม', 'วันที่เริ่ม', 'เริ่ม'],
+      classesLeft: ['classes left', 'credits left', 'remaining', 'remaining classes', 'remaining credits', 'sessions left',
+        'balance', 'ครั้งที่เหลือ', 'คงเหลือ', 'เหลือ'] } },
+  };
+  const nh = s => String(s ?? '').normalize('NFC').toLowerCase().replace(/[\s\-_./:()#*'"]+/g, '');
+  const CI_ALL = new Set(Object.values(CI_KINDS).flatMap(k => Object.values(k.fields).flat()).map(nh));
+  const CI_BATCH = 1000;
+  const CI = { kind: 'members', file: '', rows: [], heads: [], headRow: 0, map: {}, pastBooked: false,
+    busy: false, prog: '', msg: '', result: null, checkedSig: null };
+  const fieldName = f => STR.en[`f_${CI.kind}_${f}`] ? T(`f_${CI.kind}_${f}`) : T('f_' + f);
+
+  // Excel on a Thai Windows saves "CSV" in the Thai code page, not UTF-8.
+  function decodeFile(buf) {
+    const b = new Uint8Array(buf);
+    if ((b[0] === 0x50 && b[1] === 0x4B) || (b[0] === 0xD0 && b[1] === 0xCF)) return null;   // .xlsx or .xls
+    if (b[0] === 0xFF && b[1] === 0xFE) return new TextDecoder('utf-16le').decode(b);
+    if (b[0] === 0xFE && b[1] === 0xFF) return new TextDecoder('utf-16be').decode(b);
+    try { return new TextDecoder('utf-8', { fatal: true }).decode(b); }
+    catch { return new TextDecoder('windows-874').decode(b); }
+  }
+  // Quotes, commas or new lines inside quotes, CRLF; the separator is whichever
+  // of , ; or tab the top of the file uses most.
+  function parseCsv(text) {
+    text = text.replace(/^﻿/, '');
+    const n = { ',': 0, ';': 0, '\t': 0 };
+    let inQ = false;
+    for (const ch of text.slice(0, 4000)) { if (ch === '"') inQ = !inQ; else if (!inQ && ch in n) n[ch]++; }
+    const sep = Object.keys(n).reduce((a, b) => n[b] > n[a] ? b : a);
+    const recs = [];
+    let row = [], cell = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) {
+        if (ch !== '"') cell += ch;
+        else if (text[i + 1] === '"') { cell += '"'; i++; }
+        else q = false;
+      } else if (ch === '"' && cell === '') q = true;
+      else if (ch === sep) { row.push(cell); cell = ''; }
+      else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && text[i + 1] === '\n') i++;
+        row.push(cell); recs.push(row); row = []; cell = '';
+      } else cell += ch;
+    }
+    if (cell !== '' || row.length) { row.push(cell); recs.push(row); }
+    return recs.map((cells, i) => ({ n: i + 1, cells }));
+  }
+  function autoMap(kind, heads) {
+    const norm = heads.map(nh), used = new Set(), map = {};
+    for (const [f, aliases] of Object.entries(CI_KINDS[kind].fields)) {
+      for (const a of aliases) {
+        const i = norm.findIndex((h, j) => h === nh(a) && !used.has(j));
+        if (i >= 0) { map[f] = i; used.add(i); break; }
+      }
+    }
+    return map;
+  }
+  // One file row as the server reads it: only mapped fields, trimmed, no blanks.
+  function rowFor(r) {
+    const o = {}, val = i => String(r.cells[i] ?? '').trim();
+    for (const f of Object.keys(CI_KINDS[CI.kind].fields)) {
+      if (f === 'lastName' || CI.map[f] == null) continue;
+      const v = val(CI.map[f]);
+      if (v) o[f] = v;
+    }
+    if (CI.map.lastName != null && val(CI.map.lastName)) o.name = [o.name, val(CI.map.lastName)].filter(Boolean).join(' ');
+    return o;
+  }
+  // What makes a row with no Rezerv ID that row, as the server tells them apart.
+  const CI_SAME = { visits: ['memberRezervId', 'email', 'phone', 'name', 'date', 'time', 'className'],
+    payments: ['memberRezervId', 'email', 'phone', 'name', 'date', 'item', 'amount'] };
+  // Batches of consecutive file rows, so the server's row numbers match the file.
+  // Identical rows (two drop-ins on one day, no payment ID) are numbered over
+  // the whole file: the server sees one batch, and would take the second one,
+  // sent in the next batch, for the first.
+  function ciBatches() {
+    const out = [], seen = new Map(), same = CI_SAME[CI.kind];
+    for (const r of CI.rows) {
+      const o = rowFor(r);
+      if (same && !o.rezervId) {
+        const k = JSON.stringify(same.map(f => o[f] ?? ''));
+        const n = (seen.get(k) || 0) + 1;
+        seen.set(k, n);
+        if (n > 1) o.nth = n;
+      }
+      const cur = out[out.length - 1];
+      if (cur && cur.rows.length < CI_BATCH && r.n === cur.first + cur.rows.length) cur.rows.push(o);
+      else out.push({ first: r.n, rows: [o] });
+    }
+    return out;
+  }
+  // The server's reasons and notes come in English, with a code to say them in Thai.
+  const ciSay = (x, text) => LANG !== 'en' && x.code && STR[LANG]['ci_' + x.code] ? T('ci_' + x.code, ...(x.vals || [])) : text;
+  const ciSig = () => JSON.stringify([CI.kind, CI.file, CI.rows.length,
+    Object.keys(CI_KINDS[CI.kind].fields).map(f => CI.map[f] ?? null), CI.kind === 'visits' && CI.pastBooked]);
+  const ciReset = () => { CI.result = null; CI.prog = ''; };
+  function paintImport() { const b = $('#ciBox'); if (b) b.innerHTML = importInner(); }
+
+  window.ciKind = k => { if (CI.busy || !CI_KINDS[k]) return; CI.kind = k; CI.map = autoMap(k, CI.heads); ciReset(); paintImport(); };
+  window.ciMap = (f, v) => { if (CI.busy) return; if (v === '') delete CI.map[f]; else CI.map[f] = Number(v); ciReset(); paintImport(); };
+  window.ciPast = on => { if (CI.busy) return; CI.pastBooked = !!on; ciReset(); paintImport(); };
+  window.ciPick = async input => {
+    const f = input.files && input.files[0];
+    if (!f || CI.busy) return;
+    Object.assign(CI, { file: f.name, rows: [], heads: [], headRow: 0, map: {}, msg: '', checkedSig: null });
+    ciReset();
+    let text;
+    try { text = decodeFile(await f.arrayBuffer()); } catch { CI.msg = T('ciBadFile'); paintImport(); return; }
+    if (text == null) { CI.msg = T('ciExcel'); paintImport(); return; }
+    const filled = parseCsv(text).filter(r => r.cells.some(c => c.trim()));
+    // The headings are the row, of the first ten, that names the most fields we know.
+    let head = filled[0], best = 0;
+    for (const r of filled.slice(0, 10)) {
+      const k = r.cells.filter(c => CI_ALL.has(nh(c))).length;
+      if (k > best) { best = k; head = r; }
+    }
+    const rows = head ? filled.filter(r => r.n > head.n) : [];
+    if (!rows.length) { CI.msg = T('ciEmpty'); paintImport(); return; }
+    CI.headRow = head.n;
+    CI.heads = head.cells.map((c, i) => c.trim() || `#${i + 1}`);
+    CI.rows = rows;
+    CI.map = autoMap(CI.kind, CI.heads);
+    paintImport();
+  };
+
+  function importInner() {
+    const k = CI.kind, K = CI_KINDS[k], dis = CI.busy ? 'disabled' : '';
+    let h = `<b>${T('ciTitle')}</b><p class="muted">${esc(T('ciHelp'))}</p>
+      <div class="row2"><label>${T('ciKind')}<br><select onchange="ciKind(this.value)" ${dis}>
+        ${Object.keys(CI_KINDS).map(x => `<option value="${x}" ${x === k ? 'selected' : ''}>${esc(T('kind_' + x))}</option>`).join('')}</select></label>
+      <label>${T('ciFile')}<br><input type="file" accept=".csv,.tsv,.txt,text/csv" onchange="ciPick(this)" ${dis} style="max-width:100%"></label></div>`;
+    if (CI.msg) h += `<p class="warnline">${esc(CI.msg)}</p>`;
+    if (!CI.rows.length) return h;
+    const fields = Object.keys(K.fields);
+    h += `<p class="muted">${esc(T('ciRead', CI.file, CI.rows.length.toLocaleString(), CI.headRow))}</p>
+      <p style="margin-bottom:0"><b>${T('ciMapH')}</b></p><p class="muted" style="margin-top:2px">${esc(T('ciMapHelp'))}</p>
+      <div class="cimap">${fields.map(f => `<label for="cm_${f}">${esc(fieldName(f))}${K.need.includes(f) ? ' *' : ''}</label>
+        <select id="cm_${f}" onchange="ciMap('${f}',this.value)" ${dis}><option value="">${esc(T('ciNotUsed'))}</option>
+          ${CI.heads.map((c, i) => `<option value="${i}" ${CI.map[f] === i ? 'selected' : ''}>${esc(CI.heads.indexOf(c) === i ? c : `${c} (${i + 1})`)}</option>`).join('')}
+        </select>`).join('')}</div>`;
+    const cols = fields.filter(f => f !== 'lastName' && (CI.map[f] != null || (f === 'name' && CI.map.lastName != null)));
+    h += `<p style="margin-bottom:4px"><b>${T('ciPreviewH')}</b></p>
+      ${tbl([[T('thRow'), 'n'], ...cols.map(f => [fieldName(f)])], CI.rows.slice(0, 5).map(r => {
+        const o = rowFor(r);
+        return `<tr><td class="n muted">${r.n}</td>${cols.map(f => `<td>${o[f] != null ? esc(o[f]) : '<span class="muted">–</span>'}</td>`).join('')}</tr>`;
+      }), '', cols.length > 3)}`;
+    if (k === 'visits') h += `<p><label style="display:flex;gap:8px;align-items:flex-start;font-size:14px">
+      <input type="checkbox" style="width:auto;margin-top:4px" ${CI.pastBooked ? 'checked' : ''} onchange="ciPast(this.checked)" ${dis}>
+      <span>${esc(T('ciPastBooked'))}</span></label></p>`;
+    const miss = K.need.filter(f => CI.map[f] == null);
+    const noWho = K.who && !Object.keys(WHO).some(f => CI.map[f] != null);
+    if (miss.length) h += `<p class="warnline">${esc(T('ciNeed', miss.map(fieldName).join(', ')))}</p>`;
+    if (noWho) h += `<p class="warnline">${esc(T('ciNeedWho'))}</p>`;
+    const ready = !miss.length && !noWho, checked = CI.checkedSig === ciSig();
+    h += `<p><button class="btn" onclick="ciRun(true)" ${!ready || CI.busy ? 'disabled' : ''}>${T('ciCheck')}</button>
+      <button class="btn pink" onclick="ciRun(false)" ${!ready || CI.busy || !checked ? 'disabled' : ''}>${T('ciImport')}</button></p>
+      ${ready && !checked && !CI.busy && !CI.result ? `<p class="muted">${T('ciCheckFirst')}</p>` : ''}
+      <p id="ciProg" class="muted" aria-live="polite">${esc(CI.prog)}</p>`;
+    if (CI.result) h += ciResult(CI.result);
+    return h;
+  }
+
+  function ciResult(s) {
+    const n = [['ciTotal', s.total], ['ciAdded', s.added], ['ciMatched', s.matched], ['ciUpdated', s.updated],
+      ['ciNewMembers', s.newMembers], ['ciSkipped', s.skipped.length]];
+    return `<div class="box" style="background:var(--blush);margin-bottom:0">
+      <b>${T(s.dry ? 'ciCheckDone' : 'ciImportDone')}</b>
+      ${s.stopped ? `<p class="warnline">${esc(T('ciStopped', s.stopped.row, s.stopped.error))}</p>` : ''}
+      <div class="tiles">${n.map(([k, v]) => tile(T(k), v.toLocaleString())).join('')}</div>
+      ${s.pastBooked ? `<p class="warnline">${esc(T('ciPastNote', s.pastBooked))}</p>` : ''}
+      ${s.dry && s.batches > 1 && s.newMembers ? `<p class="muted">${esc(T('ciBatchNote'))}</p>` : ''}
+      ${s.skipped.length ? `<p style="margin-bottom:4px"><b>${T('ciSkippedH')}</b>
+        <button class="btn gray sm" onclick="ciSkippedCsv()">${T('ciSkippedCsv')}</button></p>
+        <div class="list">${s.skipped.map(x => `<div><span class="muted">${esc(T('ciRow', x.row))}</span> ${esc(ciSay(x, x.reason))}</div>`).join('')}</div>` : ''}
+      ${s.warnings.length ? `<p style="margin-bottom:4px"><b>${T('ciWarnH')}</b></p>
+        <div class="list">${s.warnings.map(w => `<div>${w.row != null ? `<span class="muted">${esc(T('ciRow', w.row))}</span> ` : ''}${esc(ciSay(w, w.message))}</div>`).join('')}</div>` : ''}
+    </div>`;
+  }
+
+  // Check (dryRun) or Import, every batch in turn. A batch that fails stops the
+  // run: what came before it is saved, and running again adds nothing twice.
+  window.ciRun = async dry => {
+    if (CI.busy || !CI.rows.length) return;
+    const k = CI.kind, total = CI.rows.length;
+    if (!dry && (CI.checkedSig !== ciSig() || !confirm(T('ciConfirm', total.toLocaleString(), T('kind_' + k))))) return;
+    const sig = ciSig(), batches = ciBatches();
+    const sum = { dry, total: 0, added: 0, matched: 0, updated: 0, newMembers: 0, skipped: [], warnings: [],
+      pastBooked: 0, batches: batches.length, stopped: null };
+    CI.busy = true; CI.result = null; CI.prog = T(dry ? 'ciChecking' : 'ciImporting', 0, total);
+    window.onbeforeunload = () => true;
+    paintImport();
+    let done = 0;
+    for (const b of batches) {
+      let r = null, j = {};
+      try {
+        r = await api('/api/bkk/admin/import/' + k, { method: 'POST', body: JSON.stringify({ rows: b.rows, dryRun: dry,
+          firstRow: b.first, ...(k === 'visits' && CI.pastBooked ? { pastBookedAttended: true } : {}) }) });
+        j = await r.json().catch(() => ({}));
+      } catch (e) { j = { error: e.message }; }
+      if (!r || !r.ok) { sum.stopped = { row: b.first, error: j.error || (r ? 'HTTP ' + r.status : T('failed')) }; break; }
+      for (const x of ['total', 'added', 'matched', 'updated', 'newMembers']) sum[x] += j[x] || 0;
+      sum.skipped.push(...(j.skipped || []));
+      for (const w of j.warnings || []) {
+        if (w.row == null && w.code === 'pastBooked') sum.pastBooked += Number(w.vals[0]) || 0; else sum.warnings.push(w);
+      }
+      done += b.rows.length;
+      CI.prog = T(dry ? 'ciChecking' : 'ciImporting', done, total);
+      const p = $('#ciProg'); if (p) p.textContent = CI.prog;
+    }
+    CI.busy = false; window.onbeforeunload = null;
+    CI.prog = '';
+    CI.result = sum;
+    CI.checkedSig = dry && !sum.stopped ? sig : null;
+    paintImport();
+  };
+
+  window.ciSkippedCsv = () => {
+    const s = CI.result;
+    if (!s || !s.skipped.length) return;
+    const byN = new Map(CI.rows.map(r => [r.n, r]));
+    const fields = Object.keys(CI_KINDS[CI.kind].fields).filter(f => CI.map[f] != null);
+    const cell = v => `"${String(v ?? '').replace(/^[=+\-@\t\r]/, "'$&").replace(/"/g, '""')}"`;
+    const lines = [['row', 'reason', ...fields].join(',')].concat(s.skipped.map(x => {
+      const r = byN.get(x.row);
+      return [x.row, cell(ciSay(x, x.reason)), ...fields.map(f => cell(r ? r.cells[CI.map[f]] : ''))].join(',');
+    }));
+    saveBlob(new Blob(['﻿' + lines.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' }),
+      `${CI.file.replace(/\.[^.]*$/, '')}-skipped.csv`);
   };
 
   let LINKS = {};                       // social links, loaded with the tab
@@ -690,6 +2087,7 @@
     TEES = await api('/api/bkk/admin/tees').then(r => r.json())
       .then(d => d.tees || []).catch(() => []);
     const { counts: letter = [], doors = [] } = await api('/api/bkk/admin/newsletter').then(r => r.json()).catch(() => ({}));
+    if (current !== 'settings' || SUB) return;
     const byStatus = {};
     for (const c of letter) byStatus[c.status] = (byStatus[c.status] || 0) + c.n;
     $('#view').innerHTML = `<div class="box">
