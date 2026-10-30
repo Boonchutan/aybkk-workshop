@@ -91,14 +91,152 @@ function rotationTeacher(code, ymdStr) {
   return t[((weeks % t.length) + t.length) % t.length];
 }
 
+// ── reading Rezerv's export (Oct 2026) ──────────────────────────────────────
+// Thailand writes the day first, often in the Buddhist year (2569 = 2026), and
+// a spreadsheet re-saves dates in its own way, so every shape seen in the wild
+// is read. All dates and times are Bangkok.
+const MON_EN = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+const MON_TH = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+const MON_TH_SHORT = ['มค', 'กพ', 'มีค', 'เมย', 'พค', 'มิย', 'กค', 'สค', 'กย', 'ตค', 'พย', 'ธค'];
+function monthOf(word) {
+  const w = String(word).toLowerCase().replace(/[.,\s]/g, '');
+  if (/^[a-z]{3,}$/.test(w)) return MON_EN[w.slice(0, 3)] || null;
+  const i = MON_TH.indexOf(w);
+  if (i >= 0) return i + 1;
+  const j = MON_TH_SHORT.indexOf(w);
+  return j >= 0 ? j + 1 : null;
+}
+// Two-digit years never overlap: 15–30 are 2015–2030, 58–73 are Buddhist 2558–2573.
+function fullYear(y) {
+  const n = Number(y);
+  if (y.length <= 2) return n >= 50 ? 2500 + n - 543 : 2000 + n;
+  return n > 2400 ? n - 543 : n;
+}
+// A class written as a range, "05:30 - 07:30", is read as its start.
+const rangeStart = s => s.replace(/(\d[:.]\d{2}(?::\d{2})?(?:\s*[ap]\.?m\.?|\s*น\.?)?)\s*[-–]\s*\d{1,2}[:.]\d{2}.*$/i, '$1');
+// "05:30", "5:30 AM", "05:30:00", "05.30 น." → "05:30"
+function parseClock(v) {
+  const s = String(v ?? '').trim();
+  if (s.length > 40) return null;
+  const m = rangeStart(s).match(/^(\d{1,2})[:.](\d{2})(?::\d{2}(?:\.\d+)?)?\s*(a\.?m\.?|p\.?m\.?|น\.?)?$/i);
+  if (!m) return null;
+  let h = Number(m[1]);
+  const ap = (m[3] || '').toLowerCase();
+  if (/^[ap]/.test(ap)) {
+    if (h < 1 || h > 12) return null;
+    if (ap[0] === 'p' && h < 12) h += 12;
+    if (ap[0] === 'a' && h === 12) h = 0;
+  }
+  if (h > 23 || Number(m[2]) > 59) return null;
+  return `${String(h).padStart(2, '0')}:${m[2]}`;
+}
+// → { date: 'YYYY-MM-DD', time: 'HH:MM' | null }, or null when unreadable.
+function parseWhen(v) {
+  // The era ("พ.ศ. 2569") goes: the year itself says which one it is.
+  let s = String(v ?? '').replace(/[พค]\.\s?ศ\./g, ' ').trim().replace(/\s+/g, ' ');
+  // A date cell is short. A long one is not a date, and the patterns below
+  // backtrack badly on one (a whole server stalls on a 4 KB cell).
+  if (!s || s.length > 80) return null;
+  // Only an explicit UTC time or offset is converted; anything else is Bangkok already.
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})$/.test(s)) {
+    const t = Date.parse(s);
+    if (isNaN(t)) return null;
+    const b = new Date(t + 7 * 3600000).toISOString();
+    return { date: b.slice(0, 10), time: b.slice(11, 16) };
+  }
+  s = rangeStart(s);
+  let rest = s, time = null;
+  const tm = s.match(/(^|[\sT,])(\d{1,2}[.:]\d{2}\s*น\.?|\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:\s*[ap]\.?m\.?)?)(?=$|\s)/i);
+  if (tm) {
+    time = parseClock(tm[2]);
+    if (!time) return null;
+    rest = (s.slice(0, tm.index) + ' ' + s.slice(tm.index + tm[0].length)).trim();
+  }
+  rest = rest.replace(/(?:[,\s]*(?:at|เวลา))?[,\s]*$/i, '')
+    .replace(/^(sun|mon|tue|wed|thu|fri|sat)[a-z]*\.?,?\s+/i, '').replace(/^วัน[^\s\d]*ที่\s*/, '').trim();
+  let y, mo, d, m;
+  if ((m = rest.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/))) [y, mo, d] = [fullYear(m[1]), +m[2], +m[3]];
+  else if ((m = rest.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2}|\d{4})$/))) [d, mo, y] = [+m[1], +m[2], fullYear(m[3])];
+  else if ((m = rest.match(/^(\d{1,2})[\s-]*([^\d\s-]+)[\s-]*(\d{2}|\d{4})$/))) [d, mo, y] = [+m[1], monthOf(m[2]), fullYear(m[3])];
+  else if ((m = rest.match(/^([A-Za-z]+)\.?\s+(\d{1,2}),?\s+(\d{4})$/))) [mo, d, y] = [monthOf(m[1]), +m[2], fullYear(m[3])];
+  else return null;
+  if (!mo || !d || y < 1990 || y > 2100) return null;
+  const dt = new Date(Date.UTC(y, mo - 1, d));
+  if (dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null;
+  return { date: dt.toISOString().slice(0, 10), time };
+}
+// "฿1,500.00", "THB 9600", "(1,500)" → number; null when it is not an amount.
+function parseAmount(v) {
+  if (typeof v === 'number') return isFinite(v) ? v : null;
+  const s = String(v ?? '').trim();
+  if (!s) return null;
+  const n = s.replace(/[^\d.,]/g, '').replace(/,/g, '');
+  if (!/^\d+(\.\d+)?$/.test(n)) return null;
+  return (/^\(.*\)$/.test(s) || s.includes('-')) ? -Number(n) : Number(n);
+}
+const luhn = digits => {
+  let sum = 0;
+  for (let i = 0; i < digits.length; i++) {
+    let x = Number(digits[digits.length - 1 - i]);
+    if (i % 2) { x *= 2; if (x > 9) x -= 9; }
+    sum += x;
+  }
+  return sum % 10 === 0;
+};
+// Card numbers are never kept, not even typed into a note.
+const noCards = s => String(s).replace(/\d(?:[ -]?\d){12,18}/g, m => luhn(m.replace(/\D/g, '')) ? '[card number removed]' : m);
+// Rezerv's visit statuses, loosely: order matters ("not attended", "late cancel", "ไม่มา").
+const VISIT_WORDS = [
+  [/late[\s_-]*cancel|ยกเลิกช้า|ยกเลิกกระชั้น/i, 'late'],
+  [/no[\s_-]*show|absent|missed|not[\s_-]*(attend|came|show)|did\s*n[o']?t|ไม่มา|ขาด/i, 'noshow'],
+  [/wait|รอคิว|สำรอง/i, 'waitlist'],
+  [/cancel|ยกเลิก|refund/i, 'cancelled'],
+  // "Not checked in", "Unattended", "Incomplete", "ยังไม่เข้าเรียน": did not come
+  // (yet). A no-show once the class is over, a seat while it is still to come.
+  [/\b(not|no|un|non|never)[\s_-]*(yet[\s_-]*)?(check|attend|complet|came|come|show|visit|present)|incomplete|pending|ไม่/i, 'unchecked'],
+  [/attend|check(ed)?[\s_-]*in|present|came|complete|done|visit|เข้าเรียน|มาเรียน|เช็[คก]อิน|เข้าร่วม|มาแล้ว/i, 'attended'],
+  [/book|confirm|reserv|upcoming|schedul|จอง|ยืนยัน/i, 'booked'],
+];
+function visitStatus(v) {
+  const s = String(v ?? '').trim();
+  if (!s) return null;
+  const hit = VISIT_WORDS.find(([re]) => re.test(s));
+  return hit ? hit[1] : undefined;
+}
+// Rezerv's payment states. Only money that came in, or went back, is kept:
+// order matters ("Payment failed", "Refund pending", "Unpaid").
+const PAY_WORDS = [
+  [/fail|declin|reject|pending|await|\bdue\b|overdue|unpaid|not[\s_-]*paid|cancel|void|expir|abandon|incomplete|chargeback|disput|ไม่สำเร็จ|ยกเลิก|รอชำระ|รอดำเนินการ|รอตรวจสอบ|ค้างชำระ|หมดอายุ|ยังไม่ชำระ|ไม่ได้ชำระ/i, 'skip'],
+  [/refund|คืนเงิน/i, 'refund'],
+  [/paid|success|complete|approv|captur|settl|^ok$|sale|purchase|payment|charge|ชำระแล้ว|จ่ายแล้ว|สำเร็จ|เรียบร้อย|ขาย|ซื้อ/i, 'paid'],
+];
+function payStatus(v) {
+  const s = String(v ?? '').trim();
+  if (!s) return null;
+  const hit = PAY_WORDS.find(([re]) => re.test(s));
+  return hit ? hit[1] : undefined;
+}
+function payMethod(raw) {
+  const s = String(raw || '').toLowerCase();
+  if (!s) return 'other';
+  if (/cash|เงินสด/.test(s)) return 'cash';
+  if (/card|credit|debit|visa|master|amex|jcb|บัตร/.test(s)) return 'card';
+  if (/transfer|bank|prompt\s*pay|qr|โอน|พร้อมเพย์|ธนาคาร/.test(s)) return 'transfer';
+  if (/online|web|app|stripe|omise|paypal|2c2p|pay\s*solutions|gateway|ออนไลน์/.test(s)) return 'online';
+  return 'other';
+}
+
 function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
   const cloudinary = opts.cloudinary || null;
   const httpFetch = opts.fetch || fetch;
-  const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || 'aybkk2026';
+  // No key set means no admin at all: the repo is public, so a default key
+  // would open every student's data to anyone.
+  const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '';
+  if (!ADMIN_KEY) console.warn('⚠ bkk-api: BKK_ADMIN_KEY not set — admin endpoints are closed');
   // Header only. A key in the query string ends up in access logs, browser
   // history and Referer headers.
-  const isAdmin = req => req.headers['x-bkk-key'] === ADMIN_KEY;
+  const isAdmin = req => !!ADMIN_KEY && req.headers['x-bkk-key'] === ADMIN_KEY;
 
   if (!pool) { console.warn('⚠ bkk-api: no pgPool — Bangkok API disabled'); return; }
   const q = (sql, params = []) => pool.query(sql, params);
@@ -296,6 +434,28 @@ function mountBkk(app, opts = {}) {
     await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_bookings_request_id
              ON bkk_bookings (request_id) WHERE request_id IS NOT NULL`);
 
+    // Keep all history (28 Oct 2026): everything Rezerv holds moves over, and
+    // nothing is deleted to tidy up. source_ref is Rezerv's own id for the row
+    // (or a hash of it), so importing the same file twice adds nothing twice.
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS rezerv_id TEXT`);
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS joined_on DATE`);
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS source TEXT`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_members_rezerv ON bkk_members (rezerv_id) WHERE rezerv_id IS NOT NULL`);
+    // A past Rezerv class that matches no slot keeps its own title, slot_id NULL.
+    // status 'noshow' = booked, never came. Attended = 'booked' and checked in.
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS class_title TEXT`);
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS source_ref TEXT`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_bookings_source_ref
+             ON bkk_bookings (source, source_ref) WHERE source_ref IS NOT NULL`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_bookings_member ON bkk_bookings (member_id, class_date)`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_bookings_date ON bkk_bookings (class_date)`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS item_name TEXT`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS source TEXT`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS source_ref TEXT`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_orders_source_ref
+             ON bkk_orders (source, source_ref) WHERE source_ref IS NOT NULL`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_orders_member ON bkk_orders (member_id)`);
+
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
     // package retired in the admin page stays as staff set it.
@@ -405,6 +565,25 @@ function mountBkk(app, opts = {}) {
     const d = new Date(`${dateStr}T12:00:00Z`);
     return `${WD3[d.getUTCDay()]} ${d.getUTCDate()} ${MON3[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${hhmm}`;
   };
+  // A visit they came to: a live seat that was checked in (the door, or the
+  // class start for one moved over from Rezerv). Written for bkk_bookings b.
+  const ATTENDED = `b.status='booked' AND b.checked_in_at IS NOT NULL`;
+  // A no-show: Rezerv said so, or a seat here never checked in by the end of
+  // its day (aybkk.net itself never writes 'noshow').
+  const NOSHOW = `(b.status='noshow' OR (b.status='booked' AND b.checked_in_at IS NULL
+    AND b.class_date < (now() AT TIME ZONE 'Asia/Bangkok')::date))`;
+  // A Rezerv class with no time on file is stored at 00:00 with no slot; no
+  // class starts at midnight, so that time is shown as unknown.
+  const VISIT_TIME = `CASE WHEN b.slot_id IS NULL AND to_char(b.start_at AT TIME ZONE 'Asia/Bangkok','HH24:MI') = '00:00'
+    THEN NULL ELSE to_char(b.start_at AT TIME ZONE 'Asia/Bangkok','HH24:MI') END`;
+  // When money came in, as a Bangkok day.
+  const PAY_AT = `coalesce(o.verified_at, o.created_at)`;
+  const PAY_DAY = `(${PAY_AT} AT TIME ZONE 'Asia/Bangkok')::date`;
+  const realYmd = d => {
+    if (!isYmd(d)) return false;
+    const t = Date.parse(`${d}T00:00:00Z`);
+    return !isNaN(t) && new Date(t).toISOString().slice(0, 10) === d;
+  };
 
   async function findOrCreateMember({ name, email, phone }) {
     const em = (email || '').trim().toLowerCase();
@@ -505,7 +684,8 @@ function mountBkk(app, opts = {}) {
         }
       }
       out.sort((a, b) => a.startAt.localeCompare(b.startAt));
-      res.json({ classes: out, moonDays: Object.fromEntries(moon) });
+      // to: the last day loaded, so a page knows a later day is not "no class".
+      res.json({ classes: out, moonDays: Object.fromEntries(moon), to: dates[dates.length - 1], cutoffHours: CANCEL_CUTOFF_HOURS });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -662,6 +842,8 @@ function mountBkk(app, opts = {}) {
     const o = (await q('SELECT * FROM bkk_orders WHERE refno = $1', [refno])).rows[0];
     if (!o) return { status: 'unknown' };
     if (o.status === 'paid') return { status: 'paid', already: true, ...await orderBooking(o) };
+    // A Rezerv payment is history: it never goes near the gateway or a pass.
+    if (o.source === 'rezerv') return { status: o.status };
 
     const cfg = paysoConfig();
     if (!cfg) return { status: o.status, note: 'gateway not configured' };
@@ -781,16 +963,16 @@ function mountBkk(app, opts = {}) {
         try {
           seat = await takeSeat(client, { member: { id: order.member_id }, slotId, date, staff: true,
             allowOver: true, cover: 'pass', passId: pass.id, checkIn: !!opts.checkIn,
-            source: opts.source || 'order', requestId: opts.requestId });
+            source: opts.source || 'order', requestId: opts.requestId, onList: true });
           await client.query('RELEASE SAVEPOINT seat');
         } catch (e) {
           await client.query('ROLLBACK TO SAVEPOINT seat');
           seat = { error: e.message };
         }
-        // At the door the money is still in the hand. Another phone (or a
-        // second tap) put them on the list while this sale was on its way:
-        // they stay checked in, and nothing is sold twice.
-        if (opts.source === 'door' && seat.already) {
+        // At the door (or staff adding from the calendar) the money is still in
+        // the hand. Another phone (or a second tap) put them on the list while
+        // this sale was on its way: they keep that seat, and nothing is sold twice.
+        if ((opts.source === 'door' || opts.source === 'staff') && seat.already) {
           await client.query('DELETE FROM bkk_passes WHERE id=$1', [pass.id]);
           await client.query('DELETE FROM bkk_orders WHERE id=$1', [order.id]);
           await client.query('COMMIT');
@@ -1270,10 +1452,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const m = (await q('SELECT * FROM bkk_members WHERE code = $1', [req.params.code])).rows[0];
       if (!m) return res.status(404).json({ error: 'not found' });
       const passes = (await q(
-        `SELECT p.*, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+        `SELECT p.*, pr.name_en, pr.name_th FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id])).rows;
+      // classDate is the Bangkok day as text: class_date comes back as a JS
+      // Date, which a browser in another timezone can shift a day.
       const bookings = (await q(
-        `SELECT b.*, s.title, s.start_time, s.is_online FROM bkk_bookings b
+        `SELECT b.*, to_char(b.class_date,'YYYY-MM-DD') AS "classDate", s.title, s.start_time, s.is_online FROM bkk_bookings b
          JOIN bkk_class_slots s ON s.id=b.slot_id
          WHERE b.member_id=$1 AND b.status='booked' AND b.start_at >= now()
          ORDER BY b.start_at`, [m.id])).rows;
@@ -1285,11 +1469,24 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
          WHERE n.member_id=$1 AND n.share_with_student
            AND (n.to_work_on IS NOT NULL OR n.body IS NOT NULL)
          ORDER BY n.created_at DESC LIMIT 10`, [m.id])).rows;
+      // The habit proof: every class they came to, the ones moved over from
+      // Rezerv included.
+      const [count, recent] = await Promise.all([
+        q(`SELECT count(*)::int AS practised, count(DISTINCT b.class_date)::int AS days,
+             count(DISTINCT b.class_date) FILTER (WHERE date_trunc('month', b.class_date) = date_trunc('month', $2::date))::int AS this_month
+           FROM bkk_bookings b WHERE b.member_id=$1 AND ${ATTENDED}`, [m.id, bkkToday()]),
+        q(`SELECT to_char(b.class_date,'YYYY-MM-DD') AS date, ${VISIT_TIME} AS time, coalesce(s.title, b.class_title) AS class
+           FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
+           WHERE b.member_id=$1 AND ${ATTENDED}
+           ORDER BY b.start_at DESC, b.id DESC LIMIT 10`, [m.id]),
+      ]);
+      const c = count.rows[0];
       res.json({
         member: { code: m.code, name: m.name, email: m.email, journalId: await journalId(m) },
+        history: { practised: c.practised, days: c.days, thisMonth: c.this_month, recent: recent.rows },
         notes,
         passes: passes.map(p => ({
-          name: p.name_en, kind: p.kind, status: p.status,
+          name: p.name_en, nameTh: p.name_th, kind: p.kind, status: p.status,
           creditsLeft: p.kind === 'unlimited' ? null : (p.credits_total - p.credits_used),
           validFrom: p.valid_from, validUntil: p.valid_until, dailyCap: p.daily_cap,
         })),
@@ -1305,6 +1502,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   const singleClass = pr => pr.kind === 'credits' && Number(pr.credits) === 1;
   const CLASS_ENDED = 'that class has already ended';
+  // A visit moved from Rezerv that matched no slot is history as Rezerv kept it.
+  const REZERV_READONLY = 'moved from Rezerv: it cannot be changed here';
   const seatsTaken = async (db, slotId, date) => (await db.query(
     `SELECT count(*)::int AS n FROM bkk_bookings
      WHERE slot_id=$1 AND class_date=$2 AND status='booked'`, [slotId, date])).rows[0].n;
@@ -1343,11 +1542,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   //   source    'student' | 'staff' | 'door' | 'order'
   //   requestId the door's id for this add: a seat already carrying it is the
   //             same add sent twice (out.repeat), even for a second new profile
-  // The door and paid orders treat a seat the member already holds as "on the
-  // list" and just check it in; a student is told they already booked it.
+  //   onList    treat a seat the member already holds as "on the list"
+  // The door and paid orders (and staff adding from the calendar) treat a seat
+  // the member already holds as "on the list" and just check it in (when
+  // checkIn); a student is told they already booked it.
   async function takeSeat(db, { member, slotId, date, staff = false, allowOver = false,
-    cover = 'pass', passId = null, checkIn = false, source = 'student', requestId = null }) {
-    const door = source === 'door' || source === 'order';
+    cover = 'pass', passId = null, checkIn = false, source = 'student', requestId = null,
+    onList = source === 'door' || source === 'order' }) {
+    const door = onList;
     const { slot, startAt, capacity } = await classCheck(db, slotId, date,
       { staff, endedMsg: door ? CLASS_ENDED : undefined });
 
@@ -1457,6 +1659,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // it skipped the ownership check entirely and let anyone cancel any booking
       // by guessing its id. Staff cancel through the admin, not through here.
       if (!isAdmin(req) && b.mcode !== String(mcode || '')) throw new Error('not your booking');
+      if (b.slot_id == null) throw new Error(REZERV_READONLY);
       if (b.status !== 'booked') throw new Error('already ' + b.status);
 
       const hoursLeft = (new Date(b.start_at) - bkkNow()) / 3600000;
@@ -1470,7 +1673,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       await client.query('COMMIT');
       res.json({
-        success: true, creditReturned: refund,
+        success: true, creditReturned: refund, cutoffHours: CANCEL_CUTOFF_HOURS,
         message: refund ? 'Cancelled — your credit is back.'
           : `Cancelled. Less than ${CANCEL_CUTOFF_HOURS}h before class, so the credit is used.`,
       });
@@ -1503,13 +1706,32 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   });
 
   // ── admin ─────────────────────────────────────────────────────────────────
+  // Newest first by when the order was made, so thousands of Rezerv payments
+  // (dated when they were paid) never push today's orders off the list.
+  // ?from=&to= (Bangkok days, either end), ?source=rezerv|aybkk, ?limit= (≤2000).
   app.get('/api/bkk/admin/orders', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     try {
+      const where = [], args = [];
+      for (const [k, op] of [['from', '>='], ['to', '<=']]) {
+        if (req.query[k] == null || req.query[k] === '') continue;
+        if (!realYmd(req.query[k])) return res.status(400).json({ error: `${k} must be a date (YYYY-MM-DD)` });
+        args.push(req.query[k]);
+        where.push(`${PAY_DAY} ${op} $${args.length}::date`);
+      }
+      const src = String(req.query.source || '');
+      if (src === 'aybkk') where.push('o.source IS NULL');
+      else if (src) { args.push(src); where.push(`o.source = $${args.length}`); }
+      const limit = Math.min(2000, Math.max(1, parseInt(req.query.limit) || 200));
+      // name_en falls back to what Rezerv called it, so a payment for a package
+      // that is not in the catalogue still says what was bought.
       const r = await q(
-        `SELECT o.*, pr.name_en, pr.name_th, m.name AS member_name, m.email, m.code AS member_code
-         FROM bkk_orders o JOIN bkk_products pr ON pr.id=o.product_id
-         JOIN bkk_members m ON m.id=o.member_id ORDER BY o.id DESC LIMIT 200`);
+        `SELECT o.*, coalesce(pr.name_en, o.item_name) AS name_en, pr.name_th,
+           coalesce(pr.name_en, o.item_name) AS item, m.name AS member_name, m.email, m.code AS member_code
+         FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id
+         LEFT JOIN bkk_members m ON m.id=o.member_id
+         ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
+         ORDER BY o.created_at DESC, o.id DESC LIMIT ${limit}`, args);
       res.json({ orders: r.rows });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -1566,6 +1788,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // not in this system yet, so 'rezerv' seats them with no pass; anyone else
   // buys a drop-in on the spot (a real desk sale: today's money, VAT, receipt).
   // Over capacity is allowed and reported: the person is already in the room.
+  // The calendar adds the same way, with checkIn: false for a class that has
+  // not started: the seat is taken, nobody is checked in, source 'staff'.
   const WALKIN_COVERS = ['pass', 'rezerv', 'dropin'];
   // What a door add with this requestId already did, answered again as it was
   // the first time: staff tap a second time when the first reply is lost.
@@ -1590,8 +1814,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       return res.status(400).json({ error: 'slotId and date (YYYY-MM-DD) required' });
     if (cover === 'dropin' && !DESK_METHODS.includes(b.method))
       return res.status(400).json({ error: 'method must be cash, transfer or card' });
+    if (b.checkIn !== undefined && typeof b.checkIn !== 'boolean')
+      return res.status(400).json({ error: 'checkIn must be true or false' });
     const slotId = Number(b.slotId);
     const rid = b.requestId ? String(b.requestId).slice(0, 64) : null;
+    const checkIn = b.checkIn !== false;
+    const source = checkIn ? 'door' : 'staff';
+    // Nobody is in the room for a class on a later day: the rule of the
+    // check-in from inside a class. The door only ever sends today.
+    if (checkIn && date > bkkToday()) return res.status(409).json({ error: 'that class is not today yet' });
     try {
       const first = rid && await walkinDone(rid);
       if (first) return res.json(first);
@@ -1614,7 +1845,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const reply = (seat, extra = {}) => res.json({ success: true, name: member.name, code: member.code,
       className: seat.title, startAt: seat.startAt, overCapacity: !!seat.overCapacity, already: !!seat.already, ...extra });
     // A seat takeSeat found rather than made: the same add sent twice, or
-    // someone already on the list (checked in, nothing sold).
+    // someone already on the list (checked in unless checkIn is false, nothing sold).
     const listed = s => s.repeat ? walkinDone(rid).then(r => res.json(r))
       : reply({ title: s.slot.title, startAt: s.startAt, overCapacity: s.overCapacity, already: s.already },
         { cover: s.already ? (s.booking.cover || (s.booking.pass_id ? 'pass' : 'rezerv')) : cover });
@@ -1625,7 +1856,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       await client.query('BEGIN');
       seat = await takeSeat(client, { member, slotId, date, staff: true, allowOver: true,
-        cover: cover === 'dropin' ? null : cover, checkIn: true, source: 'door', requestId: rid });
+        cover: cover === 'dropin' ? null : cover, checkIn, source, requestId: rid, onList: true });
       await client.query('COMMIT');
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
@@ -1638,8 +1869,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (seat) return await listed(seat);
       const pr = (await q(`SELECT * FROM bkk_products WHERE code='dropin' AND active`)).rows[0];
       if (!pr) return res.status(404).json({ error: 'the drop-in is not on sale' });
-      const { o, act } = await deskSale({ member, pr, method: b.method, slotId, date, checkIn: true,
-        source: 'door', requestId: rid });
+      const { o, act } = await deskSale({ member, pr, method: b.method, slotId, date, checkIn,
+        source, requestId: rid });
       if (act && act.unsold) return await listed(act.seat);
       // Paid, but the seat went in the moment between: the money and the pass
       // stand, and the shala has the Telegram ping to put them on by hand.
@@ -1657,6 +1888,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const o = (await q('SELECT * FROM bkk_orders WHERE id=$1', [req.params.id])).rows[0];
       if (!o) return res.status(404).json({ error: 'not found' });
       if (o.status === 'paid') return res.json({ success: true, already: true });
+      if (o.source === 'rezerv') return res.status(409).json({ error: 'a payment moved from Rezerv is history: it cannot be activated' });
       const act = await activateOrder(o, { note: 'MANUAL ACTIVATION by admin' });
       res.json({ success: true, booking: act && act.booking || undefined, bookingError: act && act.bookingError || undefined });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -1897,13 +2129,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const r = await q(
         `SELECT m.*,
            (SELECT count(*)::int FROM bkk_bookings b
-             WHERE b.member_id = m.id AND b.status='booked') AS booked,
+             WHERE b.member_id = m.id AND b.status='booked' AND b.start_at >= now()) AS booked,
            EXISTS (SELECT 1 FROM bkk_passes p WHERE p.member_id = m.id AND p.status='active'
              AND (p.valid_until IS NULL OR p.valid_until >= (now() AT TIME ZONE 'Asia/Bangkok')::date)
              AND (p.kind='unlimited' OR p.credits_used < p.credits_total)) AS has_pass
          FROM bkk_members m
          WHERE lower(m.name) LIKE $1 OR lower(m.email) LIKE $1
-            OR lower(m.code) LIKE $1 OR coalesce(m.phone,'') LIKE $1
+            OR lower(m.code) LIKE $1 OR coalesce(m.phone,'') LIKE $1 OR lower(coalesce(m.rezerv_id,'')) LIKE $1
          ORDER BY m.name LIMIT 25`, [like]);
       const ids = r.rows.map(m => m.id);
       const passes = ids.length ? (await q(
@@ -1980,6 +2212,17 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!m || !MONTHS[m[2].toLowerCase()]) return null;
     return `${m[3]}-${String(MONTHS[m[2].toLowerCase()]).padStart(2, '0')}-${m[1].padStart(2, '0')}`;
   }
+  // 2- and 6-month plans are no longer sold, but Rezerv students still hold
+  // them: keep the package as a retired (never for sale) record.
+  async function planProduct(db, code) {
+    const pr = (await db.query('SELECT * FROM bkk_products WHERE code=$1', [code])).rows[0];
+    if (pr || !RETIRED_PLANS[code]) return pr || null;
+    const r = RETIRED_PLANS[code];
+    return (await db.query(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort,active)
+                   VALUES ($1,$2,$3,$4,'unlimited',NULL,$5,2,$6,false)
+                   ON CONFLICT (code) DO UPDATE SET code=EXCLUDED.code RETURNING *`,
+      [code, r.en, r.th, r.price, r.days, r.sort])).rows[0];
+  }
   app.post('/api/bkk/admin/import', async (req, res) => {
     if (adminOnly(req, res)) return;
     const rows = Array.isArray((req.body || {}).rows) ? req.body.rows.slice(0, 500) : [];
@@ -1993,16 +2236,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         const plan = IMPORT_PLANS.find(([re]) => re.test(String(row.plan || '').trim()));
         const until = importDate(row.until);
         if (!plan || !until) { out.skipped.push(`${name}: plan or end date not understood`); continue; }
-        let pr = (await q('SELECT * FROM bkk_products WHERE code=$1', [plan[1]])).rows[0];
-        // 2- and 6-month plans are no longer sold, but Rezerv students still hold
-        // them: keep the package as a retired (never for sale) record.
-        if (!pr && RETIRED_PLANS[plan[1]]) {
-          const r = RETIRED_PLANS[plan[1]];
-          pr = (await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort,active)
-                         VALUES ($1,$2,$3,$4,'unlimited',NULL,$5,2,$6,false)
-                         ON CONFLICT (code) DO UPDATE SET code=EXCLUDED.code RETURNING *`,
-            [plan[1], r.en, r.th, r.price, r.days, r.sort])).rows[0];
-        }
+        const pr = await planProduct(pool, plan[1]);
         if (!pr) { out.skipped.push(`${name}: package ${plan[1]} missing`); continue; }
 
         let m = email && email.includes('@')
@@ -2037,6 +2271,747 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       console.log(`✓ bkk: Rezerv import ${JSON.stringify({ ...out, skipped: out.skipped.length })}`);
       res.json({ success: true, ...out });
     } catch (e) { res.status(500).json({ error: e.message, ...out }); }
+  });
+
+  // ── keep all history: everything from Rezerv (Oct 2026) ───────────────────
+  // Rezerv's export columns were not known when this was written, so the admin
+  // page maps the file's columns to the field names below and this reads only
+  // those: a birthday, address, ID or card number in the file is never read.
+  // One transaction per call, and a dry run is that same run rolled back, so it
+  // reports exactly what the import would do. Imports never go through
+  // activateOrder (no pass, no Telegram, no receipt) and never touch credits.
+  const IMPORT_MAX_ROWS = 1000;
+  const clean = (v, n) => noCards(String(v ?? '').replace(/\s+/g, ' ').trim()).slice(0, n);
+  // Ids and phones are not free text: the card scrub would turn every tenth
+  // long id into the same "[card number removed]" and merge people.
+  const cleanId = (v, n = 100) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
+  // Excel drops leading zeros (00123 → 123), so an all-digit id is kept without them.
+  const importId = v => { const s = cleanId(v); return /^\d+$/.test(s) ? s.replace(/^0+(?=\d)/, '') : s; };
+  // …and writes long ones as 1.23E+15, which no longer says which id it was.
+  const excelId = v => /^\d+(\.\d+)?e\+?\d+$/i.test(cleanId(v));
+
+  // Every skip reason and note carries a code and its values, so the admin
+  // page can say it in Thai. The English text is for anything else.
+  const THEN = { hand: 'check by hand', made: 'made a new student', madeNoEmail: 'made a new student without the email' };
+  const IMPORT_EN = {
+    noName: () => 'no name',
+    sharePhone: (n, p) => `${n} students share the phone ${p}: add email`,
+    sameName: (n, name) => `${n} students named ${name}: add email or phone`,
+    noWho: () => 'no student on this row: map a customer id, email, phone or name',
+    notFound: () => 'student not found: add their name to make a new one',
+    clashEmail: (e, name, code, rz, then) => `${e} is on ${name}'s profile (${code}, Rezerv id ${rz}): ${THEN[then]}`,
+    clashPhone: (p, name, code, fileName, then) => `phone ${p} is on ${name}'s profile (${code}), the file says ${fileName}: ${THEN[then]}`,
+    clashOtherEmail: (name, code, e, then) => `a student named ${name} (${code}) has another email (${e}): ${THEN[then]}`,
+    excelId: v => `id "${v}": Excel changed this id: export again without opening in Excel`,
+    badDate: v => `date "${v}" not understood`,
+    badTime: v => `time "${v}" not understood`,
+    badStatus: v => `status "${v}" not understood`,
+    waitlist: () => 'a waiting-list place, not a visit',
+    noSlot: (time, date) => `no class on our timetable at ${time || 'that time'} on ${classWhen(date, '').slice(0, -2)}: book it by hand`,
+    moonDay: d => `${d} is a moon day: the shala is closed`,
+    classOff: (title, d) => `${title} on ${d} is cancelled`,
+    idReused: (id, what) => `Rezerv id ${id} is already used for a different ${what}: map a per-line id, or none`,
+    badAmount: v => `amount "${v}" not understood`,
+    payStatus: v => `payment status "${v}" not understood`,
+    notMoney: v => `payment status "${v}": no money came in, so it is not kept`,
+    badPlan: v => `package "${v}" not understood`,
+    badUntil: v => `end date "${v}" not understood`,
+    badStart: v => `start date "${v}" not understood`,
+    startsAfterEnd: () => 'it starts after it ends',
+    noPackage: c => `package ${c} missing`,
+    badLeft: v => `classes left "${v}" not understood`,
+    duplicate: () => 'already there (a duplicate)',
+    notEmail: v => `"${v}" is not an email address: left out`,
+    badJoined: v => `joined date "${v}" not understood: left out`,
+    badCheckIn: v => `check-in time "${v}" not understood: left out`,
+    overCap: (n, cap, title, d) => `over capacity: ${n} for ${cap} places in ${title} on ${d}`,
+    badVat: v => `VAT "${v}" not understood: 0 kept`,
+    emailTaken: (e, name, code, to) => `${e} is on ${name}'s profile (${code}): not added to ${to}`,
+    keepsEmail: (name, e, fe) => `${name} keeps the email ${e}; the file says ${fe}`,
+    keepsRezervId: (name, id, fid) => `${name} keeps the Rezerv id ${id}; the file says ${fid}`,
+    leftOver: (left, total) => `${left} classes left is more than the ${total} in the package: ${total} kept`,
+    keptHere: (here, file) => `Rezerv says ${file}, but it is ${here} here: kept as it is here`,
+    cameDoor: file => `checked in at our door; Rezerv says ${file}: not added`,
+    newStudent: name => `new student: ${name}`,
+    pastBooked: n => `${n} past visits say booked, not attended: kept as booked, so they do not count as classes practised. `
+      + 'If Rezerv never marked attendance, import again with past bookings counted as attended.',
+  };
+  const why = (code, ...vals) => ({ code, vals, text: IMPORT_EN[code](...vals) });
+
+  // Who a row is about. rezervKey: the column holding their Rezerv customer id.
+  function importWho(row, rezervKey, warn) {
+    const raw = String(row.email ?? '').trim().toLowerCase();
+    const email = raw && raw.length <= 200 && EMAIL_RE.test(raw) ? raw : null;
+    if (raw && !email) warn(why('notEmail', raw.slice(0, 60)));
+    return { rezervId: importId(row[rezervKey]) || null, email, phone: cleanId(row.phone, 40) || null,
+      name: clean(row.name, 120) || null, bad: excelId(row[rezervKey]) ? why('excelId', cleanId(row[rezervKey], 40)) : null };
+  }
+
+  // Rezerv id, then email, then phone (the last 9 digits: 081… and +6681… are
+  // one number), then the exact name. Someone found by phone or name who
+  // carries a different Rezerv id is somebody else. One whose email, or for a
+  // phone their name, says it is somebody else is a clash: never merged.
+  async function importFind(db, f) {
+    if (f.rezervId) {
+      const r = (await db.query('SELECT * FROM bkk_members WHERE rezerv_id=$1', [f.rezervId])).rows[0];
+      if (r) return { member: r };
+    }
+    let clash = null;
+    if (f.email) {
+      const r = (await db.query('SELECT * FROM bkk_members WHERE lower(email)=$1', [f.email])).rows[0];
+      if (r && !(f.rezervId && r.rezerv_id && r.rezerv_id !== f.rezervId)) return { member: r };
+      if (r) clash = { code: 'clashEmail', vals: [f.email, r.name, r.code, r.rezerv_id] };
+    }
+    const other = m => f.rezervId && m.rezerv_id && m.rezerv_id !== f.rezervId;
+    const norm = s => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const emailOff = m => f.email && m.email && m.email.toLowerCase() !== f.email;
+    const nameOff = m => f.name && norm(m.name) !== norm(f.name);
+    const clashOf = m => emailOff(m) ? { code: 'clashOtherEmail', vals: [m.name, m.code, m.email] }
+      : { code: 'clashPhone', vals: [f.phone, m.name, m.code, f.name] };
+    const digits = String(f.phone || '').replace(/\D/g, '');
+    if (digits.length >= 9) {
+      const rows = (await db.query(
+        `SELECT * FROM bkk_members WHERE right(regexp_replace(coalesce(phone,''), '\\D', '', 'g'), 9) = $1 ORDER BY id`,
+        [digits.slice(-9)])).rows.filter(m => !other(m));
+      // A shared family phone, or a placeholder like 0000000000, is no proof alone.
+      const fits = rows.filter(m => !emailOff(m) && !nameOff(m));
+      if (fits.length === 1) return { member: fits[0] };
+      if (fits.length > 1) return { reason: why('sharePhone', fits.length, f.phone) };
+      if (rows.length && !clash) clash = clashOf(rows[0]);
+    }
+    if (f.name) {
+      const rows = (await db.query(
+        `SELECT * FROM bkk_members WHERE lower(regexp_replace(btrim(name), '\\s+', ' ', 'g')) = lower($1) ORDER BY id`,
+        [f.name.replace(/\s+/g, ' ').trim()])).rows.filter(m => !other(m));
+      const fits = rows.filter(m => !emailOff(m));
+      if (fits.length === 1) return { member: fits[0] };
+      if (fits.length > 1) return { reason: why('sameName', fits.length, f.name) };
+      if (rows.length && !clash) clash = clashOf(rows[0]);
+    }
+    return clash ? { clash } : {};
+  }
+
+  const importNewMember = (db, f) => db.query(
+    `INSERT INTO bkk_members (code,name,email,phone,rezerv_id,joined_on,source)
+     VALUES ($1,$2,$3,$4,$5,$6,'rezerv') RETURNING *`,
+    [memberCode(), f.name, f.email, f.phone, f.rezervId, f.joinedOn || null]).then(r => r.rows[0]);
+
+  // Fills what a found student is missing. Never overwrites: a different
+  // email or Rezerv id on file stays, and the import says so.
+  async function fillMember(db, m, f, warn) {
+    const set = {};
+    if (f.email && !m.email) {
+      const o = (await db.query('SELECT code,name FROM bkk_members WHERE lower(email)=$1 AND id<>$2', [f.email, m.id])).rows[0];
+      if (o) warn(why('emailTaken', f.email, o.name, o.code, m.name));
+      else set.email = f.email;
+    } else if (f.email && String(m.email).toLowerCase() !== f.email) {
+      warn(why('keepsEmail', m.name, m.email, f.email));
+    }
+    if (f.phone && !m.phone) set.phone = f.phone;
+    if (f.joinedOn && !m.joined_on) set.joined_on = f.joinedOn;
+    if (f.rezervId && !m.rezerv_id) set.rezerv_id = f.rezervId;
+    else if (f.rezervId && m.rezerv_id !== f.rezervId) warn(why('keepsRezervId', m.name, m.rezerv_id, f.rezervId));
+    const keys = Object.keys(set);
+    if (!keys.length) return false;
+    await db.query(`UPDATE bkk_members SET ${keys.map((k, i) => `${k}=$${i + 2}`).join(', ')} WHERE id=$1`,
+      [m.id, ...keys.map(k => set[k])]);
+    return true;
+  }
+
+  // For visits, payments and passes: a new student only when a name is given
+  // and nobody matches.
+  async function importStudent(db, row, ctx, warn) {
+    const f = importWho(row, 'memberRezervId', warn);
+    if (f.bad) return { skip: f.bad };
+    if (!f.rezervId && !f.email && !f.phone && !f.name) return { skip: why('noWho') };
+    const hit = await importFind(db, f);
+    if (hit.reason) return { skip: hit.reason };
+    if (hit.member) return { member: hit.member, f };
+    // Somebody else's email, phone or name: their visits and money must not
+    // land on that profile, and nobody can tell from here who this is.
+    if (hit.clash) return { skip: why(hit.clash.code, ...hit.clash.vals, 'hand') };
+    if (!f.name) return { skip: why('notFound') };
+    ctx.made = f.name;
+    return { member: await importNewMember(db, f), f };
+  }
+
+  // Rezerv's own id for the row, else a hash of what makes it that row. The
+  // nth identical row in a file is its own record (two drop-ins on one day):
+  // the page numbers them over the whole file (row.nth), as a batch of 1,000
+  // rows cannot see the one before it.
+  function importRef(kind, rezervId, parts, row, ctx) {
+    const id = importId(rezervId);
+    if (id) return id;
+    const h = crypto.createHash('sha1').update([kind, ...parts].join('|')).digest('hex').slice(0, 24);
+    let n = Number.isInteger(row.nth) && row.nth > 0 ? row.nth : 1;
+    while (ctx.seen.has(`${h}#${n}`)) n++;
+    ctx.seen.add(`${h}#${n}`);
+    return `h:${h}${n > 1 ? '#' + n : ''}`;
+  }
+
+  // Weekday + start time (active or not). Online and shala classes share
+  // times, so the class name decides between them; with no time, only a name
+  // that one slot that weekday carries.
+  function matchSlot(slots, date, time, className) {
+    const wd = new Date(`${date}T12:00:00${TZ_OFFSET}`).getUTCDay();
+    const name = String(className || '').toLowerCase();
+    let c = slots.filter(s => s.weekday === wd && (time ? s.start_time === time : name && s.title.toLowerCase() === name));
+    if (!time) return c.length === 1 ? c[0] : null;
+    if (c.length > 1) {
+      const exact = c.filter(s => s.title.toLowerCase() === name);
+      const online = /online|zoom|ออนไลน์/i.test(name);
+      const kind = c.filter(s => !!s.is_online === online);
+      c = exact.length ? exact : kind.length ? kind : c;
+    }
+    c.sort((a, b) => (b.active - a.active) || a.id - b.id);
+    return c[0] || null;
+  }
+
+  async function importMemberRow(db, row, ctx, warn) {
+    const f = importWho(row, 'rezervId', warn);
+    if (f.bad) return { skip: f.bad };
+    if (!f.name) return { skip: why('noName') };
+    const jRaw = clean(row.joinedOn, 40);
+    const joined = jRaw ? parseWhen(jRaw) : null;
+    if (jRaw && !joined) warn(why('badJoined', jRaw));
+    f.joinedOn = joined ? joined.date : null;
+    const hit = await importFind(db, f);
+    if (hit.reason) return { skip: hit.reason };
+    if (!hit.member) {
+      // Somebody else holds that email, phone or name: a new student, never a merge.
+      if (hit.clash) {
+        const noEmail = hit.clash.code === 'clashEmail';
+        warn(why(hit.clash.code, ...hit.clash.vals, noEmail ? 'madeNoEmail' : 'made'));
+        if (noEmail) f.email = null;
+      }
+      await importNewMember(db, f);
+      return { result: 'added' };
+    }
+    return { result: await fillMember(db, hit.member, f, warn) ? 'updated' : 'matched' };
+  }
+
+  // A "Checked in" column of Yes/No instead of a time.
+  const CI_YES = /^(yes|y|true|1|[✓✔x]|ใช่|มา)$/i, CI_NO = /^(no|n|false|0|[✗✘]|ไม่|ไม่มา)$/i;
+  async function importVisit(db, row, ctx, warn) {
+    if (excelId(row.rezervId)) return { skip: why('excelId', cleanId(row.rezervId, 40)) };
+    const when = parseWhen(row.date);
+    if (!when) return { skip: why('badDate', clean(row.date, 40)) };
+    const tRaw = clean(row.time, 20);
+    // Excel saves a date-only cell as "04/10/2026 0:00": that is no time at all.
+    const time = tRaw ? parseClock(tRaw) : when.time === '00:00' ? null : when.time;
+    if (tRaw && !time) return { skip: why('badTime', tRaw) };
+    let status = visitStatus(row.status);
+    if (status === undefined) return { skip: why('badStatus', clean(row.status, 40)) };
+    if (status === 'waitlist') return { skip: why('waitlist') };
+    const ciRaw = clean(row.checkedInAt, 40);
+    const ciSaid = CI_YES.test(ciRaw) ? 'yes' : CI_NO.test(ciRaw) ? 'no' : null;
+    let ci = null;
+    if (ciRaw && !ciSaid) {
+      ci = parseWhen(ciRaw) || (parseClock(ciRaw) ? { date: when.date, time: parseClock(ciRaw) } : null);
+      if (!ci) warn(why('badCheckIn', ciRaw));
+    }
+
+    const className = clean(row.className, 120) || null;
+    const slot = matchSlot(ctx.slots, when.date, time, className);
+    const startAt = startAtISO(when.date, slot ? slot.start_time : (time || '00:00'));
+    const begun = new Date(startAt) <= ctx.now;
+    if ((ci || ciSaid === 'yes') && (status === null || status === 'booked')) status = 'attended';
+    if (ciSaid === 'no' && (status === null || status === 'booked')) status = 'unchecked';
+    // Said not to have come: a no-show, never counted as attended by the tick box.
+    if (status === 'unchecked') status = begun ? 'noshow' : 'booked';
+    // No status: a row in a visits file is a visit, or a booking still to come.
+    if (status === null) status = begun ? 'attended' : 'booked';
+    if (status === 'booked' && begun) {
+      if (ctx.pastBookedAttended) status = 'attended'; else ctx.rowPastBooked = true;
+    }
+    // A booking still to come is a real seat: it must be a class we run.
+    const future = when.date >= ctx.today;
+    let ov = null;
+    if (status === 'booked' && future) {
+      if (!slot || !slot.active) return { skip: why('noSlot', time, when.date) };
+      if (moonDaysBetween(when.date, when.date).size) return { skip: why('moonDay', when.date) };
+      ov = (await db.query('SELECT * FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2', [slot.id, when.date])).rows[0];
+      if (ov && ov.cancelled) return { skip: why('classOff', slot.title, when.date) };
+    }
+
+    const who = await importStudent(db, row, ctx, warn);
+    if (who.skip) return who;
+    const m = who.member;
+    const own = importId(row.rezervId);
+    const ref = importRef('visits', row.rezervId, [m.id, when.date, time || '', className || (slot ? slot.title : '')], row, ctx);
+    const t = {
+      status: status === 'attended' || status === 'booked' ? 'booked' : status === 'late' ? 'cancelled' : status,
+      checkedIn: status === 'attended' ? (ci && ci.time ? startAtISO(ci.date, ci.time) : startAt) : null,
+      reason: status === 'late' ? 'late cancel (Rezerv)' : status === 'cancelled' ? 'cancelled in Rezerv' : null,
+    };
+    const had = (await db.query(`SELECT *, to_char(class_date,'YYYY-MM-DD') AS d FROM bkk_bookings
+      WHERE source='rezerv' AND source_ref=$1`, [ref])).rows[0];
+    if (had) {
+      // One Rezerv id on two different visits: a class or order id mapped as the booking id.
+      if (own && (had.member_id !== m.id || had.d !== when.date || new Date(had.start_at).getTime() !== Date.parse(startAt))) {
+        return { skip: why('idReused', own, 'visit') };
+      }
+      if (had.status === t.status && !!had.checked_in_at === !!t.checkedIn) return { result: 'matched' };
+      // Imported before. Rezerv may since have marked it attended or cancelled,
+      // but only forward: a check-in at our door, a seat cancelled on aybkk.net
+      // or a no-show is never undone by a later export.
+      const here = visitStatusOut(had), file = t.checkedIn ? 'attended' : t.status;
+      if (had.status !== 'booked' || had.checked_in_at) {
+        // Rezerv never sees our door, so "booked" there next to a check-in here is expected.
+        if (!(here === 'attended' && file === 'booked')) warn(why('keptHere', here, file));
+        return { result: 'matched' };
+      }
+      await db.query(`UPDATE bkk_bookings SET status=$2, checked_in_at=coalesce(checked_in_at, $3), cancel_reason=$4,
+          cancelled_at=CASE WHEN $2='cancelled' THEN coalesce(cancelled_at, now()) ELSE cancelled_at END WHERE id=$1`,
+        [had.id, t.status, t.checkedIn, t.reason]);
+      return { result: 'updated' };
+    }
+    if (slot && t.status !== 'booked') {
+      // Checked in at our door, which Rezerv never saw: they came, so its
+      // no-show or cancel for that class is not added next to the visit.
+      const came = (await db.query(`SELECT 1 FROM bkk_bookings WHERE slot_id=$1 AND class_date=$2 AND member_id=$3
+          AND status='booked' AND checked_in_at IS NOT NULL`, [slot.id, when.date, m.id])).rows[0];
+      if (came) { warn(why('cameDoor', t.status)); return { result: 'matched' }; }
+    }
+    if (slot && t.status === 'booked') {
+      // On the list here already (the door, or booked on aybkk.net): one visit, not two.
+      const seat = (await db.query(
+        `SELECT id, checked_in_at FROM bkk_bookings WHERE slot_id=$1 AND class_date=$2 AND member_id=$3 AND status='booked'`,
+        [slot.id, when.date, m.id])).rows[0];
+      if (seat) {
+        if (!t.checkedIn || seat.checked_in_at) return { result: 'matched' };
+        await db.query('UPDATE bkk_bookings SET checked_in_at=$2 WHERE id=$1', [seat.id, t.checkedIn]);
+        return { result: 'updated' };
+      }
+      if (future) {
+        await db.query('SELECT pg_advisory_xact_lock($1::int, $2::int)', [slot.id, Number(when.date.replace(/-/g, ''))]);
+        const cap = ov && ov.capacity != null ? ov.capacity : slot.capacity;
+        const taken = await seatsTaken(db, slot.id, when.date);
+        if (taken >= cap) warn(why('overCap', taken + 1, cap, slot.title, when.date));
+      }
+    }
+    await db.query(
+      `INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,status,booked_at,checked_in_at,cancel_reason,cover,source,source_ref,class_title)
+       VALUES ($1,$2,$3,$4,$5,NULL,$6,$7,'rezerv','rezerv',$8,$9)`,
+      [slot ? slot.id : null, when.date, startAt, m.id, t.status, t.checkedIn, t.reason, ref, className]);
+    return { result: 'added' };
+  }
+
+  // What was bought, as a package in the catalogue when it clearly is one.
+  const ITEM_PLANS = [[/drop[\s-]*in|ครั้งเดียว/i, 'dropin'], ...IMPORT_PLANS];
+  async function itemProduct(db, item) {
+    if (!item) return null;
+    const exact = (await db.query(
+      `SELECT * FROM bkk_products WHERE lower(name_en)=lower($1) OR lower(coalesce(name_th,''))=lower($1) OR code=lower($1)
+       ORDER BY id LIMIT 1`, [item])).rows[0];
+    if (exact) return exact;
+    const plan = ITEM_PLANS.find(([re]) => re.test(item));
+    return plan ? (await db.query('SELECT * FROM bkk_products WHERE code=$1', [plan[1]])).rows[0] || null : null;
+  }
+
+  async function importPayment(db, row, ctx, warn) {
+    if (excelId(row.rezervId)) return { skip: why('excelId', cleanId(row.rezervId, 40)) };
+    const when = parseWhen(row.date);
+    if (!when) return { skip: why('badDate', clean(row.date, 40)) };
+    const amount = parseAmount(row.amount);
+    if (amount == null) return { skip: why('badAmount', clean(row.amount, 40)) };
+    // Only money that came in, or went back: a failed, pending or voided payment is not money.
+    const st = payStatus(clean(row.status, 60));
+    if (st === undefined) return { skip: why('payStatus', clean(row.status, 40)) };
+    if (st === 'skip') return { skip: why('notMoney', clean(row.status, 40)) };
+    const amt = st === 'refund' ? -Math.abs(Math.round(amount)) : Math.round(amount);
+    let vat = 0;
+    const vRaw = clean(row.vat, 40);
+    if (vRaw) {
+      const v = parseAmount(vRaw.replace(/%/g, ''));
+      if (v == null) warn(why('badVat', vRaw));
+      // "7%" is the rate, so the VAT inside the amount paid. A refund takes its VAT back.
+      else vat = Math.abs(Math.round(vRaw.includes('%') ? amt * v / (100 + v) : v)) * (amt < 0 ? -1 : 1);
+    }
+    const item = clean(row.item, 120) || null;
+    const methodRaw = clean(row.method, 60);
+    const note = clean(row.note, 300);
+    const who = await importStudent(db, row, ctx, warn);
+    if (who.skip) return who;
+    const own = importId(row.rezervId);
+    const ref = importRef('payments', row.rezervId, [who.member.id, when.date, when.time || '', item || '', amt], row, ctx);
+    const had = (await db.query(`SELECT o.member_id, o.amount_thb, o.item_name, to_char(${PAY_DAY},'YYYY-MM-DD') AS d
+      FROM bkk_orders o WHERE o.source='rezerv' AND o.source_ref=$1`, [ref])).rows[0];
+    if (had) {
+      // One Rezerv id on two different payments: an order or invoice with several lines.
+      if (own && (had.member_id !== who.member.id || had.amount_thb !== amt || had.d !== when.date
+        || (had.item_name || '') !== (item || ''))) return { skip: why('idReused', own, 'payment') };
+      return { result: 'matched' };
+    }
+    const pr = await itemProduct(db, item);
+    let refno = newRefno();
+    for (let i = 0; i < 10 && (await db.query('SELECT 1 FROM bkk_orders WHERE refno=$1', [refno])).rows.length; i++) refno = newRefno();
+    const at = startAtISO(when.date, when.time || '00:00');
+    await db.query(
+      `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,status,gateway_note,
+         verified_at,created_at,method,item_name,source,source_ref)
+       VALUES ($1,$2,$3,$4,0,$5,$6,$7,$8,$9,$9,$10,$11,'rezerv',$12)`,
+      [refno, pr ? pr.id : null, who.member.id, amt - vat, vat, amt, amt < 0 ? 'refund' : 'paid',
+       [methodRaw, note].filter(Boolean).join(' | ') || 'moved from Rezerv', at, payMethod(methodRaw), item, ref]);
+    return { result: 'added' };
+  }
+
+  // The paste importer's fields plus memberRezervId and start.
+  async function importPass(db, row, ctx, warn) {
+    row = { ...row, name: String(row.name || '').replace(/\s*\((renewed|staff)\)\s*/gi, ' ') };
+    const planRaw = clean(row.plan, 80);
+    const plan = IMPORT_PLANS.find(([re]) => re.test(planRaw));
+    if (!plan) return { skip: why('badPlan', planRaw) };
+    const until = parseWhen(row.until);
+    if (!until) return { skip: why('badUntil', clean(row.until, 40)) };
+    const sRaw = clean(row.start, 40);
+    const start = sRaw ? parseWhen(sRaw) : null;
+    if (sRaw && !start) return { skip: why('badStart', sRaw) };
+    if (start && start.date > until.date) return { skip: why('startsAfterEnd') };
+    // A year sold since 21 Oct 2026 has no free month: one that runs a year
+    // or less is the 12-month package, not the old 13-month one.
+    const code = plan[1] === 'unlim12' && start && (Date.parse(until.date) - Date.parse(start.date)) / 86400000 <= 366
+      ? 'unlim12m' : plan[1];
+    const pr = await planProduct(db, code);
+    if (!pr) return { skip: why('noPackage', code) };
+    const total = pr.kind === 'credits' ? (pr.credits || 10) : null;
+    // "3", "3/10" or "3 classes": the number at the start. Unreadable is never "all left".
+    let left = null;
+    const lRaw = clean(row.classesLeft, 40);
+    if (total != null && lRaw) {
+      const lm = lRaw.match(/^(\d+)/);
+      if (!lm) return { skip: why('badLeft', lRaw) };
+      left = Number(lm[1]);
+      if (left > total) warn(why('leftOver', left, total));
+    }
+    const who = await importStudent(db, row, ctx, warn);
+    if (who.skip) return who;
+    const m = who.member;
+    // As the paste importer did: an email or phone on the pass list fills a gap.
+    if (!ctx.made) await fillMember(db, m, who.f, warn);
+    if ((await db.query('SELECT 1 FROM bkk_passes WHERE member_id=$1 AND product_id=$2 AND valid_until=$3',
+      [m.id, pr.id, until.date])).rows.length) return { result: 'matched' };
+    const from = start ? start.date
+      : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
+    await db.query(`INSERT INTO bkk_passes
+        (member_id,product_id,order_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,note,source)
+      VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,'moved from Rezerv','rezerv')`,
+      [m.id, pr.id, pr.kind, total, left != null ? Math.max(0, total - left) : 0,
+       pr.daily_cap, pr.valid_days, from, until.date]);
+    return { result: 'added' };
+  }
+
+  const IMPORTERS = { members: importMemberRow, visits: importVisit, payments: importPayment, passes: importPass };
+
+  app.post('/api/bkk/admin/import/:kind', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const kind = req.params.kind;
+    if (!IMPORTERS[kind]) return res.status(404).json({ error: 'kind must be members, visits, payments or passes' });
+    const b = req.body || {};
+    if (!Array.isArray(b.rows)) return res.status(400).json({ error: 'rows must be a list' });
+    if (b.rows.length > IMPORT_MAX_ROWS) return res.status(400).json({ error: `at most ${IMPORT_MAX_ROWS} rows per call: send them in batches` });
+    // Writing takes an explicit dryRun:false; anything else only looks.
+    const dryRun = b.dryRun !== false;
+    const firstRow = Number.isInteger(b.firstRow) && b.firstRow > 0 ? b.firstRow : 1;
+    const out = { kind, dryRun, total: b.rows.length, added: 0, matched: 0, updated: 0, newMembers: 0, skipped: [], warnings: [] };
+    const ctx = { today: bkkToday(), now: bkkNow(), seen: new Set(), pastBooked: 0, pastBookedAttended: b.pastBookedAttended === true };
+    // A reason or note as the page gets it: the English text, plus its code and values to say it in Thai.
+    const said = (x, key) => typeof x === 'string' ? { [key]: x } : { [key]: x.text, code: x.code, vals: x.vals };
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      // One import at a time: two at once could each make the same new student.
+      await client.query(`SELECT pg_advisory_xact_lock(hashtext('bkk_import'))`);
+      ctx.slots = (await client.query('SELECT * FROM bkk_class_slots ORDER BY id')).rows;
+      for (let i = 0; i < b.rows.length; i++) {
+        const row = firstRow + i;
+        const notes = [];
+        ctx.made = null; ctx.rowPastBooked = false;
+        await client.query('SAVEPOINT import_row');
+        let r;
+        try {
+          const data = b.rows[i] && typeof b.rows[i] === 'object' ? b.rows[i] : {};
+          r = await IMPORTERS[kind](client, data, ctx, message => notes.push({ row, ...said(message, 'message') }));
+        } catch (e) {
+          r = { skip: e.code === '23505' ? why('duplicate') : e.message };
+        }
+        // A skipped row leaves nothing behind, not even a new student.
+        if (r.skip) {
+          await client.query('ROLLBACK TO SAVEPOINT import_row');
+          out.skipped.push({ row, ...said(r.skip, 'reason') });
+          continue;
+        }
+        await client.query('RELEASE SAVEPOINT import_row');
+        out[r.result]++;
+        if (ctx.rowPastBooked) ctx.pastBooked++;
+        if (ctx.made) { out.newMembers++; out.warnings.push({ row, ...said(why('newStudent', ctx.made), 'message') }); }
+        out.warnings.push(...notes);
+      }
+      if (ctx.pastBooked) out.warnings.push({ row: null, ...said(why('pastBooked', ctx.pastBooked), 'message') });
+      await client.query(dryRun ? 'ROLLBACK' : 'COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      return res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+    if (!dryRun) console.log(`✓ bkk: Rezerv ${kind} import: ${out.added} added, ${out.matched} matched, ${out.updated} updated, ${out.skipped.length} skipped`);
+    res.json(out);
+  });
+
+  // ── admin sees everything ─────────────────────────────────────────────────
+  // node-postgres reads a DATE as local midnight, so its local parts are the date.
+  const pgDate = d => d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : null;
+  const visitStatusOut = v => v.status === 'booked' && v.checked_in_at ? 'attended' : v.status;
+  const passOut = p => ({
+    id: p.id, name: p.name_en, nameTh: p.name_th, kind: p.kind, status: p.status,
+    source: p.source || (p.order_id ? 'order' : 'manual'), note: p.note,
+    creditsTotal: p.credits_total, creditsUsed: p.credits_used,
+    creditsLeft: p.kind === 'unlimited' ? null : (p.credits_total || 0) - (p.credits_used || 0),
+    dailyCap: p.daily_cap, validFrom: p.from_d, validUntil: p.until_d,
+    frozenFrom: p.frozen_from_d, frozenUntil: p.frozen_until_d, createdAt: p.created_at,
+  });
+  const PASS_DATES = `to_char(p.valid_from,'YYYY-MM-DD') AS from_d, to_char(p.valid_until,'YYYY-MM-DD') AS until_d,
+    to_char(p.frozen_from,'YYYY-MM-DD') AS frozen_from_d, to_char(p.frozen_until,'YYYY-MM-DD') AS frozen_until_d`;
+
+  // One student, all of it: every visit, payment, pass and note, newest first.
+  app.get('/api/bkk/admin/members/:code/history', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const m = (await q('SELECT * FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'member not found' });
+      const [visits, pays, passes, notes, photos, checks, active] = await Promise.all([
+        q(`SELECT b.id, to_char(b.class_date,'YYYY-MM-DD') AS date, ${VISIT_TIME} AS time,
+             coalesce(s.title, b.class_title) AS class, b.status, b.checked_in_at, b.cancelled_at, b.cancel_reason,
+             b.cover, b.source, b.slot_id, b.start_at
+           FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
+           WHERE b.member_id=$1 ORDER BY b.class_date DESC, b.start_at DESC, b.id DESC`, [m.id]),
+        q(`SELECT o.id, to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS date,
+             to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS time, coalesce(pr.name_en, o.item_name) AS item,
+             o.amount_thb, o.base_thb, o.fee_thb, o.vat_thb, o.method, o.status, o.source, o.refno, o.gateway_note
+           FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id
+           WHERE o.member_id=$1 ORDER BY ${PAY_AT} DESC, o.id DESC`, [m.id]),
+        q(`SELECT p.*, pr.name_en, pr.name_th, ${PASS_DATES} FROM bkk_passes p LEFT JOIN bkk_products pr ON pr.id=p.product_id
+           WHERE p.member_id=$1 ORDER BY coalesce(p.valid_from, (p.created_at AT TIME ZONE 'Asia/Bangkok')::date) DESC, p.id DESC`, [m.id]),
+        q(`SELECT n.id, to_char(n.class_date,'YYYY-MM-DD') AS date, n.created_at, n.body, n.to_work_on,
+             n.share_with_student, t.name AS teacher
+           FROM bkk_notes n LEFT JOIN bkk_teachers t ON t.id=n.teacher_id
+           WHERE n.member_id=$1 ORDER BY n.created_at DESC`, [m.id]),
+        q('SELECT count(*)::int AS n FROM bkk_photo_members WHERE member_id=$1', [m.id]),
+        q(`SELECT to_char(taken_on,'YYYY-MM-DD') AS date, resting_hr, sleep_hours, feel, note
+           FROM bkk_checks WHERE member_id=$1 ORDER BY taken_on DESC`, [m.id]),
+        activePass(m.id),
+      ]);
+      const today = bkkToday();
+      const daysAgo = n => ymd(new Date(Date.parse(`${today}T12:00:00${TZ_OFFSET}`) - n * 86400000));
+      const came = visits.rows.filter(v => visitStatusOut(v) === 'attended');
+      const money = pays.rows.filter(o => o.status === 'paid' || o.status === 'refund');
+      res.json({
+        member: { code: m.code, name: m.name, email: m.email, phone: m.phone, joinedOn: pgDate(m.joined_on),
+          source: m.source, rezervId: m.rezerv_id, createdAt: m.created_at },
+        summary: {
+          visits: came.length,
+          visitsLast30: came.filter(v => v.date > daysAgo(30)).length,
+          visitsLast90: came.filter(v => v.date > daysAgo(90)).length,
+          firstVisit: came.length ? came[came.length - 1].date : null,
+          lastVisit: came.length ? came[0].date : null,
+          noShows: visits.rows.filter(v => v.status === 'noshow' || (v.status === 'booked' && !v.checked_in_at && v.date < today)).length,
+          cancellations: visits.rows.filter(v => v.status === 'cancelled').length,
+          totalPaid: money.reduce((s, o) => s + o.amount_thb, 0),
+          payments: money.filter(o => o.status === 'paid').length,
+          activePass: active ? { name: active.name_en, kind: active.kind,
+            until: pgDate(active.valid_until),
+            creditsLeft: active.kind === 'unlimited' ? null : active.credits_total - active.credits_used } : null,
+        },
+        passes: passes.rows.map(passOut),
+        visits: visits.rows.map(v => ({ id: v.id, date: v.date, time: v.time, class: v.class, status: visitStatusOut(v),
+          checkedInAt: v.checked_in_at, cancelledAt: v.cancelled_at, cancelReason: v.cancel_reason,
+          cover: v.cover, source: v.source, upcoming: new Date(v.start_at) > bkkNow() && v.status === 'booked' })),
+        payments: pays.rows.map(o => ({ id: o.id, date: o.date, time: o.time, item: o.item, amount: o.amount_thb,
+          base: o.base_thb, fee: o.fee_thb, vat: o.vat_thb, method: o.method, status: o.status,
+          source: o.source || 'aybkk', refno: String(o.refno), note: o.gateway_note })),
+        notes: notes.rows.map(n => ({ id: n.id, date: n.date, createdAt: n.created_at, teacher: n.teacher,
+          body: n.body, toWorkOn: n.to_work_on, shared: n.share_with_student })),
+        photos: photos.rows[0].n,
+        checks: checks.rows.map(c => ({ date: c.date, restingHr: c.resting_hr,
+          sleepHours: c.sleep_hours == null ? null : Number(c.sleep_hours), feel: c.feel, note: c.note })),
+      });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ?from=&to= as Bangkok dates, both ends included.
+  function dayRange(qs, { required = false, maxDays = null } = {}) {
+    const { from, to } = qs;
+    if (!from && !to) return required ? { error: 'from and to (YYYY-MM-DD) required' } : { from: null, to: null };
+    if (!realYmd(from) || !realYmd(to)) return { error: 'from and to must both be dates (YYYY-MM-DD)' };
+    if (from > to) return { error: 'from is after to' };
+    if (maxDays && (Date.parse(to) - Date.parse(from)) / 86400000 + 1 > maxDays) return { error: `at most ${maxDays} days at a time` };
+    return { from, to };
+  }
+
+  // The shala over a stretch of days: who came, what came in, who to call.
+  app.get('/api/bkk/admin/report', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const r = dayRange(req.query, { required: true, maxDays: 400 });
+    if (r.error) return res.status(400).json({ error: r.error });
+    const { from, to } = r;
+    const today = bkkToday();
+    try {
+      const all = async (sql, args = [from, to]) => (await q(sql, args)).rows;
+      const inRange = `b.class_date BETWEEN $1::date AND $2::date`;
+      const paid = `o.status IN ('paid','refund') AND ${PAY_DAY} BETWEEN $1::date AND $2::date`;
+      const [v, first, vDay, vClass, vSource, mTot, mDay, mMethod, mItem, mSource, sold, expiring, notSeen] = await Promise.all([
+        all(`SELECT count(*) FILTER (WHERE ${ATTENDED})::int AS total,
+               count(*) FILTER (WHERE b.status='booked')::int AS booked,
+               count(*) FILTER (WHERE ${NOSHOW})::int AS no_shows,
+               count(*) FILTER (WHERE b.status='cancelled')::int AS cancelled,
+               count(DISTINCT b.member_id) FILTER (WHERE ${ATTENDED})::int AS students
+             FROM bkk_bookings b WHERE ${inRange}`),
+        all(`SELECT count(*)::int AS n FROM (SELECT min(b.class_date) AS first FROM bkk_bookings b
+               WHERE ${ATTENDED} GROUP BY b.member_id) f WHERE f.first BETWEEN $1::date AND $2::date`),
+        all(`SELECT to_char(b.class_date,'YYYY-MM-DD') AS date, count(*) FILTER (WHERE b.checked_in_at IS NOT NULL)::int AS attended,
+               count(*)::int AS booked
+             FROM bkk_bookings b WHERE b.status='booked' AND ${inRange} GROUP BY b.class_date ORDER BY b.class_date`),
+        all(`SELECT coalesce(s.title, b.class_title, 'Class') AS title, ${VISIT_TIME} AS time,
+               count(*) FILTER (WHERE b.checked_in_at IS NOT NULL)::int AS attended,
+               count(DISTINCT b.class_date) FILTER (WHERE b.checked_in_at IS NOT NULL)::int AS classes
+             FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
+             WHERE b.status='booked' AND ${inRange} GROUP BY 1,2 ORDER BY 2 NULLS LAST, 1`),
+        all(`SELECT coalesce(b.source,'aybkk') AS source, count(*)::int AS n FROM bkk_bookings b
+             WHERE ${ATTENDED} AND ${inRange} GROUP BY 1 ORDER BY n DESC, 1`),
+        all(`SELECT coalesce(sum(o.amount_thb),0)::int AS total, coalesce(sum(o.vat_thb),0)::int AS vat, count(*)::int AS n
+             FROM bkk_orders o WHERE ${paid}`),
+        all(`SELECT to_char(${PAY_DAY},'YYYY-MM-DD') AS date, sum(o.amount_thb)::int AS total
+             FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY 1`),
+        all(`SELECT o.method, count(*)::int AS n, sum(o.amount_thb)::int AS total
+             FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
+        all(`SELECT coalesce(pr.name_en, o.item_name, 'other') AS item, count(*)::int AS n, sum(o.amount_thb)::int AS total
+             FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
+        all(`SELECT coalesce(o.source,'aybkk') AS source, count(*)::int AS n, sum(o.amount_thb)::int AS total
+             FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
+        all(`SELECT count(*)::int AS n FROM bkk_orders o
+             WHERE o.status='paid' AND o.product_id IS NOT NULL AND ${PAY_DAY} BETWEEN $1::date AND $2::date`),
+        // Ends within 14 days, and nothing after it to carry on with.
+        all(`SELECT m.code, m.name, pr.name_en AS item, to_char(p.valid_until,'YYYY-MM-DD') AS until
+             FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
+             WHERE p.status='active' AND p.valid_until BETWEEN $1::date AND $1::date + 14
+               AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
+               AND NOT EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=p.member_id AND x.id<>p.id
+                 AND x.status IN ('active','frozen') AND (x.valid_until IS NULL OR x.valid_until > p.valid_until)
+                 AND (x.kind='unlimited' OR x.credits_used < x.credits_total))
+             ORDER BY p.valid_until, m.name`, [today]),
+        // Holds a pass they can use, and no class in the last 14 days: the "we miss you" list.
+        // A pass under 14 days old and no visit yet is a new student, not one who stopped coming.
+        all(`SELECT m.code, m.name, to_char(lv.last,'YYYY-MM-DD') AS last_visit, pr.name_en AS pass,
+               to_char(p.valid_until,'YYYY-MM-DD') AS until
+             FROM bkk_members m
+             JOIN LATERAL (SELECT * FROM bkk_passes p WHERE p.member_id=m.id AND p.status='active'
+               AND (p.valid_until IS NULL OR p.valid_until >= $1::date)
+               AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
+               ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1) p ON true
+             LEFT JOIN bkk_products pr ON pr.id=p.product_id
+             LEFT JOIN LATERAL (SELECT max(b.class_date) AS last FROM bkk_bookings b
+               WHERE b.member_id=m.id AND ${ATTENDED}) lv ON true
+             WHERE (lv.last IS NULL OR lv.last <= $1::date - 14)
+               AND (lv.last IS NOT NULL OR coalesce(p.valid_from, (p.created_at AT TIME ZONE 'Asia/Bangkok')::date) <= $1::date - 14)
+             ORDER BY lv.last NULLS FIRST, m.name`, [today]),
+      ]);
+      const t = v[0], mt = mTot[0];
+      res.json({
+        from, to,
+        visits: {
+          total: t.total, booked: t.booked, noShows: t.no_shows, cancelled: t.cancelled,
+          uniqueStudents: t.students, newStudents: first[0].n, byDay: vDay,
+          byClass: vClass.map(c => ({ ...c, avgPerClass: c.classes ? Math.round(c.attended / c.classes * 10) / 10 : 0 })),
+          bySource: vSource,
+        },
+        money: { total: mt.total, vat: mt.vat, count: mt.n, byDay: mDay, byMethod: mMethod, byItem: mItem, bySource: mSource },
+        passes: { sold: sold[0].n, expiringNext14: expiring },
+        notSeen: notSeen.map(n => ({ code: n.code, name: n.name, lastVisit: n.last_visit, pass: n.pass, until: n.until })),
+      });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Spreadsheets of everything. UTF-8 with a BOM so Excel reads Thai; a cell
+  // that starts with = + - @ would run as a formula, so it is made plain text.
+  const csvCell = v => typeof v === 'number' ? String(v)
+    : `"${String(v ?? '').replace(/^[=+\-@\t\r]/, "'$&").replace(/"/g, '""')}"`;
+  const EXPORTS = {
+    visits: {
+      head: ['date', 'time', 'class', 'status', 'checked_in', 'student', 'code', 'email', 'cover', 'source', 'cancel_reason', 'rezerv_ref'],
+      sql: `SELECT to_char(b.class_date,'YYYY-MM-DD') AS date, ${VISIT_TIME} AS time, coalesce(s.title, b.class_title) AS class,
+              CASE WHEN ${ATTENDED} THEN 'attended' ELSE b.status END AS status,
+              to_char(b.checked_in_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD HH24:MI') AS checked_in,
+              m.name AS student, m.code, m.email, b.cover, coalesce(b.source,'aybkk') AS source, b.cancel_reason,
+              CASE WHEN b.source='rezerv' THEN b.source_ref END AS rezerv_ref
+            FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
+            WHERE ($1::date IS NULL OR b.class_date BETWEEN $1::date AND $2::date) AND ($3::int IS NULL OR b.member_id=$3)
+            ORDER BY b.class_date, b.start_at, m.name, b.id`,
+    },
+    payments: {
+      head: ['date', 'time', 'student', 'code', 'email', 'item', 'amount', 'base', 'fee', 'vat', 'method', 'status', 'source', 'refno', 'note', 'rezerv_ref'],
+      sql: `SELECT to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS date,
+              to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','HH24:MI') AS time, m.name AS student, m.code, m.email,
+              coalesce(pr.name_en, o.item_name) AS item, o.amount_thb AS amount, o.base_thb AS base, o.fee_thb AS fee,
+              o.vat_thb AS vat, o.method, o.status, coalesce(o.source,'aybkk') AS source, o.refno::text AS refno,
+              o.gateway_note AS note, CASE WHEN o.source='rezerv' THEN o.source_ref END AS rezerv_ref
+            FROM bkk_orders o LEFT JOIN bkk_members m ON m.id=o.member_id LEFT JOIN bkk_products pr ON pr.id=o.product_id
+            WHERE ($1::date IS NULL OR ${PAY_DAY} BETWEEN $1::date AND $2::date) AND ($3::int IS NULL OR o.member_id=$3)
+            ORDER BY ${PAY_AT}, o.id`,
+    },
+    // With a range: everyone who booked, came or paid in it, or joined in it.
+    members: {
+      head: ['code', 'name', 'email', 'phone', 'joined_on', 'source', 'rezerv_id', 'created', 'visits', 'first_visit',
+        'last_visit', 'visits_in_range', 'paid_total', 'paid_in_range', 'active_pass', 'pass_until'],
+      sql: `SELECT m.code, m.name, m.email, m.phone, to_char(m.joined_on,'YYYY-MM-DD') AS joined_on,
+              coalesce(m.source,'aybkk') AS source, m.rezerv_id,
+              to_char(m.created_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS created,
+              v.visits, to_char(v.first,'YYYY-MM-DD') AS first_visit, to_char(v.last,'YYYY-MM-DD') AS last_visit,
+              v.in_range AS visits_in_range, coalesce(pd.total,0)::int AS paid_total, coalesce(pd.in_range,0)::int AS paid_in_range,
+              ap.name_en AS active_pass, to_char(ap.valid_until,'YYYY-MM-DD') AS pass_until
+            FROM bkk_members m
+            LEFT JOIN LATERAL (SELECT count(*)::int AS visits, min(b.class_date) AS first, max(b.class_date) AS last,
+                count(*) FILTER (WHERE b.class_date BETWEEN $1::date AND $2::date)::int AS in_range
+              FROM bkk_bookings b WHERE b.member_id=m.id AND ${ATTENDED}) v ON true
+            LEFT JOIN LATERAL (SELECT sum(o.amount_thb) AS total,
+                sum(o.amount_thb) FILTER (WHERE ${PAY_DAY} BETWEEN $1::date AND $2::date) AS in_range
+              FROM bkk_orders o WHERE o.member_id=m.id AND o.status IN ('paid','refund')) pd ON true
+            LEFT JOIN LATERAL (SELECT p.valid_until, pr.name_en FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+              WHERE p.member_id=m.id AND p.status='active'
+                AND (p.valid_until IS NULL OR p.valid_until >= (now() AT TIME ZONE 'Asia/Bangkok')::date)
+                AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
+              ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1) ap ON true
+            WHERE ($3::int IS NULL OR m.id=$3) AND ($1::date IS NULL
+              OR EXISTS (SELECT 1 FROM bkk_bookings b WHERE b.member_id=m.id AND b.class_date BETWEEN $1::date AND $2::date)
+              OR EXISTS (SELECT 1 FROM bkk_orders o WHERE o.member_id=m.id AND o.status IN ('paid','refund')
+                AND ${PAY_DAY} BETWEEN $1::date AND $2::date)
+              OR m.joined_on BETWEEN $1::date AND $2::date
+              OR (m.created_at AT TIME ZONE 'Asia/Bangkok')::date BETWEEN $1::date AND $2::date)
+            ORDER BY lower(m.name), m.id`,
+    },
+  };
+  // /export/visits.csv | payments.csv | members.csv, ?from=&to= (both or
+  // neither: neither is all time), ?member=CODE for one student.
+  app.get('/api/bkk/admin/export/:file', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const what = (String(req.params.file).match(/^(visits|payments|members)\.csv$/) || [])[1];
+    if (!what) return res.status(404).json({ error: 'export visits.csv, payments.csv or members.csv' });
+    const r = dayRange(req.query);
+    if (r.error) return res.status(400).json({ error: r.error });
+    try {
+      let memberId = null, code = '';
+      if (req.query.member) {
+        const m = (await q('SELECT id, code FROM bkk_members WHERE code=$1', [String(req.query.member)])).rows[0];
+        if (!m) return res.status(404).json({ error: 'member not found' });
+        memberId = m.id; code = `-${m.code}`;
+      }
+      const ex = EXPORTS[what];
+      const rows = (await q(ex.sql, [r.from, r.to, memberId])).rows;
+      const lines = [ex.head.join(',')].concat(rows.map(row => ex.head.map(h => csvCell(row[h])).join(',')));
+      const span = r.from ? `-${r.from}-to-${r.to}` : '';
+      res.set('Content-Type', 'text/csv; charset=utf-8')
+        .set('Content-Disposition', `attachment; filename="aybkk-${what}${code}${span}.csv"`)
+        .set('Cache-Control', 'no-store');
+      res.send('﻿' + lines.join('\r\n') + '\r\n');
+    } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   // Pause a pass — the injury case. The clock stops: the expiry moves out by the
@@ -2697,6 +3672,165 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // ── the class calendar (admin) ───────────────────────────────────────────
+  // Every class over a stretch of days with its counts, past ones included:
+  // the timetable as generated (moon days off), a closed class kept so staff
+  // can see it and reopen it, and any class with names on it, even one no
+  // longer run or on a moon day, so history never drops off the calendar.
+  // A Rezerv class moved over with no slot is one read-only class per
+  // (day, title, start time). key is what the page sends back for one class.
+  const CAL_TIME = `to_char(b.start_at AT TIME ZONE 'Asia/Bangkok','HH24:MI')`;
+  const bkkISO = ms => new Date(ms + 7 * 3600000).toISOString().slice(0, 16) + ':00' + TZ_OFFSET;
+  function calClass({ slot, date, ov, n = {}, time, title }) {
+    const counts = { booked: n.booked || 0, checkedIn: n.checkedIn || 0, noShows: n.noShows || 0 };
+    if (!slot) {
+      // The import stores a Rezerv visit with no time at 00:00 (VISIT_TIME):
+      // the key keeps it, so the class still opens by time=00:00.
+      return { key: `x:${date}:${time}:${title}`, slotId: null, date, startAt: startAtISO(date, time),
+        timeKnown: time !== '00:00', title,
+        kind: null, teachers: '', durationMin: null, isOnline: /online|zoom|ออนไลน์/i.test(title), capacity: null,
+        ...counts, cancelled: false, note: null };
+    }
+    const cancelled = !!(ov && ov.cancelled);
+    return { key: `s:${slot.id}:${date}`, slotId: slot.id, date, startAt: startAtISO(date, slot.start_time), timeKnown: true,
+      title: slot.title, kind: slot.kind, teachers: rotationTeacher(slot.code, date) || slot.teachers || '',
+      durationMin: slot.duration_min, isOnline: slot.is_online,
+      // ?? not || — an override capacity of 0 ("closed today") is a real value.
+      capacity: ov && ov.capacity != null ? ov.capacity : slot.capacity,
+      ...counts, cancelled, note: cancelled ? ov.note : null };
+  }
+
+  app.get('/api/bkk/admin/calendar', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const r = dayRange(req.query, { required: true, maxDays: SCHEDULE_DAYS });
+    if (r.error) return res.status(400).json({ error: r.error });
+    const { from, to } = r;
+    try {
+      const [slots, ovs, counts] = await Promise.all([
+        q('SELECT * FROM bkk_class_slots'),
+        q(`SELECT slot_id, to_char(class_date,'YYYY-MM-DD') AS date, cancelled, capacity, note
+           FROM bkk_class_overrides WHERE class_date BETWEEN $1::date AND $2::date`, [from, to]),
+        q(`SELECT b.slot_id, to_char(b.class_date,'YYYY-MM-DD') AS date,
+             CASE WHEN b.slot_id IS NULL THEN coalesce(b.class_title,'') END AS title,
+             CASE WHEN b.slot_id IS NULL THEN ${CAL_TIME} END AS time,
+             count(*) FILTER (WHERE b.status='booked')::int AS booked,
+             count(*) FILTER (WHERE b.status='booked' AND b.checked_in_at IS NOT NULL)::int AS checked_in,
+             count(*) FILTER (WHERE b.status='noshow')::int AS no_shows
+           FROM bkk_bookings b
+           WHERE b.class_date BETWEEN $1::date AND $2::date AND b.status IN ('booked','noshow')
+           GROUP BY 1, 2, 3, 4`, [from, to]),
+      ]);
+      const slotById = new Map(slots.rows.map(s => [s.id, s]));
+      const ovOf = new Map(ovs.rows.map(o => [`${o.slot_id}:${o.date}`, o]));
+      const moon = moonDaysBetween(from, to);
+      const found = new Map(), out = [];
+      for (let t = Date.parse(`${from}T12:00:00Z`); t <= Date.parse(`${to}T12:00:00Z`); t += 86400000) {
+        const date = new Date(t).toISOString().slice(0, 10);
+        if (moon.has(date)) continue;
+        const wd = new Date(t).getUTCDay();
+        for (const s of slots.rows) if (s.active && s.weekday === wd) found.set(`${s.id}:${date}`, { slot: s, date });
+      }
+      for (const row of counts.rows) {
+        const n = { booked: row.booked, checkedIn: row.checked_in, noShows: row.no_shows };
+        if (row.slot_id == null) { out.push(calClass({ date: row.date, time: row.time, title: row.title, n })); continue; }
+        if (!slotById.has(row.slot_id)) continue;
+        found.set(`${row.slot_id}:${row.date}`, { slot: slotById.get(row.slot_id), date: row.date, n });
+      }
+      for (const [k, c] of found) out.push(calClass({ ...c, ov: ovOf.get(k) }));
+      // A class with no time on file goes last in its day, not first at 00:00.
+      out.sort((a, b) => a.date.localeCompare(b.date) || (a.timeKnown ? 0 : 1) - (b.timeKnown ? 0 : 1)
+        || a.startAt.localeCompare(b.startAt) || (a.isOnline - b.isOnline) || a.title.localeCompare(b.title));
+      res.json({ from, to, today: bkkToday(), moonDays: Object.fromEntries(moon), classes: out });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Inside one class: ?slotId=&date=, or ?date=&time=&title= for a slotless
+  // class moved over from Rezerv. No email, phone or birthday on the roster.
+  app.get('/api/bkk/admin/class', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const { slotId, date } = req.query;
+    const bySlot = slotId != null && slotId !== '';
+    const time = String(req.query.time || ''), title = String(req.query.title || '');
+    if (!realYmd(date)) return res.status(400).json({ error: 'date must be a date (YYYY-MM-DD)' });
+    if (bySlot ? !/^\d{1,9}$/.test(String(slotId)) : !/^\d{2}:\d{2}$/.test(time))
+      return res.status(400).json({ error: 'slotId, or time (HH:MM) and title, needed' });
+    try {
+      let slot = null, ov = null;
+      if (bySlot) {
+        slot = (await q('SELECT * FROM bkk_class_slots WHERE id=$1', [Number(slotId)])).rows[0];
+        if (!slot) return res.status(404).json({ error: 'class not found' });
+        ov = (await q('SELECT * FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2::date', [slot.id, date])).rows[0];
+      }
+      const rows = (await q(
+        `SELECT b.id, b.status, b.checked_in_at, b.booked_at, b.cancelled_at, b.cancel_reason, b.cover, b.source,
+           m.code, m.name, pr.name_en AS pass_name, coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
+         FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+         LEFT JOIN bkk_passes p ON p.id=b.pass_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
+         WHERE b.class_date=$1::date AND ${bySlot ? 'b.slot_id=$2'
+           : `b.slot_id IS NULL AND ${CAL_TIME}=$2 AND coalesce(b.class_title,'')=$3`}`,
+        bySlot ? [date, slot.id] : [date, time, title])).rows;
+      if (!bySlot && !rows.length) return res.status(404).json({ error: 'class not found' });
+      const live = rows.filter(b => b.status === 'booked' || b.status === 'noshow');
+      // Another weekday's slot is not a class on this day, unless names are
+      // already on it: then it is history and is shown.
+      const offDay = slot && new Date(`${date}T12:00:00Z`).getUTCDay() !== slot.weekday;
+      if (offDay && !live.length) return res.status(400).json({ error: 'that class is not on that day' });
+      const c = calClass({ slot, date, ov, time, title, n: {
+        booked: live.filter(b => b.status === 'booked').length,
+        checkedIn: live.filter(b => b.status === 'booked' && b.checked_in_at).length,
+        noShows: live.filter(b => b.status === 'noshow').length } });
+      const startMs = Date.parse(c.startAt), now = bkkNow().getTime();
+      const dur = slot ? (slot.duration_min || 120) : null;
+      const started = now >= startMs;
+      // classCheck's staff rule: a name can go on the list until the class ends.
+      // A slotless class only exists as Rezerv history, so it is over once begun.
+      const ended = slot ? (now - startMs) / 60000 > dur : started;
+      const canAdd = !!slot && slot.active && !offDay && !c.cancelled && !ended && !moonDaysBetween(date, date).size;
+      res.json({
+        class: { ...c, endAt: slot ? bkkISO(startMs + dur * 60000) : null, started, ended, canAdd },
+        roster: live.map(b => ({ bookingId: b.id, code: b.code, name: b.name, status: b.status,
+          checkedInAt: b.checked_in_at, bookedAt: b.booked_at, cover: b.cover, source: b.source,
+          passName: b.pass_name, dropin: b.dropin }))
+          .sort((a, b) => String(a.name).localeCompare(String(b.name)) || a.bookingId - b.bookingId),
+        cancelledList: rows.filter(b => b.status === 'cancelled')
+          .sort((a, b) => (b.cancelled_at || 0) - (a.cancelled_at || 0) || b.id - a.id)
+          .map(b => ({ code: b.code, name: b.name, cancelledAt: b.cancelled_at, reason: b.cancel_reason })),
+      });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Check one name in from inside a class, or undo it. A past class is
+  // checked in at its start (as the Rezerv import does), a no-show seen after
+  // all becomes a visit, and a class not reached yet cannot be: nobody is in
+  // the room. Pass credits are never touched here.
+  app.post('/api/bkk/admin/bookings/:id/checkin', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    if (!/^\d{1,9}$/.test(req.params.id)) return res.status(404).json({ error: 'booking not found' });
+    const undo = (req.body || {}).undo === true;
+    try {
+      const b = (await q(`SELECT id, slot_id, status, to_char(class_date,'YYYY-MM-DD') AS date FROM bkk_bookings WHERE id=$1`,
+        [Number(req.params.id)])).rows[0];
+      if (!b) return res.status(404).json({ error: 'booking not found' });
+      if (b.slot_id == null) return res.status(409).json({ error: REZERV_READONLY });
+      if (b.status === 'cancelled') return res.status(409).json({ error: 'that booking was cancelled' });
+      const today = bkkToday();
+      if (!undo && b.date > today) return res.status(409).json({ error: 'that class is not today yet' });
+      const r = (await q(undo
+        ? `UPDATE bkk_bookings SET checked_in_at=NULL
+           WHERE id=$1 AND status IN ('booked','noshow') RETURNING id, status, checked_in_at`
+        : `UPDATE bkk_bookings SET status='booked',
+             checked_in_at=COALESCE(checked_in_at, CASE WHEN class_date < $2::date THEN start_at ELSE now() END)
+           WHERE id=$1 AND status IN ('booked','noshow') RETURNING id, status, checked_in_at`,
+        undo ? [b.id] : [b.id, today])).rows[0];
+      if (!r) return res.status(409).json({ error: 'that booking was cancelled' });
+      res.json({ success: true, booking: { id: r.id, status: r.status, checkedInAt: r.checked_in_at } });
+    } catch (e) {
+      // A no-show whose student is on the same class again (booked twice in Rezerv).
+      if (/duplicate key/.test(e.message)) return res.status(409).json({ error: 'already on this class list' });
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   initSchema()
     .then(() => { console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message));
@@ -2707,4 +3841,4 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 const express = require('express');
 const express_urlencoded_safe = express.urlencoded({ extended: false });
 
-module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween, rotationTeacher };
+module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween, rotationTeacher, parseWhen };
