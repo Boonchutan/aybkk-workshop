@@ -6,3 +6,4 @@ Reel: Plato's daily run is paused (expected). Plato chat 29 Oct: "Ganda Bherunda
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 13 days. A first-morning booking ask came in from the Google start page (feeds the Google ad judgement).
 Inbox 07:08: 4 new, 2 hot.
 13:08 check-in: aybkk.net buyers (19:00 today) and course prices (Sun 1 Nov, 2 days) reminded, 2nd nudge today. Inbox 13:08: 0 new, 0 hot.
+19:08 check-in: aybkk.net buyers default B applied (each buyer added to Rezerv by hand). Course prices not repeated (2 nudges today). Inbox 19:08: 5 new threads, 1 hot.
