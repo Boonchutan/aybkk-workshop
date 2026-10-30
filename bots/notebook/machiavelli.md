@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-10-30T00:11:25.525Z
+Inbox last read: 2026-10-30T06:15:58.673Z
 
 ## Standing orders from Boonchu
 - 2026-10-17 (Boonchu, HOUSE RULE for every student or customer message and review reply): never write "sorry". For a late answer write "Thank you for your patience with our reply." Keep replies brief, friendly and precise.
@@ -181,3 +181,4 @@ Inbox last read: 2026-10-30T00:11:25.525Z
 - 2026-10-29 13:08: Inbox 13:08: 1 new in 1 thread, 1 hot (LINE booking question, may be answered). Prices (Sun 1 Nov) and aybkk.net buyers (19:00 Fri 30 Oct) reminded, 2nd nudge today: do not repeat at 19:08. No reminders due since 07:08, no wins.
 - 2026-10-29 19:08: Inbox 19:08: 3 new in 1 thread, 1 hot (LINE, image + shirt pickup, may be answered). Prices and aybkk.net buyers already nudged twice today: not repeated. No reminders due since 13:08, no wins. Next step given: answer the online Led invite-only question (day 13), send Carne draft.
 - 2026-10-30 07:08: Carne posted; Plato paused (expected; Plato chat wrote 2 Reels 29 Oct). Inbox 07:08: 4 new in 4 LINE threads, 2 hot (first-morning booking from the Google start page; question on how long the 9th floor is used). aybkk.net buyers (due 19:00 today) and prices (Sun 1 Nov) reminded, 1st nudge today. No reminders due this morning, no wins. Board rebuilt.
+- 2026-10-30 13:08: Inbox 13:08: 0 new, 0 hot. aybkk.net buyers (due 19:00 today) and prices (Sun 1 Nov, 2 days) reminded, 2nd nudge today: do not repeat at 19:08. BKK_ADMIN_KEY check before Sat 05:15 mentioned. No reminders due since 07:08, no wins.

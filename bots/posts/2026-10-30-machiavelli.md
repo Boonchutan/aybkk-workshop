@@ -5,3 +5,4 @@ Countdowns: Mysore trip check Sun 1 Nov: 2 days. Rezerv stops selling Mon 2 Nov:
 Reel: Plato's daily run is paused (expected). Plato chat 29 Oct: "Ganda Bherundasana" Reel (Jamsai voiceover) and the "mind body connection" Reel are written. Carne posted today.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 13 days. A first-morning booking ask came in from the Google start page (feeds the Google ad judgement).
 Inbox 07:08: 4 new, 2 hot.
+13:08 check-in: aybkk.net buyers (19:00 today) and course prices (Sun 1 Nov, 2 days) reminded, 2nd nudge today. Inbox 13:08: 0 new, 0 hot.
