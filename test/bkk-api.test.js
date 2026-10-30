@@ -1922,6 +1922,16 @@ const ok = (name, cond, extra = '') => {
     const tIn = await checkin(todayBk);
     ok("today's class is checked in now", tIn.status === 200 && Math.abs(Date.parse(tIn.body.booking.checkedInAt) - Date.now()) < 60000,
        JSON.stringify(tIn.body));
+    // Today's date, with start times set by hand so the test holds at any hour.
+    const agoSlot = await mkSlot('test_cal_ago', wdOf(todayB), '05:30', 30, 10, false);
+    const endedAt = new Date(Date.now() - 2 * 3600e3).toISOString();
+    const endedIn = await checkin(await addBk({ slot: agoSlot, date: todayB, at: endedAt, member: mem.zed }));
+    ok("today's class that has ended is checked in at its start, not at the tap",
+       endedIn.status === 200 && Date.parse(endedIn.body.booking.checkedInAt) === Date.parse(endedAt), JSON.stringify(endedIn.body));
+    const runSlot = await mkSlot('test_cal_run', wdOf(todayB), '06:00', 120, 10, false);
+    const runIn = await checkin(await addBk({ slot: runSlot, date: todayB, at: new Date(Date.now() - 10 * 60e3).toISOString(), member: mem.zed }));
+    ok('...a class still running is checked in at the tap', runIn.status === 200
+       && Math.abs(Date.parse(runIn.body.booking.checkedInAt) - Date.now()) < 60000, JSON.stringify(runIn.body));
     const credits = async code => (await pool.query(`SELECT coalesce(sum(credits_used),0)::int AS n FROM bkk_passes p
       JOIN bkk_members m ON m.id=p.member_id WHERE m.code=$1`, [code])).rows[0].n;
 
