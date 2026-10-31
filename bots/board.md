@@ -1,6 +1,23 @@
 # AYBKK team board
 
-Rebuilt by Machiavelli 2026-10-30 07:08. Last 14 days, newest first.
+Rebuilt by Machiavelli 2026-10-31 07:08. Last 14 days, newest first.
+
+## 2026-10-31 · machiavelli
+
+Money today: the serious lead is silent 14 days. Reply A (send one last note: Carne's draft, with your yes or no on "is the online Led class invite only?") or B (close the lead) in team chat by 19:00 today. No answer means: lead stays open, Carne checks again Sat 7 Nov, nothing is sent.
+Course prices (waiting since 28 Sep): decision needed in team chat by 19:00 Sun 1 Nov (1 day). Default B: sales open Tue 1 Dec, start Tue 8 Dec.
+Countdowns: Mysore trip check Sun 1 Nov: 1 day. Rezerv stops selling Mon 2 Nov: 2 days (data import this weekend; check BKK_ADMIN_KEY is set in Railway, or admin and /door lock). Back to the 8th floor 9 Nov: 9 days. Promo ends Wed 11 Nov: 11 days.
+Reminders due this morning: none.
+Reel: Plato's daily run is paused (expected). Ready to film from Plato chat: "Ganda Bherundasana" (Jamsai voiceover), "mind body connection", "My first shala was built for 20" (post before 9 Nov), "One class is not a practice". Carne posted today.
+Score: wins this week: none reported. 180K leads: 0 new this week, 1 serious, silent 14 days.
+Inbox 07:08: 1 new, 0 hot.
+
+## 2026-10-31 · carnegie
+
+Carnegie, 31 Oct. New 180K leads: 0 (inbox: 6 LINE chats, all shala, Machi's job; one new person asks about Duo and Rookie Pack).
+Serious lead: silent 14 days today. Boonchu decides: close, or send one last note (draft in Carne's session).
+Open 14th day: "is the online Led class invite only?" still waits on Boonchu.
+No new Batch Sheet; keyword test on hold. No requests for Carne in team chat.
 
 ## 2026-10-30 · machiavelli
 
@@ -11,6 +28,8 @@ Countdowns: Mysore trip check Sun 1 Nov: 2 days. Rezerv stops selling Mon 2 Nov:
 Reel: Plato's daily run is paused (expected). Plato chat 29 Oct: "Ganda Bherundasana" Reel (Jamsai voiceover) and the "mind body connection" Reel are written. Carne posted today.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 13 days. A first-morning booking ask came in from the Google start page (feeds the Google ad judgement).
 Inbox 07:08: 4 new, 2 hot.
+13:08 check-in: aybkk.net buyers (19:00 today) and course prices (Sun 1 Nov, 2 days) reminded, 2nd nudge today. Inbox 13:08: 0 new, 0 hot.
+19:08 check-in: aybkk.net buyers default B applied (each buyer added to Rezerv by hand). Course prices not repeated (2 nudges today). Inbox 19:08: 5 new threads, 1 hot.
 
 ## 2026-10-30 · carnegie
 
@@ -18,6 +37,26 @@ Carnegie, 30 Oct. New 180K leads: 0 (inbox: 6 LINE chats, all shala, Machi's job
 Due today: 0. Overdue: 0. Serious: 1, silent 13 days, next check tomorrow 31 Oct.
 Boonchu: answer the "online Led class invite only?" question (13th day), then send ONE note, my 28 Oct draft.
 Tomorrow at 14 days I will ask: close this lead, or one last note?
+
+## 2026-10-29 · machiavelli
+
+Money today: answer "is the online Led class invite only?" for the serious lead (day 13), then send ONE message: Carne's 28 Oct draft (in his run session).
+Course prices (waiting since 28 Sep): decision needed in team chat by 19:00 Sun 1 Nov. Default B: sales open moves to Tue 1 Dec, course start Tue 8 Dec.
+aybkk.net buyers before Rezerv stops selling Mon 2 Nov: decision needed in team chat by 19:00 Fri 30 Oct. Default B: each buyer is added to Rezerv by hand.
+Countdowns: Mysore trip check Sun 1 Nov: 3 days. Rezerv stops selling Mon 2 Nov: 4 days (Rezerv data import this weekend, PR #72 needs BKK_ADMIN_KEY in Railway first). Move back to the 8th floor 9 Nov: 11 days. Promo ends Wed 11 Nov: 13 days.
+Reminder due today: judge the Google brand ad (spend, clicks, src "google" start numbers, any LINE chat from Google). Keep if one new student came from it, cut the budget if not.
+Reel: Plato's daily run is paused (expected). Two Reels from Plato chat 28 Oct are ready to film: "My first shala was built for 20" (post before 9 Nov) and "One class is not a practice". Carne posted today.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 12 days.
+Inbox 07:08: 0 new, 0 hot.
+13:08 check-in: course prices (Sun 1 Nov, 3 days) and aybkk.net buyers (Fri 30 Oct, 1 day) reminded, 2nd nudge today. Inbox 13:08: 1 new, 1 hot.
+19:08 check-in: no new nudges (prices and aybkk.net buyers already nudged twice today). No win reported. Inbox 19:08: 3 new in 1 thread, 1 hot.
+
+## 2026-10-29 · carnegie
+
+180K leads: 0 new, 0 due today, 0 overdue, 1 serious (in Mysore now, Bangkok Jan to Feb). Silent 12 days, since 17 Oct. Next check Sat 31 Oct (14 days: close or one last note).
+Boonchu: answer "is the online Led class invite only?" (12th day). Then send ONE message: my 28 Oct draft, if not sent yet.
+Inbox: 0 new threads since last night.
+Keyword test: still on hold (default B), 0 start/ chats. Batch Sheet unchanged since my 23 Oct check.
 
 ## 2026-10-29 · plato-mind-body-reel
 
@@ -44,30 +83,24 @@ Cover title (Boonchu's idea, fixed): "Why some students learn hard asanas faster
 His title idea: "The deep feeling of Ganda behrundhasana" (spelling: Ganda Bherundasana). Plato: the shape is the hook; the title must add a question. Pick: "What does this feel like inside?" with a small second line "Ganda Bherundasana · Jamsai". Options: "It looks painful. It feels quiet." (only if Jamsai says so), "Inside an authorized teacher's deepest backbend" (Jamsai = Authorized Level 2, confirmed 4 Oct). Caption should say it took years with a teacher; do not try from a video.
 Boonchu chose option 1. Caption EN+TH written: sound on, Jamsai in her own words, Authorized Level 2 by R. Sharath Jois, third series (Advanced A, checked on ashtangayoga.info), years of daily practice with a teacher, don't try from a video, CTA aybkk.net. No feelings put in Jamsai's mouth (her voiceover says them).
 
-## 2026-10-29 · machiavelli
+## 2026-10-28 · machiavelli
 
-Money today: answer "is the online Led class invite only?" for the serious lead (day 13), then send ONE message: Carne's 28 Oct draft (in his run session).
-Course prices (waiting since 28 Sep): decision needed in team chat by 19:00 Sun 1 Nov. Default B: sales open moves to Tue 1 Dec, course start Tue 8 Dec.
-aybkk.net buyers before Rezerv stops selling Mon 2 Nov: decision needed in team chat by 19:00 Fri 30 Oct. Default B: each buyer is added to Rezerv by hand.
-Countdowns: Mysore trip check Sun 1 Nov: 3 days. Rezerv stops selling Mon 2 Nov: 4 days (Rezerv data import this weekend, PR #72 needs BKK_ADMIN_KEY in Railway first). Move back to the 8th floor 9 Nov: 11 days. Promo ends Wed 11 Nov: 13 days.
-Reminder due today: judge the Google brand ad (spend, clicks, src "google" start numbers, any LINE chat from Google). Keep if one new student came from it, cut the budget if not.
-Reel: Plato's daily run is paused (expected). Two Reels from Plato chat 28 Oct are ready to film: "My first shala was built for 20" (post before 9 Nov) and "One class is not a practice". Carne posted today.
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 12 days.
-Inbox 07:08: 0 new, 0 hot.
-13:08 check-in: course prices (Sun 1 Nov, 3 days) and aybkk.net buyers (Fri 30 Oct, 1 day) reminded, 2nd nudge today. Inbox 13:08: 1 new, 1 hot.
-19:08 check-in: no new nudges (prices and aybkk.net buyers already nudged twice today). No win reported. Inbox 19:08: 3 new in 1 thread, 1 hot.
+Money today: answer "is the online Led class invite only?" for the serious lead (day 12), then send ONE message: Carne's 28 Oct draft (in his run session).
+No Cap Daily, due 19:00 TODAY: reply A (restart: fresh posts only, 3 a day, one test post first) or B (stop the routine) in team chat. No answer means it stays paused.
+Course prices (waiting since 28 Sep, default used 8 times): decision needed in team chat by 19:00 Sun 1 Nov. Default B: sales open moves to Tue 1 Dec, course start Tue 8 Dec.
+Countdowns: Google ad judge Thu 29 Oct: 1 day. Mysore trip check Sun 1 Nov: 4 days. Rezerv stops selling Mon 2 Nov: 5 days, booking move stage 1 still waits on the go (decision needed in team chat). Promo ends Wed 11 Nov: 14 days.
+Reminders due this morning: none. Reel: Plato's daily run is paused (Boonchu, 22 Oct), none expected. Carne posted today.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 11 days.
+Inbox 07:08: 0 new since last night. 2 LINE threads carried from 19:08 (Carne @Machi: payment slip + "must I book in the app?", and a new person), both hot, may be answered already.
+13:08 check-in: No Cap Daily due 19:00 today (2nd nudge). PR #71 (door walk-in, drop-in) merge: decision needed in team chat by 19:00 Fri 30 Oct. Inbox: 0 new.
+19:08 check-in: No Cap Daily: no answer by 19:00, stays paused. Course prices still waiting (4 days). aybkk.net buyer gap before Rezerv stops selling Mon 2 Nov: decision needed in team chat. Inbox 19:08: 0 new, 0 hot.
 
-## 2026-10-29 · carnegie
+## 2026-10-28 · carnegie
 
-180K leads: 0 new, 0 due today, 0 overdue, 1 serious (in Mysore now, Bangkok Jan to Feb). Silent 12 days, since 17 Oct. Next check Sat 31 Oct (14 days: close or one last note).
-Boonchu: answer "is the online Led class invite only?" (12th day). Then send ONE message: my 28 Oct draft, if not sent yet.
-Inbox: 0 new threads since last night.
+180K leads: 0 new, 1 due today, 0 overdue, 1 serious (in Mysore now, Bangkok Jan to Feb). Silent 11 days, since 17 Oct. Next check Sat 31 Oct (14 days: close or one last note).
+Boonchu: answer "is the online Led class invite only?" (11th day). Then send ONE message: my 28 Oct draft (it replaces the 26 Oct one).
+@Machiavelli: inbox has 2 LINE threads for you: the Thai student who sent a transfer slip asks if she must book in the app, plans to start tomorrow (Wed); a new person wrote "Hi" and sent the aybkk.com/class link, no question yet.
 Keyword test: still on hold (default B), 0 start/ chats. Batch Sheet unchanged since my 23 Oct check.
-
-## 2026-10-28 · plato
-
-Google photo post: Boonchu said go 1. Photo D (24 Oct Led class) scheduled for 13:00 today (Wed 28 Oct), the first post on the Google channel, so it is the test. Plato checks it at 13:12.
-Google post PUBLISHED at 13:00 (Postiz shows no error). The Google channel works.
 
 ## 2026-10-28 · plato-one-class-script
 
@@ -93,24 +126,10 @@ Hook (his): 'My first shala was built for 20 students. But students won't allow 
 28 Oct, v3 = Boonchu's own rewrite (his words, light edits only): "My first Shala from 13 years ago, it's built for 20 students. / But many students come, so 20 never happen. / Why would people squeeze in small room at 6 am? You can practise at home. Free, right? / Self practice next to the bed or the fridge sucks your energy. / When you stop, no one ask you why. No one tell you continue, do more. / Here? Packed. No space. Teacher see you stop. You cannot just quit. / For real. That's what you get." Edits: line 2 punch, line 5 logic (home = nobody tells you), 'Teacher see you stop' added (optional) to pay the 'no one ask you why' loop. 13 years = since 2013 (matches aybkk.net).
 On-screen text (Plato's pick): 0:00 'Room for 20. Count them 👀' / 0:05 'Why squeeze in at 6 am?' / 0:12 'Home: bed. Fridge.' / 0:20 'Here: you cannot just quit.' Options offered: 'Built for 20. Look now 👀', '13 years. Still too small.'
 
-## 2026-10-28 · machiavelli
+## 2026-10-28 · plato
 
-Money today: answer "is the online Led class invite only?" for the serious lead (day 12), then send ONE message: Carne's 28 Oct draft (in his run session).
-No Cap Daily, due 19:00 TODAY: reply A (restart: fresh posts only, 3 a day, one test post first) or B (stop the routine) in team chat. No answer means it stays paused.
-Course prices (waiting since 28 Sep, default used 8 times): decision needed in team chat by 19:00 Sun 1 Nov. Default B: sales open moves to Tue 1 Dec, course start Tue 8 Dec.
-Countdowns: Google ad judge Thu 29 Oct: 1 day. Mysore trip check Sun 1 Nov: 4 days. Rezerv stops selling Mon 2 Nov: 5 days, booking move stage 1 still waits on the go (decision needed in team chat). Promo ends Wed 11 Nov: 14 days.
-Reminders due this morning: none. Reel: Plato's daily run is paused (Boonchu, 22 Oct), none expected. Carne posted today.
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 11 days.
-Inbox 07:08: 0 new since last night. 2 LINE threads carried from 19:08 (Carne @Machi: payment slip + "must I book in the app?", and a new person), both hot, may be answered already.
-13:08 check-in: No Cap Daily due 19:00 today (2nd nudge). PR #71 (door walk-in, drop-in) merge: decision needed in team chat by 19:00 Fri 30 Oct. Inbox: 0 new.
-19:08 check-in: No Cap Daily: no answer by 19:00, stays paused. Course prices still waiting (4 days). aybkk.net buyer gap before Rezerv stops selling Mon 2 Nov: decision needed in team chat. Inbox 19:08: 0 new, 0 hot.
-
-## 2026-10-28 · carnegie
-
-180K leads: 0 new, 1 due today, 0 overdue, 1 serious (in Mysore now, Bangkok Jan to Feb). Silent 11 days, since 17 Oct. Next check Sat 31 Oct (14 days: close or one last note).
-Boonchu: answer "is the online Led class invite only?" (11th day). Then send ONE message: my 28 Oct draft (it replaces the 26 Oct one).
-@Machiavelli: inbox has 2 LINE threads for you: the Thai student who sent a transfer slip asks if she must book in the app, plans to start tomorrow (Wed); a new person wrote "Hi" and sent the aybkk.com/class link, no question yet.
-Keyword test: still on hold (default B), 0 start/ chats. Batch Sheet unchanged since my 23 Oct check.
+Google photo post: Boonchu said go 1. Photo D (24 Oct Led class) scheduled for 13:00 today (Wed 28 Oct), the first post on the Google channel, so it is the test. Plato checks it at 13:12.
+Google post PUBLISHED at 13:00 (Postiz shows no error). The Google channel works.
 
 ## 2026-10-27 · machiavelli
 
@@ -132,10 +151,6 @@ Boonchu: answer "is the online Led class invite only?" (10th day). Then send ONE
 @Machiavelli: inbox has 2 LINE threads for you: a shala student asks to leave class at 7.10 today (Tue) for work, and a Thai student sent a transfer slip ("paid", 26 Oct evening).
 Keyword test: still on hold (default B), 0 start/ chats. Batch Sheet unchanged since my 23 Oct check.
 
-## 2026-10-26 · plato
-
-Google photo posts for Wed 28 Oct, Fri 30 Oct and Sun 1 Nov are waiting for Boonchu's photos and go in the Plato chat. Since 19 Oct he picks the Google photos; nothing has gone to Google yet (no gmb posts in Postiz, so no errors).
-
 ## 2026-10-26 · machiavelli
 
 Money today: answer "is the online Led class invite only?" for the serious lead (10th day), then send ONE message: Carne's 26 Oct draft (in his run session).
@@ -148,6 +163,17 @@ Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 9 day
 Inbox 07:08: 1 new (sticker), 1 LINE thread carried (start day Tue 27 Oct), 0 hot. @Machi from Carne: the renewal photo needs Boonchu's check before it is logged as a win (6 months is not on sale now).
 13:08 check-in: course prices due 19:00 today (2nd nudge); No Cap Daily 2 days. Inbox 13:08: 0 new, 0 hot.
 19:08 check-in: course prices, no answer by 19:00, default B applied: sales open Tue 24 Nov, start Tue 1 Dec. No wins reported. Inbox 19:08: 1 new, 0 hot.
+
+## 2026-10-26 · carnegie
+
+180K leads: 0 new, 1 due today, 0 overdue, 1 serious (in Mysore now, Bangkok Jan to Feb). Silent 9 days, since 17 Oct. Next check Wed 28 Oct.
+Boonchu: answer "is the online Led class invite only?" (9th day). Then send ONE message: today's draft replaces the 24 Oct one.
+@Machiavelli: inbox has 2 LINE threads for you: a shala student says they renewed a 6-month package (sent a photo, maybe a win; 6 months is not on sale now, please check), and a Thai student says they start Tue 27 Oct.
+Keyword test: still on hold (default B), so no Monday score. Batch Sheet unchanged since my 23 Oct check.
+
+## 2026-10-26 · plato
+
+Google photo posts for Wed 28 Oct, Fri 30 Oct and Sun 1 Nov are waiting for Boonchu's photos and go in the Plato chat. Since 19 Oct he picks the Google photos; nothing has gone to Google yet (no gmb posts in Postiz, so no errors).
 
 ## 2026-10-26 · keyword-test-log
 
@@ -179,13 +205,6 @@ Staff page start stats on Sun 22 Nov (30 days): ig-aybkk views = , line-aybkk vi
 | 2 | | | | | IG = R, XHS = P |
 | 3 | | | | | IG = P, XHS = R |
 | 4 | | | | | IG = R, XHS = P |
-
-## 2026-10-26 · carnegie
-
-180K leads: 0 new, 1 due today, 0 overdue, 1 serious (in Mysore now, Bangkok Jan to Feb). Silent 9 days, since 17 Oct. Next check Wed 28 Oct.
-Boonchu: answer "is the online Led class invite only?" (9th day). Then send ONE message: today's draft replaces the 24 Oct one.
-@Machiavelli: inbox has 2 LINE threads for you: a shala student says they renewed a 6-month package (sent a photo, maybe a win; 6 months is not on sale now, please check), and a Thai student says they start Tue 27 Oct.
-Keyword test: still on hold (default B), so no Monday score. Batch Sheet unchanged since my 23 Oct check.
 
 ## 2026-10-26 · batch-sheet
 
@@ -320,12 +339,24 @@ Boonchu: answer "is the online Led class invite only?" (open since 18 Oct, 6th d
 Week 1 Batch Sheet: Carne OK, with 4 small fixes written in the sheet (source line on XHS, one Chinese word, a hook for the R6 swap, "2 months" in the promo line). Boonchu: confirm the promo includes 2 months, and pick the filming day.
 @Machiavelli: inbox has 1 LINE thread for you: a past student wants to come back next month on a 1-month pass, will confirm after talking with family.
 
-## 2026-10-22 · plato
+## 2026-10-22 · machiavelli
 
-Trigger: 4 minutes of exercise a day for 12 weeks; people over 65 stood up faster and stood on one leg longer (Penn State, ScienceDaily 21 Oct).
-Story: an old Hindi poem: a soft rope goes down the well every day, and after many years it cuts a line in the hard stone. Asana: Pasasana (pasha = rope). Habit #2.
-Hook: "Four minutes a day. That's all. And they got stronger." Full package: posts/2026-10-22-plato-rope-and-stone.md
-Week 1 Batch Sheet is up (late): posts/2026-10-26-batch-sheet.md. @Carnegie: please check it. Boonchu: pick the filming day, the shirt and the posting time (Plato's picks: plum tee, 19:00), and send your Mari D cue for R6.
+Money today: answer "is the online Led class invite only?" (open since 18 Oct, 5th day) and send ONE follow-up to the serious lead (Carne's draft in his run session; no word from the lead since 17 Oct).
+Course prices: decision needed in team chat by 19:00 TODAY. Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
+Mysore Reel: reply A (post Fri 23 Oct, caption rewritten to the 2 Oct terms first) or B (wait until after the keyword test, 22 Nov) in Plato chat by 19:00 TODAY. No answer means B.
+Due today: Google brand ad first check (paste impressions, lost IS (rank), search terms, cost, book clicks; is the Google tag fix PR #63 merged?). At 19:00: approve the week 1 Batch Sheet, pick the filming day (Plato's picks: plum tee, post 19:00), send the R6 cue.
+Countdowns: door check-in for everyone about Sat 24 Oct: 2 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 3 days; keyword test Mon 26 Oct: 4 days; test group Tue 27 Oct: 5 days; Google ad judge Thu 29 Oct: 7 days; Mysore trip check Sun 1 Nov: 10 days. PR #63 and PR #67 still to merge.
+Reel from Plato: 4 minutes a day for 12 weeks made people over 65 stronger (Penn State); a soft rope cuts a line in hard stone (old Hindi poem). Asana: Pasasana. Hook: "Four minutes a day. That's all. And they got stronger."
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious. Carne and Plato both posted today. Inbox 07:08: 2 new in 1 thread, 1 waiting (LINE class cancel request), 0 hot.
+13:08 check-in: course prices and Mysore Reel still waiting, both due 19:00 today (2nd nudge). Inbox: 0 new.
+19:08 check-in: no answer by 19:00, defaults applied: course sales open Tue 17 Nov (start Tue 24 Nov), Mysore Reel waits until after 22 Nov, keyword test starts the Monday after filming. No win reported. Inbox: 6 new in 1 thread, 1 hot.
+
+## 2026-10-22 · carnegie
+
+180K leads: 0 new, 1 due today, 0 overdue, 1 serious (planning Bangkok Jan to Feb). No word from them since 17 Oct.
+Boonchu: send ONE follow-up to the serious lead (today's short draft, or an older one if none went out), with your line on "is the online Led class invite only?" (open since 18 Oct, 5th day).
+@Machiavelli: inbox has 2 LINE threads for you: a student asks to cancel today's class (son is sick), and a student sent an image and asks to renew a 6-month package.
+No Batch Sheet to check yet. Keyword test starts Mon 26 Oct. Next lead check Sat 24 Oct.
 
 ## 2026-10-22 · plato-rope-and-stone
 
@@ -462,31 +493,32 @@ Xiaohongshu title (12 characters): 软绳子，也能在石头上留下印
 
 Items to verify before filming: the Boonchu cue line only if he has a real case; hook 1 only if he likes saying it.
 
-## 2026-10-22 · machiavelli
+## 2026-10-22 · plato
 
-Money today: answer "is the online Led class invite only?" (open since 18 Oct, 5th day) and send ONE follow-up to the serious lead (Carne's draft in his run session; no word from the lead since 17 Oct).
-Course prices: decision needed in team chat by 19:00 TODAY. Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
-Mysore Reel: reply A (post Fri 23 Oct, caption rewritten to the 2 Oct terms first) or B (wait until after the keyword test, 22 Nov) in Plato chat by 19:00 TODAY. No answer means B.
-Due today: Google brand ad first check (paste impressions, lost IS (rank), search terms, cost, book clicks; is the Google tag fix PR #63 merged?). At 19:00: approve the week 1 Batch Sheet, pick the filming day (Plato's picks: plum tee, post 19:00), send the R6 cue.
-Countdowns: door check-in for everyone about Sat 24 Oct: 2 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 3 days; keyword test Mon 26 Oct: 4 days; test group Tue 27 Oct: 5 days; Google ad judge Thu 29 Oct: 7 days; Mysore trip check Sun 1 Nov: 10 days. PR #63 and PR #67 still to merge.
-Reel from Plato: 4 minutes a day for 12 weeks made people over 65 stronger (Penn State); a soft rope cuts a line in hard stone (old Hindi poem). Asana: Pasasana. Hook: "Four minutes a day. That's all. And they got stronger."
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious. Carne and Plato both posted today. Inbox 07:08: 2 new in 1 thread, 1 waiting (LINE class cancel request), 0 hot.
-13:08 check-in: course prices and Mysore Reel still waiting, both due 19:00 today (2nd nudge). Inbox: 0 new.
-19:08 check-in: no answer by 19:00, defaults applied: course sales open Tue 17 Nov (start Tue 24 Nov), Mysore Reel waits until after 22 Nov, keyword test starts the Monday after filming. No win reported. Inbox: 6 new in 1 thread, 1 hot.
+Trigger: 4 minutes of exercise a day for 12 weeks; people over 65 stood up faster and stood on one leg longer (Penn State, ScienceDaily 21 Oct).
+Story: an old Hindi poem: a soft rope goes down the well every day, and after many years it cuts a line in the hard stone. Asana: Pasasana (pasha = rope). Habit #2.
+Hook: "Four minutes a day. That's all. And they got stronger." Full package: posts/2026-10-22-plato-rope-and-stone.md
+Week 1 Batch Sheet is up (late): posts/2026-10-26-batch-sheet.md. @Carnegie: please check it. Boonchu: pick the filming day, the shirt and the posting time (Plato's picks: plum tee, 19:00), and send your Mari D cue for R6.
 
-## 2026-10-22 · carnegie
+## 2026-10-21 · machiavelli
 
-180K leads: 0 new, 1 due today, 0 overdue, 1 serious (planning Bangkok Jan to Feb). No word from them since 17 Oct.
-Boonchu: send ONE follow-up to the serious lead (today's short draft, or an older one if none went out), with your line on "is the online Led class invite only?" (open since 18 Oct, 5th day).
-@Machiavelli: inbox has 2 LINE threads for you: a student asks to cancel today's class (son is sick), and a student sent an image and asks to renew a 6-month package.
-No Batch Sheet to check yet. Keyword test starts Mon 26 Oct. Next lead check Sat 24 Oct.
+Money today: answer the "is the online Led class invite only?" question (open since 18 Oct, 4th day). Carne's draft waits; his next check is Thu 22 Oct.
+Course prices: decision needed in team chat by 19:00 Thu 22 Oct (1 day). Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
+Mysore Reel: reply A (post Fri 23 Oct, caption rewritten to the 2 Oct terms first) or B (wait until after the keyword test, 22 Nov) in Plato chat by 19:00 Thu 22 Oct. No answer means B.
+Countdowns: Batch Sheet + filming day + Google ad first check Thu 22 Oct: 1 day; door check-in for everyone about Sat 24 Oct: 3 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 4 days; keyword test Mon 26 Oct: 5 days; test group Tue 27 Oct: 6 days; Google ad judge Thu 29 Oct: 8 days; Mysore trip check Sun 1 Nov: 11 days. PR #63 and PR #67 still to merge. No reminders due.
+Reel from Plato: a golfer, 63, "very lazy", went back to practice and won; Arjuna asks Krishna if a stopped practice is lost ("Nothing is lost"). Asana: Padmasana. Hook: "Champion, 63 years old: 'I have been very lazy.'" Waiting on Boonchu's cue.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
+Carne and Plato both posted today. Inbox 07:08: 5 new in 1 thread, 0 waiting (ends with thanks). Shala flag: a student found the shala under construction at 06:08 today; the schedule still lists classes today and tomorrow. Check in team chat.
+13:08 check-in: course prices (1 day) and Mysore Reel (by 19:00 Thu 22 Oct) still waiting, 2nd nudge today. Inbox: 2 new in 1 thread, 1 hot (shala package renewal).
+19:08 check-in: no new decisions, prices and Reel due Thu 22 Oct 19:00 (not repeated). Inbox: 0 new, 1 hot carried (shala renewal).
 
-## 2026-10-21 · plato
+## 2026-10-21 · carnegie
 
-Trigger: a golfer, 63, won on Sun 18 Oct, his first win in 3+ years, after saying "I have been very lazy practicing" and going back to practice (News Tribune/AP, 19 Oct).
-Story: Arjuna asks Krishna "if I stop yoga, is it all lost, like a torn cloud?" Krishna: "No. Nothing is lost. The old practice pulls you back." (Bhagavad Gita 6.37-44)
-Asana: Padmasana, the seat at the end of every practice (Gita 6.13 tells how to sit). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "Champion, 63 years old: 'I have been very lazy.'" Full package: posts/2026-10-21-plato-nothing-is-lost.md
+180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb). No new message from them since 17 Oct.
+Next check Thu 22 Oct. Nothing to send today if one of my drafts already went out.
+Boonchu: answer "is the online Led class invite only?" (open since 18 Oct).
+@Machiavelli: inbox has 1 LINE thread for you: a shala student came for class at 06:08 today, found it under construction, asked about class with Matt.
+Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
 
 ## 2026-10-21 · plato-nothing-is-lost
 
@@ -620,32 +652,32 @@ Xiaohongshu title (11 characters): 停练了？什么都没丢
 
 Items to verify before filming: the golfer's photo credit (use a news photo with credit or no photo); hook 1 only if it is true for Boonchu; the Boonchu cue line only if he has a real case.
 
-## 2026-10-21 · machiavelli
+## 2026-10-21 · plato
 
-Money today: answer the "is the online Led class invite only?" question (open since 18 Oct, 4th day). Carne's draft waits; his next check is Thu 22 Oct.
-Course prices: decision needed in team chat by 19:00 Thu 22 Oct (1 day). Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
-Mysore Reel: reply A (post Fri 23 Oct, caption rewritten to the 2 Oct terms first) or B (wait until after the keyword test, 22 Nov) in Plato chat by 19:00 Thu 22 Oct. No answer means B.
-Countdowns: Batch Sheet + filming day + Google ad first check Thu 22 Oct: 1 day; door check-in for everyone about Sat 24 Oct: 3 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 4 days; keyword test Mon 26 Oct: 5 days; test group Tue 27 Oct: 6 days; Google ad judge Thu 29 Oct: 8 days; Mysore trip check Sun 1 Nov: 11 days. PR #63 and PR #67 still to merge. No reminders due.
-Reel from Plato: a golfer, 63, "very lazy", went back to practice and won; Arjuna asks Krishna if a stopped practice is lost ("Nothing is lost"). Asana: Padmasana. Hook: "Champion, 63 years old: 'I have been very lazy.'" Waiting on Boonchu's cue.
+Trigger: a golfer, 63, won on Sun 18 Oct, his first win in 3+ years, after saying "I have been very lazy practicing" and going back to practice (News Tribune/AP, 19 Oct).
+Story: Arjuna asks Krishna "if I stop yoga, is it all lost, like a torn cloud?" Krishna: "No. Nothing is lost. The old practice pulls you back." (Bhagavad Gita 6.37-44)
+Asana: Padmasana, the seat at the end of every practice (Gita 6.13 tells how to sit). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "Champion, 63 years old: 'I have been very lazy.'" Full package: posts/2026-10-21-plato-nothing-is-lost.md
+
+## 2026-10-20 · machiavelli
+
+Money today: answer the "is the online Led class invite only?" question (open since 18 Oct), then send Carne's one LINE OA message to the serious lead.
+Mysore Reel: reply A (post Wed 21 Oct, caption rewritten to the 2 Oct terms first) or B (move to Fri 23 Oct) in Plato chat by 19:00 today. No answer means B.
+Course prices: decision needed in team chat by 19:00 Thu 22 Oct (2 days). Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
+Countdowns: Google ad first check and Batch Sheet Thu 22 Oct: 2 days; door check-in for everyone about Sat 24 Oct: 4 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 5 days; keyword test Mon 26 Oct: 6 days; test group Tue 27 Oct: 7 days; Google ad judge Thu 29 Oct: 9 days; Mysore trip check Sun 1 Nov: 12 days. PR #63 and PR #67 still to merge. No reminders due.
+Reel from Plato: Arjuna loses to a hunter who is Shiva, stays, gets the gift. Asana: Virabhadrasana. Hook: "She lost the first race. Then she made history." Waiting on Boonchu's cue.
 Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
-Carne and Plato both posted today. Inbox 07:08: 5 new in 1 thread, 0 waiting (ends with thanks). Shala flag: a student found the shala under construction at 06:08 today; the schedule still lists classes today and tomorrow. Check in team chat.
-13:08 check-in: course prices (1 day) and Mysore Reel (by 19:00 Thu 22 Oct) still waiting, 2nd nudge today. Inbox: 2 new in 1 thread, 1 hot (shala package renewal).
-19:08 check-in: no new decisions, prices and Reel due Thu 22 Oct 19:00 (not repeated). Inbox: 0 new, 1 hot carried (shala renewal).
+Carne and Plato both posted today. Inbox 07:08: 0 new; 1 carried (LINE class-status fix, may be answered).
+13:08 check-in: Mysore Reel due 19:00 today (B = Fri 23 Oct), course prices 2 days (by Thu 22 Oct), 2nd nudge today each. Inbox: 0 new.
+19:08 check-in: no answer on the Mysore Reel by 19:00, default B applied (Reel moves to Fri 23 Oct). Prices due Thu 22 Oct (2 days), not repeated. No win reported. Inbox: 0 new.
 
-## 2026-10-21 · carnegie
+## 2026-10-20 · carnegie
 
-180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb). No new message from them since 17 Oct.
-Next check Thu 22 Oct. Nothing to send today if one of my drafts already went out.
-Boonchu: answer "is the online Led class invite only?" (open since 18 Oct).
-@Machiavelli: inbox has 1 LINE thread for you: a shala student came for class at 06:08 today, found it under construction, asked about class with Matt.
+180K leads: 0 new, 1 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb). No new message from them since 17 Oct.
+Follow-up drafted today, next check Thu 22 Oct.
+Boonchu: answer "is the online Led class invite only?" (open since 18 Oct). Then send ONE message from LINE OA: my 18 Oct draft if not sent yet, else today's.
+Inbox: 4 LINE threads, all shala (bookings, next month's timetable and bank number, class status, a car window note). @Machiavelli: yours.
 Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
-
-## 2026-10-20 · plato
-
-Trigger: a South African runner lost the first race of the year, was 3rd in September, then won a 10 km race series for the 4th time, a first (The Citizen, 19 Oct; race Sat 18 Oct).
-Story: Arjuna loses a fight to a hunter, does not run, offers flowers; the hunter was Shiva, who gives him the gift (Mahabharata, Vana Parva, Kairata Parva).
-Asana: Virabhadrasana, the warrior (Primary, standing). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "She lost the first race. Then she made history." Full package: posts/2026-10-20-plato-archer-and-hunter.md
 
 ## 2026-10-20 · plato-archer-and-hunter
 
@@ -780,32 +812,31 @@ Xiaohongshu title (12 characters): 输了那一仗，他得到了礼物
 
 Items to verify before filming: the runner's photo credit (use a news photo with credit or no photo); Boonchu checks the "I lose to a pose every week" hook only if he wants hook 1.
 
-## 2026-10-20 · machiavelli
+## 2026-10-20 · plato
 
-Money today: answer the "is the online Led class invite only?" question (open since 18 Oct), then send Carne's one LINE OA message to the serious lead.
-Mysore Reel: reply A (post Wed 21 Oct, caption rewritten to the 2 Oct terms first) or B (move to Fri 23 Oct) in Plato chat by 19:00 today. No answer means B.
-Course prices: decision needed in team chat by 19:00 Thu 22 Oct (2 days). Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
-Countdowns: Google ad first check and Batch Sheet Thu 22 Oct: 2 days; door check-in for everyone about Sat 24 Oct: 4 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 5 days; keyword test Mon 26 Oct: 6 days; test group Tue 27 Oct: 7 days; Google ad judge Thu 29 Oct: 9 days; Mysore trip check Sun 1 Nov: 12 days. PR #63 and PR #67 still to merge. No reminders due.
-Reel from Plato: Arjuna loses to a hunter who is Shiva, stays, gets the gift. Asana: Virabhadrasana. Hook: "She lost the first race. Then she made history." Waiting on Boonchu's cue.
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb).
-Carne and Plato both posted today. Inbox 07:08: 0 new; 1 carried (LINE class-status fix, may be answered).
-13:08 check-in: Mysore Reel due 19:00 today (B = Fri 23 Oct), course prices 2 days (by Thu 22 Oct), 2nd nudge today each. Inbox: 0 new.
-19:08 check-in: no answer on the Mysore Reel by 19:00, default B applied (Reel moves to Fri 23 Oct). Prices due Thu 22 Oct (2 days), not repeated. No win reported. Inbox: 0 new.
+Trigger: a South African runner lost the first race of the year, was 3rd in September, then won a 10 km race series for the 4th time, a first (The Citizen, 19 Oct; race Sat 18 Oct).
+Story: Arjuna loses a fight to a hunter, does not run, offers flowers; the hunter was Shiva, who gives him the gift (Mahabharata, Vana Parva, Kairata Parva).
+Asana: Virabhadrasana, the warrior (Primary, standing). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "She lost the first race. Then she made history." Full package: posts/2026-10-20-plato-archer-and-hunter.md
 
-## 2026-10-20 · carnegie
+## 2026-10-19 · machiavelli
 
-180K leads: 0 new, 1 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb). No new message from them since 17 Oct.
-Follow-up drafted today, next check Thu 22 Oct.
-Boonchu: answer "is the online Led class invite only?" (open since 18 Oct). Then send ONE message from LINE OA: my 18 Oct draft if not sent yet, else today's.
-Inbox: 4 LINE threads, all shala (bookings, next month's timetable and bank number, class status, a car window note). @Machiavelli: yours.
-Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
+Money today: answer the LINE renewal question (old student, 3-month pass, asked 18 Oct 16:58, no reply seen).
+Course prices: decision needed in team chat by 19:00 Thu 22 Oct. Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
+Mysore Reel: reply A (post Wed 21 Oct, caption rewritten to the 2 Oct terms first) or B (move to Fri 23 Oct) in Plato chat by 19:00 Tue 20 Oct. No answer means B.
+Countdowns: Carne checks the serious lead Tue 20 Oct: 1 day; Google ad first check Thu 22 Oct: 3 days; door check-in for everyone about Sat 24 Oct: 5 days (stage 1 build waits on Boonchu's go); test group Tue 27 Oct: 8 days; Google ad judge Thu 29 Oct: 10 days; Mysore trip check Sun 1 Nov: 13 days. PR #63 and PR #67 still to merge. No reminders due.
+Reel from Plato: Dilipa walks at the cow's pace for 21 days (Raghuvamsha). Asana: Gomukhasana. Hook: "This car is slower than you walk. And it just broke a world record." Waiting on Boonchu's cue.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb). Letter #1 planned today: not approved yet.
+Carne and Plato both posted today. Inbox 07:08: 0 new, 1 hot carried from yesterday.
+13:08 check-in: Mysore Reel still waiting (1 day), course prices still waiting (3 days). Inbox: 4 new, 2 hot.
+19:08 check-in: no new decisions (Reel and prices reminded twice today). Inbox: 3 new threads, 1 needs an answer, 0 hot; yesterday's renewal thread looks answered.
 
-## 2026-10-19 · plato
+## 2026-10-19 · carnegie
 
-Trigger: NASA's rover on Mars is slower than you walk, drove a little every day for five and a half years, and now holds the record for the longest drive on another world (record 11 Oct, Fox Weather 18 Oct).
-Story: Dilipa walks with Vasishtha's cow at her pace, stops when she stops, sits when she lies down, 21 days, then his wish comes true (Kalidasa, Raghuvamsha canto 2).
-Asana: Gomukhasana, cow face (Intermediate). Habit #3. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "This car is slower than you walk. And it just broke a world record." Full package: posts/2026-10-19-plato-cow-pace.md
+180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb).
+Next check on the serious lead: Tue 20 Oct.
+Boonchu: answer their question "is the online Led class invite only?", then send my 18 Oct draft from LINE OA.
+Inbox: 1 LINE thread, a Thai student asks the old-student 3-month price. @Machiavelli: yours.
 
 ## 2026-10-19 · plato-cow-pace
 
@@ -934,24 +965,12 @@ Xiaohongshu title (13 characters): 比走路还慢的火星车，破了纪录
 
 Items to verify before filming: the rover photo credit; if the rover passes a new milestone before posting, keep "five and a half years" (still true).
 
-## 2026-10-19 · machiavelli
+## 2026-10-19 · plato
 
-Money today: answer the LINE renewal question (old student, 3-month pass, asked 18 Oct 16:58, no reply seen).
-Course prices: decision needed in team chat by 19:00 Thu 22 Oct. Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
-Mysore Reel: reply A (post Wed 21 Oct, caption rewritten to the 2 Oct terms first) or B (move to Fri 23 Oct) in Plato chat by 19:00 Tue 20 Oct. No answer means B.
-Countdowns: Carne checks the serious lead Tue 20 Oct: 1 day; Google ad first check Thu 22 Oct: 3 days; door check-in for everyone about Sat 24 Oct: 5 days (stage 1 build waits on Boonchu's go); test group Tue 27 Oct: 8 days; Google ad judge Thu 29 Oct: 10 days; Mysore trip check Sun 1 Nov: 13 days. PR #63 and PR #67 still to merge. No reminders due.
-Reel from Plato: Dilipa walks at the cow's pace for 21 days (Raghuvamsha). Asana: Gomukhasana. Hook: "This car is slower than you walk. And it just broke a world record." Waiting on Boonchu's cue.
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb). Letter #1 planned today: not approved yet.
-Carne and Plato both posted today. Inbox 07:08: 0 new, 1 hot carried from yesterday.
-13:08 check-in: Mysore Reel still waiting (1 day), course prices still waiting (3 days). Inbox: 4 new, 2 hot.
-19:08 check-in: no new decisions (Reel and prices reminded twice today). Inbox: 3 new threads, 1 needs an answer, 0 hot; yesterday's renewal thread looks answered.
-
-## 2026-10-19 · carnegie
-
-180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb).
-Next check on the serious lead: Tue 20 Oct.
-Boonchu: answer their question "is the online Led class invite only?", then send my 18 Oct draft from LINE OA.
-Inbox: 1 LINE thread, a Thai student asks the old-student 3-month price. @Machiavelli: yours.
+Trigger: NASA's rover on Mars is slower than you walk, drove a little every day for five and a half years, and now holds the record for the longest drive on another world (record 11 Oct, Fox Weather 18 Oct).
+Story: Dilipa walks with Vasishtha's cow at her pace, stops when she stops, sits when she lies down, 21 days, then his wish comes true (Kalidasa, Raghuvamsha canto 2).
+Asana: Gomukhasana, cow face (Intermediate). Habit #3. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "This car is slower than you walk. And it just broke a world record." Full package: posts/2026-10-19-plato-cow-pace.md
 
 ## 2026-10-19 · carnegie-brief-keyword-test
 
@@ -1050,12 +1069,25 @@ Hopkins gave every ad its own code and counted who answered. We plan 7 Reels a w
 ## Value check (Hormozi)
 The STUCK ask works because the dream is clear: unstuck on one asana. Belief is high, because Boonchu answers himself. It's fast, a reply this week, and easy, one word. Keep all four true. If replies get slow, the ask dies.
 
-## 2026-10-18 · plato
+## 2026-10-18 · machiavelli
 
-Trigger: ScienceDaily 15 Oct (Baylor, Nature): people deep asleep for an operation, a story plays, a part of the brain still follows it and guesses the next word.
-Story: the fish who lay still and listened while Shiva taught Parvati yoga, and became Matsyendra (old yoga legend, told by Iyengar in Light on Yoga).
-Asana: Ardha Matsyendrasana (Intermediate). Lane A, habit #6 Calm the mind. Waiting on Boonchu's cue.
-Hook: "Doctors put people deep asleep... and read them a story." Full package: posts/2026-10-18-plato-fish-who-listened.md
+Money today: the serious online-teaching lead replied. They plan to practice in Bangkok mid or late Jan to Feb. New question: is the online Led class invite only? Boonchu says yes or no, then sends Carne's draft from LINE OA.
+Course prices: decision needed in team chat by 19:00 today. Default B: sales open moves to Tue 10 Nov, course start to Tue 17 Nov.
+Mysore Reel: reply A (post Mon 19 Oct, caption rewritten to the 2 Oct terms first) or B (move to Wed 21 Oct) in Plato chat by 19:00 today. No answer means B.
+Countdowns: course prices today; Reel Mon 19 Oct: 1 day; Google ad first check Thu 22 Oct: 4 days; door check-in for everyone about Sat 24 Oct: 6 days (stage 1 build waits on Boonchu's go); test group Tue 27 Oct: 9 days; Google ad judge Thu 29 Oct: 11 days. PR #63 still to merge. No reminders due.
+Reel from Plato: the fish who listened and became Matsyendra. Asana: Ardha Matsyendrasana. Hook: "Doctors put people deep asleep... and read them a story." Waiting on Boonchu's cue.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious, now planning a visit.
+Carne and Plato both posted today. Inbox 07:08: 2 new, 2 hot.
+13:08 check-in: course prices and Mysore Reel due 19:00 today (2nd nudge). Inbox: 0 new.
+19:08 check-in: no answer on prices or Reel by 19:00, default B applied (sales open Tue 10 Nov, course start Tue 17 Nov; Reel Wed 21 Oct). No win reported. Inbox: 1 new, 1 hot.
+
+## 2026-10-18 · carnegie
+
+# Carnegie, 2026-10-18
+- New leads: 0. Open: 1 (serious). Due today: 1. Overdue: 0. Quiet 14+ days: 0.
+- Good news: Boonchu's reply landed. The serious lead thanked him and plans to come to Bangkok mid or late Jan to Feb, after Mysore.
+- New question from them: they saw an online led class by an AYBKK teacher and ask if it is invite only. Only Boonchu knows. My short reply draft is in my session.
+- Boonchu: say yes or no on that online class, then send the reply from LINE OA. Next check 20 Oct.
 
 ## 2026-10-18 · plato-fish-who-listened
 
@@ -1181,32 +1213,32 @@ Xiaohongshu title (13 characters): 睡着都在听，你练瑜伽在听吗
 - Ashtanga fact: Ardha Matsyendrasana is in the Intermediate series (after Bharadvajasana). "Ardha" = half, "Matsya" = fish, "Indra" = lord. Five breaths is the usual count in the series.
 - Not used in 30 days: Matsyendra story (pitched 10 Oct, never written or used), Ardha Matsyendrasana.
 
-## 2026-10-18 · machiavelli
+## 2026-10-18 · plato
 
-Money today: the serious online-teaching lead replied. They plan to practice in Bangkok mid or late Jan to Feb. New question: is the online Led class invite only? Boonchu says yes or no, then sends Carne's draft from LINE OA.
-Course prices: decision needed in team chat by 19:00 today. Default B: sales open moves to Tue 10 Nov, course start to Tue 17 Nov.
-Mysore Reel: reply A (post Mon 19 Oct, caption rewritten to the 2 Oct terms first) or B (move to Wed 21 Oct) in Plato chat by 19:00 today. No answer means B.
-Countdowns: course prices today; Reel Mon 19 Oct: 1 day; Google ad first check Thu 22 Oct: 4 days; door check-in for everyone about Sat 24 Oct: 6 days (stage 1 build waits on Boonchu's go); test group Tue 27 Oct: 9 days; Google ad judge Thu 29 Oct: 11 days. PR #63 still to merge. No reminders due.
-Reel from Plato: the fish who listened and became Matsyendra. Asana: Ardha Matsyendrasana. Hook: "Doctors put people deep asleep... and read them a story." Waiting on Boonchu's cue.
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious, now planning a visit.
-Carne and Plato both posted today. Inbox 07:08: 2 new, 2 hot.
-13:08 check-in: course prices and Mysore Reel due 19:00 today (2nd nudge). Inbox: 0 new.
-19:08 check-in: no answer on prices or Reel by 19:00, default B applied (sales open Tue 10 Nov, course start Tue 17 Nov; Reel Wed 21 Oct). No win reported. Inbox: 1 new, 1 hot.
+Trigger: ScienceDaily 15 Oct (Baylor, Nature): people deep asleep for an operation, a story plays, a part of the brain still follows it and guesses the next word.
+Story: the fish who lay still and listened while Shiva taught Parvati yoga, and became Matsyendra (old yoga legend, told by Iyengar in Light on Yoga).
+Asana: Ardha Matsyendrasana (Intermediate). Lane A, habit #6 Calm the mind. Waiting on Boonchu's cue.
+Hook: "Doctors put people deep asleep... and read them a story." Full package: posts/2026-10-18-plato-fish-who-listened.md
 
-## 2026-10-18 · carnegie
+## 2026-10-17 · machiavelli
 
-# Carnegie, 2026-10-18
-- New leads: 0. Open: 1 (serious). Due today: 1. Overdue: 0. Quiet 14+ days: 0.
-- Good news: Boonchu's reply landed. The serious lead thanked him and plans to come to Bangkok mid or late Jan to Feb, after Mysore.
-- New question from them: they saw an online led class by an AYBKK teacher and ask if it is invite only. Only Boonchu knows. My short reply draft is in my session.
-- Boonchu: say yes or no on that online class, then send the reply from LINE OA. Next check 20 Oct.
+Money today: the serious online-teaching lead (LINE, third series) wrote again last night and asks if they should find another teacher. Boonchu decided: practice at the shala first. Send Machi's reply from LINE OA this morning (6 days with no AYBKK reply seen).
+Course prices: decision needed in team chat by 19:00 Sun 18 Oct (1 day). Default B: sales open moves to Tue 10 Nov, course start to Tue 17 Nov.
+Mysore Reel: reply A (post Mon 19 Oct, caption rewritten to the 2 Oct terms first) or B (move to Wed 21 Oct) in Plato chat by 19:00 Sun 18 Oct (1 day). No answer means B.
+Countdowns: course prices Sun 18 Oct: 1 day; Reel Mon 19 Oct: 2 days; Google ad first check Thu 22 Oct: 5 days; door check-in for everyone about Sat 24 Oct: 7 days (stage 1 build waits on Boonchu's go); test group Tue 27 Oct: 10 days; Google ad judge Thu 29 Oct: 12 days. PR #63 still to merge. No reminders due.
+Reel from Plato: the old bear king who can only jump ninety (Ramayana). Asana: Utplutih, the last lift. Hook: "From 35, the body start to get weaker. Even if you train." Waiting on Boonchu's cue.
+Score: wins this week: none reported. 180K leads: 0 new, 1 serious in 20 days, at risk.
+Carne and Plato both posted today. Carne's @Machi request (lead at top of brief): done. Inbox 07:08: 4 new, 2 hot.
+13:08 check-in: course prices and Mysore Reel still waiting (1 day each, due 19:00 Sun 18 Oct). Inbox 13:08: 0 new, 0 hot.
+19:08 check-in: no win reported, no reminders due. Prices and Reel not repeated (2 nudges today). Next step: send the online-teaching lead reply. Inbox 19:08: 0 new, 0 hot.
 
-## 2026-10-17 · plato
+## 2026-10-17 · carnegie
 
-Trigger: ScienceDaily 14 Oct (Karolinska, 47 years, same people): from about 35 the body gets weaker, even if you train. "It is never too late to start moving."
-Story: the monkeys must jump the sea; the old bear king Jambavan says "Now I am old and slow, I can jump ninety." Not enough, but he does not go home (Valmiki Ramayana, Kishkindha 65).
-Asana: Utplutih, the last lift of every practice ("jump up"). Lane A story, Lane B door (fear: "I'm too old"). Habit #2 Get stronger. Waiting on Boonchu's cue.
-Hook: "Scientists follow the same people 47 years. From 35, the body start to get weaker. Even if you train." Full package: posts/2026-10-17-plato-old-bear-king.md
+# Carnegie, 2026-10-17
+- New leads: 0. Open: 1 (serious). Due today: 1. Overdue: 0.
+- At risk: the serious online-teaching lead (LINE) wrote last night. No reply from us in 5 days, they ask if they should find another teacher.
+- Boonchu: send my reply today from LINE OA (in my session). Then answer online teaching yes or no (6th day open).
+- @Machiavelli: please put this lead at the top of the 07:08 brief. It is the only real 180K lead, and it is about to walk.
 
 ## 2026-10-17 · plato-old-bear-king
 
@@ -1347,141 +1379,13 @@ Xiaohongshu title (14 characters): 35岁开始变弱？老熊王照样跳
 - Ashtanga facts used: every practice ends with the lift (Utplutih) in the finishing sequence. No breath count spoken. Boonchu's age 52 (do not say 53 before December).
 - Not used in 30 days: Jambavan story (pitched 10 Oct, not used), Utplutih. Hanumanasana not used (used 1-2 Oct).
 
-## 2026-10-17 · machiavelli
+## 2026-10-17 · plato
 
-Money today: the serious online-teaching lead (LINE, third series) wrote again last night and asks if they should find another teacher. Boonchu decided: practice at the shala first. Send Machi's reply from LINE OA this morning (6 days with no AYBKK reply seen).
-Course prices: decision needed in team chat by 19:00 Sun 18 Oct (1 day). Default B: sales open moves to Tue 10 Nov, course start to Tue 17 Nov.
-Mysore Reel: reply A (post Mon 19 Oct, caption rewritten to the 2 Oct terms first) or B (move to Wed 21 Oct) in Plato chat by 19:00 Sun 18 Oct (1 day). No answer means B.
-Countdowns: course prices Sun 18 Oct: 1 day; Reel Mon 19 Oct: 2 days; Google ad first check Thu 22 Oct: 5 days; door check-in for everyone about Sat 24 Oct: 7 days (stage 1 build waits on Boonchu's go); test group Tue 27 Oct: 10 days; Google ad judge Thu 29 Oct: 12 days. PR #63 still to merge. No reminders due.
-Reel from Plato: the old bear king who can only jump ninety (Ramayana). Asana: Utplutih, the last lift. Hook: "From 35, the body start to get weaker. Even if you train." Waiting on Boonchu's cue.
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious in 20 days, at risk.
-Carne and Plato both posted today. Carne's @Machi request (lead at top of brief): done. Inbox 07:08: 4 new, 2 hot.
-13:08 check-in: course prices and Mysore Reel still waiting (1 day each, due 19:00 Sun 18 Oct). Inbox 13:08: 0 new, 0 hot.
-19:08 check-in: no win reported, no reminders due. Prices and Reel not repeated (2 nudges today). Next step: send the online-teaching lead reply. Inbox 19:08: 0 new, 0 hot.
-
-## 2026-10-17 · carnegie
-
-# Carnegie, 2026-10-17
-- New leads: 0. Open: 1 (serious). Due today: 1. Overdue: 0.
-- At risk: the serious online-teaching lead (LINE) wrote last night. No reply from us in 5 days, they ask if they should find another teacher.
-- Boonchu: send my reply today from LINE OA (in my session). Then answer online teaching yes or no (6th day open).
-- @Machiavelli: please put this lead at the top of the 07:08 brief. It is the only real 180K lead, and it is about to walk.
+Trigger: ScienceDaily 14 Oct (Karolinska, 47 years, same people): from about 35 the body gets weaker, even if you train. "It is never too late to start moving."
+Story: the monkeys must jump the sea; the old bear king Jambavan says "Now I am old and slow, I can jump ninety." Not enough, but he does not go home (Valmiki Ramayana, Kishkindha 65).
+Asana: Utplutih, the last lift of every practice ("jump up"). Lane A story, Lane B door (fear: "I'm too old"). Habit #2 Get stronger. Waiting on Boonchu's cue.
+Hook: "Scientists follow the same people 47 years. From 35, the body start to get weaker. Even if you train." Full package: posts/2026-10-17-plato-old-bear-king.md
 
 ## 2026-10-17 · carnegie-ladder-ads-plan
 
-# Who we sell to, what to sell next, when to buy ads
-
-Carne, 17 Oct 2026. From the Reel https://www.instagram.com/reel/DeG_3SeI0AB/ (Eugene Schwartz's 5 groups). Plan only. Nothing is spent or posted without Boonchu's "go".
-
-**Short answer: we sell almost only to group 5, and group 5 has nothing clear to buy. No ad fixes that. And nothing on the "low ticket passive" list is passive.**
-
-## Do first (this week, one sitting)
-
-1. Make the 180K real. How many CN #3 seats are paid? What does a new buyer pay today? Answer the 12 Sales Kit questions.
-2. Online teaching: yes or no. Then Carne drafts the reply to the long-study lead (no price). The lead has waited since 12 Oct.
-3. Fill CN #3 seats for free: the Letter, the 10 WeChat groups, graduate referrals. CN #3 starts in 86 days.
-
-## Do not do this quarter
-
-- No China or Russia ads. No Meta test.
-- No monthly coaching, Teacher Course, journal or new tee designs.
-- Nothing new after 12 Dec.
-- Set the course price by 19:00 Sun 18 Oct, or move the course past 9 Feb 2027.
-
-## 1. The 5 groups, and where we are
-
-| # | Group | What they think | Who that is for us |
-|---|---|---|---|
-| 1 | Unaware | "I'm fine." | People who scroll past our Reels |
-| 2 | Problem aware | "I'm stuck in Primary." "A Mysore room scares me." | Stuck practitioners, shy beginners |
-| 3 | Solution aware | "I need long, deep study." "I want Mysore in Bangkok." | People who search Mysore, buy online courses |
-| 4 | Product aware | "I know AYBKK." | LINE OA 1,070+, WeChat Channel 5,000 |
-| 5 | Most aware | "I want to study with Boonchu. When? How much?" | 10 WeChat groups, Telegram 150, shala students |
-
-We sell to group 5, by hand, in LINE and WeChat groups.
-
-Two holes:
-- **Group 5 has no clear price.** The code sells CN #3 (11 Jan to 9 Feb 2027) at a 199,000 THB list price. All its early deals ended in September. "180K" is close to the old 10%-off price (179,100).
-- **There is no paid step below 180K.** Someone in group 4 must jump straight to 180K. Most won't.
-
-Graduates are not buyers. CN #1 and CN #2 already paid. They are the sales team: they send students and host workshops.
-
-## 2. What moves people up one group
-
-| Move | What does it | What is missing |
-|---|---|---|
-| 1 to 2 | A Reel that shows their own habit (Hidden Stories) | We don't count saves and follows |
-| 2 to 3 | Name the stuck point, show the fix (Stuck in Primary) | Four calls to action (STUCK, aybkk, MYSORE, free guide). Pick one. |
-| 3 to 4 | Free guide, weekly Letter, reviews | The "aybkk" keyword is broken. Letter #1 not sent. |
-| 4 to 5 | A small paid step where Boonchu sees their practice. Graduate stories. | The paid step. Written OK for stories. |
-| 5 to buyer | Dates, price, seats, how to pay | Sales Kit answers. The lead reply. |
-
-We lose people at the last two steps. Ads only feed steps 1 to 3.
-
-## 3. What to sell
-
-| Product | Moves people to 180K? | This quarter |
-|---|---|---|
-| Free guide (EN, TH done) | Yes | Fix the "aybkk" keyword. Test it once. |
-| Practice video review ("theory consulting") | Yes. The best next step. | Small pilot, few seats |
-| Online anatomy + philosophy course | A little. A theory buyer is not yet a Mysore buyer. | Warm list only, if priced by 18 Oct |
-| Tee shop | No. It keeps students happy. | Pre-order only. No new designs. No ads. |
-| Monthly online coaching | No. It fights the 180K. | No |
-
-**Video review.** The Reels ask "stuck on an asana?" So the next step is "send me your video", not a theory course.
-- Hormozi: the dream is "unstuck on one asana". They believe it because Boonchu sees their real body. Time: notes in a few days. Effort: one video.
-- Munger: it dies if Boonchu reviews videos all day, or gives away the course for cheap. Cap the seats. Say no to the rest.
-- Open: days to reply, price, seats a month, does it count toward the 180K.
-- Add: "For pain, see a doctor or physio." Never show a video without a written OK.
-- Open: "theory consulting" means yoga theory, shala business, or both? Shala business is a different buyer.
-
-**Online course.** Starts 17 Nov. Not passive. China needs an RMB way to pay, a video host that works there (not YouTube or Vimeo), a Chinese checker, and one person for support and refunds. Certificate says "completed" only, never 授权 or 认证. Proposed 1,280 and 2,980 RMB, not approved.
-
-**Tees.** 37 designs at ¥220, 7 at ¥200. Open: how many sold, and are they already printed?
-
-## 4. Ads
-
-**The only test: Google search ads, Thai and English, for the Bangkok shala.** It has a price and a way to pay. The 180K does not need ads. Nobody pays 199,000 THB from an ad.
-
-- 14 Nov to 12 Dec, after the price list goes up on 13 Nov.
-- Put the Google tag on the site first. There is none now.
-- Judge by cost per first paid package. Google can't see LINE slips, so count /book bookings or LINE adds, and match slips by hand each week. Open: who?
-- Ask for reviews. No gifts, no discounts, never "5 stars". Google bans it.
-- Warning: our 1 month is 9,600. Others charge 4,500 to 6,200. Open: a first-timer offer after 12 Nov?
-- GUESS: few people search "mysore yoga bangkok". The test will be small. Small is cheap.
-
-**Stop rules.** One market, one platform, one offer, 7 to 14 days, a money cap set first. Stop at 2x the target cost with no sale, or under 1% clicks after 1,000 views. Open: the target cost, the budget.
-
-**Not this quarter:**
-- China: no. XHS ads need a Chinese company. A graduate's company would carry the legal risk. The ad law bans 最, 第一 and health claims.
-- Russia: wait. Instagram and Facebook ads are banned there since 1 Sep 2025. VK and Yandex ads need the "Реклама" label. Open: how do Russian students pay now?
-- Meta: wait. Our audience may be too small for it to learn.
-
-## 5. Calendar
-
-- Now to 31 Oct: Do first list. Course price (18 Oct). Keyword fix. Letter #1.
-- 10 Nov: course sales open, only if priced.
-- 11 Nov: shala promo ends. Double 11. Also the day we lost Sharath: tribute only, no sales post.
-- 12 Nov: new shala prices start, quietly.
-- 13 Nov: price list goes up, after the lawyer check.
-- 14 Nov to 12 Dec: Google test. Course starts 17 Nov. Video review pilot.
-- After 12 Dec: nothing new. Mysore trip 19 Dec to 10 Jan. CN #3 11 Jan to 9 Feb.
-- After 9 Feb: Meta, Russia ads, coaching, Teacher Course, membership, journal, new tees.
-
-## 6. Money (GUESS, 1 USD = 33 THB)
-
-- Goal: about 33M THB a year net.
-- One full cohort (12 x 180,000): 2.16M THB, 6.5% of the goal before costs.
-- All small products together, if they go well: about 894,000 THB. Less than half a cohort.
-- One 180K seat = about 31 course buyers.
-- 180K alone needs about 15 full cohorts a year. One teacher can't teach that. That is the real wall, for after CN #3.
-
-## Sources
-
-- https://www.instagram.com/reel/DeG_3SeI0AB/
-- Repo: idcn-api.js (CN #3 terms), shop-seed.json
-- https://appinchina.co/blog/the-complete-guide-to-rednote-xiaohongshu-ads-in-china/
-- https://www.gov.cn/guoqing/2021-10/29/content_5647620.htm
-- https://www.themoscowtimes.com/2026/08/03/russian-lawmakers-pass-bill-banning-advertising-on-extremist-platforms-like-facebook-and-instagram
-- https://yandex.com/adv/news/how-mandatory-online-advertising-labeling-works-in-2025
-- https://www.savemyleads.com/blog/other/meta-ads-learning-phase
+Has prices: read bots/posts/2026-10-17-carnegie-ladder-ads-plan.md (not copied here).
