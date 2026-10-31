@@ -6,3 +6,4 @@ Reel: Plato's daily run is paused (expected). Ready to film from Plato chat: "Ga
 Score: wins this week: none reported. 180K leads: 0 new this week, 1 serious, silent 14 days.
 Inbox 07:08: 1 new, 0 hot.
 13:08 check-in: course prices (Sun 1 Nov, 1 day) and serious lead (19:00 today) reminded, 2nd nudge today. PR #77 next step given (LINE keyword replies + test). Inbox 13:08: 1 new, 0 hot.
+19:08 check-in: serious lead default applied (stays open, Carne checks 7 Nov). Course prices due 19:00 tomorrow. Inbox 19:08: 0 new, 0 hot.
