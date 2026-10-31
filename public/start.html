@@ -159,8 +159,11 @@
   const NAME = { line: 'LINE', whatsapp: 'WhatsApp', wechat: 'WeChat' };
   const pathTag = (location.pathname.match(/^\/start\/([\w-]+)/) || [])[1];
   const MSG = `Hi AYBKK, I want to book my first morning. (aybkk.net/start${pathTag ? '/' + pathTag : ''})\nสวัสดีครับ/ค่ะ อยากจองเช้าแรกครับ/ค่ะ`;
+  // LINE OA keyword replies fire only on an exact match, so the LINE button
+  // sends just the keyword; the OA answers it in seconds, day or night.
+  const LINE_KEY = { en: 'First morning', th: 'จองเช้าแรก', zh: '预约第一个早上', ru: 'First morning' };
   const LINK = {
-    line: 'https://line.me/R/oaMessage/%40aybkk/?' + encodeURIComponent(MSG),
+    get line() { return 'https://line.me/R/oaMessage/%40aybkk/?' + encodeURIComponent(LINE_KEY[LANG] || LINE_KEY.en); },
     whatsapp: 'https://wa.me/66842244246?text=' + encodeURIComponent(MSG),
   };
   const qs = new URLSearchParams(location.search);
