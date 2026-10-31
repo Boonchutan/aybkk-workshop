@@ -5,3 +5,4 @@ Reminders due this morning: none.
 Reel: Plato's daily run is paused (expected). Ready to film from Plato chat: "Ganda Bherundasana" (Jamsai voiceover), "mind body connection", "My first shala was built for 20" (post before 9 Nov), "One class is not a practice". Carne posted today.
 Score: wins this week: none reported. 180K leads: 0 new this week, 1 serious, silent 14 days.
 Inbox 07:08: 1 new, 0 hot.
+13:08 check-in: course prices (Sun 1 Nov, 1 day) and serious lead (19:00 today) reminded, 2nd nudge today. PR #77 next step given (LINE keyword replies + test). Inbox 13:08: 1 new, 0 hot.
