@@ -16,3 +16,4 @@ OL: Everyone can improve. But you must learn which part of your body is holding 
 RH: If your shoulders feel tight, work more on opening and lifting the chest. If your lower back feels too bendy, with some pain, stretch your quads and open your hips.
 P: The most valuable thing: every time, stay as long as you can and breathe until you feel comfortable there. The longer you stay, the more your body will let you go deeper.
 CTA: Shoulders or lower back: which one is your tight spot? 👇
+CTA (Boonchu, replaces the question): Find a good teacher who can point out what you need to work on, or come to Bangkok and practice with us.
