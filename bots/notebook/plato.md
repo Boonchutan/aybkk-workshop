@@ -161,6 +161,8 @@
 
 - 2026-11-01 (Boonchu, follow-up): BIG WORD = THE IDEA of the story ('you should use word from the idea of the story'), not an object in it (no HORSE, NOODLE, MACHETE). SMALL TEXT ORDER: 'lead with the main context... then the 2nd-3rd sentence is the intro': sentence 1 = the idea in plain words with the big word in it; sentences 2-3 = who/where + what happened. COVER SLIDE first on every quote carousel (yes), and Postiz takes max 10 slides, so a carousel = 1 cover + 9 stories. The white big word MAY sit on the teacher's black shirt (never face, hands, feet). A sideways (vertical) big word is OK when there is no other room.
 
+- 2026-11-01 BIG WORD SIZE (Boonchu): 'make sure the big text is not smaller than 1/3 of the width. i prefer white big text.' Big word at least 360 px wide on a 1080 slide (sideways: at least 360 px long), white by default.
+
 ## Jobs from Machi
 - REPLACED 15 Oct by GOOGLE BUSINESS PHOTO POSTS (next entry); kept for history. Was: 2026-10-15 (Google report): WEEKLY GOOGLE BUSINESS PROFILE POST. Once a week, turn the week's best Reel into a Google post: 1 photo or the video, under 300 characters, alternate English and Thai, button "Book" to https://aybkk.net/start/maps. Posts may mention the promotion (the profile description may not). Draft only; Boonchu or Claude in Chrome posts it.
 - 2026-10-15 (Boonchu: "choose some photos with many people in the frame to post in google business. you can do every wednesday, friday and sunday"): GOOGLE BUSINESS PHOTO POSTS.
