@@ -1,0 +1,123 @@
+[
+ {
+  "photo": "31-042",
+  "id": "C1",
+  "word": "EASE",
+  "line": "Life springs from sorrow and calamity, and death from ease and pleasure.",
+  "credit": "Mencius 6B.15 · tr. James Legge"
+ },
+ {
+  "photo": "27-300",
+  "id": "C2",
+  "word": "ICE",
+  "line": "Ice crushed their ship. Six men sailed a small boat about 1,300 km for help. All 28 came home.",
+  "credit": "Ernest Shackleton · Endurance expedition, 1914 to 1917"
+ },
+ {
+  "photo": "31-021",
+  "id": "C3",
+  "word": "HEAT",
+  "line": "Heat and cold, sorrows and joys... Bear with it... As the wise bear.",
+  "credit": "Bhagavad Gita 2.14-15 · tr. Edwin Arnold (adapted)"
+ },
+ {
+  "photo": "31-155",
+  "id": "C4",
+  "word": "TRIAL",
+  "line": "Character cannot be developed in ease and quiet. Only through experiences of trial and suffering can the soul be strengthened.",
+  "credit": "Helen Keller · Helen Keller's Journal (1938), p. 60",
+  "wmain": 0.3,
+  "tight": true,
+  "t": 100,
+  "wwidth": 360,
+  "wpos": [
+   660,
+   40
+  ],
+  "ink_w": "dark",
+  "sz": 40,
+  "cws": [
+   480
+  ],
+  "sxy": [
+   540,
+   800
+  ],
+  "ink_s": "dark",
+  "direct": true
+ },
+ {
+  "photo": "31-046",
+  "id": "C5",
+  "word": "FISH",
+  "line": "Without work, you can't even pull a little fish out of a pond.",
+  "credit": "Russian proverb · recorded by Vladimir Dal"
+ },
+ {
+  "photo": "31-128",
+  "id": "C6",
+  "word": "PLUM",
+  "line": "A sword's sharp edge comes from grinding. The plum blossom's scent comes from bitter cold.",
+  "credit": "Chinese saying",
+  "wmain": 0.3,
+  "tight": true,
+  "t": 0,
+  "wwidth": 300,
+  "wpos": [
+   660,
+   40
+  ],
+  "ink_w": "light",
+  "sz": 38,
+  "cws": [
+   250
+  ],
+  "sxy": [
+   30,
+   170
+  ],
+  "ink_s": "dark",
+  "direct": true
+ },
+ {
+  "photo": "27-302",
+  "id": "C7",
+  "word": "FIRE",
+  "line": "Fire tests gold, misfortune brave men.",
+  "credit": "Seneca, On Providence 5.10 · tr. John W. Basore"
+ },
+ {
+  "photo": "31-062",
+  "id": "C8",
+  "word": "WILL",
+  "line": "What is needed is constant work, day and night, constant reading, study, will.",
+  "credit": "Anton Chekhov, letter to his brother, 1886 · tr. Constance Garnett",
+  "wmain": 0.3,
+  "tight": true
+ },
+ {
+  "photo": "31-011",
+  "id": "C9",
+  "word": "EVEREST",
+  "line": "Tenzing Norgay went to Everest six times. On the seventh, in 1953, he and Hillary reached the top.",
+  "credit": "Tenzing Norgay · Everest, 29 May 1953"
+ },
+ {
+  "photo": "31-183",
+  "id": "C10",
+  "word": "JEWEL",
+  "line": "Hardship makes you a jewel.",
+  "credit": "Japanese proverb · 艱難汝を玉にす",
+  "wmain": 0.3,
+  "tight": true,
+  "tlist": [
+   70
+  ],
+  "wwidth": 340,
+  "wpos": [
+   1020,
+   1000
+  ],
+  "ink_w": "dark"
+ }
+]

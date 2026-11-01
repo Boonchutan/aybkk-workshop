@@ -1,0 +1,112 @@
+[
+ {
+  "photo": "31-038",
+  "id": "A1",
+  "word": "ANSWER",
+  "line": "Same question, opposite answers. Confucius urged the slow student forward and kept the eager one back.",
+  "credit": "Confucius, Analects 11.22 · tr. James Legge (adapted)"
+ },
+ {
+  "photo": "27-013",
+  "id": "A2",
+  "word": "HORSE",
+  "line": "Sometimes the best horse may be the worst horse, and the worst horse can be the best one.",
+  "credit": "Shunryu Suzuki · Zen Mind, Beginner's Mind (1970)"
+ },
+ {
+  "photo": "31-171",
+  "id": "A3",
+  "word": "ROCKET",
+  "line": "Tsiolkovsky, nearly deaf from a childhood fever, left school and taught himself. Today he is called the father of astronautics.",
+  "credit": "Konstantin Tsiolkovsky · Space Hall of Fame, 1976",
+  "wmain": 0.3,
+  "tight": true,
+  "t": 200,
+  "wwidth": 360,
+  "wpos": [
+   60,
+   430
+  ],
+  "ink_w": "light",
+  "sz": 40,
+  "cws": [
+   280
+  ],
+  "sxy": [
+   760,
+   420
+  ],
+  "ink_s": "dark",
+  "direct": true
+ },
+ {
+  "photo": "31-059",
+  "id": "A4",
+  "word": "LOTUS",
+  "line": "The Buddha saw people like lotuses: some flourish under the water, some stand level, some rise above it.",
+  "credit": "The Buddha, Samyutta Nikaya 6.1 · tr. Thanissaro Bhikkhu (adapted)"
+ },
+ {
+  "photo": "31-084",
+  "id": "A5",
+  "word": "COUNT",
+  "line": "Feynman counted by talking to himself. John Tukey counted by picturing numbers. Same task, different minds.",
+  "credit": "Richard Feynman · What Do You Care…, 1988",
+  "wmain": 0.3,
+  "tight": false,
+  "t": 100,
+  "wwidth": 360,
+  "wpos": [
+   560,
+   40
+  ],
+  "ink_w": "dark",
+  "sz": 42,
+  "cws": [
+   480
+  ],
+  "sxy": [
+   560,
+   400
+  ],
+  "ink_s": "light",
+  "direct": true
+ },
+ {
+  "photo": "27-304",
+  "id": "A6",
+  "word": "WHEEL",
+  "line": "Not too gentle, not too hard: you can get it in your hand and feel it in your mind.",
+  "credit": "Zhuangzi, ch. 13, the wheelwright · tr. Burton Watson"
+ },
+ {
+  "photo": "31-131",
+  "id": "A7",
+  "word": "MINDS",
+  "line": "The world is going to need all of the different kinds of minds to work together.",
+  "credit": "Temple Grandin · TED talk, 2010"
+ },
+ {
+  "photo": "31-087",
+  "id": "A8",
+  "word": "DRUMMER",
+  "line": "If a man does not keep pace with his companions, perhaps it is because he hears a different drummer.",
+  "credit": "Henry David Thoreau · Walden (1854)",
+  "wmain": 0.3,
+  "tight": true
+ },
+ {
+  "photo": "31-018",
+  "id": "A9",
+  "word": "TAILOR",
+  "line": "The essence of my father's teachings: the yoga practice must be tailored to fit each person.",
+  "credit": "T.K.V. Desikachar on T. Krishnamacharya · The Heart of Yoga, 1995 (adapted)"
+ },
+ {
+  "photo": "27-294",
+  "id": "A10",
+  "word": "TOMORROW",
+  "line": "What the child can do in cooperation today he can do alone tomorrow.",
+  "credit": "Lev Vygotsky, Thought and Language, ch. 6 · tr. Hanfmann and Vakar"
+ }
+]

@@ -302,7 +302,7 @@ def layouts(fr, st, word, line, credit, allow_feet=False, want=None):
 
 def best(s, prev_corner=None):
     n = s['photo']; lo, hi = t_range(n)
-    ts = ['pad'] if (lo > hi or s.get('t') == 'pad') else ([s['t']] if 't' in s else sorted({t for t in list(range(0, 271, 30)) + [lo, hi] if lo <= t <= hi}))
+    ts = s['tlist'] if 'tlist' in s else (['pad'] if (s.get('t') == 'pad' or (lo > hi and 't' not in s)) else ([s['t']] if 't' in s else sorted({t for t in list(range(0, 271, 30)) + [lo, hi] if lo <= t <= hi})))   # Boonchu: 4:5 frames, never white bars, so a numeric t or tlist wins over pad
     top, bot = body_span(n); res = []
     for allow_feet in ((False, True) if s.get('feet_ok') else (False,)):   # never put text on the main student's feet unless told
         for t in ts:

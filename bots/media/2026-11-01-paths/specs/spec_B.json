@@ -1,0 +1,96 @@
+[
+ {
+  "photo": "27-306",
+  "id": "B1",
+  "word": "NOODLE",
+  "line": "Momofuku Ando lost almost everything in 1957. In 1958, at 48, he launched the world's first instant noodles.",
+  "credit": "Momofuku Ando | Nissin founder"
+ },
+ {
+  "photo": "31-031",
+  "id": "B2",
+  "word": "HUNDRED",
+  "line": "If another man succeed by one effort, he will use a hundred efforts... though weak, he will surely become strong.",
+  "credit": "Doctrine of the Mean 20 · tr. James Legge (adapted)",
+  "wmain": 0.3,
+  "tight": true
+ },
+ {
+  "photo": "31-034",
+  "id": "B3",
+  "word": "CLERK",
+  "line": "Ramanujan failed every exam subject except maths and became a clerk. In 1914 he went to Cambridge.",
+  "credit": "Srinivasa Ramanujan, mathematician · MacTutor, St Andrews"
+ },
+ {
+  "photo": "31-145",
+  "id": "B4",
+  "word": "MACHETE",
+  "line": "Slowly, slowly, you get a fine machete.",
+  "credit": "Thai proverb · ช้า ๆ ได้พร้าเล่มงาม"
+ },
+ {
+  "photo": "31-004",
+  "id": "B5",
+  "word": "FABLE",
+  "line": "Krylov wrote plays first. At 40 he published his first book of fables, and wrote about 200 in all.",
+  "credit": "Ivan Krylov · Russian fabulist"
+ },
+ {
+  "photo": "27-239",
+  "id": "B6",
+  "word": "PACE",
+  "line": "The success of Yogis differs according as the means they adopt are mild, medium, or intense.",
+  "credit": "Patanjali, Yoga Sutra 1.22 · tr. Swami Vivekananda"
+ },
+ {
+  "photo": "27-291",
+  "id": "B7",
+  "word": "PAINT",
+  "line": "Grandma Moses began painting in earnest in her late 70s. Her first solo show came at 80.",
+  "credit": "Grandma Moses, painter · Smithsonian American Art Museum"
+ },
+ {
+  "photo": "27-100",
+  "id": "B8",
+  "word": "RIDE",
+  "line": "The slower you ride, the farther you will get.",
+  "credit": "Russian proverb · collected by Vladimir Dal (1862)",
+  "wmain": 0.3,
+  "tight": true
+ },
+ {
+  "photo": "31-061",
+  "id": "B9",
+  "word": "DOTS",
+  "line": "You can't connect the dots looking forward. You can only connect them looking backwards.",
+  "credit": "Steve Jobs · Stanford commencement, 2005",
+  "wmain": 0.3,
+  "tight": true
+ },
+ {
+  "photo": "31-044",
+  "id": "B10",
+  "word": "VESSEL",
+  "line": "A vessel great, it is the slowest made.",
+  "credit": "Laozi | Dao De Jing 41 | tr. Legge",
+  "direct": true,
+  "t": 60,
+  "wm": "right",
+  "wwidth": 460,
+  "wpos": [
+   170,
+   1140
+  ],
+  "ink_w": "light",
+  "sz": 38,
+  "cws": [
+   236
+  ],
+  "sxy": [
+   588,
+   72
+  ],
+  "ink_s": "dark"
+ }
+]
