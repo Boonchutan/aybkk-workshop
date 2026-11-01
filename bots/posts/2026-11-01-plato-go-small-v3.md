@@ -32,3 +32,7 @@ Stuck on one asana? Comment STUCK and its name. This week I reply to each one my
 
 Facts: Valmiki Ramayana, Sundara Kanda, Sarga 1. Surasa, mother of the Nagas, sent by gods and sages to test Hanuman, rises from the ocean, says all must enter her mouth (Brahma's boon); he grows, her mouth grows (to about 100 yojanas); he becomes thumb-size, goes in and out; she takes her own form and blesses him; he flies on. "Smile" and "pleased" are not in the text: do not add. No monkey emoji next to Hanuman (could read as mocking). No "you become Hanuman" line.
 Verify before filming: the Hanumanasana cue is Plato's; Boonchu's own cue wins.
+
+## v4 (Boonchu 1 Nov: "split stuck, change to backbend tight... people care more about backbend than split")
+Topic = tight backbend; story unchanged. Footage: a backbend clip (his Kapotasana clip from 31 Oct led intermediate fits), not Hanumanasana. Payoff cue uses his own Kapotasana words (go a tiny bit, stay, breathe until OK). Caption: drop the "Hanumanasana is the split named after him" line; first line "Backbend tight for months?"; hashtags #backbend instead of #hanumanasana.
+Your backbend tight, so you push more. / That's why it stay tight. / For real. / Push harder, your body push back harder. / ... / Your backbend, same fight. / Every morning you push, and your body push back a bit harder. / ... / So in your backbend, you go small too. / Go one tiny bit deeper, and stay there. / Breathe until it feel OK. / Sharp pain? Come up. / ... / Your backbend is your test.
