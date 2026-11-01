@@ -6,3 +6,4 @@ Score: wins this week (26 Oct to 1 Nov): none reported. 180K leads: 0 new, 1 ser
 Inbox 07:08: 0 new, 0 hot.
 Update (Boonchu): all 4 Plato Reels posted (Ganda Bherundasana, mind body connection, My first shala was built for 20, One class is not a practice). Nothing waiting to film.
 Update (Boonchu): all LINE chats replied. Inbox clear.
+13:08 check-in: course prices due 19:00 today (2nd nudge today, default B = sales Tue 1 Dec, start Tue 8 Dec). Rezerv stops selling tomorrow. No reminders due since 07:08. Inbox 13:08: 0 new, 0 hot.
