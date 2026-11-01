@@ -163,6 +163,8 @@
 
 - 2026-11-01 BIG WORD SIZE (Boonchu): 'make sure the big text is not smaller than 1/3 of the width. i prefer white big text.' Big word at least 360 px wide on a 1080 slide (sideways: at least 360 px long), white by default.
 
+- 2026-11-01 HOOK TEST FOR SENTENCE 1 (Boonchu felt he wanted to read more after the first sentence): big word = visual hook (H), sentence 1 = open loop (OL), a claim with the proof held back, sentences 2-3 = payoff (P). Test every sentence 1: if nobody would ask 'says who?', rewrite it (surprise or contrast beats a known truth like 'We all learn in different ways'). The COVER line matters most. Approved covers: B 'There is more than one path. Late, slow, or failed first, they still got there.' C 'Easy days feel good. Hard days make you strong.'
+
 ## Jobs from Machi
 - REPLACED 15 Oct by GOOGLE BUSINESS PHOTO POSTS (next entry); kept for history. Was: 2026-10-15 (Google report): WEEKLY GOOGLE BUSINESS PROFILE POST. Once a week, turn the week's best Reel into a Google post: 1 photo or the video, under 300 characters, alternate English and Thai, button "Book" to https://aybkk.net/start/maps. Posts may mention the promotion (the profile description may not). Draft only; Boonchu or Claude in Chrome posts it.
 - 2026-10-15 (Boonchu: "choose some photos with many people in the frame to post in google business. you can do every wednesday, friday and sunday"): GOOGLE BUSINESS PHOTO POSTS.
