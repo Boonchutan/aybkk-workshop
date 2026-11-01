@@ -39,3 +39,5 @@ Your backbend tight, so you push more. / That's why it stay tight. / For real. /
 
 ## v5 (Boonchu 1 Nov: start with "you cant gain flexibility by pushing. the tight backbend cant be bendly if you try to force it." and say Hanumanasana somewhere so it relates to Hanuman)
 Opening: You can't gain flexibility by pushing. / Tight backbend can't get bendy if you force it. Hanumanasana line placed in the story: Hanuman jump over the sea... Hanumanasana, the split, is this big jump. (Hanumanasana = named for Hanuman's leap across the ocean, the leap in Sundara Kanda 1 where Surasa appears.)
+
+## v6 (after 'your script is shit'): point, straight story, back to the backbend. See chat for the full text.
