@@ -4,3 +4,4 @@ Reminders due today (1st of the month): Google Business Profile numbers; drop-in
 Reel: Plato's daily run is paused (expected). Ready to film from Plato chat: "Ganda Bherundasana" (Jamsai voiceover), "mind body connection", "My first shala was built for 20" (post before 9 Nov), "One class is not a practice". Carne posted today.
 Score: wins this week (26 Oct to 1 Nov): none reported. 180K leads: 0 new, 1 serious, silent 15 days, open by default, Carne checks Sat 7 Nov. "Is the online Led class invite only?" open 16 days.
 Inbox 07:08: 0 new, 0 hot.
+Update (Boonchu): all 4 Plato Reels posted (Ganda Bherundasana, mind body connection, My first shala was built for 20, One class is not a practice). Nothing waiting to film.
