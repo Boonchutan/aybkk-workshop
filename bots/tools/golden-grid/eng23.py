@@ -33,20 +33,31 @@ def F(w, s):
         _FC[w, s] = f
     return _FC[w, s]
 CJK = '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc'   # Chinese and Japanese in credits (Nimbus has no CJK glyphs)
-def _cjk(ch): return ord(ch) >= 0x2E80
+THAI = os.path.join(GD, 'fonts', 'NotoSansThai-var.ttf')   # Thai in credits (Nimbus has no Thai glyphs, the Thai proverb came out blank)
+def _thai(ch): return 0x0E00 <= ord(ch) <= 0x0E7F
+def _cjk(ch): return ord(ch) >= 0x2E80 or _thai(ch)
 def _fc(f, ch):
     if not _cjk(ch): return f
-    k = ('CJK', f.size)
-    if k not in _FC: _FC[k] = ImageFont.truetype(CJK, f.size)
+    th = _thai(ch); k = ('TH' if th else 'CJK', f.size)
+    if k not in _FC:
+        _FC[k] = ImageFont.truetype(THAI if th else CJK, f.size)
+        if th: _FC[k].set_variation_by_axes([700])
     return _FC[k]
+_TMARK = set(chr(c) for c in [0x0E31] + list(range(0x0E34, 0x0E3B)) + list(range(0x0E47, 0x0E4F)))
+def _clusters(t):   # a Thai vowel or tone mark sits on the letter before it: draw and space them as one unit
+    out = []
+    for ch in t:
+        if ch in _TMARK and out: out[-1] += ch
+        else: out.append(ch)
+    return out
 def tlen(t, f, trk):
     if not any(_cjk(c) for c in t): return f.getlength(t) + trk * f.size * max(0, len(t) - 1)
-    return sum(_fc(f, c).getlength(c) for c in t) + trk * f.size * max(0, len(t) - 1)
+    cl = _clusters(t); return sum(_fc(f, c[0]).getlength(c) for c in cl) + trk * f.size * max(0, len(cl) - 1)
 def ttext(d, xy, t, f, trk, fill, sw=0, extra=0):
     x, y = xy; mixed = any(_cjk(c) for c in t); x += sw
-    for i, ch in enumerate(t):
-        d.text((x, y), ch, font=_fc(f, ch), fill=fill, anchor='ls', stroke_width=sw + extra, stroke_fill=fill if sw + extra else None)
-        x += (_fc(f, ch).getlength(ch) if mixed else f.getlength(t[:i + 1]) - f.getlength(t[:i])) + trk * f.size + sw * 1.6
+    for i, ch in enumerate(_clusters(t) if mixed else t):
+        d.text((x, y), ch, font=_fc(f, ch[0]), fill=fill, anchor='ls', stroke_width=sw + extra, stroke_fill=fill if sw + extra else None)
+        x += (_fc(f, ch[0]).getlength(ch) if mixed else f.getlength(t[:i + 1]) - f.getlength(t[:i])) + trk * f.size + sw * 1.6
 WEAK = {'a', 'an', 'the', 'of', 'to', 'and', 'in', 'on', 'at', 'for', 'but', 'so', 'or'}
 def _greedy(words, f, width):
     out, cur = [], []
