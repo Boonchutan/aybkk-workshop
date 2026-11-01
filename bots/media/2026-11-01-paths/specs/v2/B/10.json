@@ -1,0 +1,33 @@
+[
+ {
+  "photo": "31-061",
+  "id": "B10",
+  "word": "TRUST",
+  "line": "Trust that what you learn now can help later. Apple's Steve Jobs took a handwriting class that seemed useless. Ten years later, it helped shape the letters on the first Mac.",
+  "credit": "Steve Jobs · Stanford speech, 2005 (retold)",
+  "wmain": 0.3,
+  "tight": true,
+  "t": 230,
+  "wm": "center",
+  "wrot": -90,
+  "wwidth": 556,
+  "wpos": [
+   60,
+   702
+  ],
+  "ink_w": "light",
+  "wshadow": 1.5,
+  "wburn": 0.25,
+  "sz": 46,
+  "cws": [
+   310
+  ],
+  "sxy": [
+   "R",
+   446
+  ],
+  "ink_s": "dark",
+  "sright": true,
+  "line_br": "Trust that what|you learn now can|help later. Apple's|Steve Jobs took|a handwriting|class that seemed|useless. Ten years|later, it helped|shape the letters|on the first Mac."
+ }
+]

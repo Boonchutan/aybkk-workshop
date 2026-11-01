@@ -1,0 +1,29 @@
+[
+ {
+  "photo": "31-004",
+  "id": "B6",
+  "word": "TALENT",
+  "line": "Some people find their real talent later. Russian writer Ivan Krylov wrote plays first. At 40, his first book of fables was a hit. In all, he wrote about 200 fables.",
+  "credit": "Ivan Krylov · Fables, 1809 (retold)",
+  "t": 0,
+  "wm": "left",
+  "wwidth": 820,
+  "wpos": [
+   199,
+   60
+  ],
+  "ink_w": "light",
+  "wburn": 0.3,
+  "sz": 46,
+  "cws": [
+   360
+  ],
+  "sxy": [
+   "R",
+   840
+  ],
+  "ink_s": "light",
+  "sright": true,
+  "sburn": 0.3
+ }
+]
