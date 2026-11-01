@@ -167,6 +167,8 @@
 
 - 2026-11-01 ONE THREAD AT A TIME (Boonchu, angry: 'One sentence about this, next sentence about that. My 5 years old boy will NOT understand this crap'). Never zigzag between the viewer's asana and the story line by line to chase rehooks. Shape: 1) his point to adults in 2 to 3 lines, 2) the story told straight from start to end with no jumping out, 3) back to the adults: same thing in your asana, the trick, sign-off. Retention labels must fit inside this flow, never break it. Test: read only the story part to a 5-year-old; it must make sense alone.
 
+- 2026-11-01 SFX LEVEL (Boonchu: 'The sound effect ping so loud that my voice is low. Lower sound effect ping to 40%'). Always: normalize his voice first (ffmpeg loudnorm I=-16 TP=-1.5), then every effect at 40% of his voice level (99.9th-percentile voice peak), tones (ping, chime, sparkle) x0.7 softer. Never scale effects to full scale (the old 0.89*0.40 rule made them louder than a quiet take). Tool: bots/tools/reel-edit/ep5/sfx5.py.
+
 ## Jobs from Machi
 - REPLACED 15 Oct by GOOGLE BUSINESS PHOTO POSTS (next entry); kept for history. Was: 2026-10-15 (Google report): WEEKLY GOOGLE BUSINESS PROFILE POST. Once a week, turn the week's best Reel into a Google post: 1 photo or the video, under 300 characters, alternate English and Thai, button "Book" to https://aybkk.net/start/maps. Posts may mention the promotion (the profile description may not). Draft only; Boonchu or Claude in Chrome posts it.
 - 2026-10-15 (Boonchu: "choose some photos with many people in the frame to post in google business. you can do every wednesday, friday and sunday"): GOOGLE BUSINESS PHOTO POSTS.

@@ -27,14 +27,16 @@ HF['impact-bass-2']=sweep(80,35,0.8)*env(int(0.8*SR),0.003,0.28)+0.4*lp(rng.stan
 e1=tone(220,0.18,dec=0.08,harm=(1,1.5,2)); e2=tone(185,0.25,dec=0.1,harm=(1,1.5,2))
 HF['error']=np.concatenate([e1,e2])
 HF={k:v.astype(np.float32) for k,v in HF.items()}
-w=wave.open('voicecut.wav'); voice=np.frombuffer(w.readframes(w.getnframes()),np.int16).astype(np.float32).reshape(-1,2)/32768
+w=wave.open('voice_norm.wav'); voice=np.frombuffer(w.readframes(w.getnframes()),np.int16).astype(np.float32).reshape(-1,2)/32768
 voice=np.concatenate([voice,np.zeros((int(TAIL*SR),2),np.float32)])
 PUNCH=[(4,'impact-bass-1'),(13,'error'),(17,'click-soft'),(21,'chime'),(26,'ping'),(34,'whoosh'),(46,'impact-bass-2'),
  (64,'pop'),(69,'pop'),(74,'pop'),(78,'pop'),(83,'pop'),(89,'pop'),(93,'pop'),(95,'error'),(100,'ping'),(109,'sparkle'),
  (118,'whoosh-short'),(131,'chime'),(147,'sparkle'),(157,'impact-bass-1'),(162,'error'),(165,'ping'),(169,'click-soft'),(174,'chime'),(177,'sparkle')]
+REF=float(np.percentile(np.abs(voice).max(1),99.9))   # Boonchu 1 Nov: effects at 40% of his voice level, tones a bit softer
+TONAL={'ping','chime','sparkle'}
 sfx=np.zeros(len(voice),np.float32); punches=[]; log=[]
 for i,snd in PUNCH:
-    s=HF[snd]; s=s/np.max(np.abs(s))*0.89*0.40
+    s=HF[snd]; s=s/np.max(np.abs(s))*REF*0.40*(0.7 if snd in TONAL else 1.0)
     ws,we=words[i][0],words[i][1]
     st=int((we+0.4)*SR); en=min(len(sfx),st+len(s)); sfx[st:en]+=s[:en-st]
     punches.append([round(ws,3),round(max(we+0.5,ws+0.9),3)]); log.append((round(we+0.4,2),snd,words[i][2]))
