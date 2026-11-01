@@ -8,3 +8,11 @@ An old Chinese book says: if others need one try, you use a hundred. Then the sl
 The Doctrine of the Mean, ch. 20 · tr. James Legge
 
 Source checked: en.wikisource.org/wiki/The_Chinese_Classics/Volume_1/The_Doctrine_of_the_Mean (Legge; "them" = the duties of the Way). Lesson for Plato: he liked the slide's plain retelling plus the real old words, not my own invented "road" lines.
+
+## His own Kapotasana script (1 Nov), checked for hook / open loop / payoff
+H: You don't need to be super flexible to do Kapotasana.
+DH: And if someone tells you your tight body is your karma, get out of there as fast as you can. (flag: karma = Buddhist/Hindu word; not mocking a religion, but Thai/Chinese Buddhist viewers may read it that way; safer swap offered: "is just not made for it")
+OL: Everyone can improve. But you must learn which part of your body is holding you back.
+RH: If your shoulders feel tight, work more on opening and lifting the chest. If your lower back feels too bendy, with some pain, stretch your quads and open your hips.
+P: The most valuable thing: every time, stay as long as you can and breathe until you feel comfortable there. The longer you stay, the more your body will let you go deeper.
+CTA: Shoulders or lower back: which one is your tight spot? 👇
