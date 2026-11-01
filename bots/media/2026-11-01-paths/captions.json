@@ -70,5 +70,43 @@
   "A": "now, after Boonchu's go",
   "B": "2026-11-02 11:59 Bangkok",
   "C": "2026-11-03 11:59 Bangkok"
+ },
+ "postiz_media": {
+  "A": [
+   "https://uploads.postiz.com/TeMrZEcBbC.jpg",
+   "https://uploads.postiz.com/fgtjnUze63.jpg",
+   "https://uploads.postiz.com/onZdtGiBpF.jpg",
+   "https://uploads.postiz.com/fYpM1aav4f.jpg",
+   "https://uploads.postiz.com/Q41pdGgZhX.jpg",
+   "https://uploads.postiz.com/VnMlzDvFqh.jpg",
+   "https://uploads.postiz.com/o52XeLYOWu.jpg",
+   "https://uploads.postiz.com/hGWJs39wAV.jpg",
+   "https://uploads.postiz.com/QlzjLPjXOl.jpg",
+   "https://uploads.postiz.com/GiqpUTzko8.jpg"
+  ],
+  "B": [
+   "https://uploads.postiz.com/koiWiDwP4N.jpg",
+   "https://uploads.postiz.com/aargmqaLx5.jpg",
+   "https://uploads.postiz.com/RF7sjGfqEX.jpg",
+   "https://uploads.postiz.com/1rtUu772IP.jpg",
+   "https://uploads.postiz.com/x5afnzLXat.jpg",
+   "https://uploads.postiz.com/CvRQad9eG1.jpg",
+   "https://uploads.postiz.com/Dj1x5N6QA9.jpg",
+   "https://uploads.postiz.com/AmCYsJKK8D.jpg",
+   "https://uploads.postiz.com/fj4g7ZczJC.jpg",
+   "https://uploads.postiz.com/6ajJd6KcbR.jpg"
+  ],
+  "C": [
+   "https://uploads.postiz.com/RsLT9bNFdw.jpg",
+   "https://uploads.postiz.com/DZ3YWogzNt.jpg",
+   "https://uploads.postiz.com/GdkYkLXErk.jpg",
+   "https://uploads.postiz.com/TZofdc9xgq.jpg",
+   "https://uploads.postiz.com/1Xz5upjktV.jpg",
+   "https://uploads.postiz.com/KoMk8IoXjB.jpg",
+   "https://uploads.postiz.com/t42i43ALZ8.jpg",
+   "https://uploads.postiz.com/KKrGIrNG61.jpg",
+   "https://uploads.postiz.com/vur3TCyajY.jpg",
+   "https://uploads.postiz.com/KZgd5fwgnZ.jpg"
+  ]
  }
 }
