@@ -1,0 +1,32 @@
+[
+ {
+  "photo": "31-062",
+  "id": "C9",
+  "word": "WORK",
+  "line": "Growing as a person takes work every day. In 1886, Russian writer Anton Chekhov wrote to his brother. He said to work, read and study, day and night. Every hour counts.",
+  "credit": "Anton Chekhov · letter, 1886 (retold)",
+  "wmain": 0.3,
+  "tight": true,
+  "t": 100,
+  "wm": "right",
+  "wwidth": 520,
+  "wpos": [
+   500,
+   60
+  ],
+  "ink_w": "light",
+  "wburn": 0.3,
+  "sz": 44,
+  "cws": [
+   420
+  ],
+  "sxy": [
+   "R",
+   714
+  ],
+  "ink_s": "light",
+  "sright": true,
+  "sburn": 0.4,
+  "line_br": "Growing as a person|takes work every day.|In 1886, Russian writer|Anton Chekhov wrote|to his brother. He said|to work, read and study,|day and night.|Every hour counts."
+ }
+]

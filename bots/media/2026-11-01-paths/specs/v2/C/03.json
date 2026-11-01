@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "27-300",
+  "id": "C3",
+  "word": "ENDURE",
+  "line": "To endure means to keep going when it's hard. Ice crushed explorer Shackleton's ship, Endurance. Six men sailed a small boat about 1,300 km for help. All 28 men came home.",
+  "credit": "Ernest Shackleton · 1914 to 1917 (retold)",
+  "t": 98,
+  "wm": "right",
+  "wrot": 0,
+  "wwidth": 900,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "wburn": 0.3,
+  "sz": 44,
+  "cws": [
+   360
+  ],
+  "sxy": [
+   645,
+   270
+  ],
+  "ink_s": "light",
+  "sright": true,
+  "sburn": 0.4
+ }
+]

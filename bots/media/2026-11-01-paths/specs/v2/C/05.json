@@ -1,0 +1,34 @@
+[
+ {
+  "photo": "31-155",
+  "id": "C5",
+  "word": "STRONG",
+  "line": "Pain and hard times make you strong inside. Helen Keller, an American writer, could not see or hear. She wrote that no one grows strong in an easy, quiet life.",
+  "credit": "Helen Keller's Journal (1938), p. 60 (retold)",
+  "wmain": 0.3,
+  "tight": true,
+  "t": 85,
+  "wrot": -90,
+  "wwidth": 675,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "wshadow": 1.8,
+  "wburn": 0.3,
+  "sz": 46,
+  "cws": [
+   380
+  ],
+  "sxy": [
+   507,
+   60
+  ],
+  "ink_s": "light",
+  "sright": false,
+  "sburn": 0.4,
+  "wm": "center",
+  "line_br": "Pain and hard times|make you strong|inside. Helen Keller,|an American writer,|could not see or hear.|She wrote that|no one grows strong|in an easy, quiet life."
+ }
+]

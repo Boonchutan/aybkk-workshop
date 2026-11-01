@@ -1,0 +1,36 @@
+[
+ {
+  "photo": "31-021",
+  "id": "C4",
+  "word": "CALM",
+  "line": "Stay calm in heat or cold, joy or pain. The Bhagavad Gita, an old book from India, teaches this. It says they all come and go, so put up with them.",
+  "credit": "Bhagavad Gita 2.14-15 · Arnold (retold)",
+  "t": 270,
+  "tight": false,
+  "wwidth": 566,
+  "wpos": [
+   60,
+   962
+  ],
+  "ink_w": "light",
+  "wshadow": 1.2,
+  "wburn": 0.1,
+  "sz": 46,
+  "cws": [
+   350
+  ],
+  "sxy": [
+   "R",
+   902
+  ],
+  "ink_s": "light",
+  "sright": true,
+  "sburn": 0.4,
+  "wm": "left",
+  "wmxy": [
+   60,
+   1240
+  ],
+  "line_br": "Stay calm in heat or|cold, joy or pain. The|Bhagavad Gita, an|old book from India,|teaches this. It says|they all come and go,|so put up with them."
+ }
+]

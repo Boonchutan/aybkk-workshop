@@ -1,0 +1,28 @@
+[
+ {
+  "photo": "31-046",
+  "id": "C6",
+  "word": "EARN",
+  "line": "You have to earn even the small things. An old Russian saying puts it this way. Without work, you can't even take a small fish from a pond.",
+  "credit": "Russian proverb · Vladimir Dal (retold)",
+  "t": 30,
+  "wm": "left",
+  "wwidth": 660,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "wburn": 0.3,
+  "sz": 46,
+  "cws": [
+   420
+  ],
+  "sxy": [
+   66,
+   784
+  ],
+  "ink_s": "light",
+  "sburn": 0.4
+ }
+]

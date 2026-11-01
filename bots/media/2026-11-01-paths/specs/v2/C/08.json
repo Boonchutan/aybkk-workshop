@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "27-302",
+  "id": "C8",
+  "word": "TEST",
+  "line": "Trouble is a test of how strong you are. Seneca was a thinker in old Rome. He wrote that fire tests gold, and hard times test brave people.",
+  "credit": "Seneca · On Providence 5.9 (retold)",
+  "t": 0,
+  "wm": "left",
+  "wrot": -90,
+  "wwidth": 565,
+  "wpos": [
+   850,
+   580
+  ],
+  "ink_w": "light",
+  "wshadow": 1.5,
+  "wburn": 0.2,
+  "sz": 46,
+  "cws": [
+   560
+  ],
+  "sxy": [
+   468,
+   60
+  ],
+  "ink_s": "light",
+  "sburn": 0.4
+ }
+]

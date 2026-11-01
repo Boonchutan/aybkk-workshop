@@ -1,0 +1,29 @@
+[
+ {
+  "photo": "31-011",
+  "id": "C10",
+  "word": "TRY",
+  "line": "If you don't make it, try again. Climber Tenzing Norgay went to Everest six times and never reached the top. On trip seven, in 1953, he and Edmund Hillary made it.",
+  "credit": "Tenzing Norgay · Everest, 1953 (retold)",
+  "t": 90,
+  "wm": "left",
+  "wwidth": 550,
+  "wpos": [
+   460,
+   1075
+  ],
+  "ink_w": "light",
+  "wburn": 0.2,
+  "sz": 46,
+  "cws": [
+   700
+  ],
+  "sxy": [
+   60,
+   60
+  ],
+  "ink_s": "light",
+  "sright": false,
+  "sburn": 0.4
+ }
+]
