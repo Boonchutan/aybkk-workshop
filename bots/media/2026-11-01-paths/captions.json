@@ -2,22 +2,23 @@
  "captions": {
   "A": [
    "Why did Confucius give two students opposite answers? 🧭",
-   "People learn in different ways. One student needs a push. Another needs to slow down. Here are 10 slides from teachers and thinkers who taught each person in their own way. Photos: classes at AYBKK, 27 and 31 Oct.",
+   "People learn in different ways. One student needs a push. Another needs to wait. Here are 9 real stories from teachers, scientists and old books. Photos: classes at AYBKK, 27 and 31 Oct.",
    "Same practice. Your own way in.",
    "How do you learn a new asana best: by watching, by feeling, or by being told? 👇",
    "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
   ],
   "B": [
    "Started late? So did they. 🛤️",
-   "Success has more than one road. Some start late. Some go slow. Some fail first. Here are 10 slides on people who took the long way and still got there. Photos: classes at AYBKK, 27 and 31 Oct.",
+   "Success has more than one road. Some start late. Some go slow. Some fail first. Here are 9 real stories of people who took the long way and still got there. Photos: classes at AYBKK, 27 and 31 Oct.",
+   "Slide 5 in Qi Baishi's own words: 余作画数十年，未称己意，从此决定大变。",
    "Your path does not need to look like anyone else's. It only needs to keep going.",
    "How old were you when you started your practice? 👇",
    "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
   ],
   "C": [
    "Does the easy way make you strong? ❄️",
-   "Easy days feel good. Hard days make you strong. Here are 10 slides on people shaped by cold, heat and trial. Photos: classes at AYBKK, 27 and 31 Oct.",
-   "Slide 6 in Chinese: 宝剑锋从磨砺出，梅花香自苦寒来",
+   "Easy days feel good. Hard days make you strong. Here are 9 real stories of people shaped by cold, heat and hard times. Photos: classes at AYBKK, 27 and 31 Oct.",
+   "Slide 7 in Chinese: 宝剑锋从磨砺出，梅花香自苦寒来",
    "Tired is not wrong. Tired is the practice.",
    "What hard thing made you stronger? 👇",
    "Aybkk.net #aybkk #ashtanga #ashtangabangkok #boonchutanti"
@@ -30,40 +31,40 @@
  },
  "order": {
   "A": [
-   "ANSWER",
-   "HORSE",
-   "ROCKET",
-   "LOTUS",
-   "COUNT",
-   "WHEEL",
+   "LEARN",
+   "NEED",
+   "STRUGGLE",
+   "LEVEL",
+   "THINK",
+   "FEEL",
+   "PACE",
    "MINDS",
-   "DRUMMER",
-   "TAILOR",
-   "TOMORROW"
+   "FIT",
+   "HELP"
   ],
   "B": [
-   "NOODLE",
-   "HUNDRED",
-   "CLERK",
-   "MACHETE",
-   "FABLE",
-   "PACE",
-   "PAINT",
-   "RIDE",
-   "DOTS",
-   "VESSEL"
+   "PATHS",
+   "AGAIN",
+   "EFFORT",
+   "FAIL",
+   "CHANGE",
+   "TALENT",
+   "SPEED",
+   "LATE",
+   "SLOW",
+   "TRUST"
   ],
   "C": [
-   "EASE",
-   "ICE",
-   "HEAT",
-   "TRIAL",
-   "FISH",
-   "PLUM",
-   "FIRE",
-   "WILL",
-   "EVEREST",
-   "JEWEL"
+   "HARD",
+   "EASY",
+   "ENDURE",
+   "CALM",
+   "STRONG",
+   "EARN",
+   "BEST",
+   "TEST",
+   "WORK",
+   "TRY"
   ]
  },
  "schedule": {
@@ -71,42 +72,5 @@
   "B": "2026-11-02 11:59 Bangkok",
   "C": "2026-11-03 11:59 Bangkok"
  },
- "postiz_media": {
-  "A": [
-   "https://uploads.postiz.com/TeMrZEcBbC.jpg",
-   "https://uploads.postiz.com/fgtjnUze63.jpg",
-   "https://uploads.postiz.com/onZdtGiBpF.jpg",
-   "https://uploads.postiz.com/fYpM1aav4f.jpg",
-   "https://uploads.postiz.com/Q41pdGgZhX.jpg",
-   "https://uploads.postiz.com/VnMlzDvFqh.jpg",
-   "https://uploads.postiz.com/o52XeLYOWu.jpg",
-   "https://uploads.postiz.com/hGWJs39wAV.jpg",
-   "https://uploads.postiz.com/QlzjLPjXOl.jpg",
-   "https://uploads.postiz.com/GiqpUTzko8.jpg"
-  ],
-  "B": [
-   "https://uploads.postiz.com/koiWiDwP4N.jpg",
-   "https://uploads.postiz.com/aargmqaLx5.jpg",
-   "https://uploads.postiz.com/RF7sjGfqEX.jpg",
-   "https://uploads.postiz.com/1rtUu772IP.jpg",
-   "https://uploads.postiz.com/x5afnzLXat.jpg",
-   "https://uploads.postiz.com/CvRQad9eG1.jpg",
-   "https://uploads.postiz.com/Dj1x5N6QA9.jpg",
-   "https://uploads.postiz.com/AmCYsJKK8D.jpg",
-   "https://uploads.postiz.com/fj4g7ZczJC.jpg",
-   "https://uploads.postiz.com/6ajJd6KcbR.jpg"
-  ],
-  "C": [
-   "https://uploads.postiz.com/RsLT9bNFdw.jpg",
-   "https://uploads.postiz.com/DZ3YWogzNt.jpg",
-   "https://uploads.postiz.com/GdkYkLXErk.jpg",
-   "https://uploads.postiz.com/TZofdc9xgq.jpg",
-   "https://uploads.postiz.com/1Xz5upjktV.jpg",
-   "https://uploads.postiz.com/KoMk8IoXjB.jpg",
-   "https://uploads.postiz.com/t42i43ALZ8.jpg",
-   "https://uploads.postiz.com/KKrGIrNG61.jpg",
-   "https://uploads.postiz.com/vur3TCyajY.jpg",
-   "https://uploads.postiz.com/KZgd5fwgnZ.jpg"
-  ]
- }
+ "note": "v2 (1 Nov): idea words, small text leads with the point, cover + 9 stories; MACHETE replaced by Qi Baishi CHANGE; dropped ROCKET, VESSEL, JEWEL stories (their photos are the covers)"
 }

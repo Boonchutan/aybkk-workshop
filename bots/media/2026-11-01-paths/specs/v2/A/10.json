@@ -1,0 +1,31 @@
+[
+ {
+  "photo": "27-294",
+  "id": "A10",
+  "word": "HELP",
+  "line": "We need help before we can do things alone. Russian scientist Lev Vygotsky studied how children learn. What kids can do with help today, he wrote, they can do alone tomorrow.",
+  "credit": "Vygotsky · Thought and Language, 1934 (retold)",
+  "t": 270,
+  "wm": "center",
+  "wmxy": [
+   360,
+   1250
+  ],
+  "wwidth": 684,
+  "wpos": [
+   236,
+   1010
+  ],
+  "ink_w": "light",
+  "wshadow": 1.0,
+  "sz": 48,
+  "cws": [
+   800
+  ],
+  "sxy": [
+   60,
+   60
+  ],
+  "ink_s": "dark"
+ }
+]

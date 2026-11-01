@@ -1,0 +1,29 @@
+[
+ {
+  "photo": "31-038",
+  "id": "A2",
+  "word": "NEED",
+  "line": "Some students need a push, others need to wait. Two students asked Chinese teacher Confucius: should I act on what I hear? He told the shy one yes, the eager one wait.",
+  "credit": "Confucius \u00b7 Analects 11.22 (retold)",
+  "t": 232,
+  "wm": "left",
+  "wwidth": 560,
+  "wpos": [
+   459,
+   1138
+  ],
+  "ink_w": "light",
+  "wburn": 0.0,
+  "sz": 46,
+  "cws": [
+   560
+  ],
+  "sxy": [
+   "R",
+   758
+  ],
+  "ink_s": "light",
+  "sright": true,
+  "sburn": 0.3
+ }
+]

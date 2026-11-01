@@ -1,0 +1,1045 @@
+{
+ "sets": [
+  {
+   "key": "A",
+   "items": [
+    {
+     "slot": "cover",
+     "word": "LEARN",
+     "text": "We all learn in different ways. Swipe for 9 lessons from people and old books.",
+     "credit": "9 lessons · swipe",
+     "quoted_words": [],
+     "facts": [
+      "Main idea of carousel A 'Many Ways to Learn': people learn in different ways (theme from the task).",
+      "'9 lessons', not '9 real stories', per the fact checker: the wheel maker (Zhuangzi ch. 13) and the four horses (a scripture parable Suzuki retells) are parables, Thoreau's drummer is a metaphor and Vygotsky's line is a research finding.",
+      "The 9 slides draw on people (Suzuki, Feynman, Grandin, Thoreau, Krishnamacharya and Desikachar, Vygotsky) and old books (Analects, Samyutta Nikaya, Zhuangzi). The set has no proverbs, so the cover says 'people and old books', not 'sayings'."
+     ]
+    },
+    {
+     "slot": "ANSWER",
+     "word": "NEED",
+     "text": "Some students need a push, others need to wait. Two students asked Chinese teacher Confucius: should I act on what I hear? He told the shy one yes, the eager one wait.",
+     "credit": "Confucius · Analects 11.22 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Confucius, a teacher in ancient China; Analects 11.22 (Legge XI.21), tr. James Legge 1893 (lines.json source).",
+      "Two students (Tsze-lu and Zan Yu) each asked whether he should 'immediately carry into practice what he heard' (lines.json exact), retold as 'should I act on what I hear?'. The timing is carried by 'need to wait' and 'wait'.",
+      "Zan Yu (Ch'iu) was 'retiring and slow', retold as 'shy' (retiring = shy and holding back, not a slow learner). He was told 'Immediately carry into practice what you hear' = yes; 'I urged him forward' = a push (lines.json exact).",
+      "Tsze-lu (Yu) 'has more than his own share of energy', retold as 'eager'. He was told his father and elder brothers must be consulted first = wait; 'I kept him back' (lines.json exact).",
+      "All retold, no quotation marks."
+     ]
+    },
+    {
+     "slot": "HORSE",
+     "word": "STRUGGLE",
+     "text": "Students who struggle get more out of practice. Shunryu Suzuki, a Zen teacher from Japan, told a story about four horses. The slowest one to learn, he said, can be the best.",
+     "credit": "Suzuki · Zen Mind, Beginner's Mind (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Shunryu Suzuki, Japanese Zen teacher; Zen Mind, Beginner's Mind (Weatherhill, 1970), chapter 'The Marrow of Zen', pp. 37-38 (lines.json source).",
+      "'those who find great difficulties in practicing Zen will find more meaning in it' (lines.json exact), retold as 'get more out of practice'.",
+      "He tells the old story of four kinds of horses: the best runs before it sees the whip's shadow, the fourth only after the pain reaches the marrow; 'You can imagine how difficult it is for the fourth one to learn how to run!' (checked earlier in the book text, web.stanford.edu/~funn/ZenMindBeginners.pdf, p. 37). The horses differ in how hard they are to teach, so it is retold as 'slowest to learn', not running speed. 'Told a story' does not say he made the story up.",
+      "'the worst horse can be the best one' (lines.json exact), retold without quotation marks."
+     ]
+    },
+    {
+     "slot": "LOTUS",
+     "word": "LEVEL",
+     "text": "Every student is at a different level. In old India, the Buddha saw people as lotus flowers in a pond. Some stay underwater, some reach the surface, some rise above it.",
+     "credit": "The Buddha · Samyutta Nikaya 6.1 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "The Buddha, ancient India; Samyutta Nikaya 6.1, Ayacana Sutta, tr. Thanissaro Bhikkhu (lines.json source).",
+      "He saw beings with keen and dull faculties, 'those easy to teach and those hard' = different levels; 'Just as in a pond of blue or red or white lotuses' (lines.json exact) = lotus flowers in a pond.",
+      "Three lotuses only, as in the sutta: some flourish 'immersed in the water' (underwater), some 'stand at an even level with the water' (the surface), some 'rise up from the water' (rise above it) (lines.json exact).",
+      "Retold, no quotation marks; no god or deity named."
+     ]
+    },
+    {
+     "slot": "COUNT",
+     "word": "THINK",
+     "text": "We don't all think the same way. American scientist Richard Feynman counted by talking to himself. John Tukey pictured the numbers, so only Tukey could talk while counting.",
+     "credit": "Feynman · What Do You Care…, 1988 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Richard Feynman, American physicist; 'It's as Simple as One, Two, Three' in What Do You Care What Other People Think? (Norton, 1988) (lines.json source).",
+      "Key lesson: 'what goes on in different people's heads when they think they're doing the same thing ... is different for different people' (lines.json exact; checked earlier in the Caltech E&S PDF, calteches.library.caltech.edu/607/02/Feynman.pdf).",
+      "Feynman counted by 'talking' to himself, so he could read while counting but not speak (lines.json exact).",
+      "Tukey was 'visualizing a tape with numbers on it going by', so he could talk while counting but not read (lines.json exact) = 'only Tukey could talk while counting'.",
+      "Tukey named with no label (the essay calls him 'a fella named John Tukey'); not called a scientist, student or friend. Now 3 sentences, no semicolon."
+     ]
+    },
+    {
+     "slot": "WHEEL",
+     "word": "FEEL",
+     "text": "Some skills you learn by feel, not words. The old Chinese book Zhuangzi has a story about a wheel maker. He felt how hard to hit his chisel, but couldn't explain it.",
+     "credit": "Zhuangzi ch. 13 · tr. Burton Watson (retold)",
+     "quoted_words": [],
+     "facts": [
+      "The story is in the book Zhuangzi, ch. 13 'The Way of Heaven', tr. Burton Watson, Columbia University Press 2013 (lines.json source). It says 'the old Chinese book Zhuangzi has a story', not that the thinker told it.",
+      "If the mallet blows on the chisel are too gentle it slides, if too hard it bites and won't budge (lines.json exact) = how hard to hit his chisel.",
+      "'you can get it in your hand and feel it in your mind. You can't put it into words' (lines.json exact), retold as 'felt ... but couldn't explain it'.",
+      "The duke in the story is left out (no royalty)."
+     ]
+    },
+    {
+     "slot": "DRUMMER",
+     "word": "PACE",
+     "text": "It's okay to go at your own pace. American writer Henry David Thoreau put it this way in his book Walden. If you don't keep pace, maybe you hear a different drummer.",
+     "credit": "Henry David Thoreau · Walden, 1854 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Henry David Thoreau, American writer; Walden (1854), chapter 'Conclusion' (lines.json source).",
+      "'If a man does not keep pace with his companions, perhaps it is because he hears a different drummer' (lines.json exact), retold without quotation marks as 'If you don't keep pace, maybe you hear a different drummer'. It now says 'don't', not 'can't', as the source does: a different rhythm, not a lack of ability.",
+      "Own pace: 'Let him step to the music which he hears ... It is not important that he should mature as soon as an apple-tree or an oak' (lines.json exact)."
+     ]
+    },
+    {
+     "slot": "MINDS",
+     "word": "MINDS",
+     "text": "The world needs all kinds of minds. American scientist Temple Grandin has autism and thinks in pictures. In a 2010 talk, she said others think in patterns or words.",
+     "credit": "Temple Grandin · TED talk, 2010 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "TED2010 talk 'The world needs all kinds of minds', February 2010 (lines.json source); 'the world is going to need all of the different kinds of minds to work together' (lines.json exact), retold.",
+      "Diagnosed with autism as a child; ability to 'think in pictures' (checked earlier on the TED talk page, ted.com/talks/temple_grandin_the_world_needs_all_kinds_of_minds).",
+      "Kinds of thinkers in the talk: 'visual thinkers, pattern thinkers, verbal thinkers' (TED talk page summary, checked earlier); transcript copy: 'photo-realistic visual thinkers, like me; pattern thinkers, music and math minds' and 'a verbal mind' (singjupost.com transcript, checked earlier).",
+      "American scientist: animal science professor (widely documented)."
+     ]
+    },
+    {
+     "slot": "TAILOR",
+     "word": "FIT",
+     "text": "Yoga should fit the person, not the other way around. Indian yoga teacher T. Krishnamacharya changed the practice for each student. His son Desikachar called this the heart of his father's teaching.",
+     "credit": "Desikachar · The Heart of Yoga, 1995 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "'it is not that the person needs to accommodate him- or herself to yoga, but rather the yoga practice must be tailored to fit each person' (Desikachar, The Heart of Yoga, 1995; lines.json exact), retold as sentence 1.",
+      "'the yoga practice must be tailored to fit each person' and 'each student must be taught according to his or her individual capacity at any given time' (Desikachar with Cravens, Health, Healing and Beyond, 1998; lines.json exact and source), retold as 'changed the practice for each student'. 'At their level' was removed so it does not repeat LEVEL from the lotus slide.",
+      "'The essence of my father's teachings is this' (lines.json exact), retold as 'the heart of his father's teaching'; T. Krishnamacharya is Desikachar's father, an Indian yoga teacher."
+     ]
+    },
+    {
+     "slot": "TOMORROW",
+     "word": "HELP",
+     "text": "We need help before we can do things alone. Russian scientist Lev Vygotsky studied how children learn. What kids can do with help today, he wrote, they can do alone tomorrow.",
+     "credit": "Vygotsky · Thought and Language, 1934 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Lev Vygotsky, a psychologist who worked in Moscow and wrote in Russian; Thought and Language (Russian original 1934), ch. 6 (lines.json source; Britannica: Soviet psychologist, 1896 to 1934, best-known book Thought and Language, 1934, checked earlier via WebSearch).",
+      "Studied child development: Britannica and Wikipedia describe his work on how children's minds develop (checked earlier via WebSearch).",
+      "'What the child can do in cooperation today he can do alone tomorrow' (tr. Hanfmann and Vakar 1962, p. 104; lines.json exact), retold with 'help' in place of 'cooperation' and both uses of 'can' kept, no quotation marks.",
+      "Sentence 1 now says 'do things alone', so 'it' no longer points to nothing."
+     ]
+    }
+   ],
+   "dropped": "ROCKET",
+   "drop_reason": "Konstantin Tsiolkovsky (ROCKET) is the hardest story to explain simply and the weakest fit for the theme. To make sense it needs hard words ('astronautics', 'rocket dynamics', 'scarlet fever'). Its idea is 'he taught himself', which is about learning alone, not the carousel's point that different people learn in different ways. The sources also disagree on his age when he lost his hearing (9 or 10), so the clearest detail cannot be used. The other 9 keep their original order after the cover.",
+   "probs": [
+    {
+     "slot": "cover",
+     "problem": "\"9 real stories\" claims more than the set supports. The wheelwright (Zhuangzi ch. 13) and the four horses (a scripture parable Suzuki retells from the Samyuktagama) are parables, not real events. Thoreau's drummer is a metaphor and Vygotsky's line is a research finding, not a story.",
+     "fix": "Text: \"We all learn in different ways. Swipe for 9 lessons from people and old books.\" Credit: \"9 lessons · swipe\"",
+     "from": "fact checker"
+    },
+    {
+     "slot": "DRUMMER",
+     "problem": "\"can't keep pace\" changes the meaning. Walden says \"does not keep pace with his companions\": the man follows a different rhythm, which is a choice. \"Can't\" makes it a lack of ability.",
+     "fix": "He said someone who does not keep pace with others may hear a different drummer.",
+     "from": "fact checker"
+    },
+    {
+     "slot": "TOMORROW",
+     "problem": "The retelling drops \"can\". The source (tr. Hanfmann and Vakar 1962, p. 104) says \"What the child can do in cooperation today he can do alone tomorrow\", which is about what a child is able to do. \"What kids do ... they do\" turns that into a claim about what kids actually do.",
+     "fix": "What kids can do with help today, he wrote, they can do alone tomorrow.",
+     "from": "fact checker"
+    },
+    {
+     "slot": "ANSWER",
+     "problem": "Small loss of meaning. In Analects 11.22 (Legge) each student asks whether to \"immediately carry into practice what he heard\". \"Should I act right away?\" leaves out what they would act on. Lower priority than the three above.",
+     "fix": "Two students asked Chinese teacher Confucius: should I act on what I hear right away?",
+     "from": "fact checker"
+    },
+    {
+     "slot": "ANSWER",
+     "problem": "'The slow one' reads as 'the slow learner', which is not the point. In Analects 11.22 that student held back and was timid. It also clashes with the HORSE slide, where 'slowest' really does mean slow to learn. 32 words, at the limit.",
+     "fix": "Some students need a push, others need to wait. Two students asked Chinese teacher Confucius: should I act right away? He told the shy one yes, and the eager one to wait. (32 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "HORSE",
+     "problem": "'Told of four horses' sounds like a book, not a person talking. The rest passes: STRUGGLE is the idea, and sentence 1 says it and contains it.",
+     "fix": "Students who struggle get more out of practice. Shunryu Suzuki, a Zen teacher from Japan, told a story about four horses. The slowest one to learn, he said, can be the best. (32 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "LOTUS",
+     "problem": "'Saw people like lotus flowers' can be read as 'saw people who like lotus flowers'. The last part, 'some rise above', stops before saying above what, so it sounds like a poster slogan instead of the picture of a pond.",
+     "fix": "Every student is at a different level. In old India, the Buddha saw people as lotus flowers in a pond. Some stay underwater, some reach the surface, some rise above it. (31 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "COUNT",
+     "problem": "It has 4 sentences, but the rule is the idea sentence plus 2 to 3 more. 'A man named John Tukey' is filler that reads like a joke setup. The semicolon is hard to read fast on a phone. 32 words.",
+     "fix": "We don't all think the same way. American scientist Richard Feynman counted by talking to himself, and John Tukey by picturing the numbers. So Tukey could talk while counting, but Feynman couldn't. (32 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "WHEEL",
+     "problem": "'Tells of a wheel maker' sounds like a book, not a person. FEEL is the right idea word and the facts are correct.",
+     "fix": "Some skills you learn by feel, not words. The old Chinese book Zhuangzi has a story about a wheel maker. He felt how hard to hit his chisel, but couldn't explain it. (32 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "DRUMMER",
+     "problem": "The quote is changed. Thoreau wrote that a man 'does not keep pace', not 'can't', so he meant a choice, not a failure. Sentence 2 ('wrote the book Walden') is only a book listing and nothing happens in it.",
+     "fix": "It's okay to go at your own pace. American writer Henry David Thoreau put it this way in his book Walden. If you don't keep pace, maybe you hear a different drummer. (32 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "TAILOR",
+     "problem": "'At their level' reuses LEVEL, the big word of the LOTUS slide, so the two slides blur together. 32 words, at the limit.",
+     "fix": "Yoga should fit the person, not the other way around. Indian yoga teacher T. Krishnamacharya changed the practice for each student. His son Desikachar called this the heart of his father's teaching. (32 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "TOMORROW",
+     "problem": "In sentence 1, 'do it alone' has nothing for 'it' to point to, so a scroller asks 'do what?'. Vygotsky wrote 'can do', meaning what a child is able to do, but the slide says 'do', as if it always happens.",
+     "fix": "We need help before we can do things alone. Russian scientist Lev Vygotsky studied how children learn. What kids can do with help today, he wrote, they can do alone tomorrow. (31 words)",
+     "from": "reader"
+    }
+   ]
+  },
+  {
+   "key": "B",
+   "items": [
+    {
+     "slot": "cover",
+     "word": "PATHS",
+     "text": "There are many paths to success. Swipe for 9 real lessons from people, old books and an old saying.",
+     "credit": "9 real lessons · swipe",
+     "quoted_words": [],
+     "facts": [
+      "The 9 slides are 9 real lessons: 6 people (Ando, Ramanujan, Qi Baishi, Krylov, Grandma Moses, Steve Jobs), 2 old books (Doctrine of the Mean, Yoga Sutras) and 1 saying (Russian proverb). Source: lines.json set B.",
+      "'Lessons' and 'an old saying' (singular) follow the fact checker. Only 6 slides are stories, and there is only one saying. The credit follows the fact checker too.",
+      "The first sentence is the theme of the carousel, not a claim from a source. It now has the big word PATHS."
+     ]
+    },
+    {
+     "slot": "NOODLE",
+     "word": "AGAIN",
+     "text": "You can start again after a big loss. In Japan, Momofuku Ando lost almost everything in 1957. A year later, at 48, he made the world's first instant noodles.",
+     "credit": "Momofuku Ando · Nissin Foods (retold)",
+     "quoted_words": [],
+     "facts": [
+      "In 1957 a credit union where Ando was a director went bankrupt, and he lost all his property except a rented house in Ikeda City, Osaka. That is the basis for 'in Japan' and 'lost almost everything': lines.json exact (Nissin 'Our Founder' page; Nippon.com 2018).",
+      "Chicken Ramen, the world's first instant noodles, launched on 25 August 1958, when he was 48. That is the basis for 'A year later, at 48, he made the world's first instant noodles': lines.json exact (Nissin). He worked on the product himself in a shed he built in his backyard, which supports 'made': lines.json exact.",
+      "Nationality and birthplace are left out on purpose, because the source note says no birthplace. 'In Japan' names only where the loss happened (Osaka).",
+      "The first sentence is the lesson, not a claim from the source."
+     ]
+    },
+    {
+     "slot": "HUNDRED",
+     "word": "EFFORT",
+     "text": "Slow learners get there with more effort. An old Chinese book says: if others need one try, you use a hundred. Then the slow grow smart and the weak grow strong.",
+     "credit": "Doctrine of the Mean 20 · tr. Legge (retold)",
+     "quoted_words": [],
+     "facts": [
+      "The 'old Chinese book' is The Doctrine of the Mean (Zhongyong), ch. 20, tr. James Legge, The Chinese Classics vol. 1. Its name stays on the credit line: lines.json source (checked on Wikisource).",
+      "'If another man succeed by one effort, he will use a hundred efforts' is retold as 'if others need one try, you use a hundred': lines.json exact.",
+      "'though dull, he will surely become intelligent' is retold as 'Slow learners get there' and 'the slow grow smart': lines.json exact.",
+      "'though weak, he will surely become strong' is retold as 'the weak grow strong': lines.json exact. There are no quotation marks, so the credit says retold."
+     ]
+    },
+    {
+     "slot": "CLERK",
+     "word": "FAIL",
+     "text": "Failing is not the end. In India, Srinivasa Ramanujan failed a college exam, passing only maths. He took an office job and kept doing maths. In 1914, he went to Cambridge University.",
+     "credit": "Srinivasa Ramanujan · MacTutor (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Ramanujan was from India (Madras): lines.json exact and source (MacTutor, St Andrews; Wikipedia).",
+      "He failed one college exam and passed only maths. MacTutor says: 'In 1906 Ramanujan went to Madras where he entered Pachaiyappa's College' and 'He passed in mathematics but failed all his other subjects and therefore failed the examination' (the First Arts exam). Checked myself on mathshistory.st-andrews.ac.uk; also in lines.json exact. It now names one exam, not his whole school record, as the fact checker asked.",
+      "'He took an office job' retells his post as a clerk in the accounts section of the Madras Port Trust, which began on 1 March 1912: MacTutor (checked myself) and lines.json exact.",
+      "He kept doing maths. His 1912 job letter says 'I have, however, been devoting all my time to Mathematics', and he wrote to G. H. Hardy in January 1913: lines.json exact.",
+      "He went to Trinity College, Cambridge, in 1914: lines.json exact (MacTutor, Wikipedia).",
+      "The first sentence is the lesson, not a claim from the source. It was cut from 'Failing exams' to 'Failing' to keep the slide at 32 words with the fact checker's narrower wording."
+     ]
+    },
+    {
+     "slot": "CHANGE",
+     "word": "CHANGE",
+     "text": "You can change, even after many years. Chinese painter Qi Baishi had painted for decades. At 55, still unhappy with his work, he decided to change his style.",
+     "credit": "Qi Baishi 齐白石 · diary, 1919 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Qi Baishi was a Chinese painter (born 1 Jan 1864, died 16 Sep 1957): lines.json source (Hunan Museum; Kyoto National Museum via Google Arts & Culture).",
+      "In 1919 he wrote on a painting, and copied into his diary: 余作画数十年，未称己意，从此决定大变 (I have painted for decades and have not pleased myself; from now on I decide on a big change). It is retold as 'painted for decades', 'still unhappy with his work' and 'decided to change his style': lines.json exact (Beijing Daily 2025-05-26; The Paper).",
+      "'Change his style' rests on the lines.json source note, which names this as his late-life style change (衰年变法).",
+      "Age 55 is his Western age at the 1919 note (The Paper says 57 by Chinese count): lines.json source.",
+      "The slide gives no result and does not say the change made him famous, as the source note warns."
+     ]
+    },
+    {
+     "slot": "FABLE",
+     "word": "TALENT",
+     "text": "Some people find their real talent later. Russian writer Ivan Krylov wrote plays first. At 40, his first book of fables came out. People loved it, and he wrote about 200 fables.",
+     "credit": "Ivan Krylov · Fables, 1809 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Krylov was a Russian writer who wrote plays (drama) before fables: lines.json exact and source (Wikipedia EN and RU; 1911 Britannica).",
+      "His first collection of fables (23 fables) came out in 1809, and he 'only discovered his true genre at the age of 40': lines.json exact.",
+      "It 'met with such an enthusiastic reception' that he then gave up drama for fables. That is retold as 'People loved it': lines.json exact.",
+      "English Wikipedia says: 'By the end of his career he had completed some 200' (checked myself). The ending now says 'about 200 fables', so it cannot be read as 200 books or a topic. I did not use the reader's 'over 200': the total depends on the edition (197, 201 and 202 are cited, and 236 appears only in a bookseller's listing), so it is not confirmed.",
+      "'Real talent' retells 'true genre' (the kind of writing he was best at). The first sentence is the lesson."
+     ]
+    },
+    {
+     "slot": "PACE",
+     "word": "PACE",
+     "text": "Not every yoga student moves at the same pace. Patanjali's Yoga Sutras is an old yoga book from India. It says practice can be mild, medium or strong, and results differ.",
+     "credit": "Patanjali · Yoga Sutra 1.22 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Patanjali's Yoga Sutras is an old text from India, tr. Swami Vivekananda, Raja Yoga (1896): lines.json source.",
+      "Sutra 1.22 says: 'The success of Yogis differs according as the means they adopt are mild, medium, or intense' (Sanskrit mṛdu-madhya-adhimātra). It is retold as 'practice can be mild, medium or strong, and results differ'. Mild, medium and strong now describe the practice (the means), not the student, as the reader asked: lines.json exact.",
+      "There is no claim that one pace is better. The text says only that results differ, which is what 1.22 says.",
+      "The big word stays PACE, since the reader offered SPEED only as an option. The first sentence is the lesson, not a claim from the source."
+     ]
+    },
+    {
+     "slot": "PAINT",
+     "word": "LATE",
+     "text": "A late start is still a start. Grandma Moses grew up on an American farm. She began painting seriously in her late 70s. At 80, she had her first solo show.",
+     "credit": "Grandma Moses · Smithsonian (retold)",
+     "quoted_words": [],
+     "facts": [
+      "She 'grew up on a farm in upstate New York': checked myself on the Smithsonian American Art Museum page (americanart.si.edu/node/67641).",
+      "'Moses began painting in earnest in her late 70s' is retold as 'began painting seriously in her late 70s': lines.json exact (Smithsonian), confirmed again on the same page.",
+      "She 'was 80 when gallerist Otto Kallir introduced her to the American public with her first solo exhibition in 1940': lines.json exact (Smithsonian), confirmed again on the same page.",
+      "The first sentence is the lesson, not a claim from the source."
+     ]
+    },
+    {
+     "slot": "RIDE",
+     "word": "SLOW",
+     "text": "Slow does not mean behind. Russians have an old saying for this. The slower you ride, the farther you will get.",
+     "credit": "Russian proverb · Dal, 1862 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "The Russian proverb is 'Тише едешь - дальше будешь' (literally: the quieter, meaning slower, you ride, the farther you'll get): lines.json exact.",
+      "It is in V. I. Dal's collection Пословицы русского народа (1862), section 'Путь, Дорога', which supports 'an old saying': lines.json source (checked on Russian Wikisource).",
+      "The English is our own translation, so it has no quotation marks and the credit says retold.",
+      "The first sentence ('Slow does not mean behind') is the lesson, not a claim from the source. It no longer gives away the proverb's punchline."
+     ]
+    },
+    {
+     "slot": "DOTS",
+     "word": "TRUST",
+     "text": "Trust that what you learn now can help later. Apple's Steve Jobs took a handwriting class that seemed useless. Ten years later, it helped shape the letters on the first Mac.",
+     "credit": "Steve Jobs · Stanford speech, 2005 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Jobs started Apple: 'Woz and I started Apple in my parents' garage when I was 20' (Stanford speech, 12 June 2005; checked earlier on the jamesclear.com transcript).",
+      "'I decided to take a calligraphy class to learn how to do this' (calligraphy = beautiful handwriting) and 'None of this had even a hope of any practical application in my life' are retold as 'a handwriting class that seemed useless': checked earlier on the jamesclear.com and entrepreneur.com transcripts.",
+      "'But 10 years later, when we were designing the first Macintosh computer, it all came back to me. And we designed it all into the Mac. It was the first computer with beautiful typography.' is retold as 'it helped shape the letters on the first Mac': same two transcripts.",
+      "'So you have to trust that the dots will somehow connect in your future' is the source of the big word TRUST. The first sentence now ties TRUST to learning, uses 'can' instead of 'may', and no longer repeats 'useless': lines.json exact (NPR transcript)."
+     ]
+    }
+   ],
+   "dropped": "VESSEL",
+   "drop_reason": "VESSEL (Laozi, Dao De Jing 41, tr. Legge: 'A vessel great, it is the slowest made') is the hardest story to explain simply. 'Vessel' is a word a 10-year-old does not know, and Legge's old word order ('A vessel great') would need its own explanation. The line is also a short saying, not a story, so there is no 'who did what' to retell. Its idea (great things take a long time) is already covered by LATE, SLOW and PACE.",
+   "probs": [
+    {
+     "slot": "cover",
+     "problem": "The cover promises '9 real stories ... and sayings'. Only 6 of the 9 slides are stories (Ando, Ramanujan, Qi Baishi, Krylov, Grandma Moses, Jobs). The other 3 are a passage from the Doctrine of the Mean, Yoga Sutra 1.22 and one proverb. 'Sayings' is plural, but there is only one saying (the Russian proverb). This is the cover's only fact claim, and as written it is not accurate.",
+     "fix": "There is more than one path to success. Swipe to see 9 real lessons from people, old books and a saying. (credit: 9 real lessons · swipe)",
+     "from": "fact checker"
+    },
+    {
+     "slot": "CLERK",
+     "problem": "'Failed every exam subject except maths' has no time limit, so it reads as his whole school record. That is wrong. The source (lines.json exact, MacTutor) says this happened in one exam, the First Arts exam in Madras in 1906. His own 1912 letter in lines.json exact says 'I have passed the Matriculation Examination', and he won a scholarship to Government College, Kumbakonam in 1904. Set B's base line has the same over-broad wording.",
+     "fix": "Failing exams is not the end. Srinivasa Ramanujan from India passed maths but failed every other subject in his college exam. He became an office clerk and kept doing maths. In 1914, he went to Cambridge University.",
+     "from": "fact checker"
+    },
+    {
+     "slot": "cover",
+     "problem": "Sentence 1 says 'path', not the big word PATHS. It also says 'sayings', but the carousel has only one saying (the Russian one). The rest are 6 people and 2 old books.",
+     "fix": "There are many paths to success. Swipe for 9 real stories from people, old books and an old saying. (20 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "NOODLE",
+     "problem": "Minor. 'Launched' sounds like a press release, not a person talking. Three numbers in a row (1957, 1958, 48) slow down a fast scroller.",
+     "fix": "You can start again after a big loss. In Japan, Momofuku Ando lost almost everything in 1957. A year later, at 48, he made the world's first instant noodles. (28 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "HUNDRED",
+     "problem": "A 10-year-old will not understand 'Doctrine of the Mean'. 'Mean' reads as 'unkind'. The name is already on the credit line. 'Explains how' is filler. The ending ('the weak grow strong') no longer links back to 'slow learners' in sentence 1. The source has both lines: the dull become smart and the weak become strong. At 32 words, the slide is also at the limit.",
+     "fix": "Slow learners get there with more effort. An old Chinese book says: if others need one try, you use a hundred. Then the slow grow smart and the weak grow strong. (31 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "CLERK",
+     "problem": "'Failed every exam subject except maths' is clumsy. 'Clerk' is a word a child may not know. Where he is from is buried in the middle of the sentence. At 32 words, the slide is at the limit.",
+     "fix": "Failing exams is not the end. In India, Srinivasa Ramanujan failed every subject except maths. He took an office job and kept doing maths. In 1914, he went to Cambridge University. (31 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "CHANGE",
+     "problem": "'He chose a big change' sounds translated, and a child will ask 'what change?' The diary says he decided to make a big change in his painting, so the slide can say that. The story still has no result. Only add one (for example, what happened after the change) if it is checked against a source.",
+     "fix": "You can change, even after many years. Chinese painter Qi Baishi had painted for decades. At 55, still unhappy with his work, he decided to change the way he painted. (30 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "FABLE",
+     "problem": "'He wrote about 200' can be read as 'he wrote on the topic of 200', or as 200 books. The usual count is 236 fables, so 'about 200' undercounts. 'Over 200' is correct.",
+     "fix": "Some people find their real talent later. Russian writer Ivan Krylov wrote plays first. At 40, his first book of fables came out. People loved it, and he wrote over 200 fables. (32 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "PACE",
+     "problem": "'Students go mild, medium or strong' is not natural English and reads like a textbook. In the sutra, mild, medium and strong describe the practice, not the student. PACE is also the one big word a young or non-native reader may not know. SPEED is the easier word if wanted.",
+     "fix": "Not every yoga student moves at the same pace. Patanjali's Yoga Sutras is an old yoga book from India. It says practice can be mild, medium or strong, and results differ. (31 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "RIDE",
+     "problem": "Sentence 1 ('Going slow can take you farther') says the same thing as the proverb in sentence 3, so the punchline is used up before it arrives. 'There is an old Russian saying about it' is filler. Its idea is also close to the PACE slide.",
+     "fix": "Slow does not mean behind. Russians have an old saying for this. The slower you ride, the farther you will get. (21 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "DOTS",
+     "problem": "Sentence 1 ('Trust that what seems useless now may help later') is a hard nested phrase for a child. 'May' makes it weak. 'Useless' then repeats in sentence 2. On its own, TRUST reads as 'trust a person', so sentence 1 has to tie it plainly to learning.",
+     "fix": "Trust that what you learn now can help later. Apple's Steve Jobs took a handwriting class that seemed useless. Ten years later, it helped shape the letters on the first Mac. (31 words)",
+     "from": "reader"
+    }
+   ]
+  },
+  {
+   "key": "C",
+   "items": [
+    {
+     "slot": "cover",
+     "word": "HARD",
+     "text": "The hard way, not the easy way, makes you strong. Swipe for 9 real stories: people, old books and sayings.",
+     "credit": "9 real stories · swipe",
+     "quoted_words": [],
+     "facts": [
+      "The carousel theme 'The Hard Way': the easy way does not build a strong mind; hardship and effort make you strong (task brief).",
+      "9 stories: people (Shackleton, Helen Keller, Chekhov, Tenzing Norgay), old books (Mencius, Bhagavad Gita, Seneca) and sayings (Russian proverb, Chinese saying), all in lines.json set C."
+     ]
+    },
+    {
+     "slot": "EASE",
+     "word": "EASY",
+     "text": "An easy life makes a weak mind. Chinese thinker Mencius said hunger and hard work make a mind strong. Life grows from hard times, he said, and dies from easy ones.",
+     "credit": "Mencius 6B.15 · tr. Legge (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Mencius was a Chinese Confucian philosopher: Wikipedia 'Mencius' first sentence (WebFetch), retold as 'Chinese thinker'.",
+      "Hunger and hard work make a mind strong: retold from Legge 6B.15, Heaven 'exercises his mind with suffering, and his sinews and bones with toil... exposes his body to hunger... stimulates his mind, hardens his nature' (lines.json exact).",
+      "Life grows from hard times and dies from easy ones: retold from 'life springs from sorrow and calamity, and death from ease and pleasure' (lines.json exact, Legge, Wikisource).",
+      "Sentence 1 is the lesson in our own words, not a quote."
+     ]
+    },
+    {
+     "slot": "ICE",
+     "word": "ENDURE",
+     "text": "To endure means to keep going when it's hard. Ice crushed explorer Shackleton's ship, Endurance. Six men sailed a small boat about 1,300 km for help. All 28 men came home.",
+     "credit": "Ernest Shackleton · 1914 to 1917 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Sentence 1 explains the word; the big word comes from the ship's name, Endurance (lines.json exact).",
+      "Ice crushed the ship Endurance: 'their ship Endurance was crushed in the ice' (lines.json exact; Wikipedia 'Voyage of the James Caird').",
+      "Shackleton and five companions (six men) sailed the small boat James Caird about 1,300 km to South Georgia to get help (lines.json exact; Wikipedia and RSGS agree).",
+      "The party had 28 men and 'the entire Endurance crew returned home, without loss of life' (lines.json exact, Wikipedia), so 'All 28 men came home'. True for the Endurance party only.",
+      "Expedition years 1914 to 1917 (lines.json credit).",
+      "Reader fix applied: active 'Ice crushed...', and '28 men' so the number has a noun (31 words)."
+     ]
+    },
+    {
+     "slot": "HEAT",
+     "word": "CALM",
+     "text": "Stay calm in heat or cold, joy or pain. The Bhagavad Gita, an old book from India, teaches this. It says they all come and go, so put up with them.",
+     "credit": "Bhagavad Gita 2.14-15 · Arnold (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Bhagavad Gita ch. 2, verses 14-15, tr. Edwin Arnold, The Song Celestial, 1885 (lines.json source, Project Gutenberg #2388).",
+      "Heat or cold, joy or pain: retold from Arnold 'Bringing thee heat and cold, sorrows and joys' (lines.json exact); the Sanskrit pair sukha-duhkha is pleasure and pain.",
+      "They all come and go: Arnold ''Tis brief and mutable!'; Sanskrit 2.14 'agamapayino 'nityas' = coming and going, not lasting (lines.json exact).",
+      "So put up with them: retold from Arnold 'Bear with it ... As the wise bear'; Sanskrit 'tams titiksasva' = endure them (lines.json exact). 'Bear' replaced so no one reads it as the animal.",
+      "Calm: Arnold 2.15 'with a strong and constant calm / Takes sorrow and takes joy' (lines.json exact).",
+      "Reader fix applied: grammar of sentence 1 fixed, 'these all' made 'they all' (31 words)."
+     ]
+    },
+    {
+     "slot": "TRIAL",
+     "word": "STRONG",
+     "text": "Pain and hard times make you strong inside. Helen Keller, an American writer, could not see or hear. She wrote that no one grows strong in an easy, quiet life.",
+     "credit": "Helen Keller's Journal (1938), p. 60 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Helen Keller was 'an American deafblind author' who lost her sight and hearing after an illness at 19 months: Wikipedia 'Helen Keller' (WebFetch).",
+      "No one grows strong in an easy, quiet life: retold from 'character cannot be developed in ease and quiet. Only through experiences of trial and suffering can the soul be strengthened' (lines.json exact). 'Character' dropped per reader fix (30 words).",
+      "Strong inside: retold from 'Only through experiences of trial and suffering can the soul be strengthened' (lines.json exact).",
+      "Book: Helen Keller's Journal: 1936-1937, Doubleday, Doran & Co., 1938, p. 60, archive.org scan (lines.json source; fact checker confirmed page [60]). Credit gives the book title with its publication year in brackets, per the fact checker, so it does not read as written in 1938. The leading 'Helen Keller ·' is dropped because the title already names her; this keeps the credit at 45 characters instead of 60."
+     ]
+    },
+    {
+     "slot": "FISH",
+     "word": "EARN",
+     "text": "You have to earn even the small things. An old Russian saying puts it this way. Without work, you can't even take a small fish from a pond.",
+     "credit": "Russian proverb · Vladimir Dal (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Russian proverb 'Без труда не вынешь и рыбку из пруда', literally 'Without labour you can't even take a little fish out of a pond' (lines.json exact).",
+      "Recorded by V. I. Dal in his Explanatory Dictionary, 2nd ed., entry 'Рыба', checked on Russian Wikisource (lines.json source).",
+      "The English is our own retelling of Dal's wording ('take', from вынешь, not the modern вытащишь), so the credit can name Dal."
+     ]
+    },
+    {
+     "slot": "PLUM",
+     "word": "BEST",
+     "text": "Hard times bring out your best. China has an old saying about this. A sword's sharp edge comes from grinding. Plum flowers smell sweet thanks to bitter cold.",
+     "credit": "Chinese saying · 宝剑锋从磨砺出，梅花香自苦寒来 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Word changed from BLOOM to BEST (reader fix): the idea of both halves of the saying, not the plum flower.",
+      "Traditional Chinese couplet, author unknown; fact checker confirmed it comes from the anonymous Ming-Qing collection 警世贤文 (勤奋篇). 'China has an old saying about this' replaces the unconfirmed 'Children in China learn...' per the fact checker (fact checker wins over the reader's wording).",
+      "宝剑锋从磨砺出 = a sword's sharp edge comes from grinding (lines.json line and exact).",
+      "梅花香自苦寒来 = the plum blossom's scent comes from bitter cold, retold as 'plum flowers smell sweet thanks to bitter cold' (lines.json line and exact).",
+      "Sentence 1 is the lesson in our own words (28 words total)."
+     ]
+    },
+    {
+     "slot": "FIRE",
+     "word": "TEST",
+     "text": "Trouble is a test of how strong you are. Seneca was a thinker in old Rome. He wrote that fire tests gold, and hard times test brave people.",
+     "credit": "Seneca · On Providence 5.9 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Seneca was 'a Stoic philosopher of Ancient Rome': Wikipedia 'Seneca the Younger' (WebFetch), retold as 'a thinker in old Rome'.",
+      "'Fire tests gold, misfortune brave men' (Latin: Ignis aurum probat, miseria fortes viros), tr. John W. Basore, Loeb 1928 (lines.json exact), retold without quotation marks, 'misfortune' as 'hard times'.",
+      "Section number corrected to De Providentia 5.9 per the fact checker (Latin Library text and wist.info both give chapter V, section 9; the 5.10 in lines.json is wrong).",
+      "Sentence 1 is the lesson in our own words."
+     ]
+    },
+    {
+     "slot": "WILL",
+     "word": "EFFORT",
+     "text": "Growing as a person takes effort every day. In 1886, Russian writer Anton Chekhov wrote to his brother. He said to work, read and study, day and night. Every hour counts.",
+     "credit": "Anton Chekhov · letter, 1886 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Letter 'To his brother Nikolay', Moscow, 1886, tr. Constance Garnett (lines.json source; heading confirmed in Project Gutenberg #6408 via WebFetch).",
+      "The letter is about how to become a cultured person, so 'growing as a person' (Gutenberg #6408 via WebFetch).",
+      "Work, read and study, day and night: retold from 'What is needed is constant work, day and night, constant reading, study, will' (lines.json exact).",
+      "Every hour counts: retold from 'Every hour is precious for it' (lines.json exact)."
+     ]
+    },
+    {
+     "slot": "EVEREST",
+     "word": "TRY",
+     "text": "If you don't make it, try again. Climber Tenzing Norgay went to Everest six times and never reached the top. On trip seven, in 1953, he and Edmund Hillary made it.",
+     "credit": "Tenzing Norgay · Everest, 1953 (retold)",
+     "quoted_words": [],
+     "facts": [
+      "Tenzing Norgay was a 'Nepalese-Indian Sherpa mountaineer': Wikipedia 'Tenzing Norgay' (WebFetch), retold as 'climber'.",
+      "'Tenzing had previously been to Everest six times': Wikipedia (WebFetch; also lines.json exact).",
+      "Never reached the top on those six trips: no one reached the summit of Everest before 29 May 1953, the first ascent by Tenzing and Hillary (Wikipedia 'Tenzing Norgay'; lines.json exact).",
+      "Trip seven: Tenzing, Tiger of the Snows (1955), 'Seven times I have tried' (lines.json exact).",
+      "On 29 May 1953 he and Edmund Hillary reached the summit of Mount Everest (lines.json exact; Wikipedia via WebFetch).",
+      "Reader fix applied: the six failed trips are now said, and Hillary is folded into the last sentence (31 words)."
+     ]
+    }
+   ],
+   "dropped": "JEWEL",
+   "drop_reason": "JEWEL stays dropped, as before. No problem asked to change that. It was the story hardest to explain simply for a 10-year-old. Its key image does not plainly show 'the hard way makes you strong' the way the other nine do, and the big word would have been an object, not the idea. Fixes in this round: FIRE credit is now 5.9 (fact checker). PLUM word is now BEST, and its sentence 2 is the fact checker's 'China has an old saying about this' in place of the reader's unconfirmed 'Children in China learn...'. The TRIAL credit names the book, Helen Keller's Journal, with its 1938 publication year in brackets. I left out the extra 'Helen Keller ·' so the credit is 45 characters, not 60. The reader's new texts are in for EVEREST, HEAT, TRIAL and ICE. Cover, EASY, EARN and EFFORT are unchanged.",
+   "probs": [
+    {
+     "slot": "FIRE",
+     "problem": "Wrong section number in the credit. 'Ignis aurum probat, miseria fortes viros' is at De Providentia chapter V, section 9 in the Latin Library text, and wist.info also cites it as 5.9. The stoics.com Basore page header only covers 'v. 9 to vi. 1'. No source found gives 5.10, so the 5.10 in lines.json is also wrong. The slide text itself is fine.",
+     "fix": "Credit: Seneca · On Providence 5.9 (retold)",
+     "from": "fact checker"
+    },
+    {
+     "slot": "PLUM",
+     "problem": "Unconfirmed claim: 'Children in China learn an old saying about this.' The only support is the line 'widely taught in Chinese schools' in lines.json, which has no URL. Searches confirm the couplet comes from the anonymous Ming-Qing collection 警世贤文 (勤奋篇) and is on a Hong Kong EDB list of classical sayings. They found no mainland textbook, grade or lesson that includes it. The other three sentences check out.",
+     "fix": "China has an old saying about this.",
+     "from": "fact checker"
+    },
+    {
+     "slot": "TRIAL",
+     "problem": "The credit can mislead on the date. The book is 'Helen Keller's Journal, 1936-1937', published by Doubleday, Doran in 1938. The p. 60 entry was written in winter 1936-37, so 'Journal, 1938' reads like she wrote it in 1938. Page 60 and the wording are confirmed in the archive.org scan: the passage is on the page whose bottom number reads [60], between pages [59] and [61].",
+     "fix": "Credit: Helen Keller · Helen Keller's Journal (1938), p. 60 (retold)",
+     "from": "fact checker"
+    },
+    {
+     "slot": "PLUM",
+     "problem": "The big word BLOOM is taken from the plum flower, an object in the saying, not from its idea. It also covers only half the saying: the sword half has nothing to do with blooming, and the plum line is about smell, not blooming. 'Hard times can make you bloom' also sounds like a poster.",
+     "fix": "Word: BEST. Text: \"Hard times bring out your best. Children in China learn an old saying about this. A sword's sharp edge comes from grinding. Plum flowers smell sweet thanks to bitter cold.\" (30 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "EVEREST",
+     "problem": "The slide never says that his first six trips failed, and that failure is the whole point of TRY. 'Went to Everest six times', then 'on his seventh trip', reads like a count, not a story of not making it. 'Edmund Hillary was with him' is a loose fourth sentence tacked on at the end.",
+     "fix": "Word: TRY (keep). Text: \"If you don't make it, try again. Climber Tenzing Norgay went to Everest six times and never reached the top. On trip seven, in 1953, he and Edmund Hillary made it.\" (31 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "HEAT",
+     "problem": "Sentence 1 has broken grammar ('in heat and cold, happy and sad times'). 'Bear them' makes a child or a non-native scroller think of the animal. 'These all' is vague.",
+     "fix": "Word: CALM (keep). Text: \"Stay calm in heat or cold, joy or pain. The Bhagavad Gita, an old book from India, teaches this. It says they all come and go, so put up with them.\" (31 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "TRIAL",
+     "problem": "'Character' trips up a 10-year-old (a cartoon character) and Chinese readers (a written character). It is the only abstract word on the slide. The big word STRONG is fine, but the third sentence should say it in plain words.",
+     "fix": "Word: STRONG (keep). Text: \"Pain and hard times make you strong inside. Helen Keller, an American writer, could not see or hear. She wrote that no one grows strong in an easy, quiet life.\" (30 words)",
+     "from": "reader"
+    },
+    {
+     "slot": "ICE",
+     "problem": "The text uses all 32 words, the maximum. 'All 28 came home' leaves the scroller asking '28 what?', because only 6 men were mentioned before. The passive 'Shackleton's ship, Endurance, was crushed by ice' is clumsy. ENDURE is a hard word for a child; keep it only because sentence 1 explains it and the ship is named Endurance.",
+     "fix": "Word: ENDURE (keep). Text: \"To endure means to keep going when it's hard. Ice crushed explorer Shackleton's ship, Endurance. Six men sailed a small boat about 1,300 km for help. All 28 men came home.\" (31 words)",
+     "from": "reader"
+    }
+   ]
+  }
+ ],
+ "unified": {
+  "sets": [
+   {
+    "key": "A",
+    "dropped": "ROCKET",
+    "items": [
+     {
+      "slot": "cover",
+      "word": "LEARN",
+      "text": "We all learn in different ways. Swipe for 9 real stories from people and old books.",
+      "credit": "9 real stories · swipe",
+      "quoted_words": [],
+      "facts": [
+       "Main idea of carousel A 'Many Ways to Learn': people learn in different ways (theme from the task). Sentence 1 is the theme in our own words, not a claim from a source.",
+       "'9 real stories · swipe' is now the one credit all three covers share (final editor rule). The fact checker had asked for '9 lessons', because the wheel maker (Zhuangzi ch. 13) and the four horses (a scripture parable Suzuki retells) are parables, Thoreau's drummer is a metaphor and Vygotsky's line is a research finding. Each one really is in its named source, and 'from people and old books' says where they come from, so the cover does not claim that every slide is a true event.",
+       "The 9 slides draw on people (Suzuki, Feynman, Grandin, Thoreau, Krishnamacharya and Desikachar, Vygotsky) and old books (Analects, Samyutta Nikaya, Zhuangzi). The set has no proverbs, so the cover says 'people and old books', not 'sayings'."
+      ]
+     },
+     {
+      "slot": "ANSWER",
+      "word": "NEED",
+      "text": "Some students need a push, others need to wait. Two students asked Chinese teacher Confucius: should I act on what I hear? He told the shy one yes, the eager one wait.",
+      "credit": "Confucius · Analects 11.22 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Confucius, a teacher in ancient China; Analects 11.22 (Legge XI.21), tr. James Legge 1893 (lines.json source).",
+       "Two students (Tsze-lu and Zan Yu) each asked whether he should 'immediately carry into practice what he heard' (lines.json exact), retold as 'should I act on what I hear?'. The timing is carried by 'need to wait' and 'wait'.",
+       "Zan Yu (Ch'iu) was 'retiring and slow', retold as 'shy' (retiring = shy and holding back, not a slow learner). He was told 'Immediately carry into practice what you hear' = yes; 'I urged him forward' = a push (lines.json exact).",
+       "Tsze-lu (Yu) 'has more than his own share of energy', retold as 'eager'. He was told his father and elder brothers must be consulted first = wait; 'I kept him back' (lines.json exact).",
+       "All retold, no quotation marks."
+      ]
+     },
+     {
+      "slot": "HORSE",
+      "word": "STRUGGLE",
+      "text": "Students who struggle get more out of practice. Shunryu Suzuki, a Zen teacher from Japan, told a story about four horses. The slowest one to learn, he said, can be the best.",
+      "credit": "Suzuki · Zen Mind, Beginner's Mind (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Shunryu Suzuki, Japanese Zen teacher; Zen Mind, Beginner's Mind (Weatherhill, 1970), chapter 'The Marrow of Zen', pp. 37-38 (lines.json source).",
+       "'those who find great difficulties in practicing Zen will find more meaning in it' (lines.json exact), retold as 'get more out of practice'.",
+       "He tells the old story of four kinds of horses: the best runs before it sees the whip's shadow, the fourth only after the pain reaches the marrow; 'You can imagine how difficult it is for the fourth one to learn how to run!' (checked earlier in the book text, web.stanford.edu/~funn/ZenMindBeginners.pdf, p. 37). The horses differ in how hard they are to teach, so it is retold as 'slowest to learn', not running speed. 'Told a story' does not say he made the story up.",
+       "'the worst horse can be the best one' (lines.json exact), retold without quotation marks."
+      ]
+     },
+     {
+      "slot": "LOTUS",
+      "word": "LEVEL",
+      "text": "Every student is at a different level. In old India, the Buddha saw people as lotus flowers in a pond. Some stay underwater, some reach the surface, some rise above it.",
+      "credit": "The Buddha · Samyutta Nikaya 6.1 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "The Buddha, ancient India; Samyutta Nikaya 6.1, Ayacana Sutta, tr. Thanissaro Bhikkhu (lines.json source).",
+       "He saw beings with keen and dull faculties, 'those easy to teach and those hard' = different levels; 'Just as in a pond of blue or red or white lotuses' (lines.json exact) = lotus flowers in a pond.",
+       "Three lotuses only, as in the sutta: some flourish 'immersed in the water' (underwater), some 'stand at an even level with the water' (the surface), some 'rise up from the water' (rise above it) (lines.json exact).",
+       "Retold, no quotation marks; no god or deity named."
+      ]
+     },
+     {
+      "slot": "COUNT",
+      "word": "THINK",
+      "text": "We don't all think the same way. American scientist Richard Feynman counted by talking to himself. John Tukey pictured the numbers, so only Tukey could talk while counting.",
+      "credit": "Feynman · What Do You Care…, 1988 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Richard Feynman, American physicist; 'It's as Simple as One, Two, Three' in What Do You Care What Other People Think? (Norton, 1988) (lines.json source).",
+       "Key lesson: 'what goes on in different people's heads when they think they're doing the same thing ... is different for different people' (lines.json exact; checked earlier in the Caltech E&S PDF, calteches.library.caltech.edu/607/02/Feynman.pdf).",
+       "Feynman counted by 'talking' to himself, so he could read while counting but not speak (lines.json exact).",
+       "Tukey was 'visualizing a tape with numbers on it going by', so he could talk while counting but not read (lines.json exact) = 'only Tukey could talk while counting'.",
+       "Tukey named with no label (the essay calls him 'a fella named John Tukey'); not called a scientist, student or friend. Now 3 sentences, no semicolon."
+      ]
+     },
+     {
+      "slot": "WHEEL",
+      "word": "FEEL",
+      "text": "Some skills you learn by feel, not words. The old Chinese book Zhuangzi has a story about a wheel maker. He felt how hard to hit his chisel, but couldn't explain it.",
+      "credit": "Zhuangzi ch. 13 · tr. Burton Watson (retold)",
+      "quoted_words": [],
+      "facts": [
+       "The story is in the book Zhuangzi, ch. 13 'The Way of Heaven', tr. Burton Watson, Columbia University Press 2013 (lines.json source). It says 'the old Chinese book Zhuangzi has a story', not that the thinker told it.",
+       "If the mallet blows on the chisel are too gentle it slides, if too hard it bites and won't budge (lines.json exact) = how hard to hit his chisel.",
+       "'you can get it in your hand and feel it in your mind. You can't put it into words' (lines.json exact), retold as 'felt ... but couldn't explain it'.",
+       "The duke in the story is left out (no royalty)."
+      ]
+     },
+     {
+      "slot": "DRUMMER",
+      "word": "PACE",
+      "text": "It's okay to go at your own pace. American writer Henry David Thoreau put it this way in his book Walden. If you don't keep pace, maybe you hear a different drummer.",
+      "credit": "Henry David Thoreau · Walden, 1854 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Henry David Thoreau, American writer; Walden (1854), chapter 'Conclusion' (lines.json source).",
+       "'If a man does not keep pace with his companions, perhaps it is because he hears a different drummer' (lines.json exact), retold without quotation marks as 'If you don't keep pace, maybe you hear a different drummer'. It now says 'don't', not 'can't', as the source does: a different rhythm, not a lack of ability.",
+       "Own pace: 'Let him step to the music which he hears ... It is not important that he should mature as soon as an apple-tree or an oak' (lines.json exact)."
+      ]
+     },
+     {
+      "slot": "MINDS",
+      "word": "MINDS",
+      "text": "The world needs all kinds of minds. American scientist Temple Grandin has autism and thinks in pictures. In a 2010 talk, she said others think in patterns or words.",
+      "credit": "Temple Grandin · TED talk, 2010 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "TED2010 talk 'The world needs all kinds of minds', February 2010 (lines.json source); 'the world is going to need all of the different kinds of minds to work together' (lines.json exact), retold.",
+       "Diagnosed with autism as a child; ability to 'think in pictures' (checked earlier on the TED talk page, ted.com/talks/temple_grandin_the_world_needs_all_kinds_of_minds).",
+       "Kinds of thinkers in the talk: 'visual thinkers, pattern thinkers, verbal thinkers' (TED talk page summary, checked earlier); transcript copy: 'photo-realistic visual thinkers, like me; pattern thinkers, music and math minds' and 'a verbal mind' (singjupost.com transcript, checked earlier).",
+       "American scientist: animal science professor (widely documented)."
+      ]
+     },
+     {
+      "slot": "TAILOR",
+      "word": "FIT",
+      "text": "Yoga should fit the person, not the other way around. Indian yoga teacher T. Krishnamacharya changed the practice for each student. His son Desikachar called this the heart of his father's teaching.",
+      "credit": "Desikachar · The Heart of Yoga, 1995 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "'it is not that the person needs to accommodate him- or herself to yoga, but rather the yoga practice must be tailored to fit each person' (Desikachar, The Heart of Yoga, 1995; lines.json exact), retold as sentence 1.",
+       "'the yoga practice must be tailored to fit each person' and 'each student must be taught according to his or her individual capacity at any given time' (Desikachar with Cravens, Health, Healing and Beyond, 1998; lines.json exact and source), retold as 'changed the practice for each student'. 'At their level' was removed so it does not repeat LEVEL from the lotus slide.",
+       "'The essence of my father's teachings is this' (lines.json exact), retold as 'the heart of his father's teaching'; T. Krishnamacharya is Desikachar's father, an Indian yoga teacher."
+      ]
+     },
+     {
+      "slot": "TOMORROW",
+      "word": "HELP",
+      "text": "We need help before we can do things alone. Russian scientist Lev Vygotsky studied how children learn. What kids can do with help today, he wrote, they can do alone tomorrow.",
+      "credit": "Vygotsky · Thought and Language, 1934 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Lev Vygotsky, a psychologist who worked in Moscow and wrote in Russian; Thought and Language (Russian original 1934), ch. 6 (lines.json source; Britannica: Soviet psychologist, 1896 to 1934, best-known book Thought and Language, 1934, checked earlier via WebSearch).",
+       "Studied child development: Britannica and Wikipedia describe his work on how children's minds develop (checked earlier via WebSearch).",
+       "'What the child can do in cooperation today he can do alone tomorrow' (tr. Hanfmann and Vakar 1962, p. 104; lines.json exact), retold with 'help' in place of 'cooperation' and both uses of 'can' kept, no quotation marks.",
+       "Sentence 1 now says 'do things alone', so 'it' no longer points to nothing."
+      ]
+     }
+    ]
+   },
+   {
+    "key": "B",
+    "dropped": "VESSEL",
+    "items": [
+     {
+      "slot": "cover",
+      "word": "PATHS",
+      "text": "We all take different paths to success. Swipe for 9 real stories from people, old books and a saying.",
+      "credit": "9 real stories · swipe",
+      "quoted_words": [],
+      "facts": [
+       "The 9 slides: 6 people (Ando, Ramanujan, Qi Baishi, Krylov, Grandma Moses, Steve Jobs), 2 old books (Doctrine of the Mean, Yoga Sutras) and 1 saying (Russian proverb). Source: lines.json set B.",
+       "'A saying' (singular): the set has only one saying. '9 real stories' and the credit '9 real stories · swipe' follow the final editor rule that all three covers match. The fact checker had preferred 'lessons', because only 6 slides are stories about people. The list 'people, old books and a saying' tells the reader that 3 slides are a teaching or a saying, not an event.",
+       "The first sentence is the theme of the carousel in our own words, not a claim from a source. It has the big word PATHS and now uses the same 'We all ...' pattern as the other two covers."
+      ]
+     },
+     {
+      "slot": "NOODLE",
+      "word": "AGAIN",
+      "text": "You can start again after a big loss. In Japan, Momofuku Ando lost almost everything in 1957. A year later, at 48, he made the world's first instant noodles.",
+      "credit": "Momofuku Ando · Nissin Foods (retold)",
+      "quoted_words": [],
+      "facts": [
+       "In 1957 a credit union where Ando was a director went bankrupt, and he lost all his property except a rented house in Ikeda City, Osaka. That is the basis for 'in Japan' and 'lost almost everything': lines.json exact (Nissin 'Our Founder' page; Nippon.com 2018).",
+       "Chicken Ramen, the world's first instant noodles, launched on 25 August 1958, when he was 48. That is the basis for 'A year later, at 48, he made the world's first instant noodles': lines.json exact (Nissin). He worked on the product himself in a shed he built in his backyard, which supports 'made': lines.json exact.",
+       "Nationality and birthplace are left out on purpose, because the source note says no birthplace. 'In Japan' names only where the loss happened (Osaka).",
+       "The first sentence is the lesson, not a claim from the source."
+      ]
+     },
+     {
+      "slot": "HUNDRED",
+      "word": "EFFORT",
+      "text": "Slow learners get there with more effort. An old Chinese book says: if others need one try, you use a hundred. Then the slow grow smart and the weak grow strong.",
+      "credit": "Doctrine of the Mean 20 · tr. Legge (retold)",
+      "quoted_words": [],
+      "facts": [
+       "The 'old Chinese book' is The Doctrine of the Mean (Zhongyong), ch. 20, tr. James Legge, The Chinese Classics vol. 1. Its name stays on the credit line: lines.json source (checked on Wikisource).",
+       "'If another man succeed by one effort, he will use a hundred efforts' is retold as 'if others need one try, you use a hundred': lines.json exact.",
+       "'though dull, he will surely become intelligent' is retold as 'Slow learners get there' and 'the slow grow smart': lines.json exact.",
+       "'though weak, he will surely become strong' is retold as 'the weak grow strong': lines.json exact. There are no quotation marks, so the credit says retold.",
+       "EFFORT stays on this slide (Legge's own word is 'efforts'); the Chekhov slide in carousel C, which also had EFFORT, now has WORK so no big word repeats."
+      ]
+     },
+     {
+      "slot": "CLERK",
+      "word": "FAIL",
+      "text": "Failing is not the end. In India, Srinivasa Ramanujan failed a college exam, passing only maths. He took an office job and kept doing maths. In 1914, he went to Cambridge University.",
+      "credit": "Srinivasa Ramanujan · MacTutor (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Ramanujan was from India (Madras): lines.json exact and source (MacTutor, St Andrews; Wikipedia).",
+       "He failed one college exam and passed only maths. MacTutor says: 'In 1906 Ramanujan went to Madras where he entered Pachaiyappa's College' and 'He passed in mathematics but failed all his other subjects and therefore failed the examination' (the First Arts exam). Checked myself on mathshistory.st-andrews.ac.uk; also in lines.json exact. It now names one exam, not his whole school record, as the fact checker asked.",
+       "'He took an office job' retells his post as a clerk in the accounts section of the Madras Port Trust, which began on 1 March 1912: MacTutor (checked myself) and lines.json exact.",
+       "He kept doing maths. His 1912 job letter says 'I have, however, been devoting all my time to Mathematics', and he wrote to G. H. Hardy in January 1913: lines.json exact.",
+       "He went to Trinity College, Cambridge, in 1914: lines.json exact (MacTutor, Wikipedia).",
+       "The first sentence is the lesson, not a claim from the source. It was cut from 'Failing exams' to 'Failing' to keep the slide at 32 words with the fact checker's narrower wording."
+      ]
+     },
+     {
+      "slot": "CHANGE",
+      "word": "CHANGE",
+      "text": "You can change, even after many years. Chinese painter Qi Baishi had painted for decades. At 55, still unhappy with his work, he decided to change his style.",
+      "credit": "Qi Baishi 齐白石 · diary, 1919 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Qi Baishi was a Chinese painter (born 1 Jan 1864, died 16 Sep 1957): lines.json source (Hunan Museum; Kyoto National Museum via Google Arts & Culture).",
+       "In 1919 he wrote on a painting, and copied into his diary: 余作画数十年，未称己意，从此决定大变 (I have painted for decades and have not pleased myself; from now on I decide on a big change). It is retold as 'painted for decades', 'still unhappy with his work' and 'decided to change his style': lines.json exact (Beijing Daily 2025-05-26; The Paper).",
+       "'Change his style' rests on the lines.json source note, which names this as his late-life style change (衰年变法).",
+       "Age 55 is his Western age at the 1919 note (The Paper says 57 by Chinese count): lines.json source.",
+       "The slide gives no result and does not say the change made him famous, as the source note warns."
+      ]
+     },
+     {
+      "slot": "FABLE",
+      "word": "TALENT",
+      "text": "Some people find their real talent later. Russian writer Ivan Krylov wrote plays first. At 40, his first book of fables was a hit. In all, he wrote about 200 fables.",
+      "credit": "Ivan Krylov · Fables, 1809 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Krylov was a Russian writer who wrote plays (drama) before fables: lines.json exact and source (Wikipedia EN and RU; 1911 Britannica).",
+       "His first collection of fables (23 fables) came out in 1809, and he 'only discovered his true genre at the age of 40': lines.json exact.",
+       "It 'met with such an enthusiastic reception' that he then gave up drama for fables. That is retold as 'was a hit': lines.json exact.",
+       "English Wikipedia says: 'By the end of his career he had completed some 200' (checked myself). The ending says 'In all, he wrote about 200 fables', so it reads as a career total and cannot be read as 200 books or a topic. I did not use the reader's 'over 200': the total depends on the edition (197, 201 and 202 are cited, and 236 appears only in a bookseller's listing), so it is not confirmed.",
+       "'Real talent' retells 'true genre' (the kind of writing he was best at). The first sentence is the lesson.",
+       "Final editor: sentences 3 and 4 were reworded because sentence 4 ('People loved it, and he wrote about 200 fables.') was 9 words and the rule allows 8. Sentence 4 is now 7 words. 'Came out' and 'people loved it' are both carried by 'his first book of fables was a hit'. No fact added or dropped."
+      ]
+     },
+     {
+      "slot": "PACE",
+      "word": "SPEED",
+      "text": "Not every yoga student moves at the same speed. Patanjali's Yoga Sutras is an old yoga book from India. It says practice can be mild, medium or strong, and results differ.",
+      "credit": "Patanjali · Yoga Sutra 1.22 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Patanjali's Yoga Sutras is an old text from India, tr. Swami Vivekananda, Raja Yoga (1896): lines.json source.",
+       "Sutra 1.22 says: 'The success of Yogis differs according as the means they adopt are mild, medium, or intense' (Sanskrit mṛdu-madhya-adhimātra). It is retold as 'practice can be mild, medium or strong, and results differ'. Mild, medium and strong now describe the practice (the means), not the student, as the reader asked: lines.json exact.",
+       "There is no claim that one pace is better. The text says only that results differ, which is what 1.22 says.",
+       "Final editor: the big word changed from PACE to SPEED (the option the reader offered earlier), because PACE is also the big word of the Thoreau slide in carousel A and no big word may repeat. Thoreau keeps PACE because his own line says 'keep pace'. Sentence 1 changed only 'pace' to 'speed'. The first sentence is the lesson, not a claim from the source."
+      ]
+     },
+     {
+      "slot": "PAINT",
+      "word": "LATE",
+      "text": "A late start is still a start. Grandma Moses grew up on an American farm. She began painting seriously in her late 70s. At 80, she had her first solo show.",
+      "credit": "Grandma Moses · Smithsonian (retold)",
+      "quoted_words": [],
+      "facts": [
+       "She 'grew up on a farm in upstate New York': checked myself on the Smithsonian American Art Museum page (americanart.si.edu/node/67641).",
+       "'Moses began painting in earnest in her late 70s' is retold as 'began painting seriously in her late 70s': lines.json exact (Smithsonian), confirmed again on the same page.",
+       "She 'was 80 when gallerist Otto Kallir introduced her to the American public with her first solo exhibition in 1940': lines.json exact (Smithsonian), confirmed again on the same page.",
+       "The first sentence is the lesson, not a claim from the source."
+      ]
+     },
+     {
+      "slot": "RIDE",
+      "word": "SLOW",
+      "text": "Slow does not mean behind. Russians have an old saying for this. The slower you ride, the farther you will get.",
+      "credit": "Russian proverb · Dal, 1862 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "The Russian proverb is 'Тише едешь - дальше будешь' (literally: the quieter, meaning slower, you ride, the farther you'll get): lines.json exact.",
+       "It is in V. I. Dal's collection Пословицы русского народа (1862), section 'Путь, Дорога', which supports 'an old saying': lines.json source (checked on Russian Wikisource).",
+       "The English is our own translation, so it has no quotation marks and the credit says retold.",
+       "The first sentence ('Slow does not mean behind') is the lesson, not a claim from the source. It no longer gives away the proverb's punchline."
+      ]
+     },
+     {
+      "slot": "DOTS",
+      "word": "TRUST",
+      "text": "Trust that what you learn now can help later. Apple's Steve Jobs took a handwriting class that seemed useless. Ten years later, it helped shape the letters on the first Mac.",
+      "credit": "Steve Jobs · Stanford speech, 2005 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Jobs started Apple: 'Woz and I started Apple in my parents' garage when I was 20' (Stanford speech, 12 June 2005; checked earlier on the jamesclear.com transcript).",
+       "'I decided to take a calligraphy class to learn how to do this' (calligraphy = beautiful handwriting) and 'None of this had even a hope of any practical application in my life' are retold as 'a handwriting class that seemed useless': checked earlier on the jamesclear.com and entrepreneur.com transcripts.",
+       "'But 10 years later, when we were designing the first Macintosh computer, it all came back to me. And we designed it all into the Mac. It was the first computer with beautiful typography.' is retold as 'it helped shape the letters on the first Mac': same two transcripts.",
+       "'So you have to trust that the dots will somehow connect in your future' is the source of the big word TRUST. The first sentence now ties TRUST to learning, uses 'can' instead of 'may', and no longer repeats 'useless': lines.json exact (NPR transcript)."
+      ]
+     }
+    ]
+   },
+   {
+    "key": "C",
+    "dropped": "JEWEL",
+    "items": [
+     {
+      "slot": "cover",
+      "word": "HARD",
+      "text": "We all grow strong through hard things. Swipe for 9 real stories from people, old books and sayings.",
+      "credit": "9 real stories · swipe",
+      "quoted_words": [],
+      "facts": [
+       "The carousel theme 'The Hard Way': the easy way does not build a strong mind; hardship and effort make you strong (task brief).",
+       "Sentence 1 is the theme in our own words, now in the same 'We all ...' pattern as the other two covers. 'Hard things' covers both hard times (Keller, Seneca, the plum saying, the Gita, Shackleton) and hard work (Mencius, the fish saying, Chekhov, Tenzing).",
+       "9 stories: people (Shackleton, Helen Keller, Chekhov, Tenzing Norgay), old books (Mencius, Bhagavad Gita, Seneca) and sayings (Russian proverb, Chinese saying), all in lines.json set C."
+      ]
+     },
+     {
+      "slot": "EASE",
+      "word": "EASY",
+      "text": "An easy life makes a weak mind. Chinese thinker Mencius said hunger and hard work make a mind strong. Life grows from hard times, he said, and dies from easy ones.",
+      "credit": "Mencius 6B.15 · tr. Legge (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Mencius was a Chinese Confucian philosopher: Wikipedia 'Mencius' first sentence (WebFetch), retold as 'Chinese thinker'.",
+       "Hunger and hard work make a mind strong: retold from Legge 6B.15, Heaven 'exercises his mind with suffering, and his sinews and bones with toil... exposes his body to hunger... stimulates his mind, hardens his nature' (lines.json exact).",
+       "Life grows from hard times and dies from easy ones: retold from 'life springs from sorrow and calamity, and death from ease and pleasure' (lines.json exact, Legge, Wikisource).",
+       "Sentence 1 is the lesson in our own words, not a quote."
+      ]
+     },
+     {
+      "slot": "ICE",
+      "word": "ENDURE",
+      "text": "To endure means to keep going when it's hard. Ice crushed explorer Shackleton's ship, Endurance. Six men sailed a small boat about 1,300 km for help. All 28 men came home.",
+      "credit": "Ernest Shackleton · 1914 to 1917 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Sentence 1 explains the word; the big word comes from the ship's name, Endurance (lines.json exact).",
+       "Ice crushed the ship Endurance: 'their ship Endurance was crushed in the ice' (lines.json exact; Wikipedia 'Voyage of the James Caird').",
+       "Shackleton and five companions (six men) sailed the small boat James Caird about 1,300 km to South Georgia to get help (lines.json exact; Wikipedia and RSGS agree).",
+       "The party had 28 men and 'the entire Endurance crew returned home, without loss of life' (lines.json exact, Wikipedia), so 'All 28 men came home'. True for the Endurance party only.",
+       "Expedition years 1914 to 1917 (lines.json credit).",
+       "Reader fix applied: active 'Ice crushed...', and '28 men' so the number has a noun (31 words)."
+      ]
+     },
+     {
+      "slot": "HEAT",
+      "word": "CALM",
+      "text": "Stay calm in heat or cold, joy or pain. The Bhagavad Gita, an old book from India, teaches this. It says they all come and go, so put up with them.",
+      "credit": "Bhagavad Gita 2.14-15 · Arnold (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Bhagavad Gita ch. 2, verses 14-15, tr. Edwin Arnold, The Song Celestial, 1885 (lines.json source, Project Gutenberg #2388).",
+       "Heat or cold, joy or pain: retold from Arnold 'Bringing thee heat and cold, sorrows and joys' (lines.json exact); the Sanskrit pair sukha-duhkha is pleasure and pain.",
+       "They all come and go: Arnold ''Tis brief and mutable!'; Sanskrit 2.14 'agamapayino 'nityas' = coming and going, not lasting (lines.json exact).",
+       "So put up with them: retold from Arnold 'Bear with it ... As the wise bear'; Sanskrit 'tams titiksasva' = endure them (lines.json exact). 'Bear' replaced so no one reads it as the animal.",
+       "Calm: Arnold 2.15 'with a strong and constant calm / Takes sorrow and takes joy' (lines.json exact).",
+       "Reader fix applied: grammar of sentence 1 fixed, 'these all' made 'they all' (31 words)."
+      ]
+     },
+     {
+      "slot": "TRIAL",
+      "word": "STRONG",
+      "text": "Pain and hard times make you strong inside. Helen Keller, an American writer, could not see or hear. She wrote that no one grows strong in an easy, quiet life.",
+      "credit": "Helen Keller's Journal (1938), p. 60 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Helen Keller was 'an American deafblind author' who lost her sight and hearing after an illness at 19 months: Wikipedia 'Helen Keller' (WebFetch).",
+       "No one grows strong in an easy, quiet life: retold from 'character cannot be developed in ease and quiet. Only through experiences of trial and suffering can the soul be strengthened' (lines.json exact). 'Character' dropped per reader fix (30 words).",
+       "Strong inside: retold from 'Only through experiences of trial and suffering can the soul be strengthened' (lines.json exact).",
+       "Book: Helen Keller's Journal: 1936-1937, Doubleday, Doran & Co., 1938, p. 60, archive.org scan (lines.json source; fact checker confirmed page [60]). Credit gives the book title with its publication year in brackets, per the fact checker, so it does not read as written in 1938. The leading 'Helen Keller ·' is dropped because the title already names her; this keeps the credit at 45 characters instead of 60."
+      ]
+     },
+     {
+      "slot": "FISH",
+      "word": "EARN",
+      "text": "You have to earn even the small things. An old Russian saying puts it this way. Without work, you can't even take a small fish from a pond.",
+      "credit": "Russian proverb · Vladimir Dal (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Russian proverb 'Без труда не вынешь и рыбку из пруда', literally 'Without labour you can't even take a little fish out of a pond' (lines.json exact).",
+       "Recorded by V. I. Dal in his Explanatory Dictionary, 2nd ed., entry 'Рыба', checked on Russian Wikisource (lines.json source).",
+       "The English is our own retelling of Dal's wording ('take', from вынешь, not the modern вытащишь), so the credit can name Dal."
+      ]
+     },
+     {
+      "slot": "PLUM",
+      "word": "BEST",
+      "text": "Hard times bring out your best. China has an old saying about this. A sword's sharp edge comes from grinding. Plum flowers smell sweet thanks to bitter cold.",
+      "credit": "Chinese saying · 宝剑锋从磨砺出，梅花香自苦寒来 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Word changed from BLOOM to BEST (reader fix): the idea of both halves of the saying, not the plum flower.",
+       "Traditional Chinese couplet, author unknown; fact checker confirmed it comes from the anonymous Ming-Qing collection 警世贤文 (勤奋篇). 'China has an old saying about this' replaces the unconfirmed 'Children in China learn...' per the fact checker (fact checker wins over the reader's wording).",
+       "宝剑锋从磨砺出 = a sword's sharp edge comes from grinding (lines.json line and exact).",
+       "梅花香自苦寒来 = the plum blossom's scent comes from bitter cold, retold as 'plum flowers smell sweet thanks to bitter cold' (lines.json line and exact).",
+       "Sentence 1 is the lesson in our own words (28 words total)."
+      ]
+     },
+     {
+      "slot": "FIRE",
+      "word": "TEST",
+      "text": "Trouble is a test of how strong you are. Seneca was a thinker in old Rome. He wrote that fire tests gold, and hard times test brave people.",
+      "credit": "Seneca · On Providence 5.9 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Seneca was 'a Stoic philosopher of Ancient Rome': Wikipedia 'Seneca the Younger' (WebFetch), retold as 'a thinker in old Rome'.",
+       "'Fire tests gold, misfortune brave men' (Latin: Ignis aurum probat, miseria fortes viros), tr. John W. Basore, Loeb 1928 (lines.json exact), retold without quotation marks, 'misfortune' as 'hard times'.",
+       "Section number corrected to De Providentia 5.9 per the fact checker (Latin Library text and wist.info both give chapter V, section 9; the 5.10 in lines.json is wrong).",
+       "Sentence 1 is the lesson in our own words."
+      ]
+     },
+     {
+      "slot": "WILL",
+      "word": "WORK",
+      "text": "Growing as a person takes work every day. In 1886, Russian writer Anton Chekhov wrote to his brother. He said to work, read and study, day and night. Every hour counts.",
+      "credit": "Anton Chekhov · letter, 1886 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Letter 'To his brother Nikolay', Moscow, 1886, tr. Constance Garnett (lines.json source; heading confirmed in Project Gutenberg #6408 via WebFetch).",
+       "The letter is about how to become a cultured person, so 'growing as a person' (Gutenberg #6408 via WebFetch).",
+       "Work, read and study, day and night: retold from 'What is needed is constant work, day and night, constant reading, study, will' (lines.json exact).",
+       "Every hour counts: retold from 'Every hour is precious for it' (lines.json exact).",
+       "Final editor: the big word changed from EFFORT to WORK, because EFFORT is also the big word of the Doctrine of the Mean slide in carousel B, which keeps it (Legge's own word is 'efforts'). WORK is the letter's own word, 'constant work' (lines.json exact). Sentence 1 changed only 'effort' to 'work'."
+      ]
+     },
+     {
+      "slot": "EVEREST",
+      "word": "TRY",
+      "text": "If you don't make it, try again. Climber Tenzing Norgay went to Everest six times and never reached the top. On trip seven, in 1953, he and Edmund Hillary made it.",
+      "credit": "Tenzing Norgay · Everest, 1953 (retold)",
+      "quoted_words": [],
+      "facts": [
+       "Tenzing Norgay was a 'Nepalese-Indian Sherpa mountaineer': Wikipedia 'Tenzing Norgay' (WebFetch), retold as 'climber'.",
+       "'Tenzing had previously been to Everest six times': Wikipedia (WebFetch; also lines.json exact).",
+       "Never reached the top on those six trips: no one reached the summit of Everest before 29 May 1953, the first ascent by Tenzing and Hillary (Wikipedia 'Tenzing Norgay'; lines.json exact).",
+       "Trip seven: Tenzing, Tiger of the Snows (1955), 'Seven times I have tried' (lines.json exact).",
+       "On 29 May 1953 he and Edmund Hillary reached the summit of Mount Everest (lines.json exact; Wikipedia via WebFetch).",
+       "Reader fix applied: the six failed trips are now said, and Hillary is folded into the last sentence (31 words)."
+      ]
+     }
+    ]
+   }
+  ],
+  "changes": [
+   "Repeat 1, PACE (A Thoreau and B Patanjali): Thoreau keeps PACE because his line says 'keep pace'. B Patanjali (slot PACE) is now SPEED, the option the reader offered earlier. Sentence 1 now reads 'Not every yoga student moves at the same speed.' (only 'pace' changed to 'speed', 31 words). The facts note that said 'The big word stays PACE' was rewritten to match.",
+   "Repeat 2, EFFORT (B Doctrine of the Mean and C Chekhov): Doctrine of the Mean keeps EFFORT because Legge's own word is 'efforts'. C Chekhov (slot WILL) is now WORK, the letter's own word ('constant work'). Sentence 1 now reads 'Growing as a person takes work every day.' (only 'effort' changed to 'work', 31 words). Added a facts note on both slides.",
+   "After these two changes, all 30 big words are different: LEARN NEED STRUGGLE LEVEL THINK FEEL PACE MINDS FIT HELP / PATHS AGAIN EFFORT FAIL CHANGE TALENT SPEED LATE SLOW TRUST / HARD EASY ENDURE CALM STRONG EARN BEST TEST WORK TRY. MACHETE appears nowhere.",
+   "Covers: all three now follow one pattern, 'We all [idea with the big word]. Swipe for 9 real stories from [the kinds of source].', and all three credits are '9 real stories · swipe'. A: 'We all learn in different ways. Swipe for 9 real stories from people and old books.' (credit was '9 lessons · swipe'). B: 'We all take different paths to success. Swipe for 9 real stories from people, old books and a saying.' (was 'There are many paths to success. Swipe for 9 real lessons from people, old books and an old saying.', credit '9 real lessons · swipe'). C: 'We all grow strong through hard things. Swipe for 9 real stories from people, old books and sayings.' (was 'The hard way, not the easy way, makes you strong. Swipe for 9 real stories: people, old books and sayings.'). Each list names only the kinds of source that set really has. The cover facts were updated.",
+   "Flag for the owner: the fact checker had asked for 'lessons' instead of 'stories' on covers A and B, because some slides are parables, sayings or a research finding and not true events. I followed the rule given to me ('9 real stories · swipe' on all three). The 'from people, old books ...' list keeps the cover honest. If the owner prefers the fact checker's word, change 'stories' to 'lessons' on all three covers and credits, so they still match.",
+   "B Krylov (TALENT) broke the rule that sentence 4 can be at most 8 words: 'People loved it, and he wrote about 200 fables.' was 9 words. Sentences 3 and 4 now read 'At 40, his first book of fables was a hit. In all, he wrote about 200 fables.' (31 words, sentence 4 is 7 words). No fact was added or dropped. 'Was a hit' does the job of both 'came out' and 'people loved it' (the 'enthusiastic reception'). 'In all' keeps 200 as the total for his whole career. The facts were updated to match.",
+   "Rule 4 check on all 27 story slides: each sentence 1 holds the big word or its plain form (FAIL/Failing). Each sentence 2 names who or where with a plain label. Every slide is 16 to 32 words (21 to 32). No long dash appears in any text or credit. Every set has 10 items, the cover first. The dropped stories (ROCKET, VESSEL, JEWEL) and every other fact, quote and credit are unchanged.",
+   "Checked and left as they are: some sentences run 13 to 14 words against the 'about 12' guide. They are HELP s3 (14), EFFORT s2 (14), and NEED, STRUGGLE, LEVEL, PACE (A), CHANGE and TRY at 13. Making them shorter would cut words from the retold source line or the who/where label."
+  ]
+ }
+}

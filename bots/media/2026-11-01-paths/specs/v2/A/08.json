@@ -1,0 +1,31 @@
+[
+ {
+  "photo": "31-087",
+  "id": "A8",
+  "word": "PACE",
+  "line": "It's okay to go at your own pace. American writer Henry David Thoreau put it this way in his book Walden. If you don't keep pace, maybe you hear a different drummer.",
+  "credit": "Henry David Thoreau · Walden, 1854 (retold)",
+  "wmain": 0.3,
+  "tight": true,
+  "t": 0,
+  "wrot": -90,
+  "wwidth": 640,
+  "wpos": [
+   830,
+   70
+  ],
+  "ink_w": "light",
+  "wshadow": 1.4,
+  "wburn": 0.12,
+  "sz": 46,
+  "cws": [
+   460
+  ],
+  "sxy": [
+   60,
+   62
+  ],
+  "ink_s": "light",
+  "sburn": 0.35
+ }
+]

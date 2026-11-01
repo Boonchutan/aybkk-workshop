@@ -1,0 +1,32 @@
+[
+ {
+  "photo": "31-171",
+  "id": "A1",
+  "word": "LEARN",
+  "line": "We all learn in different ways. Swipe for 9 real stories from people and old books.",
+  "credit": "9 real stories · swipe",
+  "wmain": 0.3,
+  "tight": true,
+  "t": 270,
+  "wm": "left",
+  "wwidth": 488,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "wshadow": 1.5,
+  "wburn": 0.25,
+  "sz": 46,
+  "cws": [
+   360
+  ],
+  "sxy": [
+   60,
+   214
+  ],
+  "ink_s": "light",
+  "sburn": 0.38,
+  "line_br": "We all learn in|different ways. Swipe|for 9 real stories from|people and old books."
+ }
+]

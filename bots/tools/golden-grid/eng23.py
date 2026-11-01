@@ -205,6 +205,7 @@ class Stats:
         fp = self.mean('f' if kind == 's' else 'mf', r)
         if fp > 0.001 and not allow_feet: return None
         bd, bl = self.mean('bd', r), self.mean('bl', r); ink = 'dark' if bd < bl else 'light'; bad = min(bd, bl)
+        if kind == 'w' and getattr(self, 'force_w', None) == 'light': ink, bad = 'light', bl   # Boonchu 1 Nov: big words white
         mu = self.mean('g', r); std = max(0.0, self.mean('g2', r) - mu * mu) ** .5; pf = self.mean('p', r); mf = self.mean('m', r)
         if kind == 'w' and mf > getattr(self, 'wmain', WMAIN): return None   # Boonchu 23 Oct: the big word goes on empty space, never across the main student's asana
         ring = self.mean('m', (r[0] - 30, r[1] - 30, r[2] + 30, r[3] + 30))
@@ -317,7 +318,7 @@ def best(s, prev_corner=None):
     top, bot = body_span(n); res = []
     for allow_feet in ((False, True) if s.get('feet_ok') else (False,)):   # never put text on the main student's feet unless told
         for t in ts:
-            fr = frame(n, t, s.get('wm'), s.get('tight', False), s.get('wmxy'), s.get('wmk', 1.0)); st = Stats(fr); st.wmain = s.get('wmain', WMAIN)   # close-ups with no empty space may allow more
+            fr = frame(n, t, s.get('wm'), s.get('tight', False), s.get('wmxy'), s.get('wmk', 1.0)); st = Stats(fr); st.wmain = s.get('wmain', WMAIN); st.force_w = s.get('ink_w')   # close-ups with no empty space may allow more
             frame_pen = 0 if t == 'pad' else max(0, (t + H) - bot - 90) / 350
             for L in layouts(fr, st, s['word'], s['line'], s['credit'], allow_feet, s):
                 L['score'] += frame_pen + (0.35 if prev_corner and L['corner'] == prev_corner else 0); L['t'] = t; L['fr'] = fr
