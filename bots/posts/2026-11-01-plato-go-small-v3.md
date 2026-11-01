@@ -41,3 +41,12 @@ Your backbend tight, so you push more. / That's why it stay tight. / For real. /
 Opening: You can't gain flexibility by pushing. / Tight backbend can't get bendy if you force it. Hanumanasana line placed in the story: Hanuman jump over the sea... Hanumanasana, the split, is this big jump. (Hanumanasana = named for Hanuman's leap across the ocean, the leap in Sundara Kanda 1 where Surasa appears.)
 
 ## v6 (after 'your script is shit'): point, straight story, back to the backbend. See chat for the full text.
+
+## EDIT (1 Nov): Ep. 5 "Go Small" from his talking head
+- Take: Drive 14y5IIPoESRdNyWTXvCtU_XFh1RofX7RU (89 s, 4K HEVC 10-bit, white tee, bedroom). He said the v6 text; two restarts ('Surasa bless her', 'Surasa bless') cut. No Thai sign-off in the take.
+- Cut: pauses (-55 dB), x1.1, beats kept (0.9 s after 'Nobody wins', 0.6 s after 'test from the gods' and before 'That's Hanuman's trick') -> 59.2 s + 0.8 tail + 2 s STUCK end card.
+- Pictures: Kling kling-image-v3_0_omni, 1:1 2k, 2 credits each, 10 jobs = 20 credits (3,000 before). Look: gothic whimsical stop-motion puppet (Boonchu asked 'Tim Burton cartoon style'; prompts describe the look, no artist name), plum/teal/gold. Hanuman = red furry monkey hero; Surasa = purple sea serpent lady with cobra hood, big round white eyes, curly antennae (keep this design for continuity). Prompts: scratchpad ep5/prompts.json (+ redo prompts for g4-g6 in chat log).
+- Cards: header 'Hidden Stories of Ashtanga · Ep. 5'; class photos 27-294 (hook), 31-155 (your backbend); title cards: I tell you why / Hanumanasana named after Hanuman / Surasa quote / Hanuman has an idea / he keeps her rule / bigger and bigger / go small / Hanuman's trick.
+- Captions: Weight Shift Montserrat + 4 px dark stroke (white tee needs it). SFX: numpy synth (hf/ wavs not in repo), 26 cues at 40%, 23 zoom punches.
+- Cover: frame at 53.7 s, plum gradient, 'TIGHT BACKBEND? STOP PUSHING.' (gold BACKBEND).
+- Caption (Lane A, STUCK): Backbend tight for months? / Hanuman, the monkey god, had the same fight. Getting bigger did not help. / Hanumanasana is named after him. / Hidden Stories of Ashtanga · Ep. 5 / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti #backbend #hanumanasana #hiddenstoriesofashtanga
