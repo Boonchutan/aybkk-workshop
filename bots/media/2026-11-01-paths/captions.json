@@ -113,7 +113,8 @@
  },
  "posted": {
   "A": "PUBLISHED 2026-11-01 08:55 UTC (15:55 BKK), Postiz cmvxlhi27056ztd1hfii59d6v",
-  "B": "SCHEDULED 2026-11-02 04:59 UTC (11:59 BKK), Postiz cmvxmi5fu05nptd1hd7jwd9g2 (Boonchu: go B)"
+  "B": "SCHEDULED 2026-11-02 04:59 UTC (11:59 BKK), Postiz cmvxmi5fu05nptd1hd7jwd9g2 (Boonchu: go B)",
+  "C": "SCHEDULED 2026-11-03 04:59 UTC (11:59 BKK), Postiz cmvxpcx7x06k5td1hbpl7rzys (Boonchu: go C)"
  },
  "cover_text": {
   "B": "There is more than one path. Late, slow, or failed first, they still got there.",
