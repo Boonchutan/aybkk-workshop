@@ -33,8 +33,19 @@ const SEED_PRODUCTS = [
   { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 20 },
   { code: 'unlim1',    name_en: '1 month unlimited',     name_th: '1 เดือน ไม่จำกัด',   price_thb: 9600,  kind: 'unlimited', credits: null, valid_days: 30,  daily_cap: 2, sort: 30 },
   { code: 'unlim3',    name_en: '3 months unlimited',    name_th: '3 เดือน ไม่จำกัด',   price_thb: 25800, kind: 'unlimited', credits: null, valid_days: 90,  daily_cap: 2, sort: 50 },
+  { code: 'unlim6m',   name_en: '6 months unlimited',    name_th: '6 เดือน ไม่จำกัด',   price_thb: 32000, kind: 'unlimited', credits: null, valid_days: 180, daily_cap: 2, sort: 60, active: false },
   { code: 'unlim12m',  name_en: '12 months unlimited',   name_th: '12 เดือน ไม่จำกัด',  price_thb: 78000, kind: 'unlimited', credits: null, valid_days: 365, daily_cap: 2, sort: 70 },
 ];
+// New prices from 12 Nov 2026 00:00 Bangkok (Boonchu, 2 Nov), with the
+// 6-month package on sale again. Nothing runs on a timer here, so the first
+// request from then on makes the change (switchPrices). unlim6m is a new code:
+// the old 45,000 6-month (unlim6) stays for the passes Rezerv sold.
+const PRICE_SWITCH = {
+  at: Date.parse('2026-11-12T00:00:00+07:00'),
+  key: 'prices_from_2026_11_12',
+  prices: { unlim3: 22000, unlim6m: 32000, unlim12m: 59900 },
+  opens: ['unlim6m'],
+};
 
 // weekday: 0=Sun … 6=Sat
 // Moon days: the shala is closed on the Bangkok date of every new and full moon.
@@ -230,6 +241,8 @@ function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
   const cloudinary = opts.cloudinary || null;
   const httpFetch = opts.fetch || fetch;
+  // Tests move the clock the 12 Nov price switch reads.
+  const nowMs = typeof opts.now === 'function' ? opts.now : Date.now;
   // No key set means no admin at all: the repo is public, so a default key
   // would open every student's data to anyone.
   const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '';
@@ -460,11 +473,7 @@ function mountBkk(app, opts = {}) {
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
     // package retired in the admin page stays as staff set it.
     const added = await q(`SELECT count(*)::int AS n FROM bkk_products`);
-    for (const s of SEED_PRODUCTS) {
-      await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort)
-               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT (code) DO NOTHING`,
-        [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort]);
-    }
+    for (const s of SEED_PRODUCTS) await seedProduct(pool, s);
     // From 21 Oct 2026 a year is 12 months, no free 13th (Boonchu). valid_days
     // never changes under passes already sold, so the 13-month package is
     // retired once and kept for the passes and Rezerv imports that point at it.
@@ -532,6 +541,46 @@ function mountBkk(app, opts = {}) {
   }
 
   const surcharge = async () => Number(await getSetting('surcharge_pct', 3)) || 0;
+
+  const seedProduct = (db, s) => db.query(
+    `INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort,active)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT (code) DO NOTHING`,
+    [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort, s.active !== false]);
+
+  // Called before anything reads a price. The marker goes in with the prices in
+  // one transaction: two servers racing apply it once (the loser waits on the
+  // key, then finds it taken), a failure leaves no marker, so the next request
+  // tries again, and a price staff change afterwards is never put back.
+  let pricesSwitched = false, switching = null;
+  function switchPrices() {
+    if (pricesSwitched || nowMs() < PRICE_SWITCH.at) return Promise.resolve();
+    switching = switching || applyPriceSwitch().finally(() => { switching = null; });
+    return switching;
+  }
+  async function applyPriceSwitch() {
+    // A fresh database is seeded first. If that boot step failed, the rows are
+    // added here, or the marker would shut out a package that came later.
+    await booted.catch(() => {});
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const mark = await client.query(`INSERT INTO bkk_settings (key,value) VALUES ($1,'true')
+                                       ON CONFLICT (key) DO NOTHING RETURNING key`, [PRICE_SWITCH.key]);
+      if (mark.rows.length) {
+        for (const [code, price] of Object.entries(PRICE_SWITCH.prices)) {
+          await seedProduct(client, SEED_PRODUCTS.find(s => s.code === code));
+          await client.query(`UPDATE bkk_products SET price_thb=$2, active = active OR $3 WHERE code=$1`,
+            [code, price, PRICE_SWITCH.opens.includes(code)]);
+        }
+      }
+      await client.query('COMMIT');
+      if (mark.rows.length) console.log('✓ bkk: prices from 12 Nov 2026 are live');
+      pricesSwitched = true;
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw e;
+    } finally { client.release(); }
+  }
 
   // VAT is due on everything the student pays, the online fee included.
   function breakdown(base, pct) {
@@ -623,6 +672,7 @@ function mountBkk(app, opts = {}) {
   // ── public: catalogue + schedule ──────────────────────────────────────────
   app.get('/api/bkk/products', async (req, res) => {
     try {
+      await switchPrices();
       const pct = await surcharge();
       const r = await q('SELECT * FROM bkk_products WHERE active ORDER BY sort, id');
       res.json({
@@ -696,6 +746,7 @@ function mountBkk(app, opts = {}) {
       if (!productCode || !(name || '').trim() || !(email || '').trim())
         return res.status(400).json({ error: 'name, email and product are required' });
 
+      await switchPrices();
       const pr = (await q('SELECT * FROM bkk_products WHERE code = $1 AND active', [productCode])).rows[0];
       if (!pr) return res.status(404).json({ error: 'product not found' });
 
@@ -1765,6 +1816,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const { productCode, name, email, phone, method, slotId, checkIn } = req.body || {};
       if (!DESK_METHODS.includes(method)) return res.status(400).json({ error: 'method must be cash, transfer or card' });
       if (!(name || '').trim()) return res.status(400).json({ error: 'name is required' });
+      await switchPrices();
       const pr = (await q('SELECT * FROM bkk_products WHERE code = $1 AND active', [productCode])).rows[0];
       if (!pr) return res.status(404).json({ error: 'product not found' });
       const date = req.body.date || bkkToday();
@@ -1867,6 +1919,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
     try {
       if (seat) return await listed(seat);
+      await switchPrices();
       const pr = (await q(`SELECT * FROM bkk_products WHERE code='dropin' AND active`)).rows[0];
       if (!pr) return res.status(404).json({ error: 'the drop-in is not on sale' });
       const { o, act } = await deskSale({ member, pr, method: b.method, slotId, date, checkIn,
@@ -2158,6 +2211,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const { memberCode, name, email, phone, productCode,
               validFrom, validUntil, creditsTotal, creditsUsed, note, source } = req.body || {};
+      await switchPrices();
       const pr = (await q('SELECT * FROM bkk_products WHERE code=$1', [productCode])).rows[0];
       if (!pr) return res.status(404).json({ error: 'product not found' });
 
@@ -2601,9 +2655,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const ITEM_PLANS = [[/drop[\s-]*in|ครั้งเดียว/i, 'dropin'], ...IMPORT_PLANS];
   async function itemProduct(db, item) {
     if (!item) return null;
+    // Rezerv never sold the 6-month from 12 Nov 2026, and it shares its name with the old one.
     const exact = (await db.query(
-      `SELECT * FROM bkk_products WHERE lower(name_en)=lower($1) OR lower(coalesce(name_th,''))=lower($1) OR code=lower($1)
-       ORDER BY id LIMIT 1`, [item])).rows[0];
+      `SELECT * FROM bkk_products WHERE (lower(name_en)=lower($1) OR lower(coalesce(name_th,''))=lower($1) OR code=lower($1))
+         AND code <> 'unlim6m' ORDER BY id LIMIT 1`, [item])).rows[0];
     if (exact) return exact;
     const plan = ITEM_PLANS.find(([re]) => re.test(item));
     return plan ? (await db.query('SELECT * FROM bkk_products WHERE code=$1', [plan[1]])).rows[0] || null : null;
@@ -2883,8 +2938,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
              FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY 1`),
         all(`SELECT o.method, count(*)::int AS n, sum(o.amount_thb)::int AS total
              FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
-        all(`SELECT coalesce(pr.name_en, o.item_name, 'other') AS item, count(*)::int AS n, sum(o.amount_thb)::int AS total
-             FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
+        // By package, not by name: the old Rezerv 6-month and the 12 Nov 2026 one share a name.
+        all(`SELECT coalesce(pr.name_en, o.item_name, 'other') AS item, pr.price_thb AS price, count(*)::int AS n, sum(o.amount_thb)::int AS total
+             FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id WHERE ${paid} GROUP BY pr.id, 1, 2 ORDER BY total DESC, 1`),
         all(`SELECT coalesce(o.source,'aybkk') AS source, count(*)::int AS n, sum(o.amount_thb)::int AS total
              FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
         all(`SELECT count(*)::int AS n FROM bkk_orders o
@@ -3567,6 +3623,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const b = req.body || {};
       const code = String(b.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
       if (!code) return res.status(400).json({ error: 'code required' });
+      await switchPrices();
       const existing = (await q('SELECT * FROM bkk_products WHERE code=$1', [code])).rows[0];
 
       if (existing) {
@@ -3837,8 +3894,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     }
   });
 
-  initSchema()
-    .then(() => { console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); })
+  const booted = initSchema();
+  booted
+    .then(() => {
+      console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge();
+      return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));
+    })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message));
 }
 

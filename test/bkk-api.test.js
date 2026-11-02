@@ -44,7 +44,12 @@ const ok = (name, cond, extra = '') => {
     return new Response(Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 1, 2, 3]), { status: 200 });
   };
   process.env.DRIVE_PHOTOS_FOLDER = 'ROOTF';
-  mountBkk(app, { pgPool: pool, cloudinary: fakeCloud, fetch: fakeFetch });
+  // The price switch reads this clock. It stays on the last minute of the old
+  // prices until the test of the switch itself, near the end.
+  const bkkAt = s => Date.parse(s + '+07:00');
+  let clock = bkkAt('2026-11-11T23:59:00');
+  const now = () => clock;
+  mountBkk(app, { pgPool: pool, cloudinary: fakeCloud, fetch: fakeFetch, now });
   await new Promise(r => setTimeout(r, 1500));           // let schema init finish
   const srv = app.listen(0);
   const port = srv.address().port;
@@ -1697,7 +1702,7 @@ const ok = (name, cond, extra = '') => {
     delete process.env.BKK_ADMIN_KEY; delete process.env.SHOP_ADMIN_KEY;
     const app2 = express();
     app2.use(express.json());
-    mountBkk(app2, { pgPool: pool });
+    mountBkk(app2, { pgPool: pool, now });
     process.env.BKK_ADMIN_KEY = keep[0];
     if (keep[1] != null) process.env.SHOP_ADMIN_KEY = keep[1];
     const srv2 = app2.listen(0);
@@ -2020,6 +2025,176 @@ const ok = (name, cond, extra = '') => {
      `today(BKK)=${todayBkk} earliest=${sch2.body.classes.map(c => c.date).sort()[0]}`);
   ok('...and names the last Bangkok day it loaded', sch2.body.to === new Date(Date.parse(todayBkk + 'T12:00:00Z') + 2 * 86400000).toISOString().slice(0, 10),
      `today(BKK)=${todayBkk} to=${sch2.body.to}`);
+
+  console.log('\n— new prices from 12 Nov 2026 00:00 Bangkok —');
+  {
+    const byCode = async (port = null) => {
+      const r = await (port ? fetch(`http://127.0.0.1:${port}/api/bkk/products`).then(x => x.json()) : J('/api/bkk/products').then(x => x.body));
+      return Object.fromEntries((r.products || []).map(p => [p.code, p]));
+    };
+    const mount = (opts = {}) => {
+      const a = express(); a.use(express.json());
+      mountBkk(a, { pgPool: pool, now, ...opts });
+      const srv = a.listen(0);
+      return { srv, port: srv.address().port };
+    };
+    const buyer = n => ({ name: `Switch Buyer ${n}`, email: `switch.buyer${n}@example.com` });
+    const marker = async () => (await pool.query(`SELECT count(*)::int AS n FROM bkk_settings WHERE key='prices_from_2026_11_12'`)).rows[0].n;
+
+    clock = bkkAt('2026-11-11T23:59:59');
+    const pre = await byCode();
+    ok('11 Nov 23:59 Bangkok: old prices, 3 months 25,800 and 12 months 78,000', pre.unlim3.price_thb === 25800
+       && pre.unlim12m.price_thb === 78000 && pre.unlim1.price_thb === 9600 && pre.dropin.price_thb === 1500 && pre.pack10.price_thb === 14000,
+       JSON.stringify(Object.values(pre).map(p => [p.code, p.price_thb])));
+    const pre6 = await post('/api/bkk/orders', { productCode: 'unlim6m', ...buyer(1) });
+    const pre6desk = await post('/api/bkk/admin/sales', { productCode: 'unlim6m', name: 'Switch Desk Early', method: 'cash' }, ADMIN);
+    ok('...the new 6-month is not listed, not sold online and not sold at the desk', !pre.unlim6m && pre6.status === 404
+       && pre6desk.status === 404 && (await marker()) === 0, JSON.stringify([pre6.body, pre6desk.body]));
+    const early = await post('/api/bkk/orders', { productCode: 'unlim3', ...buyer(2) });
+    ok('...a 3-month order at 23:59 is 25,800 + 3% fee + 7% VAT = 28,434', early.body.order && early.body.order.amount === 28434,
+       JSON.stringify(early.body.order));
+
+    // A failure part way leaves no marker behind, so the next request tries again.
+    let failing = true;
+    const flaky = {
+      query: (...a) => pool.query(...a),
+      connect: async () => {
+        const c = await pool.connect();
+        return { query: (sql, p) => failing && /^UPDATE bkk_products SET price_thb/.test(sql)
+          ? Promise.reject(new Error('disk full')) : c.query(sql, p), release: (...a) => c.release(...a) };
+      },
+    };
+    const bad = mount({ pgPool: flaky });
+    const other = mount();
+    await new Promise(r => setTimeout(r, 1500));           // let both schema checks finish
+    // As if the boot that seeds the 6-month had failed: the switch must add it, not lock it out.
+    await pool.query(`DELETE FROM bkk_products WHERE code='unlim6m'`);
+    clock = bkkAt('2026-11-12T00:00:00');
+    const badRes = await fetch(`http://127.0.0.1:${bad.port}/api/bkk/products`);
+    ok('a switch that fails part way answers 500 and leaves the old prices and no marker', badRes.status === 500
+       && (await marker()) === 0 && (await pool.query(`SELECT price_thb FROM bkk_products WHERE code='unlim3'`)).rows[0].price_thb === 25800,
+       String(badRes.status));
+    bad.srv.close();
+
+    // Two servers take their first request at 00:00 together: the change happens once.
+    const said = [], log = console.log;
+    console.log = (...a) => { if (/prices from 12 Nov 2026 are live/.test(a.join(' '))) said.push(a); else log(...a); };
+    const both = await Promise.all([byCode(), byCode(other.port), byCode(), byCode(other.port)]);
+    console.log = log;
+    ok('12 Nov 00:00 Bangkok: two servers asking at once apply the switch once', said.length === 1 && (await marker()) === 1,
+       `applied ${said.length} times`);
+    const post12 = both[0];
+    ok('...3 months 22,000, 12 months 59,900, 1 month, drop-in and 10 classes unchanged', both.every(b => b.unlim3.price_thb === 22000
+       && b.unlim12m.price_thb === 59900 && b.unlim1.price_thb === 9600 && b.dropin.price_thb === 1500 && b.pack10.price_thb === 14000),
+       JSON.stringify(Object.values(post12).map(p => [p.code, p.price_thb])));
+    const six = post12.unlim6m || {};
+    ok('...the 6-month is on sale at 32,000 for 180 days, 2 classes a day, between 3 and 12 months',
+       six.price_thb === 32000 && six.valid_days === 180 && six.daily_cap === 2 && six.kind === 'unlimited'
+       && Object.keys(post12).join() === 'dropin,pack10,unlim1,unlim3,unlim6m,unlim12m', JSON.stringify(six));
+    ok('...even when the boot before it never added the 6-month row', (await pool.query(
+       `SELECT 1 FROM bkk_products WHERE code='unlim6m' AND active AND price_thb=32000`)).rows.length === 1);
+    ok('...and the old 6-month (45,000, sold by Rezerv) stays off sale', !post12.unlim6
+       && (await pool.query(`SELECT active, price_thb FROM bkk_products WHERE code='unlim6'`)).rows.every(r => !r.active && r.price_thb === 45000));
+
+    const o6 = await post('/api/bkk/orders', { productCode: 'unlim6m', ...buyer(3) });
+    const o3 = await post('/api/bkk/orders', { productCode: 'unlim3', ...buyer(4) });
+    const o12 = await post('/api/bkk/orders', { productCode: 'unlim12m', ...buyer(5) });
+    const row6 = (await pool.query('SELECT base_thb, fee_thb, vat_thb, amount_thb FROM bkk_orders WHERE refno=$1', [o6.body.order.refno])).rows[0];
+    ok('checkout: 6 months is 32,000 + 960 fee + 2,307 VAT = 35,267', o6.body.order.amount === 35267 && row6.base_thb === 32000
+       && row6.fee_thb === 960 && row6.vat_thb === 2307 && row6.amount_thb === 35267 && six.total_thb === 35267, JSON.stringify(row6));
+    ok('...3 months 24,246 and 12 months 66,016, as the Packages tab shows', o3.body.order.amount === 24246 && o12.body.order.amount === 66016
+       && post12.unlim3.total_thb === 24246 && post12.unlim12m.total_thb === 66016, JSON.stringify([o3.body.order, o12.body.order]));
+    const earlyRow = (await pool.query('SELECT id, base_thb, amount_thb FROM bkk_orders WHERE refno=$1', [early.body.order.refno])).rows[0];
+    ok('an order made before the switch keeps its old price', earlyRow.base_thb === 25800 && earlyRow.amount_thb === 28434, JSON.stringify(earlyRow));
+    const desk6 = await post('/api/bkk/admin/sales', { productCode: 'unlim6m', name: 'Switch Desk', method: 'cash' }, ADMIN);
+    const deskPass = (await pool.query(`SELECT p.valid_days, p.daily_cap FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id
+      WHERE m.name='Switch Desk'`)).rows[0] || {};
+    ok('a desk sale of the 6-month is 32,000 + 7% VAT and gives a 180-day pass', desk6.body.order && desk6.body.order.amount === 34240
+       && deskPass.valid_days === 180 && deskPass.daily_cap === 2, JSON.stringify([desk6.body, deskPass]));
+
+    // Staff own the prices from here: a change in the admin page stays.
+    clock = bkkAt('2026-11-12T09:00:00');
+    const staff = await post('/api/bkk/admin/products', { code: 'unlim3', priceThb: 21000 }, ADMIN);
+    const after = await byCode();
+    const reboot = mount();
+    await new Promise(r => setTimeout(r, 1500));
+    const rebooted = await byCode(reboot.port);
+    ok('a price staff change after the switch stays, on the next request and after a reboot', staff.status === 200
+       && after.unlim3.price_thb === 21000 && rebooted.unlim3.price_thb === 21000 && rebooted.unlim12m.price_thb === 59900
+       && (await byCode(other.port)).unlim3.price_thb === 21000, JSON.stringify([after.unlim3.price_thb, rebooted.unlim3.price_thb]));
+    reboot.srv.close(); other.srv.close();
+    await post('/api/bkk/admin/products', { code: 'unlim3', priceThb: 22000 }, ADMIN);
+
+    // An old 6-month pass from Rezerv is still the old 6-month package.
+    const pasted = await post('/api/bkk/admin/import', { rows: [{ name: 'Switch Old Six', plan: '6 months', until: '2027-01-31' }] }, ADMIN);
+    const viaPasses = await post('/api/bkk/admin/import/passes', { dryRun: false, rows: [
+      { name: 'Switch Old Six Two', plan: '6 Months Unlimited', start: '2026-08-01', until: '2027-01-27' }] }, ADMIN);
+    const viaPay = await post('/api/bkk/admin/import/payments', { dryRun: false, rows: [
+      { rezervId: 'P-SW6', name: 'Switch Old Six Three', date: '2026-08-01', amount: 45000, item: '6 months unlimited', method: 'transfer' },
+      { rezervId: 'P-SW6T', name: 'Switch Old Six Three', date: '2026-08-02', amount: 45000, item: '6 เดือน ไม่จำกัด', method: 'transfer' }] }, ADMIN);
+    const sixes = (await pool.query(`SELECT m.name, pr.code, pr.valid_days FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+      JOIN bkk_members m ON m.id=p.member_id WHERE m.name LIKE 'Switch Old Six%' ORDER BY m.name`)).rows;
+    const paid = (await pool.query(`SELECT pr.code FROM bkk_orders o JOIN bkk_products pr ON pr.id=o.product_id
+      WHERE o.source='rezerv' AND o.source_ref LIKE 'P-SW6%'`)).rows;
+    ok('after the switch, an old Rezerv 6-month pass or payment still maps to the old 6-month, never the new one',
+       pasted.body.passes === 1 && viaPasses.body.added === 1 && sixes.length === 2 && sixes.every(x => x.code === 'unlim6' && x.valid_days === 180)
+       && viaPay.body.added === 2 && paid.length === 2 && paid.every(x => x.code === 'unlim6'), JSON.stringify([sixes, paid, viaPay.body]));
+
+    // Both 6-month packages are called "6 months unlimited".
+    const deskDay = (await pool.query(`SELECT to_char(created_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS d
+      FROM bkk_orders WHERE refno=$1`, [desk6.body.order.refno])).rows[0].d;
+    await post('/api/bkk/admin/import/payments', { dryRun: false, rows: [
+      { rezervId: 'P-SW6R', name: 'Switch Old Six Four', date: deskDay, amount: 45000, item: '6 months unlimited', method: 'transfer' }] }, ADMIN);
+    const rep6 = ((await J(`/api/bkk/admin/report?from=${deskDay}&to=${deskDay}`, { headers: ADMIN })).body.money || { byItem: [] })
+      .byItem.filter(x => x.item === '6 months unlimited');
+    ok('the money report keeps the old 6-month and the new one apart, each with its price', rep6.length === 2
+       && rep6.some(x => x.price === 45000) && rep6.some(x => x.price === 32000 && x.total === 34240), JSON.stringify(rep6));
+
+    // The first request after midnight is not always a price list read.
+    const unswitch = async () => {
+      await pool.query(`DELETE FROM bkk_settings WHERE key='prices_from_2026_11_12'`);
+      await pool.query(`UPDATE bkk_products SET active = code <> 'unlim6m',
+        price_thb = CASE code WHEN 'unlim3' THEN 25800 WHEN 'unlim12m' THEN 78000 ELSE price_thb END
+        WHERE code IN ('unlim3','unlim6m','unlim12m')`);
+    };
+    const firstAfterMidnight = async () => {
+      clock = bkkAt('2026-11-11T23:59:00');
+      await unswitch();
+      const a = mount();
+      await new Promise(r => setTimeout(r, 1500));
+      clock = bkkAt('2026-11-12T00:00:00');
+      a.call = (p, body, headers = {}) => fetch(`http://127.0.0.1:${a.port}${p}`, body
+        ? { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) } : {})
+        .then(async r => ({ status: r.status, body: await r.json().catch(() => ({})) }));
+      return a;
+    };
+    let first = await firstAfterMidnight();
+    const firstOrder = await first.call('/api/bkk/orders', { productCode: 'unlim3', ...buyer(6) });
+    first.srv.close();
+    ok('a checkout as the first request after midnight charges the new price, 24,246',
+       firstOrder.body.order && firstOrder.body.order.amount === 24246, JSON.stringify(firstOrder.body));
+    first = await firstAfterMidnight();
+    const firstDesk = await first.call('/api/bkk/admin/sales', { productCode: 'unlim6m', name: 'Switch Desk First', method: 'cash' }, ADMIN);
+    first.srv.close();
+    ok('a desk sale of the 6-month as the first request after midnight sells it, 34,240', firstDesk.status === 200
+       && firstDesk.body.order && firstDesk.body.order.amount === 34240, JSON.stringify(firstDesk.body));
+    first = await firstAfterMidnight();
+    const firstEdit = await first.call('/api/bkk/admin/products', { code: 'unlim3', priceThb: 21000 }, ADMIN);
+    const firstList = await first.call('/api/bkk/products');
+    first.srv.close();
+    const firstPrices = Object.fromEntries((firstList.body.products || []).map(p => [p.code, p.price_thb]));
+    ok('a staff price change as the first request after midnight stays', firstEdit.status === 200 && firstPrices.unlim3 === 21000,
+       JSON.stringify(firstPrices));
+    await unswitch();
+    clock = bkkAt('2026-11-12T08:00:00');
+    const late = mount();
+    await new Promise(r => setTimeout(r, 1500));
+    late.srv.close();
+    const lateRows = Object.fromEntries((await pool.query(`SELECT code, price_thb, active FROM bkk_products
+      WHERE code IN ('unlim3','unlim6m','unlim12m')`)).rows.map(r => [r.code, r]));
+    ok('a server that boots after midnight switches with no request at all', (await marker()) === 1 && lateRows.unlim3.price_thb === 22000
+       && lateRows.unlim12m.price_thb === 59900 && lateRows.unlim6m.price_thb === 32000 && lateRows.unlim6m.active, JSON.stringify(lateRows));
+  }
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
