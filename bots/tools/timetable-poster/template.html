@@ -54,6 +54,11 @@ h1{margin:0 0 var(--tgap);font-weight:900;font-size:var(--big,140px);line-height
   text-box:trim-both cap alphabetic;margin:2px 0 calc(6px + var(--date) * .15)}
 .tile .k ~ .k{margin-top:6px}
 .tile p,.foot p{margin:0;white-space:nowrap}
+.tile .mn{display:block;width:calc(var(--date) * 1.6);height:calc(var(--date) * 1.6);border-radius:50%;margin-top:12px}
+.tile .mn.full{background:#F2C94C}
+.tile .mn.new{background:#17121a}
+/* On B's dark scrim a dark disc would vanish: give it a gold edge. */
+.look-B .tile .mn.new{background:#0e0a10;box-shadow:inset 0 0 0 3px #F2C94C}
 .wrap p{white-space:normal}
 .k{color:var(--kc,inherit)}
 .k.mysore{--kc:var(--k-mysore)}.k.led_primary{--kc:var(--k-led_primary)}.k.led_inter{--kc:var(--k-led_inter)}
@@ -101,6 +106,8 @@ function build() {
     t.dataset.day = c.d;
     t.append(el('b', 'd', String(c.d)));
     for (const l of c.lines) t.append(el('p', l.k ? 'k ' + l.k : '', l.t));
+    // Boonchu, 2 Nov: a dark moon for the new moon, a full yellow moon for the full moon.
+    if (c.moon === 'new' || c.moon === 'full') t.append(el('i', 'mn ' + c.moon));
     g.append(t);
   }
 

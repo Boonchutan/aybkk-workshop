@@ -25,7 +25,7 @@ const TEXT = {
     year: y => y,
     heads: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     kinds: { mysore: 'Mysore', led_primary: 'Primary', led_inter: 'Inter.' },
-    moon: 'Moon day',
+    moon: { new: 'New moon', full: 'Full moon' },
     none: 'No classes',
     book: 'Book at aybkk.net · LINE @aybkk',
     where: 'S31 Sukhumvit Hotel, 8th floor, Sukhumvit 31',
@@ -206,7 +206,7 @@ function payload(month, lang, size, look, photo, credit, titleUp = true) {
       { t: g.times.join(' ') },
       { t: g.teachers.join(', ') },
     ]);
-    return { d: day.d, col: (i % 7) + 1, row: Math.floor(i / 7) + 1, moon: !!day.moon, lines };
+    return { d: day.d, col: (i % 7) + 1, row: Math.floor(i / 7) + 1, moon: day.moon || '', lines };
   });
   const lead = month.first, trail = month.rows * 7 - month.first - month.daysIn;
   // Six-week months always open with five or six empty days: the month name sits there.

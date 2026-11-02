@@ -100,7 +100,7 @@ took and how far the month name moved up. Exit code 1 means a CHECK or a WARNING
 - One white see-through tile per date, Sunday first. Each tile: date, then per class type its
   short name (Mysore / Primary / Inter., Thai มายซอร์, as on the booking page), start times,
   teachers in time order ("5:30 7:30" then "M, Boonchu" means M at 5:30). Shala classes only.
-  Moon days: date and "Moon day" (EN), or the booking page's own words in TH: "จันทร์ดับ"
+  Moon days: date, "New moon" or "Full moon" (EN) and a dark or a full yellow moon (Boonchu, 2 Nov), or the booking page's own words in TH: "จันทร์ดับ"
   (new moon) / "จันทร์เต็มดวง" (full moon). No classes on them. No tile for days outside the month.
 - Footer, in the month's empty days when there is room, else a band at the bottom:
   "Book at aybkk.net · LINE @aybkk", "S31 Sukhumvit Hotel, 8th floor, Sukhumvit 31", and
