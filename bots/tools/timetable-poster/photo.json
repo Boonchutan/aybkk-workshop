@@ -1,6 +1,7 @@
 {
-  "about": "Led Intermediate, 31 Oct 2026, at AYBKK. creditBox: where the printed credit sits in the photo, in photo pixels [left, top, right, bottom]. pos: the crop for each size (CSS object-position).",
+  "about": "Led Intermediate, 31 Oct 2026, at AYBKK. Boxes are in photo pixels [left, top, right, bottom]. creditBox: the printed credit. faces: every face (head and hair); white letters never go on one. pos: the crop for each size (CSS object-position).",
   "credit": ["AYBKK Shala Bangkok", "Oct 31st Led Intermediate", "Boonchu Tanti"],
   "creditBox": [440, 1780, 895, 1895],
+  "faces": [[96, 414, 240, 545], [1166, 418, 1234, 524], [170, 598, 290, 728], [228, 685, 383, 864], [430, 895, 600, 1065], [510, 1140, 905, 1405]],
   "pos": { "feed": "50% 0%", "story": "50% 50%" }
 }

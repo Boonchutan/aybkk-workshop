@@ -10,10 +10,14 @@ const DIR = __dirname;
 const API = 'https://aybkk.net/api/bkk/schedule?days=62';
 const OUT_ROOT = process.env.POSTER_OUT
   || '/tmp/claude-0/-home-user-aybkk-workshop/3b3548ff-02bf-5c45-bd02-b8c67f38ecca/scratchpad/poster-out';
-const SIZES = { feed: { W: 1080, H: 1350 }, story: { W: 1080, H: 1920 } };
-const LOOKS = ['A', 'B'];
-// Single images use A until Boonchu picks a look; --all renders both until then.
-const DEFAULT_LOOK = 'A';
+// tall: the whole photo, no crop (aybkk.net booking page). Its height comes from the photo.
+const SIZES = { feed: { W: 1080, H: 1350 }, story: { W: 1080, H: 1920 }, tall: { W: 1080, H: null } };
+const LOOKS = ['A', 'B', 'C'];
+// Look C (Look A's calendar under a white header) is made for the tall size only.
+const LOOK_SIZES = { A: ['feed', 'story', 'tall'], B: ['feed', 'story', 'tall'], C: ['tall'] };
+// Feed and story use A until Boonchu picks a look; --all renders both until then.
+const DEFAULT_LOOK = { feed: 'A', story: 'A', tall: 'C' };
+const LOGO = path.join(DIR, 'logo-white.png');
 
 const TEXT = {
   en: {
@@ -26,6 +30,7 @@ const TEXT = {
     book: 'Book at aybkk.net · LINE @aybkk',
     where: 'S31 Sukhumvit Hotel, 8th floor, Sukhumvit 31',
     zoom: 'Led classes also live on Zoom',
+    place: 'Ashtanga Bangkok, Thailand',
   },
   th: {
     months: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'],
@@ -37,22 +42,28 @@ const TEXT = {
     book: 'จองที่ aybkk.net · LINE @aybkk',
     where: 'โรงแรม S31 ชั้น 8 สุขุมวิท 31',
     zoom: 'คลาส Led ถ่ายทอดสดทาง Zoom ด้วย',
+    place: 'อัษฎางคโยคะ กรุงเทพฯ ประเทศไทย',
   },
 };
 
 const USAGE = `AYBKK timetable poster
 
-  node render.js --all [--month 2026-12] [--look A|B]
-      every image for the month (EN and TH, feed and story) into
-      ${OUT_ROOT}/<YYYY-MM>/  (both looks unless --look is given)
+  node render.js --all [--month 2026-12] [--look A|B|C]
+      every image for the month into ${OUT_ROOT}/<YYYY-MM>/:
+      EN and TH, feed and story in looks A and B (only --look if it is A or B),
+      tall in look C, and web JPEGs of the tall images in web/
+      (--look C: only the tall images)
 
-  node render.js --month 2026-11 --lang en|th --size feed|story --look A|B --out file.png
-      one image (look ${DEFAULT_LOOK} if --look is left out)
+  node render.js --month 2026-11 --lang en|th --size feed|story|tall --look A|B|C --out file.png
+      one image (look A for feed and story, C for tall, if --look is left out)
 
 Options
   --month YYYY-MM   default: next month (Bangkok time)
-  --photo path      background photo (default photo.jpg here). A photo.json beside it may give
-                    credit, creditBox and crop positions; see README.md
+  --photo path      background photo (default photo.jpg here). A JSON file beside it (photo.json
+                    for photo.jpg) may give credit, creditBox, faces and crop positions; see README.md
+  --title up|down   tall only, when the month name would cover a face listed in the photo's JSON:
+                    up (default) raises it just clear of the faces, down keeps it right above the
+                    weekday heads as in the feed (and prints CHECK)
   --credit "a|b|c"  photo credit to re-stamp if the photo's own credit is cut off or covered
                     (| separates its lines)
   --data file       schedule JSON saved from ${API}
@@ -182,9 +193,9 @@ function moonDaysBetween(fromYmd, toYmd) {
 
 const cleanTitle = t => String(t).replace(/^\[Online\]\s*/, '').replace(/\s+series$/, '').replace(/\s*\((1st|2nd) batch\)/, '');
 
-function payload(month, lang, size, look, photo, credit) {
+function payload(month, lang, size, look, photo, credit, titleUp = true) {
   const L = TEXT[lang];
-  const { W, H } = SIZES[size];
+  const W = SIZES[size].W, H = SIZES[size].H || Math.round(W * photo.h / photo.w);
   const cells = month.days.map(day => {
     const i = month.first + day.d - 1;
     let lines;
@@ -210,14 +221,17 @@ function payload(month, lang, size, look, photo, credit) {
   if (month.online) foot.push(L.zoom);
   const meta = photo.meta;
   return {
-    lang, size, look, W, H,
+    lang, size, look, W, H, titleUp,
+    header: look === 'C' ? { brand: 'AYBKK', place: L.place, logo: 'data:image/png;base64,' + fs.readFileSync(LOGO).toString('base64') } : null,
     title: `${L.months[month.m - 1]} ${L.year(month.y)}`,
     heads: L.heads, rows: month.rows, lead, trail, titleIn, footIn, creditIn, cells, foot,
     photo: {
       src: photo.url,
       pos: (meta.pos && meta.pos[size]) || (size === 'feed' ? '50% 0%' : '50% 50%'),
+      w: photo.w, h: photo.h,
       credit: credit ? credit.split('|').map(x => x.trim()).filter(Boolean) : [].concat(meta.credit || []),
       box: meta.creditBox || null,
+      faces: meta.faces || [],
     },
   };
 }
@@ -235,12 +249,35 @@ async function renderOne(browser, template, data, out) {
   await page.screenshot({ path: out, type: jpg ? 'jpeg' : 'png', quality: jpg ? 92 : undefined, clip: { x: 0, y: 0, width: data.W, height: data.H } });
   await page.close();
   const notes = [`title ${r.title}px`];
+  if (r.logo) notes.push(`logo ${Math.round(r.logo)}px`);
   if (r.steps.length) notes.push('fitted: ' + r.steps.join(', '));
+  if (r.lift) notes.push(`month name ${r.lift}px up, off a face`);
   if (r.restamp) notes.push('photo credit re-stamped in the footer');
-  console.log(`${r.overflow.length ? 'CHECK' : 'ok   '} ${out}  (${notes.join('; ')})`);
+  if (r.painted) notes.push('printed credit under a box painted out of the photo');
+  console.log(`${r.overflow.length || r.onFace.length ? 'CHECK' : 'ok   '} ${out}  (${notes.join('; ')})`);
   if (r.overflow.length) console.log('      text does not fit in: ' + r.overflow.join(', '));
+  if (r.onFace.length) console.log(`      ${r.onFace.join(' and ')} on a face (faces in the photo's JSON)`);
   if (r.minSmall < 22) console.log('      small text is ' + r.minSmall + 'px, under 22px');
   return r;
+}
+
+// The photo's shape as the browser shows it (EXIF rotation included): the tall size follows it.
+async function photoSize(browser, photo) {
+  const page = await browser.newPage();
+  await page.setContent(`<img src="${photo.url}">`, { waitUntil: 'load' });
+  const [w, h] = await page.evaluate(() => { const i = document.querySelector('img'); return [i.naturalWidth, i.naturalHeight]; });
+  await page.close();
+  return { w, h };
+}
+
+// For the booking page: 1080 wide, JPEG 82, sRGB, no metadata.
+function webCopy(png, out) {
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  try {
+    execFileSync('convert', [png, '-resize', '1080x>', '-colorspace', 'sRGB', '-strip', '-sampling-factor', '4:2:0', '-quality', '82', out]);
+  } catch (e) { console.log('      WARNING no web copy (needs ImageMagick convert): ' + e.message.split('\n')[0]); return false; }
+  console.log(`web   ${out}  (${Math.round(fs.statSync(out).size / 1024)} KB)`);
+  return true;
 }
 
 async function main() {
@@ -249,8 +286,12 @@ async function main() {
   const today = a.today || bkkToday();
   const month = a.month || nextMonth(today);
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) throw new Error('--month must look like 2026-11');
-  for (const [k, ok] of [['lang', ['en', 'th']], ['size', Object.keys(SIZES)], ['look', LOOKS]]) {
+  for (const [k, ok] of [['lang', ['en', 'th']], ['size', Object.keys(SIZES)], ['look', LOOKS], ['title', ['up', 'down']]]) {
     if (a[k] && !ok.includes(a[k])) throw new Error(`--${k} must be one of ${ok.join(', ')}`);
+  }
+  if (!a.size && a.look === 'C') a.size = 'tall';
+  if (!a.all && a.look && !LOOK_SIZES[a.look].includes(a.size || 'feed')) {
+    throw new Error(`Look ${a.look} is made for --size ${LOOK_SIZES[a.look].join(' or ')}`);
   }
   const { s: sched, raw } = loadSchedule(a.data);
   const photo = loadPhoto(a.photo);
@@ -263,22 +304,28 @@ async function main() {
   const jobs = [];
   if (a.all) {
     const dir = path.join(a.outdir || OUT_ROOT, month);
-    for (const look of a.look ? [a.look] : LOOKS) for (const lang of ['en', 'th']) for (const size of ['feed', 'story']) {
+    const igLooks = !a.look ? ['A', 'B'] : a.look === 'C' ? [] : [a.look];
+    for (const look of igLooks) for (const lang of ['en', 'th']) for (const size of ['feed', 'story']) {
       jobs.push({ lang, size, look, out: path.join(dir, `aybkk-${month}-${lang}-${size}-${look}.png`) });
+    }
+    for (const lang of ['en', 'th']) {
+      jobs.push({ lang, size: 'tall', look: 'C', out: path.join(dir, `aybkk-${month}-${lang}-tall-C.png`), web: path.join(dir, 'web', `${month}-${lang}.jpg`) });
     }
     fs.mkdirSync(dir, { recursive: true });
     if (!a.data) fs.writeFileSync(path.join(dir, 'schedule.json'), raw);
   } else {
-    const lang = a.lang || 'en', size = a.size || 'feed', look = a.look || DEFAULT_LOOK;
+    const lang = a.lang || 'en', size = a.size || 'feed', look = a.look || DEFAULT_LOOK[size];
     jobs.push({ lang, size, look, out: path.resolve(a.out || path.join(a.outdir || OUT_ROOT, month, `aybkk-${month}-${lang}-${size}-${look}.png`)) });
   }
 
   const browser = await chromium.launch();
   let bad = 0;
   try {
+    Object.assign(photo, await photoSize(browser, photo));
     for (const j of jobs) {
-      const r = await renderOne(browser, template, payload(m, j.lang, j.size, j.look, photo, a.credit), j.out);
-      if (r.overflow.length) bad++;
+      const r = await renderOne(browser, template, payload(m, j.lang, j.size, j.look, photo, a.credit, a.title !== 'down'), j.out);
+      if (r.overflow.length || r.onFace.length) bad++;
+      if (j.web && !webCopy(j.out, j.web)) bad++;
     }
   } finally { await browser.close(); }
   if (bad || warn.length) process.exitCode = 1;
