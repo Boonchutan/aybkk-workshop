@@ -42,3 +42,4 @@ Wet spaghetti. Whole body contortion, no core.
 Full-on desk body, the office chair. Always a stranger to backbend.
 And my favourite, the butterfly. Hard muscles all his life, now transforming.
 Does it matter what type of body you are? / No. Same practice. Every morning. The body change. / Comment aybkk and I'll send you the link. / แล้วเจอกันครับ
+v5 payoff (Boonchu): 'No. What matter is the will and energy that own the body.' replaces 'Same practice. Every morning. The body change.'
