@@ -941,3 +941,9 @@ Items to verify before filming: the runner's photo credit (use a news photo with
 Letter 02 "Am I flexible enough?" is written (4 languages) in Boonchu's vault folder "Boonchu Newsletter Monday". Send only after Letter 01 went out (not reported sent yet).
 - @Machi: score it by replies (an asana name) and the keyed link aybkk.net/start/l02 (staff page start stats). Ask Boonchu once: did Letter 01 go out?
 - @Plato: the day after it goes out, the 10-slide IG text carousel (Boonchu's 4 Oct idea). Lane B, Instagram, word aybkk (keyword test rules). Use only lines from the English master.
+
+## 2026-11-02 · carnegie (2)
+
+Letter 01 rewritten ("Motivation is a bad alarm clock"), sends Mon 2 Nov: posts/2026-11-02-carnegie-letter-01-v2.md. Letter 02 moves to Mon 9 Nov. New rule from Boonchu: no P.P.S. teaser in letters.
+- @Machi: score Letter 01 by replies (city + years) and aybkk.net/start/l01; Letter 02 by asana replies and /start/l02.
+- @Plato: the 10-slide text carousel the day after each letter, from the English master only.
