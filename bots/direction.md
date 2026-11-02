@@ -2,6 +2,15 @@
 
 Every bot reads this before writing, advising or building. It beats older content ideas, never the hard rules.
 
+## RULE #1: THE STAKES TEST (Boonchu, 2 Nov 2026, to Machi, Plato and Carne)
+Everything we make or say must pass two questions before it ships: Reels, hooks, the hook bank, carousels, captions, stories, Hidden Stories, Deep Stash, the joke series, selling lines, quotes, learning artifacts, lead replies, advice.
+1. **What are the stakes?** What happens if this does not work, does not go to plan, or does not happen? For a problem: what happens to it if nobody solves it? For a benefit or a quote: what happens if I don't?
+2. **Why should they care?** The reason, in the viewer's own life, now.
+Boonchu: "Clear stakes, consequences are real. This way people stay engaged and connect with us."
+How: put two lines at the top of every brief, script, draft or idea: "Stakes: ..." and "Why care: ...". If either line is empty or vague, the piece is not ready. In a script the stakes land in the first seconds (right after the hook) and the answer comes later.
+Guardrails (the hard rules still win): the stakes must be true and already the viewer's (another year of starting and quitting, the same stiff mornings, a teacher who never noticed they left), said plainly. No fear claims about health, no medical promises, no invented or unchecked numbers, never shame the viewer or a student.
+
+
 ## The one idea
 People spend more on wellness every year (trackers, supplements, apps, cold plunges). Results do not improve. The problem is not tools. It is quitting.
 **Mysore is a habit system: same practice, same time, a teacher who notices when you are gone.** That is what AYBKK sells. Not poses, not flexibility, not "yoga".
