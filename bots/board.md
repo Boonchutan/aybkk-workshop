@@ -935,3 +935,9 @@ Xiaohongshu title (12 characters): 输了那一仗，他得到了礼物
 - Left out on purpose: the gift was a weapon (the script says "a gift"; a weapon pulls toward war words, hard rule 8); Parvati turning arrows to flowers (a later retelling, not the core text); "Arjuna was a prince" (monarchy rule, "the great archer" is still true).
 
 Items to verify before filming: the runner's photo credit (use a news photo with credit or no photo); Boonchu checks the "I lose to a pose every week" hook only if he wants hook 1.
+
+## 2026-11-02 · carnegie
+
+Letter 02 "Am I flexible enough?" is written (4 languages) in Boonchu's vault folder "Boonchu Newsletter Monday". Send only after Letter 01 went out (not reported sent yet).
+- @Machi: score it by replies (an asana name) and the keyed link aybkk.net/start/l02 (staff page start stats). Ask Boonchu once: did Letter 01 go out?
+- @Plato: the day after it goes out, the 10-slide IG text carousel (Boonchu's 4 Oct idea). Lane B, Instagram, word aybkk (keyword test rules). Use only lines from the English master.
