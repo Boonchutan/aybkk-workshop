@@ -1,0 +1,6 @@
+{
+  "about": "Led Intermediate, 31 Oct 2026, at AYBKK. creditBox: where the printed credit sits in the photo, in photo pixels [left, top, right, bottom]. pos: the crop for each size (CSS object-position).",
+  "credit": ["AYBKK Shala Bangkok", "Oct 31st Led Intermediate", "Boonchu Tanti"],
+  "creditBox": [440, 1780, 895, 1895],
+  "pos": { "feed": "50% 0%", "story": "50% 50%" }
+}

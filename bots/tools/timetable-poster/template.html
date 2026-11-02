@@ -1,0 +1,193 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Inter';src:url(__INTER__) format('woff2');font-weight:100 900}
+@font-face{font-family:'Noto Sans Thai';src:url(__THAI__) format('truetype');font-weight:100 900;
+  ascent-override:97%;descent-override:25%;line-gap-override:0%}
+*{box-sizing:border-box}
+html,body{margin:0;background:#17121a}
+
+/* One big style (the month), one middle (date numbers), one small (everything else). */
+#p{--m:22px;--gap:10px;--small:22px;--w:600;--lh:1.15;--padx:7px;--pady:10px;--tgap:24px;
+  position:relative;width:1080px;height:var(--H);overflow:hidden;color:var(--ink);
+  font:var(--w) var(--small)/var(--lh) 'Inter','Noto Sans Thai',sans-serif;font-feature-settings:'tnum' 0}
+#p.size-feed{--top:var(--m);--bot:var(--m);--date:40px;--bigmax:150px}
+#p.size-story{--top:220px;--bot:260px;--date:60px;--bigmax:150px}
+
+/* One ink per look. Class colours, if ever wanted, go in --k-mysore / --k-led_primary / --k-led_inter. */
+#p.look-A{--ink:#17121a;--title:#17121a;--tile:rgba(255,255,255,.64);--panel:rgba(255,255,255,.64);--scrim:transparent;
+  --k-mysore:var(--ink);--k-led_primary:var(--ink);--k-led_inter:var(--ink)}
+#p.look-B{--ink:#fff;--title:#fff;--tile:rgba(255,255,255,.16);--panel:transparent;--scrim:rgba(14,10,16,.68);
+  --k-mysore:#fff;--k-led_primary:#fff;--k-led_inter:#fff}
+
+.ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scrim{position:absolute;inset:0;background:var(--scrim)}
+.fr{position:absolute;left:var(--m);right:var(--m);top:var(--top);bottom:var(--bot);display:flex;flex-direction:column}
+
+h1{margin:0 0 var(--tgap);font-weight:900;font-size:var(--big,140px);line-height:.9;letter-spacing:-.035em;
+  color:var(--title);white-space:nowrap;text-box:trim-both cap alphabetic}
+.lang-th h1{letter-spacing:-.01em}
+.grid h1{align-self:end;margin:0 0 var(--pady)}
+
+.heads,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));column-gap:var(--gap)}
+.heads{margin-bottom:8px}
+.heads span{padding:0 var(--padx)}
+.look-A .heads span{background:var(--tile);padding-top:5px;padding-bottom:5px}
+.look-A .heads{margin-bottom:var(--gap)}
+.grid{flex:1;min-height:0;row-gap:var(--gap)}
+
+.tile{background:var(--tile);padding:var(--pady) var(--padx);overflow:hidden;min-height:0}
+.tile .d{display:block;font-weight:900;font-size:var(--date);line-height:1;letter-spacing:-.02em;
+  text-box:trim-both cap alphabetic;margin:2px 0 calc(6px + var(--date) * .15)}
+.tile .k ~ .k{margin-top:6px}
+.tile p,.foot p{margin:0;white-space:nowrap}
+.wrap p{white-space:normal}
+.k{color:var(--kc,inherit)}
+.k.mysore{--kc:var(--k-mysore)}.k.led_primary{--kc:var(--k-led_primary)}.k.led_inter{--kc:var(--k-led_inter)}
+
+.foot{padding:var(--pady) var(--padx);overflow:hidden;min-height:0}
+.grid .foot{background:var(--panel)}
+.look-A .grid .foot{align-self:start;max-height:100%}
+.band{margin-top:var(--gap);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gap);background:var(--panel)}
+</style></head>
+<body>
+<div id="p"><img class="ph" alt=""><div class="scrim"></div><div class="fr"></div></div>
+<script>
+const P = __DATA__;
+const $ = s => document.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const at = (e, row, c0, c1) => { e.style.gridRow = String(row); e.style.gridColumn = c0 + ' / ' + c1; return e; };
+
+function build() {
+  const p = $('#p'), fr = $('.fr');
+  p.className = `look-${P.look} size-${P.size} lang-${P.lang}`;
+  p.style.setProperty('--H', P.H + 'px');
+  const ph = $('.ph');
+  ph.src = P.photo.src;
+  ph.style.objectPosition = P.photo.pos;
+
+  const h1 = el('h1');
+  h1.append(el('span', '', P.title));
+  const heads = el('div', 'heads');
+  for (const h of P.heads) heads.append(el('span', '', h));
+  const g = el('div', 'grid');
+  g.style.gridTemplateRows = `repeat(${P.rows}, minmax(0, 1fr))`;
+  if (P.titleIn === 'lead') g.append(at(h1, 1, 1, P.lead + 1)); else fr.append(h1);
+  fr.append(heads, g);
+
+  for (const c of P.cells) {
+    const t = at(el('div', 'tile' + (c.moon ? ' moon' : '')), c.row, c.col, c.col + 1);
+    t.dataset.day = c.d;
+    t.append(el('b', 'd', String(c.d)));
+    for (const l of c.lines) t.append(el('p', l.k ? 'k ' + l.k : '', l.t));
+    g.append(t);
+  }
+
+  // Footer and photo credit go in the month's empty days when there is room, else in a band below.
+  const area = (where, cls) => {
+    const e = el('div', cls);
+    if (where === 'band') { fr.append(e); return e; }
+    if (where === 'trail') at(e, P.rows, 8 - P.trail, 8); else at(e, 1, 1, P.lead + 1);
+    g.append(e);
+    return e;
+  };
+  const foot = area(P.footIn, 'foot' + (P.footIn === 'band' ? ' band' : ''));
+  if (P.footIn === 'band') {
+    const a = el('div'), b = el('div');
+    a.append(...P.foot.filter((_, i) => i !== 1).map(t => el('p', '', t)));
+    b.append(el('p', '', P.foot[1]));
+    foot.append(a, b);
+  } else for (const line of P.foot) foot.append(el('p', '', line));
+}
+
+function addCredit() {
+  const c = P.photo.credit;
+  if (P.creditIn === 'foot') return $('.foot').append(el('p', '', c.join(' · ')));
+  if (P.creditIn === 'band') return $('.band > div:last-child').append(el('p', '', c.join(' · ')));
+  const e = el('div', 'foot credit');
+  if (P.creditIn === 'trail') at(e, P.rows, 8 - P.trail, 8); else at(e, 1, 1, P.lead + 1);
+  for (const line of c) e.append(el('p', '', line));
+  $('.grid').append(e);
+}
+
+function fitTitle() {
+  const h1 = $('h1');
+  h1.style.setProperty('--big', '100px');
+  const avail = h1.parentElement.classList.contains('grid')
+    ? h1.getBoundingClientRect().width : $('.fr').clientWidth;
+  const w = h1.firstChild.getBoundingClientRect().width;
+  const max = parseFloat(getComputedStyle($('#p')).getPropertyValue('--bigmax'));
+  const size = Math.min(max, Math.floor(100 * avail / w * 10) / 10);
+  h1.style.setProperty('--big', size + 'px');
+  // Pull the first letter back by its side bearing so its stem sits on the tiles' left edge.
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.font = `900 ${size}px Inter, "Noto Sans Thai"`;
+  const m = ctx.measureText(P.title.slice(0, 1));
+  h1.style.marginLeft = (m.actualBoundingBoxLeft) + 'px';
+  // The box is trimmed to cap height and baseline. Thai marks above it and descenders below it
+  // (July, พฤศจิกายน) get room of their own, in em so it scales if the title is shrunk later.
+  const ink = ctx.measureText(P.title), cap = ctx.measureText('H').actualBoundingBoxAscent;
+  const em = v => Math.max(0, v) / size + 'em';
+  const inGrid = h1.parentElement.classList.contains('grid');
+  if (!inGrid) h1.style.marginTop = em(ink.actualBoundingBoxAscent - cap);
+  h1.style.marginBottom = `calc(${inGrid ? 'var(--pady)' : 'var(--tgap)'} + ${em(ink.actualBoundingBoxDescent)})`;
+  return size;
+}
+
+function rect(e) { const r = e.getBoundingClientRect(); return { x0: r.left, y0: r.top, x1: r.right, y1: r.bottom }; }
+const hit = (a, b, pad = 6) => a.x0 < b.x1 + pad && a.x1 > b.x0 - pad && a.y0 < b.y1 + pad && a.y1 > b.y0 - pad;
+
+// Where the photo's printed credit lands after the crop; false if cut off or covered.
+function creditShows() {
+  const c = P.photo;
+  // Under a dark scrim the printed credit's thin white letters go grey and unreadable.
+  if (getComputedStyle($('.scrim')).backgroundColor !== 'rgba(0, 0, 0, 0)') return false;
+  if (!c.box) return true;
+  const ph = $('.ph'), W = P.W, H = P.H, nw = ph.naturalWidth, nh = ph.naturalHeight;
+  const s = Math.max(W / nw, H / nh), rw = nw * s, rh = nh * s;
+  const [px, py] = c.pos.split(/\s+/).map(v => parseFloat(v) / 100);
+  const ox = (W - rw) * px, oy = (H - rh) * py;
+  const b = { x0: c.box[0] * s + ox, y0: c.box[1] * s + oy, x1: c.box[2] * s + ox, y1: c.box[3] * s + oy };
+  if (b.x0 < 0 || b.y0 < 0 || b.x1 > W || b.y1 > H) return false;
+  return ![...document.querySelectorAll('h1, .heads, .tile, .foot')].some(e => hit(rect(e), b));
+}
+
+const boxes = () => [...document.querySelectorAll('.tile, .foot')];
+const wide = e => e.scrollWidth > e.clientWidth + 1;
+const tall = e => e.scrollHeight > e.clientHeight + 1;
+
+window.layout = async () => {
+  build();
+  await Promise.all([
+    document.fonts.load('900 100px Inter'), document.fonts.load('600 22px Inter'),
+    document.fonts.load('900 100px "Noto Sans Thai"', 'กข'), document.fonts.load('600 22px "Noto Sans Thai"', 'กข'),
+    new Promise(r => { const i = $('.ph'); if (i.complete && i.naturalWidth) r(); else i.onload = r; }),
+  ]);
+  await document.fonts.ready;
+  const p = $('#p'), h1 = $('h1'), set = (k, v) => p.style.setProperty(k, v);
+  const log = [];
+  const size = fitTitle();
+  let restamp = false;
+  if (P.photo.credit.length && !creditShows()) { restamp = true; addCredit(); }
+  // A line wider than its box may wrap, in that box only.
+  for (const e of boxes()) if (wide(e)) { e.classList.add('wrap'); log.push('wrapped ' + (e.dataset.day ? 'day ' + e.dataset.day : e.className)); }
+  const top = P.titleIn !== 'lead';
+  const steps = [
+    ['tighter lines', () => set('--lh', '1.1')],
+    ['date 36px', () => set('--date', '36px')],
+    top && ['title 90%', () => h1.style.setProperty('--big', (size * .9) + 'px')],
+    ['date 32px', () => set('--date', '32px')],
+    top && ['title 80%', () => h1.style.setProperty('--big', (size * .8) + 'px')],
+    ['tile padding 7px', () => set('--pady', '7px')],
+  ].filter(Boolean);
+  for (const [name, fn] of steps) {
+    if (!boxes().some(tall)) break;
+    fn(); log.push(name);
+  }
+  const over = boxes().filter(e => tall(e) || wide(e)).map(e => e.dataset.day ? 'day ' + e.dataset.day : 'footer');
+  if (h1.firstChild.getBoundingClientRect().right > h1.getBoundingClientRect().right + 1) over.push('title');
+  const small = [...document.querySelectorAll('.tile p, .foot p, .heads span')].map(e => parseFloat(getComputedStyle(e).fontSize));
+  return { overflow: over, steps: log, restamp, title: parseFloat(getComputedStyle(h1).fontSize), minSmall: Math.min(...small) };
+};
+</script>
+</body></html>
