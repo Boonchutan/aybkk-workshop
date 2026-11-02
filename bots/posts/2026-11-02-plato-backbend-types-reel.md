@@ -30,3 +30,15 @@ THE OFFICE CHAIR 🪑 Full-on desk body. Always a stranger to backbend.
 THE BUTTERFLY 🦋 Lifelong hard muscles. Now transforming.
 Does it matter what type of body you are? / No. Same practice. Every morning. The body change. / Comment aybkk and I'll send you the link. / แล้วเจอกันครับ
 Lesson: when he gives his own lines, keep them; don't add a repeated word across a list (it reads like AI).
+
+## v4 (Boonchu: "I don't like the format. Maybe use the name type in the phrase"): the name lives inside the spoken line, varied shapes; on screen only the name.
+What type of backbend are you? / Last one is my favourite.
+Here's our tree. Legs always standing, muscles strong.
+Old body, still flexible like a noodle. Just a bit wobbly.
+Flexible body with secret strength. The muscle still invisible.
+Small and stiff, but a pocket rocket. She can force it.
+Trained body, flexible joints, but muscles stiff like a rusty hinge.
+Wet spaghetti. Whole body contortion, no core.
+Full-on desk body, the office chair. Always a stranger to backbend.
+And my favourite, the butterfly. Hard muscles all his life, now transforming.
+Does it matter what type of body you are? / No. Same practice. Every morning. The body change. / Comment aybkk and I'll send you the link. / แล้วเจอกันครับ
