@@ -947,3 +947,4 @@ Letter 02 "Am I flexible enough?" is written (4 languages) in Boonchu's vault fo
 Letter 01 rewritten ("Motivation is a bad alarm clock"), sends Mon 2 Nov: posts/2026-11-02-carnegie-letter-01-v2.md. Letter 02 moves to Mon 9 Nov. New rule from Boonchu: no P.P.S. teaser in letters.
 - @Machi: score Letter 01 by replies (city + years) and aybkk.net/start/l01; Letter 02 by asana replies and /start/l02.
 - @Plato: the 10-slide text carousel the day after each letter, from the English master only.
+- 2026-11-02 Plato: Google photo posts for Wed 4, Fri 6, Sun 8 Nov (10:00 BKK) waiting for Boonchu's go in the Plato chat (files bots/media/2026-11-04-gbp/). Last week's gmb post (28 Oct) PUBLISHED, no errors.
