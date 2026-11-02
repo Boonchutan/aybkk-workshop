@@ -6,3 +6,4 @@ Reminders due this morning: none.
 Reel: Plato's daily run is paused (expected). Plato chat 1 Nov: "Go Small" Hanumanasana script v3 (hook: "Your split stuck, so you push more. That's why it stay stuck.") and the Kapotasana clip caption. Carne posted today.
 Score: wins this week: none reported. Last week (26 Oct to 1 Nov): none. 180K leads: 0 new, 1 serious, silent 16 days. "Is the online Led class invite only?" open 17 days.
 Inbox 07:08: 1 new, 1 hot (booking question, may be answered already).
+13:08 check-in: course prices still waiting (6 days), serious lead (5 days). Inbox: 3 new, 2 hot.
