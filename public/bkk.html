@@ -406,6 +406,25 @@
     background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
   .calsw button[aria-pressed="true"]{background:var(--plum);border-color:var(--plum);color:var(--on-dark)}
   #dayList{scroll-margin-top:64px}
+  /* The month's printed timetable (the same poster as Instagram), above its calendar. */
+  .ttp{margin:0 0 16px}
+  .ttp img{display:block;width:100%;height:auto;border-radius:var(--radius)}
+  .ttp figcaption{margin-top:8px;font-size:14px}
+  .ttp figcaption a{color:var(--plum);font-weight:700}
+  .ttp .pic{position:relative}
+  /* Each date on the poster is a button over its own box: tap it to see that day's classes. */
+  .ttp .ttd{position:absolute;margin:0;padding:0;border:0;background:transparent;cursor:pointer;border-radius:4px}
+  .ttp .ttd:hover,.ttp .ttd:focus-visible{box-shadow:inset 0 0 0 3px var(--pink);outline:none}
+  .ttp .ttd[aria-pressed="true"]{box-shadow:inset 0 0 0 3px var(--pink)}
+  .ttp .ttd.mine::after{content:"✓";position:absolute;top:5%;right:6%;display:grid;place-items:center;width:clamp(16px,4.6vw,24px);
+    height:clamp(16px,4.6vw,24px);border-radius:50%;background:#F2C94C;color:#3e1442;font-weight:900;font-size:clamp(10px,3vw,15px);line-height:1}
+  .ttnav{display:flex;align-items:center;justify-content:space-between;margin:0 0 8px}
+  .ttnav b{font-size:15px;color:var(--soft);font-weight:700}
+  .ttnav .nav{background:none;border:none;font:inherit;font-weight:700;font-size:26px;line-height:1;color:var(--plum);cursor:pointer;padding:6px 14px;min-height:44px}
+  .ttnav .nav:disabled{opacity:.25;cursor:default}
+  .ttp .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .ttp .acts .btn{width:100%;min-height:48px}
+  @media (min-width:700px){ .ttp{max-width:420px} }
   .cls[data-cls]{cursor:pointer}
   .cls .open{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
   .cls .open:hover{text-decoration:underline}
@@ -501,6 +520,16 @@
   .msg{padding:12px 14px;border-radius:8px;margin-top:12px;font-size:14px}
   .msg.ok{background:var(--blush);color:var(--plum)}
   .msg.bad{background:#fdeaea;color:#a33}
+  .msg .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .skel{display:grid;gap:12px;margin:4px 0 16px}
+  .skel i{display:block;height:16px;border-radius:10px;background:linear-gradient(90deg,var(--line) 30%,rgba(232,69,140,.10) 50%,var(--line) 70%);background-size:300% 100%;animation:skel 1.4s ease-in-out infinite}
+  .skel .row{display:flex;gap:10px}
+  .skel .pill{width:96px;height:44px;border-radius:999px}
+  .skel .big{height:auto;aspect-ratio:2/3;max-width:420px;border-radius:var(--radius)}
+  @keyframes skel{from{background-position:100% 0}to{background-position:0 0}}
+  @media (prefers-reduced-motion:reduce){ .skel i{animation:none} }
+  .calc{scroll-margin-top:12px}
   [hidden]{display:none!important}
   #promo{margin-top:28px;padding:26px 18px 20px;background:var(--promo-soft);box-shadow:inset 0 0 0 1.5px var(--promo-line);border-radius:22px;line-height:1.35}
   #promo h2{color:var(--promo-deep);margin-bottom:8px}
@@ -711,7 +740,7 @@
       <div class="plan">
         <h3 data-i18n="visitH">Visiting?</h3>
         <ul class="rows">
-          <li><span class="pn"><span data-i18n="dropIn">Drop-in</span><small data-i18n="dropInSub" data-i18n-new="dropInSubNew">For students who know the sequence</small></span><span class="pv"><b>฿1,500<i class="vt newP" hidden>+VAT</i></b></span></li>
+          <li><span class="pn"><span data-i18n="dropIn">Drop-in</span><small data-i18n="dropInSub">For students who know the sequence</small></span><span class="pv"><b>฿1,500<i class="vt newP" hidden>+VAT</i></b></span></li>
           <li><span class="pn"><span data-i18n="pack10">10-class pack</span><small data-i18n="pack10Sub" data-i18n-new="pack10SubNew">Valid 3 months</small></span><span class="pv"><b>฿14,000<i class="vt newP" hidden>+VAT</i></b></span></li>
         </ul>
       </div>
@@ -806,7 +835,8 @@
   <button id="t-me" onclick="tab('me')" data-i18n="tabMe">My pass</button>
 </nav>
 
-<main id="view"><p class="note" data-i18n="loading">Loading…</p></main>
+<main id="view" aria-busy="true"><div class="skel" role="status"><span class="sr" data-i18n="loading">Loading…</span><div class="row"><i class="pill"></i><i class="pill"></i></div><i style="width:40%"></i><i class="big"></i></div>
+  <noscript><p class="msg bad">The timetable needs JavaScript. Book on LINE @aybkk.</p></noscript></main>
 <footer><span class="brush">AYBKK</span>Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31</footer>
 
 <dialog id="dlg"><div id="dlgIn"></div></dialog>
@@ -818,6 +848,8 @@
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const baht = n => '฿' + Number(n).toLocaleString('en-US');
   let MOON = {}, CLASSES = [], PRODUCTS = [], SURCHARGE = 0, VAT = 0, LOADED = false;
+  let POSTERS = {};                     // { 'YYYY-MM': ['en','th'] } from /img/timetable/posters.json
+  const POSTER_MAPS = {};               // '<YYYY-MM>-<lang>' -> where each date box sits, or null
   // Storage can be blocked (privacy settings, some in-app browsers): then nobody is signed in.
   const myCode = () => { try { return localStorage.getItem('aybkk_member') || ''; } catch (_) { return ''; } };
 
@@ -877,7 +909,6 @@
       n3: 'For ฿10,000 more, you get 6 months instead of 3.',
       n1: 'The price of trying. New or stiff, come as you are.',
       pack10SubNew: 'Use within 3 months. 3+ classes left? You can pass them on.',
-      dropInSubNew: 'One class.',
       newBtn: 'See packages →',
       fineNew: (fee, vat = 7) => `+VAT = plus ${vat}% VAT.${fee ? ' Paying online adds a transaction fee.' : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
       polH: 'Member notes',
@@ -896,6 +927,8 @@
       copy: 'Copy', copied: 'Copied',
       tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
       loading: 'Loading…',
+      loadFail: 'The timetable did not load. Check your connection and try again, or message us on LINE @aybkk.',
+      tryAgain: 'Try again',
       noClasses: 'No classes scheduled.',
       noDay: 'No classes this day.',
       calTeachers: 'Teachers:', calClasses: 'Classes:', moonDay: 'Moon day', newMoon: 'New moon', fullMoon: 'Full moon',
@@ -966,7 +999,6 @@
       n3: 'เพิ่มอีก ฿10,000 ขยับเป็นแพ็ก 6 เดือนได้',
       n1: 'ลองฝึกดูสักเดือน มือใหม่หรือตัวแข็งก็เริ่มได้',
       pack10SubNew: 'ใช้ภายใน 3 เดือน เหลือ 3 ครั้งขึ้นไป โอนให้ผู้อื่นได้',
-      dropInSubNew: 'ฝึก 1 ครั้ง',
       newBtn: 'ดูแพ็กเกจ →',
       fineNew: (fee, vat = 7) => `+VAT = ยังไม่รวม VAT ${vat}% ${fee ? 'หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม ' : ''}ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
       polH: 'ข้อควรรู้สำหรับสมาชิก',
@@ -985,6 +1017,8 @@
       copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
       tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
       loading: 'กำลังโหลด…',
+      loadFail: 'โหลดตารางเรียนไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง หรือทักเราทาง LINE @aybkk',
+      tryAgain: 'ลองอีกครั้ง',
       noClasses: 'ยังไม่มีคลาส',
       noDay: 'วันนี้ไม่มีคลาส',
       calTeachers: 'ครู:', calClasses: 'คลาส:', moonDay: 'วันพระจันทร์', newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง',
@@ -1055,7 +1089,6 @@
       n3: '再加 ฿10,000，3个月就变成6个月。',
       n1: '试一试的价格。新手、身体僵硬，都欢迎来。',
       pack10SubNew: '3个月内用完。还剩3次或以上，可以转给别人。',
-      dropInSubNew: '一节课。',
       newBtn: '查看课程套餐 →',
       fineNew: (fee, vat = 7) => `+VAT = 另加 ${vat}% 增值税。${fee ? '在线支付另收交易手续费。' : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       polH: '会员须知',
@@ -1074,6 +1107,8 @@
       copy: '复制', copied: '已复制',
       tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
       loading: '加载中…',
+      loadFail: '课程表没有加载出来。请检查网络后再试一次，或加微信 aybkkwechat 联系我们。',
+      tryAgain: '再试一次',
       noClasses: '暂无课程安排。',
       noDay: '当天没有课。',
       calTeachers: '老师：', calClasses: '课程：', moonDay: '月亮日', newMoon: '新月', fullMoon: '满月',
@@ -1144,7 +1179,6 @@
       n3: 'Ещё ฿10,000, и у вас 6 месяцев вместо 3.',
       n1: 'Цена пробного месяца. Новичок или скованное тело? Приходите как есть.',
       pack10SubNew: 'Использовать за 3 месяца. Осталось 3 занятия или больше? Их можно передать.',
-      dropInSubNew: 'Одно занятие.',
       newBtn: 'Все абонементы →',
       fineNew: (fee, vat = 7) => `+VAT = плюс НДС ${vat}%. ${fee ? 'При онлайн-оплате добавляется комиссия. ' : ''}Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
       polH: 'Памятка для участников',
@@ -1163,6 +1197,8 @@
       copy: 'Копировать', copied: 'Скопировано',
       tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
       loading: 'Загрузка…',
+      loadFail: 'Расписание не загрузилось. Проверьте интернет и попробуйте ещё раз или напишите нам в LINE @aybkk.',
+      tryAgain: 'Ещё раз',
       noClasses: 'Занятий пока нет.',
       noDay: 'В этот день занятий нет.',
       calTeachers: 'Учителя:', calClasses: 'Занятия:', moonDay: 'Лунный день', newMoon: 'Новолуние', fullMoon: 'Полнолуние',
@@ -1422,6 +1458,8 @@
   // Timetable: month and week views, what this student booked, and the class view (29 Oct 2026).
   Object.assign(STR.en, {
     calView: 'Calendar view', viewMonth: 'Month', viewWeek: 'Week', prev: 'Previous', next: 'Next',
+    posterSave: 'Save the poster', posterAlt: m => `AYBKK timetable, ${m}`,
+    posterBook: 'Book a class', posterBuy: 'Buy a pass', posterTap: 'Tap a date to book it', posterDay: d => `Classes on ${d}`,
     booked: 'Booked', bookedByYou: 'Booked by you', youBooked: 'You are booked', notBooked: 'Not booked yet',
     cancelRule: h => `Cancel at least ${h} hours before class to get your credit back.`,
     back: 'Back', teacherL: 'Teacher', online: 'online', mins: n => `${n} min`,
@@ -1432,6 +1470,8 @@
   });
   Object.assign(STR.th, {
     calView: 'มุมมองปฏิทิน', viewMonth: 'เดือน', viewWeek: 'สัปดาห์', prev: 'ก่อนหน้า', next: 'ถัดไป',
+    posterSave: 'บันทึกโปสเตอร์', posterAlt: m => `ตารางเรียน AYBKK ${m}`,
+    posterBook: 'จองคลาส', posterBuy: 'ซื้อแพ็กเกจ', posterTap: 'แตะวันที่เพื่อจอง', posterDay: d => `คลาสวัน${d}`,
     booked: 'จองแล้ว', bookedByYou: 'คลาสที่คุณจอง', youBooked: 'คุณจองคลาสนี้แล้ว', notBooked: 'ยังไม่ได้จอง',
     cancelRule: h => `ยกเลิกล่วงหน้าอย่างน้อย ${h} ชั่วโมงก่อนคลาส เพื่อไม่เสียสิทธิ์`,
     back: 'กลับ', teacherL: 'ครู', online: 'ออนไลน์', mins: n => `${n} นาที`,
@@ -1442,6 +1482,8 @@
   });
   Object.assign(STR.zh, {
     calView: '日历视图', viewMonth: '月', viewWeek: '周', prev: '往前', next: '往后',
+    posterSave: '保存海报', posterAlt: m => `AYBKK 课程表，${m}`,
+    posterBook: '预约课程', posterBuy: '购买课程卡', posterTap: '点日期即可预约', posterDay: d => `${d}的课程`,
     booked: '已预约', bookedByYou: '你已预约', youBooked: '你已预约这节课', notBooked: '还没有预约',
     cancelRule: h => `至少提前${h}小时取消，课时才会退回。`,
     back: '返回', teacherL: '老师', online: '线上', mins: n => `${n} 分钟`,
@@ -1452,6 +1494,8 @@
   });
   Object.assign(STR.ru, {
     calView: 'Вид календаря', viewMonth: 'Месяц', viewWeek: 'Неделя', prev: 'Раньше', next: 'Дальше',
+    posterSave: 'Сохранить постер', posterAlt: m => `Расписание AYBKK, ${m}`,
+    posterBook: 'Записаться', posterBuy: 'Купить абонемент', posterTap: 'Нажмите на дату, чтобы записаться', posterDay: d => `Занятия: ${d}`,
     booked: 'Вы записаны', bookedByYou: 'Ваши записи', youBooked: 'Вы записаны', notBooked: 'Вы ещё не записаны',
     cancelRule: h => `Отмените запись минимум за ${h} ч до начала, чтобы сохранить занятие.`,
     back: 'Назад', teacherL: 'Учитель', online: 'онлайн', mins: n => `${n} мин`,
@@ -1665,9 +1709,11 @@
     if (b.dataset.group && P.group) $(`[data-group="${P.group}"]`).scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   // The band and the price-list button open the Duo calculator straight away.
-  document.querySelectorAll('a[href="#promo"]:not(#h12Btn)').forEach(a => a.addEventListener('click', () => {
+  document.querySelectorAll('a[href="#promo"]:not(#h12Btn)').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
     P.group = 'new'; P.offer = 'duo'; P.pkg = 0;
     renderPromo();
+    ($('#calc') || $('#promo')).scrollIntoView({ behavior: 'smooth', block: 'start' });
   }));
   $('#promo').addEventListener('change', e => {
     if (e.target.id !== 'pStart' || !e.target.value) return;
@@ -1800,11 +1846,23 @@
   };
 
   const SCHEDULE_URL = '/api/bkk/schedule?days=62';
+  // A request that hangs (a slow line from China) must end in a Try again, not a page that loads forever.
+  const fetchT = (url, ms = 15000) => {
+    const c = new AbortController(), timer = setTimeout(() => c.abort(), ms);
+    return fetch(url, { signal: c.signal }).finally(() => clearTimeout(timer));
+  };
+  const getJSON = url => fetchT(url).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  const SKEL = $('#view').innerHTML;
   async function load() {
+    // The posters are a bonus: the timetable never waits for them or fails with them.
+    fetch('/img/timetable/posters.json').then(r => r.ok ? r.json() : {}).catch(() => ({})).then(m => {
+      POSTERS = m && typeof m === 'object' ? m : {};
+      if (LOADED && current === 'schedule' && !OPEN) renderSchedule();
+    });
     try {
       const [s, p] = await Promise.all([
-        fetch(SCHEDULE_URL).then(r => r.json()),
-        fetch('/api/bkk/products').then(r => r.json()),
+        getJSON(SCHEDULE_URL),
+        getJSON('/api/bkk/products'),
         loadMine(),
       ]);
       CLASSES = s.classes || [];
@@ -1816,9 +1874,14 @@
       PMOON = p.moonDays || {};
       applyLang();
       LOADED = true;
+      $('#view').removeAttribute('aria-busy');
       tab(current);
     } catch (e) {
-      $('#view').innerHTML = '<p class="msg bad">Could not load. Please refresh.</p>';
+      $('#view').removeAttribute('aria-busy');
+      $('#view').innerHTML = `<div class="msg bad" role="alert"><p>${esc(t('loadFail'))}</p><div class="acts">
+        <button type="button" class="btn" data-act="reload">${esc(t('tryAgain'))}</button>
+        ${LANG === "zh" ? "<span class=\"note\">WeChat: <b>aybkkwechat</b></span>"
+          : "<a class=\"btn ghost\" href=\"https://line.me/R/ti/p/@aybkk\" target=\"_blank\" rel=\"noopener\">LINE @aybkk</a>"}</div></div>`;
     }
   }
   // A page left open past midnight into 12 Nov 2026 would still show, and open
@@ -1827,7 +1890,7 @@
     if (newPrices() === PRICES_SEEN) return;
     PRICES_SEEN = newPrices();
     try {
-      const p = await fetch('/api/bkk/products').then(r => r.json());
+      const p = await getJSON('/api/bkk/products');
       if (p.products) PRODUCTS = p.products;
     } catch (_) {}
     applyLang();
@@ -1886,7 +1949,7 @@
     if (!code) return;
     let d = null;
     try {
-      const r = await fetch('/api/bkk/me/' + encodeURIComponent(code));
+      const r = await fetchT('/api/bkk/me/' + encodeURIComponent(code));
       if (r.ok) d = await r.json();
     } catch (_) {}
     if (code === myCode()) setMine(code, d);
@@ -2099,13 +2162,63 @@
     const my = mine();
     const sw = `<div class="calsw" role="group" aria-label="${esc(t('calView'))}">${['month', 'week'].map(v =>
       `<button type="button" data-act="view" data-v="${v}" aria-pressed="${CALVIEW === v}">${esc(t(v === 'month' ? 'viewMonth' : 'viewWeek'))}</button>`).join('')}</div>`;
-    $('#view').innerHTML = sw + (CALVIEW === 'week' ? weekCal(has, today, my) : monthCal(has, today, my)) + dayList(my);
+    const cal = CALVIEW === 'week' ? weekCal(has, today, my) : monthCal(has, today, my);
+    // A month with its bright poster shows the poster as the month calendar (its dates are
+    // tappable); the dark calendar stays for the week view and for months without a poster.
+    const poster = CALVIEW === 'month' ? posterBox(calMonth, my) : '';
+    $('#view').innerHTML = sw + (poster ? posterNav(has, today) + poster : cal) + dayList(my);
     if (CALVIEW === 'week') {
       // Phones scroll the week sideways: start at the chosen day, or today.
       const box = $('#view .wkbox');
       const col = box.querySelector(`[data-col="${selDate}"]`) || box.querySelector(`[data-col="${today}"]`);
       box.scrollLeft = col ? Math.max(0, col.offsetLeft - 8) : 0;
     }
+  }
+  // The poster for the month on screen, in the reader's language, else English. Its dates are
+  // buttons (from the date map the poster tool writes beside the image): tap one to book that day.
+  function posterMap(key) {
+    if (key in POSTER_MAPS) return POSTER_MAPS[key];
+    POSTER_MAPS[key] = null;
+    fetch(`/img/timetable/${key}.json`).then(r => r.ok ? r.json() : null).catch(() => null).then(m => {
+      if (!m || !Array.isArray(m.days) || !(m.w > 0) || !(m.h > 0)) return;
+      POSTER_MAPS[key] = m;
+      if (LOADED && current === 'schedule' && !OPEN && CALVIEW === 'month') renderSchedule();
+    });
+    return null;
+  }
+  function posterNav(has, today) {
+    const months = [...new Set([today.slice(0, 7), ...[...has].map(d => d.slice(0, 7))])].sort();
+    const mi = months.indexOf(calMonth);
+    let label = calMonth;
+    try {
+      label = new Date(calMonth + '-15T12:00:00Z').toLocaleDateString(LOCALE[LANG] || 'en-GB', { timeZone: 'UTC', month: 'long', year: 'numeric' });
+    } catch (_) {}
+    return `<div class="ttnav">${calNav('prev', 'month', mi > 0 ? months[mi - 1] : '')}<b>${esc(label)}</b>${
+      calNav('next', 'month', mi >= 0 && mi < months.length - 1 ? months[mi + 1] : '')}</div>`;
+  }
+  function posterBox(m, my) {
+    const langs = Array.isArray(POSTERS[m]) ? POSTERS[m].filter(l => /^[a-z]{2}$/.test(l)) : [];
+    if (!/^\d{4}-\d{2}$/.test(m || '') || !langs.length) return '';
+    const lang = langs.includes(LANG) ? LANG : langs.includes('en') ? 'en' : langs[0];
+    const src = `/img/timetable/${m}-${lang}.jpg`;
+    let label = m;
+    try {
+      label = new Date(m + '-15T12:00:00Z').toLocaleDateString(LOCALE[LANG] || 'en-GB', { timeZone: 'UTC', month: 'long', year: 'numeric' });
+    } catch (_) {}
+    const map = posterMap(`${m}-${lang}`);
+    const pct = (v, of) => (Math.max(0, Math.min(of, Number(v) || 0)) / of * 100).toFixed(3) + '%';
+    const myDays = new Set(my && my.map ? [...my.map.keys()].map(k => k.split('|')[1]) : []);
+    const days = map ? map.days.filter(d => Array.isArray(d) && d[0] >= 1 && d[0] <= 31).map(([d, x, y, w, h]) => {
+      const iso = `${m}-${String(d).padStart(2, '0')}`, booked = myDays.has(iso);
+      return `<button type="button" class="ttd${booked ? ' mine' : ''}" data-act="day" data-day="${iso}" aria-pressed="${iso === selDate}"
+        aria-label="${esc(t('posterDay', fmtDay(iso + 'T12:00:00+07:00')) + (booked ? ', ' + t('bookedByYou') : ''))}"
+        style="left:${pct(x, map.w)};top:${pct(y, map.h)};width:${pct(w, map.w)};height:${pct(h, map.h)}"></button>`;
+    }).join('') : '';
+    return `<figure class="ttp"><div class="pic"><img src="${src}" width="1080" height="1620" loading="lazy" decoding="async"
+      alt="${esc(t('posterAlt', label))}">${days}</div>
+      <div class="acts"><button type="button" class="btn" data-act="tobook">${esc(t('posterBook'))}</button>
+        <button type="button" class="btn pink" data-act="buy">${esc(t('posterBuy'))}</button></div>
+      <figcaption>${map ? esc(t('posterTap')) + ' · ' : ''}<a href="${src}" download="AYBKK-timetable-${m}-${lang}.jpg">${esc(t('posterSave'))}</a></figcaption></figure>`;
   }
   window.pickDay = iso => { selDate = iso; renderSchedule(); };
   window.calGo = m => { calMonth = m; renderSchedule(); };
@@ -2156,6 +2269,11 @@
   });
 
   $('#view').addEventListener('click', e => {
+    if (!LOADED && e.target.closest('[data-act="reload"]')) {
+      $('#view').setAttribute('aria-busy', 'true');
+      $('#view').innerHTML = SKEL;
+      return load();
+    }
     if (current !== 'schedule') return;
     const kb = e.detail === 0;                  // Enter or Space on a button
     const focus = (...sels) => {
@@ -2171,6 +2289,12 @@
       if (act === 'book') return book(Number(a.dataset.slot), a.dataset.date);
       if (act === 'cancel') return cancelBooking(Number(a.dataset.id));
       if (act === 'back') return closeCls(kb);
+      if (act === 'tobook') return ($('#dayList') || $('#view .calsw')).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (act === 'buy') {
+        if (promoLive()) return $('#promo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        tab('packages');
+        return $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
       if (act === 'view') { setView(a.dataset.v); renderSchedule(); return focus(`[data-act="view"][data-v="${a.dataset.v}"]`); }
       if (act === 'month' || act === 'week') {
         if (act === 'month') calMonth = a.dataset.to; else goWeek(a.dataset.to);
