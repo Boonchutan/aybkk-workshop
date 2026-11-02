@@ -16,3 +16,17 @@ H: Eight types of backbend in my class. Which one are you? / OL: Last one is my 
 8 THE BUTTERFLY 🦋 Bend opening slowly, every week. Hard muscle whole life, now look.
 (beat) Does it matter what type of body you are? (beat) No. Same practice. Every morning. The body change.
 CTA (C1 take): Comment aybkk and I'll send you the link. / แล้วเจอกันครับ
+
+## v3 (Boonchu: "Let's go back to my original and recreate it. You keep putting the word 'bend'. Sounded so AI")
+His 8 lines, light edits, fun names, no added 'bend':
+What type of backbend are you? / Last one is my favourite.
+THE TREE 🌳 Always standing leg. Strong muscles.
+THE WISE NOODLE 🍜 Old body, full of flexibility. A bit less stable.
+THE SECRET STRENGTH 💪 Flexible body. The muscle still invisible.
+THE POCKET ROCKET 🚀 Stiff, small frame. But can force the bend.
+THE RUSTY HINGE 🔩 Trained body. Flexible joints, stiff muscles.
+THE WET SPAGHETTI 🍝 Whole body contortion. No core.
+THE OFFICE CHAIR 🪑 Full-on desk body. Always a stranger to backbend.
+THE BUTTERFLY 🦋 Lifelong hard muscles. Now transforming.
+Does it matter what type of body you are? / No. Same practice. Every morning. The body change. / Comment aybkk and I'll send you the link. / แล้วเจอกันครับ
+Lesson: when he gives his own lines, keep them; don't add a repeated word across a list (it reads like AI).
