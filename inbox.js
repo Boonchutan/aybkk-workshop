@@ -9,6 +9,8 @@
 // for 90 days. Machi, the chief-of-staff routine, reads GET /api/inbox three
 // times a day and drafts the replies. With ANTHROPIC_API_KEY set, a message is
 // also sorted as it arrives and hot ones reach Boonchu's Telegram at once.
+// Applications from the In-Depth Mysore page (POST /api/in-depth/apply) land
+// here too, on channel 'apply', already marked hot.
 
 const crypto = require('crypto');
 
@@ -111,6 +113,7 @@ function parseMeta(body) {
   return out;
 }
 
+// Plain text, no parse_mode: a name like "<b>" or "[x](link)" arrives as typed.
 async function telegram(text) {
   const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.BOONCHU_CHAT_ID;
   if (!token || !chat) return false;
@@ -121,10 +124,120 @@ async function telegram(text) {
   return r.ok;
 }
 
+// ── In-Depth Mysore applications (aybkk.net/in-depth) ──────────────────────
+// Each one is kept as a message on channel 'apply', so Machi's brief shows it
+// beside the chats and it is deleted with them after KEEP_DAYS. It never goes
+// to the AI sort: an application is always hot, and applicant data stays here.
+const APPLY_PER_IP_HOUR = 10;        // every try from one address, sent or not
+const APPLY_PER_EMAIL_DAY = 3;
+const APPLY_PER_HOUR = 40;           // from everywhere (x-forwarded-for can be faked)
+const APPLY_MAX_BYTES = 64 * 1024;
+const APPLY_FIELDS = {
+  name: { max: 100, need: true, line: true },
+  email: { max: 200, need: true, line: true },
+  contact: { max: 120, need: true, line: true },
+  country: { max: 80, need: true, line: true },
+  call_lang: { one: ['en', 'zh'], need: true },
+  primary: { one: ['yes', 'not_yet'], need: true, bar: v => v !== 'yes' },
+  rooms: { one: ['yes', 'not_yet'], need: true, bar: v => v !== 'yes' },
+  dates: { one: ['yes', 'not_sure', 'no'], need: true, bar: v => v === 'no' },
+  years: { int: 60, need: true },
+  mornings: { int: 7, need: true },
+  series: { one: ['primary', 'intermediate', 'advanced_a', 'advanced_b'], need: true },
+  teaching: { one: ['yes', 'no'], need: true },
+  teach: { max: 1500 },
+  why: { max: 2000, need: true },
+  stuck: { max: 2000, need: true },
+  injury: { max: 2000 },
+  video: { max: 500, need: true },
+  heard: { max: 200, line: true },
+  question: { max: 1000 },
+};
+// Baidu's share text is "链接: https://pan.baidu.com/s/… 提取码: abcd", so the
+// link is found inside the answer and the whole answer is kept.
+const LINK_RE = /https:\/\/[^\s<>"'，。、；）)]+/i;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SAY = {
+  call_lang: { en: 'English', zh: 'Chinese' },
+  series: { primary: 'Primary', intermediate: 'Intermediate', advanced_a: 'Advanced A', advanced_b: 'Advanced B or further' },
+  dates: { yes: 'yes', not_sure: 'not sure', no: 'no' },
+  primary: { yes: 'yes', not_yet: 'not yet' },
+};
+SAY.rooms = SAY.primary;
+
+const cleanText = (v, line) => {
+  let s = String(v ?? '').replace(/\r\n?/g, '\n').replace(/\t/g, ' ')
+    .replace(/[\u0000-\u0009\u000b-\u001f\u007f​‪-‮⁦-⁩]/g, '');
+  if (line) s = s.replace(/\n+/g, ' ');
+  return s.replace(/\n{3,}/g, '\n\n').trim();
+};
+
+// → { app } or { error: 'fields' | 'bar', fields: [...] }
+function checkApplication(body) {
+  const b = body && typeof body === 'object' ? body : {};
+  const app = {}, bad = [], bar = [];
+  for (const [k, f] of Object.entries(APPLY_FIELDS)) {
+    const raw = b[k];
+    if (f.one) {
+      const v = String(raw ?? '');
+      if (f.one.includes(v)) app[k] = v; else if (f.need || v) bad.push(k);
+    } else if (f.int != null) {
+      const v = String(raw ?? '').trim();
+      if (/^\d{1,2}$/.test(v) && +v <= f.int) app[k] = +v; else bad.push(k);
+    } else {
+      const v = cleanText(raw, f.line);
+      if ((f.need && !v) || [...v].length > f.max) bad.push(k); else app[k] = v;
+    }
+    if (f.bar && app[k] != null && f.bar(app[k])) bar.push(k);
+  }
+  if (app.email != null) {
+    app.email = app.email.toLowerCase();
+    if (!EMAIL_RE.test(app.email)) bad.push('email');
+  }
+  if (app.video) {
+    let url = null;
+    try { url = new URL((app.video.match(LINK_RE) || [])[0]); } catch (_) {}
+    if (!url || url.protocol !== 'https:' || !url.hostname.includes('.')) bad.push('video');
+    else app.link = url.href;
+  }
+  if (b.consent !== true) bad.push('consent');
+  if (bad.length) return { error: 'fields', fields: [...new Set(bad)] };
+  if (bar.length) return { error: 'bar', fields: bar };
+  app.lang = b.lang === 'zh' ? 'zh' : 'en';
+  return { app };
+}
+
+function applicationText(a) {
+  const block = (label, v) => v ? `${label}:\n${v}` : null;
+  return [
+    `In-Depth Mysore application, Generation #3 (page in ${a.lang === 'zh' ? 'Chinese' : 'English'})`,
+    `Name: ${a.name}`,
+    `Email: ${a.email}`,
+    `Contact: ${a.contact}`,
+    `Country: ${a.country}`,
+    `Call in: ${SAY.call_lang[a.call_lang]}`,
+    `Primary Series by heart: ${SAY.primary[a.primary]}`,
+    `Practised in Mysore and led classes: ${SAY.rooms[a.rooms]}`,
+    `All 30 days in person: ${SAY.dates[a.dates]}`,
+    `Years of Ashtanga: ${a.years}`,
+    `Mornings a week now: ${a.mornings}`,
+    `Series now: ${SAY.series[a.series]}`,
+    `Teaches now: ${a.teaching}`,
+    block('About their teaching', a.teach),
+    block('Why this course, and why now', a.why),
+    block('Where the practice is stuck', a.stuck),
+    block('Pain or injury', a.injury),
+    block('Practice video', a.video),
+    a.heard ? `Heard about it from: ${a.heard}` : null,
+    block('Question for the call', a.question),
+  ].filter(Boolean).join('\n');
+}
+
 function mountInbox(app, opts = {}) {
   const pool = opts.pgPool;
   if (!pool) {
     console.warn('⚠ inbox: no pgPool — inbox disabled');
+    app.post('/api/in-depth/apply', (req, res) => res.status(503).json({ error: 'server' }));
     return { takeLine() {} };
   }
   const q = (sql, params = []) => pool.query(sql, params);
@@ -356,7 +469,58 @@ function mountInbox(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // Tries per address live in memory only, so no IP is stored with an application.
+  const applyTries = new Map();
+  const clientIp = req => String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+    req.socket?.remoteAddress || 'unknown';
+  function applyTry(ip) {
+    const now = Date.now(), recent = (applyTries.get(ip) || []).filter(t => now - t < 3600 * 1000);
+    if (applyTries.size > 5000) applyTries.clear();
+    applyTries.set(ip, [...recent, now]);
+    return recent.length < APPLY_PER_IP_HOUR;
+  }
+
+  // The answer is only ever { ok } or an error code with field names: nothing
+  // the applicant typed is sent back. A filled honeypot is told it worked.
+  app.post('/api/in-depth/apply', async (req, res) => {
+    if (!applyTry(clientIp(req))) return res.status(429).json({ error: 'busy' });
+    if (+(req.headers['content-length'] || 0) > APPLY_MAX_BYTES) return res.status(413).json({ error: 'fields', fields: [] });
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    if (String(body.website || '').trim()) return res.json({ ok: true });
+    const checked = checkApplication(body);
+    if (checked.error) return res.status(checked.error === 'bar' ? 422 : 400).json(checked);
+    const a = checked.app;
+    try {
+      await ready;
+      const sent = (await q(`SELECT count(*) FILTER (WHERE sender_id=$1)::int AS email,
+          count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour
+        FROM aybkk_inbox WHERE channel='apply' AND created_at > now() - interval '1 day'`, [a.email])).rows[0];
+      if (sent.email >= APPLY_PER_EMAIL_DAY || sent.hour >= APPLY_PER_HOUR) {
+        console.warn('[apply] throttled');
+        return res.status(429).json({ error: 'busy' });
+      }
+      const summary = `In-Depth Mysore application from ${a.country}: ${a.years} years, ${a.mornings} mornings a week, ` +
+        `${SAY.series[a.series]}, all 30 days ${SAY.dates[a.dates]}, call in ${SAY.call_lang[a.call_lang]}.`;
+      const row = (await q(
+        `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, ref, sent_at, triage)
+         VALUES ('apply','application','in',$1,$2,$3,$4,$5,now(),$6) RETURNING id`,
+        [`apply:${crypto.randomUUID()}`, a.email, a.name, applicationText(a), a.link,
+          { lane: 'hot', summary, reply: '' }])).rows[0];
+      res.json({ ok: true });
+      // Name, country and fit only: contacts, answers and the video stay in the inbox.
+      notify(`New In-Depth Mysore application\n${a.name}, ${a.country}\n` +
+        `${a.years} years of Ashtanga, ${a.mornings} mornings a week, ${SAY.series[a.series]}. Teaches now: ${a.teaching}.\n` +
+        `All 30 days: ${SAY.dates[a.dates]}. Call in ${SAY.call_lang[a.call_lang]}.\n` +
+        `The page promises a reply within 2 days. Full answers: the inbox, channel "apply".`)
+        .then(ok => ok && q('UPDATE aybkk_inbox SET alerted_at=now() WHERE id=$1', [row.id]))
+        .catch(e => console.error('[apply] ping failed:', e.message));
+    } catch (e) {
+      console.error('[apply] save failed:', e.message);
+      if (!res.headersSent) res.status(500).json({ error: 'server' });
+    }
+  });
+
   return { takeLine };
 }
 
-module.exports = { mountInbox, parseMeta };
+module.exports = { mountInbox, parseMeta, checkApplication, telegram };

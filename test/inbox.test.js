@@ -9,7 +9,7 @@ delete process.env.INBOX_KEY;
 const crypto = require('crypto');
 const express = require('express');
 const { Pool } = require('pg');
-const { mountInbox } = require('../inbox.js');
+const { mountInbox, telegram } = require('../inbox.js');
 
 // Own schema, so the fake timetable never touches the bkk tests' tables
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
@@ -173,6 +173,111 @@ const alerts = [];
   ok('since returns only threads with news, with earlier context', res.body.threads.length === 1 &&
     anna2.new === 1 && anna2.messages.length === 3 && anna2.messages[0].new === false);
   ok('an unsorted newer message hides the stale sort result', anna2.sorted === null);
+
+  console.log('\n— In-Depth Mysore applications —');
+  await wait(400);   // let the last LINE burst finish its sort and ping first
+  let ipN = 0;
+  const apply = (body, ip = `10.0.0.${++ipN}`) => fetch(B + '/api/in-depth/apply', { method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': ip }, body: JSON.stringify(body) });
+  const good = (over = {}) => ({ name: 'Mei', email: 'Mei@Example.com', contact: 'WeChat mei123', country: 'China',
+    call_lang: 'zh', primary: 'yes', rooms: 'yes', dates: 'yes', years: '6', mornings: 6, series: 'intermediate',
+    teaching: 'yes', teach: 'A small Mysore room, 2 years', why: 'I want to understand why my students stop coming.',
+    stuck: 'Kapotasana, for two years.', injury: '', video: 'https://youtu.be/abc123', heard: 'Instagram',
+    question: '', consent: true, lang: 'zh', website: '', ...over });
+  const applied = async () => (await pool.query(`SELECT * FROM aybkk_inbox WHERE channel='apply' ORDER BY id`)).rows;
+  const aiBefore = aiCalls.length, alertsBefore = alerts.length;
+
+  let ar = await apply(good());
+  let aj = await ar.json();
+  await wait(100);
+  let ap = await applied();
+  ok('a good application is stored on channel apply', ar.status === 200 && aj.ok === true && ap.length === 1 &&
+    ap[0].kind === 'application' && ap[0].direction === 'in', `${ar.status} ${JSON.stringify(aj)} ${ap.length}`);
+  ok('one thread per email, named, with the video as ref', ap[0].sender_id === 'mei@example.com' &&
+    ap[0].sender_name === 'Mei' && ap[0].ref === 'https://youtu.be/abc123');
+  ok('the stored text carries every answer', /In-Depth Mysore application, Generation #3 \(page in Chinese\)/.test(ap[0].text) &&
+    /Series now: Intermediate/.test(ap[0].text) && /Why this course, and why now:\nI want to understand/.test(ap[0].text) &&
+    /Practice video:\nhttps:\/\/youtu.be\/abc123/.test(ap[0].text) && !/Pain or injury/.test(ap[0].text));
+  ok('marked hot without an AI call', ap[0].triage && ap[0].triage.lane === 'hot' && aiCalls.length === aiBefore);
+  const ping = alerts[alerts.length - 1] || '';
+  ok('one Telegram ping with name, country and fit only', alerts.length === alertsBefore + 1 &&
+    /New In-Depth Mysore application\nMei, China/.test(ping) && !/mei123|example\.com|youtu|students stop/i.test(ping), ping);
+  ok('the ping time is saved', !!ap[0].alerted_at);
+
+  ar = await apply(good({ email: 'li@example.cn', name: 'Li', video: '链接: https://pan.baidu.com/s/1AbC-x 提取码: x1y2 \n--来自百度网盘的分享' }));
+  ap = await applied();
+  ok('a Baidu share text is accepted; the link is pulled out and the code kept', ar.status === 200 &&
+    ap[1].ref === 'https://pan.baidu.com/s/1AbC-x' && /提取码: x1y2/.test(ap[1].text));
+
+  const n = (await applied()).length;
+  const fails = async (body, status, field, name) => {
+    const r = await apply(body), j = await r.json();
+    ok(name, r.status === status && (j.fields || []).includes(field) && (await applied()).length === n,
+      `${r.status} ${JSON.stringify(j)}`);
+  };
+  const noVideo = good(); delete noVideo.video;
+  await fails(noVideo, 400, 'video', 'no video link → 400, nothing stored');
+  await fails(good({ video: 'my video is on my phone' }), 400, 'video', 'a video answer with no link → 400');
+  await fails(good({ video: 'http://youtu.be/abc' }), 400, 'video', 'an http:// link → 400');
+  await fails(good({ email: 'mei@example' }), 400, 'email', 'a bad email → 400');
+  await fails(good({ consent: 'yes' }), 400, 'consent', 'consent must be a real tick → 400');
+  await fails(good({ why: 'x'.repeat(2001) }), 400, 'why', 'a 2,001-character answer → 400');
+  await fails(good({ name: 'N'.repeat(101) }), 400, 'name', 'a 101-character name → 400');
+  await fails(good({ years: '6 years' }), 400, 'years', 'years must be a number → 400');
+  await fails(good({ series: 'third' }), 400, 'series', 'an unknown series → 400');
+  await fails(good({ primary: 'not_yet' }), 422, 'primary', 'Primary not yet by heart → 422, below the bar');
+  await fails(good({ dates: 'no' }), 422, 'dates', 'cannot come all 30 days → 422');
+
+  const before = alerts.length;
+  ar = await apply(good({ website: 'http://spam.example' }));
+  aj = await ar.json();
+  await wait(50);
+  ok('a filled honeypot looks accepted but stores and pings nothing', ar.status === 200 && aj.ok === true &&
+    (await applied()).length === n && alerts.length === before);
+
+  ar = await apply(good({ email: 'bad', name: '<script>alert(1)</script>' }));
+  const errText = await ar.text();
+  ok('an error answer names fields only, never echoes input', ar.status === 400 && !/script|alert/.test(errText), errText);
+
+  const evil = '<img src=x onerror=alert(1)>', evilWhy = '<script>alert("x")</script> & "quotes"';
+  ar = await apply(good({ email: 'x@example.org', name: evil, why: evilWhy + '‮\u0007' }));
+  const okText = await ar.text();
+  ok('a good answer is exactly {"ok":true}', ar.status === 200 && okText === '{"ok":true}', okText);
+  ap = await applied();
+  const evilRow = ap[ap.length - 1];
+  ok('text is stored as typed (escaping is the reader\'s job), control and bidi characters dropped',
+    evilRow.sender_name === evil && evilRow.text.includes(evilWhy) &&
+    !/[‮\u0007]/.test(evilRow.text));
+  res = await readInbox(`?since=${encodeURIComponent(mark)}`);
+  const ir = await fetch(B + '/api/inbox', { headers: { 'x-inbox-key': 'inbox-key' } });
+  ok('the inbox serves applications as JSON, never as HTML', /^application\/json/.test(ir.headers.get('content-type')));
+  const at = (res.body.threads || []).filter(x => x.channel === 'apply');
+  const atEvil = at.find(x => x.sender === 'x@example.org');
+  ok('applications show in GET /api/inbox, hot, with the video link', at.length === 3 &&
+    at.every(x => x.sorted && x.sorted.lane === 'hot') && at.find(x => x.sender === 'mei@example.com').messages[0].ref === 'https://youtu.be/abc123',
+    JSON.stringify(at.map(x => x.sender)));
+  ok('the JSON string round-trips exactly', atEvil && atEvil.name === evil && atEvil.messages[0].text.includes(evilWhy));
+
+  const realFetch = global.fetch;
+  let tgBody = null;
+  process.env.TELEGRAM_BOT_TOKEN = 't'; process.env.BOONCHU_CHAT_ID = 'c';
+  global.fetch = async (url, init) => { tgBody = JSON.parse(init.body); return { ok: true }; };
+  try { await telegram(`New In-Depth Mysore application\n${evil}, China`); } finally { global.fetch = realFetch; }
+  delete process.env.TELEGRAM_BOT_TOKEN; delete process.env.BOONCHU_CHAT_ID;
+  ok('Telegram gets plain text (no parse_mode), so a name cannot add HTML or links',
+    tgBody && !('parse_mode' in tgBody) && tgBody.text.includes(evil));
+
+  for (let i = 0; i < 3; i++) await apply(good({ email: 'same@example.com', name: `S${i}` }));
+  ar = await apply(good({ email: 'SAME@example.com', name: 'S3' }));
+  ok('a 4th application from one email in a day → 429', ar.status === 429 &&
+    (await applied()).filter(x => x.sender_id === 'same@example.com').length === 3);
+
+  const statuses = [];
+  for (let i = 0; i < 11; i++) statuses.push((await apply({}, '10.9.9.9')).status);
+  ok('10 tries an hour from one address, valid or not, then 429', statuses.slice(0, 10).every(s => s === 400) &&
+    statuses[10] === 429, statuses.join(','));
+  ar = await apply(good({ email: 'other@example.com' }), '10.9.9.9');
+  ok('the address stays blocked even for a good application', ar.status === 429);
 
   srv.close();
   await pool.end();

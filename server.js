@@ -206,7 +206,9 @@ const ORIENTATION_SHORTCUTS = {
 };
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
-  door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html' };
+  door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html',
+  // In-Depth Mysore course page: one file, English or Chinese by ?lang=, the host (cn.) or the browser
+  'in-depth': 'in-depth.html' };
 // Clean tracking links for Reels and bios: aybkk.net/start/sleep instead of ?src=sleep.
 app.get('/start/:tag', (req, res) => res.sendFile(path.join(__dirname, 'public', 'start.html')));
 for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SHORTCUTS })) {
@@ -2791,7 +2793,7 @@ app.get('/robots.txt', (req, res) => {
   res.type('text/plain').send('User-agent: *\nAllow: /\n\nSitemap: https://aybkk.net/sitemap.xml\n');
 });
 app.get('/sitemap.xml', (req, res) => {
-  const urls = ['https://aybkk.net/', 'https://aybkk.net/start'];
+  const urls = ['https://aybkk.net/', 'https://aybkk.net/start', 'https://aybkk.net/in-depth'];
   res.type('application/xml').send('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
     urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n') + '\n</urlset>\n');
 });
