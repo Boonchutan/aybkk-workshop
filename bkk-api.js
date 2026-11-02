@@ -3181,10 +3181,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // Tiles show the whole photo (no crop: a 4:5 fill cut off heads and feet).
   // 'save' is a plain JPEG sent as a download: the WebP/AVIF that f_auto gives
   // Android can't be long-pressed into a Samsung gallery or out of LINE's browser.
+  // 'full' is what students long-press to keep and repost on Instagram, so it is
+  // a high-quality JPEG too: the f_auto copy it used to be looked soft once saved.
   const PHOTO_SIZES = {
     thumb: { width: 600, height: 600, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
-    full: { width: 2048, height: 2048, crop: 'limit', quality: 'auto', fetch_format: 'auto' },
-    save: { width: 2048, height: 2048, crop: 'limit', quality: 90, fetch_format: 'jpg', flags: 'attachment:AYBKK-photo' },
+    full: { width: 2048, height: 2048, crop: 'limit', quality: 'auto:best', fetch_format: 'jpg' },
+    save: { width: 2048, height: 2048, crop: 'limit', quality: 95, fetch_format: 'jpg', flags: 'attachment:AYBKK-photo' },
   };
   const photoUrl = (publicId, kind) => cloudinary.url(publicId, {
     type: 'authenticated', sign_url: true, secure: true, transformation: [PHOTO_SIZES[kind]],
@@ -3282,7 +3284,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       return await cloudinary.uploader.upload(file, {
         type: 'authenticated', folder: `aybkk/profile/${date}`, resource_type: 'image',
-        transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:good' }],
+        transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:best' }],
       });
     } catch (e) {
       const err = e && e.error ? e.error : e;
