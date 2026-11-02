@@ -2003,7 +2003,7 @@
     try {
       label = new Date(m + '-15T12:00:00Z').toLocaleDateString(LOCALE[LANG] || 'en-GB', { timeZone: 'UTC', month: 'long', year: 'numeric' });
     } catch (_) {}
-    return `<figure class="ttp"><a href="${src}" target="_blank" rel="noopener"><img src="${src}" width="1080" height="1920"
+    return `<figure class="ttp"><a href="${src}" target="_blank" rel="noopener"><img src="${src}" width="1080" height="1620"
       loading="lazy" decoding="async" alt="${esc(t('posterAlt', label))}"></a>
       <figcaption><a href="${src}" download="AYBKK-timetable-${m}-${lang}.jpg">${esc(t('posterSave'))}</a></figcaption></figure>`;
   }
