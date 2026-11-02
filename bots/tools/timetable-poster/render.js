@@ -244,6 +244,12 @@ async function renderOne(browser, template, data, out) {
     .replace('__DATA__', () => JSON.stringify(data).replace(/</g, '\\u003c'));
   await page.setContent(html, { waitUntil: 'load' });
   const r = await page.evaluate(() => window.layout());
+  // Where each date box sits, so the booking page can make the poster's dates tappable.
+  r.days = await page.evaluate(() => [...document.querySelectorAll('.tile[data-day]')].map(t => {
+    const b = t.getBoundingClientRect();
+    return [Number(t.dataset.day), Math.round(b.x), Math.round(b.y), Math.round(b.width), Math.round(b.height)];
+  }));
+  r.W = data.W; r.H = data.H;
   fs.mkdirSync(path.dirname(out), { recursive: true });
   const jpg = /\.jpe?g$/i.test(out);
   await page.screenshot({ path: out, type: jpg ? 'jpeg' : 'png', quality: jpg ? 92 : undefined, clip: { x: 0, y: 0, width: data.W, height: data.H } });
@@ -326,6 +332,7 @@ async function main() {
       const r = await renderOne(browser, template, payload(m, j.lang, j.size, j.look, photo, a.credit, a.title !== 'down'), j.out);
       if (r.overflow.length || r.onFace.length) bad++;
       if (j.web && !webCopy(j.out, j.web)) bad++;
+      if (j.web) fs.writeFileSync(j.web.replace(/\.jpg$/, '.json'), JSON.stringify({ w: r.W, h: r.H, days: r.days }) + '\n');
     }
   } finally { await browser.close(); }
   if (bad || warn.length) process.exitCode = 1;

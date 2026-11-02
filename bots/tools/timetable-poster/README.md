@@ -100,6 +100,7 @@ took and how far the month name moved up. Exit code 1 means a CHECK or a WARNING
 - One white see-through tile per date, Sunday first. Each tile: date, then per class type its
   short name (Mysore / Primary / Inter., Thai มายซอร์, as on the booking page), start times,
   teachers in time order ("5:30 7:30" then "M, Boonchu" means M at 5:30). Shala classes only.
+  Web copies come with a date map, web/<YYYY-MM>-<lang>.json ({ w, h, days: [[day, x, y, w, h], ...] }): copy it beside the JPEG in public/img/timetable/ so the poster's dates are tappable on the booking page.
   Class names keep the booking page colours (Boonchu, 2 Nov): Mysore red, Primary green, Inter. blue, darkened on the bright boxes (A, C: #A3122A, #155A18, #2E3AA8, bold), light on B (#FC838B, #8BFC83, #9AA2FF).
   Moon days: date, "New moon" or "Full moon" (EN) and a dark or a full yellow moon (Boonchu, 2 Nov), or the booking page's own words in TH: "จันทร์ดับ"
   (new moon) / "จันทร์เต็มดวง" (full moon). No classes on them. No tile for days outside the month.
