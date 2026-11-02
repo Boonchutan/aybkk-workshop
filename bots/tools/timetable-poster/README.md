@@ -47,6 +47,10 @@ or save it. It reads two things from the aybkk-workshop repo:
   `{ "2026-11": ["en", "th"], "2026-12": ["en", "th"] }`. A month missing from it shows no poster
   (and the page never breaks for want of one). Add next month on the last afternoon, so it shows
   when someone pages forward; drop a month (and its two JPEGs) once it is over.
+- CHECK THE PR FILE LIST, not your disk: it must hold 2 JPEGs, 2 date maps (`<YYYY-MM>-<en|th>.json`) and
+  `posters.json`. The repo ignores `*.json`; PR #81 allows `public/img/timetable/*.json`. On 2 Nov PR #79 shipped
+  without the json files and the live site kept the old calendar. After merge, open
+  aybkk.net/img/timetable/posters.json: it must show the month, not "not found".
 
 Use the web copies, never the PNGs (1.5 MB each). The page sets the image to 1080x1620; if a new
 photo gives the tall image another shape, change `width`/`height` in `posterBox` to match (the
