@@ -228,7 +228,7 @@
   .plan{background:var(--paper);border-radius:var(--radius);padding:22px;min-width:0;box-shadow:var(--lift)}
   .plan.feature{background:var(--paper);box-shadow:inset 0 0 0 2px var(--plum),var(--lift)}
   .plan.quiet{background:transparent;box-shadow:inset 0 0 0 1px var(--price-line)}
-  .plan .badge{display:inline-block;margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  .plan .badge,.pkg .badge{display:inline-block;margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
     background:var(--plum);color:var(--on-dark);border-radius:999px;padding:4px 10px}
   .plan h3{margin:0 0 6px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:28px;line-height:1.15;
     letter-spacing:0;text-transform:none;color:var(--ink)}
@@ -248,6 +248,13 @@
   .prices .fair{margin:20px 0 4px;font-size:16px;font-weight:600;color:var(--plum)}
   .prices .fine{margin:0;font-size:12.5px;color:var(--soft)}
   .prices .fine a{color:var(--plum);font-weight:600;text-decoration:none}
+  .rows .badge{display:table;margin:0 0 6px}
+  .rows .vt{margin-left:4px;font-style:normal;font-size:11px;font-weight:600;letter-spacing:0;color:var(--soft)}
+  .prices .mnotes{margin:18px 0 0;padding:18px 20px;border-radius:var(--radius);box-shadow:inset 0 0 0 1px var(--price-line)}
+  .mnotes h3{margin:0 0 8px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:24px;line-height:1.15;
+    letter-spacing:0;text-transform:none;color:var(--ink)}
+  .mnotes ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.5}
+  .mnotes li{margin:8px 0 0}
   @media (min-width:760px){
     .plans{grid-template-columns:1fr 1fr;align-items:start}
     .teacher .card{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:26px;align-items:start}
@@ -670,16 +677,22 @@
   </section>
 
   <section class="prices" id="prices">
-    <h2 data-i18n="pricesH">From 406 baht a class.</h2>
+    <h2 data-i18n="pricesH" data-i18n-new="pricesHNew">From 406 baht a class.</h2>
     <p class="lead" data-i18n="pricesSub">Counted at 4 mornings a week (16 classes a month).</p>
     <div class="plans">
       <div class="plan feature">
         <h3 data-i18n="flexH">Membership</h3>
         <p class="line" data-i18n="flexLine">Unlimited classes. Best results at 4 mornings a week.</p>
-        <ul class="rows">
+        <ul class="rows oldP">
           <li><span class="pn"><span data-i18n="mo1">1 month</span></span><span class="pv"><b>฿9,600</b><small>600 <span data-i18n="perClass">per class</span></small></span></li>
           <li><span class="pn"><span data-i18n="mo3">3 months</span></span><span class="pv"><b>฿25,800</b><small>538 <span data-i18n="perClass">per class</span></small></span></li>
           <li><span class="pn"><span data-i18n="mo12">12 months</span></span><span class="pv"><b>฿78,000</b><small>406 <span data-i18n="perClass">per class</span></small></span></li>
+        </ul>
+        <ul class="rows newP" hidden>
+          <li><span class="pn"><span data-i18n="mo12">12 months</span><small data-i18n="n12">Month by month for 12 months: ฿115,200. You save ฿55,300.</small></span><span class="pv"><b>฿59,900<i class="vt">+VAT</i></b><small>312 <span data-i18n="perClass">per class</span></small></span></li>
+          <li class="pick"><span class="pn"><span class="badge" data-i18n="pick">Teacher’s pick</span><span data-i18n="mo6">6 months</span><small data-i18n="n6">Long enough for the habit to stick. You save ฿25,600.</small></span><span class="pv"><b>฿32,000<i class="vt">+VAT</i></b><small>333 <span data-i18n="perClass">per class</span></small></span></li>
+          <li><span class="pn"><span data-i18n="mo3">3 months</span><small data-i18n="n3">For ฿10,000 more, you get 6 months instead of 3.</small></span><span class="pv"><b>฿22,000<i class="vt">+VAT</i></b><small>458 <span data-i18n="perClass">per class</span></small></span></li>
+          <li><span class="pn"><span data-i18n="mo1">1 month</span><small data-i18n="n1">The price of trying. New or stiff, come as you are.</small></span><span class="pv"><b>฿9,600<i class="vt">+VAT</i></b><small>600 <span data-i18n="perClass">per class</span></small></span></li>
         </ul>
       </div>
       <div class="plan">
@@ -687,22 +700,32 @@
         <p class="line" data-i18n="newLine">Start with 1 month, so your teacher can guide you step by step.</p>
         <p class="camp campWrap" data-i18n="newCamp">Until 11 Nov 2026: Duo, buy 1 get 1 free, or the Rookie Pack, 5,900. Book the promotion on LINE @aybkk. Start by 12 Nov.</p>
         <p style="margin-top:12px" class="campWrap"><a class="btn buy" href="#promo" data-i18n="bandBtn">Calculate my price →</a></p>
+        <p style="margin-top:12px" class="newP" hidden><a class="btn buy" href="#book" id="newPkgs" data-i18n="newBtn">See packages →</a></p>
       </div>
       <div class="plan">
         <h3 data-i18n="visitH">Visiting?</h3>
         <ul class="rows">
-          <li><span class="pn"><span data-i18n="dropIn">Drop-in</span><small data-i18n="dropInSub">For students who know the sequence</small></span><span class="pv"><b>฿1,500</b></span></li>
-          <li><span class="pn"><span data-i18n="pack10">10-class pack</span><small data-i18n="pack10Sub">Valid 3 months</small></span><span class="pv"><b>฿14,000</b></span></li>
+          <li><span class="pn"><span data-i18n="dropIn">Drop-in</span><small data-i18n="dropInSub">For students who know the sequence</small></span><span class="pv"><b>฿1,500<i class="vt newP" hidden>+VAT</i></b></span></li>
+          <li><span class="pn"><span data-i18n="pack10">10-class pack</span><small data-i18n="pack10Sub" data-i18n-new="pack10SubNew">Valid 3 months</small></span><span class="pv"><b>฿14,000<i class="vt newP" hidden>+VAT</i></b></span></li>
         </ul>
       </div>
       <div class="plan quiet">
         <h3 data-i18n="loyalH">Loyal students</h3>
-        <p class="line" data-i18n="loyalLine">After 12 months in a row, renew 12 months at 54,900.</p>
+        <p class="line" data-i18n="loyalLine">Practise 12 months in a row, then renew for 12 more. You get the special collection AYBKK shala tee.</p>
       </div>
     </div>
     <p class="fair" data-i18n="fair">One price for everyone. Clear and simple.</p>
-    <p class="fine"><span data-i18n="fine">Prices in Thai baht. Buy online in the Packages tab below, or at the shala. Questions:</span>
+    <p class="fine"><span data-i18n="fine" data-i18n-new="fineNew">Prices in Thai baht. Buy online in the Packages tab below, or at the shala. Questions:</span>
       <a href="https://line.me/R/ti/p/@aybkk" target="_blank" rel="noopener">LINE @aybkk</a></p>
+    <div class="mnotes newP" hidden>
+      <h3 data-i18n="polH">Member notes</h3>
+      <ul>
+        <li><b data-i18n="pol1a">All passes are final once purchased,</b><span data-i18n="pol1b"> unless we can’t give the classes you paid for (if we close or move). Long passes are priced for people who stay.</span></li>
+        <li><b data-i18n="pol2a">Your pass is just for you,</b><span data-i18n="pol2b"> not shareable.</span></li>
+        <li><b data-i18n="pol3a">Moving away, or your doctor says stop?</b><span data-i18n="pol3b"> If a freeze doesn’t fit, a 3, 6 or 12-month membership can pass once to someone new to AYBKK. Same end date. Fee ฿1,500. Ask us on LINE @aybkk first.</span></li>
+        <li><b data-i18n="pol4a">Freeze up to 30 days</b><span data-i18n="pol4b"> (or as your doctor’s note says, up to 2 months) for a broken bone, an eye problem, surgery, or pregnancy and birth. Other cases: talk with us. Please tell us on LINE @aybkk before it starts.</span></li>
+      </ul>
+    </div>
   </section>
 
   <section id="tees" hidden>
@@ -840,7 +863,24 @@
       pack10: '10-class pack',
       pack10Sub: 'Valid 3 months',
       loyalH: 'Loyal students',
-      loyalLine: 'After 12 months in a row, renew 12 months at 54,900.',
+      loyalLine: 'Practise 12 months in a row, then renew for 12 more. You get the special collection AYBKK shala tee.',
+      pricesHNew: 'From 312 baht a class.',
+      pick: 'Teacher’s pick',
+      n12: 'Month by month for 12 months: ฿115,200. You save ฿55,300.',
+      n6: 'Long enough for the habit to stick. You save ฿25,600.',
+      n3: 'For ฿10,000 more, you get 6 months instead of 3.',
+      n1: 'The price of trying. New or stiff, come as you are.',
+      pack10SubNew: 'Use within 3 months. 3+ classes left? You can pass them on.',
+      newBtn: 'See packages →',
+      fineNew: (fee, vat = 7) => `+VAT = plus ${vat}% VAT.${fee ? ' Paying online adds a transaction fee.' : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
+      polH: 'Member notes',
+      pol1a: 'All passes are final once purchased,',
+      pol1b: ' unless we can’t give the classes you paid for (if we close or move). Long passes are priced for people who stay.',
+      pol2a: 'Your pass is just for you,', pol2b: ' not shareable.',
+      pol3a: 'Moving away, or your doctor says stop?',
+      pol3b: ' If a freeze doesn’t fit, a 3, 6 or 12-month membership can pass once to someone new to AYBKK. Same end date. Fee ฿1,500. Ask us on LINE @aybkk first.',
+      pol4a: 'Freeze up to 30 days',
+      pol4b: ' (or as your doctor’s note says, up to 2 months) for a broken bone, an eye problem, surgery, or pregnancy and birth. Other cases: talk with us. Please tell us on LINE @aybkk before it starts.',
       fair: 'One price for everyone. Clear and simple.',
       fine: (fee, vat = 7) => `Prices in Thai baht, before ${vat}% VAT. ${fee ? 'Paying online adds an online transaction fee.' : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
       momH: 'Today at the shala', momLine: 'Every morning we share moments from the shala: the practice, the people, news and updates.',
@@ -911,7 +951,24 @@
       pack10: 'แพ็ก 10 ครั้ง',
       pack10Sub: 'ใช้ได้ 3 เดือน',
       loyalH: 'นักเรียนประจำ',
-      loyalLine: 'ฝึกต่อเนื่องครบ 12 เดือน ต่ออายุ 12 เดือนได้ในราคา 54,900 บาท',
+      loyalLine: 'ฝึกต่อเนื่องครบ 12 เดือน แล้วต่ออายุอีก 12 เดือน รับเสื้อ AYBKK shala คอลเลกชันพิเศษ',
+      pricesHNew: 'เริ่มต้นเพียง 312 บาทต่อครั้ง',
+      pick: 'ครูแนะนำ',
+      n12: 'ซื้อรายเดือน 12 เดือน รวม ฿115,200 ประหยัด ฿55,300',
+      n6: 'นานพอให้การฝึกติดเป็นนิสัย ประหยัด ฿25,600',
+      n3: 'เพิ่มอีก ฿10,000 ขยับเป็นแพ็ก 6 เดือนได้',
+      n1: 'ลองฝึกดูสักเดือน มือใหม่หรือตัวแข็งก็เริ่มได้',
+      pack10SubNew: 'ใช้ภายใน 3 เดือน เหลือ 3 ครั้งขึ้นไป โอนให้ผู้อื่นได้',
+      newBtn: 'ดูแพ็กเกจ →',
+      fineNew: (fee, vat = 7) => `+VAT = ยังไม่รวม VAT ${vat}% ${fee ? 'หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม ' : ''}ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
+      polH: 'ข้อควรรู้สำหรับสมาชิก',
+      pol1a: 'ขอสงวนสิทธิ์ไม่คืนเงินหลังชำระ',
+      pol1b: ' ยกเว้นกรณีที่เราให้บริการตามที่ชำระไว้ไม่ได้ (เช่น ปิดหรือย้ายสถานที่) ราคาแพ็กยาวคิดไว้ให้คนที่ฝึกกันยาว ๆ',
+      pol2a: '1 แพ็กเกจต่อ 1 ท่าน', pol2b: ' ไม่สามารถแบ่งกันใช้ได้',
+      pol3a: 'ต้องย้ายออกจากกรุงเทพฯ หรือแพทย์ให้หยุดฝึก?',
+      pol3b: ' หากการพักแพ็กเกจไม่ตอบโจทย์ สมาชิก 3, 6 และ 12 เดือน โอนให้ผู้ที่ยังไม่เคยเป็นสมาชิก AYBKK ได้ 1 ครั้ง วันหมดอายุเดิม ค่าธรรมเนียม ฿1,500 กรุณาแจ้งทาง LINE @aybkk ก่อน',
+      pol4a: 'เราพักแพ็กเกจให้ได้สูงสุด 30 วัน',
+      pol4b: ' (หรือตามใบรับรองแพทย์ ไม่เกิน 2 เดือน) กรณีกระดูกหัก ปัญหาดวงตา ผ่าตัด หรือตั้งครรภ์และคลอดบุตร กรณีอื่นคุยกับเราได้ กรุณาแจ้งทาง LINE @aybkk ก่อนเริ่มพักทุกครั้ง',
       fair: 'ราคาเดียวสำหรับทุกคน ชัดเจน ตรงไปตรงมา',
       fine: (fee, vat = 7) => `ราคาเป็นเงินบาท ยังไม่รวม VAT ${vat}% ${fee ? 'ชำระออนไลน์มีค่าธรรมเนียมการชำระเงิน' : ''} ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
       momH: 'วันนี้ที่ชาลา', momLine: 'ทุกเช้าเราแบ่งปันบรรยากาศการฝึก ผู้คน ข่าวสาร และอัปเดตจากชาลา',
@@ -982,7 +1039,24 @@
       pack10: '10次课卡',
       pack10Sub: '3个月内有效',
       loyalH: '老学员',
-      loyalLine: '连续练习满12个月后，续订12个月只需 54,900 泰铢。',
+      loyalLine: '连续练习满12个月，再续订12个月，就送你一件 AYBKK 道场特别款T恤。',
+      pricesHNew: '每节课低至 312 泰铢。',
+      pick: '老师推荐',
+      n12: '按月买12个月共 ฿115,200，年卡省下 ฿55,300。',
+      n6: '时间够长，练习才能成为习惯。省下 ฿25,600。',
+      n3: '再加 ฿10,000，3个月就变成6个月。',
+      n1: '试一试的价格。新手、身体僵硬，都欢迎来。',
+      pack10SubNew: '3个月内用完。还剩3次或以上，可以转给别人。',
+      newBtn: '查看课程套餐 →',
+      fineNew: (fee, vat = 7) => `+VAT = 另加 ${vat}% 增值税。${fee ? '在线支付另收交易手续费。' : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
+      polH: '会员须知',
+      pol1a: '课程卡一经购买，不予退款，',
+      pol1b: '除非我们无法提供你已付费的课程（道场关闭或搬迁）。长期卡的价格，是为长期练习的人定的。',
+      pol2a: '课程卡仅限本人使用，', pol2b: '不能与他人共用。',
+      pol3a: '要离开曼谷，或医生让你停练？',
+      pol3b: '如果暂停不合适，3个月、6个月或12个月会员可转让一次，给从未在 AYBKK 办过卡的新学员。到期日不变，手续费 ฿1,500。请先在 LINE @aybkk 联系我们。',
+      pol4a: '可暂停最多30天',
+      pol4b: '（或按医生证明，最多2个月），适用于骨折、眼睛问题、手术、怀孕和生产。其他情况可以和我们商量。请在暂停开始前，通过 LINE @aybkk 告诉我们。',
       fair: '所有人同一个价格，清楚简单。',
       fine: (fee, vat = 7) => `价格以泰铢计，不含 ${vat}% 增值税。${fee ? '在线支付另收线上支付手续费。' : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       momH: '今天的道场', momLine: '每天早上我们分享道场的瞬间：练习、学员、新闻和动态。',
@@ -1053,7 +1127,24 @@
       pack10: '10 занятий',
       pack10Sub: 'Действует 3 месяца',
       loyalH: 'Верные ученики',
-      loyalLine: 'После 12 месяцев подряд — продление на 12 месяцев за 54,900 бат.',
+      loyalLine: 'Занимайтесь 12 месяцев подряд и продлите абонемент ещё на 12. Вы получите футболку шалы AYBKK из особой коллекции.',
+      pricesHNew: 'От 312 бат за занятие.',
+      pick: 'Выбор учителя',
+      n12: 'Помесячно за 12 месяцев: ฿115,200. Экономия ฿55,300.',
+      n6: 'Достаточно долго, чтобы практика стала привычкой. Экономия ฿25,600.',
+      n3: 'Ещё ฿10,000, и у вас 6 месяцев вместо 3.',
+      n1: 'Цена, чтобы попробовать. Новичок или скованное тело? Приходите как есть.',
+      pack10SubNew: 'Использовать за 3 месяца. Осталось 3 занятия или больше? Их можно передать.',
+      newBtn: 'Все абонементы →',
+      fineNew: (fee, vat = 7) => `+VAT = плюс НДС ${vat}%. ${fee ? 'При онлайн-оплате добавляется комиссия. ' : ''}Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
+      polH: 'Памятка для участников',
+      pol1a: 'Оплаченный абонемент не возвращается,',
+      pol1b: ' кроме случая, когда мы не можем провести оплаченные занятия (если шала закроется или переедет). Цены длинных абонементов рассчитаны на тех, кто остаётся.',
+      pol2a: 'Абонемент только для вас,', pol2b: ' делиться им нельзя.',
+      pol3a: 'Уезжаете, или врач велит сделать перерыв?',
+      pol3b: ' Если заморозка не подходит, абонемент на 3, 6 или 12 месяцев можно один раз передать человеку, который ещё не занимался в AYBKK. Дата окончания та же. Сбор ฿1,500. Сначала напишите нам в LINE @aybkk.',
+      pol4a: 'Заморозка до 30 дней',
+      pol4b: ' (или по справке врача, до 2 месяцев): перелом, проблемы с глазами, операция, беременность и роды. Другие случаи обсудим. Напишите нам в LINE @aybkk до начала заморозки.',
       fair: 'Одна цена для всех. Всё просто и понятно.',
       fine: (fee, vat = 7) => `Цены в тайских батах, без НДС ${vat}%. ${fee ? 'При онлайн-оплате взимается комиссия.' : ''} Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
       momH: 'Сегодня в шале', momLine: 'Каждое утро мы делимся моментами из шалы: практика, люди, новости.',
@@ -1389,6 +1480,9 @@
   const fmtD = (iso, lang) => new Date(iso + 'T00:00:00Z').toLocaleDateString(LOCALE[lang] || 'en-GB',
     { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
   const promoLive = () => bkkTodayP() <= PROMO_LAST_SALE;
+  // The server switches its catalogue at the same moment (bkk-api.js PRICE_SWITCH).
+  const NEW_PRICES_FROM = '2026-11-12';
+  const newPrices = () => bkkTodayP() >= NEW_PRICES_FROM;
   function bkkTodayP() { return new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10); }
   let PMOON = {};
   // One group open at a time; a card's calculator opens under that card.
@@ -1467,7 +1561,7 @@
   // yourself (180 days); after it, the same pass at its own 90 days. Per day is
   // the VAT-inclusive total over calendar days, with the total shown beside it.
   function renderHero12() {
-    const live = promoLive(), price = MONTHLY[2][1];
+    const live = promoLive(), price = newPrices() ? 22000 : MONTHLY[2][1];
     const total = price + Math.round(price * 0.07), days = live ? MONTHLY[2][0] * 2 : MONTHLY[2][0];
     $('#h12h').textContent = t('h12H');
     $('#h12s').textContent = t(live ? 'h12S' : 'h12Sp');
@@ -1483,6 +1577,12 @@
       tab('packages');
       $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  });
+
+  $('#newPkgs').addEventListener('click', e => {
+    e.preventDefault();
+    tab('packages');
+    $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   function renderPromo() {
@@ -1569,7 +1669,12 @@
 
   function applyLang() {
     document.documentElement.lang = HTML_LANG[LANG];
-    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n, SURCHARGE, VAT || 7); });
+    const np = newPrices();
+    document.querySelectorAll('.oldP').forEach(el => { el.hidden = np; });
+    document.querySelectorAll('.newP').forEach(el => { el.hidden = !np; });
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      el.textContent = t((np && el.dataset.i18nNew) || el.dataset.i18n, SURCHARGE, VAT || 7);
+    });
     document.querySelectorAll('.langs button').forEach(b =>
       b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
     document.querySelectorAll('.readmore').forEach(b =>
@@ -2067,6 +2172,7 @@
         ? [t('unlim', p.valid_days), t('cap', p.daily_cap)]
         : [t('credits', p.credits), t('valid', p.valid_days)];
       return `<div class="pkg ${p.kind === 'unlimited' ? 'feature' : ''}">
+        ${p.code === 'unlim6m' ? `<span class="badge">${esc(t('pick'))}</span>` : ''}
         <h3>${esc(pkgName(p))}</h3>
         <div class="price">${baht(p.total_thb)}</div>
         <div class="fee">${esc(t('fee', baht(p.price_thb), SURCHARGE, VAT))}</div>
