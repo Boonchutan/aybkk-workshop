@@ -398,6 +398,12 @@
   .ttp img{display:block;width:100%;height:auto;border-radius:var(--radius)}
   .ttp figcaption{margin-top:8px;font-size:14px}
   .ttp figcaption a{color:var(--plum);font-weight:700}
+  .ttp .pic{position:relative}
+  /* Each date on the poster is a button over its own box: tap it to see that day's classes. */
+  .ttp .ttd{position:absolute;margin:0;padding:0;border:0;background:transparent;cursor:pointer;border-radius:4px}
+  .ttp .ttd:hover,.ttp .ttd:focus-visible{box-shadow:inset 0 0 0 3px var(--pink);outline:none}
+  .ttp .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .ttp .acts .btn{width:100%;min-height:48px}
   @media (min-width:700px){ .ttp{max-width:420px} }
   .cls[data-cls]{cursor:pointer}
   .cls .open{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
@@ -796,6 +802,7 @@
   const baht = n => '฿' + Number(n).toLocaleString('en-US');
   let MOON = {}, CLASSES = [], PRODUCTS = [], SURCHARGE = 0, VAT = 0, LOADED = false;
   let POSTERS = {};                     // { 'YYYY-MM': ['en','th'] } from /img/timetable/posters.json
+  const POSTER_MAPS = {};               // '<YYYY-MM>-<lang>' -> where each date box sits, or null
   // Storage can be blocked (privacy settings, some in-app browsers): then nobody is signed in.
   const myCode = () => { try { return localStorage.getItem('aybkk_member') || ''; } catch (_) { return ''; } };
 
@@ -1329,6 +1336,7 @@
   Object.assign(STR.en, {
     calView: 'Calendar view', viewMonth: 'Month', viewWeek: 'Week', prev: 'Previous', next: 'Next',
     posterSave: 'Save the poster', posterAlt: m => `AYBKK timetable, ${m}`,
+    posterBook: 'Book a class', posterBuy: 'Buy a pass', posterTap: 'Tap a date to book it', posterDay: d => `Classes on ${d}`,
     booked: 'Booked', bookedByYou: 'Booked by you', youBooked: 'You are booked', notBooked: 'Not booked yet',
     cancelRule: h => `Cancel at least ${h} hours before class to get your credit back.`,
     back: 'Back', teacherL: 'Teacher', online: 'online', mins: n => `${n} min`,
@@ -1340,6 +1348,7 @@
   Object.assign(STR.th, {
     calView: 'มุมมองปฏิทิน', viewMonth: 'เดือน', viewWeek: 'สัปดาห์', prev: 'ก่อนหน้า', next: 'ถัดไป',
     posterSave: 'บันทึกโปสเตอร์', posterAlt: m => `ตารางเรียน AYBKK ${m}`,
+    posterBook: 'จองคลาส', posterBuy: 'ซื้อแพ็กเกจ', posterTap: 'แตะวันที่เพื่อจอง', posterDay: d => `คลาสวัน${d}`,
     booked: 'จองแล้ว', bookedByYou: 'คลาสที่คุณจอง', youBooked: 'คุณจองคลาสนี้แล้ว', notBooked: 'ยังไม่ได้จอง',
     cancelRule: h => `ยกเลิกล่วงหน้าอย่างน้อย ${h} ชั่วโมงก่อนคลาส เพื่อไม่เสียสิทธิ์`,
     back: 'กลับ', teacherL: 'ครู', online: 'ออนไลน์', mins: n => `${n} นาที`,
@@ -1351,6 +1360,7 @@
   Object.assign(STR.zh, {
     calView: '日历视图', viewMonth: '月', viewWeek: '周', prev: '往前', next: '往后',
     posterSave: '保存海报', posterAlt: m => `AYBKK 课程表，${m}`,
+    posterBook: '预约课程', posterBuy: '购买课程卡', posterTap: '点日期即可预约', posterDay: d => `${d}的课程`,
     booked: '已预约', bookedByYou: '你已预约', youBooked: '你已预约这节课', notBooked: '还没有预约',
     cancelRule: h => `至少提前${h}小时取消，课时才会退回。`,
     back: '返回', teacherL: '老师', online: '线上', mins: n => `${n} 分钟`,
@@ -1362,6 +1372,7 @@
   Object.assign(STR.ru, {
     calView: 'Вид календаря', viewMonth: 'Месяц', viewWeek: 'Неделя', prev: 'Раньше', next: 'Дальше',
     posterSave: 'Сохранить постер', posterAlt: m => `Расписание AYBKK, ${m}`,
+    posterBook: 'Записаться', posterBuy: 'Купить абонемент', posterTap: 'Нажмите на дату, чтобы записаться', posterDay: d => `Занятия: ${d}`,
     booked: 'Вы записаны', bookedByYou: 'Ваши записи', youBooked: 'Вы записаны', notBooked: 'Вы ещё не записаны',
     cancelRule: h => `Отмените запись минимум за ${h} ч до начала, чтобы сохранить занятие.`,
     back: 'Назад', teacherL: 'Учитель', online: 'онлайн', mins: n => `${n} мин`,
@@ -1993,7 +2004,18 @@
       box.scrollLeft = col ? Math.max(0, col.offsetLeft - 8) : 0;
     }
   }
-  // The poster for the month on screen, in the reader's language, else English.
+  // The poster for the month on screen, in the reader's language, else English. Its dates are
+  // buttons (from the date map the poster tool writes beside the image): tap one to book that day.
+  function posterMap(key) {
+    if (key in POSTER_MAPS) return POSTER_MAPS[key];
+    POSTER_MAPS[key] = null;
+    fetch(`/img/timetable/${key}.json`).then(r => r.ok ? r.json() : null).catch(() => null).then(m => {
+      if (!m || !Array.isArray(m.days) || !(m.w > 0) || !(m.h > 0)) return;
+      POSTER_MAPS[key] = m;
+      if (LOADED && current === 'schedule' && !OPEN && CALVIEW === 'month') renderSchedule();
+    });
+    return null;
+  }
   function posterBox(m) {
     const langs = Array.isArray(POSTERS[m]) ? POSTERS[m].filter(l => /^[a-z]{2}$/.test(l)) : [];
     if (!/^\d{4}-\d{2}$/.test(m || '') || !langs.length) return '';
@@ -2003,9 +2025,18 @@
     try {
       label = new Date(m + '-15T12:00:00Z').toLocaleDateString(LOCALE[LANG] || 'en-GB', { timeZone: 'UTC', month: 'long', year: 'numeric' });
     } catch (_) {}
-    return `<figure class="ttp"><a href="${src}" target="_blank" rel="noopener"><img src="${src}" width="1080" height="1620"
-      loading="lazy" decoding="async" alt="${esc(t('posterAlt', label))}"></a>
-      <figcaption><a href="${src}" download="AYBKK-timetable-${m}-${lang}.jpg">${esc(t('posterSave'))}</a></figcaption></figure>`;
+    const map = posterMap(`${m}-${lang}`);
+    const pct = (v, of) => (Math.max(0, Math.min(of, Number(v) || 0)) / of * 100).toFixed(3) + '%';
+    const days = map ? map.days.filter(d => Array.isArray(d) && d[0] >= 1 && d[0] <= 31).map(([d, x, y, w, h]) => {
+      const iso = `${m}-${String(d).padStart(2, '0')}`;
+      return `<button type="button" class="ttd" data-act="day" data-day="${iso}" aria-label="${esc(t('posterDay', fmtDay(iso + 'T12:00:00+07:00')))}"
+        style="left:${pct(x, map.w)};top:${pct(y, map.h)};width:${pct(w, map.w)};height:${pct(h, map.h)}"></button>`;
+    }).join('') : '';
+    return `<figure class="ttp"><div class="pic"><img src="${src}" width="1080" height="1620" loading="lazy" decoding="async"
+      alt="${esc(t('posterAlt', label))}">${days}</div>
+      <div class="acts"><button type="button" class="btn" data-act="tobook">${esc(t('posterBook'))}</button>
+        <button type="button" class="btn pink" data-act="buy">${esc(t('posterBuy'))}</button></div>
+      <figcaption>${map ? esc(t('posterTap')) + ' · ' : ''}<a href="${src}" download="AYBKK-timetable-${m}-${lang}.jpg">${esc(t('posterSave'))}</a></figcaption></figure>`;
   }
   window.pickDay = iso => { selDate = iso; renderSchedule(); };
   window.calGo = m => { calMonth = m; renderSchedule(); };
@@ -2071,6 +2102,12 @@
       if (act === 'book') return book(Number(a.dataset.slot), a.dataset.date);
       if (act === 'cancel') return cancelBooking(Number(a.dataset.id));
       if (act === 'back') return closeCls(kb);
+      if (act === 'tobook') return $('#view .calsw').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (act === 'buy') {
+        if (promoLive()) return $('#promo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        tab('packages');
+        return $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
       if (act === 'view') { setView(a.dataset.v); renderSchedule(); return focus(`[data-act="view"][data-v="${a.dataset.v}"]`); }
       if (act === 'month' || act === 'week') {
         if (act === 'month') calMonth = a.dataset.to; else goWeek(a.dataset.to);
