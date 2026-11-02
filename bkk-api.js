@@ -233,7 +233,7 @@ function payMethod(raw) {
   if (/cash|เงินสด/.test(s)) return 'cash';
   if (/card|credit|debit|visa|master|amex|jcb|บัตร/.test(s)) return 'card';
   if (/transfer|bank|prompt\s*pay|qr|โอน|พร้อมเพย์|ธนาคาร/.test(s)) return 'transfer';
-  if (/online|web|app|stripe|omise|paypal|2c2p|pay\s*solutions|gateway|ออนไลน์/.test(s)) return 'online';
+  if (/online|web|app|stripe|omise|paypal|2c2p|pay\s*solutions?|gateway|ออนไลน์/.test(s)) return 'online';
   return 'other';
 }
 
@@ -467,6 +467,11 @@ function mountBkk(app, opts = {}) {
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS source_ref TEXT`);
     await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_orders_source_ref
              ON bkk_orders (source, source_ref) WHERE source_ref IS NOT NULL`);
+    // A pass's end date moves here (pause, extra days), so Rezerv's own pass id
+    // finds it again: "Membership Number" or the package's "Transaction Id".
+    await q(`ALTER TABLE bkk_passes ADD COLUMN IF NOT EXISTS source_ref TEXT`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_passes_source_ref
+             ON bkk_passes (source, source_ref) WHERE source_ref IS NOT NULL`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_orders_member ON bkk_orders (member_id)`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
@@ -2248,8 +2253,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // a student is matched by email, else by exact name, and a pass with the same
   // package and end date is never added twice. A second run with emails fills
   // them in, which is what lets the student sign in and see their profile.
+  // Rezerv's own names: "1 Month unlimited (9600thb + online transaction fee 5%)",
+  // "1 Year (13 months)", "10 classes/3mo (…)", "Drop-in". A package named after
+  // one of our classes ("Mysore 5.30am (1st batch) (Refunded credits)") is a
+  // one-class credit; "Mysore with <guest teachers>" is a workshop, not ours.
+  const CLASS_CREDIT = /^(?!.*\b(workshop|with)\b)(\[online\]\s*)?(mysore|led\s+(primary|intermediate)|self[\s-]*practice)\b/i;
   const IMPORT_PLANS = [[/^1\s*month/i, 'unlim1'], [/^2\s*months?/i, 'unlim2'], [/^3\s*months?/i, 'unlim3'],
-    [/^6\s*months?/i, 'unlim6'], [/^12\s*months?/i, 'unlim12'], [/^10[\s-]*class/i, 'pack10']];
+    [/^6\s*months?/i, 'unlim6'], [/^(12\s*months?|1\s*years?)\b/i, 'unlim12'], [/^10[\s-]*class/i, 'pack10'],
+    [/^drop[\s-]*in\b/i, 'dropin'], [CLASS_CREDIT, 'dropin']];
   const RETIRED_PLANS = {
     unlim2: { en: '2 months unlimited', th: '2 เดือน ไม่จำกัด', price: 18200, days: 60, sort: 40 },
     unlim6: { en: '6 months unlimited', th: '6 เดือน ไม่จำกัด', price: 45000, days: 180, sort: 60 },
@@ -2340,7 +2351,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // long id into the same "[card number removed]" and merge people.
   const cleanId = (v, n = 100) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
   // Excel drops leading zeros (00123 → 123), so an all-digit id is kept without them.
-  const importId = v => { const s = cleanId(v); return /^\d+$/.test(s) ? s.replace(/^0+(?=\d)/, '') : s; };
+  // Rezerv writes 0 for a booking with no customer account: that is no id at all,
+  // and as an id it would put every such guest on one profile.
+  const importId = v => { const s = cleanId(v); return /^\d+$/.test(s) ? s.replace(/^0+/, '') : s; };
   // …and writes long ones as 1.23E+15, which no longer says which id it was.
   const excelId = v => /^\d+(\.\d+)?e\+?\d+$/i.test(cleanId(v));
 
@@ -2368,7 +2381,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     badAmount: v => `amount "${v}" not understood`,
     payStatus: v => `payment status "${v}" not understood`,
     notMoney: v => `payment status "${v}": no money came in, so it is not kept`,
-    badPlan: v => `package "${v}" not understood`,
+    payVoided: id => `payment ${id} was voided in Rezerv: it no longer counts as money`,
+    badPlan: v => `package "${v}" is not one of ours (a workshop, or not understood): not kept as a pass`,
+    passStatus: v => `pass status "${v}" not understood: read as no status`,
+    neverStarted: v => `never started, and Rezerv says ${v}: nothing to keep`,
+    passOff: v => `Rezerv says ${v}: kept as history, it cannot be used`,
+    badFreeze: v => `pause date "${v}" not understood: left out`,
+    freezeLater: (a, b) => `Rezerv has a pause from ${a}${b ? ' to ' + b : ''}: pause it here on that day`,
     badUntil: v => `end date "${v}" not understood`,
     badStart: v => `start date "${v}" not understood`,
     startsAfterEnd: () => 'it starts after it ends',
@@ -2397,7 +2416,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const raw = String(row.email ?? '').trim().toLowerCase();
     const email = raw && raw.length <= 200 && EMAIL_RE.test(raw) ? raw : null;
     if (raw && !email) warn(why('notEmail', raw.slice(0, 60)));
-    return { rezervId: importId(row[rezervKey]) || null, email, phone: cleanId(row.phone, 40) || null,
+    // Rezerv writes "+66" alone for a student with no phone: a country code is not a phone.
+    const phone = cleanId(row.phone, 40);
+    return { rezervId: importId(row[rezervKey]) || null, email, phone: phone.replace(/\D/g, '').length >= 6 ? phone : null,
       name: clean(row.name, 120) || null, bad: excelId(row[rezervKey]) ? why('excelId', cleanId(row[rezervKey], 40)) : null };
   }
 
@@ -2505,17 +2526,21 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   // Weekday + start time (active or not). Online and shala classes share
   // times, so the class name decides between them; with no time, only a name
-  // that one slot that weekday carries.
+  // that one slot that weekday carries. A named online class is never put on a
+  // shala slot, or the other way round: Rezerv's online Led Intermediate ran at
+  // 08:45, the shala's start, and ours starts at 09:00.
   function matchSlot(slots, date, time, className) {
     const wd = new Date(`${date}T12:00:00${TZ_OFFSET}`).getUTCDay();
     const name = String(className || '').toLowerCase();
     let c = slots.filter(s => s.weekday === wd && (time ? s.start_time === time : name && s.title.toLowerCase() === name));
     if (!time) return c.length === 1 ? c[0] : null;
+    if (name) {
+      const online = /online|zoom|ออนไลน์/i.test(name);
+      c = c.filter(s => !!s.is_online === online);
+    }
     if (c.length > 1) {
       const exact = c.filter(s => s.title.toLowerCase() === name);
-      const online = /online|zoom|ออนไลน์/i.test(name);
-      const kind = c.filter(s => !!s.is_online === online);
-      c = exact.length ? exact : kind.length ? kind : c;
+      if (exact.length) c = exact;
     }
     c.sort((a, b) => (b.active - a.active) || a.id - b.id);
     return c[0] || null;
@@ -2622,9 +2647,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     }
     if (slot && t.status !== 'booked') {
       // Checked in at our door, which Rezerv never saw: they came, so its
-      // no-show or cancel for that class is not added next to the visit.
+      // no-show or cancel for that class is not added next to the visit. A
+      // visit Rezerv itself kept is another booking: a cancel, then a rebook.
       const came = (await db.query(`SELECT 1 FROM bkk_bookings WHERE slot_id=$1 AND class_date=$2 AND member_id=$3
-          AND status='booked' AND checked_in_at IS NOT NULL`, [slot.id, when.date, m.id])).rows[0];
+          AND status='booked' AND checked_in_at IS NOT NULL AND source IS DISTINCT FROM 'rezerv'`, [slot.id, when.date, m.id])).rows[0];
       if (came) { warn(why('cameDoor', t.status)); return { result: 'matched' }; }
     }
     if (slot && t.status === 'booked') {
@@ -2661,7 +2687,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
          AND code <> 'unlim6m' ORDER BY id LIMIT 1`, [item])).rows[0];
     if (exact) return exact;
     const plan = ITEM_PLANS.find(([re]) => re.test(item));
-    return plan ? (await db.query('SELECT * FROM bkk_products WHERE code=$1', [plan[1]])).rows[0] || null : null;
+    // Payments may come before the passes that make the retired 2-, 6- and 13-month packages.
+    return plan ? planProduct(db, plan[1]) : null;
   }
 
   async function importPayment(db, row, ctx, warn) {
@@ -2673,7 +2700,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     // Only money that came in, or went back: a failed, pending or voided payment is not money.
     const st = payStatus(clean(row.status, 60));
     if (st === undefined) return { skip: why('payStatus', clean(row.status, 40)) };
-    if (st === 'skip') return { skip: why('notMoney', clean(row.status, 40)) };
+    if (st === 'skip') {
+      // Paid when it came over, voided in Rezerv since: no longer money here either.
+      const own = importId(row.rezervId);
+      if (own && /void|cancel|ยกเลิก/i.test(clean(row.status, 60))) {
+        const v = await db.query(`UPDATE bkk_orders SET status='void', gateway_note=coalesce(gateway_note || ' | ', '') || 'voided in Rezerv'
+          WHERE source='rezerv' AND source_ref=$1 AND status IN ('paid','refund') RETURNING id`, [own]);
+        if (v.rows.length) { warn(why('payVoided', own)); return { result: 'updated' }; }
+      }
+      return { skip: why('notMoney', clean(row.status, 40)) };
+    }
     const amt = st === 'refund' ? -Math.abs(Math.round(amount)) : Math.round(amount);
     let vat = 0;
     const vRaw = clean(row.vat, 40);
@@ -2711,22 +2747,47 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return { result: 'added' };
   }
 
-  // The paste importer's fields plus memberRezervId and start.
+  // Rezerv's pass states, and the "Cancel" column's yes. Order matters:
+  // "Inactive" says "active" too.
+  const PASS_WORDS = [
+    [/inactive|invalid|cancel|void|refund|suspend|terminat|deactiv|ยกเลิก|ระงับ/i, 'off'],
+    [/froz|freez|pause|on\s*hold|พัก/i, 'frozen'],
+    [/expir|ended|finish|used\s*up|หมดอายุ|หมดแล้ว/i, 'ended'],
+    [/active|start|current|valid|ใช้งาน|เริ่ม/i, 'on'],
+  ];
+  function passState(v) {
+    const s = String(v ?? '').trim();
+    if (!s) return null;
+    const hit = PASS_WORDS.find(([re]) => re.test(s));
+    return hit ? hit[1] : undefined;
+  }
+
+  // The paste importer's fields plus memberRezervId, start, Rezerv's pass id
+  // (rezervId), and Rezerv's status, cancel and freeze columns.
   async function importPass(db, row, ctx, warn) {
     row = { ...row, name: String(row.name || '').replace(/\s*\((renewed|staff)\)\s*/gi, ' ') };
     const planRaw = clean(row.plan, 80);
     const plan = IMPORT_PLANS.find(([re]) => re.test(planRaw));
     if (!plan) return { skip: why('badPlan', planRaw) };
+    const stRaw = clean(row.status, 40);
+    // A word we do not know is no status, as before the Status column was read.
+    let state = passState(stRaw);
+    if (state === undefined) { warn(why('passStatus', stRaw)); state = null; }
     const until = parseWhen(row.until);
-    if (!until) return { skip: why('badUntil', clean(row.until, 40)) };
+    if (!until) {
+      // Rezerv's "--": a package never started, and Rezerv says it is over. Nothing was held.
+      if ((state === 'ended' || state === 'off') && /^-*$/.test(clean(row.until, 40))) return { skip: why('neverStarted', stRaw) };
+      return { skip: why('badUntil', clean(row.until, 40)) };
+    }
     const sRaw = clean(row.start, 40);
-    const start = sRaw ? parseWhen(sRaw) : null;
-    if (sRaw && !start) return { skip: why('badStart', sRaw) };
+    const start = sRaw && !/^-+$/.test(sRaw) ? parseWhen(sRaw) : null;
+    if (sRaw && !/^-+$/.test(sRaw) && !start) return { skip: why('badStart', sRaw) };
     if (start && start.date > until.date) return { skip: why('startsAfterEnd') };
-    // A year sold since 21 Oct 2026 has no free month: one that runs a year
-    // or less is the 12-month package, not the old 13-month one.
+    // A year sold since 21 Oct 2026 has no free month: one that runs a year or
+    // less is the 12-month package. A name that says 13 months, or a free month,
+    // is what Rezerv sold, whatever its dates (a year cut short by hand).
     const code = plan[1] === 'unlim12' && start && (Date.parse(until.date) - Date.parse(start.date)) / 86400000 <= 366
-      ? 'unlim12m' : plan[1];
+      && !/13\s*months?|free\s*month/i.test(planRaw) ? 'unlim12m' : plan[1];
     const pr = await planProduct(db, code);
     if (!pr) return { skip: why('noPackage', code) };
     const total = pr.kind === 'credits' ? (pr.credits || 10) : null;
@@ -2739,20 +2800,69 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       left = Number(lm[1]);
       if (left > total) warn(why('leftOver', left, total));
     }
+
+    // Cancelled, stopped, or over in Rezerv while its end date is still to
+    // come: kept as history, never a pass that lets anyone in.
+    const cRaw = clean(row.cancelled, 40), conRaw = clean(row.cancelledOn, 40);
+    const cancelledOn = conRaw ? parseWhen(conRaw) : null;
+    const cancelled = !!cancelledOn || CI_YES.test(cRaw) || /^(cancell?ed|ยกเลิกแล้ว)$/i.test(cRaw);
+    const off = cancelled || state === 'off' || (state === 'ended' && until.date >= ctx.today);
+    const said = cancelled ? `cancelled${cancelledOn ? ' on ' + cancelledOn.date : ''}` : stRaw;
+    // A pause keeps Rezerv's own end date: Rezerv moved it out already. Paused
+    // today stays paused until staff unpause it here; a pause still to come is
+    // for staff to start on its day.
+    const freeze = [];
+    for (const k of ['frozenFrom', 'frozenUntil']) {
+      const raw = clean(row[k], 40), d = raw && !/^-+$/.test(raw) ? parseWhen(raw) : null;
+      if (raw && !/^-+$/.test(raw) && !d) warn(why('badFreeze', raw));
+      freeze.push(d ? d.date : null);
+    }
+    const [fFrom, fUntil] = freeze;
+    const later = fFrom && fFrom > ctx.today;
+    const frozen = !off && !later && (state === 'frozen' || (fFrom && fFrom <= ctx.today && (!fUntil || fUntil >= ctx.today)));
+    if (!off && later) warn(why('freezeLater', fFrom, fUntil || ''));
+    const status = off ? 'void' : frozen ? 'frozen' : 'active';
+    const note = ['moved from Rezerv', off ? `${said} in Rezerv` : null,
+      fFrom || fUntil ? `paused in Rezerv ${fFrom || '?'} to ${fUntil || '?'}` : null].filter(Boolean).join(' | ');
+
     const who = await importStudent(db, row, ctx, warn);
     if (who.skip) return who;
     const m = who.member;
     // As the paste importer did: an email or phone on the pass list fills a gap.
     if (!ctx.made) await fillMember(db, m, who.f, warn);
-    if ((await db.query('SELECT 1 FROM bkk_passes WHERE member_id=$1 AND product_id=$2 AND valid_until=$3',
-      [m.id, pr.id, until.date])).rows.length) return { result: 'matched' };
+    // Rezerv's own pass id first: a pause or extra days here move the end date.
+    const ref = importId(row.rezervId) || null;
+    const COLS = 'id, member_id, status, source, note, source_ref';
+    let had = ref ? (await db.query(`SELECT ${COLS} FROM bkk_passes WHERE source='rezerv' AND source_ref=$1`, [ref])).rows[0] : null;
+    if (had && had.member_id !== m.id) return { skip: why('idReused', ref, 'pass') };
+    // No pass id, or a pass that came over without one: the same package and
+    // end date, or Rezerv's own start date. Two pass ids are two passes.
+    if (!had) had = (await db.query(`SELECT ${COLS} FROM bkk_passes WHERE member_id=$1 AND product_id=$2
+        AND ($4::text IS NULL OR source_ref IS NULL)
+        AND (valid_until=$3 OR ($4::text IS NOT NULL AND source='rezerv' AND valid_from=$5::date))
+      ORDER BY valid_until=$3 DESC, id LIMIT 1`, [m.id, pr.id, until.date, ref, start ? start.date : null])).rows[0];
+    if (had) {
+      const tag = had.source === 'rezerv' ? had.source_ref || ref : null;
+      // Rezerv lists some passes twice, one copy "Inactive": the copy still in
+      // use wins, in either order. Never one staff voided here.
+      if (!off && had.status === 'void' && had.source === 'rezerv' && !/voided:/.test(had.note || '')) {
+        await db.query('UPDATE bkk_passes SET status=$2, frozen_from=$3, frozen_until=$4, note=$5, source_ref=$6 WHERE id=$1',
+          [had.id, status, later ? null : fFrom, later ? null : fUntil, note, tag]);
+        return { result: 'updated' };
+      }
+      if (tag !== had.source_ref) await db.query('UPDATE bkk_passes SET source_ref=$2 WHERE id=$1', [had.id, tag]);
+      return { result: 'matched' };
+    }
+    if (off && until.date >= ctx.today) warn(why('passOff', said));
     const from = start ? start.date
       : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
     await db.query(`INSERT INTO bkk_passes
-        (member_id,product_id,order_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,note,source)
-      VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,'moved from Rezerv','rezerv')`,
+        (member_id,product_id,order_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,note,source,
+         status,frozen_from,frozen_until,source_ref)
+      VALUES ($1,$2,NULL,$3,$4,$5,$6,$7,$8,$9,$10,'rezerv',$11,$12,$13,$14)`,
       [m.id, pr.id, pr.kind, total, left != null ? Math.max(0, total - left) : 0,
-       pr.daily_cap, pr.valid_days, from, until.date]);
+       pr.daily_cap, pr.valid_days, from, until.date, note, status,
+       later ? null : fFrom, later ? null : fUntil, ref]);
     return { result: 'added' };
   }
 

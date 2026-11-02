@@ -467,12 +467,13 @@
     rNotSeenH: 'Not seen for 14 days', rNotSeenHelp: 'Has a pass they can use, but no class in the last 14 days. Counted from today. Send them a message.',
     neverCame: 'never came',
     ciTitle: 'Move everything from Rezerv (CSV files)',
-    ciHelp: 'Export each list from Rezerv as a CSV file. Import Students first, then Passes, Visits and Payments. Check shows what will happen and saves nothing. Running the same file again adds nothing twice.',
+    ciHelp: 'Export each list from Rezerv as a CSV file. Import Students first, then Passes (the memberships file, then the packages file), Visits and Payments, one file per year. Columns and date order are matched for you. Check shows what will happen and saves nothing. Running the same file again adds nothing twice.',
     ciKind: 'What is in the file?', ciFile: 'CSV file',
     kind_members: 'Students', kind_visits: 'Visits (classes booked or attended)', kind_payments: 'Payments',
-    kind_passes: 'Passes (packages students hold now)',
+    kind_passes: 'Passes (Rezerv memberships and packages)',
     ciRead: (f, n, h) => `${f}: ${n} rows, headings on row ${h}`,
     ciEmpty: 'No rows found in this file.', ciBadFile: 'Could not read this file.',
+    ciVoidFile: 'This is Rezerv\'s list of voided or refunded payments. They do not count as money, so there is nothing to import. Do not upload this file.',
     ciExcel: 'This is an Excel file. In Excel choose Save As, then "CSV UTF-8", and pick that file here.',
     ciMapH: 'Match the columns',
     ciMapHelp: 'We matched what we could. Check each line and pick the right column where needed. Columns not picked here are never sent: no birthdays, addresses or card numbers.',
@@ -493,11 +494,15 @@
     ciPastNote: n => `Past classes still marked "booked" in the file, not attended: ${n}. They stay booked and do not count as classes practised. If Rezerv never marked who came, tick the box above and run it again.`,
     ciBatchNote: 'A check looks at each 1,000 rows on its own, so a student made from a name in an earlier part shows as new again. The real import does not do this.',
     f_rezervId: 'Rezerv customer ID', f_visits_rezervId: 'Booking ID', f_payments_rezervId: 'Payment ID',
+    f_passes_rezervId: 'Pass ID in Rezerv (Membership Number, or Transaction Id for packages)',
     f_memberRezervId: 'Customer ID', f_name: 'Name', f_lastName: 'Last name (added after the name)', f_email: 'Email',
     f_phone: 'Phone', f_joinedOn: 'Joined on', f_date: 'Date', f_visits_date: 'Class date', f_payments_date: 'Payment date',
     f_time: 'Class time', f_className: 'Class', f_status: 'Status', f_checkedInAt: 'Checked in at', f_amount: 'Amount paid',
     f_item: 'Item', f_method: 'Paid by', f_vat: 'VAT', f_note: 'Note', f_plan: 'Package', f_until: 'End date',
     f_start: 'Start date', f_classesLeft: 'Classes left', f_payments_status: 'Payment status (paid, refund, failed…)',
+    f_phoneCode: 'Phone country code (put before the phone)', f_passes_status: 'Status in Rezerv (active, expired, inactive…)',
+    f_cancelled: 'Cancelled', f_cancelledOn: 'Cancelled on', f_frozenFrom: 'Paused from', f_frozenUntil: 'Paused until',
+    ciMonthFirst: cols => `${cols}: the dates are written month first (12/31/2026), as Rezerv writes payment dates. They are read that way.`,
   });
   Object.assign(STR.en.words, {
     attended: 'came', booked: 'booked', past: 'booked, never checked in', noshow: 'no-show', cancelled: 'cancelled',
@@ -537,12 +542,13 @@
     rNotSeenH: 'ไม่ได้มา 14 วัน', rNotSeenHelp: 'มีแพ็กเกจที่ใช้ได้ แต่ไม่ได้มาเรียนใน 14 วันล่าสุด นับจากวันนี้ ลองส่งข้อความหา',
     neverCame: 'ยังไม่เคยมา',
     ciTitle: 'ย้ายข้อมูลทั้งหมดจาก Rezerv (ไฟล์ CSV)',
-    ciHelp: 'ดาวน์โหลดแต่ละรายการจาก Rezerv เป็นไฟล์ CSV นำเข้านักเรียนก่อน แล้วจึงแพ็กเกจ การเข้าเรียน และการชำระเงิน ปุ่มตรวจสอบจะแสดงผลที่จะเกิดขึ้นโดยยังไม่บันทึก นำเข้าไฟล์เดิมซ้ำได้ ไม่มีข้อมูลซ้ำ',
+    ciHelp: 'ดาวน์โหลดแต่ละรายการจาก Rezerv เป็นไฟล์ CSV นำเข้านักเรียนก่อน แล้วจึงแพ็กเกจ (ไฟล์ memberships ก่อน แล้วไฟล์ packages) การเข้าเรียน และการชำระเงิน ทีละไฟล์ต่อปี ระบบจับคู่คอลัมน์และลำดับวันที่ให้เอง ปุ่มตรวจสอบจะแสดงผลที่จะเกิดขึ้นโดยยังไม่บันทึก นำเข้าไฟล์เดิมซ้ำได้ ไม่มีข้อมูลซ้ำ',
     ciKind: 'ในไฟล์คืออะไร', ciFile: 'ไฟล์ CSV',
     kind_members: 'นักเรียน', kind_visits: 'การเข้าเรียน (คลาสที่จองหรือมาเรียน)', kind_payments: 'การชำระเงิน',
-    kind_passes: 'แพ็กเกจ (ที่นักเรียนถืออยู่ตอนนี้)',
+    kind_passes: 'แพ็กเกจ (memberships และ packages ใน Rezerv)',
     ciRead: (f, n, h) => `${f}: ${n} แถว หัวตารางอยู่แถวที่ ${h}`,
     ciEmpty: 'ไม่พบข้อมูลในไฟล์นี้', ciBadFile: 'อ่านไฟล์นี้ไม่ได้',
+    ciVoidFile: 'ไฟล์นี้คือรายการการชำระเงินที่ถูกยกเลิกหรือคืนเงินใน Rezerv รายการเหล่านี้ไม่นับเป็นเงินเข้า จึงไม่มีอะไรต้องนำเข้า ไม่ต้องอัปโหลดไฟล์นี้',
     ciExcel: 'นี่คือไฟล์ Excel ใน Excel ให้เลือก Save As แล้วเลือก "CSV UTF-8" แล้วเลือกไฟล์นั้นที่นี่',
     ciMapH: 'จับคู่คอลัมน์',
     ciMapHelp: 'ระบบจับคู่ให้เท่าที่ทำได้ ตรวจทีละบรรทัด และเลือกคอลัมน์ที่ถูกต้องถ้าจำเป็น คอลัมน์ที่ไม่ได้เลือกจะไม่ถูกส่ง (ไม่มีวันเกิด ที่อยู่ หรือเลขบัตร)',
@@ -563,11 +569,15 @@
     ciPastNote: n => `${n} คลาสที่ผ่านไปแล้วในไฟล์ยังเป็น "จอง" ไม่ใช่ "มาเรียน" ระบบเก็บไว้เป็นจอง และไม่นับเป็นครั้งที่มาฝึก ถ้า Rezerv ไม่เคยบันทึกว่าใครมา ให้ติ๊กช่องด้านบนแล้วทำอีกครั้ง`,
     ciBatchNote: 'การตรวจสอบดูทีละ 1,000 แถว นักเรียนที่สร้างจากชื่อในส่วนก่อนหน้าจึงขึ้นเป็นนักเรียนใหม่อีก ตอนนำเข้าจริงจะไม่เป็นแบบนี้',
     f_rezervId: 'รหัสลูกค้าใน Rezerv', f_visits_rezervId: 'รหัสการจอง', f_payments_rezervId: 'รหัสการชำระเงิน',
+    f_passes_rezervId: 'รหัสแพ็กเกจใน Rezerv (Membership Number หรือ Transaction Id ของแพ็กเกจ)',
     f_memberRezervId: 'รหัสลูกค้า', f_name: 'ชื่อ', f_lastName: 'นามสกุล (ต่อท้ายชื่อ)', f_email: 'อีเมล',
     f_phone: 'เบอร์โทร', f_joinedOn: 'วันที่สมัคร', f_date: 'วันที่', f_visits_date: 'วันที่เรียน', f_payments_date: 'วันที่ชำระ',
     f_time: 'เวลาเรียน', f_className: 'คลาส', f_status: 'สถานะ', f_checkedInAt: 'เวลาเช็คอิน', f_amount: 'ยอดที่ชำระ',
     f_item: 'รายการ', f_method: 'ชำระโดย', f_vat: 'VAT', f_note: 'หมายเหตุ', f_plan: 'แพ็กเกจ', f_until: 'วันหมดอายุ',
     f_start: 'วันเริ่ม', f_classesLeft: 'ครั้งที่เหลือ', f_payments_status: 'สถานะการชำระ (ชำระแล้ว คืนเงิน ไม่สำเร็จ…)',
+    f_phoneCode: 'รหัสประเทศ (ใส่หน้าเบอร์โทร)', f_passes_status: 'สถานะใน Rezerv (ใช้งาน หมดอายุ ไม่ใช้งาน…)',
+    f_cancelled: 'ยกเลิก', f_cancelledOn: 'วันที่ยกเลิก', f_frozenFrom: 'พักตั้งแต่', f_frozenUntil: 'พักถึง',
+    ciMonthFirst: cols => `${cols}: วันที่เขียนแบบเดือนก่อนวัน (12/31/2026) ตามที่ Rezerv เขียนวันที่ชำระเงิน ระบบอ่านแบบนั้นให้แล้ว`,
     // The server's skip reasons and notes, by code (English comes from the server).
     ci_noName: 'ไม่มีชื่อ',
     ci_sharePhone: (n, p) => `นักเรียน ${n} คนใช้เบอร์ ${p} เดียวกัน: เพิ่มอีเมล`,
@@ -585,11 +595,17 @@
     ci_noSlot: (time, d) => `ไม่มีคลาสในตาราง เวลา ${time || '(ไม่มีเวลา)'} ${ymdLong(d, true)}: จองให้นักเรียนเอง`,
     ci_moonDay: d => `${ymdLong(d, true)} เป็นวัน Moon day: ชาลาปิด`,
     ci_classOff: (title, d) => `คลาส ${title} ${ymdLong(d, true)} ถูกยกเลิก`,
-    ci_idReused: (id, what) => `รหัส Rezerv ${id} ใช้กับ${what === 'payment' ? 'การชำระเงิน' : 'การเข้าเรียน'}รายการอื่นแล้ว: เลือกคอลัมน์รหัสที่ไม่ซ้ำกันในแต่ละแถว หรือไม่ต้องเลือก`,
+    ci_idReused: (id, what) => `รหัส Rezerv ${id} ใช้กับ${what === 'payment' ? 'การชำระเงิน' : what === 'pass' ? 'แพ็กเกจ' : 'การเข้าเรียน'}รายการอื่นแล้ว: เลือกคอลัมน์รหัสที่ไม่ซ้ำกันในแต่ละแถว หรือไม่ต้องเลือก`,
     ci_badAmount: v => `อ่านยอดเงิน "${v}" ไม่ได้`,
     ci_payStatus: v => `อ่านสถานะการชำระ "${v}" ไม่ได้`,
     ci_notMoney: v => `สถานะการชำระ "${v}": ไม่มีเงินเข้า จึงไม่บันทึก`,
-    ci_badPlan: v => `อ่านแพ็กเกจ "${v}" ไม่ได้`,
+    ci_badPlan: v => `แพ็กเกจ "${v}" ไม่ใช่แพ็กเกจของเรา (เวิร์กช็อป หรืออ่านไม่ได้): ไม่เก็บเป็นแพ็กเกจ`,
+    ci_passStatus: v => `อ่านสถานะแพ็กเกจ "${v}" ไม่ได้: ถือว่าไม่มีสถานะ`,
+    ci_neverStarted: v => `ยังไม่เคยเริ่มใช้ และ Rezerv เป็น ${v}: ไม่มีอะไรต้องเก็บ`,
+    ci_passOff: v => `Rezerv เป็น ${v}: เก็บเป็นประวัติ ใช้เข้าเรียนไม่ได้`,
+    ci_badFreeze: v => `อ่านวันที่พัก "${v}" ไม่ได้: ไม่ได้ใส่`,
+    ci_freezeLater: (a, b) => `Rezerv มีการพักแพ็กเกจตั้งแต่ ${ymdLong(a, true)}${b ? ' ถึง ' + ymdLong(b, true) : ''}: กดพักในระบบนี้ในวันนั้น`,
+    ci_payVoided: id => `การชำระเงิน ${id} ถูกยกเลิกใน Rezerv แล้ว: ไม่นับเป็นเงินเข้าอีก`,
     ci_badUntil: v => `อ่านวันหมดอายุ "${v}" ไม่ได้`,
     ci_badStart: v => `อ่านวันเริ่ม "${v}" ไม่ได้`,
     ci_startsAfterEnd: 'วันเริ่มอยู่หลังวันหมดอายุ',
@@ -1801,25 +1817,28 @@
   // a birthday, an address or a card number in the file never leaves this page.
   const AL = {
     customer: ['customer id', 'member id', 'client id', 'user id', 'customer no', 'customer number', 'member no',
-      'member number', 'rezerv id', 'รหัสลูกค้า', 'รหัสสมาชิก'],
+      'member number', 'rezerv id', 'rezervpass id', 'รหัสลูกค้า', 'รหัสสมาชิก'],
     name: ['name', 'full name', 'customer name', 'member name', 'client name', 'student name', 'customer', 'member',
       'client', 'student', 'first name', 'firstname', 'given name', 'ชื่อ', 'ชื่อลูกค้า', 'ชื่อสมาชิก', 'ชื่อนามสกุล', 'ชื่อจริง'],
     lastName: ['last name', 'lastname', 'surname', 'family name', 'นามสกุล'],
     email: ['email', 'e-mail', 'email address', 'e-mail address', 'mail', 'อีเมล', 'อีเมล์'],
     phone: ['phone', 'mobile', 'phone number', 'mobile number', 'mobile phone', 'tel', 'telephone', 'contact number',
       'เบอร์โทร', 'เบอร์โทรศัพท์', 'โทรศัพท์', 'มือถือ', 'เบอร์มือถือ', 'เบอร์'],
+    // Rezerv's students and payments keep the country code apart ("66" and "0812345678").
+    phoneCode: ['mobile code', 'phone code', 'country code', 'dial code', 'calling code', 'รหัสประเทศ'],
   };
-  const WHO = { memberRezervId: AL.customer, name: AL.name, lastName: AL.lastName, email: AL.email, phone: AL.phone };
+  const WHO = { memberRezervId: AL.customer, name: AL.name, lastName: AL.lastName, email: AL.email, phone: AL.phone,
+    phoneCode: AL.phoneCode };
   const CI_KINDS = {
     members: { need: ['name'], fields: { rezervId: ['id', ...AL.customer], name: AL.name, lastName: AL.lastName,
-      email: AL.email, phone: AL.phone,
-      joinedOn: ['joined', 'joined on', 'join date', 'date joined', 'member since', 'registered', 'registration date',
+      email: AL.email, phone: AL.phone, phoneCode: AL.phoneCode,
+      joinedOn: ['joined', 'joined on', 'joined date', 'join date', 'date joined', 'member since', 'registered', 'registration date',
         'sign up date', 'signup date', 'created', 'created at', 'created date', 'วันที่สมัคร', 'สมัครเมื่อ', 'วันที่ลงทะเบียน'] } },
     visits: { need: ['date'], who: true, fields: {
-      rezervId: ['booking id', 'reservation id', 'booking ref', 'booking reference', 'booking number', 'booking no', 'id',
+      rezervId: ['booking id', 'reservation id', 'booking ref', 'booking ref/no.', 'booking reference', 'booking number', 'booking no', 'id',
         'รหัสการจอง', 'เลขที่การจอง'],
       ...WHO,
-      date: ['class date', 'session date', 'date', 'booking date', 'class start', 'datetime', 'date time', 'start',
+      date: ['class date', 'session date', 'date of service', 'service date', 'date', 'booking date', 'class start', 'datetime', 'date time', 'start',
         'วันที่เรียน', 'วันที่', 'วันที่จอง'],
       time: ['time', 'start time', 'class time', 'session time', 'เวลา', 'เวลาเริ่ม', 'เวลาเรียน'],
       className: ['class', 'class name', 'service', 'service name', 'session', 'session name', 'activity', 'program',
@@ -1833,9 +1852,10 @@
       ...WHO,
       date: ['payment date', 'paid at', 'paid on', 'date paid', 'transaction date', 'purchase date', 'date', 'created',
         'created at', 'วันที่ชำระ', 'วันที่ชำระเงิน', 'วันที่จ่าย', 'วันที่'],
-      amount: ['amount', 'amount paid', 'paid', 'total', 'total paid', 'grand total', 'net', 'price', 'ยอดเงิน', 'ยอดชำระ',
+      // Rezerv's "Amount" is before VAT; "Paid Amount" is what the student paid.
+      amount: ['paid amount', 'amount paid', 'total paid', 'amount', 'paid', 'total', 'grand total', 'net', 'price', 'ยอดเงิน', 'ยอดชำระ',
         'จำนวนเงิน', 'ยอดรวม', 'ราคา', 'รวม'],
-      item: ['item', 'item name', 'package', 'package name', 'product', 'product name', 'description', 'plan', 'membership',
+      item: ['linked item', 'item', 'item name', 'package', 'package name', 'product', 'product name', 'description', 'plan', 'membership',
         'pass', 'service', 'รายการ', 'แพ็กเกจ', 'แพ็คเกจ', 'สินค้า'],
       method: ['method', 'payment method', 'payment type', 'paid by', 'paid with', 'channel', 'payment channel', 'gateway',
         'วิธีชำระ', 'วิธีชำระเงิน', 'ช่องทางชำระเงิน', 'ชำระโดย'],
@@ -1844,18 +1864,25 @@
       status: ['status', 'payment status', 'transaction status', 'payment state', 'state', 'transaction type',
         'สถานะ', 'สถานะการชำระ', 'สถานะการชำระเงิน', 'type'] } },
     passes: { need: ['plan', 'until'], who: true, fields: {
+      rezervId: ['membership number', 'membership no', 'membership id', 'transaction id', 'pass id', 'package id'],
       ...WHO,
-      plan: ['plan', 'package', 'package name', 'membership', 'pass', 'product', 'item', 'แพ็กเกจ', 'แพ็คเกจ'],
+      plan: ['plan', 'package', 'packages', 'package name', 'membership', 'pass', 'product', 'item', 'แพ็กเกจ', 'แพ็คเกจ'],
       until: ['until', 'valid until', 'end date', 'end', 'expiry', 'expiry date', 'expires', 'expires on',
         'expiration date', 'expiration', 'วันหมดอายุ', 'หมดอายุ', 'ใช้ได้ถึง'],
       start: ['start', 'start date', 'valid from', 'from', 'activated', 'activation date', 'วันเริ่ม', 'วันที่เริ่ม', 'เริ่ม'],
       classesLeft: ['classes left', 'credits left', 'remaining', 'remaining classes', 'remaining credits', 'sessions left',
-        'balance', 'ครั้งที่เหลือ', 'คงเหลือ', 'เหลือ'] } },
+        'unutilised credit balance', 'unutilized credit balance', 'remaining class credits', 'credit balance',
+        'balance', 'ครั้งที่เหลือ', 'คงเหลือ', 'เหลือ'],
+      status: ['status', 'package status', 'membership status', 'pass status', 'สถานะ'],
+      cancelled: ['cancel', 'cancelled', 'canceled', 'ยกเลิก'],
+      cancelledOn: ['cancelled date', 'canceled date', 'cancelled on', 'cancel date', 'cancellation date', 'วันที่ยกเลิก'],
+      frozenFrom: ['freeze start date', 'freeze start', 'frozen from', 'paused from', 'pause start', 'พักตั้งแต่'],
+      frozenUntil: ['freeze end date', 'freeze end', 'frozen until', 'paused until', 'pause end', 'พักถึง'] } },
   };
   const nh = s => String(s ?? '').normalize('NFC').toLowerCase().replace(/[\s\-_./:()#*'"]+/g, '');
   const CI_ALL = new Set(Object.values(CI_KINDS).flatMap(k => Object.values(k.fields).flat()).map(nh));
   const CI_BATCH = 1000;
-  const CI = { kind: 'members', file: '', rows: [], heads: [], headRow: 0, map: {}, pastBooked: false,
+  const CI = { kind: 'members', file: '', rows: [], heads: [], headRow: 0, map: {}, mdy: new Set(), pastBooked: false,
     busy: false, prog: '', msg: '', result: null, checkedSig: null };
   const fieldName = f => STR.en[`f_${CI.kind}_${f}`] ? T(`f_${CI.kind}_${f}`) : T('f_' + f);
 
@@ -1904,16 +1931,67 @@
     }
     return map;
   }
-  // One file row as the server reads it: only mapped fields, trimmed, no blanks.
+  // A date written with numbers can be either way round: 03/15/2024 is month
+  // first. Rezerv's payment export writes "Paid On" month first, its other
+  // exports day first, so each date column is judged on the whole file.
+  const CI_DATES = { members: ['joinedOn'], visits: ['date', 'checkedInAt'], payments: ['date'],
+    passes: ['until', 'start', 'cancelledOn', 'frozenFrom', 'frozenUntil'] };
+  const SLASHED = /^(\d{1,2})([/.-])(\d{1,2})\2(\d{2}|\d{4})(?=$|[\sT,])/;
+  // Month first when some second number is over 12 and no first one is. A file
+  // that cannot tell (only days up to the 12th) is day first, except Rezerv's
+  // payment export, known by its "Issued On" column.
+  function monthFirst() {
+    const out = new Set(), rezervPay = CI.heads.some(h => nh(h) === 'issuedon');
+    for (const f of CI_DATES[CI.kind]) {
+      if (CI.map[f] == null) continue;
+      let seen = 0, dayOver = 0, monthOver = 0;
+      for (const r of CI.rows) {
+        const m = String(r.cells[CI.map[f]] ?? '').trim().match(SLASHED);
+        if (!m) continue;
+        seen++;
+        if (+m[1] > 12) dayOver++;
+        if (+m[3] > 12) monthOver++;
+      }
+      if (seen && !dayOver && (monthOver || rezervPay)) out.add(f);
+    }
+    return out;
+  }
+  const ciAutoMap = () => { CI.map = autoMap(CI.kind, CI.heads); CI.mdy = monthFirst(); };
+  // One file row as the server reads it: only mapped fields, trimmed, no blanks,
+  // dates day first.
   function rowFor(r) {
     const o = {}, val = i => String(r.cells[i] ?? '').trim();
     for (const f of Object.keys(CI_KINDS[CI.kind].fields)) {
-      if (f === 'lastName' || CI.map[f] == null) continue;
+      if (f === 'lastName' || f === 'phoneCode' || CI.map[f] == null) continue;
       const v = val(CI.map[f]);
-      if (v) o[f] = v;
+      if (v) o[f] = CI.mdy.has(f) ? v.replace(SLASHED, (x, mo, sep, d, y) => `${d}${sep}${mo}${sep}${y}`) : v;
     }
     if (CI.map.lastName != null && val(CI.map.lastName)) o.name = [o.name, val(CI.map.lastName)].filter(Boolean).join(' ');
+    // "+66 812345678", as Rezerv's other exports write it. A phone with its own + stays as it is.
+    const code = CI.map.phoneCode != null ? val(CI.map.phoneCode).replace(/\D/g, '') : '';
+    if (o.phone && code && !o.phone.startsWith('+')) o.phone = `+${code} ${o.phone.replace(/^0(?=\d)/, '')}`;
     return o;
+  }
+  // Rezerv's lists of voided and refunded payments are not money: no column
+  // picked by hand may send them as payments.
+  const NOT_SALES = /^(date(voided|refunded)on|(voided|refunded)transactionid|reasonfor(void|refund))$/;
+  // The headings are the row, of the first ten, that names the most fields we
+  // know; the columns are matched for the kind chosen. True, or why not.
+  function ciRead(text) {
+    const filled = parseCsv(text).filter(r => r.cells.some(c => c.trim()));
+    if (filled.slice(0, 10).some(r => r.cells.some(c => NOT_SALES.test(nh(c))))) return 'ciVoidFile';
+    let head = filled[0], best = 0;
+    for (const r of filled.slice(0, 10)) {
+      const k = r.cells.filter(c => CI_ALL.has(nh(c))).length;
+      if (k > best) { best = k; head = r; }
+    }
+    const rows = head ? filled.filter(r => r.n > head.n) : [];
+    if (!rows.length) return 'ciEmpty';
+    CI.headRow = head.n;
+    CI.heads = head.cells.map((c, i) => c.trim() || `#${i + 1}`);
+    CI.rows = rows;
+    ciAutoMap();
+    return true;
   }
   // What makes a row with no Rezerv ID that row, as the server tells them apart.
   const CI_SAME = { visits: ['memberRezervId', 'email', 'phone', 'name', 'date', 'time', 'className'],
@@ -1945,30 +2023,23 @@
   const ciReset = () => { CI.result = null; CI.prog = ''; };
   function paintImport() { const b = $('#ciBox'); if (b) b.innerHTML = importInner(); }
 
-  window.ciKind = k => { if (CI.busy || !CI_KINDS[k]) return; CI.kind = k; CI.map = autoMap(k, CI.heads); ciReset(); paintImport(); };
-  window.ciMap = (f, v) => { if (CI.busy) return; if (v === '') delete CI.map[f]; else CI.map[f] = Number(v); ciReset(); paintImport(); };
+  window.ciKind = k => { if (CI.busy || !CI_KINDS[k]) return; CI.kind = k; ciAutoMap(); ciReset(); paintImport(); };
+  window.ciMap = (f, v) => {
+    if (CI.busy) return;
+    if (v === '') delete CI.map[f]; else CI.map[f] = Number(v);
+    CI.mdy = monthFirst(); ciReset(); paintImport();
+  };
   window.ciPast = on => { if (CI.busy) return; CI.pastBooked = !!on; ciReset(); paintImport(); };
   window.ciPick = async input => {
     const f = input.files && input.files[0];
     if (!f || CI.busy) return;
-    Object.assign(CI, { file: f.name, rows: [], heads: [], headRow: 0, map: {}, msg: '', checkedSig: null });
+    Object.assign(CI, { file: f.name, rows: [], heads: [], headRow: 0, map: {}, mdy: new Set(), msg: '', checkedSig: null });
     ciReset();
     let text;
     try { text = decodeFile(await f.arrayBuffer()); } catch { CI.msg = T('ciBadFile'); paintImport(); return; }
     if (text == null) { CI.msg = T('ciExcel'); paintImport(); return; }
-    const filled = parseCsv(text).filter(r => r.cells.some(c => c.trim()));
-    // The headings are the row, of the first ten, that names the most fields we know.
-    let head = filled[0], best = 0;
-    for (const r of filled.slice(0, 10)) {
-      const k = r.cells.filter(c => CI_ALL.has(nh(c))).length;
-      if (k > best) { best = k; head = r; }
-    }
-    const rows = head ? filled.filter(r => r.n > head.n) : [];
-    if (!rows.length) { CI.msg = T('ciEmpty'); paintImport(); return; }
-    CI.headRow = head.n;
-    CI.heads = head.cells.map((c, i) => c.trim() || `#${i + 1}`);
-    CI.rows = rows;
-    CI.map = autoMap(CI.kind, CI.heads);
+    const read = ciRead(text);
+    if (read !== true) CI.msg = T(read);
     paintImport();
   };
 
@@ -1987,7 +2058,8 @@
         <select id="cm_${f}" onchange="ciMap('${f}',this.value)" ${dis}><option value="">${esc(T('ciNotUsed'))}</option>
           ${CI.heads.map((c, i) => `<option value="${i}" ${CI.map[f] === i ? 'selected' : ''}>${esc(CI.heads.indexOf(c) === i ? c : `${c} (${i + 1})`)}</option>`).join('')}
         </select>`).join('')}</div>`;
-    const cols = fields.filter(f => f !== 'lastName' && (CI.map[f] != null || (f === 'name' && CI.map.lastName != null)));
+    if (CI.mdy.size) h += `<p class="muted">${esc(T('ciMonthFirst', [...CI.mdy].map(f => CI.heads[CI.map[f]]).join(', ')))}</p>`;
+    const cols = fields.filter(f => f !== 'lastName' && f !== 'phoneCode' && (CI.map[f] != null || (f === 'name' && CI.map.lastName != null)));
     h += `<p style="margin-bottom:4px"><b>${T('ciPreviewH')}</b></p>
       ${tbl([[T('thRow'), 'n'], ...cols.map(f => [fieldName(f)])], CI.rows.slice(0, 5).map(r => {
         const o = rowFor(r);
@@ -1997,7 +2069,7 @@
       <input type="checkbox" style="width:auto;margin-top:4px" ${CI.pastBooked ? 'checked' : ''} onchange="ciPast(this.checked)" ${dis}>
       <span>${esc(T('ciPastBooked'))}</span></label></p>`;
     const miss = K.need.filter(f => CI.map[f] == null);
-    const noWho = K.who && !Object.keys(WHO).some(f => CI.map[f] != null);
+    const noWho = K.who && !Object.keys(WHO).some(f => f !== 'phoneCode' && CI.map[f] != null);
     if (miss.length) h += `<p class="warnline">${esc(T('ciNeed', miss.map(fieldName).join(', ')))}</p>`;
     if (noWho) h += `<p class="warnline">${esc(T('ciNeedWho'))}</p>`;
     const ready = !miss.length && !noWho, checked = CI.checkedSig === ciSig();
