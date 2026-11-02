@@ -393,6 +393,12 @@
     background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
   .calsw button[aria-pressed="true"]{background:var(--plum);border-color:var(--plum);color:var(--on-dark)}
   #dayList{scroll-margin-top:64px}
+  /* The month's printed timetable (the same poster as Instagram), above its calendar. */
+  .ttp{margin:0 0 16px}
+  .ttp img{display:block;width:100%;height:auto;border-radius:var(--radius)}
+  .ttp figcaption{margin-top:8px;font-size:14px}
+  .ttp figcaption a{color:var(--plum);font-weight:700}
+  @media (min-width:700px){ .ttp{max-width:420px} }
   .cls[data-cls]{cursor:pointer}
   .cls .open{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
   .cls .open:hover{text-decoration:underline}
@@ -789,6 +795,7 @@
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const baht = n => '฿' + Number(n).toLocaleString('en-US');
   let MOON = {}, CLASSES = [], PRODUCTS = [], SURCHARGE = 0, VAT = 0, LOADED = false;
+  let POSTERS = {};                     // { 'YYYY-MM': ['en','th'] } from /img/timetable/posters.json
   // Storage can be blocked (privacy settings, some in-app browsers): then nobody is signed in.
   const myCode = () => { try { return localStorage.getItem('aybkk_member') || ''; } catch (_) { return ''; } };
 
@@ -1321,6 +1328,7 @@
   // Timetable: month and week views, what this student booked, and the class view (29 Oct 2026).
   Object.assign(STR.en, {
     calView: 'Calendar view', viewMonth: 'Month', viewWeek: 'Week', prev: 'Previous', next: 'Next',
+    posterSave: 'Save the poster', posterAlt: m => `AYBKK timetable, ${m}`,
     booked: 'Booked', bookedByYou: 'Booked by you', youBooked: 'You are booked', notBooked: 'Not booked yet',
     cancelRule: h => `Cancel at least ${h} hours before class to get your credit back.`,
     back: 'Back', teacherL: 'Teacher', online: 'online', mins: n => `${n} min`,
@@ -1331,6 +1339,7 @@
   });
   Object.assign(STR.th, {
     calView: 'มุมมองปฏิทิน', viewMonth: 'เดือน', viewWeek: 'สัปดาห์', prev: 'ก่อนหน้า', next: 'ถัดไป',
+    posterSave: 'บันทึกโปสเตอร์', posterAlt: m => `ตารางเรียน AYBKK ${m}`,
     booked: 'จองแล้ว', bookedByYou: 'คลาสที่คุณจอง', youBooked: 'คุณจองคลาสนี้แล้ว', notBooked: 'ยังไม่ได้จอง',
     cancelRule: h => `ยกเลิกล่วงหน้าอย่างน้อย ${h} ชั่วโมงก่อนคลาส เพื่อไม่เสียสิทธิ์`,
     back: 'กลับ', teacherL: 'ครู', online: 'ออนไลน์', mins: n => `${n} นาที`,
@@ -1341,6 +1350,7 @@
   });
   Object.assign(STR.zh, {
     calView: '日历视图', viewMonth: '月', viewWeek: '周', prev: '往前', next: '往后',
+    posterSave: '保存海报', posterAlt: m => `AYBKK 课程表，${m}`,
     booked: '已预约', bookedByYou: '你已预约', youBooked: '你已预约这节课', notBooked: '还没有预约',
     cancelRule: h => `至少提前${h}小时取消，课时才会退回。`,
     back: '返回', teacherL: '老师', online: '线上', mins: n => `${n} 分钟`,
@@ -1351,6 +1361,7 @@
   });
   Object.assign(STR.ru, {
     calView: 'Вид календаря', viewMonth: 'Месяц', viewWeek: 'Неделя', prev: 'Раньше', next: 'Дальше',
+    posterSave: 'Сохранить постер', posterAlt: m => `Расписание AYBKK, ${m}`,
     booked: 'Вы записаны', bookedByYou: 'Ваши записи', youBooked: 'Вы записаны', notBooked: 'Вы ещё не записаны',
     cancelRule: h => `Отмените запись минимум за ${h} ч до начала, чтобы сохранить занятие.`,
     back: 'Назад', teacherL: 'Учитель', online: 'онлайн', mins: n => `${n} мин`,
@@ -1683,6 +1694,11 @@
 
   const SCHEDULE_URL = '/api/bkk/schedule?days=62';
   async function load() {
+    // The posters are a bonus: the timetable never waits for them or fails with them.
+    fetch('/img/timetable/posters.json').then(r => r.ok ? r.json() : {}).catch(() => ({})).then(m => {
+      POSTERS = m && typeof m === 'object' ? m : {};
+      if (LOADED && current === 'schedule' && !OPEN) renderSchedule();
+    });
     try {
       const [s, p] = await Promise.all([
         fetch(SCHEDULE_URL).then(r => r.json()),
@@ -1968,13 +1984,28 @@
     const my = mine();
     const sw = `<div class="calsw" role="group" aria-label="${esc(t('calView'))}">${['month', 'week'].map(v =>
       `<button type="button" data-act="view" data-v="${v}" aria-pressed="${CALVIEW === v}">${esc(t(v === 'month' ? 'viewMonth' : 'viewWeek'))}</button>`).join('')}</div>`;
-    $('#view').innerHTML = sw + (CALVIEW === 'week' ? weekCal(has, today, my) : monthCal(has, today, my)) + dayList(my);
+    const cal = CALVIEW === 'week' ? weekCal(has, today, my) : monthCal(has, today, my);
+    $('#view').innerHTML = (CALVIEW === 'month' ? posterBox(calMonth) : '') + sw + cal + dayList(my);
     if (CALVIEW === 'week') {
       // Phones scroll the week sideways: start at the chosen day, or today.
       const box = $('#view .wkbox');
       const col = box.querySelector(`[data-col="${selDate}"]`) || box.querySelector(`[data-col="${today}"]`);
       box.scrollLeft = col ? Math.max(0, col.offsetLeft - 8) : 0;
     }
+  }
+  // The poster for the month on screen, in the reader's language, else English.
+  function posterBox(m) {
+    const langs = Array.isArray(POSTERS[m]) ? POSTERS[m].filter(l => /^[a-z]{2}$/.test(l)) : [];
+    if (!/^\d{4}-\d{2}$/.test(m || '') || !langs.length) return '';
+    const lang = langs.includes(LANG) ? LANG : langs.includes('en') ? 'en' : langs[0];
+    const src = `/img/timetable/${m}-${lang}.jpg`;
+    let label = m;
+    try {
+      label = new Date(m + '-15T12:00:00Z').toLocaleDateString(LOCALE[LANG] || 'en-GB', { timeZone: 'UTC', month: 'long', year: 'numeric' });
+    } catch (_) {}
+    return `<figure class="ttp"><a href="${src}" target="_blank" rel="noopener"><img src="${src}" width="1080" height="1920"
+      loading="lazy" decoding="async" alt="${esc(t('posterAlt', label))}"></a>
+      <figcaption><a href="${src}" download="AYBKK-timetable-${m}-${lang}.jpg">${esc(t('posterSave'))}</a></figcaption></figure>`;
   }
   window.pickDay = iso => { selDate = iso; renderSchedule(); };
   window.calGo = m => { calMonth = m; renderSchedule(); };
