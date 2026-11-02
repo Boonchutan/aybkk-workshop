@@ -15,5 +15,6 @@ seed*.js
 !package.json
 !shop-seed.json
 !data/quotes.json
+!public/img/timetable/*.json
 .env
 *.env*

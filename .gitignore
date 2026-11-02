@@ -11,6 +11,7 @@ db/
 !.claude/settings.json
 !scripts/tee-photos.json
 !shop-seed.json
+!public/img/timetable/*.json
 .env
 .env.*
 .DS_Store
