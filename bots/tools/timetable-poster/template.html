@@ -13,8 +13,9 @@ html,body{margin:0;background:#17121a}
   font:var(--w) var(--small)/var(--lh) 'Inter','Noto Sans Thai',sans-serif;font-feature-settings:'tnum' 0}
 #p.size-feed{--top:var(--m);--bot:var(--m);--date:40px;--bigmax:150px}
 #p.size-story{--top:220px;--bot:260px;--date:60px;--bigmax:150px}
-/* Tall: the feed's calendar block, same height, at the bottom; the photo above it is the header. */
-#p.size-tall{--block:calc(1350px - 2 * var(--m));--top:calc(var(--H) - var(--m) - var(--block));--bot:var(--m);--date:40px;--bigmax:150px}
+/* Tall, and story in look C: the feed's calendar block, same height, at the bottom; the photo above
+   it is the header (story C then pins the calendar where the tall image has it, see PIN). */
+#p.size-tall,#p.size-story.look-C{--block:calc(1350px - 2 * var(--m));--top:calc(var(--H) - var(--m) - var(--block));--bot:var(--m);--date:40px;--bigmax:150px}
 
 /* One ink per look, except the class names: each class keeps its own colour, the booking page's
    (Boonchu, 2 Nov). On the bright boxes the same hues are darkened to read over any part of the photo. */
@@ -33,7 +34,19 @@ html,body{margin:0;background:#17121a}
 .hdr b{display:block;font-weight:900;font-size:var(--date);line-height:1;letter-spacing:-.02em;
   text-box:trim-both cap alphabetic;margin-bottom:14px}
 .hdr p{margin:0;white-space:nowrap}
-/* --lift raises the month name off a face (tall only); the heads and tiles stay where they are. */
+/* Feed and story C: logo, words and month share one row; the logo runs from the cap top of AYBKK to
+   the month's baseline. Feed: in the column, right above the heads. Story: Instagram draws its
+   progress bar, profile picture and name over the top 250px (14%), so the row starts there. */
+.hdr.lock{position:static;align-items:start}
+#p.size-story > .hdr.lock{position:absolute;top:250px;right:var(--m)}
+.lock .lk{flex:1;min-width:0}
+.lock .brand{display:flex;align-items:baseline;column-gap:16px;margin-bottom:16px}
+.lock .brand b{margin:0}
+.lock .brand p{text-box:trim-both cap alphabetic}
+/* A six-week month puts the row in the empty first days, part of Look A's block: A's ink there. */
+.grid .hdr.lock{align-self:end;color:var(--ink)}
+.grid .hdr.lock img{filter:brightness(0)}
+/* --lift raises the month name off a face (tall); the heads and tiles stay where they are. */
 .fr{position:absolute;left:var(--m);right:var(--m);top:calc(var(--top) - var(--lift, 0px));bottom:var(--bot);display:flex;flex-direction:column}
 
 h1{margin:0 0 var(--tgap);font-weight:900;font-size:var(--big,140px);line-height:.9;letter-spacing:-.035em;
@@ -75,6 +88,10 @@ h1{margin:0 0 var(--tgap);font-weight:900;font-size:var(--big,140px);line-height
 <div id="p"><img class="ph" alt=""><div class="scrim"></div><div class="hdr"></div><div class="fr"></div></div>
 <script>
 const P = __DATA__;
+// Story C: lay out the tall image's calendar (month name above the heads, or in a six-week month's
+// first days), pin it there, then move the month name up into the row, so the boxes match the tall
+// image's exactly and the row always starts below Instagram's strip.
+const PIN = P.lock && P.size === 'story';
 const $ = s => document.querySelector(s);
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
 const at = (e, row, c0, c1) => { e.style.gridRow = String(row); e.style.gridColumn = c0 + ' / ' + c1; return e; };
@@ -86,22 +103,32 @@ function build() {
   const ph = $('.ph');
   ph.src = P.photo.src;
   ph.style.objectPosition = P.photo.pos;
+  const h1 = el('h1');
+  h1.append(el('span', '', P.title));
+  // What goes above the weekday heads (or into the first week's empty days): the month name, or in
+  // feed C the row of logo, words and month name (story C: see PIN).
+  let top = h1;
   if (P.header) {
-    const logo = el('img');
+    const hdr = $('.hdr'), logo = el('img');
     logo.src = P.header.logo;
     logo.alt = '';
     const words = el('div');
-    words.append(el('b', '', P.header.brand), el('p', '', P.header.place));
-    $('.hdr').append(logo, words);
+    if (P.lock) {
+      const brand = el('div', 'brand');
+      brand.append(el('b', '', P.header.brand), el('p', '', P.header.place));
+      words.className = 'lk';
+      words.append(brand);
+      if (!PIN) words.append(h1);
+      hdr.classList.add('lock');
+      top = PIN ? h1 : hdr;
+    } else words.append(el('b', '', P.header.brand), el('p', '', P.header.place));
+    hdr.append(logo, words);
   }
-
-  const h1 = el('h1');
-  h1.append(el('span', '', P.title));
   const heads = el('div', 'heads');
   for (const h of P.heads) heads.append(el('span', '', h));
   const g = el('div', 'grid');
   g.style.gridTemplateRows = `repeat(${P.rows}, minmax(0, 1fr))`;
-  if (P.titleIn === 'lead') g.append(at(h1, 1, 1, P.lead + 1)); else fr.append(h1);
+  if (P.titleIn === 'lead') g.append(at(top, 1, 1, P.lead + 1)); else fr.append(top);
   fr.append(heads, g);
 
   for (const c of P.cells) {
@@ -145,7 +172,7 @@ function fitTitle() {
   const h1 = $('h1');
   h1.style.setProperty('--big', '100px');
   const avail = h1.parentElement.classList.contains('grid')
-    ? h1.getBoundingClientRect().width : $('.fr').clientWidth;
+    ? h1.getBoundingClientRect().width : h1.parentElement.clientWidth;
   const w = h1.firstChild.getBoundingClientRect().width;
   const max = parseFloat(getComputedStyle($('#p')).getPropertyValue('--bigmax'));
   const size = Math.min(max, Math.floor(100 * avail / w * 10) / 10);
@@ -159,12 +186,25 @@ function fitTitle() {
   // (July, พฤศจิกายน) get room of their own, in em so it scales if the title is shrunk later.
   const ink = ctx.measureText(P.title), cap = ctx.measureText('H').actualBoundingBoxAscent;
   const em = v => Math.max(0, v) / size + 'em';
-  const inGrid = h1.parentElement.classList.contains('grid');
+  const inGrid = !!h1.closest('.grid');
   if (!inGrid) h1.style.marginTop = em(ink.actualBoundingBoxAscent - cap);
   h1.style.marginBottom = inGrid ? `calc(var(--pady) + ${em(ink.actualBoundingBoxDescent)})`
     : `calc(var(--tgap) + ${em(ink.actualBoundingBoxDescent)} + var(--lift, 0px))`;
   return size;
 }
+
+// Feed C: the logo is as tall as the words beside it (AYBKK's cap top to the month's baseline) and
+// the month name fills the rest of the row; a few rounds settle both.
+function fitLock() {
+  const h1 = $('h1'), lk = $('.lk');
+  let size;
+  for (let i = 0; i < 5; i++) {
+    size = fitTitle();
+    $('#p').style.setProperty('--logo', (h1.getBoundingClientRect().bottom - lk.getBoundingClientRect().top) + 'px');
+  }
+  return fitTitle();
+}
+const syncLock = () => $('#p').style.setProperty('--logo', ($('h1').getBoundingClientRect().bottom - $('.lk').getBoundingClientRect().top) + 'px');
 
 // The logo is up to 200px tall, less if the photo leaves less room above the title's ink (Thai
 // marks included); false if that is under 120px or the words run off the right edge.
@@ -175,6 +215,7 @@ function fitHeader(inkTop) {
   return room >= 120 && $('.hdr').getBoundingClientRect().right <= P.W - 22;
 }
 
+const HDR = '.hdr img, .hdr b, .hdr p';
 function rect(e) { const r = e.getBoundingClientRect(); return { x0: r.left, y0: r.top, x1: r.right, y1: r.bottom }; }
 const hit = (a, b, pad = 6) => a.x0 < b.x1 + pad && a.x1 > b.x0 - pad && a.y0 < b.y1 + pad && a.y1 > b.y0 - pad;
 
@@ -217,17 +258,24 @@ function inkOn(ink, b, pad = 6) {
   return false;
 }
 
-// Tall only: if the month name's letters sit on a face from the photo's JSON, raise it just clear of
-// every such face (same size; the heads and tiles stay put). Returns the lift in px.
+// Tall: if the month name's letters sit on a face from the photo's JSON, raise it just
+// clear of every such face (same size; the heads and tiles stay put), again if it then lands on a
+// face higher up, never above the top margin. Returns the lift in px.
 function liftOffFaces(faces) {
-  const ink = titleInk(), pad = 6;
+  const pad = 6, m = parseFloat(getComputedStyle($('#p')).getPropertyValue('--m'));
   let lift = 0;
-  for (const f of faces) {
-    if (!inkOn(ink, f, pad)) continue;
-    const low = inkLow(ink, f, pad);
-    if (low != null && f.y0 > ink.top) lift = Math.max(lift, Math.ceil(low + pad - f.y0));
+  for (let i = 0; i <= faces.length; i++) {
+    const ink = titleInk();
+    let more = 0;
+    for (const f of faces) {
+      if (!inkOn(ink, f, pad)) continue;
+      const low = inkLow(ink, f, pad);
+      if (low != null) more = Math.max(more, Math.ceil(low + pad - f.y0));
+    }
+    if (!more || ink.top - more < m) break;
+    lift += more;
+    $('#p').style.setProperty('--lift', lift + 'px');
   }
-  if (lift) $('#p').style.setProperty('--lift', lift + 'px');
   return lift;
 }
 
@@ -241,7 +289,7 @@ function creditState() {
   const W = P.W, H = P.H, b = fromPhoto(c.box);
   if (b.x0 < 0 || b.y0 < 0 || b.x1 > W || b.y1 > H) return 'out';
   if (dark && hit(rect(sc), b, 0)) return 'scrim';
-  return [...document.querySelectorAll('h1, .heads, .tile, .foot, .hdr > *')].some(e => hit(rect(e), b)) ? 'covered' : 'shows';
+  return [...document.querySelectorAll('h1, .heads, .tile, .foot, ' + HDR)].some(e => hit(rect(e), b)) ? 'covered' : 'shows';
 }
 
 // A see-through box over the printed credit would leave it half showing next to the re-stamp, so
@@ -308,8 +356,8 @@ window.layout = async () => {
   await document.fonts.ready;
   const p = $('#p'), h1 = $('h1'), set = (k, v) => p.style.setProperty(k, v);
   const log = [];
-  const size = fitTitle();
-  if (P.header) fitHeader(titleInk().top);
+  const size = P.lock && !PIN ? fitLock() : fitTitle();
+  if (P.header && !P.lock) fitHeader(titleInk().top);
   let restamp = false, painted = false;
   const credit = P.photo.credit.length ? creditState() : 'shows';
   if (credit !== 'shows') { restamp = true; addCredit(); }
@@ -317,33 +365,56 @@ window.layout = async () => {
   // A line wider than its box may wrap, in that box only.
   for (const e of boxes()) if (wide(e)) { e.classList.add('wrap'); log.push('wrapped ' + (e.dataset.day ? 'day ' + e.dataset.day : e.className)); }
   const top = P.titleIn !== 'lead';
-  const steps = [
+  const title = k => [`title ${k * 100}%`, () => h1.style.setProperty('--big', (size * k) + 'px')];
+  // Feed C: a smaller month name would leave its row ragged at the right, so it comes after padding.
+  const steps = P.lock && !PIN ? [
+    ['tighter lines', () => set('--lh', '1.1')],
+    ['tile padding 7px', () => set('--pady', '7px')],
+    ['date 36px', () => set('--date', '36px')],
+    top && title(.9),
+    ['date 32px', () => set('--date', '32px')],
+    top && title(.8),
+  ] : [
     ['tighter lines', () => set('--lh', '1.1')],
     ['date 36px', () => set('--date', '36px')],
-    top && ['title 90%', () => h1.style.setProperty('--big', (size * .9) + 'px')],
+    top && title(.9),
     ['date 32px', () => set('--date', '32px')],
-    top && ['title 80%', () => h1.style.setProperty('--big', (size * .8) + 'px')],
+    top && title(.8),
     ['tile padding 7px', () => set('--pady', '7px')],
-  ].filter(Boolean);
-  for (const [name, fn] of steps) {
+  ];
+  for (const [name, fn] of steps.filter(Boolean)) {
     if (!boxes().some(tall)) break;
     fn(); log.push(name);
+    if (P.lock && !PIN) syncLock();
   }
   // Faces from the photo's JSON: white letters never go across one.
   const faces = P.photo.faces.map(fromPhoto);
+  const rowOnFace = () => { const ink = titleInk(); return faces.some(f => inkOn(ink, f) || [...document.querySelectorAll(HDR)].some(e => hit(rect(e), f))); };
+  let shrunk = 0;
+  if (PIN) {
+    const y = $('.heads').getBoundingClientRect().top;
+    $('.lk').append(h1);
+    $('.fr').style.top = y + 'px';
+    const full = fitLock();
+    // The row cannot go up into Instagram's strip, so on a face it gets smaller instead, 5% at a
+    // time, down to 80% of its size.
+    for (let k = .95; k > .79 && rowOnFace(); k -= .05) { set('--bigmax', full * k + 'px'); shrunk = fitLock(); }
+  }
   const lift = P.size === 'tall' && P.titleUp && top ? liftOffFaces(faces) : 0;
   const ink = titleInk(), headsTop = $('.heads').getBoundingClientRect().top;
-  const header = P.header ? fitHeader(ink.top) : true;
   const tgap = parseFloat(getComputedStyle(p).getPropertyValue('--tgap'));
-  if (P.header) set('--scrim-h', Math.min(ink.bottom + tgap, headsTop) + 'px');
+  const header = !P.header ? true : !P.lock ? fitHeader(ink.top)
+    : [...document.querySelectorAll(HDR)].every(e => rect(e).x1 <= P.W - 22) && (!PIN || ink.bottom + tgap <= headsTop);
+  // The scrim is for the white words above the heads; none when they sit in the first week's days.
+  if (P.header) set('--scrim-h', (P.lock && !top && !PIN ? 0 : Math.min(ink.bottom + tgap, headsTop)) + 'px');
   const over = boxes().filter(e => tall(e) || wide(e)).map(e => e.dataset.day ? 'day ' + e.dataset.day : 'footer');
   if (!header) over.push('header');
   if (h1.firstChild.getBoundingClientRect().right > h1.getBoundingClientRect().right + 1) over.push('title');
   const onFace = [];
   if (faces.some(f => inkOn(ink, f))) onFace.push('month name');
-  if (faces.some(f => [...document.querySelectorAll('.hdr > *')].some(e => hit(rect(e), f)))) onFace.push('header');
+  if (faces.some(f => [...document.querySelectorAll(HDR)].some(e => hit(rect(e), f)))) onFace.push('header');
   const small = [...document.querySelectorAll('.tile p, .foot p, .heads span, .hdr p')].map(e => parseFloat(getComputedStyle(e).fontSize));
-  return { overflow: over, onFace, steps: log, restamp, painted, lift, logo: P.header ? $('.hdr img').getBoundingClientRect().height : 0,
+  return { overflow: over, onFace, steps: log, restamp, painted, lift, shrunk, logo: P.header ? $('.hdr img').getBoundingClientRect().height : 0,
     title: parseFloat(getComputedStyle(h1).fontSize), minSmall: Math.min(...small) };
 };
 </script>

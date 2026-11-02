@@ -13,25 +13,25 @@ node render.js --all --outdir <your scratchpad>/poster-out
 ```
 
 It reads the live timetable (https://aybkk.net/api/bkk/schedule?days=62, no key), renders next
-month, and writes ten images plus `schedule.json` (the timetable it used) into
-`<outdir>/<YYYY-MM>/`: `aybkk-<YYYY-MM>-<en|th>-<feed|story>-<A|B>.png` for Instagram and LINE,
-`aybkk-<YYYY-MM>-<en|th>-tall-C.png` for the booking page, and the booking page's web copies
+month, and writes six images plus `schedule.json` (the timetable it used) into
+`<outdir>/<YYYY-MM>/`, all in look C: `aybkk-<YYYY-MM>-<en|th>-<feed|story>-C.png` for Instagram
+and LINE, `aybkk-<YYYY-MM>-<en|th>-tall-C.png` for the booking page, and the booking page's web copies
 `web/<YYYY-MM>-<en|th>.jpg` (1080 wide, JPEG 82, sRGB, no metadata; about 270 KB; made with
 ImageMagick `convert`). The command prints each web copy's size.
 Without `--outdir` (or the `POSTER_OUT` env var) it writes to the scratchpad of the session that
 built the tool, which a later session does not have, so always pass it.
 
-Then make the preview sheet for Boonchu (the four feed images, A on top, B below, white ground):
+Then make the preview sheet for Boonchu (the four Instagram images in a row, white ground):
 
 ```
 D=<outdir>/<YYYY-MM>; M=<YYYY-MM>; F=../golden-grid/fonts/Inter-var.ttf
 montage -font "$F" -pointsize 40 -fill '#17121a' -background white \
-  -label 'Look A · English' $D/aybkk-$M-en-feed-A.png -label 'Look A · Thai' $D/aybkk-$M-th-feed-A.png \
-  -label 'Look B · English' $D/aybkk-$M-en-feed-B.png -label 'Look B · Thai' $D/aybkk-$M-th-feed-B.png \
-  -tile 2x2 -geometry 1080x1350+40+30 -depth 8 $D/preview.png
+  -label 'Feed · English' $D/aybkk-$M-en-feed-C.png -label 'Feed · Thai' $D/aybkk-$M-th-feed-C.png \
+  -label 'Story · English' $D/aybkk-$M-en-story-C.png -label 'Story · Thai' $D/aybkk-$M-th-story-C.png \
+  -tile 4x1 -geometry +40+30 -gravity north -depth 8 $D/preview.png
 ```
 
-Open every image (all ten, the two web copies and the preview) and check it before sending it to him.
+Open every image (all six, the two web copies and the preview) and check it before sending it to him.
 The command prints `ok` or `CHECK` per image; fix any CHECK first. A CHECK names the box whose text
 does not fit, or says the month name or the header is on a face (see `faces` under "Photo" below).
 
@@ -55,11 +55,10 @@ the aybkk-workshop repo and a deploy, which needs Boonchu's go like any public c
 
 ### Which look
 
-For feed and story Boonchu has not picked yet, so `--all` renders both looks, and **A is the
-default** for a single feed or story image (`DEFAULT_LOOK` in `render.js`). Once he picks, add
-`--look A` or `--look B` to the monthly command (and set `DEFAULT_LOOK` to his pick); the tall
-booking-page images (look C) are still made. `--all --look C` makes only the tall ones.
-The tall size uses **look C** (his brief, 2 Nov), its default: see "The tall size" below.
+**Look C on every size** (Boonchu, 2 Nov: "i dont want dark and short calendar. i like the tall and
+bright box and can see more of the photo of students with clear text"). It is the default
+(`DEFAULT_LOOK` in `render.js`) and what `--all` makes. Looks A and B are still there:
+`--all --look A` (or B) makes feed and story in that look, plus the tall C images as always.
 
 ### A new photo
 
@@ -79,7 +78,7 @@ image and make the command print CHECK wherever a month name or header still lan
 ## One image
 
 ```
-node render.js --month 2026-11 --lang en|th --size feed|story|tall --look A|B|C [--title up|down] [--photo p] [--data file] --out file.png
+node render.js --month 2026-11 --lang en|th --size feed|story|tall [--look A|B|C] [--title up|down] [--photo p] [--data file] --out file.png
 ```
 
 `--data` takes a saved copy of the schedule JSON instead of fetching it. `--today 2026-11-10`
@@ -87,8 +86,9 @@ pretends it is that Bangkok date (testing). `.jpg` in `--out` writes a JPEG. `--
 tall size (see "The tall size"). `--help` lists all.
 
 The command prints one line per image: `ok` or `CHECK` (some text did not fit, the box is named;
-or the month name or header is on a face), the title size, the logo size (tall), any fit steps it
-took and how far the month name moved up. Exit code 1 means a CHECK or a WARNING: look before using it.
+or the month name or header is on a face), the title size, the logo size (look C), any fit steps it
+took, how far the month name moved up (tall) and whether the header row was made smaller (story C).
+Exit code 1 means a CHECK or a WARNING: look before using it.
 
 ## What is on it
 
@@ -122,8 +122,8 @@ The calendar (weekday heads, tiles, footer) is exactly the feed's, 22px from the
 same tile sizes, gaps and type, so it matches the feed image of the same look in size, only lower.
 The month name is the feed's size and sits right above the weekday heads, as in the feed, unless
 its letters would land on a face listed in the photo's JSON: then it moves up, same size, just
-clear of the faces (6px), and the command prints `month name <n>px up, off a face`. The heads and
-tiles never move. `--title down` keeps it right above the heads anyway and prints CHECK.
+clear of the faces (6px), again if that puts it on a face higher up, never above the top margin,
+and the command prints `month name <n>px up, off a face`. The heads and tiles never move. `--title down` keeps it right above the heads anyway and prints CHECK.
 Everything above the month name is the header.
 
 With `photo.jpg`, the A-feed spot puts the month name across the upside-down man's face on the
@@ -142,7 +142,8 @@ CHECK (header): use another photo. November: 181px (EN), 153px (TH).
 Six-week months (January 2027, May 2027) put the month name in the empty first days, as in the
 feed; there it is part of Look A's block, so it is in A's dark ink, not white, and gets no scrim.
 With `photo.jpg` it lands on the face of the woman in the black top in January 2027 and the command
-prints CHECK: that month needs another photo or Boonchu's OK.
+prints CHECK: that month's tall image needs another photo or Boonchu's OK. Story C has room above,
+so there the month name goes up into its header row and those first days stay open photo.
 
 The month name's box is trimmed to cap height and baseline; the tool measures the title and adds
 room for Thai marks above it (ธันวาคม, กุมภาพันธ์) and descenders below it (July, พฤศจิกายน), so
@@ -158,8 +159,8 @@ the marks keep the 22px outer margin and nothing touches the weekday heads.
   contrast measured on November: 4.9:1. Under the scrim the photo's printed credit goes grey, so
   B always re-stamps it in the footer.
 
-- **C** (tall only, for the booking page; Boonchu, 2 Nov: "move the calendar down to bottom so it
-  looks like space as header" and "use the whole tall photo but keep the size and format from A
+- **C** (every size, the default; first made for the tall booking-page image; Boonchu, 2 Nov:
+  "move the calendar down to bottom so it looks like space as header" and "use the whole tall photo but keep the size and format from A
   english (with big white november 2026)"): Look A's calendar block, unchanged (same strips,
   tiles, ink, sizes, gaps, margins, footer, credit rule), at the bottom, with the month name in
   white, the feed's size, above it (moved up off any face, see "The tall size"). The photo above
@@ -170,9 +171,29 @@ the marks keep the 22px outer margin and nothing touches the weekday heads.
   ink (never lower than the weekday heads), so the strips and tiles are exactly as bright as in A.
   Worst white-text contrast measured on November (title up): 5.8:1 EN and 5.3:1 TH (month name),
   7.0:1 (small line).
+  - **Story C** (1080x1920): the tall image's calendar under more open photo. The photo fills the
+    frame (cover, the sides cropped, the middle kept: `pos.story`). The calendar block is laid out
+    exactly as on the tall image (same heads, boxes, type and fit steps, 22px from the bottom and
+    sides), then pinned there. Instagram draws its progress bar, profile picture and name over the
+    top 250px (14%) of a story, so nothing of ours goes there: the header is feed C's one row (logo,
+    AYBKK with the place line, month name below them), starting at y 250. Between the row and the
+    heads is open photo: with `photo.jpg` the faces of the upside-down man, the seated student, the
+    woman in the black top and the student below her. November: the row ends at the month name's
+    baseline at y 379, logo 129px (EN) and 128px (TH), month name 115px and 114px. The row cannot
+    move up, so if it lands on a face it gets smaller, 5% at a time, down to 80% (the command prints
+    `header row made smaller, off a face`; with `photo.jpg` May 2027 EN needs it), then CHECK. In a
+    six-week month the month name still goes up into the row, and the first days stay open photo.
+  - **Feed C** (1080x1350, Instagram's tallest feed shape): no room for a header above the month, so
+    the logo, the words and the month name share one row above the heads: the logo on the left, as
+    tall as the words beside it (AYBKK's cap top to the month name's baseline), "AYBKK" and the place
+    line on one line, the month name below them filling the rest of the width. Then Look A's bright
+    calendar. The scrim covers that row only. November: logo 129px (EN) and 128px (TH), month name
+    115px and 114px. In a six-week month the row goes into the empty first-week days instead, in A's
+    ink with the logo in black, and gets no scrim.
+  Contrast measured on November, white text against the 99th-percentile background under it:
+  month name 7.3:1 (feed), 6.0:1 (story); AYBKK and the place line 5.6:1 or more.
 
-The reviewer's pick (2 Nov) was B: the photo stays a real background and the white month has the
-most punch. A is the second choice. Boonchu decides.
+Boonchu picked C (2 Nov) over A and B.
 
 Look and type live in `template.html` (CSS variables at the top). Design rules followed: the
 design-taste-frontend house rules (two or three sizes, tight big type, no rules or outlines, no
@@ -181,8 +202,10 @@ gradients, no shadows, no blur, no emoji, no tracked caps labels, left-aligned, 
 ## Fitting
 
 Text never shrinks below 22px. If a tile overflows, the tool tightens in this order and logs each
-step: line height, date number 36px, title 90%, date 32px, title 80%, tile padding. A line that is
-too wide for its box wraps in that box only.
+step: line height, date number 36px, title 90%, date 32px, title 80%, tile padding. Feed C takes
+tile padding second (line height, tile padding, date 36px, title 90%, date 32px, title 80%), since a
+smaller month name would leave its row short of the right edge. Story C takes the tall image's
+order, so its boxes stay the tall image's. A line that is too wide for its box wraps in that box only.
 
 ## Days already started
 
@@ -212,15 +235,15 @@ whatever size it ends up on the poster).
 - `creditBox`: where the photo's printed credit is, in photo pixels (left, top, right, bottom).
   If the crop cuts it off, a tile covers it or the Look B scrim darkens it, the credit is re-stamped
   in the footer (or as three lines in spare empty days). With this photo the feed re-stamps it in
-  both looks; story A shows the original, story B re-stamps it. When a box (tile, footer, title,
+  every look; story A shows the original, stories B and C re-stamp it. When a box (tile, footer, title,
   header) covers it, the see-through box would leave the printed letters half showing next to the
   re-stamp, so the tool paints them out of the photo first (thin bright strokes and their shadow,
   filled from the pixels around them) and prints "printed credit under a box painted out". With
-  this photo that happens on the tall images, where the footer sits on the printed credit.
+  this photo that happens on the tall images and story C, where the footer sits on the printed credit.
 - `faces`: every face in the photo, head and hair. On every size and look the command prints
   CHECK when a letter of the month name (its actual ink, Thai marks and tails included) comes within
   6px of one, or the header (logo, words) does; on the tall size the month name first moves up off
-  them (see "The tall size"). Faces under the see-through tiles are fine, as in Look A. List them
+  them (see "The tall size"), on story C the header row first gets smaller (see "The looks"). Faces under the see-through tiles are fine, as in Look A. List them
   all, not only the ones near the month name today: a month with a longer name or six weeks puts
   the name somewhere else. `photo.jpg` lists six.
 - `pos`: the crop (CSS object-position), per size (`feed`, `story`, `tall`; tall has no crop
@@ -237,7 +260,7 @@ whatever size it ends up on the poster).
   (variable). Never a font CDN.
 - `photo.jpg`, `photo.json`: default background, its printed credit and its six faces.
 - `logo-white.png`: the AYBKK seal (`public/aybkk-logo.jpg` in the main repo) in white on
-  transparent, 400px, trimmed to the ring, for look C. Remake it from the main repo with:
+  transparent, 400px, trimmed to the ring, for look C (black in a six-week feed, by CSS filter). Remake it from the main repo with:
   `convert aybkk-logo.jpg -colorspace Gray -negate -level 22%,58% \( -size 1276x1280 xc:black
   -fill white -draw "circle 638,638 638,74" \) -compose multiply -composite a.png;
   convert -size 1276x1280 xc:white a.png -alpha off -compose copy-opacity -composite -trim +repage

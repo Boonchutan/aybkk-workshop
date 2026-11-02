@@ -13,10 +13,9 @@ const OUT_ROOT = process.env.POSTER_OUT
 // tall: the whole photo, no crop (aybkk.net booking page). Its height comes from the photo.
 const SIZES = { feed: { W: 1080, H: 1350 }, story: { W: 1080, H: 1920 }, tall: { W: 1080, H: null } };
 const LOOKS = ['A', 'B', 'C'];
-// Look C (Look A's calendar under a white header) is made for the tall size only.
-const LOOK_SIZES = { A: ['feed', 'story', 'tall'], B: ['feed', 'story', 'tall'], C: ['tall'] };
-// Feed and story use A until Boonchu picks a look; --all renders both until then.
-const DEFAULT_LOOK = { feed: 'A', story: 'A', tall: 'C' };
+// Boonchu, 2 Nov: "i like the tall and bright box and can see more of the photo of students with
+// clear text": look C (Look A's bright calendar under a white header) on every size.
+const DEFAULT_LOOK = 'C';
 const LOGO = path.join(DIR, 'logo-white.png');
 
 const TEXT = {
@@ -50,18 +49,17 @@ const USAGE = `AYBKK timetable poster
 
   node render.js --all [--month 2026-12] [--look A|B|C]
       every image for the month into ${OUT_ROOT}/<YYYY-MM>/:
-      EN and TH, feed and story in looks A and B (only --look if it is A or B),
-      tall in look C, and web JPEGs of the tall images in web/
-      (--look C: only the tall images)
+      EN and TH, feed and story in look C (or in --look A or B), tall in look C,
+      and web JPEGs of the tall images in web/
 
   node render.js --month 2026-11 --lang en|th --size feed|story|tall --look A|B|C --out file.png
-      one image (look A for feed and story, C for tall, if --look is left out)
+      one image (look C if --look is left out)
 
 Options
   --month YYYY-MM   default: next month (Bangkok time)
   --photo path      background photo (default photo.jpg here). A JSON file beside it (photo.json
                     for photo.jpg) may give credit, creditBox, faces and crop positions; see README.md
-  --title up|down   tall only, when the month name would cover a face listed in the photo's JSON:
+  --title up|down   tall size, when the month name would cover a face listed in the photo's JSON:
                     up (default) raises it just clear of the faces, down keeps it right above the
                     weekday heads as in the feed (and prints CHECK)
   --credit "a|b|c"  photo credit to re-stamp if the photo's own credit is cut off or covered
@@ -222,6 +220,9 @@ function payload(month, lang, size, look, photo, credit, titleUp = true) {
   const meta = photo.meta;
   return {
     lang, size, look, W, H, titleUp,
+    // Feed and story C: logo, words and month name in one row (feed: no room for a header above the
+    // month; story: the row must start below the top strip that Instagram covers).
+    lock: look === 'C' && size !== 'tall',
     header: look === 'C' ? { brand: 'AYBKK', place: L.place, logo: 'data:image/png;base64,' + fs.readFileSync(LOGO).toString('base64') } : null,
     title: `${L.months[month.m - 1]} ${L.year(month.y)}`,
     heads: L.heads, rows: month.rows, lead, trail, titleIn, footIn, creditIn, cells, foot,
@@ -258,6 +259,7 @@ async function renderOne(browser, template, data, out) {
   if (r.logo) notes.push(`logo ${Math.round(r.logo)}px`);
   if (r.steps.length) notes.push('fitted: ' + r.steps.join(', '));
   if (r.lift) notes.push(`month name ${r.lift}px up, off a face`);
+  if (r.shrunk) notes.push('header row made smaller, off a face');
   if (r.restamp) notes.push('photo credit re-stamped in the footer');
   if (r.painted) notes.push('printed credit under a box painted out of the photo');
   console.log(`${r.overflow.length || r.onFace.length ? 'CHECK' : 'ok   '} ${out}  (${notes.join('; ')})`);
@@ -295,10 +297,6 @@ async function main() {
   for (const [k, ok] of [['lang', ['en', 'th']], ['size', Object.keys(SIZES)], ['look', LOOKS], ['title', ['up', 'down']]]) {
     if (a[k] && !ok.includes(a[k])) throw new Error(`--${k} must be one of ${ok.join(', ')}`);
   }
-  if (!a.size && a.look === 'C') a.size = 'tall';
-  if (!a.all && a.look && !LOOK_SIZES[a.look].includes(a.size || 'feed')) {
-    throw new Error(`Look ${a.look} is made for --size ${LOOK_SIZES[a.look].join(' or ')}`);
-  }
   const { s: sched, raw } = loadSchedule(a.data);
   const photo = loadPhoto(a.photo);
   const template = fs.readFileSync(path.join(DIR, 'template.html'), 'utf8');
@@ -310,8 +308,8 @@ async function main() {
   const jobs = [];
   if (a.all) {
     const dir = path.join(a.outdir || OUT_ROOT, month);
-    const igLooks = !a.look ? ['A', 'B'] : a.look === 'C' ? [] : [a.look];
-    for (const look of igLooks) for (const lang of ['en', 'th']) for (const size of ['feed', 'story']) {
+    const look = a.look || DEFAULT_LOOK;
+    for (const lang of ['en', 'th']) for (const size of ['feed', 'story']) {
       jobs.push({ lang, size, look, out: path.join(dir, `aybkk-${month}-${lang}-${size}-${look}.png`) });
     }
     for (const lang of ['en', 'th']) {
@@ -320,7 +318,7 @@ async function main() {
     fs.mkdirSync(dir, { recursive: true });
     if (!a.data) fs.writeFileSync(path.join(dir, 'schedule.json'), raw);
   } else {
-    const lang = a.lang || 'en', size = a.size || 'feed', look = a.look || DEFAULT_LOOK[size];
+    const lang = a.lang || 'en', size = a.size || 'feed', look = a.look || DEFAULT_LOOK;
     jobs.push({ lang, size, look, out: path.resolve(a.out || path.join(a.outdir || OUT_ROOT, month, `aybkk-${month}-${lang}-${size}-${look}.png`)) });
   }
 
