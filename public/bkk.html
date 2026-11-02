@@ -255,8 +255,14 @@
     letter-spacing:0;text-transform:none;color:var(--ink)}
   .mnotes ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.5}
   .mnotes li{margin:8px 0 0}
+  /* The Thai Plex file has one weight, so Thai bold would show as regular with only the digits bold. */
+  :lang(th) .mnotes b{font-weight:inherit;color:var(--plum)}
   @media (min-width:760px){
     .plans{grid-template-columns:1fr 1fr;align-items:start}
+    /* The 4-row list from 12 Nov 2026 is tall: New and Visiting stack beside it. */
+    .plans.np{grid-template-rows:auto 1fr}
+    .plans.np .feature{grid-row:span 2}
+    .plans.np .quiet{grid-column:1/-1}
     .teacher .card{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:26px;align-items:start}
     .teacher figure{margin:0}
     .pair{display:grid;grid-template-columns:1fr 1fr;gap:26px}
@@ -705,7 +711,7 @@
       <div class="plan">
         <h3 data-i18n="visitH">Visiting?</h3>
         <ul class="rows">
-          <li><span class="pn"><span data-i18n="dropIn">Drop-in</span><small data-i18n="dropInSub">For students who know the sequence</small></span><span class="pv"><b>฿1,500<i class="vt newP" hidden>+VAT</i></b></span></li>
+          <li><span class="pn"><span data-i18n="dropIn">Drop-in</span><small data-i18n="dropInSub" data-i18n-new="dropInSubNew">For students who know the sequence</small></span><span class="pv"><b>฿1,500<i class="vt newP" hidden>+VAT</i></b></span></li>
           <li><span class="pn"><span data-i18n="pack10">10-class pack</span><small data-i18n="pack10Sub" data-i18n-new="pack10SubNew">Valid 3 months</small></span><span class="pv"><b>฿14,000<i class="vt newP" hidden>+VAT</i></b></span></li>
         </ul>
       </div>
@@ -871,6 +877,7 @@
       n3: 'For ฿10,000 more, you get 6 months instead of 3.',
       n1: 'The price of trying. New or stiff, come as you are.',
       pack10SubNew: 'Use within 3 months. 3+ classes left? You can pass them on.',
+      dropInSubNew: 'One class.',
       newBtn: 'See packages →',
       fineNew: (fee, vat = 7) => `+VAT = plus ${vat}% VAT.${fee ? ' Paying online adds a transaction fee.' : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
       polH: 'Member notes',
@@ -959,6 +966,7 @@
       n3: 'เพิ่มอีก ฿10,000 ขยับเป็นแพ็ก 6 เดือนได้',
       n1: 'ลองฝึกดูสักเดือน มือใหม่หรือตัวแข็งก็เริ่มได้',
       pack10SubNew: 'ใช้ภายใน 3 เดือน เหลือ 3 ครั้งขึ้นไป โอนให้ผู้อื่นได้',
+      dropInSubNew: 'ฝึก 1 ครั้ง',
       newBtn: 'ดูแพ็กเกจ →',
       fineNew: (fee, vat = 7) => `+VAT = ยังไม่รวม VAT ${vat}% ${fee ? 'หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม ' : ''}ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
       polH: 'ข้อควรรู้สำหรับสมาชิก',
@@ -1047,6 +1055,7 @@
       n3: '再加 ฿10,000，3个月就变成6个月。',
       n1: '试一试的价格。新手、身体僵硬，都欢迎来。',
       pack10SubNew: '3个月内用完。还剩3次或以上，可以转给别人。',
+      dropInSubNew: '一节课。',
       newBtn: '查看课程套餐 →',
       fineNew: (fee, vat = 7) => `+VAT = 另加 ${vat}% 增值税。${fee ? '在线支付另收交易手续费。' : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       polH: '会员须知',
@@ -1133,15 +1142,16 @@
       n12: 'Помесячно за 12 месяцев: ฿115,200. Экономия ฿55,300.',
       n6: 'Достаточно долго, чтобы практика стала привычкой. Экономия ฿25,600.',
       n3: 'Ещё ฿10,000, и у вас 6 месяцев вместо 3.',
-      n1: 'Цена, чтобы попробовать. Новичок или скованное тело? Приходите как есть.',
+      n1: 'Цена пробного месяца. Новичок или скованное тело? Приходите как есть.',
       pack10SubNew: 'Использовать за 3 месяца. Осталось 3 занятия или больше? Их можно передать.',
+      dropInSubNew: 'Одно занятие.',
       newBtn: 'Все абонементы →',
       fineNew: (fee, vat = 7) => `+VAT = плюс НДС ${vat}%. ${fee ? 'При онлайн-оплате добавляется комиссия. ' : ''}Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
       polH: 'Памятка для участников',
       pol1a: 'Оплаченный абонемент не возвращается,',
       pol1b: ' кроме случая, когда мы не можем провести оплаченные занятия (если шала закроется или переедет). Цены длинных абонементов рассчитаны на тех, кто остаётся.',
       pol2a: 'Абонемент только для вас,', pol2b: ' делиться им нельзя.',
-      pol3a: 'Уезжаете, или врач велит сделать перерыв?',
+      pol3a: 'Уезжаете или врач велит сделать перерыв?',
       pol3b: ' Если заморозка не подходит, абонемент на 3, 6 или 12 месяцев можно один раз передать человеку, который ещё не занимался в AYBKK. Дата окончания та же. Сбор ฿1,500. Сначала напишите нам в LINE @aybkk.',
       pol4a: 'Заморозка до 30 дней',
       pol4b: ' (или по справке врача, до 2 месяцев): перелом, проблемы с глазами, операция, беременность и роды. Другие случаи обсудим. Напишите нам в LINE @aybkk до начала заморозки.',
@@ -1483,6 +1493,7 @@
   // The server switches its catalogue at the same moment (bkk-api.js PRICE_SWITCH).
   const NEW_PRICES_FROM = '2026-11-12';
   const newPrices = () => bkkTodayP() >= NEW_PRICES_FROM;
+  let PRICES_SEEN = newPrices();
   function bkkTodayP() { return new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10); }
   let PMOON = {};
   // One group open at a time; a card's calculator opens under that card.
@@ -1672,6 +1683,7 @@
     const np = newPrices();
     document.querySelectorAll('.oldP').forEach(el => { el.hidden = np; });
     document.querySelectorAll('.newP').forEach(el => { el.hidden = !np; });
+    $('.plans').classList.toggle('np', np);
     document.querySelectorAll('[data-i18n]').forEach(el => {
       el.textContent = t((np && el.dataset.i18nNew) || el.dataset.i18n, SURCHARGE, VAT || 7);
     });
@@ -1778,6 +1790,7 @@
   // A sign-in link lands on /book?me=1: open the student's profile straight away.
   let current = new URLSearchParams(location.search).has('me') ? 'me' : 'schedule';
   window.tab = t => {
+    pricesNow();
     if (t !== current) OPEN = null;
     current = t;
     document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.id === 't' + '-' + t));
@@ -1808,6 +1821,19 @@
       $('#view').innerHTML = '<p class="msg bad">Could not load. Please refresh.</p>';
     }
   }
+  // A page left open past midnight into 12 Nov 2026 would still show, and open
+  // the buy dialog at, the old prices the server no longer charges.
+  async function pricesNow() {
+    if (newPrices() === PRICES_SEEN) return;
+    PRICES_SEEN = newPrices();
+    try {
+      const p = await fetch('/api/bkk/products').then(r => r.json());
+      if (p.products) PRODUCTS = p.products;
+    } catch (_) {}
+    applyLang();
+    if (LOADED && current === 'packages') renderPackages();
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) pricesNow(); });
 
   // The calendar shows Bangkok's "today" regardless of the visitor's timezone —
   // a student in China is 1h ahead and must not see tomorrow highlighted.
@@ -2429,6 +2455,7 @@
   // paying books it. pre = { slotId, date } when they came from a class's Book.
   const singleClass = p => p.kind === 'credits' && Number(p.credits) === 1;
   window.buy = (code, pre, intro) => {
+    if (newPrices() !== PRICES_SEEN) return pricesNow().then(() => window.buy(code, pre, intro));
     const p = PRODUCTS.find(x => x.code === code);
     if (!p) return;
     const single = singleClass(p);

@@ -473,11 +473,7 @@ function mountBkk(app, opts = {}) {
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
     // package retired in the admin page stays as staff set it.
     const added = await q(`SELECT count(*)::int AS n FROM bkk_products`);
-    for (const s of SEED_PRODUCTS) {
-      await q(`INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort,active)
-               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT (code) DO NOTHING`,
-        [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort, s.active !== false]);
-    }
+    for (const s of SEED_PRODUCTS) await seedProduct(pool, s);
     // From 21 Oct 2026 a year is 12 months, no free 13th (Boonchu). valid_days
     // never changes under passes already sold, so the 13-month package is
     // retired once and kept for the passes and Rezerv imports that point at it.
@@ -546,6 +542,11 @@ function mountBkk(app, opts = {}) {
 
   const surcharge = async () => Number(await getSetting('surcharge_pct', 3)) || 0;
 
+  const seedProduct = (db, s) => db.query(
+    `INSERT INTO bkk_products (code,name_en,name_th,price_thb,kind,credits,valid_days,daily_cap,sort,active)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT (code) DO NOTHING`,
+    [s.code, s.name_en, s.name_th, s.price_thb, s.kind, s.credits, s.valid_days, s.daily_cap, s.sort, s.active !== false]);
+
   // Called before anything reads a price. The marker goes in with the prices in
   // one transaction: two servers racing apply it once (the loser waits on the
   // key, then finds it taken), a failure leaves no marker, so the next request
@@ -557,7 +558,8 @@ function mountBkk(app, opts = {}) {
     return switching;
   }
   async function applyPriceSwitch() {
-    // A fresh database has to be seeded first, or the new package is not there to open.
+    // A fresh database is seeded first. If that boot step failed, the rows are
+    // added here, or the marker would shut out a package that came later.
     await booted.catch(() => {});
     const client = await pool.connect();
     try {
@@ -566,6 +568,7 @@ function mountBkk(app, opts = {}) {
                                        ON CONFLICT (key) DO NOTHING RETURNING key`, [PRICE_SWITCH.key]);
       if (mark.rows.length) {
         for (const [code, price] of Object.entries(PRICE_SWITCH.prices)) {
+          await seedProduct(client, SEED_PRODUCTS.find(s => s.code === code));
           await client.query(`UPDATE bkk_products SET price_thb=$2, active = active OR $3 WHERE code=$1`,
             [code, price, PRICE_SWITCH.opens.includes(code)]);
         }
@@ -2935,8 +2938,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
              FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY 1`),
         all(`SELECT o.method, count(*)::int AS n, sum(o.amount_thb)::int AS total
              FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
-        all(`SELECT coalesce(pr.name_en, o.item_name, 'other') AS item, count(*)::int AS n, sum(o.amount_thb)::int AS total
-             FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
+        // By package, not by name: the old Rezerv 6-month and the 12 Nov 2026 one share a name.
+        all(`SELECT coalesce(pr.name_en, o.item_name, 'other') AS item, pr.price_thb AS price, count(*)::int AS n, sum(o.amount_thb)::int AS total
+             FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id WHERE ${paid} GROUP BY pr.id, 1, 2 ORDER BY total DESC, 1`),
         all(`SELECT coalesce(o.source,'aybkk') AS source, count(*)::int AS n, sum(o.amount_thb)::int AS total
              FROM bkk_orders o WHERE ${paid} GROUP BY 1 ORDER BY total DESC, 1`),
         all(`SELECT count(*)::int AS n FROM bkk_orders o

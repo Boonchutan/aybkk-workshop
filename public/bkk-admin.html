@@ -1776,7 +1776,8 @@
         <div class="tiles">${tile(T('kMoney'), baht(m.total))}${tile(T('kVat'), baht(m.vat))}
           ${tile(T('kPayments'), String(m.count))}${tile(T('kSold'), String(d.passes.sold))}</div>
         ${m.byMethod.length ? `<p><b>${T('rByMethod')}</b></p>${tbl(moneyHeads(T('thMethod')), money(m.byMethod, x => W(x.method || 'online')))}` : ''}
-        ${m.byItem.length ? `<p><b>${T('rByItem')}</b></p>${tbl(moneyHeads(T('thItem')), money(m.byItem, x => itemName(x.item)))}` : ''}
+        ${m.byItem.length ? `<p><b>${T('rByItem')}</b></p>${tbl(moneyHeads(T('thItem')), money(m.byItem, x => itemName(x.item)
+          + (x.price && m.byItem.some(y => y !== x && y.item === x.item) ? ' · ' + baht(x.price) : '')))}` : ''}
         ${m.bySource.length ? `<p><b>${T('rMoneySource')}</b></p>${tbl(moneyHeads(T('thFrom')), money(m.bySource, x => W(x.source)))}` : ''}
       </div>
       <div class="box"><b>${T(long ? 'rByMonth' : 'rByDay')}</b>
