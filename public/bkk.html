@@ -507,6 +507,16 @@
   .msg{padding:12px 14px;border-radius:8px;margin-top:12px;font-size:14px}
   .msg.ok{background:var(--blush);color:var(--plum)}
   .msg.bad{background:#fdeaea;color:#a33}
+  .msg .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .skel{display:grid;gap:12px;margin:4px 0 16px}
+  .skel i{display:block;height:16px;border-radius:10px;background:linear-gradient(90deg,var(--line) 30%,rgba(232,69,140,.10) 50%,var(--line) 70%);background-size:300% 100%;animation:skel 1.4s ease-in-out infinite}
+  .skel .row{display:flex;gap:10px}
+  .skel .pill{width:96px;height:44px;border-radius:999px}
+  .skel .big{height:auto;aspect-ratio:2/3;max-width:420px;border-radius:var(--radius)}
+  @keyframes skel{from{background-position:100% 0}to{background-position:0 0}}
+  @media (prefers-reduced-motion:reduce){ .skel i{animation:none} }
+  .calc{scroll-margin-top:12px}
   [hidden]{display:none!important}
   #promo{margin-top:28px;padding:26px 18px 20px;background:var(--promo-soft);box-shadow:inset 0 0 0 1.5px var(--promo-line);border-radius:22px;line-height:1.35}
   #promo h2{color:var(--promo-deep);margin-bottom:8px}
@@ -716,7 +726,7 @@
       </div>
       <div class="plan quiet">
         <h3 data-i18n="loyalH">Loyal students</h3>
-        <p class="line" data-i18n="loyalLine">After 12 months in a row, renew 12 months at 54,900.</p>
+        <p class="line" data-i18n="loyalLine">Practise 12 months in a row, then renew for 12 more. You get the special collection AYBKK shala tee.</p>
       </div>
     </div>
     <p class="fair" data-i18n="fair">One price for everyone. Clear and simple.</p>
@@ -796,7 +806,8 @@
   <button id="t-me" onclick="tab('me')" data-i18n="tabMe">My pass</button>
 </nav>
 
-<main id="view"><p class="note" data-i18n="loading">Loading…</p></main>
+<main id="view" aria-busy="true"><div class="skel" role="status"><span class="sr" data-i18n="loading">Loading…</span><div class="row"><i class="pill"></i><i class="pill"></i></div><i style="width:40%"></i><i class="big"></i></div>
+  <noscript><p class="msg bad">The timetable needs JavaScript. Book on LINE @aybkk.</p></noscript></main>
 <footer><span class="brush">AYBKK</span>Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31</footer>
 
 <dialog id="dlg"><div id="dlgIn"></div></dialog>
@@ -861,7 +872,7 @@
       pack10: '10-class pack',
       pack10Sub: 'Valid 3 months',
       loyalH: 'Loyal students',
-      loyalLine: 'After 12 months in a row, renew 12 months at 54,900.',
+      loyalLine: 'Practise 12 months in a row, then renew for 12 more. You get the special collection AYBKK shala tee.',
       fair: 'One price for everyone. Clear and simple.',
       fine: (fee, vat = 7) => `Prices in Thai baht, before ${vat}% VAT. ${fee ? 'Paying online adds an online transaction fee.' : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
       momH: 'Today at the shala', momLine: 'Every morning we share moments from the shala: the practice, the people, news and updates.',
@@ -870,6 +881,8 @@
       copy: 'Copy', copied: 'Copied',
       tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
       loading: 'Loading…',
+      loadFail: 'The timetable did not load. Check your connection and try again, or message us on LINE @aybkk.',
+      tryAgain: 'Try again',
       noClasses: 'No classes scheduled.',
       noDay: 'No classes this day.',
       calTeachers: 'Teachers:', calClasses: 'Classes:', moonDay: 'Moon day', newMoon: 'New moon', fullMoon: 'Full moon',
@@ -932,7 +945,7 @@
       pack10: 'แพ็ก 10 ครั้ง',
       pack10Sub: 'ใช้ได้ 3 เดือน',
       loyalH: 'นักเรียนประจำ',
-      loyalLine: 'ฝึกต่อเนื่องครบ 12 เดือน ต่ออายุ 12 เดือนได้ในราคา 54,900 บาท',
+      loyalLine: 'ฝึกต่อเนื่องครบ 12 เดือน แล้วต่ออายุอีก 12 เดือน รับเสื้อ AYBKK shala คอลเลกชันพิเศษ',
       fair: 'ราคาเดียวสำหรับทุกคน ชัดเจน ตรงไปตรงมา',
       fine: (fee, vat = 7) => `ราคาเป็นเงินบาท ยังไม่รวม VAT ${vat}% ${fee ? 'ชำระออนไลน์มีค่าธรรมเนียมการชำระเงิน' : ''} ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
       momH: 'วันนี้ที่ชาลา', momLine: 'ทุกเช้าเราแบ่งปันบรรยากาศการฝึก ผู้คน ข่าวสาร และอัปเดตจากชาลา',
@@ -941,6 +954,8 @@
       copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
       tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
       loading: 'กำลังโหลด…',
+      loadFail: 'โหลดตารางเรียนไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง หรือทักเราทาง LINE @aybkk',
+      tryAgain: 'ลองอีกครั้ง',
       noClasses: 'ยังไม่มีคลาส',
       noDay: 'วันนี้ไม่มีคลาส',
       calTeachers: 'ครู:', calClasses: 'คลาส:', moonDay: 'วันพระจันทร์', newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง',
@@ -1003,7 +1018,7 @@
       pack10: '10次课卡',
       pack10Sub: '3个月内有效',
       loyalH: '老学员',
-      loyalLine: '连续练习满12个月后，续订12个月只需 54,900 泰铢。',
+      loyalLine: '连续练习满12个月，再续订12个月，就送你一件 AYBKK 道场特别款T恤。',
       fair: '所有人同一个价格，清楚简单。',
       fine: (fee, vat = 7) => `价格以泰铢计，不含 ${vat}% 增值税。${fee ? '在线支付另收线上支付手续费。' : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       momH: '今天的道场', momLine: '每天早上我们分享道场的瞬间：练习、学员、新闻和动态。',
@@ -1012,6 +1027,8 @@
       copy: '复制', copied: '已复制',
       tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
       loading: '加载中…',
+      loadFail: '课程表没有加载出来。请检查网络后再试一次，或加微信 aybkkwechat 联系我们。',
+      tryAgain: '再试一次',
       noClasses: '暂无课程安排。',
       noDay: '当天没有课。',
       calTeachers: '老师：', calClasses: '课程：', moonDay: '月亮日', newMoon: '新月', fullMoon: '满月',
@@ -1074,7 +1091,7 @@
       pack10: '10 занятий',
       pack10Sub: 'Действует 3 месяца',
       loyalH: 'Верные ученики',
-      loyalLine: 'После 12 месяцев подряд — продление на 12 месяцев за 54,900 бат.',
+      loyalLine: 'Занимайтесь 12 месяцев подряд и продлите абонемент ещё на 12. Вы получите футболку шалы AYBKK из особой коллекции.',
       fair: 'Одна цена для всех. Всё просто и понятно.',
       fine: (fee, vat = 7) => `Цены в тайских батах, без НДС ${vat}%. ${fee ? 'При онлайн-оплате взимается комиссия.' : ''} Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
       momH: 'Сегодня в шале', momLine: 'Каждое утро мы делимся моментами из шалы: практика, люди, новости.',
@@ -1083,6 +1100,8 @@
       copy: 'Копировать', copied: 'Скопировано',
       tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
       loading: 'Загрузка…',
+      loadFail: 'Расписание не загрузилось. Проверьте интернет и попробуйте ещё раз или напишите нам в LINE @aybkk.',
+      tryAgain: 'Ещё раз',
       noClasses: 'Занятий пока нет.',
       noDay: 'В этот день занятий нет.',
       calTeachers: 'Учителя:', calClasses: 'Занятия:', moonDay: 'Лунный день', newMoon: 'Новолуние', fullMoon: 'Полнолуние',
@@ -1583,9 +1602,11 @@
     if (b.dataset.group && P.group) $(`[data-group="${P.group}"]`).scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
   // The band and the price-list button open the Duo calculator straight away.
-  document.querySelectorAll('a[href="#promo"]:not(#h12Btn)').forEach(a => a.addEventListener('click', () => {
+  document.querySelectorAll('a[href="#promo"]:not(#h12Btn)').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
     P.group = 'new'; P.offer = 'duo'; P.pkg = 0;
     renderPromo();
+    ($('#calc') || $('#promo')).scrollIntoView({ behavior: 'smooth', block: 'start' });
   }));
   $('#promo').addEventListener('change', e => {
     if (e.target.id !== 'pStart' || !e.target.value) return;
@@ -1711,6 +1732,13 @@
   };
 
   const SCHEDULE_URL = '/api/bkk/schedule?days=62';
+  // A request that hangs (a slow line from China) must end in a Try again, not a page that loads forever.
+  const fetchT = (url, ms = 15000) => {
+    const c = new AbortController(), timer = setTimeout(() => c.abort(), ms);
+    return fetch(url, { signal: c.signal }).finally(() => clearTimeout(timer));
+  };
+  const getJSON = url => fetchT(url).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  const SKEL = $('#view').innerHTML;
   async function load() {
     // The posters are a bonus: the timetable never waits for them or fails with them.
     fetch('/img/timetable/posters.json').then(r => r.ok ? r.json() : {}).catch(() => ({})).then(m => {
@@ -1719,8 +1747,8 @@
     });
     try {
       const [s, p] = await Promise.all([
-        fetch(SCHEDULE_URL).then(r => r.json()),
-        fetch('/api/bkk/products').then(r => r.json()),
+        getJSON(SCHEDULE_URL),
+        getJSON('/api/bkk/products'),
         loadMine(),
       ]);
       CLASSES = s.classes || [];
@@ -1732,9 +1760,14 @@
       PMOON = p.moonDays || {};
       applyLang();
       LOADED = true;
+      $('#view').removeAttribute('aria-busy');
       tab(current);
     } catch (e) {
-      $('#view').innerHTML = '<p class="msg bad">Could not load. Please refresh.</p>';
+      $('#view').removeAttribute('aria-busy');
+      $('#view').innerHTML = `<div class="msg bad" role="alert"><p>${esc(t('loadFail'))}</p><div class="acts">
+        <button type="button" class="btn" data-act="reload">${esc(t('tryAgain'))}</button>
+        ${LANG === "zh" ? "<span class=\"note\">WeChat: <b>aybkkwechat</b></span>"
+          : "<a class=\"btn ghost\" href=\"https://line.me/R/ti/p/@aybkk\" target=\"_blank\" rel=\"noopener\">LINE @aybkk</a>"}</div></div>`;
     }
   }
 
@@ -1789,7 +1822,7 @@
     if (!code) return;
     let d = null;
     try {
-      const r = await fetch('/api/bkk/me/' + encodeURIComponent(code));
+      const r = await fetchT('/api/bkk/me/' + encodeURIComponent(code));
       if (r.ok) d = await r.json();
     } catch (_) {}
     if (code === myCode()) setMine(code, d);
@@ -2109,6 +2142,11 @@
   });
 
   $('#view').addEventListener('click', e => {
+    if (!LOADED && e.target.closest('[data-act="reload"]')) {
+      $('#view').setAttribute('aria-busy', 'true');
+      $('#view').innerHTML = SKEL;
+      return load();
+    }
     if (current !== 'schedule') return;
     const kb = e.detail === 0;                  // Enter or Space on a button
     const focus = (...sels) => {
