@@ -298,7 +298,8 @@
   }
 
   // Shrink on the phone before sending: a 6000px camera file is 10MB, a
-  // 2048px JPEG is about half a megabyte, and that is all a profile needs.
+  // 2048px JPEG is under a megabyte, and that is all a profile needs. 0.92, not
+  // lower: students repost these on Instagram, which compresses them again.
   function shrink(file) {
     return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(file);
@@ -309,7 +310,7 @@
         c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
         URL.revokeObjectURL(url);
-        resolve(c.toDataURL('image/jpeg', 0.86));
+        resolve(c.toDataURL('image/jpeg', 0.92));
       };
       img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('cannot read ' + file.name)); };
       img.src = url;
