@@ -402,6 +402,13 @@
   /* Each date on the poster is a button over its own box: tap it to see that day's classes. */
   .ttp .ttd{position:absolute;margin:0;padding:0;border:0;background:transparent;cursor:pointer;border-radius:4px}
   .ttp .ttd:hover,.ttp .ttd:focus-visible{box-shadow:inset 0 0 0 3px var(--pink);outline:none}
+  .ttp .ttd[aria-pressed="true"]{box-shadow:inset 0 0 0 3px var(--pink)}
+  .ttp .ttd.mine::after{content:"✓";position:absolute;top:5%;right:6%;display:grid;place-items:center;width:clamp(16px,4.6vw,24px);
+    height:clamp(16px,4.6vw,24px);border-radius:50%;background:#F2C94C;color:#3e1442;font-weight:900;font-size:clamp(10px,3vw,15px);line-height:1}
+  .ttnav{display:flex;align-items:center;justify-content:space-between;margin:0 0 8px}
+  .ttnav b{font-size:15px;color:var(--soft);font-weight:700}
+  .ttnav .nav{background:none;border:none;font:inherit;font-weight:700;font-size:26px;line-height:1;color:var(--plum);cursor:pointer;padding:6px 14px;min-height:44px}
+  .ttnav .nav:disabled{opacity:.25;cursor:default}
   .ttp .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
   .ttp .acts .btn{width:100%;min-height:48px}
   @media (min-width:700px){ .ttp{max-width:420px} }
@@ -1996,7 +2003,10 @@
     const sw = `<div class="calsw" role="group" aria-label="${esc(t('calView'))}">${['month', 'week'].map(v =>
       `<button type="button" data-act="view" data-v="${v}" aria-pressed="${CALVIEW === v}">${esc(t(v === 'month' ? 'viewMonth' : 'viewWeek'))}</button>`).join('')}</div>`;
     const cal = CALVIEW === 'week' ? weekCal(has, today, my) : monthCal(has, today, my);
-    $('#view').innerHTML = (CALVIEW === 'month' ? posterBox(calMonth) : '') + sw + cal + dayList(my);
+    // A month with its bright poster shows the poster as the month calendar (its dates are
+    // tappable); the dark calendar stays for the week view and for months without a poster.
+    const poster = CALVIEW === 'month' ? posterBox(calMonth, my) : '';
+    $('#view').innerHTML = sw + (poster ? posterNav(has, today) + poster : cal) + dayList(my);
     if (CALVIEW === 'week') {
       // Phones scroll the week sideways: start at the chosen day, or today.
       const box = $('#view .wkbox');
@@ -2016,7 +2026,17 @@
     });
     return null;
   }
-  function posterBox(m) {
+  function posterNav(has, today) {
+    const months = [...new Set([today.slice(0, 7), ...[...has].map(d => d.slice(0, 7))])].sort();
+    const mi = months.indexOf(calMonth);
+    let label = calMonth;
+    try {
+      label = new Date(calMonth + '-15T12:00:00Z').toLocaleDateString(LOCALE[LANG] || 'en-GB', { timeZone: 'UTC', month: 'long', year: 'numeric' });
+    } catch (_) {}
+    return `<div class="ttnav">${calNav('prev', 'month', mi > 0 ? months[mi - 1] : '')}<b>${esc(label)}</b>${
+      calNav('next', 'month', mi >= 0 && mi < months.length - 1 ? months[mi + 1] : '')}</div>`;
+  }
+  function posterBox(m, my) {
     const langs = Array.isArray(POSTERS[m]) ? POSTERS[m].filter(l => /^[a-z]{2}$/.test(l)) : [];
     if (!/^\d{4}-\d{2}$/.test(m || '') || !langs.length) return '';
     const lang = langs.includes(LANG) ? LANG : langs.includes('en') ? 'en' : langs[0];
@@ -2027,9 +2047,11 @@
     } catch (_) {}
     const map = posterMap(`${m}-${lang}`);
     const pct = (v, of) => (Math.max(0, Math.min(of, Number(v) || 0)) / of * 100).toFixed(3) + '%';
+    const myDays = new Set(my && my.map ? [...my.map.keys()].map(k => k.split('|')[1]) : []);
     const days = map ? map.days.filter(d => Array.isArray(d) && d[0] >= 1 && d[0] <= 31).map(([d, x, y, w, h]) => {
-      const iso = `${m}-${String(d).padStart(2, '0')}`;
-      return `<button type="button" class="ttd" data-act="day" data-day="${iso}" aria-label="${esc(t('posterDay', fmtDay(iso + 'T12:00:00+07:00')))}"
+      const iso = `${m}-${String(d).padStart(2, '0')}`, booked = myDays.has(iso);
+      return `<button type="button" class="ttd${booked ? ' mine' : ''}" data-act="day" data-day="${iso}" aria-pressed="${iso === selDate}"
+        aria-label="${esc(t('posterDay', fmtDay(iso + 'T12:00:00+07:00')) + (booked ? ', ' + t('bookedByYou') : ''))}"
         style="left:${pct(x, map.w)};top:${pct(y, map.h)};width:${pct(w, map.w)};height:${pct(h, map.h)}"></button>`;
     }).join('') : '';
     return `<figure class="ttp"><div class="pic"><img src="${src}" width="1080" height="1620" loading="lazy" decoding="async"
@@ -2102,7 +2124,7 @@
       if (act === 'book') return book(Number(a.dataset.slot), a.dataset.date);
       if (act === 'cancel') return cancelBooking(Number(a.dataset.id));
       if (act === 'back') return closeCls(kb);
-      if (act === 'tobook') return $('#view .calsw').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (act === 'tobook') return ($('#dayList') || $('#view .calsw')).scrollIntoView({ behavior: 'smooth', block: 'start' });
       if (act === 'buy') {
         if (promoLive()) return $('#promo').scrollIntoView({ behavior: 'smooth', block: 'start' });
         tab('packages');
