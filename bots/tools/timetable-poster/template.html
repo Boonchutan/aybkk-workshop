@@ -16,13 +16,14 @@ html,body{margin:0;background:#17121a}
 /* Tall: the feed's calendar block, same height, at the bottom; the photo above it is the header. */
 #p.size-tall{--block:calc(1350px - 2 * var(--m));--top:calc(var(--H) - var(--m) - var(--block));--bot:var(--m);--date:40px;--bigmax:150px}
 
-/* One ink per look. Class colours, if ever wanted, go in --k-mysore / --k-led_primary / --k-led_inter. */
+/* One ink per look, except the class names: each class keeps its own colour, the booking page's
+   (Boonchu, 2 Nov). On the bright boxes the same hues are darkened to read over any part of the photo. */
 #p.look-A,#p.look-C{--ink:#17121a;--title:#17121a;--tile:rgba(255,255,255,.64);--panel:rgba(255,255,255,.64);--scrim:transparent;
-  --k-mysore:var(--ink);--k-led_primary:var(--ink);--k-led_inter:var(--ink)}
+  --k-mysore:#A3122A;--k-led_primary:#155A18;--k-led_inter:#2E3AA8}
 /* C: Look A's calendar; white title and header on a scrim that stops above the weekday heads. */
 #p.look-C{--title:#fff;--scrim:rgba(14,10,16,.6)}
 #p.look-B{--ink:#fff;--title:#fff;--tile:rgba(255,255,255,.16);--panel:transparent;--scrim:rgba(14,10,16,.68);
-  --k-mysore:#fff;--k-led_primary:#fff;--k-led_inter:#fff}
+  --k-mysore:#FC838B;--k-led_primary:#8BFC83;--k-led_inter:#9AA2FF}
 
 .ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .scrim{position:absolute;inset:0;background:var(--scrim)}
@@ -61,6 +62,8 @@ h1{margin:0 0 var(--tgap);font-weight:900;font-size:var(--big,140px);line-height
 .look-B .tile .mn.new{background:#0e0a10;box-shadow:inset 0 0 0 3px #F2C94C}
 .wrap p{white-space:normal}
 .k{color:var(--kc,inherit)}
+/* Bold so the coloured class names read over the darkest part of the photo too. */
+.tile .k{font-weight:800}
 .k.mysore{--kc:var(--k-mysore)}.k.led_primary{--kc:var(--k-led_primary)}.k.led_inter{--kc:var(--k-led_inter)}
 
 .foot{padding:var(--pady) var(--padx);overflow:hidden;min-height:0}
