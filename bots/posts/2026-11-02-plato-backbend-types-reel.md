@@ -8,7 +8,7 @@ Types (on-screen name / spoken line):
 H: Eight types of backbend in my class. Which one are you? / OL: Last one is my favourite.
 1 The Tree Trunk 🌳 Legs strong, always standing. Bend? Tree don't bend.
 2 The Classic Noodle 🍜 Many years, bend like noodle. Balance? Wobble, wobble.
-3 The Loading Muscle ⏳ So flexible. Muscle? Still loading.
+3 The Plot Twist 😮 Everybody look and think, no way. Then she bend like rubber. Plot twist! (Boonchu meant his chubby but flexible students; no body words on screen, the clip shows it; only with that student's OK)
 4 The Pocket Rocket 🚀 Small and stiff, but she make it bend anyway. Stubborn!
 5 The Rusty Hinge 🔩 Joints say yes. Muscles say, tomorrow.
 6 The Wet Spaghetti 🍝 Fold like paper. Core? Lost.
