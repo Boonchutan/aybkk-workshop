@@ -948,3 +948,4 @@ Letter 01 rewritten ("Motivation is a bad alarm clock"), sends Mon 2 Nov: posts/
 - @Machi: score Letter 01 by replies (city + years) and aybkk.net/start/l01; Letter 02 by asana replies and /start/l02.
 - @Plato: the 10-slide text carousel the day after each letter, from the English master only.
 - 2026-11-02 Plato: Google photo posts for Wed 4, Fri 6, Sun 8 Nov (10:00 BKK) waiting for Boonchu's go in the Plato chat (files bots/media/2026-11-04-gbp/). Last week's gmb post (28 Oct) PUBLISHED, no errors.
+- 2026-11-02 Plato: Google photo posts SCHEDULED on Boonchu's go: Wed 4, Fri 6, Sun 8 Nov 10:00 BKK (gmb, Book button gp-2611xx).
