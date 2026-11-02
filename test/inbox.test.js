@@ -40,9 +40,11 @@ const alerts = [];
     ('c','[Online] Led Primary series',1,'06:30',true)`);
 
   const app = express();
-  app.use(express.json({ verify: (req, res, buf) => {
+  // As in server.js: the application route reads its own body
+  const jsonBody = express.json({ verify: (req, res, buf) => {
     if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf;
-  } }));
+  } });
+  app.use((req, res, next) => req.path === '/api/in-depth/apply' ? next() : jsonBody(req, res, next));
   const inbox = mountInbox(app, { pgPool: pool, ai: fakeAi, burstMs: 150,
     notify: async text => { alerts.push(text); return true; } });
   app.post('/line/webhook', (req, res) => { inbox.takeLine(req); res.json({ ok: true }); });
@@ -200,8 +202,9 @@ const alerts = [];
     /Practice video:\nhttps:\/\/youtu.be\/abc123/.test(ap[0].text) && !/Pain or injury/.test(ap[0].text));
   ok('marked hot without an AI call', ap[0].triage && ap[0].triage.lane === 'hot' && aiCalls.length === aiBefore);
   const ping = alerts[alerts.length - 1] || '';
-  ok('one Telegram ping with name, country and fit only', alerts.length === alertsBefore + 1 &&
-    /New In-Depth Mysore application\nMei, China/.test(ping) && !/mei123|example\.com|youtu|students stop/i.test(ping), ping);
+  ok('one Telegram ping with country and fit only, no name', alerts.length === alertsBefore + 1 &&
+    /^New In-Depth Mysore application, from China\n/.test(ping) && !ping.includes('Mei') &&
+    !/mei123|example\.com|youtu|students stop/i.test(ping), ping);
   ok('the ping time is saved', !!ap[0].alerted_at);
 
   ar = await apply(good({ email: 'li@example.cn', name: 'Li', video: '链接: https://pan.baidu.com/s/1AbC-x 提取码: x1y2 \n--来自百度网盘的分享' }));
@@ -225,8 +228,23 @@ const alerts = [];
   await fails(good({ name: 'N'.repeat(101) }), 400, 'name', 'a 101-character name → 400');
   await fails(good({ years: '6 years' }), 400, 'years', 'years must be a number → 400');
   await fails(good({ series: 'third' }), 400, 'series', 'an unknown series → 400');
+  await fails(good({ mornings: '8' }), 400, 'mornings', '8 mornings a week → 400');
+  await fails(good({ years: '61' }), 400, 'years', '61 years → 400');
+  for (const k of ['contact', 'why', 'stuck']) await fails(good({ [k]: '  ' }), 400, k, `an empty ${k} → 400`);
   await fails(good({ primary: 'not_yet' }), 422, 'primary', 'Primary not yet by heart → 422, below the bar');
+  await fails(good({ rooms: 'not_yet' }), 422, 'rooms', 'no Mysore or led classes yet → 422');
   await fails(good({ dates: 'no' }), 422, 'dates', 'cannot come all 30 days → 422');
+
+  const big = JSON.stringify(good({ email: 'big@example.com', filler: 'x'.repeat(70 * 1024) }));
+  ar = await fetch(B + '/api/in-depth/apply', { method: 'POST', duplex: 'half',
+    headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': '10.7.7.7' },
+    body: new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode(big)); c.close(); } }) });
+  ok('a body over 64 KB, even sent in chunks → 413, nothing stored', ar.status === 413 && (await applied()).length === n,
+    String(ar.status));
+  ar = await fetch(B + '/api/in-depth/apply', { method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': '10.7.7.8' }, body: '{"name":"<b>Mei</b>",' });
+  const badJson = await ar.text();
+  ok('broken JSON → 400 with no echo', ar.status === 400 && !/Mei/.test(badJson), badJson);
 
   const before = alerts.length;
   ar = await apply(good({ website: 'http://spam.example' }));
@@ -264,13 +282,46 @@ const alerts = [];
   global.fetch = async (url, init) => { tgBody = JSON.parse(init.body); return { ok: true }; };
   try { await telegram(`New In-Depth Mysore application\n${evil}, China`); } finally { global.fetch = realFetch; }
   delete process.env.TELEGRAM_BOT_TOKEN; delete process.env.BOONCHU_CHAT_ID;
-  ok('Telegram gets plain text (no parse_mode), so a name cannot add HTML or links',
-    tgBody && !('parse_mode' in tgBody) && tgBody.text.includes(evil));
+  ok('Telegram gets plain text (no parse_mode) and shows no link previews',
+    tgBody && !('parse_mode' in tgBody) && tgBody.text.includes(evil) && tgBody.link_preview_options?.is_disabled === true);
+
+  ar = await apply(good({ email: 'nl@example.com', name: 'Line\nTwo', country: 'https://evil.example/verify' }));
+  await wait(50);
+  ap = await applied();
+  ok('a name stays on one line', ar.status === 200 && ap[ap.length - 1].sender_name === 'Line Two' &&
+    /\nName: Line Two\n/.test(ap[ap.length - 1].text));
+  ok('a link typed as the country stays out of the ping', /from \(see the inbox\)\n/.test(alerts[alerts.length - 1]) &&
+    !/evil/.test(alerts[alerts.length - 1]), alerts[alerts.length - 1]);
 
   for (let i = 0; i < 3; i++) await apply(good({ email: 'same@example.com', name: `S${i}` }));
   ar = await apply(good({ email: 'SAME@example.com', name: 'S3' }));
   ok('a 4th application from one email in a day → 429', ar.status === 429 &&
     (await applied()).filter(x => x.sender_id === 'same@example.com').length === 3);
+
+  const seed = (count, alerted) => pool.query(`INSERT INTO aybkk_inbox
+      (channel, kind, direction, ext_id, sender_id, sender_name, text, sent_at, alerted_at)
+    SELECT 'apply', 'application', 'in', 'apply:seed-' || $1 || '-' || g, 'seed-' || $1 || '-' || g || '@example.com',
+      'Seed', 'seed', now(), CASE WHEN $2 THEN now() END FROM generate_series(1, $3::int) g`,
+    [crypto.randomUUID(), alerted, count]);
+  const pinged = async () => (await pool.query(`SELECT count(*)::int AS c FROM aybkk_inbox
+    WHERE channel='apply' AND alerted_at > now() - interval '1 hour'`)).rows[0].c;
+  await seed(10 - await pinged(), true);
+  let pings = alerts.length;
+  ar = await apply(good({ email: 'p1@example.com' }));
+  await wait(100);
+  ok('after 10 pings in an hour, one note says pings pause', ar.status === 200 && alerts.length === pings + 1 &&
+    /Pings pause/.test(alerts[alerts.length - 1]), alerts[alerts.length - 1]);
+  ar = await apply(good({ email: 'p2@example.com' }));
+  await wait(100);
+  ok('then applications are still saved, with no ping', ar.status === 200 && alerts.length === pings + 1 &&
+    (await applied()).some(x => x.sender_id === 'p2@example.com'));
+
+  const hourCount = async () => (await pool.query(`SELECT count(*)::int AS c FROM aybkk_inbox
+    WHERE channel='apply' AND created_at > now() - interval '1 hour'`)).rows[0].c;
+  await seed(200 - await hourCount(), false);
+  ar = await apply(good({ email: 'late@example.com' }));
+  ok('200 applications in an hour from everywhere, then 429', ar.status === 429 &&
+    !(await applied()).some(x => x.sender_id === 'late@example.com'), String(ar.status));
 
   const statuses = [];
   for (let i = 0; i < 11; i++) statuses.push((await apply({}, '10.9.9.9')).status);
@@ -278,6 +329,15 @@ const alerts = [];
     statuses[10] === 429, statuses.join(','));
   ar = await apply(good({ email: 'other@example.com' }), '10.9.9.9');
   ok('the address stays blocked even for a good application', ar.status === 429);
+
+
+  const bare = express();
+  mountInbox(bare, {});
+  const srv2 = bare.listen(0);
+  ar = await fetch(`http://127.0.0.1:${srv2.address().port}/api/in-depth/apply`, { method: 'POST',
+    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(good()) });
+  ok('with no database the form answers 503', ar.status === 503);
+  srv2.close();
 
   srv.close();
   await pool.end();

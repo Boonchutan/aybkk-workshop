@@ -110,10 +110,12 @@ const upload = multer({
 // (/api/bkk/login/<token>, /p/<slug>).
 app.use((req, res, next) => { res.set('Referrer-Policy', 'strict-origin'); next(); });
 app.use(cors());
-// LINE and Meta sign the exact bytes they send; the inbox checks those signatures
-app.use(express.json({ limit: '10mb', verify: (req, res, buf) => {
+// LINE and Meta sign the exact bytes they send; the inbox checks those signatures.
+// The public In-Depth application form reads its own body with a 64 KB limit (inbox.js).
+const jsonBody = express.json({ limit: '10mb', verify: (req, res, buf) => {
   if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf;
-} }));
+} });
+app.use((req, res, next) => req.path === '/api/in-depth/apply' ? next() : jsonBody(req, res, next));
 // index: false so '/' falls through to the host-aware front-door route below
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));
@@ -206,9 +208,26 @@ const ORIENTATION_SHORTCUTS = {
 };
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
-  door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html',
-  // In-Depth Mysore course page: one file, English or Chinese by ?lang=, the host (cn.) or the browser
-  'in-depth': 'in-depth.html' };
+  door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html' };
+// In-Depth Mysore: one file, English or Chinese by ?lang=, a saved choice, the host (cn.) or the browser.
+// On cn.aybkk.net the <head> is sent in Chinese, because WeChat link cards and crawlers run no JS.
+// The Chinese strings come from the page's own ZH table; the English ones ride along for the switch.
+const IN_DEPTH_HTML = path.join(__dirname, 'public', 'in-depth.html');
+app.get('/in-depth', (req, res) => {
+  if (!String(req.headers.host || '').toLowerCase().startsWith('cn.')) return res.sendFile(IN_DEPTH_HTML);
+  const html = fs.readFileSync(IN_DEPTH_HTML, 'utf8');
+  const zh = k => (html.match(new RegExp(`\\b${k}: '([^']*)'`)) || [])[1] || '';
+  const attr = s => String(s || '').replace(/"/g, '&quot;');
+  const enTitle = (html.match(/<title>([^<]*)<\/title>/) || [])[1];
+  const enDesc = (html.match(/<meta name="description" content="([^"]*)">/) || [])[1];
+  res.type('html').send(html
+    .replace('<html lang="en">', () => `<html lang="zh-Hans" data-en-title="${attr(enTitle)}" data-en-desc="${attr(enDesc)}">`)
+    .replace(/<title>[^<]*<\/title>/, () => `<title>${zh('metaTitle')}</title>`)
+    .replace(/(<meta (?:name="description"|property="og:description") content=")[^"]*/g, (m, a) => a + attr(zh('metaDesc')))
+    .replace(/(<meta property="og:title" content=")[^"]*/, (m, a) => a + attr(zh('metaTitle')))
+    .replace('"og:locale" content="en_US"', '"og:locale" content="zh_CN"')
+    .replace('"og:locale:alternate" content="zh_CN"', '"og:locale:alternate" content="en_US"'));
+});
 // Clean tracking links for Reels and bios: aybkk.net/start/sleep instead of ?src=sleep.
 app.get('/start/:tag', (req, res) => res.sendFile(path.join(__dirname, 'public', 'start.html')));
 for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SHORTCUTS })) {

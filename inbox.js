@@ -13,6 +13,7 @@
 // here too, on channel 'apply', already marked hot.
 
 const crypto = require('crypto');
+const express = require('express');
 
 const KEEP_DAYS = 90;
 const BURST_MS = 90 * 1000;          // "hi" / "a question" / "tomorrow?" arrive as three messages
@@ -113,13 +114,14 @@ function parseMeta(body) {
   return out;
 }
 
-// Plain text, no parse_mode: a name like "<b>" or "[x](link)" arrives as typed.
+// Plain text, no parse_mode: "<b>" or "[x](link)" arrives as typed. No link
+// previews, so a link someone typed never shows up as a card from this bot.
 async function telegram(text) {
   const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.BOONCHU_CHAT_ID;
   if (!token || !chat) return false;
   const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chat, text: text.slice(0, 4000) }),
+    body: JSON.stringify({ chat_id: chat, text: text.slice(0, 4000), link_preview_options: { is_disabled: true } }),
   });
   return r.ok;
 }
@@ -130,7 +132,10 @@ async function telegram(text) {
 // to the AI sort: an application is always hot, and applicant data stays here.
 const APPLY_PER_IP_HOUR = 10;        // every try from one address, sent or not
 const APPLY_PER_EMAIL_DAY = 3;
-const APPLY_PER_HOUR = 40;           // from everywhere (x-forwarded-for can be faked)
+// From everywhere, because x-forwarded-for can be faked. Saving is capped high
+// so a script cannot cheaply lock real applicants out; pings are capped low.
+const APPLY_PER_HOUR = 200;
+const APPLY_PINGS_HOUR = 10;
 const APPLY_MAX_BYTES = 64 * 1024;
 const APPLY_FIELDS = {
   name: { max: 100, need: true, line: true },
@@ -164,6 +169,8 @@ const SAY = {
   primary: { yes: 'yes', not_yet: 'not yet' },
 };
 SAY.rooms = SAY.primary;
+// Country is typed free text: anything that looks like a link or a handle stays out of the ping.
+const pingSafe = s => /[:/@]|www\.|\.[a-z]{2,}/i.test(s) ? '(see the inbox)' : s;
 
 const cleanText = (v, line) => {
   let s = String(v ?? '').replace(/\r\n?/g, '\n').replace(/\t/g, ' ')
@@ -470,21 +477,24 @@ function mountInbox(app, opts = {}) {
   });
 
   // Tries per address live in memory only, so no IP is stored with an application.
+  // One counter per address per hour: a flood costs the same as one try.
   const applyTries = new Map();
   const clientIp = req => String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
     req.socket?.remoteAddress || 'unknown';
   function applyTry(ip) {
-    const now = Date.now(), recent = (applyTries.get(ip) || []).filter(t => now - t < 3600 * 1000);
+    const now = Date.now();
     if (applyTries.size > 5000) applyTries.clear();
-    applyTries.set(ip, [...recent, now]);
-    return recent.length < APPLY_PER_IP_HOUR;
+    let t = applyTries.get(ip);
+    if (!t || now - t.start >= 3600 * 1000) applyTries.set(ip, t = { start: now, n: 0 });
+    return ++t.n <= APPLY_PER_IP_HOUR;
   }
 
   // The answer is only ever { ok } or an error code with field names: nothing
   // the applicant typed is sent back. A filled honeypot is told it worked.
-  app.post('/api/in-depth/apply', async (req, res) => {
-    if (!applyTry(clientIp(req))) return res.status(429).json({ error: 'busy' });
-    if (+(req.headers['content-length'] || 0) > APPLY_MAX_BYTES) return res.status(413).json({ error: 'fields', fields: [] });
+  // server.js leaves this path out of its 10 MB JSON parser; the body is read
+  // here, after the address check, with a 64 KB limit.
+  app.post('/api/in-depth/apply', (req, res, next) => applyTry(clientIp(req)) ? next() : res.status(429).json({ error: 'busy' }),
+  express.json({ limit: APPLY_MAX_BYTES }), async (req, res) => {
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     if (String(body.website || '').trim()) return res.json({ ok: true });
     const checked = checkApplication(body);
@@ -493,7 +503,8 @@ function mountInbox(app, opts = {}) {
     try {
       await ready;
       const sent = (await q(`SELECT count(*) FILTER (WHERE sender_id=$1)::int AS email,
-          count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour
+          count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour,
+          count(*) FILTER (WHERE alerted_at > now() - interval '1 hour')::int AS pinged
         FROM aybkk_inbox WHERE channel='apply' AND created_at > now() - interval '1 day'`, [a.email])).rows[0];
       if (sent.email >= APPLY_PER_EMAIL_DAY || sent.hour >= APPLY_PER_HOUR) {
         console.warn('[apply] throttled');
@@ -507,18 +518,21 @@ function mountInbox(app, opts = {}) {
         [`apply:${crypto.randomUUID()}`, a.email, a.name, applicationText(a), a.link,
           { lane: 'hot', summary, reply: '' }])).rows[0];
       res.json({ ok: true });
-      // Name, country and fit only: contacts, answers and the video stay in the inbox.
-      notify(`New In-Depth Mysore application\n${a.name}, ${a.country}\n` +
-        `${a.years} years of Ashtanga, ${a.mornings} mornings a week, ${SAY.series[a.series]}. Teaches now: ${a.teaching}.\n` +
-        `All 30 days: ${SAY.dates[a.dates]}. Call in ${SAY.call_lang[a.call_lang]}.\n` +
-        `The page promises a reply within 2 days. Full answers: the inbox, channel "apply".`)
+      if (sent.pinged > APPLY_PINGS_HOUR) return;
+      // Country and fit only: the name, contacts, answers and the video stay in the inbox.
+      notify(sent.pinged === APPLY_PINGS_HOUR
+        ? `More In-Depth Mysore applications this hour. Pings pause until the hour is over; every application is in the inbox, channel "apply".`
+        : `New In-Depth Mysore application, from ${pingSafe(a.country)}\n` +
+          `${a.years} years of Ashtanga, ${a.mornings} mornings a week, ${SAY.series[a.series]}. Teaches now: ${a.teaching}.\n` +
+          `All 30 days: ${SAY.dates[a.dates]}. Call in ${SAY.call_lang[a.call_lang]}.\n` +
+          `The page promises a reply within 2 days. Full answers: the inbox, channel "apply".`)
         .then(ok => ok && q('UPDATE aybkk_inbox SET alerted_at=now() WHERE id=$1', [row.id]))
         .catch(e => console.error('[apply] ping failed:', e.message));
     } catch (e) {
       console.error('[apply] save failed:', e.message);
       if (!res.headersSent) res.status(500).json({ error: 'server' });
     }
-  });
+  }, (err, req, res, next) => res.status(err.status === 413 ? 413 : 400).json({ error: 'fields', fields: [] }));
 
   return { takeLine };
 }
