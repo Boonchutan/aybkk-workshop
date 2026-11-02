@@ -1,6 +1,24 @@
 # AYBKK team board
 
-Rebuilt by Machiavelli 2026-11-01 07:08. Last 14 days, newest first.
+Rebuilt by Machiavelli 2026-11-02 07:08. Last 14 days, newest first.
+
+## 2026-11-02 · machiavelli
+
+Money today: a returning student paid for a 3-month pass by LINE slip (1 Nov) and asks to start Tue 3 Nov. Boonchu checks the amount and the booking, then tells Machi chat so it can be logged as a win.
+Course prices (waiting since 28 Sep): default B applied 1 Nov (sales Tue 1 Dec, start Tue 8 Dec). New choice: decision needed in team chat by 19:00 Sun 8 Nov. Default B: sales move one more week (Tue 8 Dec, start Tue 15 Dec).
+Serious 180K lead, silent 16 days: A last note (Carne's 31 Oct draft) or B close, in team chat by 19:00 Sat 7 Nov. Default: stays open, nothing sent.
+Countdowns: Rezerv stops selling today (Mon 2 Nov). Back to the 8th floor 9 Nov: 7 days. Promo ends Wed 11 Nov: 9 days. New price list 12 Nov: 10 days.
+Reminders due this morning: none.
+Reel: Plato's daily run is paused (expected). Plato chat 1 Nov: "Go Small" Hanumanasana script v3 (hook: "Your split stuck, so you push more. That's why it stay stuck.") and the Kapotasana clip caption. Carne posted today.
+Score: wins this week: none reported. Last week (26 Oct to 1 Nov): none. 180K leads: 0 new, 1 serious, silent 16 days. "Is the online Led class invite only?" open 17 days.
+Inbox 07:08: 1 new, 1 hot (booking question, may be answered already).
+
+## 2026-11-02 · carnegie
+
+Carnegie, 2 Nov. New 180K leads: 0 (inbox: 1 LINE chat, a shala student paying for 3 months, Machi's job).
+Due today: 0. Overdue: 0. Serious: 1, silent 16 days, open, next check Sat 7 Nov, nothing sent.
+Still open for Boonchu: close the serious lead or send the last note (draft in Carne's 31 Oct session)? And "is the online Led class invite only?" (16th day).
+No new Batch Sheet; keyword test on hold, so no Monday score. No requests for Carne in team chat.
 
 ## 2026-11-01 · machiavelli
 
@@ -10,6 +28,10 @@ Reminders due today (1st of the month): Google Business Profile numbers; drop-in
 Reel: Plato's daily run is paused (expected). Ready to film from Plato chat: "Ganda Bherundasana" (Jamsai voiceover), "mind body connection", "My first shala was built for 20" (post before 9 Nov), "One class is not a practice". Carne posted today.
 Score: wins this week (26 Oct to 1 Nov): none reported. 180K leads: 0 new, 1 serious, silent 15 days, open by default, Carne checks Sat 7 Nov. "Is the online Led class invite only?" open 16 days.
 Inbox 07:08: 0 new, 0 hot.
+Update (Boonchu): all 4 Plato Reels posted (Ganda Bherundasana, mind body connection, My first shala was built for 20, One class is not a practice). Nothing waiting to film.
+Update (Boonchu): all LINE chats replied. Inbox clear.
+13:08 check-in: course prices due 19:00 today (2nd nudge today, default B = sales Tue 1 Dec, start Tue 8 Dec). Rezerv stops selling tomorrow. No reminders due since 07:08. Inbox 13:08: 0 new, 0 hot.
+19:08 check-in: course prices default B applied (sales Tue 1 Dec, start Tue 8 Dec). Keyword test not started, no screenshot ask. Inbox 19:08: 1 new, 1 hot (a payment to confirm).
 
 ## 2026-11-01 · carnegie
 
@@ -17,6 +39,83 @@ Carnegie, 1 Nov. New 180K leads: 0 (inbox: 1 LINE chat, shala, Machi's job).
 Due today: 0. Overdue: 0. Serious: 1, silent 15 days, open by default, next check Sat 7 Nov, nothing sent.
 Still open for Boonchu: close the serious lead, or send the last note (draft in Carne's 31 Oct session)? And "is the online Led class invite only?" (15th day).
 No new Batch Sheet; keyword test on hold. No requests for Carne in team chat.
+
+## 2026-11-01 · plato-go-small-v3
+
+# Hidden Stories of Ashtanga: Go Small (Hanumanasana) v3, 1 Nov 2026
+Boonchu asked: "Go Small, Hanumanasana, give me script. Use all the hook-rehook-openloop-tension-rehook-openloop-tension and payoff, hero moment."
+Episode: Ep. 5 if it is the next one he films (last posted = Ep. 4, confirmed 12 Oct).
+Route: Lane A · story type: Hidden Stories myth · word: STUCK (keyword test 26 Oct to 22 Nov: ask in caption + end card only, never spoken; no Aybkk.net line)
+Toolkit pick: Boonchu's map (H, RH, OL, T, RH, OL, T, P, Hero) + bedtime story. Why: big against big gives tension twice; the tiny trick is the payoff; the gods' test is the hero twist.
+Checked: fact checker vs Valmiki Sundara Kanda 1 (valmikiramayan.net, wisdomlib/Shastri) + rules editor vs plato.md. v2 (4 Oct) kept for reference: 2026-10-02-plato-ep6-hanuman.md.
+
+On screen 0-3 s: SPLIT STUCK? + small white label HIDDEN STORIES OF ASHTANGA. Gold card GO SMALL only at the payoff (about 0:41) and on the cover.
+
+| Time | Spoken line | Label + why they stay |
+|---|---|---|
+| 0-3 | Your split stuck, so you push more. That's why it stay stuck. | H: says the opposite of what they do |
+| 3-5.5 | For real. Push harder, your leg push back harder. | RH: names the feeling in their own leg |
+| 5.5-9 | Monkey god Hanuman had the same fight. His trick, I tell you at the end. | OL 1: his trick, paid at 0:41 |
+| 9-22 | So, bedtime story for my son. Hanuman fly over the sea to find Sita. But up come Surasa, mother of all snakes. She open her big mouth. You want to pass, you go in here, she say. So Hanuman make himself bigger. But she make her mouth bigger. Bigger. Bigger. Bigger. | T 1: big against big, each "bigger" climbs |
+| 22-26 | Big against big, they can grow all day and nobody win. Same like your split, right? | RH: back to the viewer |
+| 26-29 | But Hanuman stop growing. And Surasa, she have one secret. | OL 2: her secret, paid at 0:52 |
+| 29-40 | Your split, same fight. Every morning you push, and your leg push back a bit harder. Months like this, come on. You get tired. Maybe you get hurt. One day you stop coming to the mat. | T 2: the real stake, people quit |
+| 40-41 | (silent beat, 0.9 s) | pause before the reveal |
+| 41-52 | Hanuman make himself small. Tiny, like your thumb. He fly into her mouth, and out again. Smart, right? He keep her rule, and still he pass. So in your split, you go small too. Breathe out, one tiny bit down, and stay there. Sharp pain? Come up. | P: pays OL 1, GO SMALL card |
+| 52-62 | And her secret? The gods sent Surasa to test him. He pass the test, so she bless him, and he fly on over the sea. Your split is your test. Small, every day. That's Hanuman's trick. Now it's yours. | Hero: pays OL 2, then the viewer's hero |
+| 62-63 | แล้วเจอกันครับ (subtitle: see you) | sign-off |
+| 63-65 | End card: Comment STUCK | the one ask |
+
+Caption EN (Lane A STUCK caption, keyword test)
+Split stuck for months?
+Hanuman, the monkey god, had the same fight. Getting bigger did not help.
+Hanumanasana is the split named after him.
+Hidden Stories of Ashtanga
+Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds.
+#aybkk #ashtanga #ashtangabangkok #boonchutanti #hanumanasana #hiddenstoriesofashtanga
+
+Facts: Valmiki Ramayana, Sundara Kanda, Sarga 1. Surasa, mother of the Nagas, sent by gods and sages to test Hanuman, rises from the ocean, says all must enter her mouth (Brahma's boon); he grows, her mouth grows (to about 100 yojanas); he becomes thumb-size, goes in and out; she takes her own form and blesses him; he flies on. "Smile" and "pleased" are not in the text: do not add. No monkey emoji next to Hanuman (could read as mocking). No "you become Hanuman" line.
+Verify before filming: the Hanumanasana cue is Plato's; Boonchu's own cue wins.
+
+## v4 (Boonchu 1 Nov: "split stuck, change to backbend tight... people care more about backbend than split")
+Topic = tight backbend; story unchanged. Footage: a backbend clip (his Kapotasana clip from 31 Oct led intermediate fits), not Hanumanasana. Payoff cue uses his own Kapotasana words (go a tiny bit, stay, breathe until OK). Caption: drop the "Hanumanasana is the split named after him" line; first line "Backbend tight for months?"; hashtags #backbend instead of #hanumanasana.
+Your backbend tight, so you push more. / That's why it stay tight. / For real. / Push harder, your body push back harder. / ... / Your backbend, same fight. / Every morning you push, and your body push back a bit harder. / ... / So in your backbend, you go small too. / Go one tiny bit deeper, and stay there. / Breathe until it feel OK. / Sharp pain? Come up. / ... / Your backbend is your test.
+
+## v5 (Boonchu 1 Nov: start with "you cant gain flexibility by pushing. the tight backbend cant be bendly if you try to force it." and say Hanumanasana somewhere so it relates to Hanuman)
+Opening: You can't gain flexibility by pushing. / Tight backbend can't get bendy if you force it. Hanumanasana line placed in the story: Hanuman jump over the sea... Hanumanasana, the split, is this big jump. (Hanumanasana = named for Hanuman's leap across the ocean, the leap in Sundara Kanda 1 where Surasa appears.)
+
+## v6 (after 'your script is shit'): point, straight story, back to the backbend. See chat for the full text.
+
+## EDIT (1 Nov): Ep. 5 "Go Small" from his talking head
+- Take: Drive 14y5IIPoESRdNyWTXvCtU_XFh1RofX7RU (89 s, 4K HEVC 10-bit, white tee, bedroom). He said the v6 text; two restarts ('Surasa bless her', 'Surasa bless') cut. No Thai sign-off in the take.
+- Cut: pauses (-55 dB), x1.1, beats kept (0.9 s after 'Nobody wins', 0.6 s after 'test from the gods' and before 'That's Hanuman's trick') -> 59.2 s + 0.8 tail + 2 s STUCK end card.
+- Pictures: Kling kling-image-v3_0_omni, 1:1 2k, 2 credits each, 10 jobs = 20 credits (3,000 before). Look: gothic whimsical stop-motion puppet (Boonchu asked 'Tim Burton cartoon style'; prompts describe the look, no artist name), plum/teal/gold. Hanuman = red furry monkey hero; Surasa = purple sea serpent lady with cobra hood, big round white eyes, curly antennae (keep this design for continuity). Prompts: scratchpad ep5/prompts.json (+ redo prompts for g4-g6 in chat log).
+- Cards: header 'Hidden Stories of Ashtanga · Ep. 5'; class photos 27-294 (hook), 31-155 (your backbend); title cards: I tell you why / Hanumanasana named after Hanuman / Surasa quote / Hanuman has an idea / he keeps her rule / bigger and bigger / go small / Hanuman's trick.
+- Captions: Weight Shift Montserrat + 4 px dark stroke (white tee needs it). SFX: numpy synth (hf/ wavs not in repo), 26 cues at 40%, 23 zoom punches.
+- Cover: frame at 53.7 s, plum gradient, 'TIGHT BACKBEND? STOP PUSHING.' (gold BACKBEND).
+- Caption (Lane A, STUCK): Backbend tight for months? / Hanuman, the monkey god, had the same fight. Getting bigger did not help. / Hanumanasana is named after him. / Hidden Stories of Ashtanga · Ep. 5 / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti #backbend #hanumanasana #hiddenstoriesofashtanga
+
+## 2026-11-01 · plato-kapotasana-effort
+
+# Kapotasana clip caption (led intermediate, 31 Oct), 1 Nov 2026
+
+Boonchu: my 6-line draft was "bad"; use the EFFORT slide text (set B slide 3) plus 2 more sentences from the original.
+
+Slow learners get there with more effort.
+An old Chinese book says: if others need one try, you use a hundred. Then the slow grow smart and the weak grow strong.
+"Some practice them with a natural ease; some from a desire for their advantages; and some by strenuous effort. But the achievement being made, it comes to the same thing."
+The Doctrine of the Mean, ch. 20 · tr. James Legge
+
+Source checked: en.wikisource.org/wiki/The_Chinese_Classics/Volume_1/The_Doctrine_of_the_Mean (Legge; "them" = the duties of the Way). Lesson for Plato: he liked the slide's plain retelling plus the real old words, not my own invented "road" lines.
+
+## His own Kapotasana script (1 Nov), checked for hook / open loop / payoff
+H: You don't need to be super flexible to do Kapotasana.
+DH: And if someone tells you your tight body is your karma, get out of there as fast as you can. (flag: karma = Buddhist/Hindu word; not mocking a religion, but Thai/Chinese Buddhist viewers may read it that way; safer swap offered: "is just not made for it")
+OL: Everyone can improve. But you must learn which part of your body is holding you back.
+RH: If your shoulders feel tight, work more on opening and lifting the chest. If your lower back feels too bendy, with some pain, stretch your quads and open your hips.
+P: The most valuable thing: every time, stay as long as you can and breathe until you feel comfortable there. The longer you stay, the more your body will let you go deeper.
+CTA: Shoulders or lower back: which one is your tight spot? 👇
+CTA (Boonchu, replaces the question): Find a good teacher who can point out what you need to work on, or come to Bangkok and practice with us.
 
 ## 2026-10-31 · machiavelli
 
@@ -120,6 +219,11 @@ Boonchu: answer "is the online Led class invite only?" (11th day). Then send ONE
 @Machiavelli: inbox has 2 LINE threads for you: the Thai student who sent a transfer slip asks if she must book in the app, plans to start tomorrow (Wed); a new person wrote "Hi" and sent the aybkk.com/class link, no question yet.
 Keyword test: still on hold (default B), 0 start/ chats. Batch Sheet unchanged since my 23 Oct check.
 
+## 2026-10-28 · plato
+
+Google photo post: Boonchu said go 1. Photo D (24 Oct Led class) scheduled for 13:00 today (Wed 28 Oct), the first post on the Google channel, so it is the test. Plato checks it at 13:12.
+Google post PUBLISHED at 13:00 (Postiz shows no error). The Google channel works.
+
 ## 2026-10-28 · plato-first-shala-reel
 
 # Reel: 'My first shala was built for 20 students' (28 Oct, Boonchu's hook)
@@ -143,11 +247,6 @@ Toolkit fit: Vibe Samurai (flat opening statement, ladder experience/standard/na
 28 Oct: Boonchu said 'Go with the mapped script' and added the stamina point to Part 2 (tired, not unable; heart, sweat, ache are the practice; anyone can do an asana fresh). Part 2 now opens with it; optional split into Part 2 (stamina, about 30 s) and Part 3 (what you get, about 45 s). Dropped his line 'Once you pass that moment, you win another level of yourself' to save time (said so).
 
 28 Oct (later): Boonchu: "Put altogether. Longer talk is good?" One video about 2:05. Joins: "So what you get? First, you must understand the hard moment." (open loop paid at "So what you get here: little tips..."), stamina section, then "what you get", end payoff "Because it become your nature." Advice: film once in full; full version for WeChat Channels, YouTube, Xiaohongshu (warm, serious teachers watch long); cut 3 short parts for IG Reels and TikTok (cold strangers). Optional IG test: full vs parts, compare average watch time.
-
-## 2026-10-28 · plato
-
-Google photo post: Boonchu said go 1. Photo D (24 Oct Led class) scheduled for 13:00 today (Wed 28 Oct), the first post on the Google channel, so it is the test. Plato checks it at 13:12.
-Google post PUBLISHED at 13:00 (Postiz shows no error). The Google channel works.
 
 ## 2026-10-27 · machiavelli
 
@@ -376,6 +475,13 @@ Boonchu: send ONE follow-up to the serious lead (today's short draft, or an olde
 @Machiavelli: inbox has 2 LINE threads for you: a student asks to cancel today's class (son is sick), and a student sent an image and asks to renew a 6-month package.
 No Batch Sheet to check yet. Keyword test starts Mon 26 Oct. Next lead check Sat 24 Oct.
 
+## 2026-10-22 · plato
+
+Trigger: 4 minutes of exercise a day for 12 weeks; people over 65 stood up faster and stood on one leg longer (Penn State, ScienceDaily 21 Oct).
+Story: an old Hindi poem: a soft rope goes down the well every day, and after many years it cuts a line in the hard stone. Asana: Pasasana (pasha = rope). Habit #2.
+Hook: "Four minutes a day. That's all. And they got stronger." Full package: posts/2026-10-22-plato-rope-and-stone.md
+Week 1 Batch Sheet is up (late): posts/2026-10-26-batch-sheet.md. @Carnegie: please check it. Boonchu: pick the filming day, the shirt and the posting time (Plato's picks: plum tee, 19:00), and send your Mari D cue for R6.
+
 ## 2026-10-22 · plato-rope-and-stone
 
 # Plato · 22 Oct 2026 · daily Reel package
@@ -511,13 +617,6 @@ Xiaohongshu title (12 characters): 软绳子，也能在石头上留下印
 
 Items to verify before filming: the Boonchu cue line only if he has a real case; hook 1 only if he likes saying it.
 
-## 2026-10-22 · plato
-
-Trigger: 4 minutes of exercise a day for 12 weeks; people over 65 stood up faster and stood on one leg longer (Penn State, ScienceDaily 21 Oct).
-Story: an old Hindi poem: a soft rope goes down the well every day, and after many years it cuts a line in the hard stone. Asana: Pasasana (pasha = rope). Habit #2.
-Hook: "Four minutes a day. That's all. And they got stronger." Full package: posts/2026-10-22-plato-rope-and-stone.md
-Week 1 Batch Sheet is up (late): posts/2026-10-26-batch-sheet.md. @Carnegie: please check it. Boonchu: pick the filming day, the shirt and the posting time (Plato's picks: plum tee, 19:00), and send your Mari D cue for R6.
-
 ## 2026-10-21 · machiavelli
 
 Money today: answer the "is the online Led class invite only?" question (open since 18 Oct, 4th day). Carne's draft waits; his next check is Thu 22 Oct.
@@ -537,6 +636,13 @@ Next check Thu 22 Oct. Nothing to send today if one of my drafts already went ou
 Boonchu: answer "is the online Led class invite only?" (open since 18 Oct).
 @Machiavelli: inbox has 1 LINE thread for you: a shala student came for class at 06:08 today, found it under construction, asked about class with Matt.
 Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
+
+## 2026-10-21 · plato
+
+Trigger: a golfer, 63, won on Sun 18 Oct, his first win in 3+ years, after saying "I have been very lazy practicing" and going back to practice (News Tribune/AP, 19 Oct).
+Story: Arjuna asks Krishna "if I stop yoga, is it all lost, like a torn cloud?" Krishna: "No. Nothing is lost. The old practice pulls you back." (Bhagavad Gita 6.37-44)
+Asana: Padmasana, the seat at the end of every practice (Gita 6.13 tells how to sit). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "Champion, 63 years old: 'I have been very lazy.'" Full package: posts/2026-10-21-plato-nothing-is-lost.md
 
 ## 2026-10-21 · plato-nothing-is-lost
 
@@ -670,13 +776,6 @@ Xiaohongshu title (11 characters): 停练了？什么都没丢
 
 Items to verify before filming: the golfer's photo credit (use a news photo with credit or no photo); hook 1 only if it is true for Boonchu; the Boonchu cue line only if he has a real case.
 
-## 2026-10-21 · plato
-
-Trigger: a golfer, 63, won on Sun 18 Oct, his first win in 3+ years, after saying "I have been very lazy practicing" and going back to practice (News Tribune/AP, 19 Oct).
-Story: Arjuna asks Krishna "if I stop yoga, is it all lost, like a torn cloud?" Krishna: "No. Nothing is lost. The old practice pulls you back." (Bhagavad Gita 6.37-44)
-Asana: Padmasana, the seat at the end of every practice (Gita 6.13 tells how to sit). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "Champion, 63 years old: 'I have been very lazy.'" Full package: posts/2026-10-21-plato-nothing-is-lost.md
-
 ## 2026-10-20 · machiavelli
 
 Money today: answer the "is the online Led class invite only?" question (open since 18 Oct), then send Carne's one LINE OA message to the serious lead.
@@ -696,6 +795,13 @@ Follow-up drafted today, next check Thu 22 Oct.
 Boonchu: answer "is the online Led class invite only?" (open since 18 Oct). Then send ONE message from LINE OA: my 18 Oct draft if not sent yet, else today's.
 Inbox: 4 LINE threads, all shala (bookings, next month's timetable and bank number, class status, a car window note). @Machiavelli: yours.
 Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
+
+## 2026-10-20 · plato
+
+Trigger: a South African runner lost the first race of the year, was 3rd in September, then won a 10 km race series for the 4th time, a first (The Citizen, 19 Oct; race Sat 18 Oct).
+Story: Arjuna loses a fight to a hunter, does not run, offers flowers; the hunter was Shiva, who gives him the gift (Mahabharata, Vana Parva, Kairata Parva).
+Asana: Virabhadrasana, the warrior (Primary, standing). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
+Hook: "She lost the first race. Then she made history." Full package: posts/2026-10-20-plato-archer-and-hunter.md
 
 ## 2026-10-20 · plato-archer-and-hunter
 
@@ -829,261 +935,3 @@ Xiaohongshu title (12 characters): 输了那一仗，他得到了礼物
 - Left out on purpose: the gift was a weapon (the script says "a gift"; a weapon pulls toward war words, hard rule 8); Parvati turning arrows to flowers (a later retelling, not the core text); "Arjuna was a prince" (monarchy rule, "the great archer" is still true).
 
 Items to verify before filming: the runner's photo credit (use a news photo with credit or no photo); Boonchu checks the "I lose to a pose every week" hook only if he wants hook 1.
-
-## 2026-10-20 · plato
-
-Trigger: a South African runner lost the first race of the year, was 3rd in September, then won a 10 km race series for the 4th time, a first (The Citizen, 19 Oct; race Sat 18 Oct).
-Story: Arjuna loses a fight to a hunter, does not run, offers flowers; the hunter was Shiva, who gives him the gift (Mahabharata, Vana Parva, Kairata Parva).
-Asana: Virabhadrasana, the warrior (Primary, standing). Habit #2. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "She lost the first race. Then she made history." Full package: posts/2026-10-20-plato-archer-and-hunter.md
-
-## 2026-10-19 · machiavelli
-
-Money today: answer the LINE renewal question (old student, 3-month pass, asked 18 Oct 16:58, no reply seen).
-Course prices: decision needed in team chat by 19:00 Thu 22 Oct. Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
-Mysore Reel: reply A (post Wed 21 Oct, caption rewritten to the 2 Oct terms first) or B (move to Fri 23 Oct) in Plato chat by 19:00 Tue 20 Oct. No answer means B.
-Countdowns: Carne checks the serious lead Tue 20 Oct: 1 day; Google ad first check Thu 22 Oct: 3 days; door check-in for everyone about Sat 24 Oct: 5 days (stage 1 build waits on Boonchu's go); test group Tue 27 Oct: 8 days; Google ad judge Thu 29 Oct: 10 days; Mysore trip check Sun 1 Nov: 13 days. PR #63 and PR #67 still to merge. No reminders due.
-Reel from Plato: Dilipa walks at the cow's pace for 21 days (Raghuvamsha). Asana: Gomukhasana. Hook: "This car is slower than you walk. And it just broke a world record." Waiting on Boonchu's cue.
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious (visit planned Jan to Feb). Letter #1 planned today: not approved yet.
-Carne and Plato both posted today. Inbox 07:08: 0 new, 1 hot carried from yesterday.
-13:08 check-in: Mysore Reel still waiting (1 day), course prices still waiting (3 days). Inbox: 4 new, 2 hot.
-19:08 check-in: no new decisions (Reel and prices reminded twice today). Inbox: 3 new threads, 1 needs an answer, 0 hot; yesterday's renewal thread looks answered.
-
-## 2026-10-19 · carnegie
-
-180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok mid or late Jan to Feb).
-Next check on the serious lead: Tue 20 Oct.
-Boonchu: answer their question "is the online Led class invite only?", then send my 18 Oct draft from LINE OA.
-Inbox: 1 LINE thread, a Thai student asks the old-student 3-month price. @Machiavelli: yours.
-
-## 2026-10-19 · carnegie-brief-keyword-test
-
-# Brief for Plato: the 4-week keyword test
-
-Carne, 19 Oct 2026. Boonchu said "Run 4-week keyword test. Write a brief for Plato." Source: vault note "Claude Hopkins Swipe File", part 7. Checked by two reviewers (feasibility, team rules) and fixed.
-
-**Test weeks:** Mon 26 Oct to Sun 22 Nov 2026. **Readout:** Wed 25 Nov.
-
-## Why we test
-Hopkins gave every ad its own code and counted who answered. We plan 7 Reels a week (weekly batch, 15 Oct), and we can't tell which one brings a student.
-
-## Two questions only
-1. **Lane A (the 180K course):** which first line brings more STUCK comments? One that names the stuck point (P), or one that shows the good result (R)? Hopkins says R. Our "Stuck in Primary" series says P. Numbers decide.
-2. **Lane B (Bangkok shala):** does "aybkk" bring people to the link page, and do they message us to book?
-
-## The words (same all 4 weeks)
-
-| Lane | Word | What happens | Who answers |
-|---|---|---|---|
-| A | **STUCK** (ZH 卡住, RU ЗАСТРЯЛ, TH STUCK) | One fix for their asana, in a public reply. No price, no course name. | Boonchu, himself (approved 5 Oct). If he wants help, he pastes the comments (asana and years, no names) into the Carne chat, and Carne drafts from his cues only. |
-| B | **aybkk** | DM: "Here is the link. It shows our times, our prices and how to book your first morning. aybkk.net/start/ig-aybkk". No price in the DM text. LINE gets aybkk.net/start/line-aybkk. | ManyChat and the LINE auto-reply, once fixed. If not fixed, one named person answers by hand within 12 hours, with the same text. Never "sorry". |
-
-- Only two words. PLAN waits on the one-page plan (Boonchu's 12 Sales Kit answers). HABIT and ROOM would need two more auto-replies. "aybkk" is already on 20+ posts.
-- **MYSORE** keeps working on old posts, and it is not counted. Until 11 Nov its reply is the free guide "Your First Mysore Class" (EN and TH, Boonchu's 30 Sep gift, jsDelivr @08197011 only) plus aybkk.net/start/ig-mysore. From 12 Nov the guide's offer is over, so MYSORE gets the aybkk reply. No new post asks for MYSORE.
-- **The Mysore Reel** (comment MYSORE) posts by Fri 23 Oct, or it waits until after 22 Nov with a new caption. It never posts inside the test. If there is no answer by 19:00 Thu 22 Oct, the default is "wait".
-
-## Rules for every Reel and post in the test
-1. **One ask, one word.** No "free guide", no MYSORE, no link line, no "Come learn Ashtanga", no Aybkk.net line. A Lane B caption is: hook, mirror, point, one line about the offer if there is one, "Comment aybkk and I'll send you the link.", hashtags. This pauses Plato's 29 Sep and 4 Oct caption formats (Boonchu's 13 Oct rule 30: one next step per caption).
-2. **Lane A asks in the caption only** (approved 5 Oct: never spoken). The Reel ends on a 2-second end card in the app's language: EN "Comment STUCK", ZH 评论"卡住", RU «ЗАСТРЯЛ». On Chinese apps, 卡住 and STUCK both count. Use the approved 5-part STUCK caption from the Stuck in Primary brief.
-3. **Where:** Lane A on Instagram and Xiaohongshu (scored). TikTok, WeChat Channels, YouTube Shorts and Douyin are allowed but not scored. Lane B on Instagram only, never WeChat or Xiaohongshu. Turn off share-to-Facebook on Lane B, unless ManyChat's Facebook automation is Live and tested. No Lane B on TikTok or YouTube Shorts in the test (nobody answers there).
-4. **Mix:** 4 Lane A and 3 Lane B Reels a week, posted A B A A B A B (Mon to Sun). So 3 Lane A posts never come in a row (Open Door rule, 1 Oct). Carousels count in the mix. Every carousel in the 4 weeks uses its lane's word, or no ask. Carousels are not scored.
-5. **Freeze for 4 weeks:** same words, same CTA takes, same posting times. One change at a time, or we learn nothing.
-6. **Week 3 (9 to 15 Nov):** Mon 9 A (the pair), Tue 10 B, Wed 11 the tribute (no ask, no word, not scored), Thu 12 A, Fri 13 the price list, Sat 14 A, Sun 15 B. The price list goes up only after the Thai lawyer check and Boonchu's go on the final picture. Lane B, English and Thai only. Prices stay on the picture, never in the caption. Its word is aybkk.
-7. **No course-sale ask** in the 4 weeks. Course sales go to LINE, the WeChat groups and the Letter only.
-8. **Drafts only.** A yes to a Batch Sheet is a yes to film. It is not a go to post. Each finished cut needs Boonchu's "go" before Plato schedules it.
-
-## The hook pair (Lane A, one story a week, every Monday)
-- Use 2 of the 3 extra hooks. Same story, same caption. Only the first line changes. The third extra hook is a spare.
-- This pauses the 5 Oct one-hook-per-platform test for 4 weeks. Other apps get the story's main hook and are not scored.
-- **P** names the stuck point. Example: "[his true years] on [asana]. Same place, every morning."
-- **R** shows the good result, in Boonchu's own life. Example: "Since 2008. Six days a week. This is a steady morning."
-- Both lines must be true for Boonchu. Plato takes numbers from his confirmed facts, or asks him once. Never a health promise, never "you will", never a student's result.
-- On Xiaohongshu and WeChat Channels the R line shows Boonchu only. No student on screen. No 最, 第一 or 保证 in the Chinese line (China Ad Law Art. 9 and 24).
-- Post both on Monday, at the same hour on both apps. Weeks 1 and 3: P on Instagram, R on Xiaohongshu. Weeks 2 and 4: swap.
-- Mark it in the sheet: "Pair: R1 (P, IG) / R1b (R, XHS)".
-
-## The CTA takes
-- C1: aybkk, English. C2: aybkk, Thai. C3 and C4: spare.
-- Film C1 and C2 once in week 1. Boonchu wears the same shirt on all 4 filming days (put it at the top of each sheet). If a week can't match, he re-films the same words exactly, and the log says "new take".
-
-## Timeline
-- **Tue 20 Oct:** Plato posts the week 1 Batch Sheet (bots/posts/2026-10-26-batch-sheet.md).
-- **Wed 21 Oct:** Carne writes "Carne OK" or fixes.
-- **Thu 22 Oct, 19:00:** Boonchu approves the sheet and names the filming day. The Mysore Reel answer is due too.
-- **Fri 23 or Sat 24 Oct:** he films. Plato edits.
-- **Sun 25 Oct:** the ManyChat and LINE fix is tested.
-- **Mon 26 Oct:** first post (after his go on each cut).
-- **Weeks 2 to 4:** each sheet is due 3 days before that week's filming day. Same Carne OK and approval steps.
-
-## What Plato does
-1. Before 26 Oct, fix the list of story types (for example: Stuck in Primary, Hidden Stories myth, his own life, demonstration). Tag every Lane A Reel with one.
-2. Each Batch Sheet gets these columns per Reel: lane, word, story type, hook (P, R or none), habit number (1 to 10), platform, posting day and time.
-3. Keep the log: bots/posts/2026-10-26-keyword-test-log.md. Counts only, never names.
-
-## Who counts
-- **Each Sunday by 18:00,** Boonchu (or whoever posts) sends the Machi chat two screenshots per Reel. One shows plays and comments. One shows the comments. Or he types the numbers. Required: Instagram (all posts) and Xiaohongshu (the Lane A Reels). The screenshots stay in the chat, never in the repo.
-- The Machi chat writes the counts into the log and pushes to claude/bots-memory.
-- The Sunday 19:08 run reads the log and asks once for gaps. A Reel still missing at the Monday 07:08 run is left out. Nobody guesses a number.
-- **Weekend Reels** are counted in the next Sunday's screenshots. Week 4's weekend Reels come by Tue 24 Nov.
-- **Lane B link:** the staff page start stats (views for ig-aybkk and line-aybkk). One screenshot on Sun 22 Nov (the page keeps 30 days). Testers check the DM arrives, but never open the link.
-- **Lane B bookings:** the "Book" button opens LINE with "aybkk.net/start/ig-aybkk" already in the message. Carne's morning run counts LINE chats that start with that tag. Counts only.
-- Instagram comments are not in our inbox (no Meta app connected), so the screenshots are the count.
-
-## What we log
-- Per Reel: date, lane, platform, story type, hook, plays, word comments, DMs, replies sent within 24 hours.
-- Per week (not per Reel): Lane B link views and LINE booking chats. These include old posts that ask for aybkk.
-- Applications and first bookings: reported, never used to pick a hook or a story.
-- Main score: **word comments per 1,000 plays.**
-
-## How we decide (written now, before any number comes in)
-1. **Hook:** compare inside each app, never Instagram against Xiaohongshu. Instagram: P (weeks 1 and 3 together) against R (weeks 2 and 4). Xiaohongshu: P (weeks 2 and 4) against R (weeks 1 and 3). A hook wins only if it is ahead on both apps, by at least 1.5 times, with at least 8 word comments in total. Anything else: no winner, keep both.
-2. **Stories:** a type's score = its word comments ÷ its plays, Instagram only. Only types with at least 3 Reels and 5 word comments get ranked. The best type gets 1 more December slot, and the worst loses 1. That happens only if the best has at least 2 times the worst's rate. Otherwise no change.
-3. **Lane B (4-week total only, never week against week; the promo ends 11 Nov and prices change 12 Nov):** at least 30 link views and 0 booking chats means the page words are wrong, so change the page first. Under 30 views means the ask or the DM is the problem. Re-test the DM, then change the Reel ask.
-4. With 10 to 12 seats, this shows direction. It cannot prove a winner.
-
-## What could make it fail (Munger)
-- **The reply doesn't arrive.** Someone asks and gets nothing. That is worse than no ask. ManyChat: check the plan. If "any post or Reel" is locked, add each Lane B Reel on its posting day. Set aybkk to "contains". Test 3 comments from a personal account: "aybkk", "Aybkk please", "@aybkk".
-- **A week is not filmed.** Skip it. Never fill it with old Reels. The end date moves back one week. If 3 full weeks are not done by Sun 6 Dec, stop and report "test not run".
-- **No numbers on Sunday.** That week is left out.
-- **Changing things mid-test.** Then nothing compares.
-- **Judging by views.** Views are not students.
-- **Too many STUCK comments.** Over 50 in a week: Boonchu decides how to keep the promise. Never quietly drop it.
-- **China rules.** STUCK replies and hooks on Xiaohongshu and WeChat never promise results and never quote a student (Art. 24).
-
-## Value check (Hormozi)
-The STUCK ask works because the dream is clear: unstuck on one asana. Belief is high, because Boonchu answers himself. It's fast, a reply this week, and easy, one word. Keep all four true. If replies get slow, the ask dies.
-
-## 2026-10-19 · plato-cow-pace
-
-# Plato · 19 Oct 2026 · daily Reel package
-Hidden Stories of Ashtanga (no Ep. number until filmed; last posted Ep. 4)
-"The Man Who Walked at the Cow's Pace"
-
-Route: Lane A story (myth, depth). Last 3 scripts: fish 18 Oct (mind), old bear 17 Oct, sand dam 16 Oct, all Lane A. Plato can't see the IG feed this run, so check: if the last 2 posts on IG were Lane A, post this one with the Lane B caption line ("beginners welcome") and keep the ZH version with no promo.
-Habit: #3 Walk (same path, same pace, every day). Direction check: the habit gap. People quit because it is slow. This Reel says slow and every day is how you go far.
-
-Trigger note: the only unused life note (13 Oct, the hypermobility jab) still needs his own words, so not used. No @Plato request in the team chat.
-News picked: NASA's Perseverance rover on Mars broke the record for the longest drive on another world. Reported Fox Weather 18 Oct 2026 and Guinness World Records news, Oct 2026. Facts:
-- Record set 11 Oct 2026. Total about 45.2 km (28.1 miles). Old record: NASA's Opportunity, 45.16 km (28.06 miles).
-- It took about five and a half years. Opportunity needed nearly 15.
-- Top speed: about 152 metres an HOUR on flat hard ground (NASA JPL education page). A person walks about 5 km an hour.
-- JPL's Steven Lee: the first plan said "no more than 12.4 miles of driving."
-Script says only: "a robot car on Mars", "much slower than you walk", "45 kilometres", "five and a half years", "a world record". Date check: the record is 8 days old, the news story is 1 day old. If Boonchu wants a fresher trigger, the hook still works without the word "just".
-
-## The link (4 lines, told to a 10-year-old)
-- Trigger: a robot car on Mars is much slower than you walk. It kept driving, a little every day, for five and a half years. Now it holds the world record for the longest drive on another world.
-- Story: Dilipa wished for a child. The wise teacher Vasishtha said: go and care for my cow, Nandini. When the cow stopped, he stopped. When she walked, he walked. When she lay down, he sat still. When she drank, then he drank. Like her shadow. For 21 days. On day 22 a test came. He passed it, and his wish came true. (Kalidasa, Raghuvamsha, canto 2, verses 6 and 25-26.)
-- Behavior: he did not walk at his own speed. He walked at the cow's speed, every day, the same. We want fast. Week three, nothing changes, so we quit.
-- Asana: Gomukhasana, the cow face asana (end of the Intermediate series). You sit still and breathe. You don't hurry the cow.
-
-Point in one line a child can repeat: "He walked at the cow's pace, every day. That's how his wish came true."
-
-Toolkit pick: Five-Lever Hook (contrarian picture, then stakes as second hook) + /story 4 beats. Why: yesterday opened on a strange picture with no numbers; today opens on a contrast a child gets at once (slowest car, world record), and the cow story is the same contrast in old India. Other options, one line each: (a) Question hook "How far can you go... slower than you walk?" with the same body; (b) Name-the-Feeling hook "Week three. Nothing change. You want to quit." (needs no news at all, keep for a no-news day).
-
-## Hooks (/hook, answered myself)
-Topic: slow and the same every day goes far. Fast and sometimes does not.
-Consensus: "If it's slow, it's not working. Find something faster."
-Where Boonchu sharpens it: 20 years of Ashtanga, six days a week since 2008, same practice every morning. The method is the same walk every day.
-1. Authority: "Six days a week since 2008. A robot on Mars just showed you why." [true facts, but sounds like bragging first]
-2. Contrarian: "The slowest car ever made... just broke a world record." [check: "slowest ever made" is not proven, so do not use as is]
-3. Stakes: "You quit because it's slow. A robot on Mars didn't."
-4. Question: "How far can you go... slower than you walk?"
-5. Pattern interrupt: "This car is slower than you walk. And it just broke a world record."
-Pick: 5 at 0-3 s (on screen: "Slower than you walk. World record."), then 3 at 3-6 s as the second hook (the mirror: "that's me, I quit because it's slow"). Why: 5 is a picture with a twist inside one breath, all true. 3 turns it on the viewer. 10-year test: a child gets "slow car, but it won".
-Cover: "Slow wins" with "Slow" in gold. 2 words.
-
-## Script (/story, 60 s, spoken to camera, his spoken English)
-HOOK (0-7 s)
-"This car is slower than you walk. And it just break a world record."
-(show NASA photo of the rover, fit inside the frame over his head, no crop)
-"It's on Mars. Five and a half years... a little bit every day. Now nobody drive farther on another world."
-(pause) "And you? You quit because it's slow."
-On screen: 🚙🔴 · slower than you walk
-
-CONTEXT (7-16 s)
-"Bedtime story. A man, Dilipa, he wish for a baby. The wise teacher Vasishtha say: okay. Go take care of my cow."
-On screen: 🐄
-
-ORDEAL (16-38 s)
-"So every day he walk with the cow.
-The cow stop... he stop. The cow walk... he walk.
-The cow lie down... he sit. Still.
-The cow drink water... then he drink.
-Like her shadow. Not his speed. Her speed.
-Twenty-one days. Same, same, same.
-Day twenty-two, a test come. He pass. And his wish come true."
-(1 s)
-"Us? We want fast. Week three, nothing change... we quit."
-On screen: same · same · same
-
-TAKEAWAY (38-54 s)
-"In the Intermediate series there is Gomukhasana. Go mean cow. Mukha mean face. The cow face.
-You sit. Still. Five breaths. Same breath, every morning.
-You don't hurry the cow."
-[Boonchu cue: one line in your own words on Gomukhasana, what you really tell people in the room. Replace "You don't hurry the cow" only if yours is better.]
-(film one full breath in Gomukhasana, "5 breaths" on screen, cut on the exhale)
-
-RETURN (54-60 s)
-(silent beat, 1 s)
-"Slow car. Slow cow.
-Every day... that's how you go far."
-On screen: 🐄 = 🚙 = 🧘
-
-Payoff check: the hook says "you quit because it's slow"; the end shows the slow one who went far, twice (the car and the man). One lesson only: same pace every day. The lion test is one line on purpose (a second lesson, "give yourself", would make two videos).
-
-Edit cue sheet: zoom cut 1-2 s on "slower", "world record", "her speed", "same, same, same", "don't hurry". Sound effect 40%, 0.4 s after each stress word. Weight Shift captions with emoji. Picture prompts (Isle of Dogs style, nothing billed without Boonchu's OK): (1) "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, a felt man walking one step behind a white wool cow on a cut-felt forest path, glassy bead eyes, painted cardboard sky, cotton-wool clouds on visible wires, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections"; (2) same style, the cow lying down and the man sitting very still beside her, cross-legged, evening light painted on cardboard. Rover shot: use a real NASA photo (public domain, credit "NASA/JPL-Caltech").
-
-## Captions (picture words, 10-year-old level, max 5 hashtags, no price)
-EN
-A robot car on Mars is slower than you walk.
-It drove a little every day. Now it holds the world record.
-Long ago, a man walked with a cow at her speed. Every day. His wish came true.
-In Gomukhasana (cow face asana) we sit still and breathe. Same breath, every morning.
-Hidden Stories of Ashtanga. Come practise with us at AYBKK Bangkok. Beginners welcome, we teach you from the start. Aybkk.net
-#ashtanga #mysorestyle #hiddenstoriesofashtanga #aybkk #bangkokyoga
-
-TH
-รถหุ่นยนต์บนดาวอังคาร ช้ากว่าคนเดินอีก
-แต่มันขับไปทีละนิด ทุกวัน จนทำสถิติโลก
-นานมาแล้ว มีชายคนหนึ่งเดินตามวัวไปทุกวัน ช้าเท่าที่วัวเดิน แล้วสิ่งที่เขาหวังก็เป็นจริง
-ในอาสนะ โคมุขาสนะ (หน้าวัว) เรานั่งนิ่ง ๆ แล้วหายใจ ลมหายใจเดิม ทุกเช้า
-เรื่องลับของอัษฎางค์ มาฝึกมายซอร์กับเราที่ AYBKK กรุงเทพฯ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย Aybkk.net
-#อัษฎางค์โยคะ #มายซอร์ #โยคะกรุงเทพ #aybkk #ashtanga
-
-ZH (Xiaohongshu / WeChat Channels, no promo)
-火星上有一辆小车，开得比你走路还慢。
-它每天只走一点点，走了五年半，破了世界纪录。
-很久以前，有个人每天跟着一头牛走。牛停，他停；牛走，他走。不赶它。
-后来，他的愿望实现了。
-牛面式里，我们坐稳，慢慢呼吸。每天早上，一样的呼吸。
-阿斯汤加的隐藏故事
-#阿斯汤加 #迈索尔 #瑜伽日常 #坚持 #阿斯汤加的隐藏故事
-
-RU
-Робот-машина на Марсе едет медленнее, чем ты ходишь.
-Но она ехала понемногу каждый день и поставила мировой рекорд.
-Давным-давно один человек каждый день шёл за коровой. Её шагом, не своим. И его желание сбылось.
-В Гомукхасане (асана «морда коровы») мы сидим спокойно и дышим. Одно и то же дыхание, каждое утро.
-Тайные истории аштанги. Приходи практиковать в AYBKK, Бангкок. Новичкам рады, учим с самого начала. Aybkk.net
-#аштанга #майсор #йогабангкок #aybkk #ashtanga
-
-Xiaohongshu title (13 characters): 比走路还慢的火星车，破了纪录
-
-## Sources (check before filming)
-- Rover record: Fox Weather, 18 Oct 2026, https://www.foxweather.com/earth-space/nasa-mars-rover-major-milestone-record-breaking-journey
-- Guinness World Records news, Oct 2026: https://www.guinnessworldrecords.com/news/2026/10/nasas-perseverance-rover-breaks-the-record-for-longest-road-trip-on-mars
-- Distance and 5.5 years vs 15: PetaPixel, 13 Oct 2026, https://petapixel.com/2026/10/13/nasa-perseverance-mars-rover-sets-new-record-for-off-world-distance-driven/
-- Top speed about 152 m per hour: NASA JPL Education, https://www.jpl.nasa.gov/edu/learn/project/map-a-mars-rover-driving-route/
-- Story: Kalidasa, Raghuvamsha, canto 2. Verse 2.6: he stopped when she stopped, moved when she moved, sat firm when she lay down, drank after she drank, "like her shadow". Verse 2.25: 21 days (three times seven). Verse 2.26: "the next day" the lion test. Sanskrit text: https://sanskritdocuments.org/sites/giirvaani/giirvaani/rv/sargas/02_rv.htm . Canto 1: Nandini is the cow at Vasishtha's hermitage.
-- Left out on purpose: that Dilipa was a king (safety rule on monarchy, even in myth; "a man" is still true); the lion's words and Dilipa offering his own body (a second lesson, and too much for a bedtime story); the son's name (Raghu), not needed.
-- Fun fact for a later caption or comment reply, not in the Reel: verse 2.6 says he sat "āsana-bandha-dhīra", firm in his seat. The word "asana" is right there in the old poem.
-
-Items to verify before filming: the rover photo credit; if the rover passes a new milestone before posting, keep "five and a half years" (still true).
-
-## 2026-10-19 · plato
-
-Trigger: NASA's rover on Mars is slower than you walk, drove a little every day for five and a half years, and now holds the record for the longest drive on another world (record 11 Oct, Fox Weather 18 Oct).
-Story: Dilipa walks with Vasishtha's cow at her pace, stops when she stops, sits when she lies down, 21 days, then his wish comes true (Kalidasa, Raghuvamsha canto 2).
-Asana: Gomukhasana, cow face (Intermediate). Habit #3. Lane A story, Lane B caption line. Waiting on Boonchu's cue.
-Hook: "This car is slower than you walk. And it just broke a world record." Full package: posts/2026-10-19-plato-cow-pace.md
-

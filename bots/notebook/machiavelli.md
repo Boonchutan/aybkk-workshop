@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-01T12:10:30.583Z
+Inbox last read: 2026-11-02T00:12:15.041Z
 
 ## Standing orders from Boonchu
 - 2026-10-31 (Boonchu: "You can't say serious lead but not telling me where"): every time a message names a lead or person, also say where to find them: channel, date and time of their last message, and its first words. Do this in the session message only, never in a file. If the name is unknown, say so and why.
@@ -90,7 +90,10 @@ Inbox last read: 2026-11-01T12:10:30.583Z
 
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
+- 2026-11-02 07:08: COURSE PRICES new choice set after default B (1 Nov): A send prices or B move sales one more week, by 19:00 Sun 8 Nov. Default B = sales Tue 8 Dec, start Tue 15 Dec.
+
 ## Log
+- 2026-11-02 07:08: Carne posted; Plato paused (expected). No @Machi requests. Inbox 07:08: 1 new, 1 hot (LINE booking question from the returning 3-month payer, may be answered). Possible win (3-month pass) flagged, not logged until Boonchu confirms. Prices: new choice by 19:00 Sun 8 Nov, default B. Serious lead: A/B by 19:00 Sat 7 Nov, default stays open. Rezerv stops selling today. No reminders due, no wins. Board rebuilt.
 - 2026-11-01 19:08: Course prices: no answer by 19:00, default B applied (sales Tue 1 Dec, start Tue 8 Dec). Keyword test reminder checked: test not started, no ask. Inbox 19:08: 1 new, 1 hot (LINE: returning student says 3-month pass paid, slip sent, asks to start Tue 3 Nov; amount to check). Possible win flagged, not logged until Boonchu confirms. No reminders due.
 - 2026-11-01 (Boonchu): 'All lines replied' = every LINE OA chat answered as of this morning. Drop all carried 'may be answered' LINE threads; only count LINE threads with news after 2026-11-01 07:30 Bangkok.
 - 2026-11-01 (Boonchu, after the 07:08 brief): 'All Plato reels posted' = the 4 ready Reels from Plato chat (Ganda Bherundasana with Jamsai voiceover, mind body connection, My first shala was built for 20, One class is not a practice). Drop them from 'ready to film'. Not logged as a Win (no money yet). Next: plays + comments per Reel in the Sunday screenshots; any DM or booking that names one of them.
