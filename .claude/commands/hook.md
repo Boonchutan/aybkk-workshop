@@ -43,8 +43,9 @@ Generate 5 distinct hook options for a single Reel topic, each under 12 words, e
 - Each hook must be specific enough that a competitor cannot post the same hook tomorrow
 - No buzzwords: "flow," "journey," "transformation," "unlock," "level up"
 - Must work in English and translate cleanly to Thai or Chinese
+- Rule #1, the stakes test (Boonchu, 2 Nov 2026): before writing, answer two lines: "Stakes: what happens if this does not work or does not happen? (a problem left unsolved, a benefit skipped: what happens if I don't?)" and "Why care: the reason in the viewer's life now". If either is empty or vague, the piece is not ready. True stakes only: no health fear, no medical promise, no unchecked number, no shaming.
 </rules>
 
 <output>
-Topic → Consensus view → Where the teacher's transmission refines it → 5 labeled hooks → Recommended hook + 1-sentence reason
+Stakes + Why care (two lines) → Topic → Consensus view → Where the teacher's transmission refines it → 5 labeled hooks → Recommended hook + 1-sentence reason
 </output>

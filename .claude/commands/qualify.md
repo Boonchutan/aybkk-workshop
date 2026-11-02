@@ -39,8 +39,9 @@ Write the qualification section of a high-ticket Ashtanga offer page. The sectio
 - Release statement must be genuine — not reverse-psychology dressed up as honesty
 - Tone: direct, calm, slightly austere. Never warm-up sentences. Never "we." Never "transform your life."
 - Must work for a reader who is already skeptical of yoga marketing
+- Rule #1, the stakes test (Boonchu, 2 Nov 2026): before writing, answer two lines: "Stakes: what happens if this does not work or does not happen? (a problem left unsolved, a benefit skipped: what happens if I don't?)" and "Why care: the reason in the reader's life now". If either is empty or vague, the piece is not ready. True stakes only: no health fear, no medical promise, no unchecked number, no shaming.
 </rules>
 
 <output>
-Named doubts (3) → Not-for-you-if list (minimum 3) → Release statement → Single CTA → One-line page headline that signals filter, not sales
+Stakes + Why care (two lines) → Named doubts (3) → Not-for-you-if list (minimum 3) → Release statement → Single CTA → One-line page headline that signals filter, not sales
 </output>

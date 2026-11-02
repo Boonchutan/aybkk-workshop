@@ -51,8 +51,10 @@ Build a complete Reel script on the 4-beat skeleton — spoken to camera, or cap
 - Written to stop a 10-year practitioner, not a beginner
 - Must translate cleanly to Thai or Chinese
 - Footage of recognizable students (especially pregnant or elderly students) requires their permission — flag it in the output
+- Rule #1, the stakes test (Boonchu, 2 Nov 2026): before writing the beats, answer two lines: "Stakes: what happens if this does not work or does not happen? (a problem left unsolved, a benefit skipped: what happens if I don't?)" and "Why care: the reason in the viewer's life now". If either is empty or vague, the piece is not ready. True stakes only: no health fear, no medical promise, no unchecked number, no shaming.
+- The stakes land in the Context beat, right after the hook: what this person loses if the ordeal is never solved
 </rules>
 
 <output>
-Length + mode → the ONE ordeal → beat-by-beat script (spoken lines, or shot list with captions and seconds) → how the last line pays off the hook → items to verify before filming
+Stakes + Why care (two lines) → Length + mode → the ONE ordeal → beat-by-beat script (spoken lines, or shot list with captions and seconds) → how the last line pays off the hook → items to verify before filming
 </output>
