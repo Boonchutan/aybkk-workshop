@@ -9,8 +9,8 @@
 // for 90 days. Machi, the chief-of-staff routine, reads GET /api/inbox three
 // times a day and drafts the replies. With ANTHROPIC_API_KEY set, a message is
 // also sorted as it arrives and hot ones reach Boonchu's Telegram at once.
-// Applications from the In-Depth Mysore page (POST /api/in-depth/apply) land
-// here too, on channel 'apply', already marked hot.
+// Applications from the In-Depth Mysore pages (POST /api/in-depth/apply) land
+// here too, on channel 'apply', already marked hot and tagged with their list.
 
 const crypto = require('crypto');
 const express = require('express');
@@ -126,10 +126,16 @@ async function telegram(text) {
   return r.ok;
 }
 
-// ── In-Depth Mysore applications (aybkk.net/in-depth) ──────────────────────
+// ── In-Depth Mysore applications ───────────────────────────────────────────
 // Each one is kept as a message on channel 'apply', so Machi's brief shows it
 // beside the chats and it is deleted with them after KEEP_DAYS. It never goes
 // to the AI sort: an application is always hot, and applicant data stays here.
+// The form says which list it came from; the list is stored in triage.list and
+// named in the text and the ping, so Machi and Boonchu can tell them apart.
+const APPLY_LISTS = {
+  'gen3-zh': 'Generation #3, the private Chinese page',
+  'priority-en': 'priority list for the next English intake, the public English page',
+};
 const APPLY_PER_IP_HOUR = 10;        // every try from one address, sent or not
 const APPLY_PER_EMAIL_DAY = 3;
 // From everywhere, because x-forwarded-for can be faked. Saving is capped high
@@ -145,7 +151,7 @@ const APPLY_FIELDS = {
   call_lang: { one: ['en', 'zh'], need: true },
   primary: { one: ['yes', 'not_yet'], need: true, bar: v => v !== 'yes' },
   rooms: { one: ['yes', 'not_yet'], need: true, bar: v => v !== 'yes' },
-  dates: { one: ['yes', 'not_sure', 'no'], need: true, bar: v => v === 'no' },
+  dates: { one: ['yes', 'not_sure', 'no'], need: true, bar: v => v === 'no', list: 'gen3-zh' },   // asked for Gen #3 only
   years: { int: 60, need: true },
   mornings: { int: 7, need: true },
   series: { one: ['primary', 'intermediate', 'advanced_a', 'advanced_b'], need: true },
@@ -183,7 +189,10 @@ const cleanText = (v, line) => {
 function checkApplication(body) {
   const b = body && typeof body === 'object' ? body : {};
   const app = {}, bad = [], bar = [];
+  const list = typeof b.list === 'string' && Object.hasOwn(APPLY_LISTS, b.list) ? b.list : null;
+  if (!list) bad.push('list');
   for (const [k, f] of Object.entries(APPLY_FIELDS)) {
+    if (f.list && f.list !== list) continue;
     const raw = b[k];
     if (f.one) {
       const v = String(raw ?? '');
@@ -210,14 +219,14 @@ function checkApplication(body) {
   if (b.consent !== true) bad.push('consent');
   if (bad.length) return { error: 'fields', fields: [...new Set(bad)] };
   if (bar.length) return { error: 'bar', fields: bar };
-  app.lang = b.lang === 'zh' ? 'zh' : 'en';
+  app.list = list;
   return { app };
 }
 
 function applicationText(a) {
   const block = (label, v) => v ? `${label}:\n${v}` : null;
   return [
-    `In-Depth Mysore application, Generation #3 (page in ${a.lang === 'zh' ? 'Chinese' : 'English'})`,
+    `In-Depth Mysore application, list ${a.list} (${APPLY_LISTS[a.list]})`,
     `Name: ${a.name}`,
     `Email: ${a.email}`,
     `Contact: ${a.contact}`,
@@ -225,7 +234,7 @@ function applicationText(a) {
     `Call in: ${SAY.call_lang[a.call_lang]}`,
     `Primary Series by heart: ${SAY.primary[a.primary]}`,
     `Practised in Mysore and led classes: ${SAY.rooms[a.rooms]}`,
-    `All 30 days in person: ${SAY.dates[a.dates]}`,
+    a.dates ? `All 30 days in person: ${SAY.dates[a.dates]}` : null,
     `Years of Ashtanga: ${a.years}`,
     `Mornings a week now: ${a.mornings}`,
     `Series now: ${SAY.series[a.series]}`,
@@ -510,21 +519,22 @@ function mountInbox(app, opts = {}) {
         console.warn('[apply] throttled');
         return res.status(429).json({ error: 'busy' });
       }
-      const summary = `In-Depth Mysore application from ${a.country}: ${a.years} years, ${a.mornings} mornings a week, ` +
-        `${SAY.series[a.series]}, all 30 days ${SAY.dates[a.dates]}, call in ${SAY.call_lang[a.call_lang]}.`;
+      const summary = `In-Depth Mysore application, list ${a.list}, from ${a.country}: ${a.years} years, ` +
+        `${a.mornings} mornings a week, ${SAY.series[a.series]}, ` +
+        `${a.dates ? `all 30 days ${SAY.dates[a.dates]}, ` : ''}call in ${SAY.call_lang[a.call_lang]}.`;
       const row = (await q(
         `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, ref, sent_at, triage)
          VALUES ('apply','application','in',$1,$2,$3,$4,$5,now(),$6) RETURNING id`,
         [`apply:${crypto.randomUUID()}`, a.email, a.name, applicationText(a), a.link,
-          { lane: 'hot', summary, reply: '' }])).rows[0];
+          { lane: 'hot', list: a.list, summary, reply: '' }])).rows[0];
       res.json({ ok: true });
       if (sent.pinged > APPLY_PINGS_HOUR) return;
       // Country and fit only: the name, contacts, answers and the video stay in the inbox.
       notify(sent.pinged === APPLY_PINGS_HOUR
         ? `More In-Depth Mysore applications this hour. Pings pause until the hour is over; every application is in the inbox, channel "apply".`
-        : `New In-Depth Mysore application, from ${pingSafe(a.country)}\n` +
+        : `New In-Depth Mysore application, list ${a.list} (${APPLY_LISTS[a.list]}), from ${pingSafe(a.country)}\n` +
           `${a.years} years of Ashtanga, ${a.mornings} mornings a week, ${SAY.series[a.series]}. Teaches now: ${a.teaching}.\n` +
-          `All 30 days: ${SAY.dates[a.dates]}. Call in ${SAY.call_lang[a.call_lang]}.\n` +
+          `${a.dates ? `All 30 days: ${SAY.dates[a.dates]}. ` : ''}Call in ${SAY.call_lang[a.call_lang]}.\n` +
           `The page promises a reply within 2 days. Full answers: the inbox, channel "apply".`)
         .then(ok => ok && q('UPDATE aybkk_inbox SET alerted_at=now() WHERE id=$1', [row.id]))
         .catch(e => console.error('[apply] ping failed:', e.message));

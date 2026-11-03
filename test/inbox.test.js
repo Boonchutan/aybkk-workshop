@@ -185,7 +185,7 @@ const alerts = [];
     call_lang: 'zh', primary: 'yes', rooms: 'yes', dates: 'yes', years: '6', mornings: 6, series: 'intermediate',
     teaching: 'yes', teach: 'A small Mysore room, 2 years', why: 'I want to understand why my students stop coming.',
     stuck: 'Kapotasana, for two years.', injury: '', video: 'https://youtu.be/abc123', heard: 'Instagram',
-    question: '', consent: true, lang: 'zh', website: '', ...over });
+    question: '', consent: true, list: 'gen3-zh', website: '', ...over });
   const applied = async () => (await pool.query(`SELECT * FROM aybkk_inbox WHERE channel='apply' ORDER BY id`)).rows;
   const aiBefore = aiCalls.length, alertsBefore = alerts.length;
 
@@ -197,13 +197,16 @@ const alerts = [];
     ap[0].kind === 'application' && ap[0].direction === 'in', `${ar.status} ${JSON.stringify(aj)} ${ap.length}`);
   ok('one thread per email, named, with the video as ref', ap[0].sender_id === 'mei@example.com' &&
     ap[0].sender_name === 'Mei' && ap[0].ref === 'https://youtu.be/abc123');
-  ok('the stored text carries every answer', /In-Depth Mysore application, Generation #3 \(page in Chinese\)/.test(ap[0].text) &&
-    /Series now: Intermediate/.test(ap[0].text) && /Why this course, and why now:\nI want to understand/.test(ap[0].text) &&
+  ok('the stored text names the list and carries every answer',
+    /^In-Depth Mysore application, list gen3-zh \(Generation #3, the private Chinese page\)\n/.test(ap[0].text) &&
+    /All 30 days in person: yes/.test(ap[0].text) && /Series now: Intermediate/.test(ap[0].text) && /Why this course, and why now:\nI want to understand/.test(ap[0].text) &&
     /Practice video:\nhttps:\/\/youtu.be\/abc123/.test(ap[0].text) && !/Pain or injury/.test(ap[0].text));
-  ok('marked hot without an AI call', ap[0].triage && ap[0].triage.lane === 'hot' && aiCalls.length === aiBefore);
+  ok('marked hot without an AI call, with the list stored', ap[0].triage && ap[0].triage.lane === 'hot' &&
+    ap[0].triage.list === 'gen3-zh' && /list gen3-zh/.test(ap[0].triage.summary) && aiCalls.length === aiBefore);
   const ping = alerts[alerts.length - 1] || '';
   ok('one Telegram ping with country and fit only, no name', alerts.length === alertsBefore + 1 &&
-    /^New In-Depth Mysore application, from China\n/.test(ping) && !ping.includes('Mei') &&
+    /^New In-Depth Mysore application, list gen3-zh \(Generation #3, the private Chinese page\), from China\n/.test(ping) &&
+    /All 30 days: yes\. Call in Chinese\./.test(ping) && !ping.includes('Mei') &&
     !/mei123|example\.com|youtu|students stop/i.test(ping), ping);
   ok('the ping time is saved', !!ap[0].alerted_at);
 
@@ -211,6 +214,29 @@ const alerts = [];
   ap = await applied();
   ok('a Baidu share text is accepted; the link is pulled out and the code kept', ar.status === 200 &&
     ap[1].ref === 'https://pan.baidu.com/s/1AbC-x' && /提取码: x1y2/.test(ap[1].text));
+
+  // The public English page joins the priority list: no Gen #3 dates question.
+  const en = good({ list: 'priority-en', email: 'anna@example.de', name: 'Anna', country: 'Germany', call_lang: 'en' });
+  delete en.dates;
+  let pingsBefore = alerts.length;
+  ar = await apply(en);
+  await wait(100);
+  ap = await applied();
+  let enRow = ap[ap.length - 1];
+  ok('an English priority-list application needs no dates answer', ar.status === 200 && enRow.sender_id === 'anna@example.de',
+    String(ar.status));
+  ok('its text and triage say priority-en, with no 30-day line', enRow.triage.list === 'priority-en' &&
+    /^In-Depth Mysore application, list priority-en \(priority list for the next English intake, the public English page\)\n/.test(enRow.text) &&
+    !/30 days/.test(enRow.text) && !/30 days/.test(enRow.triage.summary), enRow.text.split('\n')[0]);
+  const enPing = alerts[alerts.length - 1] || '';
+  ok('its ping names the list and leaves out the dates', alerts.length === pingsBefore + 1 &&
+    /^New In-Depth Mysore application, list priority-en \(priority list for the next English intake, the public English page\), from Germany\n/.test(enPing) &&
+    !/30 days/.test(enPing) && /Call in English\./.test(enPing) && !enPing.includes('Anna'), enPing);
+  ar = await apply(good({ list: 'priority-en', email: 'ben@example.de', dates: 'no' }));
+  ap = await applied();
+  enRow = ap[ap.length - 1];
+  ok('a dates answer sent to the English list is not asked there, so it is dropped', ar.status === 200 &&
+    enRow.sender_id === 'ben@example.de' && !/30 days/.test(enRow.text));
 
   const n = (await applied()).length;
   const fails = async (body, status, field, name) => {
@@ -234,6 +260,13 @@ const alerts = [];
   await fails(good({ primary: 'not_yet' }), 422, 'primary', 'Primary not yet by heart → 422, below the bar');
   await fails(good({ rooms: 'not_yet' }), 422, 'rooms', 'no Mysore or led classes yet → 422');
   await fails(good({ dates: 'no' }), 422, 'dates', 'cannot come all 30 days → 422');
+  const noDates = good(); delete noDates.dates;
+  await fails(noDates, 400, 'dates', 'Generation #3 without the dates answer → 400');
+  const noList = good(); delete noList.list;
+  await fails(noList, 400, 'list', 'no list → 400');
+  await fails(good({ list: 'gen4-zh' }), 400, 'list', 'an unknown list → 400');
+  await fails(good({ list: ['gen3-zh'] }), 400, 'list', 'a list sent as an array → 400');
+  await fails(good({ list: 'toString' }), 400, 'list', 'an inherited key is not a list → 400');
 
   const big = JSON.stringify(good({ email: 'big@example.com', filler: 'x'.repeat(70 * 1024) }));
   ar = await fetch(B + '/api/in-depth/apply', { method: 'POST', duplex: 'half',
@@ -271,7 +304,9 @@ const alerts = [];
   ok('the inbox serves applications as JSON, never as HTML', /^application\/json/.test(ir.headers.get('content-type')));
   const at = (res.body.threads || []).filter(x => x.channel === 'apply');
   const atEvil = at.find(x => x.sender === 'x@example.org');
-  ok('applications show in GET /api/inbox, hot, with the video link', at.length === 3 &&
+  ok('applications show in GET /api/inbox, hot, with the video link and the list', at.length === 5 &&
+    at.find(x => x.sender === 'anna@example.de').sorted.list === 'priority-en' &&
+    at.find(x => x.sender === 'mei@example.com').sorted.list === 'gen3-zh' &&
     at.every(x => x.sorted && x.sorted.lane === 'hot') && at.find(x => x.sender === 'mei@example.com').messages[0].ref === 'https://youtu.be/abc123',
     JSON.stringify(at.map(x => x.sender)));
   ok('the JSON string round-trips exactly', atEvil && atEvil.name === evil && atEvil.messages[0].text.includes(evilWhy));

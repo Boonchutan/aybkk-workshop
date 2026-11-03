@@ -209,24 +209,17 @@ const ORIENTATION_SHORTCUTS = {
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
   door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html' };
-// In-Depth Mysore: one file, English or Chinese by ?lang=, a saved choice, the host (cn.) or the browser.
-// On cn.aybkk.net the <head> is sent in Chinese, because WeChat link cards and crawlers run no JS.
-// The Chinese strings come from the page's own ZH table; the English ones ride along for the switch.
-const IN_DEPTH_HTML = path.join(__dirname, 'public', 'in-depth.html');
+// In-Depth Mysore. On every host but cn.*, /in-depth is the public English page: the priority list
+// for the next English intake. cn.aybkk.net/in-depth is Generation #3, a Chinese cohort, sent only by
+// link on WeChat. That page sits in pages/, so no static path serves it; ?lang= changes nothing; it is
+// noindex in the page and in X-Robots-Tag; and nothing public (sitemap, hreflang, llms.txt, JSON-LD,
+// other pages) links to it.
 app.get('/in-depth', (req, res) => {
-  if (!String(req.headers.host || '').toLowerCase().startsWith('cn.')) return res.sendFile(IN_DEPTH_HTML);
-  const html = fs.readFileSync(IN_DEPTH_HTML, 'utf8');
-  const zh = k => (html.match(new RegExp(`\\b${k}: '([^']*)'`)) || [])[1] || '';
-  const attr = s => String(s || '').replace(/"/g, '&quot;');
-  const enTitle = (html.match(/<title>([^<]*)<\/title>/) || [])[1];
-  const enDesc = (html.match(/<meta name="description" content="([^"]*)">/) || [])[1];
-  res.type('html').send(html
-    .replace('<html lang="en">', () => `<html lang="zh-Hans" data-en-title="${attr(enTitle)}" data-en-desc="${attr(enDesc)}">`)
-    .replace(/<title>[^<]*<\/title>/, () => `<title>${zh('metaTitle')}</title>`)
-    .replace(/(<meta (?:name="description"|property="og:description") content=")[^"]*/g, (m, a) => a + attr(zh('metaDesc')))
-    .replace(/(<meta property="og:title" content=")[^"]*/, (m, a) => a + attr(zh('metaTitle')))
-    .replace('"og:locale" content="en_US"', '"og:locale" content="zh_CN"')
-    .replace('"og:locale:alternate" content="zh_CN"', '"og:locale:alternate" content="en_US"'));
+  if (!String(req.headers.host || '').toLowerCase().startsWith('cn.')) {
+    return res.sendFile(path.join(__dirname, 'public', 'in-depth.html'));
+  }
+  res.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  res.sendFile(path.join(__dirname, 'pages', 'in-depth-gen3-zh.html'));
 });
 // Clean tracking links for Reels and bios: aybkk.net/start/sleep instead of ?src=sleep.
 app.get('/start/:tag', (req, res) => res.sendFile(path.join(__dirname, 'public', 'start.html')));
