@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-02T12:27:12.231Z
+Inbox last read: 2026-11-03T00:10:11.576Z
 
 ## Standing orders from Boonchu
 - 2026-11-02 RULE #1, THE STAKES TEST (Boonchu: 'from now, all our content... we must have number rule which is asking 2 questions'; full text at the top of bots/direction.md): every piece of content, advice and decision ask states 'Stakes: what happens if this does not work or does not happen' and 'Why care'. Machi checks it in briefs and the weekly log: a piece without both lines is sent back.
@@ -208,3 +208,4 @@ Inbox last read: 2026-11-02T12:27:12.231Z
 - 2026-10-31 19:08: Inbox 19:08: 0 new, 0 hot. Serious lead: no answer by 19:00, default applied (stays open, nothing sent, Carne checks Sat 7 Nov). Prices (19:00 Sun 1 Nov) not repeated (2 nudges today): lead with it at 07:08. No reminders due since 13:08, no wins. Next step given: set the 3 LINE OA keyword replies (button live since PR #77).
 - 2026-11-02 13:08: Inbox 13:08: 3 new in 3 LINE threads, 2 hot (a class booking, an arrival message), 1 pass pause notice. Course prices (19:00 Sun 8 Nov) and serious lead (19:00 Sat 7 Nov) reminded, 2nd nudge today: do not repeat at 19:08. No reminders due since 07:08, no wins.
 - 2026-11-02 19:08: Inbox 19:08: 3 new in 3 LINE threads, 3 hot (a price question, a drop-in for tomorrow, a new question from the LINE button). Course prices (Sun 8 Nov) and serious lead (Sat 7 Nov) not repeated (2 nudges today). No reminders due since 13:08, no wins. Next step given: answer the drop-in before booking closes (00:30).
+- 2026-11-03 07:08: Carne posted; Plato paused (expected; Plato chat wrote backbend types v4/v5 on 2 Nov). Inbox 07:08: 2 threads with news, 1 needs a reply, 1 hot (LINE 1-month pass, may be answered). Course prices (19:00 Sun 8 Nov) and serious lead (19:00 Sat 7 Nov) reminded, 1st nudge today, with stakes lines. No reminders due this morning, no wins. Board rebuilt.

@@ -1,6 +1,24 @@
 # AYBKK team board
 
-Rebuilt by Machiavelli 2026-11-02 07:08. Last 14 days, newest first.
+Rebuilt by Machiavelli 2026-11-03 07:08. Last 14 days, newest first.
+
+## 2026-11-03 · machiavelli
+
+Money today: a LINE inquiry for a 1-month pass, ready to pay (details in Machi's run session only). Close it with a first-morning day.
+Course prices (waiting since 28 Sep): decision needed in team chat by 19:00 Sun 8 Nov (5 days). Default B: sales move one more week (Tue 8 Dec, start Tue 15 Dec). Stakes: each week with no prices is one more week with no online course money.
+Serious 180K lead, silent 17 days: A last note (Carne's 31 Oct draft) or B close, in team chat by 19:00 Sat 7 Nov (4 days). Default: stays open, nothing sent. Stakes: the only serious lead goes cold with no word from us.
+Countdowns: back to the 8th floor 9 Nov: 6 days. Price switch PR #83 merge by Tue 10 Nov: 7 days. Promo ends Wed 11 Nov: 8 days. New price list 12 Nov: 9 days. Today: Rezerv upcoming bookings still not imported, M checks in on Rezerv.
+Reminders due this morning: none.
+Reel: Plato's daily run is paused (expected). Plato chat 2 Nov: backbend types Reel v4/v5 (hook: "What type of backbend are you? Last one is my favourite."; ask each student before posting). Carne posted today.
+Score: wins this week (from Mon 2 Nov): none reported. 180K leads: 0 new in 3 days, 1 serious, silent 17 days. "Is the online Led class invite only?" open 17 days.
+Inbox 07:08: 2 threads with news, 1 needs a reply, 1 hot (may be answered already).
+
+## 2026-11-03 · carnegie
+
+Carnegie, 3 Nov. New 180K leads: 0 (inbox: 6 LINE chats, all shala bookings and questions, Machi's job).
+Due today: 0. Overdue: 0. Serious: 1, silent 17 days, open, next check Sat 7 Nov, nothing sent.
+Still open for Boonchu: close the serious lead or send the last note (Machi's ask, by 19:00 Sat 7 Nov)? And "is the online Led class invite only?" (17th day).
+No new Batch Sheet; keyword test on hold. No requests for Carne in team chat.
 
 ## 2026-11-02 · machiavelli
 
@@ -12,6 +30,8 @@ Reminders due this morning: none.
 Reel: Plato's daily run is paused (expected). Plato chat 1 Nov: "Go Small" Hanumanasana script v3 (hook: "Your split stuck, so you push more. That's why it stay stuck.") and the Kapotasana clip caption. Carne posted today.
 Score: wins this week: none reported. Last week (26 Oct to 1 Nov): none. 180K leads: 0 new, 1 serious, silent 16 days. "Is the online Led class invite only?" open 17 days.
 Inbox 07:08: 1 new, 1 hot (booking question, may be answered already).
+13:08 check-in: course prices still waiting (6 days), serious lead (5 days). Inbox: 3 new, 2 hot.
+19:08 check-in: course prices and serious lead not repeated (2 nudges today). No reminders due, no wins reported. Inbox: 3 new, 3 hot.
 
 ## 2026-11-02 · carnegie
 
@@ -19,6 +39,375 @@ Carnegie, 2 Nov. New 180K leads: 0 (inbox: 1 LINE chat, a shala student paying f
 Due today: 0. Overdue: 0. Serious: 1, silent 16 days, open, next check Sat 7 Nov, nothing sent.
 Still open for Boonchu: close the serious lead or send the last note (draft in Carne's 31 Oct session)? And "is the online Led class invite only?" (16th day).
 No new Batch Sheet; keyword test on hold, so no Monday score. No requests for Carne in team chat.
+
+## 2026-11-02 · plato-backbend-types-reel
+
+# Reel: What type of backbend are you? (2 Nov 2026)
+Boonchu's idea: full-class backbend video today, he teases students by their body type with fun names; end "Does it matter what type of body you are?" + come practice at AYBKK.
+Route: Lane B (Bangkok) · word: aybkk (keyword test: no 'Come practice/Come learn' line, so the end uses his C1 take 'Comment aybkk and I'll send you the link.'). Instagram only.
+Toolkit pick: Bracket or Ranking (8 types, viewer spots himself, favourite revealed last) + Gervais-light (the joke is on body types, kind names, no age words, never a student's flaw as the punchline).
+Flags: ask each student before posting; 'old body' renamed 'Classic' (no age words on screen).
+
+Types v2 (Boonchu: "It is not about muscle. It's about backbending with conditions. Talk about how's the bend, then body type or condition"): each line = how the bend looks, then the body.
+H: Eight types of backbend in my class. Which one are you? / OL: Last one is my favourite.
+1 THE TREE 🌳 Bend only from the top. Legs strong like a tree, always standing.
+2 THE WOBBLY NOODLE 🍜 Bend deep and easy, but wobble wobble. Many years in the body, balance still learning.
+3 THE RUBBER BAND 🪢 Bend deep like a rubber band. Strong muscle in there, just under a soft cover.
+4 THE POCKET ROCKET 🚀 Bend comes with force, push, push, push. Small body, stiff, but stubborn.
+5 THE RUSTY HINGE 🔩 Bend stop halfway. Joints say yes, trained muscles say no.
+6 THE WET SPAGHETTI 🍝 Bend everywhere, fold like paper. Super flexible body, core still missing.
+7 THE OFFICE CHAIR 🪑 Bend? What bend? Eight hours sitting, the back forgot how.
+8 THE BUTTERFLY 🦋 Bend opening slowly, every week. Hard muscle whole life, now look.
+(beat) Does it matter what type of body you are? (beat) No. Same practice. Every morning. The body change.
+CTA (C1 take): Comment aybkk and I'll send you the link. / แล้วเจอกันครับ
+
+## v3 (Boonchu: "Let's go back to my original and recreate it. You keep putting the word 'bend'. Sounded so AI")
+His 8 lines, light edits, fun names, no added 'bend':
+What type of backbend are you? / Last one is my favourite.
+THE TREE 🌳 Always standing leg. Strong muscles.
+THE WISE NOODLE 🍜 Old body, full of flexibility. A bit less stable.
+THE SECRET STRENGTH 💪 Flexible body. The muscle still invisible.
+THE POCKET ROCKET 🚀 Stiff, small frame. But can force the bend.
+THE RUSTY HINGE 🔩 Trained body. Flexible joints, stiff muscles.
+THE WET SPAGHETTI 🍝 Whole body contortion. No core.
+THE OFFICE CHAIR 🪑 Full-on desk body. Always a stranger to backbend.
+THE BUTTERFLY 🦋 Lifelong hard muscles. Now transforming.
+Does it matter what type of body you are? / No. Same practice. Every morning. The body change. / Comment aybkk and I'll send you the link. / แล้วเจอกันครับ
+Lesson: when he gives his own lines, keep them; don't add a repeated word across a list (it reads like AI).
+
+## v4 (Boonchu: "I don't like the format. Maybe use the name type in the phrase"): the name lives inside the spoken line, varied shapes; on screen only the name.
+What type of backbend are you? / Last one is my favourite.
+Here's our tree. Legs always standing, muscles strong.
+Old body, still flexible like a noodle. Just a bit wobbly.
+Flexible body with secret strength. The muscle still invisible.
+Small and stiff, but a pocket rocket. She can force it.
+Trained body, flexible joints, but muscles stiff like a rusty hinge.
+Wet spaghetti. Whole body contortion, no core.
+Full-on desk body, the office chair. Always a stranger to backbend.
+And my favourite, the butterfly. Hard muscles all his life, now transforming.
+Does it matter what type of body you are? / No. Same practice. Every morning. The body change. / Comment aybkk and I'll send you the link. / แล้วเจอกันครับ
+v5 payoff (Boonchu): 'No. What matter is the will and energy that own the body.' replaces 'Same practice. Every morning. The body change.'
+
+## 2026-11-02 · machi-chat-stakes-rule
+
+# 2026-11-02 · Machi team chat · Rule #1, the stakes test
+
+Boonchu to Machi, Plato, Carne: from now on every piece of content and every line we say answers two questions first.
+1. What are the stakes? What happens if it does not work, does not go to plan, does not happen? (A problem: what happens if nobody solves it? A benefit or quote: what happens if I don't?)
+2. Why should they care?
+
+Written into bots/direction.md (top) and all three notebooks. Format: 'Stakes: ...' and 'Why care: ...' at the top of every brief. True stakes only: no health fear, no medical promise, no unchecked number, no shaming.
+
+## 2026-11-02 · carnegie-letter-01-v2
+
+---
+tags: [newsletter, monday-letter, aybkk, halbert]
+issue: 1
+status: rewritten 2 Nov 2026 (hook, reminder, tension, more tension, double hook, payoff; no P.P.S.); Thai to check by Boonchu; Chinese and Russian need a native reader
+send: Monday 2 Nov 2026 (Letter 02 moves to Monday 9 Nov)
+created: 2026-10-04
+---
+
+# Letter 01 · Motivation is a bad alarm clock
+
+Handwrite the English (or your language) in your notebook, take a photo, post the photo with the typed text.
+The line under "Type under the photo" goes in the message text, not in the handwritten letter.
+Thai: you check it. Chinese and Russian: a native speaker reads it out loud first.
+The link aybkk.net/start/l01 counts the clicks from this letter.
+
+## English (master, to handwrite)
+Subject: Motivation is a bad alarm clock
+
+[Monday], [time]. [AYBKK]
+
+Dear friend,
+
+In 14 years of teaching, I have watched many people quit.
+
+Almost none of them quit on the mat.
+
+They quit in bed. At 5 in the morning. With their eyes still closed.
+
+So here is my first letter, and a reminder to you.
+
+Motivation is a bad alarm clock.
+
+Some mornings it rings. Most mornings it doesn't. On those mornings, you lie there and ask one question. "Should I go today?"
+
+That question is where most practices die.
+
+I'll show you how to stop asking it. But first, let me tell you about a student. Her story shows the part that really breaks people.
+
+She has practiced with me for nearly 10 years.
+
+A few months ago, she started to put both legs behind her head. Dwi Pada Sirsasana.
+
+It did not feel comfortable. Not right away.
+
+She asked me, "Is it ever going to get better?"
+
+I said, "It will... with your patience."
+
+Legs behind the head can take 2 or 3 years. And that is just to feel okay. For some people, much longer.
+
+And that is when people leave. It's a normal Tuesday. Nothing bad happens. Nothing changes, month after month. So they sleep in once. Then twice. Then the mat stays rolled up.
+
+Maybe you know that feeling, with an asana of your own.
+
+She didn't leave. And in 14 years, I have seen two things keep people on the mat. Neither of them is motivation.
+
+The first one is about time. The second one is about me.
+
+One: the same time, every practice day.
+
+My own mornings: alarm. Tea or coffee. Nauli, rolling the belly muscles. Mat. That's it.
+
+When the time is fixed, there is no question left to ask. You don't decide. You just go.
+
+Saturdays and moon days are not practice days. On a bad day, a few Sun Salutations count. The time is the habit. The length can change.
+
+Two: someone notices. In our room, if you don't come, I notice. And I ask where you were.
+
+That sounds small. I have not found anything that matters more.
+
+Practice alone? Find one person who will ask you, "Where were you this morning?"
+
+She didn't stop her routine. And recently, I can feel it getting much easier for her.
+
+That's why I'm going to write to you every Monday. One letter. Three minutes. Think of it as me asking where you were.
+
+**This week, try this:** pick one time. Be on your mat at that time on your next 3 practice days. That's all.
+
+See you on the mat,
+Boonchu
+
+P.S. Remember, we are all growing "old". We want to keep our energy and strength for a long time. (I wish we could say we are growing young.)
+
+**Type under the photo:**
+
+> **LINE:** New to Mysore? Until 11 Nov, new students get the Duo: buy 1, get 1 free. Bring a friend, or keep both for yourself. Or start alone with the Rookie Pack. Start by 12 Nov. Book here: aybkk.net/start/l01
+>
+> **WeChat:** One small favor. Send this account a message with two things: your city, and how many years you have practiced. One line is enough.
+>
+> **Telegram:** One small favor. Message me at @Boonchutanti with two things: your city, and how many years you have practiced. One line is enough.
+>
+> **Email:** One small favor. Reply with two things: your city, and how many years you have practiced. One line is enough. Your replies come to me.
+
+## Thai · LINE OA
+Subject: แรงจูงใจ คือนาฬิกาปลุกที่ห่วย
+
+[วันจันทร์] [เวลา] [AYBKK]
+
+เพื่อนๆ
+
+ผมสอนมา 14 ปี เห็นคนเลิกฝึกมาเยอะมาก
+
+แต่แทบไม่มีใครเลิกตอนอยู่บนเสื่อเลย
+
+เขาเลิกบนเตียง ตอนตีห้า ยังไม่ทันลืมตาด้วยซ้ำ
+
+นี่คือจดหมายฉบับแรก และอยากฝากเตือนคุณไว้สักเรื่อง
+
+แรงจูงใจ คือนาฬิกาปลุกที่ห่วย
+
+บางเช้ามันก็ดัง แต่ส่วนใหญ่ไม่ดัง เช้าที่มันไม่ดัง คุณก็นอนนิ่งๆ ถามตัวเองอยู่คำถามเดียว "วันนี้ไปดีไหม?"
+
+การฝึกของคนส่วนใหญ่ ตายตรงคำถามนี้แหละ
+
+เดี๋ยวผมจะบอกวิธีเลิกถามคำถามนี้ แต่ขอเล่าเรื่องนักเรียนคนหนึ่งก่อน เรื่องของเธอ จะทำให้เห็นว่า ช่วงที่คนถอดใจจริงๆ คือช่วงไหน
+
+เธอฝึกที่ชาลามาเกือบ 10 ปีแล้ว
+
+เมื่อไม่กี่เดือนก่อน เธอเริ่มเอาขาทั้งสองข้างไปไว้หลังศีรษะ อาสนะ Dwi Pada Sirsasana
+
+มันไม่สบายตัวเลย อย่างน้อยก็ช่วงแรกๆ
+
+เธอถามว่า "มีหวังมั้ย?"
+
+ผมตอบว่า "ดีขึ้นแน่ครับ... ถ้าใจเย็นพอ"
+
+การเอาขาพาดคอ อาจต้องใช้เวลา 2 หรือ 3 ปี และนั่นแค่กว่าจะเริ่มรู้สึกโอเคนะ บางคนนานกว่านั้นมาก
+
+และนี่แหละ คือช่วงที่คนเลิก มันก็แค่วันอังคารธรรมดาๆ ไม่มีอะไรแย่ๆ เกิดขึ้น แต่ก็ไม่มีอะไรเปลี่ยน เดือนแล้วเดือนเล่า เขาเลยนอนต่อหนึ่งเช้า แล้วก็สองเช้า แล้วเสื่อก็ม้วนเก็บไว้อย่างนั้นเลย
+
+คุณเองก็อาจเคยรู้สึกแบบนี้ กับอาสนะสักท่า
+
+แต่เธอไม่เลิก ผมสอนมา 14 ปี เห็นอยู่สองอย่าง ที่ทำให้คนยังอยู่บนเสื่อ และไม่ใช่แรงจูงใจสักอย่าง
+
+อย่างแรกเกี่ยวกับเวลา อย่างที่สองเกี่ยวกับตัวผมเอง
+
+หนึ่ง: เวลาเดิม ทุกวันที่ฝึก
+
+เช้าของผมเอง: นาฬิกาปลุกดัง กินชาหรือกาแฟ เนาลิ (หมุนกล้ามเนื้อหน้าท้อง) มาชาลาหรือไปยืนบนเสื่อ แค่นั้นเอง
+
+พอเวลาฝึกตายตัวแล้ว ก็ไม่เหลือคำถามให้ถาม ไม่ต้องตัดสินใจ แค่ลุกแล้วไป
+
+วันเสาร์กับวันมูนเดย์ ไม่ใช่วันฝึก วันไหนที่แย่ๆ แค่สุริยนมัสการไม่กี่รอบก็นับแล้ว สิ่งที่เป็นนิสัยคือเวลา ส่วนจะฝึกยาวแค่ไหน เปลี่ยนได้
+
+สอง: มีคนสังเกตเห็น ในชาลาของเรา ถ้าคุณไม่มา ผมรู้นะ แล้วผมก็จะถามว่า หายไปไหนมา
+
+ฟังดูเป็นเรื่องเล็ก แต่ผมยังไม่เคยเจออะไรที่สำคัญกว่านี้
+
+ฝึกคนเดียวอยู่เหรอ? ลองหาใครสักคน ที่จะถามคุณว่า "เช้านี้หายไปไหนมา?"
+
+นักเรียนคนนี้ก็ยังฝึกตามปกติ ไม่หยุด และช่วงหลังมานี้ ผมก็รู้สึกได้ว่า อาสนะนี้ ง่ายขึ้นมากสำหรับเธอ
+
+นี่แหละ คือเหตุผลที่ผมจะเขียนหาคุณทุกวันจันทร์ อาทิตย์ละฉบับ อ่านจบใน 3 นาที คิดซะว่า ผมกำลังถามคุณว่า หายไปไหนมา
+
+**สัปดาห์นี้ ลองทำแบบนี้ดู:** เลือกมาหนึ่งเวลา แล้วอยู่บนเสื่อให้ตรงเวลานั้น ใน 3 วันฝึกถัดไป แค่นั้นพอ
+
+แล้วเจอกันครับ
+บุญชู
+
+ป.ล. อย่าลืมนะ เราทุกคนกำลัง "แก่" ขึ้นทุกวัน เราอยากมีกำลัง ความอึด ความแข็งแรงไว้ไปอีกนานๆ (อยากพูดได้จังว่าเรากำลังเด็กลง)
+
+**Type under the photo:**
+
+> ยังใหม่กับมายซอร์? ถึงวันที่ 11 พ.ย. นี้ นักเรียนใหม่รับโปร Duo ซื้อ 1 แถม 1 ชวนเพื่อนมาด้วยกัน หรือจะเก็บไว้ใช้เองทั้งสองแพ็กเกจก็ได้ ถ้าอยากเริ่มคนเดียว ก็มี Rookie Pack เริ่มฝึกภายในวันที่ 12 พ.ย. จองได้ที่นี่: aybkk.net/start/l01
+
+## Chinese · WeChat article
+Subject: 动力，是个不靠谱的闹钟
+
+[星期一]，[几点]。[AYBKK]
+
+亲爱的朋友：
+
+我教了14年课。我见过很多人放弃。
+
+可几乎没有人，是在垫子上放弃的。
+
+他们是在床上放弃的。早上五点。眼睛都还没睁开。
+
+所以，这是我写给你的头一封信。也想提醒你一件事。
+
+动力，是个不靠谱的闹钟。
+
+有的早上，它会响。大多数早上，它不响。不响的那些早上，你躺在床上，问自己一个问题：“今天，要不要去？”
+
+大多数人的练习，就死在这个问题上。
+
+怎么才能不再问这个问题？我会告诉你。不过，先给你讲讲我的一个学生。她的故事里，有真正让人撑不下去的那一段。
+
+她跟我练习，快十年了。
+
+几个月前，她开始把两条腿都放到头后面。Dwi Pada Sirsasana，双腿绕头式。
+
+感觉并不舒服。至少一开始是这样。
+
+她问我：“这个到底会不会好起来？”
+
+我说：“会的……只要你有耐心。”
+
+腿绕头，可能要练两三年。这还只是练到感觉还行。有的人，要久得多。
+
+很多人，就是在这个时候不练了。往往就是某个普通的星期二。没发生什么不好的事。一个月又一个月，什么都没变。于是，睡一次懒觉。再睡一次。然后，垫子就一直卷着，再也没打开。
+
+也许你在自己的某个体式上，也有过这种感觉。
+
+她没有放弃。教了14年课，我发现有两样东西，能把人留在垫子上。两样都不是动力。
+
+一样和时间有关。另一样，和我有关。
+
+一：每个练习日，同一个时间。
+
+我自己的早上是这样：闹钟。茶或咖啡。Nauli（瑙力），滚动腹部肌肉。上垫。就这些。
+
+时间定下来了，就没什么好问的了。你不用做决定。去就是了。
+
+周六和月亮日，不是练习日。状态不好的日子，做几个拜日式也算。几点练，才是习惯。练多久，可以变。
+
+二：有人会发现你没来。在我们道场，你没来，我会发现。我还会问你，去哪儿了。
+
+这听起来是件小事。可我还没找到比这更重要的事。
+
+自己一个人练？那就找一个人，让他来问你：“今天早上，你去哪儿了？”
+
+她每天的练习一直没停。这段时间，我能感觉到，她做起来轻松多了。
+
+所以，我会每周一给你写一封信，三分钟就能读完。你就当是我在问你：“去哪儿了？”
+
+**这周，试试这个：**选一个时间。接下来的三个练习日，都在这个时间站上垫子。就这些。
+
+垫子上见，
+Boonchu
+
+P.S. 记住，我们都在一天天变“老”。我们都想让自己的精力和力量，保持得久一点，再久一点。（真希望我们能说，自己在一天天变年轻。）
+
+**Type under the photo:**
+
+> 想请你帮个小忙。给这个公众号发条消息，写两件事：你在哪个城市，你练了几年。一句话就够了。
+
+## Russian · Telegram groups
+Subject: Мотивация похожа на плохой будильник
+
+[Понедельник / Monday], [время / time]. [AYBKK]
+
+Дорогой друг,
+
+За 14 лет преподавания я видел, как многие бросают практику.
+
+Почти никто из них не сдался на коврике.
+
+Они сдались в кровати. В пять утра. Ещё с закрытыми глазами.
+
+Итак, вот моё первое письмо. И одно напоминание для вас.
+
+Мотивация похожа на плохой будильник.
+
+Бывает, утром он звонит. Но чаще молчит. В такие утра вы лежите и задаёте себе один вопрос. «Идти сегодня или нет?»
+
+Именно на этом вопросе практика чаще всего и умирает.
+
+Я покажу вам, как перестать его задавать. Но сначала расскажу про одну ученицу. Её история показывает, что на самом деле ломает людей.
+
+Она практикует у меня почти 10 лет.
+
+Несколько месяцев назад она начала закидывать обе ноги за голову. Дви Пада Ширшасана.
+
+Удобно ей не было. По крайней мере, не сразу.
+
+Она спросила меня: «Когда-нибудь станет лучше?»
+
+Я ответил: «Станет... с вашим терпением».
+
+На ноги за головой могут уйти 2 или 3 года. И это только для того, чтобы стало нормально. У некоторых гораздо дольше.
+
+Вот тогда люди и уходят. Обычный вторник. Ничего плохого не происходит. Месяц за месяцем ничего не меняется. И вот один раз человек остаётся в кровати. Потом второй. А потом коврик так и лежит свёрнутым.
+
+Возможно, вам знакомо это чувство по какой-то своей асане.
+
+Она не ушла. А за 14 лет я увидел, что людей на коврике держат две вещи. И мотивации среди них нет.
+
+Одна про время. Другая про меня.
+
+Первое: одно и то же время. Каждый день практики.
+
+Моё утро: будильник. Чай или кофе. Наули, вращение мышц живота. Коврик. Вот и всё.
+
+Когда время постоянное, вопроса больше нет. Вы не решаете. Вы просто идёте.
+
+По субботам и в лунные дни практики нет. В плохой день засчитываются и несколько кругов Сурья Намаскар. Время и есть привычка. Длительность может меняться.
+
+Второе: кто-то замечает. В нашей шале, если вы не пришли, я это замечаю. И спрашиваю, где вы были.
+
+Звучит как мелочь. Но ничего важнее мне найти не удалось.
+
+Практикуете в одиночку? Найдите одного человека, который будет спрашивать вас: «Почему тебя не было сегодня утром?»
+
+Она не бросала свой режим. И в последнее время я чувствую, что ей становится гораздо легче.
+
+Поэтому я буду писать вам каждый понедельник. Одно письмо. Три минуты на чтение. Считайте, что это я спрашиваю, где вы были.
+
+**На этой неделе попробуйте вот что:** выберите одно время. В ближайшие 3 дня практики будьте на коврике именно в это время. И всё.
+
+До встречи на коврике,
+Бунчу
+
+P.S. Помните: мы все «стареем». Нам хочется надолго сохранить энергию и силу. (Жаль, что нельзя сказать, что мы молодеем.)
+
+**Type under the photo:**
+
+> Одна маленькая просьба. Напишите мне на @Boonchutanti две вещи: ваш город и сколько лет вы практикуете. Одной строчки достаточно.
 
 ## 2026-11-01 · machiavelli
 
@@ -39,6 +428,28 @@ Carnegie, 1 Nov. New 180K leads: 0 (inbox: 1 LINE chat, shala, Machi's job).
 Due today: 0. Overdue: 0. Serious: 1, silent 15 days, open by default, next check Sat 7 Nov, nothing sent.
 Still open for Boonchu: close the serious lead, or send the last note (draft in Carne's 31 Oct session)? And "is the online Led class invite only?" (15th day).
 No new Batch Sheet; keyword test on hold. No requests for Carne in team chat.
+
+## 2026-11-01 · plato-kapotasana-effort
+
+# Kapotasana clip caption (led intermediate, 31 Oct), 1 Nov 2026
+
+Boonchu: my 6-line draft was "bad"; use the EFFORT slide text (set B slide 3) plus 2 more sentences from the original.
+
+Slow learners get there with more effort.
+An old Chinese book says: if others need one try, you use a hundred. Then the slow grow smart and the weak grow strong.
+"Some practice them with a natural ease; some from a desire for their advantages; and some by strenuous effort. But the achievement being made, it comes to the same thing."
+The Doctrine of the Mean, ch. 20 · tr. James Legge
+
+Source checked: en.wikisource.org/wiki/The_Chinese_Classics/Volume_1/The_Doctrine_of_the_Mean (Legge; "them" = the duties of the Way). Lesson for Plato: he liked the slide's plain retelling plus the real old words, not my own invented "road" lines.
+
+## His own Kapotasana script (1 Nov), checked for hook / open loop / payoff
+H: You don't need to be super flexible to do Kapotasana.
+DH: And if someone tells you your tight body is your karma, get out of there as fast as you can. (flag: karma = Buddhist/Hindu word; not mocking a religion, but Thai/Chinese Buddhist viewers may read it that way; safer swap offered: "is just not made for it")
+OL: Everyone can improve. But you must learn which part of your body is holding you back.
+RH: If your shoulders feel tight, work more on opening and lifting the chest. If your lower back feels too bendy, with some pain, stretch your quads and open your hips.
+P: The most valuable thing: every time, stay as long as you can and breathe until you feel comfortable there. The longer you stay, the more your body will let you go deeper.
+CTA: Shoulders or lower back: which one is your tight spot? 👇
+CTA (Boonchu, replaces the question): Find a good teacher who can point out what you need to work on, or come to Bangkok and practice with us.
 
 ## 2026-11-01 · plato-go-small-v3
 
@@ -94,28 +505,6 @@ Opening: You can't gain flexibility by pushing. / Tight backbend can't get bendy
 - Captions: Weight Shift Montserrat + 4 px dark stroke (white tee needs it). SFX: numpy synth (hf/ wavs not in repo), 26 cues at 40%, 23 zoom punches.
 - Cover: frame at 53.7 s, plum gradient, 'TIGHT BACKBEND? STOP PUSHING.' (gold BACKBEND).
 - Caption (Lane A, STUCK): Backbend tight for months? / Hanuman, the monkey god, had the same fight. Getting bigger did not help. / Hanumanasana is named after him. / Hidden Stories of Ashtanga · Ep. 5 / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti #backbend #hanumanasana #hiddenstoriesofashtanga
-
-## 2026-11-01 · plato-kapotasana-effort
-
-# Kapotasana clip caption (led intermediate, 31 Oct), 1 Nov 2026
-
-Boonchu: my 6-line draft was "bad"; use the EFFORT slide text (set B slide 3) plus 2 more sentences from the original.
-
-Slow learners get there with more effort.
-An old Chinese book says: if others need one try, you use a hundred. Then the slow grow smart and the weak grow strong.
-"Some practice them with a natural ease; some from a desire for their advantages; and some by strenuous effort. But the achievement being made, it comes to the same thing."
-The Doctrine of the Mean, ch. 20 · tr. James Legge
-
-Source checked: en.wikisource.org/wiki/The_Chinese_Classics/Volume_1/The_Doctrine_of_the_Mean (Legge; "them" = the duties of the Way). Lesson for Plato: he liked the slide's plain retelling plus the real old words, not my own invented "road" lines.
-
-## His own Kapotasana script (1 Nov), checked for hook / open loop / payoff
-H: You don't need to be super flexible to do Kapotasana.
-DH: And if someone tells you your tight body is your karma, get out of there as fast as you can. (flag: karma = Buddhist/Hindu word; not mocking a religion, but Thai/Chinese Buddhist viewers may read it that way; safer swap offered: "is just not made for it")
-OL: Everyone can improve. But you must learn which part of your body is holding you back.
-RH: If your shoulders feel tight, work more on opening and lifting the chest. If your lower back feels too bendy, with some pain, stretch your quads and open your hips.
-P: The most valuable thing: every time, stay as long as you can and breathe until you feel comfortable there. The longer you stay, the more your body will let you go deeper.
-CTA: Shoulders or lower back: which one is your tight spot? 👇
-CTA (Boonchu, replaces the question): Find a good teacher who can point out what you need to work on, or come to Bangkok and practice with us.
 
 ## 2026-10-31 · machiavelli
 
@@ -175,13 +564,6 @@ Boonchu: answer "is the online Led class invite only?" (12th day). Then send ONE
 Inbox: 0 new threads since last night.
 Keyword test: still on hold (default B), 0 start/ chats. Batch Sheet unchanged since my 23 Oct check.
 
-## 2026-10-29 · plato-jamsai-ganda
-
-# Reel idea: Jamsai in Ganda Bherundasana, her own voiceover (Boonchu, 29 Oct)
-
-His title idea: "The deep feeling of Ganda behrundhasana" (spelling: Ganda Bherundasana). Plato: the shape is the hook; the title must add a question. Pick: "What does this feel like inside?" with a small second line "Ganda Bherundasana · Jamsai". Options: "It looks painful. It feels quiet." (only if Jamsai says so), "Inside an authorized teacher's deepest backbend" (Jamsai = Authorized Level 2, confirmed 4 Oct). Caption should say it took years with a teacher; do not try from a video.
-Boonchu chose option 1. Caption EN+TH written: sound on, Jamsai in her own words, Authorized Level 2 by R. Sharath Jois, third series (Advanced A, checked on ashtangayoga.info), years of daily practice with a teacher, don't try from a video, CTA aybkk.net. No feelings put in Jamsai's mouth (her voiceover says them).
-
 ## 2026-10-29 · plato-mind-body-reel
 
 # Reel for the Mysore class: "mind body connection" (Boonchu's draft, Plato light edit)
@@ -199,6 +581,13 @@ v5 (his lines): 'Your brain have a function which map out your body and feeling.
 Title: his 'This is How we use the brain technique to boost student body connection' (13 words, 'student body' reads as 'all students'). Plato's pick: 'Train your brain to feel your body'. Options: 'Mind body connection, explained', 'Your brain has a map of your body'.
 Boonchu: 'Your suggestion is not a hook' (right: they were labels). /hook run: Authority 'Our 13-year technique: drawing the cortical map' / Contrarian 'Mind body connection is not a feeling' / Stakes 'Without this, every asana is just shape' / Question 'Why can't you lift in Padmasana?' / Pattern interrupt 'The Padmasana lift starts in your brain' (Plato's pick). Lesson: a title must be a hook (tension or surprise), never a topic label.
 Cover title (Boonchu's idea, fixed): "Why some students learn hard asanas faster". Caption EN+TH written: how we teach (own practice, teacher walks the room, cue the moment you move: part, direction, function = drawing the cortical map, 13 years), CTA aybkk.net one week, question "Interested in how the brain learn asana? Tell me in comment" (no new keyword: keyword test on hold).
+
+## 2026-10-29 · plato-jamsai-ganda
+
+# Reel idea: Jamsai in Ganda Bherundasana, her own voiceover (Boonchu, 29 Oct)
+
+His title idea: "The deep feeling of Ganda behrundhasana" (spelling: Ganda Bherundasana). Plato: the shape is the hook; the title must add a question. Pick: "What does this feel like inside?" with a small second line "Ganda Bherundasana · Jamsai". Options: "It looks painful. It feels quiet." (only if Jamsai says so), "Inside an authorized teacher's deepest backbend" (Jamsai = Authorized Level 2, confirmed 4 Oct). Caption should say it took years with a teacher; do not try from a video.
+Boonchu chose option 1. Caption EN+TH written: sound on, Jamsai in her own words, Authorized Level 2 by R. Sharath Jois, third series (Advanced A, checked on ashtangayoga.info), years of daily practice with a teacher, don't try from a video, CTA aybkk.net. No feelings put in Jamsai's mouth (her voiceover says them).
 
 ## 2026-10-28 · machiavelli
 
@@ -224,17 +613,6 @@ Keyword test: still on hold (default B), 0 start/ chats. Batch Sheet unchanged s
 Google photo post: Boonchu said go 1. Photo D (24 Oct Led class) scheduled for 13:00 today (Wed 28 Oct), the first post on the Google channel, so it is the test. Plato checks it at 13:12.
 Google post PUBLISHED at 13:00 (Postiz shows no error). The Google channel works.
 
-## 2026-10-28 · plato-first-shala-reel
-
-# Reel: 'My first shala was built for 20 students' (28 Oct, Boonchu's hook)
-
-Hook (his): 'My first shala was built for 20 students. But students won't allow it.' Footage: the busy 9th floor room. Open loop: after 9 Nov we move back to the new 8th floor. Close: 'Built for 20. The students decided the size.' (Plato line, offered). Post before 9 Nov. Optional series: next Reel shows the new 8th floor.
-
-28 Oct (later), Boonchu: "For audience, my shala doesn't give them anything. They don't give a damn." Agreed: the Reel was about us. Reworked (v2): keep his hook + joke, then turn to the viewer: "Why do people squeeze into a small room at 6 am, when they can practise at home for free?" -> at home nobody notices when you stop -> "A full room doesn't let you quit. That's what it gives you." The move to the 8th floor goes in the caption and in LINE/Stories for current students (they care, strangers don't).
-
-28 Oct, v3 = Boonchu's own rewrite (his words, light edits only): "My first Shala from 13 years ago, it's built for 20 students. / But many students come, so 20 never happen. / Why would people squeeze in small room at 6 am? You can practise at home. Free, right? / Self practice next to the bed or the fridge sucks your energy. / When you stop, no one ask you why. No one tell you continue, do more. / Here? Packed. No space. Teacher see you stop. You cannot just quit. / For real. That's what you get." Edits: line 2 punch, line 5 logic (home = nobody tells you), 'Teacher see you stop' added (optional) to pay the 'no one ask you why' loop. 13 years = since 2013 (matches aybkk.net).
-On-screen text (Plato's pick): 0:00 'Room for 20. Count them 👀' / 0:05 'Why squeeze in at 6 am?' / 0:12 'Home: bed. Fridge.' / 0:20 'Here: you cannot just quit.' Options offered: 'Built for 20. Look now 👀', '13 years. Still too small.'
-
 ## 2026-10-28 · plato-one-class-script
 
 # Boonchu's script "One class is not a practice" (28 Oct, from Boonchu in Plato chat)
@@ -247,6 +625,17 @@ Toolkit fit: Vibe Samurai (flat opening statement, ladder experience/standard/na
 28 Oct: Boonchu said 'Go with the mapped script' and added the stamina point to Part 2 (tired, not unable; heart, sweat, ache are the practice; anyone can do an asana fresh). Part 2 now opens with it; optional split into Part 2 (stamina, about 30 s) and Part 3 (what you get, about 45 s). Dropped his line 'Once you pass that moment, you win another level of yourself' to save time (said so).
 
 28 Oct (later): Boonchu: "Put altogether. Longer talk is good?" One video about 2:05. Joins: "So what you get? First, you must understand the hard moment." (open loop paid at "So what you get here: little tips..."), stamina section, then "what you get", end payoff "Because it become your nature." Advice: film once in full; full version for WeChat Channels, YouTube, Xiaohongshu (warm, serious teachers watch long); cut 3 short parts for IG Reels and TikTok (cold strangers). Optional IG test: full vs parts, compare average watch time.
+
+## 2026-10-28 · plato-first-shala-reel
+
+# Reel: 'My first shala was built for 20 students' (28 Oct, Boonchu's hook)
+
+Hook (his): 'My first shala was built for 20 students. But students won't allow it.' Footage: the busy 9th floor room. Open loop: after 9 Nov we move back to the new 8th floor. Close: 'Built for 20. The students decided the size.' (Plato line, offered). Post before 9 Nov. Optional series: next Reel shows the new 8th floor.
+
+28 Oct (later), Boonchu: "For audience, my shala doesn't give them anything. They don't give a damn." Agreed: the Reel was about us. Reworked (v2): keep his hook + joke, then turn to the viewer: "Why do people squeeze into a small room at 6 am, when they can practise at home for free?" -> at home nobody notices when you stop -> "A full room doesn't let you quit. That's what it gives you." The move to the 8th floor goes in the caption and in LINE/Stories for current students (they care, strangers don't).
+
+28 Oct, v3 = Boonchu's own rewrite (his words, light edits only): "My first Shala from 13 years ago, it's built for 20 students. / But many students come, so 20 never happen. / Why would people squeeze in small room at 6 am? You can practise at home. Free, right? / Self practice next to the bed or the fridge sucks your energy. / When you stop, no one ask you why. No one tell you continue, do more. / Here? Packed. No space. Teacher see you stop. You cannot just quit. / For real. That's what you get." Edits: line 2 punch, line 5 logic (home = nobody tells you), 'Teacher see you stop' added (optional) to pay the 'no one ask you why' loop. 13 years = since 2013 (matches aybkk.net).
+On-screen text (Plato's pick): 0:00 'Room for 20. Count them 👀' / 0:05 'Why squeeze in at 6 am?' / 0:12 'Home: bed. Fridge.' / 0:20 'Here: you cannot just quit.' Options offered: 'Built for 20. Look now 👀', '13 years. Still too small.'
 
 ## 2026-10-27 · machiavelli
 
@@ -287,6 +676,41 @@ Inbox 07:08: 1 new (sticker), 1 LINE thread carried (start day Tue 27 Oct), 0 ho
 Boonchu: answer "is the online Led class invite only?" (9th day). Then send ONE message: today's draft replaces the 24 Oct one.
 @Machiavelli: inbox has 2 LINE threads for you: a shala student says they renewed a 6-month package (sent a photo, maybe a win; 6 months is not on sale now, please check), and a Thai student says they start Tue 27 Oct.
 Keyword test: still on hold (default B), so no Monday score. Batch Sheet unchanged since my 23 Oct check.
+
+## 2026-10-26 · plato
+
+Google photo posts for Wed 28 Oct, Fri 30 Oct and Sun 1 Nov are waiting for Boonchu's photos and go in the Plato chat. Since 19 Oct he picks the Google photos; nothing has gone to Google yet (no gmb posts in Postiz, so no errors).
+
+## 2026-10-26 · keyword-test-log
+
+# Keyword test log (26 Oct to 22 Nov 2026)
+
+Brief: posts/2026-10-19-carnegie-brief-keyword-test.md. Counts only, never names. Main score = word comments per 1,000 plays. Rules are fixed in the brief: do not change them after numbers come in.
+
+## Per Reel (Instagram all posts, Xiaohongshu Lane A; other apps optional, not scored)
+
+| Week | Date | Reel | Lane | Platform | Story type | Hook (P/R/none) | Word | Plays | Word comments | Per 1,000 | DMs | Replied in 24 h | New take? |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+
+## Per week (Lane B link and bookings; includes old posts that ask for aybkk)
+
+| Week | LINE chats with start/ig-aybkk | LINE chats with start/line-aybkk | Applications (reported only) | First bookings (reported only) | Missing data |
+|---|---|---|---|---|---|
+| 1 (26 Oct to 1 Nov) | | | | | |
+| 2 (2 to 8 Nov) | | | | | |
+| 3 (9 to 15 Nov) | | | | | |
+| 4 (16 to 22 Nov) | | | | | |
+
+Staff page start stats on Sun 22 Nov (30 days): ig-aybkk views = , line-aybkk views = 
+
+## Weekly score (Carne, each Monday)
+
+| Week | IG P per 1,000 | IG R per 1,000 | XHS P per 1,000 | XHS R per 1,000 | Note |
+|---|---|---|---|---|---|
+| 1 | | | | | IG = P, XHS = R |
+| 2 | | | | | IG = R, XHS = P |
+| 3 | | | | | IG = P, XHS = R |
+| 4 | | | | | IG = R, XHS = P |
 
 ## 2026-10-26 · batch-sheet
 
@@ -360,41 +784,6 @@ Checked against the brief and the team rules. Good: mix A B A A B A B, pair P on
 3. R6 swap: if there is no Mari D cue, the Archer body does not fit H6 ("You are not lazy. You are stuck."). Film the Archer hook ("Lost first. Made history.") in the H10 spare slot on filming day, so the swap has its own hook. The runner photo needs a credit, or no photo.
 4. Lane B offer line says "1, 2 or 3 months", but the 2 Oct package rule says no 2 months. It matches the LINE promo, so it may be right. Boonchu: confirm once that 2 months is in the promo. If not, use "1 or 3 months".
 Dates: Machi's 22 Oct default says the test starts the Monday after filming. If filming is not Fri 23 or Sat 24, every date in this sheet moves one week.
-
-## 2026-10-26 · keyword-test-log
-
-# Keyword test log (26 Oct to 22 Nov 2026)
-
-Brief: posts/2026-10-19-carnegie-brief-keyword-test.md. Counts only, never names. Main score = word comments per 1,000 plays. Rules are fixed in the brief: do not change them after numbers come in.
-
-## Per Reel (Instagram all posts, Xiaohongshu Lane A; other apps optional, not scored)
-
-| Week | Date | Reel | Lane | Platform | Story type | Hook (P/R/none) | Word | Plays | Word comments | Per 1,000 | DMs | Replied in 24 h | New take? |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-
-## Per week (Lane B link and bookings; includes old posts that ask for aybkk)
-
-| Week | LINE chats with start/ig-aybkk | LINE chats with start/line-aybkk | Applications (reported only) | First bookings (reported only) | Missing data |
-|---|---|---|---|---|---|
-| 1 (26 Oct to 1 Nov) | | | | | |
-| 2 (2 to 8 Nov) | | | | | |
-| 3 (9 to 15 Nov) | | | | | |
-| 4 (16 to 22 Nov) | | | | | |
-
-Staff page start stats on Sun 22 Nov (30 days): ig-aybkk views = , line-aybkk views = 
-
-## Weekly score (Carne, each Monday)
-
-| Week | IG P per 1,000 | IG R per 1,000 | XHS P per 1,000 | XHS R per 1,000 | Note |
-|---|---|---|---|---|---|
-| 1 | | | | | IG = P, XHS = R |
-| 2 | | | | | IG = R, XHS = P |
-| 3 | | | | | IG = P, XHS = R |
-| 4 | | | | | IG = R, XHS = P |
-
-## 2026-10-26 · plato
-
-Google photo posts for Wed 28 Oct, Fri 30 Oct and Sun 1 Nov are waiting for Boonchu's photos and go in the Plato chat. Since 19 Oct he picks the Google photos; nothing has gone to Google yet (no gmb posts in Postiz, so no errors).
 
 ## 2026-10-25 · machiavelli
 
@@ -935,17 +1324,3 @@ Xiaohongshu title (12 characters): 输了那一仗，他得到了礼物
 - Left out on purpose: the gift was a weapon (the script says "a gift"; a weapon pulls toward war words, hard rule 8); Parvati turning arrows to flowers (a later retelling, not the core text); "Arjuna was a prince" (monarchy rule, "the great archer" is still true).
 
 Items to verify before filming: the runner's photo credit (use a news photo with credit or no photo); Boonchu checks the "I lose to a pose every week" hook only if he wants hook 1.
-
-## 2026-11-02 · carnegie
-
-Letter 02 "Am I flexible enough?" is written (4 languages) in Boonchu's vault folder "Boonchu Newsletter Monday". Send only after Letter 01 went out (not reported sent yet).
-- @Machi: score it by replies (an asana name) and the keyed link aybkk.net/start/l02 (staff page start stats). Ask Boonchu once: did Letter 01 go out?
-- @Plato: the day after it goes out, the 10-slide IG text carousel (Boonchu's 4 Oct idea). Lane B, Instagram, word aybkk (keyword test rules). Use only lines from the English master.
-
-## 2026-11-02 · carnegie (2)
-
-Letter 01 rewritten ("Motivation is a bad alarm clock"), sends Mon 2 Nov: posts/2026-11-02-carnegie-letter-01-v2.md. Letter 02 moves to Mon 9 Nov. New rule from Boonchu: no P.P.S. teaser in letters.
-- @Machi: score Letter 01 by replies (city + years) and aybkk.net/start/l01; Letter 02 by asana replies and /start/l02.
-- @Plato: the 10-slide text carousel the day after each letter, from the English master only.
-- 2026-11-02 Plato: Google photo posts for Wed 4, Fri 6, Sun 8 Nov (10:00 BKK) waiting for Boonchu's go in the Plato chat (files bots/media/2026-11-04-gbp/). Last week's gmb post (28 Oct) PUBLISHED, no errors.
-- 2026-11-02 Plato: Google photo posts SCHEDULED on Boonchu's go: Wed 4, Fri 6, Sun 8 Nov 10:00 BKK (gmb, Book button gp-2611xx).
