@@ -9,7 +9,7 @@ delete process.env.INBOX_KEY;
 const crypto = require('crypto');
 const express = require('express');
 const { Pool } = require('pg');
-const { mountInbox, telegram } = require('../inbox.js');
+const { mountInbox, telegram, APPLY_PATH_RE } = require('../inbox.js');
 
 // Own schema, so the fake timetable never touches the bkk tests' tables
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
@@ -44,7 +44,7 @@ const alerts = [];
   const jsonBody = express.json({ verify: (req, res, buf) => {
     if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf;
   } });
-  app.use((req, res, next) => req.path === '/api/in-depth/apply' ? next() : jsonBody(req, res, next));
+  app.use((req, res, next) => APPLY_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
   const inbox = mountInbox(app, { pgPool: pool, ai: fakeAi, burstMs: 150,
     notify: async text => { alerts.push(text); return true; } });
   app.post('/line/webhook', (req, res) => { inbox.takeLine(req); res.json({ ok: true }); });
@@ -274,6 +274,11 @@ const alerts = [];
     body: new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode(big)); c.close(); } }) });
   ok('a body over 64 KB, even sent in chunks → 413, nothing stored', ar.status === 413 && (await applied()).length === n,
     String(ar.status));
+  for (const [i, p] of ['/api/in-depth/apply/', '/API/In-Depth/Apply'].entries()) {
+    ar = await fetch(B + p, { method: 'POST', body: big,
+      headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': `10.7.8.${i}` } });
+    ok(`the 64 KB limit also holds at ${p} → 413`, ar.status === 413 && (await applied()).length === n, String(ar.status));
+  }
   ar = await fetch(B + '/api/in-depth/apply', { method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': '10.7.7.8' }, body: '{"name":"<b>Mei</b>",' });
   const badJson = await ar.text();
@@ -364,6 +369,45 @@ const alerts = [];
     statuses[10] === 429, statuses.join(','));
   ar = await apply(good({ email: 'other@example.com' }), '10.9.9.9');
   ok('the address stays blocked even for a good application', ar.status === 429);
+
+  console.log('\n— keeping the priority list —');
+  const oldRow = (ext, channel, list) => pool.query(`INSERT INTO aybkk_inbox
+      (channel, kind, direction, ext_id, sender_id, sender_name, text, sent_at, created_at, triage)
+    VALUES ($1, $2, 'in', $3, $4, 'Old', 'old', now() - interval '91 days', now() - interval '91 days', $5)`,
+    [channel, channel === 'apply' ? 'application' : 'dm', `old:${ext}`, `${ext}@example.com`,
+      list ? { lane: 'hot', list, summary: `old ${list}`, reply: '' } : null]);
+  await oldRow('old-en', 'apply', 'priority-en');
+  await oldRow('old-zh', 'apply', 'gen3-zh');
+  await oldRow('old-bare', 'apply', null);
+  await oldRow('old-chat', 'line', null);
+  await inbox.purge();
+  const left = (await pool.query(`SELECT ext_id FROM aybkk_inbox WHERE ext_id LIKE 'old:%'`)).rows.map(r => r.ext_id);
+  ok('after 90 days the purge keeps priority-list applications and deletes the rest',
+    left.length === 1 && left[0] === 'old:old-en', JSON.stringify(left));
+
+  await pool.query(`INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, ref, sent_at, triage)
+    VALUES ('apply', 'application', 'in', 'apply:anna-again', 'anna@example.de', 'Anna K', 'second try',
+      'https://youtu.be/anna2', now(), $1)`, [{ lane: 'hot', list: 'priority-en', summary: 'second', reply: '' }]);
+  const readList = async (qs, key = 'inbox-key') => {
+    const r = await fetch(B + '/api/inbox/applications' + qs, { headers: key ? { 'x-inbox-key': key } : {} });
+    return { status: r.status, body: await r.json() };
+  };
+  ok('the list needs the inbox key', (await readList('?list=priority-en', null)).status === 401 &&
+    (await readList('?list=priority-en', 'wrong')).status === 401);
+  ok('an unknown list → 400', (await readList('?list=nope')).status === 400 &&
+    (await readList('?list=priority-en&list=gen3-zh')).status === 400);
+  const pl = (await readList('?list=priority-en')).body;
+  const places = (pl.applications || []).map(x => `${x.place}:${x.email}:${x.tries}`);
+  ok('the priority list comes in the order people joined, one place per email, the 91-day-old one first',
+    pl.list === 'priority-en' && pl.count === 3 &&
+    places.join(',') === '1:old-en@example.com:1,2:anna@example.de:2,3:ben@example.de:1', places.join(','));
+  const annaEntry = (pl.applications || [])[1] || {};
+  ok('a second try keeps the first place and shows the latest answers', annaEntry.name === 'Anna K' &&
+    annaEntry.text === 'second try' && annaEntry.video === 'https://youtu.be/anna2' && new Date(annaEntry.joined) < new Date(annaEntry.last));
+  const zl = (await readList('?list=gen3-zh')).body;
+  ok('the Gen #3 list holds only its own applications', zl.count > 0 &&
+    zl.applications.every(x => !['anna@example.de', 'ben@example.de', 'old-en@example.com'].includes(x.email)) &&
+    !zl.applications.some(x => x.email === 'old-zh@example.com'));
 
 
   const bare = express();

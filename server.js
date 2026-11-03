@@ -13,7 +13,7 @@ const { mountBkk } = require('./bkk-api');
 const { mountPartner } = require('./partner-api');
 const { mountIdcn } = require('./idcn-api');
 const { mountShop } = require('./shop-api');
-const { mountInbox } = require('./inbox');
+const { mountInbox, APPLY_PATH_RE } = require('./inbox');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -115,7 +115,7 @@ app.use(cors());
 const jsonBody = express.json({ limit: '10mb', verify: (req, res, buf) => {
   if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf;
 } });
-app.use((req, res, next) => req.path === '/api/in-depth/apply' ? next() : jsonBody(req, res, next));
+app.use((req, res, next) => APPLY_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
 // index: false so '/' falls through to the host-aware front-door route below
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));
@@ -2801,8 +2801,14 @@ async function initSchema() {
 // shala's main booking page. The journal home stays reachable everywhere at /planner.
 // The booking page is served on several hostnames (aybkk.net, my.aybkk.com, cn.aybkk.net/shala);
 // its canonical tag and this sitemap tell Google that aybkk.net is the one to show.
+// cn.aybkk.net/in-depth is sent by link only. Google reads its noindex; Baidu, Sogou, 360, Shenma and
+// Toutiao do not document noindex, so on cn.* they are also told not to fetch it.
+const CN_CRAWLERS = ['Baiduspider', 'Sogou web spider', '360Spider', 'YisouSpider', 'Bytespider'];
 app.get('/robots.txt', (req, res) => {
-  res.type('text/plain').send('User-agent: *\nAllow: /\n\nSitemap: https://aybkk.net/sitemap.xml\n');
+  const cn = String(req.headers.host || '').toLowerCase().startsWith('cn.');
+  res.type('text/plain').send('User-agent: *\nAllow: /\n\n' +
+    (cn ? CN_CRAWLERS.map(ua => `User-agent: ${ua}\nDisallow: /in-depth\n\n`).join('') : '') +
+    'Sitemap: https://aybkk.net/sitemap.xml\n');
 });
 app.get('/sitemap.xml', (req, res) => {
   const urls = ['https://aybkk.net/', 'https://aybkk.net/start', 'https://aybkk.net/in-depth'];

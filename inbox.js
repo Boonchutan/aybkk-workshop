@@ -6,11 +6,13 @@
 //         The LINE webhook in server.js hands each request to inbox.takeLine(req).
 //
 // Messages live in aybkk_inbox (the private Postgres, never the public repo)
-// for 90 days. Machi, the chief-of-staff routine, reads GET /api/inbox three
+// for 90 days, except the English priority list (see below). Machi, the chief-of-staff routine, reads GET /api/inbox three
 // times a day and drafts the replies. With ANTHROPIC_API_KEY set, a message is
 // also sorted as it arrives and hot ones reach Boonchu's Telegram at once.
 // Applications from the In-Depth Mysore pages (POST /api/in-depth/apply) land
 // here too, on channel 'apply', already marked hot and tagged with their list.
+// GET /api/inbox/applications?list=priority-en gives a whole list in the order
+// people joined, one line per email.
 
 const crypto = require('crypto');
 const express = require('express');
@@ -128,8 +130,11 @@ async function telegram(text) {
 
 // ── In-Depth Mysore applications ───────────────────────────────────────────
 // Each one is kept as a message on channel 'apply', so Machi's brief shows it
-// beside the chats and it is deleted with them after KEEP_DAYS. It never goes
-// to the AI sort: an application is always hot, and applicant data stays here.
+// beside the chats. It never goes to the AI sort: an application is always hot,
+// and applicant data stays here. Gen #3 applications are deleted with the chats
+// after KEEP_DAYS. The English priority list has no dates yet and its order sets
+// who is offered a seat first, so its rows are kept until the list is closed:
+// then delete them (channel 'apply', triage->>'list' = 'priority-en').
 // The form says which list it came from; the list is stored in triage.list and
 // named in the text and the ping, so Machi and Boonchu can tell them apart.
 const APPLY_LISTS = {
@@ -143,6 +148,10 @@ const APPLY_PER_EMAIL_DAY = 3;
 const APPLY_PER_HOUR = 200;
 const APPLY_PINGS_HOUR = 10;
 const APPLY_MAX_BYTES = 64 * 1024;
+// Matched the way Express matches the route (any case, optional trailing slash),
+// so server.js can leave every spelling of it out of its 10 MB JSON parser.
+const APPLY_PATH_RE = /^\/api\/in-depth\/apply\/?$/i;
+const KEPT_LIST = 'priority-en';
 const APPLY_FIELDS = {
   name: { max: 100, need: true, line: true },
   email: { max: 200, need: true, line: true },
@@ -286,7 +295,8 @@ function mountInbox(app, opts = {}) {
 
   // Chats are customers' words: keep them only as long as a brief needs them.
   const purge = () => ready
-    .then(() => q(`DELETE FROM aybkk_inbox WHERE created_at < now() - interval '${KEEP_DAYS} days'`))
+    .then(() => q(`DELETE FROM aybkk_inbox WHERE created_at < now() - interval '${KEEP_DAYS} days'
+      AND (channel <> 'apply' OR triage->>'list' IS DISTINCT FROM $1)`, [KEPT_LIST]))
     .catch(e => console.error('[inbox] purge failed:', e.message));
   purge();
   setInterval(purge, 24 * 3600 * 1000).unref();
@@ -447,10 +457,14 @@ function mountInbox(app, opts = {}) {
   });
 
   // Header only, like x-bkk-key: a key in the query string ends up in logs.
-  app.get('/api/inbox', async (req, res) => {
+  function inboxKey(req, res, next) {
     const key = process.env.INBOX_KEY;
     if (!key) return res.status(503).json({ error: 'INBOX_KEY is not set on the server' });
     if (!safeEqual(req.headers['x-inbox-key'], key)) return res.status(401).json({ error: 'bad key' });
+    next();
+  }
+
+  app.get('/api/inbox', inboxKey, async (req, res) => {
     const since = req.query.since ? new Date(req.query.since) : new Date(Date.now() - 24 * 3600 * 1000);
     if (isNaN(since)) return res.status(400).json({ error: 'since must be a date, e.g. 2026-09-30T07:00:00Z' });
     try {
@@ -482,6 +496,32 @@ function mountInbox(app, opts = {}) {
         lineBadSignatures: stats.lineBadSignatures,
         threads: [...threads.values()],
       });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // A whole list in the order people joined: seats go in this order. One entry
+  // per email; a second try keeps the place of the first and shows the latest answers.
+  app.get('/api/inbox/applications', inboxKey, async (req, res) => {
+    const list = String(req.query.list || '');
+    if (!Object.hasOwn(APPLY_LISTS, list)) {
+      return res.status(400).json({ error: `list must be one of: ${Object.keys(APPLY_LISTS).join(', ')}` });
+    }
+    try {
+      await ready;
+      const rows = (await q(`SELECT created_at, sender_id, sender_name, text, ref, triage FROM aybkk_inbox
+        WHERE channel='apply' AND triage->>'list' = $1 ORDER BY created_at, id LIMIT 5000`, [list])).rows;
+      const people = new Map();
+      for (const r of rows) {
+        const p = people.get(r.sender_id);
+        if (!p) {
+          people.set(r.sender_id, { place: people.size + 1, joined: r.created_at, last: r.created_at, tries: 1,
+            email: r.sender_id, name: r.sender_name, video: r.ref, summary: r.triage.summary, text: r.text });
+        } else {
+          Object.assign(p, { last: r.created_at, tries: p.tries + 1, name: r.sender_name, video: r.ref,
+            summary: r.triage.summary, text: r.text });
+        }
+      }
+      res.json({ list, about: APPLY_LISTS[list], count: people.size, applications: [...people.values()] });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -544,7 +584,7 @@ function mountInbox(app, opts = {}) {
     }
   }, (err, req, res, next) => res.status(err.status === 413 ? 413 : 400).json({ error: 'fields', fields: [] }));
 
-  return { takeLine };
+  return { takeLine, purge };
 }
 
-module.exports = { mountInbox, parseMeta, checkApplication, telegram };
+module.exports = { mountInbox, parseMeta, checkApplication, telegram, APPLY_PATH_RE };
