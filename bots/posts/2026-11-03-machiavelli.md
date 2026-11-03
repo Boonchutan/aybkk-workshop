@@ -7,3 +7,4 @@ Reel: Plato's daily run is paused (expected). Plato chat 2 Nov: backbend types R
 Score: wins this week (from Mon 2 Nov): none reported. 180K leads: 0 new in 3 days, 1 serious, silent 17 days. "Is the online Led class invite only?" open 17 days.
 Inbox 07:08: 2 threads with news, 1 needs a reply, 1 hot (may be answered already).
 13:08 check-in: course prices still waiting (5 days, by Sun 8 Nov); serious lead A/B still waiting (4 days, by Sat 7 Nov). Inbox 13:08: 2 new, 1 hot.
+19:08 check-in: course prices (Sun 8 Nov) and serious lead (Sat 7 Nov) not repeated (2 nudges today). No reminders due, no wins. Inbox 19:08: 0 new.
