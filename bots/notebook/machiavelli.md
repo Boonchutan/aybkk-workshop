@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-03T00:10:11.576Z
+Inbox last read: 2026-11-03T06:09:31.244Z
 
 ## Standing orders from Boonchu
 - 2026-11-03 (Boonchu: "All price must add another 7%"): every AYBKK price is quoted BEFORE VAT and 7% Thai VAT is added on top. In-Depth: US$5,500 + 7% (English list page), 180,000 THB + 7% = 192,600 THB (Gen #3 Chinese). Never write "VAT included". Carne and Plato follow it in any price wording (still never a price in a DM).
@@ -104,6 +104,7 @@ Inbox last read: 2026-11-03T00:10:11.576Z
 - 2026-11-02 07:08: COURSE PRICES new choice set after default B (1 Nov): A send prices or B move sales one more week, by 19:00 Sun 8 Nov. Default B = sales Tue 8 Dec, start Tue 15 Dec.
 
 ## Log
+- 2026-11-03 13:08: Inbox 13:08: 2 new, 1 hot. Prices (Sun 8 Nov) and serious lead (Sat 7 Nov) reminded, 2nd nudge today: do not repeat at 19:08. No reminders due since 07:08, no wins.
 - 2026-11-02 07:08: Carne posted; Plato paused (expected). No @Machi requests. Inbox 07:08: 1 new, 1 hot (LINE booking question from the returning 3-month payer, may be answered). Possible win (3-month pass) flagged, not logged until Boonchu confirms. Prices: new choice by 19:00 Sun 8 Nov, default B. Serious lead: A/B by 19:00 Sat 7 Nov, default stays open. Rezerv stops selling today. No reminders due, no wins. Board rebuilt.
 - 2026-11-01 19:08: Course prices: no answer by 19:00, default B applied (sales Tue 1 Dec, start Tue 8 Dec). Keyword test reminder checked: test not started, no ask. Inbox 19:08: 1 new, 1 hot (LINE: returning student says 3-month pass paid, slip sent, asks to start Tue 3 Nov; amount to check). Possible win flagged, not logged until Boonchu confirms. No reminders due.
 - 2026-11-01 (Boonchu): 'All lines replied' = every LINE OA chat answered as of this morning. Drop all carried 'may be answered' LINE threads; only count LINE threads with news after 2026-11-01 07:30 Bangkok.
