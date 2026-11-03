@@ -108,6 +108,10 @@
   };
   const T = (zh, en) => LANG === 'zh'
     ? `${zh} <span class="muted" style="font-weight:400">${en}</span>` : en;
+  // students who signed v1 to v3 keep the page exactly as they saw it; anyone
+  // on a later version gets the cleaned-up wording
+  const LEGACY = () => !!P && ['idcn3-v1', 'idcn3-v2', 'idcn3-v3'].includes(P.course.policyVersion);
+  const W = (legacy, now) => LEGACY() ? legacy : now;
 
   // ── the signed policy, bilingual, one list per version. Each entry is one
   // consent box. The server says which version a student signs; v1 to v3 (the
@@ -124,7 +128,7 @@
         zh: '我明白瑜伽是身体性的练习，存在受伤风险。我确认自己的身体状况适合参加，并已（或将在下方）如实告知伤病、身体状况或怀孕情况，且在课程期间如有变化会及时告知。我对在自己能力范围内练习负责。',
         en: 'I understand yoga is a physical practice and carries a risk of injury. I confirm I am fit to take part, have told AYBKK (or will tell below) about any injuries, medical conditions or pregnancy, and will report changes during the course. I am responsible for practising within my own limits.' },
       { k: 'instructions',
-        zh: '我同意遵守课程要求：全程参加30天课程，听从老师指导，按时完成作业与考试。本课程不是教师培训，也不提供迈索尔的教学资格，AYBKK 无法给予这种资格。完成全部要求后，我将获得 AYBKK 深度迈索尔课程结业证书。我可以说明自己在 AYBKK 完成了深度迈索尔课程，并可以把所学用于帮助我自己的学生以及任何需要改善身体的人。但我的教学属于我自己：未经书面许可，不得表示我的课程隶属于 AYBKK 或以 AYBKK 的名义开设。课程资料（教学大纲、笔记、视频）不得复制或传播。助教与学徒的选拔完全由 Kru Boonchu 决定。',
+        zh: '我同意遵守课程要求：全程参加30天课程，听从老师指导，按时完成作业与考试。本课程不是教师培训，也不是来自印度迈索尔的教学许可，AYBKK 无法给予这种许可。完成全部要求后，我将获得 AYBKK 深度迈索尔课程结业证书。我可以说明自己在 AYBKK 完成了深度迈索尔课程，并可以把所学用于帮助我自己的学生以及任何需要改善身体的人。但我的教学属于我自己：未经书面许可，不得表示我的课程隶属于 AYBKK 或以 AYBKK 的名义开设。课程资料（教学大纲、笔记、视频）不得复制或传播。助教与学徒的选拔完全由 Kru Boonchu 决定。',
         en: 'I agree to follow the course requirements: attend the whole 30-day course, follow the teachers’ instructions, and complete the homework and exams on time. This course is not a teacher training. It is not an authorization from Mysore, and AYBKK cannot give one. On completing all requirements I receive the AYBKK Certificate of Completion, In-Depth Mysore. I may say that I completed In-Depth Mysore at AYBKK, and I may use what I learned to help my own students and anyone who needs help with their body. My teaching is my own: without written permission I may not present my classes as being under AYBKK or run them in AYBKK’s name. The course materials (syllabus, notes, videos) may not be copied or shared. Kru Boonchu alone decides who is chosen as an assistant or apprentice.' },
       { k: 'travel',
         zh: 'Khaoyaithieng 的交通与住宿已包含。机票、签证及其他住宿不包含，由我自行负责。AYBKK 强烈建议购买覆盖瑜伽练习的旅行/医疗保险；如我选择不购买，练习及旅行期间的医疗费用由我自己承担。',
@@ -200,7 +204,7 @@
         <div id="photos"><p class="muted">${T('加载中…', 'Loading…')}</p></div></div>`;
     }
     html += `<p class="muted" style="text-align:center">
-      ${T('有任何问题，直接联系 AYBKK。', 'Any question — contact AYBKK directly.')}</p>`;
+      ${T('有任何问题，直接联系 AYBKK。', W('Any question — contact AYBKK directly.', 'Any question? Contact AYBKK directly.'))}</p>`;
     $('#view').innerHTML = html;
     if (signed) loadPhotos();
   }
@@ -212,7 +216,10 @@
 
   // one price with its VAT, and the dated payments of an option
   const feeLine = q => `<span class="price">${baht(q.totalSatang)}</span><br>
-      <span class="muted">${baht(q.netSatang)} + ${q.vatPct}% ${T2('增值税', 'VAT')} ${baht(q.vatSatang)}</span>`;
+      <span class="muted">${baht(q.netSatang)} + ${q.vatPct}% ${LANG === 'zh'
+        ? `增值税（${baht(q.vatSatang)}）` : `VAT (${baht(q.vatSatang)})`} = ${baht(q.totalSatang)}</span>`;
+  const planText = ps => ps.map(p => baht(p.amountSatang) + ' ' + byDate(p.due))
+    .join(LANG === 'zh' ? '，' : ' + ');
   const optBox = (q, sel) => `<div class="opt${sel ? ' sel' : ''}">
       <b>${T2('方案', 'Option')} ${esc(q.code)} · ${esc(LANG === 'zh' ? q.label_zh : q.label_en)}</b>
       ${q.installments.map(p => `<div class="inst"><span>${baht(p.amountSatang)}</span>
@@ -221,8 +228,7 @@
   function planCard(qt) {
     const qs = P.quotes || [];
     if (!qt) return `<div class="card"><b class="h">${T('付款方案', 'Payment options')}</b>
-      ${qs.length ? `<p style="margin:4px 0 0">${feeLine(qs[0])}<br>
-      <span class="muted">${T2('所有人同一价格。', 'One price for everyone.')}</span></p>` : ''}
+      ${qs.length ? `<p style="margin:4px 0 0">${feeLine(qs[0])}</p>` : ''}
       ${qs.map(q => optBox(q, false)).join('')}
       <p class="muted" style="margin:10px 0 0">${T('告诉 AYBKK 你选择哪个方案，确认后会显示在这里。付款链接由 AYBKK 单独发给你（微信/支付宝/信用卡）。',
         'Tell AYBKK which option you choose. It then shows here. AYBKK sends you the payment link separately (WeChat / Alipay / credit card).')}</p></div>`;
@@ -231,6 +237,9 @@
   }
 
   function renderEnroll(s, c) {
+    if (P.held) return `<div class="card"><b class="h">${T('付款方案', 'Payment plan')}</b>
+      <p style="margin:4px 0 0">${T('AYBKK 已记录你的付款' + (P.held.paidSatang ? ' ' + baht(P.held.paidSatang) : '') + '。签署前，AYBKK 会先与你确认付款方案，确认后会显示在这里。',
+        'AYBKK has your payment' + (P.held.paidSatang ? ' of ' + baht(P.held.paidSatang) : '') + ' on record. Before you sign, AYBKK will confirm your payment plan with you. It then shows here.')}</p></div>`;
     const policy = POLICIES[c.policyVersion];
     if (!policy) return `<div class="card"><div class="warn">${T('课程条款已更新，请刷新页面。',
       'The course terms were updated. Please reload this page.')}</div></div>`;
@@ -263,7 +272,10 @@
     return `<div class="card">
       <div class="okbox">${T('名额已确认 ✓', 'Your spot is confirmed ✓')}
         <span style="font-weight:400"> · ${esc(String(cs.signed_at).slice(0, 10))} · ${esc(cs.signed_name)}</span></div>
-      ${qt && qt.installments ? `<div style="padding:10px 2px 0">${feeLine(qt)}</div>${optBox(qt, true)}`
+      ${qt && qt.installments ? `<div style="padding:10px 2px 0">${feeLine(qt)}</div>${optBox(qt, true)}${
+        P.signedPlan && JSON.stringify(P.signedPlan) !== JSON.stringify(qt.installments)
+          ? `<p class="muted" style="margin:8px 0 0">${T('AYBKK 在你签署后更改了付款方案。你签署时的方案：' + planText(P.signedPlan) + '。',
+            'AYBKK changed your payment plan after you signed. When you signed, it was: ' + planText(P.signedPlan) + '.')}</p>` : ''}`
         : qt ? `<div style="padding:10px 2px 0">
         <b>${T('方案', 'Option')} ${qt.option}</b> — <span style="font-weight:700">${baht(qt.totalSatang)}</span>
         ${(qt.discounts || []).length ? `<span class="save"> ${qt.discounts.map(d => '−' + d + '%').join(' ')}</span>` : ''}<br>
@@ -277,8 +289,10 @@
 
   function renderSubmit() {
     return `<div class="card"><b class="h">${T('每日作业视频', 'Daily assignment video')}</b>
-      <p class="muted">${T('每天把你的训练/作业视频传到这里，老师会在你的档案里看到。最大100MB。',
-        'Upload your daily drill video here — the teachers see it on your profile. Max 100MB.')}</p>
+      <p class="muted">${W(T('每天把你的训练/作业视频传到这里，老师会在你的档案里看到。最大100MB。',
+        'Upload your daily drill video here — the teachers see it on your profile. Max 100MB.'),
+        T('每天把你的练习/作业视频传到这里，老师会在你的档案里看到。最大100MB。',
+        'Upload your daily practice video here. The teachers see it on your profile. Max 100MB.'))}</p>
       <input id="subNote" placeholder="${LANG === 'zh' ? '想说的话（可选）' : 'a note with it (optional)'}"
         autocomplete="off" style="margin-bottom:8px">
       <p style="margin:4px 0 0"><button class="btn pink" onclick="pickSubmission()">
@@ -316,7 +330,8 @@
       const file = f.files && f.files[0]; if (!file) return;
       if (file.size > 100 * 1024 * 1024) {
         $('#subMsg').textContent = T2('视频太大了，请控制在100MB以内（1-2分钟足够）。',
-          'That file is over 100MB — a 1–2 minute clip is enough.'); f.value = ''; return;
+          W('That file is over 100MB — a 1–2 minute clip is enough.',
+            'That file is over 100MB. A 1 to 2 minute clip is enough.')); f.value = ''; return;
       }
       $('#subMsg').textContent = T2('上传中… 视频较大时需要一点时间，请不要关闭页面。',
         'Uploading… a video can take a while, keep the page open.');
@@ -328,11 +343,11 @@
         const r = await fetch(`/api/idcn/${COURSE}/submissions`, { method: 'POST',
           headers: { 'x-idcn-key': KEY, ...(ADMIN ? { 'x-bkk-key': ADMIN } : {}) }, body: fd });
         const j = await r.json().catch(() => ({}));
-        if (!r.ok) { $('#subMsg').textContent = j.error || T2('上传失败，请重试', 'Upload failed — try again'); return; }
+        if (!r.ok) { $('#subMsg').textContent = j.error || T2('上传失败，请重试', W('Upload failed — try again', 'Upload failed. Try again.')); return; }
         $('#subMsg').textContent = '';
         await load();
       } catch (_) {
-        $('#subMsg').textContent = T2('网络中断，请重试', 'Connection dropped — try again');
+        $('#subMsg').textContent = T2('网络中断，请重试', W('Connection dropped — try again', 'Connection dropped. Try again.'));
       }
       f.value = '';
     };
@@ -380,6 +395,7 @@
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { $('#signMsg').textContent = r.status === 409 && j.policyVersion
       ? T2('课程条款已更新，请刷新页面后重新阅读。', 'The course terms changed. Reload the page and read them again.')
+      : r.status === 409 && j.held ? T2('签署前，AYBKK 会先与你确认付款方案。', 'Before you sign, AYBKK will confirm your payment plan with you.')
       : (j.error || 'failed'); return; }
     await load();
   };
@@ -406,7 +422,7 @@
       rd.onload = async () => {
         const r = await api(`/api/idcn/${COURSE}/photos`, { method: 'POST',
           body: JSON.stringify({ slug: SLUG, imageBase64: rd.result }) });
-        $('#upMsg').textContent = r.ok ? T2('已上传 ✓', 'Uploaded ✓') : T2('上传失败，请重试', 'Upload failed — try again');
+        $('#upMsg').textContent = r.ok ? T2('已上传 ✓', 'Uploaded ✓') : T2('上传失败，请重试', W('Upload failed — try again', 'Upload failed. Try again.'));
         if (r.ok) loadPhotos();
       };
       rd.readAsDataURL(file);

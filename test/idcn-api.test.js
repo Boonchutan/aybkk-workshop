@@ -6,11 +6,18 @@
 //   4. a student's named link opens with their passcode and nobody else's
 //   5. consent is complete-or-nothing, recorded once with the version on screen
 //   6. payment proofs uploaded by admin appear on the student's profile
+//   7. a later wording bump, or a deploy that overlaps the old instance, never
+//      moves a signature onto other terms
+//   8. a student who paid before having an option of their terms can't sign
+//      until admin confirms one, and the plan on screen is kept with the signature
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+const Module = require('module');
 const express = require('express');
 const { Pool } = require('pg');
-const { mountIdcn, quote, applyPct, planError, IDCN3_TERMS, IDCN3_TERMS_V4,
-  IDCN3_POLICY_VERSION } = require('../idcn-api.js');
+const { mountIdcn, quote, applyPct, planError, termsFor, IDCN3_TERMS, IDCN3_TERMS_V4,
+  IDCN3_POLICY_VERSION, TERMS_BY_POLICY } = require('../idcn-api.js');
 
 process.env.BKK_ADMIN_KEY = 'test-admin';
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
@@ -103,9 +110,58 @@ const B_THB = 100; // satang per baht
        && !!planError(Array.from({ length: 7 }, () => ({ amountSatang: 2751428, due: '2026-12-10' })), 19260000)
        && planError(plan, 19260000) === null);
 
+  console.log('\n[a later wording bump never moves a v4 signature]');
+  ok('v4 terms are keyed by the literal version idcn3-v4; v1 to v3 read the stored terms',
+     termsFor({ terms: IDCN3_TERMS }, 'idcn3-v4') === IDCN3_TERMS_V4
+       && ['idcn3-v1', 'idcn3-v2', 'idcn3-v3'].every(v => termsFor({ terms: IDCN3_TERMS }, v) === IDCN3_TERMS)
+       && Object.keys(TERMS_BY_POLICY).join() === 'idcn3-v4');
+  ok('the current version has its own terms entry', TERMS_BY_POLICY[IDCN3_POLICY_VERSION] === IDCN3_TERMS_V4);
+  const SRC_PATH = path.join(__dirname, '..', 'idcn-api.js');
+  const SRC = fs.readFileSync(SRC_PATH, 'utf8');
+  const loadSrc = code => {
+    const m = new Module(SRC_PATH); m.filename = SRC_PATH; m.paths = module.paths;
+    m._compile(code, SRC_PATH); return m.exports;
+  };
+  const bumped = SRC.replace("const IDCN3_POLICY_VERSION = 'idcn3-v4';", "const IDCN3_POLICY_VERSION = 'idcn3-v5';");
+  let refused = ''; try { loadSrc(bumped); } catch (e) { refused = e.message; }
+  ok('bumping the version without giving it terms refuses to load',
+     bumped !== SRC && /idcn3-v5 has no entry/.test(refused), refused);
+  const v5src = bumped.replace("const TERMS_BY_POLICY = { 'idcn3-v4': IDCN3_TERMS_V4 };",
+    "const TERMS_BY_POLICY = { 'idcn3-v4': IDCN3_TERMS_V4, 'idcn3-v5': { ...IDCN3_TERMS_V4 } };");
+  const v5 = loadSrc(v5src);
+  const v5t = v5.termsFor({ terms: v5.IDCN3_TERMS }, 'idcn3-v4');
+  ok('after a bump to v5, a v4 signature still gets the v4 terms (option B: 9,630,000 x 2)',
+     v5src !== bumped && v5.IDCN3_POLICY_VERSION === 'idcn3-v5' && v5t === v5.IDCN3_TERMS_V4
+       && JSON.stringify(v5.quote(v5t, 5, false)) === JSON.stringify(qb) && v5.quote(v5t, 1, false) === null);
+
+  console.log('\n[v4 wording: no banned words]');
+  const HTML = fs.readFileSync(path.join(__dirname, '..', 'public', 'idcn.html'), 'utf8');
+  const v4policy = HTML.slice(HTML.indexOf("'idcn3-v4': ["), HTML.indexOf('const MEDIA_PUBLIC'));
+  const v4all = v4policy + JSON.stringify(IDCN3_TERMS_V4);
+  ok('the v4 policy has all 8 clauses', (v4policy.match(/\{ k: '/g) || []).length === 8);
+  ok('no certified, certification, 认证, 训练, 最, "both sessions", 两个阶段 or em dash in v4',
+     !/certified|certification|认证|训练|最|both sessions|两个阶段|\u2014/i.test(v4all));
+  ok('授权 only for the teachers\' own credential',
+     (v4all.match(/授权/g) || []).length === 1 && /两位均获 R\. Sharath Jois 授权 Level 2/.test(v4all));
+  ok('"training" and 培训 only in the denial',
+     (v4all.match(/training/gi) || []).length === 1 && /This course is not a teacher training\./.test(v4all)
+       && (v4all.match(/培训/g) || []).length === 1 && /本课程不是教师培训/.test(v4all));
+  ok('the certificate is named "AYBKK Certificate of Completion, In-Depth Mysore"',
+     /AYBKK Certificate of Completion, In-Depth Mysore\./.test(v4policy)
+       && /AYBKK 深度迈索尔课程结业证书/.test(v4policy));
+
   mountIdcn(app, { pgPool: pool });
   await new Promise(r => setTimeout(r, 1200));
   await pool.query('DELETE FROM idc_notes; DELETE FROM idc_payments; DELETE FROM idc_consents; DELETE FROM idc_settings; DELETE FROM idc_students;');
+
+  console.log('\n[deploy overlap: the old instance keeps stamping the wording it shows]');
+  // main's boot leaves the row at idcn3-v3, and main stamps signatures from it
+  await pool.query(`UPDATE idc_courses SET policy_version='idcn3-v3' WHERE code='idcn3'`);
+  mountIdcn(express(), { pgPool: pool });
+  await new Promise(r => setTimeout(r, 1200));
+  ok('booting the new code leaves the course row at idcn3-v3 (every test below runs on that row)',
+     (await pool.query(`SELECT policy_version FROM idc_courses WHERE code='idcn3'`)).rows[0].policy_version
+       === 'idcn3-v3');
   const srv = app.listen(0);
   const B = `http://127.0.0.1:${srv.address().port}`;
   const J = async (path, opts = {}, headers = {}) => {
@@ -220,6 +276,12 @@ const B_THB = 100; // satang per baht
      JSON.stringify(after.body.consent));
   ok('her locked quote is option B: 9,630,000 + 9,630,000 satang',
      JSON.stringify(after.body.quote) === JSON.stringify(qb));
+  const yRow = (await pool.query('SELECT policy_version, plan FROM idc_consents WHERE student_id=$1', [YID])).rows[0];
+  ok('the stamp comes from the code (idcn3-v4) though the course row says idcn3-v3, '
+     + 'and the plan on screen is stored with the signature',
+     yRow.policy_version === 'idcn3-v4' && yRow.plan.length === 2
+       && yRow.plan.every((p, i) => p.amountSatang === qb.installments[i].amountSatang && p.due === qb.installments[i].due)
+       && JSON.stringify(after.body.signedPlan) === JSON.stringify(qb.installments), JSON.stringify(yRow));
 
 
   console.log('\n— payment proof on the profile —');
@@ -328,6 +390,10 @@ const B_THB = 100; // satang per baht
   ok('her signed record still says idcn3-v3, option 3, attendee',
      v3p.consent.policy_version === 'idcn3-v3' && v3p.consent.payment_option === 3
        && v3p.student.isAttendee === true && v3p.student.paymentOption === 3);
+  ok('her profile has the same keys as before v4 (no signedPlan, no held)',
+     Object.keys(v3p).join() === 'course,student,quotes,quote,consent,payments,notes,links,requiredConsents'
+       && Object.keys(v3p.consent).join()
+         === 'policy_version,payment_option,items,signed_name,health_note,media_public,signed_at');
   const v1s = await mkRow('test-v1', 'Test Signer V1', 1, false, 'idcn3-v1', '2026-09-10T03:00:00Z');
   const v1get = async () => (await J('/api/idcn/idcn3/students/test-v1', {}, { 'x-idcn-key': v1s.key })).body;
   ok('a v1 signer keeps the same v3-era money: option 1 at ฿179,100',
@@ -371,6 +437,38 @@ const B_THB = 100; // satang per baht
      invSign.status === 200 && ip2.consent.policy_version === 'idcn3-v4'
        && ip2.consent.payment_option === null, JSON.stringify(ip2.consent));
 
+  console.log('\n[paid under v3, never signed: held until admin confirms an option]');
+  const pd = await mkRow('test-paid', 'Test Paid Unsigned', 3, false, null);
+  await pool.query(`INSERT INTO idc_payments (student_id, label, amount_satang, uploaded_by)
+    VALUES ($1, '60% deposit', 11940000, 'Test')`, [pd.id]);
+  const pdGet = async () => (await J('/api/idcn/idcn3/students/test-paid', {}, { 'x-idcn-key': pd.key })).body;
+  const pp = await pdGet();
+  ok('she is held: no quote, her payment named, never shown as owing ฿192,600 on top',
+     pp.course.policyVersion === 'idcn3-v4' && pp.quote === null && pp.consent === null
+       && JSON.stringify(pp.held) === '{"paidSatang":11940000}', JSON.stringify(pp.held));
+  const pdSign = await J('/api/idcn/idcn3/students/test-paid/consent', { method: 'POST',
+    body: JSON.stringify({ ...V4, items: allTicked, signedName: 'Test Paid' }) }, { 'x-idcn-key': pd.key });
+  ok('she cannot sign while held', pdSign.status === 409 && pdSign.body.held === true, JSON.stringify(pdSign.body));
+  const pdRow = async () => (await J('/api/idcn/admin/idcn3/students', {}, A)).body.students
+    .find(x => x.slug === 'test-paid');
+  const pr1 = await pdRow();
+  ok('admin sees her held, with the amount paid and the old option',
+     pr1.held === true && pr1.paid_satang === 11940000 && pr1.option_stale === true
+       && pr1.payment_option === 3 && pr1.quote === null, JSON.stringify(pr1).slice(0, 300));
+  const noConfirm = await PUT(pd.id, { paymentOption: 'B' });
+  ok('setting a v4 option without confirming is refused, and nothing changes',
+     noConfirm.status === 409 && noConfirm.body.held === true && (await pdRow()).payment_option === 3,
+     JSON.stringify(noConfirm.body));
+  ok('once confirmed (Boonchu decided), admin sets B and the hold ends',
+     (await PUT(pd.id, { paymentOption: 'B', confirmHeld: true })).status === 200
+       && JSON.stringify((await pdGet()).quote) === JSON.stringify(qb) && !('held' in await pdGet())
+       && (await pdRow()).held === false);
+  ok('then she can sign v4, and her payment stays on record',
+     (await J('/api/idcn/idcn3/students/test-paid/consent', { method: 'POST',
+        body: JSON.stringify({ ...V4, items: allTicked, signedName: 'Test Paid' }) }, { 'x-idcn-key': pd.key }))
+       .status === 200 && (await pdGet()).consent.payment_option === 5
+       && (await pdGet()).payments.length === 1);
+
   console.log('\n[option C: a plan agreed on the call, for one student]');
   const LKEY2 = reset.body.passcode;
   const short = await PUT(LID, { paymentOption: 'C', customPlan: [{ amountSatang: 18000000, due: '2026-12-10' }] });
@@ -380,9 +478,11 @@ const B_THB = 100; // satang per baht
      (await PUT(LID, { paymentOption: 'C', customPlan: [{ amountSatang: 9630000.5, due: '2026-12-10' },
        { amountSatang: 9629999.5, due: '2027-01-10' }] })).status === 400);
   ok('option C without its payments is refused', (await PUT(LID, { paymentOption: 'C' })).status === 400);
+  const cPlan = [{ amountSatang: 9260000, due: '2027-01-05' }, { amountSatang: 10000000, due: '2026-12-10' }];
+  ok('Li Mei has a deposit recorded and no v4 option, so she is held: C needs the confirm',
+     (await PUT(LID, { paymentOption: 'C', customPlan: cPlan })).status === 409);
   ok('a plan that adds up is saved',
-     (await PUT(LID, { paymentOption: 'C', customPlan: [{ amountSatang: 9260000, due: '2027-01-05' },
-       { amountSatang: 10000000, due: '2026-12-10' }] })).status === 200);
+     (await PUT(LID, { paymentOption: 'C', customPlan: cPlan, confirmHeld: true })).status === 200);
   const lq = (await J('/api/idcn/idcn3/students/limei', {}, { 'x-idcn-key': LKEY2 })).body.quote;
   ok('she sees her plan in date order, adding up to 19,260,000 satang',
      lq.code === 'C' && lq.totalSatang === 19260000 && JSON.stringify(lq.installments) === JSON.stringify(plan),
@@ -391,6 +491,33 @@ const B_THB = 100; // satang per baht
   const lrow = (await J('/api/idcn/admin/idcn3/students', {}, A)).body.students.find(x => x.slug === 'limei');
   ok('moving her to A drops the custom plan',
      lrow.custom_plan === null && JSON.stringify(lrow.quote) === JSON.stringify(qa));
+
+  console.log('\n[option C: the plan signed is kept when admin changes it later]');
+  const cs = await J('/api/idcn/admin/idcn3/students', { method: 'POST',
+    body: JSON.stringify({ nameEn: 'Test Plan C', slug: 'test-plan-c' }) }, A);
+  const CS = { id: cs.body.student.id, key: cs.body.passcode };
+  const three = [{ amountSatang: 6420000, due: '2026-12-10' }, { amountSatang: 6420000, due: '2026-12-25' },
+    { amountSatang: 6420000, due: '2027-01-05' }];
+  await PUT(CS.id, { paymentOption: 'C', customPlan: three });
+  ok('she signs on a 3-part plan C',
+     (await J('/api/idcn/idcn3/students/test-plan-c/consent', { method: 'POST',
+        body: JSON.stringify({ ...V4, items: allTicked, signedName: 'Test Plan C' }) }, { 'x-idcn-key': CS.key }))
+       .status === 200);
+  const one = [{ amountSatang: 19260000, due: '2026-11-05' }];
+  ok('admin can still change her plan (agreed on a later call)',
+     (await PUT(CS.id, { paymentOption: 'C', customPlan: one })).status === 200);
+  const cp = (await J('/api/idcn/idcn3/students/test-plan-c', {}, { 'x-idcn-key': CS.key })).body;
+  const cRow = (await pool.query('SELECT plan FROM idc_consents WHERE student_id=$1', [CS.id])).rows[0];
+  ok('her page shows the new plan and the one she signed; the signed row is unchanged',
+     JSON.stringify(cp.quote.installments) === JSON.stringify(one)
+       && JSON.stringify(cp.signedPlan) === JSON.stringify(three)
+       && cRow.plan.length === 3 && cRow.plan.every((p, i) => p.amountSatang === three[i].amountSatang
+         && p.due === three[i].due), JSON.stringify({ q: cp.quote, s: cp.signedPlan }));
+  const cAdm = (await J('/api/idcn/admin/idcn3/students', {}, A)).body.students.find(x => x.slug === 'test-plan-c');
+  ok('admin sees the plan was changed after signing, and what was signed',
+     cAdm.plan_changed === true && JSON.stringify(cAdm.signed_plan) === JSON.stringify(three)
+       && (await J('/api/idcn/admin/idcn3/students', {}, A)).body.students
+         .find(x => x.slug === 'yang-yang').plan_changed === false);
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();

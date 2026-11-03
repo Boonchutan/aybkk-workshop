@@ -62,7 +62,7 @@
         <div><label>Journal link (optional, paste later is fine)</label><input id="nJournal"></div>
       </div>
       <p class="muted" style="margin:10px 0 0">New students sign terms idcn3-v4: ฿192,600
-        (฿180,000 + 7% VAT), one price for everyone. Students who signed earlier keep their own terms.</p>
+        (฿180,000 + 7% VAT), the same for every new student. Students who signed earlier keep their own terms.</p>
       <p style="margin:12px 0 0"><button class="btn" onclick="addStudent()">Create link + passcode</button></p>
       <div id="newPass"></div>
     </div>
@@ -224,15 +224,20 @@
   };
 
   // what the student owes under their own terms (v3 signers keep 1, 2, 3)
+  const planText = ps => ps.map(p => baht(p.amountSatang) + ' by ' + esc(p.due)).join(' + ');
   const optionText = s => {
+    if (s.held) return `<span class="stale">${baht(s.paid_satang)} paid before this student had an ${esc(s.terms_version)} option${
+      s.payment_option ? ' (old option ' + s.payment_option + ')' : ''}. Set ${s.options.map(o => o.code).join(' / ')
+      } once what they pay is agreed; if they paid under older terms, Boonchu decides. They cannot sign until then.</span>`;
     if (s.option_stale) return `<span class="stale">option ${s.payment_option} is from older terms: set ${
       s.options.map(o => o.code).join(' / ')}</span>`;
+    if (s.plan_changed) return optionText({ ...s, plan_changed: false })
+      + ` <span class="stale">changed after signing; signed with ${s.signed_plan ? planText(s.signed_plan) : 'no plan'}</span>`;
     const qt = s.quote;
     if (!s.payment_option) return 'no option yet';
     if (!qt) return 'Option ' + s.payment_option;
     if (!qt.installments) return 'Option ' + s.payment_option + ' — ' + baht(qt.totalSatang);
-    return `Option ${esc(qt.code)}: ${baht(qt.totalSatang)} incl. VAT (`
-      + qt.installments.map(p => baht(p.amountSatang) + ' by ' + esc(p.due)).join(' + ') + ')';
+    return `Option ${esc(qt.code)}: ${baht(qt.totalSatang)} incl. VAT (` + planText(qt.installments) + ')';
   };
 
   window.setOption = async id => {
@@ -244,15 +249,19 @@
       : (s.options.find(o => o.key === s.payment_option) || {}).code || '';
     const o = prompt('Payment option for this student, agreed on the call:\n' + lines.join('\n'), cur);
     if (o === null) return;
+    const confirmHeld = s.held ? confirm(`This student paid ${baht(s.paid_satang)} before they had an `
+      + `${s.terms_version} option. If that was under older terms, set one only after Boonchu has decided `
+      + `what they pay. Continue?`) : undefined;
+    if (confirmHeld === false) return;
     const pick = s.options.find(x => x.code === o.trim().toUpperCase() || String(x.key) === o.trim());
-    if (pick && pick.custom) return customPlanForm(id, pick.code);
+    if (pick && pick.custom) return customPlanForm(id, pick.code, confirmHeld);
     const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
-      { method: 'PUT', body: JSON.stringify({ paymentOption: o.trim() }) });
+      { method: 'PUT', body: JSON.stringify({ paymentOption: o.trim(), confirmHeld }) });
     if (r.ok) load(); else alert((await r.json().catch(() => ({}))).error || 'failed');
   };
 
   // a plan agreed on the call: one payment per line, baht then the date
-  const customPlanForm = (id, code) => {
+  const customPlanForm = (id, code, confirmHeld) => {
     const s = STU[id];
     const now = s.quote && s.quote.code === code ? s.quote.installments
       .map(p => (p.amountSatang / 100) + ' ' + p.due).join('\n') : '';
@@ -260,11 +269,11 @@
       <label>Agreed plan: one payment per line, amount in baht then the date (YYYY-MM-DD).
         The payments must add up to the course fee incl. VAT.</label>
       <textarea id="cp${id}" rows="4" placeholder="100000 2026-12-10&#10;92600 2027-01-10">${esc(now)}</textarea>
-      <p style="margin:10px 0 0"><button class="btn pink" onclick="sendPlan(${id}, '${esc(code)}')">Save plan</button>
+      <p style="margin:10px 0 0"><button class="btn pink" onclick="sendPlan(${id}, '${esc(code)}', ${confirmHeld === true})">Save plan</button>
         <button class="btn gray" onclick="document.getElementById('proofRow${id}').innerHTML=''">Cancel</button>
         <span class="muted" id="cpm${id}"></span></p></div>`;
   };
-  window.sendPlan = async (id, code) => {
+  window.sendPlan = async (id, code, confirmHeld) => {
     const customPlan = [];
     for (const line of $('#cp' + id).value.split('\n').map(x => x.trim()).filter(Boolean)) {
       const m = line.replace(/,/g, '').match(/^(\d+)(?:\.(\d{1,2}))?\s+(\d{4}-\d{2}-\d{2})$/);
@@ -272,7 +281,7 @@
       customPlan.push({ amountSatang: Number(m[1]) * 100 + Number((m[2] || '').padEnd(2, '0') || 0), due: m[3] });
     }
     const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
-      { method: 'PUT', body: JSON.stringify({ paymentOption: code, customPlan }) });
+      { method: 'PUT', body: JSON.stringify({ paymentOption: code, customPlan, confirmHeld }) });
     if (r.ok) { $('#proofRow' + id).innerHTML = ''; load(); }
     else $('#cpm' + id).textContent = (await r.json().catch(() => ({}))).error || 'failed';
   };
