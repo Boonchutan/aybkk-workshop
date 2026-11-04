@@ -117,6 +117,14 @@
   "A": {
    "postId": "cmw1uwxgk06qnof063clgcjuf",
    "when": "2026-11-04 15:30 BKK, type now, Boonchu go"
+  },
+  "B": {
+   "postId": "cmw25zaxn01mxlm07z648gciz",
+   "when": "scheduled 2026-11-05 11:59 BKK (04:59 UTC), Boonchu go"
+  },
+  "C": {
+   "postId": "cmw25zay301mylm07j5ypst2c",
+   "when": "scheduled 2026-11-06 11:59 BKK (04:59 UTC), Boonchu go"
   }
  },
  "swap_note": "4 Nov, Boonchu: 'put happy image on set C to set B'. HAPPY (Lin Yutang) is B10, JOY (Shepherd) moved to C05 to keep 10 each."
