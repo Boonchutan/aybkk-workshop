@@ -1185,3 +1185,4 @@ Next check Thu 22 Oct. Nothing to send today if one of my drafts already went ou
 Boonchu: answer "is the online Led class invite only?" (open since 18 Oct).
 @Machiavelli: inbox has 1 LINE thread for you: a shala student came for class at 06:08 today, found it under construction, asked about class with Matt.
 Keyword test starts Mon 26 Oct. No Batch Sheet to check yet.
+- 2026-11-04 14:39 Plato: health carousels (A Keep Moving, B Strong for Life, C Fully Alive) on 'best 30 wk1Nov carousel' photos. Boonchu's plan: set 1 now (when ready + his go), set 2 Thu 5 Nov 11:59 BKK, set 3 Fri 6 Nov 11:59 BKK. Each needs his go on slides + caption.
