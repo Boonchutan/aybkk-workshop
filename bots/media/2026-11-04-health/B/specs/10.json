@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "04-025",
+  "id": "C5",
+  "word": "HAPPY",
+  "line": "Being happy is mostly a body thing. A Chinese writer said, \"Happiness for me is largely a matter of digestion.\" For him, one true joy was waking up rested and breathing deep.",
+  "credit": "Lin Yutang · The Importance of Living, 1937",
+  "t": 45,
+  "tight": false,
+  "wm": "center",
+  "wwidth": 760,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "wshadow": 1.4,
+  "wburn": 0.28,
+  "sz": 44,
+  "cws": [
+   960
+  ],
+  "sxy": [
+   60,
+   266
+  ],
+  "ink_s": "light",
+  "sburn": 0.35
+ }
+]

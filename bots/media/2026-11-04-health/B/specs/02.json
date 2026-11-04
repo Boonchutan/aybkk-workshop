@@ -1,0 +1,29 @@
+[
+ {
+  "photo": "03-118",
+  "id": "B2",
+  "word": "START",
+  "line": "You can start running at 93. A woman in India began when her son asked. At 101 she ran 100 m at the World Masters Games. \"There's no full stop,\" she said.",
+  "credit": "Man Kaur · AFP, 2017",
+  "t": 197,
+  "wm": "left",
+  "wwidth": 485,
+  "wpos": [
+   535,
+   60
+  ],
+  "ink_w": "light",
+  "wburn": 0.25,
+  "sz": 42,
+  "cws": [
+   460
+  ],
+  "sxy": [
+   68,
+   60
+  ],
+  "ink_s": "light",
+  "sburn": 0.34,
+  "line_br": "You can start running at 93.|A woman in India began|when her son asked.|At 101 she ran 100 m at|the World Masters Games.|“There’s no full stop,” she said."
+ }
+]
