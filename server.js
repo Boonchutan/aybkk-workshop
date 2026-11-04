@@ -13,7 +13,7 @@ const { mountBkk } = require('./bkk-api');
 const { mountPartner } = require('./partner-api');
 const { mountIdcn } = require('./idcn-api');
 const { mountShop } = require('./shop-api');
-const { mountInbox } = require('./inbox');
+const { mountInbox, APPLY_PATH_RE } = require('./inbox');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -110,10 +110,12 @@ const upload = multer({
 // (/api/bkk/login/<token>, /p/<slug>).
 app.use((req, res, next) => { res.set('Referrer-Policy', 'strict-origin'); next(); });
 app.use(cors());
-// LINE and Meta sign the exact bytes they send; the inbox checks those signatures
-app.use(express.json({ limit: '10mb', verify: (req, res, buf) => {
+// LINE and Meta sign the exact bytes they send; the inbox checks those signatures.
+// The public In-Depth application form reads its own body with a 64 KB limit (inbox.js).
+const jsonBody = express.json({ limit: '10mb', verify: (req, res, buf) => {
   if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf;
-} }));
+} });
+app.use((req, res, next) => APPLY_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
 // index: false so '/' falls through to the host-aware front-door route below
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));
@@ -207,6 +209,18 @@ const ORIENTATION_SHORTCUTS = {
 // Bangkok shala: timetable, packages, booking. ('/bkk' is the orientation form.)
 const PAGE_SHORTCUTS = { book: 'bkk.html', shala: 'bkk.html', booking: 'bkk.html',
   door: 'bkk-door.html', teach: 'bkk-teacher.html', photos: 'bkk-photos.html', start: 'start.html', partner: 'partner.html' };
+// In-Depth Mysore. On every host but cn.*, /in-depth is the public English page: the priority list
+// for the next English intake. cn.aybkk.net/in-depth is Generation #3, a Chinese cohort, sent only by
+// link on WeChat. That page sits in pages/, so no static path serves it; ?lang= changes nothing; it is
+// noindex in the page and in X-Robots-Tag; and nothing public (sitemap, hreflang, llms.txt, JSON-LD,
+// other pages) links to it.
+app.get('/in-depth', (req, res) => {
+  if (!String(req.headers.host || '').toLowerCase().startsWith('cn.')) {
+    return res.sendFile(path.join(__dirname, 'public', 'in-depth.html'));
+  }
+  res.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  res.sendFile(path.join(__dirname, 'pages', 'in-depth-gen3-zh.html'));
+});
 // Clean tracking links for Reels and bios: aybkk.net/start/sleep instead of ?src=sleep.
 app.get('/start/:tag', (req, res) => res.sendFile(path.join(__dirname, 'public', 'start.html')));
 for (const [slug, file] of Object.entries({ ...ORIENTATION_SHORTCUTS, ...PAGE_SHORTCUTS })) {
@@ -2787,11 +2801,17 @@ async function initSchema() {
 // shala's main booking page. The journal home stays reachable everywhere at /planner.
 // The booking page is served on several hostnames (aybkk.net, my.aybkk.com, cn.aybkk.net/shala);
 // its canonical tag and this sitemap tell Google that aybkk.net is the one to show.
+// cn.aybkk.net/in-depth is sent by link only. Google reads its noindex; Baidu, Sogou, 360, Shenma and
+// Toutiao do not document noindex, so on cn.* they are also told not to fetch it.
+const CN_CRAWLERS = ['Baiduspider', 'Sogou web spider', '360Spider', 'YisouSpider', 'Bytespider'];
 app.get('/robots.txt', (req, res) => {
-  res.type('text/plain').send('User-agent: *\nAllow: /\n\nSitemap: https://aybkk.net/sitemap.xml\n');
+  const cn = String(req.headers.host || '').toLowerCase().startsWith('cn.');
+  res.type('text/plain').send('User-agent: *\nAllow: /\n\n' +
+    (cn ? CN_CRAWLERS.map(ua => `User-agent: ${ua}\nDisallow: /in-depth\n\n`).join('') : '') +
+    'Sitemap: https://aybkk.net/sitemap.xml\n');
 });
 app.get('/sitemap.xml', (req, res) => {
-  const urls = ['https://aybkk.net/', 'https://aybkk.net/start'];
+  const urls = ['https://aybkk.net/', 'https://aybkk.net/start', 'https://aybkk.net/in-depth'];
   res.type('application/xml').send('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
     urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n') + '\n</urlset>\n');
 });

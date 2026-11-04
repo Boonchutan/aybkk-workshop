@@ -6,11 +6,16 @@
 //         The LINE webhook in server.js hands each request to inbox.takeLine(req).
 //
 // Messages live in aybkk_inbox (the private Postgres, never the public repo)
-// for 90 days. Machi, the chief-of-staff routine, reads GET /api/inbox three
+// for 90 days, except the English priority list (see below). Machi, the chief-of-staff routine, reads GET /api/inbox three
 // times a day and drafts the replies. With ANTHROPIC_API_KEY set, a message is
 // also sorted as it arrives and hot ones reach Boonchu's Telegram at once.
+// Applications from the In-Depth Mysore pages (POST /api/in-depth/apply) land
+// here too, on channel 'apply', already marked hot and tagged with their list.
+// GET /api/inbox/applications?list=priority-en gives a whole list in the order
+// people joined, one line per email.
 
 const crypto = require('crypto');
+const express = require('express');
 
 const KEEP_DAYS = 90;
 const BURST_MS = 90 * 1000;          // "hi" / "a question" / "tomorrow?" arrive as three messages
@@ -111,20 +116,153 @@ function parseMeta(body) {
   return out;
 }
 
+// Plain text, no parse_mode: "<b>" or "[x](link)" arrives as typed. No link
+// previews, so a link someone typed never shows up as a card from this bot.
 async function telegram(text) {
   const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.BOONCHU_CHAT_ID;
   if (!token || !chat) return false;
   const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chat, text: text.slice(0, 4000) }),
+    body: JSON.stringify({ chat_id: chat, text: text.slice(0, 4000), link_preview_options: { is_disabled: true } }),
   });
   return r.ok;
+}
+
+// ── In-Depth Mysore applications ───────────────────────────────────────────
+// Each one is kept as a message on channel 'apply', so Machi's brief shows it
+// beside the chats. It never goes to the AI sort: an application is always hot,
+// and applicant data stays here. Gen #3 applications are deleted with the chats
+// after KEEP_DAYS. The English priority list has no dates yet and its order sets
+// who is offered a seat first, so its rows are kept until the list is closed:
+// then delete them (channel 'apply', triage->>'list' = 'priority-en').
+// The form says which list it came from; the list is stored in triage.list and
+// named in the text and the ping, so Machi and Boonchu can tell them apart.
+const APPLY_LISTS = {
+  'gen3-zh': 'Generation #3, the private Chinese page',
+  'priority-en': 'priority list for the next English intake, the public English page',
+};
+const APPLY_PER_IP_HOUR = 10;        // every try from one address, sent or not
+const APPLY_PER_EMAIL_DAY = 3;
+// From everywhere, because x-forwarded-for can be faked. Saving is capped high
+// so a script cannot cheaply lock real applicants out; pings are capped low.
+const APPLY_PER_HOUR = 200;
+const APPLY_PINGS_HOUR = 10;
+const APPLY_MAX_BYTES = 64 * 1024;
+// Matched the way Express matches the route (any case, optional trailing slash),
+// so server.js can leave every spelling of it out of its 10 MB JSON parser.
+const APPLY_PATH_RE = /^\/api\/in-depth\/apply\/?$/i;
+const KEPT_LIST = 'priority-en';
+const APPLY_FIELDS = {
+  name: { max: 100, need: true, line: true },
+  email: { max: 200, need: true, line: true },
+  contact: { max: 120, need: true, line: true },
+  country: { max: 80, need: true, line: true },
+  call_lang: { one: ['en', 'zh'], need: true },
+  primary: { one: ['yes', 'not_yet'], need: true, bar: v => v !== 'yes' },
+  rooms: { one: ['yes', 'not_yet'], need: true, bar: v => v !== 'yes' },
+  dates: { one: ['yes', 'not_sure', 'no'], need: true, bar: v => v === 'no', list: 'gen3-zh' },   // asked for Gen #3 only
+  years: { int: 60, need: true },
+  mornings: { int: 7, need: true },
+  series: { one: ['primary', 'intermediate', 'advanced_a', 'advanced_b'], need: true },
+  teaching: { one: ['yes', 'no'], need: true },
+  teach: { max: 1500 },
+  why: { max: 2000, need: true },
+  stuck: { max: 2000, need: true },
+  injury: { max: 2000 },
+  video: { max: 500, need: true },
+  heard: { max: 200, line: true },
+  question: { max: 1000 },
+};
+// Baidu's share text is "链接: https://pan.baidu.com/s/… 提取码: abcd", so the
+// link is found inside the answer and the whole answer is kept.
+const LINK_RE = /https:\/\/[^\s<>"'，。、；）)]+/i;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SAY = {
+  call_lang: { en: 'English', zh: 'Chinese' },
+  series: { primary: 'Primary', intermediate: 'Intermediate', advanced_a: 'Advanced A', advanced_b: 'Advanced B or further' },
+  dates: { yes: 'yes', not_sure: 'not sure', no: 'no' },
+  primary: { yes: 'yes', not_yet: 'not yet' },
+};
+SAY.rooms = SAY.primary;
+// Country is typed free text: anything that looks like a link or a handle stays out of the ping.
+const pingSafe = s => /[:/@]|www\.|\.[a-z]{2,}/i.test(s) ? '(see the inbox)' : s;
+
+const cleanText = (v, line) => {
+  let s = String(v ?? '').replace(/\r\n?/g, '\n').replace(/\t/g, ' ')
+    .replace(/[\u0000-\u0009\u000b-\u001f\u007f​‪-‮⁦-⁩]/g, '');
+  if (line) s = s.replace(/\n+/g, ' ');
+  return s.replace(/\n{3,}/g, '\n\n').trim();
+};
+
+// → { app } or { error: 'fields' | 'bar', fields: [...] }
+function checkApplication(body) {
+  const b = body && typeof body === 'object' ? body : {};
+  const app = {}, bad = [], bar = [];
+  const list = typeof b.list === 'string' && Object.hasOwn(APPLY_LISTS, b.list) ? b.list : null;
+  if (!list) bad.push('list');
+  for (const [k, f] of Object.entries(APPLY_FIELDS)) {
+    if (f.list && f.list !== list) continue;
+    const raw = b[k];
+    if (f.one) {
+      const v = String(raw ?? '');
+      if (f.one.includes(v)) app[k] = v; else if (f.need || v) bad.push(k);
+    } else if (f.int != null) {
+      const v = String(raw ?? '').trim();
+      if (/^\d{1,2}$/.test(v) && +v <= f.int) app[k] = +v; else bad.push(k);
+    } else {
+      const v = cleanText(raw, f.line);
+      if ((f.need && !v) || [...v].length > f.max) bad.push(k); else app[k] = v;
+    }
+    if (f.bar && app[k] != null && f.bar(app[k])) bar.push(k);
+  }
+  if (app.email != null) {
+    app.email = app.email.toLowerCase();
+    if (!EMAIL_RE.test(app.email)) bad.push('email');
+  }
+  if (app.video) {
+    let url = null;
+    try { url = new URL((app.video.match(LINK_RE) || [])[0]); } catch (_) {}
+    if (!url || url.protocol !== 'https:' || !url.hostname.includes('.')) bad.push('video');
+    else app.link = url.href;
+  }
+  if (b.consent !== true) bad.push('consent');
+  if (bad.length) return { error: 'fields', fields: [...new Set(bad)] };
+  if (bar.length) return { error: 'bar', fields: bar };
+  app.list = list;
+  return { app };
+}
+
+function applicationText(a) {
+  const block = (label, v) => v ? `${label}:\n${v}` : null;
+  return [
+    `In-Depth Mysore application, list ${a.list} (${APPLY_LISTS[a.list]})`,
+    `Name: ${a.name}`,
+    `Email: ${a.email}`,
+    `Contact: ${a.contact}`,
+    `Country: ${a.country}`,
+    `Call in: ${SAY.call_lang[a.call_lang]}`,
+    `Primary Series by heart: ${SAY.primary[a.primary]}`,
+    `Practised in Mysore and led classes: ${SAY.rooms[a.rooms]}`,
+    a.dates ? `All 30 days in person: ${SAY.dates[a.dates]}` : null,
+    `Years of Ashtanga: ${a.years}`,
+    `Mornings a week now: ${a.mornings}`,
+    `Series now: ${SAY.series[a.series]}`,
+    `Teaches now: ${a.teaching}`,
+    block('About their teaching', a.teach),
+    block('Why this course, and why now', a.why),
+    block('Where the practice is stuck', a.stuck),
+    block('Pain or injury', a.injury),
+    block('Practice video', a.video),
+    a.heard ? `Heard about it from: ${a.heard}` : null,
+    block('Question for the call', a.question),
+  ].filter(Boolean).join('\n');
 }
 
 function mountInbox(app, opts = {}) {
   const pool = opts.pgPool;
   if (!pool) {
     console.warn('⚠ inbox: no pgPool — inbox disabled');
+    app.post('/api/in-depth/apply', (req, res) => res.status(503).json({ error: 'server' }));
     return { takeLine() {} };
   }
   const q = (sql, params = []) => pool.query(sql, params);
@@ -157,7 +295,8 @@ function mountInbox(app, opts = {}) {
 
   // Chats are customers' words: keep them only as long as a brief needs them.
   const purge = () => ready
-    .then(() => q(`DELETE FROM aybkk_inbox WHERE created_at < now() - interval '${KEEP_DAYS} days'`))
+    .then(() => q(`DELETE FROM aybkk_inbox WHERE created_at < now() - interval '${KEEP_DAYS} days'
+      AND (channel <> 'apply' OR triage->>'list' IS DISTINCT FROM $1)`, [KEPT_LIST]))
     .catch(e => console.error('[inbox] purge failed:', e.message));
   purge();
   setInterval(purge, 24 * 3600 * 1000).unref();
@@ -318,10 +457,14 @@ function mountInbox(app, opts = {}) {
   });
 
   // Header only, like x-bkk-key: a key in the query string ends up in logs.
-  app.get('/api/inbox', async (req, res) => {
+  function inboxKey(req, res, next) {
     const key = process.env.INBOX_KEY;
     if (!key) return res.status(503).json({ error: 'INBOX_KEY is not set on the server' });
     if (!safeEqual(req.headers['x-inbox-key'], key)) return res.status(401).json({ error: 'bad key' });
+    next();
+  }
+
+  app.get('/api/inbox', inboxKey, async (req, res) => {
     const since = req.query.since ? new Date(req.query.since) : new Date(Date.now() - 24 * 3600 * 1000);
     if (isNaN(since)) return res.status(400).json({ error: 'since must be a date, e.g. 2026-09-30T07:00:00Z' });
     try {
@@ -356,7 +499,92 @@ function mountInbox(app, opts = {}) {
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
-  return { takeLine };
+  // A whole list in the order people joined: seats go in this order. One entry
+  // per email; a second try keeps the place of the first and shows the latest answers.
+  app.get('/api/inbox/applications', inboxKey, async (req, res) => {
+    const list = String(req.query.list || '');
+    if (!Object.hasOwn(APPLY_LISTS, list)) {
+      return res.status(400).json({ error: `list must be one of: ${Object.keys(APPLY_LISTS).join(', ')}` });
+    }
+    try {
+      await ready;
+      const rows = (await q(`SELECT created_at, sender_id, sender_name, text, ref, triage FROM aybkk_inbox
+        WHERE channel='apply' AND triage->>'list' = $1 ORDER BY created_at, id LIMIT 5000`, [list])).rows;
+      const people = new Map();
+      for (const r of rows) {
+        const p = people.get(r.sender_id);
+        if (!p) {
+          people.set(r.sender_id, { place: people.size + 1, joined: r.created_at, last: r.created_at, tries: 1,
+            email: r.sender_id, name: r.sender_name, video: r.ref, summary: r.triage.summary, text: r.text });
+        } else {
+          Object.assign(p, { last: r.created_at, tries: p.tries + 1, name: r.sender_name, video: r.ref,
+            summary: r.triage.summary, text: r.text });
+        }
+      }
+      res.json({ list, about: APPLY_LISTS[list], count: people.size, applications: [...people.values()] });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Tries per address live in memory only, so no IP is stored with an application.
+  // One counter per address per hour: a flood costs the same as one try.
+  const applyTries = new Map();
+  const clientIp = req => String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+    req.socket?.remoteAddress || 'unknown';
+  function applyTry(ip) {
+    const now = Date.now();
+    if (applyTries.size > 5000) applyTries.clear();
+    let t = applyTries.get(ip);
+    if (!t || now - t.start >= 3600 * 1000) applyTries.set(ip, t = { start: now, n: 0 });
+    return ++t.n <= APPLY_PER_IP_HOUR;
+  }
+
+  // The answer is only ever { ok } or an error code with field names: nothing
+  // the applicant typed is sent back. A filled honeypot is told it worked.
+  // server.js leaves this path out of its 10 MB JSON parser; the body is read
+  // here, after the address check, with a 64 KB limit.
+  app.post('/api/in-depth/apply', (req, res, next) => applyTry(clientIp(req)) ? next() : res.status(429).json({ error: 'busy' }),
+  express.json({ limit: APPLY_MAX_BYTES }), async (req, res) => {
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    if (String(body.website || '').trim()) return res.json({ ok: true });
+    const checked = checkApplication(body);
+    if (checked.error) return res.status(checked.error === 'bar' ? 422 : 400).json(checked);
+    const a = checked.app;
+    try {
+      await ready;
+      const sent = (await q(`SELECT count(*) FILTER (WHERE sender_id=$1)::int AS email,
+          count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour,
+          count(*) FILTER (WHERE alerted_at > now() - interval '1 hour')::int AS pinged
+        FROM aybkk_inbox WHERE channel='apply' AND created_at > now() - interval '1 day'`, [a.email])).rows[0];
+      if (sent.email >= APPLY_PER_EMAIL_DAY || sent.hour >= APPLY_PER_HOUR) {
+        console.warn('[apply] throttled');
+        return res.status(429).json({ error: 'busy' });
+      }
+      const summary = `In-Depth Mysore application, list ${a.list}, from ${a.country}: ${a.years} years, ` +
+        `${a.mornings} mornings a week, ${SAY.series[a.series]}, ` +
+        `${a.dates ? `all 30 days ${SAY.dates[a.dates]}, ` : ''}call in ${SAY.call_lang[a.call_lang]}.`;
+      const row = (await q(
+        `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, ref, sent_at, triage)
+         VALUES ('apply','application','in',$1,$2,$3,$4,$5,now(),$6) RETURNING id`,
+        [`apply:${crypto.randomUUID()}`, a.email, a.name, applicationText(a), a.link,
+          { lane: 'hot', list: a.list, summary, reply: '' }])).rows[0];
+      res.json({ ok: true });
+      if (sent.pinged > APPLY_PINGS_HOUR) return;
+      // Country and fit only: the name, contacts, answers and the video stay in the inbox.
+      notify(sent.pinged === APPLY_PINGS_HOUR
+        ? `More In-Depth Mysore applications this hour. Pings pause until the hour is over; every application is in the inbox, channel "apply".`
+        : `New In-Depth Mysore application, list ${a.list} (${APPLY_LISTS[a.list]}), from ${pingSafe(a.country)}\n` +
+          `${a.years} years of Ashtanga, ${a.mornings} mornings a week, ${SAY.series[a.series]}. Teaches now: ${a.teaching}.\n` +
+          `${a.dates ? `All 30 days: ${SAY.dates[a.dates]}. ` : ''}Call in ${SAY.call_lang[a.call_lang]}.\n` +
+          `The page promises a reply within 2 days. Full answers: the inbox, channel "apply".`)
+        .then(ok => ok && q('UPDATE aybkk_inbox SET alerted_at=now() WHERE id=$1', [row.id]))
+        .catch(e => console.error('[apply] ping failed:', e.message));
+    } catch (e) {
+      console.error('[apply] save failed:', e.message);
+      if (!res.headersSent) res.status(500).json({ error: 'server' });
+    }
+  }, (err, req, res, next) => res.status(err.status === 413 ? 413 : 400).json({ error: 'fields', fields: [] }));
+
+  return { takeLine, purge };
 }
 
-module.exports = { mountInbox, parseMeta };
+module.exports = { mountInbox, parseMeta, checkApplication, telegram, APPLY_PATH_RE };
