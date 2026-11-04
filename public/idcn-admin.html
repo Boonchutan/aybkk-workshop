@@ -34,6 +34,8 @@
   .passbox code{font-size:19px;font-family:ui-monospace,Menlo,monospace;user-select:all}
   #gate{max-width:320px;margin:16vh auto;text-align:center;padding:0 16px}
   .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .ver{background:#efeaf0;color:var(--ink)}.ver.old{background:#e8e4f7;color:#4b3a86}
+  .stale{color:#a33;font-weight:600}
 </style>
 </head>
 <body>
@@ -59,9 +61,8 @@
         <div><label>Link name (auto from latin name)</label><input id="nSlug" placeholder="yangyang"></div>
         <div><label>Journal link (optional, paste later is fine)</label><input id="nJournal"></div>
       </div>
-      <label style="display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink);margin-top:10px">
-        <input type="checkbox" id="nAtt" style="width:20px;height:20px;accent-color:var(--pink)">
-        Full workshop / monthly attendee (extra −3%)</label>
+      <p class="muted" style="margin:10px 0 0">New students sign terms idcn3-v4: ฿192,600
+        (฿180,000 + 7% VAT), the same for every new student. Students who signed earlier keep their own terms.</p>
       <p style="margin:12px 0 0"><button class="btn" onclick="addStudent()">Create link + passcode</button></p>
       <div id="newPass"></div>
     </div>
@@ -103,6 +104,8 @@
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
   const COURSE = 'idcn3';
   let KEY = localStorage.getItem('idcn_admin_key') || '';
+  const STU = {};
+  let CURRENT = '';
   const api = (u, o = {}) => fetch(u, { ...o,
     headers: { 'Content-Type': 'application/json', 'x-bkk-key': KEY, ...(o.headers || {}) } });
   const baht = st => '฿' + Math.floor(Number(st) / 100).toLocaleString('en-US')
@@ -126,17 +129,20 @@
     $('#linksBox').value = (lr.links || [])
       .map(l => `${l.title_en} | ${l.title_zh} | ${l.url}`).join('\n');
     const students = sr.students || [];
+    for (const s of students) STU[s.id] = s;
+    CURRENT = sr.policyVersion;
     $('#count').textContent = `${students.length} total · ${students.filter(s => s.signed_at).length} signed`;
     $('#list').innerHTML = students.map(s => `<div class="stu">
       <div class="top">
         <b>${esc(s.name_zh || '')} ${esc(s.name_en)}</b>
         <span class="pill ${esc(s.status)}">${esc(s.status)}</span>
-        ${s.is_attendee ? '<span class="pill confirmed">−3%</span>' : ''}
+        <span class="pill ver${s.terms_version === CURRENT ? '' : ' old'}">${esc(s.terms_version)}</span>
+        ${s.is_attendee && s.attendee_discount ? '<span class="pill confirmed">−3%</span>' : ''}
         <span style="flex:1"></span>
         <button class="btn gray" onclick="copyLink('${esc(s.slug)}')">Copy link</button>
       </div>
       <div class="muted">/${COURSE}/${esc(s.slug)}
-        · ${s.payment_option ? 'Option ' + s.payment_option + (s.quote ? ' — ' + baht(s.quote.totalSatang) : '') : 'no option yet'}
+        · ${optionText(s)}
         · ${s.signed_at ? '✓ signed ' + String(s.signed_at).slice(0, 10) + ' as “' + esc(s.signed_name) + '”' : 'NOT signed'}
         · ${s.proofs} proof${s.proofs === 1 ? '' : 's'}
         · ${s.submissions || 0} video submission${s.submissions === 1 ? '' : 's'}</div>
@@ -146,9 +152,9 @@
         <a class="btn" style="text-decoration:none" href="/${COURSE}/${esc(s.slug)}" target="_blank">Open profile</a>
         <button class="btn" onclick="addNote(${s.id})">+ Note / assignment</button>
         <button class="btn" onclick="addProof(${s.id}, '${esc(s.slug)}')">+ Payment proof</button>
-        <button class="btn gray" onclick="setOption(${s.id}, ${s.payment_option || 0})">Option</button>
+        <button class="btn gray" onclick="setOption(${s.id})">Option</button>
         <button class="btn gray" onclick="setJournal(${s.id}, '${esc(s.journal_url || '')}')">Journal link</button>
-        <button class="btn gray" onclick="toggleAtt(${s.id}, ${s.is_attendee})">${s.is_attendee ? 'Remove −3%' : 'Give −3%'}</button>
+        ${s.attendee_discount ? `<button class="btn gray" onclick="toggleAtt(${s.id}, ${s.is_attendee})">${s.is_attendee ? 'Remove −3%' : 'Give −3%'}</button>` : ''}
         <button class="btn gray" onclick="setStatus(${s.id}, '${esc(s.status)}')">Status</button>
         <button class="btn gray" onclick="resetKey(${s.id})">Reset passcode</button>
       </div>
@@ -167,13 +173,12 @@
     const r = await api(`/api/idcn/admin/${COURSE}/students`, { method: 'POST',
       body: JSON.stringify({ nameEn, nameZh: $('#nZh').value.trim(),
         slug: $('#nSlug').value.trim() || undefined,
-        journalUrl: $('#nJournal').value.trim(), isAttendee: $('#nAtt').checked }) });
+        journalUrl: $('#nJournal').value.trim() }) });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) return alert(j.error || 'failed');
     $('#newPass').innerHTML = `<div class="passbox">Shown ONCE — send both together:<br>
       ${location.origin}${esc(j.link)}<br>passcode <code>${esc(j.passcode)}</code></div>`;
     $('#nEn').value = $('#nZh').value = $('#nSlug').value = $('#nJournal').value = '';
-    $('#nAtt').checked = false;
     load();
   };
 
@@ -218,12 +223,67 @@
     } else send(null);
   };
 
-  window.setOption = async (id, cur) => {
-    const o = prompt('Payment option for this student (1, 2 or 3) — agreed with Jamsai:', cur || '');
+  // what the student owes under their own terms (v3 signers keep 1, 2, 3)
+  const planText = ps => ps.map(p => baht(p.amountSatang) + ' by ' + esc(p.due)).join(' + ');
+  const optionText = s => {
+    if (s.held) return `<span class="stale">${baht(s.paid_satang)} paid before this student had an ${esc(s.terms_version)} option${
+      s.payment_option ? ' (old option ' + s.payment_option + ')' : ''}. Set ${s.options.map(o => o.code).join(' / ')
+      } once what they pay is agreed; if they paid under older terms, Boonchu decides. They cannot sign until then.</span>`;
+    if (s.option_stale) return `<span class="stale">option ${s.payment_option} is from older terms: set ${
+      s.options.map(o => o.code).join(' / ')}</span>`;
+    if (s.plan_changed) return optionText({ ...s, plan_changed: false })
+      + ` <span class="stale">changed after signing; signed with ${s.signed_plan ? planText(s.signed_plan) : 'no plan'}</span>`;
+    const qt = s.quote;
+    if (!s.payment_option) return 'no option yet';
+    if (!qt) return 'Option ' + s.payment_option;
+    if (!qt.installments) return 'Option ' + s.payment_option + ' — ' + baht(qt.totalSatang);
+    return `Option ${esc(qt.code)}: ${baht(qt.totalSatang)} incl. VAT (` + planText(qt.installments) + ')';
+  };
+
+  window.setOption = async id => {
+    const s = STU[id];
+    const lines = s.options.map(o => o.custom ? `${o.code} = ${o.label_en} (you type the payments)`
+      : `${o.code} = ${o.label_en}` + (o.installments ? ': ' + o.installments
+        .map(p => baht(p.amountSatang) + ' by ' + p.due).join(' + ') : ''));
+    const cur = s.option_stale || !s.payment_option ? ''
+      : (s.options.find(o => o.key === s.payment_option) || {}).code || '';
+    const o = prompt('Payment option for this student, agreed on the call:\n' + lines.join('\n'), cur);
     if (o === null) return;
+    const confirmHeld = s.held ? confirm(`This student paid ${baht(s.paid_satang)} before they had an `
+      + `${s.terms_version} option. If that was under older terms, set one only after Boonchu has decided `
+      + `what they pay. Continue?`) : undefined;
+    if (confirmHeld === false) return;
+    const pick = s.options.find(x => x.code === o.trim().toUpperCase() || String(x.key) === o.trim());
+    if (pick && pick.custom) return customPlanForm(id, pick.code, confirmHeld);
     const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
-      { method: 'PUT', body: JSON.stringify({ paymentOption: Number(o.trim()) }) });
+      { method: 'PUT', body: JSON.stringify({ paymentOption: o.trim(), confirmHeld }) });
     if (r.ok) load(); else alert((await r.json().catch(() => ({}))).error || 'failed');
+  };
+
+  // a plan agreed on the call: one payment per line, baht then the date
+  const customPlanForm = (id, code, confirmHeld) => {
+    const s = STU[id];
+    const now = s.quote && s.quote.code === code ? s.quote.installments
+      .map(p => (p.amountSatang / 100) + ' ' + p.due).join('\n') : '';
+    $('#proofRow' + id).innerHTML = `<div style="margin-top:8px;border:1.5px solid var(--line);border-radius:8px;padding:10px">
+      <label>Agreed plan: one payment per line, amount in baht then the date (YYYY-MM-DD).
+        The payments must add up to the course fee incl. VAT.</label>
+      <textarea id="cp${id}" rows="4" placeholder="100000 2026-12-10&#10;92600 2027-01-10">${esc(now)}</textarea>
+      <p style="margin:10px 0 0"><button class="btn pink" onclick="sendPlan(${id}, '${esc(code)}', ${confirmHeld === true})">Save plan</button>
+        <button class="btn gray" onclick="document.getElementById('proofRow${id}').innerHTML=''">Cancel</button>
+        <span class="muted" id="cpm${id}"></span></p></div>`;
+  };
+  window.sendPlan = async (id, code, confirmHeld) => {
+    const customPlan = [];
+    for (const line of $('#cp' + id).value.split('\n').map(x => x.trim()).filter(Boolean)) {
+      const m = line.replace(/,/g, '').match(/^(\d+)(?:\.(\d{1,2}))?\s+(\d{4}-\d{2}-\d{2})$/);
+      if (!m) return ($('#cpm' + id).textContent = 'Could not read "' + line + '". Write e.g. 100000 2026-12-10');
+      customPlan.push({ amountSatang: Number(m[1]) * 100 + Number((m[2] || '').padEnd(2, '0') || 0), due: m[3] });
+    }
+    const r = await api(`/api/idcn/admin/${COURSE}/students/${id}`,
+      { method: 'PUT', body: JSON.stringify({ paymentOption: code, customPlan, confirmHeld }) });
+    if (r.ok) { $('#proofRow' + id).innerHTML = ''; load(); }
+    else $('#cpm' + id).textContent = (await r.json().catch(() => ({}))).error || 'failed';
   };
 
   window.addNote = id => {

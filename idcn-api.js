@@ -16,13 +16,20 @@
 // (Boonchu's decision 9 Sep 2026): option discount first, then attendee 3% on
 // the discounted price. Every idcn3 combination lands on exact satang; the
 // fractional-satang guard floors toward the student and is pinned by tests.
+//
+// Terms follow the signature. A student who signed keeps the terms of the
+// policy version they signed, forever; a student who has not signed sees the
+// current version. Policies v1 to v3 were all signed against IDCN3_TERMS (kept
+// in idc_courses.terms); v4 (3 Nov 2026) is IDCN3_TERMS_V4. Each version past
+// v3 gets its own literal entry in TERMS_BY_POLICY.
 
 const crypto = require('crypto');
 
 const SATANG = 100;
 // bumped whenever the policy text in public/idcn.html changes, so every
-// signature records exactly which wording was on screen
-const IDCN3_POLICY_VERSION = 'idcn3-v3';
+// signature records exactly which wording was on screen. A new version needs
+// its own entry in TERMS_BY_POLICY (the module refuses to load without one).
+const IDCN3_POLICY_VERSION = 'idcn3-v4';
 const sha = k => crypto.createHash('sha256').update(String(k)).digest('hex');
 const newPasscode = () => crypto.randomBytes(6).toString('base64url');
 
@@ -50,6 +57,63 @@ const IDCN3_TERMS = {
   confirmBy: '2026-09-10',
 };
 
+// Boonchu, 2-3 Nov 2026: 180,000 THB plus 7% VAT, the same for every v4 signer
+// (no option or attendee discounts). Option keys carry on from v3's 1 to 3, so an
+// option set under v3 for someone who never signed can't turn into a v4 plan
+// with a different meaning. Option C is a plan agreed on the call, stored per
+// student in idc_students.custom_plan.
+const IDCN3_TERMS_V4 = {
+  name_en: 'In-Depth Mysore: the development of the practice · Generation #3',
+  name_zh: '深度迈索尔课程：练习的发展 · 第三期',
+  netSatang: 180000 * SATANG,
+  vatPct: 7,
+  options: {
+    4: { code: 'A', plan: [{ pct: 100, due: '2026-12-10' }],
+      label_en: 'Pay in full', label_zh: '一次付清' },
+    5: { code: 'B', plan: [{ pct: 50, due: '2026-12-10' }, { pct: 50, due: '2027-01-10' }],
+      label_en: 'Two payments', label_zh: '分两次付款' },
+    6: { code: 'C', custom: true,
+      label_en: 'A plan agreed with AYBKK', label_zh: '与 AYBKK 约定的付款计划' },
+  },
+  sessions: [
+    { dates: '11 Jan to 9 Feb 2027 (30 days)', dates_zh: '2027年1月11日至2月9日（30天）',
+      place_en: 'AYBKK Shala, Bangkok & Khaoyaithieng, Thailand',
+      place_zh: '泰国曼谷 AYBKK 及 Khaoyaithieng' },
+  ],
+  confirmBy: '2026-12-10',
+  facts: [
+    { en: 'Taught by Boonchu Tanti and Jamsai, both Authorized Level 2 by R. Sharath Jois.',
+      zh: '由 Boonchu Tanti 与 Jamsai 授课，两位均获 R. Sharath Jois 授权 Level 2。' },
+    { en: 'Taught in English, with Chinese translation in class.',
+      zh: '英语授课，课堂上有中文翻译。' },
+    { en: 'A group of 12 at most.', zh: '每期不超过 12 人。' },
+  ],
+};
+
+// Literal keys: a signature stays on its version's terms when a later wording
+// fix bumps IDCN3_POLICY_VERSION. Any version without its own entry (v1 to v3)
+// was signed against the course's stored terms (IDCN3_TERMS for idcn3).
+const TERMS_BY_POLICY = { 'idcn3-v4': IDCN3_TERMS_V4 };
+if (!TERMS_BY_POLICY[IDCN3_POLICY_VERSION])
+  throw new Error(`idcn-api: policy ${IDCN3_POLICY_VERSION} has no entry in TERMS_BY_POLICY`);
+const termsFor = (course, version) => TERMS_BY_POLICY[version] || course.terms;
+
+// The version a new signature records comes from the code, not from the
+// idc_courses row: during a deploy the old instance still serves its own
+// wording and stamps what it reads from that row, so the row must keep naming
+// the old wording until the old instance is gone.
+const CURRENT_POLICY = { idcn3: IDCN3_POLICY_VERSION };
+const currentVersion = course => CURRENT_POLICY[course.code] || course.policy_version;
+
+// Money recorded for a student who has not signed and has no option of the
+// terms they would sign: they paid under older terms, or before an option was
+// set. They can't sign until admin, once Boonchu decides, sets an option.
+const isHeld = (terms, s, signed, paymentCount) =>
+  !signed && paymentCount > 0 && !(s.payment_option && terms.options[s.payment_option]);
+
+// JSONB hands keys back in its own order; plans are always { amountSatang, due }
+const planOf = ps => ps ? ps.map(p => ({ amountSatang: Number(p.amountSatang), due: p.due })) : null;
+
 // Discounted amount in satang: multiply by (100−pct)/100 in integers, flooring
 // any fractional satang toward the student. For idcn3 every case is exact.
 function applyPct(satang, pct) {
@@ -57,9 +121,52 @@ function applyPct(satang, pct) {
   return Math.floor((satang * (100 - pct)) / 100);
 }
 
-function quote(terms, option, isAttendee) {
+// A plan agreed on the call: 1 to 6 dated payments that add up to the fee.
+// Returns the reason it is refused, or null.
+function planError(plan, totalSatang) {
+  if (!Array.isArray(plan) || !plan.length || plan.length > 6) return 'a plan has 1 to 6 payments';
+  let sum = 0;
+  for (const p of plan) {
+    if (!p || !Number.isSafeInteger(p.amountSatang) || p.amountSatang <= 0)
+      return 'every payment needs a positive whole amount in satang';
+    const d = String(p.due || ''), t = new Date(d + 'T00:00:00Z');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || isNaN(t) || t.toISOString().slice(0, 10) !== d)
+      return `"${d}" is not a date (use YYYY-MM-DD)`;
+    sum += p.amountSatang;
+  }
+  if (sum !== totalSatang) return `the payments add up to ${(sum / SATANG).toLocaleString('en-US')} THB, `
+    + `but the course fee is ${(totalSatang / SATANG).toLocaleString('en-US')} THB`;
+  return null;
+}
+
+// v4 shape: one price (net + VAT), no discounts, paid in dated parts. The last
+// part takes the remainder, so the parts always add up to the total exactly.
+const feeWithVat = terms => terms.netSatang + Math.floor((terms.netSatang * terms.vatPct) / 100);
+
+function planQuote(terms, option, opt, customPlan) {
+  const net = terms.netSatang;
+  const total = feeWithVat(terms), vat = total - net;
+  let installments;
+  if (opt.custom) {
+    if (planError(customPlan, total)) return null;
+    installments = customPlan.map(p => ({ amountSatang: p.amountSatang, due: p.due }));
+  } else {
+    let left = total;
+    installments = opt.plan.map((p, i) => {
+      const amountSatang = i === opt.plan.length - 1 ? left : Math.floor((total * p.pct) / 100);
+      left -= amountSatang;
+      return { amountSatang, due: p.due };
+    });
+  }
+  return { option, code: opt.code, listSatang: total, netSatang: net, vatPct: terms.vatPct,
+    vatSatang: vat, totalSatang: total, discounts: [], due: installments[0].due,
+    label_en: opt.label_en, label_zh: opt.label_zh, installments };
+}
+
+function quote(terms, option, isAttendee, customPlan) {
   const opt = terms.options[option];
   if (!opt) return null;
+  if (terms.netSatang != null) return planQuote(terms, Number(option), opt, customPlan);
   let total = applyPct(terms.feeSatang, opt.pct);
   if (isAttendee) total = applyPct(total, terms.attendeePct);
   const out = {
@@ -168,14 +275,32 @@ function mountIdcn(app, opts = {}) {
       VALUES ('idcn3', 'AYBKK In-Depth Mysore Course for Chinese Generation #3',
               'AYBKK 深度迈索尔课程 · 中国第三期', $1, $2)
       ON CONFLICT (code) DO NOTHING`, [JSON.stringify(IDCN3_TERMS), IDCN3_POLICY_VERSION]);
-    await q(`UPDATE idc_courses SET policy_version=$1 WHERE code='idcn3' AND policy_version <> $1`,
-      [IDCN3_POLICY_VERSION]);
     // the code is the source of truth for idcn3's dates and deadlines
     await q(`UPDATE idc_courses SET terms=$1 WHERE code='idcn3'`,
       [JSON.stringify(IDCN3_TERMS)]);
     await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS media_url TEXT`);
     await q(`ALTER TABLE idc_notes ADD COLUMN IF NOT EXISTS media_type TEXT`);
+    await q(`ALTER TABLE idc_students ADD COLUMN IF NOT EXISTS custom_plan JSONB`);
+    // the dated payments on screen when the student signed (insert-only, like
+    // the rest of the row): a plan changed later never hides what was signed
+    await q(`ALTER TABLE idc_consents ADD COLUMN IF NOT EXISTS plan JSONB`);
   }
+
+  // the policy a student signed, or the one they would sign now
+  async function termsOf(course, studentId) {
+    const signed = (await q(
+      'SELECT policy_version FROM idc_consents WHERE student_id=$1 ORDER BY id ASC LIMIT 1',
+      [studentId])).rows[0];
+    const version = signed ? signed.policy_version : currentVersion(course);
+    const paid = (await q('SELECT count(*)::int AS n FROM idc_payments WHERE student_id=$1',
+      [studentId])).rows[0].n;
+    return { version, terms: termsFor(course, version), signed: !!signed, paid };
+  }
+  const studentQuote = (terms, s) => s.payment_option
+    ? quote(terms, s.payment_option, s.is_attendee, s.custom_plan) : null;
+  const optionList = terms => Object.entries(terms.options).map(([k, o]) =>
+    ({ key: Number(k), code: o.code || k, label_en: o.label_en, custom: !!o.custom,
+       installments: o.plan ? quote(terms, k, false).installments : undefined }));
 
   const courseFor = async (req, res) => {
     const c = (await q('SELECT * FROM idc_courses WHERE code=$1 AND active',
@@ -206,11 +331,13 @@ function mountIdcn(app, opts = {}) {
     'instructions', 'travel', 'schedule', 'media_course', 'privacy'];
 
   async function profileJson(course, s) {
-    const terms = course.terms;
-    const consent = (await q(
+    const signedRow = (await q(
       `SELECT policy_version, payment_option, items, signed_name, health_note,
-              media_public, signed_at
+              media_public, signed_at, plan
        FROM idc_consents WHERE student_id=$1 ORDER BY id ASC LIMIT 1`, [s.id])).rows[0] || null;
+    let consent = null, signedPlan = null;
+    if (signedRow) ({ plan: signedPlan, ...consent } = signedRow);
+    signedPlan = planOf(signedPlan);
     const payments = (await q(
       `SELECT id, label, amount_satang, proof_url, note, created_at
        FROM idc_payments WHERE student_id=$1 ORDER BY id ASC`, [s.id])).rows;
@@ -220,18 +347,27 @@ function mountIdcn(app, opts = {}) {
     const notes = (await q(
       `SELECT id, kind, title, body, created_by, media_url, media_type, created_at
        FROM idc_notes WHERE student_id=$1 ORDER BY id DESC LIMIT 100`, [s.id])).rows;
+    const version = consent ? consent.policy_version : currentVersion(course);
+    const terms = termsFor(course, version);
+    const held = isHeld(terms, s, !!consent, payments.length);
+    const c = { code: course.code, name_en: terms.name_en || course.name_en,
+      name_zh: terms.name_zh || course.name_zh,
+      sessions: terms.sessions, confirmBy: terms.confirmBy, policyVersion: version };
+    if (terms.facts) c.facts = terms.facts;
     return {
-      course: { code: course.code, name_en: course.name_en, name_zh: course.name_zh,
-        sessions: terms.sessions, confirmBy: terms.confirmBy,
-        policyVersion: course.policy_version },
+      course: c,
       student: { slug: s.slug, name_en: s.name_en, name_zh: s.name_zh, lang: s.lang,
         status: s.status, paymentOption: s.payment_option, isAttendee: s.is_attendee,
         journalUrl: s.journal_url || null },
-      quotes: [1, 2, 3].map(o => quote(terms, o, s.is_attendee)),
-      quote: s.payment_option ? quote(terms, s.payment_option, s.is_attendee) : null,
+      quotes: Object.keys(terms.options).filter(o => !terms.options[o].custom)
+        .map(o => quote(terms, o, s.is_attendee)),
+      quote: studentQuote(terms, s),
       consent, payments, notes,
       links: (links && links.value) || [],
       requiredConsents: REQUIRED_CONSENTS,
+      // only in v4-era profiles, so a v3 signer's profile stays as it was
+      ...(signedPlan ? { signedPlan } : {}),
+      ...(held ? { held: { paidSatang: payments.reduce((n, p) => n + Number(p.amount_satang || 0), 0) } } : {}),
     };
   }
 
@@ -251,6 +387,18 @@ function mountIdcn(app, opts = {}) {
       const b = req.body || {};
       const already = (await q('SELECT 1 FROM idc_consents WHERE student_id=$1', [s.id])).rows[0];
       if (already) return res.status(409).json({ error: 'already signed' });
+      // the page says which wording it showed; a page loaded before the terms
+      // changed must not sign the new ones
+      const version = currentVersion(course);
+      if (b.policyVersion !== version)
+        return res.status(409).json({ error: 'the course terms changed: reload the page and read them again',
+          policyVersion: version });
+      const terms = termsFor(course, version);
+      const paid = (await q('SELECT count(*)::int AS n FROM idc_payments WHERE student_id=$1',
+        [s.id])).rows[0].n;
+      if (isHeld(terms, s, false, paid))
+        return res.status(409).json({ held: true,
+          error: 'AYBKK will confirm your payment plan with you before you sign' });
       const items = b.items || {};
       const missing = REQUIRED_CONSENTS.filter(k => items[k] !== true);
       if (missing.length)
@@ -258,14 +406,17 @@ function mountIdcn(app, opts = {}) {
       const signedName = String(b.signedName || '').trim();
       if (signedName.length < 2) return res.status(400).json({ error: 'type your full name to sign' });
       const kept = {}; for (const k of REQUIRED_CONSENTS) kept[k] = true;
+      const qt = studentQuote(terms, s);
       await q(
         `INSERT INTO idc_consents (student_id, policy_version, payment_option, items,
-           signed_name, health_note, media_public, ip)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-        [s.id, course.policy_version, s.payment_option, JSON.stringify(kept),
+           signed_name, health_note, media_public, ip, plan)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [s.id, version, terms.options[s.payment_option] ? s.payment_option : null,
+         JSON.stringify(kept),
          signedName, String(b.healthNote || '').slice(0, 2000) || null,
          b.mediaPublic === true,
-         String(req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim()]);
+         String(req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim(),
+         qt && qt.installments ? JSON.stringify(qt.installments) : null]);
       await q(`UPDATE idc_students SET status='confirmed' WHERE id=$1`, [s.id]);
       res.json({ success: true, status: 'confirmed' });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -381,16 +532,30 @@ function mountIdcn(app, opts = {}) {
       const course = await courseFor(req, res); if (!course) return;
       const rows = (await q(
         `SELECT s.id, s.slug, s.name_en, s.name_zh, s.lang, s.status,
-                s.payment_option, s.is_attendee, s.journal_url,
-                c.signed_at, c.signed_name, c.health_note, c.media_public,
+                s.payment_option, s.is_attendee, s.journal_url, s.custom_plan,
+                c.signed_at, c.signed_name, c.health_note, c.media_public, c.policy_version,
+                c.plan AS signed_plan,
                 (SELECT count(*)::int FROM idc_payments p WHERE p.student_id=s.id) AS proofs,
+                (SELECT COALESCE(sum(p.amount_satang), 0)::bigint FROM idc_payments p
+                  WHERE p.student_id=s.id) AS paid_satang,
                 (SELECT count(*)::int FROM idc_notes n
                   WHERE n.student_id=s.id AND n.kind='submission') AS submissions
          FROM idc_students s
          LEFT JOIN idc_consents c ON c.student_id=s.id
          WHERE s.course_code=$1 ORDER BY s.name_en`, [course.code])).rows;
-      res.json({ students: rows.map(r =>
-        ({ ...r, quote: r.payment_option ? quote(course.terms, r.payment_option, r.is_attendee) : null })) });
+      res.json({ policyVersion: currentVersion(course), students: rows.map(r => {
+        const version = r.policy_version || currentVersion(course);
+        const terms = termsFor(course, version);
+        const qt = studentQuote(terms, r);
+        r.signed_plan = planOf(r.signed_plan);
+        return { ...r, paid_satang: Number(r.paid_satang), terms_version: version, quote: qt,
+          // an option set under older terms for someone who never signed
+          option_stale: r.payment_option != null && !terms.options[r.payment_option],
+          held: isHeld(terms, r, !!r.signed_at, r.proofs),
+          plan_changed: !!r.signed_plan && JSON.stringify(r.signed_plan)
+            !== JSON.stringify((qt && qt.installments) || null),
+          attendee_discount: !!terms.attendeePct, options: optionList(terms) };
+      }) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -411,12 +576,31 @@ function mountIdcn(app, opts = {}) {
       if (b.journalUrl !== undefined)
         await q('UPDATE idc_students SET journal_url=$1 WHERE id=$2',
           [String(b.journalUrl || '').trim() || null, s.id]);
-      if (b.isAttendee !== undefined)
+      const { terms, signed, paid } = await termsOf(course, s.id);
+      if (b.isAttendee !== undefined) {
+        if (!terms.attendeePct && b.isAttendee === true)
+          return res.status(400).json({ error: 'these terms have no attendee discount' });
         await q('UPDATE idc_students SET is_attendee=$1 WHERE id=$2', [b.isAttendee === true, s.id]);
+      }
       if (b.paymentOption !== undefined) {
-        if (![1, 2, 3].includes(Number(b.paymentOption)))
-          return res.status(400).json({ error: 'option must be 1, 2 or 3' });
-        await q('UPDATE idc_students SET payment_option=$1 WHERE id=$2', [Number(b.paymentOption), s.id]);
+        // the key (1, 4…) or its letter (A, B, C), within this student's terms
+        const want = String(b.paymentOption).trim().toUpperCase();
+        const opts = optionList(terms);
+        const o = opts.find(x => String(x.key) === want || x.code === want);
+        if (!o) return res.status(400).json({ error: 'option must be '
+          + opts.map(x => x.code).join(', ').replace(/, ([^,]*)$/, ' or $1') });
+        let plan = null;
+        if (o.custom) {
+          const err = planError(b.customPlan, feeWithVat(terms));
+          if (err) return res.status(400).json({ error: err });
+          plan = b.customPlan.map(p => ({ amountSatang: p.amountSatang, due: p.due }))
+            .sort((x, y) => x.due.localeCompare(y.due));
+        }
+        if (isHeld(terms, s, signed, paid) && b.confirmHeld !== true)
+          return res.status(409).json({ held: true, error: 'this student paid before they had an option '
+            + 'of these terms: if that was under older terms, Boonchu decides what they pay first' });
+        await q('UPDATE idc_students SET payment_option=$1, custom_plan=$2 WHERE id=$3',
+          [o.key, plan && JSON.stringify(plan), s.id]);
       }
       if (b.status !== undefined) {
         if (!['invited', 'confirmed', 'completed', 'withdrawn'].includes(b.status))
@@ -528,4 +712,5 @@ function mountIdcn(app, opts = {}) {
     .catch(e => console.error('✗ idcn-api schema init failed:', e.message));
 }
 
-module.exports = { mountIdcn, quote, applyPct, IDCN3_TERMS };
+module.exports = { mountIdcn, quote, applyPct, planError, termsFor, IDCN3_TERMS, IDCN3_TERMS_V4,
+  IDCN3_POLICY_VERSION, TERMS_BY_POLICY };
