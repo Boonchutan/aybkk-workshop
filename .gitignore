@@ -20,3 +20,5 @@ cloudflared
 
 # submitted exam papers, student writing. never commit
 exam-submissions/
+!public/themes/*.json
+!public/bkk-tees.json

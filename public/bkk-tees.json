@@ -1,0 +1,233 @@
+{
+ "about": [
+  "AYBKK tees on aybkk.net (Bangkok). Order on LINE @aybkk, pick up at the shala. The China shop (shop-seed.json) is separate.",
+  "price: baht before VAT; the page shows it as \"790 THB + 7% VAT\". A tee may have its own \"price\".",
+  "Each tee: show (true or false), name (the Bangkok name), photo (/img/tees/...), sizes, optional colours. from = the China shop ids it came from (not shown).",
+  "The page shows the first 8 shown tees, then a \"Show all tees\" button."
+ ],
+ "price": 790,
+ "vat": 7,
+ "tees": [
+  {
+   "show": true,
+   "name": "AYBKK Back Logo",
+   "photo": "/img/tees/40.jpg",
+   "sizes": ["S", "M", "L", "XL"],
+   "colours": ["Green", "Burgundy"],
+   "from": ["tee-40", "tee-41"]
+  },
+  {
+   "show": true,
+   "name": "Pink Logo Minimal",
+   "photo": "/img/tees/42.jpg",
+   "sizes": ["S", "M", "L", "XL"],
+   "from": ["tee-42"]
+  },
+  {
+   "show": true,
+   "name": "Hefei · Purple Tithibasana",
+   "photo": "/img/tees/38.jpg",
+   "sizes": ["S", "M", "L", "XL"],
+   "from": ["tee-38"]
+  },
+  {
+   "show": true,
+   "name": "Zhuhai · Grey Seabird",
+   "photo": "/img/tees/39.jpg",
+   "sizes": ["S", "M", "L", "XL"],
+   "from": ["tee-39"]
+  },
+  {
+   "show": true,
+   "name": "AYBKK Seal Logo",
+   "photo": "/img/tees/8.jpg",
+   "sizes": ["S", "M", "L", "XL"],
+   "colours": ["Light brown", "Blue", "Black", "Colour print on black"],
+   "from": ["tee-6", "tee-8", "tee-9", "tee-26"]
+  },
+  {
+   "show": true,
+   "name": "AYBKK Colour Letters",
+   "photo": "/img/tees/18.jpg",
+   "sizes": ["M", "L", "XL"],
+   "colours": ["Black", "White"],
+   "from": ["tee-18", "tee-19"]
+  },
+  {
+   "show": true,
+   "name": "Huizhou Shirt",
+   "photo": "/img/tees/1.jpg",
+   "sizes": ["S", "M", "L", "XL"],
+   "from": ["tee-1"]
+  },
+  {
+   "show": true,
+   "name": "Qingdao · Urdhva Kukuta",
+   "photo": "/img/tees/16.jpg",
+   "sizes": ["S", "M", "L", "XL"],
+   "from": ["tee-16"]
+  },
+  {
+   "show": true,
+   "name": "Guangzhou · Grey Viranchayasana A",
+   "photo": "/img/tees/2.jpg",
+   "sizes": ["S", "M", "L"],
+   "from": ["tee-2"]
+  },
+  {
+   "show": true,
+   "name": "Suzhou · Yellow Maricasana H",
+   "photo": "/img/tees/3.jpg",
+   "sizes": ["S", "M", "L", "XL"],
+   "from": ["tee-3"]
+  },
+  {
+   "show": true,
+   "name": "Maoming · Brown Purna Matsyendrasana",
+   "photo": "/img/tees/4.jpg",
+   "sizes": ["S", "M", "XL"],
+   "from": ["tee-4"]
+  },
+  {
+   "show": true,
+   "name": "Xichang · Kundinyasana",
+   "photo": "/img/tees/20.jpg",
+   "sizes": ["S", "M", "L", "XL"],
+   "from": ["tee-20"]
+  },
+  {
+   "show": true,
+   "name": "Tianjin · White Adho Dandasana",
+   "photo": "/img/tees/7.jpg",
+   "sizes": ["M", "L"],
+   "from": ["tee-7"]
+  },
+  {
+   "show": true,
+   "name": "Huizhou · Monkey Yogi",
+   "photo": "/img/tees/24.jpg",
+   "sizes": ["M", "L", "XL"],
+   "from": ["tee-24"]
+  },
+  {
+   "show": true,
+   "name": "Huizhou · Wolf Vatayana",
+   "photo": "/img/tees/30.jpg",
+   "sizes": ["L"],
+   "from": ["tee-30"]
+  },
+  {
+   "show": true,
+   "name": "Red Indepth",
+   "photo": "/img/tees/13.jpg",
+   "sizes": ["S", "M", "L"],
+   "colours": ["Grey", "White"],
+   "from": ["tee-13", "tee-14"]
+  },
+  {
+   "show": true,
+   "name": "Red Logo",
+   "photo": "/img/tees/5.jpg",
+   "sizes": ["M", "L", "XL"],
+   "from": ["tee-5"]
+  },
+  {
+   "show": true,
+   "name": "Mustard Brown Logo Green",
+   "photo": "/img/tees/31.jpg",
+   "sizes": ["S", "M", "XL"],
+   "from": ["tee-31"]
+  },
+  {
+   "show": true,
+   "name": "Grey AYBKK Vintage",
+   "photo": "/img/tees/11.jpg",
+   "sizes": ["M", "XL"],
+   "from": ["tee-11"]
+  },
+  {
+   "show": true,
+   "name": "Grey AYBKK",
+   "photo": "/img/tees/15.jpg",
+   "sizes": ["M", "L"],
+   "from": ["tee-15"]
+  },
+  {
+   "show": true,
+   "name": "Cream Ashtanga Back",
+   "photo": "/img/tees/23.jpg",
+   "sizes": ["M", "L"],
+   "from": ["tee-23"]
+  },
+  {
+   "show": true,
+   "name": "Sharathji Tithiba",
+   "photo": "/img/tees/22.jpg",
+   "sizes": ["L"],
+   "from": ["tee-22"]
+  },
+  {
+   "show": true,
+   "name": "Guruji",
+   "photo": "/img/tees/34.jpg",
+   "sizes": ["S"],
+   "from": ["tee-34"]
+  },
+  {
+   "show": true,
+   "name": "Bangkok",
+   "photo": "/img/tees/28.jpg",
+   "sizes": ["M"],
+   "from": ["tee-28"]
+  },
+  {
+   "show": true,
+   "name": "Russia · Orange Bear",
+   "photo": "/img/tees/10.jpg",
+   "sizes": ["M", "XL"],
+   "from": ["tee-10"]
+  },
+  {
+   "show": true,
+   "name": "Green Lion",
+   "photo": "/img/tees/21.jpg",
+   "sizes": ["L"],
+   "from": ["tee-21"]
+  },
+  {
+   "show": true,
+   "name": "Walrus Handstand",
+   "photo": "/img/tees/25.jpg",
+   "sizes": ["S", "M", "XL"],
+   "from": ["tee-25"]
+  },
+  {
+   "show": true,
+   "name": "Rino",
+   "photo": "/img/tees/27.jpg",
+   "sizes": ["S", "M", "XL"],
+   "from": ["tee-27"]
+  },
+  {
+   "show": true,
+   "name": "Old Rose Heart",
+   "photo": "/img/tees/29.jpg",
+   "sizes": ["L"],
+   "from": ["tee-29"]
+  },
+  {
+   "show": true,
+   "name": "Elephant Seal",
+   "photo": "/img/tees/32.jpg",
+   "sizes": ["S", "M"],
+   "from": ["tee-32"]
+  },
+  {
+   "show": true,
+   "name": "LOVE Sleeveless",
+   "photo": "/img/tees/33.jpg",
+   "sizes": ["S"],
+   "from": ["tee-33"]
+  }
+ ]
+}

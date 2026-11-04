@@ -1,0 +1,222 @@
+{
+ "schema": 1,
+ "month": "2026-11",
+ "show": true,
+ "brief": {
+  "stakes": "Quit because it is hard and you quit one step before the lesson: another year of the same stiff mornings and the same fear.",
+  "whyCare": "The reader who feels weak, stiff or afraid thinks that is a reason to wait. It is the reason to start, and the teacher who notices is there for exactly that person.",
+  "habits": [
+   2,
+   6,
+   9
+  ],
+  "source": "Boonchu's November theme; Plato talking Reel 3 Nov 2026 (jump back, backbend)"
+ },
+ "eyebrow": {
+  "en": "This month",
+  "th": "เดือนนี้",
+  "zh": "本月",
+  "ru": "В этом месяце"
+ },
+ "monthName": {
+  "en": "November",
+  "th": "พฤศจิกายน",
+  "zh": "十一月",
+  "ru": "Ноябрь"
+ },
+ "title": {
+  "en": "The one who struggles learns the most.",
+  "th": "คนที่ต้องสู้ ได้เรียนรู้มากที่สุด",
+  "zh": "吃力的人，学到的最多。",
+  "ru": "Больше всех учится тот, кому трудно."
+ },
+ "lead": {
+  "en": "Some people start strong or flexible. The asana comes fast. Others shake, feel afraid, and still come back the next morning. Strength is a gift. Struggle is a teacher.",
+  "th": "บางคนเริ่มมาก็แข็งแรงหรือตัวอ่อนอยู่แล้ว อาสนะมาเร็ว บางคนตัวสั่น กลัว แต่เช้าวันรุ่งขึ้นก็ยังกลับมา ความแข็งแรงคือพรสวรรค์ ความยากคือครู",
+  "zh": "有些人一开始就有力量、身体柔软，体式来得很快。有些人会发抖、会害怕，第二天早上还是回来了。力量是天赋，吃力才是老师。",
+  "ru": "Кто-то с первого дня сильный или гибкий, и асаны даются быстро. Кто-то дрожит, боится и всё равно приходит на следующее утро. Сила даётся от природы. А учит трудность."
+ },
+ "columns": {
+  "a": {
+   "en": "Strong from day one",
+   "th": "แข็งแรงตั้งแต่วันแรก",
+   "zh": "第一天就很强",
+   "ru": "Сильный с первого дня"
+  },
+  "b": {
+   "en": "The one who struggles",
+   "th": "คนที่ต้องสู้",
+   "zh": "吃力的人",
+   "ru": "Тот, кому трудно"
+  },
+  "highlight": "b"
+ },
+ "rows": [
+  {
+   "label": {
+    "en": "The jump back",
+    "th": "กระโดดถอยหลัง",
+    "zh": "跳回",
+    "ru": "Прыжок назад"
+   },
+   "a": {
+    "en": "Floats back early. Never has to ask how.",
+    "th": "ลอยกลับได้ตั้งแต่แรก ไม่เคยต้องถามว่าทำยังไง",
+    "zh": "很早就能轻轻跳回，从来不用问怎么做。",
+    "ru": "Легко прыгает назад почти сразу. Не нужно спрашивать, как."
+   },
+   "b": {
+    "en": "Builds it piece by piece: hands, belly, breath. Knows every part.",
+    "th": "ค่อยๆ ประกอบทีละส่วน มือ ท้อง ลมหายใจ จนรู้จักทุกจังหวะ",
+    "zh": "一点一点拼起来：手、腹部、呼吸。每个环节都清楚。",
+    "ru": "Собирает прыжок по частям: руки, живот, дыхание. Знает каждую деталь."
+   }
+  },
+  {
+   "label": {
+    "en": "The backbend",
+    "th": "แอ่นหลัง",
+    "zh": "后弯",
+    "ru": "Прогиб"
+   },
+   "a": {
+    "en": "Bends back with ease. Fear never shows up.",
+    "th": "แอ่นหลังได้สบาย ความกลัวไม่เคยโผล่มา",
+    "zh": "轻松就弯下去，害怕从没出现过。",
+    "ru": "Прогибается легко. Страх даже не появляется."
+   },
+   "b": {
+    "en": "Meets fear every morning and breathes through it. Learns to stay calm when it is scary.",
+    "th": "เจอความกลัวทุกเช้า แล้วหายใจผ่านมันไป ได้ฝึกใจให้นิ่ง แม้ตอนที่กลัว",
+    "zh": "每天早上都遇到害怕，用呼吸穿过它。学会在害怕时保持平静。",
+    "ru": "Каждое утро встречает страх и продышивает его. Учится сохранять спокойствие, когда страшно."
+   }
+  },
+  {
+   "label": {
+    "en": "Listening to the body",
+    "th": "ฟังร่างกาย",
+    "zh": "倾听身体",
+    "ru": "Слушать тело"
+   },
+   "a": {
+    "en": "Can push through without listening.",
+    "th": "ดันผ่านไปได้ โดยไม่ต้องฟัง",
+    "zh": "不用听，也能硬撑过去。",
+    "ru": "Может продавить, не прислушиваясь."
+   },
+   "b": {
+    "en": "Listens on every breath. Learns where the limit is, and moves it slowly.",
+    "th": "ต้องฟังทุกลมหายใจ รู้ว่าขีดจำกัดอยู่ตรงไหน แล้วค่อยๆ ขยับออกไป",
+    "zh": "每个呼吸都在听。知道极限在哪里，再慢慢往前推。",
+    "ru": "Слушает тело на каждом вдохе. Знает, где предел, и сдвигает его понемногу."
+   }
+  },
+  {
+   "label": {
+    "en": "The teacher",
+    "th": "ครู",
+    "zh": "老师",
+    "ru": "Учитель"
+   },
+   "a": {
+    "en": "Needs less help, so the teacher moves on.",
+    "th": "ต้องการความช่วยเหลือน้อย ครูเลยไปดูคนอื่น",
+    "zh": "需要的帮助少，老师就去看别人了。",
+    "ru": "Помощи нужно мало, и учитель идёт дальше."
+   },
+   "b": {
+    "en": "Gets more of the teacher's time. Every small change is noticed.",
+    "th": "ได้เวลาจากครูมากกว่า ทุกความเปลี่ยนแปลงเล็กๆ มีคนเห็น",
+    "zh": "得到老师更多的时间。每一个小变化都有人看见。",
+    "ru": "Получает больше времени учителя. Каждое маленькое изменение замечают."
+   }
+  },
+  {
+   "label": {
+    "en": "When life gets hard",
+    "th": "วันที่ชีวิตยาก",
+    "zh": "生活变难的时候",
+    "ru": "Когда в жизни трудно"
+   },
+   "a": {
+    "en": "Has had little practice at being stuck.",
+    "th": "ไม่ค่อยได้ฝึกตอนที่ติด",
+    "zh": "很少练习过卡住的时候。",
+    "ru": "Почти не учился оставаться, когда не получается."
+   },
+   "b": {
+    "en": "Practises being stuck every morning. Knows how to stay, on the mat and in life.",
+    "th": "ฝึกตอนที่ติดอยู่ทุกเช้า รู้ว่าจะอยู่ต่ออย่างไร ทั้งบนเสื่อและในชีวิต",
+    "zh": "每天早上都在练卡住时怎么留下来。在垫子上，也在生活里。",
+    "ru": "Каждое утро учится не уходить, когда не получается. На коврике и в жизни."
+   }
+  },
+  {
+   "label": {
+    "en": "The next beginner",
+    "th": "มือใหม่คนต่อไป",
+    "zh": "下一个新手",
+    "ru": "Следующий новичок"
+   },
+   "a": {
+    "en": "Can show the asana. Finds it hard to explain.",
+    "th": "ทำอาสนะให้ดูได้ แต่อธิบายยาก",
+    "zh": "能做给你看，却很难讲清楚。",
+    "ru": "Может показать асану, но объяснить трудно."
+   },
+   "b": {
+    "en": "Remembers every step. Can walk the next beginner through it.",
+    "th": "จำได้ทุกขั้น เลยพามือใหม่คนต่อไปผ่านไปได้",
+    "zh": "记得每一步，能带着下一个新手走过来。",
+    "ru": "Помнит каждый шаг и может провести через него следующего новичка."
+   }
+  }
+ ],
+ "stakes": {
+  "en": "Stop because it is hard, and you stop one step before the lesson. A year from now: the same stiff mornings, the same fear, and the lesson still waiting.",
+  "th": "ถ้าหยุดเพราะมันยาก คุณจะหยุดห่างจากบทเรียนแค่ก้าวเดียว ปีหน้าก็ยังเป็นเช้าที่ตัวแข็งแบบเดิม กลัวแบบเดิม และบทเรียนนั้นก็ยังรออยู่",
+  "zh": "因为难就停下，你就停在了学会之前的那一步。一年以后，还是一样僵硬的早上、一样的害怕，那一课还在等你。",
+  "ru": "Если бросить, потому что трудно, вы остановитесь в шаге от урока. Через год: то же скованное тело по утрам, тот же страх, и урок всё ещё ждёт вас."
+ },
+ "quote": {
+  "text": {
+   "en": "He who mixes with the experts while he is himself still stiff and imperfect... though he have not the natural talent for it, he will not lag far behind the others.",
+   "th": "ผู้ที่ยังแข็งทื่อและยังไม่สมบูรณ์ แต่เข้าไปฝึกปะปนกับผู้ชำนาญ… แม้ไม่มีพรสวรรค์ ก็จะไม่ตามหลังคนอื่นไปไกล",
+   "zh": "自己还僵硬、还不完美的时候，就混在高手之中……即使没有天分，也不会落后别人太远。",
+   "ru": "Кто, ещё скованный и несовершенный, держится среди мастеров… тот, пусть и без природного таланта, не отстанет от других далеко."
+  },
+  "who": {
+   "en": "Yoshida Kenko · Tsurezuregusa §150, c. 1330 (tr. W. N. Porter, 1914)",
+   "th": "โยชิดะ เค็นโค · สึเรซึเรงุสะ ตอนที่ 150 ราว ค.ศ. 1330 (แปลจากฉบับภาษาอังกฤษของ W. N. Porter ปี 1914)",
+   "zh": "吉田兼好 ·《徒然草》第150段，约1330年（据 W. N. Porter 1914年英译本转译）",
+   "ru": "Ёсида Кэнко · «Цурэдзурэгуса» (Записки от скуки), § 150, ок. 1330 г. (пер. по английскому переводу У. Н. Портера, 1914)"
+  },
+  "meaning": {
+   "en": "A stiff beginner who keeps practising next to better people does not stay far behind. That is a Mysore room.",
+   "th": "มือใหม่ที่ตัวแข็ง แต่ยังฝึกข้างๆ คนที่เก่งกว่าทุกวัน จะไม่ตามหลังไปไกล นี่แหละห้องมายซอร์",
+   "zh": "身体僵硬的新手，每天在比自己厉害的人旁边练习，就不会落后太远。这就是迈索尔课堂。",
+   "ru": "Скованный новичок, который каждый день занимается рядом с более опытными, не отстанет далеко. Это и есть Майсор-класс."
+  },
+  "checked": {
+   "file": "bots/media/2026-10-01-weak-to-strong/quotes_checked_1oct.json",
+   "verdict": "fixed",
+   "source_url": "https://archive.org/details/miscellanyofjapa00yosh/page/118/mode/2up"
+  }
+ },
+ "cta": {
+  "label": {
+   "en": "Start with one morning",
+   "th": "เริ่มจากเช้าแรก",
+   "zh": "从一个早上开始",
+   "ru": "Начните с одного утра"
+  },
+  "href": "#mysore",
+  "note": {
+   "en": "Stiff, weak or afraid is a fine place to begin. We teach you from the very start.",
+   "th": "ตัวแข็ง ไม่มีแรง หรือกลัว ก็เริ่มได้ เราสอนตั้งแต่เริ่มต้น ไม่เป็นอะไรเลย",
+   "zh": "僵硬、没力气、会害怕，都可以开始。我们从第一步教起。",
+   "ru": "Скованность, слабость или страх: с этого можно начать. Мы учим с самого начала."
+  }
+ }
+}
