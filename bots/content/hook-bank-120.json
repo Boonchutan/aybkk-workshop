@@ -1198,5 +1198,24 @@
   "goal": "shala",
   "habit": 0,
   "note": "Rank excuses kindly and answer each one, and never rank styles, studios or teachers."
+ },
+ {
+  "n": 121,
+  "cat": "triple",
+  "template": "Context: {what the video is about} · Lean: {what they believe} · Snapback: {the opposite}",
+  "aybkk": "This is why most people quit yoga. You think it's because yoga is too hard. It's not. It's because nobody notices when you stop coming.",
+  "fit": "use",
+  "goal": "shala",
+  "habit": 9,
+  "lines": {
+   "context": "This is why most people quit yoga.",
+   "lean": "You think it's because yoga is too hard.",
+   "snapback": "It's not. It's because nobody notices when you stop coming."
+  },
+  "first_second": "Say it, show it, write it, all in second 1: say line 1 to camera, show an empty mat, put 'This is why most people quit yoga' on screen.",
+  "stakes": "If nobody notices when you stop, one skipped week turns into a month off, and next year you start over again from day 1.",
+  "why_care": "If you have started yoga and quit before, you probably blamed yourself or the practice. This shows the real gap, and that a room where someone notices you is the fix.",
+  "note": "Answer after the snapback: Mysore, same time every morning, a teacher who sees who is missing. 'Most people' is your view from years of teaching, not a study: never add a number. Kind to people who quit, never shame them. Close to #116; use #121 to open a Reel, #116 as a caption line.",
+  "source": "Kallaway, Triple Hook Method post (instagram.com/p/DfQ5RxHjg1S), sent by Boonchu via Neo, 4 Nov 2026"
  }
 ]
