@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-04T06:10:26.853Z
+Inbox last read: 2026-11-04T12:14:03.217Z
 
 ## Standing orders from Boonchu
 - 2026-11-03, changed 2026-11-04 (Boonchu: "Why machi cannot see instagram link?"): VIDEO LINKS. Platforms do not let bots download their videos and we never get around that (no fake user agent, no downloader, no login). For a video link: run `python3 bots/tools/read-link/read_link.py "<link>"` for any openly shared caption, then ask Boonchu for the file (Instagram share button, "Download", or a screen recording; in chat or Google Drive) and run the tool on the file: every spoken line, plus stills you open with your image reader to see the screen. README next to the tool.
@@ -105,6 +105,7 @@ Inbox last read: 2026-11-04T06:10:26.853Z
 - 2026-10-04 (Plato chat handoff): weekly "Letter from the Shala" (Halbert skeleton, judge 31 Dec 2026). Letter #1 sends MON 5 OCT (LINE OA, WeChat, Telegram), #2 Mon 12 Oct. Plato drafts weekly. Machi tracks weekly score: replies, bookings from P.S. link, "TT" replies (not opens). Still open: who checks the Chinese and Russian versions each week.
 
 - 2026-11-02 07:08: COURSE PRICES new choice set after default B (1 Nov): A send prices or B move sales one more week, by 19:00 Sun 8 Nov. Default B = sales Tue 8 Dec, start Tue 15 Dec.
+- 2026-11-04 19:08: Inbox 19:08: 1 new in 1 LINE thread, 1 hot (class booking question for Tue 10 Nov, may be answered). Course prices (Sun 8 Nov) and serious lead (Sat 7 Nov) not repeated (2 nudges today). No reminders due since 13:08, no wins. Next step given: close the DUO PACK LINE lead (promo ends 11 Nov) and answer the 10 Nov booking.
 
 ## Log
 - 2026-11-03 13:08: Inbox 13:08: 2 new, 1 hot. Prices (Sun 8 Nov) and serious lead (Sat 7 Nov) reminded, 2nd nudge today: do not repeat at 19:08. No reminders due since 07:08, no wins.
