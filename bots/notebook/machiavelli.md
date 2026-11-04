@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-04T00:10:10.708Z
+Inbox last read: 2026-11-04T06:10:26.853Z
 
 ## Standing orders from Boonchu
 - 2026-11-03, changed 2026-11-04 (Boonchu: "Why machi cannot see instagram link?"): VIDEO LINKS. Platforms do not let bots download their videos and we never get around that (no fake user agent, no downloader, no login). For a video link: run `python3 bots/tools/read-link/read_link.py "<link>"` for any openly shared caption, then ask Boonchu for the file (Instagram share button, "Download", or a screen recording; in chat or Google Drive) and run the tool on the file: every spoken line, plus stills you open with your image reader to see the screen. README next to the tool.
