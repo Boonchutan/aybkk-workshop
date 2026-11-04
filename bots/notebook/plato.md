@@ -1,6 +1,7 @@
 # Plato notebook
 
 ## Standing orders from Boonchu
+- 2026-11-04 (Boonchu, on the Arjuna hand-in-the-dark script): THE STORY MUST SURPRISE ('everyone knows how to put food in the mouth in the dark. It doesn't surprise anyone'). If the key moment is something every viewer already does or knows, drop the story. And GET TO THE POINT FAST ('the first six lines are very too long'): the point lands in about 6 seconds (3 short lines), stakes folded in, then straight into the story.
 - 2026-11-04 (Boonchu): HOOKS ARE ALWAYS CONTRARIAN AND MAKE THE AUDIENCE QUESTION ('Always contrarian and make audience questioning'). Every Reel hook flips what the viewer believes, and the close leaves them asking themselves a question. Check both before sending any script.
 - 2026-11-04: EP. 5 'Go Small' (Hanumanasana) POSTED by Boonchu. Last posted = Ep. 5. Next filmed = Ep. 6.
 - 2026-11-04 (Boonchu via Neo, Kallaway's Triple Hook post): TRIPLE HOOK LINE 1 CHECK. Whenever a script uses the Triple Hook, check line 1 does all three in the first second: SAY it (to camera), SHOW it (the picture matches), WRITE it (words on screen). If any one is missing, fix it before sending. Clear first, then clever. Hook Bank #121 added (Context 'This is why most people quit yoga.' / Lean / Snapback), with Stakes and Why care, page https://claude.ai/artifact/TzfE7h72HFnCmmW2otCuma v2 and bots/content/hook-bank-120.json.

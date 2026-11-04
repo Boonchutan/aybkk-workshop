@@ -89,3 +89,26 @@ Optional spoken link (only at the very end, after the payoff): "P.S. Upamanyu's 
 - At that sacrifice Vaisampayana, on Vyasa's order, "recited the whole of that history" (sec. 60). Do not say "first" told.
 - NOT KNOWN, never say as fact: that Ayoda-Dhaumya is (or is not) Dhaumya the Pandavas' priest (sec. 185, "younger brother of Devala"); that this Upamanyu is the one Krishna visits (Anushasana 14, "descendant of Vyaghrapada"); that classmate Aruni, renamed Uddalaka, is Ashtavakra's grandfather (tradition only).
 - In the book the teacher's help = "Glorify the twin Aswins"; never say he pulled him out.
+
+## v4 (4 Nov 2026), Hidden Stories Ep. 6 "The Teacher Who Said No", with Neo's hook #121
+Why: Boonchu rejected the Arjuna hand-in-the-dark story ("everyone knows how to put food in the mouth in the dark. It doesn't surprise anyone") and said the opening took too long. Upamanyu matches #121 and has a real twist. 3 critics (scroller 6.5, facts 6.5, risk 6); fixes applied: 'most' cut (unchecked), 'you look fat' -> 'so well fed' (source: plump), speaker tags, the calves' reason for the no (source), the teacher's own words at sunset (source: 'restrained by me from the use of everything... doth not come home... let us go in search of him'), sight comes back by prayer (source: the twin Aswins), line 19 cut. Source re-read 4 Nov: Ganguli Adi Parva sec. 3, Gutenberg 15474 (well, 'Ho Upamanyu, where art thou?', 'Here I am at the bottom of a well').
+Stakes: stop once, nobody notices, you never come back. Why care: the viewer who quit thinks it was the hard part.
+1 This is why people quit yoga. (to camera, empty mat, words on screen from frame 1)
+2 Not because it's hard.
+3 Because nobody notice when you stop. And you never come back.
+4 Bedtime story for my son. Long ago in India, a teacher send Upamanyu to look after the cows.
+5 Every evening, Upamanyu come back and bow to his teacher. (on screen: SAMASTHITIH, optional)
+6 One day the teacher say: you look so well fed. What you eat?
+7 I beg for food. Teacher say: give it all to me.
+8 I drink the cow milk. No.
+9 I drink the foam from the baby cow mouth. Then baby cow go hungry. No.
+10 Nothing left. So hungry, he eat wild leaves. He go blind. He fall in a well.
+11 The sun go down. The teacher notice: Upamanyu not back.
+12 The teacher say: I say no to everything. That's why he not home. Let's go find him.
+13 Into the forest he shout: Upamanyu! Where are you?
+14 From the bottom of the well: Here I am!
+15 He pray, he see again, he come home.
+16 (silent beat)
+17 The one who say no is the one who come looking.
+18 Last time you stop yoga... who notice? (end on the same empty mat)
+Caption: The teacher who says no is the one who comes looking. 🐄 / Why do people quit yoga? Not because it's hard. Because nobody notices when they stop. / In an old story from India, a teacher said no to everything his student ate and drank. One evening the student didn't come home, and the same teacher went into the forest to find him. (Mahabharata, Adi Parva 3) / At AYBKK, someone notices when your mat is empty. / Comment aybkk and I'll send you the link. / #aybkk #ashtanga #ashtangabangkok #boonchutanti #hiddenstoriesofashtanga
