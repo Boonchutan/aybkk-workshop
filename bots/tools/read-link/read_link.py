@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-"""Read a public video link: print its caption and the words spoken in it.
+"""Read a video: every spoken line, plus stills a bot can open to see the screen.
 
-Usage:  python3 read_link.py <url> [--model small|medium]
+Usage:
+  python3 read_link.py <video file> [--model small|medium] [--no-frames]
+  python3 read_link.py <link>          caption only, from what the platform shares openly
 
-Works for Instagram reels and posts, TikTok and Facebook videos. YouTube often
-blocks the download from cloud computers; then only the title comes back.
-
-No login is used anywhere: Instagram shows the caption to link-preview bots
-(the same thing that draws a preview card in LINE or WhatsApp), and the video
-file is public. Boonchu's accounts are never touched.
+Instagram, Facebook, TikTok and YouTube do not let bots pull their videos. We do not
+get around that: no fake user agents, no downloaders. For a video link, ask Boonchu
+for the file (saved from the app, or a screen recording) and run this on the file.
 """
 import html
 import json
@@ -20,7 +19,10 @@ import sys
 import tempfile
 import urllib.parse
 
-PREVIEW_UA = "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"
+UA = "AYBKK-team-bot/1.0 (+https://aybkk.net)"
+OEMBED = {"tiktok.com": "https://www.tiktok.com/oembed",
+          "youtube.com": "https://www.youtube.com/oembed",
+          "youtu.be": "https://www.youtube.com/oembed"}
 
 
 def ensure(module, package):
@@ -33,40 +35,45 @@ def ensure(module, package):
             subprocess.run(cmd + ["--break-system-packages"], check=True)
 
 
-def curl(url, ua=PREVIEW_UA):
-    r = subprocess.run(["curl", "-sL", "--max-time", "30", "-A", ua, url],
+def curl(url):
+    r = subprocess.run(["curl", "-sL", "--max-time", "30", "-A", UA, url],
                        capture_output=True, text=True, errors="replace")
     return r.stdout
 
 
 def caption(url):
     host = urllib.parse.urlparse(url).netloc.lower()
-    if "youtube.com" in host or "youtu.be" in host or "tiktok.com" in host:
-        base = "https://www.tiktok.com/oembed" if "tiktok" in host else "https://www.youtube.com/oembed"
-        try:
-            j = json.loads(curl(f"{base}?url={urllib.parse.quote(url, safe='')}&format=json"))
-            return f"{j.get('author_name', '')}: {j.get('title', '')}".strip(": ")
-        except ValueError:
-            pass
+    for domain, endpoint in OEMBED.items():
+        if host.endswith(domain):
+            try:
+                j = json.loads(curl(f"{endpoint}?url={urllib.parse.quote(url, safe='')}&format=json"))
+                return f"{j.get('author_name', '')}: {j.get('title', '')}".strip(": ")
+            except ValueError:
+                return ""
+    # Any other page: read its public preview tags as an honest visitor. A login wall means no caption.
     page = curl(url)
-    found = {}
-    for key in ("og:title", "og:description"):
+    for key in ("og:description", "og:title"):
         m = re.search(r'<meta[^>]+(?:property|name)="%s"[^>]+content="([^"]*)"' % key, page)
         if m:
-            found[key] = html.unescape(m.group(1))
-    # og:description repeats the caption after the like count; prefer it when it has more
-    return found.get("og:description") or found.get("og:title") or ""
+            return html.unescape(m.group(1))
+    return ""
 
 
-def download(url, work):
-    ensure("yt_dlp", "yt-dlp")
-    r = subprocess.run([sys.executable, "-m", "yt_dlp", "--no-warnings", "-q",
-                        "-f", "best[ext=mp4]/best", "-o", os.path.join(work, "video.%(ext)s"), url],
+def frames(video, out_dir, max_frames=20):
+    """One still every few seconds (every 3 s, spread wider for long videos) for the image reader."""
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", video],
                        capture_output=True, text=True)
-    files = [f for f in os.listdir(work) if f.startswith("video.")]
-    if not files:
-        return None, (r.stderr.strip().splitlines() or ["download failed"])[-1]
-    return os.path.join(work, files[0]), None
+    try:
+        secs = float(r.stdout.strip())
+    except ValueError:
+        secs = 60.0
+    step = max(3.0, secs / max_frames)
+    os.makedirs(out_dir, exist_ok=True)
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-ss", "0.5", "-i", video,
+                    "-vf", f"fps=1/{step:.2f},scale=540:-2", "-frames:v", str(max_frames),
+                    os.path.join(out_dir, "frame_%02d.jpg")], check=True)
+    shots = sorted(f for f in os.listdir(out_dir) if f.endswith(".jpg"))
+    return [(0.5 + i * step, os.path.join(out_dir, f)) for i, f in enumerate(shots)]
 
 
 def transcribe(video, work, model_name):
@@ -89,23 +96,27 @@ def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     if not args:
         sys.exit(__doc__)
-    url = args[0]
+    target = args[0]
+    if not os.path.isfile(target):
+        print("CAPTION:")
+        print(caption(target) or "(none: the platform shows bots a login page)")
+        print("\nVIDEO: platforms do not let bots download videos, and we do not get around that."
+              " Ask Boonchu to send the video file (save it from the app, or screen-record it),"
+              " then run this tool on the file.")
+        return
     model_name = "medium" if "--model" in sys.argv and "medium" in sys.argv else "small"
     work = tempfile.mkdtemp(prefix="read-link-")
     try:
-        print("CAPTION:")
-        print(caption(url) or "(none found)")
-        video, err = download(url, work)
-        if not video:
-            # Instagram caps anonymous video fetches per computer. Respect it: one try, no workarounds.
-            why = ("Instagram is limiting video fetches from this computer right now"
-                   if "rate-limit" in err or "login page" in err else err)
-            print(f"\nSPOKEN: could not get the video ({why}). Work from the caption, try once more in an hour,"
-                  " or ask Boonchu for a screenshot or one line on what is said.")
-            return
-        lang, secs, lines = transcribe(video, work, model_name)
-        print(f"\nSPOKEN ({secs:.0f} s, language: {lang}):")
-        print("\n".join(lines) if lines else "(no speech: music only, or text on screen)")
+        lang, secs, lines = transcribe(target, work, model_name)
+        print(f"SPOKEN ({secs:.0f} s, language: {lang}):")
+        print("\n".join(lines) if lines else "(no speech: music only, or text on screen: look at the frames)")
+        if "--no-frames" not in sys.argv:
+            # Kept after the run (the work folder is not): open them with the image reader.
+            out = tempfile.mkdtemp(prefix="read-link-frames-")
+            shots = frames(target, out)
+            print(f"\nFRAMES ({len(shots)} stills; open them with your image reader to see text on screen,"
+                  " faces, setting, edit style):")
+            print("\n".join(f"[{t:5.1f}s] {path}" for t, path in shots))
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
