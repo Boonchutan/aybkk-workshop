@@ -1,0 +1,29 @@
+[
+ {
+  "photo": "04-016",
+  "id": "A10",
+  "word": "LIFE",
+  "line": "She joined a gym in her 60s, and means to keep going for life. A retired Shanghai worker trained daily at 68. \"I will work out as long as I'm still alive.\"",
+  "credit": "Chen Jifang · AFP, 2020",
+  "t": 110,
+  "tight": false,
+  "wwidth": 550,
+  "wpos": [
+   208,
+   60
+  ],
+  "ink_w": "light",
+  "wburn": 0.2,
+  "wm": "right",
+  "sz": 46,
+  "cws": [
+   540
+  ],
+  "sxy": [
+   60,
+   1046
+  ],
+  "ink_s": "light",
+  "sburn": 0.3
+ }
+]

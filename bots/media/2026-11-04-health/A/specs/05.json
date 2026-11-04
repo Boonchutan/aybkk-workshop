@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "03-088",
+  "id": "A5",
+  "word": "EARLY",
+  "line": "You can get old too early, even at 32. In a famous Russian novel, Oblomov lay down most of the time. He went flabby too soon, maybe from too little movement or fresh air.",
+  "credit": "Ivan Goncharov · Oblomov, 1859 (retold)",
+  "t": 270,
+  "wm": "left",
+  "wwidth": 920,
+  "wpos": [
+   55,
+   66
+  ],
+  "ink_w": "light",
+  "wburn": 0.3,
+  "sz": 46,
+  "cws": [
+   600
+  ],
+  "sxy": [
+   "R",
+   945
+  ],
+  "ink_s": "light",
+  "sright": true,
+  "sburn": 0.35,
+  "wtrk": 0.04
+ }
+]

@@ -1,0 +1,27 @@
+[
+ {
+  "photo": "03-113",
+  "id": "A2",
+  "word": "IDLE",
+  "line": "Idle body parts, the unused ones, get old fast. An old Greek medical book saw it in a leg with a bad hip. Parts used the right amount \"age slowly\". Idle ones \"age quickly\".",
+  "credit": "Hippocratic writings · On Joints 58, tr. 1928",
+  "t": 0,
+  "wwidth": 432,
+  "wpos": [
+   588,
+   880
+  ],
+  "ink_w": "light",
+  "wburn": 0.3,
+  "sz": 46,
+  "cws": [
+   520
+  ],
+  "sxy": [
+   60,
+   120
+  ],
+  "ink_s": "light",
+  "sburn": 0.32
+ }
+]

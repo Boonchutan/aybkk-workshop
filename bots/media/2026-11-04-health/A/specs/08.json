@@ -1,0 +1,28 @@
+[
+ {
+  "photo": "04-233",
+  "id": "A8",
+  "word": "WALK",
+  "line": "Walk every day, and you may walk away from feeling sick. A Danish thinker wrote this about himself in an 1847 letter. Sitting still did the opposite. His best thoughts came on walks.",
+  "credit": "Søren Kierkegaard · letter, 1847 (retold)",
+  "t": 40,
+  "wm": "left",
+  "wwidth": 540,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "wburn": 0.25,
+  "sz": 42,
+  "cws": [
+   500
+  ],
+  "sxy": [
+   60,
+   236
+  ],
+  "ink_s": "light",
+  "sburn": 0.3
+ }
+]

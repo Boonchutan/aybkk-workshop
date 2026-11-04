@@ -1,0 +1,29 @@
+[
+ {
+  "photo": "04-198",
+  "id": "A4",
+  "word": "LATE",
+  "line": "She started late, at 65, and taught fitness at 87. A Japanese housewife had \"never exercised before\". At 90 she walked and jogged from about 4 a.m. \"every day\", unless it rained.",
+  "credit": "Takishima Mika · Nippon.com, 2021",
+  "t": 200,
+  "tight": false,
+  "wwidth": 700,
+  "wpos": [
+   808,
+   66
+  ],
+  "wrot": -90,
+  "ink_w": "light",
+  "wshadow": 1.6,
+  "wburn": 0.2,
+  "sz": 46,
+  "cws": [
+   440
+  ],
+  "sxy": [
+   64,
+   66
+  ],
+  "ink_s": "dark"
+ }
+]
