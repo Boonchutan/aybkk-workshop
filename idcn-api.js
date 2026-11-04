@@ -84,8 +84,9 @@ function mountIdcn(app, opts = {}) {
   const pool = opts.pgPool;
   if (!pool) { console.warn('⚠ idcn-api: no pgPool — in-depth courses disabled'); return; }
   const q = (sql, params = []) => pool.query(sql, params);
-  const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || 'aybkk2026';
-  const isAdmin = req => req.headers['x-bkk-key'] === ADMIN_KEY;
+  const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '';
+  if (!ADMIN_KEY) console.warn('⚠ idcn-api: BKK_ADMIN_KEY not set — course admin is closed');
+  const isAdmin = req => !!ADMIN_KEY && req.headers['x-bkk-key'] === ADMIN_KEY;
 
   // Video uploads arrive as real multipart files (never base64 JSON — the app
   // body limit is 10MB) and are pushed to Cloudinary from a temp file.

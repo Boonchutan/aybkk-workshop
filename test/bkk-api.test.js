@@ -2036,13 +2036,23 @@ const ok = (name, cond, extra = '') => {
     const app2 = express();
     app2.use(express.json());
     mountBkk(app2, { pgPool: pool, now });
+    require('../shop-api.js').mountShop(app2, { dataDir: require('fs').mkdtempSync(require('path').join(require('os').tmpdir(), 'shop-')) });
+    require('../idcn-api.js').mountIdcn(app2, { pgPool: pool });
+    require('../partner-api.js').mountPartner(app2, { pgPool: pool });
     process.env.BKK_ADMIN_KEY = keep[0];
     if (keep[1] != null) process.env.SHOP_ADMIN_KEY = keep[1];
     const srv2 = app2.listen(0);
-    const st2 = async key => (await fetch(`http://127.0.0.1:${srv2.address().port}/api/bkk/admin/export/members.csv`,
-      { headers: key == null ? {} : { 'x-bkk-key': key } })).status;
+    const at2 = (p, init = {}) => fetch(`http://127.0.0.1:${srv2.address().port}${p}`, init).then(r => r.status);
+    const st2 = key => at2('/api/bkk/admin/export/members.csv', { headers: key == null ? {} : { 'x-bkk-key': key } });
     ok('with no admin key set, nothing opens the admin: not the old default key, not an empty one',
        (await st2('aybkk2026')) === 401 && (await st2('')) === 401 && (await st2(null)) === 401);
+    const shopSt = key => at2('/api/shop/admin/orders', { headers: key == null ? {} : { 'x-shop-key': key } });
+    const idcnSt = key => at2('/api/idcn/admin/idcn3/students', { headers: key == null ? {} : { 'x-bkk-key': key } });
+    const locSt = key => at2('/api/loc/seed-demo', { method: 'POST', headers: key == null ? {} : { 'x-bkk-key': key } });
+    ok('with no admin key set, the shop, course and partner admins stay closed to the old public default and to no key',
+       (await shopSt('aybkk2026')) === 401 && (await shopSt(null)) === 401 && (await at2('/api/shop/admin/orders?key=aybkk2026')) === 401
+       && (await idcnSt('aybkk2026')) === 401 && (await idcnSt(null)) === 401
+       && (await locSt('aybkk2026')) === 401 && (await locSt(null)) === 401);
     await new Promise(r => setTimeout(r, 1500));           // let its schema check finish
     srv2.close();
   }

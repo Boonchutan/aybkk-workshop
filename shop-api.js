@@ -16,7 +16,8 @@ function mountShop(app, opts = {}) {
     orders:   path.join(dataDir, 'shop-orders.json'),
     settings: path.join(dataDir, 'shop-settings.json'),
   };
-  const ADMIN_KEY = process.env.SHOP_ADMIN_KEY || 'aybkk2026';
+  const ADMIN_KEY = process.env.SHOP_ADMIN_KEY || '';
+  if (!ADMIN_KEY) console.warn('⚠ shop-api: SHOP_ADMIN_KEY not set — shop admin is closed');
   const HOLD_MS = 10 * 60 * 1000;                    // 10-minute payment window
 
   const read = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
@@ -113,7 +114,7 @@ function mountShop(app, opts = {}) {
   }
   const write = (f, v) => fs.writeFileSync(f, JSON.stringify(v, null, 2));
   const uid = p => p + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6).toUpperCase();
-  const isAdmin = req => (req.headers['x-shop-key'] || req.query.key) === ADMIN_KEY;
+  const isAdmin = req => !!ADMIN_KEY && (req.headers['x-shop-key'] || req.query.key) === ADMIN_KEY;
 
   // Release expired unpaid reservations (lazy sweep — no cron needed)
   function sweep() {
