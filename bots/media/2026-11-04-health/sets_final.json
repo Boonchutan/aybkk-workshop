@@ -1,0 +1,374 @@
+{
+ "A": [
+  {
+   "n": 1,
+   "row": {
+    "photo": "04-030",
+    "id": "A1",
+    "word": "MOVE",
+    "line": "Sitting feels easy. A still body gets old faster.",
+    "credit": "9 voices · swipe",
+    "wmain": 0.3,
+    "tight": true
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 2,
+   "row": {
+    "photo": "03-113",
+    "id": "A2",
+    "word": "IDLE",
+    "line": "Idle body parts, the unused ones, get old fast. An old Greek medical book saw it in a leg with a bad hip. Parts used the right amount \"age slowly\". Idle ones \"age quickly\".",
+    "credit": "Hippocratic writings · On Joints 58, tr. 1928"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 3,
+   "row": {
+    "photo": "04-166",
+    "id": "A3",
+    "word": "DAILY",
+    "line": "She did yoga daily, and could still do headstand in her 90s. A yoga teacher in south India began yoga as a child. She did peacock asana too, in a saree.",
+    "credit": "V. Nanammal · The News Minute, 2019 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 4,
+   "row": {
+    "photo": "04-198",
+    "id": "A4",
+    "word": "LATE",
+    "line": "She started late, at 65, and taught fitness at 87. A Japanese housewife had \"never exercised before\". At 90 she walked and jogged from about 4 a.m. \"every day\", unless it rained.",
+    "credit": "Takishima Mika · Nippon.com, 2021"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 5,
+   "row": {
+    "photo": "03-088",
+    "id": "A5",
+    "word": "EARLY",
+    "line": "You can get old too early, even at 32. In a famous Russian novel, Oblomov lay down most of the time. He went flabby too soon, maybe from too little movement or fresh air.",
+    "credit": "Ivan Goncharov · Oblomov, 1859 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 6,
+   "row": {
+    "photo": "04-122",
+    "id": "A6",
+    "word": "ANYWAY",
+    "line": "You can hate working out and do it anyway. At 95, this American fitness star still worked out \"seven days a week\". \"I hate it, but I love the results,\" he said.",
+    "credit": "Jack LaLanne · NBC Bay Area, 2009"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 7,
+   "row": {
+    "photo": "03-006",
+    "id": "A7",
+    "word": "OLDEST",
+    "line": "Being the oldest didn't make him the slowest. A Thai grandpa ran his first marathon at 72. He beat half the \"much younger racers\". In his 90s, he still raced 10 km.",
+    "credit": "Peng Perngsa · Coconuts Bangkok, 2014"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 8,
+   "row": {
+    "photo": "04-233",
+    "id": "A8",
+    "word": "WALK",
+    "line": "Walk every day, and you may walk away from feeling sick. A Danish thinker wrote this about himself in an 1847 letter. Sitting still did the opposite. His best thoughts came on walks.",
+    "credit": "Søren Kierkegaard · letter, 1847 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 9,
+   "row": {
+    "photo": "03-156",
+    "id": "A9",
+    "word": "HABIT",
+    "line": "Japan made a morning habit that anyone can do. Its radio exercise show, Radio Taiso, began in 1928. Today it is on at 6:30 every morning, for about ten minutes.",
+    "credit": "Radio Taiso · Japankuru, 2020 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 10,
+   "row": {
+    "photo": "04-016",
+    "id": "A10",
+    "word": "LIFE",
+    "line": "She joined a gym in her 60s, and means to keep going for life. A retired Shanghai worker trained daily at 68. \"I will work out as long as I'm still alive.\"",
+    "credit": "Chen Jifang · AFP, 2020"
+   },
+   "auto": null,
+   "log": null
+  }
+ ],
+ "B": [
+  {
+   "n": 1,
+   "row": {
+    "photo": "04-154",
+    "id": "B1",
+    "word": "STRONG",
+    "line": "Everyone gets old. Not everyone gets weak.",
+    "credit": "9 real stories · swipe",
+    "wmain": 0.3,
+    "tight": true
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 2,
+   "row": {
+    "photo": "03-118",
+    "id": "B2",
+    "word": "START",
+    "line": "You can start running at 93. A woman in India began when her son asked. At 101 she ran 100 m at the World Masters Games. \"There's no full stop,\" she said.",
+    "credit": "Man Kaur · AFP, 2017"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 3,
+   "row": {
+    "photo": "04-266",
+    "id": "B3",
+    "word": "FAMILY",
+    "line": "Strength can be a family habit. At 99, a Japanese ski teacher skied Mont Blanc's White Valley. Three generations of his family skied it together. He kept skiing past 100.",
+    "credit": "Keizo Miura · AP, 2006 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 4,
+   "row": {
+    "photo": "03-120",
+    "id": "B4",
+    "word": "YOUNG",
+    "line": "Your body can stay young, even if you start at 50. A Russian man felt old, so he began running and skiing. By 86 he had 20 world titles for older athletes.",
+    "credit": "Akhmet Siraziev · Sport-Express, 2014 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 5,
+   "row": {
+    "photo": "03-126",
+    "id": "B5",
+    "word": "BETTER",
+    "line": "You can still get better after 100. Scientists tested one French cyclist at 101, then at 103. In between, he trained for two years. His heart-and-lung fitness rose 13%, his power 39%.",
+    "credit": "Robert Marchand · J Appl Physiol, 2017 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 6,
+   "row": {
+    "photo": "04-220",
+    "id": "B6",
+    "word": "GENTLE",
+    "line": "Strong and gentle go together. A Japanese judo master in San Francisco got judo's highest rank at 98. Her motto: \"Be Strong, Be Gentle, Be Beautiful in Mind, Body, and Spirit.\"",
+    "credit": "Keiko Fukuda · Soko Joshi Judo Club"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 7,
+   "row": {
+    "photo": "04-308",
+    "id": "B7",
+    "word": "GRACE",
+    "line": "Grace doesn't have to retire. A Russian ballerina danced the ballet Carmen about 350 times. She danced it last at 65. After that, she still danced on the tips of her toes.",
+    "credit": "Maya Plisetskaya · The Arts Desk, 2015 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 8,
+   "row": {
+    "photo": "04-110",
+    "id": "B8",
+    "word": "FLEXIBLE",
+    "line": "You can still be flexible at 86. A German gymnast did a floor and beam routine in Rome. Her advice: \"find the sport that is right for you, and get started.\"",
+    "credit": "Johanna Quaas · Guinness World Records, 2012"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 9,
+   "row": {
+    "photo": "04-311",
+    "id": "B9",
+    "word": "BALANCE",
+    "line": "Balance beats pushing. A retired Canadian teacher began track at 77 and set world records. \"If you undertrain, you might not finish,\" she said. \"If you overtrain, you might not start.\"",
+    "credit": "Olga Kotelko · NYT Magazine, 2010"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 10,
+   "row": {
+    "photo": "03-083",
+    "id": "B10",
+    "word": "JOY",
+    "line": "Hard training can feel like joy. At 56, after trying on a swimsuit, an American woman began exercising. Guinness named her the oldest performing female bodybuilder. \"Exercise is not work, it's fun.\"",
+    "credit": "Ernestine Shepherd · VOA News, 2018"
+   },
+   "auto": null,
+   "log": null
+  }
+ ],
+ "C": [
+  {
+   "n": 1,
+   "row": {
+    "photo": "03-033",
+    "id": "C1",
+    "word": "ALIVE",
+    "line": "A weak body gets through the day. A strong body lives it.",
+    "credit": "9 real sources · swipe",
+    "wmain": 0.3,
+    "tight": true
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 2,
+   "row": {
+    "photo": "03-069",
+    "id": "C2",
+    "word": "FIRST",
+    "line": "Your body comes first. In an Indian poem, a young monk asks Parvati: is your hard practice within your strength? The body is the first tool for doing good. He was Shiva in disguise.",
+    "credit": "Kalidasa · Kumarasambhava 5.33 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 3,
+   "row": {
+    "photo": "04-306",
+    "id": "C3",
+    "word": "DREAM",
+    "line": "A big dream can still come true at 80. A Japanese climber broke his hip, then had heart surgery. He said, \"I am still healthy and strong,\" and climbed Everest.",
+    "credit": "Yuichiro Miura · CNN, 2013"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 4,
+   "row": {
+    "photo": "04-278",
+    "id": "C4",
+    "word": "RICH",
+    "line": "A strong poor person is better off than a sick rich one. This comes from an old book found in many Bibles. It says, \"There is no riches above a sound body.\"",
+    "credit": "Sirach 30:14-16 · King James Bible, 1611"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 5,
+   "row": {
+    "photo": "04-025",
+    "id": "C5",
+    "word": "HAPPY",
+    "line": "Being happy is mostly a body thing. A Chinese writer said, \"Happiness for me is largely a matter of digestion.\" For him, one true joy was waking up rested and breathing deep.",
+    "credit": "Lin Yutang · The Importance of Living, 1937"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 6,
+   "row": {
+    "photo": "04-282",
+    "id": "C6",
+    "word": "GAIN",
+    "line": "Not getting sick is the best thing you can gain. In India, the Buddha said, \"Health is the greatest of gifts.\" Thai people still quote it today.",
+    "credit": "The Buddha · Dhammapada 204, tr. Max Müller"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 7,
+   "row": {
+    "photo": "04-095",
+    "id": "C7",
+    "word": "MOOD",
+    "line": "Strength training is for your mood, not just your muscles. Scientists in Europe and the US checked 33 studies with about 1,900 adults. On average, those who trained felt less depressed.",
+    "credit": "Gordon et al. · JAMA Psychiatry, 2018 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 8,
+   "row": {
+    "photo": "04-076",
+    "id": "C8",
+    "word": "MISTAKE",
+    "line": "The biggest mistake is giving up health for success. A German thinker called it the most foolish choice of all. With health, he wrote, \"everything is a source of pleasure.\"",
+    "credit": "Schopenhauer · The Wisdom of Life, tr. Saunders"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 9,
+   "row": {
+    "photo": "04-304",
+    "id": "C9",
+    "word": "BLOOM",
+    "line": "Some people bloom in autumn, not spring. A great Russian poet wrote that every autumn he bloomed again. Sleep and hunger came on time, he loved his habits again, and felt young.",
+    "credit": "Alexander Pushkin · Autumn, 1833 (retold)"
+   },
+   "auto": null,
+   "log": null
+  },
+  {
+   "n": 10,
+   "row": {
+    "photo": "04-057",
+    "id": "C10",
+    "word": "PRAY",
+    "line": "If you pray for anything, pray for a healthy body and mind. A Roman poet called it \"a sound mind in a sound body.\" Russians and Japanese say a version of it.",
+    "credit": "Juvenal · Satire X, tr. Lewis Evans"
+   },
+   "auto": null,
+   "log": null
+  }
+ ]
+}
