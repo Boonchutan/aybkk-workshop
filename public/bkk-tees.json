@@ -1,8 +1,10 @@
 {
  "about": [
-  "AYBKK tees on aybkk.net (Bangkok). Order on LINE @aybkk, pick up at the shala. The China shop (shop-seed.json) is separate.",
+  "AYBKK tees on aybkk.net (Bangkok). Order on LINE @aybkk, pick up at the shala. The China shop (shop-seed.json) is separate, and cn.aybkk.net does not show this list.",
   "price: baht before VAT; the page shows it as \"790 THB + 7% VAT\". A tee may have its own \"price\".",
   "Each tee: show (true or false), name (the Bangkok name), photo (/img/tees/...), sizes, optional colours. from = the China shop ids it came from (not shown).",
+  "A colour is {\"en\", \"th\", \"zh\", \"ru\"}. When the colours of one design come in different sizes, write each as {\"name\": {...}, \"sizes\": [...]} and leave out the tee's own sizes: the card then lists each colour with its sizes.",
+  "Sizes were copied from the China shop stock list on 4 Nov 2026. Check them against the tees at the shala.",
   "The page shows the first 8 shown tees, then a \"Show all tees\" button."
  ],
  "price": 790,
@@ -13,7 +15,10 @@
    "name": "AYBKK Back Logo",
    "photo": "/img/tees/40.jpg",
    "sizes": ["S", "M", "L", "XL"],
-   "colours": ["Green", "Burgundy"],
+   "colours": [
+    {"en": "Green", "th": "เขียว", "zh": "绿色", "ru": "Зелёный"},
+    {"en": "Burgundy", "th": "เลือดหมู", "zh": "酒红色", "ru": "Бордовый"}
+   ],
    "from": ["tee-40", "tee-41"]
   },
   {
@@ -25,7 +30,7 @@
   },
   {
    "show": true,
-   "name": "Hefei · Purple Tithibasana",
+   "name": "Hefei · Purple Tittibhasana",
    "photo": "/img/tees/38.jpg",
    "sizes": ["S", "M", "L", "XL"],
    "from": ["tee-38"]
@@ -41,16 +46,22 @@
    "show": true,
    "name": "AYBKK Seal Logo",
    "photo": "/img/tees/8.jpg",
-   "sizes": ["S", "M", "L", "XL"],
-   "colours": ["Light brown", "Blue", "Black", "Colour print on black"],
+   "colours": [
+    {"name": {"en": "Light brown", "th": "น้ำตาลอ่อน", "zh": "浅棕色", "ru": "Светло-коричневый"}, "sizes": ["M"]},
+    {"name": {"en": "Blue", "th": "น้ำเงิน", "zh": "蓝色", "ru": "Синий"}, "sizes": ["M", "L", "XL"]},
+    {"name": {"en": "Black", "th": "ดำ", "zh": "黑色", "ru": "Чёрный"}, "sizes": ["M"]},
+    {"name": {"en": "Colour print on black", "th": "ดำ ลายพิมพ์หลายสี", "zh": "黑底彩印", "ru": "Чёрный, цветной принт"}, "sizes": ["S", "M"]}
+   ],
    "from": ["tee-6", "tee-8", "tee-9", "tee-26"]
   },
   {
    "show": true,
    "name": "AYBKK Colour Letters",
    "photo": "/img/tees/18.jpg",
-   "sizes": ["M", "L", "XL"],
-   "colours": ["Black", "White"],
+   "colours": [
+    {"name": {"en": "Black", "th": "ดำ", "zh": "黑色", "ru": "Чёрный"}, "sizes": ["M", "L", "XL"]},
+    {"name": {"en": "White", "th": "ขาว", "zh": "白色", "ru": "Белый"}, "sizes": ["L"]}
+   ],
    "from": ["tee-18", "tee-19"]
   },
   {
@@ -62,21 +73,21 @@
   },
   {
    "show": true,
-   "name": "Qingdao · Urdhva Kukuta",
+   "name": "Qingdao · Urdhva Kukkutasana",
    "photo": "/img/tees/16.jpg",
    "sizes": ["S", "M", "L", "XL"],
    "from": ["tee-16"]
   },
   {
    "show": true,
-   "name": "Guangzhou · Grey Viranchayasana A",
+   "name": "Guangzhou · Grey Viranchyasana A",
    "photo": "/img/tees/2.jpg",
    "sizes": ["S", "M", "L"],
    "from": ["tee-2"]
   },
   {
    "show": true,
-   "name": "Suzhou · Yellow Maricasana H",
+   "name": "Suzhou · Yellow Marichyasana H",
    "photo": "/img/tees/3.jpg",
    "sizes": ["S", "M", "L", "XL"],
    "from": ["tee-3"]
@@ -120,8 +131,10 @@
    "show": true,
    "name": "Red Indepth",
    "photo": "/img/tees/13.jpg",
-   "sizes": ["S", "M", "L"],
-   "colours": ["Grey", "White"],
+   "colours": [
+    {"name": {"en": "Grey", "th": "เทา", "zh": "灰色", "ru": "Серый"}, "sizes": ["S", "M", "L"]},
+    {"name": {"en": "White", "th": "ขาว", "zh": "白色", "ru": "Белый"}, "sizes": ["S"]}
+   ],
    "from": ["tee-13", "tee-14"]
   },
   {
@@ -161,7 +174,7 @@
   },
   {
    "show": true,
-   "name": "Sharathji Tithiba",
+   "name": "Sharathji Tittibhasana",
    "photo": "/img/tees/22.jpg",
    "sizes": ["L"],
    "from": ["tee-22"]
@@ -203,7 +216,7 @@
   },
   {
    "show": true,
-   "name": "Rino",
+   "name": "Rhino",
    "photo": "/img/tees/27.jpg",
    "sizes": ["S", "M", "XL"],
    "from": ["tee-27"]

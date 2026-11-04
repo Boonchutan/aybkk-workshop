@@ -201,13 +201,15 @@
   header.hero .mast span{display:block;font-weight:400}
   .h12h{grid-row:3;margin:56px 0 0;font:800 var(--fs-d)/.94 var(--f-head);letter-spacing:-.04em;color:var(--hero-ink);
     font-variant-numeric:lining-nums;text-wrap:balance}
-  .h12s{grid-row:4;margin:28px 0 0;font-size:var(--fs-l);line-height:1.3;color:var(--hero-muted);max-width:26ch}
+  .h12s{grid-row:4;margin:28px 0 0;font-size:var(--fs-l);line-height:1.3;color:var(--hero-muted);max-width:26ch;text-wrap:balance}
+  /* 26ch is counted in Latin zeros: about 14 Chinese characters, so a date broke in two. */
+  :lang(zh-Hans) .h12s,:lang(zh-Hans) .facts li{max-width:none;word-break:keep-all}
   header.hero .cta{grid-row:5;display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:28px}
   header.hero .cta .btn{width:100%;min-height:56px;font-size:var(--fs-b)}
   header.hero .more{display:inline-flex;align-items:center;min-height:44px;color:var(--hero-ink);font-weight:600}
   .facts{grid-row:6;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--g);
     list-style:none;margin:28px 0 56px;padding:0}
-  .facts li{border-top:2px solid var(--hero-rule);padding:12px 0 14px;font-size:var(--fs-s);line-height:20px;color:var(--hero-ink)}
+  .facts li{border-top:2px solid var(--hero-rule);padding:12px 0 14px;font-size:var(--fs-s);line-height:20px;color:var(--hero-ink);text-wrap:balance}
   .facts li:last-child{grid-column:1/-1}
   header.hero .pic{grid-column:full-start/full-end;grid-row:7;display:block;position:relative;aspect-ratio:4/5;overflow:hidden}
   header.hero .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:46% 50%;display:block}
@@ -216,9 +218,7 @@
   @media (min-width:700px){
     header.hero .cta{flex-direction:row;align-items:center;gap:28px}
     header.hero .cta .btn{width:auto}
-    .facts{grid-template-columns:repeat(3,minmax(0,1fr))}
     .facts li{font-size:var(--fs-b);line-height:28px}
-    .facts li:last-child{grid-column:auto}
     header.hero .pic{aspect-ratio:3/2}
   }
   @media (min-width:1100px){
@@ -271,7 +271,7 @@
   .vs thead .k{display:none}
   .vs .a{grid-column:1/3;color:var(--aub-muted)}
   .vs .b{grid-column:3/5;color:var(--aub-ink)}
-  .vs thead th{font-size:var(--fs-l);line-height:1.2}
+  .vs thead th{font-size:var(--fs-l);line-height:1.2;text-wrap:balance}
   .vs thead .b{font-weight:700}
   .vs.hl-a .a{color:var(--aub-ink)}
   .vs.hl-a .b{color:var(--aub-muted)}
@@ -339,8 +339,15 @@
     .pair > #mysore{grid-column:c 1/c 5;grid-template-columns:[c-start] repeat(4,[c] minmax(0,1fr)) [c-end]}
     .pair > #first{grid-column:c 5/c-end;margin-top:0;grid-template-columns:[c-start] repeat(8,[c] minmax(0,1fr)) [c-end]}
     .pair > .sec::after{grid-column:c-start/c-end}
-    .pair > .sec > h2{grid-row:3;font-size:calc(var(--fs-h)*.75)}
+    .pair > .sec > h2{grid-row:3;font-size:calc(var(--fs-h)*.75);min-height:calc(2*1.06em)}
+    :lang(th) .pair > .sec > h2{min-height:calc(2*1.3em)}
+    :lang(zh-Hans) .pair > .sec > h2{min-height:calc(2*1.2em)}
     #first .points{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:column;grid-template-rows:repeat(3,auto);column-gap:var(--g)}
+  }
+
+  @media (min-width:700px) and (max-width:1099px){
+    .points,.plan > p,.bios{max-width:calc((100% - 7*var(--g))*.75 + 5*var(--g))}   /* 6 of the 8 columns it sits in */
+    #first .points{max-width:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:column;grid-template-rows:repeat(3,auto);column-gap:var(--g)}
   }
 
   /* ── #moments */
@@ -356,7 +363,6 @@
   .plan h3,.mnotes h3{margin:0 0 14px;font:700 var(--fs-l)/1.3 var(--f-text);color:var(--ink)}
   .plan .line{margin:0 0 14px}
   .plan > p{margin:0 0 14px}
-  .plan > p{max-width:62ch}
   .plan .camp{padding:12px 16px;background:var(--promo-soft);border-left:4px solid var(--promo);color:var(--promo-deep);font-weight:500}
   .rows{list-style:none;margin:0;padding:0}
   .rows li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 0;border-top:2px solid var(--line)}
@@ -373,13 +379,16 @@
   .rows .pv small{display:block;font-size:var(--fs-s);line-height:20px;color:var(--soft);white-space:nowrap}
   .buy{background:var(--promo);color:var(--promo-ink)}
   .buy:hover{background:var(--promo-hi);color:var(--promo-ink)}
-  .plan .buy{min-height:56px}
+  .plan .buy{min-height:56px;font-size:var(--fs-b);font-weight:700}
+  @media (min-width:700px){ .plan .btn{display:inline-flex;width:auto} }
   /* Gold is for the promotion only: "See packages" is the normal action. */
   #newPkgs{background:var(--act);color:var(--act-ink)}
   @media (hover:hover){ #newPkgs:hover{background:var(--act-hi);color:var(--act-hi-ink)} }
   .prices .fair{margin:var(--grp) 0 14px;font:700 var(--fs-l)/1.3 var(--f-text)}
   .prices .fine{margin:0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
   .prices .fine a{color:var(--ink);font-weight:600}
+  /* Inline links in small print: a 44px tap area without moving the lines around them. */
+  .tq figcaption a,.prices .fine a{display:inline-block;min-width:44px;padding-block:12px;margin-block:-12px;white-space:nowrap}
   .mnotes{margin-top:var(--grp);padding-top:14px;border-top:2px solid var(--ink)}
   .mnotes ul{list-style:none;margin:0;padding:0}
   .mnotes li{padding:14px 0;border-top:2px solid var(--line)}
@@ -393,6 +402,7 @@
     .plan > h3,.mnotes > h3{grid-column:c 1/c 5;grid-row:1;padding-right:var(--g)}
     .plan.feature > .line{grid-column:c 1/c 5;grid-row:2;padding-right:var(--g)}
     .plan > .rows{grid-row:1/span 3}
+    .plan > p{grid-column:c 5/c 11}
     #prices .fair{grid-column:c 5/c-end}
     #prices .fine{grid-column:c 5/c 11}
     #prices .mnotes{grid-column:c 1/c-end}
@@ -404,11 +414,13 @@
   .tee img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;object-position:50% 45%;background:var(--paper)}
   .tee h3{margin:14px 0 4px;font:700 var(--fs-b)/28px var(--f-text);overflow:hidden;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-  .tee p{margin:0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
-  .tee .tp{margin:4px 0;font-size:var(--fs-b);line-height:28px;font-weight:700;color:var(--plum);font-variant-numeric:tabular-nums}
-  .tee .btn{width:100%;margin-top:auto;padding-inline:12px}
-  .tee .ts{margin-bottom:14px}
+  .tee p,.tee li{margin:0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  .tee ul{list-style:none;margin:0;padding:0}
+  .tee .tp{margin:auto 0 14px;padding-top:14px;font-size:var(--fs-b);line-height:28px;font-weight:700;color:var(--plum);font-variant-numeric:tabular-nums}
+  .tee .tp span{white-space:nowrap}
+  .tee .btn{width:100%;padding-inline:12px}
   @media (min-width:700px){ .tees{grid-template-columns:repeat(4,minmax(0,1fr))} }
+  @media (max-width:1099px){ .tee .btn{font-size:var(--fs-s)} }
   @media (min-width:1100px){ #tees .tees{grid-column:c 1/c-end} }
 
   /* ── #letter */
@@ -453,12 +465,14 @@
   }
 
   /* ── Booking app head and tabs. The nav stays a direct child of body, or sticky stops working. */
-  .bookhead{padding-bottom:28px}
+  /* Routes into the app land 14px above this rule, not on the band's blank top half. */
+  .bookhead{padding-bottom:28px;scroll-margin-top:calc(14px - var(--gap)/2)}
   .bookhead > h2{margin-bottom:0}
   nav.tabs{display:flex;position:sticky;top:0;z-index:5;padding:0 var(--m);background:var(--wall);border-bottom:2px solid var(--ink)}
   nav.tabs button{flex:1;position:relative;min-width:0;min-height:56px;padding:0;border:0;background:none;text-align:left;cursor:pointer;
     font:600 var(--fs-b)/1.2 var(--f-text);color:var(--soft)}
   nav.tabs button.on{color:var(--ink)}
+  @media (max-width:419px){ :lang(ru) nav.tabs button{font-size:var(--fs-s)} }
   nav.tabs button.on::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:4px;background:var(--ink)}
   @media (min-width:1100px){
     nav.tabs{display:grid;padding:0}
@@ -467,6 +481,10 @@
     nav.tabs #t-me{grid-column:c 9/c 11}
   }
   main{padding:28px var(--m) 112px}
+  @media (min-width:700px) and (max-width:1099px){
+    main{width:var(--W);margin-inline:auto;padding-left:0;padding-right:calc(var(--colw) + var(--g))}
+  }
+  @media (min-width:900px) and (max-width:1099px){ main{padding-right:calc(2*(var(--colw) + var(--g)))} }
   @media (min-width:1100px){
     main{width:var(--W);margin-inline:auto;padding-left:calc(4*(var(--colw) + var(--g)));padding-right:calc(var(--colw) + var(--g))}
   }
@@ -474,10 +492,17 @@
   /* ── Footer (dark field) */
   footer{background:var(--header);color:var(--hero-ink);padding:84px 0 56px;--ring:var(--hero-ink)}
   footer::before{content:"";grid-column:c-start/c-end;height:4px;margin-bottom:56px;background:var(--hero-ink)}
-  footer .brush{font-size:clamp(88px,30vw,360px);line-height:.8;color:var(--hero-ink);justify-self:start}
+  footer .brush{font-size:clamp(88px,30vw,360px);line-height:.8;color:var(--hero-ink);justify-self:start;margin-left:-.063em}
   footer .faddr{margin:28px 0 0;font-size:var(--fs-s);line-height:20px;color:var(--hero-muted)}
   @media (min-width:700px){ footer .faddr{font-size:var(--fs-b);line-height:28px} }
   @media (min-width:1100px){ footer .faddr{grid-column:c 1/c 9} footer .cklink{grid-column:c 9/c-end;grid-row:3;justify-self:end;align-self:end} }
+
+  /* ── Thai: the Plex Thai file has one weight, so a bold run showed bold digits and Latin beside
+     regular Thai letters. Medium for both, with no fake bold. (No :is(): older WeChat kernels.) */
+  :lang(th) .sec::after,:lang(th) .habsub,:lang(th) .hab b,:lang(th) .hab .hn,:lang(th) .vs thead th,:lang(th) .teacher .auth,
+  :lang(th) .plan h3,:lang(th) .mnotes h3,:lang(th) .rows .pn > span,:lang(th) .fair,:lang(th) .tee h3,:lang(th) .tee .tp,
+  :lang(th) .nlq,:lang(th) #find .addr,:lang(th) #find h3,:lang(th) .btn,:lang(th) .readmore,:lang(th) nav.tabs button,
+  :lang(th) .day,:lang(th) .pkg h3,:lang(th) dialog h3{font-weight:500;font-synthesis:none}
 
   /* ── Motion: each section's rule wipes in from the left, once. */
   @media (prefers-reduced-motion:no-preference){
@@ -709,6 +734,7 @@
   input,select{width:100%;min-height:48px;padding:10px 12px;border:2px solid var(--soft);border-radius:0;
     font:400 16px/1.4 var(--f-text);background:var(--wall);color:var(--ink)}
   input:focus,select:focus{outline:3px solid var(--ring);outline-offset:0}
+  .dacts{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 0}
   .msg{padding:12px 14px;margin-top:12px;font-size:14px;line-height:1.5}
   .msg.ok{background:var(--blush);color:var(--plum)}
   .msg.bad{background:#fdeaea;color:#a33}
@@ -728,8 +754,8 @@
     font:inherit;border:none;border-radius:0;min-height:56px;padding:14px 46px 14px 18px;position:relative;
     background:var(--promo);color:var(--promo-ink)}
   .grp.past .grp-h{background:var(--promo-ink);color:var(--promo-hi)}
-  .grp-h span{font-family:'Plex',sans-serif;font-weight:700;font-size:19px;line-height:1.15}
-  .grp-h small{font-size:13px;font-weight:500;opacity:.85}
+  .grp-h span{font-family:'Plex',sans-serif;font-weight:700;font-size:var(--fs-b);line-height:1.15}
+  .grp-h small{font-size:var(--fs-s);font-weight:500}
   .grp-h i{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-style:normal;font-size:22px;font-weight:900}
   .offers{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:10px}
   .offer .oc{display:block;margin-top:8px;font-weight:800;font-size:15px;color:var(--promo-deep)}
@@ -737,7 +763,7 @@
   .offer{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);cursor:pointer;line-height:1.35;
     background:var(--paper);border:0;border-top:4px solid transparent;border-radius:0;padding:14px 16px 16px}
   .offer[aria-pressed="true"]{border-top-color:var(--promo)}
-  .offer .tag{display:inline-block;font-size:15px;font-weight:800;letter-spacing:.02em;
+  .offer .tag{display:inline-block;font-size:var(--fs-s);font-weight:800;
     padding:6px 14px;background:var(--promo);color:var(--promo-ink)}
   .offer .tag.past{background:var(--promo-ink);color:var(--promo-hi)}
   .offer .ot{display:block;margin-top:8px;font:700 var(--fs-s)/20px var(--f-text);color:var(--soft)}
@@ -789,7 +815,7 @@
   <ul class="facts">
     <li data-i18n="heroF1">Mysore style since 2013</li>
     <li data-i18n="heroF2">Sukhumvit 31, Bangkok</li>
-    <li data-i18n="auth">Authorized Level 2 by R. Sharath Jois</li>
+    <li data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</li>
   </ul>
   <picture class="pic"><source media="(min-width:700px)" srcset="/img/aybkk-hero-1600.jpg">
     <img src="/img/aybkk-hero-900.jpg" width="900" height="1000" alt="Jamsai, R. Sharath Jois and Boonchu at the AYBKK shala wall" fetchpriority="high" decoding="async"></picture>
@@ -844,7 +870,7 @@
       <div class="bios">
         <div class="bio">
           <div class="name">Boonchu Tanti</div>
-          <div class="auth" data-i18n="auth">Authorized Level 2 by R. Sharath Jois</div>
+          <div class="auth" data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</div>
           <div class="txt" id="bioB">
             <p data-i18n="bio1">Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.</p><p data-i18n="bio2">He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.</p><p data-i18n="bio3">In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga. AYBKK has been the home shala of Bangkok’s Ashtanga community since 2013. Several of Bangkok’s Ashtanga teachers practised and assisted here before opening their own shalas.</p><p data-i18n="bio4">His teaching looks at how each body works, and at the student's own commitment. Every body is different, and so is every practice.</p>
           </div>
@@ -852,7 +878,7 @@
         </div>
         <div class="bio">
           <div class="name">Jamsai Tanti</div>
-          <div class="auth" data-i18n="auth">Authorized Level 2 by R. Sharath Jois</div>
+          <div class="auth" data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</div>
           <div class="txt" id="bioJ">
             <p data-i18n="jbio1">Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.</p><p data-i18n="jbio2">The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.</p><p data-i18n="jbio3">She runs AYBKK and teaches led, Mysore and private classes. She also organised Sharath Jois’s workshop in Bangkok. Her teaching puts breath, clear alignment and an active vinyasa first.</p><p data-i18n="jbio4">She kept practising through both of her pregnancies, into the Advanced series, and still practises and teaches as a mother.</p>
           </div>
@@ -1041,17 +1067,19 @@
   // Storage can be blocked (privacy settings, some in-app browsers): then nobody is signed in.
   const myCode = () => { try { return localStorage.getItem('aybkk_member') || ''; } catch (_) { return ''; } };
   // Home page data, read once: the Bangkok tees and the monthly theme (renderTees, loadTheme).
-  let TEES_P = null, TEES_ALL = false;
+  let TEES_P = null, TEES_R = null, TEES_ALL = false;
   const TEES_FIRST = 8;
+  // cn.aybkk.net serves this page too: China has its own tee shop in RMB, and LINE is blocked there.
+  const CN_HOST = /^cn\./.test(location.hostname);
   const list = v => (Array.isArray(v) ? v : String(v ?? '').split(/[,\s/]+/)).map(x => String(x).trim()).filter(Boolean);
-  const THEME = { checked: null, month: null, data: null };
+  const THEME = { checked: null, now: null, month: null, data: null, files: {} };
 
   const STR = {
     en: {
       ctaTimetable: 'See timetable', ctaStart: 'New? Start here',
       teacherH: 'Your teacher',
       caption: 'Jamsai, R. Sharath Jois and Boonchu at AYBKK',
-      auth: 'Authorized Level 2 by R. Sharath Jois',
+      auth: 'Authorized Level 2 by R.\u00a0Sharath\u00a0Jois',
       bio1: 'Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.',
       bio2: 'He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.',
       bio3: 'In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga. AYBKK has been the home shala of Bangkok’s Ashtanga community since 2013. Several of Bangkok’s Ashtanga teachers practised and assisted here before opening their own shalas.',
@@ -1089,7 +1117,7 @@
       campBtn: 'Get the promotion on LINE',
       newCamp: 'Until 11 Nov 2026: Duo, buy 1 get 1 free, or the Rookie Pack, 5,900. Book the promotion on LINE @aybkk. Start by 12 Nov.',
       visitH: 'Visiting?',
-      dropIn: 'Drop-in',
+      dropIn: 'Drop-\u2060in',
       dropInSub: 'For students who know the sequence',
       pack10: '10-class pack',
       pack10Sub: 'Valid 3 months',
@@ -1141,7 +1169,7 @@
       ctaTimetable: 'ดูตารางเรียน', ctaStart: 'มือใหม่? เริ่มที่นี่',
       teacherH: 'ครูของคุณ',
       caption: 'Jamsai, R. Sharath Jois และ Boonchu ที่ AYBKK',
-      auth: 'ได้รับ Authorization Level 2 จาก R. Sharath Jois',
+      auth: 'ได้รับ Authorization Level 2 จาก R.\u00a0Sharath\u00a0Jois',
       bio1: 'Boonchu เคยเป็นวิศวกรเครื่องกล เขาเริ่มฝึกอัษฎางคโยคะในปี 2008 ขณะอาศัยอยู่ที่สหรัฐอเมริกา',
       bio2: 'เขาเรียนกับ Sharath Jois ที่เมืองมายซอร์ตั้งแต่ปี 2008 และเป็นเจ้าภาพต้อนรับ R. Sharath Jois ที่กรุงเทพฯ ในปี 2018 และ 2024',
       bio3: 'ปี 2013 เขาเปิด AYBKK ที่กรุงเทพฯ บ้านเกิดของเขา และยังสร้างเพจ Facebook "The Yoga Comics" ที่เล่าเรื่ององค์ 8 ของโยคะ AYBKK เป็นบ้านของชุมชนอัษฎางคะในกรุงเทพฯ ตั้งแต่ปี 2013 ครูอัษฎางคะหลายท่านในกรุงเทพฯ เคยฝึกและเป็นผู้ช่วยสอนที่นี่ ก่อนเปิดชาลาของตัวเอง',
@@ -1179,7 +1207,7 @@
       campBtn: 'รับโปรโมชันทาง LINE',
       newCamp: 'ถึง 11 พ.ย. 2026: DUO ซื้อ 1 แถม 1 หรือ ROOKIE PACK 5,900 สมัครโปรโมชันทาง LINE @aybkk เริ่มใช้ภายใน 12 พ.ย.',
       visitH: 'มาเยือนชั่วคราว?',
-      dropIn: 'ครั้งเดียว (drop-in)',
+      dropIn: 'ครั้งเดียว (drop-\u2060in)',
       dropInSub: 'สำหรับผู้ที่จำลำดับท่าได้แล้ว',
       pack10: 'แพ็ก 10 ครั้ง',
       pack10Sub: 'ใช้ได้ 3 เดือน',
@@ -1231,7 +1259,7 @@
       ctaTimetable: '查看课程表', ctaStart: '新学员？从这里开始',
       teacherH: '你的老师',
       caption: 'Jamsai、R. Sharath Jois 与 Boonchu 在 AYBKK',
-      auth: '获 R. Sharath Jois 授权 Level 2（Authorized Level 2）',
+      auth: '获 R.\u00a0Sharath\u00a0Jois 授权 Level\u00a02（Authorized\u00a0Level\u00a02）',
       bio1: 'Boonchu 曾是一名机械工程师。2008年他在美国生活时，开始练习阿斯汤加瑜伽。',
       bio2: '他自2008年起在迈索尔跟随 Sharath Jois 学习，并于2018年和2024年在曼谷接待 R. Sharath Jois。',
       bio3: '2013年，他在家乡曼谷创办了 AYBKK。他还创作了 Facebook 主页 The Yoga Comics（瑜伽漫画），讲解瑜伽八支。自2013年起，AYBKK 一直是曼谷阿斯汤加社群的家。曼谷多位阿斯汤加老师在开设自己的道场之前，曾在这里练习并担任助教。',
@@ -1269,7 +1297,7 @@
       campBtn: '通过 LINE 领取优惠',
       newCamp: '2026年11月11日前：DUO 买一送一，或 Rookie Pack 5,900。请通过 LINE @aybkk 报名优惠。需在11月12日前开始使用。',
       visitH: '短期来访？',
-      dropIn: '单次课（drop-in）',
+      dropIn: '单次课（drop-\u2060in）',
       dropInSub: '适合已熟悉序列的学生',
       pack10: '10次课卡',
       pack10Sub: '3个月内有效',
@@ -1321,7 +1349,7 @@
       ctaTimetable: 'Расписание', ctaStart: 'Новичок? Начните здесь',
       teacherH: 'Ваш учитель',
       caption: 'Jamsai, R. Sharath Jois и Boonchu в AYBKK',
-      auth: 'Авторизация Level 2 от R. Sharath Jois',
+      auth: 'Авторизация Level 2 от R.\u00a0Sharath\u00a0Jois',
       bio1: 'Boonchu — бывший инженер-механик. Он открыл для себя аштанга-йогу в 2008 году, когда жил в США.',
       bio2: 'С 2008 года он учится у Sharath Jois в Майсоре. В 2018 и 2024 годах он принимал R. Sharath Jois в Бангкоке.',
       bio3: 'В 2013 году он открыл AYBKK в родном Бангкоке. Он также создал страницу The Yoga Comics в Facebook — о восьми ступенях йоги. С 2013 года AYBKK — родная шала для аштанга-сообщества Бангкока. Несколько преподавателей аштанги в Бангкоке практиковали и ассистировали здесь, прежде чем открыть свои шалы.',
@@ -1359,7 +1387,7 @@
       campBtn: 'Получить акцию в LINE',
       newCamp: 'До 11 ноября 2026: Duo — купи 1, получи 1 бесплатно, или Rookie Pack за 5,900. Записаться на акцию — в LINE @aybkk. Начать — не позднее 12 ноября.',
       visitH: 'Вы проездом?',
-      dropIn: 'Разовое занятие (drop-in)',
+      dropIn: 'Разовое занятие (drop-\u2060in)',
       dropInSub: 'Для тех, кто знает последовательность',
       pack10: '10 занятий',
       pack10Sub: 'Действует 3 месяца',
@@ -1621,7 +1649,7 @@
     themeSrc: 'ที่มา',
   });
   Object.assign(STR.zh, {
-    heroF1: '2013年起教授迈索尔练习', heroF2: '曼谷 Sukhumvit 31', bookH: '预约课程',
+    heroF1: '2013年起，教授迈索尔练习', heroF2: '曼谷 Sukhumvit 31', bookH: '预约课程',
     teeOrder: '通过 LINE 订购', teeAll: '查看全部T恤', teeColours: '颜色',
     teePrice: (p, v) => `${p} 泰铢 + ${v}% 增值税`,
     teeMsg: (name, sizes, colours) => `你好 AYBKK，我想要这件T恤：${name}。${colours ? `颜色：[${colours}]。` : ''}尺码：[${sizes}]。我会到道场自取。`,
@@ -1839,6 +1867,14 @@
     $('#h12s').textContent = t(live ? 'h12S' : 'h12Sp');
     $('#h12Btn').textContent = t('h12Btn', baht(Math.round(total / days)));
   }
+  // Routes into the booking app land on its numbered heading; the sticky tabs sit right under it.
+  // (#book stays on the tabs: openCls measures their height.)
+  // No behavior given, so the page's scroll-behavior decides: smooth, or a jump with reduced motion.
+  const toBook = () => $('.bookhead').scrollIntoView({ block: 'start' });
+  document.querySelectorAll('a[href="#book"]:not(#newPkgs)').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    toBook();
+  }));
   $('#h12Btn').addEventListener('click', e => {
     e.preventDefault();
     if (promoLive()) {
@@ -1847,14 +1883,14 @@
       $('#calc').scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
       tab('packages');
-      $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toBook();
     }
   });
 
   $('#newPkgs').addEventListener('click', e => {
     e.preventDefault();
     tab('packages');
-    $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toBook();
   });
 
   function renderPromo() {
@@ -1866,11 +1902,12 @@
     const today = bkkTodayP();
     const tomorrow = addDays(today, 1) <= PROMO_LAST_START ? addDays(today, 1) : today;
     if (!P.start || P.start < today || P.start > PROMO_LAST_START) P.start = tomorrow;
+    const sc = s => s.charAt(0) + s.slice(1).toLowerCase();
     const opt = (group, val, label, on) =>
       `<button type="button" data-${group}="${val}" aria-pressed="${on}">${esc(label)}</button>`;
     const calc = o => `
       <div class="card calc" id="calc">
-      <h3>${esc(t('calcH'))} · ${esc(o.title)}</h3>
+      <h3>${esc(t('calcH'))} · ${esc(sc(o.title))}</h3>
       ${o.monthly ? `<div class="q">${esc(t('pkgQ'))}</div><div class="opts">${MONTHLY.map((m, i) =>
         opt('pkg', i, `${t('pm' + (i + 1))} · ${baht(o.off ? Math.round(m[1] * (100 - o.off[i]) / 100) : m[1])}`, P.pkg === i)).join('')}</div>` : ''}
       ${P.offer === 'duo' ? `<div class="q">${esc(t('whoQ'))}</div><div class="opts">${opt('who', 'me', t('whoMe'), P.who === 'me')}${opt('who', 'friend', t('whoFriend'), P.who === 'friend')}</div>` : ''}
@@ -1886,11 +1923,11 @@
       return `<div class="grp${open ? ' open' : ''}${past ? ' past' : ''}">
         <button type="button" class="grp-h" data-group="${g}" aria-expanded="${open}">
           <span>${esc(t(past ? 'tagPast' : 'tagNew'))}</span>
-          <small>${list.map(([, o]) => esc(o.title)).join(' · ')}</small><i>${open ? '▴' : '▾'}</i>
+          <small>${list.map(([, o]) => esc(sc(o.title))).join(' · ')}</small><i>${open ? '▴' : '▾'}</i>
         </button>
         ${open ? `<div class="offers">${list.map(([k, o]) => `
           <button type="button" class="offer" data-offer="${k}" aria-expanded="${P.offer === k}">
-            <span class="ot">${esc(o.title)}</span>
+            <span class="ot">${esc(sc(o.title))}</span>
             <span class="ob">${o.big ? esc(t(o.big)) : baht(o.price) + `<s>${esc(t('rookWas'))}</s>`}</span>
             <span class="od">${esc(t(o.desc))}</span>
             <span class="oc">${esc(t('calcH'))} ${P.offer === k ? '▴' : '▾'}</span>
@@ -1955,7 +1992,7 @@
     document.querySelectorAll('.readmore').forEach(b =>
       { b.textContent = t(b.parentElement.classList.contains('open') ? 'readLess' : 'readMore'); });
     renderPromo();
-    renderTees();
+    TEES_R = renderTees();
     renderTheme();
     if (typeof nlDefault === 'function') nlDefault();
   }
@@ -2034,7 +2071,26 @@
     setTimeout(() => { $('#wxCopy').textContent = t('copy'); }, 1800);
   });
   applyLang();
-  loadTheme();
+  // A deep link (/#prices, /book#letter) is scrolled to before the theme and the tees load and
+  // push it down by a few screens. Once they are in, go there again, unless the visitor has moved.
+  let moved = false;
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, () => { moved = true; }, { passive: true, capture: true }));
+  Promise.all([TEES_R, loadTheme()]).then(() => {
+    let id = '';
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) {}
+    const el = id && !moved && (id === 'book' ? $('.bookhead') : document.getElementById(id));
+    if (!el) return;
+    // Instant, then again on the next two frames: the browser's own smooth scroll can still add one step.
+    const root = document.documentElement;
+    const go = n => {
+      if (moved) return;
+      root.style.scrollBehavior = 'auto';
+      el.scrollIntoView({ block: 'start' });
+      root.style.scrollBehavior = '';
+      if (n) requestAnimationFrame(() => go(n - 1));
+    };
+    go(2);
+  });
   // Each section's rule wipes in once it scrolls into view. Without the observer (or with
   // reduced motion) nothing is hidden: the class that hides the rules is never set.
   if ('IntersectionObserver' in window && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
@@ -2521,7 +2577,7 @@
       if (act === 'buy') {
         if (promoLive()) return $('#promo').scrollIntoView({ behavior: 'smooth', block: 'start' });
         tab('packages');
-        return $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return toBook();
       }
       if (act === 'view') { setView(a.dataset.v); renderSchedule(); return focus(`[data-act="view"][data-v="${a.dataset.v}"]`); }
       if (act === 'month' || act === 'week') {
@@ -2736,7 +2792,10 @@
   }
 
   // Bangkok tees from public/bkk-tees.json (Boonchu edits it). Read once; drawn again on a language change.
+  // A colour can carry its own sizes ({"name": {...}, "sizes": [...]}): the card then lists each colour with its sizes.
+  const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL'];
   async function renderTees() {
+    if (CN_HOST) { $('#tees').hidden = true; return; }
     if (!TEES_P) TEES_P = fetch('/bkk-tees.json').then(r => r.ok ? r.json() : null).catch(() => null);
     const d = await TEES_P;
     const shown = d && Array.isArray(d.tees) ? d.tees.filter(x => x && x.show !== false && String(x.show).toLowerCase() !== 'no' && x.name) : [];
@@ -2744,17 +2803,27 @@
     if (!shown.length) return;
     const vat = Number(d.vat) > 0 ? Number(d.vat) : 7;
     const L = v => v && typeof v === 'object' ? v[LANG] || v.en || '' : String(v ?? '');
+    const lbl = k => t(k) + (LANG === 'zh' ? '：' : ': ');
+    const bySize = (a, b) => (SIZE_ORDER.indexOf(a) + 1 || 99) - (SIZE_ORDER.indexOf(b) + 1 || 99);
     $('#teeList').innerHTML = (TEES_ALL ? shown : shown.slice(0, TEES_FIRST)).map(x => {
-      const name = L(x.name), sizes = list(x.sizes), colours = list(x.colours).length ? (Array.isArray(x.colours) ? x.colours : [x.colours]).map(L) : [];
+      const name = L(x.name), sizes = list(x.sizes);
+      const colours = (Array.isArray(x.colours) ? x.colours : x.colours ? [x.colours] : [])
+        .map(c => c && typeof c === 'object' && 'name' in c ? { name: L(c.name), sizes: list(c.sizes) } : { name: L(c), sizes: [] })
+        .filter(c => c.name);
+      const own = colours.some(c => c.sizes.length);
+      const all = [...new Set(own ? colours.flatMap(c => c.sizes.length ? c.sizes : sizes) : sizes)].sort(bySize);
       const price = Number(x.price) > 0 ? Number(x.price) : Number(d.price) || 0;
-      const msg = t('teeMsg', name, sizes.join(' / ') || 'S / M / L / XL', colours.join(' / '));
+      // "790 THB" and "+ 7% VAT" each stay whole, so a narrow card breaks the price only between them.
+      const [p1, ...p2] = price ? t('teePrice', price.toLocaleString('en-US'), vat).split(' + ') : [];
+      const msg = t('teeMsg', name, all.join(' / ') || 'S / M / L / XL', colours.map(c => c.name).join(' / '));
       const photo = /^\/img\/[\w./-]+$/.test(x.photo || '') ? x.photo : '';
       return `<article class="tee">
         ${photo ? `<img src="${esc(photo)}" width="900" height="900" loading="lazy" decoding="async" alt="${esc(name)}">` : ''}
         <h3>${esc(name).replace(/ · /g, '\u00a0· ')}</h3>
-        ${colours.length ? `<p class="tc">${esc(t('teeColours'))}: ${esc(colours.join(', '))}</p>` : ''}
-        ${price ? `<p class="tp">${esc(t('teePrice', price.toLocaleString('en-US'), vat))}</p>` : ''}
-        ${sizes.length ? `<p class="ts">${esc(t('teeSizes'))}: ${esc(sizes.join(', '))}</p>` : ''}
+        ${own ? `<ul class="tcs">${colours.map(c => `<li>${esc(c.name)}${LANG === 'zh' ? '：' : ': '}${esc((c.sizes.length ? c.sizes : sizes).join(', '))}</li>`).join('')}</ul>`
+          : `${colours.length ? `<p class="tc">${esc(lbl('teeColours'))}${esc(colours.map(c => c.name).join(LANG === 'zh' ? '、' : ', '))}</p>` : ''}
+        ${all.length ? `<p class="ts">${esc(lbl('teeSizes'))}${esc(all.join(', '))}</p>` : ''}`}
+        ${price ? `<p class="tp"><span>${esc(p1)}</span>${p2.length ? ` <span>+ ${esc(p2.join(' + '))}</span>` : ''}</p>` : ''}
         <a class="btn" data-tee="1" target="_blank" rel="noopener"
           href="https://line.me/R/oaMessage/%40aybkk/?${encodeURIComponent(msg)}">${esc(t('teeOrder'))}</a></article>`;
     }).join('');
@@ -2766,18 +2835,26 @@
   });
 
   // The monthly theme: public/themes/index.json lists the months that have one, and the page
-  // shows the latest at or before this Bangkok month. It changes by itself on the 1st, also on
-  // a page left open past midnight. No file, show:false or a failed fetch: the section stays hidden.
+  // shows the latest at or before this Bangkok month; a month whose file is missing or has
+  // show:false falls back to the one before it. It changes by itself on the 1st, also on a page
+  // left open past midnight. Nothing to show, or the index cannot be read: the section stays hidden.
   async function loadTheme() {
     const now = bkkTodayP().slice(0, 7);
     if (THEME.checked === now) return;
     THEME.checked = now;
-    const months = await fetch('/themes/index.json').then(r => r.ok ? r.json() : []).catch(() => []);
-    const pick = (Array.isArray(months) ? months : []).filter(m => /^\d{4}-\d{2}$/.test(m) && m <= now).sort().pop();
-    if (pick && pick === THEME.month) return;
-    const d = pick ? await fetch(`/themes/${pick}.json`).then(r => r.ok ? r.json() : null).catch(() => null) : null;
-    THEME.month = pick || null;
-    THEME.data = d && d.show !== false && d.title ? d : null;
+    const months = await fetch('/themes/index.json').then(r => r.ok ? r.json() : []).catch(() => null);
+    if (months === null) THEME.checked = null;   // offline: try again when the tab comes back
+    const cands = (Array.isArray(months) ? months : []).filter(m => /^\d{4}-\d{2}$/.test(m) && m <= now).sort().reverse().slice(0, 6);
+    let month = null, data = null;
+    for (const m of cands) {
+      if (!THEME.files[m]) {
+        const f = await fetch(`/themes/${m}.json`).then(r => r.ok ? r.json() : null).catch(() => null);
+        if (f) THEME.files[m] = f;
+      }
+      const f = THEME.files[m];
+      if (f && f.show !== false && f.title) { month = m; data = f; break; }
+    }
+    Object.assign(THEME, { now, month, data });
     renderTheme();
   }
   function renderTheme() {
@@ -2786,7 +2863,10 @@
     if (!d) return;
     const L = v => v && typeof v === 'object' ? v[LANG] || v.en || '' : String(v ?? '');
     $('#themeH').textContent = L(d.title);
-    $('#themeMonth').textContent = [L(d.eyebrow), L(d.monthName)].filter(Boolean).join(' · ');
+    // "This month · November" only in that month. An older theme shown as a fallback has no month line.
+    const cur = THEME.month === THEME.now;
+    $('#themeMonth').textContent = cur ? [L(d.eyebrow), L(d.monthName)].filter(Boolean).join(' · ') : '';
+    $('#themeMonth').hidden = !$('#themeMonth').textContent;
     $('#themeLead').textContent = L(d.lead);
     const c = d.columns || {}, rows = Array.isArray(d.rows) ? d.rows : [];
     const tb = $('#themeTable');
@@ -2807,6 +2887,7 @@
       fig.querySelector('figcaption').innerHTML = esc((q.who && q.who.en) || '') +
         (src ? ` · <a href="${esc(src)}" target="_blank" rel="noopener">${esc(t('themeSrc'))}</a>` : '');
       fig.querySelector('.qm').textContent = L(q.meaning);
+      fig.querySelector('.qm').hidden = !L(q.meaning);
     }
     const cta = d.cta || {}, href = String(cta.href || '#mysore');
     $('#themeCta').href = /^(#[\w-]+|\/[\w./?=&#-]*)$/.test(href) ? href : '#mysore';
@@ -2896,7 +2977,7 @@
       <label>${esc(t('email'))}</label><input id="be" type="email" autocomplete="email">
       <label>${esc(t('phone'))}</label><input id="bp" autocomplete="tel">
       <div id="bmsg"></div>
-      <p style="margin-top:14px"><button class="btn pink" id="bgo" ${single && !opts.length ? 'disabled' : ''}>${esc(t('pay'))}</button>
+      <p class="dacts"><button class="btn pink" id="bgo" ${single && !opts.length ? 'disabled' : ''}>${esc(t('pay'))}</button>
       <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>
       ${intro ? `<p><button class="linkbtn" id="bhave">${esc(t('havePass'))}</button></p>` : ''}`;
     $('#dlg').showModal();
@@ -3069,7 +3150,7 @@
 #ckbar button{border:2px solid transparent;border-radius:0;padding:8px 14px;min-height:44px;font:600 13px/1 'Plex',sans-serif;cursor:pointer}
 #ckNo{background:transparent;color:#fdf7fa;border-color:rgba(253,247,250,.5)!important}
 #ckOk{background:#F2C94C;color:#3E1442}
-.cklink{display:inline-flex;align-items:center;justify-self:start;min-height:44px;margin:14px 0 0;background:none;border:0;padding:0;color:inherit;
+.cklink{display:inline-flex;align-items:center;justify-self:start;min-height:44px;min-width:44px;margin:14px 0 0;background:none;border:0;padding:0;color:inherit;
   font:400 14px/20px 'Plex',sans-serif;text-decoration:underline;text-underline-offset:.18em;cursor:pointer}
 </style>
 <script>
