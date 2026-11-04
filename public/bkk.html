@@ -14,55 +14,66 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://aybkk.net/">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SportsActivityLocation","name":"AYBKK","alternateName":["Ashtanga Yoga Center of Bangkok","Ashtanga Yoga Bangkok"],"telephone":"+66842244246","url":"https://aybkk.net/","logo":"https://aybkk.net/img/aybkk-logo-240.jpg","image":"https://aybkk.net/img/aybkk-hero-1600.jpg","description":"Traditional Ashtanga, Mysore style, in Bangkok since 2013. Beginners welcome: we teach you from zero.","foundingDate":"2013","address":{"@type":"PostalAddress","streetAddress":"545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor","addressLocality":"Bangkok","postalCode":"10110","addressCountry":"TH"},"geo":{"@type":"GeoCoordinates","latitude":13.7336594,"longitude":100.5658621},"hasMap":"https://www.google.com/maps/search/?api=1&query=AYBKK&query_place_id=ChIJOWhLf_2e4jARi25S9GpEmWk","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Monday","opens":"06:30","closes":"08:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Tuesday","Wednesday","Thursday","Friday"],"opens":"05:30","closes":"09:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"07:00","closes":"10:45"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Sunday","opens":"07:00","closes":"09:30"}],"sameAs":["https://www.instagram.com/aybkk","https://www.facebook.com/ashtangabkk","https://www.tiktok.com/@aybkkashtanga","https://www.youtube.com/@AshtangaAYBKK","https://line.me/R/ti/p/@aybkk"]}</script>
-<link rel="preload" href="/fonts/longcang.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/worksans.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* AYBKK Bangkok — Aubergine & Blush.
-     Long Cang (brush) carries display only; body text is a plain face so the
-     small print stays readable. Self-hosted font: the Google CDN is blocked in China. */
+  /* AYBKK Bangkok, Swiss grid (Boonchu, 4 Nov 2026). Same palette, same self-hosted type
+     (the Google Fonts CDN is blocked in China). One column grid for every band: 4 columns
+     on phones, 8 on tablets, 12 on desktop, where the content hangs from column 5. */
   @font-face{font-family:'Long Cang';src:url('/fonts/longcang.woff2') format('woff2');font-display:swap}
-  /* Patrick Hand: package names & prices — handwritten but instantly legible
-     (Boonchu's pick, 21 Sep). No ฿ glyph, so the stack falls back to Plex for it. */
+  /* Patrick Hand: class names and the habit count in the app (Boonchu's pick, 21 Sep). */
   @font-face{font-family:'Patrick Hand';src:url('/fonts/patrickhand.woff2') format('woff2');font-display:swap}
-  /* Two cuts of one family under one name: the browser picks the Thai file only
-     for Thai characters, so Thai and Latin sit on the same baseline. */
-  @font-face{font-family:'Work Sans';src:url('/fonts/worksans.woff2') format('woff2');font-weight:100 900;font-display:swap}
-  /* Latin text was the SemiBold Plex file, so every sentence printed half-bold.
-     Work Sans (variable) gives real regular text and real bold. */
+  /* One family name for two files: the browser takes the Thai file only for Thai
+     characters, so Thai and Latin sit on the same baseline. */
   @font-face{font-family:'Plex';src:url('/fonts/worksans.woff2') format('woff2');font-weight:100 900;font-display:swap}
-  /* Headings: a classic serif, quiet and traditional. Latin only; Thai falls back to Plex. */
-  @font-face{font-family:'Cormorant';src:url('/fonts/cormorant.woff2') format('woff2');font-weight:300 700;font-display:swap}
   @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');font-weight:100 900;
     unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
+  /* Cormorant has one job now: the words of the monthly quote. */
+  @font-face{font-family:'Cormorant';src:url('/fonts/cormorant.woff2') format('woff2');font-weight:300 700;font-display:swap}
   :root{
     --ink:#17121a;          /* near-black, violet cast */
     --wall:#f7f1f5;         /* blush-tinted room */
     --paper:#ffffff;
-    --blush:#fbe7f0;        /* pink surface */
+    --blush:#fbe7f0;
     --blush-line:#f3d3e2;
     --plum:#5c2160;         /* aubergine */
     --plum-deep:#43164a;
     --plum-soft:#8b4c90;
-    --pink:#e8458c;         /* the contrast */
+    --pink:#e8458c;
     --pink-deep:#c92f74;
     --soft:#6b5d70;
     --line:rgba(23,18,26,.11);
     --on-dark:#fdf7fa;
-    --header:#17121a;   /* fixed: never flips with the theme */
+    --header:#17121a;       /* fixed: never flips with the theme */
     --gold:#9a6b12;
     --gold-soft:#fbf1dc;
-    /* Promotion = gold, a third of the colour wheel from the plum, so a deal
-       never looks like a normal price (Boonchu, 2 Oct). */
+    /* Promotion = gold, so a deal never looks like a normal price (Boonchu, 2 Oct). */
     --promo:#d9a521; --promo-hi:#f2c94c; --promo-ink:#3e1442; --promo-deep:#7d5300;
     --promo-soft:#fdf4dc; --promo-line:#e6c25a;
-    /* Normal prices = plum, so they never look like the gold promotion. */
+    /* Normal prices = plum. */
     --price-bg:#f4ebf5; --price-line:#d8bfdc;
-    --radius:14px;
-    --lift:0 1px 2px rgba(23,18,26,.04),0 10px 30px rgba(23,18,26,.06);
+    /* White on --pink is 3.7:1, too weak for button text; --pink-deep is 5.1:1. */
+    --act:var(--pink-deep); --act-ink:#fff; --act-hi:var(--ink); --act-hi-ink:var(--wall); --ring:var(--pink-deep);
+    --rule:var(--ink); --num:var(--plum); --radius:0; --lift:none;
+    /* Fixed fields: the hero, the footer and the monthly theme never flip. */
+    --hero-ink:#fdf7fa; --hero-muted:#e2cbd7; --hero-rule:rgba(253,247,250,.25);
+    --aub:#3E1442; --aub-ink:#FBF5F9; --aub-muted:#C9AFCB; --aub-rule:rgba(251,245,249,.22);
+    /* The grid. --W is the content width, --colw one column. */
+    --cols:4; --m:16px; --g:16px; --maxw:1600px;
+    --W:min(100% - 2*var(--m), var(--maxw));
+    --colw:calc((var(--W) - (var(--cols) - 1)*var(--g)) / var(--cols));
+    /* Rhythm: a 28px line, 14px half lines. */
+    --bl:28px; --bl2:14px; --gap:84px; --head-gap:28px; --grp:42px;
+    /* Five sizes: small, body, large, heading, display. */
+    --fs-s:14px; --fs-b:clamp(17px,16.56px + .11vw,18px); --fs-l:clamp(22px,19.37px + .674vw,28px);
+    --fs-h:clamp(30px,16.85px + 3.371vw,64px); --fs-d:clamp(52px,25.7px + 6.74vw,144px);
+    --f-text:'Plex',-apple-system,'Helvetica Neue',Arial,'PingFang SC','Microsoft YaHei',sans-serif;
+    --f-head:var(--f-text);
+    --f-quote:'Cormorant',Georgia,serif;
+    --f-mark:'Long Cang',cursive;
+    color-scheme:light;
   }
   @media (prefers-color-scheme: dark){
-    :root{
+    :root:not([data-theme="light"]){
       --ink:#f5e9f0; --wall:#140f18; --paper:#1e1723; --blush:#2b1c2b; --blush-line:#3d2740;
       --plum:#c07ec8; --plum-deep:#d9a5de; --plum-soft:#a468ac;
       --pink:#ff6fae; --pink-deep:#ff8dc0; --soft:#b09cb6;
@@ -71,6 +82,9 @@
       --promo:#e0b52b; --promo-hi:#f2d98a; --promo-ink:#1c1010; --promo-deep:#f2d98a;
       --promo-soft:#2a2114; --promo-line:#6b5420;
       --price-bg:#231927; --price-line:#4b3352;
+      --act:var(--pink); --act-ink:#17121a; --act-hi:var(--ink); --act-hi-ink:var(--wall); --ring:var(--pink);
+      --rule:var(--ink); --num:var(--plum);
+      color-scheme:dark;
     }
   }
   :root[data-theme="dark"]{
@@ -81,6 +95,9 @@
     --promo:#e0b52b; --promo-hi:#f2d98a; --promo-ink:#1c1010; --promo-deep:#f2d98a;
     --promo-soft:#2a2114; --promo-line:#6b5420;
     --price-bg:#231927; --price-line:#4b3352;
+    --act:var(--pink); --act-ink:#17121a; --act-hi:var(--ink); --act-hi-ink:var(--wall); --ring:var(--pink);
+    --rule:var(--ink); --num:var(--plum);
+    color-scheme:dark;
   }
   :root[data-theme="light"]{
     --ink:#17121a; --wall:#f7f1f5; --paper:#ffffff; --blush:#fbe7f0; --blush-line:#f3d3e2;
@@ -90,202 +107,418 @@
     --promo:#d9a521; --promo-hi:#f2c94c; --promo-ink:#3e1442; --promo-deep:#7d5300;
     --promo-soft:#fdf4dc; --promo-line:#e6c25a;
     --price-bg:#f4ebf5; --price-line:#d8bfdc;
+    --act:var(--pink-deep); --act-ink:#fff; --act-hi:var(--ink); --act-hi-ink:var(--wall); --ring:var(--pink-deep);
+    --rule:var(--ink); --num:var(--plum);
+    color-scheme:light;
   }
+  @media (min-width:700px){ :root{ --cols:8; --m:32px; --g:24px; --gap:112px; --head-gap:42px; --grp:56px; } }
+  @media (min-width:1100px){ :root{ --cols:12; --m:clamp(32px,2.5vw,48px); --gap:168px; --head-gap:56px; } }
+
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{margin:0;background:var(--wall);color:var(--ink);
-    font:400 16px/1.65 'Plex',-apple-system,'Helvetica Neue','PingFang SC',sans-serif}
-  .brush{font-family:'Long Cang',cursive;font-weight:400}
-  /* Cormorant's default figures are old-style: 1 reads as I. */
-  .sw h2,.teacher .name,.plan h3,.pkg h3,dialog h3,.calc h3{font-variant-numeric:lining-nums}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+  body{margin:0;background:var(--wall);color:var(--ink);counter-reset:sec;
+    font:400 var(--fs-b)/28px var(--f-text)}
+  body:lang(th){line-height:30px}
+  .brush{font-family:var(--f-mark);font-weight:400}
+  :focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+  a{color:inherit;text-decoration-thickness:.08em;text-underline-offset:.18em}
+  a:hover{color:var(--pink-deep)}
+  h2,h3{text-wrap:balance}
 
-  header{background:var(--header);color:#fdf7fa;padding:34px 20px 30px;text-align:center;position:relative;overflow:hidden}
-  header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
-    background:linear-gradient(90deg,var(--plum),var(--pink))}
-  header h1{margin:0;font-size:clamp(52px,14vw,80px);line-height:1;letter-spacing:.04em}
-  header .sub{margin:6px 0 0;font-size:15px;letter-spacing:.03em;color:#f0d6e3}
-  header .dot{color:var(--pink)}
-  html{scroll-behavior:smooth}
-  /* The wall photo is mostly white, so the shade is strongest where the text sits (the floor). */
-  /* Phone: the photo sits on top at its own size; the text gets a dark floor below it. */
-  header.hero{min-height:640px;display:flex;flex-direction:column;justify-content:flex-end;
-    padding:250px 20px 30px;background:
-      linear-gradient(180deg,rgba(23,18,26,.3) 0%,rgba(23,18,26,0) 18%,rgba(23,18,26,.55) 32%,rgba(23,18,26,.92) 44%,#17121a 60%),
-      #17121a url('/img/aybkk-hero-900.jpg') center top/100% auto no-repeat}
+  /* ── The grid. Every band is full-bleed; its content snaps to named column lines:
+     c 1 is the start of column 1, c 5 the axis, c-end the end of the last column.
+     Not subgrid: older WeChat (X5) kernels do not have it. */
+  .sgrid{display:grid;column-gap:var(--g);
+    grid-template-columns:[full-start] calc(var(--m) - var(--g)) [c-start] repeat(var(--cols),[c] minmax(0,1fr))
+      [c-end] calc(var(--m) - var(--g)) [full-end]}
+  .sgrid > *{grid-column:c-start/c-end;min-width:0}
+  @media (min-width:1100px){
+    .sgrid{grid-template-columns:[full-start] minmax(calc(var(--m) - var(--g)),1fr)
+      [c-start] repeat(12,[c] minmax(0,calc((var(--maxw) - 11*var(--g))/12)))
+      [c-end] minmax(calc(var(--m) - var(--g)),1fr) [full-end]}
+  }
+
+  /* ── Sections: a 4px rule, the number, the heading, then the content.
+     The number is a pseudo-element because applyLang() rewrites every h2's text.
+     Hidden sections are display:none, so they never count. */
+  .sec{padding-block:calc(var(--gap)/2)}
+  .sec:not([hidden]){counter-increment:sec}
+  .sec::before{content:"";grid-column:c-start/c-end;grid-row:1;height:4px;margin-bottom:24px;background:var(--rule);
+    transform-origin:0 50%}
+  .sec::after{content:counter(sec);content:counter(sec) / "";grid-column:c-start/c-end;grid-row:2;
+    font:700 var(--fs-h)/1.06 var(--f-head);letter-spacing:-.025em;color:var(--num);font-variant-numeric:tabular-nums}
+  .sec > h2{grid-row:3;margin:0 0 var(--head-gap);font:700 var(--fs-h)/1.06 var(--f-head);letter-spacing:-.025em;color:inherit}
+  .sec > .card{display:contents}
+  .sec > .card > *{grid-column:c-start/c-end;min-width:0}
+  .sec > .lead{margin:0 0 var(--grp);font-size:var(--fs-l);line-height:1.3}
+  .act{display:flex;flex-wrap:wrap;gap:16px;margin:var(--grp) 0 0}
+  .act .btn{min-height:56px}
+  @media (max-width:699px){ .act .btn{width:100%} }
+  @media (min-width:1100px){
+    .sec > *,.sec > .card > *{grid-column:c 5/c-end}
+    .sec::after{grid-column:c 1/c 3}
+    .sec > h2{grid-row:2}
+    .sec > .lead{grid-column:c 5/c 11}
+  }
+  :lang(th) .sec > h2{font-weight:500;letter-spacing:0;line-height:1.3;font-synthesis:none}
+  :lang(zh-Hans) .sec > h2{letter-spacing:0;line-height:1.2}
+  /* Russian runs in the system sans and is the longest: two lines on a phone too. */
+  @media (max-width:699px){ :lang(ru) .sec > h2{font-size:min(28px,7.2vw)} }
+  :lang(th) .sec > .lead{line-height:1.45}
+  .field-aub{background:var(--aub);color:var(--aub-ink);--rule:var(--aub-ink);--num:var(--aub-ink);--ring:var(--aub-ink);--line:var(--aub-rule)}
+  .field-price{background:var(--price-bg)}
+  .field-promo{background:var(--promo-soft);--rule:var(--promo-deep);--num:var(--promo-deep)}
+
+  /* ── Buttons: square. Plum is the second colour; pink-deep is the action. */
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 24px;
+    border:0;border-radius:0;background:var(--plum);color:var(--on-dark);text-align:center;text-decoration:none;
+    font:600 var(--fs-b)/1.2 var(--f-text);cursor:pointer;transition:background-color .18s,color .18s}
+  .btn:hover{background:var(--plum-deep);color:var(--on-dark)}
+  .btn.pink{background:var(--act);color:var(--act-ink)}
+  .btn.ghost{background:transparent;color:var(--ink);border:2px solid currentColor;padding:8px 22px}
+  @media (hover:hover){
+    .btn.pink:hover{background:var(--act-hi);color:var(--act-hi-ink)}
+    .btn.ghost:hover{background:var(--ink);color:var(--wall);border-color:var(--ink)}
+    .hero .btn.pink:hover{background:var(--hero-ink);color:#17121a}
+    .field-aub .btn.pink:hover{background:var(--aub-ink);color:var(--aub)}
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn[disabled]{opacity:.4;cursor:not-allowed}
+  .readmore,.signout,.linkbtn{border:none;background:none;padding:0;min-height:44px;cursor:pointer;color:var(--ink);
+    font:600 var(--fs-b)/1.2 var(--f-text);text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.18em}
+  .readmore:hover,.signout:hover,.linkbtn:hover{color:var(--pink-deep)}
+
+  /* ── Hero (dark field, not numbered) */
+  header.hero{position:relative;background:var(--header);color:var(--hero-ink);--ring:var(--hero-ink);padding-top:16px;
+    align-content:start}
+  header.hero .logo{grid-column:c 1;grid-row:1;align-self:center;width:40px;height:40px;border-radius:50%;background:#fff}
+  .langs{grid-column:c 2/c-end;grid-row:1;justify-self:end;align-self:center;display:flex;gap:0}
+  .langs button{min-width:44px;min-height:44px;padding:0 8px;border:0;border-radius:0;background:transparent;color:var(--hero-muted);
+    font:600 14px/1 var(--f-text);cursor:pointer}
+  .langs button[aria-pressed="true"]{background:var(--hero-ink);color:#17121a}
+  header.hero .mast{grid-row:2;margin:28px 0 0;font:800 var(--fs-l)/1.27 var(--f-text);letter-spacing:-.01em;color:var(--hero-ink)}
+  header.hero .mast span{display:block;font-weight:400}
+  .h12h{grid-row:3;margin:56px 0 0;font:800 var(--fs-d)/.94 var(--f-head);letter-spacing:-.04em;color:var(--hero-ink);
+    font-variant-numeric:lining-nums;text-wrap:balance}
+  .h12s{grid-row:4;margin:28px 0 0;font-size:var(--fs-l);line-height:1.3;color:var(--hero-muted);max-width:26ch;text-wrap:balance}
+  /* 26ch is counted in Latin zeros: about 14 Chinese characters, so a date broke in two. */
+  :lang(zh-Hans) .h12s,:lang(zh-Hans) .facts li{max-width:none;word-break:keep-all}
+  header.hero .cta{grid-row:5;display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:28px}
+  header.hero .cta .btn{width:100%;min-height:56px;font-size:var(--fs-b)}
+  header.hero .more{display:inline-flex;align-items:center;min-height:44px;color:var(--hero-ink);font-weight:600}
+  .facts{grid-row:6;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--g);
+    list-style:none;margin:28px 0 56px;padding:0}
+  .facts li{border-top:2px solid var(--hero-rule);padding:12px 0 14px;font-size:var(--fs-s);line-height:20px;color:var(--hero-ink);text-wrap:balance}
+  .facts li:last-child{grid-column:1/-1}
+  header.hero .pic{grid-column:full-start/full-end;grid-row:7;display:block;position:relative;aspect-ratio:4/5;overflow:hidden}
+  header.hero .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:46% 50%;display:block}
+  :lang(th) .h12h{font-weight:500;letter-spacing:0;line-height:1.2;font-synthesis:none}
+  :lang(zh-Hans) .h12h{letter-spacing:0;line-height:1.1}
   @media (min-width:700px){
-    header.hero{min-height:640px;padding-top:70px;background:
-      linear-gradient(180deg,rgba(23,18,26,.3) 0%,rgba(23,18,26,.05) 30%,rgba(23,18,26,.45) 52%,rgba(23,18,26,.88) 76%,rgba(23,18,26,.94) 100%),
-      #3a2a3a url('/img/aybkk-hero-1600.jpg') center 40%/cover no-repeat}
+    header.hero .cta{flex-direction:row;align-items:center;gap:28px}
+    header.hero .cta .btn{width:auto}
+    .facts li{font-size:var(--fs-b);line-height:28px}
+    header.hero .pic{aspect-ratio:3/2}
   }
-  header.hero .sub{font-size:17px;color:#fdf7fa;text-shadow:0 1px 8px rgba(0,0,0,.5)}
-  /* Wide screens: the offer on the left on dark, the photo on the right, so no line sits on a face. */
-  @media (min-width:960px){
-    header.hero{min-height:620px;justify-content:center;text-align:left;padding:80px 52% 50px 6%;background:
-      linear-gradient(90deg,#17121a 0%,#17121a 44%,rgba(23,18,26,.6) 52%,rgba(23,18,26,0) 64%),
-      #17121a url('/img/aybkk-hero-1600.jpg') right center/auto 100% no-repeat}
-    header.hero .cta{justify-content:flex-start}
-    header.hero .more{padding-left:0;margin-right:14px}
+  @media (min-width:1100px){
+    header.hero{min-height:max(640px,min(100vh,900px));min-height:max(640px,min(100svh,900px));
+      grid-template-rows:auto 1fr auto auto auto;padding-top:24px}
+    header.hero .logo{width:48px;height:48px}
+    header.hero .mast{grid-column:c 2/c 8;grid-row:1;align-self:center;margin:0}
+    .langs{grid-column:c 9/c-end;grid-row:1}
+    header.hero .pic{grid-column:c 8/full-end;grid-row:2/-1;aspect-ratio:auto;margin-top:24px}
+    .h12h{grid-column:c 1/c 8;grid-row:2;align-self:end}
+    .h12s{grid-column:c 1/c 7;grid-row:3}
+    header.hero .cta{grid-column:c 1/c 8;grid-row:4}
+    .facts{grid-column:c 1/c 8;grid-row:5;grid-template-columns:repeat(7,minmax(0,1fr))}
+    .facts li:nth-child(1){grid-column:1/3}
+    .facts li:nth-child(2){grid-column:3/5}
+    .facts li:nth-child(3){grid-column:5/8}
   }
-  header.hero{position:relative}
-  header.hero .logo{position:absolute;top:10px;left:12px;width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.35)}
-  .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
-  /* Hero, Equinox-minimal (Boonchu, 6 Oct): one line, one short line, one button with the price on it. */
-  header.hero .kick{font-family:'Work Sans','Plex',sans-serif;font-weight:700;font-size:13px;letter-spacing:.16em;
-    text-transform:uppercase;line-height:1.3;color:#fff;margin:0 0 14px;text-shadow:0 1px 6px rgba(0,0,0,.6)}
-  header.hero .kick span{font-weight:500;color:#e2cbd7}
-  .h12h{margin:0;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:clamp(40px,11vw,64px);line-height:1;
-    font-variant-numeric:lining-nums;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.5)}
-  .h12s{margin:12px 0 0;font-size:17px;color:#f0d6e3;text-shadow:0 1px 8px rgba(0,0,0,.6)}
-  header.hero .cta{margin-top:24px}
-  header.hero .btn.pink{min-height:54px;padding:14px 30px;font-size:17px}
-  a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:48px}
-  header .btn.ghost{color:#fdf7fa;box-shadow:inset 0 0 0 1.5px rgba(253,247,250,.6);background:rgba(23,18,26,.3)}
-  .langs{position:absolute;top:12px;right:12px;display:flex;gap:2px;background:rgba(23,18,26,.55);
-    border-radius:999px;padding:3px;z-index:2}
-  .langs button{border:none;background:none;color:#e2cbd7;font:600 12.5px/1 'Plex',-apple-system,'PingFang SC',sans-serif;
-    padding:8px 10px;border-radius:999px;cursor:pointer;min-width:36px}
-  .langs button[aria-pressed="true"]{background:var(--pink);color:#fff}
 
-  .sw{max-width:880px;margin:0 auto;padding:8px 16px 0}
-  .sw section{padding:52px 0 6px;scroll-margin-top:12px}
-  .sw h2{margin:0 0 18px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:clamp(32px,8vw,42px);line-height:1.08;letter-spacing:-.01em;color:var(--ink)}
-  .card{background:var(--paper);border-radius:var(--radius);padding:22px;box-shadow:var(--lift)}
-  .habsub{margin:-8px 0 20px;font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:18px;color:var(--pink)}
-  .habs{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
-  @media (min-width:640px){ .habs{grid-template-columns:repeat(2,minmax(0,1fr))} }
-  .hab{display:flex;gap:14px;align-items:flex-start;background:var(--paper);border-radius:var(--radius);padding:16px;box-shadow:var(--lift)}
-  .hab .hn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--plum);color:var(--on-dark);display:flex;align-items:center;justify-content:center;
-    font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:13px}
-  .hab b{display:block;font-size:16px;font-weight:600;line-height:1.3}
-  .hab p{margin:2px 0 0;font-size:14px;line-height:1.45;color:var(--soft)}
-  #compare .lead{margin:-6px 0 14px;font-size:15px}
-  .cmpwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);background:var(--paper);box-shadow:var(--lift)}
-  table.cmp{width:100%;border-collapse:collapse;font-size:13px;line-height:1.25;min-width:340px}
-  table.cmp th,table.cmp td{padding:9px 6px;border-top:1px solid var(--line);text-align:center;vertical-align:middle}
-  table.cmp thead th{border-top:none;font-size:12px;font-weight:700;color:var(--soft)}
-  table.cmp tbody th{text-align:left;font-weight:600;font-size:13px;color:var(--ink);padding-left:10px}
-  table.cmp .c-yes{color:var(--plum);font-weight:700}
-  table.cmp .c-some{color:var(--soft);font-size:12px}
-  table.cmp .c-no{color:var(--line);font-weight:700}
-  table.cmp .ash{background:var(--plum);color:var(--on-dark);font-weight:600}
-  table.cmp thead th.ash{color:var(--on-dark);font-size:13px;border-radius:8px 8px 0 0}
-  .teacher figure{margin:0 0 16px}
-  .teacher img{display:block;width:100%;height:auto;border-radius:var(--radius);aspect-ratio:9/10;object-fit:cover}
-  .teacher figcaption{font-size:12.5px;color:var(--soft);margin-top:6px}
-  .teacher .name{font-family:'Cormorant','Plex',serif;font-weight:600;font-size:30px;line-height:1.15}
-  .teacher .auth{display:inline-block;margin:4px 0 14px;font-size:13px;font-weight:500;
-    color:var(--plum);background:var(--blush);border-radius:999px;padding:5px 12px}
-  .teacher p{margin:0 0 10px;font-size:15px}
-  .bio + .bio{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+  /* ── #promo (until 11 Nov) */
+  #promo .lead{font-size:var(--fs-b);line-height:28px}
+  #offers{line-height:1.35}
+  @media (min-width:1100px){ #promo .lead{grid-column:c 5/c 11} }
+
+  /* ── #habits */
+  .habsub{margin:0 0 var(--grp);font:700 var(--fs-l)/1.3 var(--f-text);letter-spacing:-.01em}
+  .habs{display:grid;grid-template-columns:minmax(0,1fr);column-gap:var(--g)}
+  .hab{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:baseline;border-top:2px solid var(--line);padding:14px 0 28px}
+  .hab .hn{font:700 max(24px,var(--fs-l))/1 var(--f-text);font-variant-numeric:tabular-nums;color:var(--ink)}
+  .hab b{display:block;font-weight:700}
+  .hab p{margin:0}
+  @media (min-width:700px){
+    .habs{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:column;grid-template-rows:repeat(5,auto)}
+    .hab{grid-template-columns:56px minmax(0,1fr)}
+  }
+  @media (min-width:1100px){
+    #habits .habsub{grid-column:c 1/c 5;grid-row:3;padding-right:var(--g)}
+    #habits .habs{grid-row:3}
+    #habits .act{grid-row:4}
+  }
+
+  /* ── #theme: the monthly theme, on a fixed aubergine field */
+  #themeMonth{margin:0 0 28px;font:600 var(--fs-s)/20px var(--f-text);color:var(--aub-muted)}
+  .vs{display:block;width:100%;border-collapse:collapse;margin:0}
+  .vs thead,.vs tbody{display:contents}
+  .vs tr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:var(--g);padding:14px 0;border-top:2px solid var(--aub-rule)}
+  .vs thead tr{padding:0 0 14px;border-top:0;border-bottom:2px solid var(--aub-ink)}
+  .vs tbody tr:first-child{border-top:0}
+  .vs th,.vs td{display:block;padding:0;text-align:left;vertical-align:top;font-weight:400}
+  .vs .k{grid-column:1/-1;margin:0 0 6px;font:600 var(--fs-s)/20px var(--f-text);color:var(--aub-muted)}
+  .vs thead .k{display:none}
+  .vs .a{grid-column:1/3;color:var(--aub-muted)}
+  .vs .b{grid-column:3/5;color:var(--aub-ink)}
+  .vs thead th{font-size:var(--fs-l);line-height:1.2;text-wrap:balance}
+  .vs thead .b{font-weight:700}
+  .vs.hl-a .a{color:var(--aub-ink)}
+  .vs.hl-a .b{color:var(--aub-muted)}
+  .vs.hl-a thead .a{font-weight:700}
+  .vs.hl-a thead .b{font-weight:400}
+  #themeStakes{margin:var(--grp) 0 0;font:500 var(--fs-l)/1.3 var(--f-text)}
+  .tq{margin:var(--grp) 0 0}
+  .tq blockquote{margin:0;font:500 var(--fs-l)/1.3 var(--f-quote);font-size-adjust:.5}
+  .tq blockquote p{margin:0}
+  .tq figcaption{margin-top:14px;font:400 var(--fs-s)/20px var(--f-text);color:var(--aub-muted)}
+  .tq figcaption a{color:var(--aub-ink)}
+  .tq .qm{margin:14px 0 0}
+  #theme .note{margin:14px 0 0;font-size:var(--fs-s);line-height:20px;color:var(--aub-muted)}
+  :lang(th) #themeStakes{line-height:1.45}
+  @media (min-width:700px){
+    .vs tr{grid-template-columns:repeat(8,minmax(0,1fr))}
+    .vs .k{grid-column:1/3;margin:0;font-size:var(--fs-b);line-height:28px}
+    .vs thead .k{display:block}
+    .vs .a{grid-column:3/6}
+    .vs .b{grid-column:6/9}
+  }
+  @media (min-width:1100px){
+    #themeMonth{grid-column:c 1/c 5;grid-row:3;padding-right:var(--g)}
+    #theme .vs{grid-column:c 1/c-end}
+    .vs tr{grid-template-columns:repeat(12,minmax(0,1fr))}
+    .vs .k{grid-column:1/5;padding-right:var(--g)}
+    .vs .a{grid-column:5/9}
+    .vs .b{grid-column:9/13}
+    #themeStakes{grid-column:c 5/c 11}
+    #theme .tq{grid-column:c 5/c 12}
+    #theme .note{grid-column:c 5/c 11}
+  }
+
+  /* ── #teacher */
+  .teacher figure{margin:0 0 var(--grp)}
+  .teacher .tpic{display:block}
+  .teacher img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;object-position:50% 45%}
+  .teacher figcaption{margin-top:14px;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  .bios{display:grid;grid-template-columns:minmax(0,1fr)}
+  .bio + .bio{margin-top:var(--grp);padding-top:28px;border-top:2px solid var(--ink)}
+  .teacher .name{font:700 var(--fs-l)/1.3 var(--f-text)}
+  .teacher .auth{margin:4px 0 14px;font-weight:600;color:var(--plum)}
+  .teacher p{margin:0 0 14px}
   /* 3 lines, then "Read more" (Boonchu, 2 Oct) */
-  .bio .txt{max-height:4.8em;overflow:hidden;line-height:1.6;position:relative}
-  .bio .txt::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.6em;
-    background:linear-gradient(rgba(255,255,255,0),var(--paper))}
+  .bio:not(.open) .txt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .bio:not(.open) .txt p{display:inline;margin:0}
   .bio:not(.open) .txt p::after{content:" "}
-  .bio.open .txt{max-height:none}
-  .bio.open .txt::after{display:none}
-  .readmore,.signout{border:none;background:none;padding:6px 0;min-height:36px;cursor:pointer;
-    font:600 14px/1.2 'Plex',sans-serif;color:var(--pink)}
-  .points{list-style:none;margin:0;padding:0}
-  .points li{position:relative;padding:0 0 0 24px;margin:0 0 12px;font-size:16px}
-  .points li::before{content:"";position:absolute;left:4px;top:.66em;width:6px;height:6px;border-radius:99px;background:var(--pink)}
-  .addr{margin:0 0 6px;font-size:15px}
-  .addr.th{color:var(--soft);font-size:14px}
-  .links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-  .links .btn{width:100%;padding:11px 10px;text-align:center}
-  .links .wide{grid-column:1/-1}
-  /* Google is blocked on most Chinese phones, so in Chinese the Amap button leads. */
-  html[lang="zh-Hans"] #find .amap{order:-1;background:var(--plum);color:var(--on-dark);border-color:var(--plum)}
-  html[lang="zh-Hans"] #find .gmap{background:transparent;color:var(--plum);border:1px solid var(--line)}
-  .wechat{display:flex;align-items:center;gap:10px;justify-content:space-between;grid-column:1/-1;
-    background:var(--wall);border-radius:12px;padding:6px 6px 6px 14px;font-size:14.5px}
-  .wechat b{user-select:all}
-  .links .wechat .btn{width:auto;flex:none;min-height:40px;padding:9px 16px}
-  /* The Monday letter: one question, four doors. */
-  #letter .lead{margin:-6px 0 14px;font-size:15px}
-  .nlq{margin:0 0 8px;font-size:14px;font-weight:700;color:var(--soft)}
-  .nlch{display:flex;flex-wrap:wrap;gap:8px}
-  .nlch button{font:600 15px/1 inherit;font-family:inherit;min-height:44px;padding:10px 16px;border-radius:999px;cursor:pointer;
-    background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
-  .nlch button[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#fff}
-  .nlpane{margin-top:14px}
-  .nlpane p{margin:0 0 10px}
-  .nlpane .wechat{display:flex;align-items:center;gap:10px;justify-content:space-between}
-  .nlpane .wechat .btn{width:auto;flex:none;min-height:40px;padding:9px 16px}
-  .nlok{display:flex;gap:10px;align-items:flex-start;margin:12px 0;font-size:14px;line-height:1.5;cursor:pointer}
-  .nlok input{width:auto;margin-top:3px;flex:none}
-  .nlmsg{margin:10px 0 0;font-weight:600}
-  .nlmsg:empty{display:none}
-  #letter details.fine summary{cursor:pointer;text-decoration:underline}
-  #letter details.fine p{margin:6px 0 0}
-  #letter .fine{margin:10px 0 0;font-size:12.5px;color:var(--soft)}
-  .sw h3{margin:20px 0 8px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--pink)}
-  header .more{display:inline-block;margin-top:14px;font-size:14px;font-weight:500;
-    color:#fdf7fa;text-decoration:underline;text-decoration-color:var(--pink);text-underline-offset:4px;padding:6px 8px}
-  .sw section.prices{margin-top:44px;padding:28px 18px 22px;background:var(--price-bg);border-radius:22px}
-  .prices .lead{margin:-6px 0 16px;font-size:14.5px;color:var(--soft)}
-  .plans{display:grid;gap:14px}
-  .plan{background:var(--paper);border-radius:var(--radius);padding:22px;min-width:0;box-shadow:var(--lift)}
-  .plan.feature{background:var(--paper);box-shadow:inset 0 0 0 2px var(--plum),var(--lift)}
-  .plan.quiet{background:transparent;box-shadow:inset 0 0 0 1px var(--price-line)}
-  .plan .badge,.pkg .badge{display:inline-block;margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-    background:var(--plum);color:var(--on-dark);border-radius:999px;padding:4px 10px}
-  .plan h3{margin:0 0 6px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:28px;line-height:1.15;
-    letter-spacing:0;text-transform:none;color:var(--ink)}
-  .plan .line{margin:0 0 6px;font-size:15px}
-  .plan .small{margin:0 0 4px;font-size:13px;color:var(--soft)}
-  .plan .camp{margin:12px 0 0;font-size:13.5px;font-weight:500;color:var(--promo-deep);background:var(--promo-soft);
-    border-left:3px solid var(--promo);border-radius:4px;padding:8px 10px}
-  .rows{list-style:none;margin:10px 0 0;padding:0}
-  .rows li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
-  .rows li:first-child{border-top:none}
-  .rows .pn{font-size:15px;font-weight:500;min-width:0}
-  .rows .pn small{display:block;font-weight:400;font-size:12.5px;color:var(--soft)}
-  .rows .pv{text-align:right;flex:none}
-  .rows .pv b{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:21px;line-height:1.15;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--plum)}
-  .rows .pv small{display:block;font-size:12px;color:var(--soft);white-space:nowrap}
-  .plan.feature .rows li{border-top-color:var(--price-line)}
-  .prices .fair{margin:20px 0 4px;font-size:16px;font-weight:600;color:var(--plum)}
-  .prices .fine{margin:0;font-size:12.5px;color:var(--soft)}
-  .prices .fine a{color:var(--plum);font-weight:600;text-decoration:none}
-  .rows .badge{display:table;margin:0 0 6px}
-  .rows .vt{margin-left:4px;font-style:normal;font-size:11px;font-weight:600;letter-spacing:0;color:var(--soft)}
-  .prices .mnotes{margin:18px 0 0;padding:18px 20px;border-radius:var(--radius);box-shadow:inset 0 0 0 1px var(--price-line)}
-  .mnotes h3{margin:0 0 8px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:24px;line-height:1.15;
-    letter-spacing:0;text-transform:none;color:var(--ink)}
-  .mnotes ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.5}
-  .mnotes li{margin:8px 0 0}
-  /* The Thai Plex file has one weight, so Thai bold would show as regular with only the digits bold. */
-  :lang(th) .mnotes b{font-weight:inherit;color:var(--plum)}
-  @media (min-width:760px){
-    .plans{grid-template-columns:1fr 1fr;align-items:start}
-    /* The 4-row list from 12 Nov 2026 is tall: New and Visiting stack beside it. */
-    .plans.np{grid-template-rows:auto 1fr}
-    .plans.np .feature{grid-row:span 2}
-    .plans.np .quiet{grid-column:1/-1}
-    .teacher .card{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:26px;align-items:start}
-    .teacher figure{margin:0}
-    .pair{display:grid;grid-template-columns:1fr 1fr;gap:26px}
-    .links{grid-template-columns:repeat(3,1fr)}
+  @media (min-width:1100px){
+    .teacher figure{display:contents}
+    .teacher .tpic{grid-column:c 1/c-end}
+    .teacher img{aspect-ratio:16/7}
+    .teacher figcaption{grid-column:c 1/c 5;margin:28px 0 0;padding-right:var(--g)}
+    .teacher .bios{grid-column:c 5/c-end;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--g);margin-top:28px}
+    .bio + .bio{margin:0;padding:0;border:0}
   }
 
-  nav.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-  nav.tabs button{flex:1;padding:16px 8px;border:none;background:none;font:500 15px/1 inherit;
-    color:var(--soft);cursor:pointer;position:relative}
-  nav.tabs button.on{color:var(--plum)}
-  nav.tabs button.on::after{content:"";position:absolute;left:18%;right:18%;bottom:0;height:3px;
-    border-radius:3px 3px 0 0;background:var(--pink)}
+  /* ── .pair: #mysore + #first, each with its own inner grid on the same gutter */
+  .pair{padding-block:calc(var(--gap)/2)}
+  .pair > .sec{display:grid;align-content:start;column-gap:var(--g);padding:0;grid-template-columns:[c-start] repeat(var(--cols),[c] minmax(0,1fr)) [c-end]}
+  .pair > .sec > *{grid-column:c-start/c-end;min-width:0}
+  .pair > #first{margin-top:var(--gap)}
+  .points{list-style:none;margin:0;padding:0}
+  .points li{border-top:2px solid var(--line);padding:14px 0}
+  @media (min-width:1100px){
+    .pair > #mysore{grid-column:c 1/c 5;grid-template-columns:[c-start] repeat(4,[c] minmax(0,1fr)) [c-end]}
+    .pair > #first{grid-column:c 5/c-end;margin-top:0;grid-template-columns:[c-start] repeat(8,[c] minmax(0,1fr)) [c-end]}
+    .pair > .sec::after{grid-column:c-start/c-end}
+    .pair > .sec > h2{grid-row:3;font-size:calc(var(--fs-h)*.75);min-height:calc(2*1.06em)}
+    :lang(th) .pair > .sec > h2{min-height:calc(2*1.3em)}
+    :lang(zh-Hans) .pair > .sec > h2{min-height:calc(2*1.2em)}
+    #first .points{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:column;grid-template-rows:repeat(3,auto);column-gap:var(--g)}
+  }
 
-  main{max-width:640px;margin:0 auto;padding:18px 16px 40px}
-  .day{margin:26px 0 10px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
+  @media (min-width:700px) and (max-width:1099px){
+    .points,.plan > p,.bios{max-width:calc((100% - 7*var(--g))*.75 + 5*var(--g))}   /* 6 of the 8 columns it sits in */
+    #first .points{max-width:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:column;grid-template-rows:repeat(3,auto);column-gap:var(--g)}
+  }
 
+  /* ── #moments */
+  #moments .card > p{margin:0 0 var(--grp);font-size:var(--fs-l);line-height:1.3}
+  #moments .links{display:flex;flex-wrap:wrap;gap:16px}
+  @media (max-width:699px){ #moments .links .btn{width:100%} }
+  @media (min-width:1100px){ #moments .card > p{grid-column:c 5/c 11} }
+
+  /* ── #prices: each plan is a row group on the 12 columns */
+  .prices .lead{font-size:var(--fs-b);line-height:28px;color:var(--soft)}
+  .plan{border-top:2px solid var(--ink);padding-top:14px;margin-top:var(--grp)}
+  .plans > .plan:first-child{margin-top:0}
+  .plan h3,.mnotes h3{margin:0 0 14px;font:700 var(--fs-l)/1.3 var(--f-text);color:var(--ink)}
+  .plan .line{margin:0 0 14px}
+  .plan > p{margin:0 0 14px}
+  .plan .camp{padding:12px 16px;background:var(--promo-soft);border-left:4px solid var(--promo);color:var(--promo-deep);font-weight:500}
+  .rows{list-style:none;margin:0;padding:0}
+  .rows li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 0;border-top:2px solid var(--line)}
+  .rows li:first-child{border-top:0;padding-top:0}
+  .rows li.pick{border-top:4px solid var(--plum);padding-top:12px}
+  .rows .pn{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px;min-width:0}
+  .rows .pn > span{order:1;font:700 var(--fs-l)/1.3 var(--f-text)}
+  .rows .pn > .badge{order:2;font:700 var(--fs-s)/20px var(--f-text);color:var(--plum)}
+  .rows .pn small{order:3;flex-basis:100%;font-size:var(--fs-b);line-height:28px;color:var(--soft)}
+  .rows li.pick .pn > span:not(.badge){color:var(--plum)}
+  .rows .pv{flex:none;text-align:right}
+  .rows .pv b{display:block;font:700 var(--fs-l)/1.3 var(--f-text);font-variant-numeric:tabular-nums;color:var(--plum);white-space:nowrap}
+  .rows .vt{margin-left:6px;font:600 var(--fs-s)/20px var(--f-text);font-style:normal;color:var(--soft)}
+  .rows .pv small{display:block;font-size:var(--fs-s);line-height:20px;color:var(--soft);white-space:nowrap}
+  .buy{background:var(--promo);color:var(--promo-ink)}
+  .buy:hover{background:var(--promo-hi);color:var(--promo-ink)}
+  .plan .buy{min-height:56px;font-size:var(--fs-b);font-weight:700}
+  @media (min-width:700px){ .plan .btn{display:inline-flex;width:auto} }
+  /* Gold is for the promotion only: "See packages" is the normal action. */
+  #newPkgs{background:var(--act);color:var(--act-ink)}
+  @media (hover:hover){ #newPkgs:hover{background:var(--act-hi);color:var(--act-hi-ink)} }
+  .prices .fair{margin:var(--grp) 0 14px;font:700 var(--fs-l)/1.3 var(--f-text)}
+  .prices .fine{margin:0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  .prices .fine a{color:var(--ink);font-weight:600}
+  /* Inline links in small print: a 44px tap area without moving the lines around them. */
+  .tq figcaption a,.prices .fine a{display:inline-block;min-width:44px;padding-block:12px;margin-block:-12px;white-space:nowrap}
+  .mnotes{margin-top:var(--grp);padding-top:14px;border-top:2px solid var(--ink)}
+  .mnotes ul{list-style:none;margin:0;padding:0}
+  .mnotes li{padding:14px 0;border-top:2px solid var(--line)}
+  .mnotes li:first-child{padding-top:0;border-top:0}
+  /* The Thai Plex file has one weight, so Thai bold would show as regular with only the digits bold. */
+  :lang(th) .mnotes b{font-weight:inherit;color:var(--plum)}
+  @media (min-width:1100px){
+    #prices .plans{grid-column:c 1/c-end}
+    .plan,.mnotes{display:grid;column-gap:var(--g);align-items:start;grid-template-columns:[c-start] repeat(12,[c] minmax(0,1fr)) [c-end]}
+    .plan > *,.mnotes > *{grid-column:c 5/c-end;min-width:0}
+    .plan > h3,.mnotes > h3{grid-column:c 1/c 5;grid-row:1;padding-right:var(--g)}
+    .plan.feature > .line{grid-column:c 1/c 5;grid-row:2;padding-right:var(--g)}
+    .plan > .rows{grid-row:1/span 3}
+    .plan > p{grid-column:c 5/c 11}
+    #prices .fair{grid-column:c 5/c-end}
+    #prices .fine{grid-column:c 5/c 11}
+    #prices .mnotes{grid-column:c 1/c-end}
+  }
+
+  /* ── #tees: Bangkok tees, ordered on LINE */
+  .tees{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--g);row-gap:var(--grp)}
+  .tee{display:flex;flex-direction:column;min-width:0}
+  .tee img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;object-position:50% 45%;background:var(--paper)}
+  .tee h3{margin:14px 0 4px;font:700 var(--fs-b)/28px var(--f-text);overflow:hidden;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .tee p,.tee li{margin:0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  .tee ul{list-style:none;margin:0;padding:0}
+  .tee .tp{margin:auto 0 14px;padding-top:14px;font-size:var(--fs-b);line-height:28px;font-weight:700;color:var(--plum);font-variant-numeric:tabular-nums}
+  .tee .tp span{white-space:nowrap}
+  .tee .btn{width:100%;padding-inline:12px}
+  @media (min-width:700px){ .tees{grid-template-columns:repeat(4,minmax(0,1fr))} }
+  @media (max-width:1099px){ .tee .btn{font-size:var(--fs-s)} }
+  @media (min-width:1100px){ #tees .tees{grid-column:c 1/c-end} }
+
+  /* ── #letter */
+  .nlq{margin:0 0 14px;font-weight:600}
+  .nlch{display:flex;flex-wrap:wrap;gap:2px;margin:0 0 28px}
+  .nlch button{min-width:44px;min-height:44px;padding:10px 18px;border:0;border-radius:0;cursor:pointer;
+    background:var(--paper);color:var(--ink);font:600 var(--fs-b)/1.2 var(--f-text)}
+  .nlch button[aria-pressed="true"]{background:var(--ink);color:var(--wall)}
+  .nlpane p{margin:0 0 14px}
+  .nlok{display:flex;gap:12px;align-items:center;min-height:44px;margin:14px 0;font-size:var(--fs-b);line-height:1.4;color:var(--ink);cursor:pointer}
+  .nlok input{width:24px;height:24px;min-height:0;margin:0;padding:0;flex:none;accent-color:var(--plum)}
+  .nlmsg{margin:14px 0 0;font-weight:600}
+  .nlmsg:empty{display:none}
+  #letter .fine{margin:14px 0 0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  #letter details.fine summary{display:flex;align-items:center;min-height:44px;cursor:pointer;text-decoration:underline}
+  #letter details.fine p{margin:0}
+  /* Small print keeps a reading measure even where its column is wide. */
+  #letter .fine,.prices .fine,#theme .note,.calc .fine{max-width:62ch}
+  @media (min-width:1100px){ #letter .card > *{grid-column:c 5/c 11} }
+  .wechat{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--paper);padding:8px 8px 8px 16px}
+  .wechat b{user-select:all}
+  .wechat .btn{flex:none;width:auto;min-height:44px;padding:8px 16px}
+
+  /* ── #find */
+  #find .addr{margin:0 0 14px}
+  #find .addr:not(.th){font:700 var(--fs-l)/1.3 var(--f-text)}
+  #find .addr.th{color:var(--soft)}
+  #find .links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--g);margin-top:28px}
+  #find .links .btn{width:100%;padding-inline:12px}
+  #find .links .wide,#find .wechat{grid-column:1/-1}
+  #find .wechat .btn{width:auto}
+  #find h3{margin:var(--grp) 0 0;padding-top:14px;border-top:2px solid var(--ink);font:700 var(--fs-l)/1.3 var(--f-text)}
+  #find .links.contact{margin-top:14px}
+  /* Google is blocked on most Chinese phones, so in Chinese the Amap button leads. */
+  html[lang="zh-Hans"] #find .amap{order:-1;background:var(--plum);color:var(--on-dark);border-color:var(--plum)}
+  html[lang="zh-Hans"] #find .gmap{background:transparent;color:var(--ink);border:2px solid currentColor}
+  @media (min-width:1100px){
+    #find .card > .addr{grid-column:c 5/c 11}
+    #find .links .wide{grid-column:auto}
+    #find .card > h3{grid-column:c 1/c 5;grid-row:6}
+    #find .links.contact{grid-row:6;margin-top:var(--grp);padding-top:16px;border-top:2px solid var(--ink)}
+  }
+
+  /* ── Booking app head and tabs. The nav stays a direct child of body, or sticky stops working. */
+  /* Routes into the app land 14px above this rule, not on the band's blank top half. */
+  .bookhead{padding-bottom:28px;scroll-margin-top:calc(14px - var(--gap)/2)}
+  .bookhead > h2{margin-bottom:0}
+  nav.tabs{display:flex;position:sticky;top:0;z-index:5;padding:0 var(--m);background:var(--wall);border-bottom:2px solid var(--ink)}
+  nav.tabs button{flex:1;position:relative;min-width:0;min-height:56px;padding:0;border:0;background:none;text-align:left;cursor:pointer;
+    font:600 var(--fs-b)/1.2 var(--f-text);color:var(--soft)}
+  nav.tabs button.on{color:var(--ink)}
+  @media (max-width:419px){ :lang(ru) nav.tabs button{font-size:var(--fs-s)} }
+  nav.tabs button.on::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:4px;background:var(--ink)}
+  @media (min-width:1100px){
+    nav.tabs{display:grid;padding:0}
+    nav.tabs #t-schedule{grid-column:c 5/c 7}
+    nav.tabs #t-packages{grid-column:c 7/c 9}
+    nav.tabs #t-me{grid-column:c 9/c 11}
+  }
+  main{padding:28px var(--m) 112px}
+  @media (min-width:700px) and (max-width:1099px){
+    main{width:var(--W);margin-inline:auto;padding-left:0;padding-right:calc(var(--colw) + var(--g))}
+  }
+  @media (min-width:900px) and (max-width:1099px){ main{padding-right:calc(2*(var(--colw) + var(--g)))} }
+  @media (min-width:1100px){
+    main{width:var(--W);margin-inline:auto;padding-left:calc(4*(var(--colw) + var(--g)));padding-right:calc(var(--colw) + var(--g))}
+  }
+
+  /* ── Footer (dark field) */
+  footer{background:var(--header);color:var(--hero-ink);padding:84px 0 56px;--ring:var(--hero-ink)}
+  footer::before{content:"";grid-column:c-start/c-end;height:4px;margin-bottom:56px;background:var(--hero-ink)}
+  footer .brush{font-size:clamp(88px,30vw,360px);line-height:.8;color:var(--hero-ink);justify-self:start;margin-left:-.063em}
+  footer .faddr{margin:28px 0 0;font-size:var(--fs-s);line-height:20px;color:var(--hero-muted)}
+  @media (min-width:700px){ footer .faddr{font-size:var(--fs-b);line-height:28px} }
+  @media (min-width:1100px){ footer .faddr{grid-column:c 1/c 9} footer .cklink{grid-column:c 9/c-end;grid-row:3;justify-self:end;align-self:end} }
+
+  /* ── Thai: the Plex Thai file has one weight, so a bold run showed bold digits and Latin beside
+     regular Thai letters. Medium for both, with no fake bold. (No :is(): older WeChat kernels.) */
+  :lang(th) .sec::after,:lang(th) .habsub,:lang(th) .hab b,:lang(th) .hab .hn,:lang(th) .vs thead th,:lang(th) .teacher .auth,
+  :lang(th) .plan h3,:lang(th) .mnotes h3,:lang(th) .rows .pn > span,:lang(th) .fair,:lang(th) .tee h3,:lang(th) .tee .tp,
+  :lang(th) .nlq,:lang(th) #find .addr,:lang(th) #find h3,:lang(th) .btn,:lang(th) .readmore,:lang(th) nav.tabs button,
+  :lang(th) .day,:lang(th) .pkg h3,:lang(th) dialog h3{font-weight:500;font-synthesis:none}
+
+  /* ── Motion: each section's rule wipes in from the left, once. */
+  @media (prefers-reduced-motion:no-preference){
+    html.js-motion .sec::before{transition:transform .7s ease-in-out}
+    html.js-motion .sec:not(.in-view)::before{transform:scaleX(0)}
+  }
+
+  /* ── The booking app (restyled only: square, rules, no resting shadows) */
+  .day{margin:28px 0 14px;font:700 var(--fs-b)/28px var(--f-text);color:var(--ink)}
   /* Month calendar, design B: deep plum, hairlines, gold moons. */
   .cal{background:#3E1442;color:#FBF5F9;border-radius:var(--radius);padding:16px 12px 16px;margin-bottom:16px}
   .cal .head{display:flex;align-items:flex-end;margin:-16px -12px 14px;min-height:190px;padding:0 6px 12px;
     border-radius:var(--radius) var(--radius) 0 0;
     background:linear-gradient(180deg,rgba(62,20,66,0) 35%,rgba(62,20,66,.95) 92%),
       #3E1442 url('/img/aybkk-hero-900.jpg') center 22%/cover no-repeat}
-  .cal .head b{flex:1;text-align:center;font-family:'Work Sans',sans-serif;font-weight:900;font-size:30px;text-shadow:0 2px 10px rgba(0,0,0,.4);
+  .cal .head b{flex:1;text-align:center;font-family:'Plex',sans-serif;font-weight:900;font-size:30px;text-shadow:0 2px 10px rgba(0,0,0,.4);
     letter-spacing:.01em;color:#FBF5F9}
   .cal .head b small{font-weight:300;font-size:20px;margin-left:8px;color:#F2D98A}
   .cal .nav{background:none;border:none;font-family:inherit;font-weight:700;font-size:24px;line-height:1;color:#F2D98A;
@@ -378,7 +611,7 @@
     border:0;border-bottom:1px solid rgba(251,245,249,.28);border-radius:0;background:none;color:#FBF5F9;font:inherit;text-align:left}
   .cal button.wh{cursor:pointer}
   .cal .wh .w{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#C9AFCB}
-  .cal .wh .dd{font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:20px;line-height:1;font-variant-numeric:tabular-nums}
+  .cal .wh .dd{font-family:'Plex',sans-serif;font-weight:800;font-size:20px;line-height:1;font-variant-numeric:tabular-nums}
   .cal .wh.today .dd{color:#E0B52B}
   .cal .wh.past .dd{opacity:.4}
   .cal .wh.sel{box-shadow:inset 0 -3px 0 #E0B52B}
@@ -401,10 +634,11 @@
   .cal .wb.isfull{opacity:.6}
   @media (min-width:560px){ .cal .head b.wkl{font-size:30px} .cal .head b.wkl small{font-size:18px} }
   @media (min-width:600px){ .cal .wkgrid{grid-template-columns:repeat(7,minmax(74px,1fr))} }
-  .calsw{display:flex;gap:6px;margin:0 0 10px}
-  .calsw button{font-weight:600;font-size:14px;line-height:1;font-family:inherit;min-height:40px;padding:8px 18px;border-radius:999px;cursor:pointer;
-    background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
-  .calsw button[aria-pressed="true"]{background:var(--plum);border-color:var(--plum);color:var(--on-dark)}
+  .calsw{display:flex;gap:0;margin:0 0 14px}
+  .calsw button{font:600 var(--fs-b)/1 var(--f-text);min-height:44px;min-width:44px;padding:8px 18px;border:0;border-radius:0;cursor:pointer;
+    background:var(--paper);color:var(--ink)}
+  .calsw button + button{margin-left:2px}
+  .calsw button[aria-pressed="true"]{background:var(--ink);color:var(--wall)}
   #dayList{scroll-margin-top:64px}
   /* The month's printed timetable (the same poster as Instagram), above its calendar. */
   .ttp{margin:0 0 16px}
@@ -428,21 +662,21 @@
   .cls[data-cls]{cursor:pointer}
   .cls .open{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
   .cls .open:hover{text-decoration:underline}
-  .cls.mine{border-color:var(--promo-line);box-shadow:inset 3px 0 0 var(--promo)}
+  .cls.mine{background:var(--promo-soft);padding-left:12px;box-shadow:inset 4px 0 0 var(--promo)}
   .pill.ok{background:var(--promo-soft);color:var(--promo-deep)}
   /* Inside a class: tall enough that the tabs can sit at the top of the screen. */
   .inside{min-height:calc(100vh - 110px)}
-  .backbtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:0 0 12px;padding:8px 16px 8px 12px;border-radius:999px;
-    border:1.5px solid var(--line);background:var(--paper);color:var(--plum);font-weight:700;font-size:15px;line-height:1;font-family:inherit;cursor:pointer}
-  .clsv{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--plum);border-radius:var(--radius);padding:18px;margin-bottom:12px}
-  .clsv .k{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--pink)}
+  .backbtn{display:inline-flex;align-items:center;gap:6px;min-height:48px;margin:0 0 14px;padding:8px 18px 8px 12px;border-radius:0;
+    border:2px solid var(--ink);background:transparent;color:var(--ink);font:700 var(--fs-b)/1 var(--f-text);cursor:pointer}
+  .clsv{background:var(--paper);border-top:4px solid var(--plum);padding:18px;margin-bottom:14px}
+  .clsv .k{font:700 var(--fs-s)/20px var(--f-text);color:var(--plum)}
   .clsv h3{margin:6px 0 2px;font-family:'Patrick Hand','Plex',cursive;font-weight:400;font-size:29px;line-height:1.15;color:var(--ink)}
-  .clsv .when{font-family:'Work Sans','Plex',sans-serif;font-weight:800;font-size:26px;line-height:1.15;color:var(--plum);font-variant-numeric:tabular-nums}
+  .clsv .when{font-family:'Plex',sans-serif;font-weight:800;font-size:26px;line-height:1.15;color:var(--plum);font-variant-numeric:tabular-nums}
   .clsv .m{font-size:14.5px;color:var(--soft);margin-top:6px}
-  .clsv .seats{font-size:14px;font-weight:700;color:var(--pink);margin-top:4px}
+  .clsv .seats{font-size:14px;font-weight:700;color:var(--pink-deep);margin-top:4px}
   .clsv .seats.quiet{color:var(--soft);font-weight:400}
-  .mystate{border:2px solid var(--line);border-radius:var(--radius);padding:18px;background:var(--paper)}
-  .mystate .big{font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:26px;line-height:1.15}
+  .mystate{border:2px solid var(--line);padding:18px;background:var(--paper)}
+  .mystate .big{font-family:'Plex',sans-serif;font-weight:900;font-size:26px;line-height:1.15}
   .mystate.yes{background:var(--promo-soft);border-color:var(--promo)}
   .mystate.yes .big{color:var(--promo-deep)}
   .mystate.no{background:var(--blush);border-color:var(--blush-line)}
@@ -450,166 +684,151 @@
   .mystate.full .big{color:var(--soft)}
   .mystate .btn{margin-top:14px;min-height:50px;padding:14px 30px;font-size:16px}
   .mystate .note{margin:12px 0 0}
-  .cls{background:var(--paper);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;
-    display:flex;gap:14px;align-items:center;box-shadow:var(--lift)}
+  .cls{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:2px solid var(--line)}
   .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
     color:var(--plum);min-width:62px}
   .cls .b{flex:1;min-width:0}
   .cls .n{font-weight:600;font-size:15.5px}
   .cls .m{font-size:13px;color:var(--soft);margin-top:1px}
-  .cls .seats{font-size:12.5px;font-weight:600;color:var(--pink);margin-top:3px}
+  .cls .seats{font-size:13px;font-weight:600;color:var(--pink-deep);margin-top:3px}
   /* pink is for scarcity; an empty class is just information */
   .cls .seats.quiet{color:var(--soft);font-weight:400}
   .cls.full{opacity:.45}
-  .cls.came{padding:11px 16px;margin-bottom:8px}
+  .cls.came{padding:11px 0}
   .cls.came .t{font-size:17px;color:var(--soft)}
   .pkg.habit{display:flex;align-items:center;gap:16px;background:var(--blush);border-color:var(--blush-line)}
   .pkg.habit .hn{font-family:'Patrick Hand','Plex',cursive;font-size:54px;line-height:1;color:var(--plum);
     min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
   .pkg.habit b{font-size:17px}
-  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-    background:var(--blush);color:var(--plum);border-radius:999px;padding:3px 9px;margin-left:6px}
+  .pill{display:inline-block;font:600 var(--fs-s)/20px var(--f-text);background:var(--blush);color:var(--plum);padding:0 8px;margin-left:8px}
 
-  .btn{background:var(--plum);color:var(--on-dark);border:none;border-radius:999px;padding:12px 24px;
-    font:600 15px/1.2 inherit;cursor:pointer;transition:background .18s}
-  .btn:hover{background:var(--plum-deep)}
-  .btn.pink{background:var(--pink)}
-  .btn.pink:hover{background:var(--pink-deep)}
-  .btn.ghost{background:transparent;color:var(--plum);box-shadow:inset 0 0 0 1.5px var(--price-line)}
-  .btn[disabled]{opacity:.4;cursor:not-allowed}
-
-  .pkg{background:var(--paper);border-radius:var(--radius);padding:22px;margin-bottom:14px;box-shadow:var(--lift)}
+  .pkg{background:var(--paper);padding:22px;margin-bottom:14px}
+  .pkg .badge{display:inline-block;margin:0 0 8px;font:700 var(--fs-s)/20px var(--f-text);color:var(--plum)}
   .pkg.feature{background:var(--blush)}
-  .pkg h3{margin:0 0 4px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:28px;line-height:1.15;color:var(--ink)}
-  .pkg .price{font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:32px;line-height:1.1;letter-spacing:-.02em;color:var(--plum)}
+  .pkg h3{margin:0 0 4px;font:700 var(--fs-l)/1.3 var(--f-text);color:var(--ink)}
+  .pkg .price{font-family:'Plex',sans-serif;font-weight:700;font-size:32px;line-height:1.1;letter-spacing:-.02em;color:var(--plum);font-variant-numeric:tabular-nums}
   .pkg .fee{font-size:12.5px;color:var(--soft);margin-top:2px}
   .pkg ul{margin:10px 0 15px;padding-left:17px;font-size:13.5px;color:var(--soft)}
   .pkg li{margin:3px 0}
-  .note{font-size:13.5px;color:var(--soft);line-height:1.65}
+  .note{font-size:var(--fs-s);color:var(--soft);line-height:20px}
   table.chk{width:100%;border-collapse:collapse;font-size:15px}
   table.chk th{text-align:left;font-size:12px;color:var(--soft);font-weight:700;padding:4px 6px}
   table.chk td{padding:6px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
   .feel{display:flex;gap:8px}
-  .feel button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font:700 16px/1 inherit;cursor:pointer}
-  .feel button[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#fff}
+  .feel button{width:48px;height:48px;border-radius:0;border:2px solid var(--line);background:var(--paper);color:var(--ink);font:700 16px/1 inherit;cursor:pointer}
+  .feel button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--wall)}
   /* Whole photos, any shape: columns instead of cropped square tiles. */
   .myph{columns:3;column-gap:6px}
   .myph button{display:block;width:100%;border:none;padding:0;margin:0 0 6px;background:none;cursor:pointer;break-inside:avoid}
-  .myph img{display:block;width:100%;height:auto;border-radius:6px;background:var(--blush)}
-  .jrn{margin:8px 0 16px;border-radius:12px;background:var(--paper);box-shadow:var(--lift)}
+  .myph img{display:block;width:100%;height:auto;background:var(--blush)}
+  .jrn{margin:8px 0 16px;background:var(--paper)}
   .jrn summary{padding:10px 12px;cursor:pointer;font-weight:700;color:var(--plum);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .jrn[open] summary{white-space:normal}
   .jrn .in{padding:0 12px 12px}
   .jrn .said{margin:0 0 8px;white-space:pre-wrap}
-  .tees{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-  .tee{background:var(--paper);box-shadow:var(--lift);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
-  .tee img{display:block;width:100%;aspect-ratio:1;object-fit:cover;background:var(--blush)}
-  .tee .tb{padding:10px;display:flex;flex-direction:column;gap:6px;flex:1}
-  .tee .tb .btn{margin-top:auto;text-align:center}
-
-  dialog{border:none;border-radius:12px;padding:22px;max-width:410px;width:92%;
+  dialog{border:none;border-radius:0;padding:28px;max-width:440px;width:92%;
     background:var(--paper);color:var(--ink);box-shadow:0 24px 60px rgba(23,18,26,.3)}
   dialog::backdrop{background:rgba(23,18,26,.55)}
-  dialog h3{margin:0 0 14px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:30px;line-height:1.15}
-  label{display:block;font-size:12.5px;color:var(--soft);margin:11px 0 4px}
-  input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
-    font-family:inherit;background:var(--wall);color:var(--ink)}
-  input:focus,select:focus{outline:2px solid var(--pink);outline-offset:1px}
-  .linkbtn{background:none;border:none;padding:6px 0;font:inherit;font-size:14px;color:var(--plum);
-    text-decoration:underline;cursor:pointer}
-  .msg{padding:12px 14px;border-radius:8px;margin-top:12px;font-size:14px}
+  dialog h3{margin:0 0 14px;font:700 var(--fs-l)/1.3 var(--f-text)}
+  label{display:block;font:600 var(--fs-s)/20px var(--f-text);color:var(--ink);margin:14px 0 6px}
+  input,select{width:100%;min-height:48px;padding:10px 12px;border:2px solid var(--soft);border-radius:0;
+    font:400 16px/1.4 var(--f-text);background:var(--wall);color:var(--ink)}
+  input:focus,select:focus{outline:3px solid var(--ring);outline-offset:0}
+  .dacts{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 0}
+  .msg{padding:12px 14px;margin-top:12px;font-size:14px;line-height:1.5}
   .msg.ok{background:var(--blush);color:var(--plum)}
   .msg.bad{background:#fdeaea;color:#a33}
   .msg .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .skel{display:grid;gap:12px;margin:4px 0 16px}
-  .skel i{display:block;height:16px;border-radius:10px;background:linear-gradient(90deg,var(--line) 30%,rgba(232,69,140,.10) 50%,var(--line) 70%);background-size:300% 100%;animation:skel 1.4s ease-in-out infinite}
+  .skel i{display:block;height:16px;background:linear-gradient(90deg,var(--line) 30%,rgba(232,69,140,.10) 50%,var(--line) 70%);background-size:300% 100%;animation:skel 1.4s ease-in-out infinite}
   .skel .row{display:flex;gap:10px}
-  .skel .pill{width:96px;height:44px;border-radius:999px}
-  .skel .big{height:auto;aspect-ratio:2/3;max-width:420px;border-radius:var(--radius)}
+  .skel .pill{width:96px;height:44px;margin:0}
+  .skel .big{height:auto;aspect-ratio:2/3;max-width:420px}
   @keyframes skel{from{background-position:100% 0}to{background-position:0 0}}
   @media (prefers-reduced-motion:reduce){ .skel i{animation:none} }
   .calc{scroll-margin-top:12px}
   [hidden]{display:none!important}
-  #promo{margin-top:28px;padding:26px 18px 20px;background:var(--promo-soft);box-shadow:inset 0 0 0 1.5px var(--promo-line);border-radius:22px;line-height:1.35}
-  #promo h2{color:var(--promo-deep);margin-bottom:8px}
-  #promo .lead{margin:0 0 14px;font-size:15.5px}
-  .grp + .grp{margin-top:10px}
+  .grp + .grp{margin-top:14px}
   .grp-h{display:flex;align-items:center;flex-wrap:wrap;gap:2px 10px;width:100%;text-align:left;cursor:pointer;
-    font:inherit;border:none;border-radius:14px;padding:15px 46px 15px 18px;position:relative;
+    font:inherit;border:none;border-radius:0;min-height:56px;padding:14px 46px 14px 18px;position:relative;
     background:var(--promo);color:var(--promo-ink)}
   .grp.past .grp-h{background:var(--promo-ink);color:var(--promo-hi)}
-  .grp-h span{font-family:'Work Sans','Plex',sans-serif;font-weight:700;font-size:19px;line-height:1.15}
-  .grp-h small{font-size:13px;font-weight:500;opacity:.85}
+  .grp-h span{font-family:'Plex',sans-serif;font-weight:700;font-size:var(--fs-b);line-height:1.15}
+  .grp-h small{font-size:var(--fs-s);font-weight:500}
   .grp-h i{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-style:normal;font-size:22px;font-weight:900}
   .offers{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:10px}
   .offer .oc{display:block;margin-top:8px;font-weight:800;font-size:15px;color:var(--promo-deep)}
-  .offer[aria-expanded="true"]{border:3px solid var(--promo);padding:12.5px 12.5px 10.5px;box-shadow:0 4px 14px rgba(217,165,33,.25)}
+  .offer[aria-expanded="true"]{border-top-color:var(--promo)}
   .offer{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);cursor:pointer;line-height:1.35;
-    background:var(--paper);border:1.5px solid transparent;border-radius:14px;padding:16px 16px 14px;box-shadow:var(--lift)}
-  .offer[aria-pressed="true"]{border:3px solid var(--promo);padding:12.5px 12.5px 10.5px;box-shadow:0 4px 14px rgba(217,165,33,.25)}
-  .offer .tag{display:inline-block;font-size:15px;font-weight:800;letter-spacing:.02em;
-    border-radius:999px;padding:6px 14px;background:var(--promo);color:var(--promo-ink)}
+    background:var(--paper);border:0;border-top:4px solid transparent;border-radius:0;padding:14px 16px 16px}
+  .offer[aria-pressed="true"]{border-top-color:var(--promo)}
+  .offer .tag{display:inline-block;font-size:var(--fs-s);font-weight:800;
+    padding:6px 14px;background:var(--promo);color:var(--promo-ink)}
   .offer .tag.past{background:var(--promo-ink);color:var(--promo-hi)}
-  .offer .ot{display:block;margin-top:8px;font-family:'Work Sans','Plex',sans-serif;font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
-  .offer .ob{display:block;font-family:'Work Sans','Plex',sans-serif;font-weight:700;font-size:28px;letter-spacing:-.01em;line-height:1.05;color:var(--promo-deep);margin:2px 0 4px}
+  .offer .ot{display:block;margin-top:8px;font:700 var(--fs-s)/20px var(--f-text);color:var(--soft)}
+  .offer .ob{display:block;font-family:'Plex',sans-serif;font-weight:700;font-size:28px;letter-spacing:-.01em;line-height:1.05;color:var(--promo-deep);margin:2px 0 4px}
   .offer .ob s{font-weight:500;font-size:16px;color:var(--soft);margin-left:6px}
   .offer .od{display:block;font-size:15px;line-height:1.4}
-  .calc{margin-top:0;border:2px solid var(--promo);border-radius:12px;line-height:1.35}
-  .calc h3{margin:0 0 4px;font-family:'Cormorant','Plex',serif;font-weight:600;font-size:30px;line-height:1.15;letter-spacing:0;text-transform:none;color:var(--promo-deep)}
+  .calc{margin-top:0;padding:22px 18px;background:var(--paper);border-top:4px solid var(--promo);line-height:1.35}
+  .calc h3{margin:0 0 4px;font:700 var(--fs-l)/1.3 var(--f-text);color:var(--promo-deep)}
   .calc .q{margin:12px 0 6px;font-size:14px;font-weight:700;color:var(--soft)}
-  .calc .opts{display:flex;flex-wrap:wrap;gap:8px}
-  .calc .opts button{font:600 16px/1 inherit;font-family:inherit;min-height:46px;padding:10px 16px;border-radius:999px;cursor:pointer;
-    background:var(--paper);color:var(--ink);border:1.5px solid var(--promo-line)}
+  .calc .opts{display:flex;flex-wrap:wrap;gap:2px}
+  .calc .opts button{font:600 16px/1 var(--f-text);min-height:46px;min-width:46px;padding:10px 16px;border-radius:0;cursor:pointer;
+    background:var(--wall);color:var(--ink);border:2px solid var(--promo-line)}
   .calc .opts button[aria-pressed="true"]{background:var(--promo);border-color:var(--promo);color:var(--promo-ink);font-weight:800}
   .calc input[type=date]{max-width:260px;font-size:17px}
-  .res{margin-top:16px;background:var(--promo-soft);border:1px solid var(--promo-line);border-radius:10px;padding:14px}
+  .res{margin-top:16px;background:var(--promo-soft);padding:16px}
   .res .pass{font-size:17px;font-weight:700}
   .res .each{font-size:15px;margin-top:2px}
-  .res .ph{margin-top:10px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
-  .res .total{font-family:'Work Sans','Plex',sans-serif;font-weight:900;font-size:44px;line-height:1.02;color:var(--promo-deep)}
+  .res .ph{margin-top:10px;font:700 var(--fs-s)/20px var(--f-text);color:var(--soft)}
+  .res .total{font:800 var(--fs-h)/1.05 var(--f-text);letter-spacing:-.025em;font-variant-numeric:tabular-nums;color:var(--promo-deep)}
   .res .brk{font-size:14px;color:var(--soft)}
   .res .pc{margin-top:8px;font-size:17px;font-weight:700;color:var(--promo-ink)}
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .res .pc{color:var(--promo-hi)} }
   :root[data-theme="dark"] .res .pc{color:var(--promo-hi)}
-  .res .save{display:inline-block;margin-top:6px;font-size:14px;font-weight:800;color:var(--promo-hi);background:#3e1442;border-radius:999px;padding:4px 12px}
+  .res .save{display:inline-block;margin-top:6px;font-size:14px;font-weight:800;color:var(--promo-hi);background:#3e1442;padding:4px 12px}
   .res .past{margin-top:8px;font-size:14px;font-weight:700;color:var(--promo-deep)}
   .buy{display:flex;width:100%;margin-top:14px;min-height:56px;font-size:19px;font-weight:800;background:var(--promo);color:var(--promo-ink)}
   .buy:hover{background:var(--promo-hi)}
   .alt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-  .alt .btn{width:100%;min-height:46px;padding:10px 8px;font-size:15px;background:var(--paper);color:var(--promo-deep);border:1.5px solid var(--promo)}
+  .alt .btn{width:100%;min-height:48px;padding:10px 8px;font-size:15px;background:var(--paper);color:var(--promo-deep);border:2px solid var(--promo)}
   .alt .btn:hover{background:var(--promo-soft)}
   .res .how{margin:8px 0 0;font-size:14px}
   .res .copied{margin:6px 0 0;font-size:14px;font-weight:700;color:var(--promo-deep)}
-  .calc .fine{margin:10px 0 0;font-size:12.5px;color:var(--soft)}
-  footer{text-align:center;color:var(--soft);font-size:12.5px;padding:26px 16px 44px}
-  footer .brush{font-size:19px;color:var(--plum);display:block;margin-bottom:4px}
+  .calc .fine{margin:10px 0 0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
 </style>
 </head>
 <body>
-<header class="hero">
+<header class="hero sgrid">
+  <img class="logo" src="/img/aybkk-logo-240.jpg" width="120" height="120" alt="Ashtanga Yoga Center of Bangkok logo">
+  <h1 class="mast">AYBKK <span>Ashtanga Yoga Bangkok</span></h1>
   <div class="langs" role="group" aria-label="Language">
     <button type="button" data-lang="en" lang="en">EN</button>
     <button type="button" data-lang="th" lang="th">ไทย</button>
     <button type="button" data-lang="zh" lang="zh-Hans">中文</button>
     <button type="button" data-lang="ru" lang="ru">RU</button>
   </div>
-  <img class="logo" src="/img/aybkk-logo-240.jpg" width="120" height="120" alt="Ashtanga Yoga Center of Bangkok logo">
-  <h1 class="kick">AYBKK <span>· Ashtanga Yoga Bangkok</span></h1>
   <p class="h12h" id="h12h"></p>
   <p class="h12s" id="h12s"></p>
-  <div class="cta"><a class="btn pink" href="#promo" id="h12Btn"></a></div>
-  <a class="more" href="#book" data-i18n="ctaTimetable">See timetable</a>
+  <div class="cta"><a class="btn pink" href="#promo" id="h12Btn"></a><a class="more" href="#book" data-i18n="ctaTimetable">See timetable</a></div>
+  <ul class="facts">
+    <li data-i18n="heroF1">Mysore style since 2013</li>
+    <li data-i18n="heroF2">Sukhumvit 31, Bangkok</li>
+    <li data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</li>
+  </ul>
+  <picture class="pic"><source media="(min-width:700px)" srcset="/img/aybkk-hero-1600.jpg">
+    <img src="/img/aybkk-hero-900.jpg" width="900" height="1000" alt="Jamsai, R. Sharath Jois and Boonchu at the AYBKK shala wall" fetchpriority="high" decoding="async"></picture>
 </header>
 
 <div class="sw">
-  <section id="promo" hidden>
+  <section id="promo" class="sec sgrid field-promo" hidden>
     <h2 data-i18n="promoH">Sharathji promotion, 1 Oct to 11 Nov</h2>
     <p class="lead" data-i18n="promoLead">Pick an offer, pick your first day, and see exactly what you pay.</p>
     <div id="offers"></div>
   </section>
 
-  <section id="habits">
+  <section id="habits" class="sec sgrid">
     <h2 data-i18n="habH">10 things people do to stay healthy.</h2>
     <p class="habsub" data-i18n="habSub">Ashtanga does all 10, in one morning.</p>
     <div class="habs">
@@ -624,42 +843,34 @@
       <div class="hab"><span class="hn">9</span><div><b data-i18n="hab9t">Together</b><p data-i18n="hab9d">A quiet room of people who show up. Belonging without noise.</p></div></div>
       <div class="hab"><span class="hn">10</span><div><b data-i18n="hab10t">Traditional</b><p data-i18n="hab10d">A 100-year-old method, taught by an Authorized teacher.</p></div></div>
     </div>
-    <p style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px"><a class="btn pink" href="#mysore" data-i18n="habCta">Start with one morning</a>
-      <a class="btn ghost" href="#compare" data-i18n="cmpBtn">See how it compares →</a></p>
+    <p class="act"><a class="btn pink" href="#mysore" data-i18n="habCta">Start with one morning</a></p>
   </section>
 
-  <section id="compare">
-    <h2 data-i18n="cmpH">One morning vs four workouts</h2>
-    <p class="lead" data-i18n="cmpSub">To cover these 10, most people need a run, a gym, a Pilates class and a meditation app. Or one morning.</p>
-    <div class="cmpwrap"><table class="cmp">
-        <thead><tr><th></th><th data-i18n="cmpWalk">Walk / run</th><th data-i18n="cmpGym">Gym</th><th data-i18n="cmpPilates">Pilates</th><th class="ash" data-i18n="cmpAsh">Ashtanga</th></tr></thead>
-        <tbody>
-        <tr><th scope="row" data-i18n="cmpStrength">Strength</th><td class="c-some" data-i18n="cmpLower">Lower body only</td><td class="c-yes" data-i18n="cmpYes">Yes</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        <tr><th scope="row" data-i18n="cmpHeart">Heart and lungs</th><td class="c-yes" data-i18n="cmpYes">Yes</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        <tr><th scope="row" data-i18n="cmpMobility">Mobility</th><td class="c-no">–</td><td class="c-no">–</td><td class="c-yes" data-i18n="cmpYes">Yes</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        <tr><th scope="row" data-i18n="cmpCore">Balance and core</th><td class="c-some" data-i18n="cmpLower">Lower body only</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-yes" data-i18n="cmpYes">Yes</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        <tr><th scope="row" data-i18n="cmpCalm">Breath and calm</th><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-no">–</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        <tr><th scope="row" data-i18n="cmpSleep">Better sleep</th><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-some" data-i18n="cmpIntense">Yes if intense, less if light</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        <tr><th scope="row" data-i18n="cmpTeacher">A teacher who notices you</th><td class="c-no">–</td><td class="c-some" data-i18n="cmpCoach">With a paid coach</td><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        <tr><th scope="row" data-i18n="cmpFriends">Daily friends</th><td class="c-some" data-i18n="cmpSome">Some</td><td class="c-some" data-i18n="cmpSometimes">Sometimes</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        <tr><th scope="row" data-i18n="cmpTradition">Tradition and meaning</th><td class="c-no">–</td><td class="c-no">–</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        <tr><th scope="row" data-i18n="cmpHabit">A habit that sticks</th><td class="c-some" data-i18n="cmpStrict">Some, for strict people</td><td class="c-some" data-i18n="cmpStrict">Some, for strict people</td><td class="c-no">–</td><td class="c-yes ash" data-i18n="cmpYes">Yes</td></tr>
-        </tbody></table></div>
-    <p style="margin-top:14px"><a class="btn pink" href="#mysore" data-i18n="cmpCta">Try one morning</a></p>
+  <!-- The monthly theme: public/themes/<YYYY-MM>.json, picked by the Bangkok month. Hidden when there is none. -->
+  <section id="theme" class="sec sgrid field-aub" hidden aria-labelledby="themeH">
+    <h2 id="themeH"></h2>
+    <p class="side" id="themeMonth"></p>
+    <p class="lead" id="themeLead"></p>
+    <table class="vs" id="themeTable" role="table" aria-labelledby="themeH"></table>
+    <p id="themeStakes"></p>
+    <figure class="tq" id="themeQ" hidden><blockquote lang="en"><p></p></blockquote><figcaption></figcaption><p class="qm"></p></figure>
+    <p class="act"><a class="btn pink" id="themeCta" href="#mysore"></a></p>
+    <p class="note" id="themeNote"></p>
   </section>
 
-  <section class="teacher" id="teacher">
+  <section class="teacher sec sgrid" id="teacher">
     <h2 data-i18n="teacherH">Your teacher</h2>
     <div class="card">
       <figure>
-        <img src="/img/aybkk-hero-900.jpg" width="900" height="1000" loading="lazy"
-          alt="Jamsai, R. Sharath Jois and Boonchu at the AYBKK shala wall">
+        <picture class="tpic"><source media="(min-width:700px)" srcset="/img/aybkk-hero-1600.jpg">
+          <img src="/img/aybkk-hero-900.jpg" width="900" height="1000" loading="lazy" decoding="async"
+          alt="Jamsai, R. Sharath Jois and Boonchu at the AYBKK shala wall"></picture>
         <figcaption data-i18n="caption">Jamsai, R. Sharath Jois and Boonchu at AYBKK</figcaption>
       </figure>
       <div class="bios">
         <div class="bio">
           <div class="name">Boonchu Tanti</div>
-          <div class="auth" data-i18n="auth">Authorized Level 2 by R. Sharath Jois</div>
+          <div class="auth" data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</div>
           <div class="txt" id="bioB">
             <p data-i18n="bio1">Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.</p><p data-i18n="bio2">He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.</p><p data-i18n="bio3">In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga. AYBKK has been the home shala of Bangkok’s Ashtanga community since 2013. Several of Bangkok’s Ashtanga teachers practised and assisted here before opening their own shalas.</p><p data-i18n="bio4">His teaching looks at how each body works, and at the student's own commitment. Every body is different, and so is every practice.</p>
           </div>
@@ -667,7 +878,7 @@
         </div>
         <div class="bio">
           <div class="name">Jamsai Tanti</div>
-          <div class="auth" data-i18n="auth">Authorized Level 2 by R. Sharath Jois</div>
+          <div class="auth" data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</div>
           <div class="txt" id="bioJ">
             <p data-i18n="jbio1">Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.</p><p data-i18n="jbio2">The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.</p><p data-i18n="jbio3">She runs AYBKK and teaches led, Mysore and private classes. She also organised Sharath Jois’s workshop in Bangkok. Her teaching puts breath, clear alignment and an active vinyasa first.</p><p data-i18n="jbio4">She kept practising through both of her pregnancies, into the Advanced series, and still practises and teaches as a mother.</p>
           </div>
@@ -677,8 +888,8 @@
     </div>
   </section>
 
-  <div class="pair">
-    <section id="mysore">
+  <div class="pair sgrid">
+    <section id="mysore" class="sec">
       <h2 data-i18n="mysoreH">What is Mysore style?</h2>
       <ul class="points">
         <li data-i18n="m1">It is self-practice. You move through the Ashtanga sequence at your own pace, with your own breath.</li>
@@ -687,7 +898,7 @@
         <li data-i18n="m4">This is the traditional way Ashtanga is taught, as in Mysore, India.</li>
       </ul>
     </section>
-    <section id="first">
+    <section id="first" class="sec">
       <h2 data-i18n="firstH">Your first class</h2>
       <ul class="points">
         <li data-i18n="f1">New to Mysore style? Start with a monthly package, so the teacher can guide you step by step. Drop-in is for visitors who already know the sequence.</li>
@@ -700,7 +911,7 @@
     </section>
   </div>
 
-  <section id="moments">
+  <section id="moments" class="sec sgrid">
     <h2 data-i18n="momH">Today at the shala</h2>
     <div class="card">
       <p data-i18n="momLine">Every morning we share moments from the shala: the practice, the people, news and updates.</p>
@@ -711,7 +922,7 @@
     </div>
   </section>
 
-  <section class="prices" id="prices">
+  <section class="prices sec sgrid field-price" id="prices">
     <h2 data-i18n="pricesH" data-i18n-new="pricesHNew">From 406 baht a class.</h2>
     <p class="lead" data-i18n="pricesSub">Counted at 4 mornings a week (16 classes a month).</p>
     <div class="plans">
@@ -734,8 +945,8 @@
         <h3 data-i18n="ctaStart">New? Start here</h3>
         <p class="line" data-i18n="newLine">Start with 1 month, so your teacher can guide you step by step.</p>
         <p class="camp campWrap" data-i18n="newCamp">Until 11 Nov 2026: Duo, buy 1 get 1 free, or the Rookie Pack, 5,900. Book the promotion on LINE @aybkk. Start by 12 Nov.</p>
-        <p style="margin-top:12px" class="campWrap"><a class="btn buy" href="#promo" data-i18n="bandBtn">Calculate my price →</a></p>
-        <p style="margin-top:12px" class="newP" hidden><a class="btn buy" href="#book" id="newPkgs" data-i18n="newBtn">See packages →</a></p>
+        <p class="campWrap"><a class="btn buy" href="#promo" data-i18n="bandBtn">Calculate my price →</a></p>
+        <p class="newP" hidden><a class="btn buy" href="#book" id="newPkgs" data-i18n="newBtn">See packages →</a></p>
       </div>
       <div class="plan">
         <h3 data-i18n="visitH">Visiting?</h3>
@@ -763,13 +974,15 @@
     </div>
   </section>
 
-  <section id="tees" hidden>
+  <!-- Bangkok tees: public/bkk-tees.json (Boonchu edits it). Hidden while no tee is shown. -->
+  <section id="tees" class="sec sgrid" hidden>
     <h2 data-i18n="teeH">AYBKK tees</h2>
-    <p class="lead" data-i18n="teeLead">Pay online, then send your size and payment slip to LINE @aybkk.</p>
+    <p class="lead" data-i18n="teeLead">Order on LINE, then pick up your tee at the shala.</p>
     <div class="tees" id="teeList"></div>
+    <p class="act" hidden><button type="button" class="btn ghost" id="teeAll" data-i18n="teeAll">Show all tees</button></p>
   </section>
 
-  <section id="letter">
+  <section id="letter" class="sec sgrid">
     <h2 data-i18n="letterH">The Monday letter</h2>
     <p class="lead" data-i18n="letterLead">A short letter from the shala every Monday, with one small thing to try on your mat that week. Free. Leave any time.</p>
     <div class="card">
@@ -805,19 +1018,19 @@
     </div>
   </section>
 
-  <section id="find">
+  <section id="find" class="sec sgrid">
     <h2 data-i18n="findH">Find us</h2>
     <div class="card">
       <p class="addr">545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor, Bangkok 10110</p>
       <p class="addr th" lang="th">545 สุขุมวิท 31 (S31 Sukhumvit Hotel, 8th floor AYBKK) คลองเตยเหนือ วัฒนา กรุงเทพ 10110</p>
-      <div class="links">
+      <div class="links maps">
         <a class="btn wide gmap" href="https://www.google.com/maps/search/?api=1&amp;query=AYBKK&amp;query_place_id=ChIJOWhLf_2e4jARi25S9GpEmWk"
           target="_blank" rel="noopener" data-i18n="maps">Open in Google Maps</a>
         <a class="btn wide ghost amap" href="https://uri.amap.com/marker?position=100.5658621,13.7336594&amp;name=AYBKK&amp;src=aybkk&amp;coordinate=wgs84&amp;callnative=1"
           target="_blank" rel="noopener" data-i18n="amap">Open in Amap (高德地图)</a>
       </div>
       <h3 data-i18n="contactH">Message us</h3>
-      <div class="links">
+      <div class="links contact">
         <a class="btn pink" href="https://line.me/R/ti/p/@aybkk" target="_blank" rel="noopener">LINE @aybkk</a>
         <a class="btn ghost" href="https://www.instagram.com/aybkk/" target="_blank" rel="noopener">Instagram @aybkk</a>
         <a class="btn ghost" href="https://www.facebook.com/ashtangabkk" target="_blank" rel="noopener">Facebook</a>
@@ -829,7 +1042,8 @@
   </section>
 </div>
 
-<nav class="tabs" id="book">
+<div class="sec sgrid bookhead"><h2 data-i18n="bookH">Book a class</h2></div>
+<nav class="tabs sgrid" id="book">
   <button id="t-schedule" class="on" onclick="tab('schedule')" data-i18n="tabSchedule">Timetable</button>
   <button id="t-packages" onclick="tab('packages')" data-i18n="tabPackages">Packages</button>
   <button id="t-me" onclick="tab('me')" data-i18n="tabMe">My pass</button>
@@ -837,7 +1051,7 @@
 
 <main id="view" aria-busy="true"><div class="skel" role="status"><span class="sr" data-i18n="loading">Loading…</span><div class="row"><i class="pill"></i><i class="pill"></i></div><i style="width:40%"></i><i class="big"></i></div>
   <noscript><p class="msg bad">The timetable needs JavaScript. Book on LINE @aybkk.</p></noscript></main>
-<footer><span class="brush">AYBKK</span>Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31</footer>
+<footer class="sgrid"><span class="brush">AYBKK</span><p class="faddr">Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31</p></footer>
 
 <dialog id="dlg"><div id="dlgIn"></div></dialog>
 
@@ -852,13 +1066,20 @@
   const POSTER_MAPS = {};               // '<YYYY-MM>-<lang>' -> where each date box sits, or null
   // Storage can be blocked (privacy settings, some in-app browsers): then nobody is signed in.
   const myCode = () => { try { return localStorage.getItem('aybkk_member') || ''; } catch (_) { return ''; } };
+  // Home page data, read once: the Bangkok tees and the monthly theme (renderTees, loadTheme).
+  let TEES_P = null, TEES_R = null, TEES_ALL = false;
+  const TEES_FIRST = 8;
+  // cn.aybkk.net serves this page too: China has its own tee shop in RMB, and LINE is blocked there.
+  const CN_HOST = /^cn\./.test(location.hostname);
+  const list = v => (Array.isArray(v) ? v : String(v ?? '').split(/[,\s/]+/)).map(x => String(x).trim()).filter(Boolean);
+  const THEME = { checked: null, now: null, month: null, data: null, files: {} };
 
   const STR = {
     en: {
       ctaTimetable: 'See timetable', ctaStart: 'New? Start here',
       teacherH: 'Your teacher',
       caption: 'Jamsai, R. Sharath Jois and Boonchu at AYBKK',
-      auth: 'Authorized Level 2 by R. Sharath Jois',
+      auth: 'Authorized Level 2 by R.\u00a0Sharath\u00a0Jois',
       bio1: 'Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.',
       bio2: 'He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.',
       bio3: 'In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga. AYBKK has been the home shala of Bangkok’s Ashtanga community since 2013. Several of Bangkok’s Ashtanga teachers practised and assisted here before opening their own shalas.',
@@ -896,7 +1117,7 @@
       campBtn: 'Get the promotion on LINE',
       newCamp: 'Until 11 Nov 2026: Duo, buy 1 get 1 free, or the Rookie Pack, 5,900. Book the promotion on LINE @aybkk. Start by 12 Nov.',
       visitH: 'Visiting?',
-      dropIn: 'Drop-in',
+      dropIn: 'Drop-\u2060in',
       dropInSub: 'For students who know the sequence',
       pack10: '10-class pack',
       pack10Sub: 'Valid 3 months',
@@ -948,7 +1169,7 @@
       ctaTimetable: 'ดูตารางเรียน', ctaStart: 'มือใหม่? เริ่มที่นี่',
       teacherH: 'ครูของคุณ',
       caption: 'Jamsai, R. Sharath Jois และ Boonchu ที่ AYBKK',
-      auth: 'ได้รับ Authorization Level 2 จาก R. Sharath Jois',
+      auth: 'ได้รับ Authorization Level 2 จาก R.\u00a0Sharath\u00a0Jois',
       bio1: 'Boonchu เคยเป็นวิศวกรเครื่องกล เขาเริ่มฝึกอัษฎางคโยคะในปี 2008 ขณะอาศัยอยู่ที่สหรัฐอเมริกา',
       bio2: 'เขาเรียนกับ Sharath Jois ที่เมืองมายซอร์ตั้งแต่ปี 2008 และเป็นเจ้าภาพต้อนรับ R. Sharath Jois ที่กรุงเทพฯ ในปี 2018 และ 2024',
       bio3: 'ปี 2013 เขาเปิด AYBKK ที่กรุงเทพฯ บ้านเกิดของเขา และยังสร้างเพจ Facebook "The Yoga Comics" ที่เล่าเรื่ององค์ 8 ของโยคะ AYBKK เป็นบ้านของชุมชนอัษฎางคะในกรุงเทพฯ ตั้งแต่ปี 2013 ครูอัษฎางคะหลายท่านในกรุงเทพฯ เคยฝึกและเป็นผู้ช่วยสอนที่นี่ ก่อนเปิดชาลาของตัวเอง',
@@ -986,7 +1207,7 @@
       campBtn: 'รับโปรโมชันทาง LINE',
       newCamp: 'ถึง 11 พ.ย. 2026: DUO ซื้อ 1 แถม 1 หรือ ROOKIE PACK 5,900 สมัครโปรโมชันทาง LINE @aybkk เริ่มใช้ภายใน 12 พ.ย.',
       visitH: 'มาเยือนชั่วคราว?',
-      dropIn: 'ครั้งเดียว (drop-in)',
+      dropIn: 'ครั้งเดียว (drop-\u2060in)',
       dropInSub: 'สำหรับผู้ที่จำลำดับท่าได้แล้ว',
       pack10: 'แพ็ก 10 ครั้ง',
       pack10Sub: 'ใช้ได้ 3 เดือน',
@@ -1038,7 +1259,7 @@
       ctaTimetable: '查看课程表', ctaStart: '新学员？从这里开始',
       teacherH: '你的老师',
       caption: 'Jamsai、R. Sharath Jois 与 Boonchu 在 AYBKK',
-      auth: '获 R. Sharath Jois 授权 Level 2（Authorized Level 2）',
+      auth: '获 R.\u00a0Sharath\u00a0Jois 授权 Level\u00a02（Authorized\u00a0Level\u00a02）',
       bio1: 'Boonchu 曾是一名机械工程师。2008年他在美国生活时，开始练习阿斯汤加瑜伽。',
       bio2: '他自2008年起在迈索尔跟随 Sharath Jois 学习，并于2018年和2024年在曼谷接待 R. Sharath Jois。',
       bio3: '2013年，他在家乡曼谷创办了 AYBKK。他还创作了 Facebook 主页 The Yoga Comics（瑜伽漫画），讲解瑜伽八支。自2013年起，AYBKK 一直是曼谷阿斯汤加社群的家。曼谷多位阿斯汤加老师在开设自己的道场之前，曾在这里练习并担任助教。',
@@ -1076,7 +1297,7 @@
       campBtn: '通过 LINE 领取优惠',
       newCamp: '2026年11月11日前：DUO 买一送一，或 Rookie Pack 5,900。请通过 LINE @aybkk 报名优惠。需在11月12日前开始使用。',
       visitH: '短期来访？',
-      dropIn: '单次课（drop-in）',
+      dropIn: '单次课（drop-\u2060in）',
       dropInSub: '适合已熟悉序列的学生',
       pack10: '10次课卡',
       pack10Sub: '3个月内有效',
@@ -1128,7 +1349,7 @@
       ctaTimetable: 'Расписание', ctaStart: 'Новичок? Начните здесь',
       teacherH: 'Ваш учитель',
       caption: 'Jamsai, R. Sharath Jois и Boonchu в AYBKK',
-      auth: 'Авторизация Level 2 от R. Sharath Jois',
+      auth: 'Авторизация Level 2 от R.\u00a0Sharath\u00a0Jois',
       bio1: 'Boonchu — бывший инженер-механик. Он открыл для себя аштанга-йогу в 2008 году, когда жил в США.',
       bio2: 'С 2008 года он учится у Sharath Jois в Майсоре. В 2018 и 2024 годах он принимал R. Sharath Jois в Бангкоке.',
       bio3: 'В 2013 году он открыл AYBKK в родном Бангкоке. Он также создал страницу The Yoga Comics в Facebook — о восьми ступенях йоги. С 2013 года AYBKK — родная шала для аштанга-сообщества Бангкока. Несколько преподавателей аштанги в Бангкоке практиковали и ассистировали здесь, прежде чем открыть свои шалы.',
@@ -1166,7 +1387,7 @@
       campBtn: 'Получить акцию в LINE',
       newCamp: 'До 11 ноября 2026: Duo — купи 1, получи 1 бесплатно, или Rookie Pack за 5,900. Записаться на акцию — в LINE @aybkk. Начать — не позднее 12 ноября.',
       visitH: 'Вы проездом?',
-      dropIn: 'Разовое занятие (drop-in)',
+      dropIn: 'Разовое занятие (drop-\u2060in)',
       dropInSub: 'Для тех, кто знает последовательность',
       pack10: '10 занятий',
       pack10Sub: 'Действует 3 месяца',
@@ -1332,18 +1553,12 @@
   Object.assign(STR.zh, { habH: "人们为健康做的10件事。", habSub: "阿斯汤加一个早上就做到全部10件。", habCta: "从一个早上开始", hab1t: "记录数据", hab1d: "真实的证据：练习次数、静息心率、睡眠。第0、6、12周各检查一次。", hab2t: "变强壮", hab2d: "用自己的体重练出的力量，30岁练成，70岁还在。", hab3t: "有伙伴", hab3d: "志同道合的人在你身边。一起坚持，一起进步。", hab4t: "睡得好", hab4d: "早起练习，慢慢呼吸，早早入睡。学生说最先改变的是睡眠。", hab5t: "有目的地吃", hab5d: "不用节食。你会自然吃得更轻，因为想在明天的垫子上更轻盈。", hab6t: "让心安静", hab6d: "90分钟，没有手机，只有呼吸。安静是练出来的，不是买来的。", hab7t: "冷与热", hab7d: "身体由内发热，呼吸让它降温。自己产生的温暖，不需要机器。", hab8t: "身心合一", hab8d: "核心、平衡、呼吸与动作结合。百年的原版。", hab9t: "一起练", hab9d: "一间安静的房间，大家都认真来练习。有归属感，没有喧闹。", hab10t: "传统", hab10d: "有百年历史的方法，由获得授权的老师教授。" });
   Object.assign(STR.ru, { habH: "10 вещей, которые люди делают ради здоровья.", habSub: "Аштанга делает все 10 за одно утро.", habCta: "Начните с одного утра", hab1t: "Отслеживать", hab1d: "Реальные данные: сколько утр вы практиковали, пульс в покое, сон. Проверка на 0, 6 и 12 неделе.", hab2t: "Сила", hab2d: "Сила на собственном весе: наберёте в 30 и сохраните в 70.", hab3t: "Партнёры", hab3d: "Единомышленники рядом. Вместе трудно, вместе растём.", hab4t: "Сон", hab4d: "Ранняя практика, медленное дыхание, ранний отбой. Ученики говорят: первым меняется сон.", hab5t: "Осознанное питание", hab5d: "Без диет. Вы едите легче, потому что хотите лёгкости на коврике завтра.", hab6t: "Спокойный ум", hab6d: "90 минут без телефона, только дыхание. Спокойствие тренируют, а не покупают.", hab7t: "Жар и прохлада", hab7d: "Тепло изнутри, дыхание охлаждает. Собственное тепло, без машин.", hab8t: "Тело и ум", hab8d: "Кор, баланс, дыхание с движением. Оригинал, которому 100 лет.", hab9t: "Вместе", hab9d: "Тихий зал людей, которые приходят. Принадлежность без шума.", hab10t: "Традиция", hab10d: "Метод возрастом 100 лет, его ведёт авторизованный учитель." });
 
-  // One practice vs four (Boonchu, 4 Oct 2026).
-  Object.assign(STR.en, { cmpCoach: "With a paid coach", cmpSometimes: "Sometimes", cmpIntense: "Yes if intense, less if light", cmpBtn: "See how it compares →", cmpH: "One morning vs four workouts", cmpSub: "To cover these 10, most people need a run, a gym, a Pilates class and a meditation app. Or one morning.", cmpWalk: "Walk / run", cmpGym: "Gym", cmpPilates: "Pilates", cmpAsh: "Ashtanga", cmpYes: "Yes", cmpSome: "Some", cmpLower: "Lower body only", cmpStrict: "Some, for strict people", cmpStrength: "Strength", cmpHeart: "Heart and lungs", cmpMobility: "Mobility", cmpCore: "Balance and core", cmpCalm: "Breath and calm", cmpSleep: "Better sleep", cmpTeacher: "A teacher who notices you", cmpFriends: "Daily friends", cmpTradition: "Tradition and meaning", cmpHabit: "A habit that sticks", cmpCta: "Try one morning" });
-  Object.assign(STR.th, { cmpCoach: "มีโค้ช ถ้าจ้าง", cmpSometimes: "บางครั้ง", cmpIntense: "ได้ถ้าเล่นหนัก เบาๆ ได้น้อย", cmpBtn: "ดูการเปรียบเทียบ →", cmpH: "เช้าเดียว เทียบกับออกกำลังกาย 4 แบบ", cmpSub: "ถ้าอยากได้ครบ 10 ข้อ คนส่วนใหญ่ต้องวิ่ง เข้ายิม เรียนพิลาทิส และใช้แอปทำสมาธิ หรือแค่ฝึกเช้าเดียว", cmpWalk: "เดิน / วิ่ง", cmpGym: "ยิม", cmpPilates: "พิลาทิส", cmpAsh: "อัษฎางคะ", cmpYes: "ได้", cmpSome: "บางส่วน", cmpLower: "เฉพาะช่วงล่าง", cmpStrict: "บางส่วน สำหรับคนมีวินัย", cmpStrength: "ความแข็งแรง", cmpHeart: "หัวใจและปอด", cmpMobility: "ความยืดหยุ่นของข้อต่อ", cmpCore: "การทรงตัวและแกนกลาง", cmpCalm: "ลมหายใจและความสงบ", cmpSleep: "นอนหลับดีขึ้น", cmpTeacher: "ครูที่สังเกตเห็นคุณ", cmpFriends: "เพื่อนฝึกทุกวัน", cmpTradition: "ศาสตร์ดั้งเดิมและความหมาย", cmpHabit: "นิสัยที่ติดตัว", cmpCta: "ลองฝึกหนึ่งเช้า" });
-  Object.assign(STR.zh, { cmpCoach: "请私教才有", cmpSometimes: "有时", cmpIntense: "高强度有，轻松练较少", cmpBtn: "看看对比 →", cmpH: "一个早上 vs 四种锻炼", cmpSub: "想要做到这10件，大多数人需要跑步、健身房、普拉提课和冥想app。或者，一个早上。", cmpWalk: "走路 / 跑步", cmpGym: "健身房", cmpPilates: "普拉提", cmpAsh: "阿斯汤加", cmpYes: "有", cmpSome: "部分", cmpLower: "只有下半身", cmpStrict: "部分，适合自律的人", cmpStrength: "力量", cmpHeart: "心肺", cmpMobility: "关节活动度", cmpCore: "平衡与核心", cmpCalm: "呼吸与平静", cmpSleep: "睡得更好", cmpTeacher: "一位会注意你的老师", cmpFriends: "每天的练习伙伴", cmpTradition: "传统与意义", cmpHabit: "能坚持的习惯", cmpCta: "试一个早上" });
-  Object.assign(STR.ru, { cmpCoach: "С платным тренером", cmpSometimes: "Иногда", cmpIntense: "Да при интенсиве, меньше при лёгкой", cmpBtn: "Сравнить →", cmpH: "Одно утро против четырёх тренировок", cmpSub: "Чтобы закрыть все 10, большинству нужны бег, зал, пилатес и приложение для медитации. Или одно утро.", cmpWalk: "Ходьба / бег", cmpGym: "Зал", cmpPilates: "Пилатес", cmpAsh: "Аштанга", cmpYes: "Да", cmpSome: "Частично", cmpLower: "Только низ тела", cmpStrict: "Частично, для дисциплинированных", cmpStrength: "Сила", cmpHeart: "Сердце и лёгкие", cmpMobility: "Подвижность", cmpCore: "Баланс и кор", cmpCalm: "Дыхание и спокойствие", cmpSleep: "Лучший сон", cmpTeacher: "Учитель, который вас замечает", cmpFriends: "Друзья каждый день", cmpTradition: "Традиция и смысл", cmpHabit: "Привычка, которая держится", cmpCta: "Попробуйте одно утро" });
-
   // Jamsai's facts come from "Boonchu & JAMSAI bio.md" in Boonchu's Drive.
   Object.assign(STR.en, {
     addEmailH: 'Add your email', addEmailWhy: 'So you can open your profile again on another phone. We email you a one-time link, no password.', addEmailBtn: 'Save my email', addEmailDone: 'Saved. Next time, sign in with this email.',
     checkH: 'My 12-week check · Habit #1', chkWhy: 'Three numbers from your watch or phone, at week 0, 6 and 12. Proof, not promises.', chkStartH: 'Week 0: your starting point', chkDueH: 'Your next check is due', chkHrL: 'Resting heart rate (beats per minute)', chkSleepL: 'Average sleep last week (hours)', chkFeelL: 'How do you feel? (1 = tired, 5 = great)', chkNoteL: 'One line (optional)', chkSave: 'Save my check', chkWeek: 'Week', chkHr: 'Heart rate', chkSleep: 'Sleep', chkFeel: 'Feel', chkChange: (hr, sl) => `Since week 0: heart rate ${hr}, sleep ${sl}`, chkNext: d => `Next check: ${d}`, chkAll: 'All 3 checks done. Look how far you came.',
     fromTeachers: 'From your teachers', workOn: 'Work on',
-    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo.', paidMail: 'Payment confirmed 🙏 Your pass is active. Open the link in your receipt email to see it on this phone.', haveProfile: 'This email already has an AYBKK profile. After you pay, open the link in your receipt email to see your pass.', codeNotFound: 'We could not find that member code. Check it, or ask for an email link above.', notYou: n => `Not ${n}? Sign out`, emailWho: n => `This is ${n}’s profile. Add your email only if you are ${n}.`, meGone: 'This sign-in has ended. Ask the shala for a new link on LINE @aybkk.', photoDl: 'Save photo', h12H: 'Give us 12 weeks.', h12S: 'We’ll add 3 more months. Free, until 11\u00a0Nov.', h12Sp: 'See you tomorrow.', h12Btn: d => `I’m in · ${d} a day`, jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Pay online, then send your size and payment slip to LINE @aybkk.', teeBuy: 'Pay now', teeSizes: 'Sizes',
+    myPhotos: 'My class photos', noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo.', paidMail: 'Payment confirmed 🙏 Your pass is active. Open the link in your receipt email to see it on this phone.', haveProfile: 'This email already has an AYBKK profile. After you pay, open the link in your receipt email to see your pass.', codeNotFound: 'We could not find that member code. Check it, or ask for an email link above.', notYou: n => `Not ${n}? Sign out`, emailWho: n => `This is ${n}’s profile. Add your email only if you are ${n}.`, meGone: 'This sign-in has ended. Ask the shala for a new link on LINE @aybkk.', photoDl: 'Save photo', h12H: 'Give us 12 weeks.', h12S: 'We’ll add 3 more months. Free, until 11\u00a0Nov.', h12Sp: 'See you tomorrow.', h12Btn: d => `I’m in · ${d} a day`, jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Order on LINE, then pick up your tee at the shala.', teeSizes: 'Sizes',
     teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
     jbio1: 'Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.',
     jbio2: 'The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.',
@@ -1354,7 +1569,7 @@
     addEmailH: 'เพิ่มอีเมลของคุณ', addEmailWhy: 'เพื่อเปิดโปรไฟล์ได้อีกครั้งบนมือถือเครื่องอื่น เราส่งลิงก์ใช้ครั้งเดียวทางอีเมล ไม่ต้องมีรหัสผ่าน', addEmailBtn: 'บันทึกอีเมล', addEmailDone: 'บันทึกแล้ว ครั้งหน้าเข้าด้วยอีเมลนี้',
     checkH: 'เช็กผล 12 สัปดาห์ของฉัน · นิสัยที่ 1', chkWhy: 'ตัวเลข 3 ค่าจากนาฬิกาหรือมือถือ สัปดาห์ที่ 0, 6 และ 12 หลักฐานจริง ไม่ใช่คำสัญญา', chkStartH: 'สัปดาห์ที่ 0: จุดเริ่มต้นของคุณ', chkDueH: 'ถึงเวลาเช็กครั้งต่อไปแล้ว', chkHrL: 'ชีพจรขณะพัก (ครั้งต่อนาที)', chkSleepL: 'นอนเฉลี่ยสัปดาห์ที่แล้ว (ชั่วโมง)', chkFeelL: 'รู้สึกอย่างไร (1 = เหนื่อย, 5 = ดีมาก)', chkNoteL: 'หนึ่งบรรทัด (ไม่บังคับ)', chkSave: 'บันทึกผล', chkWeek: 'สัปดาห์', chkHr: 'ชีพจร', chkSleep: 'นอน', chkFeel: 'ความรู้สึก', chkChange: (hr, sl) => `ตั้งแต่สัปดาห์ที่ 0: ชีพจร ${hr} การนอน ${sl}`, chkNext: d => `เช็กครั้งต่อไป: ${d}`, chkAll: 'ครบ 3 ครั้งแล้ว ดูสิว่าคุณมาไกลแค่ไหน',
     fromTeachers: 'จากครูของคุณ', workOn: 'ฝึกต่อ',
-    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ', paidMail: 'ชำระเงินเรียบร้อย 🙏 แพ็กเกจของคุณใช้งานได้แล้ว เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูบนมือถือเครื่องนี้', haveProfile: 'อีเมลนี้มีโปรไฟล์ AYBKK อยู่แล้ว หลังชำระเงิน เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูแพ็กเกจของคุณ', codeNotFound: 'ไม่พบรหัสสมาชิกนี้ ลองตรวจสอบอีกครั้ง หรือขอลิงก์ทางอีเมลด้านบน', notYou: n => `ไม่ใช่คุณ${n}? ออกจากระบบ`, emailWho: n => `นี่คือโปรไฟล์ของคุณ${n} ใส่อีเมลเฉพาะเมื่อคุณคือคุณ${n}`, meGone: 'การเข้าสู่ระบบนี้หมดอายุแล้ว ขอลิงก์ใหม่ได้ทาง LINE @aybkk', photoDl: 'บันทึกรูป', h12H: 'ให้เวลาเรา 12 สัปดาห์', h12S: 'เราแถมให้อีก 3 เดือน ฟรี ถึง 11 พ.ย.', h12Sp: 'เจอกันพรุ่งนี้', h12Btn: d => `เอาเลย · วันละ ${d}`, jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'ชำระเงินออนไลน์ แล้วส่งไซซ์และสลิปทาง LINE @aybkk', teeBuy: 'ชำระเงิน', teeSizes: 'ไซซ์',
+    myPhotos: 'รูปการฝึกของฉัน', noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ', paidMail: 'ชำระเงินเรียบร้อย 🙏 แพ็กเกจของคุณใช้งานได้แล้ว เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูบนมือถือเครื่องนี้', haveProfile: 'อีเมลนี้มีโปรไฟล์ AYBKK อยู่แล้ว หลังชำระเงิน เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูแพ็กเกจของคุณ', codeNotFound: 'ไม่พบรหัสสมาชิกนี้ ลองตรวจสอบอีกครั้ง หรือขอลิงก์ทางอีเมลด้านบน', notYou: n => `ไม่ใช่คุณ${n}? ออกจากระบบ`, emailWho: n => `นี่คือโปรไฟล์ของคุณ${n} ใส่อีเมลเฉพาะเมื่อคุณคือคุณ${n}`, meGone: 'การเข้าสู่ระบบนี้หมดอายุแล้ว ขอลิงก์ใหม่ได้ทาง LINE @aybkk', photoDl: 'บันทึกรูป', h12H: 'ให้เวลาเรา 12 สัปดาห์', h12S: 'เราแถมให้อีก 3 เดือน ฟรี ถึง 11 พ.ย.', h12Sp: 'เจอกันพรุ่งนี้', h12Btn: d => `เอาเลย · วันละ ${d}`, jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'สั่งทาง LINE แล้วมารับเสื้อที่ชาลา', teeSizes: 'ไซซ์',
     teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
     jbio1: 'Jamsai เคยเป็นที่ปรึกษาด้านภาษี เธอเริ่มฝึกอัษฎางคโยคะในปี 2015 ระหว่างรับเคมีบำบัดรักษามะเร็งเต้านม โดยมี Boonchu เป็นครู',
     jbio2: 'การฝึกทำให้เธอกลับมาแข็งแรง เธอจึงลาออกจากงานไปเรียนกับ Sharath Jois ที่มายซอร์ และได้รับ Authorization Level 2 จากท่านในฤดูกาล 2018 ถึง 2019',
@@ -1365,7 +1580,7 @@
     addEmailH: '添加你的邮箱', addEmailWhy: '这样你可以在另一部手机上再次打开个人主页。我们会发一次性链接到邮箱，不需要密码。', addEmailBtn: '保存邮箱', addEmailDone: '已保存。下次用这个邮箱登录。',
     checkH: '我的12周检查 · 习惯1', chkWhy: '手表或手机上的3个数字，第0、6、12周各记录一次。是证据，不是承诺。', chkStartH: '第0周：你的起点', chkDueH: '该做下一次检查了', chkHrL: '静息心率（次/分钟）', chkSleepL: '上周平均睡眠（小时）', chkFeelL: '感觉如何？（1 = 很累，5 = 很好）', chkNoteL: '一句话（可选）', chkSave: '保存', chkWeek: '周', chkHr: '心率', chkSleep: '睡眠', chkFeel: '感觉', chkChange: (hr, sl) => `从第0周起：心率 ${hr}，睡眠 ${sl}`, chkNext: d => `下次检查：${d}`, chkAll: '3次检查都完成了。看看你走了多远。',
     fromTeachers: '老师给你的话', workOn: '要练习的',
-    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。', paidMail: '付款成功 🙏 你的课程卡已生效。打开收据邮件里的链接，即可在这部手机上查看。', haveProfile: '这个邮箱已有 AYBKK 个人主页。付款后，打开收据邮件里的链接即可查看你的课程卡。', codeNotFound: '找不到这个会员编号。请检查，或在上方用邮箱获取链接。', notYou: n => `不是${n}？退出`, emailWho: n => `这是${n}的个人主页。只有你是${n}本人时才添加邮箱。`, meGone: '此登录已失效。请在 LINE @aybkk 向道场索取新链接。', photoDl: '保存照片', h12H: '给我们12周。', h12S: '我们再送你3个月，免费，到11月11日。', h12Sp: '明天见。', h12Btn: d => `我要开始 · 每天${d}`, jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '在线付款，然后在 LINE @aybkk 发送尺码和付款截图。', teeBuy: '付款', teeSizes: '尺码',
+    myPhotos: '我的练习照片', noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。', paidMail: '付款成功 🙏 你的课程卡已生效。打开收据邮件里的链接，即可在这部手机上查看。', haveProfile: '这个邮箱已有 AYBKK 个人主页。付款后，打开收据邮件里的链接即可查看你的课程卡。', codeNotFound: '找不到这个会员编号。请检查，或在上方用邮箱获取链接。', notYou: n => `不是${n}？退出`, emailWho: n => `这是${n}的个人主页。只有你是${n}本人时才添加邮箱。`, meGone: '此登录已失效。请在 LINE @aybkk 向道场索取新链接。', photoDl: '保存照片', h12H: '给我们12周。', h12S: '我们再送你3个月，免费，到11月11日。', h12Sp: '明天见。', h12Btn: d => `我要开始 · 每天${d}`, jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '通过 LINE 订购，然后到道场自取。', teeSizes: '尺码',
     teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
     jbio1: 'Jamsai 曾是一名税务顾问。2015年她在接受乳腺癌化疗期间开始练习阿斯汤加，老师是 Boonchu。',
     jbio2: '练习让她重新找回力量，于是她辞去工作，去迈索尔跟随 Sharath Jois 学习，并在2018至2019季获得他授予的 Level 2 授权。',
@@ -1376,7 +1591,7 @@
     addEmailH: 'Добавьте email', addEmailWhy: 'Чтобы открыть профиль на другом телефоне. Мы пришлём одноразовую ссылку, без пароля.', addEmailBtn: 'Сохранить email', addEmailDone: 'Сохранено. В следующий раз входите с этим email.',
     checkH: 'Моя 12-недельная проверка · Привычка №1', chkWhy: 'Три числа с часов или телефона, на 0, 6 и 12 неделе. Доказательства, а не обещания.', chkStartH: 'Неделя 0: ваша отправная точка', chkDueH: 'Пора следующей проверки', chkHrL: 'Пульс в покое (уд/мин)', chkSleepL: 'Средний сон за неделю (часы)', chkFeelL: 'Как вы себя чувствуете? (1 = устал, 5 = отлично)', chkNoteL: 'Одна строка (по желанию)', chkSave: 'Сохранить', chkWeek: 'Неделя', chkHr: 'Пульс', chkSleep: 'Сон', chkFeel: 'Самочувствие', chkChange: (hr, sl) => `С недели 0: пульс ${hr}, сон ${sl}`, chkNext: d => `Следующая проверка: ${d}`, chkAll: 'Все 3 проверки готовы. Посмотрите, какой путь вы прошли.',
     fromTeachers: 'От ваших учителей', workOn: 'Над чем работать',
-    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы.', paidMail: 'Оплата получена 🙏 Абонемент активен. Откройте ссылку в письме с чеком, чтобы увидеть его на этом телефоне.', haveProfile: 'У этого email уже есть профиль AYBKK. После оплаты откройте ссылку в письме с чеком, чтобы увидеть абонемент.', codeNotFound: 'Такой код участника не найден. Проверьте его или запросите ссылку по email выше.', notYou: n => `Не ${n}? Выйти`, emailWho: n => `Это профиль: ${n}. Добавляйте email, только если вы ${n}.`, meGone: 'Этот вход больше не действует. Попросите новую ссылку в LINE @aybkk.', photoDl: 'Сохранить фото', h12H: 'Дайте нам 12 недель.', h12S: 'Мы добавим ещё 3 месяца. Бесплатно, до 11\u00a0ноября.', h12Sp: 'До завтра.', h12Btn: d => `Я в деле · ${d} в день`, jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Оплатите онлайн, затем пришлите размер и чек в LINE @aybkk.', teeBuy: 'Оплатить', teeSizes: 'Размеры',
+    myPhotos: 'Мои фото с практики', noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы.', paidMail: 'Оплата получена 🙏 Абонемент активен. Откройте ссылку в письме с чеком, чтобы увидеть его на этом телефоне.', haveProfile: 'У этого email уже есть профиль AYBKK. После оплаты откройте ссылку в письме с чеком, чтобы увидеть абонемент.', codeNotFound: 'Такой код участника не найден. Проверьте его или запросите ссылку по email выше.', notYou: n => `Не ${n}? Выйти`, emailWho: n => `Это профиль: ${n}. Добавляйте email, только если вы ${n}.`, meGone: 'Этот вход больше не действует. Попросите новую ссылку в LINE @aybkk.', photoDl: 'Сохранить фото', h12H: 'Дайте нам 12 недель.', h12S: 'Мы добавим ещё 3 месяца. Бесплатно, до 11\u00a0ноября.', h12Sp: 'До завтра.', h12Btn: d => `Я в деле · ${d} в день`, jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Закажите в LINE и заберите футболку в шале.', teeSizes: 'Размеры',
     teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
     jbio1: 'Jamsai работала налоговым консультантом. Она начала заниматься аштангой в 2015 году, во время химиотерапии от рака груди, и её учителем был Boonchu.',
     jbio2: 'Практика вернула ей силы, и она ушла с работы, чтобы учиться у Шарата Джойса в Майсуре. В сезоне 2018–2019 она получила от него авторизацию Level 2.',
@@ -1416,6 +1631,36 @@
     paidBooked: (c, w) => `Оплата получена 🙏 Вы записаны: ${c}, ${w}. До встречи в шале.`,
     paidBookedMail: 'Откройте ссылку в письме с чеком, чтобы увидеть запись на этом телефоне.',
     paidNotBooked: (c, w) => `Оплата получена, но записать вас на ${c}, ${w} не удалось. Разовое посещение сохранено для другого занятия, шала свяжется с вами.`,
+  });
+  // The Swiss-grid home page (4 Nov 2026): hero facts, the booking head, the Bangkok tees, the theme's source link.
+  // A tee is 790 THB + 7% VAT, shown that way, never "VAT included". Ordered on LINE, picked up at the shala.
+  Object.assign(STR.en, {
+    heroF1: 'Mysore style since 2013', heroF2: 'Sukhumvit 31, Bangkok', bookH: 'Book a class',
+    teeOrder: 'Order on LINE', teeAll: 'Show all tees', teeColours: 'Colours',
+    teePrice: (p, v) => `${p} THB + ${v}% VAT`,
+    teeMsg: (name, sizes, colours) => `Hi AYBKK, I would like the tee: ${name}.${colours ? ` Colour: [${colours}].` : ''} Size: [${sizes}]. I will pick it up at the shala.`,
+    themeSrc: 'Source',
+  });
+  Object.assign(STR.th, {
+    heroF1: 'ฝึกแบบมายซอร์ตั้งแต่ปี 2013', heroF2: 'สุขุมวิท 31 กรุงเทพฯ', bookH: 'จองคลาส',
+    teeOrder: 'สั่งทาง LINE', teeAll: 'ดูเสื้อทั้งหมด', teeColours: 'สี',
+    teePrice: (p, v) => `${p} บาท + VAT ${v}%`,
+    teeMsg: (name, sizes, colours) => `สวัสดีค่ะ/ครับ AYBKK อยากได้เสื้อ: ${name}${colours ? ` สี: [${colours}]` : ''} ไซซ์: [${sizes}] จะไปรับที่ชาลา`,
+    themeSrc: 'ที่มา',
+  });
+  Object.assign(STR.zh, {
+    heroF1: '2013年起，教授迈索尔练习', heroF2: '曼谷 Sukhumvit 31', bookH: '预约课程',
+    teeOrder: '通过 LINE 订购', teeAll: '查看全部T恤', teeColours: '颜色',
+    teePrice: (p, v) => `${p} 泰铢 + ${v}% 增值税`,
+    teeMsg: (name, sizes, colours) => `你好 AYBKK，我想要这件T恤：${name}。${colours ? `颜色：[${colours}]。` : ''}尺码：[${sizes}]。我会到道场自取。`,
+    themeSrc: '出处',
+  });
+  Object.assign(STR.ru, {
+    heroF1: 'Майсор-стиль с 2013 года', heroF2: 'Сукхумвит 31, Бангкок', bookH: 'Записаться',
+    teeOrder: 'Заказать в LINE', teeAll: 'Все футболки', teeColours: 'Цвета',
+    teePrice: (p, v) => `${p} THB + НДС ${v}%`,
+    teeMsg: (name, sizes, colours) => `Здравствуйте, AYBKK! Я хочу футболку: ${name}.${colours ? ` Цвет: [${colours}].` : ''} Размер: [${sizes}]. Заберу в шале.`,
+    themeSrc: 'Источник',
   });
   // My pass keeps the habit proof: every class they came to, the ones moved over
   // from Rezerv included (28 Oct 2026).
@@ -1622,6 +1867,14 @@
     $('#h12s').textContent = t(live ? 'h12S' : 'h12Sp');
     $('#h12Btn').textContent = t('h12Btn', baht(Math.round(total / days)));
   }
+  // Routes into the booking app land on its numbered heading; the sticky tabs sit right under it.
+  // (#book stays on the tabs: openCls measures their height.)
+  // No behavior given, so the page's scroll-behavior decides: smooth, or a jump with reduced motion.
+  const toBook = () => $('.bookhead').scrollIntoView({ block: 'start' });
+  document.querySelectorAll('a[href="#book"]:not(#newPkgs)').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    toBook();
+  }));
   $('#h12Btn').addEventListener('click', e => {
     e.preventDefault();
     if (promoLive()) {
@@ -1630,14 +1883,14 @@
       $('#calc').scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
       tab('packages');
-      $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toBook();
     }
   });
 
   $('#newPkgs').addEventListener('click', e => {
     e.preventDefault();
     tab('packages');
-    $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toBook();
   });
 
   function renderPromo() {
@@ -1649,11 +1902,12 @@
     const today = bkkTodayP();
     const tomorrow = addDays(today, 1) <= PROMO_LAST_START ? addDays(today, 1) : today;
     if (!P.start || P.start < today || P.start > PROMO_LAST_START) P.start = tomorrow;
+    const sc = s => s.charAt(0) + s.slice(1).toLowerCase();
     const opt = (group, val, label, on) =>
       `<button type="button" data-${group}="${val}" aria-pressed="${on}">${esc(label)}</button>`;
     const calc = o => `
       <div class="card calc" id="calc">
-      <h3>${esc(t('calcH'))} · ${esc(o.title)}</h3>
+      <h3>${esc(t('calcH'))} · ${esc(sc(o.title))}</h3>
       ${o.monthly ? `<div class="q">${esc(t('pkgQ'))}</div><div class="opts">${MONTHLY.map((m, i) =>
         opt('pkg', i, `${t('pm' + (i + 1))} · ${baht(o.off ? Math.round(m[1] * (100 - o.off[i]) / 100) : m[1])}`, P.pkg === i)).join('')}</div>` : ''}
       ${P.offer === 'duo' ? `<div class="q">${esc(t('whoQ'))}</div><div class="opts">${opt('who', 'me', t('whoMe'), P.who === 'me')}${opt('who', 'friend', t('whoFriend'), P.who === 'friend')}</div>` : ''}
@@ -1669,11 +1923,11 @@
       return `<div class="grp${open ? ' open' : ''}${past ? ' past' : ''}">
         <button type="button" class="grp-h" data-group="${g}" aria-expanded="${open}">
           <span>${esc(t(past ? 'tagPast' : 'tagNew'))}</span>
-          <small>${list.map(([, o]) => esc(o.title)).join(' · ')}</small><i>${open ? '▴' : '▾'}</i>
+          <small>${list.map(([, o]) => esc(sc(o.title))).join(' · ')}</small><i>${open ? '▴' : '▾'}</i>
         </button>
         ${open ? `<div class="offers">${list.map(([k, o]) => `
           <button type="button" class="offer" data-offer="${k}" aria-expanded="${P.offer === k}">
-            <span class="ot">${esc(o.title)}</span>
+            <span class="ot">${esc(sc(o.title))}</span>
             <span class="ob">${o.big ? esc(t(o.big)) : baht(o.price) + `<s>${esc(t('rookWas'))}</s>`}</span>
             <span class="od">${esc(t(o.desc))}</span>
             <span class="oc">${esc(t('calcH'))} ${P.offer === k ? '▴' : '▾'}</span>
@@ -1738,7 +1992,8 @@
     document.querySelectorAll('.readmore').forEach(b =>
       { b.textContent = t(b.parentElement.classList.contains('open') ? 'readLess' : 'readMore'); });
     renderPromo();
-    renderTees();
+    TEES_R = renderTees();
+    renderTheme();
     if (typeof nlDefault === 'function') nlDefault();
   }
   document.querySelectorAll('.langs button').forEach(b => b.addEventListener('click', () => {
@@ -1816,6 +2071,35 @@
     setTimeout(() => { $('#wxCopy').textContent = t('copy'); }, 1800);
   });
   applyLang();
+  // A deep link (/#prices, /book#letter) is scrolled to before the theme and the tees load and
+  // push it down by a few screens. Once they are in, go there again, unless the visitor has moved.
+  let moved = false;
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, () => { moved = true; }, { passive: true, capture: true }));
+  Promise.all([TEES_R, loadTheme()]).then(() => {
+    let id = '';
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) {}
+    const el = id && !moved && (id === 'book' ? $('.bookhead') : document.getElementById(id));
+    if (!el) return;
+    // Instant, then again on the next two frames: the browser's own smooth scroll can still add one step.
+    const root = document.documentElement;
+    const go = n => {
+      if (moved) return;
+      root.style.scrollBehavior = 'auto';
+      el.scrollIntoView({ block: 'start' });
+      root.style.scrollBehavior = '';
+      if (n) requestAnimationFrame(() => go(n - 1));
+    };
+    go(2);
+  });
+  // Each section's rule wipes in once it scrolls into view. Without the observer (or with
+  // reduced motion) nothing is hidden: the class that hides the rules is never set.
+  if ('IntersectionObserver' in window && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
+    }), { rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('.sec').forEach(el => io.observe(el));
+    document.documentElement.classList.add('js-motion');
+  }
 
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MON3 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1896,7 +2180,7 @@
     applyLang();
     if (LOADED && current === 'packages') renderPackages();
   }
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) pricesNow(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { pricesNow(); loadTheme(); } });
 
   // The calendar shows Bangkok's "today" regardless of the visitor's timezone —
   // a student in China is 1h ahead and must not see tomorrow highlighted.
@@ -2293,7 +2577,7 @@
       if (act === 'buy') {
         if (promoLive()) return $('#promo').scrollIntoView({ behavior: 'smooth', block: 'start' });
         tab('packages');
-        return $('#book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return toBook();
       }
       if (act === 'view') { setView(a.dataset.v); renderSchedule(); return focus(`[data-act="view"][data-v="${a.dataset.v}"]`); }
       if (act === 'month' || act === 'week') {
@@ -2507,17 +2791,109 @@
     </details>`;
   }
 
+  // Bangkok tees from public/bkk-tees.json (Boonchu edits it). Read once; drawn again on a language change.
+  // A colour can carry its own sizes ({"name": {...}, "sizes": [...]}): the card then lists each colour with its sizes.
+  const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL'];
   async function renderTees() {
-    try {
-      const tees = (await fetch('/api/bkk/tees').then(r => r.json())).tees || [];
-      if (!tees.length) return;
-      $('#teeList').innerHTML = tees.map(x => `<div class="tee">
-        ${x.photo ? `<img loading="lazy" alt="${esc(x.name)}" src="${esc(x.photo)}">` : ''}
-        <div class="tb"><b>${esc(x.name)}</b><span><b>฿${Number(x.priceThb).toLocaleString()}</b></span>
-          ${x.sizes ? `<span class="note">${esc(t('teeSizes'))}: ${esc(x.sizes)}</span>` : ''}
-          <a class="btn pink" href="${esc(x.payLink)}" target="_blank" rel="noopener">${esc(t('teeBuy'))}</a></div></div>`).join('');
-      $('#tees').hidden = false;
-    } catch (_) {}
+    if (CN_HOST) { $('#tees').hidden = true; return; }
+    if (!TEES_P) TEES_P = fetch('/bkk-tees.json').then(r => r.ok ? r.json() : null).catch(() => null);
+    const d = await TEES_P;
+    const shown = d && Array.isArray(d.tees) ? d.tees.filter(x => x && x.show !== false && String(x.show).toLowerCase() !== 'no' && x.name) : [];
+    $('#tees').hidden = !shown.length;
+    if (!shown.length) return;
+    const vat = Number(d.vat) > 0 ? Number(d.vat) : 7;
+    const L = v => v && typeof v === 'object' ? v[LANG] || v.en || '' : String(v ?? '');
+    const lbl = k => t(k) + (LANG === 'zh' ? '：' : ': ');
+    const bySize = (a, b) => (SIZE_ORDER.indexOf(a) + 1 || 99) - (SIZE_ORDER.indexOf(b) + 1 || 99);
+    $('#teeList').innerHTML = (TEES_ALL ? shown : shown.slice(0, TEES_FIRST)).map(x => {
+      const name = L(x.name), sizes = list(x.sizes);
+      const colours = (Array.isArray(x.colours) ? x.colours : x.colours ? [x.colours] : [])
+        .map(c => c && typeof c === 'object' && 'name' in c ? { name: L(c.name), sizes: list(c.sizes) } : { name: L(c), sizes: [] })
+        .filter(c => c.name);
+      const own = colours.some(c => c.sizes.length);
+      const all = [...new Set(own ? colours.flatMap(c => c.sizes.length ? c.sizes : sizes) : sizes)].sort(bySize);
+      const price = Number(x.price) > 0 ? Number(x.price) : Number(d.price) || 0;
+      // "790 THB" and "+ 7% VAT" each stay whole, so a narrow card breaks the price only between them.
+      const [p1, ...p2] = price ? t('teePrice', price.toLocaleString('en-US'), vat).split(' + ') : [];
+      const msg = t('teeMsg', name, all.join(' / ') || 'S / M / L / XL', colours.map(c => c.name).join(' / '));
+      const photo = /^\/img\/[\w./-]+$/.test(x.photo || '') ? x.photo : '';
+      return `<article class="tee">
+        ${photo ? `<img src="${esc(photo)}" width="900" height="900" loading="lazy" decoding="async" alt="${esc(name)}">` : ''}
+        <h3>${esc(name).replace(/ · /g, '\u00a0· ')}</h3>
+        ${own ? `<ul class="tcs">${colours.map(c => `<li>${esc(c.name)}${LANG === 'zh' ? '：' : ': '}${esc((c.sizes.length ? c.sizes : sizes).join(', '))}</li>`).join('')}</ul>`
+          : `${colours.length ? `<p class="tc">${esc(lbl('teeColours'))}${esc(colours.map(c => c.name).join(LANG === 'zh' ? '、' : ', '))}</p>` : ''}
+        ${all.length ? `<p class="ts">${esc(lbl('teeSizes'))}${esc(all.join(', '))}</p>` : ''}`}
+        ${price ? `<p class="tp"><span>${esc(p1)}</span>${p2.length ? ` <span>+ ${esc(p2.join(' + '))}</span>` : ''}</p>` : ''}
+        <a class="btn" data-tee="1" target="_blank" rel="noopener"
+          href="https://line.me/R/oaMessage/%40aybkk/?${encodeURIComponent(msg)}">${esc(t('teeOrder'))}</a></article>`;
+    }).join('');
+    $('#teeAll').parentElement.hidden = TEES_ALL || shown.length <= TEES_FIRST;
+  }
+  $('#teeAll').addEventListener('click', () => {
+    TEES_ALL = true;
+    renderTees().then(() => { const n = $('#teeList').children[TEES_FIRST]; if (n) n.querySelector('a').focus({ preventScroll: true }); });
+  });
+
+  // The monthly theme: public/themes/index.json lists the months that have one, and the page
+  // shows the latest at or before this Bangkok month; a month whose file is missing or has
+  // show:false falls back to the one before it. It changes by itself on the 1st, also on a page
+  // left open past midnight. Nothing to show, or the index cannot be read: the section stays hidden.
+  async function loadTheme() {
+    const now = bkkTodayP().slice(0, 7);
+    if (THEME.checked === now) return;
+    THEME.checked = now;
+    const months = await fetch('/themes/index.json').then(r => r.ok ? r.json() : []).catch(() => null);
+    if (months === null) THEME.checked = null;   // offline: try again when the tab comes back
+    const cands = (Array.isArray(months) ? months : []).filter(m => /^\d{4}-\d{2}$/.test(m) && m <= now).sort().reverse().slice(0, 6);
+    let month = null, data = null;
+    for (const m of cands) {
+      if (!THEME.files[m]) {
+        const f = await fetch(`/themes/${m}.json`).then(r => r.ok ? r.json() : null).catch(() => null);
+        if (f) THEME.files[m] = f;
+      }
+      const f = THEME.files[m];
+      if (f && f.show !== false && f.title) { month = m; data = f; break; }
+    }
+    Object.assign(THEME, { now, month, data });
+    renderTheme();
+  }
+  function renderTheme() {
+    const d = THEME.data;
+    $('#theme').hidden = !d;
+    if (!d) return;
+    const L = v => v && typeof v === 'object' ? v[LANG] || v.en || '' : String(v ?? '');
+    $('#themeH').textContent = L(d.title);
+    // "This month · November" only in that month. An older theme shown as a fallback has no month line.
+    const cur = THEME.month === THEME.now;
+    $('#themeMonth').textContent = cur ? [L(d.eyebrow), L(d.monthName)].filter(Boolean).join(' · ') : '';
+    $('#themeMonth').hidden = !$('#themeMonth').textContent;
+    $('#themeLead').textContent = L(d.lead);
+    const c = d.columns || {}, rows = Array.isArray(d.rows) ? d.rows : [];
+    const tb = $('#themeTable');
+    tb.className = 'vs ' + (c.highlight === 'a' ? 'hl-a' : 'hl-b');
+    tb.hidden = !rows.length;
+    tb.innerHTML = `<thead><tr role="row"><th role="columnheader" class="k"></th><th role="columnheader" class="a" scope="col">${esc(L(c.a))}</th>
+      <th role="columnheader" class="b" scope="col">${esc(L(c.b))}</th></tr></thead><tbody>${rows.map(r => `<tr role="row">
+      <th role="rowheader" class="k" scope="row">${esc(L(r.label))}</th><td role="cell" class="a">${esc(L(r.a))}</td>
+      <td role="cell" class="b">${esc(L(r.b))}</td></tr>`).join('')}</tbody>`;
+    $('#themeStakes').textContent = L(d.stakes);
+    $('#themeStakes').hidden = !L(d.stakes);
+    // The quote stays in the English that was checked against its source, with its exact credit.
+    const q = d.quote && d.quote.text && d.quote.text.en ? d.quote : null, fig = $('#themeQ');
+    fig.hidden = !q;
+    if (q) {
+      const src = q.checked && /^https:\/\//.test(q.checked.source_url || '') ? q.checked.source_url : '';
+      fig.querySelector('blockquote p').textContent = `“${q.text.en}”`;
+      fig.querySelector('figcaption').innerHTML = esc((q.who && q.who.en) || '') +
+        (src ? ` · <a href="${esc(src)}" target="_blank" rel="noopener">${esc(t('themeSrc'))}</a>` : '');
+      fig.querySelector('.qm').textContent = L(q.meaning);
+      fig.querySelector('.qm').hidden = !L(q.meaning);
+    }
+    const cta = d.cta || {}, href = String(cta.href || '#mysore');
+    $('#themeCta').href = /^(#[\w-]+|\/[\w./?=&#-]*)$/.test(href) ? href : '#mysore';
+    $('#themeCta').textContent = L(cta.label) || t('habCta');
+    $('#themeNote').textContent = L(cta.note);
+    $('#themeNote').hidden = !L(cta.note);
   }
 
   document.addEventListener('click', e => {
@@ -2601,7 +2977,7 @@
       <label>${esc(t('email'))}</label><input id="be" type="email" autocomplete="email">
       <label>${esc(t('phone'))}</label><input id="bp" autocomplete="tel">
       <div id="bmsg"></div>
-      <p style="margin-top:14px"><button class="btn pink" id="bgo" ${single && !opts.length ? 'disabled' : ''}>${esc(t('pay'))}</button>
+      <p class="dacts"><button class="btn pink" id="bgo" ${single && !opts.length ? 'disabled' : ''}>${esc(t('pay'))}</button>
       <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>
       ${intro ? `<p><button class="linkbtn" id="bhave">${esc(t('havePass'))}</button></p>` : ''}`;
     $('#dlg').showModal();
@@ -2763,18 +3139,19 @@
 <div id="ckbar" hidden><div class="ckt"><p id="ckTxt"></p><button type="button" id="ckMore" aria-expanded="false"></button><p id="ckInfo" hidden></p></div><div class="ckb"><button type="button" id="ckNo"></button><button type="button" id="ckOk"></button></div></div>
 <style>
 #ckbar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto;
-  display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;
-  background:#17121a;color:#fdf7fa;font:500 13px/1.35 'Work Sans','Plex',sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+  display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:0;
+  background:#17121a;color:#fdf7fa;font:500 13px/1.35 'Plex',sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.25)}
 #ckbar[hidden]{display:none}
 #ckbar p{margin:0}
 #ckbar .ckt{flex:1;min-width:0}
 #ckbar .ckb{display:flex;gap:6px;flex:none}
-#ckMore{background:none!important;border:0!important;padding:2px 0!important;min-height:0!important;color:inherit;font:inherit!important;text-decoration:underline;cursor:pointer}
+#ckMore{background:none!important;border:0!important;padding:2px 0!important;min-height:0!important;margin-top:2px;color:inherit;font:inherit!important;text-decoration:underline;cursor:pointer}
 #ckInfo{margin-top:6px!important;font-size:12px;opacity:.9}
-#ckbar button{border:1px solid transparent;border-radius:999px;padding:8px 12px;min-height:36px;font:600 13px/1 'Work Sans','Plex',sans-serif;cursor:pointer}
-#ckNo{background:transparent;color:#fdf7fa;border-color:rgba(253,247,250,.35)!important}
+#ckbar button{border:2px solid transparent;border-radius:0;padding:8px 14px;min-height:44px;font:600 13px/1 'Plex',sans-serif;cursor:pointer}
+#ckNo{background:transparent;color:#fdf7fa;border-color:rgba(253,247,250,.5)!important}
 #ckOk{background:#F2C94C;color:#3E1442}
-.cklink{display:block;margin:8px auto 0;background:none;border:0;padding:4px;color:inherit;font:inherit;text-decoration:underline;cursor:pointer}
+.cklink{display:inline-flex;align-items:center;justify-self:start;min-height:44px;min-width:44px;margin:14px 0 0;background:none;border:0;padding:0;color:inherit;
+  font:400 14px/20px 'Plex',sans-serif;text-decoration:underline;text-underline-offset:.18em;cursor:pointer}
 </style>
 <script>
 // Google Ads tag (Boonchu, 15 Oct): which ads bring students. Thai PDPA: nothing is sent to Google
@@ -2885,7 +3262,7 @@
   document.addEventListener('click', function (e) {
     if (e.target.closest && e.target.closest('button[data-wechat], #wxCopy')) { window.aybkkBook(); return; }
     var a = e.target.closest && e.target.closest('a[href]');
-    if (!a || a.id === 'go' || a.hasAttribute('data-nl')) return;
+    if (!a || a.id === 'go' || a.hasAttribute('data-nl') || a.hasAttribute('data-tee')) return;
     var h = a.getAttribute('href').toLowerCase();
     if (h.indexOf('line.me') > -1 || h.indexOf('wa.me') > -1) window.aybkkBook();
   }, true);

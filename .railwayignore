@@ -16,5 +16,7 @@ seed*.js
 !shop-seed.json
 !data/quotes.json
 !public/img/timetable/*.json
+!public/themes/*.json
+!public/bkk-tees.json
 .env
 *.env*
