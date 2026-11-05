@@ -51,6 +51,44 @@
   .promo .big{display:block;font-size:26px;font-weight:800;color:var(--promo-deep);margin:2px 0}
   .promo .s{display:block;font-size:15px}
   .promo .b{display:inline-block;margin-top:10px;padding:8px 14px;border-radius:8px;background:var(--promo);color:var(--promo-ink);font-weight:700}
+  /* First-step ladder: in the page, one question at a time, never a pop-up. */
+  .fs{margin:28px 0 0;scroll-margin-top:12px}
+  .fs [hidden]{display:none!important}
+  .fs h2{font-size:22px;line-height:1.25;margin:0}
+  .fs-sub{margin:2px 0 12px;color:var(--soft);font-size:15px}
+  .fs-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px 16px 16px}
+  .fs-top{display:flex;align-items:center;min-height:44px}
+  .fs-back{border:0;background:none;color:var(--soft);font:inherit;font-size:15px;padding:0 12px 0 0;min-height:44px;cursor:pointer;text-decoration:underline}
+  .fs-count{margin-left:auto;font-size:14px;color:var(--soft);font-variant-numeric:tabular-nums}
+  .fs-q{margin:0 0 12px;font-size:19px;font-weight:700;line-height:1.3;color:var(--plum)}
+  .fs-opts{display:grid;gap:10px}
+  .fs-opt{display:block;width:100%;min-height:52px;padding:12px 16px;border:2px solid var(--line);border-radius:10px;
+    background:var(--wall);color:var(--ink);font:inherit;font-weight:600;text-align:left;cursor:pointer}
+  .fs-opt[aria-pressed="true"]{border-color:var(--pink)}
+  @media (hover:hover){ .fs-opt:hover{border-color:var(--plum)} }
+  .fs-opt:active{background:var(--line)}
+  .fs [tabindex="-1"]:focus{outline:none}
+  .fs-res{margin:0}
+  .fs .note:empty{min-height:0;margin:0}
+  .fs-next{margin:8px 0 0;color:var(--soft)}
+  .fs .go{margin-top:16px}
+  .fs .alt a,.fs .alt button{display:inline-block;min-height:44px;padding:10px 6px;line-height:24px}
+  .fs-more{display:block;width:100%;margin:4px 0 0;min-height:44px;border:0;background:none;color:var(--soft);
+    font:inherit;font-size:15px;text-decoration:underline;cursor:pointer}
+  .fs-form{display:grid;margin:4px 0 0}
+  .fs-form label{margin:10px 0 4px;font-size:15px;font-weight:600}
+  .fs-form input[type=text]{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--soft);border-radius:8px;
+    background:var(--wall);color:var(--ink);font:inherit}
+  .fs-form input[aria-invalid="true"]{border-color:var(--pink-deep)}
+  .fs-form .fs-ck{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-weight:400;cursor:pointer}
+  .fs-ck input{flex:none;width:24px;height:24px;margin:0;accent-color:var(--pink)}
+  .fs-err,.fs-msg{margin:4px 0 0;font-size:14px;color:var(--pink-deep)}
+  .fs-err:empty,.fs-msg:empty{display:none}
+  .fs-send{margin-top:16px;min-height:48px;border:0;border-radius:10px;background:var(--plum);color:var(--wall);
+    font:inherit;font-weight:700;cursor:pointer}
+  .fs-send[disabled]{opacity:.6;cursor:default}
+  .fs-done{margin:14px 0 0;padding:12px 14px;border-radius:8px;background:var(--wall);font-weight:600}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
   ul.obj{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px}
   ul.obj li{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
   ul.obj b{display:block;color:var(--plum)}
@@ -86,6 +124,43 @@
     <span class="b" data-t="pbtn">Calculate my price →</span>
   </a>
 
+  <section class="fs" id="first-step" aria-labelledby="fsH">
+    <h2 id="fsH" data-t="fsH">Not sure where to start? Find your first step</h2>
+    <p class="fs-sub" data-t="fsSub">4 quick taps</p>
+    <div class="fs-card" id="fsCard">
+      <div class="fs-top">
+        <button type="button" class="fs-back" id="fsBack" data-t="fsBack" hidden>← Back</button>
+        <span class="fs-count" id="fsCount">1/4</span>
+      </div>
+      <div id="fsAsk">
+        <p class="fs-q" id="fsQ" tabindex="-1"></p>
+        <div class="fs-opts" id="fsOpts" role="group" aria-labelledby="fsQ"></div>
+      </div>
+      <div id="fsEnd" hidden>
+        <p class="fs-res" id="fsRes" tabindex="-1"></p>
+        <p class="fs-next" id="fsNext"></p>
+        <a class="go" id="fsGo" href="#"></a>
+        <p class="alt" id="fsAlt"></p>
+        <p class="note" id="fsNote" aria-live="polite"></p>
+        <button type="button" class="fs-more" id="fsMore" aria-expanded="false" aria-controls="fsForm" data-t="fsMore">No LINE? Leave your email or WhatsApp number</button>
+        <form class="fs-form" id="fsForm" hidden novalidate>
+          <label for="fsName" data-t="fsName">First name</label>
+          <input type="text" id="fsName" name="name" autocomplete="given-name" maxlength="60" aria-describedby="fsNameE">
+          <p class="fs-err" id="fsNameE"></p>
+          <label for="fsContact" data-t="fsContact">Email or WhatsApp number</label>
+          <input type="text" id="fsContact" name="contact" autocomplete="email" maxlength="200" autocapitalize="off" spellcheck="false" aria-describedby="fsContactE">
+          <p class="fs-err" id="fsContactE"></p>
+          <label class="fs-ck"><input type="checkbox" id="fsOk" name="consent" aria-describedby="fsOkE"><span data-t="fsOk">Use this only to reply to me about my first step</span></label>
+          <p class="fs-err" id="fsOkE"></p>
+          <div class="hp" aria-hidden="true"><label for="fsWeb">Website</label><input type="text" id="fsWeb" name="website" tabindex="-1" autocomplete="off"></div>
+          <button type="submit" class="fs-send" id="fsSend">Send</button>
+          <p class="fs-msg" id="fsMsg" aria-live="polite"></p>
+        </form>
+        <p class="fs-done" id="fsDone" tabindex="-1" data-t="fsDone" hidden></p>
+      </div>
+    </div>
+  </section>
+
   <ul class="obj">
     <li><b data-t="o1t">Not flexible?</b><span data-t="o1d">Nobody is on day one. We teach you from zero.</span></li>
     <li><b data-t="o2t">Busy mornings?</b><span data-t="o2d">Mysore starts at 5:30 or 7:30. You are done before work.</span></li>
@@ -100,7 +175,7 @@
 </main>
 <footer>
   <p>S31 Sukhumvit Hotel, 8th floor, Sukhumvit 31, Bangkok · <a href="/#prices" data-t="more">All prices and the timetable</a></p>
-  <p data-t="privacy">This page saves no names or phone numbers. Your message goes straight to our chat.</p>
+  <p data-t="privacy">This page saves no names or contact details unless you fill in the short form. Then we use them only to reply to you. Your message goes straight to our chat.</p>
 </footer>
 <script>
 (() => {
@@ -122,7 +197,7 @@
       o2t: 'Busy mornings?', o2d: 'Mysore starts at 5:30 or 7:30. You are done before work.',
       o3t: 'The price?', o3d: `From ${FROM} baht a class, with a teacher who knows your name.`,
       auth: 'Authorized Level 2 by R. Sharath Jois', since: 'Mysore style in Bangkok since 2013',
-      more: 'All prices and the timetable', privacy: 'This page saves no names or phone numbers. Your message goes straight to our chat.' },
+      more: 'All prices and the timetable', privacy: 'This page saves no names or contact details unless you fill in the short form. Then we use them only to reply to you. Your message goes straight to our chat.' },
     th: { pk: 'ถึง 11 พ.ย. เท่านั้น · น้อมรำลึก Sharathji', pbig: 'ซื้อ 1 แถม 1 ฟรี', psub: 'หรือ Rookie Pack ฿5,900 สำหรับนักเรียนใหม่', pbtn: 'คำนวณราคาเรียน →',
       h1: 'แข็งแรงขึ้น ใจสงบขึ้น นอนหลับดีขึ้น วันละหนึ่งเช้า', sub: 'อัษฎางคโยคะแบบดั้งเดิมในกรุงเทพฯ มือใหม่มาได้เลย',
       ctx: 'ครูเดินดูทั้งห้องและปรับท่าให้คุณด้วยมือ คุณฝึกตามจังหวะของตัวเอง ตามลมหายใจของตัวเอง',
@@ -132,7 +207,7 @@
       o2t: 'เช้าๆ ยุ่ง?', o2d: 'มายซอร์เริ่ม 5:30 หรือ 7:30 ฝึกเสร็จก่อนไปทำงาน',
       o3t: 'ราคาล่ะ?', o3d: `เริ่มต้น ${FROM} บาทต่อครั้ง กับครูที่จำชื่อคุณได้`,
       auth: 'ได้รับ Authorization Level 2 จาก R. Sharath Jois', since: 'สอนแบบมายซอร์ในกรุงเทพฯ ตั้งแต่ปี 2013',
-      more: 'ราคาทั้งหมดและตารางเรียน', privacy: 'หน้านี้ไม่เก็บชื่อหรือเบอร์โทร ข้อความของคุณส่งตรงถึงแชทของเรา' },
+      more: 'ราคาทั้งหมดและตารางเรียน', privacy: 'หน้านี้ไม่เก็บชื่อหรือช่องทางติดต่อของคุณ เว้นแต่คุณกรอกแบบฟอร์มสั้น ๆ และเราจะใช้เพื่อตอบกลับคุณเท่านั้น ข้อความของคุณส่งตรงถึงแชทของเรา' },
     zh: { pk: '仅限11月11日前 · 纪念 Sharathji', pbig: '买一送一', psub: '或新学员 Rookie Pack ฿5,900', pbtn: '计算我的价格 →',
       h1: '更强壮，更平静，睡得更好。每天一个早上。', sub: '曼谷的传统阿斯汤加。欢迎初学者。',
       ctx: '老师在教室里走动，亲手为你调整。你按自己的节奏、自己的呼吸练习。',
@@ -142,7 +217,7 @@
       o2t: '早上很忙？', o2d: 'Mysore 5:30 或 7:30 开始，上班前就练完。',
       o3t: '价格？', o3d: `每节课低至 ${FROM} 泰铢，老师记得你的名字。`,
       auth: '获 R. Sharath Jois 授权 Level 2（Authorized Level 2）', since: '自 2013 年起在曼谷教 Mysore',
-      more: '全部价格和课程表', privacy: '本页不保存姓名或电话。你的消息直接发到我们的聊天。' },
+      more: '全部价格和课程表', privacy: '除非你填写简短表格，本页不保存姓名或联系方式。填写后，我们只用它来回复你。你的消息直接发到我们的聊天。' },
     ru: { pk: 'Только до 11 ноября · в память о Шарате', pbig: 'Купи 1, получи 1 БЕСПЛАТНО', psub: 'или Rookie Pack за ฿5,900 для новичков', pbtn: 'Рассчитать мою цену →',
       h1: 'Сильнее, спокойнее, лучше сон. Одно утро в день.', sub: 'Традиционная аштанга в Бангкоке. Новичкам рады.',
       ctx: 'Учитель ходит по залу и поправляет вас руками. Вы двигаетесь в своём темпе, со своим дыханием.',
@@ -152,8 +227,115 @@
       o2t: 'Утро занято?', o2d: 'Майсор начинается в 5:30 или 7:30. Вы успеете до работы.',
       o3t: 'Цена?', o3d: `От ${FROM} бат за занятие, с учителем, который знает ваше имя.`,
       auth: 'Авторизация Level 2 от R. Sharath Jois', since: 'Майсор в Бангкоке с 2013 года',
-      more: 'Все цены и расписание', privacy: 'Эта страница не сохраняет имена и телефоны. Ваше сообщение идёт прямо в наш чат.' },
+      more: 'Все цены и расписание', privacy: 'Эта страница не сохраняет имена и контакты, если вы не заполните короткую форму. Тогда мы используем их только чтобы ответить вам. Ваше сообщение идёт прямо в наш чат.' },
   };
+  // First-step ladder. The answers are fixed codes (inbox.js LEAD_SAY). The message staff
+  // read is built from fsL and fsA in English and Thai. No prices here: they change on 12 Nov.
+  Object.assign(STR.en, {
+    fsH: 'Not sure where to start? Find your first step', fsSub: '4 quick taps', fsBack: '← Back',
+    fsQ: ['What do you want most?', 'Have you done yoga before?', 'When could you come?'],
+    fsA: { goal: { strong: 'Stronger body', calm: 'Calmer mind', sleep: 'Better sleep', age: 'Age well' },
+      exp: { never: 'Never done yoga', some: 'Some yoga', ashtanga: 'Ashtanga before', aybkk: 'I practised at AYBKK' },
+      when: { weekday: 'Weekdays before work', weekend: 'Weekends', unsure: 'Not sure yet' } },
+    fsL: ['Goal', 'Experience', 'When'],
+    fsG: { strong: 'a stronger body', calm: 'a calmer mind', sleep: 'better sleep', age: 'aging well' },
+    fsFirst: g => `For ${g}, your first step is one Mysore morning.`,
+    fsShow: 'The teacher shows you the first postures.', fsKnow: 'The teacher sees your practice and takes it from there.',
+    fsHi: 'Welcome back.',
+    fsWeekday: 'Mysore starts at 5:30 or 7:30 on weekdays, so you are done before work.',
+    fsWeekend: 'On Sunday, Mysore starts at 7:00.',
+    fsAgain: 'We will send you the returning-student option.',
+    fsOffer: 'New students have an offer until 11 Nov. We will send you the one that fits.',
+    fsBest: 'We will send you the best way to start.',
+    fsGoLine: 'Send my answers on LINE', fsGoWa: 'Send my answers on WhatsApp', fsGoWx: 'Copy my answers for WeChat',
+    fsCopied: `Your answers are copied. Add our WeChat ID ${WECHAT}, then paste them in the chat.`,
+    fsWxNo: `Add our WeChat ID ${WECHAT} and send us your answers.`,
+    fsMore: 'No LINE? Leave your email or WhatsApp number',
+    fsName: 'First name', fsContact: 'Email or WhatsApp number', fsOk: 'Use this only to reply to me about my first step',
+    fsSend: 'Send', fsSending: 'Sending…', fsDone: 'Thank you, it is sent. We will reply to you about your first step.',
+    fsErrName: 'Please write your first name.', fsErrContact: 'Please check the email or WhatsApp number.',
+    fsErrOk: 'Please tick the box to send.',
+    fsErrBusy: 'Too many tries from this connection. Please try again later, or message LINE @aybkk.',
+    fsErrServer: 'That did not send. Please try again, or message LINE @aybkk.',
+  });
+  Object.assign(STR.th, {
+    fsH: 'ไม่แน่ใจว่าจะเริ่มตรงไหน? หาก้าวแรกของคุณ', fsSub: 'แตะแค่ 4 ครั้ง', fsBack: '← ย้อนกลับ',
+    fsQ: ['คุณอยากได้อะไรมากที่สุด?', 'เคยเล่นโยคะมาก่อนไหม?', 'สะดวกมาฝึกช่วงไหน?'],
+    fsA: { goal: { strong: 'ร่างกายแข็งแรงขึ้น', calm: 'ใจสงบขึ้น', sleep: 'นอนหลับดีขึ้น', age: 'สูงวัยอย่างแข็งแรง' },
+      exp: { never: 'ไม่เคยเล่นโยคะ', some: 'เคยเล่นโยคะมาบ้าง', ashtanga: 'เคยฝึกอัษฎางคโยคะ', aybkk: 'เคยฝึกที่ AYBKK' },
+      when: { weekday: 'วันธรรมดา ก่อนไปทำงาน', weekend: 'เสาร์-อาทิตย์', unsure: 'ยังไม่แน่ใจ' } },
+    fsL: ['เป้าหมาย', 'ประสบการณ์', 'ช่วงเวลา'],
+    fsG: { strong: 'แข็งแรงขึ้น', calm: 'ใจสงบขึ้น', sleep: 'นอนหลับดีขึ้น', age: 'สูงวัยอย่างแข็งแรง' },
+    fsFirst: g => `ถ้าอยาก${g} ก้าวแรกของคุณคือมาฝึกมายซอร์หนึ่งเช้า`,
+    fsShow: 'ครูจะสอนท่าแรก ๆ ให้คุณเอง', fsKnow: 'ครูจะดูการฝึกของคุณ แล้วต่อจากตรงนั้น',
+    fsHi: 'ยินดีต้อนรับกลับมา',
+    fsWeekday: 'วันธรรมดา มายซอร์เริ่ม 5:30 หรือ 7:30 ฝึกเสร็จก่อนไปทำงาน',
+    fsWeekend: 'วันอาทิตย์ มายซอร์เริ่ม 7:00',
+    fsAgain: 'เราจะส่งตัวเลือกสำหรับนักเรียนเก่าให้คุณ',
+    fsOffer: 'นักเรียนใหม่มีโปรถึง 11 พ.ย. เราจะส่งโปรที่เหมาะกับคุณให้',
+    fsBest: 'เราจะส่งวิธีเริ่มที่เหมาะกับคุณที่สุดให้',
+    fsGoLine: 'ส่งคำตอบทาง LINE', fsGoWa: 'ส่งคำตอบทาง WhatsApp', fsGoWx: 'คัดลอกคำตอบไปส่งทาง WeChat',
+    fsCopied: `คัดลอกคำตอบแล้ว เพิ่ม WeChat ID ${WECHAT} แล้ววางข้อความในแชท`,
+    fsWxNo: `เพิ่ม WeChat ID ${WECHAT} แล้วส่งคำตอบมาหาเรา`,
+    fsMore: 'ไม่มี LINE? ฝากอีเมลหรือเบอร์ WhatsApp ไว้',
+    fsName: 'ชื่อ', fsContact: 'อีเมลหรือเบอร์ WhatsApp', fsOk: 'ใช้ข้อมูลนี้เพื่อตอบฉันเรื่องก้าวแรกเท่านั้น',
+    fsSend: 'ส่ง', fsSending: 'กำลังส่ง…', fsDone: 'ส่งแล้ว ขอบคุณ เราจะตอบกลับคุณเรื่องก้าวแรก',
+    fsErrName: 'กรุณาใส่ชื่อ', fsErrContact: 'กรุณาตรวจอีเมลหรือเบอร์ WhatsApp', fsErrOk: 'กรุณาติ๊กช่องนี้ก่อนส่ง',
+    fsErrBusy: 'ลองหลายครั้งเกินไปจากเครือข่ายนี้ ลองใหม่ภายหลัง หรือทักมาที่ LINE @aybkk',
+    fsErrServer: 'ส่งไม่สำเร็จ ลองใหม่อีกครั้ง หรือทักมาที่ LINE @aybkk',
+  });
+  Object.assign(STR.zh, {
+    fsH: '不知道从哪里开始？找到你的第一步', fsSub: '点 4 下就好', fsBack: '← 返回',
+    fsQ: ['你最想要什么？', '你练过瑜伽吗？', '你什么时候方便来？'],
+    fsA: { goal: { strong: '身体更强壮', calm: '内心更平静', sleep: '睡得更好', age: '健康到老' },
+      exp: { never: '从没练过瑜伽', some: '练过一些瑜伽', ashtanga: '练过阿斯汤加', aybkk: '我在 AYBKK 练过' },
+      when: { weekday: '工作日上班前', weekend: '周末', unsure: '还不确定' } },
+    fsG: { strong: '身体更强壮', calm: '内心更平静', sleep: '睡得更好', age: '健康到老' },
+    fsFirst: g => `想要${g}，你的第一步是来练一个 Mysore 早上。`,
+    fsShow: '老师会教你最开始的体式。', fsKnow: '老师会看你的练习，从你现在的程度带你往下走。',
+    fsHi: '欢迎回来。',
+    fsWeekday: '工作日 Mysore 5:30 或 7:30 开始，上班前就练完。',
+    fsWeekend: '周日 Mysore 7:00 开始。',
+    fsAgain: '我们会把老学员的方案发给你。',
+    fsOffer: '新学员在11月11日前有优惠。我们会把适合你的那一个发给你。',
+    fsBest: '我们会把最适合你的开始方式发给你。',
+    fsGoLine: '用 LINE 发送我的答案', fsGoWa: '用 WhatsApp 发送我的答案', fsGoWx: '复制我的答案，发到微信',
+    fsCopied: `已复制你的答案。添加我们的微信号 ${WECHAT}，然后把答案粘贴到聊天里。`,
+    fsWxNo: `添加我们的微信号 ${WECHAT}，把你的答案发给我们。`,
+    fsMore: '没有 LINE 或微信？留下邮箱或 WhatsApp 号码',
+    fsName: '名字', fsContact: '邮箱或 WhatsApp 号码', fsOk: '只用来回复我关于第一步的事',
+    fsSend: '发送', fsSending: '正在发送…', fsDone: '已发送，谢谢。我们会回复你关于第一步的事。',
+    fsErrName: '请填写你的名字。', fsErrContact: '请检查邮箱或 WhatsApp 号码。', fsErrOk: '请勾选后再发送。',
+    fsErrBusy: `这个网络尝试的次数太多了。请稍后再试，或加微信 ${WECHAT}。`,
+    fsErrServer: `没有发送成功。请再试一次，或加微信 ${WECHAT}。`,
+    fsJoin: '',
+  });
+  Object.assign(STR.ru, {
+    fsH: 'Не знаете, с чего начать? Найдите свой первый шаг', fsSub: '4 быстрых нажатия', fsBack: '← Назад',
+    fsQ: ['Чего вы хотите больше всего?', 'Вы занимались йогой раньше?', 'Когда вам удобно приходить?'],
+    fsA: { goal: { strong: 'Сильное тело', calm: 'Спокойный ум', sleep: 'Лучший сон', age: 'Здоровое долголетие' },
+      exp: { never: 'Йога для меня впервые', some: 'Есть немного опыта йоги', ashtanga: 'Есть опыт аштанги', aybkk: 'Уже занимался(-ась) в AYBKK' },
+      when: { weekday: 'Будни, до работы', weekend: 'Выходные', unsure: 'Пока не знаю' } },
+    fsG: { strong: 'Для сильного тела', calm: 'Для спокойного ума', sleep: 'Для хорошего сна', age: 'Для здорового долголетия' },
+    fsFirst: g => `${g} ваш первый шаг: одно утро в классе майсор.`,
+    fsShow: 'Учитель покажет вам первые позы.', fsKnow: 'Учитель посмотрит вашу практику и продолжит с того, что есть.',
+    fsHi: 'С возвращением.',
+    fsWeekday: 'По будням майсор начинается в 5:30 или 7:30. Вы успеете до работы.',
+    fsWeekend: 'В воскресенье майсор начинается в 7:00.',
+    fsAgain: 'Мы пришлём вам вариант для тех, кто уже занимался у нас.',
+    fsOffer: 'Для новичков до 11 ноября есть предложение. Мы пришлём то, которое вам подходит.',
+    fsBest: 'Мы пришлём лучший способ начать.',
+    fsGoLine: 'Отправить ответы в LINE', fsGoWa: 'Отправить ответы в WhatsApp', fsGoWx: 'Скопировать ответы для WeChat',
+    fsCopied: `Ответы скопированы. Добавьте наш WeChat ID ${WECHAT} и вставьте их в чат.`,
+    fsWxNo: `Добавьте наш WeChat ID ${WECHAT} и пришлите нам ответы.`,
+    fsMore: 'Не хотите писать сейчас? Оставьте email или номер WhatsApp',
+    fsName: 'Имя', fsContact: 'Email или номер WhatsApp', fsOk: 'Используйте это только для ответа мне о первом шаге',
+    fsSend: 'Отправить', fsSending: 'Отправляем…', fsDone: 'Отправлено, спасибо. Мы ответим вам о первом шаге.',
+    fsErrName: 'Напишите, пожалуйста, ваше имя.', fsErrContact: 'Проверьте, пожалуйста, email или номер WhatsApp.',
+    fsErrOk: 'Отметьте, пожалуйста, галочку, чтобы отправить.',
+    fsErrBusy: 'Слишком много попыток с этого подключения. Попробуйте позже или напишите нам в WhatsApp.',
+    fsErrServer: 'Не отправилось. Попробуйте ещё раз или напишите нам в WhatsApp.',
+  });
   // The channel each audience actually has: Thai and English on LINE, Chinese on WeChat, Russian on WhatsApp.
   // Same end date as the homepage promotion (bkk.html PROMO_LAST_BUY).
   const PROMO_LAST_BUY = '2026-11-11';
@@ -220,7 +402,152 @@
       const c = document.createElement('cite'); c.textContent = x.who; bq.append(c);
       return bq;
     }));
+    renderLadder();
   }
+
+  // First-step ladder (Boonchu, 5 Nov 2026): three taps, then the answers go to LINE
+  // already typed, or to a short form. It sits in the page and never opens by itself.
+  // The LINE OA keyword reply fires on an exact match only, so this longer text gets
+  // no instant answer, and the end screen promises none.
+  const ASK = [['goal', ['strong', 'calm', 'sleep', 'age']], ['exp', ['never', 'some', 'ashtanga', 'aybkk']],
+    ['when', ['weekday', 'weekend', 'unsure']]];
+  // Funnel counts are kind 'step'; the server keeps ch to [a-z0-9_-], 10 characters.
+  const DONE = { line: 'done-line', whatsapp: 'done-wa', wechat: 'done-wchat' };
+  const FIELD = { name: 'fsName', contact: 'fsContact', consent: 'fsOk' };
+  const ERR = { name: 'fsErrName', contact: 'fsErrContact', consent: 'fsErrOk' };
+  const $ = id => document.getElementById(id);
+  const fs = { step: 0, a: {}, open: false, busy: false, sent: false, errs: {}, msg: '', wx: '' };
+  const counted = new Set();
+  const countStep = ch => { if (counted.has(ch)) return; counted.add(ch); send('step', ch); };
+  const leadSrc = String(src).toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
+  const fsRows = l => ASK.map(([k], i) => `${STR[l].fsL[i]}: ${STR[l].fsA[k][fs.a[k]]}`);
+  const fsText = () => [`First step · aybkk.net/start${pathTag ? '/' + pathTag : ''}`, ...fsRows('en'), '', ...fsRows('th')].join('\n');
+  const copyWx = () => {
+    countStep(DONE.wechat);
+    if (window.aybkkBook) window.aybkkBook();
+    const show = k => { fs.wx = k; $('fsNote').textContent = STR[LANG][k]; };
+    const text = fsText() + `\n\nWeChat ID: ${WECHAT}`;
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => show('fsCopied'), () => show('fsWxNo'));
+    else show('fsWxNo');
+  };
+  const checkField = k => {
+    if (k === 'name') { const v = $('fsName').value.trim(); return v && [...v].length <= 60 ? '' : ERR.name; }
+    if (k === 'consent') return $('fsOk').checked ? '' : ERR.consent;
+    const v = $('fsContact').value.trim(), n = v.replace(/\D/g, '').length;
+    const good = v.includes('@') ? v.length <= 200 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+      : /^\+?\d+(?:[ -]\d+)*$/.test(v) && n >= 8 && n <= 15;
+    return good ? '' : ERR.contact;
+  };
+
+  function renderForm() {
+    const S = STR[LANG];
+    for (const [k, id] of Object.entries(FIELD)) {
+      $(id + 'E').textContent = fs.errs[k] ? S[fs.errs[k]] : '';
+      $(id).setAttribute('aria-invalid', String(!!fs.errs[k]));
+    }
+    $('fsMsg').textContent = fs.msg ? S[fs.msg] : '';
+    $('fsSend').textContent = fs.busy ? S.fsSending : S.fsSend;
+    $('fsSend').disabled = fs.busy;
+    $('fsMore').hidden = fs.sent;
+    $('fsMore').setAttribute('aria-expanded', String(fs.open));
+    $('fsForm').hidden = fs.sent || !fs.open;
+    $('fsDone').hidden = !fs.sent;
+  }
+
+  function renderLadder(moved) {
+    const S = STR[LANG], asking = fs.step < ASK.length;
+    $('fsCount').textContent = `${fs.step + 1}/4`;
+    $('fsBack').hidden = fs.step === 0;
+    $('fsAsk').hidden = !asking;
+    $('fsEnd').hidden = asking;
+    if (asking) {
+      const [k, codes] = ASK[fs.step];
+      $('fsQ').textContent = S.fsQ[fs.step];
+      $('fsOpts').replaceChildren(...codes.map(c => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'fs-opt'; b.textContent = S.fsA[k][c];
+        b.setAttribute('aria-pressed', String(fs.a[k] === c));
+        b.onclick = () => { fs.a[k] = c; countStep('q' + (fs.step + 1)); fs.step++; renderLadder(true); };
+        return b;
+      }));
+    } else {
+      const { goal, exp, when } = fs.a;
+      const J = S.fsJoin ?? ' ', first = document.createElement('strong');
+      first.textContent = [exp === 'aybkk' && S.fsHi, S.fsFirst(S.fsG[goal])].filter(Boolean).join(J);
+      $('fsRes').replaceChildren(first, J + [(exp === 'never' || exp === 'some') && S.fsShow, exp === 'ashtanga' && S.fsKnow,
+        when === 'weekend' ? S.fsWeekend : S.fsWeekday].filter(Boolean).join(J));
+      $('fsNext').textContent = exp === 'aybkk' ? S.fsAgain : promoLive ? S.fsOffer : S.fsBest;
+      const text = encodeURIComponent(fsText());
+      const href = { line: 'https://line.me/R/oaMessage/%40aybkk/?' + text, whatsapp: 'https://wa.me/66842244246?text=' + text };
+      const main = MAIN[LANG], go = $('fsGo');
+      go.textContent = { line: S.fsGoLine, whatsapp: S.fsGoWa, wechat: S.fsGoWx }[main];
+      go.href = href[main] || '#';
+      go.onclick = main === 'wechat' ? e => { e.preventDefault(); copyWx(); } : () => countStep(DONE[main]);
+      const alt = $('fsAlt');
+      alt.textContent = S.or + ' ';
+      Object.keys(NAME).filter(c => c !== main).forEach((c, i) => {
+        if (i) alt.append(' · ');
+        const el = document.createElement(c === 'wechat' ? 'button' : 'a');
+        el.textContent = NAME[c];
+        if (c === 'wechat') { el.type = 'button'; el.onclick = copyWx; }
+        else { el.href = href[c]; el.onclick = () => countStep(DONE[c]); }
+        alt.append(el);
+      });
+      $('fsNote').textContent = fs.wx ? S[fs.wx] : '';
+    }
+    renderForm();
+    if (moved) {
+      (asking ? $('fsQ') : $('fsRes')).focus({ preventScroll: true });
+      if ($('fsCard').getBoundingClientRect().top < 0) $('fsCard').scrollIntoView({ block: 'start' });
+    }
+  }
+  $('fsBack').onclick = () => { fs.step--; fs.wx = ''; renderLadder(true); };
+  $('fsMore').onclick = () => { fs.open = !fs.open; renderForm(); if (fs.open) $('fsName').focus(); };
+  $('fsForm').addEventListener('input', e => {
+    const k = Object.keys(FIELD).find(f => FIELD[f] === e.target.id);
+    if (k && fs.errs[k]) { fs.errs[k] = checkField(k); renderForm(); }
+  });
+  $('fsForm').onsubmit = async e => {
+    e.preventDefault();
+    if (fs.busy) return;
+    fs.msg = '';
+    fs.errs = {};
+    for (const k of Object.keys(FIELD)) { const er = checkField(k); if (er) fs.errs[k] = er; }
+    const bad = Object.keys(fs.errs);
+    renderForm();
+    if (bad.length) { $(FIELD[bad[0]]).focus(); return; }
+    fs.busy = true;
+    renderForm();
+    try {
+      const r = await fetch('/api/start/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: $('fsName').value.trim(), contact: $('fsContact').value.trim(), ...fs.a,
+          lang: LANG, src: leadSrc, consent: $('fsOk').checked, website: $('fsWeb').value }) });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.ok) {
+        fs.sent = true;
+        countStep('done-form');
+        if (window.aybkkBook) window.aybkkBook();
+      } else if (r.status === 429) fs.msg = 'fsErrBusy';
+      else {
+        const fields = Array.isArray(j.fields) ? j.fields : [];
+        fields.forEach(k => { if (ERR[k]) fs.errs[k] = ERR[k]; });
+        if (!fields.length || fields.some(k => !ERR[k])) fs.msg = 'fsErrServer';
+      }
+    } catch { fs.msg = 'fsErrServer'; }
+    fs.busy = false;
+    renderForm();
+    if (fs.sent) $('fsDone').focus();
+  };
+  // /start/<tag>#first-step: the browser's own jump can land short once the photo, the
+  // fonts and the cookie bar take their room, so it is redone unless the visitor moved.
+  if (location.hash === '#first-step') {
+    let moved = false;
+    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(t => addEventListener(t, () => { moved = true; }, { once: true, passive: true }));
+    const jump = () => { if (!moved) $('first-step').scrollIntoView({ block: 'start' }); };
+    document.addEventListener('DOMContentLoaded', jump);
+    addEventListener('load', jump);
+  }
+
   document.querySelectorAll('.langs button').forEach(b => b.onclick = () => {
     LANG = b.dataset.lang; try { store && store.setItem('aybkk_lang', LANG); } catch {}
     render();
