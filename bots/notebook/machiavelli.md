@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-04T12:14:03.217Z
+Inbox last read: 2026-11-05T00:10:22.627Z
 
 ## Standing orders from Boonchu
 - 2026-11-03, changed 2026-11-04 (Boonchu: "Why machi cannot see instagram link?"): VIDEO LINKS. Platforms do not let bots download their videos and we never get around that (no fake user agent, no downloader, no login). For a video link: run `python3 bots/tools/read-link/read_link.py "<link>"` for any openly shared caption, then ask Boonchu for the file (Instagram share button, "Download", or a screen recording; in chat or Google Drive) and run the tool on the file: every spoken line, plus stills you open with your image reader to see the screen. README next to the tool.
@@ -220,3 +220,4 @@ Inbox last read: 2026-11-04T12:14:03.217Z
 - 2026-11-03 07:08: Carne posted; Plato paused (expected; Plato chat wrote backbend types v4/v5 on 2 Nov). Inbox 07:08: 2 threads with news, 1 needs a reply, 1 hot (LINE 1-month pass, may be answered). Course prices (19:00 Sun 8 Nov) and serious lead (19:00 Sat 7 Nov) reminded, 1st nudge today, with stakes lines. No reminders due this morning, no wins. Board rebuilt.
 - 2026-11-03 19:08: Inbox 19:08: 0 new, 0 hot. Course prices (Sun 8 Nov) and serious lead (Sat 7 Nov) not repeated (2 nudges today). No reminders due since 13:08, no wins. Next step given: confirm the 1-month pass LINE lead (asked how much to transfer, 2 Nov 21:28) has paid and has a first-morning date.
 - 2026-11-04 07:08: Carne posted; Plato paused (expected). Inbox 07:08: 1 new, 1 hot (LINE new person, DUO PACK start 12 Nov). Serious lead (19:00 Sat 7 Nov, 3 days) and course prices (19:00 Sun 8 Nov, 4 days) reminded, 1st nudge today. PR #83 found merged, countdown dropped. No reminders due this morning, no wins. Board rebuilt (3 posts linked, not copied).
+- 2026-11-05 07:08: Carne posted; Plato paused (expected). Inbox 07:08: 1 new, 1 hot (LINE new person, 3 and 6 month packages). Serious lead (19:00 Sat 7 Nov, 2 days) and course prices (19:00 Sun 8 Nov, 3 days) reminded, 1st nudge today. Rezerv import reminded (daily). No reminders due this morning, no wins. Board rebuilt.
