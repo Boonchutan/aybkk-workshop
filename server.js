@@ -13,7 +13,7 @@ const { mountBkk } = require('./bkk-api');
 const { mountPartner } = require('./partner-api');
 const { mountIdcn } = require('./idcn-api');
 const { mountShop } = require('./shop-api');
-const { mountInbox, APPLY_PATH_RE } = require('./inbox');
+const { mountInbox, APPLY_PATH_RE, LEAD_PATH_RE } = require('./inbox');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -111,11 +111,12 @@ const upload = multer({
 app.use((req, res, next) => { res.set('Referrer-Policy', 'strict-origin'); next(); });
 app.use(cors());
 // LINE and Meta sign the exact bytes they send; the inbox checks those signatures.
-// The public In-Depth application form reads its own body with a 64 KB limit (inbox.js).
+// The public In-Depth application form and the /start first-step form read their own
+// bodies with small limits (inbox.js).
 const jsonBody = express.json({ limit: '10mb', verify: (req, res, buf) => {
   if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf;
 } });
-app.use((req, res, next) => APPLY_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
+app.use((req, res, next) => APPLY_PATH_RE.test(req.path) || LEAD_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
 // index: false so '/' falls through to the host-aware front-door route below
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));

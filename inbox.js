@@ -12,7 +12,8 @@
 // Applications from the In-Depth Mysore pages (POST /api/in-depth/apply) land
 // here too, on channel 'apply', already marked hot and tagged with their list.
 // GET /api/inbox/applications?list=priority-en gives a whole list in the order
-// people joined, one line per email.
+// people joined, one line per email. The first-step form on the /start pages
+// (POST /api/start/lead) lands on channel 'lead', also marked hot.
 
 const crypto = require('crypto');
 const express = require('express');
@@ -232,6 +233,63 @@ function checkApplication(body) {
   return { app };
 }
 
+// ── First-step leads from the /start ad pages ──────────────────────────────
+// The 4-tap ladder ends on LINE, WhatsApp or WeChat; people without those leave
+// a first name and an email or WhatsApp number. Answers arrive as fixed codes.
+// Kept on channel 'lead' and deleted with the chats after KEEP_DAYS.
+const LEAD_SAY = {
+  goal: { strong: 'Stronger body', calm: 'Calmer mind', sleep: 'Better sleep', age: 'Age well' },
+  exp: { never: 'Never done yoga', some: 'Some yoga', ashtanga: 'Ashtanga before', aybkk: 'Practised at AYBKK' },
+  when: { weekday: 'Weekdays before work', weekend: 'Weekends', unsure: 'Not sure yet' },
+  lang: { en: 'English', th: 'Thai', zh: 'Chinese', ru: 'Russian' },
+};
+const LEAD_PER_IP_HOUR = 10;
+const LEAD_PER_CONTACT_DAY = 3;
+const LEAD_PER_HOUR = 100;
+const LEAD_PINGS_HOUR = 10;
+const LEAD_MAX_BYTES = 8 * 1024;
+const LEAD_PATH_RE = /^\/api\/start\/lead\/?$/i;
+const PHONE_RE = /^\+?\d+(?:[ -]\d+)*$/;
+
+// → { lead } or { error: 'fields', fields: [...] }
+function checkLead(body) {
+  const b = body && typeof body === 'object' ? body : {};
+  const lead = {}, bad = [];
+  const name = typeof b.name === 'string' ? cleanText(b.name, true) : '';
+  if (name && [...name].length <= 60) lead.name = name; else bad.push('name');
+  const contact = typeof b.contact === 'string' ? cleanText(b.contact, true) : '';
+  if (contact.includes('@')) {
+    const email = contact.toLowerCase();
+    if (email.length <= 200 && EMAIL_RE.test(email)) Object.assign(lead, { contact: email, by: 'email' });
+    else bad.push('contact');
+  } else {
+    const digits = contact.replace(/\D/g, '');
+    if (PHONE_RE.test(contact) && digits.length >= 8 && digits.length <= 15) {
+      Object.assign(lead, { contact: (contact.startsWith('+') ? '+' : '') + digits, by: 'whatsapp' });
+    } else bad.push('contact');
+  }
+  for (const k of ['goal', 'exp', 'when', 'lang']) {
+    if (typeof b[k] === 'string' && Object.hasOwn(LEAD_SAY[k], b[k])) lead[k] = b[k]; else bad.push(k);
+  }
+  const src = b.src == null ? '' : b.src;
+  if (typeof src === 'string' && /^[a-z0-9_-]{0,40}$/.test(src)) lead.src = src; else bad.push('src');
+  if (b.consent !== true) bad.push('consent');
+  return bad.length ? { error: 'fields', fields: bad } : { lead };
+}
+
+function leadText(l) {
+  return [
+    `First-step lead from aybkk.net/start${l.src ? '/' + l.src : ''}`,
+    `Name: ${l.name}`,
+    `${l.by === 'email' ? 'Email' : 'WhatsApp'}: ${l.contact}`,
+    `Goal: ${LEAD_SAY.goal[l.goal]}`,
+    `Experience: ${LEAD_SAY.exp[l.exp]}`,
+    `Mornings: ${LEAD_SAY.when[l.when]}`,
+    `Source: ${l.src || '(none)'}`,
+    `Page language: ${LEAD_SAY.lang[l.lang]}`,
+  ].join('\n');
+}
+
 function applicationText(a) {
   const block = (label, v) => v ? `${label}:\n${v}` : null;
   return [
@@ -263,6 +321,7 @@ function mountInbox(app, opts = {}) {
   if (!pool) {
     console.warn('⚠ inbox: no pgPool — inbox disabled');
     app.post('/api/in-depth/apply', (req, res) => res.status(503).json({ error: 'server' }));
+    app.post('/api/start/lead', (req, res) => res.status(503).json({ error: 'server' }));
     return { takeLine() {} };
   }
   const q = (sql, params = []) => pool.query(sql, params);
@@ -527,16 +586,20 @@ function mountInbox(app, opts = {}) {
 
   // Tries per address live in memory only, so no IP is stored with an application.
   // One counter per address per hour: a flood costs the same as one try.
-  const applyTries = new Map();
   const clientIp = req => String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
     req.socket?.remoteAddress || 'unknown';
-  function applyTry(ip) {
-    const now = Date.now();
-    if (applyTries.size > 5000) applyTries.clear();
-    let t = applyTries.get(ip);
-    if (!t || now - t.start >= 3600 * 1000) applyTries.set(ip, t = { start: now, n: 0 });
-    return ++t.n <= APPLY_PER_IP_HOUR;
+  function hourlyTries(max) {
+    const tries = new Map();
+    return ip => {
+      const now = Date.now();
+      if (tries.size > 5000) tries.clear();
+      let t = tries.get(ip);
+      if (!t || now - t.start >= 3600 * 1000) tries.set(ip, t = { start: now, n: 0 });
+      return ++t.n <= max;
+    };
   }
+  const applyTry = hourlyTries(APPLY_PER_IP_HOUR);
+  const leadTry = hourlyTries(LEAD_PER_IP_HOUR);
 
   // The answer is only ever { ok } or an error code with field names: nothing
   // the applicant typed is sent back. A filled honeypot is told it worked.
@@ -584,7 +647,49 @@ function mountInbox(app, opts = {}) {
     }
   }, (err, req, res, next) => res.status(err.status === 413 ? 413 : 400).json({ error: 'fields', fields: [] }));
 
+  // The first-step form on /start: same rules as the application form, with an
+  // 8 KB body (server.js leaves this path out of its 10 MB parser too). The ping
+  // carries the answers only: the name and the contact stay in the inbox.
+  app.post('/api/start/lead', (req, res, next) => leadTry(clientIp(req)) ? next() : res.status(429).json({ error: 'busy' }),
+  express.json({ limit: LEAD_MAX_BYTES }), async (req, res) => {
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    if (String(body.website || '').trim()) return res.json({ ok: true });
+    const checked = checkLead(body);
+    if (checked.error) return res.status(400).json(checked);
+    const l = checked.lead;
+    try {
+      await ready;
+      const sent = (await q(`SELECT count(*) FILTER (WHERE sender_id=$1)::int AS contact,
+          count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour,
+          count(*) FILTER (WHERE alerted_at > now() - interval '1 hour')::int AS pinged
+        FROM aybkk_inbox WHERE channel='lead' AND created_at > now() - interval '1 day'`, [l.contact])).rows[0];
+      if (sent.contact >= LEAD_PER_CONTACT_DAY || sent.hour >= LEAD_PER_HOUR) {
+        console.warn('[lead] throttled');
+        return res.status(429).json({ error: 'busy' });
+      }
+      const reply = l.by === 'email' ? 'email' : 'WhatsApp';
+      const summary = `First-step lead from ${l.src || 'no source'}: ${LEAD_SAY.goal[l.goal]}, ` +
+        `${LEAD_SAY.exp[l.exp]}, ${LEAD_SAY.when[l.when]}. Reply by ${reply}, page in ${LEAD_SAY.lang[l.lang]}.`;
+      const row = (await q(
+        `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, sent_at, triage)
+         VALUES ('lead','ladder','in',$1,$2,$3,$4,now(),$5) RETURNING id`,
+        [`lead:${crypto.randomUUID()}`, l.contact, l.name, leadText(l), { lane: 'hot', summary, reply: '' }])).rows[0];
+      res.json({ ok: true });
+      if (sent.pinged > LEAD_PINGS_HOUR) return;
+      notify(sent.pinged === LEAD_PINGS_HOUR
+        ? `More first-step leads this hour. Pings pause until the hour is over; every lead is in the inbox, channel "lead".`
+        : `New first-step lead, src ${l.src || '(none)'}\n` +
+          `Goal: ${LEAD_SAY.goal[l.goal]}. Experience: ${LEAD_SAY.exp[l.exp]}. Mornings: ${LEAD_SAY.when[l.when]}.\n` +
+          `Wants a reply by ${reply}. Details: the inbox, channel "lead".`)
+        .then(ok => ok && q('UPDATE aybkk_inbox SET alerted_at=now() WHERE id=$1', [row.id]))
+        .catch(e => console.error('[lead] ping failed:', e.message));
+    } catch (e) {
+      console.error('[lead] save failed:', e.message);
+      if (!res.headersSent) res.status(500).json({ error: 'server' });
+    }
+  }, (err, req, res, next) => res.status(err.status === 413 ? 413 : 400).json({ error: 'fields', fields: [] }));
+
   return { takeLine, purge };
 }
 
-module.exports = { mountInbox, parseMeta, checkApplication, telegram, APPLY_PATH_RE };
+module.exports = { mountInbox, parseMeta, checkApplication, checkLead, telegram, APPLY_PATH_RE, LEAD_PATH_RE };
