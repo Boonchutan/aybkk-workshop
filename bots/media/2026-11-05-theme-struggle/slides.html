@@ -1,0 +1,86 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:'Plex';src:url('__WORKSANS__') format('woff2');font-weight:100 900}
+  @font-face{font-family:'PlexTH';src:url('__PLEXTHAI__') format('woff2');font-weight:400;unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}
+  @font-face{font-family:'Cormorant';src:url('__CORMORANT__') format('woff2');font-weight:300 700}
+  :root{--aub:#3E1442;--ink:#FBF5F9;--muted:#C9AFCB;--rule:rgba(251,245,249,.22);--pink:#e8458c;--act:#c92f74}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1080px;height:1350px;background:var(--aub);color:var(--ink);font-family:'Plex','PlexTH',sans-serif;-webkit-font-smoothing:antialiased}
+  .page{position:relative;width:1080px;height:1350px;padding:60px 72px 0;display:flex;flex-direction:column}
+  .mast{display:flex;align-items:center;gap:18px;padding-bottom:22px;border-bottom:3px solid var(--ink)}
+  .mast img{width:64px;height:64px}
+  .mast b{font-weight:800;font-size:32px;letter-spacing:-.01em}
+  .mast .m{margin-left:auto;font-size:26px;color:var(--muted);font-weight:600}
+  .body{flex:1;display:flex;flex-direction:column;padding-top:56px}
+  .foot{display:flex;justify-content:space-between;align-items:center;height:110px;font-size:28px;color:var(--muted);border-top:2px solid var(--rule)}
+  .foot span{font-weight:600}
+  .foot b{color:var(--ink);font-weight:700}
+  .eyebrow{font-size:32px;font-weight:600;color:var(--muted)}
+  h1{margin-top:28px;font-weight:800;font-size:128px;line-height:.96;letter-spacing:-.045em;text-wrap:balance}
+  :lang(th) h1{font-weight:500;letter-spacing:0;line-height:1.2;font-size:112px;font-synthesis:none}
+  .lead{margin-top:auto;margin-bottom:48px;font-size:40px;line-height:1.32;max-width:30ch}
+  :lang(th) .lead{line-height:1.5;max-width:none;font-size:44px}
+  :lang(th) .lead .l,:lang(th) .lead em{display:block}
+  .lead em{font-style:normal;font-weight:700}
+  .num{font-size:30px;font-weight:700;color:var(--muted)}
+  .nw{white-space:nowrap}
+  h2{margin-top:10px;font-weight:800;font-size:112px;line-height:1;letter-spacing:-.04em}
+  :lang(th) h2{font-weight:500;letter-spacing:0;line-height:1.25;font-size:88px;font-synthesis:none}
+  .a{margin-top:56px;padding-top:22px;border-top:2px solid var(--rule)}
+  .a .k{font-size:28px;font-weight:600;color:var(--muted)}
+  .a p{margin-top:10px;font-size:46px;line-height:1.3;color:var(--muted)}
+  .b{margin-top:auto;margin-bottom:64px;border-left:12px solid var(--pink);padding:6px 0 10px 32px}
+  .b .k{font-size:30px;font-weight:800}
+  .b p{margin-top:12px;font-size:66px;line-height:1.2;font-weight:600;letter-spacing:-.015em}
+  :lang(th) .a p{line-height:1.5} :lang(th) .b p{line-height:1.4;letter-spacing:0;font-weight:500;font-size:58px}
+  :lang(th) .b .k{font-weight:700;font-size:34px}
+  :lang(th) .a .k{font-size:32px}
+  .stakes{margin:auto 0;padding-bottom:40px;font-size:76px;line-height:1.16;font-weight:700;letter-spacing:-.025em;text-wrap:pretty}
+  .stakes .s2{display:block;margin-top:40px;color:var(--muted);font-weight:500}
+  :lang(th) .stakes{font-size:56px;line-height:1.45;letter-spacing:0;font-weight:600}
+  :lang(th) .stakes .s2{font-weight:400}
+  blockquote{font-family:'Cormorant','Plex',serif;font-size:62px;line-height:1.12;font-weight:500}
+  :lang(th) blockquote{font-family:'Plex','PlexTH',sans-serif;font-size:56px;line-height:1.5;font-weight:400}
+  .who{margin-top:24px;font-size:28px;line-height:1.4;color:var(--muted)}
+  .cta{margin-top:auto;margin-bottom:44px}
+  .cta .btn{display:inline-block;background:var(--act);color:#fff;font-weight:800;font-size:40px;padding:26px 40px}
+  :lang(th) .cta .btn{font-weight:700}
+  .cta p{margin-top:20px;font-size:32px;line-height:1.35;color:var(--ink);max-width:34ch}
+  :lang(th) .cta p{max-width:none;line-height:1.5}
+</style></head>
+<body><div class="page"><div class="mast"><img src="__LOGO__" alt=""><b>AYBKK</b><span class="m" id="m"></span></div>
+<div class="body" id="body"></div>
+<div class="foot"><span id="fl"></span><b>aybkk.net · LINE @aybkk</b></div></div>
+<script>
+const D = __THEME__;
+const q = new URLSearchParams(location.search), lang = q.get('lang') || 'en', n = +(q.get('slide') || 1), N = 7;
+const L = o => (o && (o[lang] || o.en)) || '';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const U = { en: { swipe: 'Swipe', of: (a, b) => `${a} / ${b}` }, th: { swipe: 'ปัดดูต่อ', of: (a, b) => `${a} / ${b}` } }[lang];
+document.documentElement.lang = lang;
+document.getElementById('m').textContent = L(D.eyebrow) + ' · ' + L(D.monthName);
+document.getElementById('fl').textContent = q.get('cr') ? (n < N ? U.swipe + ' →' : '') : U.of(n, N) + (n < N ? ' · ' + U.swipe + ' →' : '');
+const body = document.getElementById('body');
+const TH_GLUE = ['มือ ท้อง ลมหายใจ', 'ได้ฝึกใจให้นิ่ง แม้ตอนที่กลัว', 'W. N. Porter', 'ค.ศ. 1330'];
+const glue = s => TH_GLUE.reduce((t, g) => t.split(g).join(g.replace(/ /g, '\u00a0')), String(s));
+const keep = s => lang === 'th' ? glue(s).split(' ').map(w => `<span class="nw">${esc(w)}</span>`).join(' ') : esc(s).replace(/ (\S+)$/, '\u00a0$1');
+const lines = s => String(s).split(' ').map(w => `<span class="nw" style="display:block">${esc(w)}</span>`).join('');
+if (n === 1) {
+  const lead = L(D.lead), cut = lang === 'th' ? lead.lastIndexOf('ความแข็งแรง') : lead.lastIndexOf('Strength');
+  const i1 = lang === 'th' ? lead.indexOf('บางคนตัวสั่น') : -1;
+  const head = i1 > 0 ? `<span class="l">${keep(lead.slice(0, i1).trim())}</span><span class="l">${keep(lead.slice(i1, cut).trim())}</span>` : keep(lead.slice(0, cut).trim());
+  body.innerHTML = `<h1>${lang === 'th' ? lines(L(D.title)) : esc(L(D.title))}</h1><p class="lead">${head} <em>${keep(lead.slice(cut))}</em></p>`;
+} else if (n <= 5) {
+  const r = D.rows[n - 2];
+  body.innerHTML = `<div class="num">0${n - 1}</div><h2>${esc(L(r.label))}</h2>
+    <div class="a"><div class="k">${esc(L(D.columns.a))}</div><p>${keep(L(r.a))}</p></div>
+    <div class="b"><div class="k">${esc(L(D.columns.b))}</div><p>${keep(L(r.b))}</p></div>`;
+} else if (n === 6) {
+  const s = L(D.stakes), i = lang === 'th' ? s.indexOf(' ปีหน้า') : s.indexOf(' A year');
+  body.innerHTML = `<p class="stakes">${keep(s.slice(0, i))}<span class="s2">${keep(s.slice(i + 1))}</span></p>`;
+} else {
+  body.innerHTML = `<blockquote>“${keep(L(D.quote.text))}”</blockquote><p class="who">${(lang === 'th' ? keep(L(D.quote.who)) : esc(L(D.quote.who))).replace(' (', '<br>(')}</p>
+    <div class="cta"><span class="btn">${esc(L(D.cta.label))}</span><p>${keep(L(D.cta.note))}</p></div>`;
+}
+</script></body></html>
