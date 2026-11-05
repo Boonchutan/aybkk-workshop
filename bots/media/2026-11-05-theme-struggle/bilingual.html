@@ -1,0 +1,78 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @font-face{font-family:'Plex';src:url('__WORKSANS__') format('woff2');font-weight:100 900}
+  @font-face{font-family:'PlexTH';src:url('__PLEXTHAI__') format('woff2');font-weight:400;unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}
+  :root{--aub:#3E1442;--ink:#FBF5F9;--muted:#C9AFCB;--rule:rgba(251,245,249,.22);--pink:#e8458c;--act:#c92f74}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1080px;height:1350px;background:var(--aub);color:var(--ink);font-family:'Plex','PlexTH',sans-serif;-webkit-font-smoothing:antialiased}
+  .page{position:relative;width:1080px;height:1350px;padding:60px 64px 0;display:flex;flex-direction:column}
+  .mast{display:flex;align-items:center;gap:18px;padding-bottom:22px;border-bottom:3px solid var(--ink)}
+  .mast img{width:64px;height:64px}
+  .mast b{font-weight:800;font-size:32px;letter-spacing:-.01em}
+  .mast .m{margin-left:auto;font-size:28px;color:var(--muted);font-weight:600}
+  .body{flex:1;display:flex;flex-direction:column;padding-top:48px}
+  .foot{display:flex;justify-content:space-between;align-items:center;height:110px;font-size:28px;color:var(--muted);border-top:2px solid var(--rule)}
+  .foot span{font-weight:600}
+  .foot b{color:var(--ink);font-weight:700}
+  .th{font-family:'PlexTH','Plex',sans-serif;color:var(--muted);line-height:1.45;font-weight:400}
+  .body .th{font-weight:400;letter-spacing:0}
+  .nw{white-space:nowrap}
+  /* cover */
+  h1{font-weight:800;font-size:128px;line-height:.96;letter-spacing:-.045em}
+  h1 + .th{margin-top:26px;font-size:60px;line-height:1.3;color:var(--ink)}
+  .pay{margin-top:auto;margin-bottom:52px}
+  .pay p{font-size:60px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+  .pay .th{margin-top:16px;font-size:46px}
+  /* rows */
+  .row{flex:1 1 auto;display:flex;flex-direction:column;padding:6px 0 30px}
+  .row + .row{border-top:2px solid var(--rule);padding-top:30px}
+  .lab{display:flex;align-items:baseline;gap:18px}
+  .lab b{font-weight:800;font-size:68px;line-height:1;letter-spacing:-.035em}
+  .lab .th{font-size:40px}
+  .lab i{font-style:normal;font-weight:700;font-size:26px;color:var(--muted);align-self:flex-start;margin-top:4px}
+  .a{margin-top:20px;font-size:33px;line-height:1.3;color:var(--muted)}
+  .a .k{font-weight:700;display:block}
+  .b{margin-top:22px;border-left:10px solid var(--pink);padding:2px 0 4px 26px}
+  .b p{font-size:50px;line-height:1.16;font-weight:700;letter-spacing:-.01em}
+  .b .th{margin-top:10px;font-size:36px;line-height:1.4}
+  /* last */
+  .stakes p{font-size:64px;line-height:1.12;font-weight:800;letter-spacing:-.025em}
+  .stakes p.s2{margin-top:24px;font-size:44px;line-height:1.25;font-weight:500;color:var(--muted);letter-spacing:-.01em}
+  .stakes .th{margin-top:26px;font-size:38px;line-height:1.5;font-weight:400;letter-spacing:0}
+  .cta{margin-top:auto;margin-bottom:46px}
+  .cta .btn{display:inline-block;background:var(--act);color:#fff;font-weight:800;font-size:40px;padding:24px 36px}
+  .cta .btn span{font-family:'PlexTH','Plex',sans-serif;font-weight:700}
+  .cta p{margin-top:18px;font-size:32px;line-height:1.35}
+  .cta .th{margin-top:6px;font-size:30px}
+</style></head>
+<body><div class="page"><div class="mast"><img src="__LOGO__" alt=""><b>AYBKK</b><span class="m" id="m"></span></div>
+<div class="body" id="body"></div>
+<div class="foot"><span id="fl"></span><b>aybkk.net · LINE @aybkk</b></div></div>
+<script>
+const D = __THEME__;
+const q = new URLSearchParams(location.search), n = +(q.get('page') || 1), N = 4;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const EN = s => esc(s).replace(/ (\S+)$/, ' $1');
+const GLUE = ['มือ ท้อง ลมหายใจ', 'ได้ฝึกใจให้นิ่ง แม้ตอนที่กลัว'];
+const TH = s => GLUE.reduce((t, g) => t.split(g).join(g.replace(/ /g, ' ')), String(s)).split(' ').map(w => `<span class="nw">${esc(w)}</span>`).join(' ');
+document.getElementById('m').innerHTML = `${esc(D.eyebrow.en)} · ${esc(D.monthName.en)} · <span class="th">${esc(D.monthName.th)}</span>`;
+document.getElementById('fl').innerHTML = n < N ? 'Swipe → <span class="th">ปัดดูต่อ</span>' : '';
+const body = document.getElementById('body');
+const lead = D.lead, cutE = lead.en.lastIndexOf('Strength'), cutT = lead.th.lastIndexOf('ความแข็งแรง');
+const row = (r, i) => `<div class="row">
+  <div class="lab"><i>0${i + 1}</i><b>${esc(r.label.en)}</b><span class="th">${esc(r.label.th)}</span></div>
+  <p class="a"><span class="k">${esc(D.columns.a.en)}:</span> ${EN(r.a.en)}</p>
+  <div class="b"><p>${EN(r.b.en)}</p><p class="th">${TH(r.b.th)}</p></div></div>`;
+if (n === 1) {
+  body.innerHTML = `<h1>${EN(D.title.en)}</h1><p class="th">${TH(D.title.th)}</p>
+    <div class="pay"><p>${EN(lead.en.slice(cutE)).replace('gift. ', 'gift.<br>')}</p><p class="th">${TH(lead.th.slice(cutT))}</p></div>`;
+} else if (n === 2 || n === 3) {
+  const k = (n - 2) * 2;
+  body.innerHTML = row(D.rows[k], k) + row(D.rows[k + 1], k + 1);
+} else {
+  const s = D.stakes.en, i = s.indexOf(' A year');
+  body.innerHTML = `<div class="stakes"><p>${EN(s.slice(0, i))}</p><p class="s2">${EN(s.slice(i + 1))}</p><p class="th">${TH(D.stakes.th)}</p></div>
+    <div class="cta"><span class="btn">${esc(D.cta.label.en)} · <span>${esc(D.cta.label.th)}</span></span><p>${EN(D.cta.note.en).replace('begin. ', 'begin.<br>')}</p><p class="th">${TH(D.cta.note.th)}</p></div>`;
+}
+</script></body></html>
