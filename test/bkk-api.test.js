@@ -702,6 +702,16 @@ const ok = (name, cond, extra = '') => {
   const row = (st.body.sources || []).find(x => x.src === 'reel-sleep1');
   ok('start page views and taps are counted per source, cleaned', row && row.views === 2 && row.taps === 1, JSON.stringify(st.body));
   ok('start stats need the staff key', (await J('/api/bkk/admin/start-stats')).status === 401);
+  for (const ch of ['q1', 'q2', 'q3', 'done-line', 'done-wchat']) await post('/api/bkk/start-event', { kind: 'step', src: 'reel-sleep1', ch });
+  await post('/api/bkk/start-event', { kind: 'Step!', src: 'reel-sleep1', ch: 'q1' });
+  await post('/api/bkk/start-event', { kind: 'hack', src: 'reel-sleep1' });
+  const evs = (await pool.query(`SELECT kind, ch FROM bkk_start_events WHERE src='reel-sleep1' ORDER BY id`)).rows;
+  ok('first-step ladder steps are stored as kind step, with their channel',
+     evs.filter(e => e.kind === 'step').map(e => e.ch).join() === 'q1,q2,q3,done-line,done-wchat', JSON.stringify(evs));
+  ok('an unknown kind is still counted as a view', evs.filter(e => e.kind === 'view').length === 4 &&
+     evs.every(e => ['view', 'tap', 'step'].includes(e.kind)), JSON.stringify(evs));
+  const st2 = (await J('/api/bkk/admin/start-stats', { headers: ADMIN })).body.sources.find(x => x.src === 'reel-sleep1');
+  ok('ladder steps do not change the views and taps report', st2 && st2.views === 4 && st2.taps === 1, JSON.stringify(st2));
 
   console.log('\n— 12-week proof check —');
   const ck = (await post('/api/bkk/teacher/members', { name: 'Check Person', email: 'check.person@example.com' }, PKEY)).body.member.code;

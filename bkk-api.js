@@ -1954,7 +1954,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   app.post('/api/bkk/start-event', async (req, res) => {
     const b = req.body || {};
-    const kind = b.kind === 'tap' ? 'tap' : 'view';
+    // 'step': the first-step ladder (q1..q3 answered, done-<channel> at the end).
+    // The staff reports count kind 'view' and 'tap' only, so steps never inflate them.
+    const kind = ['tap', 'step'].includes(b.kind) ? b.kind : 'view';
     const clean = (v, n) => String(v || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, n) || null;
     try {
       await q(`INSERT INTO bkk_start_events (kind,src,lang,ch) VALUES ($1,$2,$3,$4)`,
