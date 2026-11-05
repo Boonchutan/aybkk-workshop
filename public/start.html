@@ -55,6 +55,8 @@
   .fs{margin:28px 0 0;scroll-margin-top:12px}
   .fs [hidden]{display:none!important}
   .fs h2{font-size:22px;line-height:1.25;margin:0}
+  /* Thai has no spaces between words, so a phone breaks lines inside phrases: break at spaces, and inside a phrase only when it cannot fit. */
+  .fs .nw{display:inline-block;max-width:100%}
   .fs-sub{margin:2px 0 12px;color:var(--soft);font-size:15px}
   .fs-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px 16px 16px}
   .fs-card.fs-wait{pointer-events:none}
@@ -277,7 +279,7 @@
     fsFirst: g => `ถ้าอยาก${g} ก้าวแรกของคุณคือมาฝึกมายซอร์หนึ่งเช้า`,
     fsShow: 'ครูจะสอนท่าแรก ๆ ให้คุณเอง', fsKnow: 'ครูจะดูการฝึกของคุณก่อน แล้วสอนต่อจากที่คุณทำได้',
     fsHi: 'ยินดีต้อนรับกลับมา',
-    fsWeekday: 'วันอังคารถึงวันศุกร์ มายซอร์เริ่ม 5:30 หรือ 7:30 ฝึกเสร็จก่อนไปทำงาน',
+    fsWeekday: 'วันอังคารถึงวันศุกร์ มายซอร์เริ่ม 5:30\u00a0หรือ\u00a07:30 ฝึกเสร็จก่อนไปทำงาน',
     fsWeekend: 'วันอาทิตย์ มายซอร์เริ่ม 7:00',
     fsAgain: 'เราจะส่งตัวเลือกสำหรับนักเรียนเก่าให้คุณ',
     fsOffer: 'นักเรียนใหม่มีโปรถึง 11 พ.ย. เราจะส่งโปรที่เหมาะกับคุณให้',
@@ -456,6 +458,25 @@
     return good ? '' : ERR.contact;
   };
 
+  // Thai only: wrap each space-separated phrase in the ladder (not underlined links, where an inline-block would drop the underline).
+  function thPhrases() {
+    if (LANG !== 'th') return;
+    const w = document.createTreeWalker($('first-step'), NodeFilter.SHOW_TEXT), hits = [];
+    while (w.nextNode()) {
+      const n = w.currentNode;
+      if (/[\u0E00-\u0E7F]/.test(n.nodeValue) && !n.parentElement.closest('.nw,a,.fs-back,.fs-more,.alt')) hits.push(n);
+    }
+    hits.forEach(n => {
+      const f = document.createDocumentFragment();
+      n.nodeValue.split(/( +)/).forEach(part => {
+        if (!part) return;
+        if (/^ +$/.test(part)) { f.append(part); return; }
+        const sp = document.createElement('span'); sp.className = 'nw'; sp.textContent = part; f.append(sp);
+      });
+      n.replaceWith(f);
+    });
+  }
+
   function renderForm() {
     const S = STR[LANG];
     for (const [k, id] of Object.entries(FIELD)) {
@@ -469,6 +490,7 @@
     $('fsMore').setAttribute('aria-expanded', String(fs.open));
     $('fsForm').hidden = fs.sent || !fs.open;
     $('fsDone').hidden = !fs.sent;
+    thPhrases();
   }
 
   // A double tap must not also answer the next question, or press a button on the result
