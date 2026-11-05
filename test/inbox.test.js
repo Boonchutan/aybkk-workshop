@@ -355,10 +355,20 @@ const alerts = [];
   await wait(100);
   ok('then applications are still saved, with no ping', ar.status === 200 && alerts.length === pings + 1 &&
     (await applied()).some(x => x.sender_id === 'p2@example.com'));
+  let aipN = 0;
+  const applyTogether = async (n, over) => (await Promise.all(Array.from({ length: n },
+    (_, i) => apply(good(over(i)), `10.8.${Math.floor(++aipN / 250)}.${aipN % 250}`)))).map(r => r.status);
+  let ast = await applyTogether(10, () => ({ email: 'burst.apply@example.com' }));
+  ok('10 applications at once from one email: 3 saved, the rest 429', ast.filter(x => x === 200).length === 3 &&
+    ast.filter(x => x === 429).length === 7 && (await applied()).filter(x => x.sender_id === 'burst.apply@example.com').length === 3,
+    ast.join(','));
 
   const hourCount = async () => (await pool.query(`SELECT count(*)::int AS c FROM aybkk_inbox
     WHERE channel='apply' AND created_at > now() - interval '1 hour'`)).rows[0].c;
-  await seed(200 - await hourCount(), false);
+  await seed(198 - await hourCount(), false);
+  ast = await applyTogether(8, i => ({ email: `hour${i}@example.com` }));
+  ok('8 applications at once with 198 saved this hour: 2 saved, the rest 429', ast.filter(x => x === 200).length === 2 &&
+    ast.filter(x => x === 429).length === 6 && await hourCount() === 200, `${ast.join(',')} ${await hourCount()}`);
   ar = await apply(good({ email: 'late@example.com' }));
   ok('200 applications in an hour from everywhere, then 429', ar.status === 429 &&
     !(await applied()).some(x => x.sender_id === 'late@example.com'), String(ar.status));
@@ -435,7 +445,7 @@ const alerts = [];
     ld[0].triage.summary === 'First-step lead from reel-sleep: Better sleep, Some yoga, Weekdays before work. Reply by email, page in Thai.',
     JSON.stringify(ld[0].triage));
   ok('the text sums up answers, contact, src and language', ld[0].text === [
-    'First-step lead from aybkk.net/start/reel-sleep', 'Name: Nok', 'Email: nok.test@example.com', 'Goal: Better sleep',
+    'First-step lead from the /start page', 'Name: Nok', 'Email: nok.test@example.com', 'Goal: Better sleep',
     'Experience: Some yoga', 'Mornings: Weekdays before work', 'Source: reel-sleep', 'Page language: Thai'].join('\n'), ld[0].text);
   ok('one ping with src and answers only: no name, no contact', alerts.length === alertsAt + 1 &&
     lastAlert() === 'New first-step lead, src reel-sleep\nGoal: Better sleep. Experience: Some yoga. Mornings: Weekdays before work.\n' +
@@ -452,18 +462,33 @@ const alerts = [];
   await wait(100);
   ld = await leads();
   let lrow = ld[ld.length - 1];
-  ok('a WhatsApp number with +, spaces and dashes is stored as + and digits', lr.status === 200 &&
-    lrow.sender_id === '+79123456789' && lrow.sender_name === 'Ivan P' && /\nWhatsApp: \+79123456789\n/.test(lrow.text) &&
-    /^First-step lead from aybkk\.net\/start\n/.test(lrow.text) && /\nSource: \(none\)\n/.test(lrow.text) &&
+  ok('a WhatsApp number with +, spaces and dashes is keyed on its digits, and staff read it with the +', lr.status === 200 &&
+    lrow.sender_id === '79123456789' && lrow.sender_name === 'Ivan P' && /\nWhatsApp: \+79123456789\n/.test(lrow.text) &&
+    /^First-step lead from the \/start page\n/.test(lrow.text) && /\nSource: \(none\)\n/.test(lrow.text) &&
     /\nPage language: Russian$/.test(lrow.text) && /Practised at AYBKK/.test(lrow.text), lrow.text);
   ok('its ping says WhatsApp and carries no name or number', alerts.length === alertsAt + 1 &&
     /^New first-step lead, src \(none\)\n/.test(lastAlert()) && /Wants a reply by WhatsApp\./.test(lastAlert()) &&
     !/912|345|Ivan|\+7/.test(lastAlert()), lastAlert());
-  for (const [contact, want, why] of [['0812 3456', '08123456', '8 digits'], ['123456789012345', '123456789012345', '15 digits'],
-    ['081-234-5678', '0812345678', 'dashes']]) {
+  for (const [contact, want, shown, why] of [['0812 3456', '08123456', '08123456', '8 digits'],
+    ['123456789012345', '123456789012345', '123456789012345', '15 digits'], ['081-234-5678', '0812345678', '0812345678', 'dashes'],
+    ['081 - 234 - 5678', '0812345678', '0812345678', 'spaced dashes'], ['081--2345678', '0812345678', '0812345678', 'a double dash'],
+    ['+66 81 234  5679', '66812345679', '+66812345679', 'a double space'],
+    ['+66\u00a081\u00a0234\u00a05680', '66812345680', '+66812345680', 'no-break spaces'],
+    ['\u202a+66 81 234 5681\u202c', '66812345681', '+66812345681', 'invisible direction marks'],
+    ['00 66 81 234 5682', '66812345682', '+66812345682', 'a 00 country prefix'],
+    ['0044 7911 123456789', '447911123456789', '+447911123456789', '15 digits after a 00 prefix']]) {
     lr = await lead(goodLead({ contact }));
     ld = await leads();
-    ok(`a number with ${why} is accepted`, lr.status === 200 && ld[ld.length - 1].sender_id === want, `${lr.status} ${ld[ld.length - 1].sender_id}`);
+    const last = ld[ld.length - 1];
+    ok(`a number with ${why} is accepted`, lr.status === 200 && last.sender_id === want &&
+      last.text.includes(`\nWhatsApp: ${shown}\n`), `${lr.status} ${last.sender_id} ${last.text.split('\n')[2]}`);
+  }
+  for (const [i, [mark, why]] of [['\u200c', 'zero-width non-joiner'], ['\u200d', 'zero-width joiner'], ['\u2060', 'word joiner'],
+    ['\u00ad', 'soft hyphen'], ['\ufeff', 'byte order mark']].entries()) {
+    lr = await lead(goodLead({ contact: `inv${mark}${i}@exam${mark}ple.com` }));
+    ld = await leads();
+    ok(`an email with a hidden ${why} is stored without it`, lr.status === 200 &&
+      ld[ld.length - 1].sender_id === `inv${i}@example.com`, `${lr.status} ${JSON.stringify(ld[ld.length - 1].sender_id)}`);
   }
   lr = await lead(goodLead({ name: 'N'.repeat(60), contact: 'sixty@example.com' }));
   ok('a 60-character name is accepted', lr.status === 200);
@@ -486,7 +511,9 @@ const alerts = [];
   await leadFails(goodLead({ contact: '1234567890123456' }), 'contact', 'a number with 16 digits → 400');
   await leadFails(goodLead({ contact: '(02) 123 4567' }), 'contact', 'brackets in a number → 400');
   await leadFails(goodLead({ contact: '081 234 5678 ext 2' }), 'contact', 'letters in a number → 400');
-  await leadFails(goodLead({ contact: '081--2345678' }), 'contact', 'a double dash in a number → 400');
+  await leadFails(goodLead({ contact: '-0812345678' }), 'contact', 'a number that starts with a dash → 400');
+  await leadFails(goodLead({ contact: '00 1234 567' }), 'contact', '7 digits after a 00 prefix → 400');
+  await leadFails(goodLead({ contact: '0081.234.5678' }), 'contact', 'dots in a number → 400');
   await leadFails(goodLead({ contact: '66+812345678' }), 'contact', 'a + inside a number → 400');
   await leadFails(goodLead({ contact: 12345678 }), 'contact', 'a number sent as a JSON number → 400');
   for (const [k, v] of [['goal', 'rich'], ['goal', 'Sleep'], ['goal', ['sleep']], ['goal', 'toString'], ['exp', 'expert'],
@@ -536,10 +563,18 @@ const alerts = [];
   lr = await lead(goodLead({ contact: 'SAME.lead@example.com', name: 'S3' }));
   ok('a 4th lead from one email in a day → 429', lr.status === 429 &&
     (await leads()).filter(x => x.sender_id === 'same.lead@example.com').length === 3, String(lr.status));
-  for (const c of ['+66 81 111 2222', '+66-81-111-2222', '+66811112222']) await lead(goodLead({ contact: c }));
+  for (const c of ['+66 81 111 2222', '66-81-111-2222', '0066811112222']) await lead(goodLead({ contact: c }));
   lr = await lead(goodLead({ contact: '+66 811 112 222' }));
-  ok('a 4th lead from one WhatsApp number, however it is written → 429', lr.status === 429 &&
-    (await leads()).filter(x => x.sender_id === '+66811112222').length === 3, String(lr.status));
+  ok('a 4th lead from one WhatsApp number, with or without + or 00 → 429', lr.status === 429 &&
+    (await leads()).filter(x => x.sender_id === '66811112222').length === 3, String(lr.status));
+
+  // Requests that arrive at the same moment must not all read the same old count.
+  const together = async (n, over) => (await Promise.all(Array.from({ length: n }, (_, i) => lead(goodLead(over(i))))))
+    .map(r => r.status);
+  let st = await together(12, () => ({ contact: 'burst.same@example.com' }));
+  ok('12 leads at once from one email: 3 saved, the rest 429', st.filter(x => x === 200).length === 3 &&
+    st.filter(x => x === 429).length === 9 && (await leads()).filter(x => x.sender_id === 'burst.same@example.com').length === 3,
+    st.join(','));
 
   const lstat = [];
   for (let i = 0; i < 11; i++) lstat.push((await lead({}, '10.3.3.3')).status);
@@ -568,9 +603,34 @@ const alerts = [];
   ok('then leads are still saved, with no ping', lr.status === 200 && alerts.length === alertsAt + 1 &&
     (await leads()).some(x => x.sender_id === 'lp2@example.com'));
 
+  await pool.query(`UPDATE aybkk_inbox SET alerted_at = alerted_at - interval '2 hours' WHERE channel='lead' AND alerted_at IS NOT NULL`);
+  alertsAt = alerts.length;
+  st = await together(15, i => ({ contact: `burst${i}@example.com` }));
+  await wait(200);
+  const burstAlerts = alerts.slice(alertsAt);
+  ok('15 leads at once: all saved, 10 pings and one pause note', st.every(x => x === 200) && burstAlerts.length === 11 &&
+    burstAlerts.filter(a => /^More first-step leads this hour/.test(a)).length === 1 && await leadPinged() === 11,
+    `${st.join(',')} | ${burstAlerts.length} alerts, ${await leadPinged()} marked`);
+
+  const failing = express();
+  failing.use((req, res, next) => LEAD_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
+  mountInbox(failing, { pgPool: pool, ai: fakeAi, notify: async () => false });
+  const srv3 = failing.listen(0);
+  await pool.query(`UPDATE aybkk_inbox SET alerted_at = alerted_at - interval '2 hours' WHERE channel='lead' AND alerted_at IS NOT NULL`);
+  lr = await fetch(`http://127.0.0.1:${srv3.address().port}/api/start/lead`, { method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': '10.4.0.1' },
+    body: JSON.stringify(goodLead({ contact: 'noping@example.com' })) });
+  await wait(150);
+  ok('a ping that did not go out leaves the lead unmarked', lr.status === 200 &&
+    (await leads()).find(x => x.sender_id === 'noping@example.com')?.alerted_at === null && await leadPinged() === 0);
+  srv3.close();
+
   const leadHour = async () => (await pool.query(`SELECT count(*)::int AS c FROM aybkk_inbox
     WHERE channel='lead' AND created_at > now() - interval '1 hour'`)).rows[0].c;
-  await seedLeads(100 - await leadHour(), false);
+  await seedLeads(97 - await leadHour(), false);
+  st = await together(10, i => ({ contact: `hour${i}@example.com` }));
+  ok('10 leads at once with 97 saved this hour: 3 saved, the rest 429', st.filter(x => x === 200).length === 3 &&
+    st.filter(x => x === 429).length === 7 && await leadHour() === 100, `${st.join(',')} ${await leadHour()}`);
   lr = await lead(goodLead({ contact: 'late.lead@example.com' }));
   ok('100 leads saved in an hour from everywhere, then 429', lr.status === 429 &&
     !(await leads()).some(x => x.sender_id === 'late.lead@example.com'), String(lr.status));

@@ -249,7 +249,10 @@ const LEAD_PER_HOUR = 100;
 const LEAD_PINGS_HOUR = 10;
 const LEAD_MAX_BYTES = 8 * 1024;
 const LEAD_PATH_RE = /^\/api\/start\/lead\/?$/i;
-const PHONE_RE = /^\+?\d+(?:[ -]\d+)*$/;
+const PHONE_RE = /^\+?\d(?:[\d -]*\d)?$/;
+// A pasted number or address can carry invisible marks and odd spaces: drop the marks and
+// make every space a plain one. start.html checkField does exactly the same.
+const plainContact = s => s.replace(/[\p{Cf}\u0000-\u0008\u000e-\u001f\u007f]/gu, '').replace(/\s+/g, ' ').trim();
 
 // → { lead } or { error: 'fields', fields: [...] }
 function checkLead(body) {
@@ -257,15 +260,17 @@ function checkLead(body) {
   const lead = {}, bad = [];
   const name = typeof b.name === 'string' ? cleanText(b.name, true) : '';
   if (name && [...name].length <= 60) lead.name = name; else bad.push('name');
-  const contact = typeof b.contact === 'string' ? cleanText(b.contact, true) : '';
+  const contact = typeof b.contact === 'string' ? plainContact(cleanText(b.contact, true)) : '';
   if (contact.includes('@')) {
     const email = contact.toLowerCase();
-    if (email.length <= 200 && EMAIL_RE.test(email)) Object.assign(lead, { contact: email, by: 'email' });
+    if (email.length <= 200 && EMAIL_RE.test(email)) Object.assign(lead, { contact: email, shown: email, by: 'email' });
     else bad.push('contact');
   } else {
-    const digits = contact.replace(/\D/g, '');
-    if (PHONE_RE.test(contact) && digits.length >= 8 && digits.length <= 15) {
-      Object.assign(lead, { contact: (contact.startsWith('+') ? '+' : '') + digits, by: 'whatsapp' });
+    // One key per number however it is typed: +66…, 66… and 0066… are the same phone.
+    const digits = contact.replace(/\D/g, ''), key = digits.replace(/^00/, '');
+    if (PHONE_RE.test(contact) && key.length >= 8 && key.length <= 15) {
+      const plus = contact.startsWith('+') || digits !== key;
+      Object.assign(lead, { contact: key, shown: (plus ? '+' : '') + key, by: 'whatsapp' });
     } else bad.push('contact');
   }
   for (const k of ['goal', 'exp', 'when', 'lang']) {
@@ -279,9 +284,9 @@ function checkLead(body) {
 
 function leadText(l) {
   return [
-    `First-step lead from aybkk.net/start${l.src ? '/' + l.src : ''}`,
+    'First-step lead from the /start page',
     `Name: ${l.name}`,
-    `${l.by === 'email' ? 'Email' : 'WhatsApp'}: ${l.contact}`,
+    `${l.by === 'email' ? 'Email' : 'WhatsApp'}: ${l.shown}`,
     `Goal: ${LEAD_SAY.goal[l.goal]}`,
     `Experience: ${LEAD_SAY.exp[l.exp]}`,
     `Mornings: ${LEAD_SAY.when[l.when]}`,
@@ -601,6 +606,18 @@ function mountInbox(app, opts = {}) {
   const applyTry = hourlyTries(APPLY_PER_IP_HOUR);
   const leadTry = hourlyTries(LEAD_PER_IP_HOUR);
 
+  // Count, save and claim the ping as one step per form: requests that arrive together wait
+  // their turn, so a burst cannot all read the same old count and slip past the limits.
+  // Railway runs one process, as the per-address counters above already assume.
+  const turns = new Map();
+  const inTurn = (form, fn) => {
+    const run = (turns.get(form) || Promise.resolve()).then(fn);
+    turns.set(form, run.catch(() => {}));
+    return run;
+  };
+  // The ping is claimed when the row is saved; a ping that did not go out gives its place back.
+  const unclaim = id => ok => ok ? null : q('UPDATE aybkk_inbox SET alerted_at=NULL WHERE id=$1', [id]);
+
   // The answer is only ever { ok } or an error code with field names: nothing
   // the applicant typed is sent back. A filled honeypot is told it worked.
   // server.js leaves this path out of its 10 MB JSON parser; the body is read
@@ -614,33 +631,39 @@ function mountInbox(app, opts = {}) {
     const a = checked.app;
     try {
       await ready;
-      const sent = (await q(`SELECT count(*) FILTER (WHERE sender_id=$1)::int AS email,
-          count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour,
-          count(*) FILTER (WHERE alerted_at > now() - interval '1 hour')::int AS pinged
-        FROM aybkk_inbox WHERE channel='apply' AND created_at > now() - interval '1 day'`, [a.email])).rows[0];
-      if (sent.email >= APPLY_PER_EMAIL_DAY || sent.hour >= APPLY_PER_HOUR) {
-        console.warn('[apply] throttled');
-        return res.status(429).json({ error: 'busy' });
-      }
       const summary = `In-Depth Mysore application, list ${a.list}, from ${a.country}: ${a.years} years, ` +
         `${a.mornings} mornings a week, ${SAY.series[a.series]}, ` +
         `${a.dates ? `all 30 days ${SAY.dates[a.dates]}, ` : ''}call in ${SAY.call_lang[a.call_lang]}.`;
-      const row = (await q(
-        `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, ref, sent_at, triage)
-         VALUES ('apply','application','in',$1,$2,$3,$4,$5,now(),$6) RETURNING id`,
-        [`apply:${crypto.randomUUID()}`, a.email, a.name, applicationText(a), a.link,
-          { lane: 'hot', list: a.list, summary, reply: '' }])).rows[0];
+      const saved = await inTurn('apply', async () => {
+        const sent = (await q(`SELECT count(*) FILTER (WHERE sender_id=$1)::int AS email,
+            count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour,
+            count(*) FILTER (WHERE alerted_at > now() - interval '1 hour')::int AS pinged
+          FROM aybkk_inbox WHERE channel='apply' AND created_at > now() - interval '1 day'`, [a.email])).rows[0];
+        if (sent.email >= APPLY_PER_EMAIL_DAY || sent.hour >= APPLY_PER_HOUR) return null;
+        const ping = sent.pinged < APPLY_PINGS_HOUR ? 'new' : sent.pinged === APPLY_PINGS_HOUR ? 'pause' : null;
+        const row = (await q(
+          `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, ref, sent_at, triage, alerted_at)
+           VALUES ('apply','application','in',$1,$2,$3,$4,$5,now(),$6,CASE WHEN $7 THEN now() END) RETURNING id`,
+          [`apply:${crypto.randomUUID()}`, a.email, a.name, applicationText(a), a.link,
+            { lane: 'hot', list: a.list, summary, reply: '' }, !!ping])).rows[0];
+        return { id: row.id, ping };
+      });
+      if (!saved) {
+        console.warn('[apply] throttled');
+        return res.status(429).json({ error: 'busy' });
+      }
       res.json({ ok: true });
-      if (sent.pinged > APPLY_PINGS_HOUR) return;
+      if (!saved.ping) return;
       // Country and fit only: the name, contacts, answers and the video stay in the inbox.
-      notify(sent.pinged === APPLY_PINGS_HOUR
+      notify(saved.ping === 'pause'
         ? `More In-Depth Mysore applications this hour. Pings pause until the hour is over; every application is in the inbox, channel "apply".`
         : `New In-Depth Mysore application, list ${a.list} (${APPLY_LISTS[a.list]}), from ${pingSafe(a.country)}\n` +
           `${a.years} years of Ashtanga, ${a.mornings} mornings a week, ${SAY.series[a.series]}. Teaches now: ${a.teaching}.\n` +
           `${a.dates ? `All 30 days: ${SAY.dates[a.dates]}. ` : ''}Call in ${SAY.call_lang[a.call_lang]}.\n` +
           `The page promises a reply within 2 days. Full answers: the inbox, channel "apply".`)
-        .then(ok => ok && q('UPDATE aybkk_inbox SET alerted_at=now() WHERE id=$1', [row.id]))
-        .catch(e => console.error('[apply] ping failed:', e.message));
+        .catch(e => { console.error('[apply] ping failed:', e.message); return false; })
+        .then(unclaim(saved.id))
+        .catch(e => console.error('[apply] ping not given back:', e.message));
     } catch (e) {
       console.error('[apply] save failed:', e.message);
       if (!res.headersSent) res.status(500).json({ error: 'server' });
@@ -659,30 +682,36 @@ function mountInbox(app, opts = {}) {
     const l = checked.lead;
     try {
       await ready;
-      const sent = (await q(`SELECT count(*) FILTER (WHERE sender_id=$1)::int AS contact,
-          count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour,
-          count(*) FILTER (WHERE alerted_at > now() - interval '1 hour')::int AS pinged
-        FROM aybkk_inbox WHERE channel='lead' AND created_at > now() - interval '1 day'`, [l.contact])).rows[0];
-      if (sent.contact >= LEAD_PER_CONTACT_DAY || sent.hour >= LEAD_PER_HOUR) {
-        console.warn('[lead] throttled');
-        return res.status(429).json({ error: 'busy' });
-      }
       const reply = l.by === 'email' ? 'email' : 'WhatsApp';
       const summary = `First-step lead from ${l.src || 'no source'}: ${LEAD_SAY.goal[l.goal]}, ` +
         `${LEAD_SAY.exp[l.exp]}, ${LEAD_SAY.when[l.when]}. Reply by ${reply}, page in ${LEAD_SAY.lang[l.lang]}.`;
-      const row = (await q(
-        `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, sent_at, triage)
-         VALUES ('lead','ladder','in',$1,$2,$3,$4,now(),$5) RETURNING id`,
-        [`lead:${crypto.randomUUID()}`, l.contact, l.name, leadText(l), { lane: 'hot', summary, reply: '' }])).rows[0];
+      const saved = await inTurn('lead', async () => {
+        const sent = (await q(`SELECT count(*) FILTER (WHERE sender_id=$1)::int AS contact,
+            count(*) FILTER (WHERE created_at > now() - interval '1 hour')::int AS hour,
+            count(*) FILTER (WHERE alerted_at > now() - interval '1 hour')::int AS pinged
+          FROM aybkk_inbox WHERE channel='lead' AND created_at > now() - interval '1 day'`, [l.contact])).rows[0];
+        if (sent.contact >= LEAD_PER_CONTACT_DAY || sent.hour >= LEAD_PER_HOUR) return null;
+        const ping = sent.pinged < LEAD_PINGS_HOUR ? 'new' : sent.pinged === LEAD_PINGS_HOUR ? 'pause' : null;
+        const row = (await q(
+          `INSERT INTO aybkk_inbox (channel, kind, direction, ext_id, sender_id, sender_name, text, sent_at, triage, alerted_at)
+           VALUES ('lead','ladder','in',$1,$2,$3,$4,now(),$5,CASE WHEN $6 THEN now() END) RETURNING id`,
+          [`lead:${crypto.randomUUID()}`, l.contact, l.name, leadText(l), { lane: 'hot', summary, reply: '' }, !!ping])).rows[0];
+        return { id: row.id, ping };
+      });
+      if (!saved) {
+        console.warn('[lead] throttled');
+        return res.status(429).json({ error: 'busy' });
+      }
       res.json({ ok: true });
-      if (sent.pinged > LEAD_PINGS_HOUR) return;
-      notify(sent.pinged === LEAD_PINGS_HOUR
+      if (!saved.ping) return;
+      notify(saved.ping === 'pause'
         ? `More first-step leads this hour. Pings pause until the hour is over; every lead is in the inbox, channel "lead".`
         : `New first-step lead, src ${l.src || '(none)'}\n` +
           `Goal: ${LEAD_SAY.goal[l.goal]}. Experience: ${LEAD_SAY.exp[l.exp]}. Mornings: ${LEAD_SAY.when[l.when]}.\n` +
           `Wants a reply by ${reply}. Details: the inbox, channel "lead".`)
-        .then(ok => ok && q('UPDATE aybkk_inbox SET alerted_at=now() WHERE id=$1', [row.id]))
-        .catch(e => console.error('[lead] ping failed:', e.message));
+        .catch(e => { console.error('[lead] ping failed:', e.message); return false; })
+        .then(unclaim(saved.id))
+        .catch(e => console.error('[lead] ping not given back:', e.message));
     } catch (e) {
       console.error('[lead] save failed:', e.message);
       if (!res.headersSent) res.status(500).json({ error: 'server' });
