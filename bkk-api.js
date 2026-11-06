@@ -40,13 +40,14 @@ const SEED_PRODUCTS = [
   { code: 'unlim12m',  name_en: '12 months unlimited',   name_th: '12 เดือน ไม่จำกัด',  price_thb: 78000, kind: 'unlimited', credits: null, valid_days: 365, daily_cap: 2, sort: 70 },
 ];
 // New prices from 12 Nov 2026 00:00 Bangkok (Boonchu, 2 Nov), with the
-// 6-month package on sale again. Nothing runs on a timer here, so the first
-// request from then on makes the change (switchPrices). unlim6m is a new code:
-// the old 45,000 6-month (unlim6) stays for the passes Rezerv sold.
+// 6-month package on sale again. 3 months is 19,500, 6,500 a month (Boonchu,
+// 6 Nov). Nothing runs on a timer here, so the first request from then on
+// makes the change (switchPrices). unlim6m is a new code: the old 45,000
+// 6-month (unlim6) stays for the passes Rezerv sold.
 const PRICE_SWITCH = {
   at: Date.parse('2026-11-12T00:00:00+07:00'),
   key: 'prices_from_2026_11_12',
-  prices: { unlim3: 22000, unlim6m: 32000, unlim12m: 59900 },
+  prices: { unlim3: 19500, unlim6m: 32000, unlim12m: 59900 },
   opens: ['unlim6m'],
 };
 
