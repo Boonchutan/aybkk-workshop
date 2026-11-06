@@ -960,7 +960,7 @@
   window.grantPass = async () => {
     const d = await fetch('/api/bkk/products').then(r => r.json());
     const codes = d.products.map(p => p.code).join(', ');
-    const productCode = ask(T('qWhichCode', codes), 'pack10'); if (!productCode) return;
+    const productCode = ask(T('qWhichCode', codes), 'pack8'); if (!productCode) return;
     const name = ask(T('qName')); if (!name) return;
     const email = ask(T('qEmailFind')); if (email === null) return;
     const validFrom = ask(T('qStart'), '');
