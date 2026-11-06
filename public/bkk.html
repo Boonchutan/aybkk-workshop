@@ -188,6 +188,11 @@
   .readmore,.signout,.linkbtn{border:none;background:none;padding:0;min-height:44px;cursor:pointer;color:var(--ink);
     font:600 var(--fs-b)/1.2 var(--f-text);text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.18em}
   .readmore:hover,.signout:hover,.linkbtn:hover{color:var(--pink-deep)}
+  /* Read more (Boonchu, 6 Nov 2026): each section shows a little, then folds the rest under one
+     button. Only the script sets .shut, so without JavaScript the whole page shows. */
+  .shut .xm{display:none!important}
+  .sec .rm{margin:14px 0 0}
+  .field-aub .readmore,.field-aub .readmore:hover{color:var(--aub-ink)}
 
   /* ── Hero (dark field, not numbered) */
   header.hero{position:relative;background:var(--header);color:var(--hero-ink);--ring:var(--hero-ink);padding-top:16px;
@@ -249,14 +254,18 @@
   .hab .hn{font:700 max(24px,var(--fs-l))/1 var(--f-text);font-variant-numeric:tabular-nums;color:var(--ink)}
   .hab b{display:block;font-weight:700}
   .hab p{margin:0}
+  .habs > .xm{display:contents}
   @media (min-width:700px){
     .habs{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:column;grid-template-rows:repeat(5,auto)}
+    /* Folded, 3 habits read across: 1 2, then 3. */
+    #habits.shut .habs{grid-auto-flow:row;grid-template-rows:none}
     .hab{grid-template-columns:56px minmax(0,1fr)}
   }
   @media (min-width:1100px){
     #habits .habsub{grid-column:c 1/c 5;grid-row:3;padding-right:var(--g)}
     #habits .habs{grid-row:3}
-    #habits .act{grid-row:4}
+    #habits .rm{grid-row:4}
+    #habits .act{grid-row:5}
   }
 
   /* ── #theme: the monthly theme, on a fixed aubergine field */
@@ -315,10 +324,6 @@
   .teacher .name{font:700 var(--fs-l)/1.3 var(--f-text)}
   .teacher .auth{margin:4px 0 14px;font-weight:600;color:var(--plum)}
   .teacher p{margin:0 0 14px}
-  /* 3 lines, then "Read more" (Boonchu, 2 Oct) */
-  .bio:not(.open) .txt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-  .bio:not(.open) .txt p{display:inline;margin:0}
-  .bio:not(.open) .txt p::after{content:" "}
   @media (min-width:1100px){
     .teacher figure{display:contents}
     .teacher .tpic{grid-column:c 1/c-end}
@@ -326,6 +331,7 @@
     .teacher figcaption{grid-column:c 1/c 5;margin:28px 0 0;padding-right:var(--g)}
     .teacher .bios{grid-column:c 5/c-end;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--g);margin-top:28px}
     .bio + .bio{margin:0;padding:0;border:0}
+    #teacher.shut .bios{margin-top:0}
   }
 
   /* ── .pair: #mysore + #first, each with its own inner grid on the same gutter */
@@ -349,6 +355,7 @@
     .points,.plan > p,.bios{max-width:calc((100% - 7*var(--g))*.75 + 5*var(--g))}   /* 6 of the 8 columns it sits in */
     #first .points{max-width:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:column;grid-template-rows:repeat(3,auto);column-gap:var(--g)}
   }
+  @media (min-width:700px){ #first.shut .points{grid-auto-flow:row;grid-template-rows:none} }
 
   /* ── #moments */
   #moments .card > p{margin:0 0 var(--grp);font-size:var(--fs-l);line-height:1.3}
@@ -386,6 +393,7 @@
   @media (hover:hover){ #newPkgs:hover{background:var(--act-hi);color:var(--act-hi-ink)} }
   .prices .fair{margin:var(--grp) 0 14px;font:700 var(--fs-l)/1.3 var(--f-text)}
   .prices .fine{margin:0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  #prices.shut .fine{margin-top:var(--grp)}
   .prices .fine a{color:var(--ink);font-weight:600}
   /* Inline links in small print: a 44px tap area without moving the lines around them. */
   .tq figcaption a,.prices .fine a{display:inline-block;min-width:44px;padding-block:12px;margin-block:-12px;white-space:nowrap}
@@ -457,14 +465,21 @@
   /* Google is blocked on most Chinese phones, so in Chinese the Amap button leads. */
   html[lang="zh-Hans"] #find .amap{order:-1;background:var(--plum);color:var(--on-dark);border-color:var(--plum)}
   html[lang="zh-Hans"] #find .gmap{background:transparent;color:var(--ink);border:2px solid currentColor}
+  /* Folded, LINE is the one contact left; Thai readers keep the Thai address (for the taxi),
+     and Chinese readers keep WeChat, because LINE is blocked in China. */
+  @media (max-width:1099px){ #find.shut .contact > a:first-child{grid-column:1/-1} }
+  html[lang="th"] #find.shut #findTh{display:block!important}
+  html[lang="zh-Hans"] #find.shut #findWx{display:flex!important}
   @media (min-width:1100px){
     #find .card > .addr{grid-column:c 5/c 11}
     #find .links .wide{grid-column:auto}
     #find .card > h3{grid-column:c 1/c 5;grid-row:6}
     #find .links.contact{grid-row:6;margin-top:var(--grp);padding-top:16px;border-top:2px solid var(--ink)}
+    #find .rm{grid-row:7}
   }
 
-  /* ── Booking app head and tabs. The nav stays a direct child of body, or sticky stops working. */
+  /* ── Booking app head and tabs. The nav stays a direct child of div.booking: sticky inside it, and
+     no ancestor with overflow set, or sticky stops working. */
   /* Routes into the app land 14px above this rule, not on the band's blank top half. */
   .bookhead{padding-bottom:28px;scroll-margin-top:calc(14px - var(--gap)/2)}
   .bookhead > h2{margin-bottom:0}
@@ -480,7 +495,7 @@
     nav.tabs #t-packages{grid-column:c 7/c 9}
     nav.tabs #t-me{grid-column:c 9/c 11}
   }
-  main{padding:28px var(--m) 112px}
+  main{padding:28px var(--m) calc(var(--gap)/2)}
   @media (min-width:700px) and (max-width:1099px){
     main{width:var(--W);margin-inline:auto;padding-left:0;padding-right:calc(var(--colw) + var(--g))}
   }
@@ -629,7 +644,7 @@
     border:1px solid rgba(251,245,249,.45);border-radius:999px;padding:1px 4px;color:#FBF5F9;vertical-align:2px}
   .cal .wb .st{font-size:11px;font-weight:700;line-height:1.25;color:#C9AFCB}
   .cal .wb .st.ok{color:#F2C94C}
-  .cal .wb .st.full{color:#FF8DC0}
+  .cal .wb .st.full,.cal .wb .st.last{color:#FF8DC0}
   .cal .wb.mine{background:rgba(242,201,76,.14);box-shadow:inset 0 0 0 1.5px #F2C94C}
   .cal .wb.isfull{opacity:.6}
   @media (min-width:560px){ .cal .head b.wkl{font-size:30px} .cal .head b.wkl small{font-size:18px} }
@@ -827,103 +842,23 @@
     <p class="lead" data-i18n="promoLead">Pick an offer, pick your first day, and see exactly what you pay.</p>
     <div id="offers"></div>
   </section>
+</div>
 
-  <section id="habits" class="sec sgrid">
-    <h2 data-i18n="habH">10 things people do to stay healthy.</h2>
-    <p class="habsub" data-i18n="habSub">Ashtanga does all 10, in one morning.</p>
-    <div class="habs">
-      <div class="hab"><span class="hn">1</span><div><b data-i18n="hab1t">Track</b><p data-i18n="hab1d">Real proof: mornings practised, resting heart rate, sleep. Checked at week 0, 6 and 12.</p></div></div>
-      <div class="hab"><span class="hn">2</span><div><b data-i18n="hab2t">Get stronger</b><p data-i18n="hab2d">Strength from your own body weight, built at 30 and kept at 70.</p></div></div>
-      <div class="hab"><span class="hn">3</span><div><b data-i18n="hab3t">Partners</b><p data-i18n="hab3d">Like-minded people beside you. We struggle together and progress together.</p></div></div>
-      <div class="hab"><span class="hn">4</span><div><b data-i18n="hab4t">Sleep</b><p data-i18n="hab4d">Early practice, slow breath, early nights. Students tell us sleep changes first.</p></div></div>
-      <div class="hab"><span class="hn">5</span><div><b data-i18n="hab5t">Eat with purpose</b><p data-i18n="hab5d">No diet. You eat lighter because you want to feel light on the mat tomorrow.</p></div></div>
-      <div class="hab"><span class="hn">6</span><div><b data-i18n="hab6t">Calm the mind</b><p data-i18n="hab6d">90 minutes, no phone, only your breath. Calm you train, not buy.</p></div></div>
-      <div class="hab"><span class="hn">7</span><div><b data-i18n="hab7t">Hot and cold</b><p data-i18n="hab7d">Heat from inside, cooled by your breath. Your own warmth, no machine.</p></div></div>
-      <div class="hab"><span class="hn">8</span><div><b data-i18n="hab8t">Mind-body movement</b><p data-i18n="hab8d">Core, balance and breath with movement. The original, 100 years old.</p></div></div>
-      <div class="hab"><span class="hn">9</span><div><b data-i18n="hab9t">Together</b><p data-i18n="hab9d">A quiet room of people who show up. Belonging without noise.</p></div></div>
-      <div class="hab"><span class="hn">10</span><div><b data-i18n="hab10t">Traditional</b><p data-i18n="hab10d">A 100-year-old method, taught by an Authorized teacher.</p></div></div>
-    </div>
-    <p class="act"><a class="btn pink" href="#mysore" data-i18n="habCta">Start with one morning</a></p>
-  </section>
+<!-- Booking right under the headline (Boonchu, 6 Nov 2026: the page scrolled too far). The wrapper
+     ends the sticky tabs here, so they do not follow the reader down the rest of the page. -->
+<div class="booking">
+  <div class="sec sgrid bookhead"><h2 data-i18n="bookH">Book a class</h2></div>
+  <nav class="tabs sgrid" id="book">
+    <button id="t-schedule" class="on" onclick="tab('schedule')" data-i18n="tabSchedule">Timetable</button>
+    <button id="t-packages" onclick="tab('packages')" data-i18n="tabPackages">Packages</button>
+    <button id="t-me" onclick="tab('me')" data-i18n="tabMe">My pass</button>
+  </nav>
+  <main id="view" aria-busy="true"><div class="skel" role="status"><span class="sr" data-i18n="loading">Loading…</span><div class="row"><i class="pill"></i><i class="pill"></i></div><i style="width:40%"></i><i class="big"></i></div>
+    <noscript><p class="msg bad">The timetable needs JavaScript. Book on LINE @aybkk.</p></noscript></main>
+</div>
 
-  <!-- The monthly theme: public/themes/<YYYY-MM>.json, picked by the Bangkok month. Hidden when there is none. -->
-  <section id="theme" class="sec sgrid field-aub" hidden aria-labelledby="themeH">
-    <h2 id="themeH"></h2>
-    <p class="side" id="themeMonth"></p>
-    <p class="lead" id="themeLead"></p>
-    <table class="vs" id="themeTable" role="table" aria-labelledby="themeH"></table>
-    <p id="themeStakes"></p>
-    <figure class="tq" id="themeQ" hidden><blockquote lang="en"><p></p></blockquote><figcaption></figcaption><p class="qm"></p></figure>
-    <p class="act"><a class="btn pink" id="themeCta" href="#mysore"></a></p>
-    <p class="note" id="themeNote"></p>
-  </section>
-
-  <section class="teacher sec sgrid" id="teacher">
-    <h2 data-i18n="teacherH">Your teacher</h2>
-    <div class="card">
-      <figure>
-        <picture class="tpic"><source media="(min-width:700px)" srcset="/img/aybkk-hero-1600.jpg">
-          <img src="/img/aybkk-hero-900.jpg" width="900" height="1000" loading="lazy" decoding="async"
-          alt="Jamsai, R. Sharath Jois and Boonchu at the AYBKK shala wall"></picture>
-        <figcaption data-i18n="caption">Jamsai, R. Sharath Jois and Boonchu at AYBKK</figcaption>
-      </figure>
-      <div class="bios">
-        <div class="bio">
-          <div class="name">Boonchu Tanti</div>
-          <div class="auth" data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</div>
-          <div class="txt" id="bioB">
-            <p data-i18n="bio1">Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.</p><p data-i18n="bio2">He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.</p><p data-i18n="bio3">In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga. AYBKK has been the home shala of Bangkok’s Ashtanga community since 2013. Several of Bangkok’s Ashtanga teachers practised and assisted here before opening their own shalas.</p><p data-i18n="bio4">His teaching looks at how each body works, and at the student's own commitment. Every body is different, and so is every practice.</p>
-          </div>
-          <button type="button" class="readmore" aria-expanded="false" aria-controls="bioB" data-i18n="readMore">Read more</button>
-        </div>
-        <div class="bio">
-          <div class="name">Jamsai Tanti</div>
-          <div class="auth" data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</div>
-          <div class="txt" id="bioJ">
-            <p data-i18n="jbio1">Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.</p><p data-i18n="jbio2">The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.</p><p data-i18n="jbio3">She runs AYBKK and teaches led, Mysore and private classes. She also organised Sharath Jois’s workshop in Bangkok. Her teaching puts breath, clear alignment and an active vinyasa first.</p><p data-i18n="jbio4">She kept practising through both of her pregnancies, into the Advanced series, and still practises and teaches as a mother.</p>
-          </div>
-          <button type="button" class="readmore" aria-expanded="false" aria-controls="bioJ" data-i18n="readMore">Read more</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="pair sgrid">
-    <section id="mysore" class="sec">
-      <h2 data-i18n="mysoreH">What is Mysore style?</h2>
-      <ul class="points">
-        <li data-i18n="m1">It is self-practice. You move through the Ashtanga sequence at your own pace, with your own breath.</li>
-        <li data-i18n="m2">The teacher walks the room and gives each student individual adjustments.</li>
-        <li data-i18n="m3">Beginners are welcome. We teach you from zero.</li>
-        <li data-i18n="m4">This is the traditional way Ashtanga is taught, as in Mysore, India.</li>
-      </ul>
-    </section>
-    <section id="first" class="sec">
-      <h2 data-i18n="firstH">Your first class</h2>
-      <ul class="points">
-        <li data-i18n="f1">New to Mysore style? Start with a monthly package, so the teacher can guide you step by step. Drop-in is for visitors who already know the sequence.</li>
-        <li data-i18n="f2">Plan to practise at least 4 days a week, and book your classes in advance.</li>
-        <li data-i18n="f3">Bring your own mat and a towel, and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.</li>
-        <li data-i18n="f4">No phones, no photos and no talking in the shala during practice.</li>
-        <li data-i18n="f5">After practice, clean your mat and the floor around it with the spray we provide.</li>
-        <li data-i18n="f6">The shala is closed on full moon and new moon days.</li>
-      </ul>
-      <p class="act"><a class="btn pink" href="/start/home#first-step" data-i18n="firstStep">Find your first step (4 quick taps)</a></p>
-    </section>
-  </div>
-
-  <section id="moments" class="sec sgrid">
-    <h2 data-i18n="momH">Today at the shala</h2>
-    <div class="card">
-      <p data-i18n="momLine">Every morning we share moments from the shala: the practice, the people, news and updates.</p>
-      <div class="links">
-        <a class="btn pink" href="https://www.instagram.com/aybkk/" target="_blank" rel="noopener" data-i18n="momIg">Today's practice on Instagram</a>
-        <a class="btn ghost" href="https://www.facebook.com/ashtangabkk" target="_blank" rel="noopener" data-i18n="momFb">News and updates on Facebook</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="prices sec sgrid field-price" id="prices">
+<div class="sw">
+  <section class="prices sec sgrid field-price" id="prices" data-fold>
     <h2 data-i18n="pricesH" data-i18n-new="pricesHNew">From 406 baht a class.</h2>
     <p class="lead" data-i18n="pricesSub">Counted at 4 mornings a week (16 classes a month).</p>
     <div class="plans">
@@ -956,15 +891,15 @@
           <li><span class="pn"><span data-i18n="pack8">8-class pack</span><small data-i18n="pack8Sub">Use within 1 month. No weekly minimum.</small></span><span class="pv"><b>฿7,600<i class="vt newP" hidden>+VAT</i></b></span></li>
         </ul>
       </div>
-      <div class="plan quiet">
+      <div class="plan quiet xm" id="loyal">
         <h3 data-i18n="loyalH">Loyal students</h3>
         <p class="line" data-i18n="loyalLine">Practise 12 months in a row, then renew for 12 more. You get the special collection AYBKK shala tee.</p>
       </div>
     </div>
-    <p class="fair" data-i18n="fair">One price for everyone. Clear and simple.</p>
-    <p class="fine"><span data-i18n="fine" data-i18n-new="fineNew">Prices in Thai baht. Buy online in the Packages tab below, or at the shala. Questions:</span>
+    <p class="fair xm" id="fair" data-i18n="fair">One price for everyone. Clear and simple.</p>
+    <p class="fine"><span data-i18n="fine" data-i18n-new="fineNew">Prices in Thai baht. Buy online in the Packages tab above, or at the shala. Questions:</span>
       <a href="https://line.me/R/ti/p/@aybkk" target="_blank" rel="noopener">LINE @aybkk</a></p>
-    <div class="mnotes newP" hidden>
+    <div class="mnotes newP xm" id="mnotes" hidden>
       <h3 data-i18n="polH">Member notes</h3>
       <ul>
         <li><b data-i18n="pol1a">All passes are final once purchased,</b><span data-i18n="pol1b"> unless we can’t give the classes you paid for (if we close or move). Long passes are priced for people who stay.</span></li>
@@ -972,6 +907,109 @@
         <li><b data-i18n="pol3a">Moving away, or your doctor says stop?</b><span data-i18n="pol3b"> If a freeze doesn’t fit, a 3, 6 or 12-month membership can pass once to someone new to AYBKK. Same end date. Fee ฿1,500. Ask us on LINE @aybkk first.</span></li>
         <li><b data-i18n="pol4a">Freeze up to 30 days</b><span data-i18n="pol4b"> (or as your doctor’s note says, up to 2 months) for a broken bone, an eye problem, surgery, or pregnancy and birth. Other cases: talk with us. Please tell us on LINE @aybkk before it starts.</span></li>
       </ul>
+    </div>
+    <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="loyal fair mnotes">Read more</button></p>
+  </section>
+
+  <section id="habits" class="sec sgrid" data-fold>
+    <h2 data-i18n="habH">10 things people do to stay healthy.</h2>
+    <p class="habsub" data-i18n="habSub">Ashtanga does all 10, in one morning.</p>
+    <div class="habs">
+      <div class="hab"><span class="hn">1</span><div><b data-i18n="hab1t">Track</b><p data-i18n="hab1d">Real proof: mornings practised, resting heart rate, sleep. Checked at week 0, 6 and 12.</p></div></div>
+      <div class="hab"><span class="hn">2</span><div><b data-i18n="hab2t">Get stronger</b><p data-i18n="hab2d">Strength from your own body weight, built at 30 and kept at 70.</p></div></div>
+      <div class="hab"><span class="hn">3</span><div><b data-i18n="hab3t">Partners</b><p data-i18n="hab3d">Like-minded people beside you. We struggle together and progress together.</p></div></div>
+      <div class="xm" id="habMore">
+        <div class="hab"><span class="hn">4</span><div><b data-i18n="hab4t">Sleep</b><p data-i18n="hab4d">Early practice, slow breath, early nights. Students tell us sleep changes first.</p></div></div>
+        <div class="hab"><span class="hn">5</span><div><b data-i18n="hab5t">Eat with purpose</b><p data-i18n="hab5d">No diet. You eat lighter because you want to feel light on the mat tomorrow.</p></div></div>
+        <div class="hab"><span class="hn">6</span><div><b data-i18n="hab6t">Calm the mind</b><p data-i18n="hab6d">90 minutes, no phone, only your breath. Calm you train, not buy.</p></div></div>
+        <div class="hab"><span class="hn">7</span><div><b data-i18n="hab7t">Hot and cold</b><p data-i18n="hab7d">Heat from inside, cooled by your breath. Your own warmth, no machine.</p></div></div>
+        <div class="hab"><span class="hn">8</span><div><b data-i18n="hab8t">Mind-body movement</b><p data-i18n="hab8d">Core, balance and breath with movement. The original, 100 years old.</p></div></div>
+        <div class="hab"><span class="hn">9</span><div><b data-i18n="hab9t">Together</b><p data-i18n="hab9d">A quiet room of people who show up. Belonging without noise.</p></div></div>
+        <div class="hab"><span class="hn">10</span><div><b data-i18n="hab10t">Traditional</b><p data-i18n="hab10d">A 100-year-old method, taught by an Authorized teacher.</p></div></div>
+      </div>
+    </div>
+    <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="habMore">Read more</button></p>
+    <p class="act"><a class="btn pink" href="#mysore" data-i18n="habCta">Start with one morning</a></p>
+  </section>
+
+  <!-- The monthly theme: public/themes/<YYYY-MM>.json, picked by the Bangkok month. Hidden when there is none. -->
+  <section id="theme" class="sec sgrid field-aub" hidden aria-labelledby="themeH" data-fold>
+    <h2 id="themeH"></h2>
+    <p class="side" id="themeMonth"></p>
+    <p class="lead" id="themeLead"></p>
+    <table class="vs xm" id="themeTable" role="table" aria-labelledby="themeH"></table>
+    <p class="xm" id="themeStakes"></p>
+    <figure class="tq xm" id="themeQ" hidden><blockquote lang="en"><p></p></blockquote><figcaption></figcaption><p class="qm"></p></figure>
+    <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="themeTable themeStakes themeQ themeNote">Read more</button></p>
+    <p class="act"><a class="btn pink" id="themeCta" href="#mysore"></a></p>
+    <p class="note xm" id="themeNote"></p>
+  </section>
+
+  <section class="teacher sec sgrid" id="teacher" data-fold>
+    <h2 data-i18n="teacherH">Your teacher</h2>
+    <div class="card">
+      <figure class="xm" id="tPic">
+        <picture class="tpic"><source media="(min-width:700px)" srcset="/img/aybkk-hero-1600.jpg">
+          <img src="/img/aybkk-hero-900.jpg" width="900" height="1000" loading="lazy" decoding="async"
+          alt="Jamsai, R. Sharath Jois and Boonchu at the AYBKK shala wall"></picture>
+        <figcaption data-i18n="caption">Jamsai, R. Sharath Jois and Boonchu at AYBKK</figcaption>
+      </figure>
+      <div class="bios">
+        <div class="bio">
+          <div class="name">Boonchu Tanti</div>
+          <div class="auth" data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</div>
+          <div class="txt" id="bioB">
+            <p data-i18n="bio1">Boonchu is a former mechanical engineer. He found Ashtanga yoga in 2008, while living in the US.</p>
+            <div class="xm" id="bioBm"><p data-i18n="bio2">He has studied with Sharath Jois in Mysore since 2008. He hosted R. Sharath Jois in Bangkok in 2018 and 2024.</p><p data-i18n="bio3">In 2013 he opened AYBKK in his hometown, Bangkok. He also created The Yoga Comics, a Facebook page about the eight limbs of yoga. AYBKK has been the home shala of Bangkok’s Ashtanga community since 2013. Several of Bangkok’s Ashtanga teachers practised and assisted here before opening their own shalas.</p><p data-i18n="bio4">His teaching looks at how each body works, and at the student's own commitment. Every body is different, and so is every practice.</p></div>
+          </div>
+        </div>
+        <div class="bio">
+          <div class="name">Jamsai Tanti</div>
+          <div class="auth" data-i18n="auth">Authorized Level 2 by R.&nbsp;Sharath&nbsp;Jois</div>
+          <div class="txt" id="bioJ">
+            <p data-i18n="jbio1">Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.</p>
+            <div class="xm" id="bioJm"><p data-i18n="jbio2">The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.</p><p data-i18n="jbio3">She runs AYBKK and teaches led, Mysore and private classes. She also organised Sharath Jois’s workshop in Bangkok. Her teaching puts breath, clear alignment and an active vinyasa first.</p><p data-i18n="jbio4">She kept practising through both of her pregnancies, into the Advanced series, and still practises and teaches as a mother.</p></div>
+          </div>
+        </div>
+      </div>
+      <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="tPic bioBm bioJm">Read more</button></p>
+    </div>
+  </section>
+
+  <div class="pair sgrid">
+    <section id="mysore" class="sec" data-fold>
+      <h2 data-i18n="mysoreH">What is Mysore style?</h2>
+      <ul class="points">
+        <li data-i18n="m1">It is self-practice. You move through the Ashtanga sequence at your own pace, with your own breath.</li>
+        <li data-i18n="m2">The teacher walks the room and gives each student individual adjustments.</li>
+        <li class="xm" id="mys3" data-i18n="m3">Beginners are welcome. We teach you from zero.</li>
+        <li class="xm" id="mys4" data-i18n="m4">This is the traditional way Ashtanga is taught, as in Mysore, India.</li>
+      </ul>
+      <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="mys3 mys4">Read more</button></p>
+    </section>
+    <section id="first" class="sec" data-fold>
+      <h2 data-i18n="firstH">Your first class</h2>
+      <ul class="points">
+        <li data-i18n="f1">New to Mysore style? Start with a monthly package, so the teacher can guide you step by step. Drop-in is for visitors who already know the sequence.</li>
+        <li data-i18n="f2">Plan to practise at least 4 days a week, and book your classes in advance.</li>
+        <li class="xm" id="fst3" data-i18n="f3">Bring your own mat and a towel, and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.</li>
+        <li class="xm" id="fst4" data-i18n="f4">No phones, no photos and no talking in the shala during practice.</li>
+        <li class="xm" id="fst5" data-i18n="f5">After practice, clean your mat and the floor around it with the spray we provide.</li>
+        <li class="xm" id="fst6" data-i18n="f6">The shala is closed on full moon and new moon days.</li>
+      </ul>
+      <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="fst3 fst4 fst5 fst6">Read more</button></p>
+      <p class="act"><a class="btn pink" href="/start/home#first-step" data-i18n="firstStep">Find your first step (4 quick taps)</a></p>
+    </section>
+  </div>
+
+  <section id="moments" class="sec sgrid">
+    <h2 data-i18n="momH">Today at the shala</h2>
+    <div class="card">
+      <p data-i18n="momLine">Every morning we share moments from the shala: the practice, the people, news and updates.</p>
+      <div class="links">
+        <a class="btn pink" href="https://www.instagram.com/aybkk/" target="_blank" rel="noopener" data-i18n="momIg">Today's practice on Instagram</a>
+        <a class="btn ghost" href="https://www.facebook.com/ashtangabkk" target="_blank" rel="noopener" data-i18n="momFb">News and updates on Facebook</a>
+      </div>
     </div>
   </section>
 
@@ -1019,11 +1057,11 @@
     </div>
   </section>
 
-  <section id="find" class="sec sgrid">
+  <section id="find" class="sec sgrid" data-fold>
     <h2 data-i18n="findH">Find us</h2>
     <div class="card">
       <p class="addr">545 Sukhumvit 31, S31 Sukhumvit Hotel, 8th floor, Bangkok 10110</p>
-      <p class="addr th" lang="th">545 สุขุมวิท 31 (S31 Sukhumvit Hotel, 8th floor AYBKK) คลองเตยเหนือ วัฒนา กรุงเทพ 10110</p>
+      <p class="addr th xm" id="findTh" lang="th">545 สุขุมวิท 31 (S31 Sukhumvit Hotel, 8th floor AYBKK) คลองเตยเหนือ วัฒนา กรุงเทพ 10110</p>
       <div class="links maps">
         <a class="btn wide gmap" href="https://www.google.com/maps/search/?api=1&amp;query=AYBKK&amp;query_place_id=ChIJOWhLf_2e4jARi25S9GpEmWk"
           target="_blank" rel="noopener" data-i18n="maps">Open in Google Maps</a>
@@ -1033,25 +1071,17 @@
       <h3 data-i18n="contactH">Message us</h3>
       <div class="links contact">
         <a class="btn pink" href="https://line.me/R/ti/p/@aybkk" target="_blank" rel="noopener">LINE @aybkk</a>
-        <a class="btn ghost" href="https://www.instagram.com/aybkk/" target="_blank" rel="noopener">Instagram @aybkk</a>
-        <a class="btn ghost" href="https://www.facebook.com/ashtangabkk" target="_blank" rel="noopener">Facebook</a>
-        <a class="btn ghost" href="https://www.tiktok.com/@aybkkashtanga" target="_blank" rel="noopener">TikTok</a>
-        <div class="wechat"><span>WeChat ID: <b>aybkkwechat</b></span>
+        <a class="btn ghost xm" id="findIg" href="https://www.instagram.com/aybkk/" target="_blank" rel="noopener">Instagram @aybkk</a>
+        <a class="btn ghost xm" id="findFb" href="https://www.facebook.com/ashtangabkk" target="_blank" rel="noopener">Facebook</a>
+        <a class="btn ghost xm" id="findTt" href="https://www.tiktok.com/@aybkkashtanga" target="_blank" rel="noopener">TikTok</a>
+        <div class="wechat xm" id="findWx"><span>WeChat ID: <b>aybkkwechat</b></span>
           <button type="button" class="btn ghost" id="wxCopy" data-i18n="copy">Copy</button></div>
       </div>
+      <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="findTh findIg findFb findTt findWx">Read more</button></p>
     </div>
   </section>
 </div>
 
-<div class="sec sgrid bookhead"><h2 data-i18n="bookH">Book a class</h2></div>
-<nav class="tabs sgrid" id="book">
-  <button id="t-schedule" class="on" onclick="tab('schedule')" data-i18n="tabSchedule">Timetable</button>
-  <button id="t-packages" onclick="tab('packages')" data-i18n="tabPackages">Packages</button>
-  <button id="t-me" onclick="tab('me')" data-i18n="tabMe">My pass</button>
-</nav>
-
-<main id="view" aria-busy="true"><div class="skel" role="status"><span class="sr" data-i18n="loading">Loading…</span><div class="row"><i class="pill"></i><i class="pill"></i></div><i style="width:40%"></i><i class="big"></i></div>
-  <noscript><p class="msg bad">The timetable needs JavaScript. Book on LINE @aybkk.</p></noscript></main>
 <footer class="sgrid"><span class="brush">AYBKK</span><p class="faddr">Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31</p></footer>
 
 <dialog id="dlg"><div id="dlgIn"></div></dialog>
@@ -1069,7 +1099,8 @@
   const myCode = () => { try { return localStorage.getItem('aybkk_member') || ''; } catch (_) { return ''; } };
   // Home page data, read once: the Bangkok tees and the monthly theme (renderTees, loadTheme).
   let TEES_P = null, TEES_R = null, TEES_ALL = false;
-  const TEES_FIRST = 8;
+  // One row of tees until "Show all tees": 2 on a phone, 4 from 700px (the page was too long, 6 Nov 2026).
+  const teesFirst = () => matchMedia('(min-width:700px)').matches ? 4 : 2;
   // cn.aybkk.net serves this page too: China has its own tee shop in RMB, and LINE is blocked there.
   const CN_HOST = /^cn\./.test(location.hostname);
   const list = v => (Array.isArray(v) ? v : String(v ?? '').split(/[,\s/]+/)).map(x => String(x).trim()).filter(Boolean);
@@ -1132,7 +1163,7 @@
       n3: 'For ฿12,500 more, you get 6 months instead of 3.',
       n1: 'The price of trying. New or stiff, come as you are.',
       newBtn: 'See packages →',
-      fineNew: (fee, vat = 7) => `+VAT = plus ${vat}% VAT.${fee ? ' Paying online adds a transaction fee.' : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
+      fineNew: (fee, vat = 7) => `+VAT = plus ${vat}% VAT.${fee ? ' Paying online adds a transaction fee.' : ''} Buy online in the Packages tab above, or at the shala. Questions:`,
       polH: 'Member notes',
       pol1a: 'All passes are final once purchased,',
       pol1b: ' unless we can’t give the classes you paid for (if we close or move). Long passes are priced for people who stay.',
@@ -1142,7 +1173,7 @@
       pol4a: 'Freeze up to 30 days',
       pol4b: ' (or as your doctor’s note says, up to 2 months) for a broken bone, an eye problem, surgery, or pregnancy and birth. Other cases: talk with us. Please tell us on LINE @aybkk before it starts.',
       fair: 'One price for everyone. Clear and simple.',
-      fine: (fee, vat = 7) => `Prices in Thai baht, before ${vat}% VAT. ${fee ? 'Paying online adds an online transaction fee.' : ''} Buy online in the Packages tab below, or at the shala. Questions:`,
+      fine: (fee, vat = 7) => `Prices in Thai baht, before ${vat}% VAT. ${fee ? 'Paying online adds an online transaction fee.' : ''} Buy online in the Packages tab above, or at the shala. Questions:`,
       momH: 'Today at the shala', momLine: 'Every morning we share moments from the shala: the practice, the people, news and updates.',
       momIg: 'Today’s practice on Instagram', momFb: 'News and updates on Facebook',
       findH: 'Find us', maps: 'Open in Google Maps', amap: 'Open in Amap (高德地图)', contactH: 'Message us',
@@ -1154,7 +1185,7 @@
       noClasses: 'No classes scheduled.',
       noDay: 'No classes this day.',
       calTeachers: 'Teachers:', calClasses: 'Classes:', moonDay: 'Moon day', newMoon: 'New moon', fullMoon: 'Full moon',
-      full: 'Class full', left: n => n + ' places left', places: n => n + ' places',
+      full: 'Class full', lastSpots: n => n === 1 ? 'Last spot' : `Last ${n} spots`, spotsFree: 'Spots available',
       book: 'Book', buy: 'Buy',
       fee: (base, pct, vat) => `${base} + online transaction fee + ${vat}% VAT`,
       unlim: d => `Unlimited classes for ${d} days`,
@@ -1222,7 +1253,7 @@
       n3: 'เพิ่มอีก ฿12,500 ขยับเป็นแพ็ก 6 เดือนได้',
       n1: 'ลองฝึกดูสักเดือน มือใหม่หรือตัวแข็งก็เริ่มได้',
       newBtn: 'ดูแพ็กเกจ →',
-      fineNew: (fee, vat = 7) => `+VAT = ยังไม่รวม VAT ${vat}% ${fee ? 'หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม ' : ''}ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
+      fineNew: (fee, vat = 7) => `+VAT = ยังไม่รวม VAT ${vat}% ${fee ? 'หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม ' : ''}ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านบน หรือซื้อที่ชาลา สอบถาม:`,
       polH: 'ข้อควรรู้สำหรับสมาชิก',
       pol1a: 'ขอสงวนสิทธิ์ไม่คืนเงินหลังชำระ',
       pol1b: ' ยกเว้นกรณีที่เราให้บริการตามที่ชำระไว้ไม่ได้ (เช่น ปิดหรือย้ายสถานที่) ราคาแพ็กยาวคิดไว้ให้คนที่ฝึกกันยาว ๆ',
@@ -1232,7 +1263,7 @@
       pol4a: 'เราพักแพ็กเกจให้ได้สูงสุด 30 วัน',
       pol4b: ' (หรือตามใบรับรองแพทย์ ไม่เกิน 2 เดือน) กรณีกระดูกหัก ปัญหาดวงตา ผ่าตัด หรือตั้งครรภ์และคลอดบุตร กรณีอื่นคุยกับเราได้ กรุณาแจ้งทาง LINE @aybkk ก่อนเริ่มพักทุกครั้ง',
       fair: 'ราคาเดียวสำหรับทุกคน ชัดเจน ตรงไปตรงมา',
-      fine: (fee, vat = 7) => `ราคาเป็นเงินบาท ยังไม่รวม VAT ${vat}% ${fee ? 'ชำระออนไลน์มีค่าธรรมเนียมการชำระเงิน' : ''} ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านล่าง หรือซื้อที่ชาลา สอบถาม:`,
+      fine: (fee, vat = 7) => `ราคาเป็นเงินบาท ยังไม่รวม VAT ${vat}% ${fee ? 'ชำระออนไลน์มีค่าธรรมเนียมการชำระเงิน' : ''} ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านบน หรือซื้อที่ชาลา สอบถาม:`,
       momH: 'วันนี้ที่ชาลา', momLine: 'ทุกเช้าเราแบ่งปันบรรยากาศการฝึก ผู้คน ข่าวสาร และอัปเดตจากชาลา',
       momIg: 'ดูการฝึกวันนี้ใน Instagram', momFb: 'ข่าวสารและอัปเดตใน Facebook',
       findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', amap: 'เปิดใน Amap (高德地图)', contactH: 'ทักหาเรา',
@@ -1244,7 +1275,7 @@
       noClasses: 'ยังไม่มีคลาส',
       noDay: 'วันนี้ไม่มีคลาส',
       calTeachers: 'ครู:', calClasses: 'คลาส:', moonDay: 'วันพระจันทร์', newMoon: 'จันทร์ดับ', fullMoon: 'จันทร์เต็มดวง',
-      full: 'เต็มแล้ว', left: n => `เหลือ ${n} ที่`, places: n => `${n} ที่`,
+      full: 'เต็มแล้ว', lastSpots: n => n === 1 ? 'ที่สุดท้าย' : `เหลือ ${n} ที่สุดท้าย`, spotsFree: 'มีที่ว่าง',
       book: 'จอง', buy: 'ซื้อ',
       fee: (base, pct, vat) => `${base} + ค่าธรรมเนียมการชำระเงินออนไลน์ + VAT ${vat}%`,
       unlim: d => `เรียนไม่จำกัด ${d} วัน`,
@@ -1312,7 +1343,7 @@
       n3: '再加 ฿12,500，3个月就变成6个月。',
       n1: '试一试的价格。新手、身体僵硬，都欢迎来。',
       newBtn: '查看课程套餐 →',
-      fineNew: (fee, vat = 7) => `+VAT = 另加 ${vat}% 增值税。${fee ? '在线支付另收交易手续费。' : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
+      fineNew: (fee, vat = 7) => `+VAT = 另加 ${vat}% 增值税。${fee ? '在线支付另收交易手续费。' : ''}可在上方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       polH: '会员须知',
       pol1a: '课程卡一经购买，不予退款，',
       pol1b: '除非我们无法提供你已付费的课程（道场关闭或搬迁）。长期卡的价格，是为长期练习的人定的。',
@@ -1322,7 +1353,7 @@
       pol4a: '可暂停最多30天',
       pol4b: '（或按医生证明，最多2个月），适用于骨折、眼睛问题、手术、怀孕和生产。其他情况可以和我们商量。请在暂停开始前，通过 LINE @aybkk 告诉我们。',
       fair: '所有人同一个价格，清楚简单。',
-      fine: (fee, vat = 7) => `价格以泰铢计，不含 ${vat}% 增值税。${fee ? '在线支付另收线上支付手续费。' : ''}可在下方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
+      fine: (fee, vat = 7) => `价格以泰铢计，不含 ${vat}% 增值税。${fee ? '在线支付另收线上支付手续费。' : ''}可在上方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       momH: '今天的道场', momLine: '每天早上我们分享道场的瞬间：练习、学员、新闻和动态。',
       momIg: '在 Instagram 看今天的练习', momFb: '在 Facebook 看新闻和动态',
       findH: '地址与联系方式', maps: '在 Google 地图中打开', amap: '在高德地图中打开', contactH: '联系我们',
@@ -1334,7 +1365,7 @@
       noClasses: '暂无课程安排。',
       noDay: '当天没有课。',
       calTeachers: '老师：', calClasses: '课程：', moonDay: '月亮日', newMoon: '新月', fullMoon: '满月',
-      full: '已满', left: n => `剩余 ${n} 个名额`, places: n => `${n} 个名额`,
+      full: '已满', lastSpots: n => `最后 ${n} 个名额`, spotsFree: '有名额',
       book: '预约', buy: '购买',
       fee: (base, pct, vat) => `${base} + 线上支付手续费 + ${vat}% 增值税`,
       unlim: d => `${d} 天内不限次数`,
@@ -1402,7 +1433,7 @@
       n3: 'Ещё ฿12,500, и у вас 6 месяцев вместо 3.',
       n1: 'Цена пробного месяца. Новичок или скованное тело? Приходите как есть.',
       newBtn: 'Все абонементы →',
-      fineNew: (fee, vat = 7) => `+VAT = плюс НДС ${vat}%. ${fee ? 'При онлайн-оплате добавляется комиссия. ' : ''}Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
+      fineNew: (fee, vat = 7) => `+VAT = плюс НДС ${vat}%. ${fee ? 'При онлайн-оплате добавляется комиссия. ' : ''}Купить можно онлайн во вкладке «Абонементы» выше или в шале. Вопросы:`,
       polH: 'Памятка для участников',
       pol1a: 'Оплаченный абонемент не возвращается,',
       pol1b: ' кроме случая, когда мы не можем провести оплаченные занятия (если шала закроется или переедет). Цены длинных абонементов рассчитаны на тех, кто остаётся.',
@@ -1412,7 +1443,7 @@
       pol4a: 'Заморозка до 30 дней',
       pol4b: ' (или по справке врача, до 2 месяцев): перелом, проблемы с глазами, операция, беременность и роды. Другие случаи обсудим. Напишите нам в LINE @aybkk до начала заморозки.',
       fair: 'Одна цена для всех. Всё просто и понятно.',
-      fine: (fee, vat = 7) => `Цены в тайских батах, без НДС ${vat}%. ${fee ? 'При онлайн-оплате взимается комиссия.' : ''} Купить можно онлайн во вкладке «Абонементы» ниже или в шале. Вопросы:`,
+      fine: (fee, vat = 7) => `Цены в тайских батах, без НДС ${vat}%. ${fee ? 'При онлайн-оплате взимается комиссия.' : ''} Купить можно онлайн во вкладке «Абонементы» выше или в шале. Вопросы:`,
       momH: 'Сегодня в шале', momLine: 'Каждое утро мы делимся моментами из шалы: практика, люди, новости.',
       momIg: 'Сегодняшняя практика в Instagram', momFb: 'Новости в Facebook',
       findH: 'Как нас найти', maps: 'Открыть в Google Картах', amap: 'Открыть в Amap (高德地图)', contactH: 'Напишите нам',
@@ -1424,7 +1455,7 @@
       noClasses: 'Занятий пока нет.',
       noDay: 'В этот день занятий нет.',
       calTeachers: 'Учителя:', calClasses: 'Занятия:', moonDay: 'Лунный день', newMoon: 'Новолуние', fullMoon: 'Полнолуние',
-      full: 'Мест нет', left: n => `Осталось мест: ${n}`, places: n => `Мест: ${n}`,
+      full: 'Мест нет', lastSpots: n => n === 1 ? 'Последнее место' : `Последние ${n} места`, spotsFree: 'Есть места',
       book: 'Записаться', buy: 'Купить',
       fee: (base, pct, vat) => `${base} + комиссия за онлайн-оплату + ${vat}% НДС`,
       unlim: d => `Без ограничений, ${d} дн.`,
@@ -1991,7 +2022,7 @@
     document.querySelectorAll('.langs button').forEach(b =>
       b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
     document.querySelectorAll('.readmore').forEach(b =>
-      { b.textContent = t(b.parentElement.classList.contains('open') ? 'readLess' : 'readMore'); });
+      { b.textContent = t(b.getAttribute('aria-expanded') === 'true' ? 'readLess' : 'readMore'); });
     renderPromo();
     TEES_R = renderTees();
     renderTheme();
@@ -2003,11 +2034,42 @@
     applyLang();
     if (LOADED) tab(current);
   }));
-  document.querySelectorAll('.readmore').forEach(b => b.addEventListener('click', () => {
-    const open = b.parentElement.classList.toggle('open');
+  // ── Read more: every section with data-fold starts folded (its .xm parts hidden). One button per section.
+  function setFold(sec, open) {
+    const b = sec.querySelector('.readmore');
+    sec.classList.toggle('shut', !open);
     b.setAttribute('aria-expanded', String(open));
     b.textContent = t(open ? 'readLess' : 'readMore');
-  }));
+  }
+  // No button when there is nothing to open (a monthly theme with only a title and a lead).
+  function syncFolds() {
+    document.querySelectorAll('[data-fold]').forEach(sec => {
+      sec.querySelector('.rm').hidden = ![...sec.querySelectorAll('.xm')].some(x => !x.hidden);
+    });
+  }
+  // A link or the address bar pointing inside a folded part opens that section first.
+  function unfoldTo(id) {
+    let el = null;
+    try { el = id && document.getElementById(decodeURIComponent(id)); } catch (_) {}
+    const sec = el && el.closest('.xm') && el.closest('[data-fold]');
+    if (sec && sec.classList.contains('shut')) setFold(sec, true);
+  }
+  document.querySelectorAll('[data-fold]').forEach(sec => {
+    setFold(sec, false);
+    sec.querySelector('.readmore').addEventListener('click', e => {
+      const b = e.currentTarget, open = sec.classList.contains('shut');
+      setFold(sec, open);
+      // Closing a long section can leave the reader far below it: bring the button back on screen.
+      if (!open && b.getBoundingClientRect().top < 0) b.scrollIntoView({ block: 'center' });
+    });
+  });
+  syncFolds();
+  unfoldTo(location.hash.slice(1));
+  addEventListener('hashchange', () => unfoldTo(location.hash.slice(1)));
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (a) unfoldTo(a.getAttribute('href').slice(1));
+  }, true);
   // ── the Monday letter ─────────────────────────────────────────────────────
   // The door follows the reader's language until they pick one themselves:
   // Thai readers live on LINE, Chinese on WeChat, Russian on Telegram, the rest on email.
@@ -2216,9 +2278,10 @@
   const wkDay = iso => dateOnly(iso, { weekday: 'short' }, DAYS[new Date(iso + 'T12:00:00Z').getUTCDay()].slice(0, 3));
   const shortDate = iso => dateOnly(iso, { day: 'numeric', month: 'short' },
     Number(iso.slice(8)) + ' ' + MON3[Number(iso.slice(5, 7)) - 1]);
-  const seatsText = c => c.seatsLeft < 1 ? t('full')
-    : c.booked ? t('left', c.seatsLeft)
-    : t('places', c.capacity);   /* nothing booked yet: "42 left" reads odd */
+  // The public page never shows a count of places or the capacity (Boonchu, 6 Nov 2026):
+  // "Last 3 spots" and under, else "Spots available". Staff pages keep their numbers.
+  const seatsText = c => c.seatsLeft < 1 ? t('full') : c.seatsLeft <= 3 ? t('lastSpots', c.seatsLeft) : t('spotsFree');
+  const seatsCls = c => c.seatsLeft > 3 ? 'quiet' : c.seatsLeft > 0 ? 'last' : 'full';
 
   // What this student booked, keyed like the schedule (slotId|Bangkok date).
   // Only a hint for the timetable: a failed or 404 /me never signs anyone out
@@ -2359,7 +2422,7 @@
         <span class="wt">${esc(fmtTime(c.startAt))}${c.isOnline ? `<span class="on">${esc(t('online'))}</span>` : ''}</span>
         <em class="cn">${esc((CAL_NAME[c.kind] || [c.title, c.title])[1])}</em>
         ${who.length ? `<span class="wtt">${who.map(teachTag).join('')}</span>` : ''}
-        <span class="st${booked ? ' ok' : full ? ' full' : ''}">${esc(booked ? '✓ ' + t('booked') : full ? t('full') : t('places', c.seatsLeft))}</span>
+        <span class="st ${booked ? 'ok' : seatsCls(c)}">${esc(booked ? '✓ ' + t('booked') : seatsText(c))}</span>
       </button>`;
   }
   function weekCal(has, today, my) {
@@ -2404,7 +2467,7 @@
             c.isOnline ? `<span class="pill">${esc(t('online'))}</span>` : ''}${
             b ? `<span class="pill ok">✓ ${esc(t('booked'))}</span>` : ''}</div>
           <div class="m">${esc(t('mins', c.durationMin))}${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
-          <div class="seats ${c.booked ? '' : 'quiet'}">${esc(seatsText(c))}</div>
+          ${b ? '' : `<div class="seats ${seatsCls(c)}">${esc(seatsText(c))}</div>`}
         </div>
         ${b ? `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`
           : `<button type="button" class="btn" ${full ? 'disabled' : ''} data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button>`}
@@ -2431,7 +2494,7 @@
         <h3>${esc(clsName(c.title))}${c.isOnline ? `<span class="pill">${esc(t('online'))}</span>` : ''}</h3>
         <div class="when">${esc(t('timeRange', fmtTime(c.startAt), fmtTime(end)))}</div>
         <div class="m">${c.teachers ? esc(t('teacherL')) + ': ' + esc(c.teachers) + ' · ' : ''}${esc(t('mins', c.durationMin))}</div>
-        <div class="seats ${c.booked ? '' : 'quiet'}">${esc(seatsText(c))}</div>
+        ${b ? '' : `<div class="seats ${seatsCls(c)}">${esc(seatsText(c))}</div>`}
       </div>
       ${state}</div>`;
   }
@@ -2806,7 +2869,8 @@
     const L = v => v && typeof v === 'object' ? v[LANG] || v.en || '' : String(v ?? '');
     const lbl = k => t(k) + (LANG === 'zh' ? '：' : ': ');
     const bySize = (a, b) => (SIZE_ORDER.indexOf(a) + 1 || 99) - (SIZE_ORDER.indexOf(b) + 1 || 99);
-    $('#teeList').innerHTML = (TEES_ALL ? shown : shown.slice(0, TEES_FIRST)).map(x => {
+    const first = teesFirst();
+    $('#teeList').innerHTML = (TEES_ALL ? shown : shown.slice(0, first)).map(x => {
       const name = L(x.name), sizes = list(x.sizes);
       const colours = (Array.isArray(x.colours) ? x.colours : x.colours ? [x.colours] : [])
         .map(c => c && typeof c === 'object' && 'name' in c ? { name: L(c.name), sizes: list(c.sizes) } : { name: L(c), sizes: [] })
@@ -2828,11 +2892,12 @@
         <a class="btn" data-tee="1" target="_blank" rel="noopener"
           href="https://line.me/R/oaMessage/%40aybkk/?${encodeURIComponent(msg)}">${esc(t('teeOrder'))}</a></article>`;
     }).join('');
-    $('#teeAll').parentElement.hidden = TEES_ALL || shown.length <= TEES_FIRST;
+    $('#teeAll').parentElement.hidden = TEES_ALL || shown.length <= first;
   }
   $('#teeAll').addEventListener('click', () => {
+    const first = $('#teeList').children.length;
     TEES_ALL = true;
-    renderTees().then(() => { const n = $('#teeList').children[TEES_FIRST]; if (n) n.querySelector('a').focus({ preventScroll: true }); });
+    renderTees().then(() => { const n = $('#teeList').children[first]; if (n) n.querySelector('a').focus({ preventScroll: true }); });
   });
 
   // The monthly theme: public/themes/index.json lists the months that have one, and the page
@@ -2871,7 +2936,8 @@
     $('#themeLead').textContent = L(d.lead);
     const c = d.columns || {}, rows = Array.isArray(d.rows) ? d.rows : [];
     const tb = $('#themeTable');
-    tb.className = 'vs ' + (c.highlight === 'a' ? 'hl-a' : 'hl-b');
+    tb.classList.toggle('hl-a', c.highlight === 'a');
+    tb.classList.toggle('hl-b', c.highlight !== 'a');
     tb.hidden = !rows.length;
     tb.innerHTML = `<thead><tr role="row"><th role="columnheader" class="k"></th><th role="columnheader" class="a" scope="col">${esc(L(c.a))}</th>
       <th role="columnheader" class="b" scope="col">${esc(L(c.b))}</th></tr></thead><tbody>${rows.map(r => `<tr role="row">
@@ -2895,6 +2961,7 @@
     $('#themeCta').textContent = L(cta.label) || t('habCta');
     $('#themeNote').textContent = L(cta.note);
     $('#themeNote').hidden = !L(cta.note);
+    syncFolds();
   }
 
   document.addEventListener('click', e => {
