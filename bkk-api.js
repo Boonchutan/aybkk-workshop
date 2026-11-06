@@ -30,7 +30,10 @@ const VAT_PCT = 7;                             // Thai VAT, charged on price + o
 // checkout, so it can be changed without touching the catalogue.
 const SEED_PRODUCTS = [
   { code: 'dropin',    name_en: 'Drop-in',              name_th: 'ครั้งเดียว',        price_thb: 1500,  kind: 'credits',   credits: 1,  valid_days: 1,   daily_cap: null, sort: 10 },
-  { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 20 },
+  { code: 'pack8',     name_en: '8 classes / 1 month',   name_th: '8 ครั้ง / 1 เดือน',  price_thb: 7600,  kind: 'credits',   credits: 8,  valid_days: 30,  daily_cap: null, sort: 20 },
+  // Not sold since 6 Nov 2026 (pack8 replaced it). Kept for the passes already
+  // sold and the Rezerv imports that point at it.
+  { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 25, active: false },
   { code: 'unlim1',    name_en: '1 month unlimited',     name_th: '1 เดือน ไม่จำกัด',   price_thb: 9600,  kind: 'unlimited', credits: null, valid_days: 30,  daily_cap: 2, sort: 30 },
   { code: 'unlim3',    name_en: '3 months unlimited',    name_th: '3 เดือน ไม่จำกัด',   price_thb: 25800, kind: 'unlimited', credits: null, valid_days: 90,  daily_cap: 2, sort: 50 },
   { code: 'unlim6m',   name_en: '6 months unlimited',    name_th: '6 เดือน ไม่จำกัด',   price_thb: 32000, kind: 'unlimited', credits: null, valid_days: 180, daily_cap: 2, sort: 60, active: false },
@@ -487,6 +490,13 @@ function mountBkk(app, opts = {}) {
     if (!year12.rows.length) {
       await q(`UPDATE bkk_products SET active=false WHERE code='unlim12'`);
       await q(`INSERT INTO bkk_settings (key,value) VALUES ('year_is_12_months','true') ON CONFLICT (key) DO NOTHING`);
+    }
+    // 8 classes / 1 month replaced the 10-class pack on 6 Nov 2026 (Boonchu).
+    // Same once-only retire: a 10-pack already sold keeps its 10 classes and 90 days.
+    const pack8 = await q(`SELECT 1 FROM bkk_settings WHERE key = 'pack8_replaces_pack10'`);
+    if (!pack8.rows.length) {
+      await q(`UPDATE bkk_products SET active=false WHERE code='pack10'`);
+      await q(`INSERT INTO bkk_settings (key,value) VALUES ('pack8_replaces_pack10','true') ON CONFLICT (key) DO NOTHING`);
     }
     if (added.rows[0].n === 0) console.log(`✓ bkk: seeded ${SEED_PRODUCTS.length} products`);
     const c = await q('SELECT count(*)::int AS n FROM bkk_class_slots');

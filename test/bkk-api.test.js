@@ -101,13 +101,111 @@ const ok = (name, cond, extra = '') => {
   ok('no Mysore on Monday', !month.body.classes.some(c => c.kind === 'mysore' && isMon(c.date)));
   ok('Led Primary still on Monday', month.body.classes.some(c => c.kind === 'led_primary' && isMon(c.date)));
 
+  console.log('\n— 8 classes / 1 month replaced the 10-class pack (6 Nov 2026) —');
+  {
+    const marker = async () => (await pool.query(`SELECT count(*)::int AS n FROM bkk_settings WHERE key='pack8_replaces_pack10'`)).rows[0].n;
+    const prod = async code => (await pool.query('SELECT * FROM bkk_products WHERE code=$1', [code])).rows[0];
+    const passOf = async code => (await pool.query(`SELECT p.credits_total, p.credits_used, p.valid_days, p.status, pr.code,
+        to_char(p.valid_from,'YYYY-MM-DD') AS f, p.valid_until - p.valid_from AS span
+      FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id WHERE m.code=$1`, [code])).rows[0];
+    // A boot only: the schema step runs when the API is mounted.
+    const boot = async (db = pool) => { mountBkk(express(), { pgPool: db, now }); await new Promise(r => setTimeout(r, 1500)); };
+
+    const new8 = await prod('pack8'), new10 = await prod('pack10');
+    ok('a new database has the 8-class pack on sale and the 10-class pack off sale, listed after it', new8 && new8.active
+       && new10 && !new10.active && new10.sort > new8.sort && (await marker()) === 1, JSON.stringify([new8, new10]));
+
+    // A shala that ran before 6 Nov: the 10-class pack on sale, no 8-class pack, no marker.
+    await pool.query(`DELETE FROM bkk_settings WHERE key='pack8_replaces_pack10'`);
+    await pool.query(`DELETE FROM bkk_products WHERE code='pack8'`);
+    await pool.query(`UPDATE bkk_products SET active=true, sort=20 WHERE code='pack10'`);
+    const holder = await post('/api/bkk/orders', { productCode: 'pack10', name: 'Tenpack Holder', email: 'tenpack.holder@example.com' });
+    await post(`/api/bkk/admin/orders/${holder.body.order.id}/force-activate`, {}, ADMIN);
+    const waiting = await post('/api/bkk/orders', { productCode: 'pack10', name: 'Tenpack Waiting', email: 'tenpack.waiting@example.com' });
+    ok('(before: a 10-class pack sold online at 14,000 + 3% fee + 7% VAT = 15,429)',
+       holder.body.order && holder.body.order.amount === 15429 && waiting.body.order && waiting.body.order.amount === 15429,
+       JSON.stringify([holder.body, waiting.body]).slice(0, 200));
+
+    const errs = [], logErr = console.error;
+    console.error = (...a) => errs.push(a.join(' '));
+    await boot({ query: (sql, p) => /SET active=false WHERE code='pack10'/.test(sql)
+      ? Promise.reject(new Error('disk full')) : pool.query(sql, p), connect: () => pool.connect() });
+    console.error = logErr;
+    ok('a boot that fails to retire the 10-class pack writes no marker, so the next boot tries again',
+       (await marker()) === 0 && (await prod('pack10')).active && errs.some(e => /disk full/.test(e)), JSON.stringify(errs));
+
+    await boot();
+    const run8 = await prod('pack8'), run10 = await prod('pack10');
+    ok('the next boot adds the 8-class pack to the running shala: 7,600, 8 classes, 30 days, on sale', run8 && run8.active
+       && run8.price_thb === 7600 && run8.kind === 'credits' && run8.credits === 8 && run8.valid_days === 30 && run8.daily_cap === null
+       && run8.name_en === '8 classes / 1 month' && run8.name_th === '8 ครั้ง / 1 เดือน', JSON.stringify(run8));
+    ok('...and retires the 10-class pack once, its rules unchanged, with the marker written', !run10.active && run10.price_thb === 14000
+       && run10.credits === 10 && run10.valid_days === 90 && (await marker()) === 1, JSON.stringify(run10));
+
+    const seen = [];
+    await boot({ query: (sql, p) => { seen.push(sql); return pool.query(sql, p); }, connect: () => pool.connect() });
+    ok('a second boot never touches the 10-class pack again, and it stays off sale', seen.length > 20
+       && !seen.some(s => /code='pack10'/.test(s)) && !(await prod('pack10')).active && (await marker()) === 1
+       && (await prod('pack8')).active, `${seen.length} queries`);
+
+    const late = await post(`/api/bkk/admin/orders/${waiting.body.order.id}/force-activate`, {}, ADMIN);
+    const hp = await passOf(holder.body.member.code), wp = await passOf(waiting.body.member.code);
+    ok('10-class passes already sold keep 10 classes and 90 days, also one paid before and confirmed after the change',
+       late.status === 200 && [hp, wp].every(p => p && p.code === 'pack10' && p.credits_total === 10 && p.credits_used === 0
+       && p.valid_days === 90 && p.status === 'active'), JSON.stringify([late.body, hp, wp]));
+    const farDay = new Date(Date.now() + (7 * 3600 + 35 * 86400) * 1000).toISOString().slice(0, 10);
+    const cls10 = month.body.classes.find(c => c.date >= farDay && c.seatsLeft > 0);
+    const bk10 = await post('/api/bkk/bookings', { memberCode: holder.body.member.code, slotId: cls10.slotId, date: cls10.date });
+    const used = await passOf(holder.body.member.code);
+    ok('...and a 10-class pass still books a class: 9 left, a 90-day window from that class', bk10.status === 200
+       && used.credits_total - used.credits_used === 9 && used.f === cls10.date && used.span === 90, JSON.stringify([bk10.body, used]));
+    await post(`/api/bkk/bookings/${bk10.body.booking.id}/cancel`, { memberCode: holder.body.member.code });
+
+    const cat = (await J('/api/bkk/products')).body;
+    const p8 = cat.products.find(p => p.code === 'pack8');
+    ok('GET /api/bkk/products lists the 8-class pack at 7,600, 8 classes, 30 days, after the drop-in',
+       p8 && p8.price_thb === 7600 && p8.credits === 8 && p8.valid_days === 30 && cat.products.map(p => p.code).slice(0, 2).join() === 'dropin,pack8',
+       JSON.stringify(p8));
+    ok('...with the Packages tab total 7,600 + 228 online fee + 548 VAT = 8,376', p8 && p8.fee_thb === 228 && p8.vat_thb === 548
+       && p8.total_thb === 8376, JSON.stringify(p8));
+    const buy10 = await post('/api/bkk/orders', { productCode: 'pack10', name: 'Tenpack Late', email: 'tenpack.late@example.com' });
+    const desk10 = await post('/api/bkk/admin/sales', { productCode: 'pack10', name: 'Tenpack Desk', method: 'cash' }, ADMIN);
+    ok('the 10-class pack is not listed, and the checkout and the desk refuse it', !cat.products.some(p => p.code === 'pack10')
+       && buy10.status === 404 && desk10.status === 404, JSON.stringify([buy10.body, desk10.body]));
+
+    const desk8 = await post('/api/bkk/admin/sales', { productCode: 'pack8', name: 'Eight Desk', email: 'eight.desk@example.com', method: 'cash' }, ADMIN);
+    const row8 = desk8.body.order ? (await pool.query('SELECT base_thb, fee_thb, vat_thb, amount_thb FROM bkk_orders WHERE refno=$1',
+      [desk8.body.order.refno])).rows[0] : {};
+    ok('the buyer pays 7,600 + 532 VAT = 8,132 for the 8-class pack at the desk', desk8.body.order && desk8.body.order.amount === 8132
+       && desk8.body.order.vat === 532 && row8.base_thb === 7600 && row8.fee_thb === 0 && row8.vat_thb === 532 && row8.amount_thb === 8132,
+       JSON.stringify([desk8.body, row8]));
+    await new Promise(r => setTimeout(r, 300));                    // the receipt goes after the reply
+    const rc8 = require('../mailer').outbox.filter(m => m.tag === 'receipt' && m.to === 'eight.desk@example.com').pop();
+    ok('...the receipt says so', rc8 && rc8.text.includes('Paid ฿8,132 (฿7,600 + ฿0 online transaction fee + ฿532 VAT 7%)'),
+       rc8 && rc8.text.slice(0, 300));
+    const dp8 = desk8.body.member ? await passOf(desk8.body.member.code) : null;
+    ok('...and gets 8 classes for 30 days', dp8 && dp8.code === 'pack8' && dp8.credits_total === 8 && dp8.valid_days === 30, JSON.stringify(dp8));
+    await post('/api/bkk/admin/settings', { surchargePct: 0 }, ADMIN);
+    const online8 = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Eight Online', email: 'eight.online@example.com' });
+    await post('/api/bkk/admin/settings', { surchargePct: 3 }, ADMIN);
+    ok('...and 8,132 online too, with the online fee set to 0', online8.body.order && online8.body.order.amount === 8132,
+       JSON.stringify(online8.body).slice(0, 160));
+
+    const imp10 = await post('/api/bkk/admin/import', { rows: [
+      { name: 'Tenpack Import', plan: '10 classes/3mo (14000thb + online transaction fee 5%)', until: '2027-01-31', classesLeft: 4 }] }, ADMIN);
+    const ip = (await pool.query(`SELECT p.credits_total, p.credits_used, p.valid_days, pr.code FROM bkk_passes p
+      JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id WHERE m.name='Tenpack Import'`)).rows[0] || {};
+    ok('the Rezerv import still maps "10 classes" to the 10-class pack', imp10.body.passes === 1 && ip.code === 'pack10'
+       && ip.credits_total === 10 && ip.credits_used === 6 && ip.valid_days === 90, JSON.stringify([imp10.body, ip]));
+  }
+
   console.log('\n— buy (gateway not configured) —');
   const order = await post('/api/bkk/orders',
-    { productCode: 'pack10', name: 'Test Student', email: 'test@example.com' });
+    { productCode: 'pack8', name: 'Test Student', email: 'test@example.com' });
   ok('order created', order.status === 200 && order.body.order, JSON.stringify(order.body).slice(0, 120));
   const refno = Number(order.body.order.refno);
   const memberCode = order.body.member.code;
-  ok('amount is ฿15429', order.body.order.amount === 15429, `got ${order.body.order.amount}`);
+  ok('amount is ฿8376 (7,600 + 3% fee + 7% VAT)', order.body.order.amount === 8376, `got ${order.body.order.amount}`);
   ok('refno is numeric ≤12 digits', /^\d{1,12}$/.test(String(refno)), String(refno));
   ok('no pay form without credentials', order.body.pay === null);
 
@@ -131,14 +229,14 @@ const ok = (name, cond, extra = '') => {
   ok('force-activate works', fa.status === 200, JSON.stringify(fa.body));
   me = await J('/api/bkk/me/' + memberCode);
   ok('pass now exists', me.body.passes.length === 1);
-  ok('10 credits available', me.body.passes[0].creditsLeft === 10, String(me.body.passes[0].creditsLeft));
+  ok('8 credits available', me.body.passes[0].creditsLeft === 8, String(me.body.passes[0].creditsLeft));
   ok('validity not started before first booking', me.body.passes[0].validUntil === null);
 
   console.log('\n— booking —');
   bk = await post('/api/bkk/bookings', { memberCode, slotId: slot.slotId, date: slot.date });
   ok('booking succeeds', bk.status === 200, JSON.stringify(bk.body).slice(0, 120));
   me = await J('/api/bkk/me/' + memberCode);
-  ok('credit decremented to 9', me.body.passes[0].creditsLeft === 9, String(me.body.passes[0].creditsLeft));
+  ok('credit decremented to 7', me.body.passes[0].creditsLeft === 7, String(me.body.passes[0].creditsLeft));
   ok('validity window opened on first booking', !!me.body.passes[0].validUntil, String(me.body.passes[0].validUntil));
   ok('booking listed for member', me.body.bookings.length === 1);
 
@@ -579,6 +677,10 @@ const ok = (name, cond, extra = '') => {
      JSON.stringify({ name: one.name, until: onePass.valid_until, source: onePass.source }));
   const pack = (await J('/api/bkk/admin/members?q=imp pack', { headers: ADMIN })).body.members[0].passes[0];
   ok('a 10-class pack keeps the classes left', pack.credits_total - pack.credits_used === 7, JSON.stringify(pack));
+  const packPkg = (await pool.query(`SELECT p.code, p.credits, p.valid_days FROM bkk_passes x JOIN bkk_products p ON p.id = x.product_id
+    JOIN bkk_members m ON m.id = x.member_id WHERE m.name = 'Imp Pack'`)).rows[0] || {};
+  ok('...on the 10-class package, 10 classes and 90 days, as Rezerv sold it', packPkg.code === 'pack10' && packPkg.credits === 10
+     && packPkg.valid_days === 90 && pack.credits_total === 10, JSON.stringify(packPkg));
   ok('import needs the staff key', (await post('/api/bkk/admin/import', { rows: [] }, {})).status === 401);
   const twoCode = (await J('/api/bkk/admin/members?q=imp two', { headers: ADMIN })).body.members[0].code;
   const sl = await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, ADMIN);
@@ -900,7 +1002,7 @@ const ok = (name, cond, extra = '') => {
 
     const noCls = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Drop Without', email: 'drop.without@example.com' });
     ok('a drop-in bought without a class is refused', noCls.status === 400 && /Pick the class/.test(noCls.body.error), JSON.stringify(noCls.body));
-    const pack = await post('/api/bkk/orders', { productCode: 'pack10', name: 'Pack Buyer', email: 'pack.buyer@example.com' });
+    const pack = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Pack Buyer', email: 'pack.buyer@example.com' });
     ok('...other packages need no class', pack.status === 200, JSON.stringify(pack.body).slice(0, 120));
     const wrongWd = await post('/api/bkk/orders', { productCode: 'dropin',
       name: 'Wrong Day', email: 'wrong.day@example.com', slotId: dc.slotId, date: wrongDay });
@@ -2397,7 +2499,7 @@ const ok = (name, cond, extra = '') => {
     clock = bkkAt('2026-11-11T23:59:59');
     const pre = await byCode();
     ok('11 Nov 23:59 Bangkok: old prices, 3 months 25,800 and 12 months 78,000', pre.unlim3.price_thb === 25800
-       && pre.unlim12m.price_thb === 78000 && pre.unlim1.price_thb === 9600 && pre.dropin.price_thb === 1500 && pre.pack10.price_thb === 14000,
+       && pre.unlim12m.price_thb === 78000 && pre.unlim1.price_thb === 9600 && pre.dropin.price_thb === 1500 && pre.pack8.price_thb === 7600 && !pre.pack10,
        JSON.stringify(Object.values(pre).map(p => [p.code, p.price_thb])));
     const pre6 = await post('/api/bkk/orders', { productCode: 'unlim6m', ...buyer(1) });
     const pre6desk = await post('/api/bkk/admin/sales', { productCode: 'unlim6m', name: 'Switch Desk Early', method: 'cash' }, ADMIN);
@@ -2437,13 +2539,13 @@ const ok = (name, cond, extra = '') => {
     ok('12 Nov 00:00 Bangkok: two servers asking at once apply the switch once', said.length === 1 && (await marker()) === 1,
        `applied ${said.length} times`);
     const post12 = both[0];
-    ok('...3 months 22,000, 12 months 59,900, 1 month, drop-in and 10 classes unchanged', both.every(b => b.unlim3.price_thb === 22000
-       && b.unlim12m.price_thb === 59900 && b.unlim1.price_thb === 9600 && b.dropin.price_thb === 1500 && b.pack10.price_thb === 14000),
+    ok('...3 months 22,000, 12 months 59,900, 1 month, drop-in and 8 classes unchanged', both.every(b => b.unlim3.price_thb === 22000
+       && b.unlim12m.price_thb === 59900 && b.unlim1.price_thb === 9600 && b.dropin.price_thb === 1500 && b.pack8.price_thb === 7600 && !b.pack10),
        JSON.stringify(Object.values(post12).map(p => [p.code, p.price_thb])));
     const six = post12.unlim6m || {};
     ok('...the 6-month is on sale at 32,000 for 180 days, 2 classes a day, between 3 and 12 months',
        six.price_thb === 32000 && six.valid_days === 180 && six.daily_cap === 2 && six.kind === 'unlimited'
-       && Object.keys(post12).join() === 'dropin,pack10,unlim1,unlim3,unlim6m,unlim12m', JSON.stringify(six));
+       && Object.keys(post12).join() === 'dropin,pack8,unlim1,unlim3,unlim6m,unlim12m', JSON.stringify(six));
     ok('...even when the boot before it never added the 6-month row', (await pool.query(
        `SELECT 1 FROM bkk_products WHERE code='unlim6m' AND active AND price_thb=32000`)).rows.length === 1);
     ok('...and the old 6-month (45,000, sold by Rezerv) stays off sale', !post12.unlim6
