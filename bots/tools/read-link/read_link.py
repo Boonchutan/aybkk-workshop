@@ -2,12 +2,12 @@
 """Read a video: every spoken line, plus stills a bot can open to see the screen.
 
 Usage:
-  python3 read_link.py <video file> [--model small|medium] [--no-frames]
-  python3 read_link.py <link>          caption only, from what the platform shares openly
+  python3 read_link.py <link or video file> [--model small|medium] [--no-frames]
 
-Instagram, Facebook, TikTok and YouTube do not let bots pull their videos. We do not
-get around that: no fake user agents, no downloaders. For a video link, ask Boonchu
-for the file (saved from the app, or a screen recording) and run this on the file.
+For a link it fetches the video once, as a normal visitor (Boonchu, 6 Nov: "Watching
+video is not doing bad to someone"). It never pretends to be another company's bot and
+never tries to get around a block: if the platform says log in or slow down, it stops
+and asks for the file (saved from the app, or a screen recording).
 """
 import html
 import json
@@ -59,6 +59,16 @@ def caption(url):
     return ""
 
 
+def download(url, work):
+    ensure("yt_dlp", "yt-dlp")
+    r = subprocess.run([sys.executable, "-m", "yt_dlp", "--no-warnings", "-q", "-f", "best[ext=mp4]/best",
+                        "-o", os.path.join(work, "video.%(ext)s"), url], capture_output=True, text=True)
+    got = [f for f in os.listdir(work) if f.startswith("video.")]
+    if got:
+        return os.path.join(work, got[0]), None
+    return None, (r.stderr.strip().splitlines() or ["download failed"])[-1]
+
+
 def frames(video, out_dir, max_frames=20):
     """One still every few seconds (every 3 s, spread wider for long videos) for the image reader."""
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", video],
@@ -97,16 +107,20 @@ def main():
     if not args:
         sys.exit(__doc__)
     target = args[0]
-    if not os.path.isfile(target):
-        print("CAPTION:")
-        print(caption(target) or "(none: the platform shows bots a login page)")
-        print("\nVIDEO: platforms do not let bots download videos, and we do not get around that."
-              " Ask Boonchu to send the video file (save it from the app, or screen-record it),"
-              " then run this tool on the file.")
-        return
     model_name = "medium" if "--model" in sys.argv and "medium" in sys.argv else "small"
     work = tempfile.mkdtemp(prefix="read-link-")
     try:
+        if not os.path.isfile(target):
+            print("CAPTION:")
+            print(caption(target) or "(none: the platform shows a login page)")
+            video, err = download(target, work)
+            if not video:
+                # One try only. A login wall or a rate limit is the platform saying no: stop there.
+                print(f"\nVIDEO: the platform said no ({err}). Do not retry or work around it."
+                      " Ask Boonchu for the file (Share > Download, or a screen recording).")
+                return
+            print()
+            target = video
         lang, secs, lines = transcribe(target, work, model_name)
         print(f"SPOKEN ({secs:.0f} s, language: {lang}):")
         print("\n".join(lines) if lines else "(no speech: music only, or text on screen: look at the frames)")
