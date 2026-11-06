@@ -1,0 +1,104 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @page{size:297mm 420mm;margin:0}
+  @font-face{font-family:'Plex';src:url('__WORKSANS__') format('woff2');font-weight:100 900}
+  @font-face{font-family:'PlexTH';src:url('__PLEXTHAI__') format('woff2');font-weight:400;unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}
+  @font-face{font-family:'Cormorant';src:url('__CORMORANT__') format('woff2');font-weight:300 700}
+  :root{--ink:#17121a;--soft:#5d5262;--paper:#fff;--plum:#5c2160;--pink:#c92f74;--blush:#fbe7f0;--line:rgba(23,18,26,.16);
+    --m:56px;--g:20px;--W:1123px;--H:1587px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:var(--W);height:var(--H);background:var(--paper);color:var(--ink);font-family:'Plex','PlexTH',sans-serif;
+    -webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{width:var(--W);height:var(--H);padding:44px var(--m) 40px;display:flex;flex-direction:column}
+  .g{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--g)}
+  /* header */
+  .top{align-items:center;padding-bottom:16px;border-bottom:5px solid var(--ink)}
+  .brand{grid-column:1/8;display:flex;align-items:center;gap:16px}
+  .brand img{width:64px;height:64px;border-radius:50%}
+  .brand b{display:block;font-weight:800;font-size:28px;letter-spacing:-.01em;line-height:1}
+  .brand span{display:block;font-size:17px;color:var(--soft);margin-top:4px}
+  .when{grid-column:8/13;text-align:right}
+  .when b{display:block;font-weight:800;font-size:17px;letter-spacing:.08em;text-transform:uppercase}
+  .when span{display:block;font-size:22px;font-weight:600;margin-top:2px}
+  :lang(th) .when b{letter-spacing:0;text-transform:none;font-size:20px}
+  /* hero */
+  .hero{margin-top:26px;align-items:end}
+  .hero h1{grid-column:1/9;font-weight:800;font-size:116px;line-height:.86;letter-spacing:-.055em}
+  :lang(th) .hero h1{font-weight:500;letter-spacing:0;line-height:1.05;font-size:150px;font-synthesis:none}
+  .hero .lead{grid-column:1/9;margin-top:16px;font-size:24px;line-height:1.3;color:var(--soft)}
+  .hero .pic{grid-column:9/13;grid-row:1/3;height:220px;overflow:hidden;position:relative}
+  .hero .pic img{position:absolute;width:300%;left:-87%;top:-188px}
+  /* sections */
+  .sec{margin-top:20px;padding-top:12px;border-top:2px solid var(--ink)}
+  .lab{grid-column:1/4}
+  .lab span.n{display:block;font-weight:800;font-size:46px;line-height:1;letter-spacing:-.03em}
+  .lab b{display:block;margin-top:8px;font-weight:800;font-size:19px;line-height:1.2;letter-spacing:.02em}
+  .lab > span:not(.n){display:block;margin-top:6px;font-size:16px;line-height:1.35;color:var(--soft)}
+  :lang(th) .lab b{font-size:21px;letter-spacing:0;line-height:1.35}
+  :lang(th) .lab > span:not(.n){font-size:17px;line-height:1.5}
+  .rows{grid-column:4/13}
+  .row{display:grid;grid-template-columns:1fr auto;column-gap:24px;align-items:center;padding:10px 0 10px;border-bottom:1px solid var(--line);position:relative}
+  .row:first-child{padding-top:2px}
+  .row .nm{font-weight:800;font-size:40px;line-height:1.05;letter-spacing:-.025em}
+  :lang(th) .row .nm{font-weight:700;letter-spacing:0;font-size:38px;line-height:1.25}
+  .row .nt{margin-top:6px;font-size:18px;line-height:1.35;color:var(--soft);max-width:34ch}
+  :lang(th) .row .nt{line-height:1.5;max-width:30em}
+  .row .pr{text-align:right;white-space:nowrap}
+  .row .pr b{font-weight:800;font-size:58px;line-height:1;letter-spacing:-.035em;color:var(--plum)}
+  .row .pr b i{font-style:normal;font-size:.55em;vertical-align:.32em;margin-right:4px}
+  .row .pr small{font-weight:700;font-size:18px;color:var(--plum);margin-left:6px;letter-spacing:.02em}
+  .row .pr span{display:block;margin-top:4px;font-size:18px;color:var(--soft)}
+  :lang(th) .row .pr span{font-size:19px}
+  .row.pick{background:var(--blush);margin:0 0 0 -22px;padding-left:22px;padding-right:18px;border-bottom-color:transparent}
+  .row.pick::before{content:'';position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--pink)}
+  .badge{display:inline-block;vertical-align:.45em;margin-left:12px;background:var(--pink);color:#fff;font-weight:800;font-size:14px;
+    letter-spacing:.08em;text-transform:uppercase;padding:5px 10px 4px}
+  :lang(th) .badge{letter-spacing:0;font-size:17px;font-weight:700;padding:3px 10px 5px}
+  .vat{grid-column:4/13;margin-top:12px;font-size:16px;color:var(--soft)}
+  :lang(th) .vat{font-size:17px}
+  /* notes */
+  .notes{grid-column:4/13;display:grid;grid-template-columns:1fr 1fr;column-gap:28px;row-gap:16px}
+  .notes p{font-size:16px;line-height:1.42;color:var(--ink)}
+  .notes p b{font-weight:800}
+  :lang(th) .notes p{font-size:16px;line-height:1.5}
+  :lang(th) .notes p b{font-weight:700}
+  /* footer */
+  .foot{margin-top:auto;padding-top:18px;border-top:5px solid var(--ink);align-items:center}
+  .bye{grid-column:1/7;font-family:'Cormorant','Plex','PlexTH',serif;font-style:italic;font-weight:500;font-size:56px;line-height:1;color:var(--plum)}
+  :lang(th) .bye{font-family:'Plex','PlexTH',sans-serif;font-style:normal;font-size:44px;font-weight:500;font-synthesis:none}
+  .contact{grid-column:7/13;display:flex;align-items:center;justify-content:flex-end;gap:18px;text-align:right}
+  .contact .t b{display:block;font-weight:800;font-size:20px;line-height:1.25}
+  .contact .t > span{display:block;margin-top:4px;font-size:17px;color:var(--soft)}
+  :lang(th) .contact .t b{font-weight:700;font-size:21px;line-height:1.4}
+  .contact .qr{width:112px;height:112px;flex:none}
+  .contact .qr svg{width:100%;height:100%;display:block}
+  .nw{white-space:nowrap}
+</style></head>
+<body><div class="page" id="page"></div>
+<script>
+const C = __COPY__, QR = __QR__, PHOTO = '__PHOTO__', LOGO = '__LOGO__';
+const lang = new URLSearchParams(location.search).get('lang') || 'en';
+const T = C[lang], X = {
+  en: { list: 'Price list', date: 'Prices from 1 Nov 2026', lead: 'Same practice, same time, a teacher who notices.', scan: 'New here? Scan to find your first step.' },
+  th: { list: 'ราคาสมาชิก', date: 'ราคาตั้งแต่ 1 พ.ย. 2569', lead: 'ฝึกท่าเดิม เวลาเดิม กับครูที่สังเกตเห็นคุณ', scan: 'มาใหม่? สแกนเพื่อหาก้าวแรกของคุณ' },
+}[lang];
+document.documentElement.lang = lang;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// Thai: break only at spaces (phrase by phrase); English: keep the last two words together.
+const P = s => lang === 'th' ? String(s).split(' ').map(w => `<span class="nw">${esc(w)}</span>`).join(' ') : esc(s).replace(/ (\S+)$/, ' $1');
+const row = r => `<div class="row${r.pick ? ' pick' : ''}"><div><div class="nm">${esc(r.name)}${r.badge ? `<span class="badge">${esc(r.badge)}</span>` : ''}</div>${r.note ? `<p class="nt">${P(r.note)}</p>` : ''}</div>
+  <div class="pr"><b><i>฿</i>${esc(r.price)}</b><small>${esc(T.vatTag)}</small>${r.per ? `<span>${esc(r.per)}</span>` : ''}</div></div>`;
+document.getElementById('page').innerHTML = `
+  <header class="g top"><div class="brand"><img src="${LOGO}" alt=""><div><b>AYBKK</b><span>Ashtanga Yoga Bangkok</span></div></div>
+    <div class="when"><b>${esc(X.list)}</b><span>${esc(X.date)}</span></div></header>
+  <section class="g hero"><h1>${esc(T.title)}</h1><div class="pic"><img src="${PHOTO}" alt=""></div><p class="lead">${P(X.lead)}</p></section>
+  <section class="g sec"><div class="lab"><span class="n">01</span><b>${esc(T.sec1)}</b><span>${P(T.sec1note)}</span></div>
+    <div class="rows">${T.rows.map(row).join('')}</div></section>
+  <section class="g sec"><div class="lab"><span class="n">02</span><b>${esc(T.sec2)}</b></div>
+    <div class="rows">${T.packs.map(row).join('')}</div><p class="vat">${P(T.vat)}</p></section>
+  <section class="g sec"><div class="lab"><span class="n">03</span><b>${esc(T.polH)}</b></div>
+    <div class="notes">${T.pol.map(([b, t]) => `<p><b>${P(b)}</b>${P(t)}</p>`).join('')}</div></section>
+  <footer class="g foot"><p class="bye">${esc(T.bye)}</p>
+    <div class="contact"><div class="t"><b>${P(X.scan)}</b><span>aybkk.net · LINE @aybkk</span></div><div class="qr">${QR}</div></div></footer>`;
+</script></body></html>
