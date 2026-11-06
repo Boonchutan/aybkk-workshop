@@ -44,7 +44,10 @@
     "name": "8 classes",
     "note": "Use within 1 month. No weekly minimum. For ฿2,000 more, go unlimited.",
     "price": "7,600",
-    "per": "950 / class"
+    "per": "950 / class",
+    "badge": "No minimum",
+    "hl": "No need to come 4 times a week. Come when you can.",
+    "noteWall": "Use within 1 month. For ฿2,000 more, go unlimited."
    }
   ],
   "vat": "+VAT = plus 7% VAT. Paying online adds a transaction fee.",
@@ -115,7 +118,10 @@
     "name": "แพ็ก 8 ครั้ง",
     "note": "ใช้ภายใน 1 เดือน ไม่กำหนดว่าต้องมากี่ครั้งต่อสัปดาห์ เพิ่มอีก ฿2,000 ฝึกได้ไม่จำกัด",
     "price": "7,600",
-    "per": "ตกครั้งละ 950"
+    "per": "ตกครั้งละ 950",
+    "badge": "ไม่มีขั้นต่ำ",
+    "hl": "ไม่ต้องมาสัปดาห์ละ 4 ครั้ง มาได้ตามสะดวก",
+    "noteWall": "ใช้ภายใน 1 เดือน เพิ่มอีก ฿2,000 ฝึกได้ไม่จำกัด"
    }
   ],
   "vat": "+VAT = ยังไม่รวม VAT 7% หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม",
