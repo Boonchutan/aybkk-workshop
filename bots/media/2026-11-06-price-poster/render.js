@@ -5,7 +5,7 @@ const REPO = process.env.REPO || '/home/user/aybkk-workshop';
 const QRLIB = require(path.join(REPO, 'node_modules/qrcode'));
 const THEME = process.env.THEME || '';
 const b64 = (f, t) => `data:${t};base64,` + fs.readFileSync(f).toString('base64');
-const copy = JSON.parse(fs.readFileSync(path.join(__dirname, '../2026-10-19-prices-v3/final-v3.json'), 'utf8'));
+const copy = JSON.parse(fs.readFileSync(path.join(__dirname, '../2026-10-19-prices-v3/final-v3.json'), 'utf8').replace(/’/g, "'"));
 (async () => {
   const qr = await QRLIB.toString('https://aybkk.net/start/wall#first-step', { type: 'svg', margin: 0, errorCorrectionLevel: 'M', color: { dark: '#17121a', light: '#ffffff' } });
   const html = fs.readFileSync(path.join(__dirname, 'poster.html'), 'utf8')
@@ -33,7 +33,7 @@ const copy = JSON.parse(fs.readFileSync(path.join(__dirname, '../2026-10-19-pric
     // A4 has the same shape as A3: zoom the same layout to 210/297 on an A4 page.
     await p.addStyleTag({ content: '@page{size:210mm 297mm;margin:0} html{zoom:0.70707}' });
     await p.pdf({ path: base.replace('-A3', '-A4') + '.pdf', preferCSSPageSize: true, printBackground: true, pageRanges: '1' });
-    console.log(lang, JSON.stringify(chk), errs.join(' '));
+    console.log(lang, JSON.stringify(chk), errs.join(' '), chk.gapAboveFooter < 12 || chk.pageOverflow > 0 ? 'TOO TIGHT' : 'fits');
     await p.close();
   }
   await b.close(); fs.unlinkSync(tmp);
