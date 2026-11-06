@@ -1,0 +1,191 @@
+{
+ "key": "4-debunk",
+ "final": {
+  "format": "4) The debunk carousel",
+  "title": "TOUCH: what the studies really say about hands-on adjustments",
+  "goal": "trust",
+  "stakes": "Stakes: what happens if this does not work or the viewer does nothing. The viewer keeps fearing a teacher's hands and keeps learning alone from a phone. No one sees what they cannot see themselves, like their own back in a backbend, and when they push too far, no one is there to stop it. For AYBKK, hands-on teaching in the Mysore room is the shala's real value. If this does not land, new people keep seeing it as a risk, not as help.",
+  "why_care": "Why care: the reason in the viewer's life now. A 35-year-old Bangkok office worker or a home practitioner in China is learning from a phone right now, partly because a stranger's touch feels risky. The fear is fair: in one online survey, 11% said an adjustment had hurt them. But the studies also show that expert feedback helps people learn a movement, and that help may matter most when a movement is new. Once they know what safe hands look like (the teacher checks first, the breath leads, light hands, you can say no), they can pick help over fear.",
+  "slides": [
+   {
+    "slot": "cover",
+    "word": "TOUCH",
+    "text": "Scared of a teacher's hands? We read the studies. Who stops you pushing too far at home?",
+    "credit": "9 notes · swipe",
+    "photo_hint": "Wide, calm frame of Boonchu giving a hands-on adjustment in the Mysore room (drop back or backbend with an experienced student), student relaxed, room visible so it reads as a real class in one second",
+    "source": "none"
+   },
+   {
+    "slot": "1",
+    "word": "RISK",
+    "text": "The risk is real. In one online survey, 11% of 2,620 people who do yoga said an adjustment had hurt them. Yet about 7 in 10 called adjustments \"very helpful\".",
+    "credit": "David Keil, Yoganatomy online survey, 2017",
+    "photo_hint": "A careful, close backbend or twist adjustment where the teacher's care is clear (soft hands, student breathing). Not a forward fold. Avoid any frame that looks forceful or strained",
+    "source": "https://www.yoganatomy.com/injuries-in-yoga-adjustments/ (By David Keil; page datePublished 2017-04-25, now shows 'Updated October 27, 2023'): 'Of the 2620 total practitioners who responded to our question about an injury during yoga practice, 284 (11%) reported injuries in yoga adjustments.' ... 'Most respondents (n=2530) found hands-on physical adjustments to be \"very helpful\" (71.9%).' Sample, https://www.yoganatomy.com/yoga-asana-survey-results-summary/: 'We had 2,628 people take the self-administered survey!' ... 'More than half of respondents (60.1%) reported that they also teach yoga (n = 2620).' 'About 7 in 10' rounds 71.9% of the 2,530 who answered that question."
+   },
+   {
+    "slot": "2",
+    "word": "ALONE",
+    "text": "Practising alone is not risk-free either. In a survey of 2,567 Australians who do yoga, some injuries came in home practice. Those hurt often blamed themselves for \"pushing it too far\".",
+    "credit": "Penman et al., International Journal of Yoga, 2012 (retold)",
+    "photo_hint": "Teacher kneeling beside a student in a twist or seated asana, watching the breath with a light hand: someone is there before the student pushes too far. Use a forward fold only if the hands plainly rest and the student's face is soft",
+    "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3410203/: '...injuries that happened during home practice (not under supervision).' ... 'Respondents commonly took the blame for the injury on themselves, citing reasons such as 'pushing it too far' and not warming up' ... 'a large, well-distributed response from 2567 yoga practitioners around the country.' The quote 'lower under supervision' was removed: the 3.4% hurt under supervision is part of the 4.6% hurt anywhere, so it cannot show class is safer."
+   },
+   {
+    "slot": "3",
+    "word": "FEEDBACK",
+    "text": "You learn a movement better with expert feedback. A big 2013 review says this is widely agreed. A video can show an asana. It cannot see yours.",
+    "credit": "Sigrist et al., Psychonomic Bulletin & Review, 2013 (retold)",
+    "photo_hint": "Close frame of the teacher's hand on a student's back or shoulder in a twist (Marichyasana), the hand clearly showing which way to turn",
+    "source": "https://doi.org/10.3758/s13423-012-0333-8 (full text https://sonar.ch/global/documents/253603): 'It is generally accepted that augmented feedback, provided by a human expert or a technical display, effectively enhances motor learning.'"
+   },
+   {
+    "slot": "4",
+    "word": "EARLY",
+    "text": "Help may matter most early, when a movement is still new. The same review says lots of guidance looks useful at the start. Its proof for touch was thin.",
+    "credit": "Sigrist et al., Psychonomic Bulletin & Review, 2013 (retold)",
+    "photo_hint": "A newer student in a simple twist or seated asana, the teacher's hands light and steady, the student's face calm. A forward fold only if the hands plainly rest and the face is soft. No drop back on this slide",
+    "source": "https://doi.org/10.3758/s13423-012-0333-8 (full text https://sonar.ch/global/documents/253603): 'In the early learning phase, guidance in the form of concurrent feedback or very frequent terminal feedback has been suggested to be effective (Liebermann et al., 2002).' Also: 'position control may be useful for novices who do not know the desired movement at all'. Section heading: 'Haptic feedback: Many concepts, few proofs'."
+   },
+   {
+    "slot": "5",
+    "word": "LESS",
+    "text": "As you learn, good help gets less. The review also warns constant guidance can make learners ignore their own body sense. So the practice stays yours. Hands come now and then.",
+    "credit": "Sigrist et al., Psychonomic Bulletin & Review, 2013 (retold)",
+    "photo_hint": "Student nearly on their own (handstand or backbend), teacher close with hands just touching or hovering, showing very little help",
+    "source": "https://doi.org/10.3758/s13423-012-0333-8 (full text https://sonar.ch/global/documents/253603): 'the guidance hypothesis, which states that permanent feedback during acquisition leads to a dependency on the feedback' ... 'The guidance forces learners to ignore their intrinsic feedback [that is, proprioception].' Also: 'when the learner has an idea of the movement ... the learner may profit more from less frequent feedback'. Last two sentences are Boonchu's own view (4 Oct brief)."
+   },
+   {
+    "slot": "6",
+    "word": "OUTSIDE",
+    "text": "Even the best need outside eyes. Singer Renée Fleming said: \"What we hear as we are singing is not what the audience hears.\" In a backbend, you cannot see your back.",
+    "credit": "Renée Fleming in Atul Gawande, The New Yorker, 2011",
+    "photo_hint": "Teacher behind or beside an experienced student in a deep backbend or drop back, the student's back hidden from their own view",
+    "source": "https://www.newyorker.com/magazine/2011/10/03/personal-best (Atul Gawande, 'Personal Best', online 26 Sep 2011, issue of 3 Oct 2011): '\"We refer to them as our 'outside ears,'\" the great soprano Renée Fleming told me.' ... '\"What we hear as we are singing is not what the audience hears.\"' Also: 'So outside ears, and eyes, are important for concert-calibre musicians and Olympic-level athletes.'"
+   },
+   {
+    "slot": "7",
+    "word": "COACH",
+    "text": "In one gym study, the same plan worked better with a coach. Over 12 weeks, men with a trainer gained more strength than men training alone. It was small, and not yoga.",
+    "credit": "Mazzetti et al., Medicine & Science in Sports & Exercise, 2000 (retold)",
+    "photo_hint": "Teacher spotting a handstand or lift (gym-like 'spotting' feel), student strong and steady",
+    "source": "https://pubmed.ncbi.nlm.nih.gov/10862549/ (abstract opened via Europe PMC): 'after 12 wk of periodized heavy-resistance training directly supervised by a personal trainer (SUP) versus unsupervised training (UNSUP)' ... 'Both groups performed identical linear periodized resistance training programs' ... 'Directly supervised, heavy-resistance training in moderately trained men resulted in a greater rate of training load increase and magnitude which resulted in greater maximal strength gains compared with unsupervised training.'"
+   },
+   {
+    "slot": "8",
+    "word": "TRUST",
+    "text": "Hands work better with trust. David Keil, who ran the 11% survey, writes that even a skilled stranger's adjustment might go wrong. Trust grows with one teacher over time.",
+    "credit": "David Keil, Yoganatomy, 2017 (retold)",
+    "photo_hint": "A long-time student in a drop back with the teacher holding the hips, both faces calm, a clear sense they know each other",
+    "source": "https://www.yoganatomy.com/injuries-in-yoga-adjustments/: 'An adjustment might work well for us in the context of working with a teacher with whom we have an established relationship of trust. But, it might backfire if it is applied by someone who is unfamiliar to us, even if they are a skilled teacher.' Survey run by Keil: https://www.yoganatomy.com/yoga-asana-survey-results-summary/ ('I reached out to Yoga International ... my newsletter list')."
+   },
+   {
+    "slot": "9",
+    "word": "FORCE",
+    "text": "The danger is force, not touch. In our Mysore room, the teacher checks first, the breath leads, and hands stay light. You can always say no.",
+    "credit": "AYBKK MYSORE NOTES · 9/9",
+    "photo_hint": "The lightest-touch frame of the set: fingertips only on a twist, or hands hovering, student's face soft, breath visible. Not a forward fold",
+    "source": "none (AYBKK teaching rules from the brief; teacher's view, not a study finding. Expert view in line with it, not on the slide: Keil, 'speed and force need to adapt according to the joint, its position, and the tissues surrounding it.')"
+   }
+  ],
+  "caption": "Afraid of a teacher's hands? We read the studies.\nThe risk is real. So is the help.\nMy wife is an experienced practitioner, and she still asked me for an adjustment.\nWhat did a teacher's hands teach you that a video never could?\n#aybkk #ashtanga #ashtangabangkok #boonchutanti #mysore",
+  "notes": "Boonchu, please confirm these. Lines that state your own practice or opinion:\n1) Slide 5 (LESS): \"So the practice stays yours. Hands come now and then.\" This is your 4 Oct view. It sits under the Sigrist credit as the takeaway from that review. OK?\n2) Slide 8 (TRUST): \"Trust grows with one teacher over time.\" This is your view, built on Keil's point about \"an established relationship of trust\". OK?\n3) Slide 9 (FORCE): \"The danger is force, not touch\" is your teaching view, not a study result. Keil writes something close as expert opinion (\"speed and force need to adapt according to the joint\"), but it is not on the slide. Also: in your Mysore room, does every adjustment work like this now, assistants included: the teacher checks first, the breath leads, hands stay light, the student can always say no?\n4) Caption: \"My wife is an experienced practitioner, and she still asked me for an adjustment.\" Is she OK with that?\nFacts to OK before posting:\n5) Slide 1 (RISK) puts an injury number in public: 11% of 2,620 said an adjustment hurt them. I checked it word for word on yoganatomy.com (David Keil, posted 25 Apr 2017, page now says \"Updated October 27, 2023\"). It was a self-administered online survey shared through Yoga International's social media, the Yoga Alliance directory, Keil's Facebook and his newsletter. 60.1% of respondents also teach yoga, and 60.1% practise Ashtanga, so the slide says \"people who do yoga\", not \"students\". The blog post is not peer reviewed. Keil says the project was later published in two peer-reviewed papers, but I did not check those for this number. \"About 7 in 10\" rounds 71.9% of the 2,530 who answered the helpfulness question. Are you OK posting it?\n6) Slide 2 (ALONE): I removed \"lower under supervision\". Penman's 3.4% (hurt in class) is part of the 4.6% (hurt anywhere), so it cannot show class is safer. The slide now only says some injuries came in home practice and those hurt often blamed \"pushing it too far\". That self-blame covers all injuries, not only home ones. The cover line \"Who stops you pushing too far at home?\" is a question, not a data claim.\n7) Slide 7 (COACH): checked in the abstract: 12 weeks, a personal trainer, the same program for both groups. It is a gym strength study of men, not yoga, and the slide says so. 20 men were randomized, but the groups add up to 18 (10 + 8), so there is no head count on the slide.\n8) Slides 3 to 5 all use one 2013 review (Sigrist). Most of its touch studies use robots or devices, not human hands. Its own heading is \"Many concepts, few proofs\", which is why slide 4 says \"Its proof for touch was thin\" (no \"still\": a 2013 source cannot speak for today).\nEditor changes:\n9) New order: the fear comes first (cover, RISK, ALONE), then the help slides (FEEDBACK, EARLY, LESS, OUTSIDE, COACH), then TRUST and FORCE. Slide 8 now names Keil, so no one thinks Penman said it.\n10) Fixes I rejected: the reader's \"a bit lower with a teacher watching\" (it misleads, see 6); the reader's \"still few\" (see 8); and \"most scientists agree\", which became \"widely agreed\" because it is closer to the source's \"generally accepted\". The big word is not in capitals inside the small text, to match the earlier grid sets.\n11) Photos: Keil's adjustment page says \"there are many variations of forward bending postures at the top of this list\" of adjustment injuries, with the sit bone named most often. So slide 9 is not a forward fold. On slides 2 and 4, use a forward fold only if the hands plainly rest and the face is soft. Slide 4 (EARLY, newer students) has no drop back. Skip any frame where the adjustment looks forceful or the student looks strained.\n12) I used neither method name (\"drawing the cortical map\" or \"function over shape\"), so the debunk stays on data.\n13) Dropped for lack of a solid source: a peer-reviewed rate of injuries from adjustments, any study of video against a live teacher, and the Rawlings & Pollen 2020 blog survey."
+ },
+ "checks": {
+  "facts": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "7",
+     "problem": "MUST FIX. The quote 'lower under supervision' is used to suggest that practising alone is riskier, and the source does not show that. In Penman 2012 (PMC3410203), 3.4% is the share of all respondents who were hurt under supervision, and it is a SUBSET of the 4.6% hurt anywhere ('including unsupervised practice (e.g. at home)'). The supervised number has to be smaller by construction. Read the other way, about 3.4% were hurt in class and only about 1.2% only at home. Also, the 'pushing it too far' self-blame covers all injuries, not only home practice. The quotes are exact, but the slide misleads.",
+     "fix": "Change sentence 2 to: \"In a survey of 2,567 Australians who do yoga, some injuries came in home practice.\" Keep sentence 1 and \"Many blamed themselves for 'pushing it too far'.\" (28 words). Source wording: 'injuries that happened during home practice (not under supervision)'. The credit stays Penman et al., International Journal of Yoga, 2012."
+    },
+    {
+     "slot": "notes",
+     "problem": "Note 4 says 'lower under supervision' is just not a clean class-versus-home figure. It is worse than that: it is a subset of the total, so it cannot show class is safer. Note 1 leaves out key facts about the Keil sample. Per yoganatomy.com/yoga-asana-survey-results-summary/, it was self-selected and self-administered, shared through social media, Yoga International, Yoga Alliance and his newsletter, heavy on Ashtanga, and 60.1% of respondents also teach yoga. The same data set was later published in a peer-reviewed journal (Wiese, Keil et al. 2019, Journal of Bodywork and Movement Therapies), but nobody checked that paper for the adjustment figure.",
+     "fix": "Rewrite note 4: \"Penman's 3.4% (hurt in class) is part of the 4.6% (hurt anywhere), so it cannot show class is safer. I removed that quote. Slide 7 now only says some injuries came in home practice and many blamed 'pushing it too far'.\" Add to note 1: \"Self-selected, shared on social media and by email, many Ashtanga people, 60% of respondents also teach. The blog post is not peer reviewed. The data set was later published as Wiese et al. 2019, which I did not check for this number.\""
+    },
+    {
+     "slot": "6",
+     "problem": "'2,620 yoga students' is the wrong label. The Keil respondents were practitioners, and 60.1% of them also teach yoga (survey summary page). Every number checks out: 284/2620 = 11%, 71.9% 'very helpful' (n=2530), online self-administered survey, published 25 Apr 2017.",
+     "fix": "Change \"2,620 yoga students\" to \"2,620 people who do yoga\" (28 words)."
+    },
+    {
+     "slot": "2",
+     "problem": "'Studies on touch are still few' makes a claim about 2026 from a 2013 review. The source says 'Haptic feedback: Many concepts, few proofs', and its 'touch' studies are mostly robots and devices, not teachers' hands. 'Still' cannot be backed by a 2013 source.",
+     "fix": "Change \"Studies on touch are still few.\" to \"Its proof for touch was thin.\" (still 31 words; credit stays 'Sigrist et al., Psychonomic Bulletin & Review, 2013 (retold)')."
+    },
+    {
+     "slot": "8",
+     "problem": "Small change in meaning. Keil says an adjustment 'might backfire if it is applied by someone who is unfamiliar to us, even if they are a skilled teacher'. That is a teacher the STUDENT does not know. The slide turns it around to 'a teacher who does not know you'.",
+     "fix": "Change \"hands from a teacher who does not know you might backfire\" to \"hands from a teacher you do not know might backfire\" (30 words)."
+    },
+    {
+     "slot": "4",
+     "problem": "The quote is exact and checked: The New Yorker, Atul Gawande, 'Personal Best', online 26 Sep 2011, issue of 3 Oct 2011. Fleming 'told me' this in 2011, though, so the present tense 'says' makes an old interview sound current.",
+     "fix": "Change \"Singer Renée Fleming says:\" to \"Singer Renée Fleming said:\" (same word count)."
+    },
+    {
+     "slot": "2",
+     "problem": "Safety framing of the photo: the slide says help 'may matter most early', and the photo_hint suggests a newer student's 'first assisted drop back'. Together they can read as deep, assisted backbends for beginners.",
+     "fix": "Change the photo_hint to: \"A newer student in a forward fold or simple twist, the teacher's hands light and steady, the student's face calm\". Drop the drop-back option."
+    }
+   ]
+  },
+  "reader": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "cover",
+     "problem": "The cover is clear about the topic, but it flips nothing. 'Has risks too' gives ground, so the reader just nods and moves on. 'From videos' is a claim no slide proves: the notes say no study of video against a live teacher was found. Nothing tells the reader they are about to see real data, and nothing makes them ask whether they are the risk.",
+     "fix": "Word TOUCH. Text: 'Scared of a teacher's hands? We read the studies. Who stops you pushing too far at home?' Credit: '9 notes · swipe'. The first line says the topic in one second. The second line turns the fear back on practising alone, which slide 7 backs up."
+    },
+    {
+     "slot": "order",
+     "problem": "This is a debunk, but the fear the cover raises does not get an answer until slide 6. A reader scared of being hurt meets five slides on why help is good (FEEDBACK, EARLY, LESS, OUTSIDE, COACH). That reads like a sales pitch before the honest part, and that reader may stop swiping at slide 1 or 2.",
+     "fix": "Put the controversy first: cover, then RISK, ALONE, FEEDBACK, EARLY, LESS, OUTSIDE, COACH, TRUST, FORCE. Saying 'The risk is real' straight after the cover earns trust. ALONE then flips the belief, and the help slides back up the answer. Keep 'AYBKK MYSORE NOTES · 9/9' on FORCE."
+    },
+    {
+     "slot": "1",
+     "problem": "'Generally accepted' is adult academic English, not words a 10-year-old uses. Sentence 1 is also flat ('helps you learn a movement'), so few readers ask 'says who?'. The best line, 'It cannot see yours', is buried at the end.",
+     "fix": "'You learn a movement better with expert FEEDBACK. A big 2013 review says most scientists agree. A video can show an asana. It cannot see yours.' (26 words) Credit: 'Sigrist et al., Psychonomic Bulletin & Review, 2013 (retold)'."
+    },
+    {
+     "slot": "2",
+     "problem": "Sentence 1 is muddled. 'Matter most early, not only when you are advanced' puts 'most' and 'not only' in the same line, so the reader cannot tell what the claim is.",
+     "fix": "'Help may matter most EARLY, when an asana is still new. The same review says lots of guidance looks useful at the start. Studies on touch itself are still few.' (29 words) Keep the same credit."
+    },
+    {
+     "slot": "5",
+     "problem": "'Small study, clear gap.' sounds AI-made and a bit like hype. 'Lifted heavier and got stronger than men alone' is loose: both groups got stronger, and the trained group gained more. A tough reader will also think 'that is not yoga', and the slide never admits it.",
+     "fix": "'In one gym study, the same plan worked better with a COACH. Over 12 weeks, men with a trainer gained more strength than men training alone. It was small, and not yoga.' (32 words) Keep the same credit."
+    },
+    {
+     "slot": "6",
+     "problem": "The two numbers count different groups. The 11% is out of 2,620 people. The 71.9% is out of 2,530 people (the source says 'Most respondents (n=2530) ... 71.9%'). The slide reads as if both come from the same 2,620. '71.9%' is also too exact for 10-year-old English next to a rounded '11%'. 'Yoga students' is not quite right either: the source calls them 'practitioners', mostly people with 4+ years of practice.",
+     "fix": "'The RISK is real. In one online survey, 11% of 2,620 people who do yoga said an adjustment had hurt them. Yet 72% of those asked called adjustments \"very helpful\".' (30 words) Credit: 'David Keil, Yoganatomy online survey, 2017'."
+    },
+    {
+     "slot": "7",
+     "problem": "'Many blamed themselves' reads as many of all 2,567 people. The source means those who got hurt. 'Supervision' is not 10-year-old English, and 'lower under supervision' does not say lower than what.",
+     "fix": "'Practising ALONE is not risk-free either. In a yoga survey of 2,567 Australians, injuries were a bit lower with a teacher watching. Those hurt often blamed themselves for \"pushing it too far\".' (32 words) Credit: 'Penman et al., International Journal of Yoga, 2012 (retold)'. 'A bit lower' is honest for 3.4% against 4.6% overall."
+    },
+    {
+     "slot": "8",
+     "problem": "'The survey's author' comes straight after slide 7, which is Penman's survey, so the reader thinks Penman said it. The words are really David Keil's, from slide 6. 'Might backfire, even a skilled one' is clumsy. 'Same teacher, same time builds it' is a fragment with a vague 'it', and 'Safe hands grow from trust' sounds like a poster slogan.",
+     "fix": "'Hands work best with TRUST. David Keil, who ran the 11% survey, says even a skilled stranger's adjustment might go wrong. Trust grows with one teacher over time.' (28 words) Credit: 'David Keil, Yoganatomy, 2017 (retold)'."
+    },
+    {
+     "slot": "9",
+     "problem": "'Here' is unclear once the slide is shared or reposted: where is here? The verdict is strong and safe. Keil himself writes that 'speed and force need to adapt' to the joint, which backs it up as expert opinion, not as data.",
+     "fix": "'The danger is FORCE, not touch. In our Mysore room, the teacher checks first, the breath leads, and hands stay light. You can always say no.' (26 words) Credit: 'AYBKK MYSORE NOTES · 9/9'. This has no website, no 'come practice' and no link, so it passes the keyword test."
+    },
+    {
+     "slot": "photos",
+     "problem": "Keil's survey says the adjustment injuries reported most often were in forward bends (the sit bone area). The photo hints put forward folds on slide 2, slide 7 and slide 9, the light-hands slide. Someone who knows that finding will see a forward fold under 'danger is force' and wince.",
+     "fix": "For slide 9, use a fingertips-only twist or a hover frame instead of a forward fold. On slides 2 and 7, use a forward fold only if the hands are plainly resting and the student's face is soft. Otherwise use a twist or a seated asana."
+    }
+   ]
+  }
+ }
+}

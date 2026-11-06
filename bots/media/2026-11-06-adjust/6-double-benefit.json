@@ -1,0 +1,186 @@
+{
+ "key": "6-double-benefit",
+ "final": {
+  "format": "6) Double benefit carousel",
+  "title": "One Touch, Two Lessons",
+  "goal": "shala",
+  "stakes": "Stakes: if this does not work, the viewer goes on thinking an adjustment is a push. Then one of two things happens. They avoid hands, and they keep practising with spots they cannot see in a mirror or a video. Or they get an adjustment, it feels good, and by the next morning on their own mat it is gone. Either way the same habits repeat, alone, for years.",
+  "why_care": "Why care: a 35-year-old Bangkok office worker already gives the practice time every morning. One good adjustment, if they keep it, makes that time count for more. They learn where their body can go today and what to do alone on their mat tomorrow. They also learn that they can always say no, or ask for hands.",
+  "slides": [
+   {
+    "slot": "cover",
+    "word": "TWICE",
+    "text": "Not a push: a good adjustment teaches you twice.\nDo you lose the second lesson by morning?",
+    "credit": "9 notes · swipe",
+    "photo_hint": "A beginner or an elder getting one light hand from the teacher, for example in a gentle forward fold or a standing asana (Boonchu's 1 Oct rule for the first slide), unless Boonchu picks a drop back himself. Calm, relaxed face. Leave clear wall or floor space at the top or bottom for TWICE. The text must not cover the student's face, hands or feet.",
+    "source": "none (teacher's own teaching content)"
+   },
+   {
+    "slot": "1",
+    "word": "WHERE",
+    "text": "Lesson one: you cannot see where your body can go today. Hands can feel it. Some days that is further, some days not. Your breath decides, not the hands.",
+    "credit": "AYBKK MYSORE NOTES · 1/9",
+    "photo_hint": "A drop back with the teacher's light hands at the waist, or a forward fold (Paschimottanasana or Prasarita Padottanasana) with flat palms resting lightly on the low back. The student moves on an out breath. Pick a gentle frame where nothing looks like pressing down.",
+    "source": "none (teacher's own teaching content)"
+   },
+   {
+    "slot": "2",
+    "word": "ALONE",
+    "text": "Lesson two: an adjustment is not finished until you can use it alone. Good hands leave you one small job for tomorrow, like 'lift, then twist'. One job, not ten.",
+    "credit": "AYBKK MYSORE NOTES · 2/9",
+    "photo_hint": "A twist (Marichyasana C or D). One light hand of the teacher on the shoulder shows the turn, and the student turns on their own breath. Nothing should look like pulling or cranking.",
+    "source": "none (teacher's own teaching content)"
+   },
+   {
+    "slot": "3",
+    "word": "INSIDE",
+    "text": "Mirrors and videos show the outside of your asana, never the inside. Hands feel what they miss: a hip that lifts, a breath that stops.",
+    "credit": "AYBKK MYSORE NOTES · 3/9",
+    "photo_hint": "A backbend (Urdhva Dhanurasana or Kapotasana) where the student cannot see their own back. The teacher's hands are at the hips or thighs, reading the body, not pushing it.",
+    "source": "none (teacher's own teaching content)"
+   },
+   {
+    "slot": "4",
+    "word": "TODAY",
+    "text": "Where your body can go changes every day. Yesterday's deep backbend may not come today. Hands read today's body, not last week's.",
+    "credit": "AYBKK MYSORE NOTES · 4/9",
+    "photo_hint": "An experienced student in an advanced asana (a handstand, an arm balance or a deep backbend) getting light help. It should be clear that strong practitioners get hands too. If his wife is in a photo and she says OK, this is the slide for it.",
+    "source": "none (Plato edit 6 Nov: wife/gymnast story kept only in carousel 2)"
+   },
+   {
+    "slot": "5",
+    "word": "ASK",
+    "text": "Good hands ask first, and 'no' is a full answer. You can also ask for hands. Either way, the touch stays light and nothing is forced.",
+    "credit": "AYBKK MYSORE NOTES · 5/9",
+    "photo_hint": "The moment before contact: the teacher kneels or stands beside the student and checks or speaks, with a hand about to touch or one very light hand. Calm faces. This slide must look the safest of the ten.",
+    "source": "none (AYBKK safety rule for adjustments)"
+   },
+   {
+    "slot": "6",
+    "word": "BREATH",
+    "text": "Hold your breath, and the adjustment teaches you nothing. A held breath makes the body tight, and a tight body fights the hands. Breathe out slowly. If you cannot, say so.",
+    "credit": "AYBKK MYSORE NOTES · 6/9",
+    "photo_hint": "Any asana where the long out breath shows on a soft face and belly, for example a forward fold or a gentle backbend, with one light hand. Pick a frame where the student looks easy, not strained.",
+    "source": "none (teacher's own teaching content; a teaching point, not a study claim)"
+   },
+   {
+    "slot": "7",
+    "word": "NAME",
+    "text": "The lesson leaves with the hands, unless you give it a name. Before the hands let go, give the feeling two words, like 'heavy heels'. Tomorrow, those words help bring it back.",
+    "credit": "AYBKK MYSORE NOTES · 7/9",
+    "photo_hint": "A closer frame of one light hand on one body part (heel, hip or shoulder blade), the part the cue would name. A standing asana or a drop back works well. Keep the text off the hands and the face.",
+    "source": "none (teacher's own teaching content)"
+   },
+   {
+    "slot": "8",
+    "word": "AGAIN",
+    "text": "The real test is tomorrow, when you try it again with no hands. Same asana, your two words, your own breath. If it does not come, do not force it.",
+    "credit": "AYBKK MYSORE NOTES · 8/9",
+    "photo_hint": "The teacher's hand just leaving, or the teacher stepping back while the student holds the asana alone. If the set has a before and after from the same asana, use the after here.",
+    "source": "none (teacher's own teaching content)"
+   },
+   {
+    "slot": "9",
+    "word": "HABIT",
+    "text": "Without a habit, even the best adjustment fades. Same practice, same time, and a teacher who notices when you are gone. Plus a 12-week check of your progress.",
+    "credit": "AYBKK MYSORE NOTES · 9/9",
+    "photo_hint": "The full morning Mysore room: the teacher helps one student while the others do their own sequence at their own breath around them. Shows the daily rhythm, not one hero asana.",
+    "source": "none (AYBKK promise and the 12-week check, from the allowed facts. Checked in the build: bkk-api.js line 217 and public/bkk.html line 1123 say 'at week 0, 6 and 12'. No results claimed.)"
+   }
+  ],
+  "caption": "A good adjustment is not a push. It teaches you twice.\nLesson one: where your body can go. Lesson two: what to do alone tomorrow. Photos: our Mysore class at AYBKK.\nYou can always say no. Your breath leads.\nComment aybkk and I'll send you the link.\n#aybkk #ashtanga #ashtangabangkok #boonchutanti #mysorestyle",
+  "notes": "For Boonchu to confirm (every line below states your own practice or view):\n1) Slide 4 (SKILLED) is written in your voice: 'My wife has practised for years, and she asked me for an adjustment.' Please check she is OK with being named in a carousel, and that 'practised for years' is right. If she says no, delete the third sentence. The slide then has 2 sentences and 16 words, which is still inside the rules.\n2) Slide 4: 'Being skilled does not mean you never need good hands. Gymnasts and ballet dancers still keep coaches.' This is your own view from 4 Oct, not a study.\n3) Slide 5 (ASK): 'Good hands ask first, and no is a full answer. You can also ask for hands.' Please confirm this is how you work in class (you ask or check first, and students can ask you for hands). It has to be true to pass the stakes test.\n4) Slide 6 (BREATH): 'Hold your breath, and the adjustment teaches you nothing. A held breath makes the body tight, and a tight body fights the hands. Breathe out slowly. If you cannot, say so.' This is a teaching point, not a study. Confirm you teach it this way.\n5) Slides 1, 2, 3, 7 and 8 are your teaching: 'Your breath decides, not the hands' (1); 'an adjustment is not finished until you can use it alone' (2); 'Hands feel what they miss: a hip that lifts, a breath that stops' (3); give the feeling two words before the hands let go (7); try it again tomorrow with no hands, do not force it (8). Confirm these match how you teach.\n6) The cues 'lift, then twist' (slide 2) and 'heavy heels' (slide 7) are only examples. Swap in the cue words you really use.\n7) Slide 9: the 12-week check runs once. The student enters three numbers from their own watch or phone (resting heart rate, sleep, feel) on their student page at week 0, 6 and 12, and after the third check it is done. It does not repeat. The slide says only 'a 12-week check of your progress' and promises no results.\n8) The MAP slide is gone. The reader check asked for one more how step, so BREATH took its place. Neither method name ('drawing the cortical map' or 'function over shape') is used now. If you want 'drawing the cortical map' back, give it its own post. It means the cue you call out the moment the student does the action, not the touch.\n9) Photos: the first slide shows a beginner or an elder (your 1 Oct rule), unless you pick the drop back yourself. Pick frames where the hands look light and nothing looks like pushing or pulling. Get each student's OK to post. Use at most 2 photos of the same student. Keep the text off faces, hands and feet.\n10) Keyword test (until 22 Nov): the only ask is 'Comment aybkk' in the caption. The slides have no website, no 'link in bio' and no 'come practice'. There is no price anywhere (prices change on 12 Nov). Instagram only (Lane B), not Xiaohongshu or WeChat. Sharath's name is not used. There are no outside facts, studies, numbers or quotes, so nothing needs a source check.\nEditor (fixes not taken): 'Long-time students still ask us for hands' was left out, because it is a new claim about AYBKK students. 'Every 12 weeks, we check what stayed' was left out, because the check runs once and measures numbers, not lessons. 'The more skilled you are, the more a light touch can teach you' was left out, because it says more than your 4 Oct view."
+ },
+ "checks": {
+  "facts": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "9",
+     "problem": "The fact is wrong. 'Every 12 weeks, we check your progress' says the check repeats and that the teacher does it. In the real build (bkk-api.js line 217, public/bkk.html lines 485, 1123 and 1696-1716) the 12-week check runs once. The student enters three numbers from their own watch or phone (resting heart rate, sleep, feel) at week 0, 6 and 12, and after the third check it ends ('All 3 checks done'). The allowed fact only says 'There is a 12-week check of progress'.",
+     "fix": "Replace sentence 3 with 'Plus a 12-week check of your progress.' (the slide becomes 28 words). Rewrite note 5 to say: the check runs once, at week 0, 6 and 12, using numbers the student enters on their student page. It does not repeat and no results are claimed."
+    },
+    {
+     "slot": "4",
+     "problem": "The slide changes what his method means. Boonchu's own words (plato.md, 29 Oct) describe 'drawing the cortical map' as the cue the teacher calls out the moment the student does the action. The allowed fact says the same: 'the cue comes the moment the student does the action'. 'Hands can ... We call it drawing the cortical map' turns the method into touch. That stretches the allowed fact.",
+     "fix": "Change 'Hands can, the moment you move' to 'A teacher can, the moment you move'. That makes 31 words, it still sits well over a photo of the teacher touching one spot, and it keeps the method a teaching picture."
+    },
+    {
+     "slot": "why_care",
+     "problem": "The stakes test fails here because the viewer named is not one this post can reach. The goal is 'shala', which is Lane B: the ask is 'aybkk' and it leads to booking in Bangkok. The keyword test brief (bots/posts/2026-10-19-carnegie-brief-keyword-test.md, rule 3) says Lane B goes on Instagram only, never on WeChat or Xiaohongshu. Instagram is blocked in mainland China, so 'a home practitioner in China' will not see this carousel and cannot act on it.",
+     "fix": "Delete 'or a home practitioner in China', so it reads 'Why care: a 35-year-old Bangkok office worker already gives the practice time every morning. ...'. Add to note 8: 'Instagram only (Lane B), not Xiaohongshu or WeChat.'"
+    },
+    {
+     "slot": "2",
+     "problem": "The example cue does not match the photo: 'heels down' is laid over a seated twist (Marichyasana C or D), where heels are not the job. It also repeats the heel cue on slide 7 ('heavy heels'). The photo hint (one hand on the shoulder and one on the knee) is also the 'cranked twist' look that the 4 Oct adjustment Reel check marked as a consent and forcing risk ('film one light hand only').",
+     "fix": "Change the cue to one that fits a twist, for example 'like 'sit tall'' (still 30 words; Boonchu swaps in his real cue, see note 4). Change the photo hint to: one light hand on the shoulder showing the turn, with the student turning on their own breath, and nothing that looks like pulling."
+    },
+    {
+     "slot": "notes",
+     "problem": "The fallback line in note 1, 'Even long-time students ask for one.', is a new claim about AYBKK students that is not in the allowed facts. Note 7 also leaves out Boonchu's 1 Oct carousel rule: at most 2 photos of the same student in one post.",
+     "fix": "Note 1: 'If she says no, delete the third sentence (slide 5 stays at 2 sentences, 20 words).' Note 7: add 'Use at most 2 photos of the same student.'"
+    },
+    {
+     "slot": "cover",
+     "problem": "The cover has three sentences, but the rule is the big word plus 1-2 short lines. Also, Boonchu's 1 Oct rule (plato.md) says slide 1 should show a beginner or an elder, and the photo hint asks for a drop back.",
+     "fix": "Text: 'Not a push: a good adjustment teaches you twice. Do you keep both?' (2 lines, clear, contrarian, still a question). Photo hint: a beginner or an elder getting one light hand (for example in a forward fold), unless Boonchu picks the drop back himself."
+    }
+   ]
+  },
+  "reader": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "cover",
+     "problem": "The cover asks 'Do you keep both lessons?' before the reader knows what the two lessons are, so the question cannot make them doubt themselves. It is also 3 sentences, not 1-2 short lines. The flip ('not a push') and the promise ('teaches you twice') are good. The ending is what fails.",
+     "fix": "Big word: TWICE. Line 1: 'An adjustment is not a push. It teaches you twice.' Line 2: 'Most of us lose the second lesson by morning.' Credit: '9 notes · swipe'. This puts the topic first, then the flip, then the self-doubt ('do I lose it?'), and it matches the stakes in the brief."
+    },
+    {
+     "slot": "1",
+     "problem": "'You cannot see where your body can go. Hands can.' means hands can see, which is a mixed picture. 'Sometimes it is further, sometimes less' is broken English. 'A light touch says here, and your breath takes you there' sounds as if the hands always take you deeper, which is close to the 'push' idea this carousel is trying to kill.",
+     "fix": "WHERE: 'Lesson one: you cannot see where your body can go today. Hands can feel it. Some days that is further, some days not. Your breath decides, not the hands.' (29 words) Credit: AYBKK MYSORE NOTES · 1/9."
+    },
+    {
+     "slot": "2",
+     "problem": "'That is lesson two' is hidden in sentence 2, so it does not match 'Lesson one:' on slide 1. On a fast swipe the reader misses the second benefit, and the second benefit is the whole format. 'If you cannot do it alone' is vague (do what?) and can read as 'you must do the full asana alone'. The cue 'heels down' is almost the same as 'heavy heels' on slide 7, and it does not fit the twist photo.",
+     "fix": "ALONE: 'Lesson two: an adjustment is not finished until you can use it alone. Good hands leave you one small job for tomorrow, like \"lift, then twist\". One job, not ten.' (30 words) Boonchu swaps in his real twist cue. Credit: 2/9."
+    },
+    {
+     "slot": "3-4",
+     "problem": "Repeated slides. Slide 3 (a mirror cannot, hands can) and slide 4 (a video cannot, hands can) make the same point, and slide 1 already uses the 'you cannot, hands can' pattern. That is three slides of the same pattern. Meanwhile the format ('then breaks down how the audience can achieve that result') gets only 3 real how slides (6, 7, 8).",
+     "fix": "Put the mirror and the video into slot 3. INSIDE: 'Mirrors and videos show the outside of your asana, never the inside. Hands feel what they miss: a hip that lifts, a breath that stops.' (23 words) Credit: 3/9. This frees one slot for a how step (see slot 4)."
+    },
+    {
+     "slot": "4",
+     "problem": "MAP fails the 10-year-old test: 'cortical' is too hard, and 'the body map in your head' is vague for someone who tried yoga twice. 'This part, this way, this job' is an AI-sounding list of three. 'We call it...' reads like a plug for a brand name, not a reason. It is also one more 'why hands' slide when the format needs 'how'.",
+     "fix": "Drop MAP and add a how step. If Boonchu wants his method name, it can go in the caption. BREATH: 'Hold your breath, and the adjustment teaches you nothing. A held breath makes the body tight, and a tight body fights the hands. Breathe out slowly. If you cannot, say so.' (30 words) Photo: a backbend or a twist where the long out breath shows on the face and belly. Place it at 6/9 (see order)."
+    },
+    {
+     "slot": "5",
+     "problem": "SKILLED: 'now and then' makes sentence 1 weak, so it does not pass 'says who?'. 'Practitioner' and 'experienced' are not 10-year-old words. 'The teacher's own wife' is in the third person, but the other slides speak as 'we'. The last line ('asked for an adjustment') stops flat with no point. It also has the privacy question from note 1.",
+     "fix": "SKILLED: 'The more skilled you are, the more a light touch can teach you. Top gymnasts and dancers still keep coaches. Long-time students still ask us for hands.' (27 words) If his wife says yes, the last line can be 'My wife has practised for years, and she still asks.' Move it to 4/9 and give it the handstand or advanced-asana photo."
+    },
+    {
+     "slot": "6",
+     "problem": "ASK: everyone nods at 'Good hands ask before they touch', so it does not make the reader want the reason. 'Your breath leads, the touch stays light, and nothing is forced' is a list of rules that reads like a policy. The slide also leaves out that the student can ask for hands, which is what makes the SKILLED slide land.",
+     "fix": "ASK: 'Good hands ask first, and \"no\" is a full answer. You can also ask for hands. Either way, the touch stays light and nothing is forced.' (26 words) Move it to 5/9. Keep note 3 (Boonchu confirms he asks or checks first)."
+    },
+    {
+     "slot": "8",
+     "problem": "AGAIN repeats slide 2's claim ('yours only when you find it alone' vs 'not finished until you can do it alone'). It also repeats slide 1's 'some days... some days not'. 'Keep looking' is vague. The slide should be the concrete next-morning step, tied to the two words from NAME.",
+     "fix": "AGAIN: 'The real test is tomorrow, when you try it again with no hands. Same asana, your two words, your own breath. If it does not come, do not force it.' (30 words) Credit: 8/9."
+    },
+    {
+     "slot": "9",
+     "problem": "Small fix: 'Every 12 weeks, we check your progress' feels like a feature added at the end. It does not link back to the carousel's idea of lessons that stay.",
+     "fix": "HABIT: 'Without a habit, even the best adjustment fades. Same practice, same time, and a teacher who notices when you are gone. Every 12 weeks, we check what stayed.' (28 words) No result is promised. Boonchu confirms the wording fits how the 12-week check really runs."
+    },
+    {
+     "slot": "order",
+     "problem": "In the current order the why slides and the how slides are mixed together. The format needs the promise (cover), then the two benefits, then a clear step-by-step of how to get them.",
+     "fix": "New order and credits: cover TWICE, 1/9 WHERE (lesson one), 2/9 ALONE (lesson two), 3/9 INSIDE (why hands), 4/9 SKILLED (even experts), 5/9 ASK (before), 6/9 BREATH (during), 7/9 NAME (before the hands let go; keep the text as is, it is the strongest slide), 8/9 AGAIN (tomorrow), 9/9 HABIT (every day). Slides 5 to 9 now read as a how-to: before, during, at the end, tomorrow, every day. Remove note 2 ('cortical') from the notes, or move it to the caption question."
+    }
+   ]
+  }
+ }
+}

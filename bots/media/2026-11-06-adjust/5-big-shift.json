@@ -1,0 +1,181 @@
+{
+ "key": "5-big-shift",
+ "final": {
+  "format": "5) The big shift carousel: an audit of 9 honest questions, set against the end of the year and the next 12 weeks",
+  "title": "Check Before the Year Ends",
+  "goal": "shala",
+  "stakes": "If the viewer does nothing, they take the same unchecked practice into next year. Nobody sees it, nobody corrects it, and nobody notices if it stops. The next 12 weeks pass anyway, the same habits get repeated every day, and a quiet stop can turn into another restart in January. No injury fear and no promised results: the risk is wasted time and another stop.",
+  "why_care": "The year ends in about 8 weeks. People who practise alone at home, or who keep quitting and starting again, are deciding right now whether January will be one more restart. These 9 questions show them, without blame, what a home practice is missing: someone who sees them, light hands, a set time, and someone who notices when they are gone. That way they know what to change before they choose.",
+  "slides": [
+   {
+    "slot": "cover",
+    "word": "CHECK",
+    "text": "Practise alone every day, and you can repeat the same mistake every day. Check your practice with 9 questions before the year ends.",
+    "credit": "9 questions · swipe",
+    "photo_hint": "The clearest adjustment photo in the set, with empty wall or window space for the big word: a drop back or backbend with the teacher's light hands at the waist, the student calm, the whole body in frame.",
+    "source": "none (cover line; a general teaching claim, no fact or number)"
+   },
+   {
+    "slot": "1",
+    "word": "SEEN",
+    "text": "A practice nobody has seen can drift off track for years. It drifts slowly, so it feels fine every day. Who has watched your whole practice this year?",
+    "credit": "AYBKK MYSORE NOTES · 1/9",
+    "photo_hint": "Wide shot of the Mysore room: the teacher beside a student in a forward fold, his hand light on her back, other students practising their own sequences behind.",
+    "source": "none (teaching content)"
+   },
+   {
+    "slot": "2",
+    "word": "BLIND",
+    "text": "Getting good does not remove your blind spot. In a backbend, nobody can see their own feet. Skill does not grow eyes in your back. Does anyone check yours?",
+    "credit": "AYBKK MYSORE NOTES · 2/9",
+    "photo_hint": "A full backbend (urdhva dhanurasana) where the student cannot see her own feet; the teacher's hands guide at the hips or the back of the ribs.",
+    "source": "none (Plato edit 6 Nov: gymnast line removed, kept only in carousel 2)"
+   },
+   {
+    "slot": "3",
+    "word": "TOUCH",
+    "text": "A light touch can teach what words cannot. Hands show which part to lift. The teacher checks first, and you can say no. When did a teacher's hands last help you?",
+    "credit": "AYBKK MYSORE NOTES · 3/9",
+    "photo_hint": "A drop back with the teacher's hands light at the student's waist, her face relaxed, clearly not forced. Pick the softest-looking hands in the set.",
+    "source": "none (teaching content; safety lines from the brief: light hands, the teacher asks or checks first, the student can say no)"
+   },
+   {
+    "slot": "4",
+    "word": "BREATH",
+    "text": "Your breath knows you are pushing before you do. When it stops, you are forcing. Good hands wait for it, never force. In your hardest asana, is it long and even?",
+    "credit": "AYBKK MYSORE NOTES · 4/9",
+    "photo_hint": "A seated twist (Marichyasana) or forward fold with one light hand from the teacher, the student's face calm, so the slide reads as breath first.",
+    "source": "none (teaching content; in Mysore class each student practises at their own breath; 'never force' and 'the breath leads' are from the brief's safety rule)"
+   },
+   {
+    "slot": "5",
+    "word": "MOMENT",
+    "text": "At AYBKK, help comes in the moment you move: which part, which way. We call it drawing the cortical map, your brain's body map. Do you get that help at home?",
+    "credit": "AYBKK MYSORE NOTES · 5/9",
+    "photo_hint": "An action shot: the teacher's hand showing a direction while the student moves, such as guiding the hips up into a handstand or turning the ribs in a twist.",
+    "source": "none (Boonchu's method name from the allowed facts, 'drawing the cortical map'; plain meaning from the allowed facts: the brain has a map of the body, the cue comes the moment the student does the action. A teaching picture, not a study claim, and no 'helps most' claim. The only method name in the carousel)"
+   },
+   {
+    "slot": "6",
+    "word": "READY",
+    "text": "You may be the last to know when you are ready. In Mysore class, the teacher watches you and gives the next asana. At home, who decides: you, or a video?",
+    "credit": "AYBKK MYSORE NOTES · 6/9",
+    "photo_hint": "A handstand or a new, harder asana with the teacher standing close to spot, ready rather than pushing.",
+    "source": "none (allowed fact: in Mysore class the teacher gives the next asana when the student is ready)"
+   },
+   {
+    "slot": "7",
+    "word": "CHOICE",
+    "text": "A daily choice is a daily chance to skip. 'When I have time' means deciding again every day. A set time decides for you. Is yours set for January?",
+    "credit": "AYBKK MYSORE NOTES · 7/9",
+    "photo_hint": "Early morning light in the Mysore room, several students on their mats, the teacher adjusting one of them. It should feel like the same room at the same hour.",
+    "source": "none (AYBKK's promise from the allowed facts: same practice, same time)"
+   },
+   {
+    "slot": "8",
+    "word": "MISSED",
+    "text": "One missed day did not stop a new habit from forming, a 12-week study found. So a missed day is not quitting. But who notices when you are gone for a month?",
+    "credit": "Lally et al. · Eur J Soc Psychol, 2010 (retold)",
+    "photo_hint": "A quiet forward fold with the teacher's hand on the student's back, as if welcoming someone back. An empty mat nearby helps.",
+    "source": "https://doi.org/10.1002/ejsp.674 (abstract re-checked on 6 Nov 2026 at https://api.openalex.org/works/https://doi.org/10.1002/ejsp.674). Exact words: '96 volunteers chose an eating, drinking or activity behaviour to carry out daily in the same context (for example 'after breakfast') for 12 weeks.' and 'Missing one opportunity to perform the behaviour did not materially affect the habit formation process.' Lally P, van Jaarsveld CHM, Potts HWW, Wardle J. How are habits formed: Modelling habit formation in the real world. European Journal of Social Psychology 40(6): 998-1009 (issue 2010, online 2009). Sentences 2 and 3 are AYBKK's own words, not the study's."
+   },
+   {
+    "slot": "9",
+    "word": "PROOF",
+    "text": "A good feeling is not proof of progress. Film one asana today, and again in 12 weeks. Will you compare the two? At AYBKK, there is a 12-week check.",
+    "credit": "AYBKK MYSORE NOTES · 9/9",
+    "photo_hint": "An end moment: a student coming up from a drop back or standing tall, with the teacher close and light hands. It should feel like progress, not force.",
+    "source": "none (allowed fact, word for word in meaning: 'There is a 12-week check of progress'. No results claimed, and no claim about who does the check)"
+   }
+  ],
+  "caption": "Every day on the mat is not proof it is working.\nBefore the year ends, swipe and check your practice with 9 questions.\nIn Mysore class, you practise your own sequence. A teacher watches, helps with light hands, and notices when you are gone. You can always say no to hands-on help.\nComment aybkk and I'll send you the link.\n#aybkk #ashtanga #ashtangabangkok #boonchutanti #mysorestyle",
+  "notes": "For Boonchu to confirm (lines that state your own class, practice or view):\n1) Slide 3: 'The teacher checks first, and you can say no.' The draft said 'asks first'. I changed it to 'checks first' because 'checks' is true whether you ask out loud or check by eye. If you always ask out loud, you can change it back to 'The teacher asks first, and you can say no.' (still 31 words).\n2) Caption: 'You can always say no to hands-on help.' This is a promise about your class. Please confirm it is true for every student. (It used to say 'helps with light hands only if you say yes', which did not match slide 3.)\n3) Slide 9: 'At AYBKK, there is a 12-week check.' This is the allowed fact only. It says nothing about who does the check. If a teacher does the check with every student, you can change the last line to 'At AYBKK, a teacher checks it with you.' The draft's line 'Who will check it with you?' was cut because it promised a teacher check that is not confirmed.\n4) Slide 5: 'At AYBKK, help comes in the moment you move: which part, which way. We call it drawing the cortical map, your brain's body map.' This describes your method, with a plain gloss so a beginner can follow. Please confirm the method name and the gloss. 'Function over shape' is left out on purpose (one name per carousel). The checker's line 'A hand helps most in the moment you move' was rejected: 'helps most' is a science claim with no source, and the research may say the opposite.\n5) Slide 4: 'Good hands wait for it, never force.' This describes how you adjust. It is also the only place the 'never force' safety line shows on a slide. Please confirm.\n6) Slide 2: 'Top gymnasts and ballet dancers still train with coaches' comes from your view of 4 Oct. The story of your wife asking for an adjustment is not on any slide. Add it to the caption only if you want it there.\n7) Slide 7: 'A set time decides for you. Is yours set for January?' carries the AYBKK promise (same practice, same time). The big word changed from SAME to CHOICE, because CHOICE is the idea of the slide.\n8) Slide 6: 'In Mysore class, the teacher watches you and gives the next asana.' This is an allowed fact and needs no change. Just confirm it reads right to you.\n9) Slide 8 is the only slide with an outside source. Lally et al. (DOI 10.1002/ejsp.674): I read the abstract again today on OpenAlex, and both the 12 weeks and the missed day line match. The issue is 2010 (online 2009). The slide is retold, with no quote marks. 'So a missed day is not quitting' and the question after it are AYBKK's words, not the study's.\n10) Photos: they show students being touched, which is the sensitive part. Please check that every student shown is happy to be posted. Use the softest, least forced-looking photos for TOUCH (3) and BREATH (4).\n11) Two timelines on purpose: the cover says 'before the year ends' (about 8 weeks from 6 Nov). Slide 7 points to January, and slide 9 says 12 weeks (to about the end of January 2027).\n12) Keyword test (until 22 Nov): this is a Lane B post (the ask is 'aybkk', Instagram only). Check where it fits in the A B A A B A B mix on the batch sheet. No slide has 'come practice', a website or 'link in bio'. There is no price anywhere, so it can go out before the 12 Nov price change.\n13) Edits made: cover (CHECK is now in the text), slides 1, 2, 3, 4, 5, 7, 9 and the caption. Slides 6 and 8 are unchanged. 'Who ...?' endings dropped from six to three (1, 6, 8). Word counts (checked with a script): cover 23, then 28, 30, 31, 31, 31, 31, 29, 32, 29. No long dashes. Sentence 1 of every slide contains its big word. Big words: CHECK, SEEN, BLIND, TOUCH, BREATH, MOMENT, READY, CHOICE, MISSED, PROOF."
+ },
+ "checks": {
+  "facts": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "9",
+     "problem": "'In our shala, a teacher does' (checks your 12-week film with you) goes beyond the allowed fact, which only says 'There is a 12-week check of progress'. Who does the check, and whether every student gets one, is not in the allowed facts. Note 1 already raises this, but the slide should not go out with the unconfirmed version.",
+     "fix": "Unless Boonchu confirms a teacher does the check with every student, change the last sentence to: 'In our shala, there is a 12-week check.' (31 words, sentence 1 unchanged)."
+    },
+    {
+     "slot": "5",
+     "problem": "'A cue helps most in the moment you move' reads as a superlative science claim, and it has no source. The research also argues against it: Schmidt & Wulf 1997 (Human Factors 39(4):509-525, doi 10.1518/001872097778667979) found that continuous feedback during practice degraded learning when tested later. The brief says the cortical-map idea must stay a teaching picture, never a study claim. The allowed fact only says the cue comes the moment the student does the action.",
+     "fix": "Sentence 1: 'At AYBKK, the cue comes in the moment you move.' Sentence 3: 'We call it drawing the cortical map.' Full text (29 words): 'At AYBKK, the cue comes in the moment you move. Which part, which way, and why. We call it drawing the cortical map. Who cues you while you move?'"
+    },
+    {
+     "slot": "caption",
+     "problem": "'helps with light hands only if you say yes' promises that hands-on help is opt-in. Slide 3 describes it as opt-out ('asks first, and you can say no'). The two do not match, and if Boonchu checks by eye or touch rather than asking out loud, the caption makes a consent promise that is not true.",
+     "fix": "Change to: 'A teacher watches, helps with light hands, and notices when you are gone. You can always say no to hands-on help.'"
+    },
+    {
+     "slot": "3",
+     "problem": "'The teacher asks first' is a statement of fact about Boonchu's class that is not in the allowed facts (note 2 is still open). The safety rule allows 'asks or checks first'. 'Checks' is true either way; 'asks' is only true if he asks out loud.",
+     "fix": "Unless Boonchu confirms he asks out loud, change it to: 'The teacher checks first, and you can say no.' (still 31 words)."
+    },
+    {
+     "slot": "4",
+     "problem": "The safety rule says 'Always ... never force'. The carousel covers 'say no', 'breath leads', 'light hands' and 'asks/checks first', but no slide or caption ever says 'never force'. It only appears in the photo hints, which viewers do not see.",
+     "fix": "Change sentence 3 from 'Good hands wait for it too.' to 'Good hands wait for it, never force.' (32 words, still within the limit)."
+    },
+    {
+     "slot": "cover",
+     "problem": "The big word CHECK does not appear anywhere in the cover text, and the cover never says what is being checked, so it is less clear in one second. Note 9 also says 'sentence 1 always contains the big word', which is not true of the cover.",
+     "fix": "Change line 2 to: 'Before the year ends, check your practice with 9 honest questions.' Keep line 1 and the credit '9 questions · swipe'."
+    }
+   ]
+  },
+  "reader": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "cover",
+     "problem": "The big word CHECK never appears in the cover text, so the word and the line do not lock together in one second. 'Ask yourself 9 honest questions' is also soft and sounds like AI writing. The flip itself works: daily practice alone can mean repeating the same mistake.",
+     "fix": "Word: CHECK. Text: 'Practise alone every day, and you may repeat the same mistake every day. Check yours with 9 questions before the year ends.' (22 words, 2 lines). Credit: '9 questions · swipe'."
+    },
+    {
+     "slot": "1",
+     "problem": "SEEN and BLIND (slide 2) make the same point back to back: you cannot see your own practice. A reader swiping from 1 to 2 feels a repeat. The line 'it feels the same every day' also echoes the cover ('same mistake') and slide 7 (SAME). The fix makes this slide about slow drift over the year (the timeline), so slide 2 can be about skill.",
+     "fix": "Word: SEEN. Text: 'A practice nobody has seen can drift off track for years. It drifts slowly, so it feels fine every day. Who has watched your whole practice this year?' (28 words). Credit: 'AYBKK MYSORE NOTES · 1/9'."
+    },
+    {
+     "slot": "2",
+     "problem": "'Everyone has a blind spot' is a truism. Nobody doubts it, so it fails the 'says who?' test. It also overlaps slide 1 and ends on another 'Who ...?' question. Six of the nine inner slides end with 'Who ...?', which reads as a template.",
+     "fix": "Word: BLIND. Text: 'Getting good does not remove your blind spot. In a backbend, nobody can see their own feet. Top gymnasts and ballet dancers still train with coaches. Does anyone check yours?' (30 words). Credit: 'AYBKK MYSORE NOTES · 2/9'."
+    },
+    {
+     "slot": "3",
+     "problem": "The last question, 'When did good hands last help your backbend?', assumes the reader does backbends. A 35-year-old who tried yoga twice does not, so they fall out of the audit here. 'Good hands' is used again on slide 4.",
+     "fix": "Word: TOUCH. Text: 'A light touch can teach what words cannot. Hands show which part to lift. The teacher asks first, and you can say no. When did a teacher's hands last help you?' (31 words). Credit: 'AYBKK MYSORE NOTES · 3/9'. (Keep the note 2 check on 'asks first' vs 'checks first'.)"
+    },
+    {
+     "slot": "4",
+     "problem": "'Your breath shows what a mirror cannot' copies the shape of slide 3 ('can teach what words cannot'). The same 'X does what Y cannot' line on two slides in a row sounds like AI writing.",
+     "fix": "Word: BREATH. Text: 'Your breath knows you are pushing before you do. When it stops, you are forcing, not practising. Good hands wait for it. In your hardest asana, is it long and even?' (31 words). Credit: 'AYBKK MYSORE NOTES · 4/9'."
+    },
+    {
+     "slot": "5",
+     "problem": "This slide fails 10-year-old English. 'Cortical map' means nothing to a 10-year-old or to a beginner, and 'cue' is teacher jargon. 'Which part, which way, and why.' is a loose fragment. The slide also ends on another 'Who ...?' question. The method name can stay, but it needs a plain-words gloss.",
+     "fix": "Word: MOMENT. Text: 'A hand helps most in the moment you move. It shows which part, and which way. We call it drawing the cortical map, your brain's body map. Does anyone guide you mid-move?' (32 words). Credit: 'AYBKK MYSORE NOTES · 5/9'. If Boonchu prefers no technical word at all: 'We call it drawing the map in your brain.' (Keep the note 3 confirm.)"
+    },
+    {
+     "slot": "7",
+     "problem": "SAME is a vague adjective, not the idea. Over a photo it reads as nothing. The idea of this slide is the daily choice that a set time takes away. The slide also never uses the year-end timeline, which a big shift carousel should carry through the middle.",
+     "fix": "Word: CHOICE. Text: 'A daily choice is a daily chance to skip. 'When I have time' means deciding again every day. A set time decides for you. Is yours set for January?' (29 words). Credit: 'AYBKK MYSORE NOTES · 7/9'. It still carries the AYBKK promise (same practice, same time) and ties the audit to the coming year."
+    },
+    {
+     "slot": "9",
+     "problem": "Small point: 'shala' is a word the tried-yoga-twice reader does not know, and it lands on the most important line of the close. The rest is strong: the contrarian first line, the 12-week reset, and the CHECK echo from the cover.",
+     "fix": "Word: PROOF. Text: 'A good feeling is not proof of progress. Film one asana today, and again in 12 weeks. Who will check it with you? At AYBKK, a teacher does.' (29 words). Credit: 'AYBKK MYSORE NOTES · 9/9'. (Keep note 1: if the 12-week check is not done with a teacher, use 'At AYBKK, there is a 12-week check.')"
+    },
+    {
+     "slot": "notes",
+     "problem": "If the rewrites above are used, note 9's big-word list is out of date (SAME becomes CHOICE). After the fixes the 'Who ...?' endings drop from six slides to four (1, 6, 8, 9). Slides 6 and 8 need no change: 6 flips a belief well, and 8 retells the Lally abstract correctly ('did not materially affect' is told as 'did not stop'), with a proper retold credit.",
+     "fix": "Update note 9 to: 'Big words: CHECK, SEEN, BLIND, TOUCH, BREATH, MOMENT, READY, CHOICE, MISSED, PROOF.' Re-count every slide at 16 to 32 words after the edits. All the rewrites above fall between 22 and 32."
+    }
+   ]
+  }
+ }
+}
