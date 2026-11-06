@@ -3,6 +3,7 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 const fs = require('fs'), path = require('path');
 const REPO = process.env.REPO || '/home/user/aybkk-workshop';
 const QRLIB = require(path.join(REPO, 'node_modules/qrcode'));
+const THEME = process.env.THEME || '';
 const b64 = (f, t) => `data:${t};base64,` + fs.readFileSync(f).toString('base64');
 const copy = JSON.parse(fs.readFileSync(path.join(__dirname, '../2026-10-19-prices-v3/final-v3.json'), 'utf8'));
 (async () => {
@@ -19,14 +20,14 @@ const copy = JSON.parse(fs.readFileSync(path.join(__dirname, '../2026-10-19-pric
   for (const lang of (process.env.LANGS || 'en,th').split(',')) {
     const p = await b.newPage({ viewport: { width: 1123, height: 1587 }, deviceScaleFactor: 2 });
     const errs = []; p.on('pageerror', e => errs.push(e.message));
-    await p.goto('file://' + tmp + '?lang=' + lang); await p.evaluate(() => document.fonts.ready);
+    await p.goto('file://' + tmp + '?lang=' + lang + (THEME ? '&theme=' + THEME : '')); await p.evaluate(() => document.fonts.ready);
     const chk = await p.evaluate(() => {
       const pg = document.getElementById('page');
       const over = [...pg.querySelectorAll('*')].filter(e => e.scrollWidth > e.clientWidth + 1 && getComputedStyle(e).overflow !== 'hidden').map(e => e.className || e.tagName).slice(0, 5);
       const foot = pg.querySelector('.foot').getBoundingClientRect(), notes = pg.querySelector('.notes').getBoundingClientRect();
       return { over, gapAboveFooter: Math.round(foot.top - notes.bottom), pageOverflow: pg.scrollHeight - pg.clientHeight };
     });
-    const base = path.join(__dirname, `AYBKK-prices-from-1Nov-${lang.toUpperCase()}-A3`);
+    const base = path.join(__dirname, `AYBKK-prices-from-1Nov-${lang.toUpperCase()}${THEME ? '-' + THEME : ''}-A3`);
     await p.screenshot({ path: base + '.png' });
     await p.pdf({ path: base + '.pdf', preferCSSPageSize: true, printBackground: true, pageRanges: '1' });
     // A4 has the same shape as A3: zoom the same layout to 210/297 on an A4 page.
