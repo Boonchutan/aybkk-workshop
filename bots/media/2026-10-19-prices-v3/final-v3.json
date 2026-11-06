@@ -41,9 +41,10 @@
     "price": "1,500"
    },
    {
-    "name": "10 classes",
-    "note": "Use within 3 months. 3+ classes left? You can pass them on.",
-    "price": "14,000"
+    "name": "8 classes",
+    "note": "Use within 1 month. For ฿2,000 more, go unlimited.",
+    "price": "7,600",
+    "per": "950 / class"
    }
   ],
   "vat": "+VAT = plus 7% VAT. Paying online adds a transaction fee.",
@@ -111,9 +112,10 @@
     "price": "1,500"
    },
    {
-    "name": "แพ็ก 10 ครั้ง",
-    "note": "ใช้ภายใน 3 เดือน เหลือ 3 ครั้งขึ้นไป โอนให้ผู้อื่นได้",
-    "price": "14,000"
+    "name": "แพ็ก 8 ครั้ง",
+    "note": "ใช้ภายใน 1 เดือน เพิ่มอีก ฿2,000 ฝึกได้ไม่จำกัด",
+    "price": "7,600",
+    "per": "ตกครั้งละ 950"
    }
   ],
   "vat": "+VAT = ยังไม่รวม VAT 7% หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม",
