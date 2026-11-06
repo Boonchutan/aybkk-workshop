@@ -1,0 +1,918 @@
+{
+ "assign": {
+  "carousels": [
+   {
+    "key": "1-problem-fix",
+    "picks": [
+     {
+      "slot": "cover",
+      "label": "30Oct-119",
+      "why": "q9 side view of a full urdhva dhanurasana with Boonchu at the hips, calm body. Reads as 'same backbend' in one second."
+     },
+     {
+      "slot": "1",
+      "label": "3Nov-073",
+      "why": "Side view of a drop back. He stands at her side holding her hips with his eyes on her back. Her face is upside down and not clear."
+     },
+     {
+      "slot": "2",
+      "label": "4Nov-149",
+      "why": "Headstand seen from the side. His light hands bring her legs toward straight, which matches 'from the side they are bent'."
+     },
+     {
+      "slot": "3",
+      "label": "27Oct-183",
+      "why": "Start of a drop back, hands in prayer overhead with the teacher holding them. The first small step, not the full shape."
+     },
+     {
+      "slot": "4",
+      "label": "28Oct-196",
+      "why": "One open hand resting on her lower back in a kneeling fold. Her face is hidden. The softest one-hand touch left."
+     },
+     {
+      "slot": "5",
+      "label": "31Oct-126",
+      "why": "Side view of a standing drop back with his hands at her waist. Calm, clean frame."
+     },
+     {
+      "slot": "6",
+      "label": "6Nov-141",
+      "why": "Supta vajrasana with Boonchu sitting beside her. Her shoulders are low and her body is calm. Not a handstand."
+     },
+     {
+      "slot": "7",
+      "label": "3Nov-015",
+      "why": "Hands on one spot, the hips, while she folds into lotus upside down. Caught mid-move."
+     },
+     {
+      "slot": "8",
+      "label": "28Oct-267",
+      "why": "Experienced student in a deep backbend, hands to ankles, with his hands at her thighs. Matches 'a teacher's hand at your thigh'."
+     },
+     {
+      "slot": "9",
+      "label": "27Oct-161",
+      "why": "Wide Mysore room with several students doing their own standing poses while he helps one. No altar or guru photo in frame."
+     }
+    ]
+   },
+   {
+    "key": "2-list-opinion",
+    "picks": [
+     {
+      "slot": "cover",
+      "label": "31Oct-114",
+      "why": "q9 drop back held lightly at the waist, teacher relaxed and smiling, lots of window space for LESS. Nothing pressing down."
+     },
+     {
+      "slot": "1",
+      "label": "3Nov-079",
+      "why": "Open palm resting on the lower back in a seated forward fold, face hidden. Exactly the light-touch shot."
+     },
+     {
+      "slot": "2",
+      "label": "28Oct-280",
+      "why": "Pasasana twist with ribs and back visible and his hands resting on shoulder and back. Student calm."
+     },
+     {
+      "slot": "3",
+      "label": "4Nov-242",
+      "why": "Eye contact and talking while he holds her arm lightly at the wall bars. A check-in moment."
+     },
+     {
+      "slot": "4",
+      "label": "27Oct-091",
+      "why": "Trikonasana with one hand on the shoulder blade and one on the hip. The eye sees 'which part'."
+     },
+     {
+      "slot": "5",
+      "label": "6Nov-081",
+      "why": "Drop back with steady hands at her hips, not pulling."
+     },
+     {
+      "slot": "6",
+      "label": "4Nov-177",
+      "why": "Light hands guiding her up into handstand while other students practise their own sequence behind."
+     },
+     {
+      "slot": "7",
+      "label": "31Oct-158",
+      "why": "q9 advanced tic-tac with both faces sharp. Skilled student getting help. Not his wife, so cut the last two sentences."
+     },
+     {
+      "slot": "8",
+      "label": "27Oct-265",
+      "why": "Supta vajrasana, a deep assist that fits a trust slide. Steady hands on her knees and her face calm."
+     },
+     {
+      "slot": "9",
+      "label": "28Oct-247",
+      "why": "Holds one student's lotus while looking across the room. Attention more than force."
+     }
+    ]
+   },
+   {
+    "key": "3-never-again",
+    "picks": [
+     {
+      "slot": "cover",
+      "label": "4Nov-201",
+      "why": "Calmest frame in the set: an older woman in baddha konasana, eyes closed, his palms resting on her back. Clear floor for PUSH."
+     },
+     {
+      "slot": "1",
+      "label": "3Nov-091",
+      "why": "Crouched beside her at the start of a seated twist, eyes on her. Her face is visible and relaxed. Reads as a check-in, not a grab."
+     },
+     {
+      "slot": "2",
+      "label": "6Nov-093",
+      "why": "Seated backbend with his hands resting still at the student's lower back. Open chest, eyes closed, easy breathing."
+     },
+     {
+      "slot": "3",
+      "label": "4Nov-206",
+      "why": "Bharadvajasana twist. He crouches beside her with his hand at her shoulder and no body weight on her."
+     },
+     {
+      "slot": "4",
+      "label": "3Nov-048",
+      "why": "Full wheel with his hands at her hips, so the help goes to the base. Feet rooted and in frame."
+     },
+     {
+      "slot": "5",
+      "label": "31Oct-103",
+      "why": "Hands at the hips as she rises into a bent-knee handstand. A lift-off moment."
+     },
+     {
+      "slot": "6",
+      "label": "4Nov-256",
+      "why": "Prasarita padottanasana C with his hands placed on this body's thighs. The only wide-leg fold in the set."
+     },
+     {
+      "slot": "7",
+      "label": "28Oct-187",
+      "why": "Holding her hips in a drop back before she comes up. Both faces visible and calm."
+     },
+     {
+      "slot": "8",
+      "label": "5Nov-026",
+      "why": "q9 Kapotasana. He cradles her neck and shoulders. An experienced student getting a careful assist."
+     },
+     {
+      "slot": "9",
+      "label": "3Nov-160",
+      "why": "Older long-time student in bright morning light, with light hands at his hips as he lands his backbend."
+     }
+    ]
+   },
+   {
+    "key": "4-debunk",
+    "picks": [
+     {
+      "slot": "cover",
+      "label": "4Nov-097",
+      "why": "Wide room full of mats with a drop back assist in the middle. Reads as a real class in one second."
+     },
+     {
+      "slot": "1",
+      "label": "3Nov-103",
+      "why": "Close, careful backbend at the wall bars with his hands at her hips. Nothing strained, and not a forward fold."
+     },
+     {
+      "slot": "2",
+      "label": "4Nov-262",
+      "why": "He stands beside a seated student with one very light hand at her forehead, watching. Someone is there before she pushes too far."
+     },
+     {
+      "slot": "3",
+      "label": "6Nov-114",
+      "why": "Marichyasana twist with his hand at her shoulder and knee, showing which way to turn."
+     },
+     {
+      "slot": "4",
+      "label": "27Oct-113",
+      "why": "Simple standing asana with light hands squaring her hips. Both faces calm. No drop back."
+     },
+     {
+      "slot": "5",
+      "label": "31Oct-093",
+      "why": "She holds the handstand almost alone. His hands only touch her hips."
+     },
+     {
+      "slot": "6",
+      "label": "28Oct-212",
+      "why": "He stands at the side of an experienced man in a drop back. The man cannot see his own back."
+     },
+     {
+      "slot": "7",
+      "label": "31Oct-122",
+      "why": "q9 handstand spot like a gym coach would give. Strong, steady student."
+     },
+     {
+      "slot": "8",
+      "label": "4Nov-129",
+      "why": "q9 drop back held at the waist, front view with both faces calm. Trust shows."
+     },
+     {
+      "slot": "9",
+      "label": "27Oct-202",
+      "why": "Pincha at the wall with his hands barely touching her leg. The lightest touch in this carousel, and not a forward fold."
+     }
+    ]
+   },
+   {
+    "key": "5-big-shift",
+    "picks": [
+     {
+      "slot": "cover",
+      "label": "3Nov-058",
+      "why": "Clear drop back with light hands at her waist, the whole body in frame, and window space for CHECK."
+     },
+     {
+      "slot": "1",
+      "label": "4Nov-123",
+      "why": "His hand rests on her back as she folds, with other students practising behind. The room shows."
+     },
+     {
+      "slot": "2",
+      "label": "31Oct-100",
+      "why": "Full wheel where she cannot see her feet. His hands guide at her hips."
+     },
+     {
+      "slot": "3",
+      "label": "4Nov-447",
+      "why": "Drop back with soft hands at her waist, clearly not forced."
+     },
+     {
+      "slot": "4",
+      "label": "6Nov-133",
+      "why": "Quiet forward fold with his hands resting on her. Reads as breath first."
+     },
+     {
+      "slot": "5",
+      "label": "27Oct-210",
+      "why": "Action shot: he lifts her lotus knees back up in Karandavasana. His hands show the direction, up."
+     },
+     {
+      "slot": "6",
+      "label": "31Oct-080",
+      "why": "q9 folded-knee handstand. He stands close to spot and is ready, not pushing."
+     },
+     {
+      "slot": "7",
+      "label": "30Oct-041",
+      "why": "Morning room with several students on their mats while he helps one older student. Same room, same hour."
+     },
+     {
+      "slot": "8",
+      "label": "6Nov-217",
+      "why": "Forward fold with his palms on her back on a pink mat, with mats around. Quiet welcome-back feel."
+     },
+     {
+      "slot": "9",
+      "label": "4Nov-113",
+      "why": "Student coming up from a drop back with Boonchu close and hands light. Ends on progress."
+     }
+    ]
+   },
+   {
+    "key": "6-double-benefit",
+    "picks": [
+     {
+      "slot": "cover",
+      "label": "4Nov-548",
+      "why": "Gentle standing asana (Parsvakonasana). She is smiling and his hands are light at hip and back. Calm, and reads at once."
+     },
+     {
+      "slot": "1",
+      "label": "31Oct-186",
+      "why": "Drop back with light hands at his hips as he goes back on the breath."
+     },
+     {
+      "slot": "2",
+      "label": "6Nov-043",
+      "why": "Marichyasana with one light hand on her shoulder showing the turn. She is calm, no cranking."
+     },
+     {
+      "slot": "3",
+      "label": "31Oct-072",
+      "why": "Deep backbend she cannot see. His hands at her hips are reading her body."
+     },
+     {
+      "slot": "4",
+      "label": "28Oct-228",
+      "why": "Experienced student in Kapotasana. His hands cradle the head, a skilled assist."
+     },
+     {
+      "slot": "5",
+      "label": "4Nov-140",
+      "why": "Moment before a drop back: one light hand on her back, both standing, calm. The safest-looking frame."
+     },
+     {
+      "slot": "6",
+      "label": "6Nov-123",
+      "why": "Forward fold with flat hands resting on her. Easy body, nothing strained."
+     },
+     {
+      "slot": "7",
+      "label": "30Oct-020",
+      "why": "One hand on one body part, her raised heel, in a backbend. The spot the cue would name."
+     },
+     {
+      "slot": "8",
+      "label": "4Nov-495",
+      "why": "She holds a straight handstand by herself while his hands barely touch. Hands about to leave."
+     },
+     {
+      "slot": "9",
+      "label": "27Oct-274",
+      "why": "Full morning room: everyone on their own sequence while he helps one student."
+     }
+    ]
+   },
+   {
+    "key": "7-relatable-reward",
+    "picks": [
+     {
+      "slot": "cover",
+      "label": "3Nov-148",
+      "why": "Older-looking man in a drop back with light hands at his hips. Calm, with empty wall at the top for BRACE."
+     },
+     {
+      "slot": "1",
+      "label": "31Oct-162",
+      "why": "Deep backbend with hands at her hips. Her face is hidden: working, not strained."
+     },
+     {
+      "slot": "2",
+      "label": "27Oct-166",
+      "why": "Seated Marichyasana twist with his hands showing the direction. She is calm and he is not cranking."
+     },
+     {
+      "slot": "3",
+      "label": "6Nov-193",
+      "why": "He sits close beside the student, looking up as if checking in. Seated and quiet."
+     },
+     {
+      "slot": "4",
+      "label": "4Nov-251",
+      "why": "Uttanasana with flat hands on her lower back. Soft shoulders, a breathing-out shape."
+     },
+     {
+      "slot": "5",
+      "label": "6Nov-225",
+      "why": "Supported drop back. His hands hold the ribs instead of pushing, and the student's head and neck hang relaxed."
+     },
+     {
+      "slot": "6",
+      "label": "4Nov-204",
+      "why": "Gentlest frame here: a standing Trikonasana with a light touch at her raised arm and no body weight on her."
+     },
+     {
+      "slot": "7",
+      "label": "31Oct-062",
+      "why": "Hands at her hips as she lifts from handstand over. The direction is clear."
+     },
+     {
+      "slot": "8",
+      "label": "28Oct-233",
+      "why": "Experienced older student in Kapotasana with a close, light assist."
+     },
+     {
+      "slot": "9",
+      "label": "31Oct-173",
+      "why": "q9 warm moment: Boonchu smiling during a tic-tac at the end of backbends."
+     }
+    ]
+   }
+  ]
+ },
+ "verified": [
+  {
+   "key": "1-problem-fix",
+   "picks": [
+    {
+     "slot": "cover",
+     "label": "30Oct-119",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. This is the same photo as reference tile E (grey tank, 30 Oct). Side view of a full wheel with his hands on her back. Her upside-down face is calm, eyes closed. Reads in one second."
+    },
+    {
+     "slot": "1",
+     "label": "3Nov-073",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Blue tank (tile G). Side view of a drop back: he holds her hips and watches her back. Her face is upside down and not clear. Good match for 'a teacher at your side sees what you cannot'."
+    },
+    {
+     "slot": "2",
+     "label": "4Nov-149",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Grey tank on 4 Nov (tile H, not the yellow tank in I). Headstand from the side with one light hand on her legs. Her face is upside down and looks relaxed, not strained."
+    },
+    {
+     "slot": "3",
+     "label": "27Oct-183",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. White tank (tile A). Start of a drop back: he holds her prayer hands overhead. Her face is turned away. Clearly an early step, not the full shape. The frame is a little dark."
+    },
+    {
+     "slot": "4",
+     "label": "28Oct-196",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "Kept. White tank with palm shorts (tile C, not the coral tank in B). One open hand rests on her lower back while she kneels head down. Her face is hidden. The pose is headstand prep, not the twist or fold the hint asks for, but it is the softest one-hand touch available. Spare 4Nov-526 (a twist) uses two hands, so it is less gentle."
+    },
+    {
+     "slot": "5",
+     "label": "31Oct-126",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Black tank with pink toile shorts (tile F/L). Side view of a drop back with his hands at her waist. Her body is calm and her face is upside down with eyes closed. No fear showing."
+    },
+    {
+     "slot": "6",
+     "label": "6Nov-141",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Black AYBKK tank (tile K). Supta vajrasana with him sitting beside her. Her shoulders are low and her face is soft with eyes closed. Not a handstand. Small guru photos sit on a shelf in the top-left corner, which is fine on this slide."
+    },
+    {
+     "slot": "7",
+     "label": "3Nov-015",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Blue tank (tile G). Both hands on one spot, the hips, as she folds into lotus upside down. Caught mid-move, and her face is hidden."
+    },
+    {
+     "slot": "8",
+     "label": "31Oct-128",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "SWAPPED out 28Oct-267. In that photo his hands are at her wrists and ankles by her head, not at her thigh. His head presses into her body, which looks heavy rather than light, and her upside-down face is visible. Spare 31Oct-128 (black tank, tile F/L): side view of an experienced student in a deep backbend, hands to ankles. Her straight, strong legs are easy to see, his leg braces her thigh, and her face is hidden. Same student as slot 5, from the same 31 Oct class."
+    },
+    {
+     "slot": "9",
+     "label": "27Oct-161",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. White tank (tile A). A medium-wide room: he helps one student while others do their own standing poses, with more people in the mirror. No altar or guru photo in frame. Her face shows and looks calm. Not the widest shot, but it gives the daily-rhythm feel."
+    }
+   ]
+  },
+  {
+   "key": "2-list-opinion",
+   "picks": [
+    {
+     "slot": "cover",
+     "label": "31Oct-114",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Boonchu in the black tank (31 Oct, tile F/L). A drop back held lightly with one hand at her waist, he is relaxed and smiling, her face is hidden by her hair, and there is a lot of window space for the word LESS. It reads in one second."
+    },
+    {
+     "slot": "1",
+     "label": "3Nov-079",
+     "teacher_is_boonchu": "yes",
+     "fit": 9,
+     "note": "Kept. Boonchu in the blue tank (3 Nov, tile G). Open palm on her lower back in a seated forward fold, face hidden. Clearly a light touch. Crop off the stray leg at top right."
+    },
+    {
+     "slot": "2",
+     "label": "28Oct-280",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Boonchu in the plain white tank and palm-leaf shorts (28 Oct, tile C, the older teacher). Pasasana with ribs and back visible. Her eyes are closed and her face is calm."
+    },
+    {
+     "slot": "3",
+     "label": "4Nov-242",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Boonchu in the grey tank (4 Nov, tile H). Face to face at the wall bars, light hold on her arm, a check-in moment. Blurry heads in the bottom-left foreground, so crop them out. None of my spares shows asking better."
+    },
+    {
+     "slot": "4",
+     "label": "27Oct-091",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Boonchu in the white tank (27 Oct, tile A). Trikonasana with one hand on the shoulder blade and one on the hip, so 'which part' is clear. Her face is relaxed. Crop the blurry head at the bottom."
+    },
+    {
+     "slot": "5",
+     "label": "6Nov-081",
+     "teacher_is_boonchu": "yes",
+     "fit": 5,
+     "note": "Kept but flagged. Boonchu in the black AYBKK tank (6 Nov, tile K), hands steady on her hips. In the frame she is folding forward between drop backs, seen from behind, so it does not read as a drop back. There was no drop back among my spares, so it stays. If a clearer drop back is free from another list, swap it in."
+    },
+    {
+     "slot": "6",
+     "label": "4Nov-177",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Boonchu in the grey tank (4 Nov, tile H). Light hands guiding her up into handstand, another student practising her own sequence behind, and the watermark says Mysore. Her face is neutral."
+    },
+    {
+     "slot": "7",
+     "label": "6Nov-149",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "SWAPPED from 31Oct-158. Boonchu is in that photo, but up close the student's brow is knotted and she has red marks on her cheek and forehead, which reads as pain or injury. The new photo is Karandavasana: Boonchu (black AYBKK tank, 6 Nov) holds her lotus legs with light fingertips and looks calm, her face is hidden, and the window background is clean. It is an advanced asana with a teacher helping. Not his wife, so cut the last two sentences ('My wife has practised for years. She asked me for one.')."
+    },
+    {
+     "slot": "8",
+     "label": "27Oct-265",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Boonchu in the white tank (27 Oct, tile A). Supta Vajrasana, he holds her lotus knees and she lies back fully supported. Her face is calm with a slight frown, not pain. It is a deeper assist than ideal for TRUST, but none of my spares looks more relaxed."
+    },
+    {
+     "slot": "9",
+     "label": "4Nov-184",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "SWAPPED from 28Oct-247. The teacher in that photo wears a white flower-print tee and has the younger, rounder face of the second teacher on 28 Oct, not Boonchu. The new photo: Boonchu (grey tank, 4 Nov, tile H) holds a student's handstand while looking out across the room and talking, with another student and the wall bars behind. That shows attention more than force. Her face shows effort, not fear. It is the same student and asana as slot 6, so the two look alike."
+    }
+   ]
+  },
+  {
+   "key": "3-never-again",
+   "picks": [
+    {
+     "slot": "cover",
+     "label": "4Nov-201",
+     "teacher_is_boonchu": "yes",
+     "fit": 9,
+     "note": "Kept. Grey tank on 4 Nov, so tile H (Boonchu). Older woman folding forward in baddha konasana, eyes closed, face soft, his palms on her back. Reads in one second. Put PUSH on the cabinet wall at top right or on the floor at the bottom."
+    },
+    {
+     "slot": "1",
+     "label": "4Nov-564",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "SWAPPED from 3Nov-091. In 3Nov-091 his body presses into her side and his hand pulls her arm into the bind: a bind assist, not a check-in (fit 6). In 4Nov-564 Boonchu (grey tank, 4 Nov) stands facing her at the wall bars with eye contact and a light hold on her forearm. Her face is visible and calm, so it reads as asking. Note: it is a re-export of 4Nov-241, which is not used anywhere else. A grey-haired student and a blurred figure fill the lower foreground; text can sit there."
+    },
+    {
+     "slot": "2",
+     "label": "6Nov-093",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Black tank on 6 Nov, so tile K. Correction: his hands rest still on the student's thighs and pelvis in supta vajrasana, not on the lower back. Chest open, eyes closed, calm face. Fits BREATH. No spare offers a forward fold."
+    },
+    {
+     "slot": "3",
+     "label": "4Nov-206",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Grey tank on 4 Nov, so tile H. Bharadvajasana twist: he crouches beside her with one hand at her shoulder, no leaning and no body weight. Her face looks down, neutral, not strained. Clearly gentle."
+    },
+    {
+     "slot": "4",
+     "label": "3Nov-048",
+     "teacher_is_boonchu": "yes",
+     "fit": 9,
+     "note": "Kept. Blue tank on 3 Nov, so tile G. Full wheel with both his hands at her hips, so the help goes to the base. Feet rooted and in frame; keep text off the feet."
+    },
+    {
+     "slot": "5",
+     "label": "31Oct-103",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Black tank on 31 Oct, so tiles F and L. His hands at her hips as she kicks up into a bent-knee handstand: a moment of action. Her face is calm. Keep text off the space around her body and the mat."
+    },
+    {
+     "slot": "6",
+     "label": "4Nov-256",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Grey tank on 4 Nov, so tile H. Prasarita wide-leg fold with his hands on her thighs, eyes closed and calm. A second student shows in the foreground, which helps the 'not the same' idea a little."
+    },
+    {
+     "slot": "7",
+     "label": "28Oct-187",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. White tank with red graphic on 28 Oct, so tile C, not the coral tank in B. He holds her hips in a drop back. Her face is calm. His face is turned down and only partly visible. Shows the hold, not the moment of letting go, but it is the best drop-back option."
+    },
+    {
+     "slot": "8",
+     "label": "5Nov-026",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. White tank on 5 Nov, so tile J. Kneeling deep backbend (kapotasana entry) with his hands cradling her neck and shoulders. Her eyes are closed and her mouth slightly open; it reads as giving in to the pose, not pain. A careful assist for a skilled student. 4Nov-540 (Durvasasana) is a calmer-faced backup."
+    },
+    {
+     "slot": "9",
+     "label": "3Nov-160",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "Kept, the weakest fit. Blue tank on 3 Nov, so tile G. Older student in bright morning light landing a drop back, with light hands at his hips. It is an effort shot, and his face is upside down and partly hidden, so it ends less on trust than the slide wants. No spare is better: the rest are kapotasana pulls, feet pressed behind the head or other intense assists. It also repeats the hands-at-hips backbend from slides 4 and 7."
+    }
+   ]
+  },
+  {
+   "key": "4-debunk",
+   "picks": [
+    {
+     "slot": "cover",
+     "label": "4Nov-097",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Grey tank on 4 Nov matches tile H. Wide room full of mats with a drop back in the middle, so it reads as a class in one second. The student's face is calm, eyes open. The yellow-tank teacher (tile I) is only in the far background and is not the one adjusting."
+    },
+    {
+     "slot": "1",
+     "label": "3Nov-103",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Blue tank on 3 Nov matches tile G. Close backbend at the wall bars with his hands at her hips. Her face is calm, eyes closed. A cropped student at the front left is a small distraction."
+    },
+    {
+     "slot": "2",
+     "label": "4Nov-262",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Grey tank on 4 Nov matches tile H. He stands over a seated student with one light hand at her forehead. Her face is soft. Fits the line about someone being there before she pushes too far."
+    },
+    {
+     "slot": "3",
+     "label": "6Nov-114",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Black tank and palm-leaf shorts on 6 Nov match tile K, and the credit names Boonchu alone. Marichyasana twist with his hand at her shoulder and knee. Her face is calm and focused. His head is cut off at the top, but no spare is a twist."
+    },
+    {
+     "slot": "4",
+     "label": "27Oct-113",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. White graphic tank on 27 Oct matches tile A. Simple Parsvakonasana with light hands squaring her hips. Both faces calm, no drop back."
+    },
+    {
+     "slot": "5",
+     "label": "31Oct-093",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Black tank on 31 Oct matches tiles F and L. She holds the handstand almost alone with one of his hands at her hip, so very little help shows."
+    },
+    {
+     "slot": "6",
+     "label": "28Oct-212",
+     "teacher_is_boonchu": "yes",
+     "fit": 9,
+     "note": "Kept. White tank and palm shorts on 28 Oct: this is the same scene as tile C. He is beside an experienced man in a drop back who cannot see his own back. The man's face is calm, eyes closed."
+    },
+    {
+     "slot": "7",
+     "label": "31Oct-122",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Black tank on 31 Oct matches tiles F and L. Spots a handstand like a gym coach, with both hands on her hips. Her face is mostly behind her hair and shows effort, not pain. It is close to slide 5 (also a 31 Oct handstand, different student), but no spare is a better spotting photo."
+    },
+    {
+     "slot": "8",
+     "label": "4Nov-129",
+     "teacher_is_boonchu": "yes",
+     "fit": 9,
+     "note": "Kept. Grey tank on 4 Nov matches tile H. Front view of a drop back held at the waist. Her eyes are closed and her face is calm, so the trust shows."
+    },
+    {
+     "slot": "9",
+     "label": "27Oct-202",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "Kept. White graphic tank on 27 Oct matches tile A. Pincha at the wall with his hands barely on her leg. This is the lightest touch and not a forward fold, but her face is hidden. I checked the spares (Supta Kurmasana, Kapotasana, leg-behind-head, a tic-tac lift) and every one is a firmer grip, so none is better."
+    }
+   ]
+  },
+  {
+   "key": "5-big-shift",
+   "picks": [
+    {
+     "slot": "cover",
+     "label": "3Nov-058",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Boonchu in the navy tank (tile G). A clean drop back with light hands at her waist and the whole body in frame. Her eyes are closed and she looks calm. The window space top left fits the word CHECK, so it reads in one second."
+    },
+    {
+     "slot": "1",
+     "label": "4Nov-123",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Boonchu in the grey tank with the red print (tile H), not the yellow-tank teacher. His hand is on her back while she catches her ankles, and other students are practising behind. It is a backbend, not the forward fold the hint asked for, but the room shows clearly. Her face looks neutral."
+    },
+    {
+     "slot": "2",
+     "label": "31Oct-100",
+     "teacher_is_boonchu": "yes",
+     "fit": 9,
+     "note": "Kept. Boonchu in the black tank (tile F), smiling, hands guiding at her hips in a full wheel where she cannot see her feet. Her face is calm. A strong match for BLIND."
+    },
+    {
+     "slot": "3",
+     "label": "4Nov-447",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Boonchu in the grey tank (tile H). Soft hands at her hips in a drop back, clearly not forced, and her face is not in pain. A student's head at the bottom edge is a small distraction."
+    },
+    {
+     "slot": "4",
+     "label": "4Nov-376",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "SWAPPED out 6Nov-133. In that one Boonchu leans his weight over her hips and seems to press the fold. Her face is hidden and her backside fills the frame, which is wrong for a 'never force' slide. In the spare 4Nov-376 (Boonchu, grey tank, tile H) he holds the feet in Dwi Pada Sirsasana while the student sits with eyes closed and hands in prayer, calm in a hard asana. That reads as 'is your breath long and even'. It uses two hands, not the one light hand the hint asked for."
+    },
+    {
+     "slot": "5",
+     "label": "27Oct-210",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "Kept. Boonchu in the white tank (tile A) lifting her lotus knees in Karandavasana. It is a true action shot and the direction is up, but her leggings hide his hands, so it reads a little busy. The spare 4Nov-505 is cleaner, but it is a folded-knee handstand almost the same as slot 6, so I kept this one for variety."
+    },
+    {
+     "slot": "6",
+     "label": "31Oct-080",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Boonchu in the black tank (tile F/L), standing close with his hands at her hips in a folded-knee handstand. He is ready, not pushing. Her face looks focused, not in pain."
+    },
+    {
+     "slot": "7",
+     "label": "30Oct-041",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "Kept. Boonchu in the grey tank with lime shorts (tile E), holding an older student's wrists in Kapotasana, with several students on their mats behind. The 'early morning light' feel is weak, but no spare showed a better wide room. The student's face is hidden."
+    },
+    {
+     "slot": "8",
+     "label": "6Nov-217",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Boonchu in the black tank (tile K) with both palms resting on her upper back in a seated forward fold on a pink mat, with mats around. It is quiet and gentle, and her face is hidden."
+    },
+    {
+     "slot": "9",
+     "label": "4Nov-113",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Boonchu in the grey tank (tile H). The other name in the credit is the yellow-tank teacher, who is not in the frame. Light hands at the waist in a drop back, close and not forcing. It shows the middle of the arc, not the moment of coming up, so the progress feeling is only moderate."
+    }
+   ]
+  },
+  {
+   "key": "6-double-benefit",
+   "picks": [
+    {
+     "slot": "cover",
+     "label": "4Nov-548",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Grey tank on 4 Nov matches tile H, so it is Boonchu. Gentle side-angle asana with light hands at her hip and back, and she is smiling. Reads at once as a teacher helping a happy student."
+    },
+    {
+     "slot": "1",
+     "label": "31Oct-186",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Black tank and red shorts on 31 Oct match tile F. A drop back with his hands at the student's hips, exactly what the hint asks for. The student's face is hidden."
+    },
+    {
+     "slot": "2",
+     "label": "6Nov-043",
+     "teacher_is_boonchu": "yes",
+     "fit": 9,
+     "note": "Kept. Black AY BK K tank on 6 Nov matches tile K. Marichyasana bind with one light hand on her shoulder. Her eyes are closed and she is calm, with no cranking."
+    },
+    {
+     "slot": "3",
+     "label": "4Nov-432",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Swapped out 31Oct-072. Boonchu is in it, but it was almost the same frame as slide 1: same day, same black tank and red shorts, same hold at the hips in a drop back. 4Nov-432 (grey tank, tile H) shows a backbend the student cannot see, with his hands at the chest and hip. His eyes are on the student, reading the body, and the student's face is calm. The shrine shelf behind adds a new setting."
+    },
+    {
+     "slot": "4",
+     "label": "28Oct-228",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. White tank on 28 Oct matches tile C, not the coral-tank teacher in B. Experienced student in Kapotasana with his hands cradling the head. Shows that strong students get hands too. The student's face looks calm."
+    },
+    {
+     "slot": "5",
+     "label": "4Nov-140",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "Kept, but this is the weakest fit. Grey tank on 4 Nov matches tile H. Calm and standing, with one hand on her back before the drop back, so it looks safe. The catch is that he looks at the camera, not at her, so it does not quite show asking. No spare was safer (they are all deep binds or backbends), and 28Oct-216 was rejected because the teacher may not be Boonchu."
+    },
+    {
+     "slot": "6",
+     "label": "6Nov-123",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "Kept. Black tank on 6 Nov matches tile K. Easy forward fold with nothing strained, but her face is hidden and her hips (heart-print shorts) fill the middle of the frame. Keep the text block over that area. No spare forward fold with a soft face was available."
+    },
+    {
+     "slot": "7",
+     "label": "30Oct-020",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "Kept. Grey tank and olive shorts on 30 Oct match tile E. His hands are on one body part, her raised leg and heel, in a backbend. It is a wider frame than the 'close-up of one hand' in the hint, and he uses two hands, not one. No closer spare was available."
+    },
+    {
+     "slot": "8",
+     "label": "4Nov-495",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Grey tank on 4 Nov matches tile H (not the yellow-tank teacher in I). She holds a straight handstand by herself while one hand barely touches her hips. It reads as hands about to leave."
+    },
+    {
+     "slot": "9",
+     "label": "27Oct-274",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. White tank and pink shorts on 27 Oct match tile A. He helps one student in a lotus handstand while the room behind practices on its own (backbends, folds), so the daily rhythm shows. Her upside-down face is small and neutral, with no strain."
+    }
+   ]
+  },
+  {
+   "key": "7-relatable-reward",
+   "picks": [
+    {
+     "slot": "cover",
+     "label": "3Nov-148",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Blue tank and lime shorts match tile G (3 Nov), so this is Boonchu. Light hands at the hips in a drop back; it reads in one second. The student's face is upside down and neutral. The top edge is pale wall with a wall-bar ladder, not fully empty, but BRACE fits over it."
+    },
+    {
+     "slot": "1",
+     "label": "31Oct-162",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Black tank and pink floral shorts match tile F/L (31 Oct). Hands at her hips in a deep backbend catching her ankles. Her face is partly visible upside down and calm (zoom checked), working but not strained."
+    },
+    {
+     "slot": "2",
+     "label": "27Oct-166",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. White tank with red/blue print matches tile A (27 Oct). Seated twist with light hands on her shoulder and back showing the direction. She is calm and he is not cranking."
+    },
+    {
+     "slot": "3",
+     "label": "6Nov-193",
+     "teacher_is_boonchu": "yes",
+     "fit": 6,
+     "note": "Kept, but the weakest fit. Black AYBKK tank matches tile K (6 Nov). He sits close beside her in Supta Vajrasana, holding her hands at her knees. He looks at the camera, not at her, so it reads as looking at the viewer rather than a check-in. No spare shows a talking or check-in moment, so there was no better swap. The student is calm."
+    },
+    {
+     "slot": "4",
+     "label": "4Nov-523",
+     "teacher_is_boonchu": "yes",
+     "fit": 9,
+     "note": "SWAPPED from 4Nov-251. 4Nov-251 is framed around the student's rear in shorts with her face hidden, and spare 4Nov-575 is a duplicate of the same frame. 4Nov-523 is a Baddha Konasana forward fold with flat palms on her back, and her eyes are closed with a soft face, which is exactly the breathing-out look. Grey tank with red print and cream shorts match tile H (4 Nov), not the yellow-tank teacher in I; zoom checked."
+    },
+    {
+     "slot": "5",
+     "label": "6Nov-225",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. Black AYBKK tank matches tile K (6 Nov). Supported drop back into Kapotasana: his hands hold the ribs, and the older student's hands rest relaxed overhead. His face is neutral, not pained (zoom checked); the brow lines come from being upside down."
+    },
+    {
+     "slot": "6",
+     "label": "4Nov-204",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Grey tank with red print matches tile H. Standing Trikonasana with one light hand at her raised wrist and one at her shoulder blade. No body weight on her and she is calm: the gentlest frame, as the STOP slide needs."
+    },
+    {
+     "slot": "7",
+     "label": "31Oct-062",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Black tank matches tile F/L. Hands at her hips as she goes from handstand over, so the direction is clear. Keep the text in the upper area: she lifts from the floor at bottom centre."
+    },
+    {
+     "slot": "8",
+     "label": "28Oct-233",
+     "teacher_is_boonchu": "yes",
+     "fit": 7,
+     "note": "Kept. White tank with red print and beige leaf shorts match tile C (28 Oct white); zoom checked against B (coral, not Boonchu). Older, clearly experienced student in Kapotasana, with Boonchu close and pressing his arms toward his heels. The help is firm-ish rather than feather-light, but the student's face is neutral."
+    },
+    {
+     "slot": "9",
+     "label": "31Oct-173",
+     "teacher_is_boonchu": "yes",
+     "fit": 8,
+     "note": "Kept. Black tank matches tile F/L. Boonchu smiles with both hands on the student's hips in a tic-tac at the end of backbends. The student looks focused, not strained: a warm moment for BETTER."
+    }
+   ]
+  }
+ ]
+}
