@@ -1100,7 +1100,7 @@
   // Home page data, read once: the Bangkok tees and the monthly theme (renderTees, loadTheme).
   let TEES_P = null, TEES_R = null, TEES_ALL = false;
   // One row of tees until "Show all tees": 2 on a phone, 4 from 700px (the page was too long, 6 Nov 2026).
-  const teesFirst = () => matchMedia('(min-width:700px)').matches ? 4 : 2;
+  const TEES_MQ = matchMedia('(min-width:700px)'), teesFirst = () => TEES_MQ.matches ? 4 : 2;
   // cn.aybkk.net serves this page too: China has its own tee shop in RMB, and LINE is blocked there.
   const CN_HOST = /^cn\./.test(location.hostname);
   const list = v => (Array.isArray(v) ? v : String(v ?? '').split(/[,\s/]+/)).map(x => String(x).trim()).filter(Boolean);
@@ -2023,6 +2023,10 @@
       b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
     document.querySelectorAll('.readmore').forEach(b =>
       { b.textContent = t(b.getAttribute('aria-expanded') === 'true' ? 'readLess' : 'readMore'); });
+    // The folded #find keeps the Thai address open in Thai and the WeChat ID in Chinese, so the button does not control them.
+    const findKeep = { th: 'findTh', zh: 'findWx' }[LANG];
+    $('#find .readmore').setAttribute('aria-controls',
+      ['findTh', 'findIg', 'findFb', 'findTt', 'findWx'].filter(id => id !== findKeep).join(' '));
     renderPromo();
     TEES_R = renderTees();
     renderTheme();
@@ -2134,11 +2138,11 @@
     setTimeout(() => { $('#wxCopy').textContent = t('copy'); }, 1800);
   });
   applyLang();
-  // A deep link (/#prices, /book#letter) is scrolled to before the theme and the tees load and
-  // push it down by a few screens. Once they are in, go there again, unless the visitor has moved.
+  // A deep link (/#prices, /book#letter) is scrolled to before the timetable, the theme and the tees
+  // load and push it down by a few screens. Each time some are in, go there again, unless the visitor has moved.
   let moved = false;
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => addEventListener(ev, () => { moved = true; }, { passive: true, capture: true }));
-  Promise.all([TEES_R, loadTheme()]).then(() => {
+  const toHash = () => {
     let id = '';
     try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) {}
     const el = id && !moved && (id === 'book' ? $('.bookhead') : document.getElementById(id));
@@ -2153,7 +2157,8 @@
       if (n) requestAnimationFrame(() => go(n - 1));
     };
     go(2);
-  });
+  };
+  Promise.all([TEES_R, loadTheme()]).then(toHash);
   // Each section's rule wipes in once it scrolls into view. Without the observer (or with
   // reduced motion) nothing is hidden: the class that hides the rules is never set.
   if ('IntersectionObserver' in window && matchMedia('(prefers-reduced-motion: no-preference)').matches) {
@@ -2204,7 +2209,7 @@
     // The posters are a bonus: the timetable never waits for them or fails with them.
     fetch('/img/timetable/posters.json').then(r => r.ok ? r.json() : {}).catch(() => ({})).then(m => {
       POSTERS = m && typeof m === 'object' ? m : {};
-      if (LOADED && current === 'schedule' && !OPEN) renderSchedule();
+      if (LOADED && current === 'schedule' && !OPEN) { renderSchedule(); toHash(); }
     });
     try {
       const [s, p] = await Promise.all([
@@ -2230,6 +2235,7 @@
         ${LANG === "zh" ? "<span class=\"note\">WeChat: <b>aybkkwechat</b></span>"
           : "<a class=\"btn ghost\" href=\"https://line.me/R/ti/p/@aybkk\" target=\"_blank\" rel=\"noopener\">LINE @aybkk</a>"}</div></div>`;
     }
+    toHash();
   }
   // A page left open past midnight into 12 Nov 2026 would still show, and open
   // the buy dialog at, the old prices the server no longer charges.
@@ -2899,6 +2905,9 @@
     TEES_ALL = true;
     renderTees().then(() => { const n = $('#teeList').children[first]; if (n) n.querySelector('a').focus({ preventScroll: true }); });
   });
+  // A phone turned sideways (or a window resized) past 700px changes how many tees fill the first row.
+  const teesRedo = () => { if (!TEES_ALL) TEES_R = renderTees(); };
+  if (TEES_MQ.addEventListener) TEES_MQ.addEventListener('change', teesRedo); else if (TEES_MQ.addListener) TEES_MQ.addListener(teesRedo);
 
   // The monthly theme: public/themes/index.json lists the months that have one, and the page
   // shows the latest at or before this Bangkok month; a month whose file is missing or has
