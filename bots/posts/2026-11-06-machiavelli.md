@@ -6,3 +6,4 @@ Reminders due this morning: none.
 Reel: Plato's daily run is paused (expected). Last from Plato chat: tough women Reel (3 Nov). Carne posted today.
 Score: wins this week (from Mon 2 Nov): none reported. 180K leads: 0 new in 6 days, 1 serious, silent 20 days.
 Inbox 07:08: 2 new threads, 1 hot.
+13:08 check-in: serious lead (1 day) and course prices (2 days) still waiting. Inbox: 3 new, 2 hot.
