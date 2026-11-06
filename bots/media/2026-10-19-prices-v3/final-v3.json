@@ -21,9 +21,9 @@
    },
    {
     "name": "3 months",
-    "note": "For ฿10,000 more, you get 6 months instead of 3.",
-    "price": "22,000",
-    "per": "about 7,300 / month"
+    "note": "For ฿12,500 more, you get 6 months instead of 3.",
+    "price": "19,500",
+    "per": "6,500 / month"
    },
    {
     "name": "1 month",
@@ -92,9 +92,9 @@
    },
    {
     "name": "3 เดือน",
-    "note": "เพิ่มอีก ฿10,000 ขยับเป็นแพ็ก 6 เดือนได้",
-    "price": "22,000",
-    "per": "ตกเดือนละราว 7,300"
+    "note": "เพิ่มอีก ฿12,500 ขยับเป็นแพ็ก 6 เดือนได้",
+    "price": "19,500",
+    "per": "ตกเดือนละ 6,500"
    },
    {
     "name": "1 เดือน",
