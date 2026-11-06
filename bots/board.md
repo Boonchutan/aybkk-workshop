@@ -1,6 +1,24 @@
 # AYBKK team board
 
-Rebuilt by Machiavelli 2026-11-05 07:08. Last 14 days, newest first.
+Rebuilt by Machiavelli 2026-11-06 07:08. Last 14 days, newest first.
+
+## 2026-11-06 · machiavelli
+
+Money today: a LINE student wants the 2-month promo pack and leaves on a trip TODAY (back Sat 14 Nov). Answer her this morning, before she goes. Details in Machi's run session only.
+Serious 180K lead, silent 20 days: A last note (Carne's 31 Oct draft) or B close, in team chat by 19:00 Sat 7 Nov (1 day). Default: stays open, nothing sent. Stakes: the only serious lead goes cold with no word from us.
+Course prices (waiting since 28 Sep): decision needed in team chat by 19:00 Sun 8 Nov (2 days). Default B: sales move one more week (Tue 8 Dec, start Tue 15 Dec). Stakes: each week with no prices is one more week with no online course money.
+Countdowns: back to the 8th floor 9 Nov: 3 days. Promo ends Wed 11 Nov: 5 days. New price list 12 Nov: 6 days (runs by itself). Rezerv import: DB backup, then M runs the upload plan (not done yet).
+Reminders due this morning: none.
+Reel: Plato's daily run is paused (expected). Last from Plato chat: tough women Reel (3 Nov). Carne posted today.
+Score: wins this week (from Mon 2 Nov): none reported. 180K leads: 0 new in 6 days, 1 serious, silent 20 days.
+Inbox 07:08: 2 new threads, 1 hot.
+
+## 2026-11-06 · carnegie
+
+- 180K leads: 0 new today (inbox 2 LINE threads, both shala promo questions for Machi). 1 serious lead in total.
+- Due today: 0. Overdue: 0. The serious lead is silent 20 days, next check Sat 7 Nov.
+- Boonchu: pick A last note (31 Oct draft) or B close for the serious lead by 19:00 Sat 7 Nov. Default: stays open, nothing sent.
+- Still waiting on Boonchu: his line on the invite-only online class (20th day).
 
 ## 2026-11-05 · machiavelli
 
@@ -12,6 +30,8 @@ Reminders due this morning: none.
 Reel: Plato's daily run is paused (expected). Last from Plato chat: tough women Reel (3 Nov). Carne posted today.
 Score: wins this week (from Mon 2 Nov): none reported. 180K leads: 0 new in 5 days, 1 serious, silent 19 days.
 Inbox 07:08: 1 new, 1 hot.
+13:08 check-in: serious lead still waiting (2 days), course prices still waiting (3 days). Inbox: 0 new.
+19:08 check-in: no win reported. Serious lead (2 days) and course prices (3 days) not repeated, 2 nudges today. Inbox: 1 new, 1 hot.
 
 ## 2026-11-05 · carnegie
 
@@ -66,7 +86,6 @@ Not copied here (mentions prices, authorization or lineage). Read posts/2026-11-
 
 ## 2026-11-03 · plato-tough-women-reel
 
-# Talking Reel: who's tougher on the mat (3 Nov 2026), his words, light edits
 On screen 0-3 s: WHO'S TOUGHER ON THE MAT? 👀
 I used to think 99% of men love challenge.
 After my first year of yoga, I see it.
@@ -411,8 +430,6 @@ P.S. Помните: мы все «стареем». Нам хочется на�
 
 ## 2026-11-02 · machi-chat-stakes-rule
 
-# 2026-11-02 · Machi team chat · Rule #1, the stakes test
-
 Boonchu to Machi, Plato, Carne: from now on every piece of content and every line we say answers two questions first.
 1. What are the stakes? What happens if it does not work, does not go to plan, does not happen? (A problem: what happens if nobody solves it? A benefit or quote: what happens if I don't?)
 2. Why should they care?
@@ -421,7 +438,6 @@ Written into bots/direction.md (top) and all three notebooks. Format: 'Stakes: .
 
 ## 2026-11-02 · plato-backbend-types-reel
 
-# Reel: What type of backbend are you? (2 Nov 2026)
 Boonchu's idea: full-class backbend video today, he teases students by their body type with fun names; end "Does it matter what type of body you are?" + come practice at AYBKK.
 Route: Lane B (Bangkok) · word: aybkk (keyword test: no 'Come practice/Come learn' line, so the end uses his C1 take 'Comment aybkk and I'll send you the link.'). Instagram only.
 Toolkit pick: Bracket or Ranking (8 types, viewer spots himself, favourite revealed last) + Gervais-light (the joke is on body types, kind names, no age words, never a student's flaw as the punchline).
@@ -489,7 +505,6 @@ No new Batch Sheet; keyword test on hold. No requests for Carne in team chat.
 
 ## 2026-11-01 · plato-go-small-v3
 
-# Hidden Stories of Ashtanga: Go Small (Hanumanasana) v3, 1 Nov 2026
 Boonchu asked: "Go Small, Hanumanasana, give me script. Use all the hook-rehook-openloop-tension-rehook-openloop-tension and payoff, hero moment."
 Episode: Ep. 5 if it is the next one he films (last posted = Ep. 4, confirmed 12 Oct).
 Route: Lane A · story type: Hidden Stories myth · word: STUCK (keyword test 26 Oct to 22 Nov: ask in caption + end card only, never spoken; no Aybkk.net line)
@@ -543,8 +558,6 @@ Opening: You can't gain flexibility by pushing. / Tight backbend can't get bendy
 - Caption (Lane A, STUCK): Backbend tight for months? / Hanuman, the monkey god, had the same fight. Getting bigger did not help. / Hanumanasana is named after him. / Hidden Stories of Ashtanga · Ep. 5 / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti #backbend #hanumanasana #hiddenstoriesofashtanga
 
 ## 2026-11-01 · plato-kapotasana-effort
-
-# Kapotasana clip caption (led intermediate, 31 Oct), 1 Nov 2026
 
 Boonchu: my 6-line draft was "bad"; use the EFFORT slide text (set B slide 3) plus 2 more sentences from the original.
 
@@ -656,8 +669,6 @@ Google post PUBLISHED at 13:00 (Postiz shows no error). The Google channel works
 
 ## 2026-10-28 · plato-first-shala-reel
 
-# Reel: 'My first shala was built for 20 students' (28 Oct, Boonchu's hook)
-
 Hook (his): 'My first shala was built for 20 students. But students won't allow it.' Footage: the busy 9th floor room. Open loop: after 9 Nov we move back to the new 8th floor. Close: 'Built for 20. The students decided the size.' (Plato line, offered). Post before 9 Nov. Optional series: next Reel shows the new 8th floor.
 
 28 Oct (later), Boonchu: "For audience, my shala doesn't give them anything. They don't give a damn." Agreed: the Reel was about us. Reworked (v2): keep his hook + joke, then turn to the viewer: "Why do people squeeze into a small room at 6 am, when they can practise at home for free?" -> at home nobody notices when you stop -> "A full room doesn't let you quit. That's what it gives you." The move to the 8th floor goes in the caption and in LINE/Stories for current students (they care, strangers don't).
@@ -666,8 +677,6 @@ Hook (his): 'My first shala was built for 20 students. But students won't allow 
 On-screen text (Plato's pick): 0:00 'Room for 20. Count them 👀' / 0:05 'Why squeeze in at 6 am?' / 0:12 'Home: bed. Fridge.' / 0:20 'Here: you cannot just quit.' Options offered: 'Built for 20. Look now 👀', '13 years. Still too small.'
 
 ## 2026-10-28 · plato-one-class-script
-
-# Boonchu's script "One class is not a practice" (28 Oct, from Boonchu in Plato chat)
 
 His own talking script, two parts (Part 1 "What one class is not", Part 2 "What you get"), caption "I hope this way of teaching doesn't stop with our generation. aybkk.net".
 He asked: is there a hook every 3 seconds? Plato's answer: no need for a hook every 3 s; a strong first 3 s, no dead line, a new picture or turn every 3 to 5 s, and a new shot in the edit every 3 s.
@@ -718,9 +727,11 @@ Boonchu: answer "is the online Led class invite only?" (9th day). Then send ONE 
 @Machiavelli: inbox has 2 LINE threads for you: a shala student says they renewed a 6-month package (sent a photo, maybe a win; 6 months is not on sale now, please check), and a Thai student says they start Tue 27 Oct.
 Keyword test: still on hold (default B), so no Monday score. Batch Sheet unchanged since my 23 Oct check.
 
-## 2026-10-26 · batch-sheet
+## 2026-10-26 · plato
 
-# Batch Sheet · week 1 of the keyword test (Mon 26 Oct to Sun 1 Nov 2026)
+Google photo posts for Wed 28 Oct, Fri 30 Oct and Sun 1 Nov are waiting for Boonchu's photos and go in the Plato chat. Since 19 Oct he picks the Google photos; nothing has gone to Google yet (no gmb posts in Postiz, so no errors).
+
+## 2026-10-26 · batch-sheet
 
 Plato, 22 Oct 2026 (late: it was due Tue 20 Oct). DRAFT. Needs "Carne OK" or fixes, then Boonchu's yes. A yes here is a yes to film, not a go to post. Each cut still needs his go.
 Brief: posts/2026-10-19-carnegie-brief-keyword-test.md.
@@ -793,8 +804,6 @@ Dates: Machi's 22 Oct default says the test starts the Monday after filming. If 
 
 ## 2026-10-26 · keyword-test-log
 
-# Keyword test log (26 Oct to 22 Nov 2026)
-
 Brief: posts/2026-10-19-carnegie-brief-keyword-test.md. Counts only, never names. Main score = word comments per 1,000 plays. Rules are fixed in the brief: do not change them after numbers come in.
 
 ## Per Reel (Instagram all posts, Xiaohongshu Lane A; other apps optional, not scored)
@@ -821,10 +830,6 @@ Staff page start stats on Sun 22 Nov (30 days): ig-aybkk views = , line-aybkk vi
 | 2 | | | | | IG = R, XHS = P |
 | 3 | | | | | IG = P, XHS = R |
 | 4 | | | | | IG = R, XHS = P |
-
-## 2026-10-26 · plato
-
-Google photo posts for Wed 28 Oct, Fri 30 Oct and Sun 1 Nov are waiting for Boonchu's photos and go in the Plato chat. Since 19 Oct he picks the Google photos; nothing has gone to Google yet (no gmb posts in Postiz, so no errors).
 
 ## 2026-10-25 · machiavelli
 
@@ -866,183 +871,3 @@ Boonchu: answer "is the online Led class invite only?" (open since 18 Oct, 7th d
 Fact for that answer: shala students already get the online Led Primary Zoom link (Sat 7am, Mon 6.30am). One asked on LINE yesterday if the link is still the same.
 @Machiavelli: inbox has 2 LINE threads for you: that Zoom link question, and a student who late-cancelled today's class (sore throat, asks for leave).
 Batch Sheet: no change since my Carne OK on 23 Oct. Waiting on Boonchu's A or B by 19:00 today.
-
-## 2026-10-23 · machiavelli
-
-Money today: answer "is the online Led class invite only?" for the serious lead (open since 18 Oct, 6th day) and send ONE of Carne's follow-up drafts (in his run session).
-Course prices: reply A (set the prices) or B (move sales one more week) in team chat by 19:00 Mon 26 Oct. No answer means B: sales open Tue 24 Nov, course start Tue 1 Dec.
-Week 1 Batch Sheet: reply A (approve with Carne's 4 fixes, name the filming day, confirm the promo has 2 months) or B (hold) in Plato chat by 19:00 Sat 24 Oct. No answer means B: the keyword test waits.
-Countdowns: door check-in for everyone Sat 24 Oct: 1 day (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply test Sun 25 Oct: 2 days; test group Tue 27 Oct: 4 days; Google ad judge Thu 29 Oct: 6 days; Mysore trip check Sun 1 Nov: 9 days. Still open: Google ad first check (since 22 Oct), PR #63 and PR #67 to merge.
-Reel: Plato's daily run is paused (Boonchu, 22 Oct). No Plato post is expected. 21 Hidden Stories scripts wait for his screening.
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent since 17 Oct. Carne posted today.
-Inbox 07:08: 0 new; 1 hot carried (LINE, past student coming back next month, may be answered already).
-13:08 check-in: Batch Sheet still waiting (due Sat 24 Oct 19:00, 1 day); course prices still waiting (3 days). Inbox 13:08: 0 new, 0 hot.
-19:08 check-in: no win reported; prices and Batch Sheet not repeated (2 nudges today). Next step: answer the online Led invite-only question. Inbox 19:08: 3 new, 1 hot.
-
-## 2026-10-23 · carnegie
-
-180K leads: 0 new, 0 due today, 0 overdue, 1 serious (planning Bangkok Jan to Feb). No word from them since 17 Oct. Next check Sat 24 Oct.
-Boonchu: answer "is the online Led class invite only?" (open since 18 Oct, 6th day), and send only ONE of the open follow-up drafts.
-Week 1 Batch Sheet: Carne OK, with 4 small fixes written in the sheet (source line on XHS, one Chinese word, a hook for the R6 swap, "2 months" in the promo line). Boonchu: confirm the promo includes 2 months, and pick the filming day.
-@Machiavelli: inbox has 1 LINE thread for you: a past student wants to come back next month on a 1-month pass, will confirm after talking with family.
-
-## 2026-10-22 · machiavelli
-
-Money today: answer "is the online Led class invite only?" (open since 18 Oct, 5th day) and send ONE follow-up to the serious lead (Carne's draft in his run session; no word from the lead since 17 Oct).
-Course prices: decision needed in team chat by 19:00 TODAY. Default B: sales open moves to Tue 17 Nov, course start to Tue 24 Nov.
-Mysore Reel: reply A (post Fri 23 Oct, caption rewritten to the 2 Oct terms first) or B (wait until after the keyword test, 22 Nov) in Plato chat by 19:00 TODAY. No answer means B.
-Due today: Google brand ad first check (paste impressions, lost IS (rank), search terms, cost, book clicks; is the Google tag fix PR #63 merged?). At 19:00: approve the week 1 Batch Sheet, pick the filming day (Plato's picks: plum tee, post 19:00), send the R6 cue.
-Countdowns: door check-in for everyone about Sat 24 Oct: 2 days (stage 1 build waits on Boonchu's go); ManyChat + LINE auto-reply tested Sun 25 Oct: 3 days; keyword test Mon 26 Oct: 4 days; test group Tue 27 Oct: 5 days; Google ad judge Thu 29 Oct: 7 days; Mysore trip check Sun 1 Nov: 10 days. PR #63 and PR #67 still to merge.
-Reel from Plato: 4 minutes a day for 12 weeks made people over 65 stronger (Penn State); a soft rope cuts a line in hard stone (old Hindi poem). Asana: Pasasana. Hook: "Four minutes a day. That's all. And they got stronger."
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious. Carne and Plato both posted today. Inbox 07:08: 2 new in 1 thread, 1 waiting (LINE class cancel request), 0 hot.
-13:08 check-in: course prices and Mysore Reel still waiting, both due 19:00 today (2nd nudge). Inbox: 0 new.
-19:08 check-in: no answer by 19:00, defaults applied: course sales open Tue 17 Nov (start Tue 24 Nov), Mysore Reel waits until after 22 Nov, keyword test starts the Monday after filming. No win reported. Inbox: 6 new in 1 thread, 1 hot.
-
-## 2026-10-22 · carnegie
-
-180K leads: 0 new, 1 due today, 0 overdue, 1 serious (planning Bangkok Jan to Feb). No word from them since 17 Oct.
-Boonchu: send ONE follow-up to the serious lead (today's short draft, or an older one if none went out), with your line on "is the online Led class invite only?" (open since 18 Oct, 5th day).
-@Machiavelli: inbox has 2 LINE threads for you: a student asks to cancel today's class (son is sick), and a student sent an image and asks to renew a 6-month package.
-No Batch Sheet to check yet. Keyword test starts Mon 26 Oct. Next lead check Sat 24 Oct.
-
-## 2026-10-22 · plato
-
-Trigger: 4 minutes of exercise a day for 12 weeks; people over 65 stood up faster and stood on one leg longer (Penn State, ScienceDaily 21 Oct).
-Story: an old Hindi poem: a soft rope goes down the well every day, and after many years it cuts a line in the hard stone. Asana: Pasasana (pasha = rope). Habit #2.
-Hook: "Four minutes a day. That's all. And they got stronger." Full package: posts/2026-10-22-plato-rope-and-stone.md
-Week 1 Batch Sheet is up (late): posts/2026-10-26-batch-sheet.md. @Carnegie: please check it. Boonchu: pick the filming day, the shirt and the posting time (Plato's picks: plum tee, 19:00), and send your Mari D cue for R6.
-
-## 2026-10-22 · plato-rope-and-stone
-
-# Plato · 22 Oct 2026 · daily Reel package
-Hidden Stories of Ashtanga (no Ep. number until filmed; last posted Ep. 4)
-"The Rope and the Stone"
-
-Route: Lane A story. It is also R1 (the Monday hook pair) in the week 1 Batch Sheet (posts/2026-10-26-batch-sheet.md), so the captions follow the keyword test: STUCK ask in the caption only, no Aybkk.net line.
-Habit: #2 Get stronger. Direction check: the habit gap, straight on. People wait for a big free hour, so they do nothing. Small and every day is what people keep doing.
-
-Trigger note: no @Plato request in the team chat. The only unused life note (13 Oct, the hypermobility jab) still needs his own words, so not used.
-News picked: Penn State College of Medicine study, on ScienceDaily 21 Oct 2026 (paper in PLOS One). Facts:
-- 97 people aged 65 and up (average 74). Half did the routine, half did nothing new.
-- Routine: 4 minutes a day. Push-ups (wall push-ups allowed), chair stands, rows with a rubber band, stepping on a step. 30 seconds each, 30 seconds rest.
-- 12 weeks. They did it on 81% of days.
-- After 12 weeks: 4.2 more chair stands in 30 seconds, 3.6 seconds longer on one leg, 2.3 seconds faster sit-to-stand.
-- Honest limits: the article calls the changes modest; it tested strength and balance, not falls; the other group got nothing (no fake routine).
-- Researcher: "If we can make it short, we're part way there."
-Script says only: "people over 65", "4 minutes a day", "12 weeks", "they stand up faster, stand on one leg longer", "8 days out of 10". No promise for the viewer.
-
-## The link (4 lines, told to a 10-year-old)
-- Trigger: some people over 65 did 4 minutes of exercise every day. Just 4 minutes. After 12 weeks, they could stand up from a chair faster, and stand on one leg longer.
-- Story: an old poem from India. Every day a soft rope goes down into the well, and comes up again. After many years, the soft rope cuts a line into the hard stone.
-- Behavior: we wait for one big free hour, so we do nothing. Small, soft, every day: that is what cuts the stone.
-- Asana: Pasasana. Pasa means rope. You squat low, heels down, twist, and wrap your arms around like a rope. A little lower, every morning.
-
-Point in one line a child can repeat: "A soft rope, every day, cuts the stone."
-
-Toolkit pick: Root and Wobble (word-root reveal: Pasa = rope) + /story 4 beats. Why: the asana's own name is the story's picture, so the turn to the mat lands by itself. The hook stays on the news (Five-Lever), not on the word, because a word meaning is not a hook (12 Oct lesson).
-Other options, one line each: (a) Win/Loss Frame hook "4 minutes a day, or one hour never" with the same body; (b) Vibe Samurai ladder: rope and stone, the Mars rover, the chair study (too close to 19 Oct, so not picked).
-
-## Hooks (/hook, answered myself)
-Topic: small and daily beats big and someday.
-Consensus: "Exercise only counts if it is long and hard. No time for an hour? Then skip it."
-Where Boonchu sharpens it: since 2008, six days a week. It never was one big day. It was the same morning, again and again. (His confirmed facts. Any line about how he feels is his to say, not mine.)
-1. Authority: "Since 2008. Six days a week. Never one big day."
-2. Contrarian: "Four minutes is too small? That's why it works."
-3. Stakes: "You wait for one free hour. So you do nothing."
-4. Question: "What can four minutes a day do? Scientists checked."
-5. Pattern interrupt: "Four minutes a day. That's all. And they got stronger."
-Pick: 5 at 0-3 s (on screen: "4 minutes a day."), then 3 at 3-6 s as the second hook (the mirror: "that's me, I wait for the big free hour"). Why: a tiny number with a big result is a surprise, all true, and a 10-year-old gets it. 3 turns it on the viewer.
-Cover: "4 minutes" with "4" in gold. 2 words.
-
-## Script (/story, 60 s, spoken to camera, his spoken English)
-HOOK (0-8 s)
-"Four minutes a day. That's all.
-People over sixty-five. Small push-up. Stand up from the chair. Step on a step.
-Twelve weeks. Then? They stand up faster. They stand on one leg longer."
-(pause) "And you? You wait for one free hour... so you do nothing."
-On screen: 4 min · 12 weeks · stronger
-
-CONTEXT (8-14 s)
-"Short. So they do it almost every day. Eight days out of ten.
-India have a very old poem about this. Two lines."
-On screen: 8 of 10 days
-
-ORDEAL (14-38 s)
-"Bedtime story. A village. A well.
-Every day, the rope go down. Every day, it come up.
-The rope is soft. The stone is hard.
-Nobody think the rope can win.
-But many, many years later... look at the stone.
-There is a line. The soft rope cut it."
-(1 s)
-"We think we need big. Big hour. Big sweat. Big plan.
-Then life come... and we stop.
-Soft. Every day. That is what cut the stone."
-On screen: soft · every day · cut the stone
-
-TAKEAWAY (38-54 s)
-"In Ashtanga, there is an asana. Pasasana. Pasa mean rope.
-You squat down. Heels on the floor. You twist.
-Your arms wrap around... like a rope.
-For many people, the heels don't touch. Don't force.
-Every morning, sit a little lower. Breathe. Like the rope."
-[Boonchu cue: one line in your own words about heels in Pasasana, yours or a student's. Only if true. Never a name, never a promise of time.]
-(film yourself coming into Pasasana from Samasthitih, one full breath, "Pasa = rope" on screen, cut on the exhale)
-
-RETURN (54-60 s)
-(silent beat, 1 s)
-"Four minutes. A soft rope. Every day.
-แล้วเจอกันครับ"
-On screen: soft rope · every day, then small subtitle "see you"
-End card 2 s (keyword test): EN "Comment STUCK" / ZH 评论"卡住" / RU «ЗАСТРЯЛ». Caption only, never spoken.
-
-Payoff check: the hook opens "4 minutes made them stronger, and you wait for an hour"; the end closes it: soft rope, every day, cuts the stone; sit a little lower every morning. One lesson only: small and daily. Left out on purpose: the nursing-home line from the researcher (fear, and not what was tested), the bands and the stepper (gear talk), the poet's name (sources differ, see below).
-
-Edit cue sheet: zoom cut 1-2 s on "four minutes", "one free hour", "soft", "hard", "cut it", "Pasa mean rope". Sound effect 40%, 0.4 s after each stress word (a soft rope creak on "cut it"). Picture prompt for the poem (Isle of Dogs style, nothing billed without Boonchu's OK): "stop-motion puppet animation film still in the style of Wes Anderson's Isle of Dogs: a handmade tabletop diorama, an old stone village well in India, a twisted jute rope over the stone rim with a deep smooth groove worn into the stone, a small clay water pot, felt and wool textures, painted cardboard sky, cotton-wool clouds on visible wires, flat front-on camera, centered symmetrical tableau, visible fibers and handmade imperfections". No people needed. Study picture: no photo of the study people (none with rights); use the on-screen numbers only.
-
-## Captions (picture words, 10-year-old level, max 5 hashtags, no price)
-EN (Instagram, Lane A, keyword test)
-Some people over 65 did 4 minutes of exercise a day. Just 4 minutes.
-After 12 weeks, they stood up from a chair faster. They stood on one leg longer.
-An old poem from India: a soft rope goes down the well every day. After many years, it cuts a line in the hard stone.
-In Ashtanga, Pasasana means the rope asana. Sit a little lower every morning.
-Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds.
-#ashtanga #mysorestyle #hiddenstoriesofashtanga #pasasana #aybkk
-
-TH
-มีงานวิจัยให้คนอายุ 65 ขึ้นไป ออกกำลังกายวันละ 4 นาที แค่ 4 นาทีเท่านั้น
-ผ่านไป 12 สัปดาห์ เขาลุกจากเก้าอี้ได้เร็วขึ้น ยืนขาเดียวได้นานขึ้น
-กลอนเก่าของอินเดียบอกว่า เชือกนุ่มๆ หย่อนลงบ่อน้ำทุกวัน ผ่านไปหลายปี หินแข็งๆ ที่ขอบบ่อก็เป็นรอย
-ในอัษฎางค์ มีอาสนะชื่อ ปาศาสนะ แปลว่าอาสนะเชือก นั่งยองให้ต่ำลงอีกนิด ทุกเช้า
-ติดอาสนะไหนอยู่? คอมเมนต์ STUCK พร้อมชื่ออาสนะ สัปดาห์นี้ผมจะตอบทุกคอมเมนต์เอง ให้คำแนะนำหนึ่งข้อ ใช้เวลาแค่ 2 วินาที
-#อัษฎางค์โยคะ #มายซอร์ #เรื่องลับของอัษฎางค์ #ashtanga #aybkk
-
-ZH (Xiaohongshu / WeChat Channels, written fresh; no 最, 第一, 保证)
-每天只练4分钟，会怎样？
-有个研究，请65岁以上的人每天做4分钟：扶墙俯卧撑、从椅子上站起来、踩台阶。
-12周以后，他们从椅子上站起来更快了，单脚站得更久了。
-印度有一首很老的小诗：软软的井绳，每天下去、上来。
-很多年后，硬硬的井沿石头上，被磨出了一道印。
-阿斯汤加里有个体式叫套索式（Pasasana），Pasa就是“绳子”。
-蹲下来，脚跟着地，扭转，手臂像绳子一样绕过来。脚跟落不下去？别硬压。每天早上，蹲低一点点。
-卡在哪个体式？评论"卡住"加上体式名。这周我会亲自回复每一条，给你一个小提示。只要两秒钟。
-阿斯汤加的隐藏故事
-#阿斯汤加 #迈索尔 #套索式 #每天一点点 #阿斯汤加的隐藏故事
-
-RU
-Люди старше 65 занимались 4 минуты в день. Всего 4 минуты.
-Через 12 недель они быстрее вставали со стула и дольше стояли на одной ноге.
-Старое индийское стихотворение: мягкая верёвка каждый день опускается в колодец. Через много лет на твёрдом камне остаётся след.
-В аштанге есть Пашасана: «паша» значит верёвка. Каждое утро садись чуть ниже.
-Застряли на асане? Напишите «ЗАСТРЯЛ» и её название. На этой неделе я сам отвечу каждому: одна подсказка. Это 2 секунды.
-#аштанга #майсор #пашасана #тайныеисторииаштанги #aybkk
-
-Xiaohongshu title (12 characters): 软绳子，也能在石头上留下印
-
-## Sources (check before filming)
-- Study: ScienceDaily, 21 Oct 2026, "Just 4 minutes a day can dramatically improve strength after 65" (Penn State College of Medicine), https://www.sciencedaily.com/releases/2026/10/261020085025.htm . Paper: PLOS One 2026; 21(3): e0336748, "Brief daily functional strength training to improve functional performance in older adults with mobility disability: A randomized trial". 97 people, 65+, 12 weeks, 81% of days, +4.2 chair stands, +3.6 s one leg, 2.3 s faster sit-to-stand. Note: the participants had some trouble moving (mobility disability); the script does not claim anything for healthy or younger people.
-- Poem: Hindi doha "करत-करत अभ्यास के, जड़मति होत सुजान। रसरी आवत जात ते, सिल पर परत निसान॥" ("By practice, practice, even a dull mind becomes wise. The rope going and coming leaves a mark on the stone.") Found in the Rajasthan board Class 5 Hindi book (chapter 10, "दोहे और पद"), https://www.studiestoday.com/rbse-board-solutions-for-class-5-hindi-chapter-10 . The poet: that page says Kabir, many others say Vrind. Sources differ, so the script names no poet and says only "an old poem from India". The popular tale of a slow pupil who saw the groove at a well and went back to study is often told with this poem, but I could not check it, so it is left out.
-- Asana: Pasasana (pasha = noose, rope), first asana of the Intermediate series: squat with heels down, twist, arms bind around the shins behind the back.
-- Safety: no politics, no religion debate, no victims. Respect: the poem is quoted, not mocked.
-
-Items to verify before filming: the Boonchu cue line only if he has a real case; hook 1 only if he likes saying it.

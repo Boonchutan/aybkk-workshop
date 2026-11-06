@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-05T12:11:11.206Z
+Inbox last read: 2026-11-06T00:11:16.070Z
 
 ## Standing orders from Boonchu
 - 2026-11-03, changed 2026-11-04 (Boonchu: "Why machi cannot see instagram link?"): VIDEO LINKS. Platforms do not let bots download their videos and we never get around that (no fake user agent, no downloader, no login). For a video link: run `python3 bots/tools/read-link/read_link.py "<link>"` for any openly shared caption, then ask Boonchu for the file (Instagram share button, "Download", or a screen recording; in chat or Google Drive) and run the tool on the file: every spoken line, plus stills you open with your image reader to see the screen. README next to the tool.
@@ -223,3 +223,4 @@ Inbox last read: 2026-11-05T12:11:11.206Z
 - 2026-11-05 07:08: Carne posted; Plato paused (expected). Inbox 07:08: 1 new, 1 hot (LINE new person, 3 and 6 month packages). Serious lead (19:00 Sat 7 Nov, 2 days) and course prices (19:00 Sun 8 Nov, 3 days) reminded, 1st nudge today. Rezerv import reminded (daily). No reminders due this morning, no wins. Board rebuilt.
 - 2026-11-05 13:08: check-in. Serious lead (2 days) and course prices (3 days) reminded, 2nd nudge today (no more today). No reminders due. Inbox 13:08: 0 new.
 - 2026-11-05 19:08: Inbox 19:08: 1 new LINE thread, 1 hot (promo start-date question, may be answered). Serious lead (Sat 7 Nov) and course prices (Sun 8 Nov) not repeated (2 nudges today). No reminders due since 13:08, no wins. Next step given: answer the promo question before the promo ends 11 Nov.
+- 2026-11-06 07:08: Carne posted; Plato paused (expected). Inbox 07:08: 2 new LINE threads, 1 hot (2-month promo buyer, travels today to 14 Nov, asks if she can start 16 Nov). Serious lead (19:00 Sat 7 Nov, 1 day) and course prices (19:00 Sun 8 Nov, 2 days) reminded, 1st nudge today. Rezerv import reminded (daily). No reminders due this morning, no wins. Board rebuilt.
