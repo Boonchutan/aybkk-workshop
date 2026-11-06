@@ -197,6 +197,12 @@ const ok = (name, cond, extra = '') => {
       JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id WHERE m.name='Tenpack Import'`)).rows[0] || {};
     ok('the Rezerv import still maps "10 classes" to the 10-class pack', imp10.body.passes === 1 && ip.code === 'pack10'
        && ip.credits_total === 10 && ip.credits_used === 6 && ip.valid_days === 90, JSON.stringify([imp10.body, ip]));
+    const imp8 = await post('/api/bkk/admin/import', { rows: [
+      { name: 'Eightpack Import', plan: '8 classes / 1 month', until: '2026-12-05', classesLeft: 5 }] }, ADMIN);
+    const i8 = (await pool.query(`SELECT p.credits_total, p.credits_used, p.valid_days, pr.code FROM bkk_passes p
+      JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id WHERE m.name='Eightpack Import'`)).rows[0] || {};
+    ok('the Rezerv import maps "8 classes" to the 8-class pack', imp8.body.passes === 1 && i8.code === 'pack8'
+       && i8.credits_total === 8 && i8.credits_used === 3 && i8.valid_days === 30, JSON.stringify([imp8.body, i8]));
   }
 
   console.log('\n— buy (gateway not configured) —');

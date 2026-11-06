@@ -2273,7 +2273,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const CLASS_CREDIT = /^(?!.*\b(workshop|with)\b)(\[online\]\s*)?(mysore|led\s+(primary|intermediate)|self[\s-]*practice)\b/i;
   const IMPORT_PLANS = [[/^1\s*month/i, 'unlim1'], [/^2\s*months?/i, 'unlim2'], [/^3\s*months?/i, 'unlim3'],
     [/^6\s*months?/i, 'unlim6'], [/^(12\s*months?|1\s*years?)\b/i, 'unlim12'], [/^10[\s-]*class/i, 'pack10'],
-    [/^drop[\s-]*in\b/i, 'dropin'], [CLASS_CREDIT, 'dropin']];
+    [/^8[\s-]*class/i, 'pack8'], [/^drop[\s-]*in\b/i, 'dropin'], [CLASS_CREDIT, 'dropin']];
   const RETIRED_PLANS = {
     unlim2: { en: '2 months unlimited', th: '2 เดือน ไม่จำกัด', price: 18200, days: 60, sort: 40 },
     unlim6: { en: '6 months unlimited', th: '6 เดือน ไม่จำกัด', price: 45000, days: 180, sort: 60 },
