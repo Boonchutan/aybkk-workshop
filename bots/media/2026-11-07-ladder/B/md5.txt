@@ -5,6 +5,6 @@ ff0ada98fc82c11ba1632a6257a32775  bots/media/2026-11-07-ladder/B/LB02.jpg
 0b0c5b2ed06544796d1dd8a56056d2b1  bots/media/2026-11-07-ladder/B/LB05.jpg
 4c0f436e9911bc7302b07be4ce29465e  bots/media/2026-11-07-ladder/B/LB06.jpg
 a9626c55dc9fcf0645b33f38a7e1dd3f  bots/media/2026-11-07-ladder/B/LB07.jpg
-b5cd5822e43b71971c10ed0b5e148dcb  bots/media/2026-11-07-ladder/B/LB08.jpg
+b7d35df0adc25425b0db8cbbf3c03e63  bots/media/2026-11-07-ladder/B/LB08.jpg
 e367750672e9af096506c49e025544c8  bots/media/2026-11-07-ladder/B/LB09.jpg
 6f8938c11124fd6ce1da64e6159d1ecb  bots/media/2026-11-07-ladder/B/LB10.jpg
