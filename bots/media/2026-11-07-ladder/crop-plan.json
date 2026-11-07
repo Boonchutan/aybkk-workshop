@@ -1,0 +1,74 @@
+{
+ "note": "crop decisions to carry into the full IBM Plex + connector redo (7 Nov)",
+ "LAg": {
+  "07": {
+   "photo": "07-171",
+   "t": 195
+  },
+  "05": {
+   "photo": "07-164"
+  },
+  "04": {
+   "photo": "07-292"
+  },
+  "02": {
+   "t": 80,
+   "why": "whole frame"
+  },
+  "10": {
+   "t": 142,
+   "why": "head and elbows in"
+  },
+  "09": {
+   "t": "12 now; 30-40 gives fingertips room (optional)"
+  }
+ },
+ "LB": {
+  "02": {
+   "photo": "07-591",
+   "why": "self-conscious student off HELPLESS",
+   "t": 270
+  },
+  "03": {
+   "photo": "07-192",
+   "t": 270
+  },
+  "09": {
+   "photo": "07-599",
+   "t": "about 200 (was C KIND layout)",
+   "why": "self-conscious lady off 'old age' text; backs + grey-haired man from behind fit 'in old age'. NEVER 06-284 (Boonchu removed it from the folder)"
+  },
+  "06": {
+   "t": 230,
+   "why": "teacher head cut at 270; move PATIENCE down ~25"
+  }
+ },
+ "LC": {
+  "05": {
+   "photo": "07-696",
+   "t": 185
+  },
+  "03": {
+   "t": 75,
+   "why": "big man's left hand in; watermark readability check"
+  },
+  "01": {
+   "t": 220,
+   "why": "front lady's thigh/seat in; STEADY must move"
+  },
+  "07": {
+   "photo": "07-491",
+   "t": "pad:70:1565",
+   "why": "Boonchu: 'crop just her fingers and my hair and expand with white tab on the side just enough' (bars about 50 px each side)"
+  },
+  "09": {
+   "t": 165,
+   "why": "frame sliver judged trivial; keep"
+  },
+  "08": {
+   "photo": "07-595",
+   "why": "the self-conscious lady goes on KIND (be kind to yourself), the kindest line"
+  }
+ },
+ "folder_rule": "Only photos listed in ids3.json (the Drive folder now). 06-284, 06-268, 06-200 are OUT."
+}

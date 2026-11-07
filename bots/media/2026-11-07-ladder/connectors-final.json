@@ -1,0 +1,279 @@
+{
+ "A": [
+  {
+   "n": 1,
+   "word": "READY",
+   "conn": "for the steps nobody skips",
+   "text": "Not even the healthiest person can. You only choose how you arrive.",
+   "credit": "9 steps · swipe",
+   "changed": "Moved 'Nobody skips a step of life' into the line. Text is now 'Not even the healthiest person can.', so 'skips' is not said twice. 'how READY you arrive' became 'how you arrive', since READY sits right above it."
+  },
+  {
+   "n": 2,
+   "word": "WONDER",
+   "conn": "is where life starts",
+   "text": "Plato, the Greek thinker, wrote: \"philosophy begins in wonder.\" Philosophy means the love of wisdom.",
+   "credit": "Plato · Theaetetus · tr. Jowett",
+   "changed": "Moved 'Life starts in WONDER' into the line. Quote, credit and the 'love of wisdom' line unchanged."
+  },
+  {
+   "n": 3,
+   "word": "JOY",
+   "conn": "teaches children to move",
+   "text": "Thais say: \"ไม้อ่อนดัดง่าย ไม้แก่ดัดยาก\" (young wood bends easily, old wood is hard to bend). Old wood still bends, just slower.",
+   "credit": "Thai proverb (สำนวน)",
+   "changed": "Moved 'Children learn to move through JOY' into the line (JOY teaches children to move). Saying, gloss and the 'still bends' line unchanged."
+  },
+  {
+   "n": 4,
+   "word": "PROUD",
+   "conn": "of the strength you build yourself",
+   "text": "A Swahili proverb: \"Haba na haba hujaza kibaba\" (little by little fills up the measure).",
+   "credit": "Swahili proverb · East Africa",
+   "changed": "Moved 'Strength you build yourself makes you PROUD' into the line. Saying and gloss unchanged."
+  },
+  {
+   "n": 5,
+   "word": "FRAGILE",
+   "conn": "days come even to the strongest",
+   "text": "Susan Sontag wrote: \"Everyone who is born holds dual citizenship,\" one with the healthy, one with the sick.",
+   "credit": "Susan Sontag · Illness as Metaphor, 1978",
+   "changed": "Moved 'Nobody is too strong to feel FRAGILE' into the line as 'FRAGILE days come even to the strongest' (word order fixed): the word names a time in every life, not the student. Quote and the healthy/sick line unchanged."
+  },
+  {
+   "n": 6,
+   "word": "HOPE",
+   "conn": "grows each time you get back up",
+   "text": "The Japanese say: \"七転び八起き\" (fall down seven times, get up eight). Your mat waits for you.",
+   "credit": "Japanese proverb · Digital Daijisen",
+   "changed": "Moved sentence 1 into the line word for word. Saying, gloss and 'Your mat waits for you' unchanged."
+  },
+  {
+   "n": 7,
+   "word": "CURIOUS",
+   "conn": "minds stay strong without muscles",
+   "text": "The Persian poet Ferdowsi wrote: \"roam earth, converse with every one.\" Keep asking.",
+   "credit": "Ferdowsi · Shahnameh · tr. Warner, 1905",
+   "changed": "Moved 'A CURIOUS mind stays strong without muscles' into the line (plural 'minds', so it reads as everyone). Quote and 'Keep asking' unchanged."
+  },
+  {
+   "n": 8,
+   "word": "HUMBLE",
+   "conn": "like wise people who keep listening",
+   "text": "A Korean proverb: \"벼는 익을수록 고개를 숙인다\" (the riper the rice plant, the more it bends its head).",
+   "credit": "Korean proverb (속담)",
+   "changed": "Moved 'Wise people stay HUMBLE and keep listening' into the line as 'HUMBLE like wise people who keep listening', which keeps the old meaning (v1 'is how' made humility the way they listen). Saying and gloss unchanged."
+  },
+  {
+   "n": 9,
+   "word": "GRATEFUL",
+   "conn": "later in life, that you kept moving",
+   "text": "Russians say: \"Береги платье снову, а здоровье смолоду\" (care for clothes while new, health while young).",
+   "credit": "Russian proverb · V. I. Dal, 1862",
+   "changed": "Moved 'Later in life, you feel GRATEFUL you kept moving' into the line, with a comma so it reads in two parts. Saying and gloss unchanged."
+  },
+  {
+   "n": 10,
+   "word": "PEACE",
+   "conn": "can still come, like a leaf going home",
+   "text": "A Chinese saying: \"落叶归根\" (fallen leaves return to the roots). Thank your body.",
+   "credit": "Chinese idiom · Jingde Record of the Lamp, c. 1004",
+   "changed": "Moved 'A long life can still end in PEACE, like a leaf going home' into the line as 'PEACE can still come, like a leaf going home'. Keeps the hedge 'can still' from the wording put to Boonchu, so it is never a promise of a peaceful end. 'A long life' and 'at the end' cut to stay within 8 words; the leaf going home and the gloss carry the end gently. Saying, gloss, credit and 'Thank your body.' unchanged. Quote this exact line to Boonchu for his OK."
+  }
+ ],
+ "B": [
+  {
+   "n": 1,
+   "word": "WILLING",
+   "conn": "hearts climb each hard step",
+   "text": "Not even a yoga master can skip one.",
+   "credit": "The life of B.K.S. Iyengar · 9 steps · swipe",
+   "changed": "Moved 'a WILLING heart climbs each one' into the line as 'hearts climb each hard step' (plural, so it is about everyone; it no longer ends like C1 'every step of life'). Text: 'Not even a yoga master can skip one.' No fact or quote."
+  },
+  {
+   "n": 2,
+   "word": "HELPLESS",
+   "conn": "is how his life began",
+   "text": "B.K.S. Iyengar, who helped make yoga popular around the world, was born sick in 1918, then had malaria, typhoid and tuberculosis.",
+   "credit": "The Tribune, 2005 · AP, 2014 (retold)",
+   "changed": "The owner's own line. Moved 'began life HELPLESS' into it and joined the two sentences: 'He was born sick' became 'was born sick'. Every fact unchanged (Tribune, AP)."
+  },
+  {
+   "n": 3,
+   "word": "DOUBT",
+   "conn": "about young Iyengar, even from his own teacher",
+   "text": "He started yoga at 15, and his body was very stiff. Still, he would practise for hours.",
+   "credit": "The Tribune, 2005 · Open, 2014 · AP, 2014 (retold)",
+   "changed": "Moved 'Even his own teacher looked at him with DOUBT' into the line as 'DOUBT about young Iyengar, even from his own teacher': it now says who was doubted and by whom, so DOUBT cannot land on the man in the photo. 'young' is backed by Open ('the boy') and AP (age 15). Facts unchanged."
+  },
+  {
+   "n": 4,
+   "word": "BRAVE",
+   "conn": "is what the stiff boy became",
+   "text": "He \"could do a lot of backbends.\" At 18, when no one else would go to Pune, he went.",
+   "credit": "B.K.S. Iyengar · The Tribune, 2005 · AP, 2014 (retold)",
+   "changed": "Moved 'The stiff boy grew BRAVE' into the line ('grew' became 'became'). Quote and Pune line unchanged."
+  },
+  {
+   "n": 5,
+   "word": "HURT",
+   "conn": "came to Iyengar too",
+   "text": "In 1979, his scooter hit a rock. \"My spine was twisted.\" He was told he would never practise again.",
+   "credit": "B.K.S. Iyengar · The Tribune, 2005 · Open, 2014 (retold)",
+   "changed": "Moved sentence 1 into the line as 'HURT came to Iyengar too': 'the strongest body' read as a warning on the two students in headstand. 'too' keeps the idea that hurt comes to everyone, and 'his scooter' now clearly means Iyengar's. Facts and quote unchanged."
+  },
+  {
+   "n": 6,
+   "word": "PATIENCE",
+   "conn": "is what healing took, even for a master",
+   "text": "He said he recovered \"only very slowly.\" He had to learn yoga all over again.",
+   "credit": "B.K.S. Iyengar · The Tribune, 2005 · Open, 2014 (retold)",
+   "changed": "Moved 'Healing took PATIENCE, even for a master' into the line as 'PATIENCE is what healing took, even for a master' (the approved claim: patience is what the slow recovery took; he healed by re-learning yoga, Tribune and Open). Quote and 'all over again' line unchanged."
+  },
+  {
+   "n": 7,
+   "word": "EAGER",
+   "conn": "to keep writing, year after year",
+   "text": "He mostly taught himself by watching how the body works. At 86 he published his 18th book.",
+   "credit": "The Tribune, 2005 · Open, 2014 (retold)",
+   "changed": "Moved 'An EAGER mind kept him writing into his 80s' into the line as 'EAGER to keep writing, year after year': '80s' could read as the age of the woman in the photo (Thai has no he/she) and said the age twice. The age now sits only in 'At 86'; 18 books by 86 backs 'year after year' (Tribune). Facts unchanged."
+  },
+  {
+   "n": 8,
+   "word": "CALM",
+   "conn": "because results take time",
+   "text": "The wise old teacher said one woman practised for 11 years before she learned her knees were not straight.",
+   "credit": "Open, 2014 (retold)",
+   "changed": "Moved 'The wise old teacher was CALM about slow progress' into the line as 'CALM because results take time' (Open: 'results took time'). Keeps the narrow point (calm about how long results take), with no claim about his general manner, and no 'his' or 'slow' to land on the man in the photo. 'He said' became 'The wise old teacher said'. Facts unchanged. CALM still waits for Boonchu's OK: quote him this line."
+  },
+  {
+   "n": 9,
+   "word": "LOYAL",
+   "conn": "to his practice in old age",
+   "text": "In his 70s he could not climb stairs. Near 90, he did three hours of asanas daily.",
+   "credit": "Open, 2014 (retold)",
+   "changed": "Moved 'In old age, he stayed LOYAL to his practice' into the line. Facts unchanged."
+  },
+  {
+   "n": 10,
+   "word": "GENTLE",
+   "conn": "hearts take the last step",
+   "text": "Even a strong body grows weak. He practised until two months before he passed away, aged 95.",
+   "credit": "AP, 2014 (retold)",
+   "changed": "Moved 'The last step asks for a GENTLE heart' into the line as 'GENTLE hearts take the last step', which mirrors the B1 cover 'WILLING hearts climb each hard step' and drops one 'is' opener. Facts and the gentle 'passed away' wording unchanged."
+  }
+ ],
+ "C": [
+  {
+   "n": 1,
+   "word": "STEADY",
+   "conn": "on every step of life",
+   "text": "You can learn it, even on the ones you wish you could skip.",
+   "credit": "AYBKK · THE LADDER · 9 steps · swipe",
+   "changed": "Moved 'stay STEADY on every step of life' into the line. 'You can learn to' became 'You can learn it', and 'the ones you wish you could skip' kept."
+  },
+  {
+   "n": 2,
+   "word": "AMAZED",
+   "conn": "by your own feet, as a baby",
+   "text": "On the mat, you can look at your body like that again.",
+   "credit": "AYBKK · THE LADDER · 1/9",
+   "changed": "Moved 'As a baby, you were AMAZED by your own feet' into the line. Second sentence unchanged."
+  },
+  {
+   "n": 3,
+   "word": "SAFE",
+   "conn": "is how a kid can feel after falling",
+   "text": "In a Mysore-style class, the teacher gives the next asana when you are ready.",
+   "credit": "AYBKK · THE LADDER · 2/9",
+   "changed": "Moved 'As a kid, you could fall and still feel SAFE' into the line as 'SAFE is how a kid can feel after falling'. The kid comes before the fall, so it does not read as 'you are safe here even if you fall'. 'can feel' keeps it a feeling and a possibility, and 'a kid' (not 'you') does not assume the reader had a safe childhood. Mysore-style sentence unchanged."
+  },
+  {
+   "n": 4,
+   "word": "SURE",
+   "conn": "of yourself, from slow daily work",
+   "text": "Same mat, same time. One day, you do an asana you could not do before.",
+   "credit": "AYBKK · THE LADDER · 3/9",
+   "changed": "Moved 'Slow, daily work makes you SURE of yourself' into the line. Cut 'strong and': the new-asana line shows the strength. Rest unchanged."
+  },
+  {
+   "n": 5,
+   "word": "FEAR",
+   "conn": "comes to us all when we get sick",
+   "text": "Practice does not stop sickness. But you have a teacher who notices when you miss class.",
+   "credit": "AYBKK · THE LADDER · 4/9",
+   "changed": "Moved 'Even healthy people get sick, and FEAR comes with it' into the line as 'FEAR comes to us all when we get sick': 'us' takes in the teacher and the viewer, so it does not point at the student in the photo. 'Practice does not stop sickness' and the teacher line unchanged. The photo move is still open (see rejected)."
+  },
+  {
+   "n": 6,
+   "word": "TRUST",
+   "conn": "starts the way back after sickness",
+   "text": "You may return slower and weaker. But your mat and your practice time are still there, waiting for you.",
+   "credit": "AYBKK · THE LADDER · 5/9",
+   "changed": "Moved 'Coming back after sickness starts with TRUST' into the line. Rest unchanged."
+  },
+  {
+   "n": 7,
+   "word": "OPEN",
+   "conn": "to being a beginner",
+   "text": "You learn your whole sequence by heart. Then you get a new asana and start again.",
+   "credit": "AYBKK · THE LADDER · 6/9",
+   "changed": "Moved 'Your mind can stay OPEN to being a beginner' into the line ('Your mind can stay' cut). 'Then a new asana makes you a beginner again' became 'Then you get a new asana and start again', so 'beginner' is not said twice and 'one' cannot be translated as the number one."
+  },
+  {
+   "n": 8,
+   "word": "KIND",
+   "conn": "to yourself, after years on the mat",
+   "text": "Some days the asana comes, some days not. You stop fighting yourself on hard days.",
+   "credit": "AYBKK · THE LADDER · 7/9",
+   "changed": "Moved 'Years on the mat teach you to be KIND to yourself' into the line. Rest unchanged."
+  },
+  {
+   "n": 9,
+   "word": "FREE",
+   "conn": "is what strength means as you grow older",
+   "text": "You get up from the floor on your own. Daily practice helps you keep more of that strength.",
+   "credit": "AYBKK · THE LADDER · 8/9",
+   "changed": "Moved 'As you grow older, strength means feeling FREE' into the line. Rest unchanged ('helps... more of', never a sure result)."
+  },
+  {
+   "n": 10,
+   "word": "EASE",
+   "conn": "can stay, even as the body weakens",
+   "text": "Every practice ends the same way: rest, breathe, let go.",
+   "credit": "AYBKK · THE LADDER · 9/9",
+   "changed": "Moved 'When the body gets weaker, the heart can still be at EASE' into the line as 'EASE can stay, even as the body weakens'. Keeps the hedge 'can' (never a sure result). 'weakens' kept so it does not echo B10 'grows weak'. 'in the heart' cut to stay within 8 words. Closing sentence unchanged."
+  }
+ ],
+ "applied": [
+  "FACT B6 PATIENCE: conn 'is what healing took, even for a master' (reads 'PATIENCE is what healing took, even for a master').",
+  "FACT B8 CALM (point kept, wording from reader check): no claim about his general manner. Line is 'CALM because results take time' (Open: 'results took time'). Quote it to Boonchu for the pending CALM OK.",
+  "FACT A10 PEACE (hedge restored, reworded to fit 8 words): conn 'can still come, like a leaf going home' (reads 'PEACE can still come, like a leaf going home'). Quote this line to Boonchu.",
+  "FACT C10 EASE (hedge restored, reworded to fit 8 words): conn 'can stay, even as the body weakens'. 'weakens' kept.",
+  "FACT C3 SAFE + READER C3 SAFE (merged): conn 'is how a kid can feel after falling'. Kid before fall (reader), 'can feel' and no assumed childhood (fact), 8 words.",
+  "READER B5 HURT: conn 'came to Iyengar too'. Text unchanged.",
+  "READER B8 CALM: conn 'because results take time'. Text unchanged.",
+  "READER B7 EAGER: conn 'to keep writing, year after year'. The age sits only in 'At 86'.",
+  "READER B3 DOUBT: conn 'about young Iyengar, even from his own teacher' (8 words). Text unchanged.",
+  "READER C5 FEAR (connector part, reworded): conn 'comes to us all when we get sick'. 'us' takes in the teacher, as the checker asked.",
+  "READER A8 HUMBLE: conn 'like wise people who keep listening'.",
+  "READER C7 OPEN: text 'You learn your whole sequence by heart. Then you get a new asana and start again.' (16 words).",
+  "READER A1 READY: text 'Not even the healthiest person can. You only choose how you arrive.' (12 words, cover range 8 to 18).",
+  "READER B1 WILLING: conn 'hearts climb each hard step', text 'Not even a yoga master can skip one.' (8 words, cover range).",
+  "READER PATTERN is/was (optional B10 taken): B10 conn 'hearts take the last step'. With the B6 fact fix (back to 'is') and C3 ('is how'), openers are now 6 'is' (A2, B2, B4, B6, C3, C9) and 0 'was', down from 6 'is' + 2 'was' in v1. Without the B10 change it would be 7.",
+  "READER PATTERN even: no extra change made. After the fixes 'even' is in 4 lines (A5, B3, B6, C10), down from 7.",
+  "READER A5 FRAGILE: conn 'days come even to the strongest'.",
+  "READER A9 GRATEFUL: conn 'later in life, that you kept moving'."
+ ],
+ "rejected": [
+  "FACT B8 exact wording 'about slow progress': not used. The reader line 'because results take time' meets the same fact point (narrow, sourced to Open, not his general manner). It also drops 'slow progress', which could still read as the clearly seen man's own slow progress.",
+  "FACT A10 exact wording 'can come at the end, like a leaf going home': 10 words, over the 8-word limit. Used 'can still come, like a leaf going home' (8): same hedge, and 'can still' matches the wording put to Boonchu.",
+  "FACT C10 exact wording 'can stay in the heart, even as the body weakens': 10 words, over the limit. Used 'can stay, even as the body weakens' (7).",
+  "FACT C3 'is how you could feel as a kid, even after a fall' (12 words) and the shorter 'is how a kid can feel after a fall' (9 words): both over the 8-word limit. Used 'is how a kid can feel after falling' (8).",
+  "READER C3 exact wording 'as a kid, even when you fell': fixes the order but still drops 'could' and 'feel' and says the reader was safe as a child (fact check C3 point). Merged into 'is how a kid can feel after falling'.",
+  "READER B7 'book after book' (in conn_v1_fixed.json): echoes '18th book' in the text right below. Used 'year after year', the wording in the reader issue.",
+  "READER C5 exact wording 'comes with sickness, to all of us': puts 'sickness' in the line right above 'Practice does not stop sickness.' Used 'comes to us all when we get sick', which keeps the same 'us' idea and reads as one phrase.",
+  "READER C5 photo move (FEAR on one clearly seen woman, tense face): not done here, because this file holds texts, not photos. Still open: move FEAR to a blurred, group or from-behind photo at the next layout run, or ask Boonchu about this student.",
+  "READER B3 photo note (07-192 is one clearly seen man under the hard word DOUBT): photo not changed here. The standing order lists 07-192 as the DOUBT fix, so this goes back to Boonchu or the layout run. The new line names Iyengar as the one doubted, which lowers the risk meanwhile."
+ ]
+}

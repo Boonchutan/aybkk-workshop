@@ -24,22 +24,22 @@ THE GRID (owner's rule, strict; he caught slides where the small text ignored it
 - Vertical: the block's top on 60, 516 or 834; OR its bottom on 516, 834 or 1120 (1290 only when the watermark sits on the other side); OR, only when all those are blocked, its top on the 52 px baseline grid (60 + 52k).
 - The big word: also prefer one vertical edge on a grid line (60, 413, 667, 1020) and its top or bottom on a grid line, but never shrink it much just for that.
 - The renderer prints a line 'GRID OK' or 'GRID FAIL: <reason>'. Your final MUST print GRID OK. Pass 'grid' as a 4th argument to also save <out>_grid.jpg with the grid lines drawn (cyan = x lines, magenta = y lines); put those in the work folder and look at them.
-- Inside a narrow column use sz 42-46 so lines hold 3+ words; a wide column suits most 20-26 word texts at sz 46.`
+- Inside a narrow column use sz 40-42 so lines hold 3+ words; a wide column suits most texts at sz 42-44.`
 
 const COMMON = `
-You are laying out ONE Instagram carousel slide (1080x1350 JPEG, 4:5) for AYBKK (Ashtanga Yoga Bangkok). The slide = a class photo crop + one BIG white keyword (font Inter Black) + a small text block (italic serif, 2-4 short sentences) with an uppercase credit line under it + the "AYBKK SHALA BANGKOK" watermark at the bottom (the renderer adds it).
+You are laying out ONE Instagram carousel slide (1080x1350 JPEG, 4:5) for AYBKK (Ashtanga Yoga Bangkok). The slide = a class photo crop + one BIG white keyword (font Inter Black) + a small text block (IBM Plex Serif, upright, 2-3 short sentences) with an uppercase credit line under it + the "AYBKK SHALA BANGKOK" watermark at the bottom (the renderer adds it).
 The texts are final and fact-checked: never change, drop or add a single word of the word, the text or the credit. (Earlier agents cut words to make text fit; that is forbidden. If it does not fit, use the wide column, a smaller sz down to 42, or another spot.)
 
 Working dir WD=${WD}
 Renderer: run from cwd ${WD}/tools with env WD set:
   cd ${WD}/tools && WD=${WD} ENG=eng23 python3 direct20g.py <spec.json> 1 <out.jpg> grid
 It renders row 1 of a JSON list with hand-set positions. Row fields:
-- photo, id, word, line (the small text), credit: never change.
+- photo, id, word, line (the small text), credit: never change. NEVER switch the photo, even if a reviewer suggests it: if you think the photo is wrong, keep it, finish the best layout, and explain the problem in notes (the owner picks photos; some photos were deleted from his folder and must never come back).
 - t: integer 0..270 = top of the 1350-high crop window in the 1080x1620 photo (slide_y = photo_y - t). Never 'pad', never white bars.
 - tight (bool), wmain: keep as given. wm: watermark side 'left' | 'right' | 'center' | 'orig' (optional; sits around slide y 1180-1330).
 - wwidth: length of the big word in px. wpos: [x_left, y_top] of the word box. ink_w: must be 'light' (white). wshadow: shadow strength behind the white word (default 1.0; 1.2-1.8 for bright areas). wburn: soft darkening behind the word (0..0.3).
 - wrot: 0 (normal) or -90 (word reads top to bottom, standing sideways) or 90; with rotation wpos is the top-left of the rotated box and wwidth its length. Use sideways only when no horizontal spot can hold a big word.
-- sz: small-text font size (42 to 50, prefer 46; never under 42). cws: [353] or [607] only. sxy: [x, y_top] of the text block (x as in THE GRID). ink_s: 'light' or 'dark'. sright: true to right-align the lines. sburn: soft darkening behind the text block (0..0.4) to make light text readable on a busy or bright area.
+- sz: small-text font size (40 to 46, prefer 42; never under 40). The small-text font is IBM Plex Serif (upright), wider than the old italic. cws: [353] or [607] only. sxy: [x, y_top] of the text block (x as in THE GRID). ink_s: 'light' or 'dark'. sright: true to right-align the lines. sburn: soft darkening behind the text block (0..0.4) to make light text readable on a busy or bright area.
 - line_br (optional): the same text with manual line breaks (" | " between lines), only to fix an ugly wrap (one-word last line, 'a'/'the' at a line end). The words must stay identical, character for character. Start without line_br and let the renderer wrap.
 It prints 'word [x0,y0,x1,y1] <check>', 'sent [x0,y0,x1,y1] <check>' (strict auto-rule hint, may print None for good hand placements) and the GRID line.
 Photo grid with labels: ${WD}/grid/<photo>.jpg (720x1080 preview of the full 1080x1620 photo; axis labels are FULL photo pixels). Full photo: ${WD}/full/<photo>.jpg.
@@ -61,6 +61,7 @@ Try at least 3 grid layouts (different columns or sides), compare them side by s
 const MAKE = { type: 'object', properties: { nn: { type: 'string' }, final_jpg: { type: 'string' }, spec_json: { type: 'string' }, column: { type: 'string' }, grid_line: { type: 'string' }, word_box: { type: 'array', items: { type: 'number' } }, letter_height: { type: 'number' }, sz: { type: 'number' }, notes: { type: 'string' } }, required: ['nn', 'final_jpg', 'spec_json', 'column', 'grid_line', 'word_box', 'letter_height', 'sz', 'notes'] }
 const CHECK = { type: 'object', properties: { pass: { type: 'boolean' }, grid_ok: { type: 'boolean' }, text_exact: { type: 'boolean' }, word_big_enough: { type: 'boolean' }, text_readable_on_phone: { type: 'boolean' }, issues: { type: 'array', items: { type: 'string' } } }, required: ['pass', 'grid_ok', 'text_exact', 'word_big_enough', 'text_readable_on_phone', 'issues'] }
 
+const CONN_DOC = "CONNECTING LINE (owner's idea, now the house style): conn = a short line that reads as ONE phrase with the big word (e.g. 'HURT' + 'came to Iyengar too'). Never change its words. Renderer fields: conn (text; ' | ' = line break), csz (40-60, default 56; usually 48-56), cxy optional [x, y_top] (x may be 'R1020'/'R667'/'R413' = right edge on that line; default = just under the word box, left-aligned), cgap, cright, ink_c, cshadow. It prints 'conn [x0,y0,x1,y1]'. Place it tight to the word (10-30 px) under it or beside it so word -> line reads as one phrase; line up its left or right edge with the word's edge or a grid line; never on faces, hands, feet or frames; small text block 40+ px away and on the grid (GRID OK). Prefer a HORIZONTAL big word with the connector under or beside it; a sideways word only if no horizontal spot keeps it 110+ px tall, and then put the connector horizontal where the word ends. Big word letters at least 110 px tall. The small text font is IBM Plex Serif (upright); the connector uses it too. The layout fields in the row are only a starting point from the old italic layout; re-place everything for the new font and the connector."
 const nn = (s) => String(s.n).padStart(2, '0')
 function makePrompt(s, fb) {
   return `${COMMON}
@@ -68,6 +69,7 @@ function makePrompt(s, fb) {
 THIS SLIDE: set ${SET}, slide ${s.n} (${s.n === 1 ? 'the COVER, first slide people see' : 'a story slide'}), photo ${s.row.photo}, big word ${s.row.word}.
 Its row (start from it; fill or change t, wwidth, wpos, ink_w, sz, cws, sxy, ink_s and the rest): ${JSON.stringify(s.row)}
 ${REGRID ? 'This slide was laid out before WITHOUT the grid (old final: ' + WD + '/' + s.old + '). Keep what was good about it (crop, big word spot and size) if it still works, but re-place the small text on the grid. The small text is now the full planned text (some words the old layout had cut are back). You may move or resize the big word to make room; keep it big.' : ''}
+${s.row.conn ? CONN_DOC : ''}
 ${s.hint ? 'Photo notes: ' + s.hint : ''}
 ${fb ? 'A reviewer rejected your previous final (' + WD + '/v2/' + SET + '/final/' + nn(s) + '.json). Fix all of these and overwrite the final:\n- ' + fb.join('\n- ') : ''}
 Return nn = "${nn(s)}", column = which of the 4 columns, grid_line = the exact GRID line the renderer printed for the final.`
@@ -75,7 +77,7 @@ Return nn = "${nn(s)}", column = which of the 4 columns, grid_line = the exact G
 function checkPrompt(s, m) {
   return `You are an independent, strict reviewer of ONE Instagram carousel slide (1080x1350) for a yoga school. Reject if any rule is broken.
 Slide: ${m.final_jpg}   Spec: ${m.spec_json}
-Big word: ${s.row.word}. Small text (must appear word for word, nothing cut): "${s.row.line}". Credit: "${s.row.credit}".
+Big word: ${s.row.word}. Small text (must appear word for word, nothing cut): "${s.row.line}". Credit: "${s.row.credit}".${s.row.conn ? ' Connecting line (a new element right under or beside the big word, must appear word for word, sit tight to the word so word + line read as one phrase, be easy to read on a phone, and touch no face, hand, foot or frame): "' + s.row.conn + '".' : ''}
 First re-render the spec yourself: cd ${WD}/tools && WD=${WD} ENG=eng23 python3 direct20g.py ${m.spec_json} 1 ${WD}/v2/${SET}/work/check_${nn(s)}.jpg grid
 and confirm it prints GRID OK, then look at ${WD}/v2/${SET}/work/check_${nn(s)}_grid.jpg.
 ${GRID}
@@ -86,6 +88,7 @@ Rules:
 4. No head, hand or foot of the main people cut off at the frame edge where it could have been kept. Owner's orders: never cut a main person's head (in tall inversions keep head, face, hands and elbows and cut a bit of the feet instead); never let the crop edge cut through a framed picture on the wall (whole or fully out).
 5. Text and word never over framed pictures, guru portraits or deity statues (30 px clear).
 Use the Read tool and python3 with PIL (save crops as ${WD}/v2/${SET}/work/check_${nn(s)}_*.jpg). Look closely at word edges for fingers, toes and faces.
+Never ask for a different photo as a fix; if the photo itself is the problem, say so in an issue starting 'PHOTO:' and judge the layout on its own.
 pass=true only if all rules hold. Each issue = a short concrete fix instruction. Your final message is data, not chat.`
 }
 
