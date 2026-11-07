@@ -52,6 +52,7 @@ Rules (from the owner, strict):
 3. Word and text block at least 40 px apart; both clear of the watermark.
 4. Change t only if no visible head, hand or foot of the main people gets cut.
 4b. NEVER put the big word or the text over framed pictures, teacher portraits, photos of gurus or deity statues on the wall shelves (they are sacred to the shala). Keep 30 px clear of them.
+4e. Owner's order: never cut the main person's head. If the whole body cannot fit (tall inversions like a headstand), keep the head, face, hands and elbows fully in and cut a bit of the feet instead.
 4d. Owner's order: never let the crop edge cut through a framed picture on the wall. Choose t so each framed picture is either fully inside the slide (with some space around it) or fully out of it.
 4c. The small text may contain Thai, Japanese, Korean, Russian or Chinese words: they render with fallback fonts; check they are complete and readable in the preview.
 5. Write candidates to ${WD}/v2/${SET}/work/<NN>_v<k>.jpg (+ .json). Final: ${WD}/v2/${SET}/final/<NN>.jpg and its one-row spec list ${WD}/v2/${SET}/final/<NN>.json (make the folders). Do not touch other files.

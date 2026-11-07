@@ -27,7 +27,9 @@ def grid_check():
         if not any(abs(R - c1) <= 1.5 and c1 - c0 == cw for c0, c1 in COLS): bad.append('right edge %d must sit on a column end (413, 667 or 1020) matching its width' % R)
     else:
         if not any(abs(L - c0) <= 1.5 and c1 - c0 == cw for c0, c1 in COLS): bad.append('left edge %d must sit on a column start (60, 413 or 667) matching its width' % L)
-    yok = any(abs(T - y) <= 2 for y in (60, 516, 834)) or any(abs(B - y) <= 2 for y in (516, 834, 1120, 1290)) or abs(((T - 60) + 26) % 52 - 26) <= 2
+    yok = any(abs(T - y) <= 2 for y in (60, 516, 834)) or any(abs(B - y) <= 2 for y in (516, 834, 1120, 1290)) or (T >= 58 and abs(((T - 60) + 26) % 52 - 26) <= 2)
+    if T < 58: bad.append('top %d is inside the 60 px top margin' % T)
+    if B > 1292: bad.append('block bottom %d is below the 60 px bottom margin (must end by 1290)' % B)
     if not yok: bad.append('top %d / bottom %d: put the top on 60, 516 or 834, or the bottom on 516, 834, 1120 (or 1290 when the watermark is on the other side), or the top on the 52 px baseline grid (60 + 52k)' % (T, B))
     return bad
 _g = grid_check(); print('GRID', 'OK' if not _g else 'FAIL: ' + '; '.join(_g))
