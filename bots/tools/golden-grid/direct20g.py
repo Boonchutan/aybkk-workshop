@@ -68,6 +68,26 @@ else:
     out.paste(Image.new('RGBA', (W, H), (e.LIGHT if light else e.DARK) + (255,)), (0, 0), txt)
     out = out.convert('RGB')
     ys, xs = np.where(np.asarray(txt) > 128); print('ink', [int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max())])
+conn = s.get('conn')   # Boonchu 7 Nov: a small connecting line under the big word, so the word reads as context, not a label
+if conn:
+    csz = s.get('csz', 56); fc = e.F('Serif', csz); lines = [x.strip() for x in e.smart(conn).split('|')]
+    lead = round(csz * 1.08); asc = round(csz * 0.78)
+    cw_ = max(e.mlen(x, fc) for x in lines)
+    if s.get('cxy'):
+        cx, cy = s['cxy']; cx = (int(cx[1:]) - cw_) if isinstance(cx, str) else cx
+    else:
+        cx, cy = wr[0], wr[3] + s.get('cgap', 10)
+    cright = s.get('cright', False); cbox = (cx, cy, cx + cw_, cy + asc + lead * (len(lines) - 1) + round(csz * 0.25))
+    light = s.get('ink_c', 'light') == 'light'
+    m = Image.new('L', (W, H), 0); dm = ImageDraw.Draw(m)
+    for i, t in enumerate(lines):
+        x = (cx + cw_ - e.mlen(t, fc)) if cright else cx
+        e.mdraw(dm, x, cy + asc + i * lead, t, fc, 255, e.SENT_STROKE)
+    k = s.get('cshadow', 1.2); o = out.convert('RGBA')
+    sh = Image.new('L', (W, H), 0); sh.paste(m.filter(ImageFilter.GaussianBlur(7 * k)).point(lambda v: int(min(255, v * 1.5 * k) * (0.55 if light else 0.4))), (0, 4 if light else 0))
+    o = Image.alpha_composite(o, Image.merge('RGBA', [Image.new('L', (W, H), c) for c in (e.SHADOW if light else e.GLOW)] + [sh]))
+    o.paste(Image.new('RGBA', (W, H), (e.LIGHT if light else e.DARK) + (255,)), (0, 0), m); out = o.convert('RGB')
+    print('conn', [round(v) for v in cbox], 'GRID-conn', 'edge on a grid line' if any(abs(v - g) <= 4 for v in (cbox[0], cbox[2]) for g in (60, 413, 667, 1020)) else 'no edge on a grid line')
 out.save(sys.argv[3], quality=93)
 if len(sys.argv) > 4 and sys.argv[4] == 'grid':
     gv = out.copy(); gd = ImageDraw.Draw(gv)

@@ -29,7 +29,15 @@ def F(w, s):
         if w == 'Big' and BIG == 'inter':
             f = ImageFont.truetype(os.path.join(GD, 'fonts', 'Inter-var.ttf'), s); f.set_variation_by_axes([32, 900])
         else:
-            f = ImageFont.truetype(os.path.join(GD, 'fonts', 'InstrumentSerif-Italic.ttf' if w == 'Serif' else 'NimbusSans-%s.otf' % ('Bold' if w == 'Big' else w)), s)
+            if w == 'Serif' and os.environ.get('SERIF_FILE', SERIF_DEFAULT):   # Boonchu 7 Nov: test upright minimal serifs for the small text
+                f = ImageFont.truetype(os.environ.get('SERIF_FILE', SERIF_DEFAULT), s)
+                ax = dict(kv.split('=') for kv in os.environ.get('SERIF_AX', '').split(',') if kv)
+                if ax:
+                    names = [a['name'].decode() if isinstance(a['name'], bytes) else a['name'] for a in f.get_variation_axes()]
+                    tags = {'Weight': 'wght', 'Optical size': 'opsz', 'Optical Size': 'opsz'}
+                    f.set_variation_by_axes([float(ax.get(tags.get(n, n), a['default'])) for n, a in zip(names, f.get_variation_axes())])
+            else:
+                f = ImageFont.truetype(os.path.join(GD, 'fonts', 'InstrumentSerif-Italic.ttf' if w == 'Serif' else 'NimbusSans-%s.otf' % ('Bold' if w == 'Big' else w)), s)
         _FC[w, s] = f
     return _FC[w, s]
 CJK = '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc'   # Chinese and Japanese in credits (Nimbus has no CJK glyphs)
@@ -59,7 +67,8 @@ def ttext(d, xy, t, f, trk, fill, sw=0, extra=0):
         d.text((x, y), ch, font=_fc(f, ch[0]), fill=fill, anchor='ls', stroke_width=sw + extra, stroke_fill=fill if sw + extra else None)
         x += (_fc(f, ch[0]).getlength(ch) if mixed else f.getlength(t[:i + 1]) - f.getlength(t[:i])) + trk * f.size + sw * 1.6
 
-CYR_SERIF = '/usr/share/fonts/truetype/liberation/LiberationSerif-Italic.ttf'   # Russian words inside the italic sentence
+SERIF_DEFAULT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fonts', 'IBMPlexSerif-Regular.ttf')   # Boonchu 7 Nov picked IBM Plex Serif (upright) for the small text; SERIF_FILE='' falls back to Instrument Serif Italic
+CYR_SERIF = os.environ.get('CYR_SERIF', SERIF_DEFAULT)   # Russian words inside the sentence: IBM Plex Serif has its own Cyrillic
 def _nonlat(ch): o = ord(ch); return 0x0400 <= o <= 0x04FF or _thai(ch) or o >= 0x2E80
 def _sfc(f, ch):
     o = ord(ch)
@@ -151,12 +160,25 @@ def frames_of(n):
             for z in json.load(open(p)): FR_[z['id']] = z['items']
     return FR_.get(n, [])
 _CLEAN = {}
+# 07-491's watermark sits on fingertips, nails and a mat edge, and wm_alpha pasted those highlights as white chips when the watermark
+# moved. Same class, same watermark at the same pixels (checked, shift 0,0): take the letters' alpha from these clean photos instead.
+WM_REF = {'07-491': ('07-482', '07-713', '07-717', '07-725', '07-747'),
+          '07-696': ('07-482', '07-713', '07-717', '07-725', '07-747')}   # 07-696: the watermark band holds her toenails (ghost streaks when moved)
+WM_REF['07-310'] = WM_REF['07-491']   # 07-310: its own letters sit on the orange mat and lose strokes of 'Nov 7th' (checked, shift 0,0)
+WM_REF['07-171'] = WM_REF['07-491']   # 07-171: the letters lie across her right-hand fingers, red nail and toe tips
+# (dilation kernel, inpaint radius) per photo; 07-171: 7x7/r5 smeared her fingertip and nail into a streak with grey patches, 3x3/r3 keeps them sharp
+WM_INPAINT = {'07-171': (3, 3)}
+# the letters (AYBKK SHALA BANGKOK + 2 credit lines) sit at x 364-715, y 1452-1529 of the photo = band x 144-495, y 67-144
+WM_BOX = np.zeros((c18.WY1 - c18.WY0, c18.WX1 - c18.WX0), np.float32); WM_BOX[58:156, 132:508] = 1
 def clean(n):
     if n not in _CLEAN:
         B = big(n); reg = B[c18.WY0:c18.WY1, c18.WX0:c18.WX1].copy(); a = c18.wm_alpha(reg)
+        if n in WM_REF: a = np.mean([c18.wm_alpha(big(r)[c18.WY0:c18.WY1, c18.WX0:c18.WX1].copy()) for r in WM_REF[n]], 0).astype(a.dtype)
+        a = a * WM_BOX   # only the letters move: bright hand edges or mat streaks elsewhere in the band were pasted as white shards (07-310)
         mm = np.zeros(B.shape[:2], np.uint8)
-        mm[c18.WY0:c18.WY1, c18.WX0:c18.WX1] = cv2.dilate((a > 0.05).astype(np.uint8), np.ones((7, 7), np.uint8)) * 255
-        _CLEAN[n] = (cv2.inpaint(B, mm, 5, cv2.INPAINT_TELEA), reg, a)
+        dk, ir = WM_INPAINT.get(n, (7, 5))
+        mm[c18.WY0:c18.WY1, c18.WX0:c18.WX1] = cv2.dilate((a > 0.05).astype(np.uint8), np.ones((dk, dk), np.uint8)) * 255
+        _CLEAN[n] = (cv2.inpaint(B, mm, ir, cv2.INPAINT_TELEA), reg, a)
     return _CLEAN[n]
 
 def frame(n, t, wm=None, tight=False, wmxy=None, wmk=1.0):
