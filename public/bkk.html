@@ -704,7 +704,11 @@
   .mystate.full .big{color:var(--soft)}
   .mystate .btn{margin-top:14px;min-height:50px;padding:14px 30px;font-size:16px}
   .mystate .note{margin:12px 0 0}
-  .cls{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:2px solid var(--line)}
+  .cls{display:flex;flex-wrap:wrap;gap:0 14px;align-items:center;padding:14px 0;border-top:2px solid var(--line)}
+  /* In a list row the tick takes a line of its own under the class name, so a long
+     label (Russian) does not make the row tall. */
+  .cls > .matrow{flex:0 0 100%;padding-left:76px;box-sizing:border-box}
+  .cls > .matrow label.mat{margin-top:4px}
   .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
     color:var(--plum);min-width:62px}
   .cls .b{flex:1;min-width:0}
@@ -997,7 +1001,7 @@
       <ul class="points">
         <li data-i18n="f1">New to Mysore style? Start with a monthly package, so the teacher can guide you step by step. Drop-in is for visitors who already know the sequence.</li>
         <li data-i18n="f2">Plan to practise at least 4 days a week, and book your classes in advance.</li>
-        <li class="xm" id="fst3" data-i18n="f3">Bring your own mat and a towel, and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.</li>
+        <li class="xm" id="fst3" data-i18n="f3">Bring your own mat and a towel (or tick "I need a mat" when you book), and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.</li>
         <li class="xm" id="fst4" data-i18n="f4">No phones, no photos and no talking in the shala during practice.</li>
         <li class="xm" id="fst5" data-i18n="f5">After practice, clean your mat and the floor around it with the spray we provide.</li>
         <li class="xm" id="fst6" data-i18n="f6">The shala is closed on full moon and new moon days.</li>
@@ -1129,7 +1133,7 @@
       firstH: 'Your first class',
       f1: 'New to Mysore style? Start with a monthly package, so the teacher can guide you step by step. Drop-in is for visitors who already know the sequence.',
       f2: 'Plan to practise at least 4 days a week, and book your classes in advance.',
-      f3: 'Bring your own mat and a towel, and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.',
+      f3: 'Bring your own mat and a towel (or tick "I need a mat" when you book), and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.',
       f4: 'No phones, no photos and no talking in the shala during practice.',
       f5: 'After practice, clean your mat and the floor around it with the spray we provide.',
       f6: 'The shala is closed on full moon and new moon days.',
@@ -1219,7 +1223,7 @@
       firstH: 'คลาสแรกของคุณ',
       f1: 'ยังไม่เคยฝึกแบบมายซอร์? เริ่มด้วยแพ็กเกจรายเดือน แบบครั้งเดียว (drop-in) สำหรับผู้ที่จำลำดับท่าได้แล้วเท่านั้น',
       f2: 'ตั้งใจฝึกอย่างน้อยสัปดาห์ละ 4 วัน และจองคลาสล่วงหน้า',
-      f3: 'นำเสื่อโยคะและผ้าเช็ดตัวมาเอง ใส่ชุดที่เคลื่อนไหวสะดวก มาก่อนเวลาเล็กน้อยเพื่อเตรียมตัวและคุยกับครู',
+      f3: 'นำเสื่อโยคะและผ้าเช็ดตัวมาเอง (หรือติ๊ก "ต้องการเช่าเสื่อที่ชาลา" ตอนจอง) ใส่ชุดที่เคลื่อนไหวสะดวก มาก่อนเวลาเล็กน้อยเพื่อเตรียมตัวและคุยกับครู',
       f4: 'ระหว่างการฝึก ห้ามใช้โทรศัพท์ ห้ามถ่ายรูป และงดพูดคุยในห้องฝึก',
       f5: 'ฝึกเสร็จแล้ว ทำความสะอาดเสื่อและพื้นรอบ ๆ ด้วยสเปรย์ที่เราเตรียมไว้',
       f6: 'AYBKK ปิดในวันพระจันทร์เต็มดวงและวันพระจันทร์ดับ (moon day)',
@@ -1309,7 +1313,7 @@
       firstH: '你的第一堂课',
       f1: '第一次上迈索尔课？请从月度套餐开始。单次课（drop-in）只适合已经熟悉序列的学生。',
       f2: '请计划每周至少练习4天，并提前预约课程。',
-      f3: '请自带瑜伽垫和毛巾，穿方便活动的衣服。提前到达，有时间安顿下来并与老师交谈。',
+      f3: '请自带瑜伽垫和毛巾（或在预约时勾选“需要在道场租瑜伽垫”），穿方便活动的衣服。提前到达，有时间安顿下来并与老师交谈。',
       f4: '练习期间，练习室内不可使用手机、拍照或交谈。',
       f5: '练习结束后，请用我们准备的清洁喷雾擦干净垫子和周围的地面。',
       f6: '每逢满月和新月（月亮日），AYBKK 停课。',
@@ -1399,7 +1403,7 @@
       firstH: 'Ваше первое занятие',
       f1: 'Впервые в Майсор-классе? Начните с месячного абонемента. Разовое посещение (drop-in) — только для тех, кто уже знает последовательность.',
       f2: 'Планируйте практиковать не меньше 4 дней в неделю и записывайтесь на занятия заранее.',
-      f3: 'Возьмите свой коврик и полотенце, наденьте удобную одежду. Приходите пораньше, чтобы спокойно устроиться и поговорить с учителем.',
+      f3: 'Возьмите свой коврик и полотенце (или отметьте «Нужен коврик напрокат в шале» при записи), наденьте удобную одежду. Приходите пораньше, чтобы спокойно устроиться и поговорить с учителем.',
       f4: 'Во время практики в зале нельзя пользоваться телефоном, фотографировать и разговаривать.',
       f5: 'После практики протрите коврик и пол вокруг него спреем, который мы оставляем в зале.',
       f6: 'В дни полнолуния и новолуния (лунные дни) занятий нет.',
@@ -2329,6 +2333,7 @@
   const matBox = (c, b) => c.isOnline ? '' : b
     ? `<label class="mat"><input type="checkbox" data-matbk="${Number(b.id)}"${b.need_mat ? ' checked' : ''}>${esc(t('needMat'))}</label>`
     : `<label class="mat"><input type="checkbox" data-mat="${esc(clsKey(c))}"${MAT_WANT.has(clsKey(c)) ? ' checked' : ''}>${esc(t('needMat'))}</label>`;
+  const matRow = (c, b) => { const m = matBox(c, b); return m ? `<div class="matrow">${m}</div>` : ''; };
 
   // After a booking or a cancel: new seat counts and booked marks, same screen.
   async function refreshSchedule() {
@@ -2494,10 +2499,10 @@
             b ? `<span class="pill ok">✓ ${esc(t('booked'))}</span>` : ''}</div>
           <div class="m">${esc(t('mins', c.durationMin))}${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
           ${b ? '' : `<div class="seats ${seatsCls(c)}">${esc(seatsText(c))}</div>`}
-          ${b || !full ? matBox(c, b) : ''}
         </div>
         ${b ? `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`
           : `<button type="button" class="btn" ${full ? 'disabled' : ''} data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button>`}
+        ${b || !full ? matRow(c, b) : ''}
       </div>`;
     }
     return html;
@@ -2771,8 +2776,9 @@
       const bookings = (d.bookings || []).map(b => `<div class="cls">
         <div class="t">${fmtTime(b.start_at)}</div>
         <div class="b"><div class="n">${esc(clsName(b.title))}</div>
-          <div class="m">${esc(fmtDay(b.start_at))}</div>${matBox({ isOnline: b.is_online }, b)}</div>
+          <div class="m">${esc(fmtDay(b.start_at))}</div></div>
         <button class="btn ghost" onclick="cancelBooking(${b.id})">${esc(t('cancelBk'))}</button>
+        ${matRow({ isOnline: b.is_online }, b)}
       </div>`).join('') || `<p class="note">${esc(t('noUpcoming'))}</p>`;
       // Mornings, not classes: Saturday's two led classes are one morning.
       const h = d.history || { days: 0, thisMonth: 0, recent: [] };
@@ -3087,7 +3093,7 @@
       && (c.date <= last || key(c) === preKey)) : [];
     const picker = !single ? '' : opts.length
       ? `<label>${esc(t('dropWhich'))}</label><select id="bc"><option value="">${esc(t('dropPick'))}</option>${
-          opts.map(c => `<option value="${esc(key(c))}" ${key(c) === preKey ? 'selected' : ''}>${
+          opts.map(c => `<option value="${esc(key(c))}"${c.isOnline ? ' data-online="1"' : ''} ${key(c) === preKey ? 'selected' : ''}>${
             esc(clsWhen(c.startAt))} · ${esc(clsName(c.title))}</option>`).join('')}</select>`
       : `<div class="msg bad">${esc(t('dropNone'))}</div>`;
     $('#dlgIn').innerHTML = `<h3>${esc(pkgName(p))} · ${baht(p.total_thb)}</h3>
@@ -3102,6 +3108,11 @@
       <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>
       ${intro ? `<p><button class="linkbtn" id="bhave">${esc(t('havePass'))}</button></p>` : ''}`;
     $('#dlg').showModal();
+    // An online class is practised at home: no mat to rent, so no tick.
+    const onlinePick = () => !!($('#bc') && $('#bc').selectedOptions[0] && $('#bc').selectedOptions[0].dataset.online);
+    const syncMat = () => { if ($('#bmat')) $('#bmat').closest('label').style.display = onlinePick() ? 'none' : ''; };
+    if ($('#bc')) $('#bc').addEventListener('change', syncMat);
+    syncMat();
     if ($('#bhave')) $('#bhave').onclick = () => { $('#dlg').close(); tab('me'); };
     $('#bgo').onclick = async () => {
       const name = $('#bn').value.trim(), email = $('#be').value.trim(), phone = $('#bp').value.trim();
@@ -3113,7 +3124,7 @@
         const r = await fetch('/api/bkk/orders', { method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode(),
-            ...(single ? { slotId: Number(slotId), date, needMat: !!($('#bmat') && $('#bmat').checked) } : {}) }) });
+            ...(single ? { slotId: Number(slotId), date, needMat: !!($('#bmat') && $('#bmat').checked) && !onlinePick() } : {}) }) });
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || 'could not create order');
         // An email that already has a profile: its code is not handed to this

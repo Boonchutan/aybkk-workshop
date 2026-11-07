@@ -1535,11 +1535,12 @@
     const blocks = Object.entries(byClass).map(([k, list]) => {
       const [title, startAt] = k.split('|');
       const inCount = list.filter(b => b.checked_in_at).length;
+      const mats = list.filter(b => b.need_mat).length;
       return `<div class="box">
         <b>${time(startAt)} · ${esc(cls(title))}</b>
-        <span class="muted">${T('bookedIn', list.length, inCount)}</span>
+        <span class="muted">${T('bookedIn', list.length, inCount)}${mats ? ` · ${esc(T('tMats'))} ${mats}` : ''}</span>
         <table>${list.map(b => `<tr>
-          <td>${esc(b.name)}</td>
+          <td>${esc(b.name)}${b.need_mat ? ` <span class="pill mat">${esc(T('matPill'))}</span>` : ''}</td>
           <td class="muted">${esc(b.code)}</td>
           <td>${b.checked_in_at ? `<span class="in">${T('checkedIn')}</span>` : `<span class="muted">${T('notYet')}</span>`}</td>
         </tr>`).join('')}</table></div>`;

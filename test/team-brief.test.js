@@ -32,7 +32,11 @@ const lineFetch = async (url, o = {}) => {
   const u = new URL(url);
   if (u.hostname !== 'api.line.me') throw new Error('test: only api.line.me is stubbed, not ' + url);
   lineCalls.push({ path: u.pathname, method: o.method || 'GET', headers: o.headers || {}, body: o.body ? JSON.parse(o.body) : null });
-  if (u.pathname.endsWith('/summary')) return Response.json({ groupId: u.pathname.split('/')[4], groupName: 'AYBKK teachers' });
+  if (u.pathname.endsWith('/summary')) {
+    const id = u.pathname.split('/')[4];
+    return Response.json({ groupId: id, groupName: id === 'Cteam1' ? 'AYBKK teachers' : `Other ${id.slice(1)}` });
+  }
+  if (/^\/v2\/bot\/group\/[^/]+\/leave$/.test(u.pathname)) return new Response('{}', { status: 200 });
   if (u.pathname === '/v2/bot/message/quota') return Response.json({ type: 'limited', value: 300 });
   if (u.pathname === '/v2/bot/message/quota/consumption') return Response.json({ totalUsage: 42 });
   if (u.pathname === '/v2/bot/message/push') {
@@ -54,7 +58,7 @@ const journalAsks = [];
 const fakeDriver = { session: () => ({
   run: async (cypher, p) => {
     journalAsks.push(p);
-    return { records: p.from.startsWith('2026-11-10') ? [{ get: k => ({ id: 'bkk-anna', n: { toNumber: () => 2 } })[k] }] : [] };
+    return { records: p.to.startsWith('2026-11-10') ? [{ get: k => ({ id: 'bkk-anna', n: { toNumber: () => 2 } })[k] }] : [] };
   },
   close: async () => {},
 }) };
@@ -95,6 +99,9 @@ const fakeDriver = { session: () => ({
   ok('names are first names and the family initial', shortName('Anna Maria Bell') === 'Anna Maria B.' && shortName('Mai') === 'Mai'
      && shortName('สมชาย ใจดี') === 'สมชาย จ.', [shortName('Anna Maria Bell'), shortName('สมชาย ใจดี')].join(' | '));
   ok('a name never carries an email or a phone number', shortName('Bo bo@example.com 0812345678 Chan') === 'Bo C.', shortName('Bo bo@example.com 0812345678 Chan'));
+  ok('...not even one typed in short groups, with a +, or a code-like word', shortName('Lee 08 12 34 56 78') === 'Lee'
+     && shortName('Kim +66 81 234 5678') === 'Kim' && shortName('B1B19BKGPI3QYA Anna') === 'Anna',
+     [shortName('Lee 08 12 34 56 78'), shortName('Kim +66 81 234 5678'), shortName('B1B19BKGPI3QYA Anna')].join(' | '));
   const parts = splitText(Array.from({ length: 300 }, (_, i) => `line ${i} ${'x'.repeat(40)}`).join('\n'));
   ok('text over 5,000 characters is split at line ends', parts.length === 3 && parts.every(p => p.length <= 5000)
      && parts.join('\n').split('\n').length === 300, parts.map(p => p.length).join(','));
@@ -135,19 +142,38 @@ const fakeDriver = { session: () => ({
      JSON.stringify({ everywhere, logs }));
 
   await hook([join('Cteam2', bkkAt('2026-11-07T10:00:00'))]);
-  ok('a join to another group moves the briefs there (the latest group wins)', (await setting('team_line_group')) === 'Cteam2' && told.length === 2);
+  const seen2 = await setting('team_line_groups');
+  ok('a join to a second group does not move the briefs: that group waits', (await setting('team_line_group')) === 'Cteam1'
+     && seen2.find(g => g.id === 'Cteam2').pending === true && seen2.find(g => g.id === 'Cteam1').pending === false, JSON.stringify(seen2));
+  ok('...and Boonchu is told the briefs still go to the team group', told.length === 2
+     && /Other team2/.test(told[1]) && /still go to "AYBKK teachers"/.test(told[1]), JSON.stringify(told));
   await hook([join('Cteam1', bkkAt('2026-11-07T09:00:00'))]);
-  ok('a late copy of an older join does not take them back', (await setting('team_line_group')) === 'Cteam2');
+  await hook([join('Cteam2', bkkAt('2026-11-07T10:00:00'))]);
+  ok('a join LINE sends again changes nothing and tells nobody twice', (await setting('team_line_group')) === 'Cteam1' && told.length === 2);
+  const stW = await get('/api/bkk/admin/team/status');
+  const waiting = (stW.body.groupsSeen || []).find(g => g.pending);
+  ok('status lists the waiting group by a ref, never by its LINE id', stW.body.group.name === 'AYBKK teachers'
+     && waiting && waiting.name === 'Other team2' && /^[0-9a-f]{12}$/.test(waiting.ref) && !waiting.saved
+     && !JSON.stringify(stW.body).includes('Cteam'), JSON.stringify(stW.body.groupsSeen));
+  ok('team/group needs the key', (await post('/api/bkk/admin/team/group', { accept: waiting.ref }, {})).status === 401
+     && (await setting('team_line_group')) === 'Cteam1');
+  ok('team/group refuses an empty body or an unknown ref', (await post('/api/bkk/admin/team/group', {})).status === 400
+     && (await post('/api/bkk/admin/team/group', { accept: 'ffffffffffff' })).status === 404);
+  const acc = await post('/api/bkk/admin/team/group', { accept: waiting.ref });
+  ok('accepting the waiting group moves the briefs there, and Boonchu hears of it', acc.status === 200
+     && (await setting('team_line_group')) === 'Cteam2' && told.length === 3 && /Other team2/.test(told[2]), JSON.stringify([acc, told.at(-1)]));
   await hook([leave('Cteam1', bkkAt('2026-11-07T10:30:00'))]);
   ok('leaving a group that is not the saved one changes nothing', (await setting('team_line_group')) === 'Cteam2');
   await hook([leave('Cteam2', bkkAt('2026-11-07T11:00:00'))]);
   const afterLeave = await setting('team_line_groups');
   ok('leaving the saved group clears it', (await setting('team_line_group')) == null
      && afterLeave.find(g => g.id === 'Cteam2').leftAt === '2026-11-07T04:00:00.000Z', JSON.stringify(afterLeave));
+  ok('a group the help desk has left cannot be accepted', (await post('/api/bkk/admin/team/group', { accept: waiting.ref })).status === 409
+     && (await setting('team_line_group')) == null);
 
   console.log('\n# admin routes need the key');
   for (const [m, p] of [['GET', '/api/bkk/admin/team/status'], ['GET', '/api/bkk/admin/team/preview?kind=morning'],
-    ['POST', '/api/bkk/admin/team/send'], ['POST', '/api/bkk/admin/team/brief']]) {
+    ['POST', '/api/bkk/admin/team/send'], ['POST', '/api/bkk/admin/team/brief'], ['POST', '/api/bkk/admin/team/group']]) {
     const none = m === 'GET' ? await get(p, {}) : await post(p, { text: 'x', kind: 'morning' }, {});
     const wrong = m === 'GET' ? await get(p, { 'x-bkk-key': 'nope' }) : await post(p, { text: 'x', kind: 'morning' }, { 'x-bkk-key': 'nope' });
     ok(`${m} ${p.split('?')[0]} is 401 without the key, or with a wrong one`, none.status === 401 && wrong.status === 401);
@@ -165,7 +191,9 @@ const fakeDriver = { session: () => ({
   ok('an empty text is refused', (await post('/api/bkk/admin/team/send', { text: '  ' })).status === 400);
 
   await hook([join('Cteam1', bkkAt('2026-11-07T12:00:00'))]);
-  ok('(the help desk is back in the team group)', (await setting('team_line_group')) === 'Cteam1');
+  ok('with no group saved, the next join is saved again', (await setting('team_line_group')) === 'Cteam1');
+  await hook([join('Cstranger', bkkAt('2026-11-07T12:30:00'))]);
+  ok('(someone adds the help desk to a group of their own: it waits)', (await setting('team_line_group')) === 'Cteam1');
   const sent = await post('/api/bkk/admin/team/send', { text: 'ประชุมครู 10:00 วันเสาร์' });
   const p1 = pushes().at(-1);
   ok('send pushes one text to the saved group with the help desk token', sent.status === 200 && sent.body.ok === true
@@ -173,6 +201,14 @@ const fakeDriver = { session: () => ({
      && JSON.stringify(p1.body) === JSON.stringify({ to: 'Cteam1', messages: [{ type: 'text', text: 'ประชุมครู 10:00 วันเสาร์' }] })
      && /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(p1.headers['X-Line-Retry-Key']),
      JSON.stringify([sent, p1]));
+  ok('...never to a group that is only waiting', !pushes().some(x => x.body.to === 'Cstranger'));
+  const stranger = (await get('/api/bkk/admin/team/status')).body.groupsSeen.find(g => g.name === 'Other stranger');
+  const gone = await post('/api/bkk/admin/team/group', { leave: stranger.ref });
+  const st2 = (await get('/api/bkk/admin/team/status')).body;
+  ok('team/group can make the help desk leave a waiting group', gone.status === 200 && gone.body.saved === true
+     && lineCalls.some(c => c.method === 'POST' && c.path === '/v2/bot/group/Cstranger/leave')
+     && st2.groupsSeen.find(g => g.name === 'Other stranger').leftAt && !st2.groupsSeen.some(g => g.pending)
+     && (await setting('team_line_group')) === 'Cteam1', JSON.stringify([gone, st2.groupsSeen]));
   const long = Array.from({ length: 400 }, (_, i) => `บรรทัด ${i} ${'ก'.repeat(20)}`).join('\n');
   const before = pushes().length;
   const sentLong = await post('/api/bkk/admin/team/send', { text: long });
@@ -181,6 +217,10 @@ const fakeDriver = { session: () => ({
      && pushes().length === before + 1 && pl.body.messages.length === 3 && pl.body.messages.every(m => m.type === 'text' && m.text.length <= 5000),
      JSON.stringify(pl && pl.body.messages.map(m => m.text.length)));
   ok('a text over 25,000 characters is refused', (await post('/api/bkk/admin/team/send', { text: 'x'.repeat(25001) })).status === 400);
+  const pushesNow = pushes().length;
+  const six = await post('/api/bkk/admin/team/send', { text: Array.from({ length: 6 }, () => 'ก'.repeat(2600)).join('\n') });
+  ok('a text that needs more than 5 LINE messages is refused, so one approved message is one push', six.status === 400
+     && /too long for one LINE post/.test(six.body.error) && pushes().length === pushesNow, JSON.stringify(six.body));
   lineMode = '400';
   const bad = await post('/api/bkk/admin/team/send', { text: 'Hello' });
   lineMode = 'ok';
@@ -289,9 +329,9 @@ const fakeDriver = { session: () => ({
      mt.includes('⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ\n• Anna B. 3 เดือน ไม่จำกัด หมด ส. 14 พ.ย.\n• Ploy W. 8 ครั้ง / 1 เดือน เหลือ 1 ครั้ง ใช้ได้ถึง อ. 1 ธ.ค.'));
   ok('...not someone who already renewed, or who has not come for over 30 days', !mt.includes('Zoe R.') && !mt.includes('Gus G.'));
   ok('NOT PAID: an online order pending from the last 3 days, and a booking today with no valid pass',
-     mt.includes(`💳 ยังไม่จ่าย\n• Kim L. สั่ง 3 เดือน ไม่จำกัด ฿26,412 ยังไม่ได้จ่าย (สั่ง จ. 9 พ.ย., ref ${kimRef})\n• Tom H. จอง 05:30 แต่แพ็กเกจถูกยกเลิกแล้ว`));
+     mt.includes(`💳 ยังไม่จ่าย ช่วยตามเก็บเงิน\n• Kim L. สั่ง 3 เดือน ไม่จำกัด ฿26,412 ยังไม่ได้จ่าย (สั่ง จ. 9 พ.ย., ref ${kimRef})\n• Tom H. จอง 05:30 แต่แพ็กเกจถูกยกเลิกแล้ว`));
   ok('...not an older order, one the student paid since, or a Rezerv seat', !mt.includes('Sam O.') && !mt.includes('Nina P.') && !/Rex R\. จอง/.test(mt));
-  ok('NEEDS A MAT: who ticked it, by class', mt.includes('🧘 ขอเช่าเสื่อ\n• 05:30 Anna B.'));
+  ok('NEEDS A MAT: who ticked it, by class', mt.includes('🧘 เตรียมเสื่อให้\n• 05:30 Anna B.'));
   ok('one closing line with the totals', mt.trim().split('\n').at(-1) === 'รวม 2 คลาส · จอง 4 · ใหม่ 2 · ใกล้หมด 2 · ยังไม่จ่าย 2 · เสื่อ 1', mt.trim().split('\n').at(-1));
   ok('never an email, a phone number or a member code', !/@|0899000|BTEAM/.test(mt));
   ok('no em dash anywhere', !/—/.test(mt));
@@ -300,8 +340,9 @@ const fakeDriver = { session: () => ({
   const met = me.body.text || '';
   ok('English when asked', met.startsWith('☀️ Teaching brief Tue 10 Nov') && met.includes('05:30 Mysore (1st batch) · Boonchu · 3 booked')
      && met.includes('• Chai D., first class today at 07:30') && met.includes('• Anna B.: 3 months unlimited, ends Sat 14 Nov')
-     && met.includes('• Tom H.: booked 05:30 but the pass was voided') && met.includes('🧘 Needs a mat\n• 05:30 Anna B.')
-     && met.trim().endsWith('Total: 2 classes · 4 booked · 2 new · 2 ending · 2 not paid · 1 mats'), met);
+     && met.includes('💳 Not paid, please collect\n') && met.includes('• Tom H.: booked 05:30 but the pass was voided')
+     && met.includes('🧘 Have a mat ready\n• 05:30 Anna B.')
+     && met.trim().endsWith('Total: 2 classes · 4 booked · 2 new · 2 ending · 2 not paid · 1 mat'), met);
 
   const moon = await get('/api/bkk/admin/team/preview?kind=morning&date=2026-11-09');
   ok('moon day: one line saying the shala is closed and why, then stop',
@@ -378,22 +419,23 @@ const fakeDriver = { session: () => ({
   const e = await get(`/api/bkk/admin/team/preview?kind=evening&date=${D}`);
   const et = e.body.text || '';
   console.log(et.split('\n').map(l => '      | ' + l).join('\n'));
-  ok('Thai, about today to 20:00', e.status === 200 && et.startsWith('🌙 สรุปวันนี้ อ. 10 พ.ย. (ถึง 20:00)'), et.split('\n')[0]);
+  ok('Thai, from 20:00 yesterday to 20:00 today', e.status === 200 && et.startsWith('🌙 สรุปวันนี้ อ. 10 พ.ย. (ตั้งแต่ 20:00 เมื่อวาน ถึง 20:00)'), et.split('\n')[0]);
   ok('money: orders paid today, the total with VAT, by product', et.includes('💰 เงิน\nจ่ายแล้ว 3 รายการ ฿20,317 (รวม VAT ฿1,329)\n'
      + '• 1 เดือน ไม่จำกัด ×1 ฿10,580\n• 8 ครั้ง / 1 เดือน ×1 ฿8,132\n• ครั้งเดียว ×1 ฿1,605'));
-  ok('...desk sales by method, online, and what is still pending', et.includes('ที่เคาน์เตอร์ เงินสด 1 ฿1,605 · โอน 1 ฿8,132\nออนไลน์ 1 รายการ ฿10,580\nค้างจ่าย 1 รายการ ฿26,412'));
+  ok('...desk sales by method, online, and what is still pending (an order from 21:15 last night too)',
+     et.includes('ที่เคาน์เตอร์ เงินสด 1 ฿1,605 · โอน 1 ฿8,132\nออนไลน์ 1 รายการ ฿10,580\nค้างจ่าย 2 รายการ ฿52,824'), (et.match(/ค้างจ่าย.*/) || [])[0]);
   ok('...not a payment after 20:00 or one moved over from Rezerv', !et.includes('฿9,600') && !et.includes('×2'));
-  ok('students: new members, passes started, passes that ended today (renewed or not)', et.includes('👥 นักเรียน\nสมัครใหม่ 2: Lin N., Ola F.\n'
-     + 'เริ่มแพ็กเกจ 1: Chai D. (1 เดือน ไม่จำกัด)\nแพ็กเกจหมดวันนี้ 2: Eve E. (ยังไม่ต่อ), Ray R. (ต่อแล้ว)') && !et.includes('Rita'));
+  ok('students: new members, passes started, passes that ended today (renewed or not)', et.includes('👥 นักเรียน\nสมัครใหม่ 2 คน: Lin N., Ola F.\n'
+     + 'เริ่มแพ็กเกจ 1 คน: Chai D. (1 เดือน ไม่จำกัด)\nแพ็กเกจหมดวันนี้ 2 คน: Eve E. (ยังไม่ต่อ), Ray R. (ต่อแล้ว)') && !et.includes('Rita'));
   ok('classes: check-ins per class with the no-shows by name', et.includes('🧘 คลาสวันนี้\n05:30 มายซอร์ (รอบแรก): มา 2/3 · ไม่มา: Tom H.\n07:30 มายซอร์ (รอบสอง): มา 1/1'));
   ok('...bookings made and cancelled today', et.includes('จองใหม่ 3 · ยกเลิก 1'), (et.match(/จองใหม่.*/) || [])[0]);
   ok('tomorrow: booked per class, with mats', et.includes('📅 พรุ่งนี้ พ. 11 พ.ย.\n05:30 มายซอร์ (รอบแรก): จอง 2 · เสื่อ 1\n07:30 มายซอร์ (รอบสอง): จอง 0'));
   ok('photos: uploaded today, tagged, on how many profiles', et.includes('📷 รูปคลาส\nอัปโหลด 3 รูป · แท็กแล้ว 2 · ขึ้นโปรไฟล์ 2 คน'));
   ok('profile actions: teacher notes, 12-week checks and journal entries with names, sign-ins',
-     et.includes('📝 โปรไฟล์นักเรียน\nโน้ตครู 2 (Jamsai 2)\nเช็กผล 12 สัปดาห์ 1: Anna B.\nบันทึกการฝึก 2: Anna B.\nเข้าโปรไฟล์ 1 คน · ครูส่งลิงก์ 1'));
-  ok('...journal entries are asked of Neo4j for exactly today to 20:00', journalAsks.some(p => p.from === '2026-11-10T00:00:00+07:00' && p.to === '2026-11-10T20:00:00+07:00'));
-  ok('leads: letter, /start, first-step forms, LINE chats new and hot, applications (counts only)',
-     et.includes('📣 ลีด\nจดหมายวันจันทร์ ยืนยัน 1 · รอยืนยัน 1\nหน้า /start เข้าชม 3 · กดปุ่ม 1 · ทำครบ 1\nฟอร์มลีด 1\nLINE แชต 2 คน (คนใหม่ 1) · ด่วน 1\nใบสมัคร In-Depth 1'));
+     et.includes('📝 โปรไฟล์นักเรียน\nโน้ตครู 2 (Jamsai 2)\nเช็กผล 12 สัปดาห์ 1 คน: Anna B.\nบันทึกการฝึก 2 ครั้ง (Anna B.)\nเข้าโปรไฟล์ 1 คน · ครูส่งลิงก์ 1'));
+  ok('...journal entries are asked of Neo4j for exactly 20:00 yesterday to 20:00 today', journalAsks.some(p => p.from === '2026-11-09T20:00:00+07:00' && p.to === '2026-11-10T20:00:00+07:00'));
+  ok('leads: letter, Start page, first-step forms, LINE chats new and hot, applications (counts only)',
+     et.includes('📣 ลีด\nจดหมายวันจันทร์ ยืนยัน 1 · รอยืนยัน 1\nหน้า Start เข้าชม 3 · กดจอง 1 · ทำครบทุกขั้น 1\nฟอร์มสนใจเรียน 1\nLINE แชต 2 คน (คนใหม่ 1) · ด่วน 1\nใบสมัคร In-Depth 1'));
   ok('...and no message text from the inbox', !/SECRET/.test(et));
   ok('one closing line', et.trim().split('\n').at(-1) === 'วันนี้เงินเข้า ฿20,317 · มาเรียน 3 · พรุ่งนี้จองแล้ว 2', et.trim().split('\n').at(-1));
   ok('never an email, a phone number or a member code; no em dash', !/@|0899000|BTEAM|—/.test(et));
@@ -405,10 +447,17 @@ const fakeDriver = { session: () => ({
      && e.body.messages.slice(1).every(x => x.type === 'image' && x.originalContentUrl && x.previewImageUrl));
   const en = await get(`/api/bkk/admin/team/preview?kind=evening&date=${D}&lang=en`);
   const ent = en.body.text || '';
-  ok('English evening', ent.startsWith('🌙 Today on aybkk.net, Tue 10 Nov (to 20:00)') && ent.includes('Paid: 3 orders, ฿20,317 (VAT ฿1,329 included)')
-     && ent.includes('At the desk: cash 1 ฿1,605 · transfer 1 ฿8,132') && ent.includes('05:30 Mysore (1st batch): 2/3 came · no-show: Tom H.')
-     && ent.includes('Passes ended today: 2: Eve E. (not renewed), Ray R. (renewed)') && ent.includes('LINE chats: 2 people (1 new) · hot: 1')
+  ok('English evening', ent.startsWith('🌙 Today on aybkk.net, Tue 10 Nov (20:00 yesterday to 20:00)') && ent.includes('Paid: 3 orders, ฿20,317 (VAT ฿1,329 included)')
+     && ent.includes('At the desk: cash 1 ฿1,605 · transfer 1 ฿8,132') && ent.includes('Online: 1 order ฿10,580\nStill pending: 2 orders ฿52,824')
+     && ent.includes('05:30 Mysore (1st batch): 2/3 came · no-show: Tom H.')
+     && ent.includes('New members (2): Lin N., Ola F.') && ent.includes('Passes started (1): Chai D. (1 month unlimited)')
+     && ent.includes('Passes ended today (2): Eve E. (not renewed), Ray R. (renewed)') && ent.includes('05:30 Mysore (1st batch): 2 booked · 1 mat')
+     && ent.includes('12-week checks (1): Anna B.') && ent.includes('Practice journal entries: 2 (Anna B.)')
+     && ent.includes('Start page: 3 views · 1 tapped Book · 1 finished') && ent.includes('LINE chats: 2 people (1 new) · hot: 1')
      && ent.trim().endsWith('Today: ฿20,317 in · 3 came · 2 booked for tomorrow'), ent);
+  const next = (await get('/api/bkk/admin/team/preview?kind=evening&date=2026-11-11')).body.text || '';
+  ok('a payment at 21:00 is in the next evening\'s summary', next.startsWith('🌙 สรุปวันนี้ พ. 11 พ.ย. (ตั้งแต่ 20:00 เมื่อวาน ถึง 20:00)')
+     && next.includes('💰 เงิน\nจ่ายแล้ว 1 รายการ ฿10,580 ') && next.includes('• 1 เดือน ไม่จำกัด ×1 ฿10,580'), next.split('\n').slice(0, 5).join(' | '));
 
   const appNoCloud = express();
   const plainCloud = { url: (id, o) => `http://res.cloudinary.com/demo/${id}` };
@@ -483,12 +532,47 @@ const fakeDriver = { session: () => ({
 
   console.log('\n# a brief by hand');
   clock = bkkAt('2026-11-10T21:00:00');
-  const byHand = await post('/api/bkk/admin/team/brief', { kind: 'evening' });
-  ok('POST brief sends one brief now', byHand.status === 200 && byHand.body.ok && byHand.body.date === D && eveningPushes().length === 2);
+  const twice = await post('/api/bkk/admin/team/brief', { kind: 'evening' });
+  ok('POST brief after the timer sent it is refused, with how to post it again', twice.status === 409
+     && /already sent at 20:05/.test(twice.body.error) && /force/.test(twice.body.error) && eveningPushes().length === 1, JSON.stringify(twice.body));
+  const byHand = await post('/api/bkk/admin/team/brief', { kind: 'evening', force: true });
+  ok('...with force it sends one brief now', byHand.status === 200 && byHand.body.ok && byHand.body.date === D && eveningPushes().length === 2);
   clock = bkkAt('2026-11-10T15:12:00');
   const early = (await get(`/api/bkk/admin/team/preview?kind=evening&date=${D}`)).body.text || '';
-  ok('...and an evening summary made before 20:00 says how far the day has got', early.startsWith('🌙 สรุปวันนี้ อ. 10 พ.ย. (ถึง 15:12)'), early.split('\n')[0]);
+  ok('...and an evening summary made before 20:00 says how far the day has got', early.startsWith('🌙 สรุปวันนี้ อ. 10 พ.ย. (ตั้งแต่ 20:00 เมื่อวาน ถึง 15:12)'), early.split('\n')[0]);
   ok('...and a bad kind is refused', (await post('/api/bkk/admin/team/brief', { kind: 'lunch' })).status === 400);
+
+  const forDay = (list, d) => list.filter(p => p.body.messages[0].text.split('\n')[0].includes(d));
+  clock = bkkAt('2026-11-16T04:58:00');
+  const early16 = await post('/api/bkk/admin/team/brief', { kind: 'morning' });
+  clock = bkkAt('2026-11-16T05:00:00');
+  const tick16 = await team.tick(clock);
+  ok('a morning brief sent by hand at 04:58 is the day\'s brief: 05:00 does not send another', early16.status === 200
+     && tick16[0].skipped === 'already' && forDay(morningPushes(), ' 16 พ.ย.').length === 1, JSON.stringify([early16.body, tick16]));
+  clock = bkkAt('2026-11-16T15:12:00');
+  const sofar = await post('/api/bkk/admin/team/brief', { kind: 'evening' });
+  ok('an evening summary by hand before 20:00 is "so far" and leaves the day\'s marker alone', sofar.status === 200 && sofar.body.sofar === true
+     && (await setting('team_brief_sent_evening_2026-11-16')) == null);
+  clock = bkkAt('2026-11-16T20:00:00');
+  const eve16 = await team.tick(clock);
+  ok('...so the 20:00 summary still goes', eve16.length === 1 && eve16[0].sent && forDay(eveningPushes(), ' 16 พ.ย.').length === 2);
+
+  lineMode = 'down';
+  clock = bkkAt('2026-11-17T05:00:00');
+  const down17 = await team.tick(clock);
+  const key17 = pushes().at(-1).headers['X-Line-Retry-Key'];
+  lineMode = 'ok';
+  clock = bkkAt('2026-11-17T05:01:00');
+  const hand17 = await post('/api/bkk/admin/team/brief', { kind: 'morning' });
+  const handKey = pushes().at(-1).headers['X-Line-Retry-Key'];
+  clock = bkkAt('2026-11-17T05:02:00');
+  const after17 = pushes().length;
+  const tick17 = await team.tick(clock);
+  ok('LINE down at 05:00, sent by hand at 05:01: the timer at 05:02 sends nothing', !down17[0].sent && hand17.status === 200
+     && handKey === key17 && pushes().length === after17 && tick17[0].skipped === 'already'
+     && (await setting('team_brief_sent_morning_2026-11-17')).state === 'sent'
+     && forDay(morningPushes(), ' 17 พ.ย.').length === 2,   // the one tried while LINE was down, and the one by hand
+     JSON.stringify([down17, hand17.body, tick17]));
 
   console.log('\n# the mat tick on bookings');
   const sch = (await get('/api/bkk/schedule?days=14', {})).body.classes || [];
@@ -521,6 +605,20 @@ const fakeDriver = { session: () => ({
   await post(`/api/bkk/admin/orders/${drop.body.order.id}/force-activate`, {});
   const inClass3 = await get(`/api/bkk/admin/class?slotId=${room.slotId}&date=${room.date}`);
   ok('a drop-in bought for the class carries the tick to its seat', inClass3.body.roster.some(r => r.name === 'Drop Mat' && r.needMat === true));
+
+  // A far class booked first starts the pass window there; a nearer seat on
+  // the same pass was accepted, so it is paid for.
+  const inRoom = sch.filter(c => !c.isOnline && c.seatsLeft > 0);
+  const near = inRoom[0], far = inRoom.find(c => c.date > near.date);
+  const pita = (await post('/api/bkk/admin/passes', { name: 'Pita Probe', email: 'pita.probe@example.com', productCode: 'unlim1' })).body.member.code;
+  const farBk = await post('/api/bkk/bookings', { memberCode: pita, slotId: far.slotId, date: far.date }, {});
+  const nearBk = await post('/api/bkk/bookings', { memberCode: pita, slotId: near.slotId, date: near.date }, {});
+  const win = (await pool.query(`SELECT to_char(valid_from,'YYYY-MM-DD') AS f FROM bkk_passes WHERE id=$1`, [nearBk.body.booking && nearBk.body.booking.pass_id])).rows[0];
+  const nearText = (await get(`/api/bkk/admin/team/preview?kind=morning&date=${near.date}`)).body.text || '';
+  const paySection = nearText.split('\n\n').find(x => x.startsWith('💳')) || '';
+  ok('a seat before the pass window starts is not listed as not paid', farBk.status === 200 && nearBk.status === 200
+     && farBk.body.booking.pass_id === nearBk.body.booking.pass_id && win && win.f === far.date
+     && nearText.includes('Pita P.') && !paySection.includes('Pita P.'), JSON.stringify([far.date, near.date, win, paySection]));
   // The door's list is today's bookings.
   const today = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
   const wd = new Date(`${today}T12:00:00Z`).getUTCDay();
