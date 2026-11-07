@@ -1,1 +1,43 @@
-[{"photo": "06-289", "id": "LA10", "word": "PEACE", "line": "A long life can still end in PEACE, like a leaf going home. A Chinese saying: \"落叶归根\" (fallen leaves return to the roots). Thank your body.", "credit": "Chinese idiom · Jingde Record of the Lamp, c. 1004", "t": 142, "wm": "right", "wwidth": 563, "wpos": [457, 1076], "ink_w": "light", "wburn": 0.25, "sz": 42, "cws": [353], "sxy": ["R", 60], "ink_s": "light", "sright": true, "sburn": 0.38, "wmxy": [660, 1250], "line_br": "A long life can still | end in PEACE, like | a leaf going home. | A Chinese saying: | \"落叶归根\" (fallen | leaves return | to the roots). | Thank your body."}]
+[
+ {
+  "photo": "06-289",
+  "id": "A10",
+  "word": "PEACE",
+  "conn": "can still come, like a leaf | going home",
+  "line": "A Chinese saying: \"落叶归根\" (fallen leaves return to the roots). Thank your body.",
+  "credit": "Chinese idiom · Jingde Record of the Lamp, c. 1004",
+  "ink_w": "light",
+  "t": 142,
+  "ink_s": "light",
+  "wm": "right",
+  "wmxy": [
+   660,
+   1250
+  ],
+  "wwidth": 650,
+  "wpos": [
+   370,
+   60
+  ],
+  "wshadow": 1.6,
+  "wburn": 0.3,
+  "csz": 48,
+  "cxy": [
+   "R1020",
+   224
+  ],
+  "cright": true,
+  "cshadow": 1.6,
+  "sz": 40,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   "R",
+   996
+  ],
+  "sright": true,
+  "sburn": 0.22,
+  "line_br": "A Chinese saying: | \"落叶归根\" (fallen leaves return | to the roots). Thank your body."
+ }
+]

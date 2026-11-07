@@ -1,1 +1,41 @@
-[{"photo": "07-171", "id": "LA7", "word": "CURIOUS", "line": "A CURIOUS mind stays strong without muscles. The Persian poet Ferdowsi wrote: \"roam earth, converse with every one.\" Keep asking.", "credit": "Ferdowsi · Shahnameh · tr. Warner, 1905", "t": 0, "wm": "right", "wrot": -90, "wwidth": 774, "wpos": [60, 60], "ink_w": "light", "wshadow": 1.8, "wburn": 0, "sz": 44, "cws": [353], "sxy": [667, 60], "ink_s": "light", "sburn": 0.4, "line_br": "A CURIOUS mind | stays strong without | muscles. The Persian | poet Ferdowsi wrote: | \"roam earth, converse | with every one.\" | Keep asking."}]
+[
+{
+"photo": "07-171",
+"id": "A7",
+"word": "CURIOUS",
+"conn": "minds stay | strong | without | muscles",
+"line": "The Persian poet Ferdowsi wrote: \"roam earth, converse with every one.\" Keep asking.",
+"credit": "Ferdowsi · Shahnameh · tr. Warner, 1905",
+"ink_w": "light",
+"t": 195,
+"wwidth": 760,
+"wpos": [
+60,
+60
+],
+"wrot": -90,
+"ink_s": "light",
+"sz": 42,
+"cws": [
+353
+],
+"sxy": [
+"R",
+60
+],
+"wmxy": [
+665,
+1225
+],
+"wm": "right",
+"sburn": 0.4,
+"wburn": 0,
+"wshadow": 1.8,
+"sright": true,
+"csz": 44,
+"cxy": [
+60,
+834
+]
+}
+]

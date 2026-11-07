@@ -1,1 +1,39 @@
-[{"photo": "07-070", "id": "LA8", "word": "HUMBLE", "line": "Wise people stay HUMBLE and keep listening. A Korean proverb: \"벼는 익을수록 고개를 숙인다\" (the riper the rice plant, the more it bends its head).", "credit": "Korean proverb (속담)", "tight": false, "ink_w": "light", "t": 270, "wwidth": 832, "wpos": [60, 60], "wburn": 0.3, "sz": 42, "cws": [607], "sxy": ["R", 991], "ink_s": "light", "sright": true, "sburn": 0.38, "wm": "left", "line_br": "Wise people stay | HUMBLE and keep | listening. A Korean proverb: | \"벼는 익을수록 고개를 숙인다\" | (the riper the rice plant, | the more it bends its head)."}]
+[
+ {
+  "photo": "07-070",
+  "id": "A8",
+  "word": "HUMBLE",
+  "conn": "like wise | people | who keep | listening",
+  "line": "A Korean proverb: \"벼는 익을수록 고개를 숙인다\" (the riper the rice plant, the more it bends its head).",
+  "credit": "Korean proverb (속담)",
+  "ink_w": "light",
+  "ink_s": "light",
+  "wm": "left",
+  "tight": false,
+  "line_br": "A Korean proverb: | \"벼는 익을수록 고개를 숙인다\" | (the riper the rice plant, | the more it bends its head).",
+  "t": 270,
+  "wwidth": 840,
+  "wpos": [
+   180,
+   60
+  ],
+  "sz": 40,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   "R",
+   1083
+  ],
+  "sright": true,
+  "sburn": 0.38,
+  "wburn": 0.3,
+  "csz": 44,
+  "cxy": [
+   "R1020",
+   228
+  ],
+  "cright": true,
+  "cshadow": 1.8
+ }
+]
