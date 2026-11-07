@@ -1,1 +1,43 @@
-[{"word": "GENTLE", "line": "The last step asks for a GENTLE heart. Even a strong body grows weak. He practised until two months before he passed away, aged 95.", "credit": "AP, 2014 (retold)", "photo": "07-601", "id": "B10", "tight": false, "ink_w": "light", "t": 0, "wwidth": 600, "wpos": [420, 60], "ink_s": "light", "sz": 46, "cws": [607], "sxy": [60, 1060], "sright": false, "wmxy": [660, 1250], "sburn": 0.4, "wburn": 0.3, "shadow": 1.8}]
+[
+ {
+  "photo": "07-599",
+  "id": "B10",
+  "word": "CLEAR",
+  "conn": "in mind, | says his will, | as he weakened",
+  "line": "A chronicler of his time wrote that near the end, Marco said he \"had not told one-half\" of what he saw.",
+  "credit": "His will, 1324 \u00b7 Jacopo d'Acqui \u00b7 tr. Yule (retold)",
+  "ink_w": "light",
+  "wrot": 0,
+  "ink_s": "light",
+  "ink_c": "light",
+  "t": 186,
+  "wwidth": 550,
+  "wpos": [
+   97,
+   60
+  ],
+  "csz": 42,
+  "cxy": [
+   667,
+   60
+  ],
+  "sz": 44,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   "R",
+   994
+  ],
+  "sright": true,
+  "sburn": 0.4,
+  "wburn": 0.3,
+  "shadow": 1.6,
+  "wshadow": 1.6,
+  "cshadow": 1.6,
+  "wmxy": [
+   60,
+   1250
+  ]
+ }
+]

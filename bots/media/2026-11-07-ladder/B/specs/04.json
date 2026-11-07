@@ -1,1 +1,42 @@
-[{"id": "B4", "photo": "07-747", "t": 270, "word": "BRAVE", "line": "The stiff boy grew BRAVE. He \"could do a lot of backbends.\" At 18, when no one else would go to Pune, he went.", "credit": "B.K.S. Iyengar · The Tribune, 2005 · AP, 2014 (retold)", "wwidth": 540, "wpos": [60, 60], "ink_w": "light", "ink_s": "light", "sz": 42, "cws": [607], "sxy": [60, 1043], "wmxy": [660, 1250], "wburn": 0.25, "shadow": 1.6}]
+[
+ {
+  "photo": "07-192",
+  "id": "B4",
+  "word": "BRAVE",
+  "conn": "at 17, | on the long | road east",
+  "line": "His book says the trip took 3½ years, and on one high, cold plain \"you do not even see any birds flying.\"",
+  "credit": "Wikipedia · Marco Polo's book, tr. Yule, 1903 (retold)",
+  "ink_w": "light",
+  "t": 270,
+  "wwidth": 960,
+  "wpos": [
+   60,
+   60
+  ],
+  "wrot": 0,
+  "ink_s": "light",
+  "sz": 42,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   60,
+   705
+  ],
+  "wmxy": [
+   60,
+   1250
+  ],
+  "sburn": 0.4,
+  "wburn": 0.3,
+  "shadow": 1.8,
+  "tight": false,
+  "csz": 44,
+  "cxy": [
+   "R1020",
+   292
+  ],
+  "cright": true,
+  "cshadow": 1.6
+ }
+]

@@ -1,1 +1,40 @@
-[{"id": "B8", "photo": "07-808", "t": 40, "word": "CALM", "line": "The wise old teacher was CALM about slow progress. He said one woman practised for 11 years before she learned her knees were not straight.", "credit": "Open, 2014 (retold)", "wwidth": 567, "wpos": [60, 60], "ink_w": "light", "ink_s": "light", "sz": 44, "cws": [353], "sxy": ["R", 60], "wrot": 0, "wmxy": [60, 1250], "sburn": 0.4, "wshadow": 1.6, "wburn": 0.25, "sright": true, "line_br": "The wise old teacher | was CALM about slow | progress. He said one | woman practised for | 11 years before she | learned her knees | were not straight.", "shadow": 1.5}]
+[
+ {
+  "photo": "07-808",
+  "id": "B8",
+  "word": "WISE",
+  "conn": "after about 24 years away",
+  "line": "Back in Italy, he told his story to a writer, who promised to keep \"things seen\" separate from \"things heard.\"",
+  "credit": "Rustichello of Pisa, | 1298 \u00b7 tr. Yule, | 1903 (retold)",
+  "ink_w": "light",
+  "wrot": 0,
+  "ink_s": "light",
+  "ink_c": "light",
+  "t": 0,
+  "wwidth": 580,
+  "wpos": [
+   60,
+   60
+  ],
+  "csz": 48,
+  "cgap": 16,
+  "sz": 40,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   "R",
+   60
+  ],
+  "sright": true,
+  "sburn": 0.4,
+  "wburn": 0.25,
+  "shadow": 1.6,
+  "wshadow": 1.6,
+  "cshadow": 1.5,
+  "wmxy": [
+   660,
+   1250
+  ]
+ }
+]

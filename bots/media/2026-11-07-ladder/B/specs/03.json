@@ -1,1 +1,41 @@
-[{"id": "B3", "photo": "07-591", "t": 270, "word": "DOUBT", "line": "Even his own teacher looked at him with DOUBT. He started yoga at 15, and his body was very stiff. Still, he would practise for hours.", "credit": "The Tribune, 2005 · Open, 2014 · AP, 2014 (retold)", "wwidth": 540, "wpos": [898, 60], "ink_w": "light", "ink_s": "light", "sz": 42, "cws": [607], "sxy": [60, 1001], "wrot": -90, "wmxy": [660, 1250], "sburn": 0.3, "wshadow": 1.6, "wburn": 0.2}]
+[
+ {
+  "photo": "07-601",
+  "id": "B3",
+  "word": "APART",
+  "conn": "for years, | father | and son",
+  "line": "Little is known of his childhood. When his father came home in 1269, he found \"a son of fifteen years of age.\"",
+  "credit": "Wikipedia · Marco Polo's book, | tr. Yule, 1903 (retold)",
+  "ink_w": "light",
+  "t": 150,
+  "wwidth": 730,
+  "wpos": [
+   60,
+   784
+  ],
+  "ink_s": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   1038
+  ],
+  "sright": false,
+  "wmxy": [
+   660,
+   1250
+  ],
+  "sburn": 0.4,
+  "wburn": 0.25,
+  "shadow": 1.6,
+  "tight": false,
+  "csz": 44,
+  "cxy": [
+   812,
+   818
+  ],
+  "cshadow": 1.5
+ }
+]
