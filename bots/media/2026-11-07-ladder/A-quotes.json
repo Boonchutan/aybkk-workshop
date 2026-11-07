@@ -19,8 +19,8 @@
     "slot": "1",
     "step": "born (a new body, wonder)",
     "word": "WONDER",
-    "text": "Life starts in WONDER, before you can do a single thing. Plato, the Greek thinker, wrote: \"philosophy begins in wonder.\" Philosophy means the love of wisdom.",
-    "credit": "Plato · Theaetetus · tr. Benjamin Jowett",
+    "text": "Life starts in WONDER. Plato, the Greek thinker, wrote: \"philosophy begins in wonder.\" Philosophy means the love of wisdom.",
+    "credit": "Plato · Theaetetus · tr. Jowett",
     "source": "https://www.gutenberg.org/cache/epub/1726/pg1726.txt (Theaetetus, tr. Jowett): \"for wonder is the feeling of a philosopher, and philosophy begins in wonder.\" Swapped in by Plato 7 Nov for Psalm 139 (scripture is risky on Chinese apps).",
     "photo_hint": "A student curled small in Balasana (child's asana), soft light, quiet and new"
    },
@@ -28,8 +28,8 @@
     "slot": "2",
     "step": "growing up (play, learning to move)",
     "word": "JOY",
-    "text": "Children learn to move through JOY, not rules. Thais say: \"ไม้อ่อนดัดง่าย ไม้แก่ดัดยาก\" (young wood is easy to bend, old wood is hard to bend). Old wood still bends, just slower.",
-    "credit": "Thai proverb (สำนวน) · Thai Wiktionary · our translation",
+    "text": "Children learn to move through JOY. Thais say: \"ไม้อ่อนดัดง่าย ไม้แก่ดัดยาก\" (young wood bends easily, old wood is hard to bend). Old wood still bends, just slower.",
+    "credit": "Thai proverb (สำนวน)",
     "source": "https://th.wiktionary.org/wiki/ไม้อ่อนดัดง่าย_ไม้แก่ดัดยาก : headword \"ไม้อ่อนดัดง่าย ไม้แก่ดัดยาก\", marked (สำนวน), defined \"อบรมสั่งสอนเด็กให้เด็กประพฤติดีได้ง่ายกว่าอบรมสั่งสอนผู้ใหญ่\"",
     "photo_hint": "The youngest student or a young adult laughing mid-jump-through or in Navasana, playful and light"
    },
@@ -37,8 +37,8 @@
     "slot": "3",
     "step": "getting strong (living and building strength)",
     "word": "PROUD",
-    "text": "Real strength makes you PROUD because you built it yourself, one small day at a time. A Swahili proverb: \"Haba na haba hujaza kibaba\" (little by little fills up the measure).",
-    "credit": "Swahili proverb, East Africa · Swahili Proverbs, University of Illinois",
+    "text": "Strength you build yourself makes you PROUD. A Swahili proverb: \"Haba na haba hujaza kibaba\" (little by little fills up the measure).",
+    "credit": "Swahili proverb · East Africa",
     "source": "http://swahiliproverbs.afrst.illinois.edu/proverbs.htm : \"Methali: HABA NA HABA HUJAZA KIBABA Meaning: Little by little fills up the measure. Application: Great investments are borne out of small savings.\"",
     "photo_hint": "A strong student in their 20s or 30s holding Bakasana or a steady Utkatasana, muscles working, face calm"
    },
@@ -46,7 +46,7 @@
     "slot": "4",
     "step": "getting sick (it comes to everyone)",
     "word": "FRAGILE",
-    "text": "Nobody is too strong to feel FRAGILE. Sickness visits every life. Susan Sontag wrote: \"Everyone who is born holds dual citizenship,\" one with the healthy, one with the sick.",
+    "text": "Nobody is too strong to feel FRAGILE. Susan Sontag wrote: \"Everyone who is born holds dual citizenship,\" one with the healthy, one with the sick.",
     "credit": "Susan Sontag · Illness as Metaphor, 1978",
     "source": "https://www.nybooks.com/articles/1978/01/26/illness-as-metaphor/ (New York Review of Books, 26 Jan 1978, opening of the essay that became the 1978 book): \"Illness is the night-side of life, a more onerous citizenship. Everyone who is born holds dual citizenship, in the kingdom of the well and in the kingdom of the sick.\"",
     "photo_hint": "A student resting low and quiet, for example lying on the back between asanas with eyes closed. No bandages, braces or pain on the face"
@@ -55,8 +55,8 @@
     "slot": "5",
     "step": "healing (coming back)",
     "word": "HOPE",
-    "text": "Healing has its own pace, but HOPE grows each time you get back up. The Japanese say: \"七転び八起き\" (fall down seven times, get up eight). Your mat waits for you.",
-    "credit": "Japanese proverb · Digital Daijisen (Shogakukan) · our translation",
+    "text": "HOPE grows each time you get back up. The Japanese say: \"七転び八起き\" (fall down seven times, get up eight). Your mat waits for you.",
+    "credit": "Japanese proverb · Digital Daijisen",
     "source": "https://kotobank.jp/word/七転び八起き-589160 (デジタル大辞泉): \"《七度転んで八度起き上がる意から》多くの失敗にもめげず、そのたびに奮起して立ち直ること。\"",
     "photo_hint": "A student coming up from a backbend to standing, or rising out of a forward fold: the 'get up eight' moment"
    },
@@ -64,8 +64,8 @@
     "slot": "6",
     "step": "a strong brain (learning, a sharp mind)",
     "word": "CURIOUS",
-    "text": "A CURIOUS mind is strength that does not need muscles. The Persian poet Ferdowsi told readers to \"roam earth, converse with every one.\" Keep asking.",
-    "credit": "Ferdowsi · Shahnameh, c. 1010 · tr. A. G. and E. Warner, 1905",
+    "text": "A CURIOUS mind stays strong without muscles. The Persian poet Ferdowsi wrote: \"roam earth, converse with every one.\" Keep asking.",
+    "credit": "Ferdowsi · Shahnameh · tr. Warner, 1905",
     "source": "https://archive.org/download/shahnama01firduoft/shahnama01firduoft_djvu.txt (The Shahnama of Firdausi, done into English by Arthur George Warner and Edmond Warner, Vol. I, London: Kegan Paul, 1905, The Prelude, §2 'Discourse in Praise of Wisdom', p. 102): \"Learn by the words of sages how to wend / Thy way, roam earth, converse with every one ;\"",
     "photo_hint": "A student watching closely while Boonchu shows or adjusts an asana, eyes on the detail, a learning face, or two students talking on their mats after practice"
    },
@@ -73,8 +73,8 @@
     "slot": "7",
     "step": "becoming wise",
     "word": "HUMBLE",
-    "text": "Wise people stay HUMBLE: the more they know, the more they listen. A Korean proverb: \"벼는 익을수록 고개를 숙인다\" (the riper the rice plant, the more it bends its head).",
-    "credit": "Korean proverb (속담) · tr. Wiktionary",
+    "text": "Wise people stay HUMBLE and keep listening. A Korean proverb: \"벼는 익을수록 고개를 숙인다\" (the riper the rice plant, the more it bends its head).",
+    "credit": "Korean proverb (속담)",
     "source": "https://en.wiktionary.org/wiki/벼는_익을수록_고개를_숙인다 : \"the riper the rice plant, the more it bends its head\": wise people are humble",
     "photo_hint": "A long-time or senior student folding forward in Paschimottanasana or Uttanasana, head bowed like ripe rice"
    },
@@ -82,8 +82,8 @@
     "slot": "8",
     "step": "staying strong (keeping what you built, later in life)",
     "word": "GRATEFUL",
-    "text": "Later in life, you feel GRATEFUL you kept moving. Russians say: \"Береги платье снову, а здоровье смолоду\" (care for clothes while new, health while young). You will never be younger than today.",
-    "credit": "Russian proverb · V. I. Dal, Proverbs of the Russian People, 1862 · our translation",
+    "text": "Later in life, you feel GRATEFUL you kept moving. Russians say: \"Береги платье снову, а здоровье смолоду\" (care for clothes while new, health while young).",
+    "credit": "Russian proverb · V. I. Dal, 1862",
     "source": "https://ru.wikisource.org/wiki/Пословицы_русского_народа_(Даль)/Здоровье_—_Хворь (Dal, section Health and Sickness): \"Береги платье снову, а здоровье смолоду.\"",
     "photo_hint": "An older student (60+) in a steady standing balance such as Utthita Hasta Padangusthasana or Virabhadrasana, strong and smiling"
    },
@@ -91,8 +91,8 @@
     "slot": "9",
     "step": "getting weak and near the end of life (slowing down, peace, gratitude)",
     "word": "PEACE",
-    "text": "Every body slows, and a long life can still end in PEACE, like a leaf going home. A Chinese saying: \"落叶归根\" (fallen leaves will return to the roots). Thank your body.",
-    "credit": "Chinese idiom · originally 葉落歸根, Jingde Record of the Lamp, c. 1004 · tr. Wiktionary",
+    "text": "A long life can still end in PEACE, like a leaf going home. A Chinese saying: \"落叶归根\" (fallen leaves return to the roots). Thank your body.",
+    "credit": "Chinese idiom · Jingde Record of the Lamp, c. 1004",
     "source": "https://en.wiktionary.org/wiki/落葉歸根 : simplified 落叶归根, \"lit=fallen leaves will return to the roots\"; \"From Song dynasty book 《景德傳燈錄》 by 釋道原, originally written as 葉落歸根: 葉落歸根，來時無口。\"",
     "photo_hint": "The oldest student in a quiet seated asana (Padmasana or simple cross-legged) or resting at the end of practice, eyes closed, soft warm light"
    }
