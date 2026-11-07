@@ -1,0 +1,37 @@
+[
+ {
+  "photo": "06-184",
+  "id": "LA9",
+  "word": "GRATEFUL",
+  "credit": "Russian proverb · V. I. Dal, 1862",
+  "ink_w": "light",
+  "tight": false,
+  "line": "Later in life, you feel GRATEFUL you kept moving. \"Береги платье снову, а здоровье смолоду\": care for clothes while new, health while young.",
+  "line_br": "Later in life, you feel|GRATEFUL you kept moving.|\"Береги платье снову, а|здоровье смолоду\": care|for clothes while new,|health while young.",
+  "t": 30,
+  "wm": "left",
+  "wmxy": [
+   60,
+   1250
+  ],
+  "wwidth": 480,
+  "wpos": [
+   945,
+   60
+  ],
+  "wrot": -90,
+  "sz": 42,
+  "cws": [
+   440
+  ],
+  "sxy": [
+   61,
+   60
+  ],
+  "ink_s": "light",
+  "sright": true,
+  "sburn": 0.38,
+  "wshadow": 1.8,
+  "wburn": 0
+ }
+]

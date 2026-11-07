@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "07-238",
+  "id": "LA2",
+  "word": "WONDER",
+  "line": "Life starts in WONDER. Plato wrote: \"philosophy begins in wonder.\" Philosophy means the love of wisdom.",
+  "credit": "Plato · Theaetetus · tr. Jowett",
+  "t": 185,
+  "wm": "orig",
+  "ink_w": "light",
+  "wrot": -90,
+  "wwidth": 900,
+  "wpos": [
+   858,
+   385
+  ],
+  "wshadow": 1.8,
+  "wburn": 0.25,
+  "sz": 46,
+  "cws": [
+   420
+  ],
+  "sxy": [
+   60,
+   60
+  ],
+  "ink_s": "light",
+  "sburn": 0.4
+ }
+]

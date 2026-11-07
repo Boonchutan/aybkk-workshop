@@ -1,0 +1,31 @@
+[
+ {
+  "photo": "06-268",
+  "id": "LA5",
+  "word": "FRAGILE",
+  "line": "Nobody is too strong to feel FRAGILE. \"Everyone who is born holds dual citizenship,\" one with the healthy, one with the sick.",
+  "credit": "Susan Sontag · Illness as Metaphor, 1978",
+  "t": 0,
+  "tight": false,
+  "wwidth": 685,
+  "wpos": [
+   290,
+   290
+  ],
+  "ink_w": "light",
+  "wshadow": 1.6,
+  "shadow": 1.6,
+  "wburn": 0.25,
+  "ink_s": "light",
+  "sz": 45,
+  "cws": [
+   320
+  ],
+  "sxy": [
+   60,
+   470
+  ],
+  "line_br": "Nobody is too strong|to feel FRAGILE.|\"Everyone who is|born holds dual|citizenship,\" one|with the healthy,|one with the sick.",
+  "sburn": 0.4
+ }
+]

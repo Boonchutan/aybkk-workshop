@@ -58,11 +58,44 @@ def ttext(d, xy, t, f, trk, fill, sw=0, extra=0):
     for i, ch in enumerate(_clusters(t) if mixed else t):
         d.text((x, y), ch, font=_fc(f, ch[0]), fill=fill, anchor='ls', stroke_width=sw + extra, stroke_fill=fill if sw + extra else None)
         x += (_fc(f, ch[0]).getlength(ch) if mixed else f.getlength(t[:i + 1]) - f.getlength(t[:i])) + trk * f.size + sw * 1.6
+
+CYR_SERIF = '/usr/share/fonts/truetype/liberation/LiberationSerif-Italic.ttf'   # Russian words inside the italic sentence
+def _nonlat(ch): o = ord(ch); return 0x0400 <= o <= 0x04FF or _thai(ch) or o >= 0x2E80
+def _sfc(f, ch):
+    o = ord(ch)
+    if 0x0400 <= o <= 0x04FF:
+        k = ('CYR', f.size)
+        if k not in _FC: _FC[k] = ImageFont.truetype(CYR_SERIF, f.size)
+        return _FC[k]
+    if _thai(ch):
+        k = ('THS', f.size)
+        if k not in _FC: _FC[k] = ImageFont.truetype(THAI, round(f.size * 0.86)); _FC[k].set_variation_by_axes([500])
+        return _FC[k]
+    if o >= 0x2E80:
+        k = ('CJKS', f.size)
+        if k not in _FC: _FC[k] = ImageFont.truetype(CJK, round(f.size * 0.86))
+        return _FC[k]
+    return f
+def _runs(t, f):
+    out = []
+    for c in _clusters(t):
+        ff = _sfc(f, c[0])
+        if out and out[-1][1] is ff: out[-1][0] += c
+        else: out.append([c, ff])
+    return out
+def mlen(t, f):
+    if not any(_nonlat(c) for c in t): return f.getlength(t)
+    return sum(ff.getlength(r) for r, ff in _runs(t, f))
+def mdraw(d, x, y, t, f, fill, sw=0):
+    if not any(_nonlat(c) for c in t):
+        d.text((x, y), t, font=f, fill=fill, anchor='ls', stroke_width=sw, stroke_fill=fill); return
+    for r, ff in _runs(t, f):
+        d.text((x, y), r, font=ff, fill=fill, anchor='ls', stroke_width=sw, stroke_fill=fill); x += ff.getlength(r)
 WEAK = {'a', 'an', 'the', 'of', 'to', 'and', 'in', 'on', 'at', 'for', 'but', 'so', 'or'}
 def _greedy(words, f, width):
     out, cur = [], []
     for w in words:
-        if not cur or f.getlength(' '.join(cur + [w])) <= width: cur.append(w)
+        if not cur or mlen(' '.join(cur + [w]), f) <= width: cur.append(w)
         else:
             if len(cur) > 1 and cur[-1].lower() in WEAK: out.append(' '.join(cur[:-1])); cur = [cur[-1], w]
             else: out.append(' '.join(cur)); cur = [w]
@@ -74,10 +107,10 @@ def wrap(text, f, width):
     lo, hi = width * 0.55, width          # narrowest width that keeps the same line count = balanced lines
     for _ in range(14):
         mid = (lo + hi) / 2; tr = _greedy(words, f, mid)
-        if len(tr) == len(best) and max(f.getlength(x) for x in tr) <= width: hi = mid
+        if len(tr) == len(best) and max(mlen(x, f) for x in tr) <= width: hi = mid
         else: lo = mid
     cand = _greedy(words, f, hi)
-    if len(cand) == len(best) and max(f.getlength(x) for x in cand) <= width: best = cand
+    if len(cand) == len(best) and max(mlen(x, f) for x in cand) <= width: best = cand
     return best
 def smart(t):
     out = []
@@ -85,6 +118,9 @@ def smart(t):
         if ch == "'":
             prev = t[i - 1] if i else ' '
             out.append('\u2019' if prev.isalnum() or prev in '.,!?' else '\u2018')
+        elif ch == '"':   # straight double quotes have a wide left gap in Instrument Serif Italic: use curly ones
+            prev = t[i - 1] if i else ' '
+            out.append('\u201c' if prev in ' (\u2014-|\n' or i == 0 else '\u201d')
         else: out.append(ch)
     return ''.join(out)
 _BIG = {}
@@ -230,11 +266,11 @@ def sent_geom(line, credit, cw, lead_k=1.12, sz=SENT):
             else: cl2.append(cur); cur = w
         cl2.append(cur)
     cl = cl2
-    if any(tlen(c, fc, TRK_CRED) > cw for c in cl) or any(fs.getlength(x) > cw for x in sl): return None
+    if any(tlen(c, fc, TRK_CRED) > cw for c in cl) or any(mlen(x, fs) > cw for x in sl): return None
     lead = round(sz * lead_k); asc = round(sz * 0.78)
     base = [asc + i * lead for i in range(len(sl))]; cy = base[-1] + 26 + CRED
     cbase = [cy + j * round(CRED * 1.7) for j in range(len(cl))]
-    w = max([fs.getlength(x) for x in sl] + [tlen(c, fc, TRK_CRED) for c in cl])
+    w = max([mlen(x, fs) for x in sl] + [tlen(c, fc, TRK_CRED) for c in cl])
     pen = 0.25 * max(0, len(sl) - 4) + 0.3 * max(0, len(cl) - 2)    # tall thin columns and ragged credits look messy
     return dict(sl=sl, cl=cl, base=base, cbase=cbase, h=cbase[-1] + 8, w=w, cw=cw, sz=sz, pen=pen)
 
@@ -350,8 +386,8 @@ def render(L, word, ink_w=None, ink_s=None, shadow=1.0):
                     x = x0
                     for w in ws: d.text((x, yb), w, font=fs, fill=fill, anchor='ls'); x += fs.getlength(w) + gap
                     continue
-            x = x1 - fs.getlength(t) if right else x0
-            d.text((x, yb), t, font=fs, fill=fill, anchor='ls', stroke_width=SENT_STROKE + (DARK_SENT if si == 'dark' else 0), stroke_fill=fill)
+            x = x1 - mlen(t, fs) if right else x0
+            mdraw(d, x, yb, t, fs, fill, SENT_STROKE + (DARK_SENT if si == 'dark' else 0))
         for j, c in enumerate(sg['cl']):
             x = x1 - tlen(c, fc, TRK_CRED) if right else x0
             ttext(d, (x, L['sr'][1] + sg['cbase'][j]), c, fc, TRK_CRED, fill)
