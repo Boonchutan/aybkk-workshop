@@ -39,7 +39,7 @@ Inbox last read: 2026-11-07T06:09:44.526Z
 - 12 Nov 2026 (promotion ended 11 Nov): Boonchu said "change after Nov 11": switch the site's pink buttons and blush backgrounds (hue 334) to the plum + gold + teal triad, matching the calendar and comparison posters. Ask Boonchu for a go, then Neo builds it as a PR.
 
 ## Wins
-(none yet)
+- 2026-11-06 18:16 Bangkok (Boonchu, 7 Nov 'add new students'): NEW STUDENT, Duo 2 months, slip 19,474 (18,200 + 7% VAT) by bank transfer to AYBKK Company, paid from a friend's account. Start Thu 12 Nov. To do: M confirms the money is in, asks if the Duo is shared (2 people x 2 months) or doubled (1 person x 4 months), then adds the pass(es) like the other Duo buyers.
 
 ## Open items
 - 2026-11-07 06:58 Bangkok: PR #92 (8-class pack; 3 months 19,500 at the 12 Nov switch) and PR #93 (shorter home page: Book a class is section 2 after the promo, Read more on every section, class spots shown as Spots available / Last 3 / Last 2 / Last spot / Class full, no numbers) are LIVE. #92's own deploy had failed 6 Nov 18:15; the #93 deploy carried both. Live check: products dropin 1,500 / pack8 7,600 (8 classes, 30 days, online 8,376) / unlim1 9,600 / unlim3 25,800 (switches to 19,500 at 00:00 12 Nov) / unlim12m 78,000; pack10 off sale. Phone page 11,777px, booking at 2.5 screens until 11 Nov (1.4 after). The 12 Nov 07:08 reminder still checks the switch (3 months 19,500, 6 months 32,000, 12 months 59,900).
