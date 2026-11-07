@@ -165,3 +165,9 @@ Which step are you on now? Tell me the number.
 #aybkk #ashtanga #ashtangabangkok #boonchutanti #mysore
 
 ---
+
+## Update 7 Nov evening (Plato chat)
+- Boonchu caught set A's small text off the grid. All 10 failed a strict check (widths 276-660, x anywhere). Fixed: new renderer direct20g.py (GRID OK/FAIL), 4 columns only, full planned texts restored.
+- His fixes: WONDER shows the whole frame; FRAGILE photo deleted -> 07-164; PROUD photo removed -> 07-292; PEACE moved down so head and elbows show (feet cut a bit OK). New standing orders saved: grid, never cut a frame, never cut the head.
+- Sets B (Iyengar's life) and C (your ladder) made: texts 17-26 words, 30 different big words across A/B/C, B fact-checked live against Tribune 2005, Open 2014, AP 2014. B has no AYBKK teacher as main figure (he/his = Iyengar).
+- All 30 slides GRID OK, uploaded to Postiz, md5 checked 30/30. Media lists in A/, B/, C/postiz.json. Waiting for Boonchu's go + times, and his OK to reuse Iyengar for set B.
