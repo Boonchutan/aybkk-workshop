@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-07T00:09:50.320Z
+Inbox last read: 2026-11-07T06:09:44.526Z
 
 ## Standing orders from Boonchu
 - 2026-11-03, changed 2026-11-06 (Boonchu: "Watching video is not doing bad to someone. Delete that rule."): VIDEO LINKS. Run `python3 bots/tools/read-link/read_link.py "<link>"` first. It fetches the video once as a normal visitor and gives every spoken line plus stills you open with your image reader. If the platform says log in or slow down, stop (no retry, no disguise, never pose as another company's bot: the safety checks block that anyway) and ask him for the file. README next to the tool.
@@ -229,3 +229,4 @@ Inbox last read: 2026-11-07T00:09:50.320Z
 - 2026-11-06 13:08: Inbox 13:08: 3 LINE threads with news, 2 hot (promo buyer chased at 10:31 to pay today before her trip; a transfer 10 Nov for a start 11 Nov, asks for the account), 1 student health question (arm, video). Serious lead (Sat 7 Nov, 1 day) and course prices (Sun 8 Nov, 2 days) reminded, 2nd nudge today: do not repeat at 19:08. No reminders due since 07:08, no wins.
 - 2026-11-06 19:08: Inbox 19:08: 2 LINE threads with news, 2 hot (promo buyer sent a bank slip to check; Thai student asks a lower 3-month price, comes to meet the teacher Sat morning). Serious lead (Sat 7 Nov) and course prices (Sun 8 Nov) not repeated (2 nudges today). No reminders due since 13:08, no wins reported. Next step given: check the slip, confirm her pass and start date before 12 Nov.
 - 2026-11-07 07:08: Carne posted (fresh short last note for the serious lead in his run session); Plato paused (expected; Plato chat wrote six-jobs Reel and adjustment carousels 6 Nov). Inbox 07:08: 1 new LINE thread (new person, "I have a question" button), 0 hot. Serious lead (19:00 TODAY) and course prices (19:00 Sun 8 Nov, 1 day) reminded, 1st nudge today. Money line: Thai student meets the teacher this morning about a 3-month pass. Rezerv import reminded (daily). No reminders due, no wins. Board rebuilt.
+- 2026-11-07 13:08: check-in. Serious lead (19:00 TODAY) and course prices (19:00 Sun 8 Nov, 1 day) reminded, 2nd nudge today: do not repeat at 19:08. No reminders due since 07:08, no wins. Inbox 13:08: 1 LINE thread with news, 1 hot (3-month pass student: payment on 10 Nov, start 11 Nov).

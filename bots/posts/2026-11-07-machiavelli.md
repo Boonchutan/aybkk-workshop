@@ -8,3 +8,4 @@ Reminders due this morning: none.
 Reel: Plato's daily run is paused (expected). Last from Plato chat: "One morning, six jobs" (6 Nov). Carne posted today.
 Score: wins this week (from Mon 2 Nov): none reported. 180K leads: 0 new in 7 days, 1 serious, silent 21 days.
 Inbox 07:08: 1 new, 0 hot.
+13:08 check-in: serious lead due 19:00 today; course prices due Sun 8 Nov (1 day). Inbox: 1 new, 1 hot.
