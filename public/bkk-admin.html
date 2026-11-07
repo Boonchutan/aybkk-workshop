@@ -167,6 +167,7 @@
   .drow.off .tm,.drow.off .bd b,.drow.off .cnt b{text-decoration:line-through;opacity:.6}
   .drow .go{font-size:24px;line-height:1;color:var(--soft)}
   .pill.onl{background:var(--blush);color:var(--plum);vertical-align:2px}
+  .pill.mat{background:#fff3d6;color:#6b520e;vertical-align:1px;margin-left:4px}
   /* Inside one class. */
   .tile.hot b{color:var(--pink)}
   .flash{border-radius:7px;padding:8px 10px;font-size:14px;margin:10px 0 0;background:#e6f6ec;color:#187a43}
@@ -642,7 +643,7 @@
     tBooked: 'Booked', tIn: 'Checked in', tLeft: 'Places left', full: 'Full', nOver: n => `${n} over`,
     slotless: 'Moved from Rezerv. You can look, not change.', ended: 'This class has ended.',
     noTime: 'Time not known', rCame: 'Came',
-    rosterH: 'On the list', rosterNone: 'Nobody booked yet.',
+    rosterH: 'On the list', rosterNone: 'Nobody booked yet.', matPill: 'mat', tMats: 'Mats to rent',
     rIn: x => `In ${x}`, rNotYet: 'Not yet', rNoShow: 'No-show', covPass: 'aybkk.net pass', covDrop: 'Drop-in',
     btnIn: 'Check in', btnUndo: 'Undo', btnCancelBk: 'Cancel booking',
     qCancelBk: (n, title, when) => `Cancel ${n}'s booking?\n${title}, ${when}`,
@@ -683,7 +684,7 @@
     tBooked: 'จองแล้ว', tIn: 'เช็คอินแล้ว', tLeft: 'ที่ว่าง', full: 'เต็ม', nOver: n => `เกิน ${n} คน`,
     slotless: 'ย้ายมาจาก Rezerv ดูได้อย่างเดียว', ended: 'คลาสนี้จบแล้ว',
     noTime: 'ไม่ทราบเวลา', rCame: 'มาเรียน',
-    rosterH: 'รายชื่อ', rosterNone: 'ยังไม่มีคนจอง',
+    rosterH: 'รายชื่อ', rosterNone: 'ยังไม่มีคนจอง', matPill: 'เสื่อ', tMats: 'เช่าเสื่อ',
     rIn: x => `เช็คอิน ${x}`, rNotYet: 'ยังไม่มา', rNoShow: 'จองแล้วไม่มา', covPass: 'แพ็กเกจ aybkk.net', covDrop: 'Drop-in',
     btnIn: 'เช็คอิน', btnUndo: 'ยกเลิกเช็คอิน', btnCancelBk: 'ยกเลิกการจอง',
     qCancelBk: (n, title, when) => `ยกเลิกการจองของ ${n}?\n${title} ${when}`,
@@ -1237,6 +1238,7 @@
       <div class="tiles">
         ${tile(T('tBooked'), c.capacity != null ? `${c.booked} / ${c.capacity}` : String(c.booked), c.noShows ? T('nNoShows', c.noShows) : '')}
         ${tile(T('tIn'), String(c.checkedIn))}
+        ${c.mats ? tile(T('tMats'), String(c.mats)) : ''}
         ${left != null ? `<div class="tile${left <= 0 ? ' hot' : ''}"><span>${esc(T('tLeft'))}</span><b>${esc(left > 0 ? String(left)
           : left === 0 ? T('full') : T('nOver', -left))}</b></div>` : ''}
       </div>
@@ -1258,7 +1260,8 @@
         !fixed && b.status === 'booked' && !b.checkedInAt ? `<button class="btn red sm" onclick="cvCancel(${id})">${T('btnCancelBk')}</button>` : '',
         histBtn(b.code)].filter(Boolean).join('');
       return `<div class="rr${b.status === 'noshow' ? ' miss' : ''}">
-        <div class="rm"><b>${esc(b.name)}</b><br><span class="muted">${esc([b.code, cover, src].filter(Boolean).join(' · '))}</span></div>
+        <div class="rm"><b>${esc(b.name)}</b>${b.needMat && b.status === 'booked'
+          ? ` <span class="pill mat" title="${esc(T('tMats'))}">${esc(T('matPill'))}</span>` : ''}<br><span class="muted">${esc([b.code, cover, src].filter(Boolean).join(' · '))}</span></div>
         <div class="rs">${st}</div><div class="ra">${acts}</div></div>`;
     });
     const rosterBox = `<div class="box"><b>${T('rosterH')}</b> <span class="muted">${roster.length}</span>

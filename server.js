@@ -14,6 +14,7 @@ const { mountPartner } = require('./partner-api');
 const { mountIdcn } = require('./idcn-api');
 const { mountShop } = require('./shop-api');
 const { mountInbox, APPLY_PATH_RE, LEAD_PATH_RE } = require('./inbox');
+const { mountTeam, HELPDESK_PATH_RE } = require('./team-brief');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -112,11 +113,13 @@ app.use((req, res, next) => { res.set('Referrer-Policy', 'strict-origin'); next(
 app.use(cors());
 // LINE and Meta sign the exact bytes they send; the inbox checks those signatures.
 // The public In-Depth application form and the /start first-step form read their own
-// bodies with small limits (inbox.js).
+// bodies with small limits (inbox.js), and the help desk webhook reads its raw bytes
+// itself (team-brief.js).
 const jsonBody = express.json({ limit: '10mb', verify: (req, res, buf) => {
   if (/^\/(line|meta)\/webhook/.test(req.url)) req.rawBody = buf;
 } });
-app.use((req, res, next) => APPLY_PATH_RE.test(req.path) || LEAD_PATH_RE.test(req.path) ? next() : jsonBody(req, res, next));
+app.use((req, res, next) => APPLY_PATH_RE.test(req.path) || LEAD_PATH_RE.test(req.path) || HELPDESK_PATH_RE.test(req.path)
+  ? next() : jsonBody(req, res, next));
 // index: false so '/' falls through to the host-aware front-door route below
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));
@@ -609,6 +612,10 @@ mountIdcn(app, { pgPool });
 // One inbox for LINE, Instagram and Facebook chats: stored for Machi's briefs,
 // hot ones pinged to Boonchu at once when ANTHROPIC_API_KEY is set
 const inbox = mountInbox(app, { pgPool });
+
+// The AYBKK help desk (a second LINE OA, internal): the 05:00 teaching brief and the
+// 20:00 day summary to the teacher team's LINE group, and messages the Desk sends.
+mountTeam(app, { pgPool, cloudinary, driver }).start();
 
 // In-Depth Mysore course profiles: /idcn3/yangyang ('#' can't appear in a URL
 // path, so generation 3 is idcn3). The page reads course+slug from the path.

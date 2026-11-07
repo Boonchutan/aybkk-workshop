@@ -2319,7 +2319,7 @@ const ok = (name, cond, extra = '') => {
        bea.bookingId === bk.bea && bea.code === 'BTESTCALBEA' && bea.status === 'booked' && !!bea.checkedInAt && !!bea.bookedAt
          && bea.cover === 'pass' && bea.source === 'door' && bea.passName === 'Drop-in' && bea.dropin === true
          && moe.status === 'noshow' && moe.checkedInAt === null && moe.dropin === false && moe.passName === null
-         && r.every(x => Object.keys(x).sort().join() === 'bookedAt,bookingId,checkedInAt,code,cover,dropin,name,passName,source,status')
+         && r.every(x => Object.keys(x).sort().join() === 'bookedAt,bookingId,checkedInAt,code,cover,dropin,name,needMat,passName,source,status')
          && !JSON.stringify(inA.body).includes('@example.com') && !JSON.stringify(inA.body).includes('080-000'),
        JSON.stringify(r));
     const cl = inA.body.cancelledList || [];

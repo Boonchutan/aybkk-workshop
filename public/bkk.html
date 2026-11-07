@@ -679,6 +679,11 @@
   .cls .open:hover{text-decoration:underline}
   .cls.mine{background:var(--promo-soft);padding-left:12px;box-shadow:inset 4px 0 0 var(--promo)}
   .pill.ok{background:var(--promo-soft);color:var(--promo-deep)}
+  /* "I need a mat": a small tick under the class, not a second button. */
+  label.mat{display:flex;align-items:center;gap:8px;margin:6px 0 0;font:400 13.5px/1.35 var(--f-text);color:var(--ink);cursor:pointer;width:fit-content;max-width:100%}
+  label.mat input{width:20px;height:20px;min-height:0;margin:0;padding:0;flex:0 0 auto;accent-color:var(--plum);cursor:pointer}
+  .mystate label.mat{margin-top:14px;font-size:15px}
+  dialog label.mat{margin-top:14px}
   /* Inside a class: tall enough that the tabs can sit at the top of the screen. */
   .inside{min-height:calc(100vh - 110px)}
   .backbtn{display:inline-flex;align-items:center;gap:6px;min-height:48px;margin:0 0 14px;padding:8px 18px 8px 12px;border-radius:0;
@@ -1782,6 +1787,13 @@
     cancelLate: h => `Запись отменена. До занятия было меньше ${h} ч, поэтому занятие списано.`,
   });
 
+  // Mat rental at the shala, ticked when booking (7 Nov 2026). No price here:
+  // the teachers see who needs one in the morning brief.
+  Object.assign(STR.en, { needMat: 'I need a mat (rent at the shala)' });
+  Object.assign(STR.th, { needMat: 'ต้องการเช่าเสื่อที่ชาลา' });
+  Object.assign(STR.zh, { needMat: '需要在道场租瑜伽垫' });
+  Object.assign(STR.ru, { needMat: 'Нужен коврик напрокат в шале' });
+
   // Class names in the page language, for the drop-in class list and the
   // "you are booked" message. Anything not listed stays as the shala wrote it.
   const CLASS_WORDS = {
@@ -2310,6 +2322,14 @@
   }
   const mine = () => (MINE.code && MINE.code === myCode() ? MINE : { ok: false, map: new Map() });
 
+  // "I need a mat": before booking, the tick rides along with Book (kept per
+  // class while the page is open); on a seat already booked it changes that
+  // seat. Online classes are practised at home, so they have none.
+  const MAT_WANT = new Set();
+  const matBox = (c, b) => c.isOnline ? '' : b
+    ? `<label class="mat"><input type="checkbox" data-matbk="${Number(b.id)}"${b.need_mat ? ' checked' : ''}>${esc(t('needMat'))}</label>`
+    : `<label class="mat"><input type="checkbox" data-mat="${esc(clsKey(c))}"${MAT_WANT.has(clsKey(c)) ? ' checked' : ''}>${esc(t('needMat'))}</label>`;
+
   // After a booking or a cancel: new seat counts and booked marks, same screen.
   async function refreshSchedule() {
     try {
@@ -2474,6 +2494,7 @@
             b ? `<span class="pill ok">✓ ${esc(t('booked'))}</span>` : ''}</div>
           <div class="m">${esc(t('mins', c.durationMin))}${c.teachers ? ' · ' + esc(c.teachers) : ''}</div>
           ${b ? '' : `<div class="seats ${seatsCls(c)}">${esc(seatsText(c))}</div>`}
+          ${b || !full ? matBox(c, b) : ''}
         </div>
         ${b ? `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`
           : `<button type="button" class="btn" ${full ? 'disabled' : ''} data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button>`}
@@ -2489,10 +2510,12 @@
     const b = mine().map.get(OPEN), full = c.seatsLeft < 1;
     const end = new Date(Date.parse(c.startAt) + (Number(c.durationMin) || 0) * 60e3).toISOString();
     const state = b ? `<div class="mystate yes"><div class="big">✓ ${esc(t('youBooked'))}</div>
+        ${matBox(c, b)}
         <button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>
         <p class="note">${esc(t('cancelRule', CANCEL_HOURS))}</p></div>`
       : full ? `<div class="mystate full"><div class="big">${esc(t('full'))}</div></div>`
       : `<div class="mystate no"><div class="big">${esc(t('notBooked'))}</div>
+        ${matBox(c, null)}
         <button type="button" class="btn pink" data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button></div>`;
     $('#view').innerHTML = `<div class="inside"><button type="button" class="backbtn" data-act="back">‹ ${esc(t('back'))}</button>
       <div class="clsv">
@@ -2629,6 +2652,7 @@
       return load();
     }
     if (current !== 'schedule') return;
+    if (e.target.closest('label.mat')) return;  // the tick box, not the class row under it
     const kb = e.detail === 0;                  // Enter or Space on a button
     const focus = (...sels) => {
       if (!kb) return;
@@ -2668,6 +2692,25 @@
     if (c) return openCls(c.dataset.cls, kb);
     const d = e.target.closest('.cal .d[data-day]');
     if (d) { selDate = d.dataset.day; renderSchedule(); focus(`.d[data-day="${selDate}"] .dn`); }
+  });
+
+  // Any view: the schedule, the class, and My pass all carry mat ticks.
+  $('#view').addEventListener('change', async e => {
+    const want = e.target.closest('input[data-mat]');
+    if (want) { if (want.checked) MAT_WANT.add(want.dataset.mat); else MAT_WANT.delete(want.dataset.mat); return; }
+    const cb = e.target.closest('input[data-matbk]');
+    if (!cb) return;
+    const id = Number(cb.dataset.matbk), on = cb.checked;
+    cb.disabled = true;
+    try {
+      const r = await fetch(`/api/bkk/bookings/${id}/mat`, { method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberCode: myCode(), needMat: on }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || 'Could not save. Please try again.');
+      for (const b of MINE.map.values()) if (Number(b.id) === id) b.need_mat = on;
+    } catch (err) { cb.checked = !on; alert(err.message); }
+    finally { cb.disabled = false; }
   });
 
   function renderPackages() {
@@ -2728,7 +2771,7 @@
       const bookings = (d.bookings || []).map(b => `<div class="cls">
         <div class="t">${fmtTime(b.start_at)}</div>
         <div class="b"><div class="n">${esc(clsName(b.title))}</div>
-          <div class="m">${esc(fmtDay(b.start_at))}</div></div>
+          <div class="m">${esc(fmtDay(b.start_at))}</div>${matBox({ isOnline: b.is_online }, b)}</div>
         <button class="btn ghost" onclick="cancelBooking(${b.id})">${esc(t('cancelBk'))}</button>
       </div>`).join('') || `<p class="note">${esc(t('noUpcoming'))}</p>`;
       // Mornings, not classes: Saturday's two led classes are one morning.
@@ -3050,6 +3093,7 @@
     $('#dlgIn').innerHTML = `<h3>${esc(pkgName(p))} · ${baht(p.total_thb)}</h3>
       ${intro ? `<p class="note" style="margin:0 0 4px">${esc(intro)}</p>` : ''}
       ${picker}
+      ${single && opts.length ? `<label class="mat"><input type="checkbox" id="bmat"${MAT_WANT.has(preKey) ? ' checked' : ''}>${esc(t('needMat'))}</label>` : ''}
       <label>${esc(t('name'))}</label><input id="bn" autocomplete="name">
       <label>${esc(t('email'))}</label><input id="be" type="email" autocomplete="email">
       <label>${esc(t('phone'))}</label><input id="bp" autocomplete="tel">
@@ -3069,7 +3113,7 @@
         const r = await fetch('/api/bkk/orders', { method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode(),
-            ...(single ? { slotId: Number(slotId), date } : {}) }) });
+            ...(single ? { slotId: Number(slotId), date, needMat: !!($('#bmat') && $('#bmat').checked) } : {}) }) });
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || 'could not create order');
         // An email that already has a profile: its code is not handed to this
@@ -3136,12 +3180,13 @@
     try {
       const r = await fetch('/api/bkk/bookings', { method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ memberCode: code, slotId, date }) });
+        body: JSON.stringify({ memberCode: code, slotId, date, needMat: MAT_WANT.has(slotId + '|' + date) }) });
       const j = await r.json();
       if (!r.ok) {
         if (/no active pass/.test(j.error || '') && offerDropin(slotId, date)) return;
         throw new Error(j.error);
       }
+      MAT_WANT.delete(slotId + '|' + date);
       BUSY = false;
       // Said at once; the new seats and marks come in behind the message.
       refreshSchedule();

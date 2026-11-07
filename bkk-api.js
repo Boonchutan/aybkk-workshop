@@ -477,6 +477,11 @@ function mountBkk(app, opts = {}) {
     await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_passes_source_ref
              ON bkk_passes (source, source_ref) WHERE source_ref IS NOT NULL`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_orders_member ON bkk_orders (member_id)`);
+    // "I need a mat (rent at the shala)", ticked when booking (7 Nov 2026). The
+    // morning team brief and the staff lists show it; nothing is charged here.
+    // A drop-in bought for a class carries the tick on its order to the seat.
+    await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS need_mat BOOLEAN NOT NULL DEFAULT false`);
+    await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS need_mat BOOLEAN NOT NULL DEFAULT false`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -801,10 +806,10 @@ function mountBkk(app, opts = {}) {
       for (let attempt = 0; attempt < 5 && !o; attempt++) {
         try {
           o = (await q(
-            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,slot_id,class_date)
-             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+            `INSERT INTO bkk_orders (refno,product_id,member_id,base_thb,fee_thb,vat_thb,amount_thb,slot_id,class_date,need_mat)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
             [newRefno(), pr.id, member.id, pr.price_thb, fee, vat, total,
-             cls && cls.slotId, cls && cls.date])).rows[0];
+             cls && cls.slotId, cls && cls.date, !!cls && req.body.needMat === true])).rows[0];
         } catch (e) {
           if (!/duplicate key/.test(e.message) || attempt === 4) throw e;
         }
@@ -1030,7 +1035,7 @@ function mountBkk(app, opts = {}) {
         try {
           seat = await takeSeat(client, { member: { id: order.member_id }, slotId, date, staff: true,
             allowOver: true, cover: 'pass', passId: pass.id, checkIn: !!opts.checkIn,
-            source: opts.source || 'order', requestId: opts.requestId, onList: true });
+            source: opts.source || 'order', requestId: opts.requestId, onList: true, needMat: order.need_mat === true });
           await client.query('RELEASE SAVEPOINT seat');
         } catch (e) {
           await client.query('ROLLBACK TO SAVEPOINT seat');
@@ -1615,7 +1620,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // checkIn); a student is told they already booked it.
   async function takeSeat(db, { member, slotId, date, staff = false, allowOver = false,
     cover = 'pass', passId = null, checkIn = false, source = 'student', requestId = null,
-    onList = source === 'door' || source === 'order' }) {
+    onList = source === 'door' || source === 'order', needMat = false }) {
     const door = onList;
     const { slot, startAt, capacity } = await classCheck(db, slotId, date,
       { staff, endedMsg: door ? CLASS_ENDED : undefined });
@@ -1686,10 +1691,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
     } else if (cover !== 'rezerv') throw new Error('unknown cover');
 
+    // An online class is practised at home: no mat to rent.
     out.booking = (await db.query(
-      `INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,pass_id,cover,source,request_id,checked_in_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,${checkIn ? 'now()' : 'NULL'}) RETURNING *`,
-      [slotId, date, startAt, member.id, pass ? pass.id : null, cover, source, requestId])).rows[0];
+      `INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,pass_id,cover,source,request_id,checked_in_at,need_mat)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,${checkIn ? 'now()' : 'NULL'},$9) RETURNING *`,
+      [slotId, date, startAt, member.id, pass ? pass.id : null, cover, source, requestId,
+        needMat === true && !slot.is_online])).rows[0];
     return out;
   }
 
@@ -1703,7 +1710,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!m) throw new Error('member not found');
       const staff = isAdmin(req);
       const { booking: b } = await takeSeat(client, { member: m, slotId, date, staff,
-        cover: 'pass', source: staff ? 'staff' : 'student' });
+        cover: 'pass', source: staff ? 'staff' : 'student', needMat: req.body.needMat === true });
       await client.query('COMMIT');
       res.json({ success: true, booking: b });
     } catch (e) {
@@ -1711,6 +1718,28 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const msg = /duplicate key/.test(e.message) ? 'you already booked this class' : e.message;
       res.status(409).json({ error: msg });
     } finally { client.release(); }
+  });
+
+  // Tick or untick "I need a mat" on a seat already booked. Same ownership rule
+  // as cancelling: the member code, or staff. A student can change it until the
+  // class starts; staff any time.
+  app.post('/api/bkk/bookings/:id/mat', async (req, res) => {
+    const { memberCode: mcode, needMat } = req.body || {};
+    if (typeof needMat !== 'boolean') return res.status(400).json({ error: 'needMat must be true or false' });
+    if (!/^\d{1,9}$/.test(req.params.id)) return res.status(404).json({ error: 'booking not found' });
+    try {
+      const b = (await q(
+        `SELECT b.id, b.status, b.start_at, s.is_online, m.code AS mcode FROM bkk_bookings b
+         JOIN bkk_members m ON m.id=b.member_id LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
+         WHERE b.id=$1`, [Number(req.params.id)])).rows[0];
+      const staff = isAdmin(req);
+      if (!b || (!staff && b.mcode !== String(mcode || ''))) return res.status(404).json({ error: 'booking not found' });
+      if (b.status !== 'booked') return res.status(409).json({ error: 'already ' + b.status });
+      if (b.is_online !== false && needMat) return res.status(409).json({ error: 'an online class needs no mat from the shala' });
+      if (!staff && new Date(b.start_at) <= bkkNow()) return res.status(409).json({ error: 'that class has already started' });
+      await q('UPDATE bkk_bookings SET need_mat=$2 WHERE id=$1', [b.id, needMat]);
+      res.json({ success: true, booking: { id: b.id, needMat } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   app.post('/api/bkk/bookings/:id/cancel', async (req, res) => {
@@ -2061,7 +2090,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       // pass_name / dropin let the door label a row: a drop-in, or a Rezerv seat.
       const r = await q(
         `SELECT s.title, b.class_date, b.start_at, m.name, m.code, b.checked_in_at,
-           b.slot_id, b.cover, b.source, pr.name_en AS pass_name,
+           b.slot_id, b.cover, b.source, b.need_mat, pr.name_en AS pass_name,
            coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
          FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id
          JOIN bkk_members m ON m.id=b.member_id
@@ -2087,7 +2116,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           const list = r.rows.filter(b => b.slot_id === s.id);
           return { slotId: s.id, date: today, title: s.title, startAt: startAtISO(today, s.start_time),
             durationMin: s.duration_min, isOnline: s.is_online, capacity: (ov && ov.capacity != null) ? ov.capacity : s.capacity,
-            booked: list.length, checkedIn: list.filter(b => b.checked_in_at).length };
+            booked: list.length, checkedIn: list.filter(b => b.checked_in_at).length,
+            mats: list.filter(b => b.need_mat).length };
         }).filter(Boolean);
       }
       res.json({ bookings: r.rows, money, classes });
@@ -2112,9 +2142,33 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // The team LINE group briefs (team-brief.js): 05:00 teaching brief, 20:00
+  // summary, and their language. Off until switched on here.
+  const TEAM_SETTINGS = { teamBriefMorning: ['team_brief_morning', ['on', 'off']],
+    teamBriefEvening: ['team_brief_evening', ['on', 'off']], teamBriefLang: ['team_brief_lang', ['th', 'en']] };
+  const teamSettings = async () => {
+    const r = await q(`SELECT key, value FROM bkk_settings WHERE key = ANY($1::text[])`,
+      [Object.values(TEAM_SETTINGS).map(([k]) => k)]);
+    const v = k => (r.rows.find(x => x.key === k) || {}).value;
+    return { morning: v('team_brief_morning') === 'on' ? 'on' : 'off',
+      evening: v('team_brief_evening') === 'on' ? 'on' : 'off', lang: v('team_brief_lang') === 'en' ? 'en' : 'th' };
+  };
+
   app.post('/api/bkk/admin/settings', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
     try {
+      const b = req.body || {};
+      const team = [];
+      for (const [field, [key, allowed]] of Object.entries(TEAM_SETTINGS)) {
+        if (b[field] === undefined) continue;
+        const val = b[field] === true ? 'on' : b[field] === false ? 'off' : String(b[field]);
+        if (!allowed.includes(val)) return res.status(400).json({ error: `${field} must be ${allowed.join(' or ')}` });
+        team.push([key, val]);
+      }
+      for (const [key, val] of team) {
+        await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
+                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`, [key, JSON.stringify(val)]);
+      }
       if (req.body.surchargePct !== undefined) {
         await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct',$1)
                  ON CONFLICT (key) DO UPDATE SET value=$1, updated_at=now()`,
@@ -2133,7 +2187,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                  ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`,
           ['link_' + k, JSON.stringify(url)]);
       }
-      res.json({ success: true, surchargePct: await surcharge() });
+      res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings() });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3944,7 +3998,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         ov = (await q('SELECT * FROM bkk_class_overrides WHERE slot_id=$1 AND class_date=$2::date', [slot.id, date])).rows[0];
       }
       const rows = (await q(
-        `SELECT b.id, b.status, b.checked_in_at, b.booked_at, b.cancelled_at, b.cancel_reason, b.cover, b.source,
+        `SELECT b.id, b.status, b.checked_in_at, b.booked_at, b.cancelled_at, b.cancel_reason, b.cover, b.source, b.need_mat,
            m.code, m.name, pr.name_en AS pass_name, coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
          FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
          LEFT JOIN bkk_passes p ON p.id=b.pass_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
@@ -3969,10 +4023,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const ended = slot ? (now - startMs) / 60000 > dur : started;
       const canAdd = !!slot && slot.active && !offDay && !c.cancelled && !ended && !moonDaysBetween(date, date).size;
       res.json({
-        class: { ...c, endAt: slot ? bkkISO(startMs + dur * 60000) : null, started, ended, canAdd },
+        class: { ...c, endAt: slot ? bkkISO(startMs + dur * 60000) : null, started, ended, canAdd,
+          mats: live.filter(b => b.status === 'booked' && b.need_mat).length },
         roster: live.map(b => ({ bookingId: b.id, code: b.code, name: b.name, status: b.status,
           checkedInAt: b.checked_in_at, bookedAt: b.booked_at, cover: b.cover, source: b.source,
-          passName: b.pass_name, dropin: b.dropin }))
+          passName: b.pass_name, dropin: b.dropin, needMat: b.need_mat }))
           .sort((a, b) => String(a.name).localeCompare(String(b.name)) || a.bookingId - b.bookingId),
         cancelledList: rows.filter(b => b.status === 'cancelled')
           .sort((a, b) => (b.cancelled_at || 0) - (a.cancelled_at || 0) || b.id - a.id)
