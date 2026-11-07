@@ -52,6 +52,7 @@ Rules (from the owner, strict):
 3. Word and text block at least 40 px apart; both clear of the watermark.
 4. Change t only if no visible head, hand or foot of the main people gets cut.
 4b. NEVER put the big word or the text over framed pictures, teacher portraits, photos of gurus or deity statues on the wall shelves (they are sacred to the shala). Keep 30 px clear of them.
+4d. Owner's order: never let the crop edge cut through a framed picture on the wall. Choose t so each framed picture is either fully inside the slide (with some space around it) or fully out of it.
 4c. The small text may contain Thai, Japanese, Korean, Russian or Chinese words: they render with fallback fonts; check they are complete and readable in the preview.
 5. Write candidates to ${WD}/v2/${SET}/work/<NN>_v<k>.jpg (+ .json). Final: ${WD}/v2/${SET}/final/<NN>.jpg and its one-row spec list ${WD}/v2/${SET}/final/<NN>.json (make the folders). Do not touch other files.
 Try at least 3 grid layouts (different columns or sides), compare them side by side at phone size, pick the best. Your final message is data, not chat.`
