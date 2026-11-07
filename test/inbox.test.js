@@ -6,6 +6,7 @@ process.env.META_VERIFY_TOKEN = 'verify-me';
 delete process.env.LINE_CHANNEL_ACCESS_TOKEN;
 delete process.env.META_PAGE_TOKEN;
 delete process.env.INBOX_KEY;
+process.env.BKK_ADMIN_KEY = 'desk-key';
 const crypto = require('crypto');
 const express = require('express');
 const { Pool } = require('pg');
@@ -69,6 +70,10 @@ const alerts = [];
     message: { id, type: 'text', text } });
   const readInbox = async (qs = '', key = 'inbox-key') => {
     const r = await fetch(B + '/api/inbox' + qs, { headers: { 'x-inbox-key': key } });
+    return { status: r.status, body: await r.json() };
+  };
+  const readDesk = async (qs = '', headers = { 'x-bkk-key': 'desk-key' }) => {
+    const r = await fetch(B + '/api/bkk/admin/inbox' + qs, { headers });
     return { status: r.status, body: await r.json() };
   };
   const rows = async () => (await pool.query('SELECT * FROM aybkk_inbox ORDER BY id')).rows;
@@ -151,6 +156,9 @@ const alerts = [];
   console.log('\n— /api/inbox —');
   let res = await readInbox();
   ok('no INBOX_KEY on the server → 503', res.status === 503);
+  const deskAlone = await readDesk();
+  ok('the Desk reads the inbox with x-bkk-key alone, no INBOX_KEY needed', deskAlone.status === 200
+    && (deskAlone.body.threads || []).length === 7, JSON.stringify(deskAlone.body).slice(0, 200));
   process.env.INBOX_KEY = 'inbox-key';
   res = await readInbox('', 'wrong-key');
   ok('a wrong key → 401', res.status === 401);
@@ -175,6 +183,29 @@ const alerts = [];
   ok('since returns only threads with news, with earlier context', res.body.threads.length === 1 &&
     anna2.new === 1 && anna2.messages.length === 3 && anna2.messages[0].new === false);
   ok('an unsorted newer message hides the stale sort result', anna2.sorted === null);
+
+  console.log('\n# /api/bkk/admin/inbox (the Desk, x-bkk-key)');
+  const noKey = await readDesk('', {});
+  const badKey = await readDesk('', { 'x-bkk-key': 'nope' });
+  const inboxKeyOnly = await readDesk('', { 'x-inbox-key': 'inbox-key' });
+  ok('401 without x-bkk-key, with a wrong one, or with the inbox key instead', noKey.status === 401 && badKey.status === 401
+    && inboxKeyOnly.status === 401 && !noKey.body.threads && !badKey.body.threads && !inboxKeyOnly.body.threads);
+  const logs = [], keep = [console.log, console.warn, console.error, console.info];
+  console.log = console.warn = console.error = console.info = (...a) => logs.push(a.join(' '));
+  const sinceQs = `?since=${encodeURIComponent(mark)}`;
+  let both;
+  try {
+    both = await Promise.all([readInbox(), readDesk(), readInbox(sinceQs), readDesk(sinceQs), readInbox('?since=nope'), readDesk('?since=nope')]);
+  } finally { [console.log, console.warn, console.error, console.info] = keep; }
+  const [mAll, dAll, mNew, dNew, mBad, dBad] = both;
+  const same = (a, b, skip) => { const x = { ...a }, y = { ...b }; for (const k of skip) { delete x[k]; delete y[k]; } return JSON.stringify(x) === JSON.stringify(y); };
+  ok('same rows as /api/inbox: every thread and message, in the same order', mAll.status === 200 && dAll.status === 200
+    && dAll.body.threads.length === 7 && same(mAll.body, dAll.body, ['now', 'since']), JSON.stringify([mAll.body.threads.length, dAll.body.threads.length]));
+  ok('since works the same: only threads with news, with earlier context', dNew.status === 200 && dNew.body.threads.length === 1
+    && dNew.body.threads[0].sender === 'Uanna' && dNew.body.threads[0].new === 1 && dNew.body.since === mark
+    && same(mNew.body, dNew.body, ['now']), JSON.stringify(dNew.body).slice(0, 300));
+  ok('a bad since is 400 on both', mBad.status === 400 && dBad.status === 400 && mBad.body.error === dBad.body.error);
+  ok('no message text goes into the logs', !logs.some(l => /mats\?|Mysore tomorrow|teacher training|Sukhumvit/.test(l)), JSON.stringify(logs));
 
   console.log('\n— In-Depth Mysore applications —');
   await wait(400);   // let the last LINE burst finish its sort and ping first

@@ -477,8 +477,9 @@ function mountBkk(app, opts = {}) {
     await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_passes_source_ref
              ON bkk_passes (source, source_ref) WHERE source_ref IS NOT NULL`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_orders_member ON bkk_orders (member_id)`);
-    // "I need a mat (rent at the shala)", ticked when booking (7 Nov 2026). The
-    // morning team brief and the staff lists show it; nothing is charged here.
+    // "I need a mat", ticked when booking: a flat ฿200, VAT included, paid at the
+    // shala (7 Nov 2026). The morning team brief and the staff lists show it;
+    // nothing is charged online, so no order amount ever changes for it.
     // A drop-in bought for a class carries the tick on its order to the seat.
     await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS need_mat BOOLEAN NOT NULL DEFAULT false`);
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS need_mat BOOLEAN NOT NULL DEFAULT false`);

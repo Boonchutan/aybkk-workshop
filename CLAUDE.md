@@ -101,6 +101,7 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
   (LINE signature); `META_APP_SECRET`, `META_VERIFY_TOKEN`, optional `META_PAGE_TOKEN` (names).
   Optional `ANTHROPIC_API_KEY` sorts each message on arrival and sends hot ones to Boonchu's
   Telegram (`INBOX_AI_MODEL`, default Opus 5.5; `INBOX_AI_DAILY_CAP`, default 150 calls).
+- **Team help desk:** `team-brief.js`; LINE OA "AYBKK help desk" (internal, not @aybkk), webhook `/line/helpdesk-webhook`, env `HELPDESK_LINE_CHANNEL_SECRET` and `HELPDESK_LINE_ACCESS_TOKEN`. Sends the 05:00 teaching brief and the 20:00 day summary to the saved team group, off until switched on. The first group joined is saved; later groups wait for approval. Admin routes `/api/bkk/admin/team/*` (status, preview, send, brief, group) and `/api/bkk/admin/inbox`, all with `x-bkk-key`.
 - **Inline JS gate:** After every Write/Edit, `scripts/check-inline-js.js` runs automatically (PostToolUse hook). If it fails, fix the JS syntax before proceeding.
 - **package-lock.json** is tracked in git (intentional — see `.gitignore`)
 - **Obsidian vault:** Boonchu's vault ("1st obsidian vault") syncs with Google Drive. ONE note per topic — never create companion/extra notes (e.g. "X students", "X links") next to an existing note. The Drive connector cannot edit or delete existing files, so to update a vault note, put the complete updated note content in the chat reply for Boonchu to paste in himself.

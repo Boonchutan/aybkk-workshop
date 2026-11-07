@@ -98,6 +98,8 @@ const fakeDriver = { session: () => ({
   console.log('\n# small helpers');
   ok('names are first names and the family initial', shortName('Anna Maria Bell') === 'Anna Maria B.' && shortName('Mai') === 'Mai'
      && shortName('สมชาย ใจดี') === 'สมชาย จ.', [shortName('Anna Maria Bell'), shortName('สมชาย ใจดี')].join(' | '));
+  ok('...written as stored: the same script and case, never transliterated', shortName('mai tran') === 'mai t.'
+     && shortName('Анна Белова') === 'Анна Б.', [shortName('mai tran'), shortName('Анна Белова')].join(' | '));
   ok('a name never carries an email or a phone number', shortName('Bo bo@example.com 0812345678 Chan') === 'Bo C.', shortName('Bo bo@example.com 0812345678 Chan'));
   ok('...not even one typed in short groups, with a +, or a code-like word', shortName('Lee 08 12 34 56 78') === 'Lee'
      && shortName('Kim +66 81 234 5678') === 'Kim' && shortName('B1B19BKGPI3QYA Anna') === 'Anna',
@@ -173,7 +175,8 @@ const fakeDriver = { session: () => ({
 
   console.log('\n# admin routes need the key');
   for (const [m, p] of [['GET', '/api/bkk/admin/team/status'], ['GET', '/api/bkk/admin/team/preview?kind=morning'],
-    ['POST', '/api/bkk/admin/team/send'], ['POST', '/api/bkk/admin/team/brief'], ['POST', '/api/bkk/admin/team/group']]) {
+    ['POST', '/api/bkk/admin/team/send'], ['POST', '/api/bkk/admin/team/brief'], ['POST', '/api/bkk/admin/team/group'],
+    ['GET', '/api/bkk/admin/inbox']]) {
     const none = m === 'GET' ? await get(p, {}) : await post(p, { text: 'x', kind: 'morning' }, {});
     const wrong = m === 'GET' ? await get(p, { 'x-bkk-key': 'nope' }) : await post(p, { text: 'x', kind: 'morning' }, { 'x-bkk-key': 'nope' });
     ok(`${m} ${p.split('?')[0]} is 401 without the key, or with a wrong one`, none.status === 401 && wrong.status === 401);
@@ -319,19 +322,21 @@ const fakeDriver = { session: () => ({
      && m.body.kind === 'morning' && m.body.date === D && m.body.lang === 'th');
   ok('Thai by default, with the day', mt.startsWith('☀️ บรีฟเช้า อ. 10 พ.ย.'), mt.split('\n')[0]);
   ok('each class in time order: time, class, teacher, how many booked, and the names',
-     mt.includes('05:30 มายซอร์ (รอบแรก) · ครู Boonchu · จอง 3\nAnna B., Rex R., Tom H.')
-     && mt.includes('07:30 มายซอร์ (รอบสอง) · ครู Boonchu · จอง 1\nChai D.')
-     && mt.indexOf('05:30 มายซอร์') < mt.indexOf('07:30 มายซอร์'));
+     mt.includes('05:30 Mysore (1st batch) · ครู Boonchu · จอง 3\nAnna B., Rex R., Tom H.')
+     && mt.includes('07:30 Mysore (2nd batch) · ครู Boonchu · จอง 1\nChai D.')
+     && mt.indexOf('05:30 Mysore') < mt.indexOf('07:30 Mysore'));
   ok('NEW: first class ever today, and a first pass bought this week by someone who has not come yet',
-     mt.includes('🌱 นักเรียนใหม่ ช่วยกันต้อนรับ\n• Chai D. มาครั้งแรก 07:30\n• Mali S. ซื้อ 1 เดือน ไม่จำกัด เมื่อ ศ. 6 พ.ย. ยังไม่เคยมา ยังไม่ได้จอง'));
+     mt.includes('🌱 นักเรียนใหม่ ช่วยกันต้อนรับ\n• Chai D. มาครั้งแรก 07:30\n• Mali S. ซื้อ 1 month unlimited เมื่อ ศ. 6 พ.ย. ยังไม่เคยมา ยังไม่ได้จอง'));
   ok('...but not a student who came before, or one moved over from Rezerv', !/Anna B\. มาครั้งแรก|Tom H\. มาครั้งแรก|Rex R\. มาครั้งแรก/.test(mt));
   ok('ENDING SOON: a pass ending within 7 days and a credit pass with 2 or fewer classes, with the end date',
-     mt.includes('⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ\n• Anna B. 3 เดือน ไม่จำกัด หมด ส. 14 พ.ย.\n• Ploy W. 8 ครั้ง / 1 เดือน เหลือ 1 ครั้ง ใช้ได้ถึง อ. 1 ธ.ค.'));
+     mt.includes('⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ\n• Anna B. 3 months unlimited หมด ส. 14 พ.ย.\n• Ploy W. 8 classes / 1 month เหลือ 1 ครั้ง ใช้ได้ถึง อ. 1 ธ.ค.'));
   ok('...not someone who already renewed, or who has not come for over 30 days', !mt.includes('Zoe R.') && !mt.includes('Gus G.'));
   ok('NOT PAID: an online order pending from the last 3 days, and a booking today with no valid pass',
-     mt.includes(`💳 ยังไม่จ่าย ช่วยตามเก็บเงิน\n• Kim L. สั่ง 3 เดือน ไม่จำกัด ฿26,412 ยังไม่ได้จ่าย (สั่ง จ. 9 พ.ย., ref ${kimRef})\n• Tom H. จอง 05:30 แต่แพ็กเกจถูกยกเลิกแล้ว`));
+     mt.includes(`💳 ยังไม่จ่าย ช่วยตามเก็บเงิน\n• Kim L. สั่ง 3 months unlimited ฿26,412 ยังไม่ได้จ่าย (สั่ง จ. 9 พ.ย., ref ${kimRef})\n• Tom H. จอง 05:30 แต่แพ็กเกจถูกยกเลิกแล้ว`));
   ok('...not an older order, one the student paid since, or a Rezerv seat', !mt.includes('Sam O.') && !mt.includes('Nina P.') && !/Rex R\. จอง/.test(mt));
-  ok('NEEDS A MAT: who ticked it, by class', mt.includes('🧘 เตรียมเสื่อให้\n• 05:30 Anna B.'));
+  ok('NEEDS A MAT: who ticked it, by class, and staff collect ฿200 (VAT included, nothing added)',
+     mt.includes('🧘 เตรียมเสื่อให้ (เก็บ ฿200)\n• 05:30 Anna B.') && !/VAT|฿214/.test(mt));
+  ok('class and package names stay in the original English in the Thai brief', !/มายซอร์|รอบแรก|ไม่จำกัด|ครั้ง \/ 1 เดือน/.test(mt), mt);
   ok('one closing line with the totals', mt.trim().split('\n').at(-1) === 'รวม 2 คลาส · จอง 4 · ใหม่ 2 · ใกล้หมด 2 · ยังไม่จ่าย 2 · เสื่อ 1', mt.trim().split('\n').at(-1));
   ok('never an email, a phone number or a member code', !/@|0899000|BTEAM/.test(mt));
   ok('no em dash anywhere', !/—/.test(mt));
@@ -341,8 +346,13 @@ const fakeDriver = { session: () => ({
   ok('English when asked', met.startsWith('☀️ Teaching brief Tue 10 Nov') && met.includes('05:30 Mysore (1st batch) · Boonchu · 3 booked')
      && met.includes('• Chai D., first class today at 07:30') && met.includes('• Anna B.: 3 months unlimited, ends Sat 14 Nov')
      && met.includes('💳 Not paid, please collect\n') && met.includes('• Tom H.: booked 05:30 but the pass was voided')
-     && met.includes('🧘 Have a mat ready\n• 05:30 Anna B.')
+     && met.includes('🧘 Have a mat ready (collect ฿200 each)\n• 05:30 Anna B.')
      && met.trim().endsWith('Total: 2 classes · 4 booked · 2 new · 2 ending · 2 not paid · 1 mat'), met);
+
+  const sat = (await get('/api/bkk/admin/team/preview?kind=morning&date=2026-11-14')).body.text || '';
+  ok('Saturday in Thai: Led and [Online] class titles exactly as on the timetable, the rotating teacher as stored',
+     sat.includes('\n07:00 Led Primary series · ครู Jamsai · จอง 0\n') && sat.includes('\n07:00 [Online] Led Primary series · ครู Jamsai · จอง 0\n')
+     && sat.includes('\n08:45 Led Intermediate series · ครู Boonchu · จอง 0\n') && sat.includes('\n09:00 [Online] Led Intermediate series · ครู Boonchu · จอง 0'), sat);
 
   const moon = await get('/api/bkk/admin/team/preview?kind=morning&date=2026-11-09');
   ok('moon day: one line saying the shala is closed and why, then stop',
@@ -421,15 +431,15 @@ const fakeDriver = { session: () => ({
   console.log(et.split('\n').map(l => '      | ' + l).join('\n'));
   ok('Thai, from 20:00 yesterday to 20:00 today', e.status === 200 && et.startsWith('🌙 สรุปวันนี้ อ. 10 พ.ย. (ตั้งแต่ 20:00 เมื่อวาน ถึง 20:00)'), et.split('\n')[0]);
   ok('money: orders paid today, the total with VAT, by product', et.includes('💰 เงิน\nจ่ายแล้ว 3 รายการ ฿20,317 (รวม VAT ฿1,329)\n'
-     + '• 1 เดือน ไม่จำกัด ×1 ฿10,580\n• 8 ครั้ง / 1 เดือน ×1 ฿8,132\n• ครั้งเดียว ×1 ฿1,605'));
+     + '• 1 month unlimited ×1 ฿10,580\n• 8 classes / 1 month ×1 ฿8,132\n• Drop-in ×1 ฿1,605'));
   ok('...desk sales by method, online, and what is still pending (an order from 21:15 last night too)',
      et.includes('ที่เคาน์เตอร์ เงินสด 1 ฿1,605 · โอน 1 ฿8,132\nออนไลน์ 1 รายการ ฿10,580\nค้างจ่าย 2 รายการ ฿52,824'), (et.match(/ค้างจ่าย.*/) || [])[0]);
   ok('...not a payment after 20:00 or one moved over from Rezerv', !et.includes('฿9,600') && !et.includes('×2'));
   ok('students: new members, passes started, passes that ended today (renewed or not)', et.includes('👥 นักเรียน\nสมัครใหม่ 2 คน: Lin N., Ola F.\n'
-     + 'เริ่มแพ็กเกจ 1 คน: Chai D. (1 เดือน ไม่จำกัด)\nแพ็กเกจหมดวันนี้ 2 คน: Eve E. (ยังไม่ต่อ), Ray R. (ต่อแล้ว)') && !et.includes('Rita'));
-  ok('classes: check-ins per class with the no-shows by name', et.includes('🧘 คลาสวันนี้\n05:30 มายซอร์ (รอบแรก): มา 2/3 · ไม่มา: Tom H.\n07:30 มายซอร์ (รอบสอง): มา 1/1'));
+     + 'เริ่มแพ็กเกจ 1 คน: Chai D. (1 month unlimited)\nแพ็กเกจหมดวันนี้ 2 คน: Eve E. (ยังไม่ต่อ), Ray R. (ต่อแล้ว)') && !et.includes('Rita'));
+  ok('classes: check-ins per class with the no-shows by name', et.includes('🧘 คลาสวันนี้\n05:30 Mysore (1st batch): มา 2/3 · ไม่มา: Tom H.\n07:30 Mysore (2nd batch): มา 1/1'));
   ok('...bookings made and cancelled today', et.includes('จองใหม่ 3 · ยกเลิก 1'), (et.match(/จองใหม่.*/) || [])[0]);
-  ok('tomorrow: booked per class, with mats', et.includes('📅 พรุ่งนี้ พ. 11 พ.ย.\n05:30 มายซอร์ (รอบแรก): จอง 2 · เสื่อ 1\n07:30 มายซอร์ (รอบสอง): จอง 0'));
+  ok('tomorrow: booked per class, with mats', et.includes('📅 พรุ่งนี้ พ. 11 พ.ย.\n05:30 Mysore (1st batch): จอง 2 · เสื่อ 1\n07:30 Mysore (2nd batch): จอง 0'));
   ok('photos: uploaded today, tagged, on how many profiles', et.includes('📷 รูปคลาส\nอัปโหลด 3 รูป · แท็กแล้ว 2 · ขึ้นโปรไฟล์ 2 คน'));
   ok('profile actions: teacher notes, 12-week checks and journal entries with names, sign-ins',
      et.includes('📝 โปรไฟล์นักเรียน\nโน้ตครู 2 (Jamsai 2)\nเช็กผล 12 สัปดาห์ 1 คน: Anna B.\nบันทึกการฝึก 2 ครั้ง (Anna B.)\nเข้าโปรไฟล์ 1 คน · ครูส่งลิงก์ 1'));
@@ -439,6 +449,7 @@ const fakeDriver = { session: () => ({
   ok('...and no message text from the inbox', !/SECRET/.test(et));
   ok('one closing line', et.trim().split('\n').at(-1) === 'วันนี้เงินเข้า ฿20,317 · มาเรียน 3 · พรุ่งนี้จองแล้ว 2', et.trim().split('\n').at(-1));
   ok('never an email, a phone number or a member code; no em dash', !/@|0899000|BTEAM|—/.test(et));
+  ok('...and class and package names in English, never the Thai product name', !/มายซอร์|ไม่จำกัด|ครั้งเดียว|ครั้ง \/ 1 เดือน/.test(et), et);
   const imgs = e.body.images || [];
   ok('up to 4 of today\'s photos as LINE images, tagged ones first, https JPEG sized for LINE', imgs.length === 3
      && imgs.every(i => i.original.startsWith('https://') && i.original.includes('w_1600,f_jpg') && i.preview.includes('w_480,f_jpg'))
@@ -457,7 +468,7 @@ const fakeDriver = { session: () => ({
      && ent.trim().endsWith('Today: ฿20,317 in · 3 came · 2 booked for tomorrow'), ent);
   const next = (await get('/api/bkk/admin/team/preview?kind=evening&date=2026-11-11')).body.text || '';
   ok('a payment at 21:00 is in the next evening\'s summary', next.startsWith('🌙 สรุปวันนี้ พ. 11 พ.ย. (ตั้งแต่ 20:00 เมื่อวาน ถึง 20:00)')
-     && next.includes('💰 เงิน\nจ่ายแล้ว 1 รายการ ฿10,580 ') && next.includes('• 1 เดือน ไม่จำกัด ×1 ฿10,580'), next.split('\n').slice(0, 5).join(' | '));
+     && next.includes('💰 เงิน\nจ่ายแล้ว 1 รายการ ฿10,580 ') && next.includes('• 1 month unlimited ×1 ฿10,580'), next.split('\n').slice(0, 5).join(' | '));
 
   const appNoCloud = express();
   const plainCloud = { url: (id, o) => `http://res.cloudinary.com/demo/${id}` };
@@ -602,6 +613,10 @@ const fakeDriver = { session: () => ({
   }
   const drop = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Drop Mat', email: 'drop.mat@example.com',
     slotId: room.slotId, date: room.date, needMat: true }, {});
+  const dropNoMat = await post('/api/bkk/orders', { productCode: 'dropin', name: 'Drop Plain', email: 'drop.plain@example.com',
+    slotId: room.slotId, date: room.date }, {});
+  ok('the mat is never charged online: a drop-in with the tick costs the same as one without', drop.status === 200
+     && dropNoMat.status === 200 && drop.body.order.amount === dropNoMat.body.order.amount, JSON.stringify([drop.body.order, dropNoMat.body.order]));
   await post(`/api/bkk/admin/orders/${drop.body.order.id}/force-activate`, {});
   const inClass3 = await get(`/api/bkk/admin/class?slotId=${room.slotId}&date=${room.date}`);
   ok('a drop-in bought for the class carries the tick to its seat', inClass3.body.roster.some(r => r.name === 'Drop Mat' && r.needMat === true));
@@ -627,6 +642,16 @@ const fakeDriver = { session: () => ({
     [ts.id, today, `${today}T${ts.start_time}:00+07:00`, anna]);
   const door = await get('/api/bkk/admin/today');
   ok('the door\'s check-in list carries the mat mark', door.body.bookings.some(b => b.name === 'Anna Bell' && b.need_mat === true), JSON.stringify(door.body.bookings).slice(0, 200));
+
+  // The booking page: the tick and the first-class guide say ฿200 in all 4 languages, no VAT added.
+  const page = require('fs').readFileSync(require('path').join(__dirname, '..', 'public', 'bkk.html'), 'utf8');
+  const tick = Object.fromEntries([...page.matchAll(/Object\.assign\(STR\.(en|th|zh|ru), \{ needMat: '([^']*)' \}\)/g)].map(x => [x[1], x[2]]));
+  ok('the mat tick says ฿200, pay at the shala, in all 4 languages', tick.en === 'I need a mat (฿200, pay at the shala)'
+     && tick.th === 'ต้องการเช่าเสื่อ (฿200 จ่ายที่ชาลา)' && tick.zh === '需要租瑜伽垫（฿200，在道场付款）'
+     && tick.ru === 'Нужен коврик (฿200, оплата в шале)', JSON.stringify(tick));
+  const f3 = [...page.matchAll(/\bf3: '([^']*)'/g)].map(x => x[1]);
+  ok('...and the first-class guide (f3) says the mat is ฿200 if you tick it, in all 4', f3.length === 4
+     && f3.every(x => x.includes('฿200') && !/VAT|НДС|增值税|ภาษี/.test(x)), JSON.stringify(f3));
 
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();

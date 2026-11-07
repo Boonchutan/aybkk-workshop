@@ -20,6 +20,9 @@
 // and private class photos.
 // Briefs name students by first name and family initial only: no email, phone
 // or member code ever goes to LINE.
+// The Thai brief keeps class and package names in the original English
+// ('Mysore (1st batch)', '1 month unlimited', 'Drop-in'), and every student and
+// teacher name is written as stored, never transliterated (Boonchu, 7 Nov 2026).
 
 const crypto = require('crypto');
 const express = require('express');
@@ -40,6 +43,7 @@ const TRIES = 3;                     // per brief per day, only when LINE did no
 const GROUPS_KEPT = 10;
 const MARKER = 'team_brief_sent_';
 const ATTENDED = `b.status='booked' AND b.checked_in_at IS NOT NULL`;
+const MAT_THB = 200;                 // mat rental, flat, VAT included, paid at the shala
 
 const safeEqual = (a, b) => {
   const x = Buffer.from(String(a || '')), y = Buffer.from(String(b || ''));
@@ -64,10 +68,10 @@ const bkkAt = (ymd, hhmm) => `${ymd}T${hhmm}:00+07:00`;
 const realYmd = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || '')) && !isNaN(Date.parse(`${d}T00:00:00Z`))
   && new Date(`${d}T00:00:00Z`).toISOString().slice(0, 10) === d;
 
-// "Anna Maria Bell" → "Anna Maria B."; one word stays as it is. A word with a
-// digit, '+' or '@' is dropped: real names have none, phone numbers, emails and
-// member codes do. A Thai family name is shortened to its first consonant, not
-// a leading vowel.
+// "Anna Maria Bell" → "Anna Maria B."; one word stays as it is. Letters stay as
+// stored (script and case). A word with a digit, '+' or '@' is dropped: real
+// names have none, phone numbers, emails and member codes do. A Thai family
+// name is shortened to its first consonant, not a leading vowel.
 function shortName(raw) {
   const words = String(raw || '').replace(/\([^)]*\)/g, ' ').replace(/[\u0000-\u001f\u007f]/g, ' ')
     .split(/\s+/).filter(w => w && !/[@+\d]/.test(w));
@@ -75,7 +79,7 @@ function shortName(raw) {
   if (words.length === 1) return [...words[0]].slice(0, 30).join('');
   const last = words.pop();
   const first = [...last.replace(/^[เ-ไ]+/, '')][0] || [...last][0];
-  return `${[...words.join(' ')].slice(0, 30).join('')} ${first.toUpperCase()}.`;
+  return `${[...words.join(' ')].slice(0, 30).join('')} ${first}.`;
 }
 
 // Longer than 5,000 characters: split at line ends, never inside a character.
@@ -124,8 +128,6 @@ const MON = {
   th: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
   en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 };
-const CLASS_TH = [[/\[Online\]/g, '[ออนไลน์]'], [/Mysore Sunday/g, 'มายซอร์ วันอาทิตย์'], [/Mysore/g, 'มายซอร์'],
-  [/\(1st batch\)/g, '(รอบแรก)'], [/\(2nd batch\)/g, '(รอบสอง)']];
 const baht = n => '฿' + Math.round(Number(n) || 0).toLocaleString('en-US');
 const pl = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 const list = (names, max = 15) => names.length > max ? `${names.slice(0, max).join(', ')} +${names.length - max}` : names.join(', ');
@@ -133,8 +135,7 @@ const list = (names, max = 15) => names.length > max ? `${names.slice(0, max).jo
 const WORDS = {
   th: {
     day: d => { const t = new Date(`${d}T12:00:00Z`); return `${WD.th[t.getUTCDay()]} ${t.getUTCDate()} ${MON.th[t.getUTCMonth()]}`; },
-    cls: s => CLASS_TH.reduce((x, [re, to]) => x.replace(re, to), String(s || '')).replace(/ series/g, ''),
-    item: (en, th) => th || en || 'แพ็กเกจ',
+    item: en => en || 'แพ็กเกจ',
     mHead: d => `☀️ บรีฟเช้า ${d}`,
     closed: c => c.why === 'none' ? 'วันนี้ไม่มีคลาสในตาราง'
       : c.why === 'cancelled' ? `วันนี้ชาลาปิด ยกเลิกทุกคลาส${c.note ? ` (${c.note})` : ''}`
@@ -153,7 +154,7 @@ const WORDS = {
     paySeat: (n, time, why) => `• ${n} จอง ${time} ${why}`,
     why: { none: 'แต่ยังไม่มีแพ็กเกจ', ended: d => `แต่แพ็กเกจหมดไปแล้ว ${d}`, frozen: 'แต่แพ็กเกจพักไว้อยู่',
       void: 'แต่แพ็กเกจถูกยกเลิกแล้ว' },
-    matH: '🧘 เตรียมเสื่อให้',
+    matH: `🧘 เตรียมเสื่อให้ (เก็บ ${baht(MAT_THB)})`,
     mTotal: o => `รวม ${o.classes} คลาส · จอง ${o.booked} · ใหม่ ${o.fresh} · ใกล้หมด ${o.ending} · ยังไม่จ่าย ${o.unpaid} · เสื่อ ${o.mats}`,
 
     eHead: (d, upTo) => `🌙 สรุปวันนี้ ${d} (ตั้งแต่ 20:00 เมื่อวาน ถึง ${upTo})`,
@@ -197,7 +198,6 @@ const WORDS = {
   },
   en: {
     day: d => { const t = new Date(`${d}T12:00:00Z`); return `${WD.en[t.getUTCDay()]} ${t.getUTCDate()} ${MON.en[t.getUTCMonth()]}`; },
-    cls: s => String(s || '').replace(/ series/g, ''),
     item: en => en || 'pass',
     mHead: d => `☀️ Teaching brief ${d}`,
     closed: c => c.why === 'none' ? 'No classes on the timetable today.'
@@ -217,7 +217,7 @@ const WORDS = {
     paySeat: (n, time, why) => `• ${n}: booked ${time} but ${why}`,
     why: { none: 'has no pass', ended: d => `the pass ended ${d}`, frozen: 'the pass is paused',
       void: 'the pass was voided' },
-    matH: '🧘 Have a mat ready',
+    matH: `🧘 Have a mat ready (collect ${baht(MAT_THB)} each)`,
     mTotal: o => `Total: ${pl(o.classes, 'class', 'classes')} · ${o.booked} booked · ${o.fresh} new · ${o.ending} ending · ${o.unpaid} not paid · ${pl(o.mats, 'mat', 'mats')}`,
 
     eHead: (d, upTo) => `🌙 Today on aybkk.net, ${d} (20:00 yesterday to ${upTo})`,
@@ -395,11 +395,11 @@ function mountTeam(app, opts = {}) {
            AND NOT EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=b.member_id AND x.status='booked'
              AND x.checked_in_at IS NOT NULL AND x.class_date < $1::date)`, [date]),
       // First pass bought in the last 7 days, never came, not booked today.
-      q(`SELECT m.name, fp.item_en, fp.item_th, to_char(fp.at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day,
+      q(`SELECT m.name, fp.item_en, to_char(fp.at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day,
            (SELECT to_char(min(x.class_date),'YYYY-MM-DD') FROM bkk_bookings x WHERE x.member_id=m.id
              AND x.status='booked' AND x.class_date > $1::date) AS next
          FROM bkk_members m
-         JOIN LATERAL (SELECT p.created_at AS at, pr.name_en AS item_en, pr.name_th AS item_th FROM bkk_passes p
+         JOIN LATERAL (SELECT p.created_at AS at, pr.name_en AS item_en FROM bkk_passes p
            LEFT JOIN bkk_products pr ON pr.id=p.product_id WHERE p.member_id=m.id ORDER BY p.created_at, p.id LIMIT 1) fp ON true
          WHERE fp.at >= ($1::date - 7)::timestamp AT TIME ZONE 'Asia/Bangkok'
            AND fp.at < ($1::date + 1)::timestamp AT TIME ZONE 'Asia/Bangkok' AND NOT ${FROM_REZERV}
@@ -408,7 +408,7 @@ function mountTeam(app, opts = {}) {
          ORDER BY fp.at`, [date]),
       // Ends within 7 days, or 2 or fewer classes left, nothing after it, and came in the last 30 days.
       q(`SELECT * FROM (SELECT DISTINCT ON (p.member_id) m.name, p.kind, p.credits_total - p.credits_used AS left,
-           to_char(p.valid_until,'YYYY-MM-DD') AS until, pr.name_en AS item_en, pr.name_th AS item_th
+           to_char(p.valid_until,'YYYY-MM-DD') AS until, pr.name_en AS item_en
          FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.status='active' AND (p.valid_until IS NULL OR p.valid_until >= $1::date)
            AND (p.kind='unlimited' OR p.credits_total > 1)
@@ -419,7 +419,7 @@ function mountTeam(app, opts = {}) {
            AND NOT ${CARRIES_ON}
          ORDER BY p.member_id, p.valid_until DESC NULLS FIRST) e ORDER BY e.until NULLS LAST, lower(e.name)`, [date]),
       // Online orders left unpaid in the last 3 days, unless the same student paid since.
-      q(`SELECT m.name, o.refno, o.amount_thb, pr.name_en AS item_en, pr.name_th AS item_th,
+      q(`SELECT m.name, o.refno, o.amount_thb, pr.name_en AS item_en,
            to_char(o.created_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day
          FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id LEFT JOIN bkk_products pr ON pr.id=o.product_id
          WHERE o.status='pending' AND o.source IS NULL AND o.method='online'
@@ -432,11 +432,10 @@ function mountTeam(app, opts = {}) {
     const name = r => shortName(r.name);
     let shown = 0;
     for (const c of classes) {
-      const title = L.cls(c.title);
-      if (c.off) { lines.push('', L.cOff(c.time, title, c.note)); continue; }
+      if (c.off) { lines.push('', L.cOff(c.time, c.title, c.note)); continue; }
       shown++;
       const here = seats.rows.filter(s => s.slot_id === c.id);
-      lines.push('', L.cLine(c.time, title, c.teacher, here.length), here.length ? here.map(name).join(', ') : L.nobody);
+      lines.push('', L.cLine(c.time, c.title, c.teacher, here.length), here.length ? here.map(name).join(', ') : L.nobody);
     }
 
     const freshIds = new Set(fresh.rows.map(r => r.member_id));
@@ -447,12 +446,12 @@ function mountTeam(app, opts = {}) {
       if (!firstSeat.has(s.member_id) || t < firstSeat.get(s.member_id).t) firstSeat.set(s.member_id, { t, n: name(s) });
     }
     const newLines = [...[...firstSeat.values()].sort((a, b) => a.t.localeCompare(b.t)).map(x => L.newFirst(x.n, x.t)),
-      ...bought.rows.map(r => L.newBought(name(r), L.item(r.item_en, r.item_th), L.day(r.day), r.next && L.day(r.next)))];
+      ...bought.rows.map(r => L.newBought(name(r), L.item(r.item_en), L.day(r.day), r.next && L.day(r.next)))];
     if (newLines.length) lines.push('', L.newH, ...newLines);
 
     const endLines = ending.rows.map(r => r.kind === 'credits' && r.left <= 2
-      ? L.endLeft(name(r), L.item(r.item_en, r.item_th), Math.max(0, r.left), r.until && L.day(r.until))
-      : L.endDate(name(r), L.item(r.item_en, r.item_th), L.day(r.until)));
+      ? L.endLeft(name(r), L.item(r.item_en), Math.max(0, r.left), r.until && L.day(r.until))
+      : L.endDate(name(r), L.item(r.item_en), L.day(r.until)));
     if (endLines.length) lines.push('', L.endH, ...endLines);
 
     // A seat booked on an active pass is paid for, even when the pass window
@@ -460,7 +459,7 @@ function mountTeam(app, opts = {}) {
     const why = s => !s.pass_id ? L.why.none : s.pass_status === 'frozen' ? L.why.frozen
       : s.pass_status !== 'active' ? L.why.void : s.until && s.until < date ? L.why.ended(L.day(s.until)) : null;
     const unpaidSeats = seats.rows.filter(s => s.cover !== 'rezerv' && why(s));
-    const payLines = [...orders.rows.map(r => L.payOrder(name(r), L.item(r.item_en, r.item_th), baht(r.amount_thb), L.day(r.day), r.refno)),
+    const payLines = [...orders.rows.map(r => L.payOrder(name(r), L.item(r.item_en), baht(r.amount_thb), L.day(r.day), r.refno)),
       ...unpaidSeats.map(s => L.paySeat(name(s), time.get(s.slot_id), why(s)))];
     if (payLines.length) lines.push('', L.payH, ...payLines);
 
@@ -525,7 +524,7 @@ function mountTeam(app, opts = {}) {
       AND NOT EXISTS (SELECT 1 FROM bkk_orders x WHERE x.member_id=o.member_id AND x.status='paid' AND x.created_at > o.created_at)`;
     const [paid, pending, mismatch, joined, started, ended, seats, made, today, next, nextSeats,
       photos, tagged, notes, checks, tokens, letter, start, journal] = await Promise.all([
-      all(`SELECT o.method, o.amount_thb, o.vat_thb, o.product_id, coalesce(pr.name_en, o.item_name) AS item_en, pr.name_th AS item_th
+      all(`SELECT o.method, o.amount_thb, o.vat_thb, o.product_id, coalesce(pr.name_en, o.item_name) AS item_en
            FROM bkk_orders o LEFT JOIN bkk_products pr ON pr.id=o.product_id
            WHERE o.status='paid' AND o.source IS NULL
              AND coalesce(o.verified_at, o.created_at) >= $1 AND coalesce(o.verified_at, o.created_at) < $2`),
@@ -533,7 +532,7 @@ function mountTeam(app, opts = {}) {
       one(`SELECT count(*)::int AS n FROM bkk_orders o WHERE o.status='mismatch' AND o.created_at >= $1 AND o.created_at < $2`),
       all(`SELECT name FROM bkk_members WHERE created_at >= $1 AND created_at < $2 AND source IS DISTINCT FROM 'rezerv'
            ORDER BY created_at, id`),
-      all(`SELECT m.name, pr.name_en AS item_en, pr.name_th AS item_th FROM bkk_passes p
+      all(`SELECT m.name, pr.name_en AS item_en FROM bkk_passes p
            JOIN bkk_members m ON m.id=p.member_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
            WHERE p.valid_from=$1::date AND p.status IN ('active','frozen') AND p.created_at < $2
              AND (p.kind='unlimited' OR p.credits_total > 1) ORDER BY lower(m.name)`, [date, to]),
@@ -595,7 +594,7 @@ function mountTeam(app, opts = {}) {
     const byItem = new Map();
     for (const o of paid) {
       const k = o.product_id || o.item_en;
-      const it = byItem.get(k) || { item: L.item(o.item_en, o.item_th), n: 0, total: 0 };
+      const it = byItem.get(k) || { item: L.item(o.item_en), n: 0, total: 0 };
       it.n++; it.total += o.amount_thb;
       byItem.set(k, it);
     }
@@ -609,7 +608,7 @@ function mountTeam(app, opts = {}) {
 
     lines.push('', L.peopleH, L.joined(joined.length, list(joined.map(name))));
     if (started.length) lines.push(L.started(started.length,
-      list(started.map(r => `${name(r)} (${L.item(r.item_en, r.item_th)})`))));
+      list(started.map(r => `${name(r)} (${L.item(r.item_en)})`))));
     if (ended.length) lines.push(L.ended(ended.length, list(ended.map(r => `${name(r)} (${L.renewed(r.renewed)})`))));
 
     lines.push('', L.classesH);
@@ -617,14 +616,13 @@ function mountTeam(app, opts = {}) {
     if (today.closed) lines.push(L.closed(today.closed));
     else {
       for (const c of today.classes) {
-        const title = L.cls(c.title);
-        if (c.off) { lines.push(L.cOff(c.time, title, c.note)); continue; }
+        if (c.off) { lines.push(L.cOff(c.time, c.title, c.note)); continue; }
         const here = seats.filter(s => s.slot_id === c.id);
         const inN = here.filter(s => s.checked_in_at).length;
         came += inN;
         const over = Date.parse(bkkAt(date, c.time)) + c.duration * 60000 <= cut;
         const missed = over ? here.filter(s => !s.checked_in_at).map(name) : [];
-        lines.push(L.came(c.time, title, inN, here.length, list(missed)));
+        lines.push(L.came(c.time, c.title, inN, here.length, list(missed)));
       }
     }
     lines.push(L.bookings(made.made, made.off, made.by_shala));
@@ -634,11 +632,10 @@ function mountTeam(app, opts = {}) {
     if (next.closed) lines.push(L.tClosed(next.closed));
     else {
       for (const c of next.classes) {
-        const title = L.cls(c.title);
-        if (c.off) { lines.push(L.cOff(c.time, title, c.note)); continue; }
+        if (c.off) { lines.push(L.cOff(c.time, c.title, c.note)); continue; }
         const n = nextSeats.find(s => s.slot_id === c.id) || { n: 0, mats: 0 };
         booked += n.n;
-        lines.push(L.tLine(c.time, title, n.n, n.mats));
+        lines.push(L.tLine(c.time, c.title, n.n, n.mats));
       }
     }
 
