@@ -1,0 +1,157 @@
+{
+ "hero": "Marco Polo",
+ "why": "Marco Polo (about 1254 to 1324) walks every rung of the Ladder in one real life, with a real, surprising detail at each step, and he is loved in China. Columbus is out (conquest and slavery) and Boonchu said 'No iyengar', so this replaces the Iyengar set B. Not posted before (used.txt has no Polo; the only bots-memory hit is today's planning note). Every quote is word for word from the Yule/Cordier translation (1903, Project Gutenberg 10636/12410), checked against the downloaded text; the rest is retold from Wikipedia, the Tubingen University release and the 1911 Britannica. The book's own claims (3½ years, no birds, the mountain-air cure) are told as what his book or he says, never as fact. Stakes: if you build no habit, the steps still come (getting sick, getting older, getting weaker); nobody skips them, not even the man who travelled across Asia and back, and you meet them with nothing to come back to. Why care: you are on one of these steps today. Polo got sick far from home, came back, kept learning, and near the end said he had not told half. A steady habit, same mat, same time, with a teacher who notices when you miss class, is what you carry to the next step. Open points for Boonchu: HUMAN on the cover (a kind word, a small flip: the legend was a person like us); the cover has no distance figure now (the 24,000 km was never checked against its source); RELIEF says 'He said he went too' (his claim, from one old version of his book, not a health promise); CLEAR says 'as he weakened', so it needs a from-behind photo. Source fields are internal only: never paste them into captions, comments or alt text (they hold words the content rules keep out).",
+ "slides": [
+  {
+   "n": 1,
+   "step": "cover",
+   "word": "HUMAN",
+   "conn": "after all, like the rest of us",
+   "text": "Marco Polo travelled across Asia and back. Not even he could skip one step of life.",
+   "credit": "The life of Marco Polo, about 1254 to 1324 · 9 steps · swipe",
+   "source": "https://en.wikipedia.org/wiki/Marco_Polo : \"travelled through Asia along the Silk Road between 1271 and 1295\" \"They returned to Venice in 1295, after 24 years\" \"Marco Polo was born around 1254 in Venice\" \"He died in 1324 and was buried in the church of San Lorenzo in Venice.\"",
+   "photo_hint": "Wide shot of the full Mysore room, many students of different ages on their mats, calm wall or window space at the top for the big word. Candidate: 07-894 (the old B cover). HUMAN is a kind word, so a clearly seen student is fine."
+  },
+  {
+   "n": 2,
+   "step": "1 born",
+   "word": "GENTLE",
+   "conn": "as every life begins",
+   "text": "Marco Polo was born around 1254, most likely in Venice, to a family of traders. Nobody knows his birthday.",
+   "credit": "Wikipedia · tr. Yule, 1903 (retold)",
+   "source": "https://en.wikipedia.org/wiki/Marco_Polo : \"Marco Polo was born around 1254 in Venice, but the exact date and place of birth are archivally unknown.\" \"Marco's father, the travelling merchant Niccolò Polo\" | https://www.gutenberg.org/ebooks/10636 (Yule, Introduction §16): \"MARCO, the Author of our Book, born in 1254\"",
+   "photo_hint": "A soft, gentle moment: the teacher's hand resting on a student's back, or a student folded small in a forward bend. Candidate: 07-713 (teacher bent over a student; keep the teacher's head whole, t=230). GENTLE is a kind word."
+  },
+  {
+   "n": 3,
+   "step": "2 growing up",
+   "word": "APART",
+   "conn": "for years, father and son",
+   "text": "Little is known of his childhood. When his father came home in 1269, he found \"a son of fifteen years of age.\"",
+   "credit": "Wikipedia · Marco Polo's book, tr. Yule, 1903 (retold)",
+   "source": "https://en.wikipedia.org/wiki/Marco_Polo : \"Almost nothing is known about the childhood of Marco Polo until he was fifteen years old\" \"In 1269, Niccolò and Maffeo returned to their families in Venice, meeting young Marco for the first time.\" | https://www.gutenberg.org/ebooks/10636 (Prologue ch. IX): \"On their arrival there, Messer Nicolas found that his wife was dead, and that she had left behind her a son of fifteen years of age, whose name was MARCO\" (Yule's April 1269 date in ch. IX is the arrival at Acre, so the 1269 homecoming rests on Wikipedia; Yule's note 3 confirms 'xv.' in the old manuscripts)",
+   "photo_hint": "APART is a sad-ish word: use a from-behind or wide photo with space between two people, never one clearly seen student. Candidate: 07-601 (two students from behind; keep the framed guru photo whole and 30 px clear)."
+  },
+  {
+   "n": 4,
+   "step": "3 setting out and getting strong",
+   "word": "BRAVE",
+   "conn": "at 17, on the long road east",
+   "text": "His book says the trip took 3½ years, and on one high, cold plain \"you do not even see any birds flying.\"",
+   "credit": "Wikipedia · Marco Polo's book, tr. Yule, 1903 (retold)",
+   "source": "https://en.wikipedia.org/wiki/Marco_Polo : \"Marco Polo (at seventeen years of age), his father, and his uncle set off for Asia\" | https://www.gutenberg.org/ebooks/10636 (Prologue ch. XIII): \"Their journey back to the Kaan occupied a good three years and a half, owing to the bad weather and severe cold that they encountered.\" (Yule, Introduction §19): \"If there be no mistake in the time (three years and a half) ascribed to this journey in all the existing texts\" (Book I ch. XXXII): \"The region is so lofty and cold that you do not even see any birds flying.\" (note 2): \"The absence of birds on Pamir, reported by Marco, probably shows that he passed very late or early in the season.\"",
+   "photo_hint": "A strong student in a big, powerful asana (a backbend or a deep standing asana). Candidate: 07-747 (BRAVE in the old set B). Show the whole asana."
+  },
+  {
+   "n": 5,
+   "step": "4 getting sick",
+   "word": "WEARY",
+   "conn": "traveller, far from home",
+   "text": "One old version of his book says that in the mountains of Central Asia, he \"had been ill for about a year.\"",
+   "credit": "Ramusio's edition, 1559 · tr. Yule, 1903 (retold)",
+   "source": "https://www.gutenberg.org/ebooks/10636 (Book I ch. XXIX, Of the Province of Badashan): \"And Messer Marco said he had proved this by experience: for when in those parts he had been ill for about a year\"; Yule's note 7: \"This pleasant passage is only in Ramusio, but it would be heresy to doubt its genuine character.\" | https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Polo,_Marco (1911 Britannica): \"in which last country young Marco recovered from illness.\"",
+   "photo_hint": "Hard word: blurred, crowded or from-behind photo only, no one clearly seen student wears WEARY. Candidate: 07-591 (the blurred crowded room used for HELPLESS)."
+  },
+  {
+   "n": 6,
+   "step": "5 healing",
+   "word": "RELIEF",
+   "conn": "came from a local habit",
+   "text": "Valley people with a fever went to the hills for pure air. He said he went too, \"and got well at once.\"",
+   "credit": "Ramusio's edition, 1559 · tr. Yule, 1903 (retold)",
+   "source": "https://www.gutenberg.org/ebooks/10636 (Book I ch. XXIX, only in Ramusio per Yule's note 7): \"the air in those regions is so pure, and residence there so healthful, that when the men who dwell below in the towns, and in the valleys and plains, find themselves attacked by any kind of fever or other ailment that may hap, they lose no time in going to the hills\" \"And Messer Marco said he had proved this by experience: for when in those parts he had been ill for about a year, but as soon as he was advised to visit that mountain, he did so and got well at once.\"",
+   "photo_hint": "A student resting or breathing out after a hard asana (lying in the final rest, or sitting up with a calm face), window light for the pure-air idea. RELIEF is a kind word, so a clearly seen student is fine. Candidate: 07-192 (the man who wore DOUBT; a kind word fits him better), if his asana suits."
+  },
+  {
+   "n": 7,
+   "step": "6 a strong curious mind",
+   "word": "EAGER",
+   "conn": "to learn languages and four kinds of writing",
+   "text": "His book describes Chinese paper money made from mulberry bark, and calls Hangzhou \"the finest and the noblest in the world.\"",
+   "credit": "tr. Yule, 1903 · Univ. of Tübingen, 2012 (retold)",
+   "source": "https://www.gutenberg.org/ebooks/10636 (Prologue ch. XV): \"he came in brief space to know several languages, and four sundry written characters\"; \"Mark therefore, as he went and returned, took great pains to learn about all kinds of different matters in the countries which he visited\" | https://uni-tuebingen.de/uploads/media/12-04-16MarcoPoloengl.pdf : \"The Venetian traveler is the only one to describe precisely how paper for money was made from the bark of the mulberry tree\" | https://www.gutenberg.org/ebooks/12410 (Book II ch. LXXVI, Kinsay = Hangzhou): \"the city is beyond dispute the finest and the noblest in the world\"",
+   "photo_hint": "A student watching the teacher closely, or trying a new asana with full focus. Candidate: 07-725 (EAGER in the old set B, one woman, kind word)."
+  },
+  {
+   "n": 8,
+   "step": "7 becoming wise",
+   "word": "WISE",
+   "conn": "after about 24 years away",
+   "text": "Back in Italy, he told his story to a writer, who promised to keep \"things seen\" separate from \"things heard.\"",
+   "credit": "Rustichello of Pisa, 1298 · tr. Yule, 1903 (retold)",
+   "source": "https://en.wikipedia.org/wiki/Marco_Polo : \"They returned to Venice in 1295, after 24 years\" | https://www.gutenberg.org/ebooks/10636 (Prologue): \"And we shall set down things seen as seen, and things heard as heard only, so that no jot of falsehood may mar the truth of our Book\"; \"Now, being thereafter an inmate of the Prison at Genoa, he caused Messer Rusticiano of Pisa, who was in the said Prison likewise, to reduce the whole to writing; and this befell in the year 1298 from the birth of Jesus.\" (Genoa, not home: hence 'Back in Italy'; the prison stays off the slide)",
+   "photo_hint": "A long-time student in a calm seated asana. WISE is a kind word. Candidate: 07-808 (the man who wore CALM). Not Boonchu himself: WISE on the teacher's own account reads as self-praise."
+  },
+  {
+   "n": 9,
+   "step": "8 staying strong later in life",
+   "word": "BUSY",
+   "conn": "with trade and family in Venice",
+   "text": "He married Donata around 1300, in his mid-40s. They had three daughters. His book was translated into many languages while he lived.",
+   "credit": "Wikipedia · tr. Yule, 1903 (retold)",
+   "source": "https://en.wikipedia.org/wiki/Marco_Polo : \"The company continued its activities and Marco soon became a wealthy merchant.\" \"In 1300, he married Donata Badoèr, the daughter of Vitale Badoèr, a merchant. They had three daughters, Fantina ..., Bellela ..., and Moreta.\" | https://en.wikipedia.org/wiki/The_Travels_of_Marco_Polo : \"The book was translated into many European languages in Marco Polo's own lifetime\" | https://www.gutenberg.org/ebooks/10636 (Yule, Introduction §46): \"Under 1311 we find a document ... which exhibits Marco under the aspect of a practical trader\" | https://www.gutenberg.org/ebooks/10636 (Yule, Introduction §46): \"When Marco married we have not been able to ascertain, but it was no doubt early in the 14th century\"",
+   "photo_hint": "A full, active room in the middle of class, many students moving. Candidate: 07-136 (two students in headstands; keep both heads and all elbows in, t=190)."
+  },
+  {
+   "n": 10,
+   "step": "9 getting weak near the end",
+   "word": "CLEAR",
+   "conn": "in mind, says his will, as he weakened",
+   "text": "A chronicler of his time wrote that near the end, Marco said he \"had not told one-half\" of what he saw.",
+   "credit": "His will, 1324 · Jacopo d'Acqui · tr. Yule (retold)",
+   "source": "https://www.gutenberg.org/ebooks/10636 (Will, 9 January 1324, tr. in Yule, Introduction §47): \"finding myself to grow daily feebler through bodily ailment, but being by the grace of God of a sound mind, and of senses and judgment unimpaired\" | https://www.gutenberg.org/ebooks/10636 (Yule, Introduction): \"The Dominican Friar Jacopo of Acqui was a contemporary of Polo's, and was the author of a somewhat obscure Chronicle called Imago Mundi\"; \"he was asked by his friends on his death-bed to correct the Book by removing everything that went beyond the facts. To which his reply was that he had not told one-half of what he had really seen!\" (Yule says the same chronicle gets Polo's capture wrong, so the slide keeps 'wrote that')",
+   "photo_hint": "Quiet end of class, seen from behind or wide: students seated still, eyes closed. The line says 'as he weakened', so never put it on one clearly seen older student. Candidate: 07-599 (students seated from behind); keep CLEAR and its line away from the grey-haired man and keep every guru frame whole."
+  }
+ ],
+ "caption": "Marco Polo's book tells of a plain so high and cold that no birds flew. Even he could not skip a step of life. Nobody can. But you can meet each step with a habit. Same mat, same time, and a teacher who notices when you miss class. Which step are you on right now?\n\n#aybkk #ashtanga #ashtangabangkok #boonchutanti #marcopolo",
+ "left_out": [
+  "The great ruler he served for about 17 years, his court, his missions for that ruler, and every word like khan, emperor, empire or Mongol (content rules; Mongol rule is also a sore subject in Russia). China is told only through what his book describes.",
+  "The war prison: Polo told his story in a Genoa prison during a Venice and Genoa war. Genoa was not his home, so the slide says 'Back in Italy, he told his story to a writer' and the credit names Rustichello of Pisa, 1298.",
+  "The sea voyage home escorting a royal bride, in which most of about 600 travellers died (royalty plus a tragedy with victims). The set just says he was away about 24 years.",
+  "The line in his will that frees 'PETER the Tartar' from bondage (slavery). Only the 'daily feebler ... sound mind' line is used, and only retold.",
+  "His mother's death (the father came home to find his wife had died): left out to keep death gentle; the quote starts at 'a son of fifteen years of age'.",
+  "Any cause for his year of illness (malaria is modern guesswork). The illness and the mountain-air cure are labelled 'one old version of his book' and credited to Ramusio's 1559 edition, as they are not in the oldest French text.",
+  "Afghanistan by name: Badakhshan is given as 'the mountains of Central Asia' to keep war associations out.",
+  "The 'did he really reach China' debate (Frances Wood, 1995): wording stays 'his book describes' and 'his book calls'. No Great Wall, tea or footbinding.",
+  "Coal ('black stones that burn') and porcelain: true and fun, but Europe already knew coal, and the slide has room for one wonder plus Hangzhou. Paper money from bark was chosen (Tubingen 2012 confirms it).",
+  "The rest of the Hangzhou passage, which names a queen, 'Bayan the conqueror' and the ruler; only 'the finest and the noblest in the world' is quoted.",
+  "Religious labels and slurs in the book ('idolaters', 'an evil race'), and the Lugou ('Marco Polo') Bridge, tied to the 1937 war.",
+  "Columbus's annotated copy of the book (Columbus is out).",
+  "The 2022 find of an earlier daughter, Agnese, from a partnership before 1300. 'He married Donata ... and they had three daughters' stays true.",
+  "The 1311 court case over musk and the 1323 house matter: they show he kept trading into his late 50s (cited in slide 9's source), but a court case reads as a fight, so the slide says 'BUSY with trade and family in Venice'.",
+  "Korcula's claim to his birth, the exact death day (8 or 9 January vs June 1324) and the book's own 'six-and-twenty years': the set says 'most likely in Venice', 'about 1254 to 1324' and 'about 24 years'.",
+  "Any portrait of Marco Polo: no real one exists, so the slides use AYBKK student photos only.",
+  "STUCK as a big word for the sick step: it is the Lane A keyword-test ask until 22 Nov. PATIENT for the cover: readers with a little English may read it as a hospital patient. The word 'journey' (banned AI word in the standing orders).",
+  "The cover's 'almost 24,000 km': Wikipedia's figure for the 1271 to 1295 trip rests on one encyclopedia (Parker 2004) that was not opened, and CLAUDE.md bars any statistic not checked against its source. The cover says 'travelled across Asia and back'.",
+  "'He learned the family trade': not in the book, and Wikipedia says almost nothing is known of his childhood before fifteen. Slide 3 says 'Little is known of his childhood'.",
+  "The full line 'things seen as seen, and things heard as heard only': old English that confuses young readers and translators. Slide 8 quotes only 'things seen' and 'things heard'.",
+  "'Friar' for Jacopo d'Acqui (a religious-order label): slide 10 calls him a chronicler and keeps 'wrote that', since Yule shows the same chronicle gets Polo's capture wrong.",
+  "TENDER for the birth step: yoga students read it as 'sore', and translators can pick the 'bid' sense next to 'traders'. GENTLE is used.",
+  "Yule's note that the missing birds on the Pamir probably mean Marco crossed late or early in the season (in summer the lake swarmed with water-fowl): too long for the slide, so slide 4 and the caption say 'his book says' and 'his book tells of' instead of stating it as fact."
+ ],
+ "applied": [
+  "FACT slide 8: 'Back home' was false (he dictated the book in the Genoa prison, and Genoa was not home). Now 'Back in Italy'. Merged with READER slide 8: the old-English quote is cut to \"things seen\" and \"things heard\" (both word for word); 'apart' became 'separate' so it does not echo slide 3's big word APART. 20 words.",
+  "FACT + READER slide 10: 'A friar' became 'A chronicler', and the second 'he' became 'Marco' so it cannot be read as the chronicler. 'wrote that' kept; credit 'Jacopo d'Acqui' kept. 21 words.",
+  "FACT slide 10 conn: the will is now named as the witness, trimmed to 8 words: 'in mind, says his will, as he weakened' (the suggested 10-word line was over the 4 to 8 word limit).",
+  "FACT caption: first line now 'Marco Polo's book tells of a plain so high and cold that no birds flew.'",
+  "FACT slide 4: both claims are now the book's: 'His book says the trip took 3½ years, and on one high, cold plain \"you do not even see any birds flying.\"' '3½' (the font has the glyph) keeps it at 22 words; the suggested wording with 'three and a half' was 25. Credit now 'Wikipedia · Marco Polo's book, tr. Yule, 1903 (retold)' because 'at 17' comes from Wikipedia.",
+  "FACT + READER slide 6: the cure is now his claim: 'Valley people with a fever went to the hills for pure air. He said he went too, \"and got well at once.\"' (22 words; the suggested 'went up to the hills for the pure air' version was 24). READER conn 'came from a local habit' applied, so the conn no longer repeats 'valley people'.",
+  "FACT slide 3: 'He learned the family trade' replaced by 'Little is known of his childhood.' Credit now 'Wikipedia · Marco Polo's book, tr. Yule, 1903 (retold)'. 22 words. READER slide 3 conn 'for years, father and son' applied, so 'APART from' can no longer be machine-translated as 'except'. My own check: Yule's 'April 1269' is the arrival at Acre, not Venice, so the 1269 homecoming rests on Wikipedia ('In 1269, Niccolò and Maffeo returned to their families in Venice'). The source field now says so, and the new credit names Wikipedia.",
+  "FACT slide 1: the 24,000 km figure is dropped (the issue's second option), because CLAUDE.md bars any statistic not checked against its source. Cover text: 'Marco Polo travelled across Asia and back. Not even he could skip one step of life.' (16 words; no China claim, so the hedge stays). Why, stakes line and left_out updated to match.",
+  "FACT slide 9: the stacked 'about 46' is gone: 'He married Donata around 1300, in his mid-40s. They had three daughters. His book was translated into many languages while he lived.' (22 words). Yule §46 is added to the source.",
+  "FACT slide 7 (optional): 'tree bark' became 'mulberry bark'. The Hangzhou quote is still cut exactly where it was. 21 words.",
+  "FACT all slides: source fields stay internal only (note added to 'why'). The slide 8 source now carries the full Genoa prison sentence the '...' had cut, and slides 4, 6 and 10 carry the Yule caveats, so the internal record is honest.",
+  "READER slide 2: TENDER became GENTLE (not in set A or C, and no other slide uses it); conn 'as every life begins' kept; text now ends 'Nobody knows his birthday.' (19 words). Photo hint updated.",
+  "READER slide 1 credit: 'c.' became 'about': 'The life of Marco Polo, about 1254 to 1324 · 9 steps · swipe'.",
+  "READER slide 8 photo: student only (07-808); dropped the 'Boonchu explaining' and 'or the teacher' options (self-praise)."
+ ],
+ "rejected": [
+  "FACT slide 1 option 'add distance: Wikipedia estimate to the credit': a credit note does not check the figure against its source (Parker 2004 was not opened), which CLAUDE.md requires. Its fix text was also 20 words, over the 18-word cover limit. The number was dropped instead.",
+  "FACT slide 10 conn as written ('in mind, says his will, as his body grew weak'): 10 words, over the 8-word conn limit. Applied in an 8-word form.",
+  "FACT slide 4, slide 6 and slide 9 texts as written: 25, 24 and 24 words, over the 22-word limit. Applied in trimmed forms that keep each fix ('his book says', 'He said he went too', 'around 1300, in his mid-40s'). Slide 9 drops 'European': 'many languages' is still true, and the fact check had passed it.",
+  "READER slide 8 text as written: it kept 'Back home', which the fact check shows is false (Genoa). Its quote cut is applied with 'Back in Italy'.",
+  "READER slide 10 text as written: it kept 'A friar' (religious-order label, see FACT). Its 'Marco said he' fix is applied with 'A chronicler'.",
+  "READER slide 6 text 'He went too and, he said, \"got well at once.\"': it states 'He went too' as fact, though that is also only his report. The FACT wording 'He said he went too' labels both, at the same 22 words.",
+  "READER slide 6, the wider point that RELIEF plus 'habit' sounds like 'habit cures fever': no extra change. The reader's own fix keeps 'habit' in the conn, the habit is the valley people's custom, and the text now marks the cure as his claim."
+ ]
+}
