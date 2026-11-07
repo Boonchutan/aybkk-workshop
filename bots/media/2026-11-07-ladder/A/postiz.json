@@ -1,4 +1,35 @@
-{"status":"uploaded, md5 checked 10/10, waiting for Boonchu's go",
- "integration":"cmnmyjqex06mrqi0yeynj0y3f",
- "media":["https://uploads.postiz.com/P0ngG2dRvG.jpg","https://uploads.postiz.com/XynChvAClr.jpg","https://uploads.postiz.com/X0sGkpJZ26.jpg","https://uploads.postiz.com/JZFIPvxxJp.jpg","https://uploads.postiz.com/XQZ3Nkjz2t.jpg","https://uploads.postiz.com/QXd5TxA2DC.jpg","https://uploads.postiz.com/5ZWTrNEoKE.jpg","https://uploads.postiz.com/yyN73x0Wh6.jpg","https://uploads.postiz.com/uC1m43SLlV.jpg","https://uploads.postiz.com/xEgmqxYLpy.jpg"],
- "caption":["Nobody skips a step of life, not even the healthiest. 🪜","9 steps, 9 old sayings from Thailand, Japan, Korea, China, Russia, Persia, East Africa, Greece and America.","A moving life does not let you skip a step. It lets you meet each one stronger and calmer.","Which step are you on right now? 👇","#aybkk #ashtanga #ashtangabangkok #boonchutanti #ladderoflife"]}
+{
+ "status": "v2 on the grid, uploaded, md5 checked 10/10, waiting for Boonchu go",
+ "integration": "cmnmyjqex06mrqi0yeynj0y3f",
+ "media": [
+  "https://uploads.postiz.com/rkIoW7CZGH.jpg",
+  "https://uploads.postiz.com/C9XdKUz8nU.jpg",
+  "https://uploads.postiz.com/dnkG86YKqJ.jpg",
+  "https://uploads.postiz.com/4nF8LtG24E.jpg",
+  "https://uploads.postiz.com/18tPXq4u2N.jpg",
+  "https://uploads.postiz.com/k2cIPf7CSy.jpg",
+  "https://uploads.postiz.com/pCdVsZz7zL.jpg",
+  "https://uploads.postiz.com/ObRKJjkoV6.jpg",
+  "https://uploads.postiz.com/jYE7gNDIC4.jpg",
+  "https://uploads.postiz.com/896LrouLB4.jpg"
+ ],
+ "caption": [
+  "Nobody skips a step of life, not even the healthiest. 🪜",
+  "9 steps, 9 old sayings from Thailand, Japan, Korea, China, Russia, Persia, East Africa, Greece and America.",
+  "A moving life does not let you skip a step. It lets you meet each one stronger and calmer.",
+  "Which step are you on right now? 👇",
+  "#aybkk #ashtanga #ashtangabangkok #boonchutanti #ladderoflife"
+ ],
+ "old_media_offgrid_do_not_use": [
+  "https://uploads.postiz.com/P0ngG2dRvG.jpg",
+  "https://uploads.postiz.com/XynChvAClr.jpg",
+  "https://uploads.postiz.com/X0sGkpJZ26.jpg",
+  "https://uploads.postiz.com/JZFIPvxxJp.jpg",
+  "https://uploads.postiz.com/XQZ3Nkjz2t.jpg",
+  "https://uploads.postiz.com/QXd5TxA2DC.jpg",
+  "https://uploads.postiz.com/5ZWTrNEoKE.jpg",
+  "https://uploads.postiz.com/yyN73x0Wh6.jpg",
+  "https://uploads.postiz.com/uC1m43SLlV.jpg",
+  "https://uploads.postiz.com/xEgmqxYLpy.jpg"
+ ]
+}
