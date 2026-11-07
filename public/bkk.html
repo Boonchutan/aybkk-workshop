@@ -706,9 +706,11 @@
   .mystate .note{margin:12px 0 0}
   .cls{display:flex;flex-wrap:wrap;gap:0 14px;align-items:center;padding:14px 0;border-top:2px solid var(--line)}
   /* In a list row the tick takes a line of its own under the class name, so a long
-     label (Russian) does not make the row tall. */
-  .cls > .matrow{flex:0 0 100%;padding-left:76px;box-sizing:border-box}
-  .cls > .matrow label.mat{margin-top:4px}
+     label (Russian) does not make the row tall. On a small phone only the indent
+     shrinks, so the tick keeps one line. */
+  .cls > .matrow{flex:0 0 100%;display:flex}
+  .cls > .matrow::before{content:'';flex:0 1 76px}
+  .cls > .matrow label.mat{margin-top:4px;flex-shrink:0}
   .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
     color:var(--plum);min-width:62px}
   .cls .b{flex:1;min-width:0}
