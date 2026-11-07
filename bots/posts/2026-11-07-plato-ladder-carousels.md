@@ -171,3 +171,8 @@ Which step are you on now? Tell me the number.
 - His fixes: WONDER shows the whole frame; FRAGILE photo deleted -> 07-164; PROUD photo removed -> 07-292; PEACE moved down so head and elbows show (feet cut a bit OK). New standing orders saved: grid, never cut a frame, never cut the head.
 - Sets B (Iyengar's life) and C (your ladder) made: texts 17-26 words, 30 different big words across A/B/C, B fact-checked live against Tribune 2005, Open 2014, AP 2014. B has no AYBKK teacher as main figure (he/his = Iyengar).
 - All 30 slides GRID OK, uploaded to Postiz, md5 checked 30/30. Media lists in A/, B/, C/postiz.json. Waiting for Boonchu's go + times, and his OK to reuse Iyengar for set B.
+
+## Update 7 Nov night (Plato chat): v3, all 30 slides redone
+- Boonchu's calls today: small text font = IBM Plex Serif (upright); a connecting line under each big word (his idea, so the word is context, not a label); no Iyengar, set B = Marco Polo (fact-checked against the Yule translation; khan, war prison, slavery, deaths left out); FEAR student OK; 'a teacher notices when you miss class' is true.
+- Crop fixes: WONDER whole frame, FRAGILE 07-164, PROUD 07-292, PEACE head+elbows, CURIOUS full hip+hands, FEAR feet, OPEN white side bars (pad:70:1565), PATIENCE/SAFE/STEADY from the crop audit. Self-conscious student moved off HELPLESS to KIND (set C); hard words on blurred/group/behind photos.
+- All 30: GRID OK, words exact, 30 unique photos from the folder, uploaded to Postiz, md5 30/30. Media lists in A/, B/, C/postiz.json. Old Iyengar B in B/old-iyengar (never post). Waiting for Boonchu's go + times.
