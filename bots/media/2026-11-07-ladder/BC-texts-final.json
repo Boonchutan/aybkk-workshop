@@ -1,0 +1,249 @@
+{
+ "B": {
+  "slides": [
+   {
+    "slot": "1/10",
+    "step": "cover",
+    "word": "WILLING",
+    "text": "Not even a yoga master skips the hard steps of life, but a WILLING heart climbs each one.",
+    "credit": "The life of B.K.S. Iyengar · 9 steps · swipe",
+    "source": "none (the owner's message in plain words, no quote or fact)",
+    "photo_hint": "Wide shot of the full Mysore room, students of every age mixed side by side. Leave calm space at the top for the big word.",
+    "word_note": "WILLING in the heart sense: ready in the heart to take the next hard step (it echoes the Tribune line on slide 4's source, 'no one was willing to go; so Guruji asked me to go'). TH เต็มใจ, ZH 甘愿, RU с охотой (avoid готовый, the usual Russian for A's READY)."
+   },
+   {
+    "slot": "2/10",
+    "step": "1 born (a new body)",
+    "word": "HELPLESS",
+    "text": "B.K.S. Iyengar, who helped make yoga popular around the world, began life HELPLESS. He was born sick in 1918, then had malaria, typhoid and tuberculosis.",
+    "credit": "The Tribune, 2005 · AP, 2014 (retold)",
+    "source": "https://www.tribuneindia.com/2005/20051204/spectrum/main1.htm : \"In 1918, I was affected by influenza when I was born.\" \"I used to contract malaria every year for many years. I also developed typhoid and was diagnosed as having TB.\" | https://wtop.com/news/2014/08/indian-yoga-guru-bks-iyengar-dies-at-95/ (AP, 20 Aug 2014): \"who helped popularize yoga around the world\"; \"Iyengar was a sickly child\"",
+    "photo_hint": "A new or very young student taking a first careful Samasthiti, small and still, soft morning light.",
+    "word_note": "The feeling of a sick baby who cannot fight back. TH ไร้ทางสู้, ZH 无助, RU беспомощный."
+   },
+   {
+    "slot": "3/10",
+    "step": "2 growing up (learning to move)",
+    "word": "DOUBT",
+    "text": "Even his own teacher looked at him with DOUBT. He started yoga at 15, and his body was very stiff. Still, he would practise for hours.",
+    "credit": "The Tribune, 2005 · Open, 2014 · AP, 2014 (retold)",
+    "source": "https://www.tribuneindia.com/2005/20051204/spectrum/main1.htm : \"He taught me for a few days and saw my body was very stiff and lost interest.\" | https://openthemagazine.com/voices/the-iyengar-art-of-living (Madhavankutty Pillai, 21 Aug 2014): \"reluctant to teach the boy because he considered him physically weak\"; \"He would practice like a maniac for hours.\" | https://wtop.com/news/2014/08/indian-yoga-guru-bks-iyengar-dies-at-95/ (AP): \"When he was 15, a relative introduced him to yoga\"",
+    "photo_hint": "A stiff teenage or beginner student in Paschimottanasana, hands far from the feet, still trying.",
+    "word_note": "His teacher's doubt about the stiff, weak boy (Open also writes of his 'self doubt'). TH ความไม่เชื่อมั่น, ZH 怀疑, RU сомнение."
+   },
+   {
+    "slot": "4/10",
+    "step": "3 getting strong",
+    "word": "BRAVE",
+    "text": "The stiff boy grew BRAVE. He \"could do a lot of backbends.\" At 18, when no one else would go to Pune, he went.",
+    "credit": "B.K.S. Iyengar · The Tribune, 2005 · AP, 2014 (retold)",
+    "source": "https://www.tribuneindia.com/2005/20051204/spectrum/main1.htm : \"In 1936, at a demonstration in Belgaum, a surgeon called V.B. Gokhale was impressed by me as I could do a lot of backbends.\" \"He wanted a senior student. He wrote to Guruji. But no one was willing to go; so Guruji asked me to go. I came to Pune in 1937.\" | https://wtop.com/news/2014/08/indian-yoga-guru-bks-iyengar-dies-at-95/ (AP): \"By the time he was 18, he moved to Pune to practice yoga and to teach its techniques to others.\"",
+    "photo_hint": "A strong young student in Urdhva Dhanurasana (backbend), full of power.",
+    "word_note": "Going where no one else was willing to go. TH กล้าหาญ, ZH 勇敢, RU смелый."
+   },
+   {
+    "slot": "5/10",
+    "step": "4 getting sick (it comes to everyone)",
+    "word": "HURT",
+    "text": "HURT comes even to the strongest body. In 1979, his scooter hit a rock. \"My spine was twisted.\" He was told he would never practise again.",
+    "credit": "B.K.S. Iyengar · The Tribune, 2005 · Open, 2014 (retold)",
+    "source": "https://www.tribuneindia.com/2005/20051204/spectrum/main1.htm : (asked about 'a bad accident in 1979') \"I was driving a scooter and it hit the rock and fell off because of which my spine was twisted.\" | https://openthemagazine.com/voices/the-iyengar-art-of-living : \"After a scooter accident in 1979, he was told he would never be able to practise but he taught himself all over again.\"",
+    "photo_hint": "A middle-aged student sitting still after practice, one hand on the lower back or knee, quiet and thoughtful. No pain on the face.",
+    "word_note": "Pain of body and heart after the crash. TH เจ็บปวด, ZH 伤痛, RU боль."
+   },
+   {
+    "slot": "6/10",
+    "step": "5 healing (coming back)",
+    "word": "PATIENCE",
+    "text": "Healing took PATIENCE, even for a master. He said he recovered \"only very slowly.\" He had to learn yoga all over again.",
+    "credit": "B.K.S. Iyengar · The Tribune, 2005 · Open, 2014 (retold)",
+    "source": "https://www.tribuneindia.com/2005/20051204/spectrum/main1.htm : \"Only very slowly, did I recover. I had to virtually re-learn yoga.\" | https://openthemagazine.com/voices/the-iyengar-art-of-living : \"he taught himself all over again\"",
+    "photo_hint": "A student in their 50s or 60s doing a simple Surya Namaskara A slowly, like a beginner again.",
+    "word_note": "The noun, so nobody reads 'a hospital patient'. TH ความอดทน, ZH 耐心 (not 病人), RU терпение."
+   },
+   {
+    "slot": "7/10",
+    "step": "6 a strong brain",
+    "word": "EAGER",
+    "text": "An EAGER mind kept him writing into his 80s. He mostly taught himself by watching how the body works. At 86 he published his 18th book.",
+    "credit": "The Tribune, 2005 · Open, 2014 (retold)",
+    "source": "https://www.tribuneindia.com/2005/20051204/spectrum/main1.htm : \"From the beginning, I had the ability to observe the body and see what was happening to it and explain it.\"; \"on the publication of his 18th book Light on Life. He turns 87 on December 14.\" | https://openthemagazine.com/voices/the-iyengar-art-of-living : \"he was self taught to a large extent\"",
+    "photo_hint": "An older student looking closely at their own foot or hand alignment, focused and curious.",
+    "word_note": "Eager to learn, at any age. TH กระตือรือร้น (ใฝ่รู้), ZH 好学, RU увлечённый."
+   },
+   {
+    "slot": "8/10",
+    "step": "7 becoming wise",
+    "word": "CALM",
+    "text": "The wise old teacher was CALM about slow progress. He said one woman practised for 11 years before she learned her knees were not straight.",
+    "credit": "Open, 2014 (retold)",
+    "source": "https://openthemagazine.com/voices/the-iyengar-art-of-living : \"He dismissed the instant yoga of television; results took time.\" \"He said it took 11 years of practise to just know the back of her knees, how ridiculous was it to think that you could learn anything in a few days.\" \"She replied, '11 years'. He told me that it was only this year that she learnt that the back of her knees were not straight.\"",
+    "photo_hint": "An older student in Padmasana, eyes closed, calm face.",
+    "word_note": "Calm, unhurried about results. TH ใจเย็น, ZH 从容, RU спокойный. (Kept apart from A's PEACE: TH ความสงบ, ZH 安宁, RU покой.)"
+   },
+   {
+    "slot": "9/10",
+    "step": "8 staying strong (later in life)",
+    "word": "LOYAL",
+    "text": "In old age, he stayed LOYAL to his practice. In his 70s he could not climb stairs. Near 90, he did three hours of asanas daily.",
+    "credit": "Open, 2014 (retold)",
+    "source": "https://openthemagazine.com/voices/the-iyengar-art-of-living (meeting in 2006): his words \"My friend, 10 years ago I was in a death bed at this place only. My vital energy had sapped to such an extent that I could not come to class because I could not climb staircases.\"; \"Iyengar had finished his daily practice of three hours of asanas and an hour of pranayam\"; \"not bad for someone just short of 90\"",
+    "photo_hint": "A student in their 60s or 70s holding a long, steady standing asana or Sirsasana, strong and focused.",
+    "word_note": "Faithful to the daily habit (the Habit Gap idea). Replaces STUBBORN, which has no clean Thai word (ดื้อ is negative). TH ซื่อสัตย์, ZH 忠诚, RU верный."
+   },
+   {
+    "slot": "10/10",
+    "step": "9 getting weak, near the end of life",
+    "word": "GENTLE",
+    "text": "The last step asks for a GENTLE heart. Even a strong body grows weak. He practised until two months before he passed away, aged 95.",
+    "credit": "AP, 2014 (retold)",
+    "source": "https://wtop.com/news/2014/08/indian-yoga-guru-bks-iyengar-dies-at-95/ (AP, 20 Aug 2014): \"practiced yoga until two months ago\"; \"died Wednesday at age 95\" (sentence 2 is a plain life truth, no fact or number)",
+    "photo_hint": "The oldest student in the room sitting in Padmasana at the end of practice, eyes closed, light from the window, peaceful. Never show an older student lying flat.",
+    "word_note": "A soft, accepting heart at the end of life, no fear and no promise. TH อ่อนโยน, ZH 温柔, RU мягкий (мягкость)."
+   }
+  ],
+  "caption": "Born sick. A stiff boy. A twisted spine. Could not climb stairs in his 70s.\nB.K.S. Iyengar, a yoga teacher from India, could not skip a step of life. Nobody can.\nOnce he found yoga at 15, he went back to it after every hard step.\nWhich step are you on right now?\n#aybkk #ashtanga #ashtangabangkok #boonchutanti #bksiyengar"
+ },
+ "C": {
+  "slides": [
+   {
+    "slot": "cover",
+    "step": "cover: all of life is steps you cannot skip; how you climb changes how each step feels",
+    "word": "STEADY",
+    "text": "You can learn to stay STEADY on every step of life, even the ones you wish you could skip.",
+    "credit": "AYBKK · THE LADDER · 9 steps · swipe",
+    "source": "none (no quote or fact; the owner's message in plain words)",
+    "photo_hint": "Wide shot of the Mysore room with students of many ages, each on their own mat at a different point in the practice. Keep calm, empty space at the top for the big word.",
+    "word_note": "A steady heart on every step. TH หนักแน่น (not มั่นคง, too close to C 3 SURE มั่นใจ), ZH 沉稳, RU уравновешенный."
+   },
+   {
+    "slot": "1",
+    "step": "born (a new body, wonder)",
+    "word": "AMAZED",
+    "text": "As a baby, you were AMAZED by your own feet. On the mat, you can look at your body like that again.",
+    "credit": "AYBKK · THE LADDER · 1/9",
+    "source": "none (general life truth, no number or study)",
+    "photo_hint": "Close soft shot of a student in Padangusthasana or a seated forward fold, eyes on their own toes or hands. Use the youngest-looking student, in gentle morning light.",
+    "word_note": "A baby's amazement at its own body. TH ทึ่ง, ZH 惊叹, RU изумлённый (kept apart from A's WONDER)."
+   },
+   {
+    "slot": "2",
+    "step": "growing up (play, learning to move)",
+    "word": "SAFE",
+    "text": "As a kid, you could fall and still feel SAFE. In a Mysore-style class, the teacher gives the next asana when you are ready.",
+    "credit": "AYBKK · THE LADDER · 2/9",
+    "source": "AYBKK fact given in the brief: 'the teacher gives the next asana when the student is ready'. Background: https://en.wikipedia.org/wiki/Ashtanga_(vinyasa)_yoga : 'students practice the sequences they know at their own pace'",
+    "photo_hint": "A newer student smiling or laughing while trying a balance (or just after losing it), or the teacher showing a beginner a new asana.",
+    "word_note": "Safe even when you fall, and safe to learn at your own pace. TH อุ่นใจ, ZH 安心, RU в безопасности (not защищённый, which means 'protected')."
+   },
+   {
+    "slot": "3",
+    "step": "getting strong (living and building strength)",
+    "word": "SURE",
+    "text": "Slow, daily work makes you strong and SURE of yourself. Same mat, same time. One day, you do an asana you could not do before.",
+    "credit": "AYBKK · THE LADDER · 3/9",
+    "source": "none",
+    "photo_hint": "A student in their 30s or 40s holding a strong asana (Bakasana, Urdhva Dhanurasana or a jump-through), with sweat and focus.",
+    "word_note": "Sure of yourself, the quiet confidence of earned strength. TH มั่นใจ, ZH 自信, RU уверенный."
+   },
+   {
+    "slot": "4",
+    "step": "getting sick (it comes to everyone)",
+    "word": "FEAR",
+    "text": "Even healthy people get sick, and FEAR comes with it. Practice does not stop sickness. But you have a teacher who notices when you miss class.",
+    "credit": "AYBKK · THE LADDER · 4/9",
+    "source": "none (AYBKK habit-system promise from the brief: 'a teacher who notices when you are gone')",
+    "photo_hint": "One empty mat in a full Mysore room, or a student sitting still with eyes closed. Quiet and soft, never dark or sad.",
+    "word_note": "The fear that comes with sickness. TH ความกลัว, ZH 恐惧, RU страх."
+   },
+   {
+    "slot": "5",
+    "step": "healing (coming back)",
+    "word": "TRUST",
+    "text": "Coming back after sickness starts with TRUST. You may return slower and weaker. But your mat and your practice time are still there, waiting for you.",
+    "credit": "AYBKK · THE LADDER · 5/9",
+    "source": "none",
+    "photo_hint": "A student in Samasthiti or the first Surya Namaskara at the start of practice, with morning light from the window. A simple, gentle beginning.",
+    "word_note": "Trust that the way back is still there. TH ความไว้ใจ, ZH 信任, RU доверие."
+   },
+   {
+    "slot": "6",
+    "step": "a strong brain (learning, a sharp mind)",
+    "word": "OPEN",
+    "text": "Your mind can stay OPEN to being a beginner. You learn your whole sequence by heart. Then a new asana makes you a beginner again.",
+    "credit": "AYBKK · THE LADDER · 6/9",
+    "source": "https://en.wikipedia.org/wiki/Ashtanga_(vinyasa)_yoga : 'Traditionally, Ashtanga yoga students memorised a sequence of asanas' (opened and checked). 'A new asana comes' = the AYBKK fact 'the teacher gives the next asana when you are ready'. No brain-health claim is made.",
+    "photo_hint": "A student mid-vinyasa with clear drishti and a focused face, or the teacher showing a student a new asana for the first time.",
+    "word_note": "Open-hearted, open to learning. TH เปิดใจ, ZH 开放 (心态开放), RU открытый."
+   },
+   {
+    "slot": "7",
+    "step": "becoming wise",
+    "word": "KIND",
+    "text": "Years on the mat teach you to be KIND to yourself. Some days the asana comes, some days not. You stop fighting yourself on hard days.",
+    "credit": "AYBKK · THE LADDER · 7/9",
+    "source": "none",
+    "photo_hint": "A long-time student (grey hair welcome) in a quiet forward fold such as Paschimottanasana, or receiving a soft adjustment from the teacher.",
+    "word_note": "Kind to yourself, the wise step. TH ใจดีกับตัวเอง, ZH 善待自己, RU добрый к себе."
+   },
+   {
+    "slot": "8",
+    "step": "staying strong (keeping what you built, later in life)",
+    "word": "FREE",
+    "text": "As you grow older, strength means feeling FREE. You get up from the floor on your own. Daily practice helps you keep more of that strength.",
+    "credit": "AYBKK · THE LADDER · 8/9",
+    "source": "none (general claim with no number or study: practice HELPS you keep MORE of your strength, never all of it, and never a sure result)",
+    "photo_hint": "An older student (60+) in a strong standing asana such as Utthita Trikonasana or Virabhadrasana, or standing up from the mat. Bright and steady.",
+    "word_note": "Free to move on your own. TH อิสระ, ZH 自由, RU свободный."
+   },
+   {
+    "slot": "9",
+    "step": "getting weak and near the end of life (peace, gratitude, letting go)",
+    "word": "EASE",
+    "text": "When the body gets weaker, the heart can still be at EASE. Every practice ends the same way: rest, breathe, let go.",
+    "credit": "AYBKK · THE LADDER · 9/9",
+    "source": "https://en.wikipedia.org/wiki/Ashtanga_(vinyasa)_yoga : 'followed by a standard closing sequence' and 'Sessions end with resting for 5 minutes.' (opened and checked). Also https://www.yogapedia.com/definition/9939/closing-sequence-of-ashtanga-yoga : 'always performed in the same order as a way to finish the practice' (Shavasana is listed last; checked by the fact checker).",
+    "photo_hint": "Seated only. The oldest student sits in Padmasana, eyes closed, with a soft smile, in warm soft light with plenty of space. Never show an older student lying flat. If Boonchu wants a final-rest photo, use a younger student, or a wide room shot where no single older face is in final rest.",
+    "word_note": "A heart at ease, letting go. TH สบายใจ, ZH 坦然 (not 自在, too close to C 8 FREE 自由), RU легко на душе (лёгкость)."
+   }
+  ],
+  "caption": "Every step of life comes to all of us, healthy or not.\nA daily practice does not stop age or sickness. It can change how you meet them. A bit stronger. A bit calmer.\nSame mat, same time, and a teacher who notices when you miss class.\nWhich step are you on today?\n#aybkk #ashtanga #ashtangabangkok #boonchutanti #mysore"
+ },
+ "changes": [
+  "v1 log kept in changes_v1.json. Final state: 20 small texts at 22-26 words, covers 18 (B) and 19 (C), every big word in sentence 1 and the only CAPS word.",
+  "Final big words B: WILLING, HELPLESS, DOUBT, BRAVE, HURT, PATIENCE, EAGER, CALM, LOYAL, GENTLE. C: STEADY, AMAZED, SAFE, SURE, FEAR, TRUST, OPEN, KIND, FREE, EASE. None repeats set A or each other (30 in all).",
+  "Still waiting on Boonchu: OK to use B.K.S. Iyengar as the set B subject. WILLING on the B cover (or keep STRONG). CALM as the word for him on B 8. Confirm that the teacher notices when a student misses class (C 4, C caption), that every class ends with rest (C 9), and that the next asana comes when the student is ready (C 2, C 6). Near-duplicates AMAZED/WONDER and EASE/PEACE. #bksiyengar in place of #iyengar."
+ ],
+ "applied": [
+  "B 1/10 credit 'B.K.S. Iyengar · 9 steps · swipe' -> 'The life of B.K.S. Iyengar · 9 steps · swipe', so nobody reads the cover line (the owner's words) as an Iyengar quote (fact check).",
+  "B 1/10 big word STRONG -> WILLING: 'Not even a yoga master skips the hard steps of life, but a WILLING heart climbs each one.' (18 words). STRONG is a body word and blurred with 'strongest body' (B 5) and 'strong body' (B 10). COURAGE was not used because it repeats BRAVE. WILLING echoes the Tribune line behind slide 4 ('no one was willing to go'). 'Pairs with CALM' note dropped. RU note avoids готовый, the usual Russian for A's READY (reader check).",
+  "B 1/10 photo_hint: no ranking by age ('young at the front, older at the back' removed), students of every age mixed side by side (reader check).",
+  "B 2/10: 'helped take yoga to the world' -> 'helped make yoga popular around the world' (AP: 'helped popularize yoga around the world'), and 'TB' -> 'tuberculosis' so the slide has one CAPS word only. 25 words (fact check + reader check merged).",
+  "B 3/10: 'Still, he practised for hours.' -> 'Still, he would practise for hours.', so Open's general habit ('He would practice like a maniac for hours') is not tied to one moment. 26 words (fact check, optional).",
+  "B 4/10: 'grew strong, then BRAVE' -> 'grew BRAVE' (no source says he grew strong) and 'no other student' -> 'no one else' (Tribune: 'no one was willing to go'). 24 words (fact check).",
+  "B 7/10: 'learning into his 80s' -> 'writing into his 80s', and 'another book' -> 'his 18th book' (Tribune, 4 Dec 2005: '18th book Light on Life. He turns 87 on December 14', so 86). 26 words (fact check).",
+  "B 8/10: 'just to know the back of her knees' -> 'one woman practised for 11 years before she learned her knees were not straight' (Open: 'it was only this year that she learnt that the back of her knees were not straight'). That Open line was added to the source field. 25 words (reader check).",
+  "B 8/10 and 9/10 credit 'Open magazine, 2014 (retold)' -> 'Open, 2014 (retold)'. B 10/10 credit 'Associated Press, 2014 (retold)' -> 'AP, 2014 (retold)' (fact check).",
+  "B 9/10 opener 'Late in life,' -> 'In old age,' so it no longer echoes A 9 'Later in life,' (reader repeats note). No linking word added between the 70s and 'Near 90' lines. 26 words.",
+  "B 10/10 photo_hint: seated Padmasana at the end of practice, 'Never show an older student lying flat', in place of the Savasana image under 'passed away' (reader check, rule 5).",
+  "B caption: 'Too weak for stairs' -> 'Could not climb stairs' (the slide's source words), 'After each hard step, he went back to his practice.' -> 'Once he found yoga at 15, he went back to it after every hard step.' (he had no practice when he was born sick), and #iyengar -> #bksiyengar (the person, not the trademarked method) (both checks).",
+  "C cover: 'climb every step of life STEADY' -> 'stay STEADY on every step of life' (no adjective-for-adverb). 19 words. TH note STEADY หนักแน่น, so it is not close to C 3 SURE มั่นใจ (reader check).",
+  "C 2: 'you felt SAFE to fall, and nobody rushed you' -> 'you could fall and still feel SAFE' and 'In Mysore class' -> 'In a Mysore-style class' (not the city). I did not use the reader's 'As a kid, it felt SAFE to fall': that has a dangling 'As a kid', and 'nobody rushed you' assumes a happy childhood (the reader's own nit). RU note -> в безопасности. 24 words (reader check).",
+  "C 3: 'Slow, daily work makes you strong and SURE of yourself. Same mat, same time. One day, you do an asana you could not do before.' It no longer copies A 4's frame ('Strength you build yourself makes you PROUD'), and the old sentence 2 with no main verb is gone. 25 words (reader check).",
+  "C 4: 'notices your empty mat' -> 'notices when you miss class', the same words as the caption. 26 words. This still needs Boonchu's yes on the follow-up promise (reader check).",
+  "C 6: 'Then a new asana comes, and you start again.' -> 'Then a new asana makes you a beginner again.' (it no longer reads as starting the whole practice from zero). I also changed the opener 'A strong mind stays OPEN' -> 'Your mind can stay OPEN', because it mirrored A 7 'A CURIOUS mind stays strong' (reader repeats nit). 25 words.",
+  "C 7: 'You stop fighting the day you have.' -> 'You stop fighting yourself on hard days.' 26 words (reader check).",
+  "C 8: 'As you grow older, strength means feeling FREE. You get up from the floor on your own. Daily practice helps you keep more of that strength.' A clear 'that strength' in place of a vague 'it', 'helps' so it is not a sure result, and no 'Later in life' opener (A 9). 26 words (reader check).",
+  "C 9: 'lie still, breathe, let go' -> 'rest, breathe, let go' (not a picture of dying), and 'grows weak' -> 'gets weaker' (B 10 keeps 'grows weak'). ZH note EASE 坦然 in place of 自在 (too close to C 8 FREE 自由). 22 words (reader check).",
+  "C caption: line 1 -> 'Every step of life comes to all of us, healthy or not.' (it no longer copies A's cover), and 'It changes how you meet them' -> 'It can change how you meet them' (not a sure result). 53 words before the tags (reader check).",
+  "Checked by code (tools/build_final.py): word counts (covers 18 and 19, slides 22-26), 30 different big words across A/B/C, the big word in sentence 1 and the only all-caps token, 3-8 letters, every quoted phrase found in the saved Tribune/Open/AP page text, name-first credit only with an exact quote, every B slide 2-10 ends in (retold), no long dash, no 'pose', captions end with a question before the tags."
+ ],
+ "rejected": [
+  "B 8/10 CALM (fact check, judgement call): kept, no change. Open does show him unhurried about results ('results took time'), but he was also dismissive and a 'hard taskmaster', so CALM is the writer's reading. Boonchu should OK it. If he says no, the swap has to stay clear of all 29 other big words.",
+  "Rule 1, character traits (LOYAL, KIND, OPEN, GENTLE, STEADY, BRAVE, now also WILLING): no rewrite. The checker forced none, and they pass if the rule means 'a heart quality'. This goes to Boonchu.",
+  "Near-duplicates C 1 AMAZED / A WONDER and C 9 EASE / A PEACE: no swap. The checker asked for these to be put to Boonchu, not changed. Also flagged: the new B cover WILLING sits near A's READY (cover) and B 7 EAGER in English, though the TH/ZH/RU words differ.",
+  "B 9/10 'could read as practice brought him back': no change, as the checker said. It is fine as written, and no 'so', 'because' or 'thanks to' was added.",
+  "B 3/10 teacher (Krishnamacharya) unnamed: nothing to change. He is not named in the text, credit or caption. Keep him unnamed in comment replies too.",
+  "The reader's exact C 2 text ('As a kid, it felt SAFE to fall, and nobody rushed you.'): not used word for word, because of the dangling 'As a kid' and the happy-childhood nit. A cleaner line with the same fix is applied above."
+ ]
+}

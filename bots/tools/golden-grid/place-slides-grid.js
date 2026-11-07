@@ -83,14 +83,15 @@ Rules:
 1. Big word is white and big (letters about 110 px tall or more where space allows; short words bigger). Never on a face (also background people), a hand or a foot; never across the main student's body (the teacher's black shirt is allowed).
 2. The small text and credit are complete, word for word as above (compare the spec's line and line_br with it), and easy to read at phone size (make a 432x540 preview and look), never on a face, hand or foot, never over framed pictures or guru portraits.
 3. Small text on the grid: GRID OK printed, column one of the four, no lines that look one-word thin or ragged in an ugly way. Word and text not touching; both clear of the watermark; no white bars.
-4. No head, hand or foot of the main people cut off at the frame edge where it could have been kept.
+4. No head, hand or foot of the main people cut off at the frame edge where it could have been kept. Owner's orders: never cut a main person's head (in tall inversions keep head, face, hands and elbows and cut a bit of the feet instead); never let the crop edge cut through a framed picture on the wall (whole or fully out).
+5. Text and word never over framed pictures, guru portraits or deity statues (30 px clear).
 Use the Read tool and python3 with PIL (save crops as ${WD}/v2/${SET}/work/check_${nn(s)}_*.jpg). Look closely at word edges for fingers, toes and faces.
 pass=true only if all rules hold. Each issue = a short concrete fix instruction. Your final message is data, not chat.`
 }
 
 const res = await pipeline(
   SLIDES,
-  (s) => agent(makePrompt(s, null), { label: `make:${SET}${s.n}`, phase: 'Make', schema: MAKE }),
+  (s) => (s.pre ? Promise.resolve(s.pre) : agent(makePrompt(s, null), { label: `make:${SET}${s.n}`, phase: 'Make', schema: MAKE })),
   async (m, s) => (m ? { m, c: await agent(checkPrompt(s, m), { label: `check:${SET}${s.n}`, phase: 'Check', schema: CHECK }) } : null),
   async (r, s) => {
     if (!r || !r.c || r.c.pass) return r && { n: s.n, m: r.m, c: r.c }

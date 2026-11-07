@@ -1,0 +1,189 @@
+{
+ "photo_plan": {
+  "A": {
+   "PROUD": "07-292 (06-284 removed by Boonchu)",
+   "FRAGILE": "07-164 (06-268 deleted by Boonchu)"
+  },
+  "B": {
+   "1": "07-894",
+   "2": "07-595",
+   "3": "07-591",
+   "4": "07-747",
+   "5": "07-136",
+   "6": "07-713",
+   "7": "07-725",
+   "8": "07-808",
+   "9": "07-192",
+   "10": "07-601"
+  },
+  "C": {
+   "cover": "07-604",
+   "1": "07-717",
+   "2": "07-250",
+   "3": "07-482",
+   "4": "07-696",
+   "5": "07-310",
+   "6": "07-491",
+   "7": "07-599",
+   "8": "06-248",
+   "9": "07-603"
+  },
+  "why": "Plato 7 Nov: set B is Iyengar's life told with he/his, so no photo where an AYBKK teacher is the main or front figure (B10 had the teacher in front next to \"he passed away\"). Teacher photos moved to set C."
+ },
+ "photo_agent_final": {
+  "B": [
+   {
+    "slot": "1/10",
+    "photo": "07-292",
+    "why": "Cover WILLING. The widest B room shot: four people, and a man in red shorts climbs up out of a strong backbend ('a WILLING heart climbs each one'). The teacher only watches from the left edge. He is not adjusting, and he is not the main figure.",
+    "space": "t=135. Word WILLING across the top: x 230-994, y 90-232, bs 190 (it was 129 in HOPE's old box). It starts ~60 px right of the teacher's head (head ends x ~170). Its top is at y 90, not 60, so it stays ~35 px under the flowers at x 890-950 (slide y <= 55). Text narrow-right (cws 353, 667-1020), bottom on 1290, sz 42: block 667-1010, y 1001-1290, 4 lines + 3 credit lines. Use credit_br 'The life of | B.K.S. Iyengar | 9 steps · swipe'; without it the credit wraps into 4 ragged lines in 353. The block runs from the light grey mat onto the black mat (from ~1140), so sburn 0.4. His raised foot ends at slide ~845. His hand on the grey mat (x ~420-480, y ~1065-1095) stays left of the column. Watermark wmxy [60,1250] on the dark floor, below the teacher's feet. Word wburn 0.25, shadow 1.4."
+   },
+   {
+    "slot": "2/10",
+    "photo": "07-595",
+    "why": "HELPLESS (born sick). A young woman curls small into a bound seated fold, face down and still, small like a newborn. Her face is mostly hidden and shows no pain. She is the youngest-looking main student in the B pool. The standing man behind is blurred and not adjusting. The hint's 'first careful Samasthiti' is in no B-eligible photo.",
+    "space": "t=0. Word HELPLESS top-left over the blurred window: x 60-659, y 60-151, bs 122. This is confirmed as the most it can get. The standing man's face (x 700-790, y 55-190) caps the width, and a sideways word in the right window strip would be smaller. Text wide-left (cws 607), top on 216 (52 px baseline grid), sz 42, with line_br 'B.K.S. Iyengar, who helped make | yoga popular around the world, | began life HELPLESS. He was born | sick in 1918, then had malaria, | typhoid and tuberculosis.' Block: 60-598, y 216-473. The sentence lines end by x ~570. The one-line credit (x to 598) sits at y ~455-473, below his hand, ~40 px from his body. The default 607 wrap is 604 px wide, and its lines 1-4 would run onto his blurred arm (x 600-650, y 190-400). Light blurred wall: sburn 0.4; word wburn 0.3, shadow 1.6. Watermark wmxy [660,1180] on the blue mat. A blurred hand sits at the right edge (x >= 1020)."
+   },
+   {
+    "slot": "3/10",
+    "photo": "07-591",
+    "why": "DOUBT (stiff boy, still practised for hours). A crowded Led Primary room full of headstands. The sharp student in the middle holds a hard half-way leg position and keeps trying. Young students. No stiff beginner in Paschimottanasana is in the pool.",
+    "space": "t=270. Word DOUBT sideways (wrot -90) on the blurred torso of the right foreground woman: wpos [870,60], wwidth 540, bs 163, ink x 870-992, y 66-599 (inside the 1020 margin). Her face is lower, at slide 1030+. The framed pictures (x 505-690, y 60-150) stay clear. wshadow 1.6, wburn 0.2. Text wide-left (cws 607), bottom on 1290, sz 42: 60-587, y 1001-1290, over the floor and dark grey mat. It is ~50 px under the left man's blurred knees; the old plan touched them. sburn 0.3. Watermark wmxy [660,1250], the lowest right spot. It still sits directly under her blurred upside-down face, with no gap. Centre and left are taken by the text. Check by eye. This is the weakest B image."
+   },
+   {
+    "slot": "4/10",
+    "photo": "07-747",
+    "why": "BRAVE ('could do a lot of backbends'). A woman in a deep Kapotasana: a strong, clean backbend, close to the hint's powerful backbend. It has the best text space of the 21. No teacher.",
+    "space": "t=270. Word BRAVE in the bright window band: x 60-602, y 60-184, bs 169. It stays 30 px left of the shelf items (x 630-1000, y 60-180). Shadow 1.6, wburn 0.25. Text wide-left (cws 607), bottom on 1290, sz 42: 60-609, y 1043-1290, white ink on the black mat (very readable), ~90 px under her elbows (slide ~950). Watermark wmxy [660,1250] on the black mat."
+   },
+   {
+    "slot": "5/10",
+    "photo": "07-601",
+    "why": "HURT (swapped in from 10/10). Two students sit still and cross-legged with their hands on their knees, facing the window after practice. This matches the hint's 'sitting still after practice, a hand on the knee, quiet and thoughtful'. They are seen from behind, so no face can show pain. No teacher.",
+    "space": "t=0. Word HURT across the top window, right of the frame's top: x 595-1020, y 60-181, bs 162, right edge on the 1020 margin. The framed photo starts at y 210 (x 464-684), so the ink must end by ~180. That caps HURT at bs ~162; a wider box only makes it taller. Bright window: shadow 1.6, wburn 0.25. Text wide-right (cws 607), set flush right (sright) on 1020, bottom on 1290, sz 42: 500-1020, y 1001-1290, over the mint mat and floor. It is ~85 px under the right woman's crossed legs and hips (slide ~840-915). It is flush right, not left-aligned on 413, because the left watermark logo ends at x ~416. Watermark wmxy [60,1250] over the dark blurred foreground figure. sburn 0.4."
+   },
+   {
+    "slot": "6/10",
+    "photo": "07-713",
+    "why": "PATIENCE (swapped in from 7/10). A woman lies prone with her chest gently lifted and eyes closed: a soft, beginner-like backbend, close to the hint's 'simple Surya Namaskara, like a beginner again' ('had to learn yoga all over again'). Calm face. She looks 30s, younger than the hint's 50s-60s.",
+    "space": "t=270. Word PATIENCE on the calm grey mat, just under her chest: x 60-711, y 800-906, bs 140. Her black top ends at slide ~770 (x 400-600), and her hands sit at x 820-1000, y <= 720. Text wide-left (cws 607), bottom on 1290, sz 42: 60-547, y 1001-1290, on the same mat, ~95 px under the word. Light ground: sburn 0.4; word wburn 0.3, shadow 1.6 (dark ink is the alternative). Watermark wmxy [660,1250] on the mat and floor. The blurred teacher adjusting far behind is cropped out at t=270."
+   },
+   {
+    "slot": "7/10",
+    "photo": "07-725",
+    "why": "EAGER (swapped in from 6/10). The oldest face in the B pool, a woman about 50s, holds Dhanurasana with eyes closed, sweating and focused. This matches the hint's 'older student, focused'. No teacher.",
+    "space": "t=270. Word EAGER across the top band, over blurred background bodies: x 60-680, y 60-204, bs 191. It stays ~40 px left of the purple-top girl's blurred face (x ~720, y ~40-130) and away from the raised foot (x >= 990). Its lower-left corner comes within ~20 px of the yellow-top woman's blurred head (x 24-132, y ~240); check by eye. Text wide-left (cws 607), bottom on 1290, sz 42, with credit_br 'The Tribune, 2005 | Open, 2014 (retold)'. Block: 60-619, y 1038-1290, on the white mat, ~45 px under the lower edge of her cream top. The one-line credit (578 px) would run to x 638, 26 px from the watermark logo. sburn 0.4, word wburn 0.2. Watermark wmxy [660,1250] on the mat."
+   },
+   {
+    "slot": "8/10",
+    "photo": "07-808",
+    "why": "CALM. A man in Dwi Pada Sirsasana, hands in prayer, eyes lowered, with a very calm face. He is the red-shorts man from the cover, so 'he' carries through the story. The blurred person behind him is not adjusting. He is about 40, not the hint's older student.",
+    "space": "t=40 (was 0). At t=0 the lowest left watermark spot touches his elbow, and the right and centre spots sit on his red shorts. Text wide-left (cws 607), top on 60, sz 42: 60-610, y 60-275, over the grey wall, dark doorway and window, with sburn 0.4. It ends ~55 px above his raised foot (slide ~390) and ~65 px above the background face (x 580-650, slide ~340). Word CALM sideways (wrot -90) on the right, over the plain wall and dark glass door: wpos [870,60], wwidth 520, bs 182, ink x 870-1006, y 64-571. It stops ~40 px above the background face at x 900-960 (slide ~610). wshadow 1.6. Watermark wmxy [60,1250] on the mat, ~45 px under his elbow."
+   },
+   {
+    "slot": "9/10",
+    "photo": "07-192",
+    "why": "LOYAL (was the set-A spare; swapped in for 07-136). The same red-shorts man holds a strong standing backbend alone, hands clasped behind his head. This matches the hint's 'long, steady standing asana, strong and focused'. The 'he' thread runs through cover, CALM and LOYAL. He is about 40, not the hint's 60s-70s.",
+    "space": "t=270, the only crop with his feet in frame (at t=0 the slide cuts his shins). Text wide-left (cws 607), top on 60, sz 42: 60-543, y 60-275, over the bright window, so sburn 0.45 (or dark ink). The guru portraits start at slide ~330, ~55 px below. Word LOYAL sideways (wrot -90) down the right window strip: wpos [860,300], wwidth 600, bs 196, ink x 860-1006, y 308-896. It sits right of his elbow (x <= 790) and the portraits (x <= 750). wshadow 1.8, wburn 0.3. Watermark wmxy [60,1250] on the floor, ~25 px left of his feet; the centre spot sits on his feet. The engine inpaints the photographer's watermark, which crosses his shins at t=270. It looked clean in the test render; check by eye."
+   },
+   {
+    "slot": "10/10",
+    "photo": "07-604",
+    "why": "GENTLE (swapped in from 5/10). A row of students sits cross-legged, eyes closed, in the closing pranayama, with window light from the left. This matches 'at the end of practice, eyes closed, light from the window, peaceful'. The faces run 30s-50s, the oldest seated faces among the B candidates. Nobody lies flat. The teacher sits at the left, teaching; he is not adjusting.",
+    "space": "t=135. Word GENTLE top-left over the window bars, curtain and cabinet: x 60-599, y 65-172, bs 142. The framed picture at x 830-1010 is out of the top. Busy ground: shadow 1.6, wburn 0.3. Text narrow-left (cws 353), top on 834, sz 42: 60-382, y 834-1175 (7 lines + credit), over the light floor and mint mat. Line 1 ends at x ~310, left of the grey cloth (x 330-460, slide <= 825). The teacher's feet end at slide ~735. sburn 0.4. Watermark wmxy [60,1250] on the mint mat, below the text. The front woman's thigh fills the right spot at y 1250 (to ~1330), ~15 px under her hand (to ~1235), so the text is not bottom-on-1290 with the watermark right."
+   }
+  ],
+  "C": [
+   {
+    "slot": "cover",
+    "photo": "07-894",
+    "why": "Cover STEADY. The widest room shot: three students at different headstand stages in front of tall windows ('each at a different point in the practice'), with calm window space for the big word. The teacher spots the middle student, so this photo has to go to C.",
+    "space": "t=80 (was 0). At t=0 every bottom watermark spot sits on a student's head or hands (hands at slide ~1260-1300); at t=80 they end by ~1220. Word STEADY very large across the top window: x 60-1020, y 60-244, bs 244. Text wide-left (cws 607), bottom on 516, sz 42: 60-601, y 343-516, over the window panes, sburn 0.45. The framed Pattabhi Jois photo (slide >= 560, x 225-415) and the Ganesha shelf (x 810-960, slide ~400-480) stay clear. Watermark wmxy [360,1250] on the green mat under the middle student."
+   },
+   {
+    "slot": "1",
+    "photo": "07-717",
+    "why": "AMAZED. A woman in Dhanurasana holds her own feet ('AMAZED by your own feet') beside a young girl in the same pose. These are the youngest faces in the C pool. The teacher is only blurred far behind.",
+    "space": "t=50. Word AMAZED on the plain wall: x 150-851, y 60-181, bs 164. The framed picture on the cabinet (x 210-380, slide 240-320) stays clear. Text wide-right (cws 607), set flush right (sright) on 1020, bottom on 1290, sz 42: 499-1020, y 1117-1290, over the mint mat and floor, ~85 px under her body (ends ~1030). It is flush right because the left watermark logo ends at x ~416. Light ground: sburn 0.4. Watermark wmxy [60,1250] over the red towel."
+   },
+   {
+    "slot": "2",
+    "photo": "07-250",
+    "why": "SAFE (swapped in from 4). The teacher stands close and spots a student (30s) kicking over in a backbend: 'you could fall and still feel SAFE', and the hint's teacher guiding a student into an asana. The swap also takes the ~50-year-old face out of the childhood step.",
+    "space": "t=0. Word SAFE top-left over the white wall and the top of the mirror: x 60-540, y 60-201, bs 188 (the reviewer had ~160). It still ends ~50 px above the teacher's head (y ~250) and ~95 px above her raised feet (y ~295). Shadow 1.6, wburn 0.3. Text narrow-right (cws 353), top on 60, sz 42, with credit_br 'AYBKK · The Ladder | 2/9'. The full credit is 356 px, so in 353 it splits into 3 ragged lines. Block: 667-996, y 60-396, over the dark curtain and bright window, with sburn 0.4. It ends ~195 px above the red shorts (~590). Watermark wmxy [60,1250] on the floor and black mat edge. The centre spot sits on her hand (x 640-720), and the right spot on his arm."
+   },
+   {
+    "slot": "3",
+    "photo": "07-482",
+    "why": "SURE. The teacher holds a woman (30s-40s) as she catches her ankles in a deep standing backbend: strong and focused, 'one day you do an asana you could not do before'. This fits the 30s-40s strong-asana hint.",
+    "space": "t=0. Text wide-left (cws 607), top on 60, sz 42: 60-572, y 60-275, over the bright window, sburn 0.45. At sz 42, line 4 ends at x ~564 (y ~186-229) and the credit at x ~416, so his hair (x >= 600, y >= 245) stays clear and no line_br is needed. At sz 46, line 4 would reach ~617, so keep sz 42. Word SURE sideways (wrot -90) on the wooden cabinet: wpos [904,110], wwidth 395, bs 153, ink x 904-1019, y 115-499. It stays inside 1020 and ends above her black top and back (x >= 860 from y ~500). wshadow 1.4. The green mat at the bottom is calm, but t=270 would remove the window text space. Watermark wmxy [660,1250] on the floor and green mat; the centre spot is on their feet."
+   },
+   {
+    "slot": "4",
+    "photo": "07-696",
+    "why": "FEAR (swapped in from 2). A still student with eyes closed in a twist (about 50), with the teacher standing right beside her. This matches the hint's 'a student sitting still with eyes closed, quiet and soft' and the text's 'a teacher who notices'. Calm, not dark.",
+    "space": "t=0. Text wide-left (cws 607), top on 60, sz 42: 60-631, y 60-275, over the curtain and bright window panes, sburn 0.45. The last line is the short credit (x 60-416, y ~255-275), so the shelf statue (x 565-685, y 290-350) stays clear. Word FEAR top-right over the window: x 667-1000, y 60-156, bs 130, shadow 1.8, left edge on the 667 line. The right edge stops at x 1000 because the teacher's shirt reaches x ~1035 at y ~170, and the word stays above the frames (y >= 234). The other spot is the floor between her arm and the teacher's leg, x 590-900, y 1000-1130 (bs ~125). Watermark wmxy [420,1250] (hand-placed) on the black mat, between her shorts (x <= 400) and the teacher's shin (x >= 930). The three standard spots each touch one of them."
+   },
+   {
+    "slot": "5",
+    "photo": "07-310",
+    "why": "TRUST. The teacher's hands are ready as a woman in a backbend is about to come back up: 'your mat and your practice time are still there, waiting for you'. Calm face, eyes closed, bright window light.",
+    "space": "t=0. Text wide-right (cws 607), set flush right (sright) on 1020, top on 60, sz 42: 526-1020, y 60-317, 5 lines + credit. The widest final line is 493 px, so the left edge stays at x >= 526, ~85 px right of the teacher's head and ear (x <= 440, +30 pad = 470). No line_br is needed; at sz 46 the left edge would still be ~480. A narrow 353 column fails: its 415 px block reaches the framed asana chart (x 400-720, y ~412). Bright window, plus the wooden pillar at x >= 975: sburn 0.45. Word TRUST sideways (wrot -90) on the right window strip: wpos [760,420], wwidth 540, bs 168, ink x 760-886, y 423-958, between the chart (x <= 720) and the pillar. wshadow 1.8. Watermark wmxy [660,1180] on the orange mat, ~100 px right of her head."
+   },
+   {
+    "slot": "6",
+    "photo": "07-491",
+    "why": "OPEN. The teacher places an older woman's foot (50s-60s) for a new asana. This matches the hint's 'teacher showing a student a new asana' and 'a new asana makes you a beginner again'. Her face shows effort, not pain. The weakest C layout, kept for its content fit.",
+    "space": "t=0. There is no clean column. Word OPEN sideways (wrot -90) on the left glass strip: wpos [60,330], wwidth 520, bs 196, ink x 60-206, y 334-843 (ink <= 210), ~35 px left of her purple shorts (x ~240). wshadow 1.6. Text narrow-right (cws 353), top on 268 (52 px grid), sz 42, with credit_br 'AYBKK · The Ladder | 6/9'. Block: 667-989, y 268-646. It covers the teacher's upper arm (x 667-780, y ~255-780) for most of its height, so sburn 0.45 is required. It ends ~85 px above his hand on her foot (y ~730) and the Pattabhi Jois frame (y >= 1005). Watermark: no clean spot. Her arms run down at x 240-370 and 670-850 to the bottom edge, and the frame and the teacher's legs fill the right. It is hand-placed at wmxy [372,1250], between her arms, and still overlaps ~55 px of her right forearm. Check by eye."
+   },
+   {
+    "slot": "7",
+    "photo": "07-599",
+    "why": "KIND. The teacher's hand rests softly on a seated student's back while the students face the window, with a grey-haired man beside them. This is the hint's soft adjustment for a long-time student (grey hair welcome).",
+    "space": "t=200. Word KIND in the window band between the deity shelf (ends slide ~15) and the guru portraits (start slide ~200): x 413-769, y 60-170, bs 151, left edge on the 413 line. The band's height caps the size, so the short KIND gets the bs HUMBLE had, just narrower. Text wide-left (cws 607), bottom on 1290 (was bottom on 1120), sz 42: 60-604, y 1075-1290, over the dark mat, floor and the blurred back of a head (no face), with sburn 0.4. With the bottom on 1120, the 215 px block would start at 905, ~15 px under the teacher's bare foot (x 420-520, ends ~880-890). Watermark wmxy [660,1250] over the blurred head's edge and floor."
+   },
+   {
+    "slot": "8",
+    "photo": "06-248",
+    "why": "FREE. The oldest-looking student, a grey-haired man, in a deep Kapotasana with the teacher supporting him: strength kept later in life. The pool has no 60+ student in a standing asana. The teacher is adjusting, so the photo goes to C.",
+    "space": "t=190. Word FREE in the top-left window band: x 60-500, y 60-194, bs 181. It ends ~35 px above the shelf frames (slide 230 at x 0-90, 260 at x 255-365) and left of the teacher's head (x >= 540). Text wide-left (cws 607), bottom on 1290, sz 42: 60-607, y 1075-1290, over the grey cloth and purple mat, ~75 px under the feet (~1000); the old plan had ~13 px. sburn 0.35. Watermark wmxy [660,1250]. The photographer's original, at the centre, would sit under the text."
+   },
+   {
+    "slot": "9",
+    "photo": "07-603",
+    "why": "EASE. Students sit cross-legged in the closing pranayama, seen from behind, and the teacher faces them with eyes closed: 'every practice ends the same way'. Seated and calm. Nobody lies flat, as the hint requires.",
+    "space": "t=270. Word EASE in the window strip between the shelves: x 60-439, y 60-171, bs 147, kept ~30 px above the guru portraits (slide ~200). Small items at x 60-130, y ~245 stay clear. Text wide-left (cws 607), bottom on 1120, sz 42: 60-640, y 947-1120, over the mat ends and floor. A blurred person stands at the right edge (x >= 900). sburn 0.4. Watermark: the photographer's original (wm 'orig', centre, slide 1180-1260) on the floor below the text."
+   }
+  ],
+  "spare_A_PROUD": {
+   "photo": "07-136",
+   "why": "Backup for set A's PROUD slide (moved out of B9). Two students hold a steady Sirsasana, and the man is the same red-shorts 'he'. The teacher behind is mostly hidden and not adjusting. Use only if set A's PROUD (v2/LAg 04, 06-284) is dropped.",
+   "space": "Not usable at t=0: the slide's bottom edge (1350) cuts both headstanders' faces (photo y ~1290-1440). Use t~95: the faces just fit (slide ~1195-1345), and the forearms touch the bottom edge. Text wide-left (cws 607), top on 60: about 60-275 for set A's PROUD line at sz 42. It clears the deity frames (slide ~305) by ~30 px. Word PROUD sideways (wrot -90) down the right window strip, ink x ~880-1020, y ~80-800, right of his legs (x <= 810) and torso (x <= 870). Watermark: none of the three bottom spots is clean (left on her face, centre on his hands, right on his face), so it needs a hand-placed wmxy checked by eye."
+  },
+  "flags": [
+   "Test renders: all 20 B/C slides were rendered with tools/direct20g.py from /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk6/BC/render_final/spec.json (rows in direct20g format, with the final words, texts, line_br and split credits). Output: /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk6/BC/render_final/01.jpg-20.jpg, plus _grid.jpg; contact sheets sheet0-4.jpg and sheet_fix.jpg. All 20 were checked by eye, and all 20 print GRID OK. Text columns are only 353 or 607, all at sz 42. Tops sit on 60, 216, 268 or 834; bottoms on 516, 1120 or 1290. Every rotated word's ink is inside x 1020 (B3 992, B8 1006, B9 1006, C3 1019, C5 886, C6 206).",
+   "zones20.json and frames20.json are empty for these photos. So the watermark is hand-set (wmxy) on every slide except C9 (the photographer's original, 'orig'), and every clearance above was measured by eye on crops.",
+   "Flush-right blocks: B5, C1 and C5 use sright on 1020, so their left edges float at x 500, 499 and 526, not on a grid line. B5 and C1 would hit the left watermark logo (ends x ~416) if left-aligned on 413. C5 would hit the teacher's head (needs x >= 470). If Boonchu wants every left edge on a grid line, these three need another layout.",
+   "Weakest slides: C6 07-491 (the text sits over the teacher's arm, and the watermark overlaps her forearm); B3 07-591 (weakest image, and the watermark sits right under the blurred upside-down face); B2 07-595 (HELPLESS can only reach bs 122).",
+   "Ages: no B-eligible photo shows a 60+ face. After the swaps, B runs: young (2-6), ~50s at 7 EAGER, then the red-shorts man (~40) at 8-9 and a 30s-50s row at 10. The line still dips after 7. This is a known limit for Boonchu, carried by the 'he' thread. C runs 30s+child, 30s, 30s-40s, ~50, 40s, 50s-60s, grey-haired, oldest grey-haired, older man.",
+   "Teacher: no set-B main figure is an adjusting teacher. He is visible but not adjusting on B1 07-292 (watching from the left edge) and B10 07-604 (seated, teaching). He is blurred on B2 07-595 and B8 07-808. B6 07-713's far-background adjusting teacher is cropped out at t=270. No older student lies flat on B10 or C9; both are seated.",
+   "The same red-shorts man appears on B cover 07-292, B8 CALM 07-808 and B9 LOYAL 07-192 (and on the spare 07-136).",
+   "Text with the bottom on 1290 (watermark on the other side): B1, B3, B4, B5, B6, B7, C1, C7, C8. Sideways words (wrot -90): B DOUBT, CALM, LOYAL; C SURE, TRUST, OPEN; spare PROUD.",
+   "Hand line breaks: line_br on B2. Credits split with '|' (credit_br; in spec.json they are in 'credit'): B1, B7, C2, C6.",
+   "Photo use: each photo is used once, 20 + 1 spare. B: 07-292, 07-595, 07-591, 07-747, 07-601, 07-713, 07-725, 07-808, 07-192, 07-604. C: 07-894, 07-717, 07-250, 07-482, 07-696, 07-310, 07-491, 07-599, 06-248, 07-603. Spare A PROUD: 07-136.",
+   "The user's set-A question: v2/LA/final/01-10.json (12:12-12:23) is the pre-grid set. Its widths are 440, 420, 600, 560, 320, 520, 276, 560, 440 and 290, and it fails the grid check on all 10, so the reviewer is right about that folder. v2/LAg/final/01-10.json (13:22-13:42) is the grid re-lay: only 353 and 607 columns, and 10/10 pass the same check. What can still look off-grid there: the flush-right blocks' left edges float at x 494 (01), 494 (04), 540 (08) and 692 (10); 03, 06 and 09 sit 4-16 px off a line. sz still varies 42/44/46 across slides. 04 starts on the 52 px baseline (996), not a golden line."
+  ],
+  "rejected": [
+   "B10 07-604 layout (accepted the swap, rejected the layout): the text is not narrow-left with the bottom on 1290, and the watermark is not at the right spot y 1250. At y 1250 the right spot still sits on the front woman's thigh (to slide ~1330) and ~15 px under her hand (to ~1235). Instead the text goes top on 834 (834-1175) and the watermark left at [60,1250] on the mint mat.",
+   "B5 07-601 layout detail: the text is not left-aligned at 413 in the wide-right column. The left watermark logo spans x ~64-416, so a block starting at 413 would touch it. It is set flush right (500-1020) instead. 'HURT across x 300-1020' cannot use the full 720 px: that gives bs 274 and 204 px of height, which crosses the frame at y 210. HURT gets x 595-1020 at bs 162.",
+   "C5 07-310 'set line_br so every TRUST line is <= 550': not needed. The final TRUST text wraps to at most 493 px at sz 42, so flush right already puts the left edge at 526, past the head limit of 470. The concern is real but needs no fix.",
+   "C3 07-482 'keep text line 4 short with line_br': not needed at sz 42. Line 4 ends at x ~564 and y ~229, above and left of his hair (x >= 600, y >= 245). It only matters at sz 46, so the slide is pinned to sz 42.",
+   "C4 07-696 FEAR 'top-right x 700-1020 at bs ~125': adjusted to x 667-1000 (bs 130). The left edge is on the 667 grid line. The right edge pulls in to 1000 because the teacher's shirt reaches x ~1035 at y ~170.",
+   "C2 07-250 SAFE 'x 60-480 (bs ~160)': enlarged to x 60-540 (bs 188). It still clears the teacher's head by ~50 px and her feet by ~95 px.",
+   "B7 07-725 text 'bottom on 1290 (~1075-1290), ~85 px under her cream top': changed to 1038-1290, ~45 px, with the credit split into 2 lines. On one line the 578 px credit ends at x 638, 26 px from the right watermark logo.",
+   "B1 07-292 WILLING 'x ~230-1020': used x 230-994, with the top at y 90, not 60. The flowers at x 890-950 reach slide y ~55. bs 190 as the reviewer predicted.",
+   "USER'S SET-A QUESTION 'set A's small text has not been re-laid on the grid yet': only true for v2/LA/final. v2/LAg/final/01-10 is the grid re-lay (353/607 only, 10/10 GRID OK). Its remaining off-grid look is the floating left edges of the flush-right blocks and the mixed sz 42-46 (see flags).",
+   "Changes the reviewer did not ask for, made after the test renders: B8 07-808 t 0->40 (watermark touched his elbow), C cover 07-894 t 0->80 (every bottom watermark spot hit a student), C7 07-599 text bottom 1120->1290 (it would have started ~15 px under the teacher's foot), B2 07-595 line_br (the final 604 px wrap ran onto the standing man's arm)."
+  ]
+ }
+}
