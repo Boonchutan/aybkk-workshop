@@ -75,6 +75,7 @@
     padding:1px 6px;border-radius:5px;border:1px solid var(--line);color:var(--soft)}
   .row .tag.rz{color:#8fc7ff;border-color:rgba(143,199,255,.4)}
   .row .tag.dp{color:var(--pink);border-color:rgba(255,111,174,.4)}
+  .row .tag.mt{color:#ffc857;border-color:rgba(255,200,87,.5)}
   .add{width:100%;margin:0 0 12px;padding:13px;border-radius:8px;border:1px dashed var(--plum);
     background:none;color:var(--plum);font:inherit;font-weight:600;font-size:15px;cursor:pointer}
   .add:disabled{opacity:.35;cursor:default}
@@ -270,7 +271,8 @@
   }
 
   // Rezerv: no aybkk.net pass yet. Drop-in: a 1-class pass. walk-in: added here.
-  const tags = b => [b.cover === 'rezerv' && ['Rezerv', 'rz'], b.dropin && ['Drop-in', 'dp'],
+  // mat: ticked "I need a mat" when booking, so have a rental mat ready.
+  const tags = b => [b.need_mat && ['mat', 'mt'], b.cover === 'rezerv' && ['Rezerv', 'rz'], b.dropin && ['Drop-in', 'dp'],
     b.source === 'door' && ['walk-in', '']].filter(Boolean);
 
   // The server refuses a walk-in once the class is over: say so on the button
@@ -290,8 +292,9 @@
     const term = $('#q').value.trim().toLowerCase();
     const inC = g.list.filter(b => b.checked_in_at).length;
     $('#ctitle').textContent = time(g.startAt) + ' · ' + g.title;
+    const mats = g.list.filter(b => b.need_mat).length;
     $('#ccount').innerHTML = `<b>${inC}</b> in / ${g.list.length} booked`
-      + (g.capacity != null ? ` / ${esc(g.capacity)} places` : '');
+      + (g.capacity != null ? ` / ${esc(g.capacity)} places` : '') + (mats ? ` · ${mats} mat${mats > 1 ? 's' : ''}` : '');
     const rows = g.list.filter(b =>
       !term || String(b.name).toLowerCase().includes(term) || String(b.code).toLowerCase().includes(term));
     $('#list').innerHTML = rows.length ? rows.map(b => `

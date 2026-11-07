@@ -679,6 +679,11 @@
   .cls .open:hover{text-decoration:underline}
   .cls.mine{background:var(--promo-soft);padding-left:12px;box-shadow:inset 4px 0 0 var(--promo)}
   .pill.ok{background:var(--promo-soft);color:var(--promo-deep)}
+  /* "I need a mat": a small tick under the class, not a second button. */
+  label.mat{display:flex;align-items:center;gap:8px;margin:6px 0 0;font:400 13.5px/1.35 var(--f-text);color:var(--ink);cursor:pointer;width:fit-content;max-width:100%}
+  label.mat input{width:20px;height:20px;min-height:0;margin:0;padding:0;flex:0 0 auto;accent-color:var(--plum);cursor:pointer}
+  .mystate label.mat{margin-top:14px;font-size:15px}
+  dialog label.mat{margin-top:14px}
   /* Inside a class: tall enough that the tabs can sit at the top of the screen. */
   .inside{min-height:calc(100vh - 110px)}
   .backbtn{display:inline-flex;align-items:center;gap:6px;min-height:48px;margin:0 0 14px;padding:8px 18px 8px 12px;border-radius:0;
@@ -699,7 +704,13 @@
   .mystate.full .big{color:var(--soft)}
   .mystate .btn{margin-top:14px;min-height:50px;padding:14px 30px;font-size:16px}
   .mystate .note{margin:12px 0 0}
-  .cls{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:2px solid var(--line)}
+  .cls{display:flex;flex-wrap:wrap;gap:0 14px;align-items:center;padding:14px 0;border-top:2px solid var(--line)}
+  /* In a list row the tick takes a line of its own under the class name, so a long
+     label (Russian) does not make the row tall. On a small phone only the indent
+     shrinks, so the tick keeps one line. */
+  .cls > .matrow{flex:0 0 100%;display:flex}
+  .cls > .matrow::before{content:'';flex:0 1 76px}
+  .cls > .matrow label.mat{margin-top:4px;flex-shrink:0}
   .cls .t{font:600 21px/1 inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em;
     color:var(--plum);min-width:62px}
   .cls .b{flex:1;min-width:0}
@@ -992,7 +1003,7 @@
       <ul class="points">
         <li data-i18n="f1">New to Mysore style? Start with a monthly package, so the teacher can guide you step by step. Drop-in is for visitors who already know the sequence.</li>
         <li data-i18n="f2">Plan to practise at least 4 days a week, and book your classes in advance.</li>
-        <li class="xm" id="fst3" data-i18n="f3">Bring your own mat and a towel, and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.</li>
+        <li class="xm" id="fst3" data-i18n="f3">Bring your own mat and a towel, or tick "I need a mat" when you book and rent one at the shala for ฿200. Wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.</li>
         <li class="xm" id="fst4" data-i18n="f4">No phones, no photos and no talking in the shala during practice.</li>
         <li class="xm" id="fst5" data-i18n="f5">After practice, clean your mat and the floor around it with the spray we provide.</li>
         <li class="xm" id="fst6" data-i18n="f6">The shala is closed on full moon and new moon days.</li>
@@ -1124,7 +1135,7 @@
       firstH: 'Your first class',
       f1: 'New to Mysore style? Start with a monthly package, so the teacher can guide you step by step. Drop-in is for visitors who already know the sequence.',
       f2: 'Plan to practise at least 4 days a week, and book your classes in advance.',
-      f3: 'Bring your own mat and a towel, and wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.',
+      f3: 'Bring your own mat and a towel, or tick "I need a mat" when you book and rent one at the shala for ฿200. Wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.',
       f4: 'No phones, no photos and no talking in the shala during practice.',
       f5: 'After practice, clean your mat and the floor around it with the spray we provide.',
       f6: 'The shala is closed on full moon and new moon days.',
@@ -1214,7 +1225,7 @@
       firstH: 'คลาสแรกของคุณ',
       f1: 'ยังไม่เคยฝึกแบบมายซอร์? เริ่มด้วยแพ็กเกจรายเดือน แบบครั้งเดียว (drop-in) สำหรับผู้ที่จำลำดับท่าได้แล้วเท่านั้น',
       f2: 'ตั้งใจฝึกอย่างน้อยสัปดาห์ละ 4 วัน และจองคลาสล่วงหน้า',
-      f3: 'นำเสื่อโยคะและผ้าเช็ดตัวมาเอง ใส่ชุดที่เคลื่อนไหวสะดวก มาก่อนเวลาเล็กน้อยเพื่อเตรียมตัวและคุยกับครู',
+      f3: 'นำเสื่อโยคะและผ้าเช็ดตัวมาเอง หรือติ๊ก "ต้องการเช่าเสื่อ" ตอนจอง แล้วเช่าที่ชาลา ฿200 ใส่ชุดที่เคลื่อนไหวสะดวก มาก่อนเวลาเล็กน้อยเพื่อเตรียมตัวและคุยกับครู',
       f4: 'ระหว่างการฝึก ห้ามใช้โทรศัพท์ ห้ามถ่ายรูป และงดพูดคุยในห้องฝึก',
       f5: 'ฝึกเสร็จแล้ว ทำความสะอาดเสื่อและพื้นรอบ ๆ ด้วยสเปรย์ที่เราเตรียมไว้',
       f6: 'AYBKK ปิดในวันพระจันทร์เต็มดวงและวันพระจันทร์ดับ (moon day)',
@@ -1304,7 +1315,7 @@
       firstH: '你的第一堂课',
       f1: '第一次上迈索尔课？请从月度套餐开始。单次课（drop-in）只适合已经熟悉序列的学生。',
       f2: '请计划每周至少练习4天，并提前预约课程。',
-      f3: '请自带瑜伽垫和毛巾，穿方便活动的衣服。提前到达，有时间安顿下来并与老师交谈。',
+      f3: '请自带瑜伽垫和毛巾，或在预约时勾选“需要租瑜伽垫”，在道场租垫 ฿200。穿方便活动的衣服。提前到达，有时间安顿下来并与老师交谈。',
       f4: '练习期间，练习室内不可使用手机、拍照或交谈。',
       f5: '练习结束后，请用我们准备的清洁喷雾擦干净垫子和周围的地面。',
       f6: '每逢满月和新月（月亮日），AYBKK 停课。',
@@ -1394,7 +1405,7 @@
       firstH: 'Ваше первое занятие',
       f1: 'Впервые в Майсор-классе? Начните с месячного абонемента. Разовое посещение (drop-in) — только для тех, кто уже знает последовательность.',
       f2: 'Планируйте практиковать не меньше 4 дней в неделю и записывайтесь на занятия заранее.',
-      f3: 'Возьмите свой коврик и полотенце, наденьте удобную одежду. Приходите пораньше, чтобы спокойно устроиться и поговорить с учителем.',
+      f3: 'Возьмите свой коврик и полотенце или отметьте «Нужен коврик» при записи: коврик в шале стоит ฿200. Наденьте удобную одежду. Приходите пораньше, чтобы спокойно устроиться и поговорить с учителем.',
       f4: 'Во время практики в зале нельзя пользоваться телефоном, фотографировать и разговаривать.',
       f5: 'После практики протрите коврик и пол вокруг него спреем, который мы оставляем в зале.',
       f6: 'В дни полнолуния и новолуния (лунные дни) занятий нет.',
@@ -1781,6 +1792,14 @@
     cancelBack: 'Запись отменена. Занятие вернулось на абонемент.',
     cancelLate: h => `Запись отменена. До занятия было меньше ${h} ч, поэтому занятие списано.`,
   });
+
+  // Mat rental, ticked when booking: a flat ฿200, VAT included, paid at the shala
+  // (Boonchu, 7 Nov 2026). Nothing is charged online; the morning brief tells the
+  // teachers who needs one and to collect it.
+  Object.assign(STR.en, { needMat: 'I need a mat (฿200, pay at the shala)' });
+  Object.assign(STR.th, { needMat: 'ต้องการเช่าเสื่อ (฿200 จ่ายที่ชาลา)' });
+  Object.assign(STR.zh, { needMat: '需要租瑜伽垫（฿200，在道场付款）' });
+  Object.assign(STR.ru, { needMat: 'Нужен коврик (฿200, оплата в шале)' });
 
   // Class names in the page language, for the drop-in class list and the
   // "you are booked" message. Anything not listed stays as the shala wrote it.
@@ -2310,6 +2329,15 @@
   }
   const mine = () => (MINE.code && MINE.code === myCode() ? MINE : { ok: false, map: new Map() });
 
+  // "I need a mat": before booking, the tick rides along with Book (kept per
+  // class while the page is open); on a seat already booked it changes that
+  // seat. Online classes are practised at home, so they have none.
+  const MAT_WANT = new Set();
+  const matBox = (c, b) => c.isOnline ? '' : b
+    ? `<label class="mat"><input type="checkbox" data-matbk="${Number(b.id)}"${b.need_mat ? ' checked' : ''}>${esc(t('needMat'))}</label>`
+    : `<label class="mat"><input type="checkbox" data-mat="${esc(clsKey(c))}"${MAT_WANT.has(clsKey(c)) ? ' checked' : ''}>${esc(t('needMat'))}</label>`;
+  const matRow = (c, b) => { const m = matBox(c, b); return m ? `<div class="matrow">${m}</div>` : ''; };
+
   // After a booking or a cancel: new seat counts and booked marks, same screen.
   async function refreshSchedule() {
     try {
@@ -2477,6 +2505,7 @@
         </div>
         ${b ? `<button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>`
           : `<button type="button" class="btn" ${full ? 'disabled' : ''} data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button>`}
+        ${b || !full ? matRow(c, b) : ''}
       </div>`;
     }
     return html;
@@ -2489,10 +2518,12 @@
     const b = mine().map.get(OPEN), full = c.seatsLeft < 1;
     const end = new Date(Date.parse(c.startAt) + (Number(c.durationMin) || 0) * 60e3).toISOString();
     const state = b ? `<div class="mystate yes"><div class="big">✓ ${esc(t('youBooked'))}</div>
+        ${matBox(c, b)}
         <button type="button" class="btn ghost" data-act="cancel" data-id="${Number(b.id)}">${esc(t('cancelBk'))}</button>
         <p class="note">${esc(t('cancelRule', CANCEL_HOURS))}</p></div>`
       : full ? `<div class="mystate full"><div class="big">${esc(t('full'))}</div></div>`
       : `<div class="mystate no"><div class="big">${esc(t('notBooked'))}</div>
+        ${matBox(c, null)}
         <button type="button" class="btn pink" data-act="book" data-slot="${Number(c.slotId)}" data-date="${esc(c.date)}">${esc(t('book'))}</button></div>`;
     $('#view').innerHTML = `<div class="inside"><button type="button" class="backbtn" data-act="back">‹ ${esc(t('back'))}</button>
       <div class="clsv">
@@ -2629,6 +2660,7 @@
       return load();
     }
     if (current !== 'schedule') return;
+    if (e.target.closest('label.mat')) return;  // the tick box, not the class row under it
     const kb = e.detail === 0;                  // Enter or Space on a button
     const focus = (...sels) => {
       if (!kb) return;
@@ -2668,6 +2700,25 @@
     if (c) return openCls(c.dataset.cls, kb);
     const d = e.target.closest('.cal .d[data-day]');
     if (d) { selDate = d.dataset.day; renderSchedule(); focus(`.d[data-day="${selDate}"] .dn`); }
+  });
+
+  // Any view: the schedule, the class, and My pass all carry mat ticks.
+  $('#view').addEventListener('change', async e => {
+    const want = e.target.closest('input[data-mat]');
+    if (want) { if (want.checked) MAT_WANT.add(want.dataset.mat); else MAT_WANT.delete(want.dataset.mat); return; }
+    const cb = e.target.closest('input[data-matbk]');
+    if (!cb) return;
+    const id = Number(cb.dataset.matbk), on = cb.checked;
+    cb.disabled = true;
+    try {
+      const r = await fetch(`/api/bkk/bookings/${id}/mat`, { method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberCode: myCode(), needMat: on }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || 'Could not save. Please try again.');
+      for (const b of MINE.map.values()) if (Number(b.id) === id) b.need_mat = on;
+    } catch (err) { cb.checked = !on; alert(err.message); }
+    finally { cb.disabled = false; }
   });
 
   function renderPackages() {
@@ -2730,6 +2781,7 @@
         <div class="b"><div class="n">${esc(clsName(b.title))}</div>
           <div class="m">${esc(fmtDay(b.start_at))}</div></div>
         <button class="btn ghost" onclick="cancelBooking(${b.id})">${esc(t('cancelBk'))}</button>
+        ${matRow({ isOnline: b.is_online }, b)}
       </div>`).join('') || `<p class="note">${esc(t('noUpcoming'))}</p>`;
       // Mornings, not classes: Saturday's two led classes are one morning.
       const h = d.history || { days: 0, thisMonth: 0, recent: [] };
@@ -3044,12 +3096,13 @@
       && (c.date <= last || key(c) === preKey)) : [];
     const picker = !single ? '' : opts.length
       ? `<label>${esc(t('dropWhich'))}</label><select id="bc"><option value="">${esc(t('dropPick'))}</option>${
-          opts.map(c => `<option value="${esc(key(c))}" ${key(c) === preKey ? 'selected' : ''}>${
+          opts.map(c => `<option value="${esc(key(c))}"${c.isOnline ? ' data-online="1"' : ''} ${key(c) === preKey ? 'selected' : ''}>${
             esc(clsWhen(c.startAt))} · ${esc(clsName(c.title))}</option>`).join('')}</select>`
       : `<div class="msg bad">${esc(t('dropNone'))}</div>`;
     $('#dlgIn').innerHTML = `<h3>${esc(pkgName(p))} · ${baht(p.total_thb)}</h3>
       ${intro ? `<p class="note" style="margin:0 0 4px">${esc(intro)}</p>` : ''}
       ${picker}
+      ${single && opts.length ? `<label class="mat"><input type="checkbox" id="bmat"${MAT_WANT.has(preKey) ? ' checked' : ''}>${esc(t('needMat'))}</label>` : ''}
       <label>${esc(t('name'))}</label><input id="bn" autocomplete="name">
       <label>${esc(t('email'))}</label><input id="be" type="email" autocomplete="email">
       <label>${esc(t('phone'))}</label><input id="bp" autocomplete="tel">
@@ -3058,6 +3111,11 @@
       <button class="btn ghost" onclick="document.getElementById('dlg').close()">${esc(t('cancel'))}</button></p>
       ${intro ? `<p><button class="linkbtn" id="bhave">${esc(t('havePass'))}</button></p>` : ''}`;
     $('#dlg').showModal();
+    // An online class is practised at home: no mat to rent, so no tick.
+    const onlinePick = () => !!($('#bc') && $('#bc').selectedOptions[0] && $('#bc').selectedOptions[0].dataset.online);
+    const syncMat = () => { if ($('#bmat')) $('#bmat').closest('label').style.display = onlinePick() ? 'none' : ''; };
+    if ($('#bc')) $('#bc').addEventListener('change', syncMat);
+    syncMat();
     if ($('#bhave')) $('#bhave').onclick = () => { $('#dlg').close(); tab('me'); };
     $('#bgo').onclick = async () => {
       const name = $('#bn').value.trim(), email = $('#be').value.trim(), phone = $('#bp').value.trim();
@@ -3069,7 +3127,7 @@
         const r = await fetch('/api/bkk/orders', { method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ productCode: code, name, email, phone, memberCode: myCode(),
-            ...(single ? { slotId: Number(slotId), date } : {}) }) });
+            ...(single ? { slotId: Number(slotId), date, needMat: !!($('#bmat') && $('#bmat').checked) && !onlinePick() } : {}) }) });
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || 'could not create order');
         // An email that already has a profile: its code is not handed to this
@@ -3136,12 +3194,13 @@
     try {
       const r = await fetch('/api/bkk/bookings', { method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ memberCode: code, slotId, date }) });
+        body: JSON.stringify({ memberCode: code, slotId, date, needMat: MAT_WANT.has(slotId + '|' + date) }) });
       const j = await r.json();
       if (!r.ok) {
         if (/no active pass/.test(j.error || '') && offerDropin(slotId, date)) return;
         throw new Error(j.error);
       }
+      MAT_WANT.delete(slotId + '|' + date);
       BUSY = false;
       // Said at once; the new seats and marks come in behind the message.
       refreshSchedule();

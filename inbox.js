@@ -7,7 +7,8 @@
 //
 // Messages live in aybkk_inbox (the private Postgres, never the public repo)
 // for 90 days, except the English priority list (see below). Machi, the chief-of-staff routine, reads GET /api/inbox three
-// times a day and drafts the replies. With ANTHROPIC_API_KEY set, a message is
+// times a day and drafts the replies; the Desk reads the same answer at
+// GET /api/bkk/admin/inbox with x-bkk-key. With ANTHROPIC_API_KEY set, a message is
 // also sorted as it arrives and hot ones reach Boonchu's Telegram at once.
 // Applications from the In-Depth Mysore pages (POST /api/in-depth/apply) land
 // here too, on channel 'apply', already marked hot and tagged with their list.
@@ -528,7 +529,14 @@ function mountInbox(app, opts = {}) {
     next();
   }
 
-  app.get('/api/inbox', inboxKey, async (req, res) => {
+  // The Desk holds only the aybkk.net key (x-bkk-key). It reads the inbox at
+  // GET /api/bkk/admin/inbox through the same handler, so both answers match.
+  const ADMIN_KEY = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '';
+  const adminOnly = (req, res, next) => ADMIN_KEY && safeEqual(req.headers['x-bkk-key'], ADMIN_KEY)
+    ? next() : res.status(401).json({ error: 'bad key' });
+
+  // ?since= (default: the last 24 hours). Nothing here is logged: the threads are customers' words.
+  async function threadsSince(req, res) {
     const since = req.query.since ? new Date(req.query.since) : new Date(Date.now() - 24 * 3600 * 1000);
     if (isNaN(since)) return res.status(400).json({ error: 'since must be a date, e.g. 2026-09-30T07:00:00Z' });
     try {
@@ -561,7 +569,9 @@ function mountInbox(app, opts = {}) {
         threads: [...threads.values()],
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
-  });
+  }
+  app.get('/api/inbox', inboxKey, threadsSince);
+  app.get('/api/bkk/admin/inbox', adminOnly, threadsSince);
 
   // A whole list in the order people joined: seats go in this order. One entry
   // per email; a second try keeps the place of the first and shows the latest answers.
