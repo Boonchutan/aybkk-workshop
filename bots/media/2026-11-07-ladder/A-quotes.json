@@ -1,0 +1,190 @@
+{
+ "key": "A-quotes",
+ "final": {
+  "style": "THE LADDER OF WORDS. A cover, then 9 life steps. Each step carries one old saying, checked against its source, and no two sayings come from the same country. In order: Hebrew, Thai, Swahili (East Africa), American, Japanese, Persian, Korean, Russian, Chinese. Each slide has one emotional big word, then the point of the step, then who said it and the exact words. Non-English folk sayings appear in the original script with a literal English gloss. The Psalm and Ferdowsi use a named published translation.",
+  "title": "The Ladder of Words: 9 steps of life, 9 cultures",
+  "stakes": "If you do nothing, every step still comes on its own schedule: the sickness, the slow road back, the older body. You just meet each one with whatever body and habits you happened to keep, and there is no rehearsal.",
+  "why_care": "Every reader is standing on one of these steps today. The habits you keep this year are what you carry onto the next step, and the next step never waits until you feel ready.",
+  "slides": [
+   {
+    "slot": "cover",
+    "step": "cover: the whole ladder (steps you cannot skip; how you climb changes how each feels)",
+    "word": "READY",
+    "text": "Nobody skips a step of life, not even the healthiest. You only choose how READY you arrive.",
+    "credit": "9 steps · swipe",
+    "source": "none",
+    "photo_hint": "Wide shot of the Mysore room with students of very different ages on their mats in early light, so the ladder of ages is visible in one frame"
+   },
+   {
+    "slot": "1",
+    "step": "born (a new body, wonder)",
+    "word": "WONDER",
+    "text": "Life starts in WONDER, before you can do a single thing. Plato, the Greek thinker, wrote: \"philosophy begins in wonder.\" Philosophy means the love of wisdom.",
+    "credit": "Plato · Theaetetus · tr. Benjamin Jowett",
+    "source": "https://www.gutenberg.org/cache/epub/1726/pg1726.txt (Theaetetus, tr. Jowett): \"for wonder is the feeling of a philosopher, and philosophy begins in wonder.\" Swapped in by Plato 7 Nov for Psalm 139 (scripture is risky on Chinese apps).",
+    "photo_hint": "A student curled small in Balasana (child's asana), soft light, quiet and new"
+   },
+   {
+    "slot": "2",
+    "step": "growing up (play, learning to move)",
+    "word": "JOY",
+    "text": "Children learn to move through JOY, not rules. Thais say: \"ไม้อ่อนดัดง่าย ไม้แก่ดัดยาก\" (young wood is easy to bend, old wood is hard to bend). Old wood still bends, just slower.",
+    "credit": "Thai proverb (สำนวน) · Thai Wiktionary · our translation",
+    "source": "https://th.wiktionary.org/wiki/ไม้อ่อนดัดง่าย_ไม้แก่ดัดยาก : headword \"ไม้อ่อนดัดง่าย ไม้แก่ดัดยาก\", marked (สำนวน), defined \"อบรมสั่งสอนเด็กให้เด็กประพฤติดีได้ง่ายกว่าอบรมสั่งสอนผู้ใหญ่\"",
+    "photo_hint": "The youngest student or a young adult laughing mid-jump-through or in Navasana, playful and light"
+   },
+   {
+    "slot": "3",
+    "step": "getting strong (living and building strength)",
+    "word": "PROUD",
+    "text": "Real strength makes you PROUD because you built it yourself, one small day at a time. A Swahili proverb: \"Haba na haba hujaza kibaba\" (little by little fills up the measure).",
+    "credit": "Swahili proverb, East Africa · Swahili Proverbs, University of Illinois",
+    "source": "http://swahiliproverbs.afrst.illinois.edu/proverbs.htm : \"Methali: HABA NA HABA HUJAZA KIBABA Meaning: Little by little fills up the measure. Application: Great investments are borne out of small savings.\"",
+    "photo_hint": "A strong student in their 20s or 30s holding Bakasana or a steady Utkatasana, muscles working, face calm"
+   },
+   {
+    "slot": "4",
+    "step": "getting sick (it comes to everyone)",
+    "word": "FRAGILE",
+    "text": "Nobody is too strong to feel FRAGILE. Sickness visits every life. Susan Sontag wrote: \"Everyone who is born holds dual citizenship,\" one with the healthy, one with the sick.",
+    "credit": "Susan Sontag · Illness as Metaphor, 1978",
+    "source": "https://www.nybooks.com/articles/1978/01/26/illness-as-metaphor/ (New York Review of Books, 26 Jan 1978, opening of the essay that became the 1978 book): \"Illness is the night-side of life, a more onerous citizenship. Everyone who is born holds dual citizenship, in the kingdom of the well and in the kingdom of the sick.\"",
+    "photo_hint": "A student resting low and quiet, for example lying on the back between asanas with eyes closed. No bandages, braces or pain on the face"
+   },
+   {
+    "slot": "5",
+    "step": "healing (coming back)",
+    "word": "HOPE",
+    "text": "Healing has its own pace, but HOPE grows each time you get back up. The Japanese say: \"七転び八起き\" (fall down seven times, get up eight). Your mat waits for you.",
+    "credit": "Japanese proverb · Digital Daijisen (Shogakukan) · our translation",
+    "source": "https://kotobank.jp/word/七転び八起き-589160 (デジタル大辞泉): \"《七度転んで八度起き上がる意から》多くの失敗にもめげず、そのたびに奮起して立ち直ること。\"",
+    "photo_hint": "A student coming up from a backbend to standing, or rising out of a forward fold: the 'get up eight' moment"
+   },
+   {
+    "slot": "6",
+    "step": "a strong brain (learning, a sharp mind)",
+    "word": "CURIOUS",
+    "text": "A CURIOUS mind is strength that does not need muscles. The Persian poet Ferdowsi told readers to \"roam earth, converse with every one.\" Keep asking.",
+    "credit": "Ferdowsi · Shahnameh, c. 1010 · tr. A. G. and E. Warner, 1905",
+    "source": "https://archive.org/download/shahnama01firduoft/shahnama01firduoft_djvu.txt (The Shahnama of Firdausi, done into English by Arthur George Warner and Edmond Warner, Vol. I, London: Kegan Paul, 1905, The Prelude, §2 'Discourse in Praise of Wisdom', p. 102): \"Learn by the words of sages how to wend / Thy way, roam earth, converse with every one ;\"",
+    "photo_hint": "A student watching closely while Boonchu shows or adjusts an asana, eyes on the detail, a learning face, or two students talking on their mats after practice"
+   },
+   {
+    "slot": "7",
+    "step": "becoming wise",
+    "word": "HUMBLE",
+    "text": "Wise people stay HUMBLE: the more they know, the more they listen. A Korean proverb: \"벼는 익을수록 고개를 숙인다\" (the riper the rice plant, the more it bends its head).",
+    "credit": "Korean proverb (속담) · tr. Wiktionary",
+    "source": "https://en.wiktionary.org/wiki/벼는_익을수록_고개를_숙인다 : \"the riper the rice plant, the more it bends its head\": wise people are humble",
+    "photo_hint": "A long-time or senior student folding forward in Paschimottanasana or Uttanasana, head bowed like ripe rice"
+   },
+   {
+    "slot": "8",
+    "step": "staying strong (keeping what you built, later in life)",
+    "word": "GRATEFUL",
+    "text": "Later in life, you feel GRATEFUL you kept moving. Russians say: \"Береги платье снову, а здоровье смолоду\" (care for clothes while new, health while young). You will never be younger than today.",
+    "credit": "Russian proverb · V. I. Dal, Proverbs of the Russian People, 1862 · our translation",
+    "source": "https://ru.wikisource.org/wiki/Пословицы_русского_народа_(Даль)/Здоровье_—_Хворь (Dal, section Health and Sickness): \"Береги платье снову, а здоровье смолоду.\"",
+    "photo_hint": "An older student (60+) in a steady standing balance such as Utthita Hasta Padangusthasana or Virabhadrasana, strong and smiling"
+   },
+   {
+    "slot": "9",
+    "step": "getting weak and near the end of life (slowing down, peace, gratitude)",
+    "word": "PEACE",
+    "text": "Every body slows, and a long life can still end in PEACE, like a leaf going home. A Chinese saying: \"落叶归根\" (fallen leaves will return to the roots). Thank your body.",
+    "credit": "Chinese idiom · originally 葉落歸根, Jingde Record of the Lamp, c. 1004 · tr. Wiktionary",
+    "source": "https://en.wiktionary.org/wiki/落葉歸根 : simplified 落叶归根, \"lit=fallen leaves will return to the roots\"; \"From Song dynasty book 《景德傳燈錄》 by 釋道原, originally written as 葉落歸根: 葉落歸根，來時無口。\"",
+    "photo_hint": "The oldest student in a quiet seated asana (Padmasana or simple cross-legged) or resting at the end of practice, eyes closed, soft warm light"
+   }
+  ],
+  "caption": "Nobody skips a step of life, not even the healthiest.\nA moving life does not let you skip one. It lets you meet each one stronger and calmer.\nWhich step are you on right now?\n#aybkk #ashtanga #ashtangabangkok #boonchutanti",
+  "notes": "BOONCHU MUST CONFIRM BEFORE POSTING:\n(1) Slide 1 is Bible text (Psalm 139 has the heading 'A Psalm of David', and David was a king). The slide names no king, no God and no Israel. It is fine for Instagram and LINE. On Xiaohongshu and WeChat, China's 2022 rules on religious content online could flag a scripture verse. Please OK it for China, or ask for a China-only swap. Any new saying needs a fresh source check first.\n(2) Slide 2: Thai readers know this proverb as a saying about bringing up children, since it is easier to teach a child than an adult. Sentence 1 is now about children learning, which fits that meaning, and 'Old wood still bends, just slower' answers the 'too late for me' reading. Please OK.\n(3) Slide 6 has a NEW Ferdowsi line. The old one ('Thy source of might is knowledge...') was not from the praise-of-wisdom section. It ends §1 of the Prelude, 'In the Name of God' (p.101), just after 'Adore Him... Observing His commands', so the knowledge it means is knowing God's commands, and it also used old words (Thy, might, thus). The new line is from §2, 'Discourse in Praise of Wisdom', p.102. I checked it word for word in the archive.org Warner text. That passage calls wisdom God's best gift, but the quoted words name no god and no king. 'Shahnameh' means 'Book of Kings' and appears only in the credit.\n(4) Slide 9 says 'a long life can still end in PEACE', a gentle mention of the end of life. 落叶归根 means going home to your roots, so the slide now says 'like a leaf going home' and not 'letting go'. In the 1004 Zen book, the Sixth Patriarch (Huineng) says it before going home, where he died calmly at 76. That is in the notes only, never on the slide. Please OK this wording for the Chinese audience.\n(5) Slide 8: the health line is word for word in Dal (Wikisource). From memory, not checked this session: Russians know the 'honour' version (береги честь смолоду) better, so some readers may take this one as a twist on that famous line. It is still a genuine Dal proverb.\n\nFIXES APPLIED: cover credit is now '9 steps · swipe' (there are 9 steps). Slide 1 says 'Life starts in WONDER', so WONDER is a feeling, not a thing. Slide 2 has the new gloss, the new sentence 1, plain sentence 3 and a source added to the credit. Slide 4 is split into short sentences and 'the well' becomes 'the healthy' (outside the quote marks), so nobody reads it as a water well. The quoted words are unchanged. Slide 5 adds 'Your mat waits for you' to link healing to the habit. Slide 6 has the new quote. Slide 8 now says 'you kept moving' and 'You will never be younger than today'. Slide 9 has the 'get weak' step ('Every body slows'), 'going home', present-tense 'Thank your body', and the credit wording follows Wiktionary's 'originally written as'. The style line now says the Psalm and Ferdowsi use published translations.\n\nFIXES REJECTED OR CHANGED: (a) The reader check wanted to keep 'Healing is slow for everyone'. I rejected that because it is an unsupported claim about everyone and works against 'you come back faster'. I used 'Healing has its own pace', which makes no claim about speed. (b) The reader check wanted 'You are never younger than today'. I rejected it because it has the same logic flaw as before (you were younger in the past). I used the fact check's 'You will never be younger than today' and shortened sentence 1 to keep the slide at 32 words. (c) The reader check wanted slide 6 sentence 1 to say 'a strength you can grow at any age'. I left it out because it comes close to a brain-health promise, and I kept the original sentence 1. (d) The reader check's slide 9 credit said 'first found as', which claims more than the source does. I changed it to 'originally', which matches Wiktionary's words.\n\nCHECKS: word counts (scratchpad/ladder/edfinal/count.py) are cover 17, then 26, 30, 31, 29, 30, 25, 30, 32 and 31. Every step slide is 16 to 32 words, and sentence 1 holds the big word. Each big word appears once and is 3 to 8 letters. There are no long dashes, no 'pose' and no emoji on the slides. None of the nine people or sayings, including the new Ferdowsi line, is in used.txt or used_early.txt, or in posted slides on claude/bots-memory (git grep). The Dal line and 七転び八起き appear there only as unused research candidates. The bracketed English for the Thai, Japanese and Russian sayings is our own literal translation, and the credits say so. The Swahili, Korean and Chinese glosses are the sources' own words. The old count.py in the ladder folder still has an earlier slide 8 line. Use this JSON as the final version.\n\nHOUSEKEEPING: used.txt is missing items already posted (Tagore, Three Character Classic, Aristotle, Russian 'live and learn'). Merge it with bots/media/2026-10-12-guide-light/used_quotes_after.txt on claude/bots-memory, and add these nine sayings once this carousel is posted.\n\nHONESTY: no slide says easy, painless or free of sickness. The cover says nobody skips a step, slide 4 says sickness visits every life, and slide 9 says every body slows. The only promise is 'stronger and calmer' (caption, the owner's own message) and 'how READY you arrive' (cover). There are no numbers, studies or medical claims.\n\nPHOTO ORDER: ages should rise across the carousel. Use young and strong students for steps 2 and 3 and the oldest students for steps 8 and 9."
+ },
+ "checks": {
+  "facts": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "8",
+     "problem": "'Today is your youngest day.' is not true as written: your youngest day was the day you were born. The idea it means is 'you will never be younger than today'. The slide is already at 32 words, the limit, so the fix has to cut words elsewhere. The proverb itself checks out: it is word for word on ru.wikisource, Dal, section Здоровье — Хворь (1862 and 1879 editions). It is not in used.txt and was never on a posted slide (it only appears in research notes from 2026-10-09 and 2026-10-15).",
+     "fix": "Change the text to: 'Later, you feel GRATEFUL for every year you cared. Russians say: \"Береги платье снову, а здоровье смолоду\" (care for clothes while new, health while young). You will never be younger than today.' That is 32 words."
+    },
+    {
+     "slot": "cover",
+     "problem": "The credit line '10 steps · swipe' does not match the carousel. The title says '9 steps of life' and there are 9 step slides after the cover.",
+     "fix": "Change the credit to '9 steps · swipe'."
+    },
+    {
+     "slot": "2",
+     "problem": "The gloss 'old wood bends hard' gets ดัดยาก wrong. It means 'is hard to bend', and in English 'bends hard' can read as 'bends with force'. The Thai saying and its สำนวน tag are confirmed on th.wiktionary. Its dictionary meaning is about teaching children, which the notes already say.",
+     "fix": "Change the bracket to '(young wood bends easily, old wood is hard to bend)'. The slide stays at 32 words."
+    },
+    {
+     "slot": "5",
+     "problem": "'Healing is slow for everyone' is a claim about everyone that no source supports, since many sicknesses heal fast. It also works against the honest promise that you come back faster. The proverb checks out: 七転び八起き is word for word in Digital Daijisen on Kotobank ('七度転んで八度起き上がる意から… 立ち直ること').",
+     "fix": "Change sentence 1 to: 'Healing takes time, but HOPE grows each time you get back up.' That makes 23 words."
+    },
+    {
+     "slot": "6",
+     "problem": "The quote is exact. archive.org Warner Vol. I, 1905, p. 101 reads 'Thy source of might / Is knowledge ; thus old hearts grow young again,'. But note (2) puts it in the wrong part of the book. It is not in the Prelude section in praise of wisdom. It is the end of §1 'In the Name of God', just after 'Adore Him... Observing His commands.', and §2 'Discourse in Praise of Wisdom' starts right after it. It is still respectful and safe, but Boonchu should know it comes from a passage praising God.",
+     "fix": "Change the note to: 'The quoted line ends §1 of the Prelude, \"In the Name of God\" (p. 101), just before §2, \"Discourse in Praise of Wisdom\". The quoted words name no god and no king.' The slide stays as it is."
+    },
+    {
+     "slot": "1",
+     "problem": "The style line says non-English sayings appear in the original script with an English gloss. Slide 1 (Hebrew Psalm) and slide 6 (Persian Ferdowsi) give only a published English translation. That is fine for a fact check, since the KJV words 'wonderfully made' are exact in Gutenberg #10, Psalm 139:14, and the Warner translation is credited. But the carousel breaks its own stated rule.",
+     "fix": "Change the style line to: 'Non-English folk sayings appear in the original script with a literal English gloss; the Psalm and Ferdowsi use a named published translation.' Do not add Hebrew or Persian script unless it is checked against a source first."
+    },
+    {
+     "slot": "9",
+     "problem": "This one is optional. The gloss and its origin are confirmed. Wiktionary gives 'fallen leaves will return to the roots', and zh.wikisource 景德傳燈錄 卷五 has Huineng saying 葉落歸根，來時無口 before going home to Xinzhou, where he died calmly at 76 (壽七十六). The book was presented in 1004. But Chinese readers know the idiom as going home to your roots, not as 'letting go'.",
+     "fix": "If you want the image to match the idiom, change 'like a leaf letting go' to 'like a leaf going home' (same word count). Everything else stays."
+    }
+   ]
+  },
+  "reader": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "6",
+     "problem": "Two problems. (a) The English fails the 10-year-old test: 'Thy', 'might' and 'thus' are Victorian words, and they read as AI-ish or churchy to all three readers. (b) The notes give the wrong context. I opened the Warner 1905 archive.org text. The line is in Prelude section 1, 'In the Name of God', p.101, straight after 'Adore Him and all other ways ignore, / Observing His commands. Thy source of might / Is knowledge'. It is not from 'Discourse in Praise of Wisdom' (section 2). So the 'knowledge' meant here is knowing God's commands, and Boonchu's judgement call rests on a false note. The quote is about knowledge, not curiosity, which also blurs CURIOUS.",
+     "fix": "Use a line from the real Praise of Wisdom section (section 2, p.102, same archive.org file). The source reads exactly 'Learn by the words of sages how to wend / Thy way, roam earth, converse with every one'. Rewrite (27 words): 'A CURIOUS mind is a strength you can grow at any age. The Persian poet Ferdowsi told readers to \"roam earth, converse with every one.\" Keep asking.' Credit: 'Ferdowsi · Shahnameh, c. 1010 · tr. A. G. and E. Warner, 1905'. Source note: Vol. I, Prelude section 2 'Discourse in Praise of Wisdom', p.102. If Boonchu prefers to keep 'old hearts grow young again', at least fix the notes to say it comes from the praise-of-God opening."
+    },
+    {
+     "slot": "9",
+     "problem": "Three problems. (a) Mixed image: 'a leaf letting go' does not match 落叶归根. That idiom is about returning home to the roots, and the Chinese home practitioner will read it as 'going home', not 'letting go'. (b) The user's 'get weak' step has disappeared. Nothing says the body slows, and that is the exact step where the honest promise (carry it with more peace) fits best, so the jump from GRATEFUL to PEACE feels sudden. (c) 'Thank the body that carried you' is in the past tense and sounds like a eulogy. For Thai, Chinese and Russian readers it is gentler not to sound finished.",
+     "fix": "Rewrite (31 words): 'Every body slows, and a long life can still end in PEACE, like a leaf going home. A Chinese saying: \"落叶归根\" (fallen leaves will return to the roots). Thank your body.' Make the credit exact: 'Chinese idiom · first found as 葉落歸根 in the Jingde Record of the Lamp, c. 1004 · tr. Wiktionary'. 'from' is not right because the 1004 wording is different."
+    },
+    {
+     "slot": "8",
+     "problem": "'every year you cared' is vague: cared about what? 'Today is your youngest day' is confusing. A 10-year-old reads it as the day you were youngest, which is birth. Also, after slide 2 this is the second 'start young' message. Without a clear 'start now', a 60+ reader hears regret.",
+     "fix": "Rewrite (32 words): 'Later, you feel GRATEFUL for every year you kept moving. Russians say: \"Береги платье снову, а здоровье смолоду\" (care for clothes while new, health while young). You are never younger than today.' This also puts the owner's 'moving life' message on the slide. Note: count.py has a different last line for this slide ('Today is the youngest you will be') from the JSON. Keep one version."
+    },
+    {
+     "slot": "2",
+     "problem": "Three problems. (a) Sentence 1 is too obvious to pass the 'says who?' test ('Children learn to move with JOY, and young bodies learn fast'). (b) The gloss 'old wood bends hard' is unclear English and can be read as 'bends forcefully'. (c) 'with more mornings' is vague poetry that a 10-year-old or an ESL reader will not decode. A 40-year-old Thai, who knows this proverb is about bringing up children, may hear 'you are old wood, too late'. The credit also names no source.",
+     "fix": "Rewrite (30 words): 'Children learn to move through JOY, not rules. Thais say: \"ไม้อ่อนดัดง่าย ไม้แก่ดัดยาก\" (young wood is easy to bend, old wood is hard to bend). Old wood still bends, just slower.' Credit: 'Thai proverb (สำนวน) · Thai Wiktionary · our translation'."
+    },
+    {
+     "slot": "4",
+     "problem": "'with the well and with the sick': ESL readers and a 10-year-old will read 'the well' as a water well. 'The writer Susan Sontag:' has no verb. Joining the two halves of sentence 1 with 'because' kills the tension. 'Dual citizenship' is not plain, so the slide needs to unpack it in plain words.",
+     "fix": "Rewrite (29 words): 'Nobody is too strong to feel FRAGILE. Sickness visits every life. Susan Sontag wrote: \"Everyone who is born holds dual citizenship,\" one with the healthy, one with the sick.' The quote is unchanged and exact (checked in the saved NYRB file). The royalty word 'kingdom' stays out."
+    },
+    {
+     "slot": "5",
+     "problem": "The slide does not link healing to the habit, so the middle of the ladder never says what the practice changes. On its own, 七転び八起き is a cliché that a 10-year practitioner has seen many times.",
+     "fix": "Keep it as written and add one plain line that ties it to the Habit Gap direction (a place and a teacher to come back to). 30 words: 'Healing is slow for everyone, but HOPE grows each time you get back up. The Japanese say: \"七転び八起き\" (fall down seven times, get up eight). Your mat waits for you.'"
+    },
+    {
+     "slot": "1",
+     "problem": "'You were a WONDER' uses the big word as a noun for a thing (a marvel), not as the feeling of the step, which breaks the 'emotional word, never an object' rule. Also a judgement call: Psalm 139 is Bible text headed 'A Psalm of David' (a king). Under China's 2022 online religious content rules, a scripture verse could be flagged on Xiaohongshu or WeChat.",
+     "fix": "Rewrite (26 words): 'Life starts in WONDER, before you can do a single thing. Nobody taught your heart to beat. An old Hebrew psalm says we are \"wonderfully made.\"' Ask Boonchu to OK the Bible line for the China platforms, or to approve a swap there."
+    },
+    {
+     "slot": "overall",
+     "problem": "The ladder climbs well (READY, WONDER, JOY, PROUD, FRAGILE, HOPE, CURIOUS, HUMBLE, GRATEFUL, PEACE), and nothing promises 'easy'. The honesty is good. But the owner's message (a moving life means you meet each step stronger and calmer) shows up only in the cover and caption. Slides 1, 4, 6, 7 and the draft of 9 never touch movement or habit, so a tough reader sees a nice collection of proverbs rather than a case for the habit. Checked: none of the nine sayings is in used.txt, used_early.txt or the posted slides on claude/bots-memory. The Dal proverb and 七転び八起き appear there only as unused research candidates. Korean, Swahili, Russian, Chinese and Sontag wording all match the saved sources.",
+     "fix": "Apply the slot 5 and slot 8 rewrites, so that the habit thread appears at steps 3, 5 and 8, and the slot 9 rewrite, so that the end admits slowing down and still lands calm. Leave the cover, 3 and 7 as they are. They are clear, honest and pass 'says who?'."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,175 @@
+{
+ "key": "C-your-ladder",
+ "final": {
+  "style": "YOUR LADDER: spoken to the reader ('you') in Boonchu's plain teaching voice. Each slide gives one step of life, what that step feels like, and what a daily practice (same practice, same time, a teacher who notices when you are gone) changes about how you meet it. There are no quotes and no outside people. The only AYBKK facts used are Mysore self-practice, learning the sequence by heart, and 'the teacher gives the next asana when you are ready'.",
+  "title": "The Ladder: Your Steps",
+  "stakes": "If you do nothing, you still climb every step. Sickness, older age and the weak years come anyway. You just meet them with a body and a breath you never trained, and with no one who notices when you stop showing up.",
+  "why_care": "Whatever step you are on today, the next one is already coming. The habit you build on this step is what you carry up to the next one.",
+  "slides": [
+   {
+    "slot": "cover",
+    "step": "cover: all of life is steps you cannot skip; how you climb changes how each step feels",
+    "word": "CALM",
+    "text": "Nobody skips a step of life, not even the healthy. What you choose is how strong and CALM you meet each one.",
+    "credit": "AYBKK · THE LADDER · 9 steps · swipe",
+    "source": "none (no quote or fact; the owner's message in plain words)",
+    "photo_hint": "Wide shot of the Mysore room with students of many ages, each on their own mat at a different point in the practice. Keep calm, empty space at the top for the big word."
+   },
+   {
+    "slot": "1",
+    "step": "born (a new body, wonder)",
+    "word": "WONDER",
+    "text": "WONDER was the first thing you were good at. As a baby you found your own feet and stared. In your practice, you can look at your body like that again.",
+    "credit": "AYBKK · THE LADDER · 1/9",
+    "source": "none (general life truth, no number or study)",
+    "photo_hint": "Close soft shot of a student in Padangusthasana or a seated forward fold, eyes on their own toes or hands. Use the youngest-looking student, in gentle morning light."
+   },
+   {
+    "slot": "2",
+    "step": "growing up (play, learning to move)",
+    "word": "JOY",
+    "text": "As a kid, you learned to move with JOY, one fall at a time. Nobody rushed your first steps. In Mysore class, the teacher gives the next asana when you are ready.",
+    "credit": "AYBKK · THE LADDER · 2/9",
+    "source": "AYBKK fact given in the brief: 'the teacher gives the next asana when the student is ready'. Background: https://en.wikipedia.org/wiki/Ashtanga_(vinyasa)_yoga : 'students practice the sequences they know at their own pace'",
+    "photo_hint": "A newer student smiling or laughing while trying a balance (or just after losing it), or the teacher showing a beginner a new asana."
+   },
+   {
+    "slot": "3",
+    "step": "getting strong (living and building strength)",
+    "word": "PROUD",
+    "text": "Strength you build slowly makes you PROUD in a quiet way. You cannot buy it. Same mat, same time, until one day you can do the asana you could not.",
+    "credit": "AYBKK · THE LADDER · 3/9",
+    "source": "none",
+    "photo_hint": "A student in their 30s or 40s holding a strong asana (Bakasana, Urdhva Dhanurasana or a jump-through), with sweat and focus."
+   },
+   {
+    "slot": "4",
+    "step": "getting sick (it comes to everyone)",
+    "word": "FEAR",
+    "text": "Even healthy people get sick, and FEAR comes with it. Practice does not stop sickness. But you have your breath to come back to, and a teacher who notices your empty mat.",
+    "credit": "AYBKK · THE LADDER · 4/9",
+    "source": "none (AYBKK habit-system promise from the brief: 'a teacher who notices when you are gone')",
+    "photo_hint": "One empty mat in a full Mysore room, or a student sitting still with eyes closed. Quiet and soft, never dark or sad."
+   },
+   {
+    "slot": "5",
+    "step": "healing (coming back)",
+    "word": "HOPE",
+    "text": "Coming back starts with HOPE, not strength. You return slower, maybe weaker. But your mat and your practice time have not moved, so the way back is already there.",
+    "credit": "AYBKK · THE LADDER · 5/9",
+    "source": "none",
+    "photo_hint": "A student in Samasthiti or the first Surya Namaskara at the start of practice, with morning light from the window. A simple, gentle beginning."
+   },
+   {
+    "slot": "6",
+    "step": "a strong brain (learning, a sharp mind)",
+    "word": "CURIOUS",
+    "text": "The strongest mind is not the smartest one, but the CURIOUS one. You learn your whole sequence by heart. Then a new asana comes, and you are a beginner again.",
+    "credit": "AYBKK · THE LADDER · 6/9",
+    "source": "https://en.wikipedia.org/wiki/Ashtanga_(vinyasa)_yoga : 'Traditionally, Ashtanga yoga students memorised a sequence of asanas' (opened and checked). 'A new asana comes' = the AYBKK fact 'the teacher gives the next asana when you are ready'. No brain-health claim is made.",
+    "photo_hint": "A student mid-vinyasa with clear drishti and a focused face, or the teacher showing a student a new asana for the first time."
+   },
+   {
+    "slot": "7",
+    "step": "becoming wise",
+    "word": "HUMBLE",
+    "text": "Years on the mat make you HUMBLE, and that is where wisdom starts. Some days the asana comes, some days it does not. You stop fighting the day you have.",
+    "credit": "AYBKK · THE LADDER · 7/9",
+    "source": "none",
+    "photo_hint": "A long-time student (grey hair welcome) in a quiet forward fold such as Paschimottanasana, or receiving a soft adjustment from the teacher."
+   },
+   {
+    "slot": "8",
+    "step": "staying strong (keeping what you built, later in life)",
+    "word": "FREE",
+    "text": "Later in life, strength means feeling FREE. Getting up from the floor on your own. Carrying your own bag. Keep more of it the way you built it: a little, every day.",
+    "credit": "AYBKK · THE LADDER · 8/9",
+    "source": "none (general claim with no number or study: you keep MORE of your strength, not all of it)",
+    "photo_hint": "An older student (60+) in a strong standing asana such as Utthita Trikonasana or Virabhadrasana, or standing up from the mat. Bright and steady."
+   },
+   {
+    "slot": "9",
+    "step": "getting weak and near the end of life (peace, gratitude, letting go)",
+    "word": "PEACE",
+    "text": "When the body grows weak, the heart can still be at PEACE, grateful for the climb. Every practice ends the same way: lie still, breathe, let go.",
+    "credit": "AYBKK · THE LADDER · 9/9",
+    "source": "https://en.wikipedia.org/wiki/Ashtanga_(vinyasa)_yoga : 'followed by a standard closing sequence' and 'Sessions end with resting for 5 minutes.' (opened and checked). Also https://www.yogapedia.com/definition/9939/closing-sequence-of-ashtanga-yoga : 'always performed in the same order as a way to finish the practice' (Shavasana is listed last; checked by the fact checker).",
+    "photo_hint": "Seated only. The oldest student sits in Padmasana, eyes closed, with a soft smile, in warm soft light with plenty of space. Never show an older student lying flat. If Boonchu wants a final-rest photo, use a younger student, or a wide room shot where no single older face is in final rest."
+   }
+  ],
+  "caption": "Nobody skips a step of life. Not even the healthy.\nA daily practice does not stop age or sickness. It changes how you meet them: a little stronger, a little calmer.\nWhich step are you on now? Tell me the number.\n#aybkk #ashtanga #ashtangabangkok #boonchutanti #mysore",
+  "notes": "FIXES APPLIED (from both checkers):\n- Cover: the credit now says '9 steps · swipe' (cover + 9 steps = 10 photos). The text uses the reader check's wording (22 words, 2 lines): 'What you choose is how strong and CALM you meet each one.' That fixes the vague 'arrive' and the 'only' line. 'Which step are you on now?' stays in the caption only.\n- Slide 3: now reads 'You cannot buy it' and 'until one day you can do the asana you could not' (30 words). This cuts the third 'Nobody' line and fixes the back-to-front sentence.\n- Slide 4: 'Practice does not stop sickness.' so 'that' can no longer be read as fear (32 words).\n- Slide 5: 'your mat and your practice time have not moved' (29 words).\n- Slide 6: new text from the reader check (30 words). One point now, curiosity, shown by becoming a beginner again. The fact check's 'memorised' source is added; I opened the Wikipedia page and the exact words are there.\n- Slide 8: honesty fix. The slide now says you keep MORE of your strength, not all of it. I did not take the fact check's exact wording 'You keep more of it as you built it' because it is awkward English. I used 'Keep more of it the way you built it: a little, every day.' (32 words). It means the same and has no number or study. The Karolinska study backs the idea, but AYBKK already used it on 17 Oct, so it is not cited.\n- Slide 9: the photo hint is seated only. No older student lying flat.\nAll 10 slides have 22 to 32 words. Each big word appears once. There is no long dash, 'asana' is used throughout, and there are no outside people or quotes, so nothing clashes with used.txt.\n\nBOONCHU, PLEASE CONFIRM:\n(1) Slide 4: 'a teacher who notices your empty mat'. Is it true that the teacher really follows up when a student misses class? This is the Habit Gap promise. I kept 'when you are gone' off the sickness slide because it can read as death.\n(2) Slide 9: 'Every practice ends the same way: lie still, breathe, let go.' Does every AYBKK class end with the rest? The text says 'lie still' but the photo shows a seated student. Is that mix OK, or do you want a wide room shot of final rest (with no single older face)?\n(3) Slides 2 and 6 both rely on 'the teacher gives the next asana when you are ready'. Please confirm this is how it works at AYBKK.\n(4) Slide 3: 'You cannot buy it' also points at the 'no equipment race' line. Please check you are happy with that tone.\n(5) Years of teaching are left out on purpose. The brief says 14 years, but the repo says 'since 2013' (13 years in Nov 2026). Tell me which is right if you want the number added.\nHONESTY: slide 4 and the caption say plainly that practice does not stop sickness or age, and slide 8 promises 'more' strength, not all of it. Nothing promises an easy, painless or sickness-free life. No numbers, studies or medical claims."
+ },
+ "checks": {
+  "facts": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "cover",
+     "problem": "The credit says '10 steps · swipe', but the carousel is a cover plus 9 steps, and the slides are numbered 1/9 to 9/9. The cover miscounts its own ladder. (The brief's example credit gave '10 steps', but this set has 9.)",
+     "fix": "Change the credit to 'AYBKK · THE LADDER · 9 steps · swipe'."
+    },
+    {
+     "slot": "8",
+     "problem": "Honesty: 'You keep it the way you built it' promises that daily practice keeps your strength later in life. Strength still drops with age even with training (AYBKK already used this point in the 17 Oct Karolinska story). The honest promise is that you keep MORE of it.",
+     "fix": "Change it to 'You keep more of it as you built it: a little, every day.' This keeps the slide at 31 words."
+    },
+    {
+     "slot": "cover",
+     "problem": "The format says the cover is the big word plus 1-2 short lines, readable in one second. This cover has 3 sentences and 25 words. The third line, 'Which step are you on now?', is already in the caption.",
+     "fix": "Drop 'Which step are you on now?'. The cover becomes 'Nobody skips a step of life, not even the healthy. You only choose how strong and CALM you arrive.' (19 words, 2 lines)."
+    },
+    {
+     "slot": "4",
+     "problem": "'Practice does not stop that.' comes right after FEAR, so 'that' can be read as fear, not sickness. Then the slide's honesty line (practice does not prevent sickness) gets lost.",
+     "fix": "Change it to 'Practice does not stop sickness.' The word count stays at 32."
+    },
+    {
+     "slot": "6",
+     "problem": "Source note: the cited Wikipedia line ('students practice the sequences they know at their own pace') does not back 'you learn your sequence by heart'. The same page does have an exact line that backs it.",
+     "fix": "Add this source: https://en.wikipedia.org/wiki/Ashtanga_(vinyasa)_yoga : 'Traditionally, Ashtanga yoga students memorised a sequence of asanas'. The slide text does not change."
+    },
+    {
+     "slot": "9",
+     "problem": "Gentleness: the photo hint gives the oldest student 'lying in the final rest' (Shavasana, the 'corpse' asana) under 'body grows weak... lie still, breathe, let go'. Together they read as a death image, which can feel heavy for the Chinese and Thai audience. The text alone is gentle and its facts check out: Wikipedia has 'Sessions end with resting for 5 minutes.', and Yogapedia has 'always performed in the same order as a way to finish the practice' and lists Shavasana last.",
+     "fix": "Use only the seated photo: 'the oldest student seated in Padmasana, eyes closed, warm soft light'. Drop the lying-down option."
+    }
+   ]
+  },
+  "reader": {
+   "verdict": "fix",
+   "issues": [
+    {
+     "slot": "cover",
+     "problem": "The credit says '10 steps · swipe', but the steps are numbered 1/9 to 9/9 and the caption asks 'Tell me the number'. Readers will see 9 steps and wonder what happened to the tenth. The cover also has 3 lines where the format allows 1-2. 'You only choose how strong and CALM you arrive' is vague: arrive where? And 'only' can read as 'you merely choose'.",
+     "fix": "Credit: 'AYBKK · THE LADDER · 9 steps · swipe'. Text (22 words): 'Nobody skips a step of life, not even the healthy. What you choose is how strong and CALM you meet each one.' Keep 'Which step are you on now?' in the caption only. It is already there."
+    },
+    {
+     "slot": "4",
+     "problem": "'Practice does not stop that.' The word 'that' could mean the sickness or the FEAR. If a reader takes it as 'practice does not stop fear', the slide fights itself. The honesty line is the most important sentence in the carousel, so it has to be clear.",
+     "fix": "'Even healthy people get sick, and FEAR comes with it. Practice does not stop sickness. But you have your breath to come back to, and a teacher who notices your empty mat.' (32 words)"
+    },
+    {
+     "slot": "6",
+     "problem": "This is the weakest slide. 'A sharp mind is a CURIOUS one, at any age' sounds like a poster or AI line, and it barely passes 'says who?'. The slide also makes two separate points: sentence 1 is about curiosity and sentence 3 ('your mind has one job: this breath') is about focus. Curiosity is never shown.",
+     "fix": "'The strongest mind is not the smartest one, but the CURIOUS one. You learn your whole sequence by heart. Then a new asana comes, and you are a beginner again.' (30 words, no brain-health claim, and it reuses the 'next asana when ready' fact without repeating slide 2's wording.)"
+    },
+    {
+     "slot": "5",
+     "problem": "'The mat and the time have not moved' sounds wrong in plain English. Time always moves, so a 10-year-old or a reader in translation will stumble over it. The meaning is 'your practice time is still there'.",
+     "fix": "'Coming back starts with HOPE, not strength. You return slower, maybe weaker. But your mat and your practice time have not moved, so the way back is already there.' (29 words)"
+    },
+    {
+     "slot": "3",
+     "problem": "'Nobody can give it to you' is the third 'Nobody...' sentence in four slides (cover, slide 2, slide 3), and the tic starts to sound machine-made. The last sentence is back to front ('an asana you could not do, you can'), which is hard for a 10-year-old and in translation.",
+     "fix": "'Strength you build slowly makes you PROUD in a quiet way. You cannot buy it. Same mat, same time, until one day you can do the asana you could not.' (30 words. 'You cannot buy it' also fits the brief's point that AYBKK does not compete on equipment.)"
+    },
+    {
+     "slot": "9",
+     "problem": "The text is gentle and works. 'Let go' is a positive idea in Thai and Chinese Buddhist culture. But the photo hint says 'the oldest student... lying in the final rest'. Next to 'body grows weak... lie still, let go', an old person lying flat and still can look like a deathbed or funeral to readers in Thailand, China and Russia. That breaks the 'calm, not scary' ending.",
+     "fix": "Photo hint: use only the seated option. The oldest student sits in Padmasana with eyes closed and a soft smile in warm light. Never show them lying flat. If Boonchu wants a final-rest photo, use a younger student, or a wide room shot where no single older face is in final rest."
+    }
+   ]
+  }
+ }
+}
