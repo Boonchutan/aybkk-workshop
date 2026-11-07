@@ -168,6 +168,17 @@ WM_REF['07-310'] = WM_REF['07-491']   # 07-310: its own letters sit on the orang
 WM_REF['07-171'] = WM_REF['07-491']   # 07-171: the letters lie across her right-hand fingers, red nail and toe tips
 # (dilation kernel, inpaint radius) per photo; 07-171: 7x7/r5 smeared her fingertip and nail into a streak with grey patches, 3x3/r3 keeps them sharp
 WM_INPAINT = {'07-171': (3, 3)}
+# the thin mask leaves the letters' dark drop shadow and toe-gap shadows inside the counters as dark dots on skin: replace pixels
+# darker than their local median, only next to the letters inside these photo boxes. (box, darker-by, median k, skip red nails)
+WM_DESPECK = {'07-171': [((545, 1430, 712, 1492), 10, 9, False), ((370, 1430, 545, 1545), 12, 7, True)]}   # toe tips, right hand
+def _despeck(img, mm, box, thr, k, guard):
+    x0, y0, x1, y1 = box; zone = np.zeros(mm.shape, bool); zone[y0:y1, x0:x1] = cv2.dilate(mm, np.ones((5, 5), np.uint8))[y0:y1, x0:x1] > 0
+    md = cv2.medianBlur(img, k); bad = zone & (cv2.cvtColor(img, cv2.COLOR_RGB2GRAY).astype(np.int16) < cv2.cvtColor(md, cv2.COLOR_RGB2GRAY).astype(np.int16) - thr)
+    red = np.zeros(zone.shape, bool)
+    if guard:
+        hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV); red = cv2.dilate(((hsv[..., 1] > 110) & ((hsv[..., 0] < 12) | (hsv[..., 0] > 170))).astype(np.uint8), np.ones((5, 5), np.uint8)) > 0
+    bad = (cv2.dilate((bad & ~red).astype(np.uint8), np.ones((3, 3), np.uint8)) > 0) & zone & ~red
+    out = img.copy(); out[bad] = md[bad]; return out
 # the letters (AYBKK SHALA BANGKOK + 2 credit lines) sit at x 364-715, y 1452-1529 of the photo = band x 144-495, y 67-144
 WM_BOX = np.zeros((c18.WY1 - c18.WY0, c18.WX1 - c18.WX0), np.float32); WM_BOX[58:156, 132:508] = 1
 def clean(n):
@@ -178,13 +189,21 @@ def clean(n):
         mm = np.zeros(B.shape[:2], np.uint8)
         dk, ir = WM_INPAINT.get(n, (7, 5))
         mm[c18.WY0:c18.WY1, c18.WX0:c18.WX1] = cv2.dilate((a > 0.05).astype(np.uint8), np.ones((dk, dk), np.uint8)) * 255
-        _CLEAN[n] = (cv2.inpaint(B, mm, ir, cv2.INPAINT_TELEA), reg, a)
+        C = cv2.inpaint(B, mm, ir, cv2.INPAINT_TELEA)
+        for box, thr, k, guard in WM_DESPECK.get(n, ()): C = _despeck(C, mm, box, thr, k, guard)
+        _CLEAN[n] = (C, reg, a)
     return _CLEAN[n]
 
 def frame(n, t, wm=None, tight=False, wmxy=None, wmk=1.0):
     """t = int (crop window top in the 1080x1620 photo) or 'pad'. Returns the slide photo and its masks."""
     B = big(n)
-    if t == 'pad':
+    if isinstance(t, str) and t.startswith('pad:'):   # Boonchu 7 Nov (C OPEN): 'crop just her fingers and my hair and expand with white tab on the side just enough'
+        ytop, ybot = (int(v) for v in t.split(':')[1:3]); k = H / (ybot - ytop); pw = round(W * k); px = (W - pw) // 2
+        tf = lambda x, y: (px + x * k, (y - ytop) * k); L, R = M, W - M
+        def build(src):
+            img = np.full((H, W, 3), 255, np.uint8); img[:, px:px + pw] = np.asarray(Image.fromarray(src[ytop:ybot]).resize((pw, H), Image.LANCZOS)); return img
+        orig_r = None
+    elif t == 'pad':
         ytop, k, px, pw = pad_geom(n)
         tf = lambda x, y: (px + x * k, (y - ytop) * k); L, R = max(M, px + 44), min(W - M, px + pw - 44)
         def build(src):
@@ -234,7 +253,7 @@ def frame(n, t, wm=None, tight=False, wmxy=None, wmk=1.0):
     person = np.zeros((H, W), bool); person[:, px:px + pw] = ndimage.binary_dilation(c18.mask(im.crop((px, 0, px + pw, H)), (pw, H)), iterations=8)
     mainb = person & paint(boxes(n, ['main_body']), tf, 10)
     wmm = np.zeros((H, W), bool); wmm[max(0, int(wmr[1]) - 24):int(wmr[3]) + 20, max(0, int(wmr[0]) - 24):int(wmr[2]) + 24] = True
-    if t == 'pad': wmm[:, :px + 20] = True; wmm[:, px + pw - 20:] = True
+    if isinstance(t, str) and t.startswith('pad'): wmm[:, :px + 20] = True; wmm[:, px + pw - 20:] = True
     return dict(img=im, person=person, main=mainb, crit=crit, bgc=bgc, feet=feet_m, bfeet=feet_b, wm=wmm, L=L, R=R, t=t, wmode=wmode)
 
 def paint(bl, tf, pad, top_extra=0):
