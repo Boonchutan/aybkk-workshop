@@ -8,3 +8,4 @@ Reminders due this morning: none.
 Reel: Plato's daily run is paused (expected). Last from Plato chat: Ladder of Life carousels (7 Nov). Carne posted today.
 Score: wins this week (from Mon 2 Nov): 1 new Duo student (6 Nov). 180K leads: 0 new in 8 days, 1 serious, silent 22 days.
 Inbox 07:08: 2 new, 2 hot.
+13:08 check-in: course prices and 3-month student both due 19:00 today. Inbox 13:08: 1 new, 1 hot.

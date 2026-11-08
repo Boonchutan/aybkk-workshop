@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-08T00:09:57.732Z
+Inbox last read: 2026-11-08T06:09:35.301Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -236,3 +236,4 @@ Inbox last read: 2026-11-08T00:09:57.732Z
 - 2026-11-07 07:08: Carne posted (fresh short last note for the serious lead in his run session); Plato paused (expected; Plato chat wrote six-jobs Reel and adjustment carousels 6 Nov). Inbox 07:08: 1 new LINE thread (new person, "I have a question" button), 0 hot. Serious lead (19:00 TODAY) and course prices (19:00 Sun 8 Nov, 1 day) reminded, 1st nudge today. Money line: Thai student meets the teacher this morning about a 3-month pass. Rezerv import reminded (daily). No reminders due, no wins. Board rebuilt.
 - 2026-11-07 13:08: check-in. Serious lead (19:00 TODAY) and course prices (19:00 Sun 8 Nov, 1 day) reminded, 2nd nudge today: do not repeat at 19:08. No reminders due since 07:08, no wins. Inbox 13:08: 1 LINE thread with news, 1 hot (3-month pass student: payment on 10 Nov, start 11 Nov).
 - 2026-11-07 19:08: Serious lead: no answer by 19:00, default applied (stays open, nothing sent). Course prices (19:00 Sun 8 Nov) not repeated (2 nudges today). No reminders due since 13:08. Win reported today: new Duo student (logged in Wins). Inbox 19:08: 4 LINE threads with news, 4 hot (Duo buyer asks to confirm her slip; 3-month student asks a lower amount and to pay after 11 Nov: decision needed in team chat; new person wants a first try, Monday 9 Nov is a moon day; beginner asks about a month and the 05:30/07:30 level).
+- 2026-11-08 13:08: check-in. Course prices + 3-month student both due 19:00 today (2nd nudge today, last one). Inbox 13:08: 1 new in 1 LINE thread, 1 hot. No reminders due.
