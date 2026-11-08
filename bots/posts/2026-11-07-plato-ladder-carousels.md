@@ -179,3 +179,4 @@ Which step are you on now? Tell me the number.
 - SCHEDULED on AYBKK Instagram (Boonchu's go 8 Nov 00:20 BKK: "Set A at 6 am. B at 6 pm and C Monday 6 am"): A cmw6o6oq900drmu073xzvw178 at 8 Nov 06:00 BKK; B (Marco Polo) cmw6o6oqu00dsmu077zt4wfu1 at 8 Nov 18:00 BKK; C cmw6o6orc00dtmu07fovhyhwz at 9 Nov 06:00 BKK. All QUEUE. Sayings and Marco Polo added to used_quotes_after.txt.
 - 8 Nov 06:16 BKK: set A PUBLISHED on Instagram (postsListTool). B and C still QUEUE.
 - 8 Nov 18:16 BKK: set B ERROR 'Failed to create media, please try again'. Files all fine (same format as A, which published). Asked Boonchu for a retry time. C still QUEUE for Mon 06:00.
+- 8 Nov 19:47 BKK: set B retried on Boonchu's 'Set B go' (post now), PUBLISHED (cmw7tuwjk09eqqh084q1tqim1). Failed first try cmw6o6oqu00dsmu077zt4wfu1 still in Postiz as ERROR: Boonchu deletes it in the app.

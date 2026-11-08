@@ -1,5 +1,5 @@
 {
- "status": "ERROR at 8 Nov 18:00 BKK: \"Failed to create media, please try again\" (all 10 files checked OK: 200, image/jpeg, 1080x1350). Waiting for Boonchu: retry time. Failed post cmw6o6oqu00dsmu077zt4wfu1 to delete in the Postiz app.",
+ "status": "PUBLISHED 8 Nov 19:47 BKK on retry (Boonchu: \"Set B go\"). First try cmw6o6oqu00dsmu077zt4wfu1 ERROR at 18:00, to delete in the Postiz app.",
  "integration": "cmnmyjqex06mrqi0yeynj0y3f",
  "media": [
   "https://uploads.postiz.com/nw898Zl9Sf.jpg",
@@ -17,5 +17,5 @@
   "Marco Polo's book tells of a plain so high and cold that no birds flew. Even he could not skip a step of life. Nobody can. But you can meet each step with a habit. Same mat, same time, and a teacher who notices when you miss class. Which step are you on right now?",
   "#aybkk #ashtanga #ashtangabangkok #boonchutanti #marcopolo"
  ],
- "post_id": "cmw6o6oqu00dsmu077zt4wfu1"
+ "post_id": "cmw7tuwjk09eqqh084q1tqim1"
 }
