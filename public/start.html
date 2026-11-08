@@ -16,17 +16,18 @@
   @font-face{font-family:'Plex';src:url('/fonts/plexthai.woff2') format('woff2');font-display:swap}
   @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');
     unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
-  :root{--ink:#17121a;--wall:#f7f1f5;--paper:#fff;--plum:#5c2160;--pink:#e8458c;--pink-deep:#c92f74;
-    --soft:#6b5d70;--line:rgba(23,18,26,.11);--on-pink:#fff;
-    --promo:#d9a521;--promo-ink:#3e1442;--promo-deep:#7d5300;--promo-soft:#fdf4dc}
+  /* The Louvre palette (8 Nov 2026), same as bkk.html: Louvre red, honey parquet, limestone, steel-blue links. */
+  :root{--ink:#2e1518;--wall:#f4ede2;--paper:#fffdf9;--plum:#7e262e;--pink:#d6a35c;--pink-deep:#2f507f;
+    --soft:#6b5759;--line:rgba(46,21,24,.13);--on-pink:#5f1c23;
+    --promo:#d6a35c;--promo-ink:#5f1c23;--promo-deep:#7c531d;--promo-soft:#faf1e0}
   @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){--ink:#f5e9f0;--wall:#140f18;--paper:#1e1723;--plum:#c07ec8;
-      --pink:#ff6fae;--pink-deep:#ff8dc0;--soft:#b09cb6;--line:rgba(245,233,240,.14);--on-pink:#17121a;
-      --promo:#e0b52b;--promo-ink:#1c1010;--promo-deep:#f2d98a;--promo-soft:#2a2114}
+    :root:not([data-theme="light"]){--ink:#f3e9e1;--wall:#1b1113;--paper:#2a1a1c;--plum:#e09a9f;
+      --pink:#d6a35c;--pink-deep:#a9c3e6;--soft:#c9b5b0;--line:rgba(243,233,225,.14);--on-pink:#2e1518;
+      --promo:#d6a35c;--promo-ink:#2e1518;--promo-deep:#ebc58c;--promo-soft:#2c2117}
   }
-  :root[data-theme="dark"]{--ink:#f5e9f0;--wall:#140f18;--paper:#1e1723;--plum:#c07ec8;
-    --pink:#ff6fae;--pink-deep:#ff8dc0;--soft:#b09cb6;--line:rgba(245,233,240,.14);--on-pink:#17121a;
-    --promo:#e0b52b;--promo-ink:#1c1010;--promo-deep:#f2d98a;--promo-soft:#2a2114}
+  :root[data-theme="dark"]{--ink:#f3e9e1;--wall:#1b1113;--paper:#2a1a1c;--plum:#e09a9f;
+    --pink:#d6a35c;--pink-deep:#a9c3e6;--soft:#c9b5b0;--line:rgba(243,233,225,.14);--on-pink:#2e1518;
+    --promo:#d6a35c;--promo-ink:#2e1518;--promo-deep:#ebc58c;--promo-soft:#2c2117}
   *{box-sizing:border-box}
   body{margin:0;background:var(--wall);color:var(--ink);font:17px/1.5 'Work Sans','Plex',system-ui,sans-serif}
   main{max-width:520px;margin:0 auto;padding:12px 16px 32px}
@@ -40,7 +41,7 @@
   .hero{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:50% 45%;border-radius:10px;background:var(--line)}
   .go{display:block;width:100%;margin:18px 0 8px;padding:18px 16px;border:0;border-radius:10px;cursor:pointer;
     background:var(--pink);color:var(--on-pink);font:inherit;font-size:20px;font-weight:700;text-align:center;text-decoration:none}
-  .go:active{background:var(--pink-deep)}
+  .go:active{background:var(--promo-deep);color:#fff}
   .alt{text-align:center;font-size:14px;color:var(--soft);margin:0}
   .alt a,.alt button{color:var(--soft);font:inherit;background:none;border:0;padding:4px;text-decoration:underline;cursor:pointer}
   .note{text-align:center;font-size:15px;color:var(--plum);min-height:1.5em;margin:6px 0 0}
@@ -82,11 +83,11 @@
   .fs-form label{margin:10px 0 4px;font-size:15px;font-weight:600}
   .fs-form input[type=text]{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--soft);border-radius:8px;
     background:var(--wall);color:var(--ink);font:inherit}
-  .fs-form input[aria-invalid="true"]{border-color:var(--pink-deep)}
+  .fs-form input[aria-invalid="true"]{border-color:var(--plum)}
   .fs-form .fs-ck{display:flex;gap:10px;align-items:flex-start;margin-top:4px;padding:10px 0;font-weight:400;cursor:pointer}
   .fs-ck input{flex:none;width:24px;height:24px;margin:0;accent-color:var(--pink)}
-  .fs-keep{margin:6px 0 0;font-size:13px;color:var(--soft)}
-  .fs-err,.fs-msg{margin:4px 0 0;font-size:14px;color:var(--pink-deep)}
+  .fs-keep{margin:6px 0 0;font-size:15px;color:var(--soft)}
+  .fs-err,.fs-msg{margin:4px 0 0;font-size:15px;color:var(--plum)}
   .fs-err:empty,.fs-msg:empty{display:none}
   .fs-send{margin-top:16px;min-height:48px;border:0;border-radius:10px;background:var(--plum);color:var(--wall);
     font:inherit;font-weight:700;cursor:pointer}
@@ -100,7 +101,7 @@
   .proof .auth{font-weight:700;color:var(--plum)}
   blockquote{margin:12px 0 0;background:var(--paper);border-left:4px solid var(--pink);border-radius:6px;padding:12px 14px;text-align:left}
   blockquote cite{display:block;margin-top:6px;font-style:normal;font-size:14px;color:var(--soft)}
-  footer{max-width:520px;margin:0 auto;padding:16px 16px 40px;font-size:13px;color:var(--soft);border-top:1px solid var(--line)}
+  footer{max-width:520px;margin:0 auto;padding:16px 16px 40px;font-size:15px;color:var(--soft);border-top:1px solid var(--line)}
   footer a{color:var(--soft)}
 </style>
 </head>
@@ -607,16 +608,16 @@
 <style>
 #ckbar{margin:10px 0 0;text-align:left;
   display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;
-  background:#17121a;color:#fdf7fa;font:500 13px/1.35 'Work Sans','Plex',sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+  background:#5f1c23;color:#fbf4e8;font:500 15px/1.35 'Work Sans','Plex',sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.25)}
 #ckbar[hidden]{display:none}
 #ckbar p{margin:0}
 #ckbar .ckt{flex:1;min-width:0}
 #ckbar .ckb{display:flex;gap:6px;flex:none}
 #ckMore{background:none!important;border:0!important;padding:2px 0!important;min-height:0!important;color:inherit;font:inherit!important;text-decoration:underline;cursor:pointer}
-#ckInfo{margin-top:6px!important;font-size:12px;opacity:.9}
+#ckInfo{margin-top:6px!important;font-size:14px;opacity:.9}
 #ckbar button{border:1px solid transparent;border-radius:999px;padding:8px 12px;min-height:36px;font:600 13px/1 'Work Sans','Plex',sans-serif;cursor:pointer}
 #ckNo{background:transparent;color:#fdf7fa;border-color:rgba(253,247,250,.35)!important}
-#ckOk{background:#F2C94C;color:#3E1442}
+#ckOk{background:#d6a35c;color:#5f1c23}
 .cklink{display:block;margin:8px auto 0;background:none;border:0;padding:4px;color:inherit;font:inherit;text-decoration:underline;cursor:pointer}
 </style>
 <script>
