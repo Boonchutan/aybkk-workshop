@@ -1,5 +1,5 @@
 {
- "status": "SCHEDULED 2026-11-08 18:00 BKK (Boonchu: \"Set A at 6 am. B at 6 pm and C Monday 6 am\")",
+ "status": "ERROR at 8 Nov 18:00 BKK: \"Failed to create media, please try again\" (all 10 files checked OK: 200, image/jpeg, 1080x1350). Waiting for Boonchu: retry time. Failed post cmw6o6oqu00dsmu077zt4wfu1 to delete in the Postiz app.",
  "integration": "cmnmyjqex06mrqi0yeynj0y3f",
  "media": [
   "https://uploads.postiz.com/nw898Zl9Sf.jpg",

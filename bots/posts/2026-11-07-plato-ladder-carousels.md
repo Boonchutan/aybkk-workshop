@@ -178,3 +178,4 @@ Which step are you on now? Tell me the number.
 - All 30: GRID OK, words exact, 30 unique photos from the folder, uploaded to Postiz, md5 30/30. Media lists in A/, B/, C/postiz.json. Old Iyengar B in B/old-iyengar (never post). Waiting for Boonchu's go + times.
 - SCHEDULED on AYBKK Instagram (Boonchu's go 8 Nov 00:20 BKK: "Set A at 6 am. B at 6 pm and C Monday 6 am"): A cmw6o6oq900drmu073xzvw178 at 8 Nov 06:00 BKK; B (Marco Polo) cmw6o6oqu00dsmu077zt4wfu1 at 8 Nov 18:00 BKK; C cmw6o6orc00dtmu07fovhyhwz at 9 Nov 06:00 BKK. All QUEUE. Sayings and Marco Polo added to used_quotes_after.txt.
 - 8 Nov 06:16 BKK: set A PUBLISHED on Instagram (postsListTool). B and C still QUEUE.
+- 8 Nov 18:16 BKK: set B ERROR 'Failed to create media, please try again'. Files all fine (same format as A, which published). Asked Boonchu for a retry time. C still QUEUE for Mon 06:00.
