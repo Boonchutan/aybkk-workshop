@@ -180,3 +180,4 @@ Which step are you on now? Tell me the number.
 - 8 Nov 06:16 BKK: set A PUBLISHED on Instagram (postsListTool). B and C still QUEUE.
 - 8 Nov 18:16 BKK: set B ERROR 'Failed to create media, please try again'. Files all fine (same format as A, which published). Asked Boonchu for a retry time. C still QUEUE for Mon 06:00.
 - 8 Nov 19:47 BKK: set B retried on Boonchu's 'Set B go' (post now), PUBLISHED (cmw7tuwjk09eqqh084q1tqim1). Failed first try cmw6o6oqu00dsmu077zt4wfu1 still in Postiz as ERROR: Boonchu deletes it in the app.
+- 9 Nov 06:15 BKK: set C PUBLISHED (one post). All 3 Ladder sets live. Failed B try (ERROR) still in Postiz for Boonchu to delete.
