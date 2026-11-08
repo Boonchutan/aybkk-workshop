@@ -326,7 +326,7 @@ const fakeDriver = { session: () => ({
      && mt.includes('07:30 Mysore (2nd batch) · ครู Boonchu · จอง 1\nChai D.')
      && mt.indexOf('05:30 Mysore') < mt.indexOf('07:30 Mysore'));
   ok('NEW: first class ever today, and a first pass bought this week by someone who has not come yet',
-     mt.includes('🌱 นักเรียนใหม่ ช่วยกันต้อนรับ\n• Chai D. มาครั้งแรก 07:30\n• Mali S. ซื้อ 1 month unlimited เมื่อ ศ. 6 พ.ย. ยังไม่เคยมา ยังไม่ได้จอง'));
+     mt.includes('🌱 นักเรียนใหม่ ช่วยกันต้อนรับ\n• Chai D. มาครั้งแรก 07:30\n• Mali S. ซื้อ 1 month unlimited เมื่อ ศ. 6 พ.ย. ยังไม่เช็กอินใน aybkk.net ยังไม่มีการจองใน aybkk.net'));
   ok('...but not a student who came before, or one moved over from Rezerv', !/Anna B\. มาครั้งแรก|Tom H\. มาครั้งแรก|Rex R\. มาครั้งแรก/.test(mt));
   ok('ENDING SOON: a pass ending within 7 days and a credit pass with 2 or fewer classes, with the end date',
      mt.includes('⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ\n• Anna B. 3 months unlimited หมด ส. 14 พ.ย.\n• Ploy W. 8 classes / 1 month เหลือ 1 ครั้ง ใช้ได้ถึง อ. 1 ธ.ค.'));
@@ -437,7 +437,7 @@ const fakeDriver = { session: () => ({
   ok('...not a payment after 20:00 or one moved over from Rezerv', !et.includes('฿9,600') && !et.includes('×2'));
   ok('students: new members, passes started, passes that ended today (renewed or not)', et.includes('👥 นักเรียน\nสมัครใหม่ 2 คน: Lin N., Ola F.\n'
      + 'เริ่มแพ็กเกจ 1 คน: Chai D. (1 month unlimited)\nแพ็กเกจหมดวันนี้ 2 คน: Eve E. (ยังไม่ต่อ), Ray R. (ต่อแล้ว)') && !et.includes('Rita'));
-  ok('classes: check-ins per class with the no-shows by name', et.includes('🧘 คลาสวันนี้\n05:30 Mysore (1st batch): มา 2/3 · ไม่มา: Tom H.\n07:30 Mysore (2nd batch): มา 1/1'));
+  ok('classes: check-ins per class with the no-shows by name', et.includes('🧘 คลาสวันนี้\n05:30 Mysore (1st batch): เช็กอิน 2/3 · ยังไม่เช็กอิน: Tom H.\n07:30 Mysore (2nd batch): เช็กอิน 1/1'));
   ok('...bookings made and cancelled today', et.includes('จองใหม่ 3 · ยกเลิก 1'), (et.match(/จองใหม่.*/) || [])[0]);
   ok('tomorrow: booked per class, with mats', et.includes('📅 พรุ่งนี้ พ. 11 พ.ย.\n05:30 Mysore (1st batch): จอง 2 · เสื่อ 1\n07:30 Mysore (2nd batch): จอง 0'));
   ok('photos: uploaded today, tagged, on how many profiles', et.includes('📷 รูปคลาส\nอัปโหลด 3 รูป · แท็กแล้ว 2 · ขึ้นโปรไฟล์ 2 คน'));
@@ -447,7 +447,7 @@ const fakeDriver = { session: () => ({
   ok('leads: letter, Start page, first-step forms, LINE chats new and hot, applications (counts only)',
      et.includes('📣 ลีด\nจดหมายวันจันทร์ ยืนยัน 1 · รอยืนยัน 1\nหน้า Start เข้าชม 3 · กดจอง 1 · ทำครบทุกขั้น 1\nฟอร์มสนใจเรียน 1\nLINE แชต 2 คน (คนใหม่ 1) · ด่วน 1\nใบสมัคร In-Depth 1'));
   ok('...and no message text from the inbox', !/SECRET/.test(et));
-  ok('one closing line', et.trim().split('\n').at(-1) === 'วันนี้เงินเข้า ฿20,317 · มาเรียน 3 · พรุ่งนี้จองแล้ว 2', et.trim().split('\n').at(-1));
+  ok('one closing line', et.trim().split('\n').at(-1) === 'วันนี้เงินเข้า ฿20,317 · เช็กอิน 3 · พรุ่งนี้จองแล้ว 2', et.trim().split('\n').at(-1));
   ok('never an email, a phone number or a member code; no em dash', !/@|0899000|BTEAM|—/.test(et));
   ok('...and class and package names in English, never the Thai product name', !/มายซอร์|ไม่จำกัด|ครั้งเดียว|ครั้ง \/ 1 เดือน/.test(et), et);
   const imgs = e.body.images || [];
@@ -460,12 +460,12 @@ const fakeDriver = { session: () => ({
   const ent = en.body.text || '';
   ok('English evening', ent.startsWith('🌙 Today on aybkk.net, Tue 10 Nov (20:00 yesterday to 20:00)') && ent.includes('Paid: 3 orders, ฿20,317 (VAT ฿1,329 included)')
      && ent.includes('At the desk: cash 1 ฿1,605 · transfer 1 ฿8,132') && ent.includes('Online: 1 order ฿10,580\nStill pending: 2 orders ฿52,824')
-     && ent.includes('05:30 Mysore (1st batch): 2/3 came · no-show: Tom H.')
+     && ent.includes('05:30 Mysore (1st batch): 2/3 checked in · not checked in: Tom H.')
      && ent.includes('New members (2): Lin N., Ola F.') && ent.includes('Passes started (1): Chai D. (1 month unlimited)')
      && ent.includes('Passes ended today (2): Eve E. (not renewed), Ray R. (renewed)') && ent.includes('05:30 Mysore (1st batch): 2 booked · 1 mat')
      && ent.includes('12-week checks (1): Anna B.') && ent.includes('Practice journal entries: 2 (Anna B.)')
      && ent.includes('Start page: 3 views · 1 tapped Book · 1 finished') && ent.includes('LINE chats: 2 people (1 new) · hot: 1')
-     && ent.trim().endsWith('Today: ฿20,317 in · 3 came · 2 booked for tomorrow'), ent);
+     && ent.trim().endsWith('Today: ฿20,317 in · 3 checked in · 2 booked for tomorrow'), ent);
   const next = (await get('/api/bkk/admin/team/preview?kind=evening&date=2026-11-11')).body.text || '';
   ok('a payment at 21:00 is in the next evening\'s summary', next.startsWith('🌙 สรุปวันนี้ พ. 11 พ.ย. (ตั้งแต่ 20:00 เมื่อวาน ถึง 20:00)')
      && next.includes('💰 เงิน\nจ่ายแล้ว 1 รายการ ฿10,580 ') && next.includes('• 1 month unlimited ×1 ฿10,580'), next.split('\n').slice(0, 5).join(' | '));
