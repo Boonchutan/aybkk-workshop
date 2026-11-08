@@ -9,3 +9,4 @@ Reel: Plato's daily run is paused (expected). Last from Plato chat: Ladder of Li
 Score: wins this week (from Mon 2 Nov): 1 new Duo student (6 Nov). 180K leads: 0 new in 8 days, 1 serious, silent 22 days.
 Inbox 07:08: 2 new, 2 hot.
 13:08 check-in: course prices and 3-month student both due 19:00 today. Inbox 13:08: 1 new, 1 hot.
+19:08 check-in: course prices default B applied (sales Tue 8 Dec). 3-month student default applied (ask again Mon 07:08). Inbox 19:08: 1 new, 1 hot.
