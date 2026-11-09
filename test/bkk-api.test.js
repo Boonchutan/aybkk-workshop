@@ -2539,6 +2539,15 @@ const ok = (name, cond, extra = '') => {
       upFace(sam.code, 'data:image/jpeg;base64,PGgxPmhpPC9oMT4='), post(`/api/bkk/me/${sam.code}/photo`, {})]);
     ok('not a photo is refused (400): another type, HTML dressed as a JPEG, nothing at all', notImg.every(r => r.status === 400),
        JSON.stringify(notImg.map(r => r.status)));
+    const b64 = (...parts) => Buffer.concat(parts.map(p => Buffer.from(p, 'latin1'))).toString('base64');
+    const wav = 'data:image/jpeg;base64,' + b64('RIFF', '\x24\0\0\0', 'WAVEfmt ', '\0'.repeat(24));
+    const mp4 = 'data:image/png;base64,' + b64('\0\0\0\x18', 'ftypisom', '\0'.repeat(24));
+    const avi = 'data:image/webp;base64,' + b64('RIFF', '\x24\0\0\0', 'AVI LIST', '\0'.repeat(24));
+    const mov = 'data:image/heic;base64,' + b64('\0\0\0\x14', 'ftypqt  ', '\0'.repeat(24));
+    const pngAsJpeg = 'data:image/jpeg;base64,' + b64('\x89PNG\r\n\x1a\n', '\0'.repeat(24));
+    const fakes = await Promise.all([wav, mp4, avi, mov, pngAsJpeg].map(d => upFace(sam.code, d)));
+    ok('a sound or video file called a photo is refused (400), and so is a photo with the wrong label',
+       fakes.every(r => r.status === 400 && r.body.error === 'not a photo'), JSON.stringify(fakes.map(r => [r.status, r.body.error])));
     const big = await upFace(sam.code, 'data:image/jpeg;base64,/9j/' + 'A'.repeat(8.5 * 1024 * 1024));
     ok('a photo over 6 MB is refused (413)', big.status === 413, JSON.stringify([big.status, big.body]));
     ok('...and none of those reached storage or counted as a try', faceUps().length === n0 + 1 && (await rowOf(sam.code)).photo_tries === 1);
@@ -2557,6 +2566,12 @@ const ok = (name, cond, extra = '') => {
     ok('10 uploads a day, then the 11th is refused (429)', up11.status === 429 && faceUps().length === before11
        && (await rowOf(sam.code)).photo_tries === 10, JSON.stringify([up11.status, up11.body]));
     ok('...another student is not held back', (await upFace(tia.code)).status === 200);
+    const realWebp = 'data:image/webp;base64,' + b64('RIFF', '\x24\0\0\0', 'WEBPVP8 ', '\0'.repeat(24));
+    const realHeic = 'data:image/heic;base64,' + b64('\0\0\0\x18', 'ftypheic', '\0'.repeat(24));
+    const realHeif = 'data:image/heif;base64,' + b64('\0\0\0\x18', 'ftypmif1', '\0'.repeat(24));
+    const kinds = [];
+    for (const d of [realWebp, realHeic, realHeif]) kinds.push((await upFace(tia.code, d)).status);
+    ok('a real WebP or HEIC photo is still taken', kinds.every(s => s === 200), JSON.stringify(kinds));
     await pool.query('UPDATE bkk_members SET photo_tries_on = photo_tries_on - 1 WHERE code=$1', [sam.code]);
     ok('...and the next day the student can upload again', (await upFace(sam.code)).status === 200 && (await rowOf(sam.code)).photo_tries === 1);
 
@@ -2603,6 +2618,31 @@ const ok = (name, cond, extra = '') => {
     ok('removing with a wrong code is 404; with no photo it does nothing',
        (await post('/api/bkk/me/BNOSUCHCODE00/photo/remove', {})).status === 404
        && (await post(`/api/bkk/me/${uma.code}/photo/remove`, {})).status === 200 && destroyed.length === d2 + 1);
+
+    // Cloudinary down while a photo is removed: the row is cleared at once, and
+    // the photo is noted and deleted on the next try.
+    const realDestroy = fakeCloud.uploader.destroy;
+    const tiaHad = (await rowOf(tia.code)).photo_id;
+    fakeCloud.uploader.destroy = async () => { throw new Error('network down'); };
+    const rmDown = await post(`/api/bkk/me/${tia.code}/photo/remove`, {});
+    fakeCloud.uploader.destroy = realDestroy;
+    const orphan = async id => (await pool.query('SELECT tries FROM bkk_face_orphans WHERE photo_id=$1', [id])).rows[0];
+    ok('a photo that could not be deleted is noted to delete later, and the row is cleared', rmDown.status === 200
+       && (await rowOf(tia.code)).photo_id === null && !!(await orphan(tiaHad)), JSON.stringify([rmDown.body, await orphan(tiaHad)]));
+    const d3 = destroyed.length;
+    ok('...the next photo stored tries again', (await upFace(tia.code)).status === 200);
+    for (let i = 0; i < 40 && await orphan(tiaHad); i++) await new Promise(r => setTimeout(r, 25));
+    ok('...and then it is deleted and the note goes', !(await orphan(tiaHad))
+       && destroyed.slice(d3).some(d => d.id === tiaHad && d.type === 'authenticated'), JSON.stringify(destroyed.slice(d3)));
+
+    // Staff "sign out everywhere" gives a new code: links given out before stop at once.
+    const tiaOld = (await J(`/api/bkk/me/${tia.code}`)).body.photo;
+    ok("tia's link works before", (await get(tiaOld.small)).status === 200);
+    const so = await post(`/api/bkk/admin/members/${tia.code}/signout`, { expectEmail: 'tia.face@example.com', clearEmail: false }, ADMIN);
+    const tiaNew = so.body.member && (await J(`/api/bkk/me/${so.body.member.code}`)).body.photo;
+    ok('after staff sign a profile out everywhere, the old links stop and the new code gets new ones', so.status === 200
+       && (await get(tiaOld.small)).status === 403 && (await get(tiaOld.large)).status === 403
+       && tiaNew && tiaNew.small !== tiaOld.small && (await get(tiaNew.small)).status === 200, JSON.stringify([so.status, tiaNew]));
 
     await pool.query('DELETE FROM bkk_bookings WHERE id = ANY($1::int[])', [seats]);
     clock = bkkAt('2026-11-11T23:59:00');

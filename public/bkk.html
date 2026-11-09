@@ -759,6 +759,8 @@
   .face.has .fx{display:flex;flex-wrap:wrap;gap:0 24px;margin-top:6px}
   .face.has .fx .linkbtn{font-size:var(--fs-s)}
   .face .fx .msg{flex:0 0 100%}
+  .face .fx .fq{flex:0 0 100%;margin:8px 0 0;font-weight:700;color:var(--ink)}
+  .face .fx [data-face=yes]{color:var(--plum)}
   .face progress{display:block;width:100%;height:8px;accent-color:var(--promo-deep)}
   .face .fx > .note{margin:8px 0 0}
   @media (min-width:700px){ .face .fx{grid-column:2} .face .fx .btn{width:auto} }
@@ -1698,7 +1700,7 @@
     addEmailH: 'Add your email', addEmailWhy: 'So you can open your profile again on another phone. We email you a one-time link, no password.', addEmailBtn: 'Save my email', addEmailDone: 'Saved. Next time, sign in with this email.',
     checkH: 'My 12-week check · Habit #1', chkWhy: 'Three numbers from your watch or phone, at week 0, 6 and 12. Proof, not promises.', chkStartH: 'Week 0: your starting point', chkDueH: 'Your next check is due', chkHrL: 'Resting heart rate (beats per minute)', chkSleepL: 'Average sleep last week (hours)', chkFeelL: 'How do you feel? (1 = tired, 5 = great)', chkNoteL: 'One line (optional)', chkSave: 'Save my check', chkWeek: 'Week', chkHr: 'Heart rate', chkSleep: 'Sleep', chkFeel: 'Feel', chkChange: (hr, sl) => `Since week 0: heart rate ${hr}, sleep ${sl}`, chkNext: d => `Next check: ${d}`, chkAll: 'All 3 checks done. Look how far you came.',
     fromTeachers: 'From your teachers', workOn: 'Work on',
-    faceH: 'Add your photo, so your teachers know your face', faceWho: 'Only you and your teachers can see it.', faceBtn: 'Add my photo', faceMine: 'My photo', faceChange: 'Change photo', faceRemove: 'Remove photo', faceReady: 'Getting your photo ready…', faceUp: 'Uploading…', faceSave: 'Saving…', faceDone: 'Saved. Your teachers will know your face.', faceGone: 'Photo removed.', faceBig: 'This photo is too big. Please choose a smaller one.', faceNot: 'This file is not a photo. Please choose a photo.', faceLater: 'That did not work. Please try again later.', faceMany: 'Too many tries today. Please try again tomorrow.',
+    faceH: 'Add your photo, so your teachers know your face', faceWho: 'Only you and your teachers can see it.', faceBtn: 'Add my photo', faceMine: 'My photo', faceChange: 'Change photo', faceRemove: 'Remove photo', faceRemoveQ: 'Remove your photo?', faceYes: 'Yes, remove', faceNo: 'No, keep it', faceDel: 'Removing…', faceReady: 'Getting your photo ready…', faceUp: 'Uploading…', faceSave: 'Saving…', faceDone: 'Saved. Your teachers will know your face.', faceGone: 'Photo removed.', faceBig: 'This photo is too big. Please choose a smaller one.', faceNot: 'This file is not a photo. Please choose a photo.', faceLater: 'That did not work. Please try again later.', faceMany: 'Too many tries today. Please try again tomorrow.',
     myPhotos: 'My class photos', phN: n => n === 1 ? '1 photo' : `${n} photos`, phAll: n => `See all ${n} photos`, noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo.', paidMail: 'Payment confirmed 🙏 Your pass is active. Open the link in your receipt email to see it on this phone.', haveProfile: 'This email already has an AYBKK profile. After you pay, open the link in your receipt email to see your pass.', codeNotFound: 'We could not find that member code. Check it, or ask for an email link above.', notYou: n => `Not ${n}? Sign out`, emailWho: n => `This is ${n}’s profile. Add your email only if you are ${n}.`, meGone: 'This sign-in has ended. Ask the shala for a new link on LINE @aybkk.', photoDl: 'Save photo', h12H: 'Give yourself 12 weeks.', h12S: 'New students: you will earn 3\u00a0more\u00a0months. Buy by 11\u00a0Nov.', h12Sp: 'See you tomorrow.', h12Btn: d => `I’m in · ${d} a day`, jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Order on LINE, then pick up your tee at the shala.', teeSizes: 'Sizes',
     teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
     jbio1: 'Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.',
@@ -1710,7 +1712,7 @@
     addEmailH: 'เพิ่มอีเมลของคุณ', addEmailWhy: 'เพื่อเปิดโปรไฟล์ได้อีกครั้งบนมือถือเครื่องอื่น เราส่งลิงก์ใช้ครั้งเดียวทางอีเมล ไม่ต้องมีรหัสผ่าน', addEmailBtn: 'บันทึกอีเมล', addEmailDone: 'บันทึกแล้ว ครั้งหน้าเข้าด้วยอีเมลนี้',
     checkH: 'เช็กผล 12 สัปดาห์ของฉัน · นิสัยที่ 1', chkWhy: 'ตัวเลข 3 ค่าจากนาฬิกาหรือมือถือ สัปดาห์ที่ 0, 6 และ 12 หลักฐานจริง ไม่ใช่คำสัญญา', chkStartH: 'สัปดาห์ที่ 0: จุดเริ่มต้นของคุณ', chkDueH: 'ถึงเวลาเช็กครั้งต่อไปแล้ว', chkHrL: 'ชีพจรขณะพัก (ครั้งต่อนาที)', chkSleepL: 'นอนเฉลี่ยสัปดาห์ที่แล้ว (ชั่วโมง)', chkFeelL: 'รู้สึกอย่างไร (1 = เหนื่อย, 5 = ดีมาก)', chkNoteL: 'หนึ่งบรรทัด (ไม่บังคับ)', chkSave: 'บันทึกผล', chkWeek: 'สัปดาห์', chkHr: 'ชีพจร', chkSleep: 'นอน', chkFeel: 'ความรู้สึก', chkChange: (hr, sl) => `ตั้งแต่สัปดาห์ที่ 0: ชีพจร ${hr} การนอน ${sl}`, chkNext: d => `เช็กครั้งต่อไป: ${d}`, chkAll: 'ครบ 3 ครั้งแล้ว ดูสิว่าคุณมาไกลแค่ไหน',
     fromTeachers: 'จากครูของคุณ', workOn: 'ฝึกต่อ',
-    faceH: 'เพิ่มรูปของคุณ ให้ครูจำหน้าคุณได้', faceWho: 'เห็นได้เฉพาะคุณและครูเท่านั้น', faceBtn: 'เพิ่มรูปของฉัน', faceMine: 'รูปของฉัน', faceChange: 'เปลี่ยนรูป', faceRemove: 'ลบรูป', faceReady: 'กำลังเตรียมรูป…', faceUp: 'กำลังอัปโหลด…', faceSave: 'กำลังบันทึก…', faceDone: 'บันทึกแล้ว ครูจะจำหน้าคุณได้', faceGone: 'ลบรูปแล้ว', faceBig: 'รูปนี้ใหญ่เกินไป กรุณาเลือกรูปที่เล็กกว่านี้', faceNot: 'ไฟล์นี้ไม่ใช่รูปภาพ กรุณาเลือกรูปภาพ', faceLater: 'ยังไม่สำเร็จ กรุณาลองใหม่ภายหลัง', faceMany: 'วันนี้ลองหลายครั้งเกินไปแล้ว กรุณาลองใหม่พรุ่งนี้',
+    faceH: 'เพิ่มรูปของคุณ ให้ครูจำหน้าคุณได้', faceWho: 'เห็นได้เฉพาะคุณและครูเท่านั้น', faceBtn: 'เพิ่มรูปของฉัน', faceMine: 'รูปของฉัน', faceChange: 'เปลี่ยนรูป', faceRemove: 'ลบรูป', faceRemoveQ: 'ลบรูปของคุณใช่ไหม', faceYes: 'ใช่ ลบรูป', faceNo: 'ไม่ เก็บไว้', faceDel: 'กำลังลบรูป…', faceReady: 'กำลังเตรียมรูป…', faceUp: 'กำลังอัปโหลด…', faceSave: 'กำลังบันทึก…', faceDone: 'บันทึกแล้ว ครูจะจำหน้าคุณได้', faceGone: 'ลบรูปแล้ว', faceBig: 'รูปนี้ใหญ่เกินไป กรุณาเลือกรูปที่เล็กกว่านี้', faceNot: 'ไฟล์นี้ไม่ใช่รูปภาพ กรุณาเลือกรูปภาพ', faceLater: 'ยังไม่สำเร็จ กรุณาลองใหม่ภายหลัง', faceMany: 'วันนี้ลองหลายครั้งเกินไปแล้ว กรุณาลองใหม่พรุ่งนี้',
     myPhotos: 'รูปการฝึกของฉัน', phN: n => `${n} รูป`, phAll: n => `ดูทั้งหมด ${n} รูป`, noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ', paidMail: 'ชำระเงินเรียบร้อย 🙏 แพ็กเกจของคุณใช้งานได้แล้ว เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูบนมือถือเครื่องนี้', haveProfile: 'อีเมลนี้มีโปรไฟล์ AYBKK อยู่แล้ว หลังชำระเงิน เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูแพ็กเกจของคุณ', codeNotFound: 'ไม่พบรหัสสมาชิกนี้ ลองตรวจสอบอีกครั้ง หรือขอลิงก์ทางอีเมลด้านบน', notYou: n => `ไม่ใช่คุณ${n}? ออกจากระบบ`, emailWho: n => `นี่คือโปรไฟล์ของคุณ${n} ใส่อีเมลเฉพาะเมื่อคุณคือคุณ${n}`, meGone: 'การเข้าสู่ระบบนี้หมดอายุแล้ว ขอลิงก์ใหม่ได้ทาง LINE @aybkk', photoDl: 'บันทึกรูป', h12H: 'ให้เวลากับตัว\u2060เอง 12\u00a0สัปดาห์', h12S: 'นักเรียน\u2060ใหม่: คุณ\u2060จะ\u2060ได้\u2060เพิ่ม\u2060อีก\u00a03\u00a0เดือน ซื้อภายใน 11\u00a0พ.ย.', h12Sp: 'เจอกันพรุ่งนี้', h12Btn: d => `เอาเลย · วันละ ${d}`, jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'สั่งทาง LINE แล้วมารับเสื้อที่ชาลา', teeSizes: 'ไซซ์',
     teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
     jbio1: 'Jamsai เคยเป็นที่ปรึกษาด้านภาษี เธอเริ่มฝึกอัษฎางคโยคะในปี 2015 ระหว่างรับเคมีบำบัดรักษามะเร็งเต้านม โดยมี Boonchu เป็นครู',
@@ -1722,7 +1724,7 @@
     addEmailH: '添加你的邮箱', addEmailWhy: '这样你可以在另一部手机上再次打开个人主页。我们会发一次性链接到邮箱，不需要密码。', addEmailBtn: '保存邮箱', addEmailDone: '已保存。下次用这个邮箱登录。',
     checkH: '我的12周检查 · 习惯1', chkWhy: '手表或手机上的3个数字，第0、6、12周各记录一次。是证据，不是承诺。', chkStartH: '第0周：你的起点', chkDueH: '该做下一次检查了', chkHrL: '静息心率（次/分钟）', chkSleepL: '上周平均睡眠（小时）', chkFeelL: '感觉如何？（1 = 很累，5 = 很好）', chkNoteL: '一句话（可选）', chkSave: '保存', chkWeek: '周', chkHr: '心率', chkSleep: '睡眠', chkFeel: '感觉', chkChange: (hr, sl) => `从第0周起：心率 ${hr}，睡眠 ${sl}`, chkNext: d => `下次检查：${d}`, chkAll: '3次检查都完成了。看看你走了多远。',
     fromTeachers: '老师给你的话', workOn: '要练习的',
-    faceH: '添加你的照片，让老师认得你', faceWho: '只有你和老师能看到。', faceBtn: '添加我的照片', faceMine: '我的照片', faceChange: '更换照片', faceRemove: '删除照片', faceReady: '正在准备照片…', faceUp: '正在上传…', faceSave: '正在保存…', faceDone: '已保存。老师会认得你。', faceGone: '照片已删除。', faceBig: '这张照片太大了，请选一张小一点的。', faceNot: '这个文件不是照片，请选一张照片。', faceLater: '没有成功，请稍后再试。', faceMany: '今天尝试次数太多了，请明天再试。',
+    faceH: '添加你的照片，让老师认得你', faceWho: '只有你和老师能看到。', faceBtn: '添加我的照片', faceMine: '我的照片', faceChange: '更换照片', faceRemove: '删除照片', faceRemoveQ: '要删除你的照片吗？', faceYes: '是的，删除', faceNo: '不，保留', faceDel: '正在删除…', faceReady: '正在准备照片…', faceUp: '正在上传…', faceSave: '正在保存…', faceDone: '已保存。老师会认得你。', faceGone: '照片已删除。', faceBig: '这张照片太大了，请选一张小一点的。', faceNot: '这个文件不是照片，请选一张照片。', faceLater: '没有成功，请稍后再试。', faceMany: '今天尝试次数太多了，请明天再试。',
     myPhotos: '我的练习照片', phN: n => `${n} 张`, phAll: n => `查看全部 ${n} 张`, noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。', paidMail: '付款成功 🙏 你的课程卡已生效。打开收据邮件里的链接，即可在这部手机上查看。', haveProfile: '这个邮箱已有 AYBKK 个人主页。付款后，打开收据邮件里的链接即可查看你的课程卡。', codeNotFound: '找不到这个会员编号。请检查，或在上方用邮箱获取链接。', notYou: n => `不是${n}？退出`, emailWho: n => `这是${n}的个人主页。只有你是${n}本人时才添加邮箱。`, meGone: '此登录已失效。请在 LINE @aybkk 向道场索取新链接。', photoDl: '保存照片', h12H: '给自己12周。', h12S: '新学员：你将多得3个月。11月11日前购买。', h12Sp: '明天见。', h12Btn: d => `我要开始 · 每天${d}`, jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '通过 LINE 订购，然后到道场自取。', teeSizes: '尺码',
     teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
     jbio1: 'Jamsai 曾是一名税务顾问。2015年她在接受乳腺癌化疗期间开始练习阿斯汤加，老师是 Boonchu。',
@@ -1734,7 +1736,7 @@
     addEmailH: 'Добавьте email', addEmailWhy: 'Чтобы открыть профиль на другом телефоне. Мы пришлём одноразовую ссылку, без пароля.', addEmailBtn: 'Сохранить email', addEmailDone: 'Сохранено. В следующий раз входите с этим email.',
     checkH: 'Моя 12-недельная проверка · Привычка №1', chkWhy: 'Три числа с часов или телефона, на 0, 6 и 12 неделе. Доказательства, а не обещания.', chkStartH: 'Неделя 0: ваша отправная точка', chkDueH: 'Пора следующей проверки', chkHrL: 'Пульс в покое (уд/мин)', chkSleepL: 'Средний сон за неделю (часы)', chkFeelL: 'Как вы себя чувствуете? (1 = устал, 5 = отлично)', chkNoteL: 'Одна строка (по желанию)', chkSave: 'Сохранить', chkWeek: 'Неделя', chkHr: 'Пульс', chkSleep: 'Сон', chkFeel: 'Самочувствие', chkChange: (hr, sl) => `С недели 0: пульс ${hr}, сон ${sl}`, chkNext: d => `Следующая проверка: ${d}`, chkAll: 'Все 3 проверки готовы. Посмотрите, какой путь вы прошли.',
     fromTeachers: 'От ваших учителей', workOn: 'Над чем работать',
-    faceH: 'Добавьте своё фото, чтобы учителя знали вас в лицо', faceWho: 'Его видите только вы и ваши учителя.', faceBtn: 'Добавить фото', faceMine: 'Моё фото', faceChange: 'Сменить фото', faceRemove: 'Удалить фото', faceReady: 'Готовим фото…', faceUp: 'Загружаем…', faceSave: 'Сохраняем…', faceDone: 'Сохранено. Учителя будут знать вас в лицо.', faceGone: 'Фото удалено.', faceBig: 'Это фото слишком большое. Выберите фото поменьше.', faceNot: 'Этот файл не фото. Выберите фото.', faceLater: 'Не получилось. Попробуйте позже.', faceMany: 'Сегодня слишком много попыток. Попробуйте завтра.',
+    faceH: 'Добавьте своё фото, чтобы учителя знали вас в лицо', faceWho: 'Его видите только вы и ваши учителя.', faceBtn: 'Добавить фото', faceMine: 'Моё фото', faceChange: 'Сменить фото', faceRemove: 'Удалить фото', faceRemoveQ: 'Удалить ваше фото?', faceYes: 'Да, удалить', faceNo: 'Нет, оставить', faceDel: 'Удаляем…', faceReady: 'Готовим фото…', faceUp: 'Загружаем…', faceSave: 'Сохраняем…', faceDone: 'Сохранено. Учителя будут знать вас в лицо.', faceGone: 'Фото удалено.', faceBig: 'Это фото слишком большое. Выберите фото поменьше.', faceNot: 'Этот файл не фото. Выберите фото.', faceLater: 'Не получилось. Попробуйте позже.', faceMany: 'Сегодня слишком много попыток. Попробуйте завтра.',
     myPhotos: 'Мои фото с практики', phN: n => `${n} фото`, phAll: n => `Все фото (${n})`, noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы.', paidMail: 'Оплата получена 🙏 Абонемент активен. Откройте ссылку в письме с чеком, чтобы увидеть его на этом телефоне.', haveProfile: 'У этого email уже есть профиль AYBKK. После оплаты откройте ссылку в письме с чеком, чтобы увидеть абонемент.', codeNotFound: 'Такой код участника не найден. Проверьте его или запросите ссылку по email выше.', notYou: n => `Не ${n}? Выйти`, emailWho: n => `Это профиль: ${n}. Добавляйте email, только если вы ${n}.`, meGone: 'Этот вход больше не действует. Попросите новую ссылку в LINE @aybkk.', photoDl: 'Сохранить фото', h12H: 'Дайте себе 12 недель.', h12S: 'Новым ученикам: вы\u00a0получите ещё\u00a03\u00a0месяца. Купить\u00a0до 11\u00a0ноября.', h12Sp: 'До завтра.', h12Btn: d => `Я в деле · ${d} в день`, jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Закажите в LINE и заберите футболку в шале.', teeSizes: 'Размеры',
     teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
     jbio1: 'Jamsai работала налоговым консультантом. Она начала заниматься аштангой в 2015 году, во время химиотерапии от рака груди, и её учителем был Boonchu.',
@@ -2979,32 +2981,52 @@
   // a card at the top of My account asks for one; with one, a small row to change or remove
   // it. The phone shrinks the photo first (longest side 1200 px, JPEG): a camera photo of
   // several MB goes up as a few hundred KB. XHR, not fetch, for the upload progress.
+  // FACE_BUSY is the step of an upload or removal under way ({ code, key, pct }), so a
+  // redraw meanwhile (the language changed) shows the same progress, not a dead button.
+  // FACE_ASK is set while "Remove photo" waits for a yes: one tap never deletes it.
   const FACE_SIDE = 1200, FACE_MAX = 6 * 1024 * 1024;
-  let FACE_BUSY = false;
-  // refocus: after an upload or removal, so a keyboard user stays on the card.
+  let FACE_BUSY = null, FACE_ASK = '';
+  const faceBusyHtml = () => { const { key, pct } = FACE_BUSY;
+    return `<progress max="100"${pct == null ? '' : ` value="${pct}"`}></progress>
+      <p class="note" role="status">${esc(t(key))}${pct == null ? '' : ` ${pct}%`}</p>`; };
+  function faceBusy(code, key, pct) {
+    FACE_BUSY = { code, key, pct };
+    const fx = $('#faceBox .fx');
+    if (fx && code === myCode() && ACCT_WHO.code === code) fx.innerHTML = faceBusyHtml();
+  }
+  // refocus: after an upload or removal, so a keyboard user stays on the card;
+  // a data-face name puts focus on that button.
   function drawFace(code, msg, refocus) {
     const box = $('#faceBox');
     if (!box || code !== myCode() || ACCT_WHO.code !== code) return;
     const who = ACCT_WHO, has = !!who.photo;
+    const busy = !!FACE_BUSY && FACE_BUSY.code === code, ask = !busy && has && FACE_ASK === code;
     box.className = 'pkg face' + (has ? ' has' : '');
     box.innerHTML = `<div class="fc" aria-hidden="true">${has ? `<img src="${esc(who.photo)}"${who.large
         ? ` srcset="${esc(who.photo)} 160w, ${esc(who.large)} 600w" sizes="56px"` : ''} alt="">` : esc(initials(who.name))}</div>
       ${has ? `<p class="fh">${esc(t('faceMine'))}</p>` : `<h3>${esc(t('faceH'))}</h3>`}
       <p class="note">${esc(t('faceWho'))}</p>
-      <div class="fx">${has
+      <div class="fx">${busy ? faceBusyHtml() : `${ask
+        ? `<p class="fq">${esc(t('faceRemoveQ'))}</p><button type="button" class="linkbtn" data-face="yes">${esc(t('faceYes'))}</button><button type="button" class="linkbtn" data-face="no">${esc(t('faceNo'))}</button>`
+        : has
         ? `<button type="button" class="linkbtn" data-face="pick">${esc(t('faceChange'))}</button><button type="button" class="linkbtn" data-face="remove">${esc(t('faceRemove'))}</button>`
         : `<button type="button" class="btn pink" data-face="pick">${esc(t('faceBtn'))}</button>`}
         <input type="file" accept="image/*" hidden>
-        ${msg ? `<p class="msg ${msg.ok ? 'ok' : 'bad'}" role="status">${esc(msg.text)}</p>` : ''}</div>`;
+        ${msg ? `<p class="msg ${msg.ok ? 'ok' : 'bad'}" role="status">${esc(msg.text)}</p>` : ''}`}</div>`;
     const input = box.querySelector('input[type=file]');
     box.querySelectorAll('[data-face]').forEach(b => b.addEventListener('click', () => {
       if (FACE_BUSY) return;
-      if (b.dataset.face === 'remove') return removeFace(code);
+      const act = b.dataset.face;
+      if (act === 'remove') { FACE_ASK = code; return drawFace(code, null, 'no'); }
+      if (act === 'no') { FACE_ASK = ''; return drawFace(code, null, 'remove'); }
+      FACE_ASK = '';
+      if (act === 'yes') return removeFace(code);
       input.value = '';
       input.click();
     }));
-    input.addEventListener('change', () => { if (input.files && input.files[0]) sendFace(code, input.files[0]); });
-    if (refocus) box.querySelector('[data-face]').focus({ preventScroll: true });
+    if (input) input.addEventListener('change', () => { if (input.files && input.files[0]) sendFace(code, input.files[0]); });
+    const to = refocus && box.querySelector(typeof refocus === 'string' ? `[data-face="${refocus}"]` : '[data-face]');
+    if (to) to.focus({ preventScroll: true });
   }
   function shrinkFace(file) {
     const heic = /heic|heif/i.test((file.type || '') + ' ' + (file.name || ''));
@@ -3051,20 +3073,14 @@
   });
   const faceErr = s => t(s === 413 ? 'faceBig' : s === 400 ? 'faceNot' : s === 429 ? 'faceMany' : 'faceLater');
   async function sendFace(code, file) {
-    const fx = $('#faceBox .fx');
-    if (!fx) return;
-    const busy = (text, pct) => {
-      fx.innerHTML = `<progress max="100"${pct == null ? '' : ` value="${pct}"`}></progress>
-        <p class="note" role="status">${esc(text)}${pct == null ? '' : ` ${pct}%`}</p>`;
-    };
-    FACE_BUSY = true;
+    if (FACE_BUSY) return;
     let msg;
     try {
-      busy(t('faceReady'));
+      faceBusy(code, 'faceReady');
       const data = await shrinkFace(file);
-      busy(t('faceUp'), 0);
-      const r = await postFace(code, data, p => p < 1 ? busy(t('faceUp'), Math.round(p * 100)) : busy(t('faceSave')));
-      if (r.status === 404 && r.body.error === 'not found') { FACE_BUSY = false; forgetMe(); return renderMe(true); }
+      faceBusy(code, 'faceUp', 0);
+      const r = await postFace(code, data, p => p < 1 ? faceBusy(code, 'faceUp', Math.round(p * 100)) : faceBusy(code, 'faceSave'));
+      if (r.status === 404 && r.body.error === 'not found') { FACE_BUSY = null; forgetMe(); return renderMe(true); }
       if (r.status === 200 && r.body.photo) {
         if (ACCT_WHO.code === code) ACCT_WHO = { ...ACCT_WHO, photo: r.body.photo.small, large: r.body.photo.large };
         msg = { ok: true, text: t('faceDone') };
@@ -3072,12 +3088,13 @@
     } catch (e) {
       msg = { ok: false, text: t(e && /^face/.test(e.message) ? e.message : 'faceLater') };
     }
-    FACE_BUSY = false;
+    FACE_BUSY = null;
     drawAcct();
     drawFace(code, msg, true);
   }
   async function removeFace(code) {
-    FACE_BUSY = true;
+    if (FACE_BUSY) return;
+    faceBusy(code, 'faceDel');
     let msg = { ok: false, text: t('faceLater') };
     try {
       const r = await fetch('/api/bkk/me/' + encodeURIComponent(code) + '/photo/remove',
@@ -3087,7 +3104,7 @@
         msg = { ok: true, text: t('faceGone') };
       }
     } catch (_) {}
-    FACE_BUSY = false;
+    FACE_BUSY = null;
     drawAcct();
     drawFace(code, msg, true);
   }

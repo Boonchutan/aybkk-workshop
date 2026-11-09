@@ -1289,10 +1289,14 @@
     }
   }
 
-  // First and last word's first letter, as on the student's own account button.
+  // First and last word's first letter, as on the student's own account button
+  // (public/bkk.html): a title or a name in brackets is skipped, and so is a Thai leading vowel.
+  const TITLE = /^(mr|mrs|ms|miss|mx|dr|นาย|นาง|นางสาว|น\.ส\.|ด\.ช\.|ด\.ญ\.)\.?$/i;
   const initials = name => {
-    const ws = String(name || '').replace(/[(（[][^)）\]]*[)）\]]/g, ' ').trim().split(/\s+/)
-      .map(w => (w.replace(/[\u0E40-\u0E44]/g, '').match(/\p{L}/u) || [''])[0]).filter(Boolean);
+    const s = String(name || '');
+    let ws = (s.replace(/[(（[][^)）\]]*[)）\]]/g, ' ').trim() || s).split(/\s+/).filter(Boolean);
+    if (ws.length > 1 && TITLE.test(ws[0])) ws = ws.slice(1);
+    ws = ws.map(w => (w.replace(/[\u0E40-\u0E44]/g, '').match(/\p{L}/u) || [''])[0]).filter(Boolean);
     return (ws.length > 1 ? ws[0] + ws[ws.length - 1] : ws[0] || '').toUpperCase();
   };
   const face = b => `<span class="av" aria-hidden="true">${b.photo

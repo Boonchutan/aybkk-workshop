@@ -490,6 +490,10 @@ function mountBkk(app, opts = {}) {
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS photo_at TIMESTAMPTZ`);
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS photo_tries INTEGER NOT NULL DEFAULT 0`);
     await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS photo_tries_on DATE`);
+    await q(`CREATE TABLE IF NOT EXISTS bkk_face_orphans (
+      photo_id TEXT PRIMARY KEY,
+      since TIMESTAMPTZ NOT NULL DEFAULT now(),
+      tries INTEGER NOT NULL DEFAULT 1)`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -1563,7 +1567,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const c = count.rows[0];
       res.json({
         member: { code: m.code, name: m.name, email: m.email, journalId: await journalId(m) },
-        photo: faceLinks(m.photo_id),
+        photo: faceLinks(m.photo_id, m.code),
         history: { practised: c.practised, days: c.days, thisMonth: c.this_month, recent: recent.rows },
         notes,
         passes: passes.map(p => ({
@@ -2130,7 +2134,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
             mats: list.filter(b => b.need_mat).length };
         }).filter(Boolean);
       }
-      res.json({ bookings: r.rows.map(({ photo_id, ...b }) => ({ ...b, photo: faceSmall(photo_id) })), money, classes });
+      res.json({ bookings: r.rows.map(({ photo_id, ...b }) => ({ ...b, photo: faceSmall(photo_id, b.code) })), money, classes });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3603,10 +3607,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     driveCache.set(folderId, { at: Date.now(), files });
     return files;
   }
-  const sniff = b => b[0] === 0xFF && b[1] === 0xD8 ? 'image/jpeg'
-    : b[0] === 0x89 && b[1] === 0x50 ? 'image/png'
-    : b.subarray(0, 4).toString('latin1') === 'RIFF' ? 'image/webp'
-    : b.subarray(4, 8).toString('latin1') === 'ftyp' ? 'image/heic' : null;
+  // RIFF alone is also WAV and AVI, and ftyp alone is also MP4, MOV and AVIF:
+  // WebP and HEIC need their own marks too.
+  const HEIF_BRANDS = new Set(['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'mif1', 'msf1']);
+  const sniff = b => {
+    const at = (i, j) => b.subarray(i, j).toString('latin1');
+    return b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF ? 'image/jpeg'
+      : b[0] === 0x89 && at(1, 4) === 'PNG' ? 'image/png'
+      : at(0, 4) === 'RIFF' && at(8, 12) === 'WEBP' ? 'image/webp'
+      : at(4, 8) === 'ftyp' && HEIF_BRANDS.has(at(8, 12)) ? 'image/heic' : null;
+  };
 
   app.get('/api/bkk/teacher/drive/folders', async (req, res) => {
     const t = await teacherFrom(req);
@@ -3748,6 +3758,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // do (expiring ones are a paid plan), and this server is reachable from China
   // where Cloudinary is slow. A link carries the photo's id, size and expiry,
   // and works for 6 to 12 hours, the same link all the while so browsers cache it.
+  // The member code is signed in as well (it is not in the link), so when staff
+  // sign a profile out everywhere, the new code stops every link given out before.
   // Only /me (the member code) and the staff lists (admin key) hand links out.
   const FACE_FOLDER = 'aybkk-profile';
   const FACE_MAX_BYTES = 6 * 1024 * 1024;
@@ -3762,14 +3774,46 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     || ADMIN_KEY || crypto.randomBytes(32).toString('hex'))).digest();
   const faceSig = s => crypto.createHmac('sha256', FACE_KEY).update(s).digest('base64url').slice(0, 22);
   const faceRef = photoId => String(photoId).split('/').pop();
-  const faceUrl = (photoId, size) => {
+  const faceUrl = (photoId, code, size) => {
     const s = `${faceRef(photoId)}.${size}.${(Math.floor(nowMs() / 1000 / FACE_STEP) + 2) * FACE_STEP}`;
-    return `/api/bkk/face/${s}.${faceSig(s)}`;
+    return `/api/bkk/face/${s}.${faceSig(`${s}.${code}`)}`;
   };
-  const faceLinks = photoId => photoId && cloudinary ? { small: faceUrl(photoId, 's'), large: faceUrl(photoId, 'l') } : null;
-  const faceSmall = photoId => photoId && cloudinary ? faceUrl(photoId, 's') : null;
-  const dropFace = id => cloudinary.uploader.destroy(id, { type: 'authenticated', invalidate: true })
-    .catch(e => console.warn(`[bkk face] could not delete ${id}:`, (e && e.message) || e));
+  const faceLinks = (photoId, code) => photoId && cloudinary
+    ? { small: faceUrl(photoId, code, 's'), large: faceUrl(photoId, code, 'l') } : null;
+  const faceSmall = (photoId, code) => photoId && cloudinary ? faceUrl(photoId, code, 's') : null;
+  const destroyFace = async id => {
+    try {
+      if (!cloudinary) throw new Error('photo storage not configured');
+      const r = await cloudinary.uploader.destroy(id, { type: 'authenticated', invalidate: true });
+      if (r && r.error) throw new Error(r.error.message || String(r.error));
+      return true;
+    } catch (e) {
+      console.warn(`[bkk face] could not delete ${id}:`, (e && e.message) || e);
+      return false;
+    }
+  };
+  // A photo that could not be deleted (Cloudinary down or not set up) waits in
+  // bkk_face_orphans and is tried again at boot, once a day and after the next
+  // photo is stored, so a removed or replaced face never stays in storage for good.
+  const dropFace = async id => {
+    if (await destroyFace(id)) return;
+    await q(`INSERT INTO bkk_face_orphans (photo_id) VALUES ($1)
+             ON CONFLICT (photo_id) DO UPDATE SET tries = bkk_face_orphans.tries + 1`, [id])
+      .catch(e => console.error(`[bkk face] could not note ${id} to delete later:`, e.message));
+  };
+  const sweepFaces = async () => {
+    if (!cloudinary) return;
+    try {
+      const left = (await q(`SELECT photo_id FROM bkk_face_orphans
+        WHERE photo_id NOT IN (SELECT photo_id FROM bkk_members WHERE photo_id IS NOT NULL)
+        ORDER BY since LIMIT 100`)).rows;
+      for (const { photo_id: id } of left) {
+        await q(await destroyFace(id) ? 'DELETE FROM bkk_face_orphans WHERE photo_id=$1'
+          : 'UPDATE bkk_face_orphans SET tries = tries + 1 WHERE photo_id=$1', [id]);
+      }
+    } catch (e) { console.error('[bkk face] sweep failed:', e.message); }
+  };
+  setInterval(sweepFaces, 24 * 3600 * 1000).unref();
   // Swaps the member's photo in one statement and returns the one it replaced,
   // so two uploads at once each delete the right old asset.
   const swapFace = (where, args, photoId) => q(
@@ -3781,14 +3825,17 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   app.post('/api/bkk/me/:code/photo', async (req, res) => {
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      const m = (await q('SELECT id, code FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
       if (!m) return res.status(404).json({ error: 'not found' });
       const img = String((req.body || {}).imageBase64 || '');
       const head = FACE_TYPE.exec(img);
       if (!head) return res.status(400).json({ error: 'not a photo: send a JPEG, PNG, WebP or HEIC image' });
       const b64 = img.slice(head[0].length);
       if (b64.length * 3 / 4 > FACE_MAX_BYTES) return res.status(413).json({ error: 'photo too big: 6 MB at most' });
-      if (!sniff(Buffer.from(b64.slice(0, 32), 'base64'))) return res.status(400).json({ error: 'not a photo' });
+      // The bytes must be the type the label says: a WAV or MP4 called a JPEG never reaches storage.
+      if (sniff(Buffer.from(b64.slice(0, 32), 'base64')) !== `image/${head[1] === 'heif' ? 'heic' : head[1]}`) {
+        return res.status(400).json({ error: 'not a photo' });
+      }
       if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
         return res.status(503).json({ error: 'photo storage not configured' });
       }
@@ -3811,7 +3858,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       catch (e) { await dropFace(up.public_id); throw e; }
       if (!swapped) { await dropFace(up.public_id); return res.status(404).json({ error: 'not found' }); }
       if (swapped.old && swapped.old !== up.public_id) await dropFace(swapped.old);
-      res.json({ success: true, photo: faceLinks(up.public_id) });
+      res.json({ success: true, photo: faceLinks(up.public_id, m.code) });
+      sweepFaces();
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3819,26 +3867,27 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const r = (await swapFace('code=$1', [req.params.code], null)).rows[0];
       if (!r) return res.status(404).json({ error: 'not found' });
-      if (r.old && cloudinary) await dropFace(r.old);
+      if (r.old) await dropFace(r.old);
       res.json({ success: true, photo: null });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
   // The link itself is the key: an <img> sends no header. A removed or
-  // replaced photo stops at once, whatever its links say.
+  // replaced photo stops at once, whatever its links say, and so does every
+  // link from before the member code changed.
   app.get('/api/bkk/face/:t', async (req, res) => {
     const m = /^([0-9a-f]{24})\.([sl])\.(\d{9,11})\.([\w-]{22})$/.exec(req.params.t);
     if (!m) return res.status(404).json({ error: 'not found' });
     const [, ref, size, exp, sig] = m;
-    const want = Buffer.from(faceSig(`${ref}.${size}.${exp}`)), got = Buffer.from(sig);
-    if (want.length !== got.length || !crypto.timingSafeEqual(want, got)) return res.status(403).json({ error: 'bad link' });
-    const left = Number(exp) - Math.floor(nowMs() / 1000);
-    if (left <= 0 || left > 2 * FACE_STEP) return res.status(410).json({ error: 'link expired' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const row = (await q('SELECT photo_id FROM bkk_members WHERE photo_id = ANY($1::text[]) LIMIT 1',
+      const row = (await q('SELECT photo_id, code FROM bkk_members WHERE photo_id = ANY($1::text[]) LIMIT 1',
         [[`${FACE_FOLDER}/${ref}`, ref]])).rows[0];
       if (!row) return res.status(404).json({ error: 'not found' });
+      const want = Buffer.from(faceSig(`${ref}.${size}.${exp}.${row.code}`)), got = Buffer.from(sig);
+      if (want.length !== got.length || !crypto.timingSafeEqual(want, got)) return res.status(403).json({ error: 'bad link' });
+      const left = Number(exp) - Math.floor(nowMs() / 1000);
+      if (left <= 0 || left > 2 * FACE_STEP) return res.status(410).json({ error: 'link expired' });
       const r = await httpFetch(cloudinary.url(row.photo_id, { type: 'authenticated', sign_url: true, secure: true,
         transformation: [FACE_SIZES[size]] }), { signal: AbortSignal.timeout(15000) });
       const buf = r.ok ? Buffer.from(await r.arrayBuffer()) : null;
@@ -4144,7 +4193,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           mats: live.filter(b => b.status === 'booked' && b.need_mat).length },
         roster: live.map(b => ({ bookingId: b.id, code: b.code, name: b.name, status: b.status,
           checkedInAt: b.checked_in_at, bookedAt: b.booked_at, cover: b.cover, source: b.source,
-          passName: b.pass_name, dropin: b.dropin, needMat: b.need_mat, photo: faceSmall(b.photo_id) }))
+          passName: b.pass_name, dropin: b.dropin, needMat: b.need_mat, photo: faceSmall(b.photo_id, b.code) }))
           .sort((a, b) => String(a.name).localeCompare(String(b.name)) || a.bookingId - b.bookingId),
         cancelledList: rows.filter(b => b.status === 'cancelled')
           .sort((a, b) => (b.cancelled_at || 0) - (a.cancelled_at || 0) || b.id - a.id)
@@ -4192,7 +4241,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const booted = initSchema();
   booted
     .then(() => {
-      console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge();
+      console.log('✓ bkk-api mounted (/api/bkk/*)'); letterPurge(); sweepFaces();
       return switchPrices().catch(e => console.error('✗ bkk: price switch failed:', e.message));
     })
     .catch(e => console.error('✗ bkk-api schema init failed:', e.message));
