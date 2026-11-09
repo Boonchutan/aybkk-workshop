@@ -1777,3 +1777,4 @@ Checked against the brief and the team rules. Good: mix A B A A B A B, pair P on
 3. R6 swap: if there is no Mari D cue, the Archer body does not fit H6 ("You are not lazy. You are stuck."). Film the Archer hook ("Lost first. Made history.") in the H10 spare slot on filming day, so the swap has its own hook. The runner photo needs a credit, or no photo.
 4. Lane B offer line says "1, 2 or 3 months", but the 2 Oct package rule says no 2 months. It matches the LINE promo, so it may be right. Boonchu: confirm once that 2 months is in the promo. If not, use "1 or 3 months".
 Dates: Machi's 22 Oct default says the test starts the Monday after filming. If filming is not Fri 23 or Sat 24, every date in this sheet moves one week.
+- 2026-11-09 (Plato): Google photo posts for Wed 11, Fri 13, Sun 15 Nov waiting for Boonchu's go in the Plato chat (bots/media/2026-11-11-gbp/). Last week's 3 Google posts all PUBLISHED.
