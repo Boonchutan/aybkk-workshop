@@ -65,31 +65,31 @@ Timing: the story (lines 4 to 20) is in the bedtime voice, so it is timed at the
     (picture: a calf drinking from its mother, white milk bubbles at its mouth. On screen: a third NO stamp on the picture. Stamps are not numbered, see Flag 5.)
 11. 0:22.9 [RH] (RH) What you do? Quit?
     (Harvard #1. Bedtime voice, not the teacher's. On screen: WHAT YOU DO? QUIT? Eyes in the lens, then a 1 s pause. Plato 9 Nov: 'Quit?' added so school-English viewers hear 'what would you do', not 'what is your job', and the twist in line 12 lands harder.)
-12. 0:25.1 [RH] (RH) He say OK. Back to the cows.
+12. 0:25.5 [RH] (RH) He say OK. Back to the cows.
     (the twist: no fight, no quitting. He keeps showing up.)
-13. 0:27.8 [T2] (T) So hungry, he eat wild leaves.
-14. 0:30.1 [T2] (T) He go blind. Fall in a well.
-15. 0:32.8 [T2] (OL) Sun go down. Who notice?
+13. 0:28.2 [T2] (T) So hungry, he eat wild leaves.
+14. 0:30.5 [T2] (T) He go blind. Fall in a well.
+15. 0:33.2 [T2] (OL) Sun go down. Who notice?
     (the worst moment, Harvard #20 in the story's voice. Same words as line 3, so the echo also resets attention. On screen: WHO NOTICE?)
-16. 0:34.7 [P] (P) Teacher notice. I say no to everything. Let's go find him.
+16. 0:35.1 [P] (P) Teacher notice. I say no to everything. Let's go find him.
     ("Teacher notice." in the narrator voice, then the teacher voice with the small tag TEACHER for the rest. Keep both the tag and the voice change, or I say no to everything sounds like Boonchu himself. Pays line 3. Harvard #27, the teacher's because, retold.)
-17. 0:38.9 [P] (RH) Upamanyu! Where are you?
+17. 0:39.3 [P] (RH) Upamanyu! Where are you?
     (teacher voice, loud, like calling into a forest. The loud voice is the shout, so there is no "He shout". A sound break.)
-18. 0:40.5 [P] (P) Here I am!
+18. 0:40.9 [P] (P) Here I am!
     (Upamanyu's voice, from far down, small tag UPAMANYU. On screen: HERE I AM! These are his words, so viewers read what they hear. The book's full answer stays only in the caption.)
-19. 0:41.6 [P] (P) Teacher say, pray. He see again.
+19. 0:42.0 [P] (P) Teacher say, pray. He see again.
     (on screen small: PRAY TO THE TWIN ASWINS, HEALERS OF THE GODS. An info card that names who he prays to, like the title card, not a subtitle. See Flag 22.)
-20. 0:43.9 [P] (P) He come home and bow. It was a test.
+20. 0:44.3 [P] (P) He come home and bow. It was a test.
     (small bow on "bow", like line 6. It was a test is the book's own frame, "the trial of Upamanyu". It answers the child's "why is the teacher so strict?" before the adult part. Then a 0.5 s silent beat, normal voice back.)
-21. 0:47.9 [P] (P) To say no, teacher must watch you.
+21. 0:48.3 [P] (P) To say no, teacher must watch you.
     (Harvard #21 + #27. Pays the line 3 loop. On screen: TO SAY NO, TEACHER MUST WATCH YOU)
-22. 0:50.4 [P] (P) Come back every morning. Stand like Upamanyu. Samasthitih.
+22. 0:50.8 [P] (P) Come back every morning. Stand like Upamanyu. Samasthitih.
     (Boonchu steps to the front of the mat and stands in Samasthitih, feet together, 0.5 s to settle. The lesson is showing up, like Upamanyu who came back every evening, not "obey". On screen: SAMASTHITIH · sama = same · sthiti = standing)
-23. 0:53.8 [P] (P) [BOONCHU'S OWN CUE: 5 words or less]
-24. 0:55.6 [P] (P) Your mat empty tomorrow. Who come looking?
+23. 0:54.1 [P] (P) [BOONCHU'S OWN CUE: 5 words or less]
+24. 0:55.9 [P] (P) Your mat empty tomorrow. Who come looking?
     (Harvard #20. The question stays with the viewer. End on the same empty mat as line 1. On screen: YOUR MAT EMPTY TOMORROW. WHO COME LOOKING? Never add "we come looking", see Flag 16.)
-25. 0:58.1 [P] (P) แล้วเจอกันครับ
-    (small subtitle: see you. The video ends at about 0:59.3.)
+25. 0:58.4 [P] (P) แล้วเจอกันครับ
+    (small subtitle: see you. The video ends at about 0:59.6.)
 
 Story pattern: Fail (no food, blind, in a well at sunset), Hero (the teacher who said no notices and goes looking, Upamanyu prays and sees again), Payoff (he comes home and bows, it was a test, then line 21 and the viewer's own mat).
 
@@ -99,9 +99,9 @@ Contrarian check: line 2 flips "I quit because it was too hard". Line 3 flips "t
 
 ## 7. Length
 
-Spoken words: 144 (English, the cue slot and the Thai sign-off not counted). Inside 110 to 160.
+Spoken words: 145 (English, the cue slot and the Thai sign-off not counted). Inside 110 to 160.
 How it is timed: story lines 4 to 20 at 2.6 words a second (bedtime voice), adult lines 1 to 3 and 21 to 24 at 2.8. Fixed beats on top: the fork pause after line 11 (1.0 s), the silent beat after line 20 (0.5 s), the step into Samasthitih at line 22 (0.5 s), his cue (1.8 s, which is 5 words at 2.8) and the Thai sign-off (1.2 s). Both bows happen while he says the line, so they add no time. Line 22 holds two long names (Upamanyu, Samasthitih), which is one more reason the step gets its own 0.5 s.
-Honest end time: about 0:59 (59.3 s). If he says the adult lines at the slow pace too: about 60.4 s. At 2.8 all the way through: about 56.4 s.
+Honest end time: about 0:59.6 (59.6 s). If he says the adult lines at the slow pace too: about 60.8 s. At 2.8 all the way through: about 56.8 s.
 If the real take runs over 60 s, cut in this order:
 1. Line 10, say "Bubbles from the baby cows? No." (drop "Milk", about 0.4 s).
 2. Line 9 "Cow milk? No." (about 1.2 s). Use it only if the take is still over, because the ladder then has only two no's. The milk then lives only in the caption.
@@ -109,8 +109,7 @@ Never cut lines 11 to 12 (the fork and twist), line 16 (the teacher's because), 
 If the take runs short, add back in this order. Each one was asked for by a checker and cut only for time:
 1. "In the well!" after "Here I am!" in line 18 (about 1.2 s). The screen then says HERE I AM! IN THE WELL!
 2. "Teacher look." before line 7 (about 0.8 s).
-3. "now" at the end of line 11, "What you do now?" (about 0.4 s). The screen then says WHAT YOU DO NOW?
-4. "That's why he late." in line 16, after "everything" (about 1.5 s).
+3. "That's why he late." in line 16, after "everything" (about 1.5 s).
 
 ## 8. Caption (English)
 
@@ -126,7 +125,7 @@ If the take runs short, add back in this order. Each one was asked for by a chec
 <p>The teacher looked at him and asked what he ate.</p>
 <p>He begged for food. The teacher took it all.</p>
 <p>He drank the cows' milk. The teacher said no. He had not asked first.</p>
-<p>He sipped the foam the calves spill when they drink. No again. The calves need it.</p>
+<p>He sipped the milk bubbles the calves spill when they drink. No again. The calves need it.</p>
 <p>The student said OK and went back to the cows.</p>
 <p>So hungry, he ate wild leaves.</p>
 <p>He went blind and fell into a well.</p>
@@ -195,7 +194,7 @@ Why Samasthitih stays: the one thing Upamanyu does every evening, even after eve
 16. The close "Who come looking?" is only a question. It promises no call, message or visit from AYBKK. Never add "we come looking" next to it, in the video or in the caption. The only AYBKK claim is the confirmed one in the caption ("At AYBKK, a teacher notices when you miss class."), kept word for word. Line 22's "Come back" means back to your own mat, wherever it is. It is not a sales line. Many China and Russia viewers practise at home or online, so the caption invites and does not scold home practice.
 17. Lane B and platforms: plato.md (28 Sep, Two Lanes) says "Lane B never goes on WeChat or Xiaohongshu." This Reel is Lane B (comment aybkk). Ask Boonchu before making the ZH caption and XHS title, or use a version for those platforms with no aybkk ask.
 18. Content safety: no politics, no royalty, no killing, no curse. A boy blind in a well is mild danger and ends well. Begging is a student's alms round in the story, told with respect (Thai viewers know it from monks).
-19. Length: 144 words, about 59.3 s at the honest pace (sec. 7). Use the cut order in sec. 7 only if the real take runs over 60 s.
+19. Length: 145 words, about 59.6 s at the honest pace (sec. 7). Use the cut order in sec. 7 only if the real take runs over 60 s.
 20. Ep. 6 follows the standing order (last posted = Ep. 5, 4 Nov).
 21. Hook timing, borderline (a checker's note, not a break): H runs 0:00 to 0:04.6, because the Triple Hook needs its lean and snapback, against the brief's 0 to 3 s. Line 1 alone does SAY, SHOW, WRITE inside the first 2 s. The three point lines are now 19 words, out by 0:06.8, against "about 6 s".
 22. Line 19's small card (PRAY TO THE TWIN ASWINS, HEALERS OF THE GODS) is an info card, like the title card and the Samasthitih card. It names who he prays to and does not compete with a spoken sentence the way the old line 18 quote did. If Boonchu wants the screen to match his words strictly, the card becomes PRAY. HE SEE AGAIN. and the Aswins live only in the caption.
@@ -204,8 +203,8 @@ Why Samasthitih stays: the one thing Upamanyu does every evening, even after eve
     - Line 18 "Here I am! In the well!" (first checker): cut further to "Here I am!" for time. Line 14 has already said he fell in a well. It is first on the add-back list.
     - Line 7 "Teacher look. What you eat?" (second checker): the question is used, but "Teacher look." is dropped, as the first checker asked. Lines 5 to 7 are the slow stretch where a 6 AM thumb moves, and both checkers wanted it faster. It is on the add-back list.
     - Line 22 "Every morning, you stand like him." (first checker): skipped. Right after line 21 ("teacher must watch you"), "him" reads as the teacher. The line keeps the name and takes the second checker's "come back" lesson.
-    - Line 16 "That's why he late." (second checker): skipped for time. With it the honest take runs about 60.8 s. Line 15 ("Sun go down.") already shows he is late, and I say no to everything is the teacher's because. It is on the add-back list.
-    - Line 11 "What you do now?" (second checker): skipped for time, and "What you do?" is the brief's own Harvard #1 line. The bedtime voice, the eyes in the lens and the on-screen WHAT YOU DO? make it a "what would you do" question. It is on the add-back list.
+    - Line 16 "That's why he late." (second checker): skipped for time. With it the honest take runs about 61.2 s. Line 15 ("Sun go down.") already shows he is late, and I say no to everything is the teacher's because. It is on the add-back list.
+    - Line 11 "What you do now?" (second checker): replaced by Plato's "Quit?" (9 Nov). It does the same job, so school-English viewers hear "what would you do", not "what is your job", and the screen says WHAT YOU DO? QUIT?
     - Optional lines 14 and 19 for bedtime listeners ("The leaves hurt his eyes...", "pray to the twin doctors of the gods"): skipped, no time (12 more words, about 4.6 s). The caption names the Aswins as the healers of the gods.
 
 ## Editor notes: what came from a, what from b, what I cut and why
@@ -268,3 +267,15 @@ Cut and why:
 23. Flags 1, 2, 3, 7, 8, 9, 11, 12, 16 and 19 updated to the new lines and the checkers' notes. Flag 2's safer option is now "Too hard? Maybe. Nobody notice you stop." with no "but".
 24. New Flags 21 (hook timing, borderline), 22 (line 19 info card) and 23 (checker changes not applied, and why).
 25. Sec. 3, 4, 6 notes, the one thread check, "Why Samasthitih stays" and the editor notes updated to the new lines and times.
+
+### Re-check fixes, 9 Nov
+
+26. Line 11: "Quit?" added (Plato 9 Nov, 1 word more, on screen WHAT YOU DO? QUIT?). Lines 12 to 25 re-timed +0.4 s. 145 words, honest end about 0:59.6.
+27. Sec. 6 start times from the exact sums (rounded to 0.1 s): line 12 0:25.1 to 0:25.5, 13 0:27.8 to 0:28.2, 14 0:30.1 to 0:30.5, 15 0:32.8 to 0:33.2, 16 0:34.7 to 0:35.1, 17 0:38.9 to 0:39.3, 18 0:40.5 to 0:40.9, 19 0:41.6 to 0:42.0, 20 0:43.9 to 0:44.3, 21 0:47.9 to 0:48.3, 22 0:50.4 to 0:50.8, 23 0:53.8 to 0:54.1, 24 0:55.6 to 0:55.9, 25 0:58.1 to 0:58.4.
+28. Line 25 note: "The video ends at about 0:59.3." became "about 0:59.6."
+29. Sec. 7: "Spoken words: 144" became 145. Honest end 59.3 s became 59.6 s, adult lines at the slow pace 60.4 s became 60.8 s, 2.8 all the way 56.4 s became 56.8 s.
+30. Sec. 7 add-back list: item 3 ("now" at the end of line 11, WHAT YOU DO NOW?) deleted, because "Quit?" already does that job. Old item 4 ("That's why he late.") is now item 3.
+31. Flag 19: "144 words, about 59.3 s" became "145 words, about 59.6 s".
+32. Flag 23, line 16 bullet: with "That's why he late." the honest take now runs about 61.2 s (was 60.8 s).
+33. Flag 23, line 11 bullet: replaced. "What you do now?" was replaced by Plato's "Quit?", and the screen says WHAT YOU DO? QUIT?
+34. Caption: "He sipped the foam the calves spill" became "He sipped the milk bubbles the calves spill" (carries Fix 10 into the caption, so it matches line 10).

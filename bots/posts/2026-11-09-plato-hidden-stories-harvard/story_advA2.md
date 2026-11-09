@@ -45,7 +45,7 @@ Not used: #121 and #101 (Ep. 6).
 
 ## 5. Harvard tricks used
 
-- #1 Decide before you know the ending: line 12, "What you do?", then a 1 s pause, eyes in the lens. He has heard two sounds, looked everywhere and found nobody. Line 17 answers it ("He sit down on his own seat.").
+- #1 Decide before you know the ending: line 12, "What you do?", then a 1 s pause, eyes in the lens. He has heard two sounds, looked everywhere and found nobody. Line 17 answers it ("He sit down firm on his own seat.").
 - #21 Teach them something about their own problem: lines 2 and 3 set it up, line 20 lands it. The viewer thinks the problem is the method. The first teacher of the world had two sounds, and it was enough to begin because he stayed. Lines 24 and 25 hand the same insight back as a question.
 - #27 Every claim needs a because: line 15 is the because for the hook's claim ("two sounds long"): "That's all the voice say" (2.9.6 to 2.9.7). Line 19 gives the because for his title ("So now he is...", the text's own "thus", 2.9.8). Line 20 gives the because for "enough" ("because he stay").
 - #30 Sell only the next step: the spoken video sells nothing. No price, no course, no link line. The caption has ONE ask (comment aybkk).
@@ -53,7 +53,7 @@ Not used: #2 (no result is promised to the viewer) and #20 (line 16 has a cost i
 
 ## 6. The script
 
-Timing: the story (lines 4 to 19) is in the bedtime voice, timed at 2.6 spoken words a second. The adult lines (1 to 3 and 20 to 25) are timed at 2.8. Fixed beats are added on top (see part 7). Story pictures go over his head as in Ep. 5. Pictures never show Brahma's face (Thai and Chinese viewers pray to Phra Phrom). Use a lotus on dark water, soft light from four sides, a small figure seen from behind (he sits down only at line 17).
+Timing: the story (lines 4 to 19) is in the bedtime voice, timed at 2.6 spoken words a second. The adult lines (1 to 3 and 20 to 25) are timed at 2.8. Fixed beats are added on top (see part 7). The line times below are by word count. Line 21 needs about 1 s more in the take (see part 7), so from line 22 on, expect each line about 1 s later. Story pictures go over his head as in Ep. 5. Pictures never show Brahma's face (Thai and Chinese viewers pray to Phra Phrom). Use a lotus on dark water, soft light from four sides, a small figure seen from behind (he sits down only at line 17).
 
 1. 0:00.0 [H] (H) Complete guide to Ashtanga? Two sounds long.
    (on screen from frame 1: COMPLETE GUIDE TO ASHTANGA? TWO SOUNDS LONG. Shot: Boonchu sitting at the front of his mat, straight to camera, two fingers up on "two sounds".)
@@ -72,7 +72,7 @@ Timing: the story (lines 4 to 19) is in the bedtime voice, timed at 2.6 spoken w
    (said softly, with care. It is what the book says, he did not know how to begin. Never played as "lost" or "confused". See Flag 1. No pause after it. Hard cut to the single ring on the water on "begin", at about 0:16, so the lotus shot never holds past 0:16.)
 9. 0:16.5 [T1] (OL) In the water, a voice.
    (opens the loop "whose voice?". It is never answered, on purpose. See Flag 4. Picture: the one ring from line 8 spreads on the dark water.)
-10. 0:18.4 [T1] (T) Ta pa. Ta pa.
+10. 0:18.4 [T1] (T + RH) Ta pa. Ta pa.
     (whispered, slow. Two pairs. Inside each pair the gap is very small, ta and pa almost touching. Between the two pairs comes the longer gap (0.6 s). 2.9.6 says two syllables "joined together", heard twice, so it must never sound like four separate sounds. Say ta and pa soft, with no puff of air, like Thai ต and ป. A soft water drop under each pair at 40% of his voice level. On screen: TA PA · TA PA and small TWO SOUNDS, TWO TIMES. Pattern break.)
 11. 0:20.5 [T1] (T) He look around. Nobody there.
     (picture: the figure from behind, empty dark water on every side. "Nobody there" sets up line 16.)
@@ -81,12 +81,12 @@ Timing: the story (lines 4 to 19) is in the bedtime voice, timed at 2.6 spoken w
 13. 0:24.6 [RH] (RH) Put together, tapa.
     (the twist. The verse's riddle goes on screen at no spoken cost. On screen: TA = LETTER 16 · PA = LETTER 21 → TAPA (त + प = तप), and very small under it COUNT FROM KA. TAPA big, the letter numbers small above it. Hold about 2 s, into the first words of line 14, so practitioners can read it. See Flag 23.)
 14. 0:25.7 [RH] (RH) Tapa mean heat. The hard practice.
-    (on screen: TAPA = HEAT, THE HARD PRACTICE. Picture: a warm glow rises from the lotus.)
+    (on screen, as the riddle card from line 13 clears at about 0:26.6: TAPA = HEAT, THE HARD PRACTICE. Picture: a warm glow rises from the lotus.)
 15. 0:28.1 [RH] (RH + P) That's all the voice say.
     (pays the hook. The "complete guide" really was two sounds long, for him. Harvard #27.)
 16. 0:30.0 [T2] (T) Nobody to explain. Only him, on the water.
     (the worst moment. Voice low. "Nobody to explain" calls back line 11 "Nobody there". "Only him" is 2.9.7, he found nobody besides himself. Picture: wide, the small lotus alone on dark water. 0.5 s pause. The line no longer opens a world-making goal that the story never pays. See Flag 9.)
-17. 0:33.6 [P] (P) He sit down on his own seat. Firm.
+17. 0:33.6 [P] (P) He sit down firm on his own seat.
     (pays the fork and the loop in line 3. Picture: the figure settles, very still. On screen: HIS OWN SEAT.)
 18. 0:36.6 [P] (P + RH) He practise a thousand years of the gods.
     (a number nobody expects, so it is a rehook. On screen: A THOUSAND YEARS OF THE GODS. Picture: the sky turns over the lotus many times, the figure does not move. Never turn it into human years.)
@@ -94,7 +94,7 @@ Timing: the story (lines 4 to 19) is in the bedtime voice, timed at 2.6 spoken w
     (the story ends on what he is now, 2.9.8. No "they", because nobody else is there yet (2.9.7), and the verse's "tapas tapīyāṁs tapatāṁ" says it of him directly. Pays line 3. Then a 0.5 s silent beat and the normal voice comes back. On screen: THE GREATEST OF ALL WHO PRACTISE.)
 20. 0:44.1 [P] (P) Two sounds was enough to begin, because he stay.
     (back to the adults, straight to camera. Harvard #21 and #27. "Begin" calls back to line 8.)
-21. 0:47.3 [P] (P) Viranchyasana. Named after Brahma.
+21. 0:47.3 [P] (P + RH) Viranchyasana. Named after Brahma.
     (cut to Boonchu, or a student with her OK, in Viranchyasana A. Left leg in half lotus, right leg behind the head, hands together at the heart. On screen: VIRANCHYASANA A · VIRAÑCI = A NAME OF BRAHMA. 0.5 s for the cut. See Flag 10.)
 22. 0:49.2 [P] (P) Half lotus. Your own seat.
     (a slow push in on the half lotus leg and the seat on the mat. On screen: YOUR OWN SEAT. Optional 1 s cutaway: students on their own mats in the room, with their OK. See Flag 12.)
@@ -109,7 +109,7 @@ Story pattern: Fail (he wants to make the world and does not know how to begin, 
 
 One thread check: lines 1 to 3 talk to adults. Lines 4 to 19 tell the story straight, start to end, with no jumping out. "What you do?" stays in the bedtime voice. Lines 20 to 25 come back to the adults: the point, the asana, the close.
 
-5-year-old test (lines 4 to 19 alone): Brahma is the first teacher of the whole world. His seat is a lotus flower. He wants to make the world. How to begin? In the water there is a voice. Ta pa. Ta pa. He looks around and nobody is there. What do you do? Put together, it is tapa. Tapa means heat, the hard practice. That is all the voice says. Nobody to explain. Only him, on the water. He sits down on his own seat, firm. He practises a thousand years of the gods. So now he is the greatest of all who practise. It makes sense alone. The question in line 8 (how to begin?) is answered inside the story (he sits down and practises), and line 16 no longer opens a new goal the story never pays.
+5-year-old test (lines 4 to 19 alone): Brahma is the first teacher of the whole world. His seat is a lotus flower. He wants to make the world. How to begin? In the water there is a voice. Ta pa. Ta pa. He looks around and nobody is there. What do you do? Put together, it is tapa. Tapa means heat, the hard practice. That is all the voice says. Nobody to explain. Only him, on the water. He sits down firm on his own seat. He practises a thousand years of the gods. So now he is the greatest of all who practise. It makes sense alone. The question in line 8 (how to begin?) is answered inside the story (he sits down and practises), and line 16 no longer opens a new goal the story never pays.
 
 Contrarian check: line 1 flips the belief that you need a bigger method (the guide is two sounds long). Line 2 says the viewer's own habit out loud. The close is two short questions, not an answer.
 
@@ -118,8 +118,8 @@ Retention check: one OL before 0:08 (line 3, plus "which two sounds?" from line 
 ## 7. Length
 
 Spoken words: 140 (English only, not counting the cue slot or the Thai sign-off). Inside 110 to 160.
-How it is timed: story lines 4 to 19 at 2.6 words a second, adult lines 1 to 3 and 20 to 25 at 2.8. Fixed beats on top: the whisper gap in line 10 (0.6 s), the fork pause after line 12 (1.0 s), the pause after line 16 (0.5 s), the silent beat after line 19 (0.5 s), the cut into the asana at line 21 (0.5 s), his cue (1.8 s, which is 5 words at 2.8) and the Thai sign-off (1.2 s). Script: wk6/HS/tools/advA2/t4.py (it uses tools/timing.py). t3.py is the version before the fix.
-Estimated time: about 58.6 s. If he says every line at the slow pace: about 59.9 s. At 2.8 all the way: about 56.1 s. Inside 45 to 60 s at every pace.
+How it is timed: story lines 4 to 19 at 2.6 words a second, adult lines 1 to 3 and 20 to 25 at 2.8. Fixed beats on top: the whisper gap in line 10 (0.6 s), the fork pause after line 12 (1.0 s), the pause after line 16 (0.5 s), the silent beat after line 19 (0.5 s), the cut into the asana at line 21 (0.5 s), his cue (1.8 s, which is 5 words at 2.8) and the Thai sign-off (1.2 s). Script: wk6/HS/tools/advA2/t5.py (it uses tools/timing.py). t4.py is the version before the re-check, with the old line 17 words and the same times. t3.py is the version before the first fix.
+Estimated time: about 58.6 s by word count. Line 21 has 11 syllables in 4 words ("Viranchyasana" alone is 5), so it needs about 1 s more than t4.py gives. Plan on about 59.6 s, about 61 s at the slow pace and about 57.1 s at 2.8. At the slow pace, use cut 3 (line 16 "Nobody to explain. Only him.") to stay under 60 s.
 Point lands at about 0:06.1 (lines 1 to 3 are 2.5 + 1.8 + 1.8 s).
 
 If the take runs over 60 s, cut in this order:
@@ -144,7 +144,7 @@ Never cut line 1 (the hook), line 3 (the loop), line 10 (the two sounds), line 1
 <p>Nobody was there. Only him.</p>
 <p>Put ta and pa together and you get tapa.</p>
 <p>Tapa means heat. It also means the hard practice.</p>
-<p>So Brahma sat down on his own seat, firm.</p>
+<p>So Brahma sat down firmly on his own seat.</p>
 <p>He practised for a thousand years of the gods.</p>
 <p>So now he is the greatest of all who practise.</p>
 <p>A fun part: the old book does not even write "ta" and "pa".</p>
@@ -232,3 +232,21 @@ Fixed 9 Nov 2026 from the checker's list. Timing re-run with wk6/HS/tools/advA2/
 
 Skipped: nothing. Facts that needed care are flagged: Flag 9 ("on the water"), Flag 22 (MW wording), Flag 23 (letter count).
 Unchanged on purpose: hook #13, double hook #60, Lane B and the aybkk ask, the one-thread shape, the cue slot, the sign-off, the Harvard tricks used (#1, #21, #27, #30), and every line on the "Never cut" list.
+
+### Re-check fixes, 9 Nov
+
+From the fresh checker (recheck/story_advA2.json). The file before these fixes is saved as wk6/HS/tools/advA2/story_advA2.before_recheck.md. Timing re-run with wk6/HS/tools/advA2/t5.py: still 140 words, 58.6 s by word count, 59.9 s slow, 56.1 s at 2.8.
+
+1. Must fix. Line 14 note now starts the TAPA = HEAT card "as the riddle card from line 13 clears at about 0:26.6", so the two text cards never show at once.
+2. Must fix. Part 7 estimate replaced. It now says 58.6 s is by word count, line 21 needs about 1 s more, plan on about 59.6 s (about 61 s slow, about 57.1 s at 2.8), and at the slow pace use cut 3 to stay under 60 s. The old "Inside 45 to 60 s at every pace" is gone (fix log item 1 above is the old figure).
+3. Must fix. Retention map labels. Line 10 is now (T + RH) and line 21 is now (P + RH), to match the retention check (rehooks at 0:18.4 and 0:47.3).
+4. Stale note fixed (from must fix 2). The timing note at the top of part 6 now says the line times are by word count and that from line 22 on each line comes about 1 s later in the take.
+5. Nice fix. Line 17 is now "He sit down firm on his own seat." (was "He sit down on his own seat. Firm."). Same 8 words, same time, and a lone "Firm." can no longer read as "a company". "Firm" is still the translation's "firmly" (2.9.7, Flag 7). On screen stays HIS OWN SEAT. The Harvard #1 note and the 5-year-old test now quote the new line.
+6. Caption matched to line 17. "So Brahma sat down firmly on his own seat." (was "on his own seat, firm."). Same fact, same order as the spoken line.
+7. Part 7 script reference now points to t5.py (the new line 17 words). t4.py is kept as the version before the re-check.
+
+Skipped nice fixes, and why:
+- Flag 8 "story beats say Vishnu" wording. A notes-only change, not a spoken line or the caption.
+- Adding "Did he make the world?" to the 5-year-old test. A notes-only change, not a spoken line or the caption.
+- "ONLY TWO SOUNDS" subtitle for a Chinese or Russian cut. It does not change the spoken line or this caption, and line 1 is on the never-cut list. Keep the idea for when that cut is made.
+- Line 4 card 2 s to 1.9 s. Cosmetic timing note, not a spoken line or the caption.

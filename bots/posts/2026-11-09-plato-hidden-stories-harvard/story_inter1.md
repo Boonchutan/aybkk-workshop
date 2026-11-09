@@ -70,12 +70,12 @@ Times are at a normal pace (story 2.8 words a second, adult lines 2.9), pauses i
     (friendly, as if the rock talks every day. That is the monkey's trick.)
 13. 0:29 [RH] (RH) On the rock, a crocodile.
     (the reveal. Picture: a crocodile on the rock, kid style.)
-14. 0:31 [RH] (RH) He think, rock always talk? OK. Yes, monkey?
-    (the twist. Crocodile voice and tag CROCODILE on "Yes, monkey?" Leave a small beat for the laugh.)
+14. 0:31 [RH] (RH) Crocodile think, rock always talk? OK. Yes, monkey?
+    (the twist. Crocodile voice and tag CROCODILE on "Yes, monkey?" On screen: ROCK ALWAYS TALK? / YES, MONKEY? Leave a small beat for the laugh.)
 15. 0:34 [T2] (T) No other way home.
     (the worst moment. Voice low, 0.6 s pause. The only road home goes over this rock.)
 16. 0:36 [P] (T) Monkey say, open your mouth. Catch me when I jump.
-    (on screen, the book's words: "Open your mouth and catch me when I jump.")
+    (on screen, his words: OPEN YOUR MOUTH. CATCH ME WHEN I JUMP. The book's exact words, with "and", stay in the caption.)
 17. 0:40 [P] (T) Mouth open. His eyes close.
     (picture: big open mouth, eyes shut. Say only "his eyes", this one crocodile. See Flag 3.)
 18. 0:42 [P] (P) Jump on his head. Then home.
@@ -84,14 +84,14 @@ Times are at a normal pace (story 2.8 words a second, adult lines 2.9), pauses i
     (Harvard #27. Pays line 3.)
 20. 0:46 [P] (P) Same asanas, so you see.
     (Harvard #21. On screen: SAME ROAD, SO HE SEE. / SAME ASANAS, SO YOU SEE.)
-21. 0:48 [P] (P) Nakrasana, the crocodile. Low and long.
-    (Boonchu, or a student with her OK, in Nakrasana, side view, so the line from head to heels shows. On screen: NAKRASANA · nakra = crocodile)
-22. 0:51 [P] (P) Hip higher? Teacher see.
-    (a quick split picture: ROCK LOOK HIGHER next to hips a little high in Nakrasana. On screen: HIP HIGHER? TEACHER SEE. The viewer is the one who sees, like the monkey. Never the crocodile. See Flag 9.)
-23. 0:53 [P] (P) [BOONCHU'S OWN CUE: 5 words or less]
-24. 0:55 [P] (P) If practice change every day, how you know what changed?
+21. 0:48 [P] (P) Nakrasana, the crocodile.
+    (Boonchu, or a student with her OK, in Nakrasana, side view, so the line from head to heels shows. The shot shows the low, long shape, so nobody says it. On screen: NAKRASANA · nakra = crocodile)
+22. 0:50 [P] (P) Hip higher? Teacher see.
+    (a quick split picture: ROCK LOOK HIGHER next to hips a little high in Nakrasana. On screen: HIP HIGHER? TEACHER SEE. The teacher sees here, and the viewer sees in line 20. Never the crocodile. See Flags 4 and 9.)
+23. 0:52 [P] (P) [BOONCHU'S OWN CUE: 5 words or less]
+24. 0:54 [P] (P) If practice change every day, how you know what changed?
     (the question stays with the viewer. End on Boonchu at the front of his mat, same as line 1. On screen: IF PRACTICE CHANGE EVERY DAY, HOW YOU KNOW WHAT CHANGED?)
-25. 0:58 [P] (P) แล้วเจอกันครับ
+25. 0:57 [P] (P) แล้วเจอกันครับ
     (small subtitle: see you)
 
 Story pattern: Fail (a trap on his everyday road, and no other way home), then Hero (he checked, did not jump, tested the rock and tricked the crocodile), then Payoff (home safe, then the viewer's own same asanas and Nakrasana).
@@ -106,12 +106,12 @@ Retention check: one OL before 0:08 (line 3). The rehook block runs 0:26 to 0:34
 
 ## 7. Length
 
-Spoken words: 142 (English only; the cue slot and the Thai sign-off are not counted).
-Estimated time: about 60 s at a normal pace (2.8 to 2.9 words a second), with the fork pause, the laugh beat, the silent beat, 2 s for his cue and the sign-off. At a slow bedtime pace (2.6) it runs about 63 s.
+Spoken words: 139 (English only; the cue slot and the Thai sign-off are not counted).
+Estimated time: about 59 s at a normal pace (2.8 to 2.9 words a second), with the fork pause, the laugh beat, the silent beat, 2 s for his cue and the sign-off. With the bedtime voice on lines 4 to 18 (2.6 words a second, the 92 story words) it runs about 61 s. If every line is that slow, about 63 s. So for a full bedtime-voice take, plan on cuts 1 and 2 below (together about 1.1 s, back to about 60 s).
+"Low and long." (line 21) is already cut (9 Nov re-check).
 If the take runs over 60 s, cut in this order:
-1. Line 21, "Low and long." (about 1 s; the side-view shot shows it).
-2. Line 6, say only "Island. Halfway, one rock." (the mangoes stay in the caption, about 0.5 s).
-3. Shorten the fork pause and the silent beat to 0.5 s each (about 0.6 s).
+1. Line 6, say only "Island. Halfway, one rock." (the mangoes stay in the caption, about 0.5 s).
+2. Shorten the fork pause and the silent beat to 0.5 s each (about 0.6 s).
 Never cut line 2 (the flip), line 3 (the loop), line 8 (the proof), line 10 (the fork), line 14 (the twist), line 19 (the because) or line 24 (the close).
 
 ## 8. Caption (English)
@@ -181,8 +181,8 @@ Already-used check, 9 Nov: 0 hits for crocodile, nakra, vanarinda, "rock that an
 
 ## 10. Flags
 
-1. Asana lines are a teaching picture, not from the book. "Low and long" and "Hip higher? Teacher see." are Plato's words about Nakrasana. Boonchu should confirm them, or replace line 22 with his own cue. The book only gives the name link (nakra = crocodile).
-2. The book never says the crocodile lay flat or low. It says he "took his stand on the rock", and the rock "seemed to stand higher". So the story lines say only "On the rock, a crocodile." The "low and long" shape belongs to the asana only. Line 9 says "Rock look higher", which follows "seemed".
+1. The asana line is a teaching picture, not from the book. "Hip higher? Teacher see." is Plato's words about Nakrasana. Boonchu should confirm it, or replace line 22 with his own cue. The book only gives the name link (nakra = crocodile). Plato's other asana words, "Low and long", were cut on 9 Nov.
+2. The book never says the crocodile lay flat or low. It says he "took his stand on the rock", and the rock "seemed to stand higher". So the story lines say only "On the rock, a crocodile." The low, long shape belongs only to the side-view asana shot at line 21, and nobody says it. Line 9 says "Rock look higher", which follows "seemed".
 3. Eyes closing. The narrator says crocodiles shut their eyes when they open their mouths, and the translator's footnote says that is not true. The script says only "His eyes close", about this one crocodile in the story. The caption says the same. Never say it as a fact about crocodiles.
 4. The monkey is the Bodhisatta, the Buddha in a past life. He is told kindly. He is smart, he checks every day, and no joke is made about him. He is never called "monkey king", and the pictures give him no crown. The caption says "old Buddhist stories" but does not say the monkey is the Buddha-to-be. If Boonchu wants that line for Thai viewers (they know ชาดก), add it. But then never liken the teacher to the monkey, or Boonchu could look like he compares himself to the Buddha. That is why line 22 says "Teacher see" and does not say "like the monkey". Ask a Thai reader before posting.
 5. Compressed, not changed. The book has one "Hi! rock!", then three more calls. The script says it once, and the caption says "He called three times". The book's "How comes it, friend rock..." becomes "Rock, why no answer today?" The "Who are you? I'm a crocodile." exchange is cut. "Then home" stands for "gained the bank", because he lives on the bank. "Same way home" is the book's "returning at evening by the way he came".
@@ -196,6 +196,22 @@ Already-used check, 9 Nov: 0 hits for crocodile, nakra, vanarinda, "rock that an
 13. Lane B and platforms: plato.md (28 Sep, Two Lanes) says "Lane B never goes on WeChat or Xiaohongshu." That older rule also put Hidden Stories in its own "Lane A (world)". The keyword-test lanes (A = STUCK, B = aybkk) are a different split. Ask Boonchu before making the ZH caption and the XHS title, or make a version for those platforms with no aybkk ask.
 14. Keyword test: the "aybkk" ask is frozen until 22 Nov. If this is posted later, check the ask word again.
 15. Theme echo: "same and slow every day" was the topic of the 19 Oct cow-pace hooks (bots/posts/2026-10-19-plato-cow-pace.md). The hook line is not the same, but post apart from anything on that theme.
-16. Length: 142 words, about 60 s at a normal pace and about 63 s slow. Use the cut order in part 7.
+16. Length: 139 words ("Low and long." cut on 9 Nov). About 59 s at a normal pace, about 61 s with the bedtime voice on lines 4 to 18, and about 63 s if every line is slow. For a full bedtime-voice take, use cuts 1 and 2 in part 7.
 17. The close "If practice change every day, how you know what changed?" is a question only. It promises nothing from AYBKK. The only AYBKK claim is the confirmed one in the caption, and it does not scold home or online practice.
-18. Caption: no price, one ask, no quoted thinkers. The quote marks hold only the book's exact words ("Hi! rock!", "Yes, monkey; what is it?", "Open your mouth and catch me when I jump."). The caption is long because it retells the story for sound-off and translated viewers. If Boonchu wants his short default, keep caption lines 1, 2, 23, 24, 26 (the source), 27 and 28, plus the hashtags.
+18. Caption: no price, one ask, no quoted thinkers. The quote marks hold only the book's exact words ("Hi! rock!", "Yes, monkey; what is it?", "Open your mouth and catch me when I jump."). The caption is long because it retells the story for sound-off and translated viewers. If Boonchu wants his short default, keep caption lines 1, 2, 3, 4 (the hook), 23, 24, 25 (Nakrasana), 26 (the source), 27 and 28, plus the hashtags.
+
+## 11. Fix log
+
+### Re-check fixes, 9 Nov
+
+From recheck/story_inter1.json.
+1. Line 14 (must fix): "He think" became "Crocodile think". "He" is the monkey in lines 8 and 18, so a child could hear the monkey thinking. Same word count, same time.
+2. Line 21 (must fix): "Low and long." cut, now "Nakrasana, the crocodile." Line 21 note says the side-view shot shows the shape.
+3. Lines 22 to 25 moved 1 s earlier (0:51, 0:53, 0:55, 0:58 became 0:50, 0:52, 0:54, 0:57), because line 21 is 3 words shorter.
+4. Line 22 note (must fix): "The viewer is the one who sees, like the monkey. Never the crocodile. See Flag 9." became "The teacher sees here, and the viewer sees in line 20. Never the crocodile. See Flags 4 and 9."
+5. Part 7: spoken words 142 became 139. Time now about 59 s normal, about 61 s with the bedtime voice on lines 4 to 18, about 63 s all slow. Old cut 1 ("Low and long.") removed, so the cut order is now 2 items. A full bedtime-voice take needs both (about 1.1 s) to land near 60 s. So the line 21 cut alone does not fully bring the bedtime-pace take under 60 s.
+6. Flag 16 updated to the same numbers. Flags 1 and 2 updated, because "Low and long" is no longer spoken.
+7. Line 14 on screen (nice fix): added ROCK ALWAYS TALK? / YES, MONKEY? so sound-off and school-English viewers get the twist.
+8. Line 16 on screen (nice fix, second option): now his spoken words, OPEN YOUR MOUTH. CATCH ME WHEN I JUMP., because on-screen text follows his words. The book's exact words stay in the caption.
+9. Flag 18 short caption (nice fix): also keeps caption lines 3, 4 and 25, so the short caption has the hook and names Nakrasana, like the script.
+Not applied: line 15 "Now monkey know." (adds back the 3 words just cut, about 1 s, and pushes the bedtime take further past 60 s). Line 16 first option (spoken "and" puts two ideas in one sentence; the on-screen option fixes the same mismatch). Line 4 title hold, line 20 time and the part 3 time wording (not a spoken line or the caption, and my edits did not change those times).

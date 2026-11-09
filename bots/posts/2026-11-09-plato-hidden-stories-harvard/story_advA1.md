@@ -1,6 +1,6 @@
 # Hidden Stories of Ashtanga · Ep. ? · "The Guest Who Ate Everything, Six Times" · Asana: Durvasasana (Advanced A, 3rd series, Sthira Bhaga A) · Lane B · ask word: aybkk
 
-Writer's script, 9 Nov 2026, fixed the same day after the checker (see Fix log at the end). Story id C1 (key advA1). No episode number until it is filmed. Beat order H, DH, T1, RH, T2, P.
+Writer's script, 9 Nov 2026, fixed the same day after the checker and again after a fresh re-check (see Fix log at the end). Story id C1 (key advA1). No episode number until it is filmed. Beat order H, DH, T1, RH, T2, P.
 
 Lane B, and why: the point is the habit. You lose a week, then you go back with no anger. That is the Habit Gap. Durvasasana comes in as a picture of falling out and standing up again. It is not a fix for an asana people are stuck in. Lane A needs a real technique fix and the STUCK ask. Durvasasana is a 3rd series asana that few viewers practise, and this story gives no technique. So the caption asks for "aybkk" (keyword test, frozen until 22 Nov).
 
@@ -13,7 +13,7 @@ Why care: You have lost practice to a trip, a sick week or a busy month before. 
 ## 3. Toolkit
 
 Toolkit pick: /hook (contrarian lever, bank #107 [bold]) + Fork-First Story.
-Why: #107 says advice the viewer likes and trusts out loud ("practise when you feel like it"), then flips it in the next line. That flip is the contrarian lever. The story has a real fork built in. Half a month of food is gone, so what do you do? The viewer chooses before Mudgala does (Harvard #1). Then the twist lands as the rehook at about 0:26 to 0:30. The guest comes back, Mudgala gives again, and the guest is Durvasa, the sage famous for his anger. The point is out by about 0:07.5.
+Why: #107 says advice the viewer likes and trusts out loud ("practise when you feel like it"), then flips it in the next line. That flip is the contrarian lever. The story has a real fork built in. Half a month of food is gone, so what do you do? The viewer chooses before Mudgala does (Harvard #1). Then the twist lands as the rehook at about 0:25 to 0:29. The guest comes back, Mudgala gives again, and the guest is Durvasa, the sage famous for his anger. The point is out by about 0:07.5.
 
 Toolkit choice:
 - Vibe Samurai (flat statement "Feeling like it is a bad alarm clock" + a ladder of three lost pots + the turn): the ladder is strong, but the turn pulls toward a banned "not X but Y" line. Also, "Motivation is a bad alarm clock" is already Carnegie's Letter 01 (2 Nov).
@@ -38,15 +38,15 @@ Backup for the 5-hook test, #83 [story] fit=use goal=shala habit=3 ("How do you 
 ## 5. Harvard tricks used
 
 - #1 Decide before you know the ending: line 11, "Half a month, gone. What you do?", then a 0.5 s pause with eyes in the lens. Line 12 answers it ("Mudgala give again."), and line 14 finishes the answer.
-- #27 Every claim needs a because: line 18 is the because for the hook's claim (lines 1 and 2). "Hungry. Who feel like it? Mudgala go back anyway." Line 16 is the because for "on purpose" (line 3). He came to look for anger, and the book says he saw no change in Mudgala's mind (3.246.21 to 22). Line 19's name claim has its because in the caption source (Iyengar 1979, Monier-Williams).
-- #21 Teach them something about their own problem: lines 18 and 20. The feeling never shows up on the hard days, and the anger after a lost week is what keeps you away. The asana carries the angry sage's name, but standing up again needs the man with no anger.
+- #27 Every claim needs a because: line 18 is the because for the hook's claim (lines 1 and 2). "Hungry. Who feel like it? Mudgala go back anyway." Line 16 is the because for "on purpose" (line 3). He came to look for anger, and the book says he saw no change in Mudgala's mind (3.246.21 to 22). Line 19's name claim is backed in part 9 (Iyengar 1979 via Wikipedia, Monier-Williams p. 487). The caption does not cite them.
+- #21 Teach them something about their own problem: lines 18, 20 and the question in line 22. The feeling never shows up on the hard days (line 18), and the anger after a lost week is what keeps you away (line 22 asks it). The asana carries the angry sage's name, but standing up again needs the man with no anger.
 - #30 Sell only the next step: the spoken video sells nothing. No price, no course, no link line. The caption has ONE ask (comment aybkk).
 
 Not used: #2 (a result-for-your-life line would be a pitch, and Lane B keeps the pitch out of the video). #20 (the close asks what you will do next time, not what it costs. A cost line would repeat the Stakes and push the take past 60 s).
 
 ## 6. The script
 
-Times are at the slow bedtime pace the brief asks for (story 2.6 words a second, adult lines 2.8), with pauses (tools/advA1/t6.py, same method as t5.py). At a normal pace (2.8 and 2.9) every line comes a little earlier and the video ends at about 0:56.8. Bedtime voice from line 4 to line 17. Story pictures go over his head as in Ep. 5, kid style and friendly. Durvasa is NEVER shown as a body or a face. He is a shadow at the door, or a far figure from behind. No nudity anywhere. Never draw him angry, funny or crazy.
+Times are at the slow bedtime pace the brief asks for (story 2.6 words a second, adult lines 2.8), with pauses (tools/advA1/t7.py, same method as t5.py), and with line 19 at a real 2.8 s (it is 12 syllables, see part 7). At a normal pace (2.8 and 2.9) every line comes a little earlier and the video ends at about 0:56.7. Bedtime voice from line 4 to line 17. Story pictures go over his head as in Ep. 5, kid style and friendly. Durvasa is NEVER shown as a body or a face. He is a shadow at the door, or a far figure from behind. No nudity anywhere. Never draw him angry, funny or crazy.
 
 1. 0:00 [H] (H) Practise when you feel like it.
    (on screen from frame 1: PRACTISE WHEN YOU FEEL LIKE IT. Shot: Boonchu at the front of his mat in the shala, straight to camera. Said like advice everybody likes.)
@@ -57,43 +57,43 @@ Times are at the slow bedtime pace the brief asks for (story 2.6 words a second,
 4. 0:08 [T1] (T) Bedtime story for my son.
    (voice drops to bedtime voice. On screen 2 s: HIDDEN STORIES OF ASHTANGA · EP. ? · THE GUEST WHO ATE EVERYTHING, SIX TIMES. Small: MAHABHARATA, INDIA'S GREAT OLD STORY · BOOK 3)
 5. 0:10 [T1] (T) Poor wise man, Mudgala.
-   (name tag: MUDGALA · THE POOR MAN. Picture: a thin, calm man in plain cloth at the edge of a field after harvest.)
-6. 0:12 [T1] (T) He pick leftover grains, like a pigeon.
-   (picture: pigeons pecking in the cut stubble, his fingers picking single grains next to them.)
-7. 0:15 [T1] (T) Half a month, one small pot of rice.
+   (name tag: MUDGALA · POOR WISE MAN. Picture: a thin, calm man in plain cloth at the edge of a field after harvest.)
+6. 0:12 [T1] (T) He pick leftover grains.
+   (picture: pigeons pecking in the cut stubble, his fingers picking single grains next to them. He no longer says "like a pigeon". The pigeons in the picture carry it, and the caption says it.)
+7. 0:13 [T1] (T) Half a month, one small pot of rice.
    (picture: one small clay pot with a little rice. On screen: HALF A MONTH, ONE SMALL POT OF RICE. Plants the cost for line 11.)
-8. 0:18 [T1] (T) A guest come, shouting rude words.
+8. 0:17 [T1] (T) A guest come, shouting rude words.
    (picture: a long shadow falls across the doorway. Boonchu says the line. No body and no face.)
-9. 0:20 [T1] (T) Mudgala say, welcome!
+9. 0:19 [T1] (T) Mudgala say, welcome!
    (picture: Mudgala bows, hands together. On screen: WELCOME!)
-10. 0:21 [T1] (T) Guest eat it all.
+10. 0:20 [T1] (T) Guest eat it all.
     (picture: the pot, empty. The shadow is gone.)
-11. 0:23 [T1] (T + OL) Half a month, gone. What you do?
+11. 0:22 [T1] (T + OL) Half a month, gone. What you do?
     (THE FORK, Harvard #1. Bedtime voice, the way you ask your child. On screen: WHAT YOU DO? Then a 0.5 s pause, eyes in the lens.)
-12. 0:26 [RH] (RH) Next moon day, guest come back. Mudgala give again.
+12. 0:25 [RH] (RH) Next moon day, guest come back. Mudgala give again.
     (the twist starts: he came back, and Mudgala gives again. This answers the fork. Picture: the shadow at the door again. Mudgala's hands hold out the small pot. The pot comes back empty again. No moon on screen.)
-13. 0:30 [RH] (RH) Guest is Durvasa. Famous angry sage.
-    (the reveal. Name tag: DURVASA · FAMOUS ANGRY SAGE (WISE HOLY MAN). Picture: still only the shadow. Small 0.4 s beat.)
-14. 0:32 [T2] (T) Mudgala eat nothing. Back to the field, from zero.
+13. 0:28 [RH] (RH) Guest is Durvasa. Famous angry sage.
+    (the reveal. Name tag: DURVASA · FAMOUS ANGRY SAGE (WISE HOLY MAN). Picture: still only the shadow. Small 0.2 s beat.)
+14. 0:31 [T2] (T) Mudgala eat nothing. Back to the field, from zero.
     (the worst moment. Picture: Mudgala bent in the field again, picking with the pigeons. His wife and son can pick beside him, never shown thin or weak. Finishes the answer to the fork.)
-15. 0:36 [T2] (T) Six times. No anger.
-    (on screen: SIX TIMES. NO ANGER. Picture: six empty clay pots appear one by one in a row, one pot for each visit. Voice low, 0.6 s pause.)
-16. 0:38 [P] (P) Durvasa look for anger. Find none.
+15. 0:34 [T2] (T) Six times. No anger.
+    (on screen: SIX TIMES. NO ANGER. Picture: six empty clay pots appear one by one in a row, one pot for each visit. Voice low, 0.3 s pause.)
+16. 0:36 [P] (P) Durvasa look for anger. Find none.
     (pays "on purpose" from line 3. Harvard #27. Picture: Mudgala's calm face, the shadow still.)
-17. 0:40 [P] (P) He say, nobody on earth give like you.
+17. 0:39 [P] (P) He say, nobody on earth give like you.
     (on screen: NOBODY ON EARTH GIVE LIKE YOU. "Give" lands because line 12 showed him give again. Then a 0.5 s silent beat, and normal voice back.)
-18. 0:44 [P] (P) Hungry. Who feel like it? Mudgala go back anyway.
+18. 0:42 [P] (P) Hungry. Who feel like it? Mudgala go back anyway.
     (Boonchu to camera again, normal voice. Harvard #27 and #21. Pays the hook. On screen: HUNGRY. WHO FEEL LIKE IT?)
-19. 0:47 [P] (RH) Durvasasana. Named after Durvasa.
+19. 0:46 [P] (RH) Durvasasana. Named after Durvasa.
     (new picture where attention drops: a real class photo, 4 Nov, Boonchu adjusting Durvasasana, label 4Nov-217. On screen: DURVASASANA · NAMED AFTER DURVASA)
 20. 0:49 [P] (P) You fall out. Stand up again.
-    (photo 4Nov-218 or 4Nov-219, the teacher steadying her leg and shoulder in the balance. On screen: YOU FALL OUT. STAND UP AGAIN. / NO ANGER. He does not say "no anger" here. It is his own line 15 words coming back on screen as the echo. Harvard #21.)
-21. 0:52 [P] (P) [BOONCHU'S OWN CUE: 5 words or less]
+    (photo 4Nov-218 or 4Nov-219, the teacher steadying her leg and shoulder in the balance. On screen: YOU FALL OUT. STAND UP AGAIN. The screen follows his words, so NO ANGER is not on it. Harvard #21.)
+21. 0:51 [P] (P) [BOONCHU'S OWN CUE: 5 words or less]
     (his own cue for the rise. If he has none, AYI's cue fits the slot: "Rise slowly on the inhale.")
-22. 0:54 [P] (P) Bad week eat your practice. Back to the mat? Or you get angry?
+22. 0:53 [P] (P) Bad week eat your practice. Back to the mat? Or you get angry?
     (the question stays with the viewer. End on Boonchu at the front of his mat, same as line 1. On screen: BAD WEEK EAT YOUR PRACTICE. / BACK TO THE MAT? OR YOU GET ANGRY?)
-23. 0:59 [P] (P) แล้วเจอกันครับ
-    (small subtitle: see you. The video ends at about 0:59.8 at the slow bedtime pace, about 0:56.8 at a normal pace.)
+23. 0:58 [P] (P) แล้วเจอกันครับ
+    (small subtitle: see you. The video ends at about 0:59.6 at the slow bedtime pace, about 0:56.7 at a normal pace, both with line 19 at a real 2.8 s.)
 
 Retention map:
 
@@ -103,36 +103,37 @@ Retention map:
 | 0:02 | 2 That's ruining your yoga habit. | H. The flip. "Ruining? How?" |
 | 0:04 | 3 Guest eat poor man's food. Six times. On purpose. | DH + OL. Who does that, and why? What did he do? |
 | 0:08 | 4 to 10 the poor man, the pot, the rude guest | T. Small real pictures, half a month of work in one pot. |
-| 0:23 | 11 Half a month, gone. What you do? | T + OL. They choose before they hear. |
-| 0:26 | 12 Next moon day, guest come back. Mudgala give again. | RH. Pattern break, he came back, and the fork gets its answer. |
-| 0:30 | 13 Guest is Durvasa. Famous angry sage. | RH. The name twist. |
-| 0:32 | 14 to 15 eat nothing, from zero, six times, no anger | T. The worst moment, and the hero. Six empty pots on screen. |
-| 0:38 | 16 Find none. | P. Pays "on purpose". |
-| 0:40 | 17 Nobody on earth give like you. | P. The reward. Silent beat. |
-| 0:44 | 18 Hungry. Who feel like it? | P. Pays the hook. |
-| 0:47 | 19 Durvasasana, named after Durvasa | RH. New real picture, a second name twist. |
+| 0:22 | 11 Half a month, gone. What you do? | T + OL. They choose before they hear. |
+| 0:25 | 12 Next moon day, guest come back. Mudgala give again. | RH. Pattern break, he came back, and the fork gets its answer. |
+| 0:28 | 13 Guest is Durvasa. Famous angry sage. | RH. The name twist. |
+| 0:31 | 14 to 15 eat nothing, from zero, six times, no anger | T. The worst moment, and the hero. Six empty pots on screen. |
+| 0:36 | 16 Find none. | P. Pays "on purpose". |
+| 0:39 | 17 Nobody on earth give like you. | P. The reward. Silent beat. |
+| 0:42 | 18 Hungry. Who feel like it? | P. Pays the hook. |
+| 0:46 | 19 Durvasasana, named after Durvasa | RH. New real picture, a second name twist. |
 | 0:49 | 20 to 21 fall out, stand up, his cue | P. The asana as the same story. |
-| 0:54 | 22 Back to the mat? Or you get angry? | P. The question they keep. |
+| 0:53 | 22 Back to the mat? Or you get angry? | P. The question they keep. |
 
 Story pattern: Fail (half a month of food gone, six times, to a rude guest who does it on purpose), then Hero (he gives again, eats nothing, goes back to the field from zero, no anger), then Payoff (the angry sage finds no anger, "nobody on earth give like you", then the viewer's own lost week and Durvasasana).
 
 One thread check: lines 1 to 3 talk to adults. Lines 4 to 17 tell the story straight, start to end, with no jumping out. Lines 18 to 22 come back to the adults. "What you do?" stays in the bedtime voice.
 
-5-year-old test (lines 4 to 17 alone): A poor wise man, Mudgala, picks leftover grains like a pigeon. Half a month gives one small pot of rice. A guest comes, shouting rude words. Mudgala says welcome. The guest eats it all. Half a month, gone. What do you do? Next moon day the guest comes back. Mudgala gives again. The guest is Durvasa, a famous angry sage. Mudgala eats nothing and goes back to the field, from zero. Six times, no anger. Durvasa looks for anger and finds none. He says nobody on earth gives like you. It makes sense alone.
+5-year-old test (lines 4 to 17 alone): A poor wise man, Mudgala, picks leftover grains. Half a month gives one small pot of rice. A guest comes, shouting rude words. Mudgala says welcome. The guest eats it all. Half a month, gone. What do you do? Next moon day the guest comes back. Mudgala gives again. The guest is Durvasa, a famous angry sage. Mudgala eats nothing and goes back to the field, from zero. Six times, no anger. Durvasa looks for anger and finds none. He says nobody on earth gives like you. It makes sense alone.
 
 Contrarian check: line 1 says the viewer's belief (practise when you feel like it). Line 2 flips it. The close is a question, not an answer.
 
-Retention check: one OL before 0:08 (line 3). The voice drop at 0:08, WELCOME! on screen at 0:20 and the fork at 0:23. A rehook block at 0:26 to 0:32, the six pots at 0:36, then the voice change at 0:44 and a new real picture at 0:47. The longest stretch from one big break to the next is about 15 s (the voice drop at 0:08 to the fork at 0:23 at the slow pace), with the WELCOME! text in between. The silent beat comes before the adult payoff (line 17). Every loop is paid: line 3 at lines 12 to 16, line 11 at lines 12 and 14, the hook at line 18.
+Retention check: one OL before 0:08 (line 3). The voice drop at 0:08, WELCOME! on screen at 0:19 and the fork at 0:22. A rehook block at 0:25 to 0:31, the six pots at 0:34, then the voice change at 0:42 and a new real picture at 0:46. The longest stretch from one big break to the next is about 14 s (the voice drop at 0:08 to the fork at 0:22 at the slow pace), with the WELCOME! text in between. The silent beat comes before the adult payoff (line 17). Every loop is paid: line 3 at lines 12 to 16, line 11 at lines 12 and 14, the hook at line 18.
 
 ## 7. Length
 
-Spoken words: 138 (English only; the cue slot and the Thai sign-off are not counted). With AYI's 5-word cue in the slot: 143.
-Estimated time (tools/advA1/t6.py, the t5.py method): about 59.8 s at the slow bedtime pace (story 2.6, adults 2.8 words a second) and about 56.8 s at a normal pace (2.8 and 2.9). This counts the 0.5 s fork pause, the 0.5 s silent beat, 2 s for his cue and the sign-off. With AYI's 5-word cue said in the slot: 59.9 s slow, 56.9 s normal.
-Cuts already made (fix, 9 Nov): fork pause and silent beat down to 0.5 s each. Old line 13 ("Six times. On purpose.") dropped, because line 3 already says it and line 15 carries "Six times". Line 19 shortened to "Durvasasana. Named after Durvasa." Line 20 shortened to "You fall out. Stand up again." (NO ANGER stays on screen).
-The tool counts words, not syllables. "Mudgala give again" and "Named after Durvasa" are a little longer to say than the words they replaced. There is only 0.2 s to spare at the slow pace, so time the real take. If it runs over 60 s, cut in this order:
-1. The 0.6 s pause after line 15 down to 0.3 s, and the 0.4 s beat after line 13 down to 0.2 s (about 0.5 s).
-2. Keep his cue in line 21 to 3 words, or cut the slot to 1.5 s (about 0.5 s).
-3. Line 6, say only "He pick leftover grains." and keep the pigeons in the picture (about 1.1 s).
+Spoken words: 135 (English only; the cue slot and the Thai sign-off are not counted). With AYI's 5-word cue in the slot: 140.
+Estimated time (tools/advA1/t7.py, the t5.py method): by word count, about 58.2 s at the slow bedtime pace (story 2.6, adults 2.8 words a second) and about 55.3 s at a normal pace (2.8 and 2.9). With line 19 at a real 2.8 s: about 59.6 s slow and about 56.7 s normal. This counts the 0.5 s fork pause, the 0.5 s silent beat, the 0.2 s beat after line 13, the 0.3 s pause after line 15, 2 s for his cue and the sign-off. With AYI's 5-word cue said in the slot, and line 19 at a real 2.8 s: 59.7 s slow, 56.7 s normal.
+Cuts already made (fix, 9 Nov): fork pause and silent beat down to 0.5 s each. Old line 13 ("Six times. On purpose.") dropped, because line 3 already says it and line 15 carries "Six times". Line 19 shortened to "Durvasasana. Named after Durvasa." Line 20 shortened to "You fall out. Stand up again."
+Cuts made in the re-check fix (9 Nov): cut 1 (the beat after line 13 is 0.2 s, the pause after line 15 is 0.3 s) and cut 3 (line 6 is "He pick leftover grains.", the pigeons stay in the picture). NO ANGER is off line 20's screen now, so the screen follows his words.
+The tool counts words, not syllables. "Mudgala give again" and "Named after Durvasa" are a little longer to say than the words they replaced. Line 19 is 12 syllables, about 2.8 s in a real take, not the tool's 1.43 s. After cuts 1 and 3 the slow take is about 60 s or less. Keep cut 2 (cue slot 1.5 s) in reserve. Time the real take. The cut order:
+1. Done (re-check fix, 9 Nov). The pause after line 15 is 0.3 s (was 0.6 s), and the beat after line 13 is 0.2 s (was 0.4 s).
+2. In reserve, if the real take still runs over 60 s. Keep his cue in line 21 to 3 words, or cut the slot to 1.5 s (about 0.5 s).
+3. Done (re-check fix, 9 Nov). Line 6 is only "He pick leftover grains." and the pigeons stay in the picture.
 Never cut line 2 (the flip), line 3 (the loop), line 11 (the fork), line 12 (the answer, "give again"), line 13 (the twist), line 15 (six times, no anger), line 16 (the because), line 18 (the hook's because) or line 22 (the close).
 
 ## 8. Caption (English)
@@ -162,7 +163,7 @@ Never cut line 2 (the flip), line 3 (the loop), line 11 (the fork), line 12 (the
 <p>So Mudgala said, "I do not desire heaven."</p>
 <p>He let the messenger go. He stayed calm and sat in meditation every day.</p>
 <p>Durvasasana (also written Durvasana) is the asana named after Durvasa.</p>
-<p>You stand on one leg, with the other foot behind your head.</p>
+<p>It is a balance on one leg, with the other foot behind the head.</p>
 <p>You fall out. You stand up again. No anger.</p>
 <p>Feeling lazy is one thing. Pain is another.</p>
 <p>Aching, yes. Sharp pain, no. That one, you tell your teacher.</p>
@@ -187,7 +188,7 @@ Photos: bots/media/2026-11-06-adjust/photo_scan.json (claude/bots-memory), entri
 | Script line | Story fact | Section / verse | Exact source words checked |
 |---|---|---|---|
 | 5 to 6, caption | Mudgala lives by gleaning, picking grains left on the field after harvest | Ganguli CCLVIII and fn 86; MBh 3.246.3 | "And he used to lead the Sila and Unchha modes of life." fn 86: "Picking up for support (1) ears of corn and (2) individual grains, left on the field by husbandmen after they have gathered and carried away the sheaves, are called the Sila and the Unchha modes of life." Skt: "śiloñchavṛttir dharmātmā mudgalaḥ saṃśitavrataḥ" |
-| 6 | Like a pigeon | Ganguli CCLVIII; 3.246.4 | "And although living like a pigeon" ... Skt: "kāpotīṃ vṛttim āsthitaḥ" |
+| 6 (picture only), caption | Like a pigeon | Ganguli CCLVIII; 3.246.4 | "And although living like a pigeon" ... Skt: "kāpotīṃ vṛttim āsthitaḥ" |
 | 7, caption | Half a month of gleaning gives one drona of rice, a very small measure | 3.246.5c; Ganguli CCLVIII and fn 85 | Skt: "kapotavṛttyā pakṣeṇa vrīhidroṇam upārjayat". Ganguli: "during the other fortnight led the life of a pigeon, collecting a drona of corn". fn 85: "A very small measure." |
 | caption | On moon days he feeds gods and guests first and lives on what is left | 3.246.6 to 8; Ganguli CCLVIII | Skt: "darśaṃ ca paurṇamāsaṃ ca kurvan" ... "devatātithiśeṣeṇa kurute dehayāpanam" ... "atithibhyo dadāv annaṃ". Ganguli: "used to pass his days by taking the food that remained after the deities and the guests had eaten" |
 | 8, caption | The guest comes looking wild, saying rude words | 3.246.11 to 12; Ganguli CCLVIII | Skt: "bibhrac cāniyataṃ veṣam unmatta iva" ... "paruṣā vāco vyāharan vividhā muniḥ". Ganguli: "came there, uttering, O Pandava various insulting words" |
@@ -233,17 +234,17 @@ Already-used check, 9 Nov: 0 hits for mudgala or durvasa in bots/posts, bots/not
 11. Photos. Lines 19 and 20 use the real 4 Nov photos 4Nov-217 (quality 8) to 4Nov-222. The grey tank with red print is Boonchu, per the 6 Nov note. 4Nov-218 and 219 show him steadying a held balance (photo_scan.json: "Grips shin behind her head, body braced behind her" and "Both hands at her leg and shoulder"). They do not show a rise, so the picture note says so. The student is clearly seen, so get the student's OK for a Reel. Keep the whole asana in the crop (hips, hands, feet), and never cut a head. 4Nov-538 to 544 (grey tee) need a check that the teacher is him before use.
 12. Spelling. Iyengar and Wikipedia say Durvasasana. So do two other lists on the grimmly page (the one based on Absolutely Ashtanga, and Ramaswami's book list). AYI and Sweeney's Advanced A list say Durvasana. The screen says DURVASASANA and the caption gives both. Do not put "#7" on screen. That number is only AYI's menu order. Correction (9 Nov): the grimmly page's warning about David Swenson's DVD order goes with the Absolutely Ashtanga based list. It is not about Sweeney's Advanced A list, and it is not on screen.
 13. The Iyengar name line was checked only through Wikipedia's citation (fetched today). I did not open Light on Yoga. MW alone supports "known for his irascibility".
-14. "Poor" (DH, line 5) comes from his gleaning life (Sila and Unchha), not from a word in the text. "Wise man" stands for muni and dharmatma.
+14. "Poor" (DH line 3, and line 5) comes from his gleaning life (Sila and Unchha), not from a word in the text. "Wise man" stands for muni and dharmatma.
 15. "Each time, Mudgala ate nothing" (line 14, caption). The text says "without partaking any food himself" after the second visit, then "in this way ... six times". The wife and son glean with him. Never say they starved.
 16. Heaven in the caption is a teaching inside the text (you use up what you earned, then you fall). It is told plainly as what the messenger said, not as AYBKK's belief. The Vishnu seat lines are starred (not in the critical text) and left out.
 17. Optional lines I read myself but left out because they are not on the brief's verified list. 3.246.26, Ganguli: "It must be hard to renounce in a pure spirit a thing earned by pains." It is a strong caption line if the picker checks it. Mudgala serving a second helping (3.246.16). Moon days as Ashtanga rest days (plato.md 31 Oct verified history, from the SYC page). Do not say AYBKK rests on moon days unless Boonchu confirms it.
 18. Theme echo. "Motivation is a bad alarm clock" (Carnegie Letter 01, 2 Nov) makes the same point as hook #107. Post apart from it, or check with Carne. Also check that no other wk6 script took #107.
 19. Lane B and platforms. plato.md (28 Sep, Two Lanes) says Lane B never goes on WeChat or Xiaohongshu. Ask Boonchu before making the ZH caption and the XHS title, or make a version for those platforms with no aybkk ask.
 20. Keyword test. The "aybkk" ask is frozen until 22 Nov. If this is posted later, check the ask word again.
-21. Length. 138 words, about 59.8 s at the slow bedtime pace and about 56.8 s at a normal pace (t6.py). It fits the 60 s cap with only 0.2 s to spare at the slow pace, and the tool counts words, not syllables. Time the real take and use the cut order in part 7 if it runs over.
+21. Length. 135 words. By word count (t7.py) about 58.2 s at the slow bedtime pace and about 55.3 s at a normal pace. Line 19 is 12 syllables, about 2.8 s in a real take, not the tool's 1.43 s. After cuts 1 and 3 the slow take is about 60 s or less (t7.py with line 19 at 2.8 s: about 59.6 s slow, 56.7 s normal). Keep cut 2 (cue slot 1.5 s) in reserve. Time the real take.
 22. The close is a question only. It promises nothing from AYBKK. The only AYBKK claim is the confirmed one in the caption. Durvasa is never likened to the teacher or to Boonchu, so nobody reads "the teacher eats your food".
 23. Line 19 says "Named after Durvasa", not the checker's "Named after him". It comes right after line 18 ("Mudgala go back anyway"), so "him" would point at Mudgala, and the asana is not named after Mudgala. It is the same 4 words, so t6.py gives the same time. In a real take it is about 2 syllables longer.
-24. Line 20's screen keeps NO ANGER, but he no longer says it in that line. These are his own words from line 15 coming back on screen, so no new words are put in his mouth. If Boonchu wants the screen to match each line exactly, drop NO ANGER from line 20's screen.
+24. Line 20's screen no longer shows NO ANGER (re-check fix, 9 Nov). It now reads YOU FALL OUT. STAND UP AGAIN., the same as his words, as the standing order asks. "No anger" is still said in line 15 and written in the caption ("You fall out. You stand up again. No anger.").
 
 ## Fix log
 
@@ -269,3 +270,27 @@ Kept, with a flag:
 - NO ANGER stays on line 20's screen even though he doesn't say it there, as the checker asked. These are his words from line 15 coming back, so I don't think it breaks "on-screen text follows his words", but it is a stretch. See flag 24.
 
 Checked and left as is: every spoken story fact, the "I do not desire heaven" quote, the series placement and the name sources. The checker confirmed all of them online (Gutenberg #15474 and GRETIL, downloaded 9 Nov). No story fact changed in this fix. Backup of the old version: tools/advA1/story_advA1.before-fix.md.
+
+## Re-check fixes, 9 Nov
+
+Fixed after the fresh checker (recheck/story_advA1.json). Line numbers did not change. Backup of the version before this fix: tools/advA1/story_advA1.before-recheck.md. New timer: tools/advA1/t7.py (t6.py with the cuts, plus runs with line 19 at a real 2.8 s).
+
+Applied (must fix):
+1. Cut 1, line 13. The note's "Small 0.4 s beat." is now "Small 0.2 s beat."
+2. Cut 1, line 15. The note's "Voice low, 0.6 s pause." is now "Voice low, 0.3 s pause."
+3. Cut 3, line 6. "He pick leftover grains, like a pigeon." is now "He pick leftover grains." The pigeons stay in the picture note, and the caption keeps "Like a pigeon", so no story fact is lost. The source table row for "Like a pigeon" now says "6 (picture only), caption". The 5-year-old test was changed to match.
+4. Re-timed with t7.py. 135 words (140 with AYI's cue). By word count, 58.2 s slow and 55.3 s normal. With line 19 at a real 2.8 s, 59.6 s slow and 56.7 s normal (59.7 s and 56.7 s with AYI's cue). Every time stamp from line 7 on was moved to the slow run with line 19 at 2.8 s: line 7 0:13, 8 0:17, 9 0:19, 10 0:20, 11 0:22, 12 0:25, 13 0:28, 14 0:31, 15 0:34, 16 0:36, 17 0:39, 18 0:42, 19 0:46, 20 0:49 (same), 21 0:51, 22 0:53, 23 0:58. The end note says about 0:59.6 slow and 0:56.7 normal. The intro to part 6, the toolkit "Why" line (rehook now about 0:25 to 0:29), the retention map and the retention check (longest stretch now about 14 s, 0:08 to 0:22) were updated too.
+5. Part 7 and flag 21. "There is only 0.2 s to spare at the slow pace" is gone. Both now say: "Line 19 is 12 syllables, about 2.8 s in a real take, not the tool's 1.43 s. After cuts 1 and 3 the slow take is about 60 s or less. Keep cut 2 (cue slot 1.5 s) in reserve." The word counts and times in part 7 are new, and the cut order now marks cuts 1 and 3 as done and cut 2 as in reserve. The "Never cut" list did not need a change. Line 3 still says "Six times. On purpose.", and the list names line 3 only as "the loop".
+6. Part 5, #27. The line now reads "Line 19's name claim is backed in part 9 (Iyengar 1979 via Wikipedia, Monier-Williams p. 487). The caption does not cite them."
+7. Flag 14. It now reads "'Poor' (DH line 3, and line 5) comes from his gleaning life".
+
+Applied (nice fix):
+8. Line 20's screen. Took option (a) and dropped "/ NO ANGER", so the screen is YOU FALL OUT. STAND UP AGAIN., the same as his words. Option (b), saying "No anger" out loud, adds about 0.7 s and would push the slow take past 60 s. Flag 24 and the part 7 "Cuts already made" note were updated. This replaces the old fix log's "Kept, with a flag" item.
+9. Line 5's name tag is now MUDGALA · POOR WISE MAN, the same as the spoken line.
+10. Caption. "You stand on one leg, with the other foot behind your head." is now "It is a balance on one leg, with the other foot behind the head." It no longer reads like an instruction, so it matches flag 10 (the Reel never tells a viewer to try the asana). It is still the AYI source fact.
+11. Part 5, #21. Dropping NO ANGER from line 20's screen made this note stale, so it now says "lines 18, 20 and the question in line 22" and names which line carries each half. The checker's "(NO ANGER on screen)" wording was not used, because that text is gone.
+
+Skipped (nice fix):
+- Line 12 on-screen HALF A MONTH LATER. Skipped because it puts my own moon-day gloss on screen as a fact (the text says only "when the second moon day came"), and the screen would no longer follow his words. Flag 3 keeps that gloss off screen on purpose.
+- Retention map line 12 wording. Skipped. It is a note only and does not change a spoken line or the caption.
+- Line 3 without "Six times". Skipped. The checker says to do it only if the length still runs over, and the slow take is now about 59.6 s. "Six times" is the strongest stakes word in the double hook.

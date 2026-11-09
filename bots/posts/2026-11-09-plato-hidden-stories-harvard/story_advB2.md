@@ -1,6 +1,6 @@
 # Hidden Stories of Ashtanga · Ep. ? · "The Mother Who Did Not Move" · Asana: Kapilasana (Advanced B, 4th series, Sthira Bhaga B) · Lane B · ask word: aybkk
 
-Writer's script, 9 Nov 2026. Story id C3 (key advB2). No episode number until it is filmed. Beat order H, DH, T1, RH, T2, P. Fixed on 9 Nov after the checker's notes. See the Fix log at the end.
+Writer's script, 9 Nov 2026. Story id C3 (key advB2). No episode number until it is filmed. Beat order H, DH, T1, RH, T2, P. Fixed on 9 Nov after the checker's notes, then again after a fresh re-check. See the Fix log at the end.
 
 Lane B, and why: the point is the habit. You think you are too late, so you never start. She felt the same. Then she stayed in the same house and kept the way her teacher taught. That is the Habit Gap: same place, same practice. Kapilasana is a 4th series asana. Almost no viewer is stuck in it, and this story gives no technique fix. Lane A needs a real fix and the STUCK ask, so it does not fit. The caption asks for "aybkk" (keyword test, frozen until 22 Nov).
 
@@ -72,22 +72,22 @@ Times are at a normal pace (story 2.8 words a second, adult lines 2.9), with pau
     (picture: he bows to her, she nods, he walks away on a path. On screen: WITH HER OK, HE GO.)
 11. 0:28 [RH] (RH) This teacher? Her own son.
     (the twist. Picture: the path is empty. Said plainly, no smile, no wink. On screen: THIS TEACHER? / HER OWN SON. Then the title card, 1.5 s, over a 0.5 s beat: THE MOTHER WHO DID NOT MOVE.)
-12. 0:31 [T2] (T) Son gone. Teacher gone. So much time, gone.
-    (the worst moment. On screen: SON GONE. TEACHER GONE. / SO MUCH TIME, GONE. Picture: her at the window again, the same as line 6. Voice low, 0.4 s pause. Never "alone" or "nobody", see Flag 3. In every translation, "gone" here means "left", never a word that can mean died.)
+12. 0:31 [T2] (T) Son left. Teacher left. So much time, gone.
+    (the worst moment. On screen: SON LEFT. TEACHER LEFT. / SO MUCH TIME, GONE. Picture: her at the window again, the same as line 6. Voice low, 0.4 s pause. Never "alone" or "nobody", see Flag 3. "Left", never "gone", for the son and the teacher, because in English "gone" can mean died. In every translation use a word for "left", never one that can mean died. "So much time, gone" is about time, so it stays.)
 13. 0:34 [T2] (T + OL) What you do?
     (THE FORK, Harvard #1, at the worst moment. Bedtime voice, the way you ask your child. On screen: WHAT YOU DO? Then a 0.5 s pause, eyes in the lens.)
 14. 0:36 [P] (P) She stay. Same house. Same practice. The path he teach.
     (pays the fork and line 3, Harvard #27. On screen: SAME HOUSE. SAME PRACTICE. / THE PATH HE TEACH. Picture: she sits straight by the lake, eyes closed.)
 15. 0:39 [P] (P) Soon, she reach her goal.
     (pays line 2. On screen: SOON, SHE REACH HER GOAL. Small: BHAGAVATA PURANA 3.33.30.)
-16. 0:41 [P] (P) Place call Siddhapada. Where she made it.
-    (name tag: SIDDHAPADA · THE PLACE WHERE SHE MADE IT. Picture: the lake at sunrise. Then a 0.5 s silent beat, and normal voice back.)
+16. 0:41 [P] (P) Place call Siddhapada. Where she reach it.
+    (name tag: SIDDHAPADA · THE PLACE WHERE SHE REACHED IT. "It" is her goal from line 15. Picture: the lake at sunrise. Then a 0.5 s silent beat, and normal voice back.)
 17. 0:44 [P] (T, voice change) Too late, so you wait?
     (Boonchu to camera again, normal voice. Harvard #20, the cost. On screen: TOO LATE, SO YOU WAIT?)
-18. 0:46 [P] (RH) Kapilasana carry his name.
+18. 0:46 [P] (RH) Kapilasana carry Kapila name.
     (new real picture where attention drops: a real AYBKK photo of Kapilasana, only with the student's OK, see Flag 13. On screen: KAPILASANA · NAMED AFTER KAPILA)
 19. 0:48 [P] (P) Same seat as the asana before. Now you fold.
-    (on screen: BUDDHASANA SEAT + A FORWARD FOLD + ONE MORE BIND. Buddhasana has no forward fold, so the fold is the first one. Only the bind is "one more".)
+    (on screen: SAME SEAT AS BUDDHASANA. / NOW YOU FOLD. The screen follows his words. The extra bind is only in the caption ("Then you add a forward fold and one more bind."). Buddhasana has no forward fold, so the fold is the first one. Only the bind is "one more".)
 20. 0:51 [P] (P) [BOONCHU'S OWN CUE: 5 words or less]
     (his own cue for the fold. If he has none, AYI's cue fits the slot: "Fold forward on the exhale.")
 21. 0:53 [P] (P) Next year, you still waiting?
@@ -107,20 +107,20 @@ Retention map:
 | 0:22 | 9 He teach her. Breathe in. Hold. Breathe out. Mind get steady. | T. Clear steps. He breathes with the words. |
 | 0:27 | 10 With her OK, he go. | T. The help walks away. |
 | 0:28 | 11 This teacher? Her own son. | RH. The twist, then the title. |
-| 0:31 | 12 Son gone. Teacher gone. So much time, gone. | T. The worst moment. |
+| 0:31 | 12 Son left. Teacher left. So much time, gone. | T. The worst moment. |
 | 0:34 | 13 What you do? | T + OL. The fork. They choose before they hear. |
 | 0:36 | 14 She stay. Same house. Same practice. The path he teach. | P. Pays the fork and line 3. |
 | 0:39 | 15 to 16 Soon, she reach her goal. Siddhapada. | P. Pays line 2. Silent beat. |
 | 0:44 | 17 Too late, so you wait? | T. Back in the viewer's life. Voice change. |
-| 0:46 | 18 Kapilasana carry his name. | RH. New real picture, the name twist for practitioners. |
+| 0:46 | 18 Kapilasana carry Kapila name. | RH. New real picture, the name twist for practitioners. |
 | 0:48 | 19 to 20 Buddhasana seat, now you fold, his cue | P. The asana. |
 | 0:53 | 21 Next year, you still waiting? | P. The question they keep. |
 
-Story pattern: Fail (so much time gone, lost in the dark, then the teacher leaves: son gone, teacher gone), then Hero (she stays, same house, same practice, the path he taught), then Payoff (soon she reaches her goal, the place is named Siddhapada, then the viewer's own "too late" and Kapilasana).
+Story pattern: Fail (so much time gone, lost in the dark, then the teacher leaves: son left, teacher left), then Hero (she stays, same house, same practice, the path he taught), then Payoff (soon she reaches her goal, the place is named Siddhapada, then the viewer's own "too late" and Kapilasana).
 
 One thread check: lines 1 to 3 talk to adults. Lines 4 to 16 tell the story straight, start to end, with no jumping out. Lines 17 to 21 come back to the adults. "What you do?" stays in the bedtime voice. The beat order is still H, DH, T1, RH, T2, P. The fork now sits at the worst moment (line 13), right before its answer (line 14), see Flag 23. The brief's beat put "The asana Kapilasana carries his name" inside the rehook. I moved it to line 18 so the story part stays clean for a 5-year-old.
 
-5-year-old test (lines 4 to 16 alone): A woman named Devahuti lives in a house by a lake. She says, so much time is gone. Later she tells a great teacher, Kapila, I feel lost, like in the dark. You show me the way. He teaches her. Breathe in. Hold. Breathe out. Her mind gets steady. With her OK, he goes. This teacher? Her own son. Son gone. Teacher gone. So much time, gone. What do you do? She stays. Same house. Same practice. The path he taught. Soon, she reaches her goal. The place is called Siddhapada, where she made it. It makes sense alone.
+5-year-old test (lines 4 to 16 alone): A woman named Devahuti lives in a house by a lake. She says, so much time is gone. Later she tells a great teacher, Kapila, I feel lost, like in the dark. You show me the way. He teaches her. Breathe in. Hold. Breathe out. Her mind gets steady. With her OK, he goes. This teacher? Her own son. Son left. Teacher left. So much time, gone. What do you do? She stays. Same house. Same practice. The path he taught. Soon, she reaches her goal. The place is called Siddhapada, where she reached it. It makes sense alone.
 
 Contrarian check: line 1 says the viewer's belief back as a doubt, not as agreement. Line 2 flips it in the same breath (she thought so too, then she got there, soon). The flip is on screen at 0:03 and spoken from 0:04 to 0:06. The close is a plain question, not an answer and not a reframe.
 
@@ -154,7 +154,7 @@ Never cut line 2 (the flip), line 3 (the double hook), line 8 (the fail), line 1
 <p>Now her son had left. Her teacher had left.</p>
 <p>She stayed in that very house. She practised the way he taught her.</p>
 <p>And soon, she reached her goal.</p>
-<p>The place got a name, Siddhapada. It is the place where she made it.</p>
+<p>The place got a name, Siddhapada. It is the place where she reached it.</p>
 <p>Kapilasana is named after Kapila.</p>
 <p>It starts in the same seat as Buddhasana, the asana before. Then you add a forward fold and one more bind.</p>
 <p>It is a 4th series asana. You learn it with a teacher, one piece at a time.</p>
@@ -167,7 +167,7 @@ Never cut line 2 (the flip), line 3 (the double hook), line 8 (the fail), line 1
 
 Short version, if Boonchu wants his default: keep the first 3 lines, the "Who was this teacher? Her own son." line, the "She stayed in that very house" line, "And soon, she reached her goal.", the Kapilasana line, the "learn it with a teacher" line, the source line, the "Next year" question, the "Devahuti kept the way" line, the AYBKK line and the ask, plus the hashtags. Keep "Devahuti kept the way her teacher taught her." right above the AYBKK line in every version (Flag 10).
 
-Translation rule for the ZH, TH and RU captions (Flag 20 still applies: ask Boonchu before the ZH caption and the XHS title). "Son gone. Teacher gone." and "Teacher leave" mean he LEFT the house (3.33.12 "yayau", left; 3.33.33 went to the northeast). Never use a word that can also mean died. A native speaker checks each one (Boonchu for Thai).
+Translation rule for the ZH, TH and RU captions (Flag 20 still applies: ask Boonchu before the ZH caption and the XHS title). "Son left. Teacher left." and "Teacher leave" mean he LEFT the house (3.33.12 "yayau", left; 3.33.33 went to the northeast). Never use a word that can also mean died. A native speaker checks each one (Boonchu for Thai).
 - ZH: 儿子离开了家。老师离开了家。 Line 3: 老师离开了家，她留了下来。 Never 走了, 去了, 离去, 离世, 不在了, 没了 or 逝去 (all can mean died).
 - TH: ลูกชายออกจากบ้านไปแล้ว ครูออกจากบ้านไปแล้ว Line 3: ครูออกจากบ้านไป เธอไม่ไปไหน Never จากไป, ไม่อยู่แล้ว, เสียแล้ว, สิ้น or ล่วงลับ (all can mean died).
 - RU: Сын покинул дом. Учитель покинул дом. Line 3: Учитель покинул дом. Она осталась на месте. Never bare "ушёл", "не стало", "покинул нас", "отошёл" or "его больше нет" (all can mean died).
@@ -197,7 +197,7 @@ Series check: Yogapedia, "Fourth Series of Ashtanga Yoga": https://www.yogapedia
 | 3, 10, caption | With her OK, he leaves | BhP 3.33.12, https://vedabase.io/en/library/sb/3/33/12/ | Skt: "iti pradarśya bhagavān ... sva-mātrā brahma-vādinyā / kapilo 'numato yayau". Word meanings: "pradarśya — after instructing ... gatim — path; sva-mātrā — from His mother ... anumataḥ — took permission; yayau — left". Tr: "took permission from her and left His home". |
 | 10 | He went to the northeast, with his mother's permission | BhP 3.33.33, https://vedabase.io/en/library/sb/3/33/33/ | Skt: "mātaraṁ samanujñāpya / prāg-udīcīṁ diśaṁ yayau". Tr: "left His father's hermitage with the permission of His mother and went towards the northeast." Not spoken; it backs "he go". |
 | 11, caption | The teacher is her own son | BhP 3.24.40, https://vedabase.io/en/library/sb/3/24/40/ ; 3.25.6 (above) | Skt: "mātra ādhyātmikīṁ vidyāṁ ... vitariṣye". Word meanings: "mātre — to My mother ... vitariṣye — I shall give". Tr: "I shall also describe this sublime knowledge ... to My mother ... Thus she also will be freed from all material fear." |
-| 12, caption | Son gone (and teacher gone), meaning he left | BhP 3.33.12 and 3.33.33 (above) | "kapilo 'numato yayau"; "prāg-udīcīṁ diśaṁ yayau". "So much time, gone" is the narrator's echo of 3.23.53, not her words. |
+| 12, caption | Son left (and teacher left), meaning he left the house | BhP 3.33.12 and 3.33.33 (above) | "kapilo 'numato yayau"; "prāg-udīcīṁ diśaṁ yayau". "So much time, gone" is the narrator's echo of 3.23.53, not her words. |
 | 16, caption | The place is known as Siddhapada, where she reached perfection | BhP 3.33.31, https://vedabase.io/en/library/sb/3/33/31/ | Skt: "nāmnā siddha-padaṁ yatra / sā saṁsiddhim upeyuṣī". Word meanings: "nāmnā — by the name; siddha-padam — Siddhapada; yatra — where; sā — she (Devahūti); saṁsiddhim — perfection; upeyuṣī — achieved". Tr: "It is known all over the three worlds as Siddhapada." |
 | 18, caption | Kapila is an ancient sage | MW p. 250 kapila | "N. of an ancient sage (identified by some with Viṣṇu and considered as the founder of the Sāṃkhya system of philosophy), MBh. ; Bhag. &c." Also "'monkey-coloured', brown, tawny, reddish". |
 | 18, caption | Kapilasana is named after Kapila | AYI Kapilasana | Title: "Kapilāsana: The posture of Kapila". German note: "Der Name erinnert an Kapila, einen legendären Ṛṣi". |
@@ -216,12 +216,12 @@ Already-used check, 9 Nov: 0 hits for devahuti in bots/posts, bots/notebook, bot
 
 1. "So much time gone" (lines 1, 2, 6, 12). In 3.23.53 she says it to her husband Kardama, before Kapila is born, about years of married life. The script never says to whom. Line 7 starts with "Later", so the line is not in her talk with Kapila. The Sanskrit has "alam" ("for nothing") and Prabhupada says "wasted". We never say wasted. The text never says she felt "too late". "Too late" (line 17) is only said about the viewer. A purist could say her line is regret about the senses, not about age. That is true, and the script never makes it about age.
 2. "House by a lake" (line 5). The lake is Bindu-sarovara (3.25.5). 3.33.13 calls the hermitage the "flower crown" of the river Sarasvati. "House" is my plain word for the asrama. In the book the house is rich (3.33.15 to 17). Draw a simple house, never a palace, never the flying palace.
-3. The brief's beat said "Now the house is empty." I dropped it. 3.33.17 says the women of the household were there, decorated with jewels ("lalanāḥ ratna-saṁyutāḥ"). So the script says only "Son gone. Teacher gone." (line 12). Never say "alone", "empty house" or "nobody". "Gone" means he left the house (3.33.12, 3.33.33). In ZH, TH and RU use a word for "left", never one that can mean died (see the translation rule in part 8). I read 3.33.17 to 3.33.21 myself today for this check. They are not on the verified list, so none of it is in the script.
+3. The brief's beat said "Now the house is empty." I dropped it. 3.33.17 says the women of the household were there, decorated with jewels ("lalanāḥ ratna-saṁyutāḥ"). So the script says only "Son left. Teacher left." (line 12). Never say "alone", "empty house" or "nobody". He left the house (3.33.12, 3.33.33). Line 12 says "left", never "gone", because in English "gone" can also mean died. In ZH, TH and RU use a word for "left", never one that can mean died (see the translation rule in part 8). I read 3.33.17 to 3.33.21 myself today for this check. They are not on the verified list, so none of it is in the script.
 4. A stronger T2 is in the text but left out. 3.33.20 to 21 say she was very sad when her son left, "like a cow when her calf is lost" ("naṣṭe vatse gaur iva vatsalā"). Prabhupada writes "when her calf dies", which brings in death. It is not on the verified list. If a checker verifies 3.33.20, "She very sad." could follow line 12. Never use the calf picture.
 5. "She not move" (line 3) and the title are retold. The text says she practised "in that very asrama" (3.33.13). It does not mean she sat still forever. It fits sthira (MW "fixed, immovable ... steady"), so I kept it.
 6. "Same seat" is gone from the story. The text never says she kept the same seat, so line 14 now says "Same house. Same practice." Both are in 3.33.13 ("tasminn āśrama", in that very hermitage; "tanayoktena yogādeśena", by the yoga teaching her son spoke). "The path he teach" is exact (3.33.30, kapiloktena margena). "Same seat" is said once, in line 19, and only about the asana: Kapilasana starts from the Buddhasana seat (AYI).
 7. What she practised. Prabhupada's English says "bhakti-yoga" (3.33.13), and her goal is the Lord (3.33.30). The Sanskrit says "yogādeśena yoga-yuk" (joined in yoga by the yoga teaching). Kapila's teaching runs from chapter 25 to 32. The breath lines (3.28.9) are only one part of it, though 3.28.1 shows chapter 28 is spoken to her. A devotee could say her path was devotion more than breath. The script never says the breath was all of it.
-8. "Get there", "reach her goal" and "where she made it" (lines 2, 15, 16). The goal in the text is the Supreme (3.33.30, param), and Siddhapada is where she reached "perfection" (3.33.31, saṁsiddhim). Line 15 now says "her goal" out loud, so nobody asks "get where?". The script avoids "liberated", "enlightened" and "freed".
+8. "Get there", "reach her goal" and "where she reach it" (lines 2, 15, 16). The goal in the text is the Supreme (3.33.30, param), and Siddhapada is where she reached "perfection" (3.33.31, saṁsiddhim). Line 15 now says "her goal" out loud, so nobody asks "get where?". The script avoids "liberated", "enlightened" and "freed".
 9. Kapila is Bhagavan in this book, a form of Vishnu (MW: "identified by some with Viṣṇu"). "A great teacher in the old books" is respectful, but a devotee may want "Lord Kapila". Draw him calm, from behind or in soft light, never funny. Line 11 is said plainly. The "Bedtime story for my son" frame and "Her own son" echo each other. That is not a joke, so no smile or wink.
 10. Lane B pull. The teacher leaves and she gets there anyway. That pulls against "a teacher notices when you miss class" right above the ask. The new hook makes it a little stronger, because "Teacher leave. She not move." is now said at 0:06. Guards: he leaves only with her OK (line 10). She keeps "the path he teach" (line 14). The caption says you learn Kapilasana with a teacher, and it puts "Devahuti kept the way her teacher taught her." right above the AYBKK line, so the teacher's way is what she kept. Nothing says "you don't need a teacher" or "practise alone". Question for Boonchu: does it still pull the wrong way? If yes, use backup hook #104 ("The room you choose decide how long you keep practising.").
 11. The title gives a hint of the twist ("mother"), so the title card waits until line 11. The caption opens with the title, which is fine for people who read after watching.
@@ -258,3 +258,13 @@ Line numbers below are the OLD numbers, then the new ones. Old 9 and 10 are now 
 13. Lane B check. Applied in the caption: "Devahuti kept the way her teacher taught her." now sits right above "At AYBKK, a teacher notices when you miss class." The short version must keep that pair. Flag 10 is updated with the question for Boonchu about #104. It also notes that the new line 3 says "Teacher leave" at 0:06, which makes the pull a little stronger in the spoken video.
 14. ZH, TH and RU. Added a translation rule in part 8, with safe words for "left" and the words to avoid, because each can mean died. The English caption now says "her son had left. Her teacher had left.", so translators start from "left". A native speaker still checks each language, and the ZH caption still waits for Boonchu (Flag 20).
 15. My own change, not asked for: old line 19 is trimmed to "Too late, so you wait?" (new 17). With the new close, "Next year" would have been said twice in 10 s. This saves about 1.7 s. The caption keeps both parts as one line: "You think it is too late, so you wait? Next year, are you still waiting?"
+
+### Re-check fixes, 9 Nov
+
+Line numbers are the current ones. The times and the word count do not change: every edit keeps the same number of words, and a t6.py rerun still gives 135 words, an end at 56.6 s normal and 59.6 s slow, with the twist at 0:28.5 (0:30.2 slow).
+
+1. Must fix, line 12. Applied. Spoken: "Son left. Teacher left. So much time, gone." On screen: SON LEFT. TEACHER LEFT. / SO MUCH TIME, GONE. In English "gone" can mean died, which the translation rule forbids. "Left" matches 3.33.12 ("yayau", left), line 3 and the caption. The same change is made in the line 12 note, the 0:31 retention-map row, the story pattern, the 5-year-old test, Flag 3, source row 12, the translation rule in part 8, tools/advB2/spoken.txt and tools/advB2/t6.py.
+2. Must fix, line 16. Applied. Spoken: "Place call Siddhapada. Where she reach it." Name tag: SIDDHAPADA · THE PLACE WHERE SHE REACHED IT. Caption: "It is the place where she reached it." School-English viewers can read "made it" as "she made the place". "It" is her goal from line 15 (3.33.30 param, 3.33.31 saṁsiddhim), so no new fact. Also changed in the 5-year-old test and Flag 8.
+3. Must fix, line 19 on screen. Applied: SAME SEAT AS BUDDHASANA. / NOW YOU FOLD. The screen now follows his words. The extra bind stays only in the caption ("Then you add a forward fold and one more bind.").
+4. Nice fix, line 18. Applied: "Kapilasana carry Kapila name." Sound-only viewers last heard "Kapila" about 30 s earlier, and line 17 just spoke to "you", so "his" was unclear. Same 4 words. The caption already says "Kapilasana is named after Kapila." Also changed in the retention map, spoken.txt and t6.py.
+5. Nice fixes skipped, because none of them makes a spoken line clearer or makes the caption match the script: the line 9 breath note, the Flag 1 rewrite, the part 7 cut #2 swap, the Harvard #27 note, the "## 1. Lane" heading and the "Sthira Bhaga B" header. Also skipped: the line 9 cut to "He teach her to breathe." It drops the three breath steps from 3.28.9 that fix log 7 kept on purpose, and the checker made it Boonchu's call. The runs of three fragments (lines 9, 12, 14) stay, as the checker said.
