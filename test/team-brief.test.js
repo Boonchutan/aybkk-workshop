@@ -587,7 +587,9 @@ const fakeDriver = { session: () => ({
 
   console.log('\n# the mat tick on bookings');
   const sch = (await get('/api/bkk/schedule?days=14', {})).body.classes || [];
-  const room = sch.find(c => !c.isOnline && c.seatsLeft > 2), home = sch.find(c => c.isOnline && c.seatsLeft > 1);
+  // An empty class: the brief tests above fill fixed dates (10, 11, 17 Nov) with made-up bookings and mats,
+  // so 'the next class' collided with them on some real dates (9 Nov, a moon day, made it 10 Nov).
+  const room = sch.find(c => !c.isOnline && c.seatsLeft === c.capacity && c.capacity > 2), home = sch.find(c => c.isOnline && c.seatsLeft > 1);
   const mp1 = await post('/api/bkk/admin/passes', { name: 'Mat Tester', email: 'mat.tester@example.com', productCode: 'unlim1' });
   const code = mp1.body.member.code;
   const bk = await post('/api/bkk/bookings', { memberCode: code, slotId: room.slotId, date: room.date, needMat: true }, {});

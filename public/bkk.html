@@ -200,10 +200,20 @@
   header.hero{position:relative;background:var(--header);color:var(--hero-ink);--ring:var(--hero-ink);padding-top:16px;
     align-content:start}
   header.hero .logo{grid-column:c 1;grid-row:1;align-self:center;width:40px;height:40px;border-radius:50%;background:#fff}
-  .langs{grid-column:c 2/c-end;grid-row:1;justify-self:end;align-self:center;display:flex;gap:0}
+  /* The language buttons and the account button (Boonchu, 9 Nov 2026: "like Facebook, top right"). The box may
+     reach into the logo's column: on a 320px phone the 40px logo leaves room, column 2 does not. */
+  .htools{grid-column:c-start/c-end;grid-row:1;justify-self:end;align-self:center;display:flex;align-items:center;gap:8px}
+  .langs{display:flex;gap:0}
   .langs button{min-width:44px;min-height:44px;padding:0 8px;border:0;border-radius:0;background:transparent;color:var(--hero-muted);
     font:600 14px/1 var(--f-text);cursor:pointer}
   .langs button[aria-pressed="true"]{background:var(--hero-ink);color:var(--header)}
+  .acct{flex:none;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;
+    border:2px solid var(--hero-ink);border-radius:50%;background:transparent;color:var(--hero-ink);cursor:pointer;
+    font:700 15px/1 var(--f-text);letter-spacing:0;white-space:nowrap;overflow:hidden}
+  .acct svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+  .acct.in{background:var(--promo);border-color:var(--promo);color:var(--promo-ink)}
+  @media (hover:hover){ .acct:hover,.acct.in:hover{background:var(--hero-ink);border-color:var(--hero-ink);color:var(--header)} }
+  @media (max-width:319px){ .htools{gap:4px} .langs button{min-width:40px;padding:0 4px} }
   header.hero .mast{grid-row:2;margin:28px 0 0;font:800 var(--fs-l)/1.27 var(--f-text);letter-spacing:-.01em;color:var(--hero-ink)}
   header.hero .mast span{display:block;font-weight:400}
   .h12h{grid-row:3;margin:56px 0 0;font:800 var(--fs-d)/.94 var(--f-head);letter-spacing:-.04em;color:var(--hero-ink);
@@ -233,7 +243,7 @@
       grid-template-rows:auto 1fr auto auto auto;padding-top:24px}
     header.hero .logo{width:48px;height:48px}
     header.hero .mast{grid-column:c 2/c 8;grid-row:1;align-self:center;margin:0}
-    .langs{grid-column:c 9/c-end;grid-row:1}
+    .htools{grid-column:c 9/c-end;grid-row:1}
     header.hero .pic{grid-column:c 8/full-end;grid-row:2/-1;aspect-ratio:auto;margin-top:24px}
     .h12h{grid-column:c 1/c 8;grid-row:2;align-self:end}
     .h12s{grid-column:c 1/c 7;grid-row:3}
@@ -851,11 +861,14 @@
 <header class="hero sgrid">
   <img class="logo" src="/img/aybkk-logo-240.jpg" width="120" height="120" alt="Ashtanga Yoga Center of Bangkok logo">
   <h1 class="mast">AYBKK <span>Ashtanga Yoga Bangkok</span></h1>
-  <div class="langs" role="group" aria-label="Language">
-    <button type="button" data-lang="en" lang="en">EN</button>
-    <button type="button" data-lang="th" lang="th">ไทย</button>
-    <button type="button" data-lang="zh" lang="zh-Hans">中文</button>
-    <button type="button" data-lang="ru" lang="ru">RU</button>
+  <div class="htools">
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="en" lang="en">EN</button>
+      <button type="button" data-lang="th" lang="th">ไทย</button>
+      <button type="button" data-lang="zh" lang="zh-Hans">中文</button>
+      <button type="button" data-lang="ru" lang="ru">RU</button>
+    </div>
+    <button type="button" class="acct" id="acct" aria-label="My account" title="My account"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c0-4.1 3.4-7 7.5-7s7.5 2.9 7.5 7"/></svg></button>
   </div>
   <p class="h12h" id="h12h"></p>
   <p class="h12s" id="h12s"></p>
@@ -884,7 +897,7 @@
   <nav class="tabs sgrid" id="book">
     <button id="t-schedule" class="on" onclick="tab('schedule')" data-i18n="tabSchedule">Timetable</button>
     <button id="t-packages" onclick="tab('packages')" data-i18n="tabPackages">Packages</button>
-    <button id="t-me" onclick="tab('me')" data-i18n="tabMe">My pass</button>
+    <button id="t-me" onclick="tab('me')" data-i18n="tabMe">My account</button>
   </nav>
   <main id="view" aria-busy="true"><div class="skel" role="status"><span class="sr" data-i18n="loading">Loading…</span><div class="row"><i class="pill"></i><i class="pill"></i></div><i style="width:40%"></i><i class="big"></i></div>
     <noscript><p class="msg bad">The timetable needs JavaScript. Book on LINE @aybkk.</p></noscript></main>
@@ -1024,7 +1037,7 @@
       <h2 data-i18n="firstH">Your first class</h2>
       <ul class="points">
         <li data-i18n="f1">New to Mysore style? Start with a monthly package, so the teacher can guide you step by step. Drop-in is for visitors who already know the sequence.</li>
-        <li data-i18n="f2">Plan to practise at least 4 days a week, and book your classes in advance.</li>
+        <li data-i18n="f2">There is no minimum: come when you can. 4 mornings a week gives the best results, so book your classes in advance.</li>
         <li class="xm" id="fst3" data-i18n="f3">Bring your own mat and a towel, or tick "I need a mat" when you book and rent one at the shala for ฿200. Wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.</li>
         <li class="xm" id="fst4" data-i18n="f4">No phones, no photos and no talking in the shala during practice.</li>
         <li class="xm" id="fst5" data-i18n="f5">After practice, clean your mat and the floor around it with the spray we provide.</li>
@@ -1156,7 +1169,7 @@
       m4: 'This is the traditional way Ashtanga is taught, as in Mysore, India.',
       firstH: 'Your first class',
       f1: 'New to Mysore style? Start with a monthly package, so the teacher can guide you step by step. Drop-in is for visitors who already know the sequence.',
-      f2: 'Plan to practise at least 4 days a week, and book your classes in advance.',
+      f2: 'There is no minimum: come when you can. 4 mornings a week gives the best results, so book your classes in advance.',
       f3: 'Bring your own mat and a towel, or tick "I need a mat" when you book and rent one at the shala for ฿200. Wear clothes you can move in. Come early, so you have time to settle in and talk to the teacher.',
       f4: 'No phones, no photos and no talking in the shala during practice.',
       f5: 'After practice, clean your mat and the floor around it with the spray we provide.',
@@ -1211,7 +1224,7 @@
       momIg: 'Today’s practice on Instagram', momFb: 'News and updates on Facebook',
       findH: 'Find us', maps: 'Open in Google Maps', amap: 'Open in Amap (高德地图)', contactH: 'Message us',
       copy: 'Copy', copied: 'Copied',
-      tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My pass',
+      tabSchedule: 'Timetable', tabPackages: 'Packages', tabMe: 'My account',
       loading: 'Loading…',
       loadFail: 'The timetable did not load. Check your connection and try again, or message us on LINE @aybkk.',
       tryAgain: 'Try again',
@@ -1246,7 +1259,7 @@
       m4: 'นี่คือวิธีสอนอัษฎางคโยคะแบบดั้งเดิม เหมือนที่เมืองมายซอร์ ประเทศอินเดีย',
       firstH: 'คลาสแรกของคุณ',
       f1: 'ยังไม่เคยฝึกแบบมายซอร์? เริ่มด้วยแพ็กเกจรายเดือน แบบครั้งเดียว (drop-in) สำหรับผู้ที่จำลำดับท่าได้แล้วเท่านั้น',
-      f2: 'ตั้งใจฝึกอย่างน้อยสัปดาห์ละ 4 วัน และจองคลาสล่วงหน้า',
+      f2: 'ไม่มีขั้นต่ำ มาได้ตามสะดวก ถ้ามาสัปดาห์ละ 4 เช้าจะเห็นผลดีที่สุด และควรจองคลาสล่วงหน้า',
       f3: 'นำเสื่อโยคะและผ้าเช็ดตัวมาเอง หรือติ๊ก "ต้องการเช่าเสื่อ" ตอนจอง แล้วเช่าที่ชาลา ฿200 ใส่ชุดที่เคลื่อนไหวสะดวก มาก่อนเวลาเล็กน้อยเพื่อเตรียมตัวและคุยกับครู',
       f4: 'ระหว่างการฝึก ห้ามใช้โทรศัพท์ ห้ามถ่ายรูป และงดพูดคุยในห้องฝึก',
       f5: 'ฝึกเสร็จแล้ว ทำความสะอาดเสื่อและพื้นรอบ ๆ ด้วยสเปรย์ที่เราเตรียมไว้',
@@ -1301,7 +1314,7 @@
       momIg: 'ดูการฝึกวันนี้ใน Instagram', momFb: 'ข่าวสารและอัปเดตใน Facebook',
       findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', amap: 'เปิดใน Amap (高德地图)', contactH: 'ทักหาเรา',
       copy: 'คัดลอก', copied: 'คัดลอกแล้ว',
-      tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัตรของฉัน',
+      tabSchedule: 'ตารางเรียน', tabPackages: 'แพ็กเกจ', tabMe: 'บัญชีของฉัน',
       loading: 'กำลังโหลด…',
       loadFail: 'โหลดตารางเรียนไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง หรือทักเราทาง LINE @aybkk',
       tryAgain: 'ลองอีกครั้ง',
@@ -1336,7 +1349,7 @@
       m4: '这是阿斯汤加的传统教学方式，和印度迈索尔一样。',
       firstH: '你的第一堂课',
       f1: '第一次上迈索尔课？请从月度套餐开始。单次课（drop-in）只适合已经熟悉序列的学生。',
-      f2: '请计划每周至少练习4天，并提前预约课程。',
+      f2: '没有最低次数要求，方便就来。每周练4个早上效果最好，请提前预约。',
       f3: '请自带瑜伽垫和毛巾，或在预约时勾选“需要租瑜伽垫”，在道场租垫 ฿200。穿方便活动的衣服。提前到达，有时间安顿下来并与老师交谈。',
       f4: '练习期间，练习室内不可使用手机、拍照或交谈。',
       f5: '练习结束后，请用我们准备的清洁喷雾擦干净垫子和周围的地面。',
@@ -1391,7 +1404,7 @@
       momIg: '在 Instagram 看今天的练习', momFb: '在 Facebook 看新闻和动态',
       findH: '地址与联系方式', maps: '在 Google 地图中打开', amap: '在高德地图中打开', contactH: '联系我们',
       copy: '复制', copied: '已复制',
-      tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的会员卡',
+      tabSchedule: '课程表', tabPackages: '课程套餐', tabMe: '我的账户',
       loading: '加载中…',
       loadFail: '课程表没有加载出来。请检查网络后再试一次，或加微信 aybkkwechat 联系我们。',
       tryAgain: '再试一次',
@@ -1426,7 +1439,7 @@
       m4: 'Это традиционный способ обучения аштанге, как в Майсоре, Индия.',
       firstH: 'Ваше первое занятие',
       f1: 'Впервые в Майсор-классе? Начните с месячного абонемента. Разовое посещение (drop-in) — только для тех, кто уже знает последовательность.',
-      f2: 'Планируйте практиковать не меньше 4 дней в неделю и записывайтесь на занятия заранее.',
+      f2: 'Минимума нет: приходите, когда можете. Лучший результат дают 4 утра в неделю, поэтому бронируйте заранее.',
       f3: 'Возьмите свой коврик и полотенце или отметьте «Нужен коврик» при записи: коврик в шале стоит ฿200. Наденьте удобную одежду. Приходите пораньше, чтобы спокойно устроиться и поговорить с учителем.',
       f4: 'Во время практики в зале нельзя пользоваться телефоном, фотографировать и разговаривать.',
       f5: 'После практики протрите коврик и пол вокруг него спреем, который мы оставляем в зале.',
@@ -1481,7 +1494,7 @@
       momIg: 'Сегодняшняя практика в Instagram', momFb: 'Новости в Facebook',
       findH: 'Как нас найти', maps: 'Открыть в Google Картах', amap: 'Открыть в Amap (高德地图)', contactH: 'Напишите нам',
       copy: 'Копировать', copied: 'Скопировано',
-      tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой абонемент',
+      tabSchedule: 'Расписание', tabPackages: 'Абонементы', tabMe: 'Мой аккаунт',
       loading: 'Загрузка…',
       loadFail: 'Расписание не загрузилось. Проверьте интернет и попробуйте ещё раз или напишите нам в LINE @aybkk.',
       tryAgain: 'Ещё раз',
@@ -1518,6 +1531,30 @@
     return typeof s === 'function' ? s(...a) : s;
   };
   const pkgName = p => (LANG === 'th' && p.name_th) || p.name_en;
+
+  // The account button at the top right: a person outline when signed out, the student's
+  // initials once /me has said who this code is (a code alone shows the filled circle, a
+  // code /me calls 'not found' shows the outline). A title or a name in brackets is skipped,
+  // and Thai abbreviations skip a leading vowel (เชียงใหม่ is ชม.), so เกศินี gives ก.
+  const ACCT = $('#acct'), ACCT_ICON = ACCT.innerHTML;
+  let ACCT_WHO = { code: '', name: '', gone: false };
+  const TITLE = /^(mr|mrs|ms|miss|mx|dr|นาย|นาง|นางสาว|น\.ส\.|ด\.ช\.|ด\.ญ\.)\.?$/i;
+  const initials = name => {
+    const s = String(name || '');
+    let ws = (s.replace(/[(（[][^)）\]]*[)）\]]/g, ' ').trim() || s).split(/\s+/).filter(Boolean);
+    if (ws.length > 1 && TITLE.test(ws[0])) ws = ws.slice(1);
+    ws = ws.map(w => (w.replace(/[\u0E40-\u0E44]/g, '').match(/\p{L}/u) || [''])[0]).filter(Boolean);
+    return (ws.length > 1 ? ws[0] + ws[ws.length - 1] : ws[0] || '').toUpperCase();
+  };
+  function drawAcct() {
+    const code = myCode(), who = code && ACCT_WHO.code === code ? ACCT_WHO : null;
+    const ini = who && !who.gone ? initials(who.name) : '';
+    ACCT.classList.toggle('in', !!code && !(who && who.gone));
+    if (ini) ACCT.textContent = ini;
+    else if (!ACCT.querySelector('svg')) ACCT.innerHTML = ACCT_ICON;
+    ACCT.setAttribute('aria-label', t('tabMe'));
+    ACCT.title = t('tabMe');
+  }
 
   // ── Sharathji promotion (LINE broadcast version, final): sold 1 Oct to 11 Nov
   // 2026, every pass starts by 12 Nov. Bought through LINE, not the online
@@ -1727,7 +1764,7 @@
     teeMsg: (name, sizes, colours) => `Здравствуйте, AYBKK! Я хочу футболку: ${name}.${colours ? ` Цвет: [${colours}].` : ''} Размер: [${sizes}]. Заберу в шале.`,
     themeSrc: 'Источник',
   });
-  // My pass keeps the habit proof: every class they came to, the ones moved over
+  // My account keeps the habit proof: every class they came to, the ones moved over
   // from Rezerv included (28 Oct 2026).
   Object.assign(STR.en, {
     practisedL: 'Mornings practised', practisedMonth: n => `This month: ${n}`,
@@ -1764,6 +1801,43 @@
     passLeft: n => `Осталось занятий: ${n}`, validUntil: d => `Действует до: ${d}`,
     startsFirst: 'Начнётся, когда вы запишетесь на первое занятие', noPassYet: 'Абонемента пока нет.',
     noUpcoming: 'Нет записей на ближайшие занятия.', member: 'Участник', cancelBk: 'Отменить',
+  });
+  // My account, signed out (9 Nov 2026: it was English only), and the alert that points there.
+  Object.assign(STR.en, {
+    meNone: 'You are not signed in on this device yet.', meHave: 'Already bought a pass?',
+    meMailWhy: 'We will email you a link that opens your account. No code to remember.',
+    meEmailL: 'Your email', meMailBtn: 'Email me a link', meOrCode: 'Or, if you have your member code:',
+    meCodeL: 'Member code', meFind: 'Find my account', meNoEmail: 'Please enter your email address.',
+    lnkSent: 'If that address is registered, a link is on its way.', lnkOnce: 'It works once and expires in 30 minutes.',
+    lnkFail: 'Could not reach the shala. Try again.',
+    needPass: 'Please buy a package first, or open “My account” and enter your member code.',
+  });
+  Object.assign(STR.th, {
+    meNone: 'คุณยังไม่ได้เข้าสู่ระบบบนอุปกรณ์นี้', meHave: 'ซื้อแพ็กเกจไว้แล้วใช่ไหม',
+    meMailWhy: 'เราจะส่งลิงก์สำหรับเปิดบัญชีของคุณไปทางอีเมล ไม่ต้องจำรหัส',
+    meEmailL: 'อีเมลของคุณ', meMailBtn: 'ส่งลิงก์ทางอีเมล', meOrCode: 'หรือถ้ามีรหัสสมาชิก:',
+    meCodeL: 'รหัสสมาชิก', meFind: 'ค้นหาบัญชีของฉัน', meNoEmail: 'กรุณาใส่อีเมลของคุณ',
+    lnkSent: 'ถ้าอีเมลนี้ลงทะเบียนไว้ เราได้ส่งลิงก์ไปให้แล้ว', lnkOnce: 'ลิงก์ใช้ได้ครั้งเดียว และหมดอายุใน 30 นาที',
+    lnkFail: 'ติดต่อชาลาไม่ได้ กรุณาลองใหม่อีกครั้ง',
+    needPass: 'กรุณาซื้อแพ็กเกจก่อน หรือเปิด “บัญชีของฉัน” แล้วใส่รหัสสมาชิก',
+  });
+  Object.assign(STR.zh, {
+    meNone: '你还没有在这台设备上登录。', meHave: '已经买过会员卡？',
+    meMailWhy: '我们会把打开账户的链接发到你的邮箱，不用记任何编号。',
+    meEmailL: '你的邮箱', meMailBtn: '把链接发到我的邮箱', meOrCode: '如果你有会员编号，也可以在这里输入：',
+    meCodeL: '会员编号', meFind: '查找我的账户', meNoEmail: '请输入你的邮箱地址。',
+    lnkSent: '如果这个邮箱已注册，链接已经发出。', lnkOnce: '链接只能用一次，30分钟内有效。',
+    lnkFail: '无法连接道场，请再试一次。',
+    needPass: '请先购买课程套餐，或打开“我的账户”输入会员编号。',
+  });
+  Object.assign(STR.ru, {
+    meNone: 'На этом устройстве вы ещё не вошли в аккаунт.', meHave: 'Уже купили абонемент?',
+    meMailWhy: 'Мы пришлём на email ссылку, которая откроет ваш аккаунт. Код запоминать не нужно.',
+    meEmailL: 'Ваш email', meMailBtn: 'Прислать ссылку', meOrCode: 'Или, если у вас есть код участника:',
+    meCodeL: 'Код участника', meFind: 'Найти мой аккаунт', meNoEmail: 'Пожалуйста, введите адрес email.',
+    lnkSent: 'Если этот адрес зарегистрирован, ссылка уже в пути.', lnkOnce: 'Она работает один раз и действует 30 минут.',
+    lnkFail: 'Не удалось связаться с шалой. Попробуйте ещё раз.',
+    needPass: 'Сначала купите абонемент или откройте «Мой аккаунт» и введите код участника.',
   });
   // Timetable: month and week views, what this student booked, and the class view (29 Oct 2026).
   Object.assign(STR.en, {
@@ -1965,6 +2039,11 @@
     tab('packages');
     toBook();
   });
+  ACCT.addEventListener('click', () => {
+    tab('me');
+    toBook();
+    $('#t-me').focus({ preventScroll: true });
+  });
 
   function renderPromo() {
     renderHero12();
@@ -2072,6 +2151,7 @@
     TEES_R = renderTees();
     renderTheme();
     if (typeof nlDefault === 'function') nlDefault();
+    drawAcct();
   }
   document.querySelectorAll('.langs button').forEach(b => b.addEventListener('click', () => {
     LANG = b.dataset.lang;
@@ -2338,16 +2418,24 @@
     const map = new Map();
     for (const b of (d && d.bookings) || []) map.set(b.slot_id + '|' + (b.classDate || bkkDate(b.start_at)), b);
     MINE = { code, ok: !!(d && d.member), map };
+    // A failed /me keeps the initials it had: only an answer changes who this is.
+    if (d && d.member) ACCT_WHO = { code, name: d.member.name || '', gone: false };
+    drawAcct();
   }
   async function loadMine() {
     const code = myCode();
     if (!code) return;
-    let d = null;
+    let d = null, gone = false;
     try {
       const r = await fetchT('/api/bkk/me/' + encodeURIComponent(code));
       if (r.ok) d = await r.json();
+      else if (r.status === 404) gone = (await r.json().catch(() => ({}))).error === 'not found';
     } catch (_) {}
-    if (code === myCode()) setMine(code, d);
+    if (code !== myCode()) return;
+    // A dead code stays on the phone until My account explains it (renderMe forgets it
+    // there), but the button stops looking signed in.
+    if (gone) ACCT_WHO = { code, name: '', gone: true };
+    setMine(code, d);
   }
   const mine = () => (MINE.code && MINE.code === myCode() ? MINE : { ok: false, map: new Map() });
 
@@ -2724,7 +2812,7 @@
     if (d) { selDate = d.dataset.day; renderSchedule(); focus(`.d[data-day="${selDate}"] .dn`); }
   });
 
-  // Any view: the schedule, the class, and My pass all carry mat ticks.
+  // Any view: the schedule, the class, and My account all carry mat ticks.
   $('#view').addEventListener('change', async e => {
     const want = e.target.closest('input[data-mat]');
     if (want) { if (want.checked) MAT_WANT.add(want.dataset.mat); else MAT_WANT.delete(want.dataset.mat); return; }
@@ -2767,17 +2855,17 @@
     const seq = ++ME_SEQ;
     const code = myCode();
     if (!code) {
-      $('#view').innerHTML = `${gone ? `<p class="msg bad">${esc(t('meGone'))}</p>` : ''}<p class="note">You have no pass on this device yet.</p>
+      $('#view').innerHTML = `${gone ? `<p class="msg bad">${esc(t('meGone'))}</p>` : ''}<p class="note">${esc(t('meNone'))}</p>
         <div class="pkg">
-          <h3>Already bought a pass?</h3>
-          <p class="note">We will email you a link that opens it. No code to remember.</p>
-          <label>Your email</label><input id="lemail" type="email" autocomplete="email" placeholder="you@example.com">
-          <p style="margin-top:12px"><button class="btn pink" onclick="emailLink()">Email me a link</button></p>
+          <h3>${esc(t('meHave'))}</h3>
+          <p class="note">${esc(t('meMailWhy'))}</p>
+          <label for="lemail">${esc(t('meEmailL'))}</label><input id="lemail" type="email" autocomplete="email" placeholder="you@example.com">
+          <p style="margin-top:12px"><button class="btn pink" onclick="emailLink()">${esc(t('meMailBtn'))}</button></p>
           <div id="lmsg"></div>
         </div>
-        <p class="note" style="margin-top:18px">Or, if you have your member code:</p>
-        <label>Member code</label><input id="mc" placeholder="B…">
-        <p><button class="btn ghost" onclick="linkCode()">Find my pass</button></p>`;
+        <p class="note" style="margin-top:18px">${esc(t('meOrCode'))}</p>
+        <label for="mc">${esc(t('meCodeL'))}</label><input id="mc" placeholder="B…">
+        <p><button class="btn ghost" onclick="linkCode()">${esc(t('meFind'))}</button></p>`;
       return;
     }
     try {
@@ -3084,7 +3172,7 @@
     $('#dlg').showModal();
   });
 
-  const forgetMe = () => { try { localStorage.removeItem('aybkk_member'); } catch (_) {} };
+  const forgetMe = () => { try { localStorage.removeItem('aybkk_member'); } catch (_) {} drawAcct(); };
   window.signOutMe = () => { forgetMe(); renderMe(); };
 
   window.saveMyEmail = async () => {
@@ -3107,26 +3195,26 @@
       $('#mcMsg').textContent = t('codeNotFound');
       return;
     }
-    localStorage.setItem('aybkk_member', v); renderMe();
+    localStorage.setItem('aybkk_member', v); drawAcct(); renderMe();
   };
 
   window.emailLink = async () => {
     const email = ($('#lemail').value || '').trim();
     if (!email.includes('@')) {
-      $('#lmsg').innerHTML = '<div class="msg bad">Please enter your email address.</div>';
+      $('#lmsg').innerHTML = `<div class="msg bad">${esc(t('meNoEmail'))}</div>`;
       return;
     }
     try {
       const r = await fetch('/api/bkk/login/request', { method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, lang: (navigator.language || 'en').slice(0, 2) }) });
-      const j = await r.json();
-      // Deliberately the same message whether or not we know the address.
-      $('#lmsg').innerHTML = `<div class="msg ok">${esc(j.message ||
-        'If that address is registered, a link is on its way.')}<br>
-        <span style="font-size:13px">It works once and expires in 30 minutes.</span></div>`;
+        body: JSON.stringify({ email, lang: LANG }) });
+      // Deliberately the same message whether or not we know the address. The server's
+      // own words are English, so the page says it in the reader's language.
+      if (!(await r.json()).ok) throw new Error('not sent');
+      $('#lmsg').innerHTML = `<div class="msg ok">${esc(t('lnkSent'))}<br>
+        <span style="font-size:13px">${esc(t('lnkOnce'))}</span></div>`;
     } catch (_) {
-      $('#lmsg').innerHTML = '<div class="msg bad">Could not reach the shala. Try again.</div>';
+      $('#lmsg').innerHTML = `<div class="msg bad">${esc(t('lnkFail'))}</div>`;
     }
   };
 
@@ -3185,7 +3273,7 @@
         // A phone signed in as someone else must not stay on that profile: the
         // buyer would see (and book on) the other person's pass after paying.
         const known = j.member.code;
-        if (known) localStorage.setItem('aybkk_member', known);
+        if (known) { localStorage.setItem('aybkk_member', known); drawAcct(); }
         else { forgetMe(); if (j.pay) alert(t('haveProfile')); }
         if (j.pay) {
           // PaySolutions appends nothing to the return URL, so the only way to
@@ -3236,7 +3324,7 @@
   window.book = async (slotId, date) => {
     const code = myCode();
     if (!code) {
-      if (!offerDropin(slotId, date)) alert('Please buy a package first, or open "My pass" and enter your member code.');
+      if (!offerDropin(slotId, date)) alert(t('needPass'));
       return;
     }
     if (BUSY) return;
