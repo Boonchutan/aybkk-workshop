@@ -44,8 +44,9 @@
   :lang(th) .row .nm{font-weight:700;letter-spacing:0;font-size:38px;line-height:1.25}
   .row .nt{margin-top:4px;font-size:21px;line-height:1.35;color:var(--soft);max-width:34ch}
   :lang(th) .row .nt{line-height:1.5;max-width:30em}
-  .row .hl{grid-column:1/-1;justify-self:start;margin-top:10px;background:var(--pink);color:#fff;font-weight:800;font-size:26px;letter-spacing:-.01em;line-height:1.25;padding:7px 14px 8px}
-  :lang(th) .row .hl{font-weight:700;font-size:28px;letter-spacing:0;line-height:1.4;padding:4px 14px 6px}
+  .row .hl,.rows > .hl{grid-column:1/-1;justify-self:start;margin-top:10px;background:var(--pink);color:#fff;font-weight:800;font-size:26px;letter-spacing:-.01em;line-height:1.25;padding:7px 14px 8px}
+  :lang(th) .row .hl,:lang(th) .rows > .hl{font-weight:700;font-size:28px;letter-spacing:0;line-height:1.4;padding:4px 14px 6px}
+  .rows > .hl{width:fit-content;margin:0 0 10px}
   .row .pr{text-align:right;white-space:nowrap}
   .row .pr b{font-weight:800;font-size:60px;line-height:1;letter-spacing:-.035em;color:var(--plum)}
   .row .pr b i{font-style:normal;font-size:.55em;vertical-align:.32em;margin-right:4px}
@@ -86,7 +87,7 @@
   body.plum .row.pick{background:#5a1f5f}
   body.plum .row.pick::before{background:var(--pinkhi)}
   body.plum .badge{background:var(--pinkhi);color:#3E1442}
-  body.plum .row .hl{background:var(--pinkhi);color:#3E1442}
+  body.plum .row .hl,body.plum .rows > .hl{background:var(--pinkhi);color:#3E1442}
   body.plum .notes p b{color:var(--pinkhi)}
   body.plum .bye{color:var(--pinkhi)}
   body.plum .brand img{background:#fff}
@@ -108,7 +109,7 @@ document.documentElement.lang = lang;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 // Thai: break only at spaces (phrase by phrase); English: keep the last two words together.
 const P = s => lang === 'th'
-  ? String(s).replace(/(ประหยัด|รวม) ฿/g, '$1\u00a0฿').replace(/(\d) (?=เดือน|ครั้ง|วัน|ท่าน)/g, '$1\u00a0').replace(/\(เช่น /g, '(เช่น\u00a0').replace(/ ๆ/g, '\u00a0ๆ')
+  ? String(s).replace(/(ประหยัด|รวม) ฿/g, '$1\u00a0฿').replace(/(\d) (?=เดือน|ครั้ง|วัน|ท่าน)/g, '$1\u00a0').replace(/\(เช่น /g, '(เช่น\u00a0').replace(/ ๆ/g, '\u00a0ๆ').replace(/คลาส Led/g, 'คลาส\u00a0Led')
       .split(' ').map(w => `<span class="nw">${esc(w)}</span>`).join(' ')
   : esc(s).replace(/ (\S+)$/, '\u00a0$1').replace(/LINE @aybkk|\d+-\w+/g, m => `<span class="nw">${m}</span>`);
 const PS = s => lang === 'th' ? P(s) : String(s).split(/(?<=[.?]) /).map(x => `<span class="ib">${P(x)}</span>`).join(' ');
@@ -118,8 +119,8 @@ document.getElementById('page').innerHTML = `
   <header class="g top"><div class="brand"><img src="${LOGO}" alt=""><div><b>AYBKK</b><span>Ashtanga Yoga Bangkok</span></div></div>
     <div class="when"><b>${esc(X.list)}</b><span>${esc(X.date)}</span></div></header>
   <section class="g hero"><h1>${esc(T.title)}</h1><div class="pic"><img src="${PHOTO}" alt=""></div><p class="lead">${P(X.lead)}</p></section>
-  <section class="g sec"><div class="lab"><span class="n">01</span><b>${esc(T.sec1)}</b><span>${P(T.sec1note)}</span></div>
-    <div class="rows">${T.rows.map(row).join('')}</div></section>
+  <section class="g sec"><div class="lab"><span class="n">01</span><b>${esc(T.sec1)}</b><span>${PS(T.sec1note)}</span></div>
+    <div class="rows">${T.sec1hl ? `<p class="hl">${PS(T.sec1hl)}</p>` : ''}${T.rows.map(row).join('')}</div></section>
   <section class="g sec"><div class="lab"><span class="n">02</span><b>${esc(T.sec2)}</b></div>
     <div class="rows">${T.packs.map(row).join('')}</div><p class="vat">${P(T.vat)}</p></section>
   <section class="g sec"><div class="lab"><span class="n">03</span><b>${esc(T.polH)}</b></div>

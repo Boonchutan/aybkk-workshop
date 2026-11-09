@@ -3,7 +3,7 @@
   "title": "Membership",
   "date": "New prices from 12 Nov 2026",
   "sec1": "Unlimited membership",
-  "sec1note": "Mysore and Led, as often as you like",
+  "sec1note": "Mysore and Led, as often as you like. No minimum.",
   "rows": [
    {
     "name": "12 months",
@@ -42,12 +42,11 @@
    },
    {
     "name": "8 classes",
-    "note": "Use within 1 month. No weekly minimum. For ฿2,000 more, go unlimited.",
+    "note": "Use within 2 months. For ฿2,000 more: 1 month unlimited.",
     "price": "7,600",
     "per": "950 / class",
-    "badge": "No minimum",
-    "hl": "No need to come 4 times a week. Come when you can.",
-    "noteWall": "Use within 1 month. For ฿2,000 more, go unlimited."
+    "badge": "Valid 2 months",
+    "noteWall": "Use within 2 months. For ฿2,000 more: 1 month unlimited."
    }
   ],
   "vat": "+VAT = plus 7% VAT. Paying online adds a transaction fee.",
@@ -71,13 +70,14 @@
    ]
   ],
   "bye": "See you tomorrow.",
-  "vatTag": "+VAT"
+  "vatTag": "+VAT",
+  "sec1hl": "No need to come 4 times a week. Come when you can."
  },
  "th": {
   "title": "สมาชิก",
   "date": "ราคาใหม่ เริ่ม 12 พ.ย. 2569",
   "sec1": "สมาชิกรายเดือน (Unlimited)",
-  "sec1note": "ฝึกมายซอร์และคลาส Led ได้ไม่จำกัด",
+  "sec1note": "ฝึกมายซอร์และคลาส Led ได้ไม่จำกัด ไม่มีขั้นต่ำ",
   "rows": [
    {
     "name": "12 เดือน",
@@ -116,12 +116,11 @@
    },
    {
     "name": "แพ็ก 8 ครั้ง",
-    "note": "ใช้ภายใน 1 เดือน ไม่กำหนดว่าต้องมากี่ครั้งต่อสัปดาห์ เพิ่มอีก ฿2,000 ฝึกได้ไม่จำกัด",
+    "note": "ใช้ภายใน 2 เดือน เพิ่มอีก ฿2,000 ฝึกได้ไม่จำกัด 1 เดือน",
     "price": "7,600",
     "per": "ตกครั้งละ 950",
-    "badge": "ไม่มีขั้นต่ำ",
-    "hl": "ไม่ต้องมาสัปดาห์ละ 4 ครั้ง มาได้ตามสะดวก",
-    "noteWall": "ใช้ภายใน 1 เดือน เพิ่มอีก ฿2,000 ฝึกได้ไม่จำกัด"
+    "badge": "ใช้ได้ 2 เดือน",
+    "noteWall": "ใช้ภายใน 2 เดือน เพิ่มอีก ฿2,000 ฝึกได้ไม่จำกัด 1 เดือน"
    }
   ],
   "vat": "+VAT = ยังไม่รวม VAT 7% หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม",
@@ -145,6 +144,7 @@
    ]
   ],
   "bye": "เจอกันพรุ่งนี้",
-  "vatTag": "+VAT"
+  "vatTag": "+VAT",
+  "sec1hl": "ไม่ต้องมาสัปดาห์ละ 4 ครั้ง มาฝึกตามเวลาที่สะดวก"
  }
 }
