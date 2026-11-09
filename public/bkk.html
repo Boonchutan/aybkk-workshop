@@ -1533,18 +1533,23 @@
   const pkgName = p => (LANG === 'th' && p.name_th) || p.name_en;
 
   // The account button at the top right: a person outline when signed out, the student's
-  // initials once /me has said who this code is (a code alone shows the filled circle).
-  // Thai abbreviations skip a leading vowel (เชียงใหม่ is ชม.), so เกศินี gives ก.
+  // initials once /me has said who this code is (a code alone shows the filled circle, a
+  // code /me calls 'not found' shows the outline). A title or a name in brackets is skipped,
+  // and Thai abbreviations skip a leading vowel (เชียงใหม่ is ชม.), so เกศินี gives ก.
   const ACCT = $('#acct'), ACCT_ICON = ACCT.innerHTML;
-  let ACCT_WHO = { code: '', name: '' };
+  let ACCT_WHO = { code: '', name: '', gone: false };
+  const TITLE = /^(mr|mrs|ms|miss|mx|dr|นาย|นาง|นางสาว|น\.ส\.|ด\.ช\.|ด\.ญ\.)\.?$/i;
   const initials = name => {
-    const ws = String(name || '').split(/\s+/)
-      .map(w => (w.replace(/[\u0E40-\u0E44]/g, '').match(/\p{L}/u) || [''])[0]).filter(Boolean);
+    const s = String(name || '');
+    let ws = (s.replace(/[(（[][^)）\]]*[)）\]]/g, ' ').trim() || s).split(/\s+/).filter(Boolean);
+    if (ws.length > 1 && TITLE.test(ws[0])) ws = ws.slice(1);
+    ws = ws.map(w => (w.replace(/[\u0E40-\u0E44]/g, '').match(/\p{L}/u) || [''])[0]).filter(Boolean);
     return (ws.length > 1 ? ws[0] + ws[ws.length - 1] : ws[0] || '').toUpperCase();
   };
   function drawAcct() {
-    const code = myCode(), ini = code && ACCT_WHO.code === code ? initials(ACCT_WHO.name) : '';
-    ACCT.classList.toggle('in', !!code);
+    const code = myCode(), who = code && ACCT_WHO.code === code ? ACCT_WHO : null;
+    const ini = who && !who.gone ? initials(who.name) : '';
+    ACCT.classList.toggle('in', !!code && !(who && who.gone));
     if (ini) ACCT.textContent = ini;
     else if (!ACCT.querySelector('svg')) ACCT.innerHTML = ACCT_ICON;
     ACCT.setAttribute('aria-label', t('tabMe'));
@@ -2414,18 +2419,23 @@
     for (const b of (d && d.bookings) || []) map.set(b.slot_id + '|' + (b.classDate || bkkDate(b.start_at)), b);
     MINE = { code, ok: !!(d && d.member), map };
     // A failed /me keeps the initials it had: only an answer changes who this is.
-    if (d && d.member) ACCT_WHO = { code, name: d.member.name || '' };
+    if (d && d.member) ACCT_WHO = { code, name: d.member.name || '', gone: false };
     drawAcct();
   }
   async function loadMine() {
     const code = myCode();
     if (!code) return;
-    let d = null;
+    let d = null, gone = false;
     try {
       const r = await fetchT('/api/bkk/me/' + encodeURIComponent(code));
       if (r.ok) d = await r.json();
+      else if (r.status === 404) gone = (await r.json().catch(() => ({}))).error === 'not found';
     } catch (_) {}
-    if (code === myCode()) setMine(code, d);
+    if (code !== myCode()) return;
+    // A dead code stays on the phone until My account explains it (renderMe forgets it
+    // there), but the button stops looking signed in.
+    if (gone) ACCT_WHO = { code, name: '', gone: true };
+    setMine(code, d);
   }
   const mine = () => (MINE.code && MINE.code === myCode() ? MINE : { ok: false, map: new Map() });
 
@@ -3197,7 +3207,7 @@
     try {
       const r = await fetch('/api/bkk/login/request', { method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, lang: (navigator.language || 'en').slice(0, 2) }) });
+        body: JSON.stringify({ email, lang: LANG }) });
       // Deliberately the same message whether or not we know the address. The server's
       // own words are English, so the page says it in the reader's language.
       if (!(await r.json()).ok) throw new Error('not sent');
