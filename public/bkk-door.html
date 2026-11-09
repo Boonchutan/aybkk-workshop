@@ -52,6 +52,11 @@
   .row .nm{flex:1;min-width:0;font-size:17px;font-weight:600;overflow-wrap:anywhere}
   .row .cd{font-size:12.5px;color:var(--soft);font-weight:400;display:block;margin-top:1px}
   .row .st{font-size:13px;color:var(--soft);flex-shrink:0;white-space:nowrap}
+  /* The student's face, or their initials, so staff can greet them by name (9 Nov 2026). */
+  .row .av{flex:none;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;
+    overflow:hidden;background:#2f2438;color:var(--plum);font-size:16px;font-weight:700;letter-spacing:.02em}
+  .row .av img{display:block;width:100%;height:100%;object-fit:cover}
+  .row.in .av{box-shadow:0 0 0 2px var(--in)}
   .row.in{border-color:rgba(61,220,151,.45);background:rgba(61,220,151,.08)}
   .row.in .st{color:var(--in);font-weight:600}
   .row.miss{opacity:.55}
@@ -274,6 +279,14 @@
   // mat: ticked "I need a mat" when booking, so have a rental mat ready.
   const tags = b => [b.need_mat && ['mat', 'mt'], b.cover === 'rezerv' && ['Rezerv', 'rz'], b.dropin && ['Drop-in', 'dp'],
     b.source === 'door' && ['walk-in', '']].filter(Boolean);
+  // First and last word's first letter, as on the student's own account button.
+  const initials = name => {
+    const ws = String(name || '').replace(/[(（[][^)）\]]*[)）\]]/g, ' ').trim().split(/\s+/)
+      .map(w => (w.replace(/[\u0E40-\u0E44]/g, '').match(/\p{L}/u) || [''])[0]).filter(Boolean);
+    return (ws.length > 1 ? ws[0] + ws[ws.length - 1] : ws[0] || '').toUpperCase();
+  };
+  const face = b => `<span class="av" aria-hidden="true">${b.photo
+    ? `<img src="${esc(b.photo)}" alt="" loading="lazy" width="48" height="48" data-ini="${esc(initials(b.name))}">` : esc(initials(b.name))}</span>`;
 
   // The server refuses a walk-in once the class is over: say so on the button
   // before staff fill in the whole form.
@@ -299,12 +312,13 @@
       !term || String(b.name).toLowerCase().includes(term) || String(b.code).toLowerCase().includes(term));
     $('#list').innerHTML = rows.length ? rows.map(b => `
       <button class="row ${b.checked_in_at ? 'in' : ''}" data-code="${esc(b.code)}">
-        <span class="nm">${esc(b.name)}<span class="cd">${esc(b.code)}${tags(b).map(([t, c]) =>
+        ${face(b)}<span class="nm">${esc(b.name)}<span class="cd">${esc(b.code)}${tags(b).map(([t, c]) =>
           `<i class="tag ${c}">${esc(t)}</i>`).join('')}</span></span>
         <span class="st">${b.checked_in_at ? '✓ in ' + time(b.checked_in_at) : 'tap to check in'}</span>
       </button>`).join('')
       : `<p class="empty">${g.list.length ? 'No one matches that.' : 'No one on the list yet.'}</p>`;
     $('#list').querySelectorAll('.row').forEach(el => el.onclick = () => checkin(el.dataset.code));
+    $('#list').querySelectorAll('.av img').forEach(i => { i.onerror = () => { i.parentNode.textContent = i.dataset.ini; }; });
   }
 
   $('#q').addEventListener('input', renderList);

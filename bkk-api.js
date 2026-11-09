@@ -245,7 +245,7 @@ function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
   const cloudinary = opts.cloudinary || null;
   const httpFetch = opts.fetch || fetch;
-  // Tests move the clock the 12 Nov price switch reads.
+  // Tests move the clock the 12 Nov price switch and the face links read.
   const nowMs = typeof opts.now === 'function' ? opts.now : Date.now;
   // No key set means no admin at all: the repo is public, so a default key
   // would open every student's data to anyone.
@@ -483,6 +483,13 @@ function mountBkk(app, opts = {}) {
     // A drop-in bought for a class carries the tick on its order to the seat.
     await q(`ALTER TABLE bkk_bookings ADD COLUMN IF NOT EXISTS need_mat BOOLEAN NOT NULL DEFAULT false`);
     await q(`ALTER TABLE bkk_orders ADD COLUMN IF NOT EXISTS need_mat BOOLEAN NOT NULL DEFAULT false`);
+    // The student's own face (9 Nov 2026), so teachers can greet them by name.
+    // photo_id is a private Cloudinary asset. photo_tries counts uploads on
+    // photo_tries_on (a Bangkok day), to cap them.
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS photo_id TEXT`);
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS photo_at TIMESTAMPTZ`);
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS photo_tries INTEGER NOT NULL DEFAULT 0`);
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS photo_tries_on DATE`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -1556,6 +1563,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const c = count.rows[0];
       res.json({
         member: { code: m.code, name: m.name, email: m.email, journalId: await journalId(m) },
+        photo: faceLinks(m.photo_id),
         history: { practised: c.practised, days: c.days, thisMonth: c.this_month, recent: recent.rows },
         notes,
         passes: passes.map(p => ({
@@ -2089,8 +2097,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const today = bkkToday();
       // pass_name / dropin let the door label a row: a drop-in, or a Rezerv seat.
+      // photo: the student's face, so the door can greet them by name.
       const r = await q(
-        `SELECT s.title, b.class_date, b.start_at, m.name, m.code, b.checked_in_at,
+        `SELECT s.title, b.class_date, b.start_at, m.name, m.code, m.photo_id, b.checked_in_at,
            b.slot_id, b.cover, b.source, b.need_mat, pr.name_en AS pass_name,
            coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
          FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id
@@ -2121,7 +2130,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
             mats: list.filter(b => b.need_mat).length };
         }).filter(Boolean);
       }
-      res.json({ bookings: r.rows, money, classes });
+      res.json({ bookings: r.rows.map(({ photo_id, ...b }) => ({ ...b, photo: faceSmall(photo_id) })), money, classes });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3514,12 +3523,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // Cloudinary answers some refusals (403: plan limit reached, account paused)
   // with no readable message, so the team saw only "unexpected status code -
   // 403". Say what it means, with the plan usage when Cloudinary will tell us.
-  async function cloudUpload(file, date) {
+  async function cloudUpload(file, opts) {
     try {
-      return await cloudinary.uploader.upload(file, {
-        type: 'authenticated', folder: `aybkk/profile/${date}`, resource_type: 'image',
-        transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:best' }],
-      });
+      return await cloudinary.uploader.upload(file, { type: 'authenticated', resource_type: 'image', ...opts });
     } catch (e) {
       const err = e && e.error ? e.error : e;
       if (err && err.http_code === 403) {
@@ -3536,7 +3542,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 
   async function storePhoto(t, date, image, memberCodes, driveId) {
     const ids = await memberIds(memberCodes);
-    const up = await cloudUpload(image, date);
+    const up = await cloudUpload(image, { folder: `aybkk/profile/${date}`,
+      transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:best' }] });
     const photo = (await q(
       `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by,drive_id)
        VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
@@ -3731,6 +3738,115 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       res.json({ days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]))
         .map(([date, items]) => ({ date, items })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── the student's own face (Boonchu, 9 Nov 2026) ──────────────────────────
+  // One square photo per student, for the round account button and for staff
+  // lists, so the door can greet people by name. Private like class photos: an
+  // "authenticated" Cloudinary asset under a random id (never the code or name).
+  // Links to it are signed here and expire: Cloudinary's own signed links never
+  // do (expiring ones are a paid plan), and this server is reachable from China
+  // where Cloudinary is slow. A link carries the photo's id, size and expiry,
+  // and works for 6 to 12 hours, the same link all the while so browsers cache it.
+  // Only /me (the member code) and the staff lists (admin key) hand links out.
+  const FACE_FOLDER = 'aybkk-profile';
+  const FACE_MAX_BYTES = 6 * 1024 * 1024;
+  const FACE_PER_DAY = 10;
+  const FACE_TYPE = /^data:image\/(jpeg|png|webp|heic|heif);base64,/;
+  const FACE_SIZES = {
+    s: { width: 160, height: 160, crop: 'fill', gravity: 'face', quality: 'auto', fetch_format: 'jpg' },
+    l: { width: 600, height: 600, crop: 'fill', gravity: 'face', quality: 'auto', fetch_format: 'jpg' },
+  };
+  const FACE_STEP = 6 * 3600;
+  const FACE_KEY = crypto.createHash('sha256').update('aybkk-face:' + (process.env.CLOUDINARY_API_SECRET
+    || ADMIN_KEY || crypto.randomBytes(32).toString('hex'))).digest();
+  const faceSig = s => crypto.createHmac('sha256', FACE_KEY).update(s).digest('base64url').slice(0, 22);
+  const faceRef = photoId => String(photoId).split('/').pop();
+  const faceUrl = (photoId, size) => {
+    const s = `${faceRef(photoId)}.${size}.${(Math.floor(nowMs() / 1000 / FACE_STEP) + 2) * FACE_STEP}`;
+    return `/api/bkk/face/${s}.${faceSig(s)}`;
+  };
+  const faceLinks = photoId => photoId && cloudinary ? { small: faceUrl(photoId, 's'), large: faceUrl(photoId, 'l') } : null;
+  const faceSmall = photoId => photoId && cloudinary ? faceUrl(photoId, 's') : null;
+  const dropFace = id => cloudinary.uploader.destroy(id, { type: 'authenticated', invalidate: true })
+    .catch(e => console.warn(`[bkk face] could not delete ${id}:`, (e && e.message) || e));
+  // Swaps the member's photo in one statement and returns the one it replaced,
+  // so two uploads at once each delete the right old asset.
+  const swapFace = (where, args, photoId) => q(
+    `UPDATE bkk_members m SET photo_id=$${args.length + 1}, photo_at=${photoId ? 'now()' : 'NULL'}
+     FROM (SELECT id, photo_id AS old FROM bkk_members WHERE ${where} FOR UPDATE) o
+     WHERE m.id=o.id RETURNING o.old`, [...args, photoId]);
+  const BKK_DAY = `(now() AT TIME ZONE 'Asia/Bangkok')::date`;
+
+  app.post('/api/bkk/me/:code/photo', async (req, res) => {
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    try {
+      const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'not found' });
+      const img = String((req.body || {}).imageBase64 || '');
+      const head = FACE_TYPE.exec(img);
+      if (!head) return res.status(400).json({ error: 'not a photo: send a JPEG, PNG, WebP or HEIC image' });
+      const b64 = img.slice(head[0].length);
+      if (b64.length * 3 / 4 > FACE_MAX_BYTES) return res.status(413).json({ error: 'photo too big: 6 MB at most' });
+      if (!sniff(Buffer.from(b64.slice(0, 32), 'base64'))) return res.status(400).json({ error: 'not a photo' });
+      if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
+        return res.status(503).json({ error: 'photo storage not configured' });
+      }
+      const tried = await q(
+        `UPDATE bkk_members SET photo_tries = CASE WHEN photo_tries_on = ${BKK_DAY} THEN photo_tries + 1 ELSE 1 END,
+           photo_tries_on = ${BKK_DAY}
+         WHERE id=$1 AND (photo_tries_on IS DISTINCT FROM ${BKK_DAY} OR photo_tries < $2) RETURNING photo_tries`,
+        [m.id, FACE_PER_DAY]);
+      if (!tried.rows.length) return res.status(429).json({ error: `${FACE_PER_DAY} photos a day at most: try again tomorrow` });
+      let up;
+      try {
+        up = await cloudUpload(img, { folder: FACE_FOLDER, public_id: crypto.randomBytes(12).toString('hex'),
+          overwrite: false, transformation: [{ width: 600, height: 600, crop: 'fill', gravity: 'face', quality: 'auto:good' }] });
+      } catch (e) {
+        console.error('[bkk face] upload failed:', e.message);
+        return res.status(502).json({ error: 'could not store the photo: try again later' });
+      }
+      let swapped;
+      try { swapped = (await swapFace('id=$1', [m.id], up.public_id)).rows[0]; }
+      catch (e) { await dropFace(up.public_id); throw e; }
+      if (!swapped) { await dropFace(up.public_id); return res.status(404).json({ error: 'not found' }); }
+      if (swapped.old && swapped.old !== up.public_id) await dropFace(swapped.old);
+      res.json({ success: true, photo: faceLinks(up.public_id) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  app.post('/api/bkk/me/:code/photo/remove', async (req, res) => {
+    try {
+      const r = (await swapFace('code=$1', [req.params.code], null)).rows[0];
+      if (!r) return res.status(404).json({ error: 'not found' });
+      if (r.old && cloudinary) await dropFace(r.old);
+      res.json({ success: true, photo: null });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The link itself is the key: an <img> sends no header. A removed or
+  // replaced photo stops at once, whatever its links say.
+  app.get('/api/bkk/face/:t', async (req, res) => {
+    const m = /^([0-9a-f]{24})\.([sl])\.(\d{9,11})\.([\w-]{22})$/.exec(req.params.t);
+    if (!m) return res.status(404).json({ error: 'not found' });
+    const [, ref, size, exp, sig] = m;
+    const want = Buffer.from(faceSig(`${ref}.${size}.${exp}`)), got = Buffer.from(sig);
+    if (want.length !== got.length || !crypto.timingSafeEqual(want, got)) return res.status(403).json({ error: 'bad link' });
+    const left = Number(exp) - Math.floor(nowMs() / 1000);
+    if (left <= 0 || left > 2 * FACE_STEP) return res.status(410).json({ error: 'link expired' });
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    try {
+      const row = (await q('SELECT photo_id FROM bkk_members WHERE photo_id = ANY($1::text[]) LIMIT 1',
+        [[`${FACE_FOLDER}/${ref}`, ref]])).rows[0];
+      if (!row) return res.status(404).json({ error: 'not found' });
+      const r = await httpFetch(cloudinary.url(row.photo_id, { type: 'authenticated', sign_url: true, secure: true,
+        transformation: [FACE_SIZES[size]] }), { signal: AbortSignal.timeout(15000) });
+      const buf = r.ok ? Buffer.from(await r.arrayBuffer()) : null;
+      const type = buf && sniff(buf);
+      if (!type) return res.status(r.status === 404 ? 404 : 502).json({ error: 'photo not available' });
+      res.set({ 'Content-Type': type, 'Cache-Control': `private, max-age=${left}`, 'X-Content-Type-Options': 'nosniff' })
+        .send(buf);
+    } catch (e) { res.status(502).json({ error: 'photo not available' }); }
   });
 
   // Admin manages who is on the team. Passcodes are shown once, at creation —
@@ -4000,7 +4116,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       const rows = (await q(
         `SELECT b.id, b.status, b.checked_in_at, b.booked_at, b.cancelled_at, b.cancel_reason, b.cover, b.source, b.need_mat,
-           m.code, m.name, pr.name_en AS pass_name, coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
+           m.code, m.name, m.photo_id, pr.name_en AS pass_name, coalesce(pr.kind = 'credits' AND pr.credits = 1, false) AS dropin
          FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
          LEFT JOIN bkk_passes p ON p.id=b.pass_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
          WHERE b.class_date=$1::date AND ${bySlot ? 'b.slot_id=$2'
@@ -4028,7 +4144,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           mats: live.filter(b => b.status === 'booked' && b.need_mat).length },
         roster: live.map(b => ({ bookingId: b.id, code: b.code, name: b.name, status: b.status,
           checkedInAt: b.checked_in_at, bookedAt: b.booked_at, cover: b.cover, source: b.source,
-          passName: b.pass_name, dropin: b.dropin, needMat: b.need_mat }))
+          passName: b.pass_name, dropin: b.dropin, needMat: b.need_mat, photo: faceSmall(b.photo_id) }))
           .sort((a, b) => String(a.name).localeCompare(String(b.name)) || a.bookingId - b.bookingId),
         cancelledList: rows.filter(b => b.status === 'cancelled')
           .sort((a, b) => (b.cancelled_at || 0) - (a.cancelled_at || 0) || b.id - a.id)
