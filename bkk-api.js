@@ -30,7 +30,10 @@ const VAT_PCT = 7;                             // Thai VAT, charged on price + o
 // checkout, so it can be changed without touching the catalogue.
 const SEED_PRODUCTS = [
   { code: 'dropin',    name_en: 'Drop-in',              name_th: 'ครั้งเดียว',        price_thb: 1500,  kind: 'credits',   credits: 1,  valid_days: 1,   daily_cap: null, sort: 10 },
-  { code: 'pack8',     name_en: '8 classes / 1 month',   name_th: '8 ครั้ง / 1 เดือน',  price_thb: 7600,  kind: 'credits',   credits: 8,  valid_days: 30,  daily_cap: null, sort: 20 },
+  { code: 'pack8',     name_en: '8 classes / 2 months',  name_th: '8 ครั้ง / 2 เดือน',  price_thb: 7600,  kind: 'credits',   credits: 8,  valid_days: 60,  daily_cap: null, sort: 20 },
+  // Rezerv sold the 8 classes as 1 month (6 to 9 Nov 2026). Never for sale here:
+  // it keeps those passes, and passes staff typed in with dates, named as they are.
+  { code: 'pack8m1',   name_en: '8 classes / 1 month',   name_th: '8 ครั้ง / 1 เดือน',  price_thb: 7600,  kind: 'credits',   credits: 8,  valid_days: 30,  daily_cap: null, sort: 21, active: false },
   // Not sold since 6 Nov 2026 (pack8 replaced it). Kept for the passes already
   // sold and the Rezerv imports that point at it.
   { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 25, active: false },
@@ -504,6 +507,26 @@ function mountBkk(app, opts = {}) {
     if (!pack8.rows.length) {
       await q(`UPDATE bkk_products SET active=false WHERE code='pack10'`);
       await q(`INSERT INTO bkk_settings (key,value) VALUES ('pack8_replaces_pack10','true') ON CONFLICT (key) DO NOTHING`);
+    }
+    // From 9 Nov 2026 the 8 classes last 2 months, not 1 (Boonchu). The packs
+    // already sold here (an order) were sold 3 days earlier as 1 month: they get
+    // the 2 months too (a started one ends 30 days later; one not started gets 60
+    // days from its first class). Dates from Rezerv, or typed in by staff, stay as
+    // they are, and those passes move to the 1-month record so their name is true
+    // (and a Rezerv re-import still finds them). Each UPDATE only touches 30-day
+    // pack8 rows, so a boot that fails before the marker can run it again safely.
+    const pack8two = await q(`SELECT 1 FROM bkk_settings WHERE key = 'pack8_two_months'`);
+    if (!pack8two.rows.length) {
+      await q(`UPDATE bkk_products SET valid_days=60, name_en='8 classes / 2 months', name_th='8 ครั้ง / 2 เดือน'
+               WHERE code='pack8' AND valid_days=30`);
+      await q(`UPDATE bkk_passes p SET valid_days=60, valid_until = p.valid_until + 30
+               FROM bkk_products pr
+               WHERE pr.id = p.product_id AND pr.code='pack8' AND p.valid_days=30
+                 AND p.source IS DISTINCT FROM 'rezerv' AND (p.order_id IS NOT NULL OR p.valid_until IS NULL)`);
+      await q(`UPDATE bkk_passes p SET product_id = m1.id
+               FROM bkk_products pr, bkk_products m1
+               WHERE pr.id = p.product_id AND pr.code='pack8' AND m1.code='pack8m1' AND p.valid_days=30`);
+      await q(`INSERT INTO bkk_settings (key,value) VALUES ('pack8_two_months','true') ON CONFLICT (key) DO NOTHING`);
     }
     if (added.rows[0].n === 0) console.log(`✓ bkk: seeded ${SEED_PRODUCTS.length} products`);
     const c = await q('SELECT count(*)::int AS n FROM bkk_class_slots');
@@ -2328,7 +2351,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const CLASS_CREDIT = /^(?!.*\b(workshop|with)\b)(\[online\]\s*)?(mysore|led\s+(primary|intermediate)|self[\s-]*practice)\b/i;
   const IMPORT_PLANS = [[/^1\s*month/i, 'unlim1'], [/^2\s*months?/i, 'unlim2'], [/^3\s*months?/i, 'unlim3'],
     [/^6\s*months?/i, 'unlim6'], [/^(12\s*months?|1\s*years?)\b/i, 'unlim12'], [/^10[\s-]*class/i, 'pack10'],
-    [/^8[\s-]*class/i, 'pack8'], [/^drop[\s-]*in\b/i, 'dropin'], [CLASS_CREDIT, 'dropin']];
+    [/^8[\s-]*class.*\b1\s*(month|mo)\b/i, 'pack8m1'], [/^8[\s-]*class/i, 'pack8'], [/^drop[\s-]*in\b/i, 'dropin'], [CLASS_CREDIT, 'dropin']];
   const RETIRED_PLANS = {
     unlim2: { en: '2 months unlimited', th: '2 เดือน ไม่จำกัด', price: 18200, days: 60, sort: 40 },
     unlim6: { en: '6 months unlimited', th: '6 เดือน ไม่จำกัด', price: 45000, days: 180, sort: 60 },

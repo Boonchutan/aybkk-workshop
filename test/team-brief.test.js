@@ -329,7 +329,7 @@ const fakeDriver = { session: () => ({
      mt.includes('🌱 นักเรียนใหม่ ช่วยกันต้อนรับ\n• Chai D. มาครั้งแรก 07:30\n• Mali S. ซื้อ 1 month unlimited เมื่อ ศ. 6 พ.ย. ยังไม่เช็กอินใน aybkk.net ยังไม่มีการจองใน aybkk.net'));
   ok('...but not a student who came before, or one moved over from Rezerv', !/Anna B\. มาครั้งแรก|Tom H\. มาครั้งแรก|Rex R\. มาครั้งแรก/.test(mt));
   ok('ENDING SOON: a pass ending within 7 days and a credit pass with 2 or fewer classes, with the end date',
-     mt.includes('⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ\n• Anna B. 3 months unlimited หมด ส. 14 พ.ย.\n• Ploy W. 8 classes / 1 month เหลือ 1 ครั้ง ใช้ได้ถึง อ. 1 ธ.ค.'));
+     mt.includes('⏳ ใกล้หมด ชวนคุยเรื่องต่อแพ็กเกจ\n• Anna B. 3 months unlimited หมด ส. 14 พ.ย.\n• Ploy W. 8 classes / 2 months เหลือ 1 ครั้ง ใช้ได้ถึง อ. 1 ธ.ค.'));
   ok('...not someone who already renewed, or who has not come for over 30 days', !mt.includes('Zoe R.') && !mt.includes('Gus G.'));
   ok('NOT PAID: an online order pending from the last 3 days, and a booking today with no valid pass',
      mt.includes(`💳 ยังไม่จ่าย ช่วยตามเก็บเงิน\n• Kim L. สั่ง 3 months unlimited ฿26,412 ยังไม่ได้จ่าย (สั่ง จ. 9 พ.ย., ref ${kimRef})\n• Tom H. จอง 05:30 แต่แพ็กเกจถูกยกเลิกแล้ว`));
@@ -431,7 +431,7 @@ const fakeDriver = { session: () => ({
   console.log(et.split('\n').map(l => '      | ' + l).join('\n'));
   ok('Thai, from 20:00 yesterday to 20:00 today', e.status === 200 && et.startsWith('🌙 สรุปวันนี้ อ. 10 พ.ย. (ตั้งแต่ 20:00 เมื่อวาน ถึง 20:00)'), et.split('\n')[0]);
   ok('money: orders paid today, the total with VAT, by product', et.includes('💰 เงิน\nจ่ายแล้ว 3 รายการ ฿20,317 (รวม VAT ฿1,329)\n'
-     + '• 1 month unlimited ×1 ฿10,580\n• 8 classes / 1 month ×1 ฿8,132\n• Drop-in ×1 ฿1,605'));
+     + '• 1 month unlimited ×1 ฿10,580\n• 8 classes / 2 months ×1 ฿8,132\n• Drop-in ×1 ฿1,605'));
   ok('...desk sales by method, online, and what is still pending (an order from 21:15 last night too)',
      et.includes('ที่เคาน์เตอร์ เงินสด 1 ฿1,605 · โอน 1 ฿8,132\nออนไลน์ 1 รายการ ฿10,580\nค้างจ่าย 2 รายการ ฿52,824'), (et.match(/ค้างจ่าย.*/) || [])[0]);
   ok('...not a payment after 20:00 or one moved over from Rezerv', !et.includes('฿9,600') && !et.includes('×2'));

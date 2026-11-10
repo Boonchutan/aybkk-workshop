@@ -147,11 +147,12 @@ Now, until 11 Nov 2026:
 - 12 months: 78,000 THB (6,500 THB/month), 12 months only. Boonchu, 21 Oct 2026: no more free 13th month.
   Passes sold before 21 Oct keep their 13 months.
 - 6 months: not sold now (2 Oct 2026). Old 45,000 THB passes from Rezerv are still honored.
-- Drop-in 1,500 THB. 8 classes 7,600 THB + VAT, use within 1 month (replaced the 10-class pack on 6 Nov 2026; 10-packs already sold stay valid).
+- Drop-in 1,500 THB. 8 classes 7,600 THB + VAT, use within 2 months (Boonchu, 9 Nov 2026; was 1 month from 6 Nov, when it replaced the 10-class pack; 10-packs already sold stay valid).
+- Unlimited (monthly) members: no minimum, no set 4 days a week (Boonchu, 9 Nov 2026). Thai: "ไม่กำหนด 4 วันต่ออาทิตย์ มาฝึกตามเวลาที่สะดวก", never "ไม่ต้องมา...".
 
 From 12 Nov 2026 (every price + 7% VAT, posters bots/media/2026-10-19-prices-v3 on claude/bots-memory):
 - 1 month 9,600 · 3 months 19,500 (6,500/month; Boonchu, 6 Nov 2026) · 6 months 32,000 (teacher's pick) · 12 months 59,900 (12 months only)
-- Drop-in 1,500 · 8 classes 7,600 THB + VAT, use within 1 month (replaced the 10-class pack on 6 Nov 2026; 10-packs already sold stay valid)
+- Drop-in 1,500 · 8 classes 7,600 THB + VAT, use within 2 months (10-packs already sold stay valid)
 
 ## Environment
 
