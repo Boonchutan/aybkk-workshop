@@ -34,3 +34,22 @@ So: 4 PATHS, one per kind of person, not a ladder. Plato's "steps" edit was wron
 8 Which path are you?
 9 แล้วเจอกันครับ
 Status: sent, waiting.
+
+## FINAL v3 (10 Nov). Boonchu: "add both lines and give me the final script"
+Checked first ("is this correct?"): paths idea holds (motivation research: "should" lasts less long than "love it"); the word "obsessed" names the bad kind in Vallerand 2003 (harmonious vs obsessive passion; dance-injury finding known only from reviews: do not quote in public). So the Reel defines the word.
+Toolkit pick: /hook contrarian (flat statement) + Vibe Samurai ladder (4 rungs, turn, question). Lane A, ask STUCK in caption + 2 s end card, never spoken.
+Stakes: stay on "I should" and practice turns into a duty; duty gets you to the mat, it does not take you deep. Why care: the viewer who has practised for years because they are supposed to.
+1 [H] Obsession is the goal.
+2 [DH] 4 paths. Everybody is on a different one.
+3 Path 1, desire. Some people want to be flexible. Handstand and things.
+4 Path 2, motivation. Some people want to learn more. So they come every day.
+5 Path 3, discipline. Some people get stuck on the difficult part. They do it anyway. Because that's what they supposed to do.
+6 [RH] But you can't beat someone on path 4.
+7 Obsessed. They want to go as deep, and know as much, as humanly possible.
+8 [P] Obsessed don't mean more hours. It mean you want to know why.
+9 [P] You can change path. Start with one question. Why?
+10 [P] Which path are you?
+11 แล้วเจอกันครับ
+107 spoken words, about 40 s. On screen: OBSESSION IS THE GOAL from frame 1; big word per path DESIRE / MOTIVATION / DISCIPLINE / OBSESSED; WHY? on line 9; end card 2 s "Comment STUCK".
+Caption: Obsession is the goal. 🔥 / There are 4 paths in yoga, and everybody is on a different one. / Desire: you want the handstand. Motivation: you want to learn more. Discipline: you get stuck, and you do it anyway. Obsessed: you want to know why. / Obsessed does not mean more hours. It means you want to know why. / You can change path. Start with one question. Why? / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti
+Status: final script sent; not filmed.
