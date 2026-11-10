@@ -136,9 +136,9 @@ const ok = (name, cond, extra = '') => {
 
     await boot();
     const run8 = await prod('pack8'), run10 = await prod('pack10');
-    ok('the next boot adds the 8-class pack to the running shala: 7,600, 8 classes, 30 days, on sale', run8 && run8.active
-       && run8.price_thb === 7600 && run8.kind === 'credits' && run8.credits === 8 && run8.valid_days === 30 && run8.daily_cap === null
-       && run8.name_en === '8 classes / 1 month' && run8.name_th === '8 ครั้ง / 1 เดือน', JSON.stringify(run8));
+    ok('the next boot adds the 8-class pack to the running shala: 7,600, 8 classes, 60 days, on sale', run8 && run8.active
+       && run8.price_thb === 7600 && run8.kind === 'credits' && run8.credits === 8 && run8.valid_days === 60 && run8.daily_cap === null
+       && run8.name_en === '8 classes / 2 months' && run8.name_th === '8 ครั้ง / 2 เดือน', JSON.stringify(run8));
     ok('...and retires the 10-class pack once, its rules unchanged, with the marker written', !run10.active && run10.price_thb === 14000
        && run10.credits === 10 && run10.valid_days === 90 && (await marker()) === 1, JSON.stringify(run10));
 
@@ -163,8 +163,8 @@ const ok = (name, cond, extra = '') => {
 
     const cat = (await J('/api/bkk/products')).body;
     const p8 = cat.products.find(p => p.code === 'pack8');
-    ok('GET /api/bkk/products lists the 8-class pack at 7,600, 8 classes, 30 days, after the drop-in',
-       p8 && p8.price_thb === 7600 && p8.credits === 8 && p8.valid_days === 30 && cat.products.map(p => p.code).slice(0, 2).join() === 'dropin,pack8',
+    ok('GET /api/bkk/products lists the 8-class pack at 7,600, 8 classes, 60 days, after the drop-in',
+       p8 && p8.price_thb === 7600 && p8.credits === 8 && p8.valid_days === 60 && cat.products.map(p => p.code).slice(0, 2).join() === 'dropin,pack8',
        JSON.stringify(p8));
     ok('...with the Packages tab total 7,600 + 228 online fee + 548 VAT = 8,376', p8 && p8.fee_thb === 228 && p8.vat_thb === 548
        && p8.total_thb === 8376, JSON.stringify(p8));
@@ -184,7 +184,7 @@ const ok = (name, cond, extra = '') => {
     ok('...the receipt says so', rc8 && rc8.text.includes('Paid ฿8,132 (฿7,600 + ฿0 online transaction fee + ฿532 VAT 7%)'),
        rc8 && rc8.text.slice(0, 300));
     const dp8 = desk8.body.member ? await passOf(desk8.body.member.code) : null;
-    ok('...and gets 8 classes for 30 days', dp8 && dp8.code === 'pack8' && dp8.credits_total === 8 && dp8.valid_days === 30, JSON.stringify(dp8));
+    ok('...and gets 8 classes for 60 days', dp8 && dp8.code === 'pack8' && dp8.credits_total === 8 && dp8.valid_days === 60, JSON.stringify(dp8));
     await post('/api/bkk/admin/settings', { surchargePct: 0 }, ADMIN);
     const online8 = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Eight Online', email: 'eight.online@example.com' });
     await post('/api/bkk/admin/settings', { surchargePct: 3 }, ADMIN);
@@ -202,7 +202,67 @@ const ok = (name, cond, extra = '') => {
     const i8 = (await pool.query(`SELECT p.credits_total, p.credits_used, p.valid_days, pr.code FROM bkk_passes p
       JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id WHERE m.name='Eightpack Import'`)).rows[0] || {};
     ok('the Rezerv import maps "8 classes" to the 8-class pack', imp8.body.passes === 1 && i8.code === 'pack8'
-       && i8.credits_total === 8 && i8.credits_used === 3 && i8.valid_days === 30, JSON.stringify([imp8.body, i8]));
+       && i8.credits_total === 8 && i8.credits_used === 3 && i8.valid_days === 60, JSON.stringify([imp8.body, i8]));
+  }
+
+  console.log('\n— 8 classes last 2 months, not 1 (9 Nov 2026) —');
+  {
+    const marker = async () => (await pool.query(`SELECT count(*)::int AS n FROM bkk_settings WHERE key='pack8_two_months'`)).rows[0].n;
+    const prod = async () => (await pool.query(`SELECT * FROM bkk_products WHERE code='pack8'`)).rows[0];
+    const passOf = async name => (await pool.query(`SELECT p.valid_days, p.source, pr.code,
+        to_char(p.valid_from,'YYYY-MM-DD') AS f, to_char(p.valid_until,'YYYY-MM-DD') AS u
+      FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id WHERE m.name=$1`, [name])).rows[0];
+    const boot = async (db = pool) => { mountBkk(express(), { pgPool: db, now }); await new Promise(r => setTimeout(r, 1500)); };
+    const sell = async name => {
+      const o = await post('/api/bkk/orders', { productCode: 'pack8', name, email: name.toLowerCase().replace(/ /g, '.') + '@example.com' });
+      await post(`/api/bkk/admin/orders/${o.body.order.id}/force-activate`, {}, ADMIN);
+      return o;
+    };
+
+    ok('a new database sells the 8-class pack as 2 months, marker written', (await prod()).valid_days === 60 && (await marker()) === 1);
+
+    // A shala that ran from 6 Nov: the pack is 30 days and some are sold.
+    await pool.query(`DELETE FROM bkk_settings WHERE key='pack8_two_months'`);
+    await pool.query(`UPDATE bkk_products SET valid_days=30, name_en='8 classes / 1 month', name_th='8 ครั้ง / 1 เดือน' WHERE code='pack8'`);
+    await sell('Eightmonth Waiting');
+    await sell('Eightmonth Started');
+    await pool.query(`UPDATE bkk_passes p SET valid_from='2026-11-07', valid_until='2026-12-07' FROM bkk_members m
+                      WHERE m.id=p.member_id AND m.name='Eightmonth Started'`);
+    await post('/api/bkk/admin/import', { rows: [
+      { name: 'Eightmonth Rezerv', plan: '8 classes / 1 month (8 ครั้ง / 1 เดือน)', until: '2026-12-05', classesLeft: 6 }] }, ADMIN);
+    const before = await Promise.all(['Eightmonth Waiting', 'Eightmonth Started', 'Eightmonth Rezerv'].map(passOf));
+    ok('(before: every 8-class pass is 30 days)', before.every(p => p && p.code === 'pack8' && p.valid_days === 30), JSON.stringify(before));
+
+    const errs = [], logErr = console.error;
+    console.error = (...a) => errs.push(a.join(' '));
+    await boot({ query: (sql, p) => /UPDATE bkk_passes p SET valid_days=60/.test(sql)
+      ? Promise.reject(new Error('disk full')) : pool.query(sql, p), connect: () => pool.connect() });
+    console.error = logErr;
+    ok('a boot that fails half way writes no marker, so the next boot tries again', (await marker()) === 0
+       && (await passOf('Eightmonth Started')).u === '2026-12-07' && errs.some(e => /disk full/.test(e)), JSON.stringify(errs));
+
+    await boot();
+    const p8 = await prod();
+    ok('the next boot makes the pack 2 months on the running shala, same price and classes', p8.valid_days === 60 && p8.price_thb === 7600
+       && p8.credits === 8 && p8.active && p8.name_en === '8 classes / 2 months' && p8.name_th === '8 ครั้ง / 2 เดือน' && (await marker()) === 1,
+       JSON.stringify(p8));
+    const waiting = await passOf('Eightmonth Waiting'), started = await passOf('Eightmonth Started'), rez = await passOf('Eightmonth Rezerv');
+    ok('...a pack sold but not started yet gets 60 days from its first class', waiting.valid_days === 60 && !waiting.f && !waiting.u,
+       JSON.stringify(waiting));
+    ok('...a started pack ends 30 days later (7 Dec becomes 6 Jan)', started.valid_days === 60 && started.f === '2026-11-07'
+       && started.u === '2027-01-06', JSON.stringify(started));
+    ok('...a pass moved from Rezerv keeps the dates Rezerv gave it', rez.source === 'rezerv' && rez.valid_days === 30 && rez.u === '2026-12-05',
+       JSON.stringify(rez));
+
+    await pool.query(`DELETE FROM bkk_settings WHERE key='pack8_two_months'`);
+    await boot();
+    ok('running it again never adds 30 days twice', (await passOf('Eightmonth Started')).u === '2027-01-06'
+       && (await prod()).valid_days === 60 && (await marker()) === 1);
+
+    await pool.query(`UPDATE bkk_products SET valid_days=45 WHERE code='pack8'`);
+    await boot();
+    ok('a length staff set afterwards is never put back', (await prod()).valid_days === 45);
+    await pool.query(`UPDATE bkk_products SET valid_days=60 WHERE code='pack8'`);
   }
 
   console.log('\n— buy (gateway not configured) —');
