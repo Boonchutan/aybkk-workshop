@@ -132,3 +132,14 @@ Status: FINAL, not filmed. (Plato flagged once that "explore" has no picture; hi
 <p>Obsessed does not mean more hours or hard work. It means you explore what you are doing.</p>
 <p>Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds.</p>
 <p>#aybkk #ashtanga #ashtangabangkok #boonchutanti</p>
+
+## Caption v3, short (10 Nov). Boonchu: "short caption". Plain text, he pastes by hand.
+Obsession is the goal. 🔥
+
+4 practice paths. Desire, motivation, discipline, obsessed.
+
+Obsessed does not mean more hours or hard work. It means you explore what you are doing.
+
+Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds.
+
+#aybkk #ashtanga #ashtangabangkok #boonchutanti
