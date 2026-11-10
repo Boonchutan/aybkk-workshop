@@ -85,3 +85,20 @@ Caption: Obsession is the goal. 🔥 / There are 4 paths in yoga, and everybody 
 11 แล้วเจอกันครับ
 114 spoken words, about 43 s. On screen line 2: 4 PRACTICE PATHWAYS.
 Caption: Obsession is the goal. 🔥 / There are 4 practice pathways in yoga, and everyone is on a different one. / Desire: you want the handstand. Motivation: you want to learn more. Discipline: you get stuck, and you do it anyway. Obsessed: same asana every day, and you still find something new. / Obsessed does not mean more hours. / You can change pathway. Tomorrow, find one new thing in one asana. / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti
+
+## FINAL v6 (10 Nov). Boonchu picked "path" (after asking "hows the pathway vs path?")
+Path: shorter (said 7 times), easier word for ZH/RU/TH viewers, already a yoga word, bigger on screen. His word "practice" stays in line 2.
+1 [H] Obsession is the goal.
+2 [DH] 4 paths. Everyone is on a different practice path.
+3 Path 1, desire. Some people want to be flexible. Handstand and things.
+4 Path 2, motivation. Some people want to learn more. So they come every day.
+5 Path 3, discipline. Some people get stuck on the difficult part. They do it anyway. Because that's what they supposed to do.
+6 [RH] But you can't beat someone on path 4.
+7 Obsessed. They want to go as deep, and know as much, as humanly possible.
+8 [P] Obsessed don't mean more hours. Same asana, every day. And you still find something new.
+9 [P] You can change path. Tomorrow, find one new thing in one asana.
+10 [P] Which path are you?
+11 แล้วเจอกันครับ
+114 spoken words, about 42 s. On screen: OBSESSION IS THE GOAL (frame 1); 4 PRACTICE PATHS; DESIRE / MOTIVATION / DISCIPLINE / OBSESSED; ONE NEW THING; end card 2 s Comment STUCK. Words on screen also fix "path" sounding like "part" in his accent.
+Caption: Obsession is the goal. 🔥 / There are 4 practice paths in yoga, and everyone is on a different one. / Desire: you want the handstand. Motivation: you want to learn more. Discipline: you get stuck, and you do it anyway. Obsessed: same asana every day, and you still find something new. / Obsessed does not mean more hours. / You can change path. Tomorrow, find one new thing in one asana. / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti
+Status: FINAL, not filmed.
