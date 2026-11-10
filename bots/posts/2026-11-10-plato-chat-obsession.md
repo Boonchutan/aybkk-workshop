@@ -121,3 +121,14 @@ Line 9 kept for now ("You can change path. Tomorrow, find one new thing in one a
 103 spoken words, about 38 s. On screen: OBSESSION IS THE GOAL (frame 1); 4 PRACTICE PATHS; DESIRE / MOTIVATION / DISCIPLINE / OBSESSED; EXPLORE on line 8; end card 2 s Comment STUCK.
 Caption: Obsession is the goal. 🔥 / There are 4 practice paths in yoga, and everyone is on a different one. / Desire: you want the handstand. Motivation: you want to learn more. Discipline: you get stuck, and you do it anyway. Obsessed: you explore what you are doing. / Obsessed does not mean more hours or hard work. / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti
 Status: FINAL, not filmed. (Plato flagged once that "explore" has no picture; his call to cut the picture line.)
+
+## Caption v2 (10 Nov). Boonchu: "caption with 4 paths short explain"
+<p>Obsession is the goal. 🔥</p>
+<p>There are 4 practice paths in yoga. Everyone is on a different one.</p>
+<p>1️⃣ Desire. You want a result. To be flexible. To do a handstand.</p>
+<p>2️⃣ Motivation. You want to learn more. So you come every day.</p>
+<p>3️⃣ Discipline. You get stuck on the difficult part. You do it anyway, because that's what you are supposed to do.</p>
+<p>4️⃣ Obsessed. You want to go as deep, and know as much, as humanly possible.</p>
+<p>Obsessed does not mean more hours or hard work. It means you explore what you are doing.</p>
+<p>Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds.</p>
+<p>#aybkk #ashtanga #ashtangabangkok #boonchutanti</p>
