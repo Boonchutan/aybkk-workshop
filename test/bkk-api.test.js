@@ -201,8 +201,15 @@ const ok = (name, cond, extra = '') => {
       { name: 'Eightpack Import', plan: '8 classes / 1 month', until: '2026-12-05', classesLeft: 5 }] }, ADMIN);
     const i8 = (await pool.query(`SELECT p.credits_total, p.credits_used, p.valid_days, pr.code FROM bkk_passes p
       JOIN bkk_products pr ON pr.id=p.product_id JOIN bkk_members m ON m.id=p.member_id WHERE m.name='Eightpack Import'`)).rows[0] || {};
-    ok('the Rezerv import maps "8 classes" to the 8-class pack', imp8.body.passes === 1 && i8.code === 'pack8'
-       && i8.credits_total === 8 && i8.credits_used === 3 && i8.valid_days === 60, JSON.stringify([imp8.body, i8]));
+    ok('the Rezerv import maps "8 classes / 1 month" to the 1-month 8-class record (never for sale)', imp8.body.passes === 1
+       && i8.code === 'pack8m1' && i8.credits_total === 8 && i8.credits_used === 3 && i8.valid_days === 30, JSON.stringify([imp8.body, i8]));
+    const imp82 = await post('/api/bkk/admin/import', { rows: [
+      { name: 'Eightpack Twomonth', plan: '8 classes / 2 months (8 ครั้ง / 2 เดือน)', until: '2027-01-05', classesLeft: 8 }] }, ADMIN);
+    const i82 = (await pool.query(`SELECT p.valid_days, pr.code FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+      JOIN bkk_members m ON m.id=p.member_id WHERE m.name='Eightpack Twomonth'`)).rows[0] || {};
+    ok('...and "8 classes / 2 months" to the 8-class pack', imp82.body.passes === 1 && i82.code === 'pack8' && i82.valid_days === 60,
+       JSON.stringify([imp82.body, i82]));
+    ok('...and the 1-month record is not listed or sold', !cat.products.some(p => p.code === 'pack8m1'));
   }
 
   console.log('\n— 8 classes last 2 months, not 1 (9 Nov 2026) —');
@@ -228,9 +235,16 @@ const ok = (name, cond, extra = '') => {
     await sell('Eightmonth Started');
     await pool.query(`UPDATE bkk_passes p SET valid_from='2026-11-07', valid_until='2026-12-07' FROM bkk_members m
                       WHERE m.id=p.member_id AND m.name='Eightmonth Started'`);
-    await post('/api/bkk/admin/import', { rows: [
-      { name: 'Eightmonth Rezerv', plan: '8 classes / 1 month (8 ครั้ง / 1 เดือน)', until: '2026-12-05', classesLeft: 6 }] }, ADMIN);
-    const before = await Promise.all(['Eightmonth Waiting', 'Eightmonth Started', 'Eightmonth Rezerv'].map(passOf));
+    // Before this change a Rezerv 8-class pass was put on pack8 too.
+    const rezRow = { name: 'Eightmonth Rezerv', plan: '8 classes / 1 month (8 ครั้ง / 1 เดือน)', until: '2026-12-05', classesLeft: 6 };
+    await post('/api/bkk/admin/import', { rows: [rezRow] }, ADMIN);
+    await pool.query(`UPDATE bkk_passes p SET product_id=(SELECT id FROM bkk_products WHERE code='pack8') FROM bkk_members m
+                      WHERE m.id=p.member_id AND m.name='Eightmonth Rezerv'`);
+    await post('/api/bkk/admin/passes', { name: 'Eightmonth Typed', email: 'eightmonth.typed@example.com', productCode: 'pack8',
+      validFrom: '2026-11-06', validUntil: '2026-12-06' }, ADMIN);
+    await post('/api/bkk/admin/passes', { name: 'Eightmonth Gift', email: 'eightmonth.gift@example.com', productCode: 'pack8' }, ADMIN);
+    const names = ['Eightmonth Waiting', 'Eightmonth Started', 'Eightmonth Rezerv', 'Eightmonth Typed', 'Eightmonth Gift'];
+    const before = await Promise.all(names.map(passOf));
     ok('(before: every 8-class pass is 30 days)', before.every(p => p && p.code === 'pack8' && p.valid_days === 30), JSON.stringify(before));
 
     const errs = [], logErr = console.error;
@@ -251,8 +265,17 @@ const ok = (name, cond, extra = '') => {
        JSON.stringify(waiting));
     ok('...a started pack ends 30 days later (7 Dec becomes 6 Jan)', started.valid_days === 60 && started.f === '2026-11-07'
        && started.u === '2027-01-06', JSON.stringify(started));
-    ok('...a pass moved from Rezerv keeps the dates Rezerv gave it', rez.source === 'rezerv' && rez.valid_days === 30 && rez.u === '2026-12-05',
-       JSON.stringify(rez));
+    const gift = await passOf('Eightmonth Gift'), typed = await passOf('Eightmonth Typed');
+    ok('...a pass given by hand, not started, gets 60 days too', gift.code === 'pack8' && gift.valid_days === 60 && !gift.u, JSON.stringify(gift));
+    ok('...a pass moved from Rezerv keeps its dates and the 1-month name', rez.source === 'rezerv' && rez.code === 'pack8m1'
+       && rez.valid_days === 30 && rez.u === '2026-12-05', JSON.stringify(rez));
+    ok('...so does a pass staff typed in with dates', typed.code === 'pack8m1' && typed.valid_days === 30 && typed.f === '2026-11-06'
+       && typed.u === '2026-12-06', JSON.stringify(typed));
+    const again = await post('/api/bkk/admin/import', { rows: [rezRow] }, ADMIN);
+    const rezCount = (await pool.query(`SELECT count(*)::int AS n FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id
+      WHERE m.name='Eightmonth Rezerv'`)).rows[0].n;
+    ok('...and importing the same Rezerv row again finds it: no second pass', again.body.passes === 0 && rezCount === 1,
+       JSON.stringify([again.body, rezCount]));
 
     await pool.query(`DELETE FROM bkk_settings WHERE key='pack8_two_months'`);
     await boot();
