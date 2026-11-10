@@ -53,3 +53,19 @@ Stakes: stay on "I should" and practice turns into a duty; duty gets you to the 
 107 spoken words, about 40 s. On screen: OBSESSION IS THE GOAL from frame 1; big word per path DESIRE / MOTIVATION / DISCIPLINE / OBSESSED; WHY? on line 9; end card 2 s "Comment STUCK".
 Caption: Obsession is the goal. 🔥 / There are 4 paths in yoga, and everybody is on a different one. / Desire: you want the handstand. Motivation: you want to learn more. Discipline: you get stuck, and you do it anyway. Obsessed: you want to know why. / Obsessed does not mean more hours. It means you want to know why. / You can change path. Start with one question. Why? / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti
 Status: final script sent; not filmed.
+
+## FINAL v4 (10 Nov). Boonchu: "we dont want student to ask us 'why' all the time. tweak it a bit"
+The "why" lines are out. The knowing comes from the mat, not from asking the teacher.
+1 [H] Obsession is the goal.
+2 [DH] 4 paths. Everybody is on a different one.
+3 Path 1, desire. Some people want to be flexible. Handstand and things.
+4 Path 2, motivation. Some people want to learn more. So they come every day.
+5 Path 3, discipline. Some people get stuck on the difficult part. They do it anyway. Because that's what they supposed to do.
+6 [RH] But you can't beat someone on path 4.
+7 Obsessed. They want to go as deep, and know as much, as humanly possible.
+8 [P] Obsessed don't mean more hours. Same asana, every day. And you still find something new.
+9 [P] You can change path. Tomorrow, find one new thing in one asana.
+10 [P] Which path are you?
+11 แล้วเจอกันครับ
+113 spoken words, about 42 s. On screen line 9: ONE NEW THING (was WHY?).
+Caption: Obsession is the goal. 🔥 / There are 4 paths in yoga, and everybody is on a different one. / Desire: you want the handstand. Motivation: you want to learn more. Discipline: you get stuck, and you do it anyway. Obsessed: same asana every day, and you still find something new. / Obsessed does not mean more hours. / You can change path. Tomorrow, find one new thing in one asana. / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti
