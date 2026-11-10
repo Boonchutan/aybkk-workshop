@@ -21,3 +21,16 @@ Optional adds: before line 1 "Everybody say discipline is the goal." (flips his 
 Caption ask (approved STUCK line): "Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds." End card 2 s: Comment STUCK.
 Also fits a 6-slide carousel: DESIRE, MOTIVATION, DISCIPLINE, OBSESSION + hook + question.
 Status: sent to Boonchu, waiting.
+
+## v2 (same day). Boonchu: "it is not a step....because its different from one person to another."
+So: 4 PATHS, one per kind of person, not a ladder. Plato's "steps" edit was wrong. What made it read like steps was "we started with... then... then". Fix: drop the order words, give each path its own people.
+1 Obsession is the goal.
+2 4 paths. Everybody is on a different one.
+3 Path 1, desire. Some people want to be flexible. Handstand and things.
+4 Path 2, motivation. Some people want to learn more. So they come every day.
+5 Path 3, discipline. Some people get stuck on the difficult part. They do it anyway. Because that's what they supposed to do.
+6 But you can't beat someone on path 4.
+7 Obsessed. They want to go as deep, and know as much, as humanly possible.
+8 Which path are you?
+9 แล้วเจอกันครับ
+Status: sent, waiting.
