@@ -102,3 +102,7 @@ Path: shorter (said 7 times), easier word for ZH/RU/TH viewers, already a yoga w
 114 spoken words, about 42 s. On screen: OBSESSION IS THE GOAL (frame 1); 4 PRACTICE PATHS; DESIRE / MOTIVATION / DISCIPLINE / OBSESSED; ONE NEW THING; end card 2 s Comment STUCK. Words on screen also fix "path" sounding like "part" in his accent.
 Caption: Obsession is the goal. 🔥 / There are 4 practice paths in yoga, and everyone is on a different one. / Desire: you want the handstand. Motivation: you want to learn more. Discipline: you get stuck, and you do it anyway. Obsessed: same asana every day, and you still find something new. / Obsessed does not mean more hours. / You can change path. Tomorrow, find one new thing in one asana. / Stuck on one asana? Comment STUCK and its name. This week I reply to each one myself, with one fix. Takes 2 seconds. / #aybkk #ashtanga #ashtangabangkok #boonchutanti
 Status: FINAL, not filmed.
+
+## v7 in progress (10 Nov). Boonchu: "1. Obsessed don't mean more hours or hardwork. but explore on what you are doing / 2." (his number 2 came through empty)
+Line 8 is now his: "Obsessed don't mean more hours or hard work. It mean you explore what you are doing." (light edit: hard work, "but explore on" -> "It mean you explore"). Replaces "Same asana, every day. And you still find something new."
+Line 9 kept for now ("You can change path. Tomorrow, find one new thing in one asana."): it gives "explore" a picture. WAITING for his number 2.
