@@ -8,3 +8,4 @@ Reminders: none due this morning. Rezerv import still waits (daily reminder).
 Reel: Plato's daily run is paused (expected). Carne posted: 1 new teacher-training ask on LINE, reply drafted.
 Score: wins this week (from Mon 9 Nov): none reported. 180K leads: 1 new, 1 serious silent 24 days.
 Inbox 07:08: 13 LINE threads with news, 8 need a reply, 5 hot.
+13:08 check-in: 3-month student and old-price renewal still waiting (due 19:00 today). Inbox: 3 new, 1 hot.
