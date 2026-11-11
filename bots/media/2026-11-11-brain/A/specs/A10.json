@@ -1,0 +1,31 @@
+[
+ {
+  "photo": "11-104",
+  "id": "A10",
+  "word": "STAIRCASE",
+  "line": "So, body first. An old yoga manual calls asana and breath a STAIRCASE to raja yoga, the mind's yoga. Unroll a mat. No chairs again. Ready to wobble?",
+  "credit": "SVATMARAMA · HATHA YOGA PRADIPIKA 1.1 (retold)",
+  "t": 40,
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   920,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   60
+  ],
+  "ink_s": "light",
+  "wrot": -90,
+  "wm": "left",
+  "wshadow": 1.5,
+  "wburn": 0.2,
+  "sburn": 0.25
+ }
+]

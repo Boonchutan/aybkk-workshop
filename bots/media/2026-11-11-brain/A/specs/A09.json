@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "11-136",
+  "id": "A9",
+  "word": "MUSCLE",
+  "line": "Life learned in that order too. English Nobel scientist Sherrington wrote that in living things, MUSCLE comes before nerve, \"and nerve is there before mind\". Mind arrived last.",
+  "credit": "SIR CHARLES SHERRINGTON · MAN ON HIS NATURE · 1940",
+  "t": 120,
+  "tight": false,
+  "wwidth": 810,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 40,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   268
+  ],
+  "ink_s": "light",
+  "line_br": "Life learned in that order too. | English Nobel scientist | Sherrington wrote that in living | things, MUSCLE comes before | nerve, \"and nerve is | there before mind\". | Mind arrived last.",
+  "wm": "right",
+  "wburn": 0.3,
+  "sburn": 0.35
+ }
+]
