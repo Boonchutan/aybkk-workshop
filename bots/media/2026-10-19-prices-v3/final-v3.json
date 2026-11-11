@@ -7,21 +7,21 @@
   "rows": [
    {
     "name": "12 months",
-    "note": "Month by month for 12 months: ฿115,200. You save ฿55,300.",
-    "price": "59,900",
-    "per": "about 5,000 / month"
+    "note": "Month by month for 12 months: ฿115,200. You save ฿51,600.",
+    "price": "63,600",
+    "per": "5,300 / month"
    },
    {
     "name": "6 months",
     "badge": "Teacher's pick",
-    "note": "Long enough for the habit to stick. You save ฿25,600.",
-    "price": "32,000",
-    "per": "about 5,300 / month",
+    "note": "Long enough for the habit to stick. You save ฿23,400.",
+    "price": "34,200",
+    "per": "5,700 / month",
     "pick": true
    },
    {
     "name": "3 months",
-    "note": "For ฿12,500 more, you get 6 months instead of 3.",
+    "note": "For ฿14,700 more, you get 6 months instead of 3.",
     "price": "19,500",
     "per": "6,500 / month"
    },
@@ -81,21 +81,21 @@
   "rows": [
    {
     "name": "12 เดือน",
-    "note": "ซื้อรายเดือน 12 เดือน รวม ฿115,200 ประหยัด ฿55,300",
-    "price": "59,900",
-    "per": "ตกเดือนละราว 5,000"
+    "note": "ซื้อรายเดือน 12 เดือน รวม ฿115,200 ประหยัด ฿51,600",
+    "price": "63,600",
+    "per": "เดือนละ 5,300"
    },
    {
     "name": "6 เดือน",
     "badge": "ครูแนะนำ",
-    "note": "นานพอให้การฝึกติดเป็นนิสัย ประหยัด ฿25,600",
-    "price": "32,000",
-    "per": "ตกเดือนละราว 5,300",
+    "note": "นานพอให้การฝึกติดเป็นนิสัย ประหยัด ฿23,400",
+    "price": "34,200",
+    "per": "เดือนละ 5,700",
     "pick": true
    },
    {
     "name": "3 เดือน",
-    "note": "เพิ่มอีก ฿12,500 ขยับเป็นแพ็ก 6 เดือนได้",
+    "note": "เพิ่มอีก ฿14,700 ขยับเป็นแพ็ก 6 เดือนได้",
     "price": "19,500",
     "per": "ตกเดือนละ 6,500"
    },
