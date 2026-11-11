@@ -525,6 +525,9 @@
   footer{background:var(--header);color:var(--hero-ink);padding:84px 0 56px;--ring:var(--hero-ink)}
   footer::before{content:"";grid-column:c-start/c-end;height:4px;margin-bottom:56px;background:var(--hero-ink)}
   footer .brush{font-size:clamp(88px,30vw,360px);line-height:.8;color:var(--hero-ink);justify-self:start;margin-left:-.063em}
+  /* The old Mysore watercolour from the shala wall, below Find us (Boonchu, 11 Nov 2026), as it is. */
+  footer .wallart{grid-column:c-start/c-end;margin:0 0 56px}
+  footer .wallart img{display:block;width:100%;height:auto}
   footer .faddr{margin:28px 0 0;font-size:var(--fs-s);line-height:20px;color:var(--hero-muted)}
   @media (min-width:700px){ footer .faddr{font-size:var(--fs-b);line-height:28px} }
   @media (min-width:1100px){ footer .faddr{grid-column:c 1/c 9} footer .cklink{grid-column:c 9/c-end;grid-row:3;justify-self:end;align-self:end} }
@@ -1153,7 +1156,7 @@
   </section>
 </div>
 
-<footer class="sgrid"><span class="brush">AYBKK</span><p class="faddr">Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31</p></footer>
+<footer class="sgrid"><figure class="wallart"><img src="/img/aybkk-old-mysore-1218.jpg" srcset="/img/aybkk-old-mysore-760.jpg 760w, /img/aybkk-old-mysore-1218.jpg 1218w" sizes="(min-width:1300px) 1218px, 92vw" width="1218" height="578" loading="lazy" decoding="async" alt="Watercolour from the AYBKK shala wall: a yoga class in old Mysore. अभ्यासात्सिद्धिमाप्नोति, abhyāsāt siddhim āpnoti: By practice, success comes."></figure><span class="brush">AYBKK</span><p class="faddr">Ashtanga Yoga Center of Bangkok · S31 Hotel, Sukhumvit 31</p></footer>
 
 <dialog id="dlg"><div id="dlgIn"></div></dialog>
 
