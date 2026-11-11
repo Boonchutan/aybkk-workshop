@@ -109,21 +109,15 @@
   body.site{background:#fff}
   body.site .page{background:var(--paper);clip-path:inset(24px)}
   body.site .notes p{font-weight:500}
-  /* Social sizes on the same grid (Boonchu, 11 Nov): feed post 1080x1350 and story 1080x1920, full bleed.
-     A phone cannot scan its own screen, so no QR. The post has no room for the member notes. */
-  body.post{--W:1080px;--H:1350px;--m:48px}
-  body.story{--W:1080px;--H:1920px;--m:56px}
+  /* Social sizes on the same grid, every section kept (Boonchu, 11 Nov): the post is laid out
+     at 1270x1588 and zoomed to 1080x1350; the story at 1123x1997 (the wall width) and zoomed to
+     1080x1920, with Instagram's top and bottom kept clear. Full bleed, no white frame. */
+  body.post{--W:1270px;--H:1588px}
+  body.story{--W:1123px;--H:1997px}
   body.post .page,body.story .page{clip-path:none}
   body.post,body.story{background:var(--paper)}
-  body.post .contact .qr,body.story .contact .qr{display:none}
-  body.post .notes-sec{display:none}
-  body.post .page{padding-top:34px;padding-bottom:30px}
-  body.story .page{padding-top:190px;padding-bottom:230px}
-  body.post .contact .t b,body.story .contact .t b{display:none}
-  body.post .contact .t > span,body.story .contact .t > span{font-size:24px;font-weight:600;color:var(--ink)}
-  body.post .row{padding-top:15px;padding-bottom:15px}
-  body.post .sec{margin-top:18px;padding-top:14px}
-  body.post .row:first-child{padding-top:8px}
+  body.story .page{padding-top:200px;padding-bottom:230px}
+  body.post .hero .pic img{top:-206px}
 </style></head>
 <body><div class="page" id="page"></div>
 <script>
