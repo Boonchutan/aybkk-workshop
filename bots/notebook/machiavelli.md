@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-11T00:11:18.044Z
+Inbox last read: 2026-11-11T06:15:02.616Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -250,3 +250,4 @@ Inbox last read: 2026-11-11T00:11:18.044Z
 
 - 2026-11-10 19:08: 3-month student + old-price renewal: no answer by 19:00, defaults applied (no reply sent; both asked again Wed 07:08). No reminders due since 13:08. No win today. Next step given: answer the 1-month LINE lead who may come Wed 11 Nov (promo last day). Inbox 19:08: 4 LINE threads with news, 2 need a reply, 2 hot.
 - 2026-11-11 07:08: Carne posted (0 new leads); Plato paused (expected). No @Machi requests. Inbox 07:08: 6 LINE threads with news, 4 need a reply, 2 hot. 3-month student (now asked the public promo, last day) and old-price renewal: choice by 19:00 today. Reminder 11 Nov (sitelink and /start promo box off) given; recheck 12 Nov 07:08 with the price switch. Rezerv import reminded (daily). No wins this week. Board rebuilt.
+- 2026-11-11 13:08: check-in. 3-month student + old-price renewal (pass ends Fri 13 Nov): 2nd nudge (last today), due 19:00. No reminders due since 07:08. Inbox 13:08: 7 LINE threads with news, 5 need a reply, 3 hot (promo last day: 2 Duo asks; 1 booking for Thu 12 Nov).

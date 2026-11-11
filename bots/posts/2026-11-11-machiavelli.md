@@ -8,3 +8,5 @@ Reminders: check the Google ad promo sitelink and the /start promo box switch of
 Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads.
 Score: wins this week (from Mon 9 Nov): none reported. 180K leads: 0 new today, 1 serious silent 25 days.
 Inbox 07:08: 6 LINE threads with news, 4 need a reply, 2 hot.
+
+13:08 check-in: 3-month student and old-price renewal still waiting (due 19:00 today). Inbox: 7 new, 3 hot.
