@@ -83,6 +83,12 @@ All writing, advice, Reels and builds follow this. Full brief: `bots/direction.m
 - Builds: the student profile is the habit system (attendance streak, "see you tomorrow" list,
   12-week proof check, renewal shown with the proof).
 - Never use a statistic in public until it is checked against its source.
+- **Rule #1, the stakes test (Boonchu, 2 Nov 2026):** every piece of content and every selling line
+  (Reels, hooks, captions, carousels, stories, jokes, quotes, learning artifacts, lead replies) first answers
+  "Stakes: what happens if this does not work or does not happen?" and "Why care?", one line each.
+  For a problem: what happens if nobody solves it. For a benefit or quote: what happens if I don't.
+  True stakes only: no health fear, no medical promise, no unchecked number, no shaming. Full text:
+  `bots/direction.md` on `claude/bots-memory`.
 
 ## Key Facts for Any Claude Instance
 
