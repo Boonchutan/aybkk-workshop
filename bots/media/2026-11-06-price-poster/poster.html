@@ -109,12 +109,28 @@
   body.site{background:#fff}
   body.site .page{background:var(--paper);clip-path:inset(24px)}
   body.site .notes p{font-weight:500}
+  /* Social sizes on the same grid (Boonchu, 11 Nov): feed post 1080x1350 and story 1080x1920, full bleed.
+     A phone cannot scan its own screen, so no QR. The post has no room for the member notes. */
+  body.post{--W:1080px;--H:1350px;--m:48px}
+  body.story{--W:1080px;--H:1920px;--m:56px}
+  body.post .page,body.story .page{clip-path:none}
+  body.post,body.story{background:var(--paper)}
+  body.post .contact .qr,body.story .contact .qr{display:none}
+  body.post .notes-sec{display:none}
+  body.post .page{padding-top:34px;padding-bottom:30px}
+  body.story .page{padding-top:190px;padding-bottom:230px}
+  body.post .contact .t b,body.story .contact .t b{display:none}
+  body.post .contact .t > span,body.story .contact .t > span{font-size:24px;font-weight:600;color:var(--ink)}
+  body.post .row{padding-top:15px;padding-bottom:15px}
+  body.post .sec{margin-top:18px;padding-top:14px}
+  body.post .row:first-child{padding-top:8px}
 </style></head>
 <body><div class="page" id="page"></div>
 <script>
 const C = __COPY__, QR = __QR__, PHOTO = '__PHOTO__', LOGO = '__LOGO__';
 const lang = new URLSearchParams(location.search).get('lang') || 'en';
 { const th = new URLSearchParams(location.search).get('theme'); if (th === 'plum' || th === 'site') document.body.classList.add(th); }
+{ const sz = new URLSearchParams(location.search).get('size'); if (sz === 'post' || sz === 'story') document.body.classList.add(sz); }
 const T = C[lang], X = {
   en: { list: 'Price list', date: 'Prices from 12 Nov 2026', lead: 'Same practice, same time, a teacher who notices.', scan: 'New here? Scan to find your first step.' },
   th: { list: 'อัตราค่าบริการ', date: 'ราคาตั้งแต่ 12 พ.ย. 2569', lead: 'ฝึกแบบเดิม เวลาเดิม กับครูที่สังเกตเห็นคุณ', scan: 'มาใหม่? สแกนเพื่อหาก้าวแรกของคุณ' },
@@ -137,7 +153,7 @@ document.getElementById('page').innerHTML = `
     <div class="rows">${T.sec1hl ? `<p class="hl">${PS(T.sec1hl)}</p>` : ''}${T.rows.map(row).join('')}</div></section>
   <section class="g sec"><div class="lab"><span class="n">02</span><b>${esc(T.sec2)}</b></div>
     <div class="rows">${T.packs.map(row).join('')}</div><p class="vat">${P(T.vat)}</p></section>
-  <section class="g sec"><div class="lab"><span class="n">03</span><b>${esc(T.polH)}</b></div>
+  <section class="g sec notes-sec"><div class="lab"><span class="n">03</span><b>${esc(T.polH)}</b></div>
     <div class="notes">${T.pol.map(([b, t]) => `<p><b>${P(b)}</b>${P(t)}</p>`).join('')}</div></section>
   <footer class="g foot"><p class="bye">${esc(T.bye)}</p>
     <div class="contact"><div class="t"><b>${P(X.scan)}</b><span>aybkk.net · LINE @aybkk</span></div><div class="qr">${QR}</div></div></footer>`;
