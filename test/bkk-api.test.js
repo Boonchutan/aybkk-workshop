@@ -8,7 +8,8 @@ const { mountBkk, moonDaysBetween, parseWhen, CANCEL_CUTOFF_HOURS } = require('.
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL ||
   'postgres://test:test@127.0.0.1:5432/bkktest' });
 const app = express();
-app.use(express.json());
+// server.js reads JSON bodies up to 10 MB; a profile photo can be a few MB.
+app.use(express.json({ limit: '10mb' }));
 
 let PASS = 0, FAIL = 0;
 const ok = (name, cond, extra = '') => {
@@ -17,12 +18,13 @@ const ok = (name, cond, extra = '') => {
 };
 
 (async () => {
-  // Stand-in for Cloudinary: remembers uploads, signs nothing.
-  const uploads = [], destroyed = [];
+  // Stand-in for Cloudinary: remembers uploads and the links asked for, signs nothing.
+  const uploads = [], destroyed = [], urlCalls = [];
   const fakeCloud = {
-    url: (id, o) => `signed://${o.type}/${id}/${o.transformation[0].width}`,
+    url: (id, o) => { urlCalls.push({ id, o }); return `signed://${o.type}/${id}/${o.transformation[0].width}`; },
     uploader: {
-      upload: async (data, o) => { const r = { public_id: `${o.folder}/p${uploads.length + 1}`, width: 2048, height: 1365, type: o.type };
+      upload: async (data, o) => { const r = { public_id: `${o.folder}/${o.public_id || 'p' + (uploads.length + 1)}`,
+        width: 2048, height: 1365, type: o.type, folder: o.folder, given: o.public_id, transformation: o.transformation };
         uploads.push(r); return r; },
       destroy: async (id, o) => { destroyed.push({ id, type: o.type }); return { result: 'ok' }; },
     },
@@ -2402,7 +2404,7 @@ const ok = (name, cond, extra = '') => {
        bea.bookingId === bk.bea && bea.code === 'BTESTCALBEA' && bea.status === 'booked' && !!bea.checkedInAt && !!bea.bookedAt
          && bea.cover === 'pass' && bea.source === 'door' && bea.passName === 'Drop-in' && bea.dropin === true
          && moe.status === 'noshow' && moe.checkedInAt === null && moe.dropin === false && moe.passName === null
-         && r.every(x => Object.keys(x).sort().join() === 'bookedAt,bookingId,checkedInAt,code,cover,dropin,name,needMat,passName,source,status')
+         && r.every(x => Object.keys(x).sort().join() === 'bookedAt,bookingId,checkedInAt,code,cover,dropin,name,needMat,passName,photo,source,status')
          && !JSON.stringify(inA.body).includes('@example.com') && !JSON.stringify(inA.body).includes('080-000'),
        JSON.stringify(r));
     const cl = inA.body.cancelledList || [];
@@ -2557,6 +2559,176 @@ const ok = (name, cond, extra = '') => {
        && typeof eMe[0].classDate === 'string' && eMe[0].slot_id === early.slotId && eMe[0].title === early.title,
        JSON.stringify({ early, eMe }));
     await pool.query(`UPDATE bkk_class_slots SET active=false WHERE code IN ('test_cal_a','test_cal_fut')`);
+  }
+
+  console.log("\n-- the student's own face (profile photo) --");
+  {
+    const FACE = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==';
+    const LINK = /^\/api\/bkk\/face\/([0-9a-f]{24})\.([sl])\.(\d+)\.[\w-]{22}$/;
+    const faceUps = () => uploads.filter(u => u.folder === 'aybkk-profile');
+    const upFace = (code, img = FACE) => post(`/api/bkk/me/${code}/photo`, { imageBase64: img });
+    const rowOf = async code => (await pool.query('SELECT id, photo_id, photo_at, photo_tries FROM bkk_members WHERE code=$1', [code])).rows[0];
+    const get = async path => { const r = await fetch(B + path); return { status: r.status, type: r.headers.get('content-type'),
+      cache: r.headers.get('cache-control'), bytes: Buffer.from(await r.arrayBuffer()) }; };
+    const newMember = async (name, email) => (await post('/api/bkk/teacher/members', { name, email }, PKEY)).body.member;
+    const sam = await newMember('Sam Faceless', 'sam.face@example.com');
+    const tia = await newMember('Tia Facetwo', 'tia.face@example.com');
+    const uma = await newMember('Uma Noface', 'uma.face@example.com');
+    clock = bkkAt('2026-11-10T00:00:00');
+
+    const me0 = (await J(`/api/bkk/me/${sam.code}`)).body;
+    ok('/me says photo: null for a student with no photo', me0.photo === null && me0.member.name === 'Sam Faceless', JSON.stringify(me0.photo));
+
+    const n0 = faceUps().length;
+    const up1 = await upFace(sam.code);
+    const u1 = faceUps()[n0];
+    ok('a student uploads a photo with their own member code', up1.status === 200 && up1.body.success === true
+       && LINK.test(up1.body.photo.small) && LINK.test(up1.body.photo.large), JSON.stringify(up1.body));
+    ok('stored private (authenticated) in the aybkk-profile folder', u1 && u1.type === 'authenticated' && u1.folder === 'aybkk-profile', JSON.stringify(u1));
+    ok('under a random id, never the member code or the name', u1 && /^[0-9a-f]{24}$/.test(u1.given)
+       && !u1.public_id.includes(sam.code) && !/sam|face/i.test(u1.given), JSON.stringify(u1));
+    const tr = (u1 && u1.transformation || [])[0] || {};
+    ok('cropped square around the face, 600 px', tr.width === 600 && tr.height === 600 && tr.crop === 'fill' && tr.gravity === 'face', JSON.stringify(tr));
+    const r1 = await rowOf(sam.code);
+    ok('the member row keeps the photo id and when it came', r1.photo_id === u1.public_id && r1.photo_at instanceof Date, JSON.stringify(r1));
+
+    const me1 = (await J(`/api/bkk/me/${sam.code}`)).body;
+    const [, ref, sz, exp] = LINK.exec(me1.photo && me1.photo.small || '') || [];
+    const [, refL, szL] = LINK.exec(me1.photo && me1.photo.large || '') || [];
+    ok('/me gives a small and a large signed link to the same photo', sz === 's' && szL === 'l' && ref === u1.given && refL === ref, JSON.stringify(me1.photo));
+    const life = Number(exp) - Math.floor(clock / 1000);
+    ok('a link lasts 6 to 12 hours', life > 6 * 3600 && life <= 12 * 3600, String(life));
+    ok('...and stays the same link meanwhile, so the browser keeps it', (await J(`/api/bkk/me/${sam.code}`)).body.photo.small === me1.photo.small);
+    ok('a link never carries the member code', !JSON.stringify(me1.photo).includes(sam.code));
+
+    const calls0 = urlCalls.length;
+    const small = await get(me1.photo.small), large = await get(me1.photo.large);
+    ok('the small link shows the photo, kept private in the browser cache', small.status === 200 && small.type === 'image/jpeg'
+       && small.bytes[0] === 0xFF && /^private, max-age=\d+$/.test(small.cache || ''), JSON.stringify([small.status, small.type, small.cache]));
+    const asked = urlCalls.slice(calls0);
+    ok('...fetched with signed private Cloudinary links, 160 px and 600 px squares', large.status === 200 && asked.length === 2
+       && asked.every(c => c.id === u1.public_id && c.o.type === 'authenticated' && c.o.sign_url === true)
+       && asked[0].o.transformation[0].width === 160 && asked[0].o.transformation[0].height === 160 && asked[0].o.transformation[0].crop === 'fill'
+       && asked[1].o.transformation[0].width === 600 && driveFetches.includes(`signed://authenticated/${u1.public_id}/160`), JSON.stringify(asked));
+    ok('a link changed by hand is refused', (await get(me1.photo.small.replace('.s.', '.l.'))).status === 403
+       && (await get(me1.photo.small.replace(/\.\d+\./, `.${Number(exp) + 21600}.`))).status === 403
+       && (await get('/api/bkk/face/nonsense')).status === 404);
+    clock = bkkAt('2026-11-10T13:00:00');
+    ok('a link stops working once it has expired', (await get(me1.photo.small)).status === 410);
+    clock = bkkAt('2026-11-10T00:00:00');
+
+    ok('a wrong member code is refused (404)', (await upFace('BNOSUCHCODE00')).status === 404);
+    const notImg = await Promise.all([upFace(sam.code, 'data:text/html;base64,PGgxPg=='),
+      upFace(sam.code, 'data:image/jpeg;base64,PGgxPmhpPC9oMT4='), post(`/api/bkk/me/${sam.code}/photo`, {})]);
+    ok('not a photo is refused (400): another type, HTML dressed as a JPEG, nothing at all', notImg.every(r => r.status === 400),
+       JSON.stringify(notImg.map(r => r.status)));
+    const b64 = (...parts) => Buffer.concat(parts.map(p => Buffer.from(p, 'latin1'))).toString('base64');
+    const wav = 'data:image/jpeg;base64,' + b64('RIFF', '\x24\0\0\0', 'WAVEfmt ', '\0'.repeat(24));
+    const mp4 = 'data:image/png;base64,' + b64('\0\0\0\x18', 'ftypisom', '\0'.repeat(24));
+    const avi = 'data:image/webp;base64,' + b64('RIFF', '\x24\0\0\0', 'AVI LIST', '\0'.repeat(24));
+    const mov = 'data:image/heic;base64,' + b64('\0\0\0\x14', 'ftypqt  ', '\0'.repeat(24));
+    const pngAsJpeg = 'data:image/jpeg;base64,' + b64('\x89PNG\r\n\x1a\n', '\0'.repeat(24));
+    const fakes = await Promise.all([wav, mp4, avi, mov, pngAsJpeg].map(d => upFace(sam.code, d)));
+    ok('a sound or video file called a photo is refused (400), and so is a photo with the wrong label',
+       fakes.every(r => r.status === 400 && r.body.error === 'not a photo'), JSON.stringify(fakes.map(r => [r.status, r.body.error])));
+    const big = await upFace(sam.code, 'data:image/jpeg;base64,/9j/' + 'A'.repeat(8.5 * 1024 * 1024));
+    ok('a photo over 6 MB is refused (413)', big.status === 413, JSON.stringify([big.status, big.body]));
+    ok('...and none of those reached storage or counted as a try', faceUps().length === n0 + 1 && (await rowOf(sam.code)).photo_tries === 1);
+
+    const d0 = destroyed.length;
+    const up2 = await upFace(sam.code);
+    const u2 = faceUps().at(-1);
+    ok('a new photo replaces the old one, and the old one is deleted from storage', up2.status === 200 && u2.public_id !== u1.public_id
+       && (await rowOf(sam.code)).photo_id === u2.public_id
+       && destroyed.slice(d0).length === 1 && destroyed[d0].id === u1.public_id && destroyed[d0].type === 'authenticated', JSON.stringify(destroyed.slice(d0)));
+    ok("the old photo's links stop at once", (await get(me1.photo.small)).status === 404);
+
+    for (let i = 0; i < 8; i++) await upFace(sam.code);
+    const before11 = faceUps().length;
+    const up11 = await upFace(sam.code);
+    ok('10 uploads a day, then the 11th is refused (429)', up11.status === 429 && faceUps().length === before11
+       && (await rowOf(sam.code)).photo_tries === 10, JSON.stringify([up11.status, up11.body]));
+    ok('...another student is not held back', (await upFace(tia.code)).status === 200);
+    const realWebp = 'data:image/webp;base64,' + b64('RIFF', '\x24\0\0\0', 'WEBPVP8 ', '\0'.repeat(24));
+    const realHeic = 'data:image/heic;base64,' + b64('\0\0\0\x18', 'ftypheic', '\0'.repeat(24));
+    const realHeif = 'data:image/heif;base64,' + b64('\0\0\0\x18', 'ftypmif1', '\0'.repeat(24));
+    const kinds = [];
+    for (const d of [realWebp, realHeic, realHeif]) kinds.push((await upFace(tia.code, d)).status);
+    ok('a real WebP or HEIC photo is still taken', kinds.every(s => s === 200), JSON.stringify(kinds));
+    await pool.query('UPDATE bkk_members SET photo_tries_on = photo_tries_on - 1 WHERE code=$1', [sam.code]);
+    ok('...and the next day the student can upload again', (await upFace(sam.code)).status === 200 && (await rowOf(sam.code)).photo_tries === 1);
+
+    const had = (await rowOf(sam.code)).photo_id, d1 = destroyed.length;
+    const both = await Promise.all([upFace(sam.code), upFace(sam.code)]);
+    const kept = (await rowOf(sam.code)).photo_id, gone = destroyed.slice(d1).map(d => d.id).sort();
+    const two = both.map(r => r.body.photo && LINK.exec(r.body.photo.small)[1]);
+    ok('two uploads at once: one photo stays, the other and the old one are deleted, nothing left over',
+       both.every(r => r.status === 200) && two.some(id => kept.endsWith(id)) && gone.length === 2 && gone.includes(had)
+       && !gone.includes(kept), JSON.stringify({ had, kept, gone, two }));
+
+    // The door and the admin class list: today's seats for one with a face and one without.
+    const todayB = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+    const slot = (await pool.query('SELECT id FROM bkk_class_slots WHERE active ORDER BY id LIMIT 1')).rows[0].id;
+    const seats = [];
+    for (const m of [sam, uma]) {
+      seats.push((await pool.query(`INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,status,cover,source)
+        VALUES ($1,$2::date,now(),$3,'booked','rezerv','staff') RETURNING id`, [slot, todayB, (await rowOf(m.code)).id])).rows[0].id);
+    }
+    const door = (await J('/api/bkk/admin/today', { headers: ADMIN })).body.bookings || [];
+    const dSam = door.find(b => b.code === sam.code), dUma = door.find(b => b.code === uma.code);
+    ok("the door's today list carries the small face link, null for no photo", dSam && LINK.test(dSam.photo)
+       && LINK.exec(dSam.photo)[2] === 's' && kept.endsWith(LINK.exec(dSam.photo)[1]) && dUma && dUma.photo === null
+       && !door.some(b => 'photo_id' in b), JSON.stringify([dSam, dUma]));
+    ok('...and the door can show it', (await get(dSam.photo)).status === 200);
+    const roster = (await J(`/api/bkk/admin/class?slotId=${slot}&date=${todayB}`, { headers: ADMIN })).body.roster || [];
+    const cSam = roster.find(b => b.code === sam.code), cUma = roster.find(b => b.code === uma.code);
+    ok('the admin class list carries it too', cSam && cSam.photo === dSam.photo && cUma && cUma.photo === null, JSON.stringify(roster));
+    ok('both lists need the staff key', (await J('/api/bkk/admin/today')).status === 401
+       && (await J(`/api/bkk/admin/class?slotId=${slot}&date=${todayB}`)).status === 401);
+    const pub = await Promise.all(['/api/bkk/schedule?days=14', '/api/bkk/products', '/api/bkk/settings', '/api/bkk/tees',
+      `/api/bkk/me/${uma.code}`].map(p => fetch(B + p).then(r => r.text())));
+    ok('public routes, and another student\'s /me, carry no photo of anyone',
+       pub.every(t => !t.includes('/api/bkk/face/') && !t.includes('aybkk-profile') && !t.includes(kept.split('/').pop())), pub.map(t => t.slice(0, 80)).join(' | '));
+
+    const d2 = destroyed.length;
+    const rm = await post(`/api/bkk/me/${sam.code}/photo/remove`, {});
+    const r2 = await rowOf(sam.code);
+    ok('removing the photo deletes it from storage and clears the row', rm.status === 200 && r2.photo_id === null && r2.photo_at === null
+       && destroyed.length === d2 + 1 && destroyed[d2].id === kept && destroyed[d2].type === 'authenticated', JSON.stringify([rm.body, r2]));
+    ok('/me and the door list say no photo again', (await J(`/api/bkk/me/${sam.code}`)).body.photo === null
+       && ((await J('/api/bkk/admin/today', { headers: ADMIN })).body.bookings || []).find(b => b.code === sam.code).photo === null);
+    ok("the removed photo's link stops at once", (await get(dSam.photo)).status === 404);
+    ok('removing with a wrong code is 404; with no photo it does nothing',
+       (await post('/api/bkk/me/BNOSUCHCODE00/photo/remove', {})).status === 404
+       && (await post(`/api/bkk/me/${uma.code}/photo/remove`, {})).status === 200 && destroyed.length === d2 + 1);
+
+    // Cloudinary down while a photo is removed: the row is cleared at once, and
+    // the photo is noted and deleted on the next try.
+    const realDestroy = fakeCloud.uploader.destroy;
+    const tiaHad = (await rowOf(tia.code)).photo_id;
+    fakeCloud.uploader.destroy = async () => { throw new Error('network down'); };
+    const rmDown = await post(`/api/bkk/me/${tia.code}/photo/remove`, {});
+    fakeCloud.uploader.destroy = realDestroy;
+    const orphan = async id => (await pool.query('SELECT tries FROM bkk_face_orphans WHERE photo_id=$1', [id])).rows[0];
+    ok('a photo that could not be deleted is noted to delete later, and the row is cleared', rmDown.status === 200
+       && (await rowOf(tia.code)).photo_id === null && !!(await orphan(tiaHad)), JSON.stringify([rmDown.body, await orphan(tiaHad)]));
+    const d3 = destroyed.length;
+    ok('...the next photo stored tries again', (await upFace(tia.code)).status === 200);
+    for (let i = 0; i < 40 && await orphan(tiaHad); i++) await new Promise(r => setTimeout(r, 25));
+    ok('...and then it is deleted and the note goes', !(await orphan(tiaHad))
+       && destroyed.slice(d3).some(d => d.id === tiaHad && d.type === 'authenticated'), JSON.stringify(destroyed.slice(d3)));
+
+    // Staff "sign out everywhere" gives a new code: links given out before stop at once.
+    const tiaOld = (await J(`/api/bkk/me/${tia.code}`)).body.photo;
+    ok("tia's link works before", (await get(tiaOld.small)).status === 200);
+    const so = await post(`/api/bkk/admin/members/${tia.code}/signout`, { expectEmail: 'tia.face@example.com', clearEmail: false }, ADMIN);
+    const tiaNew = so.body.member && (await J(`/api/bkk/me/${so.body.member.code}`)).body.photo;
+    ok('after staff sign a profile out everywhere, the old links stop and the new code gets new ones', so.status === 200
+       && (await get(tiaOld.small)).status === 403 && (await get(tiaOld.large)).status === 403
+       && tiaNew && tiaNew.small !== tiaOld.small && (await get(tiaNew.small)).status === 200, JSON.stringify([so.status, tiaNew]));
+
+    await pool.query('DELETE FROM bkk_bookings WHERE id = ANY($1::int[])', [seats]);
+    clock = bkkAt('2026-11-11T23:59:00');
   }
 
   console.log('\n— Bangkok calendar dates —');

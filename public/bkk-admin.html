@@ -173,6 +173,10 @@
   .flash{border-radius:7px;padding:8px 10px;font-size:14px;margin:10px 0 0;background:#e6f6ec;color:#187a43}
   .flash.warn{background:#fff3d6;color:#6b520e}
   .rr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 0;border-top:1px solid var(--line)}
+  /* The student's face, or their initials, so staff can put a name to a face (9 Nov 2026). */
+  .rr .av{flex:none;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;
+    overflow:hidden;background:var(--blush);color:var(--plum);font:800 14px/1 'Work Sans','Plex',sans-serif}
+  .rr .av img{display:block;width:100%;height:100%;object-fit:cover}
   .rr .rm{flex:1 1 210px;min-width:0;line-height:1.35}
   .rr .rm b{overflow-wrap:anywhere}
   .rr .rs{flex:0 0 auto;font-size:14px}
@@ -1259,7 +1263,7 @@
         !fixed && b.checkedInAt ? `<button class="btn gray sm" onclick="cvCheck(${id},true)">${T('btnUndo')}</button>` : '',
         !fixed && b.status === 'booked' && !b.checkedInAt ? `<button class="btn red sm" onclick="cvCancel(${id})">${T('btnCancelBk')}</button>` : '',
         histBtn(b.code)].filter(Boolean).join('');
-      return `<div class="rr${b.status === 'noshow' ? ' miss' : ''}">
+      return `<div class="rr${b.status === 'noshow' ? ' miss' : ''}">${face(b)}
         <div class="rm"><b>${esc(b.name)}</b>${b.needMat && b.status === 'booked'
           ? ` <span class="pill mat" title="${esc(T('tMats'))}">${esc(T('matPill'))}</span>` : ''}<br><span class="muted">${esc([b.code, cover, src].filter(Boolean).join(' · '))}</span></div>
         <div class="rs">${st}</div><div class="ra">${acts}</div></div>`;
@@ -1275,6 +1279,7 @@
       : !c.started ? `<div class="box"><b>${T('closeH')}</b><p class="muted">${T('closeHelp')}</p>
           <p><button class="btn red" onclick="cvClose()">${T('closeH')}</button></p></div>` : '';
     $('#view').innerHTML = head + rosterBox + cancelBox + (c.canAdd ? addBoxHtml(c) : '') + closeBox;
+    $('#view').querySelectorAll('.rr .av img').forEach(i => { i.onerror = () => { i.parentNode.textContent = i.dataset.ini; }; });
     if (c.canAdd) wireAdd();
     // The result shows in the header; the button tapped may be far below it.
     if (CV.flash && CV.flash.fresh) {
@@ -1283,6 +1288,19 @@
       if (f) f.scrollIntoView({ block: 'center' });
     }
   }
+
+  // First and last word's first letter, as on the student's own account button
+  // (public/bkk.html): a title or a name in brackets is skipped, and so is a Thai leading vowel.
+  const TITLE = /^(mr|mrs|ms|miss|mx|dr|นาย|นาง|นางสาว|น\.ส\.|ด\.ช\.|ด\.ญ\.)\.?$/i;
+  const initials = name => {
+    const s = String(name || '');
+    let ws = (s.replace(/[(（[][^)）\]]*[)）\]]/g, ' ').trim() || s).split(/\s+/).filter(Boolean);
+    if (ws.length > 1 && TITLE.test(ws[0])) ws = ws.slice(1);
+    ws = ws.map(w => (w.replace(/[\u0E40-\u0E44]/g, '').match(/\p{L}/u) || [''])[0]).filter(Boolean);
+    return (ws.length > 1 ? ws[0] + ws[ws.length - 1] : ws[0] || '').toUpperCase();
+  };
+  const face = b => `<span class="av" aria-hidden="true">${b.photo
+    ? `<img src="${esc(b.photo)}" alt="" loading="lazy" width="40" height="40" data-ini="${esc(initials(b.name))}">` : esc(initials(b.name))}</span>`;
 
   // The server writes "class cancelled: <reason>" in English; say it in the page's language.
   const cxlWhy = r => { const m = /^class cancelled: ([\s\S]*)$/.exec(r || '');
