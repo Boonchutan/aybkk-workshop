@@ -10,63 +10,63 @@
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{width:var(--W);height:var(--H);background:var(--paper);color:var(--ink);font-family:'Plex','PlexTH',sans-serif;
     -webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .page{width:var(--W);height:var(--H);padding:32px var(--m) 30px;display:flex;flex-direction:column}
+  .page{width:var(--W);height:var(--H);padding:28px var(--m) 28px;display:flex;flex-direction:column}
   .g{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--g)}
   .page > *{flex-shrink:0}
   /* header */
-  .top{align-items:center;padding-bottom:12px;border-bottom:5px solid var(--ink)}
+  .top{align-items:center;padding-bottom:10px;border-bottom:5px solid var(--ink)}
   .brand{grid-column:1/8;display:flex;align-items:center;gap:16px}
-  .brand img{width:58px;height:58px;border-radius:50%}
+  .brand img{width:54px;height:54px;border-radius:50%}
   .brand b{display:block;font-weight:800;font-size:28px;letter-spacing:-.01em;line-height:1}
-  .brand span{display:block;font-size:21px;color:var(--soft);margin-top:4px}
+  .brand span{display:block;font-size:22px;color:var(--soft);margin-top:4px}
   .when{grid-column:8/13;text-align:right}
   .when b{display:block;font-weight:800;font-size:17px;letter-spacing:.08em;text-transform:uppercase}
   .when span{display:block;font-size:24px;font-weight:600;margin-top:2px}
   :lang(th) .when b{letter-spacing:0;text-transform:none;font-size:20px}
   /* hero */
   .hero{margin-top:18px;align-items:end}
-  .hero h1{grid-column:1/9;font-weight:800;font-size:78px;line-height:.86;letter-spacing:-.055em}
-  :lang(th) .hero h1{font-weight:500;letter-spacing:0;line-height:1.05;font-size:88px;font-synthesis:none}
+  .hero h1{grid-column:1/9;font-weight:800;font-size:72px;line-height:.86;letter-spacing:-.055em}
+  :lang(th) .hero h1{font-weight:500;letter-spacing:0;line-height:1.05;font-size:80px;font-synthesis:none}
   .hero .lead{grid-column:1/9;margin-top:10px;font-size:25px;line-height:1.3;color:var(--soft)}
-  .hero .pic{grid-column:9/13;grid-row:1/3;height:138px;overflow:hidden;position:relative}
+  .hero .pic{grid-column:9/13;grid-row:1/3;height:116px;overflow:hidden;position:relative}
   .hero .pic img{position:absolute;width:282%;left:-82%;top:-179px}
   /* sections */
-  .sec{margin-top:9px;padding-top:8px;border-top:2px solid var(--ink)}
+  .sec{margin-top:5px;padding-top:7px;border-top:2px solid var(--ink)}
   .lab{grid-column:1/4;padding-right:12px}
   .lab span.n{display:block;font-weight:800;font-size:34px;line-height:1;letter-spacing:-.03em;color:var(--soft)}
   .lab b{display:block;margin-top:8px;font-weight:800;font-size:22px;line-height:1.2;letter-spacing:.02em}
-  .lab > span:not(.n){display:block;margin-top:6px;font-size:22px;line-height:1.35;color:var(--soft)}
+  .lab > span:not(.n){display:block;margin-top:6px;font-size:23px;line-height:1.35;color:var(--soft)}
   :lang(th) .lab b{font-size:23px;letter-spacing:0;line-height:1.35}
-  :lang(th) .lab > span:not(.n){font-size:21px;line-height:1.45}
+  :lang(th) .lab > span:not(.n){font-size:21px;line-height:1.42}
   .rows{grid-column:4/13}
   .row{display:grid;grid-template-columns:1fr auto;column-gap:24px;align-items:center;padding:6px 0 6px;border-bottom:1px solid var(--line);position:relative}
   .row:first-child{padding-top:2px}
-  .row .nm{font-weight:800;font-size:35px;line-height:1.05;letter-spacing:-.025em}
-  :lang(th) .row .nm{font-weight:700;letter-spacing:0;font-size:35px;line-height:1.22}
-  .row .nt{margin-top:3px;font-size:24px;line-height:1.24;color:var(--soft);max-width:none}
+  .row .nm{font-weight:800;font-size:33px;line-height:1.05;letter-spacing:-.025em}
+  :lang(th) .row .nm{font-weight:700;letter-spacing:0;font-size:33px;line-height:1.2}
+  .row .nt{margin-top:3px;font-size:25px;line-height:1.2;color:var(--soft);max-width:none}
   :lang(th) .row .nt{line-height:1.34;max-width:30em}
   .row .hl,.rows > .hl{grid-column:1/-1;justify-self:start;margin-top:10px;background:var(--pink);color:#fff;font-weight:800;font-size:26px;letter-spacing:-.01em;line-height:1.25;padding:7px 14px 8px}
   :lang(th) .row .hl,:lang(th) .rows > .hl{font-weight:700;font-size:28px;letter-spacing:0;line-height:1.4;padding:4px 14px 6px}
   .rows > .hl{width:fit-content;margin:0 0 6px}
   .row .pr{text-align:right;white-space:nowrap}
-  .row .pr b{font-weight:800;font-size:56px;line-height:1;letter-spacing:-.035em;color:var(--plum)}
+  .row .pr b{font-weight:800;font-size:52px;line-height:1;letter-spacing:-.035em;color:var(--plum)}
   .row .pr b i{font-style:normal;font-size:.55em;vertical-align:.32em;margin-right:4px}
   .row .pr small{font-weight:700;font-size:24px;color:var(--plum);margin-left:6px;letter-spacing:.02em}
-  .row .pr span{display:block;margin-top:2px;font-size:23px;color:var(--soft)}
-  :lang(th) .row .pr b{font-size:53px}
-  :lang(th) .row .pr span{font-size:23px;line-height:1.25}
+  .row .pr span{display:block;margin-top:2px;font-size:24px;color:var(--soft)}
+  :lang(th) .row .pr b{font-size:50px}
+  :lang(th) .row .pr span{font-size:24px;line-height:1.25}
   .row.pick{background:var(--blush);margin:0 -18px 0 -18px;padding-left:18px;padding-right:18px;border-bottom-color:transparent}
   .row.pick::before{content:'';position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--pink)}
   .badge{display:inline-block;vertical-align:.45em;margin-left:12px;background:var(--pink);color:#fff;font-weight:800;font-size:18px;
     letter-spacing:.08em;text-transform:uppercase;padding:5px 10px 4px}
   :lang(th) .badge{letter-spacing:0;font-size:17px;font-weight:700;padding:3px 10px 5px}
-  .vat{grid-column:4/13;margin-top:10px;font-size:21px;color:var(--soft)}
-  :lang(th) .vat{font-size:21px}
+  .vat{grid-column:4/13;margin-top:10px;font-size:22px;color:var(--soft)}
+  :lang(th) .vat{font-size:22px}
   /* notes */
-  .notes{grid-column:4/13;display:grid;grid-template-columns:1fr 1fr;column-gap:28px;row-gap:9px}
-  .notes p{font-size:22px;line-height:1.27;color:var(--ink)}
+  .notes{grid-column:4/13;display:grid;grid-template-columns:1fr 1fr;column-gap:22px;row-gap:8px}
+  .notes p{font-size:23px;line-height:1.23;color:var(--ink)}
   .notes p b{font-weight:800}
-  :lang(th) .notes p{font-size:21.5px;line-height:1.33}
+  :lang(th) .notes p{font-size:22.5px;line-height:1.32}
   :lang(th) .notes p b{font-weight:700}
   /* footer */
   .foot{margin-top:auto;padding-top:10px;border-top:5px solid var(--ink);align-items:center}
@@ -74,9 +74,9 @@
   :lang(th) .bye{font-family:'Plex','PlexTH',sans-serif;font-style:normal;font-size:44px;font-weight:500;font-synthesis:none}
   .contact{grid-column:7/13;display:flex;align-items:center;justify-content:flex-end;gap:18px;text-align:right}
   .contact .t b{display:block;font-weight:800;font-size:22px;line-height:1.25}
-  .contact .t > span{display:block;margin-top:4px;font-size:22px;color:var(--soft)}
+  .contact .t > span{display:block;margin-top:4px;font-size:23px;color:var(--soft)}
   :lang(th) .contact .t b{font-weight:700;font-size:21px;line-height:1.4}
-  .contact .qr{width:108px;height:108px;flex:none;background:#fff;padding:6px}
+  .contact .qr{width:102px;height:102px;flex:none;background:#fff;padding:6px}
   .contact .qr svg{width:100%;height:100%;display:block}
   .nw{white-space:nowrap}
   .ib{display:inline-block}
@@ -109,8 +109,8 @@
   body.site .brand img{background:#fff}
   body.site{background:#fff}
   body.site .page{background:var(--paper);clip-path:inset(24px)}
-  body.site .notes p{font-weight:500}
-  body.site .row .nt,body.site .row .pr span,body.site .vat,body.site .lab > span:not(.n),body.site .contact .t > span,body.site .brand span{font-weight:500}
+  body.site .notes p{font-weight:600}
+  body.site .row .nt,body.site .row .pr span,body.site .vat,body.site .lab > span:not(.n),body.site .contact .t > span,body.site .brand span{font-weight:600}
   /* Social sizes on the same grid, every section kept (Boonchu, 11 Nov): the post is laid out
      at 1270x1588 and zoomed to 1080x1350; the story at 1123x1997 (the wall width) and zoomed to
      1080x1920, with Instagram's top and bottom kept clear. Full bleed, no white frame. */
@@ -145,7 +145,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const P = s => lang === 'th'
   ? String(s).replace(/(ประหยัด|รวม) ฿/g, '$1\u00a0฿').replace(/(\d) (?=เดือน|ครั้ง|วัน|ท่าน)/g, '$1\u00a0').replace(/\(เช่น /g, '(เช่น\u00a0').replace(/ ๆ/g, '\u00a0ๆ').replace(/คลาส Led/g, 'คลาส\u00a0Led')
       .split(' ').map(w => `<span class="nw">${esc(w)}</span>`).join(' ')
-  : esc(s).replace(/ (\S+)$/, '\u00a0$1').replace(/LINE @aybkk|\d+-\w+/g, m => `<span class="nw">${m}</span>`);
+  : esc(s).replace(/(\d+) (months?|days?)/g, '$1\u00a0$2').replace(/ (\S+)$/, '\u00a0$1').replace(/LINE @aybkk|\d+-\w+/g, m => `<span class="nw">${m}</span>`);
 const PS = s => lang === 'th' ? P(s) : String(s).split(/(?<=[.?]) /).map(x => `<span class="ib">${P(x)}</span>`).join(' ');
 const row = r => `<div class="row${r.pick ? ' pick' : ''}"><div><div class="nm">${esc(r.name)}${r.badge ? `<span class="badge">${esc(r.badge)}</span>` : ''}</div>${(r.noteWall || r.note) ? `<p class="nt">${PS(r.noteWall || r.note)}</p>` : ''}</div>
   <div class="pr"><b><i>฿</i>${esc(r.price)}</b><small>${esc(T.vatTag)}</small>${r.per ? `<span>${esc(r.per)}</span>` : ''}</div>${r.hl ? `<p class="hl">${PS(r.hl)}</p>` : ''}</div>`;
