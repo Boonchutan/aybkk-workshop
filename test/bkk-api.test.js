@@ -288,6 +288,18 @@ const ok = (name, cond, extra = '') => {
     await pool.query(`UPDATE bkk_products SET valid_days=60 WHERE code='pack8'`);
   }
 
+  console.log('\n— the payment names the package (11 Nov 2026) —');
+  {
+    const keys = ['PAYSO_MERCHANT_ID', 'PAYSO_SECRET_KEY', 'PAYSO_API_KEY'];
+    keys.forEach(k => { process.env[k] = 'test-only'; });
+    const gw = await post('/api/bkk/orders', { productCode: 'pack8', name: 'Detail Buyer', email: 'detail.buyer@example.com' });
+    keys.forEach(k => { delete process.env[k]; });
+    const f = gw.body.pay && gw.body.pay.fields;
+    ok('the payment says which package it is for, and our ref, with no slash', f
+       && f.productdetail === `AYBKK 8 classes - 2 months ref ${f.refno}` && f.refno === String(gw.body.order.refno).padStart(12, '0'),
+       JSON.stringify(f));
+  }
+
   console.log('\n— buy (gateway not configured) —');
   const order = await post('/api/bkk/orders',
     { productCode: 'pack8', name: 'Test Student', email: 'test@example.com' });

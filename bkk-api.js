@@ -898,6 +898,12 @@ function mountBkk(app, opts = {}) {
   // API and compared with what we recorded.
   // Return URL and Post Back URL are NOT form fields; they are configured once
   // in the merchant panel and PaySolutions appends no parameters to the return.
+  // What staff see on the payment in PaySolutions: the package and our ref
+  // (Nov 2026: a payment came in that staff could not match to a package).
+  // Slashes in package names ('8 classes / 2 months') become dashes, so no
+  // screen that splits on a slash can cut the package name off.
+  const payDetail = (product, order) => `AYBKK ${product.name_en} ref ${refno12(order.refno)}`
+    .replace(/\s*[\/\\]\s*/g, ' - ').replace(/[<>&"']/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 255);
   function buildPayForm(cfg, order, product, member) {
     return {
       action: cfg.endpoint,
@@ -905,7 +911,7 @@ function mountBkk(app, opts = {}) {
         merchantid: String(cfg.merchantId),
         refno: refno12(order.refno),
         customeremail: String(member.email || '').slice(0, 100),
-        productdetail: `AYBKK ${product.name_en}`.replace(/[<>&"']/g, ' ').slice(0, 255),
+        productdetail: payDetail(product, order),
         total: order.amount_thb.toFixed(2),
         cc: '00',                                   // 00 = Thai baht
         lang: 'EN',
