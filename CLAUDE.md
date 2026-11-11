@@ -157,7 +157,7 @@ Now, until 11 Nov 2026:
 - Unlimited (monthly) members: no minimum, no set 4 days a week (Boonchu, 9 Nov 2026). Thai: "ไม่กำหนด 4 วันต่ออาทิตย์ มาฝึกตามเวลาที่สะดวก", never "ไม่ต้องมา...".
 
 From 12 Nov 2026 (every price + 7% VAT, posters bots/media/2026-10-19-prices-v3 on claude/bots-memory):
-- 1 month 9,600 · 3 months 19,500 (6,500/month; Boonchu, 6 Nov 2026) · 6 months 32,000 (teacher's pick) · 12 months 59,900 (12 months only)
+- 1 month 9,600 · 3 months 19,500 (6,500/month; Boonchu, 6 Nov 2026) · 6 months 34,200 (5,700/month, teacher's pick) · 12 months 63,600 (5,300/month, 12 months only; Boonchu, 11 Nov 2026: was 32,000 and 59,900)
 - Drop-in 1,500 · 8 classes 7,600 THB + VAT, use within 2 months (10-packs already sold stay valid)
 
 ## Environment

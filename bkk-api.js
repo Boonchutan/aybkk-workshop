@@ -39,7 +39,7 @@ const SEED_PRODUCTS = [
   { code: 'pack10',    name_en: '10 classes / 3 months', name_th: '10 ครั้ง / 3 เดือน', price_thb: 14000, kind: 'credits',   credits: 10, valid_days: 90,  daily_cap: null, sort: 25, active: false },
   { code: 'unlim1',    name_en: '1 month unlimited',     name_th: '1 เดือน ไม่จำกัด',   price_thb: 9600,  kind: 'unlimited', credits: null, valid_days: 30,  daily_cap: 2, sort: 30 },
   { code: 'unlim3',    name_en: '3 months unlimited',    name_th: '3 เดือน ไม่จำกัด',   price_thb: 25800, kind: 'unlimited', credits: null, valid_days: 90,  daily_cap: 2, sort: 50 },
-  { code: 'unlim6m',   name_en: '6 months unlimited',    name_th: '6 เดือน ไม่จำกัด',   price_thb: 32000, kind: 'unlimited', credits: null, valid_days: 180, daily_cap: 2, sort: 60, active: false },
+  { code: 'unlim6m',   name_en: '6 months unlimited',    name_th: '6 เดือน ไม่จำกัด',   price_thb: 34200, kind: 'unlimited', credits: null, valid_days: 180, daily_cap: 2, sort: 60, active: false },
   { code: 'unlim12m',  name_en: '12 months unlimited',   name_th: '12 เดือน ไม่จำกัด',  price_thb: 78000, kind: 'unlimited', credits: null, valid_days: 365, daily_cap: 2, sort: 70 },
 ];
 // New prices from 12 Nov 2026 00:00 Bangkok (Boonchu, 2 Nov), with the
@@ -50,8 +50,12 @@ const SEED_PRODUCTS = [
 const PRICE_SWITCH = {
   at: Date.parse('2026-11-12T00:00:00+07:00'),
   key: 'prices_from_2026_11_12',
-  prices: { unlim3: 19500, unlim6m: 32000, unlim12m: 59900 },
+  prices: { unlim3: 19500, unlim6m: 34200, unlim12m: 63600 },
   opens: ['unlim6m'],
+  // 11 Nov evening (Boonchu): 6 months 5,700 a month, 12 months 5,300 a month, so
+  // the year never costs less a month than the 40%-off promotion did. A shala that
+  // already switched at 32,000 / 59,900 moves once; a price staff set stays.
+  raise: { key: 'prices_6m12m_from_2026_11_12', from: { unlim6m: 32000, unlim12m: 59900 } },
 };
 
 // weekday: 0=Sun … 6=Sat
@@ -627,6 +631,14 @@ function mountBkk(app, opts = {}) {
           await seedProduct(client, SEED_PRODUCTS.find(s => s.code === code));
           await client.query(`UPDATE bkk_products SET price_thb=$2, active = active OR $3 WHERE code=$1`,
             [code, price, PRICE_SWITCH.opens.includes(code)]);
+        }
+      }
+      const raise = await client.query(`INSERT INTO bkk_settings (key,value) VALUES ($1,'true')
+                                        ON CONFLICT (key) DO NOTHING RETURNING key`, [PRICE_SWITCH.raise.key]);
+      if (raise.rows.length) {
+        for (const [code, old] of Object.entries(PRICE_SWITCH.raise.from)) {
+          await client.query(`UPDATE bkk_products SET price_thb=$2 WHERE code=$1 AND price_thb=$3`,
+            [code, PRICE_SWITCH.prices[code], old]);
         }
       }
       await client.query('COMMIT');
