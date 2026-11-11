@@ -17,14 +17,14 @@ const copy = JSON.parse(fs.readFileSync(path.join(__dirname, '../2026-10-19-pric
     .replace('__LOGO__', b64(path.join(REPO, 'public/img/aybkk-logo-240.jpg'), 'image/jpeg'));
   const tmp = path.join(__dirname, '.social-built.html'); fs.writeFileSync(tmp, html);
   const b = await chromium.launch();
-  for (const [size, h] of [['post', 1350], ['story', 1920]]) for (const lang of ['en', 'th']) {
+  for (const [size, h, layoutW] of [['post1', 1350, 1035], ['post2', 1350, 1080], ['story', 1920, 1123]]) for (const lang of ['en', 'th']) {
     const p = await b.newPage({ viewport: { width: 1080, height: h }, deviceScaleFactor: 1 });
     const errs = []; p.on('pageerror', e => errs.push(e.message));
     await p.goto(`file://${tmp}?lang=${lang}&theme=${THEME}&size=${size}`); await p.evaluate(() => document.fonts.ready);
-    await p.addStyleTag({ content: 'html{zoom:' + (1080 / (size === 'post' ? 1270 : 1123)) + '}' });
+    await p.addStyleTag({ content: 'html{zoom:' + (1080 / layoutW) + '}' });
     const chk = await p.evaluate(() => {
       const pg = document.getElementById('page'), foot = pg.querySelector('.foot').getBoundingClientRect();
-      const last = [...pg.querySelectorAll('.sec')].filter(s => s.offsetParent !== null).pop().getBoundingClientRect();
+      const last = [...pg.querySelectorAll('.sec')].filter(s => getComputedStyle(s).display !== 'none').pop().getBoundingClientRect();
       return { gapAboveFooter: Math.round(foot.top - last.bottom), pageOverflow: pg.scrollHeight - pg.clientHeight, footBottom: Math.round(foot.bottom) };
     });
     const out = path.join(__dirname, `AYBKK-prices-12Nov-${lang.toUpperCase()}-grid-${size}.jpg`);

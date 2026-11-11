@@ -10,72 +10,73 @@
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{width:var(--W);height:var(--H);background:var(--paper);color:var(--ink);font-family:'Plex','PlexTH',sans-serif;
     -webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .page{width:var(--W);height:var(--H);padding:38px var(--m) 34px;display:flex;flex-direction:column}
+  .page{width:var(--W);height:var(--H);padding:32px var(--m) 30px;display:flex;flex-direction:column}
   .g{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--g)}
+  .page > *{flex-shrink:0}
   /* header */
-  .top{align-items:center;padding-bottom:16px;border-bottom:5px solid var(--ink)}
+  .top{align-items:center;padding-bottom:12px;border-bottom:5px solid var(--ink)}
   .brand{grid-column:1/8;display:flex;align-items:center;gap:16px}
-  .brand img{width:64px;height:64px;border-radius:50%}
+  .brand img{width:58px;height:58px;border-radius:50%}
   .brand b{display:block;font-weight:800;font-size:28px;letter-spacing:-.01em;line-height:1}
-  .brand span{display:block;font-size:19px;color:var(--soft);margin-top:4px}
+  .brand span{display:block;font-size:21px;color:var(--soft);margin-top:4px}
   .when{grid-column:8/13;text-align:right}
   .when b{display:block;font-weight:800;font-size:17px;letter-spacing:.08em;text-transform:uppercase}
   .when span{display:block;font-size:24px;font-weight:600;margin-top:2px}
   :lang(th) .when b{letter-spacing:0;text-transform:none;font-size:20px}
   /* hero */
-  .hero{margin-top:22px;align-items:end}
-  .hero h1{grid-column:1/9;font-weight:800;font-size:96px;line-height:.86;letter-spacing:-.055em}
-  :lang(th) .hero h1{font-weight:500;letter-spacing:0;line-height:1.05;font-size:112px;font-synthesis:none}
-  .hero .lead{grid-column:1/9;margin-top:14px;font-size:26px;line-height:1.3;color:var(--soft)}
-  .hero .pic{grid-column:9/13;grid-row:1/3;height:160px;overflow:hidden;position:relative}
+  .hero{margin-top:18px;align-items:end}
+  .hero h1{grid-column:1/9;font-weight:800;font-size:78px;line-height:.86;letter-spacing:-.055em}
+  :lang(th) .hero h1{font-weight:500;letter-spacing:0;line-height:1.05;font-size:88px;font-synthesis:none}
+  .hero .lead{grid-column:1/9;margin-top:10px;font-size:25px;line-height:1.3;color:var(--soft)}
+  .hero .pic{grid-column:9/13;grid-row:1/3;height:138px;overflow:hidden;position:relative}
   .hero .pic img{position:absolute;width:282%;left:-82%;top:-179px}
   /* sections */
-  .sec{margin-top:12px;padding-top:10px;border-top:2px solid var(--ink)}
+  .sec{margin-top:9px;padding-top:8px;border-top:2px solid var(--ink)}
   .lab{grid-column:1/4;padding-right:12px}
   .lab span.n{display:block;font-weight:800;font-size:34px;line-height:1;letter-spacing:-.03em;color:var(--soft)}
   .lab b{display:block;margin-top:8px;font-weight:800;font-size:22px;line-height:1.2;letter-spacing:.02em}
-  .lab > span:not(.n){display:block;margin-top:6px;font-size:19px;line-height:1.35;color:var(--soft)}
+  .lab > span:not(.n){display:block;margin-top:6px;font-size:22px;line-height:1.35;color:var(--soft)}
   :lang(th) .lab b{font-size:23px;letter-spacing:0;line-height:1.35}
-  :lang(th) .lab > span:not(.n){font-size:20px;line-height:1.5}
+  :lang(th) .lab > span:not(.n){font-size:21px;line-height:1.45}
   .rows{grid-column:4/13}
   .row{display:grid;grid-template-columns:1fr auto;column-gap:24px;align-items:center;padding:6px 0 6px;border-bottom:1px solid var(--line);position:relative}
   .row:first-child{padding-top:2px}
-  .row .nm{font-weight:800;font-size:38px;line-height:1.05;letter-spacing:-.025em}
-  :lang(th) .row .nm{font-weight:700;letter-spacing:0;font-size:38px;line-height:1.25}
-  .row .nt{margin-top:4px;font-size:21px;line-height:1.35;color:var(--soft);max-width:34ch}
-  :lang(th) .row .nt{line-height:1.5;max-width:30em}
+  .row .nm{font-weight:800;font-size:35px;line-height:1.05;letter-spacing:-.025em}
+  :lang(th) .row .nm{font-weight:700;letter-spacing:0;font-size:35px;line-height:1.22}
+  .row .nt{margin-top:3px;font-size:24px;line-height:1.24;color:var(--soft);max-width:none}
+  :lang(th) .row .nt{line-height:1.34;max-width:30em}
   .row .hl,.rows > .hl{grid-column:1/-1;justify-self:start;margin-top:10px;background:var(--pink);color:#fff;font-weight:800;font-size:26px;letter-spacing:-.01em;line-height:1.25;padding:7px 14px 8px}
   :lang(th) .row .hl,:lang(th) .rows > .hl{font-weight:700;font-size:28px;letter-spacing:0;line-height:1.4;padding:4px 14px 6px}
-  .rows > .hl{width:fit-content;margin:0 0 10px}
+  .rows > .hl{width:fit-content;margin:0 0 6px}
   .row .pr{text-align:right;white-space:nowrap}
-  .row .pr b{font-weight:800;font-size:60px;line-height:1;letter-spacing:-.035em;color:var(--plum)}
+  .row .pr b{font-weight:800;font-size:56px;line-height:1;letter-spacing:-.035em;color:var(--plum)}
   .row .pr b i{font-style:normal;font-size:.55em;vertical-align:.32em;margin-right:4px}
   .row .pr small{font-weight:700;font-size:24px;color:var(--plum);margin-left:6px;letter-spacing:.02em}
-  .row .pr span{display:block;margin-top:2px;font-size:20.5px;color:var(--soft)}
-  :lang(th) .row .pr b{font-size:56px}
-  :lang(th) .row .pr span{font-size:21px;line-height:1.25}
+  .row .pr span{display:block;margin-top:2px;font-size:23px;color:var(--soft)}
+  :lang(th) .row .pr b{font-size:53px}
+  :lang(th) .row .pr span{font-size:23px;line-height:1.25}
   .row.pick{background:var(--blush);margin:0 -18px 0 -18px;padding-left:18px;padding-right:18px;border-bottom-color:transparent}
   .row.pick::before{content:'';position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--pink)}
   .badge{display:inline-block;vertical-align:.45em;margin-left:12px;background:var(--pink);color:#fff;font-weight:800;font-size:18px;
     letter-spacing:.08em;text-transform:uppercase;padding:5px 10px 4px}
   :lang(th) .badge{letter-spacing:0;font-size:17px;font-weight:700;padding:3px 10px 5px}
-  .vat{grid-column:4/13;margin-top:10px;font-size:18.5px;color:var(--soft)}
-  :lang(th) .vat{font-size:19px}
+  .vat{grid-column:4/13;margin-top:10px;font-size:21px;color:var(--soft)}
+  :lang(th) .vat{font-size:21px}
   /* notes */
-  .notes{grid-column:4/13;display:grid;grid-template-columns:1fr 1fr;column-gap:28px;row-gap:12px}
-  .notes p{font-size:19px;line-height:1.36;color:var(--ink)}
+  .notes{grid-column:4/13;display:grid;grid-template-columns:1fr 1fr;column-gap:28px;row-gap:9px}
+  .notes p{font-size:22px;line-height:1.27;color:var(--ink)}
   .notes p b{font-weight:800}
-  :lang(th) .notes p{font-size:18.5px;line-height:1.4}
+  :lang(th) .notes p{font-size:21.5px;line-height:1.33}
   :lang(th) .notes p b{font-weight:700}
   /* footer */
-  .foot{margin-top:auto;padding-top:14px;border-top:5px solid var(--ink);align-items:center}
-  .bye{grid-column:1/7;font-family:'Cormorant','Plex','PlexTH',serif;font-style:italic;font-weight:500;font-size:56px;line-height:1;color:var(--plum)}
+  .foot{margin-top:auto;padding-top:10px;border-top:5px solid var(--ink);align-items:center}
+  .bye{grid-column:1/7;font-family:'Cormorant','Plex','PlexTH',serif;font-style:italic;font-weight:500;font-size:50px;line-height:1;color:var(--plum)}
   :lang(th) .bye{font-family:'Plex','PlexTH',sans-serif;font-style:normal;font-size:44px;font-weight:500;font-synthesis:none}
   .contact{grid-column:7/13;display:flex;align-items:center;justify-content:flex-end;gap:18px;text-align:right}
   .contact .t b{display:block;font-weight:800;font-size:22px;line-height:1.25}
-  .contact .t > span{display:block;margin-top:4px;font-size:19px;color:var(--soft)}
+  .contact .t > span{display:block;margin-top:4px;font-size:22px;color:var(--soft)}
   :lang(th) .contact .t b{font-weight:700;font-size:21px;line-height:1.4}
-  .contact .qr{width:132px;height:132px;flex:none;background:#fff;padding:8px}
+  .contact .qr{width:108px;height:108px;flex:none;background:#fff;padding:6px}
   .contact .qr svg{width:100%;height:100%;display:block}
   .nw{white-space:nowrap}
   .ib{display:inline-block}
@@ -96,7 +97,7 @@
   body.plum .page{background:var(--paper);clip-path:inset(24px)}
   body.plum .notes p{font-weight:500}
   /* aybkk.net colours (Boonchu, 11 Nov): the site's Louvre red, cream text, gold where the eye should go. */
-  body.site{--ink:#fbf4e8;--soft:#e7d1c6;--paper:#7e262e;--plum:#fbf4e8;--line:rgba(251,244,232,.24);--gold:#d6a35c;--goldhi:#e7c38d;--deep:#5f1c23}
+  body.site{--ink:#fbf4e8;--soft:#f3e4d9;--paper:#7e262e;--plum:#fbf4e8;--line:rgba(251,244,232,.24);--gold:#d6a35c;--goldhi:#e7c38d;--deep:#5f1c23}
   body.site .lab span.n{color:var(--goldhi)}
   body.site .row .pr b i,body.site .row .pr small{color:var(--goldhi)}
   body.site .row.pick{background:var(--deep)}
@@ -109,6 +110,7 @@
   body.site{background:#fff}
   body.site .page{background:var(--paper);clip-path:inset(24px)}
   body.site .notes p{font-weight:500}
+  body.site .row .nt,body.site .row .pr span,body.site .vat,body.site .lab > span:not(.n),body.site .contact .t > span,body.site .brand span{font-weight:500}
   /* Social sizes on the same grid, every section kept (Boonchu, 11 Nov): the post is laid out
      at 1270x1588 and zoomed to 1080x1350; the story at 1123x1997 (the wall width) and zoomed to
      1080x1920, with Instagram's top and bottom kept clear. Full bleed, no white frame. */
@@ -117,14 +119,22 @@
   body.post .page,body.story .page{clip-path:none}
   body.post,body.story{background:var(--paper)}
   body.story .page{padding-top:200px;padding-bottom:230px}
-  body.post .hero .pic img{top:-206px}
+  body.post1{--W:1035px;--H:1294px;--m:44px}
+  body.post1 .notes-sec{display:none}
+  body.post2{--W:1080px;--H:1350px}
+  body.post2 .hero,body.post2 .sec01,body.post2 .sec02{display:none}
+  body.post2 .notes-sec{margin-top:0;padding-top:28px;border-top:0}
+  body.post2 .notes{grid-column:1/13;grid-template-columns:1fr;row-gap:26px;margin-top:22px}
+  body.post2 .notes-sec .lab{grid-column:1/13}
+  body.post2 .notes p{font-size:34px;line-height:1.34}
+  :lang(th) body.post2 .notes p,body.post2:lang(th) .notes p{font-size:33px}
 </style></head>
 <body><div class="page" id="page"></div>
 <script>
 const C = __COPY__, QR = __QR__, PHOTO = '__PHOTO__', LOGO = '__LOGO__';
 const lang = new URLSearchParams(location.search).get('lang') || 'en';
 { const th = new URLSearchParams(location.search).get('theme'); if (th === 'plum' || th === 'site') document.body.classList.add(th); }
-{ const sz = new URLSearchParams(location.search).get('size'); if (sz === 'post' || sz === 'story') document.body.classList.add(sz); }
+{ const sz = new URLSearchParams(location.search).get('size'); if (['post', 'post1', 'post2', 'story'].includes(sz)) document.body.classList.add(sz, sz === 'story' ? 'story' : 'post'); }
 const T = C[lang], X = {
   en: { list: 'Price list', date: 'Prices from 12 Nov 2026', lead: 'Same practice, same time, a teacher who notices.', scan: 'New here? Scan to find your first step.' },
   th: { list: 'อัตราค่าบริการ', date: 'ราคาตั้งแต่ 12 พ.ย. 2569', lead: 'ฝึกแบบเดิม เวลาเดิม กับครูที่สังเกตเห็นคุณ', scan: 'มาใหม่? สแกนเพื่อหาก้าวแรกของคุณ' },
@@ -143,9 +153,9 @@ document.getElementById('page').innerHTML = `
   <header class="g top"><div class="brand"><img src="${LOGO}" alt=""><div><b>AYBKK</b><span>Ashtanga Yoga Bangkok</span></div></div>
     <div class="when"><b>${esc(X.list)}</b><span>${esc(X.date)}</span></div></header>
   <section class="g hero"><h1>${esc(T.title)}</h1><div class="pic"><img src="${PHOTO}" alt=""></div><p class="lead">${P(X.lead)}</p></section>
-  <section class="g sec"><div class="lab"><span class="n">01</span><b>${esc(T.sec1)}</b><span>${PS(T.sec1note)}</span></div>
+  <section class="g sec sec01"><div class="lab"><span class="n">01</span><b>${esc(T.sec1)}</b><span>${PS(T.sec1note)}</span></div>
     <div class="rows">${T.sec1hl ? `<p class="hl">${PS(T.sec1hl)}</p>` : ''}${T.rows.map(row).join('')}</div></section>
-  <section class="g sec"><div class="lab"><span class="n">02</span><b>${esc(T.sec2)}</b></div>
+  <section class="g sec sec02"><div class="lab"><span class="n">02</span><b>${esc(T.sec2)}</b></div>
     <div class="rows">${T.packs.map(row).join('')}</div><p class="vat">${P(T.vat)}</p></section>
   <section class="g sec notes-sec"><div class="lab"><span class="n">03</span><b>${esc(T.polH)}</b></div>
     <div class="notes">${T.pol.map(([b, t]) => `<p><b>${P(b)}</b>${P(t)}</p>`).join('')}</div></section>
