@@ -10,3 +10,4 @@ Score: wins this week (from Mon 9 Nov): none reported. 180K leads: 0 new today, 
 Inbox 07:08: 6 LINE threads with news, 4 need a reply, 2 hot.
 
 13:08 check-in: 3-month student and old-price renewal still waiting (due 19:00 today). Inbox: 7 new, 3 hot.
+19:08 check-in: 3-month student and old-price renewal: defaults applied, asked again Thu 07:08. No win reported. Inbox: 8 new, 4 hot.
