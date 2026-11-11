@@ -95,15 +95,29 @@
   body.plum{background:#fff}
   body.plum .page{background:var(--paper);clip-path:inset(24px)}
   body.plum .notes p{font-weight:500}
+  /* aybkk.net colours (Boonchu, 11 Nov): the site's Louvre red, cream text, gold where the eye should go. */
+  body.site{--ink:#fbf4e8;--soft:#e7d1c6;--paper:#7e262e;--plum:#fbf4e8;--line:rgba(251,244,232,.24);--gold:#d6a35c;--goldhi:#e7c38d;--deep:#5f1c23}
+  body.site .lab span.n{color:var(--goldhi)}
+  body.site .row .pr b i,body.site .row .pr small{color:var(--goldhi)}
+  body.site .row.pick{background:var(--deep)}
+  body.site .row.pick::before{background:var(--gold)}
+  body.site .badge{background:var(--gold);color:var(--deep)}
+  body.site .row .hl,body.site .rows > .hl{background:var(--gold);color:var(--deep)}
+  body.site .notes p b{color:var(--goldhi)}
+  body.site .bye{color:var(--goldhi)}
+  body.site .brand img{background:#fff}
+  body.site{background:#fff}
+  body.site .page{background:var(--paper);clip-path:inset(24px)}
+  body.site .notes p{font-weight:500}
 </style></head>
 <body><div class="page" id="page"></div>
 <script>
 const C = __COPY__, QR = __QR__, PHOTO = '__PHOTO__', LOGO = '__LOGO__';
 const lang = new URLSearchParams(location.search).get('lang') || 'en';
-if (new URLSearchParams(location.search).get('theme') === 'plum') document.body.classList.add('plum');
+{ const th = new URLSearchParams(location.search).get('theme'); if (th === 'plum' || th === 'site') document.body.classList.add(th); }
 const T = C[lang], X = {
-  en: { list: 'Price list', date: 'Prices from 1 Nov 2026', lead: 'Same practice, same time, a teacher who notices.', scan: 'New here? Scan to find your first step.' },
-  th: { list: 'อัตราค่าบริการ', date: 'ราคาตั้งแต่ 1 พ.ย. 2569', lead: 'ฝึกแบบเดิม เวลาเดิม กับครูที่สังเกตเห็นคุณ', scan: 'มาใหม่? สแกนเพื่อหาก้าวแรกของคุณ' },
+  en: { list: 'Price list', date: 'Prices from 12 Nov 2026', lead: 'Same practice, same time, a teacher who notices.', scan: 'New here? Scan to find your first step.' },
+  th: { list: 'อัตราค่าบริการ', date: 'ราคาตั้งแต่ 12 พ.ย. 2569', lead: 'ฝึกแบบเดิม เวลาเดิม กับครูที่สังเกตเห็นคุณ', scan: 'มาใหม่? สแกนเพื่อหาก้าวแรกของคุณ' },
 }[lang];
 document.documentElement.lang = lang;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
