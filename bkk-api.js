@@ -635,13 +635,15 @@ function mountBkk(app, opts = {}) {
       }
       const raise = await client.query(`INSERT INTO bkk_settings (key,value) VALUES ($1,'true')
                                         ON CONFLICT (key) DO NOTHING RETURNING key`, [PRICE_SWITCH.raise.key]);
+      let moved = 0;
       if (raise.rows.length) {
         for (const [code, old] of Object.entries(PRICE_SWITCH.raise.from)) {
-          await client.query(`UPDATE bkk_products SET price_thb=$2 WHERE code=$1 AND price_thb=$3`,
-            [code, PRICE_SWITCH.prices[code], old]);
+          moved += (await client.query(`UPDATE bkk_products SET price_thb=$2 WHERE code=$1 AND price_thb=$3`,
+            [code, PRICE_SWITCH.prices[code], old])).rowCount;
         }
       }
       await client.query('COMMIT');
+      if (moved) console.log(`✓ bkk: 6 months 34,200 / 12 months 63,600 (moved ${moved} of 2 from 32,000 / 59,900)`);
       if (mark.rows.length) console.log('✓ bkk: prices from 12 Nov 2026 are live');
       pricesSwitched = true;
     } catch (e) {
