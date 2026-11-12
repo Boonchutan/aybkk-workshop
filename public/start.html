@@ -224,14 +224,14 @@
       when: { weekday: 'Weekdays before work', weekend: 'Weekends', unsure: 'Not sure yet' } },
     fsL: ['Goal', 'Experience', 'When', 'Language', 'Please send'],
     fsLang: { en: 'English', th: 'Thai', zh: 'Chinese', ru: 'Russian' },
-    fsFor: ['the returning-student option', 'the best way to start'],
+    fsFor: ['the best way back', 'the best way to start'],
     fsG: { strong: 'a stronger body', calm: 'a calmer mind', sleep: 'better sleep', age: 'aging well' },
     fsFirst: g => `For ${g}, your first step is one Mysore morning.`,
     fsShow: 'The teacher shows you the first postures.', fsKnow: 'The teacher sees your practice and takes it from there.',
     fsHi: 'Welcome back.',
     fsWeekday: 'Mysore starts at 5:30 or 7:30, Tuesday to Friday, so you are done before work.',
     fsWeekend: 'On Sunday, Mysore starts at 7:00.',
-    fsAgain: 'We will send you the returning-student option.',
+    fsAgain: 'We will help you pick up where you left off.',
     fsBest: 'We will send you the best way to start.',
     fsGoLine: 'Send my answers on LINE', fsGoWa: 'Send my answers on WhatsApp', fsGoWx: 'Copy my answers for WeChat',
     fsCopied: `Your answers are copied. Add our WeChat ID ${WECHAT}, then paste them in the chat.`,
@@ -253,14 +253,14 @@
       when: { weekday: 'วันธรรมดา ก่อนไปทำงาน', weekend: 'เสาร์-อาทิตย์', unsure: 'ยังไม่แน่ใจ' } },
     fsL: ['เป้าหมาย', 'ประสบการณ์', 'ช่วงเวลา', 'ภาษา', 'ขอให้ส่ง'],
     fsLang: { en: 'อังกฤษ', th: 'ไทย', zh: 'จีน', ru: 'รัสเซีย' },
-    fsFor: ['ตัวเลือกสำหรับนักเรียนเก่า', 'วิธีเริ่มที่เหมาะที่สุด'],
+    fsFor: ['วิธีกลับมาฝึกที่เหมาะที่สุด', 'วิธีเริ่มที่เหมาะที่สุด'],
     fsG: { strong: 'แข็งแรงขึ้น', calm: 'ใจสงบขึ้น', sleep: 'นอนหลับดีขึ้น', age: 'สูงวัยอย่างแข็งแรง' },
     fsFirst: g => `ถ้าอยาก${g} ก้าวแรกของคุณคือมาฝึกมายซอร์หนึ่งเช้า`,
     fsShow: 'ครูจะสอนท่าแรก ๆ ให้คุณเอง', fsKnow: 'ครูจะดูการฝึกของคุณก่อน แล้วสอนต่อจากที่คุณทำได้',
     fsHi: 'ยินดีต้อนรับกลับมา',
     fsWeekday: 'วันอังคารถึงวันศุกร์ มายซอร์เริ่ม 5:30\u00a0หรือ\u00a07:30 ฝึกเสร็จก่อนไปทำงาน',
     fsWeekend: 'วันอาทิตย์ มายซอร์เริ่ม 7:00',
-    fsAgain: 'เราจะส่งตัวเลือกสำหรับนักเรียนเก่าให้คุณ',
+    fsAgain: 'เราจะช่วยให้คุณกลับมาฝึกต่อจากที่ค้างไว้',
     fsBest: 'เราจะส่งวิธีเริ่มที่เหมาะกับคุณที่สุดให้',
     fsGoLine: 'ส่งคำตอบทาง LINE', fsGoWa: 'ส่งคำตอบทาง WhatsApp', fsGoWx: 'คัดลอกคำตอบไปส่งทาง WeChat',
     fsCopied: `คัดลอกคำตอบแล้ว เพิ่ม WeChat ID ${WECHAT} แล้ววางข้อความในแชท`,
@@ -285,7 +285,7 @@
     fsHi: '欢迎回来。',
     fsWeekday: '周二到周五 Mysore 5:30 或 7:30 开始，上班前就练完。',
     fsWeekend: '周日 Mysore 7:00 开始。',
-    fsAgain: '我们会把老学员的方案发给你。',
+    fsAgain: '我们会帮你从上次停下的地方继续练。',
     fsBest: '我们会把最适合你的开始方式发给你。',
     fsGoLine: '用 LINE 发送我的答案', fsGoWa: '用 WhatsApp 发送我的答案', fsGoWx: '复制我的答案，发到微信',
     fsCopied: `已复制你的答案。添加我们的微信号 ${WECHAT}，然后把答案粘贴到聊天里。`,
@@ -311,7 +311,7 @@
     fsHi: 'С возвращением.',
     fsWeekday: 'Со вторника по пятницу майсор начинается в 5:30 или 7:30. Вы успеете до работы.',
     fsWeekend: 'В воскресенье майсор начинается в 7:00.',
-    fsAgain: 'Мы пришлём вам вариант для тех, кто уже занимался у нас.',
+    fsAgain: 'Мы поможем вам продолжить с того места, где вы остановились.',
     fsBest: 'Мы пришлём лучший способ начать.',
     fsGoLine: 'Отправить ответы в LINE', fsGoWa: 'Отправить ответы в WhatsApp', fsGoWx: 'Скопировать ответы для WeChat',
     fsCopied: `Ответы скопированы. Добавьте наш WeChat ID ${WECHAT} и вставьте их в чат.`,
@@ -406,7 +406,7 @@
   const counted = new Set();
   const countStep = ch => { if (counted.has(ch)) return; counted.add(ch); send('step', ch); };
   const leadSrc = String(src).toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
-  // What the result screen promises (0 returning student, 1 the best way to start), so the message
+  // What the result screen promises (0 coming back, 1 the best way to start), so the message
   // staff read says the same, with the language to reply in.
   const fsFor = () => fs.a.exp === 'aybkk' ? 0 : 1;
   const fsRows = l => [...ASK.map(([k], i) => `${STR[l].fsL[i]}: ${STR[l].fsA[k][fs.a[k]]}`),

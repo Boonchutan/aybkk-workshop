@@ -147,18 +147,13 @@ This repo is attached to each routine (Boonchu set it in the routines UI), which
 
 ## AYBKK Bangkok study fees (aybkk.net), check here before quoting a price
 
-Now, until 11 Nov 2026:
-- 1 month: 9,600 THB
-- 3 months: 25,800 THB (8,600 THB/month)
-- 12 months: 78,000 THB (6,500 THB/month), 12 months only. Boonchu, 21 Oct 2026: no more free 13th month.
-  Passes sold before 21 Oct keep their 13 months.
-- 6 months: not sold now (2 Oct 2026). Old 45,000 THB passes from Rezerv are still honored.
-- Drop-in 1,500 THB. 8 classes 7,600 THB + VAT, use within 2 months (Boonchu, 9 Nov 2026; was 1 month from 6 Nov, when it replaced the 10-class pack; 10-packs already sold stay valid).
+From 12 Nov 2026, every price + 7% VAT (posters: bots/media/2026-11-06-price-poster on claude/bots-memory):
+- 1 month 9,600 · 3 months 19,500 (6,500/month; Boonchu, 6 Nov 2026) · 6 months 34,200 (5,700/month, teacher's pick) · 12 months 63,600 (5,300/month, 12 months only; Boonchu, 11 Nov 2026: was 32,000 and 59,900)
+- Drop-in 1,500 · 8 classes 7,600, use within 2 months (Boonchu, 9 Nov 2026)
+- One price for everyone: no returning-student or promo price. The Sharathji promotion (Duo, Rookie Pack, Reset & Restart, Back to the Beat) ended on 11 Nov 2026.
 - Unlimited (monthly) members: no minimum, no set 4 days a week (Boonchu, 9 Nov 2026). Thai: "ไม่กำหนด 4 วันต่ออาทิตย์ มาฝึกตามเวลาที่สะดวก", never "ไม่ต้องมา...".
 
-From 12 Nov 2026 (every price + 7% VAT, posters bots/media/2026-10-19-prices-v3 on claude/bots-memory):
-- 1 month 9,600 · 3 months 19,500 (6,500/month; Boonchu, 6 Nov 2026) · 6 months 34,200 (5,700/month, teacher's pick) · 12 months 63,600 (5,300/month, 12 months only; Boonchu, 11 Nov 2026: was 32,000 and 59,900)
-- Drop-in 1,500 · 8 classes 7,600 THB + VAT, use within 2 months (10-packs already sold stay valid)
+Passes sold before 12 Nov keep what was bought: 12 months sold before 21 Oct keep their 13 months, Rezerv's old 45,000 THB 6-month passes are honored, and 10-class packs stay valid.
 
 ## Environment
 

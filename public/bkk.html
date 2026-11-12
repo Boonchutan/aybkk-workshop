@@ -48,7 +48,7 @@
     --header:#7e262e;       /* fixed: never flips with the theme */
     --gold:#84621f;         /* soft brass */
     --gold-soft:#faf1e1;
-    /* Promotion = gold, so a deal never looks like a normal price (Boonchu, 2 Oct). */
+    /* Honey gold, named --promo from its first use: now the tabs and Buy buttons. */
     --promo:#d6a35c; --promo-hi:#e7c38d; --promo-ink:#5f1c23; --promo-deep:#7c531d;
     --promo-soft:#faf1e0; --promo-line:#dfbf90;
     /* Normal prices sit on the palest pyramid-glass tint. */
@@ -398,7 +398,7 @@
   .buy:hover{background:var(--promo-hi);color:var(--promo-ink)}
   .plan .buy{min-height:56px;font-size:var(--fs-b);font-weight:700}
   @media (min-width:700px){ .plan .btn{display:inline-flex;width:auto} }
-  /* Gold is for the promotion only: "See packages" is the normal action. */
+  /* "See packages" hovers to ink like other actions, not to light gold like Buy. */
   #newPkgs{background:var(--act);color:var(--act-ink)}
   @media (hover:hover){ #newPkgs:hover{background:var(--act-hi);color:var(--act-hi-ink)} }
   .prices .fair{margin:var(--grp) 0 14px;font:700 var(--fs-l)/1.3 var(--f-text)}
@@ -1786,8 +1786,6 @@
 
   const LOCALE = { en: 'en-GB', th: 'th-TH', zh: 'zh-CN', ru: 'ru-RU' };
   const addDays = (iso, n) => new Date(Date.parse(iso + 'T00:00:00Z') + n * 86400e3).toISOString().slice(0, 10);
-  const fmtD = (iso, lang) => new Date(iso + 'T00:00:00Z').toLocaleDateString(LOCALE[lang] || 'en-GB',
-    { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
   function bkkTodayP() { return new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10); }
 
   // Hero offer: 3 months unlimited, 90 days. Per day is the VAT-inclusive total over calendar days.
@@ -1803,6 +1801,7 @@
   const toBook = () => $('.bookhead').scrollIntoView({ block: 'start' });
   document.querySelectorAll('a[href="#book"]:not(#newPkgs):not(#h12Btn)').forEach(a => a.addEventListener('click', e => {
     e.preventDefault();
+    tab('schedule');
     toBook();
   }));
   document.querySelectorAll('#h12Btn, #newPkgs').forEach(a => a.addEventListener('click', e => {
@@ -3335,7 +3334,7 @@
   };
   // The booking page's own LINE / WhatsApp / WeChat buttons. The start page calls aybkkBook() itself.
   document.addEventListener('click', function (e) {
-    if (e.target.closest && e.target.closest('button[data-wechat], #wxCopy')) { window.aybkkBook(); return; }
+    if (e.target.closest && e.target.closest('#wxCopy')) { window.aybkkBook(); return; }
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || a.id === 'go' || a.hasAttribute('data-nl') || a.hasAttribute('data-tee')) return;
     var h = a.getAttribute('href').toLowerCase();
