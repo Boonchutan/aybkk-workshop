@@ -45,13 +45,6 @@
   .alt{text-align:center;font-size:14px;color:var(--soft);margin:0}
   .alt a,.alt button{color:var(--soft);font:inherit;background:none;border:0;padding:4px;text-decoration:underline;cursor:pointer}
   .note{text-align:center;font-size:15px;color:var(--plum);min-height:1.5em;margin:6px 0 0}
-  .promo{display:block;margin:18px 0 0;padding:14px 16px;border:6px solid var(--promo);border-radius:14px;
-    background:var(--promo-soft);color:var(--ink);text-decoration:none;text-align:center;line-height:1.35}
-  .promo[hidden]{display:none}
-  .promo .k{display:block;font-size:14px;color:var(--promo-deep);font-weight:600}
-  .promo .big{display:block;font-size:26px;font-weight:800;color:var(--promo-deep);margin:2px 0}
-  .promo .s{display:block;font-size:15px}
-  .promo .b{display:inline-block;margin-top:10px;padding:8px 14px;border-radius:8px;background:var(--promo);color:var(--promo-ink);font-weight:700}
   /* First-step ladder: in the page, one question at a time, never a pop-up. */
   .fs{margin:28px 0 0;scroll-margin-top:12px}
   .fs [hidden]{display:none!important}
@@ -122,13 +115,6 @@
   <p class="note" id="note" aria-live="polite"></p>
   <div id="ckbar" hidden><div class="ckt"><p id="ckTxt"></p><button type="button" id="ckMore" aria-expanded="false"></button><p id="ckInfo" hidden></p></div><div class="ckb"><button type="button" id="ckNo"></button><button type="button" id="ckOk"></button></div></div>
 
-  <a class="promo" id="promo" href="/#promo" hidden>
-    <span class="k" data-t="pk">Until 11 Nov only · in memory of Sharathji</span>
-    <span class="big" data-t="pbig">Buy 1, get 1 FREE</span>
-    <span class="s" data-t="psub">or the Rookie Pack ฿5,900 for new students</span>
-    <span class="b" data-t="pbtn">Calculate my price →</span>
-  </a>
-
   <section class="fs" id="first-step" aria-labelledby="fsH">
     <h2 id="fsH" data-t="fsH">Not sure where to start? Find your first step</h2>
     <p class="fs-sub" data-t="fsSub">4 quick taps</p>
@@ -170,7 +156,7 @@
   <ul class="obj">
     <li><b data-t="o1t">Not flexible?</b><span data-t="o1d">Nobody is on day one. We teach you from zero.</span></li>
     <li><b data-t="o2t">Busy mornings?</b><span data-t="o2d">Mysore starts at 5:30 or 7:30. You are done before work.</span></li>
-    <li><b data-t="o3t">The price?</b><span data-t="o3d">From 406 baht a class, with a teacher who knows your name.</span></li>
+    <li><b data-t="o3t">The price?</b><span data-t="o3d">From 331 baht a class +VAT, with a teacher who knows your name.</span></li>
   </ul>
 
   <div class="proof">
@@ -190,53 +176,46 @@
     // { text: { en: '...', th: '...' }, who: 'First name, 2 years' },
   ];
   const WECHAT = 'aybkkwechat';
-  const BKK_DAY = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok' }).format(new Date());
-  // New prices from 12 Nov 2026 (bkk.html NEW_PRICES_FROM): 12 months at 63,600 is 331 a class.
-  const FROM = BKK_DAY >= '2026-11-12' ? 331 : 406;
   const STR = {
-    en: { pk: 'Until 11 Nov only · in memory of Sharathji', pbig: 'Buy 1, get 1 FREE', psub: 'or the Rookie Pack ฿5,900 for new students', pbtn: 'Calculate my price →',
-      h1: 'Stronger, calmer, better sleep. One morning a day.', sub: 'Traditional Ashtanga in Bangkok. Beginners welcome.',
+    en: { h1: 'Stronger, calmer, better sleep. One morning a day.', sub: 'Traditional Ashtanga in Bangkok. Beginners welcome.',
       ctx: 'A teacher walks the room and adjusts you by hand. You move at your own pace, with your own breath.',
       line: 'Book your first morning on LINE', whatsapp: 'Book your first morning on WhatsApp', wechat: 'Book your first morning on WeChat',
       or: 'Or:', copied: `Our WeChat ID is copied: ${WECHAT}. Add us and say "first morning".`,
       o1t: 'Not flexible?', o1d: 'Nobody is on day one. We teach you from zero.',
       o2t: 'Busy mornings?', o2d: 'Mysore starts at 5:30 or 7:30. You are done before work.',
-      o3t: 'The price?', o3d: `From ${FROM} baht a class +VAT, with a teacher who knows your name.`,
+      o3t: 'The price?', o3d: `From 331 baht a class +VAT, with a teacher who knows your name.`,
       auth: 'Authorized Level 2 by R. Sharath Jois', since: 'Mysore style in Bangkok since 2013',
       more: 'All prices and the timetable', privacy: 'This page saves no names or contact details unless you fill in the short form. Then we use them only to reply to you. Your message goes straight to our chat.' },
-    th: { pk: 'ถึง 11 พ.ย. เท่านั้น · น้อมรำลึก Sharathji', pbig: 'ซื้อ 1 แถม 1 ฟรี', psub: 'หรือ Rookie Pack ฿5,900 สำหรับนักเรียนใหม่', pbtn: 'คำนวณราคาเรียน →',
-      h1: 'แข็งแรงขึ้น ใจสงบขึ้น นอนหลับดีขึ้น วันละหนึ่งเช้า', sub: 'อัษฎางคโยคะแบบดั้งเดิมในกรุงเทพฯ มือใหม่มาได้เลย',
+    th: { h1: 'แข็งแรงขึ้น ใจสงบขึ้น นอนหลับดีขึ้น วันละหนึ่งเช้า', sub: 'อัษฎางคโยคะแบบดั้งเดิมในกรุงเทพฯ มือใหม่มาได้เลย',
       ctx: 'ครูเดินดูทั้งห้องและปรับท่าให้คุณด้วยมือ คุณฝึกตามจังหวะของตัวเอง ตามลมหายใจของตัวเอง',
       line: 'จองเช้าแรกของคุณทาง LINE', whatsapp: 'จองเช้าแรกของคุณทาง WhatsApp', wechat: 'จองเช้าแรกของคุณทาง WeChat',
       or: 'หรือ:', copied: `คัดลอก WeChat ID แล้ว: ${WECHAT} เพิ่มเพื่อนแล้วพิมพ์ว่า "เช้าแรก"`,
       o1t: 'ตัวไม่อ่อน?', o1d: 'วันแรกไม่มีใครอ่อนหรอก เราสอนตั้งแต่เริ่มต้น',
       o2t: 'เช้าๆ ยุ่ง?', o2d: 'มายซอร์เริ่ม 5:30 หรือ 7:30 ฝึกเสร็จก่อนไปทำงาน',
-      o3t: 'ราคาล่ะ?', o3d: `เริ่มต้น ${FROM} บาทต่อครั้ง +VAT กับครูที่จำชื่อคุณได้`,
+      o3t: 'ราคาล่ะ?', o3d: `เริ่มต้น 331 บาทต่อครั้ง +VAT กับครูที่จำชื่อคุณได้`,
       auth: 'ได้รับ Authorization Level 2 จาก R. Sharath Jois', since: 'สอนแบบมายซอร์ในกรุงเทพฯ ตั้งแต่ปี 2013',
       more: 'ราคาทั้งหมดและตารางเรียน', privacy: 'หน้านี้ไม่เก็บชื่อหรือช่องทางติดต่อของคุณ เว้นแต่คุณกรอกแบบฟอร์มสั้น ๆ ข้อมูลนั้นเราใช้เพื่อตอบกลับคุณเท่านั้น ข้อความของคุณส่งตรงถึงแชทของเรา' },
-    zh: { pk: '仅限11月11日前 · 纪念 Sharathji', pbig: '买一送一', psub: '或新学员 Rookie Pack ฿5,900', pbtn: '计算我的价格 →',
-      h1: '更强壮，更平静，睡得更好。每天一个早上。', sub: '曼谷的传统阿斯汤加。欢迎初学者。',
+    zh: { h1: '更强壮，更平静，睡得更好。每天一个早上。', sub: '曼谷的传统阿斯汤加。欢迎初学者。',
       ctx: '老师在教室里走动，亲手为你调整。你按自己的节奏、自己的呼吸练习。',
       line: '用 LINE 预约你的第一个早上', whatsapp: '用 WhatsApp 预约你的第一个早上', wechat: '加微信，预约你的第一个早上',
       or: '或者：', copied: `已复制我们的微信号：${WECHAT}。添加后发送“第一个早上”。`,
       o1t: '身体不够柔软？', o1d: '第一天谁都不柔软。我们从零开始教你。',
       o2t: '早上很忙？', o2d: 'Mysore 5:30 或 7:30 开始，上班前就练完。',
-      o3t: '价格？', o3d: `每节课低至 ${FROM} 泰铢（另加增值税），老师记得你的名字。`,
+      o3t: '价格？', o3d: `每节课低至 331 泰铢（另加增值税），老师记得你的名字。`,
       auth: '获 R. Sharath Jois 授权 Level 2（Authorized Level 2）', since: '自 2013 年起在曼谷教 Mysore',
       more: '全部价格和课程表', privacy: '除非你填写简短表格，本页不会保存你的姓名或联系方式。这些信息我们只用来回复你。你的消息会直接发到我们的聊天里。' },
-    ru: { pk: 'Только до 11 ноября · в память о Шарате', pbig: 'Купи 1, получи 1 БЕСПЛАТНО', psub: 'или Rookie Pack за ฿5,900 для новичков', pbtn: 'Рассчитать мою цену →',
-      h1: 'Сильнее, спокойнее, лучше сон. Одно утро в день.', sub: 'Традиционная аштанга в Бангкоке. Новичкам рады.',
+    ru: { h1: 'Сильнее, спокойнее, лучше сон. Одно утро в день.', sub: 'Традиционная аштанга в Бангкоке. Новичкам рады.',
       ctx: 'Учитель ходит по залу и поправляет вас руками. Вы двигаетесь в своём темпе, со своим дыханием.',
       line: 'Записаться на первое утро в LINE', whatsapp: 'Записаться на первое утро в WhatsApp', wechat: 'Записаться на первое утро в WeChat',
       or: 'Или:', copied: `WeChat ID скопирован: ${WECHAT}. Добавьте нас и напишите «первое утро».`,
       o1t: 'Нет гибкости?', o1d: 'В первый день её нет ни у кого. Учим с нуля.',
       o2t: 'Утро занято?', o2d: 'Майсор начинается в 5:30 или 7:30. Вы успеете до работы.',
-      o3t: 'Цена?', o3d: `От ${FROM} бат за занятие +НДС, с учителем, который знает ваше имя.`,
+      o3t: 'Цена?', o3d: `От 331 бат за занятие +НДС, с учителем, который знает ваше имя.`,
       auth: 'Авторизация Level 2 от R. Sharath Jois', since: 'Майсор в Бангкоке с 2013 года',
       more: 'Все цены и расписание', privacy: 'Эта страница не сохраняет имена и контакты, если вы сами не заполните короткую форму. Эти данные мы используем только для ответа вам. Ваше сообщение идёт прямо в наш чат.' },
   };
   // First-step ladder. The answers are fixed codes (inbox.js LEAD_SAY). The message staff
-  // read is built from fsL, fsA, fsLang and fsFor in English and Thai. No prices here: they change on 12 Nov.
+  // read is built from fsL, fsA, fsLang and fsFor in English and Thai. No prices here.
   Object.assign(STR.en, {
     fsH: 'Not sure where to start? Find your first step', fsSub: '4 quick taps', fsBack: '← Back',
     fsQ: ['What do you want most?', 'Have you done yoga before?', 'When could you come?'],
@@ -245,7 +224,7 @@
       when: { weekday: 'Weekdays before work', weekend: 'Weekends', unsure: 'Not sure yet' } },
     fsL: ['Goal', 'Experience', 'When', 'Language', 'Please send'],
     fsLang: { en: 'English', th: 'Thai', zh: 'Chinese', ru: 'Russian' },
-    fsFor: ['the returning-student option', 'the new-student offer', 'the best way to start'],
+    fsFor: ['the returning-student option', 'the best way to start'],
     fsG: { strong: 'a stronger body', calm: 'a calmer mind', sleep: 'better sleep', age: 'aging well' },
     fsFirst: g => `For ${g}, your first step is one Mysore morning.`,
     fsShow: 'The teacher shows you the first postures.', fsKnow: 'The teacher sees your practice and takes it from there.',
@@ -253,7 +232,6 @@
     fsWeekday: 'Mysore starts at 5:30 or 7:30, Tuesday to Friday, so you are done before work.',
     fsWeekend: 'On Sunday, Mysore starts at 7:00.',
     fsAgain: 'We will send you the returning-student option.',
-    fsOffer: 'New students have an offer until 11 Nov. We will send you the one that fits.',
     fsBest: 'We will send you the best way to start.',
     fsGoLine: 'Send my answers on LINE', fsGoWa: 'Send my answers on WhatsApp', fsGoWx: 'Copy my answers for WeChat',
     fsCopied: `Your answers are copied. Add our WeChat ID ${WECHAT}, then paste them in the chat.`,
@@ -275,7 +253,7 @@
       when: { weekday: 'วันธรรมดา ก่อนไปทำงาน', weekend: 'เสาร์-อาทิตย์', unsure: 'ยังไม่แน่ใจ' } },
     fsL: ['เป้าหมาย', 'ประสบการณ์', 'ช่วงเวลา', 'ภาษา', 'ขอให้ส่ง'],
     fsLang: { en: 'อังกฤษ', th: 'ไทย', zh: 'จีน', ru: 'รัสเซีย' },
-    fsFor: ['ตัวเลือกสำหรับนักเรียนเก่า', 'โปรนักเรียนใหม่', 'วิธีเริ่มที่เหมาะที่สุด'],
+    fsFor: ['ตัวเลือกสำหรับนักเรียนเก่า', 'วิธีเริ่มที่เหมาะที่สุด'],
     fsG: { strong: 'แข็งแรงขึ้น', calm: 'ใจสงบขึ้น', sleep: 'นอนหลับดีขึ้น', age: 'สูงวัยอย่างแข็งแรง' },
     fsFirst: g => `ถ้าอยาก${g} ก้าวแรกของคุณคือมาฝึกมายซอร์หนึ่งเช้า`,
     fsShow: 'ครูจะสอนท่าแรก ๆ ให้คุณเอง', fsKnow: 'ครูจะดูการฝึกของคุณก่อน แล้วสอนต่อจากที่คุณทำได้',
@@ -283,7 +261,6 @@
     fsWeekday: 'วันอังคารถึงวันศุกร์ มายซอร์เริ่ม 5:30\u00a0หรือ\u00a07:30 ฝึกเสร็จก่อนไปทำงาน',
     fsWeekend: 'วันอาทิตย์ มายซอร์เริ่ม 7:00',
     fsAgain: 'เราจะส่งตัวเลือกสำหรับนักเรียนเก่าให้คุณ',
-    fsOffer: 'นักเรียนใหม่มีโปรถึง 11 พ.ย. เราจะส่งโปรที่เหมาะกับคุณให้',
     fsBest: 'เราจะส่งวิธีเริ่มที่เหมาะกับคุณที่สุดให้',
     fsGoLine: 'ส่งคำตอบทาง LINE', fsGoWa: 'ส่งคำตอบทาง WhatsApp', fsGoWx: 'คัดลอกคำตอบไปส่งทาง WeChat',
     fsCopied: `คัดลอกคำตอบแล้ว เพิ่ม WeChat ID ${WECHAT} แล้ววางข้อความในแชท`,
@@ -309,7 +286,6 @@
     fsWeekday: '周二到周五 Mysore 5:30 或 7:30 开始，上班前就练完。',
     fsWeekend: '周日 Mysore 7:00 开始。',
     fsAgain: '我们会把老学员的方案发给你。',
-    fsOffer: '新学员11月11日前有优惠，我们会把适合你的优惠发给你。',
     fsBest: '我们会把最适合你的开始方式发给你。',
     fsGoLine: '用 LINE 发送我的答案', fsGoWa: '用 WhatsApp 发送我的答案', fsGoWx: '复制我的答案，发到微信',
     fsCopied: `已复制你的答案。添加我们的微信号 ${WECHAT}，然后把答案粘贴到聊天里。`,
@@ -336,7 +312,6 @@
     fsWeekday: 'Со вторника по пятницу майсор начинается в 5:30 или 7:30. Вы успеете до работы.',
     fsWeekend: 'В воскресенье майсор начинается в 7:00.',
     fsAgain: 'Мы пришлём вам вариант для тех, кто уже занимался у нас.',
-    fsOffer: 'До 11 ноября для новичков есть предложение. Мы пришлём то, что подойдёт вам.',
     fsBest: 'Мы пришлём лучший способ начать.',
     fsGoLine: 'Отправить ответы в LINE', fsGoWa: 'Отправить ответы в WhatsApp', fsGoWx: 'Скопировать ответы для WeChat',
     fsCopied: `Ответы скопированы. Добавьте наш WeChat ID ${WECHAT} и вставьте их в чат.`,
@@ -351,9 +326,6 @@
     fsErrServer: 'Не удалось отправить. Попробуйте ещё раз или напишите нам в WhatsApp +66 84 224 4246.',
   });
   // The channel each audience actually has: Thai and English on LINE, Chinese on WeChat, Russian on WhatsApp.
-  // Same end date as the homepage promotion (bkk.html PROMO_LAST_BUY).
-  const PROMO_LAST_BUY = '2026-11-11';
-  const promoLive = BKK_DAY <= PROMO_LAST_BUY;
   const MAIN = { en: 'line', th: 'line', zh: 'wechat', ru: 'whatsapp' };
   const NAME = { line: 'LINE', whatsapp: 'WhatsApp', wechat: 'WeChat' };
   const pathTag = (location.pathname.match(/^\/start\/([\w-]+)/) || [])[1];
@@ -434,9 +406,9 @@
   const counted = new Set();
   const countStep = ch => { if (counted.has(ch)) return; counted.add(ch); send('step', ch); };
   const leadSrc = String(src).toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 40);
-  // What the result screen promises (0 returning student, 1 the offer while it runs, 2 the best way
-  // to start), so the message staff read says the same, with the language to reply in.
-  const fsFor = () => fs.a.exp === 'aybkk' ? 0 : promoLive ? 1 : 2;
+  // What the result screen promises (0 returning student, 1 the best way to start), so the message
+  // staff read says the same, with the language to reply in.
+  const fsFor = () => fs.a.exp === 'aybkk' ? 0 : 1;
   const fsRows = l => [...ASK.map(([k], i) => `${STR[l].fsL[i]}: ${STR[l].fsA[k][fs.a[k]]}`),
     `${STR[l].fsL[3]}: ${STR[l].fsLang[LANG]}`, `${STR[l].fsL[4]}: ${STR[l].fsFor[fsFor()]}`];
   const fsText = () => [`First step · aybkk.net/start${pathTag ? '/' + pathTag : ''}`, ...fsRows('en'), '', ...fsRows('th')].join('\n');
@@ -519,7 +491,7 @@
       first.textContent = [exp === 'aybkk' && S.fsHi, S.fsFirst(S.fsG[goal])].filter(Boolean).join(J);
       $('fsRes').replaceChildren(first, J + [(exp === 'never' || exp === 'some') && S.fsShow, exp === 'ashtanga' && S.fsKnow,
         when === 'weekend' ? S.fsWeekend : S.fsWeekday].filter(Boolean).join(J));
-      $('fsNext').textContent = [S.fsAgain, S.fsOffer, S.fsBest][fsFor()];
+      $('fsNext').textContent = [S.fsAgain, S.fsBest][fsFor()];
       const text = encodeURIComponent(fsText());
       const href = { line: 'https://line.me/R/oaMessage/%40aybkk/?' + text, whatsapp: 'https://wa.me/66842244246?text=' + text };
       const main = MAIN[LANG], go = $('fsGo');
@@ -598,9 +570,6 @@
     LANG = b.dataset.lang; try { store && store.setItem('aybkk_lang', LANG); } catch {}
     render();
   });
-  const promo = document.getElementById('promo');
-  promo.hidden = !promoLive;
-  promo.onclick = () => send('tap', 'promo');
   render();
   send('view');
 })();
