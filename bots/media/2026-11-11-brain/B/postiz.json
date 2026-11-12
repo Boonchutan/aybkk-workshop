@@ -1,5 +1,34 @@
-{"post_id": "cmwd5dqog00qtmr075l046wzd", "integration": "cmnmyjqex06mrqi0yeynj0y3f", "type": "now", "sent_utc": "2026-11-12T06:09", "status": "QUEUE at first check",
+{
+ "post_id": "cmwd5dqog00qtmr075l046wzd",
+ "integration": "cmnmyjqex06mrqi0yeynj0y3f",
+ "type": "now",
+ "sent_utc": "2026-11-12T06:09",
+ "status": "PUBLISHED (checked 12 Nov 2026, publishDate 06:09 UTC = 13:09 BKK)",
  "go": "Boonchu 'set b go' in the Plato chat, 12 Nov 2026, after seeing all 10 slides (sheet.jpg) and this exact caption",
- "attachments": ["https://uploads.postiz.com/WUC0tl3GU9.jpg","https://uploads.postiz.com/7DeNgKCUls.jpg","https://uploads.postiz.com/YIkA886arZ.jpg","https://uploads.postiz.com/auQvfM1weK.jpg","https://uploads.postiz.com/K9smqS6eXh.jpg","https://uploads.postiz.com/7gJQhh6wVC.jpg","https://uploads.postiz.com/K273Woq9hi.jpg","https://uploads.postiz.com/izRl65fg6E.jpg","https://uploads.postiz.com/sztoJ1c15a.jpg","https://uploads.postiz.com/dtNzDReE3b.jpg"],
- "md5_checked": true, "photos": ["11-035","11-126","11-143","11-114","11-065","11-146","11-003","11-048","11-138","11-112"],
- "notes": "slide 7 credit cut to 'GALEN (retold)' so it stays off students; slides 3, 9, 10 big word at 540 (720 would cover heads or hands)"}
+ "attachments": [
+  "https://uploads.postiz.com/WUC0tl3GU9.jpg",
+  "https://uploads.postiz.com/7DeNgKCUls.jpg",
+  "https://uploads.postiz.com/YIkA886arZ.jpg",
+  "https://uploads.postiz.com/auQvfM1weK.jpg",
+  "https://uploads.postiz.com/K9smqS6eXh.jpg",
+  "https://uploads.postiz.com/7gJQhh6wVC.jpg",
+  "https://uploads.postiz.com/K273Woq9hi.jpg",
+  "https://uploads.postiz.com/izRl65fg6E.jpg",
+  "https://uploads.postiz.com/sztoJ1c15a.jpg",
+  "https://uploads.postiz.com/dtNzDReE3b.jpg"
+ ],
+ "md5_checked": true,
+ "photos": [
+  "11-035",
+  "11-126",
+  "11-143",
+  "11-114",
+  "11-065",
+  "11-146",
+  "11-003",
+  "11-048",
+  "11-138",
+  "11-112"
+ ],
+ "notes": "slide 7 credit cut to 'GALEN (retold)' so it stays off students; slides 3, 9, 10 big word at 540 (720 would cover heads or hands)"
+}
