@@ -1,0 +1,241 @@
+{
+  "summary": "Three independent checks of Ramayana Ep. 1 v3 (rhythm/scroll, facts, voice) with exact line fixes",
+  "agentCount": 3,
+  "logs": [],
+  "result": [
+    {
+      "lens": "rhythm",
+      "verdict": "Not ready. The switch breaks in four places: lines 1-3 are three mediums in a row, and line 3 is where I would scroll. Lines 8-10 and 17-19 are strings of 2-word bits labelled M. Lines 21-23 are three shorts. Line 3 makes \"ceremony\" clear only through a 13-word line that just reports. v3 is 173 words and about 73 s, not the 150 words and 63-65 s it says.",
+      "issues": [
+        {
+          "line": 3,
+          "problem": "This is the third medium in a row after his own two lines (8, 12, then 13 words), and the longest line so far. It only describes the scene. The monsters from line 2 disappear for 5 seconds, and it says 'fire' twice. On (d): yes, 'priests chanting around the fire' gives the picture. But 'big fire ceremony' alone can read as a bonfire, a Hindu wedding, or (for Thai viewers) monks chanting at a cremation. 'Teacher is doing a big fire ceremony' also clashes with line 7's 'not one word': how does he do a chanting ceremony without a word? Fix: make the priests the ones who chant, call it 'mantra' (every Ashtanga student chants one, and it is the book's word, 1.30.10 'mantravat'), and split the line into short then medium.",
+          "fix_spoken": "[S] Their job?... guard teacher's fire.  /  [M] Priests sit around it, chanting mantra.",
+          "fix_screen": "THEIR JOB? GUARD THE TEACHER'S FIRE | small: VALMIKI RAMAYANA · BALA KANDA 30  /  PRIESTS AROUND THE FIRE · CHANTING MANTRA"
+        },
+        {
+          "line": 5,
+          "problem": "13 words, and the third 'fire' in three lines. 'Walk around the fire' can be heard as walking in circles around it (a Hindu wedding, ritual circling). The book has them patrolling close to the altar (1.30.6), not circling it.",
+          "fix_spoken": "[M] Boys walk by the fire, bows ready... six nights. No sleep.",
+          "fix_screen": "SIX NIGHTS. NO SLEEP. | small: RAMA · AND HIS BROTHER LAKSHMANA (unchanged)"
+        },
+        {
+          "line": 9,
+          "problem": "Labelled M, but it is three 2-word bits. Together with lines 8 and 10 that makes about seven short pieces in a row, so the switch dies right at the rehook, where warmth matters most. 'Something wrong?' is not his word: he wrote 'some problem?'.",
+          "fix_spoken": "[M] No monster, no word from teacher... some problem?",
+          "fix_screen": "NO MONSTER. NO WORD. SOME PROBLEM?"
+        },
+        {
+          "line": 16,
+          "problem": "At 13 words this is the longest line in the back half. 'but that's another story' spends 4 words closing the loop it just opened.",
+          "fix_spoken": "[M] Years later he come back... golden deer. Another story.",
+          "fix_screen": "YEARS LATER... A GOLDEN DEER | small: ANOTHER STORY · ARANYA KANDA 42 (unchanged)"
+        },
+        {
+          "line": 18,
+          "problem": "Lines 17-19 are six short bits in a row right at the turn: 'That day, ceremony finish.' only reports, line 18 is labelled M but is three 1-3-word bits ('And the teacher... finally... speak again.'), and line 19 is two more short bits. The warm turn goes choppy. Fix: merge 17 and 18 into one short line. Line 7 already says 'until ceremony is done', so 'speak again' tells the viewer it is done (1.30.25, same day). Then make line 19 the medium, with a callback to the hook.",
+          "fix_spoken": "[S] That day... teacher speak again.  /  [M] Five quiet days, nothing happen... that was the practice.",
+          "fix_screen": "CEREMONY DONE · THE TEACHER SPEAKS AGAIN | small: BALA KANDA 30 · VERSE 25  /  FIVE QUIET DAYS. THAT WAS THE PRACTICE."
+        },
+        {
+          "line": 22,
+          "problem": "Labelled M, but it is 5 words, so lines 21, 22 and the cue are three shorts in a row. It only reports. Fix: one breath, with a callback to the fire picture. Vishvamitra sits at the altar in 1.30.9.",
+          "fix_spoken": "[M] Named after that silent teacher by the fire.",
+          "fix_screen": "NAMED AFTER THE SAGE VISHVAMITRA (unchanged)"
+        },
+        {
+          "line": 0,
+          "problem": "Length for the whole script. v3 says about 150 words and 63-65 s. It is 173 spoken words (counted two ways) and about 73 s on the run's own timing model (timeA.py rates, plus the 1.8 s cue, the 1 s stop at the fork and the Thai sign-off). That is over the brief's 160 words and 60 s. With the fixes above plus small trims it comes to 161 words and about 68 s. The medium lines he asked for cost about 3 s.",
+          "fix_spoken": "Trims: [line 7] He promise... not one word until ceremony is done.  [line 11] Day six, Rama tell his brother... be ready.  [line 12] Sky roar... monsters come down like storm clouds.  [line 15, back to the flag 25 wording] That arrow... did not take his life.  [line 20] Mysore room same... nobody call the asana for you.  If the real take runs over 60 s, cut in this order: (1) line 20 drop 'for you', (2) line 14 'far, far away' becomes 'far', (3) line 11 becomes 'Day six... be ready.', (4) drop line 4 'Monsters want to spoil it.' (line 2 already sets up the monsters). Together that is about 4.7 s, to about 63.6 s. Getting under 60 s means cutting a fixed line (the deer). That is his call.",
+          "fix_screen": ""
+        }
+      ],
+      "est_seconds": 68,
+      "words": 161,
+      "notes": "(b) First scroll point: v3 line 3, at about 0:07.5. It is the third long line in a row. The two boys and the monsters from line 2 disappear for 5 seconds while the scene is described. Lines 1-2 (his own) hold.\n\n(c) Lines that only report and open nothing: 3, 17, 22, and the tail of 16. Line 4 ('Monsters want to spoil it.') is fine: it is short and sets the stakes.\n\n(d) Line 3 clarity: mostly yes, but only by explaining. 'Priests' alone can read as Christian (and Orthodox for Russian viewers). Fire with monks or priests chanting reads as a cremation to a Thai viewer. 'Chanting mantra' makes it Indian and yogic at once, and Ashtanga students chant a mantra themselves. In the fix the picture comes first (fire, priests, mantra) and the word 'ceremony' only comes at line 7, so by then the viewer knows what it means. Keep the teacher OUT of the chanting: he is under the mauna vow (1.30.4). Never say 'teacher chanting'.\n\nWrong M/S labels in v3: lines 9, 18 and 22 are labelled M but are short. Line 15 is labelled S at 8 words, almost the length of line 14, though aloud it is two short bits, so it passes. Lines 11-12 are both 9 words on paper, but aloud they go M then S, S then M ('...be ready. Sky roar...'), so that is not a real break. Leave them.\n\nMechanical risk: the switch also lives in the pause. Say the M lines in one breath and leave a beat after each S. Lines 7-11 hold three questions (teacher? / some problem? / what you do?). Say 'some problem?' low, to himself, then 'What you do?' to the lens with the 1 s stop, so the questions don't stack into a quiz.\n\nAssembled v3.1 (161 words, about 68 s; fork at about 0:28, attack at about 0:34, turn at about 0:51):\n1 [M] If you practice today and nothing happened... yet...\n2 [M] There's an old story of two boys wait for monsters... five days...\n3 [S] Their job?... guard teacher's fire.\n4 [M] Priests sit around it, chanting mantra.\n5 [S] Monsters want to spoil it.\n6 [M] Boys walk by the fire, bows ready... six nights. No sleep.\n7 [S] And the teacher?\n8 [M] He promise... not one word until ceremony is done.\n9 [S] Day five... nothing.\n10 [M] No monster, no word from teacher... some problem?\n11 [S] What you do?... Sleep?\n12 [M] Day six, Rama tell his brother... be ready.\n13 [S then M] Sky roar... monsters come down like storm clouds.\n14 [S] Rama shoot one arrow.\n15 [M] One monster fly far, far away... into the sea.\n16 [S] That arrow... did not take his life.\n17 [M] Years later he come back... golden deer. Another story.\n18 [S] That day... teacher speak again.\n19 [M] Five quiet days, nothing happen... that was the practice.\n20 [M] Mysore room same... nobody call the asana for you.\n21 [S] Vishvamitrasana. Advanced A. (cut to him in the asana)\n22 [M] Named after that silent teacher by the fire.\n23 [BOONCHU'S OWN CUE: 5 words or less]\n24 [M] Tomorrow, maybe nothing happen again... you still there?\n25 แล้วเจอกันครับ\n\nFacts behind the new words, checked in Rao live_balasans30.htm and Griffith pg24869.txt lines 4845-4948:\n- Priests sit around the altar: 1.30.9 ('around which Vishvamitra and the conductors of ritual are sitting'). The same verse also covers 'by the fire' in line 22.\n- Mantra: 1.30.10 'mantravat ... hymnal rendering'. Rao's note under 1.30.9 says 'to the chanting of hymns'; Griffith has 'With sacred texts began anew'.\n- Walk by the fire, bows ready: 1.30.6 ('patrolled close to the Altar of Fire', 'great bow wielders', 'alertly').\n- Teacher speaks that day: 1.30.25-26.\n'Day five', 'some problem?' and 'five quiet days' are his telling and a narrator's question, not quotes (flag 7). No flags were broken: no Maricha, no killing, no 'only one arrow', no years count, and the silence stays a vow.\n\nScratch scripts: /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/rhy_tools/v3count.py and /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/rhy_tools/v31.py"
+    },
+    {
+      "lens": "facts",
+      "verdict": "Facts and safety pass. Rao's Bala 30 and Griffith support every story line in v3, and no flag is broken. The one problem is length: the script is 173 spoken words, about 70 s. The draft says about 150 words and 63 to 65 s, and the brief allows 160 words and 60 s.",
+      "issues": [
+        {
+          "line": 0,
+          "problem": "The whole script is too long, and the draft's own count is wrong. Its 'Cost' line says about 150 words and 63 to 65 s. The real count of lines 1 to 24 is 173 spoken words, leaving out the cue slot and the Thai sign-off. Using the pace from Flag 23 (145 words took 58.8 s, with the cue counted as 1.8 s), that is about 70 s, or about 66 s at a brisk pace. The brief allows 110 to 160 words and 45 to 60 s. The medium/short rhythm he asked for added about 28 words over v2.",
+          "fix_spoken": "These trims change no fact. (a) Cut line 22 'Named after that silent teacher.' (-5 words). Its card already gives the name link, and the cue then comes straight after the asana line, as the brief asks. (b) Line 20 becomes: 'Mysore room same... nobody call the asana.' (-4 words; this now matches its card). (c) Line 16 becomes: 'Years later he come back as a golden deer... another story.' (-2 words). That gives 162 words, about 65.5 s. Getting under 60 s means cutting one more story beat. That is Boonchu's call, because it trades against the rhythm he asked for. The cut with the least loss of fact is line 17 'That day, ceremony finish.' (-4 words, about 63.9 s). If it goes, put CEREMONY FINISHED as small text on the line 18 card. Line 7 already says the vow lasts 'until the ceremony is done', so line 18 still makes sense.",
+          "fix_screen": "Only if line 22 is cut, line 21's card becomes: VISHVAMITRASANA · ADVANCED A | small: NAMED AFTER THE SAGE VISHVAMITRA. Only if line 17 is cut, line 18's card becomes: THE TEACHER SPEAKS AGAIN | small: CEREMONY FINISHED · BALA KANDA 30 · VERSE 25."
+        }
+      ],
+      "est_seconds": 70,
+      "words": 173,
+      "notes": "I checked against the Rao word-by-word file for Bala 30 (live_balasans30.htm, verses 1 to 26, read in full) and Griffith Canto XXXII (pg24869.txt lines 4845 to 4948).\n\nLINE 3, 'priests chanting around the fire': supported.\n- Rao 1.30.8: 'brightening the chief officiator of the ritual, namely Vishvamitra, and other priests around it.'\n- Rao 1.30.9: 'around which Vishvamitra and the conductors of ritual are sitting.'\n- Rao 1.30.10: mantravat, 'according to hymnal rendering'.\n- Griffith: 'Round priest and deacon...' and 'With sacred texts began anew.'\n- The line has the priests chanting, not the teacher, so it does not clash with his silence. Keep it that way: never 'the teacher chanting'.\n\nLINE 5, 'the boys walk around the fire, bows ready... six nights, no sleep': supported.\n- Rao 1.30.6: 'alertly patrolling nearby the Altar of Fire', 'wielders of great bows' (gloss 'nearby they moved - patrolled').\n- Rao 1.30.5: 'wakefully safeguarded ... for six nights and days' (anidrau = without sleep).\n- Griffith: 'disdaining sleep, / Six days and nights their watch to keep.'\n- The checked translation supports moving about near the fire better than his 'sitting staring at fire'. 'Walk around' should be heard as 'move about near it', not as walking in a circle around the fire as part of the ritual.\n\nLINE 7, 'He promise... not one word until the ceremony is done': fair to the vow.\n- Rao 1.30.4: 'under the vow of ritual goes into muteness as required by the vow.'\n- Griffith: 'The saint his Dikshá has begun, / And all that time will speak to none.'\n- In Rao, the first time he speaks after the vow is 1.30.25, 'On the completion of ritual'.\n- In the book it is the other sages who tell the boys this. Line 7 is narration and does not say whom he spoke to or refused, so Flag 8 holds. The card A VOW OF SILENCE keeps the silence a vow and not coldness.\n\nLINE 9, 'Something wrong?': safe. It has no subject, it is a question and not a claim, and line 19 answers it ('Five quiet days... that was the practice'). It puts no thought in the boys' heads. In the book they are eager for the fight (1.30.3), not worried, so no line should say 'the boys worry'. Delivery tip, not required: start the lens look on line 9 rather than line 10, so the question is clearly his.\n\nLINE 18, 'finally... speak again': supported by 1.30.25. Vishvamitra says nothing between 1.30.4 and 1.30.25. The praise in 1.30.24 comes from the other sages.\n\nOTHER STORY LINES:\n- Line 4: 1.30.2, and the translator's note under 1.30.8 says 'to spoil the ritual'.\n- Line 11: 1.30.7.\n- Line 12: 1.30.10 to 11, and Griffith 'roar' and 'vast clouds'.\n- Line 14: 1.30.18.\n- Line 15: 1.30.20.\n- Line 16: 3.42.\n- Line 17: 1.30.25 to 26 (same day, near evening prayer time).\n\nOLD FLAGS, all pass:\n- No killing is said or shown.\n- ONE ARROW and 'Rama shoot one arrow' never say 'only'.\n- Maricha is not named in speech or on screen.\n- 'Years later' has no number.\n- The movie is small on-screen text only (line 2). Per Flag 13, check a Bangkok showtimes page again if the Reel goes up after about 25 Nov.\n- Vishvamitrasana · Advanced A is a name link only.\n- The word 'pose' does not appear; it is 'asana' everywhere.\n- Indian names only, no episode number, Thai sign-off kept.\n\nLine 22, 'that silent teacher': this is fine as a name link, because the only claim is 'named after', and 'silent' just points back to the teacher in this story. If it stays (it is cut in the length fix), 'Named after that teacher.' removes any hint that the asana is about silence. That is optional.\n\nCraft only, no fact problem:\n- Lines 3 and 5 both say 'around the fire' one after the other. 'So the boys guard the fire, bows ready...' keeps the fact (1.30.6, 'protected') and removes the echo.\n- Lines 3 and 5 are 13 words each, against the brief's limit of about 12."
+    },
+    {
+      "lens": "voice",
+      "verdict": "The voice, facts, one thread, fork, cue slot, close and Thai sign-off all pass, and the fire and chanting ceremony is now explained clearly. But v3 runs about 74.8 s on 173 spoken words, not the \"about 150 words, 63 to 65 s\" the draft says. It needs the cut order below to come in at about 59.7 s.",
+      "issues": [
+        {
+          "line": 0,
+          "problem": "The draft's own time note is wrong. Spoken words are 173 (not about 150). By the set formula (story 2.6 w/s, adult lines 1, 2 and 19 to 24 at 2.8 w/s, 0.3 s per '...' (23 of them), 1.0 s fork, 1.8 s cue, 1.2 s Thai) it runs about 74.8 s. That is 14.8 s over 60 and over the brief's 160-word cap.",
+          "fix_spoken": "Change the note to say '173 spoken words, about 74.8 s'. Then apply the cut order in notes: step 1 trims take it to 68.3 s, step 2 to 60.8 s, step 3a to 59.7 s.",
+          "fix_screen": "none"
+        },
+        {
+          "line": 15,
+          "problem": "Even after every trim that loses no beat, it is still 68.3 s. Lines 15 and 16 (arrow did not take his life, golden deer, another story) are 7.5 s. They are the only block that serves neither the quiet-days point nor the ceremony. The brief lists them as fixed content, so this needs Boonchu's OK.",
+          "fix_spoken": "Cut lines 15 and 16 from the video (saves 7.5 s, 68.3 to 60.8 s). Move them to the long caption: 'That arrow did not take his life. Years later he comes back as a golden deer. Another story.' Keep Flag 10 (no Maricha name spoken or on screen; if the caption names him, add the Marichi note). If he wants to keep the deer, cut only line 15 and say 'Years later he turn into a golden deer... another story.' 'Turn into' stops 'come back as' being heard as rebirth once 'did not take his life' is gone. That version runs about 64.9 s, or 63.9 s with step 3a, so it stays over 60.",
+          "fix_screen": "Drop the line 15 and 16 cards (THAT ARROW DID NOT TAKE HIS LIFE, YEARS LATER... A GOLDEN DEER)."
+        },
+        {
+          "line": 9,
+          "problem": "'No monster. No word. Something wrong?' is said as three short stabs. So lines 8, 9 and 10 make three shorts in a row, and his medium/short switch breaks just before the fork. His own words in the note were 'some problem?', which sounds more like him than 'Something wrong?'.",
+          "fix_spoken": "No monster, no word... some problem?  (one breath, medium; +0.3 s)",
+          "fix_screen": "SOME PROBLEM?"
+        },
+        {
+          "line": 12,
+          "problem": "Lines 11 and 12 are both medium, back to back, at the climax. The switch stops right where the warmth and tension matter most.",
+          "fix_spoken": "Split line 12 into two lines. Short: 'Sky roar...' Then medium: 'Monsters come down like storm clouds.' (Dropping 'big' saves 0.4 s. The split costs no time.)",
+          "fix_screen": "SKY ROAR  /  MONSTERS COME DOWN"
+        },
+        {
+          "line": 22,
+          "problem": "Line 21 'Vishvamitrasana. Advanced A.' (3 words), line 22 'Named after that silent teacher.' (5 words) and the 5-word cue are three shorts in a row before the close.",
+          "fix_spoken": "Join 21 and 22 into one medium line before the short cue: 'Vishvamitrasana, Advanced A, named after that silent teacher.' (Commas, so no extra pause. No time change.)",
+          "fix_screen": "VISHVAMITRASANA · ADVANCED A · NAMED AFTER THE SAGE VISHVAMITRA (cut to him in the asana, real clip or class photo)"
+        },
+        {
+          "line": 3,
+          "problem": "'around the fire' is said in line 3 and again in line 5, and 'fire' comes three times in two lines. That sounds written, not spoken. At 13 words it is also over the 12-word line limit.",
+          "fix_spoken": "Their teacher doing a big fire ceremony... priests chanting.  (9 words, saves 1.5 s. The fire and chanting explanation he asked for stays; 'around the fire' now lives only in line 5.)",
+          "fix_screen": "A FIRE CEREMONY · PRIESTS CHANTING (unchanged)"
+        },
+        {
+          "line": 16,
+          "problem": "'but that's another story' is a stock narrator phrase, the copywriter register he rejected. At 13 words it is also over the limit. (This only matters if the line is kept, see line 15.)",
+          "fix_spoken": "Years later he come back... a golden deer. Another story.  (saves 1.2 s)",
+          "fix_screen": "YEARS LATER... A GOLDEN DEER | small: ANOTHER STORY · ARANYA KANDA 42 (unchanged)"
+        },
+        {
+          "line": 14,
+          "problem": "'fly far, far away' is fairy-tale English, close to the bedtime-story voice he said makes him scroll past.",
+          "fix_spoken": "One monster fly far... into the sea.  (saves 0.8 s; in step 3a, also drop the '...' for 0.3 s more)",
+          "fix_screen": "FAR INTO THE SEA (unchanged)"
+        },
+        {
+          "line": 7,
+          "problem": "The line is fine but can be tighter, and 'until the ceremony is done' does not echo the payoff line 'ceremony finish'.",
+          "fix_spoken": "He promise... not one word until ceremony finish.  (saves 0.8 s, and line 17 'That day, ceremony finish.' now pays the vow off by ear)",
+          "fix_screen": "VISHVAMITRA · THE TEACHER WHO WENT SILENT | small: A VOW OF SILENCE (unchanged)"
+        },
+        {
+          "line": 5,
+          "problem": "At 13 words it is the longest story line. 'So the' is filler.",
+          "fix_spoken": "Boys walk around the fire, bows ready... six nights, no sleep.  (saves 0.8 s; he drops the article himself, as in '2 boys wait for monsters')",
+          "fix_screen": "SIX NIGHTS. NO SLEEP. | small: RAMA · AND HIS BROTHER LAKSHMANA (unchanged)"
+        },
+        {
+          "line": 20,
+          "problem": "'is the same' is textbook English. His own form, used in earlier drafts, is 'Mysore room same'.",
+          "fix_spoken": "Mysore room same... nobody call the asana for you.  (saves 0.7 s; keep 'for you', it is the warm part)",
+          "fix_screen": "MYSORE ROOM SAME. NOBODY CALL THE ASANA (unchanged)"
+        },
+        {
+          "line": 11,
+          "problem": "This is a small trim for time only. 'say to his brother' can be shorter.",
+          "fix_spoken": "Day six, Rama tell his brother... be ready.  (saves 0.4 s)",
+          "fix_screen": "DAY 6 · BE READY (unchanged)"
+        },
+        {
+          "line": 18,
+          "problem": "Two pauses in six words ('And the teacher... finally... speak again.'). One is enough for the warmth.",
+          "fix_spoken": "And the teacher... finally speak again.  (saves 0.3 s)",
+          "fix_screen": "THE TEACHER SPEAKS AGAIN | small: BALA KANDA 30 · VERSE 25 (unchanged)"
+        },
+        {
+          "line": 24,
+          "problem": "After steps 1 and 2 it is still 60.8 s, so it needs about 1 s more. Step 3a gets that from three tiny trims and keeps line 17 as the short line between two mediums.",
+          "fix_spoken": "Step 3a: 'Tomorrow, nothing happen again... you still there?' (drop 'maybe', 0.4 s). Also drop 'a' in line 3 (0.4 s) and the '...' in line 14 (0.3 s). That gives 59.7 s. Or step 3b: keep 'maybe' and cut line 17 'That day, ceremony finish.' (1.5 s, 59.2 s). Line 7's 'until ceremony finish' plus line 18 then carry it, but lines 15 and 18 become medium after medium.",
+          "fix_screen": "Step 3b only: line 18 card becomes CEREMONY FINISHED · THE TEACHER SPEAKS AGAIN"
+        }
+      ],
+      "est_seconds": 74.8,
+      "words": 173,
+      "notes": "TIME (the set formula, script at /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/rv/time3.py; each step's JSON is in the same folder):\n- v3 as written: 173 spoken words, 23 '...' pauses, 74.8 s.\n- Step 1, trims, no beat lost: 156 words, 68.3 s (-6.5 s). Savings by line: 3 (-1.5), 16 (-1.2), 5 (-0.8), 7 (-0.8), 14 (-0.8), 20 (-0.7), 11 (-0.4), 12 'big' (-0.4), 18 one pause (-0.3), 9 rhythm fix (+0.3). The line 12 split and the 21+22 join cost no time.\n- Step 2, lines 15 and 16 to the caption: 138 words, 60.8 s (-7.5 s). Needs his OK, because the brief lists them as fixed content.\n- Step 3a: drop 'a' in line 3, the '...' in line 14 and 'maybe' in line 24: 136 words, 59.7 s (-1.0 s). Recommended, because it keeps the switch.\n- Step 3b, in place of 3a: cut line 17 instead: 134 words, 59.2 s.\n- If he keeps the deer (cut only line 15, line 16 becomes 'turn into a golden deer'): 64.9 s, or 63.9 s with 3a. Keeping the deer means about 64 s.\n- A shorter cue gives time back, since 1.8 s is counted for it.\n\nRECOMMENDED SPOKEN SCRIPT (steps 1+2+3a, about 59.7 s, fork at 26.8 s; M = medium, S = short):\n1 M If you practice today and nothing happened... yet...\n2 M There's an old story of two boys wait for monsters... five days...\n3 M Their teacher doing big fire ceremony... priests chanting.\n4 S Monsters want to spoil it.\n5 M Boys walk around the fire, bows ready... six nights, no sleep.\n6 S And the teacher?\n7 M He promise... not one word until ceremony finish.\n8 S Day five... nothing.\n9 M No monster, no word... some problem?\n10 S What you do?... Sleep? (look in lens, 1 s stop)\n11 M Day six, Rama tell his brother... be ready.\n12 S Sky roar...\n13 M Monsters come down like storm clouds.\n14 S Rama shoot one arrow.\n15 M One monster fly far into the sea.\n16 S That day, ceremony finish.\n17 M And the teacher... finally speak again.\n18 S Five quiet days... that was the practice.\n19 M Mysore room same... nobody call the asana for you.\n20 M Vishvamitrasana, Advanced A, named after that silent teacher.\n21 S [BOONCHU'S OWN CUE: 5 words or less]\n22 M Tomorrow, nothing happen again... you still there?\n23 S แล้วเจอกันครับ\nThe only medium-after-medium pairs left are his own lines 1 and 2 and lines 19 and 20. The cut to him in the asana breaks up 19 and 20.\n\nVOICE: No colons, semicolons or dashes in any spoken line (checked by script). No banned words. Ten-year-old words throughout. Lines 1 and 2 are his model lines and stay untouched. The off-register phrases ('far, far away', 'but that's another story', 'is the same', 'Something wrong?') are fixed above. One thread holds: adults in 1 and 2, the story straight through 3 to 18, adults again from 19. The 'Some problem?' and 'What you do? Sleep?' questions to the viewer sit inside the story as the fork.\n\nFACTS (checked against Rao Bala 30 in live_balasans30.htm and Griffith lines 4845 to 4948):\n- 'priests chanting around the fire': 1.30.9 (Vishvamitra and the conductors of the ritual are sitting around the altar), 1.30.10 ('according to hymnal rendering', mantravat) and Griffith ('Round priest and deacon... With sacred texts began anew').\n- 'walk around the fire, bows ready': 1.30.6 ('patrolled close to the Altar of Fire', 'great bow wielders'). 'Near' is the exact reading; 'around' is a fair telling.\n- Vow until the ceremony is done: 1.30.4 (muteness as required by the vow); he speaks at 1.30.25 on completion.\n- 'Day five... nothing' and 'some problem?' are his telling and a question to the viewer, not quotes (Flag 7). No 'ignored' or 'refused' (Flag 8).\n- No new fact risk. No Maricha name, no killing, no 'only one arrow'.\n\nOTHER:\n- By this formula, the hook (line 1) ends at 3.5 s and the double hook (line 2) at 8.3 s. That is later than the brief's ~3 s and ~6 s, but they are his lines. Add nothing before line 3.\n- The teacher's name is no longer spoken, so the asana link by ear rests on 'named after that silent teacher' plus the line 7 card. Adding 'And teacher Vishvamitra?' in line 6 would cost 0.4 s; not advised now.\n- Flag 13: recheck the movie text if posted after about 25 Nov."
+    }
+  ],
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Check"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "check:rhythm",
+      "phaseIndex": 1,
+      "phaseTitle": "Check",
+      "agentId": "aace5e8b4a70a88c9",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1794497987919,
+      "queuedAt": 1794497987899,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Not ready. The switch breaks in four places: lines 1-3 are …",
+      "promptPreview": "Read fully: /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk9/RAM1/v3_draft.md (the owner's notes verbatim and the v3 script), /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk9/RAM1/brief_v2.md (rules), /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk9/RAM1/facts_and_flags.…",
+      "promptFramed": true,
+      "lastProgressAt": 1794498649507,
+      "tokens": 163250,
+      "toolCalls": 12,
+      "durationMs": 661587,
+      "resultPreview": "{\"verdict\":\"Not ready. The switch breaks in four places: lines 1-3 are three mediums in a row, and line 3 is where I would scroll. Lines 8-10 and 17-19 are strings of 2-word bits labelled M. Lines 21-23 are three shorts. Line 3 makes \\\"ceremony\\\" clear only through a 13-word line that just reports. v3 is 173 words and about 73 s, not the 150 words and 63-65 s it says.\",\"issues\":[{\"line\":3,\"problem…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "check:facts",
+      "phaseIndex": 1,
+      "phaseTitle": "Check",
+      "agentId": "a1ab580ea9e9eb813",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1794497987920,
+      "queuedAt": 1794497987899,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Facts and safety pass. Rao's Bala 30 and Griffith support e…",
+      "promptPreview": "Read fully: /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk9/RAM1/v3_draft.md (the owner's notes verbatim and the v3 script), /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk9/RAM1/brief_v2.md (rules), /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk9/RAM1/facts_and_flags.…",
+      "promptFramed": true,
+      "lastProgressAt": 1794498206065,
+      "tokens": 112260,
+      "toolCalls": 7,
+      "durationMs": 215773,
+      "resultPreview": "{\"verdict\":\"Facts and safety pass. Rao's Bala 30 and Griffith support every story line in v3, and no flag is broken. The one problem is length: the script is 173 spoken words, about 70 s. The draft says about 150 words and 63 to 65 s, and the brief allows 160 words and 60 s.\",\"issues\":[{\"line\":0,\"problem\":\"The whole script is too long, and the draft's own count is wrong. Its 'Cost' line says about…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "check:voice",
+      "phaseIndex": 1,
+      "phaseTitle": "Check",
+      "agentId": "a1924ee573d2e709c",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1794498206070,
+      "queuedAt": 1794497987899,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "The voice, facts, one thread, fork, cue slot, close and Tha…",
+      "promptPreview": "Read fully: /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk9/RAM1/v3_draft.md (the owner's notes verbatim and the v3 script), /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk9/RAM1/brief_v2.md (rules), /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk9/RAM1/facts_and_flags.…",
+      "promptFramed": true,
+      "lastProgressAt": 1794498688317,
+      "tokens": 150780,
+      "toolCalls": 16,
+      "durationMs": 482246,
+      "resultPreview": "{\"verdict\":\"The voice, facts, one thread, fork, cue slot, close and Thai sign-off all pass, and the fire and chanting ceremony is now explained clearly. But v3 runs about 74.8 s on 173 spoken words, not the \\\"about 150 words, 63 to 65 s\\\" the draft says. It needs the cut order below to come in at about 59.7 s.\",\"issues\":[{\"line\":0,\"problem\":\"The draft's own time note is wrong. Spoken words are 173…"
+    }
+  ],
+  "totalTokens": 426290,
+  "totalToolCalls": 35
+}
