@@ -1,29 +1,31 @@
 [
  {
-  "photo": "12-145",
+  "photo": "12-044",
   "id": "FA1",
   "word": "SPLITS",
   "line": "You think flexible means doing the SPLITS. In this study of 13,423 older adults, the stiffest were linked with a higher risk of dying. Beyond a medium range? No extra survival benefit.",
   "credit": "JAMA NETWORK OPEN · 2026 (retold)",
-  "t": 0,
+  "t": 210,
   "tight": false,
   "wwidth": 540,
   "wpos": [
-   316,
-   441
+   60,
+   172
   ],
   "ink_w": "light",
-  "sz": 42,
+  "sz": 40,
   "cws": [
-   607
+   353
   ],
   "sxy": [
-   60,
+   667,
    60
   ],
   "ink_s": "light",
-  "sburn": 0.3,
-  "wburn": 0.1,
-  "wm": "right"
+  "shadow": 1.4,
+  "sburn": 0.35,
+  "wburn": 0.3,
+  "wm": "orig",
+  "line_br": "You think flexible | means doing | the SPLITS. | In this study | of 13,423 older | adults, the stiffest | were linked with | a higher risk | of dying. Beyond | a medium range? | No extra | survival | benefit."
  }
 ]
