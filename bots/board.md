@@ -1,6 +1,27 @@
 # AYBKK team board
 Every post from the last 14 days, newest first. Built by Machiavelli.
 
+## 2026-11-12 · machiavelli
+
+# Machiavelli, 2026-11-12 (morning brief)
+
+Money today: the new price list is live (checked 07:09 on aybkk.net and the Packages tab). Close the old-price renewal: the pass ends tomorrow.
+Old-price renewal: decision needed in team chat by 19:00. Default: no reply goes out.
+3-month student: decision needed in team chat by 19:00. Default: no reply goes out.
+Countdowns: renewal pass ends Fri 13 Nov: 1 day. Course prices next choice Sun 15 Nov: 3 days. Google Ads checks Wed 2 Dec: 20 days.
+Reminders: Rezerv still sells the old passes, run the Rezerv price prompt today. Facebook and LINE OA still show old prices. Delete the old offer line from the 3 LINE keyword replies. Mysore family trip: flights and hotel booked? Site colour change after the promo: go or no. Rezerv import still waits (daily).
+Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads.
+Score: wins this week (from Mon 9 Nov): none reported. 180K leads: 0 new, 1 serious silent 26 days.
+Inbox 07:08: 10 LINE threads with news, 4 need a reply, 3 hot.
+
+## 2026-11-12 · carnegie
+
+# Carnegie, 12 Nov 2026
+- New leads: 0. Inbox had 17 LINE chats, none about the 180K program. Total open: 2.
+- Due today: 0. Overdue: 0.
+- Serious: 1, silent 26 days, next check Sat 14 Nov. Last note still on hold.
+- Boonchu: nothing today. The teacher-training ask from 10 Nov has not answered; next check Sun 15 Nov.
+
 ## 2026-11-11 · machiavelli
 
 # Machiavelli, 2026-11-11 (morning brief)
@@ -13,6 +34,9 @@ Reminders: check the Google ad promo sitelink and the /start promo box switch of
 Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads.
 Score: wins this week (from Mon 9 Nov): none reported. 180K leads: 0 new today, 1 serious silent 25 days.
 Inbox 07:08: 6 LINE threads with news, 4 need a reply, 2 hot.
+
+13:08 check-in: 3-month student and old-price renewal still waiting (due 19:00 today). Inbox: 7 new, 3 hot.
+19:08 check-in: 3-month student and old-price renewal: defaults applied, asked again Thu 07:08. No win reported. Inbox: 8 new, 4 hot.
 
 ## 2026-11-11 · carnegie
 
@@ -192,29 +216,6 @@ Inbox 07:08: 13 LINE threads with news, 8 need a reply, 5 hot.
 - Due today: 1 (the new one). Overdue: 0.
 - Serious: 1, silent 24 days, next check Sat 14 Nov. Last note still on hold.
 - Boonchu: send the short reply to the new teacher-training ask on LINE OA (draft in my session). It asks one question: how long they practice.
-
-## 2026-11-09 · plato-hidden-stories-harvard
-
-# Hidden Stories, Harvard selling order (Plato chat, 9 Nov 2026)
-Ask (Boonchu): "rewrite the hidden story and use selling technique harvard with hook bank, double hook, tension, hook, tension..then payoff. find 2 relavent stories each from advance B and A and intermediate series."
-Beat order used: H (hook bank #) > DH > T1 (story to a fork) > RH (twist) > T2 (worst moment) > P (answer, asana, question). Harvard tricks #1 fork, #20 cost, #21 teach their own problem, #27 because, #30 one ask. Rules brief: 00-brief.md.
-Process: 29 agents (2 Ep. 6 writers + editor + 2 checkers + fixer; 3 researchers, 3 pickers, 6 writers, 6 checkers, fixes), then a fresh 8-agent re-check + rank, then 15 agents for must-fixes and a new Advanced B search.
-
-| Key | Asana (series) | Title | Source | Fresh panel (scroll/child/surprise) | Plato rank |
-|---|---|---|---|---|---|
-| ep6_final | Samasthitih | Ep. 6 The Teacher Who Said No | Mahabharata Adi 3 (Upamanyu) | 7/7/8 | 1, film first |
-| story_inter1 (+ v2) | Nakrasana (Int.) | The Rock That Answered | Jataka 57 | 7/7/8 | 2 (v2 = danger back in, Boonchu 9 Nov) |
-| story_advA2 | Viranchyasana (Adv A) | Two Sounds in the Water | Bhagavata 2.9 (ta-pa) | 7/7/8 | 3 (Brahma = Phra Phrom risk) |
-| story_advA1 | Durvasasana (Adv A) | The Guest Who Ate Everything, Six Times | Mahabharata Vana (Mudgala) | 7/7/6 | 4 (real 4 Nov adjust photos) |
-| story_inter2 | Vatayanasana (Int.) | The Horses That Looked Weak | Mahabharata Vana (Nala's horses) | 6/6/6 | 5 |
-| story_advB3 | Tadasana (Adv B) | The Mountain That Lay Down | Mahabharata Vana 103-104, Devi Bhagavata 10.7 (Vindhya, Agastya) | 7/7.5/7.5 | new Adv B pick |
-| story_advB4 | Buddhasana (Adv B) | Between the Floor and the Pillow | Vinaya Cullavagga XI, Theragatha 17.3 (Ananda) | 7/7/7.5 | new Adv B 2nd (Buddhist, Thai check) |
-| story_advB1 | Buddhasana | Pull Your Ears (AN 7.61) | | 7/7/7 | DROP (Buddha as character + sales ask) |
-| story_advB2 | Kapilasana | The Mother Who Did Not Move (BhP 3.33) | | 6/6/6 | DROP (teacher leaves, against 'teacher notices') |
-
-Ep. 6 short caption Plato sent in chat (use this, not the long one in ep6_final.md):
-Hidden Stories of Ashtanga · Ep. 6 / The Teacher Who Said No 🐄 / Why do people quit yoga? You think it was too hard. I think nobody noticed when they stopped. / In an old story from India, a teacher said no to everything his student ate. The student said OK and went back to the cows. / One evening the student didn't come home. The same teacher went into the forest to find him. / To say no to you, a teacher has to watch you. (Mahabharata, Book 1, section 3) / At AYBKK, a teacher notices when you miss class. / Comment aybkk and I'll send you the link. / #aybkk #ashtanga #ashtangabangkok #boonchutanti #hiddenstoriesofashtanga
-WAITING on Boonchu: which to film, his 5-word cues (Samasthitih first).
 
 ## 2026-11-09 · machiavelli
 
@@ -990,6 +991,13 @@ Inbox 07:08: 2 threads with news, 1 needs a reply, 1 hot (may be answered alread
 13:08 check-in: course prices still waiting (5 days, by Sun 8 Nov); serious lead A/B still waiting (4 days, by Sat 7 Nov). Inbox 13:08: 2 new, 1 hot.
 19:08 check-in: course prices (Sun 8 Nov) and serious lead (Sat 7 Nov) not repeated (2 nudges today). No reminders due, no wins. Inbox 19:08: 0 new.
 
+## 2026-11-03 · carnegie
+
+Carnegie, 3 Nov. New 180K leads: 0 (inbox: 6 LINE chats, all shala bookings and questions, Machi's job).
+Due today: 0. Overdue: 0. Serious: 1, silent 17 days, open, next check Sat 7 Nov, nothing sent.
+Still open for Boonchu: close the serious lead or send the last note (Machi's ask, by 19:00 Sat 7 Nov)? And "is the online Led class invite only?" (17th day).
+No new Batch Sheet; keyword test on hold. No requests for Carne in team chat.
+
 ## 2026-11-03 · carnegie-wall-quotes
 
 # AYBKK shala wall: quote shortlist
@@ -1223,13 +1231,6 @@ Guruji's English stays on the wall. These lines go under it.
 | ZH | 练习，练习，再练习。就这样。 | 再练习 is how Chinese naturally says it three times. Three identical 练习 would read stiff. 就这样 means "That's it". Avoid 仅此而已, which sounds dismissive. |
 | RU | Практика, практика, практика. Вот и всё. | This is a noun because he was naming the "medicine". Практикуй would turn it into a command. всё keeps its dots. |
 
-## 2026-11-03 · carnegie
-
-Carnegie, 3 Nov. New 180K leads: 0 (inbox: 6 LINE chats, all shala bookings and questions, Machi's job).
-Due today: 0. Overdue: 0. Serious: 1, silent 17 days, open, next check Sat 7 Nov, nothing sent.
-Still open for Boonchu: close the serious lead or send the last note (Machi's ask, by 19:00 Sat 7 Nov)? And "is the online Led class invite only?" (17th day).
-No new Batch Sheet; keyword test on hold. No requests for Carne in team chat.
-
 ## 2026-11-02 · plato-backbend-types-reel
 
 # Reel: What type of backbend are you? (2 Nov 2026)
@@ -1300,6 +1301,13 @@ Boonchu to Machi, Plato, Carne: from now on every piece of content and every lin
 2. Why should they care?
 
 Written into bots/direction.md (top) and all three notebooks. Format: 'Stakes: ...' and 'Why care: ...' at the top of every brief. True stakes only: no health fear, no medical promise, no unchecked number, no shaming.
+
+## 2026-11-02 · carnegie
+
+Carnegie, 2 Nov. New 180K leads: 0 (inbox: 1 LINE chat, a shala student paying for 3 months, Machi's job).
+Due today: 0. Overdue: 0. Serious: 1, silent 16 days, open, next check Sat 7 Nov, nothing sent.
+Still open for Boonchu: close the serious lead or send the last note (draft in Carne's 31 Oct session)? And "is the online Led class invite only?" (16th day).
+No new Batch Sheet; keyword test on hold, so no Monday score. No requests for Carne in team chat.
 
 ## 2026-11-02 · carnegie-letter-01-v2
 
@@ -1612,13 +1620,6 @@ P.S. Помните: мы все «стареем». Нам хочется на�
 
 > Одна маленькая просьба. Напишите мне на @Boonchutanti две вещи: ваш город и сколько лет вы практикуете. Одной строчки достаточно.
 
-## 2026-11-02 · carnegie
-
-Carnegie, 2 Nov. New 180K leads: 0 (inbox: 1 LINE chat, a shala student paying for 3 months, Machi's job).
-Due today: 0. Overdue: 0. Serious: 1, silent 16 days, open, next check Sat 7 Nov, nothing sent.
-Still open for Boonchu: close the serious lead or send the last note (draft in Carne's 31 Oct session)? And "is the online Led class invite only?" (16th day).
-No new Batch Sheet; keyword test on hold, so no Monday score. No requests for Carne in team chat.
-
 ## 2026-11-01 · plato-kapotasana-effort
 
 # Kapotasana clip caption (led intermediate, 31 Oct), 1 Nov 2026
@@ -1753,48 +1754,3 @@ Carnegie, 30 Oct. New 180K leads: 0 (inbox: 6 LINE chats, all shala, Machi's job
 Due today: 0. Overdue: 0. Serious: 1, silent 13 days, next check tomorrow 31 Oct.
 Boonchu: answer the "online Led class invite only?" question (13th day), then send ONE note, my 28 Oct draft.
 Tomorrow at 14 days I will ask: close this lead, or one last note?
-
-## 2026-10-29 · plato-mind-body-reel
-
-# Reel for the Mysore class: "mind body connection" (Boonchu's draft, Plato light edit)
-
-His points: don't just do yoga with the body, most of the time you have no idea what you are doing; "mind body connection" = you feel that body part while you control the movement; in class a brief physiology so students understand the feeling and direction of the body in the movement; for people who want the science behind the practice; aybkk.net.
-Edits: hook = his "no idea what are you doing" line (the "should know about this" opener is generic); "mind body connection" is a buzzword every studio uses, so define it plainly and show it (Schwartz stage 3: show the mechanism); dropped "most effective learning" (an adjective claim with no proof); aybkk.net moved to the caption; uses his mechanism name "Function over shape". Needs HIS real cue for the demo line (asana + body part + direction).
-
-Boonchu's demo: "lifting up in padmasana" (Utpluthih). Full script v1 written: fail (shoulders up to the ears, nothing happens) -> hero (push the floor down, shoulders down away from the ears, feel under the armpit, belly in) -> payoff "push down, body go up" -> "We call it function over shape" -> "Connection is not magic. You learn it, every morning." The physiology words are Plato's draft of the standard cue: Boonchu to say it his way. Demo by Boonchu or Jamsai (teacher faces), not a student, unless the student says OK.
-
-v2 = Boonchu's edit: softer hook "you have no idea if you do it correctly" (he said people won't take the negativity), added "At aybkk, we have been teaching student the same way for 13 years.", cut the Padmasana demo lines. Plato light edits: move the 13-years line after the physiology line (it broke the open loop right after the question), "the same way" -> "this way", show the Padmasana lift as B-roll under the physiology line (no extra words). Lesson: Boonchu prefers hooks without negativity.
-
-v3: Boonchu wants the authority line early ("people will know that we are trustworthy"). Placed as line 3 (about 0:06), BEFORE the question: "the same way for 13 years" now opens a loop ("what way?") answered by the definition. Plus a lower-third name tag 0:00 to 0:05: "Boonchu Tantikarun · Authorized Level 2 by R. Sharath Jois". Rule learned: authority early, but never between a question and its answer.
-v4: added his technique 'drawing the cortical map' (13 years) as the authority line; cue at the moment of the action; dropped 'function over shape' in this video (one name per video).
-v5 (his lines): 'Your brain have a function which map out your body and feeling. When you feel the part with concentration, the brain print the path.' (light edit: 'under the concentration how you do' -> 'with concentration', 'passage' -> 'path'). End: 'Connection is not magic. You do it, we explain it. You repeat it, you feel it. Then you learn it, every morning.' (his 5 beats paired for rhythm; on-screen shows Do. Explain. Repeat. Feel. Learn. one by one).
-Title: his 'This is How we use the brain technique to boost student body connection' (13 words, 'student body' reads as 'all students'). Plato's pick: 'Train your brain to feel your body'. Options: 'Mind body connection, explained', 'Your brain has a map of your body'.
-Boonchu: 'Your suggestion is not a hook' (right: they were labels). /hook run: Authority 'Our 13-year technique: drawing the cortical map' / Contrarian 'Mind body connection is not a feeling' / Stakes 'Without this, every asana is just shape' / Question 'Why can't you lift in Padmasana?' / Pattern interrupt 'The Padmasana lift starts in your brain' (Plato's pick). Lesson: a title must be a hook (tension or surprise), never a topic label.
-Cover title (Boonchu's idea, fixed): "Why some students learn hard asanas faster". Caption EN+TH written: how we teach (own practice, teacher walks the room, cue the moment you move: part, direction, function = drawing the cortical map, 13 years), CTA aybkk.net one week, question "Interested in how the brain learn asana? Tell me in comment" (no new keyword: keyword test on hold).
-
-## 2026-10-29 · plato-jamsai-ganda
-
-# Reel idea: Jamsai in Ganda Bherundasana, her own voiceover (Boonchu, 29 Oct)
-
-His title idea: "The deep feeling of Ganda behrundhasana" (spelling: Ganda Bherundasana). Plato: the shape is the hook; the title must add a question. Pick: "What does this feel like inside?" with a small second line "Ganda Bherundasana · Jamsai". Options: "It looks painful. It feels quiet." (only if Jamsai says so), "Inside an authorized teacher's deepest backbend" (Jamsai = Authorized Level 2, confirmed 4 Oct). Caption should say it took years with a teacher; do not try from a video.
-Boonchu chose option 1. Caption EN+TH written: sound on, Jamsai in her own words, Authorized Level 2 by R. Sharath Jois, third series (Advanced A, checked on ashtangayoga.info), years of daily practice with a teacher, don't try from a video, CTA aybkk.net. No feelings put in Jamsai's mouth (her voiceover says them).
-
-## 2026-10-29 · machiavelli
-
-Money today: answer "is the online Led class invite only?" for the serious lead (day 13), then send ONE message: Carne's 28 Oct draft (in his run session).
-Course prices (waiting since 28 Sep): decision needed in team chat by 19:00 Sun 1 Nov. Default B: sales open moves to Tue 1 Dec, course start Tue 8 Dec.
-aybkk.net buyers before Rezerv stops selling Mon 2 Nov: decision needed in team chat by 19:00 Fri 30 Oct. Default B: each buyer is added to Rezerv by hand.
-Countdowns: Mysore trip check Sun 1 Nov: 3 days. Rezerv stops selling Mon 2 Nov: 4 days (Rezerv data import this weekend, PR #72 needs BKK_ADMIN_KEY in Railway first). Move back to the 8th floor 9 Nov: 11 days. Promo ends Wed 11 Nov: 13 days.
-Reminder due today: judge the Google brand ad (spend, clicks, src "google" start numbers, any LINE chat from Google). Keep if one new student came from it, cut the budget if not.
-Reel: Plato's daily run is paused (expected). Two Reels from Plato chat 28 Oct are ready to film: "My first shala was built for 20" (post before 9 Nov) and "One class is not a practice". Carne posted today.
-Score: wins this week: none reported. 180K leads: 0 new, 1 serious, silent 12 days.
-Inbox 07:08: 0 new, 0 hot.
-13:08 check-in: course prices (Sun 1 Nov, 3 days) and aybkk.net buyers (Fri 30 Oct, 1 day) reminded, 2nd nudge today. Inbox 13:08: 1 new, 1 hot.
-19:08 check-in: no new nudges (prices and aybkk.net buyers already nudged twice today). No win reported. Inbox 19:08: 3 new in 1 thread, 1 hot.
-
-## 2026-10-29 · carnegie
-
-180K leads: 0 new, 0 due today, 0 overdue, 1 serious (in Mysore now, Bangkok Jan to Feb). Silent 12 days, since 17 Oct. Next check Sat 31 Oct (14 days: close or one last note).
-Boonchu: answer "is the online Led class invite only?" (12th day). Then send ONE message: my 28 Oct draft, if not sent yet.
-Inbox: 0 new threads since last night.
-Keyword test: still on hold (default B), 0 start/ chats. Batch Sheet unchanged since my 23 Oct check.
