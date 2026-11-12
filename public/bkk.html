@@ -27,6 +27,10 @@
   @font-face{font-family:'Plex';src:url('/fonts/worksans.woff2') format('woff2');font-weight:100 900;font-display:swap}
   @font-face{font-family:'Plex';src:url('/fonts/plexthai-th.woff2') format('woff2');font-weight:100 900;
     unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
+  /* The price poster's Thai (the Packages tab only): the same one-weight file under a second name, declared
+     as weight 400, so the browser thickens Thai letters and the baht sign where the poster is heavy. */
+  @font-face{font-family:'PlexTH';src:url('/fonts/plexthai-th.woff2') format('woff2');font-weight:400;
+    unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC;font-display:swap}
   /* Cormorant has one job now: the words of the monthly quote. */
   @font-face{font-family:'Cormorant';src:url('/fonts/cormorant.woff2') format('woff2');font-weight:300 700;font-display:swap}
   :root{
@@ -532,8 +536,7 @@
   :lang(th) .sec::after,:lang(th) .habsub,:lang(th) .hab b,:lang(th) .hab .hn,:lang(th) .vs thead th,:lang(th) .teacher .auth,
   :lang(th) .plan h3,:lang(th) .mnotes h3,:lang(th) .rows .pn > span,:lang(th) .fair,:lang(th) .tee h3,:lang(th) .tee .tp,
   :lang(th) .nlq,:lang(th) #find .addr,:lang(th) #find h3,:lang(th) .btn,:lang(th) .readmore,:lang(th) nav.tabs button,
-  :lang(th) .day,:lang(th) .pkg h3,:lang(th) dialog h3,:lang(th) .phh,:lang(th) .phday > summary b,
-  :lang(th) .pp-lab h4,:lang(th) .pp-fold,:lang(th) .pp-hl,:lang(th) .pp-nm h5,:lang(th) .pp-tag,:lang(th) .pp-pol b{font-weight:500;font-synthesis:none}
+  :lang(th) .day,:lang(th) .pkg h3,:lang(th) dialog h3,:lang(th) .phh,:lang(th) .phday > summary b{font-weight:500;font-synthesis:none}
 
   /* ── Motion: each section's rule wipes in from the left, once. */
   @media (prefers-reduced-motion:no-preference){
@@ -771,15 +774,18 @@
      member notes, on a fixed Louvre red field like the hero. It bleeds out of main's padding to the screen
      edge; a percentage here counts main's content box, 7 of the page's columns from 700px (6 from 900 to 1099). */
   .pp{--soft:#f3e4d9;--line:rgba(251,244,232,.26);--ring:var(--hero-ink);margin:-28px calc(-1*var(--m)) calc(var(--gap)/-2);
-    padding:42px var(--m) 56px;background:var(--header);color:var(--hero-ink)}
+    padding:42px var(--m) 56px;background:var(--header);color:var(--hero-ink);
+    --f-text:'PlexTH','Plex',-apple-system,'Helvetica Neue',Arial,'PingFang SC','Microsoft YaHei',sans-serif;font-family:var(--f-text)}
   .pp-head h3{margin:0;font:800 clamp(40px,12.5vw,84px)/.94 var(--f-head);letter-spacing:-.04em}
   .pp-head p{margin:14px 0 0;font-size:var(--fs-l);line-height:1.3;color:var(--soft);text-wrap:balance}
+  /* The poster's small text is 600, set bolder for older students (Boonchu, 11 Nov 2026). */
+  .pp-lab p,.pp-nm p,.pp-pr span,.pp-tot,.pp-vat,.pp-pol,.pp .note{font-weight:600}
   .pp-sec{margin-top:28px;padding-top:14px;border-top:2px solid var(--hero-ink)}
   .pp-lab h4,.pp-fold{display:flex;margin:0;flex-wrap:wrap;align-items:baseline;gap:0 12px;font:800 var(--fs-b)/1.25 var(--f-text);letter-spacing:.02em}
   .pp-lab .n{font-size:var(--fs-l);font-weight:800;line-height:1.1;letter-spacing:-.03em;color:var(--promo-hi)}
   .pp-lab p{margin:6px 0 0;font-size:var(--fs-s);line-height:1.4;color:var(--soft);text-wrap:balance}
   .pp-hl{width:fit-content;margin:14px 0 0;padding:8px 14px;background:var(--promo);color:var(--aub);
-    font:800 var(--fs-b)/1.3 var(--f-text);letter-spacing:-.01em}
+    font:800 var(--fs-b)/1.3 var(--f-text);letter-spacing:-.01em;text-wrap:balance}
   .pp-tot span,.pp .ph{display:inline-block}
   .pp-rows{list-style:none;margin:0;padding:0}
   /* Three tracks, so on a phone the name sits beside the price and the online total beside its Buy button. */
@@ -796,26 +802,47 @@
   .pp-pr small{margin-left:6px;font:700 var(--fs-s)/1 var(--f-text);letter-spacing:.02em;color:var(--promo-hi)}
   .pp-pr span{display:block;margin-top:4px;font-size:var(--fs-s);line-height:1.4;color:var(--soft)}
   .pp-tot{grid-area:tot;margin:0;font-size:var(--fs-s);line-height:1.4;color:var(--soft)}
-  .pp-tot b{font-weight:700;color:var(--hero-ink)}
-  .pp-row .btn{grid-area:buy;justify-self:end;min-width:96px}
-  .pp-row.pick{margin-inline:calc(-1*var(--m));padding-inline:var(--m);background:var(--aub);border-bottom-color:transparent}
+  .pp-tot b{font-weight:800;color:var(--hero-ink)}
+  /* The field is the same in both themes, so the Buy label keeps the poster's deep red in the dark one too.
+     The sticky tab bar is 58px high: a button reached with Shift+Tab must stop below it. */
+  .pp-row .btn{grid-area:buy;justify-self:end;min-width:96px;color:var(--aub);scroll-margin-top:72px}
+  .pp-row.pick{margin-left:calc(-1*var(--m));margin-right:calc(-1*var(--m));padding-left:var(--m);padding-right:var(--m);
+    background:var(--aub);border-bottom-color:transparent}
   .pp-row.pick::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--promo)}
-  .pp-vat{margin:14px 0 0;font-size:var(--fs-s);line-height:1.4;color:var(--soft)}
-  .pp-fold{width:100%;min-height:48px;align-content:center;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:pointer}
+  .pp-vat{margin:14px 0 0;font-size:var(--fs-s);line-height:1.4;color:var(--soft);text-wrap:balance}
+  .pp-fold{width:100%;min-height:48px;align-content:center;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:pointer;
+    scroll-margin-top:72px}
   .pp-fold::after{content:"";align-self:center;width:11px;height:11px;margin:-6px 6px 0 auto;border:solid var(--promo-hi);border-width:0 3px 3px 0;
     transform:rotate(45deg)}
   .pp-fold[aria-expanded="true"]::after{margin-top:6px;transform:rotate(-135deg)}
-  .pp-pol{display:grid;gap:14px;padding:6px 0 14px;font-size:var(--fs-s);line-height:1.5;font-weight:500}
+  .pp-pol{display:grid;gap:14px;padding:6px 0 14px;font-size:var(--fs-s);line-height:1.5}
   .pp-pol p{margin:0}
   .pp-pol b{font-weight:800;color:var(--promo-hi)}
   .pp .note{max-width:62ch;margin:28px 0 0;line-height:1.4}
   :lang(th) .pp-lab h4,:lang(th) .pp-fold,:lang(th) .pp-hl,:lang(th) .pp-nm h5,:lang(th) .pp-tag,
   :lang(zh-Hans) .pp-lab h4,:lang(zh-Hans) .pp-fold,:lang(zh-Hans) .pp-hl,:lang(zh-Hans) .pp-nm h5,:lang(zh-Hans) .pp-tag{letter-spacing:0}
+  /* Thai as on the poster: 700 on the one-weight file, thickened by the browser. The rest of the page keeps
+     its rule of one Thai weight with no fake bold. */
+  :lang(th) .pp-hl,:lang(th) .pp-nm h5,:lang(th) .pp-tag,:lang(th) .pp-pol b{font-weight:700}
   :lang(th) .pp-nm h5{line-height:1.3}
   :lang(th) .pp-tag,:lang(zh-Hans) .pp-tag{font-size:13px;line-height:1.3;padding:2px 8px}
   :lang(th) .pp-lab p,:lang(th) .pp-nm p,:lang(th) .pp-pr span,:lang(th) .pp-tot,:lang(th) .pp-vat,:lang(th) .pp .note{line-height:1.55}
-  :lang(th) .pp-pol{line-height:1.65;font-weight:400}
-  @media (max-width:359px){ .pp-row{grid-template-areas:"nm nm nm" "pr pr pr" "tot tot buy"} .pp-pr{text-align:left} }
+  :lang(th) .pp-pol{line-height:1.65}
+  /* A narrow phone: the note runs the full row width, under the name and the price. Russian notes run
+     long, so Russian keeps that layout on every phone. */
+  @media (max-width:389px){
+    .pp-row{grid-template-areas:"nm pr pr" "nt nt nt" "tot tot buy"}
+    .pp-nm{display:contents}
+    .pp-nm h5{grid-area:nm;align-self:start}
+    .pp-nm p{grid-area:nt;margin-top:-4px}
+  }
+  @media (min-width:390px) and (max-width:479px){
+    :lang(ru) .pp-row{grid-template-areas:"nm pr pr" "nt nt nt" "tot tot buy"}
+    :lang(ru) .pp-nm{display:contents}
+    :lang(ru) .pp-nm h5{grid-area:nm;align-self:start}
+    :lang(ru) .pp-nm p{grid-area:nt;margin-top:-4px}
+  }
+  @media (max-width:359px){ .pp-row{grid-template-areas:"nm nm nm" "nt nt nt" "pr pr pr" "tot tot buy"} .pp-pr{text-align:left} }
   @media (min-width:700px){
     .pp{margin-right:calc((100% + var(--g))/-7 - var(--m));padding-top:56px}
     .pp-row{grid-template-areas:"nm pr buy" "nm pr tot";gap:6px var(--g)}
@@ -833,9 +860,10 @@
     .pp-lab h4,.pp-fold{display:block}
     .pp-lab .n{display:block;margin-bottom:8px;font-size:calc(var(--fs-l)*1.25)}
     .pp-lab p,.pp-nm p,.pp-pr span{font-size:var(--fs-b)}
+    .pp-pr small{font-size:20px}
     .pp-main{grid-column:5/-1}
     .pp-hl{margin-top:0}
-    .pp-row.pick{margin-inline:calc(-1*var(--g));padding-inline:var(--g)}
+    .pp-row.pick{margin-left:calc(-1*var(--g));padding-left:var(--g)}
     .pp-fold::after{display:inline-block;margin:0 0 0 14px;vertical-align:4px}
     .pp-fold[aria-expanded="true"]::after{margin-top:0;vertical-align:-2px}
     .pp-vat,.pp .note{margin-left:calc((100% + var(--g))/3)}
@@ -1838,50 +1866,52 @@
   Object.assign(STR.ru, { needMat: 'Нужен коврик (฿200, оплата в шале)' });
 
   // The Packages tab reads like the price poster (Boonchu, 12 Nov 2026). Its other lines are the price list's
-  // own keys (flexH, mo12, n12, pick, dropIn, pack8, polH, pol1a ...). ppNoMin is the gold banner, one phrase
-  // per line. ppPay stands before the online total and ppIncl after it.
+  // own keys (flexH, mo12, n12, pick, polH, pol1a ...). ppDrop and ppPack are the poster's names for the two
+  // packs, where the price list words them differently. ppNoMin is the gold banner, one phrase per line.
+  // ppPay stands before the online total and ppIncl after it.
   Object.assign(STR.en, {
     ppLead: 'Same practice, same time, a teacher who notices.',
     ppS1: 'Unlimited membership', ppS1Note: 'Mysore and Led, as often as you like. No minimum.',
     ppNoMin: ['No need to come 4 times a week.', 'Come when you can.'],
-    ppS2: 'Package membership', ppOne: 'One class.',
+    ppS2: 'Package membership', ppDrop: 'Drop-\u2060in', ppPack: '8 classes', ppOne: 'One class.',
     ppValid: m => `Valid ${m} month${m > 1 ? 's' : ''}`,
     ppUse: (m, more) => `Use within ${m} month${m > 1 ? 's' : ''}.${more ? ` For ${more} more: 1 month unlimited.` : ''}`,
-    ppPerMo: n => `${n} / month`, ppPerCls: n => `${n} / class`,
-    ppPay: 'Pay online', ppIncl: (fee, vat) => `${fee ? 'fee and ' : ''}${vat}% VAT included`,
+    ppPerMo: n => `${n} / month +VAT`, ppPerCls: n => `${n} / class +VAT`,
+    ppPay: 'Pay online', ppIncl: (fee, vat) => `including ${fee ? 'fee and ' : ''}${vat}% VAT`,
     ppVat: (fee, vat) => `+VAT = plus ${vat}% VAT.${fee ? ' Paying online adds a transaction fee.' : ''}`,
   });
   Object.assign(STR.th, {
     ppLead: 'ฝึกแบบเดิม เวลาเดิม กับครูที่สังเกตเห็นคุณ',
     ppS1: 'สมาชิกรายเดือน (Unlimited)', ppS1Note: 'ฝึกมายซอร์และคลาส Led ได้ไม่จำกัด ไม่มีขั้นต่ำ',
     ppNoMin: ['ไม่กำหนด 4 วันต่ออาทิตย์', 'มาฝึกตามเวลาที่สะดวก'],
-    ppS2: 'สมาชิกแพ็กเกจ', ppOne: 'ฝึก 1 ครั้ง',
+    ppS2: 'สมาชิกแพ็กเกจ', ppDrop: 'รายครั้ง (Drop-\u2060in)', ppPack: 'แพ็ก 8 ครั้ง', ppOne: 'ฝึก 1 ครั้ง',
     ppValid: m => `ใช้ได้ ${m} เดือน`,
     ppUse: (m, more) => `ใช้ภายใน ${m} เดือน${more ? ` เพิ่มอีก ${more} ฝึกได้ไม่จำกัด 1 เดือน` : ''}`,
-    ppPerMo: n => `เดือนละ ${n}`, ppPerCls: n => `ตกครั้งละ ${n}`,
-    ppPay: 'ชำระออนไลน์', ppIncl: (fee, vat) => `รวม${fee ? 'ค่าธรรมเนียมและ ' : ''}VAT ${vat}% แล้ว`,
-    ppVat: (fee, vat) => `+VAT = ยังไม่รวม VAT ${vat}%${fee ? ' หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม' : ''}`,
+    ppPerMo: n => `เดือนละ ${n} +VAT`, ppPerCls: n => `ตกครั้งละ ${n} +VAT`,
+    ppPay: 'ชำระออนไลน์', ppIncl: (fee, vat) => `รวม${fee ? 'ค่าธรรมเนียมและ' : ''} VAT\u00a0${vat}%`,
+    ppVat: (fee, vat) => `+VAT\u00a0= ยังไม่รวม VAT\u00a0${vat}%${fee ? ' หากชำระออนไลน์ จะมีค่าธรรมเนียมการชำระเงินเพิ่ม' : ''}`,
   });
   Object.assign(STR.zh, {
     ppLead: '同样的练习，同样的时间，一位会留意你的老师。',
     ppS1: '不限次会员', ppS1Note: '迈索尔课和引导课，想来几次就来几次。没有最低次数。',
     ppNoMin: ['不要求每周来4次。', '方便就来。'],
-    ppS2: '次卡会员', ppOne: '一节课。',
+    ppS2: '次卡会员', ppDrop: '单次课（drop-\u2060in）', ppPack: '8次课卡', ppOne: '一节课。',
     ppValid: m => `${m}个月内有效`,
     ppUse: (m, more) => `${m}个月内用完。${more ? `再加 ${more}，就是1个月不限次。` : ''}`,
-    ppPerMo: n => `每月 ${n}`, ppPerCls: n => `每节 ${n}`,
+    ppPerMo: n => `每月 ${n} +VAT`, ppPerCls: n => `每节 ${n} +VAT`,
     ppPay: '在线支付', ppIncl: (fee, vat) => `已含${fee ? '手续费和' : ''} ${vat}% 增值税`,
     ppVat: (fee, vat) => `+VAT = 另加 ${vat}% 增值税。${fee ? '在线支付另收交易手续费。' : ''}`,
   });
   Object.assign(STR.ru, {
     ppLead: 'Та же практика, то же время и учитель, который вас замечает.',
     ppS1: 'Безлимитный абонемент', ppS1Note: 'Майсор и Led, так часто, как хотите. Минимума нет.',
-    ppNoMin: ['Не нужно приходить 4 раза в неделю.', 'Приходите, когда можете.'],
-    ppS2: 'Пакеты занятий', ppOne: 'Одно занятие.',
+    ppNoMin: ['Не обязательно приходить 4 раза в неделю.', 'Приходите, когда можете.'],
+    ppS2: 'Пакеты занятий', ppDrop: 'Разовое занятие (drop-\u2060in)', ppPack: '8 занятий', ppOne: 'Одно занятие.',
     ppValid: m => `Действует ${m} мес.`,
-    ppUse: (m, more) => `Используйте за ${m} мес.${more ? ` Ещё ${more}, и у вас месяц без ограничений.` : ''}`,
-    ppPerMo: n => `${n} / мес.`, ppPerCls: n => `${n} / занятие`,
-    ppPay: 'Онлайн', ppIncl: (fee, vat) => `с ${fee ? 'комиссией и ' : ''}НДС ${vat}%`,
+    ppUse: (m, more) => `Действует ${m}\u00a0${m % 10 === 1 && m % 100 !== 11 ? 'месяц'
+      : m % 10 > 1 && m % 10 < 5 && (m % 100 < 12 || m % 100 > 14) ? 'месяца' : 'месяцев'}.${more ? ` Ещё ${more}, и у вас месяц без ограничений.` : ''}`,
+    ppPerMo: n => `${n} / мес. +VAT`, ppPerCls: n => `${n} / занятие +VAT`,
+    ppPay: 'К оплате онлайн', ppIncl: (fee, vat) => `с ${fee ? 'комиссией и ' : ''}НДС ${vat}%`,
     ppVat: (fee, vat) => `+VAT = плюс НДС ${vat}%.${fee ? ' При онлайн-оплате добавляется комиссия.' : ''}`,
   });
 
@@ -2616,26 +2646,34 @@
   });
 
   // The Packages tab is the price poster (Boonchu, 12 Nov 2026): 01 membership, longest first, 02 packs
-  // behind it, 03 the member notes. The poster's words belong to a product code [name, note, tag], because
+  // behind it, 03 the member notes. The poster's words belong to a product code [name, note, tag, sums], because
   // n12, n6 and n3 quote that product's own saving. Every number is worked out from the API's products, and
   // a code not listed here still gets a row in the group its kind puts it in, with its own name and plain facts.
-  const PP = { unlim12m: ['mo12', 'n12'], unlim6m: ['mo6', 'n6', 'pick'], unlim3: ['mo3', 'n3'], unlim1: ['mo1', 'n1'],
-    dropin: ['dropIn', 'ppOne'], pack8: ['pack8'] };
+  // n12, n6 and n3 are typed sentences: `sums` gives the amounts each one quotes, worked out from the API, and
+  // the sentence shows only while it still holds them. After a price change in admin the row shows plain facts.
+  const ppBy = code => PRODUCTS.find(x => x.code === code);
+  const PP = {
+    unlim12m: ['mo12', 'n12', '', (p, m1 = ppBy('unlim1')) => m1 && [12 * m1.price_thb, 12 * m1.price_thb - p.price_thb]],
+    unlim6m: ['mo6', 'n6', 'pick', (p, m1 = ppBy('unlim1')) => m1 && [6 * m1.price_thb - p.price_thb]],
+    unlim3: ['mo3', 'n3', '', (p, m6 = ppBy('unlim6m')) => m6 && [m6.price_thb - p.price_thb]],
+    unlim1: ['mo1', 'n1'], dropin: ['ppDrop', 'ppOne'], pack8: ['ppPack'] };
   const ppNum = n => Math.round(n).toLocaleString('en-US');
   // Whole months only (30-day months, a 365-day year): a 45-day pass has no honest "per month".
   const ppMonths = d => d > 0 && d % 365 === 0 ? d / 365 * 12 : d > 0 && d % 30 === 0 ? d / 30 : 0;
   // Lines break as on the poster: a piece stays whole while it fits. Thai and Chinese have no spaces inside
   // a phrase, so a line could break in the middle of a word: a Thai piece is a phrase (and a number stays
-  // with its unit), a Chinese piece runs to the next comma or full stop. In English and Russian a short
-  // note (bySentence) breaks between its sentences.
+  // with its unit), a Chinese piece runs to the next comma or full stop. In English and Russian a number
+  // stays with the word after it ("12 months"), and a short note (bySentence) breaks between its sentences.
   const ppPieces = list => list.map(w => w.trim() && `<span class="ph">${w.trim()}</span>`).join(LANG === 'zh' ? '' : ' ');
+  const ppKeep = e => e.replace(/(\d) (?=[A-Za-z\u0400-\u04FF])/g, '$1\u00a0');
   const ppTxt = (s, bySentence) => {
     const e = esc(s);
     if (LANG === 'th') return ppPieces(e.replace(/(\d|รวม|ประหยัด|อีก) (?=เดือน|ครั้ง|วัน|฿)| (?=ๆ)/g, '$1\u00a0').split(' '));
     if (LANG === 'zh') return ppPieces(e.match(/[^，、。？！]+[，、。？！]*/g) || [e]);
-    return bySentence ? ppPieces(e.match(/[^.?!]+[.?!]*/g) || [e]) : e;
+    return bySentence ? ppPieces(ppKeep(e).match(/[^.?!]+[.?!]*/g) || [e]) : ppKeep(e);
   };
-  let PP_NOTES = false;
+  // The member notes start open where they have their own column beside the label (from 1100px), folded on a phone.
+  let PP_NOTES = null;
   window.ppFold = b => {
     PP_NOTES = !PP_NOTES;
     b.setAttribute('aria-expanded', String(PP_NOTES));
@@ -2644,15 +2682,19 @@
   function ppRow(p) {
     const k = PP[p.code], unl = p.kind === 'unlimited', mo = ppMonths(Number(p.valid_days)), n = Number(p.credits) || 0;
     const name = k ? t(k[0]) : pkgName(p);
-    let note = '';
-    if (!k) note = (unl ? [t('unlim', p.valid_days), p.daily_cap && t('cap', p.daily_cap)] : [n && t('credits', n), t('valid', p.valid_days)])
-      .filter(Boolean).join(' · ');
-    else if (k[1]) note = t(k[1]);
-    else if (mo) {
+    const facts = () => (unl ? [t('unlim', p.valid_days), p.daily_cap && t('cap', p.daily_cap)] : [n && t('credits', n), t('valid', p.valid_days)])
+      .filter(Boolean).join('\u00a0· ');
+    let note;
+    if (!k) note = facts();
+    else if (k[1]) {
+      note = t(k[1]);
+      const sums = k[3] ? k[3](p) : [];
+      if (!sums || !sums.every(a => note.includes(baht(a)))) note = facts();
+    } else if (mo) {
       // A pack's note ends with the step up to one month unlimited, when that costs more than the pack.
-      const m1 = PRODUCTS.find(x => x.kind === 'unlimited' && ppMonths(Number(x.valid_days)) === 1);
+      const m1 = [ppBy('unlim1'), ...PRODUCTS].find(x => x && x.kind === 'unlimited' && ppMonths(Number(x.valid_days)) === 1);
       note = t('ppUse', mo, m1 && m1.price_thb > p.price_thb ? baht(m1.price_thb - p.price_thb) : '');
-    }
+    } else note = t('valid', p.valid_days);
     const tag = !k ? '' : k[2] ? t(k[2]) : !unl && n > 1 && mo ? t('ppValid', mo) : '';
     const per = unl ? mo && t('ppPerMo', ppNum(p.price_thb / mo)) : n > 1 && t('ppPerCls', ppNum(p.price_thb / n));
     return `<li class="pp-row${k && k[2] ? ' pick' : ''}">
@@ -2663,22 +2705,26 @@
     </li>`;
   }
   function renderPackages() {
+    // Until the products are in, the page's own loading rows (or its load error with Try again) stay up.
+    if (!LOADED) return;
+    if (PP_NOTES === null) PP_NOTES = matchMedia('(min-width:1100px)').matches;
     const mem = PRODUCTS.filter(p => p.kind === 'unlimited').sort((a, b) => b.valid_days - a.valid_days);
     const packs = PRODUCTS.filter(p => p.kind !== 'unlimited');
-    const lab = (n, title) => `<span class="n">${n}</span>${esc(title)}`;
-    const sec = (n, title, side, body) => `<section class="pp-sec">
-      <div class="pp-lab"><h4>${lab(n, title)}</h4>${side ? `<p>${ppTxt(side, true)}</p>` : ''}</div>
+    let no = 0;
+    const lab = title => `<span class="n">${String(++no).padStart(2, '0')}</span>${esc(title)}`;
+    const sec = (title, side, body) => `<section class="pp-sec">
+      <div class="pp-lab"><h4>${lab(title)}</h4>${side ? `<p>${ppTxt(side, true)}</p>` : ''}</div>
       <div class="pp-main">${body}</div></section>`;
     const rows = list => `<ul class="pp-rows">${list.map(ppRow).join('')}</ul>`;
     $('#view').innerHTML = `<div class="pp">
       <div class="pp-head"><h3>${esc(t('flexH'))}</h3><p>${ppTxt(t('ppLead'))}</p></div>
-      ${mem.length ? sec('01', t('ppS1'), t('ppS1Note'),
-        `<p class="pp-hl">${ppPieces(t('ppNoMin').map(esc))}</p>${rows(mem)}`) : ''}
-      ${packs.length ? sec('02', t('ppS2'), '', rows(packs)) : ''}
+      ${mem.length ? sec(t('ppS1'), t('ppS1Note'),
+        `<p class="pp-hl">${ppPieces(t('ppNoMin').map(s => ppKeep(esc(s))))}</p>${rows(mem)}`) : ''}
+      ${packs.length ? sec(t('ppS2'), '', rows(packs)) : ''}
       ${PRODUCTS.length ? `<p class="pp-vat">${ppTxt(t('ppVat', SURCHARGE, VAT))}</p>` : ''}
       <section class="pp-sec">
         <div class="pp-lab"><h4><button type="button" class="pp-fold" aria-expanded="${PP_NOTES}" aria-controls="ppNotes"
-          onclick="ppFold(this)">${lab('03', t('polH'))}</button></h4></div>
+          onclick="ppFold(this)">${lab(t('polH'))}</button></h4></div>
         <div class="pp-main pp-pol" id="ppNotes"${PP_NOTES ? '' : ' hidden'}>${[1, 2, 3, 4].map(i =>
           `<p><b>${ppTxt(t(`pol${i}a`))}</b>${ppTxt(t(`pol${i}b`))}</p>`).join('')}</div>
       </section>
