@@ -1,0 +1,1286 @@
+{
+ "drafts": [
+  {
+   "id": "A",
+   "angle": "Writer A: his own two lines are the spine. He opens with his exact words, lightly cleaned: \"If you practice today and nothing happened... yet...\" and then \"There's an old story of 2 boys wait for monsters... five days...\". \"Nothing... yet\" comes back three times, as a bookend: in the hook, on day five inside the story, and in the closing question. One thread: 2 lines to adults, then the story told straight with no announcer, then back to adults. Each story line holds one thing back (who the boys are, why the teacher is silent, what day six brings, where the monster goes). Notes on facts and flags are in each line note.",
+   "toolkit_pick": "His two lines as hook and double hook, plus a \"nothing... yet\" bookend (hook, day five, close), plus Harvard #1 fork at day five (\"What you do? Sleep?\"). The contrarian lever from the old hook bank #10 is kept, but it is now carried by his own \"yet\" and not by \"Good.\".",
+   "lines": [
+    {
+     "n": 1,
+     "beat": "H",
+     "spoken": "If you practice today and nothing happened... yet...",
+     "on_screen": "NOTHING HAPPENED TODAY... YET",
+     "note": "0:00.0. His own words. On screen from frame 1. Shot: Boonchu sitting on his mat in the quiet shala, straight to camera. 'yet' is the open loop and is paid at lines 17 and 22. No number and no study claim (Flag 2)."
+    },
+    {
+     "n": 2,
+     "beat": "DH",
+     "spoken": "There's an old story of 2 boys wait for monsters... five days...",
+     "on_screen": "2 BOYS WAIT FOR MONSTERS... FIVE DAYS... | small at top: NEW RAMAYANA MOVIE · IN BANGKOK CINEMAS NOW",
+     "note": "0:03.1. His own words, kept in his grammar. Say 'two'. This line goes straight into the story, with no announcer. Monsters are said by about 0:06.6. The movie is small on-screen text only, never spoken: words only, no poster, clip or music. It is true on 12 Nov. If posted after about 25 Nov, recheck a Bangkok showtimes page (Flag 13). 'Five days' is his telling and is never put on screen as a quote (Flag 7)."
+    },
+    {
+     "n": 3,
+     "beat": "T1",
+     "spoken": "The boys? Rama and his brother.",
+     "on_screen": "RAMA · AND HIS BROTHER LAKSHMANA | small corner, lines 3 to 16: HIDDEN STORIES OF ASHTANGA",
+     "note": "0:07.4. Story voice from here: lower and slower, leaning in. No spoken announcer. The name is a reveal after '2 boys'. FIXED on the scroll test: the old line 'Boy Rama and his brother guard it.' was a dead report, so it is now a question answered with the famous name. The card names the brother, and the voice says only 'his brother'. Indian names only, never 'King Rama'."
+    },
+    {
+     "n": 4,
+     "beat": "T1",
+     "spoken": "Six nights they guard the fire... no sleep.",
+     "on_screen": "SIX NIGHTS. NO SLEEP.",
+     "note": "0:09.8. Book 1.30.4 to 5 (six nights and days, without sleep). The line ends on the hard detail. Picture, things only: a small altar fire in a forest clearing at night. No faces, nothing from the film."
+    },
+    {
+     "n": 5,
+     "beat": "T1",
+     "spoken": "Teacher Vishvamitra... not one word.",
+     "on_screen": "VISHVAMITRA · THE TEACHER WHO WENT SILENT",
+     "note": "0:13.0. The title card lands on the moment he goes silent. Strange detail, and the loop is: why? when does he speak? It is paid at line 16. This plants the name for line 20. He does not refuse or ignore the boys (Flag 8)."
+    },
+    {
+     "n": 6,
+     "beat": "T1",
+     "spoken": "His promise for the fire ceremony.",
+     "on_screen": "A VOW OF SILENCE · PART OF THE CEREMONY",
+     "note": "0:15.1. The vow must be said (1.30.4, Flag 8): it is not a test and not coldness. SCROLL TEST: this was the weakest line, a plain answer. It is kept to 6 words and about 2 s so the story moves straight to day five."
+    },
+    {
+     "n": 7,
+     "beat": "T1",
+     "spoken": "Day five... nothing... yet.",
+     "on_screen": "DAY 5... NOTHING... YET",
+     "note": "0:17.5. The second 'yet', an echo of the hook. FIXED on the scroll test: the old 'Day five. Nothing. Teacher still silent.' only reported. This version holds the answer back. He counts to five on his fingers, and a day counter runs DAY 1 to DAY 5. This is his telling, not a quoted verse (Flag 7)."
+    },
+    {
+     "n": 8,
+     "beat": "RH",
+     "spoken": "What you do? Sleep?",
+     "on_screen": "WHAT YOU DO? SLEEP?",
+     "note": "0:19.3. Harvard #1 fork, the one stop before the answer. Eyes in the lens, then a full 1 s pause. 'Sleep?' tells school-English viewers that this means 'what would you do'."
+    },
+    {
+     "n": 9,
+     "beat": "RH",
+     "spoken": "Day six... Rama say, brother, be ready.",
+     "on_screen": "DAY 6 · BE READY",
+     "note": "0:21.8. The book's answer to the fork (1.30.7): after five quiet days he is more awake, not less. The loop is: what does he know?"
+    },
+    {
+     "n": 10,
+     "beat": "T2",
+     "spoken": "Fire jump up... sky roar...",
+     "on_screen": "SKY ROAR",
+     "note": "0:24.7. Book order: the altar fire flares up (1.30.8), then a frightening roar in the sky (1.30.10). Picture: the fire flaring and a dark sky. Make a low roar for this Reel, nothing from the film."
+    },
+    {
+     "n": 11,
+     "beat": "T2",
+     "spoken": "Monsters come down like storm clouds.",
+     "on_screen": "LIKE STORM CLOUDS",
+     "note": "0:26.7. The worst moment, and it pays line 2 (1.30.11). Picture: storm clouds rolling over the fire. No blood and no altar detail (Flag 5)."
+    },
+    {
+     "n": 12,
+     "beat": "P",
+     "spoken": "Rama shoot one arrow...",
+     "on_screen": "ONE ARROW",
+     "note": "0:29.0. Held back: what does it hit? Never 'only one arrow' (Flag 5). Picture: one arrow."
+    },
+    {
+     "n": 13,
+     "beat": "P",
+     "spoken": "One monster fly far into the sea.",
+     "on_screen": "FAR INTO THE SEA",
+     "note": "0:30.5. Book 1.30.18 (a hundred yojanas, into the ocean). Picture: one splash far out at sea, nothing more. The other monsters get one gentle caption line only: 'Rama stopped the other monsters too.'"
+    },
+    {
+     "n": 14,
+     "beat": "P",
+     "spoken": "That arrow... did not take his life.",
+     "on_screen": "THAT ARROW DID NOT TAKE HIS LIFE | small: BALA KANDA 30 · VERSE 20",
+     "note": "0:33.2. The book's own statement (1.30.20), with the words unchanged and only a pause added (Flag 25). The loop is: so where is he? Paid next."
+    },
+    {
+     "n": 15,
+     "beat": "P",
+     "spoken": "Years later he come back... golden deer. Another story.",
+     "on_screen": "YEARS LATER... A GOLDEN DEER | small: ANOTHER STORY · ARANYA KANDA 42",
+     "note": "0:36.1. The last surprise, and it leaves a door open for the series. No name card, and Maricha is never said or shown (Flag 10). No count of years (Flag 12). Not 'next episode' (Flag 26). Picture: a golden deer at the forest edge."
+    },
+    {
+     "n": 16,
+     "beat": "P",
+     "spoken": "That day... ceremony finish. Teacher speak again.",
+     "on_screen": "CEREMONY FINISHED · TEACHER SPEAKS AGAIN | small: BALA KANDA 30 · VERSE 25",
+     "note": "0:39.7. 'That day' brings the story back from 'years later' to day six. This pays the loop from line 5 ('not one word'). SCROLL TEST: the end of a story is a risk of losing people. It stays because the viewer has waited since line 5 for him to speak. Picture: the fire burning calm. Then a 0.5 s silent beat, and his normal voice comes back to camera."
+    },
+    {
+     "n": 17,
+     "beat": "P",
+     "spoken": "Five quiet days... that was the practice.",
+     "on_screen": "FIVE QUIET DAYS. THAT WAS THE PRACTICE.",
+     "note": "0:43.1. Pays line 1's 'nothing happened'. Back on the same mat as line 1."
+    },
+    {
+     "n": 18,
+     "beat": "P",
+     "spoken": "Day six only show they were there.",
+     "on_screen": "DAY SIX ONLY SHOW THEY WERE THERE",
+     "note": "0:45.8. The adults' point: the big day only shows you were there on the quiet days (Harvard #21 and #27)."
+    },
+    {
+     "n": 19,
+     "beat": "P",
+     "spoken": "Mysore room same. Nobody call the asana.",
+     "on_screen": "NOBODY CALL THE ASANA",
+     "note": "0:48.3. A quiet room is the method, like the silent teacher. It does not say a teacher never speaks (Flag 18). SCROLL TEST: lecture risk, so it is kept to 7 words and leads straight into the name reveal. Shot: the quiet shala or a real class photo."
+    },
+    {
+     "n": 20,
+     "beat": "P",
+     "spoken": "Vishvamitrasana... Advanced A. Named after that silent teacher.",
+     "on_screen": "VISHVAMITRASANA · ADVANCED A · NAMED AFTER THE SAGE",
+     "note": "0:50.8. A name link only, said once (his PDF p.15, Sweeney glossary). Cut to Boonchu in the asana, from a real clip or a class photo, never AI (Flag 14). No 'anyone can' and no injury talk."
+    },
+    {
+     "n": 21,
+     "beat": "P",
+     "spoken": "[BOONCHU'S OWN CUE: 5 words or less]",
+     "on_screen": "(his cue words, only if he wants them on screen)",
+     "note": "0:53.9. Over the same asana shot. Only Boonchu fills this (Flag 24). The timing counts a full 1.8 s, so a shorter cue gives time back."
+    },
+    {
+     "n": 22,
+     "beat": "P",
+     "spoken": "Tomorrow... nothing... yet. You still there?",
+     "on_screen": "TOMORROW... NOTHING... YET. YOU STILL THERE?",
+     "note": "0:55.7. The third 'yet' closes the spine: hook, day five, tomorrow. The question stays with the viewer, and 'there' echoes line 18. Eyes in the lens. It promises no call or message from AYBKK."
+    },
+    {
+     "n": 23,
+     "beat": "P",
+     "spoken": "แล้วเจอกันครับ",
+     "on_screen": "แล้วเจอกันครับ · see you",
+     "note": "0:58.2. Small subtitle: see you. The video ends at about 0:59.4. Caption ask, not spoken: 'Comment aybkk and I'll send you the link.'"
+    }
+   ],
+   "words": 140,
+   "end_time_s": 59.4,
+   "strongest": "Lines 7 and 8 (\"Day five... nothing... yet.\" then \"What you do? Sleep?\") are the strongest pull. They repeat the hook's \"yet\" exactly when the viewer feels the boredom of five quiet days, then make the viewer choose before the book answers on day six. Lines 14 and 15 (\"That arrow... did not take his life.\" then \"Years later he come back... golden deer. Another story.\") turn the action peak into a mystery: first a twist, then a door left open, so even a viewer who knows the Ramayana stays for the end."
+  },
+  {
+   "id": "B",
+   "angle": "Writer B, CLIFFHANGER CHAIN. Every spoken line ends on a gap: a trailing \"...\", a number with no answer yet, a strange detail, or a short question. His two example lines open the Reel almost word for word. The \"yet...\" from line 1 stays open until line 16 (~42 s). One thread: adults (lines 1-2), the story told straight with no announcer (3-15), then adults again (16-22).",
+   "toolkit_pick": "His own two lines are the hook and double hook, with an open loop on \"yet...\". Harvard #1 fork at day five (\"What you do? ...Sleep?\"). Then a cliffhanger chain line by line, and the asana name held back as a reveal (line 19 sets up \"named after that silent teacher...\", line 20 gives the name). Hook bank #10 (the same practice every morning) is the idea paid off at line 16. No bank line is said.",
+   "lines": [
+    {
+     "n": 1,
+     "beat": "H",
+     "spoken": "If you practice today and nothing happened... yet...",
+     "on_screen": "NOTHING HAPPENED TODAY... YET...",
+     "note": "0:00-0:02.9. His own line, his pause. Shot: sitting on his mat in the quiet shala, straight to camera. \"yet...\" is the open loop, paid off at line 16."
+    },
+    {
+     "n": 2,
+     "beat": "DH",
+     "spoken": "There's an old story of two boys wait for monsters... five days...",
+     "on_screen": "2 BOYS · 5 DAYS...  + small at top: NEW RAMAYANA MOVIE · IN BANGKOK CINEMAS NOW",
+     "note": "0:02.9-0:06.8. His own line, kept as he wrote it. The movie is small on-screen text only and never spoken. No poster, clip, actor or music from the film. True on 11 Nov; check a Bangkok showtimes page again if posting after about 25 Nov (Flag 13). Gap: five days of what?"
+    },
+    {
+     "n": 3,
+     "beat": "T1",
+     "spoken": "Their job? Six nights, no sleep... guard a fire.",
+     "on_screen": "6 NIGHTS. NO SLEEP. GUARD THE FIRE.",
+     "note": "0:06.8-0:10.3. The story starts here with no announcer. Voice drops a little. Scroll test fix: the old dead line \"Boy Rama and his brother guard it.\" is gone. This line ends on a strange detail (why guard a fire?). Picture: a small altar fire in a forest clearing, no blood."
+    },
+    {
+     "n": 4,
+     "beat": "T1",
+     "spoken": "The teacher, Vishvamitra? He go silent...",
+     "on_screen": "VISHVAMITRA · THE TEACHER WHO WENT SILENT",
+     "note": "0:10.3-0:12.6. The title card lands on the same words. Small series tag in the corner: HIDDEN STORIES OF ASHTANGA (no episode number). Puts the name in the viewer's ear for the line 20 reveal."
+    },
+    {
+     "n": 5,
+     "beat": "T1",
+     "spoken": "His promise for the ceremony... not one word.",
+     "on_screen": "A VOW OF SILENCE FOR THE CEREMONY",
+     "note": "0:12.6-0:15.7. The vow, said plainly (Flag 8). Never say he refused the boys or ignored them. Scroll test: borderline explainer line, kept short and ended on \"not one word\" so it adds tension."
+    },
+    {
+     "n": 6,
+     "beat": "T1",
+     "spoken": "Day five... nothing. Teacher still silent.",
+     "on_screen": "DAY 1 ... DAY 5 · NOTHING",
+     "note": "0:15.7-0:18.0. His telling, not a quote (Flag 7). He counts to five on his fingers while a day counter runs. \"nothing\" echoes line 1."
+    },
+    {
+     "n": 7,
+     "beat": "RH",
+     "spoken": "What you do? ...Sleep?",
+     "on_screen": "WHAT YOU DO? SLEEP?",
+     "note": "0:18.0-0:20.5. Harvard #1 fork. Eyes in the lens, stop 1 second before \"Sleep?\"."
+    },
+    {
+     "n": 8,
+     "beat": "RH",
+     "spoken": "Day six. Rama tell his brother... be ready.",
+     "on_screen": "DAY 6 · BE READY",
+     "note": "0:20.5-0:23.6. The rehook, from 1.30.7. Small name card: RAMA · HIS BROTHER LAKSHMANA. Gap: ready for what?"
+    },
+    {
+     "n": 9,
+     "beat": "T2",
+     "spoken": "The fire jump up. Sky roar...",
+     "on_screen": "SKY ROAR...",
+     "note": "0:23.6-0:25.9. From 1.30.8 and 1.30.10. Picture: the fire flaring up. A low roar made for this Reel, nothing from the film."
+    },
+    {
+     "n": 10,
+     "beat": "T2",
+     "spoken": "Monsters come down like storm clouds...",
+     "on_screen": "LIKE STORM CLOUDS...",
+     "note": "0:25.9-0:28.2. The worst moment (1.30.11). Pays off the monsters from line 2. Picture: storm clouds rolling over the fire."
+    },
+    {
+     "n": 11,
+     "beat": "T2",
+     "spoken": "Rama shoot one arrow...",
+     "on_screen": "ONE ARROW...",
+     "note": "0:28.2-0:29.7. Never \"only one arrow\" (Flag 5). Picture: one arrow, nothing more."
+    },
+    {
+     "n": 12,
+     "beat": "P",
+     "spoken": "One monster fly far into the sea.",
+     "on_screen": "FAR INTO THE SEA",
+     "note": "0:29.7-0:32.4. From 1.30.18. Picture: one splash far out at sea."
+    },
+    {
+     "n": 13,
+     "beat": "P",
+     "spoken": "That arrow... did not take his life.",
+     "on_screen": "THAT ARROW DID NOT TAKE HIS LIFE",
+     "note": "0:32.4-0:35.1. The book's own words, unchanged (1.30.20, Flag 25). Small: BALA KANDA 30 · VERSE 20. Gap: so where is he?"
+    },
+    {
+     "n": 14,
+     "beat": "P",
+     "spoken": "Years later he come back... a golden deer. Another story...",
+     "on_screen": "A GOLDEN DEER... ANOTHER STORY",
+     "note": "0:35.1-0:38.9. No number of years, no name (Flags 10 and 12), no \"next episode\". Picture: a golden deer at the edge of a forest."
+    },
+    {
+     "n": 15,
+     "beat": "P",
+     "spoken": "That day, ceremony finish. Silent teacher... speak again.",
+     "on_screen": "TEACHER SPEAK AGAIN",
+     "note": "0:38.9-0:41.6, then a 0.5 s silent beat and his normal voice comes back. From 1.30.25. Scroll test: the story is over here, so this is the risk point. Line 1's \"yet...\" is still open and holds them, and the cut back to camera is under a second away. Picture: the fire burning calm."
+    },
+    {
+     "n": 16,
+     "beat": "P",
+     "spoken": "Five quiet days... that was the practice.",
+     "on_screen": "FIVE QUIET DAYS... THAT WAS THE PRACTICE",
+     "note": "0:42.1-0:44.6. Back to camera, back to adults. Pays off line 1's \"yet...\". These are Boonchu's words, never the teacher's."
+    },
+    {
+     "n": 17,
+     "beat": "P",
+     "spoken": "Day six only show... who still there.",
+     "on_screen": "DAY 6 ONLY SHOW WHO STILL THERE",
+     "note": "0:44.6-0:47.1. The adult point and the habit line. It plants \"still there\" for the closing question."
+    },
+    {
+     "n": 18,
+     "beat": "P",
+     "spoken": "Mysore room same. Nobody call the asana...",
+     "on_screen": "NOBODY CALL THE ASANA",
+     "note": "0:47.1-0:49.6. Shot: the quiet shala or a real class photo. It does not say a teacher never speaks (Flag 18). Scroll test fix: the trailing \"...\" leads into the name reveal so the line does not land flat."
+    },
+    {
+     "n": 19,
+     "beat": "P",
+     "spoken": "One asana... named after that silent teacher...",
+     "on_screen": "NAMED AFTER THAT SILENT TEACHER...",
+     "note": "0:49.6-0:52.1. Holds the name back for one line. Gap: which asana?"
+    },
+    {
+     "n": 20,
+     "beat": "P",
+     "spoken": "Vishvamitrasana. Advanced A.",
+     "on_screen": "VISHVAMITRASANA · ADVANCED A",
+     "note": "0:52.1-0:53.2. A name link only, said once (his PDF p.15). Cut to him in the asana, from a real clip or class photo, never AI (Flag 14)."
+    },
+    {
+     "n": 21,
+     "beat": "P",
+     "spoken": "[BOONCHU'S OWN CUE: 5 words or less]",
+     "on_screen": "(his cue words, only if he wants them on screen)",
+     "note": "0:53.2-0:55.0, over the same asana shot. Only he fills it. Not ready to film until he does (Flag 24)."
+    },
+    {
+     "n": 22,
+     "beat": "P",
+     "spoken": "Tomorrow nothing happen again... You still there?",
+     "on_screen": "TOMORROW NOTHING HAPPEN AGAIN... YOU STILL THERE?",
+     "note": "0:55.0-0:57.5. Same mat as line 1. Echoes \"nothing\" from line 1 and \"still there\" from line 17. A question only. It promises no message from AYBKK."
+    },
+    {
+     "n": 23,
+     "beat": "P",
+     "spoken": "แล้วเจอกันครับ",
+     "on_screen": "SEE YOU",
+     "note": "0:57.5-0:58.7. Small subtitle: see you. The caption ask, not spoken: Comment aybkk and I'll send you the link."
+    }
+   ],
+   "words": 146,
+   "end_time_s": 59.1,
+   "strongest": "Line 1 (\"If you practice today and nothing happened... yet...\") is his own words, and \"yet\" opens a loop that stays open until line 16 at about 42 s, so it carries the viewer even past the risk point at line 15, where the story ends. Lines 13 and 14 (\"That arrow... did not take his life.\" then \"Years later he come back... a golden deer.\") are the strongest pair inside the story: first a strange fact, then a surprise any Ramayana viewer knows, both straight from the checked verses, with no killing and no name said."
+  },
+  {
+   "id": "C",
+   "angle": "Writer C, FORK FIRST. Two adult lines from his own example (\"...yet...\", \"two boys wait for monsters... five days...\"). After that, only one setup line, which ends on \"No sleep\". The script reaches the hard moment (day five, nothing, no sleep, teacher still silent) at 0:15 and stops at 0:18 with \"What you do?... Sleep?\" before the book answers. The answer comes from the book: day six, Rama tells his brother \"be ready\". Then the story runs straight to the end with no announcer, and the script comes back to the adults. The \"yet\" in line 1 is paid twice: at line 16 (\"Day six only show... they were there\") and in the closing question. Scroll test fixes: line 3 used to be \"Their job... guard the fire ceremony.\" on its own, which only reported facts, so I joined it to \"Six nights. No sleep.\" and now it ends on a stake. Line 4 became a question (\"And teacher Vishvamitra?...\") so it pulls instead of telling. In line 5 I cut \"come\" so the line hits on \"nothing\". Line 17 got \"quiet\" so it links the silent teacher to the asana line. Every story fact is from facts_and_flags.md. No killing is shown or said, there is no \"only one arrow\", the silence is his promise for the ceremony, Maricha is never named, and no count of years is given.",
+   "toolkit_pick": "Fork First Story (Harvard #1, decide before you know the ending) on the \"...yet...\" open loop from his own line 1. The hook bank is not used: his line is the hook.",
+   "lines": [
+    {
+     "n": 1,
+     "beat": "H",
+     "spoken": "If you practice today and nothing happened... yet...",
+     "on_screen": "PRACTICED TODAY. NOTHING HAPPENED... YET?",
+     "note": "0:00.0. His own line, his pause. Boonchu on his mat in the quiet shala, straight to camera. 'yet' lands at about 2.9 s and stays open until line 16 and the close."
+    },
+    {
+     "n": 2,
+     "beat": "DH",
+     "spoken": "There's an old story of two boys wait for monsters... five days...",
+     "on_screen": "OLD RAMAYANA STORY · 2 BOYS · 5 DAYS...",
+     "note": "0:02.9. His own line, kept in his voice. 'Monsters' lands at about 0:06.5. Small text at the top from 0:02.9 to 0:07.2: NEW RAMAYANA MOVIE · IN BANGKOK CINEMAS NOW (words only, nothing from the film, Flag 13). The word Ramayana is on screen only, so his spoken line stays as he wrote it."
+    },
+    {
+     "n": 3,
+     "beat": "T1",
+     "spoken": "Their job... guard the teacher's fire ceremony. Six nights. No sleep.",
+     "on_screen": "SIX NIGHTS. NO SLEEP.",
+     "note": "0:07.2. Voice drops a little and leans in. No announcer. The only setup line, and it ends on a stake. Picture: small altar fire in a forest clearing, dark sky, no blood. Small: VALMIKI RAMAYANA · BALA KANDA 30."
+    },
+    {
+     "n": 4,
+     "beat": "T1",
+     "spoken": "And teacher Vishvamitra?... Silent. His promise for the ceremony.",
+     "on_screen": "VISHVAMITRA · THE TEACHER WHO WENT SILENT",
+     "note": "0:11.4. The title appears on 'Silent' as a reveal, with HIDDEN STORIES OF ASHTANGA small above it and no episode number. It is a vow, not a refusal (Flag 8). Saying the name here sets up the click on Vishvamitrasana at line 18."
+    },
+    {
+     "n": 5,
+     "beat": "T1",
+     "spoken": "Day five... nothing. No sleep. Teacher still silent.",
+     "on_screen": "DAY 1... DAY 5. NOTHING.",
+     "note": "0:14.9. The hard moment. He counts one to five on his fingers while a day counter runs on screen. This is his telling, so no quote marks (Flag 7)."
+    },
+    {
+     "n": 6,
+     "beat": "RH",
+     "spoken": "What you do?... Sleep?",
+     "on_screen": "WHAT YOU DO? SLEEP?",
+     "note": "0:18.0. The fork. Eyes in the lens, then a 1 s stop. 'Sleep?' makes school-English viewers hear 'what would you do', not 'what is your job'."
+    },
+    {
+     "n": 7,
+     "beat": "RH",
+     "spoken": "Day six... Rama tell his brother... be ready.",
+     "on_screen": "DAY 6 · BE READY",
+     "note": "0:20.5. The book answers: after five days of nothing he is more awake, not less. Small card: RAMA, TO HIS BROTHER LAKSHMANA."
+    },
+    {
+     "n": 8,
+     "beat": "T2",
+     "spoken": "Fire jump up. Sky roar...",
+     "on_screen": "FIRE JUMP UP. SKY ROAR.",
+     "note": "0:23.6. Book order is 1.30.8 then 1.30.10. Picture: the altar fire flares, dark sky. Sound: a low roar made for this Reel, nothing from the film. If the take runs over 60 s, cut this line first (2 s)."
+    },
+    {
+     "n": 9,
+     "beat": "T2",
+     "spoken": "Monsters come down... like storm clouds.",
+     "on_screen": "LIKE STORM CLOUDS",
+     "note": "0:25.5. The worst moment, paying off line 2. Picture: storm clouds rolling over the fire, no faces."
+    },
+    {
+     "n": 10,
+     "beat": "P",
+     "spoken": "Rama shoot one arrow...",
+     "on_screen": "ONE ARROW",
+     "note": "0:27.8. Picture: one arrow. Never 'only one arrow' (Flag 5)."
+    },
+    {
+     "n": 11,
+     "beat": "P",
+     "spoken": "One monster fly... far into the sea.",
+     "on_screen": "FAR INTO THE SEA",
+     "note": "0:29.3. Picture: one splash far out at sea. Nothing more is shown."
+    },
+    {
+     "n": 12,
+     "beat": "P",
+     "spoken": "That arrow did not take his life.",
+     "on_screen": "THAT ARROW DID NOT TAKE HIS LIFE",
+     "note": "0:32.0. The book's own words (1.30.20), kept exact (Flag 25). Small: BALA KANDA 30 · VERSE 20. Opens the next loop: so where is he?"
+    },
+    {
+     "n": 13,
+     "beat": "P",
+     "spoken": "Years later he come back... a golden deer. Another story.",
+     "on_screen": "YEARS LATER... A GOLDEN DEER",
+     "note": "0:34.7. Picture: a golden deer at the edge of a forest. Small: ANOTHER STORY · ARANYA KANDA 42. No name card and no count of years (Flags 10, 12)."
+    },
+    {
+     "n": 14,
+     "beat": "P",
+     "spoken": "That day... ceremony finish. Teacher speak again.",
+     "on_screen": "CEREMONY FINISH. TEACHER SPEAK AGAIN.",
+     "note": "0:38.6. Closes the loop from line 4. 'That day' brings the viewer back from 'years later' to day six. Picture: the fire burning calm. Then a 0.5 s silent beat and his normal voice."
+    },
+    {
+     "n": 15,
+     "beat": "P",
+     "spoken": "Five quiet days... that was the practice.",
+     "on_screen": "FIVE QUIET DAYS. THAT WAS THE PRACTICE.",
+     "note": "0:41.8. Back to camera, on the same mat as line 1. Pays off 'nothing happened' in line 1."
+    },
+    {
+     "n": 16,
+     "beat": "P",
+     "spoken": "Day six only show... they were there.",
+     "on_screen": "DAY SIX ONLY SHOW THEY WERE THERE",
+     "note": "0:44.3. Pays off the 'yet' in line 1. The pause before 'they were there' keeps the pull."
+    },
+    {
+     "n": 17,
+     "beat": "P",
+     "spoken": "Mysore room same... quiet. Nobody call the asana.",
+     "on_screen": "NOBODY CALL THE ASANA",
+     "note": "0:46.8. Shot: the quiet shala, or a real class photo. It says nobody calls out the asanas. It does not say the teacher never speaks (Flag 18)."
+    },
+    {
+     "n": 18,
+     "beat": "P",
+     "spoken": "Vishvamitrasana... Advanced A. Named after that silent teacher.",
+     "on_screen": "VISHVAMITRASANA · ADVANCED A · NAMED AFTER THE SAGE",
+     "note": "0:49.7. A name link only, said once (his PDF p.15, Sweeney glossary). Cut to Boonchu in the asana, a real clip or class photo, never AI."
+    },
+    {
+     "n": 19,
+     "beat": "P",
+     "spoken": "[BOONCHU'S OWN CUE: 5 words or less]",
+     "on_screen": "(his cue words)",
+     "note": "0:52.5. Over the same asana shot, timed at 1.8 s. Only he fills it. The script is not ready to film until he does."
+    },
+    {
+     "n": 20,
+     "beat": "P",
+     "spoken": "Tomorrow nothing happen again... You still there?",
+     "on_screen": "TOMORROW NOTHING HAPPEN AGAIN... YOU STILL THERE?",
+     "note": "0:54.3. Back on the same mat as line 1. The question stays with the viewer and echoes 'they were there' in line 16. It promises nothing from AYBKK."
+    },
+    {
+     "n": 21,
+     "beat": "P",
+     "spoken": "แล้วเจอกันครับ",
+     "on_screen": "แล้วเจอกันครับ · small subtitle: SEE YOU",
+     "note": "0:56.8. The video ends at about 0:58.0. Caption ask, not spoken: Comment aybkk and I'll send you the link."
+    }
+   ],
+   "words": 144,
+   "end_time_s": 58,
+   "strongest": "Lines 5 and 6 (\"Day five... nothing. No sleep. Teacher still silent.\" then \"What you do?... Sleep?\") are the strongest pull. Every 10-year practitioner has had a day-five morning, and the 1 s stop makes the viewer choose before the book answers, so they stay to hear what Rama did on day six. Lines 12 and 13 (\"That arrow did not take his life.\" then \"Years later he come back... a golden deer.\") give two strange details right after the climax. The payoff never feels like the end, and it carries the viewer into \"Five quiet days... that was the practice.\""
+  },
+  {
+   "id": "D",
+   "angle": "DEADPAN TEACHER (writer D). It opens with his own two lines, lightly tightened. Then the story runs straight and gripping, with no announcer and no jokes inside it. Then comes one flat Gervais bit about the quiet Mysore morning everybody hates: no new asana, no bind, teacher walk past you twice, sometimes that teacher is me. The joke is only on that morning and on Boonchu himself. The true line comes after it, said slower. Last is the callback: \"yet... You still there?\"",
+   "toolkit_pick": "His own two lines as H and DH, so no hook from the bank. The Harvard #1 fork stays at line 6 (\"What you do?... Sleep?\"). Gervais-deadpan moves: a list of true facts that ends flat (lines 14-15), laughing at himself first (16), the true thing after the joke said slower (17-18), and the callback (21 brings back \"nothing happen... yet\" from line 1 and \"still there\" from line 18). The idea of hook bank #10 (the same practice every morning is the point) sits in line 17, not in the hook.",
+   "lines": [
+    {
+     "n": 1,
+     "beat": "H",
+     "spoken": "If you practice today... and nothing happen... yet...",
+     "on_screen": "PRACTICE TODAY. NOTHING HAPPEN... YET",
+     "note": "0:00.0. His own line, his voice wins. Flat face, straight to camera, sitting on his mat in the quiet shala. \"yet\" is the open loop. Day six pays it inside the story and line 21 pays it for the viewer. It makes no claim and has no number."
+    },
+    {
+     "n": 2,
+     "beat": "DH",
+     "spoken": "There's an old story... two boys wait for monsters... five days...",
+     "on_screen": "TWO BOYS WAIT FOR MONSTERS... FIVE DAYS | small, top: NEW RAMAYANA MOVIE · IN BANGKOK CINEMAS NOW",
+     "note": "0:02.9. His second line, which goes straight in with no announcer. \"Monsters\" lands at about 0:06.0. The movie is small text only, from 0:02.9 to 0:06.8, not spoken. That text gives the word Ramayana right when he says \"old story\". \"Five days\" is his telling, never in quote marks (Flag 7)."
+    },
+    {
+     "n": 3,
+     "beat": "T1",
+     "spoken": "Their job... guard teacher's fire ceremony. Six nights. No sleep.",
+     "on_screen": "SIX NIGHTS. NO SLEEP.",
+     "note": "0:06.8. The story voice starts here; the card does the series work, not a spoken line. For the first 2 s the title card shows: HIDDEN STORIES OF ASHTANGA · THE TEACHER WHO WENT SILENT, with VALMIKI RAMAYANA · BALA KANDA 30 small under it. No episode number. Scroll test: the old line \"Boy Rama and his brother guard it\" was dead information. Now it has a gap after \"Their job...\" and then two hard stakes. The picture is a small altar fire in a dark forest, with no blood."
+    },
+    {
+     "n": 4,
+     "beat": "T1",
+     "spoken": "Teacher Vishvamitra? His promise for the ceremony... not one word.",
+     "on_screen": "VISHVAMITRA · THE TEACHER · NOT ONE WORD",
+     "note": "0:10.7. Small: A VOW OF SILENCE FOR THE CEREMONY. Scroll test: the old order ended on the answer. This order ends on the strange detail (\"not one word\"), so it pulls. The silence is a vow of the ritual. It is not a refusal and not a test (Flag 8). It plants the name for line 19."
+    },
+    {
+     "n": 5,
+     "beat": "T1",
+     "spoken": "Day five... no monster. No word.",
+     "on_screen": "DAY 5... NO MONSTER. NO WORD.",
+     "note": "0:14.5. He counts 1 to 5 on his fingers while a counter runs DAY 1 to DAY 5. Scroll test: \"Teacher still silent\" repeated line 4, so it became a short ladder that builds the pressure. This is his telling and no verse says it (Flag 7)."
+    },
+    {
+     "n": 6,
+     "beat": "RH",
+     "spoken": "What you do?... Sleep?",
+     "on_screen": "WHAT YOU DO? SLEEP?",
+     "note": "0:16.8. Harvard #1 fork. Eyes in the lens, flat face, then hold 1 full second before the answer. It answers the \"No sleep\" in line 3."
+    },
+    {
+     "n": 7,
+     "beat": "RH",
+     "spoken": "Day six... Rama say, brother... be ready.",
+     "on_screen": "DAY 6 · BE READY",
+     "note": "0:19.3. Rehook: after five empty days he is more awake, not less. Small: RAMA · AND HIS BROTHER LAKSHMANA. The voice only says \"brother\". From 1.30.7."
+    },
+    {
+     "n": 8,
+     "beat": "T2",
+     "spoken": "Sky roar. Monsters come down... like storm clouds.",
+     "on_screen": "SKY ROAR",
+     "note": "0:22.0. The worst moment, and it pays the monsters from line 2. The picture is storm clouds rolling over the fire. The roar sound is made for this Reel, nothing from the film. From 1.30.10 to 11."
+    },
+    {
+     "n": 9,
+     "beat": "T2",
+     "spoken": "Rama shoot one arrow...",
+     "on_screen": "ONE ARROW",
+     "note": "0:25.1. The line ends on a gap. It never says \"only one arrow\" (Flag 5). The picture is one arrow in flight, with no face."
+    },
+    {
+     "n": 10,
+     "beat": "P",
+     "spoken": "One monster fly far... into the sea.",
+     "on_screen": "FAR INTO THE SEA",
+     "note": "0:26.6. The surprise: he flies, he does not fall. The picture is one splash far out at sea, nothing more. From 1.30.18."
+    },
+    {
+     "n": 11,
+     "beat": "P",
+     "spoken": "That arrow did not take his life.",
+     "on_screen": "THAT ARROW DID NOT TAKE HIS LIFE",
+     "note": "0:29.3. The book's own line, kept exact (Flag 25). Small: BALA KANDA 30 · VERSE 20. Loop: so where is he?"
+    },
+    {
+     "n": 12,
+     "beat": "P",
+     "spoken": "Years later he come back... golden deer... another story.",
+     "on_screen": "YEARS LATER... A GOLDEN DEER",
+     "note": "0:32.0. Small: ANOTHER STORY · ARANYA KANDA 42. No name card and no Maricha (Flag 10), and no count of years (Flag 12). The picture is a golden deer at the edge of a forest."
+    },
+    {
+     "n": 13,
+     "beat": "P",
+     "spoken": "That day... ceremony finished. Teacher speak again.",
+     "on_screen": "CEREMONY FINISHED. TEACHER SPEAK AGAIN.",
+     "note": "0:35.5. Pays line 4. \"That day\" brings the story back from \"years later\". Small: BALA KANDA 30 · VERSE 25. Scroll test: this was the risk line because it closes the story. The fix: a 0.5 s beat, then a hard cut to his face in normal voice with a question (line 14). The joke in line 15 lands on the contrast with \"teacher speak again\"."
+    },
+    {
+     "n": 14,
+     "beat": "P",
+     "spoken": "You? No new asana. No bind.",
+     "on_screen": "YOU? NO NEW ASANA. NO BIND.",
+     "note": "0:38.7. [JOKE] Back on the same mat as line 1. Flat, the same speed as the story. The target is the quiet morning everybody hates. It is never a student."
+    },
+    {
+     "n": 15,
+     "beat": "P",
+     "spoken": "Teacher walk past you... twice.",
+     "on_screen": "TEACHER WALK PAST YOU... TWICE.",
+     "note": "0:40.8. [JOKE] A list of true facts that ends flat on \"twice\". No smile."
+    },
+    {
+     "n": 16,
+     "beat": "P",
+     "spoken": "Sometimes... that teacher is me.",
+     "on_screen": "SOMETIMES THAT TEACHER IS ME.",
+     "note": "0:42.6. [JOKE] He laughs at himself first, so the target is Boonchu. Face does nothing, then hold 1 full second. Never \"just kidding\". It makes no AYBKK claim (Flag 18)."
+    },
+    {
+     "n": 17,
+     "beat": "P",
+     "spoken": "Quiet days... that is the practice.",
+     "on_screen": "QUIET DAYS. THAT IS THE PRACTICE.",
+     "note": "0:45.4. [TRUE] Said slower than the jokes, so the sincere line hits because everything before it was flat."
+    },
+    {
+     "n": 18,
+     "beat": "P",
+     "spoken": "Day six only show... who was still there.",
+     "on_screen": "DAY SIX ONLY SHOW WHO WAS STILL THERE",
+     "note": "0:47.9. [TRUE] Ties the story to the viewer. It plants \"still there\" for the closing question."
+    },
+    {
+     "n": 19,
+     "beat": "P",
+     "spoken": "Vishvamitrasana. Advanced A. Named after that silent teacher.",
+     "on_screen": "VISHVAMITRASANA · ADVANCED A · NAMED AFTER THE SAGE VISHVAMITRA",
+     "note": "0:50.8. A name link only, said once (his PDF p.15, Sweeney glossary). Cut to Boonchu in the asana, from a real clip or a real class photo, never AI."
+    },
+    {
+     "n": 20,
+     "beat": "P",
+     "spoken": "[BOONCHU'S OWN CUE: 5 words or less]",
+     "on_screen": "[his cue words]",
+     "note": "0:53.6. Over the same asana shot. Only he fills it. Counted as 1.8 s, so a shorter cue gives time back."
+    },
+    {
+     "n": 21,
+     "beat": "P",
+     "spoken": "Tomorrow... nothing happen... yet. You still there?",
+     "on_screen": "TOMORROW NOTHING HAPPEN... YET. YOU STILL THERE?",
+     "note": "0:55.4. [CALLBACK] \"nothing happen... yet\" comes back from line 1 and \"still there\" from line 18. Eyes in the lens. It is only a question and promises no message from AYBKK."
+    },
+    {
+     "n": 22,
+     "beat": "P",
+     "spoken": "แล้วเจอกันครับ",
+     "on_screen": "SEE YOU",
+     "note": "0:57.9. Ends at about 0:59.1. If the real take runs over 60 s, cut in this order: \"You?\" in line 14 (0.4 s), \"Vishvamitra\" in line 4 (0.8 s, the card still shows the name), \"far\" in line 10 (0.4 s). Caption ask, not spoken: Comment aybkk and I'll send you the link."
+    }
+   ],
+   "words": 143,
+   "end_time_s": 59.1,
+   "strongest": "The strongest pull is line 6, \"What you do?... Sleep?\". After \"six nights, no sleep\" and \"day five... no monster, no word\", the viewer has to answer before the book does, and day six answers right away. Lines 15-16 (\"Teacher walk past you... twice.\" then \"Sometimes... that teacher is me.\") come straight after the story's teacher speaks again. That contrast plus the self-joke keeps the viewer through the turn back to adults. It also buys the true line and the \"You still there?\" callback."
+  }
+ ],
+ "judged": [
+  {
+   "lens": "scroll",
+   "scores": [
+    {
+     "draft": "A",
+     "score": 7,
+     "scroll_at_line": 19,
+     "problems": [
+      "Line 3 'The boys? Rama and his brother.' answers a question nobody asked yet. It spends 2.4 s on a name before any stakes, the same flat report the owner flagged, now phrased as a question.",
+      "Line 6 'His promise for the fire ceremony.' is a plain explainer. It closes the 'not one word' loop from line 5 and opens nothing new. The writer's own note calls it the weakest line.",
+      "Line 18 'Day six only show they were there.' Who is 'they'? A school-English viewer cannot tell whether it means the boys or the students, so the moral lands foggy.",
+      "Line 19 'Mysore room same. Nobody call the asana.' comes after the story has paid off. It is a lecture line at 0:48 with nothing held back, and this is where I would leave.",
+      "It is the longest draft at about 59.4 s with 23 lines, so it has the least room if his real take runs slow."
+     ],
+     "best_lines": [
+      "A7: Day five... nothing... yet.",
+      "A5: Teacher Vishvamitra... not one word.",
+      "A22: Tomorrow... nothing... yet. You still there?",
+      "A14: That arrow... did not take his life."
+     ]
+    },
+    {
+     "draft": "B",
+     "score": 7.5,
+     "scroll_at_line": 18,
+     "problems": [
+      "Line 3 'Their job? Six nights, no sleep... guard a fire.' ends on the weakest of its three facts. 'No sleep' is the stake, and 'guard a fire' trails off as a let-down.",
+      "Line 6 'Day five... nothing. Teacher still silent.' repeats line 5's 'not one word'. It is a report line right before the fork.",
+      "The 'yet...' from line 1 never returns in the close. 'Tomorrow nothing happen again... You still there?' is the old close, so his own hook word is paid at line 16 and then dropped.",
+      "Line 18 'Mysore room same. Nobody call the asana...' is still a lecture line at 0:47, even with the trailing dots. Line 19 saves it, but line 18 is where a harsh viewer goes.",
+      "Rama is never spoken until 0:20.5, and only a small card names the brother. The Ramayana anchor rests on small top text for the first 20 s."
+     ],
+     "best_lines": [
+      "B5: His promise for the ceremony... not one word.",
+      "B19: One asana... named after that silent teacher...",
+      "B17: Day six only show... who still there.",
+      "B4: The teacher, Vishvamitra? He go silent..."
+     ]
+    },
+    {
+     "draft": "C",
+     "score": 6,
+     "scroll_at_line": 17,
+     "problems": [
+      "Line 4 'And teacher Vishvamitra?... Silent. His promise for the ceremony.' puts the strange detail in the middle and ends on the explainer, the exact pattern the owner said he scrolls past.",
+      "Line 5 'Day five... nothing. No sleep. Teacher still silent.' repeats two facts from lines 3 and 4. It reads as a recap, not a ladder.",
+      "The writer says 'yet' is paid twice, but the close 'Tomorrow nothing happen again... You still there?' has no 'yet'. Line 16 'they were there' does not pay it either, so his hook word is left open.",
+      "Line 17 'Mysore room same... quiet. Nobody call the asana.' is a lecture after the story ends. The asana name comes next with no hold-back, so nothing pulls past 0:47.",
+      "It is the safest and tightest draft at 58 s, but it has no new move. It reads like the old script with his two lines pasted on top."
+     ],
+     "best_lines": [
+      "C3: Their job... guard the teacher's fire ceremony. Six nights. No sleep.",
+      "C6: What you do?... Sleep?",
+      "C16: Day six only show... they were there."
+     ]
+    },
+    {
+     "draft": "D",
+     "score": 8.5,
+     "scroll_at_line": 0,
+     "problems": [
+      "Line 1 changes his words: he wrote 'nothing happened....yet...' and D has 'If you practice today... and nothing happen... yet...'. The extra pause after 'today' slows the first 3 s, and his exact line should win.",
+      "The word 'Mysore' is never said or shown. It is the method word every Ashtanga viewer searches for, and the brief's 'quiet Mysore room' point now lives only inside the joke.",
+      "Line 15 'Teacher walk past you... twice.' plus line 16 'Sometimes... that teacher is me.' could be heard as 'Boonchu ignores students'. That is a tension with the Habit Gap line 'a teacher who notices when you're gone'. Line 17 and the close 'You still there?' rescue it, but he should know about the risk before filming.",
+      "Line 19 says the asana name first and the reason after, so the last reveal in the Reel has no gap before it.",
+      "The story-to-viewer jump at line 14 ('You?') needs the hard cut to the same mat as line 1, or 'You?' reads as a loose word.",
+      "The count is tight at about 59.1 s with three joke beats, so it depends on his flat, even delivery."
+     ],
+     "best_lines": [
+      "D15: Teacher walk past you... twice.",
+      "D14: You? No new asana. No bind.",
+      "D5: Day five... no monster. No word.",
+      "D4: Teacher Vishvamitra? His promise for the ceremony... not one word.",
+      "D16: Sometimes... that teacher is me.",
+      "D21: Tomorrow... nothing happen... yet. You still there?"
+     ]
+    }
+   ],
+   "winner": "D",
+   "grafts": [
+    "A line 1 replaces D line 1, word for word: \"If you practice today and nothing happened... yet...\" These are his exact typed words. The extra pause after 'today' goes, and 'happened' comes back. Time is about the same or a little less.",
+    "B lines 19 to 20 replace D line 19 (\"Vishvamitrasana. Advanced A. Named after that silent teacher.\"): \"One asana... named after that silent teacher...\" then \"Vishvamitrasana. Advanced A.\" The name is held back for one line, so the last reveal lands as a pull at 0:50 and not as a label. About +0.8 s.",
+    "B line 17 replaces D line 18 (\"Day six only show... who was still there.\"): \"Day six only show... who still there.\" It drops 'was', so it echoes the close 'You still there?' word for word, and the 0.4 s it saves pays half of the graft above (net about 59.5 s).",
+    "From B line 18 (\"Mysore room same. Nobody call the asana...\"), take only the word Mysore and put it on screen, not in the voice: D line 14's screen becomes 'MYSORE ROOM. NO NEW ASANA. NO BIND.' The Reel then carries the method word at no spoken cost, and the joke is clearly about the Mysore morning."
+   ]
+  },
+  {
+   "lens": "facts",
+   "scores": [
+    {
+     "draft": "A",
+     "score": 9,
+     "scroll_at_line": 0,
+     "problems": [
+      "Line 2 note says the movie text 'is true on 12 Nov'. The showtimes page was checked on 11 Nov (date tab TODAY11, sec. 9), not on 12 Nov. Change it to 'checked 11 Nov'. Flag 13's recheck after about 25 Nov still applies.",
+      "No source label for the book appears at the start of the story. The only 'Ramayana' on screen is NEW RAMAYANA MOVIE at line 2, and the Bala Kanda cites do not appear until lines 14 to 16. A viewer can take the story as the film's (Flag 13: nothing from the film). Add VALMIKI RAMAYANA · BALA KANDA 30 small at line 3 or 4.",
+      "Line 12 'Rama shoot one arrow...' is held as a cliffhanger, with ONE ARROW alone on screen. That makes the count the punchline and leans toward 'one arrow did it all'. In the book he strikes Subahu and the rest afterwards (1.30.22 to 23), and Flag 5 bans 'only one arrow'. This is a soft risk, and all four drafts share it. Use RAMA SHOOT ONE ARROW on screen, or the picture with no count text.",
+      "At 59.4 s the draft has only 0.6 s of room, and it gives no cut order if the real take runs long.",
+      "No hard-rule break. Every story line matches sec. 9: six nights with no sleep (1.30.4 to 5), the vow said at line 6 (Flag 8), day five as his own telling with no quote marks (Flag 7), 1.30.7, 1.30.8, 1.30.10, 1.30.11, 1.30.18, the exact words of 1.30.20 (Flag 25), the deer with no name and no count of years (Flags 10 and 12), 1.30.25, and a name-only link to Advanced A."
+     ],
+     "best_lines": [
+      "Teacher Vishvamitra... not one word.",
+      "Day five... nothing... yet.",
+      "That arrow... did not take his life.",
+      "Years later he come back... golden deer. Another story.",
+      "Tomorrow... nothing... yet. You still there?"
+     ]
+    },
+    {
+     "draft": "C",
+     "score": 8,
+     "scroll_at_line": 0,
+     "problems": [
+      "Line 2 puts OLD RAMAYANA STORY and NEW RAMAYANA MOVIE on screen together. Two 'Ramayana' lines side by side blur the book and the film (Flag 13). Keep the Valmiki label from line 3 and drop 'RAMAYANA' from the big line 2 text.",
+      "The summary says the 'yet' is paid 'in the closing question', but line 20 ('Tomorrow nothing happen again... You still there?') has no 'yet'. The writer's notes do not match the script.",
+      "Line 10 has the same ONE ARROW cliffhanger risk as the others (Flag 5).",
+      "Line 14's burned-in card 'CEREMONY FINISH. TEACHER SPEAK AGAIN.' carries broken grammar into screen text. This is not a fact problem, but sec. 9 has it as 'completion of ritual'.",
+      "Clean on facts. It handles the vow most safely: 'Silent. His promise for the ceremony.' sits in one line, so the silence never stands alone as coldness (Flag 8). Its source labeling (VALMIKI RAMAYANA · BALA KANDA 30) is the best of the four."
+     ],
+     "best_lines": [
+      "Their job... guard the teacher's fire ceremony. Six nights. No sleep.",
+      "And teacher Vishvamitra?... Silent. His promise for the ceremony.",
+      "Day five... nothing. No sleep. Teacher still silent.",
+      "Day six only show... they were there."
+     ]
+    },
+    {
+     "draft": "B",
+     "score": 7.5,
+     "scroll_at_line": 0,
+     "problems": [
+      "Line 17 'Day six only show... who still there.' changes the checked point in the brief ('The big day only shows you were there on the quiet days'). Tied to 'Day six', it suggests someone in the story left the watch. Nobody did: both boys kept it for six nights (1.30.5). Keep 'they were there'.",
+      "Lines 19 and 20 build up to the asana ('One asana... named after that silent teacher...' then the name) as a reveal. The link is still name-only, but two lines of build give the asana the weight of a payoff. Flag 14 says the lesson is the quiet days, not this asana.",
+      "No Valmiki or book label on screen at the start of the story. The only 'Ramayana' on screen is the movie line (Flag 13 risk).",
+      "Line 11's 'ONE ARROW...' with a trailing ellipsis on screen makes the 'one arrow did it all' reading stronger (Flag 5, soft).",
+      "Line 4 'He go silent...' trails off before the vow. Line 5 says the vow at once, so this passes, but the vow is held back for a beat.",
+      "The line 2 note dates the movie check correctly: 'True on 11 Nov'."
+     ],
+     "best_lines": [
+      "Their job? Six nights, no sleep... guard a fire.",
+      "His promise for the ceremony... not one word.",
+      "That day, ceremony finish. Silent teacher... speak again."
+     ]
+    },
+    {
+     "draft": "D",
+     "score": 5,
+     "scroll_at_line": 0,
+     "problems": [
+      "Lines 15 and 16 ('Teacher walk past you... twice.' 'Sometimes... that teacher is me.') make a teacher's quiet look like walking past and ignoring the student. That is the coldness reading Flag 8 forbids for the sage's silence. It comes straight after 'Teacher speak again', where 'Teacher' has meant Vishvamitra all through the story, so it can be heard as a joke on the sage.",
+      "Line 16 is an unchecked AYBKK claim. It contradicts the only confirmed one ('at AYBKK a teacher notices when you miss class', Flag 18) and the Habit Gap direction ('a teacher who notices when you're gone'). The note's 'It makes no AYBKK claim (Flag 18)' is wrong.",
+      "It drops the fixed content line 'Mysore room same. Nobody call the asana.' The brief requires the quiet Mysore room as the method, like the silent teacher.",
+      "The line 10 note says 'he flies, he does not fall'. That is wrong: Rao has 'flung down into an ocean' (1.30.18), and Griffith has 'In ocean's flood he fell.'",
+      "Its cut order removes the spoken 'Vishvamitra' from line 4. That name is what plants the link for the asana line.",
+      "Line 9 has the same ONE ARROW risk as the others (Flag 5)."
+     ],
+     "best_lines": [
+      "Teacher Vishvamitra? His promise for the ceremony... not one word.",
+      "Day five... no monster. No word."
+     ]
+    }
+   ],
+   "winner": "A",
+   "grafts": [
+    "From C line 3, onto A line 3 or 4 as small text: \"Small: VALMIKI RAMAYANA · BALA KANDA 30.\" Then the book, not only NEW RAMAYANA MOVIE, names the source on screen when the story starts (Flag 13).",
+    "From B line 2 note, replacing A's \"It is true on 12 Nov.\": \"True on 11 Nov; check a Bangkok showtimes page again if posting after about 25 Nov (Flag 13).\" The showtimes page was fetched on 11 Nov, not 12 Nov.",
+    "From B line 16 note, onto A line 17: \"These are Boonchu's words, never the teacher's.\" This stops a caption or translation from putting 'that was the practice' in Vishvamitra's mouth. No verse says it.",
+    "From C line 8 note, onto A line 10 ('Fire jump up... sky roar...'): \"If the take runs over 60 s, cut this line first (2 s).\" A runs 59.4 s with no cut order, and line 11 still pays off the monsters without it.",
+    "Optional, from C line 4, to replace A lines 5 and 6 if time is short: \"And teacher Vishvamitra?... Silent. His promise for the ceremony.\" The vow then comes in the same breath as the silence (Flag 8), and it saves about 0.7 s.",
+    "Not a graft, a fix for all four drafts: change the ONE ARROW screen text to RAMA SHOOT ONE ARROW, or show the arrow with no count text, so the count is not the punchline (Flag 5). Do NOT graft B line 17 or D line 18 ('who still there'), or D lines 14 to 16 (the joke block)."
+   ]
+  },
+  {
+   "lens": "voice",
+   "scores": [
+    {
+     "draft": "A",
+     "score": 8,
+     "scroll_at_line": 6,
+     "problems": [
+      "Line 6 'His promise for the fire ceremony.' is the one flat report left in the story. It answers line 5 and holds nothing back, so the pull drops for 2 s.",
+      "Line 22 'Tomorrow... nothing... yet. You still there?' drops 'happen', so it reads oddly (tomorrow has not come, so 'nothing yet' of what?). It is less clear than the brief's model close 'Tomorrow nothing happen again. You still there?'.",
+      "'yet' three times (lines 1, 7, 22) is right at the edge of sounding like a writer's device. Boonchu's own example uses it once. The day-five 'yet' earns its place. The closing one only works if 'happen' goes back in.",
+      "Line 3 'The boys? Rama and his brother.' uses the 'X? Y.' reveal that AI copy uses a lot. Here it passes as Thai-English topic-first speech, but it is the only line in the first 10 s that sounds written.",
+      "At ~59.4 s it is tight. Any graft must be time-neutral or pay for itself."
+     ],
+     "best_lines": [
+      "Day five... nothing... yet.",
+      "Teacher Vishvamitra... not one word.",
+      "Six nights they guard the fire... no sleep.",
+      "Fire jump up... sky roar...",
+      "That day... ceremony finish. Teacher speak again."
+     ]
+    },
+    {
+     "draft": "B",
+     "score": 6.5,
+     "scroll_at_line": 4,
+     "problems": [
+      "Lines 3 and 4 stack two self-asked questions ('Their job?' then 'The teacher, Vishvamitra?'). That is a copywriter tic. The comma form 'The teacher, Vishvamitra?' is written English and is awkward to say.",
+      "The silence is said three times in three lines ('He go silent...', 'not one word.', 'Teacher still silent.'). Line 6 'Day five... nothing. Teacher still silent.' is the old dead report almost word for word.",
+      "9 of 22 spoken lines trail '...'. When every line is a cliffhanger none of them stands out, and the read goes monotone, which is what he complained about.",
+      "The hook's 'yet...' is never paid back in words. The note says line 16 pays it, but the viewer never hears the echo."
+     ],
+     "best_lines": [
+      "Day six only show... who still there.",
+      "One asana... named after that silent teacher...",
+      "Tomorrow nothing happen again... You still there?",
+      "Their job? Six nights, no sleep... guard a fire."
+     ]
+    },
+    {
+     "draft": "C",
+     "score": 7,
+     "scroll_at_line": 4,
+     "problems": [
+      "Line 4 'And teacher Vishvamitra?... Silent. His promise for the ceremony.' ends on the explanation, not the gap, so it lands flat. The '?...' punctuation is also confusing to read off a script.",
+      "Line 5 'Day five... nothing. No sleep. Teacher still silent.' repeats 'No sleep' from line 3 and 'silent' from line 4. It is a recap, not new pressure.",
+      "Lines 3 to 5 are mostly the v1 fact order with new punctuation. It is cleaner than v1 but has the least new pull of the four in the story's first 15 s.",
+      "On-screen line 1 'PRACTICED TODAY. NOTHING HAPPENED... YET?' rewrites his words into a different sentence. His spoken line should be on screen as he says it."
+     ],
+     "best_lines": [
+      "Mysore room same... quiet. Nobody call the asana.",
+      "Day six only show... they were there.",
+      "Fire jump up. Sky roar...",
+      "Tomorrow nothing happen again... You still there?"
+     ]
+    },
+    {
+     "draft": "D",
+     "score": 6.5,
+     "scroll_at_line": 14,
+     "problems": [
+      "Lines 14 to 16 add a Gervais joke he did not ask for in this rewrite. 'You? No new asana. No bind.' is a hard tonal cut right where the story ends, which is the riskiest drop-off point, and it reads like a written comedy beat.",
+      "Line 15 'Teacher walk past you... twice.' cuts against the business direction (AYBKK sells 'a teacher who notices when you're gone'), even with 'that teacher is me' as the self-target.",
+      "It drops the fixed adults' point 'Mysore room same. Nobody call the asana.' (the brief's fixed content: the quiet room is the method, like the silent teacher). The joke takes its place.",
+      "Line 17 'Quiet days... that is the practice.' loses 'Five', which was the tie back to the story's five days.",
+      "The payoff section grows to 8 adult lines after the story, so it starts to feel like a lecture."
+     ],
+     "best_lines": [
+      "Day five... no monster. No word.",
+      "Teacher Vishvamitra? His promise for the ceremony... not one word.",
+      "Tomorrow... nothing happen... yet. You still there?",
+      "Sometimes... that teacher is me."
+     ]
+    }
+   ],
+   "winner": "A",
+   "grafts": [
+    "D line 4 'Teacher Vishvamitra? His promise for the ceremony... not one word.' replaces A lines 5 and 6 ('Teacher Vishvamitra... not one word.' + 'His promise for the fire ceremony.'). This fixes A's one flat line by ending on the strange detail instead of the answer. The vow is still said (Flag 8), the title card still lands on 'not one word', and it saves 1 word and one line break (~0.6 s).",
+    "D line 21 'Tomorrow... nothing happen... yet. You still there?' replaces A line 22 'Tomorrow... nothing... yet. You still there?'. Putting 'happen' back makes the line parse and echoes his line 1, and the third 'yet' stays. It costs +1 word (~0.4 s), which graft 1 pays for. If three 'yet's feel like too much to him, use B/C 'Tomorrow nothing happen again... You still there?' instead.",
+    "B line 17 'Day six only show... who still there.' replaces A line 18 'Day six only show they were there.'. It plants 'still there' word for word for the closing question, it is more Thai-English, and it has the same 7 words. The pause before 'who still there' holds the pull.",
+    "OPTIONAL, only if his cue comes in at 3 words or less (it is counted at 1.8 s): B lines 19 and 20 'One asana... named after that silent teacher...' / 'Vishvamitrasana. Advanced A.' replace A line 20. This holds the asana name back one beat. It costs +2 words (~1 s), so A would go over 60 s with a full 5-word cue.",
+    "Keep from A unchanged, because no other draft beats them: 'Day five... nothing... yet.' (best rehook into the fork, tying the viewer's 'yet' to the boys' wait), 'Six nights they guard the fire... no sleep.', and 'Fire jump up... sky roar...'. Do NOT graft D's joke block (lines 14 to 16): it breaks tone at the drop-off point, works against 'a teacher who notices', and pushes out the fixed Mysore-room line."
+   ]
+  }
+ ],
+ "synth": {
+  "toolkit_pick": "Name-the-Feeling + Fork-First Story. Why: his own first line names the flat morning every long-time practitioner knows (practiced, nothing happened), and \"yet\" opens a loop that pays three times: day five, day six, tomorrow. The story has a natural stop at day five (no word, no monster, no sleep), so \"What you do?... Sleep?\" makes the viewer choose before the book answers with \"be ready\". That choice is the pull that carries them from 0:18 to the arrow.",
+  "toolkit_choice": "Gervais deadpan + /story 4-beat (Draft D): its flat Mysore-morning joke covered the drop-off after the story best. But \"Teacher walk past you... twice / Sometimes that teacher is me\" sounds like a teacher who ignores students, which goes against the confirmed line and the Habit Gap. He did not ask for jokes, and it pushed out the fixed Mysore-room line. | Vibe Samurai (flat statement, ladder of five days, turn, flip): the days make a ready ladder, but its turn pulls toward the banned \"not X but Y\" line, and it has no stop where the viewer must choose.",
+  "lines": [
+   {
+    "n": 1,
+    "beat": "H",
+    "spoken": "If you practice today and nothing happened... yet...",
+    "on_screen": "IF YOU PRACTICE TODAY AND NOTHING HAPPENED... YET...",
+    "note": "0:00.0. His exact typed words (Draft A), with only the dots cleaned up. This replaces D's 'If you practice today... and nothing happen...' because the scroll judge said his exact line wins. Shot: Boonchu sitting on his mat in the quiet shala, straight to camera, with the text on from frame 1. 'yet' is the open loop. It is paid at line 5, again at line 16, and at the close. No number and no study claim (Flag 2)."
+   },
+   {
+    "n": 2,
+    "beat": "DH",
+    "spoken": "There's an old story of two boys wait for monsters... five days...",
+    "on_screen": "2 BOYS WAIT FOR MONSTERS... FIVE DAYS... | small, top: NEW RAMAYANA MOVIE · IN BANGKOK CINEMAS NOW",
+    "note": "0:03.0. His second line, kept in his grammar. Say 'two', show '2'. No announcer: it goes straight into the story, and 'monsters' lands by about 0:06. The movie line is small top text from 0:03.0 to 0:07.1. It is words only and never spoken: no poster, clip, actor or music from the film. It was checked on 11 Nov 2026 (Bangkok showtimes page, released 5 Nov). If posting after about 25 Nov, check a Bangkok showtimes page again (Flag 13). The big text has no RAMAYANA in it, so the book and the film do not blur. 'Five days' is his telling and is never quoted (Flag 7)."
+   },
+   {
+    "n": 3,
+    "beat": "T1",
+    "spoken": "Their job... guard the teacher's fire ceremony. Six nights... no sleep.",
+    "on_screen": "SIX NIGHTS. NO SLEEP. | small: VALMIKI RAMAYANA · BALA KANDA 30 | corner, lines 3 to 14: HIDDEN STORIES OF ASHTANGA",
+    "note": "0:07.1. The story voice starts here: a little lower and slower, leaning in, with no announcer. The line is C3, which the scroll and facts judges both picked. The gap after 'Their job...' is followed by two hard stakes, and the line ends on 'no sleep'. This replaces the dead 'Boy Rama and his brother guard it.' The small book label is the facts judge's fix: the book, not the film, names the source as the story starts (Flag 13). The series tag has no episode number (Flag 27). Book 1.30.4 to 5. Picture: a small altar fire in a forest clearing at night. Things only, no faces, no blood (Flag 15)."
+   },
+   {
+    "n": 4,
+    "beat": "T1",
+    "spoken": "Teacher Vishvamitra? His promise for the ceremony... not one word.",
+    "on_screen": "VISHVAMITRA · THE TEACHER WHO WENT SILENT | small: A VOW FOR THE CEREMONY",
+    "note": "0:11.4. This is D4, which all three judges picked. The old line ended on the explainer ('His promise for the ceremony'). Now the vow is said in the same breath as the silence (1.30.4, Flag 8), and the line ends on the strange detail. The title card lands on 'not one word'. Never say he refused or ignored the boys. This plants the name for lines 18 and 19."
+   },
+   {
+    "n": 5,
+    "beat": "T1",
+    "spoken": "Day five... no word. No monster... yet.",
+    "on_screen": "DAY 5... NO WORD. NO MONSTER... YET",
+    "note": "0:15.2. A graft: D5's ladder (no word, no monster) plus A7's 'yet', which the voice judge called the best rehook into the fork. It ends on the monster loop, so 'What you do?' comes at the highest pressure. It replaces the old dead report 'Teacher still silent.' He counts 1 to 5 on his fingers while a counter runs DAY 1 to DAY 5. This is his telling: no verse says it, and it is never in quote marks (Flag 7)."
+   },
+   {
+    "n": 6,
+    "beat": "RH",
+    "spoken": "What you do?... Sleep?",
+    "on_screen": "WHAT YOU DO? SLEEP?",
+    "note": "0:18.1. Harvard #1 fork, the one stop before the book answers. Eyes in the lens, then a full 1 s stop before 'Sleep?'. 'Sleep?' tells school-English viewers that this means 'what would you do', not 'what is your job'. It also echoes 'no sleep' in line 3."
+   },
+   {
+    "n": 7,
+    "beat": "RH",
+    "spoken": "Day six... Rama say, brother... be ready.",
+    "on_screen": "DAY 6 · BE READY | small: RAMA · AND HIS BROTHER LAKSHMANA",
+    "note": "0:20.6. The book's answer to the fork (1.30.7): after five quiet days he is more awake, not less. Rama's name is first said here, on his own moment. The card names the brother, and the voice says only 'brother'. Indian names only, never 'King Rama'. The loop is: ready for what?"
+   },
+   {
+    "n": 8,
+    "beat": "T2",
+    "spoken": "Fire jump up... sky roar...",
+    "on_screen": "FIRE JUMP UP. SKY ROAR.",
+    "note": "0:23.3. Draft A's line, kept unchanged on the voice judge's call. Book order: the altar fire flares up (1.30.8), then a frightening roar in the sky (1.30.10). Picture: the fire flaring under a dark sky. Use a low roar made for this Reel, nothing from the film. This is item 1 in the cut order (see open flags)."
+   },
+   {
+    "n": 9,
+    "beat": "T2",
+    "spoken": "Monsters come down... like storm clouds.",
+    "on_screen": "LIKE STORM CLOUDS",
+    "note": "0:25.3. The worst moment, and it pays the monsters from line 2 (1.30.11). The pause before 'like storm clouds' holds the picture. Picture: storm clouds rolling over the fire. No faces and nothing from the film."
+   },
+   {
+    "n": 10,
+    "beat": "T2",
+    "spoken": "Rama shoot one arrow...",
+    "on_screen": "RAMA SHOOT ONE ARROW",
+    "note": "0:27.6. Holds back what the arrow hits. Facts judge fix for all drafts: the screen says RAMA SHOOT ONE ARROW, never ONE ARROW alone, so the count is not the punchline. Never say 'only one arrow' (Flag 5). Line 11 follows fast. Picture: one arrow in flight."
+   },
+   {
+    "n": 11,
+    "beat": "P",
+    "spoken": "One monster fly far... into the sea.",
+    "on_screen": "FAR INTO THE SEA",
+    "note": "0:29.1. Book 1.30.18: he is hurled a hundred yojanas and falls into the ocean. Picture: one splash far out at sea, nothing more (Flag 22). D's note 'he flies, he does not fall' is not carried over, because it is wrong: the book has him fall into the sea."
+   },
+   {
+    "n": 12,
+    "beat": "P",
+    "spoken": "That arrow... did not take his life.",
+    "on_screen": "THAT ARROW DID NOT TAKE HIS LIFE | small: BALA KANDA 30 · VERSE 20",
+    "note": "0:31.8. The book's own statement (1.30.20). The words are unchanged and only a pause is added (Flag 25). The loop is: so where is he? It is paid by the next line."
+   },
+   {
+    "n": 13,
+    "beat": "P",
+    "spoken": "Years later he come back... a golden deer. Another story.",
+    "on_screen": "YEARS LATER... A GOLDEN DEER | small: ANOTHER STORY · ARANYA KANDA 42",
+    "note": "0:34.6. The last surprise, which leaves a door open for the series. No name and no name card: Maricha is never said or shown (Flag 10). No count of years (Flag 12). Never say 'next episode' (Flag 26). Picture: a golden deer at the edge of a forest."
+   },
+   {
+    "n": 14,
+    "beat": "P",
+    "spoken": "That day... ceremony finish. Teacher speak again.",
+    "on_screen": "CEREMONY FINISHED · TEACHER SPEAKS AGAIN | small: BALA KANDA 30 · VERSE 25",
+    "note": "0:38.3. 'That day' brings the story back from 'years later' to day six (1.30.25 to 26, 1.31.1). It pays 'not one word' from line 4. The card is a label, so it is in correct English (the facts judge flagged the broken grammar on C's card). Picture: the fire burning calm. Then a 0.5 s silent beat and a hard cut to his face in normal voice. The 'yet' from line 1 is still open here and holds the viewer across the cut."
+   },
+   {
+    "n": 15,
+    "beat": "P",
+    "spoken": "Five quiet days... that was the practice.",
+    "on_screen": "FIVE QUIET DAYS. THAT WAS THE PRACTICE.",
+    "note": "0:41.6. Back to camera on the same mat as line 1, in normal voice. Pays 'nothing happened' from line 1. These are Boonchu's words, never the teacher's. No caption or translation may put this line in Vishvamitra's mouth, because no verse says it."
+   },
+   {
+    "n": 16,
+    "beat": "P",
+    "spoken": "Day six only show... you were there.",
+    "on_screen": "DAY SIX ONLY SHOW YOU WERE THERE",
+    "note": "0:44.2. The adults' point (Harvard #21 and #27). Two fixes in one. The scroll judge said 'they' was foggy: the boys or the students? The facts judge said 'who still there' suggests someone in the story left the watch, and nobody did (1.30.5). 'You' makes the line about the viewer and plants 'you... there' for the close."
+   },
+   {
+    "n": 17,
+    "beat": "P",
+    "spoken": "Mysore room same... nobody call the asana...",
+    "on_screen": "MYSORE ROOM SAME. NOBODY CALL THE ASANA",
+    "note": "0:46.7. Fixed content: the quiet Mysore room is the method, like the silent teacher. 'Mysore' is said and shown, which fixes the scroll judge's point on D. The line says nobody calls out the asanas. It never says a teacher does not speak or does not notice (Flag 18). Fix for the scroll drop here: the trailing pause runs straight into the hold-back in line 18. Shot: the quiet shala or a real class photo."
+   },
+   {
+    "n": 18,
+    "beat": "P",
+    "spoken": "One asana... named after that silent teacher...",
+    "on_screen": "ONE ASANA... NAMED AFTER THAT SILENT TEACHER",
+    "note": "0:49.2. Graft of B19, as the scroll judge asked: the name is held back one line, so the last reveal pulls instead of landing as a label. It is a name link only (his PDF p.15, Sweeney glossary). The lesson stays the quiet days (Flag 14), and the close goes straight back to them. This is item 2 in the cut order."
+   },
+   {
+    "n": 19,
+    "beat": "P",
+    "spoken": "Vishvamitrasana. Advanced A.",
+    "on_screen": "VISHVAMITRASANA · ADVANCED A | small: NAMED AFTER THE SAGE VISHVAMITRA",
+    "note": "0:51.7. Said once. Cut to Boonchu in Vishvamitrasana: a real clip or a real class photo, never AI (Flag 14). No 'anyone can' and no injury talk."
+   },
+   {
+    "n": 20,
+    "beat": "P",
+    "spoken": "[BOONCHU'S OWN CUE: 5 words or less]",
+    "on_screen": "(his cue words, only if he wants them on screen)",
+    "note": "0:53.3. Over the same asana shot. Only Boonchu fills this (Flag 24), and the script is not ready to film until he does. It is timed as a full 1.8 s, so a shorter cue gives time back."
+   },
+   {
+    "n": 21,
+    "beat": "P",
+    "spoken": "Tomorrow... nothing happen... yet. You still there?",
+    "on_screen": "TOMORROW NOTHING HAPPEN... YET. YOU STILL THERE?",
+    "note": "0:55.1. D21's close. The voice judge asked for 'happen' back in, so the line makes sense and echoes line 1. The third 'yet' closes the spine (hook, day five, tomorrow), and after the story it carries the promise of a day six. 'You still there?' echoes 'you were there' in line 16. Eyes in the lens, on the same mat as line 1. It is a question only and promises no call or message from AYBKK (Flag 18)."
+   },
+   {
+    "n": 22,
+    "beat": "P",
+    "spoken": "แล้วเจอกันครับ",
+    "on_screen": "แล้วเจอกันครับ · SEE YOU",
+    "note": "0:57.7. The video ends at about 0:58.9. The ask is in the caption only, not spoken: Comment aybkk and I'll send you the link."
+   }
+  ],
+  "words": 143,
+  "end_time_s": 58.9,
+  "caption": "Hidden Stories of Ashtanga\nThe Teacher Who Went Silent\nYou practice today and nothing happened... yet.\nIn the old Ramayana, Rama and his brother guard their teacher's fire ceremony. Six nights, no sleep. The teacher keeps a vow of silence.\nFive days, nothing comes. On day six the monsters come down like storm clouds. One arrow sends one far into the sea, and Rama stopped the other monsters too.\nThe five quiet days were the practice. Day six only shows you were there.\nVishvamitrasana in Advanced A is named after this teacher. The link is the name only.\nAt AYBKK, a teacher notices when you miss class.\nComment aybkk and I'll send you the link.\n#aybkk #ashtanga #ashtangabangkok #boonchutanti #hiddenstoriesofashtanga #vishvamitrasana",
+  "changes_vs_old": "Opening: his two typed lines replace \"Nothing happen in your practice today? Good.\" and \"In old Ramayana book, boys wait for monsters. Five days, nothing.\" \"Bedtime story for my son\" is gone, and no other announcer replaces it. His voice just drops at line 3, and the title card moves onto \"not one word\".\n\nDead report lines now end on a gap:\n- \"Monsters spoil a teacher's fire ceremony\" and \"Boy Rama and his brother guard it\" became \"Their job... guard the teacher's fire ceremony. Six nights... no sleep.\"\n- \"Teacher Vishvamitra go silent. His promise for the ceremony.\" now ends on \"not one word\".\n- \"Day five. Nothing. Teacher still silent.\" became a ladder that ends on \"No monster... yet.\"\n- \"Sky roar. Monsters come down like storm clouds.\" is split, in book order, into \"Fire jump up... sky roar...\" and \"Monsters come down... like storm clouds.\"\n- The arrow line is split, so \"Rama shoot one arrow...\" holds back what it hits. The screen says RAMA SHOOT ONE ARROW, so the count is not the punchline.\n\n\"yet\" is now the spine: hook, day five, close. In the payoff, \"they were there\" became \"you were there\". The Mysore line now runs into a new hold-back line (\"One asana... named after that silent teacher...\") before the asana name. The close keeps \"Tomorrow nothing happen\" and adds \"... yet\".\n\nEvery pause is marked with \"...\". The VALMIKI RAMAYANA · BALA KANDA 30 label moved to line 3, so the book, not the film, names the story. D's joke block was not used.\n\nUnchanged: the facts, the title, the asana, the cue slot and the sign-off. 143 words, about 58.9 s (old: 145 words, 58.8 s).",
+  "open_flags": [
+   "Line 20 cue is empty on purpose (Flag 24). Not ready to film until Boonchu writes his own cue, 5 words or less.",
+   "Movie text was checked on 11 Nov 2026. If posting after about 25 Nov, recheck a Bangkok showtimes page. If the film has left cinemas, change the text to NEW RAMAYANA MOVIE · NOVEMBER 2026 (Flag 13).",
+   "Cut order if the real take runs over 60 s (room is about 1.1 s): (1) merge lines 8 and 9 into 'Sky roar... monsters come down like storm clouds.' (about -1.2 s, 'Fire jump up' goes); (2) cut line 18 and say line 19 as 'Vishvamitrasana. Advanced A. Named after that silent teacher.' (about -0.8 s); (3) a shorter cue gives time back.",
+   "'yet' is used three times (lines 1, 5, 21). The voice judge says that is at the edge of sounding like a device. If it feels that way to him, the close falls back to 'Tomorrow nothing happen again... You still there?'.",
+   "Line 18 holds the asana name back for one beat (scroll judge's graft). The facts judge warned this gives the asana a reveal's weight, but the lesson stays the quiet days (Flag 14). He can drop line 18 if he wants less weight on the asana.",
+   "D's Gervais block ('Teacher walk past you... twice' / 'Sometimes that teacher is me') was dropped although the scroll judge ranked D first. It sounds like a teacher who ignores students, which goes against the confirmed line, the Habit Gap direction and Flag 18. He also did not ask for humour in this rewrite.",
+   "Line 16 says 'you were there', not 'who still there'. 'Who still there' suggests someone in the story left the watch, and nobody did (1.30.5).",
+   "Rama is first spoken at line 7 (about 0:20.6), on his own moment. Until then, the Ramayana is named only in the small top movie text and the small book label at line 3. If he wants the name earlier, add RAMA · AND HIS BROTHER LAKSHMANA small at line 3.",
+   "On-screen style is mixed on purpose. Speech captions keep his words (WHAT YOU DO? SLEEP?, RAMA SHOOT ONE ARROW), and label cards use correct English (CEREMONY FINISHED · TEACHER SPEAKS AGAIN). He may want one style throughout.",
+   "The caption uses the one approved gentle line 'Rama stopped the other monsters too.' (Flag 5) and has no movie line (Flag 28).",
+   "Lane B (Flag 21): ask Boonchu before making a Chinese caption or XHS title, or make one with no aybkk ask. When the Thai caption is made, use the respect prefixes: พระราม, พระลักษมณ์, พระฤๅษีวิศวามิตร.",
+   "Do not post this next to 'The Frogs Who Kept Quiet for a Year' (9 Oct) or the unfilmed Ep. 6 'The Teacher Who Said No' (Flags 16, 17). No episode number goes on the card until it is filmed (Flag 27)."
+  ]
+ },
+ "check": {
+  "pass": true,
+  "scroll_at_line": 0,
+  "issues": [
+   "TIMING (rule break, fixed): the script's clock gives its 20 mid-line '...' pauses almost no time. The brief says 'add pauses' and says '...' marks a pause. Line 2 is timed at 4.1 s for 12 words, which is faster than the brief's own 2.8 words a second before any pause. Line 13 has 10 story words in 3.7 s, faster than 2.6 words a second. I re-ran the script with the run's own timing model (wk9/RAM1/timeA.py: story 2.6 and adult 2.8 words a second, plus 0.2 s for each '...' inside a line, 1 s fork stop, 0.5 s silent beat, 0.5 s for the asana name, cue 1.8 s, Thai 1.2 s). It runs about 62.6 s, not 58.9 s, so the claimed 1.1 s of room is really about 2.6 s over the 60 s cap. Fix: I applied the script's own cut order item 1 in split form (line 8 'Fire jump up... sky roar...' becomes 'Sky roar...', so line 9 keeps its '... like storm clouds' hold) and item 2 (the hold-back line 'One asana... named after that silent teacher...' is folded into the asana line). I also removed 2 pauses that hold nothing back: line 14 'That day...' becomes 'That day,' and in the close 'Tomorrow...' becomes 'Tomorrow', which now matches that line's own screen text. Result: 138 words, about 59.9 s with the cue at a full 1.8 s.",
+   "CAPTION (fixed): 'One arrow sends one far into the sea, and Rama stopped the other monsters too.' joins the approved Flag 5 line onto a present-tense clause ('sends ... stopped'), and the open flags call it the approved line used as is. I split it so the approved line stands alone, word for word: 'One arrow sends one far into the sea. Rama stopped the other monsters too.'",
+   "NOTE ACCURACY (fixed): the line 2 note said 'monsters' lands by about 0:06. At the honest pace it lands at about 0:06.6. That is still inside the double-hook window and it is his own line, so only the note and the start times change.",
+   "SCROLL TEST, as a non-native Ashtanga practitioner: I would not scroll anywhere (0). The weakest line is 14 ('That day, ceremony finish. Teacher speak again.'): it reports the story's ending, but it pays the 'not one word' loop from line 4 and the hard cut to his face comes 3 s later, so it stays. Line 3 opens with information ('guard the teacher's fire ceremony') but is saved by the 'Their job...' gap and by ending on 'no sleep'. Do not simplify it to 'guard the fire': Flag 5 notes the altar is already swamped in 1.30.13, so 'guard the fire' invites 'was the fire kept safe?'. Removing the line-18 hold-back puts the end of line 17 ('nobody call the asana...') straight onto the asana name and the hard cut to him in an Advanced A asana. That visual change carries the viewer. An add-back rule for the hold-back is in the open flags.",
+   "FACTS AND SAFETY: nothing broken. Six nights and no sleep (1.30.4 to 5). The vow is said before the silence and is never called refusal or coldness (1.30.4, Flag 8). Day five is his telling, never in quote marks, on screen or in the caption (Flag 7). Be ready is 1.30.7. The sky roar and storm clouds are 1.30.10 to 11. One arrow, never 'only' (Flag 5). Far into the sea is 1.30.18. 'Did not take his life' is the book's wording, unchanged (1.30.20, Flag 25). The golden deer has no name and no count of years (Flags 10, 12, 26). The ceremony finishes and the teacher speaks the same day (1.30.25 to 26, 1.31.1). The asana is a name link only, Advanced A, shown in a real clip or photo (Flag 14). The Mysore line never says a teacher is silent or does not notice (Flag 18). Indian names only. No killing, politics, health promise or student number. The movie is on screen only, with no film material and no film hashtag (Flag 13). #boonchutanti is in earlier captions in the scratchpad.",
+   "VOICE AND RULES: nothing broken. There is no bedtime or story announcer line ('There's an old story of...' is his own example, which the brief approves). '...' is used throughout. No spoken line has a colon, semicolon or dash. 'Asana' is used and 'pose' never appears, and none of the banned words appear. The cue slot comes right after the asana line. The close is a question, and แล้วเจอกันครับ is the last line. The fixed script is 138 words and about 59.9 s. Every screen text is 8 words or less."
+  ],
+  "fixed": {
+   "toolkit_pick": "Name-the-Feeling + Fork-First Story. Why: his own first line names the flat morning every long-time practitioner knows (practiced, nothing happened), and \"yet\" opens a loop that pays three times: day five, day six, tomorrow. The story has a natural stop at day five (no word, no monster, no sleep), so \"What you do?... Sleep?\" makes the viewer choose before the book answers with \"be ready\". That choice is the pull that carries them from 0:19 to the arrow.",
+   "toolkit_choice": "Gervais deadpan + /story 4-beat (Draft D): its flat Mysore-morning joke covered the drop-off after the story best. But \"Teacher walk past you... twice / Sometimes that teacher is me\" sounds like a teacher who ignores students, which goes against the confirmed line and the Habit Gap. He did not ask for jokes, and it pushed out the fixed Mysore-room line. | Vibe Samurai (flat statement, ladder of five days, turn, flip): the days make a ready ladder, but its turn pulls toward the banned \"not X but Y\" line, and it has no stop where the viewer must choose.",
+   "lines": [
+    {
+     "n": 1,
+     "beat": "H",
+     "spoken": "If you practice today and nothing happened... yet...",
+     "on_screen": "IF YOU PRACTICE TODAY AND NOTHING HAPPENED... YET...",
+     "note": "0:00.0. His exact typed words (Draft A), with only the dots cleaned up. Shot: Boonchu sitting on his mat in the quiet shala, straight to camera, with the text on from frame 1. 'yet' is the open loop. It is paid at line 5, again at line 16, and at the close. No number and no study claim (Flag 2)."
+    },
+    {
+     "n": 2,
+     "beat": "DH",
+     "spoken": "There's an old story of two boys wait for monsters... five days...",
+     "on_screen": "2 BOYS WAIT FOR MONSTERS... FIVE DAYS... | small, top: NEW RAMAYANA MOVIE · IN BANGKOK CINEMAS NOW",
+     "note": "0:03.1. His second line, kept in his grammar. Say 'two', show '2'. No announcer: it goes straight into the story, and 'monsters' lands at about 0:06.6. The movie line is small top text from 0:03.1 to 0:07.5. It is words only and never spoken: no poster, clip, actor or music from the film. It was checked on 11 Nov 2026 (Bangkok showtimes page, released 5 Nov). If posting after about 25 Nov, check a Bangkok showtimes page again (Flag 13). The big text has no RAMAYANA in it, so the book and the film do not blur. 'Five days' is his telling and is never quoted (Flag 7)."
+    },
+    {
+     "n": 3,
+     "beat": "T1",
+     "spoken": "Their job... guard the teacher's fire ceremony. Six nights... no sleep.",
+     "on_screen": "SIX NIGHTS. NO SLEEP. | small: VALMIKI RAMAYANA · BALA KANDA 30 | corner, lines 3 to 14: HIDDEN STORIES OF ASHTANGA",
+     "note": "0:07.5. The story voice starts here: a little lower and slower, leaning in, with no announcer. The gap after 'Their job...' is followed by two hard stakes, and the line ends on 'no sleep'. Keep 'fire ceremony': do not simplify it to 'guard the fire' (the altar is swamped in 1.30.13, Flag 5). The small book label names the source as the story starts (Flag 13). The series tag has no episode number (Flag 27). Book 1.30.4 to 5. Picture: a small altar fire in a forest clearing at night. Things only, no faces, no blood (Flag 15)."
+    },
+    {
+     "n": 4,
+     "beat": "T1",
+     "spoken": "Teacher Vishvamitra? His promise for the ceremony... not one word.",
+     "on_screen": "VISHVAMITRA · THE TEACHER WHO WENT SILENT | small: A VOW FOR THE CEREMONY",
+     "note": "0:12.2. The vow is said in the same breath as the silence (1.30.4, Flag 8), and the line ends on the strange detail. The title card lands on 'not one word'. Never say he refused or ignored the boys. This plants the name for line 18."
+    },
+    {
+     "n": 5,
+     "beat": "T1",
+     "spoken": "Day five... no word. No monster... yet.",
+     "on_screen": "DAY 5... NO WORD. NO MONSTER... YET",
+     "note": "0:16.2. The ladder (no word, no monster) plus 'yet', the rehook into the fork. It ends on the monster loop, so 'What you do?' comes at the highest pressure. He counts 1 to 5 on his fingers while a counter runs DAY 1 to DAY 5. This is his telling: no verse says it, and it is never in quote marks (Flag 7)."
+    },
+    {
+     "n": 6,
+     "beat": "RH",
+     "spoken": "What you do?... Sleep?",
+     "on_screen": "WHAT YOU DO? SLEEP?",
+     "note": "0:19.3. Harvard #1 fork, the one stop before the book answers. Eyes in the lens, then a full 1 s stop before 'Sleep?'. 'Sleep?' tells school-English viewers that this means 'what would you do', not 'what is your job'. It also echoes 'no sleep' in line 3."
+    },
+    {
+     "n": 7,
+     "beat": "RH",
+     "spoken": "Day six... Rama say, brother... be ready.",
+     "on_screen": "DAY 6 · BE READY | small: RAMA · AND HIS BROTHER LAKSHMANA",
+     "note": "0:21.9. The book's answer to the fork (1.30.7): after five quiet days he is more awake, not less. Rama's name is first said here, on his own moment. The card names the brother, and the voice says only 'brother'. Indian names only, never 'King Rama'. The loop is: ready for what?"
+    },
+    {
+     "n": 8,
+     "beat": "T2",
+     "spoken": "Sky roar...",
+     "on_screen": "SKY ROAR.",
+     "note": "0:24.9. Final check fix for time: 'Fire jump up...' (1.30.8) is cut, which was item 1 of the old cut order. The book's frightening roar in the sky (1.30.10) stays and hits straight after 'be ready'. Picture: a dark sky over the altar fire. Use a low roar made for this Reel, nothing from the film. The roar can run on under the start of line 9."
+    },
+    {
+     "n": 9,
+     "beat": "T2",
+     "spoken": "Monsters come down... like storm clouds.",
+     "on_screen": "LIKE STORM CLOUDS",
+     "note": "0:25.7. The worst moment, and it pays the monsters from line 2 (1.30.11). The pause before 'like storm clouds' holds the picture. Picture: storm clouds rolling over the fire. No faces and nothing from the film."
+    },
+    {
+     "n": 10,
+     "beat": "T2",
+     "spoken": "Rama shoot one arrow...",
+     "on_screen": "RAMA SHOOT ONE ARROW",
+     "note": "0:28.2. Holds back what the arrow hits. The screen says RAMA SHOOT ONE ARROW, never ONE ARROW alone, so the count is not the punchline. Never say 'only one arrow' (Flag 5). Line 11 follows fast. Picture: one arrow in flight."
+    },
+    {
+     "n": 11,
+     "beat": "P",
+     "spoken": "One monster fly far... into the sea.",
+     "on_screen": "FAR INTO THE SEA",
+     "note": "0:29.8. Book 1.30.18: he is hurled a hundred yojanas and falls into the ocean. Picture: one splash far out at sea, nothing more (Flag 22)."
+    },
+    {
+     "n": 12,
+     "beat": "P",
+     "spoken": "That arrow... did not take his life.",
+     "on_screen": "THAT ARROW DID NOT TAKE HIS LIFE | small: BALA KANDA 30 · VERSE 20",
+     "note": "0:32.7. The book's own statement (1.30.20). The words are unchanged and only a pause is added (Flag 25). The loop is: so where is he? It is paid by the next line."
+    },
+    {
+     "n": 13,
+     "beat": "P",
+     "spoken": "Years later he come back... a golden deer. Another story.",
+     "on_screen": "YEARS LATER... A GOLDEN DEER | small: ANOTHER STORY · ARANYA KANDA 42",
+     "note": "0:35.5. The last surprise, which leaves a door open for the series. No name and no name card: Maricha is never said or shown (Flag 10). No count of years (Flag 12). Never say 'next episode' (Flag 26). Picture: a golden deer at the edge of a forest."
+    },
+    {
+     "n": 14,
+     "beat": "P",
+     "spoken": "That day, ceremony finish. Teacher speak again.",
+     "on_screen": "CEREMONY FINISHED · TEACHER SPEAKS AGAIN | small: BALA KANDA 30 · VERSE 25",
+     "note": "0:39.6. Final check fix for time: 'That day...' becomes 'That day,' because that pause held nothing back. 'That day' brings the story back from 'years later' to day six (1.30.25 to 26, 1.31.1). It pays 'not one word' from line 4. The card is a label, so it is in correct English. Picture: the fire burning calm. Then a 0.5 s silent beat and a hard cut to his face in normal voice. The 'yet' from line 1 is still open here and holds the viewer across the cut."
+    },
+    {
+     "n": 15,
+     "beat": "P",
+     "spoken": "Five quiet days... that was the practice.",
+     "on_screen": "FIVE QUIET DAYS. THAT WAS THE PRACTICE.",
+     "note": "0:42.8. Back to camera on the same mat as line 1, in normal voice. Pays 'nothing happened' from line 1. These are Boonchu's words, never the teacher's. No caption or translation may put this line in Vishvamitra's mouth, because no verse says it."
+    },
+    {
+     "n": 16,
+     "beat": "P",
+     "spoken": "Day six only show... you were there.",
+     "on_screen": "DAY SIX ONLY SHOW YOU WERE THERE",
+     "note": "0:45.5. The adults' point (Harvard #21 and #27). 'You' makes the line about the viewer and plants 'you... there' for the close. It does not say 'who still there', which would suggest someone in the story left the watch, and nobody did (1.30.5)."
+    },
+    {
+     "n": 17,
+     "beat": "P",
+     "spoken": "Mysore room same... nobody call the asana...",
+     "on_screen": "MYSORE ROOM SAME. NOBODY CALL THE ASANA",
+     "note": "0:48.2. Fixed content: the quiet Mysore room is the method, like the silent teacher. 'Mysore' is said and shown. The line says nobody calls out the asanas. It never says a teacher does not speak or does not notice (Flag 18). The trailing pause runs straight into the asana name and the hard cut to him in the asana at line 18, so there is no dead air for a scroll. Shot: the quiet shala or a real class photo."
+    },
+    {
+     "n": 18,
+     "beat": "P",
+     "spoken": "Vishvamitrasana. Advanced A. Named after that silent teacher.",
+     "on_screen": "VISHVAMITRASANA · ADVANCED A | small: NAMED AFTER THE SAGE VISHVAMITRA",
+     "note": "0:50.9. Final check fix for time: item 2 of the old cut order is applied. The hold-back line 'One asana... named after that silent teacher...' is folded in here. The name is said once, with its link. This also settles the facts judge's warning that the hold-back gave the asana a reveal's weight: the lesson stays the quiet days (Flag 14). Hard cut to Boonchu in Vishvamitrasana on the first word: a real clip or a real class photo, never AI. It is a name link only (his PDF p.15, Sweeney glossary). No 'anyone can' and no injury talk."
+    },
+    {
+     "n": 19,
+     "beat": "P",
+     "spoken": "[BOONCHU'S OWN CUE: 5 words or less]",
+     "on_screen": "(his cue words, only if he wants them on screen)",
+     "note": "0:54.2. Over the same asana shot. Only Boonchu fills this (Flag 24), and the script is not ready to film until he does. It is timed as a full 1.8 s, so a shorter cue gives time back."
+    },
+    {
+     "n": 20,
+     "beat": "P",
+     "spoken": "Tomorrow nothing happen... yet. You still there?",
+     "on_screen": "TOMORROW NOTHING HAPPEN... YET. YOU STILL THERE?",
+     "note": "0:56.0. Final check fix for time: the pause after 'Tomorrow' is dropped, so the spoken line now matches its own screen text and the rhythm of line 1. 'Happen' is in, so the line makes sense and echoes line 1. The third 'yet' closes the spine (hook, day five, tomorrow), and after the story it carries the promise of a day six. 'You still there?' echoes 'you were there' in line 16. Eyes in the lens, on the same mat as line 1. It is a question only and promises no call or message from AYBKK (Flag 18)."
+    },
+    {
+     "n": 21,
+     "beat": "P",
+     "spoken": "แล้วเจอกันครับ",
+     "on_screen": "แล้วเจอกันครับ · SEE YOU",
+     "note": "0:58.7. The video ends at about 0:59.9. The ask is in the caption only, not spoken: Comment aybkk and I'll send you the link."
+    }
+   ],
+   "words": 138,
+   "end_time_s": 59.9,
+   "caption": "Hidden Stories of Ashtanga\nThe Teacher Who Went Silent\nYou practice today and nothing happened... yet.\nIn the old Ramayana, Rama and his brother guard their teacher's fire ceremony. Six nights, no sleep. The teacher keeps a vow of silence.\nFive days, nothing comes. On day six the monsters come down like storm clouds. One arrow sends one far into the sea. Rama stopped the other monsters too.\nThe five quiet days were the practice. Day six only shows you were there.\nVishvamitrasana in Advanced A is named after this teacher. The link is the name only.\nAt AYBKK, a teacher notices when you miss class.\nComment aybkk and I'll send you the link.\n#aybkk #ashtanga #ashtangabangkok #boonchutanti #hiddenstoriesofashtanga #vishvamitrasana",
+   "changes_vs_old": "Against the rejected v1: the 'Bedtime story for my son' announcer is gone. The opening is his own two lines ('If you practice today and nothing happened... yet...' / 'There's an old story of two boys wait for monsters... five days...'). The dead report lines are rewritten to end on a gap, a number or a strange detail: 'Boy Rama and his brother guard it' became 'Their job... guard the teacher's fire ceremony. Six nights... no sleep.', 'Teacher still silent' became 'Day five... no word. No monster... yet.', and the vow now ends on 'not one word'. 'Yet' threads the hook, day five and the close. 'They were there' became 'you were there'. Final check fixes on top of the submitted draft: (1) the honest clock (2.6 and 2.8 words a second, plus 0.2 s for each '...' inside a line) ran it at about 62.6 s, so cut order items 1 and 2 are applied ('Fire jump up' out, line 8 is 'Sky roar...'; the line-18 hold-back folded into the asana line), and 2 pauses that held nothing are dropped (line 14 'That day,' and the close 'Tomorrow nothing happen... yet.'). Now 138 words, about 59.9 s. (2) In the caption, the approved line 'Rama stopped the other monsters too.' stands alone word for word. (3) All start times are updated, and the line 2 note now says 'monsters' lands at about 0:06.6.",
+   "open_flags": [
+    "Line 19 cue is empty on purpose (Flag 24). Not ready to film until Boonchu writes his own cue, 5 words or less.",
+    "Timing: about 59.9 s at the honest pace with the cue at a full 1.8 s, so room is about 0.1 s. If the real take runs over 60 s, try in this order: (1) a shorter cue; (2) tighten the dead air between lines in the edit; (3) line 5 to 'Day five... no monster... yet.' (about -0.8 s).",
+    "Add-backs if time allows: if his cue is 2 words or less, the hold-back 'One asana... named after that silent teacher...' can go back in before line 18, and line 18 then says only 'Vishvamitrasana. Advanced A.' (about +0.9 s). The facts judge's warning about the asana's weight (Flag 14) then holds again. 'Fire jump up...' (1.30.8) is true and can come back before 'sky roar' only with about 1.4 s to spare.",
+    "Movie text was checked on 11 Nov 2026. If posting after about 25 Nov, recheck a Bangkok showtimes page. If the film has left cinemas, change the text to NEW RAMAYANA MOVIE · NOVEMBER 2026 (Flag 13).",
+    "'yet' is used three times (lines 1, 5, 20). The voice judge says that is at the edge of sounding like a device. If it feels that way to him, the close falls back to 'Tomorrow nothing happen again... You still there?'.",
+    "D's Gervais block ('Teacher walk past you... twice' / 'Sometimes that teacher is me') was dropped although the scroll judge ranked D first. It sounds like a teacher who ignores students, which goes against the confirmed line, the Habit Gap direction and Flag 18. He also did not ask for humour in this rewrite.",
+    "Line 16 says 'you were there', not 'who still there'. 'Who still there' suggests someone in the story left the watch, and nobody did (1.30.5).",
+    "Rama is first spoken at line 7 (about 0:21.9), on his own moment. Until then, the Ramayana is named only in the small top movie text and the small book label at line 3. If he wants the name earlier, add RAMA · AND HIS BROTHER LAKSHMANA small at line 3.",
+    "On-screen style is mixed on purpose. Speech captions keep his words (WHAT YOU DO? SLEEP?, RAMA SHOOT ONE ARROW), and label cards use correct English (CEREMONY FINISHED · TEACHER SPEAKS AGAIN). Number style is mixed too (2 BOYS, DAY 5, DAY 6, DAY SIX). He may want one style throughout.",
+    "The caption uses the one approved gentle line 'Rama stopped the other monsters too.' word for word as its own sentence (Flag 5) and has no movie line (Flag 28).",
+    "Lane B (Flag 21): ask Boonchu before making a Chinese caption or XHS title, or make one with no aybkk ask. When the Thai caption is made, use the respect prefixes: พระราม, พระลักษมณ์, พระฤๅษีวิศวามิตร.",
+    "Do not post this next to 'The Frogs Who Kept Quiet for a Year' (9 Oct) or the unfilmed Ep. 6 'The Teacher Who Said No' (Flags 16, 17). No episode number goes on the card until it is filmed (Flag 27)."
+   ]
+  }
+ }
+}
