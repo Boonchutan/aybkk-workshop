@@ -1,0 +1,341 @@
+{
+ "twenty": [
+  {
+   "n": 1,
+   "idea": "You don't need the splits (our takeaway: splits were not tested). In a study of 13,423 people aged 65 to 90, the stiffest were linked with a higher risk of dying, but more than a moderate range showed no extra survival benefit. (JAMA Network Open, 2026)",
+   "source": "JAMA Network Open 9(8):e2628227, 2026 (Wu et al.), DOI 10.1001/jamanetworkopen.2026.28227",
+   "key": "longevity-2"
+  },
+  {
+   "n": 2,
+   "idea": "In a Japanese study of young adults, tying shoelaces used about 90 degrees of hip bend. That is more than walking or stairs ask. (Hyodo et al., Brazilian Journal of Physical Therapy, 2017)",
+   "source": "Hyodo et al., Braz J Phys Ther 21(3):159-166, 2017, DOI 10.1016/j.bjpt.2017.03.012",
+   "key": "dailylife-3"
+  },
+  {
+   "n": 3,
+   "idea": "In a lab test, reversing a car used 92% of the neck's full turn. A typical daily task used about a fifth. (Bible et al., Journal of Spinal Disorders & Techniques, 2010)",
+   "source": "Bible et al., J Spinal Disord Tech 23(1):15-21, 2010, DOI 10.1097/BSD.0b013e3181981632",
+   "key": "dailylife-1"
+  },
+  {
+   "n": 4,
+   "idea": "Soviet heart surgeon Nikolai Amosov guessed that a desk worker bends his back only 10 to 20 times a day, for example to tie his shoes. (Amosov, Thoughts on Health, 1987)",
+   "source": "Н. М. Амосов, Раздумья о здоровье, 2nd ed., Sverdlovsk 1987, p. 126",
+   "key": "wisdom-5"
+  },
+  {
+   "n": 5,
+   "idea": "In 436 Canadians aged 55 to 86, each decade older had about 6 degrees less shoulder and hip range. The authors call it small. (Stathokostas et al., Journal of Aging Research, 2013)",
+   "source": "Stathokostas et al., J Aging Res 2013:743843, DOI 10.1155/2013/743843",
+   "key": "dailylife-6"
+  },
+  {
+   "n": 6,
+   "idea": "People around 85 had the back of one thigh (the hamstrings) stretched 5 times a week for 6 weeks. 60 second holds gained 2.4 degrees a week, 15 second holds only 0.6. (Feland et al., Physical Therapy, 2001)",
+   "source": "Feland et al., Phys Ther 81(5):1110-1117, 2001, DOI 10.1093/ptj/81.5.1110",
+   "key": "dailylife-8"
+  },
+  {
+   "n": 7,
+   "idea": "56 women aged 50 to 79, new to yoga, came to one 90 minute class a week for 20 weeks. On average, their spine range grew 6.9 to 12.5 degrees, depending on direction. There was no comparison group. (Grabara & Szopa, J Phys Ther Sci, 2015)",
+   "source": "Grabara & Szopa, J Phys Ther Sci 27(2):361-365, 2015, DOI 10.1589/jpts.27.361",
+   "key": "dailylife-9"
+  },
+  {
+   "n": 8,
+   "idea": "For healthy adults, the ACSM recommends a minute of stretching in total for each main muscle group, on at least 2 days a week. (ACSM, Medicine & Science in Sports & Exercise, 2011)",
+   "source": "Garber et al., ACSM Position Stand, Med Sci Sports Exerc 43(7):1334-1359, 2011, DOI 10.1249/MSS.0b013e318213fefb",
+   "key": "guidelines-1"
+  },
+  {
+   "n": 9,
+   "idea": "Young adults stretched their legs 5 days a week for 12 weeks. Six weeks after they stopped, the new range was gone. (Bisconti et al., The Journal of Physiology, 2020)",
+   "source": "Bisconti et al., J Physiol 598(17):3645-3666, 2020, DOI 10.1113/JP279866",
+   "key": "trials-2"
+  },
+  {
+   "n": 10,
+   "idea": "China's 2021 guideline tells people 65 and over to keep up balance, agility and flexibility work. Its first rule ends 'keep at it' (贵在坚持). (Physical Activity Guidelines for Chinese, 2021)",
+   "source": "中国人群身体活动指南（2021）, Chin J Public Health 38(2):129-130, DOI 10.11847/zgggws1137503; English version: Biomed Environ Sci 35(1):1-3, 2022",
+   "key": "guidelines-8"
+  },
+  {
+   "n": 11,
+   "idea": "Laozi wrote that we are born soft and supple and die hard and stiff: stiffness goes with death, softness with life. (Laozi, Daodejing 76, tr. Legge 1891, retold)",
+   "source": "Daodejing 76 (Wang Bi text); Legge, Sacred Books of the East 39, 1891, p. 118",
+   "key": "wisdom-1"
+  },
+  {
+   "n": 12,
+   "idea": "3,139 people aged 46 to 65, tested at an exercise clinic in Brazil, were followed about 13 years. The stiffest men were linked with about 1.9 times the death risk of the most flexible men. A link, not proof. (Araújo et al., Scand J Med Sci Sports, 2024)",
+   "source": "Araújo et al., Scand J Med Sci Sports 34(8):e14708, 2024, DOI 10.1111/sms.14708",
+   "key": "longevity-1"
+  },
+  {
+   "n": 13,
+   "idea": "In 526 Japanese adults, people 40 and older who reached less far toward their toes had stiffer arteries than others their age. Under 40 there was no clear difference. (Yamamoto et al., Am J Physiol Heart Circ Physiol, 2009)",
+   "source": "Yamamoto et al., Am J Physiol Heart Circ Physiol 297(4):H1314-H1318, 2009, DOI 10.1152/ajpheart.00061.2009",
+   "key": "longevity-5"
+  },
+  {
+   "n": 14,
+   "idea": "In a small Canadian trial, 40 adults around 62 with slightly high blood pressure exercised 30 minutes, 5 days a week, for 8 weeks: half stretched, half walked. In the stretching half, the top number fell from 146 to 140. (Ko et al., J Phys Act Health, 2021)",
+   "source": "Ko et al., J Phys Act Health 18(1):21-28, 2021, DOI 10.1123/jpah.2020-0365",
+   "key": "trials-1"
+  },
+  {
+   "n": 15,
+   "idea": "When walking, the back leg's hip opened about 20 degrees in young adults, 14 in healthy older people and 11 in older people with repeated falls. A link only. (Kerrigan et al., Arch Phys Med Rehabil, 2001)",
+   "source": "Kerrigan et al., Arch Phys Med Rehabil 82(1):26-30, 2001, DOI 10.1053/apmr.2001.18584",
+   "key": "trials-4"
+  },
+  {
+   "n": 16,
+   "idea": "Joseph Pilates wrote: 'If your spine is inflexibly stiff at 30, you are old; if it is completely flexible at 60, you are young.' (Pilates, Return to Life Through Contrology, 1945)",
+   "source": "Joseph H. Pilates with William John Miller, Return to Life Through Contrology, 1945",
+   "key": "wisdom-3"
+  },
+  {
+   "n": 17,
+   "idea": "No old source has been found for the Chinese saying 筋长一寸，寿延十年 (literally, sinews one inch longer, life ten years longer), and nobody ever measured that number. (Chinese folk saying, earliest print found 2009)",
+   "source": "Folk saying; earliest dated print found: Xiao Hongci, 医行天下, 2009, ISBN 9787218060873",
+   "key": "wisdom-4"
+  },
+  {
+   "n": 18,
+   "idea": "In 26,727 Americans followed 17 years, people who said they stretched were linked with about 10% lower odds of dying, even after counting their other exercise. (Sheehan & Li, Med Sci Sports Exerc, 2020)",
+   "source": "Sheehan & Li, Med Sci Sports Exerc 52(12):2554-2562, 2020, DOI 10.1249/MSS.0000000000002406",
+   "key": "longevity-9"
+  },
+  {
+   "n": 19,
+   "idea": "Half of 40 working women aged 40 to 61 stretched 10 minutes before bed for 3 weeks (about 5 nights a week). Their menopause symptom score fell from about 29 to 16; the waiting half stayed near 32. (Kai et al., Menopause, 2016)",
+   "source": "Kai et al., Menopause 23(8):827-832, 2016, DOI 10.1097/GME.0000000000000651",
+   "key": "trials-8"
+  },
+  {
+   "n": 20,
+   "idea": "An old yoga book puts asana first, practised for steadiness, health and light limbs. (Svatmarama, Hatha Yoga Pradipika ch. 1, retold; it overlaps a line used before)",
+   "source": "Hatha Yoga Pradipika 1.19 (GRETIL, Pancham Sinh 1915), which is 1.17 in the Bihar School numbering",
+   "key": "wisdom-2"
+  }
+ ],
+ "setA": {
+  "title": "Enough, Not Splits",
+  "slides": [
+   {
+    "n": 1,
+    "key": "longevity-2",
+    "word": "SPLITS",
+    "line": "You think flexible means doing the SPLITS. In this study of 13,423 older adults, the stiffest were linked with a higher risk of dying. Beyond a medium range? No extra survival benefit.",
+    "credit": "JAMA NETWORK OPEN · 2026 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Wu et al. (11 authors), Physical Fitness and All-Cause Mortality in Older Adults, JAMA Netw Open 9(8):e2628227, 2026, DOI 10.1001/jamanetworkopen.2026.28227, PMC13458872. 13,423 adults aged 65 to 90, median follow-up 7.0 years, 1,631 deaths. Exact words: 'flexibility showed a threshold pattern: extreme stiffness was associated with higher mortality risk, but gains beyond a moderate functional range yielded no further survival benefit.' The curve went flat in the reach-behind-the-back test (about a 10 cm gap between the fingertips). Review fixes applied: 'risk of dying' (closer to the source's 'mortality risk' than 'death rate'); 'no extra SURVIVAL benefit' (the paper limits it to survival, and the same paragraph says range still matters for daily function); 'medium' retells 'moderate'. Observational, so 'linked with', not cause. 'Splits' is our framing: splits were not measured, and the caption says so. Safety: credit only the journal and year, with no country, 'nationwide' or affiliation wording. Licence CC-BY-NC-ND, so short quotes only."
+   },
+   {
+    "n": 2,
+    "key": "dailylife-3",
+    "word": "SHOES",
+    "line": "So what does daily life ask? Look at your SHOES. In this Japanese study of young adults, tying shoelaces used about 90 degrees of hip bend. Walking and stairs need less.",
+    "credit": "HYODO ET AL. · BRAZILIAN JOURNAL OF PHYSICAL THERAPY · 2017 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Hyodo K, Masuda T, Aizawa J, Jinno T, Morita S (Mejiro University, Japan). Braz J Phys Ther 21(3):159-166, 2017, DOI 10.1016/j.bjpt.2017.03.012, PMC5537477. 26 healthy adults, mean age 20, 22 simulated tasks, right leg only. Table 2: tying shoelaces 89 and 90 degrees of hip flexion (both values are the right hip). Paper: 'The present results indicate that other ADLs require more extreme joint angles than walking, climbing stairs, or standing up.' Review fix applied: the bridge is 'So what does daily life ask?', not 'So how much is moderate?', because JAMA's flat point was in a shoulder reach test and neither paper links the shoelace hip bend to it. No '80 degrees for walking' claim (that figure is cited from earlier studies and covers walking, stairs and standing up together). 'Japanese study' means the study was run at a Japanese university; the paper does not give the participants' nationality. Young people, lab tasks."
+   },
+   {
+    "n": 3,
+    "key": "dailylife-1",
+    "word": "TURN",
+    "line": "Then you drive. To reverse the car, you TURN your head. In this American lab study, that used 92% of the neck's full turn. A typical daily task used about a fifth.",
+    "credit": "BIBLE ET AL. · JOURNAL OF SPINAL DISORDERS & TECHNIQUES · 2010 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Bible JE, Biswas D, Miller CP, Whang PG, Grauer JN (Yale). J Spinal Disord Tech 23(1):15-21, 2010, DOI 10.1097/BSD.0b013e3181981632, PMID 20051924. 60 adults with no neck symptoms, aged 20 to 75, 15 simulated daily tasks. 'Backing up a car required the most ROM of all the ADLs, involving 32% of sagittal, 26% of lateral, and 92% of rotational motion.' Median rotation used was 19%, so 'a typical daily task used about a fifth' (the median), not 'most tasks'. Review fix applied: 'to reverse the car' replaces 'backing out' (which also means quitting a deal). The 92% is a share of each person's own full turn, measured in a lab, not on the road. The study says nothing about crashes or older drivers."
+   },
+   {
+    "n": 4,
+    "key": "wisdom-5",
+    "word": "BENDS",
+    "line": "At your desk, you barely bend. Soviet heart surgeon Nikolai Amosov guessed a desk worker BENDS his back only 10 to 20 times a day. Tying his shoes is one of them.",
+    "credit": "N. AMOSOV · THOUGHTS ON HEALTH · 1987 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Н. М. Амосов, Раздумья о здоровье, 2nd rev. ed., Sverdlovsk: Sredne-Uralskoe knizhnoe izd-vo, 1987, p. 126 (archive.org B-001-052-430-ALL). Exact: 'Сколько раз сгибает позвоночник человек сидячего труда? Когда шнурки завязывает? Прикиньте: раз 10-20 в день сгибает спину, не больше.' The book prints a long dash in 10-20, so use a hyphen. The number is his own rough guess ('Прикиньте'), not a measurement, and tying shoelaces is one occasion he names, not 'mostly'. Review fixes applied: the opener is 'you barely bend', not 'you barely move', because his estimate is only about bending the spine; the last sentence calls back to the shoe slide and stays within his example. Credit 1987 only (the 1996 reprint drops the desk worker and the shoelaces), and 'guessed', not 'noticed'. Neutral credit 'Soviet heart surgeon' (war rule). No medical claims from the same chapter. The Russian slide can quote the original."
+   },
+   {
+    "n": 5,
+    "key": "dailylife-6",
+    "word": "DECADE",
+    "line": "Years pass. In this Canadian study of 436 people aged 55 to 86, each DECADE older had about 6 degrees less shoulder and hip range. Small, the authors say. Can it grow?",
+    "credit": "STATHOKOSTAS ET AL. · JOURNAL OF AGING RESEARCH · 2013 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Stathokostas L, McDonald MW, Little RM, Paterson DH (Western University, Canada). J Aging Res 2013:743843, DOI 10.1155/2013/743843, PMC3703899. 436 community-living adults aged 55 to 86 (London, Ontario). 'A decrease in flexibility of the shoulder and hip joints by approximately 6 degrees per decade was observed across ages 55 to 86 years in both men and women.' Authors: 'the age-related loss of flexibility appears to be small'. The study is cross-sectional, so the line compares age groups ('each decade older had less range'), never 'you lose'. No 'faster after 70' (true only for men). 'Can it grow?' sets up the next slide, matching the authors' view that specific stretching can still change flexibility in older adults. Activity level did not explain the differences, so the 'Years pass' link must not blame the desk."
+   },
+   {
+    "n": 6,
+    "key": "dailylife-8",
+    "word": "LONGER",
+    "line": "Yes. In this American trial, people around 85 had the back of one thigh stretched 5 times a week. Stretches held LONGER gained more. 60 seconds: 2.4 degrees weekly. 15 seconds: 0.6.",
+    "credit": "FELAND ET AL. · PHYSICAL THERAPY · 2001 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Feland JB, Myrer JW, Schulthies SS, Fellingham GW, Measom GW (Brigham Young University). Phys Ther 81(5):1110-1117, 2001, DOI 10.1093/ptj/81.5.1110, PMID 11319936. Randomized trial: 62 adults with tight hamstrings, mean age 84.7 (65 to 97), living in retirement housing, stretched for 6 weeks. 'A 60-second stretch produced a greater rate of gains in ROM (60-second stretch = 2.4 degrees per week, 30-second stretch = 1.3 degrees per week, 15-second stretch = 0.6 degrees per week)'. Conclusion: 'Longer hold times ... resulted in a greater rate of gains in ROM'. Review fixes applied: the line names the muscle ('the back of one thigh', the hamstrings, measured as knee straightening), because only one muscle group was tested; the semicolon list is split into short sentences. One leg 'was stretched' 5 times a week (the abstract does not say who did the stretch), not 'they stretched'. 'Around 85' is the mean age; ages ran 65 to 97."
+   },
+   {
+    "n": 7,
+    "key": "dailylife-9",
+    "word": "ONCE",
+    "line": "Can't do 5? In this Polish study, women 50 to 79 took a yoga class ONCE a week. After 20 weeks, average spine range grew 6.9 to 12.5 degrees, depending on direction.",
+    "credit": "GRABARA & SZOPA · JOURNAL OF PHYSICAL THERAPY SCIENCE · 2015 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Grabara M, Szopa J (Katowice, Poland). J Phys Ther Sci 27(2):361-365, 2015, DOI 10.1589/jpts.27.361, PMC4339138. 56 women aged 50 to 79, new to yoga, one 90-minute hatha yoga class a week for 20 weeks. 'The mean values of the recorded improvement ranged from 6.9 to 12.5 degrees, depending on the plane of motion'. Review fix applied: 6.9 to 12.5 is the spread of AVERAGE gains across directions of spine movement, not the spread between women, so the line says 'average' and 'depending on direction'. The 56 is dropped from the slide to fit (idea 7 keeps it). No control group (the authors' own limitation). 43% also practised at home, and home practice had no link with the size of the gain; 'once a week' is the class dose, not every person's total. Do not use the weight/BMI result. The caption says 'no comparison group'."
+   },
+   {
+    "n": 8,
+    "key": "guidelines-1",
+    "word": "MINUTE",
+    "line": "So what do experts advise? For healthy adults, the American College of Sports Medicine recommends a MINUTE in total per main muscle group. At least 2 days a week. Not an hour.",
+    "credit": "ACSM · MEDICINE & SCIENCE IN SPORTS & EXERCISE · 2011 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Garber CE et al.; American College of Sports Medicine Position Stand. Med Sci Sports Exerc 43(7):1334-1359, 2011, DOI 10.1249/MSS.0b013e318213fefb, PMID 21694556. Exact: 'Crucial to maintaining joint range of movement, completing a series of flexibility exercises for each the major muscle-tendon groups (a total of 60 s per exercise) on >=2 d·wk is recommended.' The abstract has its own typo ('for each the major'), so the line is retold. It is for apparently healthy adults. The 60 s is a total per muscle group and can be made of several holds. 'Not an hour' is our contrast for one muscle group, not a claim about a whole session (a full round of the main muscles takes longer; the 2007 ACSM/AHA older-adult advice works it out at about 10 minutes). The line says 'recommends', not 'science proves'. The 10-30 s hold table is not confirmed from this paper, so it is not used."
+   },
+   {
+    "n": 9,
+    "key": "trials-2",
+    "word": "STOPPED",
+    "line": "But it must be regular. In this Italian trial, young adults stretched their legs 5 days a week for 12 weeks. Six weeks after they STOPPED, their new range was gone.",
+    "credit": "BISCONTI ET AL. · THE JOURNAL OF PHYSIOLOGY · 2020 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Bisconti AV, Cè E, Longo S, Venturelli M, Coratella G, Limonta E, Doria C, Rampichini S, Esposito F (University of Milan). J Physiol 598(17):3645-3666, 2020, DOI 10.1113/JP279866. Randomized: 39 healthy adults aged about 23. 27 stretched (14 both legs, 13 one leg) and 12 were controls. 12 weeks, 5 sessions a week, 45 s holds x5. Exact: 'ROM of the ankle and the knee joint returned to pre-training levels at follow-up assessment.' (6 weeks after stopping). Only the new range (and blood pressure) went back. Artery stiffness stayed lower, so never say 'arteries stiffened again'. Call them 'young healthy adults', not 'students'. The line speaks of the people who stretched."
+   },
+   {
+    "n": 10,
+    "key": "guidelines-8",
+    "word": "KEEP",
+    "line": "So, no secret. China's 2021 activity guideline tells people 65 and over to stick with balance, agility and flexibility work. Its first rule ends: KEEP at it. Same time tomorrow?",
+    "credit": "PHYSICAL ACTIVITY GUIDELINES FOR CHINESE · 中国人群身体活动指南 · 2021 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Composing and Editorial Board of Physical Activity Guidelines for Chinese (led by China CDC and China Institute of Sport Science). Chin J Public Health 38(2):129-130, 2022, DOI 10.11847/zgggws1137503. English version: Biomed Environ Sci 35(1):1-3, 2022. Chinese: （一）总则 1. 动则有益、多动更好、适度量力、贵在坚持。（六）65岁及以上 2. 坚持平衡能力、灵活性和柔韧性练习。 Official English: 'Moving is good, the more the better, do not overdo things, and keep at it.' / 'Persist in perform balance, agility, and flexibility exercises.' The original English has a grammar slip, so the line is retold; 'stick with' retells 坚持 / 'persist in'. Review fixes applied: 'people 65 and over' (the guideline's own age group, not vague 'older adults'); the cliche 'So the secret is simple' is gone. The guideline gives no days or seconds, so none are attached. The Chinese slide can quote 贵在坚持 directly."
+   }
+  ],
+  "caption_lines": [
+   "1. SPLITS: Splits were not tested. The stiffest older adults were linked with a higher risk of dying. Beyond a medium range, no extra survival benefit.",
+   "2. SHOES: Tying shoelaces used about 90 degrees of hip bend (young adults, lab tasks).",
+   "3. TURN: Reversing a car used 92% of the neck's full turn. A typical daily task used about a fifth.",
+   "4. BENDS: Heart surgeon Nikolai Amosov guessed a desk worker bends his back only 10 to 20 times a day.",
+   "5. DECADE: Each decade older had about 6 degrees less shoulder and hip range. Small, the authors say.",
+   "6. LONGER: Even around 85, range at the back of the thigh grew. 60 second holds gained more than 15 second holds.",
+   "7. ONCE: One yoga class a week for 20 weeks, and average spine range grew (no comparison group).",
+   "8. MINUTE: For healthy adults, a minute in total per main muscle group, at least 2 days a week.",
+   "9. STOPPED: Six weeks after stopping, the new range was gone.",
+   "10. KEEP: Rule 1 of China's 2021 guideline ends with \"keep at it\"."
+  ],
+  "question": "Tying your shoes or looking back to reverse the car: which feels stiffer for you?"
+ },
+ "setB": {
+  "title": "Born Supple",
+  "slides": [
+   {
+    "n": 1,
+    "key": "wisdom-1",
+    "word": "SUPPLE",
+    "line": "You were born SUPPLE. Chinese thinker Laozi wrote that we start life soft and end it hard and stiff. Stiffness goes with death, he said. Softness goes with life.",
+    "credit": "LAOZI · DAODEJING 76 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Daodejing ch. 76, Wang Bi text: 人之生也柔弱，其死也堅強。...故堅強者死之徒，柔弱者生之徒。 Legge, Sacred Books of the East 39, 1891, p. 118: 'Man at his birth is supple and weak; at his death, firm and strong.' ... 'firmness and strength are the concomitants of death; softness and weakness, the concomitants of life.' Retold because Laozi means a soft, yielding way of living, and the slide applies it to the body. 'Weak' here means soft and tender. The quote stops before par. 3 (the army image). Ch. 76 is not in used.txt. For an exact line, use 'Man at his birth is supple and weak; at his death, firm and strong.' with the credit LAOZI · DAODEJING 76 · TR. LEGGE 1891."
+   },
+   {
+    "n": 2,
+    "key": "longevity-1",
+    "word": "STIFFEST",
+    "line": "Just poetry? In this Brazilian study, 3,139 middle-aged adults were followed for about 13 years. Compared with the most flexible men, the STIFFEST were linked with about 1.9 times the death risk.",
+    "credit": "ARAÚJO ET AL. · SCANDINAVIAN JOURNAL OF MEDICINE & SCIENCE IN SPORTS · 2024 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Araújo CGS, de Souza e Silva CG, Kunutsor SK, Franklin BA, Laukkanen JA, Myers J, Fiatarone Singh MA, Franca JF, Castro CLB. Scand J Med Sci Sports 34(8):e14708, 2024, DOI 10.1111/sms.14708, PMID 39165228. 3,139 adults aged 46 to 65 (66% men) at an exercise clinic in Rio, mean follow-up 12.9 years, 302 deaths. Men, bottom vs top of the Flexindex distribution, adjusted for age, BMI and health: HR 1.87 (1.50-2.33). Review fix applied: the comparison group now comes first ('Compared with the most flexible men'), so 'the death risk of the most flexible' cannot be misread. The women's 4.78 has a very wide range (1.23-31.71), so it is left out. Observational, so 'linked with'. The authors say it is not yet known whether training gains are linked to longer survival. This is the only Araújo-group source in either set (dailylife-7, longevity-3 and longevity-4 are not used)."
+   },
+   {
+    "n": 3,
+    "key": "longevity-5",
+    "word": "ARTERIES",
+    "line": "Look inside. In this Japanese study of 526 adults, people 40 and older with a shorter reach toward their toes had stiffer ARTERIES than others their age. Under 40, no clear difference.",
+    "credit": "YAMAMOTO ET AL. · AM J PHYSIOL HEART CIRC PHYSIOL · 2009 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Yamamoto K, Kawano H, Gando Y, Iemitsu M, Murakami H, Sanada K, Tanimoto M, Ohmori Y, Higuchi M, Tabata I, Miyachi M (National Institute of Health and Nutrition, Tokyo). Am J Physiol Heart Circ Physiol 297(4):H1314-H1318, 2009, DOI 10.1152/ajpheart.00061.2009, PMID 19666849. 526 adults aged 20 to 83, each age group split by sit-and-reach. Middle-aged 1,260 vs 1,200 cm/s; older 1,485 vs 1,384 cm/s; young: 'there was no significant difference between the two flexibility groups'. Review fixes applied: 'no clear difference' (the paper says 'no significant difference'); 'with a shorter reach' replaces 'who reached less far'. Authors: 'flexibility may be a predictor of arterial stiffening'. Cross-sectional (one moment), so it is a link; never 'stretching softens arteries'. The line opens with 'Look inside' rather than 'Why?' so the slide does not suggest this explains the deaths on slide 2."
+   },
+   {
+    "n": 4,
+    "key": "trials-1",
+    "word": "PRESSURE",
+    "line": "Can stretching help inside? In this Canadian trial, adults around 62 with slightly high blood PRESSURE stretched 30 minutes, 5 days a week, for 8 weeks. Top number: 146 down to 140.",
+    "credit": "KO ET AL. · JOURNAL OF PHYSICAL ACTIVITY AND HEALTH · 2021 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Ko J, Deprez D, Shaw K, Alcorn J, Hadjistavropoulos T, Tomczak C, Foulds H, Chilibeck PD (University of Saskatchewan). J Phys Act Health 18(1):21-28, 2021, DOI 10.1123/jpah.2020-0365, PMID 33338988. Randomized: 40 adults, mean age 61.6, high-normal or stage 1 blood pressure, no BP medicine. 20 stretched and 20 walked, 30 min a day, 5 days a week, 8 weeks. Stretching group sitting systolic went from 146 to 140 mm Hg (walking group 139 to 142). The slide speaks only of the people who stretched; idea 14 says half stretched and half walked. Small trial: the authors call for a larger one, say the walk may not have been hard enough, and suggest adding stretching to walking, not replacing it. A published commentary questioned the trial. Never 'stretching beats walking' or 'cures high blood pressure'."
+   },
+   {
+    "n": 5,
+    "key": "trials-4",
+    "word": "HIP",
+    "line": "And outside? Watch people walk. In this Boston study, the back leg's HIP opened about 20 degrees in young adults. Healthy older people: 14. Older people with repeated falls: 11.",
+    "credit": "KERRIGAN ET AL. · ARCHIVES OF PHYSICAL MEDICINE AND REHABILITATION · 2001 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Kerrigan DC, Lee LW, Collins JJ, Riley PO, Lipsitz LA (Harvard Medical School and Spaulding Rehabilitation Hospital, Boston). Arch Phys Med Rehabil 82(1):26-30, 2001, DOI 10.1053/apmr.2001.18584, PMID 11239282. 30 young adults, 23 healthy older adults and 16 older adults with a history of recurrent falls, in a gait lab. 'Peak hip extension ... averaged 20.4 degrees +/- 4.0 degrees for young adults, 14.3 degrees +/- 4.4 degrees for elderly nonfallers, and 11.1 degrees +/- 4.8 degrees for elderly fallers.' Review fixes applied: the list is split into short steps, and the jargon 'fallers' becomes 'older people with repeated falls' (the study's 'recurrent falls'). Observational: the line says the hip 'opened', not 'was tight', and makes no claim that stretching prevents falls. The abstract's 'to prevent falls' clause is only a research suggestion and is not used."
+   },
+   {
+    "n": 6,
+    "key": "wisdom-3",
+    "word": "AGE",
+    "line": "Is AGE just birthdays? German-born fitness teacher Joseph Pilates wrote: \"If your spine is inflexibly stiff at 30, you are old; if it is completely flexible at 60, you are young.\"",
+    "credit": "JOSEPH PILATES · RETURN TO LIFE THROUGH CONTROLOGY · 1945",
+    "exact_or_retold": "exact",
+    "source_note": "Joseph H. Pilates (with William John Miller), Return to Life Through Contrology, 1945. The passage was found in the book text of three reprints on archive.org; the original page number is not confirmed. Exact: 'If your spine is inflexibly stiff at 30, you are old; if it is completely flexible at 60, you are young.' The semicolon inside the quote marks is his own and stays. This is his belief, not a finding. The popular 'You are only as young as your spine is flexible' is a paraphrase (quote books credit that form to Bob Harper), so do not use it. Never use the '95 per cent' from the next sentence. The big word AGE is outside the quote marks, so the quote is unchanged."
+   },
+   {
+    "n": 7,
+    "key": "wisdom-4",
+    "word": "INCH",
+    "line": "A popular Chinese saying goes further: sinews (tendons) one INCH longer, life ten years longer. Lovely. But no old source has been found, and nobody ever measured that number.",
+    "credit": "CHINESE FOLK SAYING 筋长一寸，寿延十年 · NO OLD SOURCE FOUND (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "筋长一寸，寿延十年 (traditional 筋長一寸，壽延十年), literally 'sinews one inch longer, life ten years longer' (our own literal translation, so no quote marks on the slide). Earliest dated print found: Xiao Hongci, 医行天下, 2009, ISBN 9787218060873, which calls it 'a Daoist saying' without giving a source. It is not in the 36 Huangdi Neijing juan, the Yijinjing or the Daodejing. Older variants end differently (宁可筋长一寸，不许肉厚一分, 1992; 筋长一寸，力巧三分, 2008). Review fix applied: '(tendons)' glosses the rare word 'sinews' (筋). 'No old source has been found', never 'has no old source' or 'modern'. Never 'stretching adds 10 years'. Never call it Daoist or Neijing, and do not cite Xiao or Zhu Zengxiang (their books make cure claims)."
+   },
+   {
+    "n": 8,
+    "key": "longevity-9",
+    "word": "STRETCHED",
+    "line": "What was measured? In this American study, 26,727 adults were followed for 17 years. Those who said they STRETCHED were linked with about 10% lower odds of dying, after counting other exercise.",
+    "credit": "SHEEHAN & LI · MEDICINE & SCIENCE IN SPORTS & EXERCISE · 2020 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Sheehan CM, Li L (Arizona State University). Med Sci Sports Exerc 52(12):2554-2562, 2020, DOI 10.1249/MSS.0000000000002406, PMID 32520868. 26,727 US adults aged 18 to 84 (1998 National Health Interview Survey), followed to the end of 2015 (17 years), 4,955 deaths. 'When adjusting for engagement in all exercise types and confounders, stretching (OR = 0.90, 95% CI = 0.83-0.97) ... uniquely associated with lower risks of mortality.' Review fix applied: 'were followed for 17 years' replaces '26,727 adults over 17 years', which read as their age. Self-reported, asked once. A small effect: a link, not proof. Do not copy the authors' word 'benefits'. The volleyball result is left out. Chosen over the Korean cohort (longevity-8) because it adjusts for all other exercise; the Korean days-a-week result had no clean dose pattern."
+   },
+   {
+    "n": 9,
+    "key": "trials-8",
+    "word": "BED",
+    "line": "Too long to wait? Then tonight. In this Tokyo trial, women 40 to 61 stretched 10 minutes before BED. After 3 weeks, their menopause symptom score fell from about 29 to 16.",
+    "credit": "KAI ET AL. · MENOPAUSE · 2016 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Kai Y, Nagamatsu T, Kitabatake Y, Sensui H (Meiji Yasuda Life Foundation, Tokyo). Menopause 23(8):827-832, 2016, DOI 10.1097/GME.0000000000000651, PMC4961267. Randomized: 40 working women aged 40 to 61 (mean 51.1). 20 stretched 10 minutes just before bedtime for 3 weeks (about 5 nights a week in practice) and 20 were on a waiting list. Total Simplified Menopausal Index went from 29.3 to 15.7 (waiting group 32.4 to 32.2). The slide speaks of the stretching group only. Review fixes applied: 'Too long to wait?' replaces the idiom 'Too far off?', and 'After 3 weeks' replaces 'In 3 weeks'. Small, short, no placebo, more staff contact (the authors say the effect may be overestimated). No 'depression' or 'treats' wording. The paper's '20%' depressive figure is not used, and sleep itself was not an outcome."
+   },
+   {
+    "n": 10,
+    "key": "wisdom-2",
+    "word": "FIRST",
+    "line": "Then morning comes. The old Indian yoga book Hatha Yoga Pradipika puts asana FIRST, practised for steadiness, health and light limbs. You were born supple. Tomorrow, on the mat?",
+    "credit": "SVATMARAMA · HATHA YOGA PRADIPIKA, CH. 1 (retold)",
+    "exact_or_retold": "retold",
+    "source_note": "Hatha Yoga Pradipika 1.19 (GRETIL, Pancham Sinh), which is 1.17 in the Bihar School numbering: haṭhasya prathamāṅgatvād āsanaṃ pūrvam ucyate / kuryāt tad āsanaṃ sthairyam ārogyaṃ cāṅga-lāghavam. Pancham Sinh, 1915 (introduction signed Ajmer, 31 January 1915): 'Being the first accessory of Haṭha Yoga, āsana is described first. It should be practised for gaining steady posture, health and lightness of body.' WARNING: used.txt line 120 already has Sinh's second sentence. The slide retells it from a new angle (asana comes first) and uses the Sanskrit sense 'light limbs' (aṅga-lāghava), not Sinh's wording. If the owner wants no overlap at all, swap in the checked Suwen ch. 3 line (wisdom-7, 骨正筋柔). The verse states an aim of practice, not a cure."
+   }
+  ],
+  "caption_lines": [
+   "1. SUPPLE: Laozi wrote that we start life soft and end it stiff. Softness goes with life (retold).",
+   "2. STIFFEST: The stiffest men were linked with about 1.9 times the death risk of the most flexible men. A link, not proof.",
+   "3. ARTERIES: From 40 up, a shorter reach went with stiffer arteries. Measured once, so a link only.",
+   "4. PRESSURE: After 8 weeks of stretching, the top blood pressure number went from 146 to 140, in one small trial.",
+   "5. HIP: Older people with repeated falls opened the hip less when walking. A link, not a cause.",
+   "6. AGE: Joseph Pilates believed your spine shows your real age.",
+   "7. INCH: A lovely Chinese saying with no old source found, and a number nobody measured.",
+   "8. STRETCHED: People who said they stretched were linked with about 10% lower odds of dying, other exercise counted.",
+   "9. BED: Women 40 to 61 stretched 10 minutes before bed for 3 weeks, and their menopause symptom score fell.",
+   "10. FIRST: An old yoga book puts asana first, for steadiness, health and light limbs."
+  ],
+  "question": "What do you want your body to still do at 80?"
+ },
+ "notes": "Fixes from both reviews are applied. Where the two reviews clashed, the facts review won; story links and the style review's easy-English changes were kept wherever the facts allowed. Nothing new was fetched, so no files were saved under dl/. Build script: /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk10/fix/build_fixed.py. Output: /tmp/claude-0/-home-user-aybkk-workshop/5fef75e8-f96a-51ec-a2b6-837dec39c8e1/scratchpad/wk10/fix/fixed.json.\n\nWhere the reviews clashed, and what was chosen:\n- A1: style's easier wording ('doing the SPLITS', 'risk of dying', 'medium') plus the facts fix 'no extra SURVIVAL benefit'.\n- A2: facts bridge 'So what does daily life ask?'. The style bridge 'So how much is medium?' tied JAMA's range to the shoelace hip bend, which neither paper does. Style's short ending 'Walking and stairs need less.' is kept, since it says the same as the paper's own sentence.\n- A4: facts opener 'you barely bend' (Amosov only counted bends). Style's shoe callback 'Tying his shoes is one of them.' is kept.\n- A6: facts asked to name the muscle, so the line now says 'the back of one thigh'. Style's split numbers are kept. To stay within 32 words, the opener is now 'Yes.' ('around 85' still carries 'even late').\n- A7: facts version: 'average' and 'depending on direction'. 'women 50 to 79 took a yoga class' fits the word limit; the 56 stays in idea 7.\n- B3: style's 'with a shorter reach' plus the facts fix 'no clear difference'.\n- B5: style's stepwise list, using the facts wording 'older people with repeated falls' (the study's 'recurrent falls'), not 'who often fall'.\n- Captions A1, B2, B5, B7: facts content in the style length. A1 now says 'Splits were not tested.' B2 says 'the most flexible men'. B5 says 'repeated falls'. B7 says 'no old source found'.\n- Ideas 1, 2, 13, 14 and 17: facts fixes as written. Idea 1 says 'risk of dying' and labels 'you don't need the splits' as our takeaway. Idea 14 now says half stretched and half walked, and the 'walking group did not fall' sentence is gone.\n\nOther fixes for consistency: idea 3 says 'reversing'; idea 6 says 'the back of one thigh'; idea 7 adds 'depending on direction'; idea 12 adds 'men'; idea 15 says 'repeated falls'; idea 19 adds the waiting group (about 32). Captions A8, B4 and B10 lost their double colons (the style review flagged double colons in general).\n\nRules re-checked by script on all 20 slides:\n- Every line is 29 to 32 words.\n- Each big word appears in CAPS in its own line, and it is the only ALL-CAPS word there.\n- There is no long dash and no 'pose' in slides, captions or ideas.\n- There is no semicolon in any slide line, except B6: that semicolon is inside Pilates' exact words and stays.\n- No two slides share a source.\n- The only Araújo-group paper is B2.\n\nThe 20 ideas are in slide order (ideas 1 to 10 are set A, 11 to 20 are set B). Mix: How much (7): ideas 2, 3, 5, 6, 7, 8, 10. Why (8): ideas 1, 9, 12, 13, 14, 15, 18, 19. Old wisdom (5): Laozi 76, Hatha Yoga Pradipika, Pilates, the Chinese saying, Amosov (Russian source).\n\nCaption format: after each set's 10 caption lines and its question, add '#aybkk #ashtanga #ashtangabangkok #boonchutanti'.\n\nNote on A8: 'Not an hour.' is our own contrast for one muscle group (ACSM's 60 s total). It is not a claim about how long a whole session takes.\n\nOWNER'S CALLS (unchanged):\n(1) B10, Hatha Yoga Pradipika: used.txt line 120 already has Pancham Sinh's line 'steady posture, health and lightness of body'. The slide retells it from a new angle ('asana comes FIRST') and uses the Sanskrit sense 'light limbs'. If no overlap at all is wanted, the checked swap is Suwen ch. 3 (wisdom-7): 'bones straight, sinews supple, blood flowing freely (retold)', credit 'SUWEN, CHINESE MEDICAL CLASSIC, CH. 3'. That line is about diet, not stretching, so it must be labelled (retold).\n(2) A1, the cover: credit it only as JAMA NETWORK OPEN · 2026, with no country, 'nationwide' or affiliation (China safety).\n(3) A4: credit Amosov neutrally as a 'Soviet heart surgeon'. The Russian slide can quote his 1987 words (p. 126), with a hyphen in 10-20.\n(4) A10: this quotes China's official health guideline. That is a health body, not a leader, but it is the owner's call for the China account.\n(5) B9 (Kai) is about menopause symptoms in women aged 40 to 61. If a set for everyone is wanted, the checked swap is trials-9: one hour of stretching 3 times a week at 5 pm, and people with insomnia fell asleep about 5 minutes faster on a wrist monitor (small study, comparison group not randomized). Do not echo the used Beijing line 'slept almost 2 hours more'.\n\nLeft out on purpose (unchanged): WHO 2020 ('any amount' line already used, and no flexibility number); US guideline 2018 (it says flexibility's health benefits are unknown; a useful honest caption line if wanted); Korean cohort longevity-8 (no clean days-a-week pattern, and not adjusted for other exercise); sitting-rising tests longevity-3 and -4 (same Araújo group as B2, and a mixed test); Gando 2017 (same team as Yamamoto); PLoS One meta-analysis (mostly the same Japanese data pooled again); Zhuangzi 15 (its bear and bird image echoes the used Five Animals); Lüshi Chunqiu (a line from it was used before, and the story needs a legendary-ruler cut); Katzmarzyk 2002 (context only: one sit-and-reach test was not linked with survival)."
+}
