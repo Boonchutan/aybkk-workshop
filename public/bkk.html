@@ -767,13 +767,12 @@
   .face .fx > .note{margin:8px 0 0}
   @media (min-width:700px){ .face .fx{grid-column:2} .face .fx .btn{width:auto} }
   /* The Google review ask, and the small review link at the foot of My account. */
-  .pkg.rev{border-top:4px solid var(--promo)}
-  .rev p{margin:0}
+  .rev p{margin:0;text-wrap:pretty}
   .rev .ra{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;margin-top:14px}
   .rev .ra .btn{width:100%}
   .rev .rthx{font-weight:600}
   .rev .rthx:focus{outline:none}
-  .revlink{margin:var(--grp) 0 0;padding-top:4px;border-top:2px solid var(--line);font-size:var(--fs-s);line-height:20px}
+  .revlink{margin:var(--grp) 0 0;font-size:var(--fs-s);line-height:20px}
   .revlink a{display:inline-flex;align-items:center;min-height:44px;font-weight:600}
   :lang(th) .revlink a,:lang(th) .rev .rthx{font-weight:500;font-synthesis:none}
   @media (min-width:700px){ .rev .ra .btn{width:auto} }
@@ -995,7 +994,7 @@
         </div>
       </div>
       <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="tPic bioBm bioJm">Read more</button></p>
-      <p class="tfb" id="tFb"><a href="https://www.facebook.com/ashtangabkk/reviews" target="_blank" rel="noopener"><span data-i18n="fbRev">On Facebook: 96% recommend (441 reviews)</span></a></p>
+      <p class="tfb" id="tFb"><a href="https://www.facebook.com/ashtangabkk/reviews" target="_blank" rel="noopener"><span data-i18n="fbRev">On Facebook: 96% recommend (441&nbsp;reviews)</span></a></p>
     </div>
   </section>
 
@@ -1555,7 +1554,7 @@
   });
   // Reviews (Boonchu, 12 Nov 2026): the Facebook line in #teacher, and the Google review ask in My account.
   Object.assign(STR.en, {
-    fbRev: 'On Facebook: 96% recommend (441 reviews)',
+    fbRev: 'On Facebook: 96% recommend (441\u00a0reviews)',
     revW12H: 'Your 12 weeks are done.', revRenewH: 'Thank you for staying.',
     revBody: 'Would you write a few honest words on Google? It helps the next person in Bangkok find a teacher who notices.',
     revBtn: 'Write a Google review', revLater: 'Not now', revThanks: 'Thank you. We read every review, good or bad.',
@@ -1573,9 +1572,9 @@
     jbio4: 'เธอฝึกต่อเนื่องตลอดการตั้งครรภ์ทั้งสองครั้ง จนถึงซีรีส์ Advanced และยังฝึกและสอนอยู่ในฐานะคุณแม่',
   });
   Object.assign(STR.th, {
-    fbRev: 'บน Facebook: 96% แนะนำ (441 รีวิว)',
+    fbRev: 'บน Facebook: 96% แนะนำ (441\u00a0รีวิว)',
     revW12H: 'คุณฝึกครบ 12 สัปดาห์แล้ว', revRenewH: 'ขอบคุณที่ฝึกกับเราต่อ',
-    revBody: 'ช่วยเขียนรีวิวสั้น ๆ ตามที่รู้สึกจริงใน Google ได้ไหม รีวิวของคุณช่วยให้คนถัดไปในกรุงเทพฯ ได้เจอครูที่คอยสังเกตและใส่ใจเขา',
+    revBody: 'ช่วยเขียนรีวิวสั้น ๆ ใน Google ตามที่รู้สึกจริงได้ไหม รีวิวของคุณช่วยให้คนที่กำลังหาที่ฝึกในกรุงเทพฯ ได้เจอครูที่คอยสังเกตเห็นเขา',
     revBtn: 'เขียนรีวิวใน Google', revLater: 'ไว้ทีหลัง', revThanks: 'ขอบคุณ เราอ่านทุกรีวิว ไม่ว่าจะชมหรือติ',
   });
   Object.assign(STR.zh, {
@@ -1591,9 +1590,9 @@
     jbio4: '两次怀孕期间她都坚持练习，一直练到高级序列。现在作为妈妈，她依然练习和教学。',
   });
   Object.assign(STR.zh, {
-    fbRev: 'Facebook 上：96% 推荐（441 条评价）',
-    revW12H: '你的12周完成了。', revRenewH: '谢谢你继续和我们一起练习。',
-    revBody: '愿意在 Google 上写几句真实的话吗？这能帮曼谷的下一个人，找到一位会留意他的老师。',
+    fbRev: 'Facebook 上：96% 推荐（441\u00a0条评价）',
+    revW12H: '你已经完成了12周。', revRenewH: '谢谢你继续来练习。',
+    revBody: '愿意在 Google 上写几句真实的感受吗？这能帮助下一位在曼谷找老师的人，找到一位会留意学生的老师。',
     revBtn: '在 Google 上写评价', revLater: '以后再说', revThanks: '谢谢你。每一条评价我们都会读，无论好坏。',
   });
   Object.assign(STR.ru, {
@@ -1609,9 +1608,9 @@
     jbio4: 'Она продолжала практиковать во время обеих беременностей, вплоть до продвинутых серий, и сейчас практикует и преподаёт, будучи мамой.',
   });
   Object.assign(STR.ru, {
-    fbRev: 'На Facebook: 96% рекомендуют (441 отзыв)',
-    revW12H: 'Ваши 12 недель пройдены.', revRenewH: 'Спасибо, что остаётесь с нами.',
-    revBody: 'Не напишете пару честных слов в Google? Это поможет следующему человеку в Бангкоке найти учителя, который замечает каждого.',
+    fbRev: 'На Facebook: 96% рекомендуют (441\u00a0отзыв)',
+    revW12H: 'Вы прошли все 12 недель.', revRenewH: 'Спасибо, что остаётесь с нами.',
+    revBody: 'Не напишете пару честных слов в Google? Это поможет тем, кто ищет практику в Бангкоке, найти внимательного учителя.',
     revBtn: 'Написать отзыв в Google', revLater: 'Не сейчас', revThanks: 'Спасибо. Мы читаем каждый отзыв, хороший или плохой.',
   });
 
@@ -2627,7 +2626,7 @@
         · <button type="button" class="signout" style="min-height:0;padding:0" onclick="signOutMe()">${esc(t('notYou', d.member.name))}</button></p>
         <div id="faceBox"></div>
         ${habit}
-        <div id="revBox"></div>
+        ${CN_HOST ? '' : '<div id="revBox"></div>'}
         ${askEmail}
         ${(d.notes || []).length ? `<div class="day">${esc(t('fromTeachers'))}</div>${d.notes.map(n => `<div class="pkg">
           <div class="note">${esc(fmtDay(String(n.class_date || n.created_at).slice(0, 10) + 'T12:00:00+07:00'))}${n.teacher ? ' · ' + esc(n.teacher) : ''}</div>
@@ -2638,10 +2637,11 @@
         <div class="day">${esc(t('yourPass'))}</div>${passes}
         <div class="day">${esc(t('upcoming'))}</div>${bookings}
         <div class="day">${esc(t('cameH'))}</div>${came}
-        <p class="revlink"><a href="/review" target="_blank" rel="noopener" id="revLink">${esc(t('revBtn'))}</a></p>`;
+        ${CN_HOST ? '' : `<p class="revlink"><a href="/review" target="_blank" rel="noopener" id="revLink">${esc(t('revBtn'))}</a></p>`}`;
       drawFace(code);
       drawReview(code);
-      $('#revLink').addEventListener('click', () => revWrote(code));
+      // Google, like Facebook, does not open in China: cn.aybkk.net has no review card or link.
+      if (!CN_HOST) $('#revLink').addEventListener('click', () => revWrote(code));
       renderMyPhotos(code, d.member);
       renderChecks(code);
     } catch (e) {
@@ -2832,7 +2832,8 @@
 
   // The Google review ask (Boonchu, 12 Nov 2026), under the mornings count, at two moments: the
   // 12-week check is done (w12), or the student renewed (renew:<renewals>, so each renewal is
-  // its own moment). Everyone who reaches a moment sees the same card: it never looks at the
+  // its own moment; a count no higher than one set aside is not new, as when a pass is voided).
+  // Everyone who reaches a moment sees the same card: it never looks at the
   // numbers, the feel score or anything else about how it went. "Not now" sets aside the
   // moments open now; the review button ends the ask on this phone for this member.
   // Kept per member code; if storage fails, REV_MEM keeps it for this visit.
@@ -2853,7 +2854,8 @@
     const box = $('#revBox');
     if (!box || code !== myCode() || REV.code !== code || REV.w12 === null) return;
     const s = revState(code);
-    const open = [REV.w12 && 'w12', REV.renewals > 0 && 'renew:' + REV.renewals].filter(k => k && !s.skip.includes(k));
+    const kept = Math.max(0, ...s.skip.map(k => +(/^renew:(\d+)$/.exec(k) || [0, 0])[1]));
+    const open = [REV.w12 && !s.skip.includes('w12') && 'w12', REV.renewals > kept && 'renew:' + REV.renewals].filter(Boolean);
     if (!REV.thanks && (s.done || !open.length)) { box.className = ''; box.innerHTML = ''; return; }
     box.className = 'pkg rev';
     if (REV.thanks) {
@@ -2862,7 +2864,7 @@
       return;
     }
     box.innerHTML = `<h3>${esc(t(open[0] === 'w12' ? 'revW12H' : 'revRenewH'))}</h3>
-      <p>${esc(t('revBody'))}</p>
+      <p class="note">${esc(t('revBody'))}</p>
       <div class="ra"><a class="btn pink" href="/review" target="_blank" rel="noopener">${esc(t('revBtn'))}</a>
         <button type="button" class="linkbtn">${esc(t('revLater'))}</button></div>`;
     box.querySelector('a').addEventListener('click', () => revWrote(code, true));
@@ -2870,6 +2872,9 @@
       const now = revState(code);
       revSave(code, { ...now, skip: [...new Set([...now.skip, ...open])] });
       drawReview(code);
+      // The card is gone: keep a keyboard user's place on the mornings count just above it.
+      const h = $('#view .habit');
+      if (h && !box.firstChild) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
     });
   }
   // A tap on either review link: Google's form opens in a new tab, and this phone stops asking.

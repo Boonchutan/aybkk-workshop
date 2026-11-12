@@ -1582,8 +1582,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         `SELECT p.*, pr.name_en, pr.name_th, pr.code AS product_code FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id])).rows;
       // For the review ask in My account: study passes beyond the first. A single
-      // class is a visit, not a stay, and a void pass was written off.
-      const stays = passes.filter(p => ['active', 'frozen'].includes(p.status) && p.product_code !== 'dropin'
+      // class is a visit, not a stay, and a void pass was written off, except a
+      // Rezerv pack that was used up before its end date: importPass stores it
+      // void so it lets no one in, with "<Rezerv status> in Rezerv" in the note.
+      const usedUp = p => p.status === 'void' && p.source === 'rezerv'
+        && passState((/\| (.+?) in Rezerv/.exec(p.note || '') || [])[1]) === 'ended';
+      const stays = passes.filter(p => (['active', 'frozen'].includes(p.status) || usedUp(p)) && p.product_code !== 'dropin'
         && !(p.kind === 'credits' && Number(p.credits_total) === 1)).length;
       // classDate is the Bangkok day as text: class_date comes back as a JS
       // Date, which a browser in another timezone can shift a day.
