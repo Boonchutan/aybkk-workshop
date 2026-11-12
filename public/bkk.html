@@ -850,6 +850,8 @@
     .pp-row .btn{justify-self:stretch;align-self:end}
     .pp-tot{align-self:start}
     .pp-tot span{display:block}
+    /* In Russian the line with the amount is the widest, so its digits set each row's Buy width. */
+    :lang(ru) .pp-tot{min-width:13em}
     .pp-pol{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--g)}
   }
   @media (min-width:900px){ .pp{margin-right:calc((100% + var(--g))/-3 - var(--m))} }
