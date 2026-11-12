@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-12T06:11:22.502Z
+Inbox last read: 2026-11-12T12:13:23.924Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -260,4 +260,4 @@ Inbox last read: 2026-11-12T06:11:22.502Z
 - 2026-11-11 19:08: 3-month student + old-price renewal: no answer by 19:00, defaults applied (no reply sent; both asked again Thu 07:08). No reminders due since 13:08. No win today. Next step given: send the payment QR to the Reset & Restart buyer before the promo ends 23:59. Inbox 19:08: 8 LINE threads with news, 4 need a reply, 4 hot.
 - 2026-11-12 07:08: Carne posted (0 new leads); Plato paused (expected). No @Machi requests. Price switch CHECKED: aybkk.net home and Packages tab show the new list, /start promo box and home promo gone. Inbox 07:08: 10 LINE threads with news, 4 need a reply, 3 hot. Renewal (1 day left) and 3-month student: choice by 19:00 today. Reminders sent: Rezerv price prompt, Facebook/LINE OA old prices, LINE keyword replies, Mysore trip flights/hotel, site colour go. Rezerv import reminded (daily). No wins this week. Board rebuilt.
 
-- 2026-11-12 13:08: check-in. Old-price renewal (pass ends Fri 13 Nov, 1 day) led; 3-month student: 2nd nudge (last today), both due 19:00. No reminders due since 07:08. Inbox 13:08: 2 LINE threads with news, 0 need a reply.
+- 2026-11-12 13:08: check-in. Old-price renewal (pass ends Fri 13 Nov, 1 day) led; 3-month student: 2nd nudge (last today), both due 19:00. No reminders due since 07:08. Inbox 13:08: 2 LINE threads with news, 0 need a reply.- 2026-11-12 19:08: old-price renewal + 3-month student: no answer by 19:00, defaults applied (no reply sent; both asked again Fri 13 Nov 07:08, renewal pass ends that day). No reminders due since 13:08. No win today. Next step given: answer the renewal student tonight, last day tomorrow. Inbox 19:08: 1 LINE thread with news, 1 needs a reply, 1 hot (asks for a new promo).
