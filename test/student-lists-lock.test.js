@@ -31,6 +31,49 @@ neo4j.driver = () => ({ session, close: async () => {}, verifyConnectivity: asyn
 require(process.env.LOCK_TEST_SERVER);
 `;
 
+// The teacher bot gets made-up updates; its outgoing calls are caught, never sent, and
+// reported as one line of JSON each: how many messages and buttons went out.
+const BOT_HARNESS = `
+const grammy = require('grammy');
+const neo4j = require('neo4j-driver');
+const recs = Array.from({ length: 11 }, (_, i) => ({ get: k => k === 'name' ? 'Locktest Member ' + i : k === 'id' ? 'lock-' + i : /count/i.test(k) ? neo4j.int(1) : null }));
+neo4j.driver = () => ({ session: () => ({ run: async () => ({ records: recs }), close: async () => {} }), close: async () => {}, verifyConnectivity: async () => {} });
+let bot, sent = [];
+grammy.Bot.prototype.start = function () {
+  bot = this;
+  this.botInfo = { id: 1, is_bot: true, first_name: 'T', username: 't_bot', can_join_groups: true, can_read_all_group_messages: false, supports_inline_queries: false };
+  this.api.config.use(async (prev, method, payload) => {
+    const kb = payload && payload.reply_markup && (payload.reply_markup.inline_keyboard || payload.reply_markup.keyboard);
+    sent.push(kb ? kb.flat().length : 0);
+    return { ok: true, result: { message_id: 1, date: 0, chat: { id: 1, type: 'private' } } };
+  });
+};
+require(process.env.LOCK_TEST_BOT);
+let n = 1;
+(async () => {
+  while (!bot) await new Promise(r => setTimeout(r, 20));
+  for (const [from, text] of JSON.parse(process.env.LOCK_TEST_UPDATES)) {
+    sent = [];
+    await bot.handleUpdate({ update_id: n++, message: { message_id: n, date: 0, chat: { id: from, type: 'private' }, from: { id: from, is_bot: false, first_name: 'X' }, text,
+      ...(text.startsWith('/') ? { entities: [{ type: 'bot_command', offset: 0, length: text.split(' ')[0].length }] } : {}) } });
+    process.stdout.write('@@' + JSON.stringify({ from, text, messages: sent.length, buttons: sent.reduce((a, b) => a + b, 0) }) + '\\n');
+  }
+  process.exit(0);
+})();
+`;
+function botRun(updates) {
+  const env = { ...process.env, TELEGRAM_BOT_TOKEN: '1:lock-test', TEACHER_CHAT_IDS: '5001', BOONCHU_CHAT_ID: '5002',
+    LOCK_TEST_BOT: path.join(ROOT, 'assessment-bot.js'), LOCK_TEST_UPDATES: JSON.stringify(updates),
+    DATA_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-bot-')), NEO4J_URI: 'bolt://127.0.0.1:9' };
+  return new Promise(resolve => {
+    const c = spawn(process.execPath, ['-e', BOT_HARNESS], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'ignore'] });
+    let out = '';
+    c.stdout.on('data', d => { out += d; });
+    const t = setTimeout(() => c.kill('SIGKILL'), 30000);
+    c.on('exit', () => { clearTimeout(t); resolve(out.split('\n').filter(l => l.startsWith('@@')).map(l => JSON.parse(l.slice(2)))); });
+  });
+}
+
 let PORT;
 function request(method, p, headers = {}, body) {
   return new Promise((resolve, reject) => {
@@ -178,9 +221,64 @@ const LOCKED = [
   const link = await request('GET', `/j/${ids[0]}`);
   ok("a student's own short link still opens their journal", link.status === 302 && /^\/student\.html\?id=/.test(link.headers.location || ''));
   const twins = await request('GET', '/j/locktest-twin');
-  ok('a name shared by two students lists nobody without the key', twins.status === 409 && !/locktest|\/j\//i.test(twins.text), `${twins.status}`);
+  ok('a name shared by two students lists nobody without the key', twins.status === 404 && !/locktest|\/j\//i.test(twins.text), `${twins.status}`);
   const twinsStaff = await request('GET', '/j/locktest-twin', STAFF);
   ok('...staff get the list', twinsStaff.status === 409 && (twinsStaff.text.match(/\/j\//g) || []).length === 2, `${twinsStaff.status}`);
+
+  console.log('\n— a short link is not a name search —');
+  for (const p of ['/j/locktest-solo', '/j/solo', '/j/lockt', '/p/locktest-solo', '/p/solo', '/j/zzzz-none', '/p/locktest-twin']) {
+    const r = await request('GET', p);
+    ok(`GET ${p} → 404 without the key, no name`, r.status === 404 && !r.headers.location && !/locktest/i.test(r.text), `${r.status}`);
+  }
+  const solo = await request('GET', '/j/solo', STAFF);
+  ok('...staff still find one student by name', solo.status === 302 && /[?&]name=/.test(solo.headers.location || ''), `${solo.status}`);
+  const pretty = await request('GET', `/p/locktest-solo-${ids[0]}`);
+  ok('a pretty link with the id still opens the profile', pretty.status === 302 && /^\/my-journal\.html\?id=/.test(pretty.headers.location || ''), `${pretty.status}`);
+
+  console.log('\n— printed Hefei codes do not give the roster —');
+  // Read at runtime from the committed roster; nothing from it is printed.
+  const roster = JSON.parse(fs.readFileSync(path.join(ROOT, 'public', 'rosters', 'hefei.json'), 'utf8')).students;
+  const one = roster.find(x => x.slug && x.journalId && x.id && x.name);
+  for (const [label, p] of [['code', one.id], ['slug', one.slug], ['other id + ?name=', 'gz-lock-test?name=' + encodeURIComponent(one.name)]]) {
+    for (const route of ['pass', 'mine']) {
+      const r = await request('GET', `/api/attendance/${route}/${p.includes('?') ? p : encodeURIComponent(p)}`);
+      ok(`${route} by ${label} → 404 without the key`, r.status === 404 && !(r.json && 'name' in r.json), shape(r));
+      const rs = await request('GET', `/api/attendance/${route}/${p.includes('?') ? p : encodeURIComponent(p)}`, STAFF);
+      ok(`...staff still find it by ${label}`, rs.status === 200 && 'name' in rs.json, shape(rs));
+    }
+  }
+  const own = await request('GET', '/api/attendance/pass/' + encodeURIComponent(one.journalId));
+  ok("a student's own pass by journal id still works", own.status === 200 && 'qrDataUrl' in own.json, shape(own));
+  ok('...and no shared cache keeps it', /private/.test(own.headers['cache-control'] || '') && !/public/.test(own.headers['cache-control'] || ''), own.headers['cache-control']);
+  ok('their own stamps by journal id still work', (await request('GET', '/api/attendance/mine/' + encodeURIComponent(one.journalId))).status === 200);
+  for (const p of [one.id, one.slug]) {
+    const r = await request('GET', '/s/' + encodeURIComponent(p));
+    ok('a printed card link still opens the journal, without a name', r.status === 302 && /^\/student\.html\?id=/.test(r.headers.location || '') && !/[?&]name=/.test(r.headers.location || ''), `${r.status}`);
+  }
+
+  console.log('\n— writes that answer with student data need the key —');
+  for (const [m, p, body] of [['PUT', '/api/students/lock-test-x', {}], ['POST', '/api/notion/sync', {}], ['POST', '/api/sync/notion', {}],
+    ['POST', '/api/teacher/comment', { studentId: 'lock-test-x', teacherName: 'T', comment: 'c' }],
+    ['POST', '/api/teacher/assessment', { studentId: 'lock-test-x', teacherName: 'T' }]]) {
+    const r = await request(m, p, {}, body);
+    ok(`${m} ${p} → 401 without the key`, r.status === 401 && r.json && Object.keys(r.json).join() === 'error', shape(r));
+    ok(`...and with the key it reaches the route`, (await request(m, p, STAFF, body)).status !== 401);
+  }
+
+  console.log('\n— team pages hold no student ids or names in their source —');
+  for (const f of ['journal.html', 'student-report.html']) {
+    const src = fs.readFileSync(path.join(ROOT, 'public', f), 'utf8');
+    ok(`${f} has no journal ids in it`, !/['"][0-9a-f]{6,8}-[0-9a-f]{2,4}-[0-9a-f]{2,4}-[0-9a-f]{2,4}-[0-9a-f]{8,12}['"]/i.test(src)
+      && !roster.some(x => src.includes(x.journalId)));
+  }
+
+  console.log('\n— the teacher bot lists members to teachers only —');
+  const runs = await botRun([[7001, '/students'], [7002, '/search'], [7002, 'all'], [7003, '📋 All'], [5001, '/students'], [5002, '/students'], [7004, '/start']]);
+  ok('the bot ran every update', runs.length === 7, `${runs.length}`);
+  for (const r of runs.slice(0, 4)) ok(`a stranger sending ${r.text} gets silence`, r.messages === 0, `${r.messages}`);
+  ok('a teacher still gets the member list', runs[4] && runs[4].buttons > 0);
+  ok('BOONCHU_CHAT_ID still gets the member list', runs[5] && runs[5].buttons > 0);
+  ok('a stranger pressing Start still gets the Russia sign-up', runs[6] && runs[6].messages === 1);
 
   await pool.query(`DELETE FROM journal_entries WHERE student_id = ANY($1::int[])`, [ids]);
   await pool.query(`DELETE FROM students WHERE name LIKE 'Locktest %'`);

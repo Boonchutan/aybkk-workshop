@@ -749,15 +749,23 @@ async function tick(bot) {
   if (changed) writeJson(FIRED_FILE, fired);
 }
 
+let keyWarned = false;
 async function broadcastReminder(bot, classInfo, kind) {
   // Find all completed RU students for this city
   let studentList = [];
   try {
     const res = await fetch(`${API_BASE}/api/orientations/ru?city=${classInfo.city}`, { headers: STAFF_HEADERS });
-    if (res.ok) {
-      const j = await res.json();
-      studentList = j.students || [];
+    if (!res.ok) {
+      // A refused list must not pass for an empty class.
+      console.error(`[ru-bot] reminder list refused: HTTP ${res.status}${res.status === 401 ? ', is BKK_ADMIN_KEY set?' : ''}`);
+      if (res.status === 401 && BOONCHU_CHAT_ID && !keyWarned) {
+        keyWarned = true;
+        await bot.api.sendMessage(BOONCHU_CHAT_ID, '⚠️ Russia class reminders were not sent: the student list needs BKK_ADMIN_KEY in the bot environment.').catch(() => {});
+      }
+      return;
     }
+    const j = await res.json();
+    studentList = j.students || [];
   } catch (e) {
     console.error('[ru-bot] reminder fetch failed:', e.message);
     return;

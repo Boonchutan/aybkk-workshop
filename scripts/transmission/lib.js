@@ -35,7 +35,8 @@ function httpJson(method, url, body) {
     const headers = payload ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) } : {};
     // Our own server only (never Telegram or LINE): the weekly counts and /bootstrap need the
     // staff key, BKK_ADMIN_KEY in this script's environment.
-    if (u.origin === new URL(API_BASE).origin && process.env.BKK_ADMIN_KEY) headers['X-Bkk-Key'] = process.env.BKK_ADMIN_KEY;
+    const staffKey = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY;
+    if (u.origin === new URL(API_BASE).origin && staffKey) headers['X-Bkk-Key'] = staffKey;
     const req = https.request({
       hostname: u.hostname,
       path: u.pathname + u.search,

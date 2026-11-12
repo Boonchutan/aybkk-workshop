@@ -71,7 +71,7 @@ router.get('/notion/students', staffOnly, async (req, res) => {
 /**
  * POST /api/notion/sync - Sync Notion students to Neo4j
  */
-router.post('/notion/sync', async (req, res) => {
+router.post('/notion/sync', staffOnly, async (req, res) => {
   const driver = req.driver;
   const session = driver.session();
   

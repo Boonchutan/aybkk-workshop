@@ -9,7 +9,7 @@ const { staffOnly } = require('../lib/staff-key');
 const { v4: uuidv4 } = require('uuid');
 
 // POST /api/teacher/assessment - Save teacher assessment
-router.post('/assessment', async (req, res) => {
+router.post('/assessment', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const {
@@ -260,7 +260,7 @@ router.get('/today', staffOnly, async (req, res) => {
 });
 
 // POST /api/teacher/comment - Teacher writes a comment for a student
-router.post('/comment', async (req, res) => {
+router.post('/comment', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const { studentId, teacherName, comment, weekLabel } = req.body;

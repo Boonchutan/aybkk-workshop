@@ -46,18 +46,25 @@
     catch { return false; }
   };
 
+  const refused = r => r.status === 401 && r.headers.get('WWW-Authenticate') === 'X-Bkk-Key';
+  // A typed passcode is kept only once the server takes it: bkk-admin and bkk-door read the same name.
   window.fetch = async (input, init = {}) => {
     if (!sameOrigin(input)) return raw(input, init);
-    for (let tries = 0; ; tries++) {
-      const key = store.get();
+    const send = key => {
       const headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
       if (key && !headers.has('X-Bkk-Key')) headers.set('X-Bkk-Key', key);
-      const r = await raw(input, { ...init, headers });
-      if (r.status !== 401 || r.headers.get('WWW-Authenticate') !== 'X-Bkk-Key' || !mayAsk || tries >= 3) return r;
+      return raw(input, { ...init, headers });
+    };
+    let key = store.get();
+    let r = await send(key);
+    for (let tries = 0; refused(r) && mayAsk && tries < 3; tries++) {
       const typed = await ask(!!key);
       if (!typed) return r;
-      store.set(typed);
+      key = typed;
+      r = await send(key);
+      if (!refused(r)) store.set(key);
     }
+    return r;
   };
   window.staffKey = { get: store.get, forget: store.del };
 })();

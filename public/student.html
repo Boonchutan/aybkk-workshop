@@ -1422,10 +1422,7 @@ async function loadDoorPass() {
   };
   try { show(JSON.parse(localStorage.getItem(lsKey))); } catch (e) { /* no cache */ }
   try {
-    // Send the name too: picker-skippers have a fresh gz- id the roster does
-    // not know, but their name still finds them their door pass.
-    const r = await fetch('/api/attendance/pass/' + encodeURIComponent(studentId) +
-      (studentName ? '?name=' + encodeURIComponent(studentName) : ''));
+    const r = await fetch('/api/attendance/pass/' + encodeURIComponent(studentId));
     if (!r.ok) return; // not on the roster — card stays hidden
     const d = await r.json();
     show(d);
@@ -1437,8 +1434,7 @@ async function loadDoorPass() {
 // Their own attendance stamps inside the door-pass card (one chip per class).
 async function loadMyStamps() {
   try {
-    const r = await fetch('/api/attendance/mine/' + encodeURIComponent(studentId) +
-      (studentName ? '?name=' + encodeURIComponent(studentName) : ''));
+    const r = await fetch('/api/attendance/mine/' + encodeURIComponent(studentId));
     if (!r.ok) return;
     const d = await r.json();
     if (!d.rows || !d.rows.length) return;

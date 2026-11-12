@@ -264,6 +264,7 @@
 
   <script>
     let allStudents = [];
+    let listLocked = false;
     let currentLang = 'zh';
 
     const texts = {
@@ -279,7 +280,8 @@
         searchTitle: '查找你的名字',
         searchPlaceholder: '输入你的名字...',
         loading: '加载中...',
-        noResults: '未找到学生'
+        noResults: '未找到学生',
+        askTeacher: '请向老师索取您的练习记录链接。'
       },
       en: {
         title: 'AYBKK Practice Journal',
@@ -293,7 +295,8 @@
         searchTitle: 'Find Your Name',
         searchPlaceholder: 'Type your name...',
         loading: 'Loading...',
-        noResults: 'No students found'
+        noResults: 'No students found',
+        askTeacher: 'Ask your teacher for your own journal link.'
       },
       th: {
         title: 'AYBKK Practice Journal',
@@ -307,7 +310,8 @@
         searchTitle: 'ค้นหาชื่อของคุณ',
         searchPlaceholder: 'พิมพ์ชื่อของคุณ...',
         loading: 'กำลังโหลด...',
-        noResults: 'ไม่พบนักเรียน'
+        noResults: 'ไม่พบนักเรียน',
+        askTeacher: 'กรุณาขอลิงก์บันทึกการฝึกของคุณจากครู'
       }
     };
 
@@ -336,6 +340,12 @@
       if (!allStudents.length) {
         await loadStudents();
       }
+      if (listLocked) {
+        document.getElementById('searchInput').style.display = 'none';
+        document.getElementById('studentList').innerHTML = '<div class="no-results">'
+          + [texts[currentLang].askTeacher].concat(['zh', 'en', 'th'].filter(l => l !== currentLang).map(l => texts[l].askTeacher)).join('<br>') + '</div>';
+        return;
+      }
       renderStudents(allStudents);
     }
 
@@ -350,6 +360,7 @@
         const today = new Date().toISOString().split('T')[0];
         const classFilter = location === 'huizhou' ? 'chinese-workshop,in-depth-mysore-cn2' : 'aybkk-bangkok';
         const res = await fetch('/api/teacher/students?classType=' + classFilter + '&date=' + today);
+        listLocked = res.status === 401;
         const data = await res.json();
         allStudents = data.students || [];
       } catch (e) {

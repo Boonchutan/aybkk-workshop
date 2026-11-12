@@ -7,7 +7,7 @@ async function apiRequest(method, path, data = null) {
       port: 3000,
       path: path,
       method: method,
-      headers: { 'Content-Type': 'application/json', 'X-Bkk-Key': process.env.BKK_ADMIN_KEY || '' }
+      headers: { 'Content-Type': 'application/json', 'X-Bkk-Key': (process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '') }
     };
     
     const req = http.request(options, (res) => {

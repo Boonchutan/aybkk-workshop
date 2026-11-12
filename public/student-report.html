@@ -578,35 +578,6 @@
 <script>
 const API = '/api';
 
-// Huizhou student IDs
-const HUIZHOU_IDS = [
-  { id: '823a0c35-2ebd-4651-b6a3-027c9a41ce41', name: '马儿' },
-  { id: '829e51c6-b4fd-4a5f-b70f-45025c93a366', name: '权哥' },
-  { id: '9b4c3922-e063-4dce-97a0-c8225b12adfe', name: '嘉芬' },
-  { id: 'dab9badc-a7fc-4434-b99c-615823aff389', name: '老谢' },
-  { id: 'c3d063b4-14d9-4030-b41b-29cdbbfafc18', name: '陈云' },
-  { id: '9b5cda78-681e-4a4b-b567-0953c3bc0c9d', name: '刘建梅' },
-  { id: '5b7b526b-8a52-4258-8c6a-9e91d33e7d9c', name: 'Maggie' },
-  { id: '4a3ec6bf-ad9c-4e29-a66c-4b64bcbb144d', name: '郑莉' },
-  { id: 'b9374595-c94a-4742-bb76-31eb232cbbc4', name: '萍姐' },
-  { id: 'd5e274a2-4170-4bad-87ef-e2e88f81356f', name: '丽君' },
-  { id: 'a3488eb9-6a51-4710-a15a-7b329acf70c4', name: '华姐' },
-  { id: 'e9865ce2-18f0-4621-84a2-a32f72068d60', name: '吉吉' },
-  { id: '64111735-daf0-4ef1-ac6d-eb18382daae2', name: '白姐' },
-  { id: 'ed932971-7874-474f-89c4-08f57f4c913d', name: '小辣椒' },
-  { id: '518fb95f-990c-41c3-9bdd-2cd440615249', name: '邢晨晨' },
-  { id: 'e49bf4a2-cf3b-4de0-9b94-7c4e0f460cf7', name: '汪晓红' },
-  { id: '98dae66e-72c2-41a3-bb01-2e42218e7803', name: 'Smile' },
-  { id: 'bd3fa653-bb43-48ac-9683-fbbc85b423ba', name: '老聂' },
-  { id: 'db5b1a8a-b4fa-4d3f-ad08-872a930e277b', name: '李蓉君' },
-  { id: '934a1599-c69c-4e96-9b58-691707124891', name: '歆芝Zia' },
-  { id: '8feaa2f8-4d09-4a31-bb78-c0e17c2b1d9f', name: '骆文' },
-  { id: 'fc8e0d85-0b55-4ac2-bf9f-a7624f236780', name: '隋洪乙' },
-  { id: 'ea13f12c-4f43-4480-975b-584ad353cf8c', name: '乔乔' },
-  { id: '9a24e2cc-1257-43e5-aca3-09139dca0d1b', name: 'Amy Beibei' },
-  { id: '16756991-fed2-469f-9d2c-19d934fc17af', name: 'Edison Hu' },
-];
-
 const COLORS = ['#e8d5f5','#d5e8f5','#d5f5e8','#f5e8d5','#f5d5d5','#d5f5f5','#f5f5d5'];
 const vinyasaMap = { kept_moving: { label: 'Kept Moving', dot: 'dot-green', zh: '持续流动' }, stop_breathe: { label: 'Stopped to Breathe', dot: 'dot-yellow', zh: '停下呼吸' }, tired_paused: { label: 'Tired, Paused', dot: 'dot-red', zh: '疲惫暂停' } };
 const bandhaMap = { body_light: { label: 'Body Feels Light', dot: 'dot-green', zh: '身体轻盈' }, finding_light: { label: 'Finding Lightness', dot: 'dot-yellow', zh: '寻找轻盈' }, heavy_body: { label: 'Heavy Body', dot: 'dot-red', zh: '身体沉重' } };
@@ -624,7 +595,6 @@ async function init() {
     (d.students || []).filter(s => s.id && s.name).forEach(s => { apiById[s.id] = s; });
   } catch(e) {}
 
-  const huizhouIdSet = new Set(HUIZHOU_IDS.map(h => h.id));
   const testNames = new Set(['测试学生', 'Test Workshop Student', 'Test Student', 'test', '测试2', 'Boonchu (Test)', 'test boonchu', 'B T', 'B t']);
 
   function classify(s) {
@@ -635,7 +605,7 @@ async function init() {
     if (s.id.startsWith('bkk-')) return 'bangkok';
     if (s.id.startsWith('online-')) return 'mysore-room';
     if (s.id.startsWith('private-')) return 'private';
-    if (huizhouIdSet.has(s.id)) return 'huizhou';
+    if (/huizhou/i.test(`${s.location || ''} ${s.workshop || ''}`)) return 'huizhou';
     // classType
     if (s.classType === 'in-depth-mysore-cn2') return 'in-depth';
     if (s.classType === 'huizhou')             return 'huizhou';
@@ -662,14 +632,6 @@ async function init() {
       lastDate: s.lastDate || null,
       assessmentCount: s.assessmentCount || 0
     }));
-
-  // Add hardcoded Huizhou students that aren't already in the API list
-  const knownIds = new Set(allStudents.map(s => s.id));
-  HUIZHOU_IDS.forEach(h => {
-    if (!knownIds.has(h.id)) {
-      allStudents.push({ id: h.id, name: h.name, photoUrl: null, workshop: 'huizhou', classType: 'chinese-workshop', lastDate: null, assessmentCount: 0 });
-    }
-  });
 
   // Sort: workshop group, then assessment count desc within each
   const order = { huizhou: 0, guangzhou: 1, 'in-depth': 2, russia: 3, bangkok: 4, 'mysore-room': 5, private: 6, other: 7 };

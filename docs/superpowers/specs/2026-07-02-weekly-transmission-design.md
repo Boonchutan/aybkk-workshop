@@ -6,18 +6,18 @@ Owner: Boonchu (ritual) + agents (drafting, reminders, product)
 
 ## Problem and evidence
 
-The student journal retains nobody once the teacher leaves the room. Production data pulled 2026-07-02 from `/api/journal/students` (274 students):
+The student journal retains nobody once the teacher leaves the room. Production data pulled 2026-07-02 from `/api/journal/students`, per cohort: students, check-ins ever, and active in the last 30 days. The numbers stay out of this public repo.
 
-| Cohort | Students | Check-ins ever | Active last 30d |
-|---|---|---|---|
-| Xichang WS Jun 2026 | 53 | 0 | 0 |
-| Maoming WS Jun 2026 | 27 | 1 | 1 |
-| Suzhou WS Jun 2026 | 8 | 0 | 0 |
-| Guangzhou WS Apr 2026 | 30 | 95 | 2 |
-| SPB + Moscow May 2026 | 44 | 216 | 4 |
-| Bangkok/local | ~55 | 229 | ~10 |
+Cohorts checked:
 
-Half of all students never wrote one entry. 6 of 274 touched the journal in the last week.
+- Xichang WS Jun 2026
+- Maoming WS Jun 2026
+- Suzhou WS Jun 2026
+- Guangzhou WS Apr 2026
+- SPB + Moscow May 2026
+- Bangkok/local
+
+Half of all students never wrote one entry. Almost none touched the journal in the last week.
 
 Two stacked causes:
 

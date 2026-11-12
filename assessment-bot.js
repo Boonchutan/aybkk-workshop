@@ -707,6 +707,12 @@ async function showReview(ctx) {
 // so the bot stays silent inside student workshop chats.
 const isPrivate = (ctx) => ctx.chat?.type === 'private';
 
+// The teacher flow lists students, so it answers only teachers (TEACHER_CHAT_IDS, plus
+// BOONCHU_CHAT_ID). Anyone else gets silence: a client can send /students first, before /start.
+const TEACHER_CHATS = new Set([...(process.env.TEACHER_CHAT_IDS || '').split(','), process.env.BOONCHU_CHAT_ID || '']
+  .map(s => s.trim()).filter(Boolean));
+bot.use((ctx, next) => (ctx.from && TEACHER_CHATS.has(String(ctx.from.id)) ? next() : undefined));
+
 // ============ COMMAND HANDLERS ============
 bot.command('start', async (ctx) => {
   if (!isPrivate(ctx)) return;

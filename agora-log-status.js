@@ -18,9 +18,9 @@ MISSION CONTROL STATUS:
 - Progress tab built (Chart.js) - needs live data validation
 
 STUDENT DATA GAP:
-- Neo4j: 1 test student only (Pinn Kant with sample progress data)
-- Notion: 58 students in "Aybkk students directory" - NOT synced to Mission Control
-- CSV: 652 students (49 active, 603 inactive) - imported March 26, NOT yet in Neo4j
+- Neo4j: a test student only, with sample progress data
+- Notion: students in "Aybkk students directory" - NOT synced to Mission Control
+- CSV: booking students, active and inactive - imported March 26, NOT yet in Neo4j
 
 TASK-003 DEADLINE: TODAY March 27
 - Need Boonchu decision: sync Notion students to Mission Control?

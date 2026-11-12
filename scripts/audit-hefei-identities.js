@@ -31,8 +31,9 @@ const matchesPerson = (node, p) => {
     || (p.slug && nEn === p.slug) || (nEn && akas.includes(nEn));
 };
 
+const STAFF = { 'X-Bkk-Key': process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '' };
 async function getJson(path) {
-  const r = await fetch(BASE + path, { headers: { 'X-Bkk-Key': process.env.BKK_ADMIN_KEY || '' } });
+  const r = await fetch(BASE + path, { headers: STAFF });
   if (!r.ok) throw new Error(path + ' -> HTTP ' + r.status);
   return r.json();
 }
@@ -111,7 +112,7 @@ async function getJson(path) {
       } catch (e) { got = 'ERR ' + e.message; }
       let passOk = '';
       try {
-        const pr = await fetch(BASE + '/api/attendance/pass/' + encodeURIComponent(n.id));
+        const pr = await fetch(BASE + '/api/attendance/pass/' + encodeURIComponent(n.id), { headers: STAFF });
         passOk = pr.ok ? ' · pass OK' : ' · pass HTTP ' + pr.status;
       } catch (e) { passOk = ' · pass ERR'; }
       if (!ok) warnings++;

@@ -2,7 +2,7 @@ const http = require('http');
 
 function fetch(path) {
   return new Promise((resolve, reject) => {
-    http.get('http://localhost:3000' + path, { headers: { 'X-Bkk-Key': process.env.BKK_ADMIN_KEY || '' } }, res => {
+    http.get('http://localhost:3000' + path, { headers: { 'X-Bkk-Key': (process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '') } }, res => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {

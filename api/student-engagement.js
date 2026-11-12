@@ -134,7 +134,7 @@ router.post('/students', async (req, res) => {
 });
 
 // PUT /api/students/:id - Update student
-router.put('/students/:id', async (req, res) => {
+router.put('/students/:id', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const { name, email, phone, line_id, wechat_id, whatsapp, instagram, facebook, platform } = req.body;

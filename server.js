@@ -1623,7 +1623,7 @@ app.get('/api/orientations/bkk', staffOnly, async (req, res) => {
 
 // ─── Short journal link redirect ─────────────────────────────────────────
 // /j/:slug — short link that 302s to the full Thai journal URL.
-//   slug = numeric Reserv ID (e.g. /j/44) or fuzzy name (/j/tomoko)
+//   slug = numeric Reserv ID (e.g. /j/44), or for staff a fuzzy name (/j/tomoko)
 // If the student already has a `journal_link` in Reserv, we preserve its
 // underlying id (keeps existing journal history) but force lang=th & location=bangkok.
 app.get('/j/:slug', async (req, res) => {
@@ -1635,7 +1635,7 @@ app.get('/j/:slug', async (req, res) => {
     let row = null;
     // Pattern 1: pure numeric ID — /j/689
     // Pattern 2: pretty slug with trailing ID — /j/boonchu-test-689 (id wins, prefix is decorative)
-    // Pattern 3: name-only fuzzy match — /j/tomoko (must resolve to exactly one)
+    // Pattern 3 (staff only): name-only fuzzy match — /j/tomoko (must resolve to exactly one)
     // ID can appear three ways: bare (/j/689), leading (/j/689-boonchu), trailing (/j/boonchu-689)
     let id = null;
     if (/^\d+$/.test(slug)) {
@@ -1653,6 +1653,8 @@ app.get('/j/:slug', async (req, res) => {
       );
       row = r.rows[0] || null;
     } else {
+      // Name-only matching is a name search, so it is for staff only.
+      if (!isStaff(req)) return res.status(404).type('text/plain').send('Ask your teacher for your own link.');
       // Tokenize: "boonchu-test" → ["boonchu","test"], all must appear in name
       const tokens = slug.toLowerCase().replace(/[_]+/g, '-').split(/[-\s]+/).filter(Boolean);
       if (!tokens.length) return res.status(404).send('Not found');
@@ -1664,7 +1666,6 @@ app.get('/j/:slug', async (req, res) => {
       );
       if (r.rowCount === 1) row = r.rows[0];
       else if (r.rowCount > 1) {
-        if (!isStaff(req)) return res.status(409).type('text/plain').send('More than one student has this name. Ask your teacher for your own link.');
         const list = r.rows.map(x => `/j/${x.id}-${x.name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')}`).join('\n');
         return res.status(409).type('text/plain').send(
           'Multiple matches for "' + slug + '" — pick one:\n\n' + list
@@ -1721,6 +1722,7 @@ app.get('/p/:slug', async (req, res) => {
       );
       row = r.rows[0] || null;
     } else {
+      if (!isStaff(req)) return res.status(404).type('text/plain').send('Ask your teacher for your own link.');
       const tokens = slug.toLowerCase().replace(/[_]+/g, '-').split(/[-\s]+/).filter(Boolean);
       if (!tokens.length) return res.status(404).send('Not found');
       const params = tokens.map(t => '%' + t + '%');
@@ -1731,7 +1733,6 @@ app.get('/p/:slug', async (req, res) => {
       );
       if (r.rowCount === 1) row = r.rows[0];
       else if (r.rowCount > 1) {
-        if (!isStaff(req)) return res.status(409).type('text/plain').send('More than one student has this name. Ask your teacher for your own link.');
         const list = r.rows.map(x => `/p/${x.id}-${x.name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')}`).join('\n');
         return res.status(409).type('text/plain').send(
           'Multiple matches for "' + slug + '" — pick one:\n\n' + list
@@ -2511,7 +2512,7 @@ app.post('/api/students/:id/files', async (req, res) => {
 
 const NOTION_STUDENTS_DB = process.env.NOTION_STUDENTS_DB || '7e6f9c96-5e13-4784-995f-4048c321a2f7';
 
-app.post('/api/sync/notion', async (req, res) => {
+app.post('/api/sync/notion', staffOnly, async (req, res) => {
   if (!notion) {
     return res.status(500).json({ error: 'Notion not configured. Set NOTION_API_KEY in .env' });
   }
