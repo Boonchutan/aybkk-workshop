@@ -48,7 +48,7 @@
     --header:#7e262e;       /* fixed: never flips with the theme */
     --gold:#84621f;         /* soft brass */
     --gold-soft:#faf1e1;
-    /* Promotion = gold, so a deal never looks like a normal price (Boonchu, 2 Oct). */
+    /* Honey gold, named --promo from its first use: now the tabs and Buy buttons. */
     --promo:#d6a35c; --promo-hi:#e7c38d; --promo-ink:#5f1c23; --promo-deep:#7c531d;
     --promo-soft:#faf1e0; --promo-line:#dfbf90;
     /* Normal prices sit on the palest pyramid-glass tint. */
@@ -170,7 +170,6 @@
   :lang(th) .sec > .lead{line-height:1.45}
   .field-aub{background:var(--aub);color:var(--aub-ink);--rule:var(--aub-ink);--num:var(--aub-ink);--ring:var(--aub-ink);--line:var(--aub-rule)}
   .field-price{background:var(--price-bg)}
-  .field-promo{background:var(--promo-soft);--rule:var(--promo-deep);--num:var(--promo-deep)}
 
   /* ── Buttons: square. Plum is the second colour; pink-deep is the action. */
   .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 24px;
@@ -258,11 +257,6 @@
     .facts li:nth-child(2){grid-column:3/5}
     .facts li:nth-child(3){grid-column:5/8}
   }
-
-  /* ── #promo (until 11 Nov) */
-  #promo .lead{font-size:var(--fs-b);line-height:28px}
-  #offers{line-height:1.35}
-  @media (min-width:1100px){ #promo .lead{grid-column:c 5/c 11} }
 
   /* ── #habits */
   .habsub{margin:0 0 var(--grp);font:700 var(--fs-l)/1.3 var(--f-text);letter-spacing:-.01em}
@@ -387,7 +381,6 @@
   .plan h3,.mnotes h3{margin:0 0 14px;font:700 var(--fs-l)/1.3 var(--f-text);color:var(--ink)}
   .plan .line{margin:0 0 14px}
   .plan > p{margin:0 0 14px}
-  .plan .camp{padding:12px 16px;background:var(--promo-soft);border-left:4px solid var(--promo);color:var(--promo-deep);font-weight:500}
   .rows{list-style:none;margin:0;padding:0}
   .rows li{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 0;border-top:2px solid var(--line)}
   .rows li:first-child{border-top:0;padding-top:0}
@@ -405,7 +398,7 @@
   .buy:hover{background:var(--promo-hi);color:var(--promo-ink)}
   .plan .buy{min-height:56px;font-size:var(--fs-b);font-weight:700}
   @media (min-width:700px){ .plan .btn{display:inline-flex;width:auto} }
-  /* Gold is for the promotion only: "See packages" is the normal action. */
+  /* "See packages" hovers to ink like other actions, not to light gold like Buy. */
   #newPkgs{background:var(--act);color:var(--act-ink)}
   @media (hover:hover){ #newPkgs:hover{background:var(--act-hi);color:var(--act-hi-ink)} }
   .prices .fair{margin:var(--grp) 0 14px;font:700 var(--fs-l)/1.3 var(--f-text)}
@@ -463,7 +456,7 @@
   #letter details.fine summary{display:flex;align-items:center;min-height:44px;cursor:pointer;text-decoration:underline}
   #letter details.fine p{margin:0}
   /* Small print keeps a reading measure even where its column is wide. */
-  #letter .fine,.prices .fine,#theme .note,.calc .fine{max-width:62ch}
+  #letter .fine,.prices .fine,#theme .note{max-width:62ch}
   @media (min-width:1100px){ #letter .card > *{grid-column:c 5/c 11} }
   .wechat{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--paper);padding:8px 8px 8px 16px}
   .wechat b{user-select:all}
@@ -835,56 +828,9 @@
   .skel .big{height:auto;aspect-ratio:2/3;max-width:420px}
   @keyframes skel{from{background-position:100% 0}to{background-position:0 0}}
   @media (prefers-reduced-motion:reduce){ .skel i{animation:none} }
-  .calc{scroll-margin-top:12px}
   [hidden]{display:none!important}
-  .grp + .grp{margin-top:14px}
-  .grp-h{display:flex;align-items:center;flex-wrap:wrap;gap:2px 10px;width:100%;text-align:left;cursor:pointer;
-    font:inherit;border:none;border-radius:0;min-height:56px;padding:14px 46px 14px 18px;position:relative;
-    background:var(--promo);color:var(--promo-ink)}
-  .grp.past .grp-h{background:var(--promo-ink);color:var(--promo-hi)}
-  .grp-h span{font-family:'Plex',sans-serif;font-weight:700;font-size:var(--fs-b);line-height:1.15}
-  .grp-h small{font-size:var(--fs-s);font-weight:500}
-  .grp-h i{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-style:normal;font-size:22px;font-weight:900}
-  .offers{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:10px}
-  .offer .oc{display:block;margin-top:8px;font-weight:800;font-size:15px;color:var(--promo-deep)}
-  .offer[aria-expanded="true"]{border-top-color:var(--promo)}
-  .offer{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);cursor:pointer;line-height:1.35;
-    background:var(--paper);border:0;border-top:4px solid transparent;border-radius:0;padding:14px 16px 16px}
-  .offer[aria-pressed="true"]{border-top-color:var(--promo)}
-  .offer .tag{display:inline-block;font-size:var(--fs-s);font-weight:800;
-    padding:6px 14px;background:var(--promo);color:var(--promo-ink)}
-  .offer .tag.past{background:var(--promo-ink);color:var(--promo-hi)}
-  .offer .ot{display:block;margin-top:8px;font:700 var(--fs-s)/20px var(--f-text);color:var(--soft)}
-  .offer .ob{display:block;font-family:'Plex',sans-serif;font-weight:700;font-size:28px;letter-spacing:-.01em;line-height:1.05;color:var(--promo-deep);margin:2px 0 4px}
-  .offer .ob s{font-weight:500;font-size:16px;color:var(--soft);margin-left:6px}
-  .offer .od{display:block;font-size:15px;line-height:1.4}
-  .calc{margin-top:0;padding:22px 18px;background:var(--paper);border-top:4px solid var(--promo);line-height:1.35}
-  .calc h3{margin:0 0 4px;font:700 var(--fs-l)/1.3 var(--f-text);color:var(--promo-deep)}
-  .calc .q{margin:12px 0 6px;font-size:15px;font-weight:700;color:var(--soft)}
-  .calc .opts{display:flex;flex-wrap:wrap;gap:2px}
-  .calc .opts button{font:600 16px/1 var(--f-text);min-height:46px;min-width:46px;padding:10px 16px;border-radius:0;cursor:pointer;
-    background:var(--wall);color:var(--ink);border:2px solid var(--promo-line)}
-  .calc .opts button[aria-pressed="true"]{background:var(--promo);border-color:var(--promo);color:var(--promo-ink);font-weight:800}
-  .calc input[type=date]{max-width:260px;font-size:17px}
-  .res{margin-top:16px;background:var(--promo-soft);padding:16px}
-  .res .pass{font-size:17px;font-weight:700}
-  .res .each{font-size:15px;margin-top:2px}
-  .res .ph{margin-top:10px;font:700 var(--fs-s)/20px var(--f-text);color:var(--soft)}
-  .res .total{font:800 var(--fs-h)/1.05 var(--f-text);letter-spacing:-.025em;font-variant-numeric:tabular-nums;color:var(--promo-deep)}
-  .res .brk{font-size:15px;color:var(--soft)}
-  .res .pc{margin-top:8px;font-size:17px;font-weight:700;color:var(--promo-ink)}
-  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .res .pc{color:var(--promo-hi)} }
-  :root[data-theme="dark"] .res .pc{color:var(--promo-hi)}
-  .res .save{display:inline-block;margin-top:6px;font-size:15px;font-weight:800;color:var(--promo-hi);background:var(--aub);padding:4px 12px}
-  .res .past{margin-top:8px;font-size:15px;font-weight:700;color:var(--promo-deep)}
   .buy{display:flex;width:100%;margin-top:14px;min-height:56px;font-size:19px;font-weight:800;background:var(--promo);color:var(--promo-ink)}
   .buy:hover{background:var(--promo-hi)}
-  .alt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-  .alt .btn{width:100%;min-height:48px;padding:10px 8px;font-size:15px;background:var(--paper);color:var(--promo-deep);border:2px solid var(--promo)}
-  .alt .btn:hover{background:var(--promo-soft)}
-  .res .how{margin:8px 0 0;font-size:15px}
-  .res .copied{margin:6px 0 0;font-size:15px;font-weight:700;color:var(--promo-deep)}
-  .calc .fine{margin:10px 0 0;font-size:var(--fs-s);line-height:20px;color:var(--soft)}
 </style>
 </head>
 <body>
@@ -902,7 +848,7 @@
   </div>
   <p class="h12h" id="h12h"></p>
   <p class="h12s" id="h12s"></p>
-  <div class="cta"><a class="btn pink" href="#promo" id="h12Btn"></a><a class="more" href="#book" data-i18n="ctaTimetable">See timetable</a></div>
+  <div class="cta"><a class="btn pink" href="#book" id="h12Btn"></a><a class="more" href="#book" data-i18n="ctaTimetable">See timetable</a></div>
   <ul class="facts">
     <li data-i18n="heroF1">Mysore style since 2013</li>
     <li data-i18n="heroF2">Sukhumvit 31, Bangkok</li>
@@ -911,14 +857,6 @@
   <picture class="pic"><source media="(min-width:700px)" srcset="/img/aybkk-hero-1600.jpg">
     <img src="/img/aybkk-hero-900.jpg" width="900" height="1000" alt="Jamsai, R. Sharath Jois and Boonchu at the AYBKK shala wall" fetchpriority="high" decoding="async"></picture>
 </header>
-
-<div class="sw">
-  <section id="promo" class="sec sgrid field-promo" hidden>
-    <h2 data-i18n="promoH">Sharathji promotion, 1 Oct to 11 Nov</h2>
-    <p class="lead" data-i18n="promoLead">Pick an offer, pick your first day, and see exactly what you pay.</p>
-    <div id="offers"></div>
-  </section>
-</div>
 
 <!-- Booking right under the headline (Boonchu, 6 Nov 2026: the page scrolled too far). The wrapper
      ends the sticky tabs here, so they do not follow the reader down the rest of the page. -->
@@ -935,18 +873,13 @@
 
 <div class="sw">
   <section class="prices sec sgrid field-price" id="prices" data-fold>
-    <h2 data-i18n="pricesH" data-i18n-new="pricesHNew">From 406 baht a class.</h2>
+    <h2 data-i18n="pricesH">From 331 baht a class +VAT.</h2>
     <p class="lead" data-i18n="pricesSub">Counted at 4 mornings a week (16 classes a month).</p>
     <div class="plans">
       <div class="plan feature">
         <h3 data-i18n="flexH">Membership</h3>
         <p class="line" data-i18n="flexLine">Unlimited classes. Best results at 4 mornings a week.</p>
-        <ul class="rows oldP">
-          <li><span class="pn"><span data-i18n="mo1">1 month</span></span><span class="pv"><b>฿9,600</b><small>600 <span data-i18n="perClass">per class</span></small></span></li>
-          <li><span class="pn"><span data-i18n="mo3">3 months</span></span><span class="pv"><b>฿25,800</b><small>538 <span data-i18n="perClass">per class</span></small></span></li>
-          <li><span class="pn"><span data-i18n="mo12">12 months</span></span><span class="pv"><b>฿78,000</b><small>406 <span data-i18n="perClass">per class</span></small></span></li>
-        </ul>
-        <ul class="rows newP" hidden>
+        <ul class="rows">
           <li><span class="pn"><span data-i18n="mo12">12 months</span><small data-i18n="n12">Month by month for 12 months: ฿115,200. You save ฿51,600.</small></span><span class="pv"><b>฿63,600<i class="vt">+VAT</i></b><small>331 <span data-i18n="perClass">per class</span></small></span></li>
           <li class="pick"><span class="pn"><span class="badge" data-i18n="pick">Teacher’s pick</span><span data-i18n="mo6">6 months</span><small data-i18n="n6">Long enough for the habit to stick. You save ฿23,400.</small></span><span class="pv"><b>฿34,200<i class="vt">+VAT</i></b><small>356 <span data-i18n="perClass">per class</span></small></span></li>
           <li><span class="pn"><span data-i18n="mo3">3 months</span><small data-i18n="n3">For ฿14,700 more, you get 6 months instead of 3.</small></span><span class="pv"><b>฿19,500<i class="vt">+VAT</i></b><small>406 <span data-i18n="perClass">per class</span></small></span></li>
@@ -956,15 +889,13 @@
       <div class="plan">
         <h3 data-i18n="ctaStart">New? Start here</h3>
         <p class="line" data-i18n="newLine">Start with 1 month, so your teacher can guide you step by step.</p>
-        <p class="camp campWrap" data-i18n="newCamp">Until 11 Nov 2026: Duo, buy 1 get 1 free, or the Rookie Pack, 5,900. Book the promotion on LINE @aybkk. Start by 12 Nov.</p>
-        <p class="campWrap"><a class="btn buy" href="#promo" data-i18n="bandBtn">Calculate my price →</a></p>
-        <p class="newP" hidden><a class="btn buy" href="#book" id="newPkgs" data-i18n="newBtn">See packages →</a></p>
+        <p><a class="btn buy" href="#book" id="newPkgs" data-i18n="newBtn">See packages →</a></p>
       </div>
       <div class="plan">
         <h3 data-i18n="visitH">Visiting?</h3>
         <ul class="rows">
-          <li><span class="pn"><span data-i18n="dropIn">Drop-in</span><small data-i18n="dropInSub">For students who know the sequence</small></span><span class="pv"><b>฿1,500<i class="vt newP" hidden>+VAT</i></b></span></li>
-          <li><span class="pn"><span data-i18n="pack8">8-class pack</span><small data-i18n="pack8Sub">Use within 2 months. Come when you can.</small></span><span class="pv"><b>฿7,600<i class="vt newP" hidden>+VAT</i></b></span></li>
+          <li><span class="pn"><span data-i18n="dropIn">Drop-in</span><small data-i18n="dropInSub">For students who know the sequence</small></span><span class="pv"><b>฿1,500<i class="vt">+VAT</i></b></span></li>
+          <li><span class="pn"><span data-i18n="pack8">8-class pack</span><small data-i18n="pack8Sub">Use within 2 months. Come when you can.</small></span><span class="pv"><b>฿7,600<i class="vt">+VAT</i></b></span></li>
         </ul>
       </div>
       <div class="plan quiet xm" id="loyal">
@@ -973,9 +904,9 @@
       </div>
     </div>
     <p class="fair xm" id="fair" data-i18n="fair">One price for everyone. Clear and simple.</p>
-    <p class="fine"><span data-i18n="fine" data-i18n-new="fineNew">Prices in Thai baht. Buy online in the Packages tab above, or at the shala. Questions:</span>
+    <p class="fine"><span data-i18n="fine">+VAT = plus 7% VAT. Paying online adds a transaction fee. Buy online in the Packages tab above, or at the shala. Questions:</span>
       <a href="https://line.me/R/ti/p/@aybkk" target="_blank" rel="noopener">LINE @aybkk</a></p>
-    <div class="mnotes newP xm" id="mnotes" hidden>
+    <div class="mnotes xm" id="mnotes">
       <h3 data-i18n="polH">Member notes</h3>
       <ul>
         <li><b data-i18n="pol1a">All passes are final once purchased,</b><span data-i18n="pol1b"> unless we can’t give the classes you paid for (if we close or move). Long passes are priced for people who stay.</span></li>
@@ -1206,7 +1137,7 @@
       f6: 'The shala is closed on full moon and new moon days.',
       firstStep: 'Find your first step (4 quick taps)',
       ctaPrices: 'See prices',
-      pricesH: 'From 406 baht a class.',
+      pricesH: 'From 331 baht a class +VAT.',
       pricesSub: 'Counted at 4 mornings a week (16 classes a month).',
       dedBadge: 'Most students choose this',
       dedH: 'Dedicated Student',
@@ -1223,8 +1154,6 @@
       flexH: 'Membership',
       flexLine: 'Unlimited classes. Best results at 4 mornings a week.',
       newLine: 'Start with 1 month, so your teacher can guide you step by step.',
-      campBtn: 'Get the promotion on LINE',
-      newCamp: 'Until 11 Nov 2026: Duo, buy 1 get 1 free, or the Rookie Pack, 5,900. Book the promotion on LINE @aybkk. Start by 12 Nov.',
       visitH: 'Visiting?',
       dropIn: 'Drop-\u2060in',
       dropInSub: 'For students who know the sequence',
@@ -1232,14 +1161,12 @@
       pack8Sub: 'Use within 2 months. Come when you can.',
       loyalH: 'Loyal students',
       loyalLine: 'Practise 12 months in a row, then renew for 12 more. You get the special collection AYBKK shala tee.',
-      pricesHNew: 'From 331 baht a class +VAT.',
       pick: 'Teacher’s pick',
       n12: 'Month by month for 12 months: ฿115,200. You save ฿51,600.',
       n6: 'Long enough for the habit to stick. You save ฿23,400.',
       n3: 'For ฿14,700 more, you get 6 months instead of 3.',
       n1: 'The price of trying. New or stiff, come as you are.',
       newBtn: 'See packages →',
-      fineNew: (fee, vat = 7) => `+VAT = plus ${vat}% VAT.${fee ? ' Paying online adds a transaction fee.' : ''} Buy online in the Packages tab above, or at the shala. Questions:`,
       polH: 'Member notes',
       pol1a: 'All passes are final once purchased,',
       pol1b: ' unless we can’t give the classes you paid for (if we close or move). Long passes are priced for people who stay.',
@@ -1249,7 +1176,7 @@
       pol4a: 'Freeze up to 30 days',
       pol4b: ' (or as your doctor’s note says, up to 2 months) for a broken bone, an eye problem, surgery, or pregnancy and birth. Other cases: talk with us. Please tell us on LINE @aybkk before it starts.',
       fair: 'One price for everyone. Clear and simple.',
-      fine: (fee, vat = 7) => `Prices in Thai baht, before ${vat}% VAT. ${fee ? 'Paying online adds an online transaction fee.' : ''} Buy online in the Packages tab above, or at the shala. Questions:`,
+      fine: (fee, vat = 7) => `+VAT = plus ${vat}% VAT.${fee ? ' Paying online adds a transaction fee.' : ''} Buy online in the Packages tab above, or at the shala. Questions:`,
       momH: 'Today at the shala', momLine: 'Every morning we share moments from the shala: the practice, the people, news and updates.',
       momIg: 'Today’s practice on Instagram', momFb: 'News and updates on Facebook',
       findH: 'Find us', maps: 'Open in Google Maps', amap: 'Open in Amap (高德地图)', contactH: 'Message us',
@@ -1296,7 +1223,7 @@
       f6: 'AYBKK ปิดในวันพระจันทร์เต็มดวงและวันพระจันทร์ดับ (moon day)',
       firstStep: 'หาก้าวแรกของคุณ (แตะแค่ 4 ครั้ง)',
       ctaPrices: 'ดูราคา',
-      pricesH: 'เริ่มต้นเพียง 406 บาทต่อครั้ง',
+      pricesH: 'เริ่มต้นเพียง 331 บาทต่อครั้ง +VAT',
       pricesSub: 'คิดจากการฝึกสัปดาห์ละ 4 เช้า (เดือนละ 16 ครั้ง)',
       dedBadge: 'นักเรียนส่วนใหญ่เลือกแบบนี้',
       dedH: 'นักเรียนตั้งใจฝึก (Dedicated)',
@@ -1313,8 +1240,6 @@
       flexH: 'สมาชิก',
       flexLine: 'เข้าเรียนได้ไม่จำกัด ฝึกสัปดาห์ละ 4 เช้าจะเห็นผลดีที่สุด',
       newLine: 'เริ่มด้วยแพ็กเกจ 1 เดือน เพื่อให้ครูค่อย ๆ แนะนำคุณทีละขั้น',
-      campBtn: 'รับโปรโมชันทาง LINE',
-      newCamp: 'ถึง 11 พ.ย. 2026: DUO ซื้อ 1 แถม 1 หรือ ROOKIE PACK 5,900 สมัครโปรโมชันทาง LINE @aybkk เริ่มใช้ภายใน 12 พ.ย.',
       visitH: 'มาเยือนชั่วคราว?',
       dropIn: 'ครั้งเดียว (drop-\u2060in)',
       dropInSub: 'สำหรับผู้ที่จำลำดับท่าได้แล้ว',
@@ -1322,14 +1247,12 @@
       pack8Sub: 'ใช้ภายใน 2 เดือน มา\u2060ฝึก\u2060ตาม\u2060เวลา\u2060ที่\u2060สะดวก',
       loyalH: 'นักเรียนประจำ',
       loyalLine: 'ฝึกต่อเนื่องครบ 12 เดือน แล้วต่ออายุอีก 12 เดือน รับเสื้อ AYBKK shala คอลเลกชันพิเศษ',
-      pricesHNew: 'เริ่มต้นเพียง 331 บาทต่อครั้ง +VAT',
       pick: 'ครูแนะนำ',
       n12: 'ซื้อรายเดือน 12 เดือน รวม ฿115,200 ประหยัด ฿51,600',
       n6: 'นานพอให้การฝึกติดเป็นนิสัย ประหยัด ฿23,400',
       n3: 'เพิ่มอีก ฿14,700 ขยับเป็นแพ็ก 6 เดือนได้',
       n1: 'ลองฝึกดูสักเดือน มือใหม่หรือตัวแข็งก็เริ่มได้',
       newBtn: 'ดูแพ็กเกจ →',
-      fineNew: (fee, vat = 7) => `+VAT = ยังไม่รวม VAT ${vat}% ${fee ? 'หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม ' : ''}ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านบน หรือซื้อที่ชาลา สอบถาม:`,
       polH: 'ข้อควรรู้สำหรับสมาชิก',
       pol1a: 'ขอสงวนสิทธิ์ไม่คืนเงินหลังชำระ',
       pol1b: ' ยกเว้นกรณีที่เราให้บริการตามที่ชำระไว้ไม่ได้ (เช่น ปิดหรือย้ายสถานที่) ราคาแพ็กยาวคิดไว้ให้คนที่ฝึกกันยาว ๆ',
@@ -1339,7 +1262,7 @@
       pol4a: 'เราพักแพ็กเกจให้ได้สูงสุด 30 วัน',
       pol4b: ' (หรือตามใบรับรองแพทย์ ไม่เกิน 2 เดือน) กรณีกระดูกหัก ปัญหาดวงตา ผ่าตัด หรือตั้งครรภ์และคลอดบุตร กรณีอื่นคุยกับเราได้ กรุณาแจ้งทาง LINE @aybkk ก่อนเริ่มพักทุกครั้ง',
       fair: 'ราคาเดียวสำหรับทุกคน ชัดเจน ตรงไปตรงมา',
-      fine: (fee, vat = 7) => `ราคาเป็นเงินบาท ยังไม่รวม VAT ${vat}% ${fee ? 'ชำระออนไลน์มีค่าธรรมเนียมการชำระเงิน' : ''} ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านบน หรือซื้อที่ชาลา สอบถาม:`,
+      fine: (fee, vat = 7) => `+VAT = ยังไม่รวม VAT ${vat}% ${fee ? 'หากชำระออนไลน์จะมีค่าธรรมเนียมการชำระเงินเพิ่ม ' : ''}ซื้อออนไลน์ได้ที่แท็บ “แพ็กเกจ” ด้านบน หรือซื้อที่ชาลา สอบถาม:`,
       momH: 'วันนี้ที่ชาลา', momLine: 'ทุกเช้าเราแบ่งปันบรรยากาศการฝึก ผู้คน ข่าวสาร และอัปเดตจากชาลา',
       momIg: 'ดูการฝึกวันนี้ใน Instagram', momFb: 'ข่าวสารและอัปเดตใน Facebook',
       findH: 'ที่ตั้งและติดต่อ', maps: 'เปิดใน Google Maps', amap: 'เปิดใน Amap (高德地图)', contactH: 'ทักหาเรา',
@@ -1386,7 +1309,7 @@
       f6: '每逢满月和新月（月亮日），AYBKK 停课。',
       firstStep: '找到你的第一步（点 4 下就好）',
       ctaPrices: '查看价格',
-      pricesH: '每节课低至 406 泰铢。',
+      pricesH: '每节课低至 331 泰铢（另加增值税）。',
       pricesSub: '按每周练习4个早上计算（每月16节课）。',
       dedBadge: '大多数学员的选择',
       dedH: '专注学员（Dedicated）',
@@ -1403,8 +1326,6 @@
       flexH: '会员',
       flexLine: '不限次数。每周练习4个早上效果最好。',
       newLine: '先从1个月套餐开始，让老师一步一步带你。',
-      campBtn: '通过 LINE 领取优惠',
-      newCamp: '2026年11月11日前：DUO 买一送一，或 Rookie Pack 5,900。请通过 LINE @aybkk 报名优惠。需在11月12日前开始使用。',
       visitH: '短期来访？',
       dropIn: '单次课（drop-\u2060in）',
       dropInSub: '适合已熟悉序列的学生',
@@ -1412,14 +1333,12 @@
       pack8Sub: '2个月内用完，什么时候方便就什么时候来。',
       loyalH: '老学员',
       loyalLine: '连续练习满12个月，再续订12个月，就送你一件 AYBKK 道场特别款T恤。',
-      pricesHNew: '每节课低至 331 泰铢（另加增值税）。',
       pick: '老师推荐',
       n12: '按月买12个月共 ฿115,200，年卡省下 ฿51,600。',
       n6: '时间够长，练习才能成为习惯。省下 ฿23,400。',
       n3: '再加 ฿14,700，3个月就变成6个月。',
       n1: '试一试的价格。新手、身体僵硬，都欢迎来。',
       newBtn: '查看课程套餐 →',
-      fineNew: (fee, vat = 7) => `+VAT = 另加 ${vat}% 增值税。${fee ? '在线支付另收交易手续费。' : ''}可在上方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       polH: '会员须知',
       pol1a: '课程卡一经购买，不予退款，',
       pol1b: '除非我们无法提供你已付费的课程（道场关闭或搬迁）。长期卡的价格，是为长期练习的人定的。',
@@ -1429,7 +1348,7 @@
       pol4a: '可暂停最多30天',
       pol4b: '（或按医生证明，最多2个月），适用于骨折、眼睛问题、手术、怀孕和生产。其他情况可以和我们商量。请在暂停开始前，通过 LINE @aybkk 告诉我们。',
       fair: '所有人同一个价格，清楚简单。',
-      fine: (fee, vat = 7) => `价格以泰铢计，不含 ${vat}% 增值税。${fee ? '在线支付另收线上支付手续费。' : ''}可在上方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
+      fine: (fee, vat = 7) => `+VAT = 另加 ${vat}% 增值税。${fee ? '在线支付另收交易手续费。' : ''}可在上方“课程套餐”标签页在线购买，或在道场购买。咨询：`,
       momH: '今天的道场', momLine: '每天早上我们分享道场的瞬间：练习、学员、新闻和动态。',
       momIg: '在 Instagram 看今天的练习', momFb: '在 Facebook 看新闻和动态',
       findH: '地址与联系方式', maps: '在 Google 地图中打开', amap: '在高德地图中打开', contactH: '联系我们',
@@ -1476,7 +1395,7 @@
       f6: 'В дни полнолуния и новолуния (лунные дни) занятий нет.',
       firstStep: 'Найдите свой первый шаг (4 быстрых нажатия)',
       ctaPrices: 'Цены',
-      pricesH: 'От 406 бат за занятие.',
+      pricesH: 'От 331 бат за занятие +НДС.',
       pricesSub: 'Из расчёта 4 утра в неделю (16 занятий в месяц).',
       dedBadge: 'Выбор большинства учеников',
       dedH: 'Постоянный ученик (Dedicated)',
@@ -1493,8 +1412,6 @@
       flexH: 'Абонемент',
       flexLine: 'Без ограничений. Лучший результат — 4 утра в неделю.',
       newLine: 'Начните с 1 месяца, чтобы учитель вёл вас шаг за шагом.',
-      campBtn: 'Получить акцию в LINE',
-      newCamp: 'До 11 ноября 2026: Duo — купи 1, получи 1 бесплатно, или Rookie Pack за 5,900. Записаться на акцию — в LINE @aybkk. Начать — не позднее 12 ноября.',
       visitH: 'Вы проездом?',
       dropIn: 'Разовое занятие (drop-\u2060in)',
       dropInSub: 'Для тех, кто знает последовательность',
@@ -1502,14 +1419,12 @@
       pack8Sub: 'Действует 2\u00a0месяца. Приходите, когда удобно.',
       loyalH: 'Верные ученики',
       loyalLine: 'Занимайтесь 12 месяцев подряд и продлите абонемент ещё на 12. Вы получите футболку шалы AYBKK из особой коллекции.',
-      pricesHNew: 'От 331 бат за занятие +НДС.',
       pick: 'Выбор учителя',
       n12: 'Помесячно за 12 месяцев: ฿115,200. Экономия ฿51,600.',
       n6: 'Достаточно долго, чтобы практика стала привычкой. Экономия ฿23,400.',
       n3: 'Ещё ฿14,700, и у вас 6 месяцев вместо 3.',
       n1: 'Цена пробного месяца. Новичок или скованное тело? Приходите как есть.',
       newBtn: 'Все абонементы →',
-      fineNew: (fee, vat = 7) => `+VAT = плюс НДС ${vat}%. ${fee ? 'При онлайн-оплате добавляется комиссия. ' : ''}Купить можно онлайн во вкладке «Абонементы» выше или в шале. Вопросы:`,
       polH: 'Памятка для участников',
       pol1a: 'Оплаченный абонемент не возвращается,',
       pol1b: ' кроме случая, когда мы не можем провести оплаченные занятия (если шала закроется или переедет). Цены длинных абонементов рассчитаны на тех, кто остаётся.',
@@ -1519,7 +1434,7 @@
       pol4a: 'Заморозка до 30 дней',
       pol4b: ' (или по справке врача, до 2 месяцев): перелом, проблемы с глазами, операция, беременность и роды. Другие случаи обсудим. Напишите нам в LINE @aybkk до начала заморозки.',
       fair: 'Одна цена для всех. Всё просто и понятно.',
-      fine: (fee, vat = 7) => `Цены в тайских батах, без НДС ${vat}%. ${fee ? 'При онлайн-оплате взимается комиссия.' : ''} Купить можно онлайн во вкладке «Абонементы» выше или в шале. Вопросы:`,
+      fine: (fee, vat = 7) => `+VAT = плюс НДС ${vat}%. ${fee ? 'При онлайн-оплате добавляется комиссия. ' : ''}Купить можно онлайн во вкладке «Абонементы» выше или в шале. Вопросы:`,
       momH: 'Сегодня в шале', momLine: 'Каждое утро мы делимся моментами из шалы: практика, люди, новости.',
       momIg: 'Сегодняшняя практика в Instagram', momFb: 'Новости в Facebook',
       findH: 'Как нас найти', maps: 'Открыть в Google Картах', amap: 'Открыть в Amap (高德地图)', contactH: 'Напишите нам',
@@ -1601,99 +1516,6 @@
     ACCT.title = t('tabMe');
   }
 
-  // ── Sharathji promotion (LINE broadcast version, final): sold 1 Oct to 11 Nov
-  // 2026, every pass starts by 12 Nov. Bought through LINE, not the online
-  // checkout: Duo can be for two people and the returning-student offers need a
-  // name check, so the team sends the payment link by hand.
-  Object.assign(STR.en, {
-    bandBtn: 'Calculate my price →',
-    promoH: 'Sharathji promotion, 1 Oct to 11 Nov',
-    promoLead: 'Pick an offer, pick your first day, and see exactly what you pay. Buy by 11 Nov, start by 12 Nov.',
-    tagNew: 'New students', tagPast: 'Past AYBKK students',
-    duoBig: 'Buy 1, get 1 FREE', duoD: 'Unlimited classes for 1, 2 or 3 months. Share it with a friend, or double it for yourself.',
-    rookWas: 'normally ฿12,000', rookD: '6 practices in 1 month + 2 Ashtanga foundation workshops. The easy way to start.',
-    resetD: '8 practices in 2 months + 1 free private alignment check with Kru Boonchu, to find hidden weak spots.',
-    beatBig: '30% to 40% off', beatD: 'Monthly unlimited: 1 month 30% off, 2 months 35% off, 3 months 40% off.',
-    calcH: 'Calculate your price', pkgQ: 'Package', pm1: '1 month', pm2: '2 months', pm3: '3 months',
-    whoQ: 'Who is it for?', whoMe: 'Double for me', whoFriend: 'Share with a friend',
-    startQ: 'Your first practice', dpwQ: 'Days a week you will come',
-    passLine: (a, b, n) => `Your pass: ${a} to ${b} (${n} days)`, eachLine: (a, b) => `Each of you: ${a} to ${b}`,
-    payH: 'You pay', payBreak: (p, v) => `${p} + 7% VAT ${v}`, eachPay: x => `${x} each`,
-    perCls: (x, n) => `About ${x} a class (about ${n} classes)`, perSes: (x, n) => `About ${x} a session (${n} sessions)`,
-    save: x => `You save ${x}`, buyBtn: 'Buy on LINE',
-    buyHow: 'LINE or WhatsApp opens with your message ready. Press send, and Jamsai replies with the payment link.',
-    wcCopied: 'Message copied. On WeChat, add aybkkwechat and paste it.',
-    pastNote: 'For past AYBKK students. We check your name when you message us.',
-    calcFine: 'Prices include 7% VAT. Paying by card online adds a small transaction fee. Start by 12 Nov 2026.',
-   
-  });
-  Object.assign(STR.th, {
-    bandBtn: 'คำนวณราคาเรียน →',
-    promoH: 'โปรโมชัน Sharathji 1 ต.ค. ถึง 11 พ.ย.',
-    promoLead: 'เลือกโปร เลือกวันเริ่มฝึก แล้วดูว่าต้องจ่ายเท่าไหร่ ซื้อภายใน 11 พ.ย. เริ่มใช้ภายใน 12 พ.ย.',
-    tagNew: 'นักเรียนใหม่', tagPast: 'นักเรียนเก่า AYBKK',
-    duoBig: 'ซื้อ 1 แถม 1 ฟรี', duoD: 'เรียนไม่จำกัด 1, 2 หรือ 3 เดือน แบ่งกับเพื่อน หรือใช้เองได้นานเป็นสองเท่า',
-    rookWas: 'ปกติ ฿12,000', rookD: 'ฝึก 6 ครั้งใน 1 เดือน + เวิร์กช็อปปรับพื้นฐานอาชทางก้า 2 ครั้ง เริ่มต้นแบบง่ายที่สุด',
-    resetD: 'ฝึก 8 ครั้งใน 2 เดือน + ตรวจท่าส่วนตัวฟรี 1 ครั้งกับครูบุญชู หาจุดอ่อนที่ซ่อนอยู่',
-    beatBig: 'ลด 30% ถึง 40%', beatD: 'แพ็กเกจรายเดือนไม่จำกัด: 1 เดือนลด 30%, 2 เดือนลด 35%, 3 เดือนลด 40%',
-    calcH: 'คำนวณราคาเรียน', pkgQ: 'แพ็กเกจ', pm1: '1 เดือน', pm2: '2 เดือน', pm3: '3 เดือน',
-    whoQ: 'ใช้กับใคร?', whoMe: 'ใช้เอง 2 เท่า', whoFriend: 'แบ่งกับเพื่อน',
-    startQ: 'วันแรกที่มาฝึก', dpwQ: 'มาฝึกสัปดาห์ละกี่วัน',
-    passLine: (a, b, n) => `บัตรของคุณ: ${a} ถึง ${b} (${n} วัน)`, eachLine: (a, b) => `แต่ละคน: ${a} ถึง ${b}`,
-    payH: 'ยอดที่ต้องจ่าย', payBreak: (p, v) => `${p} + VAT 7% ${v}`, eachPay: x => `คนละ ${x}`,
-    perCls: (x, n) => `ตกครั้งละประมาณ ${x} (ประมาณ ${n} ครั้ง)`, perSes: (x, n) => `ตกครั้งละประมาณ ${x} (${n} ครั้ง)`,
-    save: x => `ประหยัด ${x}`, buyBtn: 'ซื้อผ่าน LINE',
-    buyHow: 'LINE หรือ WhatsApp จะเปิดพร้อมข้อความ กดส่งได้เลย Jamsai จะส่งลิงก์ชำระเงินให้',
-    wcCopied: 'คัดลอกข้อความแล้ว เพิ่ม WeChat ID aybkkwechat แล้ววางข้อความได้เลย',
-    pastNote: 'สำหรับนักเรียนเก่า AYBKK ทีมงานจะเช็กชื่อเมื่อคุณทักมา',
-    calcFine: 'ราคารวม VAT 7% แล้ว ชำระด้วยบัตรออนไลน์มีค่าธรรมเนียมการทำรายการเล็กน้อย เริ่มใช้ภายใน 12 พ.ย. 2569',
-   
-  });
-  Object.assign(STR.zh, {
-    bandBtn: '计算我的价格 →',
-    promoH: 'Sharathji 纪念优惠：10月1日至11月11日',
-    promoLead: '选择优惠和第一天练习的日期，马上看到要付多少。11月11日前购买，11月12日前开始。',
-    tagNew: '新学员', tagPast: 'AYBKK 老学员',
-    duoBig: '买一送一', duoD: '不限次数，1、2或3个月。可以和朋友分享，也可以自己用双倍时间。',
-    rookWas: '原价 ฿12,000', rookD: '1个月内练习6次 + 2次阿斯汤加基础工作坊。最轻松的开始。',
-    resetD: '2个月内练习8次 + 免费1次 Boonchu 老师私人体式检查，找出隐藏的弱点。',
-    beatBig: '立减30%至40%', beatD: '月卡不限次数：1个月减30%，2个月减35%，3个月减40%。',
-    calcH: '计算你的价格', pkgQ: '套餐', pm1: '1个月', pm2: '2个月', pm3: '3个月',
-    whoQ: '给谁用？', whoMe: '自己用双倍', whoFriend: '和朋友分享',
-    startQ: '第一次练习', dpwQ: '每周来几天',
-    passLine: (a, b, n) => `你的会员卡：${a} 至 ${b}（${n} 天）`, eachLine: (a, b) => `每人：${a} 至 ${b}`,
-    payH: '你需要支付', payBreak: (p, v) => `${p} + 7% 增值税 ${v}`, eachPay: x => `每人 ${x}`,
-    perCls: (x, n) => `约每节课 ${x}（约 ${n} 节课）`, perSes: (x, n) => `约每次 ${x}（${n} 次）`,
-    save: x => `省下 ${x}`, buyBtn: '通过 LINE 购买',
-    buyHow: 'LINE 或 WhatsApp 会打开并写好消息。点发送，Jamsai 会回复付款链接。',
-    wcCopied: '消息已复制。在微信添加 aybkkwechat，然后粘贴发送。',
-    pastNote: '仅限 AYBKK 老学员。你联系我们时我们会核对名字。',
-    calcFine: '价格已含7%增值税。线上刷卡付款另收少量手续费。需在2026年11月12日前开始。',
-   
-  });
-  Object.assign(STR.ru, {
-    bandBtn: 'Рассчитать мою цену →',
-    promoH: 'Акция в честь Шарата, с 1 октября по 11 ноября',
-    promoLead: 'Выберите предложение и первый день практики, и сразу увидите, сколько платить. Купить до 11 ноября, начать до 12 ноября.',
-    tagNew: 'Новые ученики', tagPast: 'Бывшие ученики AYBKK',
-    duoBig: 'Купи 1, получи 1 бесплатно', duoD: 'Безлимит на 1, 2 или 3 месяца. Поделитесь с другом или удвойте срок для себя.',
-    rookWas: 'обычно ฿12,000', rookD: '6 практик за 1 месяц + 2 базовых воркшопа по аштанге. Самый простой старт.',
-    resetD: '8 практик за 2 месяца + 1 бесплатная личная проверка выравнивания с учителем Бунчу.',
-    beatBig: 'Скидка от 30% до 40%', beatD: 'Безлимит: 1 месяц скидка 30%, 2 месяца 35%, 3 месяца 40%.',
-    calcH: 'Рассчитать цену', pkgQ: 'Абонемент', pm1: '1 месяц', pm2: '2 месяца', pm3: '3 месяца',
-    whoQ: 'Для кого?', whoMe: 'Двойной срок для меня', whoFriend: 'Поделиться с другом',
-    startQ: 'Первая практика', dpwQ: 'Сколько дней в неделю',
-    passLine: (a, b, n) => `Ваш абонемент: ${a} по ${b} (${n} дн.)`, eachLine: (a, b) => `Каждому: ${a} по ${b}`,
-    payH: 'К оплате', payBreak: (p, v) => `${p} + НДС 7% ${v}`, eachPay: x => `${x} каждому`,
-    perCls: (x, n) => `Около ${x} за занятие (около ${n} занятий)`, perSes: (x, n) => `Около ${x} за занятие (${n} занятий)`,
-    save: x => `Экономия ${x}`, buyBtn: 'Купить в LINE',
-    buyHow: 'LINE или WhatsApp откроется с готовым сообщением. Нажмите «отправить», и Jamsai пришлёт ссылку на оплату.',
-    wcCopied: 'Сообщение скопировано. В WeChat добавьте aybkkwechat и вставьте его.',
-    pastNote: 'Для бывших учеников AYBKK. Мы проверим имя, когда вы напишете.',
-    calcFine: 'Цены с НДС 7%. При оплате картой онлайн добавляется небольшая комиссия. Начать до 12 ноября 2026.',
-   
-  });
-
   // The 10 health habits frame (Boonchu, 4 Oct 2026): what people do to stay healthy, all inside one practice.
   Object.assign(STR.en, { habH: "10 things people do to stay healthy.", habSub: "Ashtanga does all 10, in one morning.", habCta: "Start with one morning", hab1t: "Track", hab1d: "Real proof: mornings practised, resting heart rate, sleep. Checked at week 0, 6 and 12.", hab2t: "Get stronger", hab2d: "Strength from your own body weight, built at 30 and kept at 70.", hab3t: "Partners", hab3d: "Like-minded people beside you. We struggle together and progress together.", hab4t: "Sleep", hab4d: "Early practice, slow breath, early nights. Students tell us sleep changes first.", hab5t: "Eat with purpose", hab5d: "No diet. You eat lighter because you want to feel light on the mat tomorrow.", hab6t: "Calm the mind", hab6d: "90 minutes, no phone, only your breath. Calm you train, not buy.", hab7t: "Hot and cold", hab7d: "Heat from inside, cooled by your breath. Your own warmth, no machine.", hab8t: "Mind-body movement", hab8d: "Core, balance and breath with movement. The original, 100 years old.", hab9t: "Together", hab9d: "A quiet room of people who show up. Belonging without noise.", hab10t: "Traditional", hab10d: "A 100-year-old method, taught by an Authorized teacher." });
   Object.assign(STR.th, { habH: "10 สิ่งที่คนทำเพื่อสุขภาพ", habSub: "อัษฎางคโยคะทำครบทั้ง 10 ในเช้าเดียว", habCta: "เริ่มจากเช้าแรก", hab1t: "วัดผลได้", hab1d: "หลักฐานจริง: จำนวนเช้าที่ฝึก ชีพจรขณะพัก และการนอน เช็กสัปดาห์ที่ 0, 6 และ 12", hab2t: "แข็งแรงขึ้น", hab2d: "ความแข็งแรงจากน้ำหนักตัวเอง สร้างตอนอายุ 30 และยังอยู่ถึง 70", hab3t: "มีเพื่อนร่วมทาง", hab3d: "คนที่คิดเหมือนกันฝึกอยู่ข้างๆ เหนื่อยด้วยกัน ก้าวหน้าไปด้วยกัน", hab4t: "นอนหลับดีขึ้น", hab4d: "ฝึกแต่เช้า หายใจช้า เข้านอนเร็ว นักเรียนบอกว่าการนอนเปลี่ยนเป็นอย่างแรก", hab5t: "กินอย่างมีเป้าหมาย", hab5d: "ไม่ต้องไดเอต คุณจะกินเบาลงเองเพราะอยากตัวเบาบนเสื่อพรุ่งนี้", hab6t: "ใจสงบ", hab6d: "90 นาที ไม่มีมือถือ มีแต่ลมหายใจ ความสงบที่ฝึกได้ ไม่ต้องซื้อ", hab7t: "ร้อนและเย็น", hab7d: "ความร้อนจากข้างใน ลมหายใจช่วยให้เย็น ความอุ่นของคุณเอง ไม่ต้องใช้เครื่อง", hab8t: "กายและใจไปด้วยกัน", hab8d: "แกนกลาง การทรงตัว และลมหายใจกับการเคลื่อนไหว ต้นฉบับอายุ 100 ปี", hab9t: "ฝึกร่วมกัน", hab9d: "ห้องที่เงียบสงบของคนที่มาฝึกจริง อบอุ่นโดยไม่ต้องวุ่นวาย", hab10t: "ศาสตร์ดั้งเดิม", hab10d: "วิธีฝึกอายุกว่า 100 ปี สอนโดยครูที่ได้รับ Authorization" });
@@ -1706,7 +1528,7 @@
     checkH: 'My 12-week check · Habit #1', chkWhy: 'Three numbers from your watch or phone, at week 0, 6 and 12. Proof, not promises.', chkStartH: 'Week 0: your starting point', chkDueH: 'Your next check is due', chkHrL: 'Resting heart rate (beats per minute)', chkSleepL: 'Average sleep last week (hours)', chkFeelL: 'How do you feel? (1 = tired, 5 = great)', chkNoteL: 'One line (optional)', chkSave: 'Save my check', chkWeek: 'Week', chkHr: 'Heart rate', chkSleep: 'Sleep', chkFeel: 'Feel', chkChange: (hr, sl) => `Since week 0: heart rate ${hr}, sleep ${sl}`, chkNext: d => `Next check: ${d}`, chkAll: 'All 3 checks done. Look how far you came.',
     fromTeachers: 'From your teachers', workOn: 'Work on',
     faceH: 'Add your photo, so your teachers know your face', faceWho: 'Only you and your teachers can see it.', faceBtn: 'Add my photo', faceMine: 'My photo', faceChange: 'Change photo', faceRemove: 'Remove photo', faceRemoveQ: 'Remove your photo?', faceYes: 'Yes, remove', faceNo: 'No, keep it', faceDel: 'Removing…', faceReady: 'Getting your photo ready…', faceUp: 'Uploading…', faceSave: 'Saving…', faceDone: 'Saved. Your teachers will know your face.', faceGone: 'Photo removed.', faceBig: 'This photo is too big. Please choose a smaller one.', faceNot: 'This file is not a photo. Please choose a photo.', faceLater: 'That did not work. Please try again later.', faceMany: 'Too many tries today. Please try again tomorrow.',
-    myPhotos: 'My class photos', phN: n => n === 1 ? '1 photo' : `${n} photos`, phAll: n => `See all ${n} photos`, noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo.', paidMail: 'Payment confirmed 🙏 Your pass is active. Open the link in your receipt email to see it on this phone.', haveProfile: 'This email already has an AYBKK profile. After you pay, open the link in your receipt email to see your pass.', codeNotFound: 'We could not find that member code. Check it, or ask for an email link above.', notYou: n => `Not ${n}? Sign out`, emailWho: n => `This is ${n}’s profile. Add your email only if you are ${n}.`, meGone: 'This sign-in has ended. Ask the shala for a new link on LINE @aybkk.', photoDl: 'Save photo', h12H: 'Give yourself 12 weeks.', h12S: 'New students: you will earn 3\u00a0more\u00a0months. Buy by 11\u00a0Nov.', h12Sp: 'From 331 baht a class +VAT, with a teacher who knows your body.', h12Btn: d => `I’m in · ${d} a day`, jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Order on LINE, then pick up your tee at the shala.', teeSizes: 'Sizes',
+    myPhotos: 'My class photos', phN: n => n === 1 ? '1 photo' : `${n} photos`, phAll: n => `See all ${n} photos`, noPhotos: 'No photos yet. After class, your photos appear here, only for you.', photoSave: 'Only you can see this photo.', paidMail: 'Payment confirmed 🙏 Your pass is active. Open the link in your receipt email to see it on this phone.', haveProfile: 'This email already has an AYBKK profile. After you pay, open the link in your receipt email to see your pass.', codeNotFound: 'We could not find that member code. Check it, or ask for an email link above.', notYou: n => `Not ${n}? Sign out`, emailWho: n => `This is ${n}’s profile. Add your email only if you are ${n}.`, meGone: 'This sign-in has ended. Ask the shala for a new link on LINE @aybkk.', photoDl: 'Save photo', h12H: 'Give yourself 12 weeks.', h12Sp: 'From 331 baht a class +VAT, with a teacher who knows your body.', h12Btn: d => `I’m in · ${d} a day`, jrnAsk: 'How was this practice?', jrnDone: 'My journal ✓', jrnWho: 'A few taps about this practice, then a note if you like. Your teachers read it.', jrnWrite: 'Write my journal', jrnAgain: 'Write again', jrnAll: 'See my whole journal', teeH: 'AYBKK tees', teeLead: 'Order on LINE, then pick up your tee at the shala.', teeSizes: 'Sizes',
     teacherH: 'Your teachers', readMore: 'Read more ▾', readLess: 'Show less ▴',
     jbio1: 'Jamsai was a tax consultant. She found Ashtanga in 2015, during chemotherapy for breast cancer, with Boonchu as her teacher.',
     jbio2: 'The practice gave her strength back, so she left her job to study with Sharath Jois in Mysore. She received Authorization Level 2 from him in the 2018 to 2019 season.',
@@ -1718,7 +1540,7 @@
     checkH: 'เช็กผล 12 สัปดาห์ของฉัน · นิสัยที่ 1', chkWhy: 'ตัวเลข 3 ค่าจากนาฬิกาหรือมือถือ สัปดาห์ที่ 0, 6 และ 12 หลักฐานจริง ไม่ใช่คำสัญญา', chkStartH: 'สัปดาห์ที่ 0: จุดเริ่มต้นของคุณ', chkDueH: 'ถึงเวลาเช็กครั้งต่อไปแล้ว', chkHrL: 'ชีพจรขณะพัก (ครั้งต่อนาที)', chkSleepL: 'นอนเฉลี่ยสัปดาห์ที่แล้ว (ชั่วโมง)', chkFeelL: 'รู้สึกอย่างไร (1 = เหนื่อย, 5 = ดีมาก)', chkNoteL: 'หนึ่งบรรทัด (ไม่บังคับ)', chkSave: 'บันทึกผล', chkWeek: 'สัปดาห์', chkHr: 'ชีพจร', chkSleep: 'นอน', chkFeel: 'ความรู้สึก', chkChange: (hr, sl) => `ตั้งแต่สัปดาห์ที่ 0: ชีพจร ${hr} การนอน ${sl}`, chkNext: d => `เช็กครั้งต่อไป: ${d}`, chkAll: 'ครบ 3 ครั้งแล้ว ดูสิว่าคุณมาไกลแค่ไหน',
     fromTeachers: 'จากครูของคุณ', workOn: 'ฝึกต่อ',
     faceH: 'เพิ่มรูปของคุณ ให้ครูจำหน้าคุณได้', faceWho: 'เห็นได้เฉพาะคุณและครูเท่านั้น', faceBtn: 'เพิ่มรูปของฉัน', faceMine: 'รูปของฉัน', faceChange: 'เปลี่ยนรูป', faceRemove: 'ลบรูป', faceRemoveQ: 'ลบรูปของคุณใช่ไหม', faceYes: 'ใช่ ลบรูป', faceNo: 'ไม่ เก็บไว้', faceDel: 'กำลังลบรูป…', faceReady: 'กำลังเตรียมรูป…', faceUp: 'กำลังอัปโหลด…', faceSave: 'กำลังบันทึก…', faceDone: 'บันทึกแล้ว ครูจะจำหน้าคุณได้', faceGone: 'ลบรูปแล้ว', faceBig: 'รูปนี้ใหญ่เกินไป กรุณาเลือกรูปที่เล็กกว่านี้', faceNot: 'ไฟล์นี้ไม่ใช่รูปภาพ กรุณาเลือกรูปภาพ', faceLater: 'ยังไม่สำเร็จ กรุณาลองใหม่ภายหลัง', faceMany: 'วันนี้ลองหลายครั้งเกินไปแล้ว กรุณาลองใหม่พรุ่งนี้',
-    myPhotos: 'รูปการฝึกของฉัน', phN: n => `${n} รูป`, phAll: n => `ดูทั้งหมด ${n} รูป`, noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ', paidMail: 'ชำระเงินเรียบร้อย 🙏 แพ็กเกจของคุณใช้งานได้แล้ว เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูบนมือถือเครื่องนี้', haveProfile: 'อีเมลนี้มีโปรไฟล์ AYBKK อยู่แล้ว หลังชำระเงิน เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูแพ็กเกจของคุณ', codeNotFound: 'ไม่พบรหัสสมาชิกนี้ ลองตรวจสอบอีกครั้ง หรือขอลิงก์ทางอีเมลด้านบน', notYou: n => `ไม่ใช่คุณ${n}? ออกจากระบบ`, emailWho: n => `นี่คือโปรไฟล์ของคุณ${n} ใส่อีเมลเฉพาะเมื่อคุณคือคุณ${n}`, meGone: 'การเข้าสู่ระบบนี้หมดอายุแล้ว ขอลิงก์ใหม่ได้ทาง LINE @aybkk', photoDl: 'บันทึกรูป', h12H: 'ให้เวลากับตัว\u2060เอง 12\u00a0สัปดาห์', h12S: 'นักเรียน\u2060ใหม่: คุณ\u2060จะ\u2060ได้\u2060เพิ่ม\u2060อีก\u00a03\u00a0เดือน ซื้อภายใน 11\u00a0พ.ย.', h12Sp: 'เริ่มต้นครั้งละ 331\u00a0บาท +VAT กับครู\u2060ที่\u2060รู้จัก\u2060ร่างกาย\u2060คุณ', h12Btn: d => `เอาเลย · วันละ ${d}`, jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'สั่งทาง LINE แล้วมารับเสื้อที่ชาลา', teeSizes: 'ไซซ์',
+    myPhotos: 'รูปการฝึกของฉัน', phN: n => `${n} รูป`, phAll: n => `ดูทั้งหมด ${n} รูป`, noPhotos: 'ยังไม่มีรูป หลังเลิกคลาส รูปของคุณจะขึ้นที่นี่ เห็นได้เฉพาะคุณ', photoSave: 'รูปนี้เห็นได้เฉพาะคุณ', paidMail: 'ชำระเงินเรียบร้อย 🙏 แพ็กเกจของคุณใช้งานได้แล้ว เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูบนมือถือเครื่องนี้', haveProfile: 'อีเมลนี้มีโปรไฟล์ AYBKK อยู่แล้ว หลังชำระเงิน เปิดลิงก์ในอีเมลใบเสร็จเพื่อดูแพ็กเกจของคุณ', codeNotFound: 'ไม่พบรหัสสมาชิกนี้ ลองตรวจสอบอีกครั้ง หรือขอลิงก์ทางอีเมลด้านบน', notYou: n => `ไม่ใช่คุณ${n}? ออกจากระบบ`, emailWho: n => `นี่คือโปรไฟล์ของคุณ${n} ใส่อีเมลเฉพาะเมื่อคุณคือคุณ${n}`, meGone: 'การเข้าสู่ระบบนี้หมดอายุแล้ว ขอลิงก์ใหม่ได้ทาง LINE @aybkk', photoDl: 'บันทึกรูป', h12H: 'ให้เวลากับตัว\u2060เอง 12\u00a0สัปดาห์', h12Sp: 'เริ่มต้นครั้งละ 331\u00a0บาท +VAT กับครู\u2060ที่\u2060รู้จัก\u2060ร่างกาย\u2060คุณ', h12Btn: d => `เอาเลย · วันละ ${d}`, jrnAsk: 'การฝึกวันนี้เป็นอย่างไร', jrnDone: 'บันทึกของฉัน ✓', jrnWho: 'แตะตอบไม่กี่ข้อเกี่ยวกับการฝึกครั้งนี้ แล้วเขียนโน้ตถ้าอยาก ครูจะได้อ่าน', jrnWrite: 'เขียนบันทึก', jrnAgain: 'เขียนอีกครั้ง', jrnAll: 'ดูบันทึกทั้งหมดของฉัน', teeH: 'เสื้อ AYBKK', teeLead: 'สั่งทาง LINE แล้วมารับเสื้อที่ชาลา', teeSizes: 'ไซซ์',
     teacherH: 'ครูของคุณ', readMore: 'อ่านต่อ ▾', readLess: 'ย่อ ▴',
     jbio1: 'Jamsai เคยเป็นที่ปรึกษาด้านภาษี เธอเริ่มฝึกอัษฎางคโยคะในปี 2015 ระหว่างรับเคมีบำบัดรักษามะเร็งเต้านม โดยมี Boonchu เป็นครู',
     jbio2: 'การฝึกทำให้เธอกลับมาแข็งแรง เธอจึงลาออกจากงานไปเรียนกับ Sharath Jois ที่มายซอร์ และได้รับ Authorization Level 2 จากท่านในฤดูกาล 2018 ถึง 2019',
@@ -1730,7 +1552,7 @@
     checkH: '我的12周检查 · 习惯1', chkWhy: '手表或手机上的3个数字，第0、6、12周各记录一次。是证据，不是承诺。', chkStartH: '第0周：你的起点', chkDueH: '该做下一次检查了', chkHrL: '静息心率（次/分钟）', chkSleepL: '上周平均睡眠（小时）', chkFeelL: '感觉如何？（1 = 很累，5 = 很好）', chkNoteL: '一句话（可选）', chkSave: '保存', chkWeek: '周', chkHr: '心率', chkSleep: '睡眠', chkFeel: '感觉', chkChange: (hr, sl) => `从第0周起：心率 ${hr}，睡眠 ${sl}`, chkNext: d => `下次检查：${d}`, chkAll: '3次检查都完成了。看看你走了多远。',
     fromTeachers: '老师给你的话', workOn: '要练习的',
     faceH: '添加你的照片，让老师认得你', faceWho: '只有你和老师能看到。', faceBtn: '添加我的照片', faceMine: '我的照片', faceChange: '更换照片', faceRemove: '删除照片', faceRemoveQ: '要删除你的照片吗？', faceYes: '是的，删除', faceNo: '不，保留', faceDel: '正在删除…', faceReady: '正在准备照片…', faceUp: '正在上传…', faceSave: '正在保存…', faceDone: '已保存。老师会认得你。', faceGone: '照片已删除。', faceBig: '这张照片太大了，请选一张小一点的。', faceNot: '这个文件不是照片，请选一张照片。', faceLater: '没有成功，请稍后再试。', faceMany: '今天尝试次数太多了，请明天再试。',
-    myPhotos: '我的练习照片', phN: n => `${n} 张`, phAll: n => `查看全部 ${n} 张`, noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。', paidMail: '付款成功 🙏 你的课程卡已生效。打开收据邮件里的链接，即可在这部手机上查看。', haveProfile: '这个邮箱已有 AYBKK 个人主页。付款后，打开收据邮件里的链接即可查看你的课程卡。', codeNotFound: '找不到这个会员编号。请检查，或在上方用邮箱获取链接。', notYou: n => `不是${n}？退出`, emailWho: n => `这是${n}的个人主页。只有你是${n}本人时才添加邮箱。`, meGone: '此登录已失效。请在 LINE @aybkk 向道场索取新链接。', photoDl: '保存照片', h12H: '给自己12周。', h12S: '新学员：你将多得3个月。11月11日前购买。', h12Sp: '每节课331泰铢起（另加增值税），老师了解你的身体。', h12Btn: d => `我要开始 · 每天${d}`, jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '通过 LINE 订购，然后到道场自取。', teeSizes: '尺码',
+    myPhotos: '我的练习照片', phN: n => `${n} 张`, phAll: n => `查看全部 ${n} 张`, noPhotos: '还没有照片。下课后你的照片会出现在这里，只有你能看到。', photoSave: '只有你能看到这张照片。', paidMail: '付款成功 🙏 你的课程卡已生效。打开收据邮件里的链接，即可在这部手机上查看。', haveProfile: '这个邮箱已有 AYBKK 个人主页。付款后，打开收据邮件里的链接即可查看你的课程卡。', codeNotFound: '找不到这个会员编号。请检查，或在上方用邮箱获取链接。', notYou: n => `不是${n}？退出`, emailWho: n => `这是${n}的个人主页。只有你是${n}本人时才添加邮箱。`, meGone: '此登录已失效。请在 LINE @aybkk 向道场索取新链接。', photoDl: '保存照片', h12H: '给自己12周。', h12Sp: '每节课331泰铢起（另加增值税），老师了解你的身体。', h12Btn: d => `我要开始 · 每天${d}`, jrnAsk: '这次练习怎么样？', jrnDone: '我的日记 ✓', jrnWho: '点几下记录这次练习，想写的话再写一句。老师会看到。', jrnWrite: '写练习日记', jrnAgain: '再写一次', jrnAll: '查看我的全部日记', teeH: 'AYBKK T恤', teeLead: '通过 LINE 订购，然后到道场自取。', teeSizes: '尺码',
     teacherH: '你的老师', readMore: '展开 ▾', readLess: '收起 ▴',
     jbio1: 'Jamsai 曾是一名税务顾问。2015年她在接受乳腺癌化疗期间开始练习阿斯汤加，老师是 Boonchu。',
     jbio2: '练习让她重新找回力量，于是她辞去工作，去迈索尔跟随 Sharath Jois 学习，并在2018至2019季获得他授予的 Level 2 授权。',
@@ -1742,7 +1564,7 @@
     checkH: 'Моя 12-недельная проверка · Привычка №1', chkWhy: 'Три числа с часов или телефона, на 0, 6 и 12 неделе. Доказательства, а не обещания.', chkStartH: 'Неделя 0: ваша отправная точка', chkDueH: 'Пора следующей проверки', chkHrL: 'Пульс в покое (уд/мин)', chkSleepL: 'Средний сон за неделю (часы)', chkFeelL: 'Как вы себя чувствуете? (1 = устал, 5 = отлично)', chkNoteL: 'Одна строка (по желанию)', chkSave: 'Сохранить', chkWeek: 'Неделя', chkHr: 'Пульс', chkSleep: 'Сон', chkFeel: 'Самочувствие', chkChange: (hr, sl) => `С недели 0: пульс ${hr}, сон ${sl}`, chkNext: d => `Следующая проверка: ${d}`, chkAll: 'Все 3 проверки готовы. Посмотрите, какой путь вы прошли.',
     fromTeachers: 'От ваших учителей', workOn: 'Над чем работать',
     faceH: 'Добавьте своё фото, чтобы учителя знали вас в лицо', faceWho: 'Его видите только вы и ваши учителя.', faceBtn: 'Добавить фото', faceMine: 'Моё фото', faceChange: 'Сменить фото', faceRemove: 'Удалить фото', faceRemoveQ: 'Удалить ваше фото?', faceYes: 'Да, удалить', faceNo: 'Нет, оставить', faceDel: 'Удаляем…', faceReady: 'Готовим фото…', faceUp: 'Загружаем…', faceSave: 'Сохраняем…', faceDone: 'Сохранено. Учителя будут знать вас в лицо.', faceGone: 'Фото удалено.', faceBig: 'Это фото слишком большое. Выберите фото поменьше.', faceNot: 'Этот файл не фото. Выберите фото.', faceLater: 'Не получилось. Попробуйте позже.', faceMany: 'Сегодня слишком много попыток. Попробуйте завтра.',
-    myPhotos: 'Мои фото с практики', phN: n => `${n} фото`, phAll: n => `Все фото (${n})`, noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы.', paidMail: 'Оплата получена 🙏 Абонемент активен. Откройте ссылку в письме с чеком, чтобы увидеть его на этом телефоне.', haveProfile: 'У этого email уже есть профиль AYBKK. После оплаты откройте ссылку в письме с чеком, чтобы увидеть абонемент.', codeNotFound: 'Такой код участника не найден. Проверьте его или запросите ссылку по email выше.', notYou: n => `Не ${n}? Выйти`, emailWho: n => `Это профиль: ${n}. Добавляйте email, только если вы ${n}.`, meGone: 'Этот вход больше не действует. Попросите новую ссылку в LINE @aybkk.', photoDl: 'Сохранить фото', h12H: 'Дайте себе 12 недель.', h12S: 'Новым ученикам: вы\u00a0получите ещё\u00a03\u00a0месяца. Купить\u00a0до 11\u00a0ноября.', h12Sp: 'От 331\u00a0бат за занятие +НДС, с учителем, который знает ваше тело.', h12Btn: d => `Я в деле · ${d} в день`, jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Закажите в LINE и заберите футболку в шале.', teeSizes: 'Размеры',
+    myPhotos: 'Мои фото с практики', phN: n => `${n} фото`, phAll: n => `Все фото (${n})`, noPhotos: 'Фото пока нет. После занятия ваши фото появятся здесь, только для вас.', photoSave: 'Это фото видите только вы.', paidMail: 'Оплата получена 🙏 Абонемент активен. Откройте ссылку в письме с чеком, чтобы увидеть его на этом телефоне.', haveProfile: 'У этого email уже есть профиль AYBKK. После оплаты откройте ссылку в письме с чеком, чтобы увидеть абонемент.', codeNotFound: 'Такой код участника не найден. Проверьте его или запросите ссылку по email выше.', notYou: n => `Не ${n}? Выйти`, emailWho: n => `Это профиль: ${n}. Добавляйте email, только если вы ${n}.`, meGone: 'Этот вход больше не действует. Попросите новую ссылку в LINE @aybkk.', photoDl: 'Сохранить фото', h12H: 'Дайте себе 12 недель.', h12Sp: 'От 331\u00a0бат за занятие +НДС, с учителем, который знает ваше тело.', h12Btn: d => `Я в деле · ${d} в день`, jrnAsk: 'Как прошла практика?', jrnDone: 'Мой дневник ✓', jrnWho: 'Несколько касаний о практике, потом заметка, если хотите. Учителя это читают.', jrnWrite: 'Написать в дневник', jrnAgain: 'Написать ещё раз', jrnAll: 'Весь мой дневник', teeH: 'Футболки AYBKK', teeLead: 'Закажите в LINE и заберите футболку в шале.', teeSizes: 'Размеры',
     teacherH: 'Ваши учителя', readMore: 'Читать дальше ▾', readLess: 'Свернуть ▴',
     jbio1: 'Jamsai работала налоговым консультантом. Она начала заниматься аштангой в 2015 году, во время химиотерапии от рака груди, и её учителем был Boonchu.',
     jbio2: 'Практика вернула ей силы, и она ушла с работы, чтобы учиться у Шарата Джойса в Майсуре. В сезоне 2018–2019 она получила от него авторизацию Level 2.',
@@ -1962,231 +1784,41 @@
   const clsWhen = iso => new Date(iso).toLocaleString(LOCALE[LANG] || 'en-GB', { timeZone: 'Asia/Bangkok',
     weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-  const PROMO_LAST_SALE = '2026-11-11', PROMO_LAST_START = '2026-11-12';
-  const MONTHLY = [[30, 9600], [60, 18200], [90, 25800]];   // days, baht (the broadcast's Duo prices)
-  const OFFERS = {
-    duo:    { title: 'DUO PACK',         past: false, big: 'duoBig', desc: 'duoD',   monthly: true },
-    rookie: { title: 'ROOKIE PACK',      past: false, price: 5900, was: 12000, days: 30, sessions: 8, desc: 'rookD' },
-    reset:  { title: 'RESET & RESTART',  past: true,  price: 5900, was: 12000, days: 60, sessions: 8, desc: 'resetD' },
-    beat:   { title: 'BACK TO THE BEAT', past: true,  big: 'beatBig', desc: 'beatD', monthly: true, off: [30, 35, 40] },
-  };
   const LOCALE = { en: 'en-GB', th: 'th-TH', zh: 'zh-CN', ru: 'ru-RU' };
   const addDays = (iso, n) => new Date(Date.parse(iso + 'T00:00:00Z') + n * 86400e3).toISOString().slice(0, 10);
-  const fmtD = (iso, lang) => new Date(iso + 'T00:00:00Z').toLocaleDateString(LOCALE[lang] || 'en-GB',
-    { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-  const promoLive = () => bkkTodayP() <= PROMO_LAST_SALE;
-  // The server switches its catalogue at the same moment (bkk-api.js PRICE_SWITCH).
-  const NEW_PRICES_FROM = '2026-11-12';
-  const newPrices = () => bkkTodayP() >= NEW_PRICES_FROM;
-  let PRICES_SEEN = newPrices();
   function bkkTodayP() { return new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10); }
-  let PMOON = {};
-  // One group open at a time; a card's calculator opens under that card.
-  // "New students" starts open: most visitors are new (Boonchu, 2 Oct).
-  const P = { group: 'new', offer: null, pkg: 0, who: 'me', start: null, dpw: 4 };
 
-  function promoCalc() {
-    const o = OFFERS[P.offer];
-    let price, days, ref, eachDays = null;
-    if (o.monthly) {
-      const [d, base] = MONTHLY[P.pkg];
-      if (P.offer === 'duo') {
-        price = base; ref = base * 2;
-        if (P.who === 'me') days = d * 2; else { days = d; eachDays = d; }
-      } else {
-        price = Math.round(base * (100 - o.off[P.pkg]) / 100); ref = base; days = d;
-      }
-    } else { price = o.price; ref = o.was; days = o.days; }
-    const vat = Math.round(price * 0.07), total = price + vat;
-    const end = addDays(P.start, days - 1);
-    let n, per;
-    if (o.monthly) {
-      let open = 0;
-      for (let i = 0; i < days; i++) if (!PMOON[addDays(P.start, i)]) open++;
-      n = Math.max(1, Math.round(open * P.dpw / 7));
-      per = Math.round((eachDays ? total / 2 : total) / n);
-    } else { n = o.sessions; per = Math.round(total / n); }
-    return { o, price, vat, total, end, days, n, per, save: ref - price };
-  }
-
-  function lineMessage(c) {
-    const o = c.o, th = [], en = [];
-    let pTh = '', pEn = '';
-    if (o.monthly) {
-      pTh = ' ' + STR.th['pm' + (P.pkg + 1)]; pEn = ' ' + STR.en['pm' + (P.pkg + 1)];
-      if (P.offer === 'duo') {
-        pTh += P.who === 'me' ? ` (ใช้เอง ${MONTHLY[P.pkg][0] * 2 / 30} เดือน)` : ' (แบ่งกับเพื่อน)';
-        pEn += P.who === 'me' ? ` (double for me, ${MONTHLY[P.pkg][0] * 2 / 30} months)` : ' (share with a friend)';
-      }
-    }
-    const past = o.past ? ' (นักเรียนเก่า)' : '', pastEn = o.past ? ' (past student)' : '';
-    th.push(`สวัสดีค่ะ/ครับ สนใจซื้อโปรโมชัน ${o.title}${pTh}${past}`,
-      `เริ่ม ${fmtD(P.start, 'th')} ถึง ${fmtD(c.end, 'th')}`,
-      `ราคา ${c.price.toLocaleString('en-US')} + VAT 7% = ${c.total.toLocaleString('en-US')} บาท`);
-    en.push(`Hi, I'm interested in the ${o.title} promotion:${pEn}${pastEn}`,
-      `Start ${fmtD(P.start, 'en')}, ends ${fmtD(c.end, 'en')}`,
-      `Price ${c.price.toLocaleString('en-US')} + 7% VAT = ${c.total.toLocaleString('en-US')} THB`);
-    return th.join('\n') + '\n\n' + en.join('\n');
-  }
-
-  function renderPromoResult() {
-    const box = $('#promoRes');
-    if (!box) return;
-    const c = promoCalc();
-    const each = P.offer === 'duo' && P.who === 'friend';
-    box.innerHTML = `
-      <div class="pass">${esc(t('passLine', fmtD(P.start, LANG), fmtD(c.end, LANG), c.days))}</div>
-      ${each ? `<div class="each">${esc(t('eachLine', fmtD(P.start, LANG), fmtD(c.end, LANG)))}</div>` : ''}
-      <div class="ph">${esc(t('payH'))}</div>
-      <div class="total">${baht(c.total)}</div>
-      <div class="brk">${esc(t('payBreak', baht(c.price), baht(c.vat)))}${each ? ' · ' + esc(t('eachPay', baht(Math.round(c.total / 2)))) : ''}</div>
-      <div class="pc">${esc(c.o.monthly ? t('perCls', baht(c.per), c.n) : t('perSes', baht(c.per), c.n))}</div>
-      <span class="save">${esc(t('save', baht(c.save)))}</span>
-      ${c.o.past ? `<div class="past">${esc(t('pastNote'))}</div>` : ''}
-      <a class="btn buy" target="_blank" rel="noopener"
-        href="https://line.me/R/oaMessage/%40aybkk/?${encodeURIComponent(lineMessage(c))}">${esc(t('buyBtn'))}</a>
-      <div class="alt">
-        <a class="btn" target="_blank" rel="noopener" href="https://wa.me/66842244246?text=${encodeURIComponent(lineMessage(c))}">WhatsApp</a>
-        <button type="button" class="btn" data-wechat="1">WeChat</button>
-      </div>
-      <p class="how">${esc(t('buyHow'))}</p>
-      <p class="copied" id="wcMsg" hidden>${esc(t('wcCopied'))}</p>`;
-  }
-
-  // Hero offer: 3 months unlimited. During the promotion the Duo doubles it for
-  // yourself (180 days); after it, the same pass at its own 90 days. Per day is
-  // the VAT-inclusive total over calendar days, with the total shown beside it.
+  // Hero offer: 3 months unlimited, 90 days. Per day is the VAT-inclusive total over calendar days.
   function renderHero12() {
-    const live = promoLive(), price = newPrices() ? 19500 : MONTHLY[2][1];
-    const total = price + Math.round(price * 0.07), days = live ? MONTHLY[2][0] * 2 : MONTHLY[2][0];
+    const price = 19500, total = price + Math.round(price * 0.07), days = 90;
     $('#h12h').textContent = t('h12H');
-    $('#h12s').textContent = t(live ? 'h12S' : 'h12Sp');
+    $('#h12s').textContent = t('h12Sp');
     $('#h12Btn').textContent = t('h12Btn', baht(Math.round(total / days)));
   }
   // Routes into the booking app land on its numbered heading; the sticky tabs sit right under it.
   // (#book stays on the tabs: openCls measures their height.)
   // No behavior given, so the page's scroll-behavior decides: smooth, or a jump with reduced motion.
   const toBook = () => $('.bookhead').scrollIntoView({ block: 'start' });
-  document.querySelectorAll('a[href="#book"]:not(#newPkgs)').forEach(a => a.addEventListener('click', e => {
+  document.querySelectorAll('a[href="#book"]:not(#newPkgs):not(#h12Btn)').forEach(a => a.addEventListener('click', e => {
     e.preventDefault();
+    tab('schedule');
     toBook();
   }));
-  $('#h12Btn').addEventListener('click', e => {
-    e.preventDefault();
-    if (promoLive()) {
-      P.group = 'new'; P.offer = 'duo'; P.pkg = 2; P.who = 'me';
-      renderPromo();
-      $('#calc').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      tab('packages');
-      toBook();
-    }
-  });
-
-  $('#newPkgs').addEventListener('click', e => {
+  document.querySelectorAll('#h12Btn, #newPkgs').forEach(a => a.addEventListener('click', e => {
     e.preventDefault();
     tab('packages');
     toBook();
-  });
+  }));
   ACCT.addEventListener('click', () => {
     tab('me');
     toBook();
     $('#t-me').focus({ preventScroll: true });
   });
 
-  function renderPromo() {
-    renderHero12();
-    const live = promoLive();
-    $('#promo').hidden = !live;
-    document.querySelectorAll('.campWrap').forEach(el => { el.hidden = !live; });
-    if (!live) return;
-    const today = bkkTodayP();
-    const tomorrow = addDays(today, 1) <= PROMO_LAST_START ? addDays(today, 1) : today;
-    if (!P.start || P.start < today || P.start > PROMO_LAST_START) P.start = tomorrow;
-    const sc = s => s.charAt(0) + s.slice(1).toLowerCase();
-    const opt = (group, val, label, on) =>
-      `<button type="button" data-${group}="${val}" aria-pressed="${on}">${esc(label)}</button>`;
-    const calc = o => `
-      <div class="card calc" id="calc">
-      <h3>${esc(t('calcH'))} · ${esc(sc(o.title))}</h3>
-      ${o.monthly ? `<div class="q">${esc(t('pkgQ'))}</div><div class="opts">${MONTHLY.map((m, i) =>
-        opt('pkg', i, `${t('pm' + (i + 1))} · ${baht(o.off ? Math.round(m[1] * (100 - o.off[i]) / 100) : m[1])}`, P.pkg === i)).join('')}</div>` : ''}
-      ${P.offer === 'duo' ? `<div class="q">${esc(t('whoQ'))}</div><div class="opts">${opt('who', 'me', t('whoMe'), P.who === 'me')}${opt('who', 'friend', t('whoFriend'), P.who === 'friend')}</div>` : ''}
-      <div class="q"><label for="pStart" style="margin:0;font:inherit;color:inherit">${esc(t('startQ'))}</label></div>
-      <input type="date" id="pStart" min="${today}" max="${PROMO_LAST_START}" value="${P.start}">
-      ${o.monthly ? `<div class="q">${esc(t('dpwQ'))}</div><div class="opts">${[3, 4, 5, 6].map(n => opt('dpw', n, String(n), P.dpw === n)).join('')}</div>` : ''}
-      <div class="res" id="promoRes"></div>
-      <p class="fine">${esc(t('calcFine'))}</p>
-      </div>`;
-    const group = (g, past) => {
-      const open = P.group === g;
-      const list = Object.entries(OFFERS).filter(([, o]) => o.past === past);
-      return `<div class="grp${open ? ' open' : ''}${past ? ' past' : ''}">
-        <button type="button" class="grp-h" data-group="${g}" aria-expanded="${open}">
-          <span>${esc(t(past ? 'tagPast' : 'tagNew'))}</span>
-          <small>${list.map(([, o]) => esc(sc(o.title))).join(' · ')}</small><i>${open ? '▴' : '▾'}</i>
-        </button>
-        ${open ? `<div class="offers">${list.map(([k, o]) => `
-          <button type="button" class="offer" data-offer="${k}" aria-expanded="${P.offer === k}">
-            <span class="ot">${esc(sc(o.title))}</span>
-            <span class="ob">${o.big ? esc(t(o.big)) : baht(o.price) + `<s>${esc(t('rookWas'))}</s>`}</span>
-            <span class="od">${esc(t(o.desc))}</span>
-            <span class="oc">${esc(t('calcH'))} ${P.offer === k ? '▴' : '▾'}</span>
-          </button>${P.offer === k ? calc(o) : ''}`).join('')}</div>` : ''}
-      </div>`;
-    };
-    $('#offers').innerHTML = group('new', false) + group('past', true);
-    if (!P.offer) return;
-    renderPromoResult();
-  }
-
-  $('#promo').addEventListener('click', async e => {
-    const b = e.target.closest('button');
-    if (!b) return;
-    if (b.dataset.wechat) {
-      // WeChat links cannot carry a message, so copy it for the student to paste
-      try { await navigator.clipboard.writeText(lineMessage(promoCalc())); } catch (_) {}
-      $('#wcMsg').hidden = false;
-      return;
-    }
-    if (b.dataset.group) {
-      P.group = P.group === b.dataset.group ? null : b.dataset.group;
-      P.offer = null;
-    } else if (b.dataset.offer) {
-      P.offer = P.offer === b.dataset.offer ? null : b.dataset.offer;
-      P.pkg = 0;
-    } else if (b.dataset.pkg) P.pkg = Number(b.dataset.pkg);
-    else if (b.dataset.who) P.who = b.dataset.who;
-    else if (b.dataset.dpw) P.dpw = Number(b.dataset.dpw);
-    else return;
-    renderPromo();
-    if (b.dataset.offer && P.offer) $(`[data-offer="${P.offer}"]`).scrollIntoView({ behavior: 'smooth', block: 'start' });
-    if (b.dataset.group && P.group) $(`[data-group="${P.group}"]`).scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-  // The band and the price-list button open the Duo calculator straight away.
-  document.querySelectorAll('a[href="#promo"]:not(#h12Btn)').forEach(a => a.addEventListener('click', e => {
-    e.preventDefault();
-    P.group = 'new'; P.offer = 'duo'; P.pkg = 0;
-    renderPromo();
-    ($('#calc') || $('#promo')).scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }));
-  $('#promo').addEventListener('change', e => {
-    if (e.target.id !== 'pStart' || !e.target.value) return;
-    const v = e.target.value, today = bkkTodayP();
-    P.start = v < today ? today : v > PROMO_LAST_START ? PROMO_LAST_START : v;
-    if (P.start !== v) e.target.value = P.start;
-    renderPromoResult();
-  });
-
-
   function applyLang() {
     document.documentElement.lang = HTML_LANG[LANG];
-    const np = newPrices();
-    document.querySelectorAll('.oldP').forEach(el => { el.hidden = np; });
-    document.querySelectorAll('.newP').forEach(el => { el.hidden = !np; });
-    $('.plans').classList.toggle('np', np);
     document.querySelectorAll('[data-i18n]').forEach(el => {
-      el.textContent = t((np && el.dataset.i18nNew) || el.dataset.i18n, SURCHARGE, VAT || 7);
+      el.textContent = t(el.dataset.i18n, SURCHARGE, VAT || 7);
     });
     document.querySelectorAll('.langs button').forEach(b =>
       b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
@@ -2196,7 +1828,7 @@
     const findKeep = { th: 'findTh', zh: 'findWx' }[LANG];
     $('#find .readmore').setAttribute('aria-controls',
       ['findTh', 'findIg', 'findFb', 'findTt', 'findWx'].filter(id => id !== findKeep).join(' '));
-    renderPromo();
+    renderHero12();
     TEES_R = renderTees();
     renderTheme();
     if (typeof nlDefault === 'function') nlDefault();
@@ -2358,7 +1990,6 @@
   // A sign-in link lands on /book?me=1: open the student's profile straight away.
   let current = new URLSearchParams(location.search).has('me') ? 'me' : 'schedule';
   window.tab = t => {
-    pricesNow();
     if (t !== current) OPEN = null;
     current = t;
     document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.id === 't' + '-' + t));
@@ -2393,7 +2024,6 @@
       PRODUCTS = p.products || [];
       SURCHARGE = p.surchargePct || 0;
       VAT = p.vatPct || 0;
-      PMOON = p.moonDays || {};
       applyLang();
       LOADED = true;
       $('#view').removeAttribute('aria-busy');
@@ -2407,19 +2037,7 @@
     }
     toHash();
   }
-  // A page left open past midnight into 12 Nov 2026 would still show, and open
-  // the buy dialog at, the old prices the server no longer charges.
-  async function pricesNow() {
-    if (newPrices() === PRICES_SEEN) return;
-    PRICES_SEEN = newPrices();
-    try {
-      const p = await getJSON('/api/bkk/products');
-      if (p.products) PRODUCTS = p.products;
-    } catch (_) {}
-    applyLang();
-    if (LOADED && current === 'packages') renderPackages();
-  }
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) { pricesNow(); loadTheme(); } });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) loadTheme(); });
 
   // The calendar shows Bangkok's "today" regardless of the visitor's timezone —
   // a student in China is 1h ahead and must not see tomorrow highlighted.
@@ -2837,7 +2455,6 @@
       if (act === 'back') return closeCls(kb);
       if (act === 'tobook') return ($('#dayList') || $('#view .calsw')).scrollIntoView({ behavior: 'smooth', block: 'start' });
       if (act === 'buy') {
-        if (promoLive()) return $('#promo').scrollIntoView({ behavior: 'smooth', block: 'start' });
         tab('packages');
         return toBook();
       }
@@ -3406,7 +3023,6 @@
   // paying books it. pre = { slotId, date } when they came from a class's Book.
   const singleClass = p => p.kind === 'credits' && Number(p.credits) === 1;
   window.buy = (code, pre, intro) => {
-    if (newPrices() !== PRICES_SEEN) return pricesNow().then(() => window.buy(code, pre, intro));
     const p = PRODUCTS.find(x => x.code === code);
     if (!p) return;
     const single = singleClass(p);
@@ -3718,7 +3334,7 @@
   };
   // The booking page's own LINE / WhatsApp / WeChat buttons. The start page calls aybkkBook() itself.
   document.addEventListener('click', function (e) {
-    if (e.target.closest && e.target.closest('button[data-wechat], #wxCopy')) { window.aybkkBook(); return; }
+    if (e.target.closest && e.target.closest('#wxCopy')) { window.aybkkBook(); return; }
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || a.id === 'go' || a.hasAttribute('data-nl') || a.hasAttribute('data-tee')) return;
     var h = a.getAttribute('href').toLowerCase();
