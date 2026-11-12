@@ -22,3 +22,8 @@ cloudflared
 exam-submissions/
 !public/themes/*.json
 !public/bkk-tees.json
+
+# Rezerv exports and the import tool's details files name students. never commit
+rezerv-export/
+rezerv-*.csv
+*.details.json
