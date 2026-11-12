@@ -8,3 +8,4 @@ Reminders: Rezerv still sells the old passes, run the Rezerv price prompt today.
 Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads.
 Score: wins this week (from Mon 9 Nov): none reported. 180K leads: 0 new, 1 serious silent 26 days.
 Inbox 07:08: 10 LINE threads with news, 4 need a reply, 3 hot.
+13:08 check-in: old-price renewal and 3-month student still waiting (renewal pass ends tomorrow, choice by 19:00). Inbox: 2 new, 0 hot.
