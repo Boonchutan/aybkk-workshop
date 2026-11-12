@@ -1003,7 +1003,7 @@
   };
 
   window.bookFor = async (code) => {
-    const d = await fetch('/api/bkk/schedule?days=14').then(r => r.json());
+    const d = await api('/api/bkk/schedule?days=14').then(r => r.json());
     const list = (d.classes || []).slice(0, 40);
     const pick = ask(T('qWhichClass') + '\n' + list.map((c, i) =>
       `${i + 1}. ${day(c.startAt)} ${time(c.startAt)} ${cls(c.title)} (${T('seatsLeft', c.seatsLeft)})`).join('\n'), '1');

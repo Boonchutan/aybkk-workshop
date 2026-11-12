@@ -5,9 +5,11 @@ const { Pool } = require('pg');
 const { v4: uuidv4 } = (() => { try { return require('uuid'); } catch { return { v4: () => Math.random().toString(36).slice(2) + Date.now().toString(36) }; } })();
 const { mountAttendance } = require('./attendance-api');
 const { mountShop } = require('./shop-api');
+const { staffOnly, staffFiles } = require('./lib/staff-key');
 
 const app = express();
 app.use(express.json());
+app.use(staffFiles);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── PostgreSQL (shared with booking system) ───────────────────────────────────
@@ -169,7 +171,7 @@ app.post('/api/journal/checkin', async (req, res) => {
 });
 
 // GET /api/journal/students — list all students with last assessment
-app.get('/api/journal/students', async (req, res) => {
+app.get('/api/journal/students', staffOnly, async (req, res) => {
   try {
     if (dbReady) {
       const result = await pgQuery(`
@@ -208,7 +210,7 @@ app.get('/api/journal/students', async (req, res) => {
 });
 
 // GET /api/journal/history/:days — all assessments in last N days
-app.get('/api/journal/history/:days', (req, res) => {
+app.get('/api/journal/history/:days', staffOnly, (req, res) => {
   try {
     const days = parseInt(req.params.days) || 7;
     const checkins = readJson(JOURNAL_FILE);
@@ -225,7 +227,7 @@ app.get('/api/journal/history/:days', (req, res) => {
 });
 
 // GET /api/journal/profiles — all orientation profiles (for teacher summary cards)
-app.get('/api/journal/profiles', (req, res) => {
+app.get('/api/journal/profiles', staffOnly, (req, res) => {
   try {
     const file = path.join(DATA_DIR, 'orientations.json');
     let orientations = [];
@@ -303,7 +305,7 @@ app.post('/api/orientation', saveOrientation);
 app.post('/api/orientations', saveOrientation);
 
 // Get all orientations (for later import to Neo4j)
-app.get('/api/orientations', (req, res) => {
+app.get('/api/orientations', staffOnly, (req, res) => {
   try {
     const file = path.join(DATA_DIR, 'orientations.json');
     let orientations = [];
@@ -417,7 +419,7 @@ app.get('/api/journal/comments/:studentId', async (req, res) => {
 });
 
 // POST /api/journal/ai-summary/:studentId — generate AI progress summary via DeepSeek
-app.post('/api/journal/ai-summary/:studentId', async (req, res) => {
+app.post('/api/journal/ai-summary/:studentId', staffOnly, async (req, res) => {
   try {
     let student, myCheckins;
 

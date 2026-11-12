@@ -8,6 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const QRCode = require('qrcode');
+const { staffOnly } = require('./lib/staff-key');
 
 function mountAttendance(app, opts = {}) {
   const pgPool = opts.pgPool || null;
@@ -93,14 +94,14 @@ function mountAttendance(app, opts = {}) {
   });
 
   // GET /api/attendance?workshop=hefei — JSON dump (teacher view / backup)
-  app.get('/api/attendance', (req, res) => {
+  app.get('/api/attendance', staffOnly, (req, res) => {
     let rows = readStore();
     if (req.query.workshop) rows = rows.filter(r => (r.workshop || 'hefei') === req.query.workshop);
     res.json({ count: rows.length, rows });
   });
 
   // GET /api/attendance.csv?workshop=hefei — spreadsheet backup
-  app.get('/api/attendance.csv', (req, res) => {
+  app.get('/api/attendance.csv', staffOnly, (req, res) => {
     let rows = readStore();
     if (req.query.workshop) rows = rows.filter(r => (r.workshop || 'hefei') === req.query.workshop);
     const cols = ['workshop', 'studentCode', 'name', 'package', 'session', 'sessionDate', 'checkedInAt', 'eligible', 'source', 'photoFile'];

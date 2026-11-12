@@ -32,7 +32,7 @@ const matchesPerson = (node, p) => {
 };
 
 async function getJson(path) {
-  const r = await fetch(BASE + path);
+  const r = await fetch(BASE + path, { headers: { 'X-Bkk-Key': process.env.BKK_ADMIN_KEY || '' } });
   if (!r.ok) throw new Error(path + ' -> HTTP ' + r.status);
   return r.json();
 }

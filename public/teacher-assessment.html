@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script src="/staff-key.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Teacher Assessment — AYBKK</title>
 <link rel="stylesheet" href="/tokens.css">
@@ -101,7 +102,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--accent)}
 
 <!-- Student Search -->
 <div class="student-search-wrap" id="studentSearchWrap">
-  <label>Select Student (all 718 students)</label>
+  <label>Select Student</label>
   <input type="text" class="student-search-input" id="studentSearch"
     placeholder="Type name to search..."
     oninput="filterStudents(this.value)"
@@ -208,7 +209,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadStudents();
 });
 
-// ── Load all 718 students from booking system ──────────────────────────────
+// ── Load the students from the booking system ──────────────────────────────
 async function loadStudents() {
   try {
     const res = await fetch('/api/mindmap/students');

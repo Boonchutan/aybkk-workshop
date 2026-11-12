@@ -5,6 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { staffOnly } = require('../lib/staff-key');
 const { v4: uuidv4 } = require('uuid');
 
 // POST /api/teacher/assessment - Save teacher assessment
@@ -79,7 +80,7 @@ router.post('/assessment', async (req, res) => {
 });
 
 // GET /api/teacher/assessment/:studentId - Get assessment history for student
-router.get('/assessment/:studentId', async (req, res) => {
+router.get('/assessment/:studentId', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const { studentId } = req.params;
@@ -120,7 +121,7 @@ router.get('/assessment/:studentId', async (req, res) => {
 });
 
 // GET /api/teacher/students - Get students list for teacher
-router.get('/students', async (req, res) => {
+router.get('/students', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const classTypeParam = req.query.classType;
@@ -234,7 +235,7 @@ router.get('/tags', async (req, res) => {
 });
 
 // GET /api/teacher/today - Get today's assessment count
-router.get('/today', async (req, res) => {
+router.get('/today', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const today = new Date().toISOString().split('T')[0];

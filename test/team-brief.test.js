@@ -586,7 +586,7 @@ const fakeDriver = { session: () => ({
      JSON.stringify([down17, hand17.body, tick17]));
 
   console.log('\n# the mat tick on bookings');
-  const sch = (await get('/api/bkk/schedule?days=14', {})).body.classes || [];
+  const sch = (await get('/api/bkk/schedule?days=14')).body.classes || [];
   // An empty class: the brief tests above fill fixed dates (10, 11, 17 Nov) with made-up bookings and mats,
   // so 'the next class' collided with them on some real dates (9 Nov, a moon day, made it 10 Nov).
   const room = sch.find(c => !c.isOnline && c.seatsLeft === c.capacity && c.capacity > 2), home = sch.find(c => c.isOnline && c.seatsLeft > 1);

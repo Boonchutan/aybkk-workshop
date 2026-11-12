@@ -45,9 +45,17 @@ jobs:
               print('schedule: NOT JSON ->', open('/tmp/s.json').read()[:200]); raise SystemExit(0)
           cs = d.get('classes', [])
           print(f"classes in next 7 days: {len(cs)}")
+          # Actions logs on this public repo are public: no seat or booking numbers here.
           for c in cs[:8]:
-              print(f"  {c['startAt'][:16]}  {c['title'][:34]:34} {c['seatsLeft']}/{c['capacity']} free")
+              left = c.get('seatsLeft', 0)
+              print(f"  {c['startAt'][:16]}  {c['title'][:34]:34} {'full' if left < 1 else 'open'}")
+          print('booking counts hidden without the key:', 'yes' if not any('booked' in c or 'capacity' in c for c in cs) else 'NO')
           EOF
+
+          echo "== student lists need the staff key (expect 401) =="
+          for p in /api/mindmap/students /api/orientations/bkk /api/students /api/journal/students /rosters/hefei.json; do
+            curl -s -o /dev/null -w "$p HTTP %{http_code}\n" --max-time 20 "$BASE$p"
+          done
 
           echo "== security: forged postback must not activate =="
           curl -s -o /dev/null -w 'postback HTTP %{http_code}\n' --max-time 20 \

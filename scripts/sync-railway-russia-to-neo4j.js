@@ -9,7 +9,8 @@ const API_URL = 'https://aybkk-ashtanga.up.railway.app/api/orientations/ru';
 
 function fetchApi(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, res => {
+    // The list needs the staff key: BKK_ADMIN_KEY in this script's environment.
+    https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0', 'X-Bkk-Key': process.env.BKK_ADMIN_KEY || '' } }, res => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {

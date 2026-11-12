@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { staffOnly } = require('../lib/staff-key');
 
 function parseIntVal(val) {
   if (!val) return 0;
@@ -131,8 +132,8 @@ router.get('/tags', async (req, res) => {
 });
 
 // GET /api/mindmap/students — all students (from PostgreSQL booking DB when available)
-router.get('/students', async (req, res) => {
-  // Prefer PostgreSQL — it has all 700+ real students
+router.get('/students', staffOnly, async (req, res) => {
+  // Prefer PostgreSQL, the booking system, which has every real student
   if (req.pg) {
     try {
       const result = await req.pg.query(`
@@ -186,7 +187,7 @@ router.get('/students', async (req, res) => {
 
 // GET /api/mindmap/student-data/:studentId — student intelligence data
 // Uses PostgreSQL when available (booking system DB), falls back to Neo4j
-router.get('/student-data/:studentId', async (req, res) => {
+router.get('/student-data/:studentId', staffOnly, async (req, res) => {
   const { studentId } = req.params;
 
   const toArray = (val) => {

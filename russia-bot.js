@@ -29,6 +29,8 @@ const BOONCHU_CHAT_ID = process.env.BOONCHU_CHAT_ID || '';
 const TEACHER_CHAT_IDS = (process.env.TEACHER_CHAT_IDS || '').split(',').map(s => s.trim()).filter(Boolean);
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const API_BASE = process.env.RUSSIA_BOT_API_BASE || 'https://aybkk-ashtanga.up.railway.app';
+// The student list needs the staff key (BKK_ADMIN_KEY, the same as the Bangkok admin).
+const STAFF_HEADERS = { 'X-Bkk-Key': process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '' };
 
 const DATA_DIR = process.env.DATA_DIR || (fs.existsSync('/data') ? '/data' : path.join(__dirname, 'data'));
 try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch {}
@@ -524,7 +526,7 @@ function attach(bot) {
       return; // silent no-op for non-admins
     }
     try {
-      const res = await fetch(`${API_BASE}/api/orientations/ru?format=csv`);
+      const res = await fetch(`${API_BASE}/api/orientations/ru?format=csv`, { headers: STAFF_HEADERS });
       if (!res.ok) throw new Error('fetch ' + res.status);
       const csv = await res.text();
       const buf = Buffer.from(csv, 'utf8');
@@ -751,7 +753,7 @@ async function broadcastReminder(bot, classInfo, kind) {
   // Find all completed RU students for this city
   let studentList = [];
   try {
-    const res = await fetch(`${API_BASE}/api/orientations/ru?city=${classInfo.city}`);
+    const res = await fetch(`${API_BASE}/api/orientations/ru?city=${classInfo.city}`, { headers: STAFF_HEADERS });
     if (res.ok) {
       const j = await res.json();
       studentList = j.students || [];

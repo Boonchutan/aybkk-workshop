@@ -11,6 +11,11 @@ on:
       - 'test/inbox.test.js'
       - 'api/student-journal.js'
       - 'test/journal-checkin.test.js'
+      - 'server.js'
+      - 'attendance-api.js'
+      - 'lib/staff-key.js'
+      - 'api/**'
+      - 'test/student-lists-lock.test.js'
       - '.github/workflows/bkk-test.yml'
 
 jobs:
@@ -53,3 +58,7 @@ jobs:
         run: node test/inbox.test.js
       - name: Run journal check-in tests (fake Neo4j, no DB)
         run: node test/journal-checkin.test.js
+      - name: Run student-list lock tests (server.js on a local port, fake Neo4j)
+        env:
+          TEST_DATABASE_URL: postgres://test:test@127.0.0.1:5432/bkktest
+        run: node test/student-lists-lock.test.js
