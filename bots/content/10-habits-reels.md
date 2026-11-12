@@ -20,7 +20,7 @@ Plato: translate TH/ZH/RU, add XHS title, keep claims as written (no medical pro
 
 ## #3 Partner (why people run: company)
 **Hook:** "People don't run for the miles. They run for the company."
-**Turn:** "Running clubs, walking groups. Everyone wants someone beside them. At 6am in a Mysore room, 30 people are on the same path as you."
+**Turn:** "Running clubs, walking groups. Everyone wants someone beside them. At 6am in a Mysore room, everyone is on the same path as you."
 **Takeaway:** "We struggle together. We progress together. Same practice, same journey. That's a partner who shows up every morning."
 **Caption action:** Come meet your practice partners: LINE @aybkk.
 
@@ -57,7 +57,7 @@ Plato: translate TH/ZH/RU, add XHS title, keep claims as written (no medical pro
 ## #9 Do it with others
 **Hook:** "Wellness is the new bar. Except you can't hear yourself think in a bar."
 **Turn:** "People want to be with others. But calm. Not a party, not a class shouting at you."
-**Takeaway:** "A Mysore room is 30 people breathing together, each in their own practice. Nobody performs. Everybody belongs."
+**Takeaway:** "A Mysore room is a room breathing together, each in their own practice. Nobody performs. Everybody belongs."
 **Caption action:** Come practise with us. LINE @aybkk.
 
 ## #10 Go traditional

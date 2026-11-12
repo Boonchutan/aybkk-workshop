@@ -127,3 +127,7 @@ Students not seen in 7+ days, profiles opened, streaks, renewals due and won.
 - Trend numbers come from a chat search: check each one before public use.
 - A habit system only works if M actually uses the "see you tomorrow" list every day. Build it, then check the Progress box.
 - Front-door classes (Pilates, runners) must be judged by conversion to Mysore, not by attendance.
+
+## Rule: student numbers stay private (Boonchu, 13 Nov 2026)
+"Don't put number of students practice at the Shala out to public."
+Never publish how many students practise at AYBKK: no count of students, regulars, members, people a morning or a day, bookings, visits, renewals or room size, in Reels, captions, carousels, posts, DMs, lead replies, the website, PR text or this public repo (notebooks and posts included). Say it without a number: "a room breathing together", "the regulars". Real numbers stay in private chats with Boonchu. Still open with Boonchu: whether lifetime lines such as "2,000+ students since 2013" may stay.
