@@ -1,0 +1,29 @@
+[
+ {
+  "photo": "12-097",
+  "id": "FA2",
+  "word": "SHOES",
+  "line": "So what does daily life ask? Look at your SHOES. In this Japanese study of young adults, tying shoelaces used about 90 degrees of hip bend. Walking and stairs need less.",
+  "credit": "HYODO ET AL. · 2017 (retold)",
+  "t": 0,
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   300,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   413,
+   268
+  ],
+  "ink_s": "light",
+  "wm": "right",
+  "wshadow": 1.2,
+  "sburn": 0.3
+ }
+]

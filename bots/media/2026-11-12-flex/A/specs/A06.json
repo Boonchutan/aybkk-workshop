@@ -1,0 +1,32 @@
+[
+ {
+  "photo": "12-162",
+  "id": "FA6",
+  "word": "LONGER",
+  "line": "Yes. In this American trial, people around 85 had the back of one thigh stretched 5 times a week. Stretches held LONGER gained more. 60 seconds: 2.4 degrees weekly. 15 seconds: 0.6.",
+  "credit": "FELAND ET AL. · PHYSICAL THERAPY | 2001 (retold)",
+  "t": 0,
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   300,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 40,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   "R",
+   834
+  ],
+  "ink_s": "light",
+  "sright": true,
+  "wshadow": 1.5,
+  "wburn": 0.2,
+  "wm": "left",
+  "sburn": 0.35,
+  "line_br": "Yes. In this American trial, | people around 85 had | the back of one thigh | stretched 5 times a week. | Stretches held LONGER gained | more. 60 seconds: 2.4 degrees | weekly. 15 seconds: 0.6."
+ }
+]

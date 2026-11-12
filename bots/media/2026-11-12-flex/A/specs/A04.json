@@ -1,0 +1,31 @@
+[
+ {
+  "photo": "12-164",
+  "id": "FA4",
+  "word": "BENDS",
+  "line": "At your desk, you barely bend. Heart surgeon Nikolai Amosov guessed a desk worker BENDS his back only 10 to 20 times a day. Tying his shoes is one of them.",
+  "credit": "N. AMOSOV · THOUGHTS ON HEALTH · 1987 (retold)",
+  "t": 215,
+  "tight": false,
+  "wwidth": 540,
+  "wpos": [
+   155,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   917
+  ],
+  "ink_s": "light",
+  "line_br": "At your desk, you barely bend. | Heart surgeon Nikolai Amosov | guessed a desk worker BENDS | his back only 10 to 20 times | a day. Tying his shoes is | one of them.",
+  "wm": "right",
+  "wshadow": 1.7,
+  "wburn": 0.25,
+  "sburn": 0.25
+ }
+]

@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "12-044",
+  "id": "FA9",
+  "word": "STOPPED",
+  "line": "But it must be regular. In this Italian trial, young adults stretched their legs 5 days a week for 12 weeks. Six weeks after they STOPPED, their new range was gone.",
+  "credit": "BISCONTI ET AL. \u00b7 2020 (retold)",
+  "t": 210,
+  "tight": false,
+  "wwidth": 540,
+  "wpos": [
+   60,
+   180
+  ],
+  "ink_w": "light",
+  "sz": 40,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   667,
+   60
+  ],
+  "ink_s": "light",
+  "wburn": 0.3,
+  "sburn": 0.35,
+  "wm": "orig",
+  "line_br": "But it must be | regular. In this | Italian trial, | young adults | stretched their | legs 5 days a week | for 12 weeks. Six | weeks after they | STOPPED, their | new range | was gone."
+ }
+]

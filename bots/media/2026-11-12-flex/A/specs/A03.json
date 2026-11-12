@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "12-065",
+  "id": "FA3",
+  "word": "TURN",
+  "line": "Then you drive. To reverse the car, you TURN your head. In this American lab study, that used 92% of the neck's full turn. A typical daily task used about a fifth.",
+  "credit": "BIBLE ET AL. · 2010 (retold)",
+  "t": 120,
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "wburn": 0.2,
+  "sz": 40,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   "R",
+   310
+  ],
+  "sright": true,
+  "ink_s": "dark",
+  "line_br": "Then you drive. | To reverse the car, | you TURN your | head. In this | American lab | study, that | used 92% of | the neck's full | turn. A typical | daily task used | about a fifth.",
+  "wm": "left"
+ }
+]

@@ -1,0 +1,29 @@
+[
+ {
+  "photo": "12-055",
+  "id": "FA8",
+  "word": "MINUTE",
+  "line": "So what do experts advise? For healthy adults, the American College of Sports Medicine recommends a MINUTE in total per main muscle group. At least 2 days a week. Not an hour.",
+  "credit": "ACSM \u00b7 2011 (retold)",
+  "tight": false,
+  "ink_w": "light",
+  "t": 90,
+  "wwidth": 810,
+  "wpos": [
+   210,
+   60
+  ],
+  "sz": 40,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   413,
+   268
+  ],
+  "ink_s": "dark",
+  "line_br": "So what do experts advise? For | healthy adults, the American | College of Sports Medicine | recommends a MINUTE in total | per main muscle | group. At least | 2 days a week. | Not an hour.",
+  "wshadow": 1.3,
+  "wburn": 0.1
+ }
+]

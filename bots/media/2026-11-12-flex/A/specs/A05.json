@@ -1,0 +1,28 @@
+[
+ {
+  "photo": "12-075",
+  "id": "FA5",
+  "word": "DECADE",
+  "line": "Years pass. In this Canadian study of 436 people aged 55 to 86, each DECADE older had about 6 degrees less shoulder and hip range. Small, the authors say. Can it grow?",
+  "credit": "STATHOKOSTAS ET AL. \u00b7 2013 (retold)",
+  "t": 60,
+  "tight": false,
+  "wwidth": 810,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 40,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   60,
+   350
+  ],
+  "ink_s": "dark",
+  "wburn": 0.2,
+  "wm": "right"
+ }
+]
