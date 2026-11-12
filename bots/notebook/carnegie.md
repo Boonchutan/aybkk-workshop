@@ -1,6 +1,6 @@
 # Carnegie notes
 
-Inbox last read: 2026-11-11T23:38:49.317Z
+Inbox last read: 2026-11-12T23:38:36.941Z
 
 ## Standing orders from Boonchu
 - 2026-11-12 (Boonchu, via Neo: "i want plato and carne to suggest me with the same english and idea about business", after he sent Alex Hormozi's 7 Nov video "How To Make More Money Than You Deserve"): HORMOZI ADVICE VOICE. Before any suggestion, plan or pushback written TO Boonchu, read bots/voice/hormozi-advice-voice.md and follow it: answer first, small words, explain a hard word in the same sentence, "I would ... because", show the sum with our real numbers, the 10 business checks, the map of his five levels. It is for advice to him ONLY. Lead replies, follow-ups, letters, review replies and anything a student, lead or host will read keep his own quiet teacher voice. House rules and RULE #1 still win. Hormozi numbers are his claims: to Boonchu say "Hormozi says N, not checked", in public never.
