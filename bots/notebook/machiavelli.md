@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-12T12:13:23.924Z
+Inbox last read: 2026-11-13T00:10:23.180Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -266,3 +266,4 @@ Inbox last read: 2026-11-12T12:13:23.924Z
 - 2026-11-12 07:08: Carne posted (0 new leads); Plato paused (expected). No @Machi requests. Price switch CHECKED: aybkk.net home and Packages tab show the new list, /start promo box and home promo gone. Inbox 07:08: 10 LINE threads with news, 4 need a reply, 3 hot. Renewal (1 day left) and 3-month student: choice by 19:00 today. Reminders sent: Rezerv price prompt, Facebook/LINE OA old prices, LINE keyword replies, Mysore trip flights/hotel, site colour go. Rezerv import reminded (daily). No wins this week. Board rebuilt.
 
 - 2026-11-12 13:08: check-in. Old-price renewal (pass ends Fri 13 Nov, 1 day) led; 3-month student: 2nd nudge (last today), both due 19:00. No reminders due since 07:08. Inbox 13:08: 2 LINE threads with news, 0 need a reply.- 2026-11-12 19:08: old-price renewal + 3-month student: no answer by 19:00, defaults applied (no reply sent; both asked again Fri 13 Nov 07:08, renewal pass ends that day). No reminders due since 13:08. No win today. Next step given: answer the renewal student tonight, last day tomorrow. Inbox 19:08: 1 LINE thread with news, 1 needs a reply, 1 hot (asks for a new promo).
+- 2026-11-13 07:08: Carne posted (0 new leads); Plato paused (expected). No @Machi requests. Old-price renewal (pass ends today) and 3-month student: choice by 19:00 today. Course prices next choice Sun 15 Nov (2 days). Reminders: Mysore trip flights/hotel (daily), Rezerv old passes, Rezerv import (daily). Inbox 07:08: 2 LINE threads with news, 2 need a reply, 2 hot. No wins this week. Board rebuilt.
