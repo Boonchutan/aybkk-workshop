@@ -1,0 +1,195 @@
+{
+ "intro": "Ask one question at a time, then stay quiet and let them talk. You will not use all 20: pick the ones that fit this person. A kind \"not yet\" is a good result too.",
+ "steps": [
+  {
+   "step": "Learn their practice",
+   "kit": "Kit step 2: Their story",
+   "aim": "Learn how they practice and why they applied, before you talk about the program.",
+   "qs": [
+    {
+     "n": 0,
+     "ask": "How do you practice now: in a Mysore room, in led classes, or alone? How many days a week?",
+     "listen": "Primary Series by heart, plus Mysore and led class? That is the entry level.",
+     "why": "Checks the entry level before anything else.",
+     "original": "(added by us: entry check)"
+    },
+    {
+     "n": 64,
+     "ask": "What has kept you practicing all these years, when many people stop?",
+     "listen": "Habit, a teacher, or only new asana? This shows what keeps them going.",
+     "why": "Opens warmly and tests our habit idea in their life.",
+     "original": "Why haven't you given up on this goal?"
+    },
+    {
+     "n": 62,
+     "ask": "What changed recently in your practice or teaching that made you apply?",
+     "listen": "A real event, like a stuck practice or students who stop coming.",
+     "why": "A real trigger shows a real need, not only curiosity.",
+     "original": "What's changed that makes you consider doing something now?"
+    },
+    {
+     "n": 1,
+     "ask": "What is the hardest thing in your practice or your teaching right now?",
+     "listen": "One clear, real problem, or only a wish to learn more asana?",
+     "why": "Hears their problem in their own words, before any program talk.",
+     "original": "What's the biggest challenge you're dealing with right now?"
+    }
+   ]
+  },
+  {
+   "step": "Find the real problem",
+   "kit": "Kit step 2: Their story",
+   "aim": "Get real stories and details, so you see if this program can help.",
+   "qs": [
+    {
+     "n": 14,
+     "ask": "Can you tell me about one real time this problem happened, in practice or class?",
+     "listen": "A true story with details, not a general idea.",
+     "why": "A real story is clearer than a general answer through a translator.",
+     "original": "Can you give me an example?"
+    },
+    {
+     "n": 6,
+     "ask": "If you teach: what happens in your classes that you wish did not happen?",
+     "listen": "Students who stop coming back? Write down their exact words.",
+     "why": "For teachers and studio owners: opens the problem of students leaving.",
+     "original": "What's happening that you wish wasn't?"
+    },
+    {
+     "n": 3,
+     "ask": "What have you already tried: workshops, trips to Mysore, other teachers, changes in your classes?",
+     "listen": "What failed and why. Is this program truly different from what they tried?",
+     "why": "If we are not different from what failed, say so.",
+     "original": "What have you tried so far?"
+    },
+    {
+     "n": 8,
+     "ask": "Of all you told me, which part is hardest to change on your own?",
+     "listen": "We can be their teacher for 30 days. We cannot give them time.",
+     "why": "Shows if a teacher is the missing piece, or something else.",
+     "original": "Which part feels the hardest to solve?"
+    }
+   ]
+  },
+  {
+   "step": "If nothing changes",
+   "kit": "Kit step 2: Their story",
+   "aim": "Let them name what is not working now. Ask gently, never push on pain.",
+   "qs": [
+    {
+     "n": 31,
+     "ask": "If your daily practice stays just as it is, what will that mean for you?",
+     "listen": "Real worry, or real peace. If peace, they may not need this.",
+     "why": "A calm answer lets a lead see they do not need us.",
+     "original": "What happens if nothing changes?"
+    },
+    {
+     "n": 38,
+     "ask": "If you teach: if you teach the same way for years, what happens to your students?",
+     "listen": "Do students stay or leave? If most stay, the need may be small.",
+     "why": "For teachers and studio owners: the core question of students who stay.",
+     "original": "What's the price of continuing down the same path?"
+    },
+    {
+     "n": 40,
+     "ask": "What would make this problem important enough that you want to change it?",
+     "listen": "If nothing would, this may not be the time. Do not push.",
+     "why": "Lets them see on their own if now is the time.",
+     "original": "At what point does staying the same become unacceptable?"
+    }
+   ]
+  },
+  {
+   "step": "The practice they want",
+   "kit": "Kit step 2: Their story",
+   "aim": "Hear the practice they want, and check if 30 days can serve it.",
+   "qs": [
+    {
+     "n": 71,
+     "ask": "What kind of practitioner, or teacher, do you want to become?",
+     "listen": "Deep practice over years, or a title? This program gives no authorization.",
+     "why": "Finds people who want a title, which this program never gives.",
+     "original": "What kind of person do you want to become?"
+    },
+    {
+     "n": 48,
+     "ask": "If you joined, how would you know a year later that it really helped?",
+     "listen": "Real signs, like a steady daily practice, not a new asana or title.",
+     "why": "Their answer shows if their hopes match what 30 days give.",
+     "original": "How would you know you'd succeeded?"
+    }
+   ]
+  },
+  {
+   "step": "Fit and worries",
+   "kit": "Kit step 6: Questions and worries",
+   "aim": "Find real reasons to say no: life, body, time, or a better choice.",
+   "qs": [
+    {
+     "n": 57,
+     "ask": "What would need to change so you can be away from home and work for 30 days?",
+     "listen": "A real plan, or a sign this is not the right time.",
+     "why": "Checks if their life truly has room for 30 days away.",
+     "original": "What specifically would need to change for the timing to work?"
+    },
+    {
+     "n": 89,
+     "ask": "What worries you about joining: an injury, the way we teach, or something else?",
+     "listen": "Injury or the method. Answer with facts, and promise nothing about the body.",
+     "why": "Brings injuries and worries out early, so you answer with facts.",
+     "original": "What risks would you want to understand before committing?"
+    },
+    {
+     "n": 85,
+     "ask": "What other teachers, trips, or courses are you thinking about for your practice?",
+     "listen": "Other good choices. If another teacher fits them better, say so.",
+     "why": "Shows we filter, not chase. Honesty here protects the brand.",
+     "original": "What alternatives are you considering?"
+    },
+    {
+     "n": 84,
+     "ask": "What would make 30 days of Mysore with us the wrong step for you?",
+     "listen": "Real reasons to say no. If one is strong, let them go kindly.",
+     "why": "The clearest way for a lead to see they should not join.",
+     "original": "What would make this the wrong solution for you?"
+    }
+   ]
+  },
+  {
+   "step": "The honest end",
+   "kit": "Kit step 7: Yes or no",
+   "aim": "Give your honest view and let them choose yes, no, or wait.",
+   "qs": [
+    {
+     "n": 97,
+     "ask": "We watched your practice video. Would you like our honest view, even if it is 'not yet'?",
+     "listen": "Are they open to 'not yet'? Then give the real view, kindly.",
+     "why": "Shows a teacher who notices, which is what we really offer.",
+     "original": "Would you like my honest recommendation?"
+    },
+    {
+     "n": 99,
+     "ask": "What do you still need to know or do before you can decide?",
+     "listen": "The real reason they wait, and a reply date they choose themselves.",
+     "why": "No false urgency. They set the next step, not us.",
+     "original": "Is there anything stopping you from making a decision today?"
+    },
+    {
+     "n": 100,
+     "ask": "Which is right for you: joining this group, waiting, or not joining?",
+     "listen": "Yes, no and wait are equal. If yes, explain the payment steps.",
+     "why": "A calm, open close. 'Wait' is an equal answer.",
+     "original": "Does it make sense to get started?"
+    }
+   ]
+  }
+ ],
+ "never_say": [
+  "\"Only today\", \"last seats\", or any deadline that is not real.",
+  "Calling this program teacher training, authorization or certification. It gives a certificate of completion, not authorization.",
+  "Any promise of results: a new asana, more students, \"your students will stay\", or a healed injury.",
+  "\"Investment\", \"it pays for itself\", or \"you can't afford to miss this\".",
+  "Anything that makes Boonchu's authorization bigger than it is.",
+  "\"Let me know soon\", or contacting them again and again after the call."
+ ]
+}
