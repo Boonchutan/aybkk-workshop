@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "12-059",
+  "id": "FB9",
+  "word": "BED",
+  "line": "Too long to wait? Then tonight. In this Tokyo trial, women 40 to 61 stretched 10 minutes before BED. After 3 weeks, their menopause symptom score fell from about 29 to 16.",
+  "credit": "KAI ET AL. \u00b7 MENOPAUSE \u00b7 2016 (retold)",
+  "t": 200,
+  "tight": false,
+  "wwidth": 540,
+  "wpos": [
+   60,
+   1080
+  ],
+  "ink_w": "light",
+  "sz": 40,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   667,
+   60
+  ],
+  "ink_s": "light",
+  "wm": "right",
+  "wburn": 0.15,
+  "line_br": "Too long to wait? | Then tonight. | In this Tokyo trial, | women 40 to 61 | stretched | 10 minutes | before BED. | | | | | After 3 weeks, | their menopause | symptom score | fell from about | 29 to 16.",
+  "shadow": 1.2
+ }
+]

@@ -1,0 +1,30 @@
+[
+ {
+  "photo": "12-081",
+  "id": "FB3",
+  "word": "ARTERIES",
+  "line": "Look inside. In this Japanese study of 526 adults, people 40 and older with a shorter reach toward their toes had stiffer ARTERIES than others their age. Under 40, no clear difference.",
+  "credit": "YAMAMOTO ET AL. · 2009 (retold)",
+  "t": 70,
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   299,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   "R",
+   516
+  ],
+  "ink_s": "light",
+  "sright": true,
+  "sburn": 0.35,
+  "wm": "right",
+  "wshadow": 1.3
+ }
+]

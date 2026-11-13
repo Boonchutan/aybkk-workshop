@@ -1,0 +1,29 @@
+[
+ {
+  "photo": "12-160",
+  "id": "FB6",
+  "word": "AGE",
+  "line": "Is AGE just birthdays? German-born fitness teacher Joseph Pilates wrote: \"If your spine is inflexibly stiff at 30, you are old; if it is completely flexible at 60, you are young.\"",
+  "credit": "JOSEPH PILATES · RETURN TO LIFE THROUGH CONTROLOGY · 1945",
+  "t": 200,
+  "tight": false,
+  "wwidth": 720,
+  "wpos": [
+   752,
+   400
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   60
+  ],
+  "ink_s": "dark",
+  "wrot": -90,
+  "wshadow": 1.4,
+  "wm": "orig"
+ }
+]

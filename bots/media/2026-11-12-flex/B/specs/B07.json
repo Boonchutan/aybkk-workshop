@@ -1,0 +1,31 @@
+[
+ {
+  "photo": "12-165",
+  "id": "FB7",
+  "word": "INCH",
+  "line": "A popular Chinese saying goes further: sinews (tendons) one INCH longer, life ten years longer. Lovely. But no old source has been found, and nobody ever measured that number.",
+  "credit": "CHINESE SAYING 筋长一寸，寿延十年 (retold)",
+  "t": 0,
+  "tight": false,
+  "wwidth": 540,
+  "wpos": [
+   480,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 40,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   60,
+   60
+  ],
+  "ink_s": "light",
+  "sburn": 0.35,
+  "wshadow": 1.6,
+  "wburn": 0.25,
+  "wm": "center",
+  "line_br": "A popular Chinese | saying goes further: | sinews (tendons) | one INCH longer, | life ten years longer. | Lovely. But no old source | has been found, and nobody | ever measured that number."
+ }
+]

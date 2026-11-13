@@ -1,0 +1,33 @@
+[
+ {
+  "photo": "12-182",
+  "id": "FB8",
+  "word": "STRETCHED",
+  "line": "What was measured? In this American study, 26,727 adults were followed for 17 years. Those who said they STRETCHED were linked with about 10% lower odds of dying, after counting other exercise.",
+  "credit": "SHEEHAN & LI · 2020 (retold)",
+  "t": 80,
+  "tight": false,
+  "wwidth": 810,
+  "wpos": [
+   60,
+   60
+  ],
+  "ink_w": "light",
+  "sz": 42,
+  "cws": [
+   607
+  ],
+  "sxy": [
+   "R",
+   60
+  ],
+  "ink_s": "light",
+  "wrot": -90,
+  "sright": true,
+  "wm": "left",
+  "wshadow": 1.4,
+  "wburn": 0,
+  "sburn": 0.15,
+  "line_br": "What was measured? | In this American study, | 26,727 adults were followed | for 17 years. Those who said | they STRETCHED were linked | with about 10% lower odds | of dying, after counting | other exercise."
+ }
+]

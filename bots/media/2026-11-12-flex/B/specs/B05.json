@@ -1,0 +1,33 @@
+[
+ {
+  "photo": "12-180",
+  "id": "FB5",
+  "word": "HIP",
+  "line": "And outside? Watch people walk. In this Boston study, the back leg's HIP opened about 20 degrees in young adults. Healthy older people: 14. Older people with repeated falls: 11.",
+  "credit": "KERRIGAN ET AL. \u00b7 2001 (retold)",
+  "t": 240,
+  "tight": false,
+  "wwidth": 540,
+  "wpos": [
+   60,
+   587
+  ],
+  "wrot": -90,
+  "ink_w": "light",
+  "wshadow": 1.5,
+  "wburn": 0.25,
+  "sz": 40,
+  "cws": [
+   353
+  ],
+  "sxy": [
+   "R",
+   632
+  ],
+  "sright": true,
+  "ink_s": "light",
+  "wm": "left",
+  "line_br": "And outside? | Watch people | walk. In this | Boston study, the | back leg's HIP | opened about 20 | degrees in young | adults. Healthy | older people: 14. | Older people | with repeated | falls: 11.",
+  "sburn": 0.15
+ }
+]
