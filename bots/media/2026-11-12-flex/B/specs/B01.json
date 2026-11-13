@@ -1,31 +1,30 @@
 [
  {
-  "photo": "12-145",
+  "photo": "12-159",
   "id": "FB1",
   "word": "SUPPLE",
   "line": "You were born SUPPLE. Chinese thinker Laozi wrote that we start life soft and end it hard and stiff. Stiffness goes with death, he said. Softness goes with life.",
   "credit": "LAOZI · DAODEJING 76 (retold)",
-  "t": 0,
+  "t": 270,
   "tight": false,
   "wwidth": 720,
   "wpos": [
    60,
-   387
+   60
   ],
   "ink_w": "light",
-  "sz": 40,
+  "sz": 42,
   "cws": [
    607
   ],
   "sxy": [
    60,
-   60
+   991
   ],
   "ink_s": "light",
-  "sburn": 0.3,
-  "wburn": 0.15,
-  "wshadow": 1.3,
   "wm": "right",
-  "line_br": "You were born SUPPLE. | Chinese thinker Laozi wrote | that we start life soft | and end it hard and stiff. | Stiffness goes with death, | he said. Softness goes with life."
+  "sburn": 0.25,
+  "wshadow": 1.3,
+  "line_br": "You were born SUPPLE. | Chinese thinker Laozi | wrote that we start life soft | and end it hard and stiff. | Stiffness goes with death, he | said. Softness goes with life."
  }
 ]
