@@ -8,3 +8,4 @@ Reminders: Mysore family trip: flights and hotel booked? Rezerv still sells the 
 Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads.
 Score: wins this week (from Mon 9 Nov): none reported. 180K leads: 0 new, 1 serious silent 27 days.
 Inbox 07:08: 2 LINE threads with news, 2 need a reply, 2 hot.
+13:08 check-in: old-price renewal (pass ends today) led, 3-month student: 2nd nudge (last today), both due 19:00. No reminders due since 07:08. Inbox 13:08: 1 LINE thread with news, 1 needs a reply, 0 hot.
