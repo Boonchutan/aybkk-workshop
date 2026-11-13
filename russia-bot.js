@@ -522,8 +522,8 @@ function attach(bot) {
 
   // /export — Boonchu only — DM CSV of all RU students
   bot.command('export', async (ctx) => {
-    if (BOONCHU_CHAT_ID && String(ctx.from.id) !== String(BOONCHU_CHAT_ID)) {
-      return; // silent no-op for non-admins
+    if (!BOONCHU_CHAT_ID || String(ctx.from.id) !== String(BOONCHU_CHAT_ID)) {
+      return; // silent no-op for non-admins, and for everyone while BOONCHU_CHAT_ID is unset
     }
     try {
       const res = await fetch(`${API_BASE}/api/orientations/ru?format=csv`, { headers: STAFF_HEADERS });

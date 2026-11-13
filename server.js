@@ -1623,7 +1623,7 @@ app.get('/api/orientations/bkk', staffOnly, async (req, res) => {
 
 // ─── Short journal link redirect ─────────────────────────────────────────
 // /j/:slug — short link that 302s to the full Thai journal URL.
-//   slug = numeric Reserv ID (e.g. /j/44), or for staff a fuzzy name (/j/tomoko)
+//   slug = numeric Reserv ID (e.g. /j/44), or for staff a fuzzy name (/j/<name>)
 // If the student already has a `journal_link` in Reserv, we preserve its
 // underlying id (keeps existing journal history) but force lang=th & location=bangkok.
 app.get('/j/:slug', async (req, res) => {
@@ -1635,7 +1635,7 @@ app.get('/j/:slug', async (req, res) => {
     let row = null;
     // Pattern 1: pure numeric ID — /j/689
     // Pattern 2: pretty slug with trailing ID — /j/boonchu-test-689 (id wins, prefix is decorative)
-    // Pattern 3 (staff only): name-only fuzzy match — /j/tomoko (must resolve to exactly one)
+    // Pattern 3 (staff only): name-only fuzzy match — /j/<name> (must resolve to exactly one)
     // ID can appear three ways: bare (/j/689), leading (/j/689-boonchu), trailing (/j/boonchu-689)
     let id = null;
     if (/^\d+$/.test(slug)) {

@@ -61,10 +61,11 @@ let n = 1;
   process.exit(0);
 })();
 `;
-function botRun(updates) {
+function botRun(updates, extra = {}) {
   const env = { ...process.env, TELEGRAM_BOT_TOKEN: '1:lock-test', TEACHER_CHAT_IDS: '5001', BOONCHU_CHAT_ID: '5002',
     LOCK_TEST_BOT: path.join(ROOT, 'assessment-bot.js'), LOCK_TEST_UPDATES: JSON.stringify(updates),
-    DATA_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-bot-')), NEO4J_URI: 'bolt://127.0.0.1:9' };
+    DATA_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'lock-bot-')), NEO4J_URI: 'bolt://127.0.0.1:9',
+    RUSSIA_BOT_API_BASE: 'http://127.0.0.1:9', ...extra };
   return new Promise(resolve => {
     const c = spawn(process.execPath, ['-e', BOT_HARNESS], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'ignore'] });
     let out = '';
@@ -279,6 +280,8 @@ const LOCKED = [
   ok('a teacher still gets the member list', runs[4] && runs[4].buttons > 0);
   ok('BOONCHU_CHAT_ID still gets the member list', runs[5] && runs[5].buttons > 0);
   ok('a stranger pressing Start still gets the Russia sign-up', runs[6] && runs[6].messages === 1);
+  const noAdmin = await botRun([[7005, '/export']], { BOONCHU_CHAT_ID: '' });
+  ok('/export gives nothing to anyone while BOONCHU_CHAT_ID is unset', noAdmin.length === 1 && noAdmin[0].messages === 0, JSON.stringify(noAdmin.map(r => r.messages)));
 
   await pool.query(`DELETE FROM journal_entries WHERE student_id = ANY($1::int[])`, [ids]);
   await pool.query(`DELETE FROM students WHERE name LIKE 'Locktest %'`);
