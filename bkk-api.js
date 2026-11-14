@@ -249,6 +249,218 @@ function payMethod(raw) {
   return 'other';
 }
 
+// A visit they came to: a live seat that was checked in (the door, or the
+// class start for one moved over from Rezerv). Written for bkk_bookings b.
+const ATTENDED = `b.status='booked' AND b.checked_in_at IS NOT NULL`;
+// Students who were already with the shala before aybkk.net (moved over from Rezerv). For bkk_members m.
+const FROM_REZERV = `(m.source IS NOT DISTINCT FROM 'rezerv' OR EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=m.id AND x.source='rezerv')
+    OR EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=m.id AND x.source='rezerv'))`;
+// A pass that carries on after p ends: the student has already renewed. $1 is the day.
+const CARRIES_ON = `EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=p.member_id AND x.id<>p.id
+    AND x.status IN ('active','frozen') AND (x.valid_until IS NULL OR x.valid_until > coalesce(p.valid_until, $1::date))
+    AND (x.kind='unlimited' OR x.credits_used < x.credits_total))`;
+
+// ── "See you tomorrow": students who hold a pass but stopped coming (Nov 2026) ──
+// One rule, quietRows, makes the Today box, the 05:00 brief and the Reports list,
+// so they can never disagree. Nothing here sends anything: staff copy a draft and
+// send it by hand. Every day is a Bangkok date as text.
+const QUIET = { freshDay: 3, coolDays: 30, gapDays: 5, muteDays: 90, endingDays: 14, teacherFrom: 21, noteMax: 200 };
+// field → [settings key, default]. Everything ships off until Boonchu switches it on.
+const QUIET_SETTINGS = {
+  quietBox: ['quiet_box', 'off'], quietBrief: ['quiet_brief', 'off'],
+  quietDays: ['quiet_days', 7], quietDays2: ['quiet_days2', 14],
+  quietDaysShort: ['quiet_days_short', 5], quietDays2Short: ['quiet_days2_short', 10],
+  quietRezerv: ['quiet_rezerv', 'hide'],
+};
+const wholeIn = (v, lo, hi) => Number.isInteger(v) && v >= lo && v <= hi;
+function quietSettingsError(s) {
+  if (!['on', 'off'].includes(s.quietBox)) return 'quietBox must be on or off';
+  if (!['on', 'off'].includes(s.quietBrief)) return 'quietBrief must be on or off';
+  if (!wholeIn(s.quietDays, 5, 30)) return 'quietDays must be a whole number from 5 to 30';
+  if (!wholeIn(s.quietDays2, s.quietDays + 1, 60)) return 'quietDays2 must be a whole number above quietDays, at most 60';
+  if (!wholeIn(s.quietDaysShort, 3, 30)) return 'quietDaysShort must be a whole number from 3 to 30';
+  if (!wholeIn(s.quietDays2Short, s.quietDaysShort + 1, 60)) return 'quietDays2Short must be a whole number above quietDaysShort, at most 60';
+  if (!['hide', 'show'].includes(s.quietRezerv)) return 'quietRezerv must be hide or show';
+  return null;
+}
+const QUIET_DEFAULTS = Object.fromEntries(Object.entries(QUIET_SETTINGS).map(([f, [, d]]) => [f, d]));
+async function quietConfig(q) {
+  const r = await q(`SELECT key, value FROM bkk_settings WHERE key = ANY($1::text[])`,
+    [[...Object.values(QUIET_SETTINGS).map(([k]) => k), 'quiet_rezerv_from']]);
+  const v = Object.fromEntries(r.rows.map(x => [x.key, x.value]));
+  const s = Object.fromEntries(Object.entries(QUIET_SETTINGS).map(([f, [k, d]]) => [f, v[k] ?? d]));
+  // A value set by hand in the database that breaks a rule: back to the defaults, all off.
+  return { ...(quietSettingsError(s) ? QUIET_DEFAULTS : s),
+    quietRezervFrom: /^\d{4}-\d{2}-\d{2}$/.test(String(v.quiet_rezerv_from || '')) ? v.quiet_rezerv_from : null };
+}
+
+// The message set (bots/content/see-you-tomorrow-messages.md), word for word. English
+// approved by Boonchu 14 Nov 2026; Thai waits on Jamsai's read. {name} is the first
+// name, {ka} the sender's ครับ or ค่ะ. bkk_outreach keeps the key, never the text.
+const QUIET_TEXTS = {
+  first: {
+    en: '{name}, see you tomorrow? We have not seen you at the shala for a few days, so we are saying hello. Come at the time that suits you.',
+    th: 'สวัสดี{ka} คุณ{name} ไม่ได้เจอกันที่ชาลาหลายวันแล้ว เลยทักมาหา{ka} ถ้าพรุ่งนี้สะดวก แล้วเจอกันที่ชาลา{ka}' },
+  firstClosed: {
+    en: 'Hi {name}, AYBKK here. We have not seen you at the shala for a few days, so we are saying hello. Come at the time that suits you.',
+    th: 'สวัสดี{ka} คุณ{name} ไม่ได้เจอกันที่ชาลาหลายวันแล้ว เลยทักมาหา{ka} มาฝึกตามเวลาที่สะดวกได้เลย แล้วเจอกันที่ชาลา{ka}' },
+  teacher: {
+    en: '{name}, Boonchu here. I have not seen you in the room for a while. No need to explain. How are you these days? The shala is here when you are ready.',
+    th: 'คุณ{name} ครูบุญชูเอง{ka} ไม่ได้เจอกันในห้องฝึกมาสักพักแล้ว เลยทักมาหา{ka} ช่วงนี้เป็นยังไงบ้าง ถ้ามีอะไรติดขัด บอกครูได้เลย พร้อมเมื่อไหร่ก็มาฝึกได้ แล้วเจอกัน{ka}' },
+  fresh: {
+    en: 'Hi {name}, welcome to AYBKK. Your pass is open. Shall I book your first morning? Tell me the day and I will tell the teacher you are coming. If it is your first time, we teach from the beginning.',
+    th: 'สวัสดี{ka} คุณ{name} ยินดีต้อนรับ{ka} แพ็กเกจของคุณ{name}เริ่มใช้ได้แล้ว จองเช้าแรกให้เลยดีไหม บอกวันที่สะดวกมาได้เลย เดี๋ยวจองคลาสให้ แล้วจะบอกครูไว้ให้ด้วย{ka} ถ้าเป็นครั้งแรก เราสอนตั้งแต่เริ่มต้น{ka}' },
+  ending: {
+    en: '{name}, see you tomorrow? Your pass is still open. Come at the time that suits you and start from where you are.',
+    th: 'สวัสดี{ka} คุณ{name} แพ็กเกจของคุณ{name}ยังใช้ได้อยู่ มาฝึกตามเวลาที่สะดวกได้เลย{ka} ค่อย ๆ เริ่มใหม่ได้ ถ้าพรุ่งนี้สะดวก แล้วเจอกันที่ชาลา{ka}' },
+  endingClosed: {
+    en: 'Hi {name}. Your pass is still open. Come at the time that suits you and start from where you are.',
+    th: 'สวัสดี{ka} คุณ{name} แพ็กเกจของคุณ{name}ยังใช้ได้อยู่ มาฝึกตามเวลาที่สะดวกได้เลย{ka} ค่อย ๆ เริ่มใหม่ได้ แล้วเจอกันที่ชาลา{ka}' },
+  replyBusy: {
+    en: 'Thank you for telling me, {name}. That sounds like a busy time. There is nothing to catch up on here. Come at the time that suits you. If you tell me the day, the teacher will know you are coming.',
+    th: 'ขอบคุณที่เล่าให้ฟัง{ka} คุณ{name} ช่วงนี้คงยุ่งมากเลย กลับมาเมื่อไหร่ก็ฝึกต่อได้เลย มาฝึกตามเวลาที่สะดวก{ka} จะมาวันไหนบอกไว้ก่อนได้ จะบอกครูไว้ให้{ka}' },
+  replyHealth: {
+    en: 'Thank you for telling me, {name}. I hope you feel better soon. Take the time you need. When you come back, tell the teacher how you are before you start. We will go at your pace.',
+    th: 'ขอบคุณที่บอก{ka} คุณ{name} ขอให้หายไว ๆ {ka} พร้อมเมื่อไหร่ค่อยกลับมาได้เลย ก่อนเริ่มฝึกเล่าให้ครูฟังสักนิดว่าเป็นยังไง แล้วเราค่อย ๆ ไปด้วยกัน{ka}' },
+  replyHabit: {
+    en: 'Thank you for saying it, {name}. There is nothing to make up for and nothing to explain. A habit starts again with one morning. Which morning suits you? Tell me and the teacher will know you are coming.',
+    th: 'ขอบคุณที่บอกตรง ๆ {ka} คุณ{name} ไม่เป็นไรเลย เริ่มใหม่ได้เสมอ มาสักเช้าเดียวก็เริ่มได้แล้ว{ka} เช้าวันไหนสะดวก บอกไว้ได้เลย จะบอกครูไว้ให้{ka}' },
+  replyMoney: {
+    en: 'Thank you for telling me, {name}. I understand, and you do not need to say more. Your pass is still open, so come at the time that suits you. We will be glad to see you at the shala.',
+    th: 'ขอบคุณที่ไว้ใจเล่าให้ฟัง{ka} คุณ{name} เข้าใจเลย{ka} แพ็กเกจของคุณ{name}ยังใช้ได้อยู่ มาฝึกตามเวลาที่สะดวกได้เลย แล้วเจอกันที่ชาลา{ka}' },
+  q1: { en: 'How have your mornings been lately?', th: 'ขอถามหน่อย{ka} ช่วงนี้ตอนเช้าเป็นยังไงบ้าง' },
+  q2: { en: 'Does the practice time still fit your day?', th: 'เวลาฝึกตอนนี้ยังสะดวกอยู่ไหม ถ้าไม่สะดวก บอกได้เลย{ka}' },
+  q3: { en: 'Is there anything at the shala or in the teaching you would like us to change?', th: 'มีอะไรที่ชาลาหรือในการสอนที่อยากให้เราปรับไหม บอกตรง ๆ ได้เลย{ka}' },
+};
+const QUIET_SEND_KEYS = ['first', 'firstClosed', 'teacher', 'fresh', 'ending', 'endingClosed'];
+// Why a student went quiet, as staff heard it, and the one reply that goes with it.
+// "us" is something on our side. Health is a category only: never a note.
+const QUIET_REASONS = { work: 'replyBusy', travel: 'replyBusy', health: 'replyHealth', habit: 'replyHabit',
+  money: 'replyMoney', moved: null, us: null, other: null };
+const KA = { krub: 'ครับ', kha: 'ค่ะ' };
+// "Anna Maria Bell" → "Anna". A word with a digit, '+' or '@' is skipped, as in the
+// team brief's shortName: real names have none, emails, phones and codes do.
+const firstName = raw => [...(String(raw || '').replace(/\([^)]*\)/g, ' ').replace(/[\u0000-\u001f\u007f]/g, ' ')
+  .split(/\s+/).find(w => w && !/[@+\d]/.test(w)) || '')].slice(0, 30).join('');
+// The teacher's note is Boonchu's own, so its Thai always ends ครับ.
+function quietDraft(key, lang, name, ka) {
+  const t = (QUIET_TEXTS[key] || {})[lang];
+  if (!t) return null;
+  const particle = key === 'teacher' ? KA.krub : KA[ka] || KA.kha;
+  return t.replace(/\{name\}/g, () => name || '').replace(/\{ka\}/g, particle);
+}
+
+const plusDays = (d, n) => new Date(Date.parse(`${d}T12:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
+const dayGap = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / 86400000);
+
+// Who holds a pass they can use on `date` and has not come for a while, and what
+// staff should do: { asOf, todo, resting, parked, heldBack, muted }, one row per member.
+// cfg is quietConfig(q); memberId narrows it to one student.
+async function quietRows(q, { date, cfg, memberId = null } = {}) {
+  cfg = cfg || await quietConfig(q);
+  const out = { asOf: date, todo: [], resting: [], parked: [], heldBack: 0, muted: 0 };
+  // One usable pass each: started, not ended, a class left, not a drop-in, not paused.
+  // A pass with no dates yet starts on the Bangkok day it was bought.
+  const START = `coalesce(p.valid_from, (p.created_at AT TIME ZONE 'Asia/Bangkok')::date)`;
+  const holders = (await q(`SELECT m.id AS member_id, m.code, m.name, p.id AS pass_id, p.kind, p.valid_days,
+      p.credits_total, p.credits_used, p.order_id, p.source, pr.name_en, pr.name_th,
+      to_char(p.valid_until,'YYYY-MM-DD') AS until, to_char(${START},'YYYY-MM-DD') AS start,
+      to_char(p.frozen_until,'YYYY-MM-DD') AS frozen_until, ${FROM_REZERV} AS from_rezerv, ${CARRIES_ON} AS carries_on,
+      EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=m.id AND x.status='booked' AND x.class_date >= $1::date) AS ahead,
+      c.last, coalesce(c.d28, 0) AS d28
+    FROM (SELECT DISTINCT ON (p.member_id) p.* FROM bkk_passes p
+      WHERE p.status='active' AND ${START} <= $1::date AND (p.valid_until IS NULL OR p.valid_until >= $1::date)
+        AND (p.kind='unlimited' OR (p.credits_total > 1 AND p.credits_used < p.credits_total))
+        AND ($2::int IS NULL OR p.member_id=$2)
+      ORDER BY p.member_id, p.valid_from NULLS LAST, p.id) p
+    JOIN bkk_members m ON m.id=p.member_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
+    LEFT JOIN LATERAL (SELECT to_char(max(v.d),'YYYY-MM-DD') AS last,
+        count(*) FILTER (WHERE v.d > $1::date - 28 AND v.d >= ${START})::int AS d28
+      FROM (SELECT DISTINCT b.class_date AS d FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
+        WHERE b.member_id=m.id AND b.class_date <= $1::date AND (${ATTENDED} OR (b.status='booked' AND s.is_online
+          AND (b.class_date < $1::date OR b.start_at + make_interval(mins => coalesce(s.duration_min, 120)) <= now())))) v) c ON true
+    ORDER BY m.id`, [date, memberId])).rows;
+  if (!holders.length) return out;
+  const ids = holders.map(h => h.member_id);
+  const [seats, notes] = await Promise.all([
+    // On-site seats booked and never checked in: the door may have missed them.
+    q(`SELECT b.member_id, to_char(b.class_date,'YYYY-MM-DD') AS d FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
+       WHERE b.member_id = ANY($2::int[]) AND b.status='booked' AND b.checked_in_at IS NULL AND NOT coalesce(s.is_online, false)
+         AND b.class_date < $1::date AND b.class_date > $1::date - 400`, [date, ids]),
+    q(`SELECT o.id, o.member_id, o.kind, o.step, o.reason, o.messaged_by, o.created_at,
+         to_char(o.created_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day, to_char(o.mute_until,'YYYY-MM-DD') AS mute_until
+       FROM bkk_outreach o WHERE o.member_id = ANY($2::int[]) AND (o.created_at AT TIME ZONE 'Asia/Bangkok')::date <= $1::date
+       ORDER BY o.created_at, o.id`, [date, ids]),
+  ]);
+  let closed = null;
+  const tomorrowClosed = async () => {
+    if (closed !== null) return closed;
+    const t = plusDays(date, 1);
+    closed = moonDaysBetween(t, t).size > 0 || !(await q(`SELECT 1 FROM bkk_class_slots s
+      WHERE s.active AND NOT s.is_online AND s.weekday=$1 AND NOT EXISTS (SELECT 1 FROM bkk_class_overrides o
+        WHERE o.slot_id=s.id AND o.class_date=$2::date AND o.cancelled) LIMIT 1`, [new Date(`${t}T12:00:00Z`).getUTCDay(), t])).rows.length;
+    return closed;
+  };
+  for (const h of holders) {
+    if (h.source === 'rezerv' && cfg.quietRezerv !== 'show') { out.heldBack++; continue; }
+    const mine = notes.rows.filter(n => n.member_id === h.member_id);
+    if (mine.some(n => n.kind === 'mute' && n.mute_until >= date)) { out.muted++; continue; }
+    if (h.ahead) continue;
+    // Counted from the latest of: last came, the pass start, the end of a pause, and for a
+    // Rezerv pass the day Rezerv packages were switched on here (never before it).
+    const since = [h.last, h.start, h.frozen_until && h.frozen_until <= date ? h.frozen_until : null,
+      h.source === 'rezerv' ? cfg.quietRezervFrom || date : null].filter(Boolean).sort().pop();
+    const daysQuiet = dayGap(since, date);
+    const cls = h.kind === 'unlimited' ? (h.valid_days > 100 ? 'long' : 'short') : 'pack';
+    const kind = !h.last && !h.from_rezerv ? 'new' : 'quiet';
+    const step1 = kind === 'new' ? (cls === 'pack' ? cfg.quietDays : QUIET.freshDay)
+      : cls === 'long' ? cfg.quietDays : cls === 'short' ? cfg.quietDaysShort : cfg.quietDays2;
+    const step2 = kind === 'new' || cls === 'pack' ? null : cls === 'long' ? cfg.quietDays2 : cfg.quietDays2Short;
+    if (daysQuiet < step1) continue;
+    // The spell is everything after `since`: a note on the day they came was before it.
+    const msgs = mine.filter(n => n.kind === 'message');
+    const spell = mine.filter(n => n.kind !== 'mute' && n.day > since);
+    const sent = spell.filter(n => n.kind === 'message');
+    const answer = [...spell].reverse().find(n => n.reason);
+    const last = msgs[msgs.length - 1];
+    let state, step = null, sender = null;
+    if (answer || sent.some(n => n.step >= (step2 ? 2 : 1))) state = 'parked';
+    else if (step2 && daysQuiet >= step2 && (!last || dayGap(last.day, date) >= QUIET.gapDays)) { state = 'todo'; step = 2; sender = 'teacher'; }
+    else if (sent.length || msgs.some(n => n.step === 1 && dayGap(n.day, date) < QUIET.coolDays)) state = 'resting';
+    // From 21 days with no note yet, the name goes to Boonchu only.
+    else { state = 'todo'; step = 1; sender = daysQuiet >= QUIET.teacherFrom ? 'teacher' : 'staff'; }
+    let draftKey = null;
+    if (state === 'todo') {
+      draftKey = kind === 'new' ? 'fresh' : sender === 'teacher' ? 'teacher'
+        : h.until && h.until <= plusDays(date, QUIET.endingDays) && !h.carries_on ? 'ending' : 'first';
+      if ((draftKey === 'first' || draftKey === 'ending') && await tomorrowClosed()) draftKey += 'Closed';
+    }
+    out[state].push({
+      memberId: h.member_id, code: h.code, name: h.name, kind, state, step, sender,
+      pass: { id: h.pass_id, name: h.name_en, nameTh: h.name_th, class: cls, until: h.until,
+        daysLeft: h.until ? dayGap(date, h.until) + 1 : null,
+        creditsLeft: h.kind === 'unlimited' ? null : h.credits_total - h.credits_used,
+        source: h.source || (h.order_id ? 'order' : 'manual') },
+      since, lastCame: h.last, daysQuiet, cameLast28: h.d28,
+      unchecked: seats.rows.filter(s => s.member_id === h.member_id && s.d > since).length,
+      // Staff only, never in a note: a membership over a month long that ends within 14 days, nothing
+      // after it, and under 8 days came in 28 days that were all on the pass and not paused.
+      endsSoonCameLittle: cls !== 'pack' && h.valid_days > 31 && !!h.until && h.until <= plusDays(date, 14) && h.d28 < 8
+        && h.start <= plusDays(date, -27) && !h.carries_on && !(h.frozen_until && h.frozen_until > plusDays(date, -27)),
+      messaged: msgs.filter(n => n.day > since || dayGap(n.day, date) < QUIET.coolDays).reverse()
+        .map(n => ({ id: n.id, at: n.created_at, by: n.messaged_by, step: n.step, reason: n.reason })),
+      reason: answer ? answer.reason : null,
+      outreachId: sent.length ? sent[sent.length - 1].id : null,
+      draftKey,
+    });
+  }
+  const byQuiet = (a, b) => b.daysQuiet - a.daysQuiet || a.name.localeCompare(b.name);
+  out.todo.sort((a, b) => (a.sender === 'teacher') - (b.sender === 'teacher') || byQuiet(a, b));
+  out.resting.sort(byQuiet);
+  out.parked.sort(byQuiet);
+  return out;
+}
+
 function mountBkk(app, opts = {}) {
   const pool = opts.pgPool;
   const cloudinary = opts.cloudinary || null;
@@ -502,6 +714,24 @@ function mountBkk(app, opts = {}) {
       photo_id TEXT PRIMARY KEY,
       since TIMESTAMPTZ NOT NULL DEFAULT now(),
       tries INTEGER NOT NULL DEFAULT 1)`);
+    // The "See you tomorrow" list (Nov 2026): a note staff sent by hand ('message'),
+    // a reason the student already gave the desk ('known'), or "their own rhythm"
+    // ('mute'). Not bkk_notes: those are served to the student. The draft's key
+    // is kept, never its text. A 'health' reason never has a note.
+    await q(`CREATE TABLE IF NOT EXISTS bkk_outreach (
+      id SERIAL PRIMARY KEY,
+      member_id INTEGER NOT NULL REFERENCES bkk_members(id) ON DELETE CASCADE,
+      kind TEXT NOT NULL, step INTEGER,
+      pass_id INTEGER REFERENCES bkk_passes(id) ON DELETE SET NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      messaged_at TIMESTAMPTZ, messaged_by TEXT,
+      days_quiet INTEGER, last_came DATE, draft_key TEXT,
+      reason TEXT, reason_note TEXT, answered_at TIMESTAMPTZ, answered_by TEXT,
+      mute_until DATE)`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_outreach_member ON bkk_outreach (member_id, created_at DESC)`);
+    // One note per student per Bangkok day: a second tap finds the first.
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_outreach_one_a_day
+             ON bkk_outreach (member_id, ((created_at AT TIME ZONE 'Asia/Bangkok')::date)) WHERE kind='message'`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -687,9 +917,6 @@ function mountBkk(app, opts = {}) {
     return `${WD3[d.getUTCDay()]} ${d.getUTCDate()} ${MON3[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${hhmm}`;
   };
   const dayName = dateStr => classWhen(dateStr, '').slice(0, -2);
-  // A visit they came to: a live seat that was checked in (the door, or the
-  // class start for one moved over from Rezerv). Written for bkk_bookings b.
-  const ATTENDED = `b.status='booked' AND b.checked_in_at IS NOT NULL`;
   // A no-show: Rezerv said so, or a seat here never checked in by the end of
   // its day (aybkk.net itself never writes 'noshow').
   const NOSHOW = `(b.status='noshow' OR (b.status='booked' AND b.checked_in_at IS NULL
@@ -2266,6 +2493,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return { morning: v('team_brief_morning') === 'on' ? 'on' : 'off',
       evening: v('team_brief_evening') === 'on' ? 'on' : 'off', lang: v('team_brief_lang') === 'en' ? 'en' : 'th' };
   };
+  // The "See you tomorrow" list, all off until switched on here, with the latest
+  // Rezerv visit on file so staff can see how fresh the Rezerv history is.
+  const quietSettings = async () => ({ ...(await quietConfig(q)),
+    lastRezervVisit: (await q(`SELECT to_char(max(b.class_date),'YYYY-MM-DD') AS d FROM bkk_bookings b
+      WHERE b.source='rezerv' AND ${ATTENDED} AND b.class_date <= $1::date`, [bkkToday()])).rows[0].d });
+
+  app.get('/api/bkk/admin/settings', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    try {
+      res.json({ surchargePct: await surcharge(), teamBrief: await teamSettings(), quiet: await quietSettings() });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
 
   app.post('/api/bkk/admin/settings', async (req, res) => {
     if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
@@ -2278,9 +2517,29 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         if (!allowed.includes(val)) return res.status(400).json({ error: `${field} must be ${allowed.join(' or ')}` });
         team.push([key, val]);
       }
+      // Checked as a whole against what is saved: step 2 must stay above step 1.
+      // One wrong value and nothing is saved.
+      const quietGiven = Object.keys(QUIET_SETTINGS).filter(f => b[f] !== undefined);
+      if (quietGiven.length) {
+        const next = await quietConfig(q);
+        for (const f of quietGiven) {
+          const v = b[f];
+          next[f] = typeof QUIET_DEFAULTS[f] === 'number'
+            ? (typeof v === 'number' ? v : /^\s*\d+\s*$/.test(String(v)) ? Number(v) : NaN)
+            : v === true ? 'on' : v === false ? 'off' : String(v);
+        }
+        const bad = quietSettingsError(next);
+        if (bad) return res.status(400).json({ error: bad });
+        for (const f of quietGiven) team.push([QUIET_SETTINGS[f][0], next[f]]);
+      }
       for (const [key, val] of team) {
         await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
                  ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`, [key, JSON.stringify(val)]);
+      }
+      // The day Rezerv packages first show: kept through later toggles.
+      if (b.quietRezerv === 'show') {
+        await q(`INSERT INTO bkk_settings (key,value) VALUES ('quiet_rezerv_from',$1) ON CONFLICT (key) DO NOTHING`,
+          [JSON.stringify(bkkToday())]);
       }
       if (req.body.surchargePct !== undefined) {
         await q(`INSERT INTO bkk_settings (key,value) VALUES ('surcharge_pct',$1)
@@ -2300,7 +2559,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                  ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`,
           ['link_' + k, JSON.stringify(url)]);
       }
-      res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings() });
+      res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings(), quiet: await quietSettings() });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3197,7 +3456,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const m = (await q('SELECT * FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
       if (!m) return res.status(404).json({ error: 'member not found' });
-      const [visits, pays, passes, notes, photos, checks, active] = await Promise.all([
+      const [visits, pays, passes, notes, photos, checks, active, outreach] = await Promise.all([
         q(`SELECT b.id, to_char(b.class_date,'YYYY-MM-DD') AS date, ${VISIT_TIME} AS time,
              coalesce(s.title, b.class_title) AS class, b.status, b.checked_in_at, b.cancelled_at, b.cancel_reason,
              b.cover, b.source, b.slot_id, b.start_at, b.pass_id, s.is_online, s.duration_min
@@ -3218,6 +3477,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         q(`SELECT to_char(taken_on,'YYYY-MM-DD') AS date, resting_hr, sleep_hours, feel, note
            FROM bkk_checks WHERE member_id=$1 ORDER BY taken_on DESC`, [m.id]),
         activePass(m.id),
+        q(`SELECT ${OUTREACH_COLS} FROM bkk_outreach WHERE member_id=$1 ORDER BY created_at DESC, id DESC`, [m.id]),
       ]);
       const today = bkkToday();
       const daysAgo = n => ymd(new Date(Date.parse(`${today}T12:00:00${TZ_OFFSET}`) - n * 86400000));
@@ -3263,6 +3523,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         photos: photos.rows[0].n,
         checks: checks.rows.map(c => ({ date: c.date, restingHr: c.resting_hr,
           sleepHours: c.sleep_hours == null ? null : Number(c.sleep_hours), feel: c.feel, note: c.note })),
+        outreach: outreach.rows.map(outreachOut),
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
@@ -3288,7 +3549,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const all = async (sql, args = [from, to]) => (await q(sql, args)).rows;
       const inRange = `b.class_date BETWEEN $1::date AND $2::date`;
       const paid = `o.status IN ('paid','refund') AND ${PAY_DAY} BETWEEN $1::date AND $2::date`;
-      const [v, first, vDay, vClass, vSource, mTot, mDay, mMethod, mItem, mSource, sold, expiring, notSeen] = await Promise.all([
+      const [v, first, vDay, vClass, vSource, mTot, mDay, mMethod, mItem, mSource, sold, expiring, quiet, notes, reasons] = await Promise.all([
         all(`SELECT count(*) FILTER (WHERE ${ATTENDED})::int AS total,
                count(*) FILTER (WHERE b.status='booked')::int AS booked,
                count(*) FILTER (WHERE ${NOSHOW})::int AS no_shows,
@@ -3329,21 +3590,21 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                  AND x.status IN ('active','frozen') AND (x.valid_until IS NULL OR x.valid_until > p.valid_until)
                  AND (x.kind='unlimited' OR x.credits_used < x.credits_total))
              ORDER BY p.valid_until, m.name`, [today]),
-        // Holds a pass they can use, and no class in the last 14 days: the "we miss you" list.
-        // A pass under 14 days old and no visit yet is a new student, not one who stopped coming.
-        all(`SELECT m.code, m.name, to_char(lv.last,'YYYY-MM-DD') AS last_visit, pr.name_en AS pass,
-               to_char(p.valid_until,'YYYY-MM-DD') AS until
-             FROM bkk_members m
-             JOIN LATERAL (SELECT * FROM bkk_passes p WHERE p.member_id=m.id AND p.status='active'
-               AND (p.valid_until IS NULL OR p.valid_until >= $1::date)
-               AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
-               ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1) p ON true
-             LEFT JOIN bkk_products pr ON pr.id=p.product_id
-             LEFT JOIN LATERAL (SELECT max(b.class_date) AS last FROM bkk_bookings b
-               WHERE b.member_id=m.id AND ${ATTENDED}) lv ON true
-             WHERE (lv.last IS NULL OR lv.last <= $1::date - 14)
-               AND (lv.last IS NOT NULL OR coalesce(p.valid_from, (p.created_at AT TIME ZONE 'Asia/Bangkok')::date) <= $1::date - 14)
-             ORDER BY lv.last NULLS FIRST, m.name`, [today]),
+        // The students who stopped coming, today, by the same rule as the Today box.
+        quietRows(q, { date: today }),
+        // Do the notes do anything? Notes sent in the range; of those at least 14 days old,
+        // how many came within 14 days of the note. Counts only, never a name.
+        all(`WITH n AS (SELECT o.member_id, o.created_at, o.reason, (o.created_at AT TIME ZONE 'Asia/Bangkok')::date AS day
+               FROM bkk_outreach o WHERE o.kind='message' AND (o.created_at AT TIME ZONE 'Asia/Bangkok')::date BETWEEN $1::date AND $2::date)
+             SELECT count(*)::int AS messaged, count(*) FILTER (WHERE n.day <= $3::date - 14)::int AS matured,
+               count(*) FILTER (WHERE n.day <= $3::date - 14 AND EXISTS (SELECT 1 FROM bkk_bookings b
+                 LEFT JOIN bkk_class_slots s ON s.id=b.slot_id WHERE b.member_id=n.member_id AND b.class_date BETWEEN n.day AND n.day + 14
+                 AND ((${ATTENDED} AND b.checked_in_at > n.created_at) OR (b.status='booked' AND s.is_online AND b.start_at > n.created_at
+                   AND b.start_at + make_interval(mins => coalesce(s.duration_min, 120)) <= now()))))::int AS came_back14,
+               count(*) FILTER (WHERE n.reason IS NOT NULL)::int AS answered
+             FROM n`, [from, to, today]),
+        all(`SELECT o.reason, count(*)::int AS n FROM bkk_outreach o WHERE o.reason IS NOT NULL AND o.kind IN ('message','known')
+               AND (o.created_at AT TIME ZONE 'Asia/Bangkok')::date BETWEEN $1::date AND $2::date GROUP BY 1 ORDER BY n DESC, 1`),
       ]);
       const t = v[0], mt = mTot[0];
       res.json({
@@ -3356,8 +3617,151 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         },
         money: { total: mt.total, vat: mt.vat, count: mt.n, byDay: mDay, byMethod: mMethod, byItem: mItem, bySource: mSource },
         passes: { sold: sold[0].n, expiringNext14: expiring },
-        notSeen: notSeen.map(n => ({ code: n.code, name: n.name, lastVisit: n.last_visit, pass: n.pass, until: n.until })),
+        notSeen: [...quiet.todo, ...quiet.resting, ...quiet.parked].map(x => ({ code: x.code, name: x.name, state: x.state,
+          kind: x.kind, sender: x.sender, lastVisit: x.lastCame, daysQuiet: x.daysQuiet, pass: x.pass.name, until: x.pass.until })),
+        notSeenHeldBack: quiet.heldBack, notSeenMuted: quiet.muted,
+        quiet: { messaged: notes[0].messaged, matured: notes[0].matured, cameBack14: notes[0].came_back14,
+          answered: notes[0].answered, byReason: reasons },
       });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // ── the "See you tomorrow" list on Today ──────────────────────────────────
+  // The server picks the people and builds the drafts; staff copy one and send it
+  // by hand. Nothing here sends anything. by is a label staff type once on their
+  // device (M, Jamsai), not a login.
+  const outreachOut = o => ({ id: o.id, kind: o.kind, at: o.created_at, by: o.messaged_by || o.answered_by, step: o.step,
+    daysQuiet: o.days_quiet, draftKey: o.draft_key, reason: o.reason, note: o.reason_note, answeredAt: o.answered_at,
+    answeredBy: o.answered_by, muteUntil: o.mute_until_d || null });
+  const OUTREACH_COLS = `*, to_char(mute_until,'YYYY-MM-DD') AS mute_until_d`;
+  const quietOut = (r, ka) => {
+    const { memberId, ...row } = r;
+    const name = firstName(r.name), k = r.sender === 'teacher' ? 'krub' : ka;
+    return { ...row, draft: r.draftKey ? { th: quietDraft(r.draftKey, 'th', name, k), en: quietDraft(r.draftKey, 'en', name, k) } : null };
+  };
+  // The three questions, ask one only, after they have written back.
+  const quietQuestions = ka => ['q1', 'q2', 'q3'].map(k => ({ th: quietDraft(k, 'th', '', ka), en: quietDraft(k, 'en', '', ka) }));
+  const quietBy = v => String(v ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 40);
+  const quietMember = async code => (await q('SELECT id, code, name FROM bkk_members WHERE code=$1', [String(code)])).rows[0];
+  const quietRowOf = async (memberId, date) => {
+    const r = await quietRows(q, { date, memberId });
+    return [...r.todo, ...r.resting, ...r.parked][0] || null;
+  };
+  const reasonArgs = (b, res) => {
+    const reason = String(b.reason ?? '');
+    if (!Object.prototype.hasOwnProperty.call(QUIET_REASONS, reason)) {
+      res.status(400).json({ error: `reason must be one of ${Object.keys(QUIET_REASONS).join(', ')}` });
+      return null;
+    }
+    const by = quietBy(b.by);
+    if (!by) { res.status(400).json({ error: 'by is required: who heard it' }); return null; }
+    // Health is a category only (Thai PDPA): no note is ever kept with it.
+    const note = reason === 'health' ? null
+      : [...String(b.note ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim()].slice(0, QUIET.noteMax).join('') || null;
+    return { reason, by, note };
+  };
+
+  app.get('/api/bkk/admin/quiet', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const ka = req.query.ka == null || req.query.ka === '' ? 'kha' : String(req.query.ka);
+    if (!KA[ka]) return res.status(400).json({ error: 'ka must be krub or kha' });
+    try {
+      const date = bkkToday(), cfg = await quietConfig(q), on = cfg.quietBox === 'on';
+      const base = { on, asOf: date,
+        days: { quietDays: cfg.quietDays, quietDays2: cfg.quietDays2, quietDaysShort: cfg.quietDaysShort, quietDays2Short: cfg.quietDays2Short },
+        // "Open the student before you send" stays while Rezerv packages are hidden and for 14 days after they show.
+        rezerv: { show: cfg.quietRezerv === 'show', from: cfg.quietRezervFrom,
+          openFirst: cfg.quietRezerv !== 'show' || !cfg.quietRezervFrom || dayGap(cfg.quietRezervFrom, date) < 14 } };
+      if (!on) return res.json({ ...base, heldBack: 0, muted: 0, todo: [], resting: [], parked: [], questions: [] });
+      const r = await quietRows(q, { date, cfg });
+      res.json({ ...base, heldBack: r.heldBack, muted: r.muted,
+        todo: r.todo.map(x => quietOut(x, ka)), resting: r.resting.map(x => quietOut(x, ka)), parked: r.parked.map(x => quietOut(x, ka)),
+        questions: quietQuestions(ka) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // Staff sent the draft by hand. One note per student per Bangkok day; { undo: true }
+  // takes today's back while it has no answer on it.
+  app.post('/api/bkk/admin/quiet/:code/messaged', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const b = req.body || {};
+    try {
+      const m = await quietMember(req.params.code);
+      if (!m) return res.status(404).json({ error: 'member not found' });
+      const today = bkkToday();
+      if (b.undo === true) {
+        const d = await q(`DELETE FROM bkk_outreach WHERE member_id=$1 AND kind='message' AND reason IS NULL
+          AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = $2::date RETURNING id`, [m.id, today]);
+        return res.json({ ok: true, undone: d.rows.length > 0 });
+      }
+      const by = quietBy(b.by);
+      if (!by) return res.status(400).json({ error: 'by is required: who sent it' });
+      const row = await quietRowOf(m.id, today);
+      const step = b.step === undefined ? row && row.step : Number(b.step);
+      if (step !== 1 && step !== 2) return res.status(400).json({ error: 'step must be 1 or 2' });
+      const key = b.draftKey === undefined ? row && row.draftKey : b.draftKey;
+      if (key != null && !QUIET_SEND_KEYS.includes(key)) return res.status(400).json({ error: `draftKey must be one of ${QUIET_SEND_KEYS.join(', ')}` });
+      const ins = await q(`INSERT INTO bkk_outreach (member_id,kind,step,pass_id,messaged_at,messaged_by,days_quiet,last_came,draft_key)
+        VALUES ($1,'message',$2,$3,now(),$4,$5,$6,$7)
+        ON CONFLICT (member_id, ((created_at AT TIME ZONE 'Asia/Bangkok')::date)) WHERE kind='message' DO NOTHING
+        RETURNING ${OUTREACH_COLS}`, [m.id, step, row ? row.pass.id : null, by, row ? row.daysQuiet : null, row ? row.lastCame : null, key || null]);
+      if (ins.rows.length) return res.json({ ok: true, again: false, outreach: outreachOut(ins.rows[0]) });
+      const had = await q(`SELECT ${OUTREACH_COLS} FROM bkk_outreach WHERE member_id=$1 AND kind='message'
+        AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = $2::date`, [m.id, today]);
+      res.json({ ok: true, again: true, outreach: outreachOut(had.rows[0]) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // The student already told the desk why: parked for this spell, and no note goes out.
+  app.post('/api/bkk/admin/quiet/:code/known', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const m = await quietMember(req.params.code);
+      if (!m) return res.status(404).json({ error: 'member not found' });
+      const a = reasonArgs(req.body || {}, res);
+      if (!a) return;
+      const row = await quietRowOf(m.id, bkkToday());
+      const ins = await q(`INSERT INTO bkk_outreach (member_id,kind,pass_id,days_quiet,last_came,reason,reason_note,answered_at,answered_by)
+        VALUES ($1,'known',$2,$3,$4,$5,$6,now(),$7) RETURNING ${OUTREACH_COLS}`,
+        [m.id, row ? row.pass.id : null, row ? row.daysQuiet : null, row ? row.lastCame : null, a.reason, a.note, a.by]);
+      res.json({ ok: true, outreach: outreachOut(ins.rows[0]) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // "Their own rhythm": a student who comes one week on, one week off. Off every list for 90 days.
+  app.post('/api/bkk/admin/quiet/:code/mute', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    try {
+      const m = await quietMember(req.params.code);
+      if (!m) return res.status(404).json({ error: 'member not found' });
+      const by = quietBy((req.body || {}).by);
+      if (!by) return res.status(400).json({ error: 'by is required: who decided it' });
+      const today = bkkToday(), row = await quietRowOf(m.id, today);
+      const ins = await q(`INSERT INTO bkk_outreach (member_id,kind,pass_id,days_quiet,last_came,answered_by,mute_until)
+        VALUES ($1,'mute',$2,$3,$4,$5,$6::date + ${QUIET.muteDays}) RETURNING ${OUTREACH_COLS}`,
+        [m.id, row ? row.pass.id : null, row ? row.daysQuiet : null, row ? row.lastCame : null, by, today]);
+      res.json({ ok: true, outreach: outreachOut(ins.rows[0]) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // What the student said, after a note: one of QUIET_REASONS, and the one reply that
+  // goes with it. Sending it again replaces it.
+  app.post('/api/bkk/admin/outreach/:id/reason', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const b = req.body || {};
+    if (!/^\d{1,9}$/.test(String(req.params.id))) return res.status(404).json({ error: 'note not found' });
+    try {
+      const a = reasonArgs(b, res);
+      if (!a) return;
+      const r = await q(`UPDATE bkk_outreach o SET reason=$2, reason_note=$3, answered_at=now(), answered_by=$4
+        FROM bkk_members m WHERE o.id=$1 AND o.kind IN ('message','known') AND m.id=o.member_id
+        RETURNING o.*, to_char(o.mute_until,'YYYY-MM-DD') AS mute_until_d, m.name AS member_name`,
+        [Number(req.params.id), a.reason, a.note, a.by]);
+      if (!r.rows.length) return res.status(404).json({ error: 'note not found' });
+      const key = QUIET_REASONS[a.reason], name = firstName(r.rows[0].member_name), ka = KA[b.ka] ? b.ka : 'kha';
+      res.json({ ok: true, outreach: outreachOut(r.rows[0]),
+        reply: key ? { th: quietDraft(key, 'th', name, ka), en: quietDraft(key, 'en', name, ka) } : null,
+        questions: quietQuestions(ka) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -4438,4 +4842,5 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
 const express = require('express');
 const express_urlencoded_safe = express.urlencoded({ extended: false });
 
-module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween, rotationTeacher, parseWhen };
+module.exports = { mountBkk, CANCEL_CUTOFF_HOURS, SEED_PRODUCTS, SEED_SLOTS, moonDaysBetween, rotationTeacher, parseWhen,
+  quietRows, quietConfig, quietDraft, firstName, FROM_REZERV, CARRIES_ON, QUIET, QUIET_TEXTS, QUIET_REASONS };

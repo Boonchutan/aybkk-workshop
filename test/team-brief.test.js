@@ -655,6 +655,96 @@ const fakeDriver = { session: () => ({
   ok('...and the first-class guide (f3) says the mat is ฿200 if you tick it, in all 4', f3.length === 4
      && f3.every(x => x.includes('฿200') && !/VAT|НДС|增值税|ภาษี/.test(x)), JSON.stringify(f3));
 
+  console.log('\n# quiet students in the morning brief');
+  {
+    // Made-up people, counted from the real Bangkok today so the brief can be set
+    // beside GET /api/bkk/admin/quiet (it reads today). A moon day moves it to the next open day.
+    const { quietRows, moonDaysBetween: moonDays, QUIET_TEXTS } = require('../bkk-api.js');
+    const addD = (d, k) => new Date(Date.parse(d + 'T12:00:00Z') + k * 86400000).toISOString().slice(0, 10);
+    const todayB = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+    let DQ = todayB;
+    while (moonDays(DQ, DQ).size) DQ = addD(DQ, 1);
+    const viaRoute = DQ === todayB;
+    const sec = (text, head) => { const p = text.split('\n\n').find(x => x.startsWith(head)); return p ? p.split('\n').slice(1) : []; };
+    const lineCount = lineCalls.length;
+    const sitAt = (mid, day, o = {}) => pool.query(`INSERT INTO bkk_bookings (class_date,start_at,member_id,status,checked_in_at,cover,source,class_title)
+      VALUES ($1,$2,$3,'booked',$4,'pass','door','Quiet Test')`, [day, `${day}T06:00:00+07:00`, mid, o.in === false ? null : `${day}T06:00:00+07:00`]);
+    const longOne = async (name, last, o = {}) => {
+      const mid = await member(name, o);
+      await pass(mid, 'unlim12m', { from: addD(DQ, -100), until: addD(DQ, 200), source: o.passSource, created: `${addD(DQ, -100)}T08:00:00+07:00` });
+      await sitAt(mid, addD(DQ, -last));
+      return mid;
+    };
+    const firsts = ['Aria', 'Bram', 'Cleo', 'Dov', 'Esme', 'Finn', 'Gaia', 'Hugo', 'Iris', 'Jude', 'Kira', 'Lyle'];
+    for (let i = 0; i < firsts.length; i++) await longOne(`${firsts[i]} Quietfolk`, 7 + i);
+    const rest = await longOne('Rhea Resting', 9);
+    await pool.query(`INSERT INTO bkk_outreach (member_id,kind,step,created_at,messaged_by) VALUES ($1,'message',1,$2,'M')`, [rest, `${addD(DQ, -1)}T10:00:00+07:00`]);
+    const park = await longOne('Paz Parked', 9);
+    await pool.query(`INSERT INTO bkk_outreach (member_id,kind,created_at,reason,reason_note,answered_at,answered_by)
+      VALUES ($1,'known',$2,'work','Work trip abroad (made up)',$2,'M')`, [park, `${addD(DQ, -1)}T10:00:00+07:00`]);
+    const mute = await longOne('Mo Muted', 9);
+    await pool.query(`INSERT INTO bkk_outreach (member_id,kind,created_at,mute_until,answered_by) VALUES ($1,'mute',$2,$3,'M')`,
+      [mute, `${addD(DQ, -1)}T10:00:00+07:00`, addD(DQ, 80)]);
+    await longOne('Hal Heldback', 9, { passSource: 'rezerv' });
+    const bookedToday = await longOne('Bly Bookedtoday', 9);
+    await sitAt(bookedToday, DQ, { in: false });
+    const nq = await member('Nova Newweek');
+    await pass(nq, 'unlim1', { from: addD(DQ, -4), until: addD(DQ, 25), created: `${addD(DQ, -4)}T09:00:00+07:00` });
+    const nq2 = await member('Noel Nineday');
+    await pass(nq2, 'unlim1', { from: addD(DQ, -9), until: addD(DQ, 20), created: `${addD(DQ, -9)}T09:00:00+07:00` });
+
+    const pv = async lang => (await get(`/api/bkk/admin/team/preview?kind=morning&date=${DQ}${lang ? '&lang=' + lang : ''}`)).body.text || '';
+    const offText = await pv('en');
+    ok('off by default: the brief has no quiet section and no quiet count', !offText.includes('👋') && !/quiet/.test(offText.trim().split('\n').at(-1)),
+       offText.trim().split('\n').at(-1));
+    await post('/api/bkk/admin/settings', { quietBox: 'on' });
+    ok('...and with the Today box on but the brief section off, still none', !(await pv('en')).includes('👋'));
+    const sw = await post('/api/bkk/admin/settings', { quietBrief: 'on' });
+    const en = await pv('en'), th = await pv();
+    console.log(en.split('\n').map(l => '      | ' + l).join('\n'));
+    const qEn = sec(en, '👋 See you tomorrow: quiet for a while'), qTh = sec(th, '👋 See you tomorrow: ไม่ได้มาหลายวัน');
+    const bought = sec(en, '🌱').filter(l => / bought /.test(l)).map(l => l.slice(2).split(' bought ')[0]);
+    const all = (await quietRows((sql, a) => pool.query(sql, a), { date: DQ })).todo;
+    const expect = all.filter(r => !(r.kind === 'new' && bought.includes(shortName(r.name))))
+      .sort((a, b) => b.daysQuiet - a.daysQuiet || a.name.localeCompare(b.name));
+    const day = d => { const t = new Date(`${d}T12:00:00Z`); return `${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][t.getUTCDay()]} ${t.getUTCDate()} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][t.getUTCMonth()]}`; };
+    const want = expect.slice(0, 10).map(r => `• ${shortName(r.name)} · ${r.daysQuiet} day${r.daysQuiet === 1 ? '' : 's'}${r.pass.until ? ` · pass ends ${day(r.pass.until)}` : ''}${r.sender === 'teacher' ? ' · for the teacher' : ''}`);
+    const lyle = qEn.find(l => l.startsWith('• Lyle Q.')) || '', aria = qEn.find(l => l.startsWith('• Aria Q.'));
+    ok('on: lists first name and initial, days quiet and the pass end, longest first; teacher rows are marked', sw.status === 200
+       && lyle === `• Lyle Q. · 18 days · pass ends ${day(addD(DQ, 200))} · for the teacher` && JSON.stringify(qEn.slice(0, 10)) === JSON.stringify(want)
+       && qEn.slice(0, 10).every((l, i, a) => !i || Number(a[i - 1].split(' · ')[1].split(' ')[0]) >= Number(l.split(' · ')[1].split(' ')[0]))
+       && (aria === undefined || aria === `• Aria Q. · 7 days · pass ends ${day(addD(DQ, 200))}`), JSON.stringify([qEn, want]));
+    if (viaRoute) {
+      const route = (await get('/api/bkk/admin/quiet?ka=kha')).body.todo || [];
+      ok('the same people as the todo list of GET /api/bkk/admin/quiet for that date', JSON.stringify(route.map(r => r.code).sort())
+         === JSON.stringify(all.map(r => r.code).sort()) && expect.length === route.length - (all.length - expect.length),
+         JSON.stringify([route.map(r => r.name), all.map(r => r.name)]));
+    } else ok('the same people as quietRows for that date (today is a moon day, so not the Today box)', expect.length > 0);
+    const names = qEn.join('\n');
+    ok('nobody resting, parked, muted, held back or booked today', !/Rhea R\.|Paz P\.|Mo M\.|Hal H\.|Bly B\./.test(names)
+       && /Rhea R\./.test(JSON.stringify((await quietRows((sql, a) => pool.query(sql, a), { date: DQ })).resting.map(r => shortName(r.name)))), names);
+    const twice = all.filter(r => r.kind === 'new' && bought.includes(shortName(r.name)));
+    const counted = Number((en.trim().split('\n').at(-1).match(/ · (\d+) quiet$/) || [])[1]);
+    ok('a new student already under "New students" is not listed twice', bought.includes('Nova N.') && !names.includes('Nova N.')
+       && twice.some(r => r.name === 'Nova Newweek') && counted === all.length - twice.length
+       && expect.some(r => r.name === 'Noel Nineday' && r.kind === 'new'), JSON.stringify([bought, counted, all.length]));
+    ok('at most 10 names, then +N', expect.length > 10 && qEn.length === 11 && qEn[10] === `+${expect.length - 10}`
+       && qTh.length === 11 && qTh[10] === `+${expect.length - 10}`, JSON.stringify(qEn.slice(-2)));
+    const both = qEn.join('\n') + qTh.join('\n');
+    const draftBits = Object.values(QUIET_TEXTS).flatMap(t => [t.en.slice(0, 18), t.th.replace(/\{\w+\}/g, '').slice(0, 12)]);
+    ok('no draft text, no reason, no email, phone or code, no long dash', !draftBits.some(b => both.includes(b))
+       && !/work|Work trip|made up|@|0899000|BTEAM|\u2014/.test(both) && !/Work trip|made up/.test(en + th), both.slice(0, 200));
+    ok('the count goes on the totals line only when the section is on', en.trim().split('\n').at(-1).endsWith(` · ${expect.length} quiet`)
+       && th.trim().split('\n').at(-1).endsWith(` · ไม่ได้มา ${expect.length}`), en.trim().split('\n').at(-1));
+    ok('English when asked, Thai by default', qEn.length > 0 && qTh.some(l => l === `• Lyle Q. · 18 วัน · แพ็กเกจหมด ${(() => {
+      const t = new Date(`${addD(DQ, 200)}T12:00:00Z`);
+      return `${['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'][t.getUTCDay()]} ${t.getUTCDate()} ${['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'][t.getUTCMonth()]}`; })()} · ครูทักเอง`), JSON.stringify(qTh));
+    const moonQ = await get('/api/bkk/admin/team/preview?kind=morning&date=2026-11-24');
+    ok('a moon day brief is still one line', moonQ.body.text === '☀️ บรีฟเช้า อ. 24 พ.ย.\nวันนี้ชาลาปิด วันพระจันทร์เต็มดวง (moon day)', JSON.stringify(moonQ.body.text));
+    ok('the quiet section never calls the LINE sender by itself', lineCalls.length === lineCount, `${lineCount} -> ${lineCalls.length}`);
+    await post('/api/bkk/admin/settings', { quietBox: 'off', quietBrief: 'off' });
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);

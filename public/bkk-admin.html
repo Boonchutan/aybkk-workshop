@@ -257,6 +257,40 @@
   .hint{min-height:1.2em;font-size:13.5px;color:var(--soft);margin:10px 0 0}
   .hint.bad{background:#fdeaea;color:#a33;border-radius:7px;padding:8px 10px;font-weight:700}
   #adGo{width:100%;margin-top:12px;padding:13px;font-size:15px}
+  /* The See you tomorrow list (Nov 2026): under the classes and folded to one line, so the door list stays on top. */
+  .qbox>details>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;min-height:44px;padding:6px 0 2px;cursor:pointer;list-style:none}
+  .qbox>details>summary::-webkit-details-marker{display:none}
+  .qbox>details>summary::before{content:'+';flex:none;width:12px;color:var(--plum);font-weight:800}
+  .qbox>details[open]>summary::before{content:'\2212'}
+  .qbox>details>summary .muted{flex:1 1 220px;min-width:0;font-size:13.5px}
+  .qbox h4{margin:18px 0 0;font:800 12.5px/1.4 'Work Sans','Plex',sans-serif;color:var(--soft);letter-spacing:.06em;text-transform:uppercase}
+  :lang(th) .qbox h4{letter-spacing:0}
+  .qbox .warnline,.qbox .flash{margin:8px 0 0}
+  details.qsub,details.qchk{border-top:1px solid var(--line);margin-top:10px}
+  details.qsub>summary,details.qchk>summary{cursor:pointer;padding:11px 0 8px;font-weight:700;min-height:44px}
+  details.qchk ol,.qask{margin:2px 0 8px;padding-left:22px;font-size:14px}
+  .qask li{margin:6px 0}
+  .qrow{padding:12px 0;border-top:1px solid var(--line);min-width:0}
+  .qrow .qn{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 8px}
+  .qrow .qn .link.who{font-size:16px}
+  .qm{font-size:13.5px;color:var(--soft);overflow-wrap:anywhere}
+  .qrow .pill{margin:5px 5px 0 0;white-space:normal;text-align:left}
+  .qd .seg{margin:8px 0 0}
+  .qd .seg button{padding:6px 14px}
+  .qd textarea{display:block;width:100%;margin-top:6px;padding:9px 10px;border:1.5px solid var(--line);border-radius:7px;background:var(--wall);
+    color:var(--ink);font:inherit;font-size:15px;line-height:1.55;resize:vertical;field-sizing:content;max-height:60vh}
+  .btn.lite{background:var(--blush);color:var(--plum);box-shadow:inset 0 0 0 1px var(--line)}
+  .qa{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .qwhy{margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--wall);min-width:0}
+  .qwhy .lbl{margin:4px 0 6px}
+  .qwhy .opt{flex:1 1 150px;font-size:14px;background:var(--paper)}
+  .qwhy .opt.on{background:var(--plum)}
+  .qwhy input{width:100%;margin-top:8px;background:var(--paper)}
+  .qwhoform{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 0}
+  .qwhoform input{flex:1 1 150px;min-width:0}
+  .qwhoform .seg{margin:0}
+  .qset .row2 input{width:96px}
+  @media (max-width:640px),(pointer:coarse){.qa .btn,.qwhoform .btn,.qd .seg button,.qwhoform .seg button,.qbox .link,.qset .seg button{min-height:44px}}
   @media (prefers-color-scheme:dark){.rr .in,.drow .in,td .in,.hit em.ok{color:#3ddc97}.now .no{color:#ff8f86}.now{border-left-color:#3ddc97}}
   @media (min-width:560px){
     .cal{padding:18px 16px}
@@ -521,7 +555,6 @@
     rByDay: 'By day', rByMonth: 'By month', rByClass: 'By class', rBySource: 'Booked through', rByMethod: 'By payment method',
     rByItem: 'By item', rMoneySource: 'Where the money came in', rNothing: 'Nothing in these days.',
     rExpH: 'Passes ending in the next 14 days', rExpHelp: 'Counted from today. Anyone who already has a next pass is left out.',
-    rNotSeenH: 'Not seen for 14 days', rNotSeenHelp: 'Has a pass they can use, but no class in the last 14 days. Counted from today. Send them a message.',
     neverCame: 'never came',
     ciTitle: 'Move everything from Rezerv (CSV files)',
     ciHelp: 'Export each list from Rezerv as a CSV file. Import Students first, then Passes (the memberships file, then the packages file), Visits and Payments, one file per year. Columns and date order are matched for you. Check shows what will happen and saves nothing. Running the same file again adds nothing twice.',
@@ -596,7 +629,6 @@
     rByDay: 'รายวัน', rByMonth: 'รายเดือน', rByClass: 'รายคลาส', rBySource: 'จองผ่าน', rByMethod: 'ตามวิธีชำระ',
     rByItem: 'ตามรายการ', rMoneySource: 'เงินเข้าผ่าน', rNothing: 'ไม่มีข้อมูลในช่วงนี้',
     rExpH: 'แพ็กเกจที่จะหมดใน 14 วัน', rExpHelp: 'นับจากวันนี้ ไม่รวมคนที่มีแพ็กเกจถัดไปแล้ว',
-    rNotSeenH: 'ไม่ได้มา 14 วัน', rNotSeenHelp: 'มีแพ็กเกจที่ใช้ได้ แต่ไม่ได้มาเรียนใน 14 วันล่าสุด นับจากวันนี้ ลองส่งข้อความหา',
     neverCame: 'ยังไม่เคยมา',
     ciTitle: 'ย้ายข้อมูลทั้งหมดจาก Rezerv (ไฟล์ CSV)',
     ciHelp: 'ดาวน์โหลดแต่ละรายการจาก Rezerv เป็นไฟล์ CSV นำเข้านักเรียนก่อน แล้วจึงแพ็กเกจ (ไฟล์ memberships ก่อน แล้วไฟล์ packages) การเข้าเรียน และการชำระเงิน ทีละไฟล์ต่อปี ระบบจับคู่คอลัมน์และลำดับวันที่ให้เอง ปุ่มตรวจสอบจะแสดงผลที่จะเกิดขึ้นโดยยังไม่บันทึก นำเข้าไฟล์เดิมซ้ำได้ ไม่มีข้อมูลซ้ำ',
@@ -840,6 +872,117 @@
     hereOver: 'คลาสจบแล้ว: บันทึกว่ามาเรียน', addGoCame: 'เพิ่มว่ามาเรียน',
     hNoPassOn: (n, d) => `${n} ไม่มีแพ็กเกจ aybkk.net ที่ใช้ได้วันที่ ${d} เลือกแพ็กเกจ Rezerv หรือ Drop-in`,
     hitPassFrom: d => `แพ็กเกจ aybkk.net เริ่ม ${d}`,
+  });
+  // The "See you tomorrow" list on Today, the profile's Messages box, the report and the
+  // settings (Nov 2026). Staff copy a draft and send it by hand: nothing is sent from here.
+  const Q_REASONS = ['work', 'travel', 'health', 'habit', 'money', 'moved', 'us', 'other'];
+  Object.assign(STR.en, {
+    qTitle: 'See you tomorrow list',
+    qFold: (s, t, r, p) => `${s} for staff · ${t} for the teacher · ${r} resting · ${p} parked`,
+    qAsOf: d => `Checked up to ${d}`,
+    qHeld: n => n === 1 ? '1 student on a Rezerv package is not checked here' : `${n} students on Rezerv packages are not checked here`,
+    qOpenFirst: 'Bookings still live in Rezerv: open the student before you send.',
+    qMuted: n => n === 1 ? '1 student on their own rhythm is left out for now' : `${n} students on their own rhythm are left out for now`,
+    qChecksH: 'Five checks before you send',
+    qChecks: ['Open the student. Is the last visit right? If a booking has no check-in, ask the teacher first.',
+      'Look at LINE and the inbox. If they are waiting on a reply from us, answer that and send no note.',
+      'Did they already tell us (leave, sick, travel)? Tap "We know why" and send nothing.',
+      'Is the pass still live, and is tomorrow an open day? (The draft changes by itself when tomorrow is closed.)',
+      'Can you keep the promise in the draft (book the class, tell the teacher)? If not, do not send it.'],
+    qOneNote: 'One note per step. No second note when there is no reply.',
+    qStaffH: 'For staff (M, or Jamsai when M is off)', qTeacherH: "Teacher's note (Boonchu)",
+    qRestH: n => `Resting: a note went out (${n})`, qParkH: n => `Parked: nothing more this time (${n})`,
+    qNone: 'Nobody to message today.',
+    qLast: d => `last came ${d}`, qNotYet: 'not come yet', qDays: n => n === 1 ? '1 day quiet' : `${n} days quiet`,
+    qEnds: d => `ends ${d}`, qLeft: n => n === 1 ? '1 class left' : `${n} classes left`,
+    qNewTag: 'first pass, not come yet', qEndsLow: 'ends soon, came little',
+    qUnchecked: n => `booked ${n === 1 ? 'once' : n + ' times'} since, no check-in: ask the teacher first`,
+    qCopy: 'Copy', qCopied: 'Copied', qCopyHand: 'Select the text and copy it',
+    qSent: 'Messaged', qKnow: 'We know why', qRhythm: 'Their own rhythm', qUndo: 'Undo',
+    qRhythmQ: n => `Take ${n} off this list for 90 days?\nFor a student who comes one week on, one week off.`,
+    qMovedRest: n => `${n}: moved to resting.`,
+    qWhoH: 'Who are you?', qWhoHelp: 'A name for this phone, so the team can see who sent each note. It is a label, not a login.',
+    qWhoName: 'Your name', qWhoSave: 'Save', qWhoIs: (n, k) => `You are ${n} (${k})`, qWhoChange: 'Change',
+    qWhoFirst: 'First say who you are, at the top of this list.',
+    qNoteBy: (s, by, d) => `step ${s} sent by ${by}, ${d}`,
+    qAnswered: 'They wrote back', qReasonH: 'What did they say?', qReasonKnowH: 'What did they tell us?',
+    qNotePh: 'Note (optional, no medical details)', qHealthNote: 'Sick or hurt is kept as a word only. Do not write any details.',
+    qSave: 'Save', qPick: 'Pick a reason first.', qChange: 'Change the reason', qWhoKaPick: 'Pick ครับ or ค่ะ.',
+    qReplyH: 'Reply (one reply, the same day)', qNoReply: 'No ready reply for this one: use your own words.',
+    qAskH: 'If they write back again, ask one question only:',
+    qReasons: { work: 'Work or family is busy', travel: 'Travelling', health: 'Sick or hurt', habit: 'Lost the habit', money: 'Money',
+      moved: 'Moved away or left Bangkok', us: 'Something on our side (time, teaching, room, booking)', other: 'Other' },
+    qKind: { message: 'Note sent', known: 'We know why', mute: 'Their own rhythm' },
+    qState: { todo: 'to send', resting: 'resting', parked: 'parked' },
+    hMsgs: 'Messages', hMsgStep: n => `step ${n}`, hMsgBy: b => `by ${b}`, hMuteUntil: d => `off the list until ${d}`,
+    hMsgDays: n => `${n} days quiet`,
+    rQuietH: 'See you tomorrow notes',
+    rQuietHelp: 'Notes sent in these days. Of the notes at least 14 days old: how many students came within 14 days of the note. Counts only.',
+    kMessaged: 'Notes sent', kMatured: '14 days old', kCameBack: 'Came within 14 days', kAnswered: 'Answered',
+    thReason: 'Reason', thState: 'State', thDays: 'Days',
+    qSetH: 'See you tomorrow list',
+    qSetHelp: 'Students who hold a pass but stopped coming, with a draft note that staff send by hand. Nothing is sent from here. Switch it on after Jamsai has read the Thai.',
+    qSetBox: 'Show the list on Today', qSetBrief: 'Add it to the 05:00 team brief', qOn: 'On', qOff: 'Off',
+    qSetLong: 'Membership over 3 months', qSetShort: '3 months or less', qSetDay1: 'First note after (days)', qSetDay2: "Teacher's note after (days)",
+    qSetPack: "A class pack gets one note only, on the teacher's note day of a membership over 3 months. A first pass never used gets a welcome note on day 3 (a pack: on the first note day).",
+    qSetRezerv: 'Rezerv packages', qHide: 'Hide', qShow: 'Show',
+    qRezervLast: d => `Latest Rezerv visit on file: ${d}`, qRezervFrom: d => `shown since ${d}`,
+    rNotSeenH: 'See you tomorrow list: everyone quiet',
+    rNotSeenHelp: 'Has a pass they can use and has not come for a while, by the same rule as the list on Today. Counted from today. Notes go out from the Today tab.',
+  });
+  Object.assign(STR.th, {
+    qTitle: 'รายชื่อ See you tomorrow',
+    qFold: (s, t, r, p) => `ทีมงานทัก ${s} · ครูทัก ${t} · รอ ${r} · พักไว้ ${p}`,
+    qAsOf: d => `ข้อมูลถึง ${d}`,
+    qHeld: n => `นักเรียนแพ็กเกจ Rezerv ${n} คน ยังไม่ได้ตรวจที่นี่`,
+    qOpenFirst: 'การจองยังอยู่ใน Rezerv: เปิดโปรไฟล์นักเรียนก่อนส่ง',
+    qMuted: n => `นักเรียนที่มาตามจังหวะของตัวเอง ${n} คน ไม่อยู่ในรายชื่อตอนนี้`,
+    qChecksH: 'เช็ก 5 ข้อก่อนส่ง',
+    qChecks: ['เปิดโปรไฟล์นักเรียน วันที่มาครั้งล่าสุดถูกไหม ถ้ามีการจองที่ไม่มีเช็กอิน ถามครูก่อน',
+      'ดู LINE และกล่องข้อความ ถ้านักเรียนรอคำตอบจากเราอยู่ ตอบเรื่องนั้น และไม่ต้องส่งข้อความนี้',
+      'นักเรียนบอกเราแล้วหรือยัง (ลา ป่วย เดินทาง) ถ้าบอกแล้ว กด "เรารู้เหตุผลแล้ว" และไม่ต้องส่งอะไร',
+      'แพ็กเกจยังใช้ได้อยู่ไหม และพรุ่งนี้ชาลาเปิดไหม (ข้อความเปลี่ยนเองเมื่อพรุ่งนี้ปิด)',
+      'ทำตามที่ข้อความบอกได้ไหม (จองคลาสให้ บอกครู) ถ้าทำไม่ได้ อย่าส่ง'],
+    qOneNote: 'ขั้นละหนึ่งข้อความ ถ้านักเรียนไม่ตอบ ไม่ต้องส่งซ้ำ',
+    qStaffH: 'ทีมงานทัก (M หรือ Jamsai เมื่อ M ไม่อยู่)', qTeacherH: 'ครูทักเอง (ครูบุญชู)',
+    qRestH: n => `รอ: ส่งข้อความไปแล้ว (${n})`, qParkH: n => `พักไว้: รอบนี้ไม่ต้องทักอีก (${n})`,
+    qNone: 'วันนี้ไม่มีใครต้องทัก',
+    qLast: d => `มาครั้งล่าสุด ${d}`, qNotYet: 'ยังไม่ได้มา', qDays: n => `ไม่ได้มา ${n} วัน`,
+    qEnds: d => `หมด ${d}`, qLeft: n => `เหลือ ${n} ครั้ง`,
+    qNewTag: 'แพ็กเกจแรก ยังไม่ได้มา', qEndsLow: 'ใกล้หมดอายุ มาเรียนน้อย',
+    qUnchecked: n => `จองไว้ ${n} ครั้งหลังจากนั้น ไม่มีเช็กอิน: ถามครูก่อน`,
+    qCopy: 'คัดลอก', qCopied: 'คัดลอกแล้ว', qCopyHand: 'เลือกข้อความแล้วคัดลอกเอง',
+    qSent: 'ส่งแล้ว', qKnow: 'เรารู้เหตุผลแล้ว', qRhythm: 'มาตามจังหวะของตัวเอง', qUndo: 'ยกเลิก',
+    qRhythmQ: n => `เอา ${n} ออกจากรายชื่อนี้ 90 วันไหม?\nสำหรับนักเรียนที่มาสัปดาห์เว้นสัปดาห์`,
+    qMovedRest: n => `${n}: ย้ายไปที่ "รอ" แล้ว`,
+    qWhoH: 'คุณคือใคร?', qWhoHelp: 'ชื่อของเครื่องนี้ ทีมจะได้รู้ว่าใครส่งข้อความ เป็นแค่ชื่อ ไม่ใช่การล็อกอิน',
+    qWhoName: 'ชื่อของคุณ', qWhoSave: 'บันทึก', qWhoIs: (n, k) => `คุณคือ ${n} (${k})`, qWhoChange: 'เปลี่ยน',
+    qWhoFirst: 'บอกก่อนว่าคุณคือใคร ที่ด้านบนของรายชื่อนี้',
+    qNoteBy: (s, by, d) => `ขั้นที่ ${s} ส่งโดย ${by} ${d}`,
+    qAnswered: 'นักเรียนตอบกลับมา', qReasonH: 'นักเรียนบอกว่าอะไร?', qReasonKnowH: 'นักเรียนบอกเราว่าอะไร?',
+    qNotePh: 'หมายเหตุ (ไม่ใส่ก็ได้ ห้ามใส่รายละเอียดเรื่องสุขภาพ)', qHealthNote: 'ป่วยหรือบาดเจ็บ เก็บไว้แค่คำนี้ ห้ามเขียนรายละเอียด',
+    qSave: 'บันทึก', qPick: 'เลือกเหตุผลก่อน', qChange: 'เปลี่ยนเหตุผล', qWhoKaPick: 'เลือก ครับ หรือ ค่ะ',
+    qReplyH: 'ข้อความตอบ (ตอบครั้งเดียว ภายในวันนั้น)', qNoReply: 'ไม่มีข้อความตอบสำเร็จรูป ใช้คำของคุณเอง',
+    qAskH: 'ถ้านักเรียนตอบมาอีก ถามแค่ข้อเดียว:',
+    qReasons: { work: 'งานหรือครอบครัวยุ่ง', travel: 'เดินทาง', health: 'ป่วยหรือบาดเจ็บ', habit: 'ขาดช่วง ยังไม่ได้เริ่มใหม่', money: 'เรื่องเงิน',
+      moved: 'ย้ายหรือไม่อยู่กรุงเทพฯ แล้ว', us: 'เรื่องของชาลา (เวลา การสอน ห้อง การจอง)', other: 'อื่น ๆ' },
+    qKind: { message: 'ส่งข้อความแล้ว', known: 'เรารู้เหตุผลแล้ว', mute: 'มาตามจังหวะของตัวเอง' },
+    qState: { todo: 'ต้องทัก', resting: 'รอ', parked: 'พักไว้' },
+    hMsgs: 'ข้อความ See you tomorrow', hMsgStep: n => `ขั้นที่ ${n}`, hMsgBy: b => `โดย ${b}`, hMuteUntil: d => `ไม่อยู่ในรายชื่อถึง ${d}`,
+    hMsgDays: n => `ไม่ได้มา ${n} วัน`,
+    rQuietH: 'ข้อความ See you tomorrow',
+    rQuietHelp: 'ข้อความที่ส่งในช่วงนี้ ในข้อความที่ส่งไปแล้วอย่างน้อย 14 วัน มีนักเรียนกี่คนที่มาเรียนภายใน 14 วันหลังได้ข้อความ นับเป็นจำนวนเท่านั้น',
+    kMessaged: 'ส่งข้อความ', kMatured: 'ครบ 14 วัน', kCameBack: 'มาภายใน 14 วัน', kAnswered: 'ตอบกลับ',
+    thReason: 'เหตุผล', thState: 'สถานะ', thDays: 'วัน',
+    qSetH: 'รายชื่อ See you tomorrow',
+    qSetHelp: 'นักเรียนที่มีแพ็กเกจแต่ไม่ได้มาสักพัก พร้อมข้อความร่างให้ทีมงานส่งเอง ระบบไม่ส่งอะไรเอง เปิดใช้หลังจาก Jamsai อ่านภาษาไทยแล้ว',
+    qSetBox: 'แสดงรายชื่อในหน้า วันนี้', qSetBrief: 'ใส่ในบรีฟเช้า 05:00', qOn: 'เปิด', qOff: 'ปิด',
+    qSetLong: 'แพ็กเกจเกิน 3 เดือน', qSetShort: 'แพ็กเกจ 3 เดือนหรือน้อยกว่า', qSetDay1: 'ทักครั้งแรกหลัง (วัน)', qSetDay2: 'ครูทักหลัง (วัน)',
+    qSetPack: 'แพ็กเกจนับครั้ง ทักครั้งเดียว ในวันเดียวกับ "ครูทัก" ของแพ็กเกจเกิน 3 เดือน แพ็กเกจแรกที่ยังไม่ได้มา ทักต้อนรับวันที่ 3 (แพ็กเกจนับครั้ง: ในวัน "ทักครั้งแรก")',
+    qSetRezerv: 'แพ็กเกจ Rezerv', qHide: 'ซ่อน', qShow: 'แสดง',
+    qRezervLast: d => `มาเรียนผ่าน Rezerv ครั้งล่าสุดในระบบ: ${d}`, qRezervFrom: d => `แสดงตั้งแต่ ${d}`,
+    rNotSeenH: 'รายชื่อ See you tomorrow: นักเรียนที่ไม่ได้มาสักพัก',
+    rNotSeenHelp: 'มีแพ็กเกจที่ใช้ได้ แต่ไม่ได้มาสักพัก ใช้กฎเดียวกับรายชื่อในหน้า วันนี้ นับจากวันนี้ ส่งข้อความจากหน้า วันนี้',
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -1689,7 +1832,7 @@
 
   // back: a class or a profile opened from here, to land on the same button again.
   async function renderToday({ back } = {}) {
-    const [d, prog0, start] = await Promise.all([api('/api/bkk/admin/today').then(r => r.json()), progressBox(), startBox()]);
+    const [d, prog0, start, quiet] = await Promise.all([api('/api/bkk/admin/today').then(r => r.json()), progressBox(), startBox(), quietBox()]);
     // Another tab was opened while this loaded (Calendar tapped right after unlock).
     if (current !== 'today' || SUB) return;
     const prog = prog0 + start;
@@ -1721,9 +1864,227 @@
         </tr>`).join('')}</table>` : `<p class="muted">${T('rosterNone')}</p>`}</div>`;
     }).join('');
     $('#view').innerHTML = prog + moneyBox
-      + (blocks || `<div class="box"><b>${T('today')}</b><p class="muted">${T('noBookings')}</p></div>`);
+      + (blocks || `<div class="box"><b>${T('today')}</b><p class="muted">${T('noBookings')}</p></div>`) + quiet;
     if (back) backTo(back);
   }
+
+  // ── the "See you tomorrow" list (Nov 2026) ────────────────────────────────
+  // The server picks who is quiet and builds each draft (GET /api/bkk/admin/quiet);
+  // this only paints it. Staff copy a draft and send it by hand from the shala LINE.
+  // Names and drafts live in these maps, never inside an onclick string.
+  let QD = null, QOPEN = false, QFLASH = null, QWHO_EDIT = false, QWHO_KA = null;
+  const QSUB = {}, QLANG = {}, QPANEL = {}, QPICK = {}, QREPLY = {}, DRAFTS = {}, QROWS = {};
+  const QKA = { krub: 'ครับ', kha: 'ค่ะ' };
+  // Who is on this phone: a label and the sender's ครับ or ค่ะ, not a login.
+  const qWho = () => {
+    try { const w = JSON.parse(store.get('aybkk_quiet_who') || 'null');
+      return w && typeof w.name === 'string' && w.name.trim() && QKA[w.ka] ? w : null; } catch { return null; }
+  };
+  async function quietLoad() {
+    const w = qWho();
+    const r = await api(`/api/bkk/admin/quiet?ka=${w ? w.ka : 'kha'}`).catch(() => null);
+    QD = r && r.ok ? await r.json().catch(() => null) : null;
+  }
+  // Off: nothing at all, so Today looks as it did before.
+  async function quietBox() {
+    await quietLoad();
+    return QD && QD.on ? `<div class="box qbox" id="qbox">${quietInner()}</div>` : '';
+  }
+  const quietPaint = () => { const b = $('#qbox'); if (b && QD && QD.on) b.innerHTML = quietInner(); };
+  const quietReload = async () => { await quietLoad(); if (current === 'today' && !SUB) quietPaint(); };
+  const qRepaint = () => { if (SUB === 'history') { if (HIST) paintHistory(); } else quietPaint(); };
+  const taRows = t => Math.min(9, Math.max(3, Math.ceil(String(t || '').length / 38)));
+  // A draft: Thai or English (starts on the admin language), read-only, with Copy.
+  const draftBox = (key, d, extra = '') => {
+    DRAFTS[key] = d;
+    const l = QLANG[key] || LANG, text = d[l] || '';
+    return `<div class="qd"><div class="seg">${['th', 'en'].map(x => `<button class="${l === x ? 'on' : ''}" data-k="${esc(key)}" data-l="${x}"
+        onclick="qLang(this)">${x === 'th' ? 'ไทย' : 'EN'}</button>`).join('')}</div>
+      <textarea readonly rows="${taRows(text)}" id="qt-${esc(key)}">${esc(text)}</textarea>
+      <div class="qa"><button class="btn sm" data-k="${esc(key)}" onclick="qCopy(this)">${esc(T('qCopy'))}</button>${extra}</div></div>`;
+  };
+  const whoForm = () => {
+    const w = qWho();
+    if (w && !QWHO_EDIT) return `<p class="muted">${esc(T('qWhoIs', w.name, QKA[w.ka]))}
+      <button class="link" onclick="qWhoEdit()">${esc(T('qWhoChange'))}</button></p>`;
+    const ka = QWHO_KA || (w && w.ka);
+    return `<div class="qwhy"><b>${esc(T('qWhoH'))}</b><p class="muted" style="margin:2px 0 0">${esc(T('qWhoHelp'))}</p>
+      <div class="qwhoform"><input id="qWhoName" maxlength="40" placeholder="${esc(T('qWhoName'))}" value="${esc(w ? w.name : '')}">
+        <div class="seg">${['krub', 'kha'].map(k => `<button class="${ka === k ? 'on' : ''}" data-ka="${k}" onclick="qWhoKa(this)">${QKA[k]}</button>`).join('')}</div>
+        <button class="btn sm" onclick="qWhoSave()">${esc(T('qWhoSave'))}</button></div></div>`;
+  };
+  // The eight reasons (the message set's labels). Health keeps no note at all.
+  const reasonPanel = (key, mode) => {
+    const p = QPICK[key] || {};
+    return `<div class="qwhy"><div class="lbl">${esc(T(mode === 'know' ? 'qReasonKnowH' : 'qReasonH'))}</div>
+      <div class="opts">${Q_REASONS.map(x => `<button class="opt${p.reason === x ? ' on' : ''}" data-k="${esc(key)}" data-r="${x}"
+        onclick="qPick(this)">${esc(T('qReasons')[x])}</button>`).join('')}</div>
+      <input data-k="${esc(key)}" maxlength="200" placeholder="${esc(T('qNotePh'))}" value="${esc(p.note || '')}" oninput="qNote(this)"
+        ${p.reason === 'health' ? 'hidden' : ''}>
+      <p class="muted qhealth" ${p.reason === 'health' ? '' : 'hidden'}>${esc(T('qHealthNote'))}</p>
+      <div class="qa"><button class="btn sm" data-k="${esc(key)}" data-mode="${mode}" onclick="qSave(this)">${esc(T('qSave'))}</button></div></div>`;
+  };
+  // After an answer: the one reply for that reason, then the three questions (ask one only).
+  const replyPanel = id => {
+    const x = QREPLY[id];
+    if (!x) return '';
+    return `<div class="qwhy">${x.reply ? `<div class="lbl">${esc(T('qReplyH'))}</div>${draftBox('r:' + id, x.reply)}`
+      : `<p class="muted">${esc(T('qNoReply'))}</p>`}
+      <div class="lbl">${esc(T('qAskH'))}</div><ol class="qask">${(x.questions || []).map((qq, i) => {
+        DRAFTS[`a:${id}:${i}`] = qq;
+        return `<li>${esc(qq[LANG] || qq.en)} <button class="link" data-k="a:${id}:${i}" onclick="qCopy(this)">${esc(T('qCopy'))}</button></li>`; }).join('')}</ol></div>`;
+  };
+  const qDay = iso => ymdLong(bkkYmd(Date.parse(iso)), true, true);
+  const qRow = r => {
+    QROWS[r.code] = r;
+    const pass = [(LANG === 'th' && (r.pass.nameTh || TH_BY_EN[r.pass.name])) || r.pass.name, r.pass.until ? T('qEnds', ymdLong(r.pass.until)) : '',
+      r.pass.creditsLeft != null ? T('qLeft', r.pass.creditsLeft) : ''].filter(Boolean).join(' · ');
+    const tags = [r.kind === 'new' ? `<span class="pill upcoming">${esc(T('qNewTag'))}</span>` : '',
+      r.endsSoonCameLittle ? `<span class="pill upcoming">${esc(T('qEndsLow'))}</span>` : '',
+      r.unchecked ? `<span class="pill noshow">${esc(T('qUnchecked', r.unchecked))}</span>` : ''].join('');
+    const sent = r.messaged || [];
+    const notes = sent.map(m => `<div class="qm">${esc(T('qNoteBy', m.step, m.by || '?', qDay(m.at)))}${
+      m.reason ? ' · ' + esc(T('qReasons')[m.reason] || m.reason) : ''}</div>`).join('');
+    const act = k => `<button class="btn sm${k === 'sent' || k === 'undo' ? '' : ' lite'}" data-code="${esc(r.code)}" data-qa="${k}"
+      onclick="qAct(this)">${esc(T({ sent: 'qSent', know: 'qKnow', rhythm: 'qRhythm', undo: 'qUndo' }[k]))}</button>`;
+    const replyTo = r.outreachId || (sent[0] || {}).id;
+    let body = '';
+    if (r.state === 'todo' && r.draft) body = draftBox('d:' + r.code, r.draft, act('sent') + act('know') + act('rhythm'))
+      + (QPANEL['m:' + r.code] ? reasonPanel('m:' + r.code, 'know') : '');
+    else if (r.state !== 'todo') {
+      if (sent[0] && !sent[0].reason && bkkYmd(Date.parse(sent[0].at)) === QD.asOf) body += `<div class="qa">${act('undo')}</div>`;
+      if (!r.reason && replyTo) body += `<details class="qsub" data-k="o:${replyTo}" ${QPANEL['o:' + replyTo] ? 'open' : ''}
+        ontoggle="qPanel(this)"><summary>${esc(T('qAnswered'))}</summary>${reasonPanel('o:' + replyTo, 'reason')}</details>`;
+      if (replyTo) body += replyPanel(replyTo);
+    }
+    return `<div class="qrow"><div class="qn">${whoBtn(r.code, r.name, 'who-q-' + r.code)}<span class="qm">${esc(pass)}</span></div>
+      <div class="qm">${esc([r.lastCame ? T('qLast', ymdLong(r.lastCame, true, true)) : T('qNotYet'), T('qDays', r.daysQuiet),
+        r.reason && !sent.some(m => m.reason) ? T('qReasons')[r.reason] || r.reason : ''].filter(Boolean).join(' · '))}</div>
+      ${tags ? `<div>${tags}</div>` : ''}${notes}${body}</div>`;
+  };
+  function quietInner() {
+    const d = QD;
+    for (const k of Object.keys(QROWS)) delete QROWS[k];
+    const staff = d.todo.filter(r => r.sender !== 'teacher'), teach = d.todo.filter(r => r.sender === 'teacher');
+    const sub = (k, title, list) => list.length ? `<details class="qsub" data-k="${k}" ${QSUB[k] ? 'open' : ''} ontoggle="qSub(this)">
+      <summary>${esc(title)}</summary>${list.map(qRow).join('')}</details>` : '';
+    return `<details ${QOPEN ? 'open' : ''} ontoggle="qOpen(this)"><summary><b>${esc(T('qTitle'))}</b>
+        <span class="muted">${esc(T('qFold', staff.length, teach.length, d.resting.length, d.parked.length))}</span></summary>
+      <p class="muted" style="margin:6px 0 0">${esc(T('qAsOf', ymdLong(d.asOf, true)))}${!d.rezerv.show && d.heldBack ? ' · ' + esc(T('qHeld', d.heldBack)) : ''}</p>
+      ${d.rezerv.openFirst ? `<p class="warnline">${esc(T('qOpenFirst'))}</p>` : ''}
+      ${QFLASH ? `<p class="flash">${esc(T('qMovedRest', QFLASH.name))} <button class="link" data-code="${esc(QFLASH.code)}" data-qa="undo"
+        onclick="qAct(this)">${esc(T('qUndo'))}</button></p>` : ''}
+      ${whoForm()}
+      <details class="qchk"><summary>${esc(T('qChecksH'))}</summary><ol>${T('qChecks').map(x => `<li>${esc(x)}</li>`).join('')}</ol>
+        <p class="muted">${esc(T('qOneNote'))}</p></details>
+      ${staff.length ? `<h4>${esc(T('qStaffH'))}</h4>${staff.map(qRow).join('')}` : ''}
+      ${teach.length ? `<h4>${esc(T('qTeacherH'))}</h4>${teach.map(qRow).join('')}` : ''}
+      ${d.todo.length ? '' : `<p class="muted">${esc(T('qNone'))}</p>`}
+      ${sub('rest', T('qRestH', d.resting.length), d.resting)}${sub('park', T('qParkH', d.parked.length), d.parked)}
+      ${d.muted ? `<p class="muted">${esc(T('qMuted', d.muted))}</p>` : ''}</details>`;
+  }
+  window.qOpen = el => { QOPEN = el.open; };
+  window.qSub = el => { QSUB[el.dataset.k] = el.open; };
+  window.qPanel = el => { QPANEL[el.dataset.k] = el.open; };
+  window.qLang = b => {
+    const k = b.dataset.k, d = DRAFTS[k];
+    if (!d) return;
+    QLANG[k] = b.dataset.l;
+    b.parentNode.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    const ta = document.getElementById('qt-' + k);
+    if (ta) { ta.value = d[QLANG[k]] || ''; ta.rows = taRows(ta.value); }
+  };
+  // The clipboard first; where a browser refuses it, the text is selected to copy by hand.
+  window.qCopy = async b => {
+    const k = b.dataset.k, d = DRAFTS[k];
+    if (!d) return;
+    const text = d[QLANG[k] || LANG] || d.en;
+    let done = false;
+    try { await navigator.clipboard.writeText(text); done = true; } catch (_) {}
+    const ta = document.getElementById('qt-' + k);
+    if (!done && ta) { ta.focus(); ta.select(); try { done = document.execCommand('copy'); } catch (_) {} }
+    b.textContent = T(done ? 'qCopied' : 'qCopyHand');
+    setTimeout(() => { b.textContent = T('qCopy'); }, 2500);
+  };
+  window.qWhoEdit = () => { QWHO_EDIT = true; QWHO_KA = null; qRepaint(); };
+  window.qWhoKa = b => { QWHO_KA = b.dataset.ka; b.parentNode.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); };
+  window.qWhoSave = async () => {
+    const name = ($('#qWhoName').value || '').trim(), w = qWho(), ka = QWHO_KA || (w && w.ka);
+    if (!name) { $('#qWhoName').focus(); return; }
+    if (!QKA[ka]) { alert(T('qWhoKaPick')); return; }
+    store.set('aybkk_quiet_who', JSON.stringify({ name: name.slice(0, 40), ka }));
+    QWHO_EDIT = false; QWHO_KA = null;
+    if (SUB === 'history') qRepaint(); else await quietReload();
+  };
+  const qNeedWho = () => {
+    if (qWho() && !QWHO_EDIT) return false;
+    alert(T('qWhoFirst'));
+    const i = $('#qWhoName');
+    if (i) { i.scrollIntoView({ block: 'center' }); i.focus(); }
+    return true;
+  };
+  window.qAct = async b => {
+    const code = b.dataset.code, what = b.dataset.qa, r = QROWS[code] || {};
+    if (what === 'know') { QPANEL['m:' + code] = !QPANEL['m:' + code]; quietPaint(); return; }
+    if (what !== 'undo' && qNeedWho()) return;
+    if (what === 'rhythm' && !confirm(T('qRhythmQ', r.name || code))) return;
+    const w = qWho();
+    const body = what === 'undo' ? { undo: true } : what === 'rhythm' ? { by: w.name } : { by: w.name, step: r.step, draftKey: r.draftKey };
+    b.disabled = true;
+    const res = await api(`/api/bkk/admin/quiet/${encodeURIComponent(code)}/${what === 'rhythm' ? 'mute' : 'messaged'}`,
+      { method: 'POST', body: JSON.stringify(body) }).catch(() => null);
+    const j = res ? await res.json().catch(() => ({})) : {};
+    if (!res || !res.ok) { b.disabled = false; alert(j.error || T('failed')); return; }
+    QFLASH = what === 'sent' ? { code, name: r.name } : null;
+    await quietReload();
+  };
+  window.qPick = b => {
+    const k = b.dataset.k, p = QPICK[k] = QPICK[k] || {}, box = b.closest('.qwhy');
+    p.reason = b.dataset.r;
+    box.querySelectorAll('.opt').forEach(x => x.classList.toggle('on', x === b));
+    box.querySelector('input').hidden = p.reason === 'health';
+    box.querySelector('.qhealth').hidden = p.reason !== 'health';
+  };
+  window.qNote = el => { (QPICK[el.dataset.k] = QPICK[el.dataset.k] || {}).note = el.value; };
+  // m:CODE is "We know why" from the list; o:ID is an answer to a note that went out.
+  window.qSave = async b => {
+    const k = b.dataset.k, p = QPICK[k] || {};
+    if (!p.reason) { alert(T('qPick')); return; }
+    if (qNeedWho()) return;
+    const w = qWho(), id = k.slice(2), known = k.startsWith('m:');
+    b.disabled = true;
+    const res = await api(known ? `/api/bkk/admin/quiet/${encodeURIComponent(id)}/known` : `/api/bkk/admin/outreach/${encodeURIComponent(id)}/reason`,
+      { method: 'POST', body: JSON.stringify({ by: w.name, reason: p.reason, note: p.reason === 'health' ? '' : p.note || '', ka: w.ka }) }).catch(() => null);
+    const j = res ? await res.json().catch(() => ({})) : {};
+    if (!res || !res.ok) { b.disabled = false; alert(j.error || T('failed')); return; }
+    delete QPICK[k]; delete QPANEL[k];
+    if (!known) { QREPLY[id] = { reply: j.reply, questions: j.questions || [] }; QSUB.park = true; }
+    QFLASH = null;
+    if (SUB === 'history') await histReload(); else await quietReload();
+  };
+  const histReload = async () => {
+    if (!HIST) return;
+    const code = HIST.member.code;
+    const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/history`).catch(() => null);
+    const j = r && r.ok ? await r.json().catch(() => null) : null;
+    if (j && SUB === 'history' && HIST && HIST.member.code === code) { HIST = j; paintHistory(); }
+  };
+  // The profile's Messages box: every note, "we know why" and "their own rhythm", newest first.
+  const messagesBox = h => {
+    const list = h.outreach || [];
+    if (!list.length) return '';
+    return `<div class="box"><b>${esc(T('hMsgs'))}</b> <span class="muted">${list.length}</span>${qWho() && !QWHO_EDIT ? '' : whoForm()}
+      ${list.map(o => {
+        const bits = [T('qKind')[o.kind] || o.kind, o.step ? T('hMsgStep', o.step) : '', o.by ? T('hMsgBy', o.by) : '',
+          o.daysQuiet != null ? T('hMsgDays', o.daysQuiet) : '', o.muteUntil ? T('hMuteUntil', ymdLong(o.muteUntil)) : ''].filter(Boolean).join(' · ');
+        const can = o.kind === 'message' || o.kind === 'known';
+        return `<div class="qrow"><div class="qn"><b>${esc(ymdLong(bkkYmd(Date.parse(o.at)), true))}</b><span class="qm">${esc(bits)}</span></div>
+          ${o.reason ? `<div><span class="pill frozen">${esc(T('qReasons')[o.reason] || o.reason)}</span>${o.note ? ` <span class="qm">${esc(o.note)}</span>` : ''}</div>` : ''}
+          ${can ? `<details class="qsub" data-k="o:${o.id}" ${QPANEL['o:' + o.id] ? 'open' : ''} ontoggle="qPanel(this)">
+            <summary>${esc(T(o.reason ? 'qChange' : 'qAnswered'))}</summary>${reasonPanel('o:' + o.id, 'reason')}</details>` : ''}
+          ${replyPanel(o.id)}</div>`;
+      }).join('')}</div>`;
+  };
 
   // Every Buy on aybkk.net makes an order before the student pays, so leaving the
   // payment page, or trying again, leaves an unpaid order behind (Nov 2026).
@@ -2049,7 +2410,7 @@
       <td class="n">${esc(c.restingHr ?? '–')}</td><td class="n">${esc(c.sleepHours ?? '–')}</td>
       <td>${c.feel ? '★'.repeat(Math.min(5, c.feel)) : '–'}</td><td class="muted">${esc(c.note || '')}</td></tr>`);
     const box = (title, n, body) => `<div class="box"><b>${esc(title)}</b>${n != null ? ` <span class="muted">${n.toLocaleString()}</span>` : ''}${body}</div>`;
-    $('#view').innerHTML = head
+    $('#view').innerHTML = head + messagesBox(h)
       + box(T('hVisits'), h.visits.length, tbl([[T('thDate')], [T('thTime')], [T('thClass')], [T('thStatus')], [T('thFrom')]], visits, '', true)
         + more('visits', h.visits))
       + box(T('hPays'), h.payments.length, tbl([[T('thDate')], [T('thItem')], [T('thAmount'), 'n'], [T('thMethod')], [T('thStatus')], [T('thRef')]], pays, '', true)
@@ -2156,11 +2517,15 @@
           <td>${who(x, 'e')}</td><td>${esc(itemName(x.item || ''))}</td>
           <td class="nowrap">${esc(ymdLong(x.until, true))}</td></tr>`))}</div>
       <div class="box"><b>${T('rNotSeenH')}</b> <span class="muted">${d.notSeen.length}</span>
-        <p class="muted">${T('rNotSeenHelp')}</p>
-        ${tbl([[T('thStudent')], [T('thLast')], [T('thPass')], [T('thUntil')]], d.notSeen.map(x => `<tr>
-          <td>${who(x, 'n')}</td>
-          <td class="nowrap">${esc(x.lastVisit ? ymdLong(x.lastVisit) : T('neverCame'))}</td>
-          <td>${esc(itemName(x.pass || ''))}</td><td class="nowrap">${esc(x.until ? ymdLong(x.until) : '')}</td></tr>`), '', true)}</div>`;
+        <p class="muted">${T('rNotSeenHelp')}${d.notSeenHeldBack ? ' ' + esc(T('qHeld', d.notSeenHeldBack)) + '.' : ''}</p>
+        ${tbl([[T('thStudent')], [T('thState')], [T('thLast')], [T('thDays'), 'n'], [T('thPass')], [T('thUntil')]], d.notSeen.map(x => `<tr>
+          <td>${who(x, 'n')}</td><td>${esc(T('qState')[x.state] || x.state)}</td>
+          <td class="nowrap">${esc(x.lastVisit ? ymdLong(x.lastVisit) : T('neverCame'))}</td><td class="n">${x.daysQuiet}</td>
+          <td>${esc(itemName(x.pass || ''))}</td><td class="nowrap">${esc(x.until ? ymdLong(x.until) : '')}</td></tr>`), '', true)}</div>
+      ${d.quiet ? `<div class="box"><b>${T('rQuietH')}</b><p class="muted">${T('rQuietHelp')}</p>
+        ${tbl([[T('thItem')], [T('thCount'), 'n']], [['kMessaged', d.quiet.messaged], ['kMatured', d.quiet.matured], ['kCameBack', d.quiet.cameBack14],
+          ['kAnswered', d.quiet.answered]].map(([k, n]) => `<tr><td>${esc(T(k))}</td><td class="n">${n}</td></tr>`)
+          .concat(d.quiet.byReason.map(x => `<tr><td>${esc(T('thReason'))}: ${esc(T('qReasons')[x.reason] || x.reason)}</td><td class="n">${x.n}</td></tr>`)))}</div>` : ''}`;
     if (REP.back) { backTo(REP.back); REP.back = null; }
   }
 
@@ -2513,10 +2878,11 @@
     TEES = await api('/api/bkk/admin/tees').then(r => r.json())
       .then(d => d.tees || []).catch(() => []);
     const { counts: letter = [], doors = [] } = await api('/api/bkk/admin/newsletter').then(r => r.json()).catch(() => ({}));
+    QSET = await api('/api/bkk/admin/settings').then(r => r.json()).then(d => d.quiet || null).catch(() => null);
     if (current !== 'settings' || SUB) return;
     const byStatus = {};
     for (const c of letter) byStatus[c.status] = (byStatus[c.status] || 0) + c.n;
-    $('#view').innerHTML = `<div class="box">
+    $('#view').innerHTML = quietSetBox() + `<div class="box">
       <b>${T('feeTitle')}</b>
       <p class="muted">${T('feeHelp')}</p>
       <p><input id="sur" type="number" min="0" max="20" step="0.5" value="${p.surchargePct}" style="width:90px"> %
@@ -2562,6 +2928,32 @@
       <p><button class="btn pink" onclick="addTeam()">${T('addTeam')}</button></p>
       </div>`;
   }
+  // The See you tomorrow list: two switches, the day counts, and when Rezerv packages show.
+  let QSET = null;
+  const quietSetBox = () => {
+    const q = QSET;
+    if (!q) return '';
+    const seg = (f, vals) => `<div class="seg">${vals.map(([v, k]) => `<button class="${q[f] === v ? 'on' : ''}" data-f="${f}" data-v="${v}"
+      onclick="qSetPick(this)">${esc(T(k))}</button>`).join('')}</div>`;
+    const num = (id, f, lo, hi) => `<label>${esc(T(id))}<br><input type="number" id="qs_${f}" min="${lo}" max="${hi}" step="1" value="${q[f]}"></label>`;
+    return `<div class="box qset"><b>${esc(T('qSetH'))}</b><p class="muted">${esc(T('qSetHelp'))}</p>
+      <div class="lbl">${esc(T('qSetBox'))}</div>${seg('quietBox', [['on', 'qOn'], ['off', 'qOff']])}
+      <div class="lbl">${esc(T('qSetBrief'))}</div>${seg('quietBrief', [['on', 'qOn'], ['off', 'qOff']])}
+      <div class="lbl">${esc(T('qSetLong'))}</div><div class="row2">${num('qSetDay1', 'quietDays', 5, 30)}${num('qSetDay2', 'quietDays2', 6, 60)}</div>
+      <div class="lbl">${esc(T('qSetShort'))}</div><div class="row2">${num('qSetDay1', 'quietDaysShort', 3, 30)}${num('qSetDay2', 'quietDays2Short', 4, 60)}</div>
+      <p class="muted">${esc(T('qSetPack'))}</p>
+      <div class="lbl">${esc(T('qSetRezerv'))}</div>${seg('quietRezerv', [['hide', 'qHide'], ['show', 'qShow']])}
+      <p class="muted">${esc([q.lastRezervVisit ? T('qRezervLast', ymdLong(q.lastRezervVisit)) : '',
+        q.quietRezervFrom ? T('qRezervFrom', ymdLong(q.quietRezervFrom)) : ''].filter(Boolean).join(' · '))}</p>
+      <p><button class="btn" onclick="qSetSave()">${esc(T('save'))}</button></p></div>`;
+  };
+  window.qSetPick = b => { QSET[b.dataset.f] = b.dataset.v; b.parentNode.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); };
+  window.qSetSave = async () => {
+    const body = { quietBox: QSET.quietBox, quietBrief: QSET.quietBrief, quietRezerv: QSET.quietRezerv };
+    for (const f of ['quietDays', 'quietDays2', 'quietDaysShort', 'quietDays2Short']) body[f] = Number($('#qs_' + f).value);
+    const j = await shout(await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify(body) }));
+    if (j) { alert(T('saved')); renderSettings(); }
+  };
   let TEES = [];
   const teeForm = x => `<div class="teeRow" data-id="${x.id || ''}" style="border-top:1px solid #eee;padding:10px 0">
       ${x.photo ? `<img src="${esc(x.photo)}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:6px;float:right">` : ''}
