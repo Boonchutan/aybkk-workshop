@@ -946,6 +946,46 @@ const ok = (name, cond, extra = '') => {
        row(ann.code).code === ann.code && row(ann.code).last_main === null && row(ann.code).last_main_days === null
          && row(cat.code).code === cat.code && row(cat.code).last_main === null, JSON.stringify([row(ann.code), row(cat.code)]));
     await pool.query('DELETE FROM bkk_bookings WHERE id = ANY($1::int[])', [booked]);
+
+    // The hint never shows a whole email, however short the name part is.
+    const short = async (name, email) => (await tp('/api/bkk/teacher/members', { name, email })).body.member;
+    const h1 = await short('Uno Hintone', 'q@hint.example.com'), h2 = await short('Duo Hinttwo', 'qz@hint.example.com');
+    const h3 = await short('Tri Hintthree', 'qzx@hint.example.com'), h0 = await short('Nul Hintnone', 'nul.hintnone@hint.example.com');
+    await pool.query(`UPDATE bkk_members SET email='no-at-sign' WHERE code=$1`, [h0.code]);
+    const hintOf = async m => (await prof(m.code)).body.member.hint;
+    const found = (await tg('/api/bkk/teacher/members?q=hint')).body.members;
+    ok('the email hint hides part of every address: one letter, two letters, or no @ at all',
+       (await hintOf(h1)) === '…@hint.example.com' && (await hintOf(h2)) === 'q…@hint.example.com'
+         && (await hintOf(h3)) === 'qz…@hint.example.com' && (await hintOf(h0)) === '…' && (await hintOf(pip)) === 'pi…@example.com',
+       JSON.stringify([await hintOf(h1), await hintOf(h2), await hintOf(h3), await hintOf(h0)]));
+    ok('...in the name search too',
+       found.length === 4 && found.find(m => m.code === h1.code).hint === '…@hint.example.com'
+         && found.find(m => m.code === h2.code).hint === 'q…@hint.example.com' && found.find(m => m.code === h0.code).hint === '…', JSON.stringify(found));
+
+    // More than 30 names on one photo: refused whole, never cut short (the cut could drop the main student).
+    const crowd = [];
+    for (let i = 1; i <= 31; i++) crowd.push((await mem(`Crowd Person${i}`)).code);
+    const many31 = [...crowd.slice(0, 30).map(code => ({ code, role: 'other' })), { code: crowd[30], role: 'main' }];
+    const photosNow = async () => (await pool.query('SELECT count(*)::int AS n FROM bkk_photos')).rows[0].n;
+    const [nBefore, upBefore] = [await photosNow(), uploads.length];
+    const tooMany = await tp('/api/bkk/teacher/photos', { date: '2026-10-04', image: IMG, tags: many31 });
+    ok('31 names on a new photo is refused (400) and nothing is stored',
+       tooMany.status === 400 && /30 names/.test(tooMany.body.error) && (await photosNow()) === nBefore && uploads.length === upBefore, JSON.stringify(tooMany.body));
+    const full = await tp('/api/bkk/teacher/photos', { date: '2026-10-04', image: IMG, tags: many31.slice(1) });
+    ok('30 names is fine, and the main one is among them',
+       full.status === 200 && full.body.photo.members.length === 30 && full.body.photo.members[0].role === 'main', JSON.stringify(full.body).slice(0, 200));
+    const p1Was = await inDb(p1.id);
+    const over = await tp(`/api/bkk/teacher/photos/${full.body.photo.id}/tags`, { tags: many31 });
+    const overOld = await tp(`/api/bkk/teacher/photos/${full.body.photo.id}/tags`, { memberCodes: crowd });
+    const overAdd = await tp('/api/bkk/teacher/photos/tags/add', { photoIds: [p1.id], memberCodes: crowd });
+    ok('31 names on a saved photo, in the old body, or in a bulk add: refused, and who was on the photos stays',
+       over.status === 400 && overOld.status === 400 && overAdd.status === 400
+         && (await inDb(full.body.photo.id)).split(',').length === 30 && p1Was.length > 0 && (await inDb(p1.id)) === p1Was, JSON.stringify([over.body, overAdd.body, p1Was, await inDb(p1.id)]));
+    const twice = await tp(`/api/bkk/teacher/photos/${full.body.photo.id}/tags`,
+      { tags: [...many31.slice(1), ...many31.slice(1).map(x => ({ code: x.code, role: 'other' }))] });
+    ok('a name sent twice counts once: 30 people named 60 times is still 30', twice.status === 200 && twice.body.photo.members.length === 30
+       && twice.body.photo.members[0].role === 'main', JSON.stringify(twice.body).slice(0, 200));
+    await tp(`/api/bkk/teacher/photos/${full.body.photo.id}/delete`, {});
   }
 
   console.log('\n— Rezerv import —');

@@ -33,19 +33,22 @@
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .chip{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;
     padding:10px 14px;font:inherit;font-weight:600;font-size:15px;cursor:pointer;min-height:44px}
-  .chip[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#fff}
+  .chip[aria-pressed="true"]{background:var(--plum);border-color:var(--plum);color:var(--on-dark)}
   .stage img{display:block;width:100%;max-height:62vh;object-fit:contain;border-radius:8px;background:#000}
   .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
   .tile{position:relative;border:none;padding:0;background:none;cursor:pointer;text-align:left;color:var(--ink);font:inherit}
-  .tile .ph{display:block;width:100%;border:none;padding:0;background:none;cursor:pointer}
+  .tile .ph{display:block;width:100%;border:none;padding:0 0 10px;background:none;cursor:pointer}
+  .tile .ph + span{margin-top:2px}
   .tile img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:6px;background:var(--blush)}
   .tile span{display:block;font-size:11.5px;line-height:1.3;margin-top:3px;color:var(--soft);overflow-wrap:anywhere}
   .tile.none span{color:#c33;font-weight:700}
-  /* Under a photo: the main names first, then "In the frame: ..." in a quieter style. */
-  .tile span.cap{color:var(--ink);font-weight:600;margin-top:0}
-  .tile span.cap i{display:block;font-style:normal;font-weight:400;color:var(--soft)}
-  .nm{border:none;background:none;padding:5px 0;font:inherit;color:inherit;cursor:pointer;text-align:left;
-    text-decoration:underline var(--soft) 1px;text-underline-offset:2px}
+  /* Under a photo: the main names first, then "In the frame: ..." in a quieter style.
+     The names run on like text, so a caption is no taller than plain names were. The
+     10px under the photo belong to the photo, so a tap at its edge is never a name. */
+  .tile span.cap{color:var(--ink);font-weight:600}
+  .tile span.cap i{font-style:normal;font-weight:400;color:var(--soft)}
+  .tile span.cap b{display:block;color:#c33}
+  .nm{color:inherit;cursor:pointer;text-decoration:underline var(--soft) 1px;text-underline-offset:2px}
   .row{display:flex;gap:8px;align-items:center}
   .row > *{flex:1}
   #gate{max-width:330px;margin:16vh auto;text-align:center;padding:0 16px}
@@ -71,18 +74,33 @@
   body.hasbar main{padding-bottom:84px}
   .strip{display:flex;gap:4px;overflow-x:auto;margin-top:8px}
   .strip img{width:56px;height:70px;object-fit:cover;border-radius:4px;flex:none}
-  /* A chip in two parts. A picked name: the name (tap takes it off) and its mark
-     (tap switches Main / In the frame). A search result: add, and see their photos. */
+  /* The name list while tagging: a tap changes how that one chip looks, never
+     its size, so no name moves under the thumb. Main: filled, with a star.
+     In the frame: outlined. The words are in the row above Save. (A picked chip
+     is plum, not the pink it was: white on that pink was too faint to read.) */
+  #chips .chip{position:relative}
+  #chips .chip.oth{background:var(--blush);color:var(--ink)}
+  #chips .chip[aria-pressed="true"]:not(.oth)::after{content:"★";position:absolute;top:-7px;right:-2px;width:19px;height:19px;
+    border-radius:50%;background:var(--paper);color:var(--plum);border:1.5px solid var(--plum);
+    font-size:11px;line-height:16px;text-align:center;pointer-events:none}
+  /* Who is in the photo, and how. One row that keeps its height, so Save never
+     moves; with many names it scrolls sideways. A tap on a name switches it. */
+  #inPhoto{display:flex;gap:8px;align-items:center;height:58px;padding:4px 3px;margin:2px -3px 0;
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+  #inPhoto::-webkit-scrollbar{display:none}
+  .pk{flex:0 1 auto;min-width:96px;min-height:46px;padding:4px 10px;border:1.5px solid var(--plum);border-radius:10px;
+    background:var(--plum);color:var(--on-dark);font:inherit;font-weight:600;font-size:14px;line-height:1.3;
+    text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pk small{display:block;font-size:11.5px;font-weight:700}
+  .pk.oth{background:var(--blush);color:var(--ink)}
+  #roleTip{margin:4px 0 0;min-height:3em}
+  /* A search result in two parts: add the name, and see their photos. */
   .chip.duo{display:inline-flex;align-items:stretch;padding:0;max-width:100%;overflow:hidden}
   .chip.duo button{border:none;background:none;color:inherit;font:inherit;font-weight:600;cursor:pointer;
     min-height:41px;padding:8px 12px;text-align:left;overflow-wrap:anywhere}
   .chip.duo button + button{flex:none;white-space:nowrap;font-size:13px;font-weight:700;color:var(--plum);
     border-left:1.5px solid var(--line)}
   .chip.duo button:focus-visible{outline-offset:-3px}
-  .chip.duo.on{background:var(--pink);border-color:var(--pink);color:#fff}
-  .chip.duo.on button + button{color:inherit;border-left-color:rgba(255,255,255,.55)}
-  .chip.duo.on.oth{background:var(--paper);color:var(--ink)}
-  .chip.duo.on.oth button + button{color:var(--plum);border-left-color:var(--pink)}
   label.chip{display:inline-flex;align-items:center;gap:8px}
   label.chip:has(input:checked){border-color:var(--pink)}
   input[type=radio]{width:20px;height:20px;padding:0;margin:0;flex:none;accent-color:var(--pink)}
@@ -153,13 +171,14 @@
       <span class="muted">Day folder in "photos"</span>
       <select id="dFolder" style="width:100%;padding:11px;border:1.5px solid var(--line);border-radius:8px;font:inherit;font-size:16px;background:var(--wall);color:var(--ink);margin-bottom:8px"></select>
       <p class="muted" id="dMsg" style="margin:0 0 10px"></p>
+      <p id="dWarn" style="margin:0 0 10px;font-size:14px;font-weight:700;color:#c33" hidden></p>
       <button class="btn pink wide" id="dStart" hidden></button>
       <div class="grid" id="dGrid"></div>
     </div>
 
     <div class="box" id="batch" hidden>
       <b class="h" id="bTitle">Who is in these photos?</b>
-      <p class="muted" style="margin:0">The name is added to every photo you picked. Anyone already on a photo stays.</p>
+      <p class="muted" style="margin:0">The name is added to every photo you picked. Anyone already on a photo stays, and a Main stays Main.</p>
       <div class="strip" id="bStrip"></div>
       <div class="chips" id="bChips"></div>
       <div class="row" style="margin-top:10px"><input id="bFind" placeholder="Search a name…" autocomplete="off"></div>
@@ -170,6 +189,7 @@
           <label class="chip"><input type="radio" name="bRole" value="main" checked>★ Main</label>
           <label class="chip"><input type="radio" name="bRole" value="other">In the frame</label>
         </div>
+        <p id="bTip" style="margin:8px 0 0;font-size:14px;font-weight:700" hidden></p>
       </div>
       <div class="row" style="margin-top:14px">
         <button class="btn ghost" id="bCancel">Back</button>
@@ -183,7 +203,6 @@
       <b class="h" id="edTitle">Who is in this photo?</b>
       <div class="stage"><img id="edImg" alt=""></div>
       <div class="chips" id="chips"></div>
-      <p class="muted" id="roleTip" style="margin:8px 0 0"></p>
       <div class="row" style="margin-top:10px">
         <input id="find" placeholder="Search a name…" autocomplete="off">
       </div>
@@ -192,7 +211,10 @@
         <div class="row" style="margin-top:8px"><input id="nName" placeholder="Name"><input id="nMail" type="email" placeholder="Email"></div>
         <p style="margin:8px 0 0"><button class="btn ghost" onclick="addNew()">Add</button> <span class="muted" id="nMsg"></span></p>
       </details>
-      <div class="row" style="margin-top:14px">
+      <b class="muted" id="inH" style="display:block;margin-top:12px">In this photo</b>
+      <div id="inPhoto" role="group" aria-labelledby="inH"></div>
+      <p class="muted" id="roleTip"></p>
+      <div class="row" style="margin-top:6px">
         <button class="btn ghost" id="edSkip">Skip</button>
         <button class="btn" id="edSave">Save &amp; next</button>
       </div>
@@ -203,7 +225,7 @@
     <div class="box">
       <div class="selhead"><b class="h">Saved for this day <span class="muted" id="count"></span></b>
         <button class="btn ghost small" data-pick="saved">Select many</button></div>
-      <p class="muted" style="margin:0">Tap a photo to change who is in it. Red = nobody tagged yet. Tap a name to see that student's photos.</p>
+      <p class="muted" style="margin:0">Tap a photo to change who is in it. <span id="redNote">Red = nobody tagged yet.</span> Tap a name to see that student's photos.</p>
       <div class="grid" id="grid"></div>
     </div>
   </main>
@@ -229,7 +251,7 @@
       </div>
       <div class="box">
         <b class="h">Photos <span class="muted" id="pfShown"></span></b>
-        <p class="muted" style="margin:0">Newest first. Tap a photo to open it on its class day.</p>
+        <p class="muted" style="margin:0">Newest first. Tap a photo to change who is in it.</p>
         <div class="grid" id="pfGrid"></div>
         <button class="btn ghost wide" style="margin-top:12px" id="pfMore" hidden>Show more</button>
       </div>
@@ -256,8 +278,13 @@
   const mains = p => p.members.filter(m => m.role !== 'other');
   const others = p => p.members.filter(m => m.role === 'other');
   const ago = n => n <= 0 ? 'today' : n === 1 ? 'yesterday' : `${n} days ago`;
+  // Names on it but nobody Main: while students see only their Main photos, nobody sees this one.
+  const noMain = p => !OTHERS_SEE && p.members.length > 0 && !mains(p).length;
   const capText = p => [mains(p).map(m => m.name).join(', '),
     others(p).length ? 'In the frame: ' + others(p).map(m => m.name).join(', ') : ''].filter(Boolean).join(' · ');
+  const dayText = d => new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB',
+    { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  const monthText = m => new Date(m + '-01T00:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
   const dthumb = (id, w) => `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w}`;
 
   window.unlock = async () => {
@@ -282,6 +309,7 @@
     OTHERS_SEE = day.othersVisible === true;
     $('#seeNote').textContent = OTHERS_SEE ? 'Each student sees only the photos you tag them in.'
       : 'Each student sees only the photos where they are Main.';
+    $('#redNote').textContent = OTHERS_SEE ? 'Red = nobody tagged yet.' : 'Red = nobody tagged, or nobody is Main yet.';
     for (const p of PHOTOS) for (const m of p.members) PEOPLE.set(m.code, m.name);
     renderGrid();
     if (DRIVE.length) renderDrive();
@@ -350,6 +378,7 @@
     const ph = PHOTOS.find(p => p.id === f.photoId);
     if (ph) f.tagged = ph.members.length;
     if (!f.tagged) return { cls: ' none', label: 'saved · no name yet' };
+    if (ph && noMain(ph)) return { cls: ' none', label: 'saved · no Main yet' };
     return { cls: ' done', label: '✓ ' + (ph ? esc(capText(ph)) : 'saved (other date)') };
   }
   const notDone = () => DRIVE.filter(f => driveState(f).cls !== ' done');
@@ -359,7 +388,13 @@
     $('#dCount').textContent = DRIVE.length ? `(${DRIVE.length - todo} of ${DRIVE.length} done)` : '';
     $('#dMsg').textContent = !DRIVE.length ? 'No photos in this folder.'
       : !todo ? 'Every photo in this folder is tagged. ✓'
-      : 'Grey = done. Tap any photo to add or change names.' + (nobody ? ' Red = saved, no name yet.' : '');
+      : 'Grey = done. Tap any photo to add or change names.'
+        + (nobody ? ` Red = saved, no name${OTHERS_SEE ? '' : ' or no Main'} yet.` : '');
+    // Photos are saved under the class date, not the folder's: say so when the two differ.
+    const folder = FOLDERS.find(x => x.id === $('#dFolder').value), date = $('#date').value;
+    $('#dWarn').hidden = !(DRIVE.length && folder && folder.date && date && folder.date !== date);
+    if (!$('#dWarn').hidden) $('#dWarn').textContent =
+      `This folder is ${folder.name}, but the class date is ${dayText(date)}. Photos you save now go under the class date.`;
     $('#dStart').hidden = !todo || PICK === 'drive';
     $('#dStart').textContent = `Tag the ${todo} photo${todo === 1 ? '' : 's'} left`;
     $('#dGrid').innerHTML = DRIVE.map(f => {
@@ -393,42 +428,72 @@
   // on, the names are plain text: every tap on a tile picks the photo.
   function capHtml(p) {
     const who = m => PICK === 'saved' ? esc(m.name)
-      : `<button class="nm" data-prof="${esc(m.code)}" data-name="${esc(m.name)}" aria-label="${esc(m.name)}, ${roleWord(m.role)}. See their photos.">${esc(m.name)}</button>`;
-    return mains(p).map(who).join(', ') + (others(p).length ? `<i>In the frame: ${others(p).map(who).join(', ')}</i>` : '');
+      : `<a class="nm" href="#" data-prof="${esc(m.code)}" data-name="${esc(m.name)}" aria-label="${esc(m.name)}, ${roleWord(m.role)}. See their photos.">${esc(m.name)}</a>`;
+    return (noMain(p) ? '<b>No Main yet</b>' : mains(p).map(who).join(', '))
+      + (others(p).length ? `<i>${mains(p).length ? ' · ' : ''}In the frame: ${others(p).map(who).join(', ')}</i>` : '');
   }
   function renderGrid() {
     $('#count').textContent = PHOTOS.length ? `(${PHOTOS.length})` : '';
     $('#grid').innerHTML = PHOTOS.map(p => `
       <div class="tile${p.members.length ? '' : ' none'}${SEL.has('p:' + p.id) ? ' sel' : ''}" data-id="${p.id}">
-        <button class="ph" aria-label="Photo: ${esc(capText(p)) || 'nobody tagged'}"><img loading="lazy" src="${esc(p.thumb)}" alt=""></button>
+        <button class="ph" aria-label="Photo: ${noMain(p) ? 'No Main yet. ' : ''}${esc(capText(p)) || 'nobody tagged'}"><img loading="lazy" src="${esc(p.thumb)}" alt=""></button>
         ${p.members.length ? `<span class="cap">${capHtml(p)}</span>` : '<span>nobody tagged</span>'}
       </div>`).join('') || '<p class="muted">No photos yet for this day.</p>';
   }
 
-  // A picked name shows its mark, Main or In the frame; a tap on the mark switches it.
-  function renderChips(focus) {
+  // The name list is drawn again only when the people in it change. A tap just
+  // changes the look of that one chip (showPicked), so no name moves under his thumb.
+  function renderChips() {
     const names = [...PEOPLE.entries()].sort((a, b) => a[1].localeCompare(b[1]));
-    $('#chips').innerHTML = names.map(([code, name]) => {
-      const role = PICKED.get(code), flip = roleWord(role === 'main' ? 'other' : 'main');
-      return !role ? `<button class="chip" data-code="${esc(code)}" aria-pressed="false">${esc(name)}</button>`
-        : `<span class="chip duo on${role === 'main' ? '' : ' oth'}"><button data-code="${esc(code)}" aria-pressed="true">${esc(name)}</button>` +
-          `<button data-flip="${esc(code)}" aria-label="${esc(name)}: ${roleWord(role)}. Tap to change to ${flip}.">${role === 'main' ? '★ Main' : 'In the frame'}</button></span>`;
-    }).join('') || '<p class="muted">Search a name below, or add a new student.</p>';
-    const noMain = PICKED.size && ![...PICKED.values()].includes('main');
-    $('#roleTip').style.cssText = noMain ? 'margin:8px 0 0;font-weight:700;color:var(--ink)' : 'margin:8px 0 0';
-    $('#roleTip').textContent = !noMain ? 'Tap ★ Main or In the frame to switch.'
-      : OTHERS_SEE ? 'Nobody is Main. Tap In the frame to switch.'
-      : 'Nobody is Main, so no student sees this photo. Tap In the frame to switch.';
-    const el = focus && $('#chips').querySelector(focus);
-    if (el) el.focus();
+    $('#chips').innerHTML = names.map(([code, name]) =>
+      `<button class="chip" data-code="${esc(code)}" aria-pressed="false">${esc(name)}</button>`).join('')
+      || '<p class="muted">Search a name below, or add a new student.</p>';
+    showPicked();
+  }
+  // Who is picked, and as what: on the chips in the list, and in the row above
+  // Save, where a tap on a name switches it between Main and In the frame.
+  function showPicked() {
+    for (const b of $('#chips').querySelectorAll('[data-code]')) {
+      const role = PICKED.get(b.dataset.code);
+      b.setAttribute('aria-pressed', role ? 'true' : 'false');
+      b.classList.toggle('oth', role === 'other');
+      if (role) b.setAttribute('aria-label', `${b.textContent}: ${roleWord(role)}. Tap to take off.`);
+      else b.removeAttribute('aria-label');
+    }
+    $('#inH').textContent = 'In this photo' + (PICKED.size ? ` (${PICKED.size})` : '');
+    $('#inPhoto').innerHTML = [...PICKED].map(([code, role]) => {
+      const name = esc(PEOPLE.get(code) || code);
+      return `<button class="pk${role === 'main' ? '' : ' oth'}" data-flip="${esc(code)}" ` +
+        `aria-label="${name}: ${roleWord(role)}. Tap to change to ${roleWord(role === 'main' ? 'other' : 'main')}.">` +
+        `<small>${role === 'main' ? '★ Main' : 'In the frame'}</small>${name}</button>`;
+    }).join('') || '<span class="muted">Nobody yet. Tap the names above.</span>';
+    const roles = [...PICKED.values()], none = roles.length && !roles.includes('main');
+    $('#roleTip').style.cssText = none ? 'font-weight:700;color:var(--ink)' : '';
+    $('#roleTip').textContent = !roles.length ? 'The first name you tap is ★ Main. The next ones are In the frame.'
+      : none ? `Nobody is ★ Main${OTHERS_SEE ? '' : ', so no student sees this photo'}. Tap a name here to switch.`
+      : roles.includes('other') && !OTHERS_SEE ? 'Only ★ Main students see this photo. Tap a name here to switch.'
+      : 'Tap a name here to switch ★ Main / In the frame.';
   }
   // The first name on a photo is Main; the names after it are In the frame.
   const pick = c => { if (!PICKED.has(c)) PICKED.set(c, [...PICKED.values()].includes('main') ? 'other' : 'main'); };
-  function editSaved(p) {
+  // back: what was open when this photo was opened from a student's photos; endEdit brings it back.
+  function editSaved(p, title, back) {
     QUEUE = []; TOTAL = 0;
-    EDIT = { kind: 'edit', id: p.id };
+    EDIT = { kind: 'edit', id: p.id, back };
     PICKED = new Map(p.members.map(m => [m.code, m.role === 'other' ? 'other' : 'main']));
-    openEditor(p.full, 'Who is in this photo?');
+    openEditor(p.full, title || 'Who is in this photo?');
+  }
+  const saveWord = () => EDIT.kind !== 'edit' ? 'Save & next' : EDIT.back ? 'Save & go back' : 'Save';
+  // A saved photo is done with (saved or deleted): what was open before it comes back.
+  function endEdit() {
+    const h = EDIT && EDIT.back;
+    if (h && h.edit) {
+      EDIT = h.edit; PICKED = h.picked; QUEUE = h.queue; TOTAL = h.total; DONE = h.done;
+      openEditor(h.src, h.title);
+      return;
+    }
+    closeEditor();
+    if (h && h.batch && BATCH.length) { $('#batch').hidden = false; $('#batch').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   }
 
   // Shrink on the phone before sending: a 6000px camera file is 10MB, a
@@ -464,7 +529,9 @@
     const file = QUEUE[0];
     if (file.drive) {
       EDIT = { kind: 'drive', f: file.drive };
-      PICKED = new Map();
+      // Saved already (names on it, nobody Main yet): start from those names, or Save would drop them.
+      const had = file.drive.photoId && PHOTOS.find(p => p.id === file.drive.photoId);
+      PICKED = new Map(had ? had.members.map(m => [m.code, m.role]) : []);
       openEditor(dthumb(file.drive.id, 1600), `Photo ${DONE + 1} of ${TOTAL}: who is in it?`);
       return;
     }
@@ -487,23 +554,25 @@
     $('#find').value = ''; $('#found').innerHTML = '';
     $('#prog').style.width = TOTAL ? `${Math.round(100 * DONE / TOTAL)}%` : '0';
     $('#edSkip').textContent = EDIT.kind !== 'edit' ? 'Skip' : 'Delete photo';
-    $('#edSave').textContent = EDIT.kind !== 'edit' ? 'Save & next' : 'Save';
+    $('#edSave').textContent = saveWord();
     renderChips();
     $('#editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function closeEditor() { $('#editor').hidden = true; EDIT = null; TOTAL = 0; DONE = 0; }
 
   $('#chips').addEventListener('click', e => {
-    const flip = e.target.closest('[data-flip]'), b = e.target.closest('[data-code]');
-    if (flip) {
-      const c = flip.dataset.flip;
-      PICKED.set(c, PICKED.get(c) === 'main' ? 'other' : 'main');
-      renderChips(`[data-flip="${CSS.escape(c)}"]`);
-    } else if (b) {
-      const c = b.dataset.code;
-      PICKED.has(c) ? PICKED.delete(c) : pick(c);
-      renderChips(`[data-code="${CSS.escape(c)}"]`);
-    }
+    const b = e.target.closest('[data-code]'); if (!b) return;
+    const c = b.dataset.code;
+    PICKED.has(c) ? PICKED.delete(c) : pick(c);
+    showPicked();
+  });
+  $('#inPhoto').addEventListener('click', e => {
+    const b = e.target.closest('[data-flip]'); if (!b) return;
+    const c = b.dataset.flip, x = $('#inPhoto').scrollLeft;
+    PICKED.set(c, PICKED.get(c) === 'main' ? 'other' : 'main');
+    showPicked();
+    $('#inPhoto').scrollLeft = x;
+    $('#inPhoto').querySelector(`[data-flip="${CSS.escape(c)}"]`).focus({ preventScroll: true });
   });
 
   // One name search for the three boxes. row: what one result looks like.
@@ -570,10 +639,10 @@
       renderGrid();
       if (DRIVE.length) renderDrive();
       refreshToday();
-      EDIT.kind !== 'edit' ? nextNew() : closeEditor();
+      EDIT.kind !== 'edit' ? nextNew() : endEdit();
     } catch (err) { $('#edMsg').textContent = '✗ NOT SAVED: ' + err.message + ' Press Save again.'; }
     btn.disabled = false;
-    if (EDIT) btn.textContent = EDIT.kind !== 'edit' ? 'Save & next' : 'Save';
+    if (EDIT) btn.textContent = saveWord();
   });
 
   $('#edSkip').addEventListener('click', async () => {
@@ -586,7 +655,7 @@
       PHOTOS = PHOTOS.filter(p => p.id !== gone);
       SEL.delete('p:' + gone);
       for (const f of DRIVE) if (f.photoId === gone) { f.photoId = null; SEL.delete('d:' + f.id); }
-      renderGrid(); if (DRIVE.length) renderDrive(); updateBar(); closeEditor(); refreshToday();
+      renderGrid(); if (DRIVE.length) renderDrive(); updateBar(); endEdit(); refreshToday();
     }
   });
 
@@ -664,6 +733,19 @@
     $('#bGo').disabled = BUSY || !BPICK.size || !n;
     $('#bGo').textContent = `Add to ${n} photo${n === 1 ? '' : 's'}`;
   }
+  // "In the frame" on photos where nobody is Main: no student would see those. Say so before Add.
+  function bulkTip() {
+    const all = BATCH.length;
+    const n = OTHERS_SEE || $('[name=bRole]:checked').value !== 'other' ? 0 : BATCH.filter(it => {
+      const id = savedId(it), ph = id && PHOTOS.find(p => p.id === id);
+      return id ? ph && !mains(ph).length : true;      // not saved yet: nobody is on it
+    }).length;
+    $('#bTip').hidden = !n;
+    $('#bTip').textContent = !n ? '' : (n < all ? `Nobody is ★ Main in ${n} of these photos, so no student sees those.`
+      : `Nobody is ★ Main in ${all === 1 ? 'this photo' : 'these photos'}, so no student sees ${all === 1 ? 'it' : 'them'}.`)
+      + ' Tag the main student too.';
+  }
+  document.querySelectorAll('[name=bRole]').forEach(r => r.addEventListener('change', bulkTip));
   // The panel saves exactly the photos it shows: a tap on the grid after it
   // opened does not sneak another photo into the batch.
   $('#selName').addEventListener('click', () => {
@@ -676,6 +758,7 @@
       `<img alt="" src="${esc(it.kind === 'photo' ? it.p.thumb : dthumb(it.f.id, 200))}">`).join('');
     $('#bFind').value = ''; $('#bFound').innerHTML = ''; $('#bMsg').textContent = ''; $('#bProg').style.width = '0';
     $('[name=bRole][value=main]').checked = true;
+    bulkTip();
     renderBChips();
     $('#batch').hidden = false;
     $('#batch').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -705,6 +788,7 @@
     BUSY = true; renderBChips();
     $('#bMsg').style.color = ''; $('#bMsg').textContent = 'Saving…';
     let done = 0, fail = null;
+    const got = [];                    // each photo as the server has it now
     const finished = it => { BATCH = BATCH.filter(x => x !== it); SEL.delete(keyOf(it)); done++; };
     try {
       // Photos already saved: one call adds the name to all of them.
@@ -714,7 +798,7 @@
           body: JSON.stringify({ photoIds: saved.map(savedId), memberCodes: codes, role }) });
         const j = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(j.error || 'Could not save.');
-        j.photos.forEach(upsertPhoto);
+        j.photos.forEach(ph => { upsertPhoto(ph); got.push(ph); });
         saved.forEach(finished);
       }
       // Drive photos not saved yet: each is saved, with the name, one by one.
@@ -727,7 +811,7 @@
         const j = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(j.error || 'Could not save.');
         f.photoId = it.f.photoId = j.photo.id;
-        upsertPhoto(j.photo);
+        upsertPhoto(j.photo); got.push(j.photo);
         finished(it);
       }
     } catch (err) { fail = err.message; }
@@ -744,7 +828,14 @@
     }
     $('#batch').hidden = true;
     updateBar();
-    flash(`✓ ${who} added to ${done} photo${done === 1 ? '' : 's'} as ${roleWord(role)}`);
+    // Said from what was saved: added as In the frame, someone already Main on a photo stays Main.
+    const kept = role !== 'other' ? 0
+      : got.reduce((n, ph) => n + ph.members.filter(m => codes.includes(m.code) && m.role === 'main').length, 0);
+    const photos = n => `${n} photo${n === 1 ? '' : 's'}`;
+    flash(!kept ? `✓ ${who} added to ${photos(done)} as ${roleWord(role)}`
+      : codes.length > 1 ? `✓ ${who} added to ${photos(done)} as In the frame. Anyone already Main stayed Main (${kept}).`
+      : kept === done ? `✓ ${who} is already Main on ${done === 1 ? 'this photo' : `these ${done} photos`}. Nothing changed.`
+      : `✓ ${who}: In the frame on ${photos(done - kept)}. Already Main on ${kept}, kept.`);
   });
 
   // ── one student's photos ───────────────────────────────────────────────
@@ -753,9 +844,6 @@
   // it is not touched, so Back (the button, the phone's back, Esc) lands where
   // he was, with a half-tagged photo still as he left it.
   let PROF = null;                   // { code, n: photos shown, day: last day shown, from: what was tapped }
-  const dayText = d => new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB',
-    { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
-  const monthText = m => new Date(m + '-01T00:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
   if (history.state && history.state.prof) history.replaceState(null, '');
   function openProf(code, name, from) {
     PROF = { code, n: 0, day: '', from };
@@ -820,16 +908,32 @@
   window.addEventListener('popstate', () => closeProf(true));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeProf(); });
   document.addEventListener('click', e => {
-    const b = e.target.closest('[data-prof]');
-    if (b) openProf(b.dataset.prof, b.dataset.name, b);
+    const b = e.target.closest('[data-prof]'); if (!b) return;
+    e.preventDefault();              // a name under a photo is a link
+    openProf(b.dataset.prof, b.dataset.name, b);
   });
-  // A photo in the profile opens on its own class day, ready to change.
+  // A photo in the profile opens in the editor, whatever day it is from. The
+  // class date is not touched: the photos he saves next still go under it. And
+  // what was open before (a photo half tagged, the Drive queue, the many-photos
+  // box) is kept, and comes back when this photo is saved or deleted.
   $('#pfGrid').addEventListener('click', async e => {
-    const b = e.target.closest('[data-go]'); if (!b || BUSY) return;
+    const b = e.target.closest('[data-go]'); if (!b || BUSY || b.disabled) return;
+    const me = PROF, id = Number(b.dataset.go), date = b.dataset.date, lab = b.querySelector('span'), was = lab.textContent;
+    let p = date === $('#date').value && PHOTOS.find(x => x.id === id);
+    if (!p) {
+      b.disabled = true; lab.textContent = 'Opening…';
+      const d = await api('/api/bkk/teacher/photos?date=' + date).then(r => r.ok ? r.json() : null).catch(() => null);
+      b.disabled = false;
+      p = d && (d.photos || []).find(x => x.id === id);
+      lab.textContent = p ? was : d ? 'This photo is gone.' : '✗ Could not open. Tap again.';
+      if (!p || PROF !== me) return;   // or he went back meanwhile
+    }
     closeProf();
-    if ($('#date').value !== b.dataset.date) { $('#date').value = b.dataset.date; await loadDay(); }
-    const p = PHOTOS.find(x => x.id === Number(b.dataset.go));
-    if (p) editSaved(p);
+    if (EDIT && EDIT.kind === 'edit' && EDIT.id === id) return;        // that photo is open already
+    const back = EDIT ? EDIT.back || { edit: EDIT, picked: PICKED, queue: QUEUE, total: TOTAL, done: DONE,
+      src: $('#edImg').src, title: $('#edTitle').textContent } : $('#batch').hidden ? null : { batch: true };
+    for (const m of p.members) PEOPLE.set(m.code, m.name);
+    editSaved(p, date === $('#date').value ? '' : `Photo from ${dayText(date)}: who is in it?`, back);
   });
 
   if (KEY) { $('#key').value = KEY; unlock(); }

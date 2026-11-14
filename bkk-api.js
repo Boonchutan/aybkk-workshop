@@ -3571,7 +3571,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!ROLES.includes(role)) throw Object.assign(new Error('role must be main or other'), { status: 400 });
       if (want.get(String(code)) !== 'main') want.set(String(code), role);
     }
-    const list = [...want.keys()].slice(0, 30);
+    const list = [...want.keys()];
+    // Cutting the list instead would save the photo without some of them, the main student maybe.
+    if (list.length > 30) throw Object.assign(new Error('30 names at most on one photo. Nothing was saved.'), { status: 400 });
     if (!list.length) return { ids: [], roles: [], given };
     const rows = (await q('SELECT id, code FROM bkk_members WHERE code = ANY($1::text[])', [list])).rows;
     if (rows.length < list.length) {
@@ -3615,8 +3617,12 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   }
 
   // Two people (or one person twice) can share a name; a hint of the email
-  // tells them apart, without handing the team full addresses.
-  const emailHint = e => e ? String(e).replace(/^(.{2})[^@]*(@.*)$/, '$1…$2') : '';
+  // tells them apart, without handing the team full addresses: at most two
+  // letters of the name part, never all of it ("a@" and "ab@" hide it too).
+  const emailHint = e => {
+    const s = String(e || ''), at = s.lastIndexOf('@');
+    return !s ? '' : at < 1 ? '…' : s.slice(0, Math.min(2, at - 1)) + '…' + s.slice(at);
+  };
 
   // Who Chay can tag: today's bookings first, then a name search, then a quick
   // add for someone not in the system yet (most students are still on Rezerv).
