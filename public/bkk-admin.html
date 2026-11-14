@@ -203,6 +203,9 @@
   .tdh{display:flex;align-items:flex-start;gap:10px}
   .tdh>div{flex:1;min-width:0}
   .tdh .btn{flex:none;white-space:nowrap}
+  /* A 44 px name button sits in the row's own padding, so the row stays one line high and in line. */
+  table.tdl td{vertical-align:middle}table.tdl td:last-child{white-space:nowrap}
+  @media (max-width:640px),(pointer:coarse){table.tdl td.nm{padding-top:0;padding-bottom:0}}
   /* The profile opens on what they can practise on today. */
   .now{margin:12px 0 4px;padding:9px 12px;border:1px solid var(--line);border-left:4px solid #187a43;border-radius:8px;background:var(--wall)}
   .now.none{border-left-color:#b3453c}
@@ -353,7 +356,7 @@
       moneyToday: 'Money in today', sales: n => `${n} sale${n === 1 ? '' : 's'}`,
       countDrawer: 'Count the cash drawer against the cash line before you go home.',
       noSales: 'No sales yet today.', today: 'Today', noBookings: 'No bookings today.',
-      bookedIn: (n, i) => ` — ${n} booked, ${i} checked in`, checkedIn: '✓ in', notYet: 'not yet',
+      bookedIn: (n, i) => `${n} booked, ${i} checked in`, checkedIn: '✓ in', notYet: 'not yet',
       payments: 'Payments', thStudent: 'Student', thPackage: 'Package', thStatus: 'Status', thRef: 'Ref',
       fee: 'fee', vat: 'VAT', activate: 'Activate', noOrders: 'no orders yet',
       ordersHelp: 'Each time a student taps Buy, a new line shows here, even if they never pay. A line that was not paid and is more than one day old, or that the student paid for later, moves into Unpaid tries at the bottom. Check payment asks PaySolutions if the money came: if it did, the pass turns on. Activate turns the pass on by hand: press it only when you can see the money in PaySolutions. Every activation here is saved as manual.',
@@ -441,7 +444,7 @@
       moneyToday: 'เงินเข้าวันนี้', sales: n => `${n} รายการ`,
       countDrawer: 'นับเงินในลิ้นชักให้ตรงกับยอดเงินสด ก่อนกลับบ้าน',
       noSales: 'วันนี้ยังไม่มียอดขาย', today: 'วันนี้', noBookings: 'วันนี้ไม่มีการจอง',
-      bookedIn: (n, i) => ` — จอง ${n} คน เช็คอินแล้ว ${i} คน`, checkedIn: '✓ เช็คอินแล้ว', notYet: 'ยังไม่มา',
+      bookedIn: (n, i) => `จอง ${n} คน เช็คอินแล้ว ${i} คน`, checkedIn: '✓ เช็คอินแล้ว', notYet: 'ยังไม่มา',
       payments: 'การชำระเงิน', thStudent: 'นักเรียน', thPackage: 'แพ็กเกจ', thStatus: 'สถานะ', thRef: 'อ้างอิง',
       fee: 'ค่าธรรมเนียม', vat: 'VAT', activate: 'เปิดใช้', noOrders: 'ยังไม่มีรายการ',
       ordersHelp: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย รายการที่ไม่ได้จ่ายและเกิน 1 วัน หรือที่นักเรียนจ่ายทีหลังแล้ว จะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่าง ปุ่มตรวจการชำระจะถาม PaySolutions ถ้าเงินเข้าแล้ว แพ็กเกจจะเปิดเอง ปุ่มเปิดใช้คือเปิดแพ็กเกจด้วยมือ กดเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
@@ -798,6 +801,7 @@
     nowFrozen: d => d ? `Frozen until ${d}` : 'Frozen', nowStarts: d => `Starts ${d}`,
     hereOver: 'Class is over: added as came.', addGoCame: 'Add as came',
     hNoPassOn: (n, d) => `${n} has no aybkk.net pass for ${d}. Choose Rezerv package or Drop-in.`,
+    hitPassFrom: d => `aybkk.net pass starts ${d}`,
   });
   Object.assign(STR.th, {
     openClass: 'เปิดคลาส', nowH: 'แพ็กเกจตอนนี้',
@@ -807,6 +811,7 @@
     nowFrozen: d => d ? `พักถึง ${d}` : 'พักอยู่', nowStarts: d => `เริ่ม ${d}`,
     hereOver: 'คลาสจบแล้ว: บันทึกว่ามาเรียน', addGoCame: 'เพิ่มว่ามาเรียน',
     hNoPassOn: (n, d) => `${n} ไม่มีแพ็กเกจ aybkk.net ที่ใช้ได้วันที่ ${d} เลือกแพ็กเกจ Rezerv หรือ Drop-in`,
+    hitPassFrom: d => `แพ็กเกจ aybkk.net เริ่ม ${d}`,
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -1539,9 +1544,14 @@
     box.innerHTML = term.length < 2 || AD.hits === null ? ''
       : AD.hits === 'offline' ? `<p class="muted">${T('addNoNet')}</p>`
       : !AD.hits.length ? `<p class="muted">${T('addNoHits')}</p>`
-      : AD.hits.map((m, i) => `<button class="hit" data-i="${i}"><b>${esc(m.name)}</b>
+      : AD.hits.map((m, i) => {
+        // A pass that only starts after this class: the profile says "Starts", so the hit does too.
+        const later = m.has_pass && m.pass_starts && m.pass_starts > CV.data.class.date;
+        return `<button class="hit" data-i="${i}"><b>${esc(m.name)}</b>
           <span>${esc([m.code, m.email, m.phone].filter(Boolean).join(' · '))}</span>
-          <em class="${m.has_pass ? 'ok' : ''}">${onList.has(m.code) ? esc(T('hitOn')) + ' · ' : ''}${esc(T(m.has_pass ? 'hitPass' : 'hitNoPass'))}</em></button>`).join('');
+          <em class="${m.has_pass && !later ? 'ok' : ''}">${onList.has(m.code) ? esc(T('hitOn')) + ' · ' : ''}${esc(later
+            ? T('hitPassFrom', ymdLong(m.pass_starts)) : T(m.has_pass ? 'hitPass' : 'hitNoPass'))}</em></button>`;
+      }).join('');
     box.querySelectorAll('.hit').forEach(el => el.onclick = () => {
       AD.member = AD.hits[Number(el.dataset.i)]; AD.isNew = false; AD.err = ''; paintAdd();
     });
@@ -1674,10 +1684,10 @@
       const mats = list.filter(b => b.need_mat).length;
       return `<div class="box"><div class="tdh"><div>
         <b>${time(g.startAt)} · ${esc(cls(g.title))}</b>
-        <span class="muted">${T('bookedIn', list.length, inCount)}${mats ? ` · ${esc(T('tMats'))} ${mats}` : ''}</span></div>
+        <span class="muted" style="display:block">${T('bookedIn', list.length, inCount)}${mats ? ` · ${esc(T('tMats'))} ${mats}` : ''}</span></div>
         <button class="btn sm" id="open-${g.slotId}" onclick="todayOpen(${g.slotId},'${esc(g.date)}',this.id)">${T('openClass')}</button></div>
-        ${list.length ? `<table>${list.map(b => `<tr>
-          <td>${whoBtn(b.code, b.name, `who-t-${g.slotId}-${b.code}`)}${b.need_mat ? ` <span class="pill mat">${esc(T('matPill'))}</span>` : ''}</td>
+        ${list.length ? `<table class="tdl">${list.map(b => `<tr>
+          <td class="nm">${whoBtn(b.code, b.name, `who-t-${g.slotId}-${b.code}`)}${b.need_mat ? ` <span class="pill mat">${esc(T('matPill'))}</span>` : ''}</td>
           <td class="muted">${esc(b.code)}</td>
           <td>${b.checked_in_at ? `<span class="in">${T('checkedIn')}</span>` : `<span class="muted">${T('notYet')}</span>`}</td>
         </tr>`).join('')}</table>` : `<p class="muted">${T('rosterNone')}</p>`}</div>`;

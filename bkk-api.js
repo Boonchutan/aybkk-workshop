@@ -698,6 +698,14 @@ function mountBkk(app, opts = {}) {
   // class starts at midnight, so that time is shown as unknown.
   const VISIT_TIME = `CASE WHEN b.slot_id IS NULL AND to_char(b.start_at AT TIME ZONE 'Asia/Bangkok','HH24:MI') = '00:00'
     THEN NULL ELSE to_char(b.start_at AT TIME ZONE 'Asia/Bangkok','HH24:MI') END`;
+  // A pass that was live on day d, for staff adding someone who came to a
+  // class that is over: started by then, not ended, and not paused that day,
+  // whatever its state today. A pause is [frozen_from, frozen_until): unfreeze
+  // sets frozen_until to the day it ended. Only the latest pause is stored, and
+  // a pass paused with no start day on file never counts. For bkk_passes p.
+  const PASS_LIVE_ON = d => `(p.status='active' OR (p.status='frozen' AND p.frozen_from IS NOT NULL))
+    AND (p.valid_from IS NULL OR p.valid_from <= ${d}) AND (p.valid_until IS NULL OR p.valid_until >= ${d})
+    AND NOT (p.frozen_from IS NOT NULL AND p.frozen_from <= ${d} AND (p.frozen_until IS NULL OR ${d} < p.frozen_until))`;
   // When money came in, as a Bangkok day.
   const PAY_AT = `coalesce(o.verified_at, o.created_at)`;
   const PAY_DAY = `(${PAY_AT} AT TIME ZONE 'Asia/Bangkok')::date`;
@@ -1678,8 +1686,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   //   requestId the door's id for this add: a seat already carrying it is the
   //             same add sent twice (out.repeat), even for a second new profile
   //   onList    treat a seat the member already holds as "on the list"
-  //   late      staff adding to a class that is over (classCheck): checked in
-  //             at its start, on a pass valid on that day
+  //   late      the admin class view: a class that is over (classCheck) takes
+  //             someone as came, checked in at its start, on a pass live that
+  //             day (PASS_LIVE_ON). Their Rezerv no-show on the class counts
+  //             as on the list: it becomes the visit, as the check-in route does.
   // The door and paid orders (and staff adding from the calendar) treat a seat
   // the member already holds as "on the list" and just check it in (when
   // checkIn); a student is told they already booked it.
@@ -1702,12 +1712,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const out = { slot, startAt, capacity, taken: 0, overCapacity: false, already: false };
     if (door) {
       const on = (await db.query(
-        `SELECT * FROM bkk_bookings WHERE slot_id=$1 AND class_date=$2 AND status='booked'
-           AND (member_id=$3 OR request_id=$4) ORDER BY request_id IS NOT DISTINCT FROM $4 DESC LIMIT 1`,
+        `SELECT * FROM bkk_bookings WHERE slot_id=$1 AND class_date=$2
+           AND (status='booked'${late ? ` OR status='noshow'` : ''}) AND (member_id=$3 OR request_id=$4)
+         ORDER BY request_id IS NOT DISTINCT FROM $4 DESC, status='booked' DESC LIMIT 1`,
         [slotId, date, member.id, requestId])).rows[0];
       if (on) {
         out.booking = checkIn ? (await db.query(
-          `UPDATE bkk_bookings SET checked_in_at = COALESCE(checked_in_at, ${over ? 'start_at' : 'now()'}) WHERE id=$1 RETURNING *`,
+          `UPDATE bkk_bookings SET status='booked',
+             checked_in_at = COALESCE(checked_in_at, ${over ? 'start_at' : 'now()'}) WHERE id=$1 RETURNING *`,
           [on.id])).rows[0] : on;
         out.already = true;
         out.repeat = !!requestId && on.request_id === requestId;
@@ -1726,9 +1738,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (cover === 'pass') {
       pass = (await db.query(
         `SELECT p.* FROM bkk_passes p
-         WHERE p.member_id=$1 AND p.status='active'
-           AND (p.valid_until IS NULL OR p.valid_until >= $2::date)
-           ${over ? 'AND (p.valid_from IS NULL OR p.valid_from <= $2::date)' : ''}
+         WHERE p.member_id=$1
+           AND ${over ? PASS_LIVE_ON('$2::date') : `p.status='active' AND (p.valid_until IS NULL OR p.valid_until >= $2::date)`}
            AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
            ${passId ? 'AND p.id=$3' : ''}
          ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1 FOR UPDATE`,
@@ -1816,8 +1827,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       await client.query('BEGIN');
       const b = (await client.query(
-        `SELECT b.*, m.code AS mcode FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
-         WHERE b.id=$1 FOR UPDATE`, [req.params.id])).rows[0];
+        `SELECT b.*, m.code AS mcode,
+           b.booked_at > b.start_at + make_interval(mins => coalesce(s.duration_min, 120)) AS added_late
+         FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
+         WHERE b.id=$1 FOR UPDATE OF b, m`, [req.params.id])).rows[0];
       if (!b) throw new Error('booking not found');
       // The member code is REQUIRED. It used to be optional, which meant omitting
       // it skipped the ownership check entirely and let anyone cancel any booking
@@ -1827,7 +1840,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (b.status !== 'booked') throw new Error('already ' + b.status);
 
       const hoursLeft = (new Date(b.start_at) - bkkNow()) / 3600000;
-      const refund = hoursLeft >= CANCEL_CUTOFF_HOURS;
+      // Staff taking off someone they put on a class after it was over (the
+      // wrong person picked): nobody kept a seat from anyone, so the class
+      // goes back on the pass. A student cancelling it never gets it back.
+      const refund = hoursLeft >= CANCEL_CUTOFF_HOURS || (isAdmin(req) && b.added_late === true);
       await client.query(
         `UPDATE bkk_bookings SET status='cancelled', cancelled_at=now() WHERE id=$1`, [b.id]);
       if (refund && b.pass_id) {
@@ -2332,20 +2348,23 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (term.length < 2) return res.json({ members: [] });
       const like = `%${term.toLowerCase()}%`;
       // ?on=YYYY-MM-DD: has_pass for a class that is over, as takeSeat's late
-      // rule sees it: valid on that day, started by then.
+      // rule sees it (PASS_LIVE_ON). pass_starts: every pass that counts starts
+      // after that day (today without ?on=), so the add box can say so.
       const on = realYmd(req.query.on) ? req.query.on : null;
+      const day = on ? '$2::date' : `(now() AT TIME ZONE 'Asia/Bangkok')::date`;
+      const usable = `p.member_id = m.id AND ${on ? PASS_LIVE_ON(day) : `p.status='active' AND (p.valid_until IS NULL OR p.valid_until >= ${day})`}
+             AND (p.kind='unlimited' OR p.credits_used < p.credits_total)`;
       const r = await q(
         `SELECT m.*,
            (SELECT count(*)::int FROM bkk_bookings b
              WHERE b.member_id = m.id AND b.status='booked' AND b.start_at >= now()) AS booked,
-           EXISTS (SELECT 1 FROM bkk_passes p WHERE p.member_id = m.id AND p.status='active'
-             AND (p.valid_until IS NULL OR p.valid_until >= coalesce($2::date, (now() AT TIME ZONE 'Asia/Bangkok')::date))
-             AND ($2::date IS NULL OR p.valid_from IS NULL OR p.valid_from <= $2::date)
-             AND (p.kind='unlimited' OR p.credits_used < p.credits_total)) AS has_pass
+           EXISTS (SELECT 1 FROM bkk_passes p WHERE ${usable}) AS has_pass,
+           (SELECT to_char(min(p.valid_from),'YYYY-MM-DD') FROM bkk_passes p WHERE ${usable}
+             HAVING bool_and(coalesce(p.valid_from > ${day}, false))) AS pass_starts
          FROM bkk_members m
          WHERE lower(m.name) LIKE $1 OR lower(m.email) LIKE $1
             OR lower(m.code) LIKE $1 OR coalesce(m.phone,'') LIKE $1 OR lower(coalesce(m.rezerv_id,'')) LIKE $1
-         ORDER BY m.name LIMIT 25`, [like, on]);
+         ORDER BY m.name LIMIT 25`, on ? [like, on] : [like]);
       const ids = r.rows.map(m => m.id);
       const passes = ids.length ? (await q(
         `SELECT p.*, pr.name_en, pr.name_th FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
