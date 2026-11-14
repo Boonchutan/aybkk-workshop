@@ -12,7 +12,7 @@ URL: http://localhost:3000
 
 ### For Huizhou Workshop (March 28-April 19):
 - **Upload student assessment videos** from your phone
-- **Track 43 students** (30 workshop + 13 in-depth)
+- **Track workshop and in-depth students**
 - **Store attributes** (forward fold, chaturanga, etc.)
 - **Process scanned forms** from partner assessments
 - **Generate progress reports** over 4 weeks

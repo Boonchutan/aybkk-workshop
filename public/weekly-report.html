@@ -710,18 +710,7 @@
             studentClassType = sData.classType || '';
           }
         } catch(e) {}
-        
-        // Fallback: fetch all history and filter
-        if (!allEntries.length) {
-          const res = await fetch('/api/journal/history/30');
-          const data = await res.json();
-          allEntries = (data.history || []).filter(e =>
-            e.studentId === studentId ||
-            (e.assessment && e.assessment.studentId === studentId) ||
-            e.studentName === studentName
-          ).map(e => e.assessment ? { ...e.assessment, studentName: e.studentName } : e);
-        }
-        
+
         journalEntries = allEntries;
         
         // Load teacher comment if available

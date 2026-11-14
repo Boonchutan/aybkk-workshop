@@ -2,6 +2,7 @@
 <html lang="en" data-ws="russia">
 <head>
   <meta charset="UTF-8">
+  <script src="/staff-key.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Russia WS Students — AYBKK 2026</title>
   <link rel="stylesheet" href="/tokens.css">
@@ -365,12 +366,17 @@
       }
     }
 
-    function downloadCSV() {
+    // fetch, not a plain link: a link cannot send the staff key.
+    async function downloadCSV() {
       const url = `${API}/orientations/ru?format=csv${currentFilter !== 'all' ? '&city=' + currentFilter : ''}`;
+      const r = await fetch(url);
+      if (!r.ok) { alert('Export failed: ' + r.status); return; }
+      const href = URL.createObjectURL(await r.blob());
       const a = document.createElement('a');
-      a.href = url;
+      a.href = href;
       a.download = `aybkk-russia-${currentFilter}-${new Date().toISOString().split('T')[0]}.csv`;
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(href), 1000);
     }
 
     loadStudents();

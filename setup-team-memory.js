@@ -12,11 +12,11 @@ const driver = neo4j.driver(
 
 const TEAM_MEMORY = `AYBKK COMPREHENSIVE (Mar 22, 2026):
 
-NEO4J: User=neo4j, PW=aybkk_neo4j_2026, URI=bolt://localhost:7687. 48 students from Notion. Schema: Student, Membership, Tag, Assessment, TagHistory. Student.id = studentId integer. Relationships: HAS_MEMBERSHIP, HAS_STRENGTH, HAS_WEAKNESS, HAS_CURRENT, HAS_ASSESSMENT. Neo4j int IDs: pass plain integer to session.run(), NOT {low: x, high: y}.
+NEO4J: User=neo4j, PW=aybkk_neo4j_2026, URI=bolt://localhost:7687. Students from Notion. Schema: Student, Membership, Tag, Assessment, TagHistory. Student.id = studentId integer. Relationships: HAS_MEMBERSHIP, HAS_STRENGTH, HAS_WEAKNESS, HAS_CURRENT, HAS_ASSESSMENT. Neo4j int IDs: pass plain integer to session.run(), NOT {low: x, high: y}.
 
-TELEGRAM BOT: @AYBKKstudentProgress_bot, token=8368539519:AAF12ytC_rr26xBoDxmKVceCFeANRTK69dA. File=~/mission-control/assessment-bot.js (935 lines). Schema setup=~/mission-control/setup-assessment-schema.js. Flow: /start → language → student (active memberships only, sorted by most assessed) → strengths → weaknesses → energy → behavior → asana → toFix → confirm → save to Neo4j. Teachers: Boonchu, Jamsai, M. Multi-lang: EN/TH/中文.
+TELEGRAM BOT: @AYBKKstudentProgress_bot, token in TELEGRAM_BOT_TOKEN (.env). File=~/mission-control/assessment-bot.js (935 lines). Schema setup=~/mission-control/setup-assessment-schema.js. Flow: /start → language → student (active memberships only, sorted by most assessed) → strengths → weaknesses → energy → behavior → asana → toFix → confirm → save to Neo4j. Teachers: Boonchu, Jamsai, M. Multi-lang: EN/TH/中文.
 
-MISSION CONTROL: http://localhost:3000, dir=~/mission-control/, backend=server.js. Notion connected (21 dbs, 48 students). Student data NOT fully synced to Neo4j — 1 test student only. Shopify store 7bdc65-2.
+MISSION CONTROL: http://localhost:3000, dir=~/mission-control/, backend=server.js. Notion connected (21 dbs). Student data NOT fully synced to Neo4j — a test student only. Shopify store 7bdc65-2.
 
 REZERW DATA (saved Mar 22): ~/mission-control/data/rezwerw_memberships_2026-03-22.csv (12.8KB, current members). ~/mission-control/data/legacy_customer_report_2018-02-11.csv (88KB, 2018). Rezerw login: Aybkks31@gmail.com, business.rezerv.co (reCAPTCHA blocks automation). Fields: First_Name, Last_Name, Mobile, Email, Membership, Membership Number, Category, Status, Start_Date, Expiration_Date, Last/Next_Booking_Class.
 

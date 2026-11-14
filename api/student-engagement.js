@@ -5,6 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { staffOnly } = require('../lib/staff-key');
 const { v4: uuidv4 } = require('uuid');
 
 // All routes use the shared Neo4j driver from server.js
@@ -15,7 +16,7 @@ const { v4: uuidv4 } = require('uuid');
 // ============================================
 
 // GET /api/students - List all students
-router.get('/students', async (req, res) => {
+router.get('/students', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const result = await session.run(`
@@ -48,7 +49,7 @@ router.get('/students', async (req, res) => {
 });
 
 // GET /api/students/:id - Get single student
-router.get('/students/:id', async (req, res) => {
+router.get('/students/:id', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const result = await session.run(`
@@ -133,7 +134,7 @@ router.post('/students', async (req, res) => {
 });
 
 // PUT /api/students/:id - Update student
-router.put('/students/:id', async (req, res) => {
+router.put('/students/:id', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const { name, email, phone, line_id, wechat_id, whatsapp, instagram, facebook, platform } = req.body;
@@ -322,7 +323,7 @@ router.post('/checkin', async (req, res) => {
 });
 
 // GET /api/checkin/:studentId/week - Get this week's check-ins
-router.get('/checkin/:studentId/week', async (req, res) => {
+router.get('/checkin/:studentId/week', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const today = new Date();
@@ -357,7 +358,7 @@ router.get('/checkin/:studentId/week', async (req, res) => {
 });
 
 // GET /api/checkin/:studentId/stats - Get student's stats
-router.get('/checkin/:studentId/stats', async (req, res) => {
+router.get('/checkin/:studentId/stats', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const { days = 30 } = req.query;
@@ -484,7 +485,7 @@ router.post('/courses', async (req, res) => {
 });
 
 // GET /api/courses/recommend/:studentId - Get course recommendation for student
-router.get('/courses/recommend/:studentId', async (req, res) => {
+router.get('/courses/recommend/:studentId', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     // Get student's weaknesses and interests
@@ -547,7 +548,7 @@ router.get('/courses/recommend/:studentId', async (req, res) => {
 // ============================================
 
 // GET /api/reports/generate/:studentId - Generate weekly report (for AI input)
-router.get('/reports/generate/:studentId', async (req, res) => {
+router.get('/reports/generate/:studentId', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const today = new Date();
@@ -623,7 +624,7 @@ router.get('/reports/generate/:studentId', async (req, res) => {
 });
 
 // GET /api/students/:id/progress - Get progress history for a student
-router.get('/students/:id/progress', async (req, res) => {
+router.get('/students/:id/progress', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     let studentId = req.params.id;

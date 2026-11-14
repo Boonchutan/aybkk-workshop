@@ -2,6 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
+<script src="/staff-key.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hefei · Attendance</title>
 <style>
@@ -200,7 +201,10 @@ async function refresh() {
 }
 
 (async function init() {
-  try { roster = await (await fetch("/rosters/hefei.json", { cache: "no-store" })).json(); } catch (e) { roster = { sessions: [], students: [] }; }
+  try {
+    const rr = await fetch("/rosters/hefei.json", { cache: "no-store" });
+    roster = rr.ok ? await rr.json() : { sessions: [], students: [] };
+  } catch (e) { roster = { sessions: [], students: [] }; }
   const sel = $("#session");
   (roster.sessions || []).forEach(s => {
     const o = document.createElement("option");

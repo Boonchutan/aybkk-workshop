@@ -8,6 +8,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { staffOnly } = require('../lib/staff-key');
 const { v4: uuidv4 } = require('uuid');
 
 const BANK = require('../exam-bank-cn2');
@@ -113,7 +114,7 @@ function checkTeacherAuth(req) {
 /* Serves COHORT_ROSTER, the explicit list of the eleven who sat Part 3. The
    graph is consulted only for who has already submitted, so a wrong or missing
    classType tag cannot drop a student from the exam or add one who left. */
-router.get('/roster', async (req, res) => {
+router.get('/roster', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const result = await session.run(

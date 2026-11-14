@@ -6,6 +6,7 @@
 const { Client } = require('@notionhq/client');
 const express = require('express');
 const router = express.Router();
+const { staffOnly } = require('../lib/staff-key');
 
 // Initialize Notion client
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
@@ -40,7 +41,7 @@ function parseNotionStudent(page) {
 /**
  * GET /api/notion/students - Fetch students from Notion
  */
-router.get('/notion/students', async (req, res) => {
+router.get('/notion/students', staffOnly, async (req, res) => {
   try {
     const response = await notion.request({
       method: 'POST',
@@ -70,7 +71,7 @@ router.get('/notion/students', async (req, res) => {
 /**
  * POST /api/notion/sync - Sync Notion students to Neo4j
  */
-router.post('/notion/sync', async (req, res) => {
+router.post('/notion/sync', staffOnly, async (req, res) => {
   const driver = req.driver;
   const session = driver.session();
   
@@ -173,7 +174,7 @@ router.post('/notion/sync', async (req, res) => {
 /**
  * GET /api/notion/sync-status - Get last sync status
  */
-router.get('/notion/sync-status', async (req, res) => {
+router.get('/notion/sync-status', staffOnly, async (req, res) => {
   const driver = req.driver;
   const session = driver.session();
   

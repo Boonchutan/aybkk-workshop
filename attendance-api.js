@@ -8,6 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const QRCode = require('qrcode');
+const { staffOnly, isStaff } = require('./lib/staff-key');
 
 function mountAttendance(app, opts = {}) {
   const pgPool = opts.pgPool || null;
@@ -42,6 +43,29 @@ function mountAttendance(app, opts = {}) {
   const writeStore = (rows) => { try { fs.writeFileSync(storeFile, JSON.stringify(rows, null, 2)); } catch (e) { console.error('attendance write failed:', e.message); } };
   const readRoster = () => { try { return JSON.parse(fs.readFileSync(rosterFile, 'utf8')); } catch { return null; } };
   const keyOf = (r) => (r.workshop || 'hefei') + '|' + (r.journalId || r.studentCode || r.id || '') + '|' + (r.session || '');
+
+  // Printed codes (HEFEI-001) count up, slugs and names can be guessed: walking them
+  // would hand out the roster. Without the staff key a student is found by their own
+  // journal id only.
+  const findOnRoster = (req, roster) => {
+    const id = String(req.params.id || '');
+    const own = roster.students.find(x => x.journalId === id);
+    if (own || !isStaff(req)) return own;
+    let s = roster.students.find(x => x.id === id || (x.slug && x.slug === id.toLowerCase()));
+    if (!s && req.query.name) {
+      const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const en = latin(req.query.name);
+      const zh = String(req.query.name).trim();
+      s = roster.students.find(x => {
+        const m = String(x.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+        const sZh = (m ? m[1] : x.name || '').trim();
+        const sEn = latin(m ? m[2] : x.name);
+        const akas = (x.aka || []).map(latin);
+        return (en && sEn && sEn === en) || (zh && sZh && sZh === zh) || (en && akas.includes(en));
+      });
+    }
+    return s;
+  };
 
   // POST /api/attendance/checkin  — body: { rows:[...] }  or a single record
   app.post('/api/attendance/checkin', async (req, res) => {
@@ -93,14 +117,14 @@ function mountAttendance(app, opts = {}) {
   });
 
   // GET /api/attendance?workshop=hefei — JSON dump (teacher view / backup)
-  app.get('/api/attendance', (req, res) => {
+  app.get('/api/attendance', staffOnly, (req, res) => {
     let rows = readStore();
     if (req.query.workshop) rows = rows.filter(r => (r.workshop || 'hefei') === req.query.workshop);
     res.json({ count: rows.length, rows });
   });
 
   // GET /api/attendance.csv?workshop=hefei — spreadsheet backup
-  app.get('/api/attendance.csv', (req, res) => {
+  app.get('/api/attendance.csv', staffOnly, (req, res) => {
     let rows = readStore();
     if (req.query.workshop) rows = rows.filter(r => (r.workshop || 'hefei') === req.query.workshop);
     const cols = ['workshop', 'studentCode', 'name', 'package', 'session', 'sessionDate', 'checkedInAt', 'eligible', 'source', 'photoFile'];
@@ -112,6 +136,7 @@ function mountAttendance(app, opts = {}) {
   });
 
   // GET /s/:code — printed short link. Maps HEFEI-001 -> student journal via roster.
+  // No name in the redirect: the codes count up. The journal page looks the name up by id.
   app.get('/s/:code', (req, res) => {
     const code = req.params.code;
     const roster = readRoster();
@@ -121,37 +146,21 @@ function mountAttendance(app, opts = {}) {
         || (s.slug && s.slug === String(code).toLowerCase()));
     }
     const uuid = entry ? entry.journalId : code;
-    const name = entry ? entry.name : '';
     const lang = (roster && roster.lang) || 'zh';
     const url = '/student.html?id=' + encodeURIComponent(uuid) +
-                (name ? '&name=' + encodeURIComponent(name) : '') +
                 '&lang=' + encodeURIComponent(lang) +
                 '&location=' + encodeURIComponent((roster && roster.location) || 'hefei');
     res.redirect(302, url);
   });
 
   // GET /api/attendance/mine/:id — a single student's own check-in stamps for
-  // their journal page (id = journalId | code | slug; ?name= fallback like the
-  // pass). Returns only that student's rows, with session labels attached.
+  // their journal page (id = journalId; staff also code | slug | ?name=).
+  // Returns only that student's rows, with session labels attached.
   app.get('/api/attendance/mine/:id', (req, res) => {
     try {
       const roster = readRoster();
       if (!roster || !Array.isArray(roster.students)) return res.status(404).json({ error: 'no roster' });
-      const id = String(req.params.id || '');
-      let s = roster.students.find(x =>
-        x.journalId === id || x.id === id || (x.slug && x.slug === id.toLowerCase()));
-      if (!s && req.query.name) {
-        const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        const en = latin(req.query.name);
-        const zh = String(req.query.name).trim();
-        s = roster.students.find(x => {
-          const m = String(x.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
-          const sZh = (m ? m[1] : x.name || '').trim();
-          const sEn = latin(m ? m[2] : x.name);
-          const akas = (x.aka || []).map(latin);
-          return (en && sEn && sEn === en) || (zh && sZh && sZh === zh) || (en && akas.includes(en));
-        });
-      }
+      const s = findOnRoster(req, roster);
       if (!s) return res.status(404).json({ error: 'not on roster' });
       const labelOf = code => {
         const meta = (roster.sessions || []).find(x => x.code === code);
@@ -169,37 +178,20 @@ function mountAttendance(app, opts = {}) {
   });
 
   // GET /api/attendance/pass/:id — digital door pass for the journal front page.
-  // id = journalId | HEFEI-### | slug. QR encodes the short slug link on the
+  // id = journalId (staff also HEFEI-### | slug | ?name=). QR encodes the short slug link on the
   // China-reachable roster.baseUrl (never the request host), which the door
   // station already knows how to scan.
   app.get('/api/attendance/pass/:id', async (req, res) => {
     try {
       const roster = readRoster();
       if (!roster || !Array.isArray(roster.students)) return res.status(404).json({ error: 'no roster' });
-      const id = String(req.params.id || '');
-      let s = roster.students.find(x =>
-        x.journalId === id || x.id === id || (x.slug && x.slug === id.toLowerCase()));
-      // Fallback: students who oriented without the picker carry a fresh gz- id,
-      // but their journal URL knows their name — match it against the roster so
-      // the door pass still appears for them.
-      if (!s && req.query.name) {
-        const latin = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        const en = latin(req.query.name);
-        const zh = String(req.query.name).trim();
-        s = roster.students.find(x => {
-          const m = String(x.name || '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
-          const sZh = (m ? m[1] : x.name || '').trim();
-          const sEn = latin(m ? m[2] : x.name);
-          const akas = (x.aka || []).map(latin);
-          return (en && sEn && sEn === en) || (zh && sZh && sZh === zh) || (en && akas.includes(en));
-        });
-      }
+      const s = findOnRoster(req, roster);
       if (!s) return res.status(404).json({ error: 'not on roster' });
       const base = (roster.baseUrl || 'https://cn.aybkk.net').replace(/\/$/, '');
       const shortUrl = base + '/s/' + (s.slug || s.id);
       const qrDataUrl = await QRCode.toDataURL(shortUrl,
         { errorCorrectionLevel: 'H', width: 320, margin: 2 });
-      res.set('Cache-Control', 'public, max-age=3600');
+      res.set('Cache-Control', 'private, max-age=3600');
       res.json({ slug: s.slug || s.id, shortUrl, qrDataUrl, name: s.name, code: s.id, package: s.package });
     } catch (e) {
       res.status(500).json({ error: e.message });

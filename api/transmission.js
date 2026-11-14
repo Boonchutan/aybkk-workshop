@@ -14,6 +14,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const router = express.Router();
+const { staffOnly } = require('../lib/staff-key');
 
 let cachedKey = null;
 async function getKey(driver) {
@@ -46,7 +47,7 @@ async function guarded(req, res) {
 
 // GET /api/transmission/bootstrap — one-time key handout for the M1 scripts.
 // First caller after deploy claims the key; every later call is refused.
-router.get('/bootstrap', async (req, res) => {
+router.get('/bootstrap', staffOnly, async (req, res) => {
   if (process.env.TRANSMISSION_KEY) {
     return res.status(404).json({ error: 'key is env-managed' });
   }

@@ -31,7 +31,7 @@ const memoryText = JSON.stringify({
 
   lineStudentBot: 'LINE bot for Thai students to self-report - NOT YET BUILT. Will mirror teacher assessment flow but student-facing.',
 
-  assessmentBot: 'Teacher assessment bot @AYBKKstudentProgress_bot, token 8368539519:AAF12ytC_rr26xBoDxmKVceCFeANRTK69dA, flow: strengths→weaknesses→energy→practiceConsistency→practiceFlow→lastAsana→vote→toFix→confirm. PracticeConsistency = Proper Vinyasa/Rest Often/Too Much Distractions (same as practiceFlow)',
+  assessmentBot: 'Teacher assessment bot @AYBKKstudentProgress_bot, token in TELEGRAM_BOT_TOKEN (.env), flow: strengths→weaknesses→energy→practiceConsistency→practiceFlow→lastAsana→vote→toFix→confirm. PracticeConsistency = Proper Vinyasa/Rest Often/Too Much Distractions (same as practiceFlow)',
 
   currentTasks: '1) DNS: Point studentprogress.aybkk.com to server for QR codes 2) Print QR codes for Chinese students 3) Test form end-to-end 4) Build LINE student bot 5) Connect Rezerv check-in → auto-trigger assessment',
 

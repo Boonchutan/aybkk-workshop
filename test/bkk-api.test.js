@@ -83,12 +83,18 @@ const ok = (name, cond, extra = '') => {
     `got ${pm.length}`);
 
   console.log('\n— schedule —');
-  const sch = await J('/api/bkk/schedule?days=7');
+  const sch = await J('/api/bkk/schedule?days=7', { headers: ADMIN });
   // A moon day can close a whole Saturday (4 classes), so the floor is low.
   ok('classes generated for the week', sch.body.classes.length > 5, `got ${sch.body.classes.length}`);
   ok('all classes are in the future', sch.body.classes.every(c => new Date(c.startAt) > new Date()));
   ok('capacity 42 on shala classes',
     sch.body.classes.filter(c => !c.isOnline).every(c => c.capacity === 42));
+  const pubSch = await J('/api/bkk/schedule?days=7');
+  ok('without the staff key the timetable has no capacity and no booked count',
+    pubSch.status === 200 && pubSch.body.classes.length === sch.body.classes.length
+      && pubSch.body.classes.every(c => !('capacity' in c) && !('booked' in c)), Object.keys(pubSch.body.classes[0] || {}).join());
+  ok('...and seatsLeft stops at 4, which is all the booking page reads',
+    pubSch.body.classes.every((c, i) => c.seatsLeft === Math.min(4, sch.body.classes[i].seatsLeft)));
   const mysore = sch.body.classes.find(c => c.title.includes('Mysore'));
   ok('Mysore class present', !!mysore);
 
@@ -1118,7 +1124,7 @@ const ok = (name, cond, extra = '') => {
   console.log('\n— every way in puts a name on the class list —');
   {
     const { outbox } = require('../mailer');
-    const sched = async () => (await J('/api/bkk/schedule?days=14')).body.classes;
+    const sched = async () => (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes;
     const seatOf = (list, c) => list.find(x => x.slotId === c.slotId && x.date === c.date) || {};
     const receiptTo = to => outbox.filter(m => m.tag === 'receipt' && m.to === to).pop();
     const settle = () => new Promise(r => setTimeout(r, 300));     // receipts are sent after the reply
@@ -1443,7 +1449,7 @@ const ok = (name, cond, extra = '') => {
     // Held for a month: a pass bought today is a new student, not one who stopped coming.
     await pool.query(`UPDATE bkk_passes SET created_at = now() - interval '30 days'
       WHERE member_id=(SELECT id FROM bkk_members WHERE code=$1)`, [niranCode]);
-    const sched = async () => (await J('/api/bkk/schedule?days=14')).body.classes;
+    const sched = async () => (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes;
     const fut = (await sched()).find(c => !c.isOnline && c.kind !== 'test' && c.seatsLeft > 0 && c.date > todayB);
     const seatsOf = async () => ((await sched()).find(c => c.slotId === fut.slotId && c.date === fut.date) || {}).booked;
     let far = addD(todayB, 20);
@@ -1524,7 +1530,7 @@ const ok = (name, cond, extra = '') => {
          && td.bookings.some(b => b.slot_id === tSlot && b.name === 'Same Name' && b.cover === 'rezerv' && b.source === 'rezerv')
          && (td.classes.find(c => c.slotId === tSlot) || {}).booked === 1, JSON.stringify([vt.body, td.classes.find(c => c.slotId === tSlot)]));
       if (new Date(`${todayB}T23:58:00+07:00`) > new Date()) {
-        ok('...and counts in the timetable', ((await J('/api/bkk/schedule?days=1')).body.classes.find(c => c.slotId === tSlot) || {}).booked === 1);
+        ok('...and counts in the timetable', ((await J('/api/bkk/schedule?days=1', { headers: ADMIN })).body.classes.find(c => c.slotId === tSlot) || {}).booked === 1);
       }
     }
 
@@ -2570,7 +2576,7 @@ const ok = (name, cond, extra = '') => {
     ok('...and checkIn must be true or false, never the text "false"', oddIn.status === 400 && !(await rowOf('Cal Odd')).length,
        JSON.stringify(oddIn.body));
     const fourth = await walk({ name: 'Cal Fourth', cover: 'rezerv', checkIn: false });
-    const sch14 = (await J('/api/bkk/schedule?days=14')).body.classes.find(c => c.slotId === slotF && c.date === F) || {};
+    const sch14 = (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes.find(c => c.slotId === slotF && c.date === F) || {};
     ok('everyone added counts on the timetable students see', fourth.status === 200 && sch14.booked === 4 && sch14.seatsLeft === 0,
        JSON.stringify(sch14));
     const inF = await cls({ slotId: slotF, date: F });

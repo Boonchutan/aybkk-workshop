@@ -777,7 +777,13 @@ function mountBkk(app, opts = {}) {
   // Schedule is generated from the weekly pattern on read — no cron.
   // 62 days covers the booking page's calendar: the rest of this month + next.
   const SCHEDULE_DAYS = 62;
+  // Without the staff key: no capacity, no booked count, and seatsLeft stops at 4. The
+  // booking page only needs "full", "last 1-3" and "spots free"; the real numbers would
+  // say how many practise in each class.
+  const PUBLIC_SEATS_MAX = 4;
   app.get('/api/bkk/schedule', async (req, res) => {
+    const staff = isAdmin(req);
+    if (staff) res.set('Cache-Control', 'private, no-store');
     try {
       const days = Math.min(SCHEDULE_DAYS, Math.max(1, parseInt(req.query.days) || 14));
       const slots = (await q('SELECT * FROM bkk_class_slots WHERE active')).rows;
@@ -810,7 +816,9 @@ function mountBkk(app, opts = {}) {
           out.push({
             slotId: s.id, date: dstr, startAt, title: s.title, kind: s.kind,
             teachers: rotationTeacher(s.code, dstr) || s.teachers || '', durationMin: s.duration_min,
-            isOnline: s.is_online, capacity: cap, booked, seatsLeft: Math.max(0, cap - booked),
+            isOnline: s.is_online,
+            ...(staff ? { capacity: cap, booked, seatsLeft: Math.max(0, cap - booked) }
+              : { seatsLeft: Math.min(PUBLIC_SEATS_MAX, Math.max(0, cap - booked)) }),
           });
         }
       }

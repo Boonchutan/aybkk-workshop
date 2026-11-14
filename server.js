@@ -9,6 +9,7 @@ const multer = require('multer');
 const neo4j = require('neo4j-driver');
 const cors = require('cors');
 const { mountAttendance } = require('./attendance-api');
+const { isStaff, staffOnly, staffFiles, deny } = require('./lib/staff-key');
 const { mountBkk } = require('./bkk-api');
 const { mountPartner } = require('./partner-api');
 const { mountIdcn } = require('./idcn-api');
@@ -120,6 +121,7 @@ const jsonBody = express.json({ limit: '10mb', verify: (req, res, buf) => {
 } });
 app.use((req, res, next) => APPLY_PATH_RE.test(req.path) || LEAD_PATH_RE.test(req.path) || HELPDESK_PATH_RE.test(req.path)
   ? next() : jsonBody(req, res, next));
+app.use(staffFiles);
 // index: false so '/' falls through to the host-aware front-door route below
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(UPLOAD_DIR));
@@ -632,7 +634,7 @@ const transmission = require('./api/transmission');
 app.use('/api/transmission', transmission);
 
 // POST /api/journal/ai-summary/:studentId — DeepSeek bilingual progress summary
-app.post('/api/journal/ai-summary/:studentId', async (req, res) => {
+app.post('/api/journal/ai-summary/:studentId', staffOnly, async (req, res) => {
   try {
     const { studentId } = req.params;
     const apiKey = process.env.OPENROUTER_API_KEY;
@@ -779,6 +781,15 @@ app.get('/api/health', async (req, res) => {
 
 // LINE pipeline status — quick mobile-friendly dashboard
 app.get('/admin/line-status', async (req, res) => {
+  res.set('Cache-Control', 'private, no-store');
+  // Opened by hand in a browser, which cannot add the key header: the 401 page asks
+  // for the key and loads the same page again with it.
+  if (!isStaff(req)) {
+    return deny(res).type('html').send('<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+      + '<title>AYBKK LINE status</title><script src="/staff-key.js"></script>'
+      + '<script>fetch(location.pathname).then(r => r.ok ? r.text() : Promise.reject(r.status))'
+      + '.then(h => { document.open(); document.write(h); document.close(); }).catch(() => {});</script>');
+  }
   const session = driver.session();
   try {
     // Run each count as its own query so a zero result doesn't collapse the whole row
@@ -888,7 +899,7 @@ app.post('/api/upload/:type', upload.single('file'), async (req, res) => {
 });
 
 // Get all uploads
-app.get('/api/uploads', async (req, res) => {
+app.get('/api/uploads', staffOnly, async (req, res) => {
   try {
     const session = driver.session();
     const result = await session.run(`
@@ -913,7 +924,7 @@ app.get('/api/uploads', async (req, res) => {
 });
 
 // Get uploads by type
-app.get('/api/uploads/:type', async (req, res) => {
+app.get('/api/uploads/:type', staffOnly, async (req, res) => {
   try {
     const { type } = req.params;
     const session = driver.session();
@@ -1108,7 +1119,7 @@ app.post('/api/orientations', async (req, res) => {
 // Hefei orientation form. "Done" means the form set oriented=true AND stamped
 // the Hefei workshop tag on the Student node (pre-seeded nodes and in-depth
 // grads with old flags don't count until they fill the Hefei form).
-app.get('/api/orientation-status/hefei', async (req, res) => {
+app.get('/api/orientation-status/hefei', staffOnly, async (req, res) => {
   const session = driver.session();
   try {
     const rosterPath = path.join(__dirname, 'public', 'rosters', 'hefei.json');
@@ -1419,7 +1430,7 @@ app.post('/api/orientation-status/hefei/merge', async (req, res) => {
 });
 
 // GET /api/orientations - Get all GZ orientation submissions for dashboard
-app.get('/api/orientations', async (req, res) => {
+app.get('/api/orientations', staffOnly, async (req, res) => {
   const session = driver.session();
   try {
     const result = await session.run(`
@@ -1529,7 +1540,7 @@ app.post('/api/orientations/bkk', async (req, res) => {
 });
 
 // GET /api/orientations/bkk — merged list: existing booking-system students + new BKK orientations
-app.get('/api/orientations/bkk', async (req, res) => {
+app.get('/api/orientations/bkk', staffOnly, async (req, res) => {
   const baseUrl = 'https://aybkk-ashtanga.up.railway.app';
   const out = [];
 
@@ -1612,7 +1623,7 @@ app.get('/api/orientations/bkk', async (req, res) => {
 
 // ─── Short journal link redirect ─────────────────────────────────────────
 // /j/:slug — short link that 302s to the full Thai journal URL.
-//   slug = numeric Reserv ID (e.g. /j/44) or fuzzy name (/j/tomoko)
+//   slug = numeric Reserv ID (e.g. /j/44), or for staff a fuzzy name (/j/<name>)
 // If the student already has a `journal_link` in Reserv, we preserve its
 // underlying id (keeps existing journal history) but force lang=th & location=bangkok.
 app.get('/j/:slug', async (req, res) => {
@@ -1624,7 +1635,7 @@ app.get('/j/:slug', async (req, res) => {
     let row = null;
     // Pattern 1: pure numeric ID — /j/689
     // Pattern 2: pretty slug with trailing ID — /j/boonchu-test-689 (id wins, prefix is decorative)
-    // Pattern 3: name-only fuzzy match — /j/tomoko (must resolve to exactly one)
+    // Pattern 3 (staff only): name-only fuzzy match — /j/<name> (must resolve to exactly one)
     // ID can appear three ways: bare (/j/689), leading (/j/689-boonchu), trailing (/j/boonchu-689)
     let id = null;
     if (/^\d+$/.test(slug)) {
@@ -1642,6 +1653,8 @@ app.get('/j/:slug', async (req, res) => {
       );
       row = r.rows[0] || null;
     } else {
+      // Name-only matching is a name search, so it is for staff only.
+      if (!isStaff(req)) return res.status(404).type('text/plain').send('Ask your teacher for your own link.');
       // Tokenize: "boonchu-test" → ["boonchu","test"], all must appear in name
       const tokens = slug.toLowerCase().replace(/[_]+/g, '-').split(/[-\s]+/).filter(Boolean);
       if (!tokens.length) return res.status(404).send('Not found');
@@ -1709,6 +1722,7 @@ app.get('/p/:slug', async (req, res) => {
       );
       row = r.rows[0] || null;
     } else {
+      if (!isStaff(req)) return res.status(404).type('text/plain').send('Ask your teacher for your own link.');
       const tokens = slug.toLowerCase().replace(/[_]+/g, '-').split(/[-\s]+/).filter(Boolean);
       if (!tokens.length) return res.status(404).send('Not found');
       const params = tokens.map(t => '%' + t + '%');
@@ -2128,7 +2142,7 @@ app.post('/api/orientations/ru', async (req, res) => {
 });
 
 // GET /api/orientations/ru — list RU students (?city=spb|moscow, ?format=csv)
-app.get('/api/orientations/ru', async (req, res) => {
+app.get('/api/orientations/ru', staffOnly, async (req, res) => {
   const session = driver.session();
   try {
     const { city, format } = req.query;
@@ -2271,7 +2285,7 @@ app.post('/api/orientations/online', async (req, res) => {
 });
 
 // GET /api/orientations/online — Mysore Room Online roster (admin)
-app.get('/api/orientations/online', async (req, res) => {
+app.get('/api/orientations/online', staffOnly, async (req, res) => {
   const session = driver.session();
   try {
     const result = await session.run(`
@@ -2404,7 +2418,7 @@ app.post('/api/orientations/private', async (req, res) => {
 });
 
 // GET /api/orientations/private — list private students (admin)
-app.get('/api/orientations/private', async (req, res) => {
+app.get('/api/orientations/private', staffOnly, async (req, res) => {
   const session = driver.session();
   try {
     const result = await session.run(`
@@ -2438,7 +2452,7 @@ app.get('/api/orientations/private', async (req, res) => {
 });
 
 // Get all students
-app.get('/api/students', async (req, res) => {
+app.get('/api/students', staffOnly, async (req, res) => {
   try {
     const session = driver.session();
     const result = await session.run(`
@@ -2498,7 +2512,7 @@ app.post('/api/students/:id/files', async (req, res) => {
 
 const NOTION_STUDENTS_DB = process.env.NOTION_STUDENTS_DB || '7e6f9c96-5e13-4784-995f-4048c321a2f7';
 
-app.post('/api/sync/notion', async (req, res) => {
+app.post('/api/sync/notion', staffOnly, async (req, res) => {
   if (!notion) {
     return res.status(500).json({ error: 'Notion not configured. Set NOTION_API_KEY in .env' });
   }
@@ -2565,7 +2579,7 @@ app.post('/api/sync/notion', async (req, res) => {
 });
 
 // Get sync status
-app.get('/api/sync/status', async (req, res) => {
+app.get('/api/sync/status', staffOnly, async (req, res) => {
   const session = driver.session();
   try {
     const result = await session.run(`
@@ -2645,7 +2659,7 @@ app.post('/api/progress-check', async (req, res) => {
 });
 
 // Get progress for a specific student
-app.get('/api/students/:id/progress', async (req, res) => {
+app.get('/api/students/:id/progress', staffOnly, async (req, res) => {
   try {
     // Handle UUID strings (fcbe9bdc-...) and Neo4j Integer objects {low, high}
     let id = req.params.id;
@@ -2713,7 +2727,7 @@ app.get('/api/students/:id/progress', async (req, res) => {
 });
 
 // Get all students with their latest progress
-app.get('/api/progress/summary', async (req, res) => {
+app.get('/api/progress/summary', staffOnly, async (req, res) => {
   try {
     const session = driver.session();
     const result = await session.run(`
@@ -3272,7 +3286,7 @@ app.delete('/api/ideas/:id', async (req, res) => {
 // ─────────────────────────────────────────────────────────────
 
 // Get graph data for visualization
-app.get('/api/graph/visualize', async (req, res) => {
+app.get('/api/graph/visualize', (req, res, next) => req.query.type === 'students' ? staffOnly(req, res, next) : next(), async (req, res) => {
   const session = driver.session();
   try {
     const { type } = req.query;

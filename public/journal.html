@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script src="/staff-key.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AYBKK Student Journal</title>
   <link rel="stylesheet" href="/tokens.css">
@@ -210,35 +211,6 @@
   </div>
 
   <script>
-    // Huizhou student IDs (from workshop-qr-urls.md)
-    const HUIZHOU_IDS = [
-      '823a0c35-2ebd-4651-b6a3-027c9a41ce41', // 马儿
-      '829e51c6-b4fd-4a5f-b70f-45025c93a366', // 权哥
-      '9b4c3922-e063-4dce-97a0-c8225b12adfe', // 嘉芬
-      'dab9badc-a7fc-4434-b99c-615823aff389', // 老谢
-      'c3d063b4-14d9-4030-b41b-29cdbbfafc18', // 陈云
-      '9b5cda78-681e-4a4b-b567-0953c3bc0c9d', // 刘建梅
-      '5b7b526b-8a52-4258-8c6a-9e91d33e7d9c', // Maggie
-      '4a3ec6bf-ad9c-4e29-a66c-4b64bcbb144d', // 郑莉
-      'b9374595-c94a-4742-bb76-31eb232cbbc4', // 萍姐
-      'd5e274a2-4170-4bad-87ef-e2e88f81356f', // 丽君
-      'a3488eb9-6a51-4710-a15a-7b329acf70c4', // 华姐
-      'e9865ce2-18f0-4621-84a2-a32f72068d60', // 吉吉
-      '64111735-daf0-4ef1-ac6d-eb18382daae2', // 白姐
-      'ed932971-7874-474f-89c4-08f57f4c913d', // 小辣椒
-      '518fb95f-990c-41c3-9bdd-2cd440615249', // 邢晨晨
-      'e49bf4a2-cf3b-4de0-9b94-7c4e0f460cf7', // 汪晓红
-      '98dae66e-72c2-41a3-bb01-2e42218e7803', // Smile
-      'bd3fa653-bb43-48ac-9683-fbbc85b423ba', // 老聂
-      'db5b1a8a-b4fa-4d3f-ad08-872a930e277b', // 李蓉君
-      '934a1599-c69c-4e96-9b58-691707124891', // 歆芝Zia
-      '8feaa2f8-4d09-4a31-bb78-c0e17c2b1d9f', // 骆文
-      'fc8e0d85-0b55-4ac2-bf9f-a7624f236780', // 隋洪乙
-      'ea13f12c-4f43-4480-975b-584ad353cf8c', // 乔乔
-      '9a24e2cc-1257-43e5-aca3-09139dca0d1b', // Amy Beibei
-      '16756991-fed2-469f-9d2c-19d934fc17af', // Edison Hu
-    ];
-
     const vinyasaEmoji = { kept_moving: '🟢', stop_breathe: '🟡', tired_paused: '🔴' };
     const vinyasaLabel = { kept_moving: 'Kept moving', stop_breathe: 'Stopped to breathe', tired_paused: 'Tired, had to pause' };
     const bandhaEmoji = { body_light: '🟢', finding_light: '🟡', heavy_body: '🔴' };
@@ -260,38 +232,28 @@
     let allProfiles = {};
     let currentSummaryStudentId = null;
 
-    // Student orientation profiles (from intake forms)
-    const STUDENT_PROFILES = [
-      {name:"Amy Yu",cn:"于贝贝",city:"Huizhou",yrs:"10+",last:"Bakasana",diff:["backbend","inversion","core"],inj:"Right shoulder pain, lower back discomfort in deep backbends, left knee pain in leg-behind-head"},
-      {name:"Beibei",cn:"北辰",city:"ZhuHai",yrs:"5-10",last:"Baddha Hasta Sirsasana A-D",diff:["inversion","balance","core"],inj:""},
-      {name:"CHEN YUN",cn:"陈云",city:"雄安新区",yrs:"3-5",last:"Urdhva Dhanurasana",diff:["backbend","shoulder"],inj:"Waist injury, left shoulder"},
-      {name:"Carrie",cn:"白姐",city:"Shenzhen",yrs:"10+",last:"Pincha",diff:["inversion","core"],inj:""},
-      {name:"Chang Chia Fen",cn:"張嘉芬",city:"Kaohsiung",yrs:"3-5",last:"Yoganidrasana",diff:["backbend","core"],inj:""},
-      {name:"Deer",cn:"丽君",city:"深圳",yrs:"10+",last:"Eka Pada Sirsasana",diff:["hip-opening","twist"],inj:"Right knee ligament & meniscus injury — cannot do lotus or hip-opening. Handle with care."},
-      {name:"Gina",cn:"谢礼群",city:"惠州",yrs:"3-5",last:"Kapotasana",diff:["shoulder","core"],inj:""},
-      {name:"Jnana",cn:"隋洪乙",city:"吉林",yrs:"1-3",last:"—",diff:["forward-fold","hip-opening","backbend","inversion","balance","twist","shoulder","core"],inj:"Shoulder pain. Beginner — needs encouragement."},
-      {name:"Lily",cn:"郑莉",city:"Guangzhou",yrs:"1-3",last:"Kapo",diff:["shoulder","core"],inj:""},
-      {name:"Maggie yang",cn:"杨小凤",city:"Huizhou",yrs:"1-3",last:"Bakasana B",diff:["hip-opening","backbend","shoulder","core"],inj:"Complex: tight breath, lower back/tailbone mobility issues, cannot reach heels in Kapotasana, inconsistent backbends. Has 2 specific questions about bandha engagement and practice modification."},
-      {name:"Qiao",cn:"乔乔",city:"Shanghai",yrs:"1-3",last:"Kapotasana",diff:["hip-opening","backbend"],inj:"Knee — posterior meniscus corner injury"},
-      {name:"Rena",cn:"刘建梅",city:"Beijing",yrs:"3-5",last:"Primary Series",diff:["backbend"],inj:"Right wrist pain for 3 months during backbends. OK in support poses."},
-      {name:"RongJun",cn:"李蓉君",city:"甘肃兰州",yrs:"5-10",last:"Kapotasana",diff:["hip-opening","backbend","inversion","shoulder","core"],inj:""},
-      {name:"Sharma",cn:"小马",city:"广州",yrs:"5-10",last:"Parighasana",diff:["backbend","inversion","shoulder"],inj:"Fell twice doing handstand → wheel. Shoulder/back injured. Currently recovering."},
-      {name:"Skyler",cn:"曲学明(小辣椒)",city:"青岛",yrs:"1-3",last:"Pinchamyurasana",diff:["inversion","balance","core"],inj:"Chest fascia strain from jumping. Still practiceable, go slow."},
-      {name:"Staya Ji",cn:"吉庆端",city:"云南昆明",yrs:"3-5",last:"Pincha Mayurasana",diff:["hip-opening","backbend","inversion","core"],inj:"Right leg tension when doing leg-behind-head if not open enough"},
-      {name:"Wen Luo",cn:"骆文",city:"ShenZhen",yrs:"1-3",last:"Supta Kurmasana",diff:["hip-opening","backbend"],inj:"Right upper back injury — cannot do deep backbends or lift head"},
-      {name:"XIEYING",cn:"XIEYING",city:"SHIVHUAN",yrs:"5-10",last:"Purna Matsyendrasana",diff:[],inj:"Left thigh fracture history, right rib compression/cracking. Advanced practitioner."},
-      {name:"chen",cn:"邢晨晨",city:"青岛",yrs:"1-3",last:"Pincha",diff:["hip-opening","backbend","inversion","balance","twist"],inj:""},
-      {name:"ekam",cn:"一权",city:"Huizhou",yrs:"3-5",last:"Ardha Matsyendrasana",diff:["hip-opening","inversion"],inj:"Shoulder"},
-      {name:"shelley Wang",cn:"汪晓红",city:"广州",yrs:"5-10",last:"Kapotasana",diff:["backbend","inversion","balance","shoulder","core"],inj:""}
-    ];
+    let huizhouIds = new Set();
+    function isHuizhou(id) { return huizhouIds.has(id); }
+    const huizhouStudent = s => /huizhou/i.test(`${s.location || ''} ${s.workshop || ''} ${s.classType || ''}`)
+      || (s.classType === 'chinese-workshop' && /^(unknown)?$/.test(s.location || '') && !String(s.id || '').startsWith('gz-'));
 
-    // Index by multiple name variants
-    STUDENT_PROFILES.forEach(p => {
-      allProfiles[p.name.toLowerCase()] = p;
-      if (p.cn) allProfiles[p.cn] = p;
-    });
-
-    function isHuizhou(id) { return HUIZHOU_IDS.includes(id); }
+    // Intake profiles come from the locked /api/journal/profiles, never from the page source.
+    function indexProfiles(profiles) {
+      allProfiles = {};
+      profiles.forEach(p => {
+        if (!p.name) return;
+        const diff = p.difficulties;
+        const card = {
+          name: p.name, cn: p.chineseName && p.chineseName !== p.name ? p.chineseName : '',
+          city: p.city || '', yrs: p.yearsPractice || '', last: p.lastAsana || '',
+          diff: Array.isArray(diff) ? diff : (typeof diff === 'string' && diff ? diff.split(/\s*,\s*/) : []),
+          inj: String(p.injury || '')
+        };
+        allProfiles[p.name.toLowerCase()] = card;
+        if (p.englishName) allProfiles[String(p.englishName).toLowerCase()] = card;
+        if (card.cn) allProfiles[card.cn] = card;
+      });
+    }
 
     function showMainTab(tab) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -317,9 +279,11 @@
     }
 
     async function loadStudents() {
-      const res = await fetch('/api/journal/students');
+      const [res, prof] = await Promise.all([fetch('/api/journal/students'), fetch('/api/journal/profiles')]);
       const data = await res.json();
       allStudents = data.students || [];
+      huizhouIds = new Set(allStudents.filter(huizhouStudent).map(s => s.id));
+      try { indexProfiles(prof.ok ? ((await prof.json()).profiles || []) : []); } catch (e) { allProfiles = {}; }
       renderStudents();
     }
 

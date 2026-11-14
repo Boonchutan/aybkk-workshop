@@ -19,7 +19,7 @@ const driver = neo4j.driver(
 
 // Fetch Notion students from local server
 async function fetchNotionStudents() {
-  const response = await fetch('http://localhost:3000/api/notion/students');
+  const response = await fetch('http://localhost:3000/api/notion/students', { headers: { 'X-Bkk-Key': (process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY || '') } });
   const data = await response.json();
   return data.students || [];
 }

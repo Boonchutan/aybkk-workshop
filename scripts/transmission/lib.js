@@ -32,11 +32,16 @@ function httpJson(method, url, body) {
   return new Promise((resolve, reject) => {
     const u = new URL(url);
     const payload = body ? JSON.stringify(body) : null;
+    const headers = payload ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) } : {};
+    // Our own server only (never Telegram or LINE): the weekly counts and /bootstrap need the
+    // staff key, BKK_ADMIN_KEY in this script's environment.
+    const staffKey = process.env.BKK_ADMIN_KEY || process.env.SHOP_ADMIN_KEY;
+    if (u.origin === new URL(API_BASE).origin && staffKey) headers['X-Bkk-Key'] = staffKey;
     const req = https.request({
       hostname: u.hostname,
       path: u.pathname + u.search,
       method,
-      headers: payload ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) } : {},
+      headers,
       timeout: 20000
     }, res => {
       let data = '';

@@ -2,6 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
+  <script src="/staff-key.js" data-ask="no"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>AYBKK 学员练习记录 · Student Portal</title>
@@ -61,7 +62,6 @@
     .student-name { font-size: 16px; font-weight: 500; }
     .student-arrow { color: var(--accent); font-size: 18px; }
     .no-results { text-align: center; color: var(--text-secondary); padding: 40px 0; font-size: 14px; }
-    .count { text-align: center; font-size: 12px; color: var(--text-secondary); margin-top: 16px; }
   </style>
 </head>
 <body>
@@ -73,7 +73,6 @@
     <div class="subtitle">Find your name to open your Practice Journal</div>
     <input type="text" class="search-box" id="searchBox" placeholder="Search your name / 搜索名字" oninput="filterStudents()">
     <div class="student-list" id="studentList"></div>
-    <div class="count" id="countText"></div>
   </div>
 
   <script>
@@ -82,6 +81,11 @@
     async function loadStudents() {
       try {
         const res = await fetch('/api/journal/students');
+        if (res.status === 401) {
+          document.getElementById('searchBox').style.display = 'none';
+          document.getElementById('studentList').innerHTML = '<div class="no-results">Ask your teacher for your own journal link.<br>请向老师索取您的练习记录链接。</div>';
+          return;
+        }
         const data = await res.json();
         // Filter to workshop students
         students = (data.students || []).filter(s => s.classType === 'chinese-workshop' || s.classType === 'workshop' || s.classType === 'in-depth-mysore-cn2');
@@ -103,7 +107,6 @@
           </div>
         `).join('');
       }
-      document.getElementById('countText').textContent = `${list.length} students registered`;
     }
 
     function filterStudents() {

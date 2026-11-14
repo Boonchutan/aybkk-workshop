@@ -1,10 +1,11 @@
 // checkin-sw.js — offline shell for the AYBKK check-in station.
 // Load the station once on good wifi, "Add to Home Screen", and it then runs
 // fully offline. This is what makes it survive a blocked/flaky network in China.
-const CACHE = "aybkk-checkin-v7"; // v7: bilingual buttons, Student List rename, roster 59
+const CACHE = "aybkk-checkin-v7"; // v7: bilingual buttons, Student List rename
 const SHELL = [
   "/checkin-station.html",
   "/vendor/jsQR.js",
+  "/staff-key.js",
   "/checkin-manifest.webmanifest"
 ];
 
@@ -25,10 +26,11 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;  // only same-origin
 
-  // Roster: network-first so an updated list is picked up, cache as fallback.
+  // Roster: network-first so an updated list is picked up, cache as fallback. It needs the
+  // staff key, so only a real roster is kept: a 401 goes to the page, which asks for the key.
   if (url.pathname === "/rosters/hefei.json") {
     e.respondWith(
-      fetch(req).then(r => { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); return r; })
+      fetch(req).then(r => { if (r.ok) { const cp = r.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return r; })
                 .catch(() => caches.match(req))
     );
     return;

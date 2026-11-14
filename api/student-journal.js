@@ -5,6 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { staffOnly } = require('../lib/staff-key');
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 
@@ -274,7 +275,7 @@ router.post('/profile', async (req, res) => {
 // GET /api/journal/weekly-recap?workshop=<tag>&weekOf=<YYYY-MM-DD (Monday)>
 // Cohort stats for the Sunday Transmission pack: how many checked in during
 // the week, how many practiced 4+ days (tap check-ins), photos shared.
-router.get('/weekly-recap', async (req, res) => {
+router.get('/weekly-recap', staffOnly, async (req, res) => {
   const { workshop, weekOf } = req.query;
   if (!workshop || !weekOf || !/^\d{4}-\d{2}-\d{2}$/.test(weekOf)) {
     return res.status(400).json({ error: 'workshop and weekOf=YYYY-MM-DD required' });
@@ -385,7 +386,7 @@ router.get('/student/:id', async (req, res) => {
 });
 
 // GET /api/journal/students - List all students (for teacher view)
-router.get('/students', async (req, res) => {
+router.get('/students', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const { isChinese, hasAssessment } = req.query;
@@ -447,7 +448,7 @@ router.get('/students', async (req, res) => {
 });
 
 // GET /api/journal/profile/:id - Get student orientation profile (for teacher summary card)
-router.get('/profile/:id', async (req, res) => {
+router.get('/profile/:id', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const { id } = req.params;
@@ -494,7 +495,7 @@ router.get('/profile/:id', async (req, res) => {
 });
 
 // GET /api/journal/profiles - Bulk fetch all student profiles (for teacher summary cards)
-router.get('/profiles', async (req, res) => {
+router.get('/profiles', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const result = await session.run(`
@@ -719,7 +720,7 @@ router.post('/comments/read', async (req, res) => {
 });
 
 // GET /api/journal/history/:days - Get all self-assessments for last N days
-router.get('/history/:days', async (req, res) => {
+router.get('/history/:days', staffOnly, async (req, res) => {
   const session = req.driver.session();
   try {
     const days = parseInt(req.params.days) || 7;
