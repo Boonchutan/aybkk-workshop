@@ -16,6 +16,9 @@ const { sendMail, render } = require('./mailer');
 const TZ_OFFSET = '+07:00';                    // Asia/Bangkok, no DST
 const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
 const STAFF_LINK_DAYS = 7;                     // one M sends by LINE/WhatsApp/WeChat
+const SHORT_ALPHABET = '23456789abcdefghjkmnpqrstuvwxyz'; // its short /in/ code: no 0/o, 1/l/i to misread
+const SHORT_LEN = 10;                          // 31^10 ≈ 8e14 codes
+const SHORT_MISSES_PER_IP_HOUR = 20;           // wrong /in/ codes before an address is stopped
 const SIGNIN_PER_EMAIL_HOUR = 3;               // and cheap to abuse without limits
 const SIGNIN_PER_IP_HOUR = 10;
 const LETTER_PER_IP_HOUR = 10;                 // letter confirm mails asked from one place (shala wifi)
@@ -325,6 +328,9 @@ function mountBkk(app, opts = {}) {
       created_at TIMESTAMPTZ DEFAULT now())`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_login_tokens_recent
              ON bkk_login_tokens (created_at)`);
+    // A staff-made link also has a short code: the 64-character link looked like spam in LINE (14 Nov).
+    await q(`ALTER TABLE bkk_login_tokens ADD COLUMN IF NOT EXISTS short_code TEXT`);
+    await q(`CREATE UNIQUE INDEX IF NOT EXISTS bkk_login_tokens_short ON bkk_login_tokens (short_code)`);
 
     // The teaching team. Each teacher has their own passcode, stored hashed —
     // a shared key would make every note say "somebody", and revoking one
@@ -1231,18 +1237,26 @@ function mountBkk(app, opts = {}) {
 
   // M sends a student their own sign-in link by LINE, WhatsApp or WeChat: most
   // Rezerv students have no email on file here. Same one-time token as the
-  // email link, just longer-lived because it waits in a chat.
+  // email link, just longer-lived because it waits in a chat. short_link is the
+  // one to send; link stays for anything that still reads it.
+  const shortCode = () => Array.from({ length: SHORT_LEN },
+    () => SHORT_ALPHABET[crypto.randomInt(SHORT_ALPHABET.length)]).join('');
   app.post('/api/bkk/admin/members/:code/signin-link', async (req, res) => {
     if (adminOnly(req, res)) return;
     try {
       const m = (await q('SELECT id,name FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
       if (!m) return res.status(404).json({ error: 'member not found' });
-      const token = crypto.randomBytes(32).toString('hex');
-      await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at)
-               VALUES ($1,$2,NULL,'staff', now() + ($3 || ' days')::interval)`,
-        [token, m.id, String(STAFF_LINK_DAYS)]);
+      let made;
+      for (let tries = 0; !made && tries < 5; tries++) {
+        made = (await q(`INSERT INTO bkk_login_tokens (token,member_id,email,ip,expires_at,short_code)
+                 VALUES ($1,$2,NULL,'staff', now() + ($3 || ' days')::interval, $4)
+                 ON CONFLICT (short_code) DO NOTHING RETURNING token, short_code`,
+          [crypto.randomBytes(32).toString('hex'), m.id, String(STAFF_LINK_DAYS), shortCode()])).rows[0];
+      }
+      if (!made) throw new Error('could not make a link, please try again');
       res.json({ success: true, name: m.name, days: STAFF_LINK_DAYS,
-        link: `${baseUrl()}/api/bkk/login/${token}` });
+        link: `${baseUrl()}/api/bkk/login/${made.token}`,
+        short_link: `${baseUrl()}/in/${made.short_code}` });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -1402,7 +1416,8 @@ function mountBkk(app, opts = {}) {
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>AYBKK</title>
 <body style="font-family:-apple-system,sans-serif;background:#f7f1f5;color:#17121a;
 text-align:center;padding:22vh 20px"><p>${msg}</p>${extra}</body></html>`;
-  const usable = `token = $1 AND expires_at > now() AND (used_at IS NULL OR ip = 'staff')`;
+  const live = `expires_at > now() AND (used_at IS NULL OR ip = 'staff')`;
+  const usable = `token = $1 AND ${live}`;
 
   // ── the Monday letter (email sign-ups) ────────────────────────────────────
   // Double opt-in: the address joins only when its owner taps Confirm, so nobody
@@ -1554,12 +1569,47 @@ border:0;border-radius:10px;background:${bg};color:#fff">${label}</button></form
   const deadLink = () => loginPage('That link has already been used, or it has expired.<br>'
     + '<a href="/book" style="color:#5c2160">Ask for a new one</a>');
 
+  // The short link a staff member sends: /in/<code> → the long link, which still
+  // only shows the page, so a chat preview opening it uses nothing up. Misses are
+  // counted per address in memory (one process on Railway), so codes cannot be
+  // guessed: an address that misses SHORT_MISSES_PER_IP_HOUR times waits an hour.
+  const SHORT_RE = new RegExp(`^[${SHORT_ALPHABET}]{${SHORT_LEN}}$`);
+  const shortTries = new Map();
+  const shortTriesOf = ip => {
+    const t = shortTries.get(ip);
+    if (t && Date.now() - t.start < 3600 * 1000) return t;
+    if (shortTries.size > 5000) shortTries.clear();
+    const fresh = { start: Date.now(), misses: 0 };
+    shortTries.set(ip, fresh);
+    return fresh;
+  };
+  app.get('/in/:code', async (req, res) => {
+    const t = shortTriesOf(clientIp(req));
+    if (t.misses >= SHORT_MISSES_PER_IP_HOUR) {
+      return res.status(429).type('text/plain').send('Too many wrong links. Please try again in an hour.');
+    }
+    const miss = status => { t.misses++; res.status(status).send(deadLink()); };
+    if (!SHORT_RE.test(req.params.code)) return miss(404);
+    try {
+      const row = (await q(`SELECT token FROM bkk_login_tokens WHERE short_code = $1 AND ${live}`,
+        [req.params.code])).rows[0];
+      if (!row) return miss(400);
+      res.set({ 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' })
+        .redirect(302, `/api/bkk/login/${row.token}`);
+    } catch (e) {
+      console.error('[bkk login] short link failed:', e.message);
+      res.status(500).send(loginPage('Something went wrong. Please try again.'));
+    }
+  });
+
+  // The form names its own target: workers/china-proxy follows redirects itself,
+  // so through it this page can arrive with /in/<code> as its address.
   app.get('/api/bkk/login/:token', async (req, res) => {
     try {
-      const ok = (await q(`SELECT 1 FROM bkk_login_tokens WHERE ${usable}`, [req.params.token])).rows.length;
-      if (!ok) return res.status(400).send(deadLink());
+      const row = (await q(`SELECT token FROM bkk_login_tokens WHERE ${usable}`, [req.params.token])).rows[0];
+      if (!row) return res.status(400).send(deadLink());
       res.set('Cache-Control', 'no-store').send(loginPage('Opening your AYBKK profile…',
-        `<form method="post" id="f"><button style="font:inherit;font-weight:700;padding:14px 22px;border:0;
+        `<form method="post" action="/api/bkk/login/${row.token}" id="f"><button style="font:inherit;font-weight:700;padding:14px 22px;border:0;
 border-radius:10px;background:#e8458c;color:#fff">Open my profile · เปิดโปรไฟล์</button></form>
 <script>document.getElementById('f').submit()</script>`));
     } catch (e) {

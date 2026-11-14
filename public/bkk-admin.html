@@ -1028,14 +1028,15 @@
     alert(T('outDone', now.name, j.linksStopped, j.removedEmail));
   };
 
-  // A one-time link M pastes into the student's LINE, WhatsApp or WeChat.
+  // A link M pastes into the student's LINE, WhatsApp or WeChat: the short one,
+  // since the long token link reads as spam in a chat.
   window.signinLink = async (code) => {
     const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/signin-link`, { method: 'POST', body: '{}' });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { alert(j.error || T('failed')); return; }
     const msg = `สวัสดีค่ะ คุณ${j.name} 🙏 โปรไฟล์ AYBKK ของคุณพร้อมแล้ว รูปการฝึกของคุณจะอยู่ที่นี่ เห็นได้เฉพาะคุณ\n`
       + `Hi ${j.name} 🙏 Your AYBKK profile is ready. Your class photos are here, only for you.\n\n`
-      + `${j.link}\n\n`
+      + `${j.short_link}\n\n`
       + `(ลิงก์ใช้ได้ ${j.days} วัน · This link works for ${j.days} days.)`;
     let copied = false;
     try { await navigator.clipboard.writeText(msg); copied = true; } catch (_) {}
