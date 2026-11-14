@@ -1,6 +1,7 @@
 // End-to-end test of bkk-api against a real Postgres.
 process.env.BKK_ADMIN_KEY = 'testkey';
 process.env.MAIL_DRY_RUN = '1';   // capture mail in an outbox instead of sending
+const crypto = require('crypto');
 const express = require('express');
 const { Pool } = require('pg');
 const { mountBkk, moonDaysBetween, parseWhen, CANCEL_CUTOFF_HOURS } = require('../bkk-api.js');
@@ -1029,6 +1030,117 @@ const ok = (name, cond, extra = '') => {
   ok('the link signs the student in and opens their profile', land.includes(twoCode) && land.includes('/book?me=1'));
   ok('a staff link still works a second time (re-open, second phone)',
      (await fetch(`${B}/api/bkk/login/${tok}`, { method: 'POST' })).status === 200);
+
+  console.log('\n— short sign-in links (14 Nov: the long link looked like spam in LINE) —');
+  {
+    const SHORT = /^https?:\/\/[^/]+\/in\/[23456789abcdefghjkmnpqrstuvwxyz]{10}$/;
+    ok('the staff link comes with a short link on the same host, 10 letters with no 0/o/1/l/i',
+       SHORT.test(sl.body.short_link || '') && sl.body.short_link.split('/in/')[0] === sl.body.link.split('/api/')[0],
+       String(sl.body.short_link));
+    ok('...and the long link is still there for anything that reads it', /\/api\/bkk\/login\/[0-9a-f]{64}$/.test(sl.body.link));
+    const codeOf = b => b.short_link.split('/in/')[1];
+    const stored = (await pool.query('SELECT token, short_code FROM bkk_login_tokens WHERE short_code=$1', [codeOf(sl.body)])).rows;
+    ok('the short code is stored on that link', stored.length === 1 && stored[0].token === tok, JSON.stringify(stored));
+
+    let ipN = 0;
+    const from = () => ({ 'x-forwarded-for': `10.77.0.${++ipN}` });
+    const open = (code, headers = from()) => fetch(`${B}/in/${code}`, { redirect: 'manual', headers });
+    const fresh = (await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, ADMIN)).body;
+    const freshTok = fresh.link.split('/').pop();
+    ok('two links get two different short codes', codeOf(fresh) !== codeOf(sl.body));
+    const hop = await open(codeOf(fresh));
+    ok('/in/<code> sends the browser on to the long link', hop.status === 302 && hop.headers.get('location') === `/api/bkk/login/${freshTok}`,
+       `${hop.status} ${hop.headers.get('location')}`);
+    ok('...never cached, and with no referrer', /no-store/.test(hop.headers.get('cache-control') || '')
+       && hop.headers.get('referrer-policy') === 'no-referrer', `${hop.headers.get('cache-control')} ${hop.headers.get('referrer-policy')}`);
+    const page = await fetch(B + hop.headers.get('location'));
+    const pageHtml = await page.text();
+    ok('the long link it lands on still opens the page', page.status === 200 && pageHtml.includes('Open my profile'));
+    ok("...whose form posts to the long link, so a proxy that follows the redirect itself can't break it",
+       pageHtml.includes(`action="/api/bkk/login/${freshTok}"`));
+    const followed = await fetch(`${B}/in/${codeOf(fresh)}`, { headers: from() });
+    ok('a chat preview following the short link only sees the page', followed.status === 200
+       && (await pool.query('SELECT used_at FROM bkk_login_tokens WHERE token=$1', [freshTok])).rows[0].used_at === null);
+    const inLand = await fetch(`${B}/api/bkk/login/${freshTok}`, { method: 'POST' }).then(r => r.text());
+    ok('tapping through signs the student in', inLand.includes(twoCode) && inLand.includes('/book?me=1'));
+    ok('a used staff short link still opens, like the long one (re-open, second phone)', (await open(codeOf(fresh))).status === 302);
+
+    const dead = async (code, status) => { const r = await open(code); const t = await r.text();
+      return r.status === status && t.includes('already been used, or it has expired') ? true : `${r.status}`; };
+    const used = (await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, ADMIN)).body;
+    await pool.query(`UPDATE bkk_login_tokens SET used_at=now(), ip='receipt' WHERE short_code=$1`, [codeOf(used)]);
+    ok('a short code follows the long link\'s rule: a used one-time link is dead', await dead(codeOf(used), 400) === true);
+    const old = (await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, ADMIN)).body;
+    await pool.query(`UPDATE bkk_login_tokens SET expires_at=now() - interval '1 minute' WHERE short_code=$1`, [codeOf(old)]);
+    ok('an expired short link shows the dead-link page', await dead(codeOf(old), 400) === true);
+    ok('...and so does a code nobody was given', await dead('23456789ab', 400) === true);
+    for (const bad of ['abc', 'ABCDEFGHJK', '0000000000', 'lllllllll1', 'abcdefghjkm', 'abcdefghi%2F', '%27%3B--abcdef'])
+      ok(`a malformed code (${bad}) is a 404 with the same page`, await dead(bad, 404) === true);
+
+    const guesser = { 'x-forwarded-for': '10.78.0.1' };
+    const guesses = [];
+    for (let i = 0; i < 20; i++) guesses.push((await open(`zzzzzzzz${'abcdefghjkmnpqrstuvw'[i]}2`, guesser)).status);
+    ok('20 wrong codes from one address each get the dead page', guesses.every(s => s === 400), guesses.join());
+    const stopped = await open('abcdefghjk', guesser);
+    ok('the 21st is refused with 429 and a short plain message', stopped.status === 429
+       && /text\/plain/.test(stopped.headers.get('content-type') || '') && (await stopped.text()).length < 80);
+    ok('...even with a real code, so a guess that hits looks like any other', (await open(codeOf(fresh), guesser)).status === 429);
+    ok('another address is not held up', (await open(codeOf(fresh))).status === 302);
+
+    // Review, 14 Nov: the count must hold against a burst, a made-up first
+    // x-forwarded-for entry, and students tapping old links on one wifi.
+    const anyCode = () => Array.from({ length: 10 }, () => '23456789abcdefghjkmnpqrstuvwxyz'[crypto.randomInt(31)]).join('');
+    const wifi = { 'x-forwarded-for': '10.78.0.2' };
+    const stale = [];
+    for (let i = 0; i < 25; i++) stale.push((await open(codeOf(old), wifi)).status);
+    for (let i = 0; i < 25; i++) stale.push((await open(codeOf(used), wifi)).status);
+    for (let i = 0; i < 25; i++) stale.push((await open('abc', wifi)).status);
+    ok('expired and used-up links and typos are not guesses: 75 of them from one wifi...',
+       stale.every((s, i) => s === (i < 50 ? 400 : 404)), stale.join());
+    ok('...and a student there can still open the new link the desk just sent', (await open(codeOf(fresh), wifi)).status === 302);
+    const burst = await Promise.all(Array.from({ length: 60 }, () =>
+      open(anyCode(), { 'x-forwarded-for': '10.78.0.3' }).then(r => r.status)));
+    ok('60 guesses at once from one address: 20 are looked up, 40 get 429',
+       burst.filter(s => s === 400).length === 20 && burst.filter(s => s === 429).length === 40,
+       `${burst.filter(s => s === 400).length} looked up`);
+    // cn.aybkk.net arrives from cloudflared on localhost: Cloudflare sets cf-connecting-ip
+    // and puts the real address last in x-forwarded-for, after whatever the client sent.
+    const tunnel = (real, sent) => ({ 'cf-connecting-ip': real, 'x-forwarded-for': `${sent}, ${real}` });
+    const rotated = [];
+    for (let i = 0; i < 21; i++) rotated.push((await open(anyCode(), tunnel('198.51.100.7', `10.80.0.${i}`))).status);
+    ok('through the tunnel, a new made-up x-forwarded-for each time does not get round the count',
+       rotated.slice(0, 20).every(s => s === 400) && rotated[20] === 429, rotated.join());
+    for (let i = 0; i < 20; i++) await open(anyCode(), tunnel('198.51.100.8', '198.51.100.9'));
+    ok("...and a guesser who writes someone else's address first does not lock that person out",
+       (await open(codeOf(fresh), tunnel('198.51.100.9', '198.51.100.9'))).status === 302
+       && (await open(codeOf(fresh), tunnel('198.51.100.8', '198.51.100.10'))).status === 429);
+    const lan = Object.values(require('os').networkInterfaces()).flat().find(a => a && a.family === 'IPv4' && !a.internal);
+    if (lan) {
+      const direct = [];
+      for (let i = 0; i < 21; i++) direct.push((await fetch(`http://${lan.address}:${port}/in/${anyCode()}`,
+        { redirect: 'manual', headers: { 'cf-connecting-ip': `10.81.0.${i}`, 'x-forwarded-for': '10.81.1.1' } })).status);
+      ok('cf-connecting-ip counts only from localhost: anywhere else anyone can send it',
+         direct.slice(0, 20).every(s => s === 400) && direct[20] === 429, direct.join());
+    } else console.log('  (no network card besides localhost: the cf-connecting-ip check from elsewhere is skipped)');
+
+    const realRandomInt = crypto.randomInt;
+    crypto.randomInt = () => 0;
+    const twos = await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, ADMIN);
+    let n = 0;
+    crypto.randomInt = (...a) => n++ < 10 ? 0 : realRandomInt(...a);
+    const retried = await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, ADMIN);
+    crypto.randomInt = () => 0;
+    const stuck = await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, ADMIN);
+    crypto.randomInt = realRandomInt;
+    ok('a short code that is taken is drawn again', twos.status === 200 && codeOf(twos.body) === '2222222222'
+       && retried.status === 200 && SHORT.test(retried.body.short_link) && codeOf(retried.body) !== '2222222222', JSON.stringify(retried.body));
+    ok('...and a run of bad luck is an error, not a link to someone else', stuck.status === 500 && !stuck.body.link);
+
+    const plain = (await post(`/api/bkk/admin/members/${twoCode}/signin-link`, {}, ADMIN)).body.link.split('/').pop();
+    ok('the long link alone still works, without ever opening the short one',
+       (await fetch(`${B}/api/bkk/login/${plain}`)).status === 200
+       && (await fetch(`${B}/api/bkk/login/${plain}`, { method: 'POST' }).then(r => r.text())).includes(twoCode));
+  }
   ok('a student adds their email once',
      (await post(`/api/bkk/me/${twoCode}/email`, { email: 'imp.two@example.com' })).status === 200 &&
      (await post(`/api/bkk/me/${twoCode}/email`, { email: 'other@example.com' })).status === 409);
@@ -1040,7 +1152,8 @@ const ok = (name, cond, extra = '') => {
   const mkMember = async name => (await post('/api/bkk/admin/passes', { name, productCode: 'pack10' }, ADMIN)).body.member.code;
   const kateCode = await mkMember('Kate Mixup'), katCode = await mkMember('Kat Mixup');
   ok('new member codes are long and random, not the clock', /^B[0-9A-Z]{13}$/.test(kateCode), kateCode);
-  const kateLink = (await post(`/api/bkk/admin/members/${kateCode}/signin-link`, {}, ADMIN)).body.link.split('/').pop();
+  const kateSent = (await post(`/api/bkk/admin/members/${kateCode}/signin-link`, {}, ADMIN)).body;
+  const kateLink = kateSent.link.split('/').pop();
   ok("Kat, holding Kate's link, puts her own email on Kate's profile",
      (await post(`/api/bkk/me/${kateCode}/email`, { email: 'kat.mixup@example.com' })).status === 200);
   ok('...so her own profile refuses it (the reported problem)',
@@ -1085,6 +1198,8 @@ const ok = (name, cond, extra = '') => {
   ok("the old code (on Kat's phone) no longer opens anything", (await J(`/api/bkk/me/${kateCode}`)).status === 404);
   ok('...and says so in the words the page listens for', (await J(`/api/bkk/me/${kateCode}`)).body.error === 'not found');
   ok('the link M sent is dead', (await fetch(`${B}/api/bkk/login/${kateLink}`, { method: 'POST' })).status === 400);
+  ok('...and so is its short link', (await fetch(`${B}/in/${kateSent.short_link.split('/in/')[1]}`,
+    { redirect: 'manual', headers: { 'x-forwarded-for': '10.79.0.1' } })).status === 400);
   const kateNow = await J(`/api/bkk/me/${kateNew}`);
   ok("Kate's profile and pass are intact under the new code",
      kateNow.status === 200 && kateNow.body.member.name === 'Kate Mixup' && kateNow.body.passes.length === 1, JSON.stringify(kateNow.body).slice(0, 160));
