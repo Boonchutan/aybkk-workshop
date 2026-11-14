@@ -29,7 +29,7 @@
   .pending{background:#fff3d6;color:#8a6a12}.paid{background:#e6f6ec;color:#187a43}
   .mismatch,.failed{background:#fdeaea;color:#a33}
   .btn{padding:9px 14px;border:none;border-radius:7px;background:var(--plum);color:var(--on-dark);font-weight:700;font-size:14px;cursor:pointer;font-family:'Work Sans','Plex',sans-serif;font-weight:800}
-  .btn.gray{background:var(--plum-deep)}.btn.pink{background:var(--pink)}.btn.red{background:#b3453c}
+  .btn.gray{background:var(--plum-deep)}.btn.pink{background:var(--pink)}.btn.red{background:#b3453c;color:#fdf7fa}
   input{padding:10px;border:1.5px solid var(--line);border-radius:7px;font-size:15px;font-family:inherit;background:var(--wall);color:var(--ink)}
   #gate{max-width:340px;margin:16vh auto;text-align:center}
   .muted{color:var(--soft);font-size:12.5px}
@@ -185,6 +185,29 @@
   .cxl div{font-size:13px;color:var(--soft);padding:5px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
   #addBox input:not([type=checkbox]){width:100%;margin-bottom:8px}
   .link{background:none;border:0;color:var(--plum);font:inherit;font-size:14px;font-weight:700;padding:6px 0;cursor:pointer}
+  /* Payments: the name opens the student's profile; unpaid tries fold away (Nov 2026). */
+  .link:focus-visible,details.tries>summary:focus-visible{outline:2px solid var(--plum);outline-offset:2px;border-radius:4px}
+  .link.who{padding:0;font-size:inherit;text-align:left;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+  .ordact{display:flex;flex-direction:column;align-items:stretch;gap:6px}
+  .ordact .btn{white-space:nowrap}
+  .chk{display:block;margin-top:4px;font-size:12.5px;font-weight:700;color:var(--plum)}
+  .chk:empty{display:none}
+  .chk small{display:block;font-size:12px;font-weight:400;color:var(--soft);overflow-wrap:anywhere}
+  .chk.ok,.chk.warn{padding:5px 8px;border-radius:6px}
+  .chk.ok{background:#e6f6ec;color:#187a43}.chk.warn{background:#fff3d6;color:#6b520e}
+  details.tries{margin-top:14px;border-top:1px solid var(--line)}
+  details.tries>summary{cursor:pointer;padding:12px 0 10px;font-weight:700}
+  details.tries>summary .muted{display:block;font-weight:400}
+  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn,#chkAll{min-height:44px}}
+  /* On a phone each payment is a card, so the buttons are on screen, not off to the side. */
+  @media (max-width:640px){
+    table.ord tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 12px;padding:10px 0;border-bottom:1px solid var(--line)}
+    table.ord tr:first-child{display:none}
+    table.ord td{display:block;border:0;padding:0;min-width:0;overflow-wrap:anywhere}
+    table.ord td.ref::before{content:attr(data-l) ' '}
+    table.ord td:last-child{grid-column:1/-1}
+    .ordact{flex-direction:row}.ordact .btn{flex:1 1 0}
+  }
   .hit{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--wall);border:1px solid var(--line);
     color:var(--ink);border-radius:8px;padding:10px 12px;margin-bottom:6px;font:inherit;cursor:pointer}
   .hit b{font-size:15px;overflow-wrap:anywhere}
@@ -319,7 +342,7 @@
       bookedIn: (n, i) => ` — ${n} booked, ${i} checked in`, checkedIn: '✓ in', notYet: 'not yet',
       payments: 'Payments', thStudent: 'Student', thPackage: 'Package', thStatus: 'Status', thRef: 'Ref',
       fee: 'fee', vat: 'VAT', activate: 'Activate', noOrders: 'no orders yet',
-      ordersHelp: 'Find the reference number in the PaySolutions dashboard, check the amount matches, then activate. Every activation here is recorded as manual.',
+      ordersHelp: 'Each time a student taps Buy, a new line shows here, even if they never pay. A line that was not paid and is more than one day old, or that the student paid for later, moves into Unpaid tries at the bottom. Check payment asks PaySolutions if the money came: if it did, the pass turns on. Activate turns the pass on by hand: press it only when you can see the money in PaySolutions. Every activation here is saved as manual.',
       qActivate: 'Activate this pass?\nOnly do this once you have seen the money arrive in PaySolutions.',
       activatedNoClass: e => `Activated. Could not book the class: ${e}. Book them by hand.`,
       feeTitle: 'Online payment fee',
@@ -407,7 +430,7 @@
       bookedIn: (n, i) => ` — จอง ${n} คน เช็คอินแล้ว ${i} คน`, checkedIn: '✓ เช็คอินแล้ว', notYet: 'ยังไม่มา',
       payments: 'การชำระเงิน', thStudent: 'นักเรียน', thPackage: 'แพ็กเกจ', thStatus: 'สถานะ', thRef: 'อ้างอิง',
       fee: 'ค่าธรรมเนียม', vat: 'VAT', activate: 'เปิดใช้', noOrders: 'ยังไม่มีรายการ',
-      ordersHelp: 'หาเลขอ้างอิงในหน้า PaySolutions ตรวจว่ายอดเงินตรงกัน แล้วกดเปิดใช้ ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
+      ordersHelp: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย รายการที่ไม่ได้จ่ายและเกิน 1 วัน หรือที่นักเรียนจ่ายทีหลังแล้ว จะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่าง ปุ่มตรวจการชำระจะถาม PaySolutions ถ้าเงินเข้าแล้ว แพ็กเกจจะเปิดเอง ปุ่มเปิดใช้คือเปิดแพ็กเกจด้วยมือ กดเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
       qActivate: 'เปิดใช้แพ็กเกจนี้?\nทำเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น',
       activatedNoClass: e => `เปิดใช้แล้ว แต่จองคลาสให้ไม่ได้ (${e}) กรุณาจองให้นักเรียนเอง`,
       feeTitle: 'ค่าธรรมเนียมจ่ายออนไลน์',
@@ -434,7 +457,7 @@
       teeName: 'ชื่อ', teePrice: 'ราคา ฿', teeLink: 'ลิงก์ PaySolutions', teePhoto: 'ลิงก์รูป (https://… หรือ /img/tees/1.jpg)', teeSizes: 'ไซซ์ (เช่น S M L XL)', teeOn: 'วางขาย', teeAdd: 'เพิ่มเสื้อ', teeSaved: 'บันทึกแล้ว',
       words: {
         cash: 'เงินสด', transfer: 'โอนเงิน', card: 'รูดบัตร', online: 'ออนไลน์',
-        paid: 'ชำระแล้ว', pending: 'รอชำระ', mismatch: 'ยอดไม่ตรง', failed: 'ไม่สำเร็จ',
+        paid: 'ชำระแล้ว', pending: 'รอชำระ', mismatch: 'ยอดไม่ตรง', failed: 'ไม่สำเร็จ', refund: 'คืนเงิน',
         active: 'ใช้งานอยู่', frozen: 'พักอยู่', void: 'ยกเลิกแล้ว',
       },
     },
@@ -718,14 +741,49 @@
     reopenH: 'เปิดคลาสนี้อีกครั้ง', reopenHelp: 'นักเรียนที่เคยจองจะไม่กลับเข้ามาเอง ต้องจองใหม่ (ได้ครั้งคืนไปแล้ว)',
     reopened: 'เปิดคลาสแล้ว นักเรียนจองได้อีกครั้ง',
   });
+  // Payments: unpaid tries folded away, and a check that asks PaySolutions (Nov 2026).
+  Object.assign(STR.en, {
+    notPaidYet: 'Not paid yet', chkPay: 'Check payment', chkWait: 'Checking…', chkPaid: 'Paid: the pass is on',
+    chkMismatch: 'PaySolutions: the amount does not match. Look in PaySolutions before you do anything.',
+    chkUnknown: 'This order was not found.', chkNoGw: 'PaySolutions is not connected here, so nothing was checked.',
+    chkNot: 'PaySolutions: not paid yet', chkErr: 'The check did not work. Try again in a minute.',
+    chkKey: 'PaySolutions did not accept our login, so nothing was checked.',
+    chkAll: 'Check unpaid from the last 3 days', chkAllWait: (i, n) => `Checking ${i} of ${n}…`,
+    chkAllDone: (n, m) => `Checked ${n}, paid ${m}`,
+    triesH: n => `Unpaid tries (${n})`,
+    triesSub: 'The student left the payment page. Nothing to do unless they say they paid.',
+    nTries: n => `+${n} unpaid ${n === 1 ? 'try' : 'tries'}`,
+    nthPay: n => `${n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th'} payment for this package in 3 days`,
+    ordPill: { paid: 'Paid', pending: 'Pending', failed: 'Failed', mismatch: 'Wrong amount', refund: 'Refund' },
+    // Without the PaySolutions keys nothing can be checked, so only a later payment folds a line away.
+    triesSubLink: 'The student paid for the same thing later. Nothing to do unless they say they paid twice.',
+    ordersHelpLink: 'Each time a student taps Buy, a new line shows here, even if they never pay. PaySolutions is not connected to this page, so no pass turns on by itself: check that the money came in, then press Activate. A line moves into Unpaid tries at the bottom only when the student paid for the same thing later. Every activation here is saved as manual.',
+  });
+  Object.assign(STR.th, {
+    notPaidYet: 'ยังไม่ชำระ', chkPay: 'ตรวจการชำระ', chkWait: 'กำลังตรวจ…', chkPaid: 'ชำระแล้ว: เปิดใช้แพ็กเกจแล้ว',
+    chkMismatch: 'PaySolutions: ยอดเงินไม่ตรง ดูใน PaySolutions ก่อนทำอะไร',
+    chkUnknown: 'ไม่พบรายการนี้', chkNoGw: 'ยังไม่ได้เชื่อมต่อ PaySolutions จึงยังตรวจไม่ได้',
+    chkNot: 'PaySolutions: ยังไม่ชำระ', chkErr: 'ตรวจไม่สำเร็จ ลองใหม่ในอีกสักครู่',
+    chkKey: 'PaySolutions ไม่รับรหัสของเรา จึงยังตรวจไม่ได้',
+    chkAll: 'ตรวจรายการที่ยังไม่ชำระ 3 วันล่าสุด', chkAllWait: (i, n) => `กำลังตรวจ ${i}/${n}…`,
+    chkAllDone: (n, m) => `ตรวจแล้ว ${n} รายการ ชำระแล้ว ${m}`,
+    triesH: n => `กดซื้อแต่ไม่ได้จ่าย (${n})`,
+    triesSub: 'นักเรียนออกจากหน้าจ่ายเงินไปก่อน ไม่ต้องทำอะไร เว้นแต่นักเรียนบอกว่าจ่ายแล้ว',
+    nTries: n => `กดซื้อแต่ไม่ได้จ่ายอีก ${n} ครั้ง`,
+    nthPay: n => `จ่ายแพ็กเกจนี้เป็นครั้งที่ ${n} ใน 3 วัน`,
+    triesSubLink: 'นักเรียนจ่ายแพ็กเกจเดียวกันทีหลังแล้ว ไม่ต้องทำอะไร เว้นแต่นักเรียนบอกว่าจ่ายสองครั้ง',
+    ordersHelpLink: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย หน้านี้ยังไม่ได้เชื่อมต่อ PaySolutions แพ็กเกจจึงไม่เปิดเอง ให้ตรวจว่าเงินเข้าแล้ว แล้วกดเปิดใช้ รายการจะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่างเฉพาะเมื่อนักเรียนจ่ายแพ็กเกจเดียวกันทีหลังแล้ว ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
+  });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
   let TH_NAMES = null, TH_BY_EN = {};
+  let PAY_MODE = null;                  // 'gateway' when PaySolutions can be asked; null until known
   let DROP_PRICE = null;                // the desk price of a drop-in: VAT in, no online fee
   const loadThNames = async () => {
     if (TH_NAMES) return;
     const d = await fetch('/api/bkk/products').then(r => r.json()).catch(() => ({}));
     TH_NAMES = {};
+    PAY_MODE = (d.payment || {}).mode || null;
     for (const x of d.products || []) if (x.name_th) { TH_NAMES[x.id] = x.name_th; TH_BY_EN[x.name_en] = x.name_th; }
     const p = (d.products || []).find(x => x.code === 'dropin');
     if (p) DROP_PRICE = p.price_thb + Math.round(p.price_thb * (d.vatPct || 0) / 100);
@@ -1566,28 +1624,157 @@
     $('#view').innerHTML = prog + moneyBox + blocks;
   }
 
-  async function renderOrders() {
+  // Every Buy on aybkk.net makes an order before the student pays, so leaving the
+  // payment page, or trying again, leaves an unpaid order behind (Nov 2026).
+  // Old ones, and ones a later payment for the same package replaced, fold away.
+  const HOUR = 3600e3;
+  let ORD = [], CHK = {}, TRIES_OPEN = false, CHK_ALL = false;
+  const ordAt = o => Date.parse(o.created_at) || 0;
+  const online = o => o.source !== 'rezerv' && (!o.method || o.method === 'online');
+  const unpaid = o => online(o) && (o.status === 'pending' || o.status === 'failed');
+  // A drop-in is bought for one class: two drop-ins match only for the same class on the same day.
+  const sameClass = (a, b) => (a.slot_id == null && b.slot_id == null)
+    || (a.slot_id === b.slot_id && String(a.class_date) === String(b.class_date));
+  const samePkg = (a, b) => a.id !== b.id && a.member_id != null && a.member_id === b.member_id
+    && a.product_id != null && a.product_id === b.product_id && sameClass(a, b);
+  const after = (a, b) => ordAt(a) > ordAt(b) || (ordAt(a) === ordAt(b) && a.id > b.id);
+  // Only with the PaySolutions keys does an unpaid order mean "not paid". With a pay.sn
+  // link, or no online payment, a student who paid also waits here for staff.
+  const gw = () => PAY_MODE === 'gateway';
+  function sortOrders(list, now) {
+    const isTry = o => unpaid(o) && ((gw() && now - ordAt(o) > 24 * HOUR)
+      || list.some(p => p.status === 'paid' && samePkg(p, o) && after(p, o)));
+    const tries = list.filter(isTry), main = list.filter(o => !isTry(o));
+    const triesN = {}, nth = {};
+    // Each try is counted once, on the nearest order for the same package left in view.
+    for (const t of tries) {
+      const gap = m => Math.abs(ordAt(m) - ordAt(t));
+      const near = main.filter(m => samePkg(m, t) && gap(m) <= 24 * HOUR).sort((a, b) => gap(a) - gap(b))[0];
+      if (near) triesN[near.id] = (triesN[near.id] || 0) + 1;
+    }
+    const paidOnline = o => o.status === 'paid' && online(o);
+    for (const o of main) if (paidOnline(o)) {
+      const k = list.filter(p => paidOnline(p) && samePkg(p, o) && after(o, p) && ordAt(o) - ordAt(p) <= 72 * HOUR).length;
+      if (k) nth[o.id] = k + 1;
+    }
+    return { main, tries, triesN, nth };
+  }
+  const ordPill = o => gw() && online(o) && o.status === 'pending' ? T('notPaidYet')
+    : (STR[LANG].ordPill || {})[o.status] || W(o.status);
+  const chkCls = c => 'chk' + (c && c.kind ? ' ' + c.kind : '');
+  const chkInner = c => c ? esc(c.text) + (c.raw ? `<small>${esc(c.raw)}</small>` : '') : '';
+  const ordRow = (o, s) => {
+    const notes = [s.triesN[o.id] && T('nTries', s.triesN[o.id]), s.nth[o.id] && T('nthPay', s.nth[o.id])].filter(Boolean);
+    return `<tr>
+      <td>${o.member_code
+        ? `<button class="link who" id="who-${o.id}" data-code="${esc(o.member_code)}" onclick="showHistory(this.dataset.code, this.id)">${esc(o.member_name || o.member_code)}</button>`
+        : `<b>${esc(o.member_name || '–')}</b>`}<br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span>
+        ${notes.map(n => `<br><span class="muted">${esc(n)}</span>`).join('')}</td>
+      <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
+        <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
+      <td><span class="pill ${esc(o.status)}">${esc(ordPill(o))}</span> <span class="muted">${esc(W(o.method || 'online'))}${o.source === 'rezerv' ? ' · Rezerv' : ''}</span><br>
+        <span class="muted">${o.created_at ? `${bkkYmd(ordAt(o)).slice(5)} ${time(o.created_at)}` : ''}</span>
+        ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}
+        <span class="${chkCls(CHK[o.id])}" id="chk-${o.id}" role="status">${chkInner(CHK[o.id])}</span></td>
+      <td class="muted ref" data-l="${esc(T('thRef'))}" style="word-break:break-all;font-size:12px">${o.refno}</td>
+      <td><div class="ordact">${[gw() && unpaid(o) && `<button class="btn sm" id="chkb-${o.id}" onclick="chkPay(${o.id})">${T('chkPay')}</button>`,
+        o.status !== 'paid' && o.source !== 'rezerv' && `<button class="btn red" onclick="force(${o.id})">${T('activate')}</button>`]
+        .filter(Boolean).join('')}</div></td>
+    </tr>`;
+  };
+  const ordTable = rows => `<div style="overflow-x:auto"><table class="ord"><tr><th>${T('thStudent')}</th><th>${T('thPackage')}</th><th>${T('thStatus')}</th><th>${T('thRef')}</th><th></th></tr>
+      ${rows}</table></div>`;
+
+  // flash: { text, warn } to show above the list. keep: the notes from Check payment stay.
+  // show: an order to bring into view (a paid one leaves the fold). back: the spot to return
+  // to from a student's profile.
+  async function renderOrders({ flash, keep, show, back } = {}) {
     await loadThNames();
     const d = await api('/api/bkk/admin/orders').then(r => r.json());
     if (current !== 'orders' || SUB) return;
-    const rows = (d.orders || []).map(o => `<tr>
-      <td><b>${esc(o.member_name)}</b><br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span></td>
-      <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
-        <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
-      <td><span class="pill ${esc(o.status)}">${esc(W(o.status))}</span> <span class="muted">${esc(W(o.method || 'online'))}${o.source === 'rezerv' ? ' · Rezerv' : ''}</span><br>
-        <span class="muted">${o.created_at ? `${bkkYmd(Date.parse(o.created_at)).slice(5)} ${time(o.created_at)}` : ''}</span>
-        ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}</td>
-      <td class="muted" style="word-break:break-all;font-size:12px">${o.refno}</td>
-      <td>${o.status !== 'paid' && o.source !== 'rezerv'
-        ? `<button class="btn red" onclick="force(${o.id})">${T('activate')}</button>`
-        : ''}</td>
-    </tr>`).join('');
+    if (!keep) CHK = {};
+    ORD = d.orders || [];
+    const now = Date.now(), s = sortOrders(ORD, now);
+    const fresh = gw() ? ORD.filter(o => online(o) && o.status === 'pending' && now - ordAt(o) < 72 * HOUR).length : 0;
     $('#view').innerHTML = `<div class="box"><b>${T('payments')}</b>
       <button class="btn gray" style="float:right" onclick="tab('orders')">↻</button>
-      <div style="overflow-x:auto"><table><tr><th>${T('thStudent')}</th><th>${T('thPackage')}</th><th>${T('thStatus')}</th><th>${T('thRef')}</th><th></th></tr>
-      ${rows || `<tr><td class="muted">${T('noOrders')}</td></tr>`}</table></div>
-      <p class="muted">${T('ordersHelp')}</p></div>`;
+      ${fresh ? `<p><button class="btn sm" id="chkAll" onclick="chkAll()">${T('chkAll')}</button>
+        <span class="muted" id="chkAllMsg" role="status"></span></p>` : ''}
+      ${flash ? `<div class="flash${flash.warn ? ' warn' : ''}" role="status">${esc(flash.text)}</div>` : ''}
+      ${s.main.length ? ordTable(s.main.map(o => ordRow(o, s)).join(''))
+        : s.tries.length ? '' : ordTable(`<tr><td class="muted">${T('noOrders')}</td></tr>`)}
+      ${s.tries.length ? `<details class="tries" id="tries"${TRIES_OPEN ? ' open' : ''}>
+        <summary>${esc(T('triesH', s.tries.length))}<span class="muted">${esc(T(gw() ? 'triesSub' : 'triesSubLink'))}</span></summary>
+        ${ordTable(s.tries.map(o => ordRow(o, s)).join(''))}</details>` : ''}
+      <p class="muted">${T(gw() ? 'ordersHelp' : 'ordersHelpLink')}</p></div>`;
+    const f = $('#tries');
+    if (f) f.addEventListener('toggle', () => { TRIES_OPEN = f.open; });
+    const who = id => id && document.getElementById(id);
+    if (back) {
+      const b = who(back.who);
+      window.scrollTo(0, b && back.top != null ? window.scrollY + b.getBoundingClientRect().top - back.top : back.y || 0);
+      if (b) b.focus({ preventScroll: true });
+    }
+    const c = show && $(`#chk-${show}`), tr = c && c.closest('tr');
+    if (tr) {
+      const r = tr.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > innerHeight) tr.scrollIntoView({ block: 'center' });
+      if (who('who-' + show)) who('who-' + show).focus({ preventScroll: true });
+    }
   }
+
+  // The same check the student's browser makes on the way back from paying: it
+  // asks PaySolutions, and turns the pass on only for a paid, matching amount.
+  // The words are for staff; the raw answer stays under them, small, for whoever fixes it.
+  async function payCheck(o) {
+    const b = $(`#chkb-${o.id}`);
+    if (b) { b.disabled = true; b.textContent = T('chkWait'); }
+    const r = await fetch('/api/bkk/pay/check/' + encodeURIComponent(o.refno)).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    const st = r && r.ok ? j.status : null, note = String(j.note || '');
+    const c = CHK[o.id] = !st ? { text: T('chkErr'), raw: j.error || (r ? `http ${r.status}` : '') }
+      : st === 'paid' ? { text: T('chkPaid'), kind: 'ok' }
+      : st === 'mismatch' ? { text: T('chkMismatch'), kind: 'warn' }
+      : st === 'unknown' ? { text: T('chkUnknown') }
+      : note === 'gateway not configured' ? { text: T('chkNoGw') }
+      // A refused key also comes back "not paid": only the HTTP code tells them apart.
+      : /\b(http|inquiry) 40[13]\b/.test(note) ? { text: T('chkKey'), raw: note }
+      : { text: T('chkNot'), raw: note };
+    const out = $(`#chk-${o.id}`);
+    if (out) { out.className = chkCls(c); out.innerHTML = chkInner(c); }
+    if (b) { b.disabled = false; b.textContent = T('chkPay'); }
+    return st;
+  }
+  const stillHere = () => current === 'orders' && !SUB;
+  window.chkPay = async id => {
+    const o = ORD.find(x => x.id === id);
+    if (!o) return;
+    const st = await payCheck(o);
+    // Paid or wrong amount moves the row (out of the fold, too): draw again and bring it into view.
+    if (stillHere() && (st === 'paid' || st === 'mismatch')) renderOrders({ keep: true, show: id });
+  };
+  window.chkAll = async () => {
+    if (CHK_ALL) return;
+    CHK_ALL = true;
+    const list = gw() ? ORD.filter(o => online(o) && o.status === 'pending' && Date.now() - ordAt(o) < 72 * HOUR) : [];
+    let paid = 0, moved = false;
+    try {
+      for (const [i, o] of list.entries()) {
+        if (!stillHere()) return;
+        const b = $('#chkAll');
+        if (b) { b.disabled = true; b.textContent = T('chkAllWait', i + 1, list.length); }
+        const st = await payCheck(o);
+        if (st === 'paid') paid++;
+        if (st === 'paid' || st === 'mismatch') moved = true;
+      }
+    } finally { CHK_ALL = false; }
+    if (!stillHere()) return;
+    const text = T('chkAllDone', list.length, paid);
+    if (moved) { renderOrders({ keep: true, flash: { text } }); return; }
+    const b = $('#chkAll');
+    if (b) { b.disabled = false; b.textContent = T('chkAll'); }
+    if ($('#chkAllMsg')) $('#chkAllMsg').textContent = text;
+  };
 
   window.force = async (id) => {
     if (!confirm(T('qActivate'))) return;
@@ -1597,7 +1784,7 @@
     // A drop-in bought for a class that was cancelled or over by now: the pass
     // is live but nobody is on the list, and this list does not show the class.
     else if (j.bookingError) alert(T('activatedNoClass', j.bookingError));
-    renderOrders();
+    renderOrders({ keep: true, show: r.ok ? id : null });
   };
 
   // ── shared by history, reports and the import ─────────────────────────────
@@ -1636,10 +1823,13 @@
   let HIST = null, HIST_FROM = null, HIST_SEQ = 0, HIST_ALL = {};
   const HIST_ROWS = 60;
   const backBtn = () => `<button class="btn gray sm" onclick="histBack()">${T('back')}</button>`;
-  window.showHistory = async code => {
+  // from: the id of the button that opened it, so Back lands on the same row (Payments).
+  window.showHistory = async (code, from) => {
     const seq = ++HIST_SEQ;
+    const fromEl = from && document.getElementById(from);
     if (SUB !== 'history') HIST_FROM = { tab: current, term: current === 'students' && $('#q') ? $('#q').value.trim() : '',
-      cls: SUB === 'class' ? CV.ref : null };
+      cls: SUB === 'class' ? CV.ref : null, y: window.scrollY, who: fromEl ? from : null,
+      top: fromEl ? fromEl.getBoundingClientRect().top : null };
     SUB = 'history'; HIST = null; HIST_ALL = {};
     $('#view').innerHTML = `<p>${backBtn()}</p><p class="muted">${T('loadingTxt')}</p>`;
     window.scrollTo(0, 0);
@@ -1657,6 +1847,7 @@
     if (f.cls) { SUB = 'class'; CV.ref = f.cls; loadClass(true); return; }
     if (f.tab === 'students') renderStudents(f.term);
     else if (f.tab === 'reports') renderReports(true);
+    else if (f.tab === 'orders') renderOrders({ keep: true, back: f });
     else tab(f.tab);
   };
   window.histMore = k => { HIST_ALL[k] = true; paintHistory(); };
