@@ -26,7 +26,7 @@
 
 const crypto = require('crypto');
 const express = require('express');
-const { moonDaysBetween, rotationTeacher } = require('./bkk-api');
+const { moonDaysBetween, rotationTeacher, quietRows, quietConfig, FROM_REZERV, CARRIES_ON } = require('./bkk-api');
 const { telegram } = require('./inbox');
 
 // Matched the way Express matches the route, so server.js can leave every
@@ -44,6 +44,7 @@ const GROUPS_KEPT = 10;
 const MARKER = 'team_brief_sent_';
 const ATTENDED = `b.status='booked' AND b.checked_in_at IS NOT NULL`;
 const MAT_THB = 200;                 // mat rental, flat, VAT included, paid at the shala
+const QUIET_MAX = 10;                // names in the brief's "See you tomorrow" section, then +N
 
 const safeEqual = (a, b) => {
   const x = Buffer.from(String(a || '')), y = Buffer.from(String(b || ''));
@@ -155,7 +156,9 @@ const WORDS = {
     why: { none: 'แต่ยังไม่มีแพ็กเกจ', ended: d => `แต่แพ็กเกจหมดไปแล้ว ${d}`, frozen: 'แต่แพ็กเกจพักไว้อยู่',
       void: 'แต่แพ็กเกจถูกยกเลิกแล้ว' },
     matH: `🧘 เตรียมเสื่อให้ (เก็บ ${baht(MAT_THB)})`,
-    mTotal: o => `รวม ${o.classes} คลาส · จอง ${o.booked} · ใหม่ ${o.fresh} · ใกล้หมด ${o.ending} · ยังไม่จ่าย ${o.unpaid} · เสื่อ ${o.mats}`,
+    quietH: '👋 See you tomorrow: ไม่ได้มาหลายวัน',
+    quietLine: (n, days, until, teacher) => `• ${n} · ${days} วัน${until ? ` · แพ็กเกจหมด ${until}` : ''}${teacher ? ' · ครูทักเอง' : ''}`,
+    mTotal: o => `รวม ${o.classes} คลาส · จอง ${o.booked} · ใหม่ ${o.fresh} · ใกล้หมด ${o.ending} · ยังไม่จ่าย ${o.unpaid} · เสื่อ ${o.mats}${o.quiet != null ? ` · ไม่ได้มา ${o.quiet}` : ''}`,
 
     eHead: (d, upTo) => `🌙 สรุปวันนี้ ${d} (ตั้งแต่ 20:00 เมื่อวาน ถึง ${upTo})`,
     moneyH: '💰 เงิน',
@@ -218,7 +221,9 @@ const WORDS = {
     why: { none: 'has no pass', ended: d => `the pass ended ${d}`, frozen: 'the pass is paused',
       void: 'the pass was voided' },
     matH: `🧘 Have a mat ready (collect ${baht(MAT_THB)} each)`,
-    mTotal: o => `Total: ${pl(o.classes, 'class', 'classes')} · ${o.booked} booked · ${o.fresh} new · ${o.ending} ending · ${o.unpaid} not paid · ${pl(o.mats, 'mat', 'mats')}`,
+    quietH: '👋 See you tomorrow: quiet for a while',
+    quietLine: (n, days, until, teacher) => `• ${n} · ${pl(days, 'day', 'days')}${until ? ` · pass ends ${until}` : ''}${teacher ? ' · for the teacher' : ''}`,
+    mTotal: o => `Total: ${pl(o.classes, 'class', 'classes')} · ${o.booked} booked · ${o.fresh} new · ${o.ending} ending · ${o.unpaid} not paid · ${pl(o.mats, 'mat', 'mats')}${o.quiet != null ? ` · ${o.quiet} quiet` : ''}`,
 
     eHead: (d, upTo) => `🌙 Today on aybkk.net, ${d} (20:00 yesterday to ${upTo})`,
     moneyH: '💰 Money',
@@ -370,14 +375,6 @@ function mountTeam(app, opts = {}) {
     return { closed: null, classes };
   }
 
-  // A pass that carries on after p ends: the student has already renewed.
-  const CARRIES_ON = `EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=p.member_id AND x.id<>p.id
-    AND x.status IN ('active','frozen') AND (x.valid_until IS NULL OR x.valid_until > coalesce(p.valid_until, $1::date))
-    AND (x.kind='unlimited' OR x.credits_used < x.credits_total))`;
-  // Students who were already with the shala before aybkk.net (moved over from Rezerv).
-  const FROM_REZERV = `(m.source IS NOT DISTINCT FROM 'rezerv' OR EXISTS (SELECT 1 FROM bkk_passes x WHERE x.member_id=m.id AND x.source='rezerv')
-    OR EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=m.id AND x.source='rezerv'))`;
-
   async function morning(date, L) {
     const lines = [L.mHead(L.day(date))];
     const { closed, classes } = await classesOn(date);
@@ -395,7 +392,7 @@ function mountTeam(app, opts = {}) {
            AND NOT EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=b.member_id AND x.status='booked'
              AND x.checked_in_at IS NOT NULL AND x.class_date < $1::date)`, [date]),
       // First pass bought in the last 7 days, never came, not booked today.
-      q(`SELECT m.name, fp.item_en, to_char(fp.at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day,
+      q(`SELECT m.id AS member_id, m.name, fp.item_en, to_char(fp.at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day,
            (SELECT to_char(min(x.class_date),'YYYY-MM-DD') FROM bkk_bookings x WHERE x.member_id=m.id
              AND x.status='booked' AND x.class_date > $1::date) AS next
          FROM bkk_members m
@@ -407,7 +404,7 @@ function mountTeam(app, opts = {}) {
              AND ((x.status='booked' AND x.checked_in_at IS NOT NULL) OR (x.class_date=$1::date AND x.status='booked')))
          ORDER BY fp.at`, [date]),
       // Ends within 7 days, or 2 or fewer classes left, nothing after it, and came in the last 30 days.
-      q(`SELECT * FROM (SELECT DISTINCT ON (p.member_id) m.name, p.kind, p.credits_total - p.credits_used AS left,
+      q(`SELECT * FROM (SELECT DISTINCT ON (p.member_id) p.member_id, m.name, p.kind, p.credits_total - p.credits_used AS left,
            to_char(p.valid_until,'YYYY-MM-DD') AS until, pr.name_en AS item_en
          FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.status='active' AND (p.valid_until IS NULL OR p.valid_until >= $1::date)
@@ -449,7 +446,19 @@ function mountTeam(app, opts = {}) {
       ...bought.rows.map(r => L.newBought(name(r), L.item(r.item_en), L.day(r.day), r.next && L.day(r.next)))];
     if (newLines.length) lines.push('', L.newH, ...newLines);
 
-    const endLines = ending.rows.map(r => r.kind === 'credits' && r.left <= 2
+    // The "See you tomorrow" list (bkk-api quietRows), only when the Today box and this
+    // section are both on: first name, days quiet and the pass end, nothing else. Someone
+    // already under "New students" is not listed twice. A quiet student whose pass ends soon
+    // stays in this list only: their note says nothing about renewing.
+    let quiet = null;
+    const qc = await quietConfig(q);
+    if (qc.quietBox === 'on' && qc.quietBrief === 'on') {
+      const already = new Set(bought.rows.map(r => r.member_id));
+      quiet = (await quietRows(q, { date, cfg: qc })).todo.filter(r => !(r.kind === 'new' && already.has(r.memberId)))
+        .sort((a, b) => b.daysQuiet - a.daysQuiet || a.name.localeCompare(b.name));
+    }
+    const quietIds = new Set((quiet || []).map(r => r.memberId));
+    const endLines = ending.rows.filter(r => !quietIds.has(r.member_id)).map(r => r.kind === 'credits' && r.left <= 2
       ? L.endLeft(name(r), L.item(r.item_en), Math.max(0, r.left), r.until && L.day(r.until))
       : L.endDate(name(r), L.item(r.item_en), L.day(r.until)));
     if (endLines.length) lines.push('', L.endH, ...endLines);
@@ -466,10 +475,16 @@ function mountTeam(app, opts = {}) {
     const mats = classes.map(c => [c, seats.rows.filter(s => s.slot_id === c.id && s.need_mat && !c.off)]).filter(([, m]) => m.length);
     if (mats.length) lines.push('', L.matH, ...mats.map(([c, m]) => `• ${c.time} ${m.map(name).join(', ')}`));
 
+    if (quiet && quiet.length) {
+      lines.push('', L.quietH, ...quiet.slice(0, QUIET_MAX).map(r => L.quietLine(name(r), r.daysQuiet,
+        r.pass.until && L.day(r.pass.until), r.sender === 'teacher')));
+      if (quiet.length > QUIET_MAX) lines.push(`+${quiet.length - QUIET_MAX}`);
+    }
+
     const live = new Set(classes.filter(c => !c.off).map(c => c.id));
     lines.push('', L.mTotal({ classes: shown, booked: seats.rows.filter(s => live.has(s.slot_id)).length,
       fresh: newLines.length, ending: endLines.length, unpaid: payLines.length,
-      mats: mats.reduce((n, [, m]) => n + m.length, 0) }));
+      mats: mats.reduce((n, [, m]) => n + m.length, 0), quiet: quiet && quiet.length }));
     return { text: lines.join('\n') };
   }
 
