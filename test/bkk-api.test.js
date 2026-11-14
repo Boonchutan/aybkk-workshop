@@ -3572,10 +3572,11 @@ const ok = (name, cond, extra = '') => {
     let qn = 0;
     const mk = async (name, o = {}) => one(`INSERT INTO bkk_members (code,name,email,phone,source) VALUES ($1,$2,$3,$4,$5) RETURNING id, code, name`,
       [`BTESTQ${++qn}X`, name, `quiet.${qn}@example.com`, `0870000${String(qn).padStart(3, '0')}`, o.source || null]);
+    // Bought on the day it starts (09:00 Bangkok), unless created says when; no dates: bought now.
     const pass = async (m, code, o = {}) => (await one(`INSERT INTO bkk_passes
         (member_id,product_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,status,frozen_from,frozen_until,source,created_at)
       SELECT $1::int, id, kind, credits, $3::int, daily_cap, valid_days, $4::date, $5::date, $6::text, $7::date, $8::date, $9::text,
-        coalesce($10::timestamptz, now()) FROM bkk_products WHERE code=$2 RETURNING id`,
+        coalesce($10::timestamptz, ($4::date + time '09:00') AT TIME ZONE 'Asia/Bangkok', now()) FROM bkk_products WHERE code=$2 RETURNING id`,
       [m.id, code, o.used || 0, o.from || null, o.until || null, o.status || 'active', o.ffrom || null, o.funtil || null,
        o.source || 'manual', o.created || null])).id;
     // A seat they came to (checked in at the start), unless in: false. No slot: an on-site class.
@@ -3619,7 +3620,8 @@ const ok = (name, cond, extra = '') => {
     const sets = async () => (await J('/api/bkk/admin/settings', { headers: ADMIN })).body.quiet;
     const bads = [{ quietBox: 'yes' }, { quietBox: 1 }, { quietBrief: 'maybe' }, { quietDays: 4 }, { quietDays: 31 }, { quietDays: 7.5 },
       { quietDays: 'seven' }, { quietDays2: 7 }, { quietDays2: 61 }, { quietDaysShort: 2 }, { quietDaysShort: 31 }, { quietDays2Short: 5 },
-      { quietDays2Short: 61 }, { quietRezerv: 'open' }, { quietRezerv: true }, { quietDays: 20 }, { quietDaysShort: 12 }];
+      { quietDays2Short: 61 }, { quietRezerv: 'open' }, { quietRezerv: true }, { quietDays: 20 }, { quietDaysShort: 12 },
+      { quietDays: [8] }, { quietBox: ['on'] }, { quietRezerv: ['show'] }];
     const refused = [];
     for (const b of bads) refused.push((await post('/api/bkk/admin/settings', b, ADMIN)).status);
     ok('settings: each field takes only its allowed values, and step 2 must stay above step 1', refused.every(s => s === 400), JSON.stringify(refused));
@@ -3628,6 +3630,11 @@ const ok = (name, cond, extra = '') => {
     ok('...a wrong value is refused and nothing is saved, not even the right ones next to it', mixed.status === 400
        && /quietDays2/.test(mixed.body.error) && after.quietBox === 'off' && after.quietDays === 7 && after.quietDays2 === 14
        && (await one(`SELECT count(*)::int AS n FROM bkk_settings WHERE key='team_brief_morning'`)).n === 0, JSON.stringify([mixed.body, after]));
+    const badLink = await post('/api/bkk/admin/settings', { quietRezerv: 'show', quietBox: 'on', links: { instagram: 'not a link' } }, ADMIN);
+    const afterLink = await sets();
+    ok('...a wrong link next to right quiet values saves none of them, and no Rezerv switch day', badLink.status === 400
+       && afterLink.quietRezerv === 'hide' && afterLink.quietBox === 'off' && afterLink.quietRezervFrom === null
+       && (await one(`SELECT count(*)::int AS n FROM bkk_settings WHERE key='quiet_rezerv_from'`)).n === 0, JSON.stringify(afterLink));
     const good = await post('/api/bkk/admin/settings', { quietDays: '8', quietDays2: 15, quietDaysShort: 4, quietDays2Short: 9 }, ADMIN);
     ok('...right values are saved and returned with the other settings', good.status === 200 && good.body.quiet.quietDays === 8
        && good.body.quiet.quietDays2 === 15 && good.body.quiet.quietDaysShort === 4 && good.body.quiet.quietDays2Short === 9
@@ -3671,7 +3678,25 @@ const ok = (name, cond, extra = '') => {
     const [rp21, rn21] = [await look(BD, p21), await look(BD, n21)];
     ok('from 21 quiet days with no note yet, the name goes to the teacher only; a pack still has one note',
        rp21.step === 1 && rp21.sender === 'teacher' && rp21.draftKey === 'teacher'
-       && rn21.kind === 'new' && rn21.step === 1 && rn21.sender === 'teacher' && rn21.draftKey === 'fresh', show(rp21) + show(rn21));
+       && rn21.kind === 'new' && rn21.step === 1 && rn21.sender === 'teacher', show(rp21) + show(rn21));
+    ok('...a first pass never used reaches the teacher with no draft: the welcome text is the desk\'s, not his', rn21.draftKey === null
+       && (await look(addD(BD, -1), n21)).draftKey === 'fresh' && (await look(addD(BD, -1), n21)).sender === 'staff', show(rn21));
+    // Settings allow step 2 after day 21: the teacher's note at 21 is then the last note.
+    const CFG30 = { ...CFG, quietDays2: 30, quietDays2Short: 25 };
+    const tl = await mk('Tad Teacherlong'), ts = await mk('Tess Teachershort'), to = await mk('Toby Teacherold');
+    await longPass(tl); await seat(tl, addD(BD, -21));
+    await pass(ts, 'unlim3', { from: addD(BD, -60), until: addD(BD, 29) }); await seat(ts, addD(BD, -21));
+    await longPass(to); await seat(to, addD(BD, -21));
+    const [tl21, ts21] = [await look(BD, tl, CFG30), await look(BD, ts, CFG30)];
+    await note(tl, BD, { step: tl21.step }); await note(ts, BD, { step: ts21.step });
+    // A note saved by an older page: step 1, but the teacher's draft.
+    await pool.query(`INSERT INTO bkk_outreach (member_id,kind,step,created_at,messaged_at,messaged_by,draft_key)
+      VALUES ($1,'message',1,$2,$2,'Test Staff','teacher')`, [to.id, `${BD}T10:00:00+07:00`]);
+    const later30 = [await look(addD(BD, 9), tl, CFG30), await look(addD(BD, 20), tl, CFG30), await look(addD(BD, 5), ts, CFG30),
+      await look(addD(BD, 9), to, CFG30)];
+    ok('the teacher\'s note is the last note, even when it comes at 21 days before step 2 is due', tl21.state === 'todo' && tl21.step === 2
+       && tl21.sender === 'teacher' && tl21.draftKey === 'teacher' && ts21.step === 2 && ts21.sender === 'teacher'
+       && later30.every(x => x && x.state === 'parked' && x.draftKey === null), [tl21, ts21, ...later30].map(show).join(' '));
     const ear = await mk('Eli Earlymorning');
     await pass(ear, 'unlim3', { from: addD(BD, -60), until: addD(BD, 29) });
     await seat(ear, addD(BD, -1), { t: '05:30' });
@@ -3707,6 +3732,22 @@ const ok = (name, cond, extra = '') => {
     const rbk5 = await look(addD(BD, 5), back);
     ok('a returning student who bought a new pass today is not quiet', (await look(BD, back)) === null && (await look(addD(BD, 4), back)) === null
        && rbk5 && rbk5.kind === 'quiet' && rbk5.since === BD, show(rbk5));
+    // A renewal bought while the old pass still runs (online, or "starts on first booking": no dates).
+    const rn = await mk('Rui Renewsearly'), rk = await mk('Ria Renewsapack'), rr = await mk('Rex Rezervimport'), rv = await mk('Roz Renewvoided');
+    await pass(rn, 'unlim3', { from: addD(BD, -80), until: addD(BD, 10) }); await seat(rn, addD(BD, -9));
+    await pass(rn, 'unlim3', { created: `${BD}T15:00:00+07:00` });
+    await pass(rk, 'pack8', { used: 6, from: addD(BD, -40), until: addD(BD, 20) }); await seat(rk, addD(BD, -15));
+    await pass(rk, 'unlim1', { created: `${BD}T08:00:00+07:00` });
+    await longPass(rr); await seat(rr, addD(BD, -8));
+    await pass(rr, 'unlim3', { from: addD(BD, -300), until: addD(BD, -210), source: 'rezerv', created: `${BD}T07:00:00+07:00` });
+    await longPass(rv); await seat(rv, addD(BD, -8));
+    await pass(rv, 'unlim1', { status: 'void', created: `${BD}T07:00:00+07:00` });
+    const [rn0, rn4, rn5, rk0, rr0, rv0] = [await look(BD, rn), await look(addD(BD, 4), rn), await look(addD(BD, 5), rn),
+      await look(BD, rk), await look(BD, rr), await look(BD, rv)];
+    ok('...nor one who renewed today while the old pass still runs: counted from the day they bought',
+       rn0 === null && rn4 === null && rn5 && rn5.since === BD && rn5.daysQuiet === 5 && rn5.pass.until === addD(BD, 10)
+       && rk0 === null && (await look(addD(BD, -1), rk)).state === 'todo', show(rn5));
+    ok('...a Rezerv import or a voided pass is not a purchase', rr0 && rr0.daysQuiet === 8 && rv0 && rv0.daysQuiet === 8, show(rr0) + show(rv0));
     const bk = await mk('Bea Bookedtoday'), bk2 = await mk('Bo Bookedlater');
     await longPass(bk); await seat(bk, addD(BD, -10)); await seat(bk, BD, { in: false });
     await longPass(bk2); await seat(bk2, addD(BD, -10)); await seat(bk2, addD(BD, 3), { in: false });
@@ -3803,6 +3844,12 @@ const ok = (name, cond, extra = '') => {
        && !quietDraft('teacher', 'th', 'Mali', 'kha').includes('ค่ะ'));
     ok('a first name is the first word, never an email, phone or code', firstName('Mali Midway') === 'Mali'
        && firstName('Bo bo@example.com 0812345678 Chan') === 'Bo' && firstName('B1B19BKGPI3QYA Anna') === 'Anna' && firstName('ทดสอบ ใจดี') === 'ทดสอบ');
+    const titled = ['Dr. Pim Chaiyo', 'Mr. Tom Lake', 'Khun Pim', 'K.Pim Somsak', 'คุณ พิม', 'นางสาว มาลี ใจดี', 'Ms Anna Bell', 'Khun', 'นางนวล ใจดี', 'คุณากร ดี']
+      .map(firstName);
+    ok('...a title in front is skipped while a name follows it; a Thai name that starts like a title is kept',
+       JSON.stringify(titled) === JSON.stringify(['Pim', 'Tom', 'Pim', 'Pim', 'พิม', 'มาลี', 'Anna', 'Khun', 'นางนวล', 'คุณากร'])
+       && quietDraft('first', 'th', firstName('คุณ พิม'), 'kha').includes('คุณพิม ') && !quietDraft('first', 'th', firstName('คุณ พิม'), 'kha').includes('คุณคุณ'),
+       JSON.stringify(titled));
 
     // ── the routes, on the real Bangkok today ──
     const on = await post('/api/bkk/admin/settings', { quietBox: 'on' }, ADMIN);
@@ -3848,6 +3895,21 @@ const ok = (name, cond, extra = '') => {
     ok('...but not one with an answer on it; step and draft come from the row when not sent', sent3.body.outreach.step === 1
        && sent3.body.outreach.draftKey === gm.draftKey && undo2.body.undone === false
        && (await one(`SELECT count(*)::int AS n FROM bkk_outreach WHERE member_id=$1`, [mali.id])).n === 1);
+
+    // A page left open since yesterday, or a second phone: no second note.
+    const nd1 = await mk('Nina Notdue'), nd3 = await mk('Noah Nowstepone'), nd4 = await mk('Nan Notquiet');
+    await longPass(nd1, { from: addD(todayB, -100), until: addD(todayB, 200) }); await seat(nd1, addD(todayB, -10));
+    await note(nd1, addD(todayB, -2), { step: 1 });
+    await longPass(nd3, { from: addD(todayB, -100), until: addD(todayB, 200) }); await seat(nd3, addD(todayB, -8));
+    await longPass(nd4, { from: addD(todayB, -100), until: addD(todayB, 200) }); await seat(nd4, addD(todayB, -1));
+    const [x1, x3, x4] = [await post(`/api/bkk/admin/quiet/${nd1.code}/messaged`, { by: 'M', step: 1, draftKey: 'first' }, ADMIN),
+      await post(`/api/bkk/admin/quiet/${nd3.code}/messaged`, { by: 'M', step: 2, draftKey: 'teacher' }, ADMIN),
+      await post(`/api/bkk/admin/quiet/${nd4.code}/messaged`, { by: 'M', step: 1, draftKey: 'first' }, ADMIN)];
+    ok('messaged on a row that is not due now is refused, and says who sent the last note', x1.status === 409 && x1.body.state === 'resting'
+       && x1.body.last && x1.body.last.by === 'Test Staff' && x1.body.last.step === 1 && x3.status === 409 && x3.body.state === 'todo'
+       && x3.body.step === 1 && x3.body.last === null && x4.status === 409 && x4.body.state === null
+       && (await one(`SELECT count(*)::int AS n FROM bkk_outreach WHERE member_id = ANY($1::int[])`, [[nd1.id, nd3.id, nd4.id]])).n === 1,
+       JSON.stringify([x1.body, x3.body, x4.body]));
 
     // A spell, day by day: notes on the days they were sent, visits added as they happen.
     const sp = await mk('Sky Spell');
@@ -3948,8 +4010,12 @@ const ok = (name, cond, extra = '') => {
        && Date.parse(hc.outreach[0].at) > Date.parse(hc.outreach[1].at) && hc.outreach[0].reason === 'habit', JSON.stringify(hc.outreach));
     const meText = JSON.stringify((await J(`/api/bkk/me/${kw.code}`)).body) + JSON.stringify((await J(`/api/bkk/me/${mali.code}`)).body);
     ok('the student\'s own page never carries outreach', meText.length > 50 && !/outreach|messaged|travel|family trip|reason/i.test(meText), meText.slice(0, 200));
+    const repOn = (await J(`/api/bkk/admin/report?from=${addD(todayB, -7)}&to=${todayB}`, { headers: ADMIN })).body;
     await post('/api/bkk/admin/settings', { quietBox: 'off' }, ADMIN);
     ok('...and switched off again, the box is empty', (await quietGet()).body.todo.length === 0);
+    const repOff = (await J(`/api/bkk/admin/report?from=${addD(todayB, -7)}&to=${todayB}`, { headers: ADMIN })).body;
+    ok('the report says whether the Today box is on, so its help line never points to a list that is off',
+       repOn.quietOn === true && repOff.quietOn === false && Array.isArray(repOff.notSeen), JSON.stringify([repOn.quietOn, repOff.quietOn]));
   }
 
   console.log('\n# why students go quiet');

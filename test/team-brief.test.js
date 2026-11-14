@@ -693,6 +693,11 @@ const fakeDriver = { session: () => ({
     const nq2 = await member('Noel Nineday');
     await pass(nq2, 'unlim1', { from: addD(DQ, -9), until: addD(DQ, 20), created: `${addD(DQ, -9)}T09:00:00+07:00` });
 
+    // Quiet, and the pass ends this week: on "Ending soon" while the section is off, in the quiet list only once it is on.
+    const endq = await member('Edda Endsquiet');
+    await pass(endq, 'unlim3', { from: addD(DQ, -84), until: addD(DQ, 5), created: `${addD(DQ, -84)}T08:00:00+07:00` });
+    await sitAt(endq, addD(DQ, -7));
+
     const pv = async lang => (await get(`/api/bkk/admin/team/preview?kind=morning&date=${DQ}${lang ? '&lang=' + lang : ''}`)).body.text || '';
     const offText = await pv('en');
     ok('off by default: the brief has no quiet section and no quiet count', !offText.includes('👋') && !/quiet/.test(offText.trim().split('\n').at(-1)),
@@ -734,6 +739,11 @@ const fakeDriver = { session: () => ({
     const draftBits = Object.values(QUIET_TEXTS).flatMap(t => [t.en.slice(0, 18), t.th.replace(/\{\w+\}/g, '').slice(0, 12)]);
     ok('no draft text, no reason, no email, phone or code, no long dash', !draftBits.some(b => both.includes(b))
        && !/work|Work trip|made up|@|0899000|BTEAM|\u2014/.test(both) && !/Work trip|made up/.test(en + th), both.slice(0, 200));
+    const endOff = sec(offText, '⏳ Ending soon'), endOn = sec(en, '⏳ Ending soon'), endOnTh = sec(th, '⏳ ใกล้หมด');
+    ok('a quiet student whose pass ends soon is listed once: in the quiet list, not under "Ending soon" (their note has no renewal talk)',
+       endOff.some(l => l.startsWith('• Edda E.')) && !endOn.some(l => l.startsWith('• Edda E.')) && !endOnTh.some(l => l.startsWith('• Edda E.'))
+       && all.some(r => r.name === 'Edda Endsquiet' && /^ending/.test(r.draftKey)) && expect.some(r => r.name === 'Edda Endsquiet'),
+       JSON.stringify([endOff, endOn, qEn]));
     ok('the count goes on the totals line only when the section is on', en.trim().split('\n').at(-1).endsWith(` · ${expect.length} quiet`)
        && th.trim().split('\n').at(-1).endsWith(` · ไม่ได้มา ${expect.length}`), en.trim().split('\n').at(-1));
     ok('English when asked, Thai by default', qEn.length > 0 && qTh.some(l => l === `• Lyle Q. · 18 วัน · แพ็กเกจหมด ${(() => {

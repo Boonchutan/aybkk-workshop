@@ -404,7 +404,7 @@ function mountTeam(app, opts = {}) {
              AND ((x.status='booked' AND x.checked_in_at IS NOT NULL) OR (x.class_date=$1::date AND x.status='booked')))
          ORDER BY fp.at`, [date]),
       // Ends within 7 days, or 2 or fewer classes left, nothing after it, and came in the last 30 days.
-      q(`SELECT * FROM (SELECT DISTINCT ON (p.member_id) m.name, p.kind, p.credits_total - p.credits_used AS left,
+      q(`SELECT * FROM (SELECT DISTINCT ON (p.member_id) p.member_id, m.name, p.kind, p.credits_total - p.credits_used AS left,
            to_char(p.valid_until,'YYYY-MM-DD') AS until, pr.name_en AS item_en
          FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.status='active' AND (p.valid_until IS NULL OR p.valid_until >= $1::date)
@@ -446,7 +446,19 @@ function mountTeam(app, opts = {}) {
       ...bought.rows.map(r => L.newBought(name(r), L.item(r.item_en), L.day(r.day), r.next && L.day(r.next)))];
     if (newLines.length) lines.push('', L.newH, ...newLines);
 
-    const endLines = ending.rows.map(r => r.kind === 'credits' && r.left <= 2
+    // The "See you tomorrow" list (bkk-api quietRows), only when the Today box and this
+    // section are both on: first name, days quiet and the pass end, nothing else. Someone
+    // already under "New students" is not listed twice. A quiet student whose pass ends soon
+    // stays in this list only: their note says nothing about renewing.
+    let quiet = null;
+    const qc = await quietConfig(q);
+    if (qc.quietBox === 'on' && qc.quietBrief === 'on') {
+      const already = new Set(bought.rows.map(r => r.member_id));
+      quiet = (await quietRows(q, { date, cfg: qc })).todo.filter(r => !(r.kind === 'new' && already.has(r.memberId)))
+        .sort((a, b) => b.daysQuiet - a.daysQuiet || a.name.localeCompare(b.name));
+    }
+    const quietIds = new Set((quiet || []).map(r => r.memberId));
+    const endLines = ending.rows.filter(r => !quietIds.has(r.member_id)).map(r => r.kind === 'credits' && r.left <= 2
       ? L.endLeft(name(r), L.item(r.item_en), Math.max(0, r.left), r.until && L.day(r.until))
       : L.endDate(name(r), L.item(r.item_en), L.day(r.until)));
     if (endLines.length) lines.push('', L.endH, ...endLines);
@@ -463,20 +475,10 @@ function mountTeam(app, opts = {}) {
     const mats = classes.map(c => [c, seats.rows.filter(s => s.slot_id === c.id && s.need_mat && !c.off)]).filter(([, m]) => m.length);
     if (mats.length) lines.push('', L.matH, ...mats.map(([c, m]) => `• ${c.time} ${m.map(name).join(', ')}`));
 
-    // The "See you tomorrow" list (bkk-api quietRows), only when the Today box and this
-    // section are both on: first name, days quiet and the pass end, nothing else. Someone
-    // already under "New students" is not listed twice.
-    let quiet = null;
-    const qc = await quietConfig(q);
-    if (qc.quietBox === 'on' && qc.quietBrief === 'on') {
-      const already = new Set(bought.rows.map(r => r.member_id));
-      quiet = (await quietRows(q, { date, cfg: qc })).todo.filter(r => !(r.kind === 'new' && already.has(r.memberId)))
-        .sort((a, b) => b.daysQuiet - a.daysQuiet || a.name.localeCompare(b.name));
-      if (quiet.length) {
-        lines.push('', L.quietH, ...quiet.slice(0, QUIET_MAX).map(r => L.quietLine(name(r), r.daysQuiet,
-          r.pass.until && L.day(r.pass.until), r.sender === 'teacher')));
-        if (quiet.length > QUIET_MAX) lines.push(`+${quiet.length - QUIET_MAX}`);
-      }
+    if (quiet && quiet.length) {
+      lines.push('', L.quietH, ...quiet.slice(0, QUIET_MAX).map(r => L.quietLine(name(r), r.daysQuiet,
+        r.pass.until && L.day(r.pass.until), r.sender === 'teacher')));
+      if (quiet.length > QUIET_MAX) lines.push(`+${quiet.length - QUIET_MAX}`);
     }
 
     const live = new Set(classes.filter(c => !c.off).map(c => c.id));

@@ -339,9 +339,17 @@ const QUIET_REASONS = { work: 'replyBusy', travel: 'replyBusy', health: 'replyHe
   money: 'replyMoney', moved: null, us: null, other: null };
 const KA = { krub: 'ครับ', kha: 'ค่ะ' };
 // "Anna Maria Bell" → "Anna". A word with a digit, '+' or '@' is skipped, as in the
-// team brief's shortName: real names have none, emails, phones and codes do.
-const firstName = raw => [...(String(raw || '').replace(/\([^)]*\)/g, ' ').replace(/[\u0000-\u001f\u007f]/g, ' ')
-  .split(/\s+/).find(w => w && !/[@+\d]/.test(w)) || '')].slice(0, 30).join('');
+// team brief's shortName: real names have none, emails, phones and codes do. A title
+// in front ("Dr. Pim", "Khun Pim", "คุณ พิม") is skipped while a name follows it; a
+// Thai title written onto the name is left alone (นางนวล and คุณากร are names).
+const NAME_TITLES = /^(mr|mrs|ms|mx|miss|dr|prof|khun|k|คุณ|นาย|นาง|นางสาว|น\.ส\.|ด\.ช\.|ด\.ญ\.)\.?$/i;
+const firstName = raw => {
+  const words = String(raw || '').replace(/\([^)]*\)/g, ' ').replace(/[\u0000-\u001f\u007f]/g, ' ')
+    .split(/\s+/).filter(w => w && !/[@+\d]/.test(w))
+    .map(w => w.replace(/^(mr|mrs|ms|dr|khun|k)\.(?=\p{L}{2})/iu, ''));
+  const name = words.find(w => !NAME_TITLES.test(w)) || words[0] || '';
+  return [...name].slice(0, 30).join('');
+};
 // The teacher's note is Boonchu's own, so its Thai always ends ครับ.
 function quietDraft(key, lang, name, ka) {
   const t = (QUIET_TEXTS[key] || {})[lang];
@@ -367,13 +375,17 @@ async function quietRows(q, { date, cfg, memberId = null } = {}) {
       to_char(p.valid_until,'YYYY-MM-DD') AS until, to_char(${START},'YYYY-MM-DD') AS start,
       to_char(p.frozen_until,'YYYY-MM-DD') AS frozen_until, ${FROM_REZERV} AS from_rezerv, ${CARRIES_ON} AS carries_on,
       EXISTS (SELECT 1 FROM bkk_bookings x WHERE x.member_id=m.id AND x.status='booked' AND x.class_date >= $1::date) AS ahead,
-      c.last, coalesce(c.d28, 0) AS d28
+      bp.bought, c.last, coalesce(c.d28, 0) AS d28
     FROM (SELECT DISTINCT ON (p.member_id) p.* FROM bkk_passes p
       WHERE p.status='active' AND ${START} <= $1::date AND (p.valid_until IS NULL OR p.valid_until >= $1::date)
         AND (p.kind='unlimited' OR (p.credits_total > 1 AND p.credits_used < p.credits_total))
         AND ($2::int IS NULL OR p.member_id=$2)
       ORDER BY p.member_id, p.valid_from NULLS LAST, p.id) p
     JOIN bkk_members m ON m.id=p.member_id LEFT JOIN bkk_products pr ON pr.id=p.product_id
+    LEFT JOIN (SELECT x.member_id, to_char(max((x.created_at AT TIME ZONE 'Asia/Bangkok')::date),'YYYY-MM-DD') AS bought
+      FROM bkk_passes x WHERE x.status <> 'void' AND x.source IS DISTINCT FROM 'rezerv'
+        AND (x.created_at AT TIME ZONE 'Asia/Bangkok')::date <= $1::date AND ($2::int IS NULL OR x.member_id=$2)
+      GROUP BY x.member_id) bp ON bp.member_id=m.id
     LEFT JOIN LATERAL (SELECT to_char(max(v.d),'YYYY-MM-DD') AS last,
         count(*) FILTER (WHERE v.d > $1::date - 28 AND v.d >= ${START})::int AS d28
       FROM (SELECT DISTINCT b.class_date AS d FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
@@ -387,7 +399,7 @@ async function quietRows(q, { date, cfg, memberId = null } = {}) {
     q(`SELECT b.member_id, to_char(b.class_date,'YYYY-MM-DD') AS d FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
        WHERE b.member_id = ANY($2::int[]) AND b.status='booked' AND b.checked_in_at IS NULL AND NOT coalesce(s.is_online, false)
          AND b.class_date < $1::date AND b.class_date > $1::date - 400`, [date, ids]),
-    q(`SELECT o.id, o.member_id, o.kind, o.step, o.reason, o.messaged_by, o.created_at,
+    q(`SELECT o.id, o.member_id, o.kind, o.step, o.draft_key, o.reason, o.messaged_by, o.created_at,
          to_char(o.created_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS day, to_char(o.mute_until,'YYYY-MM-DD') AS mute_until
        FROM bkk_outreach o WHERE o.member_id = ANY($2::int[]) AND (o.created_at AT TIME ZONE 'Asia/Bangkok')::date <= $1::date
        ORDER BY o.created_at, o.id`, [date, ids]),
@@ -406,9 +418,11 @@ async function quietRows(q, { date, cfg, memberId = null } = {}) {
     const mine = notes.rows.filter(n => n.member_id === h.member_id);
     if (mine.some(n => n.kind === 'mute' && n.mute_until >= date)) { out.muted++; continue; }
     if (h.ahead) continue;
-    // Counted from the latest of: last came, the pass start, the end of a pause, and for a
-    // Rezerv pass the day Rezerv packages were switched on here (never before it).
-    const since = [h.last, h.start, h.frozen_until && h.frozen_until <= date ? h.frozen_until : null,
+    // Counted from the latest of: last came, the pass start, the end of a pause, the day they
+    // last bought a pass here (a renewal while the old pass still runs), and for a Rezerv pass
+    // the day Rezerv packages were switched on here (never before it). A Rezerv import day is
+    // not a purchase, so it is not counted as one.
+    const since = [h.last, h.start, h.bought, h.frozen_until && h.frozen_until <= date ? h.frozen_until : null,
       h.source === 'rezerv' ? cfg.quietRezervFrom || date : null].filter(Boolean).sort().pop();
     const daysQuiet = dayGap(since, date);
     const cls = h.kind === 'unlimited' ? (h.valid_days > 100 ? 'long' : 'short') : 'pack';
@@ -423,15 +437,20 @@ async function quietRows(q, { date, cfg, memberId = null } = {}) {
     const sent = spell.filter(n => n.kind === 'message');
     const answer = [...spell].reverse().find(n => n.reason);
     const last = msgs[msgs.length - 1];
+    // The teacher's note is the last note of a spell, whichever step it was sent at.
+    const lastStep = step2 ? 2 : 1;
     let state, step = null, sender = null;
-    if (answer || sent.some(n => n.step >= (step2 ? 2 : 1))) state = 'parked';
+    if (answer || sent.some(n => n.step >= lastStep || n.draft_key === 'teacher')) state = 'parked';
     else if (step2 && daysQuiet >= step2 && (!last || dayGap(last.day, date) >= QUIET.gapDays)) { state = 'todo'; step = 2; sender = 'teacher'; }
     else if (sent.length || msgs.some(n => n.step === 1 && dayGap(n.day, date) < QUIET.coolDays)) state = 'resting';
-    // From 21 days with no note yet, the name goes to Boonchu only.
-    else { state = 'todo'; step = 1; sender = daysQuiet >= QUIET.teacherFrom ? 'teacher' : 'staff'; }
+    // From 21 days with no note yet, the name goes to Boonchu only, and his note is the last one.
+    else if (daysQuiet >= QUIET.teacherFrom) { state = 'todo'; step = lastStep; sender = 'teacher'; }
+    else { state = 'todo'; step = 1; sender = 'staff'; }
     let draftKey = null;
     if (state === 'todo') {
-      draftKey = kind === 'new' ? 'fresh' : sender === 'teacher' ? 'teacher'
+      // No approved text fits Boonchu writing to someone who never came ("fresh" is the desk's
+      // welcome): that row has no draft, and he writes in his own words.
+      draftKey = kind === 'new' ? (sender === 'teacher' ? null : 'fresh') : sender === 'teacher' ? 'teacher'
         : h.until && h.until <= plusDays(date, QUIET.endingDays) && !h.carries_on ? 'ending' : 'first';
       if ((draftKey === 'first' || draftKey === 'ending') && await tomorrowClosed()) draftKey += 'Closed';
     }
@@ -2525,12 +2544,25 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         for (const f of quietGiven) {
           const v = b[f];
           next[f] = typeof QUIET_DEFAULTS[f] === 'number'
-            ? (typeof v === 'number' ? v : /^\s*\d+\s*$/.test(String(v)) ? Number(v) : NaN)
-            : v === true ? 'on' : v === false ? 'off' : String(v);
+            ? (typeof v === 'number' ? v : typeof v === 'string' && /^\s*\d+\s*$/.test(v) ? Number(v) : NaN)
+            : v === true ? 'on' : v === false ? 'off' : typeof v === 'string' ? v : '';
         }
         const bad = quietSettingsError(next);
         if (bad) return res.status(400).json({ error: bad });
         for (const f of quietGiven) team.push([QUIET_SETTINGS[f][0], next[f]]);
+      }
+      // Every check before any write: one wrong value and nothing is saved.
+      const links = req.body.links || {};
+      const linkRows = [];
+      for (const k of LINK_KEYS) {
+        if (links[k] === undefined) continue;
+        const url = String(links[k] || '').trim();
+        // Empty clears the link. Anything else must be a real http(s) URL:
+        // a typo here becomes a broken button on every student's page.
+        if (url && !/^https?:\/\/[^\s]+$/i.test(url)) {
+          return res.status(400).json({ error: `${k} must be a full https:// link, or empty to remove` });
+        }
+        linkRows.push(['link_' + k, url]);
       }
       for (const [key, val] of team) {
         await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
@@ -2546,18 +2578,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                  ON CONFLICT (key) DO UPDATE SET value=$1, updated_at=now()`,
           [JSON.stringify(Number(req.body.surchargePct))]);
       }
-      const links = req.body.links || {};
-      for (const k of LINK_KEYS) {
-        if (links[k] === undefined) continue;
-        const url = String(links[k] || '').trim();
-        // Empty clears the link. Anything else must be a real http(s) URL —
-        // a typo here becomes a broken button on every student's page.
-        if (url && !/^https?:\/\/[^\s]+$/i.test(url)) {
-          return res.status(400).json({ error: `${k} must be a full https:// link, or empty to remove` });
-        }
+      for (const [key, url] of linkRows) {
         await q(`INSERT INTO bkk_settings (key,value) VALUES ($1,$2)
-                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`,
-          ['link_' + k, JSON.stringify(url)]);
+                 ON CONFLICT (key) DO UPDATE SET value=$2, updated_at=now()`, [key, JSON.stringify(url)]);
       }
       res.json({ success: true, surchargePct: await surcharge(), teamBrief: await teamSettings(), quiet: await quietSettings() });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -3549,6 +3572,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const all = async (sql, args = [from, to]) => (await q(sql, args)).rows;
       const inRange = `b.class_date BETWEEN $1::date AND $2::date`;
       const paid = `o.status IN ('paid','refund') AND ${PAY_DAY} BETWEEN $1::date AND $2::date`;
+      const quietCfg = await quietConfig(q);
       const [v, first, vDay, vClass, vSource, mTot, mDay, mMethod, mItem, mSource, sold, expiring, quiet, notes, reasons] = await Promise.all([
         all(`SELECT count(*) FILTER (WHERE ${ATTENDED})::int AS total,
                count(*) FILTER (WHERE b.status='booked')::int AS booked,
@@ -3591,7 +3615,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                  AND (x.kind='unlimited' OR x.credits_used < x.credits_total))
              ORDER BY p.valid_until, m.name`, [today]),
         // The students who stopped coming, today, by the same rule as the Today box.
-        quietRows(q, { date: today }),
+        quietRows(q, { date: today, cfg: quietCfg }),
         // Do the notes do anything? Notes sent in the range; of those at least 14 days old,
         // how many came within 14 days of the note. Counts only, never a name.
         all(`WITH n AS (SELECT o.member_id, o.created_at, o.reason, (o.created_at AT TIME ZONE 'Asia/Bangkok')::date AS day
@@ -3619,7 +3643,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         passes: { sold: sold[0].n, expiringNext14: expiring },
         notSeen: [...quiet.todo, ...quiet.resting, ...quiet.parked].map(x => ({ code: x.code, name: x.name, state: x.state,
           kind: x.kind, sender: x.sender, lastVisit: x.lastCame, daysQuiet: x.daysQuiet, pass: x.pass.name, until: x.pass.until })),
-        notSeenHeldBack: quiet.heldBack, notSeenMuted: quiet.muted,
+        notSeenHeldBack: quiet.heldBack, notSeenMuted: quiet.muted, quietOn: quietCfg.quietBox === 'on',
         quiet: { messaged: notes[0].messaged, matured: notes[0].matured, cameBack14: notes[0].came_back14,
           answered: notes[0].answered, byReason: reasons },
       });
@@ -3696,19 +3720,31 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       }
       const by = quietBy(b.by);
       if (!by) return res.status(400).json({ error: 'by is required: who sent it' });
+      if (b.step !== undefined && b.step !== 1 && b.step !== 2) return res.status(400).json({ error: 'step must be 1 or 2' });
+      if (b.draftKey != null && !QUIET_SEND_KEYS.includes(b.draftKey)) {
+        return res.status(400).json({ error: `draftKey must be one of ${QUIET_SEND_KEYS.join(', ')}` });
+      }
+      const todays = async () => (await q(`SELECT ${OUTREACH_COLS} FROM bkk_outreach WHERE member_id=$1 AND kind='message'
+        AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = $2::date`, [m.id, today])).rows[0];
+      const had = await todays();
+      if (had) return res.json({ ok: true, again: true, outreach: outreachOut(had) });
+      // Only a row that is due now, at that step: a page left open since yesterday, or a
+      // second phone, must not send a second note. The reply says who sent the last one.
       const row = await quietRowOf(m.id, today);
-      const step = b.step === undefined ? row && row.step : Number(b.step);
-      if (step !== 1 && step !== 2) return res.status(400).json({ error: 'step must be 1 or 2' });
-      const key = b.draftKey === undefined ? row && row.draftKey : b.draftKey;
-      if (key != null && !QUIET_SEND_KEYS.includes(key)) return res.status(400).json({ error: `draftKey must be one of ${QUIET_SEND_KEYS.join(', ')}` });
+      const step = b.step === undefined ? row && row.step : b.step;
+      if (!row || row.state !== 'todo' || row.step !== step) {
+        const lastNote = (await q(`SELECT ${OUTREACH_COLS} FROM bkk_outreach WHERE member_id=$1 AND kind='message'
+          ORDER BY created_at DESC, id DESC LIMIT 1`, [m.id])).rows[0];
+        return res.status(409).json({ error: 'not due: this student is not waiting for this note now',
+          state: row ? row.state : null, step: row ? row.step : null, last: lastNote ? outreachOut(lastNote) : null });
+      }
+      const key = b.draftKey === undefined ? row.draftKey : b.draftKey;
       const ins = await q(`INSERT INTO bkk_outreach (member_id,kind,step,pass_id,messaged_at,messaged_by,days_quiet,last_came,draft_key)
         VALUES ($1,'message',$2,$3,now(),$4,$5,$6,$7)
         ON CONFLICT (member_id, ((created_at AT TIME ZONE 'Asia/Bangkok')::date)) WHERE kind='message' DO NOTHING
-        RETURNING ${OUTREACH_COLS}`, [m.id, step, row ? row.pass.id : null, by, row ? row.daysQuiet : null, row ? row.lastCame : null, key || null]);
+        RETURNING ${OUTREACH_COLS}`, [m.id, step, row.pass.id, by, row.daysQuiet, row.lastCame, key || null]);
       if (ins.rows.length) return res.json({ ok: true, again: false, outreach: outreachOut(ins.rows[0]) });
-      const had = await q(`SELECT ${OUTREACH_COLS} FROM bkk_outreach WHERE member_id=$1 AND kind='message'
-        AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = $2::date`, [m.id, today]);
-      res.json({ ok: true, again: true, outreach: outreachOut(had.rows[0]) });
+      res.json({ ok: true, again: true, outreach: outreachOut(await todays()) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

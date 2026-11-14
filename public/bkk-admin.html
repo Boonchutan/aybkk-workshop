@@ -290,7 +290,10 @@
   .qwhoform input{flex:1 1 150px;min-width:0}
   .qwhoform .seg{margin:0}
   .qset .row2 input{width:96px}
-  @media (max-width:640px),(pointer:coarse){.qa .btn,.qwhoform .btn,.qd .seg button,.qwhoform .seg button,.qbox .link,.qset .seg button{min-height:44px}}
+  .qtw{margin:2px 0 0;font-size:13.5px}
+  @media (max-width:640px),(pointer:coarse){.qa .btn,.qwhoform .btn,.qd .seg button,.qwhoform .seg button,.qbox .link,.qset .seg button,
+    .qask .link,.qwhy .link,.qset .btn{min-height:44px}
+    .qbox .link,.qask .link,.qwhy .link{min-width:44px}}
   @media (prefers-color-scheme:dark){.rr .in,.drow .in,td .in,.hit em.ok{color:#3ddc97}.now .no{color:#ff8f86}.now{border-left-color:#3ddc97}}
   @media (min-width:560px){
     .cal{padding:18px 16px}
@@ -891,6 +894,8 @@
       'Can you keep the promise in the draft (book the class, tell the teacher)? If not, do not send it.'],
     qOneNote: 'One note per step. No second note when there is no reply.',
     qStaffH: 'For staff (M, or Jamsai when M is off)', qTeacherH: "Teacher's note (Boonchu)",
+    qTeacherWho: 'Boonchu sends these himself, from his own LINE. Staff do not send them.',
+    qOwnWords: 'No set text for a student who never came. Boonchu writes in his own words.',
     qRestH: n => `Resting: a note went out (${n})`, qParkH: n => `Parked: nothing more this time (${n})`,
     qNone: 'Nobody to message today.',
     qLast: d => `last came ${d}`, qNotYet: 'not come yet', qDays: n => n === 1 ? '1 day quiet' : `${n} days quiet`,
@@ -900,7 +905,10 @@
     qCopy: 'Copy', qCopied: 'Copied', qCopyHand: 'Select the text and copy it',
     qSent: 'Messaged', qKnow: 'We know why', qRhythm: 'Their own rhythm', qUndo: 'Undo',
     qRhythmQ: n => `Take ${n} off this list for 90 days?\nFor a student who comes one week on, one week off.`,
-    qMovedRest: n => `${n}: moved to resting.`,
+    qMovedRest: n => `${n}: messaged, moved to resting.`, qMovedPark: n => `${n}: messaged, moved to parked.`,
+    qKnownDone: n => `${n}: reason saved, moved to parked.`, qMuteDone: n => `${n}: off this list for 90 days.`,
+    qAgain: by => `Already saved today, by ${by}. Nothing new was saved.`,
+    qNotDue: 'Not saved: this student is not waiting for this note now.', qLastBy: (by, d) => `The last note went out ${d}, by ${by}.`,
     qWhoH: 'Who are you?', qWhoHelp: 'A name for this phone, so the team can see who sent each note. It is a label, not a login.',
     qWhoName: 'Your name', qWhoSave: 'Save', qWhoIs: (n, k) => `You are ${n} (${k})`, qWhoChange: 'Change',
     qWhoFirst: 'First say who you are, at the top of this list.',
@@ -924,11 +932,15 @@
     qSetHelp: 'Students who hold a pass but stopped coming, with a draft note that staff send by hand. Nothing is sent from here. Switch it on after Jamsai has read the Thai.',
     qSetBox: 'Show the list on Today', qSetBrief: 'Add it to the 05:00 team brief', qOn: 'On', qOff: 'Off',
     qSetLong: 'Membership over 3 months', qSetShort: '3 months or less', qSetDay1: 'First note after (days)', qSetDay2: "Teacher's note after (days)",
-    qSetPack: "A class pack gets one note only, on the teacher's note day of a membership over 3 months. A first pass never used gets a welcome note on day 3 (a pack: on the first note day).",
+    qSetPack: "A class pack gets one note only, on the teacher's note day of a membership over 3 months. A first pass never used gets a welcome note on day 3 (a pack: on the first note day). From 21 quiet days with no note yet, the name goes to Boonchu only.",
     qSetRezerv: 'Rezerv packages', qHide: 'Hide', qShow: 'Show',
     qRezervLast: d => `Latest Rezerv visit on file: ${d}`, qRezervFrom: d => `shown since ${d}`,
     rNotSeenH: 'See you tomorrow list: everyone quiet',
     rNotSeenHelp: 'Has a pass they can use and has not come for a while, by the same rule as the list on Today. Counted from today. Notes go out from the Today tab.',
+    rNotSeenHelpOff: 'Has a pass they can use and has not come for a while. Counted from today. The See you tomorrow list on Today is off, so this list is to read only.',
+    qSetBad1: (g, lo, hi) => `${g}: the first note day must be a whole number from ${lo} to ${hi}.`,
+    qSetBad2: g => `${g}: the teacher's note day must come after the first note day, at most 60.`,
+    qSetBad: 'Not saved. Check the numbers and try again.',
   });
   Object.assign(STR.th, {
     qTitle: 'รายชื่อ See you tomorrow',
@@ -945,6 +957,8 @@
       'ทำตามที่ข้อความบอกได้ไหม (จองคลาสให้ บอกครู) ถ้าทำไม่ได้ อย่าส่ง'],
     qOneNote: 'ขั้นละหนึ่งข้อความ ถ้านักเรียนไม่ตอบ ไม่ต้องส่งซ้ำ',
     qStaffH: 'ทีมงานทัก (M หรือ Jamsai เมื่อ M ไม่อยู่)', qTeacherH: 'ครูทักเอง (ครูบุญชู)',
+    qTeacherWho: 'ครูบุญชูส่งเองจาก LINE ของครู ทีมงานไม่ต้องส่ง',
+    qOwnWords: 'ไม่มีข้อความร่างสำหรับนักเรียนที่ยังไม่เคยมา ครูบุญชูเขียนด้วยคำของครูเอง',
     qRestH: n => `รอ: ส่งข้อความไปแล้ว (${n})`, qParkH: n => `พักไว้: รอบนี้ไม่ต้องทักอีก (${n})`,
     qNone: 'วันนี้ไม่มีใครต้องทัก',
     qLast: d => `มาครั้งล่าสุด ${d}`, qNotYet: 'ยังไม่ได้มา', qDays: n => `ไม่ได้มา ${n} วัน`,
@@ -954,7 +968,10 @@
     qCopy: 'คัดลอก', qCopied: 'คัดลอกแล้ว', qCopyHand: 'เลือกข้อความแล้วคัดลอกเอง',
     qSent: 'ส่งแล้ว', qKnow: 'เรารู้เหตุผลแล้ว', qRhythm: 'มาตามจังหวะของตัวเอง', qUndo: 'ยกเลิก',
     qRhythmQ: n => `เอา ${n} ออกจากรายชื่อนี้ 90 วันไหม?\nสำหรับนักเรียนที่มาสัปดาห์เว้นสัปดาห์`,
-    qMovedRest: n => `${n}: ย้ายไปที่ "รอ" แล้ว`,
+    qMovedRest: n => `${n}: ส่งแล้ว ย้ายไปที่ "รอ"`, qMovedPark: n => `${n}: ส่งแล้ว ย้ายไปที่ "พักไว้"`,
+    qKnownDone: n => `${n}: บันทึกเหตุผลแล้ว ย้ายไปที่ "พักไว้"`, qMuteDone: n => `${n}: ไม่อยู่ในรายชื่อนี้ 90 วัน`,
+    qAgain: by => `วันนี้บันทึกไว้แล้ว โดย ${by} ไม่ได้บันทึกซ้ำ`,
+    qNotDue: 'ไม่ได้บันทึก: ตอนนี้ยังไม่ถึงเวลาทักนักเรียนคนนี้', qLastBy: (by, d) => `ข้อความล่าสุดส่งเมื่อ ${d} โดย ${by}`,
     qWhoH: 'คุณคือใคร?', qWhoHelp: 'ชื่อของเครื่องนี้ ทีมจะได้รู้ว่าใครส่งข้อความ เป็นแค่ชื่อ ไม่ใช่การล็อกอิน',
     qWhoName: 'ชื่อของคุณ', qWhoSave: 'บันทึก', qWhoIs: (n, k) => `คุณคือ ${n} (${k})`, qWhoChange: 'เปลี่ยน',
     qWhoFirst: 'บอกก่อนว่าคุณคือใคร ที่ด้านบนของรายชื่อนี้',
@@ -978,11 +995,15 @@
     qSetHelp: 'นักเรียนที่มีแพ็กเกจแต่ไม่ได้มาสักพัก พร้อมข้อความร่างให้ทีมงานส่งเอง ระบบไม่ส่งอะไรเอง เปิดใช้หลังจาก Jamsai อ่านภาษาไทยแล้ว',
     qSetBox: 'แสดงรายชื่อในหน้า วันนี้', qSetBrief: 'ใส่ในบรีฟเช้า 05:00', qOn: 'เปิด', qOff: 'ปิด',
     qSetLong: 'แพ็กเกจเกิน 3 เดือน', qSetShort: 'แพ็กเกจ 3 เดือนหรือน้อยกว่า', qSetDay1: 'ทักครั้งแรกหลัง (วัน)', qSetDay2: 'ครูทักหลัง (วัน)',
-    qSetPack: 'แพ็กเกจนับครั้ง ทักครั้งเดียว ในวันเดียวกับ "ครูทัก" ของแพ็กเกจเกิน 3 เดือน แพ็กเกจแรกที่ยังไม่ได้มา ทักต้อนรับวันที่ 3 (แพ็กเกจนับครั้ง: ในวัน "ทักครั้งแรก")',
+    qSetPack: 'แพ็กเกจนับครั้ง ทักครั้งเดียว ในวันเดียวกับ "ครูทัก" ของแพ็กเกจเกิน 3 เดือน แพ็กเกจแรกที่ยังไม่ได้มา ทักต้อนรับวันที่ 3 (แพ็กเกจนับครั้ง: ในวัน "ทักครั้งแรก") ถ้าไม่ได้มา 21 วันแล้วยังไม่มีใครทัก ชื่อจะไปที่ครูบุญชูเท่านั้น',
     qSetRezerv: 'แพ็กเกจ Rezerv', qHide: 'ซ่อน', qShow: 'แสดง',
     qRezervLast: d => `มาเรียนผ่าน Rezerv ครั้งล่าสุดในระบบ: ${d}`, qRezervFrom: d => `แสดงตั้งแต่ ${d}`,
     rNotSeenH: 'รายชื่อ See you tomorrow: นักเรียนที่ไม่ได้มาสักพัก',
     rNotSeenHelp: 'มีแพ็กเกจที่ใช้ได้ แต่ไม่ได้มาสักพัก ใช้กฎเดียวกับรายชื่อในหน้า วันนี้ นับจากวันนี้ ส่งข้อความจากหน้า วันนี้',
+    rNotSeenHelpOff: 'มีแพ็กเกจที่ใช้ได้ แต่ไม่ได้มาสักพัก นับจากวันนี้ รายชื่อ See you tomorrow ในหน้า วันนี้ ยังปิดอยู่ รายชื่อนี้ไว้ดูอย่างเดียว',
+    qSetBad1: (g, lo, hi) => `${g}: วัน "ทักครั้งแรก" ต้องเป็นเลขจำนวนเต็ม ${lo} ถึง ${hi}`,
+    qSetBad2: g => `${g}: วัน "ครูทัก" ต้องมาหลังวัน "ทักครั้งแรก" และไม่เกิน 60`,
+    qSetBad: 'ยังไม่ได้บันทึก ตรวจตัวเลขแล้วลองใหม่',
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -1872,7 +1893,8 @@
   // The server picks who is quiet and builds each draft (GET /api/bkk/admin/quiet);
   // this only paints it. Staff copy a draft and send it by hand from the shala LINE.
   // Names and drafts live in these maps, never inside an onclick string.
-  let QD = null, QOPEN = false, QFLASH = null, QWHO_EDIT = false, QWHO_KA = null;
+  // QSTUB: the row just acted on, kept as one line where it was, so a phone shows what happened.
+  let QD = null, QOPEN = false, QSTUB = null, QWHO_EDIT = false, QWHO_KA = null;
   const QSUB = {}, QLANG = {}, QPANEL = {}, QPICK = {}, QREPLY = {}, DRAFTS = {}, QROWS = {};
   const QKA = { krub: 'ครับ', kha: 'ค่ะ' };
   // Who is on this phone: a label and the sender's ครับ or ค่ะ, not a login.
@@ -1887,6 +1909,7 @@
   }
   // Off: nothing at all, so Today looks as it did before.
   async function quietBox() {
+    QSTUB = null;
     await quietLoad();
     return QD && QD.on ? `<div class="box qbox" id="qbox">${quietInner()}</div>` : '';
   }
@@ -1932,7 +1955,7 @@
       : `<p class="muted">${esc(T('qNoReply'))}</p>`}
       <div class="lbl">${esc(T('qAskH'))}</div><ol class="qask">${(x.questions || []).map((qq, i) => {
         DRAFTS[`a:${id}:${i}`] = qq;
-        return `<li>${esc(qq[LANG] || qq.en)} <button class="link" data-k="a:${id}:${i}" onclick="qCopy(this)">${esc(T('qCopy'))}</button></li>`; }).join('')}</ol></div>`;
+        return `<li><span id="qt-a:${id}:${i}">${esc(qq[LANG] || qq.en)}</span> <button class="link" data-k="a:${id}:${i}" onclick="qCopy(this)">${esc(T('qCopy'))}</button></li>`; }).join('')}</ol></div>`;
   };
   const qDay = iso => ymdLong(bkkYmd(Date.parse(iso)), true, true);
   const qRow = r => {
@@ -1949,7 +1972,9 @@
       onclick="qAct(this)">${esc(T({ sent: 'qSent', know: 'qKnow', rhythm: 'qRhythm', undo: 'qUndo' }[k]))}</button>`;
     const replyTo = r.outreachId || (sent[0] || {}).id;
     let body = '';
-    if (r.state === 'todo' && r.draft) body = draftBox('d:' + r.code, r.draft, act('sent') + act('know') + act('rhythm'))
+    const acts = act('sent') + act('know') + act('rhythm');
+    if (r.state === 'todo') body = (r.draft ? draftBox('d:' + r.code, r.draft, acts)
+      : `<p class="muted">${esc(T('qOwnWords'))}</p><div class="qa">${acts}</div>`)
       + (QPANEL['m:' + r.code] ? reasonPanel('m:' + r.code, 'know') : '');
     else if (r.state !== 'todo') {
       if (sent[0] && !sent[0].reason && bkkYmd(Date.parse(sent[0].at)) === QD.asOf) body += `<div class="qa">${act('undo')}</div>`;
@@ -1962,23 +1987,31 @@
         r.reason && !sent.some(m => m.reason) ? T('qReasons')[r.reason] || r.reason : ''].filter(Boolean).join(' · '))}</div>
       ${tags ? `<div>${tags}</div>` : ''}${notes}${body}</div>`;
   };
+  const qStub = x => `<div class="qrow"><p class="flash" role="status">${esc(T({ sent: x.state === 'parked' ? 'qMovedPark' : 'qMovedRest',
+      known: 'qKnownDone', mute: 'qMuteDone' }[x.kind], x.name))}${x.kind === 'sent' ? ` <button class="link" id="qstub-undo"
+      data-code="${esc(x.code)}" data-qa="undo" onclick="qAct(this)">${esc(T('qUndo'))}</button>` : ''}</p></div>`;
+  // A todo group's rows, with the stub of the row just acted on at the place it had.
+  const qGroup = (list, teacher) => {
+    const html = list.map(qRow);
+    if (QSTUB && QSTUB.teacher === teacher) html.splice(Math.min(QSTUB.idx, html.length), 0, qStub(QSTUB));
+    return html.join('');
+  };
   function quietInner() {
     const d = QD;
     for (const k of Object.keys(QROWS)) delete QROWS[k];
     const staff = d.todo.filter(r => r.sender !== 'teacher'), teach = d.todo.filter(r => r.sender === 'teacher');
+    const stubIn = teacher => !!QSTUB && QSTUB.teacher === teacher;
     const sub = (k, title, list) => list.length ? `<details class="qsub" data-k="${k}" ${QSUB[k] ? 'open' : ''} ontoggle="qSub(this)">
       <summary>${esc(title)}</summary>${list.map(qRow).join('')}</details>` : '';
     return `<details ${QOPEN ? 'open' : ''} ontoggle="qOpen(this)"><summary><b>${esc(T('qTitle'))}</b>
         <span class="muted">${esc(T('qFold', staff.length, teach.length, d.resting.length, d.parked.length))}</span></summary>
       <p class="muted" style="margin:6px 0 0">${esc(T('qAsOf', ymdLong(d.asOf, true)))}${!d.rezerv.show && d.heldBack ? ' · ' + esc(T('qHeld', d.heldBack)) : ''}</p>
       ${d.rezerv.openFirst ? `<p class="warnline">${esc(T('qOpenFirst'))}</p>` : ''}
-      ${QFLASH ? `<p class="flash">${esc(T('qMovedRest', QFLASH.name))} <button class="link" data-code="${esc(QFLASH.code)}" data-qa="undo"
-        onclick="qAct(this)">${esc(T('qUndo'))}</button></p>` : ''}
       ${whoForm()}
       <details class="qchk"><summary>${esc(T('qChecksH'))}</summary><ol>${T('qChecks').map(x => `<li>${esc(x)}</li>`).join('')}</ol>
         <p class="muted">${esc(T('qOneNote'))}</p></details>
-      ${staff.length ? `<h4>${esc(T('qStaffH'))}</h4>${staff.map(qRow).join('')}` : ''}
-      ${teach.length ? `<h4>${esc(T('qTeacherH'))}</h4>${teach.map(qRow).join('')}` : ''}
+      ${staff.length || stubIn(false) ? `<h4>${esc(T('qStaffH'))}</h4>${qGroup(staff, false)}` : ''}
+      ${teach.length || stubIn(true) ? `<h4>${esc(T('qTeacherH'))}</h4><p class="muted qtw">${esc(T('qTeacherWho'))}</p>${qGroup(teach, true)}` : ''}
       ${d.todo.length ? '' : `<p class="muted">${esc(T('qNone'))}</p>`}
       ${sub('rest', T('qRestH', d.resting.length), d.resting)}${sub('park', T('qParkH', d.parked.length), d.parked)}
       ${d.muted ? `<p class="muted">${esc(T('qMuted', d.muted))}</p>` : ''}</details>`;
@@ -2002,7 +2035,11 @@
     let done = false;
     try { await navigator.clipboard.writeText(text); done = true; } catch (_) {}
     const ta = document.getElementById('qt-' + k);
-    if (!done && ta) { ta.focus(); ta.select(); try { done = document.execCommand('copy'); } catch (_) {} }
+    if (!done && ta) {
+      if (ta.tagName === 'TEXTAREA') { ta.focus(); ta.select(); }
+      else { const rg = document.createRange(), sel = window.getSelection(); rg.selectNodeContents(ta); sel.removeAllRanges(); sel.addRange(rg); }
+      try { done = document.execCommand('copy'); } catch (_) {}
+    }
     b.textContent = T(done ? 'qCopied' : 'qCopyHand');
     setTimeout(() => { b.textContent = T('qCopy'); }, 2500);
   };
@@ -2023,6 +2060,21 @@
     if (i) { i.scrollIntoView({ block: 'center' }); i.focus(); }
     return true;
   };
+  // Where a todo row sat in its group, so its stub can take the same place.
+  const qPlace = (code, kind) => {
+    const r = QROWS[code];
+    if (!r || r.state !== 'todo' || !QD) return null;
+    const teacher = r.sender === 'teacher';
+    return { code, name: r.name, kind, teacher, idx: QD.todo.filter(x => (x.sender === 'teacher') === teacher).findIndex(x => x.code === code) };
+  };
+  // After a repaint: the stub's Undo, or the row's name, takes the focus (and so comes into view).
+  const qFocus = code => {
+    const el = (QSTUB && document.getElementById('qstub-undo')) || (QSTUB && $('#qbox .qrow .flash'))
+      || document.getElementById('who-q-' + code);
+    if (!el) return;
+    if (!el.matches('button')) el.setAttribute('tabindex', '-1');
+    el.focus();
+  };
   window.qAct = async b => {
     const code = b.dataset.code, what = b.dataset.qa, r = QROWS[code] || {};
     if (what === 'know') { QPANEL['m:' + code] = !QPANEL['m:' + code]; quietPaint(); return; }
@@ -2030,13 +2082,25 @@
     if (what === 'rhythm' && !confirm(T('qRhythmQ', r.name || code))) return;
     const w = qWho();
     const body = what === 'undo' ? { undo: true } : what === 'rhythm' ? { by: w.name } : { by: w.name, step: r.step, draftKey: r.draftKey };
+    const place = what === 'undo' ? null : qPlace(code, what === 'rhythm' ? 'mute' : 'sent');
     b.disabled = true;
     const res = await api(`/api/bkk/admin/quiet/${encodeURIComponent(code)}/${what === 'rhythm' ? 'mute' : 'messaged'}`,
       { method: 'POST', body: JSON.stringify(body) }).catch(() => null);
     const j = res ? await res.json().catch(() => ({})) : {};
+    // Someone else already sent it (a second phone, or this page left open since yesterday).
+    if (res && res.status === 409) {
+      alert([T('qNotDue'), j.last ? T('qLastBy', j.last.by || '?', qDay(j.last.at)) : ''].filter(Boolean).join('\n'));
+      QSTUB = null; await quietReload(); qFocus(code); return;
+    }
     if (!res || !res.ok) { b.disabled = false; alert(j.error || T('failed')); return; }
-    QFLASH = what === 'sent' ? { code, name: r.name } : null;
-    await quietReload();
+    if (what === 'sent' && j.again && j.outreach && j.outreach.by !== w.name) alert(T('qAgain', j.outreach.by || '?'));
+    QSTUB = null;
+    await quietLoad();
+    if (place && QD && QD.on) {
+      const now = QD.resting.some(x => x.code === code) ? 'resting' : QD.parked.some(x => x.code === code) ? 'parked' : null;
+      if (place.kind === 'mute' || now) QSTUB = { ...place, state: now };
+    }
+    if (current === 'today' && !SUB) { quietPaint(); qFocus(code); }
   };
   window.qPick = b => {
     const k = b.dataset.k, p = QPICK[k] = QPICK[k] || {}, box = b.closest('.qwhy');
@@ -2057,10 +2121,11 @@
       { method: 'POST', body: JSON.stringify({ by: w.name, reason: p.reason, note: p.reason === 'health' ? '' : p.note || '', ka: w.ka }) }).catch(() => null);
     const j = res ? await res.json().catch(() => ({})) : {};
     if (!res || !res.ok) { b.disabled = false; alert(j.error || T('failed')); return; }
+    const place = known && SUB !== 'history' ? qPlace(id, 'known') : null;
     delete QPICK[k]; delete QPANEL[k];
     if (!known) { QREPLY[id] = { reply: j.reply, questions: j.questions || [] }; QSUB.park = true; }
-    QFLASH = null;
-    if (SUB === 'history') await histReload(); else await quietReload();
+    QSTUB = place;
+    if (SUB === 'history') await histReload(); else { await quietReload(); if (place) qFocus(id); }
   };
   const histReload = async () => {
     if (!HIST) return;
@@ -2078,6 +2143,8 @@
         const bits = [T('qKind')[o.kind] || o.kind, o.step ? T('hMsgStep', o.step) : '', o.by ? T('hMsgBy', o.by) : '',
           o.daysQuiet != null ? T('hMsgDays', o.daysQuiet) : '', o.muteUntil ? T('hMuteUntil', ymdLong(o.muteUntil)) : ''].filter(Boolean).join(' · ');
         const can = o.kind === 'message' || o.kind === 'known';
+        // "Change the reason" opens on what is saved, so saving again keeps the note.
+        if (can && o.reason && !QPICK['o:' + o.id]) QPICK['o:' + o.id] = { reason: o.reason, note: o.note || '' };
         return `<div class="qrow"><div class="qn"><b>${esc(ymdLong(bkkYmd(Date.parse(o.at)), true))}</b><span class="qm">${esc(bits)}</span></div>
           ${o.reason ? `<div><span class="pill frozen">${esc(T('qReasons')[o.reason] || o.reason)}</span>${o.note ? ` <span class="qm">${esc(o.note)}</span>` : ''}</div>` : ''}
           ${can ? `<details class="qsub" data-k="o:${o.id}" ${QPANEL['o:' + o.id] ? 'open' : ''} ontoggle="qPanel(this)">
@@ -2517,9 +2584,9 @@
           <td>${who(x, 'e')}</td><td>${esc(itemName(x.item || ''))}</td>
           <td class="nowrap">${esc(ymdLong(x.until, true))}</td></tr>`))}</div>
       <div class="box"><b>${T('rNotSeenH')}</b> <span class="muted">${d.notSeen.length}</span>
-        <p class="muted">${T('rNotSeenHelp')}${d.notSeenHeldBack ? ' ' + esc(T('qHeld', d.notSeenHeldBack)) + '.' : ''}</p>
-        ${tbl([[T('thStudent')], [T('thState')], [T('thLast')], [T('thDays'), 'n'], [T('thPass')], [T('thUntil')]], d.notSeen.map(x => `<tr>
-          <td>${who(x, 'n')}</td><td>${esc(T('qState')[x.state] || x.state)}</td>
+        <p class="muted">${T(d.quietOn ? 'rNotSeenHelp' : 'rNotSeenHelpOff')}${d.notSeenHeldBack ? ' ' + esc(T('qHeld', d.notSeenHeldBack)) + '.' : ''}</p>
+        ${tbl([[T('thStudent')], ...(d.quietOn ? [[T('thState')]] : []), [T('thLast')], [T('thDays'), 'n'], [T('thPass')], [T('thUntil')]], d.notSeen.map(x => `<tr>
+          <td>${who(x, 'n')}</td>${d.quietOn ? `<td>${esc(T('qState')[x.state] || x.state)}</td>` : ''}
           <td class="nowrap">${esc(x.lastVisit ? ymdLong(x.lastVisit) : T('neverCame'))}</td><td class="n">${x.daysQuiet}</td>
           <td>${esc(itemName(x.pass || ''))}</td><td class="nowrap">${esc(x.until ? ymdLong(x.until) : '')}</td></tr>`), '', true)}</div>
       ${d.quiet ? `<div class="box"><b>${T('rQuietH')}</b><p class="muted">${T('rQuietHelp')}</p>
@@ -2951,8 +3018,15 @@
   window.qSetSave = async () => {
     const body = { quietBox: QSET.quietBox, quietBrief: QSET.quietBrief, quietRezerv: QSET.quietRezerv };
     for (const f of ['quietDays', 'quietDays2', 'quietDaysShort', 'quietDays2Short']) body[f] = Number($('#qs_' + f).value);
-    const j = await shout(await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify(body) }));
-    if (j) { alert(T('saved')); renderSettings(); }
+    // The server's rules, checked here first so the message is in the page's language.
+    for (const [a, b, g, lo] of [['quietDays', 'quietDays2', 'qSetLong', 5], ['quietDaysShort', 'quietDays2Short', 'qSetShort', 3]]) {
+      const bad = !Number.isInteger(body[a]) || body[a] < lo || body[a] > 30 ? ['qSetBad1', a, [T(g), lo, 30]]
+        : !Number.isInteger(body[b]) || body[b] <= body[a] || body[b] > 60 ? ['qSetBad2', b, [T(g)]] : null;
+      if (bad) { alert(T(bad[0], ...bad[2])); $('#qs_' + bad[1]).focus(); return; }
+    }
+    const r = await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify(body) }).catch(() => null);
+    if (!r || !r.ok) { alert(T('qSetBad')); return; }
+    alert(T('saved')); renderSettings();
   };
   let TEES = [];
   const teeForm = x => `<div class="teeRow" data-id="${x.id || ''}" style="border-top:1px solid #eee;padding:10px 0">
