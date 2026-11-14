@@ -3124,6 +3124,54 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   const PASS_DATES = `to_char(p.valid_from,'YYYY-MM-DD') AS from_d, to_char(p.valid_until,'YYYY-MM-DD') AS until_d,
     to_char(p.frozen_from,'YYYY-MM-DD') AS frozen_from_d, to_char(p.frozen_until,'YYYY-MM-DD') AS frozen_until_d`;
 
+  // The profile's membership block: each pass they can use now or soon (not
+  // ended, a class left, active or paused) with how they came on it. Built from
+  // the history route's own pass and visit rows; every day is a Bangkok date as text.
+  function membershipOut(passes, visits, today) {
+    const gap = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+    const plus = (d, n) => new Date(Date.parse(d) + n * 86400000).toISOString().slice(0, 10);
+    const live = passes.filter(p => (p.status === 'active' || p.status === 'frozen')
+      && !(p.until_d && p.until_d < today) && (p.kind === 'unlimited' || p.credits_used < p.credits_total));
+    // Nobody checks in at home: an online class that is over counts as came.
+    const came = visits.filter(v => v.date <= today && (visitStatusOut(v) === 'attended'
+      || (v.status === 'booked' && v.is_online && bkkNow() - new Date(v.start_at) > (v.duration_min || 120) * 60000)));
+    const rows = live.map(p => {
+      const state = p.status === 'frozen' ? 'frozen' : p.from_d && p.from_d > today ? 'starts'
+        : !p.from_d && !p.until_d ? 'firstClass' : 'active';
+      const started = !!p.from_d && p.from_d <= today;
+      // A seat paid by another pass is that pass's day; one with no pass on it (Rezerv) counts by its date.
+      const days = started ? [...new Set(came.filter(v => v.date >= p.from_d && (v.pass_id == null || v.pass_id === p.id))
+        .map(v => v.date))].sort() : [];
+      const last28 = days.filter(d => d > plus(today, -28)).length;
+      // A pause is [frozen_from, frozen_until); one still running has no end yet.
+      let paused = 0;
+      if (started && p.frozen_from_d) {
+        const a = p.frozen_from_d > p.from_d ? p.frozen_from_d : p.from_d;
+        const b = p.frozen_until_d && p.frozen_until_d <= today ? p.frozen_until_d : plus(today, 1);
+        paused = Math.max(0, gap(a, b));
+      }
+      const ran = started ? gap(p.from_d, today) + 1 - paused : 0;
+      const o = passOut(p);
+      return [state === 'frozen' ? 1 : state === 'starts' ? 2 : 0,
+        state === 'frozen' ? p.frozen_until_d || '9' : p.from_d || '9', {
+          passId: p.id, name: o.name, nameTh: o.nameTh, kind: o.kind, source: o.source, state,
+          validFrom: o.validFrom, validUntil: o.validUntil, frozenUntil: o.frozenUntil,
+          daysLeft: p.until_d ? gap(today, p.until_d) + 1 : null,
+          creditsTotal: o.creditsTotal, creditsUsed: o.creditsUsed, creditsLeft: o.creditsLeft,
+          cameDays: days.length, cameLast28: last28,
+          perWeek: ran >= 7 ? Math.round(days.length / (ran / 7) * 2) / 2 : null,
+          lastCame: days.length ? days[days.length - 1] : null,
+          // For staff only: a membership (not a class pack, whose classes are
+          // counted, not its days) over a month long that ends within 14 days
+          // with nothing after it, and under 8 days came in the last 28.
+          endsSoonCameLittle: state === 'active' && p.kind === 'unlimited' && p.valid_days > 31
+            && !!p.until_d && p.until_d <= plus(today, 14) && last28 < 8
+            && !live.some(x => x.id !== p.id && (!x.until_d || x.until_d > p.until_d)),
+        }];
+    });
+    return rows.sort((a, b) => a[0] - b[0] || a[1].localeCompare(b[1]) || a[2].passId - b[2].passId).map(r => r[2]);
+  }
+
   // One student, all of it: every visit, payment, pass and note, newest first.
   app.get('/api/bkk/admin/members/:code/history', async (req, res) => {
     if (adminOnly(req, res)) return;
@@ -3133,7 +3181,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const [visits, pays, passes, notes, photos, checks, active] = await Promise.all([
         q(`SELECT b.id, to_char(b.class_date,'YYYY-MM-DD') AS date, ${VISIT_TIME} AS time,
              coalesce(s.title, b.class_title) AS class, b.status, b.checked_in_at, b.cancelled_at, b.cancel_reason,
-             b.cover, b.source, b.slot_id, b.start_at
+             b.cover, b.source, b.slot_id, b.start_at, b.pass_id, s.is_online, s.duration_min
            FROM bkk_bookings b LEFT JOIN bkk_class_slots s ON s.id=b.slot_id
            WHERE b.member_id=$1 ORDER BY b.class_date DESC, b.start_at DESC, b.id DESC`, [m.id]),
         q(`SELECT o.id, to_char(${PAY_AT} AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS date,
@@ -3156,6 +3204,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const daysAgo = n => ymd(new Date(Date.parse(`${today}T12:00:00${TZ_OFFSET}`) - n * 86400000));
       const came = visits.rows.filter(v => visitStatusOut(v) === 'attended');
       const money = pays.rows.filter(o => o.status === 'paid' || o.status === 'refund');
+      const upcoming = v => new Date(v.start_at) > bkkNow() && v.status === 'booked';
+      const next = visits.rows.filter(upcoming).reverse();
       res.json({
         member: { code: m.code, name: m.name, email: m.email, phone: m.phone, joinedOn: pgDate(m.joined_on),
           source: m.source, rezervId: m.rezerv_id, createdAt: m.created_at },
@@ -3173,10 +3223,13 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
             until: pgDate(active.valid_until),
             creditsLeft: active.kind === 'unlimited' ? null : active.credits_total - active.credits_used } : null,
         },
+        membership: membershipOut(passes.rows, visits.rows, today),
+        nextBookings: next.slice(0, 5).map(v => ({ date: v.date, time: v.time, class: v.class, cover: v.cover })),
+        nextBookingsMore: Math.max(0, next.length - 5),
         passes: passes.rows.map(passOut),
         visits: visits.rows.map(v => ({ id: v.id, date: v.date, time: v.time, class: v.class, status: visitStatusOut(v),
           checkedInAt: v.checked_in_at, cancelledAt: v.cancelled_at, cancelReason: v.cancel_reason,
-          cover: v.cover, source: v.source, upcoming: new Date(v.start_at) > bkkNow() && v.status === 'booked' })),
+          cover: v.cover, source: v.source, upcoming: upcoming(v) })),
         payments: pays.rows.map(o => ({ id: o.id, date: o.date, time: o.time, item: o.item, amount: o.amount_thb,
           base: o.base_thb, fee: o.fee_thb, vat: o.vat_thb, method: o.method, status: o.status,
           source: o.source || 'aybkk', refno: String(o.refno), note: o.gateway_note })),
