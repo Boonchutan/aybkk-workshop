@@ -1945,6 +1945,291 @@ const ok = (name, cond, extra = '') => {
     ok('members CSV for a range: those who came or paid in it', mc.bom && mc.text.includes('"RZ-1001"')
        && mc.text.includes('"Brand New Visitor"') && mc.text.includes('"Niran Testimport"') && !mc.text.includes('"Thai Month"'), mc.text.slice(0, 400));
 
+    // ── the profile opens on the membership: its dates, how they came on it, what is booked ──
+    console.log('\n— the membership block on the profile —');
+    {
+      const d = n => addD(todayB, n), at = (day, t = '06:00') => `${day}T${t}:00+07:00`;
+      const mk = async (key, name) => (await one(`INSERT INTO bkk_members (code,name,email) VALUES ($1,$2,$3) RETURNING id`,
+        ['BTESTMB' + key, name, `mb.${key.toLowerCase()}@example.com`])).id;
+      const pass = async (member, code, o = {}) => (await one(`INSERT INTO bkk_passes
+          (member_id,product_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,status,frozen_from,frozen_until,source)
+        SELECT $1::int, id, kind, credits, $3::int, daily_cap, valid_days, $4::date, $5::date, $6::text, $7::date, $8::date, 'manual'
+        FROM bkk_products WHERE code=$2 RETURNING id`,
+        [member, code, o.used || 0, o.from || null, o.until || null, o.status || 'active', o.ffrom || null, o.funtil || null])).id;
+      // A seat they came to, unless in: false (booked, no check-in). No pass on it is a Rezerv visit.
+      const seat = (member, day, o = {}) => pool.query(`INSERT INTO bkk_bookings
+          (slot_id,class_date,start_at,member_id,pass_id,status,checked_in_at,cancelled_at,cover,source,class_title)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'Membership Test')`,
+        [o.slot || null, day, at(day, o.t), member, o.pass || null, o.status || 'booked', o.in === false || o.status ? null : at(day, o.t),
+         o.status === 'cancelled' ? new Date() : null, o.pass ? 'pass' : 'rezerv', o.pass ? 'door' : 'rezerv']);
+      const hist = async key => (await J(`/api/bkk/admin/members/BTESTMB${key}/history`, { headers: ADMIN })).body;
+      const of = (h, id) => (h.membership || []).find(p => p.passId === id) || {};
+
+      // Mid-way through 3 months, with a paused pack and a month bought for after.
+      const mid = await mk('MID', 'Mem Midway');
+      const m3 = await pass(mid, 'unlim3', { from: d(-20), until: d(69) });
+      const mNext = await pass(mid, 'unlim1', { from: d(70), until: d(99) });
+      const mPack = await pass(mid, 'pack8', { status: 'frozen', used: 1, from: d(-10), until: d(150), ffrom: d(-2), funtil: d(80) });
+      for (const k of [-19, -15, -12, -9, -5, -2]) await seat(mid, d(k), { pass: m3 });
+      await seat(mid, d(-25));                                   // a Rezerv class before the pass began
+      await seat(mid, d(-3), { pass: mPack });                   // paid with the pack
+      await seat(mid, d(-1), { pass: m3, in: false });           // booked, never checked in
+      await seat(mid, d(-6), { pass: m3, status: 'cancelled' });
+      const hm = await hist('MID'), a = of(hm, m3), fz = of(hm, mPack), nx = of(hm, mNext);
+      ok('membership lists each pass that is live or coming, in use first, with start, end and days left',
+         hm.membership.map(p => `${p.passId}:${p.state}`).join() === `${m3}:active,${mPack}:frozen,${mNext}:starts`
+         && a.name === '3 months unlimited' && a.nameTh && a.kind === 'unlimited' && a.source === 'manual'
+         && a.validFrom === d(-20) && a.validUntil === d(69) && a.daysLeft === 70
+         && fz.frozenUntil === d(80) && nx.validFrom === d(70) && nx.validUntil === d(99), JSON.stringify(hm.membership));
+      ok('visits before the pass started are not counted on it', a.cameDays === 6 && a.lastCame === d(-2)
+         && hm.summary.visits === 8, JSON.stringify([a, hm.summary]));
+      ok('the last 28 days count only days inside the pass', a.cameLast28 === 6 && hm.summary.visitsLast30 === 8, JSON.stringify(a));
+      ok('a class paid with another pass is counted on that pass only; a no-show or a cancelled seat on none',
+         fz.cameDays === 1 && fz.lastCame === d(-3) && nx.cameDays === 0 && nx.lastCame === null && nx.perWeek === null, JSON.stringify([fz, nx]));
+
+      const twice = await mk('TWO', 'Mem Twice');
+      const tw = await pass(twice, 'unlim1', { from: d(-5), until: d(24) });
+      await seat(twice, d(-2), { pass: tw, t: '05:30' });
+      await seat(twice, d(-2), { pass: tw, t: '07:30' });
+      await seat(twice, d(-1), { pass: tw });
+      const ht = await hist('TWO');
+      ok('days came on this pass count days, not seats: two classes in one day are one', of(ht, tw).cameDays === 2
+         && of(ht, tw).cameLast28 === 2 && ht.summary.visits === 3, JSON.stringify(ht.membership));
+      // 6 days run is under a week; 7 days (today is a day) is one week.
+      const week = await mk('WEEK', 'Mem Oneweek');
+      const wk = await pass(week, 'unlim1', { from: d(-6), until: d(23) });
+      for (const k of [-6, -3, -1]) await seat(week, d(k), { pass: wk });
+      ok('about how many a week: 6 days in 3 weeks is 2; under one week it is not shown', a.perWeek === 2 && of(ht, tw).perWeek === null
+         && of(await hist('WEEK'), wk).perWeek === 3, JSON.stringify([a, ht.membership]));
+
+      const both = await mk('BOTH', 'Mem Both');
+      const bo = await pass(both, 'unlim1', { from: d(-3), until: d(26) });
+      await seat(both, d(-2));
+      await seat(both, d(-2), { pass: bo });
+      ok('a Rezerv visit and a door check-in on the same day count once', of(await hist('BOTH'), bo).cameDays === 1);
+
+      const lastDay = await mk('LAST', 'Mem Lastday');
+      const ld = await pass(lastDay, 'unlim1', { from: d(-29), until: d(0) });
+      const hl = of(await hist('LAST'), ld);
+      ok('a pass ending today has 1 day left', hl.state === 'active' && hl.daysLeft === 1, JSON.stringify(hl));
+      ok('last came is null when they have not come on this pass yet', hl.lastCame === null && hl.cameDays === 0 && hl.cameLast28 === 0, JSON.stringify(hl));
+
+      // 28 days run, 14 of them paused: 4 days came is 2 a week, not 1.
+      const paused = await mk('PAUSE', 'Mem Paused');
+      const pz = await pass(paused, 'unlim3', { from: d(-27), until: d(76), ffrom: d(-20), funtil: d(-6) });
+      for (const k of [-26, -24, -4, -1]) await seat(paused, d(k), { pass: pz });
+      ok('paused days are taken out of the weeks', of(await hist('PAUSE'), pz).perWeek === 2 && fz.perWeek === 1,
+         JSON.stringify([of(await hist('PAUSE'), pz), fz]));
+
+      const packer = await mk('PACK', 'Mem Pack');
+      const pk = await pass(packer, 'pack8', { used: 3, from: d(-10), until: d(49) });
+      const pkNew = await pass(packer, 'pack8');
+      const hp = await hist('PACK');
+      ok('a class pack shows classes used and left', of(hp, pk).creditsTotal === 8 && of(hp, pk).creditsUsed === 3 && of(hp, pk).creditsLeft === 5
+         && of(hp, pk).kind === 'credits', JSON.stringify(of(hp, pk)));
+      const fc = of(hp, pkNew);
+      ok('a pass with no dates says it starts on the first class', fc.state === 'firstClass' && fc.validFrom === null && fc.validUntil === null
+         && fc.daysLeft === null && fc.cameDays === 0 && fc.perWeek === null && fc.creditsLeft === 8
+         && hp.membership.map(p => p.passId).join() === `${pk},${pkNew}`, JSON.stringify(hp.membership));
+
+      const booker = await mk('BOOK', 'Mem Booker');
+      for (const k of [5, 2, 7, 1, 4, 6, 3]) await seat(booker, d(k), { in: false });
+      await seat(booker, d(1), { in: false, t: '08:00' });
+      await seat(booker, d(2), { status: 'cancelled', t: '08:00' });
+      await seat(booker, d(-1), { in: false });
+      await seat(booker, d(-2));
+      const hb = await hist('BOOK');
+      ok('next bookings: only seats still to come, soonest first, at most 5; a cancelled or past seat is never one',
+         hb.nextBookings.map(b => `${b.date} ${b.time}`).join() === [`${d(1)} 06:00`, `${d(1)} 08:00`, `${d(2)} 06:00`, `${d(3)} 06:00`, `${d(4)} 06:00`].join()
+         && hb.nextBookings.every(b => b.class === 'Membership Test' && b.cover === 'rezerv') && hb.nextBookingsMore === 3
+         && hb.membership.length === 0 && hm.nextBookings.length === 0 && hm.nextBookingsMore === 0, JSON.stringify([hb.nextBookings, hb.nextBookingsMore]));
+
+      const gone = await mk('GONE', 'Mem Gone');
+      await pass(gone, 'unlim1', { from: d(-40), until: d(-1) });
+      await pass(gone, 'unlim3', { status: 'void', from: d(-30), until: d(59) });
+      await pass(gone, 'pack8', { used: 8, from: d(-30), until: d(29) });
+      const hg = await hist('GONE');
+      ok('an ended, voided or used-up pass is not in membership but stays in passes', hg.membership.length === 0 && hg.passes.length === 3,
+         JSON.stringify([hg.membership, hg.passes.length]));
+
+      // Nobody checks in at home.
+      const [onSlot, onSoon, onNow] = await Promise.all([1, 2, 3].map(async n => (await one(
+        `INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity,is_online,active)
+         VALUES ($1,'[Online] Membership Test','test',1,'06:00',60,10,true,false) RETURNING id`, ['test_mb_online' + n])).id));
+      const home = await mk('HOME', 'Mem Online');
+      const ho = await pass(home, 'unlim1', { from: d(-3), until: d(26) });
+      await seat(home, d(-1), { pass: ho, slot: onSlot, in: false });
+      await seat(home, d(-2), { pass: ho, in: false });          // in the shala, no check-in: not came
+      await seat(home, d(1), { pass: ho, slot: onSlot, in: false });
+      await seat(home, d(1), { pass: ho });                      // checked in, but the day is still to come
+      // Starts in an hour; began half an hour ago and runs 60 minutes.
+      for (const [slot, ms] of [[onSoon, 3600000], [onNow, -1800000]]) {
+        const t = new Date(Date.now() + ms);
+        await pool.query(`INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,pass_id,status,cover,source)
+          VALUES ($1,$2,$3,$4,$5,'booked','pass','student')`, [slot, bkkMs(t.getTime()).slice(0, 10), t, home, ho]);
+      }
+      const hh = await hist('HOME');
+      ok('an online class booked and over counts as came on the pass; one not over yet, or a day still to come, does not',
+         of(hh, ho).cameDays === 1 && of(hh, ho).lastCame === d(-1) && hh.nextBookings.length === 4
+         && hh.nextBookings[0].class === '[Online] Membership Test' && hh.nextBookings.every(b => b.cover === 'pass'),
+         JSON.stringify([hh.membership, hh.nextBookings]));
+      ok('a day counted with no check-in (an online class) is told apart from the days checked in',
+         of(hh, ho).cameOnline === 1 && a.cameOnline === 0 && a.cameDays === 6, JSON.stringify([of(hh, ho), a]));
+
+      // The staff tag: 3 months, 14 days to go, nothing after it, 3 days came in the last 28.
+      const tagOf = async (key, name, code, o, days, after) => {
+        const m = await mk(key, name), id = await pass(m, code, o);
+        for (const k of days) await seat(m, d(k), { pass: id });
+        if (after) await pass(m, 'unlim1', { from: addD(o.until, 1), until: addD(o.until, 30) });
+        return of(await hist(key), id);
+      };
+      const long = { from: d(-75), until: d(14) }, few = [-3, -10, -17];
+      const low = await tagOf('END', 'Mem Ending', 'unlim3', long, [-3, -10, -27, -28]);
+      ok('the last 28 days are today and the 27 days before it', low.cameDays === 4 && low.cameLast28 === 3, JSON.stringify(low));
+      const seven = await tagOf('SEVEN', 'Mem Seven', 'unlim3', long, [-1, -2, -3, -4, -5, -6, -7]);
+      ok('"ends soon, came little": a membership over a month long, 14 days or less to go, nothing after it, under 8 days in the last 28',
+         low.endsSoonCameLittle === true && low.daysLeft === 15 && seven.endsSoonCameLittle === true && seven.cameLast28 === 7,
+         JSON.stringify([low, seven]));
+      const not = [
+        await tagOf('KEEN', 'Mem Keen', 'unlim3', long, [-1, -2, -3, -4, -5, -6, -7, -8]),
+        await tagOf('RENEW', 'Mem Renewed', 'unlim3', long, few, true),
+        await tagOf('FAR', 'Mem Far', 'unlim3', { from: d(-74), until: d(15) }, few),
+        await tagOf('ICE', 'Mem Iced', 'unlim3', { ...long, status: 'frozen', ffrom: d(-1), funtil: d(6) }, few),
+        await tagOf('PKEND', 'Mem Packend', 'pack8', { from: d(-50), until: d(9), used: 3 }, few),
+        hl,
+      ];
+      ok('...not with 8 days came, a pass that carries on, 15 days to go, a paused pass, a class pack or a 1-month pass',
+         not.every(p => p.endsSoonCameLittle === false) && not[0].cameLast28 === 8 && not[2].daysLeft === 16, JSON.stringify(not));
+      ok('"a week" is rounded to a half: 8 days in 76 is 0.5', not[0].perWeek === 0.5, JSON.stringify(not[0]));
+
+      // ── what a second look found (14 Nov) ──
+      // Staff fix a wrong pass by voiding it and giving the right one: the check-ins stay on the void pass.
+      const fixed = await mk('FIX', 'Mem Fixed');
+      const wrong = await pass(fixed, 'unlim3', { status: 'void', from: d(-70), until: d(19) });
+      const right = await pass(fixed, 'unlim3', { from: d(-80), until: d(9) });
+      for (const k of [-85, -60, -20, -9, -8, -7, -6, -5, -4, -3, -2]) await seat(fixed, d(k), { pass: wrong });
+      const hf = of(await hist('FIX'), right);
+      ok('a visit on a voided pass counts by its date on the pass given in its place', hf.cameDays === 10 && hf.cameLast28 === 9
+         && hf.lastCame === d(-2) && hf.endsSoonCameLittle === false, JSON.stringify(hf));
+
+      // The tag needs all of the last 28 days on the pass and not paused. A pause is [from, until).
+      const span = { from: d(-98), until: d(12) };
+      // Paused twice: the first pause is only in the note, and the second began and ended today.
+      const twiceM = await mk('TP5', 'Mem Pausedtwice'), twiceP = await pass(twiceM, 'unlim3', { ...span, ffrom: d(0), funtil: d(0) });
+      await pool.query(`UPDATE bkk_passes SET note='frozen 20d: test | frozen 6d: test' WHERE id=$1`, [twiceP]);
+      for (const k of few) await seat(twiceM, d(k), { pass: twiceP });
+      const tags = [
+        await tagOf('TP1', 'Mem Pausedlately', 'unlim3', { ...span, ffrom: d(-24), funtil: d(-3) }, [-1, -2, -3, -40, -50]),
+        await tagOf('TP2', 'Mem Pausededge', 'unlim3', { ...span, ffrom: d(-60), funtil: d(-26) }, few),
+        await tagOf('TP3', 'Mem Shortdates', 'unlim3', { from: d(-26), until: d(9) }, few),
+        await tagOf('TP4', 'Mem Nostart', 'unlim3', { until: d(9) }, []),
+        of(await hist('TP5'), twiceP),
+        await tagOf('TP6', 'Mem Pausedbefore', 'unlim3', { ...span, ffrom: d(-60), funtil: d(-27) }, few),
+        await tagOf('TP7', 'Mem Fourweeks', 'unlim3', { from: d(-27), until: d(9) }, few),
+        await tagOf('TP8', 'Mem Pausedaday', 'unlim3', { ...span, ffrom: d(0), funtil: d(0) }, few),
+      ];
+      ok('no "came little" when the last 28 days were not all on the pass: paused in them, begun in them, or no start day on file',
+         tags.slice(0, 5).every(p => p.endsSoonCameLittle === false) && tags[0].cameLast28 === 3 && tags[0].perWeek === 0.5
+         && tags[3].state === 'active' && tags[3].started === false && tags[4].perWeek === null, JSON.stringify(tags.slice(0, 5)));
+      ok('...and it stays when the pause ended before those 28 days, the pass is 28 days old, or a pause began and ended the same day',
+         tags.slice(5).every(p => p.endsSoonCameLittle === true), JSON.stringify(tags.slice(5)));
+
+      // Only the latest pause keeps its dates.
+      const again = await mk('AGAIN', 'Mem Twicepaused');
+      const ag = await pass(again, 'unlim3', { from: d(-27), until: d(62) });
+      for (const k of [-26, -24, -22, -20, -5, -3, -2, -1]) await seat(again, d(k), { pass: ag });
+      const pw = async () => of(await hist('AGAIN'), ag).perWeek;
+      const pwSteps = [await pw()];
+      for (const step of ['freeze', 'unfreeze', 'freeze', 'unfreeze']) {
+        await post(`/api/bkk/admin/passes/${ag}/${step}`, { days: 6, reason: 'test' }, ADMIN);
+        pwSteps.push(await pw());
+      }
+      const noDates = await mk('NODATES', 'Mem Nopausedates');
+      const nd = await pass(noDates, 'unlim3', { status: 'frozen', from: d(-55), until: d(60) });
+      for (const k of [-55, -53, -51, -49]) await seat(noDates, d(k));
+      const hn = of(await hist('NODATES'), nd);
+      ok('no weekly number when the paused days cannot be counted: paused a second time, or paused with no dates on file',
+         pwSteps.join() === '2,2,2,,' && hn.perWeek === null && hn.cameDays === 4 && hn.state === 'frozen', JSON.stringify([pwSteps, hn]));
+      // A pause that came over from Rezerv is on file until the pass is paused here.
+      const moved = await mk('MOVED', 'Mem Movedpause');
+      const mv = await pass(moved, 'unlim3', { from: d(-27), until: d(62), ffrom: d(-20), funtil: d(-6) });
+      await pool.query(`UPDATE bkk_passes SET note=$2 WHERE id=$1`, [mv, `moved from Rezerv | paused in Rezerv ${d(-20)} to ${d(-6)}`]);
+      for (const k of [-26, -24, -4, -1]) await seat(moved, d(k), { pass: mv });
+      const mvSteps = [of(await hist('MOVED'), mv).perWeek];
+      await post(`/api/bkk/admin/passes/${mv}/freeze`, { days: 3, reason: 'test' }, ADMIN);
+      mvSteps.push(of(await hist('MOVED'), mv).perWeek);
+      ok('...a pause moved from Rezerv counts as the first one', mvSteps.join() === '2,', JSON.stringify(mvSteps));
+
+      // A new pass starts on the day of the first class booked; an earlier class booked after that is still on it.
+      const early = await mk('EARLY', 'Mem Early');
+      const ep = await pass(early, 'pack8', { used: 2, from: d(-1), until: d(59) });
+      await seat(early, d(-2), { pass: ep });
+      await seat(early, d(-1), { pass: ep });
+      await seat(early, d(-3));
+      const he = await hist('EARLY');
+      ok('a class paid with this pass before its start day is counted on it; one with no pass on it is not',
+         of(he, ep).cameDays === 2 && of(he, ep).lastCame === d(-1) && he.summary.visits === 3, JSON.stringify(of(he, ep)));
+
+      const r36 = await tagOf('R36', 'Mem Round36', 'unlim3', { from: d(-35), until: d(54) }, [0, -4, -8, -12, -16, -20, -24, -28, -32]);
+      const r24 = await tagOf('R24', 'Mem Round24', 'unlim3', { from: d(-23), until: d(66) }, [0, -4, -8, -12, -16, -20]);
+      ok('the same rate rounds the same way: 9 days in 36 and 6 days in 24 are both 2 a week', r36.perWeek === 2 && r24.perWeek === 2
+         && r36.cameDays === 9 && r24.cameDays === 6, JSON.stringify([r36, r24]));
+
+      // A class is taken from a pack when it is booked.
+      const pre = await mk('PRE', 'Mem Prebooked');
+      const pp = await pass(pre, 'pack8', { used: 5, from: d(-5), until: d(55) });
+      await seat(pre, d(-5), { pass: pp });
+      await seat(pre, d(-3), { pass: pp, in: false });           // never came: the class is used all the same
+      await seat(pre, d(1), { pass: pp, in: false });
+      await seat(pre, d(2), { pass: pp, in: false });
+      await seat(pre, d(3), { pass: pp, status: 'cancelled' });
+      await seat(pre, d(4), { in: false });                      // a Rezerv seat: not from this pack
+      await seat(pre, d(5), { pass: pp });                       // checked in already: used
+      const hpre = of(await hist('PRE'), pp);
+      ok('a class pack tells seats still to come (booked) from classes that are over (used)', hpre.creditsUsed === 5 && hpre.creditsBooked === 2
+         && hpre.creditsDone === 3 && hpre.creditsLeft === 3 && of(hp, pk).creditsBooked === 0 && of(hp, pk).creditsDone === 3
+         && a.creditsBooked === null && a.creditsDone === null, JSON.stringify(hpre));
+
+      const notYet = await mk('NOTST', 'Mem Notstarted');
+      const ny = await pass(notYet, 'unlim1', { status: 'frozen', from: d(7), until: d(41), ffrom: d(0), funtil: d(5) });
+      const hny = of(await hist('NOTST'), ny);
+      ok('started says if the start day has come, whatever the state: a pass paused before it starts has not started',
+         hny.state === 'frozen' && hny.started === false && hny.cameDays === 0 && hny.perWeek === null
+         && a.started === true && fz.started === true && nx.started === false && fc.started === false && hl.started === true, JSON.stringify(hny));
+
+      // A booking does not stop being one at the minute its class starts. Each seat has its own slot, so its time is always on file.
+      const [sNow, sShort, sIn, sSoon] = await Promise.all([['now', 120], ['short', 30], ['in', 120], ['soon', 120]].map(async ([k, min]) => (await one(
+        `INSERT INTO bkk_class_slots (code,title,kind,weekday,start_time,duration_min,capacity,is_online,active)
+         VALUES ($1,$2,'test',1,'06:00',$3,10,false,false) RETURNING id`, ['test_mb_' + k, 'Membership Test ' + k, min])).id));
+      const late = await mk('LATE', 'Mem Late');
+      const lateSeat = (slot, mins, checkedIn) => { const t = new Date(Date.now() + mins * 60000);
+        return pool.query(`INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,status,checked_in_at,cover,source)
+          VALUES ($1,$2,$3,$4,'booked',$5,'rezerv','staff')`, [slot, bkkMs(t.getTime()).slice(0, 10), t, late, checkedIn ? t : null]); };
+      await lateSeat(sNow, -40);            // began 40 minutes ago, runs 120: on now, not in yet
+      await lateSeat(sShort, -40);          // began 40 minutes ago, ran 30: over
+      await lateSeat(sIn, -10, true);       // on now, and they are in
+      await lateSeat(sSoon, 30);
+      const hla = await hist('LATE');
+      ok('next bookings: a class that is on now while they are not in yet is still one, first and marked; one that is over, or that they are in, is not',
+         hla.nextBookings.map(b => `${b.class}:${b.onNow}`).join() === 'Membership Test now:true,Membership Test soon:false'
+         && hla.nextBookingsMore === 0 && hla.visits.filter(v => v.upcoming).length === 1, JSON.stringify(hla.nextBookings));
+      // Rezerv gives some classes no time: they are stored at 00:00 with no slot.
+      const noTime = await mk('NOTIME', 'Mem Notime');
+      const rz = (day, checkedIn) => pool.query(`INSERT INTO bkk_bookings (slot_id,class_date,start_at,member_id,status,checked_in_at,cover,source,class_title)
+        VALUES (NULL,$1,$2,$3,'booked',$4,'rezerv','rezerv',$5)`, [day, at(day, '00:00'), noTime, checkedIn ? at(day, '00:00') : null, 'No Time ' + day]);
+      await rz(d(-1)); await rz(d(0)); await rz(d(1));
+      const hnt = await hist('NOTIME');
+      ok('next bookings: a Rezerv seat today with no time on file is one for the whole day, with no time; yesterday\'s is not',
+         hnt.nextBookings.map(b => `${b.date} ${b.time} ${b.onNow}`).join() === [`${d(0)} null false`, `${d(1)} null false`].join(), JSON.stringify(hnt.nextBookings));
+      await pool.query(`UPDATE bkk_bookings SET checked_in_at = start_at WHERE member_id=$1 AND class_date=$2`, [noTime, d(0)]);
+      ok('...and once they are checked in it is a visit, not a booking', (await hist('NOTIME')).nextBookings.map(b => b.date).join() === d(1));
+
+      await pool.query(`DELETE FROM bkk_bookings WHERE member_id IN (SELECT id FROM bkk_members WHERE code LIKE 'BTESTMB%')`);
+      await pool.query(`DELETE FROM bkk_passes WHERE member_id IN (SELECT id FROM bkk_members WHERE code LIKE 'BTESTMB%')`);
+      await pool.query(`DELETE FROM bkk_members WHERE code LIKE 'BTESTMB%'`);
+      await pool.query(`DELETE FROM bkk_class_slots WHERE code LIKE 'test_mb_%'`);
+    }
+
     // ── what a second look at the import found (28 Oct) ──
     console.log('\n— keep all history: import edge cases —');
     ok('every skip reason and note carries a code and its values, so the Thai admin page can say it',

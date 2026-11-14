@@ -198,7 +198,7 @@
   details.tries{margin-top:14px;border-top:1px solid var(--line)}
   details.tries>summary{cursor:pointer;padding:12px 0 10px;font-weight:700}
   details.tries>summary .muted{display:block;font-weight:400}
-  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn,#chkAll,.tdh .btn{min-height:44px}}
+  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn,#chkAll,.tdh .btn,.btn.back{min-height:44px}}
   /* Today: each class opens, so "+ Add student" is one tap away (Nov 2026). */
   .tdh{display:flex;align-items:flex-start;gap:10px}
   .tdh>div{flex:1;min-width:0}
@@ -214,6 +214,18 @@
   .now .np{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px;padding:3px 0}
   .now .np b{font-size:16px;overflow-wrap:anywhere}
   .now .np span:not(.pill){font-size:14px}
+  /* The dot sits in the gap before its part, so at the start of a line it is cut off: no line starts or ends
+     with one. The line runs 8px into the box's padding, so the gap after its last part costs no room. */
+  .now .np .l{flex-basis:calc(100% + 8px);margin-right:-8px;overflow-x:clip;overflow-wrap:anywhere}
+  .now .np .l span{display:inline-block;margin-right:8px}
+  .now .np .l i{display:inline-block;width:0;position:relative;left:-8px;white-space:pre;font-style:normal}
+  .now .np .nt{font-family:'Work Sans','Plex',sans-serif;font-weight:800}
+  .now h3~h3{margin-top:10px}
+  /* Two columns: when, then the class, so the class names line up and a long one wraps under itself. Under 340 px the class goes under its day. */
+  .now .nbs{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;padding:2px 0;font-size:14px}
+  .now .nbs>span{overflow-wrap:anywhere}
+  .now .nbs>span:nth-child(odd){font-weight:700;white-space:nowrap}
+  @media (max-width:340px){.now .nbs{grid-template-columns:minmax(0,1fr);row-gap:0}.now .nbs>span:nth-child(even){margin-bottom:6px}}
   .now .no{margin:3px 0 0;color:#a33;font-weight:700}
   .now .no+.muted{margin:2px 0 0}
   /* On a phone each payment is a card, so the buttons are on screen, not off to the side. */
@@ -799,6 +811,14 @@
     nowNoneHint: "If they still have a Rezerv package, add them to a class with 'Rezerv package'.",
     nowDays: n => n === 1 ? 'last day today' : `${n} days left`,
     nowFrozen: d => d ? `Frozen until ${d}` : 'Frozen', nowStarts: d => `Starts ${d}`,
+    nowStarted: d => `Started ${d}`, nowFirst: 'Starts on the first class',
+    nowUsed: (a, b) => `Used ${a} of ${b} classes`, nowBooked: n => `${n} booked`,
+    nowCame: n => n === 1 ? 'Came 1 day on this pass' : `Came ${n} days on this pass`,
+    nowCame0: 'Has not come on this pass yet', nowCame28: n => `last 28 days: ${n}`,
+    nowOnline: n => `${n} online, no check-in`,
+    nowWeek: n => `about ${n} a week`, nowLast: d => `last came ${d}`,
+    nowEndsLow: 'Ends soon, came little', nowNextH: 'Next bookings', nowNoBook: 'No booking on file', nowOn: 'on now',
+    nowMoreBook: n => `and ${n} more in Visits below`,
     hereOver: 'Class is over: added as came.', addGoCame: 'Add as came',
     hNoPassOn: (n, d) => `${n} has no aybkk.net pass for ${d}. Choose Rezerv package or Drop-in.`,
     hitPassFrom: d => `aybkk.net pass starts ${d}`,
@@ -809,6 +829,14 @@
     nowNoneHint: 'ถ้ายังมีแพ็กเกจ Rezerv อยู่ ให้เพิ่มเข้าคลาสด้วย "แพ็กเกจ Rezerv"',
     nowDays: n => n === 1 ? 'วันนี้วันสุดท้าย' : `เหลือ ${n} วัน`,
     nowFrozen: d => d ? `พักถึง ${d}` : 'พักอยู่', nowStarts: d => `เริ่ม ${d}`,
+    nowStarted: d => `เริ่ม ${d}`, nowFirst: 'เริ่มนับจากคลาสแรก',
+    nowUsed: (a, b) => `ใช้ไป ${a} จาก ${b} ครั้ง`, nowBooked: n => `จองไว้ ${n} ครั้ง`,
+    nowCame: n => `มาเรียน ${n} วันด้วยแพ็กเกจนี้`,
+    nowCame0: 'ยังไม่ได้มาเรียนด้วยแพ็กเกจนี้', nowCame28: n => `28 วันล่าสุด: ${n}`,
+    nowOnline: n => `ออนไลน์ ${n} วัน ไม่มีเช็คอิน`,
+    nowWeek: n => `ประมาณ ${n} วันต่อสัปดาห์`, nowLast: d => `มาครั้งล่าสุด ${d}`,
+    nowEndsLow: 'ใกล้หมดอายุ มาเรียนน้อย', nowNextH: 'คลาสที่จองไว้', nowNoBook: 'ไม่มีการจองในระบบ', nowOn: 'คลาสเริ่มแล้ว',
+    nowMoreBook: n => `และอีก ${n} คลาส ดูในตารางการเข้าเรียนด้านล่าง`,
     hereOver: 'คลาสจบแล้ว: บันทึกว่ามาเรียน', addGoCame: 'เพิ่มว่ามาเรียน',
     hNoPassOn: (n, d) => `${n} ไม่มีแพ็กเกจ aybkk.net ที่ใช้ได้วันที่ ${d} เลือกแพ็กเกจ Rezerv หรือ Drop-in`,
     hitPassFrom: d => `แพ็กเกจ aybkk.net เริ่ม ${d}`,
@@ -1857,11 +1885,11 @@
   // ── shared by history, reports and the import ─────────────────────────────
   const baht = n => (n < 0 ? '-' : '') + '฿' + Math.abs(Number(n) || 0).toLocaleString('en-US');
   const bkkYmd = (ms = Date.now()) => new Date(ms + 7 * 3600e3).toISOString().slice(0, 10);
-  const ymdLong = (ymd, weekday) => {
+  const ymdLong = (ymd, weekday, noYear) => {
     if (!ymd) return '';
     try {
       return new Date(ymd + 'T12:00:00+07:00').toLocaleDateString(locale(), { timeZone: 'Asia/Bangkok',
-        ...(weekday ? { weekday: 'short' } : {}), day: 'numeric', month: 'short', year: 'numeric' });
+        ...(weekday ? { weekday: 'short' } : {}), day: 'numeric', month: 'short', ...(noYear ? {} : { year: 'numeric' }) });
     } catch { return ymd; }
   };
   const tile = (label, val, sub) =>
@@ -1898,7 +1926,7 @@
   // ── one student, all of it ────────────────────────────────────────────────
   let HIST = null, HIST_FROM = null, HIST_SEQ = 0, HIST_ALL = {};
   const HIST_ROWS = 60;
-  const backBtn = () => `<button class="btn gray sm" onclick="histBack()">${T('back')}</button>`;
+  const backBtn = () => `<button class="btn gray sm back" onclick="histBack()">${T('back')}</button>`;
   // from: the id of the button that opened it, so Back lands on the same row (Payments).
   window.showHistory = async (code, from) => {
     const seq = ++HIST_SEQ;
@@ -1931,28 +1959,39 @@
   window.histCsv = what => { if (HIST) csvDownload(what, { member: HIST.member.code }); };
 
   // What they can use today, first thing on the profile (Nov 2026): each pass
-  // valid today (active, started, not ended, a class left), then one paused,
-  // then one that starts later. No pass valid today says so in red.
-  function nowBox(passes) {
-    const today = bkkYmd();
+  // valid today, then one paused, then one that starts later, as the server
+  // lists them (h.membership), each with its dates and how they came on it;
+  // then the classes they have booked. No pass valid today says so in red.
+  function nowBox(h) {
     const name = p => esc((LANG === 'th' && (p.nameTh || TH_BY_EN[p.name])) || p.name || '–');
-    const daysLeft = d => Math.round((Date.parse(d) - Date.parse(today)) / 864e5) + 1;
-    const lines = [];
-    for (const p of passes) {
-      if ((p.validUntil && p.validUntil < today) || (p.kind !== 'unlimited' && !(p.creditsLeft > 0))) continue;
-      if (p.status === 'active' && !(p.validFrom > today)) lines.push([0, p.validUntil || '9', `<div class="np"><b>${name(p)}</b><span>${esc([
-        p.kind !== 'unlimited' ? T('tLeftN', p.creditsLeft) : '',
-        p.validUntil ? T('tUntil', ymdLong(p.validUntil)) : p.validFrom ? '' : T('tStartsFirst'),
-        p.validUntil ? T('nowDays', daysLeft(p.validUntil)) : ''].filter(Boolean).join(' · '))}</span></div>`]);
-      else if (p.status === 'frozen') lines.push([1, p.frozenUntil || '9', `<div class="np"><b>${name(p)}</b><span class="pill frozen">${esc(
-        T('nowFrozen', p.frozenUntil ? ymdLong(p.frozenUntil) : ''))}</span></div>`]);
-      else if (p.status === 'active') lines.push([2, p.validFrom, `<div class="np"><b>${name(p)}</b><span class="pill upcoming">${esc(
-        T('nowStarts', ymdLong(p.validFrom)))}</span></div>`]);
-    }
-    lines.sort((a, b) => a[0] - b[0] || a[1].localeCompare(b[1]));
-    const none = !lines.some(x => x[0] === 0);
-    return `<div class="now${none ? ' none' : ''}"><h3>${esc(T('nowH'))}</h3>${lines.map(x => x[2]).join('')}
-      ${none ? `<p class="no">${esc(T('nowNone'))}</p><p class="muted">${esc(T('nowNoneHint'))}</p>` : ''}</div>`;
+    // A day in the last 300 needs no year: "last came Fri 13 Nov" can only be the one just gone.
+    const recent = bkkYmd(Date.now() - 300 * 864e5);
+    // Each part stays whole, so a phone breaks the line between parts, not inside one.
+    const line = (parts, c = '') => { const p = parts.filter(Boolean);
+      return p.length ? `<span class="l${c}">${p.map((x, i) => `<span>${i ? '<i>· </i>' : ''}${esc(x)}</span>`).join(' ')}</span>` : ''; };
+    const pass = p => `<div class="np"><b>${name(p)}</b>${
+      p.state === 'frozen' ? `<span class="pill frozen">${esc(T('nowFrozen', p.frozenUntil ? ymdLong(p.frozenUntil) : ''))}</span>`
+      : p.state === 'starts' ? `<span class="pill upcoming">${esc(T('nowStarts', ymdLong(p.validFrom)))}</span>` : ''}${
+      line(p.state === 'firstClass' ? [T('nowFirst')] : [
+        p.state !== 'starts' && p.validFrom ? T(p.started ? 'nowStarted' : 'nowStarts', ymdLong(p.validFrom)) : '',
+        p.validUntil ? T('tUntil', ymdLong(p.validUntil)) : '',
+        p.state === 'active' && p.daysLeft != null ? T('nowDays', p.daysLeft) : ''])}${
+      p.kind !== 'unlimited' ? line([T('nowUsed', p.creditsDone, p.creditsTotal),
+        p.creditsBooked ? T('nowBooked', p.creditsBooked) : '', T('tLeftN', p.creditsLeft)]) : ''}${
+      !p.started ? '' : !p.cameDays ? line([T('nowCame0')]) : line([T('nowCame', p.cameDays),
+        p.cameOnline ? T('nowOnline', p.cameOnline) : '', p.perWeek ? T('nowWeek', p.perWeek) : '',
+        T('nowCame28', p.cameLast28), T('nowLast', ymdLong(p.lastCame, true, p.lastCame > recent))])}${
+      p.endsSoonCameLittle ? line([T('nowEndsLow')], ' nt') : ''}</div>`;
+    const list = h.membership || [], next = h.nextBookings || [];
+    const none = !list.some(p => p.state === 'active' || p.state === 'firstClass');
+    // The coming days need no year, so when and class fit side by side on a phone.
+    const row = v => `<span>${esc([ymdLong(v.date, true, true), v.time].filter(Boolean).join(' · '))}</span><span>${esc(cls(v.class || ''))}${
+      v.onNow ? ` <span class="pill upcoming">${esc(T('nowOn'))}</span>` : ''}${v.cover === 'rezerv' ? ' <span class="muted">Rezerv</span>' : ''}</span>`;
+    return `<div class="now${none ? ' none' : ''}"><h3>${esc(T('nowH'))}</h3>${list.map(pass).join('')}
+      ${none ? `<p class="no">${esc(T('nowNone'))}</p><p class="muted">${esc(T('nowNoneHint'))}</p>` : ''}
+      <h3>${esc(T('nowNextH'))}</h3>${next.length ? `<div class="nbs">${next.map(row).join('')}</div>`
+        : `<p class="muted">${esc(T('nowNoBook'))}</p>`}
+      ${h.nextBookingsMore ? `<p class="muted">${esc(T('nowMoreBook', h.nextBookingsMore))}</p>` : ''}</div>`;
   }
 
   function paintHistory() {
@@ -1965,7 +2004,7 @@
     const head = `<div class="box hhead">${backBtn()}
       <h2>${esc(m.name)}</h2>
       <div class="muted">${[m.code, m.email, m.phone].filter(Boolean).map(esc).join(' · ')}</div>
-      ${nowBox(h.passes)}
+      ${nowBox(h)}
       <div class="muted">${about.filter(Boolean).map(esc).join(' · ')}</div>
       <div class="tiles">
         ${tile(T('tCame'), s.visits.toLocaleString(), s.firstVisit ? T('tFirst', ymdLong(s.firstVisit)) : '')}
