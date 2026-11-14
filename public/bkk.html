@@ -339,6 +339,10 @@
   .teacher .name{font:700 var(--fs-l)/1.3 var(--f-text)}
   .teacher .auth{margin:4px 0 14px;font-weight:600;color:var(--plum)}
   .teacher p{margin:0 0 14px}
+  /* What Facebook shows for the page (read 12 Nov 2026; its newest review is from 2019): a long record, said quietly. */
+  .teacher .tfb{margin:28px 0 0;padding-top:14px;border-top:2px solid var(--line);font-size:var(--fs-s);line-height:20px;color:var(--soft)}
+  .teacher .tfb a{display:inline-block;padding-block:12px;margin-block:-12px;color:inherit}
+  .teacher .tfb a:hover{color:var(--pink-deep)}
   @media (min-width:1100px){
     .teacher figure{display:contents}
     .teacher .tpic{grid-column:c 1/c-end}
@@ -766,6 +770,16 @@
   .face progress{display:block;width:100%;height:8px;accent-color:var(--promo-deep)}
   .face .fx > .note{margin:8px 0 0}
   @media (min-width:700px){ .face .fx{grid-column:2} .face .fx .btn{width:auto} }
+  /* The Google review ask, and the small review link at the foot of My account. */
+  .rev p{margin:0;text-wrap:pretty}
+  .rev .ra{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;margin-top:14px}
+  .rev .ra .btn{width:100%}
+  .rev .rthx{font-weight:600}
+  .rev .rthx:focus{outline:none}
+  .revlink{margin:var(--grp) 0 0;font-size:var(--fs-s);line-height:20px}
+  .revlink a{display:inline-flex;align-items:center;min-height:44px;font-weight:600}
+  :lang(th) .revlink a,:lang(th) .rev .rthx{font-weight:500;font-synthesis:none}
+  @media (min-width:700px){ .rev .ra .btn{width:auto} }
 
   .pkg{background:var(--paper);padding:22px;margin-bottom:14px}
   .pkg h3{margin:0 0 4px;font:700 var(--fs-l)/1.3 var(--f-text);color:var(--ink)}
@@ -1083,6 +1097,7 @@
         </div>
       </div>
       <p class="rm" hidden><button type="button" class="readmore" aria-expanded="true" aria-controls="tPic bioBm bioJm">Read more</button></p>
+      <p class="tfb" id="tFb"><a href="https://www.facebook.com/ashtangabkk/reviews" target="_blank" rel="noopener"><span data-i18n="fbRev">On Facebook: 96% recommend (441&nbsp;reviews)</span></a></p>
     </div>
   </section>
 
@@ -1213,6 +1228,8 @@
   const TEES_MQ = matchMedia('(min-width:700px)'), teesFirst = () => TEES_MQ.matches ? 4 : 2;
   // cn.aybkk.net serves this page too: China has its own tee shop in RMB, and LINE is blocked there.
   const CN_HOST = /^cn\./.test(location.hostname);
+  // Facebook does not open in China either: there the Facebook line keeps its words, without the link.
+  if (CN_HOST) { const a = $('#tFb a'); a.parentNode.replaceChild(a.firstChild, a); }
   const list = v => (Array.isArray(v) ? v : String(v ?? '').split(/[,\s/]+/)).map(x => String(x).trim()).filter(Boolean);
   const THEME = { checked: null, now: null, month: null, data: null, files: {} };
 
@@ -1634,6 +1651,13 @@
     jbio3: 'She runs AYBKK and teaches led, Mysore and private classes. She also organised Sharath Jois’s workshop in Bangkok. Her teaching puts breath, clear alignment and an active vinyasa first.',
     jbio4: 'She kept practising through both of her pregnancies, into the Advanced series, and still practises and teaches as a mother.',
   });
+  // Reviews (Boonchu, 12 Nov 2026): the Facebook line in #teacher, and the Google review ask in My account.
+  Object.assign(STR.en, {
+    fbRev: 'On Facebook: 96% recommend (441\u00a0reviews)',
+    revW12H: 'Your 12 weeks are done.', revRenewH: 'Thank you for staying.',
+    revBody: 'Would you write a few honest words on Google? It helps the next person in Bangkok find a teacher who notices.',
+    revBtn: 'Write a Google review', revLater: 'Not now', revThanks: 'Thank you. We read every review, good or bad.',
+  });
   Object.assign(STR.th, {
     addEmailH: 'เพิ่มอีเมลของคุณ', addEmailWhy: 'เพื่อเปิดโปรไฟล์ได้อีกครั้งบนมือถือเครื่องอื่น เราส่งลิงก์ใช้ครั้งเดียวทางอีเมล ไม่ต้องมีรหัสผ่าน', addEmailBtn: 'บันทึกอีเมล', addEmailDone: 'บันทึกแล้ว ครั้งหน้าเข้าด้วยอีเมลนี้',
     checkH: 'เช็กผล 12 สัปดาห์ของฉัน · นิสัยที่ 1', chkWhy: 'ตัวเลข 3 ค่าจากนาฬิกาหรือมือถือ สัปดาห์ที่ 0, 6 และ 12 หลักฐานจริง ไม่ใช่คำสัญญา', chkStartH: 'สัปดาห์ที่ 0: จุดเริ่มต้นของคุณ', chkDueH: 'ถึงเวลาเช็กครั้งต่อไปแล้ว', chkHrL: 'ชีพจรขณะพัก (ครั้งต่อนาที)', chkSleepL: 'นอนเฉลี่ยสัปดาห์ที่แล้ว (ชั่วโมง)', chkFeelL: 'รู้สึกอย่างไร (1 = เหนื่อย, 5 = ดีมาก)', chkNoteL: 'หนึ่งบรรทัด (ไม่บังคับ)', chkSave: 'บันทึกผล', chkWeek: 'สัปดาห์', chkHr: 'ชีพจร', chkSleep: 'นอน', chkFeel: 'ความรู้สึก', chkChange: (hr, sl) => `ตั้งแต่สัปดาห์ที่ 0: ชีพจร ${hr} การนอน ${sl}`, chkNext: d => `เช็กครั้งต่อไป: ${d}`, chkAll: 'ครบ 3 ครั้งแล้ว ดูสิว่าคุณมาไกลแค่ไหน',
@@ -1645,6 +1669,12 @@
     jbio2: 'การฝึกทำให้เธอกลับมาแข็งแรง เธอจึงลาออกจากงานไปเรียนกับ Sharath Jois ที่มายซอร์ และได้รับ Authorization Level 2 จากท่านในฤดูกาล 2018 ถึง 2019',
     jbio3: 'เธอดูแล AYBKK และสอนทั้งคลาส Led มายซอร์ และคลาสส่วนตัว เธอเป็นผู้จัดเวิร์กช็อปของ Sharath Jois ที่กรุงเทพฯ การสอนของเธอเน้นลมหายใจ การจัดท่าที่ชัดเจน และวินยาสะที่กระฉับกระเฉง',
     jbio4: 'เธอฝึกต่อเนื่องตลอดการตั้งครรภ์ทั้งสองครั้ง จนถึงซีรีส์ Advanced และยังฝึกและสอนอยู่ในฐานะคุณแม่',
+  });
+  Object.assign(STR.th, {
+    fbRev: 'บน Facebook: 96% แนะนำ (441\u00a0รีวิว)',
+    revW12H: 'คุณฝึกครบ 12 สัปดาห์แล้ว', revRenewH: 'ขอบคุณที่ฝึกกับเราต่อ',
+    revBody: 'ช่วยเขียนรีวิวสั้น ๆ ใน Google ตามที่รู้สึกจริงได้ไหม รีวิวของคุณช่วยให้คนที่กำลังหาที่ฝึกในกรุงเทพฯ ได้เจอครูที่คอยสังเกตเห็นเขา',
+    revBtn: 'เขียนรีวิวใน Google', revLater: 'ไว้ทีหลัง', revThanks: 'ขอบคุณ เราอ่านทุกรีวิว ไม่ว่าจะชมหรือติ',
   });
   Object.assign(STR.zh, {
     addEmailH: '添加你的邮箱', addEmailWhy: '这样你可以在另一部手机上再次打开个人主页。我们会发一次性链接到邮箱，不需要密码。', addEmailBtn: '保存邮箱', addEmailDone: '已保存。下次用这个邮箱登录。',
@@ -1658,6 +1688,12 @@
     jbio3: '她负责经营 AYBKK，教授引导课、迈索尔课和私教课。她也组织了 Sharath Jois 在曼谷的工作坊。她的教学重视呼吸、清晰的体位对齐和有力的串联（vinyasa）。',
     jbio4: '两次怀孕期间她都坚持练习，一直练到高级序列。现在作为妈妈，她依然练习和教学。',
   });
+  Object.assign(STR.zh, {
+    fbRev: 'Facebook 上：96% 推荐（441\u00a0条评价）',
+    revW12H: '你已经完成了12周。', revRenewH: '谢谢你继续来练习。',
+    revBody: '愿意在 Google 上写几句真实的感受吗？这能帮助下一位在曼谷找老师的人，找到一位会留意学生的老师。',
+    revBtn: '在 Google 上写评价', revLater: '以后再说', revThanks: '谢谢你。每一条评价我们都会读，无论好坏。',
+  });
   Object.assign(STR.ru, {
     addEmailH: 'Добавьте email', addEmailWhy: 'Чтобы открыть профиль на другом телефоне. Мы пришлём одноразовую ссылку, без пароля.', addEmailBtn: 'Сохранить email', addEmailDone: 'Сохранено. В следующий раз входите с этим email.',
     checkH: 'Моя 12-недельная проверка · Привычка №1', chkWhy: 'Три числа с часов или телефона, на 0, 6 и 12 неделе. Доказательства, а не обещания.', chkStartH: 'Неделя 0: ваша отправная точка', chkDueH: 'Пора следующей проверки', chkHrL: 'Пульс в покое (уд/мин)', chkSleepL: 'Средний сон за неделю (часы)', chkFeelL: 'Как вы себя чувствуете? (1 = устал, 5 = отлично)', chkNoteL: 'Одна строка (по желанию)', chkSave: 'Сохранить', chkWeek: 'Неделя', chkHr: 'Пульс', chkSleep: 'Сон', chkFeel: 'Самочувствие', chkChange: (hr, sl) => `С недели 0: пульс ${hr}, сон ${sl}`, chkNext: d => `Следующая проверка: ${d}`, chkAll: 'Все 3 проверки готовы. Посмотрите, какой путь вы прошли.',
@@ -1669,6 +1705,12 @@
     jbio2: 'Практика вернула ей силы, и она ушла с работы, чтобы учиться у Шарата Джойса в Майсуре. В сезоне 2018–2019 она получила от него авторизацию Level 2.',
     jbio3: 'Она руководит AYBKK и ведёт ведомые, майсор- и индивидуальные занятия. Она также организовала семинар Шарата Джойса в Бангкоке. В её преподавании главное: дыхание, точное выравнивание и активная виньяса.',
     jbio4: 'Она продолжала практиковать во время обеих беременностей, вплоть до продвинутых серий, и сейчас практикует и преподаёт, будучи мамой.',
+  });
+  Object.assign(STR.ru, {
+    fbRev: 'На Facebook: 96% рекомендуют (441\u00a0отзыв)',
+    revW12H: 'Вы прошли все 12 недель.', revRenewH: 'Спасибо, что остаётесь с нами.',
+    revBody: 'Не напишете пару честных слов в Google? Это поможет тем, кто ищет практику в Бангкоке, найти внимательного учителя.',
+    revBtn: 'Написать отзыв в Google', revLater: 'Не сейчас', revThanks: 'Спасибо. Мы читаем каждый отзыв, хороший или плохой.',
   });
 
   // A drop-in is bought for one class, and paying books it (28 Oct 2026).
@@ -2741,6 +2783,7 @@
     const seq = ++ME_SEQ;
     const code = myCode();
     if (!code) {
+      REV.code = '';
       $('#view').innerHTML = `${gone ? `<p class="msg bad">${esc(t('meGone'))}</p>` : ''}<p class="note">${esc(t('meNone'))}</p>
         <div class="pkg">
           <h3>${esc(t('meHave'))}</h3>
@@ -2764,6 +2807,8 @@
       if (res.status === 404 && d.error === 'not found') { forgetMe(); return renderMe(true); }
       if (d.error) throw new Error(d.error);
       setMine(code, d);
+      if (REV.code !== code) REV = { code, renewals: 0, w12: null, thanks: false };
+      REV.renewals = Math.max(0, Math.floor(Number(d.renewals)) || 0);
       const passes = (d.passes || []).map(p => `<div class="pkg">
         <h3>${esc((LANG === 'th' && p.nameTh) || p.name)}</h3>
         <div class="note">${esc(p.kind === 'unlimited'
@@ -2800,6 +2845,7 @@
         · <button type="button" class="signout" style="min-height:0;padding:0" onclick="signOutMe()">${esc(t('notYou', d.member.name))}</button></p>
         <div id="faceBox"></div>
         ${habit}
+        ${CN_HOST ? '' : '<div id="revBox"></div>'}
         ${askEmail}
         ${(d.notes || []).length ? `<div class="day">${esc(t('fromTeachers'))}</div>${d.notes.map(n => `<div class="pkg">
           <div class="note">${esc(fmtDay(String(n.class_date || n.created_at).slice(0, 10) + 'T12:00:00+07:00'))}${n.teacher ? ' · ' + esc(n.teacher) : ''}</div>
@@ -2809,8 +2855,12 @@
         <div class="day">${esc(t('myPhotos'))}</div><div id="myPhotos"><p class="note">${esc(t('loading'))}</p></div>
         <div class="day">${esc(t('yourPass'))}</div>${passes}
         <div class="day">${esc(t('upcoming'))}</div>${bookings}
-        <div class="day">${esc(t('cameH'))}</div>${came}`;
+        <div class="day">${esc(t('cameH'))}</div>${came}
+        ${CN_HOST ? '' : `<p class="revlink"><a href="/review" target="_blank" rel="noopener" id="revLink">${esc(t('revBtn'))}</a></p>`}`;
       drawFace(code);
+      drawReview(code);
+      // Google, like Facebook, does not open in China: cn.aybkk.net has no review card or link.
+      if (!CN_HOST) $('#revLink').addEventListener('click', () => revWrote(code));
       renderMyPhotos(code, d.member);
       renderChecks(code);
     } catch (e) {
@@ -2982,6 +3032,7 @@
         <p style="margin-top:12px"><button class="btn pink" id="ckSave">${esc(t('chkSave'))}</button></p>
         <div id="ckMsg"></div></div>` : '';
     box.innerHTML = table + form;
+    if (REV.code === code) { REV.w12 = REV.w12 || checks.length >= 3; drawReview(code); }
     if (!due) return;
     let feel = null;
     box.querySelectorAll('.feel button').forEach(b => b.addEventListener('click', () => {
@@ -2996,6 +3047,61 @@
       if (r.ok) renderChecks(code);
       else $('#ckMsg').innerHTML = `<p class="msg bad">${esc(j.error || 'Could not save.')}</p>`;
     });
+  }
+
+  // The Google review ask (Boonchu, 12 Nov 2026), under the mornings count, at two moments: the
+  // 12-week check is done (w12), or the student renewed (renew:<renewals>, so each renewal is
+  // its own moment; a count no higher than one set aside is not new, as when a pass is voided).
+  // Everyone who reaches a moment sees the same card: it never looks at the
+  // numbers, the feel score or anything else about how it went. "Not now" sets aside the
+  // moments open now; the review button ends the ask on this phone for this member.
+  // Kept per member code; if storage fails, REV_MEM keeps it for this visit.
+  let REV = { code: '', renewals: 0, w12: null, thanks: false };
+  const REV_MEM = {};
+  function revState(code) {
+    let s = REV_MEM[code];
+    if (!s) try { s = JSON.parse(localStorage.getItem('aybkk_review_' + code) || 'null'); } catch (_) {}
+    return { done: !!(s && s.done), skip: s && Array.isArray(s.skip) ? s.skip.map(String) : [] };
+  }
+  function revSave(code, s) {
+    REV_MEM[code] = s;
+    try { localStorage.setItem('aybkk_review_' + code, JSON.stringify(s)); } catch (_) {}
+  }
+  // w12 is null until the checks have loaded once for this member, so the card does not
+  // first show one title and then switch to the other.
+  function drawReview(code, focus) {
+    const box = $('#revBox');
+    if (!box || code !== myCode() || REV.code !== code || REV.w12 === null) return;
+    const s = revState(code);
+    const kept = Math.max(0, ...s.skip.map(k => +(/^renew:(\d+)$/.exec(k) || [0, 0])[1]));
+    const open = [REV.w12 && !s.skip.includes('w12') && 'w12', REV.renewals > kept && 'renew:' + REV.renewals].filter(Boolean);
+    if (!REV.thanks && (s.done || !open.length)) { box.className = ''; box.innerHTML = ''; return; }
+    box.className = 'pkg rev';
+    if (REV.thanks) {
+      box.innerHTML = `<p class="rthx" tabindex="-1">${esc(t('revThanks'))}</p>`;
+      if (focus) box.firstChild.focus({ preventScroll: true });
+      return;
+    }
+    box.innerHTML = `<h3>${esc(t(open[0] === 'w12' ? 'revW12H' : 'revRenewH'))}</h3>
+      <p class="note">${esc(t('revBody'))}</p>
+      <div class="ra"><a class="btn pink" href="/review" target="_blank" rel="noopener">${esc(t('revBtn'))}</a>
+        <button type="button" class="linkbtn">${esc(t('revLater'))}</button></div>`;
+    box.querySelector('a').addEventListener('click', () => revWrote(code, true));
+    box.querySelector('button').addEventListener('click', () => {
+      const now = revState(code);
+      revSave(code, { ...now, skip: [...new Set([...now.skip, ...open])] });
+      drawReview(code);
+      // The card is gone: keep a keyboard user's place on the mornings count just above it.
+      const h = $('#view .habit');
+      if (h && !box.firstChild) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
+    });
+  }
+  // A tap on either review link: Google's form opens in a new tab, and this phone stops asking.
+  // The redraw waits a tick, so the link is not taken away while the tap still opens it.
+  function revWrote(code, fromCard) {
+    revSave(code, { ...revState(code), done: true });
+    if (fromCard || $('#revBox .ra')) REV.thanks = true;
+    setTimeout(() => drawReview(code, fromCard), 0);
   }
 
   // Only the photos this student was tagged in; links are signed and private.

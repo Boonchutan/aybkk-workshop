@@ -1591,8 +1591,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const m = (await q('SELECT * FROM bkk_members WHERE code = $1', [req.params.code])).rows[0];
       if (!m) return res.status(404).json({ error: 'not found' });
       const passes = (await q(
-        `SELECT p.*, pr.name_en, pr.name_th FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+        `SELECT p.*, pr.name_en, pr.name_th, pr.code AS product_code FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
          WHERE p.member_id=$1 ORDER BY p.id DESC`, [m.id])).rows;
+      // For the review ask in My account: study passes beyond the first. A single
+      // class is a visit, not a stay, and a void pass was written off, except a
+      // Rezerv pack that was used up before its end date: importPass stores it
+      // void so it lets no one in, with "<Rezerv status> in Rezerv" in the note.
+      const usedUp = p => p.status === 'void' && p.source === 'rezerv'
+        && passState((/\| (.+?) in Rezerv/.exec(p.note || '') || [])[1]) === 'ended';
+      const stays = passes.filter(p => (['active', 'frozen'].includes(p.status) || usedUp(p)) && p.product_code !== 'dropin'
+        && !(p.kind === 'credits' && Number(p.credits_total) === 1)).length;
       // classDate is the Bangkok day as text: class_date comes back as a JS
       // Date, which a browser in another timezone can shift a day.
       const bookings = (await q(
@@ -1630,6 +1638,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
           creditsLeft: p.kind === 'unlimited' ? null : (p.credits_total - p.credits_used),
           validFrom: p.valid_from, validUntil: p.valid_until, dailyCap: p.daily_cap,
         })),
+        renewals: Math.max(0, stays - 1),
         bookings,
       });
     } catch (e) { res.status(500).json({ error: e.message }); }

@@ -929,6 +929,35 @@ const ok = (name, cond, extra = '') => {
      JSON.stringify(cks));
   ok('an unknown member gets nothing', (await J('/api/bkk/me/NOPE/checks')).status === 404);
 
+  console.log('\n— renewals (the Google review ask) —');
+  const renewalsOf = async code => (await J(`/api/bkk/me/${code}`)).body.renewals;
+  const stay = (await post('/api/bkk/admin/passes', { name: 'Stay Testperson', email: 'stay.testperson@example.com', productCode: 'unlim1' }, ADMIN)).body.member.code;
+  ok('one pass: no renewal yet', await renewalsOf(stay) === 0, String(await renewalsOf(stay)));
+  const visit = (await post('/api/bkk/admin/passes', { name: 'Visit Testperson', email: 'visit.testperson@example.com', productCode: 'dropin' }, ADMIN)).body.member.code;
+  await post('/api/bkk/admin/passes', { memberCode: visit, productCode: 'dropin' }, ADMIN);
+  await post('/api/bkk/admin/passes', { memberCode: visit, productCode: 'pack8', creditsTotal: 1 }, ADMIN);
+  ok('drop-ins and 1-class passes only: no renewal', await renewalsOf(visit) === 0, String(await renewalsOf(visit)));
+  await post('/api/bkk/admin/passes', { memberCode: stay, productCode: 'dropin' }, ADMIN);
+  ok('a drop-in beside a pass is not a renewal', await renewalsOf(stay) === 0, String(await renewalsOf(stay)));
+  await post('/api/bkk/admin/passes', { memberCode: stay, productCode: 'unlim3' }, ADMIN);
+  ok('a second pass is 1 renewal', await renewalsOf(stay) === 1, String(await renewalsOf(stay)));
+  const third = (await post('/api/bkk/admin/passes', { memberCode: stay, productCode: 'pack8' }, ADMIN)).body.pass;
+  ok('a third pass is 2 renewals', await renewalsOf(stay) === 2, String(await renewalsOf(stay)));
+  await post(`/api/bkk/admin/passes/${third.id}/void`, { reason: 'test' }, ADMIN);
+  ok('a void pass is not counted', await renewalsOf(stay) === 1, String(await renewalsOf(stay)));
+  ok('a member with no pass has 0, never below', await renewalsOf(ck) === 0, String(await renewalsOf(ck)));
+  const inDays = n => new Date(Date.now() + 7 * 3600e3 + n * 86400e3).toISOString().slice(0, 10);
+  const rzMail = 'usedup.testperson@example.com';
+  await post('/api/bkk/admin/import/passes', { dryRun: false, rows: [
+    { name: 'Usedup Testperson', email: rzMail, plan: '10 class pack', start: inDays(-40), until: inDays(50), status: 'Expired', classesLeft: '0' },
+    { name: 'Usedup Testperson', email: rzMail, plan: '1 Month unlimited', start: inDays(-20), until: inDays(10), status: 'Refunded' },
+    { name: 'Usedup Testperson', email: rzMail, plan: '10 class pack', start: inDays(-5), until: inDays(85), status: 'Active', classesLeft: '9' }] }, ADMIN);
+  const rz = (await pool.query(`SELECT m.code, p.status FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id
+    WHERE m.email=$1 ORDER BY p.id`, [rzMail])).rows;
+  ok('a Rezerv pack used up before its end date (stored void) counts, a refunded one does not', rz.length === 3
+     && rz[0].status === 'void' && rz[1].status === 'void' && rz[2].status === 'active' && await renewalsOf(rz[0].code) === 1,
+     JSON.stringify([rz.map(r => r.status), rz[0] && await renewalsOf(rz[0].code)]));
+
   console.log('\n— tees —');
   ok('no tees: the public list is empty', (await J('/api/bkk/tees')).body.tees.length === 0);
   ok('adding a tee needs the admin key', (await post('/api/bkk/admin/tees', { name: 'T', priceThb: 900, payLink: 'https://pay.example/x' })).status === 401);
