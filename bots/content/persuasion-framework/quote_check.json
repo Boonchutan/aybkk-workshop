@@ -1,0 +1,200 @@
+[
+ {
+  "line": 28,
+  "quote": "Training in public speaking is not a matter of externals—primarily; it is not a matter of imitation—fundamentally. Public speaking is public utterance, public issuance, of the man himself; therefore the first thing both in time and in importance is that the man should be and think and feel things that are worthy of being given forth.",
+  "attributed_to": "Dale Carnegie, The Art of Public Speaking",
+  "verdict": "close",
+  "real_text": "...it is not a matter of imitation--fundamentally; it is not a matter of conformity to standards--at all. Public speaking is public utterance, public issuance, of the man himself; therefore the first thing both in time and in importance is that the man should be and think and feel things that are worthy of being given forth.",
+  "where": "A Foreword, 'Things to Think of First' (before Chapter I); https://www.gutenberg.org/cache/epub/16317/pg16317.txt",
+  "note": "Real words, but the note silently drops the third clause 'it is not a matter of conformity to standards--at all' with no ellipsis; otherwise word for word."
+ },
+ {
+  "line": 275,
+  "quote": "Students of public speaking continually ask, 'How can I overcome self-consciousness?' The answer is: Speak of what you know. Know it in your body before you teach it with your mouth.",
+  "attributed_to": "Dale Carnegie, The Art of Public Speaking",
+  "verdict": "paraphrase",
+  "real_text": "Students of public speaking continually ask, \"How can I overcome self-consciousness and the fear that paralyzes me before an audience?\" ... face an audience as frequently as you can, and you will soon stop shying. ... Know your subject better than your hearers know it, and you have nothing to fear.",
+  "where": "Chapter I, Acquiring Confidence Before an Audience (opening, and section 'Have Something to Say'); https://www.gutenberg.org/cache/epub/16317/pg16317.txt",
+  "note": "Only the question is his (shortened); 'Speak of what you know. Know it in your body before you teach it with your mouth' is not in the book, whose first answer is practice in front of audiences."
+ },
+ {
+  "line": 280,
+  "quote": "Feeling and enthusiasm are the steam that drives the locomotive. Without feeling, even perfect knowledge is cold and ineffective.",
+  "attributed_to": "Dale Carnegie, The Art of Public Speaking",
+  "verdict": "paraphrase",
+  "real_text": "Man is a feeling animal, hence the public speaker's ability to arouse men to action depends almost wholly on his ability to touch their emotions.",
+  "where": "Chapter X, Feeling and Enthusiasm; https://www.gutenberg.org/cache/epub/16317/pg16317.txt",
+  "note": "Chapter title is real and the idea fits, but the steam/locomotive sentence and 'perfect knowledge is cold' are not in the full text."
+ },
+ {
+  "line": 285,
+  "quote": "The pause is as powerful as the speech itself. It commands attention. It gives the listener time to feel, to absorb, to respond.",
+  "attributed_to": "Dale Carnegie, The Art of Public Speaking",
+  "verdict": "paraphrase",
+  "real_text": "Pause, in public speech, is not mere silence--it is silence made designedly eloquent. ... If you have given the audience a big idea, pause for a second or two and let them turn it over.",
+  "where": "Chapter VI, Pause and Power; https://www.gutenberg.org/cache/epub/16317/pg16317.txt",
+  "note": "Same idea as Chapter VI, but none of these three sentences appear in the book; use the real 'silence made designedly eloquent' line instead."
+ },
+ {
+  "line": 290,
+  "quote": "Logic does not move people to action. Emotion moves them. Logic only justifies the action they already wanted to take.",
+  "attributed_to": "Dale Carnegie, The Art of Public Speaking",
+  "verdict": "paraphrase",
+  "real_text": "The nature of persuasion is not solely intellectual, but is largely emotional. ... Base your appeal on reason, but do not end in the basement--let the building rise, full of deep emotion and noble persuasion.",
+  "where": "Chapter XXIV, Influencing by Persuasion; https://www.gutenberg.org/cache/epub/16317/pg16317.txt",
+  "note": "Not in the book; 'logic only justifies' is a modern sales saying, and the book actually says to base the appeal on reason and then rise to emotion, so it partly contradicts the quote."
+ },
+ {
+  "line": 295,
+  "quote": "Words are the stock-in-trade of the speaker. The more words you command, the more precisely you can illuminate truth.",
+  "attributed_to": "Dale Carnegie, The Art of Public Speaking",
+  "verdict": "paraphrase",
+  "real_text": "He must add to his everyday stock, words of value for the public presentation of thought. ... words are the raw materials of style ... Use a new word accurately five times and it is yours.",
+  "where": "Chapter XXVII, Growing a Vocabulary; https://www.gutenberg.org/cache/epub/16317/pg16317.txt",
+  "note": "Chapter title is real and the idea matches, but 'stock-in-trade' and 'illuminate truth' do not appear anywhere in the full text."
+ },
+ {
+  "line": 53,
+  "quote": "The wise man does not reveal everything he knows. Let the mystery grow, and others will come to learn it.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (Law 2)",
+  "verdict": "paraphrase",
+  "real_text": "The wise man does not allow his knowledge and abilities to be sounded to the bottom, if he desires to be honoured by all. He allows you to know them but not to comprehend them.",
+  "where": "Maxim xciv 'Keep the extent of your Abilities unknown' (see also iii); Jacobs tr., https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "The first sentence paraphrases xciv. 'Let the mystery grow, and others will come to learn it' does not appear anywhere in the book. The closest line is iii: 'Mix a little mystery with everything, and the very mystery arouses veneration.' Gracián means hiding the full extent of your ability, which is not the same as asking before telling."
+ },
+ {
+  "line": 130,
+  "quote": "Some men of great reputation have owed it more to the art of knowing when to be silent than to any powers of speaking.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (Law 5)",
+  "verdict": "not_found",
+  "real_text": "",
+  "where": "Searched the full Jacobs text in two scans (1892: https://archive.org/details/artworldlywisdo01jacogoog; 1904: https://archive.org/details/artofworldlywisd00gracuoft)",
+  "note": "Not in the book, the introduction, the testimonia or the notes, and a web search found no source for it. The nearest real line is iii: 'Cautious silence is the holy of holies of worldly wisdom.' The note calls this 'Gracian's most important insight'; that claim cannot stand."
+ },
+ {
+  "line": 238,
+  "quote": "Be common in nothing.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 1 in note)",
+  "verdict": "close",
+  "real_text": "Common in Nothing. First, not in taste. O great and wise, to be ill at ease when your deeds please the mob!",
+  "where": "Maxim xxviii 'Common in Nothing' (Sp. 'En nada vulgar'); the exact words 'to be common in nothing' are Bouterwek's, quoted in Jacobs's Testimonia; https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "The maxim's title is 'Common in Nothing'. Gracián means: do not court the mob's taste or applause. He does not mean 'stand out from other teachers'."
+ },
+ {
+  "line": 241,
+  "quote": "Do something worthy of applause, and then manage it so applause will follow.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 2 in note)",
+  "verdict": "paraphrase",
+  "real_text": "Do and be seen Doing. Things do not pass for what they are but for what they seem. To be of use and to know how to show yourself of use, is to be twice as useful. What is not seen is as if it was not.",
+  "where": "Maxim cxxx 'Do and be seen Doing' (cf. ccxcv); https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "These are not Gracián's words. The idea matches cxxx. The note's gloss 'Don't chase applause' fits ccxcv better: 'content yourself with doing, leave the talking to others.'"
+ },
+ {
+  "line": 244,
+  "quote": "Knowledge and actions are always in a man's merit, as silence and mystification are in a woman's.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 3 in note)",
+  "verdict": "not_found",
+  "real_text": "",
+  "where": "Searched the full Jacobs text (1892 and 1904 scans), https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "No such line exists, and 'mystification' never occurs in the book. A web search found no source. The only gendered metaphor is in ccii: 'Words are the shadows of deeds; the former are feminine, the latter masculine.' Do not use this line in public."
+ },
+ {
+  "line": 247,
+  "quote": "The wise man does not reveal everything he knows.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 4 in note)",
+  "verdict": "paraphrase",
+  "real_text": "The wise man does not allow his knowledge and abilities to be sounded to the bottom, if he desires to be honoured by all.",
+  "where": "Maxim xciv 'Keep the extent of your Abilities unknown'; https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "The idea is real, but the wording is not Gracián's. If quoting, use the xciv sentence."
+ },
+ {
+  "line": 250,
+  "quote": "Some men of great reputation have owed it more to the art of knowing when to be silent than to any powers of speaking.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 5 in note)",
+  "verdict": "not_found",
+  "real_text": "",
+  "where": "Searched the full Jacobs text (1892 and 1904 scans), https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "This repeats the Law 5 quote and is not in the book. The nearest real lines are iii ('Cautious silence is the holy of holies of worldly wisdom') and clx ('the fewer words the less litigation')."
+ },
+ {
+  "line": 253,
+  "quote": "Never explain. Let your actions speak.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 6 in note)",
+  "verdict": "paraphrase",
+  "real_text": "Do not Explain overmuch. Most men do not esteem what they understand, and venerate what they do not see.",
+  "where": "Maxim ccliii 'Do not Explain overmuch' (Sp. 'No allanarse sobrado en el concepto'); https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "Gracián says 'overmuch', not 'never'. He even adds that 'with most men a little elaboration is necessary'. 'Let your actions speak' is not in the maxim."
+ },
+ {
+  "line": 256,
+  "quote": "Know how to withdraw.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 7 in note)",
+  "verdict": "exact",
+  "real_text": "Know how to Withdraw. If it is a great lesson in life to know how to deny, it is a still greater to know how to deny oneself as regards both affairs and persons. There are extraneous occupations which eat away precious time.",
+  "where": "Maxim xxxiii 'Know how to Withdraw' (Sp. 'Saber abstraer'); https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "The title words are exact, but the meaning differs: Gracián means pulling back from affairs and people that waste your time. 'Disappear so they miss you' is cclxxxii 'Make use of Absence' or cxxiv 'Get Yourself missed'."
+ },
+ {
+  "line": 259,
+  "quote": "A man should not try to correct the character of those he employs; he should use them as they are.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 8 in note)",
+  "verdict": "not_found",
+  "real_text": "",
+  "where": "Searched the full Jacobs text (1892 and 1904 scans), https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "Not in the book, and a web search found no source. The nearest idea is cxv 'Get used to the Failings of your Familiars, as you do to ugly faces.'"
+ },
+ {
+  "line": 262,
+  "quote": "Never take the lead unless you know the way.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 9 in note)",
+  "verdict": "not_found",
+  "real_text": "",
+  "where": "Searched the full Jacobs text (1892 and 1904 scans), https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "Not in the book. The nearest idea is xci 'Never set to work at anything if you have any doubts of its Prudence'."
+ },
+ {
+  "line": 265,
+  "quote": "First think, then speak.",
+  "attributed_to": "Gracián, Art of Worldly Wisdom (maxim 10 in note)",
+  "verdict": "paraphrase",
+  "real_text": "Many act first and then think afterwards — that is, they think less of consequences than of excuses: others think neither before nor after.",
+  "where": "Maxim cli 'Think beforehand' (also clx 'Be careful in Speaking': 'There is always time to add a word, never to withdraw one'); https://archive.org/details/artofworldlywisd00gracuoft",
+  "note": "The phrase 'First think, then speak' is a common proverb, not Gracián's words. The idea is in cli (think before acting) and clx (care in speech)."
+ },
+ {
+  "line": 305,
+  "quote": "The 11 Steps: Select a Target, Approach and Open, Demonstrate Value, Disarm the Obstacles, Isolate the Target, Create an Emotional Connection, Extract to a Deeper Location, Pump Buying Temperature, Make a Physical Connection, Blast Last-Minute Resistance, Manage Expectations",
+  "attributed_to": "Neil Strauss, The Game (2005)",
+  "verdict": "close",
+  "real_text": "Select a Target; Approach and Open; Demonstrate Value; Disarm the Obstacles; Isolate the Target; Create an Emotional Connection; Extract to a Seduction Location; Pump Buying Temperature; Make a Physical Connection; Blast Last-Minute Resistance; Manage Expectations",
+  "where": "The book's own table of contents, Steps 1-11, 2005 ReganBooks ed. https://openlibrary.org/books/OL58843675M (German ed. TOC has the same 11 parts: https://openlibrary.org/books/OL38241210M); also https://www.andrewnoske.com/wiki/The_Game_(book)",
+  "note": "High confidence these are the book's 11 section titles (only change: 'Seduction Location' became 'Deeper Location'); they are the memoir's section headings, not Mystery's own published model, which uses 9 phases A1-A3, C1-C3, S1-S3; I could not open the book text to see whether Strauss credits Mystery for the list."
+ },
+ {
+  "line": 429,
+  "quote": "Why not see how much you can earn? Why not see how much you can learn? Why not see how many skills you can develop? Why not see what kind of person you can become? Why not see what kind of influence you can have? Why not see how many people you can rescue from oblivion?",
+  "attributed_to": "Jim Rohn",
+  "verdict": "exact",
+  "real_text": "Why not see how much you can earn? Why not see how much you can learn? Why not see how many skills you can develop? Why not see what kind of person you can become? Why not see what kind of influence you can have? Why not see how many people you can rescue from oblivion?",
+  "where": "Rohn talk 'Four Whys' (Why? Why not? Why not you? Why not now?), given at a Herbalife Extravaganza before 2000, question 2 'Why not'; transcript at http://try2biz.blogspot.com/2014/02/jim-rohn-living-exceptional-life.html",
+  "note": "All six lines appear word for word, in this order, followed by 'Why not see how many people you can reach?'; the source is a fan blog transcript, not an official Rohn text, and the four questions themselves are confirmed by Nightingale-Conant (Take Charge of Your Life); the YouTube Short is a clip, not the original."
+ },
+ {
+  "line": 425,
+  "quote": "If the why is powerful, the how is easy.",
+  "attributed_to": "Jim Rohn",
+  "verdict": "exact",
+  "real_text": "One of the big thrust for success is to come up with a strong enough why. In leadership training here's is what we learn. If the why is powerful, the how is easy.",
+  "where": "Same Rohn Herbalife Extravaganza talk, question 1 'Why'; http://try2biz.blogspot.com/2014/02/jim-rohn-living-exceptional-life.html",
+  "note": "Exact words in the same blog transcript, and the note's 'Leadership training reveals' matches his 'In leadership training here's what we learn'; quote sites also carry looser versions like 'The bigger the why, the easier the how'; no official jimrohn.com text found."
+ },
+ {
+  "line": 78,
+  "quote": "People believe what they discover more than what they're told.",
+  "attributed_to": "The seduction community (Strauss, The Game + Carnegie)",
+  "verdict": "misattributed",
+  "real_text": "People are generally better persuaded by the reasons which they have themselves discovered than by those which have come into the mind of others.",
+  "where": "Blaise Pascal, Pensées (1670), no. 10 (Trotter tr.), https://www.gutenberg.org/cache/epub/18269/pg18269.txt",
+  "note": "The idea is Pascal's (checked in the Gutenberg full text); I found no pickup-community source and could not search The Game's text (only a restricted library scan exists); Carnegie's How to Win Friends Part 3 has a close line ('more faith in ideas that you discover for yourself...'), seen only in reader highlights and not checked against the book."
+ }
+]

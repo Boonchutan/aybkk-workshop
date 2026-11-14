@@ -1,0 +1,300 @@
+{
+ "flags": [
+  {
+   "line": 3,
+   "text": "Synthesized from The Game (Strauss) ... and 2,500 years of human persuasion knowledge",
+   "problem": "It names a pickup-artist book as the base of the framework. '2,500 years' is puffery, not a fact.",
+   "fix": "Built from Gracian (The Art of Worldly Wisdom, 1647) and Carnegie (The Art of Public Speaking, 1915), checked against AYBKK house rules."
+  },
+  {
+   "line": 35,
+   "text": "The injuries that led you to understand the body",
+   "problem": "It invites an injury story that is not on record. Plato's notebook already flags the 'back injury' story as invented.",
+   "fix": "The years of daily practice that taught you the body (real events only, checked with Boonchu)."
+  },
+  {
+   "line": 43,
+   "text": "Tell the story of your back injury BEFORE you teach a single posture",
+   "problem": "The back injury story is invented (already flagged in plato.md). It also says 'posture' where our word is 'asana'.",
+   "fix": "Tell one true story from your own practice before you teach an asana."
+  },
+  {
+   "line": 53,
+   "text": "Gracian wrote: \"The wise man does not reveal everything he knows. Let the mystery grow...\"",
+   "problem": "This is not Gracian's wording. It is a paraphrase put in quote marks and called a quote.",
+   "fix": "Gracian, maxim 94 (Jacobs 1892): \"Keep the extent of your abilities unknown.\" Say the rest in our own words, without quote marks."
+  },
+  {
+   "line": 57,
+   "text": "their real problem is deeper (a life out of control, body betraying them, feeling invisible...)",
+   "problem": "It guesses at hidden pain and treats the guess as fact. Said in public, it shames the viewer and goes against the pledge at line 345 ('never make someone feel broken').",
+   "fix": "Most students come with one problem: stiff shoulders, back pain, stress. Ask what sits under it. Don't guess it for them."
+  },
+  {
+   "line": 76,
+   "text": "Source: Strauss, The Game + Carnegie",
+   "problem": "It cites a pickup-artist book as a source for teaching.",
+   "fix": "Source: Socratic teaching + Carnegie."
+  },
+  {
+   "line": 78,
+   "text": "The seduction community discovered something teachers often miss",
+   "problem": "Pickup-artist framing. This must never reach public content.",
+   "fix": "Good teachers know this: people believe what they find out more than what they are told."
+  },
+  {
+   "line": 102,
+   "text": "Source: Strauss, The Game",
+   "problem": "It credits social proof to a pickup-artist book.",
+   "fix": "Source: Cialdini, Influence (1984), 'social proof'."
+  },
+  {
+   "line": 116,
+   "text": "Every student is a long-term investment in your reputation",
+   "problem": "It uses 'investment', a money word we banned.",
+   "fix": "Every student builds your name over years, not in one sale."
+  },
+  {
+   "line": 130,
+   "text": "Gracian's most important insight: \"Some men of great reputation have owed it more to ... silent\"",
+   "problem": "The quote has not been checked against the Gracian text. It may be misattributed.",
+   "fix": "Keep the idea in our own words, without quote marks, until the line is matched word for word to the Jacobs 1892 translation."
+  },
+  {
+   "line": 137,
+   "text": "Disappear strategically to let students miss you",
+   "problem": "It goes against the Habit Gap. We sell a teacher who is there and notices when you are gone, not one who hides so students miss him.",
+   "fix": "Be there at the same time every day. Notice who is missing and say 'See you tomorrow?'"
+  },
+  {
+   "line": 141,
+   "text": "Being constantly available (destroying mystique)",
+   "problem": "'Mystique' is guru and pickup framing. Our product is a teacher who shows up.",
+   "fix": "Answering messages at every hour (set clear reply times instead)."
+  },
+  {
+   "line": 166,
+   "text": "The answer is something most yoga teachers never teach.",
+   "problem": "It knocks other teachers with an unchecked claim. It also sells flexibility, not the habit.",
+   "fix": "You don't have a flexibility problem. You have a coming-back problem."
+  },
+  {
+   "line": 226,
+   "text": "The In-Depth program runs twice a year.",
+   "problem": "Wrong fact. How often it runs is not set. Gen #3 is 11 Jan to 9 Feb 2027, and the other groups open later with no dates.",
+   "fix": "In-Depth Mysore: 30 days, 12 students at most. Here's who it's for..."
+  },
+  {
+   "line": 228,
+   "text": "You have real potential. Would you like to go deeper?",
+   "problem": "It is flattery used to sell, said during class. In-Depth entry is the Primary Series by heart plus Mysore and led class experience, not 'potential'.",
+   "fix": "(After class, never during practice) You know the Primary Series by heart. Want to hear how In-Depth Mysore works?"
+  },
+  {
+   "line": 236,
+   "text": "Selected from Art of Worldly Wisdom",
+   "problem": "Several of the 'maxims' below are paraphrases or not found in Gracian. Only 1 ('Common in nothing', maxim 28) and 4 (maxim 94) match the real text.",
+   "fix": "Ideas from Gracian, in our words. Quote only the maxims checked word for word against the Jacobs 1892 translation."
+  },
+  {
+   "line": 244,
+   "text": "Knowledge and actions are always in a man's merit, as silence and mystification are in a woman's.",
+   "problem": "Sexist. It also has not been checked against Gracian.",
+   "fix": "drop (drop line 245 'More mystique... Let them wonder' with it)"
+  },
+  {
+   "line": 254,
+   "text": "Students will make excuses for you. Let them. A mysterious teacher is more compelling",
+   "problem": "Manipulative guru framing. It lets students cover for the teacher.",
+   "fix": "Explain less, show more. When a student asks why, answer plainly."
+  },
+  {
+   "line": 259,
+   "text": "he should use them as they are",
+   "problem": "Demeaning. It treats students like staff to be used.",
+   "fix": "Don't try to remake a student. Start where they are."
+  },
+  {
+   "line": 275,
+   "text": "\"...overcome self-consciousness?' The answer is: Speak of what you know. Know it in your body...\"",
+   "problem": "Only the question is Carnegie's. The answer is made up and placed inside his quote marks.",
+   "fix": "Keep Carnegie's question in quotes. Put 'Speak of what you know' after it as our own line."
+  },
+  {
+   "line": 277,
+   "text": "Only teach postures and principles you've embodied.",
+   "problem": "It says 'postures' where our word is 'asana'.",
+   "fix": "Only teach asanas and ideas you have practised yourself."
+  },
+  {
+   "line": 280,
+   "text": "\"Feeling and enthusiasm are the steam that drives the locomotive...\"",
+   "problem": "This line is not in the 1915 book (checked against the full text). It is a made-up quote.",
+   "fix": "Carnegie gives a whole chapter to 'Feeling and Enthusiasm'. (Our words, no quote marks.)"
+  },
+  {
+   "line": 285,
+   "text": "\"The pause is as powerful as the speech itself...\"",
+   "problem": "Not Carnegie's words (checked against the full text).",
+   "fix": "Carnegie, chapter 'Pause and Power': a pause must come before or after a thought worth hearing. (paraphrase)"
+  },
+  {
+   "line": 290,
+   "text": "\"Logic does not move people to action. Emotion moves them...\"",
+   "problem": "Not in the 1915 book. It is a modern marketing line credited to the wrong author.",
+   "fix": "Drop the quote marks and the Carnegie name. Our line: Let them feel it first. Explain after."
+  },
+  {
+   "line": 295,
+   "text": "\"Words are the stock-in-trade of the speaker...\"",
+   "problem": "Not found in the 1915 book. It is a made-up quote.",
+   "fix": "Our words, not a quote: Name what you see, exactly."
+  },
+  {
+   "line": 303,
+   "text": "From The Game by Neil Strauss - adapted ethically for education",
+   "problem": "The whole 11-step section is a pickup-artist seduction script ('Approach and Open', etc.). This wording must never reach public content.",
+   "fix": "Retitle: '11 steps from first hello to sign-up (our words)'. Drop Strauss and every pickup step name."
+  },
+  {
+   "line": 307,
+   "text": "Select a Target ... Let the uncommitted drift away. They were never yours anyway.",
+   "problem": "Pickup wording. Letting people drift goes against the Habit Gap: we notice when someone stops coming.",
+   "fix": "Say who it is for. Not everyone is ready, and that's fine. If a regular stops coming, notice and ask 'See you tomorrow?'"
+  },
+  {
+   "line": 319,
+   "text": "Isolate the Target",
+   "problem": "Pickup wording. Getting a student alone is a seduction tactic, not teaching.",
+   "fix": "One-to-one time: a short word after class, in the open shala."
+  },
+  {
+   "line": 325,
+   "text": "Extract to a Deeper Location",
+   "problem": "Pickup wording.",
+   "fix": "The next step: from a free class to Mysore, from Mysore to In-Depth. Offer it when they ask."
+  },
+  {
+   "line": 328,
+   "text": "Pump Buying Temperature",
+   "problem": "Pickup wording and a pressure tactic.",
+   "fix": "Tell the true facts once."
+  },
+  {
+   "line": 329,
+   "text": "\"The next In-Depth isn't for six months.\" \"Only 8 students per cycle.\"",
+   "problem": "Wrong facts: the limit is 12 seats, and how often it runs is not set. It also uses the facts as urgency.",
+   "fix": "Say it once, calmly: In-Depth Mysore takes 12 students at most. Seats go in order of application."
+  },
+  {
+   "line": 331,
+   "text": "Make a Physical Connection ... hands-on adjustments ... they believe you in a different way",
+   "problem": "It uses touch as a sales step. This is a consent and safety risk and must never appear anywhere.",
+   "fix": "drop as a sales step. Adjustments are for the practice only, with the student's OK, never to win a sale."
+  },
+  {
+   "line": 334,
+   "text": "Blast Last-Minute Resistance",
+   "problem": "Pickup and pressure wording, even though the questions under it are fine.",
+   "fix": "Answer the last questions: 'What do you still need to know before you decide?' Yes, no and wait are all fine."
+  },
+  {
+   "line": 374,
+   "text": "This is the level Boonchu operates at.",
+   "problem": "Praise used to soften, not a checked fact (the advice voice rule bans this).",
+   "fix": "drop"
+  },
+  {
+   "line": 386,
+   "text": "Ten years ago, a student came to me who couldn't touch his toes. Last month, he ran his first marathon.",
+   "problem": "An invented student story presented as true.",
+   "fix": "Use only a real student's story, in their own words, with their OK. Otherwise drop."
+  },
+  {
+   "line": 392,
+   "text": "Most yoga teachers tell you to relax into the posture. I teach you to breathe your way through it.",
+   "problem": "It knocks other teachers and claims the lineage's breath method as Boonchu's own, which makes his role bigger than it is. It also says 'posture'.",
+   "fix": "Ashtanga doesn't ask you to relax into an asana. It asks you to breathe through it."
+  },
+  {
+   "line": 397,
+   "text": "accepts 13 students per cycle. I only open enrollment once a year.",
+   "problem": "Wrong facts: the limit is 12 seats, and there is no once-a-year rule. 'If you're serious' adds pressure.",
+   "fix": "In-Depth Mysore takes 12 students at most. If you know the Primary Series by heart, apply at aybkk.net/in-depth."
+  },
+  {
+   "line": 400,
+   "text": "You've experienced the led class... really change your relationship with your body—this is the program.",
+   "problem": "Wrong audience: one led class does not meet the entry bar (Primary by heart). It also sells vague 'transformation', which /remotecontrol forbids.",
+   "fix": "You know the Primary Series by heart. In-Depth Mysore is 30 days on how the practice develops. Want to see if it fits you?"
+  },
+  {
+   "line": 403,
+   "text": "You're ready for more. Would you like to join the next Mysore intensive?",
+   "problem": "Wrong name: the program is 'In-Depth Mysore'. It is also a sales push made during class.",
+   "fix": "drop (use the line 228 fix instead)"
+  },
+  {
+   "line": 408,
+   "text": "This practice has saved me hundreds of hours of medical appointments... What you're investing in is years of quality life.",
+   "problem": "An invented number and a medical claim. It also uses the banned word 'investing'.",
+   "fix": "I understand. Payment plans are on the call. If now is not the time, the Mysore room is open every morning."
+  },
+  {
+   "line": 411,
+   "text": "Readiness isn't a feeling. It's a decision. When you decided to come to class today, that was readiness.",
+   "problem": "Pressure: it talks the person out of their 'not yet'. Yes, no and wait must be equal answers.",
+   "fix": "That's fair. 'Not yet' is a real answer. What would make it the right time for you?"
+  },
+  {
+   "line": 417,
+   "text": "The question is: are you progressing? If yes, keep going. If not, let's look at why.",
+   "problem": "It plants doubt about another teacher. Our rule is never to attack, only show the gap.",
+   "fix": "Good, keep practising with them. If you want a second pair of eyes one day, our door is open."
+  },
+  {
+   "line": 425,
+   "text": "When students struggle with discipline, they haven't connected to a powerful enough reason.",
+   "problem": "It blames the student. The Habit Gap says people quit for lack of a system and a teacher who notices, not for lack of a reason.",
+   "fix": "When students struggle, give them a routine: same time, same room, a teacher who notices. A strong why helps; the habit does the rest."
+  },
+  {
+   "line": 432,
+   "text": "Why not see how many postures you can master?",
+   "problem": "It is asana-collecting ('postures') and goes against 'sell the habit, never poses'.",
+   "fix": "Why not see how many mornings in a row you can show up?"
+  },
+  {
+   "line": 443,
+   "text": "\"Why not see how flexible you can become?\"",
+   "problem": "It sells flexibility. Direction says we sell the outcome and the habit, not flexibility.",
+   "fix": "\"Why not see how strong you can get?\" \"Why not see how calm your mind can be?\""
+  },
+  {
+   "line": 459,
+   "text": "Transform bodies that have given up on themselves",
+   "problem": "It shames people and promises too much.",
+   "fix": "Build strength you can keep for decades."
+  },
+  {
+   "line": 460,
+   "text": "Heal injuries that Western medicine only manages",
+   "problem": "A medical claim, and it attacks medicine. This is banned everywhere.",
+   "fix": "drop"
+  },
+  {
+   "line": 472,
+   "text": "Sources: The Game (Neil Strauss)... Jordan Peterson... Robert Greene's 48 Laws of Power...",
+   "problem": "It lists a pickup book and several books the note never uses, one of them a manipulation manual. The 1915 book is by Esenwein and Carnagey.",
+   "fix": "Sources: Gracian, The Art of Worldly Wisdom (1647, tr. Jacobs 1892); Esenwein and Carnagey (Carnegie), The Art of Public Speaking (1915); Cialdini, Influence (1984); Jim Rohn, 'Why Not' talk."
+  }
+ ],
+ "strong_ideas": [
+  "BREATH BEFORE TOES (lines 90-94, habit 6 and 8). Hook: 'Can't touch your toes? Check your breath first.' Body: in a forward fold, the breath is the first thing to go when you fight your body. Ashtanga is breath first, the asana second. Stakes: another year of forcing a stretch, getting sore and quitting. Close: try one Mysore morning, ask on LINE @aybkk. Film Boonchu himself, or a student from behind with their OK.",
+  "YOU DON'T NEED TO BE FLEXIBLE (line 383, rewritten as a Triple Hook, Habit Gap). Context: 'This is why people never start Ashtanga.' Lean: 'They think they need to be flexible first.' Snapback: 'You don't. You need to come back tomorrow.' Stakes: waiting to be ready means never starting. Close: 'We teach you from the very start.' Ask on LINE @aybkk.",
+  "WHAT HAVE YOU TRIED BEFORE? (Law 2, lines 67-69, Habit Gap, habit 9). Hook: 'The first thing I ask a new student is not about their body.' Then: 'What have you tried before?' Often the answer is a list: an app, a gym, a class. Started. Stopped. Turn: 'The tool wasn't the problem. Nobody noticed when you stopped.' Close: Mysore, same time, a teacher who notices. No numbers, no student names.",
+  "DAY ONE, I TELL YOU IT'S HARD (line 338 plus the direction.md flip, habit 2). Hook: 'What I tell every new student on day one: this will be hard.' Then: 'Hard for 2 weeks. After that, the hard part is coming back. That's what we're here for.' Stakes: people quit at week 2 and think it's their fault. Close: 'We teach you from the very start.' Try Mysore.",
+  "THE QUIET AFTER A CORRECTION (lines 285-287 and 250-251; Carnegie's real chapter 'Pause and Power', habit 8). Caption-on-screen edit: one light hands-on adjustment (filmed only with the student's OK, face away), then silence and breath sound. Captions under 8 words: 'The correction is quick.' / 'Then I wait.' / 'Your body needs time to answer.' / 'A teacher who sees you.' Close: try one Mysore morning.",
+  "WHY NOT FIND OUT? (Jim Rohn 'Why Not', lines 425-447, habit 1). Hook: 'Why practise at 6 a.m.? Wrong question.' Then: 'Why not find out what 12 weeks does?' Stakes: another January start, another February stop. Close: the 12-week check (week 0, 6 and 12). Use only once that check is really running. Credit Rohn only after the line is matched to the source clip. Make no promise of results."
+ ]
+}
