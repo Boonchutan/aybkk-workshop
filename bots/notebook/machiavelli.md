@@ -1,6 +1,6 @@
 # Machiavelli notebook
 
-Inbox last read: 2026-11-14T06:10:09.482Z
+Inbox last read: 2026-11-14T12:10:55.300Z
 
 ## Standing orders from Boonchu
 - 2026-11-08 BRAND COLOURS CHANGED (Boonchu picked "L1 Grande Galerie", the Louvre palette, for aybkk.net; PR on branch claude/louvre-palette, Neo): Louvre red #7E262E (hero band, headings), oxblood #5F1C23 (deep sections), honey parquet #D6A35C (buttons, offer bars; same hue as the new maple floor), limestone #F4EDE2 (page), soft brass #84621F (prices, gilt), pyramid steel blue #2F507F (links only). The old aubergine #3E1442 + mustard #F2C94C + pink is retired on the website. Posters, carousels, the timetable poster and the review QR card still use aubergine and gold: move them to the Louvre palette only after Boonchu says go for each piece. Small text rule from the same day: nothing under 15 px on the site; keep the grid.
@@ -277,3 +277,4 @@ Inbox last read: 2026-11-14T06:10:09.482Z
 - 2026-11-13 19:08: 3-month student + old-price renewal: no answer by 19:00, default applied (no reply sent). No reminders due since 13:08. No win reported; next step given: answer the returning package student who asked 3 times when to come. Inbox 19:08: 4 LINE threads with news, 2 need a reply, 1 hot.
 - 2026-11-14 07:08: Carne posted (0 new leads; serious lead 28 days silent, send or close); Plato paused (expected). No @Machi requests. 3-month student + old-price renewal (pass ended Fri, asked once): choice by 19:00 today. Course prices: choice by 19:00 Sun 15 Nov (1 day). Reminders: Mysore trip flights/hotel, PR #110 + bot token, PRs #108/#109 merge, Rezerv import (daily). Inbox 07:08: 1 LINE thread with news (sticker), 0 need a reply. No wins this week. Board rebuilt.
 - 2026-11-14 13:08: check-in. Course prices (1 day) led; waiting students 2nd nudge (last today), both due 19:00 (prices Sun). No reminders due since 07:08. Inbox 13:08: 1 LINE thread with news, 1 needs a reply, 1 hot.
+- 2026-11-14 19:08: waiting students: no answer by 19:00, default applied (no reply sent). Course prices not repeated (2 nudges today), due 19:00 Sun 15 Nov. No reminders due since 13:08. No win reported; next step given: answer the returning package student (4th ask). Inbox 19:08: 1 LINE thread with news, 1 needs a reply, 1 hot.

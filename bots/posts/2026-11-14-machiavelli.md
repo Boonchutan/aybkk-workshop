@@ -9,3 +9,4 @@ Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads, 1 serio
 Score: wins this week (from Mon 9 Nov): none reported.
 Inbox 07:08: 1 LINE thread with news, 0 need a reply.
 13:08 check-in: course prices choice by 19:00 Sun 15 Nov (1 day, led). Waiting students choice by 19:00 today (2nd nudge, last today). Inbox 13:08: 1 LINE thread with news, 1 needs a reply, 1 hot.
+19:08 check-in: waiting students: no answer by 19:00, default applied (no reply sent). Course prices not repeated (2 nudges today; due 19:00 Sun 15 Nov). No win reported. Inbox 19:08: 1 LINE thread with news, 1 needs a reply, 1 hot.
