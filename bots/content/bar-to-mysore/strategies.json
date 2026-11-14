@@ -1,0 +1,2947 @@
+[
+ {
+  "name": "Stakes test (Rule #1)",
+  "what": "Nothing ships (Reel, hook, carousel, caption, lead reply, advice) until it has two lines on top: 'Stakes:' (what happens if this does not work or nobody solves it) and 'Why care:' (the reason in the viewer's own life, now). In a script the stakes land right after the hook; stakes must be true, no fear claims, no shaming.",
+  "stages": [
+   "click-through",
+   "bounce",
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'RULE #1: THE STAKES TEST (Boonchu, 2 Nov 2026)'"
+ },
+ {
+  "name": "The Habit Gap positioning",
+  "what": "People keep spending more on wellness tools but quit; AYBKK sells a habit system (same practice, same time, a teacher who notices when you are gone), never poses, flexibility or 'yoga'. Sell the outcome (stronger, calmer, better sleep, aging well) plus the habit.",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "retention"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'The one idea' (4 Oct 2026); /home/user/aybkk-workshop/CLAUDE.md, 'Business direction: The Habit Gap'"
+ },
+ {
+  "name": "Watch one-liner",
+  "what": "Core line for the habit gap: 'Your watch knows you slept badly. It won't get you on the mat at 6. We will.' Used as the brand's one-sentence pitch and as a Reel line (first-person 'I will' version for Reels).",
+  "stages": [
+   "click-through",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'The one idea' and 'Action plan > 3. Reels'"
+ },
+ {
+  "name": "10 Habits frame",
+  "what": "Main content and sales frame: '10 things people do to stay healthy. Ashtanga does all 10, in one morning.' Every piece names its habit number in the brief and each habit is rotated at least once every 2 weeks; the frame is already a section on the Bangkok booking page (public/bkk.html, section id 'habits').",
+  "stages": [
+   "creative/offer",
+   "traffic",
+   "click-through",
+   "conversion"
+  ],
+  "status": "live",
+  "numbers": "10 habits; each habit at least once every 2 weeks",
+  "source": "/home/user/bots-mem/bots/direction.md, 'THE 10 HABITS FRAME (Boonchu, 4 Oct 2026)'; verified in /home/user/aybkk-workshop/public/bkk.html line 485 and 1109"
+ },
+ {
+  "name": "Careful claims and checked statistics",
+  "what": "The 'all 10' claim stands only with careful words: no 'every student', no kilos, no medical claims for heat or sleep, say what students report. No statistic goes public until checked against its source; trend numbers from chat searches must be checked first.",
+  "stages": [
+   "creative/offer",
+   "bounce",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, '10 HABITS FRAME > Rules' and 'Weak points to watch'; /home/user/aybkk-workshop/CLAUDE.md, 'Business direction'"
+ },
+ {
+  "name": "One action close",
+  "what": "Every piece closes with exactly one action: try Mysore, the 12-week check, or ask on LINE @aybkk. Plato's captions also end with one action (try Mysore / ask on LINE).",
+  "stages": [
+   "click-through",
+   "conversion",
+   "cost per lead"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, '10 HABITS FRAME > Rules' and 'Per bot > Plato'"
+ },
+ {
+  "name": "Every piece leads to money",
+  "what": "No trend content for its own sake: every piece must lead to a Mysore trial, a renewal, or the 180K program.",
+  "stages": [
+   "traffic",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'What we do NOT do'"
+ },
+ {
+  "name": "Win the comparison without attacking",
+  "what": "Never say walking or running 'doesn't work'; show what it misses. Master line: 'Walking covers 2 of the 10. One Ashtanga morning covers all 10.'",
+  "stages": [
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "Walking covers 2 of the 10",
+  "source": "/home/user/bots-mem/bots/direction.md, 'HOW WE WIN THE COMPARISON (Boonchu, 4 Oct 2026)'"
+ },
+ {
+  "name": "5-step comparison pattern",
+  "what": "Every piece follows: the pain, what they try, what it misses (where we win, never attack), what Ashtanga does, then proof and one invite.",
+  "stages": [
+   "creative/offer",
+   "click-through",
+   "bounce",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'HOW WE WIN THE COMPARISON > The 5-step pattern'"
+ },
+ {
+  "name": "One practice vs four table",
+  "what": "A carousel / Reel / website table comparing walk/run, gym, Pilates and Ashtanga across 10 rows (strength, heart and lungs, mobility, a teacher who notices you, a habit that sticks, etc.). Line: 'To cover these 10, most people need a run, a gym, a Pilates class and a meditation app. Or one morning.'",
+  "stages": [
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'One practice vs four'"
+ },
+ {
+  "name": "Flip 'it's harder'",
+  "what": "Never hide that Ashtanga is hard; flip it: 'Easy things don't change you.' / 'Hard for 2 weeks. After that, the hard part is not coming.' Always paired with 'We teach you from the very start.'",
+  "stages": [
+   "conversion",
+   "churn",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "Hard for 2 weeks",
+  "source": "/home/user/bots-mem/bots/direction.md, 'HOW WE WIN THE COMPARISON > It's harder'"
+ },
+ {
+  "name": "Real proof only",
+  "what": "Proof is real 12-week check numbers (with permission), one-student-one-habit stories in their own words, and Boonchu's own 18 years. No invented numbers, ever.",
+  "stages": [
+   "conversion",
+   "creative/offer",
+   "qualified lead and close rate"
+  ],
+  "status": "decided-rule",
+  "numbers": "Boonchu's own 18 years",
+  "source": "/home/user/bots-mem/bots/direction.md, 'HOW WE WIN THE COMPARISON > Proof'"
+ },
+ {
+  "name": "No equipment race",
+  "what": "No cold plunge, sauna, red light or reformer machines: big chains win on equipment and price; AYBKK wins on habit and teacher.",
+  "stages": [
+   "creative/offer",
+   "acquisition channel and pipeline"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'What we do NOT do'; /home/user/aybkk-workshop/CLAUDE.md, 'Business direction'"
+ },
+ {
+  "name": "Front-door classes judged by conversion",
+  "what": "S31 Pilates, runners and office-syndrome classes are front doors only, judged by how many move into Mysore, not by attendance. Hormozi worked example: count N who came to a front-door class and K who later bought a Mysore pass; if K is over X then yes, and run one test Sunday rather than a weekly class.",
+  "stages": [
+   "acquisition channel and pipeline",
+   "conversion",
+   "traffic"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'What we do NOT do' and 'Weak points to watch'; /home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '6. One worked example'"
+ },
+ {
+  "name": "Shala offer: first 12 weeks with proof check",
+  "what": "Hormozi-style offer for new shala students: 'Your first 12 weeks: we check your progress at week 0, 6 and 12.' Same price, more certainty, less effort deciding (also written as 'first month with a 12-week proof check').",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "retention"
+  ],
+  "status": "planned",
+  "numbers": "week 0, 6 and 12; same price",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Per money engine > Shala' and 'Action plan > 2. Offer (Hormozi)'"
+ },
+ {
+  "name": "12-week proof check (profile)",
+  "what": "At week 0, 6 and 12 the student enters resting heart rate, sleep hours and how they feel from their watch or phone; the profile shows change since week 0. Built: bkk_checks table and 'My 12-week check · Habit #1' on the student profile; how many students use it is not counted in these files.",
+  "stages": [
+   "retention",
+   "conversion",
+   "upsell and lifetime value"
+  ],
+  "status": "live",
+  "numbers": "week 0, 6 and 12",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Action plan > 1. App' item 3; verified in /home/user/aybkk-workshop/bkk-api.js line 217 and /home/user/aybkk-workshop/public/bkk.html line 1123"
+ },
+ {
+  "name": "'See you tomorrow' list",
+  "what": "Staff page list of students with an active pass who have not come in 7+ days; one tap drafts a warm LINE message that opens 'See you tomorrow?' (expect them back, don't chase). Newest note (6 Oct) replaces the older 'we miss you' wording still in CLAUDE.md; not found in the code yet.",
+  "stages": [
+   "churn",
+   "retention"
+  ],
+  "status": "planned",
+  "numbers": "7+ days not seen",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Action plan > 1. App' item 1 (Boonchu, 6 Oct); older wording in /home/user/aybkk-workshop/CLAUDE.md, 'Business direction' ('we miss you' list)"
+ },
+ {
+  "name": "Attendance streak",
+  "what": "Each profile shows weeks in a row with 3+ practices, making the habit visible. Not found in the code yet.",
+  "stages": [
+   "retention",
+   "churn"
+  ],
+  "status": "planned",
+  "numbers": "3+ practices a week",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Action plan > 1. App' item 2"
+ },
+ {
+  "name": "Renewal shown with proof",
+  "what": "14 days before a pass ends, the profile shows the student's own numbers next to the renewal button, so the offer comes at the moment they feel progress (the '41 practices, resting HR 68 to 61' line in the plan is an example format). Not found in the code yet.",
+  "stages": [
+   "upsell and lifetime value",
+   "retention",
+   "churn"
+  ],
+  "status": "planned",
+  "numbers": "14 days before the pass ends",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Action plan > 1. App' item 4"
+ },
+ {
+  "name": "Daily journal linked into profile",
+  "what": "Link the daily journal (the CN system) into the student profile, after the photo test.",
+  "stages": [
+   "retention"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Action plan > 1. App' item 5"
+ },
+ {
+  "name": "Habit score tracking",
+  "what": "Machi tracks the habit numbers weekly in briefs: students not seen in 7+ days, profiles opened, streaks, renewals due and won. The plan warns the system only works if staff use the list every day.",
+  "stages": [
+   "retention",
+   "churn",
+   "upsell and lifetime value"
+  ],
+  "status": "decided-rule",
+  "numbers": "7+ days",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Per bot > Machi' and 'Action plan > 4. Score'"
+ },
+ {
+  "name": "Retention first (Hormozi)",
+  "what": "If the plan is 'more new students', first count how many stay, starting where AYBKK students stop, counted from the door check-in. Hormozi says the first 30 days; that is his number, not checked for AYBKK.",
+  "stages": [
+   "retention",
+   "churn",
+   "traffic"
+  ],
+  "status": "decided-rule",
+  "numbers": "first 30 days (Hormozi's number, not ours)",
+  "source": "/home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '5. BUSINESS CHECKS' item 4 (set 12 Nov 2026)"
+ },
+ {
+  "name": "Plan the next sale for paying students",
+  "what": "If a student already pays, plan that student's next step too, because the next sale is easier ('Getting the first sale is the hard part').",
+  "stages": [
+   "upsell and lifetime value",
+   "retention"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '5. BUSINESS CHECKS' item 5"
+ },
+ {
+  "name": "Fix order: offer, price, selling, then people",
+  "what": "If an offer leaves little after cost, fix the offer first, then the price, then how we sell, and only then add more people. A slow reply to a serious lead counts as a selling problem: tell Boonchu today and draft the reply; he sends it.",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "qualified lead and close rate",
+   "paid acquisition"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '5. BUSINESS CHECKS' item 6"
+ },
+ {
+  "name": "Specific who-it's-for",
+  "what": "If an offer is for everyone, say who it is for with three or more details ('the more specific you get, the more you can charge').",
+  "stages": [
+   "qualified lead and close rate",
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "3 details or more",
+  "source": "/home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '5. BUSINESS CHECKS' item 8"
+ },
+ {
+  "name": "Net first, name missing costs",
+  "what": "For any idea that adds income, count what is left after cost and after Boonchu's days away; if the cost to teach one pass, seat or workshop is unknown, name it as the missing number.",
+  "stages": [
+   "upsell and lifetime value",
+   "paid acquisition"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '5. BUSINESS CHECKS' item 9"
+ },
+ {
+  "name": "Start number, recheck in 12 weeks",
+  "what": "When Boonchu says go on anything, write the start number that day and check it again in 12 weeks, counted the same way (Hormozi checks at 90 days).",
+  "stages": [
+   "conversion",
+   "retention",
+   "acquisition channel and pipeline"
+  ],
+  "status": "decided-rule",
+  "numbers": "12 weeks",
+  "source": "/home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '5. BUSINESS CHECKS' item 10"
+ },
+ {
+  "name": "Do more of what already pays",
+  "what": "Before any new thing, ask 'what problem are we trying to solve?' and how we will know it worked; always list 'do nothing new, do more of what already pays' as an option, which Hormozi says is usually right. If the answer is 'we can't', ask 'what would it take?'.",
+  "stages": [
+   "acquisition channel and pipeline",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '5. BUSINESS CHECKS' items 1-3"
+ },
+ {
+  "name": "No pressure tricks",
+  "what": "Never use the fake choice (two options that both mean yes), a big price shown first so ours looks small, a higher price for richer buyers, or a 'unique mechanism' secret method; the website states 'One price for everyone'.",
+  "stages": [
+   "creative/offer",
+   "qualified lead and close rate",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '4. Do not copy'; /home/user/aybkk-workshop/public/bkk.html line 613"
+ },
+ {
+  "name": "Sticky first business map",
+  "what": "Hormozi ranks 'sticky' (customers stay) first of five advantages; every suggestion should say what it does to sticky first. Neo's reading, not agreed by Boonchu: Bangkok shala is level 1 and its job is proof that students stay; In-Depth Mysore and workshops (level 3) are where money is made; nothing earns on days he does not teach.",
+  "stages": [
+   "retention",
+   "upsell and lifetime value"
+  ],
+  "status": "idea",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '7. THE MAP' (12 Nov 2026)"
+ },
+ {
+  "name": "180K program retention pitch",
+  "what": "Pitch the 180K program to studio owners and teachers as 'How to build students who stay for years': retention is what they pay for; their students treat wellness like fashion, our graduates turn it into a habit. Show AYBKK retention as proof only after numbers are checked; Carne frames teacher training as a 'retention skill'.",
+  "stages": [
+   "creative/offer",
+   "qualified lead and close rate",
+   "upsell and lifetime value"
+  ],
+  "status": "decided-rule",
+  "numbers": "180,000 THB; 10 to 12 students; 2026",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Per money engine' and 'Per bot > Carne'; /home/user/aybkk-workshop/CLAUDE.md, header and 'Business direction'"
+ },
+ {
+  "name": "Authorization as the anchor",
+  "what": "All China cohort positioning anchors on the teacher's direct multi-year authorization from the late Sharath Jois (18-year relationship, hosted him in Bangkok 2018 and 2024); it must never be inflated. The /remotecontrol skill handles sales page, application criteria and competitor tests.",
+  "stages": [
+   "creative/offer",
+   "qualified lead and close rate"
+  ],
+  "status": "live",
+  "numbers": "18-year relationship; hosted in Bangkok 2018 and 2024",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'Custom Slash Commands > /remotecontrol'"
+ },
+ {
+  "name": "Name-Disqualify-Release qualifying copy",
+  "what": "The 'this is not for you' section of the China cohort page is written to filter buyers, not persuade them; it also audits copy for false urgency and vague claims (/qualify).",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'Custom Slash Commands > /qualify'"
+ },
+ {
+  "name": "DM triage, no selling in DMs",
+  "what": "Each China cohort inquiry is classified as tourist, beginner or serious and gets a reply under 60 words that filters or routes (tourists redirected, beginners qualified before price, serious moved to application). Bot hard rule: never a price in a DM draft.",
+  "stages": [
+   "qualified lead and close rate",
+   "cost per lead"
+  ],
+  "status": "live",
+  "numbers": "under 60 words",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'Custom Slash Commands > /dm' and 'AYBKK bot team > Hard rules'; /home/user/aybkk-workshop/.claude/commands/dm.md"
+ },
+ {
+  "name": "Carnegie lead drafts",
+  "what": "Daily bot keeps the 180K lead list and drafts replies and follow-ups (drafts only, Boonchu sends); lead names stay encrypted and posts carry counts only.",
+  "stages": [
+   "qualified lead and close rate",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "daily 06:37 Bangkok",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'AYBKK bot team' (set up 28 Sep 2026)"
+ },
+ {
+  "name": "Research why students quit in month 2-3",
+  "what": "Carne's next research: what makes students quit in month 2-3, in China and Thailand, with every number checked against a source.",
+  "stages": [
+   "churn",
+   "retention"
+  ],
+  "status": "planned",
+  "numbers": "month 2-3",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Per bot > Carne'"
+ },
+ {
+  "name": "Graduate workshops: trend to habit",
+  "what": "Workshops taught by graduates in China use the same message, from trend to habit. Before each trip, plan the room's next step: ask the host how many in the room teach or own a studio and how many workshops a year (use our counts, no Hormozi target).",
+  "stages": [
+   "acquisition channel and pipeline",
+   "qualified lead and close rate",
+   "upsell and lifetime value"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Per money engine'; /home/user/bots-mem/bots/voice/hormozi-advice-voice.md, '5. BUSINESS CHECKS' item 7"
+ },
+ {
+  "name": "Habit-gap Reels quota",
+  "what": "Plato makes at least 3 of 7 Reels a week on the habit gap (the quitter, the tracker who never moves, the 6am routine, the teacher who noticed); the hook is a truth about quitting, not a pose. Plato runs daily with EN/TH/ZH/RU captions and a Xiaohongshu title.",
+  "stages": [
+   "traffic",
+   "click-through",
+   "creative/offer",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "at least 3 of 7 Reels a week; daily 06:43 Bangkok",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Per bot > Plato' and 'Action plan > 3. Reels'; /home/user/aybkk-workshop/CLAUDE.md, 'AYBKK bot team'"
+ },
+ {
+  "name": "Habit-gap hook lines",
+  "what": "Ready Reel lines: 'You don't need another app. You need someone who notices when you don't show up.', 'Everyone starts in January. Ashtanga is for February.', 'Cold plunge: 3 minutes. Habit: 3 years.', and 'I have watched 2,000 students...'. The 2,000 line conflicts with the newer 13 Nov rule on student numbers; whether lifetime lines may stay is still open with Boonchu.",
+  "stages": [
+   "click-through",
+   "creative/offer"
+  ],
+  "status": "idea",
+  "numbers": "2,000 students (on hold under 13 Nov 2026 rule); Cold plunge 3 minutes vs habit 3 years",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Action plan > 3. Reels' and 'Rule: student numbers stay private (13 Nov 2026)'"
+ },
+ {
+  "name": "Hook writer: 5 levers",
+  "what": "For each video topic, write 5 hooks with distinct levers (authority, contrarian, stakes, question, pattern interrupt) and pick the strongest; hooks are built to stop a 10-year practitioner, not a beginner (/hook).",
+  "stages": [
+   "click-through",
+   "traffic"
+  ],
+  "status": "live",
+  "numbers": "5 hook options per topic",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'Custom Slash Commands > /hook'"
+ },
+ {
+  "name": "4-beat Reel skeleton",
+  "what": "Reels follow Hook, Context, Ordeal, Takeaway (4 beats for 60 seconds, 3 for 30) with one ordeal per video; caption edits use max-8-word captions (/story).",
+  "stages": [
+   "bounce",
+   "creative/offer",
+   "click-through"
+  ],
+  "status": "live",
+  "numbers": "4 beats for 60 s, 3 beats for 30 s; max 8 words per caption",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'Custom Slash Commands > /story'"
+ },
+ {
+  "name": "Student numbers stay private",
+  "what": "Never publish how many students practise at AYBKK (no counts of students, members, people a morning, bookings, renewals or room size) anywhere public; say it without a number, e.g. 'a room breathing together'. Still open: whether lifetime lines like '2,000+ students since 2013' may stay.",
+  "stages": [
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/bots-mem/bots/direction.md, 'Rule: student numbers stay private (Boonchu, 13 Nov 2026)'"
+ },
+ {
+  "name": "Current Bangkok price list",
+  "what": "From 12 Nov 2026 (newest, replaces the list valid until 11 Nov), every price plus 7% VAT, with 6 months marked as the teacher's pick and 12 months sold as 12 months only. The older list had 3 months 25,800, 12 months 78,000 and no 6-month pass; the free 13th month ended 21 Oct 2026 (earlier passes keep it).",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "upsell and lifetime value"
+  ],
+  "status": "live",
+  "numbers": "1 month 9,600 · 3 months 22,000 · 6 months 32,000 (teacher's pick) · 12 months 59,900 · Drop-in 1,500 · 10 classes 14,000 within 3 months · + 7% VAT",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'AYBKK Bangkok study fees' (From 12 Nov 2026; no 13th month from 21 Oct 2026)"
+ },
+ {
+  "name": "Loyal renewal price",
+  "what": "Students who complete 12 months in a row can renew 12 months at a lower price, shown on the booking page under 'Loyal students'.",
+  "stages": [
+   "upsell and lifetime value",
+   "retention",
+   "churn"
+  ],
+  "status": "live",
+  "numbers": "renew 12 months at 54,900 after 12 months in a row",
+  "source": "/home/user/aybkk-workshop/public/bkk.html line 611 (not in the three memory files)"
+ },
+ {
+  "name": "Monday letter list",
+  "what": "Free weekly letter from the shala with one small thing to try on the mat, sign-up by email, LINE @aybkk, WeChat or Telegram on the booking page.",
+  "stages": [
+   "retention",
+   "acquisition channel and pipeline",
+   "cost per lead"
+  ],
+  "status": "live",
+  "numbers": "every Monday",
+  "source": "/home/user/aybkk-workshop/public/bkk.html line 995 (not in the three memory files)"
+ },
+ {
+  "name": "Inbox capture and hot-lead alerts",
+  "what": "inbox.js stores LINE OA chats and Instagram/Facebook DMs and comments; an optional AI step sorts each message on arrival and sends hot ones to Boonchu's Telegram, which speeds replies to serious leads. Whether the AI key is switched on is not stated.",
+  "stages": [
+   "qualified lead and close rate",
+   "cost per lead",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "kept 90 days; AI daily cap default 150 calls",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'Key Facts > Inbox'"
+ },
+ {
+  "name": "China-proof pages",
+  "what": "Fonts are self-hosted because the Google Fonts CDN is blocked in China, so pages load there; the tee pre-order shop runs at cn.aybkk.net/shop.html with China access rules, and a Bangkok price list shop with classes and courses is planned.",
+  "stages": [
+   "bounce",
+   "conversion",
+   "upsell and lifetime value"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'Key Facts > Bangkok shala' and 'Custom Slash Commands > /shop'"
+ },
+ {
+  "name": "Bots draft only, no spending",
+  "what": "Hard rule for all bots: drafts only, no logins to Meta, WeChat, Xiaohongshu, TikTok, LINE or Rezerv, no spending; anything public or paid needs Boonchu's 'go' on that exact item. Plato also avoids politics, war, royalty, leaders, religious conflict and tragedies because the business runs in China, Russia and Thailand.",
+  "stages": [
+   "paid acquisition",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "/home/user/aybkk-workshop/CLAUDE.md, 'AYBKK bot team > Hard rules'"
+ },
+ {
+  "name": "Google Ads brand search campaign",
+  "what": "Campaign 'AYBKK Brand - Search' bids only on exact-match aybkk keywords and lands on aybkk.net/start/google, so the staff start funnel counts it apart. Rule: keep it if one new student came from it, cut the budget if not; if lost impression share (rank) is over 30%, raise max CPC from THB 20 to 35.",
+  "stages": [
+   "paid acquisition",
+   "click-through",
+   "traffic",
+   "cost per lead"
+  ],
+  "status": "live",
+  "numbers": "THB 150/day cap, max CPC THB 20; last 7 days (as of 2 Nov): 72 impressions, 21 clicks, 356 THB",
+  "source": "machiavelli.md, Reminders '29 Oct 2026' and '22 Oct 2026'; Open items 2026-11-02 (Google Ads, Cowork session)"
+ },
+ {
+  "name": "Google Ads non-brand Bangkok search with 30-day kill rule",
+  "what": "Campaign 'AYBKK Shala - Bangkok Search' (id 24415822293) has been live since 2 Nov (Maximize clicks, Bangkok presence or interest, EN+TH, ashtanga/mysore + bangkok phrase keywords); the advice is to land it on aybkk.net/start/gsearch, and each week's search terms report turns junk terms into negatives. On 2 Dec it stays if at least 1 new student came from it and is cut if 0. An older 15 Oct note said to start non-brand only after tracking was live and the rating was 4.5+; the 2 Nov launch is newer.",
+  "stages": [
+   "paid acquisition",
+   "traffic",
+   "click-through",
+   "cost per lead"
+  ],
+  "status": "testing",
+  "numbers": "300 THB/day, max CPC 40, 12 phrase keywords, 24 negatives, 1 RSA; 30 days ~9,000 THB; older rule: kill if cost per book click is over THB 500",
+  "source": "machiavelli.md, Open items 2026-11-02 (Google Ads, Cowork session); Reminders 'Mon 9 Nov 2026', 'Wed 2 Dec 2026', '30 Nov 2026'"
+ },
+ {
+  "name": "Conversion tag on Book and LINE taps",
+  "what": "One Google tag on aybkk.net and /start fires when a visitor taps Book or LINE (only after they tap OK on the cookie bar); never add a second tag. PR #63 stopped staff sign-in links being sent to Google, and the 'Include user-provided data from your website' setting is to be turned off.",
+  "stages": [
+   "conversion",
+   "paid acquisition",
+   "cost per lead"
+  ],
+  "status": "live",
+  "numbers": "AW-18515292394",
+  "source": "machiavelli.md, Open items 2026-11-02 (Google Ads) and 2026-10-15 (merge PR #63)"
+ },
+ {
+  "name": "/start landing pages with source tags",
+  "what": "Each channel gets its own link aybkk.net/start/<tag>, and the staff page counts visits, book taps and LINE taps for each tag, so every channel is judged by real taps, not likes. Google photo posts use one tag per post.",
+  "stages": [
+   "acquisition channel and pipeline",
+   "click-through",
+   "conversion",
+   "cost per lead"
+  ],
+  "status": "live",
+  "numbers": "tags in use: google, gsearch, ig, ig-aybkk, line-aybkk, gp-YYMMDD",
+  "source": "machiavelli.md, Reminders '29 Oct 2026' and 'Sun 1, 8, 15 and 22 Nov 2026'; Open items 2026-11-02 (Google Ads), 2026-10-15 (Google photo posts)"
+ },
+ {
+  "name": "/start ladder question lead capture",
+  "what": "A 4-tap 'first step' ladder question replaces the contact form on /start/<tag>#first-step and a home page button. The answer goes into the inbox as channel 'lead', pings Telegram as hot with no personal data, and opens LINE pre-typed (or email/WhatsApp). Ladder leads still have to be answered by hand, and the Machi routine does not know the 'lead' channel yet.",
+  "stages": [
+   "conversion",
+   "bounce",
+   "cost per lead",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "4 taps; PR #91 merged 5 Nov",
+  "source": "machiavelli.md, Open items 2026-11-02 (5 Nov part: 'ladder question' lead capture, PR #91)"
+ },
+ {
+  "name": "LINE OA keyword auto-replies from the /start Book button",
+  "what": "The LINE button on /start sends a keyword to LINE OA, which answers by auto-reply in 3 languages; staff are to test it from their own LINE. The promotion has ended, so the Rookie Pack line must be deleted from all 3 replies.",
+  "stages": [
+   "conversion",
+   "click-through",
+   "qualified lead and close rate"
+  ],
+  "status": "live",
+  "numbers": "3 keyword replies: 'First morning', 'จองเช้าแรก', '预约第一个早上'; PR #77 merged 31 Oct",
+  "source": "machiavelli.md, Reminders 'PR #77 MERGED Sat 31 Oct' and '12 Nov 2026 (LINE auto-reply 30 Oct)'"
+ },
+ {
+  "name": "Inbox with hot-lead Telegram alerts and 3x daily chase",
+  "what": "LINE OA chats go into one inbox, hot messages ping Telegram, and the chief-of-staff bot reads it at 07:08, 13:08 and 19:08. Each check counts new, needs-a-reply and hot messages and gives one next step, such as 'answer the promo lead before it ends'. Instagram and Facebook DMs still don't arrive because the Meta app lacks App Review and Business Verification.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion"
+  ],
+  "status": "live",
+  "numbers": "inbox connected 2 Oct (200); 10 Nov 07:08: 13 LINE threads with news, 8 need a reply, 5 hot",
+  "source": "machiavelli.md, Open items 2026-09-30 (Inbox), 2026-10-19 (ManyChat vs MCP); Log 2026-10-02 19:08 and 2026-11-10 07:08"
+ },
+ {
+  "name": "Same-day replies and the reply house rule",
+  "what": "Every message is answered within 24h, and the plan is to answer each new person the same day from 5 approved answers. Replies are brief, friendly and precise and never say 'sorry'; a late reply starts with 'Thank you for your patience with our reply.' The 5 answers are still waiting for the owner's approval.",
+  "stages": [
+   "conversion",
+   "qualified lead and close rate"
+  ],
+  "status": "decided-rule",
+  "numbers": "5 approved answers; every message within 24h",
+  "source": "machiavelli.md, Standing orders 2026-10-17; Open items 2026-11-12 (attract more regular students), 2026-10-17 (Power, Trust, Likeness)"
+ },
+ {
+  "name": "DM rules: no price in a DM, one standard warm reply",
+  "what": "Bots only write drafts and never put a price in a DM draft. Drop-in and short-stay questions get one standard warm reply that answers first, links the price page and offers a start day, which fixes the DM tone that the old-price reviews complained about.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "machiavelli.md, Standing orders 2026-11-03 ('still never a price in a DM'); Open items 2026-10-16 (old price reviews)"
+ },
+ {
+  "name": "Fix maps and business listings",
+  "what": "The existing listings are wrong: Google shows evening hours that don't exist, no floor and no moon-day closures; Apple Maps has the wrong name, address and phone; Facebook and LINE OA show old prices and link to Rezerv; Wongnai is unclaimed; OSM tags the shala as a clinic; and the Sharath Yoga Centre teacher list has the wrong address, which matters for 180K trust. The site part is live (map button, Amap button, schema with phone, hours and pin). The listing fixes are a front-desk checklist, along with new free listings: Yandex Business, Dianping via Meituan, and an Amap link in WeChat replies.",
+  "stages": [
+   "traffic",
+   "click-through",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "planned",
+  "numbers": "Google 4.1 from 22 reviews vs rivals 4.8-5.0 with 80-369; Facebook showed drop-in 1,000, month 6,000; LINE OA 'Average 1,000'; site fix PR #74 merged 29 Oct",
+  "source": "machiavelli.md, Open items 2026-10-29 (map apps); Reminders '12 Nov 2026, 07:08 (price switch)'"
+ },
+ {
+  "name": "Monthly Google visibility numbers",
+  "what": "On the 1st of each month the owner pastes the Business Profile numbers (views, searches, directions, website, calls, chat, rating, review count) into one vault note, so Google changes are judged by numbers. The 15 Oct rating was 4.0 from 21; newer notes (29 Oct, 12 Nov) say 4.1 from 22.",
+  "stages": [
+   "traffic",
+   "click-through",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "Rating on 15 Oct: 4.0 from 21 reviews; newer: 4.1 from 22",
+  "source": "machiavelli.md, Reminders '1st of every month (Google report, 15 Oct)'; Open items 2026-10-29, 2026-11-12 22:15"
+ },
+ {
+  "name": "Google review ask at the 12-week check and at renewal",
+  "what": "aybkk.net/review opens Google's write-review form. A card in My account asks once the 12-week check is done or the student renews, with a small always-there link, hidden on cn.aybkk.net. Everyone gets the same card, with no gift and no '5 stars', and 'Not now' asks again later. Staff never review their own shala, and the desk also asks 2-3 students a week.",
+  "stages": [
+   "click-through",
+   "traffic",
+   "conversion",
+   "retention"
+  ],
+  "status": "built-not-used",
+  "numbers": "target 50 new real reviews (4.5 stars needs about 21 new 5-star, 4.8 about 84); draft PR #109 waiting for merge",
+  "source": "machiavelli.md, Open items 2026-11-13 00:30, 2026-11-12 22:35, 2026-11-12 (regular students); Reminders '30 Nov 2026 (Google report)'"
+ },
+ {
+  "name": "Facebook record as plain-text proof, fresh quotes on top",
+  "what": "Facebook's exact words go in the teacher section as plain text with a link, in 4 languages: low on the page, never the main proof, no widget (Facebook is blocked in China), and never '4.8' (Facebook shows no star score). Fresh proof goes on top: 3 quotes from this year's students, with their OK.",
+  "stages": [
+   "conversion",
+   "bounce"
+  ],
+  "status": "built-not-used",
+  "numbers": "96% recommend (441 reviews); newest visible review 6 May 2019, 0 in the last 12 months",
+  "source": "machiavelli.md, Open items 2026-11-12 22:15, 2026-11-13 00:30 (PR #109)"
+ },
+ {
+  "name": "Answer to cheap competitor offers: habit system, never a discount",
+  "what": "When a rival sells a cheap month and bids on our name, AYBKK never discounts and never names them. It leads with outcome and proof (Authorized Level 2, since 2013, beginners welcome) and the habit system (same practice, same time, a teacher who notices when you're gone), and gives the price per day only after that. The per-day figure was worked out at the old 32,000 6-month price and is out of date since the 34,200 list.",
+  "stages": [
+   "creative/offer",
+   "click-through",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "rival: 'A month of yoga THB 1,500' / 'THB 50 a day'; ours then: '6 months from 12 Nov is about THB 190 a day incl. VAT'",
+  "source": "machiavelli.md, Open items 2026-10-15 (COMPETITOR PRICE HOOKS)"
+ },
+ {
+  "name": "Hold the premium price and justify it",
+  "what": "A Bangkok price scan put AYBKK at the top of the Mysore market. The advice was to hold the price, justify it, add a paid foundation offer credited to the first month, and fix the drop-in price, which was shown inconsistently online.",
+  "stages": [
+   "creative/offer",
+   "upsell and lifetime value"
+  ],
+  "status": "decided-rule",
+  "numbers": "AYBKK 9,600/mo vs market 4,500-6,200 (long-term 4,000-4,500); drop-in online showed 1,500/1,000/600",
+  "source": "machiavelli.md, Open items 2026-09-29 (Bangkok Mysore price scan)"
+ },
+ {
+  "name": "Price list from 12 Nov with automatic switch",
+  "what": "The new list switched on by itself at 00:00 12 Nov and was checked live. 6 months is the 'teacher's pick', and 12 months is 12 months only (no free 13th month since 21 Oct; passes sold before keep 13). On the evening of 11 Nov the 6m and 12m prices were raised from 32,000 / 59,900, which CLAUDE.md still shows. New wall and social price posters are waiting for the owner's go.",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "upsell and lifetime value"
+  ],
+  "status": "live",
+  "numbers": "12m 63,600 (5,300/month, 331 a class), 6m 34,200 (5,700/month, 356 a class), 3m 19,500 (6,500/month, 406 a class), 1m 9,600, drop-in 1,500, 8 classes 7,600 (2 months), all +7% VAT; online 6m 37,692, 12m 70,094",
+  "source": "machiavelli.md, Log 2026-10-02 (Campaign dates FINAL, superseded 11 Nov evening); Open items 2026-11-11 21:07; Reminders '12 Nov 2026, 07:08 (price switch)'; Log 2026-11-12 07:08"
+ },
+ {
+  "name": "Every price before VAT, 7% on top",
+  "what": "Every AYBKK price is quoted before VAT, with 7% Thai VAT added on top; never write 'VAT included'. Online payment adds a card fee on top: 3% on aybkk.net, and Rezerv prices are typed with its 5% fee included.",
+  "stages": [
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "In-Depth US$5,500 + 7%; 180,000 THB + 7% = 192,600 THB; 8 classes desk 8,132, online 8,376 with the 3% fee",
+  "source": "machiavelli.md, Standing orders 2026-11-03; Open items 2026-11-06; Reminders '12 Nov 2026, 07:08 (Rezerv)'"
+ },
+ {
+  "name": "8-class pack replaces the 10-class pack",
+  "what": "The 8-class pack is now valid for 2 months (since 9 Nov) with no weekly minimum, and unlimited members have no minimum either. Logged pushback: 2 months is about 1 class a week, which is weak for building the habit (option B, 1 month 7,600 / 2 months 8,800, was offered but not chosen).",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "upsell and lifetime value"
+  ],
+  "status": "live",
+  "numbers": "7,600 + VAT (950 a class); desk 8,132; online 8,376; replaced 10 classes 14,000; PR #100 merged 11 Nov",
+  "source": "machiavelli.md, Open items 2026-11-06, 2026-11-09, 2026-11-11 20:05"
+ },
+ {
+  "name": "Drop-in test: visible anchor price, convert to a month",
+  "what": "The drop-in price stays visible as the anchor, with the line 'Practicing 7 times or more? The 1-month pass costs less than drop-ins'. The front desk marks whether each drop-in buys a month or more within 30 days and reports the count monthly. Decision on 31 Jan 2027: if 0-1 converted, stop drop-ins (one month minimum); if 2 or more, keep drop-ins as the trial class.",
+  "stages": [
+   "conversion",
+   "upsell and lifetime value",
+   "creative/offer"
+  ],
+  "status": "testing",
+  "numbers": "drop-in 1,500; 7 x 1,500 = 10,500 > 9,600; 9,600/1,500 = 6.4",
+  "source": "machiavelli.md, Open items 2026-10-16 (DROP-IN TEST); Reminders '31 Jan 2027'"
+ },
+ {
+  "name": "New-student and restart promo (Duo, Rookie, Reset & Restart)",
+  "what": "ENDED 11 Nov 2026. From 2 Oct, Duo and Rookie packs for new students (bought on LINE) and Reset & Restart for past students sold until 11 Nov with a start by 12 Nov, pushed by the hero line, a Google ad sitelink and a /start promo box (all switched off 11-12 Nov). It replaced the 30 Sep 'Buy 1 month get 1 month free for NEW students' offer and the bonus weeks for current students.",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "churn"
+  ],
+  "status": "live",
+  "numbers": "1 logged win: Duo 2 months, slip 19,474 (18,200 + 7% VAT); 10 Nov 07:08: 5 hot promo asks; old bonus weeks 1m +1w, 3m +3w, 6m +6w, 12m +2 months",
+  "source": "machiavelli.md, Open items 2026-09-30 (Boonchu decisions; 180K framing), Log 2026-10-02 (Campaign dates FINAL); Wins 2026-11-06; Log 2026-11-10 07:08; Reminders '11 Nov 2026'"
+ },
+ {
+  "name": "Hero line on the aybkk.net home page",
+  "what": "During the promo the hero said 'Give yourself 12 weeks', with a 'New students:' prefix in 4 languages. From 12 Nov it says 'From 331 baht a class +VAT, with a teacher who knows your body' (it said 'From 406 baht a class' from 24 Oct).",
+  "stages": [
+   "bounce",
+   "click-through",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "'From 331 baht a class +VAT'; PRs #89, #90, #103",
+  "source": "machiavelli.md, Open items 2026-11-02 (PR #89, #90), 2026-11-11 21:07; Log 2026-10-02 (PR #70)"
+ },
+ {
+  "name": "Shorter home page with booking near the top",
+  "what": "Booking moved to section 2, every section got 'Read more', and class spots show as words (Spots available / Last 3 / Last 2 / Last spot / Class full), never numbers. The page uses a Swiss grid, and a monthly theme that changes on the 1st by itself replaced the old comparison table.",
+  "stages": [
+   "bounce",
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "phone page 11,777px; booking at 2.5 screens until 11 Nov (1.4 after); PRs #93, #88",
+  "source": "machiavelli.md, Open items 2026-11-07 06:58, 2026-11-04 (Swiss grid, monthly theme)"
+ },
+ {
+  "name": "Month calendar poster you tap to book",
+  "what": "In the month view of aybkk.net, the bright tall poster is the calendar: tap a date to book, and booked dates show a gold tick. Social posters use the same bright look.",
+  "stages": [
+   "conversion",
+   "bounce"
+  ],
+  "status": "live",
+  "numbers": "live 2 Nov (PRs #79, #81)",
+  "source": "machiavelli.md, Open items 2026-11-02 (prices and poster, item 3)"
+ },
+ {
+  "name": "Packages tab in price-poster style",
+  "what": "The Packages tab is rebuilt like the price poster: Membership, then 01 Unlimited (12/6 pick/3/1), 02 Packages (drop-in, 8 classes), a +VAT line and 03 Member notes. Every price comes from the API, and each row shows +VAT and the online total before Buy. Open: there are now two price lists on the page.",
+  "stages": [
+   "conversion",
+   "bounce"
+  ],
+  "status": "built-not-used",
+  "numbers": "draft PR #108",
+  "source": "machiavelli.md, Open items 2026-11-13 00:05"
+ },
+ {
+  "name": "One price everywhere (Rezerv, Facebook, LINE OA)",
+  "what": "Rezerv still sells old passes that undercut the new list. A browser prompt hides them and adds the new ones (typed with Rezerv's 5% fee), but the owner still has to run it. The Facebook description and LINE OA still show old prices.",
+  "stages": [
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "planned",
+  "numbers": "Rezerv still sells 2 months unlimited (18,200), 6 months 45,000, '12 Months unlimited (1 free month, 78,000)'; to add: 3m 19,500 typed 20,475 / 6m 34,200 typed 35,910 / 12m 63,600 typed 66,780",
+  "source": "machiavelli.md, Reminders '12 Nov 2026, 07:08 (Rezerv)' and '12 Nov 2026, 07:08 (price switch)'"
+ },
+ {
+  "name": "Facebook ad with a 3-chat kill rule",
+  "what": "The owner set up a reviewed Facebook ad pack for the promo in Meta Ads Center, with a kill rule (stop if fewer than 3 real chats by Sunday night) and a fixed end. An older rule (12 Oct) says no Facebook ad money until the Messenger reply path is covered. The notes don't confirm whether the ad ran or what it got.",
+  "stages": [
+   "paid acquisition",
+   "cost per lead",
+   "creative/offer"
+  ],
+  "status": "testing",
+  "numbers": "kill rule Sun 8 Nov night (<3 real chats = stop); ad ends Wed 11 Nov 20:00",
+  "source": "machiavelli.md, Open items 2026-11-02 (5 Nov part, fb-ad.md); 2026-10-12 (free gift audit)"
+ },
+ {
+  "name": "Carousels to Instagram and Facebook via Postiz",
+  "what": "Calendar, promo and monthly theme carousels are published through Postiz to the AYBKK Instagram and Facebook pages on the owner's go. Bots never log in to Meta; when the Facebook connection breaks, the owner reconnects it.",
+  "stages": [
+   "traffic",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "10-page carousel to IG; 7-page set published on Facebook 5 Nov 09:21",
+  "source": "machiavelli.md, Open items 2026-11-02 (5 Nov part)"
+ },
+ {
+  "name": "Google Business Profile photo posts",
+  "what": "A weekly routine writes Google photo posts (the first was published 28 Oct), each with its own gp-YYMMDD start-page tag. Advice: Wednesday only for 8 weeks, cut back if 8 weeks bring no taps, and say 'Sukhumvit 31' because that search shows rival shalas. Only teacher-face photos until students agree to appear in photos.",
+  "stages": [
+   "traffic",
+   "click-through"
+  ],
+  "status": "live",
+  "numbers": "routine Mondays 12:53; 8-week test; first post 28 Oct 13:00",
+  "source": "machiavelli.md, Open items 2026-10-15 (GOOGLE PHOTO POSTS), 2026-10-18 (QUESTION BANK); Log 2026-10-28 13:08"
+ },
+ {
+  "name": "In-Depth priority list page with apply form (English)",
+  "what": "The public page aybkk.net/in-depth is a priority list: no dates, and an application with a practice video, then a call, then payment. The list hears 7 days before anyone else and seats go in order of application. Applications are tagged so the count decides whether a Thai or English group opens; adding the link to the IG bio is still open.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion",
+   "acquisition channel and pipeline",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "'From US$5,500 + 7% VAT' (about 185,000 THB at 33.7); 12 seats at most; list tag priority-en; PR #86 merged 4 Nov",
+  "source": "machiavelli.md, Open items 2026-11-03 (IN-DEPTH page split), 2026-11-02 (IN-DEPTH MYSORE PAGE decisions)"
+ },
+ {
+  "name": "In-Depth Gen #3 private Chinese page",
+  "what": "Gen #3 is a Chinese-only cohort, so its page is a private link (cn.aybkk.net/in-depth, noindex, shared on WeChat only) that sells it as 'In-Depth Mysore: the development of the practice': certificate of completion only, not teacher training or authorization. Entry requires Primary Series by heart plus Mysore and led class experience. Before any new signer: native check of the v4 Chinese terms.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "180,000 THB + 7% = 192,600 THB; 11 Jan to 9 Feb 2027, 30 days; 12 seats; list tag gen3-zh; apply-by 10 Dec 2026 (to confirm)",
+  "source": "machiavelli.md, Open items 2026-11-03, 2026-11-02 (IN-DEPTH MYSORE PAGE decisions); Standing orders 2026-11-03"
+ },
+ {
+  "name": "180K pitch built on Chinese studio owners' retention pain",
+  "what": "The 180K China program is pitched as retention, using Chinese studio owners' own search words (can't keep members, no members, refunds); Carnegie uses them. Before the China page goes out, a China graduate must check what people think when they hear 迈索尔瑜伽 (Baidu suggests 'ran off' / 'closed down').",
+  "stages": [
+   "creative/offer",
+   "qualified lead and close rate"
+  ],
+  "status": "decided-rule",
+  "numbers": "迈索尔 used in 8 files",
+  "source": "machiavelli.md, Open items 2026-10-18 (QUESTION BANK)"
+ },
+ {
+  "name": "180K lead list and follow-up drafts (Carnegie)",
+  "what": "A daily bot keeps the 180K lead list (encrypted) and drafts replies and follow-ups; the owner sends them. Silent serious leads get one last note or are closed by a set date, and the default keeps the lead open with nothing sent.",
+  "stages": [
+   "qualified lead and close rate",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "17 Oct: 0 new, 1 serious in 20 days; 14 Nov: 0 new leads, serious lead 28 days silent",
+  "source": "machiavelli.md, Log 2026-10-17 07:08, 2026-11-14 07:08; Open items 2026-10-17 (DECIDED serious lead)"
+ },
+ {
+  "name": "Serious leads practise at the shala first",
+  "what": "A serious practitioner who asks for online teaching must first come and practise at the shala; when AYBKK opens online classes, students who practised at the shala get invited. Treated as a future 180K fit: no pitch, no price.",
+  "stages": [
+   "qualified lead and close rate",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "machiavelli.md, Open items 2026-10-17 (DECIDED, ends the daily online yes or no ask)"
+ },
+ {
+  "name": "Free gift guide by comment keyword (ManyChat MYSORE)",
+  "what": "Commenting or DMing MYSORE (or sending มือใหม่ to LINE) should deliver the 'Your First Mysore Class' guide PDFs, and the team decided to keep ManyChat rather than build an MCP. Delivery is unproven: nothing shows the ManyChat flow is live and tested, the free plan may skip new commenters, and posts asking 'Comment aybkk' need a keyword or a named person to reply.",
+  "stages": [
+   "cost per lead",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "built-not-used",
+  "numbers": "ManyChat Free plan (25 active contacts a month, commenters count); fix: Essential USD 14/mo yearly (needs yes); 20 published posts ask 'Comment aybkk'",
+  "source": "machiavelli.md, Open items 2026-10-12 (FREE GIFT DELIVERY audit), 2026-10-19 (ManyChat vs MCP); Reminders 'Sun 25 Oct 2026'"
+ },
+ {
+  "name": "Reel keyword test",
+  "what": "A test of which Reels make people comment the keyword, measured with weekly Sunday screenshots (plays and comments per Reel, Instagram and Xiaohongshu) plus the start-page stats for the ig-aybkk and line-aybkk tags; only counts go in files. It has not started: it begins the Monday after the owner films week 1, and the campaign Mysore Reel waits until after it.",
+  "stages": [
+   "click-through",
+   "cost per lead",
+   "creative/offer"
+  ],
+  "status": "planned",
+  "numbers": "original window 26 Oct to 22 Nov",
+  "source": "machiavelli.md, Reminders 'Sun 1, 8, 15 and 22 Nov 2026', 'Thu 22 Oct 2026'; Open items 2026-10-22 19:08, 2026-10-01 (Mysore Reel)"
+ },
+ {
+  "name": "Own Meta app review and comment-to-message test",
+  "what": "Ideas waiting for the owner's go: Meta Business Verification and App Review for AYBKK's own app (unlocks Instagram/Facebook DMs in the inbox, and later a guide reply with no ManyChat bill), and a free Business Suite 'Comment to message' test on ONE Reel. Never: password-login Instagram tools, two tools on one keyword.",
+  "stages": [
+   "acquisition channel and pipeline",
+   "cost per lead"
+  ],
+  "status": "idea",
+  "numbers": "verification 1-6 weeks",
+  "source": "machiavelli.md, Open items 2026-10-19 (ManyChat vs MCP); Reminders '1 Dec 2026 (Muse research)'"
+ },
+ {
+  "name": "Power, Trust, Likeness weekly content plan",
+  "what": "An audit found the feed was almost all borrowed-power quote carousels and no Trust pieces. Proposal: Mon TRUST (one 'Stuck in Primary' fix with a task), Wed LIKENESS (one belief in his words), Sat POWER (a student speaks or a real review is read out), and quote carousels cut to at most 1 a week. Measures: people asking to learn, people who tried the task, comments telling their own story.",
+  "stages": [
+   "traffic",
+   "creative/offer",
+   "qualified lead and close rate"
+  ],
+  "status": "planned",
+  "numbers": "audit 3-17 Oct: 43 pieces posted, 40 were famous-quote carousels, 1 Power, 2 Likeness, 0 Trust; plan: 3 Reels + 1 Letter a week",
+  "source": "machiavelli.md, Open items 2026-10-17 (Power, Trust, Likeness)"
+ },
+ {
+  "name": "Reels from the Plato content chat",
+  "what": "Reels are written in the Plato content chat and posted after the owner's go; the daily Plato routine has been paused since 22 Oct while he screens the waiting scripts. Each Reel is judged by plays, comments and any DM or booking that names it.",
+  "stages": [
+   "traffic",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "4 Reels posted 1 Nov; 21 waiting scripts",
+  "source": "machiavelli.md, Log 2026-11-01 (All Plato reels posted); Open items 2026-10-22 (Plato paused)"
+ },
+ {
+  "name": "Monday 'Letter from the Shala'",
+  "what": "A weekly letter goes out on LINE OA, WeChat, Telegram and email, with a signup box on aybkk.net (email double opt-in). It is scored on replies, bookings from the P.S. link and 'TT' replies, not opens, and judged on 31 Dec 2026. Letters #1-#3 were not reported sent, the Telegram channel isn't created, and Substack for the English letter is waiting for a yes.",
+  "stages": [
+   "retention",
+   "traffic",
+   "conversion"
+  ],
+  "status": "built-not-used",
+  "numbers": "signup live 20 Oct (PRs #68, #69); judge 31 Dec 2026",
+  "source": "machiavelli.md, Open items 2026-10-04 (Plato chat handoff), 2026-10-20 (newsletter), 2026-10-17; Open items 2026-11-02 (Substack)"
+ },
+ {
+  "name": "Habit Gap messaging: 10 habits and the comparison pattern",
+  "what": "Every piece sells the habit system ('people don't lack tools, they quit'), names one of the 10 health habits and leads to a Mysore trial, a renewal or the 180K program. Comparisons follow 5 steps (pain, what they try, what it misses, what Ashtanga does, proof + invite), never say other exercise 'does not work', and always add 'we teach you from the very start'. No 'every student', no kilos, no medical claims, and no public statistic until it is checked.",
+  "stages": [
+   "creative/offer",
+   "click-through",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "'Walking covers 2 of the 10. One Ashtanga morning covers all 10.'",
+  "source": "machiavelli.md, Standing orders 2026-10-04 (DIRECTION, 10 HABITS FRAME, COMPARISON)"
+ },
+ {
+  "name": "Rule #1 stakes test",
+  "what": "Every piece of content, advice and decision ask must state 'Stakes: what happens if this does not work or does not happen' and 'Why care'; a piece without both lines is sent back.",
+  "stages": [
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "machiavelli.md, Standing orders 2026-11-02 (RULE #1, THE STAKES TEST)"
+ },
+ {
+  "name": "First-timer hosting sheet and weekly counts",
+  "what": "The front desk hosts every Bangkok first-timer on one sheet: name on day 1, greeted by name the next morning, 'See you tomorrow?' after 7 quiet days, a day-25 talk, and the questions 'live in Bangkok?' and 'how did you find us?'. Weekly counts: new Bangkok people and their source, first-timers on a pass by day 14, regulars every Monday. Refused: free trials, guest mornings, more ads or content before the numbers, another price change.",
+  "stages": [
+   "retention",
+   "churn",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "planned",
+  "numbers": "day 1, day 14, day 25, 7 quiet days",
+  "source": "machiavelli.md, Open items 2026-11-12 (attract more regular students), 2026-10-17 (daily 'See you tomorrow?')"
+ },
+ {
+  "name": "Open Door rebrand and First Month Path",
+  "what": "A beginner-friendly rebrand (tagline 'Traditional Ashtanga. Open door.') in 4 phases: align the team, build a First Month Path, show it in content and on aybkk.net, and measure Day 30 renewals. It waits for the owner to pick the path name and hold the team meeting.",
+  "stages": [
+   "retention",
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "planned",
+  "numbers": "4-phase plan Oct 1 to Mar 2027",
+  "source": "machiavelli.md, Log 2026-10-01 (rebrand plan); Open items 2026-09-30 (Brand = welcoming)"
+ },
+ {
+  "name": "January 'Give us 12 weeks' push",
+  "what": "January is when people start, so a 'Give us 12 weeks' push is to be set up before the owner's December Mysore trip.",
+  "stages": [
+   "traffic",
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "machiavelli.md, Reminders '1 Nov 2026 (family calendar)' and 'From 12 Nov 2026'"
+ },
+ {
+  "name": "Students book every class; check-ins counted at the door",
+  "what": "Students book every class to train the habit, and new students book themselves. Staff use the /door 'add someone who is here' button as backup and should add fewer by hand each day; check-ins, not bookings, are what gets counted.",
+  "stages": [
+   "retention"
+  ],
+  "status": "decided-rule",
+  "numbers": "door walk-in live 28 Oct (PR #71)",
+  "source": "machiavelli.md, Open items 2026-10-17 (DECIDED book every class), 2026-10-28 (door walk-in)"
+ },
+ {
+  "name": "Mornings-practised count and milestone rewards",
+  "what": "The student profile shows 'mornings practised' (live). The most dedicated student gets a gift at the AYBKK New Year party. Advice still waiting: milestone rewards many people can reach and a one-tap 'Book again'.",
+  "stages": [
+   "retention",
+   "churn"
+  ],
+  "status": "live",
+  "numbers": "milestones 50 / 100 / 200 mornings (idea); profile count in PR #72",
+  "source": "machiavelli.md, Open items 2026-10-17 (book every class), 2026-10-28 (PR #72)"
+ },
+ {
+  "name": "Class photos in the student's private profile",
+  "what": "Class photos go into each student's private profile and the profile shows the student's face. Advice: keep only the best 100 photos per class day so the photo service stays inside its plan.",
+  "stages": [
+   "retention"
+  ],
+  "status": "live",
+  "numbers": "5,738 uploads in 30 days, about 190 a day; rule advised: best 100 photos a class day at most",
+  "source": "machiavelli.md, Open items 2026-11-09 (Cloudinary), 2026-11-11 20:05 (PR #99); Log 2026-10-02 (team fact)"
+ },
+ {
+  "name": "Loyal 12-month renewal gets a special tee, not a discount",
+  "what": "The 54,900 loyal renewal price is dropped (it replaced a 21 Oct note that kept it). A student who practises 12 months in a row and renews for 12 months gets a special-collection AYBKK shala tee instead, with no price in the line. Gap: the tee doesn't exist yet (designer, quantity and stock date still open).",
+  "stages": [
+   "retention",
+   "upsell and lifetime value"
+  ],
+  "status": "decided-rule",
+  "numbers": "54,900 loyal renewal dropped",
+  "source": "machiavelli.md, Open items 2026-11-02 (prices and poster, item 1); Log 2026-10-02 (21 Oct note, superseded)"
+ },
+ {
+  "name": "Renewal rule for holders of old-price passes",
+  "what": "The new list is a rise on cash actually collected, and volume is falling, so renewal shock is a churn risk. Open questions for the owner: one-time old deal for those who renew on time? Do Dedicated plans and cash deals end? Freeze the list after 12 Nov? Until he decides, old-price renewal requests get no reply (default). Numbers are internal, never public.",
+  "stages": [
+   "churn",
+   "retention",
+   "upsell and lifetime value"
+  ],
+  "status": "planned",
+  "numbers": "31 live 6m/12m holders; new list a 12 to 17% RISE on cash collected; paid about 3m 15,500, 6m 25,800, year 52,400; sales 281 -> 190 -> 141 a year; monthly active students 105 Jan 2025 -> 52 Oct 2026",
+  "source": "machiavelli.md, Open items 2026-11-06 (prices, item 5), 2026-11-08 19:08 (old-price renewal)"
+ },
+ {
+  "name": "Transfer, freeze and refund rules",
+  "what": "Memberships can't be transferred, except one hardship transfer (moving or doctor; once; to a new person; same end date; freeze offered first). Freezes cover set medical cases. Refund line: 'All passes are final once purchased, unless we can't give the classes you paid for (if we close or move)'. Membership stays yoga-only to stay outside the fitness rule; a Thai lawyer still has to check the refund line.",
+  "stages": [
+   "churn",
+   "retention"
+  ],
+  "status": "decided-rule",
+  "numbers": "transfer fee 1,500; freeze up to 30 days or per doctor's note",
+  "source": "machiavelli.md, Open items 2026-10-19 (membership transfer, DECIDED); Log 2026-10-02 (policy on the JPEG)"
+ },
+ {
+  "name": "Bangkok tee section on aybkk.net",
+  "what": "Tees are sold on the home page; orders go through LINE for now, and online payment waits for Bangkok stock counts.",
+  "stages": [
+   "upsell and lifetime value"
+  ],
+  "status": "live",
+  "numbers": "790 THB + 7% VAT; 8 tees live",
+  "source": "machiavelli.md, Open items 2026-11-04 (Swiss grid, tees), 2026-11-02 (#88 live)"
+ },
+ {
+  "name": "Monthly timetable update and poster",
+  "what": "On the afternoon of the last day of each month a routine checks next month on aybkk.net, makes EN and TH posters (feed and story) and asks for the owner's go. If the 1st arrives with no poster sent, he is told.",
+  "stages": [
+   "traffic",
+   "retention"
+  ],
+  "status": "live",
+  "numbers": "14:41 Bangkok on the last day of each month; first Mon 30 Nov",
+  "source": "machiavelli.md, Standing orders 2026-11-02 (MONTHLY TIMETABLE)"
+ },
+ {
+  "name": "No public student numbers",
+  "what": "Never show how many students practise: class spots are shown as words, and every student list or count needs the staff key. A built draft hides capacity and bookings on the public timetable.",
+  "stages": [
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "built-not-used",
+  "numbers": "draft PR #110 (spot words live in PR #93)",
+  "source": "machiavelli.md, Open items 2026-11-13 (lock student lists), 2026-11-07 06:58"
+ },
+ {
+  "name": "Online anatomy and philosophy course in two tiers",
+  "what": "An online course (CN + EN, two tiers) sold in a ladder: free gift first, then L1, then FULL, with L1 anchoring FULL. Prices were never set, so the default keeps moving sales back one week at a time.",
+  "stages": [
+   "upsell and lifetime value",
+   "creative/offer"
+  ],
+  "status": "planned",
+  "numbers": "now: sales Tue 8 Dec, start Tue 15 Dec; next choice by 19:00 Sun 15 Nov (default B = sales Tue 15 Dec, start Tue 22 Dec); first planned start 3 Nov 2026",
+  "source": "machiavelli.md, Open items 2026-09-28 (digital product), 2026-09-29 (ManyChat order), 2026-11-02 07:08 (COURSE PRICES)"
+ },
+ {
+  "name": "No teacher-training ads before a TT page",
+  "what": "aybkk.net has no teacher-training page yet, so no TT ad campaign runs until one exists; writing it needs the owner's go.",
+  "stages": [
+   "paid acquisition",
+   "bounce"
+  ],
+  "status": "idea",
+  "numbers": "",
+  "source": "machiavelli.md, Open items 2026-11-02 (Google Ads, last lines)"
+ },
+ {
+  "name": "No Cap Daily trend account (separate brand-deal test)",
+  "what": "A separate auto trend-facts Instagram account, run as a 90-day test of future brand deals in its own Meta business, judged on followers and reach. It has been paused since 1 Oct after Instagram blocked posts and stays paused by default.",
+  "stages": [
+   "traffic"
+  ],
+  "status": "testing",
+  "numbers": "90-day test to about 28 Dec 2026; 96 held (2 to 25 Oct), 0 posted since 1 Oct",
+  "source": "machiavelli.md, Open items 2026-09-28 (No Cap Daily); Log 2026-10-28 19:08"
+ },
+ {
+  "name": "No price in a DM",
+  "what": "Lead replies and DM drafts never state a price; price is given only on the call, late in the 180K funnel. Carne flagged two 'selling tricks' (#16, #23) because they put the price in the DM.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Standing orders 2026-11-02 RULE #1, 2026-10-02 NO TIERS, 2026-11-11 PRICE UPDATE; Log 2026-10-13 (chat)"
+ },
+ {
+  "name": "Stakes test (Rule #1)",
+  "what": "Before any lead reply, follow-up draft, selling line or research brief, write one plain line for 'Stakes' (what happens to the person's problem if it stays unsolved) and one for 'Why care' (the reason in their life now). True stakes only, never pressure.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Standing orders 2026-11-02 RULE #1, THE STAKES TEST"
+ },
+ {
+  "name": "180K funnel order",
+  "what": "DM > one-page plan (no price) > application > call (price given here) > full pay. An earlier line the same day had 'Reel > STUCK comment > reply > DM questions > call with price > application > full pay'; the later Sales Kit entry says the order is now fixed with the application BEFORE the call, so that is the newest.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Log 2026-10-13 (chat), both entries (selling-tricks advice, then 180K Sales Kit)"
+ },
+ {
+  "name": "180K Sales Kit",
+  "what": "One-page plan (EN/ZH), application form (EN/ZH), call script (EN+ZH lines) and house rules, kept only in the private Obsidian vault, not the public repo. Not in use yet: open questions wait on Boonchu; the June 'Application & Qualification Flow' note is now outdated.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion"
+  ],
+  "status": "built-not-used",
+  "numbers": "12 open questions wait on Boonchu",
+  "source": "carnegie.md, Log 2026-10-13 (chat)"
+ },
+ {
+  "name": "Daily inbox triage of 180K leads",
+  "what": "Every morning Carne reads the LINE OA inbox, counts threads, splits 180K leads from shala questions (shala goes to Machi) and writes reply drafts only; Boonchu sends from LINE OA, and notes keep counts, never names. Instagram and Facebook DMs were not connected as of 2 Oct (needs a Meta app).",
+  "stages": [
+   "acquisition channel and pipeline",
+   "qualified lead and close rate"
+  ],
+  "status": "live",
+  "numbers": "180K leads since 28 Sep: 2 (first 12 Oct, second 10 Nov, a teacher-training ask 'classed unclear'); lead table empty 28 Sep to 11 Oct; most days 0 about 180K; LINE threads per day 0 to 17 (16 on 10 Nov, 17 on 12 Nov)",
+  "source": "carnegie.md, Log 2026-09-28 to 2026-11-14; Log 2026-10-02 (Machi) INBOX LIVE"
+ },
+ {
+  "name": "Follow-up cadence and close-or-last-note",
+  "what": "A silent serious lead gets one short follow-up at each due check, and each new draft replaces the older unsent one instead of piling up; gaps widen from about 2 days to a week. After 14 days silent Carne asks Boonchu 'close or one last note'; with no answer, Machi's default keeps the lead open and nothing is sent.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion"
+  ],
+  "status": "live",
+  "numbers": "serious lead silent 28 days on 14 Nov, next check Sat 21 Nov; teacher-training ask next check 15 Nov",
+  "source": "carnegie.md, Log 2026-10-24, 2026-10-31, 2026-11-01, 2026-11-08, 2026-11-14"
+ },
+ {
+  "name": "Answer leads fast, flag urgent ones",
+  "what": "The first serious lead got no reply for 5 days and asked if they should look for another teacher; Carne drafted an urgent reply and flagged it to Machi, and Boonchu's reply then kept the lead. A later question from the same lead (is the online led class invite only) still waits on Boonchu.",
+  "stages": [
+   "conversion",
+   "qualified lead and close rate"
+  ],
+  "status": "live",
+  "numbers": "no reply in 5 days; invite-only question waiting 24th day (10 Nov)",
+  "source": "carnegie.md, Log 2026-10-17, 2026-10-18, 2026-11-10"
+ },
+ {
+  "name": "Shala first, online later",
+  "what": "A serious lead who asked for online teaching must first come and practise at the shala; when AYBKK opens online classes, students who practised at the shala get invited. Treated as a future 180K fit: no pitch, no price.",
+  "stages": [
+   "qualified lead and close rate",
+   "upsell and lifetime value"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Jobs from Machi 2026-10-17 (DECIDED)"
+ },
+ {
+  "name": "No 'sorry' reply rule",
+  "what": "In every student or customer message and review reply, never write 'sorry'; for a late answer write 'Thank you for your patience with our reply.' Keep replies brief, friendly and precise.",
+  "stages": [
+   "conversion",
+   "retention"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Jobs from Machi 2026-10-17 HOUSE RULE"
+ },
+ {
+  "name": "Use buyers' own pain words (question bank)",
+  "what": "Chinese studio owners type their pain into Baidu: 瑜伽馆 留住会员怎么办 (can't keep members), 开了瑜伽馆没有会员怎么办 (no members), 瑜伽馆遇到会员想退卡怎么办 (member wants to cancel), 老会员带新会员, 瑜伽老师真实收入. Use their words in 180K replies and drafts, because the 180K pitch is retention.",
+  "stages": [
+   "creative/offer",
+   "qualified lead and close rate"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Research 2026-10-18 QUESTION BANK"
+ },
+ {
+  "name": "Exact authorization wording",
+  "what": "When asked about authorization say exactly 'Authorized Level 2 by R. Sharath Jois' and never hint the program gives authorization; a draft hook that used Sharath was removed. Research: in China 授权/认证 is a purchase checklist; in the West/Russia it is necessary but not enough, trust falling since 2025.",
+  "stages": [
+   "creative/offer",
+   "qualified lead and close rate"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Research 2026-10-18 QUESTION BANK and 2026-10-02 (AUTHORIZATION); Log 2026-10-15 (chat)"
+ },
+ {
+  "name": "Flag sensitive lineage questions",
+  "what": "If a Russian lead raises the 'Pattabhi Jois scandal' (a top Yandex search), write no draft and flag it for Boonchu to answer himself.",
+  "stages": [
+   "qualified lead and close rate"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Research 2026-10-18 QUESTION BANK"
+ },
+ {
+  "name": "Keep 阿斯汤加 and AYBKK next to 迈索尔",
+  "what": "Baidu may pair 迈索尔瑜伽 (Mysore yoga) with 跑路了 / 倒闭了 (ran off / closed down), not checked, so Chinese drafts always put 阿斯汤加 and AYBKK next to 迈索尔.",
+  "stages": [
+   "creative/offer",
+   "click-through"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Research 2026-10-18 QUESTION BANK"
+ },
+ {
+  "name": "Why students quit (research)",
+  "what": "Experienced students leave over forceful adjustment and then a teacher who walks away, ego and harshness, poses held back without reason or behind paid privates, and a 'culty' feel; price anger is really 'no attention' ('if I am not getting any adjustments, why am I wasting my money'). They praise 'never forceful', 'observes first', 'sees you', personal treatment, so the fix is attention from a teacher who notices.",
+  "stages": [
+   "churn",
+   "retention"
+  ],
+  "status": "idea",
+  "numbers": "",
+  "source": "carnegie.md, Research 2026-10-02 180K buyer voice (WHY THEY LEAVE, PRICE ANGER)"
+ },
+ {
+  "name": "Stuck-in-primary pain as the 180K theme",
+  "what": "5+ year practitioners get stuck in primary (Mari D drop-back gate), bored, injured, face 3h practices and sunk cost; they want permission to adapt, not more asana, and strength work unstuck many. Used for the Stuck in Primary brief, with buyer word lists in EN/ZH/RU (e.g. stuck in primary, sees you; 瓶颈, 突破, 少走弯路; застрял, не пускают дальше).",
+  "stages": [
+   "creative/offer",
+   "qualified lead and close rate"
+  ],
+  "status": "planned",
+  "numbers": "stuck in primary 5-7 years",
+  "source": "carnegie.md, Research 2026-10-02 (5+ YR PAIN, BUYER WORDS); Log 2026-10-07 (chat)"
+ },
+ {
+  "name": "Target the real 180K buyer",
+  "what": "The buyer exists: a 15+ year practitioner, happy to travel and pay, 'not very price sensitive', wants a highly skilled teacher, intensity and seriousness, not 'another certification'. Loud 'too expensive' posts mostly come from beginners and tourists (strong guess), and a month off work is a real cost.",
+  "stages": [
+   "qualified lead and close rate",
+   "creative/offer"
+  ],
+  "status": "idea",
+  "numbers": "Prices seen: China Mysore ~1,500 RMB/month (2023), CN Mysore trip+TTC bundle 13,800-18,800 RMB (2019-20); RU unlimited 3,500-5,500 RUB/month, Moscow L2 seminar 16,000 RUB; AYBKK drop-in called 'out of the budget >45 USD' by a tourist (Jan 2025)",
+  "source": "carnegie.md, Research 2026-10-02 (BUYER EXISTS, PRICE ANGER, TIME IS A COST, PRICES SEEN, AYBKK ON REDDIT)"
+ },
+ {
+  "name": "Sell to the most aware + value ladder",
+  "what": "AYBKK sells almost only to Schwartz group 5 (most aware). Ladder plan: best next paid step is a capped practice video review; course to the warm list only if priced by 18 Oct; tees pre-order only; no coaching.",
+  "stages": [
+   "upsell and lifetime value",
+   "creative/offer",
+   "qualified lead and close rate"
+  ],
+  "status": "planned",
+  "numbers": "CN #3 price (code: 199,000 list, early deals ended Sep)",
+  "source": "carnegie.md, Log 2026-10-17 (chat), plan posts/2026-10-17-carnegie-ladder-ads-plan.md"
+ },
+ {
+  "name": "Google search ads for the Bangkok shala only",
+  "what": "The only ad test: Google search ads for the Bangkok shala, with the Google tag set up first. No China, Russia or Meta ads this quarter.",
+  "stages": [
+   "paid acquisition",
+   "traffic",
+   "cost per lead"
+  ],
+  "status": "planned",
+  "numbers": "14 Nov to 12 Dec",
+  "source": "carnegie.md, Log 2026-10-17 (chat)"
+ },
+ {
+  "name": "Keyed start links per source",
+  "what": "Each source gets its own link (aybkk.net/start/google, /start/ig, /start/l02 for Letter 02) so a chat or booking shows where it came from: Hopkins' 'keyed returns, judge by cost per customer'. A first-morning booking from /start/google and a /start/ig new-student form already reached the inbox.",
+  "stages": [
+   "acquisition channel and pipeline",
+   "cost per lead",
+   "click-through"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "carnegie.md, Log 2026-10-30, 2026-11-08, 2026-11-02 (chat); Research 2026-10-18 (Hopkins)"
+ },
+ {
+  "name": "4-week keyword test",
+  "what": "Count LINE chats whose first message contains 'start/ig-aybkk' or 'start/line-aybkk', score weekly on Mondays and read out with decision rules fixed in the brief before data comes in (grew from Hopkins' one-keyword-per-Reel idea). On hold since 25 Oct (Machi's default B); no keyword-start chats seen.",
+  "stages": [
+   "acquisition channel and pipeline",
+   "click-through",
+   "cost per lead"
+  ],
+  "status": "built-not-used",
+  "numbers": "26 Oct to 22 Nov; readout Wed 25 Nov; 0 keyword-start chats (11, 12, 14 Nov)",
+  "source": "carnegie.md, Jobs from Machi 2026-10-19; Log 2026-10-25, 2026-11-11 to 2026-11-14; Research 2026-10-18 (proposed comment-word test)"
+ },
+ {
+  "name": "STUCK comment trigger",
+  "what": "Reels invite a 'STUCK' comment; Carne drafts one fix per STUCK comment from Boonchu's cues and flags the volume. It is the first step from a Reel toward a DM and the 180K funnel.",
+  "stages": [
+   "acquisition channel and pipeline",
+   "click-through",
+   "qualified lead and close rate"
+  ],
+  "status": "planned",
+  "numbers": "flag if >50 in a week",
+  "source": "carnegie.md, Log 2026-10-05 (chat), 2026-10-13 (chat)"
+ },
+ {
+  "name": "Many hooks per episode, tested per platform",
+  "what": "Adapted from Hormozi 50-5-3 (built for paid Meta ads, which AYBKK does not run): film 5 hooks per episode in one session and test them per platform, add testimonial (graduate stories) and demonstration (adjustment) formats, and a 5-part CTA (what to do, why, when, how easy, what happens next) with Boonchu's personal reply promise and no price.",
+  "stages": [
+   "click-through",
+   "creative/offer",
+   "traffic"
+  ],
+  "status": "decided-rule",
+  "numbers": "5 hooks per episode",
+  "source": "carnegie.md, Research 2026-10-05 Hormozi 50-5-3; Log 2026-10-05 (chat, Boonchu approved)"
+ },
+ {
+  "name": "Weekly Reel batch + 'Carne OK' check",
+  "what": "Boonchu films a week of takes in one session; Plato writes the Batch Sheet and Carne checks research fit and rules before filming, in bedtime-story English (10-year-old level). Only the week 1 sheet has been seen; no new sheet since.",
+  "stages": [
+   "traffic",
+   "creative/offer",
+   "click-through"
+  ],
+  "status": "live",
+  "numbers": "21 takes a week (10 hooks, 7 stories, 4 CTAs) = 7 Reels; week 1 sheet: Carne OK with 4 fixes (23 Oct)",
+  "source": "carnegie.md, Standing orders 2026-10-15 WEEKLY BATCH; Log 2026-10-23"
+ },
+ {
+  "name": "Swipe rule",
+  "what": "Never copy an ad straight: keep the frame (structure, order, move), rewrite in Boonchu's plain dry voice, and promise only a true process or real proof. Never a miracle, money or health claim, never fake urgency.",
+  "stages": [
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Standing orders 2026-10-15 SWIPE RULE"
+ },
+ {
+  "name": "Comparison 5-step pattern",
+  "what": "Pain, what they try, what it misses, what Ashtanga does, proof + invite. Never say walking or running 'does not work'; flip 'harder' ('easy things don't change you') and always add 'we teach you from the very start'.",
+  "stages": [
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "\"Walking covers 2 of the 10. One Ashtanga morning covers all 10.\"",
+  "source": "carnegie.md, Standing orders 2026-10-04 COMPARISON"
+ },
+ {
+  "name": "10 health habits frame",
+  "what": "Every piece points to one of the 10 health habits and names its number; master line 'Ashtanga does all 10, in one morning'. Careful words: no 'every student', no kilos, no medical claims.",
+  "stages": [
+   "creative/offer",
+   "click-through"
+  ],
+  "status": "decided-rule",
+  "numbers": "10 habits",
+  "source": "carnegie.md, Standing orders 2026-10-04 10 HABITS FRAME"
+ },
+ {
+  "name": "Habit Gap direction: every piece leads to a next step",
+  "what": "AYBKK sells a habit system, not poses ('people don't lack tools, they quit'), and every piece leads to a Mysore trial, a renewal or the 180K program. No public statistic until checked against its source (joke numbers and ad myths were fact-checked before use).",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "retention"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Standing orders 2026-10-04 DIRECTION; Log 2026-10-07, 2026-10-18 (chat)"
+ },
+ {
+  "name": "Ad-law compliance check",
+  "what": "China Ad Law Art. 9 (no 最/最佳), Art. 11 (data must show source), Art. 24 (training ads: no promised results, no praise from past students or experts, which limits testimonials in China), own accounts can count as ads; Russia 38-FZ (erid); Thailand CPA. Applied in the batch check (a 最 fixed in a ZH line).",
+  "stages": [
+   "creative/offer",
+   "paid acquisition"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "carnegie.md, Research 2026-10-18 Hopkins (Dark side); Log 2026-10-23"
+ },
+ {
+  "name": "Hopkins rules for 180K ads",
+  "what": "Headline picks the buyer; offer service, never ask to buy; samples only to people who show interest by some effort; test small; price signals quality, never sell on cheapness. Keep FREE out of 180K hooks and put any guide offer at the end.",
+  "stages": [
+   "creative/offer",
+   "click-through",
+   "qualified lead and close rate"
+  ],
+  "status": "idea",
+  "numbers": "leading with 'free' divided Pepsodent results by four",
+  "source": "carnegie.md, Research 2026-10-18 Claude Hopkins"
+ },
+ {
+  "name": "Problem hook vs result hook test",
+  "what": "Hopkins says show the result, not the problem ('positive ad outpulls the other four to one'), which clashes with the Stuck in Primary problem hook. Settle it with a two-hook test, not by argument.",
+  "stages": [
+   "click-through",
+   "creative/offer"
+  ],
+  "status": "idea",
+  "numbers": "",
+  "source": "carnegie.md, Research 2026-10-18 (Tension with Stuck in Primary)"
+ },
+ {
+  "name": "Name-Disqualify-Release",
+  "what": "Halbert's 'Attractive Women in Miami' move: name the buyer, disqualify who it is not for, release the rest; ranked among the best 5 of 22 Halbert ads for AYBKK to filter, not persuade.",
+  "stages": [
+   "qualified lead and close rate",
+   "creative/offer"
+  ],
+  "status": "idea",
+  "numbers": "best 5 of 22 Halbert ads",
+  "source": "carnegie.md, Log 2026-10-15 (chat)"
+ },
+ {
+  "name": "100 Days of Halbert",
+  "what": "A page of 100 Halbert lessons, one move a day applied to one slot of that week's batch Reels, with progress saved in the page database for Carne to read weekly. No weekly read is logged yet.",
+  "stages": [
+   "creative/offer"
+  ],
+  "status": "built-not-used",
+  "numbers": "100 lessons (372 units extracted), 15 review days",
+  "source": "carnegie.md, Log 2026-10-15 (chat)"
+ },
+ {
+  "name": "Google review ask",
+  "what": "Ask every current student (not only happy ones, Google forbids picking) for a Google review, with no reward of any kind: what a teacher says after class, one LINE broadcast, a QR card at the desk (aybkk.net/review), in TH/EN/中文/RU. Plus a 3-line bad-review reply: thank, no argument, no student details, invite to LINE @aybkk.",
+  "stages": [
+   "click-through",
+   "conversion",
+   "traffic"
+  ],
+  "status": "planned",
+  "numbers": "AYBKK 4.0 from 21 Google reviews; nearby ashtanga shalas 4.8-5.0",
+  "source": "carnegie.md, Jobs from Machi 2026-10-15 (Google report) REVIEW ASK"
+ },
+ {
+  "name": "One public price; promos end at renewal",
+  "what": "One public price for everyone; last year's promotions were public and simply end at each student's renewal, never called secret deals. Renewal messages: warm first, then the win/loss line; drafts only, Boonchu sends.",
+  "stages": [
+   "retention",
+   "churn",
+   "upsell and lifetime value"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "carnegie.md, Standing orders 2026-09-30 SHALA RENEWALS AND PRICE RULES"
+ },
+ {
+  "name": "Price ladder with per-class price and teacher's pick",
+  "what": "From 12 Nov each pass shows a per-month and per-class price so longer passes look cheaper, and 6 months is marked teacher's pick. This 11 Nov note wins over older lines (2 Oct note: 12m 59,900 + VAT; earlier 6m 32,000 / 12m 59,900).",
+  "stages": [
+   "upsell and lifetime value",
+   "creative/offer",
+   "retention"
+  ],
+  "status": "live",
+  "numbers": "12m 63,600 (5,300/month, 331 a class), 6m 34,200 (5,700/month, teacher's pick, 356 a class), 3m 19,500 (6,500/month, 406 a class), 1m 9,600, drop-in 1,500, 8 classes 7,600 (2 months); all +7% VAT",
+  "source": "carnegie.md, Standing orders 2026-11-11 PRICE UPDATE (wins over older lines)"
+ },
+ {
+  "name": "No tiers, 12 months only, loyal renewal price",
+  "what": "Never say 'Dedicated' or 'Flexible'. 12 months is 12 months only from 21 Oct (passes sold before keep 13 months); loyal students renew 12 months at a lower price (2 Oct note, not restated in the 11 Nov price update).",
+  "stages": [
+   "retention",
+   "upsell and lifetime value",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "loyal students renew 12 months at 54,900",
+  "source": "carnegie.md, Standing orders 2026-10-02 NO TIERS"
+ },
+ {
+  "name": "Duo and Rookie Pack promotion",
+  "what": "New-student promotion on LINE: Duo buy 1 get 1 free, or Rookie Pack; it ran until 11 Nov (now ended) and drew Duo signups and promo buys in the inbox.",
+  "stages": [
+   "conversion",
+   "traffic",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "Rookie Pack 5,900; Duo buy 1 get 1 free; until 11 Nov, start by 12 Nov",
+  "source": "carnegie.md, Standing orders 2026-10-02 NO TIERS (Promotion, final, LINE version); Log 2026-10-31, 2026-11-12"
+ },
+ {
+  "name": "Weekly letter (Letter from the Shala)",
+  "what": "A weekly letter by Boonchu: WeChat OA article + own WeChat groups for Chinese, Telegram for Russian, LINE @aybkk for the Thai shala lane (Lane B); its 3 jobs are keep students on the mat, warm the next TT/180K cohort, fill graduates' China workshops. Letter 01 rewritten and Letter 02 'Am I flexible enough?' written in TH/ZH/RU (moved to 9 Nov), but whether Letter 01 was ever sent is still open.",
+  "stages": [
+   "retention",
+   "churn",
+   "acquisition channel and pipeline",
+   "upsell and lifetime value"
+  ],
+  "status": "built-not-used",
+  "numbers": "10 WeChat groups (35-70 each), WeChat Channel 5,000, Telegram 3 groups (150), LINE OA 1,070+",
+  "source": "carnegie.md, Log 2026-10-03 (chat), 2026-10-13 (chat), 2026-11-02 (chat); halbert-letter.md Part 5 'What the letter is for'"
+ },
+ {
+  "name": "Letter shape: one idea, one task, one P.S.",
+  "what": "Same shape every week: dateline, hook, one real story, one-line lesson, 'This week, try this' task, sign-off, P.S. with one offer and one link, P.P.S. teasing next week. The letter is free, so the P.S. does the earning; at most one offer per issue, because selling every week makes people mute you; no health promise, 'asana' never 'posture'.",
+  "stages": [
+   "creative/offer",
+   "click-through",
+   "bounce",
+   "churn"
+  ],
+  "status": "decided-rule",
+  "numbers": "300 to 500 words, a 3-minute read; story 100 to 200 words",
+  "source": "halbert-letter.md, Part 5 (3 weak spots, Munger check, The shape, Before you send checklist)"
+ },
+ {
+  "name": "Score the letter by actions, not opens",
+  "what": "Count replies, bookings from the P.S. link and 'TT' replies; never count opens. Letter 02 got its own keyed link.",
+  "stages": [
+   "conversion",
+   "click-through",
+   "acquisition channel and pipeline"
+  ],
+  "status": "decided-rule",
+  "numbers": "aybkk.net/start/l02",
+  "source": "halbert-letter.md, Part 5 'How to score it'; carnegie.md Log 2026-11-02 (chat)"
+ },
+ {
+  "name": "4-week P.S. loop",
+  "what": "Week 1 story, P.S. sells Mysore membership; week 2 fact, a workshop (China or Bangkok); week 3 student hot seat or graduate issue, TT early list; week 4 fodder box, bring a friend. When TT opens, switch to the sales-letter shape for 2 or 3 issues, then back to the loop.",
+  "stages": [
+   "retention",
+   "upsell and lifetime value",
+   "qualified lead and close rate",
+   "acquisition channel and pipeline"
+  ],
+  "status": "planned",
+  "numbers": "12-week starter calendar",
+  "source": "halbert-letter.md, Part 5 'The 4-week loop' and '12-week starter calendar'"
+ },
+ {
+  "name": "Reply 'TT' early list",
+  "what": "The teacher-training P.S. is never a hard sell, only 'Reply TT and you'll hear first'; the list gets early access before the public. It builds the 180K pipeline from warm readers.",
+  "stages": [
+   "qualified lead and close rate",
+   "acquisition channel and pipeline"
+  ],
+  "status": "planned",
+  "numbers": "10 to 12 places",
+  "source": "halbert-letter.md, Part 5 4-week loop and P.S. bank (Teacher training)"
+ },
+ {
+  "name": "Reply asks that sort the list",
+  "what": "Issue 1 P.S. asks for city and years of practice, which shows who is where and who has practised long enough for TT; other asks: the asana you're stuck on, your city for next year's trips. Only promise 'I read every reply' if true.",
+  "stages": [
+   "qualified lead and close rate",
+   "retention"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "halbert-letter.md, Part 5 P.S. bank (Reply) and 12-week calendar note; Part 6 Issue 1 and Language notes"
+ },
+ {
+  "name": "Come-back P.S. for lapsed students",
+  "what": "'If you haven't come in a while, come back this week. No need to explain. Just come.' Used as the Mysore / come back P.S. in the calendar.",
+  "stages": [
+   "churn",
+   "retention"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "halbert-letter.md, Part 5 P.S. bank (Shala), 12-week calendar issue 5"
+ },
+ {
+  "name": "Bring-a-friend forward",
+  "what": "P.S.: 'Know someone who keeps saying they'll start yoga next month? Forward this to them.' Issue 2 version targets friends who say they're 'too stiff' and links the beginners' start.",
+  "stages": [
+   "traffic",
+   "acquisition channel and pipeline"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "halbert-letter.md, Part 5 P.S. bank (Bring a friend); Part 6 Issue 2"
+ },
+ {
+  "name": "Letter readers book workshops first",
+  "what": "Workshop P.S.: places are limited and readers of the letter can book first until a date; the Chinese P.S. points to the China workshop or graduate host, the Thai one to Bangkok Mysore.",
+  "stages": [
+   "conversion",
+   "upsell and lifetime value"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "halbert-letter.md, Part 5 P.S. bank (Workshop); Part 6 Issue 3 and Language notes"
+ },
+ {
+  "name": "One core letter, three language versions",
+  "what": "Keep the story, lesson and task; change about a third per language (dateline, examples, greeting, P.S. offer, app), and a native speaker reads every version out loud every time, because a clumsy Chinese translation looks cheap to 180K buyers. Guesses to test by replies: Chinese want lineage and proof, Russian depth and discipline, Thai warmth and belonging.",
+  "stages": [
+   "creative/offer",
+   "bounce",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "halbert-letter.md, Part 5 (3 weak spots, Munger check, One core three versions); carnegie.md Log 2026-11-02 (chat)"
+ },
+ {
+  "name": "Keep 4 issues ahead, never skip a week",
+  "what": "Skipping weeks kills trust quietly, so 4 issues stay written ahead. Routine: Mon Boonchu records a story, Tue English core, Wed native checks, Thu he approves and it goes out; don't send when hungry, angry, lonely or tired.",
+  "stages": [
+   "retention",
+   "churn"
+  ],
+  "status": "planned",
+  "numbers": "about 30 minutes a week; 5-minute recording; 4 issues ahead",
+  "source": "halbert-letter.md, Part 5 (Munger check, The weekly routine, checklist #11)"
+ },
+ {
+  "name": "Same time every morning, someone notices",
+  "what": "Letter core: practise at the same time every morning ('You don't need more motivation. You need fewer decisions'; on a bad day five sun salutations count). Rewritten Letter 01 (2 Nov) hook 'Motivation is a bad alarm clock', payoff = same time + someone notices; 'if you don't come, I notice. And I ask where you were.' still to confirm. Note: the Issue 1 draft says '16 years of teaching'; the newest correction (2 Nov) is teaching 14, practice 20.",
+  "stages": [
+   "retention",
+   "churn"
+  ],
+  "status": "built-not-used",
+  "numbers": "",
+  "source": "halbert-letter.md, Part 6 Issue 1; carnegie.md Log 2026-11-02 (chat), both entries"
+ },
+ {
+  "name": "One tiny weekly task",
+  "what": "Each issue gives one small task that builds the habit and invites a reply: practise at the same time tomorrow, count your mornings and add one, put the next moon day in your calendar and reply, or (Letter 02) stay 5 breaths in your stiffest asana and find where the breath gets short.",
+  "stages": [
+   "retention",
+   "churn"
+  ],
+  "status": "built-not-used",
+  "numbers": "",
+  "source": "halbert-letter.md, Part 6 Issues 1-3; carnegie.md Log 2026-11-02 (chat)"
+ },
+ {
+  "name": "Lineage line test in Chinese letter",
+  "what": "Consider one lineage line in the Chinese Issue 1 and test whether lineage proof lifts replies. Any wording must follow the newer exact-wording rule ('Authorized Level 2 by R. Sharath Jois').",
+  "stages": [
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "idea",
+  "numbers": "",
+  "source": "halbert-letter.md, Part 6 Issue 1 Language notes; carnegie.md Research 2026-10-18 QUESTION BANK"
+ },
+ {
+  "name": "Men: Bangkok-only test",
+  "what": "For the Bangkok shala only: count Rezerv bookings by gender, an occasional men's intro, 'bring him' invites. For 180K gender barely matters, so don't chase men there; a visible male teacher is rare in China and is an asset.",
+  "stages": [
+   "traffic",
+   "acquisition channel and pipeline",
+   "creative/offer"
+  ],
+  "status": "idea",
+  "numbers": "men 12.2% of teachers in China (36Kr 2021); US 2022: 23.3% of women vs 10.3% of men did yoga (CDC NHIS)",
+  "source": "carnegie.md, Research 2026-10-10 Why fewer men practise yoga"
+ },
+ {
+  "name": "Shala wall line about the habit",
+  "what": "Wall text that names the habit: Boonchu's working choice is Yoga Sutra 1.14 (long time, without break, in earnest), not final. Rule: the wall is sacred space, scripture or Guruji only, no humour or slogans, above head height; an earlier 3 Nov note advised against 1.14 ('no break' shames returning students), but the newest (9 Nov) is his pick.",
+  "stages": [
+   "retention"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "carnegie.md, Log 2026-11-03 (chat, CORRECTION), 2026-11-09 (chat)"
+ },
+ {
+  "name": "No manipulation tactics",
+  "what": "Carne's advice: do not use 'negative association' (running down a trait you don't want the listener to show) on students or buyers; name the good trait positively instead. It clashes with the never-attack rules and China Ad Law Art. 13.",
+  "stages": [
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "idea",
+  "numbers": "",
+  "source": "carnegie.md, Log 2026-10-23 (chat)"
+ },
+ {
+  "name": "Hidden Stories of Ashtanga (Reel series)",
+  "what": "Boonchu tells an old Indian myth or history story in simple bedtime-story words, tied to one asana, with the series name and episode number on screen and in every caption. Each one starts from safe news or his own life. Writing new scripts was paused 22 Oct (the daily 06:43 routine is disabled) and he screens the waiting scripts as Keep or Drop. The lesson from the Ep. 3 comments: use the myth as the hook, but end every episode on the practice. This is the main Lane A content, which feeds the In-depth program and the China workshops.",
+  "stages": [
+   "traffic",
+   "click-through",
+   "creative/offer",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "Last posted = Ep. 5 ('Go Small', posted 4 Nov); 21 scripts wait unfilmed (3 to 22 Oct); Hidden Stories page: 4 posted + 24 waiting scripts",
+  "source": "plato.md Standing orders 2026-09-28 SERIES NAME, 2026-10-22 STOP WRITING, 2026-11-04 EP. 5 POSTED; What worked 2026-10-01 Ep.3 comments"
+ },
+ {
+  "name": "Ramayana run (Hidden Stories)",
+  "what": "Hidden Stories now follows the Ramayana, one character per episode, from the beginning to just after Sita is taken. It rides on the new Ramayana movie in Bangkok cinemas, and each episode ties to one Advanced A or B asana from Boonchu's PDF. This lifts the 22 Oct stop-writing order for this run only. The Ep. 1 script is written and fixed but not filmed.",
+  "stages": [
+   "traffic",
+   "creative/offer"
+  ],
+  "status": "planned",
+  "numbers": "Map v2: 8 characters; movie in Thai cinemas since 5 Nov 2026",
+  "source": "plato.md Standing orders 2026-11-11 RAMAYANA RUN; Stories used 2026-11-11 RAMAYANA RUN plan"
+ },
+ {
+  "name": "Triple Hook with say/show/write",
+  "what": "Line 1 gives the context, then the lean, then the contrarian snapback. In the first second the context is said, shown and written on screen, so the viewer is clear first and the clever part comes after. Approved example: 'This is why most people quit yoga.' / 'You think it's because yoga is too hard.' / 'It's not. It's because nobody notices when you stop coming.' The posted Flexible-or-Stiff Reel used it.",
+  "stages": [
+   "click-through",
+   "bounce"
+  ],
+  "status": "live",
+  "numbers": "Hook Bank #121",
+  "source": "plato.md Reel Toolkit, Triple Hook (UPDATE 2026-11-04); Standing orders 2026-11-04 TRIPLE HOOK LINE 1 CHECK; Stories used 2026-10-04 Flexible or Stiff (POSTED)"
+ },
+ {
+  "name": "Contrarian hook, question at the close",
+  "what": "Every Reel hook goes against what the viewer believes, and the ending leaves viewers asking themselves a question. Both are checked before any script is sent.",
+  "stages": [
+   "click-through",
+   "bounce"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-11-04 HOOKS ARE ALWAYS CONTRARIAN"
+ },
+ {
+  "name": "Stakes test (RULE #1)",
+  "what": "Every hook, script, caption, carousel, story and selling line opens its brief with 'Stakes: what happens if I don't?' and 'Why care: the reason in the viewer's life now'. If either is empty or vague, the piece is not ready. The stakes come right after the hook, and they must be true: no health fear, no medical promise, no unchecked number, no shaming.",
+  "stages": [
+   "click-through",
+   "bounce",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-11-02 RULE #1, THE STAKES TEST"
+ },
+ {
+  "name": "First 3 seconds hit the viewer's own problem",
+  "what": "A word meaning or a teaching line is not a hook. The first 3 seconds must hit the viewer's own problem or open a loop, before any myth or text. Every Reel also passes a sound-off check. All three Gu-Ru Reel options were dropped after Boonchu said 'people will scroll away'.",
+  "stages": [
+   "click-through",
+   "bounce"
+  ],
+  "status": "decided-rule",
+  "numbers": "3-Second Audit: sound off, top line under 12 words",
+  "source": "plato.md What worked 2026-10-12 DROPPED Gu-Ru Reel; Reel Toolkit, Obsidian frameworks, 3-Second Audit"
+ },
+ {
+  "name": "Mirror rule",
+  "what": "Every story reflects the viewer's own feelings so they think 'oh... that's me'. The hook names their inner voice, each beat gets one short mirror line, and the turn shows a new way to see the feeling and then the practice fix. Without that moment, people get bored and scroll.",
+  "stages": [
+   "click-through",
+   "bounce"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-10-03 MIRROR RULE"
+ },
+ {
+  "name": "Retention map on every script",
+  "what": "Each line of a script gets a label: H hook (0 to 3 s), DH double hook by about 0:05, OL open loop, RH rehook where attention drops, and P payoff after a silent beat. Every line must lead into the next with 'but', 'so' or 'because', and every loop gets paid off. It is measured by average watch time and the Instagram retention graph, but no real number has been logged in 'What worked' yet.",
+  "stages": [
+   "bounce"
+  ],
+  "status": "decided-rule",
+  "numbers": "80 percent watch target; at least one OL before 0:08; a RH in every 15 s",
+  "source": "plato.md Standing orders 2026-10-28 RETENTION MAP"
+ },
+ {
+  "name": "Curiosity-first order for joke Reels",
+  "what": "Joke Reels run in this order: curiosity (0 to 3 s, sound-off, opens a loop), a second hook (3 to 6 s), setup, payoff, and the punch last. This came from the 4 a.m. discipline Reel: many laughing comments, few likes, and the joke came too late.",
+  "stages": [
+   "click-through",
+   "bounce"
+  ],
+  "status": "decided-rule",
+  "numbers": "4 a.m. Reel: 60% scrolled away",
+  "source": "plato.md Standing orders 2026-10-12 REEL ORDER FOR JOKE REELS; What worked 2026-10-12 WHAT DID NOT WORK"
+ },
+ {
+  "name": "Get to the point fast, and the story must surprise",
+  "what": "The point lands in about 6 seconds with the stakes folded in, then the Reel goes straight into the story. If the key moment is something every viewer already does or knows, the story is dropped.",
+  "stages": [
+   "bounce",
+   "click-through"
+  ],
+  "status": "decided-rule",
+  "numbers": "about 6 seconds (3 short lines)",
+  "source": "plato.md Standing orders 2026-11-04 THE STORY MUST SURPRISE"
+ },
+ {
+  "name": "Every line pulls to the next (suspense and rhythm)",
+  "what": "Each line must open something: suspense, a trailing '...', the answer held back. A line that only gives information is rewritten or cut. Sentences switch between medium and short for warmth. Real danger in an old story stays in, placed up front as a double hook. The spoken 'Bedtime story for my son' line was dropped on 12 Nov.",
+  "stages": [
+   "bounce"
+  ],
+  "status": "decided-rule",
+  "numbers": "medium about 8 to 14 words, short 2 to 5 words; never 3 long lines or 4 short ones in a row",
+  "source": "plato.md Standing orders 2026-11-12 (both entries), 2026-11-09 KEEP THE DANGER IN; Reel Toolkit 2026-10-24 RHYTHM"
+ },
+ {
+  "name": "Story shape: Fail, Hero, Payoff, reveal at the end",
+  "what": "Every Reel runs fail, then hero, then a payoff that closes the loop the hook opened. The fix is not taught early. It comes late and short, after a silent beat. The story follows one thread at a time: the point to adults in 2 to 3 lines, then the story told straight through, then back to the asana.",
+  "stages": [
+   "bounce",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-09-29 STORY PATTERN, 2026-09-29 REVEAL AT THE END, 2026-11-01 ONE THREAD AT A TIME"
+ },
+ {
+  "name": "Kid-level English and Boonchu's own spoken voice",
+  "what": "Every script, caption, hook and card is written in 10-year-old, bedtime-story English: short sentences, one idea each, everyday words, hard words explained, and a list of banned AI words (journey, unlock, transform, and so on). Lines he speaks to camera stay in his own Thai-English way of talking, not polished English.",
+  "stages": [
+   "bounce",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "short sentences (about 12 words or less)",
+  "source": "plato.md Standing orders 2026-10-15 BEDTIME-STORY ENGLISH, 2026-10-11 KID VOICE, 2026-10-28 HIS SPOKEN VOICE, 2026-10-04 PLAIN TRIGGER"
+ },
+ {
+  "name": "Hook Bank",
+  "what": "120 title templates were analysed into a page and a JSON file, each with an AYBKK line, fit, goal and habit number. It is used only as a title source for /hook: every [bracket] is filled with a real fact or the hook is dropped, and old hooks must pass the stakes test again. Hook #121 was added 4 Nov and used in the Ep. 6 rewrite, which is not filmed yet.",
+  "stages": [
+   "click-through"
+  ],
+  "status": "built-not-used",
+  "numbers": "51 use, 66 adapt, 3 skip; 67 aim at the shala, 18 at the 180K",
+  "source": "plato.md Reel Toolkit 2026-10-25 HOOK BANK; Standing orders 2026-11-04; Stories used 2026-11-09"
+ },
+ {
+  "name": "Reel Toolkit pitch",
+  "what": "Each Reel picks one hook tool and one body tool from the toolkit (Triple Hook, /hook levers, /story, Vibe Samurai, Hero's Journey, Qahtani 'spot the myths', Wrong Fix, Fork-First, Myth-Kill and others) and says why the pick fits. Picks rotate, never the same one 3 days in a row, and Boonchu gets 2 to 3 options with Plato's pick marked.",
+  "stages": [
+   "creative/offer",
+   "click-through"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-09-28 TOOLKIT PITCH, 2026-09-29 TOOLKIT CHOICE; Reel Toolkit section"
+ },
+ {
+  "name": "House edit style for watch time",
+  "what": "Every Reel gets the house edit: zoom punches on key words, a sound effect after each one, Weight Shift captions with big emoji, story picture cards above his head, the series header pill, no full-screen cutaways, and the same Thai sign-off 'แล้วเจอกันครับ' each time. The motion is there to hold attention.",
+  "stages": [
+   "bounce"
+  ],
+  "status": "live",
+  "numbers": "1.3x cut zoom; effects at 40% of his voice, 0.4 s after the word",
+  "source": "plato.md Standing orders 2026-09-29 HOUSE EDIT STYLE, 2026-11-01 SFX LEVEL, 2026-10-20 SIGN-OFF"
+ },
+ {
+  "name": "Reel cover rule",
+  "what": "The cover shows his face, at most 5 words with one gold word, the series name and a teal 'Ep. N', and it must pass a black-and-white contrast check. Wearing the same shirt every episode was proposed but not confirmed. The website moved to the Louvre palette on 8 Nov, but posters and carousels keep aubergine and gold until he says go.",
+  "stages": [
+   "click-through"
+  ],
+  "status": "decided-rule",
+  "numbers": "max 5 words, one word in gold",
+  "source": "plato.md Standing orders 2026-09-28 COLOR RULE and SERIES UNIFORM, 2026-11-08 BRAND COLOURS CHANGED; Edit method, Cover"
+ },
+ {
+  "name": "Weekly batch filming and 5-hook test",
+  "what": "Boonchu films once a week: all hooks first, then story bodies, then CTAs, in the same shirt and light. These are mixed into 7 Reels from a Batch Sheet that Plato writes, Carne checks and Boonchu approves. The extra hooks test different hooks on the same body, one per platform. The week 1 Batch Sheet was written 22 Oct (2 days late), and the filming day is still '[Boonchu to say]'.",
+  "stages": [
+   "traffic",
+   "click-through"
+  ],
+  "status": "planned",
+  "numbers": "about 2 hours, 21 takes: 10 hooks + 7 story bodies + 4 CTAs; 7 Reels for the week",
+  "source": "plato.md Standing orders 2026-10-15 WEEKLY BATCH FILMING, 2026-10-19 KEYWORD TEST; Stories used 2026-10-22"
+ },
+ {
+  "name": "Keyword test (Lane A STUCK, Lane B aybkk)",
+  "what": "A 4-week test of comment keywords. Lane A posts ask for 'STUCK' (in the caption and end card, never spoken) and Lane B posts ask for 'aybkk' (Instagram only). Each post has one ask, with no Aybkk.net or 'Come learn' line, a P/R hook pair every Monday on IG and XHS, and fixed words and times. It replaces the 1 Oct Lane B 'MYSORE' ask during the test weeks.",
+  "stages": [
+   "click-through",
+   "conversion",
+   "cost per lead",
+   "qualified lead and close rate",
+   "acquisition channel and pipeline"
+  ],
+  "status": "testing",
+  "numbers": "Mon 26 Oct to Sun 22 Nov; lane mix A B A A B A B; health carousels 4-6 Nov: A ask aybkk, B no ask, C ask aybkk",
+  "source": "plato.md Standing orders 2026-10-19 KEYWORD TEST; Stories used 2026-11-04 HEALTH carousels; Saved for later 2026-11-04"
+ },
+ {
+  "name": "'Comment aybkk' call to action",
+  "what": "Captions end with 'Comment aybkk and I'll send you the link', so the reader acts in the comments and gets the link by DM. The prices stay on the link page. It stays as line 4 of the 5-line caption after the promo ended.",
+  "stages": [
+   "click-through",
+   "conversion",
+   "cost per lead"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-10-01 PROMO CHANGED (CTA), 2026-11-12 PROMO IS OVER"
+ },
+ {
+  "name": "ManyChat MYSORE lead magnet",
+  "what": "A free guide, 'Your First Mysore Class at AYBKK' (EN and TH PDFs), was set up to be sent by ManyChat when people comment MYSORE. It was the Lane B call to action from 1 Oct ('comment or DM MYSORE'). The notebook never confirms that ManyChat went live, and the 19 Oct keyword test uses 'aybkk' as the Lane B ask instead.",
+  "stages": [
+   "cost per lead",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "built-not-used",
+  "numbers": "EN + TH PDFs",
+  "source": "plato.md Jobs from Machi 2026-09-30 CAMPAIGN 'Sharathji's 44 days'; Standing orders 2026-10-01 OPEN DOOR ROUTE (LANE B CTA), 2026-10-19 KEYWORD TEST"
+ },
+ {
+  "name": "Two lanes, never mixed (Open Door route)",
+  "what": "Lane A (world: authority, depth, Hidden Stories) feeds the In-depth program and the China workshops. Lane B (Bangkok: open door, beginners) fills the shala. Every pitch is labelled with its lane and starts with a route check. At least 1 post in every 3 is Lane B, and carousels count toward the mix. Lane B never goes on WeChat or Xiaohongshu.",
+  "stages": [
+   "acquisition channel and pipeline",
+   "traffic",
+   "qualified lead and close rate"
+  ],
+  "status": "decided-rule",
+  "numbers": "1 Lane B post in every 3; on 2 Oct the last 7 IG carousels were all beginner (Lane B) posts",
+  "source": "plato.md Standing orders 2026-10-01 OPEN DOOR ROUTE, 2026-10-02 ROUTE COUNT"
+ },
+ {
+  "name": "Open door brand (beginners welcome)",
+  "what": "The brand is 'serious practice, open door'. Every piece makes a beginner feel invited and says 'beginners welcome, we teach you from zero'. Rules are framed as care, and the content shows beginners, real progress and smiling teachers. Words like 'hardcore', 'strict' and 'advanced only' are never used. The tagline 'Traditional Ashtanga. Open door.' is under test.",
+  "stages": [
+   "conversion",
+   "bounce",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-09-30 BRAND = WELCOMING"
+ },
+ {
+  "name": "Fear buster Reels (Lane B)",
+  "what": "Each Reel takes on one beginner fear ('I'm not flexible', 'I'm too old', 'Does everyone stare?', 'Too hard, too serious'). 'Flexible or Stiff?' was posted 4 Oct, and its self-joke ending pulled a comment within minutes. A struggling student is never filmed as the 'problem' shot.",
+  "stages": [
+   "conversion",
+   "bounce",
+   "traffic"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-10-01 OPEN DOOR ROUTE (LANE B FORMATS); Stories used 2026-10-04 LANE B REEL 'Flexible or Stiff?' (POSTED); What worked 2026-10-04"
+ },
+ {
+  "name": "Day 1 to Day 30 beginner series and beginner reviews",
+  "what": "One real beginner is filmed weekly for 30 days, with their written OK first, and beginner reviews follow in November. Both are dates in the Open Door plan. The notebook shows no posted episode yet.",
+  "stages": [
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "planned",
+  "numbers": "Day 1 to Day 30 series from 13 Oct; beginner reviews in Nov",
+  "source": "plato.md Standing orders 2026-10-01 OPEN DOOR ROUTE (LANE B FORMATS, ROUTE CHECK)"
+ },
+ {
+  "name": "Instagram bio line",
+  "what": "The bio reads 'Since 2013. 2000+ students.', then line 2, then both teachers' handles marked Authorized, LINE and WeChat IDs, and the link aybkk.net. Line 2 was the buy-1-get-1 promo until 11 Nov. The switch to 'Beginners welcome. We teach you from zero.' was sent to Boonchu on 12 Nov for him to make in the app. The chosen 'Since 2013' replaced an earlier '14 years' draft.",
+  "stages": [
+   "click-through",
+   "conversion"
+  ],
+  "status": "live",
+  "numbers": "Since 2013. 2000+ students.",
+  "source": "plato.md Standing orders 2026-10-04 IG BIO chosen, 2026-11-12 PROMO IS OVER; Stories used 2026-10-04 IG BIO"
+ },
+ {
+  "name": "Proof numbers and authority wording",
+  "what": "Public proof lines: 'teaching in Bangkok, 14 years' (shala years) and more than 2000 students; Boonchu's own practice is 20 years. The site says the shala opened in 2013, so 'since 2013' is used in public until he confirms. Teachers are called 'Authorized' (Level 2), never 'certified', 'master' or 'senior'.",
+  "stages": [
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "14 years teaching in Bangkok; 2000+ students; since 2013; 20 years of Ashtanga, strict 6 days a week since 2008",
+  "source": "plato.md Standing orders 2026-10-04 SHALA NUMBERS, BOONCHU'S NUMBERS, WEBSITE FACTS CLASH, IG BIO chosen"
+ },
+ {
+  "name": "Promo over: no promo lines (Sharathji campaign ended)",
+  "what": "The Sharathji promotion ran from 29 Sep to 11 Nov (buy by 11 Nov, start by 12 Nov). New students got DUO buy 1 get 1 free or the Rookie Pack, and past students got the Reset & Restart and Back to the Beat win-back offers. From 12 Nov there is no promo line in any caption, letter or Google post, and Machi checks the site banner is gone. Older notes that end the promo on 12 Nov or offer 6+5 months were replaced by the 2 Oct final version.",
+  "stages": [
+   "conversion",
+   "churn",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "DUO buy 1 get 1 free (1 month 9,600 / 2 months 18,200 / 3 months 25,800); ROOKIE PACK 5,900 (6 practices in 1 month + 2 Ashtanga foundation workshops); RESET & RESTART 5,900 (8 practices in 2 months + 1 free private alignment check); BACK TO THE BEAT 1 month -30%, 2 months -35%, 3 months -40%; prices before 7% VAT",
+  "source": "plato.md Standing orders 2026-11-12 PROMO IS OVER, 2026-10-02 FINAL PROMOTION, 2026-10-02 CAMPAIGN DATES FINAL"
+ },
+ {
+  "name": "5-line caption default",
+  "what": "When Boonchu asks for a caption, the default is 5 lines: hook, mirror, point, 'Comment aybkk', then link and hashtags. A long version only if he asks. The promo line was removed on 12 Nov.",
+  "stages": [
+   "click-through",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "5 lines",
+  "source": "plato.md Standing orders 2026-10-04 SHORT CAPTIONS, updated by 2026-11-12 PROMO IS OVER"
+ },
+ {
+  "name": "Caption rules: one idea, one next step",
+  "what": "'One idea, one next step, no hello.' End with a question, not the answer. Say the hard part first, and write what it took, not what it looks like. Ask for a story and reply to every one. Use scarcity only with true numbers. One next step per caption, so no promo line next to a question; the offer lives in the DM.",
+  "stages": [
+   "conversion",
+   "qualified lead and close rate",
+   "traffic"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-10-13 VIDEO + CAPTION RULES (CAPTIONS)"
+ },
+ {
+  "name": "Video sells the DM, never the price",
+  "what": "'The video makes them want to talk to you. It never says the price.' Stop the story at the hard part and ask 'what would you do?'. Show the real work (4:30 AM, the room) and students meeting each other, because connection is the product. Teach viewers the one thing they do wrong without knowing it. The video's job is to sell the next step, the DM.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-10-13 VIDEO + CAPTION RULES (VIDEO)"
+ },
+ {
+  "name": "Kid-level, plain captions",
+  "what": "Captions use picture words a 10-year-old can see and explain any hard word the first time. No philosophy lines or quoted thinkers; sources go on the slides. Captions go to Boonchu as plain text, ready to paste into Instagram.",
+  "stages": [
+   "bounce",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-10-22 CAPTIONS FOR 10-YEAR-OLDS, 2026-10-16 NO ABSTRACT CAPTIONS, 2026-11-10 PLAIN TEXT"
+ },
+ {
+  "name": "Reel caption format and hashtags",
+  "what": "Reel captions: 4 short lines (hook, series and Ep. N, the asana point, the payoff), then a link line and hashtags #aybkk #ashtanga #ashtangabangkok #hiddenstoriesofashtanga #<asana> #boonchutanti. The link has been Aybkk.net since 4 Oct (it was Aybkk.com). During the keyword test weeks there is no 'Come learn' or Aybkk.net line.",
+  "stages": [
+   "traffic",
+   "click-through"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-09-29 REEL CAPTION FORMAT, 2026-10-04 IG BIO (CAPTION LINK), 2026-10-19 KEYWORD TEST"
+ },
+ {
+  "name": "Carousel caption format",
+  "what": "A quote carousel caption is one short plain line per slide, then one question to the reader. No summary sentence, slogan or disclaimer. Per-slide captions can be added in the Instagram app at post time (Postiz cannot send them). Used on the Brain A/B and Flexibility A sets, 11 to 13 Nov.",
+  "stages": [
+   "bounce",
+   "traffic"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-11-11 CAROUSEL CAPTION FORMAT, 2026-10-22 PER-SLIDE EXPLANATIONS; Stories used 2026-11-11, 2026-11-12, 2026-11-13"
+ },
+ {
+  "name": "Carousel structure: 10 slides, hook cover, connected story",
+  "what": "Carousels are 10 slides. A quote carousel is 1 cover plus 9 stories, and the cover carries the hookiest text (a question, a short contrast, a mini story with a number); photo fit comes second. The 10 lines read as one connected story, each small text opening with a short phrase that picks up from the slide before.",
+  "stages": [
+   "click-through",
+   "bounce"
+  ],
+  "status": "live",
+  "numbers": "Postiz allows max 10 photos per Instagram carousel",
+  "source": "plato.md Standing orders 2026-10-02 (always 10 slides), 30 Sep POSTIZ LIMIT, 2026-10-15 CONNECTED-LINE CAROUSEL, 2026-11-01 COVER SLIDE, 2026-11-11 MUSCLE test slide; What worked 2026-10-12 COVER PICK"
+ },
+ {
+  "name": "Small text explains the big word",
+  "what": "People complained that the big word gave no clue ('we look like a fool trying to be cool'). Now each slide's small text opens with the idea in plain words, including the big word, then says who or where and what happened. Sentence 1 must be an open loop that makes the reader ask 'says who?'. The big word is the idea of the story, not an object in it.",
+  "stages": [
+   "bounce",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "about 17 to 26 words per slide (7 Nov; replaces 18 to 34 words of 1 Nov)",
+  "source": "plato.md Standing orders 2026-11-01 CAROUSEL SMALL TEXT MUST EXPLAIN, 2026-11-01 BIG WORD = THE IDEA, 2026-11-01 HOOK TEST FOR SENTENCE 1, 2026-11-07 SMALL TEXT A TINY BIT SHORTER"
+ },
+ {
+  "name": "Magazine-look carousels",
+  "what": "The style was locked on 18 Oct as 'calm and expensive, fits the 180K program'. One big all-caps keyword (now Inter Black, white by default) sits on empty space with no line under it, and small upright IBM Plex Serif text sits on the golden grid. Text never goes over students' faces, hands or feet when there is empty space. A slide ships only with GRID OK.",
+  "stages": [
+   "creative/offer",
+   "click-through"
+  ],
+  "status": "live",
+  "numbers": "big word 3/4 (810 px) or 2/3 (720 px) of the slide, 1/2 (540) only when neither fits (11 Nov; replaces the 21 Oct 1/2 or 2/3 rule)",
+  "source": "plato.md Standing orders 2026-10-18 STYLE LOCKED, 2026-10-23 THICKER BIG WORD, 2026-11-07 SMALL TEXT FONT and SMALL TEXT MUST USE THE GRID, 2026-11-11 NO CONNECTING LINE and SMALL TEXT ON EMPTY SPACE"
+ },
+ {
+  "name": "Carousel photo rules",
+  "what": "Slide 1 shows a beginner or an elder. At most 2 photos of one person per post, never in a row, with photos spread across the whole class. Hard words like FEAR or HELPLESS go only on blurred, group or from-behind photos. The student's whole asana stays in frame and no head is ever cut. A student is never called old, and there are no Sharath or Guruji photos.",
+  "stages": [
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "max 2 photos of one person per post",
+  "source": "plato.md Standing orders 2026-10-01 (slide 1 beginner or elder), 2026-10-15 SAME PERSON LIMIT, 2026-10-16 MIX CLASS TIME, 2026-11-07 HARD WORD and THE ASANA COMES FIRST, 2026-10-04 NEVER CALL A STUDENT OLD, 2026-10-09 NO SHARATH OR GURUJI PHOTOS"
+ },
+ {
+  "name": "Themed verified-quote carousels",
+  "what": "Boonchu gives a theme (the first time is hard, be ready, value of time, brain and exercise, flexibility). Agents find and fact-check quotes and true stories, which become sets of 10-slide carousels on that week's class photos, posted a few hours apart once he says go. Used quotes are logged so none repeat.",
+  "stages": [
+   "traffic",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "be-ready: 8 posts, 80 lines all verified; Boonchu 'go 1 now, then every 3 hours' (16 Oct); flexibility set A: 48 ideas found, 47 verified, 20 kept, PUBLISHED 13 Nov",
+  "source": "plato.md Stories used 2026-10-16 RESEARCH DONE 'be ready', 2026-11-13 FLEXIBILITY CAROUSEL SET A, and other carousel entries 30 Sep to 13 Nov"
+ },
+ {
+  "name": "Test new carousel kinds",
+  "what": "The last 6 carousels were all the quote/story kind. At the next carousel plan or Batch Sheet, pitch 1 or 2 new kinds (myths, before and after, breakdown of one asana, list) as a test.",
+  "stages": [
+   "creative/offer",
+   "traffic"
+  ],
+  "status": "idea",
+  "numbers": "last 6 carousels were all one kind (quote/story)",
+  "source": "plato.md Saved for later 2026-11-04 (@edendotso carousel)"
+ },
+ {
+  "name": "Monday letter (Halbert weekly letter)",
+  "what": "Boonchu handwrites a letter every Monday and posts the photo with the typed text on owned channels (LINE OA, Telegram, WeChat OA; the WeChat version is Lane A only). The shape is hook, contrarian take, rehook, tension, double hook, payoff, with no P.P.S. teaser. The next day the letter becomes a 10-slide IG text carousel. It is scored by replies, P.S. bookings and 'TT' replies, not opens. The 4 Oct note set Letter 1 for 5 Oct; the newer 2 Nov note says Letter 01 was rewritten and sent Mon 2 Nov.",
+  "stages": [
+   "retention",
+   "churn",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "testing",
+  "numbers": "test until 31 Dec 2026; LINE OA 1,070+, Telegram 3 groups (150), WeChat 10 groups (35-70 each), WeChat Channel 5,000; LINE OA on a paid monthly plan; Letter 01 link aybkk.net/start/l01, Letter 02 Mon 9 Nov",
+  "source": "plato.md Standing orders 2026-10-04 HALBERT WEEKLY LETTER, LETTER FORMAT, LETTER #1 SEND DATE; 2026-11-02 LETTER SHAPE"
+ },
+ {
+  "name": "Google Business Profile photo posts",
+  "what": "Every Monday, Plato drafts photo posts for Wednesday, Friday and Sunday. Each has one team-at-work photo (student consent for clear faces is not confirmed), one English and one Thai line in fail, hero, payoff order with the Habit Gap message, and a BOOK button to a link for that post only. No price, promo, handle or link goes in the text. Each post needs Boonchu's go, and since 19 Oct he picks the photos himself.",
+  "stages": [
+   "traffic",
+   "click-through",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "Wed/Fri/Sun 10:00 BKK; under 300 characters; first post PUBLISHED 28 Oct 13:00 BKK; 4, 6, 8 Nov posts all PUBLISHED",
+  "source": "plato.md Jobs from Machi 2026-10-15 GOOGLE BUSINESS PHOTO POSTS (incl. 2026-10-19 storytelling, 2026-10-26, 2026-11-02, 2026-11-09 updates)"
+ },
+ {
+  "name": "One tracked link per post",
+  "what": "Each Google post gets its own aybkk.net/start/gp-YYMMDD link, and letters get their own links (e.g. /start/l01), so taps can be counted per post.",
+  "stages": [
+   "click-through",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "gp-261028 (link returns 200)",
+  "source": "plato.md Jobs from Machi, GOOGLE BUSINESS PHOTO POSTS (POSTIZ line, 2026-10-26 update); Standing orders 2026-11-02 LETTER SHAPE"
+ },
+ {
+  "name": "Question bank (answer what people search)",
+  "what": "Top-of-funnel pieces answer what people search for, in EN, TH, ZH and RU. The exact searched words go in the XHS title, the first on-screen line and the first caption line. Check the waiting list before writing new pieces, and use no gossip about the tradition. Every Google post says 'Sukhumvit 31' because a competing studio now owns that search.",
+  "stages": [
+   "traffic",
+   "acquisition channel and pipeline"
+  ],
+  "status": "decided-rule",
+  "numbers": "at most 1 answer piece a week, Monday TRUST slot, never daily",
+  "source": "plato.md Reel Toolkit 2026-10-18 QUESTION BANK"
+ },
+ {
+  "name": "10 Habits frame and Reel series",
+  "what": "Every piece points to one of 10 health habits and names its number, under the master line 'Ashtanga does all 10, in one morning'. The series is written as ten 30-second, 3-beat scripts plus a closer, tagged 'Habit #N of 10', each caption ending with one action (try a Mysore class, LINE @aybkk, the 12-week check, first month at aybkk.net). No medical promises, no kilos, no 'every student'. The scripts' aybkk.net and LINE actions clash with the keyword-test rule during 26 Oct to 22 Nov, and the file is undated.",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "retention"
+  ],
+  "status": "planned",
+  "numbers": "30 seconds each; 3 beats; 10 habits + series closer",
+  "source": "10-habits-reels.md (whole file); plato.md Standing orders 2026-10-04 10 HABITS FRAME"
+ },
+ {
+  "name": "12-week proof check",
+  "what": "The Habit #1 Reel says AYBKK first tracks how many mornings you came, then checks heart rate and sleep at weeks 0, 6 and 12 ('Proof, not a dashboard'). The caption asks people to request the 12-week check on LINE @aybkk. The notebook has no record of the check running yet.",
+  "stages": [
+   "retention",
+   "upsell and lifetime value",
+   "conversion"
+  ],
+  "status": "planned",
+  "numbers": "week 0, 6 and 12",
+  "source": "10-habits-reels.md #1 Track everything; plato.md Stories used 2026-10-05 'The Hen Who Did Not Check' (Habit #1 check at week 0, 6, 12)"
+ },
+ {
+  "name": "Habit Gap message (a teacher who notices)",
+  "what": "AYBKK sells a habit system, not asanas: same practice, same time, and a teacher who notices when you miss class (confirmed OK to say in public on 7 Nov). Every piece leads to a Mysore trial, a renewal or the 180K program. No statistic goes public until it is checked against its source.",
+  "stages": [
+   "retention",
+   "churn",
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Standing orders 2026-10-04 DIRECTION, 2026-11-07 CONFIRMED FACT; Reel Toolkit Triple Hook example"
+ },
+ {
+  "name": "Comparison pattern and Wrong Fix skeleton",
+  "what": "5 steps: the pain, what they try, what it misses, what Ashtanga does, then proof and an invite. Boonchu's 'Wrong Fix' line is the short form. Never say another method 'does not work'; say it 'won't fix it alone'. Never promise kilos, and always add 'we teach you from the very start'.",
+  "stages": [
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "'Walking covers 2 of the 10. One Ashtanga morning covers all 10.'",
+  "source": "plato.md Standing orders 2026-10-04 COMPARISON; Reel Toolkit 2026-10-10 BOONCHU'S 'WRONG FIX' SKELETON"
+ },
+ {
+  "name": "Self-joke close and reply with a question",
+  "what": "A dry self-joke ending about Boonchu (never about students, the lineage, Sharath or the practice) gets people commenting. Reply with another self-joke plus a question back ('Team flexible or Team stiff?'). A joke must be based on his true facts and end on a real punch word.",
+  "stages": [
+   "traffic",
+   "bounce"
+  ],
+  "status": "live",
+  "numbers": "laugh test 11 Oct: 12 jokes, 3 judges, winner 6/9; Flexible-or-Stiff first comment within minutes; Adjustment Reel practitioner comment within 17 min",
+  "source": "plato.md What worked 2026-10-04 (both entries); Standing orders 2026-10-11 ASANA NAMES, 2026-10-13 KEEP IT SHORT; Reel Toolkit Humour layer"
+ },
+ {
+  "name": "Elicitation (statements, not questions)",
+  "what": "Get people to say more without asking questions: correction bait (only a named common belief or an honest guess, never a made-up fact), statements instead of questions, and mild disbelief. In 180K DMs and calls this finds the real problem and whether the person is serious. In Reels, naming a common belief invites practitioners to correct it in the comments.",
+  "stages": [
+   "qualified lead and close rate",
+   "traffic"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "plato.md Persuasion 2026-10-17 ELICITATION"
+ },
+ {
+  "name": "180K call questions page",
+  "what": "A study page of AYBKK's own 20 questions, in call order, for the 180K sales call (with a Chinese version and a practice drill), adapted from a 100-question sales carousel. Plato said no to a 50-day Reel series of these questions because it reads like a sales script; single questions can be used as story hooks instead.",
+  "stages": [
+   "qualified lead and close rate"
+  ],
+  "status": "built-not-used",
+  "numbers": "20 questions in call order",
+  "source": "plato.md Saved for later 2026-11-13 (@thechrisrigoudis 'New Era Sales')"
+ },
+ {
+  "name": "Comment-keyword DM funnel for the 180K",
+  "what": "A comment keyword that triggers a DM (like 'Comment DOUBLE'), possible for the 180K program on teaching Reels only, never on tribute Reels. DM replies follow the /dm filter rules.",
+  "stages": [
+   "qualified lead and close rate",
+   "cost per lead",
+   "acquisition channel and pipeline"
+  ],
+  "status": "idea",
+  "numbers": "",
+  "source": "plato.md Reel Toolkit, Adley Kinsman 'Missy Elliott method' (watched 1 Oct)"
+ },
+ {
+  "name": "'I read it so you don't have to'",
+  "what": "Boonchu's version of a borrowed-authority summary Reel: he sums up his own sources with a counted progress grid on screen so people stay to the end. The call to action comes only at the end, plus a comment keyword in the caption. He stays the authority, not a curator.",
+  "stages": [
+   "traffic",
+   "click-through",
+   "creative/offer"
+  ],
+  "status": "idea",
+  "numbers": "his sources: Hatha Yoga Pradipika, 49 studies",
+  "source": "plato.md Reel Toolkit 2026-10-01 Bryan (@bryanbuildbrands) 'borrowed authority summary'"
+ },
+ {
+  "name": "Lane B hook for men",
+  "what": "A hook for men who have no time or no interest in yoga: 'Not interested in yoga? Okay. Most of my students... same.' Plus a share line in the caption, 'Send this to the man who says next time', and the funny caption pick 'Next time is the most popular day to start yoga.' Waiting for his pick.",
+  "stages": [
+   "traffic",
+   "click-through",
+   "acquisition channel and pipeline"
+  ],
+  "status": "built-not-used",
+  "numbers": "caption pick 23/30; men's top reason 'no interest' 47% (from Carne's vault note)",
+  "source": "plato.md Stories used 2026-10-10 LANE B HOOK for Boonchu's message to men"
+ },
+ {
+  "name": "Chinese channels: Lane A only",
+  "what": "The Chinese Reel series starts from Ep. 3 with the same numbering, burned-in Chinese captions and Chinese card text. Captions come in EN, TH, ZH and RU with an XHS title. WeChat and Xiaohongshu get Lane A only (lineage, China workshops, TT), never beginner promo, and nothing political. The notebook does not confirm Chinese episodes were posted.",
+  "stages": [
+   "acquisition channel and pipeline",
+   "traffic"
+  ],
+  "status": "decided-rule",
+  "numbers": "Chinese series from Ep. 3 onward",
+  "source": "plato.md Standing orders 30 Sep CHINESE PLATFORMS and CHINESE VERSION, 2026-10-01 OPEN DOOR ROUTE, 2026-10-04 HALBERT WEEKLY LETTER (lane rule); 10-habits-reels.md header"
+ },
+ {
+  "name": "Price ladder with a 'teacher's pick'",
+  "what": "From 12 Nov: one 'Membership' (never 'Dedicated' or 'Flexible' tiers), the 6-month pass marked 'teacher's pick', per-month and per-class prices, '+VAT' next to every price, and 12 months means 12 months (no free month). Prices go on posters and the link page, never in a Reel, caption or DM. The 11 Nov prices replace the 24 Oct ones (12m 59,900, 6m 32,000). The v3 poster's 'You save ฿55,300' line matches the old 59,900 year price.",
+  "stages": [
+   "conversion",
+   "upsell and lifetime value",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "12m 63,600 (5,300/month, 331 a class), 6m 34,200 (5,700/month, teacher's pick, 356 a class), 3m 19,500 (6,500/month, 406 a class), 1m 9,600, drop-in 1,500, 8 classes 7,600 (2 months); all +7% VAT",
+  "source": "plato.md Standing orders 2026-11-11 PRICE FACTS UPDATE, 2026-10-24 PRICE FACTS, 2026-10-19 PRICE POSTER v3 FINAL, 2026-10-02 NO TIERS"
+ },
+ {
+  "name": "Freeze and transfer instead of quitting",
+  "what": "Pass rules on the price poster are framed as care. Members can freeze instead of losing the pass, and can make one hardship transfer to a new person with the same end date (LINE first). 'All passes are final once purchased, unless we can't give the classes you paid for' replaces a bare 'No refunds'.",
+  "stages": [
+   "churn",
+   "retention"
+  ],
+  "status": "live",
+  "numbers": "freeze 30 days or doctor's note up to 2 months; hardship transfer once, fee ฿1,500",
+  "source": "plato.md Standing orders 2026-10-19 PRICE POSTER v3 FINAL"
+ },
+ {
+  "name": "Renewal reward: a tee, not a discount",
+  "what": "The loyal renewal discount price was dropped on 2 Nov, and loyal renewals get a tee instead.",
+  "stages": [
+   "retention",
+   "upsell and lifetime value"
+  ],
+  "status": "decided-rule",
+  "numbers": "Loyal renewal 54,900 was dropped 2 Nov (tee instead)",
+  "source": "plato.md Standing orders 2026-10-24 PRICE FACTS"
+ },
+ {
+  "name": "One named teaching method",
+  "what": "Boonchu has two method names, 'Function over shape' and 'drawing the cortical map' (a cue given the moment the student does the action). Plato asked him to pick ONE to repeat for a year; until he picks, each video uses only one name.",
+  "stages": [
+   "creative/offer"
+  ],
+  "status": "testing",
+  "numbers": "'for the past 13 years' (his words)",
+  "source": "plato.md Standing orders 2026-10-29 BOONCHU'S TECHNIQUE NAME"
+ },
+ {
+  "name": "Marketing words told as a Mysore story",
+  "what": "A saved Reel explains marketing words with a bar story: nobody sees you = low traffic, they see you but don't come over = low click-through, they talk and leave fast = high bounce, she doesn't go home with you = low conversion, then paid acquisition, cost per lead, retention, upsell, churn. Plato offered (not asked for) the same ladder told as a Mysore story. Plato notes its ending, 'you don't chase, you replace', is the opposite of AYBKK's habit and retention model.",
+  "stages": [
+   "traffic",
+   "click-through",
+   "bounce",
+   "conversion",
+   "retention",
+   "churn"
+  ],
+  "status": "idea",
+  "numbers": "source Reel: 38 s, 20.5K likes (another account)",
+  "source": "plato.md Saved for later 2026-11-14 (Marz Reel 'Churn n burn')"
+ },
+ {
+  "name": "Habit Gap message in all content",
+  "what": "Carousels, Reels and letters sell the habit system, not poses: same practice, same time, and a teacher who notices when you are gone. The owner confirmed on 7 Nov that 'a teacher notices when you miss class' is true, so the line can be used.",
+  "stages": [
+   "creative/offer",
+   "retention",
+   "churn",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "\"We have taught Ashtanga in Bangkok for 14 years\" (used in copy)",
+  "source": "bots/board.md, 2026-11-06 · plato (Adjustment carousels, slides HABIT/NOTICE); 2026-11-07 · plato (Update 7 Nov night); 2026-11-02 · carnegie (Letter 01)"
+ },
+ {
+  "name": "12-week proof check",
+  "what": "The copy promises a progress check in the first 12 weeks: 'Film one asana today, and again in 12 weeks... At AYBKK, there is a 12-week check.' The board shows it only as a claim in carousel copy and does not say how it is run.",
+  "stages": [
+   "retention",
+   "churn",
+   "conversion",
+   "creative/offer"
+  ],
+  "status": "decided-rule",
+  "numbers": "12 weeks",
+  "source": "bots/board.md, 2026-11-06 · plato (Adjustment carousels #1 slide 9 HABIT, #5 slide 9 PROOF, #6 slide 9 HABIT)"
+ },
+ {
+  "name": "January 'Give us 12 weeks' push",
+  "what": "A January campaign called 'Give us 12 weeks' must be ready before the teacher leaves on the Mysore winter trip.",
+  "stages": [
+   "conversion",
+   "retention",
+   "creative/offer"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-01 · machiavelli (Reminders due today, 1st of the month)"
+ },
+ {
+  "name": "Duo / Rookie new-student promo with deadline",
+  "what": "Until 11 Nov, new students got the Duo (buy 1, get 1 free: bring a friend or keep both) or could start alone with the Rookie Pack, starting by 12 Nov. A 2-month promo pass was also sold on LINE. Machi pushed every LINE buyer to close before the deadline. The promo ended Wed 11 Nov and the new price list went up 12 Nov.",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "\"Duo: buy 1, get 1 free\"; \"Until 11 Nov\"; \"wins this week (from Mon 2 Nov): 1 new Duo student (6 Nov)\"; \"2 new people want to start before the promo ends\" (8 Nov); \"4 people on LINE asked to buy or start (Duo, Rookie, 1 month, a week of classes)\" (10 Nov); \"public promo pass on LINE (2 months, start Thu 12 Nov)\"",
+  "source": "bots/board.md, 2026-11-02 · carnegie (Letter 01, Type under the photo, LINE); 2026-11-08, 2026-11-10, 2026-11-11 · machiavelli"
+ },
+ {
+  "name": "'Money today' same-day close list",
+  "what": "Machi's 07:08 brief opens with the people on LINE who are ready to pay, plus countdowns to deadlines (promo end, pass end), so warm buyers get an answer the same day. Open problem: a 3-month student and an old-price renewal waited from 9 to 14 Nov. Each evening the default 'no reply goes out' was applied, and on 14 Nov both were still listed as 'money already at the door'.",
+  "stages": [
+   "conversion",
+   "qualified lead and close rate",
+   "retention"
+  ],
+  "status": "live",
+  "numbers": "Briefs at 07:08, 13:08, 19:08; \"Inbox 07:08: 13 LINE threads with news, 8 need a reply, 5 hot\" (10 Nov); \"Inbox 07:08: 10 LINE threads with news, 4 need a reply, 3 hot\" (12 Nov)",
+  "source": "bots/board.md, 2026-11-09 to 2026-11-14 · machiavelli"
+ },
+ {
+  "name": "Decision chasing with deadline and default",
+  "what": "Every open decision gets an A/B choice, a 19:00 deadline, stated stakes and a default that applies if nobody answers, with at most 2 nudges a day. On the board the defaults keep applying: course sales moved again, the serious lead stays open with nothing sent, and waiting students got no reply.",
+  "stages": [
+   "conversion",
+   "qualified lead and close rate"
+  ],
+  "status": "live",
+  "numbers": "\"decision needed in team chat by 19:00\"; \"2 nudges today\"",
+  "source": "bots/board.md, 2026-11-03 to 2026-11-14 · machiavelli"
+ },
+ {
+  "name": "Hot-lead inbox triage",
+  "what": "LINE chats are sorted on each run into 'need a reply' and 'hot', and Machi reports the counts 3 times a day. Carnegie handles only asks about the 180K program; Bangkok shala questions go to Machi.",
+  "stages": [
+   "qualified lead and close rate",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "\"Inbox 19:08: 5 LINE threads with news, 5 hot\" (9 Nov); \"Inbox had 17 LINE chats, none about the 180K program\" (12 Nov)",
+  "source": "bots/board.md, 2026-11-09 · machiavelli; 2026-11-12 · carnegie"
+ },
+ {
+  "name": "New price list auto-switch",
+  "what": "The new prices switched on by themselves on 12 Nov (code merged 2 Nov) and were checked live at 07:09 on aybkk.net and the Packages tab. Open problem on 12–13 Nov: Rezerv still sold the old passes, Facebook and LINE OA still showed old prices, and the old offer line was still in the 3 LINE keyword replies.",
+  "stages": [
+   "creative/offer",
+   "conversion",
+   "upsell and lifetime value"
+  ],
+  "status": "live",
+  "numbers": "\"PR #83 already merged 2 Nov, switch runs by itself\"; \"3 LINE keyword replies\"",
+  "source": "bots/board.md, 2026-11-04, 2026-11-12, 2026-11-13 · machiavelli"
+ },
+ {
+  "name": "Promo switch-off on ads and landing page",
+  "what": "After the promo ended, the Google ad promo sitelink and the /start promo box had to be switched off, so ads and the landing page do not show an offer that has ended.",
+  "stages": [
+   "paid acquisition",
+   "click-through",
+   "bounce"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-11 · machiavelli (Reminders)"
+ },
+ {
+  "name": "Google Ads search campaign with search-terms review",
+  "what": "A Google Ads campaign is running. Machi sends a reminder to pull the search terms report for the last 7 days, and counts down to a set Google Ads check date.",
+  "stages": [
+   "paid acquisition",
+   "cost per lead",
+   "traffic",
+   "click-through"
+  ],
+  "status": "testing",
+  "numbers": "\"campaign 24415822293, last 7 days\"; \"Google Ads checks Wed 2 Dec\"",
+  "source": "bots/board.md, 2026-11-09 · machiavelli (Reminder sent); 2026-11-12 and 2026-11-14 · machiavelli (Countdowns)"
+ },
+ {
+  "name": "Tracked /start links per source",
+  "what": "Each source gets its own /start link so clicks can be counted: aybkk.net/start/l01 counts clicks from Letter 01. The /start page carried a promo box during the promo.",
+  "stages": [
+   "click-through",
+   "conversion",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "\"aybkk.net/start/l01\"",
+  "source": "bots/board.md, 2026-11-02 · carnegie (Letter 01: 'The link aybkk.net/start/l01 counts the clicks from this letter'); 2026-11-11 · machiavelli"
+ },
+ {
+  "name": "Monday Letter (weekly handwritten letter)",
+  "what": "One 3-minute letter every Monday, sent as a photo of the handwritten letter with the typed text, in EN plus TH (LINE OA), ZH (WeChat article), RU (Telegram groups) and Email. Letter 01, 'Motivation is a bad alarm clock', teaches a fixed practice time plus someone who notices, and asks readers to be on the mat at one time for their next 3 practice days. The board set the send for Mon 2 Nov but never confirms it went out.",
+  "stages": [
+   "retention",
+   "churn",
+   "acquisition channel and pipeline",
+   "click-through"
+  ],
+  "status": "planned",
+  "numbers": "\"send: Monday 2 Nov 2026 (Letter 02 moves to Monday 9 Nov)\"; \"One letter. Three minutes.\"",
+  "source": "bots/board.md, 2026-11-02 · carnegie (Letter 01 front matter and text)"
+ },
+ {
+  "name": "Channel-split ask: reply with city + years practised",
+  "what": "On WeChat, Telegram and Email the letter sells nothing and only asks for a one-line reply with the reader's city and how many years they have practised. That starts a conversation and separates beginners from long-time practitioners. LINE gets the offer and the booking link instead.",
+  "stages": [
+   "qualified lead and close rate",
+   "acquisition channel and pipeline"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-02 · carnegie (Letter 01, Type under the photo)"
+ },
+ {
+  "name": "Comment-keyword CTA test (STUCK / aybkk)",
+  "what": "Lane A posts ask 'Comment STUCK and its name. This week I reply to each one myself, with one fix', in the caption and a 2 s end card only, never spoken and with no aybkk.net line. Lane B asks 'Comment aybkk and I'll send you the link.' The test window was 26 Oct–22 Nov, but the newest notes say it was not started or is on hold, with no Batch Sheet and no score yet. Captions still use STUCK (10 Nov).",
+  "stages": [
+   "click-through",
+   "cost per lead",
+   "acquisition channel and pipeline",
+   "creative/offer"
+  ],
+  "status": "testing",
+  "numbers": "\"keyword test 26 Oct to 22 Nov\"; \"End card 2 s\"",
+  "source": "bots/board.md, 2026-11-01 · plato (Go Small); 2026-11-01 · machiavelli 19:08 ('Keyword test not started'); 2026-11-05 · carnegie ('No new Batch Sheet; keyword test on hold'); 2026-11-10 · plato"
+ },
+ {
+  "name": "Two content lanes",
+  "what": "Lane A is for serious practitioners (the 180K audience) and uses the STUCK ask. Lane B is for beginners at the Bangkok shala and uses the aybkk ask. Every Reel and carousel is routed to one lane.",
+  "stages": [
+   "creative/offer",
+   "qualified lead and close rate",
+   "traffic"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-10 · plato; 2026-11-12 · plato; 2026-11-02 · plato"
+ },
+ {
+  "name": "Rule #1: stakes test",
+  "what": "Every piece of content and every line must first answer two questions: what are the stakes, and why should they care. Only true stakes count: no health fear, no medical promise, no unchecked number, no shaming.",
+  "stages": [
+   "creative/offer",
+   "click-through",
+   "bounce"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-02 · machi (Machi team chat · Rule #1, the stakes test)"
+ },
+ {
+  "name": "Claim-safety and consent rules",
+  "what": "Plato swaps promises for safer words ('fix' office syndrome becomes 'help'), checks every fact and quote against a source, drops unsourced numbers and quotes, and asks each student before posting their photo, with no age words on screen.",
+  "stages": [
+   "creative/offer",
+   "conversion"
+  ],
+  "status": "decided-rule",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-12 · plato; 2026-11-07 · plato; 2026-11-02 · plato (Flags); 2026-11-03 · carnegie (Lines to avoid)"
+ },
+ {
+  "name": "Outcome-led Reel 'Practice Ashtanga'",
+  "what": "A talking Reel that lists outcomes people want (strong, flexible, better breath, a teacher who checks your body, office syndrome, sleep, staying young), each answered 'Practice Ashtanga'. The caption options end with 'Comment aybkk'. The owner's script was final on 12 Nov and captions were sent; the board shows no filming or post yet.",
+  "stages": [
+   "creative/offer",
+   "traffic",
+   "conversion"
+  ],
+  "status": "planned",
+  "numbers": "7 lines; \"Captions sent (3 short options)\"",
+  "source": "bots/board.md, 2026-11-12 · plato"
+ },
+ {
+  "name": "Hook / re-hook / open loop / payoff Reel structure",
+  "what": "Reels are built as hook, re-hook, open loops paid off later, tension, payoff and a hero moment. 'Hidden Stories of Ashtanga' tells an Indian myth and lands on an asana fix (Ep. 5 'Go Small'). Ranking formats tease 'Last one is my favourite' to keep viewers to the end.",
+  "stages": [
+   "creative/offer",
+   "traffic",
+   "bounce"
+  ],
+  "status": "live",
+  "numbers": "\"59.2 s + 0.8 tail + 2 s STUCK end card\"; \"Kling ... 2 credits each, 10 jobs = 20 credits\"; \"last posted = Ep. 4, confirmed 12 Oct\"",
+  "source": "bots/board.md, 2026-11-01 · plato (Hidden Stories: Go Small, EDIT); 2026-11-02 · plato (backbend types)"
+ },
+ {
+  "name": "Instagram carousels scheduled via Postiz",
+  "what": "Fact-checked carousels (cover plus 9 slides; a big feeling word, small text and a source credit) are scheduled through Postiz on the AYBKK Instagram at 06:00 and 18:00 Bangkok time. Ladder of Life sets A, B and C were all published 8–9 Nov; set B failed once with a media error and was re-posted.",
+  "stages": [
+   "traffic",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "\"Set A at 6 am. B at 6 pm and C Monday 6 am\"; \"All 30: GRID OK\"; \"md5 30/30\"",
+  "source": "bots/board.md, 2026-11-07 · plato (Update 7 Nov night)"
+ },
+ {
+  "name": "Adjustment carousels (7 formats)",
+  "what": "Seven carousel formats on hands-on adjustments: problem + fix, list with opinion, never again, debunk, big shift, double benefit, relatable reward. Each is aimed at the Bangkok shala, at teachers (180K) or at trust, with a consent-first message (ask first; no needs no reason). The texts were done 6 Nov; the board shows no post.",
+  "stages": [
+   "creative/offer",
+   "qualified lead and close rate",
+   "conversion"
+  ],
+  "status": "built-not-used",
+  "numbers": "\"11% of 2,620 people who do yoga said an adjustment had hurt them... about 7 in 10 called adjustments 'very helpful'\" (David Keil survey 2017, cited in copy)",
+  "source": "bots/board.md, 2026-11-06 · plato (Adjustment carousels: 7 types)"
+ },
+ {
+  "name": "Deadpan humour talking-head Reels",
+  "what": "Dry, self-mocking Reels ('One morning, six jobs') where the last true line carries the habit point: 'I count the mats. I notice who don't come.' The ask is in the caption only. Still a draft.",
+  "stages": [
+   "creative/offer",
+   "traffic",
+   "retention"
+  ],
+  "status": "planned",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-06 · plato (Reel draft 'One morning, six jobs')"
+ },
+ {
+  "name": "Identity-question endings",
+  "what": "Posts end with a question viewers answer about themselves ('Which path are you?', 'Which step are you on now? Tell me the number.', 'What type of backbend are you?') to pull comments.",
+  "stages": [
+   "traffic",
+   "creative/offer"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-07 · plato (Ladder captions); 2026-11-10 · plato; 2026-11-02 · plato"
+ },
+ {
+  "name": "180K lead pipeline (Carnegie daily)",
+  "what": "Every morning Carnegie checks the inbox for asks about the 180K program, logs new leads, drafts replies and follow-ups with a next-check date, and asks the owner what to do about silent leads. Newest run: 0 new leads, 2 open, and the only serious lead silent for 28 days.",
+  "stages": [
+   "qualified lead and close rate",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "\"New leads: 0... Total open: 2\" (14 Nov); \"Serious: 1, silent 28 days\"; \"180K leads: 0 new in 9 days\" (9 Nov); \"Inbox had 17 LINE chats, none about the 180K program\" (12 Nov)",
+  "source": "bots/board.md, 2026-11-14 · carnegie; 2026-11-12 · carnegie; 2026-11-09 · machiavelli"
+ },
+ {
+  "name": "Qualify-first reply (one question)",
+  "what": "The reply to a new teacher-training ask on LINE OA asks only one question, how long they have practised, and gives no price. Newest note: no answer yet, next check Sun 15 Nov.",
+  "stages": [
+   "qualified lead and close rate"
+  ],
+  "status": "live",
+  "numbers": "\"New leads: 1 (LINE, English, asked 'do you offer teacher training?')\" (10 Nov)",
+  "source": "bots/board.md, 2026-11-10 · carnegie; 2026-11-14 · carnegie"
+ },
+ {
+  "name": "'Last note or close' for silent leads",
+  "what": "After weeks of silence, the serious lead gets one short last note or is closed. Drafts were made on 31 Oct, 7 Nov and 14 Nov. The owner has not chosen, so the default keeps the lead open with nothing sent.",
+  "stages": [
+   "qualified lead and close rate",
+   "acquisition channel and pipeline"
+  ],
+  "status": "built-not-used",
+  "numbers": "\"silent 28 days\"; \"next check Sat 21 Nov\"",
+  "source": "bots/board.md, 2026-11-07 · carnegie; 2026-11-14 · carnegie"
+ },
+ {
+  "name": "Online course launch (prices pending)",
+  "what": "Online course sales have waited on a price decision since 28 Sep, and each week the default moves sales one more week. The newest default (14 Nov) is sales on Tue 15 Dec and start on Tue 22 Dec; earlier defaults were sales 1 Dec (1 Nov) and 8 Dec (8 Nov).",
+  "stages": [
+   "upsell and lifetime value",
+   "creative/offer"
+  ],
+  "status": "planned",
+  "numbers": "\"waiting since 28 Sep\"; \"Default B: sales move to Tue 15 Dec, start Tue 22 Dec\"",
+  "source": "bots/board.md, 2026-11-14 · machiavelli (newest); 2026-11-01 and 2026-11-08 · machiavelli (older defaults)"
+ },
+ {
+  "name": "Invite-only online Led class",
+  "what": "Open question to the owner: 'Is the online Led class invite only?' Still unanswered after more than 3 weeks.",
+  "stages": [
+   "upsell and lifetime value",
+   "qualified lead and close rate"
+  ],
+  "status": "idea",
+  "numbers": "\"his line on the invite-only online class (23rd day)\" (9 Nov)",
+  "source": "bots/board.md, 2026-11-09 · carnegie"
+ },
+ {
+  "name": "Renew before the pass ends",
+  "what": "Students whose pass is ending should get a renewal answer before the end date. One student asked to renew at the old price before his pass ended on Fri 13 Nov, but no reply went out by any deadline (defaults applied 9–13 Nov), and on 14 Nov he was still listed as waiting.",
+  "stages": [
+   "retention",
+   "churn",
+   "upsell and lifetime value"
+  ],
+  "status": "live",
+  "numbers": "\"pass ends Fri 13 Nov\"; \"8-class pack renewal question\" (9 Nov)",
+  "source": "bots/board.md, 2026-11-09 to 2026-11-14 · machiavelli"
+ },
+ {
+  "name": "Drop-in to monthly-pass conversion count",
+  "what": "On the 1st of each month, count the drop-ins since 16 Oct and how many of them bought a month within 30 days. The board shows no result yet.",
+  "stages": [
+   "conversion",
+   "upsell and lifetime value"
+  ],
+  "status": "live",
+  "numbers": "\"drop-ins since 16 Oct, how many bought a month within 30 days\"",
+  "source": "bots/board.md, 2026-11-01 · machiavelli (Reminders due today, 1st of the month)"
+ },
+ {
+  "name": "Google Business Profile monthly numbers",
+  "what": "On the 1st of each month, pull the Google Business Profile numbers.",
+  "stages": [
+   "traffic",
+   "acquisition channel and pipeline"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-01 · machiavelli (Reminders due today)"
+ },
+ {
+  "name": "Weekly wins score",
+  "what": "Machi counts wins (new students, renewals) for each week from Monday and shows them against the gap, with no pep talk.",
+  "stages": [
+   "conversion",
+   "retention"
+  ],
+  "status": "live",
+  "numbers": "\"wins this week (from Mon 2 Nov): 1 new Duo student (6 Nov)\"; \"Win today: 1 new student\" (7 Nov); \"Last week (26 Oct to 1 Nov): none\"; \"wins this week (from Mon 9 Nov): none reported\" (14 Nov)",
+  "source": "bots/board.md, 2026-11-02, 2026-11-07, 2026-11-08, 2026-11-14 · machiavelli"
+ },
+ {
+  "name": "Close with a set first morning / meet the teacher",
+  "what": "Someone ready to pay is closed by giving them a set first-morning start day. Someone asking about a 3-month pass came in to meet the teacher so the pass could be closed that day.",
+  "stages": [
+   "conversion",
+   "qualified lead and close rate"
+  ],
+  "status": "live",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-03 · machiavelli ('Close it with a first-morning day'); 2026-11-07 · machiavelli"
+ },
+ {
+  "name": "Own booking system replacing Rezerv",
+  "what": "Rezerv was set to stop selling on Mon 2 Nov, with bookings moving to AYBKK's own system and the Packages tab on aybkk.net. The newest notes (12–13 Nov) disagree: Rezerv still sells the old passes, and the import of upcoming Rezerv bookings still waits.",
+  "stages": [
+   "conversion",
+   "retention"
+  ],
+  "status": "live",
+  "numbers": "\"Rezerv stops selling Mon 2 Nov\"",
+  "source": "bots/board.md, 2026-11-01 and 2026-11-02 · machiavelli; 2026-11-12, 2026-11-13, 2026-11-14 · machiavelli (newest)"
+ },
+ {
+  "name": "LINE OA keyword auto-replies",
+  "what": "LINE OA has keyword auto-replies that carry an offer line. After the promo, the old offer line had to be deleted from them.",
+  "stages": [
+   "conversion",
+   "click-through"
+  ],
+  "status": "live",
+  "numbers": "\"3 LINE keyword replies\"",
+  "source": "bots/board.md, 2026-11-12 · machiavelli (Reminders)"
+ },
+ {
+  "name": "Shala wall quote (Yoga Sutra 1.14)",
+  "what": "The recommended wall line is 'Long time. No break. With care.' (Yoga Sutra 1.14), which states the Habit Gap inside the room, with drafts in Thai, Chinese and Russian. It is a shortlist only, not yet painted.",
+  "stages": [
+   "retention",
+   "churn",
+   "creative/offer"
+  ],
+  "status": "idea",
+  "numbers": "\"Score /25: 24\"",
+  "source": "bots/board.md, 2026-11-03 · carnegie (AYBKK shala wall: quote shortlist)"
+ },
+ {
+  "name": "Site colour change after the promo",
+  "what": "A go/no decision is pending on changing the site colour after the promo. The board does not give the reason.",
+  "stages": [
+   "bounce"
+  ],
+  "status": "idea",
+  "numbers": "",
+  "source": "bots/board.md, 2026-11-12 · machiavelli (Reminders)"
+ },
+ {
+  "name": "Daily Plato story Reel routine (paused)",
+  "what": "The daily Plato Reel run is paused, and content is now made on request in the Plato chat. The 4 ready Reels were posted on 1 Nov, leaving nothing waiting to film.",
+  "stages": [
+   "traffic",
+   "creative/offer"
+  ],
+  "status": "built-not-used",
+  "numbers": "\"all 4 Plato Reels posted (Ganda Bherundasana, mind body connection, My first shala was built for 20, One class is not a practice)\"",
+  "source": "bots/board.md, 2026-11-01 · machiavelli (Update); 2026-11-02 to 2026-11-14 · machiavelli ('Plato's daily run is paused (expected)')"
+ }
+]
