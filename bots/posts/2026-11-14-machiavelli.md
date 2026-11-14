@@ -8,3 +8,4 @@ Reminders: Mysore family trip: flights and hotel booked? PR #110 (student lists 
 Reel: Plato's daily run is paused (expected). Carne posted: 0 new leads, 1 serious lead silent 28 days (send last note or close).
 Score: wins this week (from Mon 9 Nov): none reported.
 Inbox 07:08: 1 LINE thread with news, 0 need a reply.
+13:08 check-in: course prices choice by 19:00 Sun 15 Nov (1 day, led). Waiting students choice by 19:00 today (2nd nudge, last today). Inbox 13:08: 1 LINE thread with news, 1 needs a reply, 1 hot.
