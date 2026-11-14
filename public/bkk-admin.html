@@ -198,7 +198,24 @@
   details.tries{margin-top:14px;border-top:1px solid var(--line)}
   details.tries>summary{cursor:pointer;padding:12px 0 10px;font-weight:700}
   details.tries>summary .muted{display:block;font-weight:400}
-  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn,#chkAll{min-height:44px}}
+  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn,#chkAll,.tdh .btn{min-height:44px}}
+  /* Today: each class opens, so "+ Add student" is one tap away (Nov 2026). */
+  .tdh{display:flex;align-items:flex-start;gap:10px}
+  .tdh>div{flex:1;min-width:0}
+  .tdh .btn{flex:none;white-space:nowrap}
+  /* A 44 px name button sits in the row's own padding, so the row stays one line high and in line. */
+  table.tdl td{vertical-align:middle}table.tdl td:last-child{white-space:nowrap}
+  @media (max-width:640px),(pointer:coarse){table.tdl td.nm{padding-top:0;padding-bottom:0}}
+  /* The profile opens on what they can practise on today. */
+  .now{margin:12px 0 4px;padding:9px 12px;border:1px solid var(--line);border-left:4px solid #187a43;border-radius:8px;background:var(--wall)}
+  .now.none{border-left-color:#b3453c}
+  .now h3{margin:0 0 2px;font:800 12.5px/1.4 'Work Sans','Plex',sans-serif;color:var(--soft);letter-spacing:.06em;text-transform:uppercase}
+  :lang(th) .now h3{letter-spacing:0}
+  .now .np{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px;padding:3px 0}
+  .now .np b{font-size:16px;overflow-wrap:anywhere}
+  .now .np span:not(.pill){font-size:14px}
+  .now .no{margin:3px 0 0;color:#a33;font-weight:700}
+  .now .no+.muted{margin:2px 0 0}
   /* On a phone each payment is a card, so the buttons are on screen, not off to the side. */
   @media (max-width:640px){
     table.ord tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 12px;padding:10px 0;border-bottom:1px solid var(--line)}
@@ -228,7 +245,7 @@
   .hint{min-height:1.2em;font-size:13.5px;color:var(--soft);margin:10px 0 0}
   .hint.bad{background:#fdeaea;color:#a33;border-radius:7px;padding:8px 10px;font-weight:700}
   #adGo{width:100%;margin-top:12px;padding:13px;font-size:15px}
-  @media (prefers-color-scheme:dark){.rr .in,.drow .in,.hit em.ok{color:#3ddc97}}
+  @media (prefers-color-scheme:dark){.rr .in,.drow .in,td .in,.hit em.ok{color:#3ddc97}.now .no{color:#ff8f86}.now{border-left-color:#3ddc97}}
   @media (min-width:560px){
     .cal{padding:18px 16px}
     .cal .head b{font-size:34px}.cal .head b small{font-size:22px}.cal.wk .head b{font-size:24px}
@@ -339,7 +356,7 @@
       moneyToday: 'Money in today', sales: n => `${n} sale${n === 1 ? '' : 's'}`,
       countDrawer: 'Count the cash drawer against the cash line before you go home.',
       noSales: 'No sales yet today.', today: 'Today', noBookings: 'No bookings today.',
-      bookedIn: (n, i) => ` — ${n} booked, ${i} checked in`, checkedIn: '✓ in', notYet: 'not yet',
+      bookedIn: (n, i) => `${n} booked, ${i} checked in`, checkedIn: '✓ in', notYet: 'not yet',
       payments: 'Payments', thStudent: 'Student', thPackage: 'Package', thStatus: 'Status', thRef: 'Ref',
       fee: 'fee', vat: 'VAT', activate: 'Activate', noOrders: 'no orders yet',
       ordersHelp: 'Each time a student taps Buy, a new line shows here, even if they never pay. A line that was not paid and is more than one day old, or that the student paid for later, moves into Unpaid tries at the bottom. Check payment asks PaySolutions if the money came: if it did, the pass turns on. Activate turns the pass on by hand: press it only when you can see the money in PaySolutions. Every activation here is saved as manual.',
@@ -427,7 +444,7 @@
       moneyToday: 'เงินเข้าวันนี้', sales: n => `${n} รายการ`,
       countDrawer: 'นับเงินในลิ้นชักให้ตรงกับยอดเงินสด ก่อนกลับบ้าน',
       noSales: 'วันนี้ยังไม่มียอดขาย', today: 'วันนี้', noBookings: 'วันนี้ไม่มีการจอง',
-      bookedIn: (n, i) => ` — จอง ${n} คน เช็คอินแล้ว ${i} คน`, checkedIn: '✓ เช็คอินแล้ว', notYet: 'ยังไม่มา',
+      bookedIn: (n, i) => `จอง ${n} คน เช็คอินแล้ว ${i} คน`, checkedIn: '✓ เช็คอินแล้ว', notYet: 'ยังไม่มา',
       payments: 'การชำระเงิน', thStudent: 'นักเรียน', thPackage: 'แพ็กเกจ', thStatus: 'สถานะ', thRef: 'อ้างอิง',
       fee: 'ค่าธรรมเนียม', vat: 'VAT', activate: 'เปิดใช้', noOrders: 'ยังไม่มีรายการ',
       ordersHelp: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย รายการที่ไม่ได้จ่ายและเกิน 1 วัน หรือที่นักเรียนจ่ายทีหลังแล้ว จะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่าง ปุ่มตรวจการชำระจะถาม PaySolutions ถ้าเงินเข้าแล้ว แพ็กเกจจะเปิดเอง ปุ่มเปิดใช้คือเปิดแพ็กเกจด้วยมือ กดเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
@@ -470,7 +487,7 @@
     tCame: 'Classes came', tFirst: d => `first ${d}`, tLastVisit: 'Last visit', tNever: 'never',
     tLast30: 'Last 30 days', tLast90: n => `last 90 days: ${n}`,
     tPaid: 'Total paid', tPayN: n => `${n} payment${n === 1 ? '' : 's'}`,
-    tPass: 'Active pass', tNoPass: 'none', tLeftN: n => `${n} classes left`, tUntil: d => `until ${d}`,
+    tLeftN: n => n === 1 ? '1 class left' : `${n} classes left`, tUntil: d => `until ${d}`,
     tStartsFirst: 'starts on the first booking', tMissed: 'No-shows · cancelled', tPhotos: n => `${n} photos`,
     hVisits: 'Visits', hPays: 'Payments', hPasses: 'Passes', hNotes: 'Teacher notes', hChecks: '12-week checks',
     thDate: 'Date', thTime: 'Time', thClass: 'Class', thFrom: 'From', thItem: 'Item', thAmount: 'Amount',
@@ -545,7 +562,7 @@
     tCame: 'มาเรียน (ครั้ง)', tFirst: d => `ครั้งแรก ${d}`, tLastVisit: 'มาครั้งล่าสุด', tNever: 'ยังไม่เคยมา',
     tLast30: '30 วันล่าสุด', tLast90: n => `90 วันล่าสุด: ${n}`,
     tPaid: 'จ่ายแล้วทั้งหมด', tPayN: n => `${n} รายการ`,
-    tPass: 'แพ็กเกจที่ใช้อยู่', tNoPass: 'ไม่มี', tLeftN: n => `เหลือ ${n} ครั้ง`, tUntil: d => `ถึง ${d}`,
+    tLeftN: n => `เหลือ ${n} ครั้ง`, tUntil: d => `ถึง ${d}`,
     tStartsFirst: 'เริ่มเมื่อจองคลาสแรก', tMissed: 'จองแล้วไม่มา · ยกเลิก', tPhotos: n => `รูป ${n} รูป`,
     hVisits: 'การเข้าเรียน', hPays: 'การชำระเงิน', hPasses: 'แพ็กเกจ', hNotes: 'คำแนะนำครู', hChecks: 'เช็กผล 12 สัปดาห์',
     thDate: 'วันที่', thTime: 'เวลา', thClass: 'คลาส', thFrom: 'มาจาก', thItem: 'รายการ', thAmount: 'ยอดเงิน',
@@ -774,6 +791,28 @@
     triesSubLink: 'นักเรียนจ่ายแพ็กเกจเดียวกันทีหลังแล้ว ไม่ต้องทำอะไร เว้นแต่นักเรียนบอกว่าจ่ายสองครั้ง',
     ordersHelpLink: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย หน้านี้ยังไม่ได้เชื่อมต่อ PaySolutions แพ็กเกจจึงไม่เปิดเอง ให้ตรวจว่าเงินเข้าแล้ว แล้วกดเปิดใช้ รายการจะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่างเฉพาะเมื่อนักเรียนจ่ายแพ็กเกจเดียวกันทีหลังแล้ว ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
   });
+  // A name opens the profile, which starts with what they can use today; a
+  // class opens from Today; someone who came to a class that is over is added (Nov 2026).
+  Object.assign(STR.en, {
+    openClass: 'Open class', nowH: 'Active now',
+    nowNone: 'No active pass on aybkk.net',
+    nowNoneHint: "If they still have a Rezerv package, add them to a class with 'Rezerv package'.",
+    nowDays: n => n === 1 ? 'last day today' : `${n} days left`,
+    nowFrozen: d => d ? `Frozen until ${d}` : 'Frozen', nowStarts: d => `Starts ${d}`,
+    hereOver: 'Class is over: added as came.', addGoCame: 'Add as came',
+    hNoPassOn: (n, d) => `${n} has no aybkk.net pass for ${d}. Choose Rezerv package or Drop-in.`,
+    hitPassFrom: d => `aybkk.net pass starts ${d}`,
+  });
+  Object.assign(STR.th, {
+    openClass: 'เปิดคลาส', nowH: 'แพ็กเกจตอนนี้',
+    nowNone: 'ไม่มีแพ็กเกจที่ใช้ได้บน aybkk.net',
+    nowNoneHint: 'ถ้ายังมีแพ็กเกจ Rezerv อยู่ ให้เพิ่มเข้าคลาสด้วย "แพ็กเกจ Rezerv"',
+    nowDays: n => n === 1 ? 'วันนี้วันสุดท้าย' : `เหลือ ${n} วัน`,
+    nowFrozen: d => d ? `พักถึง ${d}` : 'พักอยู่', nowStarts: d => `เริ่ม ${d}`,
+    hereOver: 'คลาสจบแล้ว: บันทึกว่ามาเรียน', addGoCame: 'เพิ่มว่ามาเรียน',
+    hNoPassOn: (n, d) => `${n} ไม่มีแพ็กเกจ aybkk.net ที่ใช้ได้วันที่ ${d} เลือกแพ็กเกจ Rezerv หรือ Drop-in`,
+    hitPassFrom: d => `แพ็กเกจ aybkk.net เริ่ม ${d}`,
+  });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
   let TH_NAMES = null, TH_BY_EN = {};
@@ -856,7 +895,8 @@
   };
 
   // ── students ──────────────────────────────────────────────────────────────
-  async function renderStudents(term) {
+  // back: where a student's profile was opened from, to land there again.
+  async function renderStudents(term, back) {
     $('#view').innerHTML = `<div class="box">
       <b>${T('students')}</b>
       <p class="muted">${T('searchHelp')}</p>
@@ -884,7 +924,9 @@
       <div id="impOut"></div>
     </div>`;
     $('#q').onkeydown = e => { if (e.key === 'Enter') findStudents(); };
-    if (term) findStudents();
+    if (!term) return;
+    await findStudents();
+    if (back && current === 'students' && !SUB) backTo(back);
   }
 
   window.importRezerv = async () => {
@@ -909,7 +951,7 @@
     FOUND = Object.fromEntries(ms.map(m => [m.code, m]));
     if (!ms.length) { $('#results').innerHTML = `<p class="muted">${T('nobody')}</p>`; return; }
     $('#results').innerHTML = ms.map(m => `<div style="border-top:1px solid var(--line);padding:12px 0">
-      <b>${esc(m.name)}</b> <span class="muted">${esc(m.code)}</span>
+      ${whoBtn(m.code, m.name, 'who-s-' + m.code)} <span class="muted">${esc(m.code)}</span>
       <button class="btn sm" style="float:right" onclick="showHistory('${esc(m.code)}')">${T('histBtn')}</button><br>
       <span class="muted">${esc(m.email || T('noEmail'))}${m.phone ? ' · ' + esc(m.phone) : ''}
         · ${T('upcoming', m.booked)}${m.source === 'rezerv' ? ' · Rezerv' + (m.rezerv_id ? ' ' + esc(m.rezerv_id) : '') : ''}</span>
@@ -1253,7 +1295,9 @@
   };
 
   // ── inside one class ──────────────────────────────────────────────────────
-  const CV = { ref: null, data: null, seq: 0, flash: null };
+  // from: where Back goes, the calendar or Today ({ who, top, y } to land on
+  // the same Open class button). back: a profile opened here, to land on that name again.
+  const CV = { ref: null, data: null, seq: 0, flash: null, from: null, back: null };
   const calBackBtn = () => `<button class="btn gray sm" onclick="calBack()">${T('back')}</button>`;
   window.calOpen = (e, i) => {
     if (e) e.stopPropagation();
@@ -1262,11 +1306,23 @@
     CAL.y = window.scrollY;
     const sc = $('#wkScroll'); CAL.x = sc ? { from: sc.dataset.from, left: sc.scrollLeft } : null;
     CV.ref = c.slotId != null ? { slotId: c.slotId, date: c.date } : { date: c.date, time: time(c.startAt), title: c.title };
-    CV.data = null; CV.flash = null;
+    CV.data = null; CV.flash = null; CV.from = null; CV.back = null;
     SUB = 'class';
     loadClass(true);
   };
-  window.calBack = () => { SUB = null; CV.data = null; CAL.keepY = CAL.y; CAL.keepX = CAL.x; renderCalendar(); };
+  window.todayOpen = (slotId, date, id) => {
+    const b = document.getElementById(id);
+    CV.ref = { slotId, date };
+    CV.data = null; CV.flash = null; CV.back = null;
+    CV.from = { today: true, who: id, top: b ? b.getBoundingClientRect().top : null, y: window.scrollY };
+    SUB = 'class';
+    loadClass(true);
+  };
+  window.calBack = () => {
+    SUB = null; CV.data = null;
+    if (CV.from && CV.from.today) { renderToday({ back: CV.from }); return; }
+    CAL.keepY = CAL.y; CAL.keepX = CAL.x; renderCalendar();
+  };
 
   async function loadClass(top) {
     const seq = ++CV.seq, ref = CV.ref;
@@ -1322,14 +1378,14 @@
         !fixed && b.status === 'booked' && !b.checkedInAt ? `<button class="btn red sm" onclick="cvCancel(${id})">${T('btnCancelBk')}</button>` : '',
         histBtn(b.code)].filter(Boolean).join('');
       return `<div class="rr${b.status === 'noshow' ? ' miss' : ''}">${face(b)}
-        <div class="rm"><b>${esc(b.name)}</b>${b.needMat && b.status === 'booked'
+        <div class="rm">${whoBtn(b.code, b.name, 'who-r-' + id)}${b.needMat && b.status === 'booked'
           ? ` <span class="pill mat" title="${esc(T('tMats'))}">${esc(T('matPill'))}</span>` : ''}<br><span class="muted">${esc([b.code, cover, src].filter(Boolean).join(' · '))}</span></div>
         <div class="rs">${st}</div><div class="ra">${acts}</div></div>`;
     });
     const rosterBox = `<div class="box"><b>${T('rosterH')}</b> <span class="muted">${roster.length}</span>
       ${rows.length ? rows.join('') : `<p class="muted">${T('rosterNone')}</p>`}</div>`;
     const cancelBox = cancelledList.length ? `<div class="box cxl"><b>${T('cancelledH')}</b> <span class="muted">${cancelledList.length}</span>
-      ${cancelledList.map(x => `<div>${esc(x.name)} · ${esc([x.code, x.cancelledAt
+      ${cancelledList.map((x, i) => `<div>${whoBtn(x.code, x.name, 'who-x-' + i)} · ${esc([x.code, x.cancelledAt
         ? `${ymdLong(bkkYmd(Date.parse(x.cancelledAt)))} ${time(x.cancelledAt)}` : '', cxlWhy(x.reason)].filter(Boolean).join(' · '))}</div>`).join('')}</div>` : '';
     const closeBox = c.slotId == null ? '' : c.cancelled
       ? `<div class="box"><b>${T('reopenH')}</b><p class="muted">${T('reopenHelp')}</p>
@@ -1339,6 +1395,7 @@
     $('#view').innerHTML = head + rosterBox + cancelBox + (c.canAdd ? addBoxHtml(c) : '') + closeBox;
     $('#view').querySelectorAll('.rr .av img').forEach(i => { i.onerror = () => { i.parentNode.textContent = i.dataset.ini; }; });
     if (c.canAdd) wireAdd();
+    if (CV.back) { backTo(CV.back); CV.back = null; }
     // The result shows in the header; the button tapped may be far below it.
     if (CV.flash && CV.flash.fresh) {
       CV.flash.fresh = false;
@@ -1411,8 +1468,10 @@
     : Date.now().toString(36) + Math.random().toString(36).slice(2));
   const seatOf = m => m && CV.data ? CV.data.roster.find(b => b.code === m.code) : null;
   // "Here now" only on the class's own day; ticked from an hour before it starts.
-  const hereOk = c => c.date <= bkkYmd();
-  const hereOn = c => hereOk(c) && (AD.here != null ? AD.here : Date.parse(c.startAt) - Date.now() <= 3600e3);
+  // A class that is over takes someone only as came: ticked, and it stays ticked.
+  const isOver = c => !!(c.ended && c.canAdd);
+  const hereOk = c => c.date <= bkkYmd() && !isOver(c);
+  const hereOn = c => isOver(c) || (hereOk(c) && (AD.here != null ? AD.here : Date.parse(c.startAt) - Date.now() <= 3600e3));
   window.addJump = () => {
     const box = $('#addBox'); if (!box) return;
     box.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1440,8 +1499,8 @@
     </div>
     <div id="adMethods" hidden><p class="lbl">${T('methodQ')}</p><div class="opts">
       ${['cash', 'transfer', 'card'].map(m => `<button class="opt" data-method="${m}">${T('m_' + m)}</button>`).join('')}</div></div>
-    <label class="here"><input type="checkbox" id="adHere"><span>${T('hereNow')}${hereOk(c) ? ''
-      : `<small>${T('hereLater')}</small>`}</span></label>
+    <label class="here"><input type="checkbox" id="adHere"><span>${T('hereNow')}${isOver(c) ? `<small>${T('hereOver')}</small>`
+      : hereOk(c) ? '' : `<small>${T('hereLater')}</small>`}</span></label>
     <p id="adHint" class="hint" aria-live="polite"></p>
     <button class="btn" id="adGo" disabled>${T('addGo')}</button></div>`;
 
@@ -1456,7 +1515,9 @@
       if (term.length < 2) return;
       wait = setTimeout(async () => {
         try {
-          const d = await api('/api/bkk/admin/members?q=' + encodeURIComponent(term)).then(r => r.json());
+          const c = CV.data && CV.data.class;
+          const d = await api('/api/bkk/admin/members?' + new URLSearchParams({ q: term,
+            ...(c && isOver(c) ? { on: c.date } : {}) })).then(r => r.json());
           if (seq !== AD.seq) return;
           AD.hits = d.members || [];
         } catch (_) { if (seq !== AD.seq) return; AD.hits = 'offline'; }
@@ -1483,9 +1544,14 @@
     box.innerHTML = term.length < 2 || AD.hits === null ? ''
       : AD.hits === 'offline' ? `<p class="muted">${T('addNoNet')}</p>`
       : !AD.hits.length ? `<p class="muted">${T('addNoHits')}</p>`
-      : AD.hits.map((m, i) => `<button class="hit" data-i="${i}"><b>${esc(m.name)}</b>
+      : AD.hits.map((m, i) => {
+        // A pass that only starts after this class: the profile says "Starts", so the hit does too.
+        const later = m.has_pass && m.pass_starts && m.pass_starts > CV.data.class.date;
+        return `<button class="hit" data-i="${i}"><b>${esc(m.name)}</b>
           <span>${esc([m.code, m.email, m.phone].filter(Boolean).join(' · '))}</span>
-          <em class="${m.has_pass ? 'ok' : ''}">${onList.has(m.code) ? esc(T('hitOn')) + ' · ' : ''}${esc(T(m.has_pass ? 'hitPass' : 'hitNoPass'))}</em></button>`).join('');
+          <em class="${m.has_pass && !later ? 'ok' : ''}">${onList.has(m.code) ? esc(T('hitOn')) + ' · ' : ''}${esc(later
+            ? T('hitPassFrom', ymdLong(m.pass_starts)) : T(m.has_pass ? 'hitPass' : 'hitNoPass'))}</em></button>`;
+      }).join('');
     box.querySelectorAll('.hit').forEach(el => el.onclick = () => {
       AD.member = AD.hits[Number(el.dataset.i)]; AD.isNew = false; AD.err = ''; paintAdd();
     });
@@ -1514,7 +1580,7 @@
     $('#adHere').disabled = !hereOk(c);
     const ready = on ? here : (AD.member || (AD.isNew && name)) && AD.cover && (AD.cover !== 'dropin' || AD.method);
     $('#adGo').disabled = !ready || AD.busy;
-    $('#adGo').textContent = T(here ? 'addGoIn' : 'addGo');
+    $('#adGo').textContent = T(isOver(c) ? 'addGoCame' : here ? 'addGoIn' : 'addGo');
     const hint = on ? T(here ? 'hOnIn' : 'hOnOnly')
       : !chosen ? T('hFind') : AD.isNew && !name ? T('hName')
       : !AD.cover ? (AD.member && !hasPass ? T('hNoPass') : T('hCover'))
@@ -1530,8 +1596,9 @@
     // No cover chosen: they are already on the list, and the server checks in
     // a seat they hold whatever the cover says. checkIn is the box as shown:
     // its default moves with the clock, and the box is only redrawn on a change.
-    const box = $('#adHere'), on = seatOf(AD.member), checkIn = !!box && box.checked && !box.disabled;
-    const body = { slotId: c.slotId, date: c.date, checkIn,
+    // late: a class that is over still takes someone who came (the door never sends it).
+    const box = $('#adHere'), on = seatOf(AD.member), checkIn = isOver(c) || (!!box && box.checked && !box.disabled);
+    const body = { slotId: c.slotId, date: c.date, checkIn, late: true,
       cover: AD.cover || (on && on.cover === 'rezerv' ? 'rezerv' : 'pass') };
     if (body.cover === 'dropin') body.method = AD.method;
     if (AD.member) body.memberCode = AD.member.code;
@@ -1550,10 +1617,15 @@
     // The drop-in is sold but they are not on the list: the money stays,
     // and someone books them by hand.
     if (d.paid) { resetAdd(AD.key); alert(d.error || T('addPaidNot', d.refno)); loadClass(); return; }
-    if (!r || !r.ok || !d.success) { AD.err = d.error || T('addFail'); paintAdd(); return; }
+    if (!r || !r.ok || !d.success) {
+      AD.err = d.noPass && AD.member ? T('hNoPassOn', AD.member.name, ymdLong(d.date || c.date, true)) : d.error || T('addFail');
+      paintAdd(); return;
+    }
+    // The server checks in anyone added to a class that is over, whatever the box said.
+    const inn = d.checkedIn ?? checkIn;
     const msg = d.already
-      ? (body.cover === 'dropin' ? T('addWasDrop', d.name) : checkIn ? T('addWasIn', d.name) : T('addWasOn', d.name))
-      : T('addDone', d.name, checkIn);
+      ? (body.cover === 'dropin' ? T('addWasDrop', d.name) : inn ? T('addWasIn', d.name) : T('addWasOn', d.name))
+      : T('addDone', d.name, inn);
     CV.flash = { kind: d.overCapacity ? 'warn' : 'ok', fresh: true,
       text: [msg, d.overCapacity ? T('addOver') : '', d.refno && !d.already ? T('addRef', d.refno) : ''].filter(Boolean).join(' ') };
     resetAdd(AD.key);
@@ -1587,7 +1659,8 @@
       : `<p class="muted">${T('startNone')}</p>`}</div>`;
   }
 
-  async function renderToday() {
+  // back: a class or a profile opened from here, to land on the same button again.
+  async function renderToday({ back } = {}) {
     const [d, prog0, start] = await Promise.all([api('/api/bkk/admin/today').then(r => r.json()), progressBox(), startBox()]);
     // Another tab was opened while this loaded (Calendar tapped right after unlock).
     if (current !== 'today' || SUB) return;
@@ -1599,29 +1672,29 @@
         <td><b>฿${(x.total || 0).toLocaleString()}</b></td></tr>`).join('')}</table>
         <p class="muted">${T('countDrawer')}</p>`
       : `<p class="muted">${T('noSales')}</p>`}</div>`;
-    if (!rows.length) {
-      $('#view').innerHTML = prog + moneyBox + `<div class="box"><b>${T('today')}</b><p class="muted">${T('noBookings')}</p></div>`;
-      return;
-    }
-    const byClass = {};
-    for (const b of rows) {
-      const k = b.title + '|' + b.start_at;
-      (byClass[k] = byClass[k] || []).push(b);
-    }
-    const blocks = Object.entries(byClass).map(([k, list]) => {
-      const [title, startAt] = k.split('|');
+    // Today's whole timetable, booked or not, so someone who came without
+    // booking can be added to any class; names on a class no longer on it still show.
+    const groups = (d.classes || []).map(c => ({ slotId: c.slotId, date: c.date, title: c.title, startAt: c.startAt }));
+    for (const b of rows) if (!groups.some(g => g.slotId === b.slot_id))
+      groups.push({ slotId: b.slot_id, date: bkkYmd(Date.parse(b.start_at)), title: b.title, startAt: b.start_at });
+    groups.sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt));
+    const blocks = groups.map(g => {
+      const list = rows.filter(b => b.slot_id === g.slotId);
       const inCount = list.filter(b => b.checked_in_at).length;
       const mats = list.filter(b => b.need_mat).length;
-      return `<div class="box">
-        <b>${time(startAt)} · ${esc(cls(title))}</b>
-        <span class="muted">${T('bookedIn', list.length, inCount)}${mats ? ` · ${esc(T('tMats'))} ${mats}` : ''}</span>
-        <table>${list.map(b => `<tr>
-          <td>${esc(b.name)}${b.need_mat ? ` <span class="pill mat">${esc(T('matPill'))}</span>` : ''}</td>
+      return `<div class="box"><div class="tdh"><div>
+        <b>${time(g.startAt)} · ${esc(cls(g.title))}</b>
+        <span class="muted" style="display:block">${T('bookedIn', list.length, inCount)}${mats ? ` · ${esc(T('tMats'))} ${mats}` : ''}</span></div>
+        <button class="btn sm" id="open-${g.slotId}" onclick="todayOpen(${g.slotId},'${esc(g.date)}',this.id)">${T('openClass')}</button></div>
+        ${list.length ? `<table class="tdl">${list.map(b => `<tr>
+          <td class="nm">${whoBtn(b.code, b.name, `who-t-${g.slotId}-${b.code}`)}${b.need_mat ? ` <span class="pill mat">${esc(T('matPill'))}</span>` : ''}</td>
           <td class="muted">${esc(b.code)}</td>
           <td>${b.checked_in_at ? `<span class="in">${T('checkedIn')}</span>` : `<span class="muted">${T('notYet')}</span>`}</td>
-        </tr>`).join('')}</table></div>`;
+        </tr>`).join('')}</table>` : `<p class="muted">${T('rosterNone')}</p>`}</div>`;
     }).join('');
-    $('#view').innerHTML = prog + moneyBox + blocks;
+    $('#view').innerHTML = prog + moneyBox
+      + (blocks || `<div class="box"><b>${T('today')}</b><p class="muted">${T('noBookings')}</p></div>`);
+    if (back) backTo(back);
   }
 
   // Every Buy on aybkk.net makes an order before the student pays, so leaving the
@@ -1666,9 +1739,7 @@
   const ordRow = (o, s) => {
     const notes = [s.triesN[o.id] && T('nTries', s.triesN[o.id]), s.nth[o.id] && T('nthPay', s.nth[o.id])].filter(Boolean);
     return `<tr>
-      <td>${o.member_code
-        ? `<button class="link who" id="who-${o.id}" data-code="${esc(o.member_code)}" onclick="showHistory(this.dataset.code, this.id)">${esc(o.member_name || o.member_code)}</button>`
-        : `<b>${esc(o.member_name || '–')}</b>`}<br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span>
+      <td>${o.member_code ? whoBtn(o.member_code, o.member_name, 'who-' + o.id) : `<b>${esc(o.member_name || '–')}</b>`}<br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span>
         ${notes.map(n => `<br><span class="muted">${esc(n)}</span>`).join('')}</td>
       <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
         <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
@@ -1710,11 +1781,7 @@
     const f = $('#tries');
     if (f) f.addEventListener('toggle', () => { TRIES_OPEN = f.open; });
     const who = id => id && document.getElementById(id);
-    if (back) {
-      const b = who(back.who);
-      window.scrollTo(0, b && back.top != null ? window.scrollY + b.getBoundingClientRect().top - back.top : back.y || 0);
-      if (b) b.focus({ preventScroll: true });
-    }
+    if (back) backTo(back);
     const c = show && $(`#chk-${show}`), tr = c && c.closest('tr');
     if (tr) {
       const r = tr.getBoundingClientRect();
@@ -1818,6 +1885,15 @@
     saveBlob(await r.blob(), name);
   };
   const histBtn = code => `<button class="btn sm" onclick="showHistory('${esc(code)}')">${T('histBtn')}</button>`;
+  // A student's name opens their profile. id: Back finds the same name again.
+  const whoBtn = (code, name, id) => `<button class="link who" id="${esc(id)}" data-code="${esc(code)}"
+    onclick="showHistory(this.dataset.code, this.id)">${esc(name || code)}</button>`;
+  // Back lands where staff left: on the same button, at the same height on screen.
+  const backTo = f => {
+    const b = f && f.who && document.getElementById(f.who);
+    window.scrollTo(0, b && f.top != null ? window.scrollY + b.getBoundingClientRect().top - f.top : (f && f.y) || 0);
+    if (b) b.focus({ preventScroll: true });
+  };
 
   // ── one student, all of it ────────────────────────────────────────────────
   let HIST = null, HIST_FROM = null, HIST_SEQ = 0, HIST_ALL = {};
@@ -1844,18 +1920,43 @@
   window.histBack = () => {
     const f = HIST_FROM || { tab: 'students', term: '' };
     SUB = null; HIST = null;
-    if (f.cls) { SUB = 'class'; CV.ref = f.cls; loadClass(true); return; }
-    if (f.tab === 'students') renderStudents(f.term);
-    else if (f.tab === 'reports') renderReports(true);
+    if (f.cls) { SUB = 'class'; CV.ref = f.cls; CV.back = f; loadClass(true); return; }
+    if (f.tab === 'students') renderStudents(f.term, f);
+    else if (f.tab === 'reports') { REP.back = f; renderReports(true); }
     else if (f.tab === 'orders') renderOrders({ keep: true, back: f });
+    else if (f.tab === 'today') renderToday({ back: f });
     else tab(f.tab);
   };
   window.histMore = k => { HIST_ALL[k] = true; paintHistory(); };
   window.histCsv = what => { if (HIST) csvDownload(what, { member: HIST.member.code }); };
 
+  // What they can use today, first thing on the profile (Nov 2026): each pass
+  // valid today (active, started, not ended, a class left), then one paused,
+  // then one that starts later. No pass valid today says so in red.
+  function nowBox(passes) {
+    const today = bkkYmd();
+    const name = p => esc((LANG === 'th' && (p.nameTh || TH_BY_EN[p.name])) || p.name || '–');
+    const daysLeft = d => Math.round((Date.parse(d) - Date.parse(today)) / 864e5) + 1;
+    const lines = [];
+    for (const p of passes) {
+      if ((p.validUntil && p.validUntil < today) || (p.kind !== 'unlimited' && !(p.creditsLeft > 0))) continue;
+      if (p.status === 'active' && !(p.validFrom > today)) lines.push([0, p.validUntil || '9', `<div class="np"><b>${name(p)}</b><span>${esc([
+        p.kind !== 'unlimited' ? T('tLeftN', p.creditsLeft) : '',
+        p.validUntil ? T('tUntil', ymdLong(p.validUntil)) : p.validFrom ? '' : T('tStartsFirst'),
+        p.validUntil ? T('nowDays', daysLeft(p.validUntil)) : ''].filter(Boolean).join(' · '))}</span></div>`]);
+      else if (p.status === 'frozen') lines.push([1, p.frozenUntil || '9', `<div class="np"><b>${name(p)}</b><span class="pill frozen">${esc(
+        T('nowFrozen', p.frozenUntil ? ymdLong(p.frozenUntil) : ''))}</span></div>`]);
+      else if (p.status === 'active') lines.push([2, p.validFrom, `<div class="np"><b>${name(p)}</b><span class="pill upcoming">${esc(
+        T('nowStarts', ymdLong(p.validFrom)))}</span></div>`]);
+    }
+    lines.sort((a, b) => a[0] - b[0] || a[1].localeCompare(b[1]));
+    const none = !lines.some(x => x[0] === 0);
+    return `<div class="now${none ? ' none' : ''}"><h3>${esc(T('nowH'))}</h3>${lines.map(x => x[2]).join('')}
+      ${none ? `<p class="no">${esc(T('nowNone'))}</p><p class="muted">${esc(T('nowNoneHint'))}</p>` : ''}</div>`;
+  }
+
   function paintHistory() {
-    const h = HIST, m = h.member, s = h.summary, ap = s.activePass;
-    const passTh = name => (LANG === 'th' && ((h.passes.find(p => p.name === name) || {}).nameTh || TH_BY_EN[name])) || name;
+    const h = HIST, m = h.member, s = h.summary;
     const more = (k, list) => !HIST_ALL[k] && list.length > HIST_ROWS
       ? `<p><button class="btn gray sm" onclick="histMore('${k}')">${T('showAll', list.length.toLocaleString())}</button></p>` : '';
     const cut = (k, list) => HIST_ALL[k] ? list : list.slice(0, HIST_ROWS);
@@ -1864,14 +1965,13 @@
     const head = `<div class="box hhead">${backBtn()}
       <h2>${esc(m.name)}</h2>
       <div class="muted">${[m.code, m.email, m.phone].filter(Boolean).map(esc).join(' · ')}</div>
+      ${nowBox(h.passes)}
       <div class="muted">${about.filter(Boolean).map(esc).join(' · ')}</div>
       <div class="tiles">
         ${tile(T('tCame'), s.visits.toLocaleString(), s.firstVisit ? T('tFirst', ymdLong(s.firstVisit)) : '')}
         ${tile(T('tLastVisit'), s.lastVisit ? ymdLong(s.lastVisit, true) : T('tNever'))}
         ${tile(T('tLast30'), String(s.visitsLast30), T('tLast90', s.visitsLast90))}
         ${tile(T('tPaid'), baht(s.totalPaid), T('tPayN', s.payments))}
-        ${tile(T('tPass'), ap ? passTh(ap.name) : T('tNoPass'), ap ? [ap.creditsLeft != null ? T('tLeftN', ap.creditsLeft) : '',
-          ap.until ? T('tUntil', ymdLong(ap.until)) : T('tStartsFirst')].filter(Boolean).join(' · ') : '')}
         ${tile(T('tMissed'), `${s.noShows} · ${s.cancellations}`, T('tPhotos', h.photos))}
       </div>
       <p>${['visits', 'payments'].map(w => `<button class="btn gray sm" onclick="histCsv('${w}')">${T('csv_' + w)}</button>`).join(' ')}</p>
@@ -1922,7 +2022,7 @@
 
   // ── reports ───────────────────────────────────────────────────────────────
   // Quick picks run up to today, so "came" and "booked" compare like with like.
-  const REP = { pick: 'month', from: '', to: '', data: null, seq: 0 };
+  const REP = { pick: 'month', from: '', to: '', data: null, seq: 0, back: null };
   function rangeFor(pick) {
     const today = bkkYmd();
     const [y, m, d] = today.split('-').map(Number);
@@ -1989,7 +2089,7 @@
     const money = (list, label) => list.map(x => `<tr><td>${esc(label(x))}</td><td class="n">${x.n}</td><td class="n">${baht(x.total)}</td></tr>`);
     const moneyHeads = first => [[first], [T('thCount'), 'n'], [T('thTotal'), 'n']];
     // The call lists are worked from a phone: History sits under the name, never off to the side.
-    const who = x => `${esc(x.name)}<br><span class="muted">${esc(x.code)}</span> ${histBtn(x.code)}`;
+    const who = (x, k) => `${whoBtn(x.code, x.name, `who-${k}-${x.code}`)}<br><span class="muted">${esc(x.code)}</span> ${histBtn(x.code)}`;
     out.innerHTML = `<div class="box"><b>${T('rVisitsH')}</b>
         <div class="tiles">${tile(T('kCame'), v.total.toLocaleString())}${tile(T('kBooked'), v.booked.toLocaleString())}
           ${tile(T('kNoShows'), String(v.noShows))}${tile(T('kCancelled'), String(v.cancelled))}
@@ -2014,14 +2114,15 @@
       <div class="box"><b>${T('rExpH')}</b> <span class="muted">${d.passes.expiringNext14.length}</span>
         <p class="muted">${T('rExpHelp')}</p>
         ${tbl([[T('thStudent')], [T('thPass')], [T('thUntil')]], d.passes.expiringNext14.map(x => `<tr>
-          <td>${who(x)}</td><td>${esc(itemName(x.item || ''))}</td>
+          <td>${who(x, 'e')}</td><td>${esc(itemName(x.item || ''))}</td>
           <td class="nowrap">${esc(ymdLong(x.until, true))}</td></tr>`))}</div>
       <div class="box"><b>${T('rNotSeenH')}</b> <span class="muted">${d.notSeen.length}</span>
         <p class="muted">${T('rNotSeenHelp')}</p>
         ${tbl([[T('thStudent')], [T('thLast')], [T('thPass')], [T('thUntil')]], d.notSeen.map(x => `<tr>
-          <td>${who(x)}</td>
+          <td>${who(x, 'n')}</td>
           <td class="nowrap">${esc(x.lastVisit ? ymdLong(x.lastVisit) : T('neverCame'))}</td>
           <td>${esc(itemName(x.pass || ''))}</td><td class="nowrap">${esc(x.until ? ymdLong(x.until) : '')}</td></tr>`), '', true)}</div>`;
+    if (REP.back) { backTo(REP.back); REP.back = null; }
   }
 
   // ── the move from Rezerv: CSV files read here, sent in batches ────────────

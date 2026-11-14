@@ -2424,9 +2424,9 @@ const ok = (name, cond, extra = '') => {
        cl.length === 2 && cl[0].name === 'Cal Lee' && cl[0].reason === null && cl[1].name === 'Cal Kim' && cl[1].reason === 'cal test reason'
          && cl[1].code === 'BTESTCALKIM' && !!cl[1].cancelledAt, JSON.stringify(cl));
     const ca = inA.body.class || {};
-    ok('...and the class: counts, end time, over, nobody more to add',
+    ok('...and the class: counts, end time, over, and (a few days back) it still takes someone who came',
        ca.key === `s:${slotA}:${P}` && ca.booked === 3 && ca.checkedIn === 2 && ca.noShows === 1 && ca.capacity === 4
-         && ca.endAt === at(P, '07:00') && ca.started === true && ca.ended === true && ca.canAdd === false, JSON.stringify(ca));
+         && ca.endAt === at(P, '07:00') && ca.started === true && ca.ended === true && ca.canAdd === true, JSON.stringify(ca));
     const inWs = await cls({ date: P3, time: '10:00', title: 'Cal Workshop' });
     ok('a Rezerv class with no slot opens by day, time and title, read-only',
        inWs.status === 200 && inWs.body.class.slotId === null && inWs.body.class.key === wsKey && inWs.body.class.canAdd === false
@@ -2560,6 +2560,237 @@ const ok = (name, cond, extra = '') => {
     await post('/api/bkk/admin/classes/reopen', { slotId: slotF, date: F }, ADMIN);
     const fBack = ((await cal(F, F)).body.classes || []).find(c => c.slotId === slotF) || {};
     ok('...reopened, it is a plain class again', fBack.cancelled === false && fBack.note === null, JSON.stringify(fBack));
+
+    // Someone came to Friday's 05:30 without booking, and nobody put them on
+    // the list before it ended. The class view sends late: true and adds them
+    // as came, up to 7 days back; the door never sends it.
+    console.log('  adding someone who came to a class that is over');
+    const lateWalk = (slotId, date, body, h = ADMIN) => post('/api/bkk/admin/walkin', { slotId, date, late: true, ...body }, h);
+    const seatsOf = async (slotId, date, name) => (await pool.query(`SELECT b.id, b.checked_in_at, b.start_at, b.source, b.cover, b.pass_id
+      FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+      WHERE b.slot_id=$1 AND b.class_date=$2 AND b.status='booked' AND m.name=$3`, [slotId, date, name])).rows;
+    const people = async name => (await pool.query('SELECT count(*)::int AS n FROM bkk_members WHERE name=$1', [name])).rows[0].n;
+    const sameTime = (a, b) => Date.parse(a) === Date.parse(b);
+    const L = back(3);                                  // 3 days back, or 4 past a moon day
+    let E8 = addD(todayB, -8); while (isMoon(E8)) E8 = addD(E8, -1);
+    let offD = addD(L, 1); while (isMoon(offD)) offD = addD(offD, 1);
+    const slotL = await mkSlot('test_late_3', wdOf(L), '05:30', 120, 2);
+    const slotE8 = await mkSlot('test_late_8', wdOf(E8), '05:30', 120, 20);
+    const slotX = await mkSlot('test_late_cxl', wdOf(L), '17:00', 60, 20);
+    const slotM = await mkSlot('test_late_moon', wdOf(M), '05:30', 120, 20);
+    await pool.query(`INSERT INTO bkk_class_overrides (slot_id, class_date, cancelled, note) VALUES ($1,$2,true,'late test')`, [slotX, L]);
+
+    const inL = (await cls({ slotId: slotL, date: L })).body.class || {};
+    const inE8 = (await cls({ slotId: slotE8, date: E8 })).body.class || {};
+    const inX = (await cls({ slotId: slotX, date: L })).body.class || {};
+    ok('inside a class that ended 3 days ago, someone can be added; 8 days ago or closed, not',
+       inL.ended === true && inL.canAdd === true && inE8.ended === true && inE8.canAdd === false
+         && inX.cancelled === true && inX.canAdd === false, JSON.stringify({ inL, inE8, inX }));
+
+    ok('a late add needs the staff key', (await lateWalk(slotL, L, { name: 'Late NoKey', cover: 'rezerv' }, {})).status === 401
+       && (await people('Late NoKey')) === 0);
+    ok('...and late must be true or false', (await post('/api/bkk/admin/walkin',
+      { slotId: slotL, date: L, late: 'yes', name: 'Late Odd', cover: 'rezerv' }, ADMIN)).status === 400);
+    const doorLate = await post('/api/bkk/admin/walkin', { slotId: slotL, date: L, name: 'Late Door', cover: 'rezerv' }, ADMIN);
+    ok("the door's walk-in (no late) for a class that is over is still refused, and leaves no profile",
+       doorLate.status === 409 && doorLate.body.error === 'that class has already ended' && (await people('Late Door')) === 0,
+       JSON.stringify(doorLate.body));
+
+    const lz = await lateWalk(slotL, L, { name: 'Late Rezerv', cover: 'rezerv', checkIn: false, requestId: 'test-late-rezerv' });
+    const lzRows = await seatsOf(slotL, L, 'Late Rezerv');
+    ok('a class 3 days ago takes someone who came: on the list, checked in at the class start (even with checkIn false)',
+       lz.status === 200 && lz.body.success && lz.body.checkedIn === true && lz.body.cover === 'rezerv' && lzRows.length === 1
+         && sameTime(lzRows[0].checked_in_at, at(L, '05:30')) && lzRows[0].source === 'door', JSON.stringify({ body: lz.body, lzRows }));
+    const lz2 = await lateWalk(slotL, L, { name: 'Late Rezerv', cover: 'rezerv', checkIn: false, requestId: 'test-late-rezerv' });
+    ok('...the same request twice adds no one twice: one profile, one seat',
+       lz2.status === 200 && lz2.body.repeat === true && lz2.body.checkedIn === true && (await people('Late Rezerv')) === 1
+         && (await seatsOf(slotL, L, 'Late Rezerv')).length === 1, JSON.stringify(lz2.body));
+    const inLNow = (await cls({ slotId: slotL, date: L })).body.class || {};
+    ok('...and the class counts them as came', inLNow.booked === 1 && inLNow.checkedIn === 1, JSON.stringify(inLNow));
+
+    const pk = (await post('/api/bkk/admin/passes', { name: 'Late Pack', email: 'late.pack@example.com', productCode: 'pack10' }, ADMIN)).body.member.code;
+    const lp = await lateWalk(slotL, L, { memberCode: pk, cover: 'pass' });
+    const lpRows = await seatsOf(slotL, L, 'Late Pack');
+    ok('an aybkk.net pack pays for it: exactly one class used', lp.status === 200 && lp.body.cover === 'pass' && lpRows.length === 1
+       && lpRows[0].pass_id && sameTime(lpRows[0].checked_in_at, at(L, '05:30')) && (await credits(pk)) === 1,
+       JSON.stringify({ body: lp.body, lpRows, used: await credits(pk) }));
+    ok('...and a class over capacity still takes them (they were in the room)', lp.body.overCapacity === false
+       && (await lateWalk(slotL, L, { name: 'Late Third', cover: 'rezerv' })).body.overCapacity === true);
+
+    const nw0 = await post('/api/bkk/admin/passes', { name: 'Late Newpass', email: 'late.newpass@example.com', productCode: 'pack10',
+      validFrom: todayB, validUntil: addD(todayB, 30) }, ADMIN);
+    const lnp = await lateWalk(slotL, L, { memberCode: nw0.body.member.code, cover: 'pass' });
+    ok('a pass that starts after the class day is refused, with the day and the way out',
+       nw0.status === 200 && lnp.status === 409 && lnp.body.noPass === true && lnp.body.date === L
+         && lnp.body.error.includes('Late Newpass has no aybkk.net pass for ') && /Rezerv package or Drop-in/.test(lnp.body.error)
+         && !(await seatsOf(slotL, L, 'Late Newpass')).length && (await credits(nw0.body.member.code)) === 0, JSON.stringify(lnp.body));
+    // A pass that covered the class day but has run out since.
+    const gone = await mkMember('BTESTLATEGONE', 'Late Gone');
+    await pool.query(`INSERT INTO bkk_passes (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status)
+      VALUES ($1,(SELECT id FROM bkk_products WHERE code='pack10'),'credits',10,2,60,$2,$3,'active')`, [gone, addD(L, -20), addD(todayB, -1)]);
+    const hasPass = async on => ((await J('/api/bkk/admin/members?' + new URLSearchParams({ q: 'Late Gone', ...(on ? { on } : {}) }),
+      { headers: ADMIN })).body.members || []).map(x => x.has_pass).join();
+    const hasNew = async on => ((await J('/api/bkk/admin/members?' + new URLSearchParams({ q: 'Late Newpass', ...(on ? { on } : {}) }),
+      { headers: ADMIN })).body.members || []).map(x => x.has_pass).join();
+    ok("the add's search says who has a pass on the class day (?on=), not only today",
+       (await hasPass()) === 'false' && (await hasPass(L)) === 'true' && (await hasNew()) === 'true' && (await hasNew(L)) === 'false',
+       JSON.stringify([await hasPass(), await hasPass(L), await hasNew(), await hasNew(L)]));
+    const lg = await lateWalk(slotL, L, { memberCode: 'BTESTLATEGONE', cover: 'pass' });
+    ok('...and that pass pays for the class it covered', lg.status === 200 && lg.body.cover === 'pass'
+       && (await pool.query('SELECT credits_used FROM bkk_passes WHERE member_id=$1', [gone])).rows[0].credits_used === 3, JSON.stringify(lg.body));
+
+    const booked = await mkMember('BTESTLATEBOOKED', 'Late Booked');
+    await addBk({ slot: slotL, date: L, at: at(L, '05:30'), member: booked });
+    const lb = await lateWalk(slotL, L, { memberCode: 'BTESTLATEBOOKED', cover: 'rezerv' });
+    const lbRows = await seatsOf(slotL, L, 'Late Booked');
+    ok('someone already on the list is checked in at the class start, no second seat',
+       lb.status === 200 && lb.body.already === true && lbRows.length === 1 && sameTime(lbRows[0].checked_in_at, at(L, '05:30')),
+       JSON.stringify({ body: lb.body, lbRows }));
+
+    const cash0 = (((await J('/api/bkk/admin/today', { headers: ADMIN })).body.money || []).find(x => x.method === 'transfer') || {}).total || 0;
+    const ld = await lateWalk(slotL, L, { name: 'Late Cash', cover: 'dropin', method: 'transfer', requestId: 'test-late-cash' });
+    const ldRows = await seatsOf(slotL, L, 'Late Cash');
+    const ldOrd = (await pool.query(`SELECT o.status, to_char(o.class_date,'YYYY-MM-DD') AS class_date,
+        to_char(o.verified_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS paid_on
+      FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id WHERE m.name='Late Cash'`)).rows;
+    const cash1 = (((await J('/api/bkk/admin/today', { headers: ADMIN })).body.money || []).find(x => x.method === 'transfer') || {}).total || 0;
+    ok("a drop-in sold for it is today's money, and books that class as came",
+       ld.status === 200 && ld.body.cover === 'dropin' && /^\d+$/.test(ld.body.refno || '') && ldRows.length === 1
+         && sameTime(ldRows[0].checked_in_at, at(L, '05:30')) && ldOrd.length === 1 && ldOrd[0].status === 'paid'
+         && ldOrd[0].class_date === L && ldOrd[0].paid_on === todayB && cash1 === cash0 + 1605,
+       JSON.stringify({ body: ld.body, ldRows, ldOrd, cash0, cash1 }));
+    const ld2 = await lateWalk(slotL, L, { name: 'Late Cash', cover: 'dropin', method: 'transfer', requestId: 'test-late-cash' });
+    ok('...sent twice, it is sold once', ld2.status === 200 && ld2.body.repeat === true && ld2.body.refno === ld.body.refno
+       && (await pool.query(`SELECT count(*)::int AS n FROM bkk_orders o JOIN bkk_members m ON m.id=o.member_id WHERE m.name='Late Cash'`)).rows[0].n === 1,
+       JSON.stringify(ld2.body));
+
+    const mkPass = async (memberId, o) => (await pool.query(`INSERT INTO bkk_passes
+        (member_id,product_id,kind,credits_total,credits_used,valid_days,valid_from,valid_until,status,frozen_from,frozen_until)
+      VALUES ($1,(SELECT id FROM bkk_products WHERE code='pack10'),'credits',10,$2,60,$3,$4,$5,$6,$7) RETURNING id`,
+      [memberId, o.used || 0, o.from, o.until, o.status || 'active', o.ff ?? null, o.fu ?? null])).rows[0].id;
+    const rowsOf = async (slotId, date, code) => (await pool.query(`SELECT b.status, b.checked_in_at FROM bkk_bookings b
+      JOIN bkk_members m ON m.id=b.member_id WHERE b.slot_id=$1 AND b.class_date=$2 AND m.code=$3 AND b.status <> 'cancelled'
+      ORDER BY b.id`, [slotId, date, code])).rows;
+    const search = async (name, on) => ((await J('/api/bkk/admin/members?' + new URLSearchParams({ q: name, ...(on ? { on } : {}) }),
+      { headers: ADMIN })).body.members || [])[0] || {};
+
+    // The visits import writes a Rezerv no-show for a booking never checked in.
+    // They came after all: that seat becomes the visit, nothing is added twice.
+    const nsA = await mkMember('BTESTLATENS', 'Late Noshow');
+    await addBk({ slot: slotL, date: L, at: at(L, '05:30'), member: nsA, status: 'noshow', source: 'rezerv', ref: 'test-late-ns-1' });
+    const ns1 = await lateWalk(slotL, L, { memberCode: 'BTESTLATENS', cover: 'rezerv', requestId: 'test-late-ns-a' });
+    const nsRows = await rowsOf(slotL, L, 'BTESTLATENS');
+    const nsCls = (await cls({ slotId: slotL, date: L })).body;
+    ok('a Rezerv no-show on that class becomes the visit: one seat, checked in at the start, no no-show left',
+       ns1.status === 200 && ns1.body.already === true && ns1.body.checkedIn === true && nsRows.length === 1
+         && nsRows[0].status === 'booked' && sameTime(nsRows[0].checked_in_at, at(L, '05:30'))
+         && nsCls.class.noShows === 0 && nsCls.roster.filter(r => r.code === 'BTESTLATENS').length === 1,
+       JSON.stringify({ body: ns1.body, nsRows, c: nsCls.class }));
+    const nsB = await mkMember('BTESTLATENSPK', 'Late Noshow Pack');
+    await mkPass(nsB, { from: addD(L, -10), until: addD(todayB, 30) });
+    await addBk({ slot: slotL, date: L, at: at(L, '05:30'), member: nsB, status: 'noshow', source: 'rezerv', ref: 'test-late-ns-2' });
+    const ns2 = await lateWalk(slotL, L, { memberCode: 'BTESTLATENSPK', cover: 'pass' });
+    const ns2Rows = await rowsOf(slotL, L, 'BTESTLATENSPK');
+    ok('...even with their pass chosen: one seat, no class used', ns2.status === 200 && ns2.body.already === true
+       && ns2Rows.length === 1 && ns2Rows[0].status === 'booked' && (await credits('BTESTLATENSPK')) === 0,
+       JSON.stringify({ body: ns2.body, ns2Rows }));
+    const nsC = await mkMember('BTESTLATENSDI', 'Late Noshow Drop');
+    await addBk({ slot: slotL, date: L, at: at(L, '05:30'), member: nsC, status: 'noshow', source: 'rezerv', ref: 'test-late-ns-3' });
+    const ns3 = await lateWalk(slotL, L, { memberCode: 'BTESTLATENSDI', cover: 'dropin', method: 'cash' });
+    ok('...and no drop-in is sold to them', ns3.status === 200 && ns3.body.already === true && !ns3.body.refno
+       && (await rowsOf(slotL, L, 'BTESTLATENSDI')).length === 1
+       && (await pool.query('SELECT count(*)::int AS n FROM bkk_orders WHERE member_id=$1', [nsC])).rows[0].n === 0, JSON.stringify(ns3.body));
+
+    // A pause counts on the class day, not today.
+    const fzWas = await mkMember('BTESTLATEFZWAS', 'Late Paused Then');
+    await mkPass(fzWas, { from: addD(L, -20), until: addD(todayB, 30), ff: addD(L, -1), fu: addD(L, 1) });
+    const fw = await lateWalk(slotL, L, { memberCode: 'BTESTLATEFZWAS', cover: 'pass' });
+    ok('a pass paused on the class day (unpaused since) does not pay for it, and the search says so',
+       fw.status === 409 && fw.body.noPass === true && (await search('Late Paused Then', L)).has_pass === false
+         && (await search('Late Paused Then')).has_pass === true && (await credits('BTESTLATEFZWAS')) === 0, JSON.stringify(fw.body));
+    const fzNow = await mkMember('BTESTLATEFZNOW', 'Late Paused Now');
+    const fzPid = await mkPass(fzNow, { from: addD(L, -20), until: addD(todayB, 30) });
+    const fzr = await post(`/api/bkk/admin/passes/${fzPid}/freeze`, { days: 7, reason: 'test' }, ADMIN);
+    const fn = await lateWalk(slotL, L, { memberCode: 'BTESTLATEFZNOW', cover: 'pass' });
+    ok('a pass live on the class day and paused today pays for it: one class used, and the search says so',
+       fzr.status === 200 && fn.status === 200 && fn.body.cover === 'pass' && (await credits('BTESTLATEFZNOW')) === 1
+         && (await search('Late Paused Now', L)).has_pass === true && (await search('Late Paused Now')).has_pass === false,
+       JSON.stringify(fn.body));
+    const fzOld = await mkMember('BTESTLATEFZOLD', 'Late Paused Unknown');
+    await mkPass(fzOld, { from: addD(L, -20), until: addD(todayB, 30), status: 'frozen' });
+    const fo = await lateWalk(slotL, L, { memberCode: 'BTESTLATEFZOLD', cover: 'pass' });
+    ok('...but a pass paused with no start day on file never pays', fo.status === 409 && fo.body.noPass === true
+       && (await search('Late Paused Unknown', L)).has_pass === false, JSON.stringify(fo.body));
+
+    // The wrong person picked: staff taking them off give the class back.
+    const wr = await mkMember('BTESTLATEWRONG', 'Late Wrong Pick');
+    await mkPass(wr, { from: addD(L, -10), until: addD(todayB, 30) });
+    await lateWalk(slotL, L, { memberCode: 'BTESTLATEWRONG', cover: 'pass', requestId: 'test-late-wrong-1' });
+    const wrUsed = await credits('BTESTLATEWRONG');
+    const wrId = (await pool.query(`SELECT id FROM bkk_bookings WHERE request_id='test-late-wrong-1'`)).rows[0].id;
+    const wc = await post(`/api/bkk/bookings/${wrId}/cancel`, {}, ADMIN);
+    ok('staff cancelling someone added after the class was over gives the class back',
+       wrUsed === 1 && wc.status === 200 && wc.body.creditReturned === true && (await credits('BTESTLATEWRONG')) === 0, JSON.stringify(wc.body));
+    await lateWalk(slotL, L, { memberCode: 'BTESTLATEWRONG', cover: 'pass', requestId: 'test-late-wrong-2' });
+    const wr2 = (await pool.query(`SELECT id FROM bkk_bookings WHERE request_id='test-late-wrong-2'`)).rows[0].id;
+    const sc = await post(`/api/bkk/bookings/${wr2}/cancel`, { memberCode: 'BTESTLATEWRONG' });
+    ok('...but the student cancelling it does not get it back', sc.status === 200 && sc.body.creditReturned === false
+       && (await credits('BTESTLATEWRONG')) === 1, JSON.stringify(sc.body));
+    const lateEarly = await mkMember('BTESTLATEEARLY', 'Late Booked Early');
+    const ePid = await mkPass(lateEarly, { from: addD(L, -10), until: addD(todayB, 30), used: 1 });
+    const eBk = await addBk({ slot: slotL, date: L, at: at(L, '05:30'), member: lateEarly, pass: ePid, cover: 'pass', source: 'student' });
+    await pool.query(`UPDATE bkk_bookings SET booked_at = start_at - interval '1 day' WHERE id=$1`, [eBk]);
+    const ec = await post(`/api/bkk/bookings/${eBk}/cancel`, {}, ADMIN);
+    ok('...and a seat booked before the class, cancelled by staff after it, keeps the 5-hour rule',
+       ec.status === 200 && ec.body.creditReturned === false && (await credits('BTESTLATEEARLY')) === 1, JSON.stringify(ec.body));
+
+    const nx = await post('/api/bkk/admin/passes', { name: 'Late Nextweek', email: 'late.nextweek@example.com', productCode: 'pack10',
+      validFrom: addD(todayB, 7), validUntil: addD(todayB, 37) }, ADMIN);
+    const nxS = await search('Late Nextweek'), nxL = await search('Late Nextweek', L), lpS = await search('Late Pack');
+    ok("the add's search says when a pass that has not started yet starts",
+       nx.status === 200 && nxS.has_pass === true && nxS.pass_starts === addD(todayB, 7) && nxL.has_pass === false
+         && nxL.pass_starts === null && lpS.has_pass === true && lpS.pass_starts === null,
+       JSON.stringify({ nxS: [nxS.has_pass, nxS.pass_starts], nxL: [nxL.has_pass, nxL.pass_starts], lpS: [lpS.has_pass, lpS.pass_starts] }));
+
+    const l8 = await lateWalk(slotE8, E8, { name: 'Late Eight', cover: 'rezerv' });
+    ok('a class more than 7 days ago is refused, and leaves no profile', l8.status === 409
+       && l8.body.error === 'that class was more than 7 days ago' && (await people('Late Eight')) === 0, JSON.stringify(l8.body));
+    const l8d = await lateWalk(slotE8, E8, { name: 'Late Eight Cash', cover: 'dropin', method: 'cash' });
+    ok('...and nothing is sold for it', l8d.status === 409 && (await people('Late Eight Cash')) === 0);
+    const lx = await lateWalk(slotX, L, { name: 'Late Closed', cover: 'rezerv' });
+    ok('a closed class is refused', lx.status === 409 && lx.body.error === 'class cancelled' && (await people('Late Closed')) === 0,
+       JSON.stringify(lx.body));
+    const lm = await lateWalk(slotM, M, { name: 'Late Moon', cover: 'rezerv' });
+    const loff = await lateWalk(slotL, offD, { name: 'Late Offday', cover: 'rezerv' });
+    ok('a moon day, or a day the class does not run, is refused',
+       lm.status === 409 && /moon day/.test(lm.body.error) && loff.status === 409 && loff.body.error === 'that class is not on that day'
+         && (await people('Late Moon')) === 0 && (await people('Late Offday')) === 0, JSON.stringify([lm.body, loff.body]));
+    const ahead = await post('/api/bkk/admin/walkin', { slotId: slotF, date: F, late: true, checkIn: false, name: 'Late Ahead', cover: 'rezerv' }, ADMIN);
+    const aheadRows = (await pool.query(`SELECT b.checked_in_at, b.source FROM bkk_bookings b JOIN bkk_members m ON m.id=b.member_id
+      WHERE b.slot_id=$1 AND b.class_date=$2 AND b.status='booked' AND m.name='Late Ahead'`, [slotF, F])).rows;
+    ok('...and a class still to come is as before: late changes nothing there', ahead.status === 200 && ahead.body.checkedIn === false
+       && aheadRows.length === 1 && aheadRows[0].checked_in_at === null && aheadRows[0].source === 'staff', JSON.stringify({ body: ahead.body, aheadRows }));
+
+    // Today's class that ended a minute in: 00:00 to 00:01. The same slot a week back is 7 days ago, the last day allowed.
+    const hm = new Date(Date.now() + 7 * 3600e3).toISOString().slice(11, 16);
+    const slotT = await mkSlot('test_late_today', wdOf(todayB), '00:00', 1, 20);
+    if (isMoon(todayB) || hm < '00:02') console.log(`  - SKIPPED (moon day or just after midnight): a class that ended today`);
+    else {
+      const inT = (await cls({ slotId: slotT, date: todayB })).body.class || {};
+      const lt = await lateWalk(slotT, todayB, { name: 'Late Today', cover: 'rezerv', checkIn: false });
+      const ltRows = await seatsOf(slotT, todayB, 'Late Today');
+      ok("today's class after its end time: added and checked in at its start",
+         inT.ended === true && inT.canAdd === true && lt.status === 200 && lt.body.checkedIn === true && ltRows.length === 1
+           && sameTime(ltRows[0].checked_in_at, at(todayB, '00:00')), JSON.stringify({ inT, body: lt.body, ltRows }));
+    }
+    const D7 = addD(todayB, -7);
+    if (isMoon(D7)) console.log(`  - SKIPPED (moon day 7 days ago): the last day allowed`);
+    else {
+      const l7 = await lateWalk(slotT, D7, { name: 'Late Seven', cover: 'rezerv' });
+      ok('a class exactly 7 days ago still takes someone who came', l7.status === 200 && l7.body.checkedIn === true
+         && (await seatsOf(slotT, D7, 'Late Seven')).length === 1, JSON.stringify(l7.body));
+    }
+    await pool.query(`UPDATE bkk_class_slots SET active=false WHERE code LIKE 'test_late_%'`);
 
     // The student's own bookings carry the Bangkok day as text: a 05:30 class
     // is the previous day in UTC.
