@@ -185,6 +185,26 @@
   .cxl div{font-size:13px;color:var(--soft);padding:5px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
   #addBox input:not([type=checkbox]){width:100%;margin-bottom:8px}
   .link{background:none;border:0;color:var(--plum);font:inherit;font-size:14px;font-weight:700;padding:6px 0;cursor:pointer}
+  /* Payments: the name opens the student's profile; unpaid tries fold away (Nov 2026). */
+  .link:focus-visible,details.tries>summary:focus-visible{outline:2px solid var(--plum);outline-offset:2px;border-radius:4px}
+  .link.who{padding:0;font-size:inherit;text-align:left;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+  .ordact{display:flex;flex-direction:column;align-items:stretch;gap:6px}
+  .ordact .btn{white-space:nowrap}
+  .chk{display:block;margin-top:4px;font-size:12.5px;font-weight:700;color:var(--plum)}
+  .chk:empty{display:none}
+  details.tries{margin-top:14px;border-top:1px solid var(--line)}
+  details.tries>summary{cursor:pointer;padding:12px 0 10px;font-weight:700}
+  details.tries>summary .muted{display:block;font-weight:400}
+  @media (max-width:640px),(pointer:coarse){.link.who,.ordact .btn{min-height:44px}}
+  /* On a phone each payment is a card, so the buttons are on screen, not off to the side. */
+  @media (max-width:640px){
+    table.ord tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 12px;padding:10px 0;border-bottom:1px solid var(--line)}
+    table.ord tr:first-child{display:none}
+    table.ord td{display:block;border:0;padding:0;min-width:0;overflow-wrap:anywhere}
+    table.ord td.ref::before{content:attr(data-l) ' '}
+    table.ord td:last-child{grid-column:1/-1}
+    .ordact{flex-direction:row}.ordact .btn{flex:1 1 0}
+  }
   .hit{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;background:var(--wall);border:1px solid var(--line);
     color:var(--ink);border-radius:8px;padding:10px 12px;margin-bottom:6px;font:inherit;cursor:pointer}
   .hit b{font-size:15px;overflow-wrap:anywhere}
@@ -319,7 +339,7 @@
       bookedIn: (n, i) => ` — ${n} booked, ${i} checked in`, checkedIn: '✓ in', notYet: 'not yet',
       payments: 'Payments', thStudent: 'Student', thPackage: 'Package', thStatus: 'Status', thRef: 'Ref',
       fee: 'fee', vat: 'VAT', activate: 'Activate', noOrders: 'no orders yet',
-      ordersHelp: 'Find the reference number in the PaySolutions dashboard, check the amount matches, then activate. Every activation here is recorded as manual.',
+      ordersHelp: 'Each time a student taps Buy, a new line shows here, even if they never pay. A line that was not paid and is more than one day old, or that the student paid for later, moves into Unpaid tries at the bottom. Check payment asks PaySolutions if the money came: if it did, the pass turns on. Activate turns the pass on by hand: press it only when you can see the money in PaySolutions. Every activation here is saved as manual.',
       qActivate: 'Activate this pass?\nOnly do this once you have seen the money arrive in PaySolutions.',
       activatedNoClass: e => `Activated. Could not book the class: ${e}. Book them by hand.`,
       feeTitle: 'Online payment fee',
@@ -407,7 +427,7 @@
       bookedIn: (n, i) => ` — จอง ${n} คน เช็คอินแล้ว ${i} คน`, checkedIn: '✓ เช็คอินแล้ว', notYet: 'ยังไม่มา',
       payments: 'การชำระเงิน', thStudent: 'นักเรียน', thPackage: 'แพ็กเกจ', thStatus: 'สถานะ', thRef: 'อ้างอิง',
       fee: 'ค่าธรรมเนียม', vat: 'VAT', activate: 'เปิดใช้', noOrders: 'ยังไม่มีรายการ',
-      ordersHelp: 'หาเลขอ้างอิงในหน้า PaySolutions ตรวจว่ายอดเงินตรงกัน แล้วกดเปิดใช้ ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
+      ordersHelp: 'ทุกครั้งที่นักเรียนกดซื้อ จะมีรายการใหม่ที่นี่ แม้ยังไม่จ่าย รายการที่ไม่ได้จ่ายและเกิน 1 วัน หรือที่นักเรียนจ่ายทีหลังแล้ว จะย้ายไปอยู่ใน "กดซื้อแต่ไม่ได้จ่าย" ด้านล่าง ปุ่มตรวจการชำระจะถาม PaySolutions ถ้าเงินเข้าแล้ว แพ็กเกจจะเปิดเอง ปุ่มเปิดใช้คือเปิดแพ็กเกจด้วยมือ กดเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น ทุกครั้งที่เปิดใช้จากหน้านี้จะบันทึกว่าทำด้วยมือ',
       qActivate: 'เปิดใช้แพ็กเกจนี้?\nทำเมื่อเห็นเงินเข้าใน PaySolutions แล้วเท่านั้น',
       activatedNoClass: e => `เปิดใช้แล้ว แต่จองคลาสให้ไม่ได้ (${e}) กรุณาจองให้นักเรียนเอง`,
       feeTitle: 'ค่าธรรมเนียมจ่ายออนไลน์',
@@ -717,6 +737,31 @@
     closeH: 'ปิดคลาสนี้', closeHelp: 'นักเรียนที่จองไว้ทุกคนจะได้ครั้งคืน และได้รับอีเมลพร้อมเหตุผล',
     reopenH: 'เปิดคลาสนี้อีกครั้ง', reopenHelp: 'นักเรียนที่เคยจองจะไม่กลับเข้ามาเอง ต้องจองใหม่ (ได้ครั้งคืนไปแล้ว)',
     reopened: 'เปิดคลาสแล้ว นักเรียนจองได้อีกครั้ง',
+  });
+  // Payments: unpaid tries folded away, and a check that asks PaySolutions (Nov 2026).
+  Object.assign(STR.en, {
+    notPaidYet: 'Not paid yet', chkPay: 'Check payment', chkWait: 'Checking…', chkPaid: 'Paid: the pass is on',
+    chkMismatch: 'PaySolutions: the amount does not match. Look in PaySolutions before you do anything.',
+    chkUnknown: 'This order was not found.', chkNoGw: 'PaySolutions is not connected here, so nothing was checked.',
+    chkNot: note => `PaySolutions: ${note || 'not paid yet'}`,
+    chkAll: 'Check unpaid from the last 3 days', chkAllWait: (i, n) => `Checking ${i} of ${n}…`,
+    chkAllDone: (n, m) => `Checked ${n}, paid ${m}`,
+    triesH: n => `Unpaid tries (${n})`,
+    triesSub: 'The student left the payment page. Nothing to do unless they say they paid.',
+    nTries: n => `+${n} unpaid ${n === 1 ? 'try' : 'tries'}`,
+    nthPay: n => `${n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th'} payment for this package in 3 days`,
+  });
+  Object.assign(STR.th, {
+    notPaidYet: 'ยังไม่ชำระ', chkPay: 'ตรวจการชำระ', chkWait: 'กำลังตรวจ…', chkPaid: 'ชำระแล้ว: เปิดใช้แพ็กเกจแล้ว',
+    chkMismatch: 'PaySolutions: ยอดเงินไม่ตรง ดูใน PaySolutions ก่อนทำอะไร',
+    chkUnknown: 'ไม่พบรายการนี้', chkNoGw: 'ยังไม่ได้เชื่อมต่อ PaySolutions จึงยังตรวจไม่ได้',
+    chkNot: note => `PaySolutions: ${note || 'ยังไม่ชำระ'}`,
+    chkAll: 'ตรวจรายการที่ยังไม่ชำระ 3 วันล่าสุด', chkAllWait: (i, n) => `กำลังตรวจ ${i}/${n}…`,
+    chkAllDone: (n, m) => `ตรวจแล้ว ${n} รายการ ชำระแล้ว ${m}`,
+    triesH: n => `กดซื้อแต่ไม่ได้จ่าย (${n})`,
+    triesSub: 'นักเรียนออกจากหน้าจ่ายเงินไปก่อน ไม่ต้องทำอะไร เว้นแต่นักเรียนบอกว่าจ่ายแล้ว',
+    nTries: n => `+${n} ครั้งที่กดซื้อแต่ไม่ได้จ่าย`,
+    nthPay: n => `จ่ายแพ็กเกจนี้เป็นครั้งที่ ${n} ใน 3 วัน`,
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -1566,28 +1611,125 @@
     $('#view').innerHTML = prog + moneyBox + blocks;
   }
 
-  async function renderOrders() {
+  // Every Buy on aybkk.net makes an order before the student pays, so leaving the
+  // payment page, or trying again, leaves an unpaid order behind (Nov 2026).
+  // Old ones, and ones a later payment for the same package replaced, fold away.
+  const HOUR = 3600e3;
+  let ORD = [], CHK = {}, TRIES_OPEN = false, CHK_ALL = false;
+  const ordAt = o => Date.parse(o.created_at) || 0;
+  const online = o => o.source !== 'rezerv' && (!o.method || o.method === 'online');
+  const unpaid = o => online(o) && (o.status === 'pending' || o.status === 'failed');
+  const samePkg = (a, b) => a.id !== b.id && a.member_id != null && a.member_id === b.member_id
+    && a.product_id != null && a.product_id === b.product_id;
+  const after = (a, b) => ordAt(a) > ordAt(b) || (ordAt(a) === ordAt(b) && a.id > b.id);
+  function sortOrders(list, now) {
+    const isTry = o => unpaid(o) && (now - ordAt(o) > 24 * HOUR
+      || list.some(p => p.status === 'paid' && samePkg(p, o) && after(p, o)));
+    const tries = list.filter(isTry), main = list.filter(o => !isTry(o));
+    const triesN = {}, nth = {};
+    // Each try is counted once, on the nearest order for the same package left in view.
+    for (const t of tries) {
+      const gap = m => Math.abs(ordAt(m) - ordAt(t));
+      const near = main.filter(m => samePkg(m, t) && gap(m) <= 24 * HOUR).sort((a, b) => gap(a) - gap(b))[0];
+      if (near) triesN[near.id] = (triesN[near.id] || 0) + 1;
+    }
+    const paidOnline = o => o.status === 'paid' && online(o);
+    for (const o of main) if (paidOnline(o)) {
+      const k = list.filter(p => paidOnline(p) && samePkg(p, o) && after(o, p) && ordAt(o) - ordAt(p) <= 72 * HOUR).length;
+      if (k) nth[o.id] = k + 1;
+    }
+    return { main, tries, triesN, nth };
+  }
+  const ordRow = (o, s) => {
+    const notes = [s.triesN[o.id] && T('nTries', s.triesN[o.id]), s.nth[o.id] && T('nthPay', s.nth[o.id])].filter(Boolean);
+    return `<tr>
+      <td>${o.member_code
+        ? `<button class="link who" data-code="${esc(o.member_code)}" onclick="showHistory(this.dataset.code)">${esc(o.member_name || o.member_code)}</button>`
+        : `<b>${esc(o.member_name || '–')}</b>`}<br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span>
+        ${notes.map(n => `<br><span class="muted">${esc(n)}</span>`).join('')}</td>
+      <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
+        <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
+      <td><span class="pill ${esc(o.status)}">${esc(online(o) && o.status === 'pending' ? T('notPaidYet') : W(o.status))}</span> <span class="muted">${esc(W(o.method || 'online'))}${o.source === 'rezerv' ? ' · Rezerv' : ''}</span><br>
+        <span class="muted">${o.created_at ? `${bkkYmd(ordAt(o)).slice(5)} ${time(o.created_at)}` : ''}</span>
+        ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}
+        <span class="chk" id="chk-${o.id}" role="status">${esc(CHK[o.id] || '')}</span></td>
+      <td class="muted ref" data-l="${esc(T('thRef'))}" style="word-break:break-all;font-size:12px">${o.refno}</td>
+      <td><div class="ordact">${[unpaid(o) && `<button class="btn sm" id="chkb-${o.id}" onclick="chkPay(${o.id})">${T('chkPay')}</button>`,
+        o.status !== 'paid' && o.source !== 'rezerv' && `<button class="btn red" onclick="force(${o.id})">${T('activate')}</button>`]
+        .filter(Boolean).join('')}</div></td>
+    </tr>`;
+  };
+  const ordTable = rows => `<div style="overflow-x:auto"><table class="ord"><tr><th>${T('thStudent')}</th><th>${T('thPackage')}</th><th>${T('thStatus')}</th><th>${T('thRef')}</th><th></th></tr>
+      ${rows}</table></div>`;
+
+  // flash: { text, warn } to show above the list. keep: the notes from Check payment stay.
+  async function renderOrders({ flash, keep } = {}) {
     await loadThNames();
     const d = await api('/api/bkk/admin/orders').then(r => r.json());
     if (current !== 'orders' || SUB) return;
-    const rows = (d.orders || []).map(o => `<tr>
-      <td><b>${esc(o.member_name)}</b><br><span class="muted">${esc(o.email || '')}<br>${esc(o.member_code)}</span></td>
-      <td>${esc(pkgName(o))}<br><b>฿${o.amount_thb.toLocaleString()}</b>
-        <br><span class="muted">${o.base_thb.toLocaleString()} + ${T('fee')} ${o.fee_thb.toLocaleString()} + ${T('vat')} ${(o.vat_thb || 0).toLocaleString()}</span></td>
-      <td><span class="pill ${esc(o.status)}">${esc(W(o.status))}</span> <span class="muted">${esc(W(o.method || 'online'))}${o.source === 'rezerv' ? ' · Rezerv' : ''}</span><br>
-        <span class="muted">${o.created_at ? `${bkkYmd(Date.parse(o.created_at)).slice(5)} ${time(o.created_at)}` : ''}</span>
-        ${o.gateway_note ? `<br><span class="muted">${esc(String(o.gateway_note).slice(0, 60))}</span>` : ''}</td>
-      <td class="muted" style="word-break:break-all;font-size:12px">${o.refno}</td>
-      <td>${o.status !== 'paid' && o.source !== 'rezerv'
-        ? `<button class="btn red" onclick="force(${o.id})">${T('activate')}</button>`
-        : ''}</td>
-    </tr>`).join('');
+    if (!keep) CHK = {};
+    ORD = d.orders || [];
+    const now = Date.now(), s = sortOrders(ORD, now);
+    const fresh = ORD.filter(o => online(o) && o.status === 'pending' && now - ordAt(o) < 72 * HOUR).length;
     $('#view').innerHTML = `<div class="box"><b>${T('payments')}</b>
       <button class="btn gray" style="float:right" onclick="tab('orders')">↻</button>
-      <div style="overflow-x:auto"><table><tr><th>${T('thStudent')}</th><th>${T('thPackage')}</th><th>${T('thStatus')}</th><th>${T('thRef')}</th><th></th></tr>
-      ${rows || `<tr><td class="muted">${T('noOrders')}</td></tr>`}</table></div>
+      ${fresh ? `<p><button class="btn sm" id="chkAll" onclick="chkAll()">${T('chkAll')}</button>
+        <span class="muted" id="chkAllMsg" role="status"></span></p>` : ''}
+      ${flash ? `<div class="flash${flash.warn ? ' warn' : ''}" role="status">${esc(flash.text)}</div>` : ''}
+      ${s.main.length ? ordTable(s.main.map(o => ordRow(o, s)).join(''))
+        : s.tries.length ? '' : ordTable(`<tr><td class="muted">${T('noOrders')}</td></tr>`)}
+      ${s.tries.length ? `<details class="tries" id="tries"${TRIES_OPEN ? ' open' : ''}>
+        <summary>${esc(T('triesH', s.tries.length))}<span class="muted">${esc(T('triesSub'))}</span></summary>
+        ${ordTable(s.tries.map(o => ordRow(o, s)).join(''))}</details>` : ''}
       <p class="muted">${T('ordersHelp')}</p></div>`;
+    const f = $('#tries');
+    if (f) f.addEventListener('toggle', () => { TRIES_OPEN = f.open; });
   }
+
+  // The same check the student's browser makes on the way back from paying: it
+  // asks PaySolutions, and turns the pass on only for a paid, matching amount.
+  async function payCheck(o) {
+    const b = $(`#chkb-${o.id}`), out = () => $(`#chk-${o.id}`);
+    if (b) { b.disabled = true; b.textContent = T('chkWait'); }
+    const r = await fetch('/api/bkk/pay/check/' + encodeURIComponent(o.refno)).catch(() => null);
+    const j = r ? await r.json().catch(() => ({})) : {};
+    const st = r && r.ok ? j.status : null;
+    CHK[o.id] = !st ? (j.error || T('failed')) : st === 'paid' ? T('chkPaid') : st === 'mismatch' ? T('chkMismatch')
+      : st === 'unknown' ? T('chkUnknown') : j.note === 'gateway not configured' ? T('chkNoGw') : T('chkNot', j.note);
+    if (out()) out().textContent = CHK[o.id];
+    if (b) { b.disabled = false; b.textContent = T('chkPay'); }
+    return st;
+  }
+  const stillHere = () => current === 'orders' && !SUB;
+  window.chkPay = async id => {
+    const o = ORD.find(x => x.id === id);
+    if (!o) return;
+    const st = await payCheck(o);
+    if (stillHere() && (st === 'paid' || st === 'mismatch'))
+      renderOrders({ keep: true, flash: { text: CHK[id], warn: st === 'mismatch' } });
+  };
+  window.chkAll = async () => {
+    if (CHK_ALL) return;
+    CHK_ALL = true;
+    const list = ORD.filter(o => online(o) && o.status === 'pending' && Date.now() - ordAt(o) < 72 * HOUR);
+    let paid = 0, moved = false;
+    try {
+      for (const [i, o] of list.entries()) {
+        if (!stillHere()) return;
+        const b = $('#chkAll');
+        if (b) { b.disabled = true; b.textContent = T('chkAllWait', i + 1, list.length); }
+        const st = await payCheck(o);
+        if (st === 'paid') paid++;
+        if (st === 'paid' || st === 'mismatch') moved = true;
+      }
+    } finally { CHK_ALL = false; }
+    if (!stillHere()) return;
+    const text = T('chkAllDone', list.length, paid);
+    if (moved) { renderOrders({ keep: true, flash: { text } }); return; }
+    const b = $('#chkAll');
+    if (b) { b.disabled = false; b.textContent = T('chkAll'); }
+    if ($('#chkAllMsg')) $('#chkAllMsg').textContent = text;
+  };
 
   window.force = async (id) => {
     if (!confirm(T('qActivate'))) return;
@@ -1597,7 +1739,7 @@
     // A drop-in bought for a class that was cancelled or over by now: the pass
     // is live but nobody is on the list, and this list does not show the class.
     else if (j.bookingError) alert(T('activatedNoClass', j.bookingError));
-    renderOrders();
+    renderOrders({ keep: true });
   };
 
   // ── shared by history, reports and the import ─────────────────────────────
