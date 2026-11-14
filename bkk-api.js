@@ -372,6 +372,10 @@ function mountBkk(app, opts = {}) {
       member_id INTEGER REFERENCES bkk_members(id) ON DELETE CASCADE,
       PRIMARY KEY (photo_id, member_id))`);
     await q(`CREATE INDEX IF NOT EXISTS bkk_photo_members_member ON bkk_photo_members (member_id)`);
+    // 'main': the photo is about this student. 'other': they are in the frame
+    // (Boonchu, 14 Nov 2026). Every tag from before that is 'main'.
+    await q(`ALTER TABLE bkk_photo_members ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'main'
+             CHECK (role IN ('main','other'))`);
     // Photos pulled from the Drive day folder remember their Drive file, so a
     // second pass over the same folder skips what is already in.
     await q(`ALTER TABLE bkk_photos ADD COLUMN IF NOT EXISTS drive_id TEXT`);
@@ -3516,10 +3520,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const r = await q(
         `SELECT m.code, m.name, s.title, b.start_at, b.checked_in_at,
-           (SELECT count(*)::int FROM bkk_notes n WHERE n.member_id=m.id) AS notes
+           (SELECT count(*)::int FROM bkk_notes n WHERE n.member_id=m.id) AS notes,
+           lm.day AS last_main, lm.days AS last_main_days
          FROM bkk_bookings b
          JOIN bkk_members m ON m.id=b.member_id
          JOIN bkk_class_slots s ON s.id=b.slot_id
+         LEFT JOIN LATERAL (
+           SELECT to_char(max(p.class_date),'YYYY-MM-DD') AS day,
+                  (now() AT TIME ZONE 'Asia/Bangkok')::date - max(p.class_date) AS days
+           FROM bkk_photo_members pm JOIN bkk_photos p ON p.id=pm.photo_id
+           WHERE pm.member_id=m.id AND pm.role='main') lm ON true
          WHERE b.status='booked'
            AND b.class_date = (now() AT TIME ZONE 'Asia/Bangkok')::date
          ORDER BY b.start_at, m.name`);
@@ -3545,23 +3555,57 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     type: 'authenticated', sign_url: true, secure: true, transformation: [PHOTO_SIZES[kind]],
   });
   const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ''));
+  // Who is in a photo, and how: 'main' (the photo is about them) or 'other'
+  // (in the frame). Sent as tags: [{ code, role }]; the old memberCodes still
+  // works, with one role for all of them (main if none is given).
   // A code that no longer exists (the shala gave that profile a new one while
   // this page was open) stops the save: dropping it would silently untag a student.
-  async function memberIds(codes) {
-    const list = [...new Set((Array.isArray(codes) ? codes : []).map(String))].slice(0, 30);
-    if (!list.length) return [];
+  const ROLES = ['main', 'other'];
+  async function tagsFrom(b) {
+    const given = Array.isArray(b.tags);
+    const raw = given ? b.tags.map(x => [x && x.code, x && x.role])
+      : (Array.isArray(b.memberCodes) ? b.memberCodes : []).map(code => [code, b.role]);
+    const want = new Map();              // code -> role; named twice, main wins
+    for (const [code, r] of raw) {
+      const role = r ?? 'main';
+      if (!ROLES.includes(role)) throw Object.assign(new Error('role must be main or other'), { status: 400 });
+      if (want.get(String(code)) !== 'main') want.set(String(code), role);
+    }
+    const list = [...want.keys()].slice(0, 30);
+    if (!list.length) return { ids: [], roles: [], given };
     const rows = (await q('SELECT id, code FROM bkk_members WHERE code = ANY($1::text[])', [list])).rows;
     if (rows.length < list.length) {
       const e = new Error('A student on this photo has a new code. Reload the page and pick them again. Nothing was saved.');
       e.status = 409;
       throw e;
     }
-    return rows.map(r => r.id);
+    return { ids: rows.map(r => r.id), roles: rows.map(r => want.get(r.code)), given };
   }
+  // The photo ends with exactly these people. keep: someone already on it keeps
+  // the role they have (the old memberCodes body says nothing about roles).
+  const setTags = (photoId, t, keep) => q(
+    `WITH gone AS (DELETE FROM bkk_photo_members WHERE photo_id = $1::int AND member_id <> ALL($2::int[]))
+     INSERT INTO bkk_photo_members (photo_id, member_id, role)
+     SELECT $1::int, w.member_id, w.role FROM unnest($2::int[], $3::text[]) AS w(member_id, role)
+     ON CONFLICT (photo_id, member_id) DO UPDATE SET role = EXCLUDED.role WHERE NOT $4::boolean`,
+    [photoId, t.ids, t.roles, !!keep]);
+  // These people are added and nobody leaves. Someone in the frame who is added
+  // as main becomes main; a main is never turned into "in the frame" this way.
+  const addTags = (photoIds, t) => q(
+    `INSERT INTO bkk_photo_members (photo_id, member_id, role)
+     SELECT p, w.member_id, w.role FROM unnest($1::int[]) p
+       CROSS JOIN unnest($2::int[], $3::text[]) AS w(member_id, role)
+     ON CONFLICT (photo_id, member_id) DO UPDATE SET role = 'main'
+       WHERE EXCLUDED.role = 'main' AND bkk_photo_members.role <> 'main'`,
+    [photoIds, t.ids, t.roles]);
+  // Students see the photos they are main in. The ones they are only in the
+  // frame of stay hidden unless this setting is true (privacy, the safe default).
+  const othersVisible = async () => (await getSetting('photos_others_visible', false)) === true;
   async function photosWithTags(where, args) {
     const rows = (await q(
-      `SELECT p.*, to_char(p.class_date, 'YYYY-MM-DD') AS day, coalesce(json_agg(json_build_object('code', m.code, 'name', m.name))
-                FILTER (WHERE m.id IS NOT NULL), '[]') AS members
+      `SELECT p.*, to_char(p.class_date, 'YYYY-MM-DD') AS day,
+              coalesce(json_agg(json_build_object('code', m.code, 'name', m.name, 'role', pm.role)
+                ORDER BY (pm.role <> 'main'), m.name) FILTER (WHERE m.id IS NOT NULL), '[]') AS members
        FROM bkk_photos p
        LEFT JOIN bkk_photo_members pm ON pm.photo_id = p.id
        LEFT JOIN bkk_members m ON m.id = pm.member_id
@@ -3569,6 +3613,10 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     return rows.map(p => ({ id: p.id, date: p.day, members: p.members,
       thumb: photoUrl(p.public_id, 'thumb'), full: photoUrl(p.public_id, 'full'), save: photoUrl(p.public_id, 'save') }));
   }
+
+  // Two people (or one person twice) can share a name; a hint of the email
+  // tells them apart, without handing the team full addresses.
+  const emailHint = e => e ? String(e).replace(/^(.{2})[^@]*(@.*)$/, '$1…$2') : '';
 
   // Who Chay can tag: today's bookings first, then a name search, then a quick
   // add for someone not in the system yet (most students are still on Rezerv).
@@ -3582,10 +3630,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         `SELECT code, name, email FROM bkk_members
          WHERE lower(name) LIKE $1 OR lower(coalesce(email,'')) LIKE $1
          ORDER BY name LIMIT 20`, [`%${term}%`]);
-      // Two people (or one person twice) can share a name; a hint of the email
-      // tells them apart, without handing the team full addresses.
-      const hint = e => e ? String(e).replace(/^(.{2})[^@]*(@.*)$/, '$1…$2') : '';
-      res.json({ members: r.rows.map(m => ({ code: m.code, name: m.name, hint: hint(m.email) })) });
+      res.json({ members: r.rows.map(m => ({ code: m.code, name: m.name, hint: emailHint(m.email) })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3609,7 +3654,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     const date = isDate(req.query.date) ? req.query.date : ymd(bkkNow());
     try {
-      res.json({ date, photos: await photosWithTags('p.class_date = $1', [date]) });
+      res.json({ date, photos: await photosWithTags('p.class_date = $1', [date]), othersVisible: await othersVisible() });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
@@ -3618,7 +3663,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const { date, image, memberCodes } = req.body || {};
+      const { date, image } = req.body || {};
       if (!isDate(date)) return res.status(400).json({ error: 'date required (YYYY-MM-DD)' });
       if (!/^data:image\/(jpeg|png|webp);base64,/.test(String(image || ''))) {
         return res.status(400).json({ error: 'image must be a JPEG, PNG or WebP data URL' });
@@ -3626,7 +3671,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
         return res.status(503).json({ error: 'Photo storage key is missing in Railway. Nothing was saved: tell Boonchu.' });
       }
-      res.json({ success: true, photo: await storePhoto(t, date, image, memberCodes, null) });
+      res.json({ success: true, photo: await storePhoto(t, date, image, await tagsFrom(req.body), null) });
     } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
 
@@ -3650,18 +3695,14 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     }
   }
 
-  async function storePhoto(t, date, image, memberCodes, driveId) {
-    const ids = await memberIds(memberCodes);
+  async function storePhoto(t, date, image, tags, driveId) {
     const up = await cloudUpload(image, { folder: `aybkk/profile/${date}`,
       transformation: [{ width: 2048, height: 2048, crop: 'limit', quality: 'auto:best' }] });
     const photo = (await q(
       `INSERT INTO bkk_photos (public_id,class_date,width,height,uploaded_by,drive_id)
        VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
       [up.public_id, date, up.width || null, up.height || null, t.id, driveId])).rows[0];
-    for (const id of ids) {
-      await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2) ON CONFLICT DO NOTHING',
-        [photo.id, id]);
-    }
+    await addTags([photo.id], tags);
     return (await photosWithTags('p.id = $1', [photo.id]))[0];
   }
 
@@ -3753,18 +3794,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (!t) return res.status(401).json({ error: 'bad passcode' });
     if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
     try {
-      const { date, folder, driveId, memberCodes, add } = req.body || {};
+      const { date, folder, driveId, add } = req.body || {};
       if (!isDate(date)) return res.status(400).json({ error: 'date required (YYYY-MM-DD)' });
       if (!(await driveFolder(String(folder || ''))).some(f => f.id === driveId)) {
         return res.status(400).json({ error: 'That file is not in the chosen Drive folder.' });
       }
+      const tags = await tagsFrom(req.body || {});
       const had = (await q('SELECT id FROM bkk_photos WHERE drive_id=$1', [driveId])).rows[0];
       if (had) {               // already in: set who is in it (add: keep who is there)
-        const ids = await memberIds(memberCodes);
-        if (!add) await q('DELETE FROM bkk_photo_members WHERE photo_id=$1', [had.id]);
-        for (const id of ids) {
-          await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [had.id, id]);
-        }
+        await (add ? addTags([had.id], tags) : setTags(had.id, tags, !tags.given));
         return res.json({ success: true, photo: (await photosWithTags('p.id = $1', [had.id]))[0] });
       }
       if (typeof cloudinary.config === 'function' && !cloudinary.config().api_secret) {
@@ -3782,7 +3820,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         || await grab(`https://drive.google.com/uc?export=download&id=${id}`);
       const type = buf && sniff(buf);
       if (!type) return res.status(502).json({ error: 'Drive did not send a photo. Is the folder still shared by link?' });
-      const photo = await storePhoto(t, date, `data:${type};base64,${buf.toString('base64')}`, memberCodes, driveId);
+      const photo = await storePhoto(t, date, `data:${type};base64,${buf.toString('base64')}`, tags, driveId);
       res.json({ success: true, photo });
     } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
@@ -3795,17 +3833,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const p = (await q('SELECT id FROM bkk_photos WHERE id=$1', [req.params.id])).rows[0];
       if (!p) return res.status(404).json({ error: 'photo not found' });
-      const ids = await memberIds((req.body || {}).memberCodes);
-      await q('DELETE FROM bkk_photo_members WHERE photo_id=$1', [p.id]);
-      for (const id of ids) {
-        await q('INSERT INTO bkk_photo_members (photo_id,member_id) VALUES ($1,$2)', [p.id, id]);
-      }
+      const tags = await tagsFrom(req.body || {});
+      await setTags(p.id, tags, !tags.given);
       res.json({ success: true, photo: (await photosWithTags('p.id = $1', [p.id]))[0] });
     } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
 
   // Pick many photos of one person, then the name once (Boonchu, 8 Oct): the
   // name is ADDED to each photo, so other people already on a photo stay.
+  // role says how they are in these photos: main (the default) or other.
   app.post('/api/bkk/teacher/photos/tags/add', async (req, res) => {
     const t = await teacherFrom(req);
     if (!t) return res.status(401).json({ error: 'bad passcode' });
@@ -3814,13 +3850,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const photoIds = [...new Set((Array.isArray(b.photoIds) ? b.photoIds : []).map(Number))]
         .filter(n => Number.isInteger(n) && n > 0);
       if (!photoIds.length || photoIds.length > 200) return res.status(400).json({ error: 'choose 1 to 200 photos' });
-      const ids = await memberIds(b.memberCodes);
-      if (!ids.length) return res.status(400).json({ error: 'choose who is in them' });
+      const tags = await tagsFrom(b);
+      if (!tags.ids.length) return res.status(400).json({ error: 'choose who is in them' });
       const found = (await q('SELECT id FROM bkk_photos WHERE id = ANY($1::int[])', [photoIds])).rows.map(r => r.id);
       if (found.length < photoIds.length) return res.status(409).json({ error: 'A photo was deleted meanwhile. Reload the page.' });
-      await q(`INSERT INTO bkk_photo_members (photo_id, member_id)
-               SELECT p, m FROM unnest($1::int[]) p CROSS JOIN unnest($2::int[]) m
-               ON CONFLICT DO NOTHING`, [photoIds, ids]);
+      await addTags(photoIds, tags);
       res.json({ success: true, photos: await photosWithTags('p.id = ANY($1::int[])', [photoIds]) });
     } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
   });
@@ -3837,22 +3871,56 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 
+  // One student's photos, for Chay: how many, how many of them are about this
+  // student, and when. Photo data only: no pass, payment or visit.
+  app.get('/api/bkk/teacher/members/:code/photos', async (req, res) => {
+    const t = await teacherFrom(req);
+    if (!t) return res.status(401).json({ error: 'bad passcode' });
+    if (!cloudinary) return res.status(503).json({ error: 'photo storage not configured' });
+    try {
+      const m = (await q('SELECT id, code, name, email FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
+      if (!m) return res.status(404).json({ error: 'student not found' });
+      const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 60, 1), 200);
+      const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
+      const TAGS = 'FROM bkk_photo_members pm JOIN bkk_photos p ON p.id = pm.photo_id WHERE pm.member_id = $1';
+      const MAIN = `FILTER (WHERE pm.role = 'main')`;
+      const [totals, months, photos] = await Promise.all([
+        q(`SELECT count(*)::int AS photos, count(*) ${MAIN}::int AS main, count(*) FILTER (WHERE pm.role <> 'main')::int AS other,
+             count(DISTINCT p.class_date)::int AS mornings,
+             to_char(min(p.class_date),'YYYY-MM-DD') AS first, to_char(max(p.class_date),'YYYY-MM-DD') AS last,
+             to_char(max(p.class_date) ${MAIN},'YYYY-MM-DD') AS "lastMain",
+             (now() AT TIME ZONE 'Asia/Bangkok')::date - max(p.class_date) ${MAIN} AS "lastMainDays" ${TAGS}`, [m.id]),
+        q(`SELECT to_char(p.class_date,'YYYY-MM') AS month, count(*) ${MAIN}::int AS main,
+             count(*) FILTER (WHERE pm.role <> 'main')::int AS other ${TAGS} GROUP BY 1 ORDER BY 1 DESC`, [m.id]),
+        q(`SELECT p.id, p.public_id, to_char(p.class_date,'YYYY-MM-DD') AS date, pm.role ${TAGS}
+           ORDER BY p.class_date DESC, (pm.role <> 'main'), p.id DESC LIMIT $2 OFFSET $3`, [m.id, limit, offset]),
+      ]);
+      res.json({ member: { code: m.code, name: m.name, hint: emailHint(m.email) },
+        totals: totals.rows[0], months: months.rows, limit, offset,
+        photos: photos.rows.map(p => ({ id: p.id, date: p.date, role: p.role, thumb: photoUrl(p.public_id, 'thumb') })) });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
   // A student's own photos, newest day first. The member code is what the
   // signed-in browser already holds; nobody else's photos can come back here.
+  // Only the photos they are main in, unless photos_others_visible is on: then
+  // the ones they are in the frame of follow, after the main ones of that day.
   app.get('/api/bkk/me/:code/photos', async (req, res) => {
     if (!cloudinary) return res.json({ days: [] });
     try {
       const m = (await q('SELECT id FROM bkk_members WHERE code=$1', [req.params.code])).rows[0];
       if (!m) return res.status(404).json({ error: 'not found' });
       const photos = await photosWithTags(
-        'p.id IN (SELECT photo_id FROM bkk_photo_members WHERE member_id = $1)', [m.id]);
-      const byDay = new Map();
+        `p.id IN (SELECT photo_id FROM bkk_photo_members WHERE member_id = $1 AND (role = 'main' OR $2::boolean))`,
+        [m.id, await othersVisible()]);
+      const byDay = new Map();           // date -> [photos they are main in, the others]
       for (const ph of photos.reverse()) {
-        if (!byDay.has(ph.date)) byDay.set(ph.date, []);
-        byDay.get(ph.date).push({ id: ph.id, thumb: ph.thumb, full: ph.full, save: ph.save });
+        if (!byDay.has(ph.date)) byDay.set(ph.date, [[], []]);
+        const main = ph.members.some(x => x.code === req.params.code && x.role === 'main');
+        byDay.get(ph.date)[main ? 0 : 1].push({ id: ph.id, thumb: ph.thumb, full: ph.full, save: ph.save });
       }
       res.json({ days: [...byDay.entries()].sort((a, b) => b[0].localeCompare(a[0]))
-        .map(([date, items]) => ({ date, items })) });
+        .map(([date, [main, other]]) => ({ date, items: [...main, ...other] })) });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

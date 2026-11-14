@@ -761,6 +761,193 @@ const ok = (name, cond, extra = '') => {
      refused.status === 500 && /Error Reports/.test(refused.body.error) && /25.3 of 25 credits/.test(refused.body.error), JSON.stringify(refused.body));
   fakeCloud.uploader.upload = realUpload; delete fakeCloud.api;
 
+  console.log('\n-- main student and others in the frame --');
+  {
+    const tp = (path, body) => post(path, body, PKEY);
+    const tg = (path) => J(path, { headers: PKEY });
+    const mem = async name => (await tp('/api/bkk/teacher/members',
+      { name, email: name.toLowerCase().replace(/\W+/g, '.') + '@example.com' })).body.member;
+    const mia = await mem('Mia Maintag'), oto = await mem('Oto Frametag'), pip = await mem('Pip Thirdtag'), nia = await mem('Nia Nophoto');
+    const roles = ph => ph.members.map(m => `${m.name.split(' ')[0]}:${m.role}`).join();
+    const inDb = async id => (await pool.query(`SELECT m.name, pm.role FROM bkk_photo_members pm JOIN bkk_members m ON m.id=pm.member_id
+      WHERE pm.photo_id=$1 ORDER BY (pm.role <> 'main'), m.name`, [id])).rows.map(r => `${r.name.split(' ')[0]}:${r.role}`).join();
+    const mine = async code => ((await J(`/api/bkk/me/${code}/photos`)).body.days || []).flatMap(d => d.items.map(i => i.id));
+    const shot = async (date, tags) => (await tp('/api/bkk/teacher/photos', { date, image: IMG, tags })).body.photo;
+    const boot = async () => {
+      const errs = [], logErr = console.error;
+      console.error = (...a) => errs.push(a.join(' '));
+      mountBkk(express(), { pgPool: pool, now });
+      await new Promise(r => setTimeout(r, 1500));
+      console.error = logErr;
+      return errs.filter(e => /schema init failed/.test(e));
+    };
+    const driveId = manyId;            // the Drive photo from above: Ann, Bob and Cat, tagged before roles existed
+
+    // A database from before roles: the column is not there yet.
+    await pool.query('ALTER TABLE bkk_photo_members DROP COLUMN role');
+    const oldRows = (await pool.query('SELECT count(*)::int AS n FROM bkk_photo_members')).rows[0].n;
+    const boot1 = await boot();
+    const afterBoot = (await pool.query(`SELECT count(*)::int AS n, count(*) FILTER (WHERE role = 'main')::int AS main FROM bkk_photo_members`)).rows[0];
+    ok('the boot adds the role column, and every tag from before reads as main',
+       boot1.length === 0 && oldRows === 3 && afterBoot.n === 3 && afterBoot.main === 3
+         && roles((await tg('/api/bkk/teacher/photos?date=2026-10-05')).body.photos[0]) === 'Ann:main,Bob:main,Cat:main', JSON.stringify([boot1, oldRows, afterBoot]));
+    ok('...so each of those students still sees the photo',
+       (await mine(ann.code)).includes(driveId) && (await mine(bob.code)).includes(driveId) && (await mine(cat.code)).includes(driveId));
+    const setCat = await tp(`/api/bkk/teacher/photos/${driveId}/tags`,
+      { tags: [{ code: ann.code, role: 'main' }, { code: bob.code, role: 'main' }, { code: cat.code, role: 'other' }] });
+    const boot2 = await boot();
+    ok('a second boot changes nothing: a role set meanwhile stays', boot2.length === 0 && setCat.status === 200
+       && (await inDb(driveId)) === 'Ann:main,Bob:main,Cat:other', JSON.stringify([boot2, await inDb(driveId)]));
+    ok('the database refuses any role but main or other',
+       await pool.query(`UPDATE bkk_photo_members SET role='star' WHERE photo_id=$1`, [driveId]).then(() => false, () => true));
+
+    const p1 = await shot('2026-10-03', [{ code: oto.code, role: 'other' }, { code: mia.code, role: 'main' }, { code: pip.code }]);
+    ok('a role is saved and returned with each name, main names first; no role given means main',
+       roles(p1) === 'Mia:main,Pip:main,Oto:other' && (await inDb(p1.id)) === 'Mia:main,Pip:main,Oto:other', JSON.stringify(p1.members));
+    const oldUp = await tp('/api/bkk/teacher/photos', { date: '2026-10-03', image: IMG, memberCodes: [mia.code, oto.code] });
+    ok('the old memberCodes upload still works, everyone main', oldUp.status === 200 && roles(oldUp.body.photo) === 'Mia:main,Oto:main', JSON.stringify(oldUp.body));
+    const p2 = oldUp.body.photo;
+
+    const keep = await tp(`/api/bkk/teacher/photos/${p1.id}/tags`, { memberCodes: [oto.code, mia.code, nia.code] });
+    ok('the old memberCodes body on a photo keeps the roles there, a new name is main, a missing name leaves',
+       keep.status === 200 && roles(keep.body.photo) === 'Mia:main,Nia:main,Oto:other', JSON.stringify(keep.body));
+    const swap = await tp(`/api/bkk/teacher/photos/${p1.id}/tags`, { tags: [{ code: mia.code, role: 'other' }, { code: pip.code, role: 'main' }] });
+    ok('tags [{ code, role }] replaces who is on the photo and sets each role',
+       swap.status === 200 && roles(swap.body.photo) === 'Pip:main,Mia:other' && (await inDb(p1.id)) === 'Pip:main,Mia:other', JSON.stringify(swap.body));
+    const bad = await tp(`/api/bkk/teacher/photos/${p1.id}/tags`, { tags: [{ code: mia.code, role: 'star' }, { code: oto.code, role: 'main' }] });
+    const gone = await tp(`/api/bkk/teacher/photos/${p1.id}/tags`, { tags: [{ code: 'BGONE0000000', role: 'main' }] });
+    ok('a role that is not main or other is refused (400), a code that changed too (409), and nothing is saved',
+       bad.status === 400 && /main or other/.test(bad.body.error) && gone.status === 409 && (await inDb(p1.id)) === 'Pip:main,Mia:other',
+       JSON.stringify([bad.status, bad.body, gone.status]));
+    ok('the same name twice on one photo is one tag, main if either says so',
+       roles((await tp(`/api/bkk/teacher/photos/${p2.id}/tags`, { tags: [{ code: oto.code, role: 'other' }, { code: oto.code, role: 'main' }, { code: mia.code, role: 'main' }] })).body.photo) === 'Mia:main,Oto:main');
+
+    // Many photos, one name: now with Main or In the frame. p1 is Pip main + Mia other, p2 is Mia main + Oto main.
+    const frame = await tp('/api/bkk/teacher/photos/tags/add', { photoIds: [p1.id, p2.id], memberCodes: [nia.code], role: 'other' });
+    ok('a name added to many photos as "in the frame" is other on each',
+       frame.status === 200 && frame.body.photos.map(roles).join(' | ') === 'Pip:main,Mia:other,Nia:other | Mia:main,Oto:main,Nia:other', JSON.stringify(frame.body.photos.map(roles)));
+    const up2 = await tp('/api/bkk/teacher/photos/tags/add', { photoIds: [p1.id, p2.id], memberCodes: [mia.code], role: 'main' });
+    ok('added as main, someone who was in the frame becomes main',
+       up2.body.photos.map(roles).join(' | ') === 'Mia:main,Pip:main,Nia:other | Mia:main,Oto:main,Nia:other', JSON.stringify(up2.body.photos.map(roles)));
+    const down = await tp('/api/bkk/teacher/photos/tags/add', { photoIds: [p1.id, p2.id], memberCodes: [mia.code, pip.code], role: 'other' });
+    ok('added as "in the frame", a main stays main and only the new name is other',
+       down.body.photos.map(roles).join(' | ') === 'Mia:main,Pip:main,Nia:other | Mia:main,Oto:main,Nia:other,Pip:other', JSON.stringify(down.body.photos.map(roles)));
+    const plain = await tp('/api/bkk/teacher/photos/tags/add', { photoIds: [p2.id], memberCodes: [nia.code] });
+    ok('with no role a bulk add is main, as before', roles(plain.body.photos[0]) === 'Mia:main,Nia:main,Oto:main,Pip:other', roles(plain.body.photos[0]));
+    const badAdd = await tp('/api/bkk/teacher/photos/tags/add', { photoIds: [p1.id], memberCodes: [oto.code], role: 'boss' });
+    ok('a bad role on a bulk add is refused and adds nobody', badAdd.status === 400 && (await inDb(p1.id)) === 'Mia:main,Pip:main,Nia:other', JSON.stringify(badAdd.body));
+
+    // Drive photos take the same shapes. The saved one is Ann main, Bob main, Cat other.
+    const DRV = { date: '2026-10-05', folder: 'DAY5aaaaaaaaaaaaaaaaaaaaa' };
+    const ups = uploads.length;
+    const dAdd = await tp('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [mia.code], role: 'other', add: true });
+    const dUp = await tp('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [cat.code, ann.code], role: 'main', add: true });
+    const dKeep = await tp('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code, mia.code, oto.code] });
+    const dSet = await tp('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'IMG2aaaaaaaaaaaaaaaaaaaaa', tags: [{ code: ann.code, role: 'other' }, { code: bob.code, role: 'main' }] });
+    ok('a saved Drive photo: adding keeps everyone (in the frame, or up to main), the old body keeps roles, tags set them',
+       roles(dAdd.body.photo) === 'Ann:main,Bob:main,Cat:other,Mia:other' && roles(dUp.body.photo) === 'Ann:main,Bob:main,Cat:main,Mia:other'
+         && roles(dKeep.body.photo) === 'Ann:main,Oto:main,Mia:other' && roles(dSet.body.photo) === 'Bob:main,Ann:other' && uploads.length === ups,
+       JSON.stringify([dAdd.body, dUp.body, dKeep.body, dSet.body].map(b => b.photo && roles(b.photo))));
+    const dNew = await tp('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'IMG3aaaaaaaaaaaaaaaaaaaaa', tags: [{ code: bob.code, role: 'main' }, { code: ann.code, role: 'other' }] });
+    const dBad = await tp('/api/bkk/teacher/photos/from-drive', { ...DRV, driveId: 'IMG1aaaaaaaaaaaaaaaaaaaaa', memberCodes: [ann.code], role: 'boss', add: true });
+    ok('a new Drive photo is saved with its roles; a bad role stops it before anything is stored',
+       dNew.status === 200 && roles(dNew.body.photo) === 'Bob:main,Ann:other' && dBad.status === 400 && uploads.length === ups + 1, JSON.stringify([dNew.body, dBad.body]));
+    ok('the Drive list still counts everyone on a photo, main or not',
+       (await tg('/api/bkk/teacher/drive?folder=DAY5aaaaaaaaaaaaaaaaaaaaa')).body.files.find(f => f.id === 'IMG3aaaaaaaaaaaaaaaaaaaaa').tagged === 2);
+
+    // What a student sees. Ann is main in nothing now: in the frame of both Drive photos.
+    const dayView = () => tg('/api/bkk/teacher/photos?date=2026-10-05');
+    ok('a student in the frame does not see the photo; the main student does',
+       (await mine(ann.code)).length === 0 && (await mine(bob.code)).join() === [dNew.body.photo.id, driveId].join()
+         && (await dayView()).body.othersVisible === false, JSON.stringify([await mine(ann.code), await mine(bob.code)]));
+    // Pip, one morning: in the frame (first), main, in the frame (last).
+    const d1 = await shot('2026-10-07', [{ code: pip.code, role: 'other' }, { code: mia.code, role: 'main' }]);
+    const d2 = await shot('2026-10-07', [{ code: pip.code, role: 'main' }]);
+    const d3 = await shot('2026-10-07', [{ code: pip.code, role: 'other' }]);
+    const pipDay = async () => ((await J(`/api/bkk/me/${pip.code}/photos`)).body.days || []).find(d => d.date === '2026-10-07');
+    const hidden = await pipDay();
+    ok('...and a day shows only the photos the student is main in', hidden && hidden.items.map(i => i.id).join() === String(d2.id), JSON.stringify(hidden));
+    await pool.query(`INSERT INTO bkk_settings (key,value) VALUES ('photos_others_visible','true')`);
+    const shown = await pipDay();
+    ok('with photos_others_visible on, the in-the-frame photos follow the main ones of that day',
+       shown.items.map(i => i.id).join() === [d2.id, d3.id, d1.id].join() && (await mine(ann.code)).join() === [dNew.body.photo.id, driveId].join()
+         && (await dayView()).body.othersVisible === true
+         && Object.keys(shown.items[0]).sort().join() === 'full,id,save,thumb', JSON.stringify(shown));
+    await pool.query(`UPDATE bkk_settings SET value='false' WHERE key='photos_others_visible'`);
+    const off = (await mine(ann.code)).length;
+    await pool.query(`UPDATE bkk_settings SET value='"true"' WHERE key='photos_others_visible'`);
+    const word = (await mine(ann.code)).length;
+    await pool.query(`DELETE FROM bkk_settings WHERE key='photos_others_visible'`);
+    ok('the setting set to false, to anything but true, or removed hides them again',
+       off === 0 && word === 0 && (await mine(ann.code)).length === 0 && (await pipDay()).items.length === 1);
+
+    // Pip's photo profile. 3 Oct: main (p1), in the frame (p2). 7 Oct: main (d2), in the frame (d1, d3). Then one in September.
+    const sep = await shot('2026-09-28', [{ code: pip.code, role: 'other' }, { code: oto.code, role: 'main' }]);
+    await pool.query(`UPDATE bkk_members SET phone='080-000-4321' WHERE code=$1`, [pip.code]);
+    const daysSince = async d => (await pool.query(`SELECT (now() AT TIME ZONE 'Asia/Bangkok')::date - $1::date AS n`, [d])).rows[0].n;
+    const prof = async (code, qs = '') => tg(`/api/bkk/teacher/members/${code}/photos${qs}`);
+    const pf = await prof(pip.code);
+    const t = pf.body.totals || {};
+    ok('the photo profile counts photos, main, in the frame and mornings',
+       pf.status === 200 && t.photos === 6 && t.main === 2 && t.other === 4 && t.mornings === 3, JSON.stringify(t));
+    ok('...with the first and last photo, and the last main one with how many days ago',
+       t.first === '2026-09-28' && t.last === '2026-10-07' && t.lastMain === '2026-10-07' && t.lastMainDays === await daysSince('2026-10-07'), JSON.stringify(t));
+    ok('...by month, newest first',
+       JSON.stringify(pf.body.months) === JSON.stringify([{ month: '2026-10', main: 2, other: 3 }, { month: '2026-09', main: 0, other: 1 }]), JSON.stringify(pf.body.months));
+    ok('...then the photos: newest day first, main first in a day, each with its role',
+       pf.body.photos.map(p => `${p.id}:${p.date.slice(5)}:${p.role}`).join()
+         === [[d2.id, '10-07', 'main'], [d3.id, '10-07', 'other'], [d1.id, '10-07', 'other'], [p1.id, '10-03', 'main'], [p2.id, '10-03', 'other'], [sep.id, '09-28', 'other']]
+           .map(x => x.join(':')).join() && pf.body.photos.every(p => /^signed:\/\/authenticated\/.+\/600$/.test(p.thumb))
+         && pf.body.limit === 60 && pf.body.offset === 0, JSON.stringify(pf.body.photos));
+    const pg1 = await prof(pip.code, '?limit=4'), pg2 = await prof(pip.code, '?limit=4&offset=4'), pg3 = await prof(pip.code, '?limit=4&offset=8');
+    ok('...in pages: limit and offset, the totals the same on each page',
+       pg1.body.photos.length === 4 && pg2.body.photos.map(p => p.id).join() === [p2.id, sep.id].join() && pg3.body.photos.length === 0
+         && pg2.body.totals.photos === 6 && pg2.body.offset === 4 && pg2.body.limit === 4
+         && (await prof(pip.code, '?limit=9999&offset=-3')).body.limit === 200, JSON.stringify([pg1.body.photos.length, pg2.body, pg3.body.photos]));
+    ok('the photo profile needs the teacher passcode (401), and an unknown code is 404',
+       (await J(`/api/bkk/teacher/members/${pip.code}/photos`)).status === 401
+         && (await J(`/api/bkk/teacher/members/${pip.code}/photos`, { headers: ADMIN })).status === 401
+         && (await prof('BNOSUCHCODE00')).status === 404);
+    const raw = JSON.stringify(pf.body);
+    ok('it carries photo data only: no email past the masked hint, no phone, pass, payment or visit',
+       Object.keys(pf.body).sort().join() === 'limit,member,months,offset,photos,totals'
+         && Object.keys(pf.body.member).sort().join() === 'code,hint,name' && pf.body.member.hint === 'pi…@example.com'
+         && Object.keys(t).sort().join() === 'first,last,lastMain,lastMainDays,main,mornings,other,photos'
+         && pf.body.photos.every(p => Object.keys(p).sort().join() === 'date,id,role,thumb')
+         && !raw.includes('pip.thirdtag') && !raw.includes('080-000') && !/phone|email|pass|order|paid|amount|visit|booking/i.test(raw), raw.slice(0, 300));
+    const none = (await prof(nia.code)).body;
+    await tp(`/api/bkk/teacher/photos/${p2.id}/tags`, { tags: [] });
+    const empty = (await prof(nia.code)).body;
+    ok('a student with no photos, or only in the frame so far, has no last main photo',
+       none.totals.photos === 2 && none.totals.main === 1 && empty.totals.photos === 1 && empty.totals.main === 0 && empty.totals.lastMain === null
+         && empty.totals.lastMainDays === null && empty.totals.last === '2026-10-03' && (await prof(cat.code)).body.totals.photos === 0
+         && (await prof(cat.code)).body.photos.length === 0 && (await prof(cat.code)).body.months.length === 0, JSON.stringify([none.totals, empty.totals]));
+    ok('staff counts still count every tag, main or not',
+       (await J(`/api/bkk/admin/members/${pip.code}/history`, { headers: ADMIN })).body.photos === 5);
+
+    await tp(`/api/bkk/teacher/photos/${d2.id}/delete`, {});
+    const cut = (await prof(pip.code)).body;
+    ok('deleting a photo changes the counts and the last main photo',
+       cut.totals.photos === 4 && cut.totals.main === 1 && cut.totals.other === 3 && cut.totals.mornings === 3 && cut.totals.lastMain === '2026-10-03'
+         && cut.totals.lastMainDays === await daysSince('2026-10-03') && cut.photos.length === 4 && !cut.photos.some(p => p.id === d2.id)
+         && JSON.stringify(cut.months[0]) === JSON.stringify({ month: '2026-10', main: 1, other: 2 }), JSON.stringify([cut.totals, cut.months]));
+
+    // Today's list, the shot list: when each booked student was last the main one.
+    const slot = (await pool.query('SELECT id FROM bkk_class_slots ORDER BY id LIMIT 1')).rows[0].id;
+    const booked = (await pool.query(`INSERT INTO bkk_bookings (slot_id, class_date, start_at, member_id)
+      SELECT $1, (now() AT TIME ZONE 'Asia/Bangkok')::date, now(), id FROM bkk_members WHERE code = ANY($2::text[]) RETURNING id`,
+      [slot, [pip.code, ann.code, cat.code]])).rows.map(r => r.id);
+    const list = (await tg('/api/bkk/teacher/today')).body.students || [];
+    const row = code => list.find(s => s.code === code) || {};
+    ok("today's list carries each student's last main photo: the date and how many days ago",
+       row(pip.code).last_main === '2026-10-03' && row(pip.code).last_main_days === await daysSince('2026-10-03')
+         && row(pip.code).name === 'Pip Thirdtag' && 'notes' in row(pip.code), JSON.stringify(row(pip.code)));
+    ok('...and null for a student only in the frame so far, or with no photo',
+       row(ann.code).code === ann.code && row(ann.code).last_main === null && row(ann.code).last_main_days === null
+         && row(cat.code).code === cat.code && row(cat.code).last_main === null, JSON.stringify([row(ann.code), row(cat.code)]));
+    await pool.query('DELETE FROM bkk_bookings WHERE id = ANY($1::int[])', [booked]);
+  }
+
   console.log('\n— Rezerv import —');
   const imp1 = await post('/api/bkk/admin/import', { rows: [
     { name: 'Imp One (renewed)', plan: '12 months', until: '26 Oct 2026' },
