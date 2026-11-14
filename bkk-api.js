@@ -18,7 +18,8 @@ const SIGNIN_TTL_MIN = 30;                     // a sign-in link is short-lived
 const STAFF_LINK_DAYS = 7;                     // one M sends by LINE/WhatsApp/WeChat
 const SHORT_ALPHABET = '23456789abcdefghjkmnpqrstuvwxyz'; // its short /in/ code: no 0/o, 1/l/i to misread
 const SHORT_LEN = 10;                          // 31^10 ≈ 8e14 codes
-const SHORT_MISSES_PER_IP_HOUR = 20;           // wrong /in/ codes before an address is stopped
+const SHORT_MISSES_PER_IP_HOUR = 20;           // codes nobody was given, before an address is stopped
+const SHORT_MISSES_HOUR = 200;                 // from everywhere: only logged, so a guessing run shows
 const SIGNIN_PER_EMAIL_HOUR = 3;               // and cheap to abuse without limits
 const SIGNIN_PER_IP_HOUR = 10;
 const LETTER_PER_IP_HOUR = 10;                 // letter confirm mails asked from one place (shala wifi)
@@ -1570,33 +1571,59 @@ border:0;border-radius:10px;background:${bg};color:#fff">${label}</button></form
     + '<a href="/book" style="color:#5c2160">Ask for a new one</a>');
 
   // The short link a staff member sends: /in/<code> → the long link, which still
-  // only shows the page, so a chat preview opening it uses nothing up. Misses are
-  // counted per address in memory (one process on Railway), so codes cannot be
-  // guessed: an address that misses SHORT_MISSES_PER_IP_HOUR times waits an hour.
+  // only shows the page, so a chat preview opening it uses nothing up. What stops
+  // guessing is the code's length (31^10 ≈ 8e14, and a link lives 7 days); the
+  // count below (in memory, one process on Railway) only slows one address
+  // down and logs a run. Only a well-formed code nobody was given counts: an
+  // expired or stopped one is a student tapping an old message, and a shared
+  // wifi must not lock everyone out for it.
   const SHORT_RE = new RegExp(`^[${SHORT_ALPHABET}]{${SHORT_LEN}}$`);
-  const shortTries = new Map();
-  const shortTriesOf = ip => {
-    const t = shortTries.get(ip);
-    if (t && Date.now() - t.start < 3600 * 1000) return t;
-    if (shortTries.size > 5000) shortTries.clear();
-    const fresh = { start: Date.now(), misses: 0 };
-    shortTries.set(ip, fresh);
-    return fresh;
+  // cn.aybkk.net comes in through cloudflared in this container, so from localhost:
+  // there Cloudflare sets cf-connecting-ip, and x-forwarded-for starts with whatever
+  // the client sent. Railway's edge rewrites x-forwarded-for itself. The key is a
+  // copy: a slice of the header would keep all of it (up to 16 KB) in memory.
+  const guessIp = req => Buffer.from(String((/^(::ffff:)?127\.|^::1$/.test(req.socket?.remoteAddress || '')
+    && req.headers['cf-connecting-ip']) || clientIp(req)).slice(0, 45)).toString();
+  const HOUR_MS = 3600 * 1000;
+  const shortMisses = new Map();                 // address → { start, n }
+  const allMisses = { start: 0, n: 0 };
+  const missesOf = ip => { const t = shortMisses.get(ip); return t && Date.now() - t.start < HOUR_MS ? t.n : 0; };
+  const holdMiss = ip => {
+    let t = shortMisses.get(ip);
+    if (!t || Date.now() - t.start >= HOUR_MS) {
+      if (shortMisses.size >= 5000) {
+        for (const [k, v] of shortMisses) {      // make room, but never lift a block that is still running
+          if (Date.now() - v.start >= HOUR_MS || v.n < SHORT_MISSES_PER_IP_HOUR) shortMisses.delete(k);
+          if (shortMisses.size < 4000) break;
+        }
+      }
+      shortMisses.delete(ip);
+      shortMisses.set(ip, t = { start: Date.now(), n: 0 });
+    }
+    t.n++;
+    return t;
   };
   app.get('/in/:code', async (req, res) => {
-    const t = shortTriesOf(clientIp(req));
-    if (t.misses >= SHORT_MISSES_PER_IP_HOUR) {
+    const ip = guessIp(req);
+    if (missesOf(ip) >= SHORT_MISSES_PER_IP_HOUR) {
       return res.status(429).type('text/plain').send('Too many wrong links. Please try again in an hour.');
     }
-    const miss = status => { t.misses++; res.status(status).send(deadLink()); };
-    if (!SHORT_RE.test(req.params.code)) return miss(404);
+    if (!SHORT_RE.test(req.params.code)) return res.status(404).send(deadLink());
+    // Counted before the lookup and given back after, so a burst cannot all pass the check at once.
+    const t = holdMiss(ip);
     try {
-      const row = (await q(`SELECT token FROM bkk_login_tokens WHERE short_code = $1 AND ${live}`,
+      const row = (await q(`SELECT token, (${live}) AS ok FROM bkk_login_tokens WHERE short_code = $1`,
         [req.params.code])).rows[0];
-      if (!row) return miss(400);
+      if (row) t.n--;
+      else {
+        if (Date.now() - allMisses.start >= HOUR_MS) Object.assign(allMisses, { start: Date.now(), n: 0 });
+        if (++allMisses.n === SHORT_MISSES_HOUR) console.warn(`[bkk login] ${SHORT_MISSES_HOUR} unknown short codes this hour: someone may be guessing`);
+      }
+      if (!row || !row.ok) return res.status(400).send(deadLink());
       res.set({ 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' })
         .redirect(302, `/api/bkk/login/${row.token}`);
     } catch (e) {
+      t.n--;
       console.error('[bkk login] short link failed:', e.message);
       res.status(500).send(loginPage('Something went wrong. Please try again.'));
     }

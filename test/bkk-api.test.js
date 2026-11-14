@@ -849,8 +849,6 @@ const ok = (name, cond, extra = '') => {
     ok('...and so does a code nobody was given', await dead('23456789ab', 400) === true);
     for (const bad of ['abc', 'ABCDEFGHJK', '0000000000', 'lllllllll1', 'abcdefghjkm', 'abcdefghi%2F', '%27%3B--abcdef'])
       ok(`a malformed code (${bad}) is a 404 with the same page`, await dead(bad, 404) === true);
-    ok('/in-depth and /in are not caught by /in/<code>', !(await (await fetch(`${B}/in-depth`)).text()).includes('already been used')
-       && !(await (await fetch(`${B}/in`)).text()).includes('already been used'));
 
     const guesser = { 'x-forwarded-for': '10.78.0.1' };
     const guesses = [];
@@ -861,6 +859,42 @@ const ok = (name, cond, extra = '') => {
        && /text\/plain/.test(stopped.headers.get('content-type') || '') && (await stopped.text()).length < 80);
     ok('...even with a real code, so a guess that hits looks like any other', (await open(codeOf(fresh), guesser)).status === 429);
     ok('another address is not held up', (await open(codeOf(fresh))).status === 302);
+
+    // Review, 14 Nov: the count must hold against a burst, a made-up first
+    // x-forwarded-for entry, and students tapping old links on one wifi.
+    const anyCode = () => Array.from({ length: 10 }, () => '23456789abcdefghjkmnpqrstuvwxyz'[crypto.randomInt(31)]).join('');
+    const wifi = { 'x-forwarded-for': '10.78.0.2' };
+    const stale = [];
+    for (let i = 0; i < 25; i++) stale.push((await open(codeOf(old), wifi)).status);
+    for (let i = 0; i < 25; i++) stale.push((await open(codeOf(used), wifi)).status);
+    for (let i = 0; i < 25; i++) stale.push((await open('abc', wifi)).status);
+    ok('expired and used-up links and typos are not guesses: 75 of them from one wifi...',
+       stale.every((s, i) => s === (i < 50 ? 400 : 404)), stale.join());
+    ok('...and a student there can still open the new link the desk just sent', (await open(codeOf(fresh), wifi)).status === 302);
+    const burst = await Promise.all(Array.from({ length: 60 }, () =>
+      open(anyCode(), { 'x-forwarded-for': '10.78.0.3' }).then(r => r.status)));
+    ok('60 guesses at once from one address: 20 are looked up, 40 get 429',
+       burst.filter(s => s === 400).length === 20 && burst.filter(s => s === 429).length === 40,
+       `${burst.filter(s => s === 400).length} looked up`);
+    // cn.aybkk.net arrives from cloudflared on localhost: Cloudflare sets cf-connecting-ip
+    // and puts the real address last in x-forwarded-for, after whatever the client sent.
+    const tunnel = (real, sent) => ({ 'cf-connecting-ip': real, 'x-forwarded-for': `${sent}, ${real}` });
+    const rotated = [];
+    for (let i = 0; i < 21; i++) rotated.push((await open(anyCode(), tunnel('198.51.100.7', `10.80.0.${i}`))).status);
+    ok('through the tunnel, a new made-up x-forwarded-for each time does not get round the count',
+       rotated.slice(0, 20).every(s => s === 400) && rotated[20] === 429, rotated.join());
+    for (let i = 0; i < 20; i++) await open(anyCode(), tunnel('198.51.100.8', '198.51.100.9'));
+    ok("...and a guesser who writes someone else's address first does not lock that person out",
+       (await open(codeOf(fresh), tunnel('198.51.100.9', '198.51.100.9'))).status === 302
+       && (await open(codeOf(fresh), tunnel('198.51.100.8', '198.51.100.10'))).status === 429);
+    const lan = Object.values(require('os').networkInterfaces()).flat().find(a => a && a.family === 'IPv4' && !a.internal);
+    if (lan) {
+      const direct = [];
+      for (let i = 0; i < 21; i++) direct.push((await fetch(`http://${lan.address}:${port}/in/${anyCode()}`,
+        { redirect: 'manual', headers: { 'cf-connecting-ip': `10.81.0.${i}`, 'x-forwarded-for': '10.81.1.1' } })).status);
+      ok('cf-connecting-ip counts only from localhost: anywhere else anyone can send it',
+         direct.slice(0, 20).every(s => s === 400) && direct[20] === 429, direct.join());
+    } else console.log('  (no network card besides localhost: the cf-connecting-ip check from elsewhere is skipped)');
 
     const realRandomInt = crypto.randomInt;
     crypto.randomInt = () => 0;

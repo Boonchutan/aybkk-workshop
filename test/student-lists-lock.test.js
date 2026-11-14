@@ -2,6 +2,7 @@
 // Runs the real server.js on a local port against a throwaway Postgres, with Neo4j
 // replaced by an empty stand-in. Made-up students only. A failure prints the status
 // and the top-level keys, never a body: some locked routes read the committed roster.
+const crypto = require('crypto');
 const http = require('http');
 const net = require('net');
 const os = require('os');
@@ -235,6 +236,22 @@ const LOCKED = [
   ok('...staff still find one student by name', solo.status === 302 && /[?&]name=/.test(solo.headers.location || ''), `${solo.status}`);
   const pretty = await request('GET', `/p/locktest-solo-${ids[0]}`);
   ok('a pretty link with the id still opens the profile', pretty.status === 302 && /^\/my-journal\.html\?id=/.test(pretty.headers.location || ''), `${pretty.status}`);
+
+  console.log('\n— a short sign-in link (/in/<code>) leaves /in-depth alone, on every host —');
+  const inTok = crypto.randomBytes(32).toString('hex');
+  const inCode = Array.from({ length: 10 }, () => '23456789abcdefghjkmnpqrstuvwxyz'[crypto.randomInt(31)]).join('');
+  await pool.query(`INSERT INTO bkk_login_tokens (token, member_id, email, ip, expires_at, short_code)
+    VALUES ($1, NULL, NULL, 'staff', now() + interval '1 hour', $2)`, [inTok, inCode]);
+  for (const host of ['aybkk.net', 'cn.aybkk.net', 'my.aybkk.com']) {
+    const depth = await request('GET', '/in-depth', { host });
+    ok(`${host}/in-depth still serves its own page`, depth.status === 200
+      && (host.startsWith('cn.') ? /深度迈索尔/ : /In-Depth Mysore/).test(depth.text), `${depth.status}`);
+    const hop = await request('GET', `/in/${inCode}`, { host });
+    ok(`${host}/in/<code> goes on to the long link, with no referrer`, hop.status === 302
+      && hop.headers.location === `/api/bkk/login/${inTok}` && hop.headers['referrer-policy'] === 'no-referrer', `${hop.status}`);
+    ok(`${host}/in is not a short link`, (await request('GET', '/in', { host })).status === 404);
+  }
+  await pool.query('DELETE FROM bkk_login_tokens WHERE token=$1', [inTok]);
 
   console.log('\n— printed Hefei codes do not give the roster —');
   // Read at runtime from the committed roster; nothing from it is printed.
