@@ -24,9 +24,7 @@ const STUDENT_FILES = [
   /(^|\/)teacher-comments\.json$/i,
   /(^|\/)[^/]*-cards-print(\/|\.zip$)/i,
 ];
-// One release only: server.js copies this roster onto the volume, then a follow-up PR deletes it.
-const UNTIL_COPIED = new Set(['public/rosters/hefei.json']);
-const studentHits = files.filter(f => !UNTIL_COPIED.has(f) && STUDENT_FILES.some(rx => rx.test(f)));
+const studentHits = files.filter(f => STUDENT_FILES.some(rx => rx.test(f)));
 ok('no tracked file that names students', studentHits.length === 0, studentHits.slice(0, 10).join(', '));
 
 // Fixtures under test/ use made-up values on purpose; the values below look like secrets but are not.

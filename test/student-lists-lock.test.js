@@ -140,6 +140,7 @@ const LOCKED = [
   ['/api/graph/visualize?type=students', r => r.status === 200],
   ['/admin/line-status', r => r.status === 200 && /LINE pipeline/.test(r.text)],
   ['/rosters/hefei.json', r => r.status === 200 && Array.isArray(r.json.students)],
+  ['/api/calendar', r => r.status === 200 && Array.isArray(r.json.lanes) && Array.isArray(r.json.events)],
   // The cards and print files left git; the paths stay locked in case one is put back by hand.
   ['/qr-cards/manifest.json', r => r.status === 404],
   ['/qr-cards/hefei/manifest.json', r => r.status === 404],
@@ -299,6 +300,7 @@ fs.writeFileSync(path.join(PRIVATE, 'rosters', 'hefei.json'), JSON.stringify({ w
 
   console.log('\n— writes that answer with student data need the key —');
   for (const [m, p, body] of [['PUT', '/api/students/lock-test-x', {}], ['POST', '/api/notion/sync', {}], ['POST', '/api/sync/notion', {}],
+    ['PUT', '/api/calendar', { lanes: [], events: [] }],
     ['POST', '/api/teacher/comment', { studentId: 'lock-test-x', teacherName: 'T', comment: 'c' }],
     ['POST', '/api/teacher/assessment', { studentId: 'lock-test-x', teacherName: 'T' }]]) {
     const r = await request(m, p, {}, body);
