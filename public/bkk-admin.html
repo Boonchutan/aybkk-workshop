@@ -327,6 +327,12 @@
       qOutMailBad: 'Type KEEP or REMOVE. Nothing was changed.',
       outDone: (n, k, gone) => `Done. ${n}'s profile has a new code and ${k} old link(s) stopped.${gone ? `\nRemoved email: ${gone} (put it back with Change email if that was a mistake).` : ''}\nSend ${n} a new sign-in link now.`,
       linkBtn: 'Sign-in link', linkCopied: 'Copied. Paste it into their LINE, WhatsApp or WeChat.', linkCopyHand: 'Copy this and send it to them:',
+      mergeBtn: 'Merge a double', qMergeFrom: n => `${n} has a second profile?\n\nType the code of the OTHER profile. Its passes, classes, payments and photos move to this one, and ${n} keeps this code.`,
+      qMergeSure: (k, f, d) => `Careful: the ${d.join(' and ')} are different.\n\n${k.name}: ${k.email || '-'} ${k.phone || ''}\n${f.name}: ${f.email || '-'} ${f.phone || ''}\n\nThis may be two people with the same name. Type SAME only if you know it is one student.`,
+      mergeNo: 'Nothing was merged.',
+      mergePlan: j => `Keep: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nFold in: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nMoves: ${j.moved.passes} passes, ${j.moved.bookings} classes, ${j.moved.orders} payments, ${j.moved.photo_members} photos, ${j.moved.notes} notes.${j.seatsCancelled ? `\n${j.seatsCancelled} class(es) were booked on both: one copy is cancelled.` : ''}\n\nThe other code and email lead to this profile from now on. Undo is on this card.`,
+      mergeDone: n => `Done. ${n} has one profile now.`,
+      foldedL: 'Merged in:', undoBtn: 'Undo', qUndo: c => `Take ${c} back out as its own profile? Everything that moved goes back.`, undoDone: 'Undone.',
       impTitle: 'Move students from Rezerv', impBtn: 'Import',
       impHelp: 'One student per line: name | email | plan | end date | classes left (packs only). Email can be empty now and added later by importing the same line again with the email. Safe to run twice: nobody and no pass is added twice.',
       impDone: j => `Done. ${j.members} students (${j.newMembers} new), ${j.passes} passes added, ${j.emailsAdded} emails filled in.`,
@@ -415,6 +421,12 @@
       outBtn: 'ออกจากระบบทุกเครื่อง', qOut: n => `ออกจากระบบโปรไฟล์ของ ${n} ในทุกเครื่องไหม?\n\nใช้เมื่อคนผิดเปิดโปรไฟล์ของ ${n} ทุกคนที่เปิดอยู่ (รวมคนผิด) จะเข้าไม่ได้อีก ลิงก์เก่าใช้ไม่ได้ แล้วส่งลิงก์ใหม่ให้ ${n}`,
       outDone: (n, k, gone) => `เรียบร้อย โปรไฟล์ของ ${n} ได้รหัสใหม่ ลิงก์เก่า ${k} ลิงก์ใช้ไม่ได้แล้ว${gone ? `\nลบอีเมลแล้ว: ${gone} (ถ้าผิด ใส่คืนด้วยปุ่มเปลี่ยนอีเมล)` : ''}\nส่งลิงก์ใหม่ให้ ${n} เลย`,
       linkBtn: 'ลิงก์เข้าโปรไฟล์', linkCopied: 'คัดลอกแล้ว วางในไลน์ WhatsApp หรือ WeChat ของนักเรียนได้เลย', linkCopyHand: 'คัดลอกข้อความนี้แล้วส่งให้นักเรียน:',
+      mergeBtn: 'รวมโปรไฟล์ซ้ำ', qMergeFrom: n => `${n} มีโปรไฟล์ที่สองใช่ไหม?\n\nพิมพ์รหัสของโปรไฟล์อีกอัน แพ็กเกจ คลาส การชำระเงิน และรูป จะย้ายมาที่โปรไฟล์นี้ ${n} ใช้รหัสนี้ต่อ`,
+      qMergeSure: (k, f, d) => `ระวัง: ${d.map(x => x === 'email' ? 'อีเมล' : 'เบอร์โทร').join(' และ ')}ไม่ตรงกัน\n\n${k.name}: ${k.email || '-'} ${k.phone || ''}\n${f.name}: ${f.email || '-'} ${f.phone || ''}\n\nอาจเป็นคนละคนที่ชื่อเหมือนกัน พิมพ์ SAME เฉพาะเมื่อแน่ใจว่าเป็นคนเดียวกัน`,
+      mergeNo: 'ยังไม่ได้รวม',
+      mergePlan: j => `เก็บ: ${j.keep.name} (${j.keep.code}) ${j.keep.email || ''}\nรวมเข้ามา: ${j.fold.name} (${j.fold.code}) ${j.fold.email || ''}\n\nย้าย: แพ็กเกจ ${j.moved.passes} คลาส ${j.moved.bookings} การชำระเงิน ${j.moved.orders} รูป ${j.moved.photo_members} โน้ต ${j.moved.notes}${j.seatsCancelled ? `\nมี ${j.seatsCancelled} คลาสที่จองไว้ทั้งสองโปรไฟล์: ยกเลิกอันที่ซ้ำ` : ''}\n\nรหัสและอีเมลของอีกอันจะพามาที่โปรไฟล์นี้ ยกเลิกการรวมได้ที่การ์ดนี้`,
+      mergeDone: n => `เรียบร้อย ${n} มีโปรไฟล์เดียวแล้ว`,
+      foldedL: 'รวมเข้ามาแล้ว:', undoBtn: 'ยกเลิกการรวม', qUndo: c => `แยก ${c} ออกเป็นโปรไฟล์ของตัวเองอีกครั้งไหม? ทุกอย่างที่ย้ายมาจะกลับไป`, undoDone: 'แยกออกแล้ว',
       impTitle: 'ย้ายนักเรียนจาก Rezerv', impBtn: 'นำเข้า',
       impHelp: 'บรรทัดละหนึ่งคน: ชื่อ | อีเมล | แพ็กเกจ | วันหมดอายุ | ครั้งที่เหลือ (เฉพาะแพ็กครั้ง) อีเมลเว้นว่างไว้ก่อนได้ แล้วนำเข้าบรรทัดเดิมพร้อมอีเมลภายหลัง กดซ้ำได้ ไม่มีชื่อหรือบัตรซ้ำ',
       impDone: j => `เสร็จแล้ว นักเรียน ${j.members} คน (ใหม่ ${j.newMembers}) เพิ่มบัตร ${j.passes} ใบ เติมอีเมล ${j.emailsAdded} คน`,
@@ -659,6 +671,7 @@
     ci_badPlan: v => `แพ็กเกจ "${v}" ไม่ใช่แพ็กเกจของเรา (เวิร์กช็อป หรืออ่านไม่ได้): ไม่เก็บเป็นแพ็กเกจ`,
     ci_passStatus: v => `อ่านสถานะแพ็กเกจ "${v}" ไม่ได้: ถือว่าไม่มีสถานะ`,
     ci_neverStarted: v => `ยังไม่เคยเริ่มใช้ และ Rezerv เป็น ${v}: ไม่มีอะไรต้องเก็บ`,
+    ci_copyOfSale: (pkg, d) => `${pkg} เดียวกันขายใน aybkk.net แล้ว (เริ่ม ${ymdLong(d, true)}) และ Rezerv ไม่มีการชำระเงินของอันนี้: เป็นสำเนา ไม่เก็บ`,
     ci_passOff: v => `Rezerv เป็น ${v}: เก็บเป็นประวัติ ใช้เข้าเรียนไม่ได้`,
     ci_badFreeze: v => `อ่านวันที่พัก "${v}" ไม่ได้: ไม่ได้ใส่`,
     ci_freezeLater: (a, b) => `Rezerv มีการพักแพ็กเกจตั้งแต่ ${ymdLong(a, true)}${b ? ' ถึง ' + ymdLong(b, true) : ''}: กดพักในระบบนี้ในวันนั้น`,
@@ -997,7 +1010,10 @@
       <p style="margin-top:8px"><button class="btn" onclick="bookFor('${esc(m.code)}')">${T('bookBtn')}</button>
         <button class="btn pink" onclick="signinLink('${esc(m.code)}')">${T('linkBtn')}</button>
         <button class="btn gray" onclick="changeEmail('${esc(m.code)}')">${T('emailBtn')}</button>
-        <button class="btn red" onclick="signOutAll('${esc(m.code)}')">${T('outBtn')}</button></p>
+        <button class="btn red" onclick="signOutAll('${esc(m.code)}')">${T('outBtn')}</button>
+        <button class="btn gray" onclick="mergeInto('${esc(m.code)}')">${T('mergeBtn')}</button></p>
+      ${(m.folded || []).length ? `<p class="muted">${T('foldedL')} ${m.folded.map(f => `${esc(f.code)}
+        <button class="btn sm gray" onclick="unmerge('${esc(f.code)}')">${T('undoBtn')}</button>`).join(' ')}</p>` : ''}
       <div id="sl_${esc(m.code)}"></div>
     </div>`).join('');
   };
@@ -1054,6 +1070,29 @@
     $('#q').value = j.member.code;
     await findStudents();
     alert(T('outDone', now.name, j.linksStopped, j.removedEmail));
+  };
+
+  // Two profiles for one student (a Rezerv import, a second email): fold the
+  // other into this one. The server shows what would move before anything does.
+  window.mergeInto = async (code) => {
+    const m = FOUND[code]; if (!m) return;
+    const from = (ask(T('qMergeFrom', m.name), '') || '').toUpperCase(); if (!from) return;
+    const send = body => api(`/api/bkk/admin/members/${encodeURIComponent(code)}/merge`,
+      { method: 'POST', body: JSON.stringify({ from, ...body }) });
+    const p = await shout(await send({ dryRun: true })); if (!p) return;
+    const body = {};
+    if (p.differs.length) {
+      const a = ask(T('qMergeSure', p.keep, p.fold, p.differs), ''); if (a === null) return;
+      if (a.toUpperCase() !== 'SAME') { alert(T('mergeNo')); return; }
+      body.sure = true;
+    }
+    if (!confirm(T('mergePlan', p))) return;
+    if (await shout(await send(body))) { alert(T('mergeDone', p.keep.name)); findStudents(); }
+  };
+  window.unmerge = async (code) => {
+    if (!confirm(T('qUndo', code))) return;
+    const r = await api(`/api/bkk/admin/members/${encodeURIComponent(code)}/unmerge`, { method: 'POST', body: '{}' });
+    if (await shout(r)) { alert(T('undoDone')); findStudents(); }
   };
 
   // A link M pastes into the student's LINE, WhatsApp or WeChat: the short one,

@@ -513,6 +513,13 @@ function mountBkk(app, opts = {}) {
       photo_id TEXT PRIMARY KEY,
       since TIMESTAMPTZ NOT NULL DEFAULT now(),
       tries INTEGER NOT NULL DEFAULT 1)`);
+    // Two profiles for one student (the 13 Nov Rezerv import made 19). The
+    // folded one stays, empty, pointing at the one it was merged into: its code,
+    // email and Rezerv id lead there, and merge_log is what undo puts back.
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS merged_into INTEGER REFERENCES bkk_members(id)`);
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS merged_at TIMESTAMPTZ`);
+    await q(`ALTER TABLE bkk_members ADD COLUMN IF NOT EXISTS merge_log JSONB`);
+    await q(`CREATE INDEX IF NOT EXISTS bkk_members_merged ON bkk_members (merged_into) WHERE merged_into IS NOT NULL`);
 
     // Catalogue: a package added to SEED_PRODUCTS reaches a running shala on the
     // next boot. ON CONFLICT leaves existing rows alone, so a price changed or a
@@ -726,11 +733,20 @@ function mountBkk(app, opts = {}) {
     return !isNaN(t) && new Date(t).toISOString().slice(0, 10) === d;
   };
 
+  // A folded profile leads to the one it was merged into, so its code, email or
+  // Rezerv id never lands anyone on the empty one.
+  async function liveMember(db, m) {
+    for (let i = 0; m && m.merged_into && i < 10; i++)
+      m = (await db.query('SELECT * FROM bkk_members WHERE id=$1', [m.merged_into])).rows[0];
+    return m && !m.merged_into ? m : null;
+  }
+
   async function findOrCreateMember({ name, email, phone }) {
     const em = (email || '').trim().toLowerCase();
     if (em) {
       const r = await q('SELECT * FROM bkk_members WHERE lower(email) = $1 LIMIT 1', [em]);
-      if (r.rows.length) return r.rows[0];
+      const m = await liveMember(pool, r.rows[0]);
+      if (m) return m;
     }
     const r = await q(
       `INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,$2,$3,$4) RETURNING *`,
@@ -1221,7 +1237,8 @@ function mountBkk(app, opts = {}) {
         return res.json(vague);
       }
 
-      const m = (await q('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [email])).rows[0];
+      const hit = (await q('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [email])).rows[0];
+      const m = await liveMember(pool, hit);
       if (!m) return res.json(vague);
       if (lang) await q('UPDATE bkk_members SET lang=$2 WHERE id=$1', [m.id, lang]);
 
@@ -1232,7 +1249,7 @@ function mountBkk(app, opts = {}) {
 
       const t = render('signin', lang || m.lang || 'en',
         { name: m.name, link: `${baseUrl()}/api/bkk/login/${token}` });
-      await sendMail({ to: m.email, subject: t.subject, html: t.html, text: t.text, tag: 'signin' });
+      await sendMail({ to: hit.email, subject: t.subject, html: t.html, text: t.text, tag: 'signin' });
       res.json(vague);
     } catch (e) {
       console.error('[bkk login] request failed:', e.message);
@@ -1351,6 +1368,159 @@ function mountBkk(app, opts = {}) {
       console.log(`✓ bkk: ${req.params.code} signed out everywhere, now ${code} (${links.rowCount} links stopped${clear ? ', email removed' : ''})`);
       res.json({ success: true, member: { code, name: m.name, email: clear ? null : m.email },
         linksStopped: links.rowCount, removedEmail: clear ? m.email : undefined });
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // Two profiles for one student. :code stays and keeps its code; body.from is
+  // folded into it. Everything that hangs off a member id moves across; an
+  // email, phone, face photo, journal or language the kept one lacks moves too.
+  // The folded one stays as an empty pointer (merged_into), so its code, email
+  // and Rezerv id lead to the kept one, and merge_log is what undo puts back.
+  // dryRun runs the same steps and rolls back. Two different emails or phones
+  // may be two people with one name: that needs sure:true.
+  const MERGE_FIELDS = ['email', 'phone', 'photo_id', 'photo_at', 'journal_id', 'lang'];
+  const last9 = s => { const d = String(s || '').replace(/\D/g, ''); return d.length >= 9 ? d.slice(-9) : ''; };
+  const mergeWho = m => ({ code: m.code, name: m.name, email: m.email, phone: m.phone, rezervId: m.rezerv_id,
+    source: m.source || 'aybkk', created: m.created_at });
+  app.post('/api/bkk/admin/members/:code/merge', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const b = req.body || {};
+    const from = String(b.from || '').trim().toUpperCase();
+    if (!from || from === req.params.code) return res.status(400).json({ error: 'from: the code of the other profile' });
+    const client = await pool.connect();
+    const stop = async (status, body) => { await client.query('ROLLBACK'); res.status(status).json(body); };
+    try {
+      await client.query('BEGIN');
+      const rows = (await client.query(`SELECT *, to_char(joined_on,'YYYY-MM-DD') AS joined FROM bkk_members
+        WHERE code = ANY($1::text[]) ORDER BY id FOR UPDATE`, [[req.params.code, from]])).rows;
+      const keep = rows.find(m => m.code === req.params.code), fold = rows.find(m => m.code === from);
+      if (!keep || !fold) return await stop(404, { error: 'member not found' });
+      if (keep.merged_into || fold.merged_into) return await stop(409, { error: 'already merged into another profile' });
+      const differs = [];
+      if (keep.email && fold.email && keep.email.toLowerCase() !== fold.email.toLowerCase()) differs.push('email');
+      if (last9(keep.phone) && last9(fold.phone) && last9(keep.phone) !== last9(fold.phone)) differs.push('phone');
+      const seen = { keep: mergeWho(keep), fold: mergeWho(fold), differs };
+      if (differs.length && b.sure !== true && b.dryRun !== true) {
+        return await stop(409, { error: `different ${differs.join(' and ')}: two people? Send sure:true if it is one student.`,
+          needSure: true, ...seen });
+      }
+      const K = keep.id, F = fold.id;
+      const ids = r => r.rows.map(x => x.id);
+      const log = { keep: K, rows: {}, seats: [], fields: {}, refolded: [] };
+
+      // One class booked on both: keep the seat that was checked in, else the
+      // one made here (not the Rezerv copy), else the kept profile's. The other
+      // is cancelled, and a class it took off a pass goes back.
+      const both = (await client.query(
+        `SELECT f.id AS f, k.id AS k, f.checked_in_at IS NOT NULL AS f_in, k.checked_in_at IS NOT NULL AS k_in,
+           f.source = 'rezerv' AS f_rz, k.source = 'rezerv' AS k_rz, f.pass_id AS f_pass, k.pass_id AS k_pass
+         FROM bkk_bookings f JOIN bkk_bookings k ON k.member_id=$1 AND k.slot_id=f.slot_id
+           AND k.class_date=f.class_date AND k.status='booked'
+         WHERE f.member_id=$2 AND f.status='booked'`, [K, F])).rows;
+      for (const s of both) {
+        const dropK = (s.f_in && !s.k_in) || (s.f_in === s.k_in && s.k_rz && !s.f_rz);
+        const drop = dropK ? s.k : s.f, kept = dropK ? s.f : s.k, pass = dropK ? s.k_pass : s.f_pass;
+        await client.query(`UPDATE bkk_bookings SET status='cancelled', cancelled_at=now(), cancel_reason=$2 WHERE id=$1`,
+          [drop, `merged: same class as booking ${kept}`]);
+        const back = pass ? (await client.query(`UPDATE bkk_passes SET credits_used = credits_used - 1
+          WHERE id=$1 AND kind <> 'unlimited' AND credits_used > 0 RETURNING id`, [pass])).rows.length > 0 : false;
+        log.seats.push({ id: drop, pass: back ? pass : null });
+      }
+      const moveAll = t => client.query(`UPDATE ${t} SET member_id=$1 WHERE member_id=$2 RETURNING id`, [K, F]).then(ids);
+      log.rows.bkk_orders = await moveAll('bkk_orders');
+      log.rows.bkk_passes = await moveAll('bkk_passes');
+      log.rows.bkk_bookings = await moveAll('bkk_bookings');
+      log.rows.bkk_notes = await moveAll('bkk_notes');
+      // One a day, one tag a photo: what the kept profile already has stays put.
+      log.rows.bkk_checks = await client.query(`UPDATE bkk_checks SET member_id=$1 WHERE member_id=$2
+        AND taken_on NOT IN (SELECT taken_on FROM bkk_checks WHERE member_id=$1) RETURNING id`, [K, F]).then(ids);
+      log.rows.bkk_photo_members = (await client.query(`UPDATE bkk_photo_members SET member_id=$1 WHERE member_id=$2
+        AND photo_id NOT IN (SELECT photo_id FROM bkk_photo_members WHERE member_id=$1) RETURNING photo_id`, [K, F]))
+        .rows.map(x => x.photo_id);
+      // Links already sent open the kept profile.
+      log.rows.bkk_login_tokens = (await client.query(`UPDATE bkk_login_tokens SET member_id=$1 WHERE member_id=$2
+        RETURNING token`, [K, F])).rows.map(x => x.token);
+
+      const take = MERGE_FIELDS.filter(k => fold[k] != null && keep[k] == null && (k !== 'photo_at' || keep.photo_id == null));
+      if (take.length) {
+        for (const k of take) log.fields[k] = fold[k];
+        // Off the folded one first: email and journal are unique.
+        await client.query(`UPDATE bkk_members SET ${take.map(k => `${k}=NULL`).join(', ')} WHERE id=$1`, [F]);
+        await client.query(`UPDATE bkk_members SET ${take.map((k, i) => `${k}=$${i + 2}`).join(', ')} WHERE id=$1`,
+          [K, ...take.map(k => fold[k])]);
+      }
+      // Joined: the earlier day is when this student first came.
+      if (fold.joined && (!keep.joined || fold.joined < keep.joined)) {
+        log.fields.joined_was = keep.joined;
+        await client.query('UPDATE bkk_members SET joined_on=$2::date WHERE id=$1', [K, fold.joined]);
+      }
+      log.refolded = await client.query('UPDATE bkk_members SET merged_into=$1 WHERE merged_into=$2 RETURNING id', [K, F]).then(ids);
+      await client.query('UPDATE bkk_members SET merged_into=$1, merged_at=now(), merge_log=$3 WHERE id=$2', [K, F, log]);
+
+      const out = { success: true, dryRun: b.dryRun === true, ...seen,
+        moved: Object.fromEntries(Object.entries(log.rows).map(([t, v]) => [t.replace('bkk_', ''), v.length])),
+        seatsCancelled: log.seats.length, fieldsTaken: Object.keys(log.fields).filter(k => k !== 'photo_at'),
+        left: (await client.query(`SELECT (SELECT count(*)::int FROM bkk_checks WHERE member_id=$1) AS checks,
+          (SELECT count(*)::int FROM bkk_photo_members WHERE member_id=$1) AS photos`, [F])).rows[0],
+        journalLeft: !!(fold.journal_id && keep.journal_id) };
+      await client.query(b.dryRun === true ? 'ROLLBACK' : 'COMMIT');
+      if (!out.dryRun) console.log(`✓ bkk: ${fold.code} merged into ${keep.code} (${JSON.stringify(out.moved)})`);
+      res.json(out);
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      res.status(500).json({ error: e.message });
+    } finally { client.release(); }
+  });
+
+  // Undo a merge: :code is the folded profile. Each row recorded in merge_log
+  // goes back, and so does each field, if the kept profile still holds it.
+  app.post('/api/bkk/admin/members/:code/unmerge', async (req, res) => {
+    if (adminOnly(req, res)) return;
+    const client = await pool.connect();
+    const stop = async (status, body) => { await client.query('ROLLBACK'); res.status(status).json(body); };
+    try {
+      await client.query('BEGIN');
+      const f = (await client.query(`SELECT *, to_char(joined_on,'YYYY-MM-DD') AS joined FROM bkk_members
+        WHERE code=$1 FOR UPDATE`, [req.params.code])).rows[0];
+      if (!f) return await stop(404, { error: 'member not found' });
+      const L = f.merge_log;
+      if (!f.merged_into || !L) return await stop(409, { error: 'this profile was not merged' });
+      if (L.keep !== f.merged_into) return await stop(409, { error: 'the kept profile was merged again since: undo that one first' });
+      const K = L.keep, F = f.id;
+      await client.query('SELECT 1 FROM bkk_members WHERE id=$1 FOR UPDATE', [K]);
+      for (const t of ['bkk_orders', 'bkk_passes', 'bkk_bookings', 'bkk_notes', 'bkk_checks']) {
+        await client.query(`UPDATE ${t} SET member_id=$1 WHERE member_id=$2 AND id = ANY($3::int[])`, [F, K, L.rows[t] || []]);
+      }
+      await client.query(`UPDATE bkk_photo_members SET member_id=$1 WHERE member_id=$2 AND photo_id = ANY($3::int[])`,
+        [F, K, L.rows.bkk_photo_members || []]);
+      await client.query(`UPDATE bkk_login_tokens SET member_id=$1 WHERE member_id=$2 AND token = ANY($3::text[])`,
+        [F, K, L.rows.bkk_login_tokens || []]);
+      for (const s of L.seats || []) {
+        const r = await client.query(`UPDATE bkk_bookings SET status='booked', cancelled_at=NULL, cancel_reason=NULL
+          WHERE id=$1 AND status='cancelled' AND cancel_reason LIKE 'merged:%' RETURNING id`, [s.id]);
+        if (r.rows.length && s.pass) await client.query('UPDATE bkk_passes SET credits_used = credits_used + 1 WHERE id=$1', [s.pass]);
+      }
+      const back = MERGE_FIELDS.filter(k => k in (L.fields || {}));
+      const keepNow = (await client.query('SELECT * FROM bkk_members WHERE id=$1', [K])).rows[0];
+      const still = back.filter(k => String(keepNow[k] ?? '') === String(L.fields[k] ?? '')
+        || (k === 'photo_at' && back.includes('photo_id') && keepNow.photo_id === L.fields.photo_id));
+      if (still.length) {
+        await client.query(`UPDATE bkk_members SET ${still.map(k => `${k}=NULL`).join(', ')} WHERE id=$1`, [K]);
+        await client.query(`UPDATE bkk_members SET ${still.map((k, i) => `${k}=$${i + 2}`).join(', ')} WHERE id=$1`,
+          [F, ...still.map(k => L.fields[k])]);
+      }
+      if ('joined_was' in (L.fields || {})) {
+        await client.query('UPDATE bkk_members SET joined_on=$2::date WHERE id=$1 AND joined_on=$3::date', [K, L.fields.joined_was, f.joined]);
+      }
+      await client.query('UPDATE bkk_members SET merged_into=$1 WHERE merged_into=$2 AND id = ANY($3::int[])', [F, K, L.refolded || []]);
+      await client.query('UPDATE bkk_members SET merged_into=NULL, merged_at=NULL, merge_log=NULL WHERE id=$1', [F]);
+      await client.query('COMMIT');
+      console.log(`✓ bkk: ${f.code} taken back out of member ${K}`);
+      res.json({ success: true, code: f.code, fieldsBack: still.filter(k => k !== 'photo_at'),
+        fieldsKept: back.filter(k => !still.includes(k) && k !== 'photo_at') });
     } catch (e) {
       await client.query('ROLLBACK').catch(() => {});
       res.status(500).json({ error: e.message });
@@ -1677,7 +1847,9 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   }
   app.get('/api/bkk/me/:code', async (req, res) => {
     try {
-      const m = (await q('SELECT * FROM bkk_members WHERE code = $1', [req.params.code])).rows[0];
+      // A folded profile's code opens the kept one, and movedTo tells the
+      // browser to keep that code from now on.
+      const m = await liveMember(pool, (await q('SELECT * FROM bkk_members WHERE code = $1', [req.params.code])).rows[0]);
       if (!m) return res.status(404).json({ error: 'not found' });
       const passes = (await q(
         `SELECT p.*, pr.name_en, pr.name_th, pr.code AS product_code FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
@@ -1718,6 +1890,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       ]);
       const c = count.rows[0];
       res.json({
+        ...(m.code !== req.params.code ? { movedTo: m.code } : {}),
         member: { code: m.code, name: m.name, email: m.email, journalId: await journalId(m) },
         photo: faceLinks(m.photo_id, m.code),
         history: { practised: c.practised, days: c.days, thisMonth: c.this_month, recent: recent.rows },
@@ -1883,7 +2056,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      const m = (await client.query('SELECT * FROM bkk_members WHERE code=$1', [mcode])).rows[0];
+      const m = await liveMember(client, (await client.query('SELECT * FROM bkk_members WHERE code=$1', [mcode])).rows[0]);
       if (!m) throw new Error('member not found');
       const staff = isAdmin(req);
       const { booking: b } = await takeSeat(client, { member: m, slotId, date, staff,
@@ -1969,7 +2142,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       const { memberCode: mcode, windowMin } = req.body || {};
       const win = Math.min(180, Math.max(15, parseInt(windowMin) || 90));
-      const m = (await q('SELECT * FROM bkk_members WHERE code=$1', [mcode])).rows[0];
+      const m = await liveMember(pool, (await q('SELECT * FROM bkk_members WHERE code=$1', [mcode])).rows[0]);
       if (!m) return res.status(404).json({ ok: false, reason: 'unknown member' });
       const b = (await q(
         `SELECT b.*, s.title FROM bkk_bookings b JOIN bkk_class_slots s ON s.id=b.slot_id
@@ -2122,7 +2295,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     let member;
     try {
       if (b.memberCode) {
-        member = (await q('SELECT * FROM bkk_members WHERE code=$1', [b.memberCode])).rows[0];
+        member = await liveMember(pool, (await q('SELECT * FROM bkk_members WHERE code=$1', [b.memberCode])).rows[0]);
         if (!member) return res.status(404).json({ error: 'member not found' });
       } else {
         if (!String(b.name || '').trim()) return res.status(400).json({ error: 'name is required for a new person' });
@@ -2250,7 +2423,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                count(*) FILTER (WHERE email IS NOT NULL)::int AS with_email,
                count(*) FILTER (WHERE EXISTS (SELECT 1 FROM bkk_passes p WHERE p.member_id = m.id AND p.status = 'active'
                  AND (p.valid_until IS NULL OR p.valid_until >= ${today})))::int AS active
-             FROM bkk_members m`),
+             FROM bkk_members m WHERE m.merged_into IS NULL`),
         one(`SELECT count(DISTINCT member_id) FILTER (WHERE ip = 'staff')::int AS sent,
                count(DISTINCT member_id) FILTER (WHERE used_at IS NOT NULL)::int AS opened,
                count(*) FILTER (WHERE ip = 'staff' AND (created_at AT TIME ZONE 'Asia/Bangkok')::date = ${today})::int AS sent_today
@@ -2460,16 +2633,21 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
            (SELECT to_char(min(p.valid_from),'YYYY-MM-DD') FROM bkk_passes p WHERE ${usable}
              HAVING bool_and(coalesce(p.valid_from > ${day}, false))) AS pass_starts
          FROM bkk_members m
-         WHERE lower(m.name) LIKE $1 OR lower(m.email) LIKE $1
+         WHERE m.merged_into IS NULL AND (lower(m.name) LIKE $1 OR lower(m.email) LIKE $1
             OR lower(m.code) LIKE $1 OR coalesce(m.phone,'') LIKE $1 OR lower(coalesce(m.rezerv_id,'')) LIKE $1
+            OR EXISTS (SELECT 1 FROM bkk_members f WHERE f.merged_into = m.id
+              AND (lower(f.code) LIKE $1 OR lower(coalesce(f.rezerv_id,'')) LIKE $1)))
          ORDER BY m.name LIMIT 25`, on ? [like, on] : [like]);
       const ids = r.rows.map(m => m.id);
-      const passes = ids.length ? (await q(
+      const [passes, folded] = ids.length ? await Promise.all([q(
         `SELECT p.*, pr.name_en, pr.name_th FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
-         WHERE p.member_id = ANY($1::int[]) ORDER BY p.id DESC`, [ids])).rows : [];
+         WHERE p.member_id = ANY($1::int[]) ORDER BY p.id DESC`, [ids]), q(
+        `SELECT merged_into, code, name, rezerv_id, to_char(merged_at AT TIME ZONE 'Asia/Bangkok','YYYY-MM-DD') AS merged_on
+         FROM bkk_members WHERE merged_into = ANY($1::int[]) ORDER BY merged_at`, [ids])]).then(rs => rs.map(x => x.rows)) : [[], []];
       res.json({
-        members: r.rows.map(m => ({
+        members: r.rows.map(({ merge_log, ...m }) => ({
           ...m, passes: passes.filter(p => p.member_id === m.id),
+          folded: folded.filter(f => f.merged_into === m.id).map(({ merged_into, ...f }) => f),
         })),
       });
     } catch (e) { res.status(500).json({ error: e.message }); }
@@ -2489,7 +2667,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (!pr) return res.status(404).json({ error: 'product not found' });
 
       let m = memberCode
-        ? (await q('SELECT * FROM bkk_members WHERE code=$1', [memberCode])).rows[0]
+        ? await liveMember(pool, (await q('SELECT * FROM bkk_members WHERE code=$1', [memberCode])).rows[0])
         : await findOrCreateMember({ name, email, phone });
       if (!m) return res.status(404).json({ error: 'member not found' });
 
@@ -2573,8 +2751,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
         if (!pr) { out.skipped.push(`${name}: package ${plan[1]} missing`); continue; }
 
         let m = email && email.includes('@')
-          ? (await q('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [email])).rows[0] : null;
-        if (!m) m = (await q('SELECT * FROM bkk_members WHERE lower(name)=lower($1) ORDER BY id LIMIT 1', [name])).rows[0];
+          ? await liveMember(pool, (await q('SELECT * FROM bkk_members WHERE lower(email)=$1 LIMIT 1', [email])).rows[0]) : null;
+        if (!m) m = (await q('SELECT * FROM bkk_members WHERE lower(name)=lower($1) AND merged_into IS NULL ORDER BY id LIMIT 1', [name])).rows[0];
         if (!m) {
           m = (await q(`INSERT INTO bkk_members (code,name,email,phone) VALUES ($1,$2,$3,$4) RETURNING *`,
             [memberCode(), name, email.includes('@') ? email : null, phone || null])).rows[0];
@@ -2653,6 +2831,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     badPlan: v => `package "${v}" is not one of ours (a workshop, or not understood): not kept as a pass`,
     passStatus: v => `pass status "${v}" not understood: read as no status`,
     neverStarted: v => `never started, and Rezerv says ${v}: nothing to keep`,
+    copyOfSale: (pkg, d) => `the same ${pkg} was sold on aybkk.net (starts ${d}) and Rezerv has no payment for this one: a copy, not kept`,
     passOff: v => `Rezerv says ${v}: kept as history, it cannot be used`,
     badFreeze: v => `pause date "${v}" not understood: left out`,
     freezeLater: (a, b) => `Rezerv has a pause from ${a}${b ? ' to ' + b : ''}: pause it here on that day`,
@@ -2694,14 +2873,16 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
   // one number), then the exact name. Someone found by phone or name who
   // carries a different Rezerv id is somebody else. One whose email, or for a
   // phone their name, says it is somebody else is a clash: never merged.
+  // A folded profile's Rezerv id and email lead to the kept one; phone and name
+  // look only at live profiles, or a merged pair would read as two people.
   async function importFind(db, f) {
     if (f.rezervId) {
-      const r = (await db.query('SELECT * FROM bkk_members WHERE rezerv_id=$1', [f.rezervId])).rows[0];
+      const r = await liveMember(db, (await db.query('SELECT * FROM bkk_members WHERE rezerv_id=$1', [f.rezervId])).rows[0]);
       if (r) return { member: r };
     }
     let clash = null;
     if (f.email) {
-      const r = (await db.query('SELECT * FROM bkk_members WHERE lower(email)=$1', [f.email])).rows[0];
+      const r = await liveMember(db, (await db.query('SELECT * FROM bkk_members WHERE lower(email)=$1', [f.email])).rows[0]);
       if (r && !(f.rezervId && r.rezerv_id && r.rezerv_id !== f.rezervId)) return { member: r };
       if (r) clash = { code: 'clashEmail', vals: [f.email, r.name, r.code, r.rezerv_id] };
     }
@@ -2714,7 +2895,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const digits = String(f.phone || '').replace(/\D/g, '');
     if (digits.length >= 9) {
       const rows = (await db.query(
-        `SELECT * FROM bkk_members WHERE right(regexp_replace(coalesce(phone,''), '\\D', '', 'g'), 9) = $1 ORDER BY id`,
+        `SELECT * FROM bkk_members WHERE right(regexp_replace(coalesce(phone,''), '\\D', '', 'g'), 9) = $1
+         AND merged_into IS NULL ORDER BY id`,
         [digits.slice(-9)])).rows.filter(m => !other(m));
       // A shared family phone, or a placeholder like 0000000000, is no proof alone.
       const fits = rows.filter(m => !emailOff(m) && !nameOff(m));
@@ -2724,7 +2906,8 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     }
     if (f.name) {
       const rows = (await db.query(
-        `SELECT * FROM bkk_members WHERE lower(regexp_replace(btrim(name), '\\s+', ' ', 'g')) = lower($1) ORDER BY id`,
+        `SELECT * FROM bkk_members WHERE lower(regexp_replace(btrim(name), '\\s+', ' ', 'g')) = lower($1)
+         AND merged_into IS NULL ORDER BY id`,
         [f.name.replace(/\s+/g, ' ').trim()])).rows.filter(m => !other(m));
       const fits = rows.filter(m => !emailOff(m));
       if (fits.length === 1) return { member: fits[0] };
@@ -2747,13 +2930,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       const o = (await db.query('SELECT code,name FROM bkk_members WHERE lower(email)=$1 AND id<>$2', [f.email, m.id])).rows[0];
       if (o) warn(why('emailTaken', f.email, o.name, o.code, m.name));
       else set.email = f.email;
-    } else if (f.email && String(m.email).toLowerCase() !== f.email) {
+    } else if (f.email && String(m.email).toLowerCase() !== f.email
+      && !(await db.query('SELECT 1 FROM bkk_members WHERE lower(email)=$1 AND merged_into=$2', [f.email, m.id])).rows.length) {
       warn(why('keepsEmail', m.name, m.email, f.email));
     }
     if (f.phone && !m.phone) set.phone = f.phone;
     if (f.joinedOn && !m.joined_on) set.joined_on = f.joinedOn;
-    if (f.rezervId && !m.rezerv_id) set.rezerv_id = f.rezervId;
-    else if (f.rezervId && m.rezerv_id !== f.rezervId) warn(why('keepsRezervId', m.name, m.rezerv_id, f.rezervId));
+    // A Rezerv id still on a profile folded into this one is already this student's.
+    if (f.rezervId && m.rezerv_id !== f.rezervId
+      && !(await db.query('SELECT 1 FROM bkk_members WHERE rezerv_id=$1 AND merged_into=$2', [f.rezervId, m.id])).rows.length) {
+      if (!m.rezerv_id) set.rezerv_id = f.rezervId;
+      else warn(why('keepsRezervId', m.name, m.rezerv_id, f.rezervId));
+    }
     const keys = Object.keys(set);
     if (!keys.length) return false;
     await db.query(`UPDATE bkk_members SET ${keys.map((k, i) => `${k}=$${i + 2}`).join(', ')} WHERE id=$1`,
@@ -2790,6 +2978,18 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     while (ctx.seen.has(`${h}#${n}`)) n++;
     ctx.seen.add(`${h}#${n}`);
     return `h:${h}${n > 1 ? '#' + n : ''}`;
+  }
+  // A hashed ref carries the id of the profile it was first stored on (parts[0]).
+  // After a merge the same Rezerv row comes back for the kept profile, so it is
+  // looked for under every profile folded into that one too.
+  async function familyRefs(db, kind, ref, parts, ctx) {
+    if (!ref.startsWith('h:')) return [ref];
+    const folds = ctx.folds || (ctx.folds = new Map());
+    if (!folds.has(parts[0])) folds.set(parts[0], (await db.query(
+      'SELECT id FROM bkk_members WHERE merged_into=$1', [parts[0]])).rows.map(r => r.id));
+    const nth = ref.slice(26);
+    return [ref, ...folds.get(parts[0]).map(id => 'h:' + crypto.createHash('sha1')
+      .update([kind, id, ...parts.slice(1)].join('|')).digest('hex').slice(0, 24) + nth)];
   }
 
   // Weekday + start time (active or not). Online and shala classes share
@@ -2885,14 +3085,15 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (who.skip) return who;
     const m = who.member;
     const own = importId(row.rezervId);
-    const ref = importRef('visits', row.rezervId, [m.id, when.date, time || '', className || (slot ? slot.title : '')], row, ctx);
+    const parts = [m.id, when.date, time || '', className || (slot ? slot.title : '')];
+    const ref = importRef('visits', row.rezervId, parts, row, ctx);
     const t = {
       status: status === 'attended' || status === 'booked' ? 'booked' : status === 'late' ? 'cancelled' : status,
       checkedIn: status === 'attended' ? (ci && ci.time ? startAtISO(ci.date, ci.time) : startAt) : null,
       reason: status === 'late' ? 'late cancel (Rezerv)' : status === 'cancelled' ? 'cancelled in Rezerv' : null,
     };
     const had = (await db.query(`SELECT *, to_char(class_date,'YYYY-MM-DD') AS d FROM bkk_bookings
-      WHERE source='rezerv' AND source_ref=$1`, [ref])).rows[0];
+      WHERE source='rezerv' AND source_ref = ANY($1::text[]) LIMIT 1`, [await familyRefs(db, 'visits', ref, parts, ctx)])).rows[0];
     if (had) {
       // One Rezerv id on two different visits: a class or order id mapped as the booking id.
       if (own && (had.member_id !== m.id || had.d !== when.date || new Date(had.start_at).getTime() !== Date.parse(startAt))) {
@@ -2993,9 +3194,11 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     const who = await importStudent(db, row, ctx, warn);
     if (who.skip) return who;
     const own = importId(row.rezervId);
-    const ref = importRef('payments', row.rezervId, [who.member.id, when.date, when.time || '', item || '', amt], row, ctx);
+    const parts = [who.member.id, when.date, when.time || '', item || '', amt];
+    const ref = importRef('payments', row.rezervId, parts, row, ctx);
     const had = (await db.query(`SELECT o.member_id, o.amount_thb, o.item_name, to_char(${PAY_DAY},'YYYY-MM-DD') AS d
-      FROM bkk_orders o WHERE o.source='rezerv' AND o.source_ref=$1`, [ref])).rows[0];
+      FROM bkk_orders o WHERE o.source='rezerv' AND o.source_ref = ANY($1::text[]) LIMIT 1`,
+      [await familyRefs(db, 'payments', ref, parts, ctx)])).rows[0];
     if (had) {
       // One Rezerv id on two different payments: an order or invoice with several lines.
       if (own && (had.member_id !== who.member.id || had.amount_thb !== amt || had.d !== when.date
@@ -3124,6 +3327,20 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     if (off && until.date >= ctx.today) warn(why('passOff', said));
     const from = start ? start.date
       : new Date(Date.parse(until.date + 'T00:00:00Z') - (pr.valid_days - 1) * 86400e3).toISOString().slice(0, 10);
+    // Staff copied aybkk.net sales into Rezerv as free passes (Nov 2026), and each
+    // copy came back here as a second pass. Same package sold here, starting
+    // within 5 days, and no Rezerv payment for it: that is the copy.
+    if (!off) {
+      const sold = (await db.query(`SELECT to_char(coalesce(p.valid_from, ${PAY_DAY}),'YYYY-MM-DD') AS d
+        FROM bkk_passes p JOIN bkk_orders o ON o.id=p.order_id
+        WHERE p.member_id=$1 AND p.product_id=$2 AND o.status='paid' AND o.source IS DISTINCT FROM 'rezerv'
+          AND abs(coalesce(p.valid_from, ${PAY_DAY}) - $3::date) <= 5
+          AND NOT EXISTS (SELECT 1 FROM bkk_orders r WHERE r.member_id=$1 AND r.product_id=$2 AND r.source='rezerv'
+            AND r.status='paid' AND r.amount_thb > 0
+            AND abs((coalesce(r.verified_at, r.created_at) AT TIME ZONE 'Asia/Bangkok')::date - $3::date) <= 5)
+        LIMIT 1`, [m.id, pr.id, from])).rows[0];
+      if (sold) return { skip: why('copyOfSale', pr.name_en, sold.d) };
+    }
     await db.query(`INSERT INTO bkk_passes
         (member_id,product_id,order_id,kind,credits_total,credits_used,daily_cap,valid_days,valid_from,valid_until,note,source,
          status,frozen_from,frozen_until,source_ref)
@@ -3491,7 +3708,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
                 AND (p.valid_until IS NULL OR p.valid_until >= (now() AT TIME ZONE 'Asia/Bangkok')::date)
                 AND (p.kind='unlimited' OR p.credits_used < p.credits_total)
               ORDER BY p.valid_from NULLS LAST, p.id LIMIT 1) ap ON true
-            WHERE ($3::int IS NULL OR m.id=$3) AND ($1::date IS NULL
+            WHERE m.merged_into IS NULL AND ($3::int IS NULL OR m.id=$3) AND ($1::date IS NULL
               OR EXISTS (SELECT 1 FROM bkk_bookings b WHERE b.member_id=m.id AND b.class_date BETWEEN $1::date AND $2::date)
               OR EXISTS (SELECT 1 FROM bkk_orders o WHERE o.member_id=m.id AND o.status IN ('paid','refund')
                 AND ${PAY_DAY} BETWEEN $1::date AND $2::date)
@@ -3789,7 +4006,7 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
       if (term.length < 2) return res.json({ members: [] });
       const r = await q(
         `SELECT code, name, email FROM bkk_members
-         WHERE lower(name) LIKE $1 OR lower(coalesce(email,'')) LIKE $1
+         WHERE merged_into IS NULL AND (lower(name) LIKE $1 OR lower(coalesce(email,'')) LIKE $1)
          ORDER BY name LIMIT 20`, [`%${term}%`]);
       res.json({ members: r.rows.map(m => ({ code: m.code, name: m.name, hint: emailHint(m.email) })) });
     } catch (e) { res.status(500).json({ error: e.message }); }

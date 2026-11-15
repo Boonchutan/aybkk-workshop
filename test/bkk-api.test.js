@@ -3898,6 +3898,192 @@ const ok = (name, cond, extra = '') => {
                       WHERE code IN ('unlim6m','unlim12m')`);
   }
 
+  console.log('\n— two profiles of one student: merge and undo (15 Nov 2026) —');
+  {
+    const { outbox } = require('../mailer');
+    const one = async (sql, args = []) => (await pool.query(sql, args)).rows[0] || {};
+    const imp = (kind, rows) => post(`/api/bkk/admin/import/${kind}`, { rows, dryRun: false }, ADMIN);
+    const merge = (keep, body, h = ADMIN) => post(`/api/bkk/admin/members/${keep}/merge`, body, h);
+    const unmerge = (code, h = ADMIN) => post(`/api/bkk/admin/members/${code}/unmerge`, {}, h);
+    const idOf = async code => (await one('SELECT id FROM bkk_members WHERE code=$1', [code])).id;
+    const countOn = async (code) => one(`SELECT
+        (SELECT count(*)::int FROM bkk_passes WHERE member_id=m.id) AS passes,
+        (SELECT count(*)::int FROM bkk_bookings WHERE member_id=m.id) AS bookings,
+        (SELECT count(*)::int FROM bkk_orders WHERE member_id=m.id) AS orders,
+        (SELECT count(*)::int FROM bkk_notes WHERE member_id=m.id) AS notes,
+        (SELECT count(*)::int FROM bkk_checks WHERE member_id=m.id) AS checks,
+        (SELECT count(*)::int FROM bkk_photo_members WHERE member_id=m.id) AS photos,
+        (SELECT count(*)::int FROM bkk_login_tokens WHERE member_id=m.id) AS links
+      FROM bkk_members m WHERE m.code=$1`, [code]);
+    const todayB = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+    const addD = (d, k) => new Date(Date.parse(d + 'T12:00:00Z') + k * 86400000).toISOString().slice(0, 10);
+
+    // The keeper came in from Rezerv; the double was made on aybkk.net with the
+    // student's email, face photo and journal, and a Rezerv id of its own.
+    const K = 'BMRGKEEP00001', F = 'BMRGFOLD00001';
+    await pool.query(`INSERT INTO bkk_members (code,name,phone,rezerv_id,joined_on,source)
+      VALUES ($1,'Mira Merge','081-555-0101','RZ-M1','2026-11-13','rezerv')`, [K]);
+    await pool.query(`INSERT INTO bkk_members (code,name,email,phone,rezerv_id,joined_on,lang,journal_id,photo_id,photo_at)
+      VALUES ($1,'Mira Merge','mira.merge@example.com','+66 81 555 0101','RZ-M2','2025-01-05','th','bkk-jfold','faces/fold1',now())`, [F]);
+    await post('/api/bkk/admin/passes', { memberCode: K, productCode: 'unlim1' }, ADMIN);
+    await post('/api/bkk/admin/passes', { memberCode: F, productCode: 'pack8' }, ADMIN);
+    const cls = (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes
+      .find(c => !c.isOnline && c.kind !== 'test' && c.seatsLeft > 2 && c.date > todayB);
+    const bk = await post('/api/bkk/bookings', { memberCode: K, slotId: cls.slotId, date: cls.date });
+    const bf = await post('/api/bkk/bookings', { memberCode: F, slotId: cls.slotId, date: cls.date });
+    ok('setup: both profiles booked the same class', bk.status === 200 && bf.status === 200, JSON.stringify([bk.body, bf.body]));
+    const fid = await idOf(F), kid = await idOf(K);
+    await pool.query(`INSERT INTO bkk_notes (member_id, body) VALUES ($1, 'note on the double')`, [fid]);
+    await pool.query(`INSERT INTO bkk_checks (member_id, taken_on, resting_hr) VALUES ($1, $3, 60), ($1, $4, 61), ($2, $3, 62)`,
+      [fid, kid, todayB, addD(todayB, -42)]);
+    const ph = await one(`INSERT INTO bkk_photos (public_id, class_date) VALUES ('merge/p1', $1) RETURNING id`, [todayB]);
+    await pool.query(`INSERT INTO bkk_photo_members (photo_id, member_id) VALUES ($1, $2)`, [ph.id, fid]);
+    await post(`/api/bkk/admin/members/${F}/signin-link`, {}, ADMIN);
+    await pool.query(`INSERT INTO bkk_orders (refno, member_id, base_thb, amount_thb, status, item_name)
+      VALUES (990000000001, $1, 100, 100, 'paid', 'merge test')`, [fid]);
+    // A Rezerv visit with no booking id is keyed by a hash that carries the profile it landed on.
+    const visit = [{ memberRezervId: 'RZ-M2', name: 'Mira Merge', date: addD(todayB, -3), time: '06:00', className: 'Old Rezerv class', status: 'Attended' }];
+    const v1 = await imp('visits', visit);
+    ok('setup: a Rezerv visit lands on the double', v1.body.added === 1, JSON.stringify(v1.body));
+    const before = await countOn(F);
+
+    ok('merging needs the staff key', (await merge(K, { from: F }, {})).status === 401);
+    ok('an unknown profile is a 404', (await merge(K, { from: 'BNOBODY0000000' })).status === 404);
+    ok('a profile cannot be merged into itself', (await merge(K, { from: K })).status === 400);
+    const dry = await merge(K, { from: F.toLowerCase(), dryRun: true });
+    ok('a dry run says what would move', dry.status === 200 && dry.body.dryRun === true && dry.body.moved.passes === 1
+       && dry.body.moved.bookings === 2 && dry.body.moved.orders === 1 && dry.body.moved.notes === 1
+       && dry.body.moved.photo_members === 1 && dry.body.moved.login_tokens === 1 && dry.body.moved.checks === 1
+       && dry.body.seatsCancelled === 1 && dry.body.differs.length === 0, JSON.stringify(dry.body));
+    ok('...and changes nothing', JSON.stringify(await countOn(F)) === JSON.stringify(before)
+       && !(await one('SELECT merged_into FROM bkk_members WHERE code=$1', [F])).merged_into, JSON.stringify(await countOn(F)));
+
+    const done = await merge(K, { from: F });
+    ok('the merge moves passes, classes, payments, notes, photos and links', done.status === 200 && done.body.dryRun === false
+       && JSON.stringify(await countOn(F)) === JSON.stringify({ passes: 0, bookings: 0, orders: 0, notes: 0, checks: 1, photos: 0, links: 0 }),
+       JSON.stringify([done.body, await countOn(F)]));
+    const k1 = await one(`SELECT *, to_char(joined_on,'YYYY-MM-DD') AS joined FROM bkk_members WHERE code=$1`, [K]);
+    const f1 = await one('SELECT * FROM bkk_members WHERE code=$1', [F]);
+    ok('the kept profile keeps its code, phone and Rezerv id, and takes the email, face, journal, language and first day',
+       k1.code === K && k1.phone === '081-555-0101' && k1.rezerv_id === 'RZ-M1' && k1.email === 'mira.merge@example.com'
+       && k1.photo_id === 'faces/fold1' && k1.journal_id === 'bkk-jfold' && k1.lang === 'th' && k1.joined === '2025-01-05', JSON.stringify(k1));
+    ok('the double stays, empty, pointing at the kept one, with its Rezerv id', f1.merged_into === kid && f1.email === null
+       && f1.photo_id === null && f1.journal_id === null && f1.rezerv_id === 'RZ-M2' && f1.merge_log, JSON.stringify(f1));
+    const seats = (await pool.query(`SELECT b.status, b.cancel_reason, b.member_id FROM bkk_bookings b
+      WHERE b.slot_id=$1 AND b.class_date=$2 AND b.member_id=$3 ORDER BY b.id`, [cls.slotId, cls.date, kid])).rows;
+    const pack = await one(`SELECT p.credits_used FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+      WHERE p.member_id=$1 AND pr.code='pack8'`, [kid]);
+    ok('a class booked on both keeps one seat; the other is cancelled and its class goes back on the pass',
+       seats.length === 2 && seats.filter(s => s.status === 'booked').length === 1
+       && /^merged: same class as booking \d+$/.test(seats.find(s => s.status === 'cancelled').cancel_reason) && pack.credits_used === 0,
+       JSON.stringify([seats, pack]));
+    ok('a check on a day the kept profile already has stays behind', done.body.left.checks === 1, JSON.stringify(done.body.left));
+
+    const meOld = await J('/api/bkk/me/' + F);
+    ok("the double's code opens the kept profile and tells the phone the new code", meOld.status === 200
+       && meOld.body.movedTo === K && meOld.body.member.code === K && meOld.body.passes.length === 2, JSON.stringify(meOld.body).slice(0, 300));
+    ok("...the kept code itself says nothing about moving", (await J('/api/bkk/me/' + K)).body.movedTo === undefined);
+    const otherCls = (await J('/api/bkk/schedule?days=14', { headers: ADMIN })).body.classes
+      .find(c => !c.isOnline && c.kind !== 'test' && c.seatsLeft > 2 && c.date > todayB && !(c.slotId === cls.slotId && c.date === cls.date));
+    const viaOld = await post('/api/bkk/bookings', { memberCode: F, slotId: otherCls.slotId, date: otherCls.date });
+    ok("a booking made with the double's code lands on the kept profile", viaOld.status === 200
+       && (await one('SELECT member_id FROM bkk_bookings WHERE id=$1', [viaOld.body.booking.id])).member_id === kid, JSON.stringify(viaOld.body));
+
+    const found = (await J('/api/bkk/admin/members?q=mira merge', { headers: ADMIN })).body.members;
+    ok('staff search shows one Mira, with the merged code and an undo', found.length === 1 && found[0].code === K
+       && found[0].folded.length === 1 && found[0].folded[0].code === F && found[0].merge_log === undefined, JSON.stringify(found));
+    ok("...and the double's code finds the kept one", ((await J('/api/bkk/admin/members?q=' + F, { headers: ADMIN })).body.members || [])
+      .map(m => m.code).join() === K);
+    ok('merging again is refused', (await merge(K, { from: F })).status === 409);
+
+    // Rezerv again, after the merge: nothing comes back twice.
+    const m0 = (await one('SELECT count(*)::int AS n FROM bkk_members')).n;
+    const again = await imp('members', [{ rezervId: 'RZ-M2', name: 'Mira Merge' }, { rezervId: 'RZ-M1', name: 'Mira Merge' }]);
+    ok("importing the double's Rezerv id finds the kept profile: no new student, no warning", again.body.added === 0
+       && again.body.matched === 2 && !again.body.warnings.length && (await one('SELECT count(*)::int AS n FROM bkk_members')).n === m0,
+       JSON.stringify(again.body));
+    const v2 = await imp('visits', visit);
+    ok('a Rezerv visit with no booking id that came over before the merge is not added again', v2.body.added === 0
+       && v2.body.matched === 1, JSON.stringify(v2.body));
+    const byName = await imp('visits', [{ name: 'Mira Merge', date: addD(todayB, -4), time: '06:00', className: 'Old Rezerv class', status: 'Attended' }]);
+    ok('a visit found by name alone goes to the kept profile, not "two students with that name"', byName.body.added === 1
+       && (await one(`SELECT member_id FROM bkk_bookings WHERE class_date=$1 AND class_title='Old Rezerv class'`, [addD(todayB, -4)])).member_id === kid,
+       JSON.stringify(byName.body));
+
+    // Two different emails: maybe two people with one name.
+    const K2 = 'BMRGKEEP00002', F2 = 'BMRGFOLD00002';
+    await pool.query(`INSERT INTO bkk_members (code,name,email,rezerv_id) VALUES ($1,'Lek Same','lek.one@example.com','RZ-M3'),
+      ($2,'Lek Same','lek.two@example.com','RZ-M4')`, [K2, F2]);
+    const unsure = await merge(K2, { from: F2 });
+    ok('two different emails need sure:true', unsure.status === 409 && unsure.body.needSure === true
+       && unsure.body.differs.join() === 'email' && !(await one('SELECT merged_into FROM bkk_members WHERE code=$1', [F2])).merged_into,
+       JSON.stringify(unsure.body));
+    ok('...a dry run still shows the plan', (await merge(K2, { from: F2, dryRun: true })).body.differs.join() === 'email');
+    ok('...and sure:true merges them', (await merge(K2, { from: F2, sure: true })).status === 200);
+    ok('the kept profile keeps its own email; the other stays on the double',
+       (await one('SELECT email FROM bkk_members WHERE code=$1', [K2])).email === 'lek.one@example.com'
+       && (await one('SELECT email FROM bkk_members WHERE code=$1', [F2])).email === 'lek.two@example.com');
+    const lekRz = await imp('members', [{ rezervId: 'RZ-M4', name: 'Lek Same', email: 'lek.two@example.com' }]);
+    ok("...and Rezerv's row for the double matches the kept profile with no note about a second email or id",
+       lekRz.body.matched === 1 && !lekRz.body.warnings.length, JSON.stringify(lekRz.body));
+    await pool.query(`UPDATE bkk_login_tokens SET created_at = created_at - interval '2 hours' WHERE created_at > now() - interval '1 hour'`);
+    const sent0 = outbox.filter(m => m.tag === 'signin').length;
+    await post('/api/bkk/login/request', { email: 'lek.two@example.com' });
+    const tok = await one(`SELECT member_id FROM bkk_login_tokens WHERE email='lek.two@example.com' ORDER BY created_at DESC LIMIT 1`);
+    const mail = outbox.filter(m => m.tag === 'signin').slice(sent0);
+    ok("signing in with the double's email opens the kept profile, by mail to that address", tok.member_id === await idOf(K2)
+       && mail.length === 1 && mail[0].to === 'lek.two@example.com', JSON.stringify([tok, mail.map(m => m.to)]));
+    const K3 = 'BMRGKEEP00003';
+    await pool.query(`INSERT INTO bkk_members (code,name) VALUES ($1,'Lek Same')`, [K3]);
+    await merge(K3, { from: K2 });
+    ok('a profile merged twice: the earlier double now points at the last one',
+       (await one('SELECT merged_into FROM bkk_members WHERE code=$1', [F2])).merged_into === await idOf(K3)
+       && (await J('/api/bkk/me/' + F2)).body.movedTo === K3);
+    ok('...undo of the first merge waits for the later one', (await unmerge(F2)).status === 409);
+    ok('...undo the later one, then the first', (await unmerge(K2)).status === 200 && (await unmerge(F2)).status === 200
+       && (await one('SELECT merged_into FROM bkk_members WHERE code=$1', [F2])).merged_into === null);
+
+    // Undo puts every row and field back.
+    ok('undo needs the staff key', (await unmerge(F, {})).status === 401);
+    ok('a profile that was never merged has nothing to undo', (await unmerge(K)).status === 409);
+    const back = await unmerge(F);
+    const k2 = await one(`SELECT *, to_char(joined_on,'YYYY-MM-DD') AS joined FROM bkk_members WHERE code=$1`, [K]);
+    const f2 = await one('SELECT * FROM bkk_members WHERE code=$1', [F]);
+    ok('undo puts back every row that moved', back.status === 200
+       && JSON.stringify(await countOn(F)) === JSON.stringify(before), JSON.stringify([back.body, await countOn(F), before]));
+    ok('...and every field', f2.merged_into === null && f2.merge_log === null && f2.email === 'mira.merge@example.com'
+       && f2.photo_id === 'faces/fold1' && f2.journal_id === 'bkk-jfold' && f2.lang === 'th'
+       && k2.email === null && k2.photo_id === null && k2.journal_id === null && k2.lang === null && k2.joined === '2026-11-13',
+       JSON.stringify([f2, k2]));
+    const seats2 = (await pool.query(`SELECT status FROM bkk_bookings WHERE slot_id=$1 AND class_date=$2 AND member_id = ANY($3::int[])`,
+      [cls.slotId, cls.date, [kid, fid]])).rows;
+    const pack2 = await one(`SELECT p.credits_used FROM bkk_passes p JOIN bkk_products pr ON pr.id=p.product_id
+      WHERE p.member_id=$1 AND pr.code='pack8'`, [fid]);
+    ok('...and the cancelled seat is booked again, its class used again', seats2.length === 2
+       && seats2.every(s => s.status === 'booked') && pack2.credits_used === 1, JSON.stringify([seats2, pack2]));
+    ok("...and the double's code opens its own profile again", (await J('/api/bkk/me/' + F)).body.movedTo === undefined);
+
+    // A Rezerv pass staff copied by hand from an aybkk.net sale.
+    console.log('\n— a Rezerv copy of an aybkk.net sale is not a second pass —');
+    const sale = await post('/api/bkk/admin/sales', { productCode: 'unlim1', name: 'Copy Sale', email: 'copy.sale@example.com', method: 'cash' }, ADMIN);
+    ok('setup: a 1-month pass sold at the desk', sale.status === 200, JSON.stringify(sale.body));
+    const copy = await imp('passes', [{ name: 'Copy Sale', email: 'copy.sale@example.com', plan: '1 month unlimited',
+      start: addD(todayB, 2), until: addD(todayB, 31), rezervId: 'RZP-COPY1' }]);
+    const passesOf = async email => (await one(`SELECT count(*)::int AS n FROM bkk_passes p JOIN bkk_members m ON m.id=p.member_id
+      WHERE m.email=$1`, [email])).n;
+    ok('a Rezerv pass for the same package, starting within 5 days, with no Rezerv payment: skipped as a copy',
+       copy.body.added === 0 && copy.body.skipped.length === 1 && copy.body.skipped[0].code === 'copyOfSale'
+       && (await passesOf('copy.sale@example.com')) === 1, JSON.stringify(copy.body));
+    const later = await imp('passes', [{ name: 'Copy Sale', email: 'copy.sale@example.com', plan: '1 month unlimited',
+      start: addD(todayB, 40), until: addD(todayB, 69), rezervId: 'RZP-COPY2' }]);
+    ok('...a month later it is a renewal, and comes over', later.body.added === 1, JSON.stringify(later.body));
+    await imp('payments', [{ name: 'Copy Sale', email: 'copy.sale@example.com', date: addD(todayB, 1), amount: '10,272',
+      item: '1 Month Unlimited', status: 'Paid', rezervId: 'RZPAY-COPY3' }]);
+    const paid = await imp('passes', [{ name: 'Copy Sale', email: 'copy.sale@example.com', plan: '1 month unlimited',
+      start: addD(todayB, 3), until: addD(todayB, 32), rezervId: 'RZP-COPY3' }]);
+    ok('...and one Rezerv was paid for is a real second pass', paid.body.added === 1, JSON.stringify(paid.body));
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);

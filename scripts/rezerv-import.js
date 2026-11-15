@@ -446,6 +446,8 @@ const WHO_CODES = { excelId: 'ask', noWho: 'ask', notFound: 'ask', sharePhone: '
 const SKIP_CODES = {
   members: { excelId: 'ask', noName: 'ask', sharePhone: 'ask', sameName: 'ask', duplicate: 'ask' },
   passes: { ...WHO_CODES, neverStarted: 'ok',
+    // A Rezerv copy, made by hand at 0 THB, of a pass sold on aybkk.net: designed to stay out.
+    copyOfSale: 'ok',
     // "A workshop, or not understood": only a person can tell which.
     badPlan: 'ask', badUntil: 'ask', badStart: 'ask', startsAfterEnd: 'ask', noPackage: 'ask', badLeft: 'ask',
     idReused: 'ask', duplicate: 'ask' },

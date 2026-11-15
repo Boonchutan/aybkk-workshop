@@ -913,9 +913,9 @@ const MYSORE = 'Mysore 5.30am (1st batch)';
     ok('...each on the side the server uses it on: a note it gives is in the notes table, a skip in the skips',
        asNote.length >= 16 && asSkip.length >= 20 && clash.length === 3 && [...asNote, ...clash].every(c => has(WARN_CODES, c))
        && [...asSkip, ...clash].every(c => known.has(c)), JSON.stringify([asNote.filter(c => !has(WARN_CODES, c)), asSkip.filter(c => !known.has(c))]));
-    ok('...the only skips run-all lets through: a pack never started, a payment that brought no money, a waiting-list place',
+    ok('...the only skips run-all lets through: a pack never started, a Rezerv copy of an aybkk.net sale, a payment that brought no money, a waiting-list place',
        KINDS.map(k => `${k}:${Object.keys(SKIP_CODES[k]).filter(c => SKIP_CODES[k][c] === 'ok')}`).join(' ')
-       === 'members: passes:neverStarted payments:notMoney visits:waitlist');
+       === 'members: passes:neverStarted,copyOfSale payments:notMoney visits:waitlist');
     ok('...the notes run-all stops on: a status, a VAT or a pause date the server could not read, and more classes left than the pack holds',
        Object.keys(WARN_CODES).filter(c => WARN_CODES[c] === 'ask').sort().join() === 'badFreeze,badVat,leftOver,passStatus');
     ok('a batch is given two minutes, and rows go to aybkk.net or my.aybkk.com only',
