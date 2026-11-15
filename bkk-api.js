@@ -1448,12 +1448,13 @@ function mountBkk(app, opts = {}) {
   // Boonchu's private Telegram chat. Never throws. The last result is kept
   // ('telegram_last') so the admin page can say whether the pings get through.
   const telegramSet = () => !!(process.env.TELEGRAM_BOT_TOKEN && process.env.BOONCHU_CHAT_ID);
+  const tgBase = () => (process.env.TELEGRAM_API_BASE || 'https://api.telegram.org').replace(/\/+$/, '');
   async function notify(text) {
     const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.BOONCHU_CHAT_ID;
     if (!token || !chat) return { ok: false, error: 'not set' };
     let out;
     try {
-      const base = (process.env.TELEGRAM_API_BASE || 'https://api.telegram.org').replace(/\/+$/, '');
+      const base = tgBase();
       // No link previews: a link in a name or a status never shows up as a card.
       const r = await fetch(`${base}/bot${token}/sendMessage`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -3441,6 +3442,34 @@ setTimeout(function(){location.replace('/book?me=1')},400)</script>`));
     try {
       res.json({ surchargePct: await surcharge(), teamBrief: await teamSettings(),
         payWatch: await payWatchSettings(), telegram: await telegramStatus(), payment: { mode: paymentStatus().mode } });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
+
+  // A test ping on demand, for the day pings stop arriving: which bot the
+  // server's token belongs to (its @name and id, both public) and Telegram's own
+  // answer, so a wrong or replaced token, a missing chat or a bot never started
+  // shows on the page. Never the token or the chat id.
+  app.post('/api/bkk/admin/telegram/test', async (req, res) => {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'bad key' });
+    res.set('Cache-Control', 'private, no-store');
+    try {
+      const token = process.env.TELEGRAM_BOT_TOKEN;
+      const out = { tokenSet: !!token, chatSet: !!process.env.BOONCHU_CHAT_ID, bot: null, botError: null, sent: false, error: null };
+      if (token) {
+        try {
+          const r = await fetch(`${tgBase()}/bot${token}/getMe`, { signal: AbortSignal.timeout(10000) });
+          const j = await r.json().catch(() => ({}));
+          if (r.ok && j.ok && j.result) out.bot = { username: j.result.username ? String(j.result.username).slice(0, 64) : null,
+            id: Number.isFinite(Number(j.result.id)) ? Number(j.result.id) : null };
+          else out.botError = `http ${r.status}${j.description ? ': ' + String(j.description).split(token).join('[token]').slice(0, 120) : ''}`;
+        } catch (e) { out.botError = e.name === 'TimeoutError' ? 'timeout' : (e.cause && e.cause.code) || 'network error'; }
+      }
+      if (out.tokenSet && out.chatSet && !out.botError) {
+        const n = await notify('✓ AYBKK test ping from the admin page. If you see this, payment pings reach you.');
+        out.sent = !!n.ok; out.error = n.ok ? null : n.error;
+      }
+      out.telegram = await telegramStatus();
+      res.json(out);
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
 

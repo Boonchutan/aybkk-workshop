@@ -951,6 +951,13 @@
     pwBusy: 'A check is already running. Try again in a minute.',
     pwDone: (n, m) => `Asked ${n}, turned on ${m}`,
     pwStopped: 'PaySolutions did not answer, or was slow, so the rest wait for the next check.',
+    tgTest: 'Send test ping', tgTestWait: 'Sending…',
+    tgtNoToken: 'The server has no bot token (TELEGRAM_BOT_TOKEN on Railway).',
+    tgtBadToken: 'Telegram does not accept the bot token on the server: it is wrong or was replaced.',
+    tgtBot: (u, id) => `The server sends as bot ${u} (id ${id}).`,
+    tgtNoChat: 'No chat to send to (BOONCHU_CHAT_ID on Railway).',
+    tgtSent: 'Test ping sent. Check Telegram.',
+    tgtFail: 'Telegram did not deliver it. If it says "chat not found" or "blocked": open this bot in Telegram, press Start, and try again.',
   });
   Object.assign(STR.th, {
     pwTitle: 'เฝ้าดูการจ่ายเงิน',
@@ -964,6 +971,13 @@
     pwBusy: 'กำลังตรวจอยู่แล้ว ลองใหม่ในอีกสักครู่',
     pwDone: (n, m) => `ถามแล้ว ${n} รายการ เปิดใช้แล้ว ${m}`,
     pwStopped: 'PaySolutions ไม่ตอบหรือตอบช้า รายการที่เหลือจะตรวจในรอบถัดไป',
+    tgTest: 'ส่งข้อความทดสอบ', tgTestWait: 'กำลังส่ง…',
+    tgtNoToken: 'เซิร์ฟเวอร์ไม่มี bot token (TELEGRAM_BOT_TOKEN ใน Railway)',
+    tgtBadToken: 'Telegram ไม่รับ bot token ที่อยู่บนเซิร์ฟเวอร์: token ผิด หรือถูกเปลี่ยนไปแล้ว',
+    tgtBot: (u, id) => `เซิร์ฟเวอร์ส่งในนามบอท ${u} (id ${id})`,
+    tgtNoChat: 'ยังไม่มีแชทที่จะส่งไป (BOONCHU_CHAT_ID ใน Railway)',
+    tgtSent: 'ส่งข้อความทดสอบแล้ว ดูใน Telegram ได้เลย',
+    tgtFail: 'Telegram ส่งไม่ถึง ถ้าขึ้นว่า "chat not found" หรือ "blocked": เปิดบอทนี้ใน Telegram กด Start แล้วลองอีกครั้ง',
   });
   const T =(k, ...a) => { const v = STR[LANG][k] ?? STR.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
   const W = w => STR[LANG].words[w] || w;
@@ -2924,6 +2938,8 @@
         <span class="muted">${T('pwBkk')}</span></div>
       <p><button class="btn" onclick="savePw()">${T('save')}</button> <span class="muted" id="pwMsg" role="status"></span></p>
       ${tgHtml(d.telegram)}
+      <p><button class="btn gray" id="tgTestBtn" onclick="testPing()">${T('tgTest')}</button></p>
+      <div id="tgTestOut" role="status"></div>
       <p style="margin-top:12px"><button class="btn gray" id="pwRun" onclick="runSweep()">${T('pwRun')}</button></p>
       <div id="pwOut" role="status"></div></div>`;
   };
@@ -2934,6 +2950,33 @@
     const j = await shout(await api('/api/bkk/admin/settings', { method: 'POST', body: JSON.stringify(body) }));
     if (!j || current !== 'settings' || SUB) return;
     if ($('#pwMsg')) $('#pwMsg').textContent = T('pwSaved');
+    if (j.telegram && $('#tgLine')) $('#tgLine').outerHTML = tgHtml(j.telegram);
+  };
+  // Which bot the server sends as, and Telegram's own answer (15 Nov 2026).
+  let TG_TEST = false;
+  window.testPing = async () => {
+    if (TG_TEST) return;
+    TG_TEST = true;
+    const btn = on => { const b = $('#tgTestBtn'); if (b) { b.disabled = !on; b.textContent = T(on ? 'tgTest' : 'tgTestWait'); } };
+    btn(false);
+    let r = null, j = {};
+    try {
+      r = await api('/api/bkk/admin/telegram/test', { method: 'POST' }).catch(() => null);
+      j = r ? await r.json().catch(() => ({})) : {};
+    } finally { TG_TEST = false; }
+    const out = $('#tgTestOut');
+    if (current !== 'settings' || SUB || !out) return;
+    btn(true);
+    const say = (text, cls = 'flash warn', raw = '') => `<p class="${cls}">${esc(text)}${raw ? `<small>${esc(raw)}</small>` : ''}</p>`;
+    if (!r || !r.ok) { out.innerHTML = say(T('chkErr'), 'flash warn', j.error || (r ? `http ${r.status}` : '')); return; }
+    const lines = [];
+    if (!j.tokenSet) lines.push(say(T('tgtNoToken')));
+    else if (j.botError) lines.push(say(T('tgtBadToken'), 'flash warn', j.botError));
+    else if (j.bot) lines.push(say(T('tgtBot', j.bot.username ? '@' + j.bot.username : '?', j.bot.id ?? '?'), 'muted'));
+    if (j.tokenSet && !j.chatSet) lines.push(say(T('tgtNoChat')));
+    if (j.sent) lines.push(say(T('tgtSent'), 'flash'));
+    else if (j.error) lines.push(say(T('tgtFail'), 'flash warn', j.error));
+    out.innerHTML = lines.join('');
     if (j.telegram && $('#tgLine')) $('#tgLine').outerHTML = tgHtml(j.telegram);
   };
   let PW_RUN = false;

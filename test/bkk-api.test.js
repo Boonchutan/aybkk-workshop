@@ -5991,6 +5991,61 @@ const ok = (name, cond, extra = '') => {
     stub.close();
   }
 
+  console.log('\n-- Send test ping: which bot the server sends as, and what Telegram says (15 Nov 2026) --');
+  {
+    const http = require('http');
+    const seen = []; let me = { code: 200, body: { ok: true, result: { id: 7000001, is_bot: true, username: 'aybkk_test_bot' } } };
+    let send = { code: 200, body: { ok: true, result: {} } };
+    const tgs = http.createServer((req, res) => {
+      let body = ''; req.on('data', c => { body += c; });
+      req.on('end', () => {
+        seen.push({ url: req.url, body });
+        const a = /\/getMe$/.test(req.url) ? me : send;
+        res.statusCode = a.code; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(a.body));
+      });
+    });
+    await new Promise(r => tgs.listen(0, '127.0.0.1', r));
+    const keep = { TELEGRAM_API_BASE: process.env.TELEGRAM_API_BASE, TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN, BOONCHU_CHAT_ID: process.env.BOONCHU_CHAT_ID };
+    process.env.TELEGRAM_API_BASE = `http://127.0.0.1:${tgs.address().port}`;
+    delete process.env.TELEGRAM_BOT_TOKEN; delete process.env.BOONCHU_CHAT_ID;
+    const test = () => post('/api/bkk/admin/telegram/test', {}, ADMIN);
+
+    const noKey = await post('/api/bkk/admin/telegram/test', {});
+    const none = await test();
+    ok('the test ping needs the staff key; with no token it says so and calls nobody', noKey.status === 401 && none.status === 200
+       && none.body.tokenSet === false && none.body.sent === false && seen.length === 0, JSON.stringify(none.body));
+
+    process.env.TELEGRAM_BOT_TOKEN = '7000001:tg-secret-test'; process.env.BOONCHU_CHAT_ID = '5151';
+    const good = await test();
+    const sent = seen.find(x => /\/sendMessage$/.test(x.url));
+    ok('token and chat right: it names the bot and its id, sends one test ping to the chat, and the health line turns ok',
+       good.status === 200 && good.body.bot && good.body.bot.username === 'aybkk_test_bot' && good.body.bot.id === 7000001
+       && good.body.sent === true && !!sent && JSON.parse(sent.body).chat_id === '5151' && /AYBKK test ping/.test(JSON.parse(sent.body).text)
+       && good.body.telegram.last.ok === true, JSON.stringify([good.body, seen]));
+    ok('...and the answer never holds the token or the chat id', !/tg-secret-test|5151/.test(JSON.stringify(good.body)), JSON.stringify(good.body));
+
+    seen.length = 0;
+    me = { code: 401, body: { ok: false, error_code: 401, description: 'Unauthorized' } };
+    const bad = await test();
+    ok('a wrong or replaced token: Telegram\'s "Unauthorized" shows, and no ping is tried', bad.status === 200
+       && bad.body.botError === 'http 401: Unauthorized' && bad.body.sent === false && !seen.some(x => /sendMessage/.test(x.url)),
+       JSON.stringify([bad.body, seen]));
+
+    me = { code: 200, body: { ok: true, result: { id: 7000001, is_bot: true, username: 'aybkk_test_bot' } } };
+    send = { code: 400, body: { ok: false, error_code: 400, description: 'Bad Request: chat not found' } };
+    const chat = await test();
+    ok('a bot never started or a wrong chat: the bot is named, and Telegram\'s "chat not found" shows on the page and in the health line',
+       chat.body.bot.username === 'aybkk_test_bot' && chat.body.sent === false && /chat not found/.test(chat.body.error || '')
+       && chat.body.telegram.last.ok === false && /chat not found/.test(chat.body.telegram.last.error || ''), JSON.stringify(chat.body));
+
+    delete process.env.BOONCHU_CHAT_ID;
+    const noChat = await test();
+    ok('no chat set: it says so and sends nothing', noChat.body.tokenSet === true && noChat.body.chatSet === false && noChat.body.sent === false
+       && !noChat.body.error, JSON.stringify(noChat.body));
+    for (const [k, v] of Object.entries(keep)) { if (v == null) delete process.env[k]; else process.env[k] = v; }
+    tgs.close();
+  }
+
   console.log(`\n${PASS} passed, ${FAIL} failed`);
   srv.close(); await pool.end();
   process.exit(FAIL ? 1 : 0);
