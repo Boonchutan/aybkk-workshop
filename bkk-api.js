@@ -1022,13 +1022,19 @@ function mountBkk(app, opts = {}) {
   // ── payment confirmation ──────────────────────────────────────────────────
   // The postback carries NO trustworthy signature (PaySolutions' own plugins
   // accept it blindly). It only tells us *which* order to go and verify.
-  app.post('/api/bkk/pay/postback', express_urlencoded_safe, async (req, res) => {
-    const refno = String((req.body && (req.body.refno || req.body.refNo)) || req.query.refno || '').trim();
+  // The merchant panel sends it as a GET with the fields in the query string
+  // (15 Nov 2026: the route took POST only, so every postback was turned away
+  // and a payment waited for the student's own page to check it). Both are taken.
+  const postback = async (req, res) => {
+    const pick = o => o && (o.refno || o.refNo);
+    const refno = String(pick(req.body) || pick(req.query) || '').trim();
     res.json({ ok: true });                        // always 200 — never leak state
-    if (!refno) return;
+    if (!/^\d{1,12}$/.test(refno)) return;
     try { await verifyAndActivate(Number(refno)); }
     catch (e) { console.error('[bkk pay] verify failed:', e.message); }
-  });
+  };
+  app.post('/api/bkk/pay/postback', express_urlencoded_safe, postback);
+  app.get('/api/bkk/pay/postback', postback);
 
   // Student's browser comes back here; also triggers a verify so activation is
   // not dependent on the postback arriving.
