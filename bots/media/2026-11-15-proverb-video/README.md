@@ -19,3 +19,9 @@ Boonchu's video (Drive AYBKK/03_Reels_Content/สุภาษิต, 85 s, 4K ve
 - No CC0 rhino or cheetah call exists: rhino = heavy animal stomping run, cheetah = whoosh.
 - Level rule: a real sound is never louder than the draft 2 sound for the same key (peak and loudness capped), so every sound stays at 60% of draft 1.
 - `python3 -I render.py $D audio draft2.mp4` rebuilds only the sound and remuxes (1 min instead of 25).
+
+## Draft 4 (15 Nov)
+- Thai text: lines laid out by real glyph boxes, so ขี้ and other stacked marks are never cut or pushed into the line above.
+- พระ: custom monk sticker (stk/monk.png: Noto bald person + Noto folded hands, eyes closed, saffron robe) at word end + 0.25 s, small glass bell at + 0.5 s.
+- Fire: real flare whoosh on 🔥. Laugh: 2 s CC0 chuckle at 40% when Mom laughs (40.1 s and 83.6 s).
+- Levels vs the normalized voice's mono 99.9% peak: animals 0.60, other effects 0.40, ding/bell/gong 0.28, laugh 0.40 (checked in mix.wav).

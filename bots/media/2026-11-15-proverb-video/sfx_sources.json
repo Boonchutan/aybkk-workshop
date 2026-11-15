@@ -118,5 +118,29 @@
   "author": "Sunset Editorial sound library (USC Cinema), released CC0 by Craig Smith",
   "seconds": 1.5,
   "note": "No PD/CC0 rhino call exists; heavy animal stomping run used instead (2.3-3.8 s of source). Cheetah uses the whoosh."
+ },
+ {
+  "key": "fire",
+  "source_url": "https://archive.org/download/SSE_Library_FIRE/WHOOSH/FIREWhsh_Flare%20whoosh_CS_USC.wav",
+  "licence": "CC0 1.0 (archive.org item SSE_Library_FIRE licenseurl)",
+  "author": "Sunset Editorial sound library (USC Cinema), released CC0 by Craig Smith",
+  "seconds": 1.2,
+  "note": "0.12-1.32 s of source"
+ },
+ {
+  "key": "bell",
+  "source_url": "https://archive.org/download/SSE_Library_BELLS/HANDBELL/BELLHand_Glass%20bell%3B%20medium%20size_CS_USC.wav",
+  "licence": "CC0 1.0 (archive.org item SSE_Library_BELLS licenseurl)",
+  "author": "Sunset Editorial sound library (USC Cinema), released CC0 by Craig Smith",
+  "seconds": 2.0,
+  "note": "one strike at 8.72 s, for the monk sticker"
+ },
+ {
+  "key": "laugh",
+  "source_url": "https://archive.org/download/SSE_Library_CROWDS/LAUGHTER/CRWDLaff_Polite%20crowd%20laughter%3B%20%3Fpoor%20guy%3F%3B%20good%20bg%3B_CS_USC.wav",
+  "licence": "CC0 1.0 (archive.org item SSE_Library_CROWDS licenseurl)",
+  "author": "Sunset Editorial sound library (USC Cinema), released CC0 by Craig Smith",
+  "seconds": 2.0,
+  "note": "0.45-2.45 s, small polite crowd chuckle, used when Mom laughs (40.1 s, 83.6 s, found with the YAMNet laughter class)"
  }
 ]

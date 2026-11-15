@@ -14,12 +14,15 @@ def text_img(txt,size,fill,stroke,sw,maxw=980,align='center',lh=1.18):
         if f.getlength(t2)<=maxw or not cur: cur=t2
         else: lines.append(cur); cur=w_
     lines.append(cur)
-    asc,desc=f.getmetrics(); lh_px=int(size*lh)
+    bbs=[f.getbbox(l) for l in lines]; gap=int(size*0.14); ys=[]
+    for k,b in enumerate(bbs):
+        if k==0: ys.append(sw+6+max(0,-b[1]))
+        else: ys.append(max(ys[-1]+int(size*lh), ys[-1]+bbs[k-1][3]-b[1]+gap))
     wmax=int(max(f.getlength(l) for l in lines))+2*sw+20
-    im=Image.new('RGBA',(wmax,lh_px*len(lines)+int(size*0.45)+2*sw),(0,0,0,0)); d=ImageDraw.Draw(im)
-    for i,l in enumerate(lines):
+    im=Image.new('RGBA',(wmax,ys[-1]+bbs[-1][3]+sw+12),(0,0,0,0)); d=ImageDraw.Draw(im)
+    for k,l in enumerate(lines):
         lw=f.getlength(l); x=(wmax-lw)/2 if align=='center' else sw+10
-        d.text((x,sw+i*lh_px),l,font=f,fill=fill,stroke_width=sw,stroke_fill=stroke)
+        d.text((x,ys[k]),l,font=f,fill=fill,stroke_width=sw,stroke_fill=stroke)
     return im.crop(im.getbbox())
 def pill(txt,size,fg,bg,pad=(34,16),maxw=940):
     t=text_img(txt,size,fg,bg[:3],0,maxw)
@@ -108,7 +111,8 @@ if MODE=='preview':
     sys.exit()
 # audio mix
 subprocess.run([FF,'-y','-loglevel','error','-i',D+'/src/src.mp4','-vn','-ac','2','-ar','44100',D+'/orig.wav'],check=True)
-w=wave.open(D+'/orig.wav'); a=np.frombuffer(w.readframes(w.getnframes()),dtype=np.int16).reshape(-1,2).astype(np.float32)/32768; SR=44100
+subprocess.run([FF,'-y','-loglevel','error','-i',D+'/orig.wav','-af','loudnorm=I=-16:TP=-1.5:LRA=11','-ar','44100',D+'/voice_norm.wav'],check=True)
+w=wave.open(D+'/voice_norm.wav'); a=np.frombuffer(w.readframes(w.getnframes()),dtype=np.int16).reshape(-1,2).astype(np.float32)/32768; SR=44100
 a=np.concatenate([a,np.zeros((int(T['freeze']*SR)+SR,2),np.float32)])
 def rd(p):
     ww=wave.open(p); x=np.frombuffer(ww.readframes(ww.getnframes()),dtype=np.int16).astype(np.float32)/32768
@@ -116,20 +120,18 @@ def rd(p):
     if ww.getframerate()!=SR:
         n=int(len(x)*SR/ww.getframerate()); x=np.interp(np.linspace(0,len(x)-1,n),np.arange(len(x)),x)
     return x/(np.abs(x).max()+1e-9)
-def arms(x):
-    f=int(0.02*SR); r=np.sqrt(np.mean(x[:len(x)//f*f].reshape(-1,f)**2,1)); r=np.sort(r)[::-1]; return float(np.sqrt(np.mean(r[:max(1,len(r)//2)]**2)))
 def load(key):
-    syn=f'{D}/sfx_synth/{key}.wav'
-    if not os.path.exists(syn): syn=f'{D}/sfx_synth/pop.wav'
-    if SFX_OK.get(key) and os.path.exists(f'{D}/sfx/{key}.wav'):
-        x=rd(f'{D}/sfx/{key}.wav'); ref=SYN_RMS.get(key) or arms(rd(syn))
-        return x*min(ref/(arms(x)+1e-9),1.0)
-    return rd(syn)
-SYN_RMS=json.load(open(D+'/synth_rms.json')) if os.path.exists(D+'/synth_rms.json') else {}
-GAIN={'pop':0.35,'ding':0.4,'gong':0.5}; G6=T.get('sfx_gain',1.0)
-for it in T['items']:
-    for s in it['stk']:
-        x=load(s[2])*GAIN.get(s[2],0.55)*G6; i0=int((s[3] if len(s)>3 else s[1])*SR); i1=min(len(a),i0+len(x)); a[i0:i1]+=x[:i1-i0,None]
+    p=f'{D}/sfx/{key}.wav' if SFX_OK.get(key) and os.path.exists(f'{D}/sfx/{key}.wav') else f'{D}/sfx_synth/{key}.wav'
+    if not os.path.exists(p): p=f'{D}/sfx_synth/pop.wav'
+    return rd(p)
+REF=float(np.percentile(np.abs(a[:int(84.8*SR)].mean(1)),99.9))
+LV=T.get('levels',{'animal':0.6,'fx':0.4,'tone':0.28,'laugh':0.4})
+ANIMAL={'elephant','cow','tiger','frog_or_toad','rhino'}; TONE={'ding','bell','gong'}
+def lvl(k): return LV['animal'] if k in ANIMAL else LV['tone'] if k in TONE else LV['laugh'] if k=='laugh' else LV['fx']
+EV=[(s[3] if len(s)>3 else s[1],s[2]) for it in T['items'] for s in it['stk']]+[(t,k) for t,k in T.get('laughs',[])]
+for t0,k in EV:
+    x=load(k)*REF*lvl(k); i0=int(t0*SR); i1=min(len(a),i0+len(x)); a[i0:i1]+=x[:i1-i0,None]
+print('REF',round(REF,3),'events',len(EV))
 pk=np.abs(a).max();
 if pk>0.98: a=a/pk*0.98
 ww=wave.open(D+'/mix.wav','w'); ww.setnchannels(2); ww.setsampwidth(2); ww.setframerate(SR); ww.writeframes((a*32767).astype(np.int16).tobytes()); ww.close()
