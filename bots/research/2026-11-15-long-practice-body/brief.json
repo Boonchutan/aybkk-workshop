@@ -1,0 +1,316 @@
+{
+ "short_answer": "The start likely feels hard partly because the body is behind. For the first 2 to 4 minutes, your oxygen supply has not caught up. Muscles borrow quick energy to fill the gap. In lab tests, thinking is also a little clumsy for about the first 20 minutes. By about 20 minutes, oxygen supply has caught up and the clumsy thinking has passed, though heart rate slowly drifts up and the fuel mix keeps shifting. Movements you have practised for years run on the brain's movement circuits, with less brain activity and less need to think (shown in finger-tapping studies, not yoga). In long exercise, the thinking front of the brain may also go quiet for a while: a 6-hour running study saw the front of the brain go quieter, while thinking stayed stable. Over months, the same sun salutations cost less oxygen in one small study, regular exercisers sleep a little better and report fewer bad-mood days, and older people who exercised 4 to 5 times a week for years had more flexible hearts. We found no study that measured energy, heart or brain during a full 90 to 120 minute Ashtanga Mysore practice (each student moves through the sequence at their own pace). One small scan was taken right after the primary series (the first Ashtanga sequence). So every Ashtanga line below is our reading from running, cycling, shorter yoga studies and a few small Ashtanga studies.",
+ "timeline": [
+  {
+   "phase": "The first 10 minutes: sun salutations",
+   "body": "For the first 2 to 4 minutes, your oxygen supply has not caught up with the work. This is the oxygen gap. Muscles fill it with quick energy that needs no oxygen. They use a small quick-energy store, then burn stored sugar fast. Warming up also heats the muscles. In soccer players, thigh muscle went from 36.0 °C at rest to 39.4 °C after the warm-up. When they rested through half-time, the muscle cooled and their sprints were 2.4% slower. Players who kept moving lightly kept their speed. In healthy people, the oxygen gap and cool muscles are a more likely explanation for the hard start than a sudden 'second wind' (see myths).",
+   "brain": "In lab tests, thinking is a little clumsy in the first 20 minutes of exercise. The effect is small. In the most experienced runners, breathing locked onto their steps within the first 8 to 10 steps. Beginners' breathing mostly stayed irregular. One idea, not yet tested in people: the brain's movement settings drift between sessions and must be re-tuned each time. This could be why expert athletes warm up for a long time.",
+   "ashtanga": "Our reading: the first sun salutations (Surya Namaskara A and B) are where you warm up and where the breath finds its count. Each vinyasa (one movement linked to one breath) follows the count. In 6 trained young people doing what was probably a traditional Indian sun salutation (not Ashtanga's A and B), heart rate climbed with each set of 12 rounds: about 80% of top heart rate (the fastest your heart can beat) in the 2nd set, 84% in the 3rd and 90% in the 4th. Effort can also be measured in METs: sitting still is 1 MET, and moderate effort starts at about 3. Sun salutations can reach moderate or vigorous effort. In a beginner Ashtanga video, the sun-salutation section averaged 2.9 METs, just under moderate. This likely applies because steady efforts in general start with an oxygen gap, and muscles start cool.",
+   "ids": [
+    "energy-01",
+    "energy-02",
+    "energy-03",
+    "BRAIN-5",
+    "MC-5",
+    "MC-12",
+    "ASH-02",
+    "ASH-06",
+    "ASH-01"
+   ]
+  },
+  {
+   "phase": "10 to 30 minutes: last sun salutations, first standing asanas",
+   "body": "At easy to moderate effort, oxygen use has usually caught up by now (at hard effort it keeps creeping up). After 10 to 20 minutes at the same effort, the heart starts beating a bit faster and pumping a bit less blood with each beat. This is called heart drift. Scientists still argue about why it happens. In a 90-minute flow yoga class (a vinyasa-style class, not Ashtanga), heart rate averaged 58% of top heart rate in the 15-minute warm-up. It reached 72% in the 15 minutes of sun salutations, the highest part of the class.",
+   "brain": "By about 20 minutes, the clumsy phase seen in lab tests is over. After that, quick, automatic tasks even get a little better. Light-sensor scans looked at the thinking front of the brain (the front of the brain, which we use to plan and think things through). In short step-up tests, it got more oxygen as effort went from moderate to hard. Its oxygen dropped only at all-out effort. So at a moderate pace it is not short of oxygen, though it may still be less active.",
+   "ashtanga": "Our reading: the last sun salutations lead into the first standing asanas, and the breath count is set. For a student of many years, the familiar vinyasas need little conscious steering. In the beginner Ashtanga video, the sun-salutation section averaged 2.9 METs and 55% of top heart rate. The standing asanas after it were easier: 2.34 METs and 47%. We found no study that measured this in a Mysore room.",
+   "ids": [
+    "energy-01",
+    "energy-04",
+    "ASH-03",
+    "BRAIN-5",
+    "BRAIN-4",
+    "ASH-01",
+    "MC-1",
+    "MC-2"
+   ]
+  },
+  {
+   "phase": "30 to 60 minutes: standing into seated asanas",
+   "body": "Heat builds and sweat flows. Trained cyclists rode 2 hours in a 33 °C room. The more water they sweated out and did not drink back, the hotter they got and the harder the heart worked. In a lab room heated to 40 °C, trained cyclists all stopped when the heat deep inside their body reached about 40 °C. When they started hotter, they stopped sooner: after 63, 46 and 28 minutes. The fuel mix also starts to shift. In 4 hours of easy exercise, after about 40 minutes the leg muscles took more and more of their energy from fat carried in the blood.",
+   "brain": "In a 45-minute run, mood went up and worry went down, compared with walking. The body's own calming chemicals rose in the blood (they are called calming because of mouse studies; in people this role is not yet proven). A drug blocked the body's own painkillers (endorphins), and the good mood still came. So in this 45-minute run, endorphins were not needed for it.",
+   "ashtanga": "Our reading: this is the long middle, from the standing asanas into the seated asanas, with sweat building. In the 90-minute flow yoga class, heart rate stayed at about 69% of top heart rate through 45 minutes of standing, balancing, seated and upside-down asanas with ujjayi breath (a slow breath with a soft sound in the throat). In another study of 80-minute classes, Ashtanga gave a higher heart rate than a slower style where each asana is held longer, or gentle yoga: 95 beats a minute, or 54% of top heart rate. This was a different study with different people, so do not compare it with the 69%. We have these numbers second-hand, from a later paper. This likely applies because heat build-up and a slow fuel shift show up in long, steady running and cycling, though yoga is easier.",
+   "ids": [
+    "energy-10",
+    "energy-11",
+    "energy-06",
+    "energy-07",
+    "BRAIN-9",
+    "BRAIN-8",
+    "ASH-03",
+    "ASH-04",
+    "energy-12"
+   ]
+  },
+  {
+   "phase": "60 minutes and more: seated asanas and finishing sequence",
+   "body": "In 2 hours of steady exercise, trained people's muscles used less of their own stored sugar and fat as time went on. They took more fuel, sugar and fat, from the blood (5 people in a lab). In 4 hours of easy exercise, fat from the blood gave about 60% of the legs' energy by the end. In hard cycling, muscles burned their stored sugar fastest in the first 2 hours. On flavoured water alone the riders gave out at about 3 hours, after their blood sugar fell. With a sugar drink they kept going about 1 hour longer. Marathon runners who 'hit the wall' have nearly run out of stored sugar. It happens most often around km 33, and a computer model suggests few would hit it at an easy pace.",
+   "brain": "One theory explains the 'no more thinking' feeling. Scientists call it transient hypofrontality, which means 'the front of the brain goes quiet for a while'. It is a theory, not a measurement. The theory says a busy exercising brain has limited energy, so the thinking front of the brain may go quieter. In a small early test, athletes exercising at a steady, moderate pace did worse than non-exercisers on a thinking test that leans on the front of the brain. They did not do worse on a test that does not. The study's summary does not say how long they had exercised. In 11 ultrarunners (people who run races longer than a marathon), the front of the brain got quieter during a 6-hour run, but thinking stayed stable. The 'in the zone' feeling (scientists call it flow) rose after 1 hour, then faded over the next 5 hours. A review of flow studies found the clearest sign is not the front brain shutting down. It is the brain areas that think about 'me' going quiet. During a marathon, blood levels of the body's own calming chemicals kept climbing, and runners felt happier than on a walk of the same length. In 8 people rowing for 4 hours, the brain released 2 to 3 times more of a brain-growth protein (it helps brain cells grow and survive).",
+   "ashtanga": "Our reading: the seated asanas, backbending asanas and finishing sequence. In a survey of 127 Ashtanga students (a survey, not a lab test), they said they get 'in the zone' during practice, more than in another sport they do, and more so the more years they had practised. They practised about 4 times a week, for over 1.5 hours each time. The marathon wall is unlikely here: 60 minutes of flow yoga took a little less effort than brisk walking. This likely applies because the fuel shift comes from long, steady efforts and the quieter 'me' thinking from flow studies in sport and lab tasks, but we found no study that measured them during Ashtanga.",
+   "ids": [
+    "energy-05",
+    "energy-06",
+    "energy-08",
+    "energy-09",
+    "BRAIN-1",
+    "BRAIN-2",
+    "BRAIN-3",
+    "BRAIN-6",
+    "BRAIN-10",
+    "BRAIN-11",
+    "ASH-11",
+    "energy-12",
+    "ASH-05"
+   ]
+  },
+  {
+   "phase": "After practice: final rest and the hours after",
+   "body": "Muscles keep pulling sugar out of the blood for a while after exercise. Over weeks, regular training also grows more tiny blood vessels in muscle. In athletes, hard training pays off only with enough recovery (expert consensus). People who exercise regularly fall asleep a bit faster and sleep a bit better.",
+   "brain": "8 experienced practitioners (6 with Ashtanga training) did 60 minutes of their own yoga asana and breathing practice. Afterwards they had about 27% more GABA, the brain's main 'calm-down' chemical, in the scanned area. 11 people who read for an hour had no change. It was a tiny, early study. After a 2-hour run, one scan of 10 men linked a very happy feeling to signs of endorphin release (a link, not proof). In mice, the calmer, less pain-sensitive behaviour after a long run needed the docking spots those calming chemicals use.",
+   "ashtanga": "Our reading: the final rest and the hours after practice. Right after the primary series, 10 experienced Ashtanga students had a brain scan. The cerebellum (the brain's balance-and-movement centre) took a slightly bigger share of the brain's fuel than at rest: its share went up, but the brain's total fuel use did not change. We do not know whether this holds for other or longer practices. The GABA rise hints at calm, but we found no study showing that practice gives a calmer mind for the rest of the day.",
+   "ids": [
+    "BENLIM-05",
+    "BENLIM-10",
+    "BENLIM-08",
+    "BRAIN-12",
+    "BRAIN-7",
+    "BRAIN-8",
+    "ASH-12"
+   ]
+  }
+ ],
+ "biomechanics": [
+  {
+   "point": "Skill moves from thinking to autopilot over months and years. A classic model has three stages: first you work out what to do, then you polish the movement, then practice turns it into a routine. It is a theory, summarised in a review, and it describes weeks to years, not the first minutes of one class.",
+   "plain": "Our reading: first you think hard about each vinyasa, then you polish it, and after a lot of practice it runs with much less conscious steering.",
+   "ids": [
+    "MC-1"
+   ]
+  },
+  {
+   "point": "Practised movements run on the same brain network, just more quietly. In finger-tapping tests, once a sequence was automatic, people could do it while counting letters. No new brain areas switched on. Activity fell across the movement network and in the thinking front of the brain. After 4 weeks of daily practice, activity moved inside the basal ganglia (deep brain areas the authors suggest store learned movements), from their thinking part to their movement part.",
+   "plain": "Once a move is automatic, you can do it while thinking of something else, and the same brain areas run it with less activity. This was shown in finger tapping, not yoga.",
+   "ids": [
+    "MC-2",
+    "MC-3"
+   ]
+  },
+  {
+   "point": "The spinal cord may have its own rhythm circuits. In people with spinal cord injury, stimulating the lower spinal cord can make step-like muscle rhythms without any voluntary control from the brain. Whether these circuits help in normal walking or running is still debated.",
+   "plain": "Your spinal cord may help keep a walking rhythm going, but scientists still argue about it, and this review says nothing about yoga.",
+   "ids": [
+    "MC-4"
+   ]
+  },
+  {
+   "point": "Breath locks to movement. Runners lock their breathing to their stride, most often 2 strides (4 footfalls) per breath. Each footfall pushes a little air in or out of the lungs, and runners time their breaths to the steps that help. Breathing follows the legs, not the other way round.",
+   "plain": "In runners, breath and movement lock together. This may save breathing effort, but no one measured it. In yoga beginners lying down, ujjayi raised blood oxygen as much as plain slow breathing. But it helped less with a reflex that keeps heart rate and blood pressure steady. Our reading: Ashtanga's one-movement-one-breath count may lock breath and movement in a similar way. We found no study that measured this in Ashtanga.",
+   "ids": [
+    "MC-5",
+    "MC-6",
+    "ASH-09"
+   ]
+  },
+  {
+   "point": "Where you aim your attention changes efficiency. On a balance board, people who focused on keeping the board level, not on their feet, balanced better and showed more autopilot. Runners who focused on their running movement or their breathing used more oxygen at the same speed. Focusing on how the body feels cost nothing extra.",
+   "plain": "In runners, over-steering a practised movement made it less efficient. Noticing how your body feels did not.",
+   "ids": [
+    "MC-7",
+    "MC-8",
+    "MC-9"
+   ]
+  },
+  {
+   "point": "The body looks for the cheapest way to move, and tendons work like springs. Walkers wore robot leg braces that changed which step rate cost the least energy. Within minutes, they moved to the new cheapest rate, even when it saved less than 5%. Later work found most people first need to feel the cheaper way. The Achilles tendon (the thick cord at the back of the ankle) stretches and springs back, so the calf muscle can work at a better speed.",
+   "plain": "In walking tests, people slid toward the cheapest way to move once they had felt it. The Achilles tendon works like a rubber band, though how much energy it saves is not known.",
+   "ids": [
+    "MC-10",
+    "MC-11"
+   ]
+  }
+ ],
+ "benefits": [
+  {
+   "point": "Long practice counts as real exercise.",
+   "plain": "Effort can be measured in METs: sitting still is 1 MET. 60 minutes of a flow yoga class averaged 3.6 METs. That counts as moderate exercise, a little easier than brisk walking. Heart rate makes yoga look harder than the energy it uses. Sun salutations can reach moderate or vigorous effort. In the beginner Ashtanga video, the sun-salutation section averaged 2.9 METs, just under moderate. Most other yoga is light. We found no study that measured energy over a full Mysore practice.",
+   "ids": [
+    "energy-12",
+    "ASH-05",
+    "ASH-06",
+    "ASH-01"
+   ]
+  },
+  {
+   "point": "In one small study, the same sun salutations cost less oxygen after months of practice.",
+   "plain": "9 soldiers did yoga 1 hour a day, 5 days a week. The oxygen their sun salutations needed fell by about 30% between month 3 and month 11. It was a small study with no comparison group (people who did not do the yoga), and their army training may have helped.",
+   "ids": [
+    "ASH-07"
+   ]
+  },
+  {
+   "point": "Trained muscle handles long efforts more easily.",
+   "plain": "Regular long, steady exercise builds more mitochondria (the tiny power plants inside muscle cells). Trained muscle leans more on fat and uses its stored sugar more slowly at the same workload, so the same work upsets the body less. Total training time may be a key factor for building more mitochondria, while harder effort helps each one work better.",
+   "ids": [
+    "BENLIM-04",
+    "BENLIM-03",
+    "energy-07"
+   ]
+  },
+  {
+   "point": "Moving more is linked to a longer life, up to a point.",
+   "plain": "The World Health Organization (WHO) asks adults for 150 to 300 minutes a week of moderate activity, and short pieces of movement count too. In about 660,000 adults, people who moved more had a lower risk of dying during the study. The benefit grew up to about 3 to 5 times the WHO minimum (about 450 to 750 minutes a week), then levelled off, with no sign of harm even at 10 times. This is a link, not proof.",
+   "ids": [
+    "BENLIM-01",
+    "BENLIM-02"
+   ]
+  },
+  {
+   "point": "Exercise helps muscles pull sugar out of the blood.",
+   "plain": "During practice and for a while after, muscles take more sugar from the blood. Over time, regular training also grows more tiny blood vessels in muscle, which helps too. More exercise usually gives more benefit, though not every study agrees.",
+   "ids": [
+    "BENLIM-05"
+   ]
+  },
+  {
+   "point": "Hearts stay more flexible with practice 4 to 5 times a week, for years.",
+   "plain": "Older people who had exercised 4 to 5 times a week all their adult lives had more flexible hearts, closer to a young heart. Those who exercised 2 to 3 times a week did no better than non-exercisers on this one heart measure. This compares people, so it cannot prove cause.",
+   "ids": [
+    "BENLIM-06"
+   ]
+  },
+  {
+   "point": "Better mood, sleep and focus.",
+   "plain": "In a big US survey, people who exercised reported fewer days of poor mental health, most clearly with about 45-minute sessions, 3 to 5 times a week. Regular exercise helps people fall asleep a bit faster and sleep better. In a small study of yoga beginners, stress went down in both the movement-focused and the breath-focused yoga groups, and attention improved only in the breath-focused group.",
+   "ids": [
+    "BENLIM-07",
+    "BENLIM-08",
+    "ASH-10"
+   ]
+  },
+  {
+   "point": "Stronger legs.",
+   "plain": "Women aged 35 to 50 who did Ashtanga twice a week for 8 months got 11.4% stronger on the leg press. Their arteries, blood pressure and resting heart rate did not change. Each class had only 35 minutes of Ashtanga asanas.",
+   "ids": [
+    "ASH-08"
+   ]
+  }
+ ],
+ "limits": [
+  "We found no study that measured energy, heart and brain across a full 90 to 120 minute Mysore practice. The yoga numbers come mostly from 56- to 90-minute classes, plus one short sun-salutation test. Some are flow yoga classes, not Ashtanga, and some Ashtanga heart-rate numbers are second-hand. Heart rate also makes yoga look harder than the energy it really uses. [ids: ASH-01, ASH-02, ASH-03, ASH-04, ASH-05, ASH-06, ASH-12, energy-12]",
+  "The 'no more thinking' idea is still a theory. In the 6-hour run, the front brain got quieter but thinking stayed stable, and the quieter front brain did not track the 'in the zone' feeling. The brain studies are small and mostly about running, and the results on calming chemicals and calm itself come from mice. [ids: BRAIN-1, BRAIN-2, BRAIN-3, BRAIN-6, BRAIN-8, BRAIN-10]",
+  "Long efforts in heat raise body heat and heart strain, more so the more sweat you do not drink back. Drinking far more than you sweat out is also a problem: in one marathon, 13% of the 488 runners who gave a usable blood sample finished with low blood salt. Slower runners and those who gained weight during the race were most affected. Our reading: Mysore students rarely drink mid-practice, so this part is mainly about runners. Practising in the heat again and again over 1 to 2 weeks helps the body cope. [ids: energy-10, energy-11, BENLIM-09, BENLIM-12]",
+  "More is not always better. In the big US survey, more than 3 hours of exercise a day was linked to worse mental health than none (this number comes from a news release, not the paper itself). Athletes in competitive, high-volume sport were more likely than non-athletes to have an irregular heartbeat, though the studies did not show how much training it takes. Hard training without enough rest can leave you tired, slower and moody. [ids: BENLIM-07, BENLIM-10, BENLIM-11]",
+  "Most studies here are small (often 5 to 12 people), many are lab tests in trained runners or cyclists, and several only show links, not causes. Some brain results come from finger-tapping tasks or mice, not whole-body practice. [ids: energy-05, energy-06, BRAIN-3, BRAIN-7, BRAIN-8, MC-2, MC-3, ASH-07, ASH-12]"
+ ],
+ "myths": [
+  {
+   "myth": "The runner's high is just endorphins.",
+   "truth": "Not only. When a drug blocked endorphins, a 45-minute run still lifted mood and eased worry. One scan after a 2-hour run linked a very happy feeling to signs of endorphin release. A later scan after 60 minutes of moderate exercise found no overall change, though the happy feeling still went with signs of endorphin release. The body's own calming chemicals rise in the blood during long runs. In mice they are needed for the calm, but in people this is not yet proven.",
+   "ids": [
+    "BRAIN-9",
+    "BRAIN-7",
+    "BRAIN-8",
+    "BRAIN-10"
+   ]
+  },
+  {
+   "myth": "Everyone gets a 'second wind' after about 10 minutes.",
+   "truth": "A sharp 'now it gets easier' moment after 6 to 10 minutes is almost unique to people with McArdle disease, a rare muscle disease in which muscles cannot use their own stored sugar. It comes as sugar and fat from the blood reach the muscle. In healthy people, the oxygen gap of the first 2 to 4 minutes and cool muscles are a more likely explanation for the hard start.",
+   "ids": [
+    "energy-03",
+    "energy-01",
+    "energy-02"
+   ]
+  },
+  {
+   "myth": "In long exercise the thinking brain runs out of oxygen and switches off.",
+   "truth": "Brain scans show the front of the brain gets more oxygen from moderate to hard effort in short step-up tests, and less only at all-out effort. In a 6-hour run the front of the brain got quieter, but thinking stayed stable. The 'switch-off' idea is a theory, and a review calls its brain-scan evidence mixed. The clearer sign in the 'in the zone' state is quieter 'me' thinking.",
+   "ids": [
+    "BRAIN-4",
+    "BRAIN-3",
+    "BRAIN-1",
+    "BRAIN-6"
+   ]
+  },
+  {
+   "myth": "A long practice burns mostly fat, so longer is always better for fat loss.",
+   "truth": "A model built from many studies says that in trained people, easy effort leans on fat and hard effort on sugar. In long, steady exercise, muscles slowly take more of their fuel from fat and sugar in the blood. But these studies show a fuel shift, not fat loss.",
+   "ids": [
+    "energy-07",
+    "energy-05",
+    "energy-06"
+   ]
+  }
+ ],
+ "ideas": [
+  {
+   "idea": "In the first few minutes your oxygen has not caught up yet, so your muscles borrow quick energy. That may be part of why the start feels hard.",
+   "ids": [
+    "energy-01"
+   ]
+  },
+  {
+   "idea": "Our reading on why we never skip sun salutations: in a soccer study, the warm-up heated thigh muscle by about 3 °C, and players who rested at half-time cooled down and sprinted 2.4% slower (sprints, not yoga).",
+   "ids": [
+    "energy-02"
+   ]
+  },
+  {
+   "idea": "Notice how your body feels, not how to move it. Runners who paid attention to how their body felt used no extra oxygen. Watching their breathing or their movement cost more. (Treadmill study, not yoga.)",
+   "ids": [
+    "MC-9"
+   ]
+  },
+  {
+   "idea": "Once you know the sequence, stop steering every joint. Still listen to pain. Runners who thought about their own movement used more oxygen at the same speed. Learn the count, then let it run. (Treadmill study, not yoga.)",
+   "ids": [
+    "MC-8"
+   ]
+  },
+  {
+   "idea": "Your thinking is a little clumsy for the first 20 minutes of exercise. After that, quick, automatic tasks get a little better. (Lab tests, not yoga.)",
+   "ids": [
+    "BRAIN-5"
+   ]
+  },
+  {
+   "idea": "The runner's high is not only endorphins: when a drug blocked them, a 45-minute run still lifted mood.",
+   "ids": [
+    "BRAIN-9"
+   ]
+  },
+  {
+   "idea": "In 11 ultrarunners, more hours did not mean more zone. The 'in the zone' feeling peaked after 1 hour of a 6-hour run, then faded.",
+   "ids": [
+    "BRAIN-3"
+   ]
+  },
+  {
+   "idea": "Ashtanga students said they get 'in the zone' more in practice than in another sport they do, and more so the more years they had practised (a survey, not a lab test).",
+   "ids": [
+    "ASH-11"
+   ]
+  },
+  {
+   "idea": "9 soldiers doing yoga 5 days a week needed about 30% less oxygen for the same sun salutations at 11 months than at 3 months (small study, no comparison group, army training may have helped).",
+   "ids": [
+    "ASH-07"
+   ]
+  },
+  {
+   "idea": "Older people who exercised 4 to 5 times a week for life had more flexible hearts. 2 to 3 times a week did no better than none on this one heart measure.",
+   "ids": [
+    "BENLIM-06"
+   ]
+  }
+ ]
+}
