@@ -26,3 +26,5 @@ Staff page start stats on Sun 22 Nov (30 days): ig-aybkk views = , line-aybkk vi
 | 2 | | | | | IG = R, XHS = P |
 | 3 | | | | | IG = P, XHS = R |
 | 4 | | | | | IG = R, XHS = P |
+
+Carne, Mon 16 Nov: no weekly score for week 3. The log has no Reel plays, word comments or LINE counts yet (inbox 16 Nov: 0 chats with start/ig-aybkk or start/line-aybkk). Without plays there is nothing to divide. Readout Wed 25 Nov needs the per-Reel rows filled first.
